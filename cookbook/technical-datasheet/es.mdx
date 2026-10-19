@@ -40,13 +40,13 @@ La tabla de patillas y el mapa de registros salen de la misma función, `grouped
 
 <Excerpt region="drawing" />
 
-Los rótulos de las patillas, del circuito y del encapsulado son elementos `<text>` que piden Fira Mono, la letra de rótulos del documento. Un SVG llega al canvas como imagen, así que el `loadSvg` del kit pasa antes el marcado por `inlineSvgFonts`, que incrusta en el SVG las fuentes que nombra su texto; el canvas dibuja entonces los rótulos en Fira Mono. El PDF compone cada `<text>` como texto seleccionable con las fuentes que incrusta.
+Los rótulos de las patillas, del circuito y del encapsulado son elementos `<text>` que piden Fira Mono, la letra de rótulos del documento. Un SVG llega al canvas como imagen, así que el `loadSvg` del kit pasa antes el marcado por `inlineSvgFonts`, que incrusta en el SVG las fuentes que pide su texto; el canvas dibuja entonces los rótulos en Fira Mono. El PDF compone cada `<text>` como texto seleccionable con las fuentes que incrusta.
 
 ### 6 · Apertura, cabecera y pie de página
 
 <Excerpt region="furniture" />
 
-La referencia es el título de primer nivel, y su apertura se dibuja con una ranura de elementos: una caja violeta hasta el sangrado, el logotipo, y un antetítulo, una entradilla y tres cifras clave que salen de los atributos del título. Un elemento de imagen sirve en la cabecera y en el pie de página igual que en una apertura, y el pie empieza con uno que apunta al recurso del logotipo. Los elementos de la cabecera llevan `pages: 'body'`, así que ninguno aparece en la portada.
+La referencia es el encabezado de primer nivel, y su apertura se dibuja con una zona de diseño: una caja violeta hasta el sangrado, el logotipo, y un antetítulo, una entradilla y tres cifras clave que salen de los atributos del encabezado. Un elemento de imagen sirve en la cabecera y en el pie de página igual que en una apertura, y el pie empieza con uno que apunta al recurso del logotipo. Los elementos de la cabecera llevan `pages: 'body'`, así que ninguno aparece en la portada.
 
 ## Variantes
 

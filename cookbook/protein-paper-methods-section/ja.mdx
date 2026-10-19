@@ -5,7 +5,7 @@ plain: "よく引用される生物学の論文を抄録し、学術誌の体裁
 description: "AlphaFold論文をPostextで組む：Nature式の上付き引用、番号が続く小さな文字のMethods、34名の著者、PDBのデータから描いた図。"
 question: "本文の後にMethodsを小さな文字で組み、引用番号を本文から続けるにはどうすればよいですか？"
 aliases: ["Methods", "方法", "Nature形式", "上付き引用", "生命科学", "構造生物学", "計算生物学", "AlphaFold", "タンパク質構造", "PDB", "pLDDT", "長い著者リスト", "要約", "データの入手方法", "コードの入手方法", "Jumper et al. 2021"]
-pageNotes: { "1": "1ページ：濃い青の帯に白の大文字でARTICLE · STRUCTURAL BIOLOGY。サンセリフ太字の2行の表題Highly accurate protein structure prediction with AlphaFold、上付きの所属番号を付けた34名の著者を小さな文字で、DOIとライセンスを記した出典行、続いて全幅に太字の要約があり、上付きの引用1–4から15を含む。その下に全幅で図1。aはCASP14の中央値r.m.s.d.95の棒グラフで、AlphaFoldが0.96と1.5 Å、次点の手法が2.8と3.5 Å、1.4 Åに破線。bは標的T1049の実験構造の主鎖を灰色で描き、その中にpLDDTに応じて青と黄で塗ったモデルの線を重ねたもの。ページの最後に2段組の本文が5行。", "2": "2ページ：序論が終わり、The AlphaFold networkとEvoformerの節が、両端揃えのセリフ体2段組、サンセリフの見出し、上付きの引用番号で続く。", "3": "3ページ：左段にEnd-to-end structure predictionとDiscussion。Discussionは右段で終わり、小さな青い見出しの下に本文の参考文献1から15が続く。", "4": "4ページ：参考文献15から35、続いて大きな見出しの下でMethodsが小さな文字で始まり、青い小見出しIPA、Inputs and data sources、Inference regimen、見出し行が青い推論時間の表1、Metricsの冒頭がある。", "5": "5ページ：Methodsの終わり、Data availabilityとCode availability、Methodsで初めて引用された文献の二つ目の参考文献リスト36から55、続いて謝辞、所属、この版についての注記を小さなサンセリフで。" }
+pageNotes: { "1": "1ページ：濃い青の帯に白の大文字でARTICLE · STRUCTURAL BIOLOGY。サンセリフ太字の2行の表題Highly accurate protein structure prediction with AlphaFold、上付きの所属番号を付けた34名の著者を小さな文字で、DOIとライセンスを記した出典行、続いて全幅に太字の要約があり、上付きの引用1–4から15を含む。その下に全幅で図1。aはCASP14の中央値r.m.s.d.95の棒グラフで、AlphaFoldが0.96と1.5 Å、次点の手法が2.8と3.5 Å、1.4 Åに破線。bは標的T1049の実験構造の主鎖を灰色で描き、その中にpLDDTに応じて青と黄で塗ったモデルの線を重ねたもの。ページの最後に2段組みの本文が5行。", "2": "2ページ：序論が終わり、The AlphaFold networkとEvoformerの節が、両端そろえのセリフ体2段組み、サンセリフの見出し、上付きの引用番号で続く。", "3": "3ページ：左段にEnd-to-end structure predictionとDiscussion。Discussionは右段で終わり、小さな青い見出しの下に本文の参考文献1から15が続く。", "4": "4ページ：参考文献15から35、続いて大きな見出しの下でMethodsが小さな文字で始まり、青い小見出しIPA、Inputs and data sources、Inference regimen、見出し行が青い推論時間の表1、Metricsの冒頭がある。", "5": "5ページ：Methodsの終わり、Data availabilityとCode availability、Methodsで初めて引用された文献の二つ目の参考文献リスト36から55、続いて謝辞、所属、この版についての注記を小さなサンセリフで。" }
 ---
 
 ## できあがり
@@ -16,7 +16,7 @@ A4に組んだ生命科学の学術誌論文5ページ。Jumperらの*Highly acc
 
 ### 1 · 二つの参考文献リストと一つの番号
 
-コードは上の[手短な答え](#手短な答え)です。引用は初出順に番号が振られるので、番号を続けるための設定は要りません。Methodsで初めて引用されるjackhmmerは36、本文ですでに引用されたAmber力場は30のままです。リストは`:::bibliography{scope=new}`で組みます。これは、それより前のリストが載せていない文献だけを並べます。スクリプトは同じブロックをDiscussionの後とMethodsの後に置くので、一つ目は1–35、二つ目は36–55を組み、Amberは繰り返されません。Methodsの見出しは独自のスタイルを持つ第1レベルの見出しです。その`bodyStyle`がセクションを8.2 pt、行送り10.8 ptで組み、`breakBefore: { enabled: false }`で段の中にとどめ、`runningChapter: false`で柱を論文の表題のままにします。自分の論文では、`.bib`の書き出しを`:::references{format=bibtex}`ブロックに貼り付け、語の直後に`[@key]`で引用し、`nature`を投稿先のスタイルに替えます。
+コードは上の[手短な答え](#手短な答え)です。引用は初出順に番号が振られるので、番号を続けるための設定は要りません。Methodsで初めて引用されるjackhmmerは36、本文ですでに引用されたAmber力場は30のままです。リストは`:::bibliography{scope=new}`で組みます。これは、それより前のリストが載せていない文献だけを並べます。スクリプトは同じブロックをDiscussionの後とMethodsの後に置くので、一つ目は1–35、二つ目は36–55を組み、Amberは繰り返されません。Methodsの見出しは独自のスタイルを付けた第1レベルの見出しです。その`bodyStyle`がセクションを8.2 pt、行送り10.8 ptで組み、`breakBefore: { enabled: false }`で段の中にとどめ、`runningChapter: false`で柱を論文の表題のままにします。自分の論文では、`.bib`の書き出しを`:::references{format=bibtex}`ブロックに貼り付け、語の直後に`[@key]`で引用し、`nature`を投稿先のスタイルに替えます。
 
 ### 2 · 34名の著者を収める表題ブロック
 
@@ -28,7 +28,7 @@ A4に組んだ生命科学の学術誌論文5ページ。Jumperらの*Highly acc
 
 <Excerpt region="resources" />
 
-要約は`span: 'page'`で枠のない囲みで、文字はNoto Sansのセミボールドです。図1はその直後に`::resource{id="fig1"}`として置き、配置`{ position: 'here', span: 'page' }`によってその位置で2段にまたがって組まれます。2段の本文は図の説明文の下から始まります。説明文はNatureの説明文と同じく太字の一文で始まります。リソース型の`captionPrefix`と説明文スタイルの`labelSeparator`で、ラベルは*Fig. 1 |*になります。表1は`position: 'here'`でMethodsのその位置に埋め込み、段の幅に収めます。
+要約は`span: 'page'`で枠のない囲みで、文字はNoto Sansのセミボールドです。図1はその直後に`::resource{id="fig1"}`として置き、配置`{ position: 'here', span: 'page' }`によってその位置で2段にまたがって組まれます。2段の本文は図のキャプションの下から始まります。キャプションはNatureのものと同じく太字の一文で始まります。リソース型の`captionPrefix`とキャプションスタイルの`labelSeparator`で、ラベルは*Fig. 1 |*になります。表1は`position: 'here'`でMethodsのその位置に埋め込み、段の幅に収めます。
 
 ### 4 · 公開座標から描いたタンパク質の主鎖
 

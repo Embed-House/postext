@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Einstellungen für zusammengesetzte Seiten',
   description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Dekoration, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Seitenvorlagen
 
-Eine zusammengesetzte Seite ist eine Seite, deren Form aus einer **Seitenvorlage** der Konfiguration stammt und deren Inhalt aus dem Markdown eines Blocks `::::page{template="…"}`. Die Vorlage benennt Rechtecke, die **Rahmen** heißen; das Markdown schickt jedes Inhaltsstück über seinen Namen (seinen Slot) an einen Rahmen. Geometrie steht nie im Markdown, und Inhaltstext steht nie in der Vorlage. Die Eigenschaft `pageTemplates` enthält die Vorlagen des Buchs:
+Eine zusammengesetzte Seite ist eine Seite, deren Form aus einer **Seitenvorlage** der Konfiguration stammt und deren Inhalt aus dem Markdown eines Seitenblocks stammt, des Blocks `::::page{template="…"}`, der mit vier Doppelpunkten beginnt. Die Vorlage legt benannte Rechtecke fest, die **Rahmen** heißen; das Markdown weist jedes Inhaltsstück über dessen Namen (den Slot) einem Rahmen zu. Geometrie steht nie im Markdown, und Inhaltstext steht nie in der Vorlage. Die Eigenschaft `pageTemplates` enthält die Vorlagen des Buchs:
 
 ```ts
 const config: PostextConfig = {
@@ -104,25 +104,25 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>keine</td>
-      <td>Bilder, Linien und Kästen, die mit der Seite gezeichnet werden, in der Elementsprache der <a href="/de/docs/configuration-headers-footers#kopf--und-fußzeilen">Kopf- und Fußzeilen</a>. Textelemente enthalten nur Platzhalter (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> für ein Attribut des Seitenblocks). Ein Element kann an einem Rahmen oder einer Gruppe verankert werden (<code>'#dinero'</code>) und bewegt sich dann mit. Die Dekoration wird nach den Rahmen gesetzt und verdrängt nie Text. Seit postext 1.42 gibt <code>&#123;headingNumber&#125;</code> den Zähler der ersten nummerierten Überschrift aus, die die Rahmen der Seite enthalten (ein Rahmen mit <code>takes</code>), und <code>&#123;headingNumber.titulo&#125;</code> den des Rahmens <code>titulo</code>, in den Ziffern des Dokuments; ein Abzeichen mit der Nummer eines Themas liest sie also aus der Überschrift, und der Seitenblock muss sie nicht wiederholen. Die Dekoration wird unter den Rahmen gemalt; ein Klick auf ein Textelement, das über einem Rahmen liegt, an einer Stelle, an der der Rahmen keinen eigenen Text hat, trifft das Element, nicht den Rahmen. Ein Rahmen mit negativem <code>layer</code> wird unter der Dekoration gemalt.</td>
+      <td>Bilder, Linien und Kästen, die mit der Seite gezeichnet werden, beschrieben mit denselben Elementen wie <a href="/de/docs/configuration-headers-footers#kopf--und-fußzeilen">Kopf- und Fußzeilen</a>. Textelemente enthalten nur Platzhalter (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> für ein Attribut des Seitenblocks). Ein Element kann an einem Rahmen oder einer Gruppe verankert werden (<code>'#dinero'</code>) und bewegt sich dann mit. Die Dekoration wird nach den Rahmen gesetzt und verdrängt nie Text. Seit postext 1.42 gibt <code>&#123;headingNumber&#125;</code> den Zähler der ersten nummerierten Überschrift aus, die die Rahmen der Seite enthalten (ein Rahmen mit <code>takes</code>), und <code>&#123;headingNumber.titulo&#125;</code> den des Rahmens <code>titulo</code>, in den Ziffern des Dokuments; ein Abzeichen mit der Nummer eines Themas liest sie also aus der Überschrift, und der Seitenblock muss sie nicht wiederholen. Die Dekoration wird unter den Rahmen gezeichnet; ein Klick auf ein Textelement, das über einem Rahmen liegt, an einer Stelle, an der der Rahmen keinen eigenen Text hat, trifft das Element, nicht den Rahmen. Ein Rahmen mit negativem <code>layer</code> wird unter der Dekoration gezeichnet.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
       <td><code>DesignSlot | false</code></td>
       <td>geerbt</td>
-      <td>Kolumnentitel und Seitenzahl der Seite. Nicht gesetzt, behält die Seite die ihres Kapitels; <code>false</code> blendet sie aus.</td>
+      <td>Kolumnentitel und Seitenzahl der Seite. Ist der Wert nicht gesetzt, behält die Seite die ihres Kapitels; <code>false</code> blendet sie aus.</td>
     </tr>
     <tr>
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Die Vorlage beschreibt zwei gegenüberliegende Seiten, die als ein Bogen gesetzt werden (siehe <a href="/de/docs/composed-pages#doppelseiten">Zusammengesetzte Seiten › Doppelseiten</a>). Eine Doppelseite beginnt auf einer geraden Seite, der linken in einem Buch, das von links nach rechts gelesen wird, und der rechten in einem, das von rechts nach links gelesen wird, bei Bedarf mit einer Leerseite davor. Ihre Eröffnung trägt ebenfalls die Angabe <code>spread</code>; widersprechen sie sich, entscheidet die Vorlage (<code>spreadMismatch</code>).</td>
+      <td>Die Vorlage beschreibt zwei gegenüberliegende Seiten, die als ein Blatt gesetzt werden (siehe <a href="/de/docs/composed-pages#doppelseiten">Zusammengesetzte Seiten › Doppelseiten</a>). Eine Doppelseite beginnt auf einer linken Seite, wenn das Buch von links nach rechts gelesen wird, und auf einer rechten, wenn es von rechts nach links gelesen wird; bei Bedarf steht eine Vakatseite davor. Auch ihr Seitenblock hat das Attribut <code>spread</code> (ohne Wert); widersprechen sie sich, entscheidet die Vorlage (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Auf einer Doppelseite ein Band dieser Breite, zentriert auf dem Bund, das Rahmen meiden, sofern sie nicht <code>crossGutter: true</code> setzen: Ein Rahmen, der es überquert, wird an seinem Rand auf der Seite seiner Mitte abgeschnitten, einer, der darin beginnt, rückt heraus. Mit <code>0</code> ist das Band der Bund selbst.</td>
+      <td>Auf einer Doppelseite die Breite des Bundstegs, eines um den Bund zentrierten Streifens, den Rahmen freihalten, sofern sie nicht <code>crossGutter: true</code> setzen: Ein Rahmen, der ihn überquert, wird an seinem Rand abgeschnitten, und zwar auf der Seite, auf der die Mitte des Rahmens liegt; ein Rahmen, der darin beginnt, rückt heraus. Mit <code>0</code> ist der Bundsteg der Bund selbst.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -134,19 +134,19 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>diese Vorlage</td>
-      <td>Die Vorlage der Seiten, die hinzukommen, wenn ein Rahmen auf der nächsten Seite weiterläuft (<code>overflow.continueIn: 'next-page'</code>). Nicht gesetzt, ist die hinzugefügte Seite diese Vorlage, noch einmal gesetzt, in der nur die fortgesetzten Rahmen gefüllt sind; die übrigen nehmen keinen Platz ein. Ist hier eine Doppelseite angegeben, wird auch die Fortsetzung eine Doppelseite. Siehe <a href="/de/docs/composed-pages#wenn-der-text-weiterläuft">Zusammengesetzte Seiten › Wenn der Text weiterläuft</a>.</td>
+      <td>Die Vorlage der Seiten, die hinzukommen, wenn ein Rahmen auf der nächsten Seite weiterläuft (<code>overflow.continueIn: 'next-page'</code>). Ist der Wert nicht gesetzt, wird die hinzugefügte Seite noch einmal mit dieser Vorlage gesetzt; gefüllt werden nur die fortgesetzten Rahmen, die übrigen nehmen keinen Platz ein. Ist hier eine Doppelseite angegeben, wird auch die Fortsetzung eine Doppelseite. Siehe <a href="/de/docs/composed-pages#wenn-der-text-weiterläuft">Zusammengesetzte Seiten › Wenn der Text weiterläuft</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Ein Absatzformat für den Text der Seite, wie es Überschriftenformate haben.</td>
+      <td>Ein Absatzformat für den Text der Seite, wie es auch Überschriftenstile haben. Der Umbruch setzt es noch nicht um.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>keine</td>
-      <td>Eine abweichende Palette für die Seite, wie sie Überschriftenformate und Teile haben: Paare <code>Eintrag=#hex</code>, durch Kommas getrennt (<code>farbton=#f6c3d0</code>). Jede Farbe der Rahmen und der Dekoration der Seite, die an diesen Paletteneintrag gebunden ist (oder seinem Wert gleicht), übernimmt ihn, und das Attribut <code>palette</code> des Seitenblocks gilt obendrein. Seit postext 1.42 wird der Wert angewendet; vorher wurde er gelesen und ignoriert.</td>
+      <td>Eine abweichende Palette für die Seite, wie sie Überschriftenstile und Teile haben: Paare <code>Eintrag=#hex</code>, durch Kommas getrennt (<code>farbton=#f6c3d0</code>). Jede Farbe der Rahmen und der Dekoration der Seite, die an diesen Paletteneintrag gebunden ist (oder dessen Wert hat), übernimmt ihn, und das Attribut <code>palette</code> des Seitenblocks wird darüber angewendet. Seit postext 1.42 wird der Wert angewendet; vorher wurde er gelesen und ignoriert.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -159,9 +159,9 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
 
 ### Rahmen
 
-Ein Rahmen ist ein benanntes Rechteck, das gesetzten Inhalt aufnimmt. Sein `name` ist der Slot, den das Markdown anfordert, und er ist in seiner Vorlage eindeutig (auch eine Gruppe kann nicht den Namen eines Rahmens tragen, da Anker beide auf dieselbe Weise benennen).
+Ein Rahmen ist ein benanntes Rechteck, das gesetzten Inhalt aufnimmt. Sein `name` ist der Slot, den das Markdown anfordert, und er ist in seiner Vorlage eindeutig (auch eine Gruppe kann nicht den Namen eines Rahmens tragen, da Verankerungen wie `'#name'` beide auf dieselbe Weise ansprechen).
 
-Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster hat, sonst über sein `placement`, das wie das eines Gestaltungselements funktioniert: ein Anker (`'container'` ist der Bereich, `'page'`, `'bleed'` oder `'#name'` für einen anderen Rahmen oder eine Gruppe), eine Kante, ein Versatz und eine Größe. Ein Rahmen, der an einem anderen verankert ist, bewegt sich mit ihm. Ohne beides beginnt der Rahmen in der oberen linken Ecke des Bereichs, ist so breit wie der Bereich und so hoch, wie seine Höhenregel es vorgibt. Wie der Inhalt in die Rahmen fließt, wie Rahmen verkettet und wie sie beschnitten werden, beschreibt [Zusammengesetzte Seiten › Wie die Seite gesetzt wird](/de/docs/composed-pages#wie-die-seite-gesetzt-wird).
+Ein Rahmen wird über seine Rasterzelle (`grid`) platziert, wenn die Vorlage ein Raster hat, sonst über sein `placement`, das wie das eines Gestaltungselements funktioniert: ein Bezugspunkt (`'container'` ist der Bereich, `'page'`, `'bleed'` oder `'#name'` für einen anderen Rahmen oder eine Gruppe), eine Kante, ein Versatz und eine Größe. Ein Rahmen, der an einem anderen verankert ist, bewegt sich mit ihm. Ohne beides beginnt der Rahmen in der oberen linken Ecke des Bereichs, ist so breit wie der Bereich und so hoch, wie seine Höhenregel es vorgibt. Wie der Inhalt in die Rahmen fließt, wie Rahmen verkettet und wie sie beschnitten werden, beschreibt [Zusammengesetzte Seiten › Wie die Seite gesetzt wird](/de/docs/composed-pages#wie-die-seite-gesetzt-wird).
 
 <table>
   <thead>
@@ -183,7 +183,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>placement</code></td>
       <td><code>ElementPlacement</code></td>
       <td>der ganze Bereich</td>
-      <td>Anker, Kante, Versatz und Größe wie bei der <a href="/de/docs/configuration-headers-footers#platzierung-von-elementen">Platzierung von Elementen</a>. Wird ignoriert, wenn eine Rasterzelle den Rahmen platziert.</td>
+      <td>Bezugspunkt, Kante, Versatz und Größe wie bei der <a href="/de/docs/configuration-headers-footers#platzierung-von-elementen">Platzierung von Elementen</a>. Wird ignoriert, wenn eine Rasterzelle den Rahmen platziert.</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
@@ -195,7 +195,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>Eine feste Länge, ein Prozentsatz des Bereichs (0 bis 100), <code>'auto'</code> (die eigene Größe des Inhalts) oder <code>'fill'</code> (was bis zu der Kante bleibt, an der der Rahmen verankert ist). Nicht gesetzt, liest der Rahmen <code>placement.size</code> und dann den Standard: volle Breite, so hoch wie sein Inhalt. Seit postext 1.42 macht die Breite <code>'auto'</code> den Rahmen so breit wie seine längste Zeile plus Innenabstand, höchstens so breit wie der Platz, den der Anker lässt, und <code>maxWidth</code> (Text, der nicht passt, bricht dort um), mindestens <code>minWidth</code>. Der Text wird linksbündig gemessen; ein zentrierter Titel ist also so breit wie seine Wörter. Der Rahmen beginnt an der Kante, die sein Anker nennt, und daran verankerte Rahmen folgen. Gedacht für einen Reiter oder Kasten, der in jeder Sprache zu seinem Titel passen soll. Ein Wert, den die Engine nicht verwenden kann (eine negative Länge, eine unbekannte Einheit), gilt als Standard.</td>
+      <td>Eine feste Länge, ein Prozentsatz des Bereichs (0 bis 100), <code>'auto'</code> (die eigene Größe des Inhalts) oder <code>'fill'</code> (was bis zu der Kante bleibt, an der der Rahmen verankert ist). Ist der Wert nicht gesetzt, gilt <code>placement.size</code> und dann der Standard: volle Breite, so hoch wie sein Inhalt. Seit postext 1.42 macht die Breite <code>'auto'</code> den Rahmen so breit wie seine längste Zeile plus Innenabstand, höchstens so breit wie der Platz, den sein Bezugspunkt lässt, und <code>maxWidth</code> (Text, der nicht passt, bricht dort um), mindestens <code>minWidth</code>. Der Text wird linksbündig gemessen; ein zentrierter Titel ist also so breit wie seine Wörter. Der Rahmen beginnt an der Kante, die sein Bezugspunkt angibt, und daran verankerte Rahmen folgen. Gedacht für ein Etikett oder einen Kasten, der in jeder Sprache zu seinem Titel passen soll. Ein Wert, den die Engine nicht verwenden kann (eine negative Länge, eine unbekannte Einheit), gilt als Standard.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -207,7 +207,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>ohne Kasten</td>
-      <td>Die ID eines <a href="/de/docs/configuration-callouts#kastenstile">Kastenstils</a>: Rahmen werden mit Kastenstilen gezeichnet (Hintergrund, Kontur, Innenabstand, Streifen, Symbol, Beschriftungsreiter, Titel). Die Wörter eines Reiters kommen aus dem Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Die Kasteneinstellungen dazu, wo ein Kasten im Fließtext steht (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code> …), gelten für einen Rahmen nicht.</td>
+      <td>Die ID eines <a href="/de/docs/configuration-callouts#kastenstile">Kastenstils</a>: Rahmen werden mit Kastenstilen gezeichnet (Hintergrund, Kontur, Innenabstand, Streifen, Symbol, Etikett, Titel). Die Wörter eines Etiketts kommen aus dem Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Die Kasteneinstellungen dazu, wo ein Kasten im Fließtext steht (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code> …), gelten für einen Rahmen nicht.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -237,7 +237,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, der des Stils</td>
-      <td>Spalten innerhalb des Rahmens.</td>
+      <td>Spalten innerhalb des Rahmens. Eine Überschrift beendet nie eine davon: Sie geht mit dem Text, den sie einleitet, in die nächste Spalte (unter <code>headings.keepWithNext</code>, seit postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -255,13 +255,13 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Der Rahmen nimmt den Inhalt auf, der keinen Slot nennt.</td>
+      <td>Der Rahmen nimmt den Inhalt auf, der keinen Slot angibt.</td>
     </tr>
     <tr>
       <td><code>takes</code></td>
       <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>keins</td>
-      <td>Der Rahmen nimmt die erste Überschrift dieser Ebene auf, die keinen Slot nennt; ein Seitentitel ist also einfach <code># Title</code> am Anfang des Blocks. Mit <code>'toc'</code> nimmt er das <code>:::toc</code> der Seite auf, das keinen Slot nennt, und setzt es nach den Regeln des Inhaltsverzeichnisses (seit postext 1.42; siehe <a href="/de/docs/composed-pages">Zusammengesetzte Seiten</a>).</td>
+      <td>Der Rahmen nimmt die erste Überschrift dieser Ebene auf, die keinen Slot angibt; ein Seitentitel ist also einfach <code># Title</code> am Anfang des Blocks. Mit <code>'toc'</code> nimmt er das <code>:::toc</code> der Seite auf, das keinen Slot angibt, und setzt es nach den Regeln des Inhaltsverzeichnisses (seit postext 1.42; siehe <a href="/de/docs/composed-pages">Zusammengesetzte Seiten</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -273,19 +273,19 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen) oder <code>'page:&lt;id&gt;'</code> (ein Rahmen der späteren Seitenbegrenzung <code>::::page&#123;id=…&#125;</code>: der, den <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> nennt, sonst einer, den ihr eigener Inhalt leer lässt; <code>&lt;id&gt;</code> darf <code>&#123;attr.name&#125;</code> sein, gelesen an der Seitenbegrenzung; siehe <a href="/de/docs/composed-pages#auf-eine-spätere-seite-springen">Zusammengesetzte Seiten › Auf eine spätere Seite springen</a>). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat (nach einem Sprung mit <code>'next-page'</code>), bis zu 16 hinzugefügte Seiten. Die Seite darf in einer späteren Kapitel-Datei des Buchs stehen (seit postext 1.41).</td>
+      <td>Wo Inhalt weiterläuft, der nicht passt: <code>'#frame'</code> (ein anderer Rahmen der Seite, wie <code>next</code>), <code>'next-page'</code> (derselbe Rahmen auf einer Seite, die nach dieser hinzukommt, nach <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (eine Seite dieser Vorlage: ihr gleichnamiger Rahmen, sonst ihr Flussrahmen) oder <code>'page:&lt;id&gt;'</code> (ein Rahmen des späteren Seitenblocks <code>::::page&#123;id=…&#125;</code>: der, den <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> angibt, sonst einer, den dessen eigener Inhalt leer lässt; <code>&lt;id&gt;</code> darf <code>&#123;attr.name&#125;</code> sein, das aus dem Seitenblock übernommen wird; siehe <a href="/de/docs/composed-pages#auf-eine-spätere-seite-springen">Zusammengesetzte Seiten › Auf eine spätere Seite springen</a>). Ein Rahmen einer hinzugefügten Seite ohne eigene Regel läuft mit der Regel weiter, die den Inhalt gebracht hat (nach einem Sprung mit <code>'next-page'</code>), bis zu 16 hinzugefügte Seiten. Die Seite darf in einer späteren Kapiteldatei des Buchs stehen (seit postext 1.41).</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>je nach Sprache</td>
-      <td>Die Marke am Ende eines Stücks, das für eine andere Seite abgeschnitten wird. Nicht gesetzt, der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); ein String setzt genau diese Worte, wobei <code>&#123;page&#125;</code> darin die Nummer der Seite ist, auf der der Rest weiterläuft; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, trägt keine Marke.</td>
+      <td>Der Fortsetzungsvermerk am Ende eines Teils, der für eine andere Seite abgetrennt wird. Ist der Wert nicht gesetzt, gilt der <code>continuesMarker</code> des Rahmenstils, der der Dokumentsprache folgt („Continued“, „Continúa“, „À suivre“ …, die Worte geteilter Tabellen); eine Zeichenkette legt diese Worte fest, wobei <code>&#123;page&#125;</code> darin die Nummer der Seite ist, auf der der Rest weiterläuft; <code>false</code> setzt keine. Ein Rahmen, der auf derselben Seite mit <code>next</code> verkettet ist, erhält keinen Vermerk.</td>
     </tr>
     <tr>
       <td><code>overflow.fromMark</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Worte am Kopf des Stücks auf der Seite, auf der der Inhalt weiterläuft, wobei <code>&#123;page&#125;</code> die Nummer der Seite ist, von der es kommt (<code>"Fortsetzung von Seite &#123;page&#125;"</code>). Das des aufnehmenden Rahmens geht dem des sendenden vor.</td>
+      <td>Worte am Kopf des Teils auf der Seite, auf der der Inhalt weiterläuft, wobei <code>&#123;page&#125;</code> die Nummer der Seite ist, von der es kommt (<code>"Fortsetzung von Seite &#123;page&#125;"</code>). Der Wert des aufnehmenden Rahmens hat Vorrang vor dem des abgebenden.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -309,7 +309,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>fit.preferContinue</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Ein Rahmen, dessen <code>overflow.continueIn</code> Inhalt auf eine andere Seite schickt, läuft dort weiter, bevor seine Bilder und sein Text kleiner gesetzt werden, sodass ein Artikel von Seite zu Seite dieselbe Größe behält. <code>false</code>: Sie schrumpfen zuerst, und der Rahmen läuft erst weiter, wenn das nicht reicht.</td>
+      <td>Ein Rahmen, dessen <code>overflow.continueIn</code> Inhalt auf eine andere Seite leitet, läuft dort weiter, bevor seine Bilder und sein Text kleiner gesetzt werden, sodass ein Artikel von Seite zu Seite dieselbe Größe behält. <code>false</code>: Sie schrumpfen zuerst, und der Rahmen läuft erst weiter, wenn das nicht reicht.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -327,13 +327,13 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>optional</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Keine Warnung, wenn das Markdown dem Rahmen nichts schickt.</td>
+      <td>Keine Warnung, wenn das Markdown dem Rahmen nichts zuweist.</td>
     </tr>
     <tr>
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Auf einer Doppelseite darf der Rahmen über das Bundband laufen. Sein Text wird auf der Seite gelesen, die seine Mitte enthält; die gegenüberliegende Seite malt ihre Hälfte.</td>
+      <td>Auf einer Doppelseite darf der Rahmen über den Bundsteg laufen. Sein Text gehört zu der Seite, die seine Mitte enthält; die gegenüberliegende Seite zeichnet ihre Hälfte.</td>
     </tr>
     <tr>
       <td><code>rules</code></td>
@@ -345,13 +345,13 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Reiters gilt nur für einen Stil mit Reiter. In einer Kindvorlage wird es Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den es überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Seit postext 1.42.</td>
+      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Etiketts gilt nur für einen Stil mit Etikett. In einer Kindvorlage wird der Wert Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den er überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Seit postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>die der Seite</td>
-      <td>Ein Rahmen in eigener Schreibrichtung oder Laufrichtung: ein senkrechter Kasten auf einer waagerechten Seite, eine waagerechte Karte auf einer senkrechten, ein Zitat von rechts nach links in einem Buch von links nach rechts. Ein Rahmen der anderen Schreibrichtung wird in seinem um eine Vierteldrehung gedrehten Kasten gesetzt: Seine Zeilen laufen die Höhe des Kastens entlang und folgen einander über seine Breite, und eine Höhe <code>'auto'</code> ist die kleinste, die sie in dieser Breite fasst. Sein Text wird gemalt, wie eine Seite dieser Richtung ihren eigenen malt. <code>direction</code> setzt den Text des Rahmens in dieser Richtung, wie einen Kasten mit <code>&#123;dir=…&#125;</code>; ein Block oder Kasten mit eigenem <code>dir</code> behält es. Seit postext 1.39. Seit postext 1.40 funktioniert ein senkrechter Rahmen auch auf einer Seite von rechts nach links: Er wird gesetzt wie auf einer Seite von links nach rechts und dort platziert, wo der gespiegelte Fluss ihn hinlegt, sein Text ungespiegelt gemalt; ein Bild in einem senkrechten Rahmen einer waagerechten Seite steht aufrecht, mit seiner Bildunterschrift, und nimmt den Platz, den der Kasten quer zur Seite lässt; das umbrechende EPUB schreibt einen Rahmen anderer Schreibrichtung als Kasten mit dieser Richtung und der Länge, entlang der seine Zeilen laufen (in em des Grundtexts). Seit postext 1.42 steht auch ein Bild in einem Rahmen einer senkrechten Seite, der der Schreibrichtung der Seite folgt, aufrecht, mit seiner Bildunterschrift.</td>
+      <td>Ein Rahmen in eigener Schreibrichtung oder Laufrichtung: ein senkrechter Kasten auf einer waagerechten Seite, eine waagerechte Karte auf einer senkrechten, ein Zitat von rechts nach links in einem Buch von links nach rechts. Ein Rahmen der anderen Schreibrichtung wird in seinem um eine Vierteldrehung gedrehten Kasten gesetzt: Seine Zeilen laufen die Höhe des Kastens entlang und folgen einander über seine Breite, und eine Höhe <code>'auto'</code> ist die kleinste, die sie in dieser Breite fasst. Sein Text wird so gezeichnet, wie eine Seite dieser Schreibrichtung ihren eigenen zeichnet. <code>direction</code> setzt den Text des Rahmens in dieser Richtung, wie einen Kasten mit <code>&#123;dir=…&#125;</code>; ein Block oder Kasten mit eigenem <code>dir</code> behält es. Seit postext 1.39. Seit postext 1.40 funktioniert ein senkrechter Rahmen auch auf einer Seite von rechts nach links: Er wird gesetzt wie auf einer Seite von links nach rechts und dort platziert, wo der gespiegelte Textfluss ihn hinsetzt, sein Text ungespiegelt gezeichnet; ein Bild in einem senkrechten Rahmen einer waagerechten Seite steht aufrecht, mit seiner Legende, und nimmt den Platz, den der Kasten quer zur Seite lässt; das umfließende EPUB schreibt einen Rahmen anderer Schreibrichtung als Kasten mit dieser Richtung und der Länge, entlang der seine Zeilen laufen (in em des Grundtexts). Seit postext 1.42 steht auch ein Bild in einem Rahmen einer senkrechten Seite, der der Schreibrichtung der Seite folgt, aufrecht, mit seiner Legende.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -362,7 +362,7 @@ Ein Rahmen wird über seine Zelle `grid` platziert, wenn die Vorlage ein Raster 
   </tbody>
 </table>
 
-**Linierte Rahmen.** Ein Antwortfeld in einem Arbeitsheft ist ein Rahmen mit `rules`: Seine Linien folgen seiner Höhe, sodass das Markdown entscheidet, wie viele es sind. Ein leerer Rahmen mit fester Höhe bekommt die Linien, die hineinpassen; ein `'auto'`-Rahmen, der `:::space{lines=4}` erhält, bekommt vier, und ein Rahmen, der mit seinem Text wächst, bekommt mehr. Die Linien liegen über dem Hintergrund des Rahmens und unter seinem Text, auf dem Canvas, im HTML, im PDF und im EPUB mit festem Layout; im Rahmen-Inspektor des Sandbox schaltet man sie unter Aussehen ein.
+**Linierte Rahmen.** Ein Antwortfeld in einem Arbeitsheft ist ein Rahmen mit `rules`: Seine Linien folgen seiner Höhe, sodass das Markdown entscheidet, wie viele es sind. Ein leerer Rahmen mit fester Höhe bekommt die Linien, die hineinpassen; ein `'auto'`-Rahmen, der `:::space{lines=4}` erhält, bekommt vier, und ein Rahmen, der mit seinem Text wächst, bekommt mehr. Die Linien liegen über dem Hintergrund des Rahmens und unter seinem Text, im Canvas, im HTML, im PDF und im EPUB mit festem Layout; im Rahmen-Inspektor der Sandbox schaltet man sie unter Aussehen ein.
 
 ```ts
 frames: [
@@ -382,7 +382,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
 
 ### Gruppen
 
-Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum Ende) von Rahmen, die sich Platz teilen und sich gemeinsam bewegen. Innerhalb einer Gruppe wird die eigene Position der Rahmen in Richtung der Gruppe ignoriert: Die Gruppe ordnet sie der Reihe nach an, mit `gap` dazwischen. Wenn der Text eines Rahmens wächst, rücken die Rahmen danach weiter. Eine Gruppe ist ein Kasten, an dem Rahmen und Dekoration verankert werden können (`'#pagina'`).
+Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum Ende) von Rahmen, die sich Platz teilen und sich gemeinsam bewegen. Innerhalb einer Gruppe wird die eigene Position der Rahmen in Richtung der Gruppe ignoriert: Die Gruppe ordnet sie der Reihe nach an, mit `gap` dazwischen. Wenn der Text eines Rahmens wächst, rücken die Rahmen danach weiter. Eine Gruppe ist ein Rechteck, an dem Rahmen und Dekoration verankert werden können (`'#pagina'`).
 
 <table>
   <thead>
@@ -421,8 +421,8 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
     <tr>
       <td><code>placement</code>, <code>grid</code></td>
       <td>wie bei Rahmen</td>
-      <td>der Kasten ihrer Rahmen</td>
-      <td>Der eigene Kasten der Gruppe. Nicht gesetzt, beginnt die Gruppe dort, wo ihr erster Rahmen steht, und reicht so weit, wie ihre Rahmen es brauchen.</td>
+      <td>das Rechteck ihrer Rahmen</td>
+      <td>Das eigene Rechteck der Gruppe. Ist es nicht gesetzt, beginnt die Gruppe dort, wo ihr erster Rahmen steht, und reicht so weit, wie ihre Rahmen es brauchen.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -446,13 +446,13 @@ Ein Rahmen gibt seine Größe an: eine feste `height` oder `'auto'`, die Höhe s
 **Stapel.** Die Rahmen eines Stapels stehen in ihrer jeweiligen Höhe untereinander, mit `gap` dazwischen. Jeder behält seine eigene waagerechte Lage und seine Breite; seine eigene senkrechte Lage wird ignoriert.
 
 - Eine Gruppe ohne eigenes `placement` oder `grid` beginnt dort, wo ihr erster Rahmen platziert ist (sein `placement`, oder seine `grid`-Zelle in einer Vorlage mit Raster), und reicht so weit nach unten, wie ihre Rahmen es brauchen, höchstens bis zum Fuß des Bereichs der Vorlage. Wächst ein Rahmen, rücken die Rahmen nach ihm um dasselbe Maß nach unten.
-- Eine Gruppe mit eigenem Kasten legt ihre Rahmen in diesen Kasten. Brauchen sie mehr Platz, als er bietet, geben die Rahmen mit `shrink` über 0 Platz ab, die mit der niedrigsten `priority` zuerst; Rahmen derselben Priorität geben im Verhältnis ihres `shrink` nach, und keiner wird niedriger als sein `minHeight`. Freier Platz geht an die Rahmen mit `grow` über 0, im Verhältnis zu diesem Wert und bis zu ihrem `maxHeight`; hat kein Rahmen `grow`, verteilt `align` die Rahmen (`'end'` am Fuß, `'center'`, `'space-between'`). Ein Rahmen der Gruppe ohne eigene Platzierung nimmt den Kasten der Gruppe als seinen Bereich.
-- Kann nichts mehr nachgeben, geben zuerst die Rahmen nahe dem Fuß der Gruppe nach, jeder bis auf seine `minHeight`; ein Rahmen mit fester Höhe behält sie, sodass ein leeres Antwortfeld oder ein Bildplatz unter einem wachsenden Kasten auf der Seite bleibt und der Text des Kastens nachgibt. Kein Rahmen läuft über den Fuß der Gruppe hinaus: Der Rahmen, dessen Inhalt nicht passt, durchläuft die Umbruchstufen (siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)), und was dann noch nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet. Ein Rahmen, der unter seine `minHeight` oder seine feste Höhe gekürzt wird, wird ebenfalls gemeldet, ob er Inhalt hat oder nicht.
+- Eine Gruppe mit eigenem Rechteck legt ihre Rahmen in dieses Rechteck. Brauchen sie mehr Platz, als es bietet, geben die Rahmen mit `shrink` über 0 Platz ab, die mit der niedrigsten `priority` zuerst; Rahmen derselben Priorität geben im Verhältnis ihres `shrink` nach, und keiner wird niedriger als sein `minHeight`. Freier Platz geht an die Rahmen mit `grow` über 0, im Verhältnis zu diesem Wert und bis zu ihrem `maxHeight`; hat kein Rahmen `grow`, verteilt `align` die Rahmen (`'end'` am Fuß, `'center'`, `'space-between'`). Ein Rahmen der Gruppe ohne eigene Platzierung nimmt das Rechteck der Gruppe als seinen Bereich.
+- Kann nichts mehr nachgeben, geben zuerst die Rahmen nahe dem Fuß der Gruppe nach, jeder bis auf seine `minHeight`; ein Rahmen mit fester Höhe behält sie, sodass ein leeres Antwortfeld oder ein Bildplatz unter einem wachsenden Kasten auf der Seite bleibt und der Text des Kastens nachgibt. Kein Rahmen läuft über den Fuß der Gruppe hinaus: Der Rahmen, dessen Inhalt nicht passt, durchläuft die Einpassstufen (siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)), und was dann noch nicht passt, wird dort abgeschnitten und als `frameOverflow` gemeldet. Ein Rahmen, der unter seine `minHeight` oder seine feste Höhe gekürzt wird, wird ebenfalls gemeldet, ob er Inhalt hat oder nicht.
 - Ein Rahmen mit `height: 'fill'` verlangt sein `minHeight` und nimmt freien Platz, als hätte er `grow: 1`.
 
-**Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie der Kasten der Gruppe oder, wenn die Gruppe keinen eigenen Kasten hat, wie die größte Höhe, die ihre Rahmen angeben: eine feste `height`, sonst eine `minHeight` (ein `'auto'`-Rahmen gibt nicht mehr an), oder, wenn sie keine angeben, wie der höchste Inhalt (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenen Kasten wird stattdessen höher. Karten mit `height: 'auto'` und einer `minHeight` teilen sich so die Breite in dieser Höhe, und die Reihe wächst erst, wenn keine Karte Breite abgeben kann. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
+**Reihe.** Die Rahmen einer Reihe stehen in ihren angegebenen Breiten nebeneinander und sind alle so hoch wie die Reihe: so hoch wie das Rechteck der Gruppe oder, wenn die Gruppe kein eigenes Rechteck hat, wie die größte Höhe, die ihre Rahmen angeben: eine feste `height`, sonst eine `minHeight` (ein `'auto'`-Rahmen gibt nicht mehr an), oder, wenn sie keine angeben, wie der höchste Inhalt (ein Rahmen mit fester Höhe behält seine). Läuft der Text eines Rahmens über die Höhe der Reihe hinaus, holt sich der Rahmen Breite: zuerst die freie Breite der Reihe, dann Breite von Nachbarn mit `shrink` über 0, die mit der niedrigsten `priority` zuerst, wobei kein Nachbar schmaler wird als die Breite, in die sein eigener Text noch passt. Der Rahmen nimmt so wenige ganze Millimeter, wie sein Text zum Passen braucht; reicht selbst der gesamte verfügbare Platz nicht, nimmt er gar nichts, und eine Reihe ohne eigenes Rechteck wird stattdessen höher. Karten mit `height: 'auto'` und einer `minHeight` teilen sich so die Breite in dieser Höhe, und die Reihe wächst erst, wenn keine Karte Breite abgeben kann. Freie Breite geht an die Rahmen mit `grow` über 0, was dann noch bleibt, verteilt `align`. Reihen laufen von links nach rechts.
 
-**Fixierte Rahmen.** Ein Rahmen mit `pin: true` behält den Kasten, den die Vorlage für ihn angibt, auch wenn der Rahmen, an dem er verankert ist, wächst oder sich verschiebt: Ein Kasten, der passend zur Illustration gezeichnet ist, bleibt auf ihr liegen. In einer Gruppe behält ein fixierter Rahmen seinen Platz, und die übrigen Rahmen weichen ihm aus, mit `gap` auf beiden Seiten. Ein fixierter Rahmen außerhalb der Gruppe wirkt ebenso auf die Rahmen der Gruppe, die ihn sonst überdecken würden.
+**Fixierte Rahmen.** Ein Rahmen mit `pin: true` behält das Rechteck, das die Vorlage für ihn angibt, auch wenn der Rahmen, an dem er verankert ist, wächst oder sich verschiebt: Ein Kasten, der passend zur Illustration gezeichnet ist, bleibt auf ihr liegen. In einer Gruppe behält ein fixierter Rahmen seinen Platz, und die übrigen Rahmen weichen ihm aus, mit `gap` auf beiden Seiten. Ein fixierter Rahmen außerhalb der Gruppe wirkt ebenso auf die Rahmen der Gruppe, die ihn sonst überdecken würden.
 
 **Dekoration.** Ein Dekorationselement, das an einem Rahmen verankert ist (`anchor: { to: '#dinero' }`), bewegt sich mit, wenn der Rahmen wächst oder sich verschiebt. Ein Element mit `pin: true` bleibt dort, wo die Vorlage diesen Rahmen zeichnet.
 
@@ -489,9 +489,9 @@ frames: [
 groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
 ```
 
-Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typografie ab: Aus derselben Eingabe entsteht dieselbe Seite, in derselben Reihenfolge und mit denselben Schritten gemessen. Bei dieser Aufteilung liest der Umbruch nie eine andere Seite. Eine Änderung auf einer zusammengesetzten Seite lässt deshalb alle anderen Seiten unverändert, solange der Inhalt auf seiner Seite bleibt.
+Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typografie ab: Aus derselben Eingabe entsteht dieselbe Seite, in derselben Reihenfolge und mit denselben Schritten gemessen. Bei der Aufteilung des Platzes wird nie eine andere Seite berücksichtigt. Eine Änderung auf einer zusammengesetzten Seite lässt deshalb alle anderen Seiten unverändert, solange der Inhalt auf seiner Seite bleibt.
 
-**Rahmen am Fuß einer Karte halten (seit postext 1.42).** Ein Rahmen, der unter dem Text über ihm verankert ist, folgt diesem Text: In einer Ausgabe, in der der Text eine Zeile kürzer oder länger ist, rücken die Rahmen darunter nach oben oder unten, während das, was die Vorlage zeichnet (eine Karte, ein Band, der Fuß), stehen bleibt. Damit Rahmen am Fuß einer Karte bleiben, dort, wo die Vorlage sie hinsetzt, fassen Sie die Rahmen der Karte zu einem Stapel mit einer Box in der Höhe der Karte zusammen. Die Rahmen über den gehaltenen nehmen den übrigen Platz (`grow: 1`) und geben ihn zurück (`shrink: 1`); die gehaltenen schreiben ein `minHeight`. Ein kürzerer Text lässt die gehaltenen Rahmen, wo sie waren. Ein längerer wird über ihnen zusammengedrückt: Sie behalten ihr `minHeight`, der Text darüber wird verkleinert, und passt er dann immer noch nicht, meldet der Umbruch `frameOverflow` und das Umbruchprotokoll führt `textScaled` und `overflow` für den Rahmen darüber. Ein am Fuß des Containers verankerter Rahmen (`bottom-left`) behält zwar auch seinen Platz, aber nichts verbindet ihn mit den Rahmen darüber: Ein längerer Text läuft über ihn, seinetwegen wird nichts zusammengedrückt, und die Überlagerung wird nicht gemeldet.
+**Rahmen am Fuß einer Karte halten (seit postext 1.42).** Ein Rahmen, der unter dem Text über ihm verankert ist, folgt diesem Text: In einer Ausgabe, in der der Text eine Zeile kürzer oder länger ist, rücken die Rahmen darunter nach oben oder unten, während das, was die Vorlage zeichnet (eine Karte, ein Band, der Fuß), stehen bleibt. Damit Rahmen am Fuß einer Karte bleiben, dort, wo die Vorlage sie hinsetzt, fassen Sie die Rahmen der Karte zu einem Stapel mit einem Rechteck in der Höhe der Karte zusammen. Die Rahmen über den gehaltenen nehmen den übrigen Platz (`grow: 1`) und geben ihn zurück (`shrink: 1`); die gehaltenen legen ein `minHeight` fest. Ein kürzerer Text lässt die gehaltenen Rahmen, wo sie waren. Ein längerer wird über ihnen zusammengedrückt: Sie behalten ihr `minHeight`, der Text darüber wird verkleinert, und passt er dann immer noch nicht, meldet das Layout `frameOverflow`, und das Umbruchprotokoll führt `textScaled` und `overflow` für den Rahmen darüber auf. Ein am Fuß des Containers verankerter Rahmen (`bottom-left`) behält zwar auch seinen Platz, aber nichts verbindet ihn mit den Rahmen darüber: Ein längerer Text läuft über ihn, seinetwegen wird nichts zusammengedrückt, und die Überlagerung wird nicht gemeldet.
 
 ```json
 {
@@ -513,15 +513,15 @@ Der wachsende Rahmen ist so hoch wie der freie Platz, was auch immer er enthält
 
 ### Wenn der Inhalt nicht passt
 
-Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, probiert der Umbruch der Reihe nach die [Umbruchstufen](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) durch und hört bei der ersten auf, mit der er passt: freier Platz bis `maxHeight`, die Gruppe, die schiebt und nachgibt, kleinere Bilder, die übrigen Rahmen der Gruppe bis auf ihr Minimum, kleinerer Text, Fortsetzung auf einer anderen Seite. Diese Rahmeneinstellungen bestimmen, wie weit jede Stufe gehen darf:
+Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, probiert das Layout der Reihe nach die [Einpassstufen](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) durch und hört bei der ersten auf, mit der er passt: freier Platz bis `maxHeight`, die Gruppe, die schiebt und nachgibt, kleinere Bilder, die übrigen Rahmen der Gruppe bis auf ihr Minimum, kleinerer Text, Fortsetzung auf einer anderen Seite. Diese Rahmeneinstellungen bestimmen, wie weit jede Stufe gehen darf:
 
 - `maxHeight` an einem Rahmen mit fester `height`: Bis dahin darf der Rahmen wachsen, bevor irgendetwas verkleinert wird.
 - `minHeight` an den übrigen Rahmen der Gruppe: wie weit sie Platz abgeben; ein Rahmen wird nie kleiner als das, was sein eigener Inhalt braucht.
 - `fit.scaleImages` und `fit.imageMinScale`: ob die Bilder des Rahmens und seiner Gruppe kleiner gesetzt werden dürfen, und bis zu welchem Maßstab (standardmäßig 80 %).
 - `fit.shrinkText` und `fit.minScale`: ob der Text des Rahmens kleiner gesetzt werden darf, und bis zu welchem Maßstab (standardmäßig 90 %). Der Maßstab gilt gleichermaßen für Schriftgröße, Zeilenabstand und Abstände; der Rahmen behält seine Größe.
-- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer anderen Seite (`'next-page'`, `'template:<id>'`, `'page:<id>'`); dort läuft der Text nach der `overflow.mark` des Stücks in voller Größe weiter. Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, tut das, bevor seine Bilder und sein Text kleiner gesetzt werden, es sei denn, sein `fit.preferContinue` ist `false`.
+- `overflow.continueIn`: wo der Inhalt weitergeht, wenn all das nicht reicht, in einem anderen Rahmen oder auf einer anderen Seite (`'next-page'`, `'template:<id>'`, `'page:<id>'`); dort läuft der Text nach der `overflow.mark` des Teils in voller Größe weiter. Ein Rahmen, der auf einer anderen Seite weiterlaufen kann, tut das, bevor seine Bilder und sein Text kleiner gesetzt werden, es sei denn, sein `fit.preferContinue` ist `false`.
 
-Die Maßstäbe gehen in Schritten von 2,5 %, und der Umbruch nimmt den größten, der passt: Ein Text, der eine Zeile zu lang ist, wird mit 97,5 % gesetzt, nicht mit dem Minimum. Ein Kasten, der seinen Schriftgrad behalten muss, setzt `fit: { shrinkText: false }`; eine Seite, deren Bilder ihre Größe behalten müssen, setzt `fit: { scaleImages: false }` an den Rahmen ihrer Gruppe:
+Die Maßstäbe gehen in Schritten von 2,5 %, und das Layout nimmt den größten, der passt: Ein Text, der eine Zeile zu lang ist, wird mit 97,5 % gesetzt, nicht mit dem Minimum. Ein Kasten, der seinen Schriftgrad behalten muss, setzt `fit: { shrinkText: false }`; eine Seite, deren Bilder ihre Größe behalten müssen, setzt `fit: { scaleImages: false }` an den Rahmen ihrer Gruppe:
 
 ```ts
 { name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
@@ -532,10 +532,10 @@ Was dann noch nicht passt, wird als `frameOverflow` gemeldet, mit den versuchten
 
 ### Vererbung und Varianten
 
-Eine Vorlage mit `extends` geht von der Vorlage aus, die sie nennt (und die selbst eine andere erweitern kann), und ändert nur, was sie schreibt:
+Eine Vorlage mit `extends` geht von der Vorlage aus, die sie angibt (und die selbst eine andere erweitern kann), und ändert nur, was sie selbst festlegt:
 
 - Ein Feld wie `area`, `header` oder `overflowTemplate` ersetzt das der Elternvorlage. `grid` wird Schlüssel für Schlüssel zusammengeführt. Auch `spread`, `gutter` und `role` werden geerbt; `id`, `name` und `extends` gehören der Vorlage selbst.
-- `frames` und `groups` werden **nach Namen** zusammengeführt: Ein Eintrag mit dem Namen eines geerbten ändert die Felder, die er schreibt, und behält die übrigen (`fit`, `overflow` und `padding` werden Schlüssel für Schlüssel zusammengeführt; `placement` wird als Ganzes ersetzt); `remove: true` entfernt ihn; ein neuer Name wird nach den geerbten angefügt.
+- `frames` und `groups` werden **nach Namen** zusammengeführt: Ein Eintrag mit dem Namen eines geerbten ändert die Felder, die er angibt, und behält die übrigen (`fit`, `overflow` und `padding` werden Schlüssel für Schlüssel zusammengeführt; `placement` wird als Ganzes ersetzt); `remove: true` entfernt ihn; ein neuer Name wird nach den geerbten angefügt.
 - Dekorationselemente werden auf dieselbe Weise nach `id` zusammengeführt; ein Element mit neuer ID oder ohne ID wird angefügt. Seit postext 1.42 nimmt `{ id: 'kopf-gerade', remove: true }` in `decoration.elements` einer Kindvorlage oder Variante das geerbte Element mit dieser `id` heraus, wie `remove: true` es bei einem Rahmen tut; eine `id`, die die Vorlage nicht erbt, ändert nichts. Ein neues Element mit derselben `id` kann der Entfernung in derselben Liste folgen.
 
 `variants.recto` und `variants.verso` werden wie eine Vorlage geschrieben und auf dieselbe Weise zusammengeführt, auf einer rechten oder einer linken Seite. Sie gelten nach der ganzen `extends`-Kette, die Variante der Wurzel zuerst. Eine Doppelseite hat beide Seiten, daher gilt für sie keine Variante.
@@ -555,11 +555,11 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Anker, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Umbruchstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden `bodyStyle` und `palette` der Vorlage. `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Eine Breite `'auto'` wird als `'fill'` gelesen.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Verankerungen, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Einpassstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Seit postext 1.42 setzt er auch die `palette` der Vorlage, den `look` eines Rahmens und die Breite `'auto'` um (so breit wie die längste Zeile des Rahmens). `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Gelesen und geprüft, aber noch nicht umgesetzt wird `bodyStyle` der Vorlage.
 
 ### Doppelseiten
 
-In einer Doppelseitenvorlage beziehen sich alle Koordinaten auf den Bogen ihrer beiden Seiten, mit dem Bund in der Mitte: `area`, `grid`, Anker an `container`, `page` und `bleed` sowie die Größe `fill` lesen die doppelte Breite. `bleed` reicht an Kopf, Fuß und beide Außenränder, nie an den Bund. Die doppelseitige Zeitleiste eines Schulbuchs ist eine einzige Vorlage:
+In einer Doppelseitenvorlage beziehen sich alle Koordinaten auf das Blatt aus ihren beiden Seiten, mit dem Bund in der Mitte: `area`, `grid`, Verankerungen an `container`, `page` und `bleed` sowie die Größe `fill` lesen die doppelte Breite. `bleed` reicht an Kopf, Fuß und beide Außenränder, nie an den Bund. Die doppelseitige Zeitleiste eines Schulbuchs ist eine einzige Vorlage:
 
 ```ts
 pageTemplates: [{
@@ -582,13 +582,13 @@ pageTemplates: [{
 }]
 ```
 
-Ein Spaltenabstand, der breiter ist als der `gutter`, hält die Karten eines symmetrischen Rasters vom Bund fern, sodass keine verschoben wird. Das zweite Band und der Bildstreifen setzen `crossGutter`, um ihn zu überqueren: Jedes wird auf der Seite gelesen, die seine Mitte enthält, und auf beiden gemalt. Jedes Wort der Seite, auch die Namen der Zeitalter auf den Reitern, bleibt im Markdown.
+Ein Spaltenabstand, der breiter ist als der `gutter`, hält die Karten eines symmetrischen Rasters vom Bund fern, sodass keine verschoben wird. Das zweite Band und der Bildstreifen setzen `crossGutter`, um ihn zu überqueren: Jedes gehört zu der Seite, die seine Mitte enthält, und wird auf beiden gezeichnet. Jedes Wort der Seite, auch die Namen der Zeitalter auf den Etiketten, bleibt im Markdown.
 
-In einem vertikalen Buch (`vertical-rl`) wird eine Doppelseite im Fließrahmen der Seiten gesetzt, wie seine einzelnen zusammengesetzten Seiten: Oben ist auf der Seite der rechte Rand des Bogens, und die Zeilen laufen nach unten, sodass das `x` der Vorlage den Bogen hinunterläuft und ihr `y` vom rechten Rand des Bogens zum linken. Der Bogen ist die rechte Seite, gefolgt von der linken entlang `y`, der Bund ist eine Linie quer durch die Vorlage, und `gutter`, `crossGutter` und der Schnitt zwischen den Seiten lesen diese Achse; die Dekoration wird weiterhin auf dem physischen Bogen gesetzt und am Bund geschnitten. Eine waagrechte Zeitleiste, gezeichnet für ein waagrechtes Buch, erscheint in einem vertikalen gedreht: Schreiben Sie die Vorlage eines vertikalen Buches im Rahmen seines Flusses. Seit postext 1.38. Eine Karte, die quer über den Bogen gelesen werden soll, bekommt `writingMode: 'horizontal-tb'`: Sie wird waagerecht gesetzt und steht aufrecht auf der vertikalen Seite (seit postext 1.39).
+In einem senkrecht gesetzten Buch (`vertical-rl`) wird eine Doppelseite im Flussrahmen der Seiten gesetzt, wie seine einzelnen zusammengesetzten Seiten: Die Oberkante einer Seite ist der rechte Rand des Blatts, und die Zeilen laufen nach unten, sodass das `x` der Vorlage das Blatt hinunterläuft und ihr `y` vom rechten Rand des Blatts zum linken. Das Blatt besteht aus der rechten Seite, gefolgt von der linken entlang `y`; der Bund ist eine Linie quer durch die Vorlage, und `gutter`, `crossGutter` und der Schnitt zwischen den Seiten beziehen sich auf diese Achse. Die Dekoration wird weiterhin auf das physische Blatt gesetzt und am Bund geschnitten. Eine waagerechte Zeitleiste, die für ein waagerecht gesetztes Buch gezeichnet ist, erscheint in einem senkrechten gedreht: Legen Sie die Vorlage eines senkrecht gesetzten Buchs im Rahmen seines Textflusses an. Seit postext 1.38. Eine Karte, die quer über den Bogen gelesen werden soll, bekommt `writingMode: 'horizontal-tb'`: Sie wird waagerecht gesetzt und steht aufrecht auf der senkrechten Seite (seit postext 1.39).
 
 ## Beschriftungsstile
 
-Die Eigenschaft `labelStyles` benennt das Aussehen der Beschriftungen auf einem Bild: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung nennt. Im Sandbox werden sie unter **Gestaltung › Abbildungen & Tabellen › Beschriftungsstile** bearbeitet (seit postext 1.42).
+Die Eigenschaft `labelStyles` legt das Aussehen der Beschriftungen auf einem Bild fest: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung angibt. In der Sandbox werden sie unter **Gestaltung › Abbildungen und Tabellen › Beschriftungsstile** bearbeitet (seit postext 1.42). Wird ein Stil dort umbenannt, schreibt die Sandbox die Anker und die `::label`-Zeilen um, die ihn nennen (seit postext 1.43).
 
 ```ts
 labelStyles: [
@@ -660,13 +660,13 @@ labelStyles: [
       <td><code>halo</code></td>
       <td><code>&#123; color, width &#125;</code></td>
       <td>keiner</td>
-      <td>Eine Kontur hinter den Buchstaben, damit sie auf einem unruhigen Bild lesbar bleiben.</td>
+      <td>Ein Lichthof hinter den Buchstaben, damit sie auf einem unruhigen Bild lesbar bleiben.</td>
     </tr>
     <tr>
       <td><code>background</code>, <code>padding</code></td>
       <td><code>ColorValue</code>, <code>Dimension</code></td>
       <td>keiner</td>
-      <td>Eine Fläche hinter der Beschriftung und der Raum um ihren Text.</td>
+      <td>Eine Unterlage hinter der Beschriftung und der Raum um ihren Text.</td>
     </tr>
     <tr>
       <td><code>minScale</code></td>
@@ -674,7 +674,7 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Wie klein eine Beschriftung gesetzt werden darf, wenn sie nicht in ihre Breite passt.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -684,24 +684,12 @@ labelStyles: [
       <td><code>overlap</code></td>
       <td><code>'check' | 'allow'</code></td>
       <td><code>'check'</code></td>
-      <td><code>'allow'</code> besagt, dass die an diesem Anker gesetzte Beschriftung ihre Nachbarn berühren darf, wie die Vorlage sie druckt: für ein Paar, zu dem sie gehört, wird <code>labelOverlap</code> nicht ausgelöst. Geht dem <code>overlap</code> des Stils vor. Seit postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>Bei einer Abbildung über den Bund einer Doppelseite rückt <code>'keep'</code> die Beschriftung aus dem Bundstegband, auf die Seite, auf der ihr Punkt liegt; <code>'cross'</code> lässt sie dort, wo der Punkt sie hinsetzt, wie es ein Titel über beide Seiten braucht. Seit postext 1.43.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> nimmt die Beschriftungen dieses Stils aus der Prüfung <code>labelOverlap</code> aus, für eine Karte, deren Namen sich in der Vorlage berühren. Das eigene <code>overlap</code> eines Ankers geht vor. Seit postext 1.42.</td>
+      <td><code>'allow'</code> nimmt die Beschriftungen dieses Stils aus der Prüfung <code>labelOverlap</code> aus, für eine Karte, deren Namen sich in der Quelle berühren. Das eigene <code>overlap</code> eines Ankers hat Vorrang. Seit postext 1.42.</td>
     </tr>
   </tbody>
 </table>
 
-Eine Beschriftung ohne Stil, oder mit einem Stil, der keine Schrift festlegt, übernimmt Schriftfamilie, Größe, Strichstärke und Farbe des Grundtexts. Die Zeilen einer mehrzeiligen Beschriftung stehen im 1,15-Fachen ihrer Größe, oder im Zeilenabstand des geliehenen Absatzstils. Über `paragraphStyle` übernimmt die Beschriftung auch Kursive und Versalien dieses Stils; `fontStyle: 'italic'` und `textTransform: 'uppercase'` fügen sie einem Stil hinzu, der nichts leiht. Ein Beschriftungsstil, der `fontStyle: 'normal'` oder `textTransform: 'none'` schreibt, schaltet Kursive oder Versalien des geliehenen Absatzstils ab (seit postext 1.40); fehlt die Angabe, gelten die des Absatzstils. Eine zum Einpassen verkleinerte Beschriftung behält ihren Halo im Verhältnis.
+Eine Beschriftung ohne Stil, oder mit einem Stil, der keine Schrift festlegt, übernimmt Schriftfamilie, Größe, Schriftstärke und Farbe des Grundtexts. Die Zeilen einer mehrzeiligen Beschriftung haben einen Zeilenabstand vom 1,15-Fachen ihrer Größe oder den Zeilenabstand des übernommenen Absatzformats. Über `paragraphStyle` übernimmt die Beschriftung auch Kursive und Versalien dieses Formats; `fontStyle: 'italic'` und `textTransform: 'uppercase'` fügen sie einem Stil hinzu, der kein Absatzformat übernimmt. Ein Beschriftungsstil, der `fontStyle: 'normal'` oder `textTransform: 'none'` angibt, schaltet Kursive oder Versalien des übernommenen Absatzformats ab (seit postext 1.40); fehlt die Angabe, gelten die des Absatzformats. Eine zum Einpassen verkleinerte Beschriftung behält ihren Lichthof im selben Verhältnis.
 
 ### Beschriftungsfelder eines Ankers
 
@@ -745,13 +733,25 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>keiner</td>
-      <td>Eine ID aus <code>labelStyles</code>. Eine Beschriftung, die ihren eigenen Stil nennt, überschreibt ihn.</td>
+      <td>Eine ID aus <code>labelStyles</code>. Eine Beschriftung, die ihren eigenen Stil angibt, überschreibt ihn.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> setzt die Beschriftung senkrecht, wie eine chinesische oder japanische Karte oder ein Buchrücken beschriftet wird. Ihre <code>width</code> ist dann ein Bruchteil der Bildhöhe, <code>align</code> läuft entlang der Spalte (<code>start</code> ist oben) und <code>verticalAlign</code> quer zu den Spalten (<code>top</code> ist die erste, rechte).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> besagt, dass die an diesem Anker gesetzte Beschriftung ihre Nachbarn berühren darf, wie in der gedruckten Quelle: Für ein Paar, zu dem sie gehört, wird <code>labelOverlap</code> nicht ausgelöst. Hat Vorrang vor dem <code>overlap</code> des Stils. Seit postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>Bei einer Abbildung über den Bund einer Doppelseite rückt <code>'keep'</code> die Beschriftung aus dem Bundsteg, auf die Seite, auf der ihr Punkt liegt; <code>'cross'</code> lässt sie dort, wo der Punkt sie hinsetzt, wie es ein Titel über beide Seiten braucht. Seit postext 1.43.</td>
     </tr>
   </tbody>
 </table>
@@ -760,7 +760,7 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
 
 ## Warnungen zu Seitenvorlagen
 
-Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, nennt der Pointer die Vorlage, die es geschrieben hat. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
+Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, verweist der Pointer auf die Vorlage, in der es steht. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
 
 Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
 
@@ -780,27 +780,27 @@ Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, 
     </tr>
     <tr>
       <td><code>templateExtendsCycle</code></td>
-      <td>Wer <code>extends</code> folgt, landet wieder bei derselben Vorlage (<code>a → b → a</code>). Jede Vorlage der Schleife und jede Vorlage, die eine davon erweitert, entfällt: Keine Seite kann sie verwenden.</td>
+      <td>Die Kette der <code>extends</code> führt zurück zur selben Vorlage (<code>a → b → a</code>). Jede Vorlage der Schleife und jede Vorlage, die eine davon erweitert, entfällt: Keine Seite kann sie verwenden.</td>
       <td>Entfernen Sie das <code>extends</code> einer Vorlage der Schleife.</td>
     </tr>
     <tr>
       <td><code>templateExtendsUnknown</code></td>
-      <td><code>extends</code> nennt eine ID, die keine Vorlage hat. Die Vorlage wird für sich allein verwendet, ohne etwas zu erben.</td>
+      <td><code>extends</code> verweist auf eine ID, die keine Vorlage hat. Die Vorlage wird für sich allein verwendet, ohne etwas zu erben.</td>
       <td>Korrigieren Sie die ID (die Warnung schlägt die nächstliegende vor), oder fügen Sie die Elternvorlage hinzu.</td>
     </tr>
     <tr>
       <td><code>frameDuplicate</code></td>
-      <td>Zwei Rahmen oder zwei Gruppen einer Liste haben denselben <code>name</code>, oder eine Gruppe trägt den Namen eines Rahmens. Der spätere Eintrag wird ignoriert; ein Anker auf diesen Namen liest den Rahmen.</td>
+      <td>Zwei Rahmen oder zwei Gruppen einer Liste haben denselben <code>name</code>, oder eine Gruppe trägt den Namen eines Rahmens. Der spätere Eintrag wird ignoriert; eine Verankerung an diesem Namen bezieht sich auf den Rahmen.</td>
       <td>Geben Sie jedem Rahmen und jeder Gruppe einen eigenen Namen. Um einen geerbten Rahmen zu ändern, schreiben Sie einen einzigen Eintrag mit seinem Namen.</td>
     </tr>
     <tr>
       <td><code>frameStyleUnknown</code></td>
-      <td>Das <code>style</code> eines Rahmens nennt keinen Kastenstil. Der Rahmen wird ohne Kasten gezeichnet.</td>
+      <td>Das <code>style</code> eines Rahmens verweist auf keinen vorhandenen Kastenstil. Der Rahmen wird ohne Kasten gezeichnet.</td>
       <td>Korrigieren Sie die ID, oder fügen Sie den Stil zu <code>calloutStyles</code> hinzu.</td>
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Ein Rahmen, eine Gruppe oder ein Dekorationselement ist an <code>'#name'</code> verankert, und die Vorlage hat keinen Rahmen, keine Gruppe und kein Element dieses Namens; oder Rahmen und Gruppen sind in einer Schleife aneinander verankert (auch über eine Gruppe ohne eigenen Anker, deren Kasten der ihrer Rahmen ist). Der Anker gilt als <code>'container'</code>, der Bereich.</td>
+      <td>Ein Rahmen, eine Gruppe oder ein Dekorationselement ist an <code>'#name'</code> verankert, und die Vorlage hat keinen Rahmen, keine Gruppe und kein Element dieses Namens; oder Rahmen und Gruppen sind in einer Schleife aneinander verankert (auch über eine Gruppe ohne eigene Verankerung, deren Rechteck das ihrer Rahmen ist). Die Verankerung gilt als <code>'container'</code>, also als der Bereich.</td>
       <td>Verankern Sie an einem vorhandenen Rahmen oder einer vorhandenen Gruppe, oder brechen Sie die Schleife auf, indem Sie eines der Glieder am Bereich verankern.</td>
     </tr>
     <tr>
@@ -825,15 +825,15 @@ Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, 
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Ein <code>next</code> nennt keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> nennt keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> und <code>'page:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> nennt keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
+      <td>Ein <code>next</code> verweist auf keinen Rahmen der Vorlage; ein <code>overflow.continueIn</code> verweist auf keinen Rahmen (<code>'#x'</code>) oder keine Vorlage (<code>'template:x'</code>), oder es hat keine der Formen <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> und <code>'page:&lt;id&gt;'</code>; oder <code>overflowTemplate</code> verweist auf keine Vorlage. Inhalt, der nicht passt, läuft dort nicht weiter.</td>
       <td>Korrigieren Sie den Namen oder die ID, oder schreiben Sie eine der vier Formen.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>
-      <td>Ein Anker eines Bilds nennt einen <code>style</code>, den <code>labelStyles</code> nicht hat. Die Warnung nennt die Ressource. Die Beschriftungen an diesem Anker erhalten das Standardaussehen.</td>
+      <td>Ein Anker eines Bilds verweist auf einen <code>style</code>, den <code>labelStyles</code> nicht hat. Die Warnung nennt die Ressource. Die Beschriftungen an diesem Anker erhalten das Standardaussehen.</td>
       <td>Korrigieren Sie die Stil-ID am Anker, oder fügen Sie den Stil zu <code>labelStyles</code> hinzu.</td>
     </tr>
   </tbody>
 </table>
 
-Die Konfigurationsversion ist seit den Seitenvorlagen 15 (vorher geschriebene Bundles laden weiterhin unverändert: Nichts, was eine ältere Konfiguration sagt, ändert seine Bedeutung).
+Seit es Seitenvorlagen gibt, ist die Konfigurationsversion 15 (früher geschriebene Pakete laden weiterhin unverändert: Was eine ältere Konfiguration angibt, behält seine Bedeutung).

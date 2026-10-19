@@ -1,7 +1,7 @@
 ---
 title: "Un nuancier, chaque feuillet sur son papier"
 summary: "Chaque feuillet d’un catalogue de papetier est un bloc :::paper ; postext-folio le dessine avec la teinte, le grammage, la surface et la rigidité de son papier."
-plain: "Un petit catalogue d’échantillons de papetier. Chaque page dit sur quel papier elle est imprimée, et dans la visionneuse 3D chaque page a vraiment l’aspect de ce papier et se tourne comme lui."
+plain: "Un petit catalogue d’échantillons de papetier. Chaque page indique sur quel papier elle est imprimée, et dans la visionneuse 3D chaque page a vraiment l’aspect de ce papier et se tourne comme lui."
 description: "Un bloc :::paper par feuillet donne à chaque page son papier ; postext-folio tourne autrement couché, vergé, vélin et papier bible, dans un pen minimal."
 question: "Comment imprimer une couverture, un encart ou un cahier hors-texte sur un autre papier que le reste du livre ?"
 aliases: ["papier", "nuancier", "échantillons de papier", ":::paper", "cahier hors-texte", "encart", "papier bible", "transparence"]
@@ -36,11 +36,11 @@ Chaque couverture est un style de titre dont la maquette contient un aplat de co
 
 <Excerpt region="stock-card" />
 
-Chaque feuillet s’ouvre sur un titre de niveau 1 dessiné à partir d’un emplacement : le surtitre tiré des attributs du titre, le nom du papier et un filet fin. Les lignes de caractéristiques sont un style de paragraphe dans le caractère étroit des étiquettes, avec leurs intitulés en gras dans la couleur d’accent.
+Chaque feuillet s’ouvre sur un titre de niveau 1 dessiné à partir d’une zone de maquette : le surtitre tiré des attributs du titre, le nom du papier et un filet fin. Les lignes de caractéristiques sont un style de paragraphe dans le caractère étroit des étiquettes, avec leurs intitulés en gras dans la couleur d’accent.
 
 ### 5 · Relire le papier dans la mise en page
 
-Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Chaque page mise en page dans un bloc porte les attributs du bloc dans `page.paper`, tels qu’ils sont écrits : `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` les transmet à la visionneuse, qui dessine chaque feuillet avec son papier ; le pen les lit aussi pour la ligne d’état et pour le texte alternatif de chaque page.
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Chaque page mise en page dans un bloc reçoit les attributs du bloc dans `page.paper`, tels qu’ils sont écrits : `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` les transmet à la visionneuse, qui dessine chaque feuillet avec son papier ; le pen les utilise aussi pour la ligne d’état et pour le texte de remplacement de chaque page.
 
 ## Variantes
 

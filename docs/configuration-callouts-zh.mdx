@@ -3,9 +3,9 @@
 export const metadata = {
   title: '配置：标注框',
   sidebarTitle: '标注框',
-  description: ':::callout标注框的命名样式：边框、底色、色条、标题、图标和框外标记，编号的命题，框内排版，以及跨页拆分的框',
+  description: '怎样为:::callout标注框定义命名样式：边框、底色、色条、标题、图标、框外标记和标签页签；怎样给命题编号；框内文字怎样排；框跨页拆分时怎样处理；怎样在框内绘制设计',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分钟',
   order: 16,
   parent: 'configuration',
@@ -69,7 +69,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td>由<code>:::callout&#123;type="…"&#125;</code>选用的标识符。<code>type</code>未知或缺失的围栏使用配置中的第一种样式（沙盒会标出未知类型）。</td>
+      <td>由<code>:::callout&#123;type="…"&#125;</code>选用的标识符。<code>type</code>未知或缺失的块使用配置中的第一种样式（沙盒会标出未知类型）。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -81,19 +81,19 @@ The glass stays hot for an hour after the flame is out.
       <td><code>extends</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td>此样式所基于的另一个样式的 id：它没有设置的每个字段都取自该样式。见<a href="#基于其他样式的样式">基于其他样式的样式</a>。</td>
+      <td>此样式所基于的另一个样式的id：它没有设置的每个字段都取自该样式。见<a href="#基于其他样式的样式">基于其他样式的样式</a>。</td>
     </tr>
     <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
-      <td>默认标题文字；为空表示没有标题。围栏上的<code>title</code>属性可逐个覆盖它。</td>
+      <td>默认标题文字；为空表示没有标题。块上的<code>title</code>属性可逐个覆盖它。</td>
     </tr>
     <tr>
       <td><code>span</code></td>
       <td><code>'column' | 'page' | 'side'</code></td>
       <td><code>'column'</code></td>
-      <td>水平范围：一栏、整个版心宽度，或一栏半版式中只放浮动体的侧栏（<code>layout.sideColumnRole: 'floats'</code>）；后一种情况下，框离开文字流，叠放在侧栏中，紧挨着它所打断的正文。可用<code>span</code>属性逐个覆盖。在多栏版式中，<code>'page'</code>框会成为<em>通栏块</em>：它把页面切分成若干栏带，自己占一个通栏宽的栏（见下文容器一节）。本页侧栏放不下的侧栏框排进下一页的侧栏；如果所在章（或文档）先结束，每个仍在等待的框按围栏的先后排进正文之后页面的侧栏，排版会报告（<code>afterText</code>；在postext 1.24及以前，第一个这样的页面之后的框会丢失）。</td>
+      <td>水平范围：一栏、整个版心宽度，或一栏半版式中只放浮动体的侧栏（<code>layout.sideColumnRole: 'floats'</code>）；后一种情况下，框离开文字流，叠放在侧栏中，紧挨着它所打断的正文。可用<code>span</code>属性逐个覆盖。在多栏版式中，<code>'page'</code>框会成为<em>通栏块</em>：它把页面切分成若干栏带，自己占一个通栏宽的栏（见下文容器一节）。本页侧栏放不下的侧栏框排进下一页的侧栏；如果所在章（或文档）先结束，每个仍在等待的框按块在文中的先后，排进正文之后各页的侧栏，排版会报告这种情况（<code>afterText</code>；在postext 1.24及以前，第一个这样的页面之后的框会丢失）。</td>
     </tr>
     <tr>
       <td><code>columns</code></td>
@@ -111,13 +111,13 @@ The glass stays hot for an hour after the flame is out.
       <td><code>sideAtColumnEnd</code></td>
       <td><code>'before' | 'after'</code></td>
       <td><code>'before'</code></td>
-      <td>侧栏框（<code>span: 'side'</code>）在围栏之后的正文没有在同一栏接着排时的位置：栏里已经放不下，或断行规则把正文送走（被段首孤行、段末孤行规则整段移走的段落，与正文保持同栏的标题）。<code>'before'</code>让它留在围栏处，就在那一页、挨着前面的正文；围栏下方放不下时，从栏底往上挪：适合写在所解释段落之后的旁注。<code>'after'</code>把它与围栏之后正文的第一行平齐，排在那段正文接续的那一页的侧栏中：适合写在对应行之前的行号或边题。正文在同一栏接着排时，两者都把框排在围栏处。在本章中后面没有任何内容的框，无论哪种设置都留在前面正文旁边；连续围起的几个侧栏框保持原来的顺序。postext 1.4及以前，所有侧栏框的行为都等同于<code>'before'</code>，这仍是默认值：旁注样式的框会留在它所解释段落的那一页。</td>
+      <td>侧栏框（<code>span: 'side'</code>）后面的正文没有在同一栏接着排时，框放在哪里：栏里已经放不下，或断行规则把正文送走（被段首孤行、段末孤行规则整段移走的段落，与正文保持同栏的标题）。<code>'before'</code>让它留在块所在的位置，就在那一页、挨着前面的正文；块下方放不下时，从栏底往上挪：适合写在所解释段落之后的旁注。<code>'after'</code>把它与块后面正文的第一行平齐，排在那段正文接续的那一页的侧栏中：适合写在对应行之前的行号或边题。正文在同一栏接着排时，两者都把框排在块所在的位置。在本章中后面没有任何内容的框，无论哪种设置都留在前面正文旁边；接连写出的几个侧栏框保持原来的顺序。postext 1.4及以前，所有侧栏框的行为都等同于<code>'before'</code>，这仍是默认值：旁注样式的框会留在它所解释段落的那一页。</td>
     </tr>
     <tr>
       <td><code>fixed</code></td>
       <td><code>{'{ anchor?, offset? }'}</code></td>
       <td><code>{'{ anchor: { to: \'container\', edge: \'bottom-left\' } }'}</code></td>
-      <td><code>'fixed'</code>框的位置：一个<code>ElementAnchor</code>（<code>to</code>：<code>'container'</code>为页面内容区，在偶数页上镜像；<code>'page'</code>为成品尺寸框；<code>'bleed'</code>为出血框；<code>edge</code>：容器九个边位之一），外加可选的<code>offset</code>（<code>x</code> / <code>y</code>尺寸）。</td>
+      <td><code>'fixed'</code>框的位置：一个<code>ElementAnchor</code>（<code>to</code>：<code>'container'</code>为页面版心，在偶数页上镜像；<code>'page'</code>为成品尺寸框；<code>'bleed'</code>为出血框；<code>edge</code>：容器九个边位之一），外加可选的<code>offset</code>（<code>x</code> / <code>y</code>尺寸）。</td>
     </tr>
     <tr>
       <td><code>floatBarrier</code></td>
@@ -150,7 +150,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>底色 / 边框的圆角半径（上限为框宽和框高的一半）。色条随之变化：在圆角框上，色条被裁切到圆角框形之内，就像CSS按<code>border-radius</code>裁切<code>border-left</code>一样。<code>label</code>标签保持直角。</td>
+      <td>底色 / 边框的圆角半径（上限为框宽和框高的一半）。色条随之变化：在圆角框上，色条被裁切到圆角框形之内，就像CSS按<code>border-radius</code>裁切<code>border-left</code>一样。<code>label</code>页签保持直角。</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>、标题字体、<code>400</code>、<code>1.5em</code>、主色、<code>'top'</code>、<code>'inline'</code>、<code>'right'</code></td>
-      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>，或<code>'outer'</code> / <code>'inner'</code>，后两者随镜像页边距的页面奇偶变化（外侧在右页上是右边，在左页上是左边）。</td>
+      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>；<code>'outer'</code> / <code>'inner'</code>，在对称页边距下随奇偶页变化（外侧在奇数页上是右边，在偶数页上是左边）；或<code>'start'</code> / <code>'end'</code>，随框自身的书写方向而定，与色条的这两个值相同。</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -186,7 +186,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>body</code></td>
       <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, letterSpacing, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
       <td>继承<code>bodyText</code>；<code>italic</code> / <code>smallCaps</code>为<code>false</code></td>
-      <td>框内段落和列表项的排版。每个字段未设置时都继承正文；<code>italicColor</code>设置斜体文字的颜色（例如用框的颜色排成斜体的引文）。<code>fontWeight</code> / <code>boldFontWeight</code>设置常规和粗体文字的字重；<code>italic</code>把整个框排成斜体，此时<code>*…*</code>内的文字改为正体；<code>smallCaps</code>把它排成小型大写字母；<code>tabStops</code>和<code>tabInterval</code>在框内替换正文的设置（见<a href="/zh/docs/configuration-text#制表位">制表位</a>）。框内文字还会采用哪些设置，见<a href="#框内的排版">框内的排版</a>。自 postext 1.42 起，<code>letterSpacing</code>为框内的段落和列表项设置字距。以<code>em</code>为单位时按正文字号计算，负值收紧。字距会计入行的测量，所以排得紧几个百分点的框会在原稿换行的地方换行；<code>:::paragraphs</code>围栏中的段落保留其样式自己的字距。采用这种样式的框（frame）同样适用。</td>
+      <td>框内段落和列表项的排版。每个字段未设置时都继承正文；<code>italicColor</code>设置斜体文字的颜色（例如用框的颜色排成斜体的引文）。<code>fontWeight</code> / <code>boldFontWeight</code>设置常规和粗体文字的字重；<code>italic</code>把整个框排成斜体，此时<code>*…*</code>内的文字改为正体；<code>smallCaps</code>把它排成小型大写字母；<code>tabStops</code>和<code>tabInterval</code>在框内替换正文的设置（见<a href="/zh/docs/configuration-text#制表位">制表位</a>）。框内文字还会采用哪些设置，见<a href="#框内的排版">框内的排版</a>。自postext 1.42起，<code>letterSpacing</code>为框内的段落和列表项设置字距。以<code>em</code>为单位时按正文字号计算，负值收紧。字距会计入行的测量，所以排得紧几个百分点的框会在原稿换行的地方换行；<code>:::paragraphs</code>块中的段落保留其样式自己的字距。模板页中采用这种样式的框也是如此。</td>
     </tr>
     <tr>
       <td><code>lists</code></td>
@@ -197,8 +197,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
-      <td>未设置（无标签）</td>
-      <td>框顶边上的一个标签，印出围栏的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以标签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到标签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>。标签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角。自 postext 1.42 起，<code>icon.placement: 'inside'</code>把图片放进标签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：标签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和标签的高度缩放，并在标签中居中。图片保留自己的颜色，所以彩色标签上的白色圆环与白色标签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在标签边缘之外。自 postext 1.43 起，<code>icon.tint: true</code> 用页签的 <code>color</code> 代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在 PDF 中，SVG 保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为 PDF 页面无法重新着色。</td>
+      <td>未设置（无页签）</td>
+      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>，或按框自身书写方向的<code>'top-start'</code> / <code>'top-end'</code>，与色条的<code>'start'</code> / <code>'end'</code>相同），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>，不上移也不内缩，图片宽<code>1em</code>、与文字相距<code>0.3em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -222,7 +222,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>为<code>true</code>时，框保持完整：剩余空间放不下的标注框整个移到下一栏或下一页。只有比一整个空栏还高的框（对<code>span: 'page'</code>框来说是一整页）无法保持完整：它从出现处开始，按下文<code>false</code>的规则拆分，而不是溢出；能放进一栏的接续部分随后整体移动。这么高的浮动框（<code>placement: 'top' | 'bottom' | 'auto'</code>）不浮动，而是留在文字流中的原位。为<code>false</code>时，任何框都可以在子块之间、或段落和列表项的行与行之间断开：能放下的最深切口结束当前栏（对<code>span: 'page'</code>框来说结束当前页，与各栏底部齐平），其余部分在下一栏开头的一个独立框中继续，框形和色条相同，不带图标，也不带标题（除非<code>repeatTitle</code>重复它），仍然太高时再次拆分。每个片段的文字都保留行内图标在首段所占的那一栏（留空），因此框在每一页上的行长都相同。切口落在列表项内部时，项目符号留在切口之前的片段。每个片段的框形都共用围栏的<code>contentIndex</code> / <code>containerId</code>，并记录<code>callout.part</code> / <code>callout.continued</code>。可以把它用在一章末尾很长的“要点”框上，配合<code>headings.balancing.beforeSpan</code>；也可以用在绝不能把图挤出页面的注释样式上。嵌套的框（另一个框里的<code>:::callout</code>）是其父框的一个子块：切口可以落在它之前或之后；只有它自己的样式允许拆分时（<code>keepTogether: false</code>，或比一整栏还高），才会按它自己的<code>splitMinLines</code>在它内部断开。自 postext 1.39 起，切口与组版页面的框一样遵循正文的规则：标题绝不落在片段末尾（<code>headings.keepWithNext</code>），在列表项之间切开时两侧各至少留两项（<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>；关闭时为一项），在 <code>shortListSplit: 'avoid'</code> 下不超过 <code>bodyText.shortListMaxItems</code> 项的列表不在项之间切开。没有切口满足这些规则时，片段在标题或列表之前结束，或在某一项内部切开。</td>
+      <td>为<code>true</code>时，框保持完整：剩余空间放不下的标注框整个移到下一栏或下一页。只有比一整个空栏还高的框（对<code>span: 'page'</code>框来说是一整页）无法保持完整：它从出现处开始，按下文<code>false</code>的规则拆分，而不是超出栏底；能放进一栏的接续部分随后整体移动。这么高的浮动框（<code>placement: 'top' | 'bottom' | 'auto'</code>）不浮动，而是留在文字流中的原位。为<code>false</code>时，任何框都可以在子块之间、或段落和列表项的行与行之间断开：能放下的最深切口结束当前栏（对<code>span: 'page'</code>框来说结束当前页，与各栏底部齐平），其余部分在下一栏开头的一个独立框中继续，框形和色条相同，不带图标，也不带标题（除非<code>repeatTitle</code>重复它），仍然太高时再次拆分。每个片段的文字都保留行内图标在首段所占的那一栏（留空），因此框在每一页上的行长都相同。切口落在列表项内部时，项目符号留在切口之前的片段。每个片段的框形都共用块的<code>contentIndex</code> / <code>containerId</code>，并记录<code>callout.part</code> / <code>callout.continued</code>。可以把它用在一章末尾很长的“要点”框上，配合<code>headings.balancing.beforeSpan</code>；也可以用在绝不能把图挤出页面的注释样式上。嵌套的框（另一个框里的<code>:::callout</code>）是其父框的一个子块：切口可以落在它之前或之后；只有它自己的样式允许拆分时（<code>keepTogether: false</code>，或比一整栏还高），才会按它自己的<code>splitMinLines</code>在它内部断开。自postext 1.39起，切口与模板页的框一样遵循正文的规则：标题绝不落在片段末尾（<code>headings.keepWithNext</code>），在列表项之间切开时两侧各至少留两项（<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>；关闭时为一项），在<code>shortListSplit: 'avoid'</code>下，不超过<code>bodyText.shortListMaxItems</code>项的列表不在项之间切开。没有切口满足这些规则时，片段在标题或列表之前结束，或在某一项内部切开。</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>该标记的文字（剧本里的“(MORE)”），使用框的正文字体和字号，随文档语言而定。</td>
+      <td><code>'Continued'</code></td>
+      <td>该标记的文字（剧本里的“(MORE)”），使用框的正文字体和字号。默认值随文档语言而定，与拆分表格的相同：中文为<code>'接下页'</code>，西班牙语为<code>'Continúa'</code>。</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -289,7 +289,7 @@ The glass stays hot for an hour after the flame is out.
 
 ### 基于其他样式的样式
 
-`extends` 指定 `calloutStyles` 中的另一个样式，本样式没有设置的每个字段都取自它。`padding`、`border`、`titleStyle`、`fixed` 这类对象逐键合并，所以一个样式可以只改内边距的一边，或只改 `fixed.offset`；颜色和长度整体取用；`id` 和 `name` 从不继承。父样式本身也可以基于另一个样式。框分布在许多位置的书，可以用一个样式定外观，每个位置一个只写位置的小样式：
+`extends`指定`calloutStyles`中的另一个样式，本样式没有设置的每个字段都取自它。`padding`、`border`、`titleStyle`、`fixed`这类对象逐键合并，所以一个样式可以只改内边距的一边，或只改`fixed.offset`；颜色和长度整体取用；`id`和`name`从不继承。父样式本身也可以基于另一个样式。框分布在许多位置的书，可以用一个样式定外观，每个位置一个只写位置的小样式：
 
 ```ts
 calloutStyles: [
@@ -303,25 +303,25 @@ calloutStyles: [
 ]
 ```
 
-修改 `caja` 的外观，所有框都随之改变，各自留在原位。`extends` 指向不存在的样式时给出 `calloutStyleExtendsUnknown`（警告会建议最接近的 id，该样式单独成立，使用内置默认值）；相互基于、形成循环的样式给出 `calloutStyleExtendsCycle`（在其中某个样式改为基于环外的样式之前，它们都单独成立）。在 Sandbox 中，标注框样式的 **基于** 字段用来设置它；删除一个被其他样式基于的样式时，会把它的设置写进这些样式，它们的框不会改变。在 **框样式库** 中，开启 **只比较外观** 合并时，如果 **每个框留在原位** 处于开启状态（默认），框位置不同的样式会保留为这样的小样式，没有框会移动。自 postext 1.39 起。
+修改`caja`的外观，所有框都随之改变，各自留在原位。`extends`指向不存在的样式时给出`calloutStyleExtendsUnknown`（警告会建议最接近的id，该样式单独成立，使用内置默认值）；相互基于、形成循环的样式给出`calloutStyleExtendsCycle`（在其中某个样式改为基于环外的样式之前，它们都单独成立）。在沙盒中，用标注框样式的**基于**字段设置它；删除一个被其他样式基于的样式时，会把它的设置写进这些样式，它们的框不会改变。在**框样式库**中，开启**只比较外观**合并时，如果**每个框留在原位**处于开启状态（默认），框位置不同的样式会保留为这样的小样式，没有框会移动。自postext 1.39起。
 
 ### `:::callout`容器
 
-`:::callout{type="<id>"}`一行打开框，单独一行`:::`关闭它。围栏接受五个属性：`type`（样式id）、`title`（覆盖样式的标题）、`span`、`placement`和`columns`（覆盖样式中的值）；两者之间的内容排在框内：先是可选的标题，然后是段落、列表、引文块、公式或资源嵌入，各自按样式的`body` / `lists`排版（标题保留它们平常的样式）。子块之间的外边距像正文中一样合并；框内部脱离基线网格，框之后文字流回到网格上，框下方至少留出`marginBottom`（以网格为准，外边距是最小值，资源遵循的也是这一约定）。`snapToGrid: false`的样式则保持精确的`marginBottom`，框之后的正文一直偏离网格，直到下一个标题或列表结尾。紧挨在标注框之前的标题与框保持同栏。
+`:::callout{type="<id>"}`一行打开框，单独一行`:::`关闭它。这个块接受五个属性：`type`（样式id）、`title`（覆盖样式的标题）、`span`、`placement`和`columns`（覆盖样式中的值）；两者之间的内容排在框内：先是可选的标题，然后是段落、列表、引用块、公式或资源嵌入，各自按样式的`body` / `lists`排版（标题保留它们平常的样式）。子块之间的外边距像正文中一样合并；框内部脱离基线网格，框之后文字流回到网格上，框下方至少留出`marginBottom`（以网格为准，外边距是最小值，资源遵循的也是这一约定）。`snapToGrid: false`的样式则保持精确的`marginBottom`，框之后的正文一直偏离网格，直到下一个标题或列表结尾。紧挨在标注框之前的标题与框保持同栏。
 
 本版本的限制：
 
-- 标注框保持完整，除非其样式设置了`keepTogether: false`。栏中剩余空间放不下时，它整个移到下一栏或下一页；一个被浮动区带或区带上限截短的空栏，只要完整的一栏能容纳它，框也会从中移出。比一整栏还高的框改为拆分，与可拆分的框一样；只有任何切口都拆不开的框（比栏还高的图或表，或没有切口能满足的`splitMinLines`）才会照排并溢出；此时版面记录一条`calloutOverflow`警告（`VDTDocument.warnings`），沙盒会列出它。`:::columns`组像它外面的框一样切开，切口落在子栏之间（自postext 1.25起）；只有设置了`layout.flowColumns: false`或位于嵌套框内时，它才保持完整，并可能以同样的方式溢出。可拆分的框留下能放下的部分，即完整的子块，或段落的若干行，每侧不少于`splitMinLines`行（单独一个图、表或独立公式就足以构成一侧），然后在下一栏或下一页的一个不带图标的框中继续，除非样式重复标题，否则也不带标题，还可以在它留下的部分下方加一个标记（见[拆分框的标记](#拆分框的标记)）。
+- 标注框保持完整，除非其样式设置了`keepTogether: false`。栏中剩余空间放不下时，它整个移到下一栏或下一页；一个被浮动区带或区带上限截短的空栏，只要完整的一栏能容纳它，框也会从中移出。比一整栏还高的框改为拆分，与可拆分的框一样；只有任何切口都拆不开的框（比栏还高的图或表，或没有切口能满足的`splitMinLines`）才会照排，超出栏底；此时版面记录一条`calloutOverflow`警告（`VDTDocument.warnings`），沙盒会列出它。`:::columns`组像它外面的框一样切开，切口落在子栏之间（自postext 1.25起）；只有设置了`layout.flowColumns: false`或位于嵌套框内时，它才保持完整，并可能以同样的方式超出栏底。可拆分的框留下能放下的部分，即完整的子块，或段落的若干行，每侧不少于`splitMinLines`行（单独一个图、表或独立公式就足以构成一侧），然后在下一栏或下一页的一个不带图标的框中继续，除非样式重复标题，否则也不带标题，还可以在它留下的部分下方加一个标记（见[拆分框的标记](#拆分框的标记)）。
 - 浮动体让位于不可拆分的框。当图的引用之后紧接的块是`keepTogether`标注框时，如果某个位置会让这个框在当前栏带中无栏可落（引用所在的栏，或它之后的空栏，在浮动之前本可容纳它），就不采用这个位置：图移到它的下一个位置，通常是下一页，框留在文字流中。这正是排版工人的做法：不会把框挤出页面，只在栏里留下那张图。
 - 在多栏版式中，`span: 'page'`让框成为**通栏块**：它按整个版心宽度排布，把页面切分成栏带。它上方的各栏文字在切线处结束，框自己占一个通栏宽的栏，下方新开一组文字栏，文字流在每一栏中都从框下继续。在各栏*平齐*的地方，即页面顶端、`span: 'page'`的章首标题正下方、另一个通栏块正下方，或顶部浮动区带正下方，框直接在那里切开。如果它在页面中部出现、各栏参差不齐，就按排版工人的方式处理：它上方的正文在所有栏中齐平切断（引擎把该栏带的各栏缩短到相同的网格行数后重新排布，于是文字自然地从一栏流向下一栏，所有段首孤行、段末孤行和与下文同栏的规则照样生效），框横跨整页，各栏在它下方继续。切断要多跑几遍排布；如果切线下方放不下框加上段首孤行（widow）规则所需的最少正文行数，或者尝试几次后仍没有合适的排法，框就移到下一页顶端。上方的正文遵守这条切线：一栏在图下方只剩几行、放不下一个段落的开头时，该段落移到下一栏（图于是单独占据那一栏）；当某个块仍会越过切线时，切线下移一行，而不是移到那个块结束的地方。开启栏带的拆分框也在那里切断，所以它的其余部分不会越过切线。在`headings.balancing.beforeSpan`（默认开启）下，框离开的栏带在它后面齐平切断，就像一章的收尾栏带；样式允许拆分时（`keepTogether: false`），框中能放进拉齐后各栏下方的部分结束这一页，其余部分开启下一页。设`beforeSpan: false`时，框离开的页面只做常规的各栏齐底，不强制分页。紧挨在通栏块之前的标题不随它移动。在单栏版式中，`span: 'page'`就是普通的行内排布。
-- `placement: 'fixed'`把框移出文字流：先排出框（`width: 'auto'`按标题收缩宽度；`'fill'`取锚点下方那一栏的文字宽度），再把它固定在它在文字流中所在的页面上，位置由`fixed.anchor` / `fixed.offset`描述，默认为内容区的左下角。它覆盖的文字栏让出这块区域（从底部截去，栏仍为空时从顶部截去），与浮动区带完全相同；如果这块区域中已经有正文、浮动体或通栏块，框就移到下一页。收尾一章的固定框（下一个块是章首页、`:::part`、浮动体屏障框或文档末尾）会先把它上方的各栏拉齐（`headings.balancing.trailing`），这样较短的收尾页会齐底结束，下方是徽标。框形和子块放在`page.floats`中，在所有后端中都在栏的裁切区之外渲染。
-- `placement: 'top' | 'bottom'`让框像资源一样**浮动**：它在出现处离开文字流，占用该处之后第一个空闲区带，即当前页的页脚（`'bottom'`），或文字流打开的下一页的页首 / 页脚，宽度为一栏（`span: 'column'`）或整个版心（`span: 'page'`）；它之后的正文填满它离开的那一页。它的框形和子块进入`page.floats`，与固定框一样。位于新一页页首的浮动框排在等待该页的图之前；在较早一页引用、随后能放在它下方的图，即使剩下的正文不足三行，也会占满该页其余部分（图集页：框加图，中间没有正文）。`span: 'side'`框从不浮动：无论placement如何，它都叠放在正文旁边。`columns`大于1时（在样式中或作为围栏属性，postext 1.18起），`span: 'column'`框占用这么多相邻的栏：一组顶端平齐的空栏的栏首，或者当前栏及其后空栏的栏脚，例如`:::callout{placement="top" columns="2"}`。
+- `placement: 'fixed'`把框移出文字流：先排出框（`width: 'auto'`按标题收缩宽度；`'fill'`取锚点下方那一栏的文字宽度），再把它固定在它在文字流中所在的页面上，位置由`fixed.anchor` / `fixed.offset`描述，默认为版心的左下角。它覆盖的文字栏让出这块区域（从底部截去，栏仍为空时从顶部截去），与浮动区带完全相同；如果这块区域中已经有正文、浮动体或通栏块，框就移到下一页。收尾一章的固定框（下一个块是章首页、`:::part`、浮动体屏障框或文档末尾）会先把它上方的各栏拉齐（`headings.balancing.trailing`），这样较短的收尾页会齐底结束，下方是徽标。框形和子块放在`page.floats`中，在所有后端中都在栏的裁切区之外渲染。
+- `placement: 'top' | 'bottom'`让框像资源一样**浮动**：它在出现处离开文字流，占用该处之后第一个空闲区带，即当前页的页脚（`'bottom'`），或文字流打开的下一页的页首 / 页脚，宽度为一栏（`span: 'column'`）或整个版心（`span: 'page'`）；它之后的正文填满它离开的那一页。它的框形和子块进入`page.floats`，与固定框一样。位于新一页页首的浮动框排在等待该页的图之前；在较早一页引用、随后能放在它下方的图，即使剩下的正文不足三行，也会占满该页其余部分（图集页：框加图，中间没有正文）。`span: 'side'`框从不浮动：无论placement如何，它都叠放在正文旁边。`columns`大于1时（在样式中或作为块的属性，postext 1.18起），`span: 'column'`框占用这么多相邻的栏：一组顶端平齐的空栏的栏首，或者当前栏及其后空栏的栏脚，例如`:::callout{placement="top" columns="2"}`。
 - `width: 'auto'`只按标题收缩宽度，子内容被忽略。
-- 嵌套在另一个标注框中的`:::callout`是一个独立的框：它按自己的样式（底色、边框、圆角、内边距、色条、标题、图标、标记、标签、排版）以父框的全部内宽排布，作为父框的一个子块叠放，其`marginTop` / `marginBottom`与相邻块合并。它的`span`和`placement`（围栏或样式中的）被忽略，嵌套框总是在父框内顺排；`floatBarrier`和`snapToGrid`同样被忽略。框可以任意层级嵌套，也可以放在`:::columns`组中（每个框完整地位于一栏中）。父框拆分时，切口落在嵌套框之前或之后，嵌套样式允许拆分时也可以落在它内部；每个片段都会重画它切过的框形，从上一个片段接续过来的嵌套框不带标题和图标，与顶层的接续部分一样。
-- 子块中的`:::columns{count=N}` … `:::`组在框内把这些子块排成`N`个等宽的栏，间距为`columnGap`：这一串内容在最能让各栏平齐的块边界或行边界处切开（在中途切开的段落或列表项在下一栏开头继续，不带项目符号），每一栏都从组的顶部开始，组的高度等于最高的一栏；组之后的子块恢复全宽。拆分的框（`keepTogether: false`，或比一栏还高的框）也会在组内部、各栏之间切开：蛇形组依次填满各栏，接到下一个片段；平行组（`breaks`）则逐个流接续（postext 1.25起；见[文档格式 › `:::columns`](/zh/docs/document-format-directives#columns)）。围栏上的`gap`为该组替代`columnGap`，`rule`在每条栏间空白中画一条竖线。可用来排两栏的要点小结，或让宽框中的几张表并排。
-- 围栏的第六个属性`label`印在样式的标签上（见上文`label`）：`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`；样式没有`label`时忽略该属性。
+- 嵌套在另一个标注框中的`:::callout`是一个独立的框：它按自己的样式（底色、边框、圆角、内边距、色条、标题、图标、标记、页签、排版）以父框的全部内宽排布，作为父框的一个子块叠放，其`marginTop` / `marginBottom`与相邻块合并。它的`span`和`placement`（块上的或样式中的）被忽略，嵌套框总是在父框内顺排；`floatBarrier`和`snapToGrid`同样被忽略。框可以任意层级嵌套，也可以放在`:::columns`组中（每个框完整地位于一栏中）。父框拆分时，切口落在嵌套框之前或之后，嵌套样式允许拆分时也可以落在它内部；每个片段都会重画它切过的框形，从上一个片段接续过来的嵌套框不带标题和图标，与顶层的接续部分一样。
+- 子块中的`:::columns{count=N}`…`:::`组在框内把这些子块排成`N`个等宽的栏，间距为`columnGap`：这一串内容在最能让各栏平齐的块边界或行边界处切开（在中途切开的段落或列表项在下一栏开头继续，不带项目符号），每一栏都从组的顶部开始，组的高度等于最高的一栏；组之后的子块恢复全宽。拆分的框（`keepTogether: false`，或比一栏还高的框）也会在组内部、各栏之间切开：蛇形组依次填满各栏，接到下一个片段；平行组（`breaks`）则逐个流接续（postext 1.25起；见[文档格式 › `:::columns`](/zh/docs/document-format-directives#columns)）。块上的`gap`为该组替代`columnGap`，`rule`在每条栏间空白中画一条竖线。可用来排两栏的要点小结，或让宽框中的几张表并排。
+- 块的第六个属性`label`印在样式的页签上（见上文`label`）：`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`；样式没有`label`时忽略该属性。
 
-在VDT中，框是一个`type: 'callout'`的框形块，其装饰（底色、色条、图标、标题）放在`designOverlay`上，后面在同一栏中跟着它的子块；框形和每个子块都带有围栏的`containerId`。嵌套框是子块中一个独立的`type: 'callout'`框形，后面跟着它自己的块；这些块保留顶层围栏的`containerId`（排布和各栏齐底仍把它们看作一个单元），并加上`calloutPath`，即包围它们的各层嵌套围栏的容器id，由外到内排列（嵌套框形自己的id是最后一项）。带标签的PDF为每个嵌套框在其父框的`Div`内生成一个`Div`。图标图片与资源图片的解析方式相同：canvas图片注册表、HTML的`resourceImageUrl`选项和PDF的`resourceBytes`提供器。
+在VDT中，框是一个`type: 'callout'`的框形块，其装饰（底色、色条、图标、标题）放在`designOverlay`上，后面在同一栏中跟着它的子块；框形和每个子块都带有块的`containerId`。嵌套框是子块中一个独立的`type: 'callout'`框形，后面跟着它自己的块；这些块保留顶层块的`containerId`（排布和各栏齐底仍把它们看作一个单元），并加上`calloutPath`，即包围它们的各层嵌套块的容器id，由外到内排列（嵌套框形自己的id是最后一项）。带标签的PDF为每个嵌套框在其父框的`Div`内生成一个`Div`。图标图片与资源图片的解析方式相同：canvas图片注册表、HTML的`resourceImageUrl`选项和PDF的`resourceBytes`提供器。
 
 ```ts
 const resolved = resolveCalloutStylesConfig(config.calloutStyles, resolvedBodyText, resolvedHeadings, resolvedUnorderedLists, config.locale);
@@ -334,7 +334,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
 
 ### 编号的命题与证明
 
-带`numbering`的样式为它的框计数，就像LaTeX的`amsthm`为定理环境计数（postext 1.19起）。每个框印出它的标签和编号，即第一段开头的“**定理2.**”，围栏的`title`以括号跟在编号之后：`:::callout{type="theorem" title="Bradley–Terry"}`以“**定理2**（Bradley–Terry）**.**”开头。以标识符打开的框（`{#thm:main}`）可以作为交叉引用的目标，引用印出“定理2”（`:ref{id="thm:main"}`），`\ref{thm:main}`或`style=number`印出2。
+带`numbering`的样式为它的框计数，就像LaTeX的`amsthm`为定理环境计数（postext 1.19起）。每个框印出它的标签和编号，即第一段开头的“**定理2.**”，块的`title`以括号跟在编号之后：`:::callout{type="theorem" title="Bradley–Terry"}`以“**定理2**（Bradley–Terry）**.**”开头。以标识符打开的框（`{#thm:main}`）可以作为交叉引用的目标，引用印出“定理2”（`:ref{id="thm:main"}`），`\ref{thm:main}`或`style=number`印出2。
 
 <table>
   <thead>
@@ -362,7 +362,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
       <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
       <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
       <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
-      <td>与资源类型中的相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为定理2.1、2.2……；<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。几种样式共用的计数器照常递增，不论各样式的模板印出什么。标记可以像资源类型的模板那样在冒号后写样式：<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>在字母编号的附录里印出<em>定理 A.1</em>。</td>
+      <td>与资源类型中的相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为定理2.1、2.2……；<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。几种样式共用的计数器照常递增，不论各样式的模板印出什么。标记可以像资源类型的模板那样在冒号后写样式：<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>在字母编号的附录里印出<em>定理A.1</em>。</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -404,11 +404,11 @@ calloutStyles: [
 框用自己的`body`和`lists`排版设置内容，其余一切沿用文档的样式：
 
 - **段落**采用框的`body`：字体、字号、行距、颜色、强调颜色、字重、`italic`、`smallCaps`、对齐、断词、缩进和段间距。未设置的字段继承`bodyText`。继承来的强调颜色保留与调色板的关联，所以框内的粗体、斜体和`:ref`标签与框外一样随`colorPalette`变化。（postext 1.4及以前，无论主色是什么，框内的粗体都保持`#295AA3`。）
-- **项目符号列表**以框的`lists`（项目符号字符、颜色、字形大小和字重、缩进、间隔、条目间距）覆盖`unorderedLists`，文字是框的正文。`lists.bulletChar`或`lists.color`与文档的设置（`unorderedLists`）不同时，替换每一层的项目符号或颜色；与之相同或未设置时，每一层保留各自的设置（`unorderedLists.levels`），所以嵌套的破折号在框内依然保留。
-- **编号列表**采用`lists.indent`、`gap`和`itemSpacing`；只要样式设置了`lists.color`，也采用它，即使它就是文档的项目符号颜色；未设置时，编号保持`orderedLists.color`。（postext 1.4及以前，只有当颜色与`unorderedLists.color`不同时才会作用到编号上，所以设成同一种颜色不起作用。）编号本身的字体、字号和分隔符来自全局的`orderedLists`，因为`lists`只有项目符号字段：框内编号的样式请在那里设置。
+- **无序列表**以框的`lists`（项目符号字符、颜色、字形大小和字重、缩进、间隔、条目间距）覆盖`unorderedLists`，文字是框的正文。`lists.bulletChar`或`lists.color`与文档的设置（`unorderedLists`）不同时，替换每一层的项目符号或颜色；与之相同或未设置时，每一层保留各自的设置（`unorderedLists.levels`），所以嵌套的破折号在框内依然保留。
+- **有序列表**采用`lists.indent`、`gap`和`itemSpacing`；只要样式设置了`lists.color`，也采用它，即使它就是文档的项目符号颜色；未设置时，编号保持`orderedLists.color`。（postext 1.4及以前，只有当颜色与`unorderedLists.color`不同时才会作用到编号上，所以设成同一种颜色不起作用。）编号本身的字体、字号和分隔符来自全局的`orderedLists`，因为`lists`只有项目符号字段：框内编号的样式请在那里设置。
 - <strong>框内的`:::paragraphs`</strong>使用它们的段落样式，嵌套框中也是如此。段落样式未设置的字段继承文档的`bodyText`，而不是框的`body`（也不继承框的斜体或小型大写字母）。
 - **`:::columns`组**没有自己的样式：每一栏都共用框的正文和列表排版，`columnGap`设置栏间距。
-- **引文块**采用框的正文字体、字号和字重（与正文中一样为灰色斜体），以及框的小型大写字母。**标题**保留标题样式；**独立公式**保留数学设置。
+- **引用块**采用框的正文字体、字号和字重（与正文中一样为灰色斜体），以及框的小型大写字母。**标题**保留标题样式；**独立公式**保留数学设置。
 - **图和表**保留文档的题注和表格样式，宽度为框的内宽；它们的常规字重和粗体字重跟随框的`body`字重。
 - **行内标签**保留自己的标签样式；`em`字号按框的正文字号计算。
 - <strong>`:::space`</strong>以框的正文行为单位计量（它在哪些位置被丢弃，见[`:::space`](/zh/docs/document-format-directives#space)）。
@@ -418,7 +418,7 @@ calloutStyles: [
 
 框跨栏或跨页拆分时（`keepTogether: false`，或框比一栏还高），第一部分之后的每一部分都不带标题和图标开始，默认也没有任何提示告诉读者框还在继续。图书或剧本常用的标记可以通过两个选项加上：
 
-- <strong>`repeatTitle: true`</strong>在每个接续部分的开头重复标题，后接`continuedSuffix`，默认为“Key points (cont.)”。重复的标题采用标题样式，所以配合`textTransform: 'uppercase'`就得到剧本里的“HAMLET (CONT'D)”。图标和标签只留在第一部分。
+- <strong>`repeatTitle: true`</strong>在每个接续部分的开头重复标题，后接`continuedSuffix`，默认为“Key points (cont.)”。重复的标题采用标题样式，所以配合`textTransform: 'uppercase'`就得到剧本里的“HAMLET (CONT'D)”。图标和页签只留在第一部分。
 - <strong>`continuesMarkerEnabled: true`</strong>在每个还要接续的部分的最后一行下方、框内，排出`continuesMarker`：“Continued”，西班牙语文档中为“Continúa”。它使用框的正文字体和字号：除非`continuesMarkerItalic`为`false`，否则为斜体；除非`continuesMarkerAlign`设为`'left'`或`'center'`，否则右对齐。标记占用它所结束的那一部分的空间，选择切口时会保证它放得下。
 
 ```ts
@@ -441,7 +441,7 @@ A speech long enough to run over the foot of the page…
 :::
 ```
 
-结束这一页的部分以“(MORE)”收尾，下一页以“HAMLET (CONT'D)”开始。两者都是分页附属物：在无障碍PDF中它们是artifact，在HTML中对辅助技术隐藏，所以标题只被朗读一次。在VDT中，它们是标记为`artifact: true`的`designOverlay`文本块。
+结束这一页的部分以“(MORE)”收尾，下一页以“HAMLET (CONT'D)”开始。两者都只为分页而存在：在无障碍PDF中它们标为artifact（非正文内容），在HTML中对辅助技术隐藏，所以标题只被朗读一次。在VDT中，它们是标记为`artifact: true`的`designOverlay`文本块。
 
 ### 框的设计
 
@@ -494,7 +494,7 @@ A speech long enough to run over the foot of the page…
 
 图片的`resourceId`接受同样的占位符，因此每个框可以画出各自的资源。只有框的设计读取`{boxText}`；标题设计在此处不印任何内容。
 
-设`setsContent: true`后，一个样式就能用于所有同样形状的框，每个框带着自己的字词。在习字册中，每一行练习都是一个框，框的内容就是要描写的字：设计用习字字体印出这个字，并画出以它命名的虚线资源。
+设`setsContent: true`后，一个样式就能用于所有同样形状的框，每个框带着自己的字词。在习字册中，每一行练习都是一个框，框的内容就是要描写的字：设计用习字字体印出这个字，再把它排成供描写的点线字（`dotted`），一行能放几个就排几个（`repeat`；见[行内标记与描边](/zh/docs/configuration-headers-footers#行内标记与描边)）。
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'LXGW WenKai', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'LXGW WenKai', fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ calloutStyles: [{
 :::
 ```
 
-第一行印出“猫”并画出资源`trace-猫`，第二行印出“月”并画出`trace-月`，两个字都不会在带下方再排一次。`setsContent`保持`false`时，设计照样读取`{boxText}`，内容排在带下方。
+第一行印出“猫”，后面跟着一排点线的“猫”；第二行对“月”做同样的处理；两个字都不会在带下方再排一次。在Markdown中改动这个字，范字和所有描写字都随之改变。`setsContent`保持`false`时，设计照样读取`{boxText}`，内容排在带下方。
 
 在VDT中，带的元素是框架`designOverlay`上的设计块，与标题并列。

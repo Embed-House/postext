@@ -1,16 +1,16 @@
 ---
 title: "Ein Tagesstrip und eine halbe Sonntagsseite in der Zeitung"
-summary: "Comicbeilage einer Zeitung: eine halbe Sonntagsseite im Text des Titelblatts und ein Tagesstrip aus vier Bildern über eine vierspaltige Seite unter dem Artikel."
+summary: "Comicbeilage einer Zeitung: eine halbe Sonntagsseite im Text des Titelblatts und ein Tagesstrip aus vier Panels über eine vierspaltige Seite unter dem Artikel."
 plain: "Zwei Seiten aus dem Comicteil einer Zeitung: ein großer Farbcomic auf dem Titelblatt, dann ein Artikel über die Zeichnerin in vier Spalten mit dem Tagesstrip aus vier Bildern darunter."
 description: "Comicstrips in einer Postext-Zeitung: Blöcke :::strip im Text oder über vier Spalten gleitend, eine halbe Sonntagsseite und ein Tagesstrip in zehn Sprachen."
 question: "Wie setze ich einen Comicstrip auf eine Zeitungsseite, über die Spalten des Textes?"
 aliases: ["Comicstrip", "Tagesstrip", "Sonntagscomic", "Comicbeilage", "Zeitungscomic", "Strip", "Vier-Bilder-Strip", "comic strip", "tira cómica", "tira de prensa", "新聞漫画", "报纸漫画"]
-pageNotes: { "1": "Das Titelblatt der Comicbeilage: der rote Kopf „Comics“, die halbe Sonntagsseite (Pip und Otto angeln auf einer Eisscholle, Pips winziger Fisch flüstert „Wirf mich zurück.“, Otto zieht mit einem „PLATSCH“ einen Stiefel heraus) und drei Zeilen Inhalt: „In dieser Ausgabe“, „Post an die Scholle“ und „Nächsten Sonntag“.", "2": "Die Innenseite: die Schlagzeile „Zehn Winter auf der Scholle“ über vier Spalten mit einem Interview, dem Kasten „Pip & Otto in Zahlen“, Leserbriefen und einer Anzeige, und darunter, über die ganze Seitenbreite, der Tagesstrip über ein Croissant in vier Bildern („Morgen, Otto! Ein Croissant, bitte.“ … „So. Kleiner.“)." }
+pageNotes: { "1": "Das Titelblatt der Comicbeilage: der rote Kopf „Comics“, die halbe Sonntagsseite (Pip und Otto angeln auf einer Eisscholle, Pips winziger Fisch flüstert „Wirf mich zurück.“, Otto zieht mit einem „PLATSCH“ einen Stiefel heraus) und drei Zeilen Inhalt: „In dieser Ausgabe“, „Post an die Scholle“ und „Nächsten Sonntag“.", "2": "Die Innenseite: die Schlagzeile „Zehn Winter auf der Scholle“ über vier Spalten mit einem Interview, dem Kasten „Pip & Otto in Zahlen“, Leserbriefen und einer Anzeige, und darunter, über die ganze Seitenbreite, der Tagesstrip über ein Croissant in vier Panels („Morgen, Otto! Ein Croissant, bitte.“ … „So. Kleiner.“)." }
 ---
 
 ## Was Sie setzen
 
-Die Comicbeilage einer Wochenendzeitung, *Corringtoner Kurier*, auf 230 × 310 mm gefaltet. Das Titelblatt trägt die halbe Sonntagsseite von *Pip & Otto*, einem Pinguin und einem Walross, die auf einer Eisscholle eine Bäckerei betreiben, mit dem Inhalt darunter. Innen läuft ein Interview mit der Zeichnerin des Strips in vier Spalten, mit Leserbriefen und einer Anzeige, und der Tagesstrip der Woche, vier quadratische Bilder, läuft darunter über die ganze Seitenbreite. Beide Comics sind Blöcke `:::strip` im Text der Zeitung, und die Beilage erscheint in zehn Sprachen.
+Die Comicbeilage einer Wochenendzeitung, *Corringtoner Kurier*, auf 230 × 310 mm gefaltet. Auf dem Titelblatt steht die halbe Sonntagsseite von *Pip & Otto*, einem Pinguin und einem Walross, die auf einer Eisscholle eine Bäckerei betreiben, mit dem Inhalt darunter. Innen läuft ein Interview mit der Zeichnerin des Strips in vier Spalten, mit Leserbriefen und einer Anzeige, und der Tagesstrip der Woche, vier quadratische Panels, läuft darunter über die ganze Seitenbreite. Beide Comics sind Blöcke `:::strip` im Text der Zeitung, und die Beilage erscheint in zehn Sprachen.
 
 ## Zubereitung
 
@@ -22,7 +22,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein `:::strip` 
 
 ### 2 · Den Tagesstrip über die Spalten gleiten lassen
 
-Die Innenseite beginnt mit einer H1, deren Überschriftenformat den Abschnitt auf vier Spalten umstellt. Der Tagesstrip steht nach dem Artikel mit `span=page`: Er wird dort, wo der Text endet, über die vier Spalten gesetzt, und die Spalten des Artikels enden darüber auf gleicher Höhe. Ohne `height` oder `aspect` nimmt ein Strip die Form an, die seine Panels quadratisch macht, hier vier zu eins. Mit `placement=bottom` würde er an den Fuß der Seite gleiten, was zu einem Artikel passt, der lang genug ist, um ihn zu erreichen; mit `placement=top` würde er die nächste Seite eröffnen, weil ein Gleitobjekt nie über die Stelle steigt, an der es geschrieben ist.
+Die Innenseite beginnt mit einer H1, deren Überschriftenstil den Abschnitt auf vier Spalten umstellt. Der Tagesstrip steht nach dem Artikel mit `span=page`: Er wird dort, wo der Text endet, über die vier Spalten gesetzt, und die Spalten des Artikels enden darüber auf gleicher Höhe. Ohne `height` oder `aspect` nimmt ein Strip die Form an, die seine Panels quadratisch macht, hier vier zu eins. Mit `placement=bottom` würde er an den Fuß der Seite gleiten, was zu einem Artikel passt, der lang genug ist, um ihn zu erreichen; mit `placement=top` würde er die nächste Seite eröffnen, weil ein Gleitobjekt nie über die Stelle steigt, an der es geschrieben ist.
 
 ### 3 · Jedes Bild in seine Zelle einpassen
 

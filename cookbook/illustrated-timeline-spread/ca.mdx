@@ -29,7 +29,7 @@ Cada fila de tres fitxes és un grup `row`, i cada fitxa té un `minHeight`, l�
 
 <Excerpt region="marks" />
 
-Els punts i els traços són la decoració (`decoration`) de la plantilla, ancorats a `#c1` … `#c6` pel seu cantó superior (`top`) i pujats la distància que els separa de la banda. La decoració es col·loca després dels marcs, així que quan una fitxa es mou o s’eixampla, el seu punt continua sobre el seu centre. El fons crema també és decoració: una caixa ancorada al peu del sagnat, l’alçada de la qual arriba fins al peu de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), de manera que segueix la banda.
+Els punts i els traços són la decoració (`decoration`) de la plantilla, ancorats a `#c1` … `#c6` pel seu cantó superior (`top`) i pujats la distància que els separa de la banda. La decoració es col·loca després dels marcs, així que quan una fitxa es mou o s’eixampla, el seu punt continua sobre el seu centre. El fons crema també és decoració: una caixa ancorada al peu de la sang, amb una alçada que arriba fins al peu de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), de manera que segueix la banda.
 
 ### 4 · Dibuixos a la mida d’impressió
 
@@ -51,4 +51,4 @@ Amb `shrink: 0` cap fitxa no cedeix amplada: la fila creix cap avall, les tres f
 ## Errors freqüents
 
 - Una fitxa amb `height` fix no participa en el repartiment d’amplada, perquè no surt mai de la fila: dona a les fitxes un `minHeight`, com aquí, i deixa l’alçada en `auto`.
-- Una mida que arriba fins a la vora d’una altra caixa es compta des del punt d’ancoratge de l’element: el fons està ancorat al peu del sagnat i creix cap amunt fins a `#band-1`. Una vora que queda darrere de l’àncora dona una alçada de 0.
+- Una mida que arriba fins a la vora d’una altra caixa es compta des del punt d’ancoratge de l’element: el fons està ancorat al peu de la sang i creix cap amunt fins a `#band-1`. Una vora que queda darrere de l’àncora dona una alçada de 0.

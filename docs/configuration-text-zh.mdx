@@ -3,9 +3,9 @@
 export const metadata = {
   title: '配置：正文',
   sidebarTitle: '正文',
-  description: '正文的排印：字体、字号与行距、颜色、缩进、引用块、诗歌、制表位和首字下沉',
+  description: '正文的字体排印：字体、字号与行距、颜色、缩进、引用块、诗歌、制表位和首字下沉',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分钟',
   order: 7,
   parent: 'configuration',
@@ -19,7 +19,7 @@ export const metadata = {
 
 `bodyText`属性控制所有段落文字的排版。
 
-<Illustration name="TypographyScale" data='{"title": "字号层级", "desc": "从H1到小号正文的字号层级，显示标题、正文和题注的相对大小。", "caption": "统一的字号层级让层次一眼可辨。", "rows": [{"role": "H1", "sample": "一级标题", "size": "32px"}, {"role": "H2", "sample": "二级标题", "size": "24px"}, {"role": "H3", "sample": "三级标题", "size": "20px"}, {"role": "正文", "sample": "正文文字", "size": "16px"}, {"role": "小号", "sample": "题注 / 注释", "size": "13px"}]}' />
+<Illustration name="TypographyScale" data='{"title": "字号层级", "desc": "从H1到小号正文的字号层级，显示标题、正文和题注的相对大小。", "caption": "统一的字号层级让层次一眼可辨。", "rows": [{"role": "H1", "sample": "一级标题", "size": "32px"}, {"role": "H2", "sample": "二级标题", "size": "24px"}, {"role": "H3", "sample": "三级标题", "size": "20px"}, {"role": "正文", "sample": "正文文字", "size": "16px"}, {"role": "小号", "sample": "题注 / 附注", "size": "13px"}]}' />
 
 <Illustration name="SpacingScale" data='{"title": "间距层级", "desc": "按级递增的间距值，用于外边距、内边距和间隙。", "caption": "逐级的间距在版面中形成可预期的节奏。", "steps": [{"name": "xs", "value": "4 px", "px": 4}, {"name": "sm", "value": "8 px", "px": 8}, {"name": "md", "value": "16 px", "px": 16}, {"name": "lg", "value": "24 px", "px": 24}, {"name": "xl", "value": "40 px", "px": 40}, {"name": "2xl", "value": "64 px", "px": 64}]}' />
 
@@ -107,9 +107,9 @@ export const metadata = {
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>文字对齐方式。<code>'left'</code>（或<code>'start'</code>）是一行开始的一侧：从右到左的段落即右侧（见<a href="/zh/docs/configuration-language#文本方向">文本方向</a>）。两端对齐会把间距分配到每一行，使左右边缘整齐。两端对齐段落的末行按自然宽度齐左排出；例外是Knuth-Plass接受了一个依靠胶料收缩的超长末行，这时词间距会压缩，使这一行正好填满行长（TeX的胶料设定语义，Canvas、HTML和PDF三种后端的处理完全一致）。</td>
+      <td>文字对齐方式。<code>'left'</code>（或<code>'start'</code>）是一行开始的一侧：从右到左的段落即右侧（见<a href="/zh/docs/configuration-language#文本方向">文本方向</a>）。<code>'right'</code>（或<code>'end'</code>）是一行结束的一侧，<code>'center'</code>使每行居中。两端对齐会把间距分配到每一行，使左右边缘整齐。两端对齐段落的末行按自然宽度齐左排出；例外是Knuth-Plass接受了一个依靠粘连收缩才排得下的超长末行，这时词间距会压缩，使这一行正好填满行长（这是TeX设定粘连的语义，Canvas、HTML和PDF三种后端的处理完全一致）。</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -193,25 +193,25 @@ export const metadata = {
       <td><code>optimalLineBreaking</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>使用Knuth-Plass最优断行，而不是贪心的逐行填充。整个段落的词间距会更均匀。中文、日文或韩文段落（见<a href="/zh/docs/configuration-east-asian#东亚排版">东亚排版</a>），以及含有比栏还宽的词的段落，仍然逐行排；只引用了少量CJK词语的拉丁文段落则照常使用最优断行。配合<code>optimalRagged</code>，不齐行文字也使用它。见<a href="/zh/docs/justification">断词与两端对齐</a>。</td>
+      <td>使用Knuth-Plass最优断行，而不是贪心的逐行填充。整个段落的词间距会更均匀。中文、日文或韩文段落（见<a href="/zh/docs/configuration-east-asian#东亚排版">东亚排版</a>），以及含有比栏还宽的词的段落，仍然逐行排；只引用了少量CJK词语的拉丁文段落则照常使用最优断行。配合<code>optimalRagged</code>，非两端对齐的文字也使用它。见<a href="/zh/docs/justification">断词与两端对齐</a>。</td>
     </tr>
     <tr>
       <td><code>optimalRagged</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>齐左、齐右或居中的连续正文也用Knuth-Plass断行：包括正文、引用块和列表项，以及不齐行的段落样式、框的正文和篇、节样式的正文。词间距保持原宽。断行器衡量每一行比行长短多少（短3 em的行，代价与一行词间距达到<code>maxWordSpacing</code>的两端对齐行相同），因此它会让边缘更均匀，而不是先填满一行再排下一行；孤字规则（<code>avoidRunts</code>、<code>tightenRunts</code>）和<code>hyphenateAcrossColumns</code>对不齐行文字的作用也与两端对齐文字相同。开启<code>hyphenation.ragged</code>时，仍由断词区决定哪些音节可以出现在行尾（见<a href="/zh/docs/configuration-language#不齐行文字">不齐行文字</a>）。不齐行的标题、题注、注释、表格单元格和目录仍然逐行排。需要开启<code>optimalLineBreaking</code>。设为<code>false</code>时，不齐行文字逐行排，与postext 1.4及更早版本相同；早先保存、把部分连续正文设为不齐行的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
+      <td>齐左、齐右或居中的连续正文也用Knuth-Plass断行：包括正文、引用块和列表项，以及非两端对齐的段落样式、框的正文和篇、节样式的正文。词间距保持原宽。断行器衡量每一行比行长短多少（短3 em的行，代价与一行词间距达到<code>maxWordSpacing</code>的两端对齐行相同），因此它会让边缘更均匀，而不是先填满一行再排下一行；孤字规则（<code>avoidRunts</code>、<code>tightenRunts</code>）和<code>hyphenateAcrossColumns</code>对非两端对齐文字的作用也与两端对齐文字相同。开启<code>hyphenation.ragged</code>时，仍由断词区决定哪些音节可以出现在行尾（见<a href="/zh/docs/configuration-language#非两端对齐的文字">非两端对齐的文字</a>）。非两端对齐的标题、题注、注释、表格单元格和目录仍然逐行排。需要开启<code>optimalLineBreaking</code>。设为<code>false</code>时，非两端对齐的文字逐行排，与postext 1.4及更早版本相同；早先保存、把部分连续正文设为非两端对齐的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
     </tr>
     <tr>
       <td><code>breakAfterDashes</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>允许在两个词之间紧排（前后无空格）的长破折号或短破折号之后断行：<code>say—that’s</code>、<code>riddles.—I</code>、<code>Hamburg–Berlin</code>，破折号后面的词换了样式时也一样（<code>see—*and*</code>）。Knuth-Plass把它当作一个词间空格处理，行在破折号处结束，不添加任何字符。以下情况从不在破折号后断行：破折号引出插入语或一句对话时（<code>—dijo</code>、<code>said "—Hola</code>、<code>sagte »—Ich</code>：破折号前有空格，或有空格加引号；如果前面的引号是收在一个词上的，比如<code>"no"—and</code>、德文<code>„nein“—und</code>或法文<code>« non »—et</code>，则可以断行）；破折号后面是标点（<code>él—,</code>）；破折号后面是引号或括号（<code>thinking—" and</code>、<code>says—“no”</code>、<code>says—(no)</code>：破折号后面的引号往往是在结束被破折号打断的话语）；在一串破折号内部；在用短破折号连接的数字范围内（<code>1914–1918</code>）。设为<code>false</code>时保留1.4的断行方式：Knuth-Plass从不在破折号后断行，而带格式或断词的不齐行文字所用的逐行断行器只在两个字母之间断行；早先保存、正文中含有这类破折号的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。它作用于连续正文、标题、列表、引用块和框。题注、注释、表格单元格和目录保留1.4的断行方式，而逐行排的普通不齐行段落无论如何都遵循pretext自己的规则。</td>
+      <td>允许在两个词之间紧排（前后无空格）的长破折号或短破折号之后断行：<code>say—that’s</code>、<code>riddles.—I</code>、<code>Hamburg–Berlin</code>，破折号后面的词换了样式时也一样（<code>see—*and*</code>）。Knuth-Plass把它当作一个词间空格处理，行在破折号处结束，不添加任何字符。以下情况从不在破折号后断行：破折号引出插入语或一句对话时（<code>—dijo</code>、<code>said "—Hola</code>、<code>sagte »—Ich</code>：破折号前有空格，或有空格加引号；如果前面的引号是收在一个词上的，比如<code>"no"—and</code>、德文<code>„nein“—und</code>或法文<code>« non »—et</code>，则可以断行）；破折号后面是标点（<code>él—,</code>）；破折号后面是引号或括号（<code>thinking—" and</code>、<code>says—“no”</code>、<code>says—(no)</code>：破折号后面的引号往往是在结束被破折号打断的话语）；在一串破折号内部；在用短破折号连接的数字范围内（<code>1914–1918</code>）。设为<code>false</code>时保留1.4的断行方式：Knuth-Plass从不在破折号后断行，而带格式或断词的非两端对齐文字所用的逐行断行器只在两个字母之间断行；早先保存、正文中含有这类破折号的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。它作用于连续正文、标题、列表、引用块和框。题注、注释、表格单元格和目录保留1.4的断行方式，而逐行排的普通不齐行段落无论如何都遵循pretext自己的规则。</td>
     </tr>
     <tr>
       <td><code>breakAfterHyphens</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>在Knuth-Plass断行的每个段落里，允许在复合词的连字符（夹在两个字母之间的连字符）之后断行（<code>well-</code> · <code>known</code>、<code>vencer-</code> · <code>se</code>）。行在连字符处结束，不添加任何字符；这个断点的代价与音节断点相同。与数字或符号相邻的连字符之后从不断行（<code>COVID-19</code>、<code>-5 °C</code>）。没有行内格式的两端对齐段落，只有连字符两侧各有两个字母时才在此断行，所以不会有一行结束在<code>e-mail</code>的<code>e-</code>上。设为<code>false</code>时保留1.4的断行方式：没有行内格式的两端对齐段落从不在此断行，而同一个段落只要任意位置有一个斜体词，以及不齐行段落和逐行排的段落，都会在此断行；早先保存、正文中含有复合词的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。它作用于连续正文、标题、列表、引用块和框。见<a href="/zh/docs/justification#复合词">复合词</a>。</td>
+      <td>在Knuth-Plass断行的每个段落里，允许在复合词的连字符（夹在两个字母之间的连字符）之后断行（<code>well-</code> · <code>known</code>、<code>vencer-</code> · <code>se</code>）。行在连字符处结束，不添加任何字符；这个断点的代价与音节断点相同。与数字或符号相邻的连字符之后从不断行（<code>COVID-19</code>、<code>-5 °C</code>）。没有行内格式的两端对齐段落，只有连字符两侧各有两个字母时才在此断行，所以不会有一行结束在<code>e-mail</code>的<code>e-</code>上。设为<code>false</code>时保留1.4的断行方式：没有行内格式的两端对齐段落从不在此断行，而同一个段落只要任意位置有一个斜体词，以及非两端对齐的段落和逐行排的段落，都会在此断行；早先保存、正文中含有复合词的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。它作用于连续正文、标题、列表、引用块和框。见<a href="/zh/docs/justification#复合词">复合词</a>。</td>
     </tr>
     <tr>
       <td><code>repeatHyphen</code></td>
@@ -223,7 +223,7 @@ export const metadata = {
       <td><code>hardLineBreaks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>把源文本行末的反斜杠，以及后跟空格的<code>{'\\\\'}</code>，读作段落、引文或列表项内部的强制换行（CommonMark的硬换行）：后面的文字在同一段落中另起一行，换行前的一行按自然宽度排，与末行相同。段落末尾的反斜杠照样印出，行末两个空格不算换行（见<a href="/zh/docs/document-format-directives#段落内的换行">文档格式 › 段落内的换行</a>）。<code>false</code>保留1.22的读法：反斜杠照样印出，各行用空格连接；更早保存、文字中有这种反斜杠的配置按此读取（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。标题、图注、注释和表格单元格在两种设置下都在<code>{'\\\\'}</code>处换行。</td>
+      <td>把源文本行末的反斜杠，以及后跟空格的<code>{'\\\\'}</code>，读作段落、引文或列表项内部的强制换行（CommonMark的硬换行）：后面的文字在同一段落中另起一行，换行前的一行按自然宽度排，与末行相同。段落末尾的反斜杠照样印出，行末两个空格不算换行（见<a href="/zh/docs/document-format-directives#段落内的换行">文档格式 › 段落内的换行</a>）。<code>false</code>保留1.22的读法：反斜杠照样印出，各行用空格连接；更早保存、文字中有这种反斜杠的配置按此读取（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。标题、题注、注释和表格单元格在两种设置下都在<code>{'\\\\'}</code>处换行。</td>
     </tr>
     <tr>
       <td><code>scriptContext</code></td>
@@ -235,7 +235,7 @@ export const metadata = {
       <td><code>shapingLanguage</code></td>
       <td><code>'document' | 'host'</code></td>
       <td><code>'document'</code></td>
-      <td>文字成形所用的语言：测量、绘制和嵌入都按这种语言进行。字体在不同语言下给出不同的字形（OpenType <code>locl</code>）：Noto Serif SC的数字在中文下是另一套字形，带加泰罗尼亚语字形的字体把<code>l·l</code>画成另一种样子，带土耳其语规则的字体不把<code>fi</code>连成合字。<code>'document'</code>（postext 1.30起的默认值）：取文档自己的语言（<code>locale</code>，没有则取断词语言；两者都没有写明的文档算作英语<code>en-US</code>，<code>locale</code>不是语言标签的文档不带语言成形），一段文字写明了语言时取它自己的（<code>:ltr[…]&#123;lang=en&#125;</code>）。排版把这种语言设在用来测量的每个上下文上，所以一份文档在任何语言的页面上和在排版工作线程里断行都相同；Canvas按它绘制，HTML查看器和EPUB把它声明在文档和每一页上，PDF用该语言对应的OpenType语言系统成形。postext 1.30起，用这个值时文字怎样绘制就怎样测量。一个字符串只有一个宽度，与此前测量过什么无关：Chrome会保存成形过的词，Noto Serif SC的<code>2026</code>在没有U+00FF以上字符的字符串里宽2.20 em，在有这类字符的字符串里宽2.23 em，所以这两类字符串分别在各自的上下文上测量。从右到左的词，不论用哪款字体，都从右到左测量。在任何段落里（不论有没有格式），断行器可能切开的词（在音节处或连字符处）测量时是整个词；留在同一行里的，Canvas、HTML查看器和PDF都把它整个排出。从postext 1.31起如此：到1.30.1为止，没有格式的段落会把这种词的每一段各自测量，所以字体跨过断词点画出的东西，如EB Garamond里<code>of·fice</code>的<code>ff</code>、Crimson Pro里加泰罗尼亚语<code>l·l</code>的宽点，只出现在带有斜体的段落里的词上，不出现在没有格式的段落里的同一个词上。用<code>'host'</code>时，没有格式的段落仍把这种词的每一段各自测量。在行末断开的词，两部分都按绘制出来的文字测量：排在下一行开头的那一部分当作单独的一段文字，加泰罗尼亚语<code>col·lecció</code>的前一部分按<code>col-</code>测量。设计文本（书眉、章首页、标题设计）逐段测量，每一段按它绘制时的方向测量。PDF像浏览器的Canvas那样逐词成形（词在空格、制表符、U+3000或U+200B处结束，也在汉字之前结束），排版逐字测量的中文和日文字符逐字排出；字体提供函数说明了浏览器从哪个字体文件取字符时，PDF也从那个文件取（见<a href="/zh/docs/configuration-pdf-output#中文日文和韩文字体">中文、日文和韩文字体</a>）。<code>'host'</code>：与postext 1.28及更早版本相同，排版按宿主页面的语言测量（工作线程里没有语言），Canvas也按这同一种语言绘制；HTML查看器声明中文、日文、韩文或从右到左的文档的语言。使用<code>'host'</code>的文档，宽度和PDF都保持原样；带格式的段落里留在同一行的词，它的Canvas和HTML查看器也整个排出（到postext 1.29.2为止是一段一段绘制的）。用这个值时，断开的词排在下一行开头的那一部分，宽度按整个词减去前一部分来算，所以如果字体为该语言准备的字形要用到断开处两侧的字母（Crimson Pro的加泰罗尼亚语<code>l·l</code>，一个只排在两个<code>l</code>之间的宽点），在该语言的页面上，这个词余下的部分后面就会留出空隙，在这款字体里是三分之一个字宽。默认值只在postext 1.29.0是<code>'document'</code>，那一版的Canvas和PDF没有跟着测量走；1.29.1和1.29.2是<code>'host'</code>，1.30.0起又是<code>'document'</code>。在<code>configVersion</code> 14之前保存、又没有写明这项设置的配置会被写入<code>'host'</code>（<code>pinLegacyShapingLanguage</code>），所以已保存的文档断行不变；写明了值的配置保持它的值。Canvas没有<code>lang</code>的浏览器（136之前的Chrome，以及缺少它的Firefox和Safari）得不到语言，字形仍是它一直测量的那些，命令行始终用<code>'host'</code>排版（见<a href="/zh/docs/command-line#与沙盒的区别">与沙盒的区别</a>）。</td>
+      <td>文字成形所用的语言：测量、绘制和嵌入都按这种语言进行。字体在不同语言下给出不同的字形（OpenType <code>locl</code>）：Noto Serif SC的数字在中文下是另一套字形，带加泰罗尼亚语字形的字体把<code>l·l</code>画成另一种样子，带土耳其语规则的字体不把<code>fi</code>连成合字。<code>'document'</code>（postext 1.30起的默认值）：取文档自己的语言（<code>locale</code>，没有则取断词语言；两者都没有写明的文档算作英语<code>en-US</code>，<code>locale</code>不是语言标签的文档不带语言成形），一段文字写明了语言时取它自己的（<code>:ltr[…]&#123;lang=en&#125;</code>）。排版把这种语言设在用来测量的每个上下文上，所以一份文档在任何语言的页面上和在排版工作线程里断行都相同；Canvas按它绘制，HTML阅读器和EPUB把它声明在文档和每一页上，PDF用该语言对应的OpenType语言系统成形。postext 1.30起，用这个值时文字怎样绘制就怎样测量。一个字符串只有一个宽度，与此前测量过什么无关：Chrome会保存成形过的词，Noto Serif SC的<code>2026</code>在没有U+00FF以上字符的字符串里宽2.20 em，在有这类字符的字符串里宽2.23 em，所以这两类字符串分别在各自的上下文上测量。从右到左的词，不论用哪款字体，都从右到左测量。在任何段落里（不论有没有格式），断行器可能切开的词（在音节处或连字符处）测量时是整个词；留在同一行里的，Canvas、HTML阅读器和PDF都把它整个排出。从postext 1.31起如此：到1.30.1为止，没有格式的段落会把这种词的每一段各自测量，所以字体跨过断词点画出的东西，如EB Garamond里<code>of·fice</code>的<code>ff</code>、Crimson Pro里加泰罗尼亚语<code>l·l</code>的宽点，只出现在带有斜体的段落里的词上，不出现在没有格式的段落里的同一个词上。用<code>'host'</code>时，没有格式的段落仍把这种词的每一段各自测量。在行末断开的词，两部分都按绘制出来的文字测量：排在下一行开头的那一部分当作单独的一段文字，加泰罗尼亚语<code>col·lecció</code>的前一部分按<code>col-</code>测量。设计文本（书眉、章首页、标题设计）逐段测量，每一段按它绘制时的方向测量。PDF像浏览器的Canvas那样逐词成形（词在空格、制表符、U+3000或U+200B处结束，也在汉字之前结束），排版逐字测量的中文和日文字符逐字排出；字体提供函数说明了浏览器从哪个字体文件取字符时，PDF也从那个文件取（见<a href="/zh/docs/configuration-pdf-output#中文日文和韩文字体">中文、日文和韩文字体</a>）。<code>'host'</code>：与postext 1.28及更早版本相同，排版按宿主页面的语言测量（工作线程里没有语言），Canvas也按这同一种语言绘制；HTML阅读器声明中文、日文、韩文或从右到左的文档的语言。使用<code>'host'</code>的文档，宽度和PDF都保持原样；带格式的段落里留在同一行的词，它的Canvas和HTML阅读器也整个排出（到postext 1.29.2为止是一段一段绘制的）。用这个值时，断开的词排在下一行开头的那一部分，宽度按整个词减去前一部分来算，所以如果字体为该语言准备的字形要用到断开处两侧的字母（Crimson Pro的加泰罗尼亚语<code>l·l</code>，一个只排在两个<code>l</code>之间的宽点），在该语言的页面上，这个词余下的部分后面就会留出空隙，在这款字体里是三分之一个字宽。默认值只在postext 1.29.0是<code>'document'</code>，那一版的Canvas和PDF没有跟着测量走；1.29.1和1.29.2是<code>'host'</code>，1.30.0起又是<code>'document'</code>。在<code>configVersion</code> 14之前保存、又没有写明这项设置的配置会被写入<code>'host'</code>（<code>pinLegacyShapingLanguage</code>），所以已保存的文档断行不变；写明了值的配置保持它的值。Canvas没有<code>lang</code>的浏览器（136之前的Chrome，以及缺少它的Firefox和Safari）得不到语言，字形仍是它一直测量的那些，命令行始终用<code>'host'</code>排版（见<a href="/zh/docs/command-line#与沙盒的区别">与沙盒的区别</a>）。</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
@@ -254,6 +254,12 @@ export const metadata = {
       <td><code>BlockquoteConfig</code></td>
       <td>见下文</td>
       <td>Markdown引用块（<code>&gt; …</code>）的排法：颜色、斜体和缩进。见<a href="#引用块">引用块</a>。</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>见下文</td>
+      <td>逐行排的<code>:::verse</code>诗歌如何排：缩进、超长诗行的转行、诗节间距以及不拆开的诗节。见<a href="#诗歌">诗歌</a>。</td>
     </tr>
   </tbody>
 </table>
@@ -451,9 +457,9 @@ bodyText: {
 
 ### 首字下沉
 
-正文段落可以以首字下沉开头：第一个字母放大，排在段落的前几行旁边，这几行让出字母的宽度和一段间隙，其余照常排（用Knuth-Plass断行、两端对齐、断词）。段落样式给样式中每个`:::paragraphs`组的第一段加上首字下沉（设`each: true`时每一段都加，适合条目式的目录）；标题级别或标题样式给标题后的第一个正文段落加上首字下沉（见[按级别覆盖](/zh/docs/configuration-headings#按级别覆盖)、[段落样式](/zh/docs/configuration-styles#段落样式)和[标题样式](/zh/docs/configuration-styles#标题样式)中的`dropCap`字段）。标题后的这一段与`indentAfterHeading`的找法相同，会越过容器围栏、指令、离开文字流的框和浮动图；框、列表项、引文、诗或注释中的段落从不带首字下沉。在文字中，写在标题行或`:::paragraphs`围栏上的`{dropcap}`、`{dropcap=false}`和`{dropcap=N}`为该章或该组开启、关闭首字下沉，或设定它的行数（见[文档格式 › 首字下沉](/zh/docs/document-format#首字下沉)）。自postext 1.23起。
+正文段落可以以首字下沉开头：第一个字母放大，排在段落的前几行旁边，这几行让出字母的宽度和一段间隙，其余照常排（用Knuth-Plass断行、两端对齐、断词）。段落样式给样式中每个`:::paragraphs`组的第一段加上首字下沉（设`each: true`时每一段都加，适合条目式的目录）；标题级别或标题样式给标题后的第一个正文段落加上首字下沉（见[按级别覆盖](/zh/docs/configuration-headings#按级别覆盖)、[段落样式](/zh/docs/configuration-styles#段落样式)和[标题样式](/zh/docs/configuration-styles#标题样式)中的`dropCap`字段）。标题后的这一段与`indentAfterHeading`的找法相同，会越过容器的开始行和结束行、指令、不在正文中排的框和浮动图；框、列表项、引文、诗或注释中的段落从不带首字下沉。在文字中，写在标题行或`:::paragraphs`开始行上的`{dropcap}`、`{dropcap=false}`和`{dropcap=N}`为该章或该组开启、关闭首字下沉，或设定它的行数（见[文档格式 › 首字下沉](/zh/docs/document-format#首字下沉)）。自postext 1.23起。
 
-模板页的框不是标注框：它是正文，其中的段落像文字流里的段落一样做首字下沉，来源可以是`:::paragraphs`组、段落样式，或同一框里标题所在级别的设置（模板用`takes: 'h1'`把标题送进单独的框时，如果 Markdown 中紧跟标题的段落正好是流动框正文的开头，该段落会得到标题级别的首字下沉，postext 1.39 起）。在`:::callout`框里要求首字下沉的组不做首字下沉，并给出`dropCap`警告（`inBox`）。自 postext 1.38 起。带首字下沉的段落在框链（`next`）或续排到其他页面的框中，与文字流里一样，绝不在首字的最后一行之前切开：整段移走；只有当它开头的框矮得放不下这些行时才在那里切开，并给出`dropCap`警告（`split`）。自 postext 1.39 起。
+模板页的框不是标注框：它是正文，其中的段落像文字流里的段落一样做首字下沉，来源可以是`:::paragraphs`组、段落样式，或同一框里标题所在级别的设置（模板用`takes: 'h1'`把标题送进单独的框时，如果Markdown中紧跟标题的段落正好是流文框正文的开头，该段落会得到标题级别的首字下沉，postext 1.39起）。在`:::callout`框里要求首字下沉的组不做首字下沉，并给出`dropCap`警告（`inBox`）。自postext 1.38起。带首字下沉的段落在框链（`next`）或接续到其他页面的框中，与文字流里一样，绝不在首字的最后一行之前切开：整段移走；只有当它开头的框矮得放不下这些行时才在那里切开，并给出`dropCap`警告（`split`）。自postext 1.39起。
 
 ```ts
 headings: {
@@ -549,7 +555,7 @@ headings: {
 - **升起首字**（`lines: 1`配上更大的`fontSize`，或`sink`小于`lines`）高出第一行，段落在上方为高出的部分留出整条网格线的空间，所以不会压到上方的文字。
 - **断开**：段落从不在第`sink`行之前断开，而是整段移到下一栏或下一页；只有当它单独位于一个放不下这几行的空栏中时，才照样断开，并引发`dropCap`警告。与正文保持在一起的标题会把这几行留在自己下面。在下一栏接排的部分不带首字，各行排满全宽；如果为另一宽度的栏再次断开，前几行保留缩进。各栏齐底可以像对待其他段落一样把这一段排松或排紧，但从不在缩短的行之间加空白。
 - **文字**：各行在起始一侧缩短：拉丁文字在左边，阿拉伯文和希伯来文在右边。与下一个字母相连的字母（阿拉伯文、叙利亚文、N'Ko）不单独排出，段落引发`dropCap`警告；横排的中文和日文取一个字的首字（首字下沉）。竖排文字不带首字下沉（给出警告）。不以字母或数字开头的段落（引用、公式、注释标记）也不带（给出警告）。
-- **输出**：Canvas、HTML查看器和固定版式EPUB把首字画在各行旁边；HTML把它写在第一行文字的紧前面，中间不隔任何东西，所以屏幕阅读器把这个词作为一个整体读出。在带标签的PDF中，首字属于段落的`P`，并与它所在词的其余部分组成一个`Span`，其`/ActualText`就是这个词：提取文字时读出*Long before*，而不是*L ong before*。流式EPUB把它排成CSS的`initial-letter`（行数、下沉），阅读系统不支持时改为浮动。
+- **输出**：Canvas、HTML阅读器和固定版式EPUB把首字画在各行旁边；HTML把它写在第一行文字的紧前面，中间不隔任何东西，所以屏幕阅读器把这个词作为一个整体读出。在带标签的PDF中，首字属于段落的`P`，并与它所在词的其余部分组成一个`Span`，其`/ActualText`就是这个词：提取文字时读出*Long before*，而不是*L ong before*。流式EPUB把它排成CSS的`initial-letter`（行数、下沉），阅读系统不支持时改为浮动。
 
 这些设置与配置的其余部分一起检查（见[配置警告](/zh/docs/configuration-fonts-colors-viewers#配置警告)）：首字下沉或其引导词中的未知键报告为`unknownConfigKey`；不属于其取值的`punctuation`或`shortParagraph`，以及不是从1起的整数的`lines`、`sink`或`characters`，报告为`unknownConfigValue`，并使用默认值。首字下沉默认关闭，所以已保存的文档都不会改变。
 
@@ -561,5 +567,5 @@ headings: {
 bodyText: { fontFamily: "'EB Garamond', Georgia, serif" } // 用EB Garamond排版
 ```
 
-排版前要先加载这个字体族（见[自定义字体](/zh/docs/configuration-fonts-colors-viewers#自定义字体)，以及[生成PDF](/zh/docs/configuration-pdf-output#生成pdf)中的字体提供器）；如果缺少它，浏览器会用默认字体测量，不管字体栈其余部分写了什么。引号内的逗号是名称的一部分（`'"Foo, Bar"'`是一个字体族）。
+排版前要先加载这个字体族（见[自定义字体](/zh/docs/configuration-fonts-colors-viewers#自定义字体)，以及[生成PDF](/zh/docs/configuration-pdf-output#生成pdf)中的字体提供函数）；如果缺少它，浏览器会用默认字体测量，不管字体栈其余部分写了什么。引号内的逗号是名称的一部分（`'"Foo, Bar"'`是一个字体族）。
 

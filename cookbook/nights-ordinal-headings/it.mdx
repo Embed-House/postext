@@ -1,6 +1,6 @@
 ---
 title: "Titoli in ordinali arabi in lettere: la prima notte…"
-summary: "Un modello di livello scrive ogni notte come الليلة e un ordinale femminile, الليلة الأولى, الثانية, الثالثة, così il Markdown non porta mai un numero."
+summary: "Un modello di livello scrive ogni notte come الليلة e un ordinale femminile, الليلة الأولى, الثانية, الثالثة, così il Markdown non contiene mai un numero."
 plain: "L’inizio delle Mille e una notte, dove ogni notte ha come titolo il suo numero scritto in parole arabe, «la prima notte», «la seconda notte», nella forma femminile che si accorda con la parola araba per notte."
 description: "Le prime notti di Alf layla wa-layla in Postext: un modello con {2:ordinal-feminine}, titoli delle notti in ruqʿa, aperture dei racconti e testatine."
 question: "Come numero i capitoli con ordinali arabi in lettere, come الليلة الأولى?"
@@ -10,13 +10,13 @@ pageNotes: { "2": "L’apertura de Il mercante e il genio: una fascia chiara con
 
 ## Che cosa comporrai
 
-Dieci pagine dall’inizio delle *Mille e una notte*: un occhiello, poi Il mercante e il genio, il primo racconto di Shahrazad, che si estende su tre notti. Ogni notte si apre con la formula di Hindawi فلما كانت in piccolo cufico sopra il suo numero in ruqʿa verde, الليلة الأولى, الليلة الثانية, الليلة الثالثة, scritto in lettere come lo stampano i libri. Nessuno di quei numeri è nel Markdown: il livello di titolo conta le notti e scrive ogni conteggio come ordinale femminile, che si accorda con ليلة. Il racconto si apre sotto una testata con filetti d’oro, le storie dei tre vecchi hanno i loro piccoli titoli e le testatine portano il libro e il racconto. Il testo è l’edizione del 2022 della Fondazione Hindawi, con licenza CC BY 4.0.
+Dieci pagine dall’inizio delle *Mille e una notte*: un occhiello, poi Il mercante e il genio, il primo racconto di Shahrazad, che si estende su tre notti. Ogni notte si apre con la formula di Hindawi فلما كانت in piccolo cufico sopra il suo numero in ruqʿa verde, الليلة الأولى, الليلة الثانية, الليلة الثالثة, scritto in lettere come lo stampano i libri. Nessuno di quei numeri è nel Markdown: il livello di titolo conta le notti e scrive ogni conteggio come ordinale femminile, che si accorda con ليلة. Il racconto si apre sotto una testata con filetti d’oro, le storie dei tre vecchi hanno i loro piccoli titoli e le testatine riportano il libro e il racconto. Il testo è l’edizione del 2022 della Fondazione Hindawi, con licenza CC BY 4.0.
 
 ## Preparazione
 
 ### 1 · Notti contate in lettere
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una notte è un titolo di livello 2, `## الليلة`, e il `numberingTemplate` del livello è `'الليلة {2:ordinal-feminine}'`: il modificatore `-feminine` scrive الأولى, الثانية, الحادية عشرة, الحادية بعد الألف ([numeri ordinali e cardinali in lettere](/it/docs/arabic-layout#ordinali-e-cardinali-in-lettere), [numeri in lettere](/it/docs/configuration-headings#numeri-in-lettere)). Con `numberPosition: 'replace'` il numero è l’intero titolo: ciò che il Markdown scrive dopo `##` viene scartato, e il titolo, i segnalibri del PDF e il testo alternativo leggono الليلة الثانية. Il disegno stampa quel titolo, `{titleText}`, in grande, e la formula di Hindawi فلما كانت, un testo fisso, in piccolo sopra. I titoli dei racconti usano uno stile con `numbered: false`: un livello 1 numerato farebbe ripartire il conteggio delle notti a ogni racconto, mentre uno non numerato lascia stare i contatori più profondi, così le notti proseguono per tutto il libro.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una notte è un titolo di livello 2, `## الليلة`, e il `numberingTemplate` del livello è `'الليلة {2:ordinal-feminine}'`: il modificatore `-feminine` scrive الأولى, الثانية, الحادية عشرة, الحادية بعد الألف ([numeri ordinali e cardinali in lettere](/it/docs/arabic-layout#ordinali-e-cardinali-in-lettere), [numeri in lettere](/it/docs/configuration-headings#numeri-in-lettere)). Con `numberPosition: 'replace'` il numero è l’intero titolo: ciò che il Markdown scrive dopo `##` viene scartato, e il titolo, i segnalibri del PDF e il testo alternativo leggono الليلة الثانية. La grafica stampa quel titolo, `{titleText}`, in grande, e la formula di Hindawi فلما كانت, un testo fisso, in piccolo sopra. I titoli dei racconti usano uno stile con `numbered: false`: un livello 1 numerato farebbe ripartire il conteggio delle notti a ogni racconto, mentre uno non numerato lascia stare i contatori più profondi, così le notti proseguono per tutto il libro.
 
 <PageShot page={5} crop="0,0.15,1,0.35" caption="Pagina 5: la seconda notte, con il numero scritto in lettere dal modello e stampato come intero titolo." />
 
@@ -30,13 +30,13 @@ Il titolo di livello 1 è una fascia colorata tra due filetti d’oro, con il ti
 
 <Excerpt region="heads" />
 
-Le testatine appartengono allo stile di titolo `tale`, così ogni racconto porta le sue; l’occhiello non ne ha. Il verso porta il titolo del libro e il recto `{chapterTitle}`, il racconto. In un libro rilegato a destra il verso è la pagina destra, quindi il suo folio va in alto a destra ([ordine delle pagine e rilegatura a destra](/it/docs/arabic-layout#ordine-delle-pagine-e-rilegatura-a-destra)).
+Le testatine appartengono allo stile di titolo `tale`, così ogni racconto ha le sue; l’occhiello non ne ha. Il verso riporta il titolo del libro e il recto `{chapterTitle}`, il racconto. In un libro rilegato a destra il verso è la pagina destra, quindi il suo numero di pagina va in alto a destra ([ordine delle pagine e rilegatura a destra](/it/docs/arabic-layout#ordine-delle-pagine-e-rilegatura-a-destra)).
 
 ### 4 · Un occhiello in ruqʿa
 
 <Excerpt region="title" />
 
-L’occhiello è uno stile di titolo con `span: 'page'`, `numbered: false` e intestazione e piè di pagina vuoti, così non conta e non porta testatina.
+L’occhiello è uno stile di titolo con `span: 'page'`, `numbered: false` e intestazione e piè di pagina vuoti, così non conta e non ha testatina.
 
 ## Varianti
 

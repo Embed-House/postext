@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages settings',
   description: 'Page templates for composed pages: frames, groups, decoration, inheritance and recto/verso variants, the label styles of picture anchors, and the warnings a template can give',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Page templates
 
-A composed page is a page whose form comes from a **template** in the configuration and whose content comes from the Markdown of a `::::page{template="…"}` fence. The template names rectangles, called **frames**; the Markdown sends each piece of content to a frame by its name (its slot). Geometry never appears in the Markdown, and content text never appears in the template. The `pageTemplates` property holds the templates of the book:
+A composed page is a page whose form comes from a **template** in the configuration and whose content comes from the Markdown of a page fence, the `::::page{template="…"}` block that opens with four colons. The template names rectangles, called **frames**; the Markdown sends each piece of content to a frame by its name (its slot). Geometry never appears in the Markdown, and content text never appears in the template. The `pageTemplates` property holds the templates of the book:
 
 ```ts
 const config: PostextConfig = {
@@ -80,7 +80,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>area</code></td>
       <td><code>'content' | 'trim' | 'bleed'</code></td>
       <td><code>'content'</code></td>
-      <td>The rectangle frame positions refer to. <code>'content'</code> is the page's content area, mirrored on left and right pages like the running text; <code>'trim'</code> is the trimmed page; <code>'bleed'</code> the page with its bleed.</td>
+      <td>The rectangle that frame positions refer to. <code>'content'</code> is the page's content area, mirrored on left and right pages like the running text; <code>'trim'</code> is the trimmed page; <code>'bleed'</code> the page with its bleed.</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
@@ -92,7 +92,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>frames</code></td>
       <td><code>FrameConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>The frames, in template order: the order measured first and the one that breaks ties. See <a href="#frames">Frames</a>.</td>
+      <td>The frames, in template order: the order in which they are measured, which also breaks ties. See <a href="#frames">Frames</a>.</td>
     </tr>
     <tr>
       <td><code>groups</code></td>
@@ -104,7 +104,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>none</td>
-      <td>Images, rules and boxes painted with the page, in the element language of <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text. Since postext 1.42, <code>&#123;headingNumber&#125;</code> prints the counter of the first numbered heading the page's frames hold (a frame with <code>takes</code>) and <code>&#123;headingNumber.titulo&#125;</code> that of the frame <code>titulo</code>, in the document's digits, so a badge with a topic's number reads it from the heading and the page fence need not repeat it. Decoration is painted under the frames; a click on a text element that lies over a frame, at a point where the frame has no text of its own, reaches the element, not the frame. A frame with a negative <code>layer</code> is painted under the decoration.</td>
+      <td>Images, rules and boxes painted with the page, written with the same elements as <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text. Since postext 1.42, <code>&#123;headingNumber&#125;</code> prints the counter of the first numbered heading the page's frames hold (a frame with <code>takes</code>) and <code>&#123;headingNumber.titulo&#125;</code> that of the frame <code>titulo</code>, in the document's digits, so a badge with a topic's number reads it from the heading and the page fence need not repeat it. Decoration is painted under the frames; a click on a text element that lies over a frame, at a point where the frame has no text of its own, reaches the element, not the frame. A frame with a negative <code>layer</code> is painted under the decoration.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -122,7 +122,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>On a spread, a band of this width centred on the spine that frames keep off unless they set <code>crossGutter: true</code>: a frame reaching across it is cut at its edge on the side of its centre, one starting inside it moves out. With <code>0</code> the band is the spine itself.</td>
+      <td>On a spread, the width of a band centred on the spine that frames keep out of unless they set <code>crossGutter: true</code>: a frame reaching across it is cut at the band's edge on the side where the frame's centre lies, and a frame starting inside it moves out. With <code>0</code> the band is the spine itself.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
@@ -140,7 +140,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>A paragraph style for the text of the page, as heading styles have.</td>
+      <td>A paragraph style for the text of the page, as heading styles have one. The layout does not apply it yet.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -195,7 +195,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>A fixed length, a percentage of the area (0 to 100), <code>'auto'</code> (the content's own size) or <code>'fill'</code> (what is left up to the edge the frame is anchored to). Unset, the frame reads <code>placement.size</code>, then the default: full width, as tall as its content. Since postext 1.42, an <code>'auto'</code> width makes the frame as wide as its longest line plus its padding, no wider than the room its anchor leaves and <code>maxWidth</code> (text that does not fit wraps there), no narrower than <code>minWidth</code>. The text is measured set flush left, so a centred title is as wide as its words. The frame starts at the edge its anchor names, and frames anchored to it follow. Use it for a tab or a box that has to match its title in every language. A value the engine cannot use (a negative length, an unknown unit) reads as the default.</td>
+      <td>A fixed length, a percentage of the area (0 to 100), <code>'auto'</code> (the content's own size) or <code>'fill'</code> (what is left up to the edge the frame is anchored to). Unset, the frame reads <code>placement.size</code>, then the default: full width, as tall as its content. Since postext 1.42, an <code>'auto'</code> width makes the frame as wide as its longest line plus its padding, no wider than the room its anchor leaves or than <code>maxWidth</code> (text that does not fit wraps there), no narrower than <code>minWidth</code>. The text is measured set flush left, so a centred title is as wide as its words. The frame starts at the edge its anchor names, and frames anchored to it follow. Use it for a tab or a box that has to match its title in every language. A value the engine cannot use (a negative length, an unknown unit) reads as the default.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -237,7 +237,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, the style's</td>
-      <td>Columns inside the frame.</td>
+      <td>Columns inside the frame. A heading never ends one of them: it goes on to the next column with the text it introduces (under <code>headings.keepWithNext</code>, since postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -249,7 +249,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>wrap</code></td>
       <td><code>'box' | 'contour'</code></td>
       <td><code>'box'</code></td>
-      <td>With <code>exclude: 'push'</code>: what the other frames' text runs round. <code>'contour'</code> is the shape of the pictures the frame holds (their polygon or alpha channel, see <a href="/en/docs/document-format-resources#contour-wrap">Contour wrap</a>); a turned frame, or one whose pictures have no known shape, pushes with its box.</td>
+      <td>With <code>exclude: 'push'</code>: what the text of the other frames wraps around. <code>'contour'</code> is the shape of the pictures the frame holds (their polygon or alpha channel, see <a href="/en/docs/document-format-resources#contour-wrap">Contour wrap</a>); a turned frame, or one whose pictures have no known shape, pushes with its box.</td>
     </tr>
     <tr>
       <td><code>flow</code></td>
@@ -273,19 +273,19 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one, from <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (a page of that template: its frame of the same name, else its flow frame) or <code>'page:&lt;id&gt;'</code> (a frame of the later page fence <code>::::page&#123;id=…&#125;</code>: the one <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> names, else one its own content leaves empty; <code>&lt;id&gt;</code> may be <code>&#123;attr.name&#125;</code>, read from the page fence; see <a href="/en/docs/composed-pages#jumping-to-a-later-page">Composed pages › Jumping to a later page</a>). A frame of an added page with no rule of its own goes on with the rule that brought the content (after a jump, <code>'next-page'</code>), up to 16 added pages. The page may be in a later chapter file of the book (since postext 1.41).</td>
+      <td>Where content that does not fit goes on: <code>'#frame'</code> (another frame of the page, as <code>next</code>), <code>'next-page'</code> (the same frame on a page added after this one, from <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (a page of that template: its frame of the same name, else its flow frame) or <code>'page:&lt;id&gt;'</code> (a frame of the later page fence <code>::::page&#123;id=…&#125;</code>: the one <code>'page:&lt;id&gt;#&lt;frame&gt;'</code> names, else one that its own content leaves empty; <code>&lt;id&gt;</code> may be <code>&#123;attr.name&#125;</code>, read from the page fence; see <a href="/en/docs/composed-pages#jumping-to-a-later-page">Composed pages › Jumping to a later page</a>). A frame of an added page with no rule of its own goes on with the rule that brought the content (after a jump, <code>'next-page'</code>), up to 16 added pages. The page may be in a later chapter file of the book (since postext 1.41).</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>the language's</td>
-      <td>The mark at the end of a piece cut for another page. Unset, the frame style's <code>continuesMarker</code>, which follows the document language («Continued», «Continúa», «À suivre»…, the words split tables use); a string sets those words, <code>&#123;page&#125;</code> in it being the number of the page the rest goes on on; <code>false</code> sets none. A frame chained with <code>next</code> on the same page carries no mark.</td>
+      <td>The mark at the end of a piece cut for another page. Unset, the frame style's <code>continuesMarker</code>, which follows the document language («Continued», «Continúa», «À suivre»…, the words split tables use); a string sets those words, <code>&#123;page&#125;</code> in it being the number of the page where the rest goes on; <code>false</code> sets none. A frame chained with <code>next</code> on the same page carries no mark.</td>
     </tr>
     <tr>
       <td><code>overflow.fromMark</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>Words set at the head of the piece on the page the content goes on on, <code>&#123;page&#125;</code> being the number of the page it comes from (<code>"Continued from page &#123;page&#125;"</code>). The receiving frame's own wins over the sending frame's.</td>
+      <td>Words set at the head of the piece on the page where the content goes on, <code>&#123;page&#125;</code> being the number of the page it comes from (<code>"Continued from page &#123;page&#125;"</code>). The receiving frame's own wins over the sending frame's.</td>
     </tr>
     <tr>
       <td><code>fit.shrinkText</code></td>
@@ -345,7 +345,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>What this frame changes of its callout style's look, with the style's own names and nesting: colours (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> and <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) and the tracking of the text (<code>body.letterSpacing</code>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab. In a child template it merges key by key over the frame it overrides. A book with one box shape in several tints keeps one style and writes the tint here, or lets <code>palette</code> recolour a palette-linked fill. Since postext 1.42.</td>
+      <td>The parts of its callout style's look that this frame changes, with the style's own names and nesting: colours (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> and <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) and the tracking of the text (<code>body.letterSpacing</code>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab. In a child template it merges key by key over the frame it overrides. A book with one box shape in several tints keeps one style and writes the tint here, or lets <code>palette</code> recolour a palette-linked fill. Since postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -410,7 +410,7 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>The frames of the group, in their order on the page. A frame belongs to one group at most; a name that is no frame of the template, or a frame already listed, is skipped.</td>
+      <td>The frames of the group, in their order on the page. A frame belongs to one group at most; a name that is not a frame of the template, or a frame already listed, is skipped.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -441,7 +441,7 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
 
 ### How groups share space
 
-A frame declares its size: a fixed `height`, or `'auto'`, the height of what it holds, kept between `minHeight` and `maxHeight`. For a template drawn from a printed page, give each box the height it has on the page as `minHeight`: a short text keeps the drawn box, a longer one makes it taller. The page is laid twice in the same pass, once as the template declares it and once as its content needs, and what differs between the two is the [reflow log](/en/docs/composed-pages#reflow-log).
+A frame declares its size: a fixed `height`, or `'auto'`, the height of what it holds, kept between `minHeight` and `maxHeight`. For a template drawn from a printed page, give each box the height it has on the page as `minHeight`: a short text keeps the drawn box, a longer one makes it taller. The page is laid out twice in the same pass, once as the template declares it and once as its content needs, and what differs between the two is the [reflow log](/en/docs/composed-pages#reflow-log).
 
 **Stack.** The frames of a stack go one under another at their heights, `gap` between them. Each keeps its own horizontal place and width; its own vertical place is ignored.
 
@@ -450,7 +450,7 @@ A frame declares its size: a fixed `height`, or `'auto'`, the height of what it 
 - When nothing more can give, the frames nearest the group's foot give way first, each down to its `minHeight`; a frame with a fixed height keeps it, so an empty answer space or picture slot under a box that grows stays on the page and the box's own text gives way instead. No frame runs past the group's foot: the frame whose content does not fit climbs the reflow ladder (see [When content does not fit](#when-content-does-not-fit)), and what still does not fit is cut there and reported as `frameOverflow`. A frame cut below its `minHeight` or its fixed height is reported too, whether it holds content or not.
 - A frame with `height: 'fill'` asks for its `minHeight` and takes spare space as if it had `grow: 1`.
 
-**Row.** The frames of a row go side by side at their declared widths, all as tall as the row: the height of the group's box, or, with no box of its own, the tallest height its frames write: a fixed `height`, else a `minHeight` (an `'auto'` frame writes no more), or, when they write none, the tallest content's (a frame with a fixed height keeps its own). When the text of one frame runs past the row's height, the frame takes width: first the spare width of the row, then width from siblings with `shrink` above 0, the lowest `priority` first, each one never narrower than the width its own text still fits in. The width taken is the fewest whole millimetres that make the text fit; if even all the room there is would not, the frame takes none, and a row with no box of its own grows taller instead. Cards with `height: 'auto'` and a `minHeight` thus share width at that height, and the row grows only when no card has width to give. Spare width goes to the frames with `grow` above 0, then to `align`. Rows run from left to right.
+**Row.** The frames of a row go side by side at their declared widths, all as tall as the row: the height of the group's box, or, with no box of its own, the tallest height its frames set: a fixed `height`, else a `minHeight` (an `'auto'` frame sets nothing more), or, when they set none, the height of the tallest content (a frame with a fixed height keeps its own). When the text of one frame runs past the row's height, the frame takes width: first the spare width of the row, then width from siblings with `shrink` above 0, the lowest `priority` first, each one never narrower than the width its own text still fits in. The width taken is the fewest whole millimetres that make the text fit; if even all the room there is would not, the frame takes none, and a row with no box of its own grows taller instead. Cards with `height: 'auto'` and a `minHeight` thus share width at that height, and the row grows only when no card has width to give. Spare width goes to the frames with `grow` above 0, then to `align`. Rows run from left to right.
 
 **Pins.** A frame with `pin: true` keeps the box the template declares for it, even when the frame it is anchored to grows or moves: a box drawn to match the artwork stays on it. In a group, a pinned frame holds its place and the other frames go past it, `gap` kept on both sides; a pinned frame outside the group does the same for the group's frames it would overlap.
 
@@ -491,7 +491,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 The result depends only on the page's content, the template and the typography: the same input gives the same page, measured in the same order with the same steps. The negotiation never reads another page, so a change on one composed page leaves every other page as it was, as long as the content stays on its page.
 
-**Holding frames at the foot of a card (since postext 1.42).** A frame anchored below the text above it follows that text: in an edition where the text is a line shorter or longer, the frames under it move up or down, while what the template draws (a card, a band, the foot) stays where it is. To keep frames at the foot of a card, where the template puts them, make the card's frames one stack with a box of the card's height. The frames above the held ones take the spare space (`grow: 1`) and give it back (`shrink: 1`); the held ones write a `minHeight`. A shorter text leaves the held frames where they were. A longer one is squeezed above them: they keep their `minHeight`, the text above is scaled down and, if it still does not fit, the layout reports `frameOverflow` and the reflow log lists `textScaled` and `overflow` for the frame above. A frame anchored to the container's foot (`bottom-left`) holds its place too, but nothing links it to the frames above it: a longer text runs over it, nothing is squeezed for it and the overlap is not reported.
+**Holding frames at the foot of a card (since postext 1.42).** A frame anchored below the text above it follows that text: in an edition where the text is a line shorter or longer, the frames under it move up or down, while what the template draws (a card, a band, the foot) stays where it is. To keep frames at the foot of a card, where the template puts them, make the card's frames one stack with a box of the card's height. The frames above the held ones take the spare space (`grow: 1`) and give it back (`shrink: 1`); the held ones set a `minHeight`. A shorter text leaves the held frames where they were. A longer one is squeezed above them: they keep their `minHeight`, the text above is scaled down and, if it still does not fit, the layout reports `frameOverflow` and the reflow log lists `textScaled` and `overflow` for the frame above. A frame anchored to the container's foot (`bottom-left`) holds its place too, but nothing links it to the frames above it: a longer text runs over it, nothing is squeezed for it and the overlap is not reported.
 
 ```json
 {
@@ -555,7 +555,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Read and checked, but not yet applied: the template's `bodyStyle` and `palette`. A frame's `writingMode` and `direction` are applied since postext 1.39. An `'auto'` width reads as `'fill'`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Since postext 1.42 it also applies the template's `palette`, a frame's `look` and an `'auto'` width (as wide as the frame's longest line). A frame's `writingMode` and `direction` are applied since postext 1.39. Read and checked, but not yet applied: the template's `bodyStyle`.
 
 ### Spreads
 
@@ -588,7 +588,7 @@ On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as
 
 ## Label styles
 
-The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42).
+The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42). Renaming a style there rewrites the anchors and the `::label` lines that name it (since postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>How small a label may be set when it does not fit its width.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Vertical writing for the labels of this style: characters upright in cells one under another, columns from right to left, as a Chinese or Japanese map is lettered. An anchor's own <code>writingMode</code> wins.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> says the label set at this anchor may touch its neighbours, as the source prints it: <code>labelOverlap</code> is not raised for a pair it belongs to. Over the style's <code>overlap</code>. Since postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>On a figure across the spine of a spread, <code>'keep'</code> slides the label off the gutter band, to the side its point lies on; <code>'cross'</code> leaves it where the point puts it, as a title across both pages needs. Since postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -701,7 +689,7 @@ labelStyles: [
   </tbody>
 </table>
 
-A label in no style, or in a style that names no type, takes the body text's family, size, weight and colour. The lines of a label of several lines stand 1.15 times its size apart, or at the borrowed paragraph style's leading. Through `paragraphStyle` a label also takes that style's italics and capitals; `fontStyle: 'italic'` and `textTransform: 'uppercase'` add them to a style that borrows none. A label style that writes `fontStyle: 'normal'` or `textTransform: 'none'` turns off the italics or the capitals of the paragraph style it borrows from (since postext 1.40); left out, the paragraph style's hold. A label set smaller to fit keeps its halo in proportion.
+A label in no style, or in a style that names no type, takes the body text's family, size, weight and colour. The lines of a label of several lines stand 1.15 times its size apart, or at the borrowed paragraph style's leading. Through `paragraphStyle` a label also takes that style's italics and capitals; `fontStyle: 'italic'` and `textTransform: 'uppercase'` add them to a style that borrows none. A label style that writes `fontStyle: 'normal'` or `textTransform: 'none'` turns off the italics or the capitals of the paragraph style it borrows from (since postext 1.40); when they are left out, the paragraph style's italics and capitals hold. A label set smaller to fit keeps its halo in proportion.
 
 ### Label fields of an anchor
 
@@ -747,11 +735,23 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
       <td>none</td>
       <td>A <code>labelStyles</code> id. A label that names its own style overrides it.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> sets the label vertically, as a Chinese or Japanese map or a spine is lettered. Its <code>width</code> is then a fraction of the picture's height, <code>align</code> runs along the column (<code>start</code> is the top) and <code>verticalAlign</code> across the columns (<code>top</code> is the first, right-hand one).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> says the label set at this anchor may touch its neighbours, as the source prints it: <code>labelOverlap</code> is not raised for a pair it belongs to. It takes precedence over the style's <code>overlap</code>. Since postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>On a figure across the spine of a spread, <code>'keep'</code> slides the label off the gutter band, to the side its point lies on; <code>'cross'</code> leaves it where the point puts it, as a title across both pages needs. Since postext 1.43.</td>
     </tr>
   </tbody>
 </table>
@@ -785,7 +785,7 @@ A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or 
     </tr>
     <tr>
       <td><code>templateExtendsUnknown</code></td>
-      <td><code>extends</code> names an id no template has. The template is used on its own, with nothing inherited.</td>
+      <td><code>extends</code> names an id that no template has. The template is used on its own, with nothing inherited.</td>
       <td>Correct the id (the warning suggests the closest one), or add the parent template.</td>
     </tr>
     <tr>
@@ -810,7 +810,7 @@ A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or 
     </tr>
     <tr>
       <td><code>groupFrameUnknown</code></td>
-      <td>A group's <code>frames</code> lists a name that is no frame of the template (perhaps removed by a child template or a variant). The group skips it.</td>
+      <td>A group's <code>frames</code> lists a name that is not a frame of the template (perhaps removed by a child template or a variant). The group skips it.</td>
       <td>Correct the name, or remove it from the list.</td>
     </tr>
     <tr>
@@ -836,4 +836,4 @@ A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or 
   </tbody>
 </table>
 
-The configuration version is 15 since page templates (bundles written before keep loading unchanged: nothing an older configuration says changes meaning).
+Since page templates, the configuration version is 15 (bundles written earlier still load unchanged: nothing an older configuration says changes meaning).

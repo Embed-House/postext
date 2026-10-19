@@ -22,13 +22,13 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Größe in
 
 <Excerpt region="balloons" />
 
-Die Kiai beider Kämpferinnen sind Schreie: eine Explosionsblase mit 18 Zacken, tiefer als der Standard. Die Soundeffekte haben überhaupt keine Blase; sie sind mit einem weißen Rand von 2,2 pt aufs Bild gelettert, damit sie über den Speedlines lesbar bleiben. Das Panel des Schlags lautet `::panel{art=strike border=none}`, und sein ドン trägt `break`, darf also den schrägen Zwischenraum ins Nachbarpanel überqueren, so wie ein Letterer ein Geräusch über den Rahmen hinausquellen lässt (<Feature id="sound-effects">Soundeffekte</Feature>).
+Die Kiai beider Kämpferinnen sind Schreie: eine Explosionsblase mit 18 Zacken, tiefer als der Standard. Die Soundeffekte haben überhaupt keine Blase; sie sind mit einem weißen Rand von 2,2 pt aufs Bild gelettert, damit sie über den Speedlines lesbar bleiben. Das Panel des Schlags lautet `::panel{art=strike border=none}`, und sein ドン hat das Attribut `break`, darf also den schrägen Zwischenraum ins Nachbarpanel überqueren, so wie ein Letterer ein Geräusch über den Rahmen hinausquellen lässt (<Feature id="sound-effects">Soundeffekte</Feature>).
 
 ### 3 · ドン japanisch lassen und untertiteln
 
 <Excerpt region="fonts" />
 
-Im Manga gehören die Soundeffekte zur Zeichnung, und lizenzierte Ausgaben lassen sie meist an ihrem Platz und fügen daneben eine kleine Übersetzung hinzu. Das Skript macht es genauso: Jede Ausgabe hat die Zeile `sfx{… font="Dela Gothic One" break}: ドン`; die in Zeilen geletterten Ausgaben ergänzen darin `vertical`, damit ドン die Spalte behält, die es im Original hat, und setzen darunter einen zweiten, kleineren Effekt, WUMM oder WHAM. Weil die Schrift in der Zeile genannt wird, lädt jede Ausgabe die Dela Gothic One nur mit den Zeichen von ドン, gleich welche Lettering-Schrift sie selbst verwendet.
+Im Manga gehören die Soundeffekte zur Zeichnung, und lizenzierte Ausgaben lassen sie meist an ihrem Platz und fügen daneben eine kleine Übersetzung hinzu. Das Skript macht es genauso: Jede Ausgabe hat die Zeile `sfx{… font="Dela Gothic One" break}: ドン`; die in Zeilen geletterten Ausgaben ergänzen darin `vertical`, damit ドン die Spalte behält, die es im Original hat, und setzen darunter einen zweiten, kleineren Effekt, WUMM oder WHAM. Weil die Schrift in der Zeile angegeben wird, lädt jede Ausgabe die Dela Gothic One nur mit den Zeichen von ドン, gleich welche Lettering-Schrift sie selbst verwendet.
 
 ### 4 · Die Sicherheitsbereiche auf schräge Zellen abstimmen
 
@@ -45,4 +45,4 @@ Jede Sprache der Website lettert die Seite in ihrer eigenen Datei, und das japan
 ## Häufige Fehler
 
 - Ein Soundeffekt, der in einer in Zeilen geletterten Ausgabe japanisch bleibt, wird wie der Rest der Ausgabe in einer Zeile gesetzt, wenn seine Zeile nicht `vertical` sagt.
-- Soras Jubel ist auf Japanisch, Spanisch und Katalanisch länger als sein kleines Panel: Der Engine überlassen, überquerte er den Rand, und der Build warnte `comicBalloonOverflow`. Diese Ausgaben markieren ihn mit `break` (`sora{shout break}`): Er bricht absichtlich nach oben durch den Rahmen in den Zwischenraum und das Panel darüber, und nichts wird gemeldet. Eine Sprechblase mit `break` läuft nie in den Seitenrand, es sei denn, ihr Panel ist randabfallend; ein Pin (`at=`) stellt sie an jede andere Stelle.
+- Soras Jubel ist auf Japanisch, Spanisch und Katalanisch länger als sein kleines Panel: Überließe man ihn der Engine, überquerte er den Rand, und der Build warnte `comicBalloonOverflow`. Diese Ausgaben markieren ihn mit `break` (`sora{shout break}`): Er bricht absichtlich nach oben durch den Rahmen in den Zwischenraum und das Panel darüber, und es gibt keine Warnung. Eine Sprechblase mit `break` läuft nie in den Seitenrand, es sei denn, ihr Panel ist randabfallend; ein Pin (`at=`) stellt sie an jede andere Stelle.

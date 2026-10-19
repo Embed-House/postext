@@ -18,13 +18,13 @@ A primeira página e a página 2 de *The Elverdale Courier*, um semanário inven
 
 <Excerpt region="palette" />
 
-A página é papel-jornal (#f8f5ee) e o texto, uma tinta quase preta (#111315). O único vermelho, #a6192e, vai nos selos de seção, nos chapéus, nos chips e nas barras do sim. Cada cor está ligada à sua entrada da paleta por `paletteId`. `main-color` aponta para a tinta, então o negrito, os itálicos, as duas referências da página 2 e tudo o que a configuração deixa no padrão saem em preto; com o valor de origem, sairiam no azul padrão, #295AA3.
+A página é papel-jornal (#f8f5ee) e o texto, uma tinta quase preta (#111315). O único vermelho, #a6192e, vai nos selos de seção, nos chapéus, nos chips e nas barras do sim. Cada cor está ligada à entrada da paleta por `paletteId`. `main-color` aponta para a tinta, por isso o negrito, os itálicos, as duas referências da página 2 e tudo o que a configuração deixa no padrão saem em preto; com o valor de origem, sairiam no azul padrão, #295AA3.
 
 ### 2 · O logotipo é o H1 da primeira página
 
 <Excerpt region="nameplate" />
 
-`# The Elverdale Courier` usa o estilo de título `front`, que preenche o cabeçalho com o texto do título e sete dos seus atributos (`issue`, `area`, `outlook`, `temps`, `since`, `day` e `price`); a data vem de `publishDate`, no frontmatter. Uma caixa vazia com sete linhas da grade de altura (31,1 mm) define a altura da abertura. Os fios, a linha de data e o nome pendem do pé dela, e assim a abertura termina numa linha da grade.
+`# The Elverdale Courier` usa o estilo de título `front`, que preenche o cabeçalho com o texto do título e sete dos atributos (`issue`, `area`, `outlook`, `temps`, `since`, `day` e `price`); a data vem de `publishDate`, no front matter. Uma caixa vazia com sete linhas da grade de altura (31,1 mm) define a altura da abertura. Os fios, a linha de data e o nome pendem do pé dela, e assim a abertura termina numa linha da grade.
 
 ### 3 · Uma manchete sobre as duas colunas é um boxe
 
@@ -34,7 +34,7 @@ Um título só ocupa as duas colunas como abertura, e uma abertura começa uma p
 
 ### 4 · A faixa de quatro colunas é um boxe
 
-O código deste passo é [a resposta curta](#a-resposta-curta) acima. O corpo das duas páginas corre em duas colunas ([Tipos de diagramação](/pt/docs/configuration-page-layout#tipos-de-layout)). As notas só pedem quatro no pé da página 1, com título e sobre um fundo, então vão dentro de um boxe, aqui um na largura da página com um grupo [`:::columns`](/pt/docs/document-format-directives#columns). `breaks` conta os blocos do grupo, um por nota, e assim as notas 2, 3 e 4 abrem as colunas 2, 3 e 4. Cada coluna tem 49 mm de largura, com a medianiz de 6 mm da página entre elas.
+O código deste passo é [a resposta curta](#a-resposta-curta) acima. O corpo das duas páginas corre em duas colunas ([Tipos de diagramação](/pt/docs/configuration-page-layout#tipos-de-layout)). As notas só pedem quatro no pé da página 1, com título e sobre um fundo, de modo que vão dentro de um boxe, aqui um na largura da página com um grupo [`:::columns`](/pt/docs/document-format-directives#columns). `breaks` conta os blocos do grupo, um por nota, e assim as notas 2, 3 e 4 abrem as colunas 2, 3 e 4. Cada coluna tem 49 mm de largura, com a medianiz de 6 mm da página entre elas.
 
 ```markdown
 :::callout{type="briefs" span="page" placement="bottom" title="In brief"}
@@ -53,19 +53,19 @@ O código deste passo é [a resposta curta](#a-resposta-curta) acima. O corpo da
 
 <Excerpt region="floats" />
 
-A foto fica no texto, dentro do boxe da manchete, porque um flutuante `top` na largura da página nunca cai acima da linha que o cita; como flutuante, a foto abriria a página 2 (veja Erros comuns). O desenho da ponte também fica no texto, depois do parágrafo sobre o pilar, e `wrap: 'right'` com `width: 0.47` o põe à direita da coluna 1, com 47 % da largura dela, e os parágrafos seguintes são compostos ao lado dele e depois embaixo na medida inteira ([contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). Nessa largura nenhuma linha ao lado fica frouxa; o texto da matéria foi reajustado ao desenho mais baixo. A previsão flutua até o alto de uma coluna e cai no da coluna da direita. A tabela dos bairros flutua sob as duas colunas, onde o fio entre colunas para. Na última página ela fica logo abaixo das colunas balanceadas, e por isso o texto acima foi ajustado para levá-la até o pé. Os dois tipos de recurso definem `captionPrefix: ''`, e o rótulo da legenda só é impresso quando o prefixo tem texto, então nenhuma legenda começa com “Figure 1”.
+A foto fica no texto, dentro do boxe da manchete, porque um flutuante `top` na largura da página nunca cai acima da linha que o cita; como flutuante, a foto abriria a página 2 (veja Erros comuns). O desenho da ponte também fica no texto, depois do parágrafo sobre o pilar, e `wrap: 'right'` com `width: 0.47` o põe à direita da coluna 1, com 47 % da largura dela, e os parágrafos seguintes são compostos ao lado dele e depois embaixo na medida inteira ([contorno de texto](/pt/docs/document-format-resources#contorno-de-texto)). Nessa largura nenhuma linha ao lado fica frouxa; o texto da matéria foi reajustado ao desenho mais baixo. A previsão flutua até o alto de uma coluna e cai no da coluna da direita. A tabela dos bairros flutua sob as duas colunas, onde o fio entre colunas para. Na última página ela fica logo abaixo das colunas equilibradas, e por isso o texto acima foi ajustado para levá-la até o pé. Os dois tipos de recurso definem `captionPrefix: ''`, e o rótulo da legenda só é impresso quando o prefixo tem texto, de modo que nenhuma legenda começa com “Figure 1”.
 
 ### 6 · Uma página interna abre com um selo de seção
 
 <Excerpt region="inside" />
 
-`# Town & Valley` é um H1 cujo `breakBefore` tem a paridade `'any'`, e assim a seção abre a página 2 sem uma página em branco antes. O design dele é um selo vermelho sobre uma barra de 3 pt, pendurado numa caixa vazia de duas linhas da grade. A linha do fólio é um cabeçalho ancorado 6 mm abaixo da borda superior da página, com uma versão para as páginas pares e outra para as ímpares. O estilo da primeira página esvazia o cabeçalho, então nenhuma linha de fólio é impressa acima do logotipo.
+`# Town & Valley` é um H1 cujo `breakBefore` tem a paridade `'any'`, e assim a seção abre a página 2 sem uma página em branco antes. O design dele é um selo vermelho sobre uma barra de 3 pt, pendurado numa caixa vazia de duas linhas da grade. A linha do fólio é um cabeçalho ancorado 6 mm abaixo da borda superior da página, com uma versão para as páginas pares e outra para as ímpares. O estilo da primeira página esvazia o cabeçalho, por isso nenhuma linha de fólio é impressa acima do logotipo.
 
 ## Variações
 
 ### Manter as notas sob a foto
 
-Sem `placement="bottom"` em `content.en.md`, a faixa fica onde está a cerca dela, logo abaixo da foto, e a notícia principal corre por baixo até o pé da página.
+Sem `placement="bottom"` em `content.en.md`, a faixa fica onde está o delimitador dela, logo abaixo da foto, e a notícia principal corre por baixo até o pé da página.
 
 ```diff
 -:::callout{type="briefs" span="page" placement="bottom" title="In brief"}

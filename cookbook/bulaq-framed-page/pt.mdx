@@ -10,13 +10,13 @@ pageNotes: { "2": "A primeira página de texto dentro de uma moldura de fios dup
 
 ## O que você vai compor
 
-Seis páginas compostas como a tipografia de Bulaq e as suas sucessoras do Cairo imprimiam um comentário no século XIX. A explicação de Ibn ʿAqīl para os primeiros versos da Alfiyya, a gramática em mil versos de Ibn Mālik, corre na coluna principal, com os versos em vermelho; na margem externa fica uma ḥāshiya, glosas curtas que começam com as palavras do texto que explicam, ao lado da passagem a que pertencem. Um fio duplo emoldura a mancha, com uma faixa no alto para o capítulo e o fólio, e um fio simples separa o texto da sua margem. Numa página de Bulaq de verdade, a ḥāshiya contorna o texto por três lados; o Postext a põe de um lado só, e esta receita deixa isso claro.
+Seis páginas compostas como a tipografia de Bulaq e as sucessoras do Cairo imprimiam um comentário no século XIX. A explicação de Ibn ʿAqīl para os primeiros versos da Alfiyya, a gramática em mil versos de Ibn Mālik, corre na coluna principal, com os versos em vermelho; na margem externa fica uma ḥāshiya, glosas curtas que começam com as palavras do texto que explicam, ao lado da passagem a que pertencem. Um fio duplo emoldura a mancha, com uma faixa no alto para o capítulo e o fólio, e um fio simples separa o texto da margem. Numa página de Bulaq de verdade, a ḥāshiya contorna o texto por três lados; o Postext a põe de um lado só, e esta receita deixa isso claro.
 
 ## Preparo
 
 ### 1 · A ḥāshiya numa coluna lateral própria
 
-O código está [na resposta curta](#a-resposta-curta), mais acima. Uma diagramação em coluna e meia cuja coluna lateral só recebe flutuantes mantém o comentário fora do fluxo do texto: cada glosa é um `:::callout{type="hashiya" span="side"}` escrito antes do trecho que explica, e começa na altura da primeira linha desse trecho; `sideAtColumnEnd: 'after'` o mantém ao lado do trecho quando este continua na página seguinte ([Diagramação](/pt/docs/configuration-page-layout#diagramação)). O boxe não tem fundo, borda nem preenchimento, então se lê como texto composto na margem, com o lema em negrito, que o `boldColor` deixa vermelho. `sideColumnSide: 'outer'` põe a coluna junto ao corte nas duas páginas: à direita da página par, que fica à direita num livro encadernado pela direita.
+O código está [na resposta curta](#a-resposta-curta), mais acima. Uma diagramação em coluna e meia cuja coluna lateral só recebe flutuantes mantém o comentário fora do fluxo do texto: cada glosa é um `:::callout{type="hashiya" span="side"}` escrito antes do trecho que explica, e começa na altura da primeira linha desse trecho; `sideAtColumnEnd: 'after'` o mantém ao lado do trecho quando este continua na página seguinte ([Diagramação](/pt/docs/configuration-page-layout#diagramação)). O boxe não tem fundo, borda nem preenchimento, por isso se lê como texto composto na margem, com o lema em negrito, que o `boldColor` deixa vermelho. `sideColumnSide: 'outer'` põe a coluna junto ao corte nas duas páginas: à direita da página par, que fica à direita num livro encadernado pela direita.
 
 <PageShot page={2} crop="0,0.58,1,0.34" caption="Página 2: a glosa sobre «كديز» começa na altura do parágrafo que usa a palavra, na borda externa, atrás do fio de coluna." />
 
@@ -24,13 +24,13 @@ O código está [na resposta curta](#a-resposta-curta), mais acima. Uma diagrama
 
 <Excerpt region="frame" />
 
-A moldura são três elementos de design de página no cabeçalho: duas caixas com borda e sem preenchimento, a 1,3 mm uma da outra, e um fio sob a faixa que leva o cabeço. Os elementos de página são físicos, então a moldura é montada duas vezes, uma para cada paridade, a partir das margens daquele lado ([Ordem das páginas e encadernação pela direita](/pt/docs/arabic-layout#ordem-das-páginas-e-encadernação-à-direita)). O fólio fica na ponta externa da faixa em todas as páginas, aberturas incluídas; o título do capítulo é centralizado e fica fora da abertura, onde o próprio título aparece logo abaixo.
+A moldura são três elementos de design de página no cabeçalho: duas caixas com borda e sem preenchimento, a 1,3 mm uma da outra, e um fio sob a faixa que leva o cabeço. Os elementos de página são físicos, por isso a moldura é montada duas vezes, uma para cada paridade, a partir das margens daquele lado ([Ordem das páginas e encadernação pela direita](/pt/docs/arabic-layout#ordem-das-páginas-e-encadernação-à-direita)). O fólio fica na ponta externa da faixa em todas as páginas, aberturas incluídas; o título do capítulo é centralizado e fica fora da abertura, onde o próprio título aparece logo abaixo.
 
 ### 3 · Uma folha de rosto dentro da mesma moldura
 
 <Excerpt region="title" />
 
-A folha de rosto reaproveita a moldura sem a faixa. O design de um título é composto no fluxo e espelhado com a página, então ali a moldura é construída com os lados trocados (`inFlow`): a esquerda dela é a direita da folha. As linhas dela vêm de atributos do título, `on` e `margin`, então a folha de rosto inteira é uma linha de Markdown, e a linha em caracteres latinos abaixo delas muda conforme a edição.
+A folha de rosto reaproveita a moldura sem a faixa. O design de um título é composto no fluxo e espelhado com a página, de modo que ali a moldura é construída com os lados trocados (`inFlow`): a esquerda dela é a direita da folha. As linhas dela vêm de atributos do título, `on` e `margin`, por isso a folha de rosto inteira é uma linha de Markdown, e a linha em caracteres latinos abaixo delas muda conforme a edição.
 
 ## Variações
 

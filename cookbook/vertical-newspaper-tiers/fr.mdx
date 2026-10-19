@@ -18,7 +18,7 @@ Deux feuilles d’un journal chinois tel qu’il se présentait en 1912, premiè
 
 Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Avec `writingMode: 'vertical-rl'`, la page est une page horizontale tournée d’un quart de tour : `layoutType: 'double'` empile donc deux étages, le supérieur lu en premier, et le filet entre colonnes devient un filet qui traverse la page entre eux ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)). La grille de caractères fixe chaque étage à 25 caractères de 五號 (10,5 pt), le haut de la fourchette pour une colonne de journal, et la page à 29 lignes ; elle arrondit la gouttière à deux cadratins et agrandit les marges pour que les étages se placent au milieu ([grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)).
 
-Le texte courant reste en deux étages et seuls les télégrammes en demandent trois : ils vont donc dans un encadré. `span="page"` lui donne la hauteur du bloc de texte, `placement="bottom"` le fait flotter au pied du flux, qui sur une page verticale est le bord gauche, et `:::columns{count=3}` le découpe en étages. `columnGap` est ce que trois étages de 18 caractères de 9 pt laissent des 546 pt du bloc de texte, si bien que chaque étage contient des caractères entiers.
+Le texte courant reste en deux étages et seuls les télégrammes en demandent trois : ils vont donc dans un encadré. `span="page"` lui donne la hauteur de la zone de contenu, `placement="bottom"` le fait flotter au pied du flux, qui sur une page verticale est le bord gauche, et `:::columns{count=3}` le découpe en étages. `columnGap` est ce que trois étages de 18 caractères de 9 pt laissent des 546 pt de la zone de contenu : chaque étage contient donc des caractères entiers.
 
 <PageShot page={2} crop="0.04,0.12,0.36,0.78" caption="Page 2 : les télégrammes en trois étages, la bande du bord supérieur de l’encadré dessinée comme un filet le long de son côté droit." />
 
@@ -26,7 +26,7 @@ Le texte courant reste en deux étages et seuls les télégrammes en demandent t
 
 <Excerpt region="front" />
 
-Le titre de l’article principal devait traverser les deux étages sous la manchette. Un titre avec `span: 'page'` se compose comme une ouverture en tête de page : un second titre après la manchette aurait donc commencé une page à lui seul. Le titre de niveau 1 de la page est par conséquent l’article principal, et son style de titre dessine la manchette au-dessus du gros titre : un bloc vermillon de 6,5 lignes de haut avec le nom du journal en réserve et, dessous, la ligne de numéro : l’année de la République et celle du cycle, et 今日出紙兩張, « deux feuilles aujourd’hui » ; puis le titre en Noto Serif TC 900 à 44 pt. Dans le flux, la largeur de la maquette est la hauteur du bloc de texte sur la feuille : `size: { width: 'fill' }` avec `align: 'center'` centre donc le titre sur les deux étages. La maquette fait 13 lignes de haut, un nombre entier de lignes de la grille, si bien que le texte qui la suit commence sur une ligne de la grille.
+Le titre de l’article principal devait traverser les deux étages sous la manchette. Un titre avec `span: 'page'` se compose comme une ouverture en tête de page : un second titre après la manchette aurait donc commencé une page à lui seul. Le titre de niveau 1 de la page est par conséquent l’article principal, et son style de titre dessine la manchette au-dessus du gros titre : un bloc vermillon de 6,5 lignes de haut avec le nom du journal en réserve et, dessous, la ligne de numéro : l’année de la République et celle du cycle, et 今日出紙兩張, « deux feuilles aujourd’hui » ; puis le titre en Noto Serif TC 900 à 44 pt. Dans le flux, la largeur de la maquette est la hauteur de la zone de contenu sur la feuille : `size: { width: 'fill' }` avec `align: 'center'` centre donc le titre sur les deux étages. La maquette fait 13 lignes de haut, un nombre entier de lignes de la grille : le texte qui la suit commence donc sur une ligne de la grille.
 
 <PageShot page={1} crop="0.54,0.1,0.44,0.82" caption="Page 1 : le bloc de manchette, le titre centré sur les deux étages, le sous-titre à côté et la ligne de lieu et de date en tête de sa ligne." />
 
@@ -34,19 +34,19 @@ Le titre de l’article principal devait traverser les deux étages sous la manc
 
 <Excerpt region="heads" />
 
-Une maquette de titre dans la colonne vit à l’intérieur de son étage. Son filet est `direction: 'horizontal'` dans le flux : il descend donc l’étage sur la feuille, filet fin entre deux articles. Le titre commence en tête de l’étage, le sous-titre deux caractères plus bas, et la ligne de lieu et de date donne le lieu, le journal et le jour de parution du compte rendu. `minHeight` donne à chaque tête quatre lignes de haut, si bien que le texte sous chaque tête commence sur la grille.
+Une maquette de titre dans la colonne vit à l’intérieur de son étage. Son filet est `direction: 'horizontal'` dans le flux : il descend donc l’étage sur la feuille, filet fin entre deux articles. Le titre commence en tête de l’étage, le sous-titre deux caractères plus bas, et la ligne de lieu et de date donne le lieu, le journal et le jour de parution du compte rendu. `minHeight` donne à chaque tête quatre lignes de haut : le texte sous chaque tête commence donc sur la grille.
 
 ### 4 · Titrer la seconde feuille et la signer en pied
 
 <Excerpt region="pagehead" />
 
-Les titres courants restent horizontaux sur une page verticale, comme le décrit clreq. Le cadre de l’en-tête est la marge au-dessus des étages ; la grille agrandit cette marge, et `HEAD` reprend la somme calculée par la grille pour que le filet se place à 6 mm au-dessus du premier caractère. `pages: 'body'` laisse la page 1 à la manchette. Le colophon est un attribut du titre de niveau 1 : les éditions anglaise et espagnole impriment donc chacune leur propre ligne sous les mêmes pages chinoises.
+Les titres courants restent horizontaux sur une page verticale, comme le décrit clreq. Le conteneur de l’en-tête est la marge au-dessus des étages ; la grille agrandit cette marge, et `HEAD` reprend la somme calculée par la grille pour que le filet se place à 6 mm au-dessus du premier caractère. `pages: 'body'` laisse la page 1 à la manchette. Le colophon est un attribut du titre de niveau 1 : les éditions anglaise et espagnole impriment donc chacune leur propre ligne sous les mêmes pages chinoises.
 
 ### 5 · Charger chaque voix avec le texte qu’elle compose
 
 <Excerpt region="voices" />
 
-Fontsource sert chaque graisse de ces polices sous la forme d’une centaine de fichiers, et `loadCjkFonts` télécharge ceux qu’un texte utilise. Noto Serif TC 400 reçoit tout l’exemple ; ses graisses 700 et 900 ne reçoivent que les titres et les étiquettes des télégrammes, Noto Sans TC les lignes de manchette, les lignes de lieu et de date et le colophon, et LXGW WenKai TC les sous-titres, l’inscription et le nom du journal. Une police qui reçoit trop peu de texte fait échouer la capture (C12) et nomme les caractères qu’elle a empruntés à une autre police.
+Fontsource sert chaque graisse de ces polices sous la forme d’une centaine de fichiers, et `loadCjkFonts` télécharge ceux qu’un texte utilise. Noto Serif TC 400 reçoit tout l’exemple ; ses graisses 700 et 900 ne reçoivent que les titres et les étiquettes des télégrammes, Noto Sans TC les lignes de manchette, les lignes de lieu et de date et le colophon, et LXGW WenKai TC les sous-titres, l’inscription et le nom du journal. Une police qui reçoit trop peu de texte fait échouer la capture (C12) et indique les caractères qu’elle a empruntés à une autre police.
 
 ## Variantes
 
@@ -63,7 +63,7 @@ Dans le Markdown, `:::columns{count=4}`.
 
 ### Composer les articles sur un seul étage
 
-Un étage de 52 caractères occupe toute la hauteur du bloc de texte, 193 mm sur la feuille pour chaque ligne. Chaque tête d’article prend alors quatre lignes de la page entière, et les deux feuilles deviennent trois.
+Un étage de 52 caractères occupe toute la hauteur de la zone de contenu, 193 mm sur la feuille pour chaque ligne. Chaque tête d’article prend alors quatre lignes de la page entière, et les deux feuilles deviennent trois.
 
 ```diff
 -  layoutType: 'double', writingMode: 'vertical-rl', // binding 'auto' becomes 'right'
@@ -77,4 +77,4 @@ Avec `charsPerLine: 2 * CHARS + 2` dans la grille.
 - Le Noto Serif TC de Fontsource déclare 爲, la forme qu’imprimait le *Shenbao*, dans la plage de l’un de ses fichiers, mais ce fichier n’a pas de glyphe pour lui : le canvas l’a dessiné dans une police système et le PDF n’en avait aucun (C25). Les comptes rendus composent 為.
 - Les transcriptions de Wikisource contiennent des coquilles que la page corrige : 己紀 pour 已紀 et, deux fois, 倍侍 pour 陪侍 dans le compte rendu du banquet ; dans celui de la cérémonie, 勸勵一番現在將土, avec 土 pour 士 et le complément après 一番, composé ici 勸勵現在將士一番, « encouragea les officiers et les soldats présents ». La page compose aussi la forme normalisée de quatre variantes : 寧 pour 寗, 總 pour 縂 (trois fois) et 決 pour 决 (deux fois) dans les télégrammes, 刊 pour 刋 dans l’inscription.
 - LXGW WenKai TC, tel que Fontsource le sert, dessine 為 comme 爲 : l’inscription, en Kai, montre donc la forme ancienne qui manque à la police Song.
-- Les trois étages de l’encadré sont des tiers du bloc de texte et ne s’alignent pas sur les deux étages du texte courant. Un journal compose une telle rubrique sur sa propre grille ; le filet du bord droit de l’encadré sépare les deux grilles.
+- Les trois étages de l’encadré sont des tiers de la zone de contenu et ne s’alignent pas sur les deux étages du texte courant. Un journal compose une telle rubrique sur sa propre grille ; le filet du bord droit de l’encadré sépare les deux grilles.

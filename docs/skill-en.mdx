@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Install the postext-port skill in Claude Code, Codex or any agent and let it turn a PDF, Word, PowerPoint, EPUB, InDesign or HTML source into a Postext project that follows the original layout',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9 min',
   order: 44,
   plainSummary: "This page is for people who already have a book or document in another format, such as PDF, Word or InDesign, and want to move it into Postext. An AI helper, called an agent, can do most of the work if you give it a small add-on called a skill. The skill teaches the agent how to copy the text and rebuild the design of the original. The page explains how to install it, what to ask for and how to check the result. A video of about five minutes shows every step.",
@@ -81,17 +81,21 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     the National Diet Library, and Japanese fonts cut with their kana and
     vertical forms (see [Japanese layout](/en/docs/japanese-layout));
   - Arabic books, modern or classical and vocalised, set right to left and
-    bound on the right: the locale that turns the book, what to ask (region
+    bound on the right: the locale that turns the whole book right to left, what to ask (region
     and digits, vocalisation, verse, contents at the end), how to measure a
     mirrored page, how to read Arabic from PDFs, Word and Wikisource, poems
     as `:::verse`, notes «(١)» per page, and Arabic fonts cut with their
     joining tables (see [Arabic layout](/en/docs/arabic-layout));
   - comics, manga and newspaper strips: the split that cuts a page into
     panels, the panel pictures with their speaker anchors and safe areas, one
-    script per language that the engine letters (balloons, captions, sound
+    script per language, which the engine letters (balloons, captions, sound
     effects), right-to-left manga and Arabic editions, and how to port from
     text-free art plus translations, from lettered scans or from a script
     with generated art (see [Comics](/en/docs/comics));
+  - composed pages: fixed textbook, workbook and magazine pages ported as
+    page templates whose frames are filled from the Markdown, which porting
+    round the installed Postext supports, and the checks each edition must
+    pass (see [Composed pages](/en/docs/composed-pages));
   - the printed object: how to read the paper, binding, covers and spine of
     the source and set them as the `folio` settings that the [Folio viewer](/en/docs/sandbox-previews#folio-tab)
     shows, checked by the linter.
@@ -111,7 +115,7 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     <tr><td><code>measure_layout.py</code></td><td>Margins, columns, gutter and leading (the baseline grid) of a PDF</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → draft chapters by <em>type role</em> (font/size/colour): reading order, paragraphs, de-hyphenation, bold/italic, super/subscripts, lists, captions</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>Cuts figures out of a PDF: photos at native resolution, SVG previews, vector PDF print masters</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Fixed pages of a PDF (textbooks, workbooks, magazines) as composed pages: page templates with frames in mm, box, tab and highlight styles, a text-free page ground, the pictures cut without their text and Markdown with one page fence and a slot per box in reading order; text hidden under other paint is left out. <code>template_dedupe.py</code> folds the templates and styles of pages of one kind into one library and names the frames by role (<code>box-light-blue</code>, <code>caption-of-picture</code>) instead of by kind and order, with the page fences following, <code>anchors.py</code> turns the words of a map into resource anchors and <code>::label</code> lines for every edition A run of one page, which there is nothing to merge in, is named by role by <code>pdf_regions.py extract</code> itself (<code>--name-frames</code>, since postext 1.43).</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Turns the fixed pages of a PDF (textbooks, workbooks, magazines) into composed pages: page templates with frames in mm; box, tab and highlight styles; a text-free page ground; the pictures cut out without their text; and Markdown with one page fence (the <code>::::page</code> block) per page and a slot per box, in reading order. Text hidden under other paint is left out. <code>template_dedupe.py</code> folds the templates and styles of pages of one kind into one library, names the frames by role (<code>box-light-blue</code>, <code>caption-of-picture</code>) instead of by kind and order, and updates the page fences to match. <code>anchors.py</code> turns the words of a map into resource anchors and <code>::label</code> lines for every edition. When a run has a single page, so there is nothing to merge, <code>pdf_regions.py extract</code> names the frames by role itself (<code>--name-frames</code>, since postext 1.43).</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>PDF tables → Postext <code>TableModel</code></td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX, PPTX, ODT, EPUB, HTML, LaTeX, Markdown, JATS, DocBook → draft chapters, with Word styles mapped to callouts and paragraph styles</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>InDesign IDML → draft chapters by paragraph style, tables and anchored images; ruby, tate-chu-yoko, emphasis marks and warichu become <code>:ruby</code>, <code>:tcy</code>, <code>:dots</code> and <code>:warichu</code>, and vertical stories and a right-to-left binding are reported</td></tr>
@@ -119,10 +123,12 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     <tr><td><code>index_marks.py</code></td><td>Rebuilds a printed back-of-book index as <code>:index</code> marks: reads the index pages of the PDF, finds each term on its page and marks the same words in the chapters</td></tr>
     <tr><td><code>comic_panels.py</code></td><td>Measures comic pages: finds the panels by the paper between them, writes the <code>split</code> expression (left to right or right to left, slanted gutters included), the gutters and the frame, cuts one picture per panel and prints the <code>:::page</code> skeletons; lays a grid over the pictures to read speaker anchors and safe areas, and draws them back to check them</td></tr>
     <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Instance, subset, scale and split fonts (a Chinese or Japanese face cut to the book's characters keeps its vertical forms and metrics, an Arabic one its joining forms and tatweel); convert images to sRGB, trim and join them; turn <code>.ai</code>/<code>.pdf</code> artwork into SVG</td></tr>
-    <tr><td><code>preset_kit.py</code></td><td>Scaffolds the project and its generator script, builds <code>preset.json</code>, packs the <code>.postext</code> file, and lints the configuration: text of the book typed into design elements, where the configuration should hold only the design, and a configuration too large for the Sandbox</td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Scaffolds the project and its generator script, builds <code>preset.json</code>, packs the <code>.postext</code> file, and lints the configuration, flagging book text typed into design elements (the configuration should hold only the design) and a configuration too large for the Sandbox</td></tr>
     <tr><td><code>lint_project.py</code></td><td>Catches everything the parser and loader silently get wrong, and, for Chinese, Japanese and Korean text, the characters the bundled fonts cannot set; for Japanese text, kana under a Chinese locale, Chinese faces or settings, Aozora notation left in the chapters and kanji index entries without a reading; for Arabic text, a missing Arabic locale, Latin-only or unjoined faces, letter-spacing, forced hyphenation and italic emphasis; in comics, split expressions that do not parse, panels that do not match the cells, unknown pictures and balloon or panel styles, malformed speaker anchors, lettering faces the project does not bundle, and editions whose pages differ</td></tr>
     <tr><td><code>render.mjs</code></td><td>Lays the project (a folder or a <code>.postext</code> file) out headlessly with the real engine, reading its configuration as the Sandbox does, and prints warnings. With <code>--jpeg</code> it paints the pages you ask for (<code>--pages 12-15</code>) as JPEG files with the engine's own canvas renderer, in a second or two, so the agent looks at its pages without building a PDF; <code>--out</code> writes the PDF. A book set up for print gets PREFLIGHT lines (low-resolution pictures, thin rules, small text in several inks, ink over the limit, text near the trim), and its PDF is separated through the ICC output profile.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Places source and Postext pages side by side, from the render's PDF or its folder of JPEGs</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>Composed pages: <code>round</code> reads the installed engine's version and says which porting round it supports and which composed-page features it lacks; <code>check</code> runs <code>postext check</code> and <code>postext html</code> on every edition and fails on frame overflows, unknown templates or slots, labels that do not fit their anchor, text typed into the configuration, and frames the HTML reads in another order than the Markdown fills them</td></tr>
+    <tr><td><code>postext_md.py</code></td><td>The helper the other scripts import to write text in the Postext Markdown dialect: flat runs of inline marks, live characters escaped, and paragraphs that would read as a list, a heading or a fence kept as text</td></tr>
   </tbody>
 </table>
 
@@ -180,7 +186,7 @@ page and the install command there.
 ### Tools the scripts use
 
 ```bash
-python3 -m pip install pymupdf pillow fonttools brotli
+python3 -m pip install pymupdf pillow fonttools brotli numpy
 ```
 
 ```bash
@@ -191,13 +197,19 @@ brew install pandoc poppler
 mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && npm i postext postext-pdf postext-citeproc react @pdf-lib/fontkit @napi-rs/canvas
 ```
 
-Pandoc is needed for Word, PowerPoint, EPUB and HTML sources, and poppler for
-the source's page images. The Node packages power the headless renderer (Node 22.15 or
+Pandoc is needed for Word, PowerPoint, EPUB and HTML sources, poppler for
+the source's page images, and numpy for `comic_panels.py`. The Node packages power the headless renderer (Node 22.15 or
 newer); `@napi-rs/canvas` is a prebuilt canvas that lets it paint the book's
 pages straight to JPEG. Optional tools: `ocrmypdf` for scans, ImageMagick, and veraPDF for
 PDF/UA checks.
 
-The work loop runs on the [command line](/en/docs/command-line), one self-contained executable with nothing to install: the agent keeps the project unpacked and leaves `postext build --watch` running on the pages it is working on, so every change shows up as a JPEG about a second later, even in a long book. The Node packages are optional: they run `render.mjs`, which adds the Sandbox's extra checks. Both lay the book out with `bodyText.shapingLanguage: 'host'`, whatever its configuration says, so a line can break at another word than in the Sandbox (see [Differences from the Sandbox](/en/docs/command-line#differences-from-the-sandbox)).
+```bash
+mkdir -p ~/.local/bin && curl -fL -o ~/.local/bin/postext https://github.com/drnachio/postext/releases/latest/download/postext-macos-arm64 && chmod +x ~/.local/bin/postext
+```
+
+Pick your system's file (`postext-macos-arm64`, `postext-macos-x64`, `postext-linux-x64`, `postext-linux-arm64`, `postext-linux-x64-musl`, `postext-windows-x64.exe`); with Node, `npx postext-cli` works too.
+
+The work loop runs on the [command line](/en/docs/command-line), one self-contained executable with nothing to install: the agent keeps the project unpacked and leaves `postext build --watch` running on the pages it is working on, so every change shows up as a JPEG about a second later, even in a long book. The Node packages are optional: they run `render.mjs`, which adds the Sandbox's extra checks. Both lay the book out with `bodyText.shapingLanguage: 'host'`, whatever its configuration says, so a line may break at a different word than in the Sandbox (see [Differences from the Sandbox](/en/docs/command-line#differences-from-the-sandbox)).
 
 ## Using it
 
@@ -221,11 +233,11 @@ The agent follows the workflow:
    of measured facts: trim, margins, columns, leading, type roles, palette,
    openers, running heads, box families and placement habits. It classifies
    every page as running text or as a composed page (boxes, labels and maps
-   at set places); with Postext 1.35 or later it groups the composed pages by
-   kind of page and sets each kind from one page template, so the identical
-   layout keeps text you can edit and translate; with an older version, when
-   more than a third are composed, it asks whether you want the identical
-   layout or text you can edit and translate.
+   at set places). With Postext 1.35 or later it groups the composed pages by
+   kind and sets each kind from one page template, so the layout stays
+   identical and the text stays editable and translatable. With an older
+   version, when more than a third of the pages are composed, it asks whether
+   you want the identical layout or text you can edit and translate.
 3. **Project.** It scaffolds `my-book/` with a `build_preset.py` generator
    that holds the spec as constants and produces `preset.json`.
 4. **Content.** It extracts draft chapters with the right extractor, then
@@ -237,7 +249,7 @@ The agent follows the workflow:
    at the page's JPEG, repainted about a second later, and changes again
    until page breaks, figures and boxes match the source page by page. At
    each milestone it runs the full checks (`postext check` and the linter).
-   The PDF is built for the print checks, not for every look.
+   The PDF is built only for the print checks, not every time it looks.
 6. **Delivery.** It sets the book's paper, binding and covers for the Folio
    viewer and packs `my-book.postext`.
 

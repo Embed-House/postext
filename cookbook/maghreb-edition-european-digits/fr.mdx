@@ -1,6 +1,6 @@
 ---
 title: "Édition maghrébine d’un texte arabe, en chiffres européens"
-summary: "Un chapitre arabe imprimé pour le Maroc : la locale 'ar-MA' garde le texte de droite à gauche et relié à droite, et écrit chaque nombre généré en 1, 2, 3."
+summary: "Un chapitre arabe imprimé pour le Maroc : la langue 'ar-MA' garde le texte de droite à gauche et relié à droite, et écrit chaque nombre généré en 1, 2, 3."
 plain: "Au Maroc, en Algérie et en Tunisie, les livres en arabe impriment leurs nombres avec les chiffres utilisés en Europe, 1, 2, 3, et non avec ١، ٢، ٣. Un seul réglage, la langue et le pays du document, donne ces chiffres à tout le livre."
 description: "Un chapitre arabe pour le Maroc dans Postext : ar-MA met en chiffres européens folios, titres, listes, notes et figures, et garde la reliure à droite."
 question: "Comment imprimer des chiffres européens (1, 2, 3) dans un livre arabe pour une édition maghrébine ?"
@@ -16,13 +16,13 @@ Un chapitre d’un guide des vieilles villes du Maroc, consacré aux portes de F
 
 ### 1 · Le pays choisit les chiffres
 
-Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. `numerals` reste à `'auto'`, et le moteur lit les chiffres dans l’étiquette de langue : `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` et `ar-EH` donnent des chiffres européens, `ar` seul et les régions du Machrek donnent ١٢٣ ([Chiffres et styles de numération](/fr/docs/arabic-layout#chiffres-et-styles-de-numérotation)). Seuls changent les nombres que le moteur écrit : le folio, les compteurs de titres, les numéros de liste, les appels de note, les numéros de figure. Les années du texte, 789 et 1913, appartiennent à l’auteur, tapées dans les chiffres de l’édition, et le moteur ne les réécrit jamais. Le `{startAt=3}` du titre lit ٣ aussi bien que 3 : le même Markdown sert donc aux deux éditions.
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. `numerals` reste à `'auto'`, et le moteur déduit les chiffres de l’étiquette de langue : `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` et `ar-EH` donnent des chiffres européens, `ar` seul et les régions du Machrek donnent ١٢٣ ([Chiffres et styles de numération](/fr/docs/arabic-layout#chiffres-et-styles-de-numérotation)). Seuls changent les nombres que le moteur écrit : le folio, les compteurs de titres, les numéros de liste, les appels de note, les numéros de figure. Les années du texte, 789 et 1913, appartiennent à l’auteur, tapées dans les chiffres de l’édition, et le moteur ne les réécrit jamais. Le `{startAt=3}` du titre accepte ٣ aussi bien que 3 : le même Markdown sert donc aux deux éditions.
 
 ### 2 · Les signes autour des nombres
 
 <Excerpt region="marks" />
 
-Les livres arabes écrivent un numéro de liste suivi d’un trait d’union, 1-, et un appel de note entre parenthèses, (1) ; les deux modèles prennent les chiffres du document, si bien que l’édition du Machrek imprime ١- et (١) avec les mêmes réglages ([Notes de bas de page](/fr/docs/arabic-layout#notes-de-bas-de-page)). L’étiquette de la légende finit par deux-points, شكل 3-1:, car un point après un nombre se lit comme une virgule décimale. Les notes repartent à (1) à chaque page, comme les numérotent la plupart des livres arabes.
+Les livres arabes écrivent un numéro de liste suivi d’un trait d’union, 1-, et un appel de note entre parenthèses, (1) ; les deux modèles prennent les chiffres du document : l’édition du Machrek imprime donc ١- et (١) avec les mêmes réglages ([Notes de bas de page](/fr/docs/arabic-layout#notes-de-bas-de-page)). L’étiquette de la légende finit par deux-points, شكل 3-1:, car un point après un nombre se lit comme une virgule décimale. Les notes repartent à (1) à chaque page, comme les numérotent la plupart des livres arabes.
 
 ### 3 · Un bandeau de carreaux dessiné en code
 

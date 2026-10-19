@@ -1,7 +1,7 @@
 ---
 title: "Figures que suren fins on les cites"
 summary: "Capítol a dues columnes amb set figures numerades: sis suren del primer :ref al primer buit que admet la seva col·locació; una va on la posa ::resource."
-plain: "Un capítol d'un llibre de text sobre muntanyes, a dues columnes, amb set figures numerades. Ensenya com cada figura es col·loca al primer buit lliure després que el text l'esmenti."
+plain: "Un capítol d'un llibre de text sobre muntanyes, a dues columnes, amb set figures numerades. Ensenya com cada figura es col·loca al primer espai lliure després que el text l'esmenti."
 description: "Un manual a dues columnes amb Postext: set figures numerades segons la primera menció; sis suren al primer buit que admet la seva col·locació i una va en línia."
 question: "Com numero i cito les figures, i com decideixo si van a dalt, al peu, a tota l'amplada o dins del text?"
 aliases: ["col·locació de figures", "flotants", "remissions", "vegeu la figura", "citar una figura", "números de figura", "peus de figura", "figura en línia", "capçal de pàgina", "dues columnes", "Figura", "llibre de text"]
@@ -18,7 +18,7 @@ El capítol 2 de *Relleus de muntanya*, un manual de geomorfologia de 200 × 250
 
 <Excerpt region="palette" />
 
-Cada color de la configuració enllaça amb una d'aquestes entrades, i les pintures es van generar en els mateixos pissarra, blau glacera i molsa, de manera que les figures entren en els colors de la pàgina. Una pintura conserva els seus colors: si canvies el valor de `glacier`, canvien la cinta, la llosa i els rètols, no el gel de les figures. El blau d'accent és prou fosc per a la lletra petita: contrasta 5,2:1 amb el blanc a les etiquetes dels peus i a les cites, i 4,5:1 amb la llosa de gel a l'avantítol. Cada figura és un SVG que incrusta la seva pintura com un JPEG en data URL i hi posa al damunt els rètols com a text, amb un halo blanc fi, perquè es llegeixin nítids i segueixin la llengua de l'edició. Anomenen IBM Plex Sans Condensed al mateix SVG, i el `loadSvg` del kit hi incrusta els dos pesos que fan servir amb l'`inlineSvgFonts` del motor, perquè un SVG mostrat com a imatge no arriba tot sol a les fonts de la pàgina.
+Cada color de la configuració enllaça amb una d'aquestes entrades, i les pintures es van generar en els mateixos pissarra, blau glacera i molsa, de manera que les figures entren en els colors de la pàgina. Una pintura conserva els seus colors: si canvies el valor de `glacier`, canvien la cinta, la llosa i els rètols, no el gel de les figures. El blau d'accent és prou fosc per a la lletra petita: contrasta 5,2:1 amb el blanc a les etiquetes dels peus i a les cites, i 4,5:1 amb la llosa de gel a l'avantítol. Cada figura és un SVG que incrusta la seva pintura com un JPEG en data URL i hi posa al damunt els rètols com a text, amb un halo blanc fi, perquè es llegeixin nítids i segueixin la llengua de l'edició. Indiquen IBM Plex Sans Condensed al mateix SVG, i el `loadSvg` del kit hi incrusta els dos gruixos que fan servir amb l'`inlineSvgFonts` del motor, perquè un SVG mostrat com a imatge no arriba tot sol a les fonts de la pàgina.
 
 ### 2 · Anomena les figures en la llengua del lector
 
@@ -42,7 +42,7 @@ Un `:ref` o un `::resource` a un id que cap recurs no té imprimeix «?» i no c
 
 <Excerpt region="build" />
 
-Aquest és el capítol 2 d'un llibre més llarg, així que la continuació indica que abans hi va haver un capítol: les figures, numerades `{h1}.{n}`, comencen a la 2.1, i els folis, al 27. A la <PageRef page={2}>pàgina 28</PageRef>, la figura 2.3 queda per sobre de la 2.2, que porta el número menor perquè el text la cita abans. El `![]()` de Markdown es descarta, així que cada figura és un recurs l'SVG del qual es registra sota el seu `svg.fileId` abans de compondre. Cada col·locació depèn d'on se cita la figura: `auto` per a la 2.1, perquè la llosa ocupa el capçal de l'obertura; `bottom` per al perfil, que encara pot ocupar el peu de la pàgina que el cita; `top` per a les figures de columna, que obren els capçals de columna lliures següents, i també `top` per a la 2.7, que acaba al peu de la pàgina 30 perquè un flotant no surt del seu capítol.
+Aquest és el capítol 2 d'un llibre més llarg, així que la continuació indica que abans hi va haver un capítol: les figures, numerades `{h1}.{n}`, comencen a la 2.1, i els folis, al 27. A la <PageRef page={2}>pàgina 28</PageRef>, la figura 2.3 queda per sobre de la 2.2, que porta el número menor perquè el text la cita abans. El `![]()` de Markdown es descarta, així que cada figura és un recurs amb un SVG que es registra sota el seu `svg.fileId` abans de compondre. Cada col·locació depèn d'on se cita la figura: `auto` per a la 2.1, perquè la llosa ocupa el capçal de l'obertura; `bottom` per al perfil, que encara pot ocupar el peu de la pàgina que el cita; `top` per a les figures de columna, que obren els capçals de columna lliures següents, i també `top` per a la 2.7, que acaba al peu de la pàgina 30 perquè un flotant no surt del seu capítol.
 
 ## Variants
 
@@ -71,7 +71,7 @@ El peu puja per sobre de la figura, sobre una barra del blau gel de la paleta, i
 
 ### Posa una figura al marge
 
-Una pàgina a columna i mitja dona a les figures i als seus peus un canal exterior on el text no entra mai: mira <RecipeLink slug="textbook-margin-column">el llibre de text amb columna al marge</RecipeLink>.
+Una pàgina a columna i mitja dona a les figures i als seus peus una columna lateral exterior on el text no entra mai: mira <RecipeLink slug="textbook-margin-column">el llibre de text amb columna al marge</RecipeLink>.
 
 ### Fes surar les taules igual
 

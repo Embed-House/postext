@@ -16,19 +16,19 @@ Dos páginas de *الساحل*, un diario imaginario de una ciudad portuaria ima
 
 ### 1 · Dos columnas, la primera a la derecha
 
-El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `layoutType: 'double'` y el filete de columna son los mismos ajustes que en un periódico inglés; `locale: 'ar'` da la vuelta a la página, así que la noticia llena primero la columna de la derecha y sigue arriba en la de la izquierda ([Orden de las páginas y encuadernación por la derecha](/es/docs/arabic-layout#orden-de-las-páginas-y-encuadernación-por-la-derecha)). Un titular sobre las dos columnas es un recuadro a toda página sin marco, y las columnas que quedan debajo empiezan a la misma altura. La franja de breves es un recuadro a toda página flotado al pie con `:::columns{count=3}` dentro, y sus columnas también van de derecha a izquierda, igual que la tabla de horarios de la página 2: una tabla en la dirección del documento pone su primera columna a la derecha.
+El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `layoutType: 'double'` y el filete de columna son los mismos ajustes que en un periódico inglés; `locale: 'ar'` da la vuelta a la página, así que la noticia llena primero la columna de la derecha y sigue arriba en la de la izquierda ([Orden de las páginas y encuadernación por la derecha](/es/docs/arabic-layout#orden-de-las-páginas-y-encuadernación-por-la-derecha)). Un titular sobre las dos columnas es un recuadro a toda página sin borde, y las columnas que quedan debajo empiezan a la misma altura. La franja de breves es un recuadro a toda página que flota al pie con `:::columns{count=3}` dentro, y sus columnas también van de derecha a izquierda, igual que la tabla de horarios de la página 2: una tabla en la dirección del documento pone su primera columna a la derecha.
 
 ### 2 · Una cabecera entre dos orejas
 
 <Excerpt region="nameplate" />
 
-El título de primer nivel de la portada es el nombre del periódico, pintado por un estilo de título. Su diseño se dibuja en la página en espejo, así que `top-right` es el principio de la línea: el número y la fecha van ahí, y la ciudad y el precio en el otro extremo ([Qué significan izquierda, derecha, principio y final](/es/docs/arabic-layout#qué-significan-izquierda-derecha-principio-y-final)). La ruqʿa es una letra de rótulo para pocas palabras en cuerpo grande; no admite cachida y el texto nunca la usa.
+El encabezado de primer nivel de la portada es el nombre del periódico, pintado por un estilo de encabezado. Su diseño se dibuja en la página en espejo, así que `top-right` es el principio de la línea: el número y la fecha van ahí, y la ciudad y el precio en el otro extremo ([Qué significan izquierda, derecha, principio y final](/es/docs/arabic-layout#qué-significan-izquierda-derecha-principio-y-final)). La ruqʿa es una letra de rótulo para pocas palabras en cuerpo grande; no admite cachida y el texto nunca la usa.
 
 ### 3 · Pestañas de sección y líneas de folio
 
 <Excerpt region="inside" />
 
-Una página interior se abre con un título de primer nivel dibujado como pestaña sobre un filete grueso. La línea de folio es una cabecera, así que conserva sus lados físicos: la página 2, par, lleva el número en la esquina derecha, la exterior en un periódico que se abre por la derecha. La portada vacía la cabecera en su estilo de título.
+Una página interior se abre con un encabezado de primer nivel dibujado como pestaña sobre un filete grueso. La línea de folio es una cabecera, así que conserva sus lados físicos: la página 2, par, lleva el número en la esquina derecha, la exterior en un periódico que se abre por la derecha. La portada vacía la cabecera en su estilo de encabezado.
 
 ### 4 · Un mapa dibujado con código
 

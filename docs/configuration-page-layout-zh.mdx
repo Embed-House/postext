@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：页面与版式',
   sidebarTitle: '页面与版式',
-  description: '页面尺寸、页边距与基线网格，页码编号，以及分栏与栏间距',
+  description: '页面尺寸、页边距和基线网格，页码的编排，以及分栏和栏间距',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '22分钟',
   order: 5,
   parent: 'configuration',
-  plainSummary: "本页讲纸面本身的设置。你可以选择页面大小、页边距、书的装订边，以及文字行所对齐的网格。你可以设定页码怎样计数、怎样书写。你可以设定一页分几栏，栏与栏之间留多少空，以及文字横排还是竖排。页眉和页脚另有一页说明。",
+  plainSummary: "本页讲纸页本身的设置。你可以选择页面大小、页边距、书在哪一边装订，以及文字行对齐的网格。你可以设定页码从几开始、用什么数字书写。你还可以设定一页分几栏、栏与栏之间留多宽，以及文字横排还是竖排。页眉和页脚另有一页专门介绍。",
 };
 
 # 配置：页面与版式
@@ -50,8 +50,8 @@ export const metadata = {
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td>四边均为<code>2 cm</code></td>
-      <td>页面边缘与内容区域之间的空白。上、下、左、右四边各自独立设置。设了<code>mirror: true</code>时，这些页边距就是<em>对页</em>页边距：<code>left</code>是内侧（订口一侧）页边距，<code>right</code>是外侧页边距；奇数页（第1页是奇数页）按原样使用，偶数页左右互换，于是内容区域，连同其中的栏、浮动体带、页眉页脚容器和章首横带，都会在跨页中左右移动。默认为<code>false</code>。详见下文。</td>
+      <td>上下<code>2 cm</code>，左右<code>1.5 cm</code></td>
+      <td>页面边缘与版心之间的空白。上、下、左、右四边各自独立设置。设了<code>mirror: true</code>时，这些页边距就成了左右页<em>对称</em>的页边距：<code>left</code>是内侧（订口一侧）页边距，<code>right</code>是外侧页边距；奇数页（第1页是奇数页）按原样使用，偶数页左右互换。这样版心就会在跨页中左右移动，其中的栏、浮动体横带、页眉页脚容器和章首横带也随之移动。默认为<code>false</code>。详见下文。</td>
     </tr>
     <tr>
       <td><code>backgroundColor</code></td>
@@ -69,7 +69,7 @@ export const metadata = {
       <td><code>cutLines</code></td>
       <td><code>CutLinesConfig</code></td>
       <td>关闭</td>
-      <td>在页面四角显示裁切标记，供印后裁切使用。启用后，画布会扩大以包含出血区域和裁切标记。详见下文。</td>
+      <td>在页面四角显示裁切线，供印后裁切使用。启用后，画布会扩大，以容纳出血区域和裁切线。详见下文。</td>
     </tr>
     <tr>
       <td><code>baselineGrid</code></td>
@@ -78,17 +78,23 @@ export const metadata = {
       <td>在页面上画出基线网格，用来检查纵向节奏。无论画不画出来，版面都会对齐到网格。详见下文。</td>
     </tr>
     <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>页码标签的写法，以及计数从哪个数开始。详见<a href="#页码编号">页码编号</a>。</td>
+    </tr>
+    <tr>
       <td><code>binding</code></td>
       <td><code>'auto' | 'left' | 'right'</code></td>
       <td><code>'auto'</code></td>
-      <td>书籍装订的一侧。<code>layout.writingMode</code>为<code>'vertical-rl'</code>、文档从右到左（<a href="/zh/docs/configuration-language#文本方向"><code>direction</code></a>）或其<a href="/zh/docs/configuration-comics#漫画"><code>comics</code></a>部分从右往左读（日本漫画，西方漫画的日文版或繁体中文版）时，<code>'auto'</code>即<code>'right'</code>，否则为<code>'left'</code>。右侧装订的书从左页开始，页边距的镜像方向也相反。这是全书级设置：标题样式自己的<code>layout</code>不会改变它。见<a href="#装订">装订</a>。</td>
+      <td>书在哪一边装订。<code>layout.writingMode</code>为<code>'vertical-rl'</code>、文档从右向左书写（<a href="/zh/docs/configuration-language#文本方向"><code>direction</code></a>）或其<a href="/zh/docs/configuration-comics#漫画"><code>comics</code></a>部分从右往左读（日本漫画、西方漫画的日文版或繁体中文版）时，<code>'auto'</code>即<code>'right'</code>，否则为<code>'left'</code>。右侧装订的书从左页开始，页边距也反过来对称。这是全书级设置：标题样式自己的<code>layout</code>不会改变它。见<a href="#装订">装订</a>。</td>
     </tr>
   </tbody>
 </table>
 
-### 镜像页边距
+### 对称页边距
 
-书是按跨页来读的，内侧页边距通常与外侧不同。`margins.mirror`把四边页边距变成对页页边距：
+书是按跨页来读的，内侧页边距通常与外侧不同。`margins.mirror`让四边页边距按左右页对称设置：
 
 ```json
 {
@@ -104,22 +110,22 @@ export const metadata = {
 }
 ```
 
-按这份配置，每个奇数页左侧（订口）页边距为2.2 cm，右侧（切口）为1.4 cm；每个偶数页左侧（切口）为1.4 cm，右侧（订口）为2.2 cm。排好的每一页都在`VDTPage`上带有自己的`contentArea`，因此由它推导出来的一切，包括栏、整页宽的浮动体带、页眉页脚容器以及`span: 'page'`章首横带，都会自动随镜像后的几何关系变化。锚定到`'page'`/`'bleed'`的设计元素所用的页面框和出血框不受影响：它们描述的是实际纸张，而不是页边距。
+按这份配置，每个奇数页左侧（订口）页边距为2.2 cm，右侧（切口）为1.4 cm；每个偶数页左侧（切口）为1.4 cm，右侧（订口）为2.2 cm。排好的每一页都在`VDTPage`上带有自己的`contentArea`，因此由它推导出来的一切，包括栏、整页宽的浮动体横带、页眉页脚容器以及`span: 'page'`章首横带，都会自动随对称后的页面几何变化。锚定到`'page'`/`'bleed'`的设计元素所用的页面框和出血框不受影响：它们描述的是实际纸张，而不是页边距。
 
 ### 装订
 
 “竖排的中文书籍在右侧装订，横排的书籍在左侧装订”（[clreq §7.1.1.1](https://www.w3.org/TR/clreq/#x7-1-1-1-basic-elements-of-page-formatting)）。`page.binding: 'right'`按右侧装订来排书：
 
-- 第1页仍是奇数页，也仍是右页，所以`breakBefore.parity`、`:::pagebreak{parity}`、带`parity`的设计元素以及所有页数的含义都不变。变的是右页所在的一侧：它成了跨页中左边的那一页。所以从新的右页开始的章，开在左边一页上（[clreq §7.1.3.3](https://www.w3.org/TR/clreq/#x7-1-3-3-how-to-handle-headings-with-new-recto-and-page-break)）。
-- 设了`margins.mirror`时，`left`仍是内侧页边距，但左右互换的是奇数页：第1页的内侧页边距在右边，第2页在左边。位于`'outer'`/`'inner'`的`oneAndHalf`侧栏、贴着订口的旋转浮动体、篇章页的页边距，以及位于`'outer'`/`'inner'`的框角图标，都遵循同样的规则。
-- 文档本身会标明这一点（`VDTDocument.binding: 'right'`），宿主程序无须读取配置：沙盒把跨页显示为`[3 | 2]`，第1页单独位于订口左侧；它的HTML查看器从右向左排列页面，从右端打开，左箭头翻到下一页。`renderToHtml`在multi模式下把一行页面从右向左排列。
-- 无论是否带标签，PDF都写入`/ViewerPreferences << /Direction /R2L >>`和`/PageLayout /TwoPageRight`（第1页单独，之后两两成对）。Acrobat和Foxit会遵循这两项设置，Chrome内置的查看器则都忽略。
+- 第1页仍是奇数页（recto），所以`breakBefore.parity`、`:::pagebreak{parity}`、带`parity`的设计元素以及各种页数计算的含义都不变。变的是奇数页所在的一侧：它成了跨页中左边的那一页。因此，要求从新的奇数页开始的章，开在左边一页上（[clreq §7.1.3.3](https://www.w3.org/TR/clreq/#x7-1-3-3-how-to-handle-headings-with-new-recto-and-page-break)）。
+- 设了`margins.mirror`时，`left`仍是内侧页边距，但左右互换的是奇数页：第1页的内侧页边距在右边，第2页在左边。位于`'outer'`/`'inner'`的`oneAndHalf`侧栏、贴着订口的旋转浮动体、篇名页的页边距，以及位于`'outer'`/`'inner'`的框角图标，都遵循同样的规则。
+- 文档本身会标明这一点（`VDTDocument.binding: 'right'`），所以宿主程序无须读取配置：沙盒把跨页显示为`[3 | 2]`，第1页单独位于订口左侧；它的HTML阅读器从右向左排列页面，从右端打开，左箭头翻到下一页。`renderToHtml`在multi模式下把一行页面从右向左排列。
+- 无论是否带标签，PDF都写入`/ViewerPreferences << /Direction /R2L >>`和`/PageLayout /TwoPageRight`（第1页单独，之后两两成对）。Acrobat和Foxit会遵循这两项设置，Chrome内置的查看器则两项都忽略。
 
-页码和书眉不会自行移动：把页码印在外侧角的模板，需要为右侧装订分别设置奇数页和偶数页的元素（元素可以带`parity`）。
+页码和书眉不会自动换边：如果模板把页码印在外侧角，就要按右侧装订分别设置奇数页和偶数页的元素（元素可以带`parity`）。
 
-从右到左书写的书（阿拉伯文、波斯文、希伯来文等）也在右侧装订：文档的[`direction`](/zh/docs/configuration-language#文本方向)解析为`'rtl'`时，`'auto'`给出右侧。这样的书还会把整个文字流镜像：第一栏在右边，缩进、列表标记、浮动体和脚注都在右侧；页眉和页脚的槽位保持物理方向。见[阿拉伯文排版](/zh/docs/arabic-layout#页序与右侧装订)。
+从右到左书写的书（阿拉伯文、波斯文、希伯来文等）也在右侧装订：文档的[`direction`](/zh/docs/configuration-language#文本方向)解析为`'rtl'`时，`'auto'`给出右侧。这样的书整个正文流也会左右镜像：第一栏在右边，缩进、列表标记、浮动体和注释都在右侧；页眉和页脚的槽位则按纸面上的实际位置，不随之镜像。见[阿拉伯文排版](/zh/docs/arabic-layout#页序与右侧装订)。
 
-从右往左读的漫画书也在右侧装订：配置中有`comics`部分且其阅读方向解析为`'rtl'`时，`'auto'`给出右侧。日本漫画（`comics.artDirection: 'rtl'`）以及西方漫画的日文版或繁体中文版都是如此。由这一部分为全书决定，而不是某一章的`:::page`块。见[漫画](/zh/docs/comics#阅读方向)。
+从右往左读的漫画书也在右侧装订：配置中有`comics`部分且其阅读方向解析为`'rtl'`时，`'auto'`给出右侧。日本漫画（`comics.artDirection: 'rtl'`）以及西方漫画的日文版或繁体中文版都是如此。这由`comics`部分为全书统一决定，某一章的`:::page`块改变不了。见[漫画](/zh/docs/comics#阅读方向)。
 
 ### 页面尺寸预设
 
@@ -146,11 +152,11 @@ export const metadata = {
 
 <Illustration name="PageSizes" data='{"title": "页面尺寸预设", "desc": "按比例绘制的四种内置页面尺寸预设：口袋书11x17、平装书12x19、技术书17x24，以及接近A4的21x28 cm。", "caption": "各预设按比例绘制。", "sizes": [{"name": "11×17", "dims": "口袋书", "wmm": 110, "hmm": 170}, {"name": "12×19", "dims": "平装书", "wmm": 120, "hmm": 190}, {"name": "17×24", "dims": "教材", "wmm": 170, "hmm": 240}, {"name": "21×28", "dims": "~A4", "wmm": 210, "hmm": 280}]}' />
 
-四种报纸开本是postext 1.18新增的，没有画在图中：对开大报一页的面积将近21 × 28页面的四倍。它们通常用[`'multiple'`版式](#版式类型)排，对开大报常见六栏，小报常见五栏。
+四种报纸开本是postext 1.18新增的，没有画在图中，因为对开大报一页的面积将近21 × 28页面的四倍。它们通常用[`'multiple'`版式](#版式类型)排，对开大报常见六栏，小报常见五栏。
 
 ### 基线网格
 
-基线网格是正文的节奏：从内容区域顶端算起，每隔一个正文行距一条线。无论是否画出来，版面都会使用它：标题、列表末尾、框、图和行间公式之后，文字都会回到网格上（除非它们自己的`snapToGrid`关闭），所以相邻各栏的行保持对齐。`enabled`只负责在Canvas、PDF和沙盒视图中画出这些线，用来检查节奏；打开或关闭它不会移动任何东西。这些线只覆盖页面上实际的文字，从第一行文字到最后一行，所以浮动体带、为奇偶页补的空白页以及末尾未用的空间都不显示网格。
+基线网格体现正文的节奏：从版心顶端算起，每隔一个正文行距一条线。无论是否画出来，版面都会使用它：标题、列表末尾、框、图和行间公式之后，文字都会回到网格上（除非它们自己的`snapToGrid`关闭），所以相邻各栏的行保持对齐。`enabled`只负责在画布、PDF和沙盒视图中画出这些线，用来检查节奏；打开或关闭它不会移动任何东西。这些线只覆盖页面上实际有文字的部分，即从第一行文字到最后一行，所以浮动体带、为奇偶页补的空白页以及末尾未用的空间都不显示网格。
 
 <table>
   <thead>
@@ -166,7 +172,7 @@ export const metadata = {
       <td><code>enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>是否画出网格线（Canvas和PDF）。只影响绘制，版面不论开关都一样。</td>
+      <td>是否画出网格线（画布和PDF）。只影响绘制，版面不论开关都一样。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -191,7 +197,7 @@ page: {
 
 ### 裁切线
 
-启用后，画布会扩大以包含出血区域，引擎还会在每个角画出裁切标记，供印刷生产使用。PDF的每一页都带有TrimBox和BleedBox；[PDF/X](/zh/docs/configuration-fonts-colors-viewers#pdfx-1a与pdfx-4)文件即使没有裁切线也有这两个框。在沙盒中，它们在**导出 › 印前准备**中设置。
+启用后，画布会扩大，以容纳出血区域，引擎还会在每个角画出裁切线，供印刷生产使用。PDF的每一页都带有TrimBox和BleedBox；[PDF/X](/zh/docs/configuration-fonts-colors-viewers#pdfx-1a与pdfx-4)文件即使没有裁切线也有这两个框。在沙盒中，这些在**导出 › 印前准备**中设置。
 
 <table>
   <thead>
@@ -207,7 +213,7 @@ page: {
       <td><code>enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>是否扩大画布以包含出血并画出裁切标记。</td>
+      <td>是否扩大画布以容纳出血，并画出裁切线。</td>
     </tr>
     <tr>
       <td><code>bleed</code></td>
@@ -219,38 +225,38 @@ page: {
       <td><code>markLength</code></td>
       <td><code>Dimension</code></td>
       <td><code>5 mm</code></td>
-      <td>每条裁切标记的长度。</td>
+      <td>每条裁切线的长度。</td>
     </tr>
     <tr>
       <td><code>markOffset</code></td>
       <td><code>Dimension</code></td>
       <td><code>3 mm</code></td>
-      <td>成品边缘与每条裁切标记起点之间的距离。标记不会从出血区域内开始：<code>bleed</code>更宽时，标记从出血边缘开始。</td>
+      <td>成品边缘与每条裁切线起点之间的距离。裁切线不会从出血区域内开始：<code>bleed</code>更宽时，裁切线从出血边缘开始。</td>
     </tr>
     <tr>
       <td><code>markWidth</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.25 pt</code></td>
-      <td>裁切标记的粗细。</td>
+      <td>裁切线的粗细。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#000000</code></td>
-      <td>画布（屏幕预览）上裁切标记的颜色。PDF中始终用套准色绘制（见下文）。</td>
+      <td>画布（屏幕预览）上裁切线的颜色。PDF中裁切线始终用套准色绘制（见下文）。</td>
     </tr>
   </tbody>
 </table>
 
-纸张每一边扩大`bleed + markOffset + markLength`，裁切后的页面位于正中。成品的每个角有两条标记，各长`markLength`，分别与在该角相交的一条边对齐。标记从成品边缘外`markOffset`处开始；如果`bleed`比它宽，就从出血边缘开始，这样标记不会压在延伸到出血区域的图文上。按默认值（3 mm出血、3 mm偏移），标记位于成品外3到8 mm之间，标记之外还有一圈3 mm宽的空白带环绕纸张。`cropMarkSegments(page, doc.config.page, doc.trimOffset)`以页面像素返回一页的八条标记，也就是Canvas和PDF后端所画的那些。第三个参数是成品在纸张中的位置，PDF的`TrimBox`就是据此写出的；省略时按同样方式从`cutLines`算出。
+纸张每一边扩大`bleed + markOffset + markLength`，裁切后的页面位于正中。成品的每个角有两条裁切线，各长`markLength`，分别与在该角相交的两条边之一对齐。裁切线从成品边缘外`markOffset`处开始；如果`bleed`比它宽，就从出血边缘开始，这样裁切线不会压在延伸到出血区域的图文上。按默认值（3 mm出血、3 mm偏移），裁切线位于成品外3到8 mm之间，外面还有一圈3 mm宽的空白带环绕纸张。`cropMarkSegments(page, doc.config.page, doc.trimOffset)`以页面像素返回一页的八条裁切线，也就是Canvas和PDF后端所画的那些。第三个参数是成品在纸张中的位置，PDF的`TrimBox`就是据此写出的；省略时按同样方式从`cutLines`算出。
 
-出血区域之外，除了标记什么都不印。页面绘制的一切，包括锚定到`'page'`或`'bleed'`的设计元素，在Canvas、PDF和HTML输出中都会被裁到出血框以内，与桌面排版软件导出时的裁切一致：有意超出出血放置的色带或图片，在出血边缘被截断，反正裁切时那部分也会被切掉。postext 1.4及以前，这样的元素会越过标记一直延伸到纸张边缘。
+出血区域之外，除了裁切线什么都不印。页面绘制的一切，包括锚定到`'page'`或`'bleed'`的设计元素，在Canvas、PDF和HTML输出中都会被裁到出血框以内，与桌面排版软件导出时的裁切一致：有意超出出血放置的色带或图片会在出血边缘被截断，反正裁切时那部分也会被切掉。postext 1.4及以前，这样的元素会越过标记一直延伸到纸张边缘。
 
-在PDF（`postext-pdf`）中，每页的MediaBox是整张纸。页面还带有TrimBox（裁切后的成品页面）和BleedBox（成品加出血），供拼版和印前检查工具读取。标记用套准色即`/All`分色绘制，因此每块印版上都会印出。无论PDF以何种色彩空间写出（RGB、灰度或CMYK）都是如此：普通黑色到了印厂会变成四色叠黑，或只落在黑版上。`color`只用于画布。
+在PDF（`postext-pdf`）中，每页的MediaBox是整张纸。页面还带有TrimBox（裁切后的成品页面）和BleedBox（成品加出血），供拼版和印前检查工具读取。裁切线用套准色（即`/All`分色）绘制，因此每块印版上都会印出。无论PDF以何种色彩空间写出（RGB、灰度或CMYK）都是如此：普通黑色到了印厂会变成四色叠黑，或只落在黑版上。`color`只用于画布。
 
 ### 页码编号
 
-`page.pageNumbering`块控制页码标签的格式以及计数器的起始值。它只定义整个文档的默认设置。要在文档中途重新编号（例如前置部分用罗马数字，正文各章改用从1开始的阿拉伯数字），请使用`:::numbering`指令（见**文档格式 → 指令**）。
+`page.pageNumbering`块控制页码标签的格式以及计数器的起始值。它只定义整个文档的默认设置。要在文档中途重新编号（例如前辅文用罗马数字，正文各章改用从1开始的阿拉伯数字），请使用`:::numbering`指令（见**文档格式 › 指令**）。
 
 <table>
   <thead>
@@ -272,16 +278,16 @@ page: {
       <td><code>startAt</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>不论格式如何，赋给第一页的数值。<code>format: 'lower-roman', startAt: 1</code>得到<code>i, ii, iii, …</code>；<code>format: 'decimal', startAt: 17</code>得到<code>17, 18, 19, …</code>。</td>
+      <td>第一页的数值，与格式无关。<code>format: 'lower-roman', startAt: 1</code>得到<code>i, ii, iii, …</code>；<code>format: 'decimal', startAt: 17</code>得到<code>17, 18, 19, …</code>。</td>
     </tr>
   </tbody>
 </table>
 
-计算出的标签以`pageLabel`存放在每个`VDTPage`上，页眉页脚占位符<code>\{pageNumber\}</code>解析出的就是它。PDF会写出<code>/PageLabels</code>数字树，使“预览”/Acrobat的页码指示和“转到页面”导航与印出的标签完全一致。PDF没有对应代码的样式（中文数字、带圈数字和全角数字）会逐页写出，所以阅读器同样显示一、二、三。
+计算出的标签以`pageLabel`存放在每个`VDTPage`上，页眉页脚占位符<code>\{pageNumber\}</code>解析出的就是它。PDF会写出<code>/PageLabels</code>数字树，让“预览”/Acrobat的页码指示和“转到页面”导航与印出的标签完全一致。PDF没有对应代码的样式（中文数字、带圈数字和全角数字）会逐页写出，所以阅读器里同样显示一、二、三。
 
 #### 编号格式的写法
 
-有三处设置可以选择编号格式，各自形成了自己的写法：页码标签（`page.pageNumbering.format`和`:::numbering{format=…}`）写作`lower-roman`，有序列表（`orderedLists.numberFormat`）用`arabic`表示十进制，资源类型（`counterFormat`）写作`roman-lower`。这三处都接受下表中的所有写法，所以从一处复制过来的格式在另外两处同样可用。名称不区分大小写；单字符形式区分（`i`和`I`不同）。
+有三处设置可以选择编号格式，每处都有自己的写法：页码标签（`page.pageNumbering.format`和`:::numbering{format=…}`）写作`lower-roman`，有序列表（`orderedLists.numberFormat`）用`arabic`表示十进制，资源类型（`counterFormat`）写作`roman-lower`。这三处都接受下表中的所有写法，所以从一处复制过来的格式在另外两处同样可用。名称不区分大小写；单字符形式区分（`i`和`I`不同）。
 
 <table>
   <thead>
@@ -304,7 +310,7 @@ page: {
     <tr><td>中文数码</td><td>一二〇, 二〇二六</td><td><code>cjk-decimal</code>、<code>〇</code></td></tr>
     <tr><td>天干</td><td>甲, 乙, 丙 … 癸</td><td><code>cjk-heavenly-stem</code>、<code>甲</code></td></tr>
     <tr><td>地支</td><td>子, 丑, 寅 … 亥</td><td><code>cjk-earthly-branch</code>、<code>子</code></td></tr>
-    <tr><td>日文数字</td><td>一, 十二, 百一, 一万一</td><td><code>japanese-informal</code>，日文文档中的<code>一</code></td></tr>
+    <tr><td>日文数字</td><td>一, 十二, 百一, 一万一</td><td><code>japanese-informal</code>、日文文档中的<code>一</code></td></tr>
     <tr><td>日文大写数字</td><td>壱, 壱拾弐, 壱百</td><td><code>japanese-formal</code>、<code>壱</code></td></tr>
     <tr><td>平假名，五十音顺</td><td>あ, い, う … ん, ああ</td><td><code>hiragana</code>、<code>あ</code></td></tr>
     <tr><td>片假名，五十音顺</td><td>ア, イ, ウ … ン, アア</td><td><code>katakana</code>、<code>ア</code></td></tr>
@@ -321,13 +327,13 @@ page: {
   </tbody>
 </table>
 
-东亚样式在三处设置中都沿用[CSS Counter Styles](https://www.w3.org/TR/css-counter-styles-3/#limited-chinese)中的名称。中文小写数字在10到19之间写作十，前面不加一（十二，但一百一十）；数中连续的零只写一个零（一百零一、一千零五十）；万位用万或萬，亿位用亿或億（一万零一十）。只有`cjk-decimal`使用〇，逐位书写，与年份的写法相同（二〇二六，GB/T 15835—2011）。天干到10为止，地支到12，带圈数字到50；超出后以阿拉伯数字输出。`一`和`壹`跟随文档`locale`的字形：`zh-Hant`、`zh-TW`或`zh-HK`为繁体，其余为简体。有些较早的出版物把101写作一百一，不带零；Postext不输出这种形式。
+东亚样式在三处设置中都沿用[CSS Counter Styles](https://www.w3.org/TR/css-counter-styles-3/#limited-chinese)中的名称。中文小写数字在10到19之间写作十，前面不加一（十二，但一百一十）；数中连续的零只写一个零（一百零一、一千零五十）；万位用万或萬，亿位用亿或億（一万零一十）。只有`cjk-decimal`使用〇，逐位书写，与年份的写法相同（二〇二六，GB/T 15835—2011）。天干到10为止，地支到12，带圈数字到50；超出后以阿拉伯数字输出。`一`和`壹`用简体还是繁体，由文档的`locale`决定：`zh-Hant`、`zh-TW`或`zh-HK`为繁体，其余为简体。有些较早的出版物把101写作一百一，不带零；Postext不输出这种形式。
 
-日文样式（从postext 1.16起）同样遵循CSS Counter Styles。`japanese-informal`写十时前面不加一，空位不写零（百一、千十）；`japanese-formal`写大字壱 弐 参 拾 百 阡，每个单位前都保留壱（壱拾、壱百）。CSS中两者都到9 999为止；Postext接着按四位一组用万 億 兆（大写为萬 億 兆）往下写，每组在单位前保留一：一万一是10 001，一億一万是100 010 000。在日文文档（`ja`、`ja-JP`等）中，`一`表示`japanese-informal`，所以`第{1:一}章`在那里印作第百一章，在中文文档中印作第一百零一章；`壹`仍是中文大写数字。假名序列就是CSS中的列表：按五十音顺的48个假名（包括ゐ和ゑ）和按伊吕波歌顺序的47个假名；排到最后一个之后接着用两个假名（ああ、いい），它们没有零，所以编号为0的项印作`0`。逐位的汉字数字（二〇二六）是`cjk-decimal`，年份和页码用这种写法。
+日文样式（从postext 1.16起）同样遵循CSS Counter Styles。`japanese-informal`写十时前面不加一，空位不写零（百一、千十）；`japanese-formal`写大字壱、弐、参、拾、百、阡，每个单位前都保留壱（壱拾、壱百）。CSS中两者都到9 999为止；Postext接着按四位一组，用万、億、兆（大写为萬、億、兆）往下写，每组在单位前保留一：一万一是10 001，一億一万是100 010 000。在日文文档（`ja`、`ja-JP`等）中，`一`表示`japanese-informal`，所以`第{1:一}章`在那里印作第百一章，在中文文档中印作第一百零一章；`壹`仍是中文大写数字。假名序列就是CSS中的列表：按五十音顺的48个假名（包括ゐ和ゑ）和按伊吕波歌顺序的47个假名；排到最后一个之后接着用两个假名（ああ、いい）；假名序列没有零，所以编号为0的项印作`0`。逐位的汉字数字（二〇二六）是`cjk-decimal`，年份和页码用这种写法。
 
-阿拉伯样式凡CSS已有名称的都沿用之（`arabic-indic`、`persian`；W3C《Ready-made Counter Styles》中的`urdu`和`maghrebi-abjad`分别读作`persian`和`arabic-abjad-maghrebi`）。`arabic`仍表示欧洲数字。`arabic-abjad`输出古典阿拉伯语和抄本页码所用的累加式阿布贾德数字，数值大的在前：11为يا，1446为غتمو，千位的倍数写在غ之前（2000为بغ，1002为غب）；超过999 999时以数字输出。W3C把这个名称用于一个28个字母的序列，其中11为ك；Postext把这个序列称为`abjad`，即按阿布贾德顺序给列表项编字母（أ، ب، ج، د، هـ），按字母表顺序的则是`hijai`（أ، ب، ت، ث）。两者都把第一个字母写成带hamza的أ，把单独出现的he写成带tatweel的هـ，以免被读作数字١和٥；超过28个后按`lower-alpha`的方式双写（أأ、أب）。马格里布数值依照口诀صعفض قرست ثخذ ظغش（ص为60，ض为90）；W3C的列表把ص与ض对调。单个أ无法区分两种字母序列，因此它们的记号是各自的前四个字母：`{1:أبجد}`、`{1:أبتث}`。文档本身的数字由[`numerals`](/zh/docs/configuration-language#文档数字)设定。
+阿拉伯样式凡是CSS已有名称的，都沿用CSS的名称（`arabic-indic`、`persian`；W3C《Ready-made Counter Styles》中的`urdu`和`maghrebi-abjad`分别读作`persian`和`arabic-abjad-maghrebi`）。`arabic`仍表示欧洲数字。`arabic-abjad`输出古典阿拉伯语和抄本页码所用的累加式阿布贾德数字，数值大的在前：11为يا，1446为غتمو，千位的倍数写在غ之前（2000为بغ，1002为غب）；超过999 999时以数字输出。W3C的说明把这个名称用于一个28个字母的序列，其中11为ك；Postext把这个序列称为`abjad`，即按阿布贾德顺序给列表项编字母（أ، ب، ج، د، هـ），按字母表顺序的则是`hijai`（أ، ب، ت، ث）。两者都把第一个字母写成带hamza的أ，把单独出现的he写成带tatweel的هـ，以免被读作数字١和٥；超过28个后按`lower-alpha`的方式双写（أأ、أب）。马格里布数值依照口诀صعفض قرست ثخذ ظغش（ص为60，ض为90）；W3C的列表把ص与ض对调。单个أ无法区分两种字母序列，因此它们的记号是各自的前四个字母：`{1:أبجد}`、`{1:أبتث}`。文档本身的数字由[`numerals`](/zh/docs/configuration-language#文档数字)设定。
 
-其他写法是为不经类型检查的配置准备的，即JSON预设和纯JavaScript。TypeScript类型仍然只列出每处设置自己的写法，也就是沙盒写入、`resolveAllConfig`返回的那种（东亚名称也包括在内），所以有类型的`PostextConfig`要守住这种写法，用别的写法需要类型断言。
+其他写法是为不经类型检查的配置准备的，即JSON预设和纯JavaScript。TypeScript类型仍然只列出每处设置自己的写法，也就是沙盒写入、解析后的配置（`doc.config`）中的那种（东亚名称也包括在内），所以带类型的`PostextConfig`只能用这种写法，用别的写法需要类型断言。
 
 ```js
 // JavaScript或JSON预设（在TypeScript中，用每处设置自己的写法）
@@ -336,16 +342,16 @@ page: { pageNumbering: { format: 'roman-lower' } }, // 等同于'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同于'roman-upper'
 ```
 
-`resolveAllConfig`会把列表格式和页码格式转换成各自设置的写法：在`orderedLists`中`'decimal'`解析为`'arabic'`，在`page.pageNumbering`中`'roman-lower'`解析为`'lower-roman'`；`stripConfigDefaults`会去掉默认值的任一写法。沙盒的面板无论配置用的是哪种写法，都按三处设置各自的写法显示。其他任何值，如`roman`、`01`或拼写错误，都按十进制编号而不会印出`undefined`，并作为[配置警告](/zh/docs/configuration-fonts-colors-viewers#配置警告)报告。标题编号模板在冒号后接受同样的名称（`{1:roman-upper}`即`{1:I}`），此外还有它们自己的补零形式`{1:01}`。
+解析配置（`doc.config`）时会把列表格式和页码格式转换成各自设置的写法：在`orderedLists`中`'decimal'`解析为`'arabic'`，在`page.pageNumbering`中`'roman-lower'`解析为`'lower-roman'`；`stripConfigDefaults`会去掉默认值的任一写法。无论配置用的是哪种写法，沙盒的面板都按三处设置各自的写法显示。其他任何值，如`roman`、`01`或拼写错误，都按十进制编号，不会印出`undefined`，并作为[配置警告](/zh/docs/configuration-fonts-colors-viewers#配置警告)报告。标题编号模板在冒号后接受同样的名称（`{1:roman-upper}`即`{1:I}`），此外还有它们自己的补零形式`{1:01}`。
 
 
 ## 版式
 
-`layout`属性控制内容区域中的分栏方式。
+`layout`属性控制版心中的分栏方式。
 
-<Illustration name="ColumnGutter" data='{"title": "栏、栏间距与页边距", "desc": "一个分为三栏的页面：每一栏是容纳文字的内容区域，栏间距是各栏之间的竖向空隙，页边距是页面边界与第一栏之间的空白边。", "caption": "栏容纳文字，栏间距把它们隔开，页边距框住内容。", "pageLabel": "页面", "gutterLabel": "栏间距", "columnLabel": "栏", "marginLabel": "页边距"}' />
+<Illustration name="ColumnGutter" data='{"title": "栏、栏间距与页边距", "desc": "分为三栏的页面：每一栏都是排文字的区域，栏间距是相邻两栏之间的竖向空白，页边距是页面边缘与第一栏之间的空白。", "caption": "栏容纳文字，栏间距把它们隔开，页边距围在版心四周。", "pageLabel": "页面", "gutterLabel": "栏间距", "columnLabel": "栏", "marginLabel": "页边距"}' />
 
-<Illustration name="MarginSystem" data='{"title": "页边距体系", "desc": "一个页面，内容区域四周有各自独立的上、右、下、左页边距。", "caption": "页面的每一边都可以有自己的页边距。", "page": "页面", "content": "内容区域", "top": "上", "right": "右", "bottom": "下", "left": "左"}' />
+<Illustration name="MarginSystem" data='{"title": "页边距体系", "desc": "版心四周的上、右、下、左页边距各自独立。", "caption": "页面的每一边都可以有自己的页边距。", "page": "页面", "content": "版心", "top": "上", "right": "右", "bottom": "下", "left": "左"}' />
 
 <table>
   <thead>
@@ -367,7 +373,7 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td><code>columnCount</code></td>
       <td><code>number</code></td>
       <td><code>3</code></td>
-      <td><code>'multiple'</code>版式把正文分成多少个等宽的栏：3到8之间的整数。超出这个范围或不是整数的值会被限定并报告（见<a href="#版式类型">版式类型</a>）。标题样式自己的<code>'multiple'</code>版式沿用文档的栏数，除非它设定了自己的栏数。postext 1.18起。</td>
+      <td><code>'multiple'</code>版式把正文分成多少个等宽的栏：3到8之间的整数。超出这个范围或不是整数的值会被限制到范围内，并给出报告（见<a href="#版式类型">版式类型</a>）。标题样式自己的<code>'multiple'</code>版式沿用文档的栏数，除非它另设栏数。自postext 1.18起。</td>
     </tr>
     <tr>
       <td><code>gutterWidth</code></td>
@@ -379,19 +385,19 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td><code>sideColumnPercent</code></td>
       <td><code>number</code></td>
       <td><code>33</code></td>
-      <td>侧栏宽度占内容区域的百分比。只要两栏都还有宽度，任何值都按原样使用；否则会被限制到可用范围，构建时予以报告（见<a href="#版式类型">版式类型</a>）。只适用于<code>'oneAndHalf'</code>版式。</td>
+      <td>侧栏宽度占版心的百分比。只要两栏都还有宽度，任何值都按原样使用；否则会被限制到可用范围，构建时予以报告（见<a href="#版式类型">版式类型</a>）。只适用于<code>'oneAndHalf'</code>版式。</td>
     </tr>
     <tr>
       <td><code>sideColumnRole</code></td>
       <td><code>'text' | 'floats'</code></td>
       <td><code>'text'</code></td>
-      <td>侧栏承载什么：正文（主栏排满后流入侧栏），或者只放用<code>span: 'side'</code>放置的资源和标注框，即只放浮动体的边栏。仅限<code>'oneAndHalf'</code>。设为<code>'text'</code>时，从一栏接排到另一栏的段落会按接排那一栏的宽度重新断行；postext 1.4及以前，它保留起始那一栏的行，为主栏排的行会超出侧栏而被裁掉。</td>
+      <td>侧栏承载什么：正文（主栏排满后流入侧栏），或者只放用<code>span: 'side'</code>放置的资源和标注框，即只放浮动体的页边栏。仅限<code>'oneAndHalf'</code>。设为<code>'text'</code>时，从一栏接排到另一栏的段落会按接排那一栏的宽度重新断行；postext 1.4及以前，它沿用起始那一栏的断行，为主栏排的行会超出侧栏，被裁掉。</td>
     </tr>
     <tr>
       <td><code>sideColumnSide</code></td>
       <td><code>'right' | 'left' | 'outer' | 'inner'</code></td>
       <td><code>'right'</code></td>
-      <td>侧栏位于内容区域的哪一边。页边距镜像时，<code>'outer'</code>/<code>'inner'</code>随页面奇偶变化（右页的外侧是右边，左页的外侧是左边）。仅限<code>'oneAndHalf'</code>。</td>
+      <td>侧栏位于版心的哪一边。页边距左右对称时，<code>'outer'</code>/<code>'inner'</code>随页面奇偶变化（奇数页的外侧是右边，偶数页的外侧是左边）。仅限<code>'oneAndHalf'</code>。</td>
     </tr>
     <tr>
       <td><code>columnRule</code></td>
@@ -403,49 +409,49 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td><code>fitFiguresToPage</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>图（位图或SVG）的图像、题注和注释加起来比内容区域还高时，把它缩小到放得下（设了安全区<code>Resource.safeArea</code>的图片先在安全区以内按原宽度裁切，仍然放不下时才缩小）；行内图比所在栏的剩余空间稍高时，也把它排小一些（最小到原宽度的一半，题注仍保持该栏的行长），让它留在文字旁边。缩小后的图像按<code>placement.align</code>放在自己的位置里。HTML查看器会打开这一项，因为它的页面只有屏幕那么高；印刷页面的尺寸是按其中的图来定的。</td>
+      <td>图（位图或SVG）的图像、题注和附注加起来比版心还高时，把它缩小到放得下（设了安全区<code>Resource.safeArea</code>的图片先在安全区以内按原宽度裁切，仍然放不下时才缩小）；行内图比所在栏的剩余空间稍高时，也把它排小一些（最小到原宽度的一半，题注仍保持该栏的行长），使它不与相关文字分开。缩小后的图像按<code>placement.align</code>放在自己的位置里。HTML阅读器会打开这一项，因为它的页面只有屏幕那么高；印刷页面则在定尺寸时已经照顾到其中的图。</td>
     </tr>
     <tr>
       <td><code>bitmapResolution</code></td>
       <td><code>'document' | 'file' | number</code></td>
       <td><code>'document'</code></td>
-      <td>没有自身<code>bitmap.resolution</code>的位图如何取得自然印刷尺寸。<code>'document'</code>按<code>page.dpi</code>读取它的像素；数字是所有这类位图的ppi（<code>300</code>：2400 px的图片宽203.2 mm，与页面的dpi无关）；<code>'file'</code>使用文件标明的分辨率（<code>bitmap.fileResolution</code>），72和96算作未标明，未标明时用<code>page.dpi</code>。图片仍受栏宽限制，较小的图片从不放大。见<a href="/zh/docs/document-format-resources#位图尺寸">文档格式 › 位图尺寸</a>。postext 1.24起。</td>
+      <td>没有自身<code>bitmap.resolution</code>的位图怎样确定自然印刷尺寸。<code>'document'</code>按<code>page.dpi</code>换算它的像素；数字是所有这类位图的ppi（<code>300</code>：2400 px的图片宽203.2 mm，与页面的dpi无关）；<code>'file'</code>使用文件标明的分辨率（<code>bitmap.fileResolution</code>），72和96算作未标明，未标明时用<code>page.dpi</code>。图片仍受栏宽限制，较小的图片从不放大。见<a href="/zh/docs/document-format-resources#位图尺寸">文档格式 › 位图尺寸</a>。自postext 1.24起。</td>
     </tr>
     <tr>
       <td><code>floatShrink</code></td>
       <td><code>FloatShrinkConfig</code></td>
       <td><code>mode: 'never'</code></td>
-      <td>浮动图片的<code>placement.shrink</code>（<code>mode</code>：<code>'never'</code>、<code>'page'</code>或<code>'slot'</code>）和<code>placement.minScale</code>（<code>minScale</code>，未设时为0.7）的文档级默认值：把图片按原比例缩小到所在位置的空间，而不是移到后面（见<a href="/zh/docs/document-format-resources#位置">文档格式 › 位置</a>）。资源自己的位置设置、其次是资源类型的<code>defaultPlacement</code>，会覆盖它。<code>fitFiguresToPage</code>把所有图限制在版心之内；<code>floatShrink</code>看的是浮动体实际要占的横带：篇章页之下、其他浮动体旁边或脚注之上。postext 1.24起。</td>
+      <td>浮动图片的<code>placement.shrink</code>（<code>mode</code>：<code>'never'</code>、<code>'page'</code>或<code>'slot'</code>）和<code>placement.minScale</code>（<code>minScale</code>，未设时为0.7）的文档级默认值：把图片按原比例缩小到所在位置放得下，而不是把它移到后面（见<a href="/zh/docs/document-format-resources#位置">文档格式 › 位置</a>）。资源自己的位置设置会覆盖它，其次是资源类型的<code>defaultPlacement</code>。<code>fitFiguresToPage</code>把所有图限制在版心之内；<code>floatShrink</code>看的是浮动体实际要占的横带，比如章首之下、其他浮动体旁边或脚注之上。自postext 1.24起。</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>TextWrapConfig</code></td>
       <td><code>minTextWidth: 12em</code>, <code>minLinesBeside: 2</code>, <code>defaultWidth: 0.45</code></td>
-      <td>正文排在比栏窄的图片或框旁边（<code>placement.wrap</code>、框的<code>wrap</code>）：<code>gap</code>，对象与正文之间的距离（未设置时为一行正文）；<code>minTextWidth</code>，旁边正文的最小行宽，可以是长度或栏宽的比例（更窄时对象占满整条，并给出<code>textWrap</code>警告）；<code>minLinesBeside</code>，值得在旁边排的最少行数；<code>defaultWidth</code>，绕排对象未设<code>width</code>时所占栏宽的比例。见<a href="/zh/docs/document-format-resources#文字绕排">文档格式 › 文字绕排</a>。postext 1.24起。</td>
+      <td>图片或框比栏窄时，正文排在它旁边（<code>placement.wrap</code>、框的<code>wrap</code>）：<code>gap</code>，对象与正文之间的距离（未设置时为一行正文）；<code>minTextWidth</code>，旁边正文的最小行长，可以是长度或栏宽的比例（空间更窄时，对象独占整条横带，并给出<code>textWrap</code>警告）；<code>minLinesBeside</code>，值得在旁边排的最少行数；<code>defaultWidth</code>，绕排对象未设<code>width</code>时所占栏宽的比例。见<a href="/zh/docs/document-format-resources#文字绕排">文档格式 › 文字绕排</a>。自postext 1.24起。</td>
     </tr>
     <tr>
       <td><code>floatsAtCitingPage</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td><code>placement.citingPage</code>的文档默认值：<code>'top'</code>或<code>'auto'</code>浮动体可以占据首次引用它的那一行所在页面（通栏浮动体）或栏（单栏浮动体）的顶部，而不是该行之后的第一个空位；引用处之上的文字移到它下方（参见<a href="/zh/docs/document-format-resources#位置">文档格式 › 位置</a>）。资源自身的位置设置、其次是其类型的<code>defaultPlacement</code>会覆盖它。自 postext 1.25 起。</td>
+      <td><code>placement.citingPage</code>的文档默认值：<code>'top'</code>或<code>'auto'</code>浮动体可以占据首次引用它的那一行所在页面（通栏浮动体）或栏（单栏浮动体）的顶部，而不是该行之后的第一个空位；引用处之上的文字移到它下方（参见<a href="/zh/docs/document-format-resources#位置">文档格式 › 位置</a>）。资源自身的位置设置会覆盖它，其次是其类型的<code>defaultPlacement</code>。自postext 1.25起。</td>
     </tr>
     <tr>
       <td><code>maxTopFraction</code></td>
       <td><code>number</code></td>
       <td><code>0.7</code></td>
-      <td>置于引用页（栏）顶部的浮动体，连同该处已有的浮动体，最多可占栏高的比例（0 到 1），使该页仍留有正文的位置（即 LaTeX 的<code>\topfraction</code>）。超过这一比例的浮动体放到它通常的位置。自 postext 1.25 起。</td>
+      <td>浮动体排在引用它的页面或栏的顶部时，连同那里已有的浮动体，最多能占栏高的多大比例（0到1），好让该页仍给正文留出位置（相当于LaTeX的<code>\topfraction</code>）。超过这一比例的浮动体排到它通常的位置。自postext 1.25起。</td>
     </tr>
     <tr>
       <td><code>hugClosingFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>在章（以及文档）的最后一页，排在最后一段文字下方的整页宽图和表会上移，按原顺序叠放，紧贴在文字下方一个浮动体间距处：那里已没有后续内容。设为<code>false</code>则保留它们原本的位置，于是<code>position: 'bottom'</code>浮动体在最后一页也像在其他各页一样止于页脚，例如每页轮廓都在同一高度结束的数据手册。带侧栏的页面从不移动它们。</td>
+      <td>在章（以及文档）的最后一页，排在最后一段文字下方的整页宽图和表会上移，按原顺序叠放在文字下方，只隔一个浮动体间距，因为后面已没有别的内容。设为<code>false</code>则让它们留在原来的位置，于是<code>position: 'bottom'</code>浮动体在最后一页也像在其他各页一样止于页脚，比如数据手册的每页轮廓都要在同一高度结束。带侧栏的页面从不移动它们。</td>
     </tr>
     <tr>
       <td><code>inlineResourceGap</code></td>
       <td><code>'around' | 'above'</code></td>
       <td><code>'around'</code></td>
-      <td>行内资源（<code>placement.position: 'here'</code>，用<code>::resource</code>嵌入）在何处保留浮动体间距，即一行。<code>'around'</code>在资源上下都保留，其后的文字在该间距之下回到基线网格；紧跟其后的标题、列表、框或另一个行内资源，与它共用下方的间距和自身上方的空白，取两者中较大的一个。<code>'above'</code>只在上方保留：资源之后的文字从下一条网格线接着排，不管那条线有多近，从零到一行都有可能，与postext 1.4及以前相同。早期版本存储的配置，如果其中的章嵌入了资源，读入时按<code>'above'</code>处理，所以页面不会移动（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4或更早版本写出的文件包</a>）。为1.4在代码中编写的配置，可以自己设为<code>'above'</code>，或通过<code>postext/bundle</code>中的<code>pinLegacyInlineGap</code>保留旧的间距。</td>
+      <td>行内资源（<code>placement.position: 'here'</code>，用<code>::resource</code>嵌入）在哪里保留浮动体间距（一行）。<code>'around'</code>在资源上下都保留，其后的文字在该间距之下回到基线网格；如果紧跟其后的是标题、列表、框或另一个行内资源，它上方自身的空白与这段间距合并，取两者中较大的一个。<code>'above'</code>只在上方保留：资源之后的文字从下一条网格线接着排，不管那条线有多近，从零到一行都有可能，与postext 1.4及以前相同。早期版本存储的配置，如果其中的章嵌入了资源，读入时按<code>'above'</code>处理，所以页面不会移动（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4或更早版本写出的文件包</a>）。在代码中为1.4编写的配置，要保留旧的间距，可以自己设为<code>'above'</code>，或者使用<code>postext/bundle</code>中的<code>pinLegacyInlineGap</code>。</td>
     </tr>
     <tr>
       <td><code>inlineResourceGapInBoxes</code></td>
@@ -457,7 +463,7 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td><code>inlineCaptionSide</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>随文放置的资源（<code>position: 'here'</code>）是否像栏内浮动体那样采用<code>placement.captionSide</code>。在侧栏专供浮动体使用的一栏半版式中（<code>sideColumnRole: 'floats'</code>），侧栏在资源旁边空着时，题注和附注排在侧栏，与主体顶边齐平，正文栏中的块只有主体那么高。侧栏已被占用或页面没有侧栏时，题注仍排在主体下方。设为<code>false</code>时只有栏内浮动体把题注放到侧栏，与postext 1.27及更早版本相同。自postext 1.28起。早期版本保存的<code>'oneAndHalf'</code>版式配置，若章节嵌入了资源，按<code>false</code>读取；在代码中，<code>postext/bundle</code>的<code>pinLegacyInlineCaptionSide</code>作用相同。</td>
+      <td>随文放置的资源（<code>position: 'here'</code>）是否像栏内浮动体那样采用<code>placement.captionSide</code>。在侧栏专供浮动体使用的一栏半版式中（<code>sideColumnRole: 'floats'</code>），侧栏在资源旁边空着时，题注和附注排在侧栏，与主体顶边齐平，正文栏中的块只有主体那么高。侧栏已被占用或页面没有侧栏时，题注仍排在主体下方。设为<code>false</code>时只有栏内浮动体把题注放到侧栏，与postext 1.27及更早版本相同。自postext 1.28起。早期版本保存的<code>'oneAndHalf'</code>版式配置，如果其中的章嵌入了资源，读入时按<code>false</code>处理；在代码中，<code>postext/bundle</code>的<code>pinLegacyInlineCaptionSide</code>作用相同。</td>
     </tr>
     <tr>
       <td><code>boxChildSplitMinLines</code></td>
@@ -469,45 +475,49 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td><code>flowColumns</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>框外的<code>:::columns</code>围栏把其中的块排进正文栏内的若干子栏（用<code>span="page"</code>则横跨整页）；一个分栏组，无论在框内还是正文中，放不下时都在子栏之间切开，接到下一栏或下一页（见<a href="/zh/docs/document-format-directives#columns">文档格式 › <code>:::columns</code></a>）。<code>false</code>忽略框外的围栏，也从不在组内切开，与postext 1.24及以前相同；早期版本存储的配置，如果其中的章含有<code>:::columns</code>围栏，读入时按<code>false</code>处理；在代码中，<code>postext/bundle</code>的<code>pinLegacyFlowColumns</code>起同样作用。带样式的章节沿用文档的值。postext 1.25起。</td>
+      <td>框外的<code>:::columns</code>块把其中的各块排进正文栏内的若干子栏（用<code>span="page"</code>则横跨整页）；分栏组无论在框内还是正文中，放不下时都在子栏之间切开，接到下一栏或下一页（见<a href="/zh/docs/document-format-directives#columns">文档格式 › <code>:::columns</code></a>）。<code>false</code>忽略框外的这种块，也从不在组内切开，与postext 1.24及以前相同；早期版本存储的配置，如果其中的章含有<code>:::columns</code>块，读入时按<code>false</code>处理；在代码中，<code>postext/bundle</code>的<code>pinLegacyFlowColumns</code>起同样作用。套用标题样式的部分也沿用文档的值。自postext 1.25起。</td>
     </tr>
     <tr>
       <td><code>floatsUnderOpener</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>通栏的章首标题（<code>span: 'page'</code>的标题级别或标题样式）排在两栏或更多正文栏之上时，标题所在那一栏的栏首，也就是标题横带正下方的位置，是<code>'top'</code>或<code>'auto'</code>浮动体的一个空位，与其他各栏的栏首齐平：紧跟在标题后面的浮动框，或在那里嵌入的资源，排在第一栏的标题下方（带<code>columns</code>时从第一栏起跨多栏），该栏的正文从它下面开始。在正文中被引用的浮动体仍排在引用它的那一行之后。<code>false</code>不提供这个空位，这类浮动体从第二栏起排，与postext 1.24及以前相同；早期版本存储的配置，如果设有通栏标题，读入时按<code>false</code>处理；在代码中，<code>postext/bundle</code>的<code>pinLegacyOpenerHeadFloats</code>起同样作用。带样式的章节沿用文档的值。postext 1.25起。</td>
+      <td>通栏的章首标题（<code>span: 'page'</code>的标题级别或标题样式）排在两栏或更多正文栏之上时，标题所在那一栏的栏首，也就是标题横带正下方的位置，是<code>'top'</code>或<code>'auto'</code>浮动体的一个空位，与其他各栏的栏首齐平：紧跟在标题后面的浮动框，或在那里嵌入的资源，排在第一栏的标题下方（带<code>columns</code>时从第一栏起跨多栏），该栏的正文从它下面开始。在正文中被引用的浮动体仍排在引用它的那一行之后。<code>false</code>不提供这个空位，这类浮动体从第二栏起排，与postext 1.24及以前相同；早期版本存储的配置，如果设有通栏标题，读入时按<code>false</code>处理；在代码中，<code>postext/bundle</code>的<code>pinLegacyOpenerHeadFloats</code>起同样作用。套用标题样式的部分也沿用文档的值。自postext 1.25起。</td>
     </tr>
     <tr>
       <td><code>openerFloats</code></td>
       <td><code>'allow' | 'warn' | 'avoid'</code></td>
       <td><code>'allow'</code></td>
-      <td>章首页上的浮动体。章首页指：篇页，标题以自身的分页开启的页面（<code>breakBefore</code>，或另起一页的<code>span: 'page'</code>标题），以及以标题开头的文档的第一页。浮动体指浮动的图、表或漫画条，以及浮动到页首或页脚的<code>:::callout</code>，无论它占一栏、横跨整页还是排在侧栏；行内嵌入的资源（<code>'here'</code>）、<code>'fixed'</code>框和<code>span: 'side'</code>框不算。<code>'allow'</code>：浮动体在章首页上的排法与其他页面相同。<code>'warn'</code>：页面排法相同，并报告页上的每个浮动体（一条<code>openerFloat</code>警告，见<a href="/zh/docs/configuration-programmatic-usage#文档中的警告">文档中的警告</a>）。<code>'avoid'</code>：章首页不排浮动体，本应落在这一页的浮动体改排到其后的第一个空位，页上只有章首和正文。带样式的章节沿用文档的值。postext 1.28起。</td>
+      <td>章首页上的浮动体。章首页指：篇名页，标题以自身的分页开启的页面（<code>breakBefore</code>，或另起一页的<code>span: 'page'</code>标题），以及以标题开头的文档的第一页。浮动体指浮动的图、表或漫画条，以及浮动到页首或页脚的<code>:::callout</code>，无论它占一栏、横跨整页还是排在侧栏；行内嵌入的资源（<code>'here'</code>）、<code>'fixed'</code>框和<code>span: 'side'</code>框不算。<code>'allow'</code>：浮动体在章首页上的排法与其他页面相同。<code>'warn'</code>：页面排法相同，并报告页上的每个浮动体（一条<code>openerFloat</code>警告，见<a href="/zh/docs/configuration-programmatic-usage#文档中的警告">文档中的警告</a>）。<code>'avoid'</code>：章首页不排浮动体，本应落在这一页的浮动体改排到其后的第一个空位，页上只有章首和正文。套用标题样式的部分也沿用文档的值。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
-      <td>行的走向。<code>'vertical-rl'</code>把中文和日文排成竖排：字符从上到下，每一行位于前一行左边。标题样式的<code>layout</code>如果不自行设置就继承它，所以竖排的书后面可以接一个横排的附录。见<a href="#竖排">竖排</a>。</td>
+      <td>行的走向。<code>'vertical-rl'</code>把中文和日文排成竖排：字符从上到下，每一行位于前一行左边。标题样式的<code>layout</code>如果不另行设置，就继承它，所以竖排的书后面可以接一个横排的附录。见<a href="#竖排">竖排</a>。</td>
     </tr>
   </tbody>
 </table>
 
 ### 竖排
 
-设了`writingMode: 'vertical-rl'`时，页面的排法相当于把一个横排页面顺时针转四分之一圈。文字流排在一个框架里，框架的宽度等于纸张的高度；框架中的行就是竖排文字的各列，从右往左读，引擎对行所做的一切（断行、两端对齐、浮动体、脚注、不拆分规则）都在这个框架里进行。因此在纸面上：
+设了`writingMode: 'vertical-rl'`时，页面的排法相当于把一个横排页面顺时针转90度。正文流排在一个框架里，框架的宽度等于纸张的高度；框架中的行就是竖排文字的各个竖行，从右往左读，引擎对行所做的一切（断行、两端对齐、浮动体、脚注、不拆分规则）都在这个框架里进行。因此在纸面上：
 
 - 版式中的一栏就是一**栏**（tier）：`layoutType: 'double'`得到上下叠放的两栏，从右上方开始填；`gutterWidth`是两栏之间的距离，栏线则是两栏之间的一条横线。章末各栏不做齐底（[clreq §7.1.3.4](https://www.w3.org/TR/clreq/#x7-1-3-4-handling-of-spaces-just-before-the-new-recto-page-breaks-and-new-edges)）：竖排文档中各栏齐底默认关闭，除非设置了`headings.balancing.enabled`。
-- 文字流所说的“顶部”是纸张的**右**边缘，阅读从这里开始：顶部浮动体位于页面右侧，底部浮动体位于左侧，通栏章首横带是沿右边缘向下的一条带，脚注落在每一栏的左端。锚定到页面顶部的设计元素（标题版面设计、固定框）锚定在右边缘。`sideColumnSide`为`'left'`时是上栏，`'right'`是下栏；`'outer'`和`'inner'`分别按`'right'`和`'left'`理解。
-- 文字流的页边距是纸张页边距旋转后的结果：右页边距是文字流的顶部，上页边距是它的左侧。`page.margins`在纸面上保持原来的名称。
-- 书眉、页码、裁切标记和页面背景留在纸面上，横排，与clreq对竖排书籍的描述一致。
-- **图和表保持直立**。图在题注允许的范围内占满所在栏的高度，宽度最多与页面相同；它所占的宽度就是它在文字流中占用的空间。题注横排在图下方，表格的单元格也横排：两者都按横排文字度量。表格直立横贯页面，比栏高时按栏切分行。`placement.align`把图放在所在栏的顶端（`'left'`）、中间或底端。图在竖排文字中首次被引用的位置不会应用`placement.rotate`：构建时报告`rotateIgnoredVertical`内容警告。书中横排的部分（`layout`设为`'horizontal-tb'`的标题样式）会按要求旋转其中的图。
-- 版面设计中的图片（章首页的插图、篇章页的插图）同样直立。它在文字流中的框按宽高互换来确定尺寸，所以`size.width`是图片沿栏向下延伸的长度，它在纸面上的宽度则按比例得出。
-- 字符：汉字、假名和全角字符直立，各占一个全角；拉丁单词和数字侧转，保持其横排宽度；标点使用字体的竖排字形。点号从不旋转：中国大陆字体把、。，．放在字格右上角，！？：；放在字格右半部；台湾或香港字体则居中（`cjk.region`）。括号使用竖排字形，中国大陆文本中的“ ”‘ ’显示为『』「」。破折号、省略号和波浪线在字体有竖排字形时使用它（Noto CJK把—的竖排字形与`fwid`一起放在`vert`下：字格中央一条竖线），否则旋转，使墨迹位于栏的中轴上。中文文本中的破折号（——）在栏中是一条连续的线：它的竖排字形会在每个字格两端留空，所以每个破折号随行旋转，并像横排时一样拉伸（见[标点宽度](/zh/docs/configuration-east-asian#标点宽度)）。不超过两位的数字直立占一个字格，除非它位于拉丁语句中，这时跟随该句的单词（见[竖排中的数字](/zh/docs/configuration-east-asian#竖排中的数字)）。间隔号（·）在中国大陆文本中占半个字格，在台湾和香港文本中占一整个字格。Unicode规定直立的符号（× © ± § ℃ ①之类）单独占一个字格，在数字中间也是如此：`3×4`是侧转的3和4，中间夹一个直立的×。拉丁单词中两个字母之间的撇号或间隔号（`don’t`、`l·l`）留在单词里，一起侧转。竖排文字流中的拉丁段落遵循同样的规则。行内公式、行内标签和色块随行侧转。
+- 正文流所说的“顶部”是纸张的**右**边缘，阅读从这里开始：顶部浮动体位于页面右侧，底部浮动体位于左侧，通栏章首横带是沿右边缘向下的一条带，脚注落在每一栏的左端。锚定到页面顶部的设计元素（标题版面设计、固定框）锚定在右边缘。`sideColumnSide`为`'left'`时是上栏，`'right'`是下栏；`'outer'`和`'inner'`分别按`'right'`和`'left'`理解。
+- 正文流的页边距是纸张页边距旋转后的结果：右页边距是正文流的顶部，上页边距是它的左侧。`page.margins`在纸面上保持原来的名称。
+- 书眉、页码、裁切线和页面背景留在纸面上，横排，与clreq对竖排书籍的描述一致。
+- **图和表保持直立**。图在题注允许的范围内占满所在栏的高度，宽度最多与页面相同；它所占的宽度就是它在正文流中占用的空间。题注横排在图下方，表格的单元格也横排：两者都按横排文字度量。表格直立横贯页面，比栏高时按栏把各行分开排。`placement.align`把图放在所在栏的顶端（`'left'`）、中间或底端。如果图首次被引用的地方是竖排文字，`placement.rotate`不起作用：构建时会报告`rotateIgnoredVertical`内容警告。书中横排的部分（`layout`设为`'horizontal-tb'`的标题样式）会按要求旋转其中的图。
+- 版面设计中的图片（章首页的插图、篇名页的插图）同样直立。它在正文流中的框按宽高互换来确定尺寸，所以`size.width`是图片沿栏向下延伸的长度，它在纸面上的宽度则按比例得出。
+- 字符：汉字、假名和全角字符直立，各占一个全角；拉丁单词和数字侧转，保持其横排宽度；标点使用字体的竖排字形。点号从不旋转：中国大陆字体把、。，．放在字格右上角，！？：；放在字格右半部；台湾或香港字体则居中（`cjk.region`）。括号使用竖排字形，中国大陆文本中的“ ”‘ ’显示为『』「」。破折号、省略号和波浪线如果字体有竖排字形，就用竖排字形（Noto CJK把—的竖排字形与`fwid`一起放在`vert`下：字格中央一条竖线），否则旋转，使墨迹位于栏的中轴上。中文文本中的破折号（——）在栏中是一条连续的线：它的竖排字形会在每个字格两端留空，所以每个破折号随行旋转，并像横排时一样拉伸（见[标点宽度](/zh/docs/configuration-east-asian#标点宽度)）。不超过两位的数字直立占一个字格，除非它位于拉丁文句子中，这时与句中单词一样侧转（见[竖排中的数字](/zh/docs/configuration-east-asian#竖排中的数字)）。间隔号（·）在中国大陆文本中占半个字格，在台湾和香港文本中占一整个字格。Unicode规定直立的符号（× © ± § ℃ ①之类）单独占一个字格，在数字中间也是如此：`3×4`是侧转的3和4，中间夹一个直立的×。拉丁单词中两个字母之间的撇号或间隔号（`don’t`、`l·l`）留在单词里，一起侧转。竖排正文流中的拉丁文段落遵循同样的规则。行内公式、行内标签和色块随行侧转。
 - 每个字符都按绘制的方式度量：直立字符沿行向下前进一个字格，侧转的文字前进其横排宽度。在纸面上保持横排的文字（书眉、页码、题注、表格单元格）按横排度量。
-- [标点宽度](/zh/docs/configuration-east-asian#标点宽度)、[标点悬挂](/zh/docs/configuration-east-asian#标点悬挂)和[汉字与拉丁字母之间的空白](/zh/docs/configuration-east-asian#汉字与拉丁字母间距)沿竖行的作用与沿横行相同。字形前的空白在它上方，后的空白在它下方：开明式的“、”占半个字格，`」「`挤压为一个半字格，行首被挤压的开括号上移半个字格，悬挂的“。”位于所在行底端之下，侧转单词上下各有四分之一个全角的汉字与拉丁字母间空白。`：；？！`在竖排中无论哪个地区都占一整个字格。
+- [标点宽度](/zh/docs/configuration-east-asian#标点宽度)、[标点悬挂](/zh/docs/configuration-east-asian#标点悬挂)和[汉字与拉丁字母之间的空白](/zh/docs/configuration-east-asian#汉字与拉丁字母间距)沿竖行的作用与沿横行相同。字形前面的空白在它上方，后面的空白在它下方：开明式的“、”占半个字格，`」「`挤压为一个半字格，行首被挤压的开括号上移半个字格，悬挂的“。”位于所在行底端之下，侧转单词上下各有四分之一个全角的汉字与拉丁字母间空白。`：；？！`在竖排中无论哪个地区都占一整个字格。
 - [字符网格](/zh/docs/configuration-east-asian#字格)沿行计字符数，横跨页面计行数：`charsPerLine`决定一栏有多长，`linesPerPage`决定一页有多少行，`layoutType: 'double'`得到两栏，每栏都是整数个字，栏间距是整数个全角。
 
-供读取版面的宿主程序参考：竖排页面带有`VDTPage.flow`。它的`contentArea`、栏、块、行、浮动体、脚注区、章首横带和块级设计叠加层都使用文字流坐标；`width`、`height`、`header`和`footer`使用纸面坐标。`flowToPage`、`pageToFlow`、`flowRectToPage`和`pageRectToFlow`在两者之间换算，`verticalOrientation(char, region)`给出一个字符的朝向。`flow.centralBaselines`按字体族给出版面让直立字符居中所用的轴线：“中”字墨迹的中心。“中”字的长竖贯穿全角框的高度（在Noto Serif和Noto Sans中位于基线上方0.38 em，SC与TC相同），中文、日文和韩文字体都有这个字。每一行都以这条轴线居中：竖行的基线位于行框顶端之下半个行距再加该字体族的中心基线处（横行的基线在行距的0.8处），因此一列字符位于其行距的正中，而在两列之间按整行距画的线正好落在两者中间。竖排的设计文字在其自身的行中按同样方式排。Canvas自行绘制竖排页面；要用字体自带的竖排字形绘制标点，浏览器宿主程序需要为每个字体族加载一次打开了这些字形的孪生字体：`loadVerticalAlternates(family, faces)`，其中`faces`是该字体族的来源（URL或字节数据）和描述符。孪生字体只在浏览器会对Canvas文字应用该特性时保留（Chrome 140及以后）：它用孪生字体和一份不带该特性、按给定字重与样式加载的同一组字体各画一次「（《，墨迹不同时就保留孪生字体。之后对一个已在使用孪生字体的字体族再为其他字体调用（常规体之后的粗体），会把它们加入孪生字体。沙盒对竖排文档的每个字体族都这样做。没有孪生字体时，括号绕其全角框旋转，中国大陆的点号在字格内移到字体竖排字形所在的位置：、。，．移到右上角（与Noto Serif SC的竖排字形相差不超过0.07 em），！？：；右移半个全角并稍稍上移（相差不超过0.02 em）。PDF和HTML排出的是同样的页面：见[PDF中的竖排文字](/zh/docs/configuration-pdf-output#pdf中的竖排文字)，以及[HTML输出与Canvas和PDF的区别](/zh/docs/configuration-html-folio-epub#html输出与canvas和pdf的区别)下的表格。以Noto Serif TC和SC逐字格与HarfBuzz（使用`vert`的竖排排版）比对，「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’……中的每个字符，在Canvas和PDF中偏差都在0.02 em以内，在HTML中在0.05 em以内（Chrome把旋转后的字形居中于字体上伸部与下伸部的中点，在Noto中比全角框中心高0.05 em）。`flow.dashAdvances`按字体族给出页面为填满字格而拉伸的每种横线（— – ― ⸺ ⸻ －）的横排前进宽度（以em计），供没有自身字体度量的渲染器使用：HTML按它拉伸横线，Canvas和PDF则按各自的度量拉伸。书眉和页码也可以竖排：见[竖排文字元素](/zh/docs/configuration-headers-footers#竖排文本元素)。
+供读取版面的宿主程序参考：竖排页面带有`VDTPage.flow`。它的`contentArea`、栏、块、行、浮动体、脚注区、章首横带和块级设计叠加层都使用正文流坐标；`width`、`height`、`header`和`footer`使用纸面坐标。`flowToPage`、`pageToFlow`、`flowRectToPage`和`pageRectToFlow`在两者之间换算，`verticalOrientation(char, region)`给出一个字符的朝向。`flow.centralBaselines`按字体族给出版面让直立字符居中所用的轴线：“中”字墨迹的中心。“中”字的长竖贯穿全角框的高度（在Noto Serif和Noto Sans中位于基线上方0.38 em，SC与TC相同），中文、日文和韩文字体都有这个字。每一行都以这条轴线居中：竖行的基线位于行框顶端之下半个行距再加该字体族的中心基线处（横行的基线在行距的0.8处），因此一列字符位于其行距的正中，而在两列之间按整行距画的线正好落在两者中间。竖排的设计文字在其自身的行中按同样方式排。
+
+画布自行绘制竖排页面；要用字体自带的竖排字形绘制标点，浏览器宿主程序需要为每个字体族加载一次打开了这些字形的孪生字体：`loadVerticalAlternates(family, faces)`，其中`faces`是该字体族的来源（URL或字节数据）和描述符。孪生字体只在浏览器会对Canvas文字应用该特性时保留（Chrome 140及以后）：它用孪生字体和一份不带该特性、按给定字重与样式加载的同一组字体各画一次「（《，墨迹不同时就保留孪生字体。如果某个字体族已经在用孪生字体，之后再为它的其他字体（比如常规体之后的粗体）调用，就会把这些字体加入孪生字体。沙盒对竖排文档的每个字体族都这样做。没有孪生字体时，括号绕其全角框旋转，中国大陆的点号在字格内移到字体竖排字形所在的位置：、。，．移到右上角（与Noto Serif SC的竖排字形相差不超过0.07 em），！？：；右移半个全角并稍稍上移（相差不超过0.02 em）。PDF和HTML排出的是同样的页面：见[PDF中的竖排文字](/zh/docs/configuration-pdf-output#pdf中的竖排文字)，以及[HTML输出与Canvas和PDF的区别](/zh/docs/configuration-html-folio-epub#html输出与canvas和pdf的区别)下的表格。
+
+以Noto Serif TC和SC逐字格与HarfBuzz（使用`vert`的竖排排版）比对，「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’……中的每个字符，在Canvas和PDF中偏差都在0.02 em以内，在HTML中在0.05 em以内（Chrome把旋转后的字形居中于字体上伸部与下伸部的中点，在Noto中比全角框中心高0.05 em）。`flow.dashAdvances`按字体族给出页面为填满字格而拉伸的每种横线（— – ― ⸺ ⸻ －）的横排前进宽度（以em计），供没有自身字体度量的渲染器使用：HTML按它拉伸横线，Canvas和PDF则按各自的度量拉伸。书眉和页码也可以竖排：见[竖排文字元素](/zh/docs/configuration-headers-footers#竖排文本元素)。
 
 ### 栏线
 
@@ -544,16 +554,16 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
   </tbody>
 </table>
 
-在通栏标题（`span: 'page'`）之下，栏线从各栏文字开始的地方开始，也就是标题横带下方，无论横带是默认的章首样式还是自己的版面设计所绘。postext 1.4及以前，栏线从文字块顶端开始，穿过横带。
+在通栏标题（`span: 'page'`）之下，栏线从各栏文字开始的地方开始，也就是标题横带下方，无论横带由默认的章首绘制，还是由标题自己的版面设计绘制。postext 1.4及以前，栏线从文字块顶端开始，穿过横带。
 
 标题样式可以在其`layout`中设置自己的栏线（见[标题样式](/zh/docs/configuration-styles#标题样式)），该样式所在部分的页面就画这条栏线。样式没有设置的字段取文档的值，所以只改变栏数的部分保留文档的栏线。postext 1.4及以前，样式的栏线从不绘制：每一页都画文档的栏线。
 
 ### 版式类型
 
-- **`'single'`**：一栏，占满整个内容宽度。最适合窄页面或以长段落为主的文字。
+- **`'single'`**：一栏，占满整个版心宽度。最适合窄页面或以长段落为主的文字。
 
-- **`'double'`**：两个等宽栏。经典的编辑版式，使行长保持在40–50个字符的最佳范围内，读起来舒适。
+- **`'double'`**：两个等宽栏。这是经典的书刊版式，能把行长保持在40–50个字符的最佳范围内，读起来舒适。
 
-- **`'oneAndHalf'`**：非对称版式，一个主栏加一个较窄的侧栏。侧栏（由`sideColumnPercent`控制）适合放边注、小图或辅助内容。取值在25–40%之间效果较好；用于行号或边缘标记的窄栏，约取10–15%。侧栏占内容宽度的`sideColumnPercent`%，主栏是扣除栏间距后剩下的部分，所以取50%时侧栏比主栏宽一个栏间距。只要两栏都至少保有内容宽度的1%，任何值都按原样排版；会让任一栏更窄的值（0或以下，或者宽到主栏被栏间距吞没）会被限制到能保住两栏的最近值，非数字的值则取默认值33。这时文档的`configWarnings`会带有`{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }`。标题样式自己的`layout`的路径会指明该样式，例如`headingStyles[2].layout.sideColumnPercent`，并按该样式的页边距来度量。沙盒在其**检查**面板中列出这些警告；`collectConfigWarnings(config)`不做排版就返回同样的列表。不是`'oneAndHalf'`的版式从不读取这个值，也从不报告它。设了`sideColumnRole: 'floats'`时，正文从不进入侧栏：侧栏成为一条通道，专门容纳用`span: 'side'`放置的图、表和标注框。侧栏中的图或表，在首次引用它的那一页从通道顶端开始叠放，所以即使正文在更靠下的位置才引用，教材的边栏图也位于该页顶部；通道剩余空间放不下的，等到下一页的通道。侧栏中的框叠放在它所打断的文字旁边；如果通道剩余空间放不下，它就上移到仍能放下的最低位置（底边与通道底边齐平），或者等到下一页。框的围栏之后的文字接到下一页时（栏已排满，或断页规则把那段文字移到后面），框留在围栏处，位于前面文字的旁边；设了`sideAtColumnEnd: 'after'`的样式则把它放在下一页的通道里，与围栏后文字的第一行平齐，写在所属行之前的行号和边栏标题需要这样。标题版面设计中位于通道内的元素（锚定在外侧页边距的章序号）也会被叠放内容避开（见[预留高度](/zh/docs/configuration-headings#保留高度)）。`span: 'page'`浮动体和框仍然横跨两栏，带`placement.captionSide`的栏内浮动体则把题注放在通道中，与图平齐。与镜像页边距和`sideColumnSide: 'outer'`配合，通道就位于每一页的外侧边缘，即教材的边栏。自postext 1.28起，随文放置（`position: 'here'`）并带`captionSide`的图或表，题注同样排在通道中（`inlineCaptionSide`）。
+- **`'oneAndHalf'`**：非对称版式，一个主栏加一个较窄的侧栏。侧栏（由`sideColumnPercent`控制）适合放旁注、小图或辅助内容。取值在25–40%之间效果较好；只放行号或页边标记的窄栏，约取10–15%。侧栏占版心宽度的`sideColumnPercent`%，主栏是扣除栏间距后剩下的部分，所以取50%时侧栏比主栏宽一个栏间距。只要两栏都至少保有版心宽度的1%，任何值都按原样排版；会让任一栏更窄的值（0或以下，或者宽到主栏被栏间距吞没）会被限制到能保住两栏的最近值，非数字的值则取默认值33。这时文档的`configWarnings`会带有`{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }`。标题样式自己的`layout`的路径会指明该样式，例如`headingStyles[2].layout.sideColumnPercent`，并按该样式的页边距来度量。沙盒在其**检查**面板中列出这些警告；`collectConfigWarnings(config)`不做排版就返回同样的列表。不是`'oneAndHalf'`的版式从不读取这个值，也从不报告它。设了`sideColumnRole: 'floats'`时，正文从不进入侧栏：侧栏成为一条通道，专门容纳用`span: 'side'`放置的图、表和标注框。侧栏中的图或表，在首次引用它的那一页从通道顶端开始叠放，所以即使正文在更靠下的位置才引用，教材的页边图也位于该页顶部；通道剩余空间放不下的，等到下一页的通道。侧栏中的框叠放在它所打断的文字旁边；如果通道剩余空间放不下，它就上移到仍能放下的最低位置（底边与通道底边齐平），或者等到下一页。框的围栏之后的文字接到下一页时（栏已排满，或断页规则把那段文字移到后面），框留在围栏处，位于前面文字的旁边；设了`sideAtColumnEnd: 'after'`的样式则把它放在下一页的通道里，与围栏后文字的第一行平齐，行号和页边标题写在所属行之前，就需要这样。标题版面设计中位于通道内的元素（锚定在外侧页边距的章序号）也会被叠放内容避开（见[预留高度](/zh/docs/configuration-headings#保留高度)）。`span: 'page'`浮动体和框仍然横跨两栏，带`placement.captionSide`的栏内浮动体则把题注放在通道中，与图平齐。与对称页边距和`sideColumnSide: 'outer'`配合，通道就位于每一页的外侧边缘，成为教材的页边栏。自postext 1.28起，随文放置（`position: 'here'`）并带`captionSide`的图或表，题注同样排在通道中（`inlineCaptionSide`）。
 
-- **`'multiple'`**：三到八个等宽的栏，栏数由`columnCount`给出（默认3），是报纸和许多杂志的版式网格（postext 1.18起）。每栏宽为`(内容宽度 − (n − 1) × gutterWidth) / n`。正文像双栏版式一样从一栏接到下一栏；每个栏间距都画栏线，齐栏在章末页和通栏框之前让所有栏平齐，脚注在每一栏中都可用，通栏的图、框和标题横跨整个页面。图或浮动框可以只占其中几栏：`placement.columns`（见[资源类型](/zh/docs/configuration-resources#资源类型)）和标注框样式的`columns`。`columnCount`超出3–8或不是整数时，取整并限定到最接近的有效栏数（不是数字的值取3），文档的`configWarnings`带有`{ kind: 'columnCountClamped', path: 'layout.columnCount', value, used }`（标题样式自己的`layout`的路径会写出样式，如`headingStyles[1].layout.columnCount`）。其他类型的版式从不读取这个值。`layout`为`'multiple'`的标题样式沿用文档的`columnCount`，除非它设定了自己的栏数，因此一份五栏的报纸可以把评论版排成四栏。
+- **`'multiple'`**：三到八个等宽的栏，栏数由`columnCount`给出（默认3），是报纸和许多杂志的版式网格（自postext 1.18起）。每栏宽为`(内容宽度 − (n − 1) × gutterWidth) / n`。正文像双栏版式一样从一栏接到下一栏；每个栏间距都画栏线，各栏齐底会在章末页和通栏框之前把所有栏拉齐，脚注在每一栏中都可用，通栏的图、框和标题横跨整个页面。图或浮动框可以只占其中几栏：`placement.columns`（见[资源类型](/zh/docs/configuration-resources#资源类型)）和标注框样式的`columns`。`columnCount`超出3–8或不是整数时，取整并限定到最接近的有效栏数（不是数字的值取3），文档的`configWarnings`带有`{ kind: 'columnCountClamped', path: 'layout.columnCount', value, used }`（标题样式自己的`layout`的路径会指明该样式，如`headingStyles[1].layout.columnCount`）。其他类型的版式从不读取这个值。`layout`为`'multiple'`的标题样式沿用文档的`columnCount`，除非它设定了自己的栏数，因此一份五栏的报纸可以把评论版排成四栏。

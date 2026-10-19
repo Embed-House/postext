@@ -1,38 +1,38 @@
 ---
 title: "Ein Kapitel einer Dissertation, zitiert nach APA 7"
-summary: "Ein Dissertationskapitel, dessen Zitate [@key, p. 33] citeproc-js nach APA 7 formatiert; das Literaturverzeichnis entsteht aus einem BibTeX-Block."
-plain: "Ein Kapitel einer Doktorarbeit. Der Autor schreibt für jede Quelle einen kurzen Schlüssel; Postext druckt die Zitate und am Ende das Literaturverzeichnis im APA-Stil."
-description: "Ein Dissertationskapitel in Postext: Pandoc-Zitate, von citeproc-js nach APA 7 formatiert, Verzeichnis aus BibTeX mit hängendem Einzug und Querverweisen."
+summary: "Ein Dissertationskapitel, dessen Zitationen [@key, p. 33] citeproc-js nach APA 7 formatiert; das Literaturverzeichnis entsteht aus einem BibTeX-Block."
+plain: "Ein Kapitel einer Doktorarbeit. Der Autor schreibt für jede Quelle einen kurzen Schlüssel; Postext setzt die Zitationen und am Ende das Literaturverzeichnis im APA-Stil."
+description: "Ein Dissertationskapitel in Postext: Pandoc-Zitationen, von citeproc-js nach APA 7 formatiert, Verzeichnis aus BibTeX mit hängendem Einzug und Querverweisen."
 question: "Wie zitiere ich nach APA 7 und lasse das Literaturverzeichnis aus meiner BibTeX-Datei erzeugen?"
 aliases: ["APA", "APA 7", "Dissertation", "Doktorarbeit", "Abschlussarbeit", "BibTeX", "Zotero", "Literaturverzeichnis", "Autor-Jahr-Zitierweise", "citeproc"]
-pageNotes: { "1": "Seite 1: oben ein hellblaues Band mit der Marke „CHAPTER“, dem Titel „Reading on Paper and on Screens: The State of the Evidence“ und rechts einer großen, hellen 2; darunter die ersten Absätze mit Autor-Jahr-Zitaten wie „(Tinker, 1963)“ und fetten blauen Verweisen auf „Section 2.1“, „2.2“ und „2.3“.", "2": "Seite 2: die Abschnitte 2.2 und 2.3 mit erzählenden Zitaten wie „Delgado et al. (2018)“, einem Zitat mit Seitenangabe „(Ibáñez Roca, 2023, pp. 12–15)“ und dem Beginn des unnummerierten Verzeichnisses „References“.", "3": "Seite 3: der Rest des Verzeichnisses „References“ nach APA 7, jeder Eintrag mit hängendem Einzug und vollständig gedruckter DOI." }
+pageNotes: { "1": "Seite 1: oben ein hellblaues Band mit dem Wort „CHAPTER“, dem Titel „Reading on Paper and on Screens: The State of the Evidence“ und rechts einer großen, hellen 2; darunter die ersten Absätze mit Autor-Jahr-Zitationen wie „(Tinker, 1963)“ und fetten blauen Verweisen auf „Section 2.1“, „2.2“ und „2.3“.", "2": "Seite 2: die Abschnitte 2.2 und 2.3 mit erzählenden Zitationen wie „Delgado et al. (2018)“, einer Zitation mit Seitenangabe „(Ibáñez Roca, 2023, pp. 12–15)“ und dem Beginn des unnummerierten Verzeichnisses „References“.", "3": "Seite 3: der Rest des Verzeichnisses „References“ nach APA 7, jeder Eintrag mit hängendem Einzug und vollständig ausgeschriebener DOI." }
 ---
 
 ## Was Sie setzen
 
-Das zweite Kapitel einer erziehungswissenschaftlichen Dissertation, den Forschungsstand: was zwanzig Jahre Studien über das Lesen auf Papier und am Bildschirm sagen. Das Kapitel steht auf einer links gebundenen A4-Seite in der Literata mit 16 pt Zeilenabstand, unter einem hellen Band im Blau der Universität. Der Autor verwaltet die Quellen in Zotero und fügt den Export als BibTeX ein; im Text ist jede Quelle ein Schlüssel. Postext formatiert jedes Zitat nach APA 7 mit Autor, Jahr und gegebenenfalls Seite, schreibt „Delgado et al. (2018)“, wenn der Name Teil des Satzes ist, und baut das Literaturverzeichnis in der Reihenfolge und Form auf, die der Stil verlangt. Wünscht die Betreuerin Chicago, ändert sich nur die eine Zeile mit dem Stil.
+Das zweite Kapitel einer erziehungswissenschaftlichen Dissertation, den Forschungsstand: was zwanzig Jahre Studien über das Lesen auf Papier und am Bildschirm sagen. Das Kapitel steht auf einer links gebundenen A4-Seite in der Literata mit 16 pt Zeilenabstand, unter einem hellen Band im Blau der Universität. Der Autor verwaltet die Quellen in Zotero und fügt den Export als BibTeX ein; im Text ist jede Quelle ein Schlüssel. Postext formatiert jede Zitation nach APA 7 mit Autor, Jahr und gegebenenfalls Seite, schreibt „Delgado et al. (2018)“, wenn der Name Teil des Satzes ist, und baut das Literaturverzeichnis in der Reihenfolge und Form auf, die der Stil verlangt. Wünscht die Betreuerin Chicago, ändert sich nur die eine Zeile mit dem Stil.
 
 ## Zubereitung
 
 ### 1 · Eine Engine, ein Stil
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext liest die Zitate und überlässt ihren Wortlaut einer Zitier-Engine, die einmal vor dem ersten Build registriert wird; `postext-citeproc` kapselt citeproc-js, die Engine von Zotero und Mendeley, mit sechzehn CSL-Stilen und deren Sprachdateien. `[@mangen2013]` ergibt „(Mangen et al., 2013)“, `@delgado2018` ohne eckige Klammern stellt die Autoren in den Satz, und `[@ibanez2023, pp. 12–15]` trägt den Seitenbereich in die Klammer. Ist das Dokument spanisch, nehmen dieselben Schlüssel ihre Bindewörter und Abkürzungen aus der spanischen Sprachdatei, denn die Engine folgt der Sprache des Dokuments.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext erkennt die Zitationen und überlässt ihren Wortlaut einer Zitier-Engine, die einmal vor dem ersten Build registriert wird; `postext-citeproc` kapselt citeproc-js, die Engine von Zotero und Mendeley, mit sechzehn CSL-Stilen und deren Sprachdateien. `[@mangen2013]` ergibt „(Mangen et al., 2013)“, `@delgado2018` ohne eckige Klammern stellt die Autoren in den Satz, und `[@ibanez2023, pp. 12–15]` setzt den Seitenbereich in die Klammer. Ist das Dokument spanisch, nehmen dieselben Schlüssel ihre Bindewörter und Abkürzungen aus der spanischen Sprachdatei, denn die Engine folgt der Sprache des Dokuments.
 
 ### 2 · Die Quellen kommen aus einem BibTeX-Block
 
-Der letzte Block des Kapitels ist `:::references{format=bibtex}` mit dem eingefügten Zotero-Export, Akzente als `{\'a}` geschrieben. `:::bibliography` darüber setzt das Verzeichnis unter die Überschrift „References“; ohne diesen Block hängt Postext das Verzeichnis ans Ende. Es erscheinen nur zitierte Werke, sortiert wie bei APA, und jedes Zitat im Text verlinkt auf seinen Eintrag.
+Der letzte Block des Kapitels ist `:::references{format=bibtex}` mit dem eingefügten Zotero-Export, Akzente als `{\'a}` geschrieben. `:::bibliography` darüber setzt das Verzeichnis unter die Überschrift „References“; ohne diesen Block hängt Postext das Verzeichnis ans Ende. Es erscheinen nur zitierte Werke, sortiert wie bei APA, und jede Zitation im Text verlinkt auf seinen Eintrag.
 
 ### 3 · Eine Überschrift ohne Nummer, Verweise in Worten
 
 <Excerpt region="refs" />
 
-Die Überschrift des Verzeichnisses trägt das Format `references`, das sie im Inhaltsverzeichnis, aber außerhalb der Nummerierung hält, damit das Verzeichnis nicht zu Abschnitt 2.4 wird. `:ref{id="sec-speed"}` druckt „Section 2.2“ aus der Beschriftung in `crossRefs` und verlinkt auf die Überschrift; die Nummern stammen aus `startAt=2` am Kapiteltitel, demselben Zähler, den die Überschriften verwenden.
+Die Überschrift des Verzeichnisses hat den Stil `references`, der sie im Inhaltsverzeichnis, aber außerhalb der Nummerierung hält, damit das Verzeichnis nicht zu Abschnitt 2.4 wird. `:ref{id="sec-speed"}` gibt „Section 2.2“ mit der Bezeichnung aus `crossRefs` aus und verlinkt auf die Überschrift; die Nummern stammen aus `startAt=2` am Kapiteltitel, demselben Zähler, den die Überschriften verwenden.
 
 ### 4 · Der Kapitelauftakt sitzt in einem Band
 
 <Excerpt region="opener" />
 
-Das Band ist ein am Beschnitt verankerter Kasten, und der Grundtext beginnt 10 mm darunter. Die Nummer steht rechts in Literata Light zu 96 pt, wo sie als Form wirkt und dem Titel die volle Satzbreite lässt.
+Das Band ist ein an der Schnittkante verankerter Kasten, und der Grundtext beginnt 10 mm darunter. Die Nummer steht rechts in Literata Light zu 96 pt, wo sie als Form wirkt und dem Titel die volle Satzbreite lässt.
 
 <Excerpt region="palette" />
 
@@ -58,4 +58,4 @@ Viele Universitäten erlauben das Literaturverzeichnis einen Grad kleiner und mi
 
 ## Häufige Fehler
 
-- APA schreibt Titel von Artikeln und Büchern in Satzschreibung (nur das erste Wort und Eigennamen groß), und citeproc-js druckt Titel so, wie die Daten sie liefern. Zotero speichert die meisten Titel in Titelschreibung, korrigieren Sie sie also in Zotero oder im BibTeX, bevor sie auf die Seite kommen.
+- APA schreibt Titel von Artikeln und Büchern in Satzschreibung (nur das erste Wort und Eigennamen groß), und citeproc-js gibt Titel so aus, wie die Daten sie liefern. Zotero speichert die meisten Titel in Titelschreibung, korrigieren Sie sie also in Zotero oder im BibTeX, bevor sie auf die Seite kommen.

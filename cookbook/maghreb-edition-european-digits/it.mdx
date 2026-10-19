@@ -2,7 +2,7 @@
 title: "Un’edizione maghrebina di un testo arabo, con cifre europee"
 summary: "Un capitolo arabo per il Marocco: il locale 'ar-MA' tiene il testo da destra a sinistra e rilegato a destra, e scrive ogni numero generato come 1, 2, 3."
 plain: "In Marocco, Algeria e Tunisia i libri in arabo stampano i numeri con le cifre usate in Europa, 1, 2, 3, non con ١، ٢، ٣. Una sola impostazione, la lingua e il paese del documento, dà quelle cifre a tutto il libro."
-description: "Un capitolo arabo per un’edizione marocchina in Postext: ar-MA dà cifre europee a folio, titoli, elenchi, note e figure, e mantiene la rilegatura a destra."
+description: "Un capitolo arabo per un’edizione marocchina in Postext: ar-MA usa cifre europee per pagine, titoli, elenchi, note e figure, e tiene la rilegatura a destra."
 question: "Come stampo cifre europee (1, 2, 3) in un libro arabo per un’edizione del Maghreb?"
 aliases: ["Maghreb", "Marocco", "ar-MA", "cifre europee", "numeri arabi occidentali", "cifre arabe", "numerali", "latn", "Fès", "zellige", "أرقام", "المغرب"]
 pageNotes: { "1": "L’apertura del capitolo, pagina 41: الفصل 3: أبواب فاس in lettere cufiche verdi, due paragrafi giustificati in arabo con l’anno 789 in cifre europee, e sotto una fascia di zellige, stelle a otto punte blu cobalto su verde con quadrati ocra, con la didascalia شكل 3-1." }
@@ -10,13 +10,13 @@ pageNotes: { "1": "L’apertura del capitolo, pagina 41: الفصل 3: أبوا�
 
 ## Che cosa comporrai
 
-Un capitolo di una guida alle città antiche del Marocco, sulle porte di Fès, come lo stamperebbe un editore marocchino: 13,5 × 21 cm, Noto Naskh Arabic a 12,5 pt, titoli in Noto Kufi Arabic nel verde delle maioliche di Fès. Il testo va da destra a sinistra e il libro è rilegato a destra, come ogni libro arabo, ma ogni numero sulla pagina si scrive 1, 2, 3: i folio da 41 a 44, الفصل 3, i numeri di sezione 3-1 e 3-2, l’elenco delle porte da 1- a 5-, i richiami di nota (1) e il numero della figura شكل 3-1. È l’uso del Maghreb, dal Marocco alla Tunisia, e la pagina lo mostra con una sola impostazione. <RecipeLink slug="arabic-novel-right-bound">Un romanzo arabo rilegato a destra</RecipeLink> mostra lo stesso libro con le cifre ١٢ del Mashriq.
+Un capitolo di una guida alle città antiche del Marocco, sulle porte di Fès, come lo stamperebbe un editore marocchino: 13,5 × 21 cm, Noto Naskh Arabic a 12,5 pt, titoli in Noto Kufi Arabic nel verde delle maioliche di Fès. Il testo va da destra a sinistra e il libro è rilegato a destra, come ogni libro arabo, ma ogni numero sulla pagina si scrive 1, 2, 3: i numeri di pagina da 41 a 44, الفصل 3, i numeri di sezione 3-1 e 3-2, l’elenco delle porte da 1- a 5-, i richiami di nota (1) e il numero della figura شكل 3-1. È l’uso del Maghreb, dal Marocco alla Tunisia, e la pagina lo mostra con una sola impostazione. <RecipeLink slug="arabic-novel-right-bound">Un romanzo arabo rilegato a destra</RecipeLink> mostra lo stesso libro con le cifre ١٢ del Mashriq.
 
 ## Preparazione
 
 ### 1 · Il paese sceglie le cifre
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `numerals` resta su `'auto'`, e il motore ricava le cifre dal tag: `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` e `ar-EH` danno cifre europee, `ar` da solo e le regioni del Mashriq danno ١٢٣ ([Cifre e stili numerici](/it/docs/arabic-layout#cifre-e-stili-di-numerazione)). Cambiano solo i numeri che scrive il motore: il folio, i contatori dei titoli, i numeri degli elenchi, i richiami di nota, i numeri delle figure. Gli anni nel testo, 789 e 1913, sono dell’autore, scritti nelle cifre dell’edizione, e il motore non li riscrive mai. Lo `{startAt=3}` del titolo legge ٣ come 3, così lo stesso Markdown serve entrambe le edizioni.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `numerals` resta su `'auto'`, e il motore ricava le cifre dal tag: `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` e `ar-EH` danno cifre europee, `ar` da solo e le regioni del Mashriq danno ١٢٣ ([Cifre e stili numerici](/it/docs/arabic-layout#cifre-e-stili-di-numerazione)). Cambiano solo i numeri che scrive il motore: il numero di pagina, i contatori dei titoli, i numeri degli elenchi, i richiami di nota, i numeri delle figure. Gli anni nel testo, 789 e 1913, sono dell’autore, scritti nelle cifre dell’edizione, e il motore non li riscrive mai. Lo `{startAt=3}` del titolo legge ٣ come 3, così lo stesso Markdown serve entrambe le edizioni.
 
 ### 2 · I segni attorno ai numeri
 
@@ -28,7 +28,7 @@ I libri arabi scrivono un numero di elenco seguito da un trattino, 1-, e un rich
 
 <Excerpt region="art" />
 
-La figura è un SVG generato nel pen: stelle a otto punte fatte di due quadrati ruotati di 45°, piccoli quadrati tra l’una e l’altra, nel verde, nel cobalto e nell’ocra della palette. La sua didascalia è in arabo in entrambe le edizioni, numerata per capitolo, `{h1}-{n}`, come i tipi di risorsa arabi numerano le loro figure.
+La figura è un SVG generato nel pen: stelle a otto punte fatte di due quadrati ruotati di 45°, piccoli quadrati tra l’una e l’altra, nel verde, nel cobalto e nell’ocra della tavolozza. La sua didascalia è in arabo in entrambe le edizioni, numerata per capitolo, `{h1}-{n}`, come i tipi di risorsa arabi numerano le loro figure.
 
 ## Varianti
 

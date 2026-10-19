@@ -145,7 +145,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
       properties: {
         viewer: { type: 'string', enum: VIEWPORT_TABS, description: 'The viewer tab to show.' },
         mode: { type: 'string', enum: EDIT_MODES, description: 'content: the text is edited (the editor, the frames of composed pages on the page); design: page templates and styles are edited and the text is read only. The person switches with Alt+Shift+M.' },
-        panel: { type: 'string', enum: [...PANELS, 'none'], description: 'The side panel to open (projects = Books, markdown = Manuscript, config = Design, warnings = Checks), or none to close it.' },
+        panel: { type: 'string', enum: [...PANELS, 'none'], description: 'The side panel to open (projects = Books, markdown = Text, config = Design, warnings = Checks), or none to close it.' },
         sidebarWidth: { type: 'number', minimum: 5, maximum: 80, description: 'Width of the side panel, as a percentage of the window.' },
         settingsGroup: { type: 'string', enum: SETTINGS_GROUPS.map((g) => g.id), description: 'Open the Design panel on this group of settings.' },
         settingsHelp: { type: 'boolean', description: 'Design panel: show the explanation under each setting. Kept for the next time the panel opens.' },

@@ -16,11 +16,11 @@ Trois pages d’un manuel scolaire japonais de 漢文 (kanbun), le chinois class
 
 ### 1 · Marquer chaque caractère avec `:kunten`
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `:kunten[習]{kaeri="レ" okuri="フ"}` donne à 習 le signe de retour レ et l’okurigana フ ; le texte garde le caractère, si bien que la recherche, la copie et le PDF lisent le passage tel qu’il est écrit, et les signes n’y prennent aucun caractère ([Signes, ruby et warichu](/fr/docs/configuration-east-asian#signes-ruby-et-warichu)). Lisez 学ビテ而時ニ習フレ之ヲ : le レ sur 習 envoie le lecteur d’abord à 之 puis le fait revenir, 之を習ふ ; 而 n’a pas de signe et ne se lit pas. En texte vertical, le signe de retour se place en bas à gauche de son caractère et occupe un demi-caractère de la ligne, et les okurigana se placent à droite, à partir de la moitié du caractère, comme les dispose JIS X 4051. `cjk.kunten` règle leur taille, la moitié de celle du texte, et leur couleur, le vermillon dans lequel un lecteur les écrit ; un passage fait 15 pt sur deux lignes de la grille, ce qui laisse 27 pt à côté de chaque ligne pour les okurigana.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `:kunten[習]{kaeri="レ" okuri="フ"}` donne à 習 le signe de retour レ et l’okurigana フ ; le texte garde le caractère : la recherche, la copie et le PDF lisent donc le passage tel qu’il est écrit, et les signes n’y prennent aucun caractère ([Signes, ruby et warichu](/fr/docs/configuration-east-asian#signes-ruby-et-warichu)). Lisez 学ビテ而時ニ習フレ之ヲ : le レ sur 習 envoie le lecteur d’abord à 之 puis le fait revenir, 之を習ふ ; 而 n’a pas de signe et ne se lit pas. En texte vertical, le signe de retour se place en bas à gauche de son caractère et occupe un demi-caractère de la ligne, et les okurigana se placent à droite, à partir de la moitié du caractère, comme les dispose JIS X 4051. `cjk.kunten` règle leur taille, la moitié de celle du texte, et leur couleur, le vermillon dans lequel un lecteur les écrit ; un passage fait 15 pt sur deux lignes de la grille, ce qui laisse 27 pt à côté de chaque ligne pour les okurigana.
 
 ### 2 · Sauter avec 一 二 et avec 一レ
 
-Les chiffres renvoient le lecteur plus loin en arrière. Dans 不二亦タ説バシカラ一乎, le lecteur saute 不, qui porte 二, lit 亦た説ばしから et, à 一, remonte jusqu’à 不 : 亦た説ばしからずや. Dans 為政, le signe combiné 一レ sur 為 fait les deux : 可二以テ為一レ師ト矣 se lit 以て, 師と (レ), 為る, puis retour à 可 (de 一 à 二), 以て師と為るべし. Les points de code kanbun ㆑ ㆒ ㆓ sont lus comme les caractères qu’ils représentent, si bien qu’un texte copié d’ailleurs garde ses signes.
+Les chiffres renvoient le lecteur plus loin en arrière. Dans 不二亦タ説バシカラ一乎, le lecteur saute 不, qui a 二, lit 亦た説ばしから et, à 一, remonte jusqu’à 不 : 亦た説ばしからずや. Dans 為政, le signe combiné 一レ sur 為 fait les deux : 可二以テ為一レ師ト矣 se lit 以て, 師と (レ), 為る, puis retour à 可 (de 一 à 二), 以て師と為るべし. Les points de code kanbun ㆑ ㆒ ㆓ sont lus comme les caractères qu’ils représentent : un texte copié d’ailleurs garde donc ses signes.
 
 ### 3 · Laisser les okurigana longs repousser le caractère suivant
 
@@ -30,7 +30,7 @@ Un okurigana plus long que son caractère ne court pas à côté du suivant : d
 
 <Excerpt region="headings" />
 
-Chaque livre du manuel ouvre une page avec son titre, 論語 ou 唐詩, le premier avec une petite note vermillon sur son contenu ; chaque passage reçoit une étiquette en gothique large de deux lignes du texte courant (2行取り), 学而第一 ou 春暁　孟浩然, pour que les passages qui la suivent restent sur la grille. La lecture est un bloc `:::paragraphs{style="kudashi"}` décalé de deux caractères, dans le caractère et le corps du texte, avec des furigana jukugo : `{君子|くん|し}` donne à chaque caractère sa propre lecture, si bien qu’une ligne pourrait se couper entre eux.
+Chaque livre du manuel ouvre une page avec son titre, 論語 ou 唐詩, le premier avec une petite note vermillon sur son contenu ; chaque passage reçoit une étiquette en gothique large de deux lignes du texte courant (2行取り), 学而第一 ou 春暁　孟浩然, pour que les passages qui la suivent restent sur la grille. La lecture est un bloc `:::paragraphs{style="kudashi"}` décalé de deux caractères, dans le caractère et le corps du texte courant, avec des furigana jukugo : `{君子|くん|し}` donne à chaque caractère sa propre lecture, et une ligne pourrait donc se couper entre eux.
 
 ### 5 · Charger chaque voix avec ses caractères
 
@@ -51,7 +51,7 @@ Un manuel imprimé compose les kunten à l’encre du texte ; retirez la coule
 
 ### Placer les signes entre les lignes
 
-`placement: 'interlinear'` sort les signes de retour de la ligne et les place dans l’espace à côté de la moitié basse du caractère, si bien que le passage garde l’espacement du texte nu (白文). JIS les compose dans la ligne, ce qui est le comportement par défaut.
+`placement: 'interlinear'` sort les signes de retour de la ligne et les place dans l’espace à côté de la moitié basse du caractère : le passage garde donc l’espacement du texte nu (白文). JIS les compose dans la ligne, ce qui est le comportement par défaut.
 
 ```diff
 -  kunten: { fontSize: em(0.5), color: col('vermilion'), placement: 'inline' },

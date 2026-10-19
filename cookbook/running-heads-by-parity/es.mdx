@@ -18,13 +18,13 @@ Las páginas 29 a 33 de los *Ensayos* de Montaigne en edición de bolsillo y tra
 
 <Excerpt region="palette" />
 
-Cada color de la configuración enlaza con una de estas entradas. Si dejas `header` sin definir, el motor dibuja su cabecera de serie: `{title}` en las impares y `{chapterTitle}` en las pares sobre un filete de 1 pt, en Open Sans 600 de 8 pt y en azul `#295AA3` ([encabezados y pies](/es/docs/configuration-headers-footers#encabezados-y-pies)). Si `main-color` toma el valor del sepia, cambian los colores por defecto del texto y también el de esa cabecera, pero su letra, su filete y el lado en que va cada título siguen siendo los del motor. Por eso aquí cada cabecera se escribe entera, con cada color enlazado a una entrada de la paleta. La negrita, la cursiva y las referencias también toman `main-color` por defecto, y `bodyText` les devuelve el color de la tinta.
+Cada color de la configuración enlaza con una de estas entradas. Si dejas `header` sin definir, el motor dibuja su cabecera de serie: `{title}` en las impares y `{chapterTitle}` en las pares sobre un filete de 1 pt, en Open Sans 600 de 8 pt y en azul `#295AA3` ([cabeceras y pies](/es/docs/configuration-headers-footers#cabeceras-y-pies)). Si `main-color` toma el valor del sepia, cambian los colores por defecto del texto y también el de esa cabecera, pero su letra, su filete y el lado en que va cada título siguen siendo los del motor. Por eso aquí cada cabecera se escribe entera, con cada color enlazado a una entrada de la paleta. La negrita, la cursiva y las referencias también toman `main-color` por defecto, y `bodyText` les devuelve el color de la tinta.
 
 ### 2 · Todas las cabeceras salen de una pestaña
 
 <Excerpt region="tab" />
 
-La respuesta corta ancla a `'page'` la pestaña de cada cabecera, así que sus desplazamientos se miden desde el corte. Desde la esquina `top-right`, una `x` positiva saca la pestaña de la página; por eso la de la impar la lleva negativa. De la pestaña cuelga el filete, y del filete, el título ([posicionamiento de elementos](/es/docs/configuration-headers-footers#posicionamiento-de-elementos)). Las medidas de la pestaña van en constantes porque las demás piezas se miden a partir de ellas. El filete mide `TAB_H` de alto. El folio y los dos títulos comparten una caja de línea de 9 pt, y la línea de base de un texto de diseño cae al 80 % de la altura de esa caja, así que los tres quedan sobre la misma línea de base con cualquier cuerpo.
+La respuesta corta ancla a `'page'` la pestaña de cada cabecera, así que sus desplazamientos se miden desde el corte. Desde la esquina `top-right`, una `x` positiva saca la pestaña de la página; por eso la de la impar la lleva negativa. De la pestaña cuelga el filete, y del filete, el título ([colocación de elementos](/es/docs/configuration-headers-footers#colocación-de-elementos)). Las medidas de la pestaña van en constantes porque las demás piezas se miden a partir de ellas. El filete mide `TAB_H` de alto. El folio y los dos títulos comparten una caja de línea de 9 pt, y la línea de base de un texto de diseño cae al 80 % de la altura de esa caja, así que los tres quedan sobre la misma línea de base con cualquier cuerpo.
 
 <PageShot page={2} crop="0.04,0.045,0.6,0.05" caption="Página 30, par: pestaña, filete y título del libro, hacia dentro desde el margen exterior." />
 
@@ -40,7 +40,7 @@ Con `mirror: true`, el margen `right` es el exterior en la página impar y pasa 
 
 <Excerpt region="opener" />
 
-La apertura compone el título completo con `overflow: 'wrap'`, partido en cada `\\` de la línea del título. Solo una apertura a toda la página respeta esos saltos, y de ahí el `span: 'page'` del nivel ([saltos de línea en los títulos](/es/docs/document-format-directives#saltos-de-línea-en-los-títulos)). En la cabecera, `{chapterTitle}` da siempre el título en una sola línea, y los puntos suspensivos cortan esa línea. El número romano sale del atributo `{num="IV"}` del título, y las versalitas junto a la placa, del `subtitle` del frontmatter.
+La apertura compone el título completo con `overflow: 'wrap'`, partido en cada `\\` de la línea del encabezado. Solo una apertura a toda la página respeta esos saltos, y de ahí el `span: 'page'` del nivel ([saltos de línea en los títulos](/es/docs/document-format-directives#saltos-de-línea-en-los-títulos)). En la cabecera, `{chapterTitle}` da siempre el título en una sola línea, y los puntos suspensivos cortan esa línea. El número romano sale del atributo `{num="IV"}` del título, y las versalitas junto a la placa, del `subtitle` del frontmatter.
 
 ### 5 · Cada ensayo abre en página impar
 
@@ -52,13 +52,13 @@ Con `'odd'`, a un ensayo que termina en impar le sigue una página par en blanco
 
 <Excerpt region="build" />
 
-`parity` se calcula a partir del lugar que ocupa la página en el libro, y el folio no interviene. `pageIndexOffset: 28` suma 28 al índice de cada página, así que las impares y las pares, los márgenes en espejo y las cabeceras de cada lado siguen la página del libro. Después, `pageNumbering.startAt` numera estas páginas del 29 al 33. Sin ese desplazamiento, la primera página compuesta es impar, sea cual sea su folio. Con el folio 29 coincide por casualidad, pero con `startAt: 30` el título del libro caería en la 31 y el del ensayo en la 32, cada uno en el lado equivocado del pliego.
+`parity` se calcula a partir del lugar que ocupa la página en el libro, y el folio no interviene. `pageIndexOffset: 28` suma 28 al índice de cada página, así que las impares y las pares, los márgenes en espejo y las cabeceras de cada lado siguen la página del libro. Después, `pageNumbering.startAt` numera estas páginas del 29 al 33. Sin ese desplazamiento, la primera página compuesta es impar, sea cual sea su folio. Con el folio 29 coincide por casualidad, pero con `startAt: 30` el título del libro caería en la 31 y el del ensayo en la 32, cada uno en el lado equivocado de la doble página.
 
 ## Variantes
 
 ### Pon un titulillo corto a los títulos largos
 
-Escribe el titulillo en la línea del título, `{num="IV" short="Los objetos falsos"}`, e imprime el atributo en lugar del título entero; un capítulo sin `short` no imprime nada ahí.
+Escribe el titulillo en la línea del encabezado, `{num="IV" short="Los objetos falsos"}`, e imprime el atributo en lugar del título entero; un capítulo sin `short` no imprime nada ahí.
 
 ```diff
 -  { kind: 'text', id: 'essay', content: '{chapterTitle}', parity: 'odd', pages: 'body',

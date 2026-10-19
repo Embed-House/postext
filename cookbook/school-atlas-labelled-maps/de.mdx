@@ -4,7 +4,7 @@ summary: "Gemalte Karten ohne Buchstaben, benannt durch ::label-Zeilen an den An
 plain: "Drei Seiten aus einem Schulatlas eines erfundenen Landes. Die Karten sind Gemälde ohne Schrift; alle Namen stehen im Text, sodass eine Übersetzung die Wörter ändert und die Karten lässt, wie sie sind."
 description: "Ein Schulatlas mit Postext: Karten, aus dem Markdown an den Ankern der Ressource beschriftet, eine Karte über eine Doppelseite, eine arabische Ausgabe."
 question: "Wie setze ich die Namen einer Karte aus dem Text, damit jede Übersetzung dieselbe Zeichnung behält?"
-aliases: ["Atlas", "Schulatlas", "Kartenbeschriftung", "Ortsnamen", "Anker", "Beschriftungsformate", "Karte über eine Doppelseite", "Doppelseite", "von rechts nach links", "gedrehte Beschriftung", "map labels"]
+aliases: ["Atlas", "Schulatlas", "Kartenbeschriftung", "Ortsnamen", "Anker", "Beschriftungsstile", "Karte über eine Doppelseite", "Doppelseite", "von rechts nach links", "gedrehte Beschriftung", "map labels"]
 ---
 
 ## Was Sie setzen
@@ -17,7 +17,7 @@ Drei Tafeln aus einem Schulatlas von Varenia, einem Land, das für dieses Rezept
 
 <Excerpt region="anchors" />
 
-Ein Anker ist ein Punkt in Bruchteilen der Breite und Höhe des Bildes. Er gilt also bei jeder Größe, in der der Rahmen die Karte setzt, und wenn die Umbruchstufen eine Karte verkleinern, wandern ihre Namen mit. `km()` rechnet die Kilometer, die man an einem über das Gemälde gelegten Raster abliest, in diese Bruchteile um: Der Punkt einer Stadt und ihr Name kommen beide aus `TOWNS` und können nicht auseinanderlaufen. Der Anker hält fest, was zum Ort gehört und nicht zur Sprache: sein Format, die Drehung eines Fluss- oder Gebirgsnamens entlang seines Verlaufs und die Seite der Beschriftung, die am Punkt steht. Stadtnamen stehen mittig über ihrem Punkt, denn `align: 'start'` wäre bei einem englischen Namen links und bei einem arabischen rechts.
+Ein Anker ist ein Punkt in Bruchteilen der Breite und Höhe des Bildes. Er gilt also bei jeder Größe, in der der Rahmen die Karte setzt, und wenn die Einpassstufen eine Karte verkleinern, wandern ihre Namen mit. `km()` rechnet die Kilometer, die man an einem über das Gemälde gelegten Raster abliest, in diese Bruchteile um: Der Punkt einer Stadt und ihr Name kommen beide aus `TOWNS` und können nicht auseinanderlaufen. Der Anker hält fest, was zum Ort gehört und nicht zur Sprache: sein Stil, die Drehung eines Fluss- oder Gebirgsnamens entlang seines Verlaufs und die Seite der Beschriftung, die am Punkt steht. Stadtnamen stehen mittig über ihrem Punkt, denn `align: 'start'` wäre bei einem englischen Namen links und bei einem arabischen rechts.
 
 Die Gemälde entstanden der Reihe nach. Zuerst die Reliefkarte, von einem Bildmodell nach einer schattierten Höhenkarte des Landes gemalt; die Lagekarte wurde nach der Reliefkarte gemalt und das Profil nach denselben Höhen, sodass Küsten und Höhen in allen dreien übereinstimmen. Ein über jedes Bild gelegtes Raster lieferte die Kilometer jedes Ankers, und die Grenzen wurden dort gekappt, wo sie die gemalte Küste erreichen.
 
@@ -25,29 +25,29 @@ Die Gemälde entstanden der Reihe nach. Zuerst die Reliefkarte, von einem Bildmo
 
 <Excerpt region="resources" />
 
-Die Ressource hat ein Bild (ein SVG, das das Gemälde und darüber die Vektorsymbole trägt) und eine Ankerliste für alle Ausgaben. Jede Ausgabe schreibt je Anker eine Zeile `::label[…]{at="…"}` in `:::figure{resource="relief" slot="map"}`, sodass `::label[Calvera Plain]{at="plain"}` und `::label[Llanura de Calvera]{at="plain"}` an derselben Stelle stehen und bei Bedarf durch das `width` des Ankers auf zwei Zeilen umbrochen werden. Auch der Alternativtext ändert sich mit der Ausgabe: Jedes `:::figure` trägt seinen in einer Zeile `::alt[…]`, und eine Bildunterschrift oder eine Notiz stünde ebenso in `::caption[…]` und `::note[…]`. Ein Anker mit Format, den eine Ausgabe ohne Beschriftung lässt, meldet `anchorUnlabelled`; eine Beschriftung, deren `at` keinen Anker nennt, wird nicht gezeichnet und meldet `labelAnchorUnknown`.
+Die Ressource hat ein Bild (ein SVG, das das Gemälde und darüber die Vektorsymbole enthält) und eine Ankerliste für alle Ausgaben. Jede Ausgabe schreibt je Anker eine Zeile `::label[…]{at="…"}` in `:::figure{resource="relief" slot="map"}`, sodass `::label[Calvera Plain]{at="plain"}` und `::label[Llanura de Calvera]{at="plain"}` an derselben Stelle stehen und bei Bedarf durch das `width` des Ankers auf zwei Zeilen umbrochen werden. Auch der Alternativtext ändert sich mit der Ausgabe: Jedes `:::figure` hat seinen eigenen in einer Zeile `::alt[…]`, und eine Legende oder eine Notiz stünde ebenso in `::caption[…]` und `::note[…]`. Ein Anker mit Stil, den eine Ausgabe ohne Beschriftung lässt, meldet `anchorUnlabelled`; eine Beschriftung, deren `at` auf keinen Anker verweist, wird nicht gezeichnet und meldet `labelAnchorUnknown`.
 
 ### 3 · Eine Tafel und eine Doppeltafel
 
 <Excerpt region="templates" />
 
-Beide Vorlagen haben dieselben fünf Rahmen, daher hat das Markdown einer Tafel auf einer Seite wie auf zweien dieselbe Form: Titel, der Text ohne Slot, Karte, Legende und Aufgaben. Auf der Doppeltafel legt `spread: true` beide Seiten als einen Bogen von 390 mm an, und nur der Kartenrahmen setzt `crossGutter`: Er läuft über den Bund, während Text und Kästen auf ihrer Seite bleiben. Text, Karte und Legende bilden eine `stack`-Gruppe; im Belastungstest der Prüfbank, mit allen Texten um 30 % länger, setzt die arabische Ausgabe die Lagekarte auf 87,5 %, und die Kästen darunter rücken nach oben, ohne Warnung.
+Beide Vorlagen haben dieselben fünf Rahmen, daher hat das Markdown einer Tafel auf einer Seite wie auf zweien dieselbe Form: Titel, der Text ohne Slot, Karte, Legende und Aufgaben. Auf der Doppeltafel legt `spread: true` beide Seiten als ein Blatt von 390 mm Breite an, und nur der Kartenrahmen setzt `crossGutter`: Er läuft über den Bund, während Text und Kästen auf ihrer Seite bleiben. Text, Karte und Legende bilden eine `stack`-Gruppe; im Belastungstest der Prüfbank, mit allen Texten um 30 % länger, setzt die arabische Ausgabe die Lagekarte auf 87,5 %, und die Kästen darunter rücken nach oben, ohne Warnung.
 
 ### 4 · Eine Palette für Seite, Höhenfarben und Legende
 
 <Excerpt region="palette" />
 
-Die fünf Höhenschichtfarben sind Einträge der Palette (`palette.low` bis `palette.peak`), eingestellt auf die mittlere Farbe des gemalten Reliefs in jeder Schicht, und die Legende von Tafel 2 schreibt `:swatch{color="low"}` mit denselben Kennungen. Das Gemälde liest die Palette nicht: Ein neuer Hexwert ändert die Legende und die Vektorsymbole und lässt das Bild, wie es ist; um die Farben der Karte zu ändern, muss man sie neu malen. Die Gewässernamen in `water` haben auf dem gemalten Meer einen Kontrast von mindestens 6:1, der weiße Titel auf `band` 7,2:1.
+Die fünf Höhenschichtfarben sind Einträge der Palette (`palette.low` bis `palette.peak`), eingestellt auf die mittlere Farbe des gemalten Reliefs in jeder Schicht, und die Legende von Tafel 2 schreibt `:swatch{color="low"}` mit denselben Kennungen. Das Gemälde übernimmt die Palette nicht: Ein neuer Hexwert ändert die Legende und die Vektorsymbole und lässt das Bild, wie es ist; um die Farben der Karte zu ändern, muss man sie neu malen. Die Gewässernamen in `water` haben auf dem gemalten Meer einen Kontrast von mindestens 6:1, der weiße Titel auf `band` 7,2:1.
 
 ### 5 · Die arabische Ausgabe
 
-Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `locale: 'ar'` setzt den Text von rechts nach links und bindet das Buch rechts, sodass die Doppelseite auf der rechten Seite beginnt und die Rahmen dem gespiegelten Satzspiegel folgen: Titel und Text stehen rechts, die Legende rechts neben den Aufgaben. Die Karten werden nicht gespiegelt, und jeder arabische Name steht dort, wo sein Ort gezeichnet ist. Im Arabischen verlieren die Beschriftungsformate Kursive und Sperrung und werden um 15 % größer, weil das Kufi klein läuft. Dekoration und Paginierung bleiben auf dem Bogen, also wandert die Dachzeile nach rechts oben und die Seitenzahlen wechseln die Seite.
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `locale: 'ar'` setzt den Text von rechts nach links und bindet das Buch rechts, sodass die Doppelseite auf der rechten Seite beginnt und die Rahmen dem gespiegelten Satzspiegel folgen: Titel und Text stehen rechts, die Legende rechts neben den Aufgaben. Die Karten werden nicht gespiegelt, und jeder arabische Name steht dort, wo sein Ort gezeichnet ist. Im Arabischen verlieren die Beschriftungsstile Kursive und Sperrung und werden um 15 % größer, weil das Kufi klein läuft. Dekoration und Paginierung bleiben auf dem Blatt, also wandert die Dachzeile nach rechts oben und die Seitenzahlen wechseln die Seite.
 
 ## Varianten
 
 ### Einen Ort ohne Anker benennen
 
-Eine Beschriftung kann an einem Punkt stehen, der in Prozent des Bildes angegeben ist, mit einem eigenen Format.
+Eine Beschriftung kann an einem Punkt stehen, der in Prozent des Bildes angegeben ist, mit einem eigenen Stil.
 
 ```diff
  :::figure{resource="relief" slot="map"}
@@ -57,11 +57,11 @@ Eine Beschriftung kann an einem Punkt stehen, der in Prozent des Bildes angegebe
 
 ### Die Karten nummerieren und beschriften
 
-Geben Sie dem Kartentyp einen Zähler und ein Präfix und jeder Ressource eine Bildunterschrift: siehe <RecipeLink slug="atlas-map-sheet">das Atlasblatt mit nummerierten Karten</RecipeLink>, das seine Bildunterschriften auf einen blauen Balken setzt.
+Geben Sie dem Kartentyp einen Zähler und ein Präfix und jeder Ressource eine Legende: siehe <RecipeLink slug="atlas-map-sheet">das Atlasblatt mit nummerierten Karten</RecipeLink>, das seine Legenden auf einen blauen Balken setzt.
 
 ## Häufige Fehler
 
-- Der Alternativtext jeder Karte steht im Markdown, als Zeile `::alt[…]` in ihrem `:::figure`, eine je Ausgabe. Eine Figur, die keinen angibt, behält den `altText` der Ressource selbst; `script.js` enthält kein Wort der Seite.
-- Die Anker und die Vektorsymbole (Grenzen, Städte, Gipfel, Profillinie) stehen an Kilometern, die am Gemälde abgelesen wurden. Wird eine Karte neu gemalt, verschieben sich ihre Küsten, Flüsse und Kämme: Legen Sie das Raster über das neue Bild und lesen Sie sie neu ab, sonst landet ein Name im Meer.
+- Der Alternativtext jeder Karte steht im Markdown, als Zeile `::alt[…]` in ihrem `:::figure`, eine je Ausgabe. Eine Abbildung, die keinen angibt, behält den `altText` der Ressource selbst; `script.js` enthält kein Wort der Seite.
+- Die Anker und die Vektorsymbole (Grenzen, Städte, Gipfel, Profillinie) stehen an Kilometern, die am Gemälde abgelesen wurden. Wird eine Karte neu gemalt, verschieben sich ihre Küsten, Flüsse und Kämme: Legen Sie das Raster über das neue Bild und lesen Sie sie neu ab, sonst steht ein Name im Meer.
 - Auf einer Seite von rechts nach links folgen die Rahmen dem gespiegelten Satzspiegel, die Dekoration der Vorlage aber nicht: Platzieren Sie die Dachzeile je Ausgabe, wie es `kicker` tut.
 - Ein zweispaltiger Rahmen kann einen Absatz eine Zeile vor seinem Ende trennen und diese Zeile oben in die zweite Spalte stellen. Prüfen Sie die Spalten jeder Ausgabe und verschieben Sie dann einen Satz in den nächsten Absatz.

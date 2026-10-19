@@ -24,7 +24,7 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `renderToE
 
 <Excerpt region="embed" />
 
-Un EPUB à mise en page fixe dessine son texte dans les caractères qu’il embarque, et un caractère omis est remplacé par celui du lecteur. Le lettrage demande un romain, un gras et un italique ; les polices de BD en proposent moins, si bien que chaque demande reçoit le fichier que `loadComicFonts` a choisi pour elle, et un fichier qui sert les deux graisses n’entre qu’une fois, avec la plage `'400 700'`. Les polices japonaises et chinoises ne prennent que les tranches qui contiennent les caractères de l’édition, ce qui maintient le livre japonais à 1,4 Mo.
+Un EPUB à mise en page fixe dessine son texte dans les caractères qu’il embarque, et un caractère omis est remplacé par celui du lecteur. Le lettrage demande un romain, un gras et un italique ; les polices de BD en proposent moins : chaque demande reçoit donc le fichier que `loadComicFonts` a choisi pour elle, et un fichier qui sert les deux graisses n’entre qu’une fois, avec la plage `'400 700'`. Les polices japonaises et chinoises ne prennent que les tranches qui contiennent les caractères de l’édition, ce qui maintient le livre japonais à 1,4 Mo.
 
 ### 3 · Relire chaque fichier
 

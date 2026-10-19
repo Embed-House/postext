@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Contribuer',
   description: 'Comment rejoindre la communauté Postext et contribuer au projet',
   lang: 'fr',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 35,
   plainSummary: "Postext est construit par une communauté de bénévoles, et tout le monde peut aider. Inutile d’être programmeur : vous pouvez aussi aider en testant, en rédigeant de la documentation, en traduisant ou en partageant ce que vous savez de la maquette et de l’impression. Cette page explique comment l’équipe travaille, où l’aide manque le plus et comment faire votre première contribution. Elle se termine par les objectifs à long terme du projet.",
@@ -20,7 +20,7 @@ depuis des décennies : apporter au Web une mise en page éditoriale de niveau 
 grande ambition, et elle demande plus d’une personne.
 
 Le projet est jeune, mais ce n’est plus une page blanche : la chaîne de mise en page, le format de
-document et le système de configuration sont tous livrés. Beaucoup de décisions de conception restent
+document et le système de configuration sont déjà disponibles. Beaucoup de décisions de conception restent
 pourtant ouvertes, et les personnes qui contribuent dès maintenant ont une vraie influence sur la
 direction du projet. Si vous attendiez le bon moment pour nous rejoindre, c’est maintenant.
 
@@ -32,7 +32,7 @@ documentation, traduisiez des contenus ou ayez simplement des idées sur la faç
 
 ## Pourquoi contribuer
 
-Tous les ateliers de développement éditorial du monde se heurtent au même problème : CSS n’a pas été
+Toutes les équipes de développement éditorial du monde se heurtent au même problème : CSS n’a pas été
 conçu pour la mise en page éditoriale. Il n’offre aucune prise en charge native de l’équilibrage des
 colonnes, de la prévention des veuves et des orphelines, de l’habillage du texte autour d’obstacles ni
 du placement des notes de bas de page. Chaque équipe résout ces problèmes en partant de zéro, avec des
@@ -66,7 +66,7 @@ pas de décisions prises à huis clos. Tout est public, consultable et ouvert à
 C’est un choix délibéré : quand tout vit au même endroit, chacun peut retrouver le contexte de
 n’importe quelle décision, et les nouveaux venus peuvent lire l’historique.
 
-<Illustration name="ContributionWorkflow" data='{"title": "Un parcours de contribution type", "desc": "Une idée naît sous forme d’Issue ou de Discussion, elle est discutée, devient une Pull Request relue, puis est finalement fusionnée. Les issues étiquetées good first issue sont la porte d’entrée des nouveaux venus.", "caption": "De l’idée à la fusion : quatre étapes, toutes publiques sur GitHub.", "steps": [{"name": "Issue", "sub": "problème ou idée"}, {"name": "Discussion", "sub": "approche et conception"}, {"name": "Pull Request", "sub": "revue de code"}, {"name": "Merge", "sub": "dans develop"}], "branchLabel": "good first issue", "branchSub": "meilleure porte d’entrée"}' />
+<Illustration name="ContributionWorkflow" data='{"title": "Un parcours de contribution type", "desc": "Une idée naît sous forme d’Issue ou de Discussion, elle est discutée, devient une Pull Request relue, puis est finalement fusionnée. Les issues étiquetées good first issue sont la porte d’entrée des nouveaux venus.", "caption": "De l’idée à la fusion : quatre étapes, toutes publiques sur GitHub.", "steps": [{"name": "Issue", "sub": "problème ou idée"}, {"name": "Discussion", "sub": "approche et conception"}, {"name": "Pull Request", "sub": "revue de code"}, {"name": "Merge", "sub": "dans develop"}], "branchLabel": "good first issue", "branchSub": "meilleure porte d’entrée"}' />
 
 
 ## Domaines où vous pouvez aider
@@ -82,19 +82,21 @@ particulièrement précieuses :
   couleurs et traitement des octets de ressources pour les figures en une seule encre.
 - **Rendu du texte** : rendu sur canvas, sortie SVG, recoloration des SVG en une seule encre
   (`diagramStyle.singleInk`), métriques des polices.
-- **Optimisation des performances** : la couche de cache des mesures, et un moteur de mise en page
+- **Optimisation des performances** : la couche de cache des mesures, l’algorithme de coupure de
+  lignes Knuth-Plass écrit en Rust et compilé en WebAssembly (`rust/`), et un moteur de mise en page
   assez rapide pour un usage en temps réel à chaque redimensionnement.
 
 ### Sandbox et interface
 Le [Sandbox](/fr/docs/sandbox) est devenu une interface React conséquente à part entière : un panneau
 Ressources avec un éditeur de tableaux interactif et l’import d’images et de SVG, un panneau des
-polices et un panneau Maquette dont les douze groupes couvrent tous les recoins du moteur. Ses contrôles
-reposent sur les primitives Base UI (`packages/postext-sandbox/src/ui/`) et sont vérifiés avec axe-core
-pour WCAG 2.1 AA ; les nouveaux contrôles doivent donc les réutiliser et garder chaque champ nommé par
-son libellé et décrit par son texte d’aide. Chaque chaîne de l’interface suit une convention d’i18n
-stricte, câblée par des libellés à travers cinq fichiers répartis entre le paquet du Sandbox et les
-catalogues de langues de l’application web. Si vous contribuez au frontend ou à l’UX, c’est ici que
-votre travail atterrit.
+polices, des éditeurs de gabarits de page et de pages de bande dessinée, et un panneau Maquette dont
+les groupes couvrent toutes les parties du moteur. Ses contrôles reposent sur les primitives Base UI
+(`packages/postext-sandbox/src/ui/`) et sont vérifiés avec axe-core et avec des contrôles propres au
+projet pour WCAG 2.2 au niveau AAA ; les nouveaux contrôles doivent donc les réutiliser et garder
+chaque champ nommé par son libellé et décrit par son texte d’aide. Chaque chaîne de l’interface suit
+une convention d’i18n stricte : chaque libellé passe par le paquet du Sandbox, par le pont des
+libellés de l’application web et par le catalogue de chacune des dix langues. Si vous contribuez au
+frontend ou à l’UX, c’est ici que votre travail trouvera sa place.
 
 ### Maquette et typographie
 - **Expertise en maquette éditoriale** : si vous avez l’expérience de la mise en page de magazines,
@@ -106,22 +108,23 @@ votre travail atterrit.
 ### Documentation et communauté
 - **Documentation** : améliorer, étoffer et entretenir la documentation. Une documentation claire
   fait la différence entre un projet que l’on adopte et un projet que l’on abandonne.
-- **Traductions** : la documentation est actuellement bilingue (anglais et espagnol). D’autres
-  langues sont les bienvenues.
+- **Traductions** : la documentation et le site existent en dix langues : anglais, espagnol,
+  catalan, français, allemand, italien, portugais du Brésil, chinois simplifié, japonais et arabe.
+  D’autres langues sont les bienvenues, et les relectures des langues existantes aussi.
 - **Tests** : tester sur différents navigateurs et systèmes d’exploitation, et sur les cas limites.
   Trouver les mises en page qui cassent vaut autant que construire celles qui fonctionnent.
 
 ### Conception du format et du schéma
 Le format n’est plus une page blanche : les blocs `::resource`, les références en ligne `:ref` et les
-sections de configuration `tableStyle`, `captionStyle` et `diagramStyle` sont tous livrés. Le travail
+sections de configuration `tableStyle`, `captionStyle` et `diagramStyle` sont déjà disponibles. Le travail
 consiste désormais à faire évoluer un format établi sans le casser :
 
-- **Grammaire du document** : les notes marginales et les renvois au-delà des ressources restent des
-  questions ouvertes, chacune autant un problème de conception qu’un problème technique.
+- **Grammaire du document** : les notes marginales restent une question ouverte, autant un
+  problème de conception qu’un problème technique.
 - **Schéma de configuration** : garder le système assez puissant pour les professionnels et assez
   simple pour les débutants à mesure qu’il grandit.
 
-<Illustration name="ContributionAreas" data='{"title": "Où vous pouvez aider, d’un coup d’œil", "desc": "Quatre quadrants avec des exemples concrets dans chacun : le code et l’interface du Sandbox, la maquette et la typographie, la documentation et la communauté, le format et le schéma.", "caption": "Pas besoin de toucher au code : une contribution compte vraiment sur bien des fronts.", "areas": [{"name": "Code et interface du Sandbox", "items": ["Knuth-Plass et flottants", "PDF et rendu", "Cache des mesures", "Interface du Sandbox et i18n"]}, {"name": "Maquette et typographie", "items": ["Maquette éditoriale", "Traditions typographiques", "Magazines et journaux", "Écritures non latines"]}, {"name": "Documentation et communauté", "items": ["Améliorer la documentation", "Traductions", "Tests multinavigateurs", "Accueil des nouveaux venus"]}, {"name": "Format et schéma", "items": ["Directives ::resource et :ref", "Schéma de configuration", "Notes de bas de page et notes marginales", "Renvois"]}]}' />
+<Illustration name="ContributionAreas" data='{"title": "Où vous pouvez aider, d’un coup d’œil", "desc": "Quatre quadrants, chacun avec des exemples concrets : le code et l’interface du Sandbox, la maquette et la typographie, la documentation et la communauté, le format et le schéma.", "caption": "Pas besoin de toucher au code : vous pouvez apporter une vraie contribution sur bien des fronts.", "areas": [{"name": "Code et interface du Sandbox", "items": ["Knuth-Plass et flottants", "PDF et rendu", "Cache des mesures", "Interface du Sandbox et i18n"]}, {"name": "Maquette et typographie", "items": ["Maquette éditoriale", "Traditions typographiques", "Magazines et journaux", "Écritures non latines"]}, {"name": "Documentation et communauté", "items": ["Améliorer la documentation", "Traductions", "Tests multinavigateurs", "Accueil des nouveaux venus"]}, {"name": "Format et schéma", "items": ["Directives ::resource et :ref", "Schéma de configuration", "Notes de bas de page et notes marginales", "Renvois"]}]}' />
 
 
 ## Premiers pas
@@ -135,13 +138,13 @@ plus lourd :
 
 1. **Présentez-vous dans les [Discussions](https://github.com/drnachio/postext/discussions)** :
    dites sur quoi vous travaillez et ce qui vous amène. Aucune question n’est trop simple, et c’est
-   le moyen le plus rapide pour que la communauté sache que vous êtes arrivé.
+   le moyen le plus rapide de signaler votre arrivée à la communauté.
 2. **Prenez une [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** :
    elles sont choisies pour être un point d’entrée réaliste, sans contexte historique caché à
    connaître.
-3. **Traduisez la documentation dans une nouvelle langue** : aujourd’hui, la documentation existe en
-   anglais et en espagnol. Toute troisième langue est un cadeau pour les lecteurs actuellement
-   laissés de côté.
+3. **Traduisez la documentation dans une nouvelle langue, ou relisez-en une** : aujourd’hui, la
+   documentation existe en dix langues. Chaque nouvelle langue touche des lecteurs qui ne lisent
+   pas les autres.
 
 Si vous comptez écrire du code, ouvrez d’abord une issue pour discuter de l’approche : cela évite le
 travail en double, et une courte conversation en amont fait gagner du temps à tout le monde.
@@ -154,7 +157,7 @@ Pour vous repérer avant de vous lancer :
   vit chaque sous-système.
 - **[Format de document](/fr/docs/document-format)** : la grammaire Markdown enrichie que les
   contributeurs étendent.
-- **[Sandbox](/fr/docs/sandbox)** : le bac à sable où la plupart des modifications sont les plus
+- **[Sandbox](/fr/docs/sandbox)** : l’espace d’essai où la plupart des modifications sont les plus
   faciles à voir et à tester.
 
 
@@ -173,7 +176,7 @@ Le projet privilégie :
 - **La collaboration plutôt que les territoires.** Personne ne possède une partie du code. Les idées
   sont jugées sur leur mérite, pas sur la personne qui les propose.
 
-Toutes les contributions sont reconnues. Ce projet existe parce que des gens choisissent de consacrer
+Toutes les personnes qui contribuent sont reconnues. Ce projet existe parce que des gens choisissent de consacrer
 leur temps à l’améliorer.
 
 
@@ -183,6 +186,6 @@ Postext veut devenir le moteur de mise en page de référence pour le contenu é
 l’outil vers lequel se tournent les éditeurs, les magazines, les journaux et les plateformes de livres
 quand ils ont besoin d’une typographie professionnelle.
 
-Si vous travaillez dans le développement éditorial et que vous résolviez jusqu’ici ces problèmes de
-mise en page seul, voici votre invitation à les résoudre une fois pour toutes, correctement, avec
+Si vous travaillez dans le développement éditorial et que vous avez jusqu’ici résolu seul ces
+problèmes de mise en page, voici votre invitation à les résoudre une fois pour toutes, correctement, avec
 d’autres.

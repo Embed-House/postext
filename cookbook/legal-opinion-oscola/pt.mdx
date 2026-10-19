@@ -10,29 +10,29 @@ pageNotes: { "1": "Página 1: uma faixa bordô sobre a metade superior com a lin
 
 ## O que você vai compor
 
-Uma separata da série de comentários de decisões de uma revista jurídica: quatro páginas sobre *Robinson v Chief Constable of West Yorkshire Police*, a decisão de 2018 da Suprema Corte do Reino Unido sobre quando a polícia tem dever de cuidado. A página tem 162 × 240 mm, com margens espelhadas, em Libre Baskerville 9,4/13,6 pt, e a primeira página abre com uma faixa bordô e o nome do caso em itálico de 60 pt. O autor escreve cada fonte como uma chave com o seu localizador, `[@caparo1990, 617–18]`, e o Postext compõe 23 notas de rodapé em OSCOLA, a norma de citação das faculdades de direito britânicas: nomes de casos em itálico, leis em redondo, sem ponto depois de AC, HL ou edn, *ibid* para a fonte da nota anterior e *Robinson (n 1) [55]* depois disso. As decisões são reais; o autor e a revista, não.
+Uma separata da série de comentários de decisões de uma revista jurídica: quatro páginas sobre *Robinson v Chief Constable of West Yorkshire Police*, a decisão de 2018 da Suprema Corte do Reino Unido sobre quando a polícia tem dever de cuidado. A página tem 162 × 240 mm, com margens espelhadas, em Libre Baskerville 9,4/13,6 pt, e a primeira página abre com uma faixa bordô e o nome do caso em itálico de 60 pt. O autor escreve cada fonte como uma chave com o localizador, `[@caparo1990, 617–18]`, e o Postext compõe 23 notas de rodapé em OSCOLA, a norma de citação das faculdades de direito britânicas: nomes de casos em itálico, leis em redondo, sem ponto depois de AC, HL ou edn, *ibid* para a fonte da nota anterior e *Robinson (n 1) [55]* depois disso. As decisões são reais; o autor e a revista, não.
 
 ## Preparo
 
 ### 1 · Uma nota OSCOLA para cada fonte
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. OSCOLA é um estilo de notas, então `[@robinson2018, para 21]` deixa um número sobrescrito depois do ponto final, e o seu texto vai para o pé da página. A nota 1 traz o caso completo, *Robinson v Chief Constable of West Yorkshire Police [2018] UKSC 4, [2018] AC 736*; a nota 2, que o cita de novo logo em seguida, diz *ibid [21]*; a nota 8, depois de outros casos no meio, diz *Robinson (n 1) [26–27]*. Um artigo de revista jurídica cita só nas notas, então `bibliography.auto: false` deixa a lista de obras fora da última página.
+O código é [a resposta curta](#a-resposta-curta) logo acima. OSCOLA é um estilo de notas, por isso `[@robinson2018, para 21]` deixa um número sobrescrito depois do ponto final, e o texto vai para o pé da página. A nota 1 traz o caso completo, *Robinson v Chief Constable of West Yorkshire Police [2018] UKSC 4, [2018] AC 736*; a nota 2, que o cita de novo logo em seguida, diz *ibid [21]*; a nota 8, depois de outros casos no meio, diz *Robinson (n 1) [26–27]*. Um artigo de revista jurídica cita só nas notas, de modo que `bibliography.auto: false` deixa a lista de obras fora da última página.
 
 ### 2 · Um caso é um dado, escrito como os repertórios o imprimem
 
-Um caso é um item CSL de `type: legal_case`: o nome em `title`, o tribunal em `authority`, a série do repertório em `container-title` e a primeira página em `page`. O OSCOLA põe o ano de um repertório entre colchetes quando o ano identifica o volume, como nos Appeal Cases, então a receita escreve esse ano em `volume`, seguido do número do volume: `volume: "[1990] 2"` dá *[1990] 2 AC 605 (HL)*. Um caso decidido depois de 2001 também tem citação neutra: `authority: UKSC`, `number: "4"` e `issued: 2018` dão *[2018] UKSC 4*, seguido do repertório. Uma lei é `type: legislation`, com o ano no título e sem `issued`, para que o ano não saia duas vezes, e `[@hra1998, § 6]` cita uma seção como *s 6*.
+Um caso é um item CSL de `type: legal_case`: o nome em `title`, o tribunal em `authority`, a série do repertório em `container-title` e a primeira página em `page`. O OSCOLA põe o ano de um repertório entre colchetes quando o ano identifica o volume, como nos Appeal Cases, por isso a receita escreve esse ano em `volume`, seguido do número do volume: `volume: "[1990] 2"` dá *[1990] 2 AC 605 (HL)*. Um caso decidido depois de 2001 também tem citação neutra: `authority: UKSC`, `number: "4"` e `issued: 2018` dão *[2018] UKSC 4*, seguido do repertório. Uma lei é `type: legislation`, com o ano no título e sem `issued`, para que o ano não saia duas vezes, e `[@hra1998, § 6]` cita uma seção como *s 6*.
 
 ### 3 · Duas correções no estilo que acompanha o motor
 
 <Excerpt region="oscola" />
 
-O `oscola.csl` que acompanha o motor só põe entre colchetes o parágrafo citado na primeira nota de um caso. As notas seguintes imprimiam *para 55* e *ibid 27*, e uma segunda nota para a mesma lei perdia o seu *s*. A correção troca uma macro e uma linha do XML do estilo antes da composição e passa o resultado como estilo próprio, sem mexer no texto nem nas referências.
+O `oscola.csl` que acompanha o motor só põe entre colchetes o parágrafo citado na primeira nota de um caso. As notas seguintes imprimiam *para 55* e *ibid 27*, e uma segunda nota para a mesma lei perdia o *s*. A correção troca uma macro e uma linha do XML do estilo antes da composição e passa o resultado como estilo próprio, sem mexer no texto nem nas referências.
 
 ### 4 · O nome do caso na faixa
 
 <Excerpt region="opener" />
 
-A faixa desce 124 mm a partir do refile. O nome do caso, as partes e a citação são atributos do título, então outro comentário da série só muda o seu Markdown. *Robinson* é composto em Libre Baskerville Italic de 60 pt porque o OSCOLA põe em itálico os nomes dos casos, e a citação abaixo fica em redondo, como nas notas.
+A faixa desce 124 mm a partir do refile. O nome do caso, as partes e a citação são atributos do título, por isso outro comentário da série só muda o Markdown. *Robinson* é composto em Libre Baskerville Italic de 60 pt porque o OSCOLA põe em itálico os nomes dos casos, e a citação abaixo fica em redondo, como nas notas.
 
 <Excerpt region="palette" />
 
@@ -49,7 +49,7 @@ Para comparar com a saída sem correção, use o id que acompanha o motor. Os pa
 
 ### Reúna as notas no fim
 
-Algumas revistas imprimem as notas depois do texto. As citações mantêm as formas completa e abreviada e os seus números.
+Algumas revistas imprimem as notas depois do texto. As citações mantêm as formas completa e abreviada e os números.
 
 ```diff
 -  placement: 'column', numbering: 'chapter',

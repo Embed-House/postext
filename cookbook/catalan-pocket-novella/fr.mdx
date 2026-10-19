@@ -2,7 +2,7 @@
 title: "Un court roman catalan, coupé selon les règles de l’IEC"
 summary: "El transplantat de Narcís Oller, complet, en poche de 32 pages : syllabes catalanes selon l’IEC, l·l coupé en il- | lusió et une gravure par chapitre."
 plain: "Un court roman entier en catalan, composé comme un petit livre de poche. Les mots se coupent en fin de ligne comme le demandent les guides de style catalans, y compris le double l avec un point."
-description: "El transplantat d’Oller (texte de 1928) en poche de 12 × 18,5 cm : locale 'ca', césure de l’IEC, l·l coupé en il- | lusió, ouvertures avec gravure."
+description: "El transplantat d’Oller (texte de 1928) en poche de 12 × 18,5 cm : langue 'ca', césure de l’IEC, l·l coupé en il- | lusió, ouvertures avec gravure."
 question: "Comment couper correctement le catalan, avec l·l, les apostrophes et les pronoms liés par un trait d’union ?"
 aliases: ["catalan", "català", "césure catalane", "coupure des mots en catalan", "ela geminada", "l·l", "punt volat", "point médian", "IEC", "Institut d’Estudis Catalans", "pronoms enclitiques", "Narcís Oller", "livre de poche", "roman complet", "frontispice", "gravure"]
 pageNotes: { "2": "Le frontispice : une gravure d’un boulanger corpulent en tablier blanc à la porte de sa boulangerie de village, le feu du four derrière lui ; dessous, EL FORNER DE LES MONGES en petites capitales.", "3": "La page de titre : NARCÍS OLLER en petites capitales, El transplantat en grand italique rouge, De « Croquis del natural » en dessous et un court filet rouge.", "27": "Une page de texte du chapitre IV. À mi-hauteur, une ligne finit sur titil- et la suivante commence par laven : le point médian de titil·laven cède la place au trait d’union." }
@@ -16,7 +16,7 @@ pageNotes: { "2": "Le frontispice : une gravure d’un boulanger corpulent en t
 
 ### 1 · Le catalan selon ses règles
 
-Le code est [la réponse courte](#la-réponse-courte) ci-dessus. `locale: 'ca'` choisit les motifs de césure catalans, et depuis postext 1.14 ils suivent le *Llibre d’estil* de l’IEC ([langues prises en charge](/fr/docs/justification#langues-prises-en-charge)). Ce sont les motifs qu’utilise TeX, avec au moins deux lettres de chaque côté d’une coupure au lieu des trois que livre le paquet npm, si bien que *ter-ra*, *cai-xa* et *plu-ja* peuvent se couper. Les voyelles en hiatus restent ensemble (*cièn-cia*, *ca-mions*), mais un *i* entre deux voyelles ouvre sa syllabe (*fe-ia*). L’*ela geminada* se coupe entre ses deux *l* : la ligne finit sur *titil-* et la suivante commence par *laven*, sans point médian d’un côté ni de l’autre, et Knuth–Plass mesure la ligne sans le point.
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. `locale: 'ca'` choisit les motifs de césure catalans, et depuis postext 1.14 ils suivent le *Llibre d’estil* de l’IEC ([langues prises en charge](/fr/docs/justification#langues-prises-en-charge)). Ce sont les motifs qu’utilise TeX, avec au moins deux lettres de chaque côté d’une coupure au lieu des trois que livre le paquet npm : *ter-ra*, *cai-xa* et *plu-ja* peuvent donc se couper. Les voyelles en hiatus restent ensemble (*cièn-cia*, *ca-mions*), mais un *i* entre deux voyelles ouvre sa syllabe (*fe-ia*). L’*ela geminada* se coupe entre ses deux *l* : la ligne finit sur *titil-* et la suivante commence par *laven*, sans point médian d’un côté ni de l’autre, et Knuth–Plass mesure la ligne sans le point.
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Page 27 : titil·laven en fin de ligne, composé titil- | laven. C’est le seul l·l qui tombe en fin de ligne dans ces 32 pages." />
 
@@ -26,31 +26,31 @@ Le code est [la réponse courte](#la-réponse-courte) ci-dessus. `locale: 'ca'` 
 
 <Excerpt region="page" />
 
-La marge inférieure se déduit du format, de la marge supérieure et de `LINES`, si bien que le bloc de texte contient 29 lignes de 14 pt et que chaque page pleine finit sur la même ligne de base. La justification de 89 mm contient environ 63 caractères de Gentium Book Plus. `mirror: true` garde la marge de 16 mm au petit fond sur les deux pages d’une double page ([marges en miroir](/fr/docs/configuration-page-layout#marges-en-miroir)).
+La marge inférieure se déduit du format, de la marge supérieure et de `LINES` : la zone de contenu contient donc 29 lignes de 14 pt, et chaque page pleine finit sur la même ligne de base. La justification de 89 mm contient environ 63 caractères de Gentium Book Plus. `mirror: true` garde la marge de 16 mm au petit fond sur les deux pages d’une double page ([marges en miroir](/fr/docs/configuration-page-layout#marges-en-miroir)).
 
 ### 3 · Une ouverture pour quatre chapitres
 
 <Excerpt region="opener" />
 
-`resourceId: '{attr.art}'` dessine l’image que nomme le titre, si bien que `# II {style="capitol" art="cap2"}` ouvre le chapitre II sous sa propre gravure, avec le même style que les autres ([attributs de titre](/fr/docs/document-format#attributs-de-titre)). `minHeight` réserve seize lignes, douze pour l’image et quatre pour le chiffre et son filet, si bien que le texte commence sur la dix-septième ligne de la page, la même dans chaque chapitre.
+`resourceId: '{attr.art}'` dessine l’image qu’indique le titre : `# II {style="capitol" art="cap2"}` ouvre le chapitre II sous sa propre gravure, avec le même style que les autres ([attributs de titre](/fr/docs/document-format#attributs-de-titre)). `minHeight` réserve seize lignes, douze pour l’image et quatre pour le chiffre et son filet : le texte commence donc sur la dix-septième ligne de la page, la même dans chaque chapitre.
 
 ### 4 · Quatre pages avant le chapitre I
 
 <Excerpt region="front" />
 
-Chaque élément des pages liminaires est un titre de niveau 1 avec son propre style : `# El transplantat {style="portada"}` imprime l’auteur et le sous-titre tirés du frontmatter, et le titre lui-même comme titre du livre. Chaque style redonne son saut de page, puisqu’un style hérite de celui de son niveau, et vide l’en-tête et le pied de page, si bien que ces pages n’ont ni titre courant ni folio. Le frontispice tombe en page 2, un verso, et fait donc face à la page de titre sur la double page.
+Chaque élément des pages liminaires est un titre de niveau 1 avec son propre style : `# El transplantat {style="portada"}` imprime l’auteur et le sous-titre tirés de l’en-tête YAML, et le titre lui-même comme titre du livre. Chaque style redonne son saut de page, puisqu’un style hérite de celui de son niveau, et vide l’en-tête et le pied de page : ces pages n’ont donc ni titre courant ni folio. Le frontispice tombe en page 2, un verso, et fait donc face à la page de titre sur la double page.
 
 ### 5 · L’auteur au verso, le titre au recto
 
 <Excerpt region="heads" />
 
-`parity` place l’auteur sur les versos et le titre sur les rectos ; `pages: 'body'` les tient tous deux à l’écart des ouvertures, où un folio en pied avec `pages: 'opener'` prend leur place. `SHIFT` centre chaque titre courant sur le bloc de texte, à un demi-millimètre du centre de la page parce que les deux marges diffèrent.
+`parity` place l’auteur sur les versos et le titre sur les rectos ; `pages: 'body'` les tient tous deux à l’écart des ouvertures, où un folio en pied avec `pages: 'opener'` prend leur place. `SHIFT` centre chaque titre courant sur la zone de contenu, à un demi-millimètre du centre de la page parce que les deux marges diffèrent.
 
 ### 6 · Cinq gravures, sans légende
 
 <Excerpt region="pictures" />
 
-Les images appartiennent à un type de ressource dont le `captionPrefix` est vide, si bien que rien ne les numérote ni ne les nomme. Chacune est déclarée à sa taille en pixels et chargée sous son identifiant de fichier avant la composition. Leur blanc a été ramené au crème de la page et leur noir à son encre avant l’enregistrement, si bien qu’elles s’impriment comme une partie de la page et non comme des photographies collées dessus.
+Les images appartiennent à un type de ressource dont le `captionPrefix` est vide : rien ne les numérote donc ni ne les nomme. Chacune est déclarée à sa taille en pixels et chargée sous son identifiant de fichier avant la composition. Leur blanc a été ramené au crème de la page et leur noir à son encre avant l’enregistrement : elles s’impriment donc comme une partie de la page et non comme des photographies collées dessus.
 
 ## Variantes
 
@@ -74,6 +74,6 @@ Avec la valeur par défaut `compounds: true`, *d’inaugurar-se* se coupe à l�
 
 ## Erreurs fréquentes
 
-- Regardez le *l·l* dans un caractère de texte avant de l’adopter. Depuis postext 1.30, la `locale` du document est aussi la langue dans laquelle son texte est mis en forme (jusqu’à la 1.29, c’était la langue de la page qui affichait le livre), et chaque caractère répond au catalan à sa façon. Gentium Book Plus a un seul point médian pour toutes les langues, à 0,17 em entre les deux *l*. Crimson Pro, qui composait ce livre jusqu’à la 1.29, élargit le point à 0,59 em en catalan et laisse un trou dans *intel·ligent*. Alegreya et Literata dessinent un point plus serré seulement là où les deux *l* leur arrivent d’un seul tenant, si bien que *il·lustrats* sort d’une façon dans un paragraphe avec de l’italique et d’une autre dans un paragraphe sans.
-- Copiez le texte depuis Viquitexts avec ses italiques : Oller marque *tentu*, *Ensanxe* et *palacio* comme familiers ou espagnols, et un export en texte brut les perd. Vérifiez les mots douteux sur le scan du volume de 1928 : six fois, la transcription porte *tom-* là où le verbe est *tornar* (*tomà*, *tomaré*, *tomar*), et une fois *jom* pour *jorn*.
-- Avec 6 800 mots, les cinq fichiers de contenu et le kit portent le script composé à environ 69 Ko. Un livre entier est le plus grand exemple qu’un pen puisse porter ; une œuvre plus longue a sa place dans un paquet `.postext`.
+- Regardez le *l·l* dans un caractère de texte avant de l’adopter. Depuis postext 1.30, la `locale` du document est aussi la langue dans laquelle son texte est mis en forme (jusqu’à la 1.29, c’était la langue de la page qui affichait le livre), et chaque caractère répond au catalan à sa façon. Gentium Book Plus a un seul point médian pour toutes les langues, à 0,17 em entre les deux *l*. Crimson Pro, qui composait ce livre jusqu’à la 1.29, élargit le point à 0,59 em en catalan et laisse un trou dans *intel·ligent*. Alegreya et Literata dessinent un point plus serré seulement là où les deux *l* leur arrivent d’un seul tenant : *il·lustrats* sort donc d’une façon dans un paragraphe avec de l’italique et d’une autre dans un paragraphe sans.
+- Copiez le texte depuis Viquitexts avec ses italiques : Oller marque *tentu*, *Ensanxe* et *palacio* comme familiers ou espagnols, et un export en texte brut les perd. Vérifiez les mots douteux sur le scan du volume de 1928 : six fois, la transcription donne *tom-* là où le verbe est *tornar* (*tomà*, *tomaré*, *tomar*), et une fois *jom* pour *jorn*.
+- Avec 6 800 mots, les cinq fichiers de contenu et le kit amènent le script composé à environ 69 Ko. Un livre entier est le plus grand exemple qu’un pen puisse porter ; une œuvre plus longue a sa place dans un paquet `.postext`.

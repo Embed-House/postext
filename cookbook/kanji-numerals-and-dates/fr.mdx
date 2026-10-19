@@ -16,7 +16,7 @@ Quatre pages verticales d’un bulletin de quartier, 東若葉台だより, num�
 
 ### 1 · Choisir la graphie selon la place du nombre
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `formatNumeral` est le compteur avec lequel le moteur numérote les pages, les listes et les titres, et le pen l’appelle pour les nombres qu’il compose lui-même : `japanese-informal` compte (120 → 百二十, sans 一 devant 十 百 千), `cjk-decimal` écrit chiffre par chiffre (2026 → 二〇二六) et `japanese-formal` donne le daiji d’une somme (12000 → 壱萬弐阡). Un `{{daiji:12000}}` dans le texte devient le montant du reçu : le chiffre n’est tapé qu’une fois, en chiffres. Les mêmes styles nomment les compteurs : les sections sont `{2:一}、`, et `orderedLists.levels` règle （一）, puis `katakana-iroha` (イ ロ ハ), puis `hiragana` avec 、 (あ、い、う). `cjk.uprightDigits: 2` met 8月22日 et 23日 debout sans balisage, et le `!?` de 「雨が降ったら中止!?」 partage une seule case, comportement japonais par défaut ([nombres en texte vertical](/fr/docs/configuration-east-asian#nombres-en-texte-vertical)).
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `formatNumeral` est le compteur avec lequel le moteur numérote les pages, les listes et les titres, et le pen l’appelle pour les nombres qu’il compose lui-même : `japanese-informal` compte (120 → 百二十, sans 一 devant 十 百 千), `cjk-decimal` écrit chiffre par chiffre (2026 → 二〇二六) et `japanese-formal` donne le daiji d’une somme (12000 → 壱萬弐阡). Un `{{daiji:12000}}` dans le texte devient le montant du reçu : le chiffre n’est tapé qu’une fois, en chiffres. Les mêmes styles définissent les compteurs : les sections sont `{2:一}、`, et `orderedLists.levels` règle （一）, puis `katakana-iroha` (イ ロ ハ), puis `hiragana` avec 、 (あ、い、う). `cjk.uprightDigits: 2` met 8月22日 et 23日 debout sans balisage, et le `!?` de 「雨が降ったら中止!?」 partage une seule case, comportement japonais par défaut ([nombres en texte vertical](/fr/docs/configuration-east-asian#nombres-en-texte-vertical)).
 
 <PageShot page={2} crop="0.3,0.06,0.7,0.6" caption="Page 2 : イ ロ ハ sous （三）, あ、い、う sous ハ, 23日 et 4時 debout, !? dans une seule case." />
 
@@ -24,7 +24,7 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `formatNum
 
 <Excerpt region="masthead" />
 
-Sur une page verticale, le haut du flux est le bord droit de la feuille : une maquette de titre ancrée en haut du fond perdu devient donc une bande le long de ce bord, et sa `size.height` est sa largeur sur la feuille. Le numéro et la date sont du texte de maquette construit avec `kan()` et `pos()`, et la date s’arrête au pied du bloc de texte avec `align: 'right'`.
+Sur une page verticale, le haut du flux est le bord droit de la feuille : une maquette de titre ancrée en haut du fond perdu devient donc une bande le long de ce bord, et sa `size.height` est sa largeur sur la feuille. Le numéro et la date sont du texte de maquette construit avec `kan()` et `pos()`, et la date s’arrête au pied de la zone de contenu avec `align: 'right'`.
 
 ### 3 · Donner au calendrier sa propre page
 

@@ -1,6 +1,6 @@
 ---
 title: "Abschnittsüberschriften in sieben Ebenen"
-summary: "Abschnitte 1.1 bis 1.12 in einer bernsteinfarbenen Kapsel, die mit der Nummer wächst, vier Ebenen darunter und eine siebte aus einem Überschriftenformat."
+summary: "Abschnitte 1.1 bis 1.12 in einer bernsteinfarbenen Kapsel, die mit der Nummer wächst, vier Ebenen darunter und eine siebte aus einem Überschriftenstil."
 plain: "Ein Kapitel aus einem Feldhandbuch für Wegebauer über das Ableiten von Wasser von Wegen. Es zeigt, wie Überschriften sieben Ebenen mit je eigenem Aussehen erhalten, damit Leser sehen, wie die Teile zusammenhängen."
 description: "Ein Feldhandbuch für Wegebauer in Postext: nummerierte Überschriften in Kapseln, Ebenen mit Linie oder kursiv, eine siebte Ebene und verschachtelte Listen."
 question: "Wie nummeriere ich Überschriften 1.1 und 1.1.1, gestalte jede Ebene anders und setze Nummern in Kapseln?"
@@ -10,13 +10,13 @@ pageNotes: { "1": "Der Auftakt von Kapitel 1, „Drainage“: die Nummer 1 in ei
 
 ## Was Sie setzen
 
-Kapitel 1 eines Feldhandbuchs für Wegebautrupps, *Drainage*, auf drei B5-Seiten in zwei Spalten: IBM Plex Serif für den Text, IBM Plex Sans Condensed für Überschriften und Abschnittsnummern, IBM Plex Mono für Bezeichnungen, Paginas und Unterabschnittsnummern. Der Auftakt setzt die Kapitelnummer in eine große bernsteinfarbene Kapsel über dem Höhenprofil eines Weges, auf dem bernsteinfarbene Punkte zwölf Stellen markieren, die für neue Querrinnen vorgemerkt sind. Kleinere Kapseln nummerieren die Abschnitte 1.1 bis 1.12 und werden bei 1.10 breiter. Die Überschriften 1.2.1, 1.5.1 und 1.5.2 sind gesperrte Versalien unter einer grünen Linie. Die Ebenen 4 bis 6 bleiben ohne Nummer und wechseln stattdessen die Schrift (kursive Antiqua, grüne schmale Fette, Versalien in Monospace), und eine siebte Ebene in grauer Kursive nennt die Werkzeuge. Die Sicherheitsregeln beginnen mit grünen eingebundenen Begriffen. Eine nicht nummerierte Checkliste, durch ein hohles Quadrat markiert, schließt das Kapitel mit Listen, nummeriert mit 1., a) und i., und zwei Aufgabenkästchen.
+Kapitel 1 eines Feldhandbuchs für Wegebautrupps, *Drainage*, auf drei B5-Seiten in zwei Spalten: IBM Plex Serif für den Text, IBM Plex Sans Condensed für Überschriften und Abschnittsnummern, IBM Plex Mono für Bezeichnungen, Paginas und Unterabschnittsnummern. Der Auftakt setzt die Kapitelnummer in eine große bernsteinfarbene Kapsel über dem Höhenprofil eines Weges, auf dem bernsteinfarbene Punkte zwölf Stellen markieren, die für neue Querrinnen vorgemerkt sind. Kleinere Kapseln nummerieren die Abschnitte 1.1 bis 1.12 und werden bei 1.10 breiter. Die Überschriften 1.2.1, 1.5.1 und 1.5.2 sind gesperrte Versalien unter einer grünen Linie. Die Ebenen 4 bis 6 bleiben ohne Nummer und wechseln stattdessen die Schrift (kursive Antiqua, grüne schmale Fette, Versalien in Monospace), und eine siebte Ebene in grauer Kursive führt die Werkzeuge auf. Die Sicherheitsregeln beginnen mit grünen eingebundenen Begriffen. Eine nicht nummerierte Checkliste, durch ein hohles Quadrat markiert, schließt das Kapitel mit Listen, nummeriert mit 1., a) und i., und zwei Aufgabenkästchen.
 
 ## Zubereitung
 
 ### 1 · Die Nummer in eine Kapsel setzen, die mit ihr wächst
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `numberingTemplate: '{1}.{2}'` verbindet Kapitel- und Abschnittszähler zu 1.1 bis 1.12 ([Einstellungen pro Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)). Eine Ebene mit erweiterter Gestaltung druckt die Nummer nicht mehr vor ihrem Titel, die Gestaltung platziert `{number}` also selbst. Hier steht sie in einem Textelement mit gefülltem, abgerundetem `box` und ohne Breitenangabe, sodass die Kapsel so breit ist wie die Nummer plus ihr Innenabstand: 10,1 mm für 1.9 und 12,7 mm für 1.10. `'right-of'` hängt den Titel an die rechte Kante der Kapsel und richtet seine Zeilen links aus; deshalb bricht der lange Titel von 1.5 neben der Nummer um ([Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)). Die Kapsel ist 3 pt niedriger als zwei Rasterzeilen, und jede Abschnittsüberschrift beginnt auf einer Rasterlinie; diese 3 pt sind also der Abstand zwischen Kapsel und Text darunter, ob die Überschrift eine Spalte eröffnet oder einem Absatz folgt.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `numberingTemplate: '{1}.{2}'` verbindet Kapitel- und Abschnittszähler zu 1.1 bis 1.12 ([Einstellungen pro Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)). Eine Ebene mit erweiterter Gestaltung setzt die Nummer nicht mehr vor ihren Titel, die Gestaltung platziert `{number}` also selbst. Hier steht sie in einem Textelement mit gefülltem, abgerundetem `box` und ohne Breitenangabe, sodass die Kapsel so breit ist wie die Nummer plus ihr Innenabstand: 10,1 mm für 1.9 und 12,7 mm für 1.10. `'right-of'` hängt den Titel an die rechte Kante der Kapsel und richtet seine Zeilen links aus; deshalb bricht der lange Titel von 1.5 neben der Nummer um ([Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)). Die Kapsel ist 3 pt niedriger als zwei Rasterzeilen, und jede Abschnittsüberschrift beginnt auf einer Rasterlinie; diese 3 pt sind also der Abstand zwischen Kapsel und Text darunter, ob die Überschrift eine Spalte eröffnet oder einem Absatz folgt.
 
 <PageShot page={3} crop="0.07,0.3,0.44,0.215" caption="Seite 3: Die Kapsel wird von 1.9 zu 1.10 breiter, und der Titel rückt um die Breite der zusätzlichen Ziffer nach rechts." />
 
@@ -24,37 +24,37 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `numberingTempl
 
 <Excerpt region="ruled" />
 
-Auch Ebene 3 zeichnet eine Gestaltung: eine grüne Linie von 0,75 pt, die Nummer in IBM Plex Mono und daneben der gesperrte Titel. Der dritte Zähler von `'{1}.{2}.{3}'` beginnt unter jedem Abschnitt neu, sodass 1.2.1 und 1.5.1 beide auf 1 enden. `DROP` senkt nur die Linie. Die Nummer steht `LEAD - DROP` darunter, was Nummer und Titel bei jedem `DROP` eine Rasterzeile unter dem oberen Rand der Überschrift hält. Da die Linie näher an der Nummer steht als am Absatz darüber, liest sie sich als Teil der Überschrift.
+Auch Ebene 3 zeichnet eine Gestaltung: eine grüne Linie von 0,75 pt, die Nummer in IBM Plex Mono und daneben der gesperrte Titel. Der dritte Zähler von `'{1}.{2}.{3}'` beginnt unter jedem Abschnitt neu, sodass 1.2.1 und 1.5.1 beide auf 1 enden. `DROP` senkt nur die Linie. Die Nummer steht `LEAD - DROP` darunter, was Nummer und Titel bei jedem `DROP` eine Rasterzeile unter dem oberen Rand der Überschrift hält. Da die Linie näher an der Nummer steht als am Absatz darüber, wirkt sie wie ein Teil der Überschrift.
 
 ### 3 · Durch die Ebenen 4 bis 6 absteigen
 
 <Excerpt region="levels" />
 
-Eine Ebene ohne `numberingTemplate` druckt keine Nummer; ab Ebene 4 unterscheiden sich die Überschriften daher durch Schrift, Farbe oder Schreibweise: eine kursive Antiqua auf Ebene 4, die Auszeichnungsschrift in Grün auf Ebene 5 und halbfette Versalien in Monospace auf Ebene 6. Zeilenhöhe und Abstände, die auf `headings` selbst gesetzt sind, erreichen jede Ebene und stellen jede Überschrift aufs Raster, mit einer Leerzeile darüber und keiner darunter. Ebene 1 beginnt jedes Kapitel mit `parity: 'odd'` auf einer rechten Seite.
+Eine Ebene ohne `numberingTemplate` gibt keine Nummer aus; ab Ebene 4 unterscheiden sich die Überschriften daher durch Schrift, Farbe oder Schreibweise: eine kursive Antiqua auf Ebene 4, die Auszeichnungsschrift in Grün auf Ebene 5 und halbfette Versalien in Monospace auf Ebene 6. Zeilenhöhe und Abstände, die auf `headings` selbst gesetzt sind, erreichen jede Ebene und stellen jede Überschrift aufs Raster, mit einer Leerzeile darüber und keiner darunter. Ebene 1 beginnt jedes Kapitel mit `parity: 'odd'` auf einer rechten Seite.
 
 ### 4 · Eine siebte Ebene und einen nicht nummerierten Abschnitt mit Formaten bilden
 
 <Excerpt region="styles" />
 
-Markdown endet bei `######`, und `###### *Rock bar*` wäre nur eine weitere Ebene 6, nur kursiv. Das Überschriftenformat `'level7'` setzt die Werkzeugnamen in einer grauen schmalen Kursive der Stärke 500, leichter als die 600 der Ebene 6, und `textTransform: 'none'` schaltet die Versalien ab, die sie sonst erben würden. Sie lesen sich eine Stufe unter der Monospace-Bezeichnung darüber, obwohl sie mit 8,4 pt größer sind als deren 7,8 pt ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). `numbered: false` lässt die Checkliste aus der Zählung, sodass ein Abschnitt danach weiterhin 1.13 wäre. Ein leeres `{number}` würde trotzdem die bernsteinfarbene Kapsel malen, das Format bringt daher seine eigene Gestaltung mit, mit einem hohlen Quadrat an der Stelle der Kapsel. Die grünen eingebundenen Begriffe der Sicherheitsregeln stammen aus der `boldColor` eines Absatzformats.
+Markdown endet bei `######`, und `###### *Rock bar*` wäre nur eine weitere Ebene 6, nur kursiv. Der Überschriftenstil `'level7'` setzt die Werkzeugnamen in einer grauen schmalen Kursive der Stärke 500, leichter als die 600 der Ebene 6, und `textTransform: 'none'` schaltet die Versalien ab, die sie sonst erben würden. Sie wirken eine Stufe tiefer als die Monospace-Bezeichnung darüber, obwohl sie mit 8,4 pt größer sind als deren 7,8 pt ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). `numbered: false` lässt die Checkliste aus der Zählung, sodass ein Abschnitt danach weiterhin 1.13 wäre. Ein leeres `{number}` würde trotzdem die bernsteinfarbene Kapsel malen, der Stil bringt daher seine eigene Gestaltung mit, mit einem hohlen Quadrat an der Stelle der Kapsel. Die grünen eingebundenen Begriffe der Sicherheitsregeln stammen aus der `boldColor` eines Absatzformats.
 
 ### 5 · Die Listenzeichen mit der Tiefe wechseln
 
 <Excerpt region="lists" />
 
-Jede Tiefe erhält aus `levels` ihr eigenes Zeichen, ihre Farbe und ihr Trennzeichen: Die Checkliste zählt 1., a) und i. ([Einstellungen pro Ebene für nummerierte Listen](/de/docs/configuration-lists-math#überschreibungen-pro-ebene-für-nummerierte-listen)), und die Aufzählungszeichen verblassen von Grün zu Salbei ([Einstellungen pro Ebene für Aufzählungen](/de/docs/configuration-lists-math#überschreibungen-pro-ebene-für-aufzählungen)). Ebene 1 behält das voreingestellte Format `'arabic'`. Die beiden Einträge `- [ ]`, die die Checkliste schließen, drucken `taskCheckboxChar`, standardmäßig ☐, anstelle des Aufzählungszeichens, im Grün der Aufzählungszeichen der ersten Ebene ([Erweiterungen für Aufgabenlisten](/de/docs/configuration-lists-math#erweiterungen-für-aufgabenlisten)). Mit Abständen von null darüber und darunter bleibt jede Liste auf dem Grundlinienraster.
+Jede Tiefe erhält aus `levels` ihr eigenes Zeichen, ihre Farbe und ihr Trennzeichen: Die Checkliste zählt 1., a) und i. ([Einstellungen pro Ebene für nummerierte Listen](/de/docs/configuration-lists-math#überschreibungen-pro-ebene-für-nummerierte-listen)), und die Aufzählungszeichen verblassen von Grün zu Salbei ([Einstellungen pro Ebene für Aufzählungen](/de/docs/configuration-lists-math#überschreibungen-pro-ebene-für-aufzählungen)). Ebene 1 behält das voreingestellte Format `'arabic'`. Die beiden Einträge `- [ ]`, die die Checkliste schließen, setzen `taskCheckboxChar`, standardmäßig ☐, anstelle des Aufzählungszeichens, im Grün der Aufzählungszeichen der ersten Ebene ([Erweiterungen für Aufgabenlisten](/de/docs/configuration-lists-math#erweiterungen-für-aufgabenlisten)). Mit Abständen von null darüber und darunter bleibt jede Liste auf dem Grundlinienraster.
 
 ### 6 · Das Kapitel auf dem Profil des Weges eröffnen
 
 <Excerpt region="opener" />
 
-Das Profil ist ein Bildelement des Auftakts, an der Seite verankert und so breit wie diese. Eine seitenbreite Abbildung, nach oben gleitend und auf Seite 1 zitiert, hätte stattdessen Seite 2 eröffnet ([Bildelemente](/de/docs/configuration-headers-footers#bildelemente)). Der Auftakt reserviert Höhe bis zum Fuß des Bildes, und `minHeight` reicht 6 mm darüber hinaus, sodass der Text auf der ersten Rasterlinie beginnt, die mindestens 6 mm unter dem Profil liegt. Die Legende auf dem Grün ist Gestaltungstext, gefüllt aus dem Attribut `profile` der Überschrift. Die große Kapsel übernimmt Schrift und Füllung der Abschnittskapsel, und `{number}` druckt die eigene Nummer des Kapitels, aus `numberingTemplate: '{1}'`.
+Das Profil ist ein Bildelement des Auftakts, an der Seite verankert und so breit wie diese. Eine seitenbreite Abbildung, nach oben gleitend und auf Seite 1 zitiert, hätte stattdessen Seite 2 eröffnet ([Bildelemente](/de/docs/configuration-headers-footers#bildelemente)). Der Auftakt reserviert Höhe bis zum Fuß des Bildes, und `minHeight` reicht 6 mm darüber hinaus, sodass der Text auf der ersten Rasterlinie beginnt, die mindestens 6 mm unter dem Profil liegt. Die Legende auf dem Grün ist Gestaltungstext, gefüllt aus dem Attribut `profile` der Überschrift. Die große Kapsel übernimmt Schrift und Füllung der Abschnittskapsel, und `{number}` gibt die eigene Nummer des Kapitels aus, aus `numberingTemplate: '{1}'`.
 
 ## Varianten
 
 ### Die Kapitelnummer aus den Kapseln nehmen
 
-Nehmen Sie den Kapitelzähler aus der Vorlage, und die Kapseln lauten 1 bis 12 und werden bei 10 breiter; Ebene 3 druckt 1.5.1, bis auch ihre eigene Vorlage `{1}` weglässt.
+Nehmen Sie den Kapitelzähler aus der Vorlage, und die Kapseln lauten 1 bis 12 und werden bei 10 breiter; Ebene 3 zeigt weiterhin 1.5.1, bis auch ihre eigene Vorlage `{1}` weglässt.
 
 ```diff
 -const h2 = { level: 2, numberingTemplate: '{1}.{2}',
@@ -72,4 +72,4 @@ Eine feste Breite, die von 1.10, zentriert jede Nummer in einer gleich breiten K
 
 ## Häufige Fehler
 
-- Die siebte Ebene ist eine Überschrift der Ebene 6 mit dem Format `level7`, sodass im Beispiel keine Überschrift mehr als eine Ebene unter die vorige fällt: *The trench*, *Tools for the trench*, STEEL BARS und *Rock bar* laufen 4, 5, 6, 6. Die Sandbox-Warnung „Sprung in der Überschriftenhierarchie“ meldet genau einen solchen Sprung und erscheint daher in diesem Kapitel nie.
+- Die siebte Ebene ist eine Überschrift der Ebene 6 mit dem Stil `level7`, sodass im Beispiel keine Überschrift mehr als eine Ebene unter die vorige fällt: *The trench*, *Tools for the trench*, STEEL BARS und *Rock bar* laufen 4, 5, 6, 6. Die Sandbox-Warnung „Sprung in der Überschriftenhierarchie“ meldet genau einen solchen Sprung und erscheint daher in diesem Kapitel nie.

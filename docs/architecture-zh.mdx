@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '架构',
   description: 'Postext排版引擎的技术架构：核心概念、文档树、垂直韵律、后端与性能',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '20分钟',
   order: 2,
   plainSummary: "本页讲解Postext的内部工作原理，面向程序员。首先，Postext在不往屏幕上画任何东西的情况下测量每个词，所以速度很快。然后它算出每一行、每张图和每一栏的位置，并把这份排版方案保存在内存里。最后，它把排好的页面输出为网页、Canvas图像或PDF文件。你改动一个词时，它会把各页重新排一遍，并沿用未改动段落的测量结果。下一页一步步说明各行和各张图是怎样放上去的。",
@@ -74,7 +74,7 @@ export const metadata = {
     </tr>
     <tr>
       <td><strong>基线网格</strong></td>
-      <td>由正文行距导出的竖直格子（例如16px/1.5对应24px）。每条正文基线都应落在它的整数倍上，使各栏以及左右对页之间的行保持对齐。</td>
+      <td>由正文行距导出的竖直格子（例如16px/1.5对应24px）。每条正文基线都应落在它的整数倍上，使各栏之间、左右相对的两页之间的行保持对齐。</td>
     </tr>
     <tr>
       <td><strong>劣度（Badness）</strong></td>
@@ -82,7 +82,7 @@ export const metadata = {
     </tr>
     <tr>
       <td><strong>缺陷值（Demerits）</strong></td>
-      <td>Knuth-Plass中一个候选断点的总代价：劣度加上各项罚分（断词、末行孤字、适配等级不匹配）。算法选出总缺陷值最低的一组断点。段落在两栏之间的拆分也以同样的方式选出，取段首孤行、段末孤行和余量三项代价之和最低的那一种。</td>
+      <td>Knuth-Plass中一个候选断点的总代价：劣度加上各项惩罚值（断词、末行孤字、适配等级不匹配）。算法选出总缺陷值最低的一组断点。段落在两栏之间的拆分也以同样的方式选出，取段首孤行、段末孤行和余量三项代价之和最低的那一种。</td>
     </tr>
     <tr>
       <td><strong>适配等级（Fitness Class）</strong></td>
@@ -90,11 +90,11 @@ export const metadata = {
     </tr>
     <tr>
       <td><strong>余量（Slack）</strong></td>
-      <td>段落在栏底拆分或整段后移时，栏底空出的行。引擎选择拆分位置时，把余量的平方代价（以<code>slackWeight</code>加权）与段首孤行和段末孤行的罚分一起权衡。</td>
+      <td>段落在栏底拆分或整段后移时，栏底空出的行。引擎选择拆分位置时，把余量的平方代价（以<code>slackWeight</code>加权）与段首孤行和段末孤行的惩罚值一起权衡。</td>
     </tr>
     <tr>
       <td><strong>后端</strong></td>
-      <td>消费完成的VDT的渲染目标。目前已有四种：<strong>canvas</strong>（位图预览）、<strong>HTML</strong>（基于DOM的屏幕阅读）、<strong>PDF</strong>（通过<code>postext-pdf</code>输出可付印的文件）和<strong>EPUB</strong>（<code>postext-epub</code>，把整本书做成电子书）。四者共用同一套测量（基于Pretext的measure模块）。</td>
+      <td>消费完成的VDT的渲染目标。目前已有四种：<strong>canvas</strong>（位图预览）、<strong>HTML</strong>（基于DOM的屏幕阅读）、<strong>PDF</strong>（通过<code>postext-pdf</code>输出可付印的文件）和<strong>EPUB</strong>（<code>postext-epub</code>，把整本书做成电子书）。四者共用同一套测量（基于Pretext的measure模块）。3D查看器<code>postext-folio</code>用Canvas后端绘制书页。</td>
     </tr>
     <tr>
       <td><strong>放置遍（Placement Pass）</strong></td>
@@ -110,13 +110,13 @@ export const metadata = {
 
 ## 系统架构
 
-<Illustration name="SystemArchitecture" data='{"title": "Postext系统架构", "desc": "增强Markdown和PostextConfig进入解析器。放置遍通过Pretext测量文本并填充虚拟文档树；buildDocument带着提示重新运行这一遍，直到版面稳定。后端把完成的VDT渲染为HTML或PDF。", "caption": "解析器 → 放置遍 ↔ Pretext → VDT → 后端 → 输出。", "markdown": "增强Markdown", "configTitle": "PostextConfig", "configSubtitle": "（栏、规则、间距）", "engine": "排版引擎", "parser": "解析器", "pass1": "Markdown → 块", "vdtLine1": "虚拟文档树", "vdtLine2": "（VDT）", "vdtAttr1": "由放置遍原地填充", "vdtAttr2": "页面 > 栏 > 块", "vdtAttr3": "每个节点都有bbox", "vdtAttr4": "每一遍都是一棵新树", "pretext": "Pretext", "pretextSubtitle": "文本测量", "passesTitle": "放置遍（对内容的一次遍历）", "passes": [{"num": "测量", "name": "各行，经由缓存"}, {"num": "放置", "name": "块，排入栏和页"}, {"num": "浮动", "name": "资源，进入页面浮动带"}, {"num": "拆分", "name": "栏末的段落"}, {"num": "保持", "name": "标题和列表不离其正文"}, {"num": "对齐", "name": "文本流回到网格上"}], "convergence": "带着提示 重新运行", "backend": "后端", "backendSubtitle": "（统一接口）", "backendItems": ["Canvas / 浏览器", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "渲染输出"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Postext系统架构", "desc": "增强Markdown和PostextConfig进入解析器。放置遍用Pretext测量文本，并填充虚拟文档树；buildDocument带着提示重新运行这一遍，直到版面稳定。后端把完成的VDT渲染为HTML或PDF。", "caption": "解析器 → 放置遍 ↔ Pretext → VDT → 后端 → 输出。", "markdown": "增强Markdown", "configTitle": "PostextConfig", "configSubtitle": "（栏、规则、间距）", "engine": "排版引擎", "parser": "解析器", "pass1": "Markdown → 块", "vdtLine1": "虚拟文档树", "vdtLine2": "（VDT）", "vdtAttr1": "由放置遍原地填充", "vdtAttr2": "页面 > 栏 > 块", "vdtAttr3": "每个节点都有bbox", "vdtAttr4": "每一遍都是一棵新树", "pretext": "Pretext", "pretextSubtitle": "文本测量", "passesTitle": "放置遍（对内容的一次遍历）", "passes": [{"num": "测量", "name": "各行，经由缓存"}, {"num": "放置", "name": "块，排入栏和页"}, {"num": "浮动", "name": "资源，浮到页面区带"}, {"num": "断开", "name": "栏末的段落"}, {"num": "保持", "name": "标题和列表紧跟正文"}, {"num": "对齐", "name": "文本流回到网格上"}], "convergence": "带着提示 重新运行", "backend": "后端", "backendSubtitle": "（统一接口）", "backendItems": ["Canvas / 浏览器", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "渲染输出"}' />
 
 **内容在引擎中经历的过程如下：**
 
 1. **解析器**读取你的增强Markdown，把它变成一个由带类型的内容块组成的扁平列表：只有内容和结构，还没有位置
 2. **放置遍**把这个列表遍历一次，构建出VDT。它按每个块即将进入的那一栏的宽度，通过Pretext测量这个块，把文本、浮动体和框放入页面和栏，并在行进中执行分页规则和保持同页规则
-3. **驱动器**（`buildDocument`）在某个决定要依据整个版面的结果时重新运行这一遍：印出页码的目录，必须让上方各栏在切割处齐平的通栏框，提前结束的一栏。每次重新运行都从前一遍取得提示，每一类重新运行各有自己的上限
+3. **驱动器**（`buildDocument`）在某个决定要依据整个版面的结果时重新运行这一遍，例如：要印出页码的目录；通栏框，它上方的各栏必须在同一高度结束；提前结束的一栏。每次重新运行都从前一遍取得提示，每一类重新运行各有自己的上限
 4. **最终的VDT**就是完整的版面几何：每个元素都知道自己的页码、所在栏、位置和边界框。在任何渲染发生之前，文档就已完全“排好”
 5. **后端**遍历完成的VDT，把它渲染成目标格式：栅格化的canvas位图、由定位HTML元素组成的DOM树、嵌入字体的PDF文档，或EPUB。同一份VDT供四者使用，选哪个后端纯粹是输出方面的决定
 
@@ -127,7 +127,7 @@ export const metadata = {
 
 内容模型既是一种数据结构，也是一种理念。你描述要说*什么*，而不是*如何*排版。版面上的决定由引擎来做。
 
-<Illustration name="ContentModel" data='{"title": "内容模型：markdown、资源、注释", "desc": "Postext的输入把markdown（阅读顺序和语义结构）与资源（位图、SVG、表格）和注释分开。引擎按ID解析行内的:ref引用和::resource嵌入，并生成VDT。", "caption": "Markdown决定阅读顺序，资源提供视觉数据。", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "阅读顺序 + 按id的:ref / ::resource", "resources": "resources[]", "resourcesSub": "位图、SVG、表格", "notes": "metadata", "notesSub": "标题、作者、日期", "resolveMarker": "按id解析：:ref{id=…}、::resource{id=…}", "engineLabel": "引擎", "vdtLabel": "VDT"}' />
+<Illustration name="ContentModel" data='{"title": "内容模型：Markdown、资源、注释", "desc": "Postext的输入把Markdown（阅读顺序和语义结构）与资源（位图、SVG、表格）以及注释分开。引擎按ID解析行内的:ref引用和::resource嵌入，生成VDT。", "caption": "Markdown决定阅读顺序，资源提供视觉数据。", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "阅读顺序 + 按id的:ref / ::resource", "resources": "resources[]", "resourcesSub": "位图、SVG、表格", "notes": "metadata", "notesSub": "标题、作者、日期", "resolveMarker": "按id解析：:ref{id=…}、::resource{id=…}", "engineLabel": "引擎", "vdtLabel": "VDT"}' />
 
 ```typescript
 // packages/postext/src/types.ts
@@ -137,6 +137,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // 标题、副标题、作者、发布日期……
   resources?: Resource[];      // 位图、SVG、表格、视频，按id引用
   notes?: PostextNote[];       // 不读取：脚注在markdown中写成[^id]
+  continuation?: LayoutContinuation; // 从前面各章延续下来的计数器和页码
+  outline?: OutlineEntry[];    // 全书标题及其页码标签，供:::toc / :::index使用
+  citations?: CitationContext; // 全书引文中属于本章的部分
+  laterPageIds?: Record<string, number>; // 后续各章中可续排文字的页面块
 }
 
 interface Resource {
@@ -157,8 +161,8 @@ interface Resource {
 }
 ```
 
-**资源**承载视觉数据：题注、替代文本，以及与其类型对应的数据。二进制数据（位图、SVG）存放在*带外*：资源只保存一个`fileId`，渲染器在绘制时再去解析它（沙盒把这些字节保存在IndexedDB里）。表格资源是例外：它的`TableModel`（一个带合并和对齐信息的单元格网格）随资源一起内联传递，因为它是结构化数据，而不是字节。
-**注释**写在markdown里：引用脚注的地方写`[^id]`标记，定义`[^id]:`自成一段，可以放在本章的任何位置。引擎按首次引用的顺序给脚注编号，把每条脚注排在引用它的那一行所在栏的底部，上方有一条短线；设置`footnotes.placement: 'chapterEnd'`时，则排在该章最后一个块之后（见[脚注](/zh/docs/document-format-notes-references#脚注)和[配置 → 脚注](/zh/docs/configuration-notes-references#脚注)）。内容模型仍然接受`notes`数组，但流水线的任何阶段都不读取它。
+**资源**承载视觉数据：题注、替代文字，以及与其类型对应的数据。二进制数据（位图、SVG）存放在*带外*：资源只保存一个`fileId`，渲染器在绘制时再去解析它（沙盒把这些字节保存在IndexedDB里）。表格资源是例外：它的`TableModel`（一个带合并和对齐信息的单元格网格）随资源一起内联传递，因为它是结构化数据，而不是字节。
+**注释**写在markdown里：引用脚注的地方写`[^id]`标记，定义`[^id]:`自成一段，可以放在本章的任何位置。引擎按首次引用的顺序给脚注编号，把每条脚注排在引用它的那一行所在栏的底部，上方有一条短线；设置`footnotes.placement: 'chapterEnd'`时，则排在该章最后一个块之后（见[脚注](/zh/docs/document-format-notes-references#脚注)和[配置 › 脚注](/zh/docs/configuration-notes-references#脚注)）。内容模型仍然接受`notes`数组，但流水线的任何阶段都不读取它。
 
 这种分离是一个有明确取向的设计选择，其意义比看上去要大。markdown掌管*阅读顺序*和*语义结构*：什么在前，什么是标题，脚注在哪里被引用、写了什么。资源数组掌管*视觉数据*：图片尺寸、题注文字、表格单元格。两者分开后，同一份markdown只需改变配置，就能排成完全不同的样子。双栏的学术版式和单栏的博客文章可以共用同一份源内容。引擎也可以做出安放上的决定，比如因为这一栏放不下而把图片推迟到下一栏，却完全不必改动你的源内容。
 
@@ -192,7 +196,7 @@ Italy by 1465 and France by 1470.
 
 资源通过id与正文关联，**只要引用它，就能把它纳入文档**。行内的`:ref{id="printing-press"}`同时做两件事：它在正文中渲染出资源经计算得到的编号（“Fig. 1”）；并且在阅读顺序中的第一次引用处，把资源*浮动*到页面上，在该引用附近页面的顶部或底部预留一个区带，和印刷排字工的做法完全一样。你不需要再安放一次这幅图。少数资源必须位于文本流中的某个确切位置，这时可以把`::resource{id="…"}`单独写成一行，作为可选的块级嵌入：只有当资源解析后的`placement.position`为`'here'`（即不参与浮动）时，它才在原处渲染；对于浮动的资源，它只被当作又一次引用。作者从不需要考虑安放问题，由引擎来考虑。
 
-<Illustration name="ReferenceResolution" data='{"title": "引用解析", "desc": "markdown源文件用:ref{id=printing-press}在行内引用一幅图。resources数组按ID提供实际内容。引擎解析该引用，在正文中渲染计算出的编号，并把图浮动到页面顶部的一个区带中。", "caption": "markdown中的引用只是名称。引擎根据资源解析它们、为它们编号，并把图浮动到引用附近。", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "placement为&#39;here&#39;时的可选嵌入", "resolveLabel": "解析", "outputTitle": "排好的页面", "outputFigure": "[ 图1：浮动到一个区带 ]", "outputFootnote": "…shown in Fig. 1…"}' />
+<Illustration name="ReferenceResolution" data='{"title": "引用解析", "desc": "Markdown源文件用:ref{id=printing-press}在行内引用一幅图，resources数组按ID提供实际内容。引擎解析这个引用，在正文中印出算好的编号，并把图浮动到页面顶部的区带中。", "caption": "Markdown中的引用只是名称。引擎根据资源解析引用并编号，再把图浮动到引用附近。", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "placement为&#39;here&#39;时的可选嵌入", "resolveLabel": "解析", "outputTitle": "排好的页面", "outputFigure": "[图1：浮动到区带中]", "outputFootnote": "…shown in Fig. 1…"}' />
 
 ### 配置
 
@@ -209,27 +213,27 @@ Italy by 1465 and France by 1470.
   <tbody>
     <tr>
       <td><code>bodyText</code> / <code>headings</code></td>
-      <td>按字段设置的段末孤行/段首孤行/孤字罚分、保持不分离的规则、两端对齐的限度、断词，见<a href="/zh/docs/configuration-text#正文">配置 → 正文</a></td>
+      <td>按字段设置的段末孤行/段首孤行/孤字惩罚值、保持不分离的规则、两端对齐的限度、断词，见<a href="/zh/docs/configuration-text#正文">配置 › 正文</a></td>
       <td>测量、分页与保持同页规则、各栏齐底</td>
     </tr>
     <tr>
       <td><code>tableStyle</code></td>
-      <td><code>kind: 'table'</code>资源的单元格排版、边框、圆角、表头和表体的填充，以及表格用<code>table.styleId</code>选用的<code>tableStyles</code>命名变体，见<a href="/zh/docs/configuration-resources#表格样式">配置 → 表格样式</a></td>
+      <td><code>kind: 'table'</code>资源的单元格排版、边框、圆角、表头和表体的填充，以及表格用<code>table.styleId</code>选用的<code>tableStyles</code>命名变体，见<a href="/zh/docs/configuration-resources#表格样式">配置 › 表格样式</a></td>
       <td>资源放置</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
-      <td>资源题注的排版：带编号的标签和说明文字，见<a href="/zh/docs/configuration-resources#题注样式">配置 → 题注样式</a></td>
+      <td>资源题注的排版：带编号的标签和说明文字，见<a href="/zh/docs/configuration-resources#题注样式">配置 › 题注样式</a></td>
       <td>资源放置</td>
     </tr>
     <tr>
       <td><code>diagramStyle</code></td>
-      <td><code>singleInk</code> + <code>inkColor</code>：按亮度把SVG图表重新着色为同一种油墨的不同深浅，使图在单一专色印刷时也能忠实再现，见<a href="/zh/docs/configuration-resources#图示样式">配置 → 图表样式</a></td>
+      <td><code>singleInk</code> + <code>inkColor</code>：按亮度把SVG图表重新着色为同一种油墨的不同深浅，使图在单一专色印刷时也能忠实再现，见<a href="/zh/docs/configuration-resources#图示样式">配置 › 图示样式</a></td>
       <td>后端</td>
     </tr>
     <tr>
       <td><code>resourceTypes</code></td>
-      <td>按类型的资源编号：模板、计数格式、重置范围、默认浮动位置，见<a href="/zh/docs/configuration-resources#资源类型">配置 → 资源类型</a></td>
+      <td>按类型的资源编号：模板、计数格式、重置范围、默认浮动位置，见<a href="/zh/docs/configuration-resources#资源类型">配置 › 资源类型</a></td>
       <td>内容结构化、资源放置</td>
     </tr>
   </tbody>
@@ -258,7 +262,7 @@ Italy by 1465 and France by 1470.
 
 ### 结构
 
-<Illustration name="VdtStructure" data='{"title": "虚拟文档树的结构", "desc": "层级化的VDT：文档包含页面，每个页面包含栏，每一栏包含块（标题、段落、资源），每个文本块包含经过测量的行。每个块都带有边界框、自己的类型以及页面和栏的索引。", "caption": "每个块都带有bbox、自己的类型以及页面和栏的索引。", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["标题", "段落", "资源"], "lineLabels": ["第0行", "第1行"], "legendHeader": "每个块都带有：", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "行还带有：", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "虚拟文档树的结构", "desc": "层级化的VDT：文档包含页，每页包含栏，每栏包含块（标题、段落、资源），每个文本块包含测量过的行。每个块都带有边界框、类型以及所在页和栏的索引。", "caption": "每个块都带有bbox、类型以及所在页和栏的索引。", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["标题", "段落", "资源"], "lineLabels": ["第0行", "第1行"], "legendHeader": "每个块都带有：", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "行还带有：", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### 类型定义
 
@@ -396,7 +400,7 @@ interface BoundingBox {
 
 ### 文本流如何回到网格
 
-<Illustration name="VerticalRhythm" data='{"title": "垂直韵律对齐", "desc": "第1栏有一个标题，使基线网格偏移了12像素。放置这个标题时，引擎把该栏已用的高度向上取整到下一条网格线，这在标题下方增加了12像素，让下一行正文重新落在网格上。第2栏始终保持对齐。", "caption": "破坏网格的元素下方的空白在放置该元素时向上取整到网格，使各栏基线保持同步。", "column1": "第1栏", "column2": "第2栏", "bodyLine": "正文行", "bodyBaseline": "正文行（基线：24px）", "heading": "标题（高36px）", "adjustment": "+12px间距调整", "backOnGrid": "正文（回到网格上）", "aligned": "已对齐", "legendTitle": "放置时对齐网格", "legendSteps": ["1. 排入块：先是它的各行，再是它下方的间距（marginBottom）", "2. 把该栏已用的高度向上取整到下一条网格线", "3. 下一个块从那里开始，所以下方的间距是最小值", "4. snapToGrid: false保留精确的间距，直到下一个对齐网格的块"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "垂直韵律对齐", "desc": "第1栏的标题打破了基线网格，偏离12像素。放置这个标题时，引擎把该栏已用的高度向上取整到下一条网格线，于是标题下方多出12像素，下一行正文重新落在网格上。第2栏始终保持对齐。", "caption": "打破网格的元素一放下，它下方的空白就向上取整到网格，所以各栏的基线保持同步。", "column1": "第1栏", "column2": "第2栏", "bodyLine": "正文行", "bodyBaseline": "正文行（基线：24px）", "heading": "标题（高36px）", "adjustment": "+12px间距调整", "backOnGrid": "正文（回到网格上）", "aligned": "已对齐", "legendTitle": "放置时对齐网格", "legendSteps": ["1. 排入块：先是它的各行，再是它下方的间距（marginBottom）", "2. 把该栏已用的高度向上取整到下一条网格线", "3. 下一个块从那里开始，所以下方的间距是最小值", "4. snapToGrid: false保留精确的间距，直到下一个对齐网格的块"]}' />
 
 网格是在放置时逐块保持的。之后没有哪一遍会遍历各栏去找偏移。正文行的高度是一个网格行，所以从网格上开始的一串正文会一直留在网格上。放置遍排入一个可能离开网格的块之后，会在下一个块开始之前，把该栏已用的高度向上取整到下一条网格线。以这种方式对齐网格的块有：
 
@@ -410,7 +414,7 @@ interface BoundingBox {
 
 浮动带以自己的方式保持网格，见[第4阶段](/zh/docs/architecture-layout-pipeline#第4阶段资源放置)：顶部浮动带向上取整到整数个网格行，底部浮动体的锚定方式是让题注的最后一条基线落在网格上。各栏齐底按整数个网格行加空，所以也保持网格。
 
-没有任何东西拿一栏去和另一栏比较。每一栏都从网格上开始，每次对齐都回到网格上，所以相邻各栏以及左右对页的行不需要第二遍就能对上。
+没有任何东西拿一栏去和另一栏比较。每一栏都从网格上开始，每次对齐都回到网格上，所以相邻各栏的行、左右相对两页的行，不需要第二遍就能对上。
 
 **不参与对齐**。`snapToGrid: false`改为保留块下方的精确间距。它可以设在`headings`上（针对所有级别、某一级别或某个标题样式），也可以设在段落样式、标注框样式和`codeStyle`上。这样的块之后的文本可能不在网格上，直到下一个对齐网格的块为止。标注框内的文本遵循框自己的行距，没有网格。
 
@@ -419,7 +423,7 @@ interface BoundingBox {
 
 文本测量只有一个事实来源：基于Pretext Canvas字体度量的测量模块。每个后端都从它生成的同一个完成的VDT进行渲染。
 
-这是一个有意的选择，原因很关键：**测量文本的方式必须与渲染文本的方式完全一致**。设想测量使用Canvas字体度量，而某个渲染后端使用的PDF库字距调整表略有不同，那么版面就会与输出对不上。引擎测得能放进320px的行，渲染时可能溢出或留空。每一像素的偏差都是一个谎言。只测量一次，所有输出都按由此得到的几何数据渲染，各后端就不可能出现分歧：断行、栏高和资源位置在任何后端运行之前就已固定在VDT中。
+这是一个有意的选择，原因很关键：**测量文本的方式必须与渲染文本的方式完全一致**。设想测量使用Canvas字体度量，而某个渲染后端使用的PDF库字距调整表略有不同，那么版面就会与输出对不上。引擎测得能放进320px的行，渲染时可能放不下，也可能留出空隙。差一个像素，版面就不再可信。只测量一次，所有输出都按由此得到的几何数据渲染，各后端就不可能出现分歧：断行、栏高和资源位置在任何后端运行之前就已固定在VDT中。
 
 例如，PDF后端正是因此不重新测量文本：它接收完成的VDT，把其中的像素坐标换算成PDF点。Canvas度量是事实来源，PDF只是传输载体。使用`renderToPdf`（来自`postext-pdf`包）时，传入的VDT与交给`renderToCanvas`或`renderToHtml`的完全相同，三种输出保证一致。
 
@@ -474,7 +478,7 @@ renderToEpub(docs, options): Promise<Uint8Array>;
     <tr>
       <td><strong>HTML</strong></td>
       <td>Pretext（与Canvas相同的度量）</td>
-      <td>使用绝对定位的DOM节点和编辑排版CSS（<code>renderToHtml</code>、<code>renderToHtmlIndexed</code>）</td>
+      <td>使用绝对定位的DOM节点和书刊排版CSS（<code>renderToHtml</code>、<code>renderToHtmlIndexed</code>）</td>
       <td><strong>已发布</strong></td>
     </tr>
     <tr>
@@ -490,6 +494,12 @@ renderToEpub(docs, options): Promise<Uint8Array>;
       <td><strong>已发布</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong>（3D查看器）</td>
+      <td>接收已用Pretext测量好的VDT</td>
+      <td>每一页由Canvas后端绘制（<code>renderPageToCanvas</code>），作为three.js书页的纹理显示，只绘制打开的跨页附近（<code>postext-folio</code>中的<code>createFolioFromDocument</code>）</td>
+      <td><strong>已发布</strong></td>
+    </tr>
+    <tr>
       <td><strong>命令行</strong></td>
       <td>基于Skia（<code>@napi-rs/canvas</code>）的Pretext，由Skia代替浏览器的Canvas</td>
       <td>PDF、HTML和EPUB写入器，以及页面图像和Word，在终端中运行，不需要浏览器（<code>postext-cli</code>）</td>
@@ -498,9 +508,9 @@ renderToEpub(docs, options): Promise<Uint8Array>;
   </tbody>
 </table>
 
-四个已发布的后端都接收同一个`VDTDocument`。`postext`（导出Canvas和HTML后端）与`postext-pdf`（导出PDF后端）的拆分纯粹是出于依赖考虑：PDF路径会引入`pdf-lib`和`@pdf-lib/fontkit`，而大多数Web集成并不需要它们。只有在确实要输出PDF字节时才安装`postext-pdf`。`postext-epub`出于同样的原因单独成包，只在制作电子书时需要。命令行不是第五个后端：`postext-cli`在没有浏览器的地方运行同样这些写入器。
+四个后端和Folio查看器都接收同一个`VDTDocument`。`postext`（导出Canvas和HTML后端）与`postext-pdf`（导出PDF后端）的拆分纯粹是出于依赖考虑：PDF路径会引入`pdf-lib`和`@pdf-lib/fontkit`，而大多数Web集成并不需要它们。只有在确实要输出PDF字节时才安装`postext-pdf`。`postext-epub`出于同样的原因单独成包，只在制作电子书时需要。命令行不是第五个后端：`postext-cli`在没有浏览器的地方运行同样这些写入器。Word文件也不是：`postextToDocx`（来自`postext/word`）把Markdown各章及其样式写成`.docx`，不经过排版；`readDocx`配合`wordToPostext`再把它读回成Markdown。
 
-**排版在哪里运行**：引擎在Canvas上测量文本，所以只要有Canvas就能运行。在浏览器中，流水线既可以在主线程上运行（`buildDocument`），也可以在专用的Web Worker中运行（`postext/worker`中的`createLayoutWorker`）。对于由UI驱动的应用，推荐使用工作线程方式：它让测量和放置遍远离主线程，支持通过`AbortSignal`进行“后发者胜”的取消，并拥有自己的测量缓存和数学公式光栅缓存，使连续的重新构建保持低开销。完整的集成模式参见[配置 → 在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)。在浏览器之外，[命令行](/zh/docs/command-line)用Skia代替浏览器的Canvas运行同一条流水线，所以同一本书在终端、脚本或构建服务器上分出的页面完全相同。
+**排版在哪里运行**：引擎在Canvas上测量文本，所以只要有Canvas就能运行。在浏览器中，流水线既可以在主线程上运行（`buildDocument`），也可以在专用的Web Worker中运行（`postext/worker`中的`createLayoutWorker`）。对于由UI驱动的应用，推荐使用工作线程方式：它让测量和放置遍远离主线程，可以用`AbortSignal`取消旧的构建、只保留最后一次，并拥有自己的测量缓存和数学公式光栅缓存，使连续的重新构建保持低开销。完整的集成模式参见[配置 › 在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)。在浏览器之外，[命令行](/zh/docs/command-line)用Skia代替浏览器的Canvas运行同一条流水线，所以同一本书在终端、脚本或构建服务器上分出的页面完全相同。
 
 
 ## 性能策略
@@ -511,36 +521,19 @@ renderToEpub(docs, options): Promise<Uint8Array>;
 
 ### 原则
 
-1. **内存中计算**。整个VDT都能放进内存。排版期间不读取DOM。DOM
-   只在最后渲染时才会被触及。
+1. **内存中计算**。整个VDT都能放进内存。排版期间不读取DOM。DOM只在最后渲染时才会被触及。
 
 2. **在缓存的测量结果上跑完整的一遍**。重新运行放置遍时不去找哪里变了：它从第一个块开始把文档重新放置一遍。这之所以负担得起，是因为开销大的测量部分按段落缓存（原则5）。如果某一遍没有改变一个段落的文本、字体或宽度，它就从缓存中读出该段落的各行。
 
 3. **有界的轮**。每一类重新运行都有固定的上限（见[放置遍的驱动器](/zh/docs/architecture-layout-pipeline#放置遍的驱动器)），各栏齐底除了每个分段的上限之外还有每份文档的上限，所以章数很多的书不会无止境地消耗放置遍。一次构建的开销可以逐遍测量：`BuildDocumentOptions.onPass`报告每一遍及其实际耗时。
 
-4. **Pretext的速度**。文本测量速度是DOM的300至600倍，因此引擎可以
-   投机性地重新测量文本（尝试不同的栏宽、断词点、字距调整），
-   而不会阻塞主线程。
+4. **Pretext的速度**。文本测量速度是DOM的300至600倍，因此引擎可以投机性地重新测量文本（尝试不同的栏宽、断词点、字距调整），而不会阻塞主线程。
 
-5. **分层的测量缓存**。测量模块（`packages/postext/src/measure/`）在Pretext自己的
-   `prepare()`缓存和底层文本宽度缓存之上，维护一个显式的测量缓存，以文本、字体、宽度
-   和所有影响版面的选项为键。重新测量一个未改动的段落只需一次映射查找。
-   某个字体族的字体变化时，引擎丢弃该字体族的宽度和Pretext的缓存，测量缓存则在下一次查找时丢弃用该字体族排出的块（它记着自己是在哪个代次下填充的），因此字体加载完成后字形宽度是正确的，宿主不必调用任何函数；`clearMeasurementCache()`丢弃所有字体族。
+5. **分层的测量缓存**。测量模块（`packages/postext/src/measure/`）在Pretext自己的`prepare()`缓存和底层文本宽度缓存之上，维护一个显式的测量缓存，以文本、字体、宽度和所有影响版面的选项为键。重新测量一个未改动的段落只需一次映射查找。某个字体族的字体变化时，引擎丢弃该字体族的宽度和Pretext的缓存，测量缓存则在下一次查找时丢弃用该字体族排出的块（它记着自己是在哪个代次下填充的），因此字体加载完成后字形宽度是正确的，宿主不必调用任何函数；`clearMeasurementCache()`丢弃所有字体族。
 
-6. **热路径上的断行**。Knuth-Plass的活动节点处理为速度而重写：
-   节点退出时就地压缩活动集合，候选节点按（行，适配等级）去重，
-   每个键只保留缺陷值最低的节点。算法结果完全相同：
-   断点组合不变，只是计算得更快。
+6. **热路径上的断行**。Knuth-Plass的活动节点处理为速度而重写：节点退出时就地压缩活动集合，候选节点按（行，适配等级）去重，每个键只保留缺陷值最低的节点。算法结果完全相同：断点组合不变，只是计算得更快。同一个断行算法也用Rust写了一份（`rust/crates/linebreak`），编译成WebAssembly并内嵌在包中：它以相同的顺序做相同的运算，速度快两到三倍，只要模块已编译完成就由它作答。在页面主线程上，模块在后台编译；在此之前，或在缺少WebAssembly、WebAssembly被拒绝的环境中，由TypeScript版本作答。`initLineBreaker()`可以提前开始编译；`useWasmLineBreaker(false)`让所有段落都用TypeScript版本断行。
 
-7. **在主线程之外构建。**`postext/worker`入口在专用的Web Worker中
-   运行整个流水线。主线程发送`{ content, config }`和一个
-   `AbortSignal`；工作线程注册字体（以`ArrayBuffer`转移），运行
-   放置遍，再发回完成的`VDTDocument`。新的`build()`调用会以协作方式
-   取消上一次调用：工作线程运行`buildDocumentAsync`，它在每个块处和各遍之间查询取消钩子，
-   并抛出`BuildCancelledError`，因此在编辑器中打字的用户
-   从不需要等待一个已被取代的排版。工作线程还维护自己的持久
-   测量缓存和一个以内容为键的数学公式光栅缓存，使经过结构化克隆的
-   `MathRender`对象在多次重新构建之间保留下来，无需重新光栅化。
+7. **在主线程之外构建。**`postext/worker`入口在专用的Web Worker中运行整个流水线。主线程发送`{ content, config }`和一个`AbortSignal`；工作线程注册字体（以`ArrayBuffer`转移），运行放置遍，再发回完成的`VDTDocument`。新的`build()`调用会以协作方式取消上一次调用：工作线程运行`buildDocumentAsync`，它在每个块处和各遍之间查询取消钩子，并抛出`BuildCancelledError`，因此在编辑器中打字的用户从不需要等待一个已被取代的排版。工作线程还维护自己的持久测量缓存和一个以内容为键的数学公式光栅缓存，使经过结构化克隆的`MathRender`对象在多次重新构建之间保留下来，无需重新光栅化。
 
 8. **双重访问的VDT**。树结构（`pages > columns > blocks`）为按页或按栏进行的工作提供层级访问（各栏齐底测量每一栏底部的空隙）。一个并行的扁平`blocks[]`数组可以直接访问每一个块，不论它位于何处（注释编号轮从中读出每条注释印出的标记）。两种视图引用相同的块对象（没有重复，只是遍历同一份数据的两种方式）。
 
@@ -548,13 +541,13 @@ renderToEpub(docs, options): Promise<Uint8Array>;
 
 没有增量式的入口：没有哪个调用接收一个完成的VDT并更新它。内容或配置发生变化时（一次按键，换一种页面尺寸），宿主再次调用`buildDocument`，得到一份新文档。
 
-从一次构建延续到下一次构建的是测量结果。用`createMeasurementCache()`创建一次`MeasurementCache`，把它作为第三个参数传给每一次`buildDocument`调用。文本、字体、宽度和断行选项都没有变化的段落从缓存中读出，所以每次按键都重新排版的编辑器只需测量正在输入的那个段落。页面尺寸或栏数的变化会改变宽度，这些段落就要重新测量；Pretext的`prepare()`结果仍然有效，因为它们取决于字体和文本，与宽度无关，所以只需运行低开销的`layout()`算术。解析结果也有记忆化。
+从一次构建延续到下一次构建的是测量结果。用`createMeasurementCache()`创建一次`MeasurementCache`，把它作为第三个参数传给每一次`buildDocument`调用。文本、字体、宽度和断行选项都没有变化的段落从缓存中读出，所以每次按键都重新排版的编辑器只需测量正在输入的那个段落。页面尺寸或栏数的变化会改变宽度，这些段落就要重新测量；Pretext的`prepare()`结果仍然有效，因为它们取决于字体和文本，与宽度无关，所以只需运行低开销的`layout()`算术。解析结果也有记忆化。模板页也会延续下来：模板、Markdown、样式和字体都没有变化的模板页直接沿用上一次构建的结果（`composed/pageMemo.ts`），所以在由模板页组成的章里编辑某一页，只会重排这一页。含有脚注、交叉引用、引文、目录或索引列表、漫画条的页面则总是重新排版。
 
-对于实时编辑器，`createLayoutWorker`（来自`postext/worker`）在主线程之外完成这一切：工作线程拥有一个与它同寿命的测量缓存，新的`build()`会取消正在进行的那一次。见[配置 → 测量缓存](/zh/docs/configuration-programmatic-usage#测量缓存)和[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)。
+对于实时编辑器，`createLayoutWorker`（来自`postext/worker`）在主线程之外完成这一切：工作线程拥有一个与它同寿命的测量缓存，新的`build()`会取消正在进行的那一次。见[配置 › 测量缓存](/zh/docs/configuration-programmatic-usage#测量缓存)和[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)。
 
 ### 基准测试
 
-`packages/postext/src/__bench__/`中有两个基准测试。`pnpm test`跳过它们；在`packages/postext`中运行`pnpm bench`才会执行。`chapter.bench.test.ts`把一个教材篇幅的章（四十节，含标题、段落和列表）对着空的测量缓存排五次，再对着热缓存排五次，报告两个中位数和放置遍数。`cjkChapter.bench.test.ts`排《红楼梦》第1回，并统计送入`measureText`的字符数，以确保CJK排版器的开销与段落长度成线性关系。
+`packages/postext/src/__bench__/`中有三个基准测试。`pnpm test`跳过它们；在`packages/postext`中运行`pnpm bench`才会执行。`chapter.bench.test.ts`把一个教材篇幅的章（四十节，含标题、段落和列表）对着空的测量缓存排五次，再对着热缓存排五次，报告两个中位数和放置遍数。`cjkChapter.bench.test.ts`排《红楼梦》第1回，并统计送入`measureText`的字符数，以确保CJK排版器的开销与段落长度成线性关系。`composedPage.bench.test.ts`对一章二十个模板页计时：冷构建、无改动的重新构建、修改某一页的一个属性、在某一页的一个框内编辑，每种情况都分别在启用和不启用模板页记忆时测量。
 
 ```typescript
 // 摘自packages/postext/src/__bench__/chapter.bench.test.ts
@@ -571,7 +564,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-需要如实说明一点：Node中没有Canvas，所以两个基准测试都用桩代替文本测量，它们的绝对时间不是浏览器中的时间。冷缓存与热缓存的比值以及放置遍数则与浏览器中一致，其中任何一项退化，都会先在这里显现，然后才在沙盒中显现。章的基准测试只报告数字，不会让构建失败；中文的那个则断言测量的字符数低于最长段落长度的三倍。两者都不在CI中运行：性能退化是在热路径改动时通过对比多次运行的数字发现的（Knuth-Plass活动节点重写时就是这样做的）。性能是一项功能，而不是一种期望；不过目前的保障手段是测量和审查，而不是一条会失败的流水线。
+需要如实说明一点：Node中没有Canvas，所以这些基准测试都用桩代替文本测量，它们的绝对时间不是浏览器中的时间。冷缓存与热缓存的比值以及放置遍数则与浏览器中一致，其中任何一项退化，都会先在这里显现，然后才在沙盒中显现。章和模板页的基准测试只报告数字，不会让构建失败；中文的那个则断言测量的字符数低于最长段落长度的三倍。它们都不在CI中运行：性能退化是在热路径改动时通过对比多次运行的数字发现的（Knuth-Plass活动节点重写时就是这样做的）。目前没有哪次构建会因为耗时变长而失败：性能退化要靠测量和代码审查来发现。
 
 
 ## 数据流
@@ -587,7 +580,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 - **CSS column-count的封装**。Postext取代CSS多栏布局，而不是在它外面包一层。它从零开始计算精确定位的几何信息，因为浏览器的分栏算法无法控制资源的摆放、段首孤行和段末孤行的避免，以及跨栏的排版规则。而这些恰恰是Postext存在的意义。
 - **响应式断点管理**。Postext按给定的页面尺寸计算版面。何时重新排版（视口尺寸变化、屏幕方向变化时）由调用方决定。Postext不管理断点、媒体查询，也不替你做响应式设计的决定。那是你的工作。
 - **实时协同编辑**。Postext是无状态的排版计算（输入内容，输出几何信息），不是带冲突解决、操作变换或多用户感知的协同文档系统。
-- **字体文件**。`postext`包负责加载字体，但不自带字体。`prepareFonts`在第一次构建之前加载配置及其文本要求的所有字体，字体集无法提供的字体会作为`fontFallback`列在文档的警告中。文件本身由宿主提供：页面上的一条`@font-face`规则，或者一个说明每个字体在哪里的`resolve`函数。见[配置 → 排版前加载字体](/zh/docs/configuration-programmatic-usage#排版前加载字体)。
+- **字体文件**。`postext`包负责加载字体，但不自带字体。`prepareFonts`在第一次构建之前加载配置及其文本要求的所有字体，字体集无法提供的字体会作为`fontFallback`列在文档的警告中。文件本身由宿主提供：页面上的一条`@font-face`规则，或者一个说明每个字体在哪里的`resolve`函数。见[配置 › 排版前加载字体](/zh/docs/configuration-programmatic-usage#排版前加载字体)。
 
 
 ## 附录：与现有类型的对应关系
@@ -612,7 +605,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
     </tr>
     <tr>
       <td><code>Resource</code></td>
-      <td>带类型的位图/SVG/表格/视频资源。在度量阶段变成<code>ResolvedResourceBlock</code>，随后要么成为类型为<code>'resource'</code>的行内<code>VDTBlock</code>（摆放位置为<code>'here'</code>），要么成为页面横带中的浮动体（资源放置）</td>
+      <td>带类型的位图/SVG/表格/视频资源。在测量阶段变成<code>ResolvedResourceBlock</code>，随后要么成为类型为<code>'resource'</code>的行内<code>VDTBlock</code>（摆放位置为<code>'here'</code>），要么成为页面浮动带中的浮动体（资源放置）</td>
     </tr>
     <tr>
       <td><code>ResourceType</code></td>

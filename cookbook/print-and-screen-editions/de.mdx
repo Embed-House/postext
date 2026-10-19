@@ -18,7 +18,7 @@ pageNotes: { "1": "Die Teiltitelseite von „Notes on Weather“: ein regenblaue
 
 <Excerpt region="palette" />
 
-Jede Farbe der Konfiguration nennt eine Paletten-ID, und der daneben geschriebene Hexwert ist nur der Tageswert als Rückfall. Deshalb wechselt die Bildschirmausgabe zu den Nachtfarben, indem sie ein einziges Array ersetzt. Die [Überschreibungen](/de/docs/configuration-fonts-colors-viewers#html-betrachter) in [der kurzen Antwort](#die-kurze-antwort) mischen Objekte Schlüssel für Schlüssel und Überschriftenebenen über `level` und ersetzen jedes andere Array vollständig, `colorPalette` eingeschlossen. `main-color` gehört zur Palette, also ändern sich auch die Standardwerte der Engine, die sie verwenden. Die neue Palette erreicht jede mit ihr verknüpfte Farbe: den Text, die Bildunterschriften, die Gestaltungselemente der Auftakte und die Verweisfarbe.
+Jede Farbe der Konfiguration verweist auf eine Paletten-ID, und der daneben geschriebene Hexwert ist nur der Tageswert als Rückfall. Deshalb wechselt die Bildschirmausgabe zu den Nachtfarben, indem sie ein einziges Array ersetzt. Die [Überschreibungen](/de/docs/configuration-fonts-colors-viewers#html-betrachter) in [der kurzen Antwort](#die-kurze-antwort) mischen Objekte Schlüssel für Schlüssel und Überschriftenebenen über `level` und ersetzen jedes andere Array vollständig, `colorPalette` eingeschlossen. `main-color` gehört zur Palette, also ändern sich auch die Standardwerte der Engine, die sie verwenden. Die neue Palette erreicht jede mit ihr verknüpfte Farbe: den Text, die Legenden, die Gestaltungselemente der Auftakte und die Verweisfarbe.
 
 ### 2 · Auftakte: ein Band auf Papier, die Wörter auf dem Bildschirm
 
@@ -30,19 +30,19 @@ Dachzeile, Titel und Vorspann sind einmal definiert und werden in beide Gestaltu
 
 <Excerpt region="part" />
 
-Im Druck eröffnet `:::part` <PageRef page={1}>die regenblaue Teiltitelseite</PageRef>: einen an allen Kanten randabfallenden Kasten, ein Bildelement aus Regenstrichen, die die Schrift frei lassen, Ziffer und Titel aus dem Direktivenblock und die Liste der Notizen in Weiß. Die Bildschirm-Überschreibungen setzen `parts.page: false`, sodass sich keine Seite öffnet und die Liste nicht gesetzt wird. Der [Teil](/de/docs/configuration-styles#teile) gibt seine Nummer und seinen Titel trotzdem an die folgenden Notizen weiter, und die Dachzeile auf dem Bildschirm lautet „Autumn · Note 1“ wie die gedruckte.
+Im Druck eröffnet `:::part` <PageRef page={1}>die regenblaue Teiltitelseite</PageRef>: einen an allen Kanten randabfallenden Kasten, ein Bildelement aus Regenstrichen, die die Schrift frei lassen, Ziffer und Titel aus dem Container und die Liste der Notizen in Weiß. Die Bildschirm-Überschreibungen setzen `parts.page: false`, sodass sich keine Seite öffnet und die Liste nicht gesetzt wird. Der [Teil](/de/docs/configuration-styles#teile) gibt seine Nummer und seinen Titel trotzdem an die folgenden Notizen weiter, und die Dachzeile auf dem Bildschirm lautet „Autumn · Note 1“ wie die gedruckte.
 
 ### 4 · Jede Abbildung zweimal zeichnen
 
 <Excerpt region="figures" />
 
-Der Tausch der Palette färbt kein SVG um, deshalb wird jede Zeichnung einmal pro Palette angefertigt. Das Tal ist ein Foto, ein JPEG, das sich beide Ausgaben teilen. `figures(edition)` baut für beide Ausgaben dieselben Ressourcen, jede zeigt auf die Datei ihrer Ausgabe: `gauge-day.svg` im Druck, `gauge-night.svg` auf dem Bildschirm. IDs, Bildunterschriften, Alternativtexte und Platzierungen ändern sich nicht, sodass jedes `:ref` im Markdown in beiden Ausgaben zur selben Abbildung und Nummer führt. In der Bildschirmausgabe steht der Alternativtext in jedem `<img alt>`, wo ein Screenreader ihn findet.
+Der Tausch der Palette färbt kein SVG um, deshalb wird jede Zeichnung einmal pro Palette angefertigt. Das Tal ist ein Foto, ein JPEG, das sich beide Ausgaben teilen. `figures(edition)` baut für beide Ausgaben dieselben Ressourcen, jede zeigt auf die Datei ihrer Ausgabe: `gauge-day.svg` im Druck, `gauge-night.svg` auf dem Bildschirm. IDs, Legenden, Alternativtexte und Platzierungen ändern sich nicht, sodass jedes `:ref` im Markdown in beiden Ausgaben zur selben Abbildung und Nummer führt. In der Bildschirmausgabe steht der Alternativtext in jedem `<img alt>`, wo ein Screenreader ihn findet.
 
 ### 5 · Die Bildschirmausgabe einbetten
 
 <Excerpt region="screen" />
 
-Jede Bildschirmseite ist so hoch wie das Fenster, deshalb verkleinert `fitFiguresToPage` den Regenmesser, bis er mit seiner Bildunterschrift auf eine Seite passt ([Layout](/de/docs/configuration-page-layout#layout)). Bei 96 dpi, der Auflösung, die CSS annimmt, erscheinen die aus dem Druck geerbten Millimeter und Punkt in ihrer Nenngröße ([Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden)). Der Pen schreibt die absolut positionierten Zeilen von `renderToHtml` in ein Shadow DOM, wo die Selektoren der Seite sie nicht erreichen. Vererbte Eigenschaften wie `letter-spacing` überschreiten diese Grenze allerdings, und die Wurzel der Ausgabe setzt sie selbst zurück, weil die Engine die Zeilen ohne sie gemessen hat. HTML-Seiten sind durchsichtig, solange sie nicht bemalt werden, deshalb nimmt `page.backgroundColor` das Nachtpapier aus der Palette. Der ResizeObserver wartet 150 ms und baut nur dann aus einem frischen `config()` neu, wenn sich Breite oder Höhe des Fensters geändert haben; nach dem Neubau scrollt das Fenster zum selben Bruchteil seiner Höhe zurück.
+Jede Bildschirmseite ist so hoch wie das Fenster, deshalb verkleinert `fitFiguresToPage` den Regenmesser, bis er mit seiner Legende auf eine Seite passt ([Layout](/de/docs/configuration-page-layout#layout)). Bei 96 dpi, der Auflösung, die CSS annimmt, erscheinen die aus dem Druck geerbten Millimeter und Punkt in ihrer Nenngröße ([Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden)). Der Pen schreibt die absolut positionierten Zeilen von `renderToHtml` in ein Shadow DOM, wo die Selektoren der Seite sie nicht erreichen. Vererbte Eigenschaften wie `letter-spacing` überschreiten diese Grenze allerdings, und die Wurzel der Ausgabe setzt sie selbst zurück, weil die Engine die Zeilen ohne sie gemessen hat. HTML-Seiten sind durchsichtig, solange sie nicht bemalt werden, deshalb nimmt `page.backgroundColor` das Nachtpapier aus der Palette. Der ResizeObserver wartet 150 ms und baut nur dann aus einem frischen `config()` neu, wenn sich Breite oder Höhe des Fensters geändert haben; nach dem Neubau scrollt das Fenster zum selben Bruchteil seiner Höhe zurück.
 
 ## Varianten
 
@@ -67,5 +67,5 @@ Für einen kräftigeren Druckauftakt mit gesättigtem Band und großer Kapitelnu
 
 ## Häufige Fehler
 
-- Halten Sie das Fenster mindestens 400 px hoch (die `min-height` des Pens). In einem schmalen Fenster unter etwa 350 px Höhe ist der Bildschirmauftakt höher als der Inhaltsbereich der Seite; er nimmt dann die ganze Seite ein, und der erste Absatz der Notiz beginnt auf der nächsten.
+- Halten Sie das Fenster mindestens 400 px hoch (die `min-height` des Pens). In einem schmalen Fenster unter etwa 350 px Höhe ist der Bildschirmauftakt höher als der Satzspiegel der Seite; er nimmt dann die ganze Seite ein, und der erste Absatz der Notiz beginnt auf der nächsten.
 - Geben Sie dem Fenster eine Größe, bevor Sie es setzen. Ein Fenster ohne Breite, verborgen oder aus einer Flex-Zeile gedrückt, ergäbe eine Seite ohne Breite; deshalb überspringt `showScreen()` ein Fenster, das schmaler oder niedriger als `FOLDED` ist, 200 px.

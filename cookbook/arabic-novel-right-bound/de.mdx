@@ -1,6 +1,6 @@
 ---
 title: "Ein arabischer Roman, rechts gebunden, von rechts nach links"
-summary: "Der Anfang eines arabischen Romans auf 14 × 21 cm: locale 'ar' setzt von rechts nach links, bindet das Buch rechts und druckt ١٢ als Seitenzahlen."
+summary: "Der Anfang eines arabischen Romans auf 14 × 21 cm: locale 'ar' setzt von rechts nach links, bindet das Buch rechts und setzt Seitenzahlen wie ١٢."
 plain: "Die ersten Seiten eines arabischen Romans, gesetzt wie bei einem arabischen Verlag: Die Zeilen laufen von rechts nach links, das Buch öffnet sich von dem, was ein lateinischer Leser hinten nennt, die Seitenzahlen sind arabische Ziffern."
 description: "Ein arabischer Roman in Postext: locale 'ar' ergibt Text von rechts nach links, Bindung rechts, ostarabische Seitenzahlen, Kaschida und Kapitel in Worten."
 question: "Wie setze ich ein arabisches Buch von rechts nach links und binde es rechts?"
@@ -24,13 +24,13 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `locale: 'ar'` 
 
 <Excerpt region="opener" />
 
-Das `numberingTemplate` der Ebene schreibt الفصل und die Zahl als maskuline Ordnungszahl, sodass das zweite Kapitel ohne jede Änderung am Markdown الفصل الثاني heißt; `{1:ordinal-feminine}` ergibt الأولى, الثانية für ein feminines Nomen wie الليلة ([Ordnungs- und Grundzahlen in Worten](/de/docs/arabic-layout#ordnungs--und-grundzahlwörter)). Der Auftakt druckt sie mit `{number}` über dem Titel. Arabische Kapitelauftakte sind meist zentriert, deshalb erspart `align: 'center'` jede Frage, auf welcher Seite die Gestaltung beginnt.
+Das `numberingTemplate` der Ebene schreibt الفصل und die Zahl als maskuline Ordnungszahl, sodass das zweite Kapitel ohne jede Änderung am Markdown الفصل الثاني heißt; `{1:ordinal-feminine}` ergibt الأولى, الثانية für ein feminines Nomen wie الليلة ([Ordnungs- und Grundzahlen in Worten](/de/docs/arabic-layout#ordnungs--und-grundzahlwörter)). Der Auftakt gibt sie mit `{number}` über dem Titel aus. Arabische Kapitelauftakte sind meist zentriert, deshalb erspart `align: 'center'` jede Frage, auf welcher Seite die Gestaltung beginnt.
 
 ### 3 · Kolumnentitel bleiben auf ihren Seiten
 
 <Excerpt region="heads" />
 
-Der Grundtext folgt dem Textfluss, Kolumnentitel und Seitenzahlen aber behalten ihre physischen Seiten. Seite 12 ist in diesem Buch eine gerade und zugleich eine rechte Seite, deshalb steht ihre Seitenzahl oben rechts, daneben der Buchtitel; Seite 13 liegt links und trägt das Kapitel. Wer eine Doppelseite von rechts liest wie ein arabischer Leser, trifft zuerst auf den Buchtitel. `showBook` legt die Seiten gespiegelt aus, Seite 11 links von Seite 10, sodass der Bildschirm die Doppelseiten so zeigt, wie sich das Buch öffnet.
+Der Grundtext folgt dem Textfluss, Kolumnentitel und Seitenzahlen aber behalten ihre physischen Seiten. Seite 12 ist in diesem Buch eine gerade und zugleich eine rechte Seite, deshalb steht ihre Seitenzahl oben rechts, daneben der Buchtitel; Seite 13 liegt links, über ihr steht das Kapitel. Wer eine Doppelseite von rechts liest wie ein arabischer Leser, trifft zuerst auf den Buchtitel. `showBook` legt die Seiten gespiegelt aus, Seite 11 links von Seite 10, sodass der Bildschirm die Doppelseiten so zeigt, wie sich das Buch öffnet.
 
 ### 4 · Eine in Code gezeichnete Teiltitelseite
 

@@ -34,13 +34,13 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext misst j
 
 <Excerpt region="headings" />
 
-Im PDF zeigt das Lesezeichenfenster den Titel des Umschlags, *Programme* mit *About the music* darunter, *The texts* mit seinen drei Liedern und *The performers*. Die Gliederung folgt den Überschriftenebenen, wählen Sie sie also mit Blick auf die Lesezeichen: hier eine H1 pro Abschnitt und eine H2 pro Lied. *The performers* hat ein eigenes Überschriftenformat, eine H1 ohne Seitenumbruch und ohne Auftakt, sodass sie sich Seite 4 mit Tennysons Gedicht teilt und trotzdem ein Lesezeichen auf oberster Ebene bekommt. Das `\\`, das den Umschlagtitel in zwei Zeilen bricht, wird im Lesezeichen zu einem Leerzeichen.
+Im PDF zeigt das Lesezeichenfenster den Titel des Umschlags, *Programme* mit *About the music* darunter, *The texts* mit seinen drei Liedern und *The performers*. Die Gliederung folgt den Überschriftenebenen, wählen Sie sie also mit Blick auf die Lesezeichen: hier eine H1 pro Abschnitt und eine H2 pro Lied. *The performers* hat einen eigenen Überschriftenstil, eine H1 ohne Seitenumbruch und ohne Auftakt, sodass sie sich Seite 4 mit Tennysons Gedicht teilt und trotzdem ein Lesezeichen auf oberster Ebene bekommt. Das `\\`, das den Umschlagtitel in zwei Zeilen bricht, wird im Lesezeichen zu einem Leerzeichen.
 
 ### 5 · Titel und Autor aus dem Frontmatter
 
 <Excerpt region="cover" />
 
-Der Umschlag druckt zwei Werte aus dem Frontmatter über `{author}` und `{subtitle}`, und die Dokumenteigenschaften des PDF nehmen den Titel *Home from Sea* und den Autor *The Harbour Consort* aus demselben Block. Datum und Spielort sind Attribute der Umschlagüberschrift. Die Zeichnung dahinter ist ein SVG in Seitenbreite, und das PDF behält es als Vektorpfade.
+Der Umschlag gibt über `{author}` und `{subtitle}` zwei Werte aus dem Frontmatter aus, und die Dokumenteigenschaften des PDF nehmen den Titel *Home from Sea* und den Autor *The Harbour Consort* aus demselben Block. Datum und Spielort sind Attribute der Umschlagüberschrift. Die Zeichnung dahinter ist ein SVG in Seitenbreite, und das PDF behält es als Vektorpfade.
 
 ## Varianten
 
@@ -67,6 +67,6 @@ Richten Sie den Fetch auf Ihre eigenen Kopien derselben statischen WOFF2-Dateien
 
 ## Häufige Fehler
 
-Listen Sie in `FONTS` jede Schrift auf, die Ihre Seiten setzen, darunter Fett und Kursiv des Textes. Fehlt eine, sieht der Bildschirm trotzdem richtig aus, weil das Kit die Schrift ohne Warnung lädt, doch das PDF druckt die nächstliegende Schrift des Providers, und nur die Ersatzschriften in der Statuszeile verraten den Tausch.
+Listen Sie in `FONTS` jede Schrift auf, die Ihre Seiten setzen, darunter Fett und Kursiv des Textes. Fehlt eine, sieht der Bildschirm trotzdem richtig aus, weil das Kit die Schrift ohne Warnung lädt, doch das PDF verwendet die nächstliegende Schrift des Providers, und nur die Ersatzschriften in der Statuszeile verraten den Tausch.
 
 Verwenden Sie statische Dateien, eine pro Schriftstärke und Stil. Aus einer variablen WOFF2 bettet das PDF nur die Standardinstanz ein, sodass ein fetter Abschnitt in normaler Schriftstärke erschiene ([Warum ein Font-Provider?](/de/docs/configuration-pdf-output#warum-ein-font-provider)).

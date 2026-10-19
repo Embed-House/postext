@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuration : bande dessinée',
   sidebarTitle: 'Réglages de bande dessinée',
-  description: 'Les réglages de bande dessinée : cadre et gouttières des planches, styles de case, lettrage, styles de bulles et distribution',
+  description: 'Les réglages de bande dessinée : le cadre et les gouttières des planches, les styles de case, le lettrage, les styles de bulles et les personnages',
   lang: 'fr',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Bande dessinée
 
-La propriété `comics` configure les planches (`:::page`), les strips (`:::strip`) et les doubles pages : le cadre et les gouttières dans lesquels les cases sont découpées, les styles de case, le lettrage, les styles de bulles et la distribution. Seuls les documents qui contiennent de la bande dessinée la lisent ; un document sans BD se compose exactement comme avant, et un document avec BD mais sans section `comics` prend les valeurs par défaut de sa langue. Le balisage et la façon dont les planches sont lettrées sont expliqués dans [Bande dessinée](/fr/docs/comics).
+La propriété `comics` configure les planches (`:::page`), les strips (`:::strip`) et les doubles pages : le cadre et les gouttières dans lesquels les cases sont découpées, les styles de case, le lettrage, les styles de bulles et les personnages. Seuls les documents qui contiennent de la bande dessinée en tiennent compte ; un document sans BD se compose exactement comme avant, et un document avec BD mais sans section `comics` prend les valeurs par défaut de sa langue. Le balisage et la façon dont les planches sont lettrées sont expliqués dans [Bande dessinée](/fr/docs/comics).
 
 ```ts
 const config: PostextConfig = {
@@ -65,7 +65,7 @@ const config: PostextConfig = {
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>les marges de la page</td>
-      <td>Des marges propres aux planches (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Les cases sont découpées dans la boîte qu’elles laissent ; sans ce réglage, dans le bloc de texte de la page.</td>
+      <td>Des marges propres aux planches (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Les cases sont découpées dans la boîte qu’elles laissent ; sans ce réglage, dans la zone de contenu de la page.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
@@ -101,13 +101,13 @@ const config: PostextConfig = {
       <td><code>balloonStyles</code></td>
       <td><code>BalloonStyleConfig[]</code></td>
       <td>les neuf styles prédéfinis</td>
-      <td>Les styles de bulles par type. Les styles prédéfinis sont toujours présents ; une entrée qui porte l’un de leurs ids le modifie, une entrée avec un nouvel id ajoute un style superposé à <code>speech</code>.</td>
+      <td>Les styles de bulles par type. Les styles prédéfinis sont toujours présents ; une entrée qui reprend l’identifiant de l’un d’eux le modifie, une entrée avec un nouvel identifiant ajoute un style fondé sur <code>speech</code>.</td>
     </tr>
     <tr>
       <td><code>cast</code></td>
       <td><code>ComicCastMember[]</code></td>
       <td><code>[]</code></td>
-      <td>Les personnages (voir <a href="#distribution">Distribution</a>).</td>
+      <td>Les personnages (voir <a href="#personnages">Personnages</a>).</td>
     </tr>
     <tr>
       <td><code>runningHeads</code></td>
@@ -178,7 +178,7 @@ const config: PostextConfig = {
       <td><code>bleed</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Les cases de ce style dépassent le cadre jusqu’à la coupe et au fond perdu, de chaque côté qui touche le cadre.</td>
+      <td>Les cases de ce style dépassent le cadre jusqu’au rognage et au fond perdu, de chaque côté qui touche le cadre.</td>
     </tr>
   </tbody>
 </table>
@@ -207,7 +207,7 @@ const config: PostextConfig = {
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>7.5pt</code></td>
-      <td>Le corps du texte des bulles. La bande dessinée est en général lettrée entre 7 et 9 pt sur la page imprimée.</td>
+      <td>Le corps du texte des bulles. La bande dessinée est en général lettrée entre 7 et 9 pt sur la page imprimée.</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
@@ -286,7 +286,7 @@ const config: PostextConfig = {
 
 ### Styles de bulles
 
-Chaque entrée de `comics.balloonStyles` se superpose au style prédéfini de même id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), ou à `speech` pour un nouvel id. Les valeurs par défaut ci-dessous sont celles de `speech` ; la [page Bande dessinée](/fr/docs/comics#styles-de-bulles) indique ce que change chaque style prédéfini. Les longueurs en `em` sont relatives au corps du texte de la bulle.
+Chaque entrée de `comics.balloonStyles` s’applique par-dessus le style prédéfini de même identifiant (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), ou par-dessus `speech` pour un nouvel identifiant. Les valeurs par défaut ci-dessous sont celles de `speech` ; la [page Bande dessinée](/fr/docs/comics#styles-de-bulles) indique ce que change chaque style prédéfini. Les longueurs en `em` sont relatives au corps du texte de la bulle.
 
 <table>
   <thead>
@@ -302,7 +302,7 @@ Chaque entrée de `comics.balloonStyles` se superpose au style prédéfini de m�
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obligatoire</td>
-      <td>Le mot par lequel une ligne de script nomme le style : <code>ben&#123;whisper&#125;: …</code> ou <code>style=whisper</code>.</td>
+      <td>Le mot par lequel une ligne de script désigne le style : <code>ben&#123;whisper&#125;: …</code> ou <code>style=whisper</code>.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -386,25 +386,25 @@ Chaque entrée de `comics.balloonStyles` se superpose au style prédéfini de m�
       <td><code>tail</code></td>
       <td><code>'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'</code></td>
       <td><code>'curved'</code></td>
-      <td>L’appendice.</td>
+      <td>La queue.</td>
     </tr>
     <tr>
       <td><code>tailWidth</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.9em</code></td>
-      <td>La largeur de l’appendice là où il quitte le contour.</td>
+      <td>La largeur de la queue là où elle quitte le contour.</td>
     </tr>
     <tr>
       <td><code>tailReach</code></td>
       <td><code>number</code></td>
       <td><code>0.55</code></td>
-      <td>Jusqu’où l’appendice s’avance vers son locuteur, en fraction de l’écart entre le contour et la bouche.</td>
+      <td>Jusqu’où la queue s’avance vers son locuteur, en fraction de l’écart entre le contour et la bouche.</td>
     </tr>
     <tr>
       <td><code>target</code></td>
       <td><code>'mouth' | 'head'</code></td>
       <td><code>'mouth'</code></td>
-      <td>Ce que vise l’appendice : la bouche de l’ancre, ou sa tête (bulles de pensée).</td>
+      <td>Ce que vise la queue : la bouche de l’ancre, ou sa tête (bulles de pensée).</td>
     </tr>
     <tr>
       <td><code>position</code></td>
@@ -464,7 +464,7 @@ Chaque entrée de `comics.balloonStyles` se superpose au style prédéfini de m�
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>aucun</td>
-      <td>Un contour tracé autour des lettres, ici son épaisseur, pour que le texte se lise sur le dessin (onomatopées).</td>
+      <td>L’épaisseur d’un contour tracé autour des lettres, pour que le texte reste lisible sur le dessin (onomatopées).</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -478,10 +478,16 @@ Chaque entrée de `comics.balloonStyles` se superpose au style prédéfini de m�
       <td><code>0</code></td>
       <td>Rotation en degrés, dans le sens des aiguilles d’une montre. L’attribut <code>rotate</code> d’une ligne l’emporte.</td>
     </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Inclinaison des lettres en degrés, appliquée avant <code>rotate</code> : positive vers l’avant comme l’italique, négative vers l’arrière. Un texte écrit sur un objet vu en perspective (une enseigne, une couverture de livre) en suit le bord supérieur avec <code>rotate</code> et les côtés avec <code>skew</code>. L’attribut <code>skew</code> d’une ligne l’emporte.</td>
+    </tr>
   </tbody>
 </table>
 
-### Distribution
+### Personnages
 
 Chaque entrée de `comics.cast` décrit un personnage :
 
@@ -511,7 +517,7 @@ Chaque entrée de `comics.cast` décrit un personnage :
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>Le style des répliques du personnage qui n’en nomment aucun.</td>
+      <td>Le style des répliques du personnage qui n’en indiquent aucun.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

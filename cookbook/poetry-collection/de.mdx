@@ -5,12 +5,12 @@ plain: "Ein kleines Buch mit vier Naturgedichten von Gerard Manley Hopkins. Es z
 description: "Vier Gedichte von Hopkins, gesetzt mit Postext: Blöcke :::verse mit den Einzügen von 1918, hängende Folgezeilen, Strophenabstand und ein Inhalt mit Punktlinien."
 question: "Wie setze ich Gedichte Zeile für Zeile, mit Einzügen, Strophen, hängenden Folgezeilen und ohne Silbentrennung?"
 aliases: ["Lyrik", "Gedicht", "Vers", ":::verse", "Strophe", "Strophenumbruch", "Verszeile", "eingezogene Zeile", "Einzug", "Folgezeile", "umbrochene Verszeile", "lange Zeilen", "hängender Einzug", "Zeilenumbrüche", "Gedichtband", "Punktlinien", "Widmung", "Datumszeile", "Ornament", "Fleuron", "Schlussvignette", "Frontispiz", "Schmutztitel", "Gerard Manley Hopkins", "poetry"]
-pageNotes: { "2": "Das Frontispiz: ein Fotogramm eines Farnwedels und eines Vogelbeerzweigs mit Beeren, weiß ausgespart auf einem gebürsteten salbeigrünen Grund, darunter eine kursive Bildunterschrift.", "4": "Das Inhaltsverzeichnis: vier kursive Titel nach ihren Ziffern, gesperrte Punktlinien bis zu den Seitenzahlen, dann eine kurze Anmerkung zum Text und das Impressum.", "6": "„The Windhover“: Seine Widmung steht über der ersten Zeile, die Zeilen, die auf -iding und -illion reimen, beginnen 2 em eingezogen, und vier lange Zeilen brechen um und hängen 4 em ein.", "7": "„Pied Beauty“: Die Zeilen rücken je nach Reim um 1 oder 2 em ein, und die abschließende Halbzeile, „Praise him.“, steht 8 em eingezogen." }
+pageNotes: { "2": "Das Frontispiz: ein Fotogramm eines Farnwedels und eines Vogelbeerzweigs mit Beeren, weiß ausgespart auf einem gebürsteten salbeigrünen Grund, darunter eine kursive Legende.", "4": "Das Inhaltsverzeichnis: vier kursive Titel nach ihren Ziffern, gesperrte Punktlinien bis zu den Seitenzahlen, dann eine kurze Anmerkung zum Text und das Impressum.", "6": "„The Windhover“: Seine Widmung steht über der ersten Zeile, die Zeilen, die auf -iding und -illion reimen, beginnen 2 em eingezogen, und vier lange Zeilen brechen um und hängen 4 em ein.", "7": "„Pied Beauty“: Die Zeilen rücken je nach Reim um 1 oder 2 em ein, und die abschließende Halbzeile, „Praise him.“, steht 8 em eingezogen." }
 ---
 
 ## Was Sie setzen
 
-Ein schmaler Band mit vier Naturgedichten von Gerard Manley Hopkins, 140 × 216 mm, im Text der Erstausgabe von 1918. Nach dem Schmutztitel steht ein Frontispiz, ein Fotogramm von Farn und Vogelbeere, einem Titelblatt in der Italiana gegenüber. Das Inhaltsverzeichnis nennt jedes Gedicht mit Ziffer und kursivem Titel, mit gesperrten Punkten bis zur Seitenzahl. Jedes Gedicht eröffnet eine Seite unter einer salbeigrünen Ziffer und seinem kursiven Titel. Jedes Gedicht ist ein Block `:::verse`, eingezogen wie 1918: Die Zeilen von *Pied Beauty* rücken nach dem Reim ein, und die langen Zeilen von *The Windhover* brechen um und hängen 4 em ein, doppelt so tief wie seine Einzüge. Strophen stehen eine Zeile auseinander, und kein Wort wird getrennt, außer wo Hopkins es getrennt hat. Das Datum steht unter jedem Gedicht rechtsbündig, und auf das letzte folgt ein Vogelbeerzweig. Die Gedichtseiten tragen eine zentrierte Pagina am Fuß.
+Ein schmaler Band mit vier Naturgedichten von Gerard Manley Hopkins, 140 × 216 mm, im Text der Erstausgabe von 1918. Nach dem Schmutztitel steht ein Frontispiz, ein Fotogramm von Farn und Vogelbeere, einem Titelblatt in der Italiana gegenüber. Das Inhaltsverzeichnis nennt jedes Gedicht mit Ziffer und kursivem Titel, mit gesperrten Punkten bis zur Seitenzahl. Jedes Gedicht eröffnet eine Seite unter einer salbeigrünen Ziffer und seinem kursiven Titel. Jedes Gedicht ist ein Block `:::verse`, eingezogen wie 1918: Die Zeilen von *Pied Beauty* rücken nach dem Reim ein, und die langen Zeilen von *The Windhover* brechen um und hängen 4 em ein, doppelt so tief wie seine Einzüge. Strophen stehen eine Zeile auseinander, und kein Wort wird getrennt, außer wo Hopkins es getrennt hat. Das Datum steht unter jedem Gedicht rechtsbündig, und auf das letzte folgt ein Vogelbeerzweig. Die Gedichtseiten haben eine zentrierte Pagina am Fuß.
 
 ## Zubereitung
 
@@ -30,25 +30,25 @@ Die Widmung über *The Windhover* und Ort und Datum unter jedem Gedicht sind kei
 
 <Excerpt region="poem-head" />
 
-Statt ihres Textes druckt die Überschrift eine Gestaltung in der Spalte. In dieser Gestaltung ist `{number}` die Zählung, wie `numberingTemplate: '{1:I}'` sie formatiert, I bis IV, und `{titleText}` der Titel ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)). Die Ebene hat keinen unteren Abstand, und `minHeight` macht jeden Kopf sechs Rasterzeilen tief (31,75 mm). Ziffer und ein einzeiliger Titel füllen vier davon, ein umbrechender Titel fünf, sodass jedes Gedicht auf derselben Zeile seiner Seite beginnt. Auf <PageRef page={6}>Seite 6</PageRef> steht auf dieser Zeile die Widmung. Die Parität `'any'` bricht auf die nächste Seite um, rechts oder links, deshalb gibt es zwischen den Gedichten keine leeren Seiten.
+Statt ihres Textes zeichnet die Überschrift eine Gestaltung in der Spalte. In dieser Gestaltung ist `{number}` die Zählung, wie `numberingTemplate: '{1:I}'` sie formatiert, I bis IV, und `{titleText}` der Titel ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)). Die Ebene hat keinen unteren Abstand, und `minHeight` macht jeden Kopf sechs Rasterzeilen tief (31,75 mm). Ziffer und ein einzeiliger Titel füllen vier davon, ein umbrechender Titel fünf, sodass jedes Gedicht auf derselben Zeile seiner Seite beginnt. Auf <PageRef page={6}>Seite 6</PageRef> steht auf dieser Zeile die Widmung. Die Parität `'any'` bricht auf die nächste Seite um, rechts oder links, deshalb gibt es zwischen den Gedichten keine Vakatseiten.
 
 ### 4 · Die Titelei besteht aus Überschriften
 
 <Excerpt region="front" />
 
-Ein Überschriftenformat kann auf eine neue Seite umbrechen und dort eine Gestaltung zeichnen, deshalb sind Schmutztitel, Frontispiz und Titelblatt je eine Überschrift mit eigenem Format. `numbered: false` hält sie aus der Zählung heraus, und das erste Gedicht ist weiterhin I. `toc: false` hält sie aus dem Inhaltsverzeichnis heraus, und eine leere Fußzeile lässt ihre Seiten ohne Pagina ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Die Formate laufen über die ganze Seitenbreite, weil der Fuß des Satzspiegels eine in der Spalte gehaltene Gestaltung beschneidet, was die randabfallende Tafel dort kappen und ihre Bildunterschrift verlieren würde. Die Bildunterschrift kommt aus dem Attribut `caption` der Überschrift; Autor, Titel und Untertitel auf dem Titelblatt kommen aus dem Frontmatter.
+Ein Überschriftenstil kann auf eine neue Seite umbrechen und dort eine Gestaltung zeichnen, deshalb sind Schmutztitel, Frontispiz und Titelblatt je eine Überschrift mit eigenem Stil. `numbered: false` hält sie aus der Zählung heraus, und das erste Gedicht ist weiterhin I. `toc: false` hält sie aus dem Inhaltsverzeichnis heraus, und eine leere Fußzeile lässt ihre Seiten ohne Pagina ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Die Stile laufen über die ganze Seitenbreite, weil der Fuß des Satzspiegels eine in der Spalte gehaltene Gestaltung beschneidet, was die randabfallende Tafel dort kappen und ihre Legende verlieren würde. Die Legende kommt aus dem Attribut `caption` der Überschrift; Autor, Titel und Untertitel auf dem Titelblatt kommen aus dem Frontmatter.
 
 ### 5 · Das Inhaltsverzeichnis füllt sich selbst
 
 <Excerpt region="contents" />
 
-`:::toc` listet jede Überschrift, die ihr Format zulässt, mit der Ziffer aus derselben Vorlage und der Beschriftung der Seite, auf der die Überschrift landet. Der Build setzt das Buch erneut, bis sich diese Seitenbeschriftungen nicht mehr ändern ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)). Die eigene Überschrift der Seite, „Contents“, hat ein Format mit `numbered: false`; ohne diese Angabe wäre „Contents“ Gedicht I. Die Füllzeichen `'. '` setzen nach jedem Punkt ein Leerzeichen. Die Punkte sind rechtsbündig ausgerichtet, sodass sie von einem Eintrag zum nächsten untereinanderstehen, und sie erscheinen in Schrift und Farbe der Seitenzahlen, weil `toc.leader` keine Farbeinstellung hat.
+`:::toc` listet jede Überschrift, die ihr Stil zulässt, mit der Ziffer aus derselben Vorlage und der Bezeichnung der Seite, auf der die Überschrift steht. Der Build setzt das Buch erneut, bis sich diese Seitenbezeichnungen nicht mehr ändern ([Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis)). Die eigene Überschrift der Seite, „Contents“, hat einen Stil mit `numbered: false`; ohne diese Angabe wäre „Contents“ Gedicht I. Die Füllzeichen `'. '` setzen nach jedem Punkt ein Leerzeichen. Die Punkte sind rechtsbündig ausgerichtet, sodass sie von einem Eintrag zum nächsten untereinanderstehen, und sie erscheinen in Schrift und Farbe der Seitenzahlen, weil `toc.leader` keine Farbeinstellung hat.
 
 ### 6 · Ein Ornament ist ein Ressourcentyp ohne Bezeichnung
 
 <Excerpt region="ornament" />
 
-Ein Bild im Text ist eine Ressource, und jede Ressource hat einen Typ. Der Ornamenttyp hat ein leeres Legendenpräfix, und der Zweig hat keine Legende, deshalb erscheint keine Bezeichnung wie „Figure 1“ darunter ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Das `defaultPlacement` des Typs setzt den Zweig dorthin, wo `::resource{id="sprig"}` steht, zentriert und ein Fünftel der Satzbreite breit, sodass die Schlussvignette unter *Inversnaid* eine Zeile Markdown braucht. `resourceTypes` ersetzt die Standardliste, deshalb hat dieses Buch keinen Typ Figure oder Table. Um sie zu behalten, setzen Sie `defaultResourceTypes()` per Spread vor das Ornament.
+Ein Bild im Text ist eine Ressource, und jede Ressource hat einen Typ. Der Ornamenttyp hat ein leeres Legendenpräfix, und der Zweig hat keine Legende, deshalb erscheint keine Bezeichnung wie „Figure 1“ darunter ([Ressourcentypen](/de/docs/configuration-resources#ressourcentypen)). Das `defaultPlacement` des Typs setzt den Zweig dorthin, wo `::resource{id="sprig"}` steht, zentriert und ein Fünftel der Satzbreite breit, sodass die Schlussvignette unter *Inversnaid* eine Zeile Markdown braucht. `resourceTypes` ersetzt die Standardliste, deshalb hat dieses Buch keinen Typ Figure oder Table. Um sie zu behalten, setzen Sie `defaultResourceTypes()` mit dem Spread-Operator vor das Ornament.
 
 ## Varianten
 
@@ -73,7 +73,7 @@ Mit `turnover: 'right'` in `bodyText.verse` steht der Rest einer für die Satzbr
 
 ### Jedes Gedicht auf einer rechten Seite eröffnen
 
-Mit der Parität `'odd'` eröffnet jedes Gedicht auf der nächsten rechten Seite. Das Buch wächst von acht auf elf Seiten, und die drei leeren linken Seiten drucken keine Pagina, weil die Paginas nach Seitenrolle gefiltert sind.
+Mit der Parität `'odd'` eröffnet jedes Gedicht auf der nächsten rechten Seite. Das Buch wächst von acht auf elf Seiten, und die drei Vakatseiten erhalten keine Pagina, weil die Paginas nach Seitenrolle gefiltert sind.
 
 ```diff
  const poems = { level: 1, numberingTemplate: '{1:I}', advancedDesign: poemHead,
@@ -93,7 +93,7 @@ Der Zählerstil der Vorlage ändert die Ziffer auf der Seite des Gedichts und im
 ## Häufige Fehler
 
 - Halten Sie die Zeilen einer Strophe zusammen: Eine Leerzeile in einem Block `:::verse` beginnt eine neue Strophe, gleich wie viele Leerzeilen es sind.
-- Eine Zeile, die mit einem Pluszeichen und einem Leerzeichen beginnt, ist eine abgesetzte Zeile, die dort beginnt, wo die Zeile darüber endete; schreiben Sie `\+`, um das Pluszeichen zu drucken.
+- Eine Zeile, die mit einem Pluszeichen und einem Leerzeichen beginnt, ist eine abgesetzte Zeile, die dort beginnt, wo die Zeile darüber endete; schreiben Sie `\+`, um das Pluszeichen auszugeben.
 - Ohne `align=start` wird jedes Gedicht auf seine längste Zeile zentriert, und jedes Gedicht steht dann in einem anderen Abstand vom Rand.
 - Um zwei Wörter gemeinsam umzubrechen, verbinden Sie sie mit einem geschützten Leerzeichen (U+00A0), wie „the soil“ und „bright wings.“ auf Seite 5.
-- Ein Element der Fußzeile, dessen `pages` auf `'all'` steht, druckt auch auf leeren Seiten. Die Pagina besteht hier aus zwei Elementen, einem für Auftakte und einem für Textseiten, sodass eine leere linke Seite leer bleibt.
+- Ein Element der Fußzeile, dessen `pages` auf `'all'` steht, erscheint auch auf Vakatseiten. Die Pagina besteht hier aus zwei Elementen, einem für Auftakte und einem für Textseiten, sodass eine Vakatseite leer bleibt.

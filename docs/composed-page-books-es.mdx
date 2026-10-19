@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Libros de páginas compuestas',
   sidebarTitle: 'Libros de páginas compuestas',
-  description: 'Un recorrido por el Sandbox con un libro de texto escolar hecho de páginas compuestas: crear una plantilla de página, rellenarla desde el Markdown, rotular un mapa, traducir la página, arreglar lo que no cabe y seleccionar sobre la página y en el texto',
+  description: 'Recorrido por el Sandbox con un libro de texto escolar hecho de páginas compuestas: cómo crear una plantilla de página, rellenarla desde el Markdown, rotular un mapa, traducir la página, arreglar el texto que no cabe y seleccionar tanto en la página como en el texto.',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "Esta página enseña, paso a paso, a hacer en el Sandbox una página de libro de texto escolar, con una banda de título, un texto y cajas de colores. Partes de un libro de ejemplo ya terminado y le añades una página. Primero dibujas la página como plantilla, después viertes en ella el texto desde el Markdown, y luego pones nombre a los lugares de un mapa y traduces la página a otro idioma. Al final ves qué hacer cuando un texto es demasiado largo para su caja y cómo saltar entre la página y su texto.",
@@ -15,42 +15,42 @@ export const metadata = {
 
 **Construyes una página de un libro de texto a partir de una plantilla, la rellenas con texto del Markdown, rotulas un mapa, traduces la página y arreglas lo que no cabe.**
 
-La página de un libro de texto escolar es un conjunto de cajas: una banda de título, un texto, una caja para una definición, otra para una actividad, un mapa. Postext maqueta una página así a partir de una **plantilla de página** que guarda las cajas (sus marcos), y el Markdown solo dice qué palabras van en cada marco. Esta página recorre todo el trabajo en el Sandbox, sobre un libro que ya existe, y le añade una página. Las páginas de referencia explican qué hace cada campo y cada línea de Markdown; aquí haces cada cosa una vez, en orden, y ves qué cambia: [Páginas compuestas](/es/docs/composed-pages) trata del Markdown, [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages) de la plantilla y [Sandbox: las páginas compuestas](/es/docs/sandbox-composed-pages) de las pantallas.
+La página de un libro de texto escolar es un conjunto de cajas: una banda de título, un texto, una caja para una definición, otra para una actividad, un mapa. Postext maqueta una página así a partir de una **plantilla de página** que contiene las cajas (sus marcos), y el Markdown solo dice qué palabras van en cada marco. Esta página recorre todo el trabajo en el Sandbox, sobre un libro que ya existe, al que se añade una página. Las páginas de referencia explican qué hace cada campo y cada línea de Markdown; aquí haces cada cosa una vez, por orden, y ves qué cambia. [Páginas compuestas](/es/docs/composed-pages) trata del Markdown; [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages), de la plantilla, y [Sandbox: las páginas compuestas](/es/docs/sandbox-composed-pages), de las pantallas.
 
-Solo necesitas un navegador. Todo ocurre en el Sandbox, y lo que cambias se queda en tu navegador.
+Solo necesitas un navegador. Todo ocurre en el Sandbox, y lo que cambies se queda en tu navegador.
 
 ## 1. Abre el libro
 
-El libro es *Nuestro río*, una unidad de un libro de texto de tercero de primaria que el [Recetario](/es/cookbook/children-textbook-pages) publica como la receta nº 156. El río, los pueblos y las imágenes están inventados para esa receta. Tiene nueve páginas, con un mapa pintado que cruza dos páginas enfrentadas, y viene en español, catalán e inglés.
+El libro es *Nuestro río*, una unidad de un libro de texto de tercero de primaria que el [Recetario](/es/cookbook/children-textbook-pages) publica como la receta n.º 156. El río, los pueblos y las imágenes se inventaron para esa receta. Tiene nueve páginas, con un mapa pintado que ocupa dos páginas enfrentadas, y está en español, catalán e inglés.
 
-[Ábrelo en el Sandbox](/es/sandbox#recipe=children-textbook-pages&lang=es). La primera vez se añade a **Libros** como un libro tuyo, y puedes cambiarlo con libertad; si pones `lang=ca` o `lang=en` en el enlace, se abren las otras ediciones. Si más adelante vuelves a entrar por el mismo enlace, el Sandbox pregunta si quieres abrir tu copia o sustituirla por la publicada.
+[Ábrelo en el Sandbox](/es/sandbox#recipe=children-textbook-pages&lang=es). La primera vez se añade a **Libros** como un libro tuyo, así que puedes cambiarlo con libertad; si pones `lang=ca` o `lang=en` en el enlace, se abren las otras ediciones. Si más adelante vuelves a entrar por el mismo enlace, el Sandbox te pregunta si quieres abrir tu copia o sustituirla por la publicada.
 
-Antes de tocar nada, dos cosas:
+Antes de tocar nada, conviene saber dos cosas:
 
-- La barra que hay sobre la vista previa tiene un conmutador con **Contenido** y **Diseño**. En modo Contenido editas palabras, en el panel **Texto** o sobre la página. En modo Diseño editas plantillas de página y estilos, y el texto es de solo lectura. **Alt+Mayús+M** (**⌥⇧M** en un Mac) cambia de uno a otro.
-- El panel **Texto** muestra un capítulo de Markdown. Cada página compuesta es un bloque que empieza con `::::page{template="…"}` y acaba con cuatro dos puntos. Si haces clic en unas palabras de una página de la vista previa, el cursor salta a ellas en el Markdown.
+- La barra que hay sobre la vista previa tiene un conmutador con **Contenido** y **Diseño**. En el modo Contenido editas las palabras, en el panel **Texto** o sobre la página. En el modo Diseño editas las plantillas de página y los estilos, y el texto es de solo lectura. **Alt+Mayús+M** (**⌥⇧M** en un Mac) pasa de un modo a otro.
+- El panel **Texto** muestra el Markdown de un capítulo. Cada página compuesta es un bloque que empieza con `::::page{template="…"}` y termina con una línea `::::`. Si haces clic en unas palabras de una página de la vista previa, el cursor salta a ellas en el Markdown.
 
 ## 2. Crea una plantilla de página
 
-La página nueva será una página de repaso: una banda de título, un texto corto debajo y dos cajas, una para recordar lo aprendido y otra para ponerlo a prueba. Hace falta una plantilla con cuatro marcos.
+La página nueva será una página de repaso: una banda de título, un texto corto debajo y dos cajas, una para recordar lo aprendido y otra para ponerlo en práctica. Hace falta una plantilla con cuatro marcos.
 
-1. Pasa a **Diseño** y abre el panel **Diseño** de la izquierda. Elige **Página y columnas** y después **Plantillas de página**. La lista muestra cada plantilla del libro con un dibujo de sus marcos.
-2. Pulsa **Nueva**. Se abre una plantilla llamada *Plantilla nueva*. Dale el **ID** `review` (el nombre que usará el Markdown) y el **Nombre** `Página de repaso` (el que muestra este panel). El ID admite letras minúsculas, cifras y guiones.
-3. La plantilla empieza con un marco, `text`, que **Recibe el texto suelto de la página**. Conviértelo en la banda de título: **Nombre (ranura)**: `title`; **Estilo de caja**: `portada`, la banda azul que el libro ya usa para sus títulos; desactiva **Recibe el texto suelto de la página**; **Recibe el primer título**: *Nivel 1*, para que este marco reciba el primer encabezado `#` de la página.
-4. Pulsa **Añadir marco**. El marco nuevo se abre debajo de la lista de marcos. **Nombre (ranura)**: `text`, y activa **Recibe el texto suelto de la página**: todo lo que la página escriba fuera de un marco va aquí.
-5. Añade otro marco. **Nombre (ranura)**: `remember`. **Estilo de caja**: `dato-campo`, una caja verde con pestaña. **Alto mínimo**: 30 mm, para que la caja no se quede pequeña cuando su texto sea corto.
-6. Añade un último marco. **Nombre (ranura)**: `try`. **Estilo de caja**: `actividad-sol`. **Alto mínimo**: 30 mm.
-7. En `text`, `remember` y `try` pon **Ancho** en *Hasta el borde* y **Alto** en *Su contenido*: así ocupan todo el ancho de la página y tienen la altura de su texto.
-8. En **Grupos** pulsa **Añadir grupo**. Llámalo `column`, déjalo en *Apilados* y pon **Espacio entre marcos** en 6 mm. En **Marcos del grupo, en el orden de la página** marca los cuatro marcos. Márcalos en el orden en que van, con el título primero: la lista numera los miembros y las flechas suben o bajan uno. Un grupo coloca sus marcos uno debajo de otro y empuja los de abajo cuando un marco crece; por eso un texto más largo en la primera caja baja la segunda en lugar de pisarla.
+1. Pasa a **Diseño** y abre el panel **Diseño**, a la izquierda. Elige **Página y columnas** y después **Plantillas de página**. La lista muestra cada plantilla del libro con un dibujo de sus marcos.
+2. Pulsa **Nueva**. Se abre una plantilla llamada *Plantilla nueva*. Dale el **Id** `review` (el nombre que usará el Markdown) y el **Nombre** `Página de repaso` (el que muestra este panel). El id solo admite letras minúsculas, cifras y guiones.
+3. La plantilla empieza con un marco, `text`, que tiene activado **Recibe el texto suelto de la página**. Conviértelo en la banda de título: en **Nombre (ranura)**, escribe `title`; en **Estilo de marco**, elige `portada`, la banda azul que el libro ya usa para sus títulos; desactiva **Recibe el texto suelto de la página**, y en **Recibe** elige *Nivel 1*, para que este marco reciba el primer encabezado `#` de la página.
+4. Pulsa **Añadir marco**. El marco nuevo se abre debajo de la lista de marcos. En **Nombre (ranura)**, escribe `text` y activa **Recibe el texto suelto de la página**: todo lo que la página escriba fuera de un marco irá aquí.
+5. Añade otro marco. **Nombre (ranura)**: `remember`. **Estilo de marco**: `dato-campo`, una caja verde con pestaña. **Alto mínimo**: 30 mm, para que la caja no se quede pequeña cuando su texto sea corto.
+6. Añade un último marco. **Nombre (ranura)**: `try`. **Estilo de marco**: `actividad-sol`. **Alto mínimo**: 30 mm.
+7. En `text`, `remember` y `try`, pon **Ancho** en *Hasta el borde* y **Alto** en *Su contenido*: así ocupan todo el ancho de la página y tienen la altura de su texto.
+8. En **Grupos**, pulsa **Añadir grupo**. Llámalo `column`, déjalo en *Apilados* y pon **Espacio entre marcos** en 6 mm. En **Marcos del grupo, en el orden de la página**, marca los cuatro marcos en el orden en que van, con el título primero: la lista numera los marcos y las flechas suben o bajan cada uno un puesto. Un grupo coloca sus marcos uno debajo de otro y desplaza los de abajo cuando uno crece; por eso, si el texto de la primera caja se alarga, la segunda baja en lugar de quedar tapada.
 
-<Screenshot src="/docs-shots/es/template.webp" alt="El panel Diseño en Plantillas de página con la plantilla Página de repaso: sus cuatro marcos y su grupo, y los mismos marcos dibujados con contorno discontinuo sobre la página." caption="La plantilla: cuatro marcos y un grupo. En la página, las cajas discontinuas son los marcos y las etiquetas verdes dicen cómo se dimensiona cada uno." />
+<Screenshot src="/docs-shots/es/template.webp" alt="El panel Diseño en Plantillas de página con la plantilla Página de repaso: sus cuatro marcos y su grupo, y los mismos marcos dibujados con contorno discontinuo sobre la página." caption="La plantilla: cuatro marcos y un grupo. En la página, las cajas discontinuas son los marcos, y las etiquetas verdes indican cómo se dimensiona cada uno." />
 
-La plantilla no lleva palabras. Nada de lo que has puesto dice cuál es el título ni qué contienen las cajas: el estilo de caja da su aspecto a cada marco, y el grupo, su orden. Hay otros caminos hacia la misma plantilla. En modo Diseño puedes dibujar con el ratón un marco en un hueco vacío de una página compuesta y mover o cambiar de tamaño los que ya tienes (véase [Sandbox: las páginas compuestas](/es/docs/sandbox-composed-pages#plantillas-de-página)); **Duplicar** copia una plantilla para modificarla, y **Guardar maqueta como plantilla** convierte en plantilla nueva una página compuesta que te gusta.
+La plantilla no contiene palabras. Nada de lo que has puesto dice cuál es el título ni qué contienen las cajas: el estilo de caja da su aspecto a cada marco, y el grupo, su orden. Hay otros caminos para llegar a la misma plantilla. En el modo Diseño puedes dibujar un marco con el ratón en una zona vacía de una página compuesta, y mover los marcos que ya tienes o cambiar su tamaño (véase [Sandbox: las páginas compuestas](/es/docs/sandbox-composed-pages#plantillas-de-página)); **Duplicar** copia una plantilla para modificarla, y **Guardar maqueta como plantilla** convierte en una plantilla nueva una página compuesta que te guste.
 
 ## 3. Rellena la página desde el Markdown
 
 1. Pasa a **Contenido**, abre el panel **Texto** y pulsa **Ctrl+Fin** (**Cmd+↓** en un Mac) para ir al final del capítulo.
-2. Pulsa **Página compuesta** en la barra de herramientas del panel Texto. Un selector lista las plantillas de página del libro, cada una dibujada con sus marcos vacíos. Elige *Página de repaso*.
+2. Pulsa **Página compuesta** en la barra de herramientas del panel Texto. Se abre un selector con las plantillas de página del libro, cada una dibujada con sus marcos vacíos. Elige *Página de repaso*.
 3. El Sandbox escribe la página por ti, con un marco vacío por cada ranura, y selecciona la palabra `title` del encabezado. Escribe el título encima.
 
 ```md
@@ -69,15 +69,15 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
 ::::
 ```
 
-El encabezado va al marco que recibe el nivel 1, el párrafo que le sigue al marco que recibe el texto suelto, y cada `:::frame` al marco de su `slot`. El `label` son las palabras de la pestaña de una caja. La página aparece en el lienzo como la página 10, después de las nueve de la unidad: una página compuesta siempre empieza página nueva.
+El encabezado va al marco que recibe el nivel 1; el párrafo que lo sigue, al marco que recibe el texto suelto, y cada `:::frame`, al marco que indica su `slot`. El `label` es el texto de la pestaña de una caja. La página aparece en el canvas como página 10, después de las nueve de la unidad: una página compuesta siempre empieza una página nueva.
 
-<Screenshot src="/docs-shots/es/fill.webp" alt="El panel Texto con el Markdown de la página nueva y, a su lado, la página terminada con un título azul, un párrafo y dos cajas con pestaña." caption="La página en el Markdown y en el lienzo." />
+<Screenshot src="/docs-shots/es/fill.webp" alt="El panel Texto con el Markdown de la página nueva y, a su lado, la página terminada con un título azul, un párrafo y dos cajas con pestaña." caption="La página en el Markdown y en el canvas." />
 
-Fíjate en lo que el Markdown no dice: ni una posición, ni un tamaño, ni un color. Eso pertenece a la plantilla, y el mismo Markdown maquetado con otra plantilla tendría otro aspecto.
+Fíjate en lo que el Markdown no dice: ni una posición, ni un tamaño, ni un color. Todo eso es cosa de la plantilla, y el mismo Markdown maquetado con otra plantilla tendría otro aspecto.
 
 ## 4. Rotula el mapa
 
-Las páginas 6 y 7 llevan un mapa pintado que cruza la doble página. Sus palabras no forman parte de la imagen. Cada nombre es una línea del Markdown, dentro del `:::figure` del mapa:
+En las páginas 6 y 7 hay un mapa pintado que ocupa toda la doble página. Sus palabras no forman parte de la imagen: cada nombre es una línea del Markdown, dentro del `:::figure` del mapa.
 
 ```md
 :::figure{resource="mapa" slot="mapa"}
@@ -87,25 +87,25 @@ Las páginas 6 y 7 llevan un mapa pintado que cruza la doble página. Sus palabr
 :::
 ```
 
-`at` nombra un **ancla**: un punto de la imagen, definido una sola vez en el recurso de la imagen y compartido por todos los idiomas. Para añadir el puente de piedra de Molinar:
+`at` remite a un **ancla**: un punto con nombre de la imagen, que se define una sola vez en el recurso de la imagen y que comparten todos los idiomas. Para añadir el puente de piedra de Molinar:
 
-1. En el panel Texto ve a la figura del mapa (busca `at="bajo"`) y añade una línea debajo del último rótulo: `::label[Puente de piedra]{at="bridge"}`.
-2. Abre **Revisión**. En la lista aparece una entrada *Rótulo en un ancla que no existe* para la página 6: la imagen no tiene ningún ancla llamada `bridge`. Pulsa el botón con la chincheta de la entrada, *Colocar el ancla bridge en la imagen*.
-3. Un cuadro muestra el mapa con las anclas que tiene. El nombre `bridge` está elegido en *Rótulos sin ancla*. Haz clic en la imagen, donde está el puente.
+1. En el panel Texto, ve a la figura del mapa (busca `at="bajo"`) y añade una línea debajo del último rótulo: `::label[Puente de piedra]{at="bridge"}`.
+2. Abre **Revisión**. En la lista aparece un aviso *Rótulo en un ancla que no existe* para la página 6: la imagen no tiene ningún ancla llamada `bridge`. Pulsa el botón de la chincheta del aviso, *Colocar el ancla bridge en la imagen*.
+3. Se abre un cuadro de diálogo con el mapa y las anclas que tiene. El nombre `bridge` aparece seleccionado en *Rótulos sin ancla*. Haz clic en la imagen, en el punto donde está el puente.
 4. Pon el **Estilo de rótulo** del ancla nueva en `pueblo`, el estilo de los pueblos, y pulsa **Guardar**.
 
-<Screenshot src="/docs-shots/es/anchor.webp" alt="El cuadro Anclas: el mapa con sus puntos, el ancla nueva llamada bridge elegida y su campo de estilo de rótulo." caption="El ancla nueva es un clic en la imagen; su estilo de rótulo hace que se parezca a los nombres de los pueblos." />
+<Screenshot src="/docs-shots/es/anchor.webp" alt="El cuadro Anclas: el mapa con sus puntos, el ancla nueva llamada bridge seleccionada y su campo de estilo de rótulo." caption="Para crear el ancla basta con hacer clic en la imagen; su estilo de rótulo hace que se parezca a los nombres de los pueblos." />
 
-<Screenshot src="/docs-shots/es/map.webp" alt="El mapa que cruza las páginas 6 y 7 con el rótulo nuevo Puente de piedra sobre el puente, junto a los rótulos de los pueblos." caption="El rótulo queda en el punto en que hiciste clic, con las fuentes del propio libro." />
+<Screenshot src="/docs-shots/es/map.webp" alt="El mapa que ocupa las páginas 6 y 7 con el rótulo nuevo Puente de piedra sobre el puente, junto a los rótulos de los pueblos." caption="El rótulo queda en el punto en que hiciste clic, con las fuentes del propio libro." />
 
-Las palabras *Puente de piedra* son Markdown; el punto es parte de la imagen. Cuando traduzcas la página, la misma ancla recibirá otras palabras.
+Las palabras *Puente de piedra* son Markdown; el punto forma parte de la imagen. Cuando traduzcas la página, la misma ancla recibirá otras palabras.
 
 ## 5. Traduce la página
 
-Una traducción es la misma plantilla con otras palabras. El Sandbox la guarda como otra edición del mismo libro: la barra que hay sobre el lienzo cambia entre las ediciones y el panel Revisión las lee todas (véase [Ediciones de un libro](/es/docs/sandbox-previews#ediciones-de-un-libro)). Para crearla:
+Una traducción es la misma plantilla con otras palabras. El Sandbox la guarda como otra edición del mismo libro: una barra de herramientas en el borde izquierdo del canvas permite pasar de una edición a otra, y el panel Revisión las revisa todas (véase [Ediciones de un libro](/es/docs/sandbox-previews#ediciones-de-un-libro)). Esa barra aparece cuando el puntero llega al borde, y su botón de fijar la deja abierta. Para crearla:
 
-1. Abre **Libros**, pulsa **⋯** en tu libro y elige **Añadir un idioma…**. Elige el idioma y pulsa **Añadir y abrir**. El Sandbox copia la edición en pantalla en una nueva, pone su **Idioma del documento** en el idioma elegido y la abre. La separación en sílabas, las comillas y las palabras que escribe el propio motor (como *Continued* en el corte de una caja) siguen ese idioma. El texto sigue siendo el del original.
-2. En el panel **Texto** traduce las palabras y deja lo demás.
+1. Abre **Libros**, pulsa **⋯** en tu libro y elige **Añadir un idioma…**. Elige el idioma y pulsa **Añadir y abrir**. El Sandbox copia la edición que hay en pantalla en una nueva, pone su **Idioma del documento** en el idioma elegido y la abre. La separación silábica, las comillas y las palabras que escribe el propio motor (como *Continued* en el corte de una caja) siguen ese idioma. El texto sigue siendo el del original.
+2. En el panel **Texto**, traduce las palabras y deja lo demás.
 
 <table>
   <thead>
@@ -117,7 +117,7 @@ Una traducción es la misma plantilla con otras palabras. El Sandbox la guarda c
   <tbody>
     <tr>
       <td>El texto de los encabezados, los párrafos y las listas</td>
-      <td>Los cuatro dos puntos, la palabra <code>page</code> y el <code>template="…"</code> de la valla</td>
+      <td>Los cuatro signos de dos puntos, la palabra <code>page</code> y el <code>template="…"</code> de la línea de apertura</td>
     </tr>
     <tr>
       <td>El <code>label="…"</code> de un marco</td>
@@ -148,35 +148,35 @@ Draw a river from its spring to the sea. Write the names of the three courses on
 ::::
 ```
 
-<Screenshot src="/docs-shots/es/translate.webp" alt="La copia del libro en el otro idioma: el panel Texto con la página traducida y, en el lienzo, la página con el título, el texto y las pestañas traducidos." caption="La página traducida: la plantilla es la misma, las palabras no." />
+<Screenshot src="/docs-shots/es/translate.webp" alt="La copia del libro en el otro idioma: el panel Texto con la página traducida y, en el canvas, la página con el título, el texto y las pestañas traducidos." caption="La página traducida: la plantilla es la misma; las palabras, no." />
 
 ## 6. Revisa lo que no cabe
 
-Las palabras no miden lo mismo de un idioma a otro, y una caja que contenía el texto en un idioma puede no contener el del otro. El panel Revisión encuentra esos marcos. Para ver uno, pega tres o cuatro párrafos más de cualquier texto en el marco `remember` de la página traducida, de modo que contenga más de lo que la página puede dar de sí.
+Las palabras no miden lo mismo en todos los idiomas, y en una caja donde cabía el texto de un idioma puede no caber el de otro. El panel Revisión encuentra esos marcos. Para ver uno, pega tres o cuatro párrafos más de cualquier texto en el marco `remember` de la página traducida, de modo que tenga más texto del que cabe en la página.
 
-Ahora la página muestra el marco con un contorno rojo y, bajo su pie, una banda que dice cuánto falta (*faltan 14,9 mm*). En **Revisión**, bajo *Páginas compuestas*, la entrada *El texto no cabe en su marco* explica qué probó la maquetación antes de rendirse (más sitio de los marcos vecinos y, después, un texto más pequeño) y enumera las salidas como botones:
+Ahora la página muestra el marco con un contorno rojo y, bajo su pie, una banda que indica cuánto falta (*faltan 14,9 mm*). En **Revisión**, bajo *Páginas compuestas*, el aviso *El texto no cabe en su marco* explica qué intentó la maquetación antes de darse por vencida (tomar sitio de los marcos vecinos y, después, reducir el texto) y ofrece las soluciones en forma de botones:
 
-- *deja que el texto baje al 82,5 % (fit.minScale)* permite que el texto de este marco se reduzca hasta ese tamaño. Sirve cuando sobran pocas líneas.
-- *haz que siga en la página siguiente (overflow.continueIn)* manda lo que no cabe a una página añadida después de esta. Sirve para un texto más largo.
-- *recorta unos 303 caracteres* no cambia nada. Selecciona el texto del marco y te dice cuánto debes quitar.
+- *deja que el texto baje al 82,5 % (fit.minScale)* permite que el texto de este marco se reduzca hasta ese tamaño. Es lo indicado cuando sobran pocas líneas.
+- *haz que siga en la página siguiente (overflow.continueIn)* envía lo que no cabe a una página que se añade detrás de esta. Es lo indicado para un texto más largo.
+- *recorta unos 303 caracteres* no cambia nada: selecciona el texto del marco y te dice cuánto debes quitar.
 
-Un botón que cambia la plantilla (y con ella todas las páginas que la usan) pregunta antes y nombra el ajuste. Pulsa **Cambiar**. La página se maqueta de nuevo, la caja termina con la palabra del corte (*Continued*) y el resto sigue al principio de una página añadida. **Cmd/Ctrl+Z** deshace el cambio. **Reajuste**, en la barra que hay sobre el lienzo, abre *Qué se ha movido y por qué*: los marcos cuyo tamaño o lugar cambió la maquetación para que cupiera su contenido, con el motivo en palabras.
+Un botón que cambia la plantilla (y, con ella, todas las páginas que la usan) pide confirmación antes e indica qué ajuste va a cambiar. Pulsa **Cambiar**. La página se vuelve a maquetar, la caja termina con la palabra que marca el corte (*Continued*) y el resto continúa al principio de una página añadida. **Cmd/Ctrl+Z** deshace el cambio. **Reajuste**, en esa misma barra del borde del canvas, abre *Qué se ha movido y por qué*: los marcos cuyo tamaño o posición ha cambiado la maquetación para que quepa su contenido, con el motivo explicado en palabras.
 
-<Screenshot src="/docs-shots/es/checks.webp" alt="El panel Revisión con la entrada El texto no cabe en su marco y tres botones con salidas posibles, y la página con su primera caja marcada con un contorno rojo y una banda que dice faltan 14,9 mm." caption="Un marco que no cabe, y los arreglos que la maquetación ha calculado para él." />
+<Screenshot src="/docs-shots/es/checks.webp" alt="El panel Revisión con el aviso El texto no cabe en su marco y tres botones con soluciones, y la página con su primera caja marcada con un contorno rojo y una banda que dice faltan 14,9 mm." caption="Un marco en el que no cabe el texto, y las soluciones que ha calculado la maquetación." />
 
 ## 7. Selecciona sobre la página y en el texto
 
-La página y su Markdown se siguen el uno al otro.
+La página y su Markdown van siempre a la par.
 
-- **De la página al texto.** Haz clic en las palabras de un marco: el cursor salta a ese párrafo en el panel Texto, y una ruta bajo la vista previa dice dónde estás (*Página 10 › column › try › párrafo 1*). En modo Diseño, ese mismo clic elige el marco para el editor de plantillas.
-- **Del texto a la página.** Pon el cursor en un párrafo y en la página se marcan con un contorno el marco que lo contiene y el propio párrafo; la misma ruta dice dónde están.
-- **Desde una revisión.** Haz clic en una entrada del panel Revisión y el Sandbox te lleva a la página, elige el marco y pone el cursor en su texto. En un libro con varias ediciones, cambia a la edición que tiene el problema.
+- **De la página al texto.** Haz clic en las palabras de un marco: el cursor salta a ese párrafo en el panel Texto, y una ruta bajo la vista previa indica dónde estás (*Página 10 › column › try › párrafo 1*). En el modo Diseño, ese mismo clic selecciona el marco en el editor de plantillas.
+- **Del texto a la página.** Pon el cursor en un párrafo: en la página se marcan con un contorno el párrafo y el marco que lo contiene, y la misma ruta indica dónde están.
+- **Desde un aviso.** Haz clic en un aviso del panel Revisión y el Sandbox te lleva a la página, selecciona el marco y pone el cursor en su texto. En un libro con varias ediciones, pasa a la edición que tiene el problema.
 
-<Screenshot src="/docs-shots/es/select.webp" alt="La página con la segunda caja marcada con un contorno naranja y el panel Texto mostrando el marco elegido en su Markdown." caption="Un clic en la página pone el cursor en su Markdown, y la ruta bajo la vista previa dice de qué marco se trata." />
+<Screenshot src="/docs-shots/es/select.webp" alt="La página con la segunda caja marcada con un contorno naranja y el panel Texto, que muestra en el Markdown el marco seleccionado." caption="Un clic en la página pone el cursor en su Markdown, y la ruta bajo la vista previa indica de qué marco se trata." />
 
 ## Dónde seguir
 
-- [Pasar un libro a páginas compuestas](/es/docs/migrating-to-composed-pages): un libro que guarda el texto de sus páginas en sus estilos puede pasarlo al Markdown.
-- [Páginas compuestas](/es/docs/composed-pages): cada atributo de la valla de página, de la figura y de las líneas de rótulo, cómo se compone una página y cada aviso con su arreglo.
-- [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages): cada campo de una plantilla, de un marco y de un grupo, la herencia y las dobles páginas.
-- [Sandbox: las páginas compuestas](/es/docs/sandbox-composed-pages): las pantallas de las plantillas, los estilos de marco, las revisiones en todas las ediciones y los arreglos.
+- [Pasar un libro a páginas compuestas](/es/docs/migrating-to-composed-pages): si un libro guarda el texto de sus páginas en sus estilos, ese texto se puede pasar al Markdown.
+- [Páginas compuestas](/es/docs/composed-pages): todos los atributos del bloque de página (el que se abre con cuatro signos de dos puntos), de la figura y de las líneas de rótulo; cómo se compone una página, y todos los avisos con su solución.
+- [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages): todos los campos de una plantilla, de un marco y de un grupo; la herencia y las dobles páginas.
+- [Sandbox: las páginas compuestas](/es/docs/sandbox-composed-pages): las pantallas de las plantillas y de los estilos de marco, la revisión de todas las ediciones y las soluciones.

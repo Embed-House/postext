@@ -10,7 +10,7 @@ pageNotes: { "9": "L’index s’ouvre en page 305 sous le même bandeau rouge q
 
 ## Ce que vous allez composer
 
-La partie IV de *Principles of Human Physiology*, un manuel sur une page de 210 × 277 mm : le chapitre 14, *The heart as a pump*, et le chapitre 15, *Vessels and blood pressure*, s’ouvrent sur des rectos sous un bandeau rouge et composent leurs notes cliniques et leurs légendes dans un couloir extérieur. La partie se termine par un index d’environ quatre-vingt-dix entrées et trente sous-entrées sur deux colonnes, comme le compose un manuel de médecine : entrées en minuscules, lettres de groupe dans la couleur d’accent, sous-entrées en retrait d’un cadratin, page de définition en gras, *see* et *see also* en italique. Aucun numéro de page n’y a été saisi. Chaque terme est marqué dans le chapitre, là où le texte l’explique, et l’index lit les pages où ces marques sont tombées, folios 297 à 304.
+La partie IV de *Principles of Human Physiology*, un manuel sur une page de 210 × 277 mm : le chapitre 14, *The heart as a pump*, et le chapitre 15, *Vessels and blood pressure*, s’ouvrent sur des rectos sous un bandeau rouge et composent leurs notes cliniques et leurs légendes dans un couloir extérieur. La partie se termine par un index d’environ quatre-vingt-dix entrées et trente sous-entrées sur deux colonnes, comme le compose un manuel de médecine : entrées en minuscules, lettres de groupe dans la couleur d’accent, sous-entrées en retrait d’un cadratin, page de définition en gras, *see* et *see also* en italique. Aucun numéro de page n’y a été saisi. Chaque terme est marqué dans le chapitre, là où le texte l’explique, et l’index relève les pages où ces marques sont tombées, folios 297 à 304.
 
 ## Préparation
 
@@ -36,13 +36,13 @@ L’index est le dernier document Markdown du livre, `# Index {style="index"}` s
 
 <Excerpt region="build" />
 
-`buildBundle` met les chapitres en page dans l’ordre et découvre que le troisième contient `:::index`. Après la première passe, il rassemble chaque marque de chaque chapitre avec la page où elle est tombée, et transmet cette liste au chapitre d’index comme plan. Puis il remet le livre en page, jusqu’à trois passes, jusqu’à ce qu’aucun numéro de page ne bouge. Réécrivez un paragraphe du chapitre 14, changez le format ou le corps du texte, et l’index se réimprime avec les nouvelles pages. Dans le PDF, chaque numéro de page renvoie à sa page.
+`buildBundle` met les chapitres en page dans l’ordre et découvre que le troisième contient `:::index`. Après la première passe, il rassemble chaque marque de chaque chapitre avec la page où elle est tombée, et transmet cette liste au chapitre d’index comme plan. Puis il remet le livre en page, jusqu’à trois passes, jusqu’à ce qu’aucun numéro de page ne bouge. Réécrivez un paragraphe du chapitre 14, changez le format ou le corps du texte courant, et l’index se réimprime avec les nouvelles pages. Dans le PDF, chaque numéro de page renvoie à sa page.
 
 ### 5 · Ouvertures et titres courants
 
 <Excerpt region="opener" />
 
-Les chapitres et l’index partagent une même ouverture : un bandeau du bord de coupe jusqu’à 62 mm (46 mm pour l’index), le titre posé sur son pied par une boîte alignée en bas, si bien qu’un titre de deux lignes et un titre d’une ligne finissent sur la même ligne. Le surtitre imprime `{chapterNumber}`, que l’attribut de titre `{startAt=14}` règle à 14, et `page.pageNumbering.startAt: 297` place la partie là où elle se trouverait dans le livre. Le style d’index est `numbered: false` : il ne devient donc pas le chapitre 16.
+Les chapitres et l’index partagent une même ouverture : un bandeau du bord de coupe jusqu’à 62 mm (46 mm pour l’index), le titre posé sur son pied par une boîte alignée en bas : un titre de deux lignes et un titre d’une ligne finissent donc sur la même ligne. Le surtitre imprime `{chapterNumber}`, que l’attribut de titre `{startAt=14}` règle à 14, et `page.pageNumbering.startAt: 297` place la partie là où elle se trouverait dans le livre. Le style d’index est `numbered: false` : il ne devient donc pas le chapitre 16.
 
 ## Variantes
 
@@ -67,4 +67,4 @@ Un index court enchaîne souvent ses groupes, séparés seulement par une ligne 
 ## Erreurs fréquentes
 
 - La capture de cette recette ne signale pas `indexSeeUnknown` : un renvoi dont la cible s’écrit autrement que l’entrée (*Reynolds number* contre *number, Reynolds*) s’imprime sans protester. Relisez chaque *See* de l’index terminé en le comparant à sa cible.
-- Une liste de sous-entrées coupée entre deux colonnes ne répète pas son entrée principale sous forme de ligne *heart (cont.)* ; une entrée sans page propre reste toujours avec sa première sous-entrée, si bien qu’une entrée principale ne finit jamais seule une colonne.
+- Une liste de sous-entrées coupée entre deux colonnes ne répète pas son entrée principale sous forme de ligne *heart (cont.)* ; une entrée sans page propre reste toujours avec sa première sous-entrée : une entrée principale ne finit donc jamais seule une colonne.

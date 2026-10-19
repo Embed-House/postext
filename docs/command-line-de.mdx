@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Kommandozeile: postext im Terminal, in einem Skript oder einem Agenten',
   sidebarTitle: 'Kommandozeile',
-  description: 'Eine eigenständige ausführbare Datei für macOS, Linux und Windows, die ein .postext-Buch, einen Buchordner oder lose Markdown-Dateien in PDF, HTML, EPUB, Seitenbilder und Word umwandelt, Pakete packt und Bücher prüft, mit JSON-Ausgabe für Skripte und Agenten',
+  description: 'Eine eigenständige ausführbare Datei für macOS, Linux und Windows. Sie wandelt ein .postext-Buch, einen Buchordner oder lose Markdown-Dateien in PDF, HTML, EPUB, Seitenbilder und Word um, packt Pakete, prüft Bücher und liefert JSON-Ausgabe für Skripte und Agenten',
   lang: 'de',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 45,
   plainSummary: "Diese Seite richtet sich an alle, die Bücher mit Postext im Terminal statt auf der Website machen wollen. Sie laden eine einzige Datei für Ihren Computer herunter und führen sie aus, ohne etwas zu installieren. Sie geben ihr Ihr Buch oder ein paar Textdateien, und sie erzeugt ein PDF, eine Webseite, ein E-Book, Bilder der Seiten oder ein Word-Dokument. Sie kann ein Buch auch auf Probleme prüfen und seine Dateien zu einer einzigen packen. Auch Programme und KI-Assistenten können sie nutzen, denn sie kann in einem Format antworten, das diese leicht lesen.",
@@ -22,7 +22,7 @@ Seiten, ein Word-Dokument. Außerdem packt und entpackt sie `.postext`-Pakete, i
 Word-Dokumente, beschreibt ein Buch und prüft es auf Probleme.
 
 Sie ist **eine eigenständige ausführbare Datei** pro System. Die Postext-Engine, die
-Writer für PDF, EPUB, HTML und Word, der Seitenmaler (Skia), HarfBuzz für
+Schreiber für PDF, EPUB, HTML und Word, der Renderer für die Seiten (Skia), HarfBuzz für
 Arabisch und andere komplexe Schriftsysteme, die ICC-Druckprofile und die Standardschriften
 (EB Garamond und Open Sans) stecken alle darin. Es gibt keine Laufzeitumgebung,
 kein Paket und keine Bibliothek zu installieren, und das Layout ist das der Sandbox: Dasselbe Buch
@@ -90,7 +90,7 @@ Drei Markdown-Dateien in einem Ordner sind ein Buch, je ein Kapitel, in der Reih
 postext pdf chapters/ --name "Field notes" -o field-notes.pdf
 ```
 
-Die Front Matter des ersten Kapitels gibt dem Buch Titel und Autor, und die
+Das Frontmatter des ersten Kapitels gibt dem Buch Titel und Autor, und die
 Standardwerte der Engine erledigen den Rest: zwei Spalten, ein Grundlinienraster, Text im Blocksatz
 mit Silbentrennung, Kolumnentitel. Fügen Sie eine Konfiguration und Bilder hinzu, wenn Sie sie
 brauchen:
@@ -108,7 +108,7 @@ postext image my-book.postext --page 1 -o cover.png
 
 ## Was ein Buch sein kann
 
-Jeder Befehl, der ein Buch liest, nimmt eine dieser Formen an:
+Jeder Befehl, der ein Buch liest, akzeptiert jede dieser Formen:
 
 - **Eine `.postext`-Datei**: das Paket, das die Sandbox exportiert und öffnet (siehe
   [Pakete](/de/docs/configuration-bundles#pakete-dateien-im-format-postext)).
@@ -150,13 +150,13 @@ Konfiguration des Buchs gelegt. Ein mehrsprachiges Paket wird in seiner eigenen 
     <tr><td><code>pack</code></td><td>Einen Buchordner oder lose Markdown-Dateien als eine einzige <code>.postext</code>-Datei.</td></tr>
     <tr><td><code>unpack</code></td><td>Eine <code>.postext</code>-Datei als Ordner.</td></tr>
     <tr><td><code>info</code></td><td>Kapitel, Sprachen, Ressourcen und Schriften des Buchs, mit <code>--pages</code> auch seine Seitenzahl.</td></tr>
-    <tr><td><code>check</code></td><td>Umbricht das Buch und meldet jedes Problem; für den Druck den Preflight.</td></tr>
-    <tr><td><code>build</code></td><td>Umbricht das Buch einmal und schreibt mehrere der obigen Ausgaben; <code>--watch</code> läuft weiter und baut bei jedem Speichern neu.</td></tr>
+    <tr><td><code>check</code></td><td>Setzt das Buch und meldet jedes Problem; für den Druck auch den Preflight.</td></tr>
+    <tr><td><code>build</code></td><td>Setzt das Buch einmal und schreibt mehrere der obigen Ausgabeformate; <code>--watch</code> läuft weiter und baut bei jedem Speichern neu.</td></tr>
   </tbody>
 </table>
 
 Jeder Befehl schreibt in das Verzeichnis, in dem Sie ihn aufrufen, benannt nach der Eingabe, es sei denn,
-`-o` gibt den Pfad an. `-o -` schreibt eine einzelne Ausgabe auf die Standardausgabe.
+`-o` gibt den Pfad an (`images` schreibt in `pages/`). `-o -` schreibt eine einzelne Ausgabe auf die Standardausgabe.
 
 ### pdf
 
@@ -193,7 +193,7 @@ die Bilder, die Schriften und selbst gehostete Videos enthält. `--assets embed|
 wählt für jeden Pfad die eine oder andere Variante. Die Seiten sind das Drucklayout, in
 Bildschirmgröße gezeigt: nebeneinander (`--mode multi`, Standard) oder untereinander
 (`--mode single`). Schriften mit der Markierung `redistributable: false` werden genannt, aber nicht
-kopiert. Nennt die Schrift einen `fallback`, werden stattdessen die Schnitte dieser freien Schrift unter dem Namen der Schrift geschrieben (seit postext 1.43).
+kopiert. Gibt die Familie einen `fallback` an, werden stattdessen die Schnitte dieser freien Familie unter dem Namen der Familie geschrieben (seit postext 1.43).
 
 ### epub
 
@@ -206,8 +206,8 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 Text; `--layout reflowable` lässt das Lesesystem den Text für seinen Bildschirm
 neu setzen (siehe [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub)). Das
 Cover ist das Vorschaubild des Buchs, es sei denn, `--cover` gibt ein Bild an. Die
-Metadaten des Pakets (Titel, Autoren, Sprache, Kennung) kommen aus der Front Matter
-des ersten Kapitels, wie in der Sandbox. Schriften mit `redistributable: false` werden nicht kopiert; eine Schrift mit `fallback` wird mit den Schnitten dieser freien Schrift unter ihrem eigenen Namen eingebettet (seit postext 1.43).
+Metadaten des Pakets (Titel, Autoren, Sprache, Kennung) kommen aus dem Frontmatter
+des ersten Kapitels, wie in der Sandbox. Schriften mit `redistributable: false` werden nicht kopiert; eine Familie, die einen `fallback` angibt, wird mit den Schnitten dieser freien Familie unter ihrem eigenen Namen eingebettet (seit postext 1.43).
 
 ### image und images
 
@@ -219,10 +219,10 @@ postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}
 ```
 
 Seiten werden **wie gedruckt** benannt (`12`, `iv`, ein Bereich `7-9`) oder **nach ihrer Position**
-im Buch mit `#` (`#1` ist die erste Seite, egal was sie druckt, `#10-#20`,
-`#30-` bis zum Ende). `--pages` nimmt eine kommagetrennte Liste an. Der Maler ist die
-Canvas-Ansicht der Sandbox, ein Bild zeigt die Seite also genau wie umbrochen, ohne
-den Umweg über ein PDF.
+im Buch mit `#` (`#1` ist die erste Seite, egal, welche Nummer sie trägt, `#10-#20`,
+`#30-` bis zum Ende). `--pages` nimmt eine kommagetrennte Liste an. Gezeichnet wird wie in
+der Canvas-Ansicht der Sandbox, ein Bild zeigt die Seite also genau so, wie sie gesetzt ist,
+ohne den Umweg über ein PDF.
 
 - `--format png|jpeg|webp` (oder die Endung von `-o`), `--quality 1-100` für
   JPEG und WebP.
@@ -233,7 +233,8 @@ den Umweg über ein PDF.
   standardmäßig `page-{n:03}`.
 - `--print-preview`: die Seite so, wie die Druckerei sie wiedergeben wird, über das
   Ausgabeprofil, mit eingezeichnetem Endformat und Anschnitt.
-- `--jobs N`: wie viele Bilder gleichzeitig kodiert werden.
+- `--jobs N`: wie viele Bilder gleichzeitig kodiert werden (standardmäßig so viele, wie
+  der Rechner Prozessoren hat).
 
 ### docx und import-docx
 
@@ -245,7 +246,7 @@ postext import-docx manuscript.docx -o manuscript.postext
 
 `docx` schreibt die Kapitel mit Word-Formatvorlagen für Überschriften, Absätze, Kästen,
 Zitate, Listen und Anmerkungen. Was Word nicht ausdrücken kann, bleibt wörtlich in den
-Formatvorlagen *Postext Markup* erhalten, und die Importvorlage reist in der Datei mit, sodass
+Formatvorlagen *Postext Markup* erhalten, und die Importvorlage wird in der Datei mitgespeichert, sodass
 sich das Dokument unverändert wieder importieren lässt, nachdem ein Lektorat daran gearbeitet hat.
 `import-docx` macht aus einem Word-Dokument ein Buch: ein Kapitel an jeder Überschrift
 der Ebene 1 (`--no-split` behält eines), Bilder und Tabellen als Ressourcen, und
@@ -254,11 +255,11 @@ Formatierung, getippte Nummerierung …). `--template` nimmt eine Importvorlage 
 aus der Sandbox gespeicherte `.json`-Datei oder eine `.docx`-Datei, die eine enthält).
 
 Der Zeichenabstand gehört zur Formatvorlage, nicht zum Text, und steht deshalb nicht im
-Markdown. `docx` schreibt das `letterSpacing` der Absatzformate, der Überschriftenformate
+Markdown. `docx` schreibt das `letterSpacing` der Absatzformate, der Überschriftenstile
 und der Überschriftenebenen als Zeichenabstand der Word-Formatvorlage, und `import-docx`
-liest ihn in em der Schriftgröße der Vorlage zurück: Er wird als `letterSpacing` auf die Formate
-des Buchs gesetzt, die keinen eigenen haben (die Absatz- und Überschriftenformate der
-`--config`-Datei, auf die sich die Word-Formatvorlagen abbilden, und die Überschriftenebenen);
+liest ihn in em der Schriftgröße der Vorlage zurück: Er wird als `letterSpacing` bei den Formaten
+des Buchs gesetzt, die keinen eigenen haben (den Absatzformaten und Überschriftenstilen der
+`--config`-Datei, denen die Word-Formatvorlagen entsprechen, und den Überschriftenebenen);
 einen Zeichenabstand, den das Buch schon festlegt, lässt er unverändert. Mit `--json` führt
 `styleTracking` auf, was gesetzt wurde (`applied`) und was übrig blieb (`skipped`). Seit postext 1.39.
 
@@ -272,7 +273,9 @@ postext unpack my-book.postext -o my-book/
 
 `pack` packt einen Buchordner so, wie er ist, als ZIP oder baut ein Paket aus losen Markdown-Dateien.
 Dieselbe Eingabe ergibt immer dieselben Bytes, sodass sich ein Paket vergleichen oder
-hashen lässt. `unpack` weigert sich, in einen Ordner zu schreiben, der nicht leer ist, es sei denn,
+hashen lässt. Bei losen Markdown-Dateien setzen `--id`, `--description` und `--thumbnail FILE`
+(ein Titelbild) die ID, die Beschreibung und das Vorschaubild des Pakets; die ID ist
+standardmäßig ein Slug des Namens. Ein Ordner behält, was seine `preset.json` angibt. `unpack` weigert sich, in einen Ordner zu schreiben, der nicht leer ist, es sei denn,
 `--force` ist angegeben.
 
 ### info und check
@@ -284,10 +287,10 @@ postext check chapters/ --strict --json
 ```
 
 `info` listet die Kapitel auf (Titel, Wörter, Datei und mit `--pages` ihre
-Seiten), die Ressourcen und jede Schriftfamilie mit ihrer Herkunft (das
-Buch, ein Ordner, die ausführbare Datei, der Download-Cache oder die Ersatzschrift). Bei einem Buch, das angibt, wo es beginnt (`start` in `preset.json`: ein Auszug, der auf Seite 58 in Kapitel 4 einsetzt), gibt es auch das aus, und jeder Befehl umbricht das Buch ab dort.
+Seiten), die Ressourcen und jede Schriftfamilie mit ihrer Herkunft (Buch,
+Ordner, ausführbare Datei, Download-Cache oder Ersatzschrift). Bei einem Buch, das angibt, wo es beginnt (`start` in `preset.json`: ein Auszug, der auf Seite 58 in Kapitel 4 einsetzt), gibt `info` auch das aus, und jeder Befehl setzt das Buch ab dort.
 
-`check` umbricht das Buch und meldet, was das Bedienfeld Prüfungen der Sandbox zeigt:
+`check` setzt das Buch und meldet, was das Bedienfeld Prüfungen der Sandbox zeigt:
 Markdown, das nicht geschlossen wird, unbekannte Ressourcen, Direktiven und Formate, Kästen,
 die das Layout erzwingen musste, fehlende Schriften, Einstellungen, die die Engine
 ersetzen musste, und bei einem für den Druck eingerichteten Buch (oder mit `--preflight`) den
@@ -298,13 +301,13 @@ und für den Druck auf dem Papier des Ausgabeprofils. Jedes Problem nennt die
 Kapiteldatei, die Zeile und die Seite. Der Exit-Code ist 3, wenn ein Fehler gefunden wird, oder mit `--strict`
 bei jeder Warnung.
 
-Außerdem meldet es Gestaltungstexte der Konfiguration, die den Text des
+Außerdem meldet er Gestaltungstexte der Konfiguration, die den Text des
 Buches statt Platzhaltern enthalten (`contentInConfig`), einmal je
 Überschriftenstil, Kolumnentitel oder Teilgestaltung, mit dem Pfad jedes
 Textes: Verschieben Sie diesen Text ins Markdown oder tragen Sie Titel oder
 Verlagsnamen in `checks.contentInConfig.allow` ein.
 
-Bei einem Buch mit Seitenvorlagen meldet `check` außerdem Text, der nicht in seinen Rahmen passt (`frameOverflow`, mit den Schritten, die die Umbruchleiter versucht hat, und den Änderungen, die ihn passen ließen), eine Geschichte, die über die Seiten hinausläuft, die ein Rahmen anfügen darf (`frameContinuationLimit`), einen Sprung auf eine Seite, die nicht folgt (`continueTargetMissing`), und Abbildungsbeschriftungen, die sich nicht zeichnen lassen oder aufeinanderstoßen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Nach den Warnungen gibt es pro zusammengesetzter Seite mit Ereignissen eine `reflow`-Zeile aus, und `--json` liefert die Schritte, die Vorschläge und das Umbruchprotokoll als Daten. Siehe [Zusammengesetzte Seiten › Warnungen](/de/docs/composed-pages#warnungen) und [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll).
+Bei einem Buch mit Seitenvorlagen meldet `check` außerdem Text, der nicht in seinen Rahmen passt (`frameOverflow`, mit den Einpassstufen, die versucht wurden, und den Änderungen, die das Problem beheben würden), einen Artikel, der über die Seiten hinausläuft, die ein Rahmen anfügen darf (`frameContinuationLimit`), einen Sprung auf eine Seite, die nicht folgt (`continueTargetMissing`), und Beschriftungen von Abbildungen, die sich nicht zeichnen lassen oder sich überschneiden (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Nach den Warnungen gibt es pro zusammengesetzter Seite mit Ereignissen eine `reflow`-Zeile aus, und `--json` liefert die Schritte, die Vorschläge und das Umbruchprotokoll als Daten. Siehe [Zusammengesetzte Seiten › Warnungen](/de/docs/composed-pages#warnungen) und [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll).
 
 ### build und --watch
 
@@ -313,13 +316,13 @@ postext build book/ --pdf out/book.pdf --html out/book.html --images out/pages -
 postext build chapters/ --pdf book.pdf --watch
 ```
 
-`build` umbricht das Buch einmal und schreibt jede Ausgabe, die Sie nennen (`--pdf`,
+`build` setzt das Buch einmal und schreibt jedes Ausgabeformat, das Sie angeben (`--pdf`,
 `--html`, `--epub`, `--images`, `--docx`), mit den Optionen des jeweiligen Befehls.
 `--watch` bleibt aktiv: Wenn sich ein Kapitel, die Konfiguration oder ein Bild
-ändert, wird das Buch neu umbrochen, mit weiterhin geladenen Schriften und Engine,
-für ein Kapitel typischerweise in einem Bruchteil einer Sekunde, und die Ausgaben werden
-neu geschrieben. Ein Speichern, das das Buch kaputt macht, gibt den Fehler aus und behält die letzten
-fehlerfreien Dateien.
+ändert, wird das Buch neu gesetzt, wobei Schriften und Engine geladen bleiben,
+für ein Kapitel typischerweise in einem Bruchteil einer Sekunde, und die Dateien werden
+neu geschrieben. Führt eine gespeicherte Änderung zu einem Fehler, wird der Fehler ausgegeben,
+und die zuletzt fehlerfreien Dateien bleiben erhalten.
 
 ## Optionen für jedes Buch
 
@@ -329,7 +332,7 @@ fehlerfreien Dateien.
   </thead>
   <tbody>
     <tr><td><code>--locale TAG</code></td><td>Die Sprache, in der ein mehrsprachiges Buch gelesen wird (<code>es</code>, <code>en</code>, <code>pt-BR</code> …).</td></tr>
-    <tr><td><code>--chapters LIST</code></td><td>Umbricht nur einige Kapitel: <code>2</code>, <code>1,3-5</code>, <code>4-</code>. Schneller bei einem langen Buch; ihre Seiten werden ab ihrer eigenen ersten Seite nummeriert.</td></tr>
+    <tr><td><code>--chapters LIST</code></td><td>Setzt nur einige Kapitel: <code>2</code>, <code>1,3-5</code>, <code>4-</code>. Schneller bei einem langen Buch; ihre Seiten werden ab ihrer eigenen ersten Seite nummeriert.</td></tr>
     <tr><td><code>--set PATH=VALUE</code></td><td>Ändert eine Einstellung für diesen Lauf, als Pfad mit Punkten: <code>--set page.dpi=150</code>, <code>--set bodyText.fontFamily=Lora</code>, <code>--set headings.levels.0.italic=true</code>. Der Wert wird als JSON gelesen, wenn das geht (Zahlen, true und false, Objekte), sonst als Text. Wiederholbar.</td></tr>
     <tr><td><code>--config FILE</code></td><td>Eine Konfiguration (oder eine <code>preset.json</code>) für lose Markdown-Dateien, oder über die eigene eines Buchs gelegt.</td></tr>
     <tr><td><code>--resources DIR</code>, <code>--fonts DIR</code>, <code>--name TEXT</code></td><td>Bilder, Schriften und Titel für lose Markdown-Dateien.</td></tr>
@@ -340,7 +343,7 @@ fehlerfreien Dateien.
 </table>
 
 Und für jeden Befehl: `--json`, `--quiet` (`-q`, nur Fehler), `--verbose`
-(Fortschritt und jede Warnung), `--no-color`, `--help`.
+(Fortschritt und jede Warnung), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Schriften
 
@@ -358,19 +361,20 @@ die das Buch nicht mitbringt, sucht `postext` der Reihe nach:
    Cache aufbewahrt, sodass eine Familie nur einmal heruntergeladen wird.
 
 Eine Schriftstärke, die eine Familie nicht mitliefert, wird in dem Schnitt gesetzt, den ein Browser dafür
-wählen würde (CSS-Font-Matching: über 500 zuerst die schwereren Schnitte, unter 400 zuerst die leichteren,
-sodass eine 600 einer Familie mit 400 und 700 deren 700 ist, ebenso eine
-550), und eine Neigung, die sie nicht mitliefert, in ihrem aufrechten Schnitt, jeweils so, wie er ist, in den Seitenbildern
-wie im PDF: Eine Displayschrift mit nur einer Schriftstärke behält ihre eigenen Buchstaben für
-fett, und eine aufrechte Familie für kursiv.
+wählen würde (CSS-Font-Matching: über 500 zuerst die schwereren Schnitte, unter 400 zuerst die leichteren;
+bei einer Familie mit 400 und 700 wird eine 600 also zur 700, ebenso eine 550). Eine Neigung, die
+die Familie nicht mitliefert, wird in ihrem aufrechten Schnitt gesetzt. Beide Schnitte werden
+unverändert verwendet, in den Seitenbildern wie im PDF: Eine Displayschrift mit nur einer
+Schriftstärke behält auch für Fett ihre eigenen Buchstaben, und eine Familie ohne Kursive bleibt
+auch für Kursiv aufrecht.
 
-Geholt werden die Schriftstärken, die die Konfiguration nennt: normal, fett und
-deren Kursive für jede Familie sowie jede andere Schriftstärke, die eine Einstellung angibt, die
-fette eingeschlossen (`bodyText.boldFontWeight: 600` verlangt den Schnitt 600). Wenn sich eine
+Geladen werden die Schriftstärken, die die Konfiguration verlangt: für jede Familie normal und fett
+samt ihren Kursiven, dazu jede andere Schriftstärke, die eine Einstellung angibt, auch die für Fett
+(`bodyText.boldFontWeight: 600` verlangt den Schnitt 600). Wenn sich eine
 Schriftstärke, die die Familie mitliefert, nicht laden ließ (offline ohne Datei im Cache, ein
 fehlgeschlagener Download, ein Schriftordner ohne die Datei), wird der Text in dem
 Schnitt der Familie gesetzt, der nach derselben Regel dafür einspringt, und `postext check`
-listet das als Warnung `fontFallback` auf: Seine Zeilen können anders umbrechen als in der Sandbox.
+listet das als Warnung `fontFallback` auf: Die Zeilen dieses Textes können anders umbrechen als in der Sandbox.
 
 Der Cache liegt in `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` unter Windows);
 `POSTEXT_CACHE_DIR` oder `--cache-dir` verlegt ihn. `--offline` überspringt den Download.
@@ -378,7 +382,7 @@ Eine nirgends gefundene Familie wird unter ihrem eigenen Namen in EB Garamond ge
 und PDF weiterhin übereinstimmen, und eine Warnung `missingFont` nennt sie. `postext info`
 zeigt, woher jede Familie stammt.
 
-Ein Bündel, das die Dateien einer lizenzierten Familie weglässt, kann dafür eine freie Familie ähnlicher Breite nennen (`fallback` in den `fonts` des Manifests, seit postext 1.42). `postext` sucht diese Familie dann nach den obigen Schritten und setzt die Schnitte, die das Buch nicht mitbringt, in deren Schnitten gleicher Stärke und Neigung unter dem Namen der lizenzierten Familie; das Layout kommt dem mit den Dateien nahe, und `postext check` meldet dafür kein `missingFont`. Eine Familie, die das Buch nur teilweise mitbringt, nimmt vom `fallback` nur die Neigung, von der sie keine Datei hat. Das PDF bettet die freie Schrift ein.
+Ein Paket, das die Dateien einer lizenzierten Familie weglässt, kann dafür eine freie Familie ähnlicher Breite angeben (`fallback` in den `fonts` des Manifests, seit postext 1.42). `postext` sucht diese Familie dann nach den obigen Schritten und setzt die Schnitte, die das Buch nicht mitbringt, in deren Schnitten gleicher Stärke und Neigung unter dem Namen der lizenzierten Familie; das Layout kommt dem mit den Dateien nahe, und `postext check` meldet dafür kein `missingFont`. Eine Familie, die das Buch nur teilweise mitbringt, nimmt vom `fallback` nur die Neigung, von der sie keine Datei hat. Das PDF bettet die freie Schrift ein.
 
 ## Für Skripte und Agenten
 
@@ -412,8 +416,8 @@ Die Kommandozeile ist dafür gebaut, von anderen Programmen gesteuert zu werden,
 
 - **Exit-Codes**: `0` erledigt, `1` fehlgeschlagen, `2` falsche Verwendung (eine unbekannte Option, eine
   fehlende Eingabe), `3` `check` hat Fehler gefunden (oder mit `--strict` Warnungen).
-- **Keine Rückfragen.** Sie wartet nie auf eine Eingabe; ein Ordner, der nicht leer ist, wird
-  abgelehnt, statt nachzufragen.
+- **Keine Rückfragen.** Die Kommandozeile wartet nie auf eine Eingabe; ein Ordner, der nicht leer
+  ist, wird abgelehnt, statt nachzufragen.
 - **Standardausgabe**: `-o -` schreibt ein PDF, ein Bild oder ein Paket dorthin, um es
   per Pipe weiterzureichen.
 - **Geschwindigkeit.** Die ausführbare Datei startet in wenigen Hundertstelsekunden. Ein kurzes
@@ -430,9 +434,9 @@ arbeitet, und um eine Portierung zu prüfen.
 
 Die Kommandozeile ist das Paket `postext-cli` im
 [Repository](https://github.com/drnachio/postext/tree/main/packages/postext-cli).
-[Bun](https://bun.sh) kompiliert sie mit der Engine und ihren Writern zu einer
+[Bun](https://bun.sh) kompiliert sie mit der Engine und ihren Schreibern zu einer
 ausführbaren Datei pro System, und [Skia](https://skia.org) (über `@napi-rs/canvas`)
-misst und malt den Text, so wie das Canvas des Browsers in der Sandbox. Ein SVG-Bild, das ein Rasterbild enthält (ein als Data-URI eingebettetes PNG oder JPEG, wie es `pdftocairo -svg` für aus einem PDF ausgeschnittene Grafiken schreibt), wird stattdessen von [resvg](https://github.com/linebender/resvg) gezeichnet, weil der SVG-Renderer von Skia solche Bilder weglässt. Bei
+misst und zeichnet den Text, so wie das Canvas des Browsers in der Sandbox. Ein SVG-Bild, das ein Rasterbild enthält (ein als Data-URI eingebettetes PNG oder JPEG, wie es `pdftocairo -svg` für aus einem PDF ausgeschnittene Grafiken schreibt), wird stattdessen von [resvg](https://github.com/linebender/resvg) gezeichnet, weil der SVG-Renderer von Skia solche Bilder weglässt. Bei
 jedem Release werden die ausführbaren Dateien gebaut, unter Linux, Alpine, macOS und
 Windows ausgeführt und an das GitHub Release angehängt; npm erhält `postext-cli` und
 ein Paket `postext-cli-<system>` pro ausführbarer Datei.
@@ -450,19 +454,19 @@ Computer nach `packages/postext-cli/bin/`.
 
 ## Unterschiede zur Sandbox
 
-- **HTML** ist das Drucklayout in Bildschirmgröße. Der HTML-Tab der Sandbox
-  umbricht den Text für das Fenster neu.
-- **`--chapters`** umbricht die Kapitel für sich: Ihre Seitenzahlen beginnen
+- **HTML** ist das Drucklayout in Bildschirmgröße. Der Tab HTML der Sandbox
+  setzt den Text für das Fenster neu.
+- **`--chapters`** setzt die Kapitel einzeln: Ihre Seitenzahlen beginnen
   neu, während die Sandbox die Nummerierung des Buchs fortführt.
 - **Schriften** kommen aus dem Buch, Ihren Ordnern, der ausführbaren Datei, Google Fonts oder
   Fontsource (für eine Familie, die Google Fonts nicht hat), nie aus den auf dem Computer
   installierten Schriften, sodass ein Buch auf jedem Rechner gleich herauskommt.
-- **Die Sprache des Texts** ist in einem Browser die eigene des Dokuments
+- **Die Sprache des Texts** ist im Browser die des Dokuments
   (`bodyText.shapingLanguage: 'document'`, der Standard seit postext 1.30).
-  Das Canvas von Skia nimmt eine Sprache entgegen und formt ohne sie; die Kommandozeile
-  misst daher die Formen der Standardsprache jeder Schrift und umbricht ihre Bücher immer
-  mit `shapingLanguage: 'host'`, was auch immer die Konfiguration angibt; ihr PDF
-  und ihre Bilder malen dieselben Formen. Ein Buch, dessen Schrift Formen für eine
+  Das Canvas von Skia nimmt zwar eine Sprache entgegen, formt den Text aber ohne sie; die
+  Kommandozeile misst daher die Formen der Standardsprache jeder Schrift und setzt ihre Bücher
+  immer mit `shapingLanguage: 'host'`, was auch immer die Konfiguration angibt; ihr PDF
+  und ihre Bilder zeigen dieselben Formen. Ein Buch, dessen Schrift Formen für eine
   Sprache hat (ein katalanisches `l·l`, ein türkisches `fi`, die Ziffern einer chinesischen Schrift in einem
   englischen Buch), wird hier in den Standardformen gesetzt. Was `'document'`
   sonst misst (die an einem Zeilenende getrennten Teile eines Worts, ein Wort von rechts nach links, ein

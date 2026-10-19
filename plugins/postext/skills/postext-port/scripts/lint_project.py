@@ -197,10 +197,27 @@ def walk_values(node, path=""):
         yield path, node
 
 
+# PostextConfig's top-level keys (postext 1.46, packages/postext/src/types.ts). The engine drops an unknown
+# one in silence, so a typo (`bodyTex`, `pageTemplate`) changes nothing on the page.
+CONFIG_TOP_KEYS = {
+    "page", "layout", "bodyText", "headings", "tableStyle", "tableStyles", "captionStyle", "diagramStyle",
+    "videoStyle", "paragraphStyles", "calloutStyles", "chipStyles", "markStyles", "parts", "headingStyles", "toc",
+    "index", "unorderedLists", "orderedLists", "math", "footnotes", "crossRefs", "citations", "cjk", "lineNumbers",
+    "codeStyle", "header", "footer", "locale", "direction", "numerals", "debug", "htmlViewer", "canvasViewer",
+    "folio", "comics", "pageTemplates", "labelStyles", "pdfGeneration", "print", "contrast", "checks",
+    "colorPalette", "customFonts", "resourceTypes",
+}
+
+
 def check_config(cfg: dict, where: str, fonts: set[str], rep: Report, partial: bool = False) -> None:
     if not isinstance(cfg, dict):
         rep.error(where, "config must be an object")
         return
+    for key in cfg:
+        if key not in CONFIG_TOP_KEYS:
+            near = difflib.get_close_matches(key, sorted(CONFIG_TOP_KEYS), n=1)
+            hint = f" (did you mean `{near[0]}`?)" if near else ""
+            rep.warn(where, f"config.{key} is not a Postext setting and is ignored{hint}")
     if "customFonts" in cfg:
         rep.error(where, "config.customFonts must not be written: fonts come from the manifest `fonts` array")
     for sect, key in ABS_ONLY:
@@ -328,7 +345,7 @@ CODE_STYLE_KEYS = set(CODE_STYLE_ENUMS) | {
 CODE_TOKEN_KINDS = {"keyword", "string", "number", "comment", "function", "type", "operator", "punctuation",
                     "variable", "meta", "prompt", "output"}
 INLINE_CODE_KEYS = {"fontFamily", "fontSize", "color", "bold", "italic", "background", "borderColor", "borderWidth",
-                    "borderRadius", "paddingX", "paddingY"}
+                    "borderRadius", "paddingX", "paddingY", "otherScripts"}
 
 
 def check_callout_extends(cfg: dict, where: str, rep: Report) -> None:
@@ -1235,7 +1252,7 @@ COMICS_LETTERING_KEYS = {"fontFamily", "fontSize", "lineHeight", "color", "bold"
 COMICS_BALLOON_KEYS = {"id", "name", "shape", "fill", "stroke", "strokeWidth", "dash", "double", "wobble", "roundness",
                        "burstPoints", "burstDepth", "padding", "aspect", "tail", "tailWidth", "tailReach", "target",
                        "position", "butt", "fontFamily", "fontScale", "bold", "italic", "color", "textTransform",
-                       "letterSpacing", "align", "halo", "haloColor", "rotate"}
+                       "letterSpacing", "align", "halo", "haloColor", "rotate", "skew"}
 COMICS_CAST_KEYS = {"id", "name", "balloonStyle", "color", "fill", "fontFamily"}
 COMICS_ENUMS = {
     "readingDirection": {"auto", "ltr", "rtl"}, "artDirection": {"ltr", "rtl"},
@@ -2643,7 +2660,7 @@ def main() -> None:
                  "of the list's face instead of drawn; below 14: the text measured in the language of the "
                  "page that hosts the layout, and in none in a worker, instead of the document's own, unless "
                  "the config names bodyText.shapingLanguage); "
-                 "set \"configVersion\": 14 for today's rules")
+                 "set \"configVersion\": 15 for today's rules (14 reads the same)")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")

@@ -10,19 +10,19 @@ pageNotes: { "1": "Página 634, par. La cabecera dice 634 y 天—殄 sobre un f
 
 ## Lo que vas a componer
 
-Cuatro páginas del centro de una edición de lectura del Diccionario de Kangxi (康熙字典, 1716), reordenado por pinyin, de 天 tiān a 庭 tíng. Cada lema va en rojo, en la song supernegra, con su pinyin encima; las lecturas de los diccionarios de rimas (反切) y las acepciones lo siguen en un solo párrafo, con las acepciones numeradas ① ② en el mismo rojo. La página es un 大32开 de 140 × 203 mm, a dos columnas de 17 caracteres de 小五 (9 pt), sobre una retícula de 31 líneas, y cada columna llega a su última línea. En la esquina exterior de cada página, la cabecera nombra el primer y el último lema que hay en ella, así que quien busca 蜩 va a la página que lleva 腆—髫. Para compararlo con un diccionario en alfabeto latino, mira <RecipeLink slug="dictionary-thumb-index">el vocabulario marinero de Smyth</RecipeLink>.
+Cuatro páginas del centro de una edición de lectura del Diccionario de Kangxi (康熙字典, 1716), reordenado por pinyin, de 天 tiān a 庭 tíng. Cada lema va en rojo, en la song supernegra, con su pinyin encima; las lecturas de los diccionarios de rimas (反切) y las acepciones lo siguen en un solo párrafo, con las acepciones numeradas ① ② en el mismo rojo. La página es un 大32开 de 140 × 203 mm, a dos columnas de 17 caracteres de 小五 (9 pt), sobre una retícula de 31 líneas, y cada columna llega a su última línea. En la esquina exterior de cada página, la cabecera muestra el primer y el último lema que hay en ella, así que quien busca 蜩 va a la página que lleva 腆—髫. Para compararlo con un diccionario en alfabeto latino, mira <RecipeLink slug="dictionary-thumb-index">el vocabulario marinero de Smyth</RecipeLink>.
 
 ## Elaboración
 
 ### 1 · Las palabras guía salen de los lemas
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Cada lema es un título de segundo nivel, y `{firstMark.h2}` y `{lastMark.h2}` imprimen el texto del primer y del último título de ese nivel que empiezan en la página ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). La marca son los caracteres del título: `## {天|tiān}` marca 天, y la lectura se queda sobre el lema. Una entrada que pasa de una página a la siguiente solo cuenta donde está su lema: la <PageRef page={2}>página 635</PageRef> empieza con el final de 殄 y lleva 腆—髫. El primer nivel queda para las letras; en estas cuatro páginas no empieza ninguna, pero la cabecera de una letra no contaría como palabra guía.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Cada lema es un encabezado de segundo nivel, y `{firstMark.h2}` y `{lastMark.h2}` imprimen el texto del primer y del último título de ese nivel que empiezan en la página ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). La marca son los caracteres del título: `## {天|tiān}` marca 天, y la lectura se queda sobre el lema. Una entrada que pasa de una página a la siguiente solo cuenta donde está su lema: la <PageRef page={2}>página 635</PageRef> empieza con el final de 殄 y lleva 腆—髫. El primer nivel queda para las letras; en estas cuatro páginas no empieza ninguna, pero la cabecera de una letra no contaría como palabra guía.
 
 ### 2 · El pinyin sobre el lema
 
 <Excerpt region="headwords" />
 
-`{天|tiān}` es la forma corta de `:ruby[天]{rt="tiān"}`, una lectura sobre un carácter ([marcas chinas, ruby y warichu](/es/docs/document-format-inline#marcas-chinas-ruby-y-warichu)). Un título sin diseño propio compone su lectura; con un diseño, el título imprimiría 天 solo. La lectura toma la fuente del título, la supernegra, salvo que `cjk.ruby.fontFamily` nombre otra, y por eso se nombra la song regular. La mitad de 15 pt son 7,5 pt, y la línea de 30 pt del título deja sitio para la lectura sobre el lema: el título ocupa dos líneas de la retícula y el texto que va debajo sigue en las líneas de 15 pt de las dos columnas. El pinyin sube lo que bajan los rasgos descendentes de su fuente y 0,04 em más, así que la g de tīng acaba 0,6 pt por encima de la caja de 汀.
+`{天|tiān}` es la forma corta de `:ruby[天]{rt="tiān"}`, una lectura sobre un carácter ([marcas chinas, ruby y warichu](/es/docs/document-format-inline#marcas-chinas-ruby-y-warichu)). Un título sin diseño propio compone su lectura; con un diseño, el título imprimiría 天 solo. La lectura toma la fuente del título, la supernegra, salvo que `cjk.ruby.fontFamily` indique otra, y por eso se indica la song regular. La mitad de 15 pt son 7,5 pt, y la línea de 30 pt del título deja sitio para la lectura sobre el lema: el título ocupa dos líneas de la retícula y el texto que va debajo sigue en las líneas de 15 pt de las dos columnas. El pinyin sube lo que bajan los rasgos descendentes de su fuente y 0,04 em más, así que la g de tīng acaba 0,6 pt por encima de la caja de 汀.
 
 ### 3 · Un párrafo para cada entrada
 
@@ -34,7 +34,7 @@ El Diccionario de Kangxi compone cada entrada seguida: primero las lecturas de l
 
 <Excerpt region="tab" />
 
-Las sílabas del pinyin empiezan por 23 de las 26 letras (ninguna por I, U o V), así que la altura de la caja se divide en 23 pasos de 7,13 mm, y a la T le toca el decimonoveno. La pestaña mide 9 mm y empieza 3 mm fuera del corte, de modo que la página la corta en recto por el borde exterior y solo se ven redondeadas sus esquinas interiores; un archivo para imprenta con `page.cutLines` llevaría esos 3 mm a la sangre. La letra se centra en los 6 mm que quedan dentro. Las cuatro páginas son de la T, de modo que la pestaña no cambia de altura; en <RecipeLink slug="dictionary-thumb-index">el vocabulario de Smyth</RecipeLink> baja por el corte de una letra a la siguiente.
+Las sílabas del pinyin empiezan por 23 de las 26 letras (ninguna por I, U o V), así que la altura de la caja se divide en 23 pasos de 7,13 mm, y a la T le toca el decimonoveno. La pestaña mide 9 mm y empieza 3 mm fuera del corte, de modo que la página la corta en recto por el borde exterior y solo se ven redondeadas sus esquinas interiores; un archivo para imprenta con `page.cutLines` llevaría esos 3 mm al sangrado. La letra se centra en los 6 mm que quedan dentro. Las cuatro páginas son de la T, de modo que la pestaña no cambia de altura; en <RecipeLink slug="dictionary-thumb-index">el vocabulario de Smyth</RecipeLink> baja por el corte de una letra a la siguiente.
 
 ### 5 · Cada fuente carga sus propios caracteres
 
@@ -46,7 +46,7 @@ Fontsource corta cada fuente china en un centenar de archivos por intervalos de 
 
 ### El primer lema en la par y el último en la impar
 
-Hay diccionarios que imprimen una sola palabra guía por página: la primera arriba en la par y la última arriba en la impar, de modo que el pliego dice 天 … 髫.
+Hay diccionarios que imprimen una sola palabra guía por página: la primera arriba en la par y la última arriba en la impar, de modo que la doble página dice 天 … 髫.
 
 ```diff
 -  head('verso-guide', '{firstMark.h2}—{lastMark.h2}', 'even', SIDE + 8, GUIDE),
@@ -57,7 +57,7 @@ Hay diccionarios que imprimen una sola palabra guía por página: la primera arr
 
 ### Pinyin con ɑ y ɡ de un solo ojo
 
-Los diccionarios chinos componen el pinyin en una fuente con la a y la g de un solo ojo. Nombra Andika para las lecturas y añádela a `FONTS` (`'Andika': ['400']`, con su crédito OFL).
+Los diccionarios chinos componen el pinyin en una fuente con la a y la g de un solo ojo. Elige Andika para las lecturas y añádela a `FONTS` (`'Andika': ['400']`, con su crédito OFL).
 
 ```diff
 -  ruby: { fontFamily: SONG, fontSize: em(0.5), color: col('cinnabar') },

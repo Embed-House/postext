@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Document Format',
   description: 'The Markdown subset Postext parses: frontmatter, headings, lists and code blocks, what it ignores, and the rules for authoring source documents',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 25,
   plainSummary: "This page explains how to write a text that Postext can lay out. You write in Markdown, a simple way of writing where a few symbols mark headings, lists, bold words and links. This page covers the lines at the top of a file, headings, lists, code and the marks Postext ignores. Four more pages cover blocks such as boxes and columns, marks inside a line, notes and references, and pictures and tables. The page ends with advice on writing text that is easy to read.",
@@ -53,9 +53,9 @@ Quote a value to print it exactly as written — a number that must keep its dig
 
 ## Block constructs
 
-Postext recognises seven prose block types and code listings, plus the directives and resource embeds covered later on this page. Blocks are always terminated by a blank line or by the start of another block.
+Postext recognises seven prose block types and code listings, plus the [directives](/en/docs/document-format-directives) and [resource embeds](/en/docs/document-format-resources) described on pages of their own. Blocks are always terminated by a blank line or by the start of another block.
 
-<Illustration name="BlockTypesGallery" data='{"title": "Prose block constructs at a glance", "desc": "The seven prose block types Postext recognises: heading, paragraph, blockquote, unordered list, ordered list, task list, and display math, each with its markdown syntax. Directives and resource embeds are covered separately.", "caption": "Every prose block type and its markdown entry point.", "blocks": [{"name": "Heading", "syntax": "# Title", "color": "blue"}, {"name": "Paragraph", "syntax": "Plain text lines", "color": "orange"}, {"name": "Blockquote", "syntax": "> quoted text", "color": "green"}, {"name": "Unordered list", "syntax": "- item", "color": "purple"}, {"name": "Ordered list", "syntax": "1. item", "color": "pink"}, {"name": "Task list", "syntax": "- [x] done", "color": "teal"}, {"name": "Display math", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
+<Illustration name="BlockTypesGallery" data='{"title": "Prose block types at a glance", "desc": "The seven prose block types Postext recognises: heading, paragraph, blockquote, unordered list, ordered list, task list, and display math, each with its markdown syntax. Directives and resource embeds are covered separately.", "caption": "Every prose block type and its markdown syntax.", "blocks": [{"name": "Heading", "syntax": "# Title", "color": "blue"}, {"name": "Paragraph", "syntax": "Plain text lines", "color": "orange"}, {"name": "Blockquote", "syntax": "> quoted text", "color": "green"}, {"name": "Unordered list", "syntax": "- item", "color": "purple"}, {"name": "Ordered list", "syntax": "1. item", "color": "pink"}, {"name": "Task list", "syntax": "- [x] done", "color": "teal"}, {"name": "Display math", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
 <table>
   <thead>
@@ -74,7 +74,7 @@ Postext recognises seven prose block types and code listings, plus the directive
     <tr>
       <td>Paragraph</td>
       <td>Plain text over one or more lines</td>
-      <td>Consecutive non-blank, non-special lines are joined with a single space and emitted as one paragraph. Between two Chinese or Japanese characters (ideographs, kana, fullwidth punctuation, and curly quotes, dashes or an ellipsis beside them) the line end is dropped instead, as CSS does, so a Chinese paragraph may be wrapped anywhere in the source. Between two such marks (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) the characters past them decide: the line end goes when one of them is Chinese or Japanese, and <code>“hello”⏎“bye”</code> keeps its space. Korean keeps its space. A line break typed in the source is not kept, unless the line ends with a backslash (a forced line break, see <a href="/en/docs/document-format-directives#line-breaks">Line breaks</a>); a blank line starts a new paragraph. A tab typed in the text is a word space too, unless the paragraph's style sets tab stops; <code>:tab</code> is always a tab (see <a href="/en/docs/document-format-inline#tabs-and-tab-stops">Tabs and tab stops</a>). A poem, whose lines must stay as written, goes in a <a href="/en/docs/document-format-directives#verse"><code>:::verse</code></a> block.</td>
+      <td>Consecutive non-blank, non-special lines are joined with a single space and emitted as one paragraph. Between two Chinese or Japanese characters (ideographs, kana, fullwidth punctuation, and curly quotes, dashes or an ellipsis beside them) the line end is dropped instead, as CSS does, so a Chinese paragraph may be wrapped anywhere in the source. Between two such marks (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) the characters beyond them decide: the line end is dropped when one of them is Chinese or Japanese, and <code>“hello”⏎“bye”</code> keeps its space. Korean keeps its space. A line break typed in the source is not kept, unless the line ends with a backslash (a forced line break, see <a href="/en/docs/document-format-directives#line-breaks">Line breaks</a>); a blank line starts a new paragraph. A tab typed in the text is a word space too, unless the paragraph's style sets tab stops; <code>:tab</code> is always a tab (see <a href="/en/docs/document-format-inline#tabs-and-tab-stops">Tabs and tab stops</a>). A poem, whose lines must stay as written, goes in a <a href="/en/docs/document-format-directives#verse"><code>:::verse</code></a> block.</td>
     </tr>
     <tr>
       <td>Blockquote</td>
@@ -89,7 +89,7 @@ Postext recognises seven prose block types and code listings, plus the directive
     <tr>
       <td>Ordered list</td>
       <td><code>1. item</code>, <code>2) item</code></td>
-      <td>Digits followed by <code>.</code> or <code>)</code>. The start number is preserved (so a list can begin at 5, or at 0). The separator rendered in the output comes from <code>orderedLists.separator</code>, not from the source.</td>
+      <td>Digits followed by <code>.</code> or <code>)</code>: European digits, or the Arabic-Indic (<code>١.</code>) and Persian (<code>۱.</code>) ones an Arabic or Persian keyboard types. The start number is preserved (so a list can begin at 5, or at 0). The separator rendered in the output comes from <code>orderedLists.separator</code>, not from the source.</td>
     </tr>
     <tr>
       <td>Task list (GFM)</td>
@@ -113,7 +113,7 @@ A single blank line between two list items is tolerated — the list stays toget
 
 Lists of mixed kinds at the same depth are accepted (you can switch from unordered to ordered mid-run), but the engine treats the runs as separate for numbering purposes. In practice, keep one kind per depth unless you have a reason to mix them.
 
-<Illustration name="ListNesting" data='{"title": "List nesting depth", "desc": "A list item nests under the item above when it is indented past that item’s marker: two spaces under a bullet, up to a maximum depth of five. Each level indents further and may use different bullet styling.", "caption": "Two spaces per level under a bullet. Max depth: five.", "level1": "Level 1", "level2": "Level 2 — two spaces in", "level3": "Level 3 — four spaces in", "indentNote": "Two spaces in under a bullet, three under 1. Max depth: 5."}' />
+<Illustration name="ListNesting" data='{"title": "List nesting depth", "desc": "A list item nests under the item above when it is indented past that item’s marker: two spaces under a bullet, up to a maximum depth of five. Each level indents further and may use a different bullet style.", "caption": "Two spaces per level under a bullet. Maximum depth: five.", "level1": "Level 1", "level2": "Level 2 — two spaces in", "level3": "Level 3 — four spaces in", "indentNote": "Two spaces in under a bullet, three under 1. Max depth: 5."}' />
 
 ### Heading attributes
 
@@ -135,7 +135,7 @@ Two attributes have a meaning of their own. `style="<id>"` applies a named [head
 # Contents {style="front-matter" toc="false"}
 ```
 
-Two more change what a heading prints and how it counts. `hidden="true"` (or `"false"`) overrides the `hidden` of the heading's level or style: a hidden heading prints nothing and takes no room — in the flow and inside a `:::callout` box alike — but still opens its page, counts, and is listed in the contents, the `{chapterTitle}` running heads and the PDF bookmarks. `jidori=N` spaces a one-line heading evenly to `N` of its own characters (字取り: `# 序章 {jidori=3}` prints 序　章), and `jidori=0` turns off the even spacing its level or style sets (see [Configuration › Per-level overrides](/en/docs/configuration-headings#per-level-overrides)). `indent=N` lowers one heading `N` characters of the body text from the line start (字下げ: `## 一 {indent=5}`), over the `indent` of its level or style; a bare number counts body ems, `0` sets the heading at the line start, and it works the same in vertical and horizontal text. `firstLineIndent=N` indents the first line of one heading alone, over the `firstLineIndent` of its level or style, its other lines starting where `indent` puts them (the heads of GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`); it reads lengths as `indent` does, and `0` takes the level's off. `startAt=N`, a positive integer, sets the heading's level counter to `N` instead of advancing it; the headings after it count on from there, in later chapters too, and the levels below restart under it as usual. With a heading style that letters appendices (`numberingTemplate: 'Appendix {1:A}'`), the first appendix restarts the count so that it reads *Appendix A* rather than continuing from the chapters:
+Two more change what a heading prints and how it counts. `hidden="true"` (or `"false"`) overrides the `hidden` of the heading's level or style: a hidden heading prints nothing and takes no room — in the flow and inside a `:::callout` box alike — but still opens its page, counts, and is listed in the contents, the `{chapterTitle}` running heads and the PDF bookmarks. `jidori=N` spaces a one-line heading evenly to `N` of its own characters (字取り: `# 序章 {jidori=3}` prints 序　章), and `jidori=0` turns off the even spacing its level or style sets (see [Configuration › Per-level overrides](/en/docs/configuration-headings#per-level-overrides)). `indent=N` lowers one heading `N` characters of the body text from the line start (字下げ: `## 一 {indent=5}`), over the `indent` of its level or style; a bare number counts body ems, `0` sets the heading at the line start, and it works the same in vertical and horizontal text. `firstLineIndent=N` indents the first line of one heading alone, over the `firstLineIndent` of its level or style, its other lines starting where `indent` puts them (the heads of GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`); it reads lengths as `indent` does, and `0` turns off the level's. `startAt=N`, a positive integer, sets the heading's level counter to `N` instead of advancing it; the headings after it count on from there, in later chapters too, and the levels below restart under it as usual. With a heading style that letters appendices (`numberingTemplate: 'Appendix {1:A}'`), the first appendix restarts the count so that it reads *Appendix A* rather than continuing from the chapters:
 
 ```markdown
 # To my mother {hidden="true" toc="false"}
@@ -210,12 +210,16 @@ The info string after the opening fence names the language (its first word: `js`
       <td><code>span=page</code></td>
       <td>On a page of several columns, the listing spans them all.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>Floats the listing to the first free band at the head or foot of a column, as a floated <code>:::callout</code> does.</td>
+    </tr>
   </tbody>
 </table>
 
 A fence ends the paragraph above it, blank line or not, and the text after the closing fence starts a new paragraph. A fence left open runs to the end of the text and is reported (`unclosedCodeBlock`). A fence inside a `:::callout` is a box nested in it; inside `:::paragraphs` the listing keeps the code style, not the paragraph style. Postext has no list-item continuation, so a fence after a list item closes the list. Index marks and anchors written inside a listing stay as written.
 
-Indented code (four spaces or a tab, after a blank line) is read as a listing only when `codeStyle.indentedCode` is on: Postext text often indents with spaces, and nested list items read leading spaces.
+Indented code (four spaces or a tab, after a blank line) is read as a listing only when `codeStyle.indentedCode` is on: Postext text often indents with spaces, and leading spaces are what nest list items.
 
 How a listing looks (its face, box, tab width, what happens to a line wider than the box, line numbers, the colours of its tokens) is set by `codeStyle`; see [Configuration › Code listings](/en/docs/configuration-styles#code-listings). Inline code (`` `x` ``) stays in the text's face unless `codeStyle.inline` gives it one. A book stored before postext 1.23 with fences in its text reads them as it did then, as Markdown (`codeStyle.blocks: false`). Since postext 1.23.
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

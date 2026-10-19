@@ -10,7 +10,7 @@ pageNotes: { "1": "A página 1 abre o dicionário sob uma faixa: uma âncora com
 
 ## O que você vai compor
 
-Quatro páginas de uma nova edição do *Sailor’s Word-Book* do almirante Smyth (1867), letras A a C, numa página de 150 × 200 mm. Os verbetes correm em duas colunas justificadas de Alegreya de 8 pt separadas por um fio fino, cada lema em negrito azul-marinho e cada linha de continuação com recuo deslocado de 1 em. Uma letra abre dentro da sua coluna, como uma inicial azul-marinho de quatro linhas sobre um fio cor de latão, e os verbetes seguem sem quebra de página. No corte da frente, toda página imprime o índice de dedo inteiro, 22 abas num tom claro. A aba da letra atual é azul-marinho, 3,2 mm mais larga que as outras, e desce um degrau a cada letra. A edição em espanhol mantém os lemas em inglês de Smyth e traduz os verbetes.
+Quatro páginas de uma nova edição do *Sailor’s Word-Book* do almirante Smyth (1867), letras A a C, numa página de 150 × 200 mm. Os verbetes correm em duas colunas justificadas de Alegreya de 8 pt separadas por um fio fino, cada lema em negrito azul-marinho e cada linha de continuação com recuo deslocado de 1 em. Uma letra abre dentro da coluna, como uma inicial azul-marinho de quatro linhas sobre um fio cor de latão, e os verbetes seguem sem quebra de página. No corte da frente, toda página imprime o índice de dedo inteiro, 22 abas num tom claro. A aba da letra atual é azul-marinho, 3,2 mm mais larga que as outras, e desce um degrau a cada letra. A edição em espanhol mantém os lemas em inglês de Smyth e traduz os verbetes.
 
 ## Preparo
 
@@ -22,25 +22,25 @@ O código é [a resposta curta](#a-resposta-curta) lá em cima. `TABS` lista 22 
 
 <Excerpt region="running-heads" />
 
-Os cabeços são elementos de texto ancorados à página e filtrados por `parity` e `pages: 'body'` ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). O título da página 1 ocupa as duas colunas, o que faz dela uma página de abertura. Os cabeços pulam essa página, e o fólio dela vem do rodapé, um elemento com `pages: 'opener'` que imprime 6 mm abaixo da mancha. Numa página ímpar, `{chapterTitle}` imprime a letra do último título de nível 1 que está na página ou antes dela, *Letter C*. `{firstMark.<key>}` e `{lastMark.<key>}` imprimem no lugar dela o primeiro e o último lema da página, as palavras-guia que a maioria dos dicionários traz; esta receita mantém a letra, que é o que as suas abas indexam.
+Os cabeços são elementos de texto ancorados à página e filtrados por `parity` e `pages: 'body'` ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). O título da página 1 ocupa as duas colunas, o que faz dela uma página de abertura. Os cabeços pulam essa página, e o fólio dela vem do rodapé, um elemento com `pages: 'opener'` que imprime 6 mm abaixo da mancha. Numa página ímpar, `{chapterTitle}` imprime a letra do último título de nível 1 que está na página ou antes dela, *Letter C*. `{firstMark.<key>}` e `{lastMark.<key>}` imprimem no lugar dela o primeiro e o último lema da página, as palavras-guia que a maioria dos dicionários traz; esta receita mantém a letra, que é o que as abas indexam.
 
 ### 3 · Dê cor aos lemas e a nada mais
 
 <Excerpt region="entries" />
 
-Cada verbete é um parágrafo de um bloco `:::paragraphs{style="entry"}`, com as linhas de continuação em recuo deslocado de 1 em ([estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo)). O `boldColor` do texto corrido deixa o **Note.** da página 1 na cor da tinta, e o `boldColor` do estilo de verbete imprime os lemas em azul-marinho. Um estilo de parágrafo não tem `italicColor`, então os subverbetes em itálico ficam na cor do texto corrido.
+Cada verbete é um parágrafo de um bloco `:::paragraphs{style="entry"}`, com as linhas de continuação em recuo deslocado de 1 em ([estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo)). O `boldColor` do texto corrido deixa o **Note.** da página 1 na cor da tinta, e o `boldColor` do estilo de verbete imprime os lemas em azul-marinho. Um estilo de parágrafo não tem `italicColor`, por isso os subverbetes em itálico ficam na cor do texto corrido.
 
 ### 4 · Ponha uma inicial de quatro linhas na coluna
 
 <Excerpt region="letter-heads" />
 
-`LETTER`, 55,8 pt, é o corpo em que uma maiúscula da Alegreya SC 900 (0,652 em de altura) se apoia na quarta linha de base e alcança a altura das maiúsculas da primeira linha do texto. A letra e o fio cor de latão terminam dentro da quinta linha, e o bloco do título desce até a linha seguinte da grade, então cada inicial ocupa cinco linhas e os verbetes abaixo dela continuam na grade. Na <PageRef page={3}>página 3</PageRef>, o C no alto da segunda coluna fica alinhado com as quatro primeiras linhas da primeira coluna. O nível 1 define `breakBefore: { enabled: false }`, que desliga a quebra de página que um título de nível 1 tem por padrão, e os estilos das letras herdam esse valor, então B e C começam no meio da coluna.
+`LETTER`, 55,8 pt, é o corpo em que uma maiúscula da Alegreya SC 900 (0,652 em de altura) se apoia na quarta linha de base e alcança a altura das maiúsculas da primeira linha do texto. A letra e o fio cor de latão terminam dentro da quinta linha, e o bloco do título desce até a linha seguinte da grade, por isso cada inicial ocupa cinco linhas e os verbetes abaixo dela continuam na grade. Na <PageRef page={3}>página 3</PageRef>, o C no alto da segunda coluna fica alinhado com as quatro primeiras linhas da primeira coluna. O nível 1 define `breakBefore: { enabled: false }`, que desativa a quebra de página que um título de nível 1 tem por padrão, e os estilos das letras herdam esse valor, de modo que B e C começam no meio da coluna.
 
 ### 5 · Estenda o título pelas duas colunas
 
 <Excerpt region="title" />
 
-O estilo do título ocupa a largura da página com uma faixa que reúne a âncora, o nome, um subtítulo e uma linha de autoria lidos de atributos do título, e um fio duplo ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). O fio fino termina 45,1 mm abaixo do alto da mancha, então a faixa se ajusta a 13 linhas da grade, ou 47,7 mm. O fio entre colunas começa abaixo da faixa, na linha em que começa o texto das duas colunas.
+O estilo do título ocupa a largura da página com uma faixa que reúne a âncora, o nome, um subtítulo e uma linha de autoria lidos de atributos do título, e um fio duplo ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). O fio fino termina 45,1 mm abaixo do alto da mancha, por isso a faixa se ajusta a 13 linhas da grade, ou 47,7 mm. O fio entre colunas começa abaixo da faixa, na linha em que começa o texto das duas colunas.
 
 ## Variações
 

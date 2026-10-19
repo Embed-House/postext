@@ -48,7 +48,7 @@ Un disseny de títol en una columna es talla al peu de la columna, i en una pàg
 
 <Excerpt region="voices" />
 
-Fontsource serveix cada pes d'aquestes fonts en un centenar de fitxers, cadascun amb un tram de caràcters, i `loadCjkFonts` carrega els fitxers que toca un text. Amb només els títols, els avisos de segell, el colofó, les línies de la coberta i els folis, cada pes de Noto Sans TC carrega 10 fitxers; amb la mostra sencera en carregaria 35, i són tres pesos. LXGW WenKai TC rep les presentacions i les notes, i en carrega 16. Una font que rep menys text del que compon fa fallar la captura (C12), que anomena els caràcters que ha hagut de prendre d'una altra font.
+Fontsource serveix cada gruix d'aquestes fonts en un centenar de fitxers, cadascun amb un tram de caràcters, i `loadCjkFonts` carrega els fitxers que toca un text. Amb només els títols, els avisos de segell, el colofó, les línies de la coberta i els folis, cada gruix de Noto Sans TC carrega 10 fitxers; amb la mostra sencera en carregaria 35, i són tres gruixos. LXGW WenKai TC rep les presentacions i les notes, i en carrega 16. Una font que rep menys text del que compon fa fallar la captura (C12), que anomena els caràcters que ha hagut de prendre d'una altra font.
 
 ## Variants
 
@@ -72,6 +72,6 @@ Amb 0 cap nombre es posa dret per si sol: 10月10日 es gira com 1912, i només 
 
 ## Errors freqüents
 
-- Noto Serif TC, tal com la serveix Fontsource, no té 爲 ni 敎: el seu full d'estils els declara, però cap fitxer no porta el glif. La constitució, tal com es va imprimir el 1912, fa servir aquestes formes per a 為 i 教. El llenç va dibuixar 敎 amb una font del sistema i el PDF no en tenia el glif, cosa que va advertir la captura (C25). L'edició compon 為 i 教, porta amb ells 靑 i 决 a 青 i 決, i la presentació ho diu.
+- Noto Serif TC, tal com la serveix Fontsource, no té 爲 ni 敎: el seu full d'estils els declara, però cap fitxer no porta el glif. La constitució, tal com es va imprimir el 1912, fa servir aquestes formes per a 為 i 教. El canvas va dibuixar 敎 amb una font del sistema i el PDF no en tenia el glif, cosa que va advertir la captura (C25). L'edició compon 為 i 教, porta amb ells 靑 i 决 a 青 i 決, i la presentació ho diu.
 - LXGW WenKai TC, tal com la serveix Fontsource, dibuixa 即, 為, 青 i 教 amb les seves formes antigues, 卽, 爲, 靑 i 敎, que desentonen al costat dels mateixos caràcters del text en Song. Les notes es van redactar sense aquests quatre; només la presentació que enumera les formes antigues de la constitució els vol. Llegeix a mida real el text en Kai de les teves pròpies notes.
 - Un nombre compost de costat se separa del xinès que l'envolta com una paraula llatina, un quart de quadratí a cada costat (`cjk.latinSpacing`), i per això les presentacions mostren `1912 年`; un nombre en una casella no porta espai, com un caràcter xinès.

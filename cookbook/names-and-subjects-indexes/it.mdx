@@ -16,7 +16,7 @@ Il capitolo quarto di *Letters of Metal*, una monografia di studio sui caratteri
 
 ### 1 · Segna ogni persona per l’indice dei nomi e ogni argomento per quello principale
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra; il resto è nel Markdown. Un segno con `index="names"` va all’indice che stampa `:::index{index="names"}`, e ogni altro segno va all’indice principale che stampa un `:::index` senza attributi. Così `:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}` stampa il nome nel testo e archivia una pagina in grassetto sotto *Manutius* nell’indice dei nomi, mentre `:index[italic]{term="Italic" main}` due righe più avanti archivia la stessa pagina sotto *Italic* negli argomenti. Una persona che è anche argomento del capitolo può portare entrambi i segni.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra; il resto è nel Markdown. Un segno con `index="names"` va all’indice che stampa `:::index{index="names"}`, e ogni altro segno va all’indice principale che stampa un `:::index` senza attributi. Così `:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}` stampa il nome nel testo e archivia una pagina in grassetto sotto *Manutius* nell’indice dei nomi, mentre `:index[italic]{term="Italic" main}` due righe più avanti archivia la stessa pagina sotto *Italic* negli argomenti. Una persona che è anche argomento del capitolo può avere entrambi i segni.
 
 ### 2 · Inverti i nomi e ordina per le lettere sotto cui il lettore cercherà
 
@@ -26,7 +26,7 @@ I nomi si archiviano con il cognome per primo: `term="Garamond, Claude"`, `term=
 
 <Excerpt region="build" />
 
-L’indice stampa numeri di pagina che esistono solo dopo l’impaginazione, e stamparlo richiede pagine sue. `buildDocument()` se ne occupa: impagina il capitolo, legge la pagina di ogni segno, stampa entrambi gli indici e impagina di nuovo ogni volta che un numero è cambiato. Qui gli indici seguono il testo, quindi un secondo passaggio conferma il primo; un indice posto prima del testo sposterebbe tutte le pagine successive, e i passaggi continuerebbero finché non concordano. Aggiungi un paragrafo alla sezione su Bodoni e l’indice dei nomi dà da solo a Whittingham la sua nuova pagina.
+L’indice stampa numeri di pagina che esistono solo dopo l’impaginazione, e stamparlo richiede pagine sue. `buildDocument()` se ne occupa: impagina il capitolo, legge la pagina di ogni segno, stampa entrambi gli indici e impagina di nuovo ogni volta che un numero è cambiato. Qui gli indici seguono il testo, quindi una seconda passata conferma la prima; un indice posto prima del testo sposterebbe tutte le pagine successive, e le passate continuerebbero finché non concordano. Aggiungi un paragrafo alla sezione su Bodoni e l’indice dei nomi dà da solo a Whittingham la sua nuova pagina.
 
 ### 4 · Dai a ogni indice un’apertura su due colonne
 
@@ -38,7 +38,7 @@ Lo stile del titolo nella risposta breve fa tre cose per `# Index of Names {styl
 
 <Excerpt region="running-heads" />
 
-La testatina del recto stampa `{chapterTitle}`, e il titolo di un indice è un titolo di livello 1 come qualsiasi capitolo, quindi le pagine che lo seguono dicono *Index of Subjects* in testa. `pages: 'body'` tiene le testatine lontane da entrambe le aperture degli indici, che portano invece un folio al piede.
+La testatina del recto stampa `{chapterTitle}`, e il titolo di un indice è un titolo di livello 1 come qualsiasi capitolo, quindi le pagine che lo seguono riportano *Index of Subjects* in testa. `pages: 'body'` tiene le testatine lontane da entrambe le aperture degli indici, che hanno invece il numero di pagina al piede.
 
 ## Varianti
 

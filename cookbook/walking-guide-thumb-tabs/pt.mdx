@@ -1,16 +1,16 @@
 ---
 title: "Guia de passeios com abas de índice"
 summary: "Guia de bolso com um estilo de título por passeio, cuja paleta muda a aba do corte, as paradas, o tom do boxe e a página em branco antes do passeio."
-plain: "Um guia de bolso de passeios por Lisboa. Cada passeio tem a sua cor, que aparece numa aba na borda da página para você achá-lo com o polegar."
+plain: "Um guia de bolso de passeios por Lisboa. Cada passeio tem a cor, que aparece numa aba na borda da página para você achá-lo com o polegar."
 description: "Lisbon on Foot, guia de passeios de bolso composto no Postext. A aba e a página em branco pintada são elementos do cabeço; cada passeio define quatro cores."
 question: "Como faço para tirar os cabeços de aberturas e páginas em branco e pintar a página par na cor da seção?"
 aliases: ["guia de viagem", "guia de passeios", "roteiro a pé", "aba de índice", "índice de dedo", "unheiro", "seções por cor", "cores por seção", "página em branco pintada", "pinos no mapa", "paradas numeradas", "ícone de canto"]
-pageNotes: { "1": "A capa: uma parede de azulejos azuis e brancos com um azulejo faltando junto ao corte, o título numa placa emoldurada e os três passeios indicados pelo número nas suas cores.", "2": "A página 2, a introdução, com cabeços e sem aba, e um mapa das rotas cujos pinos numerados correspondem às paradas.", "3": "O passeio 1 abre numa página ímpar sob uma faixa terracota com um padrão de azulejos para o lado do corte; a aba terracota com um 1 branco pende do pé da faixa.", "5": "A página 5 fecha o passeio 1 com a quinta parada e uma linha terracota na letra dos rótulos que manda você para o passeio 2.", "6": "A página 6, a página par em branco antes do passeio 2, pintada de ponta a ponta no amarelo do passeio sob um padrão claro de azulejos, com o número do passeio, 2, em tinta." }
+pageNotes: { "1": "A capa: uma parede de azulejos azuis e brancos com um azulejo faltando junto ao corte, o título numa placa emoldurada e os três passeios indicados pelo número nas cores.", "2": "A página 2, a introdução, com cabeços e sem aba, e um mapa das rotas cujos pinos numerados correspondem às paradas.", "3": "O passeio 1 abre numa página ímpar sob uma faixa terracota com um padrão de azulejos para o lado do corte; a aba terracota com um 1 branco pende do pé da faixa.", "5": "A página 5 fecha o passeio 1 com a quinta parada e uma linha terracota na letra dos rótulos que manda você para o passeio 2.", "6": "A página 6, a página par em branco antes do passeio 2, pintada de ponta a ponta no amarelo do passeio sob um padrão claro de azulejos, com o número do passeio, 2, em tinta." }
 ---
 
 ## O que você vai compor
 
-As sete primeiras páginas de *Lisbon on Foot*, um guia de bolso de 120 × 200 mm. A capa é uma parede de azulejos azuis e brancos com o título numa placa emoldurada como as placas de rua de Lisboa, e a página 2 apresenta os três passeios com um mapa das rotas. Cada passeio tem uma cor, terracota para Alfama e amarelo para a Baixa, e uma aba no corte da frente mostra essa cor e o número do passeio na mesma altura em todas as páginas dele. Com o passeio mudam também a faixa da abertura, as paradas numeradas, o cabeço da página ímpar e o tom do boxe “Don’t miss”. A página par em branco que empurra o passeio 2 para uma página ímpar é pintada no amarelo do passeio 2 e traz o seu número. O texto é Albert Sans, alinhado à esquerda; os nomes são DM Serif Display, e os rótulos, Asap Condensed.
+As sete primeiras páginas de *Lisbon on Foot*, um guia de bolso de 120 × 200 mm. A capa é uma parede de azulejos azuis e brancos com o título numa placa emoldurada como as placas de rua de Lisboa, e a página 2 apresenta os três passeios com um mapa das rotas. Cada passeio tem uma cor, terracota para Alfama e amarelo para a Baixa, e uma aba no corte da frente mostra essa cor e o número do passeio na mesma altura em todas as páginas dele. Com o passeio mudam também a faixa da abertura, as paradas numeradas, o cabeço da página ímpar e o tom do boxe “Don’t miss”. A página par em branco que empurra o passeio 2 para uma página ímpar é pintada no amarelo do passeio 2 e traz o número. O texto é Albert Sans, alinhado à esquerda; os nomes são DM Serif Display, e os rótulos, Asap Condensed.
 
 ## Preparo
 
@@ -18,19 +18,19 @@ As sete primeiras páginas de *Lisbon on Foot*, um guia de bolso de 120 × 200 m
 
 <Excerpt region="palette" />
 
-A `palette` de um estilo de título substitui entradas pelo id nas páginas da sua seção ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)), então toda cor que deve acompanhar o passeio se liga a uma de quatro entradas: `band` para os campos de cor, a aba e os círculos das paradas, `bandInk` para o texto sobre o papel, `onBand` para o texto sobre um campo e `wash` para o boxe. O branco sobre o amarelo da Baixa dá um contraste de 2:1, por isso o `onBand` desse passeio é a tinta, com 8:1. Os elementos de design seguem o id, enquanto o texto é recolorido pelo valor: uma cor igual ao hex base de uma entrada assume o valor do passeio, e por isso os quatro valores base são todos diferentes. O título do boxe na página 4 e a linha que manda você para o passeio 2 na página 5 são texto em `bandInk`, e os dois saem em terracota.
+A `palette` de um estilo de título substitui entradas pelo id nas páginas da seção ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)), por isso toda cor que deve acompanhar o passeio se liga a uma de quatro entradas: `band` para os campos de cor, a aba e os círculos das paradas, `bandInk` para o texto sobre o papel, `onBand` para o texto sobre um campo e `wash` para o boxe. O branco sobre o amarelo da Baixa dá um contraste de 2:1, por isso o `onBand` desse passeio é a tinta, com 8:1. Os elementos de design seguem o id, enquanto o texto é recolorido pelo valor: uma cor igual ao hex base de uma entrada assume o valor do passeio, e por isso os quatro valores base são todos diferentes. O título do boxe na página 4 e a linha que manda você para o passeio 2 na página 5 são texto em `bandInk`, e os dois saem em terracota.
 
 ### 2 · Deixar os cabeços só nas páginas de texto
 
 <Excerpt region="running-heads" />
 
-Depois da diagramação, cada página recebe um papel ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). A primeira página de um passeio é `opener`, porque o título dela força a quebra de página; a página de enchimento antes de uma ímpar é `blank`; as demais são `body`. Os cabeços levam `pages: 'body'`, então as aberturas das páginas 3 e 7 e a página em branco 6 ficam sem eles, e o fólio no pé leva `'opener'`. A página par imprime o `{title}` do frontmatter, e a ímpar, `Walk {chapterNumber} · {chapterTitle}` em `bandInk`, terracota na página 5. As abas da resposta curta levam `'all'`. O campo da página em branco vem depois delas na lista, e como a ordem da lista é a ordem de pintura, ele cobre a aba na página 6. A página 2, a introdução, vem antes do passeio 1, então ali `{chapterNumber}` fica vazio, e o estilo dela tem um `header` próprio com os quatro cabeços e sem abas. Sem ele, a página 2 imprimiria uma aba azul vazia.
+Depois da diagramação, cada página recebe um papel ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). A primeira página de um passeio é `opener`, porque o título dela força a quebra de página; a página de enchimento antes de uma ímpar é `blank`; as demais são `body`. Os cabeços levam `pages: 'body'`, de modo que as aberturas das páginas 3 e 7 e a página em branco 6 ficam sem eles, e o fólio no pé leva `'opener'`. A página par imprime o `{title}` do front matter, e a ímpar, `Walk {chapterNumber} · {chapterTitle}` em `bandInk`, terracota na página 5. As abas da resposta curta levam `'all'`. O campo da página em branco vem depois delas na lista, e como a ordem da lista é a ordem de pintura, ele cobre a aba na página 6. A página 2, a introdução, vem antes do passeio 1, por isso ali `{chapterNumber}` fica vazio, e o estilo dela tem um `header` próprio com os quatro cabeços e sem abas. Sem ele, a página 2 imprimiria uma aba azul vazia.
 
 ### 3 · Abrir cada passeio sob a sua faixa e numerar as paradas
 
 <Excerpt region="levels" />
 
-A faixa é ancorada à sangria, que aqui é o refile, e avança 30 mm na área de texto. O design termina com a faixa, e `minHeight` reserva oito linhas da grade, 37,3 mm; a abertura fica com a maior das duas alturas, então nas páginas 3 e 7 o texto começa 7,3 mm abaixo da faixa. Cada parada é um título de nível 3 cujo design põe `{number}` num círculo de 5,4 mm preenchido com `band`. O modelo `{3}` recomeça a cada passeio, já que um título de nível 1 zera os contadores mais profundos, e os pinos do mapa trazem os mesmos números. Uma parada tem uma linha da grade de margem acima e nenhuma abaixo, e o círculo fica 3,2 mm abaixo do topo das duas linhas da grade que o título ocupa. Isso deixa uns 8,3 mm de branco acima do círculo e 2,1 mm abaixo; os parágrafos ficam a 6,4 mm um do outro.
+A faixa é ancorada à sangria, que aqui é o refile, e avança 30 mm na mancha gráfica. O design termina com a faixa, e `minHeight` reserva oito linhas da grade, 37,3 mm; a abertura fica com a maior das duas alturas, por isso nas páginas 3 e 7 o texto começa 7,3 mm abaixo da faixa. Cada parada é um título de nível 3 cujo design põe `{number}` num círculo de 5,4 mm preenchido com `band`. O modelo `{3}` recomeça a cada passeio, já que um título de nível 1 zera os contadores mais profundos, e os pinos do mapa trazem os mesmos números. Uma parada tem uma linha da grade de margem acima e nenhuma abaixo, e o círculo fica 3,2 mm abaixo do topo das duas linhas da grade que o título ocupa. Isso deixa uns 8,3 mm de branco acima do círculo e 2,1 mm abaixo; os parágrafos ficam a 6,4 mm um do outro.
 
 ### 4 · Pendurar um azulejo no boxe e deixar os chips em tinta
 
@@ -57,7 +57,7 @@ Sem o campo, a página 6 mantém a aba: `pages: 'all'` a imprime também na pág
 
 ### Acrescentar o terceiro passeio
 
-`WALKS` já tem as cores de Belém e `walkStyles` o estilo dele, então o passeio só precisa do título no conteúdo. Ele abre na página 9, depois de uma página 8 em branco pintada de verde-azulado com um 3 branco.
+`WALKS` já tem as cores de Belém e `walkStyles` o estilo dele, de modo que o passeio só precisa do título no conteúdo. Ele abre na página 9, depois de uma página 8 em branco pintada de verde-azulado com um 3 branco.
 
 ```diff
 +# Belém {style="belem" route="From the monastery to the tower"}
@@ -68,4 +68,4 @@ Sem o campo, a página 6 mantém a aba: `pages: 'all'` a imprime também na pág
 ## Erros comuns
 
 - A página 6 existe porque o passeio 1 termina na página 5, uma página ímpar. Um passeio que termina numa página par não deixa página em branco, e a cor do passeio seguinte só aparece nas páginas dele.
-- Antes do primeiro passeio numerado, `{chapterNumber}` fica vazio, então um elemento que o imprime, como a aba, precisa ali de um estilo que o deixe de fora.
+- Antes do primeiro passeio numerado, `{chapterNumber}` fica vazio, por isso um elemento que o imprime, como a aba, precisa ali de um estilo que o deixe de fora.

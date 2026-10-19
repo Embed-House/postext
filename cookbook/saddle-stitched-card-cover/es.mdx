@@ -24,23 +24,23 @@ Un cuadernillo grapado es una pila de pliegos doblados, así que el pliego de cu
 
 <Excerpt region="folio" />
 
-`folio.paper` es el papel prensa de toda página fuera de un bloque. `saddleStitch` dobla los pliegos alrededor de las grapas, sin lomo plano, y `cover: 'pages'` hace girar las páginas 1 y 8 como cubiertas. En un grapado la cubierta gira como los demás pliegos, solo que más rígida, y una hoja de cubierta que nombra su propio papel (la cartulina) se dibuja con ese papel.
+`folio.paper` es el papel prensa de toda página fuera de un bloque. `saddleStitch` dobla los pliegos alrededor de las grapas, sin lomo plano, y `cover: 'pages'` hace girar las páginas 1 y 8 como cubiertas. En un grapado la cubierta gira como los demás pliegos, solo que más rígida, y una hoja de cubierta que indica su propio papel (la cartulina) se dibuja con ese papel.
 
 ### 3 · Una cubierta a una tinta
 
 <Excerpt region="covers" />
 
-La cubierta es un estilo de título con márgenes cero y un diseño de página entera: la línea del número, el título en Bricolage Grotesque a 70 pt, la entradilla en Newsreader cursiva y once líneas de marea cuyas longitudes salen de un generador con semilla, de modo que cada ejecución dibuja las mismas. Nada pinta el fondo de la página: lo pone la cartulina.
+La cubierta es un estilo de encabezado con márgenes cero y un diseño de página entera: la línea del número, el título en Bricolage Grotesque a 70 pt, la entradilla en Newsreader cursiva y once líneas de marea cuyas longitudes salen de un generador con semilla, de modo que cada ejecución dibuja las mismas. Nada pinta el fondo de la página: lo pone la cartulina.
 
 ### 4 · Una apertura para cada pieza
 
 <Excerpt region="features" />
 
-Cada reportaje es un título de primer nivel con el estilo `feature`: página nueva, un antetítulo tomado de sus atributos, el título y un filete azul corto. Pasar las cinco piezas por un solo estilo deja el interior del fanzine en dos familias y un acento.
+Cada reportaje es un encabezado de primer nivel con el estilo `feature`: página nueva, un antetítulo tomado de sus atributos, el título y un filete azul corto. Pasar las cinco piezas por un solo estilo deja el interior del fanzine en dos familias y un acento.
 
 ### 5 · Ábrelo grapado
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. `createFolioFromDocument` lee la encuadernación y las cubiertas de `doc.config.folio`, y el papel de cada hoja de `page.paper`. El pen avisa cuando el número de páginas es impar, porque la página 8 solo puede ser la contracubierta si cae en un verso.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. `createFolioFromDocument` lee la encuadernación y las cubiertas de `doc.config.folio`, y el papel de cada hoja de `page.paper`. El pen avisa cuando el número de páginas es impar, porque la página 8 solo puede ser la contracubierta si cae en una página par.
 
 ## Variantes
 

@@ -1,7 +1,7 @@
 ---
 title: "Attestato con cornice guilloché"
 summary: "Attestati di fine corso disegnati da un solo stile di titolo: cornice guilloché nell’intestazione, sigillo e firme al piede, il nome nell’apertura."
-plain: "Attestati di un corso per un laboratorio di stampa, una pagina per allievo, con un bordo decorato e un sigillo. Scrivere una volta il nome di un allievo dà un attestato completo."
+plain: "Attestati di un corso per un laboratorio di stampa, una pagina per allievo, con un bordo decorato e un sigillo. Basta scrivere una volta il nome di un allievo per avere un attestato completo."
 description: "Attestati di fine corso in Postext: cornice guilloché e sigillo disegnati via codice, il nome in corsivo calligrafico da ogni titolo e la classe in un PDF."
 question: "Come metto una cornice guilloché, un sigillo e le righe per le firme su ogni pagina di un attestato?"
 aliases: ["diploma", "attestato", "certificato", "premio", "guilloché", "cornice ornamentale", "sigillo", "righe per le firme", "stampa unione", "elenco della classe", "PDF in serie", "una pagina per record", "bordo decorativo su ogni pagina", "certificate"]
@@ -16,31 +16,31 @@ Attestati di fine corso per il Quoin Room, un laboratorio di stampa a caratteri 
 
 ### 1 · Lascia che un solo stile di titolo disegni la pagina
 
-Lo stile è [la risposta breve](#la-risposta-breve) qui sopra. Uno stile di titolo governa le pagine della sua sezione ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)): il suo `header` e il suo `footer` sostituiscono quelli del documento, che qui sono vuoti, i suoi `margins` stabiliscono l’area del testo e il suo `advancedDesign` disegna l’apertura. L’altezza di un’apertura si arrotonda per eccesso a righe intere della griglia del testo da 17 pt. Una `minHeight` di 106 mm diventa 18 righe, quindi la motivazione comincia a 140 mm dal bordo superiore; in A4, `y()` la porta a 112,7 mm, cioè 19 righe, e la motivazione comincia a 146 mm. Il solo blocco del titolo farebbe cominciare la motivazione a 128 mm (134 mm in A4). Senza `marginBottom: 0`, i 0,5 em predefiniti sotto un titolo porterebbero gli stessi 106 mm a 19 righe.
+Lo stile è [la risposta breve](#la-risposta-breve) qui sopra. Uno stile di titolo governa le pagine della sua sezione ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)): `header` e `footer` sostituiscono quelli del documento, che qui sono vuoti, `margins` stabilisce l’area del testo e `advancedDesign` disegna l’apertura. L’altezza di un’apertura si arrotonda per eccesso a righe intere della griglia del testo da 17 pt. Una `minHeight` di 106 mm diventa 18 righe, quindi la motivazione comincia a 140 mm dal bordo superiore; in A4, `y()` la porta a 112,7 mm, cioè 19 righe, e la motivazione comincia a 146 mm. Il solo blocco del titolo farebbe cominciare la motivazione a 128 mm (134 mm in A4). Senza `marginBottom: 0`, i 0,5 em predefiniti sotto un titolo porterebbero gli stessi 106 mm a 19 righe.
 
 ### 2 · Aggancia la cornice alla pagina nell’intestazione
 
 <Excerpt region="frame" />
 
-Un elemento immagine disegna una risorsa alle dimensioni della sua collocazione ([elementi immagine](/it/docs/configuration-headers-footers#elementi-immagine)): ancorato all’angolo superiore sinistro della pagina con entrambi i lati `'fill'`, il guilloché copre il riquadro del formato rifilato, e l’SVG, dichiarato con le proporzioni della pagina, lo riempie senza deformarsi. L’intestazione lo dipinge sopra `page.backgroundColor` e non riserva spazio, quindi sono i soli margini a tenere il testo ad almeno 32 mm dal rifilo, dentro il filetto interno a 26 mm. Una filigrana collocata nell’intestazione si stamperebbe sopra le parole, perché l’intestazione viene dipinta dopo il testo. In un’intestazione, `{attr.serial}` legge l’attributo del titolo alla cui sezione appartiene la pagina, così ogni attestato stampa il proprio numero.
+Un elemento immagine disegna una risorsa alle dimensioni della sua collocazione ([elementi immagine](/it/docs/configuration-headers-footers#elementi-immagine)): ancorato all’angolo superiore sinistro della pagina con entrambi i lati `'fill'`, il guilloché copre il riquadro del formato rifilato, e l’SVG, dichiarato con le proporzioni della pagina, lo riempie senza deformarsi. L’intestazione lo dipinge sopra `page.backgroundColor` e non riserva spazio, quindi sono i soli margini a tenere il testo ad almeno 32 mm dal rifilo, dentro il filetto interno a 26 mm. Una filigrana collocata nell’intestazione si stamperebbe sopra le parole, perché Postext dipinge l’intestazione dopo il testo. In un’intestazione, `{attr.serial}` legge l’attributo del titolo alla cui sezione appartiene la pagina, così ogni attestato stampa il proprio numero.
 
 ### 3 · Tieni nell’apertura solo il blocco del titolo
 
 <Excerpt region="title" />
 
-Ogni riga è ancorata al bordo `'top'` della pagina, il che la centra, con una `y` misurata dal rifilo, così il blocco resta al suo posto qualunque siano i margini; `y()` allunga quelle posizioni da Letter ad A4. Il nome è il testo stesso del titolo, letto tramite `{titleText}`, quindi i segnalibri e i tag del PDF lo riportano. Un nome lungo va su una seconda riga, perché un progetto grafico di titolo manda a capo il suo testo (`overflow: 'wrap'`). Le righe spaziate non richiedono correzioni: la spaziatura dopo l’ultima lettera resta fuori dalla misura, quindi sono le lettere stesse a essere centrate.
+Ogni riga è ancorata al bordo `'top'` della pagina, il che la centra, con una `y` misurata dal rifilo, così il blocco resta al suo posto qualunque siano i margini; `y()` allunga quelle posizioni da Letter ad A4. Il nome è il testo stesso del titolo, letto tramite `{titleText}`, quindi i segnalibri e i tag del PDF lo riportano. Un nome lungo va su una seconda riga, perché la grafica di un titolo manda a capo il testo (`overflow: 'wrap'`). Le righe spaziate non richiedono correzioni: la spaziatura dopo l’ultima lettera resta fuori dalla misura, quindi sono le lettere stesse a essere centrate.
 
 ### 4 · Aggancia il sigillo e le firme a un solo bordo
 
 <Excerpt region="signatures" />
 
-Tutto ciò che sta nel piè di pagina è misurato da `SIGN`, il bordo superiore del sigillo, e il margine inferiore dello stile chiude l’area del testo sullo stesso bordo, così una motivazione troppo lunga per la pagina passa alla successiva invece di scorrere sotto il sigillo. Spostate nell’apertura, le righe e i nomi conterebbero per la sua altezza ([span e progetto grafico avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)); poiché arrivano sotto l’area del testo, l’apertura reclamerebbe l’intera pagina e manderebbe la motivazione alla successiva. `LINE` prende la larghezza tra i margini della pagina, sottrae il disco del sigillo da 34 mm, dimezza il resto e toglie 3 mm, così ogni riga si ferma 3 mm prima del sigillo in entrambi i formati (lunga 56 mm in Letter, 53 mm in A4). Ogni nome e ruolo è un elemento di testo largo quanto la sua riga, il che lo centra sotto di essa.
+Tutto ciò che sta nel piè di pagina è misurato da `SIGN`, il bordo superiore del sigillo, e il margine inferiore dello stile chiude l’area del testo sullo stesso bordo, così una motivazione troppo lunga per la pagina passa alla successiva invece di scorrere sotto il sigillo. Spostate nell’apertura, le righe e i nomi conterebbero per la sua altezza ([estensione e grafica avanzata](/it/docs/configuration-headings#estensione-e-grafica-avanzata)); poiché arrivano sotto l’area del testo, l’apertura reclamerebbe l’intera pagina e manderebbe la motivazione alla successiva. `LINE` prende la larghezza tra i margini della pagina, sottrae il disco del sigillo da 34 mm, dimezza il resto e toglie 3 mm, così ogni riga si ferma 3 mm prima del sigillo in entrambi i formati (lunga 56 mm in Letter, 53 mm in A4). Ogni nome e ruolo è un elemento di testo largo quanto la sua riga, il che lo centra sotto di essa.
 
 ### 5 · Unisci l’elenco della classe ai titoli
 
 <Excerpt region="merge" />
 
-Ogni riga diventa un titolo `#` che nomina lo stile e porta il numero di serie come attributo ([attributi dei titoli](/it/docs/document-format#attributi-dei-titoli)), seguito dal testo di `content.en.md`, quindi tre righe danno tre pagine. Il `breakBefore` del livello 1 con parità `'any'` fa cominciare ogni titolo su una nuova pagina senza pagine bianche tra gli attestati; lo stile lo eredita.
+Ogni riga diventa un titolo `#` che indica lo stile e riporta il numero di serie come attributo ([attributi dei titoli](/it/docs/document-format#attributi-dei-titoli)), seguito dal testo di `content.en.md`, quindi tre righe danno tre pagine. Il `breakBefore` del livello 1 con parità `'any'` fa cominciare ogni titolo su una nuova pagina senza pagine bianche tra gli attestati; lo stile lo eredita.
 
 ### 6 · Costruisci un solo PDF per tutta la classe
 

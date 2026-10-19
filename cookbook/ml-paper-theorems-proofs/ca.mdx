@@ -22,7 +22,7 @@ El codi és [la resposta curta](#la-resposta-curta) de dalt. Des de postext 1.19
 
 <Excerpt region="theorems" />
 
-Cada entorn és un [estil de requadre](/ca/docs/configuration-callouts#estils-davís) amb un sol recurs: un filet gris per a la definició, un de pruna per als lemes i un fons pruna pàl·lid per al teorema. `box()` posa aquest aspecte sobre la numeració de la resposta curta. `body.italic` posa l'enunciat en cursiva, com l'estil *plain* d'amsthm, i l'etiqueta en línia queda en negreta rodona a dins. La demostració no porta requadre: la seva etiqueta va en cursiva i sense número (`counter: false`), `endMark: '□'` posa un quadrat alineat a la dreta a la seva última línia, dibuixat amb el `\square` de TeX perquè les matemàtiques són actives, i `keepTogether: false` deixa que una demostració llarga passi a la pàgina següent. `snapToGrid: false` manté el mateix espai al voltant de cada enunciat; en una sola columna, sense veïna amb què alinear-se, un blanc exacte es llegeix millor que un d'arrodonit a la reixeta base.
+Cada entorn és un [estil de requadre](/ca/docs/configuration-callouts#estils-de-requadre) amb un sol recurs: un filet gris per a la definició, un de pruna per als lemes i un fons pruna pàl·lid per al teorema. `box()` posa aquest aspecte sobre la numeració de la resposta curta. `body.italic` posa l'enunciat en cursiva, com l'estil *plain* d'amsthm, i l'etiqueta en línia queda en negreta rodona a dins. La demostració no porta requadre: la seva etiqueta va en cursiva i sense número (`counter: false`), `endMark: '□'` posa un quadrat alineat a la dreta a la seva última línia, dibuixat amb el `\square` de TeX perquè les matemàtiques són actives, i `keepTogether: false` deixa que una demostració llarga passi a la pàgina següent. `snapToGrid: false` manté el mateix espai al voltant de cada enunciat; en una sola columna, sense veïna amb què alinear-se, un blanc exacte es llegeix millor que un d'arrodonit a la reixeta base.
 
 ### 3 · Cita en autor–any des de la bibliografia del mateix article
 
@@ -34,13 +34,13 @@ Les referències són BibTeX dins d'un bloc `:::references{format=bibtex}`, reco
 
 <Excerpt region="title" />
 
-El títol és l'únic títol de nivell 1, i el seu estil `paper` dibuixa al seu lloc una ranura d'elements: la banda sagna pel capdamunt de la pàgina, el títol s'ajusta a la mesura i els autors i les afiliacions surten dels atributs del títol, amb ¹ ² i * escrits com a caràcters. L'element del peu amb `pages: 'opener'` imprimeix la font, la llicència i els canvis només a la pàgina 1, perquè la primera pàgina digui d'on ve el text encara que circuli sola.
+El títol és l'únic títol de nivell 1, i el seu estil `paper` dibuixa al seu lloc una zona de disseny: la banda surt a sang pel capdamunt de la pàgina, el títol s'ajusta a la mesura i els autors i les afiliacions surten dels atributs del títol, amb ¹ ² i * escrits com a caràcters. L'element del peu amb `pages: 'opener'` imprimeix la font, la llicència i els canvis només a la pàgina 1, perquè la primera pàgina digui d'on ve el text encara que circuli sola.
 
 ### 5 · Redibuixa la figura amb codi
 
 <Excerpt region="art" />
 
-La figura 1 es dibuixa en SVG a partir de les caixes i les paraules de l'original. Els rètols anomenen Work Sans a `font-family`, i `loadSvg` passa l'SVG per `inlineSvgFonts`, del motor, que hi incrusta els dos fitxers de Work Sans que fan servir; `tex()` escriu `y_w ≻ y_l` com a traços de MathJax, els mateixos glifs de les equacions. Les puntes de fletxa són traçats i no marcadors SVG, i per això la figura continua sent vectorial al PDF.
+La figura 1 es dibuixa en SVG a partir de les caixes i les paraules de l'original. Els rètols indiquen Work Sans a `font-family`, i `loadSvg` passa l'SVG per `inlineSvgFonts`, del motor, que hi incrusta els dos fitxers de Work Sans que fan servir; `tex()` escriu `y_w ≻ y_l` com a traços de MathJax, els mateixos glifs de les equacions. Les puntes de fletxa són traçats i no marcadors SVG, i per això la figura continua sent vectorial al PDF.
 
 ## Variants
 
@@ -65,5 +65,5 @@ Algunes revistes numeren tots els enunciats en una sola sèrie (lema 1, lema 2, 
 ## Errors freqüents
 
 - `endMark` dibuixa els seus quadrats (□ ∎ ■) amb TeX només quan les matemàtiques són actives. En un document sense `initMathEngine()` la marca es compon amb la font del cos del requadre, i Spectral, com tots els fitxers latin de Fontsource, no té □: tria-hi una marca que la font pugui compondre.
-- L'equilibrat de columnes omple la pàgina que una fórmula alta deixa curta afegint línies de la reixeta base sobre els seus títols. `balancing: { maxLinesPerHeading: 1 }` deixa els títols d'un article a prop del seu espai propi; aquella pàgina pot acabar llavors unes quantes línies més amunt.
+- L'equilibratge de columnes omple la pàgina que una fórmula alta deixa curta afegint línies de la reixeta base sobre els seus títols. `balancing: { maxLinesPerHeading: 1 }` deixa els títols d'un article a prop del seu espai propi; aquella pàgina pot acabar llavors unes quantes línies més amunt.
 - Una fórmula amb un rètol de `\underbrace` més ample que la clau, com el gradient de la secció 4, necessita un tall amb `aligned`; si queda més ampla que la mesura, surt per la dreta.

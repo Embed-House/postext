@@ -3,20 +3,20 @@
 export const metadata = {
   title: 'Linha de comando: o postext em um terminal, um script ou um agente',
   sidebarTitle: 'Linha de comando',
-  description: 'Um único executável autossuficiente para macOS, Linux e Windows que transforma um livro .postext, uma pasta de livro ou arquivos Markdown soltos em PDF, HTML, EPUB, imagens das páginas e Word, empacota pacotes e verifica livros, com saída JSON para scripts e agentes',
+  description: 'Um único executável autossuficiente para macOS, Linux e Windows. Ele transforma um livro .postext, uma pasta de livro ou arquivos Markdown soltos em PDF, HTML, EPUB, imagens das páginas e Word, monta pacotes, verifica livros e oferece saída JSON para scripts e agentes',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
-  plainSummary: "Esta página é para quem quer fazer livros com o Postext a partir de um terminal, sem usar o site. Você baixa um único arquivo para o seu computador e o executa, sem instalar mais nada. Você entrega a ele o seu livro, ou alguns arquivos de texto, e ele faz um PDF, uma página da web, um livro digital, imagens das páginas ou um documento do Word. Ele também verifica se o livro tem problemas e junta todos os arquivos do livro em um só. Programas e assistentes de inteligência artificial também podem usá-lo, porque ele responde em um formato que esses programas leem com facilidade.",
+  plainSummary: "Esta página é para quem quer fazer livros com o Postext a partir de um terminal, sem usar o site. Você baixa um único arquivo feito para o seu computador e o executa, sem instalar mais nada. Você entrega a ele o livro, ou alguns arquivos de texto, e ele faz um PDF, uma página da web, um livro digital, imagens das páginas ou um documento do Word. Ele também verifica se o livro tem problemas e junta todos os arquivos do livro em um só. Programas e assistentes de inteligência artificial também podem usá-lo, porque ele responde em um formato que esses programas leem com facilidade.",
 };
 
 # Linha de comando
 
-**O `postext` compõe o seu livro a partir de um terminal, de um script ou de um agente.**
+**O `postext` compõe seu livro a partir de um terminal, de um script ou de um agente.**
 
-O [Sandbox](/pt/sandbox) é onde você escreve e desenha um livro olhando as
-páginas. A linha de comando pega o mesmo livro e produz os seus arquivos sem
+No [Sandbox](/pt/sandbox), você escreve um livro e cuida do design dele vendo
+as páginas. A linha de comando recebe o mesmo livro e gera os arquivos dele sem
 navegador: um PDF pronto para impressão, as páginas em HTML, um EPUB, uma
 imagem de uma página ou de todas, um documento do Word. Ela também empacota e
 desempacota pacotes `.postext`, importa documentos do Word, descreve um livro
@@ -27,11 +27,11 @@ geradores de PDF, EPUB, HTML e Word, o pintor de páginas (Skia), o HarfBuzz
 para o árabe e outras escritas complexas, os perfis ICC de impressão e as
 fontes padrão (EB Garamond e Open Sans) estão todos dentro dele. Não há
 runtime, pacote nem biblioteca para instalar, e a diagramação é a do Sandbox:
-o mesmo livro se quebra nas mesmas páginas.
+o mesmo livro se divide nas mesmas páginas.
 
 ## Como obter
 
-Cada versão do Postext publica os executáveis na sua
+Cada versão do Postext publica os executáveis na respectiva
 [GitHub Release](https://github.com/drnachio/postext/releases/latest), com
 as somas de verificação (`SHA256SUMS`) e um `readme.txt`:
 
@@ -61,9 +61,9 @@ chmod +x postext
 ./postext
 ```
 
-Mova-o para uma pasta do seu `PATH` (`/usr/local/bin`, `~/.local/bin`) para
+Mova-o para uma pasta do `PATH` (`/usr/local/bin`, `~/.local/bin`) para
 executá-lo como `postext` de qualquer lugar. O macOS põe em quarentena um
-arquivo baixado pelo navegador; tire a marca uma vez:
+arquivo baixado pelo navegador; remova essa marca uma única vez:
 
 ```bash
 xattr -d com.apple.quarantine postext-macos-arm64
@@ -80,7 +80,7 @@ Com o Node.js instalado, `npx postext-cli` baixa do npm o executável do seu
 sistema e o executa, e `npm install -g postext-cli` o mantém como um comando
 `postext`.
 
-Executado sem argumentos, o `postext` imprime a sua ajuda; `postext help <command>`
+Executado sem argumentos, o `postext` mostra a ajuda; `postext help <command>`
 lista as opções de um comando.
 
 ## Um primeiro livro
@@ -92,8 +92,8 @@ ordem dos nomes:
 postext pdf chapters/ --name "Field notes" -o field-notes.pdf
 ```
 
-O front matter do primeiro capítulo dá ao livro o título e o autor, e os
-padrões do motor fazem o resto: duas colunas, uma grade de linhas de base,
+O front matter do primeiro capítulo define o título e o autor do livro, e os
+valores padrão do motor fazem o resto: duas colunas, uma grade de linhas de base,
 texto justificado e hifenizado, cabeços. Acrescente uma configuração e imagens
 quando precisar delas:
 
@@ -114,25 +114,25 @@ Todo comando que lê um livro aceita qualquer uma destas formas:
 
 - **Um arquivo `.postext`**: o pacote que o Sandbox exporta e abre (veja
   [Pacotes](/pt/docs/configuration-bundles#pacotes-arquivos-postext)).
-- **Uma pasta de livro**: um pacote desempacotado, com o seu `preset.json`, os
-  seus capítulos, recursos e fontes. É o que a skill para agentes entrega, e
-  `postext unpack` grava uma.
+- **Uma pasta de livro**: um pacote desempacotado, com o `preset.json`, os
+  capítulos, os recursos e as fontes. É o que a skill para agentes entrega, e o
+  `postext unpack` gera uma.
 - **Markdown solto**: um ou mais arquivos `.md`, um capítulo cada na ordem
   dada, ou uma pasta cujos arquivos `.md` são lidos pelo nome (`01-intro.md`,
   `02-method.md`…). Com eles:
   - `--config design.json`: a configuração, seja um objeto de configuração
     simples, seja um `preset.json` inteiro;
-  - `--resources pictures/`: as imagens, cada uma uma figura cujo nome é o do
-    arquivo sem a extensão (`map.png` é `::resource{id="map"}`); um
-    `resources.json` na pasta as descreve no lugar disso (ids, tipos,
+  - `--resources pictures/`: as imagens; cada uma vira uma figura com o nome do
+    arquivo sem a extensão (`map.png` é `::resource{id="map"}`); em vez disso,
+    um `resources.json` na pasta pode descrevê-las (ids, tipos,
     legendas, texto alternativo), na mesma forma que os `resources` de um
     `preset.json`;
   - `--fonts fonts/`: arquivos de fonte que o livro leva (TTF, OTF, WOFF2),
-    identificados pela família que as suas tabelas indicam;
+    identificados pela família que as tabelas deles indicam;
   - `--name "Title"`: o nome do livro.
 
-`--config` também funciona com um pacote ou uma pasta: ela é mesclada sobre a
-configuração do próprio livro. Um pacote em vários idiomas é lido no seu
+`--config` também funciona com um pacote ou uma pasta: a configuração indicada
+é mesclada sobre a do próprio livro. Um pacote em vários idiomas é lido no
 próprio idioma, a menos que `--locale` peça outro (`--locale en`).
 
 ## Comandos
@@ -158,7 +158,7 @@ próprio idioma, a menos que `--locale` peça outro (`--locale en`).
 </table>
 
 Todo comando grava na pasta de onde você o executa, com o nome da entrada, a
-menos que `-o` indique o caminho. `-o -` grava uma saída única na saída
+menos que `-o` indique o caminho (`images` grava em `pages/`). `-o -` grava uma saída única na saída
 padrão.
 
 ### pdf
@@ -172,7 +172,7 @@ postext pdf book/ --color-space grayscale --no-outlines
 O PDF segue as configurações do próprio livro (veja
 [Geração de PDF](/pt/docs/configuration-fonts-colors-viewers#geração-de-pdf-configuração) e
 [Produção gráfica](/pt/docs/configuration-fonts-colors-viewers#produção-gráfica-configuração)); estas opções
-as mudam para uma execução:
+as alteram só naquela execução:
 
 - `--pdfx none|x1a|x4`: o padrão PDF/X para uma gráfica.
 - `--profile NAME|FILE`: o perfil ICC de saída, pelo nome (`fogra39`,
@@ -197,7 +197,7 @@ vídeos hospedados no próprio livro. `--assets embed|folder` escolhe uma das
 duas formas para qualquer caminho. As páginas são a diagramação de impressão,
 mostrada no tamanho da tela: lado a lado (`--mode multi`, o padrão) ou uma
 embaixo da outra (`--mode single`). As fontes marcadas com
-`redistributable: false` são nomeadas, mas não copiadas. Quando a família nomeia um `fallback`, as faces dessa família aberta são escritas em seu lugar, com o nome da família (desde o postext 1.43).
+`redistributable: false` são citadas pelo nome, mas não copiadas. Quando a família indica um `fallback`, são gravadas no lugar dela as faces dessa família aberta, com o nome da família original (desde o postext 1.43).
 
 ### epub
 
@@ -208,10 +208,10 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 
 `--layout fixed` (o padrão) mantém cada página como no impresso, com texto
 selecionável; `--layout reflowable` deixa o sistema de leitura recompor o
-texto para a sua tela (veja [Livros EPUB](/pt/docs/configuration-html-folio-epub#livros-epub-postext-epub)).
+texto para a própria tela (veja [Livros EPUB](/pt/docs/configuration-html-folio-epub#livros-epub-postext-epub)).
 A capa é a miniatura do livro, a menos que `--cover` indique uma imagem. Os
 metadados do pacote EPUB (título, autores, idioma, identificador) vêm do front
-matter do primeiro capítulo, como no Sandbox. As fontes marcadas `redistributable: false` não são copiadas; uma família que nomeia um `fallback` é incorporada com as faces dessa família aberta sob o próprio nome (desde o postext 1.43).
+matter do primeiro capítulo, como no Sandbox. As fontes marcadas com `redistributable: false` não são copiadas; uma família que indica um `fallback` é incorporada com as faces dessa família aberta, mas com o nome original (desde o postext 1.43).
 
 ### image e images
 
@@ -225,8 +225,8 @@ postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}
 As páginas são indicadas **como impressas** (`12`, `iv`, um intervalo `7-9`)
 ou **pela posição** no livro com `#` (`#1` é a primeira página, seja qual for
 o número que ela imprime, `#10-#20`, `#30-` até o fim). `--pages` aceita uma
-lista separada por vírgulas. O pintor é o da visualização Canvas do Sandbox,
-então uma imagem mostra a página exatamente como foi diagramada, sem passar
+lista separada por vírgulas. O pintor é o da visualização Canvas do Sandbox;
+por isso, uma imagem mostra a página exatamente como foi diagramada, sem passar
 por um PDF.
 
 - `--format png|jpeg|webp` (ou a extensão de `-o`), `--quality 1-100` para
@@ -238,7 +238,8 @@ por um PDF.
   impresso) e `{chapter}`; `page-{n:03}` por padrão.
 - `--print-preview`: a página como a gráfica vai reproduzi-la, passando pelo
   perfil de saída, com o refile e a sangria desenhados.
-- `--jobs N`: quantas imagens são codificadas ao mesmo tempo.
+- `--jobs N`: quantas imagens são codificadas ao mesmo tempo (por padrão, tantas
+  quantos processadores o computador tiver).
 
 ### docx e import-docx
 
@@ -250,9 +251,9 @@ postext import-docx manuscript.docx -o manuscript.postext
 
 `docx` grava os capítulos com estilos do Word para títulos, parágrafos,
 boxes, citações, listas e notas. O que o Word não consegue expressar fica
-como está escrito nos estilos *Postext Markup*, e o modelo de importação vai
-dentro do arquivo, então o documento é importado de volta sem mudanças depois
-que um editor trabalhou nele. `import-docx` transforma um documento do Word em
+literalmente nos estilos *Postext Markup*, e o modelo de importação vai
+dentro do arquivo; assim, o documento volta a ser importado sem mudanças
+depois que um editor trabalha nele. `import-docx` transforma um documento do Word em
 livro: um capítulo a cada título de nível 1 (`--no-split` mantém um só),
 imagens e tabelas como recursos, e `--report` imprime o relatório de
 qualidade que o Sandbox mostra (estilos em uso, formatação direta, numeração
@@ -261,10 +262,10 @@ Sandbox ou um `.docx` que traga um).
 
 O espaçamento entre caracteres é uma propriedade do estilo, não do texto, e por isso não está no
 Markdown. `docx` grava o `letterSpacing` dos estilos de parágrafo, dos estilos de título
-e dos níveis de título como espaçamento entre caracteres do estilo do Word, e `import-docx`
-o lê de volta em em do tamanho do estilo: ele o põe como `letterSpacing` nos estilos do livro
+e dos níveis de título como espaçamento entre caracteres do estilo do Word, e o `import-docx`
+o lê de volta, em em relativos ao corpo do estilo: define o `letterSpacing` nos estilos do livro
 que não têm nenhum (os estilos de parágrafo e de título do arquivo de `--config` aos quais
-os estilos do Word correspondem, e os níveis de título), e deixa como está qualquer espaçamento
+os estilos do Word correspondem, e os níveis de título) e deixa como está qualquer tracking
 que o livro já define. Com `--json`, `styleTracking` lista o que foi aplicado (`applied`) e o que
 ficou de fora (`skipped`). Desde o postext 1.39.
 
@@ -277,8 +278,11 @@ postext unpack my-book.postext -o my-book/
 ```
 
 `pack` compacta uma pasta de livro como ela está, ou monta um pacote a partir
-de Markdown solto. A mesma entrada sempre dá os mesmos bytes, então um pacote
-pode ser comparado ou ter o seu hash calculado. `unpack` se recusa a gravar em
+de Markdown solto. A mesma entrada sempre gera os mesmos bytes; por isso, um
+pacote pode ser comparado ou ter o hash calculado. Para Markdown solto,
+`--id`, `--description` e `--thumbnail FILE` (uma imagem de capa) definem o id,
+a descrição e a miniatura do pacote; por padrão, o id é um slug do nome. Uma
+pasta mantém o que o seu `preset.json` diz. `unpack` se recusa a gravar em
 uma pasta que não está vazia, a menos que se passe `--force`.
 
 ### info e check
@@ -289,9 +293,9 @@ postext check book.postext
 postext check chapters/ --strict --json
 ```
 
-`info` lista os capítulos (título, palavras, arquivo e, com `--pages`, as suas
-páginas), os recursos e cada família tipográfica com a sua origem (o livro,
-uma pasta, o executável, o cache de downloads ou a fonte substituta). Se o livro diz onde começa (`start` em `preset.json`: um trecho que abre na página 58, no capítulo 4), ele também mostra isso, e todos os comandos compõem o livro a partir daí.
+`info` lista os capítulos (título, palavras, arquivo e, com `--pages`, as
+páginas), os recursos e cada família tipográfica com a respectiva origem (o livro,
+uma pasta, o executável, o cache de downloads ou a fonte substituta). Se o livro diz onde começa (`start` em `preset.json`: um trecho que abre na página 58, no capítulo 4), ele também mostra isso, e todos os comandos diagramam o livro a partir daí.
 
 `check` diagrama o livro e relata o que o painel Verificações do Sandbox
 mostra: Markdown que não fecha, recursos, diretivas e estilos desconhecidos,
@@ -299,18 +303,18 @@ boxes que a diagramação teve de forçar, fontes que faltam, configurações qu
 motor teve de substituir e, para um livro preparado para impressão (ou com
 `--preflight`), o preflight: imagens de baixa resolução, fios finos, texto
 pequeno em várias tintas, tinta acima do limite, texto perto do refile. Também
-lista o texto que não se lê sobre o seu fundo (`contrast`), uma vez por par de
+lista o texto difícil de ler sobre o fundo (`contrast`), uma vez por par de
 cores, com a razão na tela e, para impressão, no papel do perfil de saída. Cada
 problema indica o arquivo do capítulo, a linha e a página. O código de saída é
 3 quando se encontra um erro, ou qualquer aviso com `--strict`.
 
-Também avisa dos textos de design da configuração que guardam o texto do livro
+Também aponta os textos dos designs da configuração que contêm o texto do livro
 em vez de marcadores (`contentInConfig`), uma vez por estilo de título, cabeço
 ou design de parte, com o caminho de cada texto: leve esse texto para o
 Markdown, ou acrescente o título ou o nome da editora a
 `checks.contentInConfig.allow`.
 
-Em um livro com modelos de página, o `check` informa também o texto que não cabe no seu bloco (`frameOverflow`, com os passos que a escada de reajuste tentou e as mudanças que o fariam caber), uma história que passa das páginas que um bloco pode acrescentar (`frameContinuationLimit`), um salto para uma página que não segue (`continueTargetMissing`) e os rótulos de figura que não podem ser desenhados ou que se chocam (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Depois dos avisos, imprime uma linha `reflow` por página composta com eventos, e o `--json` traz os passos, as propostas e o registro de reajustes como dados. Veja [Páginas compostas › Avisos](/pt/docs/composed-pages#avisos) e [Registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
+Em um livro com modelos de página, o `check` aponta também o texto que não cabe no bloco (`frameOverflow`, com os passos que a escada de ajuste tentou e as mudanças que o fariam caber), um texto que ultrapassa as páginas que um bloco pode acrescentar (`frameContinuationLimit`), um salto para uma página que não vem depois (`continueTargetMissing`) e os rótulos de figura que não podem ser desenhados ou que se sobrepõem (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Depois dos avisos, imprime uma linha `reflow` por página composta com eventos, e o `--json` traz os passos, as propostas e o registro de reajustes como dados. Veja [Páginas compostas › Avisos](/pt/docs/composed-pages#avisos) e [Registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
 
 ### build e --watch
 
@@ -346,13 +350,13 @@ arquivos bons.
 </table>
 
 E para qualquer comando: `--json`, `--quiet` (`-q`, só erros), `--verbose`
-(progresso e todos os avisos), `--no-color`, `--help`.
+(progresso e todos os avisos), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Fontes
 
-Um livro que leva as suas fontes (um pacote, ou `--fonts` com Markdown solto)
+Um livro que leva as próprias fontes (um pacote, ou `--fonts` com Markdown solto)
 é composto com elas e com nada mais. Para cada família que a configuração
-nomeia e que o livro não leva, o `postext` procura, nesta ordem:
+cita e que o livro não leva, o `postext` procura, nesta ordem:
 
 1. nas pastas indicadas com `--font-dir`;
 2. entre as faces compiladas no executável: EB Garamond e Open Sans, os
@@ -361,33 +365,33 @@ nomeia e que o livro não leva, o `postext` procura, nesta ordem:
 4. no [Google Fonts](https://fonts.google.com), que entrega arquivos
    TrueType estáticos completos, ou na [Fontsource](https://fontsource.org)
    quando o Google Fonts não tem a família (Commit Mono, FiraGO); eles ficam
-   no cache, então cada família é baixada uma única vez.
+   no cache; por isso, cada família é baixada uma única vez.
 
-Um peso que a família não traz é composto com a fonte que um navegador
-escolheria (a seleção de fontes do CSS: acima de 500 primeiro as mais pesadas,
-abaixo de 400 primeiro as mais leves, de modo que o 600 de uma família com 400
-e 700 é o 700 dela, e o 550 também), e uma inclinação que ela não traz, com as
-redondas, como são nos dois casos, nas imagens de página e no PDF: uma família
-de letreiramento com um só peso mantém as próprias letras no negrito, e uma
-família sem itálico, as redondas.
+Um peso que a família não traz é composto com a face que um navegador
+escolheria (a seleção de fontes do CSS: acima de 500, primeiro as mais pesadas;
+abaixo de 400, primeiro as mais leves; assim, o 600 de uma família com 400 e
+700 é o 700 dela, e o 550 também), e uma inclinação que ela não traz é composta
+com a redonda. Cada face é usada tal como é, nas imagens de página e no PDF:
+uma fonte de display com um só peso mantém as próprias letras no negrito, e
+uma família sem itálico mantém a redonda no itálico.
 
-São baixados os pesos que a configuração nomeia: regular, negrito e seus
+São baixados os pesos que a configuração cita: regular, negrito e seus
 itálicos para cada família, e qualquer outro peso que um ajuste indique,
 inclusive o do negrito (`bodyText.boldFontWeight: 600` pede a fonte de peso
 600). Quando um peso que a família traz não pôde ser carregado (offline e sem
 arquivo no cache, um download que falhou, uma pasta de fontes sem o arquivo),
-o texto é composto com a fonte da família que responde por ele pela mesma
-regra e `postext check` o lista como aviso `fontFallback`: as linhas podem quebrar de outro modo que no
-Sandbox.
+o texto é composto com a face da família que a mesma regra escolhe no lugar
+dele, e o `postext check` o lista como aviso `fontFallback`: as linhas podem
+quebrar de modo diferente do Sandbox.
 
 O cache fica em `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` no
 Windows); `POSTEXT_CACHE_DIR` ou `--cache-dir` o mudam de lugar. `--offline`
 pula o download. Uma família que não se encontra em lugar nenhum é composta em
-EB Garamond com o seu próprio nome, para que a diagramação e o PDF continuem
-de acordo, e um aviso `missingFont` a nomeia. `postext info` mostra de onde
+EB Garamond com o próprio nome, para que a diagramação e o PDF continuem
+de acordo, e um aviso `missingFont` a aponta. `postext info` mostra de onde
 veio cada família.
 
-Um pacote que deixa de fora os arquivos de uma família licenciada pode nomear para ela uma família aberta de largura parecida (`fallback` nas `fonts` do manifesto, desde o postext 1.42). O `postext` procura então essa família pelos passos acima e compõe as faces que o livro não traz nos cortes dela de mesmo peso e mesma inclinação, com o nome da licenciada, de modo que a diagramação fica próxima da obtida com os arquivos e o `postext check` não avisa um `missingFont` para ela. Uma família que o livro traz só em parte toma do `fallback` apenas a inclinação de que não tem nenhum arquivo. O PDF embute a face aberta.
+Um pacote que deixa de fora os arquivos de uma família licenciada pode indicar para ela uma família aberta de largura parecida (`fallback` nas `fonts` do manifesto, desde o postext 1.42). O `postext` procura então essa família pelos passos acima e compõe as faces que o livro não traz nos cortes dela de mesmo peso e mesma inclinação, com o nome da licenciada, de modo que a diagramação fica próxima da obtida com os arquivos e o `postext check` não gera o aviso `missingFont` para ela. Uma família que o livro traz só em parte toma do `fallback` apenas uma inclinação para a qual não tem nenhuma face. O PDF incorpora a face aberta.
 
 ## Para scripts e agentes
 
@@ -396,7 +400,7 @@ inclusive agentes de programação.
 
 - **`--json`** imprime um único objeto JSON na saída padrão quando o comando
   termina; todas as mensagens vão para a saída de erro. O relatório lista o
-  que foi gravado, as páginas, cada aviso com a sua origem e quanto tempo
+  que foi gravado, as páginas, cada aviso com a origem e quanto tempo
   levou cada etapa (em milissegundos):
 
 ```json
@@ -429,11 +433,11 @@ inclusive agentes de programação.
   passar adiante por um pipe.
 - **Velocidade.** O executável inicia em poucos centésimos de segundo. Um
   livro curto vira um PDF ou uma imagem de página em bem menos de um segundo;
-  um longo leva o tempo que a sua diagramação leva (um romance ilustrado de
+  um longo leva o tempo que a diagramação dele exigir (um romance ilustrado de
   140 páginas, uns dez segundos). Para olhar algumas páginas de um livro
   longo, combine `--chapters` com `image` ou `images --pages`. Para trabalhar
   em um livro ao longo de muitas mudanças, deixe `postext build --watch`
-  rodando e leia as suas saídas.
+  rodando e leia as saídas.
 
 A [skill para agentes](/pt/docs/skill) usa a linha de comando para renderizar
 as páginas em que está trabalhando e para verificar uma conversão.
@@ -442,7 +446,7 @@ as páginas em que está trabalhando e para verificar uma conversão.
 
 A linha de comando é o pacote `postext-cli` do
 [repositório](https://github.com/drnachio/postext/tree/main/packages/postext-cli).
-O [Bun](https://bun.sh) a compila, com o motor e os seus geradores, em um
+O [Bun](https://bun.sh) a compila, com o motor e os geradores dele, em um
 executável por sistema, e o [Skia](https://skia.org) (por meio de
 `@napi-rs/canvas`) mede e pinta o texto, como o canvas do navegador faz no
 Sandbox. Uma ilustração SVG que contém um bitmap (um PNG ou JPEG incorporado como URI de dados, como o `pdftocairo -svg` escreve a arte recortada de um PDF) é desenhada pelo [resvg](https://github.com/linebender/resvg), porque o renderizador de SVG do Skia omite essas imagens. A cada versão, os executáveis são construídos, executados no Linux,
@@ -468,17 +472,18 @@ executável deste computador em `packages/postext-cli/bin/`.
   recomeça, enquanto o Sandbox continua a numeração do livro.
 - **As fontes** vêm do livro, das suas pastas, do executável, do Google Fonts
   ou da Fontsource (para uma família que o Google Fonts não tem), nunca das
-  fontes instaladas no computador, então um livro sai igual em qualquer
+  fontes instaladas no computador; por isso, um livro sai igual em qualquer
   máquina.
 - **O idioma do texto** é, num navegador, o do próprio documento
   (`bodyText.shapingLanguage: 'document'`, o padrão desde o postext 1.30). O
-  canvas do Skia aceita um idioma e dá forma ao texto sem ele, então a linha de
-  comando mede as formas do idioma padrão de cada fonte e sempre diagrama os
-  seus livros com `shapingLanguage: 'host'`, diga o que disser a configuração;
-  o PDF e as imagens de página dela pintam essas mesmas formas. Um livro cuja
+  canvas do Skia aceita um idioma, mas dá forma ao texto sem levá-lo em conta;
+  por isso, a linha de comando mede as formas do idioma padrão de cada fonte e
+  sempre diagrama os livros com `shapingLanguage: 'host'`, diga o que disser a
+  configuração, e o PDF e as imagens de página que ela gera pintam essas mesmas
+  formas. Um livro cuja
   fonte tem formas para um idioma (um `l·l` catalão, um `fi` turco, os
   algarismos de uma fonte chinesa num livro em inglês) é composto aqui com as
   formas padrão. O que `'document'` mede de outro modo (as partes de uma
   palavra quebrada no fim de uma linha, uma palavra da direita para a
-  esquerda, um texto de design) é medido aqui como `'host'` mede, então uma
-  linha pode quebrar em outra palavra que não a do Sandbox.
+  esquerda, um texto de design) é medido aqui como `'host'` mede; por isso, uma
+  linha pode quebrar numa palavra diferente da do Sandbox.

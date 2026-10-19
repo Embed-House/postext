@@ -1,16 +1,16 @@
 ---
 title: "Kolumnentitel nach Seitenparität in einem Essayband"
 summary: "Kopfzeilenelemente nach Parität und Seitenrolle: Buchtitel links, gekürzter Essaytitel rechts, Paginamarken am Rand, Pagina am Fuß der Auftaktseiten."
-plain: "Fünf Seiten aus einem kleinen Essayband. Sie zeigen, wie man den Titel des Buchs oben auf die linken Seiten und den Titel des Essays auf die rechten Seiten druckt."
+plain: "Fünf Seiten aus einem kleinen Essayband. Sie zeigen, wie man den Titel des Buchs oben auf die linken Seiten und den Titel des Essays auf die rechten Seiten setzt."
 description: "Ein Montaigne im Taschenformat, in Postext gesetzt: Kolumnentitel nach Parität und Seitenrolle, Paginamarken am Außensteg, Auslassungspunkte bei langen Titeln."
 question: "Wie setze ich den Buchtitel auf linke Seiten, das Kapitel auf rechte Seiten und die Pagina nach außen?"
 aliases: ["Kolumnentitel", "lebender Kolumnentitel", "Kolumnentitel links und rechts", "gerade und ungerade Seiten", "Seitenzahl außen", "Paginamarke", "langer Kapiteltitel", "Titel mit Auslassungspunkten kürzen", "Kopfzeile auf Kapitelauftakt ausblenden", "Farbe der Vakatseite", "blaue Standardkopfzeile"]
-pageNotes: { "3": "Der Kolumnentitel der rechten Seite kürzt den Essaytitel von 81 Zeichen mit Auslassungspunkten vor einer sepiafarbenen Trennlinie von 0,5 pt und der Paginamarke am Außensteg.", "4": "Seite 32, eine linke Seite, trägt den Titel des Buchs; der Essay endet nach einem Drittel der Seite." }
+pageNotes: { "3": "Der Kolumnentitel der rechten Seite kürzt den Essaytitel von 81 Zeichen mit Auslassungspunkten vor einer sepiafarbenen Trennlinie von 0,5 pt und der Paginamarke am Außensteg.", "4": "Seite 32, eine linke Seite, zeigt den Titel des Buchs; der Essay endet nach einem Drittel der Seite." }
 ---
 
 ## Was Sie setzen
 
-Die Seiten 29 bis 33 einer Taschenausgabe von Montaignes *Essays* in der englischen Übersetzung von Charles Cotton: das ganze Kapitel IV und der Anfang von Kapitel V. Die linken Seiten tragen den Titel des Buchs in gesperrten Versalien. Die rechten Seiten tragen den Titel des Essays kursiv, mit Auslassungspunkten gekürzt, da der Titel von Kapitel IV 81 Zeichen lang ist. Jede Pagina sitzt in einer sepiafarbenen Marke am Außensteg, 3 mm von einer Linie von 0,5 pt an der Kante des Satzspiegels. Eine Auftaktseite hat keinen Kolumnentitel, nur eine Pagina am Fuß. Der Text steht in Baskervville auf einer warm gebrochen weißen Seite, die Titel in Libre Caslon Display, die Paginas und der Buchtitel in Alegreya SC. Jeder Kolumnentitel ist in der Konfiguration festgelegt, sodass der eingebaute Kolumnentitel der Engine, blaue Open Sans zu 8 pt, nie gedruckt wird.
+Die Seiten 29 bis 33 einer Taschenausgabe von Montaignes *Essays* in der englischen Übersetzung von Charles Cotton: das ganze Kapitel IV und der Anfang von Kapitel V. Die linken Seiten zeigen den Titel des Buchs in gesperrten Versalien. Die rechten Seiten zeigen den Titel des Essays kursiv, mit Auslassungspunkten gekürzt, da der Titel von Kapitel IV 81 Zeichen lang ist. Jede Pagina sitzt in einer sepiafarbenen Marke am Außensteg, 3 mm von einer Linie von 0,5 pt an der Kante des Satzspiegels. Eine Auftaktseite hat keinen Kolumnentitel, nur eine Pagina am Fuß. Der Text steht in Baskervville auf einer warm gebrochen weißen Seite, die Titel in Libre Caslon Display, die Paginas und der Buchtitel in Alegreya SC. Jeder Kolumnentitel ist in der Konfiguration festgelegt, sodass der eingebaute Kolumnentitel der Engine, blaue Open Sans zu 8 pt, nie erscheint.
 
 ## Zubereitung
 
@@ -24,7 +24,7 @@ Jede Farbe der Konfiguration ist mit einem dieser Einträge verknüpft. Lassen S
 
 <Excerpt region="tab" />
 
-Die kurze Antwort verankert die Marke jedes Kolumnentitels an `'page'`, sodass ihre Versätze ab dem Endformat gemessen werden. Von der Ecke `top-right` aus läuft ein positives `x` aus der Seite hinaus, deshalb nimmt die Marke der rechten Seite ein negatives. Die Trennlinie hängt an der Marke und der Titel an der Trennlinie ([Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)). Die Maße der Marke sind benannte Konstanten, weil die übrigen Teile von ihnen aus gemessen werden. Die Trennlinie ist `TAB_H` hoch. Pagina und beide Titel teilen sich eine Zeilenhöhe von 9 pt, und die Grundlinie eines Designtexts liegt bei 80 % seiner Zeilenhöhe; so stehen alle drei bei jedem Schriftgrad auf einer Grundlinie.
+Die kurze Antwort verankert die Marke jedes Kolumnentitels an `'page'`, sodass ihre Versätze ab dem Endformat gemessen werden. Von der Ecke `top-right` aus läuft ein positives `x` aus der Seite hinaus, deshalb nimmt die Marke der rechten Seite ein negatives. Die Trennlinie hängt an der Marke und der Titel an der Trennlinie ([Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)). Die Maße der Marke sind benannte Konstanten, weil die übrigen Teile von ihnen aus gemessen werden. Die Trennlinie ist `TAB_H` hoch. Pagina und beide Titel teilen sich eine Zeilenhöhe von 9 pt, und die Grundlinie eines Gestaltungstexts liegt bei 80 % seiner Zeilenhöhe; so stehen alle drei bei jedem Schriftgrad auf einer Grundlinie.
 
 <PageShot page={2} crop="0.04,0.045,0.6,0.05" caption="Seite 30, eine linke Seite: Marke, Trennlinie und Titel des Buchs, vom Außensteg nach innen gelesen." />
 
@@ -46,19 +46,19 @@ Die Auftaktseite setzt den Titel mit `overflow: 'wrap'` vollständig und bricht 
 
 <Excerpt region="levels" />
 
-Mit `'odd'` folgt auf einen Essay, der auf einer rechten Seite endet, eine leere linke Seite. Die spanische Ausgabe hat eine, weil ihr Kapitel IV auf Seite 31 endet; hier endet Kapitel IV auf Seite 32, einer linken Seite, und Kapitel V beginnt auf Seite 33. `pages: 'body'` der Kolumnentitel hält sie von Vakatseiten und von Auftaktseiten fern (den Seiten, deren erster Block diese Überschrift ist). `pages: 'opener'` der Fußzeile druckt die Pagina am Fuß nur auf Auftaktseiten ([Textelemente](/de/docs/configuration-headers-footers#textelemente)).
+Mit `'odd'` folgt auf einen Essay, der auf einer rechten Seite endet, eine linke Vakatseite. Die spanische Ausgabe hat eine, weil ihr Kapitel IV auf Seite 31 endet; hier endet Kapitel IV auf Seite 32, einer linken Seite, und Kapitel V beginnt auf Seite 33. `pages: 'body'` der Kolumnentitel hält sie von Vakatseiten und von Auftaktseiten fern (den Seiten, deren erster Block diese Überschrift ist). `pages: 'opener'` der Fußzeile setzt die Pagina am Fuß nur auf Auftaktseiten ([Textelemente](/de/docs/configuration-headers-footers#textelemente)).
 
 ### 6 · Die Paginas bei 29 beginnen
 
 <Excerpt region="build" />
 
-`parity` richtet sich nach der Stellung der Seite im Buch und ignoriert ihre Pagina. `pageIndexOffset: 28` addiert 28 zum Index jeder Seite, sodass rechte und linke Seite, gespiegelte Ränder und Kolumnentitel für gerade und ungerade Seiten der Buchseite folgen. `pageNumbering.startAt` nummeriert diese Seiten dann von 29 bis 33. Ohne den Versatz ist die erste Seite des Builds eine rechte Seite, welche Pagina sie auch druckt. Das passt zufällig zu Seite 29, doch mit `startAt: 30` käme der Titel des Buchs auf Seite 31 und der des Essays auf Seite 32, jeweils auf der falschen Seite der Doppelseite.
+`parity` richtet sich nach der Stellung der Seite im Buch und ignoriert ihre Pagina. `pageIndexOffset: 28` addiert 28 zum Index jeder Seite, sodass rechte und linke Seite, gespiegelte Ränder und Kolumnentitel für gerade und ungerade Seiten der Buchseite folgen. `pageNumbering.startAt` nummeriert diese Seiten dann von 29 bis 33. Ohne den Versatz ist die erste Seite des Builds eine rechte Seite, welche Seitenzahl sie auch zeigt. Das passt zufällig zu Seite 29, doch mit `startAt: 30` käme der Titel des Buchs auf Seite 31 und der des Essays auf Seite 32, jeweils auf der falschen Seite der Doppelseite.
 
 ## Varianten
 
 ### Langen Titeln einen kurzen Kolumnentitel geben
 
-Schreiben Sie den Kolumnentitel in die Überschriftenzeile, `{num="IV" short="Of false objects"}`, und drucken Sie das Attribut statt des ganzen Titels; ein Kapitel ohne `short` druckt dort nichts.
+Schreiben Sie den Kolumnentitel in die Überschriftenzeile, `{num="IV" short="Of false objects"}`, und geben Sie das Attribut statt des ganzen Titels aus; bei einem Kapitel ohne `short` bleibt die Stelle leer.
 
 ```diff
 -  { kind: 'text', id: 'essay', content: '{chapterTitle}', parity: 'odd', pages: 'body',
@@ -67,7 +67,7 @@ Schreiben Sie den Kolumnentitel in die Überschriftenzeile, `{num="IV" short="Of
 
 ### Essays auf beiden Seiten beginnen lassen
 
-Mit `'any'` beginnt ein Essay auf der nächsten Seite, rechts oder links, und es wird nie eine leere Seite eingefügt. Das Schild hängt an der linken oberen Ecke des Satzspiegels und die Pagina am Fuß ist darunter zentriert, sodass beide auf einer linken Seite genauso stehen wie auf einer rechten.
+Mit `'any'` beginnt ein Essay auf der nächsten Seite, rechts oder links, und es wird nie eine Vakatseite eingefügt. Das Schild hängt an der linken oberen Ecke des Satzspiegels und die Pagina am Fuß ist darunter zentriert, sodass beide auf einer linken Seite genauso stehen wie auf einer rechten.
 
 ```diff
 -      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },
@@ -76,7 +76,7 @@ Mit `'any'` beginnt ein Essay auf der nächsten Seite, rechts oder links, und es
 
 ### Die leere linke Seite in der Akzentfarbe färben
 
-Ein Kasten mit `pages: 'blank'` druckt nur auf den Seiten, die der Umbruch auf eine rechte Seite hinzufügt: In der spanischen Ausgabe füllt er Seite 32 mit Sepia, und die englische Ausgabe, die keine leere Seite hat, bleibt unverändert.
+Ein Kastenelement mit `pages: 'blank'` erscheint nur auf den Seiten, die der Umbruch auf eine rechte Seite hinzufügt: In der spanischen Ausgabe füllt er Seite 32 mit Sepia, und die englische Ausgabe, die keine Vakatseite hat, bleibt unverändert.
 
 ```diff
  const footer = { elements: [folio({ id: 'drop-folio', parity: 'all', pages: 'opener',

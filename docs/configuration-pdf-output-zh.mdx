@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'PDF文件',
   description: '用代码调用postext-pdf：安装、API、浏览器和Node中的字体提供函数、中日韩字体、资源字节、竖排文字、工作线程和可付印的文件',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15分钟',
   order: 21,
   parent: 'configuration',
@@ -37,7 +37,8 @@ npm install postext postext-pdf
 - **`PdfFontProvider`**：回调签名`(family, weight, style, request?) => Promise<Uint8Array | Uint8Array[]>`，`renderToPdf`需要嵌入新的family/weight/style组合时，用它请求字体字节。`request.codePoints`包含页面中用该字体排出的字符；返回值是一个文件，或者合起来构成该字体的多个文件（见[中文、日文和韩文字体](#中文日文和韩文字体)）。
 - **`declaredFontFile(bytes, { unicodeRange?, order? }): PdfFontFile`**：一种字体的一个文件，并说明页面怎样声明它：它的`@font-face`规则的`unicode-range`，以及这条规则在声明顺序里的位置。`PdfFontFile`是带这两个可选属性的`Uint8Array`（见[中文、日文和韩文字体](#中文日文和韩文字体)）。postext-pdf 1.30起。
 - **`RenderToPdfOptions`**：`{ fontProvider, resourceBytes?, outlines?, accessible?, colorSpace?, pageNegative?, characterGrid?, onProgress?, onWarning?, rasterizeSvg?, harfbuzzWasm?, print?, outputProfile?, profileBaseUrl?, date? }`。省略`outlines`、`accessible`和`colorSpace`时，取文档的`pdfGeneration`（见[PDF生成（配置）](/zh/docs/configuration-fonts-colors-viewers#pdf生成配置)）。`resourceBytes`的说明见[资源字节与印刷母版](#资源字节与印刷母版)；`onWarning`见[向字体提供函数请求哪些字体](#向字体提供函数请求哪些字体)和[文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)。`characterGrid: true`会把`cjk.grid.show`在屏幕上画的网格印进PDF，否则PDF不含这层网格（见[字符网格](/zh/docs/configuration-east-asian#字格)）。`harfbuzzWasm`指定含从右向左或连写文字的文档从哪里加载HarfBuzz的`harfbuzz.wasm`（URL，相对于页面；或文件字节）；省略时先找postext-pdf模块旁的副本，再依次找jsDelivr和esm.sh上同一版本的harfbuzzjs。`print`接收印刷输出设置（PDF/X标准、输出特性文件、黑色处理、印前检查），省略时取文档的`print`；设定PDF/X标准或`colorSpace: 'cmyk'`时，所有颜色都经ICC输出特性文件分色，其字节由`outputProfile`给出（否则从`profileBaseUrl`下载，默认是npm CDN上postext的`icc/`文件夹）。`date`（`Date`、毫秒时间戳或日期字符串，与`createBundle`的`mtime`同类型）是文件的创建日期和修改日期；在PDF/X文件中，它还是XMP数据包里的日期，文档标识也由它算出：同一份文档用同一个`date`生成两次，得到的字节完全相同。省略时，文件记下调用时的时间。日期无效时抛出错误。
-- **`PdfWarning`**：通过`onWarning`报告的非致命问题；按`kind`区分：`'fontFallback'`（`PdfFontFallbackWarning`），某个字体改用了同一家族的另一款字体；`'missingGlyph'`（`PdfMissingGlyphWarning`），字体的所有文件都没有字形的字符；`'variableFontDefaultInstance'`（`PdfVariableFontWarning`），以默认实例之外的字重请求可变字体；`'cffEmbeddedWhole'`（`PdfCffEmbeddedWholeWarning`），超过2 MB的CFF字体被整体嵌入；`'complexShapingUnavailable'`（`PdfComplexShapingWarning`），HarfBuzz未能加载（`reason`列出查找过的位置），从右向左或连写的文字没有经它成形，阿拉伯文的标音符号位置不对；或`'missingImage'`，没有字节、画成占位框的图像（只报告给你传入的`onWarning`；未传入时，字体类警告输出到`console.warn`）。
+- **`PdfWarning`**：通过`onWarning`报告的非致命问题；按`kind`区分：`'fontFallback'`（`PdfFontFallbackWarning`），某个字体改用了同一家族的另一款字体；`'missingGlyph'`（`PdfMissingGlyphWarning`），字体的所有文件都没有字形的字符；`'variableFontDefaultInstance'`（`PdfVariableFontWarning`），以默认实例之外的字重请求可变字体；`'cffEmbeddedWhole'`（`PdfCffEmbeddedWholeWarning`），超过2 MB的CFF字体被整体嵌入；`'complexShapingUnavailable'`（`PdfComplexShapingWarning`），HarfBuzz未能加载（`reason`列出查找过的位置），从右向左或连写的文字没有经它成形，阿拉伯文的标音符号位置不对；`'outputProfileUnavailable'`（`PdfPrintWarning`），CMYK渲染无法加载输出特性文件，改用教科书公式换算；`'pageNegativeIgnored'`（`PdfPrintWarning`），PDF/X-1a文件中略去了页面负片；或`'missingImage'`，没有字节、画成占位框的图像（只报告给你传入的`onWarning`；未传入时，字体类警告输出到`console.warn`）。
+- **`inspectPrintMaster(bytes): Promise<PrintMasterReport>`**：读取PDF印刷母版的第一页，报告它用到但没有嵌入的字体（`nonEmbeddedFonts`）、它是否用RGB绘制（`rgb`），以及是否使用透明（`transparency`），供[印前检查](/zh/docs/configuration-fonts-colors-viewers#印前检查)使用。
 - **`decompressWoff2(bytes): Uint8Array`**：辅助函数，把WOFF2文件转成TTF字节，`pdf-lib`可以直接嵌入这种格式。
 - **`createPdfWorker(options?)`**，来自`postext-pdf/worker`：在Web Worker上进行同样的渲染；见[在工作线程上渲染PDF](#在工作线程上渲染pdf)。
 
@@ -221,7 +222,7 @@ declaredFontFile(bytes, { unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153', order:
 
 - **粗体需要每个字重一个静态文件**。Fontsource把Noto Serif SC和TC的每个字重作为单独的静态文件提供，所以在沙盒中粗体可以正常使用。Google Fonts的文件（`NotoSerifSC[wght].ttf`，25 MB）是可变字体：pdf-lib嵌入其默认实例，700的字体会按400印出，`renderToPdf`将其报告为`variableFontDefaultInstance`。制作文件包时，用fontTools为每个字重切出一个静态实例（`fonttools varLib.instancer NotoSerifSC[wght].ttf wght=700`），再用`pyftsubset`把它子集化到书中用到的字符。
 - **使用TrueType版本**。思源宋体（Source Han Serif）和Noto Serif CJK的`.otf`文件是CFF轮廓，postext-pdf会整体嵌入，每个字重8到25 MB；超过2 MB的CFF字体会报告为`cffEmbeddedWhole`。TrueType版本（Google Fonts、Fontsource）会子集化到实际用到的字形。日文方面，Noto Serif JP和Noto Sans JP（Google Fonts，或Fontsource的编号分片）、Shippori Mincho、Zen Old Mincho和BIZ UDMincho都是TrueType；思源宋体日文版（Source Han Serif JP）和Noto Serif CJK的`JP` `.otf`文件是CFF。
-- **泛CJK字体中的日文字形**。同一个码位的汉字、标点或引号，在日本和中国可能写法不同，泛CJK字体（思源、Noto CJK）两种字形都有。PDF对日文文档（`locale: 'ja'`），以及任何文档中标为日文的隔离段（`:ltr[…]{lang=ja}`），按OpenType语言系统`JAN `成形，字体的`locl`特性因此印出日文字形，与画布和HTML通过`lang`印出的一致。日文书中标为其他语言的隔离段按该语言的字形成形（设为`'host'`时，中文即字体的默认字形），并标记为带`/Lang`的`Span`。设了[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)（postext 1.30起的默认值），每份文档和每个隔离段都按自己的语言成形（简体中文是`ZHS`），与排版测量时一致；设为`'host'`时，中文及其他文档仍按字体的默认字形成形，与以前相同。专为日文设计的字体（如Noto Serif JP）默认字形就是日文的；不过日文文字中的“ ”仍会换成`JAN `字形。
+- **泛CJK字体中的日文字形**。同一个码位的汉字、标点或引号，在日本和中国可能写法不同，泛CJK字体（思源、Noto CJK）两种字形都有。PDF对日文文档（`locale: 'ja'`），以及任何文档中标为日文的隔离段（`:ltr[…]{lang=ja}`），按OpenType语言系统`JAN `成形，字体的`locl`特性因此印出日文字形，与画布和HTML通过`lang`印出的一致。日文书中标为其他语言的隔离段按该语言的字形成形（设为`'host'`时，中文即字体的默认字形），并标记为带`/Lang`的`Span`。设了[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)（postext 1.30起的默认值），每份文档和每个隔离段都按自己的语言成形（简体中文是`ZHS`），与排版测量时一致；设为`'host'`时，中文及其他文档仍按字体的默认字形成形，与以前相同。专为日文设计的字体（如Noto Serif JP）默认字形就是日文的；不过日文文字中的引号“ ”仍按`JAN `字形排出。
 
 一个家族缺少的字符不会从另一个家族借用：Noto Serif TC不会借用Noto Serif SC的字形。字符覆盖要在制作字体文件时解决；《红楼梦》示例就把TC子集缺少的字形从SC字体复制了过去。
 
@@ -290,7 +291,7 @@ const pdf = await renderToPdf(buildDocument({ markdown, resources }, config), {
 - **每一个竖排行**都用`/ActualText`标出其文字，所以复制和文字提取按书写顺序读取。`pdftotext`和pdf.js从上到下、从右到左读取各栏；遇到占一个字格的数字时，pdf.js会另起一行。
 - **链接、书签和目标位置**映射到页面上：竖排行上的链接是一个又高又窄的矩形，书签打开页面时定位到其标题所在栏的顶端。
 - **带标签的PDF**在其`Document`元素上声明书写模式（Layout属性`WritingMode /TbRl`，所有元素都继承它）；竖排章节可以通过PDF/UA-1验证（veraPDF）。
-- **阅读器**：Acrobat、Preview、Chrome（PDFium）、pdf.js和Poppler都能渲染竖排字体。右侧装订的书（`page.binding`）还会请求阅读器从右向左排列跨页（`/Direction /R2L`、`/PageLayout /TwoPageRight`）；Acrobat和Foxit照办，Chrome不会。
+- **阅读器**：Acrobat、Preview、Chrome（PDFium）、pdf.js和Poppler都能渲染竖排字体。右翻（右侧装订）的书（`page.binding`）还会请求阅读器从右向左排列跨页（`/Direction /R2L`、`/PageLayout /TwoPageRight`）；Acrobat和Foxit照办，Chrome不会。
 
 一个用Noto Serif TC（书中用到的字符，TrueType）排的43页章节约为820 KB，其中大部分是两个字体子集。
 
@@ -331,13 +332,13 @@ export async function downloadPdf(markdown: string, config: PostextConfig) {
 
 ### 在线示例：在浏览器中生成PDF
 
-上面的完整流程在浏览器中运行：这个pen从CDN导入`postext`和`postext-pdf`，加载Web字体，构建文档，通过字体提供函数嵌入Fontsource的字体，再把字节交给一个在新标签页中打开文件的链接和一个下载链接。得到的PDF与Canvas和HTML输出断行相同，嵌入了真实字体，并带有大纲书签。
+上面的完整流程在浏览器中运行：这个CodePen示例从CDN导入`postext`和`postext-pdf`，加载Web字体，构建文档，通过字体提供函数嵌入Fontsource的字体，再把字节交给一个在新标签页中打开文件的链接和一个下载链接。得到的PDF与Canvas和HTML输出断行相同，嵌入了真实字体，并带有大纲书签。
 
 <CodePenExample name="render-pdf" title="Postext · 在浏览器中生成PDF" description="用postext排版一篇Markdown文档，并用postext-pdf渲染为PDF。" height={600} />
 
 ### 在工作线程上渲染PDF
 
-`postext-pdf/worker`把`renderToPdf`移出主线程。工作线程写入文字、矢量图、结构树和文件本身。有两项工作需要页面，所以工作线程会请主线程来做：获取字体，以及通过`<img>`栅格化SVG。对于几百页的书，渲染要花几秒钟，否则页面会在这段时间卡住；如果只有几页，直接调用`renderToPdf`更简单。
+`postext-pdf/worker`把`renderToPdf`移出主线程。工作线程写入文字、矢量图、结构树和文件本身。有两项工作需要页面，所以工作线程会请主线程来做：获取字体，以及通过`<img>`栅格化SVG。几百页的书要渲染好几秒，放在主线程上，页面就会卡住这么久；如果只有几页，直接调用`renderToPdf`更简单。
 
 ```ts
 import { createPdfWorker } from 'postext-pdf/worker';
@@ -368,18 +369,18 @@ const entry = URL.createObjectURL(new Blob(
 const pdfWorker = createPdfWorker({ worker: new Worker(entry, { type: 'module' }) });
 ```
 
-`postext/worker`中的排版工作线程也需要用同样的方式包装`postext/worker/entry`（见[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)）。
+`postext/worker`中的排版工作线程不需要这样做：不带选项时，`createLayoutWorker()`从esm.sh启动它自己的入口，从其他服务器启动则用它的`url`选项（见[从CDN加载工作线程](/zh/docs/configuration-programmatic-usage#从cdn加载工作线程)）。
 
 ### 可付印的PDF
 
 用于正式印刷流程时，在渲染前调整以下配置选项：
 
-- **`page.cutLines.enabled: true`**：在成品尺寸周围加上出血区域和裁切标记，并给每一页设置TrimBox和BleedBox。见[裁切线](/zh/docs/configuration-page-layout#裁切线)。
+- **`page.cutLines.enabled: true`**：在成品尺寸周围加上出血区域和裁切线，并给每一页设置TrimBox和BleedBox。见[裁切线](/zh/docs/configuration-page-layout#裁切线)。
 - **`print: { standard: 'pdfx4', outputProfile: 'fogra51' }`**（或`'pdfx1a'`）：写出PDF/X文件，带有印厂会检查的输出意图、标识和页面框；所有颜色和RGB图片都经ICC特性文件分色，100% K叠印，大面积黑色用复合黑。见[印刷输出（配置）](/zh/docs/configuration-fonts-colors-viewers#印刷输出配置)。
-- **`colorSpace: 'cmyk'`**（或`pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`）：同样的分色，但没有PDF/X标识（裁切标记始终用套准色）。PDF印刷母版原样嵌入。
+- **`colorSpace: 'cmyk'`**（或`pdfGeneration: { forceColorSpace: true, colorSpace: 'cmyk' }`）：同样的分色，但没有PDF/X标识（裁切线始终用套准色）。PDF印刷母版原样嵌入。
 - **`page.dpi: 300`**：排版的每英寸像素数；没有自身分辨率的位图按自然尺寸以这个分辨率印刷。[印前检查](/zh/docs/configuration-fonts-colors-viewers#印前检查)会报告印刷尺寸下不足300 ppi的图片。
 - **`ColorValue.cmyk`**：以CMYK定义的颜色按其准确数值印刷。
-- `RenderToPdfOptions`中的<strong>`{ pageNegative: true }`</strong>：用Difference混合模式反转成品区域（裁切标记不反转）。适合对浅底深字的排版做印前检查。
+- `RenderToPdfOptions`中的<strong>`{ pageNegative: true }`</strong>：用Difference混合模式反转成品区域（裁切线不反转）。适合对浅底深字的排版做印前检查。
 
 ### 参考实现
 

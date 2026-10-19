@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Arquitetura do Postext',
   sidebarTitle: 'Arquitetura',
-  description: 'Arquitetura técnica do motor de composição tipográfica Postext: os conceitos, a árvore do documento, o ritmo vertical, os renderizadores e o desempenho',
+  description: 'Arquitetura técnica do motor de diagramação do Postext: os conceitos, a árvore do documento, o ritmo vertical, os renderizadores e o desempenho',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 2,
   plainSummary: "Esta página explica como o Postext funciona por dentro, e foi escrita para programadores. Primeiro, o Postext mede cada palavra sem desenhar nada na tela, e por isso é muito rápido. Depois ele calcula onde vai cada linha, cada imagem e cada coluna, e guarda esse plano na memória. Por fim, desenha as páginas prontas como página web, como imagem em um canvas ou como arquivo PDF. Quando você muda uma palavra, ele diagrama as páginas de novo e reaproveita as medidas dos parágrafos que não mudaram. A página seguinte explica, passo a passo, como as linhas e as imagens são posicionadas.",
@@ -23,7 +23,7 @@ Pense em um documento de 74 páginas em duas colunas. O relatório anual de uma 
 
 Veja por que isso importa tanto.
 
-As regras tipográficas dependem umas das outras de forma profunda e exasperante. Você corrige uma viúva na página 5 (uma última linha solitária, largada no pé de uma coluna) puxando-a de volta para a coluna anterior. Ótimo. Mas essa mudança encurta a coluna da página 5, o que empurra conteúdo para a frente, o que pode criar uma órfã na página 6: uma primeira linha jogada sozinha em uma nova coluna, desligada do seu parágrafo. Só para *detectar* que você criou um problema novo, é preciso ter a diagramação inteira do documento disponível para inspeção. E para *corrigi-lo* sem criar mais um problema em outro lugar, é preciso poder ajustar, medir de novo e verificar de novo o conjunto todo.
+As regras tipográficas dependem umas das outras de forma profunda e exasperante. Você corrige uma viúva na página 5 (uma última linha solitária, largada no pé de uma coluna) puxando-a de volta para a coluna anterior. Ótimo. Mas essa mudança encurta a coluna da página 5, o que empurra conteúdo para a frente, o que pode criar uma órfã na página 6: uma primeira linha jogada sozinha em uma nova coluna, desligada do próprio parágrafo. Só para *detectar* que você criou um problema novo, é preciso ter a diagramação inteira do documento disponível para inspeção. E para *corrigi-lo* sem criar mais um problema em outro lugar, é preciso poder ajustar, medir de novo e verificar de novo o conjunto todo.
 
 Essa é a filosofia de “calcular tudo primeiro, renderizar depois”. Não é um truque de desempenho. É a única forma de aplicar as dezenas de regras tipográficas interligadas que os compositores profissionais usam há séculos.
 
@@ -67,15 +67,15 @@ ficar confuso.
     </tr>
     <tr>
       <td><strong>Recurso</strong></td>
-      <td>Um elemento não textual ligado à prosa por id: um bitmap, um SVG, uma tabela ou um vídeo (<code>Resource</code>, com <code>kind: 'bitmap' | 'svg' | 'table' | 'video'</code>). Os recursos são numerados por tipo (Figura 1, Tabela 2.1…) na primeira referência e flutuados para uma faixa no alto ou no pé de uma página próxima dessa referência.</td>
+      <td>Um elemento não textual ligado à prosa por id: um bitmap, um SVG, uma tabela ou um vídeo (<code>Resource</code>, com <code>kind: 'bitmap' | 'svg' | 'table' | 'video'</code>). Os recursos são numerados por tipo (Figura 1, Tabela 2.1…) na primeira referência e levados, como flutuantes, a uma faixa no alto ou no pé de uma página próxima dessa referência.</td>
     </tr>
     <tr>
       <td><strong>Nota</strong></td>
-      <td>Uma nota de rodapé ou uma nota de fim de capítulo, escrita no markdown como uma chamada <code>[^id]</code> e uma definição <code>[^id]:</code> (veja <a href="/pt/docs/document-format-notes-references#notas-de-rodapé">Notas de rodapé</a>). As notas de margem, e a lista <code>PostextNote</code> que o modelo de conteúdo aceita, não estão implementadas: o motor não lê <code>notes</code>.</td>
+      <td>Uma nota de rodapé ou uma nota de fim de capítulo, escrita no Markdown como uma chamada <code>[^id]</code> e uma definição <code>[^id]:</code> (veja <a href="/pt/docs/document-format-notes-references#notas-de-rodapé">Notas de rodapé</a>). As notas de margem, e a lista <code>PostextNote</code> que o modelo de conteúdo aceita, não estão implementadas: o motor não lê <code>notes</code>.</td>
     </tr>
     <tr>
       <td><strong>Grade de linhas de base</strong></td>
-      <td>A malha vertical derivada da entrelinha do corpo (por exemplo, 24px para 16px/1.5). Toda linha de base do texto corrido deve cair em um múltiplo dela, mantendo as linhas alinhadas entre colunas e entre páginas opostas.</td>
+      <td>A malha vertical derivada da entrelinha do corpo (por exemplo, 24px para 16px/1.5). Toda linha de base do texto do corpo deve cair em um múltiplo dela, mantendo as linhas alinhadas entre colunas e entre páginas opostas.</td>
     </tr>
     <tr>
       <td><strong>Badness</strong></td>
@@ -95,15 +95,15 @@ ficar confuso.
     </tr>
     <tr>
       <td><strong>Renderizador (backend)</strong></td>
-      <td>Um destino de renderização que consome o VDT pronto. Quatro já estão disponíveis hoje: <strong>canvas</strong> (visualização em bitmap), <strong>HTML</strong> (leitura em tela baseada no DOM), <strong>PDF</strong> (saída pronta para impressão via <code>postext-pdf</code>) e <strong>EPUB</strong> (<code>postext-epub</code>, o livro como e-book). Os quatro renderizam a partir da mesma medição (o módulo de medição sobre o Pretext).</td>
+      <td>Um destino de renderização que consome o VDT pronto. Quatro já estão disponíveis hoje: <strong>canvas</strong> (visualização em bitmap), <strong>HTML</strong> (leitura em tela baseada no DOM), <strong>PDF</strong> (saída pronta para impressão via <code>postext-pdf</code>) e <strong>EPUB</strong> (<code>postext-epub</code>, o livro como e-book). Os quatro renderizam a partir da mesma medição (o módulo de medição sobre o Pretext). O visualizador 3D <code>postext-folio</code> pinta as folhas com o renderizador de canvas.</td>
     </tr>
     <tr>
       <td><strong>Passada de posicionamento</strong></td>
-      <td>Um percurso do conteúdo, do primeiro bloco ao último, que monta um VDT inteiro: analisa o markdown, mede pelo cache, posiciona texto, flutuantes e boxes e aplica as regras de quebra e de manter junto.</td>
+      <td>Um percurso do conteúdo, do primeiro bloco ao último, que monta um VDT inteiro: analisa o Markdown, mede pelo cache, posiciona texto, flutuantes e boxes e aplica as regras de quebra e de manter junto.</td>
     </tr>
     <tr>
       <td><strong>Rodada</strong></td>
-      <td>Uma repetição da passada de posicionamento com dicas da anterior: um limite de faixa, alavancas de balanceamento, rótulos de página ou números de nota já definidos. Cada tipo de rodada tem o seu próprio limite (veja <a href="/pt/docs/architecture-layout-pipeline#o-condutor-das-passadas">O condutor das passadas</a>).</td>
+      <td>Uma repetição da passada de posicionamento com dicas da anterior: um limite de faixa, alavancas de equilíbrio, rótulos de página ou números de nota já definidos. Cada tipo de rodada tem um limite próprio (veja <a href="/pt/docs/architecture-layout-pipeline#o-condutor-das-passadas">O condutor das passadas</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -111,13 +111,13 @@ ficar confuso.
 
 ## Arquitetura do sistema
 
-<Illustration name="SystemArchitecture" data='{"title": "Arquitetura do sistema Postext", "desc": "O markdown enriquecido e o PostextConfig entram no parser. A passada de posicionamento mede o texto pelo Pretext e preenche a árvore virtual do documento; buildDocument roda a passada de novo com dicas até a diagramação se acomodar. Um renderizador converte o VDT pronto em HTML ou PDF.", "caption": "Parser → passada de posicionamento ↔ Pretext → VDT → renderizador → saída.", "markdown": "Markdown enriquecido", "configTitle": "PostextConfig", "configSubtitle": "(colunas, regras, espaçamento)", "engine": "Motor de layout", "parser": "Parser", "pass1": "markdown → blocos", "vdtLine1": "Árvore virtual do", "vdtLine2": "documento (VDT)", "vdtAttr1": "preenchido no lugar pela passada", "vdtAttr2": "páginas > colunas > blocos", "vdtAttr3": "todo nó tem uma bbox", "vdtAttr4": "uma árvore nova a cada passada", "pretext": "Pretext", "pretextSubtitle": "medição de texto", "passesTitle": "Passada de posicionamento (percorre o conteúdo)", "passes": [{"num": "Medir", "name": "as linhas, pelo cache"}, {"num": "Posicionar", "name": "os blocos em colunas e páginas"}, {"num": "Flutuar", "name": "os recursos para faixas da página"}, {"num": "Quebrar", "name": "os parágrafos no fim das colunas"}, {"num": "Manter", "name": "títulos e listas com o seu texto"}, {"num": "Encaixar", "name": "o fluxo de volta na grade"}], "convergence": "repetir com dicas", "backend": "Renderizador", "backendSubtitle": "(interface unificada)", "backendItems": ["Canvas / navegador", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "saída renderizada"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Arquitetura do sistema Postext", "desc": "O Markdown enriquecido e o PostextConfig entram no parser. A passada de posicionamento mede o texto pelo Pretext e preenche a árvore virtual do documento; buildDocument roda a passada de novo com dicas até a diagramação se acomodar. Um renderizador converte o VDT pronto em HTML ou PDF.", "caption": "Parser → passada de posicionamento ↔ Pretext → VDT → renderizador → saída.", "markdown": "Markdown enriquecido", "configTitle": "PostextConfig", "configSubtitle": "(colunas, regras, espaçamento)", "engine": "Motor de layout", "parser": "Parser", "pass1": "Markdown → blocos", "vdtLine1": "Árvore virtual do", "vdtLine2": "documento (VDT)", "vdtAttr1": "preenchida pela passada, sem cópia", "vdtAttr2": "páginas > colunas > blocos", "vdtAttr3": "todo nó tem uma bbox", "vdtAttr4": "uma árvore nova a cada passada", "pretext": "Pretext", "pretextSubtitle": "medição de texto", "passesTitle": "Passada de posicionamento (percorre o conteúdo)", "passes": [{"num": "Medir", "name": "as linhas, pelo cache"}, {"num": "Posicionar", "name": "os blocos em colunas e páginas"}, {"num": "Flutuar", "name": "os recursos para faixas da página"}, {"num": "Quebrar", "name": "os parágrafos no fim das colunas"}, {"num": "Manter", "name": "títulos e listas com o texto"}, {"num": "Encaixar", "name": "o fluxo de volta na grade"}], "convergence": "repetir com dicas", "backend": "Renderizador", "backendSubtitle": "(interface unificada)", "backendItems": ["Canvas / navegador", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "saída renderizada"}' />
 
-**Este é o caminho que o seu conteúdo percorre dentro do motor:**
+**Este é o caminho que seu conteúdo percorre dentro do motor:**
 
-1. O **parser** lê o seu markdown enriquecido e o converte em uma lista plana de blocos de conteúdo tipados: conteúdo e estrutura, ainda sem posições
+1. O **parser** lê seu Markdown enriquecido e o converte em uma lista plana de blocos de conteúdo tipados: conteúdo e estrutura, ainda sem posições
 2. Uma **passada de posicionamento** percorre essa lista uma vez e monta o VDT. Ela mede cada bloco pelo Pretext na largura da coluna em que o bloco está prestes a entrar, posiciona texto, flutuantes e boxes em páginas e colunas e aplica as regras de quebra e de manter junto pelo caminho
-3. O **condutor** (`buildDocument`) roda a passada de novo quando uma decisão precisa do resultado de uma diagramação inteira: um sumário que imprime números de página, um boxe de página inteira que precisa cortar niveladas as colunas acima dele, uma coluna que terminou curta. Cada repetição recebe dicas da passada anterior, e cada tipo de repetição tem o seu próprio limite
+3. O **condutor** (`buildDocument`) roda a passada de novo quando uma decisão precisa do resultado de uma diagramação inteira: um sumário que imprime números de página, um boxe de página inteira acima do qual as colunas precisam terminar niveladas, uma coluna que terminou curta. Cada repetição recebe dicas da passada anterior, e cada tipo de repetição tem um limite próprio
 4. O **VDT final** é a geometria completa da diagramação: cada elemento sabe seu número de página, sua coluna, sua posição e sua caixa delimitadora. O documento está totalmente “composto” antes de qualquer renderização
 5. Um **renderizador** percorre o VDT pronto e o converte no formato de destino: um bitmap rasterizado em canvas, uma árvore DOM de elementos HTML posicionados, um documento PDF com fontes incorporadas ou um EPUB. O mesmo VDT alimenta os quatro; escolher um renderizador é apenas uma decisão de saída
 
@@ -128,7 +128,7 @@ ficar confuso.
 
 O modelo de conteúdo é tanto uma filosofia quanto uma estrutura de dados. Você descreve *o que* dizer, não *como* diagramar. As decisões de diagramação ficam com o motor.
 
-<Illustration name="ContentModel" data='{"title": "Modelo de conteúdo: markdown, recursos, notas", "desc": "A entrada do Postext separa o markdown (ordem de leitura e estrutura semântica) dos recursos (bitmaps, SVGs, tabelas) e das notas. O motor resolve as referências em linha :ref e as inserções ::resource por ID e produz o VDT.", "caption": "O markdown define a ordem de leitura; os recursos trazem os dados visuais.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "ordem de leitura + :ref / ::resource por id", "resources": "resources[]", "resourcesSub": "bitmaps, SVGs, tabelas", "notes": "metadata", "notesSub": "título, autoria, datas", "resolveMarker": "resolvido por id: :ref{id=…}, ::resource{id=…}", "engineLabel": "motor", "vdtLabel": "VDT"}' />
+<Illustration name="ContentModel" data='{"title": "Modelo de conteúdo: Markdown, recursos, notas", "desc": "A entrada do Postext separa o Markdown (ordem de leitura e estrutura semântica) dos recursos (bitmaps, SVGs, tabelas) e das notas. O motor resolve as referências em linha :ref e as inserções ::resource por ID e produz o VDT.", "caption": "O Markdown define a ordem de leitura; os recursos trazem os dados visuais.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "ordem de leitura + :ref / ::resource por id", "resources": "resources[]", "resourcesSub": "bitmaps, SVGs, tabelas", "notes": "metadata", "notesSub": "título, autoria, datas", "resolveMarker": "resolvido por id: :ref{id=…}, ::resource{id=…}", "engineLabel": "motor", "vdtLabel": "VDT"}' />
 
 ```typescript
 // packages/postext/src/types.ts
@@ -138,6 +138,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tabelas, vídeos, referenciados por id
   notes?: PostextNote[];       // não é lido: as notas de rodapé são escritas como [^id] no markdown
+  continuation?: LayoutContinuation; // contadores e números de página vindos de capítulos anteriores
+  outline?: OutlineEntry[];    // os títulos do livro com a página de cada um, para :::toc / :::index
+  citations?: CitationContext; // a parte das citações do livro que cabe a este capítulo
+  laterPageIds?: Record<string, number>; // contêineres de página de capítulos seguintes onde uma história pode continuar
 }
 
 interface Resource {
@@ -158,10 +162,10 @@ interface Resource {
 }
 ```
 
-Os **recursos** carregam os dados visuais: legendas, texto alternativo e um conteúdo específico do tipo. Os conteúdos binários (bitmaps, SVGs) ficam *fora da estrutura*: o recurso guarda só um `fileId`, e o renderizador o resolve na hora de desenhar (o Sandbox guarda os bytes no IndexedDB). Os recursos de tabela são a exceção: o `TableModel` deles (uma grade de células com mesclagens e alinhamento) viaja junto, porque são dados estruturados, não bytes.
-As **notas** são escritas no markdown: uma chamada `[^id]` onde a nota é citada e uma definição `[^id]:`, um parágrafo próprio em qualquer ponto do capítulo. O motor as numera na ordem em que são citadas pela primeira vez e compõe cada uma no pé da coluna que contém a linha que a cita, sob um fio curto, ou depois do último bloco do capítulo com `footnotes.placement: 'chapterEnd'` (veja [Notas de rodapé](/pt/docs/document-format-notes-references#notas-de-rodapé) e [Configuração → Notas de rodapé](/pt/docs/configuration-notes-references#notas-de-rodapé)). O modelo de conteúdo ainda aceita um array `notes`, mas nenhuma etapa do pipeline o lê.
+Os **recursos** carregam os dados visuais: legendas, texto alternativo e um conteúdo específico do tipo. Os conteúdos binários (bitmaps, SVGs) ficam *fora da estrutura*: o recurso guarda só um `fileId`, e o renderizador o resolve na hora de desenhar (o Sandbox guarda os bytes no IndexedDB). Os recursos de tabela são a exceção: o `TableModel` deles (uma grade de células com mesclagens e alinhamento) viaja no próprio recurso, porque são dados estruturados, não bytes.
+As **notas** são escritas no Markdown: uma chamada `[^id]` onde a nota é citada e uma definição `[^id]:`, um parágrafo próprio em qualquer ponto do capítulo. O motor as numera na ordem em que são citadas pela primeira vez e compõe cada uma no pé da coluna que contém a linha que a cita, sob um fio curto, ou depois do último bloco do capítulo com `footnotes.placement: 'chapterEnd'` (veja [Notas de rodapé](/pt/docs/document-format-notes-references#notas-de-rodapé) e [Configuração → Notas de rodapé](/pt/docs/configuration-notes-references#notas-de-rodapé)). O modelo de conteúdo ainda aceita um array `notes`, mas nenhuma etapa do pipeline o lê.
 
-Essa separação é uma escolha de design deliberada, e pesa mais do que parece. O markdown define a *ordem de leitura* e a *estrutura semântica*: o que vem primeiro, o que é título, onde uma nota de rodapé é citada e o que ela diz. O array de recursos traz os *dados visuais*: dimensões das imagens, texto das legendas, células das tabelas. Mantendo-os separados, o mesmo markdown pode ser diagramado de formas totalmente diferentes só com uma mudança de configuração. Uma diagramação acadêmica em duas colunas e um post de blog em uma coluna podem compartilhar o mesmo conteúdo-fonte. E o motor pode tomar decisões de posicionamento, como adiar uma imagem para a coluna seguinte porque ela não cabe ali, sem nunca tocar no seu conteúdo-fonte.
+Essa separação é uma escolha de design deliberada, e pesa mais do que parece. O Markdown define a *ordem de leitura* e a *estrutura semântica*: o que vem primeiro, o que é título, onde uma nota de rodapé é citada e o que ela diz. O array de recursos traz os *dados visuais*: dimensões das imagens, texto das legendas, células das tabelas. Mantendo-os separados, o mesmo Markdown pode ser diagramado de formas totalmente diferentes só com uma mudança de configuração. Uma diagramação acadêmica em duas colunas e um post de blog em uma coluna podem compartilhar o mesmo conteúdo de origem. E o motor pode tomar decisões de posicionamento, como adiar uma imagem para a coluna seguinte porque ela não cabe ali, sem nunca tocar no conteúdo de origem.
 
 ```typescript
 // Example: a simple article with a referenced figure
@@ -193,11 +197,11 @@ Italy by 1465 and France by 1470.
 
 Os recursos se ligam à prosa por id, e **referenciar um recurso basta para incorporá-lo**. O `:ref{id="printing-press"}` em linha faz duas coisas ao mesmo tempo: mostra o número calculado do recurso no texto corrido (“Fig. 1”) e, na primeira referência em ordem de leitura, *flutua* o recurso para a página, reservando uma faixa no alto ou no pé perto dessa referência, exatamente como faria um compositor de impressos. Você nunca posiciona a figura uma segunda vez. Para o recurso ocasional que precisa ficar em um ponto exato do fluxo, `::resource{id="…"}` em uma linha própria é uma inserção de bloco opcional: ela só é renderizada no lugar quando o `placement.position` resolvido do recurso é `'here'` (o que o tira da flutuação); para um recurso flutuante, é tratada como mais uma referência. O autor nunca precisa pensar no posicionamento; isso fica com o motor.
 
-<Illustration name="ReferenceResolution" data='{"title": "Resolução de referências", "desc": "Um markdown referencia uma figura em linha com :ref{id=printing-press}. O array de recursos fornece o conteúdo real por ID. O motor resolve a referência, mostra o número calculado no texto e flutua a figura para uma faixa no alto da página.", "caption": "As referências no markdown são só nomes. O motor as resolve contra os recursos, numera-as e flutua a figura perto da referência.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "inserção opcional para placement &#39;here&#39;", "resolveLabel": "resolver", "outputTitle": "página diagramada", "outputFigure": "[ Figura 1, flutuada para uma faixa ]", "outputFootnote": "…mostrada na Fig. 1…"}' />
+<Illustration name="ReferenceResolution" data='{"title": "Resolução de referências", "desc": "O Markdown de origem cita uma figura em linha com :ref{id=printing-press}. O array de recursos fornece o conteúdo real por ID. O motor resolve a referência, mostra o número calculado no texto e flutua a figura para uma faixa no alto da página.", "caption": "As referências no Markdown são só nomes. O motor as resolve com os recursos, as numera e flutua a figura perto da referência.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "inserção opcional para placement &#39;here&#39;", "resolveLabel": "resolver", "outputTitle": "página diagramada", "outputFigure": "[ Figura 1, flutuada para uma faixa ]", "outputFootnote": "…mostrada na Fig. 1…"}' />
 
 ### Configuração
 
-Cada aspecto do pipeline de layout é controlado por `PostextConfig`. O panorama completo das seções (página, layout, texto corrido, títulos, listas, matemática, cabeçalhos e rodapés…) está na página <a href="/pt/docs/configuration">Configuração</a>; as mais relevantes para este documento são:
+Cada aspecto do pipeline de layout é controlado por `PostextConfig`. O panorama completo das seções (página, layout, texto do corpo, títulos, listas, matemática, cabeçalhos e rodapés…) está na página <a href="/pt/docs/configuration">Configuração</a>; as mais relevantes para este documento são:
 
 <table>
   <thead>
@@ -211,7 +215,7 @@ Cada aspecto do pipeline de layout é controlado por `PostextConfig`. O panorama
     <tr>
       <td><code>bodyText</code> / <code>headings</code></td>
       <td>Penalidades por campo para viúvas, órfãs e linhas curtas, regras de manter junto, limites de justificação, hifenização; veja <a href="/pt/docs/configuration-text#texto-do-corpo">Configuração → Texto do corpo</a></td>
-      <td>Medição, quebras e regras de manter junto, balanceamento</td>
+      <td>Medição, quebras e regras de manter junto, equilíbrio de colunas</td>
     </tr>
     <tr>
       <td><code>tableStyle</code></td>
@@ -238,7 +242,7 @@ Cada aspecto do pipeline de layout é controlado por `PostextConfig`. O panorama
 
 ### Estratégia de parsing
 
-O parsing é, de propósito, a etapa mais simples do pipeline. O markdown entra e sai como uma lista plana de blocos de conteúdo tipados (`ContentBlock`, em `packages/postext/src/parse/`): um título, um parágrafo com os seus trechos em linha, um item de lista, uma diretiva. O resultado é memoizado (`parseMarkdownMemo`), de modo que as passadas de uma compilação analisam o markdown uma só vez, e uma compilação posterior do mesmo texto também. As referências a recursos são resolvidas contra o array `resources[]` por ID no início de cada passada de posicionamento. As definições de notas de rodapé (parágrafos que começam com `[^id]:`) também saem do fluxo ali e ficam guardadas por id para as chamadas que as citam; o array `notes[]` não é lido.
+O parsing é, de propósito, a etapa mais simples do pipeline. O Markdown entra e sai como uma lista plana de blocos de conteúdo tipados (`ContentBlock`, em `packages/postext/src/parse/`): um título, um parágrafo com os trechos em linha, um item de lista, uma diretiva. O resultado é memoizado (`parseMarkdownMemo`), de modo que as passadas de uma compilação analisam o Markdown uma só vez, e uma compilação posterior do mesmo texto também. As referências a recursos são resolvidas contra o array `resources[]` por ID no início de cada passada de posicionamento. As definições de notas de rodapé (parágrafos que começam com `[^id]:`) também saem do fluxo ali e ficam guardadas por id para as chamadas que as citam; o array `notes[]` não é lido.
 
 Pense nisso como um manifesto: “há um título, depois um parágrafo de 200 palavras, depois uma referência a figura, depois outro parágrafo”. Nenhuma medida, nenhum posicionamento, nenhuma decisão de diagramação. Um `VDTBlock` só existe depois que a passada de posicionamento mediu um bloco e lhe deu um lugar.
 
@@ -255,11 +259,11 @@ A árvore virtual do documento é a estrutura de dados central do Postext: uma �
 
 Uma passada de posicionamento preenche a árvore no próprio lugar. Ela abre uma página, acrescenta colunas a ela, desconta a altura de um bloco da `availableHeight` da coluna em que o bloco cai e fecha as colunas de uma faixa onde um boxe de página inteira a corta. Um livro tem milhares de blocos, e uma árvore imutável (como o DOM virtual do React) alocaria um objeto novo para cada um desses passos. Por isso os nós são objetos simples, e a passada escreve neles.
 
-Uma passada terminada não é remendada. Quando `buildDocument` precisa de outra tentativa (um limite de faixa, uma alavanca de balanceamento), ele roda a passada de novo a partir do conteúdo e obtém uma árvore nova. A árvore da passada anterior fica como estava, de modo que o condutor pode comparar as duas, ficar com a melhor ou tomar algumas páginas de cada uma. O cache de medição torna a repetição viável: um parágrafo cujo texto, fontes e largura não mudaram é lido do cache em vez de ser medido de novo.
+Uma passada terminada não é remendada. Quando `buildDocument` precisa de outra tentativa (um limite de faixa, uma alavanca de equilíbrio), ele roda a passada de novo a partir do conteúdo e obtém uma árvore nova. A árvore da passada anterior fica como estava, de modo que o condutor pode comparar as duas, ficar com a melhor ou tomar algumas páginas de cada uma. O cache de medição torna a repetição viável: um parágrafo cujo texto, fontes e largura não mudaram é lido do cache em vez de ser medido de novo.
 
 ### Estrutura
 
-<Illustration name="VdtStructure" data='{"title": "Estrutura da árvore virtual do documento", "desc": "VDT hierárquico: o documento contém páginas, cada página contém colunas, cada coluna contém blocos (título, parágrafo, recurso), e cada bloco de texto contém linhas medidas. Todo bloco carrega uma caixa delimitadora, o seu tipo e índices de página e coluna.", "caption": "Todo bloco carrega sua bbox, seu tipo e índices de página e coluna.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["título", "parágrafo", "recurso"], "lineLabels": ["linha 0", "linha 1"], "legendHeader": "Todo bloco carrega:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "As linhas também carregam:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "Estrutura da árvore virtual do documento", "desc": "VDT hierárquico: o documento contém páginas, cada página contém colunas, cada coluna contém blocos (título, parágrafo, recurso), e cada bloco de texto contém linhas medidas. Todo bloco carrega uma caixa delimitadora, o tipo e os índices de página e de coluna.", "caption": "Todo bloco carrega a bbox, o tipo e os índices de página e de coluna.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["título", "parágrafo", "recurso"], "lineLabels": ["linha 0", "linha 1"], "legendHeader": "Todo bloco carrega:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "As linhas também carregam:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### Definições de tipos
 
@@ -366,10 +370,10 @@ interface BoundingBox {
 Alguns desses campos merecem um comentário:
 
 - **`isLastLine`** comanda a renderização justificada: as linhas finais são renderizadas em bandeira mesmo quando o parágrafo é justificado, exceto as linhas finais *cheias demais*, cujos espaços entre palavras se comprimem para caber na medida (a semântica de ajuste de cola do TeX).
-- **`sourceStart`/`sourceEnd` e `plainStart`/`plainEnd`** são mapas de origem de cada linha de volta ao markdown original e ao texto simples do bloco; eles sustentam a sincronização do cursor e da seleção nas integrações com editores.
+- **`sourceStart`/`sourceEnd` e `plainStart`/`plainEnd`** são mapas de origem de cada linha de volta ao Markdown original e ao texto simples do bloco; eles sustentam a sincronização do cursor e da seleção nas integrações com editores.
 - **`VDTResourceTableLayout`** (com suas entradas `VDTResourceTableCell`) carrega a geometria completa de um recurso de tabela diagramado: as bordas x das colunas, as bordas y das linhas e os retângulos de cada célula com suas linhas de conteúdo medidas, para que todo renderizador desenhe a mesma tabela.
 - **`dirty` e `snappedToGrid`** são escritos quando um bloco é posicionado, e nenhuma etapa nem renderizador os lê. `dirty` começa `true` em um bloco novo e passa a `false` quando o bloco é posicionado; o motor não rastreia alterações na árvore, ele roda de novo a passada de posicionamento (veja [O condutor das passadas](/pt/docs/architecture-layout-pipeline#o-condutor-das-passadas)). `snappedToGrid` é `true` na primeira parte de um bloco de texto depois do qual o fluxo volta à grade (veja [Sistema de ritmo vertical](#sistema-de-ritmo-vertical)).
-- **`balancing`** diz quais alavancas de balanceamento de colunas moveram ou esticaram o bloco; um bloco que o balanceamento não tocou não tem nenhuma (veja [Balanceamento de colunas](/pt/docs/architecture-layout-pipeline#balanceamento-de-colunas)).
+- **`balancing`** diz quais alavancas de equilíbrio de colunas moveram ou esticaram o bloco; um bloco que o equilíbrio não tocou não tem nenhuma (veja [Equilíbrio de colunas](/pt/docs/architecture-layout-pipeline#equilíbrio-de-colunas)).
 - **`computePageTextExtent(page)`** é uma pequena função auxiliar pública que devolve a extensão vertical realmente coberta por texto em uma página (incluindo as legendas dos flutuantes). As sobreposições de depuração a usam para que as linhas da grade de linhas de base cubram só o texto real, e não o pé vazio da página.
 
 
@@ -377,29 +381,29 @@ Alguns desses campos merecem um comentário:
 
 Ponha um livro bem composto contra a luz. As linhas da página esquerda se alinham com as linhas da página direita. A linha de base da linha 5 na coluna 1 fica exatamente na mesma posição vertical que a linha de base da linha 5 na coluna 2. Isso é ritmo vertical, e é uma das primeiras coisas que um olho treinado verifica ao avaliar a qualidade tipográfica. É também um dos principais diferenciais do Postext.
 
-Quando as duas colunas contêm apenas texto corrido no mesmo tamanho, o alinhamento é trivial: todas as linhas têm a mesma altura, então as linhas de base coincidem naturalmente. A dificuldade aparece no momento em que uma coluna contém um título com corpo maior, uma imagem com uma altura arbitrária em pixels ou um espaçamento extra em torno de uma citação em bloco. Esses elementos “rompem” a grade: o conteúdo abaixo deles se desloca por um valor que não é múltiplo do incremento da linha de base, e de repente as linhas de base dessa coluna saem de sincronia com as da coluna vizinha. A harmonia visual se perde.
+Quando as duas colunas contêm apenas texto do corpo no mesmo corpo, o alinhamento é trivial: todas as linhas têm a mesma altura; por isso, as linhas de base coincidem naturalmente. A dificuldade aparece no momento em que uma coluna contém um título com corpo maior, uma imagem com uma altura arbitrária em pixels ou um espaçamento extra em torno de uma citação em bloco. Esses elementos “rompem” a grade: o conteúdo abaixo deles se desloca por um valor que não é múltiplo do incremento da linha de base, e de repente as linhas de base dessa coluna saem de sincronia com as da coluna vizinha. A harmonia visual se perde.
 
-O objetivo é recuperá-la: as linhas de base do texto corrido em colunas adjacentes devem se alinhar horizontalmente, mesmo quando títulos, imagens ou outros elementos de altura fora do padrão aparecem em uma coluna e não na outra.
+O objetivo é recuperá-la: as linhas de base do texto do corpo em colunas adjacentes devem se alinhar horizontalmente, mesmo quando títulos, imagens ou outros elementos de altura fora do padrão aparecem em uma coluna e não na outra.
 
 ### Grade de linhas de base
 
-Tudo se ancora em um único número. O documento define um valor `baselineGrid` derivado da entrelinha do texto corrido: por exemplo, um texto corrido composto em `16px` com `line-height` de `1.5` produz uma grade de linhas de base de `24px`. Toda linha de base do texto corrido deve cair em um múltiplo desse valor. Esse é o contrato.
+Tudo se ancora em um único número. O documento define um valor `baselineGrid` derivado da entrelinha do texto do corpo: por exemplo, um texto do corpo composto em `16px` com `line-height` de `1.5` produz uma grade de linhas de base de `24px`. Toda linha de base do texto do corpo deve cair em um múltiplo desse valor. Esse é o contrato.
 
 ### Elementos que rompem a grade
 
-Alguns elementos inevitavelmente rompem a grade, porque a sua altura não é múltipla de `baselineGrid`:
+Alguns elementos inevitavelmente rompem a grade, porque a altura deles não é múltipla de `baselineGrid`:
 
 - **Títulos** (corpo maior, entrelinha diferente)
 - **Imagens** (altura arbitrária em pixels)
 - **Tabelas** (altura variável)
 - **Citações em bloco** (podem usar outro corpo ou outro preenchimento)
-- **Áreas de notas de rodapé** (as notas no pé de uma coluna e o seu fio: a área de texto da coluna termina acima delas)
+- **Áreas de notas de rodapé** (as notas no pé de uma coluna e o fio delas: a área de texto da coluna termina acima delas)
 
 ### Como o fluxo volta à grade
 
-<Illustration name="VerticalRhythm" data='{"title": "Alinhamento do ritmo vertical", "desc": "A coluna 1 contém um título que rompe a grade de linhas de base em 12 pixels. Ao posicionar o título, o motor arredonda a altura usada na coluna para cima, até a próxima linha da grade, o que acrescenta 12 pixels sob o título, de modo que a linha seguinte do corpo volta a cair na grade. A coluna 2 permanece alinhada o tempo todo.", "caption": "O espaço sob um elemento que rompe a grade é arredondado para cima até a grade quando o elemento é posicionado, e as linhas de base ficam sincronizadas entre colunas.", "column1": "Coluna 1", "column2": "Coluna 2", "bodyLine": "Linha de texto corrido", "bodyBaseline": "Linha de texto corrido (linha de base: 24px)", "heading": "Título (36px de altura)", "adjustment": "+12px de ajuste de espaçamento", "backOnGrid": "Texto corrido (de volta à grade)", "aligned": "alinhado", "legendTitle": "Encaixe na grade, ao posicionar", "legendSteps": ["1. Compor o bloco: as linhas e depois o espaço abaixo (marginBottom)", "2. Arredondar a altura usada na coluna para cima, até a próxima linha da grade", "3. O bloco seguinte começa ali, então o espaço abaixo é um mínimo", "4. snapToGrid: false mantém o espaço exato até o próximo bloco que se encaixa"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "Alinhamento do ritmo vertical", "desc": "A coluna 1 contém um título que rompe a grade de linhas de base em 12 pixels. Ao posicionar o título, o motor arredonda a altura usada na coluna para cima, até a próxima linha da grade, o que acrescenta 12 pixels sob o título, de modo que a linha seguinte do corpo volta a cair na grade. A coluna 2 permanece alinhada o tempo todo.", "caption": "O espaço sob um elemento que rompe a grade é arredondado para cima até a grade quando o elemento é posicionado, de modo que as linhas de base das colunas continuam sincronizadas.", "column1": "Coluna 1", "column2": "Coluna 2", "bodyLine": "Linha do texto do corpo", "bodyBaseline": "Linha do texto do corpo (linha de base: 24px)", "heading": "Título (36px de altura)", "adjustment": "+12px de ajuste de espaçamento", "backOnGrid": "Texto do corpo (de volta à grade)", "aligned": "alinhado", "legendTitle": "Encaixe na grade, ao posicionar", "legendSteps": ["1. Compor o bloco: as linhas e depois o espaço abaixo (marginBottom)", "2. Arredondar a altura usada na coluna para cima, até a próxima linha da grade", "3. O bloco seguinte começa ali; por isso, o espaço abaixo é um mínimo", "4. snapToGrid: false mantém o espaço exato até o próximo bloco que se encaixa"]}' />
 
-A grade é mantida no posicionamento, bloco a bloco. Nenhuma passada posterior percorre as colunas à procura de desvios. As linhas do corpo têm a altura de uma linha da grade, então um trecho de texto corrido que começa na grade continua nela. Quando a passada de posicionamento compôs um bloco que pode sair da grade, ela arredonda a altura usada na coluna para cima, até a próxima linha da grade, antes que o bloco seguinte comece. Os blocos que se encaixam assim são:
+A grade é mantida no posicionamento, bloco a bloco. Nenhuma passada posterior percorre as colunas à procura de desvios. As linhas do corpo têm a altura de uma linha da grade; por isso, um trecho de texto do corpo que começa na grade continua nela. Quando a passada de posicionamento compôs um bloco que pode sair da grade, ela arredonda a altura usada na coluna para cima, até a próxima linha da grade, antes que o bloco seguinte comece. Os blocos que se encaixam assim são:
 
 - o último título de uma sequência de títulos (títulos consecutivos se seguem sem encaixe, e o último realinha o texto depois deles);
 - o último item de uma lista, seja qual for o espaçamento entre os itens;
@@ -409,7 +413,7 @@ A grade é mantida no posicionamento, bloco a bloco. Nenhuma passada posterior p
 
 O espaço abaixo do bloco (`marginBottom`) é contado antes do arredondamento, de modo que a margem é um mínimo e a grade decide o resto. Na figura, a coluna 1 contém um título de 36px de altura em uma grade de 24px, sem margem abaixo dele. O pé do título cai 12px depois de uma linha da grade, o encaixe acrescenta 12px, e a linha seguinte do corpo começa na grade, alinhada com a linha ao lado dela na coluna 2. Com um `marginBottom` de 16px, o pé ficaria em 52px, e o encaixe arredondaria esse valor para 72px.
 
-As faixas de flutuantes mantêm a grade à sua maneira, descrita na [Etapa 4](/pt/docs/architecture-layout-pipeline#etapa-4-posicionamento-de-recursos): uma faixa superior é arredondada para cima até linhas inteiras da grade, e um flutuante inferior é ancorado de modo que a última linha de base da sua legenda fique na grade. O balanceamento de colunas soma o seu espaço em linhas inteiras da grade, então também mantém a grade.
+As faixas de flutuantes mantêm a grade à sua maneira, descrita na [Etapa 4](/pt/docs/architecture-layout-pipeline#etapa-4-posicionamento-de-recursos): uma faixa superior é arredondada para cima até linhas inteiras da grade, e um flutuante inferior é ancorado de modo que a última linha de base da legenda fique na grade. O equilíbrio de colunas acrescenta espaço em linhas inteiras da grade e, por isso, também mantém a grade.
 
 Nada compara uma coluna com outra. Toda coluna começa na grade e todo encaixe volta a ela, de modo que as linhas de colunas adjacentes, e de páginas opostas, se encontram sem uma segunda passada.
 
@@ -422,7 +426,7 @@ Existe exatamente uma fonte da verdade para a medição de texto, o módulo de m
 
 É uma escolha deliberada, e existe por um motivo crítico: **o modo como você mede o texto precisa coincidir exatamente com o modo como você o renderiza.** Suponha que a medição usasse as métricas de fonte do canvas, mas que um renderizador usasse uma biblioteca de PDF com tabelas de kerning ligeiramente diferentes. A diagramação não coincidiria com a saída. Linhas que o motor mediu como cabendo em 320px poderiam transbordar ou ficar curtas ao serem renderizadas. Cada pixel de desvio é uma mentira. Medindo uma vez e renderizando em todo lugar a partir da geometria resultante, os renderizadores não têm como discordar: quebras de linha, alturas de coluna e colocação de recursos ficam congeladas no VDT antes que qualquer renderizador entre em ação.
 
-É por isso que o renderizador de PDF, por exemplo, não volta a medir o texto: ele consome um VDT pronto e traduz as suas coordenadas em pixels para pontos de PDF. As métricas do canvas são a fonte da verdade; o PDF é um meio de transporte. Quem usa `renderToPdf` (do pacote `postext-pdf`) passa o mesmo VDT que entregaria a `renderToCanvas` ou `renderToHtml`, e as três saídas coincidem com garantia.
+É por isso que o renderizador de PDF, por exemplo, não volta a medir o texto: ele consome um VDT pronto e traduz as coordenadas dele em pixels para pontos de PDF. As métricas do canvas são a fonte da verdade; o PDF é um meio de transporte. Quem usa `renderToPdf` (do pacote `postext-pdf`) passa o mesmo VDT que entregaria a `renderToCanvas` ou `renderToHtml`, e há garantia de que as três saídas coincidem.
 
 ### Superfície da API
 
@@ -450,7 +454,7 @@ renderToPdf(doc, options): Promise<Uint8Array>;
 renderToEpub(docs, options): Promise<Uint8Array>;
 ```
 
-Como os dados binários dos recursos ficam fora do VDT, cada renderizador resolve os `fileId`s à sua maneira. O renderizador de canvas mantém um registro de `CanvasImageSource`s decodificados: o aplicativo hospedeiro registra cada bitmap ou SVG uma vez com `registerResourceImage(fileId, image)` e o renderizador o consulta na hora de desenhar. O renderizador HTML recebe nas opções um resolvedor `resourceImageUrl(fileId)` e emite tags `<img>` apontando para as URLs (object URLs, data URIs, caminhos de CDN) que o hospedeiro devolver. O renderizador de PDF recebe um provedor `resourceBytes` e incorpora os bytes reais; o gerador de EPUB também recebe um e guarda cada imagem uma única vez como arquivo do livro. Um recurso de vídeo é desenhado como o seu pôster, um bitmap como qualquer outro; o renderizador HTML recebe também um resolvedor `resourceVideoUrl(fileId)` para os arquivos de vídeo que reproduz, e o gerador de EPUB guarda esses arquivos em `media/`. O renderizador de PDF desenha o símbolo de reprodução e o código QR como traçados vetoriais sobre o pôster e, quando `video.linkPoster` está ativado, coloca sobre ele uma anotação de link URI que abre `video.link`; em um PDF etiquetado, o link se junta à `Figure` do pôster, cujo texto alternativo começa com o nome do tipo (*Vídeo: …*). Os recursos de tabela não precisam de nada disso: o seu modelo é inline, e todos os renderizadores desenham as células a partir da geometria de tabela do VDT.
+Como os dados binários dos recursos ficam fora do VDT, cada renderizador resolve os `fileId`s à sua maneira. O renderizador de canvas mantém um registro de `CanvasImageSource`s decodificados: o aplicativo hospedeiro registra cada bitmap ou SVG uma vez com `registerResourceImage(fileId, image)` e o renderizador o consulta na hora de desenhar. O renderizador HTML recebe nas opções um resolvedor `resourceImageUrl(fileId)` e emite tags `<img>` apontando para as URLs (object URLs, data URIs, caminhos de CDN) que o hospedeiro devolver. O renderizador de PDF recebe um provedor `resourceBytes` e incorpora os bytes reais; o gerador de EPUB também recebe um e guarda cada imagem uma única vez como arquivo do livro. Um recurso de vídeo é desenhado como o pôster dele, um bitmap como qualquer outro; o renderizador HTML recebe também um resolvedor `resourceVideoUrl(fileId)` para os arquivos de vídeo que reproduz, e o gerador de EPUB guarda esses arquivos em `media/`. O renderizador de PDF desenha o símbolo de reprodução e o código QR como traçados vetoriais sobre o pôster e, quando `video.linkPoster` está ativado, coloca sobre ele uma anotação de link URI que abre `video.link`; em um PDF marcado, o link se junta à `Figure` do pôster, cujo texto alternativo começa com o nome do tipo (*Vídeo: …*). Os recursos de tabela não precisam de nada disso: o modelo deles vai em linha, e todos os renderizadores desenham as células a partir da geometria de tabela do VDT.
 
 `renderToHtmlIndexed` merece um comentário: além da string HTML completa, devolve um detalhamento por página e por bloco (`HtmlRenderIndex`) para que quem chama possa comparar com uma renderização anterior e atualizar apenas as subárvores do DOM cujo HTML realmente mudou. É o caminho da visualização ao vivo no Sandbox.
 
@@ -491,6 +495,12 @@ Como os dados binários dos recursos ficam fora do VDT, cada renderizador resolv
       <td><strong>Disponível</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong> (visualizador 3D)</td>
+      <td>Consome o VDT já medido com o Pretext</td>
+      <td>Cada página pintada pelo renderizador de canvas (<code>renderPageToCanvas</code>) e mostrada como textura de uma folha do three.js, só em volta da página dupla aberta (<code>createFolioFromDocument</code> em <code>postext-folio</code>)</td>
+      <td><strong>Disponível</strong></td>
+    </tr>
+    <tr>
       <td><strong>Linha de comando</strong></td>
       <td>Pretext sobre o Skia (<code>@napi-rs/canvas</code>), no lugar do canvas do navegador</td>
       <td>Os geradores de PDF, HTML e EPUB, as imagens de página e o Word, a partir de um terminal e sem navegador (<code>postext-cli</code>)</td>
@@ -499,16 +509,16 @@ Como os dados binários dos recursos ficam fora do VDT, cada renderizador resolv
   </tbody>
 </table>
 
-Os quatro renderizadores disponíveis consomem o mesmo `VDTDocument`. A divisão entre `postext` (que exporta os renderizadores de canvas e HTML) e `postext-pdf` (que exporta o renderizador de PDF) é puramente uma questão de dependências: o caminho do PDF traz `pdf-lib` e `@pdf-lib/fontkit`, e a maioria das integrações web não precisa deles. Instale `postext-pdf` só quando quiser de fato emitir bytes de PDF. `postext-epub` é um pacote à parte pelo mesmo motivo, e só é necessário para livros digitais. A linha de comando não é um quinto renderizador: `postext-cli` roda esses mesmos geradores onde não há navegador.
+Os quatro renderizadores e o visualizador Folio consomem o mesmo `VDTDocument`. A divisão entre `postext` (que exporta os renderizadores de canvas e HTML) e `postext-pdf` (que exporta o renderizador de PDF) é puramente uma questão de dependências: o caminho do PDF traz `pdf-lib` e `@pdf-lib/fontkit`, e a maioria das integrações web não precisa deles. Instale `postext-pdf` só quando quiser de fato emitir bytes de PDF. `postext-epub` é um pacote à parte pelo mesmo motivo, e só é necessário para livros digitais. A linha de comando não é um quinto renderizador: `postext-cli` roda esses mesmos geradores onde não há navegador. Os arquivos do Word também não são um: `postextToDocx` (de `postext/word`) escreve os capítulos em Markdown e seus estilos em um `.docx`, sem diagramação, e `readDocx` com `wordToPostext` o leem de volta como Markdown.
 
-**Onde o layout roda:** o motor mede o texto em um canvas, então roda onde quer que receba um. Em um navegador, o pipeline pode rodar na thread principal (`buildDocument`) ou dentro de um Web Worker dedicado (`createLayoutWorker` de `postext/worker`). O caminho do worker é a integração recomendada para aplicativos guiados pela interface, porque tira a medição e as passadas de posicionamento da thread principal, permite cancelamento em que a última chamada vence via `AbortSignal` e mantém o seu próprio cache de medição e cache de rasterização de fórmulas matemáticas, para que as reconstruções sucessivas continuem baratas. Veja [Configuração → Rodar o layout em um Web Worker](/pt/docs/configuration-programmatic-usage#executar-o-layout-em-um-web-worker) para o padrão de integração completo. Fora do navegador, a [linha de comando](/pt/docs/command-line) roda o mesmo pipeline com o Skia no lugar do canvas do navegador, de modo que um livro se divide nas mesmas páginas em um terminal, em um script ou em um servidor de build.
+**Onde o layout roda:** o motor mede o texto em um canvas; por isso, roda onde quer que receba um. Em um navegador, o pipeline pode rodar na thread principal (`buildDocument`) ou dentro de um Web Worker dedicado (`createLayoutWorker` de `postext/worker`). O caminho do worker é a integração recomendada para aplicativos guiados pela interface, porque tira a medição e as passadas de posicionamento da thread principal, permite cancelamento em que a última chamada vence via `AbortSignal` e mantém o próprio cache de medição e o próprio cache de rasterização de fórmulas matemáticas, para que as reconstruções sucessivas continuem baratas. Veja [Configuração → Executar a diagramação em um Web Worker](/pt/docs/configuration-programmatic-usage#executar-a-diagramação-em-um-web-worker) para o padrão de integração completo. Fora do navegador, a [linha de comando](/pt/docs/command-line) roda o mesmo pipeline com o Skia no lugar do canvas do navegador, de modo que um livro se divide nas mesmas páginas em um terminal, em um script ou em um servidor de build.
 
 
 ## Estratégia de desempenho
 
 A diferença entre uma ferramenta lenta e uma que parece mágica é de umas 10 vezes. Um layout de 500 ms faz o usuário ver um engasgo toda vez que muda uma palavra. Um layout de 50 ms parece instantâneo, como se o documento sempre tivesse estado ali. Esse fator não dá para remendar depois. Ele precisa estar no projeto desde o primeiro dia.
 
-Veja contra o que o motor está lutando: milhares de blocos de texto ao longo de centenas de páginas, diagramados de novo a cada edição, e várias vezes seguidas quando a diagramação precisa das suas rodadas. Os motores de jogos enfrentam a mesma classe de problema, processar milhares de objetos (geometria, física, iluminação, IA) 60 vezes por segundo, e a resolvem não repetindo trabalho que já fizeram. O Postext aplica isso ao que mais lhe custa, que é medir texto.
+Veja contra o que o motor está lutando: milhares de blocos de texto ao longo de centenas de páginas, diagramados de novo a cada edição, e várias vezes seguidas quando a diagramação precisa das rodadas. Os motores de jogos enfrentam a mesma classe de problema, processar milhares de objetos (geometria, física, iluminação, IA) 60 vezes por segundo, e a resolvem não repetindo trabalho que já fizeram. O Postext aplica isso ao que mais lhe custa, que é medir texto.
 
 ### Princípios
 
@@ -521,7 +531,7 @@ Veja contra o que o motor está lutando: milhares de blocos de texto ao longo de
    nada no texto, nas fontes ou na largura de um parágrafo lê as linhas dele do cache.
 
 3. **Rodadas limitadas.** Todo tipo de repetição tem um limite fixo (veja
-   [O condutor das passadas](/pt/docs/architecture-layout-pipeline#o-condutor-das-passadas)), e o balanceamento de colunas tem um por documento
+   [O condutor das passadas](/pt/docs/architecture-layout-pipeline#o-condutor-das-passadas)), e o equilíbrio de colunas tem um por documento
    além de um por segmento, de modo que um livro de muitos capítulos não pode gastar passadas sem fim.
    O custo de uma compilação pode ser medido passada a passada: `BuildDocumentOptions.onPass` informa
    cada passada e o tempo que ela levou.
@@ -536,12 +546,18 @@ Veja contra o que o motor está lutando: milhares de blocos de texto ao longo de
    parágrafo que não mudou custa uma consulta a um mapa. Quando as faces de uma família mudam, o motor descarta
    as larguras dessa família e o cache do Pretext, e um cache de medição descarta os blocos compostos nela na consulta
    seguinte (ele guarda a geração em que foi preenchido), de modo que as larguras dos glifos ficam corretas depois que
-   as fontes terminam de carregar sem nenhuma chamada do host; `clearMeasurementCache()` descarta todas as famílias.
+   as fontes terminam de carregar sem nenhuma chamada do hospedeiro; `clearMeasurementCache()` descarta todas as famílias.
 
 6. **Quebra de linhas no caminho crítico.** O tratamento de nós ativos do Knuth-Plass foi reescrito para ganhar velocidade:
    o conjunto ativo é compactado no próprio lugar à medida que os nós se aposentam, e os candidatos são deduplicados
    por (linha, classe de ajuste), de modo que só sobrevive o nó de menor demérito para cada chave. Os resultados
-   do algoritmo são idênticos: os mesmos conjuntos de quebras, só que calculados mais rápido.
+   do algoritmo são idênticos: os mesmos conjuntos de quebras, só que calculados mais rápido. O mesmo
+   algoritmo também é escrito em Rust (`rust/crates/linebreak`) e compilado para WebAssembly,
+   embutido no pacote: faz a mesma aritmética na mesma ordem, de duas a três vezes mais rápido, e
+   responde onde quer que o módulo tenha sido compilado. Na thread principal de uma página ele é
+   compilado em segundo plano; até lá, ou onde o WebAssembly falta ou é recusado, responde o de
+   TypeScript. `initLineBreaker()` adianta a compilação; `useWasmLineBreaker(false)` deixa todos os
+   parágrafos no de TypeScript.
 
 7. **Construções fora da thread principal.** O ponto de entrada `postext/worker` roda o pipeline inteiro
    dentro de um Web Worker dedicado. A thread principal envia `{ content, config }` e um
@@ -549,12 +565,12 @@ Veja contra o que o motor está lutando: milhares de blocos de texto ao longo de
    as passadas de posicionamento e devolve o `VDTDocument` terminado. Uma chamada mais nova a `build()`
    cancela a anterior de forma cooperativa: o worker roda `buildDocumentAsync`, que consulta um gancho
    de cancelamento uma vez por bloco e entre passadas e lança `BuildCancelledError`, de modo que um usuário digitando em um editor
-   nunca espera por um layout já superado. O worker também mantém o seu próprio cache persistente
+   nunca espera por um layout já superado. O worker também mantém o próprio cache persistente
    de medição e um cache de rasterização de fórmulas indexado pelo conteúdo, para que os objetos `MathRender`
    clonados estruturalmente sobrevivam entre reconstruções sem serem rasterizados de novo.
 
 8. **VDT de acesso duplo.** A árvore (`pages > columns > blocks`) dá acesso hierárquico ao
-   trabalho que vai página a página ou coluna a coluna (o balanceamento de colunas mede o vão no
+   trabalho que vai página a página ou coluna a coluna (o equilíbrio de colunas mede o vão no
    pé de cada coluna). Um array plano paralelo `blocks[]` dá acesso direto a todos os blocos,
    onde quer que estejam (a rodada de números de nota lê nele a chamada que cada nota imprimiu). As duas
    visões referenciam os mesmos objetos de bloco (não há duplicação, apenas duas maneiras de percorrer
@@ -564,13 +580,18 @@ Veja contra o que o motor está lutando: milhares de blocos de texto ao longo de
 
 Não há um ponto de entrada incremental: nenhuma chamada recebe um VDT pronto e o atualiza. Quando o conteúdo ou a configuração muda (uma tecla, outro tamanho de página), o hospedeiro chama `buildDocument` de novo e recebe um documento novo.
 
-O que passa de uma compilação para a seguinte é a medição. Crie um `MeasurementCache` uma vez com `createMeasurementCache()` e passe-o como terceiro argumento de toda chamada a `buildDocument`. Um parágrafo cujo texto, fontes, largura e opções de quebra não mudaram é lido dele, de modo que um editor que diagrama o documento a cada tecla mede só o parágrafo em que se está digitando. Uma mudança de tamanho de página ou de número de colunas muda as larguras, e esses parágrafos são medidos de novo; os resultados de `prepare()` do Pretext continuam válidos, pois dependem da fonte e do texto e não da largura, então só roda a aritmética barata de `layout()`. A análise do markdown também é memoizada.
+O que passa de uma compilação para a seguinte é a medição. Crie um `MeasurementCache` uma vez com `createMeasurementCache()` e passe-o como terceiro argumento de toda chamada a `buildDocument`. Um parágrafo cujo texto, fontes, largura e opções de quebra não mudaram é lido dele, de modo que um editor que diagrama o documento a cada tecla mede só o parágrafo em que se está digitando. Uma mudança de tamanho de página ou de número de colunas muda as larguras, e esses parágrafos são medidos de novo; os resultados de `prepare()` do Pretext continuam válidos, pois dependem da fonte e do texto e não da largura; por isso, só roda a aritmética barata de `layout()`. A análise do Markdown também é memoizada. As páginas compostas também passam de uma compilação
+para a seguinte: uma página composta cujo modelo, Markdown, estilos e fontes não mudaram é
+reaproveitada da compilação anterior (`composed/pageMemo.ts`), de modo que uma edição em uma página
+de um capítulo de páginas compostas diagrama de novo só essa página. Uma página com uma nota de
+rodapé, uma referência cruzada, uma citação, um sumário ou índice ou uma tira de quadrinhos é
+sempre diagramada de novo.
 
-Para um editor ao vivo, `createLayoutWorker` (de `postext/worker`) faz tudo isso fora da thread principal: o worker tem um cache de medição que dura tanto quanto ele, e um `build()` mais novo cancela o que está em andamento. Veja [Configuração → Cache de medidas](/pt/docs/configuration-programmatic-usage#cache-de-medidas) e [Executar o layout em um Web Worker](/pt/docs/configuration-programmatic-usage#executar-o-layout-em-um-web-worker).
+Para um editor ao vivo, `createLayoutWorker` (de `postext/worker`) faz tudo isso fora da thread principal: o worker tem um cache de medição que dura tanto quanto ele, e um `build()` mais novo cancela o que está em andamento. Veja [Configuração → Cache de medidas](/pt/docs/configuration-programmatic-usage#cache-de-medidas) e [Executar a diagramação em um Web Worker](/pt/docs/configuration-programmatic-usage#executar-a-diagramação-em-um-web-worker).
 
 ### Benchmarks
 
-Dois benchmarks ficam em `packages/postext/src/__bench__/`. `pnpm test` os pula; `pnpm bench`, rodado em `packages/postext`, os executa. `chapter.bench.test.ts` diagrama um capítulo do tamanho de um livro didático (quarenta seções de títulos, parágrafos e listas) cinco vezes contra um cache de medição vazio e cinco vezes contra um já preenchido, e informa as duas medianas e o número de passadas. `cjkChapter.bench.test.ts` diagrama o capítulo 1 de 红楼梦 e conta os caracteres enviados a `measureText`, para manter o compositor CJK em um custo linear no tamanho do parágrafo.
+Três benchmarks ficam em `packages/postext/src/__bench__/`. `pnpm test` os pula; `pnpm bench`, rodado em `packages/postext`, os executa. `chapter.bench.test.ts` diagrama um capítulo do tamanho de um livro didático (quarenta seções de títulos, parágrafos e listas) cinco vezes contra um cache de medição vazio e cinco vezes contra um já preenchido, e informa as duas medianas e o número de passadas. `cjkChapter.bench.test.ts` diagrama o capítulo 1 de 红楼梦 e conta os caracteres enviados a `measureText`, para manter o compositor CJK em um custo linear no tamanho do parágrafo. `composedPage.bench.test.ts` cronometra um capítulo de vinte páginas compostas: uma compilação a frio, uma recompilação sem mudanças, a mudança de um atributo de uma página e uma edição dentro de um de seus blocos, cada uma com a memória de páginas compostas e sem ela.
 
 ```typescript
 // De packages/postext/src/__bench__/chapter.bench.test.ts
@@ -587,12 +608,12 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-Uma ressalva, por honestidade: não há canvas no Node, então os dois benchmarks simulam a medição de texto, e os seus tempos absolutos não são os do navegador. Já a razão entre o cache vazio e o preenchido e o número de passadas valem também para o navegador, e uma regressão em qualquer um dos dois aparece aqui antes de aparecer no Sandbox. O benchmark do capítulo informa números e não quebra o build; o chinês verifica que os caracteres medidos ficam abaixo de três vezes o tamanho do parágrafo mais longo. Nenhum dos dois roda na CI: as regressões são detectadas comparando os números entre execuções quando um caminho crítico muda (como foi feito na reescrita dos nós ativos do Knuth-Plass). O desempenho é um recurso e não uma esperança, mas hoje ele é garantido por medição e revisão, não por um pipeline que falha.
+Uma ressalva, por honestidade: não há canvas no Node; por isso, os benchmarks simulam a medição de texto, e os tempos absolutos deles não são os do navegador. Já a razão entre o cache vazio e o preenchido e o número de passadas valem também para o navegador, e uma regressão em qualquer um dos dois aparece aqui antes de aparecer no Sandbox. Os benchmarks do capítulo e das páginas compostas informam números e não quebram o build; o chinês verifica que os caracteres medidos ficam abaixo de três vezes o tamanho do parágrafo mais longo. Nenhum roda na CI: as regressões são detectadas comparando os números entre execuções quando um caminho crítico muda (como foi feito na reescrita dos nós ativos do Knuth-Plass). Por enquanto nenhum build falha por um tempo mais lento: uma perda de velocidade é encontrada medindo e na revisão.
 
 
 ## Fluxo de dados
 
-<Illustration name="DataFlow" data='{"title": "Fluxo de dados pelo motor", "desc": "O conteúdo e a configuração entram na passada de posicionamento, que estrutura, mede e posiciona cada bloco, flutua os recursos e aplica as regras de quebra e de manter junto. buildDocument roda a passada de novo com dicas até que cada rodada se acomode. O VDT pronto é entregue ao renderizador, que gera HTML ou PDF.", "caption": "Fluxo de dados de ponta a ponta: uma passada de posicionamento, repetida com dicas, e depois a renderização.", "input": ["Conteúdo +", "Config"], "loopBadge": "passada de posicionamento", "passesInLoop": [{"num": "1", "name": "estruturar"}, {"num": "2", "name": "medir"}, {"num": "3", "name": "posicionar"}, {"num": "4", "name": "flutuantes"}, {"num": "5", "name": "manter junto"}], "loopCondition": "rodar de novo com dicas, cada rodada até o seu limite", "convergedLabel": "VDT (pronto)", "backend": "Renderizador", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "Fluxo de dados pelo motor", "desc": "O conteúdo e a configuração entram na passada de posicionamento, que estrutura, mede e posiciona cada bloco, flutua os recursos e aplica as regras de quebra e de manter junto. buildDocument roda a passada de novo com dicas até que cada rodada se acomode. O VDT pronto é entregue ao renderizador, que gera HTML ou PDF.", "caption": "Fluxo de dados de ponta a ponta: uma passada de posicionamento, repetida com dicas, e depois a renderização.", "input": ["Conteúdo +", "Config"], "loopBadge": "passada de posicionamento", "passesInLoop": [{"num": "1", "name": "estruturar"}, {"num": "2", "name": "medir"}, {"num": "3", "name": "posicionar"}, {"num": "4", "name": "flutuantes"}, {"num": "5", "name": "manter junto"}], "loopCondition": "rodar de novo com dicas, cada rodada até o limite", "convergedLabel": "VDT (pronto)", "backend": "Renderizador", "output": "HTML / PDF"}' />
 
 
 ## Fora do escopo
@@ -604,7 +625,7 @@ assumir responsabilidades que pertencem a outro lugar seria o caminho mais rápi
 - **Invólucro de column-count do CSS.** O Postext substitui o layout de várias colunas do CSS; não o envolve. Ele calcula do zero uma geometria posicionada com precisão, porque o algoritmo de colunas do navegador não dá controle sobre a colocação de recursos, a prevenção de viúvas e órfãs e as regras tipográficas entre colunas. E é justamente disso que se trata.
 - **Gerenciamento de breakpoints responsivos.** O Postext calcula o layout para um tamanho de página dado. Quem o usa decide quando rediagramar (ao redimensionar a janela, ao mudar a orientação). O Postext não gerencia breakpoints, media queries nem decisões de design responsivo. Isso é com você.
 - **Edição colaborativa em tempo real.** O Postext é um cálculo de layout sem estado (entra conteúdo, sai geometria), não um sistema de documentos colaborativo com resolução de conflitos, transformações operacionais ou percepção de múltiplos usuários.
-- **Arquivos de fonte.** O pacote `postext` carrega as fontes, mas não as traz consigo. `prepareFonts` carrega, antes do primeiro layout, todas as faces que uma configuração e o seu texto pedem, e uma face que o conjunto de fontes não conseguiu fornecer aparece entre os avisos do documento como `fontFallback`. Os arquivos vêm de quem integra o motor: uma regra `@font-face` na página, ou uma função `resolve` que diz onde está cada face. Veja [Configuração → Carregar as fontes antes do layout](/pt/docs/configuration-programmatic-usage#carregar-as-fontes-antes-do-layout).
+- **Arquivos de fonte.** O pacote `postext` carrega as fontes, mas não as traz consigo. `prepareFonts` carrega, antes do primeiro layout, todas as faces que uma configuração e o texto dela pedem, e uma face que o conjunto de fontes não conseguiu fornecer aparece entre os avisos do documento como `fontFallback`. Os arquivos vêm de quem integra o motor: uma regra `@font-face` na página, ou uma função `resolve` que diz onde está cada face. Veja [Configuração → Carregar as fontes antes da diagramação](/pt/docs/configuration-programmatic-usage#carregar-as-fontes-antes-da-diagramação).
 
 
 ## Apêndice: relação com os tipos existentes
@@ -629,7 +650,7 @@ Veja como os principais tipos definidos em `packages/postext/src/types.ts` se re
     </tr>
     <tr>
       <td><code>Resource</code></td>
-      <td>Um recurso tipado de bitmap/SVG/tabela/vídeo. Vira um <code>ResolvedResourceBlock</code> durante a medição e, depois, um <code>VDTBlock</code> inline do tipo <code>'resource'</code> (posicionamento <code>'here'</code>) ou um flutuante em uma faixa da página (posicionamento de recursos)</td>
+      <td>Um recurso tipado de bitmap/SVG/tabela/vídeo. Vira um <code>ResolvedResourceBlock</code> durante a medição e, depois, um <code>VDTBlock</code> em linha do tipo <code>'resource'</code> (posicionamento <code>'here'</code>) ou um flutuante em uma faixa da página (posicionamento de recursos)</td>
     </tr>
     <tr>
       <td><code>ResourceType</code></td>
@@ -641,7 +662,7 @@ Veja como os principais tipos definidos em `packages/postext/src/types.ts` se re
     </tr>
     <tr>
       <td><code>PostextNote</code></td>
-      <td>O motor não o lê. As notas de rodapé são escritas no markdown (<code>[^id]</code>) e compostas no pé da coluna que as cita ou depois do capítulo; as notas de margem não estão implementadas</td>
+      <td>O motor não o lê. As notas de rodapé são escritas no Markdown (<code>[^id]</code>) e compostas no pé da coluna que as cita ou depois do capítulo; as notas de margem não estão implementadas</td>
     </tr>
     <tr>
       <td><code>PostextResource</code></td>

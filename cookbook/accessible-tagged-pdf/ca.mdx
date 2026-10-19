@@ -42,7 +42,7 @@ Un lector de pantalla segueix les etiquetes. `renderToPdf` etiqueta primer el t�
 
 <Excerpt region="palette" />
 
-PDF/UA-1 no comprova el color, però WCAG 2.2 demana 4,5:1 entre el text i el seu fons. La tinta dona 15,6:1 sobre blanc; la lletra blanca, 12,5:1 sobre les bandes blau marí, i el gris del peu de pàgina, 7,0:1. El groc dona 1,8:1 sobre blanc, així que només apareix sobre blau marí (6,9:1) i com a farciment. Els pictogrames segueixen el 3:1 que WCAG demana als gràfics: blanc quan arriba a aquesta proporció sobre el seu contenidor i tinta sobre el groc. `cell()` escriu el nom de cada contenidor al costat de la seva mostra de color, i dona a la deixalleria un quadrat buit, de manera que cap indicació no depèn de distingir colors.
+PDF/UA-1 no comprova el color, però WCAG 2.2 demana 4,5:1 entre el text i el seu fons. La tinta dona 15,6:1 sobre blanc; la lletra blanca, 12,5:1 sobre les bandes blau marí, i el gris del peu de pàgina, 7,0:1. El groc dona 1,8:1 sobre blanc, així que només apareix sobre blau marí (6,9:1) i com a fons. Els pictogrames segueixen el 3:1 que WCAG demana als gràfics: blanc quan arriba a aquesta proporció sobre el seu contenidor i tinta sobre el groc. `cell()` escriu el nom de cada contenidor al costat de la seva mostra de color, i dona a la deixalleria un quadrat buit, de manera que cap indicació no depèn de distingir colors.
 
 ## Variants
 
@@ -59,4 +59,4 @@ Treu la col·locació i la figura 1.1 flota al peu de la primera columna de la p
 
 El codi no pot validar el seu propi PDF, perquè veraPDF funciona fora del navegador. Baixa el fitxer i executa `verapdf -f ua1 accessible-tagged-pdf.pdf`; el PDF capturat per a aquesta pàgina passa la validació. El validador no sap si un text alternatiu descriu la seva imatge, així que escolta també la guia amb un lector de pantalla.
 
-El colofó imprimeix l'adreça web completa perquè la guia es va escriure per a postext 1.4.1, en què un enllaç de Markdown imprimia les seves paraules sense afegir cap enllaç al PDF. Des de postext 1.10 un enllaç `[texto](url)` funciona al PDF i s'etiqueta com a element `Link` el text del qual són les paraules enllaçades.
+El colofó imprimeix l'adreça web completa perquè la guia es va escriure per a postext 1.4.1, en què un enllaç de Markdown imprimia les seves paraules sense afegir cap enllaç al PDF. Des de postext 1.10 un enllaç `[texto](url)` funciona al PDF i s'etiqueta com a element `Link`, amb les paraules enllaçades com a text.

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Architecture',
   description: 'Architecture technique du moteur de mise en page Postext : ses concepts, l’arbre de document, le rythme vertical, les moteurs de rendu et les performances',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '31 min',
   order: 2,
   plainSummary: "Cette page explique le fonctionnement interne de Postext ; elle s’adresse aux programmeurs. D’abord, Postext mesure chaque mot sans rien dessiner à l’écran, ce qui le rend très rapide. Ensuite, il calcule l’emplacement de chaque ligne, de chaque image et de chaque colonne, et garde ce plan en mémoire. Enfin, il dessine les pages terminées sous forme de page web, d’image canvas ou de fichier PDF. Quand vous modifiez un mot, il refait la mise en page et réutilise les mesures des paragraphes qui n’ont pas changé. La page suivante explique, étape par étape, comment les lignes et les images sont placées.",
@@ -15,7 +15,7 @@ export const metadata = {
 
 Si vous avez déjà travaillé avec React, vous connaissez déjà l’astuce centrale. React construit un DOM virtuel en mémoire, calcule les différences, et ne touche qu’ensuite au véritable DOM du navigateur. Postext fait la même chose, mais au lieu de composants d’interface, il construit un arbre de **pages, colonnes, blocs de texte et boîtes englobantes**. Toute la géométrie d’un document de plusieurs pages et plusieurs colonnes, calculée avant qu’un seul pixel soit rendu. Chaque paragraphe, titre, image, note de bas de page et exergue placé à des coordonnées exactes, dans le respect de règles typographiques séculaires que le CSS ne sait tout simplement pas exprimer.
 
-Tout cela est possible grâce à [`@chenglou/pretext`](https://github.com/chenglou/pretext), une bibliothèque de mesure de texte sans DOM, de 300 à 600 fois plus rapide que le reflow de mise en page du navigateur. Pour l’histoire du projet (une décennie de tentatives ratées, le goulot d’étranglement qui les a toutes bloquées et la bibliothèque qui l’a enfin levé), voir l’[Introduction](/fr/docs/introduction).
+Tout cela est possible grâce à [`@chenglou/pretext`](https://github.com/chenglou/pretext), une bibliothèque de mesure de texte sans DOM, de 300 à 600 fois plus rapide que le recalcul de mise en page du navigateur. Pour l’histoire du projet (une décennie de tentatives ratées, le goulot d’étranglement qui les a toutes bloquées et la bibliothèque qui l’a enfin levé), voir l’[Introduction](/fr/docs/introduction).
 
 ## L’idée centrale
 
@@ -71,7 +71,7 @@ d’eux vous paraît flou.
     </tr>
     <tr>
       <td><strong>Note</strong></td>
-      <td>Une note de bas de page ou une note de fin de chapitre, écrite dans le markdown sous la forme d’un appel <code>[^id]</code> et d’une définition <code>[^id]:</code> (voir <a href="/fr/docs/document-format-notes-references#notes-de-bas-de-page">Notes de bas de page</a>). Les notes marginales, et la liste <code>PostextNote</code> qu’accepte le modèle de contenu, ne sont pas implémentées : le moteur ne lit pas <code>notes</code>.</td>
+      <td>Une note de bas de page ou une note de fin de chapitre, écrite dans le Markdown sous la forme d’un appel <code>[^id]</code> et d’une définition <code>[^id]:</code> (voir <a href="/fr/docs/document-format-notes-references#notes-de-bas-de-page">Notes de bas de page</a>). Les notes marginales, et la liste <code>PostextNote</code> qu’accepte le modèle de contenu, ne sont pas implémentées : le moteur ne lit pas <code>notes</code>.</td>
     </tr>
     <tr>
       <td><strong>Grille de ligne de base</strong></td>
@@ -94,8 +94,8 @@ d’eux vous paraît flou.
       <td>Les lignes laissées vides en bas d’une colonne quand un paragraphe y est coupé ou reporté en entier. Un coût de jeu au carré (pondéré par <code>slackWeight</code>) est mis en balance avec les pénalités de veuve et d’orpheline quand le moteur choisit la coupure.</td>
     </tr>
     <tr>
-      <td><strong>Backend</strong></td>
-      <td>Une cible de rendu qui consomme le VDT terminé. Quatre sont disponibles aujourd’hui : <strong>canvas</strong> (aperçu bitmap), <strong>HTML</strong> (lecture à l’écran fondée sur le DOM), <strong>PDF</strong> (sortie prête pour l’impression via <code>postext-pdf</code>) et <strong>EPUB</strong> (<code>postext-epub</code>, le livre en livre numérique). Tous quatre rendent à partir de la même mesure (le module measure, au-dessus de Pretext).</td>
+      <td><strong>Moteur de rendu (backend)</strong></td>
+      <td>Une cible de rendu qui consomme le VDT terminé. Quatre sont disponibles aujourd’hui : <strong>canvas</strong> (aperçu bitmap), <strong>HTML</strong> (lecture à l’écran fondée sur le DOM), <strong>PDF</strong> (sortie prête pour l’impression via <code>postext-pdf</code>) et <strong>EPUB</strong> (<code>postext-epub</code>, le livre en livre numérique). Tous quatre rendent à partir de la même mesure (le module measure, au-dessus de Pretext). La visionneuse 3D <code>postext-folio</code> peint ses feuillets avec le moteur canvas.</td>
     </tr>
     <tr>
       <td><strong>Passe de placement</strong></td>
@@ -111,15 +111,15 @@ d’eux vous paraît flou.
 
 ## Architecture du système
 
-<Illustration name="SystemArchitecture" data='{"title": "Architecture du système Postext", "desc": "Le markdown enrichi et PostextConfig entrent dans le parseur. La passe de placement mesure le texte via Pretext et remplit l’arbre de document virtuel ; buildDocument relance la passe avec des indications jusqu’à ce que la mise en page se stabilise. Un backend rend le VDT terminé en HTML ou en PDF.", "caption": "Parseur → passe de placement ↔ Pretext → VDT → backend → sortie.", "markdown": "Markdown enrichi", "configTitle": "PostextConfig", "configSubtitle": "(colonnes, règles, espacements)", "engine": "Moteur de mise en page", "parser": "Parseur", "pass1": "markdown → blocs", "vdtLine1": "Arbre de document", "vdtLine2": "virtuel (VDT)", "vdtAttr1": "rempli en place par une passe", "vdtAttr2": "pages > colonnes > blocs", "vdtAttr3": "chaque nœud a une bbox", "vdtAttr4": "un nouvel arbre à chaque passe", "pretext": "Pretext", "pretextSubtitle": "mesure du texte", "passesTitle": "Passe de placement (un parcours du contenu)", "passes": [{"num": "Mesurer", "name": "les lignes, via le cache"}, {"num": "Placer", "name": "les blocs dans les colonnes et les pages"}, {"num": "Flotter", "name": "les ressources dans les bandes de page"}, {"num": "Couper", "name": "les paragraphes en fin de colonne"}, {"num": "Maintenir", "name": "titres et listes avec leur texte"}, {"num": "Recaler", "name": "le flux sur la grille"}], "convergence": "relancer avec des indications", "backend": "Backend", "backendSubtitle": "(interface unifiée)", "backendItems": ["Canvas / navigateur", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "sortie rendue"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Architecture du système Postext", "desc": "Le Markdown enrichi et PostextConfig entrent dans l’analyseur. La passe de placement mesure le texte via Pretext et remplit l’arbre de document virtuel ; buildDocument relance la passe avec des indications jusqu’à ce que la mise en page se stabilise. Un moteur de rendu convertit le VDT terminé en HTML ou en PDF.", "caption": "Analyseur → passe de placement ↔ Pretext → VDT → moteur de rendu → sortie.", "markdown": "Markdown enrichi", "configTitle": "PostextConfig", "configSubtitle": "(colonnes, règles, espacements)", "engine": "Moteur de mise en page", "parser": "Analyseur", "pass1": "Markdown → blocs", "vdtLine1": "Arbre de document", "vdtLine2": "virtuel (VDT)", "vdtAttr1": "rempli en place par une passe", "vdtAttr2": "pages > colonnes > blocs", "vdtAttr3": "chaque nœud a une bbox", "vdtAttr4": "un nouvel arbre à chaque passe", "pretext": "Pretext", "pretextSubtitle": "mesure du texte", "passesTitle": "Passe de placement (un parcours du contenu)", "passes": [{"num": "Mesurer", "name": "les lignes, via le cache"}, {"num": "Placer", "name": "les blocs dans les colonnes et les pages"}, {"num": "Loger", "name": "les ressources dans les bandes de page"}, {"num": "Couper", "name": "les paragraphes en fin de colonne"}, {"num": "Lier", "name": "titres et listes à leur texte"}, {"num": "Recaler", "name": "le flux sur la grille"}], "convergence": "relancer avec des indications", "backend": "Moteur de rendu", "backendSubtitle": "(interface unifiée)", "backendItems": ["Canvas / navigateur", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "sortie rendue"}' />
 
 **Voici le trajet de votre contenu à travers le moteur :**
 
-1. Le **parseur** lit votre markdown enrichi et le transforme en une liste plate de blocs de contenu typés : du contenu et de la structure, pas encore de positions
+1. L’**analyseur** lit votre Markdown enrichi et le transforme en une liste plate de blocs de contenu typés : du contenu et de la structure, pas encore de positions
 2. Une **passe de placement** parcourt cette liste une fois et construit le VDT. Elle mesure chaque bloc via Pretext à la largeur de la colonne dans laquelle il va entrer, place le texte, les flottants et les encadrés dans les pages et les colonnes, et applique au fur et à mesure les règles de coupure et de maintien
 3. Le **pilote** (`buildDocument`) relance la passe quand une décision a besoin du résultat d’une mise en page complète : une table des matières qui imprime des numéros de page, un encadré sur toute la largeur de la page qui doit égaliser les colonnes au-dessus de lui, une colonne qui s’est terminée trop tôt. Chaque relance reçoit des indications de la passe précédente, et chaque sorte de relance a sa propre limite
 4. Le **VDT final** est la géométrie complète de la mise en page : chaque élément connaît son numéro de page, sa colonne, sa position et sa boîte englobante. Le document est entièrement « composé » avant tout rendu
-5. Un **backend** parcourt le VDT terminé et le rend dans le format cible : un bitmap canvas rastérisé, un arbre DOM d’éléments HTML positionnés, un document PDF avec polices incorporées, ou un EPUB. Le même VDT alimente les quatre ; choisir un backend est une pure décision de sortie
+5. Un **moteur de rendu** parcourt le VDT terminé et le rend dans le format cible : un bitmap canvas rastérisé, un arbre DOM d’éléments HTML positionnés, un document PDF avec polices incorporées, ou un EPUB. Le même VDT alimente les quatre ; choisir un moteur de rendu est une pure décision de sortie
 
 
 ## Couche d’entrée
@@ -128,7 +128,7 @@ d’eux vous paraît flou.
 
 Le modèle de contenu est une philosophie autant qu’une structure de données. Vous décrivez *ce que* vous voulez dire, pas *comment* le mettre en page. C’est le moteur qui prend les décisions de mise en page.
 
-<Illustration name="ContentModel" data='{"title": "Modèle de contenu : markdown, ressources, notes", "desc": "L’entrée de Postext sépare le markdown (ordre de lecture et structure sémantique) des ressources (bitmaps, SVG, tableaux) et des notes. Le moteur résout par identifiant les renvois en ligne :ref et les insertions ::resource et produit le VDT.", "caption": "Le markdown porte l’ordre de lecture ; les ressources portent les données visuelles.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "ordre de lecture + :ref / ::resource par id", "resources": "resources[]", "resourcesSub": "bitmaps, SVG, tableaux", "notes": "metadata", "notesSub": "titre, auteur, dates", "resolveMarker": "résolu par id : :ref{id=…}, ::resource{id=…}", "engineLabel": "moteur", "vdtLabel": "VDT"}' />
+<Illustration name="ContentModel" data='{"title": "Modèle de contenu : Markdown, ressources, notes", "desc": "L’entrée de Postext sépare le Markdown (ordre de lecture et structure sémantique) des ressources (bitmaps, SVG, tableaux) et des notes. Le moteur résout par identifiant les renvois en ligne :ref et les insertions ::resource, puis produit le VDT.", "caption": "Le Markdown fixe l’ordre de lecture ; les ressources contiennent les données visuelles.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "ordre de lecture + :ref / ::resource par id", "resources": "resources[]", "resourcesSub": "bitmaps, SVG, tableaux", "notes": "metadata", "notesSub": "titre, auteur, dates", "resolveMarker": "résolu par id : :ref{id=…}, ::resource{id=…}", "engineLabel": "moteur", "vdtLabel": "VDT"}' />
 
 ```typescript
 // packages/postext/src/types.ts
@@ -138,6 +138,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
   notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+  continuation?: LayoutContinuation; // counters and page numbers carried from earlier chapters
+  outline?: OutlineEntry[];    // the book's headings with their page labels, for :::toc / :::index
+  citations?: CitationContext; // this chapter's share of the book's citations
+  laterPageIds?: Record<string, number>; // page fences of later chapters a story may continue on
 }
 
 interface Resource {
@@ -158,10 +162,10 @@ interface Resource {
 }
 ```
 
-**Les ressources** portent les données visuelles : légendes, texte alternatif et une charge utile propre à leur sorte. Les charges binaires (bitmaps, SVG) vivent *hors bande* : la ressource ne stocke qu’un `fileId`, que le moteur de rendu résout au moment du dessin (le Sandbox garde les octets dans IndexedDB). Les ressources tableau font exception : leur `TableModel` (une grille de cellules avec fusions et alignements) voyage en ligne, car ce sont des données structurées, pas des octets.
-**Les notes** s’écrivent dans le markdown : un appel `[^id]` là où la note est citée et une définition `[^id]:`, un paragraphe à part n’importe où dans le chapitre. Le moteur numérote les notes dans l’ordre de leur première citation et place chacune au pied de la colonne qui contient la ligne qui la cite, sous un filet court, ou après le dernier bloc du chapitre avec `footnotes.placement: 'chapterEnd'` (voir [Notes de bas de page](/fr/docs/document-format-notes-references#notes-de-bas-de-page) et [Configuration → Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page)). Le modèle de contenu accepte toujours un tableau `notes`, mais aucune étape du pipeline ne le lit.
+**Les ressources** contiennent les données visuelles : légendes, texte de remplacement et une charge utile propre à leur type. Les charges binaires (bitmaps, SVG) vivent *hors bande* : la ressource ne stocke qu’un `fileId`, que le moteur de rendu résout au moment du dessin (le Sandbox garde les octets dans IndexedDB). Les ressources tableau font exception : leur `TableModel` (une grille de cellules avec fusions et alignements) voyage en ligne, car ce sont des données structurées, pas des octets.
+**Les notes** s’écrivent dans le Markdown : un appel `[^id]` là où la note est citée et une définition `[^id]:`, un paragraphe à part n’importe où dans le chapitre. Le moteur numérote les notes dans l’ordre de leur première citation et place chacune au pied de la colonne qui contient la ligne qui la cite, sous un filet court, ou après le dernier bloc du chapitre avec `footnotes.placement: 'chapterEnd'` (voir [Notes de bas de page](/fr/docs/document-format-notes-references#notes-de-bas-de-page) et [Configuration → Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page)). Le modèle de contenu accepte toujours un tableau `notes`, mais aucune étape du pipeline ne le lit.
 
-Cette séparation est un choix de conception assumé, et elle compte plus qu’il n’y paraît. Le markdown porte l’*ordre de lecture* et la *structure sémantique* : ce qui vient en premier, ce qui est un titre, où une note de bas de page est citée et ce qu’elle dit. Le tableau des ressources porte les *données visuelles* : dimensions des images, texte des légendes, cellules des tableaux. En les gardant séparés, le même markdown peut être mis en page de façons complètement différentes rien qu’en changeant la configuration. Une mise en page universitaire sur deux colonnes et un billet de blog sur une seule colonne peuvent partager le même contenu source. Et le moteur peut prendre des décisions de placement (reporter une image à la colonne suivante parce qu’elle ne tient pas ici, par exemple) sans jamais toucher à votre contenu source.
+Cette séparation est un choix de conception assumé, et elle compte plus qu’il n’y paraît. Le Markdown contient l’*ordre de lecture* et la *structure sémantique* : ce qui vient en premier, ce qui est un titre, où une note de bas de page est citée et ce qu’elle dit. Le tableau des ressources contient les *données visuelles* : dimensions des images, texte des légendes, cellules des tableaux. En les gardant séparés, le même Markdown peut être mis en page de façons complètement différentes rien qu’en changeant la configuration. Une mise en page universitaire sur deux colonnes et un billet de blog sur une seule colonne peuvent partager le même contenu source. Et le moteur peut prendre des décisions de placement (reporter une image à la colonne suivante parce qu’elle ne tient pas ici, par exemple) sans jamais toucher à votre contenu source.
 
 ```typescript
 // Example: a simple article with a referenced figure
@@ -191,9 +195,9 @@ Italy by 1465 and France by 1470.
 };
 ```
 
-Les ressources sont reliées au texte par un identifiant, et **y renvoyer suffit à les intégrer**. Le `:ref{id="printing-press"}` en ligne fait deux choses à la fois : il affiche dans le texte courant le numéro calculé de la ressource (« Fig. 1 ») et, au premier renvoi dans l’ordre de lecture, il *fait flotter* la ressource sur la page, en réservant une bande en haut ou en bas près de ce renvoi, exactement comme le ferait un compositeur d’imprimerie. Vous ne placez jamais la figure une seconde fois. Pour la ressource occasionnelle qui doit se trouver à un point précis du flux, `::resource{id="…"}` seul sur sa ligne est une insertion de bloc facultative : il ne s’affiche en ligne que lorsque le `placement.position` résolu de la ressource vaut `'here'` (ce qui la soustrait au flottement) ; pour une ressource flottante, il est traité comme un renvoi de plus. L’auteur n’a jamais à penser au placement. Le moteur s’en charge.
+Les ressources sont reliées au texte par un identifiant, et **y renvoyer suffit à les insérer**. Le `:ref{id="printing-press"}` en ligne fait deux choses à la fois : il affiche dans le texte courant le numéro calculé de la ressource (« Fig. 1 ») et, au premier renvoi dans l’ordre de lecture, il *fait flotter* la ressource sur la page, en réservant une bande en haut ou en bas près de ce renvoi, exactement comme le ferait un compositeur d’imprimerie. Vous ne placez jamais la figure une seconde fois. Pour la ressource occasionnelle qui doit se trouver à un point précis du flux, `::resource{id="…"}` seul sur sa ligne est une insertion de bloc facultative : il ne s’affiche en ligne que lorsque le `placement.position` résolu de la ressource vaut `'here'` (ce qui la soustrait au flottement) ; pour une ressource flottante, il est traité comme un renvoi de plus. L’auteur n’a jamais à penser au placement. Le moteur s’en charge.
 
-<Illustration name="ReferenceResolution" data='{"title": "Résolution des renvois", "desc": "Une source markdown renvoie en ligne à une figure avec :ref{id=printing-press}. Le tableau des ressources fournit le contenu réel par identifiant. Le moteur résout le renvoi, affiche le numéro calculé dans le texte et fait flotter la figure dans une bande en haut de la page.", "caption": "Les renvois du markdown ne sont que des noms. Le moteur les résout par rapport aux ressources, les numérote et fait flotter la figure près du renvoi.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "insertion facultative pour placement &#39;here&#39;", "resolveLabel": "résoudre", "outputTitle": "page mise en page", "outputFigure": "[ Figure 1, flottant dans une bande ]", "outputFootnote": "…illustré par la fig. 1…"}' />
+<Illustration name="ReferenceResolution" data='{"title": "Résolution des renvois", "desc": "Une source Markdown renvoie en ligne à une figure par :ref{id=printing-press}. Le tableau des ressources fournit le contenu réel par identifiant. Le moteur résout le renvoi, affiche le numéro calculé dans le texte et fait flotter la figure dans une bande en haut de la page.", "caption": "Dans le Markdown, les renvois ne sont que des noms. Le moteur les résout d’après les ressources, les numérote et fait flotter la figure près du renvoi.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "insertion facultative pour placement &#39;here&#39;", "resolveLabel": "résoudre", "outputTitle": "page finale", "outputFigure": "[ Figure 1, flottant dans une bande ]", "outputFootnote": "…illustré par la fig. 1…"}' />
 
 ### Configuration
 
@@ -225,8 +229,8 @@ Chaque aspect du pipeline de mise en page est contrôlé par `PostextConfig`. La
     </tr>
     <tr>
       <td><code>diagramStyle</code></td>
-      <td><code>singleInk</code> + <code>inkColor</code> : recolore les diagrammes SVG en teintes d’une seule encre selon leur luminance, pour que les figures se reproduisent fidèlement lors d’une impression en une seule couleur d’accompagnement (voir <a href="/fr/docs/configuration-resources#style-des-diagrammes">Configuration → Style des diagrammes</a>)</td>
-      <td>Backends</td>
+      <td><code>singleInk</code> + <code>inkColor</code> : recolore les diagrammes SVG en teintes d’une seule encre selon leur luminance, pour que les figures se reproduisent fidèlement lors d’une impression en un seul ton direct (voir <a href="/fr/docs/configuration-resources#style-des-diagrammes">Configuration → Style des diagrammes</a>)</td>
+      <td>Moteurs de rendu</td>
     </tr>
     <tr>
       <td><code>resourceTypes</code></td>
@@ -238,7 +242,7 @@ Chaque aspect du pipeline de mise en page est contrôlé par `PostextConfig`. La
 
 ### Stratégie d’analyse
 
-L’analyse est délibérément l’étape la plus simple du pipeline. Le markdown entre et ressort sous forme d’une liste plate de blocs de contenu typés (`ContentBlock`, dans `packages/postext/src/parse/`) : un titre, un paragraphe avec ses fragments en ligne, un élément de liste, une directive. Le résultat est mémoïsé (`parseMarkdownMemo`) : les passes d’une même génération n’analysent qu’une fois, et une génération ultérieure du même texte aussi. Les renvois aux ressources sont résolus par identifiant par rapport au tableau `resources[]` au début de chaque passe de placement. Les définitions de notes de bas de page (les paragraphes qui commencent par `[^id]:`) quittent aussi le flux à ce moment-là et sont conservées par identifiant pour les appels qui les citent ; le tableau `notes[]` n’est pas lu.
+L’analyse est délibérément l’étape la plus simple du pipeline. Le Markdown entre et ressort sous forme d’une liste plate de blocs de contenu typés (`ContentBlock`, dans `packages/postext/src/parse/`) : un titre, un paragraphe avec ses fragments en ligne, un élément de liste, une directive. Le résultat est mémoïsé (`parseMarkdownMemo`) : les passes d’une même génération n’analysent qu’une fois, et une génération ultérieure du même texte aussi. Les renvois aux ressources sont résolus par identifiant par rapport au tableau `resources[]` au début de chaque passe de placement. Les définitions de notes de bas de page (les paragraphes qui commencent par `[^id]:`) quittent aussi le flux à ce moment-là et sont conservées par identifiant pour les appels qui les citent ; le tableau `notes[]` n’est pas lu.
 
 Voyez cela comme un manifeste : « il y a un titre, puis un paragraphe de 200 mots, puis un renvoi à une figure, puis un autre paragraphe ». Aucune mesure. Aucun positionnement. Aucune décision de mise en page. Un `VDTBlock` n’existe qu’une fois que la passe de placement a mesuré un bloc et lui a donné une place.
 
@@ -255,15 +259,15 @@ C’est la même approche que dans les pipelines de rendu des moteurs de jeu, o�
 
 Une passe de placement remplit l’arbre en place. Elle ouvre une page, y ajoute des colonnes, retire la hauteur d’un bloc de l’`availableHeight` de la colonne où il arrive, et ferme les colonnes d’une bande là où un encadré sur toute la largeur de la page la coupe. Un livre compte des milliers de blocs, et un arbre immuable (comme le DOM virtuel de React) allouerait un nouvel objet à chacune de ces étapes. Les nœuds sont donc de simples objets, et la passe écrit dedans.
 
-Une passe terminée n’est pas rapiécée. Quand `buildDocument` a besoin d’une nouvelle tentative (un plafond de bande, un levier d’équilibrage), il relance la passe à partir du contenu et obtient un nouvel arbre. L’arbre de la passe précédente reste tel qu’il était, si bien que le pilote peut comparer les deux, garder le meilleur ou prendre certaines pages de chacun. Le cache de mesure rend la relance abordable : un paragraphe dont le texte, les polices et la largeur n’ont pas changé est lu dans le cache au lieu d’être mesuré de nouveau.
+Une passe terminée n’est pas rapiécée. Quand `buildDocument` a besoin d’une nouvelle tentative (un plafond de bande, un levier d’équilibrage), il relance la passe à partir du contenu et obtient un nouvel arbre. L’arbre de la passe précédente reste tel qu’il était : le pilote peut donc comparer les deux, garder le meilleur ou prendre certaines pages de chacun. Le cache de mesure rend la relance abordable : un paragraphe dont le texte, les polices et la largeur n’ont pas changé est lu dans le cache au lieu d’être mesuré de nouveau.
 
 ### Structure
 
-<Illustration name="VdtStructure" data='{"title": "Structure de l’arbre de document virtuel", "desc": "VDT hiérarchique : le document contient des pages, chaque page contient des colonnes, chaque colonne contient des blocs (titre, paragraphe, ressource), chaque bloc de texte contient des lignes mesurées. Chaque bloc porte une boîte englobante, son type et ses indices de page et de colonne.", "caption": "Chaque bloc porte sa bbox, son type et ses indices de page et de colonne.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["titre", "paragraphe", "ressource"], "lineLabels": ["ligne 0", "ligne 1"], "legendHeader": "Chaque bloc porte :", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Les lignes portent aussi :", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "Structure de l’arbre de document virtuel", "desc": "VDT hiérarchique : le document contient des pages, chaque page contient des colonnes, chaque colonne contient des blocs (titre, paragraphe, ressource), chaque bloc de texte contient des lignes mesurées. Chaque bloc comporte une boîte englobante, son type et ses indices de page et de colonne.", "caption": "Chaque bloc comporte sa bbox, son type et ses indices de page et de colonne.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["titre", "paragraphe", "ressource"], "lineLabels": ["ligne 0", "ligne 1"], "legendHeader": "Chaque bloc comporte :", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Les lignes comportent aussi :", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### Définitions de types
 
-Les formes ci-dessous sont **simplifiées pour l’exposé** : les vraies définitions, dans `packages/postext/src/vdt.ts`, portent bien d’autres champs orientés rendu (chaînes de police, couleurs, puces de liste, rendus mathématiques, emplacements de design). C’est la structure qui compte ici :
+Les formes ci-dessous sont **simplifiées pour l’exposé** : les vraies définitions, dans `packages/postext/src/vdt.ts`, portent bien d’autres champs orientés rendu (chaînes de police, couleurs, puces de liste, rendus mathématiques, zones de maquette). C’est la structure qui compte ici :
 
 ```typescript
 // Simplified — see packages/postext/src/vdt.ts for the full definitions
@@ -366,9 +370,9 @@ interface BoundingBox {
 Quelques-uns de ces champs méritent une remarque :
 
 - **`isLastLine`** pilote le rendu justifié : les dernières lignes sont rendues en drapeau même quand le paragraphe est justifié, sauf les dernières lignes *trop pleines*, dont les espaces entre les mots se compriment pour tenir dans la justification (sémantique de répartition des ressorts de TeX).
-- **`sourceStart`/`sourceEnd` et `plainStart`/`plainEnd`** sont des correspondances de chaque ligne vers le markdown d’origine et vers le texte brut du bloc : elles permettent la synchronisation du curseur et de la sélection dans les intégrations d’éditeur.
-- **`VDTResourceTableLayout`** (avec ses entrées `VDTResourceTableCell`) porte toute la géométrie mise en page d’une ressource tableau : bords x des colonnes, bords y des rangées et rectangles par cellule avec leurs lignes de contenu mesurées, si bien que chaque backend dessine le même tableau.
-- **`dirty` et `snappedToGrid`** sont écrits quand un bloc est placé, et ne sont lus par aucune étape ni aucun backend. `dirty` vaut `true` au départ sur un nouveau bloc et passe à `false` lorsque le bloc est placé ; le moteur ne suit pas les modifications de l’arbre, il relance la passe de placement (voir [Le pilote des passes](/fr/docs/architecture-layout-pipeline#le-pilote-des-passes)). `snappedToGrid` vaut `true` sur la première partie d’un bloc de texte après laquelle le flux revient sur la grille (voir [Système de rythme vertical](#système-de-rythme-vertical)).
+- **`sourceStart`/`sourceEnd` et `plainStart`/`plainEnd`** sont des correspondances de chaque ligne vers le Markdown d’origine et vers le texte brut du bloc : elles permettent la synchronisation du curseur et de la sélection dans les intégrations d’éditeur.
+- **`VDTResourceTableLayout`** (avec ses entrées `VDTResourceTableCell`) contient toute la géométrie mise en page d’une ressource tableau : bords x des colonnes, bords y des rangées et rectangles par cellule avec leurs lignes de contenu mesurées. Chaque moteur de rendu dessine donc le même tableau.
+- **`dirty` et `snappedToGrid`** sont écrits quand un bloc est placé, et ne sont lus par aucune étape ni aucun moteur de rendu. `dirty` vaut `true` au départ sur un nouveau bloc et passe à `false` lorsque le bloc est placé ; le moteur ne suit pas les modifications de l’arbre, il relance la passe de placement (voir [Le pilote des passes](/fr/docs/architecture-layout-pipeline#le-pilote-des-passes)). `snappedToGrid` vaut `true` sur la première partie d’un bloc de texte après laquelle le flux revient sur la grille (voir [Système de rythme vertical](#système-de-rythme-vertical)).
 - **`balancing`** indique quels leviers d’équilibrage des colonnes ont déplacé ou étiré le bloc ; un bloc que l’équilibrage n’a pas touché n’en a pas (voir [Équilibrage des colonnes](/fr/docs/architecture-layout-pipeline#équilibrage-des-colonnes)).
 - **`computePageTextExtent(page)`** est une petite fonction publique qui renvoie l’étendue verticale réellement couverte par du texte sur une page (légendes des flottants comprises). Les calques de débogage s’en servent pour que les lignes de la grille de ligne de base ne couvrent que le texte réel, et non le bas de page vide.
 
@@ -396,21 +400,21 @@ Certains éléments rompent forcément la grille, parce que leur hauteur n’est
 
 ### Comment le flux revient sur la grille
 
-<Illustration name="VerticalRhythm" data='{"title": "Alignement du rythme vertical", "desc": "La colonne 1 contient un titre qui rompt la grille de ligne de base de 12 pixels. Au placement du titre, le moteur arrondit la hauteur utilisée dans la colonne à la ligne de grille suivante, ce qui ajoute 12 pixels sous le titre, et la ligne de texte courant suivante retombe sur la grille. La colonne 2 reste alignée de bout en bout.", "caption": "L’espace sous un élément qui rompt la grille est arrondi à la grille au moment où l’élément est placé, et les lignes de base des colonnes restent synchronisées.", "column1": "Colonne 1", "column2": "Colonne 2", "bodyLine": "Ligne de texte courant", "bodyBaseline": "Ligne de texte courant (ligne de base : 24px)", "heading": "Titre (36px de haut)", "adjustment": "+12px d’ajustement d’espace", "backOnGrid": "Texte courant (de retour sur la grille)", "aligned": "aligné", "legendTitle": "Calage sur la grille, au placement", "legendSteps": ["1. Composer le bloc : ses lignes, puis son espace dessous (marginBottom)", "2. Arrondir la hauteur utilisée dans la colonne à la ligne de grille suivante", "3. Le bloc suivant commence là : l’espace dessous est donc un minimum", "4. snapToGrid: false garde l’espace exact jusqu’au prochain bloc qui se cale"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "Alignement du rythme vertical", "desc": "Dans la colonne 1, un titre décale le texte de 12 pixels par rapport à la grille de ligne de base. Au placement du titre, le moteur arrondit la hauteur utilisée dans la colonne à la ligne de grille suivante, ce qui ajoute 12 pixels sous le titre : la ligne de texte courant suivante retombe ainsi sur la grille. La colonne 2 reste alignée de bout en bout.", "caption": "L’espace sous un élément qui rompt la grille est arrondi à la grille dès le placement de l’élément : les lignes de base des colonnes restent ainsi alignées.", "column1": "Colonne 1", "column2": "Colonne 2", "bodyLine": "Ligne de texte courant", "bodyBaseline": "Ligne de texte courant (ligne de base : 24 px)", "heading": "Titre (36 px de haut)", "adjustment": "+12 px d’espace ajouté", "backOnGrid": "Texte courant (de retour sur la grille)", "aligned": "aligné", "legendTitle": "Calage sur la grille, au placement", "legendSteps": ["1. Composer le bloc : ses lignes, puis son espace dessous (marginBottom)", "2. Arrondir la hauteur utilisée dans la colonne à la ligne de grille suivante", "3. Le bloc suivant commence là : l’espace dessous est donc un minimum", "4. snapToGrid: false garde l’espace exact jusqu’au prochain bloc qui se cale"]}' />
 
 La grille est maintenue au placement, bloc par bloc. Aucune passe ultérieure ne parcourt les colonnes à la recherche d’un décalage. Les lignes de texte courant ont la hauteur d’une ligne de grille, donc une suite de texte courant qui commence sur la grille y reste. Quand la passe de placement a composé un bloc susceptible de quitter la grille, elle arrondit la hauteur utilisée dans la colonne à la ligne de grille suivante avant que le bloc suivant ne commence. Les blocs qui se calent ainsi sont :
 
 - le dernier titre d’une suite de titres (les titres consécutifs se suivent sans calage, et le dernier réaligne le texte qui les suit) ;
 - le dernier élément d’une liste, quel que soit l’espacement entre les éléments ;
-- une formule centrée ;
+- une formule hors texte ;
 - un encadré, un listing de code, et une figure ou un tableau insérés en ligne ;
 - le dernier paragraphe d’un conteneur `:::paragraphs` et un poème `:::verse`, dont l’interlignage leur est propre.
 
-L’espace sous le bloc (`marginBottom`) est compté avant l’arrondi : la marge est donc un minimum et la grille décide du reste. Dans la figure, la colonne 1 contient un titre de 36 px de haut sur une grille de 24 px, sans marge en dessous. Son pied tombe 12 px après une ligne de grille, le calage ajoute 12 px, et la ligne de texte courant suivante commence sur la grille, au niveau de sa voisine dans la colonne 2. Avec une `marginBottom` de 16 px, le pied serait à 52 px, et le calage l’arrondirait à 72 px.
+L’espace sous le bloc (`marginBottom`) est compté avant l’arrondi : la marge est donc un minimum et la grille décide du reste. Dans la figure, la colonne 1 contient un titre de 36 px de haut sur une grille de 24 px, sans marge en dessous. Son pied tombe 12 px après une ligne de grille, le calage ajoute 12 px, et la ligne de texte courant suivante commence sur la grille, au niveau de sa voisine dans la colonne 2. Avec une `marginBottom` de 16 px, le pied serait à 52 px, et le calage l’arrondirait à 72 px.
 
 Les bandes de flottants maintiennent la grille à leur manière, décrite à l’[étape 4](/fr/docs/architecture-layout-pipeline#étape-4-placement-des-ressources) : une bande du haut est arrondie à un nombre entier de lignes de grille, et un flottant du bas est ancré de sorte que la dernière ligne de base de sa légende soit sur la grille. L’équilibrage des colonnes ajoute son espace par lignes de grille entières, et maintient donc lui aussi la grille.
 
-Rien ne compare une colonne à une autre. Chaque colonne commence sur la grille et chaque calage y revient, si bien que les lignes des colonnes adjacentes, et celles des pages en regard, se rejoignent sans seconde passe.
+Rien ne compare une colonne à une autre. Chaque colonne commence sur la grille et chaque calage y revient : les lignes des colonnes adjacentes, et celles des pages en regard, se rejoignent donc sans seconde passe.
 
 **Désactivation.** `snapToGrid: false` garde à la place l’espace exact sous un bloc. Le réglage peut se poser sur `headings` (pour tous les niveaux, pour un seul niveau ou pour un seul style de titre), sur un style de paragraphe, sur un style d’encadré et sur `codeStyle`. Le texte qui suit un tel bloc peut se trouver hors de la grille jusqu’au prochain bloc qui se cale. Le texte à l’intérieur d’un encadré suit l’interlignage propre à l’encadré et n’a pas de grille.
 
@@ -419,7 +423,7 @@ Rien ne compare une colonne à une autre. Chaque colonne commence sur la grille 
 
 Il existe une seule source de vérité pour la mesure du texte (le module de mesure, au-dessus des métriques de police canvas de Pretext), et chaque moteur de rendu dessine à partir du même VDT achevé qu’elle a produit.
 
-C’est un choix délibéré, et il répond à une raison essentielle : **la façon de mesurer le texte doit correspondre exactement à la façon de le rendre.** Supposons que la mesure utilise les métriques de police du canvas, mais qu’un moteur de rendu utilise une bibliothèque PDF aux tables de crénage légèrement différentes. La mise en page ne correspondrait pas à la sortie. Des lignes que le moteur a mesurées comme tenant dans 320 px pourraient déborder ou rester trop courtes au rendu. Chaque pixel de décalage est un mensonge. En mesurant une fois et en rendant partout à partir de la géométrie obtenue, les moteurs de rendu ne peuvent pas diverger : les coupures de ligne, les hauteurs de colonne et le placement des ressources sont figés dans le VDT avant qu’aucun moteur de rendu ne s’exécute.
+C’est un choix délibéré, et il répond à une raison essentielle : **la façon de mesurer le texte doit correspondre exactement à la façon de le rendre.** Supposons que la mesure utilise les métriques de police du canvas, mais qu’un moteur de rendu utilise une bibliothèque PDF aux tables de crénage légèrement différentes. La mise en page ne correspondrait pas à la sortie. Des lignes que le moteur a mesurées comme tenant dans 320 px pourraient déborder ou rester trop courtes au rendu. Chaque pixel de décalage est un mensonge. En mesurant une fois et en rendant partout à partir de la géométrie obtenue, les moteurs de rendu ne peuvent pas diverger : les coupures de ligne, les hauteurs de colonne et le placement des ressources sont figés dans le VDT avant qu’aucun moteur de rendu ne s’exécute.
 
 C’est pourquoi le moteur de rendu PDF, par exemple, ne remesure pas le texte : il consomme un VDT achevé et convertit ses coordonnées en pixels en points PDF. Les métriques du canvas font foi ; le PDF n’est qu’un transport. Les utilisateurs de `renderToPdf` (du paquet `postext-pdf`) passent le même VDT qu’ils donneraient à `renderToCanvas` ou à `renderToHtml`, et les trois sorties concordent à coup sûr.
 
@@ -490,6 +494,12 @@ Comme les données binaires des ressources circulent hors bande, chaque moteur d
       <td><strong>Disponible</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong> (visionneuse 3D)</td>
+      <td>Consomme le VDT déjà mesuré avec Pretext</td>
+      <td>Chaque page peinte par le moteur canvas (<code>renderPageToCanvas</code>) et affichée comme texture d’un feuillet three.js, seulement autour de la double page ouverte (<code>createFolioFromDocument</code> dans <code>postext-folio</code>)</td>
+      <td><strong>Disponible</strong></td>
+    </tr>
+    <tr>
       <td><strong>Ligne de commande</strong></td>
       <td>Pretext sur Skia (<code>@napi-rs/canvas</code>), à la place du canvas du navigateur</td>
       <td>Les générateurs PDF, HTML et EPUB, les images de page et Word, lancés depuis un terminal sans navigateur (<code>postext-cli</code>)</td>
@@ -498,13 +508,13 @@ Comme les données binaires des ressources circulent hors bande, chaque moteur d
   </tbody>
 </table>
 
-Les quatre moteurs de rendu disponibles consomment le même `VDTDocument`. La séparation entre `postext` (qui exporte les moteurs canvas et HTML) et `postext-pdf` (qui exporte le moteur PDF) ne tient qu’aux dépendances : la voie PDF tire `pdf-lib` et `@pdf-lib/fontkit`, dont la plupart des intégrations web n’ont pas besoin. N’installez `postext-pdf` que si vous voulez réellement produire des octets PDF. `postext-epub` est un paquet à part pour la même raison, et ne sert qu’aux livres numériques. La ligne de commande n’est pas un cinquième moteur de rendu : `postext-cli` exécute ces mêmes générateurs là où il n’y a pas de navigateur.
+Les quatre moteurs de rendu et la visionneuse Folio consomment le même `VDTDocument`. La séparation entre `postext` (qui exporte les moteurs canvas et HTML) et `postext-pdf` (qui exporte le moteur PDF) ne tient qu’aux dépendances : la voie PDF tire `pdf-lib` et `@pdf-lib/fontkit`, dont la plupart des intégrations web n’ont pas besoin. N’installez `postext-pdf` que si vous voulez réellement produire des octets PDF. `postext-epub` est un paquet à part pour la même raison, et ne sert qu’aux livres numériques. La ligne de commande n’est pas un cinquième moteur de rendu : `postext-cli` exécute ces mêmes générateurs là où il n’y a pas de navigateur. Les fichiers Word n’en sont pas un non plus : `postextToDocx` (de `postext/word`) écrit les chapitres Markdown et leurs styles dans un `.docx`, sans mise en page, et `readDocx` avec `wordToPostext` le relisent en Markdown.
 
-**Où s’exécute la mise en page :** le moteur mesure le texte sur un canvas, il s’exécute donc partout où on lui en fournit un. Dans un navigateur, la chaîne s’exécute soit sur le thread principal (`buildDocument`), soit dans un Web Worker dédié (`createLayoutWorker` de `postext/worker`). La voie du worker est l’intégration recommandée pour les applications pilotées par une interface, car elle tient la mesure et les passes de placement hors du thread principal, permet l’annulation où la dernière demande l’emporte via `AbortSignal`, et possède son propre cache de mesure et son propre cache de rastérisation des formules, si bien que les reconstructions successives restent peu coûteuses. Voir [Configuration → Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker) pour le schéma d’intégration complet. Hors du navigateur, la [ligne de commande](/fr/docs/command-line) exécute la même chaîne avec Skia à la place du canvas du navigateur, si bien qu’un livre se découpe en pages identiques dans un terminal, un script ou un serveur de build.
+**Où s’exécute la mise en page :** le moteur mesure le texte sur un canvas, il s’exécute donc partout où on lui en fournit un. Dans un navigateur, la chaîne s’exécute soit sur le thread principal (`buildDocument`), soit dans un Web Worker dédié (`createLayoutWorker` de `postext/worker`). La voie du worker est l’intégration recommandée pour les applications pilotées par une interface, car elle tient la mesure et les passes de placement hors du thread principal, permet l’annulation où la dernière demande l’emporte via `AbortSignal`, et possède son propre cache de mesure et son propre cache de rastérisation des formules, pour que les reconstructions successives restent peu coûteuses. Voir [Configuration → Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker) pour le schéma d’intégration complet. Hors du navigateur, la [ligne de commande](/fr/docs/command-line) exécute la même chaîne avec Skia à la place du canvas du navigateur : un livre se découpe donc en pages identiques dans un terminal, un script ou un serveur de build.
 
 ## Stratégie de performance
 
-Entre un outil poussif et un outil qui semble magique, il y a un facteur 10 environ. Une mise en page en 500 ms, c’est un à-coup visible chaque fois que l’utilisateur modifie un mot. Une mise en page en 50 ms paraît instantanée, comme si le document avait toujours été là. Ce facteur ne se rattrape pas après coup. Il doit être conçu dès le premier jour.
+Entre un outil poussif et un outil qui semble magique, il y a un facteur 10 environ. Une mise en page en 500 ms, c’est un à-coup visible chaque fois que l’utilisateur modifie un mot. Une mise en page en 50 ms paraît instantanée, comme si le document avait toujours été là. Ce facteur ne se rattrape pas après coup. Il doit être conçu dès le premier jour.
 
 Voyez à quoi le moteur doit faire face : des milliers de blocs de texte sur des centaines de pages, remis en page à chaque modification, et plusieurs fois de suite quand la mise en page a besoin de ses tours. Les moteurs de jeu affrontent la même catégorie de problème (traiter des milliers d’objets, géométrie, physique, éclairage, IA, 60 fois par seconde) et ils le résolvent en ne refaisant pas un travail déjà fait. Postext applique ce principe à ce qui lui coûte le plus : la mesure du texte.
 
@@ -520,7 +530,7 @@ Voyez à quoi le moteur doit faire face : des milliers de blocs de texte sur de
 
 3. **Des tours bornés.** Chaque type de relance a une limite fixe (voir
    [Le pilote des passes](/fr/docs/architecture-layout-pipeline#le-pilote-des-passes)), et l’équilibrage des colonnes en a une par document en
-   plus de celle par segment, si bien qu’un livre de nombreux chapitres ne peut pas dépenser des passes
+   plus de celle par segment : un livre de nombreux chapitres ne peut donc pas dépenser des passes
    sans fin. Le coût d’une construction se mesure passe par passe : `BuildDocumentOptions.onPass`
    signale chaque passe et son temps réel d’exécution.
 
@@ -535,23 +545,29 @@ Voyez à quoi le moteur doit faire face : des milliers de blocs de texte sur de
    brut de largeurs de texte. Remesurer un paragraphe inchangé coûte une consultation de table. Quand
    les fontes d’une famille changent, le moteur supprime les largeurs de cette famille et le cache de
    Pretext, et un cache de mesure supprime les blocs composés dans cette famille à sa consultation
-   suivante (il porte la génération sous laquelle il a été rempli) : les largeurs de glyphes sont donc
+   suivante (il garde la trace de la génération sous laquelle il a été rempli) : les largeurs de glyphes sont donc
    justes une fois les polices chargées, sans aucun appel de l’hôte ; `clearMeasurementCache()`
    supprime toutes les familles.
 
 6. **Une coupure des lignes optimisée sur le chemin critique.** La gestion des nœuds actifs de
    Knuth-Plass a été réécrite pour la vitesse : l’ensemble actif est compacté sur place à mesure que
-   les nœuds sont retirés, et les candidats sont dédoublonnés par (ligne, classe d’ajustement), si bien
-   que seul le nœud au plus faible démérite survit pour chaque clé. Les résultats de l’algorithme sont
-   identiques : mêmes jeux de coupures, simplement calculés plus vite.
+   les nœuds sont retirés, et les candidats sont dédoublonnés par (ligne, classe d’ajustement) :
+   seul le nœud au plus faible démérite survit donc pour chaque clé. Les résultats de l’algorithme sont
+   identiques : mêmes jeux de coupures, simplement calculés plus vite. Le même algorithme existe aussi
+   en Rust (`rust/crates/linebreak`), compilé en WebAssembly et incorporé au paquet : il fait la même
+   arithmétique dans le même ordre, deux à trois fois plus vite, et répond partout où le module a été
+   compilé. Sur le fil principal d’une page, il se compile en arrière-plan ; d’ici là, ou là où
+   WebAssembly manque ou est refusé, c’est la version TypeScript qui répond. `initLineBreaker()`
+   lance la compilation plus tôt ; `useWasmLineBreaker(false)` garde tous les paragraphes sur la
+   version TypeScript.
 
 7. **Des constructions hors du thread principal.** Le point d’entrée `postext/worker` exécute toute la
    chaîne dans un Web Worker dédié. Le thread principal envoie `{ content, config }` et un
    `AbortSignal` ; le worker enregistre les polices (transférées sous forme d’`ArrayBuffer`), exécute
    les passes de placement et renvoie le `VDTDocument` achevé. Un appel `build()` plus récent annule le
    précédent de manière coopérative : le worker exécute `buildDocumentAsync`, qui interroge un point
-   d’annulation une fois par bloc et entre les passes, et lève `BuildCancelledError`, si bien qu’un
-   utilisateur qui tape dans un éditeur n’attend jamais une mise en page dépassée. Le worker tient aussi
+   d’annulation une fois par bloc et entre les passes, et lève `BuildCancelledError` : un
+   utilisateur qui tape dans un éditeur n’attend donc jamais une mise en page dépassée. Le worker tient aussi
    son propre cache de mesure persistant et un cache de rastérisation des formules indexé par contenu,
    pour que les objets `MathRender` copiés par clonage structuré survivent d’une reconstruction à
    l’autre sans être rastérisés à nouveau.
@@ -567,13 +583,18 @@ Voyez à quoi le moteur doit faire face : des milliers de blocs de texte sur de
 
 Il n’existe pas de point d’entrée incrémental : aucun appel ne prend un VDT achevé pour le mettre à jour. Quand le contenu ou la configuration change (une frappe au clavier, un autre format de page), l’hôte rappelle `buildDocument` et obtient un nouveau document.
 
-Ce qui passe d’une construction à la suivante, c’est la mesure. Créez un `MeasurementCache` une fois avec `createMeasurementCache()` et passez-le comme troisième argument de chaque appel à `buildDocument`. Un paragraphe dont le texte, les polices, la largeur et les options de coupure n’ont pas changé y est lu, si bien qu’un éditeur qui remet le document en page à chaque frappe ne mesure que le paragraphe en cours de saisie. Un changement de format de page ou de nombre de colonnes change les largeurs, et ces paragraphes sont mesurés à nouveau ; les résultats de `prepare()` de Pretext restent valables, puisqu’ils dépendent de la police et du texte et non de la largeur, et seule tourne l’arithmétique peu coûteuse de `layout()`. L’analyse est elle aussi mémoïsée.
+Ce qui passe d’une construction à la suivante, c’est la mesure. Créez un `MeasurementCache` une fois avec `createMeasurementCache()` et passez-le comme troisième argument de chaque appel à `buildDocument`. Un paragraphe dont le texte, les polices, la largeur et les options de coupure n’ont pas changé y est lu : un éditeur qui remet le document en page à chaque frappe ne mesure donc que le paragraphe en cours de saisie. Un changement de format de page ou de nombre de colonnes change les largeurs, et ces paragraphes sont mesurés à nouveau ; les résultats de `prepare()` de Pretext restent valables, puisqu’ils dépendent de la police et du texte et non de la largeur, et seule tourne l’arithmétique peu coûteuse de `layout()`. L’analyse est elle aussi mémoïsée. Les pages composées passent aussi d’une construction à
+l’autre : une page composée dont le gabarit, le Markdown, les styles et les polices n’ont pas changé
+est reprise de la construction précédente (`composed/pageMemo.ts`), si bien qu’une modification sur
+une page d’un chapitre de pages composées ne remet en page que cette page. Une page qui contient
+une note de bas de page, un renvoi, une citation, une table des matières, un index ou un strip de
+bande dessinée est toujours remise en page.
 
 Pour un éditeur en direct, `createLayoutWorker` (de `postext/worker`) fait tout cela hors du thread principal : le worker possède un cache de mesure qui vit aussi longtemps que lui, et un `build()` plus récent annule celui en cours. Voir [Configuration → Cache de mesure](/fr/docs/configuration-programmatic-usage#cache-de-mesures) et [Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker).
 
 ### Bancs d’essai
 
-Deux bancs d’essai se trouvent dans `packages/postext/src/__bench__/`. `pnpm test` les ignore ; `pnpm bench`, lancé dans `packages/postext`, les exécute. `chapter.bench.test.ts` met en page un chapitre de la taille d’un manuel (quarante sections de titres, de paragraphes et de listes) cinq fois avec un cache de mesure vide et cinq fois avec un cache déjà rempli, et indique les deux médianes ainsi que le nombre de passes. `cjkChapter.bench.test.ts` met en page le chapitre 1 de 红楼梦 et compte les caractères envoyés à `measureText`, pour tenir le compositeur CJK à un coût linéaire en la longueur du paragraphe.
+Trois bancs d’essai se trouvent dans `packages/postext/src/__bench__/`. `pnpm test` les ignore ; `pnpm bench`, lancé dans `packages/postext`, les exécute. `chapter.bench.test.ts` met en page un chapitre de la taille d’un manuel (quarante sections de titres, de paragraphes et de listes) cinq fois avec un cache de mesure vide et cinq fois avec un cache déjà rempli, et indique les deux médianes ainsi que le nombre de passes. `cjkChapter.bench.test.ts` met en page le chapitre 1 de 红楼梦 et compte les caractères envoyés à `measureText`, pour tenir le compositeur CJK à un coût linéaire en la longueur du paragraphe. `composedPage.bench.test.ts` chronomètre un chapitre de vingt pages composées : une construction à froid, une reconstruction sans changement, le changement d’un attribut d’une page et une modification dans l’un de ses blocs, chacune avec la mémoire des pages composées et sans elle.
 
 ```typescript
 // From packages/postext/src/__bench__/chapter.bench.test.ts
@@ -590,12 +611,12 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-Une réserve, par honnêteté : il n’y a pas de canvas dans Node, si bien que les deux bancs d’essai simulent la mesure du texte et que leurs temps absolus ne sont pas ceux du navigateur. Le rapport entre cache vide et cache rempli et le nombre de passes, eux, le sont, et une régression de l’un ou de l’autre se voit ici avant de se voir dans le Sandbox. Le banc d’essai du chapitre rapporte des chiffres et ne fait pas échouer la construction ; celui du chinois vérifie que les caractères mesurés restent en dessous de trois fois la longueur du paragraphe le plus long. Aucun des deux ne tourne en CI : les régressions se repèrent en comparant les chiffres d’une exécution à l’autre quand un chemin critique change (comme on l’a fait pour la réécriture des nœuds actifs de Knuth-Plass). La performance est une fonctionnalité, pas un vœu ; mais aujourd’hui elle est garantie par la mesure et la relecture, pas par une chaîne d’intégration qui échoue.
+Une réserve, par honnêteté : il n’y a pas de canvas dans Node : les bancs d’essai simulent donc la mesure du texte, et leurs temps absolus ne sont pas ceux du navigateur. Le rapport entre cache vide et cache rempli et le nombre de passes, eux, le sont, et une régression de l’un ou de l’autre se voit ici avant de se voir dans le Sandbox. Les bancs d’essai du chapitre et des pages composées rapportent des chiffres et ne font pas échouer la construction ; celui du chinois vérifie que les caractères mesurés restent en dessous de trois fois la longueur du paragraphe le plus long. Aucun ne tourne en CI : les régressions se repèrent en comparant les chiffres d’une exécution à l’autre quand un chemin critique change (comme on l’a fait pour la réécriture des nœuds actifs de Knuth-Plass). Aucune compilation n’échoue encore sur un temps plus lent : un ralentissement se repère en mesurant et à la relecture.
 
 
 ## Flux de données
 
-<Illustration name="DataFlow" data='{"title": "Flux des données dans le moteur", "desc": "Le contenu et la configuration entrent dans la passe de placement, qui structure, mesure et place chaque bloc, fait flotter les ressources et applique les règles de coupure et de maintien. buildDocument relance la passe avec des indications jusqu’à ce que chaque tour se stabilise. Le VDT achevé est remis au moteur de rendu, qui produit du HTML ou du PDF.", "caption": "Flux de données de bout en bout : une passe de placement, relancée avec des indications, puis le rendu.", "input": ["Contenu +", "Configuration"], "loopBadge": "passe de placement", "passesInLoop": [{"num": "1", "name": "structure"}, {"num": "2", "name": "mesure"}, {"num": "3", "name": "placement"}, {"num": "4", "name": "flottants"}, {"num": "5", "name": "maintien"}], "loopCondition": "relance avec indications, chaque tour jusqu’à sa limite", "convergedLabel": "VDT (achevé)", "backend": "Moteur de rendu", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "Flux des données dans le moteur", "desc": "Le contenu et la configuration entrent dans la passe de placement, qui structure, mesure et place chaque bloc, fait flotter les ressources et applique les règles de coupure et de maintien. buildDocument relance la passe avec des indications jusqu’à ce que chaque tour se stabilise. Le VDT achevé est remis au moteur de rendu, qui produit du HTML ou du PDF.", "caption": "Flux de données de bout en bout : une passe de placement, relancée avec des indications, puis le rendu.", "input": ["Contenu +", "Configuration"], "loopBadge": "passe de placement", "passesInLoop": [{"num": "1", "name": "structure"}, {"num": "2", "name": "mesure"}, {"num": "3", "name": "placement"}, {"num": "4", "name": "flottants"}, {"num": "5", "name": "maintien"}], "loopCondition": "relance avec indications, chaque tour jusqu’à sa limite", "convergedLabel": "VDT (achevé)", "backend": "Moteur de rendu", "output": "HTML / PDF"}' />
 
 
 ## Hors du périmètre
@@ -644,7 +665,7 @@ Voici comment les principaux types définis dans `packages/postext/src/types.ts`
     </tr>
     <tr>
       <td><code>PostextNote</code></td>
-      <td>Non lu par le moteur. Les notes de bas de page s’écrivent dans le markdown (<code>[^id]</code>) et se placent au pied de la colonne qui les cite ou après le chapitre ; les notes marginales ne sont pas implémentées</td>
+      <td>Non lu par le moteur. Les notes de bas de page s’écrivent dans le Markdown (<code>[^id]</code>) et se placent au pied de la colonne qui les cite ou après le chapitre ; les notes marginales ne sont pas implémentées</td>
     </tr>
     <tr>
       <td><code>PostextResource</code></td>

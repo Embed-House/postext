@@ -26,7 +26,7 @@ Le texte est composé en drapeau. Justifiée, une ligne courte étirerait ses es
 
 <Excerpt region="layout" />
 
-En écriture verticale, `'left'` désigne le haut de la page : une mise en page à colonne et demie dont la colonne latérale est à gauche devient donc deux bandes. Les images flottent dans la bande du haut (14 caractères de profondeur) et le texte court dans celle du bas (8 caractères). Chaque page cite son image avec `::resource{id="…"}` et se termine par `:::pagebreak`. Le type de ressource des images n’a pas de préfixe de légende, et les images sont 2,186 fois plus larges que hautes, la forme de la bande, si bien que chacune la remplit ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)).
+En écriture verticale, `'left'` désigne le haut de la page : une mise en page à colonne et demie dont la colonne latérale est à gauche devient donc deux bandes. Les images flottent dans la bande du haut (14 caractères de profondeur) et le texte court dans celle du bas (8 caractères). Chaque page cite son image avec `::resource{id="…"}` et se termine par `:::pagebreak`. Le type de ressource des images n’a pas de préfixe de légende, et les images sont 2,186 fois plus larges que hautes, la forme de la bande : chacune la remplit donc ([écriture verticale](/fr/docs/configuration-page-layout#écriture-verticale)).
 
 ### 3 · Faire de la couverture une image pleine page
 
@@ -38,7 +38,7 @@ La couverture est une maquette de titre sur toute la largeur de la page : l’i
 
 <Excerpt region="pictures" />
 
-Les dix images sont des peintures, des fichiers JPEG rangés dans le dossier `assets/` de la recette. Les neuf scènes sont taillées à la forme de la bande, 612 : 280, et la couverture à celle de la page, 260 : 200, de sorte que chacune remplit son cadre sans aucun recadrage. Chacune est une ressource `bitmap` déclarée à sa taille en pixels, avec un texte alternatif dans la langue du livre, et son fichier est chargé sous le `fileId` de la ressource avant la composition. Larges de 1 400 px, les scènes s’impriment à environ 165 dpi sur la largeur de la bande ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)).
+Les dix images sont des peintures, des fichiers JPEG rangés dans le dossier `assets/` de la recette. Les neuf scènes sont taillées à la forme de la bande, 612 : 280, et la couverture à celle de la page, 260 : 200, de sorte que chacune remplit son cadre sans aucun recadrage. Chacune est une ressource `bitmap` déclarée à sa taille en pixels, avec un texte de remplacement dans la langue du livre, et son fichier est chargé sous le `fileId` de la ressource avant la composition. Larges de 1 400 px, les scènes s’impriment à environ 165 dpi sur la largeur de la bande ([types de ressources](/fr/docs/configuration-resources#types-de-ressources)).
 
 ## Variantes
 

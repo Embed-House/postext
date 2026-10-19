@@ -1,6 +1,6 @@
 ---
 title: "Diccionari amb índex de pestanyes"
-summary: "Un bucle fa un estil de títol per lletra, i la capçalera de cadascun posa la pestanya blava de la seva lletra un pas més avall al tall, damunt l'índex pàl·lid."
+summary: "Un bucle fa un estil d'encapçalament per lletra, i la capçalera de cadascun posa la pestanya blava de la lletra un pas més avall al tall, sobre l'índex pàl·lid."
 plain: "Quatre pàgines d'un antic diccionari de mariners. Unes pestanyes amb lletres baixen per la vora exterior, i la de la lletra actual va en fosc i més avall a mesura que avança l'alfabet."
 description: "Quatre pàgines del Sailor’s Word-Book de Smyth a dues columnes, amb els lemes en blau, inicials de quatre línies i una pestanya que baixa un pas a cada lletra."
 question: "Com faig que la pestanya d'un diccionari baixi pel tall davanter d'una lletra a la següent?"
@@ -14,9 +14,9 @@ Quatre pàgines d'una nova edició del *Sailor’s Word-Book* de l'almirall Smyt
 
 ## Elaboració
 
-### 1 · Un estil de títol per lletra, cadascun amb la seva pestanya
+### 1 · Un estil d'encapçalament per lletra, cadascun amb la seva pestanya
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. `TABS` enumera 22 pestanyes; les lletres amb poques entrades en comparteixen una (QR, UV, XYZ). Cada pestanya fa dues línies de text (7,34 mm), així que entre totes cobreixen les 44 línies de la caixa. El bucle dona a cada lletra un estil de títol el `header` del qual afegeix a les capçaleres i a l'índex pàl·lid la pestanya blava d'aquella lletra, un pas més avall que l'anterior ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). Cada cel·la s'escriu dues vegades, una per `parity`, i s'ancora a la vora exterior de la pàgina, no al contenidor propi de la capçalera. Aquest contenidor és el marge superior, de l'amplada de la caixa i des de la vora superior de la pàgina fins al text, i les pestanyes han d'arribar al tall davanter i baixar per les 44 línies. Una pàgina pren la capçalera de l'última secció que hi comença, així que la <PageRef page={2}>pàgina 2</PageRef> comença a la A i porta la pestanya de la B.
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. `TABS` enumera 22 pestanyes; les lletres amb poques entrades en comparteixen una (QR, UV, XYZ). Cada pestanya fa dues línies de text (7,34 mm), així que entre totes cobreixen les 44 línies de la caixa. El bucle dona a cada lletra un estil d'encapçalament amb un `header` que afegeix a les capçaleres i a l'índex pàl·lid la pestanya blava d'aquella lletra, un pas més avall que l'anterior ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). Cada cel·la s'escriu dues vegades, una per `parity`, i s'ancora a la vora exterior de la pàgina, no al contenidor propi de la capçalera. Aquest contenidor és el marge superior, de l'amplada de la caixa i des de la vora superior de la pàgina fins al text, i les pestanyes han d'arribar al tall davanter i baixar per les 44 línies. Una pàgina pren la capçalera de l'última secció que hi comença, així que la <PageRef page={2}>pàgina 2</PageRef> comença a la A i porta la pestanya de la B.
 
 ### 2 · Les capçaleres, fora de la primera pàgina
 
@@ -40,7 +40,7 @@ Cada entrada és un paràgraf d'un bloc `:::paragraphs{style="entry"}`, amb sagn
 
 <Excerpt region="title" />
 
-L'estil del títol abasta la pàgina amb una banda que reuneix l'àncora, el nom, un subtítol i una signatura presos d'atributs del títol, i un filet doble ([span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)). El filet fi acaba 45,1 mm per sota de la vora superior de la caixa, així que la banda s'ajusta a 13 línies de la retícula, 47,7 mm. El filet de columna comença sota la banda, a la línia on comença el text de les dues columnes.
+L'estil del títol abasta la pàgina amb una banda que reuneix l'àncora, el nom, un subtítol i una signatura presos d'atributs del títol, i un filet doble ([extensió i disseny avançat](/ca/docs/configuration-headings#extensió-i-disseny-avançat)). El filet fi acaba 45,1 mm per sota de la vora superior de la caixa, així que la banda s'ajusta a 13 línies de la retícula, 47,7 mm. El filet de columna comença sota la banda, a la línia on comença el text de les dues columnes.
 
 ## Variants
 
@@ -55,4 +55,4 @@ Els índexs de pestanyes impresos solen mostrar només la de la lletra en curs; 
 
 ## Errors freqüents
 
-- Una columna de 60 mm admet uns 50 caràcters, i l'anglès de Smyth no es pot reescriure. Compostes només amb els seus espais, 18 de les 218 línies justificades angleses (un 8 %) els estiraven més d'1,7 vegades l'amplada normal, davant de menys d'un 2 % a l'edició castellana, la traducció de la qual es va ajustar a la columna, i la primera línia de *Cross-trees* no arribava a omplir-se. `maxJustifyTracking: 10` deixa que una línia prengui fins a un 1 % d'interlletratge abans que els seus espais passin aquest límit: a la captura en porten 25 de les 217 línies angleses i 9 de les 223 castellanes, i cap no passa d'1,7. L'anglès arribava al 17 % abans de canviar per unes altres les cinc entrades que pitjor componien (*Aground*, *Aloft*, *Belay*, *Cockpit*, *Crow’s nest*). Tria entrades que componguin bé, o eixampla la columna.
+- Una columna de 60 mm admet uns 50 caràcters, i l'anglès de Smyth no es pot reescriure. Compostes només amb els seus espais, 18 de les 218 línies justificades angleses (un 8 %) els estiraven més d'1,7 vegades l'amplada normal, davant de menys d'un 2 % a l'edició castellana, amb una traducció ajustada a la columna, i la primera línia de *Cross-trees* no arribava a omplir-se. `maxJustifyTracking: 10` deixa que una línia prengui fins a un 1 % de tracking abans que els seus espais passin aquest límit: a la captura en porten 25 de les 217 línies angleses i 9 de les 223 castellanes, i cap no passa d'1,7. L'anglès arribava al 17 % abans de canviar per unes altres les cinc entrades que pitjor componien (*Aground*, *Aloft*, *Belay*, *Cockpit*, *Crow’s nest*). Tria entrades que componguin bé, o eixampla la columna.

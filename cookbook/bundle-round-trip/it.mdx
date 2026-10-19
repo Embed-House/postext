@@ -5,7 +5,7 @@ plain: "Un pieghevole a due facciate per un vecchio mulino a marea, in inglese e
 description: "createBundle scrive il pieghevole in un file .postext e openBundle lo rilegge con i suoi font e i suoi disegni, per un’edizione inglese e una spagnola."
 question: "Come impagino un file .postext con i font, le immagini e la configurazione che contiene?"
 aliases: ["file postext", "pacchetto", "bundle", "createBundle", "openBundle", "loadBundleFonts", "andata e ritorno", "round trip", "pieghevole bilingue", "passare alla Sandbox", "pieghevole DL", "mulino a marea"]
-pageNotes: { "1": "Il fronte di un pieghevole DL: su un campo color sabbia, l’occhiello «Arenal estuary · Visitor leaflet 3» e il titolo «The Tide Mill» in corsivo blu, sopra una ruota di mulino la cui metà inferiore appare pallida sotto l’estuario blu; una linguetta blu sul bordo superiore dice «EN». Un attacco in corsivo e la riga «Open all year · Free on Sundays» stanno nell’acqua.", "2": "Il retro: il mulino in sezione in testa, il bacino a sinistra e l’estuario a destra sotto una linea tratteggiata di alta marea, con la didascalia «Figure 1»; la sezione «Two tides a day» in DM Sans giustificato; gli orari di apertura come «Table 1» con un’intestazione blu; tre righe su accesso e biglietti, un colophon e una striscia blu con il nome dell’editore." }
+pageNotes: { "1": "Il fronte di un pieghevole DL: su un campo color sabbia, l’occhiello «Arenal estuary · Visitor leaflet 3» e il titolo «The Tide Mill» in corsivo blu, sopra una ruota di mulino la cui metà inferiore appare pallida sotto l’estuario blu; una linguetta blu sul bordo superiore riporta «EN». Un attacco in corsivo e la riga «Open all year · Free on Sundays» stanno nell’acqua.", "2": "Il retro: il mulino in sezione in testa, il bacino a sinistra e l’estuario a destra sotto una linea tratteggiata di alta marea, con la didascalia «Figure 1»; la sezione «Two tides a day» in DM Sans giustificato; gli orari di apertura come «Table 1» con un’intestazione blu; tre righe su accesso e biglietti, un colophon e una striscia blu con il nome dell’editore." }
 ---
 
 ## Che cosa comporrai
@@ -18,13 +18,13 @@ Le due facciate di un pieghevole turistico DL, 99 × 210 mm, per un mulino a mar
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` comprime in zip il capitolo, la configurazione, le risorse e ogni file che nominano; `openBundle` riceve soltanto quei byte. I caratteri arrivano da `loadBundleFonts`, i disegni da `registerBundleImages` e il progetto grafico da `bundle.config`. Un carattere lasciato fuori da `files` si stampa nel font di ripiego del browser, e un disegno lasciato fuori viene scartato con un avviso e il suo rimando stampa (?). Dentro lo zip ogni `fileId` diventa un percorso (`mill.svg` ora è `resources/mill.svg`), e le risorse e i `customFonts` restituiti da `openBundle` usano già i nuovi nomi ([aprire un pacchetto](/it/docs/configuration-bundles#aprire-un-pacchetto)).
+`createBundle` comprime in zip il capitolo, la configurazione, le risorse e ogni file che indicano; `openBundle` riceve soltanto quei byte. I caratteri arrivano da `loadBundleFonts`, i disegni da `registerBundleImages` e il progetto grafico da `bundle.config`. Un carattere lasciato fuori da `files` si stampa nel font di ripiego del browser, e un disegno lasciato fuori viene scartato con un avviso e il suo rimando stampa (?). Nello zip ogni `fileId` diventa un percorso (`mill.svg` ora è `resources/mill.svg`), e le risorse e i `customFonts` restituiti da `openBundle` usano già i nuovi nomi ([aprire un pacchetto](/it/docs/configuration-bundles#aprire-un-pacchetto)).
 
 ### 2 · Metti i caratteri nel file
 
 <Excerpt region="faces" />
 
-Un pacchetto contiene un carattere quando `customFonts` lo nomina e `files` ne custodisce i byte sotto il `fileId` della variante; `createBundle` salva DM Sans 400 come `fonts/dm-sans-400-normal.woff2`. Il pen scarica i sette file woff2 da Fontsource ma non ne registra nessuno: `loadBundleFonts` aggiunge le copie del pacchetto a `document.fonts` prima che `buildBundle` misuri una riga, e il PDF prende i suoi caratteri dagli stessi sette file.
+Un pacchetto contiene un carattere quando `customFonts` lo indica e `files` ne custodisce i byte sotto il `fileId` della variante; `createBundle` salva DM Sans 400 come `fonts/dm-sans-400-normal.woff2`. Il pen scarica i sette file woff2 da Fontsource ma non ne registra nessuno: `loadBundleFonts` aggiunge le copie del pacchetto a `document.fonts` prima che `buildBundle` misuri una riga, e il PDF prende i suoi caratteri dagli stessi sette file.
 
 ### 3 · Chiama ogni file con il suo fileId
 
@@ -48,7 +48,7 @@ Il link offre i `bytes` da cui sono state impaginate le pagine, 132 KB con i fon
 
 <Excerpt region="cover" />
 
-Il fronte è il progetto grafico del titolo di copertina: il disegno ancorato alla pagina a grandezza piena, il testo del titolo tramite `{titleText}`, l’occhiello, l’attacco e la riga delle informazioni dai suoi attributi, e un elemento di testo con un riquadro per la linguetta della lingua. Il livello H1 è `span: 'page'`, quindi il disegno arriva fino al bordo inferiore del foglio. Un progetto grafico di titolo tenuto nella colonna viene tagliato al piede della gabbia del testo: il disegno si fermerebbe 13 mm sopra il bordo inferiore.
+Il fronte è la grafica del titolo di copertina: il disegno ancorato alla pagina a grandezza piena, il testo del titolo tramite `{titleText}`, l’occhiello, l’attacco e la riga delle informazioni dai suoi attributi, e un elemento di testo con un riquadro per la linguetta della lingua. Il livello H1 è `span: 'page'`, quindi il disegno arriva fino al bordo inferiore del foglio. Una grafica di titolo tenuta nella colonna viene tagliata al piede della gabbia del testo: il disegno si fermerebbe 13 mm sopra il bordo inferiore.
 
 ## Varianti
 
@@ -72,4 +72,4 @@ Senza i tipi il lettore li costruisce nella lingua del file con la numerazione p
 
 ## Errori frequenti
 
-- Qui ogni edizione è un file a sé. Per portare entrambe le lingue in un solo file, passa a `createBundle` una mappa `localized` ([pacchetti bilingui](/it/docs/configuration-bundles#pacchetti-bilingui)); `openBundle(bytes, { locale })` legge poi l’una o l’altra edizione.
+- Qui ogni edizione è un file a sé. Per mettere entrambe le lingue in un solo file, passa a `createBundle` una mappa `localized` ([pacchetti bilingui](/it/docs/configuration-bundles#pacchetti-bilingui)); `openBundle(bytes, { locale })` legge poi l’una o l’altra edizione.

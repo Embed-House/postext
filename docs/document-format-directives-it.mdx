@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Formato del documento: direttive',
   sidebarTitle: 'Direttive',
-  description: 'Le direttive ::: per contenitori, colonne, carta, interruzioni di pagina, numerazione, spazio, versi, indice dei contenuti e indice analitico, a capo, e il markup delle pagine a fumetti',
+  description: 'Le direttive aperte da ::: (contenitori, colonne, cambi di carta, interruzioni di pagina, numerazione, spazio, versi, indice e indice analitico, a capo) e il markup delle tavole a fumetti',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '36 min',
   order: 26,
   parent: 'document-format',
-  plainSummary: "Una direttiva è un blocco che comincia con tre due punti di fila, come :::callout o :::columns. Questa pagina elenca ogni direttiva e che cosa fa. Alcune mettono il testo in un riquadro, lo compongono in colonne o lo stampano su un altro tipo di carta. Altre cominciano una nuova pagina, cambiano la numerazione, aggiungono spazio, compongono una poesia verso per verso, o stampano l’indice dei contenuti e l’indice analitico. L’ultima sezione tratta i segni per le pagine a fumetti, le vignette e le parole dei personaggi.",
+  plainSummary: "Una direttiva è un blocco che comincia con tre segni di due punti, come :::callout o :::columns. Questa pagina elenca ogni direttiva e che cosa fa. Alcune mettono il testo in un riquadro, lo compongono in colonne o lo stampano su un altro tipo di carta. Altre cominciano una nuova pagina, cambiano la numerazione, aggiungono spazio, compongono una poesia verso per verso, o stampano l’indice dei contenuti e l’indice analitico. L’ultima sezione spiega come si scrivono le tavole a fumetti, le vignette e le battute dei personaggi.",
 };
 
 # Formato del documento: direttive
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Direttive
 
-Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:::name{attrs}` su una riga a sé. Non producono output visibile: guidano la pipeline di posizionamento e numerazione.
+Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:::name{attrs}` su una riga a sé. La maggior parte non produce nulla di visibile e guida il posizionamento e la numerazione; `:::toc`, `:::index` e `:::bibliography` stampano l’indice, l’indice analitico e la bibliografia nel punto in cui si trovano.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:
       <td>Stampa qui l’indice analitico: ogni termine marcato con <code>:index</code> nel libro, ordinato e raggruppato per lettera, con le pagine in cui compare, composto secondo la configurazione <code>index</code>. <code>:::index&#123;index="names"&#125;</code> stampa un indice con nome. Vedi <a href="/it/docs/document-format-notes-references#indice-analitico">Indice analitico</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Stampa qui l’elenco delle opere citate, nello stile di citazione. <code>title</code> ne cambia il titolo e <code>scope</code> ciò che elenca. Vedi <a href="/it/docs/document-format-notes-references#la-bibliografia">La bibliografia</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Una tavola di fumetto: le sue righe <code>::panel</code> e le relative righe di sceneggiatura, impaginate come vignette e nuvolette letterate su una pagina a sé. Vedi <a href="#fumetti">Fumetti</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:
 
 I valori degli attributi possono essere tra virgolette doppie (<code>"…"</code>), tra virgolette singole (<code>'…'</code>) o senza virgolette (<code>startAt=17</code>). Una chiave senza `=` viene trattata come un flag presente ma vuoto.
 
-Oggi solo `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` e `index` sono riconosciute come direttive su una sola riga (e `references`, `verse`, `page` e `strip` come blocchi delimitati): qualsiasi altra riga `:::name` che non sia un contenitore (vedi sotto) viene letta come paragrafo e fa comparire nella Sandbox un avviso **Direttiva sconosciuta**. Anche il motore la registra, come voce `unknownDirective` nei `contentWarnings` del documento (vedi [Configurazione › Avvisi nel documento](/it/docs/configuration-programmatic-usage#avvisi-nel-documento)).
+Oggi solo `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` e `bibliography` sono riconosciute come direttive su una sola riga (e `references`, `verse`, `page`, `strip` e `figure` come blocchi delimitati): qualsiasi altra riga `:::name` che non sia un contenitore (vedi sotto) viene letta come paragrafo e fa comparire nella Sandbox un avviso **Direttiva sconosciuta**. Anche il motore la registra, come voce `unknownDirective` nei `contentWarnings` del documento (vedi [Configurazione › Avvisi nel documento](/it/docs/configuration-programmatic-usage#avvisi-nel-documento)).
 
 ### Valori degli attributi
 
@@ -96,6 +100,7 @@ La stessa sintassi `key="value"` viene letta dagli attributi dei titoli, dai del
 - **Niente graffe.** `{` e `}` non vanno mai in un valore. La prima `}` chiude il blocco: un delimitatore il cui valore ne contiene una non è più una direttiva ma un paragrafo, e in linea il resto del valore si riversa nel testo. In un titolo, una graffa in un valore lascia l’intero blocco nel titolo: `# Title {note="a {b"}` viene composto così come è scritto. (Fino a postext 1.8 una `{` dopo uno spazio faceva ripartire il blocco e `b` veniva letto come flag.)
 - **Il simbolo del dollaro è testo semplice.** Gli attributi vengono letti prima della matematica in linea, quindi `lead="from $5 to $6"` è solo testo.
 - **Una sola riga.** Un blocco di attributi non occupa mai più righe.
+- **Identificatori.** `#key-idea`, l’abbreviazione di Pandoc, equivale a `id="key-idea"`: `{#sec-method}` su un titolo, `:::callout{#box-safety}` su un delimitatore. Dà un nome al blocco per i [rimandi](/it/docs/document-format-notes-references#rimandi-e-ancore).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ La stessa sintassi `key="value"` viene letta dagli attributi dei titoli, dai del
 :::
 ```
 
-`::resource{id="…"}` è più rigido: l’id tra virgolette doppie e nessun altro attributo (vedi [Risorse](/it/docs/document-format-resources#risorse)).
+`::resource{id="…"}` è più rigido: l’id tra virgolette doppie e nessun altro attributo (vedi [Risorse](/it/docs/document-format-resources#risorse)). In una pagina composta accetta anche `slot="…"` (vedi [Pagine composte](#pagine-composte)).
 
 ### Contenitori
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Nel flusso del testo sono riconosciuti cinque nomi di contenitore. Ciò che ciascuno disegna si imposta nella relativa sezione della configurazione:
+Nel flusso del testo sono riconosciuti cinque nomi di contenitore; un sesto, `:::frame`, raccoglie il contenuto di una cornice in una [pagina composta](#pagine-composte). Ciò che ciascuno disegna si imposta nella relativa sezione della configurazione:
 
 <table>
   <thead>
@@ -166,9 +171,9 @@ Un riquadro flottante (`placement` `auto`, `top` o `bottom`) accetta anche `colu
 
 Un riquadro può anche far scorrere accanto a sé il testo che lo segue: `wrap` (`left`, `right`, `start` o `end`), `width` (la sua quota della colonna, da 0 a 1; `layout.wrap.defaultWidth` quando non è impostato) e `wrapGap` (una lunghezza, come `6pt`), come in `:::callout{wrap="right" width=0.4}` (vedi [Testo che scorre attorno](/it/docs/document-format-resources#testo-intorno-alle-immagini); da postext 1.24).
 
-Un riquadro si impagina come un blocco: un titolo facoltativo, poi il contenuto composto con la tipografia del testo e degli elenchi propria dello stile. Per impostazione predefinita resta unito e si sposta intero alla colonna o alla pagina successiva quando non entra (un riquadro più alto di un’intera colonna si divide comunque, invece di debordare); uno stile con `keepTogether: false` gli permette di dividersi tra i suoi blocchi, o tra le righe, lasciando almeno `splitMinLines` righe di testo (oppure una figura, una tabella, una formula in display o un riquadro annidato) su ogni lato del taglio (un taglio dentro un paragrafo o una voce di elenco lascia inoltre almeno `layout.boxChildSplitMinLines` delle sue righe su ogni lato: due per impostazione predefinita, `splitMinLines` quando è più basso; i libri salvati prima della 1.5 i cui capitoli contengono un riquadro vengono letti con 1, il taglio della 1.4). Ogni parte dopo la prima si apre senza l’icona, anche se il testo mantiene la colonna dell’icona, e senza il titolo, a meno che lo stile non lo ripeta (`repeatTitle`: «Punti chiave (segue)»); uno stile può anche mettere un indicatore «Continua» sotto ogni parte che prosegue (`continuesMarkerEnabled`): vedi [Indicatori su un riquadro diviso](/it/docs/configuration-callouts#segni-su-un-riquadro-diviso). I riquadri a tutta larghezza (`span="page"`) dividono la pagina in fasce di colonne; i riquadri `span="side"` escono dal flusso ed entrano nella colonna laterale riservata agli elementi flottanti di un’impaginazione a colonna e mezza (`layout.sideColumnRole: 'floats'`), impilati accanto al testo che interrompono, e si impaginano come riquadri di colonna dove quella colonna non c’è; i riquadri `placement="fixed"` escono dal flusso e vengono fissati a coordinate della pagina (per esempio un badge di autovalutazione nell’angolo in basso a sinistra dell’ultima pagina di un capitolo), mentre le colonne che coprono rinunciano a quella zona; i riquadri flottanti (`placement="top"` / `"bottom"`) escono dal flusso nel punto in cui si trovano e occupano la prima fascia libera dopo quella posizione (il piede della pagina, o la testa o il piede della successiva), mentre il testo che li segue riempie la pagina che hanno lasciato. Uno stile con `floatBarrier: true` (di solito il riquadro «punti chiave» che chiude un capitolo) rende il riquadro una **barriera per gli elementi flottanti**: ogni figura o tabella richiamata prima di esso viene posizionata prima di esso (negli spazi liberi della pagina, o su pagine aperte prima del riquadro), così nessun elemento flottante sfugge oltre la fine del suo capitolo. Un delimitatore `:::name` sconosciuto non è un contenitore: la riga viene trattata come testo, esattamente come una direttiva sconosciuta.
+Un riquadro si impagina come un blocco: un titolo facoltativo, poi il contenuto composto con la tipografia del testo e degli elenchi propria dello stile. Per impostazione predefinita resta unito e si sposta intero alla colonna o alla pagina successiva quando non entra (un riquadro più alto di un’intera colonna si divide comunque, invece di debordare); uno stile con `keepTogether: false` gli permette di dividersi tra i suoi blocchi, o tra le righe, lasciando almeno `splitMinLines` righe di testo (oppure una figura, una tabella, una formula in evidenza o un riquadro annidato) su ogni lato del taglio (un taglio dentro un paragrafo o una voce di elenco lascia inoltre almeno `layout.boxChildSplitMinLines` delle sue righe su ogni lato: due per impostazione predefinita, `splitMinLines` quando è più basso; i libri salvati prima della 1.5 i cui capitoli contengono un riquadro vengono letti con 1, il taglio della 1.4). Ogni parte dopo la prima si apre senza l’icona, anche se il testo mantiene la colonna dell’icona, e senza il titolo, a meno che lo stile non lo ripeta (`repeatTitle`: «Punti chiave (segue)»); uno stile può anche mettere un indicatore «Continua» sotto ogni parte che prosegue (`continuesMarkerEnabled`): vedi [Segni su un riquadro diviso](/it/docs/configuration-callouts#segni-su-un-riquadro-diviso). I riquadri a tutta larghezza (`span="page"`) dividono la pagina in fasce di colonne; i riquadri `span="side"` escono dal flusso ed entrano nella colonna laterale riservata agli elementi flottanti di un’impaginazione a colonna e mezza (`layout.sideColumnRole: 'floats'`), impilati accanto al testo che interrompono, e si impaginano come riquadri di colonna dove quella colonna non c’è; i riquadri `placement="fixed"` escono dal flusso e vengono fissati a coordinate della pagina (per esempio un bollino di autovalutazione nell’angolo in basso a sinistra dell’ultima pagina di un capitolo), mentre le colonne che coprono rinunciano a quella zona; i riquadri flottanti (`placement="top"` / `"bottom"`) escono dal flusso nel punto in cui si trovano e occupano la prima fascia libera dopo quella posizione (il piede della pagina, o la testa o il piede della successiva), mentre il testo che li segue riempie la pagina che hanno lasciato. Uno stile con `floatBarrier: true` (di solito il riquadro «punti chiave» che chiude un capitolo) rende il riquadro una **barriera per gli elementi flottanti**: ogni figura o tabella richiamata prima di esso viene posizionata prima di esso (negli spazi liberi della pagina, o su pagine aperte prima del riquadro), così nessun elemento flottante sfugge oltre la fine del suo capitolo. Un delimitatore `:::name` sconosciuto non è un contenitore: la riga viene trattata come testo, esattamente come una direttiva sconosciuta.
 
-Un delimitatore `:::part` accetta `number` (come vuoi che venga stampato: `"I"`, `"IV"`, `"3"`; viene anche interpretato, così il progetto grafico può riformattarlo) e `title`; entrambi sono facoltativi. Un terzo attributo, `palette="band=#hex"` (più coppie `id=#hex` separate da virgole), ricolora ogni colore del progetto grafico collegato a quegli id della tavolozza (testatine, fascia di apertura, progetti delle parti) e i colori del flusso del testo che condividono il loro valore di base (titoli, grassetto, rimandi, punti elenco, didascalie, tabelle, riquadri, chip) per la parte e per i capitoli che la seguono, fino alla parte successiva; vedi [Configurazione › Parti](/it/docs/configuration-styles#parti). Il contenitore apre sempre una pagina a sé: un’interruzione di pagina con la parità configurata prima, una sola colonna di testo ai margini `parts.margins`, il progetto di apertura su tutta la pagina e un’altra interruzione di pagina dopo il delimitatore di chiusura. Il corpo (di solito l’elenco dei capitoli che la parte raggruppa, oppure niente) viene composto con `parts.bodyStyle`:
+Un delimitatore `:::part` accetta `number` (come vuoi che venga stampato: `"I"`, `"IV"`, `"3"`; viene anche interpretato, così la grafica può riformattarlo) e `title`; entrambi sono facoltativi. Un terzo attributo, `palette="band=#hex"` (più coppie `id=#hex` separate da virgole), ricolora ogni colore della grafica collegato a quegli id della tavolozza (testatine, fascia di apertura, grafica delle parti) e i colori del flusso del testo che condividono il loro valore di base (titoli, grassetto, rimandi, punti elenco, didascalie, tabelle, riquadri, chip) per la parte e per i capitoli che la seguono, fino alla parte successiva; vedi [Configurazione › Parti](/it/docs/configuration-styles#parti). Il contenitore apre sempre una pagina a sé: un’interruzione di pagina con la parità configurata prima, una sola colonna di testo ai margini `parts.margins`, la grafica di apertura su tutta la pagina e un’altra interruzione di pagina dopo il delimitatore di chiusura. Il corpo (di solito l’elenco dei capitoli che la parte raggruppa, oppure niente) viene composto con `parts.bodyStyle`:
 
 ```
 :::part{number="I" title="Foundations"}
@@ -244,7 +249,7 @@ Un gruppo composto per intero viene tagliato dove le sue colonne si allineano me
 :::
 ```
 
-**Come conta `breaks`.** `breaks` numera in ordine i blocchi del gruppo (paragrafi, voci di elenco, un blocco ciascuna, formule in display, figure e tabelle), e un `:::callout` annidato conta come un solo blocco, qualunque cosa contenga. Le direttive non sono blocchi: un `:::space` tra due strofe non sposta il conteggio. Un numero inferiore a 2, oltre l’ultimo blocco del gruppo o non successivo all’interruzione precedente viene ignorato. Dentro un gruppo `:::space` separa due blocchi come in qualsiasi altro punto di un riquadro, e scompare in cima al gruppo e in testa a ciascuna delle sue colonne (una posizione di `breaks` o un taglio di allineamento): per aprire il gruppo più in basso, metti lo spazio prima del delimitatore `:::columns`. Due colonne che portano la stessa spaziatura si allineano quindi strofa per strofa:
+**Come conta `breaks`.** `breaks` numera in ordine i blocchi del gruppo (paragrafi, voci di elenco, un blocco ciascuna, formule in evidenza, figure e tabelle), e un `:::callout` annidato conta come un solo blocco, qualunque cosa contenga. Le direttive non sono blocchi: un `:::space` tra due strofe non sposta il conteggio. Un numero inferiore a 2, oltre l’ultimo blocco del gruppo o non successivo all’interruzione precedente viene ignorato. Dentro un gruppo `:::space` separa due blocchi come in qualsiasi altro punto di un riquadro, e scompare in cima al gruppo e in testa a ciascuna delle sue colonne (una posizione di `breaks` o un taglio di allineamento): per aprire il gruppo più in basso, metti lo spazio prima del delimitatore `:::columns`. Due colonne che portano la stessa spaziatura si allineano quindi strofa per strofa:
 
 ```md
 :::callout{type="verse"}
@@ -291,7 +296,7 @@ Un riquadro annidato in un gruppo resta intero e passa alla parte successiva, e 
 :::
 ```
 
-Un delimitatore `:::callout` accetta anche `label="…"`: il testo che uno stile con una linguetta `label` stampa nell’angolo superiore del riquadro (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+Un delimitatore `:::callout` accetta anche `label="…"`: il testo che uno stile con una linguetta `label` stampa nell’angolo superiore del riquadro (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Ogni altro attributo del delimitatore lo legge il progetto grafico dello stile, se ne ha uno: `:::callout{type="card" kicker="Nota"}` dà ai suoi testi `{attr.kicker}`, e `{boxText}` stampa il contenuto del riquadro stesso (vedi [Configurazione › Progetti grafici nei riquadri](/it/docs/configuration-callouts#progetti-grafici-nei-riquadri)).
 
 Un `:::callout` dentro un altro è un riquadro a sé: per esempio una scheda di esercizi che contiene riquadri per le risposte. Prende il proprio stile (sfondo, bordo, raggio, spaziatura interna, titolo, icona) alla piena larghezza interna del riquadro esterno e si impila tra gli altri blocchi; i suoi `span` e `placement` vengono ignorati, perché un riquadro annidato scorre sempre dentro il suo genitore. Ogni delimitatore chiude il riquadro più interno ancora aperto:
 
@@ -309,7 +314,7 @@ A second answer box.
 :::
 ```
 
-Quando il riquadro esterno si divide tra colonne o pagine (`keepTogether: false`, o perché più alto di una colonna), un riquadro annidato passa intero al frammento successivo, a meno che il suo stile non gli permetta di dividersi a sua volta; ogni frammento ridisegna le cornici che contiene, e un riquadro annidato che prosegue perde l’icona, e il titolo a meno che il suo stile non lo ripeta (`repeatTitle`).
+Quando il riquadro esterno si divide tra colonne o pagine (`keepTogether: false`, o perché più alto di una colonna), un riquadro annidato passa intero al frammento successivo, a meno che il suo stile non gli permetta di dividersi a sua volta; ogni frammento ridisegna i bordi dei riquadri che contiene, e un riquadro annidato che prosegue perde l’icona, e il titolo a meno che il suo stile non lo ripeta (`repeatTitle`).
 
 ### `:::paper`
 
@@ -376,7 +381,7 @@ Un `:::paper` dentro un altro sostituisce solo gli attributi che imposta, e anch
 
 La direttiva di per sé non impone la parità: agisce solo sull’impaginazione del blocco successivo. Usala per chiudere una prefazione, mettere una dedica su una pagina a sé o segnare la fine di una sezione. Quando nello stesso punto servono sia un’interruzione di pagina sia un azzeramento della numerazione, scrivi `:::pagebreak` seguita da `:::numbering`: il cambio di numerazione si applica alla pagina nuova che `:::pagebreak` ha appena creato.
 
-Un’interruzione di pagina su una pagina ancora vuota non fa nulla, quindi non aggiunge mai una pagina bianca. Non sostituisce nemmeno il `breakBefore` di un titolo che la segue subito (il livello 1 ne ha uno per impostazione predefinita): il titolo applica comunque la sua parità, che può aggiungere una pagina bianca dopo quella aperta dalla direttiva. Per far cominciare un titolo esattamente lì, disattiva la sua interruzione (vedi **Configurazione → Stili dei titoli**). Dopo un titolo di copertina che riempie la sua pagina l’interruzione è facoltativa: la copertina occupa già il resto della sua pagina, nelle impaginazioni a una o a più colonne, e un `:::pagebreak` subito dopo non fa danni. Serve solo dopo una copertina il cui progetto grafico si ferma prima del piede della pagina, quando il testo deve comunque cominciare alla pagina successiva (vedi **Configurazione → Altezza riservata**).
+Un’interruzione di pagina su una pagina ancora vuota non fa nulla, quindi non aggiunge mai una pagina bianca. Non sostituisce nemmeno il `breakBefore` di un titolo che la segue subito (il livello 1 ne ha uno per impostazione predefinita): il titolo applica comunque la sua parità, che può aggiungere una pagina bianca dopo quella aperta dalla direttiva. Per far cominciare un titolo esattamente lì, disattiva la sua interruzione (vedi **Configurazione → Stili dei titoli**). Dopo un titolo di copertina che riempie la sua pagina l’interruzione è facoltativa: la copertina occupa già il resto della sua pagina, nelle impaginazioni a una o a più colonne, e un `:::pagebreak` subito dopo non fa danni. Serve solo dopo una copertina la cui grafica si ferma prima del piede della pagina, quando il testo deve comunque cominciare alla pagina successiva (vedi **Configurazione → Altezza riservata**).
 
 ```md
 The old chapter ends here.
@@ -411,7 +416,7 @@ I due tipi di pagina bianca che `:::pagebreak` (e `breakBefore`) possono introdu
 - `blankForParity: true`: inserita per soddisfare un vincolo di parità. Nelle intestazioni con `{chapterTitle}` questa pagina porta il titolo del capitolo **successivo**, perché la pagina bianca esiste solo per spingere quel capitolo sulla parità giusta.
 - `blankForForce: true`: il separatore iniziale obbligatorio di una modalità `'always-*'`. Appartiene al capitolo **precedente**: una pausa voluta a fine capitolo, non un riempimento di parità per il capitolo successivo.
 
-Le stesse due regole danno a una pagina bianca le testatine e la tavolozza di una sezione stilizzata: vedi [Configurazione › Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli).
+Le stesse due regole danno a una pagina bianca le testatine e la tavolozza di una sezione con stile: vedi [Configurazione › Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli).
 
 #### Eccezione all’inizio del documento
 
@@ -442,7 +447,7 @@ I cambi solo di formato (senza `startAt`) lasciano scorrere il contatore: utile,
 
 `format` accetta qualsiasi grafia di un formato di numerazione: `roman-lower` e `i` funzionano come `lower-roman`, `arabic` come `decimal`, `一` e `あ` come `japanese-informal` e `hiragana` (vedi [Configurazione › Grafie dei formati di numerazione](/it/docs/configuration-page-layout#grafie-dei-formati-di-numerazione)). Un valore che non corrisponde a nessuno di essi lascia il formato com’era, e la Sandbox lo segnala.
 
-`lines` fa ripartire il conteggio dei [numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga), non il contatore delle pagine: la riga successiva che viene contata prende il numero indicato, qualunque cosa dica `lineNumbers.restart`. Un valore che non è un numero intero pari o superiore a 0 viene ignorato.
+`lines` fa ripartire il conteggio dei [numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga), non il contatore delle pagine: la riga successiva che viene contata prende il numero indicato, qualunque sia il valore di `lineNumbers.restart`. Un valore che non è un numero intero pari o superiore a 0 viene ignorato.
 
 ```md
 ## Act II
@@ -470,7 +475,7 @@ Two lines lower still.
 - **Si somma.** Lo spazio si aggiunge al margine che già separa i due blocchi (il margine superiore di un titolo, il margine inferiore di un elenco) invece di fondersi con esso. Due righe `:::space` consecutive aggiungono due righe.
 - **Viene scartato a un’interruzione**, come il `\vspace` di LaTeX: in cima a una colonna o a una pagina scompare, così una pagina non si apre mai con un buco; e quando non entra al piede di una colonna chiude semplicemente quella colonna, senza riportare il resto.
 - **Il paragrafo che segue è composto senza rientro.** Quando `bodyText.indentAfterHeading` è disattivato, un paragrafo subito dopo `:::space` perde il rientro della prima riga, come dopo un titolo: la convenzione abituale per il testo che riprende dopo una riga vuota.
-- **Dentro un riquadro** (o un gruppo `:::columns`) separa allo stesso modo i figli del riquadro, misurato nelle righe del testo del riquadro stesso. Prima del primo blocco del riquadro viene scartato, come in cima a una colonna (la spaziatura interna separa già il contenuto dalla cornice), tranne in due casi in cui apre quello spazio: subito sotto il titolo del riquadro e in un riquadro che non contiene nient’altro (un riquadro per la risposta, uno spazio per scrivere, dimensionato in righe). Scompare sempre in cima a un gruppo `:::columns`, in testa a ciascuna delle sue colonne e in cima alla parte di un riquadro diviso che prosegue nella colonna o nella pagina successiva. Dentro un contenitore `:::paragraphs` funziona come tra paragrafi del testo corrente.
+- **Dentro un riquadro** (o un gruppo `:::columns`) separa allo stesso modo i figli del riquadro, misurato nelle righe del testo del riquadro stesso. Prima del primo blocco del riquadro viene scartato, come in cima a una colonna (la spaziatura interna separa già il contenuto dal bordo), tranne in due casi in cui apre quello spazio: subito sotto il titolo del riquadro e in un riquadro che non contiene nient’altro (un riquadro per la risposta, uno spazio per scrivere, dimensionato in righe). Scompare sempre in cima a un gruppo `:::columns`, in testa a ciascuna delle sue colonne e in cima alla parte di un riquadro diviso che prosegue nella colonna o nella pagina successiva. Dentro un contenitore `:::paragraphs` funziona come tra paragrafi del testo corrente.
 - **Tenere con il successivo** lo conta: un titolo seguito da `:::space` passa oltre quando lo spazio e le prime righe del suo testo non entrano sotto di esso.
 
 Un riquadro per la risposta in una scheda di esercizi è un riquadro il cui unico contenuto è spazio: la domanda nel titolo, quattro righe di spazio sotto.
@@ -534,7 +539,7 @@ To stop without a farmhouse near
     <tr><td><code>align</code></td><td><code>center</code> (<code>start</code> nel testo verticale)</td><td>Centra la poesia sul suo verso più lungo, o la compone a filo con l’inizio.</td></tr>
     <tr><td><code>style</code>, <code>dir</code>, <code>lang</code></td><td>—</td><td>Stile di paragrafo, direzione e lingua della poesia.</td></tr>
     <tr><td><code>numbered</code></td><td><code>true</code></td><td><code>false</code> esclude la poesia dai numeri di riga: i suoi versi non vengono contati.</td></tr>
-    <tr><td><code>lineStart</code></td><td>—</td><td>Il numero di riga del primo verso della poesia. Il conteggio riparte da lì, qualunque cosa dica <code>lineNumbers.restart</code>.</td></tr>
+    <tr><td><code>lineStart</code></td><td>—</td><td>Il numero di riga del primo verso della poesia. Il conteggio riparte da lì, qualunque sia il valore di <code>lineNumbers.restart</code>.</td></tr>
     <tr><td><code>interval</code></td><td><code>lineNumbers.interval</code></td><td>L’intervallo proprio della poesia: stampa il numero di un verso ogni N.</td></tr>
   </tbody>
 </table>
@@ -584,7 +589,7 @@ In una pagina composta, una cornice con `takes: "toc"`, o un `:::frame` che cont
 :::toc
 ```
 
-Due attributi cambiano ciò che stampa un singolo indice, qualunque cosa dica la configurazione. `levels` elenca i livelli di titolo che riporta: un intervallo (`levels="1-2"`), un solo livello (`levels="2"`) o un elenco (`levels="1,3"`); un livello a cui `toc.levels` non dà uno stile prende quello del livello più vicino sopra di esso. `keep` tiene ogni blocco dell’indice in una sola colonna e pagina, come fa [`toc.groups.keepTogether`](/it/docs/configuration-notes-references#indice-dei-contenuti): `keep="part"` tiene una riga di parte con i suoi capitoli, `keep="1"` (fino a `"6"`) un titolo di quel livello con le voci che gli stanno sotto, e `keep="none"` disattiva il raggruppamento configurato. Un blocco che non entra passa intero alla colonna o alla pagina successiva; uno più alto di una colonna viene tagliato, e la colonna in cui prosegue si apre di nuovo con la sua riga di testa, seguita da una dicitura di continuazione come *(segue)*.
+Due attributi cambiano ciò che stampa un singolo indice, qualunque cosa preveda la configurazione. `levels` elenca i livelli di titolo che riporta: un intervallo (`levels="1-2"`), un solo livello (`levels="2"`) o un elenco (`levels="1,3"`); un livello a cui `toc.levels` non dà uno stile prende quello del livello più vicino sopra di esso. `keep` tiene ogni blocco dell’indice in una sola colonna e pagina, come fa [`toc.groups.keepTogether`](/it/docs/configuration-notes-references#indice-dei-contenuti): `keep="part"` tiene una riga di parte con i suoi capitoli, `keep="1"` (fino a `"6"`) un titolo di quel livello con le voci che gli stanno sotto, e `keep="none"` disattiva il raggruppamento configurato. Un blocco che non entra passa intero alla colonna o alla pagina successiva; uno più alto di una colonna viene tagliato, e la colonna in cui prosegue si apre di nuovo con la sua riga di testa, seguita da una dicitura di continuazione come *(segue)*.
 
 ```md
 # Contents {style="front-matter" toc="false"}
@@ -627,7 +632,7 @@ Fino a postext 1.22 la barra rovesciata veniva stampata e le righe si univano co
 
 ### A capo nei titoli
 
-Scrivi `\\` dentro un titolo (o dentro l’attributo `title` di una parte) per forzare un a capo dove il titolo viene mostrato come titolo: il titolo nella colonna continua a scorrere e lì mostra uno spazio, mentre il `{titleText}` di un progetto di apertura va a capo in quel punto (in ogni modalità `overflow` dell’elemento di testo). Le testatine, `{chapterTitle}`, `{partTitle}` e i segnalibri del PDF mostrano sempre il titolo su una riga. In cinese o in giapponese l’a capo si legge come uno spazio ideografico tra due caratteri della scrittura (un titolo a distico); dove uno di essi incontra una cifra o un testo latino (`关于举办 \\ 2026年…`) la pagina mette lo spazio tra han e latino, e i segnalibri del PDF e il titolo del documento uniscono le due metà senza nulla, come si scrive il cinese semplice.
+Scrivi `\\` dentro un titolo (o dentro l’attributo `title` di una parte) per forzare un a capo dove il titolo viene mostrato come titolo: il titolo nella colonna continua a scorrere e lì mostra uno spazio, mentre il `{titleText}` di una grafica di apertura va a capo in quel punto (in ogni modalità `overflow` dell’elemento di testo). Le testatine, `{chapterTitle}`, `{partTitle}` e i segnalibri del PDF mostrano sempre il titolo su una riga. In cinese o in giapponese l’a capo si legge come uno spazio ideografico tra due caratteri della scrittura (un titolo a distico); dove uno di essi incontra una cifra o un testo latino (`关于举办 \\ 2026年…`) la pagina mette lo spazio tra han e latino, e i segnalibri del PDF e il titolo del documento uniscono le due metà senza nulla, come si scrive il cinese semplice.
 
 ```md
 # Concepts of health and illness. \\ Community health {author="I. Zango Martín"}
@@ -636,7 +641,7 @@ Scrivi `\\` dentro un titolo (o dentro l’attributo `title` di una parte) per f
 
 ## Fumetti
 
-Le pagine, le strisce e le doppie pagine a fumetti si scrivono in due blocchi delimitati il cui contenuto viene letto direttamente dal motore, riga per riga: `:::page` e `:::strip`. Al loro interno, le righe `::panel` aprono le vignette e le righe di sceneggiatura le letterano. La guida, con le regole di impaginazione, il lettering e gli output, è [Fumetti](/it/docs/comics); le impostazioni sono in [Configurazione › Fumetti](/it/docs/configuration-comics#fumetti).
+Le tavole, le strisce e le doppie pagine a fumetti si scrivono in due blocchi delimitati il cui contenuto viene letto direttamente dal motore, riga per riga: `:::page` e `:::strip`. Al loro interno, le righe `::panel` aprono le vignette e le righe di sceneggiatura le letterano. La guida, con le regole di impaginazione, il lettering e gli output, è [Fumetti](/it/docs/comics); le impostazioni sono in [Configurazione › Fumetti](/it/docs/configuration-comics#fumetti).
 
 ### `:::page`
 
@@ -654,7 +659,7 @@ sfx{rotate=-8}: KRAK
 :::
 ```
 
-Un blocco `:::page` è una pagina a fumetti: apre una pagina nuova, la occupa tutta, e il testo che segue il `:::` di chiusura comincia nella pagina successiva. I suoi attributi sono `split` (come la pagina viene divisa in celle: dimensioni in percentuale separate da `/` per le strisce e da `|` per le vignette affiancate, un elenco tra parentesi quadre per dividere di nuovo una cella, `*` per lo spazio restante, `a~b` per una linea obliqua), `gutter` (una lunghezza, o due: tra le strisce e tra le vignette; un numero senza unità è in millimetri), `style` (uno stile di vignetta con nome), `bleed`, `direction` (`ltr` o `rtl`, scritto anche `dir`) e `spread` (vedi [Doppie pagine](#doppie-pagine)). Senza `split` le vignette vengono impilate in strisce uguali. Blocchi Markdown, contenitori e direttive non vengono letti all’interno del blocco; i `<!-- comments -->` sì.
+Un blocco `:::page` è una tavola a fumetti: apre una pagina nuova, la occupa tutta, e il testo che segue il `:::` di chiusura comincia nella pagina successiva. I suoi attributi sono `split` (come la pagina viene divisa in celle: dimensioni in percentuale separate da `/` per le strisce e da `|` per le vignette affiancate, un elenco tra parentesi quadre per dividere di nuovo una cella, `*` per lo spazio restante, `a~b` per una linea obliqua), `gutter` (una lunghezza, o due: tra le strisce e tra le vignette; un numero senza unità è in millimetri), `style` (uno stile di vignetta con nome), `bleed`, `direction` (`ltr` o `rtl`, scritto anche `dir`) e `spread` (vedi [Doppie pagine](#doppie-pagine)). Senza `split` le vignette vengono impilate in strisce uguali. Blocchi Markdown, contenitori e direttive non vengono letti all’interno del blocco; i `<!-- comments -->` sì.
 
 ### Vignette
 
@@ -671,11 +676,11 @@ Una riga `::panel{…}` apre una vignetta, che occupa la cella successiva nell�
     <tr><td><code>art=&lt;id&gt;</code></td><td>L’immagine: una risorsa bitmap o SVG. Senza di essa la vignetta resta vuota.</td></tr>
     <tr><td><code>fit=cover</code>, <code>fit=contain</code></td><td>Ritaglia l’immagine per riempire la cella (mai dentro la sua zona sicura), oppure la mostra per intero.</td></tr>
     <tr><td><code>focus="x% y%"</code></td><td>Il punto da tenere centrato dove la zona sicura lascia margine.</td></tr>
-    <tr><td><code>style=…</code>, <code>border=none</code>, <code>border=0.5mm</code>, <code>bg=#hex</code></td><td>Uno stile di vignetta con nome, il bordo, lo sfondo (un colore, un id di palette o <code>none</code>).</td></tr>
+    <tr><td><code>style=…</code>, <code>border=none</code>, <code>border=0.5mm</code>, <code>bg=#hex</code></td><td>Uno stile di vignetta con nome, il bordo, lo sfondo (un colore, un id della tavolozza o <code>none</code>).</td></tr>
     <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>Porta i lati che toccano la cornice fino al rifilo e all’abbondanza.</td></tr>
     <tr><td><code>pad="…"</code></td><td>Rende la vignetta più piccola della sua cella: da una a quattro lunghezze o percentuali (alto, fine, basso, inizio).</td></tr>
     <tr><td><code>inset="x y w h"</code></td><td>Sovrappone la vignetta a quella precedente, nel riquadro indicato in percentuali di quest’ultima, invece di assegnarle una cella.</td></tr>
-    <tr><td><code>text</code>, <code>valign=middle</code>, <code>shrink</code>, <code>box=&lt;id&gt;</code></td><td>Fa della vignetta una vignetta di testo: il suo corpo è Markdown composto nella cornice della vignetta (<code>valign</code> lo posiziona), non un copione; <code>box</code> veste la vignetta con uno stile di riquadro. Vedi <a href="/it/docs/comics#vignette-di-testo">Fumetti › Vignette di testo</a>.</td></tr>
+    <tr><td><code>text</code>, <code>valign=middle</code>, <code>shrink</code>, <code>box=&lt;id&gt;</code></td><td>Fa della vignetta una vignetta di testo: il suo corpo è Markdown composto nella cornice della vignetta (<code>valign</code> lo posiziona), non un copione; <code>box</code> applica alla vignetta uno stile di riquadro. Vedi <a href="/it/docs/comics#vignette-di-testo">Fumetti › Vignette di testo</a>.</td></tr>
     <tr><td><code>pop=&lt;id&gt;</code></td><td>Un ritaglio trasparente disegnato sopra il bordo con il ritaglio dell’immagine (un bordo spezzato).</td></tr>
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Capovolge l’immagine, oppure la mantiene come disegnata su una pagina speculare.</td></tr>
     <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>Il testo alternativo (altrimenti l’<code>altText</code> della risorsa) e un id di ancora.</td></tr>
@@ -700,7 +705,7 @@ maya: This line goes on
 
 - La **chiave** è un id di personaggio (lettere, cifre, `_`, `.`, `-`), uguale in ogni traduzione; `caption`, `sfx` e `note` sono riservate. I due punti possono essere quelli a larghezza piena `：`.
 - Una parola isolata tra le graffe è uno **stile di nuvoletta** (`thought`, `whisper`, `shout`, `radio`, `inner` o uno di `comics.balloonStyles`); `style=` indica la stessa cosa.
-- `at` fissa la posizione della nuvoletta: un punto in percentuali dell’immagine della vignetta (`at="62% 40%"`), oppure un angolo o un lato (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` punta la coda verso un punto dell’immagine; `tail=none` la elimina e `tail=top|bottom|start|end|left|right` la punta fuori dalla vignetta. `join` e `join=false` uniscono la nuvoletta alla precedente dello stesso personaggio o la tengono separata; `break` le permette di oltrepassare il bordo, e l’attraversamento non viene segnalato come sbordo. `rotate` (gradi), `size` (un fattore di scala, per gli effetti sonori), `color` e `font` ne modificano il lettering.
+- `at` fissa la posizione della nuvoletta: un punto in percentuali dell’immagine della vignetta (`at="62% 40%"`), oppure un angolo o un lato (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` punta la coda verso un punto dell’immagine; `tail=none` la elimina e `tail=top|bottom|start|end|left|right` la punta fuori dalla vignetta. `join` e `join=false` uniscono la nuvoletta alla precedente dello stesso personaggio o la tengono separata; `break` le permette di oltrepassare il bordo, e l’attraversamento non viene segnalato come sbordo. `rotate` (gradi), `skew` (un’inclinazione in gradi, per un testo su un oggetto visto in prospettiva), `size` (un fattore di scala, per gli effetti sonori), `color` e `font` ne modificano il lettering.
 - `vertical` e `horizontal` (oppure `mode=vertical`, `mode=horizontal`) impostano la direzione di scrittura della riga al posto di quella del libro: un `ドン` non tradotto composto in colonna in un’edizione orizzontale, un’insegna scritta in orizzontale composta in riga in un’edizione verticale. Una colonna in un libro di un’altra lingua segue le regole del proprio testo (con i kana, quelle del giapponese). In un libro verticale, una riga senza caratteri cinesi o giapponesi viene comunque composta in orizzontale.
 - Una riga rientrata di due spazi o di una tabulazione continua la nuvoletta precedente; una barra rovesciata a fine riga spezza il testo in quel punto. Le righe vuote vengono ignorate.
 - Il testo è Markdown in linea: enfasi (letterata in grassetto corsivo), `:tcy`, `:ruby` (la lettura composta sopra la base, tranne che sopra una base da destra a sinistra), `:ltr` e `:rtl` (un tratto mantenuto nella propria direzione). Note a piè di pagina e marcatori `:ref` non vengono letti.
@@ -725,9 +730,9 @@ Una `:::strip` ha lo stesso contenuto di una pagina ma si colloca nel testo come
 
 ## Pagine composte
 
-Una pagina composta si impagina a partire da un modello di pagina della configurazione (`pageTemplates`), e il suo contenuto viene versato per nome nelle cornici del modello. La guida, con gli avvisi, è [Pagine composte](/it/docs/composed-pages).
+Una pagina composta si impagina a partire da un modello di pagina della configurazione (`pageTemplates`), e il suo contenuto viene distribuito per nome tra le cornici del modello. La guida, con gli avvisi, è [Pagine composte](/it/docs/composed-pages).
 
-- `::::page{template="…"}` … `::::` è la pagina: quattro o più due punti, chiusi da una riga che ne contiene soltanto lo stesso numero. I recinti a tre due punti al suo interno (`:::frame`, `:::callout`, `:::figure`…) funzionano come ovunque, e un `:::` da solo non chiude mai la pagina. Un `:::page` a tre due punti resta una pagina di fumetto.
+- `::::page{template="…"}` … `::::` è la pagina: quattro o più segni di due punti, chiusi da una riga che contiene soltanto lo stesso numero di segni. I blocchi aperti da tre segni di due punti al suo interno (`:::frame`, `:::callout`, `:::figure`…) funzionano come ovunque, e un `:::` da solo non chiude mai la pagina. Un `:::page` con tre segni di due punti resta una tavola di fumetto.
 - `:::frame{slot="…" label="…"}` … `:::` contiene il contenuto della cornice con quel nome: qualsiasi Markdown.
-- `slot="…"` su un titolo (`## Retos {slot="retos-titulo"}`), su `::resource{id="…" slot="…"}`, su un recinto di codice o su un contenitore `:::` manda solo quel blocco. Il contenuto senza slot va nella cornice di flusso del modello.
-- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente.
+- `slot="…"` su un titolo (`## Retos {slot="retos-titulo"}`), su `::resource{id="…" slot="…"}`, su un blocco di codice o su un contenitore `:::` manda in quella cornice solo quel blocco. Il contenuto senza slot va nella cornice di flusso del modello.
+- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente. I suoi `alt`, `caption` e `note`, come attributi del delimitatore o come righe `::alt[…]`, `::caption[…]` e `::note[…]`, sostituiscono i testi della risorsa in quel capitolo (vedi [Pagine composte › Le parole proprie di una figura](/it/docs/composed-pages#le-parole-proprie-di-una-figura)).

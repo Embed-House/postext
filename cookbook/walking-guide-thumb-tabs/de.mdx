@@ -1,16 +1,16 @@
 ---
 title: "Stadtführer zu Fuß mit Daumenregister"
-summary: "Ein Taschenführer mit einem Überschriftenformat je Rundgang, dessen Palette Randreiter, Stationsnummern, Kastentönung und die leere linke Seite davor umfärbt."
+summary: "Ein Taschenführer mit einem Überschriftenstil je Rundgang, dessen Palette Randreiter, Stationsnummern, Kastentönung und die Vakatseite davor umfärbt."
 plain: "Ein Taschenführer für Spaziergänge rund um Lissabon. Jeder Rundgang hat seine eigene Farbe, die als Reiter am Seitenrand steht, sodass man ihn mit dem Daumen findet."
-description: "Lisbon on Foot, ein Taschenführer für Rundgänge in Postext. Reiter und bemalte Vakatseite sind Kopfzeilenelemente; das Format jedes Rundgangs setzt vier Farben."
+description: "Lisbon on Foot, ein Taschenführer für Rundgänge in Postext. Reiter und bemalte Vakatseite sind Kopfzeilenelemente; der Stil jedes Rundgangs setzt vier Farben."
 question: "Wie halte ich Kolumnentitel von Auftakt- und Vakatseiten fern und färbe eine Vakatseite in der Teilfarbe?"
 aliases: ["Reiseführer", "Stadtrundgang", "Daumenregister", "Griffregister", "farbcodierte Abschnitte", "Abschnittsfarben", "bemalte Vakatseite", "Kartennadeln", "nummerierte Stationen", "Eckensymbol", "thumb tab"]
-pageNotes: { "1": "Der Umschlag: eine Wand aus blau-weißen Azulejos, der am Außenrand eine Fliese fehlt, der Titel auf einem gerahmten Schild und die drei Rundgänge, nach Nummer in ihren Farben aufgeschlüsselt.", "2": "Seite 2, die Einführung, mit Kolumnentiteln und ohne Daumenreiter, und eine Karte der Routen, deren nummerierte Nadeln den Stationen entsprechen.", "3": "„Walk 1“ beginnt auf einer rechten Seite unter einem terrakottafarbenen Band mit einem Fliesenmuster zum Außenrand hin; der terrakottafarbene Reiter mit einer weißen 1 hängt am Fuß des Bandes.", "5": "Seite 5 beendet „Walk 1“ mit der fünften Station und einer terrakottafarbenen Zeile in der Beschriftungsschrift, die zu „Walk 2“ weiterschickt.", "6": "Seite 6, die leere linke Seite vor „Walk 2“, von Rand zu Rand im Gelb des Rundgangs unter einem blassen Fliesenmuster bemalt, mit der Nummer des Rundgangs, 2, in Schwarz." }
+pageNotes: { "1": "Der Umschlag: eine Wand aus blau-weißen Azulejos, der am Außenrand eine Fliese fehlt, der Titel auf einem gerahmten Schild und die drei Rundgänge, nach Nummer in ihren Farben aufgeschlüsselt.", "2": "Seite 2, die Einführung, mit Kolumnentiteln und ohne Daumenreiter, und eine Karte der Routen, deren nummerierte Nadeln den Stationen entsprechen.", "3": "„Walk 1“ beginnt auf einer rechten Seite unter einem terrakottafarbenen Band mit einem Fliesenmuster zum Außenrand hin; der terrakottafarbene Reiter mit einer weißen 1 hängt am Fuß des Bandes.", "5": "Seite 5 beendet „Walk 1“ mit der fünften Station und einer terrakottafarbenen Zeile in der Beschriftungsschrift, die auf „Walk 2“ verweist.", "6": "Seite 6, die Vakatseite vor „Walk 2“, von Rand zu Rand im Gelb des Rundgangs unter einem blassen Fliesenmuster bemalt, mit der Nummer des Rundgangs, 2, in Schwarz." }
 ---
 
 ## Was Sie setzen
 
-Die ersten sieben Seiten von *Lisbon on Foot*, einem Taschenführer von 120 × 200 mm. Der Umschlag ist eine Wand aus blau-weißen Azulejos mit dem Titel auf einer Fläche, die wie ein Lissabonner Straßenschild gerahmt ist, und Seite 2 stellt die drei Rundgänge mit einer Karte ihrer Routen vor. Jeder Rundgang hat eine Farbe, Terrakotta für die Alfama und Gelb für die Baixa, und ein Daumenreiter am Außenrand zeigt diese Farbe und die Nummer des Rundgangs auf jeder seiner Seiten in derselben Höhe. Das Band des Auftakts, die nummerierten Stationen, der Kolumnentitel der rechten Seite und die Tönung des Kastens „Don’t miss“ wechseln mit. Die leere linke Seite, die „Walk 2“ auf eine rechte Seite schickt, ist im Gelb von „Walk 2“ bemalt und druckt seine Ziffer. Der Text steht in Albert Sans im Flattersatz; die Namen in DM Serif Display und die Beschriftungen in Asap Condensed.
+Die ersten sieben Seiten von *Lisbon on Foot*, einem Taschenführer von 120 × 200 mm. Der Umschlag ist eine Wand aus blau-weißen Azulejos mit dem Titel auf einer Fläche, die wie ein Lissabonner Straßenschild gerahmt ist, und Seite 2 stellt die drei Rundgänge mit einer Karte ihrer Routen vor. Jeder Rundgang hat eine Farbe, Terrakotta für die Alfama und Gelb für die Baixa, und ein Daumenreiter am Außenrand zeigt diese Farbe und die Nummer des Rundgangs auf jeder seiner Seiten in derselben Höhe. Das Band des Auftakts, die nummerierten Stationen, der Kolumnentitel der rechten Seite und die Tönung des Kastens „Don’t miss“ wechseln mit. Die Vakatseite, die „Walk 2“ auf eine rechte Seite bringt, ist im Gelb von „Walk 2“ bemalt und zeigt seine Ziffer. Der Text steht in Albert Sans im Flattersatz; die Namen in DM Serif Display und die Beschriftungen in Asap Condensed.
 
 ## Zubereitung
 
@@ -18,37 +18,37 @@ Die ersten sieben Seiten von *Lisbon on Foot*, einem Taschenführer von 120 × 2
 
 <Excerpt region="palette" />
 
-Die `palette` eines Überschriftenformats ersetzt auf den Seiten seines Abschnitts Einträge über ihre ID ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)), deshalb verweist jede Farbe, die dem Rundgang folgen soll, auf einen von vier Einträgen: `band` für die Flächen, den Reiter und die Stationskreise, `bandInk` für Schrift auf Papier, `onBand` für Schrift auf einer Fläche und `wash` für den Kasten. Weiß auf dem Gelb der Baixa misst 2:1, deshalb ist `onBand` dieses Rundgangs die Druckfarbe Schwarz, mit 8:1. Gestaltungselemente folgen der ID, während der Text nach Wert umgefärbt wird: Eine Farbe, die dem Grund-Hexwert eines Eintrags gleicht, nimmt den Wert des Rundgangs an, weshalb sich die vier Grundwerte alle unterscheiden. Der Kastentitel auf Seite 4 und die Zeile, die auf Seite 5 zu „Walk 2“ weiterschickt, sind Text in `bandInk`, und beide drucken in Terrakotta.
+Die `palette` eines Überschriftenstils ersetzt auf den Seiten seines Abschnitts Einträge über ihre ID ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)), deshalb verweist jede Farbe, die dem Rundgang folgen soll, auf einen von vier Einträgen: `band` für die Flächen, den Reiter und die Stationskreise, `bandInk` für Schrift auf Papier, `onBand` für Schrift auf einer Fläche und `wash` für den Kasten. Weiß auf dem Gelb der Baixa misst 2:1, deshalb ist `onBand` dieses Rundgangs die Druckfarbe Schwarz, mit 8:1. Gestaltungselemente folgen der ID, während der Text nach Wert umgefärbt wird: Eine Farbe, die dem Grund-Hexwert eines Eintrags gleicht, nimmt den Wert des Rundgangs an, weshalb sich die vier Grundwerte alle unterscheiden. Der Kastentitel auf Seite 4 und die Zeile, die auf Seite 5 auf „Walk 2“ verweist, sind Text in `bandInk`, und beide erscheinen in Terrakotta.
 
 ### 2 · Die Kolumnentitel auf Textseiten beschränken
 
 <Excerpt region="running-heads" />
 
-Nach dem Layout bekommt jede Seite eine Rolle ([Textelemente](/de/docs/configuration-headers-footers#textelemente)). Die erste Seite eines Rundgangs ist ein `opener`, weil ihre Überschrift die Seite umbricht; die Füllseite vor einer rechten Seite ist `blank`; die übrigen sind `body`. Die Kolumnentitel nehmen `pages: 'body'`, sodass die Auftaktseiten 3 und 7 und die Vakatseite 6 keine haben, und die abgesetzte Pagina nimmt `'opener'`. Die linke Seite druckt den `{title}` aus dem Frontmatter, die rechte `Walk {chapterNumber} · {chapterTitle}` in `bandInk`, auf Seite 5 in Terrakotta. Die Reiter aus der kurzen Antwort nehmen `'all'`. Die Fläche der Vakatseite kommt im Array nach ihnen, und da die Reihenfolge im Array die Malreihenfolge ist, deckt sie den Reiter auf Seite 6 ab. Seite 2, die Einführung, steht vor „Walk 1“, deshalb ist `{chapterNumber}` dort leer, und ihr Format hat einen eigenen `header` mit den vier Kolumnentiteln und ohne Reiter. Ohne ihn druckte Seite 2 einen leeren blauen Reiter.
+Nach dem Layout bekommt jede Seite eine Rolle ([Textelemente](/de/docs/configuration-headers-footers#textelemente)). Die erste Seite eines Rundgangs ist ein `opener`, weil ihre Überschrift die Seite umbricht; die Vakatseite vor einer rechten Seite ist `blank`; die übrigen sind `body`. Die Kolumnentitel nehmen `pages: 'body'`, sodass die Auftaktseiten 3 und 7 und die Vakatseite 6 keine haben, und die abgesetzte Pagina nimmt `'opener'`. Die linke Seite zeigt den `{title}` aus dem Frontmatter, die rechte `Walk {chapterNumber} · {chapterTitle}` in `bandInk`, auf Seite 5 in Terrakotta. Die Reiter aus der kurzen Antwort nehmen `'all'`. Die Fläche der Vakatseite kommt im Array nach ihnen, und da die Reihenfolge im Array die Malreihenfolge ist, deckt sie den Reiter auf Seite 6 ab. Seite 2, die Einführung, steht vor „Walk 1“, deshalb ist `{chapterNumber}` dort leer, und ihr Stil hat einen eigenen `header` mit den vier Kolumnentiteln und ohne Reiter. Ohne ihn zeigte Seite 2 einen leeren blauen Reiter.
 
 ### 3 · Jeden Rundgang unter seinem Band eröffnen und seine Stationen nummerieren
 
 <Excerpt region="levels" />
 
-Das Band ist am Anschnitt verankert, der hier das Endformat ist, und reicht 30 mm in den Textbereich. Die Gestaltung endet mit dem Band, und `minHeight` reserviert acht Rasterzeilen, 37,3 mm; der Auftakt nimmt die größere Tiefe, sodass der Text auf den Seiten 3 und 7 7,3 mm unter dem Band beginnt. Jede Station ist eine Überschrift der Ebene 3, deren Gestaltung `{number}` in einen Kreis von 5,4 mm setzt, gefüllt mit `band`. Die Vorlage `{3}` beginnt mit jedem Rundgang neu, da eine Überschrift der Ebene 1 die tieferen Zähler zurücksetzt, und die Nadeln auf der Karte tragen dieselben Nummern. Eine Station hat eine Rasterzeile Abstand darüber und keinen darunter, und ihr Kreis sitzt 3,2 mm tief in den zwei Rasterzeilen, die die Überschrift füllt. Das lässt etwa 8,3 mm Weißraum über dem Kreis und 2,1 mm darunter; Absätze stehen 6,4 mm auseinander.
+Das Band ist am Anschnitt verankert, der hier das Endformat ist, und reicht 30 mm in den Satzspiegel. Die Gestaltung endet mit dem Band, und `minHeight` reserviert acht Rasterzeilen, 37,3 mm; der Auftakt nimmt die größere Tiefe, sodass der Text auf den Seiten 3 und 7 7,3 mm unter dem Band beginnt. Jede Station ist eine Überschrift der Ebene 3, deren Gestaltung `{number}` in einen Kreis von 5,4 mm setzt, gefüllt mit `band`. Die Vorlage `{3}` beginnt mit jedem Rundgang neu, da eine Überschrift der Ebene 1 die tieferen Zähler zurücksetzt, und die Nadeln auf der Karte haben dieselben Nummern. Eine Station hat eine Rasterzeile Abstand darüber und keinen darunter, und ihr Kreis sitzt 3,2 mm tief in den zwei Rasterzeilen, die die Überschrift füllt. Das lässt etwa 8,3 mm Weißraum über dem Kreis und 2,1 mm darunter; Absätze stehen 6,4 mm auseinander.
 
 ### 4 · Eine Fliese an den Kasten hängen und die Chips schwarz halten
 
 <Excerpt region="box-and-chips" />
 
-Der Kasten hat weder Linie noch Rahmen, nur die Tönung des Rundgangs und eine im Code gezeichnete Fliese an seiner Ecke ([Kastenformate](/de/docs/configuration-callouts#kastenstile)). `cornerSide: 'outer'` hängt die Fliese zur Hälfte über die äußere Seite des Kastens, bündig mit seiner Oberkante; auf Seite 4, einer linken Seite, ist das die linke Seite, wo der Titel beginnt. Mit 6,5 mm Innenabstand auf beiden Seiten bleibt der Titel frei von der Fliese und auf beiden Seiten in Flucht mit dem Text des Kastens. Die Palette des Rundgangs färbt Tönung und Titel um, während die Fliese blau bleibt, weil ihre Farben ins SVG gezeichnet sind. Ein mit `band` verknüpfter Chip nähme ebenfalls die Farbe des Rundgangs an; hier halten sich die Fakten heraus, deshalb sind die Chips schwarz auf Papier mit einer grauen Kontur in `muted`, in jedem Rundgang gleich.
+Der Kasten hat weder Linie noch Kontur, nur die Tönung des Rundgangs und eine im Code gezeichnete Fliese an seiner Ecke ([Kastenformate](/de/docs/configuration-callouts#kastenstile)). `cornerSide: 'outer'` hängt die Fliese zur Hälfte über die äußere Seite des Kastens, bündig mit seiner Oberkante; auf Seite 4, einer linken Seite, ist das die linke Seite, wo der Titel beginnt. Mit 6,5 mm Innenabstand auf beiden Seiten bleibt der Titel frei von der Fliese und auf beiden Seiten in Flucht mit dem Text des Kastens. Die Palette des Rundgangs färbt Tönung und Titel um, während die Fliese blau bleibt, weil ihre Farben ins SVG gezeichnet sind. Ein mit `band` verknüpfter Chip nähme ebenfalls die Farbe des Rundgangs an; hier halten sich die Fakten heraus, deshalb sind die Chips schwarz auf Papier mit einer grauen Kontur in `muted`, in jedem Rundgang gleich.
 
 ### 5 · Die Karte mit den Farbfeldern der Rundgänge beschriften
 
 <Excerpt region="map" />
 
-Die Karte ist eine SVG-Ressource, gesetzt dort, wo `::resource{id="routes"}` steht, mit einem eigenen Ressourcentyp, sodass ihre Legende „Map 1“ lautet. Die Anmerkung schlüsselt die Routen mit drei Farbfeldern auf, `:swatch{color="alfama"}` und entsprechend für `baixa` und `belem`. Ein Farbfeld nimmt die ID eines Paletteneintrags ([Inline-Formatierung](/de/docs/document-format-inline#inline-formatierung)). Die Palette bekommt aus `WALKS` einen Eintrag je Rundgang, und die Zeichnung nimmt ihre Routenfarben aus demselben Objekt, sodass die Legende zu den Routen und den Reitern passt. Die Nummern in den Nadeln sind als Striche gezeichnet, deshalb trägt die Karte keine Schrift.
+Die Karte ist eine SVG-Ressource, gesetzt dort, wo `::resource{id="routes"}` steht, mit einem eigenen Ressourcentyp, sodass ihre Legende „Map 1“ lautet. Die Anmerkung schlüsselt die Routen mit drei Farbfeldern auf, `:swatch{color="alfama"}` und entsprechend für `baixa` und `belem`. Ein Farbfeld nimmt die ID eines Paletteneintrags ([Inline-Formatierung](/de/docs/document-format-inline#inline-formatierung)). Die Palette bekommt aus `WALKS` einen Eintrag je Rundgang, und die Zeichnung nimmt ihre Routenfarben aus demselben Objekt, sodass die Legende zu den Routen und den Reitern passt. Die Nummern in den Nadeln sind als Striche gezeichnet, deshalb enthält die Karte keine Schrift.
 
 ## Varianten
 
 ### Die leere linke Seite unbemalt lassen
 
-Ohne die Fläche behält Seite 6 ihren Reiter: `pages: 'all'` druckt ihn auch auf der Vakatseite, im Gelb von „Walk 2“ mit einer 2.
+Ohne die Fläche behält Seite 6 ihren Reiter: `pages: 'all'` setzt ihn auch auf die Vakatseite, im Gelb von „Walk 2“ mit einer 2.
 
 ```diff
 -const header = { elements: [...heads, ...tabs, ...blankPage] };
@@ -57,7 +57,7 @@ Ohne die Fläche behält Seite 6 ihren Reiter: `pages: 'all'` druckt ihn auch au
 
 ### Den dritten Rundgang ergänzen
 
-`WALKS` enthält bereits die Farben von Belém und `walkStyles` sein Format, der Rundgang braucht also nur seine Überschrift im Inhalt. Er beginnt auf Seite 9, nach einer Vakatseite 8, petrolfarben bemalt mit einer weißen 3.
+`WALKS` enthält bereits die Farben von Belém und `walkStyles` seinen Stil, der Rundgang braucht also nur seine Überschrift im Inhalt. Er beginnt auf Seite 9, nach einer Vakatseite 8, petrolfarben bemalt mit einer weißen 3.
 
 ```diff
 +# Belém {style="belem" route="From the monastery to the tower"}
@@ -68,4 +68,4 @@ Ohne die Fläche behält Seite 6 ihren Reiter: `pages: 'all'` druckt ihn auch au
 ## Häufige Fehler
 
 - Seite 6 gibt es, weil „Walk 1“ auf Seite 5 endet, einer rechten Seite. Ein Rundgang, der auf einer linken Seite endet, lässt keine Vakatseite, und die Farbe des nächsten Rundgangs zeigt sich dann nur auf seinen eigenen Seiten.
-- Vor dem ersten nummerierten Rundgang ist `{chapterNumber}` leer, deshalb braucht ein Element, das es druckt, etwa der Reiter, dort ein Format, das es weglässt.
+- Vor dem ersten nummerierten Rundgang ist `{chapterNumber}` leer, deshalb braucht ein Element, das es ausgibt, etwa der Reiter, dort einen Stil, der es weglässt.

@@ -5,11 +5,11 @@ export const metadata = {
   sidebarTitle: '东亚排版',
   description: 'cjk设置：中文、日文和韩文的断行、标点宽度、间距、字符网格、注音与各种标记',
   lang: 'zh',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '24分钟',
   order: 13,
   parent: 'configuration',
-  plainSummary: "本页讲中文、日文和韩文文字的设置。这些设置决定一行可以在哪里断开，标点符号占多宽。它们设定这些文字与拉丁字母或数字之间的间距。它们还控制印在字旁的小注音，以及画在人名和书名旁边的标记。中文排版和日文排版两篇指南展示了这些设置的实际用法。",
+  plainSummary: "本页讲中文、日文和韩文的排版设置。这些设置决定一行可以在哪里断开、标点符号占多宽，以及这些文字与拉丁字母或数字之间留多少空。它们还控制印在字旁的小字注音，以及画在人名和书名旁边的标记。“中文排版”和“日文排版”两篇指南展示了这些设置的实际用法。",
 };
 
 # 配置：东亚排版
@@ -139,7 +139,7 @@ interface CjkConfig {
       <td><code>composeDesignText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>中文或日文的设计文字（标题设计与篇章页、书眉与页码、页面设计、部分页）是否按正文的规则排版：<code>lineBreak</code>的避头尾规则、<code>punctuationWidth</code>和<code>compressAdjacent</code>的标点宽度、<code>latinSpacing</code>、<code>hangingPunctuation</code>以及<code>titleMinChars</code>。文字中的一行（两个<code>\n</code>之间的部分）若CJK字符多于词间空格，就像段落一样按这些规则排版；其余各行仍在空格处折行，与以前相同。显式换行、<code>paragraphIndent</code>、首字下沉和行内标记照常有效；各行不齐（不在字间分配空白），注音、割注和着重号印成普通文字。设为<code>false</code>时，这类文字在空格处折行，每个标点保持字体本身的宽度。postext 1.25之前保存的配置，若其文字含有CJK，则按<code>false</code>读取。自postext 1.25起。</td>
+      <td>中文或日文的设计文字（标题设计与章首页、书眉与页码、页面设计、篇名页）是否按正文的规则排版：<code>lineBreak</code>的避头尾规则、<code>punctuationWidth</code>和<code>compressAdjacent</code>的标点宽度、<code>latinSpacing</code>、<code>hangingPunctuation</code>以及<code>titleMinChars</code>。文字中的一行（两个<code>\n</code>之间的部分）若CJK字符多于词间空格，就像段落一样按这些规则排版；其余各行仍在空格处折行，与以前相同。显式换行、<code>paragraphIndent</code>、首字下沉和行内标记照常有效；各行不齐（不在字间分配空白），注音、夹注和着重号印成普通文字。设为<code>false</code>时，这类文字在空格处折行，每个标点保持字体本身的宽度。postext 1.25之前保存的配置，若其文字含有CJK，则按<code>false</code>读取。自postext 1.25起。</td>
     </tr>
     <tr>
       <td><code>latinSpacing</code></td>
@@ -161,7 +161,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>grid</code></td>
-      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show?, fullLines? &#125;</code></td>
       <td>关闭</td>
       <td>以每行字数和每页行数规定版心（见<a href="#字格">字格</a>）。</td>
     </tr>
@@ -193,17 +193,17 @@ interface CjkConfig {
       <td><code>annotationColor</code></td>
       <td><code>ColorValue</code></td>
       <td>文字颜色</td>
-      <td>着重号、专名线和书名线的颜色；也是注音和夹注颜色的默认值。</td>
+      <td>着重号、专名线、书名线和傍线（<code>:sideline[…]</code>）的颜色；也是注音、夹注和汉文训读记号颜色的默认值。</td>
     </tr>
     <tr>
       <td><code>ruby</code></td>
       <td><code>&#123; fontFamily?, fontSize?, color?, position?, overhang?, align?, smallKana? &#125;</code></td>
       <td>正文的一半大小，<code>'auto'</code></td>
-      <td><code>:ruby[…]</code>和<code>&#123;紅樓|hóng|lóu&#125;</code>的注音：字体（默认与正文相同）、字号（默认为正文的<code>&#123; value: 0.5, unit: 'em' &#125;</code>；注音符号为其60 %）、颜色，以及注音本身未指定时的位置（<code>'auto'</code>：注音符号在每个字的右侧；拼音和假名在横排时位于文字上方，竖排时位于右侧）。<code>overhang</code>：比基字长的读音最多能伸到相邻字上多少：<code>'kana'</code>伸到假名、ー和标点的空白一侧上一个注音字，伸到开括号上半个，汉字上不伸（JLReq §3.3.8）；<code>'any'</code>伸到任何没有读音的相邻字上半个注音字；<code>'none'</code>不伸；auto在日本为<code>'kana'</code>，其他地区与过去一样，伸到没有读音的相邻字上，最多为注音字号的四分之一。<code>align</code>：比基字短的读音怎样排开：<code>'jis'</code>按1:2:1（两端各半份，中间各一份），<code>'center'</code>密排居中，<code>'start'</code>从基字起点开始；auto在日本为<code>'jis'</code>，其他地区为<code>'center'</code>。<code>smallKana: 'full'</code>把读音中的小假名排成全尺寸（<code>'keep'</code>为默认值，按原样）。注音自己的<code>mode</code>和<code>align</code>优先。</td>
+      <td><code>:ruby[…]</code>和<code>&#123;紅樓|hóng|lóu&#125;</code>的注音：字体（默认与正文相同）、字号（默认为正文的<code>&#123; value: 0.5, unit: 'em' &#125;</code>；注音符号为其60%）、颜色，以及注音本身未指定时的位置（<code>'auto'</code>：注音符号在每个字的右侧；拼音和假名在横排时位于文字上方，竖排时位于右侧）。<code>overhang</code>：比基字长的读音最多能伸到相邻字上多少：<code>'kana'</code>伸到假名、ー和标点的空白一侧上一个注音字，伸到开括号上半个，汉字上不伸（JLReq §3.3.8）；<code>'any'</code>伸到任何没有读音的相邻字上半个注音字；<code>'none'</code>不伸；auto在日本为<code>'kana'</code>，其他地区与过去一样，伸到没有读音的相邻字上，最多为注音字号的四分之一。<code>align</code>：比基字短的读音怎样排开：<code>'jis'</code>按1:2:1（两端各半份，中间各一份），<code>'center'</code>密排居中，<code>'start'</code>从基字起点开始；auto在日本为<code>'jis'</code>，其他地区为<code>'center'</code>。<code>smallKana: 'full'</code>把读音中的小假名排成全尺寸（<code>'keep'</code>为默认值，按原样）。注音自己的<code>mode</code>和<code>align</code>优先。</td>
     </tr>
     <tr>
       <td><code>warichu</code></td>
-      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close?, minChars? &#125;</code></td>
       <td>正文的一半大小；日本用括号（），其他地区无括号</td>
       <td><code>:warichu[…]</code>的双行夹注：夹注的字号（默认半个em，两行正好填满一行的em）、颜色，以及按正文字号排在第一行之前、最后一行之后的括号（夹注自己的<code>open</code> / <code>close</code>优先）。在日本，空的<code>open</code>或<code>close</code>（<code>''</code>）让夹注不加这一侧的括号。<code>minChars</code>（默认<code>2</code>）是在夹注内部断行时断点两侧至少各留的字数：不超过三个字的夹注不会被拆开，找不到其他断点的行退回到<code>lineBreak</code>允许的断点，设为<code>1</code>时凡允许之处都可断行，与postext 1.27及更早版本相同。postext 1.28之前保存、正文中有夹注的配置按<code>1</code>读取。自postext 1.28起。</td>
     </tr>
@@ -336,7 +336,7 @@ interface CjkConfig {
 cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 ```
 
-`enabled`时，配置在被读取之前就会改写：每栏宽为`charsPerLine`个`bodyText.fontSize`的em，版心高为`linesPerPage`行`bodyText.lineHeight`；`layoutType: 'double'`时，栏间距为`layout.gutterWidth`取整到整数个em，至少一个。`page.margins`中的页边距作为最小值：版心放在它们留出区域的正中，每个页边距在其方向上增加剩余空间的一半（镜像页边距的书保留内外页边距的差别，二者增加相同的量）。未设置时，`charsPerLine`和`linesPerPage`取能排下的最大值。超出能排下的数值会减小到能排下的值，并报告一条`cjkGridClamped`配置警告。字号和行距保持原值。在`oneAndHalf`版式中，`charsPerLine`指主栏；侧栏取最接近`sideColumnPercent`在所配置页边距内给出宽度的整数个em（至少一个），栏间距按双栏的方式取整，并改写`sideColumnPercent`，使两栏都按整数个em切分。竖排时（`layout.writingMode: 'vertical-rl'`），一行的字符沿页面向下排，各行横向排列，因此`charsPerLine`量的是页面高度，`double`版式得到上下叠放的两栏，叠加显示的字格立在字符居中的轴线上。
+`enabled`时，配置在被读取之前就会改写：每栏宽为`charsPerLine`个`bodyText.fontSize`的em，版心高为`linesPerPage`行`bodyText.lineHeight`；`layoutType: 'double'`时，栏间距为`layout.gutterWidth`取整到整数个em，至少一个。`page.margins`中的页边距作为最小值：版心放在它们留出区域的正中，每个页边距在其方向上增加剩余空间的一半（使用对称页边距的书保留内外页边距的差别，二者增加相同的量）。未设置时，`charsPerLine`和`linesPerPage`取能排下的最大值。超出能排下的数值会减小到能排下的值，并报告一条`cjkGridClamped`配置警告。字号和行距保持原值。在`oneAndHalf`版式中，`charsPerLine`指主栏；侧栏取最接近`sideColumnPercent`在所配置页边距内给出宽度的整数个em（至少一个），栏间距按双栏的方式取整，并改写`sideColumnPercent`，使两栏都按整数个em切分。竖排时（`layout.writingMode: 'vertical-rl'`），一行的字符沿页面向下排，各行横向排列，因此`charsPerLine`量的是页面高度，`double`版式得到上下叠放的两栏，叠加显示的字格立在字符居中的轴线上。
 
 网格上的页面要排满网格所数的行数，所以会让一栏少排一行的两条规则也随网格而定。`bodyText.avoidWidows`在栏底只容得下段落的一行时把整段移到下一栏，在网格上默认关闭。`bodyText.avoidOrphans`从上一栏让出一行，免得段落只剩一行落在下一栏的栏首；中文文档保留这条规则（孤行，clreq §7.1.2），`japan`地区则默认关闭：JLReq §3.5.4计的是段落末行的字数，而不是换页处的行数。配置里写明的值照旧生效；postext 1.28之前保存的文档两条规则都保持开启（`configVersion` 12）。
 
@@ -364,14 +364,15 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 在VDT中，带标注的片段带有`cjkMarks`，排版把着重号和线标作为`VDTLine.marks`放在各行上（点、圆圈、芝麻点、直线、双线、点线和波浪线，位于该行的排版方向坐标系中），Canvas、HTML和PDF按原样绘制（PDF：`Artifact /Layout`；HTML：`aria-hidden`框，带着重号的文字放在`<em>`中）。注音基字的片段带有`ruby`（注音及其各段；日文读音还带有它与熟语中其他字共用的注音`id`以及`jukugo`），注音把基字拉开时在`inkOffset`处并按`tracking`绘制基字；带汉文训读记号的字带有`kunten`（各段及其竖点）；夹注在一行上的部分是一个片段，其`text`先是上一行、再是下一行，其`warichu`保存渲染器实际绘制的两行。带标签的PDF把注音放进其基字`Ruby`的`RT`中，把夹注放进`Warichu`中，该行的`/ActualText`读出基字文字，夹注只读一次。着重号、注音和夹注在正文、标题、列表和标注框中绘制，也在资源的题注、表格单元格和注释中绘制，其行与正文行一样带有`marks`和`ruby`；设计元素中的文字保留原文，但不绘制这些标注。
 
-解析函数和精简函数与其他部分一致。`spaceAfterQuestion`、`paragraphStartBracket`和`wordBreak`，以及注音的`overhang`、`align`和`smallKana`，只在它们改变了什么时（在日本，或者明确设置时）才出现在解析后的配置中。`setCjkLineBreak`和`setCjkComposition`为在`buildDocument`之外进行的测量设定级别和排版方式（标点宽度、悬挂、汉字与拉丁字母间距；`cjkCompositionOf(resolved.cjk, dpi)`），`buildDocument`则根据配置设定它们。在构建之外，标点保留完整的前进宽度，也不加汉字与拉丁字母间距：
+解析函数和精简函数与其他部分一致。`spaceAfterQuestion`、`paragraphStartBracket`和`wordBreak`，以及注音的`overhang`、`align`和`smallKana`，只在它们改变了什么时（在日本，或者明确设置时）才出现在解析后的配置中。`circledNumbers`只以`'western'`出现，`composeDesignText`只以`false`出现。`setCjkLineBreak`和`setCjkComposition`为在`buildDocument`之外进行的测量设定级别和排版方式（标点宽度、悬挂、汉字与拉丁字母间距；`cjkCompositionOf(resolved.cjk, dpi, locale)`，`locale`为文档语言），`buildDocument`则根据配置设定它们。在构建之外，标点保留完整的前进宽度，也不加汉字与拉丁字母间距：
 
 ```ts
 import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
 
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   trimLineStart: true, hangingPunctuation: 'none', titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' },
+//   latinSpacingEdge: 'letters', uprightDigits: 2,
 //   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
@@ -380,7 +381,8 @@ resolveCjkConfig(undefined, 'zh-HK');
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half',
+//   titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' }, latinSpacingEdge: 'western', …,
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },

@@ -5,7 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import type { ColorValue, Dimension, DimensionUnit, LabelStyle, ParagraphStyleConfig } from 'postext';
 import { resolveBodyTextConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, DimensionInput, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
@@ -119,17 +119,20 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-style-id={style.id}>
-      <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="truncate text-xs font-medium" style={{ color: 'var(--foreground)' }} title={style.name ?? style.id}>
-          {style.name || style.id}
-        </span>
+    <ItemCard
+      list="labelStyles"
+      id={style.id}
+      styleId={style.id}
+      title={style.name || style.id}
+      subtitle={style.name && style.name !== style.id ? style.id : undefined}
+      actions={
         <ConfirmPopover message={labels.labelStyleDeleteConfirm} onConfirm={onRemove}>
           {({ open }) => (
             <IconButton label={labels.chipStyleDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
           )}
         </ConfirmPopover>
-      </div>
+      }
+    >
 
       <div className="mb-2 flex flex-col gap-2">
         <FieldRow
@@ -345,7 +348,7 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
           onReset={reset('overlap')}
         />
       </CollapsibleSection>
-    </div>
+    </ItemCard>
     </SearchScope>
   );
 }
@@ -388,6 +391,7 @@ export const LabelStylesSection = memo(function LabelStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
+    moveCardState('labelStyles', id, nextId);
     // The anchors and label lines that name the old id follow it (#994).
     const done = applyLabelStyleRename(dispatch, styles, id, nextId, { chapters, resources: resources ?? [], activeChapterId });
     setRenamedNote(
@@ -415,6 +419,7 @@ export const LabelStylesSection = memo(function LabelStylesSection() {
           {labels.labelStylesEmpty}
         </p>
       )}
+      <ItemCardListActions list="labelStyles" ids={styles.map((s) => s.id)} />
       {styles.map((style) => (
         <LabelStyleCard
           key={style.id}
@@ -432,7 +437,7 @@ export const LabelStylesSection = memo(function LabelStylesSection() {
           onRemove={() => removeStyle(style.id)}
         />
       ))}
-      <Button variant="outline" size="xs" icon={<Plus size={12} />} onClick={() => write([...styles, { id: nextStyleId(styles), name: labels.labelStyleNewName }])} className="mt-1">
+      <Button variant="outline" size="xs" icon={<Plus size={12} />} onClick={() => { const id = nextStyleId(styles); openCard('labelStyles', id); write([...styles, { id, name: labels.labelStyleNewName }]); }} className="mt-1">
         {labels.labelStyleAdd}
       </Button>
     </CollapsibleSection>

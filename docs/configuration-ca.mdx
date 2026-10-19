@@ -5,17 +5,17 @@ export const metadata = {
   sidebarTitle: 'Configuració',
   description: "Què és una configuració de Postext i en quina de les dinou pàgines de la referència s'explica cada grup de paràmetres",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '5 min',
   order: 4,
-  plainSummary: "Aquesta pàgina obre la referència de tots els paràmetres que decideixen l'aspecte de les teves pàgines. Un sol grup de paràmetres desa totes les decisions: mida de pàgina, nombre de columnes, tipografies, cos del text, títols, requadres, colors i molt més. Només escrius els paràmetres que vols canviar, perquè cadascun parteix d'un valor raonable. La referència està repartida en dinou pàgines. La llista d'aquesta pàgina enllaça totes les seccions, així que pots anar directament a la part que necessites.",
+  plainSummary: "Aquesta pàgina obre la referència de tots els paràmetres que controlen l'aspecte de les teves pàgines. Un sol grup de paràmetres recull totes les decisions: mida de la pàgina, nombre de columnes, fonts, mida del text, títols, requadres, colors i molt més. Només has d'escriure els paràmetres que vols canviar, perquè cadascun ja té un valor raonable. La referència està repartida en dinou pàgines. La llista d'aquesta pàgina enllaça totes les seccions, així que pots anar directament a la part que necessites.",
 };
 
 # Configuració
 
-**Cada decisió de composició a Postext la controla un únic objecte de configuració.**
+**A Postext, totes les decisions de composició depenen d'un sol objecte de configuració.**
 
-`PostextConfig` controla les dimensions de pàgina, la disposició de columnes, la tipografia del text de cos, els estils d'encapçalament, la llengua del document (`locale`) i més. Totes les propietats són opcionals — Postext inclou valors per defecte assenyats, inspirats en la tipografia tradicional de llibres. Només cal que especifiquis el que vulguis canviar.
+`PostextConfig` controla les dimensions de la pàgina, la disposició de les columnes, la tipografia del text de cos, els estils dels encapçalaments, la llengua del document (`locale`) i molt més. Totes les propietats són opcionals: Postext porta valors per defecte raonables, inspirats en la tipografia tradicional del llibre. Només cal que indiquis el que vols canviar.
 
 ```ts
 import { buildDocument } from 'postext';
@@ -28,116 +28,116 @@ const document = buildDocument(content, {
 });
 ```
 
-Per a una visió general de com el motor processa aquesta configuració, consulta la pàgina d'[Arquitectura](/ca/docs/architecture).
+Per veure en conjunt com processa el motor aquesta configuració, consulta la pàgina d'[Arquitectura](/ca/docs/architecture).
 
 
 ## Índex
 
-La referència està repartida en dinou pàgines. Cada grup d'aquesta llista és una pàgina, seguida de les seccions que conté.
+La referència està repartida en dinou pàgines. Cada grup d'aquesta llista correspon a una pàgina i va seguit de les seccions que conté.
 
 **[Pàgina i disposició](/ca/docs/configuration-page-layout)**
 
-- [Pàgina](/ca/docs/configuration-page-layout#pàgina) — mida, marges, retícula de base, marques de tall, [enquadernació](/ca/docs/configuration-page-layout#enquadernació).
-- [Disposició](/ca/docs/configuration-page-layout#disposició) — nombre de columnes, espai entre columnes, filets, [escriptura vertical](/ca/docs/configuration-page-layout#escriptura-vertical).
+- [Pàgina](/ca/docs/configuration-page-layout#pàgina): mida, marges, retícula de base, marques de tall, [numeració](/ca/docs/configuration-page-layout#numeració), [enquadernació](/ca/docs/configuration-page-layout#enquadernació).
+- [Disposició](/ca/docs/configuration-page-layout#disposició): nombre de columnes, espai entre columnes, filets, [escriptura vertical](/ca/docs/configuration-page-layout#escriptura-vertical).
 
 **[Capçaleres i peus de pàgina](/ca/docs/configuration-headers-footers)**
 
-- [Capçaleres i peus](/ca/docs/configuration-headers-footers#capçaleres-i-peus) — elements de text i de línia per pàgina amb marcadors, paritat i alineació.
+- [Capçaleres i peus](/ca/docs/configuration-headers-footers#capçaleres-i-peus): elements de text, filets, caixes i imatges de cada pàgina, amb marcadors, paritat, tipus de pàgina i posicionament.
 
 **[Text de cos](/ca/docs/configuration-text)**
 
-- [Text de cos](/ca/docs/configuration-text#text-de-cos) — tipografia, partició de mots, tabulacions, vídues i òrfenes.
+- [Text de cos](/ca/docs/configuration-text#text-de-cos): tipografia, justificació i tall de línies, [cites](/ca/docs/configuration-text#cites), [vers](/ca/docs/configuration-text#vers), [tabulacions](/ca/docs/configuration-text#tabulacions) i [caplletres](/ca/docs/configuration-text#caplletres).
 
 **[Partició de mots i llengua](/ca/docs/configuration-language)**
 
-- [Partició de mots](/ca/docs/configuration-language#partició-de-mots) — patrons de partició de mots, paraules que no es parteixen, text en bandera.
-- [Llengua del document](/ca/docs/configuration-language#llengua-del-document) — el `locale` de primer nivell: alternativa per a la partició de mots, tipus de recurs integrats i cadenes de continuació de taules i d'avisos partits, llengua etiquetada en un PDF accessible; les [xifres](/ca/docs/configuration-language#xifres-del-document) (`numerals`) i la [direcció del text](/ca/docs/configuration-language#direcció-del-text) (`direction`) que se'n desprenen; i les [llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures) que Postext compon. La guia dels llibres de dreta a esquerra és [Composició àrab](/ca/docs/arabic-layout).
-- [Llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures) — les escriptures que compon Postext i les pàgines que tracten cadascuna.
-- [Text àrab](/ca/docs/configuration-language#text-àrab) — formes de les lletres, kashida, signes vocàlics i xifres del text àrab.
+- [Partició de mots](/ca/docs/configuration-language#partició-de-mots): patrons de partició, paraules que no es parteixen i text en bandera.
+- [Llengua del document](/ca/docs/configuration-language#llengua-del-document) (el `locale` de primer nivell), que fixa la partició de mots de reserva, els tipus de recurs integrats, els textos de continuació de les taules i dels requadres partits i la llengua que s'etiqueta en un PDF accessible; les [xifres](/ca/docs/configuration-language#xifres-del-document) (`numerals`) i la [direcció del text](/ca/docs/configuration-language#direcció-del-text) (`direction`) que se'n desprenen; i les [llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures) que Postext compon. La guia dels llibres de dreta a esquerra és [Composició àrab](/ca/docs/arabic-layout).
+- [Llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures): els sistemes d'escriptura que compon Postext i les pàgines que expliquen cadascun.
+- [Text àrab](/ca/docs/configuration-language#text-àrab): la forma de les lletres, la caixida, els signes vocàlics i les xifres del text àrab.
 
 **[Encapçalaments](/ca/docs/configuration-headings)**
 
-- [Encapçalaments](/ca/docs/configuration-headings#encapçalaments) — valors generals i sobreescriptures H1–H6.
+- [Encapçalaments](/ca/docs/configuration-headings#encapçalaments): valors comuns i valors propis de cada nivell, de H1 a H6.
 
 **[Vídues, òrfenes i equilibratge](/ca/docs/configuration-page-flow)**
 
-- [Òrfenes, vídues, *runts* i regles de cohesió](/ca/docs/configuration-page-flow#òrfenes-vídues-runts-i-regles-de-cohesió) — claus de `bodyText` que mantenen junts les línies i els blocs en un salt de columna.
-- [Equilibratge de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes) — les palanques que igualen el final de totes les columnes, en ordre editorial.
+- [Òrfenes, vídues, línies curtes i regles de cohesió](/ca/docs/configuration-page-flow#òrfenes-vídues-línies-curtes-i-regles-de-cohesió): claus de `bodyText` que mantenen juntes les línies i els blocs quan hi ha un salt de columna.
+- [Equilibratge de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes): els recursos que fan que totes les columnes acabin a la mateixa altura, en l'ordre que seguiria un editor.
 
 **[Llistes i matemàtiques](/ca/docs/configuration-lists-math)**
 
-- [Llistes no ordenades](/ca/docs/configuration-lists-math#llistes-no-ordenades) i [Llistes ordenades](/ca/docs/configuration-lists-math#llistes-ordenades) — vinyetes, numeració, imbricació.
-- [Matemàtiques](/ca/docs/configuration-lists-math#matemàtiques) — renderització LaTeX, escala, color, marges.
+- [Llistes amb pics](/ca/docs/configuration-lists-math#llistes-amb-pics) i [Llistes numerades](/ca/docs/configuration-lists-math#llistes-numerades): pics, numeració i llistes imbricades.
+- [Matemàtiques](/ca/docs/configuration-lists-math#matemàtiques): renderització de LaTeX, escala, color i marges.
 
 **[Notes i referències](/ca/docs/configuration-notes-references)**
 
-- [Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina) — `footnotes`: on van les notes citades amb `[^id]`, com es numeren i quin aspecte tenen.
-- [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies) — `lineNumbers`: el número de cada cinquena línia dels versos, o del text, al marge; què es compta, on torna a començar el compte, a quin costat van els números.
-- [Referències creuades](/ca/docs/configuration-notes-references#referències-creuades) — `crossRefs`: les paraules que s'imprimeixen al costat del número o la pàgina d'un `:ref`, i el seu estil per defecte.
-- [Cites](/ca/docs/configuration-notes-references#cites) — `citations`: l'estil de citació i l'aspecte de les cites i de la bibliografia.
-- [Sumari](/ca/docs/configuration-notes-references#índex-de-continguts) — el que imprimeix `:::toc`: tipografia de les entrades, línies de punts, números de pàgina, línies d'autors, files de part.
-- [Índex analític](/ca/docs/configuration-notes-references#índex-analític) — el que imprimeix `:::index`: tipografia de les entrades, sagnats, separadors i intervals de pàgines, grups per inicial, llengua d'ordenació.
+- [Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina) (`footnotes`): on van les notes citades amb `[^id]`, com es numeren i quin aspecte tenen.
+- [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies) (`lineNumbers`): un número al marge cada cinc línies dels versos o del text; què es compta, on torna a començar el compte i a quin costat van els números.
+- [Referències creuades](/ca/docs/configuration-notes-references#referències-creuades) (`crossRefs`): les paraules que s'imprimeixen al voltant del número o de la pàgina d'un `:ref`, i l'estil per defecte.
+- [Cites](/ca/docs/configuration-notes-references#cites) (`citations`): l'estil de citació i l'aspecte de les cites i de la bibliografia.
+- [Índex general](/ca/docs/configuration-notes-references#índex-general): el que imprimeix `:::toc` (tipografia de les entrades, línies de punts, números de pàgina, línies d'autors i files de les parts).
+- [Índex analític](/ca/docs/configuration-notes-references#índex-analític): el que imprimeix `:::index` (tipografia de les entrades, sagnats, separadors i intervals de pàgines, grups per inicial i llengua d'ordenació).
 
 **[Tipografia de l'Àsia oriental](/ca/docs/configuration-east-asian)**
 
-- [Tipografia de l'Àsia oriental](/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental) — `cjk`: les convencions regionals i el tall de línia del text en xinès, japonès i coreà, com s'eixamplen les seves línies justificades, les amplades de la puntuació i la puntuació penjada, l'espai entre xinès i llatí, la retícula de caràcters, els números que van drets en text vertical, i les marques, el ruby, les notes warichu i les marques de kanbun. Les guies de tot plegat són [Composició xinesa](/ca/docs/chinese-layout) i [Composició japonesa](/ca/docs/japanese-layout).
+- [Tipografia de l'Àsia oriental](/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental) (`cjk`): les convencions regionals i el tall de línies del text xinès, japonès i coreà, com es reparteix l'espai a les línies justificades, l'amplada de la puntuació i la puntuació penjada, l'espai entre els caràcters xinesos i el text llatí, la retícula de caràcters, els números drets en el text vertical, i les marques, el ruby, les notes warichu i les marques de kanbun. Les guies de tot plegat són [Composició xinesa](/ca/docs/chinese-layout) i [Composició japonesa](/ca/docs/japanese-layout).
 
 **[Recursos i taules](/ca/docs/configuration-resources)**
 
-- [Tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs) — numeració tipada per a figures, taules i tipus personalitzats.
-- [Estil de taules](/ca/docs/configuration-resources#estil-de-taules) (amb [estils de taula amb nom](/ca/docs/configuration-resources#estils-de-taula-amb-nom)) i [Estil de peus de recurs](/ca/docs/configuration-resources#estil-dels-peus-de-recurs) — tipografia i decoració de les taules-recurs i els seus peus.
-- [Estil de diagrames](/ca/docs/configuration-resources#estil-dels-diagrames) — recoloració a una sola tinta dels diagrames SVG incrustats per a impressió amb tinta plana.
-- [Estil de vídeo](/ca/docs/configuration-resources#estil-de-vídeo) — `videoStyle`: la marca de reproducció i el codi QR sobre el pòster d'un vídeo, i el que ofereixen els seus reproductors al visor HTML i en EPUB.
+- [Tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs): numeració per tipus de les figures, les taules i els tipus personalitzats.
+- [Estil de taules](/ca/docs/configuration-resources#estil-de-taules) (amb [estils de taula amb nom](/ca/docs/configuration-resources#estils-de-taula-amb-nom)) i [Estil dels peus de recurs](/ca/docs/configuration-resources#estil-dels-peus-de-recurs): tipografia i decoració de les taules que són recursos i dels seus peus.
+- [Estil dels diagrames](/ca/docs/configuration-resources#estil-dels-diagrames): com es tornen a pintar amb una sola tinta els diagrames SVG incrustats, per imprimir-los amb una tinta plana.
+- [Estil de vídeo](/ca/docs/configuration-resources#estil-de-vídeo) (`videoStyle`): la marca de reproducció i el codi QR que s'imprimeixen sobre el pòster d'un vídeo, i què ofereixen els reproductors al visor HTML i a l'EPUB.
 
 **[Estils i parts](/ca/docs/configuration-styles)**
 
-- [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf) — estils amb nom per a contenidors `:::paragraphs`: bibliografies, glossaris, notes.
-- [Estils de xip](/ca/docs/configuration-styles#estils-de-xip) — `chipStyles`: estils amb nom per al `:chip[…]` en línia: la caixa d'un banc de paraules, una tecla, una etiqueta.
-- [Estils de ressaltat](/ca/docs/configuration-styles#estils-de-ressaltat) — `markStyles`: estils amb nom per al `:mark[…]` en línia: la franja darrere d'una frase ressaltada que passa de línia.
-- [Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi) — `codeStyle`: la lletra, la caixa, l'amplada del tabulador, les línies llargues, els números de línia i els colors dels elements dels llistats ```` ``` ````, l'acoloriment de sintaxi i el seu punt d'enganxament per a ressaltadors, i el codi en línia en una lletra de codi.
-- [Parts](/ca/docs/configuration-styles#parts) — pàgines separadores de part per a contenidors `:::part`: paritat, àrea de cos, disseny d'obertura, tipografia del cos.
-- [Estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) — estils amb nom per a encapçalaments `{style="…"}`: capítols sense numerar, preliminars amb capçaleres pròpies, geometria i paleta.
+- [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf): estils amb nom per als contenidors `:::paragraphs`, com ara bibliografies, glossaris o notes.
+- [Estils de xip](/ca/docs/configuration-styles#estils-de-xip) (`chipStyles`): estils amb nom per al xip en línia `:chip[…]`, com ara la caixa d'un banc de paraules, una tecla o una etiqueta.
+- [Estils de ressaltat](/ca/docs/configuration-styles#estils-de-ressaltat) (`markStyles`): estils amb nom per al ressaltat en línia `:mark[…]`, és a dir, la franja que hi ha darrere d'una frase ressaltada, encara que passi a la línia següent.
+- [Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi) (`codeStyle`): la lletra, la caixa, l'amplada del tabulador, les línies llargues, els números de línia i els colors dels elements dels llistats ```` ``` ````; l'acoloriment de sintaxi i el punt d'enganxament per connectar-hi un ressaltador, i el codi en línia amb una lletra de codi.
+- [Parts](/ca/docs/configuration-styles#parts): les pàgines que obren les parts dels contenidors `:::part` (paritat, àrea del cos, disseny d'obertura i tipografia del cos).
+- [Estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament): estils amb nom per als encapçalaments `{style="…"}`, com ara capítols sense numerar o preliminars amb capçaleres pròpies; geometria i paleta.
 
-**[Requadres d'avís](/ca/docs/configuration-callouts)**
+**[Requadres](/ca/docs/configuration-callouts)**
 
-- [Estils d'avís](/ca/docs/configuration-callouts#estils-davís) — notes, consells i objectius en caixa per a contenidors `:::callout`.
+- [Estils de requadre](/ca/docs/configuration-callouts#estils-de-requadre): notes, consells i objectius dins d'una caixa, per als contenidors `:::callout`.
 
 **[Paràmetres de còmics](/ca/docs/configuration-comics)**
 
-- [Còmics](/ca/docs/configuration-comics#còmics) — `comics`: el marc i els carrers de les pàgines de còmic, els estils de vinyeta, la retolació, els estils de bafarada i el repartiment. La guia és [Còmics](/ca/docs/comics).
+- [Còmics](/ca/docs/configuration-comics#còmics) (`comics`): el marc i els carrers de les pàgines de còmic, els estils de vinyeta, la retolació, els estils de bafarada i el repartiment de personatges. La guia és [Còmics](/ca/docs/comics).
 
 **[Paràmetres de pàgines compostes](/ca/docs/configuration-composed-pages)**
 
-- [Plantilles de pàgina](/ca/docs/configuration-composed-pages#plantilles-de-pàgina) — `pageTemplates`: els marcs, grups i decoració d'una pàgina composta, l'herència entre plantilles i les variants de pàgina senar i parella. [Estils de rètol](/ca/docs/configuration-composed-pages#estils-de-rètol) — `labelStyles`: l'aspecte dels rètols que es col·loquen als ancoratges d'una imatge. Tots els problemes que pot tenir una plantilla són a [Avisos de les plantilles de pàgina](/ca/docs/configuration-composed-pages#avisos-de-les-plantilles-de-pàgina).
+- [Plantilles de pàgina](/ca/docs/configuration-composed-pages#plantilles-de-pàgina) (`pageTemplates`): els marcs, els grups i la decoració d'una pàgina composta, l'herència entre plantilles i les variants per a pàgina senar i parella. [Estils de rètol](/ca/docs/configuration-composed-pages#estils-de-rètol) (`labelStyles`): l'aspecte dels rètols que es col·loquen a les àncores d'una imatge. Tots els problemes que pot tenir una plantilla són a [Avisos de les plantilles de pàgina](/ca/docs/configuration-composed-pages#avisos-de-les-plantilles-de-pàgina).
 
 **[Fonts, colors i sortida](/ca/docs/configuration-fonts-colors-viewers)**
 
-- [Unitats i colors](/ca/docs/configuration-fonts-colors-viewers#unitats-i-colors) + [Paleta de colors](/ca/docs/configuration-fonts-colors-viewers#paleta-de-colors) — `Dimension`, `ColorValue`, colors amb nom.
-- [Fonts personalitzades](/ca/docs/configuration-fonts-colors-viewers#fonts-personalitzades) — declarar famílies tipogràfiques pujades per l'usuari al costat de Google Fonts.
-- [Visor HTML](/ca/docs/configuration-fonts-colors-viewers#visor-html) — amplada objectiu de columna i talls per al backend HTML.
-- [Visor Canvas](/ca/docs/configuration-fonts-colors-viewers#visor-canvas) — `canvasViewer`: l'espai entre les dues pàgines d'un parell i entre una fila i la següent al Canvas del Sandbox.
-- [Generació de PDF (configuració)](/ca/docs/configuration-fonts-colors-viewers#generació-de-pdf-configuració) — outlines, sortida accessible (etiquetada) i espai de color forçat per al backend PDF.
-- [Producció per a impremta (configuració)](/ca/docs/configuration-fonts-colors-viewers#producció-per-a-impremta-configuració) — `print`: PDF/X-1a i PDF/X-4, els perfils de sortida ICC, el negre (grisos només en K, sobreimpressió, negre enriquit), els colors definits en CMYK, el preflight i la simulació de la impressió.
-- [Comprovació del contrast (configuració)](/ca/docs/configuration-fonts-colors-viewers#comprovació-del-contrast-configuració) — `contrast`: el text davant del seu fons al nivell AA o AAA de WCAG, en pantalla i sobre el paper del perfil de sortida, i el text calat massa fi per a impremta.
-- [Comprovació del contingut (configuració)](/ca/docs/configuration-fonts-colors-viewers#comprovació-del-contingut-configuració) — `checks.contentInConfig`: textos de disseny que desen el text del llibre en lloc de marcadors, amb una llista de frases permeses per al títol i l'editorial.
-- [Visor Folio (configuració)](/ca/docs/configuration-fonts-colors-viewers#visor-folio-configuració) — paper, enquadernació, superfície i llum del visor del llibre en 3D.
-- [Depuració](/ca/docs/configuration-fonts-colors-viewers#depuració) — superposicions visuals i avisos d'autoria per a l'editor.
+- [Unitats i colors](/ca/docs/configuration-fonts-colors-viewers#unitats-i-colors) + [Paleta de colors](/ca/docs/configuration-fonts-colors-viewers#paleta-de-colors): `Dimension`, `ColorValue`, colors amb nom.
+- [Fonts personalitzades](/ca/docs/configuration-fonts-colors-viewers#fonts-personalitzades): com declarar les famílies de fonts que puja l'usuari, al costat de les de Google Fonts.
+- [Visor HTML](/ca/docs/configuration-fonts-colors-viewers#visor-html): l'amplada de columna desitjada i el tall de línies de la sortida HTML.
+- [Visor Canvas](/ca/docs/configuration-fonts-colors-viewers#visor-canvas) (`canvasViewer`): l'espai entre les dues pàgines d'una parella i entre una fila i la següent a la pestanya Canvas del Sandbox.
+- [Generació de PDF (configuració)](/ca/docs/configuration-fonts-colors-viewers#generació-de-pdf-configuració): marcadors (*outlines*), sortida accessible (etiquetada) i espai de color forçat per a la sortida PDF.
+- [Producció per a impremta (configuració)](/ca/docs/configuration-fonts-colors-viewers#producció-per-a-impremta-configuració) (`print`): PDF/X-1a i PDF/X-4, els perfils de sortida ICC, el negre (grisos només amb K, sobreimpressió, negre enriquit), els colors definits en CMYK, el preflight i la simulació de la impressió.
+- [Comprovació del contrast (configuració)](/ca/docs/configuration-fonts-colors-viewers#comprovació-del-contrast-configuració) (`contrast`): el contrast del text amb el fons al nivell AA o AAA de les WCAG, en pantalla i sobre el paper del perfil de sortida, i el text calat massa fi per imprimir-lo.
+- [Comprovació del contingut (configuració)](/ca/docs/configuration-fonts-colors-viewers#comprovació-del-contingut-configuració) (`checks.contentInConfig`): avisa dels textos del disseny que contenen el text del llibre en lloc de marcadors, amb una llista de frases permeses per al títol i l'editorial.
+- [Visor Folio (configuració)](/ca/docs/configuration-fonts-colors-viewers#visor-folio-configuració): el paper, l'enquadernació, la superfície i la llum del visor del llibre en 3D.
+- [Depuració](/ca/docs/configuration-fonts-colors-viewers#depuració): superposicions visuals i avisos de redacció per a l'editor.
 
 **[Ús programàtic](/ca/docs/configuration-programmatic-usage)**
 
-- [Ús programàtic](/ca/docs/configuration-programmatic-usage#ús-programàtic) — `buildDocument`, els avisos que registra, resolvers, memòries cau.
-- [Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker) — builds fora del fil principal amb cancel·lació.
+- [Ús programàtic](/ca/docs/configuration-programmatic-usage#ús-programàtic): `buildDocument`, els avisos que retorna, els *resolvers* i les memòries cau.
+- [Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker): composicions fora del fil principal, que es poden cancel·lar.
 
 **[Fitxers PDF](/ca/docs/configuration-pdf-output)**
 
-- [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf) — `postext-pdf`: proveïdors de fonts, fonts CJK, workers i fitxers a punt per a impremta.
+- [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf) (`postext-pdf`): proveïdors de fonts, fonts CJK, workers i fitxers a punt per a la impremta.
 
 **[HTML, Folio i EPUB](/ca/docs/configuration-html-folio-epub)**
 
-- [Integrar el visor HTML](/ca/docs/configuration-html-folio-epub#integrar-el-visor-html) i [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf) — receptes completes.
-- [Un llibre en 3D (`postext-folio`)](/ca/docs/configuration-html-folio-epub#un-llibre-en-3d-postext-folio) — el document compost com un llibre imprès obert sobre una taula, amb fulls que el lector passa.
-- [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub) — fitxers EPUB 3 de maquetació fixa i fluida a partir de la mateixa maquetació, i com comprovar-los amb EPUBCheck.
+- [Integrar el visor HTML](/ca/docs/configuration-html-folio-epub#integrar-el-visor-html) i [Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf): receptes completes, de principi a fi.
+- [Un llibre en 3D (`postext-folio`)](/ca/docs/configuration-html-folio-epub#un-llibre-en-3d-postext-folio): el document compost, presentat com un llibre imprès obert sobre una taula, amb fulls que el lector pot passar.
+- [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub): fitxers EPUB 3 de maquetació fixa i de text adaptable a partir de la mateixa maquetació, i com comprovar-los amb EPUBCheck.
 
 **[Paquets .postext](/ca/docs/configuration-bundles)**
 
-- [Paquets (fitxers `.postext`)](/ca/docs/configuration-bundles#paquets-fitxers-postext) — un llibre sencer en un sol fitxer: crear, obrir i construir fitxers `.postext` des del codi.
+- [Paquets (fitxers `.postext`)](/ca/docs/configuration-bundles#paquets-fitxers-postext): un llibre sencer en un sol fitxer; com crear, obrir i compondre fitxers `.postext` des del codi.

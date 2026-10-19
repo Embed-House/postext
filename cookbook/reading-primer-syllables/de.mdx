@@ -1,7 +1,7 @@
 ---
 title: "Erstlesebuch mit Silben-Chips"
 summary: "Eine Fibeleinheit zum Buchstaben M: die Laute jedes Wortes als Chips in der Farbe seines Vokals, dazu ein Raster mit Bildwörtern, ein Aquarell in jeder Zelle."
-plain: "Drei Seiten eines Lesebuchs für kleine Kinder zum Buchstaben M. Jeder Laut eines Wortes steht in einem kleinen farbigen Etikett, und jedes Wort in einem Raster hat sein eigenes Bild."
+plain: "Drei Seiten eines Lesebuchs für kleine Kinder zum Buchstaben M. Jeder Laut eines Wortes steht in einem kleinen farbigen Schildchen, und jedes Wort in einem Raster hat sein eigenes Bild."
 description: "Eine Einheit einer Lesefibel mit Postext: ein Chip-Stil pro Vokal, Wörter als aneinanderstoßende Laut-Chips, ein rundes Bilderraster und Zeilen zum Nachspuren."
 question: "Wie setze ich Silben als farbige Inline-Chips, eine Farbe pro Vokal, in einer Erstlesefibel?"
 aliases: ["Erstlesebuch", "Fibel", "Phonics", "Silben", "Silbenmethode", "Wortfamilien", "Lautknöpfe", "Lesefibel", "Arbeitsheft für Kinder", "Reimwörter", "cartilla", "early reader"]
@@ -18,7 +18,7 @@ Die spanische Ausgabe ist eine andere Einheit, keine Übersetzung: Einheit 7 von
 
 ### 1 · Ein Chip-Stil pro Vokal und eine Funktion, die die Chips schreibt
 
-[Die kurze Antwort](#die-kurze-antwort) baut 21 Chip-Stile, indem sie ein Objekt `syllable` ausbreitet. Es gibt einen gefüllten Stil pro Vokal für das m, einen umrandeten pro Vokal für die anderen Laute, einen Zwilling `-frase` zu jedem dieser zehn und `pinta`, den schwarzen Umriss, den ein Kind ausmalt. `syllables()` macht aus `{m·a·p}` drei `:chip[…]` ohne etwas dazwischen, sodass sich die Laute eines Wortes berühren und der weiße Rand die Naht zeichnet. Ein Chip nimmt die Farbe seines Vokals an, und ein Stück ohne Vokal, hier das m und das p, nimmt den Vokal seines Wortes, sodass *map* von Anfang bis Ende rot ist. Über einen Wortzwischenraum hinweg hält ein Chip mindestens seinen `gap`, und 0,5 em setzt die Wörter einer Zeile zu 24 pt 4,2 mm auseinander, wo das Leerzeichen allein 2,3 mm lässt. Innerhalb eines Satzes würde dieser Abstand den Raum vor dem neuen Wort fast verdoppeln, daher erhält ein Wort, das einem anderen Wort folgt, die Zwillinge `-frase`, deren `gap` von 0 das Leerzeichen von 2,3 mm unverändert lässt. In der spanischen Ausgabe sind die Stücke Silben, `{mi·mo·sa}`, und jede hat einen eigenen Vokal.
+[Die kurze Antwort](#die-kurze-antwort) baut 21 Chip-Stile, indem sie ein Objekt `syllable` mit dem Spread-Operator übernimmt. Es gibt einen gefüllten Stil pro Vokal für das m, einen umrandeten pro Vokal für die anderen Laute, einen Zwilling `-frase` zu jedem dieser zehn und `pinta`, den schwarzen Umriss, den ein Kind ausmalt. `syllables()` macht aus `{m·a·p}` drei `:chip[…]` ohne etwas dazwischen, sodass sich die Laute eines Wortes berühren und der weiße Rand die Naht zeichnet. Ein Chip nimmt die Farbe seines Vokals an, und ein Teil ohne Vokal, hier das m und das p, nimmt den Vokal seines Wortes, sodass *map* von Anfang bis Ende rot ist. Über einen Wortzwischenraum hinweg hält ein Chip mindestens seinen `gap`, und 0,5 em setzt die Wörter einer Zeile zu 24 pt 4,2 mm auseinander, wo das Leerzeichen allein 2,3 mm lässt. Innerhalb eines Satzes würde dieser Abstand den Raum vor dem neuen Wort fast verdoppeln, daher erhält ein Wort, das einem anderen Wort folgt, die Zwillinge `-frase`, deren `gap` von 0 das Leerzeichen von 2,3 mm unverändert lässt. In der spanischen Ausgabe sind die Teile Silben, `{mi·mo·sa}`, und jede hat einen eigenen Vokal.
 
 ### 2 · Ein Zeilenabstand, der die Chips freistellt
 
@@ -30,7 +30,7 @@ Der vertikale Innenabstand und der Rand eines Chips werden außerhalb seiner Zei
 
 <Excerpt region="pictures" />
 
-`setCellImage` setzt ein Bild über den Text einer Zelle, mit einem Bruchteil der Innenbreite der Zelle, hier 0,72 (36,5 mm), und die Zeile wächst, um es aufzunehmen. Jedes Bild ist ein JPEG, auf Weiß gemalt und mit dem Creme der Felder multipliziert, sodass es ohne Kasten auf dem Feld sitzt. Unter jedem Bild steht das Wort in Laut-Chips. Eine Tabellenzelle nimmt Chip-Markup an wie jeder Absatz. Der Tabellenstil `dibujos` rundet den Rahmen und seine Füllungen mit 5 mm und trennt die cremefarbenen Felder mit weißen Linien von 4 pt.
+`setCellImage` setzt ein Bild über den Text einer Zelle, mit einem Bruchteil der Innenbreite der Zelle, hier 0,72 (36,5 mm), und die Zeile wächst, um es aufzunehmen. Jedes Bild ist ein JPEG, auf Weiß gemalt und mit dem Creme der Felder multipliziert, sodass es ohne sichtbaren Rand auf dem Feld sitzt. Unter jedem Bild steht das Wort in Laut-Chips. Eine Tabellenzelle nimmt Chip-Markup an wie jeder Absatz. Der Tabellenstil `dibujos` rundet die äußere Kontur und die Füllungen mit 5 mm und trennt die cremefarbenen Felder mit weißen Linien von 4 pt.
 
 ### 4 · Eine Zeile Abstand vor dem Kasten
 
@@ -48,7 +48,7 @@ Das Mm ist der Text der Überschrift (`{titleText}`); die Nummer der Einheit, di
 
 <Excerpt region="activities" />
 
-Jeder Übungstitel nennt seinen Überschriftenstil, wie in `## Read the sentences {style="lee"}`, und der Stil zeichnet ein Icon mit dem Titel daneben zentriert. Die Titel sind weiterhin Überschriften der Ebene 2, daher bestimmt die Ebene `H2` ihre Abstände: zwei Rasterlinien `lineHeight` für den Titel und zwei weitere `marginTop` darüber.
+Jeder Übungstitel gibt seinen Überschriftenstil an, wie in `## Read the sentences {style="lee"}`, und der Stil zeichnet ein Icon mit dem Titel daneben zentriert. Die Titel sind weiterhin Überschriften der Ebene 2, daher bestimmt die Ebene `H2` ihre Abstände: zwei Rasterlinien `lineHeight` für den Titel und zwei weitere `marginTop` darüber.
 
 ## Varianten
 

@@ -5,7 +5,7 @@ plain: "Un récit japonais classique avec de courtes explications sur ses noms d
 description: "Takekurabe d’Ichiyō dans Postext, notes par double page : appels （1） à droite de la ligne, notes en marge extérieure à gauche, points sésame, et aussi 後注."
 question: "Comment composer les notes d’un livre japonais vertical à côté du texte, sur la double page ?"
 aliases: ["傍注", "bōchū", "notes marginales", "notes latérales", "後注", "kōchū", "notes de fin", "notes japonaises", "注", "（1）", "割注", "appels de note", "notes par double page", "notes en marge extérieure", "傍点", "bōten", "sésame", "たけくらべ", "Takekurabe", "Child's Play", "Higuchi Ichiyō", "樋口一葉", "Yoshiwara"]
-pageNotes: { "1": "La page de titre, seule à gauche : たけくらべ en Mincho gras au milieu de la page avec un court filet prune à côté, 樋口一葉 plus bas, et le colophon en pied.", "2": "Le premier chapitre s’ouvre sur une page de droite : 一 se tient sept caractères plus bas dans une bande de trois lignes, et le texte porte les petits appels （1） à （6） à droite de la ligne, les quatre premiers dans la longue première phrase, après 見返り柳, お齒ぐろ溝, 三階 et 大音寺前.", "3": "La page de gauche : huit lignes de texte avec l’appel （7）, puis, en marge extérieure, un court filet prune et les sept notes de la double page en plus petits caractères, chacune ouverte par son numéro et une espace d’un cadratin.", "4": "La dernière page du chapitre, avec ぎつちよんちよん marqué de points sésame à droite des caractères." }
+pageNotes: { "1": "La page de titre, seule à gauche : たけくらべ en Mincho gras au milieu de la page avec un court filet prune à côté, 樋口一葉 plus bas, et le colophon en pied.", "2": "Le premier chapitre s’ouvre sur une page de droite : 一 se tient sept caractères plus bas dans une bande de trois lignes, et le texte contient les petits appels （1） à （6） à droite de la ligne, les quatre premiers dans la longue première phrase, après 見返り柳, お齒ぐろ溝, 三階 et 大音寺前.", "3": "La page de gauche : huit lignes de texte avec l’appel （7）, puis, en marge extérieure, un court filet prune et les sept notes de la double page en plus petits caractères, chacune ouverte par son numéro et une espace d’un cadratin.", "4": "La dernière page du chapitre, avec ぎつちよんちよん marqué de points sésame à droite des caractères." }
 ---
 
 ## Ce que vous allez composer
@@ -30,7 +30,7 @@ Le Markdown écrit `見返り柳[^1]` après le mot que la note explique, et les
 
 <Excerpt region="opener" />
 
-La première phrase du chapitre appelle quatre notes dans ses trois premières lignes. Composées sous un titre en page 1, elles laisseraient la place de trois lignes de texte : la page de gauche porte ses propres notes et celles de personne d’autre. Une page de titre seule en page 1 repousse le chapitre en page 2, une page de droite, si bien que la première double page contient le texte et toutes ses notes. La page de titre est un titre de niveau 1 dont la maquette remplit la page, ancrée à la coupe pour que le titre se tienne sur l’axe de la page.
+La première phrase du chapitre appelle quatre notes dans ses trois premières lignes. Composées sous un titre en page 1, elles laisseraient la place de trois lignes de texte : la page de gauche reçoit ses propres notes et celles de personne d’autre. Une page de titre seule en page 1 repousse le chapitre en page 2, une page de droite : la première double page contient donc le texte et toutes ses notes. La page de titre est un titre de niveau 1 dont la maquette remplit la page, ancrée à la coupe pour que le titre se tienne sur l’axe de la page.
 
 ### 5 · Placer les hashira et les folios le long de la marge extérieure
 
@@ -53,7 +53,7 @@ Sans `placement`, un livre `ja` vertical compose ses notes en 後注 (kōchū) 
 
 ### Placer l’appel à côté du mot
 
-`markerPosition: 'side'` compose un appel plus petit dans l’espace à côté de la ligne, comme un ruby interlinéaire, si bien qu’il ne prend aucune place dans la ligne.
+`markerPosition: 'side'` compose un appel plus petit dans l’espace à côté de la ligne, comme un ruby interlinéaire : il ne prend donc aucune place dans la ligne.
 
 ```diff
 -  markerPosition: 'right', markerTemplate: '（{n}）', // written out: 'ja' sets them so

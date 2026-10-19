@@ -40,13 +40,13 @@ La taula de terminals i el mapa de registres surten de la mateixa funció, `grou
 
 <Excerpt region="drawing" />
 
-Els rètols dels terminals, del circuit i de l'encapsulat són elements `<text>` que demanen Fira Mono, la lletra de rètols del document. Un SVG arriba al canvas com a imatge, així que el `loadSvg` del kit passa abans el marcatge per `inlineSvgFonts`, que incrusta a l'SVG les fonts que anomena el seu text; el canvas dibuixa llavors els rètols en Fira Mono. El PDF compon cada `<text>` com a text seleccionable amb les fonts que incrusta.
+Els rètols dels terminals, del circuit i de l'encapsulat són elements `<text>` que demanen Fira Mono, la lletra de rètols del document. Un SVG arriba al canvas com a imatge, així que el `loadSvg` del kit passa abans el marcatge per `inlineSvgFonts`, que incrusta a l'SVG les fonts que indica el seu text; el canvas dibuixa llavors els rètols en Fira Mono. El PDF compon cada `<text>` com a text seleccionable amb les fonts que incrusta.
 
 ### 6 · Obertura, capçalera i peu de pàgina
 
 <Excerpt region="furniture" />
 
-La referència és el títol de primer nivell, i la seva obertura es dibuixa amb una ranura d'elements: una caixa violeta a sang, el logotip, i un avanttítol, una entradeta i tres xifres clau que surten dels atributs del títol. Un element d'imatge serveix a la capçalera i al peu de pàgina igual que en una obertura, i el peu comença amb un que apunta al recurs del logotip. Els elements de la capçalera porten `pages: 'body'`, així que cap no apareix a la portada.
+La referència és el títol de primer nivell, i la seva obertura es dibuixa amb una zona de disseny: una caixa violeta a sang, el logotip, i un avanttítol, una entradeta i tres xifres clau que surten dels atributs del títol. Un element d'imatge serveix a la capçalera i al peu de pàgina igual que en una obertura, i el peu comença amb un que apunta al recurs del logotip. Els elements de la capçalera porten `pages: 'body'`, així que cap no apareix a la portada.
 
 ## Variants
 

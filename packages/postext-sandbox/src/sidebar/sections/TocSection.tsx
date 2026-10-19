@@ -18,7 +18,10 @@ import {
   ColorPicker,
   DimensionInput,
   FontPicker,
+  ItemCard,
+  ItemCardListActions,
   NestedGroup,
+  openCard,
   NumberInput,
   SelectInput,
   TextInput,
@@ -279,6 +282,7 @@ export const TocSection = memo(function TocSection() {
     const taken = new Set(rawLevels.map((l) => l.level));
     let level = 1;
     while (taken.has(level) && level < 6) level++;
+    openCard('tocLevels', String(rawLevels.length));
     writeLevels([...rawLevels, { level }]);
   };
 
@@ -339,21 +343,23 @@ export const TocSection = memo(function TocSection() {
         </p>
         {/* The built-in levels stand in while none are stored. */}
         <ShowingDefaultsContext value={levelsAreDefault}>
+        <ItemCardListActions list="tocLevels" ids={rawLevels.map((_, i) => String(i))} />
         {rawLevels.map((level, index) => {
           const resolvedLevel = resolved.levels[index] ?? firstLevel;
           return (
             <SearchScope key={`${level.level}-${index}`} title={`${labels.headingLevel}${level.level}`} overridden={!levelsAreDefault}>
-            <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
-              <div className="mb-2 flex items-center justify-between gap-1">
-                <span className="truncate text-xs font-medium" style={{ color: 'var(--foreground)' }}>
-                  {labels.headingLevel}{level.level}
-                </span>
+            <ItemCard
+              list="tocLevels"
+              id={String(index)}
+              title={`${labels.headingLevel}${level.level}`}
+              actions={
                 <ConfirmPopover message={labels.tocLevelDeleteConfirm} onConfirm={() => removeLevel(index)}>
                   {({ open }) => (
                     <IconButton label={labels.tocLevelDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
                   )}
                 </ConfirmPopover>
-              </div>
+              }
+            >
               <NumberInput
                 label={labels.tocLevelNumber}
                 value={level.level}
@@ -371,7 +377,7 @@ export const TocSection = memo(function TocSection() {
                 fieldIdPrefix={`toc-level-${index}`}
                 labels={labels}
               />
-            </div>
+            </ItemCard>
             </SearchScope>
           );
         })}

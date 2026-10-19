@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuración: notas y referencias',
   sidebarTitle: 'Notas y referencias',
-  description: 'Las notas al pie, la numeración de líneas, las referencias cruzadas y las citas, el índice de contenidos y el índice analítico',
+  description: 'Las notas al pie, la numeración de líneas, las referencias cruzadas, las citas bibliográficas, el índice general y el índice analítico',
   lang: 'es',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '30 min',
   order: 12,
   parent: 'configuration',
-  plainSummary: "Esta página reúne los ajustes de las partes del libro que remiten a otro lugar. Las notas van al pie de la página y los números de línea van en el margen. Las referencias cruzadas nombran una figura, una sección o una página, y las citas nombran las obras que mencionas. El índice de contenidos enumera los capítulos y el índice analítico, al final, enumera términos con sus páginas. Cada sección explica el aspecto de estas piezas y cómo se numeran.",
+  plainSummary: "Esta página reúne los ajustes de las partes del libro que remiten a otro lugar. Las notas van al pie de la página, y los números de línea, en el margen. Las referencias cruzadas remiten a una figura, una sección o una página, y las citas indican las obras que mencionas. El índice general enumera los capítulos, y el índice analítico, al final del libro, enumera términos con sus páginas. Cada sección explica el aspecto de estas piezas y cómo se numeran.",
 };
 
 # Configuración: notas y referencias
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // Los símbolos de llamada de numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Volada, sobre la línea de base, junto a la palabra, o a la derecha de una línea vertical.
   markerSize?: Dimension;     // Tamaño de la llamada en línea, lateral o a la derecha; em es el texto que la rodea.
+  markerTemplate?: string;    // Cómo se escribe el número: '({n})' da «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // El número de la propia nota, en superíndice o sobre la línea.
   numberGap?: 'en' | 'em';    // Espacio tras el número de la propia nota.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notas al pie de la columna, o bajo el texto.
   fontSize?: Dimension;       // Cuerpo de la nota; em es el cuerpo del texto.
@@ -61,13 +63,13 @@ interface FootnotesConfig {
       <td><code>placement</code></td>
       <td><code>'column' | 'chapterEnd' | 'spread'</code></td>
       <td><code>'column'</code> (libros japoneses verticales: <code>'chapterEnd'</code>)</td>
-      <td><code>'column'</code> compone cada nota al pie de la columna que contiene la línea que la cita, bajo un filete corto; en una maqueta de una columna es el pie de la página. <code>'chapterEnd'</code> compone todas las notas de un capítulo tras su último bloque, en el orden en que se citan. <code>'spread'</code> (傍注, solo en texto vertical) compone las notas citadas en las dos páginas de un pliego al final de su página impar, la izquierda en un libro encuadernado por la derecha, bajo el filete: las notas citadas en la página par la esperan, una nota que dejaría en la página impar menos de una línea de texto se queda al pie de la página par con las que la siguen, y un capítulo que acaba en una página par conserva allí las notas que esperaban. En texto horizontal vuelve a <code>'column'</code> con un aviso <code>unknownConfigValue</code>. Desde postext 1.16.</td>
+      <td><code>'column'</code> compone cada nota al pie de la columna que contiene la línea que la cita, bajo un filete corto; en una maquetación de una sola columna es el pie de la página. <code>'chapterEnd'</code> compone todas las notas de un capítulo tras su último bloque, en el orden en que se citan. <code>'spread'</code> (傍注, solo en texto vertical) compone las notas citadas en las dos páginas de una doble página al final de la página impar, la izquierda en un libro encuadernado por la derecha, bajo el filete: las notas citadas en la página par la esperan, una nota que dejaría en la página impar menos de una línea de texto se queda al pie de la página par con las que la siguen, y un capítulo que acaba en una página par conserva allí las notas que esperaban. En texto horizontal vuelve a <code>'column'</code> con un aviso <code>unknownConfigValue</code>. Desde postext 1.16.</td>
     </tr>
     <tr>
       <td><code>numbering</code></td>
       <td><code>'chapter' | 'document' | 'page' | 'column' | 'spread'</code></td>
       <td><code>'chapter'</code> (libros japoneses horizontales: <code>'page'</code>; con <code>placement: 'spread'</code>: <code>'spread'</code>; con <code>numberFormat: 'symbols'</code> al pie de la columna: <code>'page'</code>)</td>
-      <td><code>'chapter'</code> vuelve a empezar en 1 bajo cada título de nivel 1 y al principio de cada documento. <code>'document'</code> sigue por todo el documento y, en un libro maquetado capítulo a capítulo, de un capítulo al siguiente (<code>continuationAfter</code> lleva el último número en <code>continuation.footnoteNumber</code>). <code>'page'</code> vuelve a empezar en 1 en cada página y <code>'column'</code> en cada columna, contando las notas donde las coloca la maquetación (las columnas de una página en orden de lectura): el 页下注 habitual de un libro chino. El documento se maqueta, se numera según dónde cayeron sus notas y se vuelve a maquetar hasta que los números se mantienen (como mucho tres veces más). Ambos valen para las notas al pie de la columna: con <code>placement: 'chapterEnd'</code> las notas se numeran por capítulo. <code>'spread'</code> vuelve a empezar en cada pliego (páginas 2–3, 4–5…), en el orden de cita, para <code>placement: 'spread'</code>.</td>
+      <td><code>'chapter'</code> vuelve a empezar en 1 bajo cada encabezado de nivel 1 y al principio de cada documento. <code>'document'</code> sigue por todo el documento y, en un libro maquetado capítulo a capítulo, de un capítulo al siguiente (<code>continuationAfter</code> lleva el último número en <code>continuation.footnoteNumber</code>). <code>'page'</code> vuelve a empezar en 1 en cada página y <code>'column'</code> en cada columna, contando las notas donde las coloca la maquetación (las columnas de una página en orden de lectura): el 页下注 habitual de un libro chino. El documento se maqueta, se numera según dónde cayeron sus notas y se vuelve a maquetar hasta que los números se mantienen (como mucho tres veces más). Ambos valen para las notas al pie de la columna: con <code>placement: 'chapterEnd'</code> las notas se numeran por capítulo. <code>'spread'</code> vuelve a empezar en cada doble página (páginas 2–3, 4–5…), en el orden de cita, para <code>placement: 'spread'</code>.</td>
     </tr>
     <tr>
       <td><code>numberFormat</code></td>
@@ -85,13 +87,13 @@ interface FootnotesConfig {
       <td><code>markerPosition</code></td>
       <td><code>'auto' | 'superscript' | 'inline' | 'side' | 'right'</code></td>
       <td><code>'auto'</code></td>
-      <td><code>'superscript'</code> pone volados, a tamaño reducido, la llamada del texto y el número que abre la nota. <code>'inline'</code> los compone sobre la línea de base: la llamada a <code>markerSize</code>, el número de la nota al tamaño de la nota; en texto vertical, una llamada en círculo en línea va derecha en una casilla propia. <code>'right'</code> compone una llamada reducida a ras del lado derecho de una línea vertical, como componen （1） los libros verticales japoneses; en texto horizontal es una volada. <code>'side'</code> (合印) compone una llamada pequeña junto a la palabra marcada, del lado de su ruby, que acaba donde acaba el último carácter de la palabra; no ocupa sitio en la línea, que se corta y se justifica como si no estuviera, y una interlínea demasiado estrecha para ella se avisa con <code>rubyExceedsLeading</code>. <code>'auto'</code> es en línea con <code>circled-decimal</code>, <code>'right'</code> en un libro japonés vertical y volada en los demás casos. En todos los casos la llamada sigue al carácter que la precede y nunca abre una línea.</td>
+      <td><code>'superscript'</code> pone en superíndice, a tamaño reducido, la llamada del texto y el número que abre la nota. <code>'inline'</code> los compone sobre la línea de base: la llamada a <code>markerSize</code>, el número de la nota al tamaño de la nota; en texto vertical, una llamada en círculo en línea va derecha en una casilla propia. <code>'right'</code> compone una llamada reducida a ras del lado derecho de una línea vertical, como componen （1） los libros verticales japoneses; en texto horizontal es un superíndice. <code>'side'</code> (合印) compone una llamada pequeña junto a la palabra marcada, del lado de su ruby, que acaba donde acaba el último carácter de la palabra; no ocupa sitio en la línea, que se corta y se justifica como si no estuviera, y, si el espacio entre líneas es demasiado estrecho para ella, salta el aviso <code>rubyExceedsLeading</code>. <code>'auto'</code> es en línea con <code>circled-decimal</code>, <code>'right'</code> en un libro japonés vertical y en superíndice en los demás casos. En todos los casos la llamada sigue al carácter que la precede y nunca abre una línea.</td>
     </tr>
     <tr>
       <td><code>markerSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>1em</code>; <code>0.6em</code> con <code>'side'</code>, <code>0.7em</code> con <code>'right'</code></td>
-      <td>Tamaño de una llamada en línea, lateral o a la derecha; <code>em</code> es el tamaño del texto que la rodea (<code>0.75em</code> es una reducción habitual). No afecta a una llamada volada.</td>
+      <td>Tamaño de una llamada en línea, lateral o a la derecha; <code>em</code> es el tamaño del texto que la rodea (<code>0.75em</code> es una reducción habitual). No afecta a una llamada en superíndice.</td>
     </tr>
     <tr>
       <td><code>numberGap</code></td>
@@ -109,7 +111,7 @@ interface FootnotesConfig {
       <td><code>noteNumberPosition</code></td>
       <td><code>'auto' | 'superscript' | 'inline'</code></td>
       <td><code>'auto'</code></td>
-      <td>Dónde va el número que abre la nota: volado, o sobre la línea al tamaño de la nota. <code>'auto'</code> sigue a <code>markerPosition</code>. Los libros árabes ponen volada la llamada del texto y sobre la línea el número de la nota.</td>
+      <td>Dónde va el número que abre la nota: en superíndice, o sobre la línea al tamaño de la nota. <code>'auto'</code> sigue a <code>markerPosition</code>. Los libros árabes ponen en superíndice la llamada del texto, y sobre la línea, el número de la nota.</td>
     </tr>
     <tr>
       <td><code>chapterEndAlign</code></td>
@@ -121,31 +123,31 @@ interface FootnotesConfig {
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.8em</code></td>
-      <td>Cuerpo del texto de las notas. <code>em</code> y <code>rem</code> son el cuerpo del texto. Las notas usan la familia y los pesos del cuerpo.</td>
+      <td>Cuerpo del texto de las notas. <code>em</code> y <code>rem</code> son el cuerpo del texto. Las notas usan la familia y los pesos del texto base.</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.25em</code></td>
-      <td>Interlineado de las notas; <code>em</code> es el cuerpo de la nota. Las notas quedan fuera de la retícula de líneas base: se apilan desde el pie de la columna y el texto de encima sigue en la retícula.</td>
+      <td>Interlineado de las notas; <code>em</code> es el cuerpo de la nota. Las notas quedan fuera de la rejilla base: se apilan desde el pie de la columna y el texto de encima sigue en la rejilla.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
-      <td>color del cuerpo</td>
+      <td>el color del texto base</td>
       <td>Color del texto de las notas.</td>
     </tr>
     <tr>
       <td><code>textAlign</code></td>
       <td><code>TextAlign</code></td>
-      <td>alineación del cuerpo</td>
+      <td>la alineación del texto base</td>
       <td>Alineación del texto de las notas.</td>
     </tr>
     <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>
-      <td>Dónde se cortan las notas entre caracteres chinos, japoneses y coreanos, con independencia del cuerpo (ver <a href="/es/docs/configuration-east-asian#tipografía-de-asia-oriental"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> mantiene entera una serie de esos caracteres: las lecturas que cita una nota en inglés (<code>看月光</code>) ya no necesitan un unidor de palabras entre cada dos caracteres, mientras los poemas de la página siguen cortándose entre dos cualesquiera. <code>'normal'</code> hace lo contrario en un documento que fija <code>'keep-all'</code>. Lo toman las notas al pie de la columna, las del final del capítulo y las que van junto al texto de un pliego. Desde postext 1.28.</td>
+      <td>Dónde se cortan las notas entre caracteres chinos, japoneses y coreanos, con independencia del cuerpo (véase <a href="/es/docs/configuration-east-asian#tipografía-de-asia-oriental"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> mantiene entera una serie de esos caracteres: las lecturas que cita una nota en inglés (<code>看月光</code>) ya no necesitan un unidor de palabras entre cada dos caracteres, mientras los poemas de la página siguen cortándose entre dos cualesquiera. <code>'normal'</code> hace lo contrario en un documento que fija <code>'keep-all'</code>. Lo toman las notas al pie de la columna, las del final del capítulo y las que van junto al texto de una doble página. Desde postext 1.28.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -207,7 +209,7 @@ footnotes: {
 }
 ```
 
-**Libros japoneses.** Un documento japonés (`locale: 'ja'`, desde postext 1.16) da a los campos que deja sin fijar los valores de JLReq §4.2. Un libro vertical compone sus notas tras el capítulo (`placement: 'chapterEnd'`, 後注), numeradas por capítulo, con llamadas `（{n}）` a la derecha de la línea (`markerPosition: 'right'`, con las cifras de pie según `cjk.uprightDigits`); uno horizontal las compone al pie de la página, numeradas en cada página, con llamadas voladas. Los dos trazan el filete con un tercio de la medida (`separator.width: 1/3`), y las notas tras el capítulo llevan `numberGap: 'em'` y una sangría francesa de dos cuadratines. Un valor explícito manda y se conserva al guardar (`stripFootnotesDefaults` compara con los valores por defecto del propio documento); los documentos chinos, árabes y latinos se resuelven como antes. `footnoteDocumentDefaults(locale, writingMode, placement?)` devuelve estos valores. La llamada se escribe delante de un 。 que cierra la oración (`先生[^1]。`): se queda con el carácter anterior, y 。 nunca abre una línea. Ver [Composición japonesa › Notas](/es/docs/japanese-layout#notas).
+**Libros japoneses.** Un documento japonés (`locale: 'ja'`, desde postext 1.16) da a los campos que deja sin fijar los valores de JLReq §4.2. Un libro vertical compone sus notas tras el capítulo (`placement: 'chapterEnd'`, 後注), numeradas por capítulo, con llamadas `（{n}）` a la derecha de la línea (`markerPosition: 'right'`, con las cifras de pie según `cjk.uprightDigits`); uno horizontal las compone al pie de la página, numeradas en cada página, con llamadas en superíndice. Los dos trazan el filete con un tercio de la medida (`separator.width: 1/3`), y las notas tras el capítulo llevan `numberGap: 'em'` y una sangría francesa de dos cuadratines. Un valor explícito manda y se conserva al guardar (`stripFootnotesDefaults` compara con los valores por defecto del propio documento); los documentos chinos, árabes y latinos se resuelven como antes. `footnoteDocumentDefaults(locale, writingMode, placement?)` devuelve estos valores. La llamada se escribe delante de un 。 que cierra la oración (`先生[^1]。`): se queda con el carácter anterior, y 。 nunca abre una línea. Consulta [Composición japonesa › Notas](/es/docs/japanese-layout#notas).
 
 Cómo se componen las notas al pie de columna:
 
@@ -215,8 +217,8 @@ Cómo se componen las notas al pie de columna:
 - **Varias notas** en una columna se apilan en el orden de cita bajo un único filete. Una nota citada de nuevo más adelante conserva su número y no se vuelve a componer.
 - **Flotantes al pie.** Una figura que ocupa el pie de una columna después de que sus notas se hayan compuesto queda encima de ellas; las notas compuestas después de la figura quedan encima de ella.
 - **Recuadros.** Una nota citada dentro de un recuadro (en línea, flotante o fijo) va al pie de la columna donde sigue el texto tras el recuadro, normalmente la misma. Un recuadro que cierra el documento deja sus notas al pie de la columna donde terminó el texto.
-- **Límites.** Una nota nunca se parte: una más alta que la columna la desborda. Las llamadas en pies de figura, celdas de tabla y títulos no se leen (se imprimen tal cual).
-- **Salida.** El canvas, el HTML y el PDF pintan las notas, las llamadas (un número volado) y el filete. En el PDF cada llamada enlaza con su nota, y un PDF etiquetado marca cada nota como elemento `Note` con un `/ID` único listado en el `/IDTree` del árbol de estructura (PDF/UA-1). Las notas son `VDTBlock` con `footnoteNote`, en `page.floats`; los filetes están en `page.footnoteAreas`.
+- **Límites.** Una nota nunca se parte: una más alta que la columna la desborda. Las llamadas en pies, celdas de tabla y encabezados no se leen (se imprimen tal cual).
+- **Salida.** El canvas, el HTML y el PDF pintan las notas, las llamadas (un número en superíndice) y el filete. En el PDF cada llamada enlaza con su nota, y un PDF etiquetado marca cada nota como elemento `Note` con un `/ID` único listado en el `/IDTree` del árbol de estructura (PDF/UA-1). Las notas son `VDTBlock` con `footnoteNote`, en `page.floats`; los filetes están en `page.footnoteAreas`.
 - **Avisos.** `undefinedFootnote` (una llamada sin definición: el número se imprime sobre una nota vacía) y `unusedFootnote` (una definición que ninguna llamada cita: no se compone).
 
 El resolutor y el depurador siguen el patrón de las demás secciones:
@@ -273,7 +275,7 @@ interface LineNumbersConfig {
       <td><code>count</code></td>
       <td><code>'verse' | 'all'</code></td>
       <td><code>'verse'</code></td>
-      <td><code>'verse'</code> cuenta los versos de los poemas <code>:::verse</code>, cada verso una vez: la parte de un verso demasiado largo para la caja que pasa a la línea siguiente no lleva número, y el espacio entre estrofas no se cuenta. Un poema en la composición árabe clásica cuenta una línea por bait; la segunda línea de un bait escalonado no se cuenta. <code>'all'</code> cuenta todas las líneas de los párrafos del cuerpo, los elementos de lista, las citas y los versos, en orden de lectura: página a página, columna a columna, de arriba abajo.</td>
+      <td><code>'verse'</code> cuenta los versos de los poemas <code>:::verse</code>, cada verso una vez: la parte de un verso demasiado largo para la medida que pasa a la línea siguiente no lleva número, y el espacio entre estrofas no se cuenta. Un poema en la composición árabe clásica cuenta una línea por bait; la segunda línea de un bait escalonado no se cuenta. <code>'all'</code> cuenta todas las líneas de los párrafos del cuerpo, los elementos de lista, las citas y los versos, en orden de lectura: página a página, columna a columna, de arriba abajo.</td>
     </tr>
     <tr>
       <td><code>interval</code></td>
@@ -291,7 +293,7 @@ interface LineNumbersConfig {
       <td><code>restart</code></td>
       <td><code>'document' | 'chapter' | 'section' | 'page' | 'poem'</code></td>
       <td><code>'poem'</code> con <code>count: 'verse'</code>, <code>'page'</code> con <code>count: 'all'</code></td>
-      <td>Dónde vuelve a empezar la cuenta: nunca (<code>'document'</code>, que sigue por todos los capítulos de un libro), en cada título de nivel 1 (<code>'chapter'</code>), en cada título de nivel 1 o 2 (<code>'section'</code>), en cada página (<code>'page'</code>) o en cada poema <code>:::verse</code> (<code>'poem'</code>). El <code>lineStart=N</code> de un poema y el <code>lines=N</code> de la directiva <code>:::numbering</code> la reinician en cualquier punto, sea cual sea el modo.</td>
+      <td>Dónde vuelve a empezar la cuenta: nunca (<code>'document'</code>, que sigue por todos los capítulos de un libro), en cada encabezado de nivel 1 (<code>'chapter'</code>), en cada encabezado de nivel 1 o 2 (<code>'section'</code>), en cada página (<code>'page'</code>) o en cada poema <code>:::verse</code> (<code>'poem'</code>). El <code>lineStart=N</code> de un poema y el <code>lines=N</code> de la directiva <code>:::numbering</code> la reinician en cualquier punto, sea cual sea el modo.</td>
     </tr>
     <tr>
       <td><code>startAt</code></td>
@@ -326,7 +328,7 @@ interface LineNumbersConfig {
     <tr>
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
-      <td>familia del cuerpo</td>
+      <td>la familia del texto base</td>
       <td>Tipo de letra de los números. Se carga y se incrusta como cualquier otra familia.</td>
     </tr>
     <tr>
@@ -338,7 +340,7 @@ interface LineNumbersConfig {
     <tr>
       <td><code>fontWeight</code></td>
       <td><code>number</code></td>
-      <td>peso del cuerpo</td>
+      <td>el peso del texto base</td>
       <td>Peso de los números.</td>
     </tr>
     <tr>
@@ -350,7 +352,7 @@ interface LineNumbersConfig {
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
-      <td>color del cuerpo</td>
+      <td>el color del texto base</td>
       <td>Color de los números. Un color enlazado a la paleta sigue las paletas de partes y secciones.</td>
     </tr>
     <tr>
@@ -376,19 +378,19 @@ lineNumbers: {
 
 Qué se cuenta y qué no:
 
-- **Nunca se cuentan** los títulos, los pies, las tablas y las imágenes, las fórmulas en bloque, el texto de diseño (aperturas, titulillos), las notas al pie y las notas de final de capítulo, el índice general, las entradas del índice alfabético y de la bibliografía, ni las páginas en blanco.
+- **Nunca se cuentan** los encabezados, los pies, las tablas y las imágenes, las fórmulas en bloque, el texto de diseño (aperturas, titulillos), las notas al pie y las notas de final de capítulo, el índice general, las entradas del índice analítico y de la bibliografía, ni las páginas en blanco.
 - **Recuadros y prosa.** El texto de un recuadro no se cuenta, y con `count: 'verse'` tampoco la prosa, salvo que el estilo de párrafo en que se compone diga `lineNumbers: true`; un estilo con `lineNumbers: false` no se cuenta nunca (véase [Estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo)).
 - **Un poema.** La apertura de un poema admite `numbered=false` (sus versos no se cuentan), `lineStart=N` (su primer verso es el N, y la cuenta vuelve a empezar ahí) e `interval=N`. `:::numbering{lines=N}` da el número N a la siguiente línea contada, esté donde esté. Véase [Formato del documento › `:::verse`](/es/docs/document-format-directives#verse) y [`:::numbering`](/es/docs/document-format-directives#numbering).
 
-En un libro maquetado capítulo a capítulo, `restart: 'document'` lleva la cuenta de un capítulo al siguiente en `continuation.lineNumber`. `continuationAfter` cuenta los versos a partir del texto; con `count: 'all'` la cuenta depende de la maquetación, así que la aplicación pasa el `lastLineNumber` del documento del capítulo anterior, como hace el Sandbox.
+En un libro maquetado capítulo a capítulo, `restart: 'document'` lleva la cuenta de un capítulo al siguiente en `continuation.lineNumber`. `continuationAfter` cuenta los versos a partir del texto; con `count: 'all'` la cuenta depende de la maquetación, así que la aplicación anfitriona pasa el `lastLineNumber` del documento del capítulo anterior, como hace el Sandbox.
 
-Con `position: 'side'` los números comparten la columna lateral con los recuadros, los pies y las figuras laterales. Un número que se solapa con uno de ellos se pinta igualmente, ninguno de los dos se mueve, y la maquetación da un aviso de contenido `lineNumberOverlap` que señala la línea numerada.
+Con `position: 'side'` los números comparten la columna lateral con los recuadros, los pies y las figuras laterales. Un número que se solapa con uno de ellos se pinta igualmente, ninguno de los dos se mueve, y la maquetación da un aviso de contenido `lineNumberOverlap` que apunta a la línea numerada.
 
 **Salida.** El canvas, el PDF, el visor HTML y el EPUB de maquetación fija pintan los números. En un PDF etiquetado son artefactos de paginación y cada uno lleva un `/ActualText` vacío, así que el texto copiado o extraído pasa de una línea a otra sin ellos. La salida HTML los oculta a las tecnologías de apoyo (`aria-hidden`), a la selección y al texto copiado. El EPUB de maquetación fluida, cuyas líneas compone el sistema de lectura, conserva solo los números de los versos: un `span` `pt-line-number` (también `aria-hidden`) en el margen inicial de la estrofa, junto a cada verso que lleva número en la versión impresa. En el VDT los números son una ranura de diseño de cada página (`page.lineNumbers`, con sus bloques de texto marcados `artifact`) y una lista de marcas (`page.lineNumberMarks`: `number`, `label`, `columnIndex`, `blockId`, `lineIndex`); el documento guarda `lastLineNumber`.
 
 **No se admiten**: números de línea en texto vertical, una referencia cruzada que imprima el número de una línea, notas enlazadas a números de línea, ni números para las líneas de celdas de tabla, pies o listados de código.
 
-En el Sandbox estos ajustes son la sección **Numeración de líneas** del panel de diseño. El resolutor y el depurador siguen el patrón de las demás secciones; la fuente, el peso y el color salen del texto de cuerpo:
+En el Sandbox estos ajustes son la sección **Numeración de líneas** del panel **Diseño**. El resolutor y el depurador siguen el patrón de las demás secciones; la fuente, el peso y el color salen del texto base:
 
 ```ts
 import { DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults } from 'postext';
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // fuente, peso 
 
 ## Referencias cruzadas
 
-La propiedad `crossRefs` fija las palabras que una [referencia cruzada](/es/docs/document-format-notes-references#referencias-cruzadas-y-anclas) imprime alrededor de un número o de una página, y el estilo que toma un `:ref` que no indica ninguno. Cada plantilla lleva `{n}` donde va el número; una que no lo lleva recibe el número detrás de un espacio de no separación (`"§"` imprime *§ 3.2*). Una plantilla sin definir sigue al idioma del documento: *capítulo / sección / pág.* en español, *chapter / section / p.* en inglés, `第{n}章` / `第{n}节` / `第{n}页` en chino, y lo mismo para francés, alemán, italiano, portugués, catalán y neerlandés.
+La propiedad `crossRefs` fija las palabras que una [referencia cruzada](/es/docs/document-format-notes-references#referencias-cruzadas-y-anclas) imprime alrededor de un número o de una página, y el estilo que toma un `:ref` que no indica ninguno. Cada plantilla lleva `{n}` donde va el número; una que no lo lleva recibe el número detrás de un espacio de no separación (`"§"` imprime *§ 3.2*). Una plantilla sin definir sigue al idioma del documento: *capítulo / sección / pág.* en español, *chapter / section / p.* en inglés, `第{n}章` / `第{n}节` / `第{n}页` en chino, `第{n}章` / `{n}節` / `{n}ページ` en japonés, `الفصل {n}` / `القسم {n}` / `ص {n}` en árabe, y lo mismo para francés, alemán, italiano, portugués, catalán y neerlandés.
 
 ```ts
 interface CrossRefsConfig {
@@ -425,13 +427,13 @@ interface CrossRefsConfig {
       <td><code>chapter</code></td>
       <td><code>string</code></td>
       <td>según el idioma</td>
-      <td>Una referencia a un título de nivel 1: <code>"capítulo &#123;n&#125;"</code>. Un número cuya plantilla ya escribe la palabra (<code>Capítulo &#123;1&#125;</code>, <code>第&#123;1:一&#125;章</code>) se imprime tal cual.</td>
+      <td>Una referencia a un encabezado de nivel 1: <code>"capítulo &#123;n&#125;"</code>. Un número cuya plantilla ya escribe la palabra (<code>Capítulo &#123;1&#125;</code>, <code>第&#123;1:一&#125;章</code>) se imprime tal cual.</td>
     </tr>
     <tr>
       <td><code>section</code></td>
       <td><code>string</code></td>
       <td>según el idioma</td>
-      <td>Una referencia a un título de nivel 2 a 6: <code>"sección &#123;n&#125;"</code>, <code>"§ &#123;n&#125;"</code>.</td>
+      <td>Una referencia a un encabezado de nivel 2 a 6: <code>"sección &#123;n&#125;"</code>, <code>"§ &#123;n&#125;"</code>.</td>
     </tr>
     <tr>
       <td><code>page</code></td>
@@ -443,13 +445,13 @@ interface CrossRefsConfig {
       <td><code>defaultStyle</code></td>
       <td><code>'default' | 'number' | 'title' | 'page'</code></td>
       <td><code>'default'</code></td>
-      <td>Lo que imprime un <code>:ref</code> a un título o a un ancla sin <code>style=</code>. <code>'default'</code>: un título numerado con su palabra y su número, uno sin número con su título, un ancla con su texto. Una referencia que indica <code>style</code> lo conserva, y las referencias a figuras y tablas no cambian.</td>
+      <td>Lo que imprime un <code>:ref</code> a un encabezado o a un ancla sin <code>style=</code>. <code>'default'</code>: un encabezado numerado con su palabra y su número, uno sin número con su título, un ancla con su texto. Una referencia que indica <code>style</code> lo conserva, y las referencias a figuras y tablas no cambian.</td>
     </tr>
     <tr>
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Deja que una línea se corte por los espacios de una referencia cuyo rótulo son palabras: el texto de un ancla <code>[palabras]{'{#id}'}</code>, el texto de un título o el título de una caja, un <code>text="…"</code> propio (también en una referencia a una figura o a una tabla). Los espacios del rótulo se estiran y se encogen entonces con la línea, y la referencia sigue siendo un solo enlace; sus palabras no se dividen con guion. Dentro de un rótulo así, un número, un número romano o una letra sola no se separan de la palabra anterior (<code>Fig. 1a</code>, <code>lámina IV</code>). Un rótulo con un número o una página (<em>sección 3.2</em>, <em>pág. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no se corta nunca, ni siquiera cuando su plantilla lleva un espacio normal. <code>false</code> compone cada rótulo como una sola palabra, sin corte de línea dentro, como hasta postext 1.27. Una configuración guardada antes de <code>configVersion</code> 12 cuyo texto contiene una referencia se lee con <code>false</code>, así que sus líneas se quedan donde estaban (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>).</td>
+      <td>Deja que una línea se corte por los espacios de una referencia cuyo rótulo son palabras: el texto de un ancla <code>[palabras]{'{#id}'}</code>, el título de un encabezado o de un recuadro, un <code>text="…"</code> propio (también en una referencia a una figura o a una tabla). Los espacios del rótulo se estiran y se encogen entonces con la línea, y la referencia sigue siendo un solo enlace; sus palabras no se dividen con guion. Dentro de un rótulo así, un número, un número romano o una letra sola no se separan de la palabra anterior (<code>Fig. 1a</code>, <code>lámina IV</code>). Un rótulo con un número o una página (<em>sección 3.2</em>, <em>pág. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no se corta nunca, ni siquiera cuando su plantilla lleva un espacio normal. <code>false</code> compone cada rótulo como una sola palabra, sin corte de línea dentro, como hasta postext 1.27. Una configuración guardada antes de <code>configVersion</code> 12 cuyo texto contiene una referencia se lee con <code>false</code>, así que sus líneas se quedan donde estaban (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -550,7 +552,7 @@ interface CitationsConfig {
       <td><code>hyphenateNames</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite que el diccionario divida los nombres de los autores citados. <code>false</code> deja entero el apellido de cada persona de las referencias (autores, editores, traductores) y todo nombre dado como una sola cadena, allí donde aparezca con su mayúscula: en una cita, en el texto corrido y en la lista, de modo que ninguna línea termina en <code>(Lup-</code>. Un apellido doble se lee parte por parte, y un autor llamado Baker no deja entera la palabra <code>baker</code>. Ver <a href="/es/docs/configuration-language#palabras-que-no-se-dividen">Palabras que no se dividen</a>.</td>
+      <td>Permite que el diccionario divida los nombres de los autores citados. <code>false</code> deja entero el apellido de cada persona de las referencias (autores, editores, traductores) y todo nombre dado como una sola cadena, allí donde aparezca con su mayúscula: en una cita, en el texto corrido y en la lista, de modo que ninguna línea termina en <code>(Lup-</code>. Un apellido doble se lee parte por parte, y un autor llamado Baker no deja entera la palabra <code>baker</code>. Consulta <a href="/es/docs/configuration-language#palabras-que-no-se-dividen">Palabras que no se dividen</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -579,7 +581,7 @@ interface CitationsConfig {
     <tr>
       <td><code>bibliography.lineHeight</code></td>
       <td><code>Dimension</code></td>
-      <td>interlineado del texto</td>
+      <td>el interlineado del texto base</td>
       <td>Interlineado de las entradas.</td>
     </tr>
     <tr>
@@ -627,9 +629,9 @@ interface CitationsConfig {
   </tbody>
 </table>
 
-## Índice de contenidos
+## Índice general
 
-La propiedad `toc` configura lo que imprime una directiva `:::toc` (ver [Formato del documento](/es/docs/document-format-directives#toc)). El índice se ensambla a partir del **esquema** del documento — cada encabezado con su número y su etiqueta de página, cada `:::part` — de modo que sigue a los capítulos: renombra uno, muévelo a otra parte, cambia sus autores, y las entradas cambian con él. Una entrada es el número del encabezado en una columna propia, el título, una línea de puntos y la etiqueta de página en el borde derecho, y después una línea de subtítulo opcional; una parte es una fila diseñada por `parts.design`.
+La propiedad `toc` configura lo que imprime una directiva `:::toc` (véase [Formato del documento](/es/docs/document-format-directives#toc)). El índice se construye a partir del **esquema** del documento (cada encabezado con su número y su etiqueta de página, cada `:::part`), de modo que sigue a los capítulos: renombra uno, muévelo a otra parte, cambia sus autores, y las entradas cambian con él. Una entrada es el número del encabezado en una columna propia, el título, una línea de puntos y la etiqueta de página en el borde derecho, y después una línea de subtítulo opcional; una parte es una fila diseñada por `parts.design`.
 
 ```ts
 const config: PostextConfig = {
@@ -662,7 +664,7 @@ const config: PostextConfig = {
       <td><code>levels</code></td>
       <td><code>TocLevelConfig[]</code></td>
       <td>nivel 1</td>
-      <td>Niveles de encabezado listados, cada uno con la tipografía de sus entradas: <code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code> (por defecto la interlínea del cuerpo, para que el índice caiga en la rejilla), <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>indent</code> (de toda la entrada), <code>numberWidth</code> / <code>numberGap</code> (la columna de números tras la que empieza el título; los números se alinean a la derecha en ella, y un número más ancho que <code>numberWidth</code>, como <code>الفصل الحادي عشر</code> o <code>Capítulo 12</code>, ensancha la columna de su nivel hasta el más ancho), <code>numberFontFamily</code>, <code>numberFontSize</code>, <code>numberFontWeight</code>, <code>numberColor</code>, <code>marginTop</code>, <code>marginBottom</code>. Los campos sin fijar heredan el texto de cuerpo. El número se asienta en la línea base de la primera línea del título, sea cual sea su fuente y su cuerpo, en el lienzo, el HTML y el PDF (hasta postext 1.4 se centraba en la altura de la x como una viñeta, así que una fuente de rótulo o un cuerpo mayor quedaban por encima del título). Un renderizador propio encuentra esa línea base en el <code>bulletBaselineY</code> del bloque de la entrada; <code>bulletY</code> sigue siendo el centro vertical del cuadratín del número, como en 1.4, de modo que un renderizador anterior a ese campo dibuja los números donde siempre.</td>
+      <td>Niveles de encabezado listados, cada uno con la tipografía de sus entradas: <code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code> (por defecto, el interlineado del texto base, para que el índice caiga en la rejilla), <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>indent</code> (de toda la entrada), <code>numberWidth</code> / <code>numberGap</code> (la columna de números tras la que empieza el título; los números se alinean a la derecha en ella, y un número más ancho que <code>numberWidth</code>, como <code>الفصل الحادي عشر</code> o <code>Capítulo 12</code>, ensancha la columna de su nivel hasta el más ancho), <code>numberFontFamily</code>, <code>numberFontSize</code>, <code>numberFontWeight</code>, <code>numberColor</code>, <code>marginTop</code>, <code>marginBottom</code>. Los campos sin fijar heredan el texto base. El número se asienta en la línea base de la primera línea del título, sea cual sea su fuente y su cuerpo, en el canvas, el HTML y el PDF (hasta postext 1.4 se centraba en la altura de la x como una viñeta, así que una fuente de rótulo o un cuerpo mayor quedaban por encima del título). Un renderizador propio encuentra esa línea base en el <code>bulletBaselineY</code> del bloque de la entrada; <code>bulletY</code> sigue siendo el centro vertical del cuadratín del número, como en 1.4, de modo que un renderizador anterior a ese campo dibuja los números donde siempre.</td>
     </tr>
     <tr>
       <td><code>unnumbered</code></td>
@@ -673,20 +675,20 @@ const config: PostextConfig = {
     <tr>
       <td><code>pageNumber</code></td>
       <td>objeto</td>
-      <td>fuente del nivel 1, peso del cuerpo</td>
+      <td>la fuente del nivel 1, el peso del texto base</td>
       <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code> de la etiqueta de página, y <code>width</code> (por defecto <code>2em</code>): la columna que se le reserva en el borde derecho, donde se alinea a la derecha.</td>
     </tr>
     <tr>
       <td><code>leader</code></td>
       <td>objeto</td>
       <td><code>{"{ enabled: true, char: '.', gap: 0.5em }"}</code></td>
-      <td><code>char</code> se repite a lo largo del hueco entre el título y el número de página, alineado a la derecha para que los puntos de entradas consecutivas queden en línea (<code>'. '</code> los espacia); <code>gap</code> es el hueco mínimo entre el título y la línea de puntos. La línea lleva tantos caracteres como caben, medida como una tira entera en su fuente, de modo que una fuente que separa con el kerning los puntos seguidos pone menos puntos en lugar de puntos que alcancen el número de página. (Hasta postext 1.4 la cuenta salía de un solo punto, y con una fuente así la línea de puntos iba del título hasta montarse en el número). Un título que no dejara sitio a la etiqueta salta de línea un poco antes. La línea de puntos lleva tres caracteres o más: donde solo caben uno o dos, la fila se queda sin ella, porque un punto suelto delante del número de página se lee como un punto final. En un PDF etiquetado los puntos son artefactos, que quedan fuera del texto extraído. El texto de cuerpo pone los mismos rellenos en sus <a href="/es/docs/configuration-text#tabulaciones">tabulaciones</a>.</td>
+      <td><code>char</code> se repite a lo largo del hueco entre el título y el número de página, alineado a la derecha para que los puntos de entradas consecutivas queden en línea (<code>'. '</code> los espacia); <code>gap</code> es el hueco mínimo entre el título y la línea de puntos. La línea lleva tantos caracteres como caben, medida como una tira entera en su fuente, de modo que una fuente que separa con el kerning los puntos seguidos pone menos puntos en lugar de puntos que alcancen el número de página. (Hasta postext 1.4 la cuenta salía de un solo punto, y con una fuente así la línea de puntos iba del título hasta montarse en el número). Un título que no dejara sitio a la etiqueta salta de línea un poco antes. La línea de puntos lleva tres caracteres o más: donde solo caben uno o dos, la fila se queda sin ella, porque un punto suelto delante del número de página se lee como un punto final. En un PDF etiquetado los puntos son artefactos, que quedan fuera del texto extraído. El texto base pone los mismos rellenos en sus <a href="/es/docs/configuration-text#tabulaciones">tabulaciones</a>.</td>
     </tr>
     <tr>
       <td><code>subtitle</code></td>
       <td>objeto</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
-      <td>Una segunda línea bajo la entrada tomada de un atributo del encabezado (<code>attr</code>) — los autores del capítulo — con sus propios <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>italic</code> (por defecto <code>true</code>), <code>color</code> e <code>indent</code> adicional. La línea comparte la interlínea de la entrada y nunca se separa de su título.</td>
+      <td>Una segunda línea bajo la entrada tomada de un atributo del encabezado (<code>attr</code>), como los autores del capítulo, con sus propios <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code>, <code>italic</code> (por defecto <code>true</code>), <code>color</code> e <code>indent</code> adicional. La línea comparte el interlineado de la entrada y nunca se separa de su título.</td>
     </tr>
     <tr>
       <td><code>parts.enabled</code></td>
@@ -704,7 +706,7 @@ const config: PostextConfig = {
       <td><code>parts.design</code></td>
       <td><code>DesignSlot</code></td>
       <td>vacío</td>
-      <td>Diseño de la fila; su contenedor es la fila (anchura de columna × <code>height</code>). Marcadores: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> y <code>{'{pageNumber}'}</code> (la etiqueta de la página de parte; con <code>parts.page: false</code>, que no abre página de parte, la etiqueta de la página en la que empieza el contenido de la parte, donde sus cabeceras pasan a ella; en un libro maquetado capítulo a capítulo, una valla que cierra su capítulo apunta a la primera página con contenido del capítulo siguiente). Los colores ligados a la paleta toman la <code>palette</code> de la propia parte, así que la fila de cada sección sale en su color. Vacío, se componen <code>{'{number} {titleText}'}</code> (separados por el <code>numberSeparator</code> del H1) y el número de página con la tipografía de las entradas de nivel 1. <code>{'{leader}'}</code> pone la <code>leader</code> del índice entre el texto anterior y el posterior, dentro de un mismo elemento de texto: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> coloca el título al principio de la fila, el número de página al final y los puntos entre ambos, alineados con el número y a <code>gap</code> de cada texto, como en las filas de entrada. El elemento ocupa entonces todo el ancho de la fila (un ancho <code>auto</code> llega hasta el borde del contenedor); si el título no cabe, se recorta el título y nunca el número, y con la línea de puntos desactivada (<code>leader.enabled: false</code>) el hueco queda en blanco. Fuera de una fila de parte, y en páginas verticales, <code>{'{leader}'}</code> no imprime nada. En un PDF etiquetado y en HTML los puntos quedan fuera del texto que se lee.</td>
+      <td>Diseño de la fila; su contenedor es la fila (anchura de columna × <code>height</code>). Marcadores: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> y <code>{'{pageNumber}'}</code> (la etiqueta de la página de parte; con <code>parts.page: false</code>, que no abre página de parte, la etiqueta de la página en la que empieza el contenido de la parte, donde sus cabeceras pasan a ella; en un libro maquetado capítulo a capítulo, un bloque `:::part` que cierra su capítulo apunta a la primera página con contenido del capítulo siguiente). Los colores ligados a la paleta toman la <code>palette</code> de la propia parte, así que la fila de cada sección sale en su color. Vacío, se componen <code>{'{number} {titleText}'}</code> (separados por el <code>numberSeparator</code> del H1) y el número de página con la tipografía de las entradas de nivel 1. <code>{'{leader}'}</code> pone la <code>leader</code> del índice entre el texto anterior y el posterior, dentro de un mismo elemento de texto: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> coloca el título al principio de la fila, el número de página al final y los puntos entre ambos, alineados con el número y a <code>gap</code> de cada texto, como en las filas de entrada. El elemento ocupa entonces todo el ancho de la fila (un ancho <code>auto</code> llega hasta el borde del contenedor); si el título no cabe, se recorta el título y nunca el número, y con la línea de puntos desactivada (<code>leader.enabled: false</code>) el hueco queda en blanco. Fuera de una fila de parte, y en páginas verticales, <code>{'{leader}'}</code> no imprime nada. En un PDF etiquetado y en HTML los puntos quedan fuera del texto que se lee.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>
@@ -716,7 +718,7 @@ const config: PostextConfig = {
       <td><code>groups.keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Mantiene cada bloque del índice en una sola columna y página: una fila de cabecera (ver <code>groups.head</code>) y todas las entradas que dependen de ella, hasta la siguiente cabecera de igual o mayor rango. Un bloque que no cabe en el espacio que queda en su columna pasa a la columna o la página siguiente junto con su fila de cabecera, y la columna que deja termina corta. Los encabezados situados justo encima del índice (su propio título) se van con el primer bloque cuando este se mueve. Un bloque más alto que una columna entera se parte: empieza donde caben su cabecera y <code>groups.minEntriesAfterHead</code> entradas, y cada columna en la que continúa se abre de nuevo con su fila de cabecera (<code>groups.continuation</code>). Cada bloque partido entre columnas se notifica con un aviso <code>tocGroupSplit</code> (ver <a href="/es/docs/configuration-programmatic-usage#avisos-del-documento">Avisos del documento</a>). Un <code>:::toc{'{keep="…"}'}</code> lo sustituye en un índice concreto (ver <a href="/es/docs/document-format-directives#toc">Formato del documento</a>). Desde postext 1.34.</td>
+      <td>Mantiene cada bloque del índice en una sola columna y página: una fila de cabecera (ver <code>groups.head</code>) y todas las entradas que dependen de ella, hasta la siguiente cabecera de igual o mayor rango. Un bloque que no cabe en el espacio que queda en su columna pasa a la columna o la página siguiente junto con su fila de cabecera, y la columna que deja termina corta. Los encabezados situados justo encima del índice (su propio título) se van con el primer bloque cuando este se mueve. Un bloque más alto que una columna entera se parte: empieza donde caben su cabecera y <code>groups.minEntriesAfterHead</code> entradas, y cada columna en la que continúa se abre de nuevo con su fila de cabecera (<code>groups.continuation</code>). Cada bloque partido entre columnas se notifica con un aviso <code>tocGroupSplit</code> (véase <a href="/es/docs/configuration-programmatic-usage#avisos-del-documento">Avisos del documento</a>). Un <code>:::toc{'{keep="…"}'}</code> lo sustituye en un índice concreto (véase <a href="/es/docs/document-format-directives#toc">Formato del documento</a>). Desde postext 1.34.</td>
     </tr>
     <tr>
       <td><code>groups.head</code></td>
@@ -739,11 +741,11 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Las etiquetas de página son las que el documento imprime. `buildDocument()` vuelve a componer un documento con `:::toc` con las etiquetas de la pasada anterior hasta que se estabilizan (tres pasadas adicionales como máximo); un anfitrión que compone un libro capítulo a capítulo suministra en su lugar el esquema del libro entero como `PostextContent.outline`, ensamblado con `contentOutline()` (encabezados y partes a partir del texto) y `outlineFromDoc()` (las mismas entradas con las etiquetas de página de una composición), y vuelve a componer el capítulo del índice cada vez que cambia el `outlineKey()` de ese esquema. Cada entrada de encabezado lleva el `number` que imprime el índice y, en un encabezado numerado, su `counter`: la cuenta acumulada del nivel tras cualquier `startAt`, imprima lo que imprima la plantilla — lo que un anfitrión muestra junto a un capítulo en sus propias listas.
+Las etiquetas de página son las que el documento imprime. `buildDocument()` vuelve a componer un documento con `:::toc` con las etiquetas de la pasada anterior hasta que se estabilizan (tres pasadas adicionales como máximo); una aplicación anfitriona que maqueta un libro capítulo a capítulo proporciona en su lugar el esquema del libro entero como `PostextContent.outline`, ensamblado con `contentOutline()` (encabezados y partes a partir del texto) y `outlineFromDoc()` (las mismas entradas con las etiquetas de página de una composición), y vuelve a componer el capítulo del índice cada vez que cambia el `outlineKey()` de ese esquema. Cada entrada de encabezado lleva el `number` que imprime el índice y, en un encabezado numerado, su `counter`: la cuenta acumulada del nivel tras cualquier `startAt`, imprima lo que imprima la plantilla: lo que una aplicación anfitriona muestra junto a un capítulo en sus propias listas.
 
 ## Índice analítico
 
-La propiedad `index` configura lo que imprime una directiva `:::index` (ver [Formato del documento](/es/docs/document-format-notes-references#índice-analítico)): los términos marcados con `:index[…]` e `:index{term="…"}` en el texto, ordenados, agrupados por inicial (en chino, por la inicial del pinyin o por trazos, y en japonés por filas del gojūon; véase `groupBy`) y cada uno con las páginas en que cae. Una entrada es su término, un separador y sus números de página; detrás van sus subentradas, con un paso de sangría por nivel, y las líneas que continúan una entrada cuelgan `turnoverIndent` para no alinearse nunca con una subentrada.
+La propiedad `index` configura lo que imprime una directiva `:::index` (véase [Formato del documento](/es/docs/document-format-notes-references#índice-analítico)): los términos marcados con `:index[…]` e `:index{term="…"}` en el texto, ordenados, agrupados por inicial (en chino, por la inicial del pinyin o por trazos, y en japonés por filas del gojūon; véase `groupBy`) y cada uno con las páginas en que cae. Una entrada es su término, un separador y sus números de página; detrás van sus subentradas, con un paso de sangría por nivel, y las líneas que continúan una entrada cuelgan `turnoverIndent` para no alinearse nunca con una subentrada.
 
 ```ts
 const config: PostextConfig = {
@@ -773,7 +775,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>color</code></td>
       <td>—</td>
-      <td>el texto de cuerpo</td>
+      <td>el texto base</td>
       <td>Tipografía de las entradas. Todas las líneas del índice, letras de grupo incluidas, se componen sobre <code>lineHeight</code>; el índice lleva su propio ritmo y no se ajusta a la rejilla base.</td>
     </tr>
     <tr>
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>según el idioma, en cursiva (redonda en escritura árabe)</td>
+      <td>según el idioma, en cursiva (redonda en escritura árabe y en japonés)</td>
       <td>Las palabras que preceden a una remisión. Sin fijar, siguen el idioma del documento: <em>Véase</em> / <em>Véase también</em>, <em>See</em> / <em>See also</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en chino tradicional)… Un índice en chino pone la remisión tras un punto y sin espacio: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>
@@ -881,4 +883,4 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-Los números de página salen del esquema del libro, como los del índice de contenidos: `computeOutline()` y `contentOutline()` enumeran las marcas de un texto como entradas de tipo `'indexMark'` (con `indexMark.path`, `sort`, `see`, `seeAlso`, `main`, `range` e `index`), y `outlineFromDoc()` da a cada una la página en que cayó, que la composición registra en `doc.indexMarks` (`{ sourceStart, pageIndex }` por marca). `buildDocument()` vuelve a componer un documento que imprime su propio índice hasta que los números se estabilizan; un anfitrión que compone un libro capítulo a capítulo pasa al capítulo que contiene `:::index` el esquema del libro entero como `PostextContent.outline`. `tocOutline()` e `indexOutline()` separan un esquema en lo que leen el índice de contenidos y el analítico, para que el anfitrión asocie cada capítulo a lo que imprime: el sandbox vuelve a componer el capítulo del índice analítico solo cuando se mueve una marca, y el del índice de contenidos solo cuando se mueve un encabezado. `contentOutline()` indica además si un texto imprime un índice analítico (`hasIndex`).
+Los números de página salen del esquema del libro, como los del índice general: `computeOutline()` y `contentOutline()` enumeran las marcas de un texto como entradas de tipo `'indexMark'` (con `indexMark.path`, `sort`, `see`, `seeAlso`, `main`, `range` e `index`), y `outlineFromDoc()` da a cada una la página en que cayó, que la composición registra en `doc.indexMarks` (`{ sourceStart, pageIndex }` por marca). `buildDocument()` vuelve a componer un documento que imprime su propio índice hasta que los números se estabilizan; una aplicación anfitriona que maqueta un libro capítulo a capítulo pasa al capítulo que contiene `:::index` el esquema del libro entero como `PostextContent.outline`. `tocOutline()` e `indexOutline()` separan un esquema en lo que leen el índice general y el analítico, para que la aplicación anfitriona asocie cada capítulo a lo que imprime: el Sandbox vuelve a componer el capítulo del índice analítico solo cuando se mueve una marca, y el del índice general solo cuando se mueve un encabezado. `contentOutline()` indica además si un texto imprime un índice analítico (`hasIndex`).

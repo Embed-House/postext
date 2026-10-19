@@ -16,9 +16,9 @@ Zehn Seiten vom Anfang von *Tausendundeiner Nacht*: ein Schmutztitel, dann „De
 
 ### 1 · Nächte in Worten gezählt
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Nacht ist eine Überschrift der Ebene 2, `## الليلة`, und das `numberingTemplate` der Ebene lautet `'الليلة {2:ordinal-feminine}'`: Der Modifikator `-feminine` schreibt الأولى, الثانية, الحادية عشرة, الحادية بعد الألف ([Ordnungs- und Grundzahlen in Worten](/de/docs/arabic-layout#ordnungs--und-grundzahlwörter), [Ausgeschriebene Zahlen](/de/docs/configuration-headings#ausgeschriebene-zahlen)). Mit `numberPosition: 'replace'` ist die Nummer der ganze Titel der Überschrift: Was das Markdown nach `##` sagt, entfällt, und Überschrift, PDF-Lesezeichen und Alternativtext lauten الليلة الثانية. Die Gestaltung druckt diesen Titel, `{titleText}`, groß und Hindawis Formel فلما كانت, einen festen Text, klein darüber. Die Überschriften der Erzählungen verwenden einen Stil mit `numbered: false`: Eine nummerierte Ebene 1 würde die Zählung der Nächte mit jeder Erzählung neu beginnen, eine unnummerierte lässt die tieferen Zähler in Ruhe, sodass die Nächte durch das ganze Buch weiterzählen.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine Nacht ist eine Überschrift der Ebene 2, `## الليلة`, und das `numberingTemplate` der Ebene lautet `'الليلة {2:ordinal-feminine}'`: Der Modifikator `-feminine` schreibt الأولى, الثانية, الحادية عشرة, الحادية بعد الألف ([Ordnungs- und Grundzahlen in Worten](/de/docs/arabic-layout#ordnungs--und-grundzahlwörter), [Ausgeschriebene Zahlen](/de/docs/configuration-headings#ausgeschriebene-zahlen)). Mit `numberPosition: 'replace'` ist die Nummer der ganze Titel der Überschrift: Was das Markdown nach `##` sagt, entfällt, und Überschrift, PDF-Lesezeichen und Alternativtext lauten الليلة الثانية. Die Gestaltung setzt diesen Titel, `{titleText}`, groß und Hindawis Formel فلما كانت, einen festen Text, klein darüber. Die Überschriften der Erzählungen verwenden einen Stil mit `numbered: false`: Eine nummerierte Ebene 1 würde die Zählung der Nächte mit jeder Erzählung neu beginnen, eine unnummerierte lässt die tieferen Zähler in Ruhe, sodass die Nächte durch das ganze Buch weiterzählen.
 
-<PageShot page={5} crop="0,0.15,1,0.35" caption="Seite 5: die zweite Nacht, ihre Nummer von der Vorlage ausgeschrieben und als ganze Überschrift gedruckt." />
+<PageShot page={5} crop="0,0.15,1,0.35" caption="Seite 5: die zweite Nacht, ihre Nummer von der Vorlage ausgeschrieben und als ganze Überschrift gesetzt." />
 
 ### 2 · Eine Kopfleiste für jede Erzählung
 
@@ -30,13 +30,13 @@ Die Überschrift der Ebene 1 ist ein getöntes Band zwischen zwei goldenen Linie
 
 <Excerpt region="heads" />
 
-Die Kolumnentitel gehören zum Überschriftenstil `tale`, sodass jede Erzählung ihre eigenen mitbringt; der Schmutztitel hat keine. Die Versoseite trägt den Titel des Buchs, die Rektoseite `{chapterTitle}`, die Erzählung. In einem rechts gebundenen Buch ist die Versoseite die rechte Seite, deshalb steht ihre Seitenzahl oben rechts ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)).
+Die Kolumnentitel gehören zum Überschriftenstil `tale`, sodass jede Erzählung ihre eigenen mitbringt; der Schmutztitel hat keine. Auf der geraden Seite steht der Titel des Buchs, auf der ungeraden `{chapterTitle}`, die Erzählung. In einem rechts gebundenen Buch liegt die gerade Seite rechts, deshalb steht ihre Seitenzahl oben rechts ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)).
 
 ### 4 · Ein Schmutztitel in Ruqʿa
 
 <Excerpt region="title" />
 
-Der Schmutztitel ist ein Überschriftenstil mit `span: 'page'`, `numbered: false` und leerer Kopf- und Fußzeile, sodass er weder mitzählt noch einen Kolumnentitel trägt.
+Der Schmutztitel ist ein Überschriftenstil mit `span: 'page'`, `numbered: false` und leerer Kopf- und Fußzeile, sodass er weder mitzählt noch einen Kolumnentitel hat.
 
 ## Varianten
 

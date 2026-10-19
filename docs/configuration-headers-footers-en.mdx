@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Headers and footers',
   description: 'What prints at the top and the foot of every page: text with placeholders, rules, boxes and images, by page parity, and where each element sits',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ The `header` and `footer` properties control per-page header and footer slots. H
 
 Slots use the unified **design slot** model: every element has a `placement` with an `anchor` (to the container or to another element by `#id`), an optional `offset`, and an optional `size`. The legacy flat fields `align`, `marginFromBody`, `marginFromEdge`, and `width: 'full'` are still accepted on input and are migrated to the new shape automatically; the equivalent new-shape description is documented below.
 
-Each slot holds a list of **text**, **rule**, and **box** elements. Array order is paint order (first element paints first, last element paints on top). This holds whatever the anchors say: an element may anchor to one listed after it (`anchor.to: '#ttl'`), so a background box can come first and still be positioned against the text it sits behind.
+Each slot holds a list of **text**, **rule**, **box** and **image** elements. Array order is paint order (first element paints first, last element paints on top). This holds whatever the anchors say: an element may anchor to one listed after it (`anchor.to: '#ttl'`), so a background box can come first and still be positioned against the text it sits behind.
 
 **Built-in defaults.** When `header` or `footer` is `undefined`, postext applies a sensible built-in default rather than an empty slot:
 
@@ -46,7 +46,7 @@ To opt out of the built-in defaults, set `header: { elements: [] }` (or `footer:
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>built-in defaults when <code>undefined</code>; <code>[]</code> disables</td>
-      <td>Ordered list of text and rule elements.</td>
+      <td>Ordered list of text, rule, box and image elements.</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ The defaults in the table below are those of a text element you add yourself. Th
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>Which page <em>roles</em> the element appears on, combined with <code>parity</code>. After placement every page is classified as <code>'blank'</code> (parity / separator padding, or no content), <code>'part'</code> (a part-divider page), <code>'opener'</code> (its first block is a heading whose level spans the page or forces a page break before it — the first page of a chapter) or <code>'body'</code> (everything else). <code>pages: 'body'</code> hides a running head on chapter openers; <code>pages: 'opener'</code> shows a folio only there.</td>
+      <td>Which page <em>roles</em> the element appears on, combined with <code>parity</code>. After placement every page is classified as <code>'blank'</code> (parity / separator padding, or no content), <code>'part'</code> (a part-divider page), <code>'opener'</code> (its first block is a heading whose level spans the page or forces a page break before it — the first page of a chapter), <code>'comic'</code> (a comic page, <code>:::page</code>), <code>'composed'</code> (a composed page, or the <code>role</code> its template names) or <code>'body'</code> (everything else). <code>pages: 'body'</code> hides a running head on chapter openers; <code>pages: 'opener'</code> shows a folio only there.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,14 +142,14 @@ The defaults in the table below are those of a text element you add yourself. Th
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> in heading and part designs, else <code>'ellipsis-end'</code></td>
-      <td>How the engine handles text that exceeds the element's available width. <code>'wrap'</code> breaks the line into multiple lines; the ellipsis variants keep each line on one line and truncate it with <code>…</code> at the start, middle, or end; <code>'clip'</code> hard-clips to the element's bounding box without inserting any character. Line breaks in the content apply in every mode: the ellipsis and clip modes truncate or clip each line on its own. An element that leaves <code>overflow</code> out takes its slot's default: in a heading design (<code>advancedDesign.slot</code>) or on a part page (<code>parts.design</code>, <code>parts.versoDesign</code>) it wraps, in a running head, a folio or a contents part row (<code>toc.parts.design</code>, a row of fixed height) it ends in <code>…</code>. Set <code>'wrap'</code> on a running head that may run to several lines (an address), or an ellipsis on a kicker that must stay on one line in an opener. A line cut by an ellipsis, or clipped with ink past the box, is reported as a <code>designTextTruncated</code> content warning, once per element and page (a running head or a folio once per element and chapter). A configuration stored before postext 1.24 (<code>configVersion</code> 9 or older) is read with <code>'ellipsis-end'</code> on every heading and part text that sets none, so its pages do not move. A text with a <code>dropCap</code> wraps whatever this says; with <code>'clip'</code> its lines are still cut at the edge of a box of fixed height. <code>'ellipsis-end'</code> and <code>'ellipsis-start'</code> cut at a word boundary — <em>The history of…</em>, not <em>The history of th…</em> — and no space or joining punctuation (comma, colon, dash, slash, opening bracket) touches the ellipsis. A word is cut where it must only when the boundary, that punctuation dropped, would keep less than half of what fits: one long word, or a URL (<em>http://exampl…</em>, not <em>http…</em>). A no-break space or a no-break hyphen (U+2011, as in <em>MS‑DOS</em>) is not a word boundary; <code>'ellipsis-middle'</code> cuts anywhere but drops the spaces beside it. Up to postext 1.4 every mode cut at the last character that fitted, spaces included.</td>
+      <td><code>'wrap'</code> in heading, part and box designs, else <code>'ellipsis-end'</code></td>
+      <td>How the engine handles text that exceeds the element's available width. <code>'wrap'</code> breaks the line into multiple lines; the ellipsis variants keep each line on one line and truncate it with <code>…</code> at the start, middle, or end; <code>'clip'</code> hard-clips to the element's bounding box without inserting any character. Line breaks in the content apply in every mode: the ellipsis and clip modes truncate or clip each line on its own. An element that leaves <code>overflow</code> out takes its slot's default: in a heading design (<code>advancedDesign.slot</code>), on a part page (<code>parts.design</code>, <code>parts.versoDesign</code>) or in a <a href="/en/docs/configuration-callouts#box-designs">box design</a> (<code>calloutStyles[].design</code>) it wraps, in a running head, a folio or a contents part row (<code>toc.parts.design</code>, a row of fixed height) it ends in <code>…</code>. Set <code>'wrap'</code> on a running head that may run to several lines (an address), or an ellipsis on a kicker that must stay on one line in an opener. A line cut by an ellipsis, or clipped with ink past the box, is reported as a <code>designTextTruncated</code> content warning, once per element and page (a running head or a folio once per element and chapter). A configuration stored before postext 1.24 (<code>configVersion</code> 9 or older) is read with <code>'ellipsis-end'</code> on every heading and part text that sets none, so its pages do not move. A text with a <code>dropCap</code> wraps whatever this says; with <code>'clip'</code> its lines are still cut at the edge of a box of fixed height. <code>'ellipsis-end'</code> and <code>'ellipsis-start'</code> cut at a word boundary — <em>The history of…</em>, not <em>The history of th…</em> — and no space or joining punctuation (comma, colon, dash, slash, opening bracket) touches the ellipsis. A word is cut in the middle only when cutting at the boundary, with that punctuation dropped, would keep less than half of what fits: one long word, or a URL (<em>http://exampl…</em>, not <em>http…</em>). A no-break space or a no-break hyphen (U+2011, as in <em>MS‑DOS</em>) is not a word boundary; <code>'ellipsis-middle'</code> cuts anywhere but drops the spaces beside it. Up to postext 1.4 every mode cut at the last character that fitted, spaces included.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom'</code></td>
       <td><code>'middle'</code></td>
-      <td>Where the text sits inside a box taller than its lines — a fixed <code>placement.size.height</code>, or a box stretched by an anchored neighbour. When the lines are taller than the box (a large numeral in a box of fixed height, a tight <code>lineHeight</code>), they run out on the side the alignment leaves free, as CSS flex alignment does: <code>'bottom'</code> keeps the foot of the last line box on the foot of the box and runs out at the top, <code>'middle'</code> runs out evenly at both ends, <code>'top'</code> at the foot. Up to postext 1.4 such lines always hung from the top, whatever the alignment. A <code>dropCap</code> moves with its lines (up to postext 1.4 it stayed at the top of a box that <code>'middle'</code> or <code>'bottom'</code> moved them down in).</td>
+      <td>Where the text sits inside a box taller than its lines — a fixed <code>placement.size.height</code>, or a box stretched by an anchored neighbour. When the lines are taller than the box (a large numeral in a box of fixed height, a tight <code>lineHeight</code>), they run out on the side the alignment leaves free, as CSS flex alignment does: <code>'bottom'</code> keeps the foot of the last line box on the foot of the box and runs out at the top, <code>'middle'</code> runs out evenly at both ends, <code>'top'</code> at the foot. Up to postext 1.4 such lines always hung from the top, whatever the alignment. A <code>dropCap</code> moves with its lines (up to postext 1.4 it stayed at the top of the box even when <code>'middle'</code> or <code>'bottom'</code> moved the lines down).</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
@@ -197,7 +197,7 @@ The defaults in the table below are those of a text element you add yourself. Th
       <td><code>inlineMarks</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Read the resolved text — placeholder values included — as inline Markdown: <code>**bold**</code>, <code>*italic*</code>, <code>^superscript^</code>, <code>~subscript~</code>. Off, the markers print as written. In a heading design, <code>{'{titleText}'}</code> then keeps the heading's own bold, italic, superscript and subscript runs (<code>*Pneumocystis*</code>, <code>CO~2~</code>), its other characters escaped so they print as written (since postext 1.19). See <a href="#inline-marks-and-outlines">Inline marks and outlines</a>.</td>
+      <td>Read the resolved text — placeholder values included — as inline Markdown: <code>**bold**</code>, <code>*italic*</code>, <code>^superscript^</code>, <code>~subscript~</code>. When it is off, the markers print as written. In a heading design, <code>{'{titleText}'}</code> then keeps the heading's own bold, italic, superscript and subscript runs (<code>*Pneumocystis*</code>, <code>CO~2~</code>), its other characters escaped so they print as written (since postext 1.19). See <a href="#inline-marks-and-outlines">Inline marks and outlines</a>.</td>
     </tr>
     <tr>
       <td><code>stroke</code></td>
@@ -227,7 +227,7 @@ The defaults in the table below are those of a text element you add yourself. Th
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Heading designs only: whether the element counts toward the height the heading reserves in the text flow. <code>false</code> for decoration that may lie under the text (a seal at the page foot, a frame, a side band). See <a href="/en/docs/configuration-headings#reserved-height">Reserved height</a>. Header, footer and part designs ignore it.</td>
+      <td>Heading and box designs only: whether the element counts toward the height the heading reserves in the text flow, or toward the height of the band of a box design (<code>calloutStyles[].design</code>). <code>false</code> for decoration that may lie under the text (a seal at the page foot, a frame, a side band). See <a href="/en/docs/configuration-headings#reserved-height">Reserved height</a>. Header, footer and part designs ignore it.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ Available placeholders:
 - `{bookTotalPages}` — total page count for the whole book: every chapter, blank pages included. For a document laid out on its own it equals `{totalPages}`. See [Book page count](#book-page-count) below.
 - `{title}`, `{subtitle}`, `{author}`, `{publishDate}` — values read from `content.metadata`. Unknown or empty metadata renders as an empty string (and raises a warning in the sandbox).
 - `{chapterTitle}` — text of the most recent H1 on or before the current page. An H1 whose [heading style](/en/docs/configuration-styles#heading-styles) sets `runningChapter: false` (a plate, a map) is passed over.
+- `{chapterNumber}` — the number of that chapter: its H1's number when the level or its heading style has a `numberingTemplate`, else the chapter's ordinal (`1`, `2`…); empty for an unnumbered chapter.
 - `{chapterTitleAtTop}`, `{chapterNumberAtTop}` — title and number of the chapter in force at the top of the page, which differs from `{chapterTitle}` and `{chapterNumber}` on a page where a new chapter starts below other text. See [Chapter at the top of the page](#chapter-at-the-top-of-the-page) below.
 - `{partTitle}`, `{partNumber}` — title and number of the current part (the most recent `:::part` page on or before the current page; blank parity pages just before a part page already belong to it). Empty before the first part.
 - `{firstMark.<key>}`, `{lastMark.<key>}` — the first and last guide word of the page: a heading of a level (`h1`–`h6`) or an entry of a paragraph style. See [Guide words](#guide-words-first-and-last-mark) below.
@@ -388,7 +389,7 @@ In the PDF, bold and italic runs embed the matching faces of the element's famil
 
 A text element you write yourself starts from these values, some of which surprise:
 
-- **`overflow` follows the slot.** In a heading design or on a part page a long title wraps onto more lines; in a running head, a folio or a contents part row a text too wide for its room is cut to one line with `…`. Set `overflow: 'wrap'` on a running head that may run long (an address, a byline), and look at the `designTextTruncated` warnings for the texts that were cut. A line break in the content (a newline, or `\n` in the template or in an attribute value) starts a new line in every mode; the ellipsis modes cut each line on its own.
+- **`overflow` follows the slot.** In a heading design, on a part page or in a box design a long title wraps onto more lines; in a running head, a folio or a contents part row a text too wide for its room is cut to one line with `…`. Set `overflow: 'wrap'` on a running head that may run long (an address, a byline), and look at the `designTextTruncated` warnings for the texts that were cut. A line break in the content (a newline, or `\n` in the template or in an attribute value) starts a new line in every mode; the ellipsis modes cut each line on its own.
 - **`align` is `'center'` and `verticalAlign` is `'middle'`.** An auto-width element shrink-wraps its longest line, so its lines are centred against one another; set `align: 'left'` for a flush-left block (an auto-width element anchored to another element aligns its lines on the side of its anchor by itself, see above).
 - **The face is EB Garamond 8 pt, black, `lineHeight` 1.2**, whatever the body text uses. Unlike the other leadings of the configuration, a design text's `lineHeight` is usually a plain multiple (`1.2`); a `Dimension` works too (see above).
 
@@ -520,7 +521,7 @@ Rule elements render a line: horizontal across the slot, or vertical down it.
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Page roles the rule appears on (see the text-element <code>pages</code> field).</td>
     </tr>
@@ -603,7 +604,7 @@ Box elements paint a rounded rectangle inside the slot — useful as a backdrop 
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Page roles the box appears on (see the text-element <code>pages</code> field).</td>
     </tr>
@@ -692,11 +693,11 @@ An `image` element draws a bitmap or SVG resource of the document — a publishe
 
 The PDF backend embeds the resource like a figure (an SVG with a print master uses it); the HTML viewer resolves it through <code>resourceImageUrl</code>.
 
-A picture a design draws is content when its resource describes it: the resource's `altText`, else its caption as plain text (a chip read by its label, a `:ref` by its `text` when it has one), goes into the VDT (`VDTDesignImageBlock.altText`), becomes the `alt` of its `<img>` in HTML and a `Figure` with `/Alt` in a tagged PDF, read right after the text of its design (a chapter's plate after the chapter's heading). A picture whose resource has neither, and one marked `decorative`, is decoration: `alt=""` with `role="presentation"`, and an artifact in the PDF. A running head's or footer's picture repeats on every page, so it is furniture whatever its resource says: no `altText` in the VDT, `alt=""` with `role="presentation"` in HTML, an artifact of the page in the PDF.
+A picture that a design draws counts as content when its resource describes it. The description (the resource's `altText`, or else its caption as plain text, with a chip read by its label and a `:ref` by its `text` when it has one) goes into the VDT (`VDTDesignImageBlock.altText`). It becomes the `alt` of the `<img>` in HTML and a `Figure` with `/Alt` in a tagged PDF, read right after the text of its design (a chapter's plate after the chapter's heading). A picture whose resource has neither, and one marked `decorative`, is decoration: `alt=""` with `role="presentation"`, and an artifact in the PDF. A running head's or footer's picture repeats on every page, so it is furniture whatever its resource says: no `altText` in the VDT, `alt=""` with `role="presentation"` in HTML, an artifact of the page in the PDF.
 
 ### Element placement
 
-`ElementPlacement` is the unified positioning model used by every element type (text, rule, box) inside any design slot — page header, page footer, or heading-level advanced design slot. Three pieces of state describe a placement:
+`ElementPlacement` is the unified positioning model used by every element type (text, rule, box, image) inside any design slot — page header, page footer, or heading-level advanced design slot. Three pieces of state describe a placement:
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge` accepts:
 
-- **Container edges** (when `anchor.to` is `'container'`, `'page'` or `'bleed'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
+- **Container edges** (when `anchor.to` is `'container'`, `'page'`, `'bleed'` or `'outer'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right` and `center`, the middle of the frame.
 - **Element-relative edges** (when `anchor.to === '#someId'`): `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
 
 Each element-relative edge puts one corner of the element on a corner of the element it anchors to, and `offset` moves it from there:
@@ -739,7 +740,7 @@ An element-relative edge used with `'container'`, `'page'` or `'bleed'`, and a c
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-A size can also run to an edge of another box: `{ to, edge }`, where `to` names the box as an anchor does (`'container'`, `'page'`, `'bleed'`, `'outer'`, or `'#id'` of another element and, on a composed page's decoration, of a frame or a group) and `edge` which of its edges, `'top'` or `'bottom'` for a height, `'left'` or `'right'` for a width. The length runs from the element's anchor point to that edge, the way the element grows; an edge behind the anchor point gives 0, and an edge across the size's axis, or a box that is not there, reads as `'fill'`. A ground from the foot of a band down to the bleed stays in the template and follows the band when the band moves. Since postext 1.38:
+A size can also run to an edge of another box: `{ to, edge }`, where `to` names the box as an anchor does (`'container'`, `'page'`, `'bleed'`, `'outer'`, or `'#id'` of another element and, on a composed page's decoration, of a frame or a group) and `edge` says which of its edges: `'top'` or `'bottom'` for a height, `'left'` or `'right'` for a width. The length runs from the element's anchor point to that edge, the way the element grows; an edge behind the anchor point gives 0, and an edge across the size's axis, or a box that is not there, reads as `'fill'`. A ground from the foot of a band down to the bleed stays in the template and follows the band when the band moves. Since postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

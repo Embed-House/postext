@@ -26,7 +26,7 @@ my-book/
 ```jsonc
 {
   "version": 2,                        // 2 = book with chapters (1 = single "markdown" file, legacy)
-  "configVersion": 14,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
+  "configVersion": 15,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
                                        // bundle reads as 1.4: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
                                        // layout.inlineResourceGap 'above' when a chapter embeds a ::resource,
                                        // layout.inlineResourceGapInBoxes false when one sits inside a :::callout,
@@ -75,7 +75,8 @@ my-book/
 
 What the loader checks: version, id, name, the chapters shape, resource `id` +
 `typeId`, font `name` + `variants[{weight: number, file}]`, and that every file
-exists (a missing chapter/resource/font file aborts the load; a missing `pdfFile`
+exists (a missing chapter or resource file aborts the load; a missing font file only drops that face with a
+warning from postext 1.39, and a family with a `fallback` is set in it; a missing `pdfFile`
 only drops the print master). It does **not** check `kind`, `typeId` against
 `resourceTypes`, or anything inside `config` — `lint_project.py` does.
 
@@ -114,9 +115,11 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   text: that is in `chapters.<lang>` and `localized.<lang>.resources`
   (SKILL.md, "Content in the Markdown"). Every edition lives in this one
   manifest; never ship a preset per language.
-- `localized.<lang>.resources[]`: `{id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height?}`
-  merged into the resource with the same id. `table` replaces the whole table
-  (model and styleId). `file` swaps the artwork (a diagram with translated
+- `localized.<lang>.resources[]`: `{id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height?, poster?, video?, resolution?, fileResolution?}`
+  merged into the resource with the same id, field by field. `table` replaces the whole table
+  (model and styleId) and `video` the whole video object; `poster` + `video` (≥ 1.17) give a language its own
+  cut of a video (its own address, start, player). When `file` or `poster` differs from the shared one, the shared
+  `width`, `height`, `pdfFile` and `fileResolution` are dropped and read from the new file unless restated. `file` swaps the artwork (a diagram with translated
   labels in `resources/en/…`).
 - `localized.<lang>.view` (postext ≥ 1.9.2): how that edition opens, over the
   manifest's `view` (`{ "canvasScope": "chapter" }` for a translation that
@@ -226,7 +229,7 @@ embeds them with `::resource{id="…"}` (placement `here`).
   weights. Cell `content` is an inline snippet: `**bold**`, `*italic*`,
   `^sup^`, `~sub~`, `:ref`, `:swatch`, `:chip`; `\n` separates paragraphs; a
   paragraph starting with `• `, `– `, `1. ` is a hanging list item (two leading
-  spaces per nesting level). **No `$math$` in cells, captions or notes.**
+  spaces per nesting level). Inline `$math$` works in cells, captions and notes from postext 1.19 (Pandoc's rule; `\$` for a dollar).
   `image` draws a bitmap/SVG resource in the cell (width = fraction of the cell).
   `background` fills the cell (link it to a palette id to re-theme).
 - **placement**: `position` `auto` (float to the first free slot after the first
@@ -236,7 +239,14 @@ embeds them with `::resource{id="…"}` (placement `here`).
   e.g. a small bitmap or one `fitFiguresToPage` shrank); `captionSide: true` (caption in the side column beside
   a main-column figure, floated or, ≥ 1.28, set `here`); `rotate: "ccw"|"cw"` (landscape table/figure on its own
   page, spine-flush; split between rows when too long). Missing fields fall
-  back to the resource type's `defaultPlacement`, then `auto`/`column`.
+  back to the resource type's `defaultPlacement`, then `auto`/`column`. More fields (`wrap` beside or round the
+  picture, `shrink`, `minScale`, `captionMeasure`, `citingPage`, `columns`): configuration.md §15. A picture the
+  text runs round (postext ≥ 1.36; PNG with transparency, or `contour.points` for any picture):
+  ```jsonc
+  { "id": "pear", "typeId": "figure", "kind": "bitmap", "file": "resources/pear.png", "width": 600, "height": 800,
+    "placement": { "position": "here", "wrap": "contour", "align": "right", "width": 0.42 },
+    "contour": { "threshold": 0.5, "margin": { "value": 2, "unit": "mm" } } }
+  ```
 - A `here` resource that is only `:ref`'d and never `::resource`'d is numbered
   but never placed.
 - **Comic panel pictures** are bitmap or SVG resources placed by
@@ -250,6 +260,16 @@ embeds them with `::resource{id="…"}` (placement `here`).
   a poster they print a dark 16:9 box; an own file without `video.url` gets no
   QR code or PDF link. Poster overlays and player options live in
   `config.videoStyle` (`playMark`, `qr`, `linkPoster`, `html`, `player`).
+- `video` fields besides `source`/`url`/`format`/`player`: `start` / `end` (seconds; it plays that part, and the QR
+  code and PDF link start at `start`), `width` / `height` (the frame size in px: its ratio when there is no poster;
+  the manifest's top-level `width`/`height` are the poster's), `duration` (seconds, informative) and `posterTime`
+  (second of a file's frame used as the poster, informative). `url` accepts any YouTube form (watch, youtu.be,
+  Shorts, embed, youtube-nocookie) or Vimeo page (unlisted with its hash).
+- The poster is set at its slot's measure (or `placement.width`) in its own ratio, enlarged if small; it takes a
+  `safeArea` and `placement.align` like a bitmap.
+- Video warnings: `videoWithoutPoster` (dark box in the video's ratio, 16:9 when unknown), `videoWithoutUrl` (a file
+  with no production `url`: no QR code, no link; HTML/EPUB without the file show the poster), `videoUrlInvalid` (a
+  YouTube/Vimeo address that names no video: poster instead of a player).
 - **Resource types** (`config.resourceTypes`): `figure`, `table` and `video`
   exist by default in the document's language (`locale`; English for a language
   without strings); declare them to rename or restyle. Custom types
@@ -312,7 +332,7 @@ embeds them with `::resource{id="…"}` (placement `here`).
   bundle that carries the faces (the PDF of the plain one embeds the open
   face). The import prints one line per family (`none of its font files are in
   the bundle, those faces are set in <fallback>`) in place of a `missingFont`
-  per face; a family with no `fallback` behaves as before.
+  per face; a family with no `fallback` behaves as before. `render.mjs` does not read `fallback` (verification.md §2).
 - Pick the stand-in by measurement, not by name: `fonts.py width LICENSED.ttf
   CANDIDATE.ttf… --text-from chapters/<lang>/` sets a paragraph of the book in
   each face at the body size and prints the candidate's width as a ratio of the
@@ -381,10 +401,12 @@ postext build my-book --locale es --images /tmp/pages --pages 12-15 -f jpeg --wa
 
 It reads only the files the manifest names (the generator, `source/` and the
 other project files are ignored, and so are their changes), and
-`postext pack my-book` leaves the same files out of the bundle as
-`preset_kit.py pack` without `--manifest-only` (it zips the rest of the
-folder: use `preset_kit.py pack --manifest-only` to ship only what the
-manifest names).
+`postext pack my-book` zips the folder without `source/`, dot files, `*.py`,
+`resources.json`, `chapters.json`, `report.md`, `roles.json` and `layouts*.json`,
+but **with every font file**, those of `redistributable: false` families
+included, and with the manifest as written. To ship, use `preset_kit.py pack`
+(it leaves licensed faces out and writes their `fallback` entries), with
+`--manifest-only` to ship only what the manifest names.
 
 `scripts/render.mjs` lays the project out in Node with the real engine and the
 bundle's own fonts, prints warnings, and writes chosen pages as JPEGs
@@ -397,8 +419,8 @@ node render.mjs book.postext --jpeg /tmp/pages --pages '#1'            # a packe
 node render.mjs my-book --lang es --out /tmp/my-book.pdf               # the PDF, for print checks
 ```
 
-One-shot JPEGs from `render.mjs` are the fallback for the loop and its
-`SANDBOX-WARN` lines a milestone check (verification.md §2);
+One-shot JPEGs from `render.mjs` are the fallback for the loop, and with
+`--repo <checkout>` its `SANDBOX-WARN` lines a milestone check (verification.md §2);
 `--png` rasterises the PDF instead and needs poppler.
 
 It mirrors the sandbox loader (defaults ← config ← localized config; chapters
@@ -459,6 +481,14 @@ const { bytes: out, warnings } = await createBundle({
   for byte-identical output (otherwise every file is dated now). Build the
   date from local fields: a zip stores local time, so a timestamp or a
   `…Z` string gives different bytes in each time zone.
+- `createBundle` also takes `id`, `description`, `markdown` (a one-chapter book), `thumbnail: { data, mime }`,
+  `canvasScope: 'book'`, `start` (§2), and `localized: { en: { name?, description?, chapters?, config?, resources?,
+  start? } }` for more editions: `chapters`, `config` and `resources` above are then the `locale` edition
+  (required). A localized `config` keeps only the top-level keys that differ; `resources` carry the wording
+  (`caption`, `note`, `altText`, `table`) and the artwork with words (`bitmap.fileId` / `svg.fileId`) by `id`.
+- `buildBundle(bundle, { config, metadata, onChapter, layoutCache })`: `config` lays out with another config,
+  `metadata` fills `{title}`/`{author}` (front matter wins), `layoutCache: createBundleLayoutCache()` reused across
+  builds lays out again only the chapters whose inputs changed (`stats` says which).
 - `buildBundle` lays each chapter out with the previous one's counters,
   page parity and numbering, and gives `:::toc` chapters the book outline —
   so every chapter starts on a new page, as in the Sandbox (the headless

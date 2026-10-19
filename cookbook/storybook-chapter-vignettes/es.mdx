@@ -1,6 +1,6 @@
 ---
 title: "Capítulos de cuento con viñetas y sumarios"
-summary: "Un solo estilo de título abre todos los capítulos; cada título nombra en atributos su viñeta y su sumario en cursiva, que pinta la apertura."
+summary: "Un solo estilo de encabezado abre todos los capítulos; cada título indica en atributos su viñeta y su sumario en cursiva, que pinta la apertura."
 plain: "Las primeras páginas de una edición infantil italiana de Pinocho. Cada capítulo empieza con su propia ilustración en acuarela y un breve resumen de lo que pasa."
 description: "Pinocchio, de Collodi, en italiano y compuesto con Postext: cada capítulo se abre bajo una viñeta distinta, con la línea del capítulo y un sumario en cursiva."
 question: "¿Cómo encabezo cada capítulo de un libro infantil con una viñeta distinta y un sumario en cursiva?"
@@ -16,19 +16,19 @@ Las primeras páginas de una edición infantil italiana de *Le avventure di Pino
 
 ### 1 · Un solo estilo de título, la viñeta en cada título
 
-El código de este paso está en [la respuesta corta](#la-respuesta-corta). El `resourceId` de un elemento de imagen admite los mismos marcadores que un texto de diseño, así que `'{attr.vignetta}'` dibuja el recurso que nombra el título, igual que `{attr.summary}` imprime su sumario. Los dos capítulos comparten el estilo `capitolo` y nombran su imagen en la línea de título: `# Capitolo II {style="capitolo" vignetta="polenta" summary="…"}`. Un tercer capítulo necesita un recurso y un título más, no otro estilo ([elementos de imagen](/es/docs/configuration-headers-footers#elementos-de-imagen)). La línea del capítulo se coloca desde la cabeza del contenedor, 6 mm por debajo de la caja de la viñeta, y el sumario cuelga 5 mm por debajo de ella; la apertura reserva sitio hasta la última línea del sumario. Con `minHeight` como mínimo de 14 líneas, el texto del capítulo I empieza en la misma línea que el del II, cuyo sumario ocupa una línea más; sin él, el del capítulo I empieza 6,7 mm más arriba ([span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)).
+El código de este paso está en [la respuesta corta](#la-respuesta-corta). El `resourceId` de un elemento de imagen admite los mismos marcadores que un texto de diseño, así que `'{attr.vignetta}'` dibuja el recurso que indica el título, igual que `{attr.summary}` imprime su sumario. Los dos capítulos comparten el estilo `capitolo` e indican su imagen en la línea del encabezado: `# Capitolo II {style="capitolo" vignetta="polenta" summary="…"}`. Un tercer capítulo necesita un recurso y un título más, no otro estilo ([elementos de imagen](/es/docs/configuration-headers-footers#elementos-de-imagen)). La línea del capítulo se coloca desde la cabeza del contenedor, 6 mm por debajo de la caja de la viñeta, y el sumario cuelga 5 mm por debajo de ella; la apertura reserva sitio hasta la última línea del sumario. Con `minHeight` como mínimo de 14 líneas, el texto del capítulo I empieza en la misma línea que el del II, cuyo sumario ocupa una línea más; sin él, el del capítulo I empieza 6,7 mm más arriba ([apertura a toda página y diseño avanzado](/es/docs/configuration-headings#apertura-a-toda-página-y-diseño-avanzado)).
 
 ### 2 · Carga las ilustraciones como recursos de mapa de bits
 
 <Excerpt region="pictures" />
 
-Cada imagen es un JPEG de la carpeta `assets/` de la receta, declarado con su tamaño en píxeles: la composición solo lee esos tamaños, y el lienzo pinta lo que `loadImage()` haya registrado con cada identificador de archivo cuando dibuja la página. Las viñetas y las cerezas se generaron sobre blanco y después se multiplicaron por el color del papel, `#fffaf0`, de modo que sus márgenes salen del color de la página y las imágenes no tienen un borde visible. La portada está recortada a 190:150, la forma de su campo, para que la imagen ajustada lo llene sin una franja de papel. El paisaje y las viñetas los pintan elementos de imagen de los diseños; las cerezas, la línea `::resource{id="ciliegie"}` del Markdown.
+Cada imagen es un JPEG de la carpeta `assets/` de la receta, declarado con su tamaño en píxeles: la composición solo lee esos tamaños, y el canvas pinta lo que `loadImage()` haya registrado con cada identificador de archivo cuando dibuja la página. Las viñetas y las cerezas se generaron sobre blanco y después se multiplicaron por el color del papel, `#fffaf0`, de modo que sus márgenes salen del color de la página y las imágenes no tienen un borde visible. La portada está recortada a 190:150, la forma de su campo, para que la imagen ajustada lo llene sin una franja de papel. El paisaje y las viñetas los pintan elementos de imagen de los diseños; las cerezas, la línea `::resource{id="ciliegie"}` del Markdown.
 
 ### 3 · Haz de la portada un estilo de título
 
 <Excerpt region="frontispiece" />
 
-La portada es el primer título del Markdown, `# Pinocchio {style="frontespizio" kicker="Le avventure di"}`, y su estilo la pinta entera: el paisaje, de 150 mm de alto desde el borde superior de la página, y después el antetítulo del atributo, el título y, desde los metadatos del principio del archivo, el subtítulo y el autor. Todos los elementos cuelgan de la página, no de la caja de texto, así que la ilustración llega al borde superior y a los dos lados de la hoja aunque el título siga en la única columna del libro. El `footer` vacío quita el disco del folio que llevan las aperturas de capítulo, y `pages: 'body'` ya deja las cabeceras fuera de esta página ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)).
+La portada es el primer encabezado del Markdown, `# Pinocchio {style="frontespizio" kicker="Le avventure di"}`, y su estilo la pinta entera: el paisaje, de 150 mm de alto desde el borde superior de la página, y después el antetítulo del atributo, el título y, desde los metadatos del principio del archivo, el subtítulo y el autor. Todos los elementos cuelgan de la página, no de la caja de texto, así que la ilustración llega al borde superior y a los dos lados de la hoja aunque el título siga en la única columna del libro. El `footer` vacío quita el disco del folio que llevan las aperturas de capítulo, y `pages: 'body'` ya deja las cabeceras fuera de esta página ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)).
 
 ### 4 · Cabeceras en las páginas de texto, folios en discos
 
@@ -40,7 +40,7 @@ La portada es el primer título del Markdown, `# Pinocchio {style="frontespizio"
 
 <Excerpt region="tailpiece" />
 
-Un tipo de recurso imprime su `captionPrefix` y su número delante del pie. Con el prefijo vacío y sin pie, bajo las cerezas no sale nada; con `captionPrefix: 'Fregio'`, el mismo recurso lleva debajo *Fregio 1.* y crece 10 mm ([tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso)). El `defaultPlacement` del tipo coloca cada recurso donde está su línea `::resource`, centrado y con un sexto de la medida de ancho, así que en el Markdown basta con `::resource{id="ciliegie"}` tras el último párrafo del capítulo. Las demás imágenes comparten el tipo, pero ningún `:ref` ni `::resource` los nombra, así que nunca se colocan ni se cuentan.
+Un tipo de recurso imprime su `captionPrefix` y su número delante del pie. Con el prefijo vacío y sin pie, bajo las cerezas no sale nada; con `captionPrefix: 'Fregio'`, el mismo recurso lleva debajo *Fregio 1.* y crece 10 mm ([tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso)). El `defaultPlacement` del tipo coloca cada recurso donde está su línea `::resource`, centrado y con un sexto de la medida de ancho, así que en el Markdown basta con `::resource{id="ciliegie"}` tras el último párrafo del capítulo. Las demás imágenes comparten el tipo, pero ningún `:ref` ni `::resource` los cita, así que nunca se colocan ni se cuentan.
 
 ## Variantes
 

@@ -80,8 +80,9 @@ document.body.append(...doc.pages.map((page) => renderPage(page, doc)));
 | `openBundle`, `createBundle`, `buildBundle` | Read, write and lay out `.postext` books. |
 | `createLayoutWorker()` (`postext/worker`) | Runs the layout in a Web Worker, with cancellation. Works from esm.sh too. |
 | `createLayout(content, config?)` (`postext/react`) | A React component that lays the content out and shows its pages. |
+| `readDocx`, `analyzeDocx`, `wordToPostext`, `postextToDocx`, `wordStyleTracking`, `applyStyleTracking` (`postext/word`) | Read a Word `.docx` and report its quality, turn it into Markdown chapters with its styles mapped, write chapters back as a `.docx`, and carry the character spacing of Word styles onto the book's styles. |
 
-The resolvers (`resolve*Config`), strippers (`strip*Defaults`), `DEFAULT_*` constants and every type are exported as well. See the [configuration reference](https://postext.dev/en/docs/configuration) and the [document format](https://postext.dev/en/docs/document-format).
+The resolvers (`resolve*Config`), strippers (`strip*Defaults`), `DEFAULT_*` constants and every type are exported as well. The ICC output profiles of print production ship in the package as `postext/icc/<id>.icc`. See the [configuration reference](https://postext.dev/en/docs/configuration) and the [document format](https://postext.dev/en/docs/document-format).
 
 ## Content
 
@@ -94,6 +95,8 @@ The resolvers (`resolve*Config`), strippers (`strip*Defaults`), `DEFAULT_*` cons
 | `metadata?` | `DocumentMetadata` | Title, author and dates (also read from the markdown's YAML frontmatter). |
 | `continuation?` | `LayoutContinuation` | Counters, page numbering and parity carried over from the chapters before, for a book laid out chapter by chapter. |
 | `outline?` | `OutlineEntry[]` | The book's outline, for a `:::toc` in a chapter laid out on its own. |
+| `citations?` | `CitationContext` | The chapter's share of its book's citations, so a chapter laid out on its own numbers them as in the whole book. |
+| `laterPageIds?` | `Record<string, number>` | The page fences of the chapters after this one, for a composed-page frame that continues its story there. |
 | `notes?` | `PostextNote[]` | Accepted, but the engine does not read it: notes are written in the markdown (below). |
 
 Footnotes are written in the markdown: a `[^id]` marker where the note is cited and a paragraph that opens with `[^id]:` for its text. Each note is set at the foot of the column that cites it; `footnotes.placement: 'chapterEnd'` gathers them after the chapter instead. See [Footnotes](https://postext.dev/en/docs/document-format-notes-references#footnotes).

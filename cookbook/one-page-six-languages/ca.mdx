@@ -15,7 +15,7 @@ Una pàgina de còmic, *La ràdio del far*: la Maya arriba al far del seu avi qu
 
 ### 1 · Una config per a totes les llengües
 
-El codi és a [la resposta curta](#la-resposta-curta). A la config res no anomena una llengua llevat de `locale`. Sense `fontFamily`, la retolació pren la lletra de còmic de la llengua del document (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC o Playpen Sans Arabic, i l'onomatopeia la lletra de rètol que li correspon. `writingMode: 'auto'` posa les bafarades japoneses en columnes verticals; `readingDirection: 'auto'` fa que les pàgines japonesa i àrab es llegeixin des de la dreta, com les seves llengües, de manera que el mateix `split="30 / 35 [* | * | *] / *"` col·loca la vinyeta de la ràdio a la dreta i la del gat a l'esquerra. Els ids dels personatges (`maya`, `tomas`) són els mateixos a tots els guions, i les àncores dels dibuixos hi responen.
+El codi és a [la resposta curta](#la-resposta-curta). A la configuració res no indica una llengua llevat de `locale`. Sense `fontFamily`, la retolació pren la lletra de còmic de la llengua del document (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC o Playpen Sans Arabic, i l'onomatopeia la lletra de rètol que li correspon. `writingMode: 'auto'` posa les bafarades japoneses en columnes verticals; `readingDirection: 'auto'` fa que les pàgines japonesa i àrab es llegeixin des de la dreta, com les seves llengües, de manera que el mateix `split="30 / 35 [* | * | *] / *"` col·loca la vinyeta de la ràdio a la dreta i la del gat a l'esquerra. Els ids dels personatges (`maya`, `tomas`) són els mateixos a tots els guions, i les àncores dels dibuixos hi responen.
 
 El cos és un per a tot el llibre. El guió anglès té 216 lletres, el castellà 220, el francès 224 i el xinès 74 caràcters; els guions més llargs tenen bafarades més grans, mai lletra més petita.
 
@@ -29,13 +29,13 @@ El francès no és una de les edicions d'aquesta recepta, així que cada edició
 
 <Excerpt region="art" />
 
-Les zones segures són més estretes que les cel·les d'aquesta divisió: la tira central té tres vinyetes d'uns 46 mm d'ample per 80 mm d'alt, així que cada dibuix quadrat mostra una columna de prop del 58 % de la seva amplada, i la seva zona segura, la cara del personatge i allò de què parla, n'ocupa del 36 al 42 %. Els dibuixos no es reflecteixen per al japonès ni per a l'àrab (`mirrorArt` continua en false): la Maya continua pujant el camí des de l'esquerra, i només l'ordre de les vinyetes segueix la lectura.
+Les zones segures són més estretes que les cel·les d'aquesta divisió: la tira central té tres vinyetes d'uns 46 mm d'ample per 80 mm d'alt, així que cada dibuix quadrat mostra una columna de prop del 58 % de la seva amplada, i la seva zona segura, la cara del personatge i allò de què parla, n'ocupa del 36 al 42 %. Els dibuixos no s'emmirallen per al japonès ni per a l'àrab (`mirrorArt` continua en false): la Maya continua pujant el camí des de l'esquerra, i només l'ordre de les vinyetes segueix la lectura.
 
 ## Variants
 
 ### Reflecteix els dibuixos a les edicions de dreta a esquerra
 
-`mirrorArt: true` gira cada dibuix quan la pàgina es llegeix en sentit contrari al del dibuix. Deixa sense reflectir una vinyeta amb lletres o un rellotge amb `::panel{mirror=false}`.
+`mirrorArt: true` gira cada dibuix quan la pàgina es llegeix en sentit contrari al del dibuix. Deixa sense emmirallar una vinyeta amb lletres o un rellotge amb `::panel{mirror=false}`.
 
 ```diff
    readingDirection: 'auto', // the default, written out: it is what an edition flips
@@ -44,5 +44,5 @@ Les zones segures són més estretes que les cel·les d'aquesta divisió: la tir
 
 ## Errors freqüents
 
-- Una línia del guió anomena el personatge pel seu id, no pel seu nom: escriu `maya:` a totes les llengües. El nom que anuncia un lector de pantalla és `cast[].name`.
+- Una línia del guió identifica el personatge pel seu id, no pel seu nom: escriu `maya:` a totes les llengües. El nom que anuncia un lector de pantalla és `cast[].name`.
 - La pàgina francesa comparteix els dibuixos de l'edició, així que el text alternatiu de les seves vinyetes és en la llengua de l'edició; escriu `::panel{alt="…"}` a `content.fr.en.md` si el vols en francès.

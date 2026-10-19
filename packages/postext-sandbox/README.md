@@ -1,14 +1,10 @@
 # postext-sandbox
 
-Interactive sandbox UI for experimenting with the [Postext](https://postext.dev/) layout engine.
+Interactive sandbox UI for experimenting with the [Postext](https://postext.dev/) layout engine: the [Sandbox](https://postext.dev/en/sandbox) of postext.dev, with its books and chapters, Markdown editor, Design, Resources, Fonts and Checks panels, and Canvas, PDF, Folio, HTML and EPUB 3 previews.
 
 ## Install
 
-```bash
-npm install postext-sandbox
-```
-
-Requires React >= 18 and `postext` as peer dependencies.
+The package is not published to npm. It is a package of this monorepo that the website (`apps/web`) embeds as `"postext-sandbox": "workspace:*"`. Its peer dependencies are React and React DOM (>= 18) and `postext`. See [Embedding the Sandbox](https://postext.dev/en/docs/sandbox-embedding) for its props.
 
 ## Usage
 
@@ -70,6 +66,10 @@ import { getConfigFontFamilies } from 'postext-sandbox';
 const families = getConfigFontFamilies(config);
 // => ['EB Garamond', 'Open Sans']
 ```
+
+## WebMCP
+
+The Sandbox registers its tools for an agent in the browser through WebMCP (`document.modelContext`) unless `webmcp={false}`. `postext-sandbox/webmcp` holds only the browser side (`registerWebMcpTools`, `runTool`, `validateArgs`) and imports nothing of the Sandbox, so a host page registers its own tools with it. See [WebMCP](https://postext.dev/en/docs/webmcp).
 
 ## License
 

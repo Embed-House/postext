@@ -1,6 +1,6 @@
 ---
 title: "Una sección de economía en papel salmón"
-summary: "Un diario berlinés de ocho páginas cuyas páginas de economía toman un estilo de título: papel salmón, seis columnas, acento petróleo y un bloque :::paper."
+summary: "Un diario berlinés de ocho páginas cuyas páginas de economía toman un estilo de encabezado: papel salmón, seis columnas, acento petróleo y un bloque :::paper."
 plain: "Ocho páginas de un diario inventado. Las cuatro primeras son de noticias, en papel blanco grisáceo; las de economía que siguen van en papel salmón, con columnas más estrechas y colores propios."
 description: "Un diario berlinés en Postext con el código: noticias a cinco columnas y una sección de economía en salmón a seis, con mercados, gráficos y el papel de Folio."
 question: "¿Cómo imprimo las páginas de economía de un periódico en papel salmón, con su propia retícula, también en 3D?"
@@ -10,7 +10,7 @@ pageNotes: { "1": "La portada de The Marrowick Ledger: la cabecera entre una ore
 
 ## Lo que vas a componer
 
-Ocho páginas de *The Marrowick Ledger*, un diario inventado, en el pliego berlinés de 315 × 470 mm. Las páginas 1 a 4 llevan las noticias en papel prensa blanco grisáceo, a cinco columnas con filetes y con una pestaña roja de sección en cada página. En la 5 cambia el papel. La sección de economía se imprime en papel salmón, como las páginas financieras desde hace más de un siglo: la página pasa a #f2d3c0, la retícula se estrecha a seis columnas, el acento pasa del rojo al petróleo y bajo el título de sección va una franja con los cierres del día. Dentro hay una página de mercados con un año del índice de la ciudad, un gráfico por sectores y cuatro tablas, noticias de empresas y una página de cotizaciones. En la vista 3D de Folio los pliegos se doblan uno dentro de otro y las cuatro últimas páginas salen en papel salmón.
+Ocho páginas de *The Marrowick Ledger*, un diario inventado, en el formato berlinés de 315 × 470 mm. Las páginas 1 a 4 llevan las noticias en papel prensa blanco grisáceo, a cinco columnas con filetes y con una pestaña roja de sección en cada página. En la 5 cambia el papel. La sección de economía se imprime en papel salmón, como las páginas financieras desde hace más de un siglo: la página pasa a #f2d3c0, la retícula se estrecha a seis columnas, el acento pasa del rojo al petróleo y bajo el título de sección va una franja con los cierres del día. Dentro hay una página de mercados con un año del índice de la ciudad, un gráfico por sectores y cuatro tablas, noticias de empresas y una página de cotizaciones. En la vista 3D de Folio los pliegos se doblan uno dentro de otro y las cuatro últimas páginas salen en papel salmón.
 
 ## Elaboración
 
@@ -34,13 +34,13 @@ El H1 es una apertura a todo el ancho con `breakBefore` de paridad `'any'`, de m
 
 <Excerpt region="floats" />
 
-`top(3)` es `placement: { position: 'top', columns: 3 }`: la foto del astillero ocupa tres de las cinco columnas de noticias, el ferri cuatro, la panadería tres de las seis de economía y el gráfico del puerto dos. Un flotante citado desde un párrafo de la columna 1 toma la cabeza de las columnas siguientes que siguen vacías, así que estas fotos empiezan en la columna 2 y la noticia baja a su lado. Una foto así se queda con su noticia solo si no se compone otra noticia debajo en esa página: una noticia a todo el ancho colocada después puede llevarse la foto a su propia franja o a la página siguiente. Por eso las páginas 2 y 3 cierran con un anuncio flotado al pie y no con otra noticia. Las fotos que cruzan toda la página van en línea (`here`) dentro del recuadro del titular. Las tablas también van en el flujo, dentro de recuadros a todo el ancho al pie.
+`top(3)` es `placement: { position: 'top', columns: 3 }`: la foto del astillero ocupa tres de las cinco columnas de noticias, el ferri cuatro, la panadería tres de las seis de economía y el gráfico del puerto dos. Un flotante citado desde un párrafo de la columna 1 toma la cabeza de las columnas siguientes que siguen vacías, así que estas fotos empiezan en la columna 2 y la noticia baja a su lado. Una foto así se queda con su noticia solo si no se compone otra noticia debajo en esa página: una noticia a todo el ancho colocada después puede llevarse la foto a su propia franja o a la página siguiente. Por eso las páginas 2 y 3 cierran con un anuncio flotante al pie y no con otra noticia. Las fotos que cruzan toda la página van en línea (`here`) dentro del recuadro del titular. Las tablas también van en el flujo, dentro de recuadros a todo el ancho al pie.
 
 ### 5 · Titulares, recuadros, datos y anuncios son recuadros
 
 <Excerpt region="boxes" />
 
-Un titular a todo el ancho es un recuadro sin marco que contiene un H2 en uno de tres cuerpos, y un filete de 1 pt encima señala la noticia siguiente. En la página 5 el recuadro *The terminal in numbers* flota sobre dos de las seis columnas (`columns="2"` en su bloque), y la cita destacada de la página 4 hace lo mismo con `columns: 2` en su estilo. Los recuadros de datos ponen de dos a cuatro tablas en paralelo con un grupo `:::columns`, y los anuncios son recuadros a todo el ancho que flotan al pie, con un filete de 0,75 pt.
+Un titular a todo el ancho es un recuadro sin borde que contiene un H2 en uno de tres cuerpos, y un filete de 1 pt encima señala la noticia siguiente. En la página 5 el recuadro *The terminal in numbers* flota sobre dos de las seis columnas (`columns="2"` en su bloque), y la cita destacada de la página 4 hace lo mismo con `columns: 2` en su estilo. Los recuadros de datos ponen de dos a cuatro tablas en paralelo con un grupo `:::columns`, y los anuncios son recuadros a todo el ancho que flotan al pie, con un filete de 0,75 pt.
 
 ### 6 · El papel que imprime Folio
 
@@ -61,7 +61,7 @@ Cada página del bloque lleva `page.paper` con ese tono, y Folio la imprime en e
 
 ### Cambia el papel sin cambiar la retícula
 
-Un estilo de título con `palette` y sin `layout` conserva las cinco columnas con filetes del documento y pinta igualmente todas las páginas de su sección: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` pone un suplemento de fin de semana en papel prensa crema. Mete también sus páginas en un bloque `:::paper`, con el tono llevado un 60 % hacia el blanco, para que Folio las imprima en un papel a juego.
+Un estilo de encabezado con `palette` y sin `layout` conserva las cinco columnas con filetes del documento y pinta igualmente todas las páginas de su sección: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` pone un suplemento de fin de semana en papel prensa crema. Mete también sus páginas en un bloque `:::paper`, con el tono llevado un 60 % hacia el blanco, para que Folio las imprima en un papel a juego.
 
 ### Haz de la sección de economía un cuadernillo
 

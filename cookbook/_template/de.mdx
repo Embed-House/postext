@@ -35,7 +35,7 @@ Die ersten Seiten eines Paperbacks: Ein Kapitel beginnt auf einer rechten Seite 
 
 ### 1 · Der Auftakt ist eine Gestaltung, keine Überschrift
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Überschrift der Ebene 1 behält ihren Platz im Text und im Inhaltsverzeichnis, zeichnet sich aber aus einem Slot von Elementen: Die Dachzeile kommt aus einem Attribut der Überschrift, der Titel bricht auf einer festen Satzbreite um, und die Linie verankert sich unter der Höhe, die der Titel gerade einnimmt. `minHeight` senkt den Grundtext auf jedem Auftakt auf dieselbe Zeile ab, wie lang der Titel auch ist.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Überschrift der Ebene 1 behält ihren Platz im Text und im Inhaltsverzeichnis, wird aber aus einem Gestaltungsfeld mit Elementen gezeichnet: Die Dachzeile kommt aus einem Attribut der Überschrift, der Titel bricht auf einer festen Satzbreite um, und die Linie wird unter dem Titel verankert, wie hoch er auch ist. `minHeight` senkt den Grundtext auf jedem Auftakt auf dieselbe Zeile ab, wie lang der Titel auch ist.
 
 ### 2 · Kolumnentitel wissen, auf welcher Seite sie stehen
 
@@ -47,7 +47,7 @@ Jedes Element ist an der physischen Seite verankert und nach Parität gefiltert,
 
 <Excerpt region="palette" />
 
-Jede Farbe der Konfiguration nennt ihren Paletteneintrag. Ändert ein Leser ein Farbfeld, färbt sich das ganze Buch um, und ein Teil oder ein Überschriftenformat kann einen Abschnitt über die ID umfärben. Wird `main-color` auf den Akzent gerichtet, erfasst das jeden Standardwert, den die Konfiguration nicht neu angibt.
+Jede Farbe der Konfiguration verweist auf ihren Paletteneintrag. Ändert ein Leser ein Farbfeld, färbt sich das ganze Buch um, und ein Teil oder ein Überschriftenstil kann einen Abschnitt über die ID umfärben. Wird `main-color` auf den Akzent gerichtet, erfasst das jeden Standardwert, den die Konfiguration nicht neu angibt.
 
 ## Varianten
 
@@ -58,7 +58,7 @@ Jede Farbe der Konfiguration nennt ihren Paletteneintrag. Ändert ein Leser ein 
 
 ### Den Text zweispaltig setzen
 
-Ein breiteres Format nimmt zwei Spalten auf; der Auftakt läuft über beide, und die Kolumnentitel bleiben, wo sie sind.
+Ein breiteres Endformat nimmt zwei Spalten auf; der Auftakt läuft über beide, und die Kolumnentitel bleiben, wo sie sind.
 
 ```diff
 -  layout: { layoutType: 'single' },

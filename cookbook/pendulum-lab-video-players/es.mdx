@@ -16,13 +16,13 @@ La práctica 4.2 de *Física en el laboratorio*, un cuaderno A4 para Bachillerat
 
 ### 1 · Dale a cada vídeo una dirección de producción y un archivo
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Un vídeo propio tiene dos direcciones. `video.url` es donde lo encontrará el libro publicado: el código QR la imprime y el PDF enlaza la portada con ella, así que aquí es la dirección del vídeo en jsDelivr, la que un móvil puede abrir hoy. `video.fileId` nombra el archivo, que se guarda aparte como un mapa de bits, para las salidas que pueden llevarlo o reproducirlo desde otro sitio (ver [Formato del documento › Vídeos](/es/docs/document-format-resources#vídeos)). Las opciones de `videoStyle.player` valen para todos los vídeos: se repiten en bucle, empiezan sin sonido, se cargan enteros (27 y 61 KB) y no ofrecen descarga, imagen dentro de imagen ni envío a otra pantalla, de modo que el vídeo se queda en la hoja.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Un vídeo propio tiene dos direcciones. `video.url` es donde lo encontrará el libro publicado: el código QR la imprime y el PDF enlaza la portada con ella, así que aquí es la dirección del vídeo en jsDelivr, la que un móvil puede abrir hoy. `video.fileId` indica el archivo, que se guarda aparte como un mapa de bits, para las salidas que pueden llevarlo o reproducirlo desde otro sitio (ver [Formato del documento › Vídeos](/es/docs/document-format-resources#vídeos)). Las opciones de `videoStyle.player` valen para todos los vídeos: se repiten en bucle, empiezan sin sonido, se cargan enteros (27 y 61 KB) y no ofrecen descarga, imagen dentro de imagen ni envío a otra pantalla, de modo que el vídeo se queda en la hoja.
 
 ### 2 · Compón la edición de pantalla con el mismo original
 
 <Excerpt region="screen" />
 
-La edición de pantalla vive en la configuración, en `htmlViewer.overrides`, que el lienzo y el PDF no leen. A 122 ppp cada medida en puntos sale una cuarta parte mayor que a 96, así que el texto de 9,4 pt se lee a 16 px en el panel, y los pies, los recuadros y las tablas crecen con él. La apertura conserva el título y deja la banda y los campos, que son cosa del papel.
+La edición de pantalla está en la configuración, en `htmlViewer.overrides`, que el canvas y el PDF no leen. A 122 ppp cada medida en puntos sale una cuarta parte mayor que a 96, así que el texto de 9,4 pt se lee a 16 px en el panel, y los pies, los recuadros y las tablas crecen con él. La apertura conserva el título y deja la banda y los campos, que son cosa del papel.
 
 ### 3 · Reproduce los vídeos en el panel
 
@@ -34,7 +34,7 @@ La edición de pantalla vive en la configuración, en `htmlViewer.overrides`, qu
 
 <Excerpt region="epub" />
 
-La hoja se organiza en torno a dos vídeos uno junto al otro y a recuadros vacíos para escribir, así que la maquetación fija la conserva: cada página como se imprime, con un reproductor donde estaba la portada. Un EPUB fluido también reproduciría los vídeos, uno debajo del otro y al ancho del texto. `resourceBytes` responde `video/mp4` para cada vídeo y un JPEG para cada portada, y el escritor los guarda en `media/` y en `images/`. El EPUB solo conserva los atributos que admite su esquema (`controls`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`), de modo que el botón de descarga y lo demás quedan en manos del sistema de lectura. El archivo pasa EPUBCheck sin errores ni avisos.
+La hoja se organiza en torno a dos vídeos uno junto al otro y a recuadros vacíos para escribir, así que la maquetación fija la conserva: cada página como se imprime, con un reproductor donde estaba la portada. Un EPUB de maquetación fluida también reproduciría los vídeos, uno debajo del otro y al ancho del texto. `resourceBytes` responde `video/mp4` para cada vídeo y un JPEG para cada portada, y el escritor los guarda en `media/` y en `images/`. El EPUB solo conserva los atributos que admite su esquema (`controls`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`), de modo que el botón de descarga y lo demás quedan en manos del sistema de lectura. El archivo pasa EPUBCheck sin errores ni avisos.
 
 ### 5 · Compón θ y π en el lienzo, el PDF y el EPUB
 

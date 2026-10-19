@@ -16,7 +16,7 @@ O suplemento de quadrinhos de um jornal de fim de semana, *A Gazeta de Corringto
 
 ### 1 · Escrever a tira onde o jornal a quer
 
-O código é [a resposta curta](#a-resposta-curta) acima. Um `:::strip` tem o corpo de uma página de quadrinhos (o seu `split`, as suas linhas `::panel` e o roteiro delas), mas é um bloco do texto ([tiras](/pt/docs/comics#tiras)). Na capa, de uma coluna, a tira de domingo é composta onde está escrita, com 210 mm de altura, e o sumário vem depois dela. A divisão dela, `55 / * [40 | *]`, dá à cena larga da pescaria uma fileira própria e às duas piadas uma fileira embaixo. Uma tira nunca se divide: se não cabe, passa inteira para a página seguinte.
+O código é [a resposta curta](#a-resposta-curta) acima. Um `:::strip` tem o corpo de uma página de quadrinhos (o `split`, as linhas `::panel` e o roteiro delas), mas é um bloco do texto ([tiras](/pt/docs/comics#tiras)). Na capa, de uma coluna, a tira de domingo é composta onde está escrita, com 210 mm de altura, e o sumário vem depois dela. A divisão dela, `55 / * [40 | *]`, dá à cena larga da pescaria uma fileira própria e às duas piadas uma fileira embaixo. Uma tira nunca se divide: se não cabe, passa inteira para a página seguinte.
 
 <PageShot page={1} crop="0,0,1,0.8" caption="A capa: a meia página de domingo composta no texto, com o sumário embaixo." />
 
@@ -28,13 +28,13 @@ A página de dentro abre com um H1 cujo estilo de título passa a seção para q
 
 <Excerpt region="art" />
 
-As imagens foram desenhadas quadradas ou largas, e as células da divisão de domingo não são: a piada da bota cai numa célula de 112 × 88 mm. Cada área segura é cortada no que a piada precisa, Pip, Otto e a bota, para que o recorte nunca deixe faixas vazias em volta da imagem ([quadros e arte](/pt/docs/comics#quadros-e-arte)).
+As imagens foram desenhadas quadradas ou largas, e as células da divisão de domingo não são: a piada da bota cai numa célula de 112 × 88 mm. Cada área segura é cortada no que a piada precisa, Pip, Otto e a bota, para que o recorte nunca deixe faixas vazias em volta da imagem ([quadros e desenhos](/pt/docs/comics#quadros-e-desenhos)).
 
 ### 4 · Imprimir a mesma página em dez jornais
 
 <Excerpt region="editions" />
 
-Cada edição compõe o jornal em fontes para a sua escrita e letreira as tiras com as suas próprias fontes de quadrinhos. Os balões japoneses correm na vertical. As edições japonesa e árabe leem as tiras da direita para a esquerda, e os quadros de cada fileira trocam de lugar; a árabe, composta da direita para a esquerda, espelha também as colunas da página. As imagens e a divisão continuam as mesmas; só muda `content.<lang>.md` ([sentido de leitura](/pt/docs/comics#sentido-de-leitura)).
+Cada edição compõe o jornal em fontes para a escrita e letreira as tiras com as próprias fontes de quadrinhos. Os balões japoneses correm na vertical. As edições japonesa e árabe leem as tiras da direita para a esquerda, e os quadros de cada fileira trocam de lugar; a árabe, composta da direita para a esquerda, espelha também as colunas da página. As imagens e a divisão continuam as mesmas; só muda `content.<lang>.md` ([sentido de leitura](/pt/docs/comics#sentido-de-leitura)).
 
 ## Variações
 
@@ -47,7 +47,7 @@ Cada edição compõe o jornal em fontes para a sua escrita e letreira as tiras 
 
 ### Pôr uma tira de uma coluna no texto
 
-Sem `span=page`, uma tira tem a largura da sua coluna e é composta onde está escrita, como uma figura no texto.
+Sem `span=page`, uma tira tem a largura da coluna e é composta onde está escrita, como uma figura no texto.
 
 ```diff
 -:::strip{split="* | * | * | *" span=page}
@@ -56,5 +56,5 @@ Sem `span=page`, uma tira tem a largura da sua coluna e é composta onde está e
 
 ## Erros comuns
 
-- O cabeçalho da seção é desenhado pelo cabeçalho da página, não por uma abertura de H1, então nada além da linha do fólio fica acima da tira da capa.
-- Uma área segura mais larga que o formato da sua célula deixa a imagem com faixas do fundo do quadro em volta, e a montagem avisa `comicPanelLetterbox`.
+- O cabeçalho da seção é desenhado pelo cabeçalho da página, não por uma abertura de H1, de modo que nada além da linha do fólio fica acima da tira da capa.
+- Uma área segura mais larga que o formato da célula deixa a imagem com faixas do fundo do quadro em volta, e a montagem avisa `comicPanelLetterbox`.

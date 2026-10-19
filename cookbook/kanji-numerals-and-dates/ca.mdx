@@ -16,7 +16,7 @@ Quatre pàgines verticals d'un butlletí de veïns, 東若葉台だより, núme
 
 ### 1 · Tria la grafia segons on va el nombre
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. `formatNumeral` és el comptador amb què el motor numera pàgines, llistes i títols, i la recepta el crida per als nombres que compon ella mateixa: `japanese-informal` compta (120 → 百二十, sense 一 davant de 十 百 千), `cjk-decimal` escriu xifra a xifra (2026 → 二〇二六) i `japanese-formal` dona el daiji d'un import (12000 → 壱萬弐阡). Un `{{daiji:12000}}` al text es converteix en l'import del rebut, de manera que la xifra s'escriu una sola vegada, en dígits. Els mateixos estils anomenen els comptadors: les seccions són `{2:一}、`, i `orderedLists.levels` fixa （一）, després `katakana-iroha` (イ ロ ハ) i després `hiragana` amb 、 (あ、い、う). `cjk.uprightDigits: 2` posa drets 8月22日 i 23日 sense marques, i el `!?` de 「雨が降ったら中止!?」 comparteix una casella, un valor per defecte del japonès ([nombres en text vertical](/ca/docs/configuration-east-asian#nombres-en-text-vertical)).
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. `formatNumeral` és el comptador amb què el motor numera pàgines, llistes i títols, i la recepta el crida per als nombres que compon ella mateixa: `japanese-informal` compta (120 → 百二十, sense 一 davant de 十 百 千), `cjk-decimal` escriu xifra a xifra (2026 → 二〇二六) i `japanese-formal` dona el daiji d'un import (12000 → 壱萬弐阡). Un `{{daiji:12000}}` al text es converteix en l'import del rebut, de manera que la xifra s'escriu una sola vegada, en dígits. Els mateixos estils defineixen els comptadors: les seccions són `{2:一}、`, i `orderedLists.levels` fixa （一）, després `katakana-iroha` (イ ロ ハ) i després `hiragana` amb 、 (あ、い、う). `cjk.uprightDigits: 2` posa drets 8月22日 i 23日 sense marques, i el `!?` de 「雨が降ったら中止!?」 comparteix una casella, un valor per defecte del japonès ([nombres en text vertical](/ca/docs/configuration-east-asian#nombres-en-text-vertical)).
 
 <PageShot page={2} crop="0.3,0.06,0.7,0.6" caption="Pàgina 2: イ ロ ハ sota （三）, あ、い、う sota ハ, 23日 i 4時 drets i !? en una sola casella." />
 
@@ -24,13 +24,13 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. `formatNumera
 
 <Excerpt region="masthead" />
 
-En una pàgina vertical, el capdamunt del flux és la vora dreta del full, així que un disseny de títol ancorat a dalt del sagnat és una banda per aquesta vora, i el seu `size.height` és la seva amplada al full. El número i la data són text de disseny construït amb `kan()` i `pos()`, i la data acaba al peu de la caixa de text amb `align: 'right'`.
+En una pàgina vertical, el capdamunt del flux és la vora dreta del full, així que un disseny de títol ancorat a dalt de la sang és una banda per aquesta vora, i el seu `size.height` és la seva amplada al full. El número i la data són text de disseny construït amb `kan()` i `pos()`, i la data acaba al peu de la caixa de text amb `align: 'right'`.
 
 ### 3 · Dona al calendari una pàgina pròpia
 
 <Excerpt region="calendar" />
 
-Una taula queda dreta en una pàgina vertical i es llegeix en horitzontal, com imprimeixen les taules els llibres japonesos; ocupa totes les línies de la pàgina on és. El calendari es cita després de l'últim paràgraf com a flotant de pàgina sencera, així que passa a la contraportada i el text anterior omple les seves pàgines. `resourceTypes` el numera amb el token `一` (表一), i un document `ja` compon tot sol l'etiqueta 表一　: el rètol i el número junts i un espai ideogràfic al darrere.
+Una taula queda dreta en una pàgina vertical i es llegeix en horitzontal, com imprimeixen les taules els llibres japonesos; ocupa totes les línies de la pàgina on és. El calendari es cita després de l'últim paràgraf com a flotant de pàgina sencera, així que passa a la contraportada i el text anterior omple les seves pàgines. `resourceTypes` el numera amb el token `一` (表一), i un document `ja` compon tot sol l'etiqueta 表一　: el prefix i el número junts i un espai ideogràfic al darrere.
 
 ### 4 · Carrega cada veu amb el text que compon
 
@@ -60,5 +60,5 @@ Amb 3, un 100 o un 365 del text també ocupen una casella.
 
 ## Errors freqüents
 
-- El calendari ocupa una pàgina perquè una taula dreta pren totes les línies d'una pàgina vertical (llacuna: taules compostes en text vertical). Si una taula ha de compartir pàgina amb el text, necessita una pàgina horitzontal o un dibuix SVG col·locat per un disseny de títol.
+- El calendari ocupa una pàgina perquè una taula dreta ocupa totes les línies d'una pàgina vertical (llacuna: taules compostes en text vertical). Si una taula ha de compartir pàgina amb el text, necessita una pàgina horitzontal o un dibuix SVG col·locat per un disseny de títol.
 - En xinès el mateix comptador escriu 一百二十 i 一千零一; en japonès, 百二十 i 千一. Escriu `locale: 'ja'`, o el token 一 triarà l'estil xinès. El llibre xinès <RecipeLink slug="chinese-dates-upright">Dates i sigles dretes en text vertical</RecipeLink> compon les dates amb el mateix `uprightDigits`.

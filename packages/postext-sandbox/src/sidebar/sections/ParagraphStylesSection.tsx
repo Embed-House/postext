@@ -8,6 +8,10 @@ import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../
 import {
   CollapsibleSection,
   ColorPicker,
+  ItemCard,
+  ItemCardListActions,
+  moveCardState,
+  openCard,
   DimensionInput,
   FontPicker,
   NumberInput,
@@ -133,21 +137,20 @@ function ParagraphStyleCard({
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-style-id={style.id}>
-      <div className="mb-2 flex items-center justify-between gap-1">
-        <span
-          className="truncate text-xs font-medium"
-          style={{ color: 'var(--foreground)' }}
-          title={style.name ?? style.id}
-        >
-          {style.name || style.id}
-        </span>
+    <ItemCard
+      list="paragraphStyles"
+      id={style.id}
+      styleId={style.id}
+      title={style.name || style.id}
+      subtitle={style.name && style.name !== style.id ? style.id : undefined}
+      actions={
         <ConfirmPopover message={labels.paragraphStyleDeleteConfirm} onConfirm={onRemove}>
           {({ open }) => (
             <IconButton label={labels.paragraphStyleDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
           )}
         </ConfirmPopover>
-      </div>
+      }
+    >
 
       <div className="mb-2 flex flex-col gap-2">
         <Field
@@ -479,7 +482,7 @@ function ParagraphStyleCard({
         isDefault={unset('containerSpacing')}
         onReset={() => onResetField('containerSpacing')}
       />
-    </div>
+    </ItemCard>
     </SearchScope>
   );
 }
@@ -503,7 +506,9 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
   };
 
   const addStyle = () => {
-    write([...styles, { id: nextStyleId(styles), name: labels.paragraphStyleNewName }]);
+    const id = nextStyleId(styles);
+    openCard('paragraphStyles', id);
+    write([...styles, { id, name: labels.paragraphStyleNewName }]);
   };
 
   const updateStyle = (id: string, partial: Partial<ParagraphStyleConfig>) => {
@@ -523,6 +528,7 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
+    moveCardState('paragraphStyles', id, nextId);
     write(styles.map((s) => (s.id === id ? { ...s, id: nextId } : s)));
   };
 
@@ -571,6 +577,7 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
           onReset={() => writeContainerSpacing(undefined)}
         />
       )}
+      <ItemCardListActions list="paragraphStyles" ids={styles.map((s) => s.id)} />
       {styles.map((style, i) => (
         <ParagraphStyleCard
           key={style.id}

@@ -18,7 +18,7 @@ El comienzo de *La importancia de llamarse Ernesto*, de Oscar Wilde, en una edic
 
 <Excerpt region="acts" />
 
-El acto se abre con un título de primer nivel en Abril Fatface de 24 pt, sin ranura de diseño. `textTransform` lo pasa a versales, y las tres líneas de 13,6 pt de la rejilla que ocupa dejan esas versales 5,5 mm por debajo del borde superior de la caja ([encabezados](/es/docs/configuration-headings#encabezados)). `textAlign: 'center'` no admite un valor por nivel, así que centra también los títulos del reparto y el rótulo *Escena*. `breakBefore` con paridad `'odd'` lleva el acto a una página impar, frente al reparto. El valor por defecto, `'always-odd'`, dejaría dos páginas en blanco entre ambos ([saltar antes](/es/docs/configuration-headings#saltar-antes)).
+El acto se abre con un encabezado de primer nivel en Abril Fatface de 24 pt, sin zona de diseño. `textTransform` lo pasa a versales, y las tres líneas de 13,6 pt de la rejilla que ocupa dejan esas versales 5,5 mm por debajo del borde superior de la caja ([encabezados](/es/docs/configuration-headings#encabezados)). `textAlign: 'center'` no admite un valor por nivel, así que centra también los títulos del reparto y el rótulo *Escena*. `breakBefore` con paridad `'odd'` lleva el acto a una página impar, frente al reparto. El valor por defecto, `'always-odd'`, dejaría dos páginas en blanco entre ambos ([salto de página antes del encabezado](/es/docs/configuration-headings#salto-de-página-antes-del-encabezado)).
 
 ### 2 · El reparto es una fila de puntos hasta cada actor
 
@@ -47,7 +47,7 @@ El fondo es un elemento de imagen, y una apertura reserva altura hasta el pie de
 La página par lleva el título de la obra, tomado del frontmatter, y la impar el del acto, de `{chapterTitle}`; las dos van en versales de Playfair Display SC, con el folio en ciruela en el borde exterior ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). La primera página del acto cuenta como apertura porque su primer bloque es un título que salta de página, así que `pages: 'body'` le quita las cabeceras, y el pie de página le pone en su lugar un folio centrado.
 
 <Note>
-Un guion de cine sangra el diálogo por los dos lados en lugar de usar sangría francesa: <RecipeLink slug="screenplay-format">Formato de guion cinematográfico</RecipeLink> compone cada réplica como un recuadro sin marco del ancho del bloque de diálogo.
+Un guion de cine sangra el diálogo por los dos lados en lugar de usar sangría francesa: <RecipeLink slug="screenplay-format">Formato de guion cinematográfico</RecipeLink> compone cada réplica como un recuadro sin borde del ancho del bloque de diálogo.
 </Note>
 
 ## Variantes
@@ -75,6 +75,6 @@ En bandera y con una sangría de primera línea de 5 mm, una acotación de una l
 ## Errores frecuentes
 
 - Toda cursiva del diálogo toma `italicColor`, también la de énfasis, y el *es* que subraya Lane sale en el gris de las acotaciones. El gris va en `bodyText` porque la mayoría de las acotaciones están dentro de un parlamento, en el mismo párrafo que el énfasis; solo en redonda quedaría ese *es* en tinta.
-- En la edición inglesa, tres parlamentos de Wilde terminan en una palabra sola: *information.*, *you.* y *that?* El tercero puede subir a la línea anterior, pero solo con el 1 % de interletraje negativo que `bodyText.maxRuntTracking` admite por defecto, y el parlamento queda más oscuro que los que lo rodean. `maxRuntTracking: 5` deja ese tope en la mitad: *that?* baja a una línea propia y la de arriba se abre hasta 1,78 veces el espacio normal, dentro del límite de 1,8. Las tres líneas cortas se quedan, para no tocar el texto de Wilde. La traducción española se reescribió allí donde una línea acababa en una palabra de una letra o donde una sílaba quedaba sola.
+- En la edición inglesa, tres parlamentos de Wilde terminan en una palabra sola: *information.*, *you.* y *that?* El tercero puede subir a la línea anterior, pero solo con el 1 % de espaciado negativo entre letras que `bodyText.maxRuntTracking` admite por defecto, y el parlamento queda más oscuro que los que lo rodean. `maxRuntTracking: 5` deja ese tope en la mitad: *that?* baja a una línea propia y la de arriba se abre hasta 1,78 veces el espacio normal, dentro del límite de 1,8. Las tres líneas cortas se quedan, para no tocar el texto de Wilde. La traducción española se reescribió allí donde una línea acababa en una palabra de una letra o donde una sílaba quedaba sola.
 - Los nombres se dividen como cualquier otra palabra: en la página 5 de la edición inglesa, *Au-gusta* y *Gwen-dolen* se parten entre dos líneas. Un carácter de unión de palabras (U+2060) dentro de *Augusta* mantiene el nombre entero, pero estira la línea anterior hasta 1,71 veces el espacio normal, así que el texto inglés conserva los guiones.
-- En el lienzo, Playfair Display SC dibuja *fi* como una ligadura en minúscula, así que *first* saldría con una *fi* minúscula entre versalitas. Por eso la cabecera del reparto inglés dice *The original cast*.
+- En el canvas, Playfair Display SC dibuja *fi* como una ligadura en minúscula, así que *first* saldría con una *fi* minúscula entre versalitas. Por eso la cabecera del reparto inglés dice *The original cast*.

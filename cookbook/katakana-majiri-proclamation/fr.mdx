@@ -16,7 +16,7 @@ Une réimpression en huit pages de la Constitution de Meiji telle que l’a impr
 
 ### 1 · Laisser un compteur de liste écrire 第十八條
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque article est un élément d’une liste ordonnée Markdown, et `orderedLists` met son numéro dans la forme du Journal officiel : `numberFormat: 'japanese-informal'` écrit 十八, et non 一十八, `prefix: '第'` et `separator: '條'` l’encadrent, et `gap: em(1)` laisse l’espace pleine chasse de l’original. `numberWidth: 'item'` fait commencer le texte de chaque article un intervalle après sa propre étiquette : 第九條 et 第十一條 sont donc suivis chacun d’une espace pleine chasse, comme dans le Journal officiel, et leurs textes commencent à un caractère d’écart. Avec `hangingIndent: false`, les lignes suivantes reviennent en tête de ligne au lieu de s’aligner sous le texte, comme dans le Journal officiel. Le chapitre deux commence sa liste à `18.`, si bien que le compteur se poursuit d’un chapitre à l’autre, et les chapitres eux-mêmes sont numérotés 第一章 et 第二章 par le modèle de titre `第{2:一}章`, avec le même style de compteur ([listes ordonnées](/fr/docs/configuration-lists-math#listes-numérotées)).
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque article est un élément d’une liste ordonnée Markdown, et `orderedLists` met son numéro dans la forme du Journal officiel : `numberFormat: 'japanese-informal'` écrit 十八, et non 一十八, `prefix: '第'` et `separator: '條'` l’encadrent, et `gap: em(1)` laisse l’espace pleine chasse de l’original. `numberWidth: 'item'` fait commencer le texte de chaque article un intervalle après sa propre étiquette : 第九條 et 第十一條 sont donc suivis chacun d’une espace pleine chasse, comme dans le Journal officiel, et leurs textes commencent à un caractère d’écart. Avec `hangingIndent: false`, les lignes suivantes reviennent en tête de ligne au lieu de s’aligner sous le texte, comme dans le Journal officiel. Le chapitre deux commence sa liste à `18.` : le compteur se poursuit donc d’un chapitre à l’autre, et les chapitres eux-mêmes sont numérotés 第一章 et 第二章 par le modèle de titre `第{2:一}章`, avec le même style de compteur ([listes ordonnées](/fr/docs/configuration-lists-math#listes-numérotées)).
 
 <PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Page 5 : 第一章　天皇 en retrait de deux caractères, les articles 第一條 à 第八條 en gras, le second alinéa de l’article 8 en retrait d’un caractère." />
 
@@ -28,13 +28,13 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque art
 
 <Excerpt region="frame" />
 
-L’emplacement d’en-tête dessine en millimètres de page ordinaires, pas dans le flux vertical : le cadre est donc fait de deux boîtes placées par les mêmes nombres qui placent le bloc de texte, `HEAD` depuis le haut, `SIDE` depuis chaque bord. Les marges sont calculées à partir de la grille, et non laissées à celle-ci, si bien que le bloc de texte se trouve exactement 6 mm à l’intérieur du filet fin. Le folio, en kanji grâce à `pageNumbering.format: 'japanese-informal'`, se place sous le cadre.
+La zone de maquette de l’en-tête dessine en millimètres de page ordinaires, pas dans le flux vertical : le cadre est donc fait de deux boîtes placées par les mêmes nombres qui placent la zone de contenu, `HEAD` depuis le haut, `SIDE` depuis chaque bord. Les marges sont calculées à partir de la grille, et non laissées à celle-ci : la zone de contenu se trouve donc exactement 6 mm à l’intérieur du filet fin. Le folio, en kanji grâce à `pageNumbering.format: 'japanese-informal'`, se place sous le cadre.
 
 ### 4 · Composer la page de titre le long de l’axe
 
 <Excerpt region="cover" />
 
-Dans un flux vertical, `x` descend le long de la feuille et `y` la traverse vers la gauche : la colonne du titre se place donc par sa distance au bord droit du bloc de texte. La date, dans la couleur d’accent, et le nom du Journal officiel se tiennent de part et d’autre du titre, à 18 mm de l’axe.
+Dans un flux vertical, `x` descend le long de la feuille et `y` la traverse vers la gauche : la colonne du titre se place donc par sa distance au bord droit de la zone de contenu. La date, dans la couleur d’accent, et le nom du Journal officiel se tiennent de part et d’autre du titre, à 18 mm de l’axe.
 
 ### 5 · Charger chaque caractère avec le texte qu’il compose
 
@@ -64,5 +64,5 @@ Certains textes juridiques et financiers écrivent 壱, 弐, 参 : le jeton 壱
 
 ## Erreurs fréquentes
 
-- Le Journal officiel compose les katakana des terminaisons plus petits que les kanji, et espace régulièrement les titres des ministres sur une même largeur (字取り). Postext compose tous les caractères au corps du texte, et son espacement régulier, `jidori`, ne s’applique qu’aux titres : les contreseings ne sont donc ici alignés qu’au pied de la ligne.
+- Le Journal officiel compose les katakana des terminaisons plus petits que les kanji, et espace régulièrement les titres des ministres sur une même largeur (字取り). Postext compose tous les caractères au corps du texte courant, et son espacement régulier, `jidori`, ne s’applique qu’aux titres : les contreseings ne sont donc ici alignés qu’au pied de la ligne.
 - Le japonais et le chinois divergent sur ce compteur : dans un document `ja`, le jeton `一` et `{2:一}` signifient `japanese-informal` (百一, 十八) ; dans un document chinois, ils signifient le style chinois (一百零一, 十八). Le livre de lecture chinois <RecipeLink slug="chinese-dates-upright">Dates et sigles debout en texte vertical</RecipeLink> tape son 第一條 à la main.

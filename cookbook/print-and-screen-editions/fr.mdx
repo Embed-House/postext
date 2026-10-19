@@ -1,7 +1,7 @@
 ---
 title: "Une seule source, une édition papier et une édition écran"
-summary: "Deux éditions, une configuration : htmlViewer.overrides porte la maquette écran sombre, qu’applyHtmlViewerOverrides fusionne avant chaque rendu HTML."
-plain: "La rubrique météo d’un magazine, composée deux fois avec le même texte. On y voit comment un seul jeu de réglages donne une version imprimée en colonnes et une version sombre sur une colonne, à lire à l’écran."
+summary: "Deux éditions, une configuration : htmlViewer.overrides contient la maquette écran sombre, qu’applyHtmlViewerOverrides fusionne avant chaque rendu HTML."
+plain: "La rubrique météo d’un magazine, composée deux fois avec le même texte. On y voit comment un seul jeu de réglages donne une édition imprimée en colonnes et une édition sombre sur une colonne, à lire à l’écran."
 description: "Une rubrique de magazine dans Postext, en numéro imprimé sur deux colonnes et en vue de lecture HTML sombre et redimensionnable, d’un Markdown et d’une config."
 question: "Comment afficher le même document en vue de lecture HTML adaptative, avec une maquette écran plus simple ?"
 aliases: ["édition écran", "vue de lecture", "mode lecture", "édition web", "mode sombre", "thème de nuit", "HTML adaptatif", "HTML responsive", "redimensionner", "ResizeObserver", "Shadow DOM", "htmlViewer overrides"]
@@ -10,7 +10,7 @@ pageNotes: { "1": "La page de partie de « Notes on Weather » : un aplat ble
 
 ## Ce que vous allez composer
 
-*Notes on Weather*, la rubrique d’automne d’un petit magazine, composée deux fois à partir du même Markdown. Sur papier, c’est un numéro de 225 × 297 mm : une page de partie bleu pluie, trois notes qui s’ouvrent sous un bandeau clair couleur de brume, deux colonnes justifiées, les dessins d’un pluviomètre et d’une rose des vents, et la photographie d’une vallée dans la brume. À l’écran, c’est une seule colonne en drapeau en Newsreader, gris pâle sur un fond presque noir, en texte HTML que le lecteur peut sélectionner et copier, sans page de partie, sans bandeaux ni folios. Le panneau s’ouvre sur le pluviomètre, réduit à la hauteur du panneau et dessiné aux couleurs de nuit, à côté de la page imprimée qui le porte. Remontez pour voir l’ouverture de « Rain », ou tirez le coin du panneau : le texte est remis en page à la nouvelle taille. La maquette écran tient en neuf clés sous `htmlViewer.overrides`, à l’intérieur de la configuration papier.
+*Notes on Weather*, la rubrique d’automne d’un petit magazine, composée deux fois à partir du même Markdown. Sur papier, c’est un numéro de 225 × 297 mm : une page de partie bleu pluie, trois notes qui s’ouvrent sous un bandeau clair couleur de brume, deux colonnes justifiées, les dessins d’un pluviomètre et d’une rose des vents, et la photographie d’une vallée dans la brume. À l’écran, c’est une seule colonne en drapeau en Newsreader, gris pâle sur un fond presque noir, en texte HTML que le lecteur peut sélectionner et copier, sans page de partie, sans bandeaux ni folios. Le panneau s’ouvre sur le pluviomètre, réduit à la hauteur du panneau et dessiné aux couleurs de nuit, à côté de la page imprimée qui le contient. Remontez pour voir l’ouverture de « Rain », ou tirez le coin du panneau : le texte est remis en page à la nouvelle taille. La maquette écran tient en neuf clés sous `htmlViewer.overrides`, à l’intérieur de la configuration papier.
 
 ## Préparation
 
@@ -18,13 +18,13 @@ pageNotes: { "1": "La page de partie de « Notes on Weather » : un aplat ble
 
 <Excerpt region="palette" />
 
-Chaque couleur de la configuration désigne un id de la palette, et l’hexadécimal écrit à côté n’est que la valeur de secours de jour. L’édition écran passe donc aux couleurs de nuit en remplaçant un seul tableau. Les [overrides](/fr/docs/configuration-fonts-colors-viewers#visionneuse-html) de [la réponse courte](#la-réponse-courte) fusionnent les objets clé par clé et les niveaux de titre sur `level`, et remplacent en entier tout autre tableau, `colorPalette` compris. `main-color` fait partie de la palette, si bien que les valeurs par défaut du moteur qui s’en servent changent aussi. La nouvelle palette atteint toutes les couleurs qui lui sont liées : le texte, les légendes, les éléments de maquette des ouvertures et la couleur des renvois.
+Chaque couleur de la configuration désigne une entrée de la palette, et l’hexadécimal écrit à côté n’est que la valeur de secours de jour. L’édition écran passe donc aux couleurs de nuit en remplaçant un seul tableau. Les [overrides](/fr/docs/configuration-fonts-colors-viewers#visionneuse-html) de [la réponse courte](#la-réponse-courte) fusionnent les objets clé par clé et les niveaux de titre sur `level`, et remplacent en entier tout autre tableau, `colorPalette` compris. `main-color` fait partie de la palette : les valeurs par défaut du moteur qui s’en servent changent donc aussi. La nouvelle palette atteint toutes les couleurs qui lui sont liées : le texte, les légendes, les éléments de maquette des ouvertures et la couleur des renvois.
 
 ### 2 · Ouvertures : un bandeau sur papier, les mots à l’écran
 
 <Excerpt region="opener" />
 
-Les éléments de surtitre, de titre et de chapeau sont définis une fois et repris dans les deux maquettes, si bien que les deux éditions affichent les mêmes attributs de titre : `{attr.kicker}`, `{attr.lead}` et le `{partTitle}` de la partie. Sur papier, un titre de niveau 1 passe à une nouvelle page et s’étend sur les deux colonnes, et sa maquette suspend un bandeau de brume depuis le fond perdu. `minHeight` réserve la hauteur du bandeau sous la marge de tête, plus `AIR`, les 9 mm entre le bandeau et la première ligne. Les titres imprimés sont composés en 54 pt parce que chacun tient en un mot court et que c’est le seul gros texte de sa page. À l’écran, le même niveau devient un titre dans la colonne, sans bandeau ni blanc. L’override fusionne sur `level` : tout réglage du titre qu’il ne reprend pas reste celui du papier.
+Les éléments de surtitre, de titre et de chapeau sont définis une fois et repris dans les deux maquettes : les deux éditions affichent donc les mêmes attributs de titre : `{attr.kicker}`, `{attr.lead}` et le `{partTitle}` de la partie. Sur papier, un titre de niveau 1 passe à une nouvelle page et s’étend sur les deux colonnes, et sa maquette suspend un bandeau de brume depuis le fond perdu. `minHeight` réserve la hauteur du bandeau sous la marge de tête, plus `AIR`, les 9 mm entre le bandeau et la première ligne. Les titres imprimés sont composés en 54 pt parce que chacun tient en un mot court et que c’est le seul gros texte de sa page. À l’écran, le même niveau devient un titre dans la colonne, sans bandeau ni blanc. L’override fusionne sur `level` : tout réglage du titre qu’il ne reprend pas reste celui du papier.
 
 ### 3 · Une page de partie qui n’existe que sur papier
 
@@ -36,7 +36,7 @@ Les éléments de surtitre, de titre et de chapeau sont définis une fois et rep
 
 <Excerpt region="figures" />
 
-Changer de palette ne recolore pas un SVG : chaque dessin est donc fait une fois par palette. La vallée est une photographie, un seul JPEG que partagent les deux éditions. `figures(edition)` construit les mêmes ressources pour les deux éditions, chacune pointant vers le fichier de son édition : `gauge-day.svg` sur papier, `gauge-night.svg` à l’écran. Les ids, les légendes, les textes alternatifs et les placements ne changent pas, si bien que chaque `:ref` du Markdown renvoie à la même figure et au même numéro dans l’une ou l’autre édition. Dans l’édition écran, le texte alternatif va dans chaque `<img alt>`, où un lecteur d’écran le trouve.
+Changer de palette ne recolore pas un SVG : chaque dessin est donc fait une fois par palette. La vallée est une photographie, un seul JPEG que partagent les deux éditions. `figures(edition)` construit les mêmes ressources pour les deux éditions, chacune pointant vers le fichier de son édition : `gauge-day.svg` sur papier, `gauge-night.svg` à l’écran. Les identifiants, les légendes, les textes de remplacement et les placements ne changent pas : chaque `:ref` du Markdown renvoie donc à la même figure et au même numéro dans l’une ou l’autre édition. Dans l’édition écran, le texte de remplacement va dans chaque `<img alt>`, où un lecteur d’écran le trouve.
 
 ### 5 · Héberger l’édition écran
 

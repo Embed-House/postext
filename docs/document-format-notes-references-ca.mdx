@@ -5,11 +5,11 @@ export const metadata = {
   sidebarTitle: 'Notes i referències',
   description: "Les notes a peu de pàgina, les referències creuades i les àncores, les citacions i la bibliografia, i les marques de l'índex analític",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 28,
   parent: 'document-format',
-  plainSummary: "Aquesta pàgina explica les marques que remeten a un altre lloc del llibre o de fora. Una crida de nota porta el lector a una nota a peu de pàgina. Una referència creuada anomena una figura, una secció o una pàgina pel seu número. Una citació anomena un llibre o un article que esmentes, i la bibliografia els recull tots. Les marques d'índex trien les paraules que l'índex del final del llibre enumera amb les seves pàgines.",
+  plainSummary: "Aquesta pàgina explica les marques que remeten a un altre lloc del llibre o de fora. Una crida de nota porta el lector a una nota a peu de pàgina. Una referència creuada esmenta una figura, una secció o una pàgina pel número. Una citació indica un llibre o un article que cites, i la bibliografia els recull tots. Les marques d'índex trien les paraules que l'índex del final del llibre recull amb les pàgines on surten.",
 };
 
 # Format del document: notes i referències
@@ -27,27 +27,27 @@ així que va aprendre a comptar els graons a les fosques.
 ```
 
 - **Crida.** `[^id]` imprimeix el número de la nota volat, enganxat a la paraula anterior (escriu-la després de la puntuació, com a dalt). L'id admet lletres, xifres, `-`, `_`, `.` i `:`. La crida funciona en paràgrafs, elements de llista, citacions i requadres; en títols, peus de figura i cel·les de taula s'imprimeix tal qual.
-- **Definició.** Un paràgraf que comença per `[^id]:`; el seu text arriba fins a la línia en blanc següent i admet les marques en línia habituals (negreta, cursiva, enllaços, `:ref`, fórmules, chips). Les definicions surten del flux siguin on siguin, de manera que poden anar sota el paràgraf que les cita o totes juntes al final del capítol. Si un id es defineix dues vegades, val la primera.
-- **Números.** Les notes es numeren en l'ordre en què se citen per primera vegada, i la numeració torna a començar a cada capítol (un títol de nivell 1, i cada document d'un llibre); una nota citada dues vegades conserva el primer número i es compon una sola vegada. `footnotes.numbering: 'document'` continua la numeració per tot el llibre, i `'page'` la reinicia a cada pàgina, com fan els llibres xinesos; `footnotes.numberFormat: 'circled-decimal'` escriu ① ② ③ sobre la línia de base. `footnotes.numberFormat: 'symbols'` les marca amb `*`, `†`, `‡`, `§`, `‖`, `¶`, després dobles, i torna a començar a cada pàgina, com fan les revistes.
-- **Text japonès.** La crida s'escriu davant d'un 。 que tanca la frase (`先生[^1]。`): es queda amb el caràcter anterior, i 。 mai no obre una línia. Un llibre japonès vertical compon per defecte les crides （1） a la dreta de la línia i les notes després del capítol; `footnotes.markerPosition: 'side'` posa una crida petita al costat de la paraula, sense ocupar lloc a la línia, i `footnotes.placement: 'spread'` compon les notes al costat del text de cada plec (vegeu [Configuració › Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina)).
-- **On va la nota.** Per defecte, al peu de la columna que conté la línia que la cita, sota un filet curt: la línia i la seva nota comparteixen sempre columna, i una línia la nota de la qual no hi cap passa amb ella a la següent. En una maqueta d'una columna és el peu de la pàgina. `footnotes.placement: 'chapterEnd'`, en canvi, compon totes les notes d'un capítol després del darrer bloc, per defecte al peu de la columna que tanquen. Els cossos, el filet i els espais són a [Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina), a la referència de configuració.
-- **Comprovacions.** Una crida sense definició (`undefinedFootnote`) imprimeix el seu número sobre una nota buida; una definició que cap crida no cita (`unusedFootnote`) no es compon. El Sandbox mostra totes dues al tauler Revisió.
+- **Definició.** Un paràgraf que comença per `[^id]:`; el seu text arriba fins a la línia en blanc següent i admet les marques en línia habituals (negreta, cursiva, enllaços, `:ref`, fórmules, xips). Les definicions surten del flux siguin on siguin, de manera que poden anar sota el paràgraf que les cita o totes juntes al final del capítol. Si un id es defineix dues vegades, val la primera.
+- **Números.** Les notes es numeren en l'ordre en què se citen per primera vegada, i la numeració torna a començar a cada capítol (un títol de nivell 1, i cada document d'un llibre); una nota citada dues vegades conserva el primer número i es compon una sola vegada. `footnotes.numbering: 'document'` continua la numeració per tot el llibre, i `'page'` la reinicia a cada pàgina, com fan els llibres xinesos, `'column'` a cada columna i `'spread'` a cada doble pàgina (les notes laterals d'un llibre japonès); `footnotes.numberFormat: 'circled-decimal'` escriu ① ② ③ sobre la línia de base. `footnotes.numberFormat: 'symbols'` les marca amb `*`, `†`, `‡`, `§`, `‖`, `¶`, després dobles, i torna a començar a cada pàgina, com fan les revistes.
+- **Text japonès.** La crida s'escriu davant d'un 。 que tanca la frase (`先生[^1]。`): es queda amb el caràcter anterior, i 。 mai no obre una línia. Un llibre japonès vertical compon per defecte les crides （1） a la dreta de la línia i les notes després del capítol; `footnotes.markerPosition: 'side'` posa una crida petita al costat de la paraula, sense ocupar lloc a la línia, i `footnotes.placement: 'spread'` compon les notes al costat del text de cada doble pàgina (vegeu [Configuració › Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina)).
+- **On va la nota.** Per defecte, al peu de la columna que conté la línia que la cita, sota un filet curt: la línia i la nota sempre comparteixen columna, i si la nota d'una línia no hi cap, la línia passa amb la nota a la columna següent. En una maquetació d'una sola columna, és el peu de la pàgina. `footnotes.placement: 'chapterEnd'`, en canvi, compon totes les notes d'un capítol després del darrer bloc, per defecte al peu de la columna que tanquen. Les mides, el filet i els espais són a [Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina), a la referència de configuració.
+- **Comprovacions.** Una crida sense definició (`undefinedFootnote`) imprimeix el número sobre una nota buida; una definició que cap crida no cita (`unusedFootnote`) no es compon. El Sandbox mostra totes dues al tauler Revisió.
 
 
 ## Referències creuades i àncores
 
-Una referència creuada anomena un lloc del llibre i n'imprimeix el número, el títol o la pàgina: *vegeu la secció 3.2*, *com explica el capítol 4*, *a la pàg. 112*. Les paraules i els números segueixen el text: si una secció canvia de lloc, si els capítols es renumeren o si el llibre es recompon, totes les referències s'actualitzen. Al PDF, a l'HTML i a les previsualitzacions del Sandbox cada referència és un enllaç: un clic porta al destí, també en un altre capítol.
+Una referència creuada remet a un lloc del llibre i n'imprimeix el número, el títol o la pàgina: *vegeu la secció 3.2*, *com explica el capítol 4*, *a la pàg. 112*. Les paraules i els números segueixen el text: si una secció canvia de lloc, si els capítols es renumeren o si el llibre es recompon, totes les referències s'actualitzen. Al PDF, a l'HTML i a les previsualitzacions del Sandbox cada referència és un enllaç: un clic porta al destí, també en un altre capítol.
 
 **Àncores.** Una referència necessita alguna cosa a què apuntar:
 
 - **Un títol** amb identificador: `## Método {#sec-metodo}` (la forma de Pandoc; `id="sec-metodo"` també val).
-- **Una caixa o un altre contenidor** obert amb un identificador: `:::callout{#caja-seguridad title="Seguridad"}`. A una caixa d'un estil numerat (un teorema) se l'anomena amb el seu rètol i el seu número: *Teorema 2*.
+- **Una caixa o un altre contenidor** obert amb un identificador: `:::callout{#caja-seguridad title="Seguridad"}`. Una caixa d'un estil numerat (un teorema) es cita amb l'etiqueta i el número: *Teorema 2*.
 - **Una fórmula en bloc** amb un `\label{eq:x}` (vegeu [Fórmules matemàtiques](/ca/docs/document-format-inline#fórmules-matemàtiques)): la referència n'imprimeix el número com l'imprimeix la fórmula, *(3)*.
-- **Un punt del text**: `:anchor{#idea-clave}` posa una àncora invisible; `[la idea clave]{#idea-clave}` conserva les seves paraules i els dona nom.
+- **Un punt del text**: `:anchor{#idea-clave}` posa una àncora invisible; `[la idea clave]{#idea-clave}` conserva les paraules i les identifica amb aquest nom.
 
-Un identificador admet lletres, xifres, `-`, `_`, `.` i `:`. Ha de ser únic al llibre: el tauler de Comprovacions avisa del que es repeteix (`duplicateAnchor`), i les referències porten al primer.
+Un identificador admet lletres, xifres, `-`, `_`, `.` i `:`. Ha de ser únic al llibre: el tauler Revisió avisa dels identificadors repetits (`duplicateAnchor`), i les referències porten al primer lloc on apareixen.
 
-**Referències.** `:ref{id="…"}` anomena una àncora igual que anomena una figura o una taula:
+**Referències.** `:ref{id="…"}` remet a una àncora igual que remet a una figura o una taula:
 
 ```md
 ## Mètode {#sec-metodo}
@@ -58,7 +58,7 @@ Els resultats de :ref{id="sec-metodo"} es compleixen a :ref{id="sec-metodo" styl
 <table>
 <thead><tr><th><code>style</code></th><th>imprimeix</th></tr></thead>
 <tbody>
-<tr><td><em>(cap)</em></td><td>un títol numerat amb la seva paraula i el seu número (<em>secció 3.2</em>, <em>capítol 4</em>), un sense número amb el seu títol, una àncora amb el seu text, una equació amb el seu número tal com s'imprimeix (<em>(3)</em>), una caixa numerada amb el seu rètol i el seu número (<em>Teorema 2</em>)</td></tr>
+<tr><td><em>(cap)</em></td><td>un títol numerat, amb la paraula i el número (<em>secció 3.2</em>, <em>capítol 4</em>); un títol sense número, amb el títol; una àncora, amb el text; una equació, amb el número tal com s'imprimeix (<em>(3)</em>); una caixa numerada, amb l'etiqueta i el número (<em>Teorema 2</em>)</td></tr>
 <tr><td><code>number</code></td><td>només el número (<em>3.2</em>, <em>3</em>, <em>2</em>)</td></tr>
 <tr><td><code>title</code></td><td>el títol, el text de l'àncora o el <code>title</code> de la caixa</td></tr>
 <tr><td><code>page</code></td><td>la pàgina on ha quedat (<em>pàg. 112</em>)</td></tr>
@@ -68,20 +68,20 @@ Els resultats de :ref{id="sec-metodo"} es compleixen a :ref{id="sec-metodo" styl
 
 `\eqref{x}` i `\ref{x}` de LaTeX també funcionen al text: `\eqref` com una referència sense estil i `\ref` com `style=number`, així que `\ref{thm:main}` imprimeix *2* i `\ref{fig:mapa}`, el número d'una figura. Una `~` just al davant és un espai de no separació (`Teorema~\ref{thm:main}`). Dins de `$…$` pertanyen a la fórmula.
 
-`text="…"` imprimeix les teves pròpies paraules i continua enllaçant; `case=capitalize` comença el rètol amb majúscula (*Secció 3.2* a principi de frase). Les paraules segueixen la llengua del document (*section 3.2*, *第3.2节*, *S. 112*) i es canvien a [Referències creuades](/ca/docs/configuration-notes-references#referències-creuades) de la configuració; un número que la seva plantilla ja escriu amb paraules (*Capítol 4*, *第四章*) s'imprimeix tal qual.
+`text="…"` imprimeix les paraules que tu vulguis i continua sent un enllaç; `case=capitalize` comença l'etiqueta amb majúscula (*Secció 3.2* a principi de frase). Les paraules segueixen la llengua del document (*section 3.2*, *第3.2节*, *S. 112*) i es poden canviar a [Referències creuades](/ca/docs/configuration-notes-references#referències-creuades), a la configuració; un número de títol que la plantilla ja escriu amb la paraula (*Capítol 4*, *第四章*) s'imprimeix tal qual.
 
-**Talls de línia.** Una referència que imprimeix paraules es talla pels seus espais com el text que l'envolta: el text d'una àncora (`[cierra la palanca de modo que apunte hacia atrás]{#paso}`), un títol, el teu propi `text="…"`. Els seus espais són espais de la línia, així que en una línia justificada s'estiren amb els altres, i la referència continua sent un sol enllaç, en dos trossos quan ocupa dues línies. Les seves paraules no es parteixen mai amb guionet. Dins d'un rètol així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior, de manera que `text="Fig. 1a"` o `text="làmina IV"` no es parteixen mai. Un rètol que porta un número o una pàgina (*secció 3.2*, *pàg. 112*, *Fig. 1.7*, *Teorema 2*) no es talla mai, sigui quin sigui l'espai de la seva plantilla, i un espai de no separació dins d'un rètol uneix com a qualsevol altre lloc. `crossRefs.breakLabels: false` manté sencer cada rètol, com fins a postext 1.27, quan un rètol era una sola paraula que no podia pujar a la línia anterior; vegeu [Referències creuades](/ca/docs/configuration-notes-references#referències-creuades).
+**Talls de línia.** Una referència que imprimeix paraules es talla pels espais, com el text que l'envolta: el text d'una àncora (`[cierra la palanca de modo que apunte hacia atrás]{#paso}`), un títol, el teu propi `text="…"`. Aquests espais són espais de la línia, així que en una línia justificada s'estiren amb els altres, i la referència continua sent un sol enllaç, en dos trossos quan ocupa dues línies. Les paraules no es parteixen mai. Dins d'una etiqueta així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior, de manera que `text="Fig. 1a"` o `text="làmina IV"` no es parteixen mai. Una etiqueta que porta un número o una pàgina (*secció 3.2*, *pàg. 112*, *Fig. 1.7*, *Teorema 2*) no es talla mai, tingui l'espai que tingui la plantilla, i un espai de no separació dins d'una etiqueta manté juntes les paraules, com a qualsevol altre lloc. `crossRefs.breakLabels: false` manté senceres totes les etiquetes, com feia postext fins a la 1.27, quan una etiqueta era una sola paraula que no podia pujar a la línia anterior; vegeu [Referències creuades](/ca/docs/configuration-notes-references#referències-creuades).
 
 **Les referències de pàgina** només es coneixen quan el llibre està compost. El motor torna a compondre el document amb les pàgines de la passada anterior fins que no canvien, com fa amb l'índex general; fins llavors la pàgina s'imprimeix com a *?*.
 
-**pandoc-crossref.** Un text escrit per a pandoc-crossref es llegeix igual: `@sec:metodo`, `[@fig:mapa]`, i `[-@tbl:datos]` per al número sol. El prefix (`sec`, `fig`, `tbl`, `eq`, `lst`) pot formar part de l'identificador (`{#sec:metodo}`) o quedar-ne fora (`{#metodo}`). Una `@` enganxada a una paraula, com en una adreça de correu, continua sent text.
+**pandoc-crossref.** Un text escrit per a pandoc-crossref es llegeix igual: `@sec:metodo`, `[@fig:mapa]`, i `[-@tbl:datos]` per al número sol. Un prefix amb majúscula (`@Sec:metodo`) posa en majúscula la inicial de l'etiqueta, com `case=capitalize`. El prefix (`sec`, `fig`, `tbl`, `eq`, `lst`) pot formar part de l'identificador (`{#sec:metodo}`) o quedar-ne fora (`{#metodo}`). Una `@` enganxada a una paraula, com en una adreça de correu, continua sent text.
 
-Una referència a un id que res no defineix imprimeix *?* i apareix al tauler de Comprovacions (`unknownResourceId`). A l'editor del Sandbox, `@` ofereix les figures, les taules, els títols amb id i les àncores del llibre.
+Una referència a un id que res no defineix imprimeix *?* i apareix al tauler Revisió (`unknownResourceId`). A l'editor del Sandbox, `@` ofereix les figures, les taules, els títols amb id i les àncores del llibre.
 
 
 ## Citacions i bibliografia
 
-Escriu les citacions com les llegeix Pandoc, desa les referències al document i tria l'estil de citació a la configuració: passar d'APA a IEEE, o a les notes de Chicago, és canviar l'estil a la configuració, no el text. Cada citació enllaça amb la seva entrada a la bibliografia.
+Escriu les citacions com les llegeix Pandoc, posa les referències al document i tria l'estil de citació a la configuració: per passar d'APA a IEEE, o a les notes de Chicago, canvies un paràmetre, no el text. Cada citació enllaça amb la seva entrada a la bibliografia.
 
 ### Citar
 
@@ -95,8 +95,8 @@ Com mostra [@garcia2020, pág. 33], es llegeix més de pressa en paper [véase @
 - **Prefix i sufix:** text abans de la `@` (`vegeu`) i després de la clau o del localitzador (`, la cursiva és nostra`). El sufix conserva la coma escrita al davant, hi hagi localitzador o no: `[@brown2020, entre altres]` imprimeix *(Brown et al., 2020, entre altres)*, com Pandoc; escrit sense coma (`[@brown2020 entre altres]`) no en porta. L'èmfasi d'un prefix o d'un sufix surt com a èmfasi en tots els estils: `[*p. ex.*, @brown2020, *inter alia*]`.
 - **`[-@clave]`** omet l'autor, per a una frase que ja l'anomena.
 - **`@clave`** cita dins de la frase (*García (2020)*); `@clave [pág. 4]` hi afegeix un localitzador.
-- **Als peus:** el peu d'una figura o d'una taula, i la seva nota, citen com el text (`El millor resultat previ [@cobbe2021].`). Les seves obres entren a la bibliografia sense `nocite`, i un estil numèric les numera on es col·loca el recurs: després de les citacions del paràgraf que l'esmenta per primer cop (el seu bloc `::resource` o la seva primera `:ref`). Una citació en una cel·la de taula queda com a text.
-- Una `@` enganxada a una lletra o a una xifra (una adreça de correu), una `@` en codi i `\@` són text. Una citació sense referència al llibre s'imprimeix tal com es va escriure, de manera que un document sense referències es llegeix com abans. En una citació de diverses obres, una clau que cap referència no defineix s'imprimeix en negreta després de les altres (`(Glen, 1955) **@nye1953**`), de manera que l'obra que falta es veu a la pàgina a més d'als avisos. Uns dos punts després d'una citació són text: `[@french2018]: el terreno…`.
+- **Als peus:** el peu d'una figura o d'una taula, i la seva nota, citen com el text (`El millor resultat previ [@cobbe2021].`). Les obres que s'hi citen entren a la bibliografia sense `nocite`, i un estil numèric les numera on es col·loca el recurs: després de les citacions del paràgraf que l'esmenta per primer cop (el bloc `::resource` o el primer `:ref`). Una citació en una cel·la de taula queda com a text.
+- Una `@` enganxada a una lletra o a una xifra (una adreça de correu), una `@` en codi i `\@` són text. Una citació sense referència al llibre s'imprimeix tal com es va escriure, de manera que un document sense referències es llegeix com abans. En una citació de diverses obres, una clau que cap referència no defineix s'imprimeix en negreta després de les altres (`(Glen, 1955) **@nye1953**`), de manera que l'obra que falta es veu a la pàgina i no només entre els avisos. Uns dos punts després d'una citació són text: `[@french2018]: el terreno…`.
 - En text xinès, japonès i coreà la citació segueix l'últim caràcter sense espai (`周明远@zhou2019认为`), i una citació autor-data pren els signes d'amplada completa del text que l'envolta: `（施雅风等，1988；刘时银等，2015）`.
 
 ### Referències
@@ -131,13 +131,13 @@ En una llista de noms BibTeX, `and others` representa els noms omesos (`author =
 
 ### La bibliografia
 
-`:::bibliography` posa la llista d'obres citades on és; sense aquest bloc, la llista va després de l'últim capítol, amb el títol en la llengua del document (*Referències*, *References*, *参考文献*). `:::bibliography{title="Obras citadas"}` canvia el títol i `title=""` el treu; `scope=chapter` llista les obres que cita el capítol (una obra col·lectiva). Cada entrada és una àncora (`ref-<clave>`), de manera que un enllaç Markdown a `#ref-garcia2020` hi porta, i el PDF l'etiqueta com a `BibEntry`.
+`:::bibliography` compon la llista d'obres citades allà on és; sense aquest bloc, la llista va després de l'últim capítol, amb el títol en la llengua del document (*Referències*, *References*, *参考文献*). `:::bibliography{title="Obras citadas"}` canvia el títol i `title=""` el treu; `scope=chapter` llista les obres que cita el capítol (per a una obra col·lectiva). Cada entrada és una àncora (`ref-<clave>`), de manera que un enllaç Markdown a `#ref-garcia2020` hi porta, i el PDF l'etiqueta com a `BibEntry`.
 
-`scope=new` llista les obres citades fins a aquell punt del document que cap llista anterior no ha imprès, en l'ordre de l'estil i amb els seus números: un `:::bibliography{scope=new}` després del text principal i un altre després dels mètodes donen les dues llistes d'un article de Nature, la segona numerada a continuació de la primera. Un estil numèric compta les citacions al llarg del llibre; amb `citations.numbering: 'chapter'` cada capítol (cada document, i cada encapçalament de nivell 1 després d'una citació) numera les seves des d'1, i la seva llista de capítol pren aquests números, com els informes d'un butlletí o les ponències d'unes actes.
+`scope=new` llista les obres citades fins a aquell punt del document que cap llista anterior no ha imprès, en l'ordre de l'estil i amb els seus números: un `:::bibliography{scope=new}` després del text principal i un altre després dels mètodes donen les dues llistes d'un article de Nature, la segona numerada a continuació de la primera. Un estil numèric compta les citacions al llarg del llibre; amb `citations.numbering: 'chapter'` cada capítol (cada document, i cada encapçalament de nivell 1 després d'una citació) numera les seves citacions des d'1, i la llista del capítol fa servir aquests números, com els informes d'un butlletí o les ponències d'unes actes.
 
 ### Estils
 
-L'estil decideix què diuen una citació i una entrada. Els estils inclosos són a la taula; qualsevol altre estil CSL (el repositori d'estils de Zotero en té més de deu mil) es carrega des del seu fitxer `.csl` a **Configuració → Citacions**.
+L'estil determina què diuen una citació i una entrada. Els estils inclosos són a la taula; qualsevol altre estil CSL (el repositori d'estils de Zotero en té més de deu mil) es carrega des del seu fitxer `.csl` a **Configuració → Citacions**.
 
 <table>
   <thead>
@@ -166,22 +166,22 @@ L'estil decideix què diuen una citació i una entrada. Els estils inclosos són
   </tbody>
 </table>
 
-Amb un **estil de notes**, cada citació es converteix en una nota a peu de pàgina, col·locada i numerada com diu la configuració de notes; les citacions següents de la mateixa obra prenen una forma breu. En text xinès, `citations.notes: 'warichu'` les compon com a notes de dues línies dins del rengle (夹注); una nota seguida d'un signe xinès (`，`, `。`) perd el punt final.
+Amb un **estil de notes**, cada citació es converteix en una nota a peu de pàgina, col·locada i numerada com diu la configuració de notes; les citacions següents de la mateixa obra prenen una forma breu. En text xinès, `citations.notes: 'warichu'` les compon com a notes de dues línies dins de la línia (夹注); una nota seguida d'un signe xinès (`，`, `。`) perd el punt final.
 
-**Xinès.** Els estils GB/T 7714-2015 escriuen els codis de tipus de document (`[M]`, `[J]`, `[D]`, `[EB/OL]`), deixen sencers els noms xinesos i escriuen `等` després de tres autors d'una obra xinesa i `et al.` després dels d'una occidental, segons el `language` de cada obra. En text vertical, un número en superíndex queda a la dreta del seu caràcter; `citations.marker: 'corner'` escriu `〔1〕`, que es manté dret.
+**Xinès.** Els estils GB/T 7714-2015 escriuen els codis de tipus de document (`[M]`, `[J]`, `[D]`, `[EB/OL]`), deixen sencers els noms xinesos i escriuen `等` després de tres autors d'una obra xinesa i `et al.` després dels d'una occidental, segons el `language` de cada obra. En text vertical, un número en superíndex queda a la dreta del caràcter; `citations.marker: 'corner'` escriu `〔1〕`, que es manté dret.
 
-**Motor.** Les citacions les formata el paquet `postext-citeproc` (citeproc-js i els estils CSL). El Sandbox el carrega per als documents que citen; en el teu propi codi, registra'l abans de compondre:
+**Motor.** Les citacions les formata el paquet `postext-citeproc` (citeproc-js i els estils CSL). El Sandbox el carrega per als documents que citen; al teu codi, registra'l abans de compondre:
 
 ```ts
 import 'postext-citeproc/register';
 ```
 
-El tauler de Comprovacions avisa d'una clau que cap referència no defineix (`unknownCitationKey`) i d'un bloc de referències que no es pot llegir (`referencesUnreadable`).
+El tauler Revisió avisa d'una clau que cap referència no defineix (`unknownCitationKey`) i d'un bloc de referències que no es pot llegir (`referencesUnreadable`). Un text que cita obres sense cap motor de citació registrat rep un avís `citationsUnavailable`, i les citacions s'imprimeixen tal com s'han escrit.
 
 
 ## Índex analític
 
-Un índex analític recull els termes d'un llibre amb les pàgines on apareixen. Marca cada terme allà on el text en tracta i imprimeix l'índex amb `:::index` on correspongui, normalment en un capítol propi al final. El motor cerca la pàgina de cada marca després de compondre, de manera que els números segueixen el text: afegeix un paràgraf, mou un capítol o canvia el format de pàgina, i l'índex imprimeix les pàgines noves.
+Un índex analític recull els termes d'un llibre amb les pàgines on apareixen. Marca cada terme allà on el text en tracta i imprimeix l'índex amb `:::index` on correspongui, normalment en un capítol propi al final. El motor troba la pàgina de cada marca després de compondre, de manera que els números segueixen el text: afegeix un paràgraf, mou un capítol o canvia el format de pàgina, i l'índex imprimeix les pàgines noves.
 
 ```md
 L':index[anèmia] ferropènica és la més freqüent.
@@ -194,8 +194,8 @@ El pols es pren al canell.:index{term="Pols!radial" main}
 
 ### Marques d'índex
 
-- **`:index[texto]`** imprimeix `texto` i el registra amb les seves pròpies paraules. Les marques de format que porti a dins s'imprimeixen i no passen a l'entrada. Els atributs després del claudàtor el registren en una altra entrada: `:index[déficit de hierro]{term="Anemia!ferropénica"}`.
-- **`:index{term="…"}`** no imprimeix res. La marca pren la pàgina de la paraula escrita just abans a la seva línia o, si obre la línia, de la paraula següent. Una línia que només conté marques desapareix, de manera que una marca en una línia pròpia mai no parteix un paràgraf ni afegeix espai.
+- **`:index[texto]`** imprimeix `texto` i el registra amb les mateixes paraules. Les marques de format que porti a dins s'imprimeixen i no passen a l'entrada. Els atributs després del claudàtor el registren en una altra entrada: `:index[déficit de hierro]{term="Anemia!ferropénica"}`.
+- **`:index{term="…"}`** no imprimeix res. La marca pren la pàgina de la paraula escrita just abans a la mateixa línia o, si obre la línia, de la paraula següent. Una línia que només conté marques desapareix, de manera que una marca en una línia pròpia mai no parteix un paràgraf ni afegeix espai.
 - **On.** Paràgrafs, encapçalaments, elements de llista, citacions, requadres i definicions de notes a peu de pàgina. En peus de figura, cel·les de taula i elements de disseny la marca s'imprimeix tal qual. Dins de codi en línia, i després d'una barra inversa (`\:index`), és text.
 
 <table>
@@ -216,19 +216,19 @@ El pols es pren al canell.:index{term="Pols!radial" main}
     </tr>
     <tr>
       <td><code>sort</code></td>
-      <td>La clau d'ordenació de l'últim nivell, quan s'ha d'ordenar per altres lletres: <code>:index[S. Juan de la Cruz]&#123;sort="San Juan de la Cruz"&#125;</code>, <code>term="siglo XX" sort="siglo 20"</code>. Un índex en xinès ordena i agrupa per la lectura que l'ordenador de cadenes dona a cada caràcter. Si un caràcter amb diverses lectures es llegeix d'una altra manera, la clau s'escriu amb caràcters que només tinguin la lectura buscada: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> posa 重阳 sota la C, entre 程 i 崔, i no sota la Z. Una clau en pinyin (<code>sort="chong yang"</code>) també arriba a la C, però s'ordena darrere de totes les seves entrades xineses, perquè l'ordenador de cadenes posa les lletres llatines després dels caràcters xinesos (vegeu <a href="/ca/docs/configuration-notes-references#índex-analític">Configuració › Índex analític</a>, <code>groupBy</code>).</td>
+      <td>La clau d'ordenació de l'últim nivell, quan s'ha d'ordenar per altres lletres: <code>:index[S. Juan de la Cruz]&#123;sort="San Juan de la Cruz"&#125;</code>, <code>term="siglo XX" sort="siglo 20"</code>. Un índex en xinès ordena i agrupa per la lectura que l'ordenador de cadenes dona a cada caràcter. Si un caràcter amb diverses lectures es llegeix d'una altra manera, la clau s'escriu amb caràcters que només tinguin la lectura buscada: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> posa 重阳 sota la C, entre 程 i 崔, i no sota la Z. Una clau en pinyin (<code>sort="chong yang"</code>) també arriba a la C, però s'ordena darrere de totes les entrades xineses de la C, perquè l'ordenador de cadenes posa les lletres llatines després dels caràcters xinesos (vegeu <a href="/ca/docs/configuration-notes-references#índex-analític">Configuració › Índex analític</a>, <code>groupBy</code>).</td>
     </tr>
     <tr>
       <td><code>yomi</code>, <code>reading</code></td>
-      <td>La lectura en kana de l'últim nivell, per la qual un índex japonès l'ordena i l'agrupa: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> va a な, a la fila な行. Sense ella, una marca el text de la qual porta furigana en kana es llegeix per aquests (<code>:index[&#123;東京|とう|きょう&#125;]</code> s'ordena com とうきょう), després per <code>sort</code> i després pel text; una entrada que continua encapçalada per un kanji s'avisa amb <code>indexReadingMissing</code>. En un índex en una altra llengua <code>yomi</code> funciona com <code>sort</code>. Els furigana dins d'una marca s'escriuen en la forma compacta: un <code>:ruby[…]</code> obligaria a escapar els seus claudàtors. Des de postext 1.16.</td>
+      <td>La lectura en kana de l'últim nivell, per la qual un índex japonès l'ordena i l'agrupa: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> va a な, a la fila な行. Si no hi és, es fa servir la lectura dels furigana en kana del text de la marca (<code>:index[&#123;東京|とう|きょう&#125;]</code> s'ordena com とうきょう), després <code>sort</code> i després el text; una entrada que continua encapçalada per un kanji s'avisa amb <code>indexReadingMissing</code>. En un índex en una altra llengua <code>yomi</code> funciona com <code>sort</code>. Els furigana dins d'una marca s'escriuen en la forma compacta: un <code>:ruby[…]</code> obligaria a escapar-ne els claudàtors. Des de postext 1.16.</td>
     </tr>
     <tr>
       <td><code>main</code></td>
-      <td>Un indicador: el lloc on el terme es tracta a fons. El seu número de pàgina s'imprimeix en negreta (<code>index.main</code>). Una pàgina marcada de les dues maneres surt en negreta.</td>
+      <td>Un indicador: el lloc on el terme es tracta a fons. El número de pàgina s'imprimeix en negreta (<code>index.main</code>). Una pàgina marcada de les dues maneres surt en negreta.</td>
     </tr>
     <tr>
       <td><code>range</code></td>
-      <td><code>range="start"</code> i <code>range="end"</code>, amb el mateix terme, delimiten una explicació que ocupa diverses pàgines: l'entrada imprimeix <code>34–37</code>. Un inici sense final, o un final sense inici, imprimeix la seva única pàgina i genera <code>indexRangeUnclosed</code>.</td>
+      <td><code>range="start"</code> i <code>range="end"</code>, amb el mateix terme, delimiten una explicació que ocupa diverses pàgines: l'entrada imprimeix <code>34–37</code>. Un inici sense final, o un final sense inici, imprimeix només la seva pàgina i genera <code>indexRangeUnclosed</code>.</td>
     </tr>
     <tr>
       <td><code>see</code></td>
@@ -249,7 +249,7 @@ Una marca sense terme (`:index{}` o `:index{see="…"}` tot sol) no indexa res i
 
 ### Imprimir l'índex
 
-`:::index` imprimeix l'índex principal al punt on és, i `:::index{index="nombres"}` un amb nom. La directiva s'expandeix en blocs ordinaris, un per entrada, que flueixen per columnes i pàgines com el text: sota un encapçalament l'[estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) del qual fixa un `layout` a dues columnes, dona l'índex habitual a dues columnes. Un clic sobre una entrada porta a la línia de la directiva.
+`:::index` imprimeix l'índex principal al punt on és, i `:::index{index="nombres"}` un amb nom. La directiva s'expandeix en blocs ordinaris, un per entrada, que flueixen per columnes i pàgines com el text: sota un encapçalament amb un [estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) que fixa un `layout` a dues columnes, en resulta l'índex habitual a dues columnes. Un clic sobre una entrada porta a la línia de la directiva.
 
 ```md
 # Índex onomàstic {style="indice"}
@@ -261,10 +261,10 @@ Una marca sense terme (`:index{}` o `:index{see="…"}` tot sol) no indexa res i
 :::index
 ```
 
-- **Ordre.** Les entrades segueixen l'ordre alfabètic de la llengua del document (`locale`, o `index.locale`): una lletra accentuada s'ordena amb la seva lletra base (*Árbol* a la A) i, en castellà, la *ñ* va després de la *n*, amb una capçalera pròpia. Primer van les entrades que comencen per un símbol, després les que comencen per una xifra i després les lletres. Les subentrades s'ordenen igual dins de la seva entrada, amb un sagnat per nivell. Un índex japonès s'ordena per la lectura en l'ordre de la JIS X 4061 i s'agrupa per files del gojūon (あ行, か行…), amb les entrades llatines abans dels kana (vegeu [Composició japonesa › Índex en ordre gojūon](/ca/docs/japanese-layout#índex-en-ordre-gojūon)).
-- **Grups.** Cada inicial nova obre un grup: una lletra de capçalera (`index.groups`) i una línia d'espai a sobre (cap sobre el primer grup). La lletra es compon en el mateix bloc que la primera entrada del grup, de manera que mai no tanca una columna tota sola; una entrada sense pàgina pròpia (la que només encapçala les seves subentrades) es compon amb la primera subentrada pel mateix motiu.
-- **Números de pàgina.** Les etiquetes que imprimeixen les pàgines, incloses les romanes dels preliminars. Les pàgines d'una entrada s'ordenen i cadascuna hi apareix una vegada; les consecutives s'uneixen en un interval (`12–14`, `index.mergeRanges`), una pàgina que cau dins d'un interval de la mateixa entrada s'hi fon (si és principal, l'interval surt en negreta) i `index.rangeFormat: 'chicago'` abreuja el segon número (`234–37`). Les pàgines principals, en negreta, no s'uneixen. Al PDF cada número enllaça amb la seva pàgina.
-- **Les remissions** tanquen l'entrada: *Terme. Vegeu Destí* quan l'entrada no té pàgines, i *Terme, 12. Vegeu també Destí* quan en té. Els textos segueixen la llengua del document (*Vegeu*, *See*…) i es canvien a `index.see`.
-- **Llibres.** En un llibre compost capítol a capítol (el Sandbox, `buildBundle`), el capítol que imprimeix l'índex rep les marques de tots els capítols amb les seves pàgines, i només es torna a compondre quan alguna es mou. Un document que conté les seves marques i el seu índex es torna a compondre fins que els números s'estabilitzen, com amb `:::toc`.
+- **Ordre.** Les entrades segueixen l'ordre alfabètic de la llengua del document (`locale`, o `index.locale`): una lletra accentuada s'ordena amb la lletra base (*Árbol* a la A) i, en castellà, la *ñ* va després de la *n*, amb una capçalera pròpia. Primer van les entrades que comencen per un símbol, després les que comencen per una xifra i després les lletres. Les subentrades s'ordenen igual dins de l'entrada, amb un sagnat per nivell. Un índex japonès s'ordena per la lectura en l'ordre de la JIS X 4061 i s'agrupa per files del gojūon (あ行, か行…), amb les entrades llatines abans dels kana (vegeu [Composició japonesa › Índex en ordre gojūon](/ca/docs/japanese-layout#índex-en-ordre-gojūon)).
+- **Grups.** Cada inicial nova obre un grup: una lletra de capçalera (`index.groups`) i una línia d'espai a sobre (cap sobre el primer grup). La lletra es compon en el mateix bloc que la primera entrada del grup, de manera que mai no tanca una columna tota sola; una entrada sense pàgina pròpia (la que només encapçala les subentrades) es compon amb la primera subentrada pel mateix motiu.
+- **Números de pàgina.** Els números que porta cada pàgina, incloses les xifres romanes dels preliminars. Les pàgines d'una entrada s'ordenen i cadascuna hi apareix una vegada; les consecutives s'uneixen en un interval (`12–14`, `index.mergeRanges`), una pàgina que cau dins d'un interval de la mateixa entrada s'hi fon (si és principal, l'interval surt en negreta) i `index.rangeFormat: 'chicago'` abreuja el segon número (`234–37`). Les pàgines principals, en negreta, no s'uneixen. Al PDF, cada número enllaça amb la pàgina.
+- **Les remissions** tanquen l'entrada: *Terme. Vegeu Destí* quan l'entrada no té pàgines, i *Terme, 12. Vegeu també Destí* quan en té. Els textos segueixen la llengua del document (*Vegeu*, *See*…) i es poden canviar a `index.see`.
+- **Llibres.** En un llibre compost capítol a capítol (el Sandbox, `buildBundle`), el capítol que imprimeix l'índex rep les marques de tots els capítols amb les seves pàgines, i només es torna a compondre quan alguna es mou. Un document que conté alhora les marques i l'índex es torna a compondre fins que els números s'estabilitzen, com amb `:::toc`.
 
 Vegeu [Índex analític](/ca/docs/configuration-notes-references#índex-analític) a la referència de configuració per a la tipografia, els sagnats i els separadors.

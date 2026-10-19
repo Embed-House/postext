@@ -1,22 +1,22 @@
 ---
 title: "Ein Text in vier Zitierstilen"
-summary: "Ein kurzer Essay mit sechs Zitaten, gebaut in APA 7, Chicago Author-Date, IEEE und ISO 690: Nur die Einstellung des Stils ändert sich."
-plain: "Dieselben zwei Absätze über Typografie mit denselben Quellen, viermal gedruckt. Jede Seite zitiert auf eine andere Art, und Zitate und Verzeichnis am Ende ändern sich mit, obwohl der Text nur einmal geschrieben wurde."
-description: "Ein Essay, mit Postext nach APA 7, Chicago, IEEE und ISO 690 zitiert: Zitate und Literaturverzeichnis folgen einer Einstellung, der Text bleibt derselbe."
+summary: "Ein kurzer Essay mit sechs Zitationen, gebaut in APA 7, Chicago Author-Date, IEEE und ISO 690: Nur die Einstellung des Stils ändert sich."
+plain: "Dieselben zwei Absätze über Typografie mit denselben Quellen, viermal gedruckt. Jede Seite zitiert auf eine andere Art, und Zitationen und Verzeichnis am Ende ändern sich mit, obwohl der Text nur einmal geschrieben wurde."
+description: "Ein Essay, mit Postext nach APA 7, Chicago, IEEE und ISO 690 zitiert: Zitationen und Literaturverzeichnis folgen einer Einstellung, der Text bleibt derselbe."
 question: "Wie stelle ich einen Text auf einen anderen Zitierstil um, ohne ihn anzufassen?"
-aliases: ["Zitierstil", "Stil wechseln", "APA", "Chicago", "IEEE", "ISO 690", "Autor-Jahr", "nummerierte Zitate", "CSL", "citeproc", "Literaturverzeichnis"]
-pageNotes: { "1": "Seite 1: ein blaues Band mit dem Label „CITATION STYLE · 1 / 4 · AUTHOR-DATE“ und „APA 7“ in großer weißer Schrift; darunter der Essay „The page that is not seen“ mit Zitaten wie „Warde (1955)“, „Bringhurst (2004, p. 17)“ und „(Rayner, 1998; Tinker, 1963)“ und ein Literaturverzeichnis nach APA, nach Autoren sortiert.", "2": "Seite 2: derselbe Essay unter einem roten Band mit „Chicago“: „(Tinker 1963; Rayner 1998)“ ohne Kommas und in der geschriebenen Reihenfolge, und ein Verzeichnis mit ausgeschriebenen Vornamen und der Auflage nach dem Titel.", "3": "Seite 3: unter einem dunkelblauen Band mit „IEEE“ derselbe Essay mit Nummern in eckigen Klammern, Warde [1] bis [6], und ein Verzeichnis, nummeriert in der Reihenfolge der Zitate.", "4": "Seite 4: unter einem grünen Band mit „ISO 690“ derselbe Essay mit Autor-Jahr-Zitaten und ein Verzeichnis, dessen Nachnamen in Großbuchstaben stehen." }
+aliases: ["Zitierstil", "Stil wechseln", "APA", "Chicago", "IEEE", "ISO 690", "Autor-Jahr", "nummerierte Zitationen", "CSL", "citeproc", "Literaturverzeichnis"]
+pageNotes: { "1": "Seite 1: ein blaues Band mit der Beschriftung „CITATION STYLE · 1 / 4 · AUTHOR-DATE“ und „APA 7“ in großer weißer Schrift; darunter der Essay „The page that is not seen“ mit Zitationen wie „Warde (1955)“, „Bringhurst (2004, p. 17)“ und „(Rayner, 1998; Tinker, 1963)“ und ein Literaturverzeichnis nach APA, nach Autoren sortiert.", "2": "Seite 2: derselbe Essay unter einem roten Band mit „Chicago“: „(Tinker 1963; Rayner 1998)“ ohne Kommas und in der geschriebenen Reihenfolge, und ein Verzeichnis mit ausgeschriebenen Vornamen und der Auflage nach dem Titel.", "3": "Seite 3: unter einem dunkelblauen Band mit „IEEE“ derselbe Essay mit Nummern in eckigen Klammern, Warde [1] bis [6], und ein Verzeichnis, nummeriert in der Reihenfolge der Zitationen.", "4": "Seite 4: unter einem grünen Band mit „ISO 690“ derselbe Essay mit Autor-Jahr-Zitationen und ein Verzeichnis, dessen Nachnamen in Großbuchstaben stehen." }
 ---
 
 ## Was Sie setzen
 
-Ein Essay aus zwei Absätzen darüber, warum gute Typografie unbemerkt bleibt, mit sechs Quellen: ein erzählendes Zitat, eines mit Seite, eines, das den Autor weglässt, weil der Satz ihn nennt, und zwei gemeinsam zitierte Werke. Der Text wird viermal auf einer Seite von 155 × 235 mm gesetzt, und zwischen den vier Builds ändert sich nur `citations.style`: APA 7, Chicago Author-Date, IEEE und ISO 690. Jede Seite trägt den Namen des Stils in einem Band in eigener Farbe, sodass sie nebeneinandergelegt eine Vergleichstafel ergeben. Die Zitate ändern Form, Reihenfolge und Zeichensetzung, das Verzeichnis ändert seine Sortierung und seine Namen, und der Essay selbst ist dieselbe Datei.
+Ein Essay aus zwei Absätzen darüber, warum gute Typografie unbemerkt bleibt, mit sechs Quellen: eine erzählende Zitation, eine mit Seite, eine, die den Autor weglässt, weil der Satz ihn nennt, und zwei gemeinsam zitierte Werke. Der Text wird viermal auf einer Seite von 155 × 235 mm gesetzt, und zwischen den vier Builds ändert sich nur `citations.style`: APA 7, Chicago Author-Date, IEEE und ISO 690. Jede Seite zeigt den Namen des Stils in einem Band in eigener Farbe, sodass sie nebeneinandergelegt eine Vergleichstafel ergeben. Die Zitationen ändern Form, Reihenfolge und Zeichensetzung, das Verzeichnis ändert seine Sortierung und seine Namen, und der Essay selbst ist dieselbe Datei.
 
 ## Zubereitung
 
 ### 1 · Eine Einstellung
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Zitate werden einmal im Inhalt geschrieben, in der Syntax von Pandoc, und die Quellen stehen in einem BibTeX-Block am Ende. `citations.style` nennt einen CSL-Stil, und citeproc-js schreibt daraus jedes Zitat und jeden Eintrag: APA setzt ein Komma vor das Jahr und sortiert zwei Werke nach Autor, Chicago behält die Reihenfolge, in der sie geschrieben wurden, IEEE macht daraus Nummern in der Reihenfolge der ersten Erwähnung, ISO 690 setzt die Nachnamen im Verzeichnis in Großbuchstaben. Für ein Buch, an dem noch geschrieben wird, ist das die ganze Änderung: ein Wert in der Konfiguration, und der Text bleibt unberührt.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Zitationen werden einmal im Inhalt geschrieben, in der Syntax von Pandoc, und die Quellen stehen in einem BibTeX-Block am Ende. `citations.style` gibt einen CSL-Stil an, und citeproc-js erzeugt daraus jede Zitation und jeden Eintrag: APA setzt ein Komma vor das Jahr und sortiert zwei Werke nach Autor, Chicago behält die Reihenfolge, in der sie geschrieben wurden, IEEE macht daraus Nummern in der Reihenfolge der ersten Erwähnung, ISO 690 setzt die Nachnamen im Verzeichnis in Großbuchstaben. Für ein Buch, an dem noch geschrieben wird, ist das die ganze Änderung: ein Wert in der Konfiguration, und der Text bleibt unberührt.
 
 ### 2 · Vier Builds, zwei Doppelseiten
 
@@ -28,7 +28,7 @@ Der Stil gilt für das ganze Dokument; die vier Fassungen sind also vier Builds 
 
 <Excerpt region="band" />
 
-Das Design der Überschrift zeichnet das Band vom Endformat aus, die Dachzeile mit Nummer und System des Stils und den Namen zu 54 pt. Name und System stammen aus dem Skript, nicht aus dem Markdown, weil der Text in allen vier Dokumenten derselbe ist.
+Die Gestaltung der Überschrift zeichnet das Band vom Endformat aus, die Dachzeile mit Nummer und System des Stils und den Namen zu 54 pt. Name und System stammen aus dem Skript, nicht aus dem Markdown, weil der Text in allen vier Dokumenten derselbe ist.
 
 <Excerpt region="palette" />
 
@@ -38,7 +38,7 @@ Jedes Dokument richtet `main-color` auf sein eigenes Band; die vier Farben sind 
 
 ### Einen Notenstil ausprobieren
 
-Mit Chicago Notes and Bibliography wird jedes Zitat zur Fußnote und die Liste zur Bibliografie; der Text ändert sich weiterhin nicht.
+Mit Chicago Notes and Bibliography wird jede Zitation zur Fußnote und die Liste zur Bibliografie; der Text ändert sich weiterhin nicht.
 
 ```diff
 -  { style: 'apa', band: 'apa', name: 'APA 7', system: t({ en: 'author-date', es: 'autor-año' }) },
@@ -47,7 +47,7 @@ Mit Chicago Notes and Bibliography wird jedes Zitat zur Fußnote und die Liste z
 
 ### Die Nummern hochgestellt schreiben
 
-Ein nummerierter Stil kann sein Verzeichnis behalten und die Zitate als hochgestellte Ziffern drucken, wie Nature und Vancouver.
+Ein nummerierter Stil kann sein Verzeichnis behalten und die Zitationen als hochgestellte Ziffern setzen, wie Nature und Vancouver.
 
 ```diff
 -  link: true,
@@ -56,5 +56,5 @@ Ein nummerierter Stil kann sein Verzeichnis behalten und die Zitate als hochgest
 
 ## Häufige Fehler
 
-- Eine Fundstellenangabe wird einmal geschrieben, und jeder Stil druckt dafür sein eigenes Wort: hier in allen vier „p. 17“. Der mitgelieferte spanische Stil ISO 690 druckt „p.“ für jede Art von Fundstelle, auch für einen Abschnitt oder ein Kapitel; deshalb zitiert dieser Text eine Seite.
-- Auflagennummern gehören in BibTeX als Zahlen (`edition = {3}`): Jeder Stil schreibt dann auf seine Weise „3rd ed.“, „3.ª ed.“ oder „3.“. Als „3rd“ geschrieben, wird das Wort so gedruckt, wie es steht, und die eigene Form des Stils geht verloren.
+- Eine Fundstellenangabe wird einmal geschrieben, und jeder Stil setzt dafür sein eigenes Wort: hier in allen vier „p. 17“. Der mitgelieferte spanische Stil ISO 690 setzt „p.“ für jede Art von Fundstelle, auch für einen Abschnitt oder ein Kapitel; deshalb zitiert dieser Text eine Seite.
+- Auflagennummern gehören in BibTeX als Zahlen (`edition = {3}`): Jeder Stil schreibt dann auf seine Weise „3rd ed.“, „3.ª ed.“ oder „3.“. Steht dort „3rd“, wird das Wort unverändert übernommen, und die eigene Form des Stils geht verloren.

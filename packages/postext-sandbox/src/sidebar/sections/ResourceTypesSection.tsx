@@ -25,7 +25,7 @@ import {
 } from '../../context/SandboxContext';
 import type { SandboxLabels } from '../../types/labels';
 import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../settings/eastAsianOptions';
-import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, DimensionInput, ItemCard, ItemCardListActions, openCard, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
 import { wrapChoiceOf } from '../settings/textWrap';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
@@ -128,6 +128,7 @@ export const ResourceTypesSection = memo(function ResourceTypesSection() {
       counterFormat: 'decimal',
       captionPrefix: '',
     };
+    openCard('resourceTypes', type.id);
     writeTypes([...types, type]);
   };
 
@@ -176,6 +177,7 @@ export const ResourceTypesSection = memo(function ResourceTypesSection() {
           {labels.resourceTypesEmpty}
         </p>
       )}
+      <ItemCardListActions list="resourceTypes" ids={types.map((t) => t.id)} />
       {types.map((type) => {
         const usageCount = resources.filter((r) => r.typeId === type.id).length;
         const confirmMessage = (
@@ -195,24 +197,19 @@ export const ResourceTypesSection = memo(function ResourceTypesSection() {
 
         return (
           <SearchScope key={type.id} title={`${type.name} ${type.id}`} overridden={!isDefault}>
-          <div
-            className="mb-3 rounded border p-2"
-            style={{ borderColor: 'var(--rule)' }}
-          >
-            <div className="mb-2 flex items-center justify-between gap-1">
-              <span
-                className="truncate text-xs font-medium"
-                style={{ color: 'var(--foreground)' }}
-                title={type.name}
-              >
-                {type.name || type.id}
-              </span>
+          <ItemCard
+            list="resourceTypes"
+            id={type.id}
+            title={type.name || type.id}
+            subtitle={type.name && type.name !== type.id ? type.id : undefined}
+            actions={
               <ConfirmPopover message={confirmMessage} onConfirm={() => removeType(type.id)}>
                 {({ open }) => (
                   <IconButton label={labels.resourceTypeDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
                 )}
               </ConfirmPopover>
-            </div>
+            }
+          >
 
             <div className="flex flex-col gap-2">
               <Field label={labels.idLabel} tooltip={labels.styleIdHelp}>
@@ -546,7 +543,7 @@ export const ResourceTypesSection = memo(function ResourceTypesSection() {
                 {renderResourceTypePreview(type, digits, language)}
               </span>
             </div>
-          </div>
+          </ItemCard>
           </SearchScope>
         );
       })}

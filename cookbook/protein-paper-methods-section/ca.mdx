@@ -22,7 +22,7 @@ El codi és [la resposta curta](#la-resposta-curta) de dalt. Les cites es numere
 
 <Excerpt region="title" />
 
-La llista d'autors és un sol atribut del títol, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, compost en Noto Sans de 7,4 pt a tota la mesura, on els 34 noms ocupen cinc línies. `inlineMarks` puja els números de filiació. Les filiacions i la nota de contribució igual van al final, a *Author information*, com les imprimeix Nature, i així la primera pàgina conserva lloc per al resum i la figura. No s'omet cap autor: la capçalera de les pàgines parells abreuja la llista a *Jumper et al.*
+La llista d'autors és un sol atribut del títol, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, compost en Noto Sans de 7,4 pt a tota la mesura, on els 34 noms ocupen cinc línies. `inlineMarks` puja els números de filiació. Les filiacions i la nota de contribució igual van al final, a *Author information*, com les imprimeix Nature, i així la primera pàgina conserva lloc per al resum i la figura. No s'omet cap autor: la capçalera de les pàgines parelles abreuja la llista a *Jumper et al.*
 
 ### 3 · El resum a tota l'amplada i la figura 1 a sota
 
@@ -38,7 +38,7 @@ Les coordenades es van llegir un sol cop, en escriure la recepta, de l'entrada 6
 
 ### 5 · Lletres gregues i accents al PDF
 
-Fontsource parteix cada font per sistemes d'escriptura. `kitFonts(FONTS)` llegeix el text que rep i carrega el fitxer latin-ext de cada font quan compon Ž o Š, i el grec quan compon α o χ; `fontsourceProvider` incrusta aquests mateixos fitxers al PDF a partir dels caràcters que compon cada font. Cα, χ, Žídek i Šali no demanen codi propi: la recepta passa el markdown, que aplega tots els blocs de contingut, i el proveïdor del kit.
+Fontsource parteix cada font per sistemes d'escriptura. `kitFonts(FONTS)` llegeix el text que rep i carrega el fitxer latin-ext de cada font quan compon Ž o Š, i el grec quan compon α o χ; `fontsourceProvider` incrusta aquests mateixos fitxers al PDF a partir dels caràcters que compon cada font. Cα, χ, Žídek i Šali no demanen codi propi: la recepta passa el Markdown, que aplega tots els blocs de contingut, i el proveïdor del kit.
 
 ## Variants
 
@@ -76,4 +76,4 @@ Per a una revista mèdica, parteix de l'estil NLM inclòs, com fa l'<RecipeLink 
 ## Errors freqüents
 
 - Nature anomena fins a cinc autors i abreuja una llista més llarga al primer seguit d'*et al.* On la llista del mateix article ho fa, escriu `and others` a l'entrada BibTeX (`{Senior, Andrew W. and others}`) i l'estil imprimeix *Senior, A. W. et al.*; en CSL-YAML, acaba la llista amb `"others"`.
-- El `bodyStyle` d'un estil de títol canvia el cos i l'interlineat del text, no la reixeta base: els títols dels Mètodes fan servir `snapToGrid: false`, o la línia sota cadascun saltaria a la línia següent de la reixeta del text principal.
+- El `bodyStyle` d'un estil d'encapçalament canvia el cos i l'interlineat del text, no la reixeta base: els títols dels Mètodes fan servir `snapToGrid: false`, o la línia sota cadascun saltaria a la línia següent de la reixeta del text principal.

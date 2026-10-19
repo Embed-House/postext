@@ -3,21 +3,21 @@
 export const metadata = {
   title: '命令行：在终端、脚本或智能体中使用postext',
   sidebarTitle: '命令行',
-  description: '一个适用于macOS、Linux和Windows的独立可执行文件，把.postext图书、图书文件夹或零散的Markdown文件转换成PDF、HTML、EPUB、页面图像和Word文档，打包文件包并检查图书，还为脚本和智能体输出JSON',
+  description: '适用于macOS、Linux和Windows的单个独立可执行文件。它能把.postext图书、图书文件夹或零散的Markdown文件转成PDF、HTML、EPUB、页面图像和Word文档，还能打包文件包、检查图书，并为脚本和智能体输出JSON',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9分钟',
   order: 45,
-  plainSummary: "本页写给想在终端里而不是在网站上用Postext做书的人。你为自己的电脑下载一个文件，直接运行它，不用安装别的东西。你把书或者几个文本文件交给它，它就能做出PDF、网页、电子书、页面图片或Word文档。它还能检查书里的问题，并把书的所有文件打包成一个文件。其他程序和AI助手也能使用它，因为它可以用这些程序容易读懂的格式回答。",
+  plainSummary: "本页写给想在终端里而不是在网站上用Postext做书的人。你下载一个适合自己电脑的文件，直接运行，不用另装任何东西。你把书或者几个文本文件交给它，它就能做出PDF、网页、电子书、页面图片或Word文档。它还能检查书里的问题，并把书的所有文件打包成一个文件。其他程序和AI助手也能使用它，因为它可以用这些程序容易读懂的格式回答。",
 };
 
 # 命令行
 
 **`postext`在终端、脚本或智能体中排版你的书。**
 
-[沙盒](/zh/sandbox)是你凭眼睛撰写和设计一本书的地方。命令行拿同一本书，不用浏览器就能生成它的各种文件：可直接付印的PDF、HTML页面、EPUB、某一页或每一页的图像、Word文档。它还能打包和解包`.postext`文件包、导入Word文档、描述一本书并检查其中的问题。
+在[沙盒](/zh/sandbox)里，你一边看一边写书、设计书。命令行拿同一本书，不用浏览器就能生成它的各种文件：可直接付印的PDF、HTML页面、EPUB、某一页或每一页的图像、Word文档。它还能打包和解包`.postext`文件包、导入Word文档、列出一本书的概况，并检查书中的问题。
 
-每个系统对应<strong>一个独立的可执行文件</strong>。postext引擎、PDF、EPUB、HTML和Word写入器、页面绘制器（Skia）、用于阿拉伯文和其他复杂文字的HarfBuzz、ICC印刷特性文件以及默认字体（EB Garamond和Open Sans）全都在里面。不需要安装任何运行时、包或库，版面与沙盒完全相同：同一本书分成同样的页面。
+每个系统对应<strong>一个独立的可执行文件</strong>。postext引擎、PDF、EPUB、HTML和Word写入器、页面绘制器（Skia）、用于阿拉伯文和其他复杂文字的HarfBuzz、ICC印刷特性文件以及默认字体（EB Garamond和Open Sans）全都在里面。不需要安装任何运行时、包或库，版面与沙盒完全相同：同一本书会在同样的地方分页。
 
 ## 获取
 
@@ -60,7 +60,7 @@ Invoke-WebRequest https://github.com/drnachio/postext/releases/latest/download/p
 .\postext.exe
 ```
 
-装有Node.js时，`npx postext-cli`会从npm下载适合你系统的可执行文件并运行它，`npm install -g postext-cli`则把它保留为`postext`命令。
+装有Node.js时，`npx postext-cli`会从npm下载适合你系统的可执行文件并运行它，`npm install -g postext-cli`则把它安装为`postext`命令。
 
 不带参数运行时，`postext`打印帮助；`postext help <command>`列出某个命令的选项。
 
@@ -93,11 +93,11 @@ postext image my-book.postext --page 1 -o cover.png
 - **图书文件夹**：解包后的文件包，含有它的`preset.json`、各章、资源和字体。智能体技能交付的就是这种文件夹，`postext unpack`也会写出一个。
 - **零散的Markdown**：一个或多个`.md`文件，按给出的顺序每个文件一章；或者一个文件夹，其中的`.md`文件按文件名排序（`01-intro.md`、`02-method.md`…）。与它们一起使用：
   - `--config design.json`：配置，可以是单纯的配置对象，也可以是完整的`preset.json`；
-  - `--resources pictures/`：图片，每张都是一个图，以去掉扩展名的文件名命名（`map.png`就是`::resource{id="map"}`）；文件夹中如有`resources.json`，则改由它描述这些图片（id、类型、题注、替代文字），格式与`preset.json`中的`resources`相同；
-  - `--fonts fonts/`：书自带的字体文件（TTF、OTF、WOFF2），以字体表中给出的字体族命名；
+  - `--resources pictures/`：图片，每张作为一个图，id取去掉扩展名的文件名（`map.png`就是`::resource{id="map"}`）；文件夹中如有`resources.json`，则改由它描述这些图片（id、类型、题注、替代文字），格式与`preset.json`中的`resources`相同；
+  - `--fonts fonts/`：书自带的字体文件（TTF、OTF、WOFF2），按字体文件内部记录的字体族名识别；
   - `--name "Title"`：书名。
 
-`--config`也可用于文件包或文件夹：它会合并到书本身的配置之上。多语言文件包按其原文语言读取，除非`--locale`要求另一种语言（`--locale en`）。
+`--config`也可用于文件包或文件夹：它会合并到书本身的配置之上。多语言文件包按它本身的语言读取，除非`--locale`要求另一种语言（`--locale en`）。
 
 ## 命令
 
@@ -108,7 +108,7 @@ postext image my-book.postext --page 1 -o cover.png
   <tbody>
     <tr><td><code>pdf</code></td><td>生成PDF，带书签、链接和嵌入的字体，默认带有无障碍标签（PDF/UA）；印刷时可用PDF/X和CMYK。</td></tr>
     <tr><td><code>html</code></td><td>把页面生成为带真实文字的HTML：一个独立文件，或一个含有<code>index.html</code>和<code>assets/</code>的文件夹。</td></tr>
-    <tr><td><code>epub</code></td><td>生成EPUB 3电子书，可以是与印刷版相同的固定页面，也可以是流式文字。</td></tr>
+    <tr><td><code>epub</code></td><td>生成EPUB 3电子书，可以是与印刷版相同的固定页面，也可以是流式版式的文字。</td></tr>
     <tr><td><code>image</code></td><td>把一页生成为PNG、JPEG或WebP图片。</td></tr>
     <tr><td><code>images</code></td><td>把每一页或某个范围的页面生成为图片，放进一个文件夹。</td></tr>
     <tr><td><code>docx</code></td><td>把各章生成为Word文档，再导入时内容不变。</td></tr>
@@ -121,7 +121,7 @@ postext image my-book.postext --page 1 -o cover.png
   </tbody>
 </table>
 
-每个命令都把文件写在运行它的位置，以输入的名称命名，除非`-o`给出路径。`-o -`把单个输出写到标准输出。
+每个命令都把文件写到你运行命令的位置，按输入的名称命名；`-o`可以另给路径（`images`写入`pages/`）。`-o -`把单个输出写到标准输出。
 
 ### pdf
 
@@ -147,7 +147,7 @@ postext html book.postext -o book.html
 postext html book.postext -o site/ --mode single
 ```
 
-以`.html`结尾的路径得到一个文件，图片和字体都在里面，便于发送。其他路径都是文件夹：`index.html`旁边有`assets/`，存放图片、字体和自托管的视频。`--assets embed|folder`可以对任何路径选择其中一种方式。页面就是印刷版面，按屏幕尺寸显示：并排显示（`--mode multi`，默认），或上下排列（`--mode single`）。标记为`redistributable: false`的字体只写出名称，不复制文件。如果字体指定了 `fallback`，写出的是这个开放字体的各个字面，名称沿用原字体（自 postext 1.43 起）。
+路径以`.html`结尾时，得到的是一个文件，图片和字体都在里面，便于发送。其他路径都是文件夹：`index.html`旁边有`assets/`，存放图片、字体和自托管的视频。`--assets embed|folder`可以对任何路径选择其中一种方式。页面就是印刷版面，按屏幕尺寸显示：并排显示（`--mode multi`，默认），或上下排列（`--mode single`）。标记为`redistributable: false`的字体只写出名称，不复制文件。如果字体族指定了`fallback`，就改为写出这个开放字体族的字面，名称沿用原字体族（自postext 1.43起）。
 
 ### epub
 
@@ -156,7 +156,7 @@ postext epub book.postext -o book.epub
 postext epub book.postext --layout reflowable --cover cover.jpg
 ```
 
-`--layout fixed`（默认）让每一页保持印刷时的样子，文字可以选取；`--layout reflowable`让阅读系统按自己的屏幕重新排列文字（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。封面是书的缩略图，除非`--cover`给出一张图片。包的元数据（书名、作者、语言、标识符）来自第一章的前置元数据，与沙盒中相同。标记为 `redistributable: false` 的字体不会被复制；指定了 `fallback` 的字体，会以自己的名称嵌入该开放字体的字面（自 postext 1.43 起）。
+`--layout fixed`（默认）让每一页保持印刷时的样子，文字可以选取；`--layout reflowable`让阅读系统按自己的屏幕重排文字（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。封面是书的缩略图，除非`--cover`给出一张图片。EPUB包的元数据（书名、作者、语言、标识符）来自第一章的前置元数据，与沙盒中相同。标记为`redistributable: false`的字体不会复制进去；指定了`fallback`的字体族，以自己的名称嵌入那个开放字体族的字面（自postext 1.43起）。
 
 ### image和images
 
@@ -172,8 +172,8 @@ postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}
 - `--format png|jpeg|webp`（或由`-o`的扩展名决定），`--quality 1-100`用于JPEG和WebP。
 - `--dpi`：分辨率，默认150；阅读页面用72–100就够了，印刷用300。
 - `--pattern`：`images`的文件名，由`{n}`（位置，`{n:03}`补足到三位数）、`{label}`（印出的页码）和`{chapter}`组成；默认为`page-{n:03}`。
-- `--print-preview`：经过输出特性文件，按印厂复制的样子显示页面，并画出裁切线和出血。
-- `--jobs N`：同时编码多少张图片。
+- `--print-preview`：按印厂印出来的样子显示页面（经过输出特性文件转换），并画出裁切线和出血。
+- `--jobs N`：同时编码多少张图片（默认与计算机的处理器数量相同）。
 
 ### docx和import-docx
 
@@ -183,9 +183,9 @@ postext import-docx manuscript.docx -o manuscript/ --locale es --report
 postext import-docx manuscript.docx -o manuscript.postext
 ```
 
-`docx`用Word样式写出各章的标题、段落、框、引文、列表和注释。Word无法表达的内容以*Postext Markup*样式按原样保留，导入模板也随文件一起保存，所以编辑修改过的文档能原样导入回来。`import-docx`把Word文档转成一本书：每个1级标题开始一章（`--no-split`保持为一章），图片和表格成为资源，`--report`打印沙盒显示的质量报告（使用中的样式、直接格式、手打的编号…）。`--template`接受一个导入模板（从沙盒保存的`.json`，或带有模板的`.docx`）。
+`docx`用Word样式写出各章的标题、段落、框、引用块、列表和注释。Word无法表达的内容以*Postext Markup*样式原样保留，导入模板也随文件一起保存，所以编辑改过的文档也能完整导回来。`import-docx`把Word文档转成一本书：每个一级标题开始一章（`--no-split`则只保留一章），图片和表格成为资源，`--report`打印沙盒显示的质量报告（使用中的样式、直接格式、手打的编号…）。`--template`接受一个导入模板（从沙盒保存的`.json`，或带有模板的`.docx`）。
 
-字符间距属于样式，不属于文字，所以不在Markdown里。`docx`把段落样式、标题样式和各级标题的`letterSpacing`写成Word样式的字符间距，`import-docx`再按样式字号的em把它读回来：设为书中尚未设置`letterSpacing`的样式（`--config`文件里与Word样式对应的段落样式和标题样式，以及各级标题），书中已有的字距保持不变。加上`--json`时，`styleTracking`列出已设置的（`applied`）和跳过的（`skipped`）。自postext 1.39起。
+字符间距属于样式，不属于文字，所以不在Markdown里。`docx`把段落样式、标题样式和各级标题的`letterSpacing`写成Word样式的字符间距，`import-docx`再以样式字号的em为单位把它读回来：书中没有设`letterSpacing`的样式（`--config`文件里与Word样式对应的段落样式和标题样式，以及各级标题）会设上这个值，书中已经设了的字距保持不变。加上`--json`时，`styleTracking`列出已设置的（`applied`）和跳过的（`skipped`）。自postext 1.39起。
 
 ### pack和unpack
 
@@ -195,7 +195,7 @@ postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o
 postext unpack my-book.postext -o my-book/
 ```
 
-`pack`把图书文件夹原样压缩，或者用零散的Markdown构建一个文件包。同样的输入总是得到同样的字节，所以文件包可以比较或计算哈希。`unpack`拒绝写入非空的文件夹，除非给出`--force`。
+`pack`把图书文件夹原样压缩，或者用零散的Markdown构建一个文件包。同样的输入总是生成逐字节相同的文件，所以可以比较文件包，或计算它的哈希。对于零散的Markdown，`--id`、`--description`和`--thumbnail FILE`（一张封面图片）设置文件包的id、描述和缩略图；id默认由名称生成slug。文件夹保留它的`preset.json`所写的内容。`unpack`拒绝写入非空的文件夹，除非给出`--force`。
 
 ### info和check
 
@@ -207,11 +207,11 @@ postext check chapters/ --strict --json
 
 `info`列出各章（标题、字数、文件，加上`--pages`时还有页数）、资源，以及每个字体族及其来源（书本身、某个文件夹、可执行文件、下载缓存或后备字体）。如果书指明了从哪里开始（`preset.json`里的`start`：从第58页、第4章开始的节选），`info`也会显示出来，所有命令都从那里开始排版。
 
-`check`排版整本书，并报告沙盒检查面板显示的内容：没有闭合的Markdown，未知的资源、指令和样式，排版时不得不强制处理的框，缺失的字体，引擎不得不替换的设置；对于为印刷设置的书（或加上`--preflight`时），还有印前检查：低分辨率图片、过细线条、多色小字、超出上限的墨量、靠近裁切线的文字。它还列出在底色上看不清的文字（`contrast`），每对颜色列一次，带有屏幕上的对比度，检查印刷时还有输出特性文件的纸张上的对比度。每个问题都指明所在的章文件、行和页。发现错误时退出码为3，加上`--strict`时有任何警告也是3。
+`check`排版整本书，并报告沙盒检查面板列出的内容：没有闭合的Markdown，未知的资源、指令和样式，排版时不得不强制处理的框，缺失的字体，引擎不得不替换的设置；对于为印刷设置的书（或加上`--preflight`时），还有印前检查：低分辨率图片、过细的线条、用多种油墨印的小字、超出上限的墨量、靠近裁切线的文字。它还列出在底色上看不清的文字（`contrast`），每对颜色列一次，给出屏幕上的对比度；针对印刷时，还给出在输出特性文件所对应纸张上的对比度。每个问题都指明所在的章文件、行和页。发现错误时退出码为3，加上`--strict`时有任何警告也是3。
 
-它还会报告配置中存放书的正文而不是占位符的设计文字（`contentInConfig`），每个标题样式、页眉或部分设计报告一次，并附每条文字的路径：把这些文字移到 Markdown 中，或把书名、出版社名称加入`checks.contentInConfig.allow`。
+它还会报告配置的设计中直接写着书中文字、而没有用占位符的地方（`contentInConfig`），每个标题样式、书眉或篇名页设计报告一次，并附上每段文字的路径：把这些文字移到Markdown中，或者把书名、出版社名这类文字列入`checks.contentInConfig.allow`。
 
-对有页面模板的书，`check`还会报告放不进框的文字（`frameOverflow`，附重排阶梯试过的步骤和能让它放下的改动）、超出框可添加页数的连排内容（`frameContinuationLimit`）、跳向并不在后面的页的跳转（`continueTargetMissing`），以及画不出或相互碰撞的插图标注（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）。警告之后，每个有事件的组合页打印一行`reflow`，`--json`把步骤、建议和重排记录作为数据带上。见[组合页›警告](/zh/docs/composed-pages#警告)和[重排记录](/zh/docs/composed-pages#重排记录)。
+对有页面模板的书，`check`还会报告放不进框的文字（`frameOverflow`，附重排阶梯试过的步骤和能让它放下的改动）、接续的文字超出了框最多能追加的页数（`frameContinuationLimit`）、跳转的目标页不在后面（`continueTargetMissing`），以及画不出或相互碰撞的插图标注（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）。警告之后，每个有重排事件的模板页打印一行`reflow`；加上`--json`时，步骤、建议和重排记录都作为数据输出。见[模板页 › 警告](/zh/docs/composed-pages#警告)和[重排记录](/zh/docs/composed-pages#重排记录)。
 
 ### build和--watch
 
@@ -220,7 +220,7 @@ postext build book/ --pdf out/book.pdf --html out/book.html --images out/pages -
 postext build chapters/ --pdf book.pdf --watch
 ```
 
-`build`把书排版一次，写出你指定的每种输出（`--pdf`、`--html`、`--epub`、`--images`、`--docx`），各自使用对应命令的选项。`--watch`保持运行：某一章、配置或某张图片改变时，在字体和引擎仍已加载的情况下重新排版，一章通常只需几分之一秒，然后重写各个输出。保存后书出错时，它打印错误并保留上一次正确的文件。
+`build`把书排版一次，写出你指定的每种输出（`--pdf`、`--html`、`--epub`、`--images`、`--docx`），各自使用对应命令的选项。`--watch`保持运行，字体和引擎一直加载着：某一章、配置或某张图片一改，它就重新排版（一章通常不到一秒），然后重写各个输出。如果某次保存让书出了错，它会打印错误，并保留上一次正确的文件。
 
 ## 适用于所有图书的选项
 
@@ -234,13 +234,13 @@ postext build chapters/ --pdf book.pdf --watch
     <tr><td><code>--set PATH=VALUE</code></td><td>在本次运行中改变一项设置，用点号分隔的路径表示：<code>--set page.dpi=150</code>、<code>--set bodyText.fontFamily=Lora</code>、<code>--set headings.levels.0.italic=true</code>。能按JSON读取的值就按JSON读取（数字、true和false、对象），否则当作文本。可以重复使用。</td></tr>
     <tr><td><code>--config FILE</code></td><td>用于零散Markdown的配置（或<code>preset.json</code>），或合并到书本身配置之上的配置。</td></tr>
     <tr><td><code>--resources DIR</code>、<code>--fonts DIR</code>、<code>--name TEXT</code></td><td>零散Markdown的图片、字体和书名。</td></tr>
-    <tr><td><code>--font-dir DIR</code></td><td>查找书中未自带字体的文件夹。可以重复使用。</td></tr>
+    <tr><td><code>--font-dir DIR</code></td><td>到这个文件夹里查找书中没有自带的字体。可以重复使用。</td></tr>
     <tr><td><code>--offline</code></td><td>从不下载字体。</td></tr>
     <tr><td><code>--cache-dir DIR</code></td><td>存放下载字体的位置。</td></tr>
   </tbody>
 </table>
 
-此外，所有命令都有：`--json`、`--quiet`（`-q`，只显示错误）、`--verbose`（进度和每条警告）、`--no-color`、`--help`。
+此外，所有命令都有：`--json`、`--quiet`（`-q`，只显示错误）、`--verbose`（进度和每条警告）、`--no-color`、`--help`（`-h`）、`--version`（`-v`）。
 
 ## 字体
 
@@ -251,13 +251,13 @@ postext build chapters/ --pdf book.pdf --watch
 3. 下载缓存；
 4. [Google Fonts](https://fonts.google.com)，它提供完整的静态TrueType文件；Google Fonts没有的字体族（Commit Mono、FiraGO）则从[Fontsource](https://fontsource.org)获取。下载的文件保存在缓存中，所以每个字体族只下载一次。
 
-字体族没有的字重，用浏览器会选的那个字体排出（即CSS的字体匹配规则：500以上先取更重的，400以下先取更轻的，所以只有400和700的字体族，600用它的700，550也是）；字体族没有的倾斜用它的正体。两种情况都原样排出，页面图像和PDF都是如此：只有一个字重的标题字体，粗体仍用它自己的字形；没有斜体的字体族，斜体用正体。
+字体族没有的字重，用浏览器会选的那个字体排出（即CSS的字体匹配规则：500以上先取更重的，400以下先取更轻的，所以只有400和700的字体族，600用它的700，550也是）；字体族没有的倾斜用它的正体。两种情况都直接用现有的字体排，页面图像和PDF都一样：只有一个字重的标题字体，粗体仍用它自己的字形；没有斜体的字体族，斜体也用正体。
 
-下载的是配置里写到的字重：每个字体族的常规体、粗体和它们的斜体，以及各项设置给出的其他字重，粗体的字重也在内（`bodyText.boldFontWeight: 600`会请求600字重的字体）。字体族本来带有某个字重，却没能载入时（离线而缓存里没有文件、下载失败、字体文件夹里缺这个文件），文字改用该字体族中按同一规则应答的字体排出，`postext check`会把它列为一条`fontFallback`警告：这些行的断行可能与Sandbox里不同。
+下载的是配置里写到的字重：每个字体族的常规体、粗体和它们的斜体，以及各项设置给出的其他字重，粗体的字重也在内（`bodyText.boldFontWeight: 600`会请求600字重的字体）。字体族本来带有某个字重，却没能载入时（离线而缓存里没有文件、下载失败、字体文件夹里缺这个文件），文字改用该字体族中按同一规则选出的替代字体排，`postext check`会把它列为一条`fontFallback`警告：这些行的断行可能与沙盒里不同。
 
 缓存位于`~/.cache/postext`（Windows上为`%LOCALAPPDATA%\postext\cache`）；`POSTEXT_CACHE_DIR`或`--cache-dir`可以改变它的位置。`--offline`跳过下载。在哪里都找不到的字体族以它自己的名称用EB Garamond排版，这样版面和PDF仍然一致，同时一条`missingFont`警告会指出它。`postext info`显示每个字体族的来源。
 
-如果文件包没有带上某个授权字体家族的文件，它可以为该家族写一个宽度相近的开放字体家族（清单`fonts`里的`fallback`，自postext 1.42起）。`postext`会按上面的步骤查找这个家族，书里没有的字形就以授权家族的名称，用它同粗细、同倾斜的字形排版，所以版面接近有文件时的结果，`postext check`也不会为该家族报`missingFont`。书里只带了一部分的家族，只从`fallback`取自己一个文件也没有的那种倾斜。PDF嵌入的是开放字体。
+文件包如果没有带上某个授权字体族的文件，可以为它指定一个宽度相近的开放字体族（清单`fonts`里的`fallback`，自postext 1.42起）。`postext`按上面的步骤查找这个字体族；书中没有自带的字面，就用它同字重、同倾斜的字面来排，名称仍用授权字体族的名称。这样版面与有文件时接近，`postext check`也不会为该字体族报`missingFont`。书中只带了部分字面的字体族，只有自己完全缺少的那种倾斜才从`fallback`中取。PDF嵌入的是开放字体。
 
 ## 用于脚本和智能体
 
@@ -289,13 +289,13 @@ postext build chapters/ --pdf book.pdf --watch
 - **退出码**：`0`完成，`1`失败，`2`用法错误（未知选项、缺少输入），`3`表示`check`发现了错误（加上`--strict`时为警告）。
 - **不提问**。它从不等待输入；非空的文件夹直接拒绝，而不是询问。
 - **标准输出**：`-o -`把PDF、图像或文件包写到那里，以便通过管道交给下一个程序。
-- **速度**。可执行文件启动只需几百分之一秒。短书变成PDF或页面图像远不到一秒；长书所需的时间取决于它的排版（一本140页的插图小说，约十秒）。要查看长书中的几页，把`--chapters`与`image`或`images --pages`结合使用。要对一本书做许多修改，让`postext build --watch`保持运行，并读取它的输出。
+- **速度**。可执行文件启动只需几百分之一秒。短书变成PDF或页面图像远不到一秒；长书所需的时间取决于它的排版（一本140页的插图小说，约十秒）。要查看长书中的几页，把`--chapters`与`image`或`images --pages`结合使用。要反复修改一本书时，让`postext build --watch`一直运行，读取它的输出即可。
 
 [智能体技能](/zh/docs/skill)用命令行渲染它正在处理的页面，并检查移植结果。
 
 ## 构建方式
 
-命令行是[仓库](https://github.com/drnachio/postext/tree/main/packages/postext-cli)中的`postext-cli`包。[Bun](https://bun.sh)把它连同引擎及其写入器编译成每个系统一个的可执行文件，[Skia](https://skia.org)（通过`@napi-rs/canvas`）测量并绘制文字，就像沙盒中浏览器的canvas那样。包含位图的SVG图片（以data URI嵌入的PNG或JPEG，`pdftocairo -svg`从PDF裁出的图稿就是这样写的）则由[resvg](https://github.com/linebender/resvg)绘制，因为Skia的SVG渲染器会漏掉这类图像。每次发布时，这些可执行文件都会被构建出来，在Linux、Alpine、macOS和Windows上运行，并附加到GitHub Release；npm收到`postext-cli`，以及每个可执行文件对应的一个`postext-cli-<system>`包。
+命令行是[仓库](https://github.com/drnachio/postext/tree/main/packages/postext-cli)中的`postext-cli`包。[Bun](https://bun.sh)把它连同引擎及其写入器，为每个系统编译成一个可执行文件；[Skia](https://skia.org)（通过`@napi-rs/canvas`）测量并绘制文字，就像沙盒中浏览器的canvas那样。包含位图的SVG图片（以data URI嵌入的PNG或JPEG，`pdftocairo -svg`从PDF裁出的图稿就是这样写的）则由[resvg](https://github.com/linebender/resvg)绘制，因为Skia的SVG渲染器会漏掉这类图像。每次发布时，都会构建这些可执行文件，在Linux、Alpine、macOS和Windows上试运行，再附到GitHub Release上；npm上会发布`postext-cli`，以及每个可执行文件对应的一个`postext-cli-<system>`包。
 
 在仓库的副本中运行它：
 

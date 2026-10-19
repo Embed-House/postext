@@ -16,7 +16,7 @@ La liste de lectures d’un séminaire de six semaines sur l’histoire et la so
 
 ### 1 · Nommer le style une seule fois
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations est enregistré avant la première composition et le style tient en un réglage : Chicago auteur-date écrit « (Shapin 1984) » pour `[@shapin_pump_1984]` et « Shapin and Schaffer (1985) » pour `@shapin_leviathan_1985` dans une phrase. Les clés sont celles que Zotero a construites à partir du premier auteur, du premier mot significatif du titre et de l’année : `gieryn_boundary-work_1983` garde donc son trait d’union ; Postext lit un trait d’union ou un tiret bas à l’intérieur d’une clé comme faisant partie de la clé.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations est enregistré avant la première composition et le style tient en un réglage : Chicago auteur-date écrit « (Shapin 1984) » pour `[@shapin_pump_1984]` et « Shapin and Schaffer (1985) » pour `@shapin_leviathan_1985` dans une phrase. Les clés sont celles que Zotero a construites à partir du premier auteur, du premier mot significatif du titre et de l’année : `gieryn_boundary-work_1983` garde donc son trait d’union ; Postext considère un trait d’union ou un tiret bas à l’intérieur d’une clé comme faisant partie de la clé.
 
 ### 2 · Coller l’export tel que Zotero l’écrit
 
@@ -38,11 +38,11 @@ Le dernier bloc du document contient l’export, une entrée par ouvrage, en ret
 }
 ```
 
-Le lecteur retire les accolades qui protègent les capitales, compose `{\"o}` et `{\'e}` en ö et é, transforme `--` en tiret demi-cadratin et lit `month = dec` comme un simple nom de mois. `urldate` devient la date de consultation et `language` la langue de l’ouvrage ; `file`, `keywords`, `abstract` et `shorttitle` sont ignorés, si bien que rien de votre disque dur n’arrive sur la page.
+Le lecteur retire les accolades qui protègent les capitales, compose `{\"o}` et `{\'e}` en ö et é, transforme `--` en tiret demi-cadratin et interprète `month = dec` comme un simple nom de mois. `urldate` devient la date de consultation et `language` la langue de l’ouvrage ; `file`, `keywords`, `abstract` et `shorttitle` sont ignorés : rien de votre disque dur n’arrive donc sur la page.
 
 ### 3 · Faire entrer les ouvrages que le texte ne cite pas
 
-Le frontmatter les liste par clé :
+L’en-tête YAML les liste par clé :
 
 ```yaml
 ---
@@ -57,7 +57,7 @@ La liste contient tous les ouvrages cités plus ces cinq-là, triés ensemble pa
 
 <Excerpt region="opener" />
 
-La bande est une boîte ancrée à la coupe, de 132 mm de haut, et les deux colonnes commencent 9 mm sous elle. Le titre, le filet et le chapeau sont enchaînés par des ancrages `below`, si bien qu’un titre de cours plus long repousse le chapeau vers le bas au lieu de le heurter.
+La bande est une boîte ancrée à la coupe, de 132 mm de haut, et les deux colonnes commencent 9 mm sous elle. Le titre, le filet et le chapeau sont enchaînés par des ancrages `below` : un titre de cours plus long repousse donc le chapeau vers le bas au lieu de le heurter.
 
 <Excerpt region="palette" />
 
@@ -84,6 +84,6 @@ Les mêmes clés donnent une liste Harvard (Cite Them Right) sans aucun autre ch
 ## Erreurs fréquentes
 
 - Une clé de `nocite` qui ne correspond à aucune entrée est abandonnée sans avertissement. Copiez les clés depuis l’export au lieu de les taper, et comptez les entrées sur la page.
-- Zotero construit les clés à partir des données : corrigez le nom d’un auteur ou un titre dans Zotero et l’export suivant peut changer la clé, ce qui casse toutes ses citations. Figez les clés avant d’écrire le texte : Zotero lit une ligne `Citation Key: …` dans le champ Extra d’un document.
-- Zotero exporte par défaut en UTF-8, avec les accents tels quels. Le bloc d’ici a été exporté avec l’option d’encodage occidental, qui écrit `{\"o}` ; Postext lit les deux.
+- Zotero construit les clés à partir des données : corrigez le nom d’un auteur ou un titre dans Zotero et l’export suivant peut changer la clé, ce qui casse toutes ses citations. Figez les clés avant d’écrire le texte : Zotero reconnaît une ligne `Citation Key: …` dans le champ Extra d’un document.
+- Zotero exporte par défaut en UTF-8, avec les accents tels quels. Le bloc d’ici a été exporté avec l’option d’encodage occidental, qui écrit `{\"o}` ; Postext accepte les deux.
 - La 18e édition de Chicago omet le lieu de publication : le champ `address` ne s’imprime donc pas, et un article avec un DOI imprime le DOI et non l’`url` JSTOR.

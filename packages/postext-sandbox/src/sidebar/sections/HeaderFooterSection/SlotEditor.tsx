@@ -15,7 +15,7 @@ import type {
 import { Button, ConfirmPopover, IconButton as UiIconButton } from '../../../ui';
 import { SearchScope } from '../../search/SearchScope';
 import { ShowingDefaultsContext } from '../../../controls/fieldContext';
-import { ToggleSwitch } from '../../../controls';
+import { ItemCard, ItemCardListActions, openCard, ToggleSwitch } from '../../../controls';
 import { TextElementEditor } from './TextElementEditor';
 import { RuleElementEditor } from './RuleElementEditor';
 import { BoxElementEditor } from './BoxElementEditor';
@@ -63,9 +63,17 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
   };
 
   const existingIds = new Set(currentRaw.map((el) => el.id));
+  // The fold of each element's card (#1031) is kept per slot.
+  const cardList = `slot:${configPath ?? slotKey}`;
+
+  /** New elements join at the end with their cards open. */
+  const append = (...added: DesignElement[]) => {
+    for (const el of added) openCard(cardList, el.id);
+    commit([...currentRaw, ...added]);
+  };
 
   const addText = () => {
-    commit([...currentRaw, newTextElement(generateId('text', existingIds), slotKey)]);
+    append(newTextElement(generateId('text', existingIds), slotKey));
   };
 
   const addRule = () => {
@@ -75,7 +83,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
       id,
       placement: applyAlign(DEFAULT_RULE_ELEMENT.placement, slotKey, 'center'),
     };
-    commit([...currentRaw, template]);
+    append(template);
   };
 
   const addBox = () => {
@@ -85,7 +93,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
       id,
       placement: applyAlign(DEFAULT_BOX_ELEMENT.placement, slotKey, 'center'),
     };
-    commit([...currentRaw, template]);
+    append(template);
   };
 
   const addImage = () => {
@@ -96,13 +104,13 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
       resourceId: '',
       placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: { value: 20, unit: 'mm' }, height: 'auto' } },
     };
-    commit([...currentRaw, template]);
+    append(template);
   };
 
   /** The fore-edge heads of a vertical book, at 80 % of the body size
    *  (see `foreEdgeElements`). */
   const addForeEdge = () => {
-    commit([...currentRaw, ...foreEdgeElements(existingIds, resolveBodyTextConfig(bodyTextRaw).fontSize)]);
+    append(...foreEdgeElements(existingIds, resolveBodyTextConfig(bodyTextRaw).fontSize));
   };
 
   const updateAt = (index: number, next: DesignElement) => {
@@ -147,6 +155,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
         </p>
       )}
       <ShowingDefaultsContext value={raw === undefined}>
+      <ItemCardListActions list={cardList} ids={currentRaw.map((el) => el.id)} />
       {currentRaw.map((rawEl, idx) => {
         const resolvedEl = resolvedElements[idx];
         const siblings = currentRaw
@@ -163,19 +172,12 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
               : labels.headerFooterElementBox;
         return (
           <SearchScope key={`${slotKey}-${rawEl.id}-${idx}`} title={`${elementTitle} ${idx + 1}`} overridden={raw !== undefined}>
-          <div
-            className="mb-2 rounded border"
-            style={{ borderColor: 'var(--rule)' }}
-            data-config-path={configPath ? `${configPath}/elements/${idx}` : undefined}
-          >
-            <div
-              className="flex items-center justify-between border-b px-2 py-1"
-              style={{ borderColor: 'var(--rule)', backgroundColor: 'var(--surface)' }}
-            >
-              <span className="text-xs font-semibold pt-caps tracking-wider" style={{ color: 'var(--brand)' }}>
-                {elementTitle}
-                {' '}#{idx + 1}
-              </span>
+          <ItemCard
+            list={cardList}
+            id={rawEl.id}
+            configPath={configPath ? `${configPath}/elements/${idx}` : undefined}
+            title={`${elementTitle} #${idx + 1}`}
+            actions={
               <div className="flex items-center gap-1">
                 <IconButton label={labels.headerFooterMoveUp} disabled={isFirst} onClick={() => moveUp(idx)}>
                   <ArrowUp size={12} aria-hidden="true" />
@@ -191,8 +193,9 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   )}
                 </ConfirmPopover>
               </div>
-            </div>
-            <div className="px-2 py-2">
+            }
+          >
+            <div>
               {rawEl.kind === 'text' && resolvedEl?.kind === 'text' ? (
                 <TextElementEditor
                   raw={rawEl}
@@ -242,7 +245,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                 />
               )}
             </div>
-          </div>
+          </ItemCard>
           </SearchScope>
         );
       })}

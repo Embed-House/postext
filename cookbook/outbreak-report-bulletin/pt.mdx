@@ -22,19 +22,19 @@ O código é [a resposta curta](#a-resposta-curta) logo acima. Um relatório de 
 
 <Excerpt region="masthead" />
 
-O cabeçalho é o design do estilo de título do primeiro relatório, então ele sai uma vez só, na página 1, e os cabeços pulam essa página (`pages: 'body'`). O antetítulo e a data vêm de atributos do H1 de cada relatório, e o título é `{titleText}`: um elemento de texto com `inlineMarks: true` mantém em itálico o gênero que aparece no título. O relatório de julho abre com os mesmos três elementos sob um fio duplo. Seu estilo de título ocupa a largura da página com `spanBreak: false`, então ele começa onde termina o relatório de junho: as colunas de cima terminam na mesma altura e o texto continua nas duas colunas de baixo, do jeito que o boletim emendava um relatório no outro.
+O cabeçalho é o design do estilo de título do primeiro relatório, por isso ele sai uma vez só, na página 1, e os cabeços pulam essa página (`pages: 'body'`). O antetítulo e a data vêm de atributos do H1 de cada relatório, e o título é `{titleText}`: um elemento de texto com `inlineMarks: true` mantém em itálico o gênero que aparece no título. O relatório de julho abre com os mesmos três elementos sob um fio duplo. Seu estilo de título ocupa a largura da página com `spanBreak: false`, de modo que ele começa onde termina o relatório de junho: as colunas de cima terminam na mesma altura e o texto continua nas duas colunas de baixo, do jeito que o boletim emendava um relatório no outro.
 
 ### 3 · Três tabelas a partir de texto separado por tabulações
 
 <Excerpt region="resources" />
 
-Cada tabela é um slot de conteúdo com texto separado por tabulações, o formato que uma planilha copia, e `parseTSV` o transforma em modelo. Uma coluna de números se alinha à direita com o cabeçalho centralizado; quatro chamadas a `mergeCells` montam o cabeçalho de duas linhas do resumo das doenças de notificação compulsória. O tipo tabela reinicia o contador a cada H1 (`resetOn: 'h1'`), de modo que cada relatório tem a sua Tabela 1, como em 1981.
+Cada tabela é um espaço de conteúdo com texto separado por tabulações, o formato que uma planilha copia, e `parseTSV` o transforma em modelo. Uma coluna de números se alinha à direita com o cabeçalho centralizado; quatro chamadas a `mergeCells` montam o cabeçalho de duas linhas do resumo das doenças de notificação compulsória. O tipo tabela reinicia o contador a cada H1 (`resetOn: 'h1'`), de modo que cada relatório tem a Tabela 1, como em 1981.
 
 ### 4 · Um só azul, vinculado em todo lugar
 
 <Excerpt region="palette" />
 
-A faixa, os rótulos, os fólios, os cabeçalhos das tabelas e o gráfico apontam para a mesma entrada da paleta, então quem trocar `accent` pela cor do seu próprio boletim recolore as seis páginas de uma vez.
+A faixa, os rótulos, os fólios, os cabeçalhos das tabelas e o gráfico apontam para a mesma entrada da paleta, por isso quem trocar `accent` pela cor de seu próprio boletim recolore as seis páginas de uma vez.
 
 ## Variações
 
@@ -63,5 +63,5 @@ Uma série de reimpressões que arquiva os relatórios separadamente abre cada u
 ## Erros comuns
 
 - Sem `numbering: 'chapter'`, os números das referências continuam pelo documento inteiro e `scope: 'chapter'` só separa as listas: o relatório de julho citaria as obras 4 e de 6 a 23, onde o boletim imprimiu de 1 a 19.
-- A nota de 1981 *Paired specimens not run in parallel* é chamada por um asterisco: `footnotes.numberFormat: 'symbols'` usa *, †, ‡ e recomeça a cada página. Dessas marcas, só o asterisco está no arquivo latin de uma fonte do Fontsource (a adaga está no latin-ext e a adaga dupla em nenhum dos dois), então uma página com duas ou três notas precisa de uma fonte que as tenha, ou de `symbols: ['*', '§', '¶']`.
+- A nota de 1981 *Paired specimens not run in parallel* é chamada por um asterisco: `footnotes.numberFormat: 'symbols'` usa *, †, ‡ e recomeça a cada página. Dessas marcas, só o asterisco está no arquivo latin de uma fonte do Fontsource (a adaga está no latin-ext e a adaga dupla em nenhum dos dois), por isso uma página com duas ou três notas precisa de uma fonte que as tenha, ou de `symbols: ['*', '§', '¶']`.
 - O texto de 1981 fica como foi impresso, com a terminologia da época, e o colofão avisa isso. Uma reimpressão não corrige o texto que reproduz; o que a edição acrescenta (a linha do tempo, a tabela de casos, a linha em itálico azul sob o primeiro parágrafo) vai num estilo próprio e identificado.

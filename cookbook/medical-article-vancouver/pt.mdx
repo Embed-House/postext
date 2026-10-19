@@ -10,7 +10,7 @@ pageNotes: { "1": "Página 181: uma faixa verde-azulada no alto com o nome da re
 
 ## O que você vai compor
 
-Três páginas de uma revista clínica: um artigo original que relata um ensaio piloto, composto em A4 e duas colunas como o imprimem as revistas que seguem o ICMJE. Uma faixa verde-azulada atravessa o alto da primeira página, sobre o tipo de artigo, um título de três linhas, os autores com números de afiliação elevados e um resumo estruturado sobre um fundo claro. Os autores citam com chaves de BibTeX, e as páginas mostram o que um editor da área médica espera: números pequenos e elevados depois do ponto, obras consecutivas agrupadas como 6–8, duas não consecutivas juntas e sem espaço, 6,9, e uma lista de referências numerada na forma da NLM, *Lancet 2016;387(10022):957–67*, que fecha com o DOI de cada obra. No PDF, cada número leva à sua referência e cada DOI abre o artigo. O ensaio é inventado; as onze obras que ele cita são reais.
+Três páginas de uma revista clínica: um artigo original que relata um ensaio piloto, composto em A4 e duas colunas como o imprimem as revistas que seguem o ICMJE. Uma faixa verde-azulada atravessa o alto da primeira página, sobre o tipo de artigo, um título de três linhas, os autores com números de afiliação elevados e um resumo estruturado sobre um fundo claro. Os autores citam com chaves de BibTeX, e as páginas mostram o que um editor da área médica espera: números pequenos e elevados depois do ponto, obras consecutivas agrupadas como 6–8, duas não consecutivas juntas e sem espaço, 6,9, e uma lista de referências numerada na forma da NLM, *Lancet 2016;387(10022):957–67*, que fecha com o DOI de cada obra. No PDF, cada número leva à referência e cada DOI abre o artigo. O ensaio é inventado; as onze obras que ele cita são reais.
 
 ## Preparo
 
@@ -22,13 +22,13 @@ O código é [a resposta curta](#a-resposta-curta) acima. Dos estilos que vêm c
 
 <Excerpt region="title" />
 
-O título do artigo é o único título de nível 1, com o estilo `article`, que ocupa a largura da página e o desenha com o seu design. O tipo de artigo, os autores, as afiliações e a nota vêm de atributos do título. `inlineMarks` transforma o `^1^` do atributo num número de afiliação elevado, e o `\n` das afiliações abre uma linha para cada instituição. A faixa é ancorada ao refile, e assim chega até a borda superior do papel.
+O título do artigo é o único título de nível 1, com o estilo `article`, que ocupa a largura da página e o desenha com o design. O tipo de artigo, os autores, as afiliações e a nota vêm de atributos do título. `inlineMarks` transforma o `^1^` do atributo num número de afiliação elevado, e o `\n` das afiliações abre uma linha para cada instituição. A faixa é ancorada ao refile, e assim chega até a borda superior do papel.
 
 ### 3 · Um resumo estruturado e um boxe de pontos-chave
 
 <Excerpt region="abstract" />
 
-Os dois boxes compartilham um estilo de texto: Fira Sans em 8,3 pt com rótulos em negrito no começo do parágrafo, a voz que o leitor espera no material de síntese. O resumo tem um fundo de cor e os rótulos em verde-azulado; os pontos-chave ficam sob um filete de 2,5 pt, com os rótulos em preto. `snapToGrid: false` mantém o preenchimento exato, de modo que o boxe do resumo se ajusta ao texto.
+Os dois boxes compartilham um estilo de texto: Fira Sans em 8,3 pt com rótulos em negrito no começo do parágrafo, a voz que o leitor espera no material de síntese. O resumo tem um fundo de cor e os rótulos em verde-azulado; os pontos-chave ficam sob um fio de 2,5 pt, com os rótulos em preto. `snapToGrid: false` mantém o preenchimento exato, de modo que o boxe do resumo se ajusta ao texto.
 
 ### 4 · A Tabela 1 e a Figura 1 no alto de uma coluna
 
@@ -70,4 +70,4 @@ Algumas revistas que seguem Vancouver escrevem os números na linha, entre colch
 
 ## Erros comuns
 
-- O `header` de um estilo de título vale para toda a seção que esse título abre, então `header: { elements: [] }` no título apagaria os cabeços de todas as páginas até o próximo título com estilo. `pages: 'body'` nos cabeços basta para tirá-los da primeira página.
+- O `header` de um estilo de título vale para toda a seção que esse título abre, por isso `header: { elements: [] }` no título apagaria os cabeços de todas as páginas até o próximo título com estilo. `pages: 'body'` nos cabeços basta para tirá-los da primeira página.

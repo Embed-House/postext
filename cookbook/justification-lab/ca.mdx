@@ -5,7 +5,7 @@ plain: "Una petita revista sobre tipografia, en columnes estretes amb el text al
 description: "Una revista de tipografia en A5 composta dues vegades: Knuth–Plass amb espaiat de 0,8 a 1,6 davant el tall voraç, amb les línies fluixes marcades des del VDT."
 question: "Com aconsegueixo una justificació uniforme en columnes estretes, amb la partició de mots de cada llengua?"
 aliases: ["justificació", "espaiat entre paraules", "rius", "carrers", "línies fluixes", "Knuth-Plass", "cola", "goma", "tall voraç", "primer ajust", "vídues", "òrfenes", "línies curtes", "partició de mots", "llengua de la partició", "columnes estretes", "ajust del text", "justifiedSpaceRatio", "minWordSpacing", "maxWordSpacing"]
-pageNotes: { "1": "Una banda grafit amb l'avanttítol Galerada · n.º 12 · Justificación en groc fosforescent, el títol El problema de los ríos en blanc i una entradeta en cursiva; a sota, un diagrama: una fila de caixes blanques unides per molles grogues l'última paraula de la qual sobrepassa una línia de traços que marca la mesura, i la mateixa fila partida, amb les molles estirades fins a la mesura. Sota la banda comencen dues columnes justificades.", "2": "Dues columnes plenes: les seccions Línea a línea o en bloque, Límites para la cola, Partir palabras i Viudas y huérfanas, amb la configuració vigent (minWordSpacing 0,8, maxWordSpacing 1,6; widowPenalty, orphanPenalty, slackWeight) en monoespaiada al costat d'un filet grafit.", "3": "El final de l'assaig en dues columnes anivellades, amb la configuració de les línies curtes i el colofó, sobre un banc de proves grafit al peu de la pàgina: un mateix paràgraf en bandera, justificat sense partir (amb grans forats i la quarta línia en bandera) i justificat amb partició, i una nota en blanc." }
+pageNotes: { "1": "Una banda grafit amb l'avanttítol Galerada · n.º 12 · Justificación en groc fosforescent, el títol El problema de los ríos en blanc i una entradeta en cursiva; a sota, un diagrama: una fila de caixes blanques unides per molles grogues, amb l'última paraula que sobrepassa una línia de traços que marca la mesura, i la mateixa fila partida, amb les molles estirades fins a la mesura. Sota la banda comencen dues columnes justificades.", "2": "Dues columnes plenes: les seccions Línea a línea o en bloque, Límites para la cola, Partir palabras i Viudas y huérfanas, amb la configuració vigent (minWordSpacing 0,8, maxWordSpacing 1,6; widowPenalty, orphanPenalty, slackWeight) en monoespaiada al costat d'un filet grafit.", "3": "El final de l'assaig en dues columnes anivellades, amb la configuració de les línies curtes i el colofó, sobre un banc de proves grafit al peu de la pàgina: un mateix paràgraf en bandera, justificat sense partir (amb grans forats i la quarta línia en bandera) i justificat amb partició, i una nota en blanc." }
 ---
 
 ## Què compondràs
@@ -22,7 +22,7 @@ El codi d'aquest pas és [la resposta curta](#la-resposta-curta) de més amunt. 
 
 <Excerpt region="marks" />
 
-`findLooseLines` retorna les línies justificades els espais de les quals s'estiren per sobre d'un llindar, aquí el límit superior, cadascuna amb la franja que cobreix el ressaltat ([Línies fluixes al teu propi canvas](/ca/docs/configuration-fonts-colors-viewers#línies-fluixes-al-teu-propi-canvas)). `marks()` hi afegeix el que aquesta llista deixa fora, llegit del [VDT](/ca/docs/justification#depuració-de-línies-fluixes): una línia de més de 3× no té proporció, perquè el motor [la compon en bandera](/ca/docs/justification#línies-que-lalgorisme-no-pot-omplir) i la marca amb `line.ragged`, i un paràgraf partit entre dues columnes torna com un bloc per fragment, que és com es troben les línies soles. Amb quaranta caràcters per línia, els límits no basten perquè totes quedin per sota d'1,6; mentre s'ajustava el text de l'assaig, les marques van assenyalar quines frases calia reescriure.
+`findLooseLines` retorna les línies justificades amb els espais estirats per sobre d'un llindar, aquí el límit superior, cadascuna amb la franja que cobreix el ressaltat ([Línies fluixes al teu propi canvas](/ca/docs/configuration-fonts-colors-viewers#línies-fluixes-al-teu-propi-canvas)). `marks()` hi afegeix el que aquesta llista deixa fora, llegit del [VDT](/ca/docs/justification#depuració-de-línies-fluixes): una línia de més de 3× no té proporció, perquè el motor [la compon en bandera](/ca/docs/justification#línies-que-lalgorisme-no-pot-omplir) i la marca amb `line.ragged`, i un paràgraf partit entre dues columnes torna com un bloc per fragment, que és com es troben les línies soles. Amb quaranta caràcters per línia, els límits no basten perquè totes quedin per sota d'1,6; mentre s'ajustava el text de l'assaig, les marques van assenyalar quines frases calia reescriure.
 
 ### 3 · Posa el control al costat de la pàgina publicada
 
@@ -55,7 +55,7 @@ El `locale` tria els patrons de partició, així que un text alemany porta `'de'
 
 ### Marca només les pitjors línies
 
-Puja el llindar d'1,6 a 2 i el ressaltador marca només les línies els espais de les quals passen del doble.
+Puja el llindar d'1,6 a 2 i el ressaltador marca només les línies amb espais que passen del doble.
 
 ```diff
 -  const loose = findLooseLines(doc, { threshold: FENCES.maxWordSpacing, pageIndex: page.index });

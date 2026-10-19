@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ligne de commande',
   description: 'Un exécutable autonome pour macOS, Linux et Windows qui transforme un livre .postext, un dossier de livre ou des fichiers Markdown isolés en PDF, HTML, EPUB, images de pages et Word, crée des paquets et vérifie des livres, avec une sortie JSON pour les scripts et les agents',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
   plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
@@ -50,7 +50,7 @@ leurs sommes de contrôle (`SHA256SUMS`) et un `readme.txt` :
   </tbody>
 </table>
 
-Chaque fichier pèse entre 115 et 140 Mo. Le lien
+Chaque fichier pèse entre 115 et 140 Mo. Le lien
 `https://github.com/drnachio/postext/releases/latest/download/<file>` donne
 toujours le plus récent.
 
@@ -94,7 +94,7 @@ chacun, dans l’ordre de leurs noms :
 postext pdf chapters/ --name "Field notes" -o field-notes.pdf
 ```
 
-Le front matter du premier chapitre donne au livre son titre et son auteur, et
+L’en-tête YAML du premier chapitre donne au livre son titre et son auteur, et
 les valeurs par défaut du moteur font le reste : deux colonnes, une grille de
 ligne de base, un texte justifié avec césure, des titres courants. Ajoutez une
 configuration et des images quand vous en avez besoin :
@@ -128,9 +128,9 @@ Toute commande qui lit un livre accepte l’une de ces formes :
   - `--resources pictures/` : les images, chacune étant une figure nommée
     d’après son nom de fichier sans l’extension (`map.png` est
     `::resource{id="map"}`) ; un `resources.json` dans le dossier les décrit à
-    la place (ids, types, légendes, texte de remplacement), sous la même forme
+    la place (identifiants, types, légendes, texte de remplacement), sous la même forme
     que les `resources` d’un `preset.json` ;
-  - `--fonts fonts/` : les fichiers de polices que porte le livre (TTF, OTF,
+  - `--fonts fonts/` : les fichiers de polices que fournit le livre (TTF, OTF,
     WOFF2), nommés d’après la famille qu’indiquent leurs tables ;
   - `--name "Title"` : le nom du livre.
 
@@ -161,8 +161,8 @@ sa propre langue, sauf si `--locale` en demande une autre (`--locale en`).
 </table>
 
 Chaque commande écrit dans le dossier d’où vous la lancez, sous le nom de
-l’entrée, sauf si `-o` donne le chemin. `-o -` écrit une sortie unique sur la
-sortie standard.
+l’entrée, sauf si `-o` donne le chemin (`images` écrit dans `pages/`). `-o -`
+écrit une sortie unique sur la sortie standard.
 
 ### pdf
 
@@ -201,7 +201,7 @@ auto-hébergées. `--assets embed|folder` choisit l’une ou l’autre forme pou
 n’importe quel chemin. Les pages sont la mise en page imprimée, montrée à la
 taille de l’écran : côte à côte (`--mode multi`, par défaut) ou l’une sous
 l’autre (`--mode single`). Les polices marquées `redistributable: false` sont
-nommées mais pas copiées. Quand la famille nomme un `fallback`, ce sont les fontes de cette famille libre qui sont écrites à sa place, sous le nom de la famille (depuis postext 1.43).
+nommées mais pas copiées. Quand la famille indique un `fallback`, ce sont les fontes de cette famille libre qui sont écrites à sa place, sous le nom de la famille (depuis postext 1.43).
 
 ### epub
 
@@ -215,7 +215,7 @@ texte sélectionnable ; `--layout reflowable` laisse le système de lecture
 recomposer le texte pour son écran (voir [Livres EPUB](/fr/docs/configuration-html-folio-epub#livres-epub-postext-epub)). La
 couverture est la vignette du livre, sauf si `--cover` donne une image. Les
 métadonnées du paquet EPUB (titre, auteurs, langue, identifiant) viennent du
-front matter du premier chapitre, comme dans le Sandbox. Les polices marquées `redistributable: false` ne sont pas copiées ; une famille qui nomme un `fallback` est intégrée avec les fontes de cette famille libre, sous son propre nom (depuis postext 1.43).
+l’en-tête YAML du premier chapitre, comme dans le Sandbox. Les polices marquées `redistributable: false` ne sont pas copiées ; une famille qui indique un `fallback` est incorporée avec les fontes de cette famille libre, sous son propre nom (depuis postext 1.43).
 
 ### image et images
 
@@ -241,8 +241,9 @@ exactement telle qu’elle a été mise en page, sans passer par un PDF.
   position, `{n:03}` complétée à trois chiffres), `{label}` (le numéro
   imprimé) et `{chapter}` ; `page-{n:03}` par défaut.
 - `--print-preview` : la page telle que l’imprimeur la reproduira, à travers le
-  profil de sortie, avec la coupe et le fond perdu dessinés.
-- `--jobs N` : le nombre d’images encodées en même temps.
+  profil de sortie, avec le rognage et le fond perdu dessinés.
+- `--jobs N` : le nombre d’images encodées en même temps (par défaut, autant
+  que l’ordinateur a de processeurs).
 
 ### docx et import-docx
 
@@ -264,10 +265,10 @@ forme directe, numérotation tapée à la main…). `--template` accepte un mod�
 d’importation (un `.json` enregistré depuis le Sandbox ou un `.docx` qui en
 contient un).
 
-L’espacement des caractères appartient au style, pas au texte : il n’est donc pas dans le
+L’espacement des caractères appartient au style, pas au texte : il n’est donc pas dans le
 Markdown. `docx` écrit le `letterSpacing` des styles de paragraphe, des styles de titre
 et des niveaux de titre comme espacement des caractères du style Word, et `import-docx`
-le relit en em de la taille du style : il le pose en `letterSpacing` sur les styles du livre
+le relit en em de la taille du style : il le pose en `letterSpacing` sur les styles du livre
 qui n’en ont aucun (les styles de paragraphe et de titre du fichier `--config` auxquels
 correspondent les styles Word, et les niveaux de titre), et laisse tel quel tout espacement
 que le livre définit déjà. Avec `--json`, `styleTracking` énumère ce qui a été posé (`applied`)
@@ -283,7 +284,11 @@ postext unpack my-book.postext -o my-book/
 
 `pack` compresse un dossier de livre tel quel, ou construit un paquet à partir
 de fichiers Markdown isolés. La même entrée donne toujours les mêmes octets :
-un paquet peut donc être comparé ou haché. `unpack` refuse d’écrire dans un
+un paquet peut donc être comparé ou haché. Pour des fichiers Markdown isolés,
+`--id`, `--description` et `--thumbnail FILE` (une image de couverture)
+fixent l’identifiant, la description et la vignette du paquet ; l’identifiant
+est par défaut une version simplifiée du nom (un slug). Un dossier garde ce
+qu’indique son `preset.json`. `unpack` refuse d’écrire dans un
 dossier qui n’est pas vide, sauf avec `--force`.
 
 ### info et check
@@ -303,21 +308,21 @@ secours). Pour un livre qui indique où il commence (`start` dans `preset.json`�
 du Sandbox : du Markdown qui ne se ferme pas, des ressources, des directives et
 des styles inconnus, des encadrés que la mise en page a dû forcer, des polices
 manquantes, des réglages que le moteur a dû remplacer et, pour un livre préparé
-pour l’impression (ou avec `--preflight`), le contrôle prépresse : images de
+pour l’impression (ou avec `--preflight`), le contrôle en amont : images de
 basse résolution, filets trop fins, petit texte en plusieurs encres, encrage
-au-delà de la limite, texte trop près de la coupe. Il liste aussi le texte qui
+au-delà de la limite, texte trop près du rognage. Il liste aussi le texte qui
 ne se lit pas sur son fond (`contrast`), une fois par paire de couleurs, avec le
 rapport à l’écran et, pour l’impression, sur le papier du profil de sortie.
-Chaque problème nomme le fichier du chapitre, la ligne et la page. Le code de sortie est 3 quand une erreur est trouvée, ou n’importe quel avertissement
+Chaque problème indique le fichier du chapitre, la ligne et la page. Le code de sortie est 3 quand une erreur est trouvée, ou n’importe quel avertissement
 avec `--strict`.
 
 Il signale aussi les textes de maquette de la configuration qui gardent le
 texte du livre au lieu de variables (`contentInConfig`), une fois par style de
-titre, titre courant ou maquette de partie, avec le chemin de chaque texte :
+titre, titre courant ou maquette de partie, avec le chemin de chaque texte :
 déplacez ce texte dans le Markdown, ou ajoutez le titre ou le nom de l’éditeur
 à `checks.contentInConfig.allow`.
 
-Pour un livre à gabarits de page, `check` signale aussi le texte qui ne tient pas dans son bloc (`frameOverflow`, avec les étapes essayées par l’échelle de recomposition et les changements qui le feraient tenir), une histoire qui dépasse les pages qu’un bloc peut ajouter (`frameContinuationLimit`), un renvoi vers une page qui ne suit pas (`continueTargetMissing`) et les étiquettes de figure qui ne peuvent pas être dessinées ou qui se heurtent (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Après les avertissements, il imprime une ligne `reflow` par page composée qui a des événements, et `--json` fournit les étapes, les propositions et le journal de recomposition comme données. Voir [Pages composées › Avertissements](/fr/docs/composed-pages#avertissements) et [Journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
+Pour un livre à gabarits de page, `check` signale aussi le texte qui ne tient pas dans son bloc (`frameOverflow`, avec les étapes d’ajustement essayées et les changements qui le feraient tenir), un article qui dépasse les pages qu’un bloc peut ajouter (`frameContinuationLimit`), un renvoi vers une page qui ne suit pas (`continueTargetMissing`) et les étiquettes de figure qui ne peuvent pas être dessinées ou qui se heurtent (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Après les avertissements, il imprime une ligne `reflow` par page composée qui a des événements, et `--json` fournit les étapes, les propositions et le journal de recomposition comme données. Voir [Pages composées › Avertissements](/fr/docs/composed-pages#avertissements) et [Journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
 
 ### build et --watch
 
@@ -326,7 +331,7 @@ postext build book/ --pdf out/book.pdf --html out/book.html --images out/pages -
 postext build chapters/ --pdf book.pdf --watch
 ```
 
-`build` met le livre en page une fois et écrit chaque sortie que vous nommez
+`build` met le livre en page une fois et écrit chaque sortie que vous indiquez
 (`--pdf`, `--html`, `--epub`, `--images`, `--docx`), avec les options de chaque
 commande. `--watch` reste actif : quand un chapitre, la configuration ou une
 image change, le livre est remis en page avec les polices et le moteur toujours
@@ -353,13 +358,14 @@ les derniers fichiers valides.
 </table>
 
 Et pour toutes les commandes : `--json`, `--quiet` (`-q`, erreurs seulement),
-`--verbose` (progression et tous les avertissements), `--no-color`, `--help`.
+`--verbose` (progression et tous les avertissements), `--no-color`, `--help`
+(`-h`), `--version` (`-v`).
 
 ## Polices
 
-Un livre qui porte ses polices (un paquet, ou `--fonts` avec des fichiers
+Un livre qui contient ses polices (un paquet, ou `--fonts` avec des fichiers
 Markdown isolés) est composé avec elles et rien d’autre. Pour chaque famille
-que nomme la configuration et que le livre ne porte pas, `postext` cherche,
+qu’indique la configuration et que le livre ne contient pas, `postext` cherche,
 dans l’ordre :
 
 1. dans les dossiers donnés avec `--font-dir` ;
@@ -381,7 +387,7 @@ romain, chacun tel quel, dans les images de pages comme dans le PDF : un
 caractère de titrage à une seule graisse garde ses propres lettres pour un
 gras, et une famille droite pour un italique.
 
-Les graisses que nomme la configuration sont celles qui sont récupérées : le
+Les graisses qu’indique la configuration sont celles qui sont récupérées : le
 normal, le gras et leurs italiques pour chaque famille, et toute autre graisse
 qu’un réglage indique, y compris celle du gras (`bodyText.boldFontWeight: 600`
 demande le caractère 600). Quand une graisse que la famille fournit n’a pas pu
@@ -394,10 +400,10 @@ Le cache est `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` sous
 Windows) ; `POSTEXT_CACHE_DIR` ou `--cache-dir` le déplace. `--offline` saute
 le téléchargement. Une famille introuvable est composée en EB Garamond sous son
 propre nom, pour que la mise en page et le PDF restent d’accord, et un
-avertissement `missingFont` la nomme. `postext info` indique d’où vient chaque
+avertissement `missingFont` la signale. `postext info` indique d’où vient chaque
 famille.
 
-Un paquet qui laisse de côté les fichiers d’une famille sous licence peut lui nommer une famille libre de chasse proche (`fallback` dans les `fonts` du manifeste, depuis postext 1.42). `postext` cherche alors cette famille par les étapes ci-dessus et compose les faces que le livre n’embarque pas dans ses coupes de même graisse et de même inclinaison, sous le nom de la famille sous licence : la mise en page ressemble à celle obtenue avec les fichiers et `postext check` ne signale aucun `missingFont` pour elle. Une famille que le livre n’embarque qu’en partie ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier. Le PDF embarque la face libre.
+Un paquet qui laisse de côté les fichiers d’une famille sous licence peut lui associer une famille libre de chasse proche (`fallback` dans les `fonts` du manifeste, depuis postext 1.42). `postext` cherche alors cette famille par les étapes ci-dessus et compose les fontes que le livre n’incorpore pas avec les fontes de même graisse et de même inclinaison de cette famille, sous le nom de la famille sous licence : la mise en page ressemble à celle obtenue avec les fichiers et `postext check` ne signale aucun `missingFont` pour elle. Une famille que le livre n’incorpore qu’en partie ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier. Le PDF incorpore la fonte libre.
 
 ## Pour les scripts et les agents
 

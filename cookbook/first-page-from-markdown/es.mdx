@@ -10,7 +10,7 @@ pageNotes: { "1": "Una fotografía ocupa la parte alta de la página: unas salin
 
 ## Lo que vas a componer
 
-Las primeras páginas de un reportaje de viajes en una pequeña revista, *Cuaderno de campo*. La página 1 es una apertura en página impar: una fotografía de salinas y una duna al anochecer que ocupa el 58 % superior, el título en Young Serif de 54 puntos y, debajo, dos columnas justificadas que arrancan con una frase en negrita. La página 2, a la vuelta, sigue bajo una cabecera en mayúsculas espaciadas y termina con un signo de fin y un colofón. Todo el diseño cabe en una función de configuración y una paleta de seis colores. El titular sale del título de primer nivel, y la entradilla, la autora y la fecha, del frontmatter del Markdown, así que el mismo pen compone cualquier artículo cuyo título quepa en dos líneas; solo la fotografía es propia de este.
+Las primeras páginas de un reportaje de viajes en una pequeña revista, *Cuaderno de campo*. La página 1 es una apertura en página impar: una fotografía de salinas y una duna al anochecer que ocupa el 58 % superior, el título en Young Serif de 54 puntos y, debajo, dos columnas justificadas que arrancan con una frase en negrita. La página 2, a la vuelta, sigue bajo una cabecera en mayúsculas espaciadas y termina con un signo de fin y un colofón. Todo el diseño cabe en una función de configuración y una paleta de seis colores. El titular sale del encabezado de primer nivel, y la entradilla, la autora y la fecha, del frontmatter del Markdown, así que el mismo pen compone cualquier artículo cuyo título quepa en dos líneas; solo la fotografía es propia de este.
 
 ## Elaboración
 
@@ -18,25 +18,25 @@ Las primeras páginas de un reportaje de viajes en una pequeña revista, *Cuader
 
 <Excerpt region="fonts" />
 
-Postext mide el texto con las fuentes que el navegador tiene cuando se compone, así que una composición que se adelantara a las fuentes conservaría los cortes de línea de una fuente de reserva. `buildDocumentWithFonts` carga antes de la primera composición todas las fuentes que nombra la configuración y las de `FONTS`; `kitFonts(FONTS)` le da los archivos de Fontsource, los mismos que incrustaría un PDF. Después repasa las fuentes que usan las páginas, carga las que falten y vuelve a componer. Una fuente que Fontsource no tiene se queda en la de reserva y aparece en `doc.contentWarnings` como `fontFallback`. Las negritas y cursivas de una fuente de texto solo se cargan si la familia las incluye.
+Postext mide el texto con las fuentes que el navegador tiene cuando se compone, así que una composición que se adelantara a las fuentes conservaría los cortes de línea de una fuente de reserva. `buildDocumentWithFonts` carga antes de la primera composición todas las fuentes que indica la configuración y las de `FONTS`; `kitFonts(FONTS)` le da los archivos de Fontsource, los mismos que incrustaría un PDF. Después repasa las fuentes que usan las páginas, carga las que falten y vuelve a componer. Una fuente que Fontsource no tiene se queda en la de reserva y aparece en `doc.contentWarnings` como `fontFallback`. Las negritas y cursivas de una fuente de texto solo se cargan si la familia las incluye.
 
 ### 2 · Nombra los colores y apunta a los nombres
 
 <Excerpt region="palette" />
 
-Cada color de la configuración es `col('id')`, un identificador de la paleta con su valor hexadecimal al lado. `bodyText.boldColor`, `italicColor`, `referenceColor` y `unorderedLists.color` apuntan a `ink`, y `headings.color`, al acento. Los valores por defecto del motor para títulos, negritas, cursivas y viñetas están enlazados a `main-color`, y esta paleta da a esa entrada el color del acento, de modo que cualquiera de ellos que no fijes sale añil y no azul. Los objetos de diseño son funciones que `config()` llama en cada composición, y `col()` copia cada vez el valor vigente de `palette`, así que un solo cambio en `palette` llega por igual al texto, a los folios y a la apertura. El signo de fin es una muestra de color en línea que nombra `band`, así que también cambia con la paleta. La cabecera por defecto también está enlazada a `main-color`, así que saldría en el color del acento hasta que la sustituyas (paso 5).
+Cada color de la configuración es `col('id')`, un identificador de la paleta con su valor hexadecimal al lado. `bodyText.boldColor`, `italicColor`, `referenceColor` y `unorderedLists.color` apuntan a `ink`, y `headings.color`, al acento. Los valores por defecto del motor para títulos, negritas, cursivas y viñetas están enlazados a `main-color`, y esta paleta da a esa entrada el color del acento, de modo que cualquiera de ellos que no fijes sale añil y no azul. Los objetos de diseño son funciones que `config()` llama en cada composición, y `col()` copia cada vez el valor vigente de `palette`, así que un solo cambio en `palette` llega por igual al texto, a los folios y a la apertura. El signo de fin es una muestra de color en línea que remite a `band`, así que también cambia con la paleta. La cabecera por defecto también está enlazada a `main-color`, así que saldría en el color del acento hasta que la sustituyas (paso 5).
 
 ### 3 · Una fotografía recortada a su marco
 
 <Excerpt region="art" />
 
-Las salinas, la duna y el mojón son una fotografía generada con modelos de difusión, tomada al anochecer para que el título claro se lea sobre un cielo oscuro. El JPEG está recortado al marco de la banda, `PAGE.width` × `BAND` milímetros, y el recurso declara sus píxeles, 1440 × 1120, de modo que a todo el ancho la foto llena exactamente la banda. Si la banda crece, hace falta una foto recortada al nuevo marco. La apertura la muestra con un elemento de imagen que nombra el recurso por su identificador.
+Las salinas, la duna y el mojón son una fotografía generada con modelos de difusión, tomada al anochecer para que el título claro se lea sobre un cielo oscuro. El JPEG está recortado al marco de la banda, `PAGE.width` × `BAND` milímetros, y el recurso declara sus píxeles, 1440 × 1120, de modo que a todo el ancho la foto llena exactamente la banda. Si la banda crece, hace falta una foto recortada al nuevo marco. La apertura la muestra con un elemento de imagen que remite al recurso por su identificador.
 
 ### 4 · El frontmatter escribe la apertura
 
 <Excerpt region="opener" />
 
-El título de primer nivel abarca las dos columnas, y su apertura es una ranura de elementos: la fotografía a sangre y cuatro textos encadenados uno debajo de otro. Un título más largo empuja hacia abajo la entradilla y la firma en vez de montarse sobre ellas, pero a partir de la tercera línea la firma cae sobre las salinas claras. `{titleText}` es el texto del título; `{subtitle}`, `{author}` y `{publishDate}` salen del frontmatter. La `\\` del título corta la línea donde la pongas ([saltos de línea en los títulos](/es/docs/document-format-directives#saltos-de-línea-en-los-títulos)). `minHeight` se cuenta desde el margen superior, así que la altura reservada acaba 5 mm por debajo de la banda.
+El encabezado de primer nivel abarca las dos columnas, y su apertura es una zona de diseño: la fotografía a sangre y cuatro textos encadenados uno debajo de otro. Un título más largo empuja hacia abajo la entradilla y la firma en vez de montarse sobre ellas, pero a partir de la tercera línea la firma cae sobre las salinas claras. `{titleText}` es el texto del título; `{subtitle}`, `{author}` y `{publishDate}` salen del frontmatter. La `\\` del título corta la línea donde la pongas ([saltos de línea en los títulos](/es/docs/document-format-directives#saltos-de-línea-en-los-títulos)). `minHeight` se cuenta desde el margen superior, así que la altura reservada acaba 5 mm por debajo de la banda.
 
 ### 5 · Cabeceras en lugar del azul por defecto
 
@@ -54,7 +54,7 @@ Si omites `header`, vuelve la cabecera por defecto del motor: Open Sans sobre un
 
 ### Mira lo que sustituye la configuración
 
-Compón con una configuración vacía y el mismo Markdown sale en una página de 17 × 24 cm, en EB Garamond de 8 puntos, con títulos azules en Open Sans y una cabecera azul sobre un filete; el motor carga también esas dos familias, porque la configuración por defecto las nombra.
+Compón con una configuración vacía y el mismo Markdown sale en una página de 17 × 24 cm, en EB Garamond de 8 puntos, con títulos azules en Open Sans y una cabecera azul sobre un filete; el motor carga también esas dos familias, porque la configuración por defecto las usa.
 
 ```diff
 -const doc = await buildDocumentWithFonts({ markdown, resources }, config(), kitFonts(FONTS));

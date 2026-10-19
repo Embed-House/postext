@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Command line: postext in a terminal, a script or an agent',
   sidebarTitle: 'Command line',
-  description: 'One self-contained executable for macOS, Linux and Windows that turns a .postext book, a book folder or loose Markdown into PDF, HTML, EPUB, page images and Word, packs bundles and checks books, with JSON output for scripts and agents',
+  description: 'A single self-contained executable for macOS, Linux and Windows. It turns a .postext book, a book folder or loose Markdown into PDF, HTML, EPUB, page images and Word, packs bundles, checks books, and gives JSON output for scripts and agents',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 45,
   plainSummary: "This page is for people who want to make books with Postext from a terminal instead of the website. You download one file for your computer and run it, with nothing to install. You give it your book, or a few text files, and it makes a PDF, a web page, an e-book, pictures of the pages or a Word document. It can also check a book for problems and pack its files into one. Programs and AI helpers can use it too, because it can answer in a format they read easily.",
@@ -99,7 +99,7 @@ them:
 postext pdf chapters/ --config design.json --resources pictures/ -o field-notes.pdf
 ```
 
-A book made in the Sandbox (**Books → Export .postext**) works as it is:
+A book made in the Sandbox (**Books › Download (.postext)**) works as it is:
 
 ```bash
 postext pdf my-book.postext -o my-book.pdf
@@ -156,7 +156,7 @@ own configuration. A multilingual bundle is read in its own language unless
 </table>
 
 Every command writes next to where you run it, named after the input, unless
-`-o` gives the path. `-o -` writes a single output to the standard output.
+`-o` gives the path (`images` writes into `pages/`). `-o -` writes a single output to the standard output.
 
 ### pdf
 
@@ -233,7 +233,8 @@ going through a PDF.
   `page-{n:03}` by default.
 - `--print-preview`: the page as the printer will reproduce it, through the
   output profile, with the trim and bleed drawn.
-- `--jobs N`: how many pictures are encoded at once.
+- `--jobs N`: how many pictures are encoded at once (by default, as many as the
+  computer has processors).
 
 ### docx and import-docx
 
@@ -272,7 +273,9 @@ postext unpack my-book.postext -o my-book/
 
 `pack` zips a book folder as it is, or builds a bundle from loose Markdown.
 The same input always gives the same bytes, so a bundle can be compared or
-hashed. `unpack` refuses to write into a folder that is not empty unless
+hashed. For loose Markdown, `--id`, `--description` and `--thumbnail FILE` (a
+cover picture) set the bundle's id, description and thumbnail; the id is a slug
+of the name by default. A folder keeps what its `preset.json` says. `unpack` refuses to write into a folder that is not empty unless
 `--force` is given.
 
 ### info and check
@@ -292,13 +295,13 @@ Markdown that does not close, unknown resources, directives and styles, boxes
 the layout had to force, fonts that are missing, settings the engine had to
 replace, and, for a book set up for print (or with `--preflight`), the
 preflight: low-resolution pictures, hairlines, small text in several inks, ink
-over the limit, text near the trim. It also lists the text that does not read
-on its ground (`contrast`), once per pair of colours, with the ratio on screen
+over the limit, text near the trim. It also lists text that is hard to read
+against its background (`contrast`), once per pair of colours, with the ratio on screen
 and, for print, on the paper of the output profile. Each problem names the
 chapter file, the line and the page. The exit code is 3 when an error is found, or any warning
 with `--strict`.
 
-It also reports design texts of the configuration that hold the book's text
+It also reports texts in the configuration's designs that hold the book's text
 instead of placeholders (`contentInConfig`), once per heading style, running
 head or part design, with the path of each text: move that text into the
 Markdown, or list a title or a publisher's name in `checks.contentInConfig.allow`.
@@ -339,7 +342,7 @@ good files.
 </table>
 
 And for every command: `--json`, `--quiet` (`-q`, errors only), `--verbose`
-(progress and every warning), `--no-color`, `--help`.
+(progress and every warning), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Fonts
 
@@ -359,17 +362,17 @@ the book does not carry, `postext` looks, in order:
 A weight a family does not ship is set in the face a browser would choose for
 it (CSS font matching: the heavier faces first above 500, the lighter first
 below 400, so a 600 of a family with a 400 and a 700 is its 700, and so is a
-550), and a slant it does not ship in its upright, each as it is, in the page
-images as in the PDF: a display face with one weight keeps its own letters for
-a bold, and an upright family for an italic.
+550), and a slant it does not ship is set in its upright. Each is used as it is,
+in the page images as in the PDF: a display face with one weight keeps its own
+letters for a bold, and an upright family keeps its upright for an italic.
 
 The weights the configuration names are the ones fetched: regular, bold and
 their italics for every family, and any other weight a setting gives, the
 bold's included (`bodyText.boldFontWeight: 600` asks for the 600 face). When a
 weight the family ships could not be loaded (offline with no cached file, a
 download that failed, a font folder without the file), the text is set in the
-face of the family that answers for it by the same rule and `postext check`
-lists it as a `fontFallback` warning: its lines may break otherwise than in the Sandbox.
+face of the family that the same rule picks in its place, and `postext check`
+lists it as a `fontFallback` warning: its lines may break differently from the Sandbox.
 
 The cache is `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows);
 `POSTEXT_CACHE_DIR` or `--cache-dir` moves it. `--offline` skips the download.
@@ -377,7 +380,7 @@ A family found nowhere is set in EB Garamond under its own name, so the layout
 and the PDF still agree, and a `missingFont` warning names it. `postext info`
 shows where each family came from.
 
-A bundle that leaves a licensed family's files out may name an open family of about the same width for it (`fallback` in the manifest's `fonts`, since postext 1.42). `postext` then looks that family up by the steps above and sets the faces the book does not carry in its cuts of the same weight and slant, under the licensed family's name, so the layout is close to the one with the files and `postext check` does not report a `missingFont` for it. A family the book carries only in part takes from the fallback just a slant it has none of. The PDF embeds the open face.
+A bundle that leaves a licensed family's files out may name an open family of about the same width for it (`fallback` in the manifest's `fonts`, since postext 1.42). `postext` then looks that family up by the steps above and sets the faces the book does not carry in its cuts of the same weight and slant, under the licensed family's name, so the layout is close to the one with the files and `postext check` does not report a `missingFont` for it. A family the book carries only in part takes from the fallback only a slant it has no face for. The PDF embeds the open face.
 
 ## For scripts and agents
 
@@ -459,7 +462,7 @@ executable to `packages/postext-cli/bin/`.
   installed on the computer, so a book comes out the same on every machine.
 - **The language of the text** is the document's own in a browser
   (`bodyText.shapingLanguage: 'document'`, the default since postext 1.30).
-  Skia's canvas takes a language and shapes without it, so the command line
+  Skia's canvas accepts a language but shapes without it, so the command line
   measures the forms of each font's default language and always lays its books
   out with `shapingLanguage: 'host'`, whatever the configuration says; its PDF
   and its pictures paint those same forms. A book whose face has forms for a
@@ -467,4 +470,4 @@ executable to `packages/postext-cli/bin/`.
   English book) is set in the default forms here. What `'document'` measures
   otherwise (the parts of a word broken at a line end, a right-to-left word, a
   design text) is measured here as `'host'` measures it, so a line can break at
-  another word than in the Sandbox.
+  a different word than in the Sandbox.

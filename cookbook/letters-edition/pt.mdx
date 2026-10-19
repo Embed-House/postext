@@ -10,43 +10,43 @@ pageNotes: { "2": "A nota introdutória em itálico e depois a carta I: LETTRE I
 
 ## O que você vai compor
 
-Cinco páginas de *Mon sort est changé*, uma edição de 14 × 21 cm com três cartas em francês: as duas que Frederico II escreveu a Voltaire seis e doze dias depois de se tornar rei da Prússia, em junho de 1740, e a carta de Voltaire de 1º de abril de 1778, dois meses antes da sua morte. Na capa, uma fotografia de duas cartas dobradas e um selo de lacre vermelho, gerada com modelos de difusão, repousa sobre um marroquim verde desenhado em código dentro de um filete duplo dourado. Por dentro, as cartas vêm seguidas, sem quebras de página. O cabeçalho de cada uma traz o número em versaletes vermelhos e os dois correspondentes em itálico Fell, com o local e a data alinhados à direita logo abaixo. A saudação tem uma linha própria, e a assinatura, em versaletes, fecha a carta na margem direita; o pós-escrito de Frederico vem depois da assinatura, um corpo menor. O cabeço de cada página ímpar dá a data da carta.
+Cinco páginas de *Mon sort est changé*, uma edição de 14 × 21 cm com três cartas em francês: as duas que Frederico II escreveu a Voltaire seis e doze dias depois de se tornar rei da Prússia, em junho de 1740, e a carta de Voltaire de 1º de abril de 1778, dois meses antes da morte dele. Na capa, uma fotografia de duas cartas dobradas e um selo de lacre vermelho, gerada com modelos de difusão, repousa sobre um marroquim verde desenhado em código dentro de um filete duplo dourado. Por dentro, as cartas vêm seguidas, sem quebras de página. O título de cada uma traz o número em versaletes vermelhos e os dois correspondentes em itálico Fell, com o local e a data alinhados à direita logo abaixo. A saudação tem uma linha própria, e a assinatura, em versaletes, fecha a carta na margem direita; o pós-escrito de Frederico vem depois da assinatura, um corpo menor. O cabeço de cada página ímpar dá a data da carta.
 
 ## Preparo
 
 ### 1 · Leia o local e a data do título
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. Cada carta é um título de nível 1 cujos atributos guardam o local e a data, e o cabeçalho os imprime como `{attr.place}, le {attr.date}.` ([atributos do título](/pt/docs/document-format#atributos-de-título)). A caixa da data vai até a borda direita da coluna (`width: 'fill'`), e `align: 'right'` encosta o texto nessa borda; sem isso, o texto de design sai centralizado. A saudação, a assinatura e o pós-escrito são [estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo) aplicados com `:::paragraphs{style="…"}`. A assinatura usa a IM Fell DW Pica SC, uma família cujas minúsculas são desenhadas como versaletes. Com `inlineMarks: true`, a linha de local e data lê as marcas do seu atributo, então `date="1^er^ avril 1778"` eleva a terminação do ordinal.
+O código é [a resposta curta](#a-resposta-curta) logo acima. Cada carta é um título de nível 1 cujos atributos guardam o local e a data, e o título os imprime como `{attr.place}, le {attr.date}.` ([atributos do título](/pt/docs/document-format#atributos-de-título)). A caixa da data vai até a borda direita da coluna (`width: 'fill'`), e `align: 'right'` encosta o texto nessa borda; sem isso, o texto de design sai centralizado. A saudação, a assinatura e o pós-escrito são [estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo) aplicados com `:::paragraphs{style="…"}`. A assinatura usa a IM Fell DW Pica SC, uma família cujas minúsculas são desenhadas como versaletes. Com `inlineMarks: true`, a linha de local e data lê as marcas do atributo, por isso `date="1^er^ avril 1778"` eleva a terminação do ordinal.
 
 ### 2 · Componha as cartas em sequência
 
 <Excerpt region="letters" />
 
-Com `breakBefore` desligado, uma carta começa duas linhas da grade (`marginTop`) abaixo da linha da grade em que a anterior termina. Na <PageRef page={4}>página 4</PageRef>, o pós-escrito, com entrelinha de 12,6 pt, termina entre duas linhas da grade, e por isso ficam cerca de três linhas em branco acima da carta III. Na página 2, a carta I vai até o pé da página e a carta II abre a página 3. Com o padrão do nível 1, cada carta abriria numa página ímpar ([quebra antes](/pt/docs/configuration-headings#quebra-antes)). `numberingTemplate: '{1:I}'` numera as cartas de I a III, e o cabeçalho imprime o numeral por `{number}`.
+Com `breakBefore` desativado, uma carta começa duas linhas da grade (`marginTop`) abaixo da linha da grade em que a anterior termina. Na <PageRef page={4}>página 4</PageRef>, o pós-escrito, com entrelinha de 12,6 pt, termina entre duas linhas da grade, e por isso ficam cerca de três linhas em branco acima da carta III. Na página 2, a carta I vai até o pé da página e a carta II abre a página 3. Com o padrão do nível 1, cada carta abriria numa página ímpar ([quebra antes](/pt/docs/configuration-headings#quebra-antes)). `numberingTemplate: '{1:I}'` numera as cartas de I a III, e o título imprime o numeral por `{number}`.
 
 ### 3 · Ponha a data da carta na página ímpar
 
 <Excerpt region="running-heads" />
 
-Num cabeçalho de página, `{attr.date}` pega o atributo do último título de nível 1 que começa naquela página ou antes dela. A página 3 imprime 12 juin 1740, e a página 5, onde continua a carta de Voltaire iniciada na 4, imprime 1er avril 1778 com a terminação elevada ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). Os cabeços ficam 12 mm abaixo da borda superior da página, o fólio na margem externa e o texto 8 mm mais para dentro. `pages: 'body'` os mantém fora da capa, que conta como abertura porque o seu título ocupa a largura da página. A data é composta no itálico da Crimson Pro, o mesmo do local e data que ela repete, e os nomes na página par, nos versaletes dos números das cartas.
+Num cabeçalho de página, `{attr.date}` pega o atributo do último título de nível 1 que começa naquela página ou antes dela. A página 3 imprime 12 juin 1740, e a página 5, onde continua a carta de Voltaire iniciada na 4, imprime 1er avril 1778 com a terminação elevada ([elementos de texto](/pt/docs/configuration-headers-footers#elementos-de-texto)). Os cabeços ficam 12 mm abaixo da borda superior da página, o fólio na margem externa e o texto 8 mm mais para dentro. `pages: 'body'` os mantém fora da capa, que conta como abertura porque o título ocupa a largura da página. A data é composta no itálico da Crimson Pro, o mesmo do local e data que ela repete, e os nomes na página par, nos versaletes dos números das cartas.
 
 ### 4 · Faça da capa um título
 
 <Excerpt region="cover" />
 
-A capa é o primeiro título, no [estilo de título](/pt/docs/configuration-styles#estilos-de-título) `cover`: um elemento de imagem ancorado à sangria leva a encadernação desenhada, um segundo põe a fotografia 72 mm abaixo do alto, e o título, os nomes e o subtítulo vêm do título e do frontmatter. `numbered: false` a deixa fora da contagem, e assim a primeira carta de Frederico é a I. A imagem da encadernação enche a página, e uma abertura reserva espaço até o seu elemento mais baixo, então a capa ocupa toda a página 1 e a nota introdutória começa na 2 sem nenhum `:::pagebreak`.
+A capa é o primeiro título, no [estilo de título](/pt/docs/configuration-styles#estilos-de-título) `cover`: um elemento de imagem ancorado à sangria leva a encadernação desenhada, um segundo põe a fotografia 72 mm abaixo do alto, e o título, os nomes e o subtítulo vêm do título e do front matter. `numbered: false` a deixa fora da contagem, e assim a primeira carta de Frederico é a I. A imagem da encadernação enche a página, e uma abertura reserva espaço até o elemento mais baixo, de modo que a capa ocupa toda a página 1 e a nota introdutória começa na 2 sem nenhum `:::pagebreak`.
 
 ### 5 · Hifenize o francês e mantenha os espaços abertos
 
 <Excerpt region="text" />
 
-`locale: 'fr'` hifeniza com os padrões franceses (*ou-vrage* na página 2, *représen-tation* na página 4). A justificação, a quebra de linhas pelo parágrafo inteiro e as regras de viúvas, órfãs e linhas curtas vêm ligadas por padrão. `minWordSpacing: 0.75` impede que um espaço entre palavras encolha abaixo de três quartos do espaço da Crimson Pro; com o padrão 0,6, a linha justificada mais apertada da página 5 comporia os espaços a 0,70 dessa largura. Com entrelinha de 14,4 pt, a página comporta 33 linhas, e a margem inferior é o que sobra abaixo delas, 20,4 mm.
+`locale: 'fr'` hifeniza com os padrões franceses (*ou-vrage* na página 2, *représen-tation* na página 4). A justificação, a quebra de linhas pelo parágrafo inteiro e as regras de viúvas, órfãs e linhas curtas vêm ativadas por padrão. `minWordSpacing: 0.75` impede que um espaço entre palavras encolha abaixo de três quartos do espaço da Crimson Pro; com o padrão 0,6, a linha justificada mais apertada da página 5 comporia os espaços a 0,70 dessa largura. Com entrelinha de 14,4 pt, a página comporta 33 linhas, e a margem inferior é o que sobra abaixo delas, 20,4 mm.
 
 ### 6 · Ligue cada cor à paleta
 
 <Excerpt region="palette" />
 
-`col()` liga cada cor à sua entrada na paleta, e a ligação vale tanto nos estilos de texto quanto nos elementos de design: os cabeçalhos das cartas, os cabeços e a capa. O itálico da nota introdutória e do colofão usa a cor de itálico padrão, que está ligada a `main-color`; com essa entrada na cor da tinta, ele sai na tinta e não no azul do motor, #295AA3.
+`col()` liga cada cor à entrada na paleta, e a ligação vale tanto nos estilos de texto quanto nos elementos de design: os títulos das cartas, os cabeços e a capa. O itálico da nota introdutória e do colofão usa a cor de itálico padrão, que está ligada a `main-color`; com essa entrada na cor da tinta, ele sai na tinta e não no azul do motor, #295AA3.
 
 ## Variações
 
@@ -65,4 +65,4 @@ Os mesmos atributos podem dar à página ímpar o local e a data completos, *À 
 - A página ímpar pega a data da última carta que *começa* nela ou antes. Uma página que termina uma carta e abre a seguinte traz a data da carta nova, do mesmo modo que o cabeço de um dicionário dá a última entrada da página.
 - Um título sem o atributo imprime um texto vazio, sem aviso: uma carta sem `place="…"` ganha uma linha de local e data que começa com vírgula. Confira o título de cada carta.
 - As cartas mantêm os ; : ? e ! da transcrição sem espaço antes. A tradição francesa põe ali um espaço fino inseparável (U+202F); digitado ali, ele mantém o sinal na linha da palavra.
-- A Crimson Pro não tem as letras modificadoras ᵉ (U+1D49) e ʳ (U+02B3), então 1ᵉʳ escrito em Unicode sairia numa fonte substituta. Escreva `1^er^`: a nota introdutória, que é texto corrido, o compõe como sobrescrito, e o mesmo fazem a linha de local e data e o cabeço da página ímpar, cujos elementos de texto levam `inlineMarks: true`.
+- A Crimson Pro não tem as letras modificadoras ᵉ (U+1D49) e ʳ (U+02B3), por isso 1ᵉʳ escrito em Unicode sairia numa fonte substituta. Escreva `1^er^`: a nota introdutória, que é texto corrido, o compõe como sobrescrito, e o mesmo fazem a linha de local e data e o cabeço da página ímpar, cujos elementos de texto levam `inlineMarks: true`.

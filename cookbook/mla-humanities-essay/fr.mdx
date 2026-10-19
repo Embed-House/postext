@@ -10,17 +10,17 @@ pageNotes: { "1": "Page 1 : un bandeau noir sur la moitié haute avec le surtit
 
 ## Ce que vous allez composer
 
-Un essai tiré d’une revue littéraire trimestrielle : quatre pages sur la question de savoir qui prononce les deux derniers vers de l’« Ode on a Grecian Urn » de Keats. La page est une page de revue de 150 × 230 mm composée en Spectral, avec les titres de section et les titres courants en Spectral SC, et l’ouverture se loge dans un bandeau couleur de vernis noir posé sur une bande d’argile rouge, les deux couleurs d’un vase attique. Les citations suivent MLA 9, le style de la plupart des départements de lettres et d’histoire de l’art : l’auteur et la page entre parenthèses, la page seule quand la phrase nomme l’auteur, un titre court quand deux œuvres ont le même auteur, et une liste Works Cited sur sa propre page. Chaque citation est une clé dans le texte, et le style est un seul réglage.
+Un essai tiré d’une revue littéraire trimestrielle : quatre pages sur la question de savoir qui prononce les deux derniers vers de l’« Ode on a Grecian Urn » de Keats. La page est une page de revue de 150 × 230 mm composée en Spectral, avec les titres de section et les titres courants en Spectral SC, et l’ouverture se loge dans un bandeau couleur de vernis noir posé sur une bande d’argile rouge, les deux couleurs d’un vase attique. Les citations suivent MLA 9, le style de la plupart des départements de lettres et d’histoire de l’art : l’auteur et la page entre parenthèses, la page seule quand la phrase cite l’auteur, un titre court quand deux œuvres ont le même auteur, et une liste Works Cited sur sa propre page. Chaque citation est une clé dans le texte, et le style est un seul réglage.
 
 ## Préparation
 
 ### 1 · Le style est MLA, les données sont en BibTeX
 
-Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations est enregistré une fois, et `citations.style` nomme le style MLA fourni ; citeproc-js en tire chaque citation et la liste. Les références se trouvent dans un bloc `:::references{format=bibtex}` à la fin de l’essai, écrites telles qu’un gestionnaire de références les exporte. MLA a besoin d’un titre court pour les deux œuvres de Keats, et le champ `shorttitle` de chaque entrée le fournit (en CSL, le champ s’appelle `title-short`).
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Le moteur de citations est enregistré une fois, et `citations.style` désigne le style MLA fourni ; citeproc-js en tire chaque citation et la liste. Les références se trouvent dans un bloc `:::references{format=bibtex}` à la fin de l’essai, écrites telles qu’un gestionnaire de références les exporte. MLA a besoin d’un titre court pour les deux œuvres de Keats, et le champ `shorttitle` de chaque entrée le fournit (en CSL, le champ s’appelle `title-short`).
 
 ### 2 · Quatre sortes de citations
 
-Le texte cite une œuvre avec `[@jack1967]`, qui imprime « (Jack) » car l’essai renvoie au livre dans son ensemble. Avec une page, `[@keats-letters, 41]` imprime « (Keats, *Letters* 41) » : deux œuvres de Keats sont citées, et citeproc ajoute donc le titre court pour les distinguer. Quand la phrase nomme déjà le critique, `[-@eliot1932, 230]` omet le nom et imprime « (230) ». Une citation narrative sans page, `@stillinger1974 records`, imprime le nom seul, « Stillinger records », suivi d’une seule espace : MLA n’a rien à mettre entre parenthèses. Une fois l’ode citée avec ses numéros de vers, les citations suivantes ne portent que les numéros, tapés entre parenthèses ordinaires, comme MLA le permet.
+Le texte cite une œuvre avec `[@jack1967]`, qui imprime « (Jack) » car l’essai renvoie au livre dans son ensemble. Avec une page, `[@keats-letters, 41]` imprime « (Keats, *Letters* 41) » : deux œuvres de Keats sont citées, et citeproc ajoute donc le titre court pour les distinguer. Quand la phrase cite déjà le critique, `[-@eliot1932, 230]` omet le nom et imprime « (230) ». Une citation narrative sans page, `@stillinger1974 records`, imprime le nom seul, « Stillinger records », suivi d’une seule espace : MLA n’a rien à mettre entre parenthèses. Une fois l’ode citée avec ses numéros de vers, les citations suivantes ne donnent que les numéros, tapés entre parenthèses ordinaires, comme MLA le permet.
 
 ### 3 · Une citation en bloc, avec sa référence après le point final
 
@@ -40,7 +40,7 @@ Le titre prend un style qui passe à une nouvelle page, et `:::bibliography{titl
 
 <Excerpt region="palette" />
 
-Le bandeau fait 116 mm de haut et porte le surtitre, le titre en Spectral Light italique de 56 pt, le sous-titre et la signature, tous tirés d’attributs du titre. La bande d’argile est une seconde boîte ancrée 3 mm au-dessus du pied du bandeau.
+Le bandeau fait 116 mm de haut et contient le surtitre, le titre en Spectral Light italique de 56 pt, le sous-titre et la signature, tous tirés d’attributs du titre. La bande d’argile est une seconde boîte ancrée 3 mm au-dessus du pied du bandeau.
 
 ## Variantes
 

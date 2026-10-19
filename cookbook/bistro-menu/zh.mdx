@@ -46,7 +46,7 @@ pageNotes: { "1": "菜单正面，米色纸：酒红与稻草色相间的遮阳�
 
 <Excerpt region="centred" />
 
-`headings.textAlign`和`bodyText.textAlign`让菜品和酒单以外的所有内容都位于菜单的中轴线上。`lineHeight: pt(3 * LEAD)`给48 pt的店名三条网格线。没有它，店名使用默认行距占四行，说明的第二行会移到单独一页，菜单排到四页。一级标题用`breakBefore: { enabled: false }`关闭H1分页，因为店名和La Cave应当和上方的插图在同一页。保留默认值`{ enabled: true, parity: 'always-odd' }`，每幅插图都会独占一页，一共七页。配置没有设置`locale`：这张菜单上没有两端对齐的内容，而不齐行的文字只有在开启`bodyText.hyphenation.ragged`时才断词。
+`headings.textAlign`和`bodyText.textAlign`让菜品和酒单以外的所有内容都位于菜单的中轴线上。`lineHeight: pt(3 * LEAD)`给48 pt的店名三条网格线。没有它，店名使用默认行距占四行，说明的第二行会移到单独一页，菜单排到四页。一级标题用`breakBefore: { enabled: false }`关闭H1分页，因为店名和La Cave应当和上方的插图在同一页。保留默认值`{ enabled: true, parity: 'always-odd' }`，每幅插图都会独占一页，一共七页。配置没有设置`locale`：这张菜单上没有两端对齐的内容，而不两端对齐的文字只有在开启`bodyText.hyphenation.ragged`时才断词。
 
 ## 变化
 

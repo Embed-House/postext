@@ -2,7 +2,7 @@
 
 The `config` object of `preset.json`: everything visual about the book. Written
 for an agent reproducing the design of an existing publication. Checked against
-the engine source (postext 1.2); where the online docs disagree, this file is
+the engine source (postext 1.46); where the online docs disagree, this file is
 right (§22 lists the differences).
 
 - There is **no runtime validation**: unknown keys are silently ignored (real
@@ -58,7 +58,7 @@ Conversion at `page.dpi` (default 300):
 ```ts
 { hex: string, model: 'hex' | 'rgb' | 'cmyk' | 'hsl', cmyk?: { c, m, y, k }, paletteId?: string }
 ```
-- `hex`: `#rrggbb`, `#rrggbbaa` (alpha ok, e.g. debug overlays), or `'transparent'`.
+- `hex`: `#rrggbb`, `#rgb`, `#rgba`, `#rrggbbaa`, `rgb()` / `rgba()` (comma or space syntax, alpha as number or %), or `'transparent'`. Translucent colours paint the same on canvas, HTML and PDF (ExtGState alpha); PDF/X-1a flattens them.
 - `model` says how the colour was specified; screens draw `hex`.
 - `cmyk` (percent, postext ≥ 1.22): the exact process values of a colour authored in CMYK (an
   InDesign CMYK swatch, a brand colour). A CMYK print render (`print`, §21) sets them as they
@@ -98,14 +98,16 @@ Conversion at `page.dpi` (default 300):
 | `chipStyles` | ChipStyleConfig[] | `[{id:'chip',name:'Chip'}]` | §13 inline `:chip[…]{style=…}` |
 | `markStyles` | MarkStyleConfig[] | `[{id:'mark'}]` (pale yellow) | §13b inline `:mark[…]{style=…}`, postext ≥ 1.34.1 |
 | `codeStyle` | CodeStyleConfig | §12b | code listings (```` ``` ```` / `~~~` fences, postext ≥ 1.23): face, box, tab width, long lines, line numbers, token colours, inline code |
-| `resourceTypes` | ResourceType[] | Figure + Table in the document language (`locale`, else the hyphenation locale; English for other languages) | §15 numbering, caption prefix, default placement |
+| `resourceTypes` | ResourceType[] | Figure + Table + Video in the document language (a list without `video` still numbers video resources with the built-in one; `locale`, else the hyphenation locale; English for other languages) | §15 numbering, caption prefix, default placement |
 | `tableStyle` | TableStyleConfig | §16 | document table style |
 | `tableStyles` | NamedTableStyleConfig[] | `[]` | §16 per-table via `resource.table.styleId` |
 | `captionStyle` | CaptionStyleConfig | §17 | + per-type overrides |
-| `diagramStyle` | DiagramStyleConfig | `{singleInk:false}` | §18 |
+| `diagramStyle` | DiagramStyleConfig | `{singleInk:false, inkColor: main-color, inlineFonts:true}` | §18 |
 | `videoStyle` | VideoStyleConfig | §18a | video resources (≥ 1.16): play mark, QR code, poster link, HTML/EPUB player options |
 | `math` | MathConfig | §19 | |
 | `footnotes` | FootnotesConfig | §19a | `[^id]` notes: placement, numbering, type, rule |
+| `crossRefs` | CrossRefsConfig | §19a2 | words of heading/anchor references, default style, label breaking (≥ 1.12) |
+| `citations` | CitationsConfig | §19a3 | CSL style, locale, markers, note mode, numbering, bibliography (≥ 1.12; needs postext-citeproc) |
 | `index` | IndexConfig | §19b | what `:::index` prints: type, indents, separators, ranges, letter heads |
 | `cjk` | CjkConfig | §19c | Chinese, Japanese and Korean composition: region, line breaking, punctuation widths, Han–Latin space, character grid, upright digits, marks, ruby, warichu (postext ≥ 1.9); Japanese summary §19c2 (≥ 1.16) |
 | `lineNumbers` | LineNumbersConfig | §19f | line numbers in the margin, the gutter or the side column (postext ≥ 1.23): verse or every body line, interval, restarts, position, face; off by default |
@@ -116,8 +118,10 @@ Conversion at `page.dpi` (default 300):
 | `numerals` | `'auto'`\|`'latn'`\|`'arab'`\|`'arabext'` | `'auto'` | digits of every engine-generated decimal number (pages, lists, notes, counters, `{h1}`/`{n}`, `{totalPages}`): `auto` = `arab` ٠–٩ for `ar` (Maghreb `ar-MA/DZ/TN/LY/MR/EH` → `latn`), `arabext` ۰–۹ for `fa`/`ps`/`ur-IN`, else `latn`; named formats print as named |
 | `customFonts` | CustomFontFamily[] | — | §20 **do not write in preset.json config** |
 | `htmlViewer` | HtmlViewerConfig | §21 | screen-only; `overrides` = partial config merged for HTML |
+| `canvasViewer` | `{ pageGap?, rowGap? }` | `24` / `24` | §21 Sandbox Canvas page spacing (≥ 1.43); `pageGap: 0` for art across the spine |
 | `pdfGeneration` | PdfGenerationConfig | §21 | outlines, tagging, colour space |
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
+| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes; layout ignores it |
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
@@ -284,7 +288,7 @@ bodyText
 ├─ firstLineIndent   Dimension       1.5 em          set {0,'mm'} for block paragraphs
 ├─ hangingIndent     boolean         false           indent all lines but the first
 ├─ indentAfterHeading boolean        true            false = first paragraph after a heading unindented (classic book style)
-├─ blockquote        { color=#666666, italic=true, indent=0, firstLineIndent=<body's> }   how `> …` quotes are set (colour palette-linkable; indent = every line, first line counted from it)
+├─ blockquote        { color=#666666, italic=true (false in an Arabic-script document, ≥ 1.15), indent=0, firstLineIndent=<body's> }   how `> …` quotes are set (colour palette-linkable; indent = every line, first line counted from it)
 ├─ verse             { layout='auto', indentStep=0.5em, turnover='hang', hang=2em, turnoverMark='[', stanzaSpace=1, keepStanzas=0, tighten=true }   (≥ 1.23) defaults of `:::verse` poems set line by line; the fence's attributes of the same name win. layout 'bayt' = 1.22's centred single hemistichs for poems with no `||` (stored configs < 9 get it); stanzaSpace in lines of the poem's leading; tighten (≥ 1.24) = a line a little wider than the measure shrinks its word spaces down to minWordSpacing and stays on one line, only a line still too wide turns over (false = 1.23: every overlong line turns over; stored configs < 10 with a line-by-line poem get false)
 ├─ tabStops          TabStop[]       unset           (≥ 1.23, §4a) tab stops of every paragraph, list item and quotation; a paragraph style or a callout body that sets its own replaces them
 ├─ tabInterval       Dimension       unset           (≥ 1.23, §4a) default stops every interval past the last stop, from the start of the measure; unset = a tab past the last stop is a word space
@@ -292,6 +296,10 @@ bodyText
                       locale: any BCP 47 tag; patterns for 'en-us'|'es'|'fr'|'de'|'it'|'pt'|'ca'|'nl' (region ignored; other languages → en-us + console warning)
                       ragged: also hyphenate ragged text, only where the word does not fit and sending it down would leave a gap wider than zone (em = text size); line by line ≤ 2 hyphenated lines in a row, with optimalRagged two in a row are only discouraged
                       compounds: false = the dictionary leaves a word with a hyphen between two letters whole; it breaks only after that hyphen (TeX; after- | dinner, never af- | ter-dinner)
+                      'ca' (≥ 1.14) follows the IEC: two letters each side, hiatus kept, no break after an apostrophe,
+                      prefixes (vos-altres), l·l breaks il- | lusió (the dot dropped, the line measured without it).
+                      Type the dot as U+00B7 `·`: a PDF's `l.l`, `l•l`, `l∙l` (U+2219) or `ŀl` (U+0140) splits or
+                      misses the word; normalise it when porting
 ```
 H&J / Knuth–Plass
 ```
@@ -560,6 +568,14 @@ headings
   numberPosition: 'before'|'replace'  'replace': the number is the whole title (# Night → الليلة الثانية), listed so in contents/bookmarks
   breakBefore: { enabled: boolean, parity: 'any'|'odd'|'even'|'always-odd'|'always-even' }
   span: 'column'|'page'                'column'
+  spanBreak: boolean                   true (≥ 1.19) span:'page' only. true = the opener starts a new page
+                                       (breakBefore picks its side). false, with breakBefore.enabled:false =
+                                       the opener is set where the text reaches, as a page-span box: the
+                                       columns above end level (balanced when headings.balancing.trailing),
+                                       the band runs across the content area under them, the text goes on in
+                                       every column below (a bulletin's second article). When the room left
+                                       cannot hold the heading plus widowMinLines under it, it opens the next
+                                       page. The page's role stays the one its first block gives it
   advancedDesign: { enabled: boolean, slot: DesignSlot, minHeight?: Dimension(abs) }
   dropCap?: ParagraphDropCap | false   (≥ 1.23, §4b) the first body paragraph after the heading opens with a drop cap
   hidden: boolean                      false → structural heading: prints nothing, takes no room
@@ -615,8 +631,9 @@ headings
 - `breakBefore.parity`: `'odd'`/`'even'` insert one blank if needed (blank belongs to the NEW chapter);
   `'always-*'` inserts a mandatory separator blank (belongs to the PREVIOUS chapter) then parity.
   The very first block of a document never gets a leading blank.
-- `span: 'page'` = chapter opener: the heading is set full content width as an **opener band**;
-  requires `breakBefore.enabled: true` to matter. Without `advancedDesign` a default text
+- `span: 'page'` = chapter opener: the heading is set full content width as an **opener band**
+  and starts a new page even with `breakBefore.enabled: false` (`breakBefore` only picks the
+  side; `spanBreak: false` opens it mid-page instead). Without `advancedDesign` a default text
   (`{number} {titleText}` in the level typography) is synthesised.
 - `advancedDesign.enabled: true` → the heading's own text is NOT drawn; the slot must include
   `{titleText}` somewhere. Container: `span:'page'` → x = content-area left, width = full
@@ -727,13 +744,17 @@ running heads, margins, layout, body typography, palette.
   // any HeadingLevelConfig field except level:
   fontFamily, fontSize, lineHeight, color, fontWeight, marginTop, marginBottom, italic,
   letterSpacing, textTransform, breakBefore (merged field by field over the level's), span,
-  advancedDesign, hidden, snapToGrid, lineSpan / indent / jidori (≥ 1.16; 0 clears the level's),
+  advancedDesign, spanBreak (≥ 1.19), hidden, snapToGrid, lineSpan / indent / jidori (≥ 1.16; 0 clears the level's),
   firstLineIndent (≥ 1.24; 0 clears the level's),
   dropCap (≥ 1.23, §4b; false clears the level's: e.g. a preface style without the chapters' initial)
   header?: DesignSlot, footer?: DesignSlot      replace document running heads on the section's pages ({elements:[]} = none)
   margins?: PageMargins                          each side inherits page margin; pair with breakBefore
   layout?: LayoutConfig                          e.g. {layoutType:'single'} — resolved from scratch (unset fields = layout DEFAULTS, not the document layout!),
                                                  except columnRule: its unset fields take the document's, and the section's pages draw it
+                                                 only page geometry is read from it (layoutType, columnCount, gutterWidth, side column,
+                                                 columnRule, writingMode, and fitFiguresToPage for moving a figure to a whole column);
+                                                 inlineResourceGap, inlineResourceGapInBoxes, flowColumns, boxChildSplitMinLines,
+                                                 hugClosingFloats and floatsUnderOpener stay the document's: setting them here does nothing
   bodyStyle?: PartsBodyStyleConfig               (§8) typography of paragraphs/lists in the section
   palette?: Record<paletteId, '#hex'>            recolours palette-linked design colours + flow colours on the section's pages,
                                                  and the page itself when page.backgroundColor links to an overridden id (1.18+)
@@ -831,7 +852,10 @@ placement: {
 
 ### 7.3 Element kinds
 Common: `id` (string, unique in slot; referenced as `'#id'`), `parity: 'all'|'odd'|'even'`
-(default 'all'; page 1 odd), `pages: 'all'|'body'|'opener'|'part'|'blank'` (page role filter,
+(default 'all'; page 1 odd), `pages: 'all'|'body'|'opener'|'part'|'blank'|'comic'|'composed'` (page role filter;
+`comic` = a `:::page` (≥ 1.20), `composed` = a `::::page` (≥ 1.34.1); a page template's `role` (default 'composed',
+inherited through `extends`, ≥ 1.37) is the role its pages report, so `role: 'opener'` gives a unit-opening template
+the folio the flow's openers get;
 default 'all'; `'body'` hides running heads on chapter openers, `'opener'` shows e.g. a
 bottom folio only there). Parity/pages are ignored inside heading slots.
 
@@ -841,11 +865,14 @@ bottom folio only there). Parity/pages are ignored inside heading slots.
   fontSize: Dimension(abs)  REQUIRED,  overflow?: 'wrap'|'ellipsis-start'|'ellipsis-end'|'ellipsis-middle'|'clip'
     (≥ 1.24 unset = the slot's: 'wrap' in heading and part designs, 'ellipsis-end' in header/footer/toc rows)
   fontFamily='EB Garamond', fontWeight=400, italic=false, color=#000000,
-  align='center' ('left'|'center'|'right'|'justify' — justify: word spaces stretched on every wrapped line
+  direction?: 'ltr'|'rtl'|'auto' (= the document's; auto = first strong letter), align='center'
+    ('left'|'center'|'right'|'justify'|'start'|'end' — start/end follow `direction`; justify: word spaces stretched on every wrapped line
     but a paragraph's last; with hyphenate a word is also cut at a syllable to fill), verticalAlign='middle'
     (lines taller than a fixed height run out on the free side: 'bottom' keeps the last line box's foot
     on the box's foot, 'middle' runs out both ways; a drop cap follows its lines),
-    lineHeight=1.2 (number × fontSize),
+    lineHeight=1.2 (a number × fontSize; or a Dimension: em/rem = the same multiplier, pt/mm = absolute
+    distance between baselines, e.g. {value: 11, unit: 'pt'} to copy a measured leading; a zero, negative or
+    malformed value sets 1.2. Never write `lineHeightLength`: it is the resolved form),
   letterSpacing?: Dimension (negative tightens, em = font size; the tracking after a line's last glyph
     counts neither for centre/right alignment nor for an auto width, and a justified line's last glyph
     ends on the edge; it never changes the glyphs: ligatures stay on canvas, HTML, EPUB and PDF, so a
@@ -878,7 +905,7 @@ and the container edge it grows toward: an offset toward that edge shrinks it (t
 fixed `size.width` or anchor to `'page'`.
 Element defaults are NOT the built-in header's (Open Sans 8pt/600 main colour) — set everything.
 `overflow` left out (≥ 1.24) follows the slot: `'wrap'` in heading designs (`advancedDesign.slot`, levels
-and heading styles) and part pages (`parts.design`, `parts.versoDesign`), `'ellipsis-end'` in running
+and heading styles), part pages (`parts.design`, `parts.versoDesign`) and box designs (`calloutStyles[].design`, ≥ 1.45), `'ellipsis-end'` in running
 heads, folios (`header`, `footer`, a style's own) and contents part rows (`toc.parts.design`, fixed
 height). So leave it out on opener and part titles, and set it only where the slot's default is wrong (a
 running head that should wrap, a one-line kicker in an opener). Before 1.24 every slot fell back to
@@ -894,6 +921,17 @@ Header/footer placeholders: `{pageNumber}` (the page LABEL, e.g. "xii"), `{total
 of the page: differs where a chapter starts below other text, for run-on chapters),
 `{partTitle}`, `{partNumber}`, `{attr.<key>}` (chapter H1 attribute; in a heading design, that
 heading's own attribute).
+`{bookTotalPages}`: the page count of the whole book, blank pages included ("12 / 348"); in header,
+footer, heading and part designs. A document laid out alone prints its own count; `buildBundle`,
+`postext` and the Sandbox lay the book out again with the total, so every chapter prints the same
+number (a host laying chapters itself passes `continuation.bookPageCount`). `{totalPages}` is the
+chapter's own count in a book.
+Guide words (header/footer only): `{firstMark.<key>}` / `{lastMark.<key>}` = the first and last mark
+that starts on the page. Key `h1`…`h6` = a heading of that level (its text, no number); key = a
+paragraph style id = the opening **bold** run of each paragraph of a `:::paragraphs{style=…}` group,
+closing punctuation dropped (`**Aback.** Said of…` → Aback). A page where no mark starts prints the
+mark in force for both; marks do not carry over chapters; an unknown key prints nothing. Dictionary
+head: `content: '{firstMark.entry} – {lastMark.entry}'`.
 
 **rule**: `{ kind:'rule', id, placement, direction: 'horizontal'|'vertical', color: ColorValue (req), thickness: Dimension (req), reserve? }`
 (required in the type; a JSON config that leaves them out gets 'horizontal', #000000 and 0.5pt)
@@ -1143,20 +1181,20 @@ All em values = the callout body font size.
   border = { enabled=false, color=#cccccc, width=0.5pt }
   borderRadius = 0em                 the stripe is clipped to it; the label tab stays square
   padding = { top, right, bottom, left } = 0.75em each
-  stripe = { enabled=false, side='left'|'right'|'top', width=1.5em, color=main }
+  stripe = { enabled=false, side='left'|'right'|'top'|'start'|'end', width=1.5em, color=main }
   icon = { kind='none'|'glyph'|'resource', glyph='', resourceId='', fontFamily=headings font,
            fontWeight=400, size=1.5em, width? (non-square box), color=main, align='top'|'center',
-           position='inline'|'corner', cornerSide='right'|'left'|'outer'|'inner' }
+           position='inline'|'corner', cornerSide='right'|'left'|'outer'|'inner'|'start'|'end' }
            (a corner icon is centred on its corner by its drawn width, a wide `width` strip included;
            a left-corner title starts past its inner half)
   label = unset (no tab). If set: { fontFamily=headings, fontSize=body size, fontWeight=700,
-           color=#fff, background=main, position='top-right'|'top-left', height=1.4em, paddingX=0.6em,
+           color=#fff, background=main, position='top-right'|'top-left'|'top-start'|'top-end', height=1.4em, paddingX=0.6em,
            offset=0, inset=0, icon:{resourceId,width=1em,gap=0.3em, placement='beside'|'inside' (≥ 1.42), tint (≥ 1.43: paint the picture in label.color)},
            rule:{enabled=false,color=main,width=0.5pt} }
            prints the fence `label` attribute ("RECUADRO 1-1"). icon.placement 'inside' (≥ 1.42) fits the picture
            into icon.width × the tab's height, widens the tab by it and `gap`, and stands it before the words
            (at the start of the tab); 'beside' (default) keeps it past the tab's edge. The picture keeps its
-           colours (no tint from the tab's text); with no picture to draw the tab is the plain one
+           colours unless `icon.tint: true` (≥ 1.43: its silhouette in `label.color`); with no picture to draw the tab is the plain one
   marker = { kind='none', glyph, resourceId, fontFamily, fontWeight=400, size=1.5em, color=main,
              align='center', gap=0.5em, rule:{enabled=false, color=main, width=0.5pt, length=0} }
              icon + vertical rule OUTSIDE the box on its left
@@ -1164,7 +1202,7 @@ All em values = the callout body font size.
                  color=main, textTransform='none'|'uppercase', gap=0.5em, letterSpacing=0, indent=0,
                  lineHeight=1.2em (em = title size; set the body leading to keep boxes a whole number of lines) }
   body = { fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight,
-           textAlign: 'left'|'justify', hyphenation: boolean, paragraphSpacing, firstLineIndent,
+           textAlign: 'left'|'justify'|'start', hyphenation: boolean, paragraphSpacing, firstLineIndent,
            tabStops, tabInterval (≥ 1.23, §4a: replace the body's inside the box),
            letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
            list items, measured into the lines) }   → inherit bodyText
@@ -1199,7 +1237,7 @@ All em values = the callout body font size.
                                      design prints the content and the box does not set it again (and never splits): one
                                      style per shape, the words in each fence. First fragment only. }
 ```
-Gotchas: `body.textAlign` only `'left'|'justify'`. Callout body inherits body text colours,
+Gotchas: `body.textAlign` only `'left'|'justify'|'start'` (start/end values, ≥ 1.15, follow the box's own `{dir}`: use them in a preset shared by LTR and RTL editions). Callout body inherits body text colours,
 so boxes with coloured bold need `body.boldColor`. `span:'page'` in a multi-column layout cuts
 the page into bands (text above levelled). Nested callouts take their own style but ignore
 span/placement/floatBarrier/snapToGrid. Ordered-list numbers inside a box come from the global
@@ -1324,9 +1362,14 @@ ResourcePlacement, resolved field-by-field: resource.placement → type.defaultP
 ```
 position: 'auto' (default) | 'top' | 'bottom' | 'here' (inline at ::resource directive)
 span:     'column' (default) | 'page' | 'side' (float-only side column; else behaves as 'column')
+          span 'page' + position 'here' (≥ 1.19): on a multi-column page the ::resource line cuts the band like a
+                         page-span box: the columns above close level (or the resource moves to the next page's head),
+                         it is set across the content width, and the text goes on in every column under it; on a
+                         one-column page it is an ordinary inline embed. `columns` does nothing for an inline embed
 rotate?:  'ccw' | 'cw'   (landscape: page-span float on its own page)
 width?:   0 < w < 1 fraction of column/page width (default whole)
-align?:   'left' (default) | 'center' | 'right'
+align?:   'left' (default) | 'center' | 'right' | 'start' | 'end'   (start/end ≥ 1.15: logical sides; left/right are
+                         flow sides, so in an RTL book 'left' is the sheet's right)
 captionSide?: boolean    caption in the float-only side column, level with the figure (oneAndHalf+floats): column floats and,
                          ≥ 1.28, a 'here' embed one column wide (layout.inlineCaptionSide; not in a box, a vertical page or with wrap)
 columns?: number         ≥ 1.18: a span:'column' float across this many adjacent columns (picture across 2 of 5);
@@ -1342,7 +1385,7 @@ minScale?: number        ≥ 1.24, 0–1, default 0.7 (then layout.floatShrink.m
                          warning with overflowPx)
 captionMeasure?: 'slot' (default) | 'body'   ≥ 1.24: caption and note of a picture narrower than its slot at the
                          picture's width, placed per align (floats and inline embeds)
-wrap?:    'none' (default) | 'left' | 'right' | 'start' | 'end'   ≥ 1.24: text runs beside the resource, which sits at that
+wrap?:    'none' (default) | 'left' | 'right' | 'start' | 'end' | 'contour'   ≥ 1.24: text runs beside the resource, which sits at that
                          side of its column (flow sides, as align; start/end synonyms). position 'here': the paragraphs,
                          quotes and list items after the ::resource line run beside it, then full width under it (one
                          paragraph can do both); a 1-column span:'column' float at the head/foot of a column: the column's
@@ -1352,6 +1395,16 @@ wrap?:    'none' (default) | 'left' | 'right' | 'start' | 'end'   ≥ 1.24: text
                          (minLinesBeside) = band + textWrap warning; columns with a wrap are not balanced
 wrapGap?: Dimension      ≥ 1.24: space between the wrapped item (caption included) and the text beside and under it;
                          default layout.wrap.gap, else one body line
+wrap: 'contour'          ≥ 1.36: text runs round the picture's shape instead of its box, on the side away from
+                         align ('right'/'end' puts the picture right, anything else left). Each line beside it is as
+                         short as the shape is wide there, plus the margin; a line clear of the shape takes the full
+                         measure. Same uses and limits as a side wrap (inline embed or 1-column float). Shape =
+                         Resource.contour: { points?: [{x,y}…] (≥ 3, fractions of the whole picture, wins; the way to
+                         shape an SVG), alpha? = true (bitmap alpha channel), threshold? = 0.5 (opacity 0–1),
+                         margin?: Dimension (default the wrap gap) }. The alpha trace (contour.traced) is made by the
+                         bundle reader / Sandbox: never write it, bundles strip it. No known shape (JPEG, SVG with no
+                         points, untraced) = runs round its box with textWrap reason noContour. Scales and crops with
+                         the picture (safe area)
 citingPage?: boolean     ≥ 1.25, position top/auto, span column/page, not rotated: head the page (page span) or column
                          (column span, columns too) where the citing line lands, LaTeX's [t], instead of the first free
                          slot after it; the text above the reference moves down under it. Only when it fits within
@@ -1368,12 +1421,22 @@ unnumbered type; write every field only for an engine older than 1.38.
 Gotchas
 - **Engine default types follow the document language**: with `resourceTypes` unset, the
   engine uses `defaultResourceTypes(locale)` (else the hyphenation locale; strings exist for
-  en, es, fr, de, it, pt, ca, nl and Chinese, English otherwise). Chinese: 图/圖 and 表, numbered
+  en, es, fr, de, it, pt, ca, nl, Chinese (Simplified and Traditional), Japanese and Arabic, English otherwise). Chinese, Japanese
+  and Arabic number `{h1}-{n}` (图1-1, 図1-1, شكل ٢-٣). Chinese: 图/圖 and 表, numbered
   `{h1}-{n}` (图1-1), continued tables （续）/（續）. Older engines used English. Still declare
   `resourceTypes` explicitly in a preset (and translate per locale via
   `localized.<lang>.config.resourceTypes` in preset.json).
 - Numbering follows first `:ref` in reading order; `{h1}` is the chapter number (continues across chapters in book mode).
 - Pair `{h1}.{n}` with `resetOn:'h1'`.
+- Only referenced resources are numbered (`:ref` or `::resource`, in first-reference order, any placement). An image
+  that only a design draws (opener, running head, part page) gets no number and leaves the counter alone. In a book,
+  the chapter with the first reference places and numbers it; later chapters' `:ref`s print that number and place
+  nothing.
+- `{h1}` counts every H1 whose style is not `numbered: false`, including one whose template is empty. So an article
+  whose only H1 is its title numbers 1.1, 1.2. For Figure 1, 2…: a type `{ numberingTemplate: '{n}', resetOn: 'never' }`,
+  or `numbered: false` on the title's heading style (such an H1 neither advances `{h1}` nor triggers `resetOn: 'h1'`;
+  `{h1}.{n}` before the first counted H1 collapses to `{n}`). A heading token with no value collapses with its
+  separator.
 - Lettered appendices (heading style `numberingTemplate: 'Appendix {1:A}'`, `startAt=1` on the first): ONE extra type for all of them,
   `{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }` (≥ 1.28). Do not write the letter into the template
   (`'A.{n}'`, one type per appendix): that was the ≤ 1.27 workaround. Numbered boxes (`calloutStyles[].numbering.numberingTemplate`) and
@@ -1402,7 +1465,7 @@ booktabs (≥ 1.24) — journal tables: heavy rule above + under the last row, l
   spanRules = 'trimmed' | 'full' | 'none' ('trimmed': rule under a head spanning columns above the
     last header row, shortened by spanRuleTrim = 0.5em at both ends, LaTeX \cmidrule(lr))
   groupRules = false   (light rule above body rows that head a group: one cell across the table)
-  continuedFootRule = 'bottom' | 'light' | 'none' ('light': a split part that goes on ends light;
+  continuedFootRule = 'bottom' | 'light' | 'none' ('light' default: a split part that goes on ends light;
     every part repeats the header with top + header rules; only the last part gets the heavy rule)
 overflow = 'split' | 'clip' | 'hide'                ('split': repeats header rows, caption + continuedSuffix)
 splitInline = true   (≥ 1.25) overflow applies to `here` tables too: one that does not fit the rest of its column is
@@ -1514,6 +1577,8 @@ Notes cited with `[^id]` (document-format.md §10.4).
 | `placement` | `'column'` | `'column'` = foot of the column holding the citing line (one-column: page foot); `'chapterEnd'` = every note of the chapter after its last block, in citation order; `'spread'` (≥ 1.16, vertical books) = 傍注: the notes of both pages of a spread at the foot (fore-edge end) of its odd (left) page, top-aligned, overflow to the even page then the next spread; in horizontal text it falls back to `'column'` with an `unknownConfigValue` warning |
 | `numbering` | `'chapter'` | restarts under each level-1 heading and each document; `'document'` runs on (book chapters carry it as `continuation.footnoteNumber`); `'page'` / `'column'` (≥ 1.11) restart on every page / column, counted where the layout sets the notes (column-foot notes only; `chapterEnd` numbers by chapter); `'spread'` (≥ 1.16) per spread, with `placement: 'spread'` |
 | `numberFormat` | `'decimal'` | ≥ 1.11; any number-format spelling: `'lower-roman'`, `'circled-decimal'` / `'①'`, `'cjk-decimal'`, `'一'`…; circled past 50 → decimal |
+| `numberFormat: 'symbols'` | | ≥ 1.19; `'symbols'` (or `'*'`) marks the notes with `symbols` in turn, then doubled (** †† ‡‡…) and tripled; with `placement: 'column'` the count restarts on every page unless `numbering` is set |
+| `symbols` | `['*','†','‡','§','‖','¶']` | ≥ 1.19; the sequence for `'symbols'`; empty strings dropped, empty list = default. Google/Fontsource Latin files lack ‡ and ‖ (`missingGlyph` in the PDF): use `['*','†','§','¶']` or a face that has them |
 | `markerPosition` | `'auto'` | ≥ 1.11; `'superscript'` / `'inline'` (on the baseline, upright cell in vertical text); `'auto'` = inline for `circled-decimal`, else superscript. ≥ 1.16: `'side'` (合印: a small marker beside the marked word on the ruby side, ending with its last character, taking no advance) and `'right'` (smaller, flush with the right side of a vertical line; superscript in horizontal text). The note's own number follows |
 | `markerSize` | `1em` | ≥ 1.11; inline marker size, em = surrounding text (`0.75em` common); default `0.6em` for `side`, `0.7em` for `right` |
 | `numberGap` | `'en'` | ≥ 1.16; space after the note's number: `'em'` = one note-em (U+3000 in CJK notes), JLReq's endnote setting |
@@ -1588,8 +1653,24 @@ citations: {
   marker?: 'style' | 'brackets' | 'parentheses' | 'superscript' | 'corner'; // numbered styles; 'corner' = 〔1〕
   collapseRanges?: boolean;  // 1–3 (default true)
   notes?: 'footnote' | 'warichu'; // note styles
+  numbering?: 'book' | 'chapter'; // ≥ 1.19, default 'book'. 'chapter': each document and each level-1 heading starts again:
+                                  // numbered styles count from 1, a note style writes a work in full at its first citation
+                                  // per chapter. Pair with bibliography.scope: 'chapter' (proceedings, edited volumes)
   hyphenateNames?: boolean;  // false: family names of the cited authors are never divided (≥ 1.28; default true)
-  bibliography?: { title?, scope?: 'book' | 'chapter', auto?, fontSize?, lineHeight?, hangingIndent?, entrySpacing?, labelWidth?, labelAlign?: 'left' | 'right', doi?: 'link' | 'text' | 'hide', includeUncited?, groupByLanguage? };
+  bibliography?: {
+    title?: string;            // default the language's word ("References", "Referencias", "参考文献"); '' = none
+    scope?: 'book' | 'chapter';// 'book'
+    auto?: boolean;            // true: set after the last chapter when no :::bibliography places it
+    fontSize?: Dimension;      // 0.9em (em = body size)
+    lineHeight?: Dimension;    // body leading (em = entry size)
+    hangingIndent?: Dimension; // 2em (author-date lists)
+    entrySpacing?: Dimension;  // 0.3em
+    labelWidth?: Dimension;    // numbered lists: label column width; default the widest label
+    labelAlign?: 'left' | 'right'; // 'left'; 'right' ends 9. and 10. together
+    doi?: 'link' | 'text' | 'hide'; // 'link'
+    includeUncited?: boolean;  // false (Pandoc nocite '@*')
+    groupByLanguage?: boolean; // false; true sets CJK works before the others
+  };
 }
 ```
 
@@ -1916,6 +1997,9 @@ says it for the installed one):
         decoration text; Frame.takes 'toc'; overlap 'allow' on anchors and label styles, avoid zones as map
         symbols, figureWordsShared; CustomFontFamily.fallback; pictures upright in the frames of a vertical
         page's own flow
+1.43.0  anchor gutter 'keep'|'cross' (labels off a spread's fold); label.icon.tint; toc.parts.breakBefore in a
+        contents frame that can go on; headingClaimsColumn; avoid zones read from an SVG's symbols (Sandbox)
+1.46.0  a heading never ends a column of a frame set in columns or of a :::columns group
 not yet template bodyStyle
 ```
 
@@ -1932,8 +2016,11 @@ PageTemplate
 ├─ groups?      Group[]          a group name must not equal a frame name
 ├─ decoration?  DesignSlot       placeholders only, like every design text (§7)
 ├─ header? / footer?  DesignSlot | false
-├─ spread?, gutter?, overflowTemplate?, bodyStyle? (read, not applied), role?
-├─ palette?     Record<paletteId, '#hex'> (applied from 1.42; the page fence's `palette="id=#hex, …"` wins over it):
+├─ spread?, gutter?, overflowTemplate?, bodyStyle? (read, not applied)
+├─ role?        page role reported to header/footer/decoration `pages` filters (§7.3), default 'composed' (≥ 1.37)
+├─ palette?     string "id=#hex, id=#hex" (applied from 1.42), as `:::part{palette}` writes it, NOT an object
+│               (an object is dropped in silence; `headingStyles[].palette` is the object form). The page
+│               fence's `palette="id=#hex, …"` goes on top of it:
 │               recolours the palette-linked fills, borders and tabs of the boxes, the decoration and the
 │               page ground of that page, as a part's palette does the flow
 └─ variants?    { recto?, verso? } partial templates applied per side (a spread takes none)
@@ -1950,7 +2037,9 @@ Frame
 │               stripe:{color}, icon:{color}, marker:{color, rule:{color}}, titleStyle:{color}, body:{color,
 │               boldColor, italicColor, letterSpacing}, label:{color, background, rule:{color}} }; a child
 │               template or variant merges it key by key; an unknown key is `unknownConfigKey`
-├─ layer? (1), rotate?, verticalAlign?, columns?, columnGap?, padding?
+├─ layer? (1; decoration is 0, negative paints under it), rotate? (degrees clockwise, box and content together),
+│  verticalAlign? 'top'|'middle'|'bottom'|'justify' ('top'; justify spreads the room between blocks),
+│  columns? (1), columnGap?, padding? (side by side over the style's)
 ├─ exclude?     'none'|'push'
 ├─ wrap?        'box'|'contour' (1.36; with exclude:'push': the shape of the pictures it holds)
 ├─ rules?       { every? ('line'|Dimension), color?, width? (0.5pt), inset? } (1.38) ruled lines across the content box
@@ -1961,7 +2050,8 @@ Frame
 ├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8), preferContinue (true, 1.38) }
 ├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>'|'page:<id>' (1.38; <id> may be {attr.x}),
 │                 mark?: string|false ({page} = the page it goes on on, 1.38), fromMark?: string (1.38) }
-└─ optional?, crossGutter?, remove?
+└─ optional? (no slotEmpty when nothing fills it), crossGutter? (spread: may cross the spine band), remove? (patch: drop it)
+   pin? never moves or resizes; grow?/shrink?/priority? default 0 (lower priority gives way first)
    writingMode?  'horizontal-tb'|'vertical-rl' (applied from 1.39; before, read only): the frame's content is laid
                  in its box turned a quarter turn (right-to-left pages too from 1.40; a picture in it stands
                  upright, in a frame of a vertical page's own flow too from 1.42); an 'auto' height is the least that
@@ -1975,9 +2065,14 @@ composed pages' decoration only. A text over a frame answers a click where the f
 Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
          align?: 'start'|'center'|'end'|'space-between', remove? }
 
-LabelStyle  { id, name?, paragraphStyle?, fontFamily?, fontSize?, fontWeight?, fontStyle?,
-              color?, textTransform?, letterSpacing?, halo?: { color, width }, background?,
-              padding?, minScale? (0.85), writingMode? ('vertical-rl', ≥ 1.39), overlap? ('check'|'allow', ≥ 1.42) }
+LabelStyle  { id, name? (Sandbox only), paragraphStyle? (borrows its type; the fields below override it),
+              fontFamily?/fontSize?/fontWeight?/color? (default: the body text's), fontStyle? 'normal'|'italic',
+              textTransform? 'none'|'uppercase', letterSpacing? number (em, default 0; NOT a Dimension),
+              halo?: { color, width: Dimension }, background? (a plate), padding?: Dimension,
+              minScale? (0.85: how far a label wider than its anchor `width` shrinks),
+              writingMode? 'horizontal-tb'|'vertical-rl' (≥ 1.39), overlap? 'check'|'allow' (≥ 1.42) }
+              lines of a several-line label stand 1.15 × its size apart (or at the borrowed style's leading);
+              the halo shrinks with the label
 ```
 
 - **Label styles and a borrowed paragraph style** (≥ 1.40): `fontStyle` and `textTransform` stay unset
@@ -2076,7 +2171,7 @@ Out of the layout key (changing it lays nothing out again). A design text (every
 of `header`, `footer`, `headings.levels[i].advancedDesign.slot`, a heading style's
 `advancedDesign.slot`/`header`/`footer`, a page template's `decoration`/`header`/`footer` and its
 variants' (the engine from #874, `preset_kit.py lint` always), `parts.design`/`versoDesign`,
-`toc.parts.design`, and the same under `htmlViewer.overrides`) is content when its literal (the `content` with every
+`toc.parts.design`, each box style's `calloutStyles[i].design.slot` (postext ≥ 1.45), and the same under `htmlViewer.overrides`) is content when its literal (the `content` with every
 `{placeholder}` removed, `{{`/`}}` read as braces, white space collapsed) still has more than
 `maxWords` words or weighs more than `maxChars` once the allowed phrases are out. Allowed: `allow`
 plus the document metadata `title`, `subtitle`, `author`, `publisher` (the first chapter's front
@@ -2087,6 +2182,8 @@ per owner (`headingStyles[3]` with `ownerId`, `headings.levels[0]`, `header`…)
 under `checks` gives `unknownConfigKey`; a negative or fractional limit `unknownConfigValue` (the
 default is used). Never raise the limits to quiet a port: move the text into the Markdown.
 `preset_kit.py lint` applies the same rule on any installed version.
+A box design prints the box's words through `{boxText}` / `{boxText.<n>}` and `{titleText}`; literal
+text typed into its elements is content like any other design text.
 
 ## 20. Fonts — `customFonts` and what goes in preset.json
 
@@ -2117,7 +2214,7 @@ default is used). Never raise the limits to quiet a port: move the text into the
 
 **preset.json** — `version: 2` manifest (full reference: project-format.md):
 ```
-{ version: 2, configVersion: 14, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
+{ version: 2, configVersion: 15, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
   default?, view?: { canvasScope?: 'book'|'chapter' },
   start?: { pageIndexOffset?, pageNumbering?: { startAt?, format? }, headings?: { h1..h6 }, part?: { number, title, palette? },
             resourceCounters?, resourceNumbers?, statementCounters?, footnoteNumber?, lineNumber?, afterPartPage? },
@@ -2128,12 +2225,13 @@ default is used). Never raise the limits to quiet a port: move the text into the
   resources: [ Resource minus createdAt/updatedAt/bitmap/svg, plus file?, pdfFile?, inlineFonts?, width?, height?, resolution?, fileResolution?, note? ],
   fonts: [ { name, variants: [{ weight, style, file: "fonts/X.woff2" }], redistributable?, fallback? (≥ 1.42) } ],
   localized?: { "<locale>": { config?: Partial<PostextConfig> (top-level keys REPLACED wholesale),
-                              resources?: [{ id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height? }],
+                              resources?: [{ id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height?, poster?, video?, resolution?, fileResolution? }],
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)
                               start?: { … } } } }                               // the edition's own start, in place of `start`
 ```
-`configVersion: 14` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
-the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
+`configVersion: 15` (postext ≥ 1.34) says `config` is written for today's rules (`preset_kit.write_manifest` sets it).
+Rule 15 marks a config that may hold `pageTemplates` / `labelStyles` and pins nothing, so a manifest stamped 14
+(postext 1.30 to 1.33) loads unchanged. Without a number the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
 `layout.inlineResourceGap: 'above'` when a chapter embeds a `::resource`, `layout.inlineResourceGapInBoxes: false`
 when one is embedded inside a `:::callout`, `headings.inlineMarks: false` when a heading carries `*`, `_`, `^`,
 `~` or a link, `bodyText.colonListRoom: 'line'` when a chapter has a list after a line ending in ':',
@@ -2213,16 +2311,107 @@ as a change. Left out, the file is stamped with the time of the call.
   equivalents).
 - A PDF/X file carries no link annotations (bookmarks stay) and every page gets a TrimBox/BleedBox.
 - `pdfGeneration.colorSpace: 'cmyk'` separates through the same profile without the PDF/X marks.
-- `postext check my-book --preflight` lists the preflight with chapter file:line and page; `render.mjs` prints `PREFLIGHT <severity> <kind> page N` lines for a book set up for print (or
-  with `--preflight`): low-resolution pictures (from the files' real pixels; ≥ 1.24 a declared size the file does not
-  have is `declaredPixelsMismatch`), thin rules, small text in several inks, ink over the
-  limit, text in the safe zone, boxes stopping short of the trim. Fix the critical ones.
+- `postext check my-book --preflight` prints `preflight.<kind>` with chapter file:line and page (critical = error,
+  exit 3); `render.mjs` prints `PREFLIGHT <severity> <kind> page N` for a book set up for print (or with
+  `--preflight`). Kinds: `lowImageResolution` (under `minImageResolution` ppi at the printed size, crop included;
+  critical under `criticalImageResolution`), `declaredPixelsMismatch` (≥ 1.24: declared width/height ≠ the file's),
+  `rgbImage`, `thinRule` (< `minRuleWidth`), `smallProcessText` (< `smallTextSize` in more than one ink; K-only black
+  never counts), `inkLimit` (TAC over the limit), `safeZone` (text within `safeZone` of the trim; figure labels
+  count), `nearTrim` (a box or picture ending within `bleedSnap` of the trim without bleeding). Fix the critical ones.
+  `customProfile` may also carry `inkLimit` (percent) for the condition.
+
+`contrast` (postext ≥ 1.28; layout ignores it, out of the layout key) is the check that the text reads on its ground:
+
+```jsonc
+"contrast": {
+  "enabled": true,
+  "level": "AA",                 // AA (4.5:1 text, 3:1 large) | AAA (7:1, 4.5:1); large = ≥ 18 pt, or ≥ 14 pt at weight ≥ 700
+  "mode": "auto",                // auto | screen | print | both; auto = screen, plus print for a book set up for print
+                                 // (print.standard ≠ none, a CMYK pdfGeneration, or page.cutLines)
+  "reversedText": {              // print only: light text knocked out of an inked ground fills in on press
+    "enabled": true,
+    "minSize": { "value": 8, "unit": "pt" },       // reversed text under this is reported
+    "minFineSize": { "value": 12, "unit": "pt" },  // the same for italics and light weights
+    "lightWeight": 300                             // a weight at or under this counts as light
+  }
+}
+```
+- Screen = WCAG 2 ratio of the sRGB colours. Print = the same formula over the colours as separated through
+  the output profile, relative to the bare paper: solid black on white is about 14:1 on coated stock (FOGRA39/51),
+  8:1 uncoated (FOGRA47/52), 5:1 newsprint (IFRA26, SNAP). `#767676` on white passes on screen (4.54:1) and
+  fails coated print (about 3.3:1).
+- Read: body lines with their inline colours, list markers, drop caps, captions, notes, table cells, running
+  heads, openers, heading designs, box titles, against the topmost fill under them (box, callout, caption
+  bar, cell, chip, else the page or part paper). Text over a picture, comic lettering, ruby and formulas are
+  skipped.
+- `postext check` prints each pair once as `contrast.lowContrast` (colours, size, ratio per rendition,
+  required ratio, first text) or `contrast.reversedText` (inks of the ground, minimum size), severity
+  warning (exit 3 only with `--strict`). With `--preflight` a `mode: 'auto'` book is checked for print too.
+  The Sandbox lists them in Checks.
+- A port keeps the source's colours. Report a low ratio the source has as a finding; do not recolour.
+  Turn the check off (`enabled: false`) only when the user asks.
 
 `htmlViewer`: `{ maxCharsPerLine = 70, columnGap = 50 (CSS px number), optimalLineBreaking = false, overrides?: Omit<PostextConfig,'htmlViewer'> }`.
 `overrides` merge: objects recursive; `levels` arrays merged by `level`; every other array
 (design `elements`, `calloutStyles`, `colorPalette`, …) replaced wholesale. Typical:
 `{ parts: { page: false }, headings: { levels: [{ level: 1, advancedDesign: { enabled: true, slot: {…screen opener…} } }] } }`.
 The HTML viewer also turns on `layout.fitFiguresToPage` itself.
+
+`canvasViewer` (postext ≥ 1.43): `{ pageGap = 24, rowGap = 24 }`, screen px at any zoom, whole numbers 0–200 (another
+value is read as the nearest such number, or 24 when not a number, with `unknownConfigValue`). `pageGap` is the space
+between the two pages of a pair in the Sandbox Canvas's double-page view; `0` joins them with no shadow or rounded
+corner at the spine. `rowGap` is the space between rows of pages in both views. A viewer setting: it never lays the
+book out again or changes the PDF, HTML or EPUB. Set `"canvasViewer": { "pageGap": 0 }` on a book whose pictures or
+designs run across the spread, so the Canvas shows the spread as one (Sandbox: Design › Export › Canvas).
+
+### Delivering EPUB, HTML and PDF files
+
+The `postext` command line writes every output from the project folder or the `.postext`; `build` takes
+the same options and lays the book out once for all of them
+(`postext build my-book --locale es --pdf out/es.pdf --epub out/es.epub --html out/es.html --docx out/es.docx`):
+
+```bash
+postext epub my-book.postext -o my-book.epub                        # fixed layout: every page as printed (default)
+postext epub my-book.postext --layout reflowable --cover cover.jpg  # reflowable text; --cover JPEG/PNG/WebP/SVG
+postext html my-book.postext -o my-book.html                        # one self-contained file (pictures, fonts inside)
+postext html my-book.postext -o site/ --mode single                 # folder: index.html + assets/; pages one under another
+                                                                    # (--mode multi, the default: side by side); --assets embed|folder
+postext pdf my-book -o print.pdf --pdfx x4 --profile fogra51         # --pdfx none|x1a|x4, --profile a catalogue id or an .icc file
+postext pdf my-book -o proof.pdf --color-space grayscale --no-outlines   # rgb|cmyk|grayscale; --accessible/--no-accessible, --page-negative
+postext image my-book --page 12 --print-preview -o p12.png          # soft proof through the output profile, trim and bleed drawn
+```
+
+- **Which EPUB.** `fixed` (EPUB `pre-paginated`: one XHTML per printed page, columns, floats and line breaks
+  kept, real text) suits illustrated books, textbooks, magazines, comics. `reflowable` (one XHTML per
+  chapter, a part opens its own; headings, paragraphs, lists, boxes as asides, figures and tables after the
+  text that cites them, notes, links, print page markers) suits novels, essays, reports. Columns, running
+  heads, designs and exact breaks are lost there. A composed page becomes its frames in Markdown order.
+  Both carry a nav TOC, a page list with the printed labels, landmarks, an NCX and EPUB Accessibility 1.1
+  metadata. Deliver the one the brief names, else ask. A designed book usually gets both.
+- **Metadata** comes from the first chapter's front matter: `title` (else the manifest name), `subtitle`,
+  `author` or `authors` (a YAML list for several), `publishDate` or `date` (ISO year, month or day), `isbn`
+  or `identifier` (a bare ISBN becomes `urn:isbn:…`; else a stable `urn:uuid:` per book), `publisher`,
+  `rights` (or `copyright`, `license`), `description` (or `abstract`). The language is `config.locale`. Put
+  them in the front matter when the source has them. The cover is `--cover`, else the manifest `thumbnail`.
+  Without either, the fixed layout uses page 1 and the reflowable book has no cover picture.
+- **Fonts.** `redistributable: false` faces are never copied into an EPUB or HTML file. A family with a
+  `fonts[].fallback` is embedded in the fallback's faces under its own name (≥ 1.43). Without one it is
+  named without files and reading systems substitute. SVG pictures get the faces their `<text>` names
+  (warnings `svgFontUnavailable`, `svgFontsTooLarge` over 2 MiB, `fontWithheld`).
+- **`postext html`** is the print layout at screen size, with real text; its reading order is the Markdown's
+  (`composed_check.py` checks it). The Sandbox's HTML tab is different: it reflows the text for the window
+  (`htmlViewer`).
+- **Videos.** A self-hosted file is packed under `media/` and plays in `<video>`. YouTube and Vimeo are the
+  poster linked to the video (§18a).
+- **Check the file** with `epubcheck my-book.epub` (W3C EPUBCheck). Usage notes `CSS-028`, `OBS-001` and
+  `HTM_062` are informational. In a Postext checkout,
+  `node packages/postext-epub/scripts/epubcheck.mjs my-book.postext --layout both` lays out and checks
+  both renditions.
+- **From code** (`postext-epub`, peer of `postext`, same version):
+  `renderToEpub(docs, { layout, metadata: { title, language, creators?, identifier?, date?, publisher?, rights?, description?, modified? }, fonts, resourceBytes, cover?: { bytes, mediaType, alt?, showsFirstPage? }, svgFonts?: { provider?, withhold?, standIn?, maxBytes?, inline? }, kindlePanelView?, onWarning })`.
+  `svgFonts.standIn: (f) => exportStandInOf(config.customFonts, f)` gives SVG text the stand-in faces;
+  `kindlePanelView: true` adds Kindle panel magnification to a fixed-layout comic (code only; the command line
+  has no flag); pass `modified` for byte-identical output.
 
 `folio` (the Folio 3D viewer, `postext-folio` and the Sandbox's Folio tab; layout, canvas, PDF and HTML ignore it, so it never changes a page or the layout hash):
 
@@ -2304,8 +2493,10 @@ C24 use it.
 `missingFont` also gates the engine's `fontFallback` content warning (≥ 1.25): a face the text was set in
 that the browser's font set could not give when the build ran (`reason` `missing` or `synthesized`, a
 weight or slant the family has no face for, drawn from another of its faces: a 600 set from the 700 as
-much as a bold made from the regular). Only builds with a font set check it (the browser, a worker);
-`render.mjs` and the CLI do not.
+much as a bold made from the regular). Builds with a font set check it (the browser, a worker), and so does
+the `postext` command line (≥ 1.28): it warns `fontFallback` when a face the family ships could not be loaded
+(offline with nothing cached, a failed download, a `--font-dir` without the file) and another face of the family
+stood in. A weight or slant the family does not ship stays silent there. `render.mjs` does not check it.
 
 **Fonts and caches in browser code (≥ 1.25).** Build with `buildDocumentWithFonts(content, config,
 { resolve })`, or call `prepareFonts(content, config, { resolve })` before `buildDocument`: it loads

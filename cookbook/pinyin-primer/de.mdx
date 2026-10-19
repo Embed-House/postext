@@ -18,13 +18,13 @@ Eine Fibel verlässt die Regeln eines chinesischen Buches mit Absicht. Ein Kind 
 
 ### 1 · Eine Silbe über jedem Zeichen
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `{人之初|rén zhī chū}` gibt drei Zeichen drei Lesungen, an den Leerzeichen getrennt: Jede Silbe wird über ihrem eigenen Zeichen zentriert, und eine Zeile darf zwischen ihnen umbrechen. Eine Lesung beansprucht keinen eigenen Raum. Sie sitzt im Zeilenzwischenraum, hier 54 − 26 = 28 pt, und ein Zwischenraum, der schmaler ist als die Lesung, wird als `rubyExceedsLeading` gemeldet. Eine Silbe, die breiter ist als ihr Zeichen, beansprucht sehr wohl Raum: Sie verbreitert den Kasten dieses Zeichens, und in einer zentrierten Zeile rücken die folgenden Zeichen vom Raster. Die Lesungen stehen in dem Grad, bei dem die breitesten Silben hier, xiāng und zhuān, noch über ein Zeichen passen, 0,38 em (9,9 pt): Jedes Verspaar ist acht Zeichen lang, und jedes Zeichen behält sein Quadrat. Bei 0,45 em würde sich 性相近，習相遠 auf achteinhalb Zeichen dehnen und Lücken um 相 öffnen.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `{人之初|rén zhī chū}` gibt drei Zeichen drei Lesungen, an den Leerzeichen getrennt: Jede Silbe wird über ihrem eigenen Zeichen zentriert, und eine Zeile darf zwischen ihnen umbrechen. Eine Lesung beansprucht keinen eigenen Raum. Sie sitzt im Zeilenzwischenraum, hier 54 − 26 = 28 pt, und ein Zwischenraum, der schmaler ist als die Lesung, wird als `rubyExceedsLeading` gemeldet. Eine Silbe, die breiter ist als ihr Zeichen, beansprucht sehr wohl Raum: Sie verbreitert die Zelle dieses Zeichens, und in einer zentrierten Zeile rücken die folgenden Zeichen vom Raster. Die Lesungen stehen in dem Grad, bei dem die breitesten Silben hier, xiāng und zhuān, noch über ein Zeichen passen, 0,38 em (9,9 pt): Jedes Verspaar ist acht Zeichen lang, und jedes Zeichen behält sein Quadrat. Bei 0,45 em würde sich 性相近，習相遠 auf achteinhalb Zeichen dehnen und Lücken um 相 öffnen.
 
 ### 2 · Der Titel behält seine Lesungen
 
 <Excerpt region="opener" />
 
-Gestaltungstext druckt keine Lesungen, deshalb kann der Titel nicht aus der Gestaltung des Auftakts kommen. Die Überschrift der Ebene 1, 第一課, zeichnet das Band, das Bild und das rote Abzeichen; der Titel ist die Überschrift der Ebene 2 darunter, eine schlichte Überschrift in 初号, die der Textsetzer mit ihrem Pinyin setzt. `reserve: false` lässt Band und Bild aus der Höhe der Überschrift heraus, und `span: 'page'` malt sie unter den Text.
+Gestaltungstext setzt keine Lesungen, deshalb kann der Titel nicht aus der Gestaltung des Auftakts kommen. Die Überschrift der Ebene 1, 第一課, zeichnet das Band, das Bild und das rote Abzeichen; der Titel ist die Überschrift der Ebene 2 darunter, eine schlichte Überschrift in 初号, die der Textsetzer mit ihrem Pinyin setzt. `reserve: false` lässt Band und Bild aus der Höhe der Überschrift heraus, und `span: 'page'` malt sie unter den Text.
 
 Die Gestaltung einer Überschrift ignoriert `parity`, deshalb hat das Bild ein Element an jedem Seitenrand: `{attr.left}` 14 mm vom linken Rand und `{attr.right}` 14 mm vom rechten. Die Lektionen auf linken Seiten schreiben `# 第一課 {left="sprout"}` und die auf rechten `{right="shuttle"}`, sodass jedes Bild auf der Außenseite der Doppelseite sitzt; das Element, dessen Attribut fehlt, zeichnet nichts.
 
@@ -32,7 +32,7 @@ Die Gestaltung einer Überschrift ignoriert `parity`, deshalb hat das Bild ein E
 
 <Excerpt region="squares" />
 
-`### 我會寫 {write="人之本不相以"}` gibt der Gestaltung die sechs Zeichen in einem Attribut. Jedes Han-Zeichen der LXGW WenKai TC ist ein Geviert breit, deshalb rückt eine Sperrung vom Kästchenabstand minus ein Geviert (18,4 − 10,6 mm) die Zeichen von Kästchen zu Kästchen, und ein einziges Textelement füllt die Reihe. Das Kästchen ist ein im Code gezeichnetes SVG: ein roter Rahmen und ein gestricheltes Kreuz.
+`### 我會寫 {write="人之本不相以"}` gibt der Gestaltung die sechs Zeichen in einem Attribut. Jedes Han-Zeichen der LXGW WenKai TC ist ein Geviert breit, deshalb rückt eine Sperrung vom Kästchenabstand minus ein Geviert (18,4 − 10,6 mm) die Zeichen von Kästchen zu Kästchen, und ein einziges Textelement füllt die Reihe. Das Kästchen ist ein im Code gezeichnetes SVG: eine rote Umrandung und ein gestricheltes Kreuz.
 
 ### 4 · Jede Schrift lädt ihre eigenen Zeichen
 
@@ -44,7 +44,7 @@ Fontsource zerlegt jede chinesische Schrift nach Zeichenbereichen in etwa hunder
 
 <Excerpt region="locale" />
 
-`zh-HK` setzt die Hongkonger Regeln: Satzzeichen in voller Breite und die grundlegenden Regeln des Zeilenumbruchs, die hier kein Verspaar braucht. Die LXGW WenKai TC zeichnet ihre Kommas und Punkte in die Mitte des Quadrats, wie Hongkong und Taiwan sie drucken, und deshalb kommt diese Fibel aus Hongkong. Eine Fibel vom Festland wird ebenfalls in Kai gesetzt, in Kurzzeichen mit Komma und Punkt unten links im Quadrat. Fontsource hat jedoch keine Kai-Textschrift für vereinfachtes Chinesisch, und die traditionelle würde diese Zeichen gegen das nächste Schriftzeichen drängen, deshalb nimmt eine Festlandseite in diesem Rezeptbuch die Noto Serif SC, die Song-Schrift <RecipeLink slug="chinese-novel-horizontal">der Romanseite vom Festland</RecipeLink>.
+`zh-HK` setzt die Hongkonger Regeln: Satzzeichen in voller Breite und die grundlegenden Regeln des Zeilenumbruchs, die hier kein Verspaar braucht. Die LXGW WenKai TC zeichnet ihre Kommas und Punkte in die Mitte des Quadrats, wie Hongkong und Taiwan sie drucken, und deshalb kommt diese Fibel aus Hongkong. Eine Fibel vom Festland wird ebenfalls in Kai gesetzt, in Kurzzeichen mit Komma und Punkt unten links im Quadrat. Fontsource hat jedoch keine Kai-Textschrift für vereinfachtes Chinesisch, und die traditionelle würde diese Zeichen gegen das nächste Schriftzeichen drängen, deshalb nimmt eine Festlandseite in diesen Rezepten die Noto Serif SC, die Song-Schrift <RecipeLink slug="chinese-novel-horizontal">der Romanseite vom Festland</RecipeLink>.
 
 ## Varianten
 

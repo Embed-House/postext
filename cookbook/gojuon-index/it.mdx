@@ -1,11 +1,11 @@
 ---
 title: "Un indice giapponese in ordine gojūon, per lettura"
 summary: "Un capitolo sui termini della composizione giapponese e il suo indice: ogni segno dà la lettura (furigana o yomi), le voci vanno sotto あ行, か行, さ行 in ordine JIS."
-plain: "Un breve capitolo che spiega le parole dei compositori giapponesi, con un indice in fondo. Ogni parola indicizzata porta la sua pronuncia, e Postext la usa per ordinare l’indice secondo l’ordine dei kana, sotto le righe あ行, か行 e così via."
+plain: "Un breve capitolo che spiega le parole dei compositori giapponesi, con un indice in fondo. Ogni parola indicizzata ha la sua pronuncia, e Postext la usa per ordinare l’indice secondo l’ordine dei kana, sotto le righe あ行, か行 e così via."
 description: "Un indice analitico giapponese in Postext: segni :index con letture yomi o furigana, righe groupBy 'gojuon', ordine JIS X 4061, rimandi → e も見よ."
 question: "Come ordino un indice giapponese in ordine gojūon secondo le letture?"
 aliases: ["indice giapponese", "索引", "五十音順", "gojūon", "gojuon", "あ行 か行", "yomi", "読み", "lettura", "lettura furigana", "JIS X 4061", "ordine dei kana", "見よ", "も見よ", "vedi anche", "indexReadingMissing", "組版用語", "glossario di composizione", "Japanese index"]
-pageNotes: { "1": "Pagina 9, l’apertura del capitolo: 第1章 in un piccolo gotico vermiglio, il titolo 紙面を呼ぶ言葉 in grassetto, un breve filetto vermiglio, un paragrafo introduttivo e la sezione 1.1 sotto un titolo di tre righe. I termini 版面, 天, 地, 小口 e 柱 portano piccole letture in kana alla prima occorrenza.", "3": "Pagina 11, l’indice: su una fascia chiara, 五十音順 in vermiglio e il titolo 索引; sotto, due colonne di voci sotto le intestazioni vermiglie D, J, か行, さ行, た行, な行, は行, ま行, や行, ら行 e わ行, ogni voce con la sua pagina dopo uno spazio ideografico, la pagina principale in grassetto, e rimandi come 級　10　→歯も見よ e 振り仮名　→ルビ." }
+pageNotes: { "1": "Pagina 9, l’apertura del capitolo: 第1章 in un piccolo gotico vermiglio, il titolo 紙面を呼ぶ言葉 in grassetto, un breve filetto vermiglio, un paragrafo introduttivo e la sezione 1.1 sotto un titolo di tre righe. I termini 版面, 天, 地, 小口 e 柱 hanno piccole letture in kana alla prima occorrenza.", "3": "Pagina 11, l’indice: su una fascia chiara, 五十音順 in vermiglio e il titolo 索引; sotto, due colonne di voci sotto le intestazioni vermiglie D, J, か行, さ行, た行, な行, は行, ま行, や行, ら行 e わ行, ogni voce con la sua pagina dopo uno spazio ideografico, la pagina principale in grassetto, e rimandi come 級　10　→歯も見よ e 振り仮名　→ルビ." }
 ---
 
 ## Che cosa comporrai
@@ -56,6 +56,6 @@ Per lasciare nuda la prima occorrenza di un termine e fornirne comunque la lettu
 
 ## Errori frequenti
 
-- Un termine con un kanji e senza lettura solleva `indexReadingMissing`. Senza il suo `yomi`, 明朝体 finiva in fondo all’indice, dopo わ行, senza intestazione, e la build avvisava che la voce «has a kanji and no reading».
-- `:ruby[…]` dentro `:index[…]` richiede l’escape delle parentesi quadre, perché il segno finisce alla prima `]`; scrivi la forma compatta, `{版面|はん|めん}`.
+- Un termine con un kanji e senza lettura produce l’avviso `indexReadingMissing`. Senza il suo `yomi`, 明朝体 finiva in fondo all’indice, dopo わ行, senza intestazione, e la costruzione segnalava che la voce «has a kanji and no reading».
+- `:ruby[…]` in `:index[…]` richiede l’escape delle parentesi quadre, perché il segno finisce alla prima `]`; scrivi la forma compatta, `{版面|はん|めん}`.
 - Una lettura ruby conta solo quando copre ogni kanji del termine: `:index[行{取|ど}り]` lascia 行 senza lettura e avvisa. `{行取|ぎょう|ど}り` dà ぎょうどり.

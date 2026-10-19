@@ -16,11 +16,11 @@ Un tiré à part de la série d’histoire des techniques d’une revue : un es
 
 ### 1 · Une note pour chaque citation
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `chicago-notes-bibliography` est un style à notes : une citation dans le texte laisse un numéro en exposant, et ses mots vont dans une note de bas de page numérotée avec les `[^notes]` de l’auteur ; `notes: 'footnote'` le dit explicitement. citeproc-js garde la trace des ouvrages déjà cités : la note 3 se lit *Derek Howse, Greenwich Time and the Discovery of the Longitude (Oxford University Press, 1980), 87*, et la note 4, qui cite de nouveau le même livre, *Howse, Greenwich Time and the Discovery of the Longitude, 90–91*. Le style fourni est celui de la 18e édition du Chicago Manual, qui abandonne *Ibid.* et répète la forme abrégée : les notes 11 et 12 impriment donc deux fois la forme abrégée.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `chicago-notes-bibliography` est un style à notes : une citation dans le texte laisse un numéro en exposant, et ses mots vont dans une note de bas de page numérotée avec les `[^notes]` de l’auteur ; `notes: 'footnote'` le précise explicitement. citeproc-js garde la trace des ouvrages déjà cités : la note 3 se lit *Derek Howse, Greenwich Time and the Discovery of the Longitude (Oxford University Press, 1980), 87*, et la note 4, qui cite de nouveau le même livre, *Howse, Greenwich Time and the Discovery of the Longitude, 90–91*. Le style fourni est celui de la 18e édition du Chicago Manual, qui abandonne *Ibid.* et répète la forme abrégée : les notes 11 et 12 impriment donc deux fois la forme abrégée.
 
 ### 2 · Les notes de l’auteur citent aussi
 
-Une citation placée dans une `[^note]` reste dans cette note et s’y compose en ligne, en entier si c’est la première apparition de l’ouvrage : la note 1 est la phrase de l’auteur suivie de la référence complète de Schivelbusch. Chaque citation se termine par le point du style, si bien qu’une note qui finit sur une citation n’a pas besoin de son propre point dans le Markdown.
+Une citation placée dans une `[^note]` reste dans cette note et s’y compose en ligne, en entier si c’est la première apparition de l’ouvrage : la note 1 est la phrase de l’auteur suivie de la référence complète de Schivelbusch. Chaque citation se termine par le point du style : une note qui finit sur une citation n’a donc pas besoin de son propre point dans le Markdown.
 
 ### 3 · Préfixes, suffixes et localisateurs
 
@@ -56,5 +56,5 @@ La 17e édition du style Chicago imprime *Ibid.* pour une note qui reprend l’o
 
 ## Erreurs fréquentes
 
-- Ne terminez pas une note par un point après une citation : le style ferme déjà la citation par un point, et Postext ne fusionne pas les deux, si bien que la note finirait sur deux points.
+- Ne terminez pas une note par un point après une citation : le style ferme déjà la citation par un point, et Postext ne fusionne pas les deux : la note finirait donc sur deux points.
 - Dans un style à notes, `@howse1980` sans crochets ne laisse dans la phrase que le numéro de note, *As ¹ says*, sans nom d’auteur. Écrivez le nom vous-même et citez entre crochets : `As Howse says,[@howse1980]`.

@@ -10,7 +10,7 @@ pageNotes: { "1": "O original japonês: um plano geral da final, uma faixa com o
 
 ## O que você vai compor
 
-A página em que se decide a final de kendô, do mesmo mangá da <RecipeLink slug="manga-right-to-left">receita da direita para a esquerda</RecipeLink>, em duas edições lado a lado: o original japonês e o letreiramento no idioma desta página (em inglês na página japonesa). Quatro fileiras: o ginásio, os olhos de Hana pela grade do capacete, a troca de golpes e as reações. A terceira fileira é cortada por uma sarjeta inclinada, e assim o ataque do adversário e o contragolpe de Hana parecem se lançar um contra o outro; a quarta se inclina para o outro lado e desacelera a página. O golpe de Hana não tem moldura nenhuma, e a onomatopeia dele, ドン, é composta numa gótica japonesa bem pesada que todas as edições mantêm, com uma pequena tradução embaixo nas páginas traduzidas.
+A página em que se decide a final de kendô, do mesmo mangá da <RecipeLink slug="manga-right-to-left">receita da direita para a esquerda</RecipeLink>, em duas edições lado a lado: o original japonês e o letreiramento no idioma desta página (em inglês na página japonesa). Quatro fileiras: o ginásio, os olhos de Hana pela grade do capacete, a troca de golpes e as reações. A terceira fileira é cortada por uma sarjeta inclinada, e assim o ataque do adversário e o contragolpe de Hana parecem se lançar um contra o outro; a quarta se inclina para o outro lado e desacelera a página. O golpe de Hana não tem borda nenhuma, e a onomatopeia dele, ドン, é composta numa gótica japonesa bem pesada que todas as edições mantêm, com uma pequena tradução embaixo nas páginas traduzidas.
 
 ## Preparo
 
@@ -22,7 +22,7 @@ O código é [a resposta curta](#a-resposta-curta) acima. Um tamanho escrito `40
 
 <Excerpt region="balloons" />
 
-Os kiai dos dois lutadores são gritos: uma explosão de 18 pontas, mais fundas que as do padrão. As onomatopeias não têm balão nenhum; são letreiradas sobre o desenho com um contorno branco de 2,2 pt, para serem lidas por cima das linhas de movimento. O quadro do golpe é escrito `::panel{art=strike border=none}`, e o seu ドン leva `break`, então pode atravessar a sarjeta inclinada até o quadro vizinho, como um letrista deixa um som transbordar da moldura (<Feature id="sound-effects">onomatopeias</Feature>).
+Os kiai dos dois lutadores são gritos: uma explosão de 18 pontas, mais fundas que as do padrão. As onomatopeias não têm balão nenhum; são letreiradas sobre o desenho com um contorno branco de 2,2 pt, para serem lidas por cima das linhas de movimento. O quadro do golpe é escrito `::panel{art=strike border=none}`, e o ドン leva `break`, por isso pode atravessar a sarjeta inclinada até o quadro vizinho, como um letrista deixa um som transbordar da borda do quadro (<Feature id="sound-effects">onomatopeias</Feature>).
 
 ### 3 · Manter ドン em japonês e legendá-lo
 
@@ -40,9 +40,9 @@ Uma célula inclinada é mais larga numa ponta que na outra, e a imagem tem de c
 
 <Excerpt region="editions" />
 
-Cada idioma do site letreira a página no próprio arquivo, e o original japonês fica de frente para ela, do outro lado da página dupla (a página japonesa faz par com a edição inglesa). ドン fica em todas as edições, cada uma traz a sua legenda (PÁ!, WHAM, ZAS!, PAF !, WUMM, SDENG!, 咚, بوم!), e as inclinações nunca mudam.
+Cada idioma do site letreira a página no próprio arquivo, e o original japonês fica de frente para ela, do outro lado da página dupla (a página japonesa faz par com a edição inglesa). ドン fica em todas as edições, cada uma traz a legenda (PÁ!, WHAM, ZAS!, PAF !, WUMM, SDENG!, 咚, بوم!), e as inclinações nunca mudam.
 
 ## Erros comuns
 
 - Uma onomatopeia mantida em japonês numa edição letreirada em linhas horizontais é composta na horizontal, como o resto da edição, a não ser que a linha dela diga `vertical`.
-- A comemoração de Sora é mais longa que o quadro pequeno dele em japonês, espanhol e catalão: deixada ao motor, ela atravessava a borda e a construção avisava `comicBalloonOverflow`. Essas edições a marcam com `break` (`sora{shout break}`): ela rompe a moldura para cima, até a sarjeta e o quadro de cima, de propósito, e nada é informado. Um balão com `break` nunca invade a margem da página, a não ser que o quadro dele tenha sangria; um ponto fixo (`at=`) o coloca em qualquer outro lugar.
+- A comemoração de Sora é mais longa que o quadro pequeno dele em japonês, espanhol e catalão: deixada ao motor, ela atravessava a borda e a construção avisava `comicBalloonOverflow`. Essas edições a marcam com `break` (`sora{shout break}`): ela rompe a borda do quadro para cima, até a sarjeta e o quadro de cima, de propósito, e nada é informado. Um balão com `break` nunca invade a margem da página, a não ser que o quadro dele tenha sangria; um ponto fixo (`at=`) o coloca em qualquer outro lugar.

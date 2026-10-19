@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuración: viudas, huérfanas y equilibrado',
   sidebarTitle: 'Viudas, huérfanas y equilibrado',
-  description: 'Las reglas que mantienen juntas las líneas y los bloques en un salto de columna, y las palancas que hacen que todas las columnas terminen a la misma altura',
+  description: 'Las reglas que mantienen juntas las líneas y los bloques cuando cambian de columna, y los recursos con los que el motor consigue que todas las columnas terminen a la misma altura.',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -15,11 +15,11 @@ export const metadata = {
 # Configuración: viudas, huérfanas y equilibrado
 
 
-## Huérfanas, viudas, *runts* y reglas de cohesión
+## Huérfanas, viudas, líneas cortas y reglas de cohesión
 
-Consulta [Separación silábica y justificación](/es/docs/justification) para entender la mecánica de deméritos que hay detrás. Esta sección es la referencia de las claves de `bodyText` que gobiernan esas penalizaciones.
+Consulta [Separación silábica y justificación](/es/docs/justification) para entender cómo funcionan los deméritos que hay detrás. Esta sección es la referencia de las claves de `bodyText` que los controlan.
 
-Más allá de la separación silábica y los límites de espaciado, la configuración del cuerpo expone las reglas *blandas* que evitan las rupturas de párrafo estructuralmente incómodas. Todas ellas se inyectan como deméritos en el algoritmo de ruptura de líneas Knuth-Plass — sesgan la maquetación hacia rupturas limpias sin imponer nunca una regla dura. Pon a `0` cualquier `*Penalty` para desactivar esa penalización.
+Además de la separación silábica y los límites del espaciado, la configuración del texto base ofrece reglas *blandas* que evitan cortes de párrafo poco afortunados. Todas entran como deméritos en el algoritmo de corte de líneas de Knuth-Plass: inclinan la maquetación hacia cortes limpios, pero nunca imponen una regla estricta. Para desactivar cualquiera de ellas, pon a `0` su valor `*Penalty`.
 
 <table>
   <thead>
@@ -35,156 +35,158 @@ Más allá de la separación silábica y los límites de espaciado, la configura
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsejar que un párrafo termine con menos de <code>orphanMinLines</code> líneas al principio de la siguiente columna. En una retícula de caracteres (<code>cjk.grid</code>) de la región <code>japan</code> el valor por defecto es <code>false</code>.</td>
+      <td>Evita, en lo posible, que un párrafo termine dejando menos de <code>orphanMinLines</code> líneas al principio de la columna siguiente. En una retícula de caracteres (<code>cjk.grid</code>) de la región <code>japan</code>, el valor por defecto es <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Líneas mínimas requeridas al principio de la siguiente columna cuando un párrafo se parte. Solo activo cuando <code>avoidOrphans</code> es <code>true</code>.</td>
+      <td>Número mínimo de líneas que deben quedar al principio de la columna siguiente cuando se parte un párrafo. Solo actúa si <code>avoidOrphans</code> es <code>true</code>.</td>
     </tr>
     <tr>
       <td><code>orphanPenalty</code></td>
       <td><code>number</code></td>
       <td><code>1000</code></td>
-      <td>Demérito añadido cuando se incumple la restricción de huérfanas. Valores más altos sesgan más fuertemente al algoritmo; <code>0</code> desactiva la penalización.</td>
+      <td>Demérito que se suma cuando no se cumple la regla de las huérfanas. Cuanto más alto, más se esfuerza el algoritmo por evitarlas; <code>0</code> desactiva la penalización.</td>
     </tr>
     <tr>
       <td><code>avoidOrphansInLists</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando es <code>true</code>, los elementos de lista también reciben protección contra huérfanas (no solo los párrafos). Solo efectivo si <code>avoidOrphans</code> es <code>true</code>.</td>
+      <td>Con <code>true</code>, los elementos de lista también se protegen contra las huérfanas (no solo los párrafos). Solo actúa si <code>avoidOrphans</code> es <code>true</code>.</td>
     </tr>
     <tr>
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsejar que un párrafo empiece con menos de <code>widowMinLines</code> líneas al final de la columna actual. En una retícula de caracteres (<code>cjk.grid</code>) el valor por defecto es <code>false</code>: la página contiene las líneas que su retícula cuenta.</td>
+      <td>Evita, en lo posible, que un párrafo empiece dejando menos de <code>widowMinLines</code> líneas al pie de la columna en curso. En una retícula de caracteres (<code>cjk.grid</code>), el valor por defecto es <code>false</code>: la página contiene las líneas que cuenta su retícula.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Líneas mínimas requeridas al final de la columna actual cuando un párrafo se parte. Solo activo cuando <code>avoidWidows</code> es <code>true</code>.</td>
+      <td>Número mínimo de líneas que deben quedar al pie de la columna en curso cuando se parte un párrafo. Solo actúa si <code>avoidWidows</code> es <code>true</code>.</td>
     </tr>
     <tr>
       <td><code>widowPenalty</code></td>
       <td><code>number</code></td>
       <td><code>1000</code></td>
-      <td>Demérito añadido cuando se incumple la restricción de viudas. <code>0</code> desactiva la penalización.</td>
+      <td>Demérito que se suma cuando no se cumple la regla de las viudas. <code>0</code> desactiva la penalización.</td>
     </tr>
     <tr>
       <td><code>avoidWidowsInLists</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando es <code>true</code>, los elementos de lista también reciben protección contra viudas. Solo efectivo si <code>avoidWidows</code> es <code>true</code>.</td>
+      <td>Con <code>true</code>, los elementos de lista también se protegen contra las viudas. Solo actúa si <code>avoidWidows</code> es <code>true</code>.</td>
     </tr>
     <tr>
       <td><code>shortListSplit</code></td>
       <td><code>'allow' | 'warn' | 'avoid'</code></td>
       <td><code>'allow'</code></td>
-      <td>Una lista corta partida entre dos columnas o páginas: una lista de hasta <code>shortListMaxItems</code> ítems en el texto corrido, como una de tres ítems compuesta 1 + 2. <code>avoidOrphansInLists</code> y <code>avoidWidowsInLists</code> mantienen juntas las líneas de un ítem; esta regla mantiene juntos los ítems de una lista. <code>'allow'</code> parte la lista donde acaba la columna, como cualquier otra. <code>'warn'</code> la compone igual e informa de cada lista partida (un aviso <code>shortListSplit</code>, véase <a href="/es/docs/configuration-programmatic-usage#avisos-del-documento">Avisos del documento</a>). <code>'avoid'</code> compone la lista entera: si no cabe bajo lo que ya tiene la columna, abre la siguiente, y los encabezados que tenga justo encima y la línea de dos puntos que la introduce (<code>keepColonWithList</code>) van con ella. Una lista más alta que una columna vacía se parte como cualquier otra, y se avisa. Las listas de dentro de un <code>:::callout</code> siguen las reglas de corte de la caja, y las entradas de <code>:::toc</code> y de <code>:::index</code> no son listas. Desde postext 1.28.</td>
+      <td>Qué hacer con una lista corta que queda partida entre dos columnas o páginas, es decir, una lista de hasta <code>shortListMaxItems</code> elementos en el texto corrido, como una de tres elementos repartidos 1 + 2. <code>avoidOrphansInLists</code> y <code>avoidWidowsInLists</code> mantienen juntas las líneas de un mismo elemento; esta regla mantiene juntos los elementos de una misma lista. <code>'allow'</code> parte la lista donde acaba la columna, como cualquier otra. <code>'warn'</code> la compone igual y avisa de cada lista partida (un aviso <code>shortListSplit</code>; véase <a href="/es/docs/configuration-programmatic-usage#avisos-del-documento">Avisos del documento</a>). <code>'avoid'</code> compone la lista entera: si no cabe en lo que queda de columna, pasa a la siguiente, y se lleva consigo los encabezados que tenga justo encima y la línea terminada en dos puntos que la introduce (<code>keepColonWithList</code>). Una lista más alta que una columna vacía se parte como cualquier otra, y se avisa. Las listas que están dentro de un <code>:::callout</code> siguen las reglas de corte del recuadro, y las entradas de <code>:::toc</code> y de <code>:::index</code> no son listas. Desde postext 1.28.</td>
     </tr>
     <tr>
       <td><code>shortListMaxItems</code></td>
       <td><code>number</code></td>
       <td><code>3</code></td>
-      <td>Cuántos ítems puede tener como máximo una lista para contar como corta en <code>shortListSplit</code>, incluidos los de sus listas anidadas. Un número entero, 1 como mínimo. Desde postext 1.28.</td>
+      <td>Número máximo de elementos que puede tener una lista para que <code>shortListSplit</code> la considere corta, contando los de sus listas anidadas. Un número entero, como mínimo 1. Desde postext 1.28.</td>
     </tr>
     <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsejar que los párrafos terminen con una línea corta: una última línea muy breve, p. ej. una única palabra corta aislada. También en el texto en bandera, con <code>optimalRagged</code>. Un párrafo chino, japonés o coreano no termina en una línea de un solo carácter, solo o con los signos que lo cierran (孤字): la línea anterior le cede su último carácter si aún puede justificarse dentro del tope de espaciado. Una línea alineada a la izquierda, a la derecha o centrada también lo cede y queda un carácter corta; con <code>cjk.grid.fullLines</code> (papel de manuscrito) conserva todas sus casillas, y el párrafo puede acabar en un solo carácter.</td>
+      <td>Evita, en lo posible, que los párrafos terminen con una última línea muy corta, lo que se llama una línea corta (por ejemplo, una sola palabra breve). También en el texto en bandera, con <code>optimalRagged</code>. Un párrafo chino, japonés o coreano no termina en una línea con un único carácter, solo o con los signos de cierre que lo acompañan (孤字): la línea anterior le cede su último carácter si todavía puede justificarse sin pasar del límite de espaciado entre letras. Una línea alineada a la izquierda, a la derecha o centrada también cede el carácter y queda un carácter más corta; con <code>cjk.grid.fullLines</code> (papel de manuscrito) conserva todas sus casillas, y el párrafo puede acabar en un solo carácter.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>
       <td><code>number</code></td>
       <td><code>20</code></td>
-      <td>Umbral para la última línea de un párrafo, contado en espacios entre palabras, no en letras: la línea es corta cuando es más estrecha que <code>runtMinCharacters × anchoDeEspacioNormal</code> píxeles. En la mayoría de los tipos de texto un espacio mide entre un cuarto y un tercio de em, más o menos media letra minúscula, así que el valor por defecto, 20, alcanza a las últimas líneas de menos de 4 a 7 em: unas 8 a 12 letras. Para alcanzar las de menos de unas N letras, ponlo en torno a 2 × N.</td>
+      <td>Umbral para la última línea de un párrafo, contado en espacios entre palabras, no en letras: la línea es corta cuando mide menos de <code>runtMinCharacters × anchoDeEspacioNormal</code> píxeles. En la mayoría de los tipos de letra para texto, un espacio mide entre un cuarto y un tercio de em, más o menos media letra minúscula, así que el valor por defecto, 20, detecta las últimas líneas de menos de 4 a 7 em, es decir, de unas 8 a 12 letras. Para detectar las de menos de unas N letras, ponlo en torno a 2 × N.</td>
     </tr>
     <tr>
       <td><code>runtPenalty</code></td>
       <td><code>number</code></td>
       <td><code>1000</code></td>
-      <td>Penalización equivalente a <em>badness</em> (se inyecta en la fórmula cuadrática de Knuth–Plass, en la misma escala que el <em>badness</em> de línea, que satura en 10000). <code>0</code> desactiva la penalización.</td>
+      <td>Penalización equivalente a una <em>badness</em> que se introduce en la fórmula cuadrática de deméritos de Knuth–Plass (en la misma escala que la <em>badness</em> de una línea, que se satura en 10000). <code>0</code> desactiva la penalización.</td>
     </tr>
     <tr>
       <td><code>gradedRuntPenalty</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Gradúa la penalización por línea corta según lo corta que se queda la última línea: una última línea de ancho <em>w</em> bajo el umbral <em>t</em> cuesta <code>runtPenalty × (1 − w / t)</code> en lugar de la penalización entera. Así, un final de dos palabras cuesta menos que uno de una, y el algoritmo baja una palabra cuando una línea de arriba puede cederla («…sallies of» / «our minds.» en lugar de «…sallies of our» / «minds.»). Desactivado por defecto: todas las líneas cortas cuestan lo mismo, y el algoritmo conserva las líneas más apretadas de arriba.</td>
+      <td>Gradúa la penalización según lo corta que se quede la última línea: una última línea de ancho <em>w</em> por debajo del umbral <em>t</em> cuesta <code>runtPenalty × (1 − w / t)</code> en lugar de la penalización entera. Así, un final de dos palabras cuesta menos que uno de una, y el algoritmo baja una palabra cuando una línea de arriba puede cederla («…sallies of» / «our minds.» en lugar de «…sallies of our» / «minds.»). Desactivado por defecto: todas las líneas cortas cuestan lo mismo, y el algoritmo conserva las líneas más apretadas de arriba.</td>
     </tr>
     <tr>
       <td><code>avoidRuntsInLists</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando es <code>true</code>, los elementos de lista también reciben la penalización por línea corta. Solo efectivo si <code>avoidRunts</code> es <code>true</code>.</td>
+      <td>Con <code>true</code>, los elementos de lista también reciben la penalización por línea corta. Solo actúa si <code>avoidRunts</code> es <code>true</code>.</td>
     </tr>
     <tr>
       <td><code>tightenRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando la penalización no ha podido evitar una línea corta, compone el párrafo con una línea menos: los espacios se aprietan (nunca por debajo de <code>minWordSpacing</code>) y, si con eso no basta, entra además algo de tracking negativo. La composición más corta se descarta, y la línea corta se queda, si estira una línea justificada más allá de <code>maxWordSpacing</code> o, si el párrafo ya tiene una línea justificada más abierta, más que esa línea, o si compone en bandera (más de 3 veces el espacio normal) más líneas que el párrafo. Los espacios del texto en bandera no cambian de ancho, así que ahí solo interviene el tracking. Requiere <code>optimalLineBreaking</code> y <code>avoidRunts</code> (y <code>optimalRagged</code> en el texto en bandera).</td>
+      <td>Si la penalización no ha conseguido evitar una línea corta, compone el párrafo con una línea menos: los espacios entre palabras se estrechan (nunca por debajo de <code>minWordSpacing</code>) y, si con eso no basta, se reduce además un poco el espaciado entre letras. Esa composición más corta se descarta, y la línea corta se queda, si estira una línea justificada más allá de <code>maxWordSpacing</code> (o, si el párrafo ya tiene una línea justificada más abierta, más que esa línea), o si deja en bandera (por encima de 3 veces el espacio normal) más líneas de las que tenía el párrafo. Los espacios del texto en bandera mantienen su ancho, así que ahí solo interviene el espaciado entre letras. Requiere <code>optimalLineBreaking</code> y <code>avoidRunts</code> (y <code>optimalRagged</code> en el texto en bandera).</td>
     </tr>
     <tr>
       <td><code>maxRuntTracking</code></td>
       <td><code>number</code></td>
       <td><code>10</code></td>
-      <td>Tracking máximo que puede tomar ese ajuste, en milésimas de eme (la unidad de InDesign: 10 = 0,01 em por carácter), aplicado como apriete. Con <code>0</code> el ajuste se limita al espaciado entre palabras.</td>
+      <td>Máximo espaciado entre letras que puede usar ese arreglo, en milésimas de em (la unidad de InDesign: 10 = 0,01 em por carácter), aplicado para estrechar. Con <code>0</code>, el arreglo solo juega con los espacios entre palabras.</td>
     </tr>
     <tr>
       <td><code>slackWeight</code></td>
       <td><code>number</code></td>
       <td><code>10</code></td>
-      <td>Peso aplicado al coste cuadrático del "espacio de columna no usado". Valores más altos hacen que la maquetación prefiera llenar las columnas al máximo; <code>0</code> desactiva esta presión por completo.</td>
+      <td>Peso que se aplica al coste cuadrático del «espacio de columna sin usar». Cuanto más alto, más tiende la maquetación a llenar las columnas al máximo; <code>0</code> desactiva por completo esta presión.</td>
     </tr>
     <tr>
       <td><code>keepColonWithList</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando un párrafo termina con dos puntos que introducen directamente una lista, mantiene la línea de los dos puntos unida a la lista: si colocar el párrafo no deja sitio para que el primer elemento de la lista empiece en la misma columna/página, la última línea (o el párrafo entero, si tiene una sola línea) se mueve a la siguiente columna junto con la lista. Cuánto sitio basta lo dice <code>colonListRoom</code>. Cuando esta regla tenga que empujar el párrafo completo y justo antes haya una secuencia de títulos en la columna, esos títulos también se arrastran hacia adelante para que <code>headings.keepWithNext</code> siga cumpliéndose.</td>
+      <td>Cuando un párrafo termina con dos puntos que introducen directamente una lista, mantiene esa última línea unida a la lista: si, al colocar el párrafo, no queda sitio para que el primer elemento de la lista empiece en la misma columna o página, la última línea (o el párrafo entero, si solo tiene una) pasa a la columna siguiente junto con la lista. Cuánto sitio es suficiente lo decide <code>colonListRoom</code>. Si esta regla obliga a pasar el párrafo entero y justo antes hay en la columna una serie de encabezados, esos encabezados también pasan, para que <code>headings.keepWithNext</code> se siga cumpliendo.</td>
     </tr>
     <tr>
       <td><code>colonListRoom</code></td>
       <td><code>'item' | 'line'</code></td>
       <td><code>'item'</code></td>
-      <td>El sitio que pide <code>keepColonWithList</code> bajo la línea de los dos puntos. <code>'item'</code>: el que las reglas de huérfanas y viudas de las listas dejarían del primer elemento al pie de la columna, una línea si puede partirse ahí, todo él si lo mantienen entero (un elemento de dos líneas, por ejemplo). <code>'line'</code>: una línea, como hasta postext 1.4; un primer elemento que esas reglas mantienen entero pasa entonces solo a la columna siguiente y deja la línea de los dos puntos al pie. Una configuración guardada antes de <code>configVersion</code> 6, en un libro que introduce una lista con dos puntos, se lee con <code>'line'</code> (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Cualquier otro valor se lee como <code>'item'</code>.</td>
+      <td>El sitio que pide <code>keepColonWithList</code> debajo de la línea terminada en dos puntos. <code>'item'</code>: la parte del primer elemento que las reglas de huérfanas y viudas de las listas dejarían al pie de la columna, es decir, una línea si el elemento puede partirse ahí, o el elemento entero si esas reglas lo mantienen unido (por ejemplo, un elemento de dos líneas). <code>'line'</code>: una línea, como hasta postext 1.4; un primer elemento que esas reglas mantienen entero pasa entonces solo a la columna siguiente y deja al pie la línea de los dos puntos. Una configuración guardada antes de <code>configVersion</code> 6, en un libro que introduce una lista con dos puntos, se lee con <code>'line'</code> (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Cualquier otro valor se lee como <code>'item'</code>.</td>
     </tr>
     <tr>
       <td><code>hyphenateAcrossColumns</code></td>
       <td><code>boolean | 'withinPage'</code></td>
       <td><code>true</code></td>
-      <td>Permite que una columna o una página termine en una palabra partida (el <em>Hyphenate Across Column</em> de InDesign). Con <code>false</code>, el párrafo que cruza el salto de columna se vuelve a cortar para que su última línea en la columna termine en una palabra entera; los espacios entre palabras de las líneas de arriba absorben la diferencia, dentro de <code>maxWordSpacing</code> y <code>minWordSpacing</code>. Es una preferencia: donde ningún corte dentro de esos límites lo evita, el guion se queda. Lo intenta en todos los saltos de columna de un párrafo: en el primero y en los siguientes que caen donde termina una columna llena, con un nuevo corte; y en un salto posterior que cae en otro sitio (una viuda evitada, una banda cortada a nivel), con otro nuevo corte desde esa columna, que deja las líneas ya colocadas en las columnas anteriores con sus cortes y solo vuelve a cortar el resto. <code>'withinPage'</code> protege las líneas que cierran una página y ninguna otra: una palabra puede partirse entre dos columnas de una misma página, y la última línea de una página termina en una palabra entera siempre que los límites lo permiten. Cambia menos líneas que <code>false</code>, y eso pesa con tres columnas o más, donde dos de cada tres finales de columna quedan dentro de la página; con una sola columna los dos valores dan las mismas líneas. Una columna cierra su página cuando ninguna columna posterior de la página recibe texto: no lo recibe una columna lateral reservada a los flotantes, ni una columna que una tabla o una figura ha llenado. No afecta al cuerpo de los recuadros. Con <code>optimalRagged</code>, un párrafo en bandera se vuelve a cortar igual: sus espacios entre palabras no cambian de ancho, así que solo se mueven los finales de sus líneas. Cada nuevo corte mide el párrafo una vez más, así que un libro con muchos guiones al pie de columna tarda algo más en componerse. Necesita <code>optimalLineBreaking</code>, y <code>optimalRagged</code> en el texto en bandera.</td>
+      <td>Permite que una columna o una página termine en una palabra partida (el <em>Hyphenate Across Column</em> de InDesign). Con <code>false</code>, el párrafo que cruza el cambio de columna se vuelve a cortar para que su última línea en la columna termine en una palabra entera; los espacios entre palabras de las líneas de arriba absorben la diferencia, sin salirse de <code>maxWordSpacing</code> y <code>minWordSpacing</code>. Es una preferencia: si ningún corte dentro de esos límites lo evita, el guion se queda. Se aplica a todos los cambios de columna de un párrafo. El primero, y los siguientes que caen donde termina una columna llena, se resuelven con un único corte nuevo. Un cambio posterior que cae en otro punto (una viuda evitada, una banda cortada a la misma altura) recibe un corte propio a partir de esa columna, que conserva las líneas ya colocadas en las columnas anteriores y solo vuelve a cortar el resto. <code>'withinPage'</code> protege las líneas que cierran una página y ninguna otra: una palabra puede partirse entre dos columnas de la misma página, y la última línea de cada página termina en una palabra entera siempre que los límites lo permitan. Cambia menos líneas que <code>false</code>, y eso importa a partir de tres columnas, donde dos de cada tres finales de columna quedan dentro de la página; con una sola columna, los dos valores dan las mismas líneas. Una columna cierra su página cuando ninguna columna posterior de esa página recibe texto: no lo recibe una columna lateral reservada a los flotantes, ni una columna que haya llenado una tabla o una figura. No afecta al contenido de los recuadros. Con <code>optimalRagged</code>, un párrafo en bandera se vuelve a cortar de la misma forma: sus espacios entre palabras mantienen su ancho, así que solo se mueven los finales de sus líneas. Cada nuevo corte vuelve a medir el párrafo, así que un libro con muchos guiones al pie de columna tarda algo más en maquetarse. Requiere <code>optimalLineBreaking</code>, y <code>optimalRagged</code> en el texto en bandera.</td>
     </tr>
     <tr>
       <td><code>paragraphContainerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td><code>'collapse'</code></td>
-      <td>El espacio bajo un contenedor <code>:::paragraphs</code> que se cierra con un párrafo, entre ese párrafo y el bloque siguiente (ver <a href="/es/docs/configuration-styles#el-contenedor-paragraphs">El contenedor <code>:::paragraphs</code></a>). <code>'collapse'</code>: el mayor entre el <code>spaceBetween</code> y el <code>marginBottom</code> del estilo y la separación entre párrafos del texto que rodea al contenedor (una línea con <code>paragraphSpacing</code>; en un recuadro, la del recuadro), fundido con el espacio que el bloque siguiente deja sobre sí, como entre dos párrafos del texto corrido: un encabezado bajo una bibliografía queda a su propio <code>marginTop</code> de ella, no a ese margen más la separación de las entradas. <code>'add'</code>: como hasta postext 1.4, bajo la última línea se pone solo el espacio del estilo antes del ajuste a la rejilla, el espacio que el bloque siguiente deja sobre sí se suma debajo y la separación entre párrafos no cuenta, así que el párrafo que sigue al contenedor podía quedar más pegado a él que a cualquier otro. Una configuración guardada antes de <code>configVersion</code> 8 que declara algún estilo de párrafo, en un libro que tiene uno de estos contenedores, se lee con <code>'add'</code> (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Un <code>marginBottom</code> negativo sube el bloque siguiente en los dos casos. Un estilo de párrafo puede fijar su propia regla para sus contenedores (<code>containerSpacing</code>, desde postext 1.28).</td>
+      <td>El espacio que queda bajo un contenedor <code>:::paragraphs</code> que termina en un párrafo, entre ese párrafo y el bloque siguiente (véase <a href="/es/docs/configuration-styles#el-contenedor-paragraphs">El contenedor <code>:::paragraphs</code></a>). <code>'collapse'</code>: el mayor de estos valores: el <code>spaceBetween</code> del estilo, su <code>marginBottom</code> y la separación entre párrafos del texto que rodea al contenedor (una línea si hay <code>paragraphSpacing</code>; dentro de un recuadro, la del recuadro), combinado con el espacio que el bloque siguiente reserva por encima, igual que entre dos párrafos del texto corrido: un encabezado bajo una bibliografía queda separado de ella por su propio <code>marginTop</code>, no por ese margen más la separación entre entradas. <code>'add'</code>: como hasta postext 1.4, bajo la última línea se pone solo el espacio del estilo, antes del ajuste a la rejilla; debajo se suma el espacio que el bloque siguiente reserva por encima, y la separación entre párrafos no cuenta, así que el párrafo que sigue al contenedor podía quedar más pegado a él que a cualquier otro. Una configuración guardada antes de <code>configVersion</code> 8 que declara algún estilo de párrafo, en un libro que tiene uno de estos contenedores, se lee con <code>'add'</code> (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). En los dos casos, un <code>marginBottom</code> negativo sube el bloque siguiente. Un estilo de párrafo puede fijar su propia regla para sus contenedores (<code>containerSpacing</code>, desde postext 1.28).</td>
     </tr>
   </tbody>
 </table>
 
-**Sobre las líneas cortas.** Una línea corta (*runt*, en inglés) es la última línea de un párrafo cuando es demasiado corta para sentirse como una línea de texto propiamente dicha — típicamente una o dos palabras cortas varadas al final del párrafo. Como la comprobación se basa en el ancho en píxeles de la línea relativo al ancho del espacio normal, `runtMinCharacters` se adapta automáticamente al tamaño de fuente actual. Una palabra corta visualmente más ancha que `runtMinCharacters × anchoDeEspacio` es válida; una palabra más estrecha que eso (o verdaderamente sola) dispara la penalización. El umbral cuenta espacios entre palabras, que miden más o menos la mitad que una letra: el valor por defecto, 20, equivale a una última línea de unas 8 a 12 letras. Toda línea corta cuesta la penalización entera, así que entre dos finales por debajo del umbral el algoritmo conserva las líneas más apretadas de arriba; `gradedRuntPenalty` valora cada uno según lo que le falta y gana el final más largo. Para quien sienta curiosidad matemática: con el `runtPenalty` por defecto de 1000, evitar una línea corta domina sobre cualquier alternativa que exigiera un estiramiento del espacio entre palabras de hasta aproximadamente r≈2,15.
+**Sobre las líneas cortas.** Una línea corta (*runt*, en inglés) es la última línea de un párrafo cuando es demasiado breve para parecer una línea de texto de verdad: normalmente, una o dos palabras cortas abandonadas al final del párrafo. Como la comprobación compara el ancho en píxeles de la línea con el ancho del espacio normal, `runtMinCharacters` se adapta automáticamente al cuerpo de la letra en uso. Una palabra corta que visualmente mide más que `runtMinCharacters × anchoDeEspacio` no plantea problema; una palabra más estrecha (o que de verdad está sola) recibe la penalización. El umbral cuenta espacios entre palabras, que miden más o menos la mitad que una letra: el valor por defecto, 20, equivale a una última línea de unas 8 a 12 letras. Todas las líneas cortas cuestan la penalización entera, así que, entre dos finales por debajo del umbral, el algoritmo conserva las líneas más apretadas de arriba; `gradedRuntPenalty`, en cambio, valora cada final según lo que le falta, y gana el más largo. Para quien sienta curiosidad matemática: con el `runtPenalty` por defecto de 1000, evitar una línea corta se impone a cualquier otra solución que exija estirar los espacios entre palabras hasta un factor de r≈2,15, aproximadamente.
 
-**Blandas, no duras.** Ninguna de estas reglas puede *impedir* una ruptura — el motor siempre produce una maquetación. Son deméritos: el algoritmo combina en una única optimización global la "badness" (desigualdad), el coste de la separación silábica, la suavidad de clase de encaje y estas penalizaciones estructurales, y elige el conjunto de rupturas con el coste total más bajo. Si necesitas una garantía más dura, sube la penalización; si un documento concreto se lee mejor con la penalización relajada, bájala.
+**Blandas, no estrictas.** Ninguna de estas reglas puede *impedir* un corte: el motor siempre produce una maquetación. Son deméritos: el algoritmo pondera en una única optimización global la *badness* (lo mal que queda cada línea), el coste de la separación silábica, la regularidad entre clases de ajuste y estas penalizaciones estructurales, y elige el conjunto de cortes con el menor coste total. Si necesitas una garantía más firme, sube la penalización; si un documento concreto se lee mejor con una penalización más suave, bájala.
 
 
 ## Equilibrado de columnas
 
-Las editoriales esperan que cada columna empiece en la parte superior de la página y termine alineada con su parte inferior. Las reglas de ruptura (protección de huérfanas y viudas, títulos unidos a su texto, figuras indivisibles) dejan columnas cortas de forma natural — una o más líneas de rejilla base vacías al final. Con el equilibrado activado, el motor hace lo que haría un maquetista, aplicando sus palancas en orden de prioridad editorial:
+Las editoriales esperan que todas las columnas empiecen en la parte superior de la página y terminen a ras de su pie. Las reglas de corte (la protección contra huérfanas y viudas, los encabezados unidos a su texto, las figuras que no se pueden partir) dejan, de forma natural, columnas cortas, con una o más líneas vacías de la rejilla base al final. Con el equilibrado activado, el motor hace lo que haría un maquetista y aplica sus palancas por orden de prioridad editorial:
 
-1. **Una caja que cierra la columna** — un callout que termina una columna corta baja exactamente el espacio que queda bajo su pie, de modo que su borde inferior cae en la última casilla de rejilla de la página, a nivel con la última línea de la columna contigua. Ocupa ese espacio aunque sea menor que una línea, siempre que nada pase a otra columna. Por defecto actúa antes que cualquier otra palanca y se queda con todo el hueco, de modo que un recuadro que comenta el párrafo de encima puede acabar varias líneas por debajo de él; con `closingBox: 'last'` los encabezados, los finales de lista y las demás palancas de espacio toman antes las líneas enteras, y el recuadro solo lo que dejan, y con `closingBox: 'off'` no se mueve nunca.
-2. **Imágenes con zona segura** — una imagen con zona segura (`Resource.safeArea`, véase [Formato del documento › Zona segura](/es/docs/document-format-resources#zona-segura)) colocada en línea en la columna corta, o flotada en su cabeza o su pie y solo sobre ella, crece en líneas enteras de rejilla, recortada dentro de su zona segura, hasta llenar la columna o hasta que el recorte llega a la zona segura. Una imagen más alta no deja ningún hueco en la página, así que actúa antes de añadir ningún espacio; un flotante en la cabeza de una columna de una página o banda cuyas cabezas de columna quedan a nivel (véase más abajo) no crece. Se anota como `flexFigure`. No tiene ajuste propio: solo crece una imagen cuyo recurso marca una zona segura.
-3. **Encabezados** — se añaden líneas completas de rejilla al margen superior de los encabezados de la columna corta. Cuando hacen falta varias líneas y la columna contiene varios encabezados, las líneas se reparten entre ellos, dejando siempre la mayor parte al encabezado más importante (un `h2` recibe más que un `h3`). Los encabezados situados al principio de una columna nunca reciben espacio adicional, de modo que las columnas siguen empezando en la parte superior — salvo un encabezado justo bajo una figura o tabla que encabeza su columna en una página que fluye hacia la siguiente: el espacio va sobre ese encabezado, bajo la figura. Un encabezado toma así como mucho `maxLinesBeforeLoose` líneas (dos por defecto) antes de probar las palancas siguientes, y las demás, hasta `maxLinesPerHeading`, solo cuando estas ya no pueden dar más.
-4. **Finales de lista** — cuando los encabezados no pueden absorber todo el hueco, se añade una línea de rejilla donde termina una lista o enumeración (el aire tras una lista se lee con naturalidad), con un máximo por lista.
-5. **Bajo fórmulas, cajas y figuras** — después va una línea de rejilla bajo una fórmula destacada o una caja tras la que sigue el texto (`stretchAfterDisplays`; se lee como margen del propio elemento), y bajo una figura o tabla que encabeza la columna (`stretchAfterFloats`, con el máximo de `maxLinesAfterFloat`).
-6. **Párrafos corridos** — como último recurso, se recompone un párrafo de la columna con una línea más (el `\looseness=+1` de TeX), eligiendo el párrafo más largo para que el espaciado adicional se diluya de forma invisible. La solución corrida solo se acepta cuando todas sus líneas quedan **por debajo de `bodyText.maxWordSpacing`** — el color tipográfico nunca supera el límite que ya tengas configurado. Requiere `bodyText.optimalLineBreaking`.
+1. **Un recuadro que cierra la columna**: un recuadro que termina una columna corta baja exactamente el espacio que queda bajo su pie, de modo que su borde inferior cae en la última línea de la rejilla de la página, a la altura de la última línea de la columna de al lado. Ocupa ese espacio aunque sea menor que una línea, siempre que nada pase a otra columna. Por defecto actúa antes que cualquier otra palanca y se queda con todo el hueco, así que un recuadro que comenta el párrafo de encima puede acabar varias líneas por debajo de él; con `closingBox: 'last'`, los encabezados, los finales de lista y las demás palancas de espacio toman antes las líneas enteras, y el recuadro solo lo que quede, y con `closingBox: 'off'` el recuadro no se mueve nunca.
+2. **Imágenes con zona segura**: una imagen con zona segura (`Resource.safeArea`; véase [Formato del documento › Zona segura](/es/docs/document-format-resources#zona-segura)) colocada en línea en la columna corta, o como flotante en su cabeza o en su pie y solo sobre esa columna, crece en líneas enteras de la rejilla, recortada dentro de su zona segura, hasta llenar la columna o hasta que el recorte alcanza la zona segura. Una imagen más alta no deja ningún hueco en la página, así que esta palanca actúa antes de añadir ningún espacio; un flotante en la cabeza de una columna, en una página o una banda cuyas columnas mantienen la cabeza a la misma altura (véase más abajo), no crece. Se registra como `flexFigure`. No tiene ajuste propio: solo crece una imagen cuyo recurso define una zona segura.
+3. **Encabezados**: se añaden líneas enteras de la rejilla al margen superior de los encabezados de la columna corta. Cuando hacen falta varias líneas y la columna contiene varios encabezados, las líneas se reparten entre ellos, y siempre recibe más el encabezado más importante (un `h2` recibe más que un `h3`). Los encabezados situados justo al principio de una columna nunca reciben espacio adicional, para que las columnas sigan empezando en la parte superior de la página, salvo un encabezado que va justo debajo de una figura o una tabla que encabeza su columna en una página que continúa en la siguiente: el espacio va sobre ese encabezado, debajo de la figura. De este modo, un encabezado toma como mucho `maxLinesBeforeLoose` líneas (dos por defecto) antes de que se prueben las palancas siguientes, y las demás, hasta `maxLinesPerHeading`, solo cuando esas ya no tienen nada más que dar.
+4. **Finales de lista**: cuando los encabezados no pueden absorber todo el hueco, se añade una línea de la rejilla donde termina una lista o enumeración (el espacio tras una lista se lee con naturalidad), con un máximo por lista.
+5. **Bajo fórmulas, recuadros y figuras**: después se añade una línea de la rejilla bajo una fórmula en bloque o un recuadro tras el que continúa el texto (`stretchAfterDisplays`; se lee como un margen del propio elemento), y bajo una figura o una tabla que encabeza la columna (`stretchAfterFloats`, con el máximo que fija `maxLinesAfterFloat`).
+6. **Párrafos aflojados**: como último recurso, un párrafo de la columna se vuelve a cortar con una línea más (el `\looseness=+1` de TeX); se elige el párrafo más largo, para que el espacio adicional entre palabras se reparta sin que se note. Esta solución solo se acepta si todas las líneas quedan **por debajo de `bodyText.maxWordSpacing`**: el gris tipográfico nunca supera el límite que ya hayas configurado. Requiere `bodyText.optimalLineBreaking`.
 
-En una retícula de caracteres (`cjk.grid`, véase [Composición china › La retícula de caracteres](/es/docs/chinese-layout#la-retícula-de-caracteres)) cada carácter ocupa una casilla de un cuadratín de ancho y cada línea cae en el paso de líneas de la retícula, que es también la rejilla base. Allí el equilibrado está desactivado por defecto, como en el texto vertical: una página compuesta línea a línea sobre una retícula, a la manera de la GB/T 9704, que cuenta 22 líneas de 28 caracteres, deja corta la columna que termina corta. Una configuración que fija `enabled: true` recibe palancas que respetan la retícula: los encabezados, los finales de lista, las fórmulas en bloque y las figuras toman líneas enteras de la retícula, de modo que el texto de debajo se desplaza filas enteras, y `gridLines: 'off'` deja fuera esas palancas para una norma que no tiene ninguna fila vacía que ceder. Un párrafo chino o japonés gana una línea solo cuando ningún hueco entre dos de sus caracteres se abre más de `maxTracking`, y no recibe tracking en sus letras: una línea a la que le falta un carácter reparte un cuadratín entre sus huecos, muy por encima de los 0,01 em por defecto, así que en una retícula de casillas enteras la palanca de párrafos corridos casi nunca encuentra nada. La caja que cierra una columna y las imágenes con zona segura quedan fuera de la retícula por diseño y funcionan como en cualquier otra página.
+En una retícula de caracteres (`cjk.grid`; véase [Composición china › La retícula de caracteres](/es/docs/chinese-layout#la-retícula-de-caracteres)), cada carácter ocupa una casilla de un cuadratín de ancho, y cada línea, un paso de la retícula, que también es la rejilla base. Allí el equilibrado está desactivado por defecto, igual que en el texto vertical: una página compuesta línea a línea sobre una retícula, como la que pide la GB/T 9704 (22 líneas de 28 caracteres), deja corta la columna que sale corta. Si la configuración fija `enabled: true`, las palancas respetan la retícula: los encabezados, los finales de lista, las fórmulas en bloque y las figuras toman líneas enteras de la retícula, de modo que el texto de debajo se desplaza por filas enteras, y `gridLines: 'off'` deja fuera esas palancas para las normas que no tienen ninguna fila vacía que ceder. Un párrafo chino o japonés solo gana una línea si ningún hueco entre dos de sus caracteres se ensancha más de `maxTracking`, y sus letras no reciben espaciado adicional: una línea a la que le falta un carácter tiene que repartir un cuadratín entre sus huecos, mucho más que los 0,01 em por defecto, así que, en una retícula de casillas enteras, la palanca de los párrafos aflojados casi nunca encuentra nada. El recuadro que cierra una columna y las imágenes con zona segura quedan, por diseño, fuera de la retícula y funcionan como en cualquier otra página.
 
-La última columna de una página solo se equilibra cuando la página fluye de forma natural hacia la siguiente — la página final de un capítulo termina corta de forma legítima. Esa página, y una banda de cierre cortada a nivel por `trailing`, mantienen además las cabezas de sus columnas a la misma altura: no se añade ninguna línea bajo una figura o tabla que encabece una de sus columnas (la palanca tras flotantes), y un encabezado o una caja que abre una columna bajo esa figura se queda en su cabeza, diga lo que diga `stretchAfterFloats`, igual que el encabezado que va justo debajo de una apertura `span: 'page'`, en la columna de esa apertura, de modo que ninguna columna empieza más abajo que su vecina solo para igualar los pies.
+La última columna de una página solo se equilibra si la página continúa de forma natural en la siguiente: es normal que la última página de un capítulo termine corta. En una página así, y en una banda de cierre cortada a la misma altura por `trailing`, las cabezas de las columnas también se mantienen a la misma altura: no se añade ninguna línea bajo una figura o una tabla que encabece una de sus columnas (la palanca de los flotantes), y un encabezado o un recuadro que abre una columna bajo esa figura se queda en su cabeza, diga lo que diga `stretchAfterFloats`. Lo mismo ocurre con el encabezado que va justo debajo de una apertura `span: 'page'`, en la columna de esa apertura. Así, ninguna columna empieza más abajo que la de al lado solo para igualar los pies.
+
+Estos ajustes van en `headings.balancing`.
 
 <table>
   <thead>
@@ -200,7 +202,7 @@ La última columna de una página solo se equilibra cuando la página fluye de f
       <td><code>enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si se equilibran los finales de columna. Desactivado por defecto en texto vertical (<code>layout.writingMode: 'vertical-rl'</code>) y en una retícula de caracteres (<code>cjk.grid.enabled</code>, desde postext 1.25); <code>true</code> lo activa también ahí.</td>
+      <td>Si se equilibran los pies de las columnas. Desactivado por defecto en el texto vertical (<code>layout.writingMode: 'vertical-rl'</code>) y en una retícula de caracteres (<code>cjk.grid.enabled</code>, desde postext 1.25); <code>true</code> lo activa también en esos casos.</td>
     </tr>
     <tr>
       <td><code>maxLinesPerHeading</code></td>
@@ -212,7 +214,7 @@ La última columna de una página solo se equilibra cuando la página fluye de f
       <td><code>maxLinesBeforeLoose</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Líneas de rejilla que un encabezado puede tomar antes de probar las palancas siguientes: los finales de lista, las fórmulas y cajas, las figuras y los párrafos corridos. El encabezado solo recibe las demás, hasta <code>maxLinesPerHeading</code>, cuando esas ya no pueden dar más, de modo que una página con un solo encabezado no abre cuatro líneas sobre él mientras sus párrafos podrían correr una línea. Un valor igual o mayor que <code>maxLinesPerHeading</code> da primero todas sus líneas a los encabezados, como hasta postext 1.27; <code>0</code> prueba las demás palancas antes de añadir ninguna línea sobre un encabezado. Desde postext 1.28; los documentos guardados antes conservan el orden anterior (<code>pinLegacyLooseOrder</code>).</td>
+      <td>Líneas de la rejilla que puede tomar un encabezado antes de que se prueben las palancas siguientes: los finales de lista, las fórmulas y los recuadros, las figuras y los párrafos aflojados. El encabezado solo recibe las demás, hasta <code>maxLinesPerHeading</code>, cuando esas ya no tienen nada más que dar; así, una página con un único encabezado no abre cuatro líneas sobre él cuando sus párrafos podrían alargarse una línea. Un valor igual o superior a <code>maxLinesPerHeading</code> da primero todas sus líneas a los encabezados, como hasta postext 1.27; <code>0</code> prueba las demás palancas antes de añadir ninguna línea sobre un encabezado. Desde postext 1.28; los documentos guardados antes conservan el orden anterior (<code>pinLegacyLooseOrder</code>).</td>
     </tr>
     <tr>
       <td><code>stretchAfterLists</code></td>
@@ -230,13 +232,13 @@ La última columna de una página solo se equilibra cuando la página fluye de f
       <td><code>stretchAfterDisplays</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite una línea de rejilla adicional bajo una fórmula destacada, y bajo una caja, en la columna corta, tras la palanca de los finales de lista: el bloque que la sigue baja una línea. Con <code>false</code>, el espacio bajo fórmulas y cajas queda como lo fijan sus propios márgenes; el hueco pasa a las palancas siguientes y la columna termina corta si no lo cierran. Desde postext 1.28.</td>
+      <td>Permite añadir, en la columna corta y después de la palanca de los finales de lista, una línea de la rejilla bajo una fórmula en bloque y bajo un recuadro: el bloque siguiente baja una línea. Con <code>false</code>, el espacio bajo las fórmulas y los recuadros es el que fijan sus propios márgenes; el hueco pasa a las palancas siguientes, y la columna termina corta si no lo cierran. Desde postext 1.28.</td>
     </tr>
     <tr>
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite líneas de rejilla adicionales bajo una figura o tabla que encabeza la columna corta (un flotante superior), tras la palanca de los finales de lista, de modo que el texto de debajo baja en lugar de acabar la columna corta. Nunca en una página que no fluye hacia la siguiente (la página final de un capítulo) ni en una banda de cierre cortada a nivel por <code>trailing</code>: ahí las cabezas de las columnas quedan a la misma altura y la última columna puede terminar una línea más corta. El primer bloque bajo la figura puede ser la continuación de un párrafo empezado en la página anterior: baja igualmente, la línea que las reglas de corte dejaron libre al pie de la columna (una línea que la regla de viudas dejó vacía, o un espacio entre párrafos sin sitio para texto detrás). Con <code>false</code>, el texto queda justo debajo de la figura. Bajo un flotante a varias columnas, las columnas bajan juntas o no bajan: véase <code>stretchAfterWideFloats</code>.</td>
+      <td>Permite añadir líneas de la rejilla, después de la palanca de los finales de lista, bajo una figura o una tabla que encabeza la columna corta (un flotante superior), para que el texto de debajo baje en lugar de que la columna termine corta. Nunca en una página que no continúa en la siguiente (la última página de un capítulo) ni en una banda de cierre cortada a la misma altura por <code>trailing</code>: ahí las cabezas de las columnas se mantienen a la misma altura y la última columna puede terminar una línea más corta. El primer bloque bajo la figura puede ser la continuación de un párrafo empezado en la página anterior: baja igualmente, tanto como la línea que las reglas de corte dejaron libre al pie de la columna (una línea que la regla de las viudas dejó vacía, o un espacio entre párrafos sin sitio para el texto que sigue). Con <code>false</code>, el texto queda justo debajo de la figura. Bajo un flotante que ocupa varias columnas, las columnas bajan todas o ninguna; véase <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
@@ -248,70 +250,70 @@ La última columna de una página solo se equilibra cuando la página fluye de f
       <td><code>stretchAfterWideFloats</code></td>
       <td><code>'flush' | 'always'</code></td>
       <td><code>'flush'</code></td>
-      <td>Bajo una figura o tabla que ocupa dos o más columnas de texto. Con <code>'flush'</code>, una columna solo baja bajo ella cuando todas las columnas de texto que quedan bajo el flotante toman las mismas líneas, de modo que sus cabezas siguen a la misma altura, o cuando las líneas dejan esa columna a ras; no se añade una línea que bajaría la cabeza de una columna y la dejaría corta igualmente, y el hueco pasa a los párrafos corridos. <code>'always'</code> estira esa columna como bajo cualquier flotante, como hasta postext 1.27. Cualquier otro valor se lee como <code>'flush'</code>. Desde postext 1.28; los documentos guardados antes conservan <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
+      <td>Bajo una figura o una tabla que ocupa dos o más columnas de texto. Con <code>'flush'</code>, una columna solo baja bajo ella si todas las columnas de texto que hay bajo el flotante reciben las mismas líneas, de modo que sus cabezas siguen a la misma altura, o si esas líneas dejan la columna a ras; no se añade una línea que bajaría la cabeza de una columna y la dejaría corta igualmente, y el hueco pasa a los párrafos aflojados. <code>'always'</code> estira esa columna como bajo cualquier otro flotante, como hasta postext 1.27. Cualquier otro valor se lee como <code>'flush'</code>. Desde postext 1.28; los documentos guardados antes conservan <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Último recurso: recompone párrafos de una columna corta con una línea más (una línea extra cada uno), sin superar <code>bodyText.maxWordSpacing</code>.</td>
+      <td>Último recurso: vuelve a cortar párrafos de una columna corta con una línea más cada uno, sin superar <code>bodyText.maxWordSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>maxLooseParagraphs</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Cuántos párrafos de una misma columna corta pueden ganar una línea, los más largos primero.</td>
+      <td>Cuántos párrafos de una misma columna corta pueden alargarse una línea, empezando por los más largos.</td>
     </tr>
     <tr>
       <td><code>trackParagraphs</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando el espaciado entre palabras no basta para ganar la línea, el párrafo corrido puede tomar además el menor tracking positivo (interletrado) que lo consiga.</td>
+      <td>Si el espacio entre palabras no basta para ganar la línea, el párrafo corrido puede recibir además el menor espaciado positivo entre letras con el que se consiga.</td>
     </tr>
     <tr>
       <td><code>maxTracking</code></td>
       <td><code>number</code></td>
       <td><code>10</code></td>
-      <td>Límite de ese tracking, en milésimas de eme por carácter (10 = 0,01 em).</td>
+      <td>Límite de ese espaciado entre letras, en milésimas de em por carácter (10 = 0,01 em).</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Nivela la banda de cierre de cada capítulo y del documento: cuando el flujo termina antes de llenar la página (en una apertura de capítulo, un <code>:::part</code>, una caja <code>placement: 'fixed'</code> que cierra el capítulo o el final del documento) con las columnas desiguales, se cortan a la misma altura — un tope de banda de <code>ceil(Σ usado / N / rejilla)</code> líneas, resuelto después de que las palancas anteriores hayan asentado las páginas previas —, de modo que una bibliografía corta termina a la misma altura en todas las columnas en lugar de llenar la primera y dejar la última a medias. El corte respeta las reglas de una banda sin cortar: cuando un bloque que no puede partirse en él (el final de un párrafo que los mínimos de huérfanas y viudas mantienen entero, una caja que no se parte) lo rebasaría — y perdería sus últimas líneas, porque los renderizadores recortan cada columna a su caja — o un encabezado cerraría una columna mientras su texto abre la siguiente (con <code>headings.keepWithNext</code>, el valor por defecto), el corte baja una línea, hasta tres veces, y si no basta se descarta. Un bloque que no puede empezar en las líneas que el corte deja bajo una figura que encabeza una columna (un párrafo necesita ahí su mínimo de huérfanas) pasa a la columna siguiente de la banda, como lo haría desde una columna sin cortar, y la figura queda sola en su columna. Las columnas cuyos pies difieren en una línea de la rejilla o menos se dejan como están: una banda de cierre cuya última columna termina una línea más corta es el final habitual, y cortarla solo movería una línea. El corte va a la banda en la que se midió, igual que el que pide una caja a ancho de página a mitad de página: hasta postext 1.4, cuando el primer texto de la página de cierre se había ofrecido antes a una banda sin sitio para él (una página que ocupa entera un flotante, la banda estrecha que deja al pie de la página anterior una caja a ancho de página), el corte se gastaba en esa banda y la página de cierre dejaba todas sus líneas en la primera columna. Las columnas de anchos distintos (una disposición de columna y media con texto en las dos) se cortan por superficie, pesando la altura de cada columna por su ancho, porque una línea de la columna estrecha lleva menos texto. Solo actúa cuando <code>enabled</code> es true.</td>
+      <td>Iguala la banda de cierre de cada capítulo y del documento: cuando el flujo termina antes de llenar la página (en una apertura de capítulo, un <code>:::part</code>, un recuadro <code>placement: 'fixed'</code> que cierra el capítulo o el final del documento) con las columnas desiguales, estas se cortan a la misma altura, con un tope de <code>ceil(Σ usado / N / rejilla)</code> líneas para la banda, que se calcula después de que las palancas anteriores hayan resuelto las páginas previas. Así, una bibliografía corta termina a la misma altura en todas las columnas, en lugar de llenar la primera y dejar la última a medias. El corte respeta las reglas que se aplican a una banda sin cortar. Si un bloque que no se puede partir en ese punto (el final de un párrafo que los mínimos de huérfanas y viudas mantienen entero, un recuadro que no se parte) lo sobrepasaría, y perdería sus últimas líneas porque los renderizadores recortan cada columna a su caja, o si un encabezado cerraría una columna y su texto abriría la siguiente (con <code>headings.keepWithNext</code>, el valor por defecto), el corte baja una línea, hasta tres veces, y después se descarta. Un bloque que no puede empezar en las líneas que deja el corte bajo una figura que encabeza una columna (un párrafo necesita ahí su mínimo de huérfanas) pasa a la columna siguiente de la banda, como lo haría desde una columna sin cortar, y la figura queda sola en su columna. Las columnas cuyos pies difieren en una línea de la rejilla o menos se dejan como están: una banda de cierre cuya última columna termina una línea más corta es el final habitual, y cortarla solo movería una línea. El corte se aplica a la banda en la que se midió, igual que el que pide un recuadro a ancho de página a mitad de página. Hasta postext 1.4, cuando el primer texto de la página de cierre se había ofrecido antes a una banda sin sitio para él (una página ocupada entera por un flotante, la banda estrecha que deja un recuadro a ancho de página al pie de la página anterior), el corte se gastaba en esa banda, y la página de cierre dejaba todas sus líneas en la primera columna. Las columnas de anchos distintos (una disposición de columna y media con texto en las dos) se cortan por superficie, ponderando la altura de cada columna por su ancho, porque una línea de la columna estrecha contiene menos texto. Solo actúa cuando <code>enabled</code> es true.</td>
     </tr>
     <tr>
       <td><code>trailingStep</code></td>
       <td><code>'lines' | 'grid'</code></td>
       <td><code>'lines'</code></td>
-      <td>La unidad del corte a nivel que hace <code>trailing</code> (y del corte que hace <code>beforeSpan</code> tras una caja que pasa a la página siguiente). <code>'lines'</code>: una banda cuyo texto va con un interlineado propio (un índice, una lista de referencias, un contenedor en cuerpo pequeño) se corta, y se reintenta, por líneas enteras de ese interlineado: la altura que comparte la mayoría de las líneas de la banda, sin contar encabezados ni cajas. Sus columnas terminan entonces con una línea de diferencia como mucho, como las de una banda de texto base. Una banda de texto base, y una que mezcla dos interlineados a partes iguales, se corta en la rejilla base como antes. También una banda cuyas líneas comparten altura pero quedan separadas por una fracción de línea (referencias con un espacio entre entradas, grupos de índice con un margen puesto a mano): cuatro de cada cinco líneas de cada columna han de estar a un número entero de líneas unas de otras. <code>'grid'</code>: todo corte es un número entero de líneas de rejilla base, como hasta postext 1.27, donde un corte en la rejilla dejaba entrar una línea de más en una columna de una banda fuera de rejilla y un corte fallido bajaba más de una de sus líneas (columnas con hasta tres líneas de diferencia). Cualquier otro valor se lee como <code>'lines'</code>. Desde postext 1.28; los documentos guardados antes conservan <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
+      <td>La unidad del corte a la misma altura que hace <code>trailing</code> (y del corte que hace <code>beforeSpan</code> detrás de un recuadro que pasa a la página siguiente). <code>'lines'</code>: una banda cuyo texto tiene un interlineado propio (un índice analítico, una lista de referencias, un contenedor en cuerpo pequeño) se corta, y se vuelve a intentar, por líneas enteras de ese interlineado, es decir, la altura que comparten la mayoría de las líneas de la banda, sin contar encabezados ni recuadros. Así, sus columnas terminan con una línea de diferencia como mucho, como las de una banda de texto base. Una banda de texto base, y una que mezcla dos interlineados a partes iguales, se cortan en la rejilla base, como antes. Lo mismo ocurre con una banda cuyas líneas tienen la misma altura pero están separadas por una fracción de línea (referencias con un espacio entre entradas, grupos del índice con un margen puesto a mano): en cada columna, cuatro de cada cinco líneas deben estar a un número entero de líneas unas de otras. <code>'grid'</code>: todo corte es un número entero de líneas de la rejilla base, como hasta postext 1.27; entonces, un corte en la rejilla dejaba entrar una línea de más en una columna de una banda fuera de la rejilla, y un corte fallido bajaba más de una de sus líneas (con columnas de hasta tres líneas de diferencia). Cualquier otro valor se lee como <code>'lines'</code>. Desde postext 1.28; los documentos guardados antes conservan <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
     </tr>
     <tr>
       <td><code>beforeSpan</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Nivela la banda que deja atrás un bloque a ancho de página: cuando un aviso <code>span: 'page'</code> no cabe bajo las columnas actuales ni siquiera tras un corte nivelado, y tiene que pasar a la página siguiente o partirse (<code>calloutStyles[].keepTogether: false</code>), las columnas que interrumpe se cortan a la misma altura — el mismo tope de cierre que recibe una banda final — en lugar de que la primera llene la página y la última termine corta. La página queda como salto explícito para que las palancas anteriores no vuelvan a estirar su última columna hasta el pie; la caja, o la parte que cabe, queda entonces bajo las columnas niveladas. Solo actúa cuando <code>enabled</code> es true.</td>
+      <td>Iguala la banda que deja atrás un bloque a ancho de página: cuando un recuadro <code>span: 'page'</code> no cabe bajo las columnas en curso ni siquiera tras un corte a la misma altura, y tiene que pasar a la página siguiente o partirse (<code>calloutStyles[].keepTogether: false</code>), las columnas que interrumpe se cortan a la misma altura (con el mismo tope que recibe una banda de cierre), en lugar de que la primera llene la página y la última termine corta. La página queda como un salto explícito, para que las palancas anteriores no vuelvan a estirar su última columna hasta el pie; el recuadro, o la parte que quepa, queda debajo de las columnas igualadas. Solo actúa cuando <code>enabled</code> es true.</td>
     </tr>
     <tr>
       <td><code>closingBox</code></td>
       <td><code>'first' | 'last' | 'off'</code></td>
       <td><code>'first'</code></td>
-      <td>Cuándo toma un recuadro que cierra una columna corta el espacio bajo su pie (la palanca 1, registrada como <code>trailingCallout</code>). <code>'first'</code>: antes que cualquier otra palanca, como hasta postext 1.4 — el recuadro se queda con todo el hueco, aunque sean varias líneas, y los encabezados de encima no reciben nada. <code>'last'</code>: después de las palancas de encabezados, finales de lista, fórmulas y flotantes, que toman antes las líneas enteras; el recuadro baja con el texto de encima y luego toma solo lo que dejaron, normalmente una fracción de línea, de modo que su pie sigue cayendo en la última casilla de la rejilla y queda cerca del texto que comenta. <code>'off'</code>: nunca; el recuadro conserva el espacio bajo su pie, aunque las demás palancas aún pueden bajarlo líneas enteras cuando añaden espacio por encima, y la fracción de línea que sobra se queda. En una página de cierre, donde el recuadro es la única palanca que alinea su pie con la columna contigua, <code>'off'</code> lo deja donde lo puso el flujo. Cualquier otro valor se lee como <code>'first'</code>. Un recuadro que cierra la única columna de texto de su banda (una página de una sola columna que acaba antes de tiempo y cuyo bloque siguiente abre la página siguiente) nunca se mueve: no hay columna al lado con la que alinearlo (desde postext 1.19).</td>
+      <td>Cuándo toma un recuadro que cierra una columna corta el espacio que hay bajo su pie (la palanca 1, que se registra como <code>trailingCallout</code>). <code>'first'</code>: antes que cualquier otra palanca, como hasta postext 1.4; el recuadro se queda con todo el hueco, aunque sean varias líneas, y los encabezados de encima no reciben nada. <code>'last'</code>: después de las palancas de los encabezados, los finales de lista, las fórmulas y los flotantes, que toman antes las líneas enteras; el recuadro baja con el texto de encima y luego toma solo lo que hayan dejado, normalmente una fracción de línea, de modo que su pie sigue cayendo en la última línea de la rejilla y el recuadro queda cerca del texto que comenta. <code>'off'</code>: nunca; el recuadro conserva el espacio bajo su pie, aunque las demás palancas pueden bajarlo líneas enteras cuando añaden espacio por encima, y la fracción de línea que sobra se queda. En una página de cierre, donde el recuadro es la única palanca que alinea su pie con la columna de al lado, <code>'off'</code> lo deja donde lo puso el flujo. Cualquier otro valor se lee como <code>'first'</code>. Un recuadro que cierra la única columna de texto de su banda (una página de una sola columna que termina antes de tiempo porque su bloque siguiente abre la página siguiente) nunca se mueve: no hay ninguna columna al lado con la que alinearlo (desde postext 1.19).</td>
     </tr>
     <tr>
       <td><code>gridLines</code></td>
       <td><code>'allow' | 'off'</code></td>
       <td><code>'allow'</code></td>
-      <td>En una retícula de caracteres: si pueden actuar las palancas que añaden líneas enteras de la retícula (sobre un encabezado, donde termina una lista, bajo una fórmula en bloque o una caja, bajo una figura que encabeza la columna). Mantienen cada carácter en su casilla; <code>'off'</code> conviene a una norma que cuenta las líneas de la página, y deja corta la columna. Sin efecto fuera de la retícula. Cualquier otro valor se lee como <code>'allow'</code>. Desde postext 1.25.</td>
+      <td>En una retícula de caracteres: si pueden actuar las palancas que añaden líneas enteras de la retícula (sobre un encabezado, donde termina una lista, bajo una fórmula en bloque o un recuadro, bajo una figura que encabeza la columna). Estas palancas mantienen cada carácter en su casilla; <code>'off'</code> conviene a las normas que cuentan las líneas de la página, y deja corta la columna. Sin efecto fuera de la retícula. Cualquier otro valor se lee como <code>'allow'</code>. Desde postext 1.25.</td>
     </tr>
   </tbody>
 </table>
 
 ### Qué palanca actuó
 
-La maquetación deja constancia de cada palanca que aplica, en el bloque sobre el que la aplica: `block.balancing` en el VDT que devuelve `buildDocument`. Una hoja de pruebas, un test o un informe pueden decir por qué una columna termina alineada — y qué columnas no pudo cerrar ninguna palanca. Los bloques que el equilibrado deja como estaban no llevan `balancing`, y un documento compuesto con `enabled: false` no lo lleva en ninguno.
+La maquetación registra cada palanca que aplica en el bloque sobre el que la aplica: `block.balancing`, en el VDT que devuelve `buildDocument`. Una hoja de pruebas, un test o un informe pueden explicar así por qué una columna termina a ras, y qué columnas no pudo cerrar ninguna palanca. Los bloques que el equilibrado no ha tocado no tienen `balancing`, y en un documento compuesto con `enabled: false` no lo tiene ninguno.
 
-En una retícula de caracteres el documento dice por qué una columna puede terminar corta: `doc.gridBalancing` es `{ off: true }` cuando el equilibrado está desactivado porque la página va sobre una retícula y la configuración no lo activa, y `{ gridLines: 'off' }` cuando actúa sin las palancas de líneas enteras; una columna que sigue corta lleva `column.gridRefused`, las palancas que la retícula le negó (`'looseParagraph'` cuando un párrafo solo podía ganar su línea sacando sus caracteres de sus casillas, y las palancas de líneas enteras con `gridLines: 'off'`). Ninguno de los dos aparece fuera de la retícula.
+En una retícula de caracteres, el documento indica por qué una columna puede terminar corta: `doc.gridBalancing` es `{ off: true }` cuando el equilibrado está desactivado porque la página va sobre una retícula y la configuración no lo activa, y `{ gridLines: 'off' }` cuando actúa sin las palancas de líneas enteras. Una columna que sigue corta tiene `column.gridRefused`, con las palancas que la retícula le negó (`'looseParagraph'`, cuando un párrafo solo podía ganar su línea sacando sus caracteres de sus casillas, y las palancas de líneas enteras con `gridLines: 'off'`). Ninguno de los dos aparece fuera de la retícula.
 
 ```ts
 interface VDTBalancing {
@@ -335,43 +337,43 @@ type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | '
   <tbody>
     <tr>
       <td><code>trailingCallout</code></td>
-      <td>el bloque del marco del aviso</td>
-      <td>Una caja que cierra la columna bajó exactamente el espacio que quedaba bajo su pie (<code>spaceAbove</code>; puede ser una fracción de línea).</td>
+      <td>el bloque del marco del recuadro</td>
+      <td>Un recuadro que cierra la columna bajó exactamente el espacio que quedaba bajo su pie (<code>spaceAbove</code>; puede ser una fracción de línea).</td>
     </tr>
     <tr>
       <td><code>flexFigure</code></td>
       <td>el bloque de la imagen (en línea) o el flotante</td>
-      <td>Una imagen con zona segura compuesta <code>bodyGrowth</code> px más alta, en líneas enteras de rejilla, recortada dentro de la zona segura. El <code>bodySource</code> del bloque del recurso es la parte que se ve, y <code>bodyFlex.delta</code> el mismo crecimiento.</td>
+      <td>Una imagen con zona segura se compuso <code>bodyGrowth</code> px más alta, en líneas enteras de la rejilla, recortada dentro de la zona segura. El <code>bodySource</code> del bloque del recurso es la parte que se ve, y <code>bodyFlex.delta</code>, ese mismo crecimiento.</td>
     </tr>
     <tr>
       <td><code>heading</code></td>
       <td>el encabezado</td>
-      <td>Líneas enteras de rejilla sobre el encabezado, hasta <code>maxLinesPerHeading</code>.</td>
+      <td>Líneas enteras de la rejilla sobre el encabezado, hasta <code>maxLinesPerHeading</code>.</td>
     </tr>
     <tr>
       <td><code>listEnd</code></td>
       <td>el primer bloque tras la lista</td>
-      <td>Una línea de rejilla donde termina una lista, hasta <code>maxLinesAfterList</code>.</td>
+      <td>Una línea de la rejilla donde termina una lista, hasta <code>maxLinesAfterList</code>.</td>
     </tr>
     <tr>
       <td><code>afterDisplay</code></td>
-      <td>el bloque tras la fórmula o la caja</td>
-      <td>Una línea de rejilla bajo una fórmula en bloque o una caja de aviso.</td>
+      <td>el bloque que sigue a la fórmula o al recuadro</td>
+      <td>Una línea de la rejilla bajo una fórmula en bloque o un recuadro.</td>
     </tr>
     <tr>
       <td><code>afterFloat</code></td>
       <td>el primer bloque de la columna</td>
-      <td>Una línea de rejilla entre una banda de flotantes que encabeza la columna y su texto, hasta <code>maxLinesAfterFloat</code>.</td>
+      <td>Una línea de la rejilla entre una banda de flotantes que encabeza la columna y su texto, hasta <code>maxLinesAfterFloat</code>.</td>
     </tr>
     <tr>
       <td><code>looseParagraph</code></td>
       <td>el párrafo</td>
-      <td>El párrafo recompuesto <code>extraLines</code> más largo, con el menor tracking que lo consiguió (<code>tracking</code>; <code>block.letterSpacing</code> es el mismo valor en px).</td>
+      <td>El párrafo, vuelto a cortar con <code>extraLines</code> líneas más y con el menor espaciado entre letras que lo consiguió (<code>tracking</code>; <code>block.letterSpacing</code> es el mismo valor en px).</td>
     </tr>
   </tbody>
 </table>
 
-Los cortes nivelados se registran en las columnas que cortan: `column.bandCapped` vale true en toda columna cortada a nivel (la banda que deja un bloque a ancho de página, una banda de cierre), y `column.trailingCap` marca además la banda de cierre de un capítulo o del documento (`trailing`).
+Los cortes a la misma altura se registran en las columnas que cortan: `column.bandCapped` vale true en todas las columnas cortadas así (la banda que deja un recuadro a ancho de página, una banda de cierre), y `column.trailingCap` marca además la banda de cierre de un capítulo o del documento (`trailing`).
 
 ```ts
 import { buildDocument } from 'postext';
@@ -388,3 +390,4 @@ for (const page of doc.pages) {
 // página 3, columna 1: heading, heading
 // página 3, columna 2: listEnd, looseParagraph
 ```
+

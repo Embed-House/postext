@@ -312,7 +312,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -417,7 +417,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -888,7 +888,7 @@
         "pt": "Paradas de tabulação",
         "fr": "Taquets de tabulation",
         "de": "Tabulatoren",
-        "it": "Punti di tabulazione"
+        "it": "Tabulatori"
       }
     },
     "fixedIn": "1.23.0"
@@ -978,7 +978,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -1414,7 +1414,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -1515,7 +1515,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -1653,7 +1653,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -1760,7 +1760,7 @@
       "slug": "document-format",
       "heading": {
         "en": "What is NOT supported",
-        "es": "Qué NO se soporta",
+        "es": "Qué no se admite",
         "ca": "Què NO s'admet",
         "zh": "不支持的内容",
         "ar": "ما لا يدعمه Postext",
@@ -1971,7 +1971,7 @@
         "ca": "Filets booktabs",
         "zh": "三线表",
         "ar": "خطوط booktabs",
-        "ja": "booktabs の罫線",
+        "ja": "booktabsの罫線",
         "pt": "Fios booktabs",
         "fr": "Filets booktabs",
         "de": "Booktabs-Linien",
@@ -2102,7 +2102,7 @@
       "slug": "configuration-pdf-output",
       "heading": {
         "en": "Print-ready PDFs",
-        "es": "PDFs listos para imprenta",
+        "es": "PDF listos para la imprenta",
         "ca": "PDF a punt per a impremta",
         "zh": "可付印的PDF",
         "ar": "ملفات PDF جاهزة للطباعة",
@@ -2983,7 +2983,7 @@
         "es": "Marcas chinas, ruby y warichu",
         "ca": "Marques xineses, ruby i warichu",
         "zh": "中文标记、注音和双行夹注",
-        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات السطرية (warichu)",
+        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات داخل السطر (warichu)",
         "ja": "中国語の記号、ルビ、割注",
         "pt": "Marcas chinesas, rubi e warichu",
         "fr": "Marques chinoises, ruby et warichu",

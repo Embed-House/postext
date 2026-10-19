@@ -10,13 +10,13 @@ pageNotes: { "1": "Page 1 : une ligne de revue bleue à chasse fixe, le titre s
 
 ## Ce que vous allez composer
 
-Sept pages d’une prépublication d’apprentissage automatique au format US Letter : *Chain-of-Thought Prompting Elicits Reasoning in Large Language Models*, de Wei et al., abrégé à partir de sa version arXiv sous licence CC BY 4.0. La première page porte la figure la plus connue de l’article, composée en encadrés au lieu d’être collée comme une image : le prompting standard à gauche, le prompting par chaîne de pensée à droite, chaque prompt dans un encadré à onglet *Model Input* et chaque réponse dans un encadré à onglet *Model Output*, les exemples en IBM Plex Mono et la chaîne de pensée en gras de couleur, avec une croix sur la mauvaise réponse et une coche sur la bonne. Le texte cite à la manière des articles de NeurIPS, *(Brown et al., 2020)*, à partir de la liste de références de l’article reconstruite en BibTeX. Le tableau 2 et deux graphiques sont redessinés à partir des chiffres que publie l’article.
+Sept pages d’une prépublication d’apprentissage automatique au format US Letter : *Chain-of-Thought Prompting Elicits Reasoning in Large Language Models*, de Wei et al., abrégé à partir de sa version arXiv sous licence CC BY 4.0. La première page présente la figure la plus connue de l’article, composée en encadrés au lieu d’être collée comme une image : le prompting standard à gauche, le prompting par chaîne de pensée à droite, chaque prompt dans un encadré à onglet *Model Input* et chaque réponse dans un encadré à onglet *Model Output*, les exemples en IBM Plex Mono et la chaîne de pensée en gras de couleur, avec une croix sur la mauvaise réponse et une coche sur la bonne. Le texte cite à la manière des articles de NeurIPS, *(Brown et al., 2020)*, à partir de la liste de références de l’article reconstruite en BibTeX. Le tableau 2 et deux graphiques sont redessinés à partir des chiffres que publie l’article.
 
 ## Préparation
 
 ### 1 · La figure 1, ce sont trois styles d’encadré
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. La figure est un encadré sur toute la largeur de la page, sans cadre propre ; à l’intérieur, `:::columns{count=2 breaks="4"}` ouvre la colonne de droite au quatrième bloc, et chaque encadré imbriqué compte pour un bloc. Les encadrés de prompt et de réponse partagent une même fabrique de styles : ils ne diffèrent que par le fond, la couleur de l’onglet et le badge dans le coin. Une `icon` d’encadré avec `position: 'corner'` accepte une ressource SVG, et c’est ainsi que le ✓ et le ✗ arrivent sur la page dans un document dont les polices n’ont pas ces glyphes. Dans votre propre article, écrivez chaque exemple en paragraphes simples à l’intérieur d’un encadré et marquez le raisonnement avec `**…**` ; le `boldColor` du style d’encadré en fait la mise en valeur.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. La figure est un encadré sur toute la largeur de la page, sans bordure propre ; à l’intérieur, `:::columns{count=2 breaks="4"}` ouvre la colonne de droite au quatrième bloc, et chaque encadré imbriqué compte pour un bloc. Les encadrés de prompt et de réponse partagent une même fabrique de styles : ils ne diffèrent que par le fond, la couleur de l’onglet et le badge dans le coin. Une `icon` d’encadré avec `position: 'corner'` accepte une ressource SVG, et c’est ainsi que le ✓ et le ✗ arrivent sur la page dans un document dont les polices n’ont pas ces glyphes. Dans votre propre article, écrivez chaque exemple en paragraphes simples à l’intérieur d’un encadré et marquez le raisonnement avec `**…**` ; le `boldColor` du style d’encadré en fait la mise en valeur.
 
 ### 2 · Des citations auteur-date, façon natbib
 
@@ -40,7 +40,7 @@ Le moteur numérote les figures dans l’ordre de leur première citation, mais 
 
 <Excerpt region="table" />
 
-Les résultats sont saisis une seule fois, tels que les donne la source LaTeX, et alimentent à la fois le tableau 2 et la figure 4 : le graphique ne peut pas s’écarter du tableau. Les noms des bancs d’essai s’étendent chacun sur deux colonnes ; une cellule fusionnée a besoin d’un emplacement marqué `hiddenBy` là où elle s’étend. Le gras signale les cellules où le prompting par chaîne de pensée bat le prompting standard, comme le font les cellules vertes de l’original.
+Les résultats sont saisis une seule fois, tels que les donne la source LaTeX, et alimentent à la fois le tableau 2 et la figure 4 : le graphique ne peut pas s’écarter du tableau. Les noms des bancs d’essai s’étendent chacun sur deux colonnes ; une cellule fusionnée a besoin d’une cellule couverte marquée `hiddenBy` là où elle s’étend. Le gras signale les cellules où le prompting par chaîne de pensée bat le prompting standard, comme le font les cellules vertes de l’original.
 
 ## Variantes
 

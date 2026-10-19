@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Elenchi e matematica',
   description: 'Elenchi puntati e numerati, i loro marcatori, rientri e annidamenti, gli elenchi di attività, e dimensione, colore e spaziatura delle formule matematiche',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '19 min',
   order: 11,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Elenchi puntati
 
-La proprietà `unorderedLists` controlla come vengono resi gli elenchi puntati (`-`, `*`, `+`) e gli elenchi di attività GFM (`- [ ]`, `- [x]`). Sono supportati fino a cinque livelli di annidamento.
+La proprietà `unorderedLists` controlla come si compongono gli elenchi puntati (`-`, `*`, `+`) e gli elenchi di attività GFM (`- [ ]`, `- [x]`). Sono supportati fino a cinque livelli di annidamento.
 
 ### Valori predefiniti degli elenchi puntati
 
@@ -41,7 +41,7 @@ La proprietà `unorderedLists` controlla come vengono resi gli elenchi puntati (
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>Colore principale (<code>#295AA3</code>)</td>
-      <td>Colore del testo e del punto elenco delle voci. Collegato alla voce <code>main-color</code> della palette predefinita.</td>
+      <td>Colore del testo e del punto elenco delle voci. Collegato alla voce <code>main-color</code> della tavolozza predefinita.</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -65,7 +65,7 @@ La proprietà `unorderedLists` controlla come vengono resi gli elenchi puntati (
       <td><code>bulletFontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>1 em</code></td>
-      <td>Dimensione del glifo del punto elenco. Le unità relative seguono il corpo del testo corrente.</td>
+      <td>Corpo del glifo del punto elenco. Le unità relative seguono il corpo del testo corrente.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -101,7 +101,7 @@ La proprietà `unorderedLists` controlla come vengono resi gli elenchi puntati (
       <td><code>snapTopToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Arrotonda per eccesso lo spazio sopra l’elenco perché il primo punto elenco cada sulla griglia della linea di base, come fa il testo sotto un titolo; <code>marginTop</code> diventa allora un minimo. La fine di un elenco riporta comunque il flusso sulla griglia, quindi con <code>itemSpacing</code> a 0 ogni voce si allinea al testo della colonna accanto. Disattivato per impostazione predefinita, come fino a postext 1.4: un <code>marginTop</code> che non è un numero intero di righe lascia le voci fuori griglia fino alla fine dell’elenco. Gli elenchi dentro i riquadri, il cui interno è fuori griglia, non sono interessati.</td>
+      <td>Arrotonda per eccesso lo spazio sopra l’elenco perché il primo punto elenco cada sulla griglia della linea di base, come fa il testo sotto un titolo; <code>marginTop</code> diventa allora un minimo. La fine di un elenco riporta comunque il flusso sulla griglia, quindi con <code>itemSpacing</code> a 0 ogni voce si allinea al testo della colonna accanto. Disattivato per impostazione predefinita, come fino a postext 1.4: un <code>marginTop</code> che non è un numero intero di righe lascia le voci fuori griglia fino alla fine dell’elenco. Gli elenchi nei riquadri, il cui interno è fuori griglia, non sono interessati.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -120,7 +120,7 @@ La proprietà `unorderedLists` controlla come vengono resi gli elenchi puntati (
 
 ### Estensioni per gli elenchi di attività
 
-Le voci di attività GFM (`- [ ] …`, `- [x] …`) sono rese come voci di elenco puntato con una casella al posto del punto elenco. Il motore disegna la casella da sé, un quadrato vuoto con un segno di spunta quando l’attività è completata: non richiede alcun font, quindi è identica su ogni macchina, nel canvas, nel PDF, nell’HTML e nell’EPUB, e le tecnologie assistive leggono `☐` o `☑`. Il suo lato misura 0,6 em della dimensione del segno (`bulletFontSize`, o il `fontSize` del livello), ed è lo spazio che occupa prima del `gap`; alla dimensione del testo poggia sulla linea di base della prima riga della voce. Il suo tratto segue il `fontWeight` del segno e il suo colore il `color` del segno. I campi seguenti valgono solo per le voci di attività:
+Le voci di attività GFM (`- [ ] …`, `- [x] …`) si compongono come voci di elenco puntato con una casella al posto del punto elenco. Il motore disegna da sé la casella, un quadrato vuoto che riceve un segno di spunta quando l’attività è completata: non richiede alcun font, quindi è identica su ogni macchina, nel canvas, nel PDF, nell’HTML e nell’EPUB, e le tecnologie assistive leggono `☐` o `☑`. Il lato misura 0,6 em al corpo del segno (`bulletFontSize`, o il `fontSize` del livello), e questo è anche lo spazio che la casella occupa prima del `gap`; al corpo del testo poggia sulla linea di base della prima riga della voce. Lo spessore del tratto segue il `fontWeight` del segno, il colore il `color` del segno. I campi seguenti valgono solo per le voci di attività:
 
 <table>
   <thead>
@@ -148,13 +148,13 @@ Le voci di attività GFM (`- [ ] …`, `- [x] …`) sono rese come voci di elenc
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>Come vengono composti i due caratteri predefiniti. <code>'drawn'</code>: la casella la disegna il motore. <code>'character'</code>: <code>☐</code> e <code>☑</code> sono testo nel carattere dell’elenco, come fino a postext 1.28; in un carattere che non li contiene il browser sceglie un font di sistema, e il testo della voce comincia dopo la larghezza che dà quel font. Una configurazione salvata prima della versione 13 viene letta con <code>'character'</code>, così le sue righe restano dov’erano.</td>
+      <td>Come vengono composti i due caratteri predefiniti. <code>'drawn'</code>: la casella la disegna il motore. <code>'character'</code>: <code>☐</code> e <code>☑</code> sono testo nel carattere dell’elenco, come fino a postext 1.28; in un carattere che non li contiene il browser sceglie un font di sistema, e il testo della voce comincia dopo la larghezza che quel font assegna al carattere. Una configurazione salvata prima di <code>configVersion</code> 13 viene letta con <code>'character'</code> (<code>pinLegacyTaskBox</code>), così le sue righe restano dov’erano.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Traccia una linea barrata sul testo delle attività completate.</td>
+      <td>Barra con una linea il testo delle attività completate.</td>
     </tr>
     <tr>
       <td><code>taskCompletedColor</code></td>
@@ -180,7 +180,7 @@ Ogni voce di `levels` riguarda un livello di profondità (1–5) e può ridefini
   <tbody>
     <tr><td><code>bulletChar</code></td><td><code>string</code></td><td>Glifo del punto elenco per questo livello.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>Famiglia di caratteri delle voci per questo livello.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>Dimensione del glifo del punto elenco per questo livello.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>Corpo del glifo del punto elenco per questo livello.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>Colore della voce.</td></tr>
     <tr><td><code>fontWeight</code></td><td><code>number</code></td><td>Peso della voce.</td></tr>
     <tr><td><code>italic</code></td><td><code>boolean</code></td><td>Attiva il corsivo.</td></tr>
@@ -230,7 +230,7 @@ La proprietà `orderedLists` controlla gli elenchi numerati (`1.`, `2)`, ecc.). 
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>Colore principale (<code>#295AA3</code>)</td>
-      <td>Colore del testo e del numero delle voci. Collegato alla voce <code>main-color</code> della palette predefinita.</td>
+      <td>Colore del testo e del numero delle voci. Collegato alla voce <code>main-color</code> della tavolozza predefinita.</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -248,7 +248,7 @@ La proprietà `orderedLists` controlla gli elenchi numerati (`1.`, `2)`, ecc.). 
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>Stile di numerazione: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. Funzionano anche le grafie delle altre impostazioni (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; vedi <a href="/it/docs/configuration-page-layout#grafie-dei-formati-di-numerazione">Grafie dei formati di numerazione</a>); un valore sconosciuto numera in cifre arabe e viene segnalato.</td>
+      <td>Stile di numerazione: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>, e gli stili dell’Asia orientale e della scrittura araba (<code>'simp-chinese-informal'</code>, <code>'circled-decimal'</code>, <code>'arabic-indic'</code>, <code>'abjad'</code>…). Funzionano anche le grafie delle altre impostazioni (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; vedi <a href="/it/docs/configuration-page-layout#grafie-dei-formati-di-numerazione">Grafie dei formati di numerazione</a>); un valore sconosciuto numera in cifre arabe e viene segnalato.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>
@@ -284,7 +284,7 @@ La proprietà `orderedLists` controlla gli elenchi numerati (`1.`, `2)`, ecc.). 
       <td><code>separatorColor</code></td>
       <td><code>ColorValue</code></td>
       <td>eredita <code>color</code></td>
-      <td>Colore del separatore. I riferimenti alla palette vengono rispettati.</td>
+      <td>Colore del separatore. I riferimenti alla tavolozza vengono rispettati.</td>
     </tr>
     <tr>
       <td><code>separatorGap</code></td>
@@ -296,7 +296,7 @@ La proprietà `orderedLists` controlla gli elenchi numerati (`1.`, `2)`, ecc.). 
       <td><code>numberFontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>1 em</code></td>
-      <td>Dimensione del numero.</td>
+      <td>Corpo del numero.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -332,13 +332,13 @@ La proprietà `orderedLists` controlla gli elenchi numerati (`1.`, `2)`, ecc.). 
       <td><code>snapTopToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Arrotonda per eccesso lo spazio sopra l’elenco perché il primo numero cada sulla griglia della linea di base, come fa il testo sotto un titolo; <code>marginTop</code> diventa allora un minimo. La fine di un elenco riporta comunque il flusso sulla griglia, quindi con <code>itemSpacing</code> a 0 ogni voce si allinea al testo della colonna accanto. Disattivato per impostazione predefinita, come fino a postext 1.4: un <code>marginTop</code> che non è un numero intero di righe lascia le voci fuori griglia fino alla fine dell’elenco. Gli elenchi dentro i riquadri, il cui interno è fuori griglia, non sono interessati.</td>
+      <td>Arrotonda per eccesso lo spazio sopra l’elenco perché il primo numero cada sulla griglia della linea di base, come fa il testo sotto un titolo; <code>marginTop</code> diventa allora un minimo. La fine di un elenco riporta comunque il flusso sulla griglia, quindi con <code>itemSpacing</code> a 0 ogni voce si allinea al testo della colonna accanto. Disattivato per impostazione predefinita, come fino a postext 1.4: un <code>marginTop</code> che non è un numero intero di righe lascia le voci fuori griglia fino alla fine dell’elenco. Gli elenchi nei riquadri, il cui interno è fuori griglia, non sono interessati.</td>
     </tr>
     <tr>
       <td><code>numberWidth</code></td>
       <td><code>'run' | 'level' | 'item'</code></td>
       <td><code>'run'</code></td>
-      <td>Quanto è larga la colonna dei numeri di una voce, il che stabilisce dove comincia il suo testo; i numeri vi sono allineati a destra. <code>'run'</code>: il numero più largo della sequenza della voce, cioè le voci di uno stesso livello che hanno tra loro solo voci più profonde. Una figura, un paragrafo o un riquadro tra due voci apre una nuova sequenza, quindi <code>ii)</code> dopo una tabella può far cominciare il testo un po’ più a destra di <code>i)</code> prima di essa, e un elenco di nove voci compone il testo più a sinistra di un elenco di dodici. <code>'level'</code>: il numero più largo a quel livello in tutto il documento (il capitolo, in un libro), quindi ogni elenco, e ogni parte di un elenco interrotto, fa cominciare il testo nello stesso punto, come già fanno i rientri dei livelli più profondi. <code>'item'</code>: il numero della voce stessa, così il testo di ogni voce comincia un <code>gap</code> dopo la propria etichetta: <span lang="ja" className="font-body">第九條</span> e <span lang="ja" className="font-body">第十一條</span> sono seguiti dallo stesso spazio e i loro testi cominciano in punti diversi, come la Gazzetta ufficiale giapponese stampa gli articoli di una legge. Le righe successive seguono <code>hangingIndent</code>: <code>false</code> le riporta al rientro dell’elenco, <code>true</code> le appende sotto il testo della voce stessa. Il rientro di un livello più profondo resta un valore unico per livello. Da postext 1.28.</td>
+      <td>La larghezza della colonna dei numeri di una voce, che stabilisce dove comincia il testo; nella colonna i numeri sono allineati a destra. <code>'run'</code>: il numero più largo della sequenza della voce, cioè le voci di uno stesso livello che hanno tra loro solo voci più profonde. Una figura, un paragrafo o un riquadro tra due voci apre una nuova sequenza, quindi <code>ii)</code> dopo una tabella può far cominciare il testo un po’ più a destra di <code>i)</code> prima di essa, e un elenco di nove voci compone il testo più a sinistra di un elenco di dodici. <code>'level'</code>: il numero più largo a quel livello in tutto il documento (il capitolo, in un libro), quindi ogni elenco, e ogni parte di un elenco interrotto, fa cominciare il testo nello stesso punto, come già fanno i rientri dei livelli più profondi. <code>'item'</code>: il numero della voce stessa, così il testo di ogni voce comincia un <code>gap</code> dopo la propria etichetta: <span lang="ja" className="font-body">第九條</span> e <span lang="ja" className="font-body">第十一條</span> sono seguiti dallo stesso spazio e i loro testi cominciano in punti diversi, come la Gazzetta ufficiale giapponese stampa gli articoli di una legge. Le righe successive seguono <code>hangingIndent</code>: <code>false</code> le riporta al rientro dell’elenco, <code>true</code> le allinea sotto il testo della voce stessa. Il rientro di un livello più profondo resta un valore unico per livello. Da postext 1.28.</td>
     </tr>
     <tr>
       <td><code>numberAlign</code></td>
@@ -365,7 +365,7 @@ La proprietà `orderedLists` controlla gli elenchi numerati (`1.`, `2)`, ecc.). 
 
 Ogni voce di `levels` può ridefinire `numberFormat`, `prefix`, `separator`, `fontFamily`, `fontSize`, `color`, `fontWeight`, `italic`, `indent`, `verticalOffset` e lo stile del separatore (`separatorFontFamily`, `separatorFontWeight`, `separatorItalic`, `separatorColor`, `separatorGap`); vale la stessa cascata dei rientri degli elenchi puntati. Lo stile del separatore di un livello eredita lo stile del numero di quel livello, a meno che non sia data l’impostazione del separatore valida per tutto l’elenco.
 
-**Allineamento a destra.** La pipeline misura il numero formattato più largo di una sequenza e fa rientrare tutte le voci di quella sequenza in modo che i numeri si allineino sul bordo destro. In un elenco di dieci voci reso come `1.` – `10.` i numeri di una cifra vengono spaziati fino ad allinearsi a destra, così il separatore resta nella stessa colonna.
+**Allineamento a destra.** La pipeline misura il numero formattato più largo di una sequenza e fa rientrare tutte le voci di quella sequenza in modo che i numeri si allineino sul bordo destro. In un elenco di dieci voci composto come `1.` – `10.` i numeri di una cifra vengono spaziati fino ad allinearsi a destra, così il separatore resta nella stessa colonna.
 
 ```ts
 orderedLists: {
@@ -378,7 +378,7 @@ orderedLists: {
 }
 ```
 
-Il risultato è il classico misto annidato:
+Il risultato è la classica combinazione annidata:
 
 ```
 1. First item
@@ -405,7 +405,7 @@ orderedLists: {
 
 ## Matematica
 
-La proprietà `math` controlla come vengono analizzate e rese le formule LaTeX tra i delimitatori `$...$` (in linea) e `$$...$$` (in display). Il motore sottostante è MathJax (il pacchetto `mathjax-full`) in modalità di output SVG, rasterizzato sul canvas e incorporato nel PDF come glifi scalabili.
+La proprietà `math` controlla come vengono analizzate e disegnate le formule LaTeX tra i delimitatori `$...$` (in linea) e `$$...$$` (in display). Il motore sottostante è MathJax (il pacchetto `mathjax-full`) in modalità di output SVG, rasterizzato sul canvas e incorporato nel PDF come glifi scalabili.
 
 ```ts
 interface MathConfig {
@@ -440,7 +440,7 @@ interface MathConfig {
       <td><code>enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Se è false, i segmenti `$...$` e `$$...$$` vengono comunque analizzati (quindi gli avvisi sui delimitatori non chiusi scattano ancora) ma sono resi come il loro sorgente TeX letterale. Utile quando il contenuto contiene di proposito il simbolo del dollaro o quando vuoi disattivare del tutto la resa delle formule.</td>
+      <td>Se è false, i segmenti `$...$` e `$$...$$` vengono comunque analizzati (quindi gli avvisi sui delimitatori non chiusi scattano ancora) ma vengono mostrati come sorgente TeX letterale. Utile quando il contenuto contiene di proposito il simbolo del dollaro o quando vuoi disattivare del tutto la resa delle formule.</td>
     </tr>
     <tr>
       <td><code>fontSizeScale</code></td>
@@ -452,7 +452,7 @@ interface MathConfig {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>eredita il colore del testo corrente</td>
-      <td>Colore della formula resa. Omettilo per ereditare `bodyText.color`. Impostalo esplicitamente quando vuoi che le formule abbiano una tinta diversa dalla prosa, per esempio in accordo con il colore d’accento di un titolo.</td>
+      <td>Colore della formula disegnata. Omettilo per ereditare `bodyText.color`. Impostalo esplicitamente quando vuoi che le formule abbiano una tinta diversa dalla prosa, per esempio in accordo con il colore d’accento di un titolo.</td>
     </tr>
     <tr>
       <td><code>marginTop</code></td>
@@ -470,19 +470,19 @@ interface MathConfig {
       <td><code>indentAfterDisplay</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Fa rientrare la prima riga di un paragrafo che segue una formula in display, come qualsiasi altro paragrafo. Con <code>false</code> ogni paragrafo subito dopo una formula in display è composto senza rientro, come continuazione della frase che la formula ha interrotto («dove <em>L</em> è…»). Una formula scritta dentro un paragrafo, senza una riga vuota né sopra né sotto, è sempre seguita senza rientro: il testo sotto il suo <code>$$</code> di chiusura continua quel paragrafo e non rientra mai (vedi <a href="/it/docs/document-format-inline#formule-matematiche">Formule matematiche</a>).</td>
+      <td>Fa rientrare la prima riga di un paragrafo che segue una formula in display, come qualsiasi altro paragrafo. Con <code>false</code> ogni paragrafo subito dopo una formula in display è composto senza rientro, perché prosegue la frase che la formula ha interrotto («dove <em>L</em> è…»). Una formula scritta dentro un paragrafo, senza una riga vuota né sopra né sotto, è sempre seguita senza rientro: il testo sotto il suo <code>$$</code> di chiusura continua quel paragrafo e non rientra mai (vedi <a href="/it/docs/document-format-inline#formule-matematiche">Formule matematiche</a>).</td>
     </tr>
     <tr>
       <td><code>keepWithLeadIn</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Tiene una formula in display nella colonna della riga che la introduce: la penalità predisplay di TeX. Quando la formula non entra sotto l’ultima riga del paragrafo che la precede, quella riga passa con la formula alla colonna o alla pagina successiva; quando le righe lasciate indietro sarebbero meno di <code>bodyText.widowMinLines</code> (meno di una se <code>bodyText.avoidWidows</code> è disattivato), un paragrafo che si apre in quella colonna passa avanti per intero (con i titoli che chiudono la colonna sopra di esso, secondo <code>headings.keepWithNext</code>). La riga portata avanti sta da sola in cima alla colonna successiva, qualunque cosa chieda la regola sulle orfane. Con <code>false</code> passa avanti solo la formula, e la riga che la introduce può chiudere la colonna sopra, o stare sopra una figura che apre la successiva.</td>
+      <td>Tiene una formula in display nella colonna della riga che la introduce: la penalità predisplay di TeX. Quando la formula non entra sotto l’ultima riga del paragrafo che la precede, quella riga passa con la formula alla colonna o alla pagina successiva; quando le righe lasciate indietro sarebbero meno di <code>bodyText.widowMinLines</code> (meno di una se <code>bodyText.avoidWidows</code> è disattivato), un paragrafo che si apre in quella colonna passa per intero alla successiva (insieme ai titoli che chiudono la colonna sopra di esso, secondo <code>headings.keepWithNext</code>). La riga spostata resta da sola in cima alla colonna successiva, qualunque cosa chieda la regola sulle orfane. Con <code>false</code> si sposta solo la formula, e la riga che la introduce può chiudere la colonna sopra, o stare sopra una figura che apre la successiva.</td>
     </tr>
     <tr>
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>, <code>'&#123;n&#125;'</code>, <code>'never'</code>, <code>'decimal'</code>, <code>'(&#123;n&#125;)'</code></td>
-      <td>Come vengono numerate le formule in display che portano un <code>\label</code> (vedi <em>Equazioni numerate</em> più sotto). <code>numberingTemplate</code>, <code>resetOn</code> e <code>counterFormat</code> funzionano come quelli di un tipo di risorsa: <code>'&#123;h1&#125;.&#123;n&#125;'</code> con <code>resetOn: 'h1'</code> numera (2.1), (2.2)… per capitolo, <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> con <code>'h2'</code> per sezione. <code>format</code> è il numero come lo stampano la formula e <code>\eqref</code>, dove <code>&#123;n&#125;</code> sta per il numero: <code>'[&#123;n&#125;]'</code> compone [3]. <code>enabled: false</code> non numera nulla: un <code>\label</code> viene scartato e un rimando a esso stampa la sua pagina. Un segnaposto accetta anche uno stile dopo i due punti (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) in un’appendice contrassegnata da una lettera).</td>
+      <td>Come vengono numerate le formule in display che hanno un <code>\label</code> (vedi <em>Equazioni numerate</em> più sotto). <code>numberingTemplate</code>, <code>resetOn</code> e <code>counterFormat</code> funzionano come quelli di un tipo di risorsa: <code>'&#123;h1&#125;.&#123;n&#125;'</code> con <code>resetOn: 'h1'</code> numera (2.1), (2.2)… per capitolo, <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> con <code>'h2'</code> per sezione. <code>format</code> è il numero come lo stampano la formula e <code>\eqref</code>, dove <code>&#123;n&#125;</code> sta per il numero: <code>'[&#123;n&#125;]'</code> compone [3]. <code>enabled: false</code> non numera nulla: un <code>\label</code> viene scartato e un rimando a quell’etichetta stampa la pagina. Un segnaposto accetta anche uno stile dopo i due punti (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) in un’appendice contrassegnata da una lettera).</td>
     </tr>
   </tbody>
 </table>
@@ -497,7 +497,7 @@ math: {
 }
 ```
 
-**Dimensione delle formule, cambiata in postext 1.5.** MathJax fornisce il riquadro di una formula in `ex`, e un `ex` del suo font TeX vale 0,442 em. Fino a postext 1.4 il motore lo considerava mezzo em, quindi ogni formula veniva composta circa il 13% più grande di `bodyText.fontSize × fontSizeScale`. Ora le formule escono alla dimensione documentata, e le righe e le pagine con formule si ridistribuiscono. Una configurazione scritta in codice per la 1.4 mantiene la dimensione delle formule della 1.4 passando una volta per `pinLegacyMathSize` di `postext/bundle`, così com’è scritta:
+**Dimensione delle formule, cambiata in postext 1.5.** MathJax fornisce il riquadro di una formula in `ex`, e un `ex` del suo font TeX vale 0,442 em. Fino a postext 1.4 il motore lo considerava mezzo em, quindi ogni formula veniva composta circa il 13% più grande di `bodyText.fontSize × fontSizeScale`. Ora le formule escono alla dimensione documentata, e le righe e le pagine con formule si reimpaginano. Per mantenere la dimensione delle formule della 1.4, una configurazione scritta in codice per quella versione passa una sola volta per `pinLegacyMathSize` di `postext/bundle`, come qui:
 
 ```ts
 import { pinLegacyMathSize } from 'postext/bundle';
@@ -505,7 +505,7 @@ import { pinLegacyMathSize } from 'postext/bundle';
 config = pinLegacyMathSize(config); // formulas, and the space around display formulas, as 1.4 set them
 ```
 
-Anche altri cambiamenti di regole della 1.5 possono spostarne le pagine: le interruzioni dei titoli, lo spazio attorno a una figura in linea (nel testo corrente e nei riquadri), i segni in linea dei suoi titoli, la dimensione dei suoi capilettera, lo spazio lasciato sotto una riga che termina con i due punti per l’elenco che introduce, le righe che il taglio di un riquadro lascia di un paragrafo o di una voce di elenco, gli a capo dopo una lineetta, la divisione in righe del testo non giustificato, la divisione di un paragrafo sotto un titolo, gli a capo dopo il trattino di una parola composta e lo spazio sotto un contenitore `:::paragraphs`. `migrateConfig`, eseguito una volta con il markdown che la configurazione impagina, fissa quelli di cui questo testo ha bisogno, dimensione delle formule compresa (vedi [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti)):
+Anche altri cambiamenti di regole della 1.5 possono spostare le pagine di un libro: le interruzioni dei titoli, lo spazio attorno a una figura in linea (nel testo corrente e nei riquadri), i segni in linea dei titoli, la dimensione dei capilettera, lo spazio lasciato sotto una riga che termina con i due punti per l’elenco che introduce, le righe di un paragrafo o di una voce di elenco che restano prima del taglio di un riquadro, gli a capo dopo una lineetta, la divisione in righe del testo in bandiera, la divisione di un paragrafo sotto un titolo, gli a capo dopo il trattino di una parola composta e lo spazio sotto un contenitore `:::paragraphs`. `migrateConfig`, eseguito una volta con il Markdown che la configurazione impagina, fissa quelli di cui questo testo ha bisogno, dimensione delle formule compresa (vedi [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti)):
 
 ```ts
 import { migrateConfig } from 'postext/bundle';
@@ -513,7 +513,7 @@ import { migrateConfig } from 'postext/bundle';
 config = migrateConfig(config, undefined, { content: markdown }); // heading breaks, formulas, inline gaps, heading marks, drop caps, colon lines, box cuts, dash breaks, compound breaks, ragged breaking, splits under a heading and container space as 1.4 set them
 ```
 
-Questo trattiene ciò che quei cambiamenti di regole sposterebbero, ma non conserva ogni pagina della 1.4. La versione 1.5 corregge anche errori di impaginazione, e una correzione non si può fissare: una configurazione vecchia la riceve come una nuova, quindi una pagina che ne è toccata può comunque spostarsi. Tra queste correzioni: un titolo a tutta larghezza della pagina senza un design proprio viene misurato sulla larghezza della pagina e composto con l’interlinea del suo livello; in un design di titolo non si riserva nulla sotto la linea di base di un capolettera; un capolettera prende il colore della palette della sezione, e viene composto anche su un testo di design il cui `overflow` non è `'wrap'`, che allora va a capo; un paragrafo in un riquadro dipinge la spaziatura tra lettere con cui è stato misurato; un riquadro diviso mantiene la colonna dell’icona su ogni frammento; una riga di riquadro che allargherebbe i suoi spazi oltre 3× viene composta non giustificata, come nel testo corrente; la leva dei paragrafi troppo spaziati non compone mai una riga giustificata più larga di quanto consenta `maxWordSpacing`; un riquadro flottante mantiene un `marginBottom` (in una fascia in alto) o un `marginTop` (in una fascia in basso) più ampio dello spazio dei flottanti; un testo di design centrato o allineato a destra con spaziatura tra lettere (una testatina, il titolo di un’apertura) viene collocato in base alle sue lettere, senza la spaziatura dopo l’ultima; sotto un’apertura a tutta larghezza della pagina, il testo che apre la seconda colonna comincia dove comincerebbe il testo subito sotto l’apertura, anche quando un titolo segue l’apertura; i puntini dell’indice si fermano prima del numero di pagina in un carattere che con la crenatura allontana una sequenza di punti; una testatina legge un titolo così come è scritto, senza spazio dove una delle sue righe finisce dopo un trattino o una lineetta o dentro una parola tagliata per larghezza (`MEDIOAMBIENTALES`, non `MEDIOAMBIENTALE S`), e il `{titleText}` di un design di titolo lo legge allo stesso modo (`thousand-colour`, non `thousand- colour`); un testo ancorato al piede o al centro della fascia di un design di titolo mantiene la fascia abbastanza alta da contenerlo, così non sale più sopra il testo che precede il titolo; una parola più larga della sua riga, tagliata accanto a un trattino che contiene, viene tagliata dopo quel trattino e non ne riceve un secondo; la voce che segue un elenco annidato in un altro prende l’`itemSpacing` del proprio elenco, non quello dell’elenco annidato; e il resto di una parola tagliata perché più larga della sua riga mantiene i propri punti di divisione, così un indirizzo web continua a dividersi nelle sue giunture e una parola composta ai suoi trattini invece che nelle sillabe del dizionario.
+Così si blocca ciò che quei cambiamenti di regole sposterebbero, ma non conserva ogni pagina della 1.4. La versione 1.5 corregge anche errori di impaginazione, e una correzione non si può fissare: una configurazione vecchia la riceve come una nuova, quindi una pagina interessata può comunque spostarsi. Tra queste correzioni: un titolo a tutta larghezza della pagina senza una grafica propria viene misurato sulla larghezza della pagina e composto con l’interlinea del suo livello; nella grafica di un titolo non si riserva nulla sotto la linea di base di un capolettera; un capolettera prende il colore della tavolozza della sezione, e viene composto anche in un testo grafico il cui `overflow` non è `'wrap'`, che allora va a capo; un paragrafo in un riquadro viene disegnato con la spaziatura tra le lettere con cui è stato misurato; un riquadro diviso mantiene la colonna dell’icona su ogni frammento; una riga di riquadro che allargherebbe i suoi spazi oltre 3× viene composta in bandiera, come nel testo corrente; la leva dei paragrafi laschi non compone mai una riga giustificata più larga di quanto consenta `maxWordSpacing`; un riquadro flottante mantiene un `marginBottom` (in una fascia in alto) o un `marginTop` (in una fascia in basso) più ampio dello spazio dei flottanti; un testo grafico centrato o allineato a destra con spaziatura tra le lettere (una testatina, il titolo di un’apertura) viene collocato in base alle sue lettere, senza la spaziatura dopo l’ultima; sotto un’apertura a tutta larghezza della pagina, il testo che apre la seconda colonna comincia dove comincerebbe il testo subito sotto l’apertura, anche quando un titolo segue l’apertura; i puntini dell’indice si fermano prima del numero di pagina in un carattere che con la crenatura allontana una sequenza di punti; una testatina legge un titolo così come è scritto, senza spazio dove una delle sue righe finisce dopo un trattino o una lineetta o dentro una parola tagliata per larghezza (`MEDIOAMBIENTALES`, non `MEDIOAMBIENTALE S`), e il `{titleText}` della grafica di un titolo lo legge allo stesso modo (`thousand-colour`, non `thousand- colour`); un testo ancorato al piede o al centro della fascia della grafica di un titolo mantiene la fascia abbastanza alta da contenerlo, così non sale più sopra il testo che precede il titolo; una parola più larga della sua riga, tagliata accanto a un trattino che contiene, viene tagliata dopo quel trattino e non ne riceve un secondo; la voce che segue un elenco annidato in un altro prende l’`itemSpacing` del proprio elenco, non quello dell’elenco annidato; e il resto di una parola tagliata perché più larga della sua riga mantiene i propri punti di divisione, così un indirizzo web continua a dividersi nelle sue giunture e una parola composta ai suoi trattini invece che nelle sillabe del dizionario.
 
 `pinLegacyMathSize` moltiplica la scala per 1,1312 (0,5 ÷ 0,442) e divide per lo stesso fattore i margini delle formule in display espressi in `em`. La sola scala non basta per un libro con formule in display: i loro margini sono lunghezze relative alla dimensione della formula stessa, quindi crescerebbero dello stesso 13% e spingerebbero in giù il testo sottostante. Scritti per esteso per i margini predefiniti, i tre valori sono:
 
@@ -525,15 +525,15 @@ math: {
 } // formulas as large as 1.4 set them, with the space 1.4 left around them
 ```
 
-Dove la configurazione era salvata, il motore se ne accorge e lo fa per te: `openBundle` / `readBundle` per un pacchetto `.postext` scritto prima della 1.5 (vedi [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti)), e la Sandbox per i libri, la copia di lavoro e i file `postext-config.json` salvati allora (vedi **Sandbox → Persistenza**). Vengono letti tramite `migrateConfig`, che fissa la dimensione (`pinLegacyMathSize`): `fontSizeScale` diventa la scala salvata (1 se non impostata) × 1,1312, e un margine delle formule in display in `em` o `rem`, che è una lunghezza relativa alla dimensione della formula stessa, viene diviso per lo stesso fattore, così lo spazio attorno a una formula in display resta quello che lasciava la 1.4 (il valore predefinito di 0,8 em diventa 0,7072 em). Un margine in un’unità di pagina (`pt`, `mm`…) resta com’è, e così una configurazione con `enabled: false` o il cui libro non contiene alcun `$`. Il vecchio libro viene allora impaginato come lo impaginava la 1.4, e la sua sezione `math` mostra la dimensione con cui è composto. Per comporre invece quel libro alla dimensione attuale, reimposta quei valori: **Formule → Scala del corpo**, *Margine superiore del display* e *Margine inferiore del display* nella Sandbox, oppure in codice:
+Quando la configurazione proviene da un salvataggio, il motore riconosce che è vecchia e lo fa per te: `openBundle` / `readBundle` per un pacchetto `.postext` scritto prima della 1.5 (vedi [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti)), e la Sandbox per i libri, la copia di lavoro e i file `postext-config.json` salvati allora (vedi **Sandbox → Persistenza**). Vengono letti tramite `migrateConfig`, che fissa la dimensione (`pinLegacyMathSize`): `fontSizeScale` diventa la scala salvata (1 se non impostata) × 1,1312, e un margine delle formule in display in `em` o `rem`, che è una lunghezza relativa alla dimensione della formula stessa, viene diviso per lo stesso fattore, così lo spazio attorno a una formula in display resta quello che lasciava la 1.4 (il valore predefinito di 0,8 em diventa 0,7072 em). Un margine in un’unità di pagina (`pt`, `mm`…) resta com’è, e così una configurazione con `enabled: false` o il cui libro non contiene alcun `$`. Il vecchio libro viene allora impaginato come lo impaginava la 1.4, e la sua sezione `math` mostra la dimensione con cui è composto. Per comporre invece quel libro alla dimensione attuale, reimposta quei valori: **Formule → Scala del corpo**, *Margine sopra le formule* e *Margine sotto le formule* nella Sandbox, oppure in codice:
 
 ```ts
 math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // today's size and margins
 ```
 
-**Equazioni numerate.** Una formula in display con un numero occupa tutta la sua giustezza (la colonna, o la larghezza interna del riquadro in cui si trova): l’equazione è centrata e il suo numero è allineato a destra sulla riga dell’equazione, su ogni riga numerata di un `align`. Un numero nasce da un `\label{eq:x}` (da postext 1.19): le formule con etichetta, e le righe con etichetta di un `align`, `gather`, `alignat`, `flalign` o `eqnarray`, vengono numerate in ordine di lettura secondo `equationNumbering`, a meno che una riga non dica `\nonumber` o `\notag`. Ambienti come `equation` non vengono numerati di per sé: una formula senza etichetta non ha numero. `\tag{…}` stampa l’etichetta che gli dai, tra parentesi, e `\tag*{…}` così come è scritta; nessuno dei due viene contato, e un `\label` accanto a uno dei due gli dà un nome. Un’equazione numerata più larga della sua giustezza deborda a destra, come qualsiasi formula in display. (Fino a postext 1.4 una formula con `\tag` non veniva disegnata affatto; fino alla 1.18 solo `\tag` dava un numero.)
+**Equazioni numerate.** Una formula in display con un numero occupa tutta la sua giustezza (la colonna, o la larghezza interna del riquadro in cui si trova): l’equazione è centrata e il suo numero è allineato a destra sulla riga dell’equazione, su ogni riga numerata di un `align`. Un numero nasce da un `\label{eq:x}` (da postext 1.19): le formule con etichetta, e le righe con etichetta di un `align`, `gather`, `alignat`, `flalign` o `eqnarray`, vengono numerate in ordine di lettura secondo `equationNumbering`, a meno che una riga non contenga `\nonumber` o `\notag`. Ambienti come `equation` non vengono numerati di per sé: una formula senza etichetta non ha numero. `\tag{…}` stampa l’etichetta che gli dai, tra parentesi, e `\tag*{…}` così come è scritta; nessuno dei due viene contato, e un `\label` accanto a uno dei due gli dà un nome che i rimandi possono usare. Un’equazione numerata più larga della sua giustezza deborda a destra, come qualsiasi formula in display. (Fino a postext 1.4 una formula con `\tag` non veniva disegnata affatto; fino alla 1.18 solo `\tag` dava un numero.)
 
-`\eqref{eq:x}` nel testo stampa il numero nel suo `format`, (3), e `\ref{eq:x}` il numero nudo; lo stesso fanno `:ref{id="eq:x"}` e `@eq:x` (vedi [Rimandi](/it/docs/document-format-notes-references#rimandi-e-ancore)), e dentro una formula `\eqref` lo stampa come testo. In un libro impaginato capitolo per capitolo il contatore prosegue dal capitolo precedente: `continuationAfter` lo porta in `LayoutContinuation.statementCounters` (`equation`), e lo schema del libro dà a ogni etichetta il suo numero (`OutlineEntry.numberLabel`), così un rimando a un’equazione di un altro capitolo la stampa.
+`\eqref{eq:x}` nel testo stampa il numero nel suo `format`, (3), e `\ref{eq:x}` il numero nudo; lo stesso fanno `:ref{id="eq:x"}` e `@eq:x` (vedi [Rimandi](/it/docs/document-format-notes-references#rimandi-e-ancore)), e dentro una formula `\eqref` lo stampa come testo. In un libro impaginato capitolo per capitolo il contatore prosegue dal capitolo precedente: `continuationAfter` lo porta in `LayoutContinuation.statementCounters` (`equation`), e lo schema del libro dà a ogni etichetta il suo numero (`OutlineEntry.numberLabel`), così un rimando a un’equazione di un altro capitolo ne stampa il numero.
 
 ```ts
 math: {
@@ -541,7 +541,7 @@ math: {
 }
 ```
 
-Il resolver e lo stripper seguono le altre sezioni:
+Il resolver e lo stripper funzionano come quelli delle altre sezioni:
 
 ```ts
 import {
@@ -567,10 +567,10 @@ document.body.append(renderPage(doc.pages[0], doc));
 ```
 
 - **Finché il motore non è avviato, le formule sono segnaposto.** Ognuna viene impaginata come un riquadro grigio di dimensione stimata. Se un documento con formule viene impaginato senza che `initMathEngine()` sia mai stato chiamato, la console mostra un avviso che lo segnala.
-- **Il worker di impaginazione lo avvia per te.** Una build in `postext/worker` chiama da sé `initMathEngine()` quando il markdown contiene un `$`.
+- **Il worker di impaginazione lo avvia per te.** Una build in `postext/worker` chiama da sé `initMathEngine()` quando il Markdown contiene un `$`.
 - **Impagina subito, e di nuovo quando è pronto.** `isMathReady()` dice se il motore è in funzione. `onMathReady(fn)` chiama `fn` appena lo è (subito, se lo è già) e restituisce una funzione che annulla la chiamata. Un editor può mostrare subito i segnaposto e impaginare di nuovo quando arriva MathJax; mentre `initMathEngine()` è in corso non viene stampato alcun avviso.
-- **Errori.** `initMathEngine()` viene rifiutata quando MathJax non si può caricare, e una chiamata successiva riprova.
+- **Errori.** La promessa di `initMathEngine()` viene rifiutata quando MathJax non si può caricare, e una chiamata successiva riprova.
 - **Qualsiasi bundler, Node o una CDN.** MathJax è incluso nel pacchetto come un unico modulo già impacchettato (circa 1,8 MB prima della compressione, scaricato solo da `initMathEngine`). Il semplice `import { initMathEngine } from 'https://esm.sh/postext'` funziona; non serve `?bundle`. Il pacchetto `mathjax-full` serve solo a compilare postext, quindi installare postext non lo installa. MathJax e il parser mhchem che include sono distribuiti con licenza Apache-2.0: le loro note e il testo della licenza sono distribuiti accanto al modulo, come `dist/math/THIRD_PARTY_LICENSES.txt`.
-- **Un solo motore per pagina.** Il motore e la sua cache delle formule rese sono condivisi da tutto ciò che importa `postext` nello stesso realm JavaScript (vedi [Stato globale condiviso in una pagina](/it/docs/configuration-programmatic-usage#stato-globale-condiviso-in-una-pagina)).
+- **Un solo motore per pagina.** Il motore e la sua cache delle formule già disegnate sono condivisi da tutto ciò che importa `postext` nello stesso realm JavaScript (vedi [Stato globale condiviso in una pagina](/it/docs/configuration-programmatic-usage#stato-globale-condiviso-in-una-pagina)).
 
 Per la grammatica lato documento (`$...$`, `$$...$$`, l’escape di un dollaro letterale), vedi [Formato del documento](/it/docs/document-format-inline#formule-matematiche).

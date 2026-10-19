@@ -18,37 +18,37 @@ Os dois lados de um folheto de visita no formato DL, 99 × 210 mm, para um moinh
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` compacta num zip o capítulo, a configuração, os recursos e todos os arquivos que eles nomeiam; `openBundle` não recebe nada além desses bytes. As fontes vêm de `loadBundleFonts`, os desenhos de `registerBundleImages` e o design de `bundle.config`. Uma fonte deixada fora de `files` sai na fonte reserva do navegador, e um desenho que fica de fora é descartado com um aviso, e a referência a ele imprime (?). Dentro do zip, cada `fileId` vira um caminho (`mill.svg` passa a ser `resources/mill.svg`), e os recursos e o `customFonts` que `openBundle` devolve já usam os nomes novos ([abrir um pacote](/pt/docs/configuration-bundles#abrir-um-pacote)).
+`createBundle` compacta num zip o capítulo, a configuração, os recursos e todos os arquivos que eles citam; `openBundle` não recebe nada além desses bytes. As fontes vêm de `loadBundleFonts`, os desenhos de `registerBundleImages` e o design de `bundle.config`. Uma fonte deixada fora de `files` sai na fonte de reserva do navegador, e um desenho que fica de fora é descartado com um aviso, e a referência a ele imprime (?). Dentro do zip, cada `fileId` vira um caminho (`mill.svg` passa a ser `resources/mill.svg`), e os recursos e o `customFonts` que `openBundle` devolve já usam os nomes novos ([abrir um pacote](/pt/docs/configuration-bundles#abrir-um-pacote)).
 
 ### 2 · Pôr as fontes no arquivo
 
 <Excerpt region="faces" />
 
-Um pacote leva uma fonte quando `customFonts` a nomeia e `files` guarda os bytes dela sob o `fileId` da variante; `createBundle` grava a DM Sans 400 como `fonts/dm-sans-400-normal.woff2`. O pen baixa os sete arquivos woff2 da Fontsource, mas não registra nenhum: `loadBundleFonts` acrescenta as cópias do pacote a `document.fonts` antes de `buildBundle` medir uma linha, e o PDF pega as fontes desses mesmos sete arquivos.
+Um pacote leva uma fonte quando `customFonts` a cita e `files` guarda os bytes dela sob o `fileId` da variante; `createBundle` grava a DM Sans 400 como `fonts/dm-sans-400-normal.woff2`. O pen baixa os sete arquivos woff2 da Fontsource, mas não registra nenhum: `loadBundleFonts` acrescenta as cópias do pacote a `document.fonts` antes de `buildBundle` medir uma linha, e o PDF pega as fontes desses mesmos sete arquivos.
 
 ### 3 · Nomear cada arquivo pelo fileId
 
 <Excerpt region="resources" />
 
-Os dois desenhos são marcação SVG gerada pelo pen e entregue a `files` sob o `svg.fileId` dos recursos deles; a tabela são dados, então viaja em `preset.json` com a legenda. O corte e a tabela são postos com `position: 'here'`: o corte no alto do verso, o horário sob o parágrafo que o cita. O folheto define `layout.inlineResourceGap: 'above'`, que mantém o espaço de um recurso na linha só acima dele, e assim o verso cabe num lado da folha: o título depois do corte traz o próprio espaço, e uma linha `:::space{lines=0.5}` depois da tabela deixa 3,7 mm sob a legenda.
+Os dois desenhos são marcação SVG gerada pelo pen e entregue a `files` sob o `svg.fileId` dos recursos deles; a tabela são dados, por isso viaja em `preset.json` com a legenda. O corte e a tabela são postos com `position: 'here'`: o corte no alto do verso, o horário sob o parágrafo que o cita. O folheto define `layout.inlineResourceGap: 'above'`, que mantém o espaço de um recurso na linha só acima dele, e assim o verso cabe num lado da folha: o título depois do corte traz o próprio espaço, e uma linha `:::space{lines=0.5}` depois da tabela deixa 3,7 mm sob a legenda.
 
 ### 4 · Manter os rótulos na língua do arquivo
 
 <Excerpt region="labels" />
 
-Quem abre um arquivo monta os tipos embutidos na língua que esse arquivo serve: sem `resourceTypes` na configuração, o folheto em espanhol imprime Figura 1.1 e Tabla 1.1 onde quer que seja aberto, inclusive no Sandbox em /en/sandbox. O folheto grava os tipos só pelos números: `'{n}'` tira o número do capítulo, de que um folheto de duas páginas não precisa ([tipos de recurso](/pt/docs/configuration-resources#tipos-de-recurso)). O mesmo `config()` define `locale`, que escolhe os padrões de hifenização do espanhol (compuer-tas no verso) e a língua que o PDF declara.
+Quem abre um arquivo monta os tipos padrão na língua que esse arquivo serve: sem `resourceTypes` na configuração, o folheto em espanhol imprime Figura 1.1 e Tabla 1.1 onde quer que seja aberto, inclusive no Sandbox em /en/sandbox. O folheto grava os tipos só pelos números: `'{n}'` tira o número do capítulo, de que um folheto de duas páginas não precisa ([tipos de recurso](/pt/docs/configuration-resources#tipos-de-recurso)). O mesmo `config()` define `locale`, que escolhe os padrões de hifenização do espanhol (compuer-tas no verso) e a língua que o PDF declara.
 
 ### 5 · Repassar os mesmos bytes
 
 <Excerpt region="handoff" />
 
-O link oferece os `bytes` a partir dos quais as páginas foram diagramadas, 132 KB com as fontes. Importado no Sandbox (*Livros → Novo → Abrir um arquivo .postext…*), o arquivo vira um livro em espanhol ou inglês com a roda como imagem, tirada de `thumbnail`. O PDF pega as fontes de `bundleFontProvider`, que devolve a fonte do pacote mais próxima em peso, no mesmo estilo quando houver, e os desenhos de `bundleResourceBytes`, então nenhuma fonte ou imagem é baixada duas vezes ([diagramar e renderizar um pacote](/pt/docs/configuration-bundles#diagramar-e-renderizar-um-pacote)).
+O link oferece os `bytes` a partir dos quais as páginas foram diagramadas, 132 KB com as fontes. Importado no Sandbox (*Livros → Novo → Abrir um arquivo .postext…*), o arquivo vira um livro em espanhol ou inglês com a roda como imagem, tirada de `thumbnail`. O PDF pega as fontes de `bundleFontProvider`, que devolve a fonte do pacote mais próxima em peso, no mesmo estilo quando houver, e os desenhos de `bundleResourceBytes`, por isso nenhuma fonte ou imagem é baixada duas vezes ([diagramar e renderizar um pacote](/pt/docs/configuration-bundles#diagramar-e-renderizar-um-pacote)).
 
 ### 6 · Desenhar a frente com um só título
 
 <Excerpt region="cover" />
 
-A frente é o design do título de capa: o desenho ancorado à página em tamanho total, o texto do título por `{titleText}`, o chapéu, o olho e a linha de informações vindos dos atributos dele, e um elemento de texto com caixa para a aba da língua. O nível H1 tem `span: 'page'`, então o desenho vai até a borda inferior do papel. Um design de título mantido na coluna é cortado no pé da mancha: o desenho pararia 13 mm acima da borda inferior.
+A frente é o design do título de capa: o desenho ancorado à página em tamanho total, o texto do título por `{titleText}`, o chapéu, o olho e a linha de informações vindos dos atributos dele, e um elemento de texto com caixa para a aba da língua. O nível H1 tem `span: 'page'`, de modo que o desenho vai até a borda inferior do papel. Um design de título mantido na coluna é cortado no pé da mancha: o desenho pararia 13 mm acima da borda inferior.
 
 ## Variações
 

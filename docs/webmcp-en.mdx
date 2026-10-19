@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'What an AI agent in the browser can do with the Sandbox through its 41 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 46,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
@@ -33,7 +33,7 @@ gives the call for each one.
 ### In a browser with WebMCP
 
 The tools are registered with `document.modelContext` when the Sandbox mounts
-and taken back when you leave it. An agent the browser hands page tools to
+and taken back when you leave it. Any agent that the browser gives page tools to
 finds them there. Nothing has to be installed or set up on the Postext side.
 
 WebMCP is still a draft. Chrome offers it as an origin trial, and behind the
@@ -211,10 +211,10 @@ what it is with the same fractions it used for the crop:
 The answer gives the block, the line and column of the Markdown source there
 (and the word), a link and the page it leads to, the table cell or caption of
 a resource. With `select: true` it also does what a click does: the
-Manuscript panel opens with the caret at that place (`word: true` selects the
+Text panel opens with the caret at that place (`word: true` selects the
 word, `to` selects up to a second point).
 
-The answer also lists `elements`: what lies at the point, innermost first, in the order a click on the page picks them and each further click or Esc climbs (a glyph, its paragraph, the box round it, the frame of a composed page, its group, the page and its template; or a design element and its slot). Each comes with its stable id, its source (a Markdown range, a config path, an attribute, a resource) and its name in the path the Sandbox shows (`path`). With `select: true`, `level` (`block`, `frame`, `template`, `design`…) picks one of them as a person would: Content mode selects its Markdown, Design mode opens its frame, style or template. `sandbox_get_state` reports the element picked as `pageSelection`.
+The answer also lists `elements`: what lies at the point, innermost first, in the order in which a click on the page picks them and each further click or Esc moves up through them (a glyph, its paragraph, the box round it, the frame of a composed page, its group, the page and its template; or a design element and its slot). Each comes with its stable id, its source (a Markdown range, a config path, an attribute, a resource) and its name in the path the Sandbox shows (`path`). With `select: true`, `level` (`block`, `frame`, `template`, `design`…) picks one of them as a person would: Content mode selects its Markdown, Design mode opens its frame, style or template. `sandbox_get_state` reports the element picked as `pageSelection`.
 
 ### Change the design
 
@@ -246,7 +246,7 @@ shows every setting the section has.
 { "path": "headings.levels[level=2]" }
 ```
 
-Paths name an item of a list by what tells it apart:
+A path picks an item of a list by the field that tells it apart:
 `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`,
 `calloutStyles[id=note].title`. Then `sandbox_set_config` changes as many
 settings as you like in one call:
@@ -265,8 +265,8 @@ settings as you like in one call:
 
 A length is `"2.5cm"`, `{ "value": 2.5, "unit": "cm" }` or a number in the
 setting's unit; a colour is `"#1f3a5f"`. A `null` value removes the setting, so
-the design's value comes back. The answer is how to judge the change, and how
-to take it back:
+the design's value comes back. The answer tells the agent how to judge the change
+and how to take it back:
 
 ```json
 {
@@ -313,11 +313,11 @@ callout style with where the book uses it (template frames, composed pages,
 `:::callout` boxes per chapter) and the merges of near-identical styles it
 suggests, the same as Design › Boxes › Frame styles. `sandbox_merge_styles`
 takes `groups` (`{ keep, merge }`) or `all: true` and rewrites every frame and
-fence that named a merged style; `lookOnly: true` also compares styles whose
-boxes stand at different places. Such a style then stays with only its place,
-based on the kept style (`extends`), so its boxes keep where they stand and the
-answer lists it as `keptForTheirPlace`; `keepPlaces: false` merges it away and
-its boxes move.
+fence that used a merged style. `lookOnly: true` also compares styles whose
+boxes stand in different places. A style of that kind then keeps only its
+position and extends the kept style (`extends`), so its boxes stay where they
+are; the answer lists it as `keptForTheirPlace`. `keepPlaces: false` merges it
+away, and its boxes move.
 Its answer gives `undoSteps`: one per chapter rewritten and one for the styles, which `sandbox_undo` takes back, the styles first.
 
 ### Edit the text
@@ -354,7 +354,7 @@ for `sandbox_undo_text`, which takes it back (`redo: true` puts it back).
 `sandbox_write_text` replaces a whole chapter, from `markdown` or from a `.md`
 file.
 
-To show you a place in the text, `sandbox_select_text` opens the Manuscript
+To show you a place in the text, `sandbox_select_text` opens the Text
 panel with that passage selected (by `text`, `line` or `offset`), as a click on
 a finding of the Checks panel does.
 
@@ -409,13 +409,13 @@ does. A file comes by `url` (an `https:` address the page can fetch, or a
 
 The answer gives the stored record and the line that places it,
 `::resource{id="prices"}`, which the agent then writes into the text with
-`sandbox_edit_text`. On an existing `id` the call changes only what it gives:
+`sandbox_edit_text`. Given an existing `id`, the call changes only what it passes:
 a caption, a table's cells, the placement, a picture's safe area. `newId`
 renames a resource and, by default, every reference to it in the book.
 `sandbox_list_resources` lists them, and with an `id` gives one in full (a
 table's cells with their formatting, an SVG's source).
 
-A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label set there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`). On an SVG, `marks.svgSymbols` (`idPrefix`, `className`) adds an avoid zone over each element of the drawing it names, to the zones the call gives or the picture has (since postext 1.43).
+A picture's `marks` also carry its anchors. For a map or a diagram they are the points its `::label` lines stand at: an `id`, `x` and `y` (fractions of the whole picture) and the label fields that a label placed there takes (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). The answer notes a label style the design lacks, and new marks on a resource are a step of the history (`sandbox_undo` answers `kind: "resource"`). On an SVG, `marks.svgSymbols` (`idPrefix`, `className`) adds an avoid zone over each element of the drawing it names, on top of the zones the call gives or the picture already has (since postext 1.43).
 
 ```jsonc
 // two anchors of a map, with their label styles
@@ -438,7 +438,7 @@ Fonts uploaded into the book go through `sandbox_save_font`:
 { "scope": "book" }
 ```
 
-The answer is what the Checks panel says, for any chapter or the whole book
+The answer is what the Checks panel says, for any chapter or the whole book,
 whatever is on screen: missing fonts and pictures, markup the engine could not
 read, design elements that do not fit, text too faint for its background,
 loose lines, widows, overflowing boxes and the print preflight. Each warning
@@ -484,12 +484,13 @@ What the agent changes, you see. To point you at something:
 ```
 
 `sandbox_set_view` also chooses the viewer (`canvas`, `pdf`, `folio`, `html`,
-`epub`), the side panel, chapter or whole book, zoom, the reader's type size,
+`epub`), the Content or Design mode (`mode`), the side panel, chapter or whole book, zoom, the reader's type size,
 the print preview and the Design panel's group. `sandbox_go_to_page` turns
 pages by `step`, `page`, `position`, a `text` passage, an `anchor` or an
 EPUB's `contents` entry. `sandbox_run_viewer` presses a toolbar button:
 `regenerate` writes the PDF or EPUB again and waits for it, `print` opens the
-print dialog for you to confirm, `play_video` plays a video on a page.
+print dialog for you to confirm, `download` saves the PDF or the EPUB, and
+`play_video` and `stop_video` play and stop a video on a page.
 
 ### Comic pages
 
@@ -514,6 +515,10 @@ The answer warns when a balloon lands on a face or runs out of its panel. See
   projects; `sandbox_open_book` opens one (`{ "kind": "sample", "id": "postext-guide",
   "language": "es" }`); `sandbox_save_book` with `action: "copy_current"` keeps
   the book on screen as your own project, `new_blank` starts an empty one.
+  On a project, `add_language` with `language` (`"fr"`, `"zh-Hant"`) copies
+  the language on screen into a new edition in that language and opens it, and
+  `rename` with `thisLanguageOnly: true` names the language on screen alone;
+  `set_cover` and `remove_cover` give it a cover or take it away.
 - **Export.** `sandbox_export` writes `pdf`, `epub`, `postext`, `docx`,
   `markdown` or `config`. By default the browser downloads the file; with
   `deliver: "data"` a PDF or an EPUB comes back base64-encoded to the agent:
@@ -538,10 +543,10 @@ The answer warns when a balloon lands on a face or runs out of its panel. See
   }
   ```
 
-  With `characterSpacing` (on by default when there is something to take; since
-  postext 1.40) the letter spacing of the Word styles in use is put, in em, on
-  the book's paragraph styles, heading styles, heading levels and callout titles
-  they map to, where the book sets none. The dry run lists it under
+  With `characterSpacing` (since postext 1.40; on by default when the Word styles
+  have letter spacing to carry over), the letter spacing of the Word styles in use
+  is copied, in em, to the book's paragraph styles, heading styles, heading levels
+  and callout titles they map to, wherever the book sets none. The dry run lists it under
   `characterSpacing`.
 
   `sandbox_word_templates` lists, reads, saves and deletes the saved
@@ -578,7 +583,7 @@ corrected `mapping`, then the real import with `destination: "book"` →
 
 ## What asks for your consent
 
-Six tools do what cannot be taken back, and are marked as consequential
+Six tools do things that cannot be undone, and are marked as consequential
 (`consequentialHint`), so the browser can ask you before they run:
 `sandbox_remove_chapter`, `sandbox_delete_resource`, `sandbox_delete_book`,
 `sandbox_reset_to_original`, `sandbox_import_word` (it can replace the whole
@@ -592,8 +597,8 @@ instructions.
 
 ## Limits
 
-- **Everything stays in your browser.** The tools reach nothing the Sandbox
-  itself does not: your books are in this browser's storage, and a file given
+- **Everything stays in your browser.** The tools reach nothing that the Sandbox
+  itself cannot: your books are in this browser's storage, and a file given
   by `url` is fetched by the page, so its server must allow it (CORS). A
   `data:` URL or `base64` always works.
 - **Long work takes time.** A tool waits for the layout before it answers;
@@ -601,8 +606,9 @@ instructions.
 - **Undo**: `sandbox_undo` takes back the last change, to the text or to the design, in the order the changes were made, as Cmd/Ctrl+Z does in the Sandbox: text typed in the Text panel, the edits of the tools and those made on the previews, settings changed by `sandbox_set_config` or in the Design panel, frames dragged. `redo: true` puts a change back. `sandbox_undo_text` takes back only a text edit, and says so when the last change was to the design. Chapters added, removed or moved, resources and fonts are not in the history; opening another book empties it, and so does a reload. `sandbox_get_state` says what each would take back (`history`).
 - **The book on screen.** The tools work on the open book. Only
   `sandbox_export` of a `.postext` file, `sandbox_save_book` with
-  `duplicate` and `sandbox_reset_to_original` with `sample` reach another book
-  without opening it.
+  `duplicate`, `rename` or a cover, `sandbox_delete_book` and
+  `sandbox_reset_to_original` with `sample` reach another book without
+  opening it.
 
 ## The tools of the site
 

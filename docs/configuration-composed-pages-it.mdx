@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configurazione: pagine composte',
   sidebarTitle: 'Impostazioni delle pagine composte',
-  description: 'I modelli delle pagine composte: cornici, gruppi, decorazione, ereditarietà e varianti recto/verso, gli stili delle etichette degli ancoraggi delle immagini e gli avvisi che un modello può dare',
+  description: 'I modelli delle pagine composte: cornici, gruppi, decorazione, ereditarietà e varianti per pagina dispari e pari (recto/verso); gli stili delle etichette poste sulle ancore delle immagini, e gli avvisi che un modello può dare',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Modelli di pagina
 
-Una pagina composta è una pagina la cui forma viene da un **modello** della configurazione e il cui contenuto viene dal Markdown di un blocco `::::page{template="…"}`. Il modello dà un nome a dei rettangoli, chiamati **cornici**; il Markdown manda ogni parte del contenuto a una cornice per nome (il suo slot). La geometria non compare mai nel Markdown, e il testo del contenuto non compare mai nel modello. La proprietà `pageTemplates` contiene i modelli del libro:
+Una pagina composta è una pagina la cui forma viene da un **modello** della configurazione e il cui contenuto viene dal Markdown di un blocco di pagina, il blocco `::::page{template="…"}` che si apre con quattro segni di due punti. Il modello dà un nome a dei rettangoli, chiamati **cornici**; il Markdown manda ogni parte del contenuto a una cornice per nome (il suo slot). La geometria non compare mai nel Markdown, e il testo del contenuto non compare mai nel modello. La proprietà `pageTemplates` contiene i modelli del libro:
 
 ```ts
 const config: PostextConfig = {
@@ -62,7 +62,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obbligatorio</td>
-      <td>Il nome che chiede un blocco di pagina (<code>template="tema-cajas"</code>). Unico tra i modelli: un secondo modello con lo stesso id viene ignorato.</td>
+      <td>Il nome con cui un blocco di pagina richiama il modello (<code>template="tema-cajas"</code>). Unico tra i modelli: un secondo modello con lo stesso id viene ignorato.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -92,7 +92,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>frames</code></td>
       <td><code>FrameConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Le cornici, nell’ordine del modello: quello in cui vengono misurate e quello che decide i pareggi. Vedi <a href="#cornici">Cornici</a>.</td>
+      <td>Le cornici, nell’ordine del modello: è l’ordine in cui vengono misurate e quello che decide in caso di parità. Vedi <a href="#cornici">Cornici</a>.</td>
     </tr>
     <tr>
       <td><code>groups</code></td>
@@ -104,19 +104,19 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>nessuna</td>
-      <td>Immagini, filetti e riquadri dipinti con la pagina, nel linguaggio di elementi di <a href="/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina">intestazioni e piè di pagina</a>. Gli elementi di testo contengono solo segnaposto (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per un attributo del blocco di pagina). Un elemento si può ancorare a una cornice o a un gruppo (<code>'#dinero'</code>) e allora si sposta con esso. La decorazione si colloca dopo le cornici e non spinge mai il testo. Da postext 1.42, <code>&#123;headingNumber&#125;</code> scrive il contatore del primo titolo numerato contenuto nelle cornici della pagina (una cornice con <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> quello della cornice <code>titulo</code>, con le cifre del documento: un contrassegno con il numero di un tema lo legge dal titolo, e il blocco di pagina non deve ripeterlo. La decorazione è dipinta sotto le cornici; un clic su un elemento di testo che sta sopra una cornice, in un punto in cui la cornice non ha testo proprio, raggiunge l’elemento e non la cornice. Una cornice con <code>layer</code> negativo è dipinta sotto la decorazione.</td>
+      <td>Immagini, filetti e riquadri disegnati con la pagina, nel linguaggio di elementi di <a href="/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina">intestazioni e piè di pagina</a>. Gli elementi di testo contengono solo segnaposto (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per un attributo del blocco di pagina). Un elemento si può ancorare a una cornice o a un gruppo (<code>'#dinero'</code>) e allora si sposta con esso. La decorazione si colloca dopo le cornici e non spinge mai il testo. Da postext 1.42, <code>&#123;headingNumber&#125;</code> scrive il contatore del primo titolo numerato contenuto nelle cornici della pagina (una cornice con <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> quello della cornice <code>titulo</code>, con le cifre del documento: così un bollino con il numero di un tema lo prende dal titolo, e il blocco di pagina non deve ripeterlo. La decorazione è disegnata sotto le cornici; un clic su un elemento di testo che sta sopra una cornice, in un punto in cui la cornice non ha testo proprio, raggiunge l’elemento e non la cornice. Una cornice con <code>layer</code> negativo è disegnata sotto la decorazione.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
       <td><code>DesignSlot | false</code></td>
       <td>ereditati</td>
-      <td>Il titolo corrente e il numero di pagina. Se non sono impostati, la pagina tiene quelli del suo capitolo; <code>false</code> li nasconde.</td>
+      <td>La testatina e il numero di pagina. Se non sono impostati, la pagina tiene quelli del suo capitolo; <code>false</code> li nasconde.</td>
     </tr>
     <tr>
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Il modello descrive due pagine affiancate composte come un solo foglio (vedi <a href="/it/docs/composed-pages#doppie-pagine">Pagine composte › Doppie pagine</a>). Una doppia pagina comincia su una pagina pari, la sinistra in un libro che si legge da sinistra a destra e la destra in uno che si legge da destra a sinistra, con una pagina bianca prima se serve. Anche la sua apertura porta il segno <code>spread</code>; se non concordano, decide il modello (<code>spreadMismatch</code>).</td>
+      <td>Il modello descrive due pagine affiancate composte come un solo foglio (vedi <a href="/it/docs/composed-pages#doppie-pagine">Pagine composte › Doppie pagine</a>). Una doppia pagina comincia su una pagina pari, la sinistra in un libro che si legge da sinistra a destra e la destra in uno che si legge da destra a sinistra, con una pagina bianca prima se serve. Anche il suo blocco di pagina riporta l’indicatore <code>spread</code>; se non concordano, decide il modello (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
@@ -134,34 +134,34 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>questo modello</td>
-      <td>Il modello delle pagine aggiunte quando una cornice continua nella pagina successiva (<code>overflow.continueIn: 'next-page'</code>). Se non è impostato, la pagina aggiunta è questo modello impaginato di nuovo con riempite solo le cornici che continuano; le altre non occupano spazio. Se qui c’è una doppia pagina, anche il proseguimento è una doppia pagina. Vedi <a href="/it/docs/composed-pages#quando-il-testo-prosegue">Pagine composte › Quando il testo prosegue</a>.</td>
+      <td>Il modello delle pagine aggiunte quando una cornice continua nella pagina successiva (<code>overflow.continueIn: 'next-page'</code>). Se non è impostato, la pagina aggiunta è questo stesso modello, impaginato di nuovo riempiendo solo le cornici che proseguono; le altre non occupano spazio. Se qui c’è una doppia pagina, anche il proseguimento è una doppia pagina. Vedi <a href="/it/docs/composed-pages#quando-il-testo-prosegue">Pagine composte › Quando il testo prosegue</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>nessuno</td>
-      <td>Uno stile di paragrafo per il testo della pagina, come quello degli stili dei titoli.</td>
+      <td>Uno stile di paragrafo per il testo della pagina, come quello degli stili dei titoli. L’impaginazione non lo applica ancora.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>nessuna</td>
-      <td>Una tavolozza sostitutiva per la pagina, come quella degli stili dei titoli e delle parti: coppie <code>voce=#hex</code> separate da virgole (<code>tinta=#f6c3d0</code>). Ogni colore delle cornici e della decorazione della pagina legato a quella voce della tavolozza (o uguale al suo valore) la prende, e l’attributo <code>palette</code> del blocco di pagina ha la precedenza. Da postext 1.42 il valore viene applicato; prima era letto e ignorato.</td>
+      <td>Una tavolozza sostitutiva per la pagina, come quella degli stili dei titoli e delle parti: coppie <code>voce=#hex</code> separate da virgole (<code>tinta=#f6c3d0</code>). Il valore si applica a tutti i colori delle cornici e della decorazione della pagina legati a quella voce della tavolozza (o uguali al suo valore), e l’attributo <code>palette</code> del blocco di pagina ha la precedenza. Da postext 1.42 il valore viene applicato; prima era letto e ignorato.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>Il ruolo di pagina che vedono gli elementi di progetto grafico con un filtro <code>pages</code>.</td>
+      <td>Il ruolo di pagina che vedono gli elementi grafici con un filtro <code>pages</code>.</td>
     </tr>
   </tbody>
 </table>
 
 ### Cornici
 
-Una cornice è un rettangolo con un nome che riceve contenuto composto. Il suo `name` è lo slot che chiede il Markdown, ed è unico nel suo modello (nemmeno un gruppo può prendere il nome di una cornice, perché gli ancoraggi indicano entrambi allo stesso modo).
+Una cornice è un rettangolo con un nome che riceve contenuto composto. Il suo `name` è lo slot che il Markdown indica, ed è unico nel suo modello (nemmeno un gruppo può prendere il nome di una cornice, perché gli ancoraggi indicano entrambi allo stesso modo).
 
-Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia, altrimenti con il suo `placement`, che funziona come quello di un elemento di progetto grafico: un ancoraggio (`'container'` è l’area, `'page'`, `'bleed'`, o `'#name'` per un’altra cornice o un altro gruppo), un bordo, uno scostamento e una dimensione. Una cornice ancorata a un’altra si sposta con essa. Senza né l’una né l’altro, la cornice parte dall’angolo in alto a sinistra dell’area, larga quanto l’area e alta quanto dice la sua regola di altezza. Come il contenuto viene versato nelle cornici, concatenato e tagliato è descritto in [Pagine composte › Come si compone la pagina](/it/docs/composed-pages#come-si-compone-la-pagina).
+Una cornice si colloca nella cella indicata da `grid`, se il modello ha una griglia, altrimenti secondo `placement`, che funziona come quello di un elemento grafico: un ancoraggio (`'container'` è l’area, `'page'`, `'bleed'`, o `'#name'` per un’altra cornice o un altro gruppo), un bordo, uno scostamento e una dimensione. Una cornice ancorata a un’altra si sposta con essa. Senza né l’una né l’altro, la cornice parte dall’angolo in alto a sinistra dell’area, larga quanto l’area e alta quanto dice la sua regola di altezza. Come il contenuto viene distribuito tra le cornici, concatenato e tagliato è descritto in [Pagine composte › Come si compone la pagina](/it/docs/composed-pages#come-si-compone-la-pagina).
 
 <table>
   <thead>
@@ -195,7 +195,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>Una lunghezza fissa, una percentuale dell’area (da 0 a 100), <code>'auto'</code> (la dimensione propria del contenuto) o <code>'fill'</code> (quanto resta fino al bordo a cui la cornice è ancorata). Se non è impostata, la cornice legge <code>placement.size</code> e poi il valore predefinito: tutta la larghezza, alta quanto il suo contenuto. Da postext 1.42, una larghezza <code>'auto'</code> rende la cornice larga quanto la sua riga più lunga più il margine interno, non oltre lo spazio che lascia l’ancora né oltre <code>maxWidth</code> (il testo che non ci sta va a capo lì) e non meno di <code>minWidth</code>. Il testo è misurato composto a sinistra, quindi un titolo centrato occupa quanto le sue parole. La cornice parte dal bordo indicato dalla sua ancora, e le cornici ancorate a essa la seguono. Serve per una linguetta o un riquadro che deve adattarsi al titolo in ogni lingua. Un valore che il motore non può usare (una lunghezza negativa, un’unità sconosciuta) vale come il predefinito.</td>
+      <td>Una lunghezza fissa, una percentuale dell’area (da 0 a 100), <code>'auto'</code> (la dimensione propria del contenuto) o <code>'fill'</code> (quanto resta fino al bordo a cui la cornice è ancorata). Se non è impostata, la cornice legge <code>placement.size</code> e poi il valore predefinito: tutta la larghezza, alta quanto il suo contenuto. Da postext 1.42, una larghezza <code>'auto'</code> rende la cornice larga quanto la sua riga più lunga più il margine interno, non oltre lo spazio che lascia l’ancoraggio né oltre <code>maxWidth</code> (il testo che non ci sta va a capo lì) e non meno di <code>minWidth</code>. Il testo è misurato composto a sinistra, quindi un titolo centrato occupa quanto le sue parole. La cornice parte dal bordo indicato dal suo ancoraggio, e le cornici ancorate a essa la seguono. Serve per una linguetta o un riquadro che deve adattarsi al titolo in ogni lingua. Un valore che il motore non può usare (una lunghezza negativa, un’unità sconosciuta) vale come il predefinito.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -207,7 +207,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>senza riquadro</td>
-      <td>L’id di uno <a href="/it/docs/configuration-callouts#stili-dei-riquadri">stile dei riquadri</a>: le cornici si disegnano con gli stili dei riquadri (sfondo, bordo, spaziatura interna, fascia, icona, linguetta dell’etichetta, titolo). Le parole di una linguetta vengono dal Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Le impostazioni dei riquadri che decidono dove va un riquadro nel testo corrente (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) non valgono per una cornice.</td>
+      <td>L’id di uno <a href="/it/docs/configuration-callouts#stili-dei-riquadri">stile dei riquadri</a>: le cornici si disegnano con gli stili dei riquadri (sfondo, bordo, spaziatura interna, banda, icona, linguetta, titolo). Le parole di una linguetta vengono dal Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Le impostazioni dei riquadri che decidono dove va un riquadro nel testo corrente (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) non valgono per una cornice.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -219,7 +219,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>layer</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>L’ordine di pittura. La decorazione è il livello 0; un livello negativo si dipinge sotto di essa.</td>
+      <td>L’ordine di disegno. La decorazione è il livello 0; un livello negativo si disegna sotto di essa.</td>
     </tr>
     <tr>
       <td><code>rotate</code></td>
@@ -231,13 +231,13 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom' | 'justify'</code></td>
       <td><code>'top'</code></td>
-      <td>Dove sta il contenuto in una cornice più alta di lui.</td>
+      <td>Dove sta il contenuto in una cornice più alta del contenuto stesso.</td>
     </tr>
     <tr>
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, quello dello stile</td>
-      <td>Colonne dentro la cornice.</td>
+      <td>Colonne dentro la cornice. Un titolo non ne chiude mai una: passa alla colonna successiva con il testo che introduce (con <code>headings.keepWithNext</code>, da postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -273,13 +273,13 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>nessuno</td>
-      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa, con <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una pagina di quel modello: la sua cornice con lo stesso nome, altrimenti la sua cornice di flusso) o <code>'page:&lt;id&gt;'</code> (una cornice del recinto di pagina <code>::::page&#123;id=…&#125;</code> che viene più avanti: quella indicata da <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>, altrimenti una che il suo contenuto lascia vuota; <code>&lt;id&gt;</code> può essere <code>&#123;attr.name&#125;</code>, letto dal recinto della pagina; vedi <a href="/it/docs/composed-pages#saltare-a-una-pagina-più-avanti">Pagine composte › Saltare a una pagina più avanti</a>). Una cornice di una pagina aggiunta senza una regola propria prosegue con la regola che ha portato il contenuto (dopo un salto, <code>'next-page'</code>), fino a 16 pagine aggiunte. La pagina può trovarsi in un file di capitolo successivo del libro (da postext 1.41).</td>
+      <td>Dove prosegue il contenuto che non entra: <code>'#frame'</code> (un’altra cornice della pagina, come <code>next</code>), <code>'next-page'</code> (la stessa cornice in una pagina aggiunta dopo questa, con <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (una pagina di quel modello: la sua cornice con lo stesso nome, altrimenti la sua cornice di flusso) o <code>'page:&lt;id&gt;'</code> (una cornice del blocco di pagina <code>::::page&#123;id=…&#125;</code> che viene più avanti: quella indicata da <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>, altrimenti una che il suo contenuto lascia vuota; <code>&lt;id&gt;</code> può essere <code>&#123;attr.name&#125;</code>, letto dal blocco della pagina; vedi <a href="/it/docs/composed-pages#saltare-a-una-pagina-più-avanti">Pagine composte › Saltare a una pagina più avanti</a>). Una cornice di una pagina aggiunta senza una regola propria prosegue con la regola che vi ha mandato il contenuto (dopo un salto, <code>'next-page'</code>), fino a 16 pagine aggiunte. La pagina può trovarsi in un file di capitolo successivo del libro (da postext 1.41).</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>quello della lingua</td>
-      <td>Il segno alla fine di un pezzo tagliato per un’altra pagina. Se non è impostato, il <code>continuesMarker</code> dello stile della cornice, che segue la lingua del documento («Continued», «Continúa», «À suivre»…, le parole delle tabelle divise); una stringa imposta quelle parole, dove <code>&#123;page&#125;</code> è il numero della pagina in cui prosegue il resto; <code>false</code> non ne mette nessuno. Una cornice concatenata con <code>next</code> nella stessa pagina non porta segno.</td>
+      <td>Il segno alla fine di un pezzo che prosegue in un’altra pagina. Se non è impostato, il <code>continuesMarker</code> dello stile della cornice, che segue la lingua del documento («Continued», «Continúa», «À suivre»…, le parole delle tabelle divise); una stringa imposta quelle parole, dove <code>&#123;page&#125;</code> è il numero della pagina in cui prosegue il resto; <code>false</code> non ne mette nessuno. Una cornice concatenata con <code>next</code> nella stessa pagina non porta segno.</td>
     </tr>
     <tr>
       <td><code>overflow.fromMark</code></td>
@@ -333,25 +333,25 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Su una doppia pagina, la cornice può attraversare la fascia del dorso. Il suo testo si legge sulla pagina che ne contiene il centro; la pagina di fronte ne dipinge la metà.</td>
+      <td>Su una doppia pagina, la cornice può attraversare la fascia del dorso. Il suo testo si legge sulla pagina che ne contiene il centro; la pagina di fronte ne disegna la metà.</td>
     </tr>
     <tr>
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Righe tracciate lungo la scatola del contenuto della cornice: una al piede di ogni riga, quante ne entrano nella sua altezza. <code>every</code> è il passo, <code>'line'</code> (predefinito: l’interlinea del testo della cornice) o una lunghezza; <code>color</code> è un grigio medio per impostazione predefinita, <code>width</code> lo spessore (0,5 pt), <code>inset</code> lo spazio lasciato a ciascuna estremità della riga, oppure <code>&#123; left, right &#125;</code>. Vedi Cornici rigate, più sotto. Da postext 1.38.</td>
+      <td>Righe tracciate nell’area del contenuto della cornice: una al piede di ogni riga di testo, quante ne entrano nella sua altezza. <code>every</code> è il passo, <code>'line'</code> (predefinito: l’interlinea del testo della cornice) o una lunghezza; <code>color</code> è un grigio medio per impostazione predefinita, <code>width</code> lo spessore (0,5 pt), <code>inset</code> lo spazio lasciato a ciascuna estremità di ogni riga tracciata, oppure <code>&#123; left, right &#125;</code>. Vedi Cornici rigate, più sotto. Da postext 1.38.</td>
     </tr>
     <tr>
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Ciò che questa cornice cambia dell’aspetto del suo stile di riquadro, con i nomi e l’annidamento dello stile stesso: colori (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e spaziatura delle lettere del testo (<code>body.letterSpacing</code>). Un <code>background</code> attiva anche il riempimento dello stile; il colore di una linguetta conta solo se lo stile ha una linguetta. In un modello figlio si fonde chiave per chiave con la cornice che sostituisce. Un libro con una forma di riquadro in più tinte conserva uno stile e scrive qui la tinta, oppure lascia che <code>palette</code> ricolori un riempimento legato alla tavolozza. Da postext 1.42.</td>
+      <td>Ciò che questa cornice cambia dell’aspetto del suo stile di riquadro, con i nomi e l’annidamento dello stile stesso: colori (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e spaziatura tra le lettere del testo (<code>body.letterSpacing</code>). Un <code>background</code> attiva anche il riempimento dello stile; il colore di una linguetta conta solo se lo stile ha una linguetta. In un modello figlio si fonde chiave per chiave con la cornice che sostituisce. Un libro che usa la stessa forma di riquadro in più tinte mantiene un solo stile e indica qui la tinta, oppure lascia che <code>palette</code> ricolori un riempimento legato alla tavolozza. Da postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>quelli della pagina</td>
-      <td>Una cornice composta nel proprio modo di scrittura o nella propria direzione: un riquadro verticale su una pagina orizzontale, una scheda orizzontale su una pagina verticale, una citazione da destra a sinistra in un libro da sinistra a destra. Una cornice dell’altro modo di scrittura viene composta nel suo riquadro ruotato di un quarto di giro: le righe ne percorrono l’altezza e si susseguono nella larghezza, e un’altezza <code>'auto'</code> è la minima che le contiene in quella larghezza. Il testo viene dipinto come una pagina di quel modo dipinge il proprio. <code>direction</code> compone la storia della cornice in quella direzione, come un riquadro con <code>&#123;dir=…&#125;</code>; un blocco o un riquadro che scrive il proprio <code>dir</code> lo mantiene. Da postext 1.39. Da postext 1.40 una cornice verticale funziona anche su una pagina da destra a sinistra: è composta come su una pagina da sinistra a destra e collocata dove la mette il flusso specchiato, con il testo dipinto senza specchio; un’immagine in una cornice verticale di una pagina orizzontale sta dritta, con la sua didascalia, e occupa lo spazio che il riquadro le lascia nel senso della larghezza della pagina; l’EPUB adattabile scrive una cornice di un altro modo di scrittura come un riquadro con quel modo e la lunghezza lungo cui corrono le sue righe (in em del testo base). Da postext 1.42 anche un’immagine in una cornice di una pagina verticale che segue il modo della pagina sta dritta, con la sua didascalia.</td>
+      <td>Una cornice composta nel proprio modo di scrittura o nella propria direzione: un riquadro verticale su una pagina orizzontale, una scheda orizzontale su una pagina verticale, una citazione da destra a sinistra in un libro da sinistra a destra. Una cornice dell’altro modo di scrittura viene composta nel suo riquadro ruotato di un quarto di giro: le righe ne percorrono l’altezza e si susseguono nella larghezza, e un’altezza <code>'auto'</code> è la minima che le contiene in quella larghezza. Il testo viene disegnato come lo disegna una pagina con quel modo di scrittura. <code>direction</code> compone il testo della cornice in quella direzione, come un riquadro con <code>&#123;dir=…&#125;</code>; un blocco o un riquadro che scrive il proprio <code>dir</code> lo mantiene. Da postext 1.39. Da postext 1.40 una cornice verticale funziona anche su una pagina da destra a sinistra: è composta come su una pagina da sinistra a destra e collocata dove la mette il flusso specchiato, con il testo disegnato senza specchiatura; un’immagine in una cornice verticale di una pagina orizzontale sta dritta, con la sua didascalia, e occupa lo spazio che il riquadro le lascia nel senso della larghezza della pagina; l’EPUB a layout fluido scrive una cornice di un altro modo di scrittura come un riquadro con quel modo e la lunghezza lungo cui corrono le sue righe (in em del testo base). Da postext 1.42 anche un’immagine in una cornice di una pagina verticale che segue il modo della pagina sta dritta, con la sua didascalia.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
@@ -362,7 +362,7 @@ Una cornice si colloca con la sua cella `grid` quando il modello ha una griglia,
   </tbody>
 </table>
 
-**Cornici rigate.** Uno spazio per la risposta in un quaderno di attività è una cornice con `rules`: le sue righe seguono la sua altezza, quindi è il Markdown a decidere quante sono. Una cornice vuota di altezza fissa riceve le righe che vi entrano; una cornice `'auto'` che riceve `:::space{lines=4}` ne riceve quattro, e una cornice che cresce con il suo testo ne riceve di più. Le righe si disegnano sopra lo sfondo della cornice e sotto il suo testo, sulla tela, nell’HTML, nel PDF e nell’EPUB a impaginazione fissa; l’ispettore delle cornici del Sandbox le attiva in Aspetto.
+**Cornici rigate.** Uno spazio per la risposta in un quaderno di attività è una cornice con `rules`: le sue righe seguono la sua altezza, quindi è il Markdown a decidere quante sono. Una cornice vuota di altezza fissa riceve le righe che vi entrano; una cornice `'auto'` che riceve `:::space{lines=4}` ne riceve quattro, e una cornice che cresce con il suo testo ne riceve di più. Le righe si disegnano sopra lo sfondo della cornice e sotto il suo testo, nel canvas, nell’HTML, nel PDF e nell’EPUB a layout fisso; l’ispettore delle cornici della Sandbox le attiva in Aspetto.
 
 ```ts
 frames: [
@@ -441,7 +441,7 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
 
 ### Come i gruppi si dividono lo spazio
 
-Una cornice dichiara la sua dimensione: un `height` fisso, oppure `'auto'`, cioè l’altezza di ciò che contiene, tenuta fra `minHeight` e `maxHeight`. In un modello ricalcato su una pagina stampata, dai a ogni riquadro come `minHeight` l’altezza che ha su quella pagina: con un testo breve il riquadro resta come è disegnato, con uno più lungo diventa più alto. Nello stesso passaggio la pagina viene disposta due volte, una come la dichiara il modello e una come la richiede il contenuto, e le differenze fra le due finiscono nel [registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
+Una cornice dichiara la sua dimensione: un `height` fisso, oppure `'auto'`, cioè l’altezza di ciò che contiene, tenuta fra `minHeight` e `maxHeight`. In un modello ricalcato su una pagina stampata, dai a ogni riquadro come `minHeight` l’altezza che ha su quella pagina: con un testo breve il riquadro resta come è disegnato, con uno più lungo diventa più alto. Nella stessa passata la pagina viene disposta due volte, una come la dichiara il modello e una come la richiede il contenuto, e le differenze fra le due finiscono nel [registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
 
 **Pila.** Le cornici di una pila si dispongono l’una sotto l’altra, ciascuna alla sua altezza, con `gap` fra l’una e l’altra. Ognuna mantiene la propria posizione orizzontale e la propria larghezza; la sua posizione verticale viene ignorata.
 
@@ -470,7 +470,7 @@ Una cornice dichiara la sua dimensione: un `height` fisso, oppure `'auto'`, cio�
       <td><code>pin</code> (elemento della decorazione)</td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Nella decorazione di una pagina composta: un elemento ancorato a una cornice resta dove il modello colloca quella cornice, qualunque cosa facciano il contenuto della cornice o il suo gruppo. Ignorato nelle intestazioni, nei piè di pagina e nei design dei titoli.</td>
+      <td>Nella decorazione di una pagina composta: un elemento ancorato a una cornice resta dove il modello colloca quella cornice, qualunque cosa facciano il contenuto della cornice o il suo gruppo. Ignorato nelle intestazioni, nei piè di pagina e nella grafica dei titoli.</td>
     </tr>
   </tbody>
 </table>
@@ -491,7 +491,7 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 Il risultato dipende solo dal contenuto della pagina, dal modello e dalla tipografia: a parità di dati si ottiene la stessa pagina, misurata nello stesso ordine e con gli stessi passi. Mentre divide lo spazio, l’impaginazione non legge mai un’altra pagina, quindi una modifica su una pagina composta lascia invariate tutte le altre, purché il contenuto resti sulla sua pagina.
 
-**Tenere le cornici al piede di una scheda (da postext 1.42).** Una cornice ancorata sotto il testo che ha sopra segue quel testo: in un’edizione in cui il testo è una riga più corto o più lungo, le cornici sotto salgono o scendono, mentre ciò che il modello disegna (una scheda, una fascia, il piede) resta dov’è. Per tenere le cornici al piede di una scheda, dove il modello le mette, riunisci le cornici della scheda in una pila con una scatola alta quanto la scheda. Le cornici sopra quelle trattenute prendono lo spazio che avanza (`grow: 1`) e lo restituiscono (`shrink: 1`); quelle trattenute scrivono un `minHeight`. Un testo più corto lascia le cornici trattenute dove erano. Uno più lungo viene stretto sopra di esse: mantengono il loro `minHeight`, il testo sopra si riduce e, se ancora non entra, l’impaginazione segnala `frameOverflow` e il registro di reimpaginazione annota `textScaled` e `overflow` per la cornice sopra. Anche una cornice ancorata al piede del contenitore (`bottom-left`) mantiene il suo posto, ma nulla la lega alle cornici sopra: un testo più lungo la ricopre, nulla viene stretto per lei e la sovrapposizione non viene segnalata.
+**Tenere le cornici al piede di una scheda (da postext 1.42).** Una cornice ancorata sotto il testo che ha sopra segue quel testo: in un’edizione in cui il testo è una riga più corto o più lungo, le cornici sotto salgono o scendono, mentre ciò che il modello disegna (una scheda, una fascia, il piede) resta dov’è. Per tenere le cornici al piede di una scheda, dove il modello le mette, riunisci le cornici della scheda in una pila con un riquadro proprio alto quanto la scheda. Le cornici sopra quelle trattenute prendono lo spazio che avanza (`grow: 1`) e lo restituiscono (`shrink: 1`); quelle trattenute scrivono un `minHeight`. Un testo più corto lascia le cornici trattenute dove erano. Uno più lungo viene stretto sopra di esse: mantengono il loro `minHeight`, il testo sopra si riduce e, se ancora non entra, l’impaginazione segnala `frameOverflow` e il registro di reimpaginazione annota `textScaled` e `overflow` per la cornice sopra. Anche una cornice ancorata al piede del contenitore (`bottom-left`) mantiene il suo posto, ma nulla la lega alle cornici sopra: un testo più lungo la ricopre, nulla viene stretto per lei e la sovrapposizione non viene segnalata.
 
 ```json
 {
@@ -509,7 +509,7 @@ Il risultato dipende solo dal contenuto della pagina, dal modello e dalla tipogr
 }
 ```
 
-La cornice che cresce è alta quanto lo spazio libero, qualunque cosa contenga, quindi uno stile con sfondo visibile la dipingerebbe tutta: dipingi la scheda nella decorazione del modello e lascia la cornice di testo senza stile.
+La cornice che cresce è alta quanto lo spazio libero, qualunque cosa contenga, quindi uno stile con sfondo visibile la colorerebbe tutta: disegna la scheda nella decorazione del modello e lascia la cornice di testo senza stile.
 
 ### Quando il contenuto non entra
 
@@ -521,7 +521,7 @@ Quando il contenuto di una cornice è più alto dello spazio che le dà il suo g
 - `fit.shrinkText` e `fit.minScale`: se il testo della cornice si può rimpicciolire, e fino a quale scala (90 % per impostazione predefinita). La scala è la stessa per il corpo, l’interlinea e le spaziature; la cornice mantiene la sua dimensione.
 - `overflow.continueIn`: dove prosegue il contenuto quando tutto questo non basta, in un’altra cornice o in un’altra pagina (`'next-page'`, `'template:<id>'`, `'page:<id>'`), dove il testo riprende a dimensione piena dopo l’`overflow.mark` del pezzo. Una cornice che può proseguire in un’altra pagina lo fa prima che le sue immagini e il suo testo si riducano, a meno che il suo `fit.preferContinue` sia `false`.
 
-Le scale vanno a passi del 2,5 % e l’impaginazione sceglie la più grande che funziona, così un testo che sfora di una riga viene composto al 97,5 %, non al minimo. Un riquadro che deve mantenere il suo corpo imposta `fit: { shrinkText: false }`; una pagina le cui immagini devono mantenere la loro dimensione imposta `fit: { scaleImages: false }` sulle cornici del suo gruppo:
+Le scale vanno a passi del 2,5 % e l’impaginazione sceglie la più grande che funziona, così un testo che eccede di una riga viene composto al 97,5 %, non al minimo. Un riquadro che deve mantenere il suo corpo imposta `fit: { shrinkText: false }`; una pagina le cui immagini devono mantenere la loro dimensione imposta `fit: { scaleImages: false }` sulle cornici del suo gruppo:
 
 ```ts
 { name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
@@ -555,7 +555,7 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Vengono letti e controllati, ma non ancora applicati: il `bodyStyle` e la `palette` del modello. Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Una larghezza `'auto'` si legge come `'fill'`.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Da postext 1.42 applica anche la `palette` del modello, il `look` di una cornice e la larghezza `'auto'` (quella della riga più lunga della cornice). Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Viene letto e controllato, ma non ancora applicato: il `bodyStyle` del modello.
 
 ### Doppie pagine
 
@@ -582,13 +582,13 @@ pageTemplates: [{
 }]
 ```
 
-Uno spazio tra le colonne più largo del `gutter` tiene le schede di una griglia simmetrica lontane dal dorso, quindi nessuna si sposta. La seconda fascia e la striscia di immagini hanno `crossGutter` per attraversarlo: ciascuna si legge sulla pagina che ne contiene il centro e si dipinge su entrambe. Tutte le parole della pagina, anche i nomi delle epoche sulle linguette, restano nel Markdown.
+Un’intercolonna più larga del `gutter` tiene le schede di una griglia simmetrica lontane dal dorso, quindi nessuna si sposta. La seconda fascia e la striscia di immagini hanno `crossGutter` per attraversarlo: ciascuna si legge sulla pagina che ne contiene il centro e si disegna su entrambe. Tutte le parole della pagina, anche i nomi delle epoche sulle linguette, restano nel Markdown.
 
-In un libro verticale (`vertical-rl`) la doppia pagina si compone nel riferimento del flusso delle pagine, come le sue pagine composte singole: l’alto della pagina è il bordo destro del foglio e le righe scendono, quindi la `x` del modello scende lungo il foglio e la sua `y` va dal bordo destro del foglio a quello sinistro. Il foglio è la pagina destra seguita dalla sinistra lungo `y`, il dorso è una linea che attraversa il modello, e `gutter`, `crossGutter` e il taglio fra le pagine leggono quell’asse; la decorazione si compone sempre sul foglio fisico e si taglia al dorso. Una linea del tempo orizzontale disegnata per un libro orizzontale esce ruotata in uno verticale: scrivi il modello di un libro verticale nel riferimento del suo flusso. Da postext 1.38. Una scheda da leggere in orizzontale sul foglio prende `writingMode: 'horizontal-tb'`: viene composta in orizzontale e sta dritta sulla pagina verticale (da postext 1.39).
+In un libro verticale (`vertical-rl`) la doppia pagina si compone nel sistema di riferimento del flusso delle pagine, come le sue pagine composte singole: l’alto della pagina è il bordo destro del foglio e le righe scendono, quindi la `x` del modello scende lungo il foglio e la sua `y` va dal bordo destro del foglio a quello sinistro. Il foglio è la pagina destra seguita dalla sinistra lungo `y`, il dorso è una linea che attraversa il modello, e `gutter`, `crossGutter` e il taglio fra le pagine leggono quell’asse; la decorazione si compone sempre sul foglio fisico e si taglia al dorso. Una linea del tempo orizzontale disegnata per un libro orizzontale esce ruotata in uno verticale: scrivi il modello di un libro verticale nel sistema di riferimento del suo flusso. Da postext 1.38. Una scheda da leggere in orizzontale sul foglio prende `writingMode: 'horizontal-tb'`: viene composta in orizzontale e sta dritta sulla pagina verticale (da postext 1.39).
 
 ## Stili delle etichette
 
-La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta in un ancoraggio dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile che indica l’ancoraggio o l’etichetta. Nel Sandbox si modificano in **Grafica › Figure e tabelle › Stili di etichetta** (da postext 1.42).
+La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta su un’ancora dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile indicato dall’ancora o dall’etichetta. Nella Sandbox si modificano in **Grafica › Figure e tabelle › Stili di etichetta** (da postext 1.42). Rinominare lì uno stile riscrive le ancore e le righe `::label` che lo nominano (da postext 1.43).
 
 ```ts
 labelStyles: [
@@ -612,7 +612,7 @@ labelStyles: [
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obbligatorio</td>
-      <td>Il nome che usano ancoraggi ed etichette.</td>
+      <td>Il nome che usano ancore ed etichette.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Quanto si può rimpicciolire un’etichetta che non entra nella sua larghezza.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Scrittura verticale per le etichette di questo stile: caratteri dritti in celle una sotto l’altra, colonne da destra a sinistra, come si scrive una mappa cinese o giapponese. Il <code>writingMode</code> proprio di un’ancora prevale.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> dice che l’etichetta posta su questa ancora può toccare le vicine, come la stampa l’originale: <code>labelOverlap</code> non viene segnalato per una coppia di cui fa parte. Ha la precedenza sull’<code>overlap</code> dello stile. Da postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>Su una figura che attraversa il dorso di una doppia pagina, <code>'keep'</code> sposta l’etichetta fuori dalla fascia del margine interno, dalla parte in cui cade il suo punto; <code>'cross'</code> la lascia dove la mette il punto, come richiede un titolo disteso sulle due pagine. Da postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -703,9 +691,9 @@ labelStyles: [
 
 Un’etichetta senza stile, o con uno stile che non fissa il carattere, prende famiglia, corpo, peso e colore del testo corrente. Le righe di un’etichetta su più righe distano 1,15 volte il suo corpo, o l’interlinea dello stile di paragrafo preso in prestito. Con `paragraphStyle` l’etichetta prende anche il corsivo e il maiuscolo di quello stile; `fontStyle: 'italic'` e `textTransform: 'uppercase'` li aggiungono a uno stile che non ne prende in prestito nessuno. Uno stile di etichetta che scrive `fontStyle: 'normal'` o `textTransform: 'none'` spegne il corsivo o il maiuscolo dello stile di paragrafo preso in prestito (da postext 1.40); se non lo scrive, valgono quelli dello stile di paragrafo. Un’etichetta ridotta per entrare mantiene l’alone in proporzione.
 
-### Campi di etichetta di un ancoraggio
+### Campi di etichetta di un’ancora
 
-Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano per i personaggi) accettano alcuni campi facoltativi per le etichette. Sono frazioni dell’immagine, quindi valgono in ogni lingua e con qualunque ritaglio dell’immagine. I fumetti li ignorano.
+Le ancore di un’immagine (`Resource.anchors`, i punti che i fumetti usano per i personaggi) accettano alcuni campi facoltativi per le etichette. I valori sono frazioni dell’immagine, quindi valgono in ogni lingua e con qualunque ritaglio dell’immagine. I fumetti li ignorano.
 
 <table>
   <thead>
@@ -727,19 +715,19 @@ Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano 
       <td><code>align</code></td>
       <td><code>'start' | 'center' | 'end'</code></td>
       <td><code>'center'</code></td>
-      <td>Quale lato dell’etichetta sta sul punto dell’ancoraggio.</td>
+      <td>Quale lato dell’etichetta sta sul punto dell’ancora.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom'</code></td>
       <td><code>'middle'</code></td>
-      <td>Quale bordo dell’etichetta sta all’altezza dell’ancoraggio.</td>
+      <td>Quale bordo dell’etichetta sta all’altezza dell’ancora.</td>
     </tr>
     <tr>
       <td><code>rotate</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Gradi, in senso orario, attorno al punto dell’ancoraggio: il nome di un fiume lungo il suo corso.</td>
+      <td>Gradi, in senso orario, attorno al punto dell’ancora: il nome di un fiume lungo il suo corso.</td>
     </tr>
     <tr>
       <td><code>style</code></td>
@@ -747,16 +735,28 @@ Gli ancoraggi di un’immagine (`Resource.anchors`, i punti che i fumetti usano 
       <td>nessuno</td>
       <td>Un id di <code>labelStyles</code>. Un’etichetta che indica il proprio stile lo sostituisce.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> compone l’etichetta in verticale, come si scrive una mappa cinese o giapponese o un dorso. La sua <code>width</code> è allora una frazione dell’altezza dell’immagine, <code>align</code> corre lungo la colonna (<code>start</code> è l’alto) e <code>verticalAlign</code> attraverso le colonne (<code>top</code> è la prima, quella di destra).</td>
     </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> dice che l’etichetta posta su questa ancora può toccare le vicine, come la stampa l’originale: <code>labelOverlap</code> non viene segnalato per una coppia di cui fa parte. Ha la precedenza sull’<code>overlap</code> dello stile. Da postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>Su una figura che attraversa il dorso di una doppia pagina, <code>'keep'</code> sposta l’etichetta fuori dalla fascia del margine del dorso, dalla parte in cui cade il suo punto; <code>'cross'</code> la lascia dove la mette il punto, come richiede un titolo disteso sulle due pagine. Da postext 1.43.</td>
+    </tr>
   </tbody>
 </table>
 
-`start` ed `end` seguono la direzione dell’etichetta: in un’etichetta araba `start` è il suo bordo destro. Un ancoraggio condiviso dalle edizioni da sinistra a destra e da destra a sinistra della stessa mappa si legge meglio con l’etichetta centrata sopra o sotto il punto. Un’etichetta con `width` va a capo tra le parole; una parola più larga della giustezza riduce tutta l’etichetta, fino al `minScale` del suo stile. Come vengono disegnate le etichette è spiegato in [Pagine composte](/it/docs/composed-pages).
+`start` ed `end` seguono la direzione dell’etichetta: in un’etichetta araba `start` è il suo bordo destro. Un’ancora condivisa dalle edizioni da sinistra a destra e da destra a sinistra della stessa mappa si legge meglio con l’etichetta centrata sopra o sotto il punto. Un’etichetta con `width` va a capo tra le parole; una parola più larga della giustezza riduce tutta l’etichetta, fino al `minScale` del suo stile. Come vengono disegnate le etichette è spiegato in [Pagine composte](/it/docs/composed-pages).
 
 ## Avvisi dei modelli di pagina
 
@@ -830,10 +830,10 @@ Una chiave scritta male di un modello, di una cornice, di un gruppo, di una grig
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>
-      <td>Un ancoraggio di un’immagine indica uno <code>style</code> che <code>labelStyles</code> non ha. L’avviso cita la risorsa. Le etichette in quell’ancoraggio prendono l’aspetto predefinito.</td>
-      <td>Correggi l’id dello stile nell’ancoraggio, o aggiungi lo stile a <code>labelStyles</code>.</td>
+      <td>Un’ancora di un’immagine indica uno <code>style</code> che <code>labelStyles</code> non ha. L’avviso cita la risorsa. Le etichette su quell’ancora prendono l’aspetto predefinito.</td>
+      <td>Correggi l’id dello stile nell’ancora, o aggiungi lo stile a <code>labelStyles</code>.</td>
     </tr>
   </tbody>
 </table>
 
-La versione della configurazione è la 15 dai modelli di pagina in poi (i bundle scritti prima continuano a caricarsi senza modifiche: niente di ciò che dice una configurazione più vecchia cambia significato).
+La versione della configurazione è la 15 dai modelli di pagina in poi (i pacchetti scritti prima continuano a caricarsi senza modifiche: niente di ciò che dice una configurazione più vecchia cambia significato).

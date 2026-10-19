@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '注と参照',
   description: '脚注、行番号、相互参照と引用、目次、巻末の索引',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '27分',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // numberFormat: 'symbols' で使う参照記号。
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -73,13 +75,13 @@ interface FootnotesConfig {
       <td><code>numberFormat</code></td>
       <td><code>string</code></td>
       <td><code>'decimal'</code></td>
-      <td>番号の書き方です。番号付けの設定が受け付けるどの表記でも指定できます（<code>'decimal'</code>、<code>'lower-roman'</code>、<code>'lower-alpha'</code>、<code>'circled-decimal'</code>（または<code>'①'</code>）、<code>'cjk-decimal'</code>、<code>'一'</code>…）。本文中の合印と、注の冒頭の番号の両方に使われます。<code>circled-decimal</code>は50を超える番号を10進数で書きます。未知の名前は、<code>unknownNumberFormat</code>の警告とともに10進数で番号を付けます。<code>'symbols'</code>（または<code>'&#42;'</code>）は、<code>symbols</code>の参照記号を順に使って注を示します（&#42; † ‡ § ‖ ¶、使い切ると二つ重ね（&#42;&#42; †† ‡‡…）、さらに三つ重ね）。このとき注は、<code>numbering</code>を指定しない限りページごとに数え直されます。postext 1.19から。</td>
+      <td>番号の書き方です。番号付けの設定が受け付けるどの表記でも指定できます（<code>'decimal'</code>、<code>'lower-roman'</code>、<code>'lower-alpha'</code>、<code>'circled-decimal'</code>（または<code>'①'</code>）、<code>'cjk-decimal'</code>、<code>'一'</code>…）。本文中の合印と、注の冒頭の番号の両方に使われます。<code>circled-decimal</code>は50を超える番号を10進数で書きます。未知の名前は、<code>unknownNumberFormat</code>の警告とともに10進数で番号を付けます。<code>'symbols'</code>（または<code>'&#42;'</code>）は、<code>symbols</code>の参照記号を順に使って注を示します（&#42; † ‡ § ‖ ¶、使い切ると2つ重ね（&#42;&#42; †† ‡‡…）、さらに3つ重ね）。このとき注は、<code>numbering</code>を指定しない限りページごとに数え直されます。postext 1.19以降。</td>
     </tr>
     <tr>
       <td><code>symbols</code></td>
       <td><code>string[]</code></td>
       <td><code>['&#42;', '†', '‡', '§', '‖', '¶']</code></td>
-      <td><code>numberFormat: 'symbols'</code>が書く記号の並びです。使い切ると二つ重ね、さらに三つ重ねになります。Google FontsとFontsourceのラテン文字ファイルには &#42; † § ¶ があります（ダガーは<code>latin-ext</code>）が、‡ と ‖ はなく、PDFではフォントの<code>.notdef</code>グリフで描かれ、<code>missingGlyph</code>の警告が出ます。そのようなフォントでは、この二つを外す（<code>['&#42;', '†', '§', '¶']</code>）か、それらを持つフォントで注を組んでください。空の文字列は無視され、空のリストは既定の並びのままです。postext 1.19から。</td>
+      <td><code>numberFormat: 'symbols'</code>が書く記号の並びです。使い切ると2つ重ね、さらに3つ重ねになります。Google FontsとFontsourceのラテン文字ファイルには &#42; † § ¶ があります（ダガーは<code>latin-ext</code>）が、‡ と ‖ はなく、PDFではフォントの<code>.notdef</code>グリフで描かれ、<code>missingGlyph</code>の警告が出ます。そのようなフォントでは、この2つを外す（<code>['&#42;', '†', '§', '¶']</code>）か、それらの字形を含むフォントで注を組んでください。空の文字列は無視され、空のリストは既定の並びのままです。postext 1.19以降。</td>
     </tr>
     <tr>
       <td><code>markerPosition</code></td>
@@ -216,7 +218,7 @@ footnotes: {
 - **下側のフロート**。注を組んだ後に段の下端を占める図は、注の上に入ります。図の後に組まれた注は図の上に入ります。
 - **囲み**。囲み（インライン、フロート、固定）の中で引用された注は、囲みの後の本文が続く段の下端に置かれます。通常は同じ段です。文書を閉じる囲みは、本文が終わった段の下端に注を残します。
 - **制限**。注は分割されません。段より高い注は段からはみ出します。キャプション、表のセル、見出しの中の合印は読み取られません（書いたとおりに印字されます）。
-- **出力**。Canvas、HTML、PDFは注、合印（上付きの番号）、罫線を描画します。PDFでは各合印がその注にリンクし、タグ付きPDFでは各注を一意の`/ID`を持つ`Note`要素とし、構造ツリーの`/IDTree`に列挙します（PDF/UA-1）。注は`footnoteNote`が設定された`VDTBlock`として`page.floats`に、罫線は`page.footnoteAreas`に入ります。
+- **出力**。Canvas、HTML、PDFは注、合印（上付きの番号）、罫線を描画します。PDFでは各合印がその注にリンクし、タグ付きPDFでは各注を、一意の`/ID`の付いた`Note`要素とし、構造ツリーの`/IDTree`に列挙します（PDF/UA-1）。注は`footnoteNote`が設定された`VDTBlock`として`page.floats`に、罫線は`page.footnoteAreas`に入ります。
 - **警告**。`undefinedFootnote`（定義のない合印。番号は空の注の上に印字されます）と`unusedFootnote`（どの合印からも引用されない定義。組まれません）があります。
 
 解決関数と除去関数は、ほかのセクションと同じ形です。
@@ -230,7 +232,7 @@ resolveFootnotesConfig(config.footnotes, 'ja', 'vertical-rl'); // unset fields t
 
 ## 行番号
 
-`lineNumbers`プロパティは、5行ごと（またはN行ごと）の行の番号を、その行の横の余白に印字します。校訂版、詩のアンソロジー、法令の本文、学校向けの版がこうして行番号を付けます。数えるのは`:::verse`の詩の行か、本文のすべての行です。既定では無効です。各番号は自分の行のベースライン上に独自のサイズで描かれ、行を動かすことはありません。ページは番号がない場合とまったく同じにレイアウトされます。postext 1.23から使えます。
+`lineNumbers`プロパティは、5行ごと（またはN行ごと）に、行番号をその行の横の余白に印字します。校訂版、詩のアンソロジー、法令の本文、学校向けの版がこうして行番号を付けます。数えるのは`:::verse`の詩の行か、本文のすべての行です。既定では無効です。各番号は自分の行のベースライン上に独自のサイズで描かれ、行を動かすことはありません。ページは番号がない場合とまったく同じにレイアウトされます。postext 1.23から使えます。
 
 ```ts
 interface LineNumbersConfig {
@@ -273,7 +275,7 @@ interface LineNumbersConfig {
       <td><code>count</code></td>
       <td><code>'verse' | 'all'</code></td>
       <td><code>'verse'</code></td>
-      <td><code>'verse'</code>は<code>:::verse</code>の詩の行を、1行につき1回数えます。行長に収まらない詩の行が次の行に折り返した部分には番号が付かず、連と連のあきも数えません。古典アラビア語の配置で組んだ詩は、1ベイトを1行と数えます。段違いに組んだベイトの2行目は数えません。<code>'all'</code>は本文の段落、リストの項目、引用、詩のすべての行を、読む順に数えます。ページごと、段ごと、上から下へです。</td>
+      <td><code>'verse'</code>は<code>:::verse</code>の詩の行を、1行につき1回数えます。行長に収まらない詩の行が次の行に折り返した部分には番号が付かず、連と連のアキも数えません。古典アラビア語の配置で組んだ詩は、1ベイトを1行と数えます。段違いに組んだベイトの2行目は数えません。<code>'all'</code>は本文の段落、リストの項目、引用、詩のすべての行を、読む順に数えます。ページごと、段ごと、上から下へです。</td>
     </tr>
     <tr>
       <td><code>interval</code></td>
@@ -378,7 +380,7 @@ lineNumbers: {
 
 - **数えないもの**：見出し、キャプション、表と画像、別行立て数式、デザインのテキスト（扉、柱）、脚注と章末の注、目次、索引と参考文献の項目、白ページ。
 - **囲みと散文。** 囲みの中のテキストは数えません。`count: 'verse'`では散文も数えません。ただし、そのテキストを組む段落スタイルが`lineNumbers: true`を指定していれば数えます。`lineNumbers: false`のスタイルは決して数えません（[段落スタイル](/ja/docs/configuration-styles#段落スタイル)を参照）。
-- **1つの詩。** 詩の開始行には`numbered=false`（その詩の行を数えない）、`lineStart=N`（最初の行をNとし、そこから数え直す）、`interval=N`を書けます。`:::numbering{lines=N}`は、どこにあっても、次に数える行をNにします。[文書の書式 › `:::verse`](/ja/docs/document-format-directives#verse)と[`:::numbering`](/ja/docs/document-format-directives#numbering)を参照してください。
+- **1つの詩。** 詩の開始行には`numbered=false`（その詩の行を数えない）、`lineStart=N`（最初の行をNとし、そこから数え直す）、`interval=N`を書けます。`:::numbering{lines=N}`は、どこにあっても、次に数える行をNにします。[文書形式 › `:::verse`](/ja/docs/document-format-directives#verse)と[`:::numbering`](/ja/docs/document-format-directives#numbering)を参照してください。
 
 章ごとにレイアウトする本では、`restart: 'document'`は`continuation.lineNumber`で章から次の章へ数を引き継ぎます。`continuationAfter`は詩の行をテキストから数えます。`count: 'all'`では数がレイアウトによって決まるので、ホストは前の章の文書の`lastLineNumber`を渡します。Sandboxはそうしています。
 
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // 未設定の�
 
 ## 相互参照
 
-`crossRefs`プロパティは、[相互参照](/ja/docs/document-format-notes-references#相互参照とアンカー)が番号やページの前後に印字する語と、スタイルを指定しない`:ref`に使うスタイルを設定します。各テンプレートには、番号が入る位置に`{n}`を書きます。これを含まないテンプレートでは、ノーブレークスペースの後に番号が入ります（`"§"`は「*§ 3.2*」と印字されます）。未設定のテンプレートは文書の言語に従い、英語では*chapter / section / p.*、スペイン語では*capítulo / sección / pág.*、中国語では`第{n}章` / `第{n}节` / `第{n}页`となります。フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語も同様です。
+`crossRefs`プロパティは、[相互参照](/ja/docs/document-format-notes-references#相互参照とアンカー)が番号やページの前後に印字する語と、スタイルを指定しない`:ref`に使うスタイルを設定します。各テンプレートには、番号が入る位置に`{n}`を書きます。これを含まないテンプレートでは、ノーブレークスペースの後に番号が入ります（`"§"`は「*§ 3.2*」と印字されます）。未設定のテンプレートは文書の言語に従い、英語では*chapter / section / p.*、スペイン語では*capítulo / sección / pág.*、中国語では`第{n}章` / `第{n}节` / `第{n}页`、日本語では`第{n}章` / `{n}節` / `{n}ページ`、アラビア語では`الفصل {n}` / `القسم {n}` / `ص {n}`となります。フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語も同様です。
 
 ```ts
 interface CrossRefsConfig {
@@ -544,7 +546,7 @@ interface CitationsConfig {
       <td><code>numbering</code></td>
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
-      <td>引用を本全体で通して扱うか、章ごとに扱うか（各文書、および引用のあとの各レベル1見出し）。章ごとでは、番号方式のスタイルは各章を 1 から数え、二つの章で引用された文献はそれぞれの章の番号を取ります。注のスタイルは各章の最初の引用で文献を完全な形で書きます。<code>bibliography.scope: 'chapter'</code>と組み合わせて使い、章の一覧はその章の番号になります。</td>
+      <td>引用を本全体で通して扱うか、章ごとに扱うか（各文書、および引用のあとの各レベル1見出し）。章ごとでは、番号方式のスタイルは各章を1から数え、2つの章で引用された文献はそれぞれの章の番号を取ります。注のスタイルは各章の最初の引用で文献を完全な形で書きます。<code>bibliography.scope: 'chapter'</code>と組み合わせて使い、章の一覧はその章の番号になります。</td>
     </tr>
     <tr>
       <td><code>hyphenateNames</code></td>
@@ -686,7 +688,7 @@ const config: PostextConfig = {
       <td><code>subtitle</code></td>
       <td>object</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
-      <td>見出しの属性（<code>attr</code>）から取る、項目の下の2行目です（章の著者など）。独自の<code>fontFamily</code>、<code>fontSize</code>、<code>fontWeight</code>、<code>italic</code>（既定値<code>true</code>）、<code>color</code>と、追加の<code>indent</code>を持ちます。この行は項目と同じ行送りで組まれ、タイトルから離れることはありません。</td>
+      <td>見出しの属性（<code>attr</code>）から取る、項目の下の2行目です（章の著者など）。<code>fontFamily</code>、<code>fontSize</code>、<code>fontWeight</code>、<code>italic</code>（既定値<code>true</code>）、<code>color</code>と、追加の<code>indent</code>を独自に指定できます。この行は項目と同じ行送りで組まれ、タイトルから離れることはありません。</td>
     </tr>
     <tr>
       <td><code>parts.enabled</code></td>
@@ -698,13 +700,13 @@ const config: PostextConfig = {
       <td><code>parts.breakBefore</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>最初の部を除くすべての部の行の前で新しいページを始めます。各部の章がそれぞれ独立したページに並びます。組版ページの枠では、その枠が続きを送れるなら、そこで枠が切れます。postext 1.43 から。</td>
+      <td>最初の部を除くすべての部の行の前で新しいページを始めます。各部の章がそれぞれ独立したページに並びます。テンプレートページの枠では、その枠が続きを送れるなら、そこで枠が切れます。postext 1.43以降。</td>
     </tr>
     <tr>
       <td><code>parts.design</code></td>
       <td><code>DesignSlot</code></td>
       <td>空</td>
-      <td>行のデザインです。コンテナーは行そのもの（段の幅 × <code>height</code>）です。プレースホルダーは<code>{'{number}'}</code>、<code>{'{numberDecimal}'}</code>、<code>{'{numberRoman}'}</code>…、<code>{'{titleText}'}</code>、<code>{'{pageNumber}'}</code>です（最後のものは部扉のページラベルです。部扉を作らない<code>parts.page: false</code>のときは、部の内容が始まるページ、つまり柱がその部に切り替わるページのラベルになります。章ごとにレイアウトする本では、章を閉じるフェンスは次の章の最初の内容ページを指します）。パレットに連動した色は部自身の<code>palette</code>を使うため、各部の行はその部の色で表示されます。空のときは、<code>{'{number} {titleText}'}</code>（あいだにH1の<code>numberSeparator</code>）とページ番号を、レベル1の項目の文字組みで組みます。<code>{'{leader}'}</code>は、同じテキスト要素のなかで、前後の文字列のあいだに目次の<code>leader</code>を置きます。<code>{'{number} {titleText}{leader}{pageNumber}'}</code>と書くと、行頭に題名、行末にページ番号が来て、そのあいだにリーダーが入ります。リーダーはページ番号側にそろい、両側の文字列とは<code>gap</code>だけ離れます。項目行と同じ組み方です。このとき要素は行の幅いっぱいを占め（幅<code>auto</code>はコンテナの端まで伸びます）、題名が収まらなければ題名を切り詰め、ページ番号は切りません。リーダーを無効にすると（<code>leader.enabled: false</code>）あいだは空白になります。部の行以外や縦組みのページでは、<code>{'{leader}'}</code>は何も出力しません。タグ付きPDFとHTMLでは、リーダーは読み上げるテキストに含まれません。</td>
+      <td>行のデザインです。コンテナーは行そのもの（段の幅 × <code>height</code>）です。プレースホルダーは<code>{'{number}'}</code>、<code>{'{numberDecimal}'}</code>、<code>{'{numberRoman}'}</code>…、<code>{'{titleText}'}</code>、<code>{'{pageNumber}'}</code>です（最後のものは部扉のページラベルです。部扉を作らない<code>parts.page: false</code>のときは、部の内容が始まるページ、つまり柱がその部に切り替わるページのラベルになります。章ごとにレイアウトする本では、章の末尾に置いた部のブロックは、次の章の最初の内容ページを指します）。パレットに連動した色は部自身の<code>palette</code>を使うため、各部の行はその部の色で表示されます。空のときは、<code>{'{number} {titleText}'}</code>（あいだにH1の<code>numberSeparator</code>）とページ番号を、レベル1の項目の文字組みで組みます。<code>{'{leader}'}</code>は、同じテキスト要素のなかで、前後の文字列のあいだに目次の<code>leader</code>を置きます。<code>{'{number} {titleText}{leader}{pageNumber}'}</code>と書くと、行頭に題名、行末にページ番号が来て、そのあいだにリーダーが入ります。リーダーはページ番号側にそろい、両側の文字列とは<code>gap</code>だけ離れます。項目行と同じ組み方です。このとき要素は行の幅いっぱいを占め（幅<code>auto</code>はコンテナーの端まで伸びます）、題名が収まらなければ題名を切り詰め、ページ番号は切りません。リーダーを無効にすると（<code>leader.enabled: false</code>）あいだは空白になります。部の行以外や縦組みのページでは、<code>{'{leader}'}</code>は何も出力しません。タグ付きPDFとHTMLでは、リーダーは読み上げるテキストに含まれません。</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>
@@ -739,7 +741,7 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-ページラベルは文書が印刷するものと同じです。`buildDocument()`は、`:::toc`を含む文書を前のパスのラベルで組み直し、ラベルが確定するまで繰り返します（追加のパスは最大3回）。本を章ごとにレイアウトするホストは、代わりに本全体のアウトラインを`PostextContent.outline`として渡します。このアウトラインは`contentOutline()`（テキストだけから得る見出しと部）と`outlineFromDoc()`（同じ項目に、あるレイアウトのページラベルを付けたもの）から組み立て、そのアウトラインの`outlineKey()`が変わるたびに目次の章を組み直します。各見出しの項目は目次が印刷する`number`を持ち、番号付きの見出しであれば`counter`も持ちます。これは、テンプレートが何を印刷するかにかかわらず、`startAt`を適用したあとのそのレベルの通し番号です。ホストが自分の一覧で章の横に表示するのに使えます。
+ページラベルは文書が印刷するものと同じです。`buildDocument()`は、`:::toc`を含む文書を前のパスのラベルで組み直し、ラベルが確定するまで繰り返します（追加のパスは最大3回）。本を章ごとにレイアウトするホストは、代わりに本全体のアウトラインを`PostextContent.outline`として渡します。このアウトラインは`contentOutline()`（テキストだけから得る見出しと部）と`outlineFromDoc()`（同じ項目に、あるレイアウトのページラベルを付けたもの）から組み立て、そのアウトラインの`outlineKey()`が変わるたびに目次の章を組み直します。各見出しの項目には目次が印刷する`number`が付き、番号付きの見出しであれば`counter`も付きます。これは、テンプレートが何を印刷するかにかかわらず、`startAt`を適用したあとのそのレベルの通し番号です。ホストが自分の一覧で章の横に表示するのに使えます。
 
 ## 索引
 
@@ -821,14 +823,14 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>言語による。イタリック（アラビア文字では正体）</td>
+      <td>言語による。イタリック（アラビア文字と日本語では正体）</td>
       <td>相互参照の前に置く語です。未設定のときは文書の言語に従います。<em>See</em> / <em>See also</em>、<em>Véase</em> / <em>Véase también</em>、<em>Voir</em> / <em>Voir aussi</em>、见 / 另见（繁体字中国語では見 / 另見）…。中国語の索引では、参照を句点のあとに空白なしで置きます：<code>贾琏 12。见贾政</code>。</td>
     </tr>
     <tr>
       <td><code>see.separator</code></td>
       <td><code>string</code></td>
-      <td>言語による（既定は <code>'. '</code>）</td>
-      <td>相互参照の前に印字する区切りです。日本語は全角スペース（<code>夏目漱石 12　→漱石</code>）、中国語は <code>'。'</code>、英語・スペイン語・アラビア語はピリオド（<em>The Chicago Manual of Style</em> の <code>Firearms. See weapons</code>）、フランス語・イタリア語・ドイツ語はコンマ（<code>pierrier, voir éboulis</code>）、ポルトガル語（ABNT NBR 6034 の <code>Aviação ver Aeronáutica</code>）とカタルーニャ語は空白です。索引の <code>locale</code>、なければ文書の言語で決まります。既定のラベルは区切りに合わせて、ピリオド・<code>!</code>・<code>?</code> のあとでは大文字、それ以外では小文字で始まります。自分で設定したラベルは書いたとおりに印字されます。</td>
+      <td>言語による（既定は<code>'. '</code>）</td>
+      <td>相互参照の前に印字する区切りです。日本語は全角スペース（<code>夏目漱石 12　→漱石</code>）、中国語は<code>'。'</code>、英語・スペイン語・アラビア語はピリオド（<em>The Chicago Manual of Style</em>の<code>Firearms. See weapons</code>）、フランス語・イタリア語・ドイツ語はコンマ（<code>pierrier, voir éboulis</code>）、ポルトガル語（ABNT NBR 6034の<code>Aviação ver Aeronáutica</code>）とカタルーニャ語は空白です。索引の<code>locale</code>、なければ文書の言語で決まります。既定のラベルは区切りに合わせて、ピリオド・<code>!</code>・<code>?</code>のあとでは大文字、それ以外では小文字で始まります。自分で設定したラベルは書いたとおりに印字されます。</td>
     </tr>
     <tr>
       <td><code>locale</code></td>
@@ -846,7 +848,7 @@ const config: PostextConfig = {
       <td><code>ignoreArticle</code></td>
       <td><code>boolean</code></td>
       <td>アラビア語では<code>true</code></td>
-      <td>アラビア語の項目を、先頭の冠詞<code>ال</code>（<code>ٱل</code>）がないものとして並べ替え、グループにまとめます。البصرةはبの下、بدرとبغدادのあいだに入り、表記は書かれたままです。<code>الله</code>は冠詞を保ち、独自の<code>sort</code>キーを持つ項目はそのキーのとおりに並びます。この設定にかかわらず、アラビア語の索引は母音記号とタトウィールを無視し、أ إ آ ٱをاの下に入れ、ؤをو、ئとىをي、ةをهとして並べます。</td>
+      <td>アラビア語の項目を、先頭の冠詞<code>ال</code>（<code>ٱل</code>）がないものとして並べ替え、グループにまとめます。البصرةはبの下、بدرとبغدادのあいだに入り、表記は書かれたままです。<code>الله</code>は冠詞を保ち、独自の<code>sort</code>キーを指定した項目はそのキーのとおりに並びます。この設定にかかわらず、アラビア語の索引は母音記号とタトウィールを無視し、أ إ آ ٱをاの下に入れ、ؤをو、ئとىをي、ةをهとして並べます。</td>
     </tr>
     <tr>
       <td><code>groups.enabled</code></td>
@@ -881,4 +883,4 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-ページ番号は、目次と同じく本のアウトラインから得ます。`computeOutline()`と`contentOutline()`は、テキストの索引の印を種類`'indexMark'`の項目として一覧にし（`indexMark.path`、`sort`、`see`、`seeAlso`、`main`、`range`、`index`を持ちます）、`outlineFromDoc()`がそれぞれに配置されたページを与えます。このページは、ビルドが`doc.indexMarks`（印ごとに`{ sourceStart, pageIndex }`）に記録します。`buildDocument()`は、自身の索引を印刷する文書を、番号が確定するまで組み直します。本を章ごとにレイアウトするホストは、`:::index`を含む章に、本全体のアウトラインを`PostextContent.outline`として渡します。`tocOutline()`と`indexOutline()`はアウトラインを目次が読む部分と索引が読む部分に分けるため、ホストは各章を、その章が印刷する部分だけに結び付けられます。Sandboxは、索引の章を印が動いたときだけ、目次の章を見出しが動いたときだけ組み直します。`contentOutline()`は、テキストが索引を印刷するかどうか（`hasIndex`）も示します。
+ページ番号は、目次と同じく本のアウトラインから得ます。`computeOutline()`と`contentOutline()`は、テキストの索引の印を種類`'indexMark'`の項目として一覧にし（`indexMark.path`、`sort`、`see`、`seeAlso`、`main`、`range`、`index`が含まれます）、`outlineFromDoc()`がそれぞれに配置されたページを与えます。このページは、ビルドが`doc.indexMarks`（印ごとに`{ sourceStart, pageIndex }`）に記録します。`buildDocument()`は、自身の索引を印刷する文書を、番号が確定するまで組み直します。本を章ごとにレイアウトするホストは、`:::index`を含む章に、本全体のアウトラインを`PostextContent.outline`として渡します。`tocOutline()`と`indexOutline()`はアウトラインを目次が読む部分と索引が読む部分に分けるため、ホストは各章を、その章が印刷する部分だけに結び付けられます。Sandboxは、索引の章を印が動いたときだけ、目次の章を見出しが動いたときだけ組み直します。`contentOutline()`は、テキストが索引を印刷するかどうか（`hasIndex`）も示します。

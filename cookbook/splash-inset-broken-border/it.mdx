@@ -10,31 +10,31 @@ pageNotes: { "1": "La splash page: il faro in una tempesta notturna, al vivo su 
 
 ## Che cosa comporrai
 
-Due tavole della tempesta del *Faro di Porthcove*. La prima è una splash: un’unica immagine del faro nella tempesta esce da ogni bordo della pagina, con una piccola vignetta incorniciata di Maya alla finestra posata sul suo angolo inferiore. La seconda si apre con un’onda al vivo su tre lati; sotto, un gabbiano vola fuori dalla vignetta del guardiano attraverso il suo bordo, e una vignetta stretta senza immagine contiene due didascalie su un fondo blu notte. Il formato è quello di un comic book americano, 168 × 259 mm con 3 mm di abbondanza, e le pagine sono in dieci lingue.
+Due tavole della tempesta del *Faro di Porthcove*. La prima è una splash: un’unica immagine del faro nella tempesta esce da ogni bordo della pagina, con una piccola vignetta incorniciata di Maya alla finestra posata sull’angolo inferiore. La seconda si apre con un’onda al vivo su tre lati; sotto, un gabbiano vola fuori dalla vignetta del guardiano attraverso il bordo, e una vignetta stretta senza immagine contiene due didascalie su un fondo blu notte. Il formato è quello di un comic book americano, 168 × 259 mm con 3 mm di abbondanza, e le pagine sono in dieci lingue.
 
 ## Preparazione
 
 ### 1 · Porta la splash al vivo su ogni lato
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `split="*"` fa dell’intera cornice una sola cella, e `bleed` sulla pagina porta ogni vignetta che tocca la cornice fino al riquadro di abbondanza, 3 mm oltre il taglio, senza bordo su quei lati ([dividere la pagina](/it/docs/comics#dividere-la-tavola)). A pagina 2, `bleed="top start end"` sull’onda porta al vivo solo quei tre lati; il suo piede mantiene lo spazio tra le vignette sottostanti. `start` e `end` seguono la direzione di lettura, quindi le edizioni giapponese e araba, lette da destra a sinistra, portano al vivo gli stessi lati.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `split="*"` fa dell’intera cornice una sola cella, e `bleed` sulla pagina porta ogni vignetta che tocca la cornice fino all’area di abbondanza, 3 mm oltre il taglio, senza bordo su quei lati ([dividere la pagina](/it/docs/comics#dividere-la-tavola)). A pagina 2, `bleed="top start end"` sull’onda porta al vivo solo quei tre lati; il suo piede mantiene lo spazio tra le vignette sottostanti. `start` e `end` seguono la direzione di lettura, quindi le edizioni giapponese e araba, lette da destra a sinistra, portano al vivo gli stessi lati.
 
 ### 2 · Posa una vignetta inserita sulla splash
 
-`inset="56 64 38 30"` colloca la vignetta di Maya al 56% e al 64% della vignetta che la precede, larga il 38% e alta il 30%. Una vignetta inserita non occupa una cella: viene posata sulla splash, mantiene il proprio bordo e si legge subito dopo. La sua immagine è ritagliata sul suo riquadro in base alla sua zona sicura, qui il volto di Maya.
+`inset="56 64 38 30"` colloca la vignetta di Maya al 56% e al 64% della vignetta che la precede, larga il 38% e alta il 30%. Una vignetta inserita non occupa una cella: si posa sulla splash, mantiene il proprio bordo e si legge subito dopo. L’immagine è ritagliata sul riquadro della vignetta in base alla zona sicura, qui il volto di Maya.
 
-<PageShot page={1} crop="0.35,0.55,0.65,0.45" caption="La vignetta inserita: il volto di Maya nella sua cornice sopra l’angolo inferiore della splash, con la sua voce interiore." />
+<PageShot page={1} crop="0.35,0.55,0.65,0.45" caption="La vignetta inserita: il volto di Maya, con il suo bordo, sopra l’angolo inferiore della splash, con la sua voce interiore." />
 
 ### 3 · Lascia che un gabbiano rompa il bordo
 
 <Excerpt region="art" />
 
-`pop=sp-tomas-pop` nomina una seconda immagine per la vignetta del guardiano: un PNG trasparente delle dimensioni della sua immagine con sopra solo il gabbiano. Postext lo ritaglia e lo colloca esattamente come il disegno della vignetta, poi lo disegna dopo il bordo e fuori dal ritaglio della vignetta, così la parte del gabbiano che sta oltre la cella vola sopra il bordo e il margine ([vignette e disegni](/it/docs/comics#vignette-e-disegni)). `focus="45% 50%"` sposta il ritaglio a sinistra entro quanto la zona sicura permette, così il gabbiano sta a cavallo del bordo sinistro invece che fuori nel margine.
+`pop=sp-tomas-pop` indica una seconda immagine per la vignetta del guardiano: un PNG trasparente delle dimensioni della sua immagine con sopra solo il gabbiano. Postext lo ritaglia e lo colloca esattamente come il disegno della vignetta, poi lo disegna dopo il bordo e fuori dal ritaglio della vignetta, così la parte del gabbiano che sta oltre la cella vola sopra il bordo e il margine ([vignette e disegni](/it/docs/comics#vignette-e-disegni)). `focus="45% 50%"` sposta il ritaglio a sinistra entro quanto la zona sicura permette, così il gabbiano sta a cavallo del bordo sinistro invece che fuori nel margine.
 
 ### 4 · Lascia una vignetta senza immagine
 
 <Excerpt region="palette" />
 
-Un `::panel` senza `art` è una cella vuota con il bordo dello stile delle vignette; `bg=night` la riempie con un colore della palette. Le sue didascalie, `at=top` e `at=bottom`, sono accostate ai suoi bordi superiore e inferiore, una pausa silenziosa dopo la tempesta.
+Un `::panel` senza `art` è una cella vuota con il bordo dello stile delle vignette; `bg=night` la riempie con un colore della tavolozza. Le didascalie, `at=top` e `at=bottom`, sono accostate ai bordi superiore e inferiore, una pausa silenziosa dopo la tempesta.
 
 ## Varianti
 
@@ -58,4 +58,4 @@ Uno stile di vignetta con nome cambia una sola vignetta; `style=` sulla vignetta
 
 - Il livello pop deve avere esattamente le dimensioni in pixel dell’immagine della vignetta: Postext lo ritaglia con la stessa finestra, quindi una sagoma più piccola finirebbe nel posto sbagliato.
 - L’abbondanza richiede `page.bleed`; senza, una vignetta al vivo si ferma al taglio.
-- Un effetto sonoro accanto a un bordo al vivo può finire nell’abbondanza, oltre il taglio, dove la taglierina lo taglia. Il giapponese ザッバーン è una colonna alta cinque caratteri, quindi è fissato più in basso degli effetti latini, a `60% 44%`.
+- Un’onomatopea accanto a un bordo al vivo può finire nell’abbondanza, oltre il taglio, dove la taglierina la taglia. Il giapponese ザッバーン è una colonna alta cinque caratteri, quindi è fissato più in basso delle onomatopee latine, a `60% 44%`.

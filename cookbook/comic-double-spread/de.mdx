@@ -1,6 +1,6 @@
 ---
 title: "Eine Comicseite über eine Doppelseite"
-summary: "Ein :::page mit dem Flag spread legt eine Aufteilung über zwei Seiten: Ein Panorama läuft über den Bund, die Reihe darunter teilt sich am Falz."
+summary: "Ein :::page mit dem Attribut spread legt eine Aufteilung über zwei Seiten: Ein Panorama läuft über den Bund, die Reihe darunter teilt sich am Falz."
 plain: "Ein Comic, über zwei gegenüberliegende Seiten gelegt, als wären sie eine: Ein breites Bild eines vollen Markts läuft über die Buchmitte, darunter stehen drei Panels."
 description: "Comic-Doppelseite in Postext: eine Aufteilung über beide Seiten, ein Panorama mit 1.900 px über den Bund, die untere Reihe am Falz geteilt, in zehn Sprachen."
 question: "Wie lege ich eine Comicseite über eine Doppelseite?"
@@ -9,13 +9,13 @@ aliases: ["Doppelseite", "doppelseitiges Bild", "Panorama", "Splash über zwei S
 
 ## Was Sie setzen
 
-Die zweite Geschichte des Albums aus <RecipeLink slug="tebeo-album-page">Nº 152</RecipeLink>, *¡Abuelo!*, erzählt über zwei gegenüberliegende Seiten. Ein Samstag im Dezember, der Markt ist voll; Lola verliert ihren Großvater im Gedränge. Die obere Hälfte der Doppelseite ist ein einziges Panorama, 432 mm breit: Lola, winzig, ganz links, Paco auf der Suche ganz rechts, und der Gang des Markts läuft zwischen ihnen in den Falz. Darunter drei Panels: Lola allein zwischen den Beinen, Paco pfeifend auf einer Obstkiste, das Wiedersehen mit seiner Baskenmütze in der Luft. Die Aufteilung ist einmal für beide Seiten geschrieben, sodass das Panorama über den Bund läuft und der Zwischenraum der unteren Reihe auf den Falz fällt. Spanisch ist das Original; die englische, katalanische, chinesische, arabische, japanische, portugiesische, französische, deutsche und italienische Ausgabe beschriften dieselbe Doppelseite.
+Die zweite Geschichte des Albums aus <RecipeLink slug="tebeo-album-page">Nº 152</RecipeLink>, *¡Abuelo!*, erzählt über zwei gegenüberliegende Seiten. Ein Samstag im Dezember, der Markt ist voll; Lola verliert ihren Großvater im Gedränge. Die obere Hälfte der Doppelseite ist ein einziges Panorama, 432 mm breit: Lola, winzig, ganz links, Paco auf der Suche ganz rechts, und der Gang des Markts läuft zwischen ihnen in den Falz. Darunter drei Panels: Lola allein zwischen den Beinen, Paco pfeifend auf einer Obstkiste, das Wiedersehen mit seiner Baskenmütze in der Luft. Die Aufteilung ist einmal für beide Seiten geschrieben, sodass das Panorama über den Bund läuft und der Zwischenraum der unteren Reihe auf den Falz fällt. Spanisch ist das Original; die englische, katalanische, chinesische, arabische, japanische, portugiesische, französische, deutsche und italienische Ausgabe lettern dieselbe Doppelseite.
 
 ## Zubereitung
 
 ### 1 · Eine Aufteilung über beide Seiten
 
-Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Der ganze Comic ist eine Direktive mit dem Flag `spread`:
+Den Code finden Sie oben unter [Die kurze Antwort](#die-kurze-antwort). Der ganze Comic ist eine Direktive mit dem Attribut `spread` ohne Wert:
 
 ```md
 :::page{spread split="55 / * [25 | 25 | *]"}
@@ -52,5 +52,5 @@ Lassen Sie die Fortsetzung weg, und die Engine lässt Seite 1 leer (Rolle `blank
 
 ## Häufige Fehler
 
-- Sprechblasen halten sich aus einem Band von 8 mm um den Bund heraus, angeheftete eingeschlossen: Ein Sprecher, der auf dem Falz steht, bekommt eine zur Seite geschobene Sprechblase. Halten Sie die Sprecher eines Panels, das über den Bund läuft, von seiner Mitte fern.
+- Sprechblasen halten sich aus einem 8 mm breiten Bereich um den Bund heraus, angeheftete eingeschlossen: Ein Sprecher, der auf dem Falz steht, bekommt eine zur Seite geschobene Sprechblase. Halten Sie die Sprecher eines Panels, das über den Bund läuft, von seiner Mitte fern.
 - Eine Sprechblase meidet zwei Figuren, deren Gesichter sich berühren, bei einer Umarmung oder einem Kampf, auch wenn ihr eigener Sprecher darunter ist. In der japanischen und der arabischen Ausgabe liest sich die Doppelseite von rechts, das Panel mit dem Wiedersehen wandert auf die linke Seite, und die fliegende Baskenmütze nimmt dessen obere rechte Ecke ein; Pacos zwei Sprechblasen stehen über dem Markt neben seinem Kopf, nicht über der Umarmung. Markieren Sie beide Gesichter in der Zeichnung (`face`), damit die Engine sieht, dass sie sich berühren.

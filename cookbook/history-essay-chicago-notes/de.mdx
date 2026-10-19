@@ -1,10 +1,10 @@
 ---
 title: "Ein historischer Essay mit Chicago-Noten"
-summary: "Ein vierseitiger historischer Essay, dessen Zitate [@key, 87] zu Chicago-Noten am Seitenfuß werden: beim ersten Mal vollständig, danach kurz, mit Bibliografie."
+summary: "Ein vierseitiger historischer Essay, dessen Zitationen [@key, 87] zu Chicago-Noten am Seitenfuß werden: erst vollständig, dann kurz, mit Bibliografie."
 plain: "Ein Essay darüber, wie britische Städte zur Londoner Zeit kamen. Jede Quelle, die der Autor zitiert, wird zu einer nummerierten Note am Fuß der Seite, und die Liste der Werke steht am Ende."
-description: "Ein historischer Essay in Postext: Pandoc-Zitate als Chicago-Fußnoten gesetzt, Kurzformen für wiederholte Werke, Präfixe, Fundstellen und eine Bibliografie."
-question: "Wie setze ich Zitate als Chicago-Fußnoten, mit Kurzformen für spätere Zitate?"
-aliases: ["Chicago", "Chicago Manual of Style", "CMOS", "Noten und Bibliografie", "Fußnotenzitate", "Zitieren in Fußnoten", "Ibid.", "ebd.", "Kurzbelege", "Geisteswissenschaften", "historischer Essay", "Turabian"]
+description: "Ein historischer Essay in Postext: Pandoc-Zitationen als Chicago-Fußnoten gesetzt, Kurzformen für wiederholte Werke, Präfixe, Fundstellen und eine Bibliografie."
+question: "Wie setze ich Zitationen als Chicago-Fußnoten, mit Kurzformen für spätere Zitationen?"
+aliases: ["Chicago", "Chicago Manual of Style", "CMOS", "Noten und Bibliografie", "Fußnotenzitationen", "Zitieren in Fußnoten", "Ibid.", "ebd.", "Kurzbelege", "Geisteswissenschaften", "historischer Essay", "Turabian"]
 pageNotes: { "1": "Seite 1: ein dunkelgrünes Band über der oberen Hälfte der Seite mit der Reihenzeile, den Jahreszahlen 1840–1880 in großen, leichten Ziffern, dem Titel „Railway Time: How British Towns Came to Keep London’s Hour“ und dem Namen des Autors; darunter die ersten Absätze und eine erste Note, die Schivelbusch vollständig zitiert.", "2": "Seite 2: die Abschnitte „The companies decide“ und „The wire carries the hour“; am Fuß die Noten 2 bis 6, in denen Howse in Note 3 vollständig erscheint und in Note 4 als „Howse, Greenwich Time and the Discovery of the Longitude“.", "3": "Seite 3: „The towns hesitate“ und „The courts decline“, mit den Noten 7 bis 11 in Kurzform und einer Anmerkung des Autors, die zwei Werke mit dem Präfix „see“ zitiert.", "4": "Seite 4: der letzte Abschnitt, die „Bibliography“ in alphabetischer Folge mit hängendem Einzug, ein kleines Impressum und die Noten 12 bis 15." }
 ---
 
@@ -16,21 +16,21 @@ Ein Sonderdruck aus der technikgeschichtlichen Reihe einer Zeitschrift: ein Essa
 
 ### 1 · Eine Note für jedes Zitat
 
-Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `chicago-notes-bibliography` ist ein Notenstil, also hinterlässt ein Zitat im Text eine hochgestellte Nummer, und sein Wortlaut geht in eine Fußnote, die mit den eigenen `[^notes]` des Autors durchgezählt wird; `notes: 'footnote'` sagt das ausdrücklich. citeproc-js merkt sich, welche Werke es bereits zitiert hat, sodass Note 3 *Derek Howse, Greenwich Time and the Discovery of the Longitude (Oxford University Press, 1980), 87* lautet und Note 4, die dasselbe Buch erneut zitiert, *Howse, Greenwich Time and the Discovery of the Longitude, 90–91*. Der mitgelieferte Stil ist die 18. Auflage des Chicago Manual, die *Ibid.* abschafft und die Kurzform wiederholt, also drucken die Noten 11 und 12 zweimal die Kurzform.
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `chicago-notes-bibliography` ist ein Notenstil, also hinterlässt eine Zitation im Text eine hochgestellte Nummer, und ihr Wortlaut geht in eine Fußnote, die mit den eigenen `[^notes]` des Autors durchgezählt wird; `notes: 'footnote'` sagt das ausdrücklich. citeproc-js merkt sich, welche Werke es bereits zitiert hat, sodass Note 3 *Derek Howse, Greenwich Time and the Discovery of the Longitude (Oxford University Press, 1980), 87* lautet und Note 4, die dasselbe Buch erneut zitiert, *Howse, Greenwich Time and the Discovery of the Longitude, 90–91*. Der mitgelieferte Stil ist die 18. Auflage des Chicago Manual, die *Ibid.* abschafft und die Kurzform wiederholt, also zeigen die Noten 11 und 12 zweimal die Kurzform.
 
 ### 2 · Auch Noten des Autors zitieren
 
-Ein Zitat in einer `[^note]` bleibt in dieser Note und wird inline gesetzt, vollständig, wenn das Werk zum ersten Mal erscheint: Note 1 ist der Satz des Autors, gefolgt von der vollständigen Angabe zu Schivelbusch. Jedes Zitat endet mit dem Schlusspunkt des Stils, also braucht eine Note, die mit einem Zitat endet, im Markdown keinen eigenen Punkt.
+Eine Zitation in einer `[^note]` bleibt in dieser Note und wird inline gesetzt, vollständig, wenn das Werk zum ersten Mal erscheint: Note 1 ist der Satz des Autors, gefolgt von der vollständigen Angabe zu Schivelbusch. Jede Zitation endet mit dem Schlusspunkt des Stils, also braucht eine Note, die mit einer Zitation endet, im Markdown keinen eigenen Punkt.
 
 ### 3 · Präfixe, Suffixe und Fundstellen
 
-`[see @simmons1991, 346–47; and @bartky2000, chap. 9]` setzt *see* vor das erste Werk, trennt die beiden mit einem Semikolon und behält die Fundstelle jedes Werks. Eine bloße Zahl ist eine Seite; `chap.` und `cap.` bezeichnen in beiden Sprachen ein Kapitel. Text nach der Fundstelle ist ein Suffix: `[@howse1980, 82–84, on the mail-coach timepieces]` druckt die Wendung nach den Seiten.
+`[see @simmons1991, 346–47; and @bartky2000, chap. 9]` setzt *see* vor das erste Werk, trennt die beiden mit einem Semikolon und behält die Fundstelle jedes Werks. Eine bloße Zahl ist eine Seite; `chap.` und `cap.` bezeichnen in beiden Sprachen ein Kapitel. Text nach der Fundstelle ist ein Suffix: `[@howse1980, 82–84, on the mail-coach timepieces]` setzt die Wendung hinter die Seitenangabe.
 
 ### 4 · Der Auftakt sitzt in einem Band
 
 <Excerpt region="opener" />
 
-Das Band reicht 122 mm vom Endformat herab, und der Text beginnt 9 mm darunter. Die Jahreszahlen kommen aus einem Attribut der Überschrift, `years="1840–1880"`, gesetzt in Crimson Pro Light mit 54 pt, sodass die Karte eine Zahl so groß wie ein Titel zeigt; das Attribut für die Autorenzeile speist auch den Kolumnentitel der linken Seiten.
+Das Band reicht 122 mm von der Oberkante der beschnittenen Seite herab, und der Text beginnt 9 mm darunter. Die Jahreszahlen kommen aus einem Attribut der Überschrift, `years="1840–1880"`, gesetzt in Crimson Pro Light mit 54 pt, sodass die Karte eine Zahl so groß wie ein Titel zeigt; das Attribut für die Autorenzeile speist auch den Kolumnentitel der linken Seiten.
 
 <Excerpt region="palette" />
 
@@ -38,7 +38,7 @@ Das Band reicht 122 mm vom Endformat herab, und der Text beginnt 9 mm darunter. 
 
 ### Die Noten ans Ende setzen
 
-Manche Zeitschriften sammeln die Noten nach dem Essay; die Zitate behalten ihre Voll- und Kurzformen.
+Manche Zeitschriften sammeln die Noten nach dem Essay; die Zitationen behalten ihre Voll- und Kurzformen.
 
 ```diff
 -  placement: 'column', numbering: 'chapter',
@@ -47,7 +47,7 @@ Manche Zeitschriften sammeln die Noten nach dem Essay; die Zitate behalten ihre 
 
 ### Wieder Ibid. schreiben
 
-Die 17. Auflage des Chicago-Stils druckt *Ibid.* für eine Note, die das vorige Werk wiederholt. Fügen Sie die `.csl`-Datei dieses Stils aus dem Zotero-Stilverzeichnis in einen String ein und verwenden Sie ihn als eigenen Stil.
+Die 17. Auflage des Chicago-Stils setzt *Ibid.* für eine Note, die das vorige Werk wiederholt. Fügen Sie die `.csl`-Datei dieses Stils aus dem Zotero-Stilverzeichnis in einen String ein und verwenden Sie ihn als eigenen Stil.
 
 ```diff
 -  style: 'chicago-notes-bibliography', // CMOS 18th edition, notes and bibliography
@@ -56,5 +56,5 @@ Die 17. Auflage des Chicago-Stils druckt *Ibid.* für eine Note, die das vorige 
 
 ## Häufige Fehler
 
-- Beenden Sie eine Note nach einem Zitat nicht mit einem Punkt: Der Stil schließt das Zitat bereits mit einem ab, und Postext verschmilzt die beiden nicht, sodass die Note mit zwei Punkten endete.
+- Beenden Sie eine Note nach einer Zitation nicht mit einem Punkt: Der Stil schließt die Zitation bereits mit einem ab, und Postext verschmilzt die beiden nicht, sodass die Note mit zwei Punkten endete.
 - In einem Notenstil hinterlässt `@howse1980` ohne Klammern nur die Notennummer im Satz, *As ¹ says*, ohne den Namen des Autors. Schreiben Sie den Namen selbst und zitieren Sie in Klammern: `As Howse says,[@howse1980]`.

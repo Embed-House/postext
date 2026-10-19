@@ -15,7 +15,7 @@ Una página de cómic, *La radio del faro*: Maya llega al faro de su abuelo cuan
 
 ### 1 · Una config para todos los idiomas
 
-El código está en [la respuesta corta](#la-respuesta-corta). En la config nada nombra un idioma salvo `locale`. Sin `fontFamily`, la rotulación toma la letra de cómic del idioma del documento (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC o Playpen Sans Arabic, y la onomatopeya la letra de rótulo que le corresponde. `writingMode: 'auto'` pone los bocadillos japoneses en columnas verticales; `readingDirection: 'auto'` hace que las páginas japonesa y árabe se lean desde la derecha, como sus idiomas, de modo que el mismo `split="30 / 35 [* | * | *] / *"` coloca la viñeta de la radio a la derecha y la del gato a la izquierda. Los ids de los personajes (`maya`, `tomas`) son los mismos en todos los guiones, y a ellos responden los anclajes de los dibujos.
+El código está en [la respuesta corta](#la-respuesta-corta). En la config nada indica un idioma salvo `locale`. Sin `fontFamily`, la rotulación toma la letra de cómic del idioma del documento (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC o Playpen Sans Arabic, y la onomatopeya la letra de rótulo que le corresponde. `writingMode: 'auto'` pone los bocadillos japoneses en columnas verticales; `readingDirection: 'auto'` hace que las páginas japonesa y árabe se lean desde la derecha, como sus idiomas, de modo que el mismo `split="30 / 35 [* | * | *] / *"` coloca la viñeta de la radio a la derecha y la del gato a la izquierda. Los ids de los personajes (`maya`, `tomas`) son los mismos en todos los guiones, y a ellos responden los anclajes de los dibujos.
 
 El cuerpo es uno para todo el libro. El guion inglés tiene 216 letras, el español 220, el francés 224 y el chino 74 caracteres; los guiones más largos tienen bocadillos más grandes, nunca letra más pequeña.
 
@@ -44,5 +44,5 @@ Las zonas seguras son más estrechas que las celdas de esta división: la tira c
 
 ## Errores frecuentes
 
-- Una línea del guion nombra al personaje por su id, no por su nombre: escribe `maya:` en todos los idiomas. El nombre que anuncia un lector de pantalla es `cast[].name`.
+- Una línea del guion identifica al personaje por su id, no por su nombre: escribe `maya:` en todos los idiomas. El nombre que anuncia un lector de pantalla es `cast[].name`.
 - La página francesa comparte los dibujos de la edición, así que el texto alternativo de sus viñetas está en el idioma de la edición; escribe `::panel{alt="…"}` en `content.fr.en.md` si lo quieres en francés.

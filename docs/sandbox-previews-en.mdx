@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Previews',
   description: 'The Canvas, PDF, Folio, HTML and EPUB 3 tabs of the main viewport: what each shows and what it can do',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 39,
   parent: 'sandbox',
@@ -42,7 +42,7 @@ Pages render lazily via `IntersectionObserver` — only visible pages (plus a 20
 
 On a composed page (`::::page{template="…"}`) the canvas links each frame to the place in the Markdown that fills it:
 
-- A click on a frame, off its words, puts the caret in its slot: the first line of its `:::frame{slot="…"}` fence, the block that names `slot="…"`, or the heading a `takes` frame received. A frame that a chain continues into leads to the first frame of the chain. A click on an empty frame that has no slot yet writes an empty `:::frame{slot="…"}` before the page's closing fence and puts the caret in it. A click on a frame's words places the caret at the word, as on any page.
+- A click on a frame, but not on its words, puts the caret in its slot: the first line of its `:::frame{slot="…"}` fence, the block that names `slot="…"`, or the heading a `takes` frame received. A frame that a chain continues into leads to the first frame of the chain. A click on an empty frame that has no slot yet writes an empty `:::frame{slot="…"}` before the page's closing fence and puts the caret in it. A click on a frame's words places the caret at the word, as on any page.
 - While the caret is in a slot, its frame, and the frames its text goes on in, are outlined on the page.
 - An empty frame shows a dashed outline, its name and **Write here**; a frame that only continues another says which. These marks are drawn over the canvas only: the PDF, the print and every export leave them out.
 - In Design mode every frame shows its outline and its name, and a click picks one for the template editor.
@@ -50,14 +50,15 @@ On a composed page (`::::page{template="…"}`) the canvas links each frame to t
 
 #### Editions of a book
 
-For a book in several languages, a bar over the canvas lists its editions (*ES · EN · CA*) and **Side by side**.
+A rail at the start edge of the canvas holds the editions of a book in several languages (*ES · EN · CA*) with **Side by side**, and **Reflow** when the chapter has composed pages (since postext 1.44). Like the toolbar at the other edge, it stays hidden until the pointer reaches that edge and leaves when the pointer does; its pin keeps it open, and it starts unpinned. It stays over the side-by-side view, which it opens and closes. On a phone it is a row at the top of the preview.
 
 - A click on an edition opens it on the same composed page. The page is found by its `::::page` fence in the chapter, which is the same in every language, so you stay on it even when its number differs in the other edition; the frame you picked stays picked. On any other page the page number is kept.
-- **Side by side** shows the chapter on screen next to the same chapter of another edition (**next to** chooses it when the book has more than two). Both columns show the same page and scroll together; **Scroll together** turns that off. Between composed pages the columns count on from the last composed page they share. The frames that do not fit, or whose text was shrunk, are marked in both columns. The other edition is read only here: a click on one of its pages opens that edition at that page.
+- **Side by side** shows the chapter on screen next to the same chapter of another edition (**next to** chooses it when the book has more than two). With the canvas on **Whole book**, both columns hold the whole book and open on the page the canvas shows. Both columns show the same place and scroll together; **Scroll together** turns that off. They meet on the text, not on the page numbers: a composed page meets the same fence, and any other page the page of the other edition that sets the same paragraph of the chapter, about as far into it; a page with no text (a blank verso, a full-page picture) is counted from the nearest page that has some. The frames that do not fit, or whose text was shrunk, are marked in both columns. The other edition is read only here: a click on one of its pages opens that edition at that page. When the other edition has no chapter in that place, its column says so.
+- A book opened from a host's link (a Cookbook recipe, `#recipe=…&lang=…`) lists the languages the host publishes it in. A click on one opens the same link in that language: your copy of it as it is when you have one, else the published book, imported afresh.
 
 #### What moved and why
 
-On a composed page the layout may change what the template draws so that the content fits: a box grows with its text, the boxes after it in its group move down, a frame gives up height to another, pictures or text are set smaller, what is left goes on to an added page. **Reflow**, in the bar over the canvas (it shows when the chapter has composed pages), opens the panel **What moved and why** and marks those changes on the pages.
+On a composed page the layout may change what the template draws so that the content fits: a box grows with its text, the boxes after it in its group move down, a frame gives up height to another, pictures or text are set smaller, what is left goes on to an added page. **Reflow**, in the rail at the start edge of the canvas (it shows when the chapter has composed pages), opens the panel **What moved and why** and marks those changes on the pages.
 
 - The panel lists each composed page where something changed and, under a number, each frame that changed, with its changes in words: *dinero grew 13.9 mm to hold its content*, *gasto moved down 13.9 mm to make room for dinero*, *ahorro-fotos: its pictures are at 82.5 %*, *dinero continues on page 9*. A change names its cause when it has one: the frame whose growth moved this one, or the spine of a spread.
 - On the page, each of those frames carries a badge with the same number and its changes in short (*+13.9 mm*, *↓ 13.9 mm*, *82.5 %*). The box the template declares is drawn dashed, and arrows go from it to the box as laid out: one from its top for a move, one at its foot or its end edge for a change of size.
@@ -88,7 +89,7 @@ Generates a real PDF of the current document via the `postext-pdf` package and d
 
 A floating toolbar at the bottom-right of the viewport provides:
 
-- **Regenerate** (`RefreshCw` icon) — Rebuilds the PDF from the current markdown and configuration. Useful after changing a setting that does not auto-trigger a rebuild, or when fonts have finished loading.
+- **Recalculate** (`RefreshCw` icon) — Rebuilds the PDF from the current markdown and configuration. Useful after changing a setting that does not auto-trigger a rebuild, or when fonts have finished loading.
 - **Download** (`Download` icon) — Saves the current PDF to disk. The filename is derived from the document's first H1 heading (falling back to `document.pdf`).
 - **Print** (`Printer` icon) — Opens the browser's print dialog against the embedded PDF viewer, which in most browsers lets you either print or save as PDF again.
 - **Current chapter / Whole book** (selector at the left of the tab bar, books with more than one chapter) — Renders every chapter as one continuous PDF instead of the active chapter continued after the ones before it (the default). Changing it regenerates the PDF. The canvas has a selector of its own (see [Books and chapters](/en/docs/sandbox-books-saving#books-and-chapters)).

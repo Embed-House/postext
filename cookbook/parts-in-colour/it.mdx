@@ -1,16 +1,16 @@
 ---
 title: "Parti a colori da un solo attributo"
-summary: "Una guida tascabile dove ogni :::part imposta una voce di palette, e pagina di parte, verso dipinto, linguette, segni e riga d’indice ne prendono il colore."
+summary: "Guida tascabile dove ogni :::part imposta una voce della tavolozza, e pagina di parte, verso dipinto, linguette, segni e riga d’indice ne prendono il colore."
 plain: "Una guida tascabile agli uccelli dell’estuario in due parti, una marrone fango e una verde canneto. Mostra come un’impostazione di colore per parte tinge la pagina d’apertura, le linguette, i numeri di pagina e la riga dell’indice."
 description: "Una guida da campo a due ambienti dell’estuario in Postext. Ogni :::part dà un colore a pagina di parte, verso dipinto, linguetta, segni e riga d’indice."
 question: "Come do a ogni parte di un libro colore, pagina di parte e verso dipinto propri, con righe d’indice colorate?"
 aliases: ["guida da campo", "parti", "colori delle sezioni", "sezioni a codice colore", "pagina di parte", "verso dipinto", "linguetta al taglio", "colore della parte", "part colour"]
-pageNotes: { "4": "La pagina 4 è il retro della pagina della parte I. Il testo la lascia bianca, e parts.versoDesign la dipinge da un bordo all’altro nel marrone fango della parte, con la linguetta della parte in negativo sul taglio esterno e il suo nome al piede.", "8": "La pagina 8 è il retro della pagina della parte II, dipinta in verde canneto dallo stesso progetto grafico." }
+pageNotes: { "4": "La pagina 4 è il retro della pagina della parte I. Il testo la lascia bianca, e parts.versoDesign la dipinge da un bordo all’altro nel marrone fango della parte, con la linguetta della parte in negativo sul taglio esterno e il suo nome al piede.", "8": "La pagina 8 è il retro della pagina della parte II, dipinta in verde canneto dalla stessa grafica." }
 ---
 
 ## Che cosa comporrai
 
-*Birds of the Estuary* è una guida da campo tascabile in due parti, una per ambiente. Le piane di fango si stampano in marrone fango e i canneti in verde canneto, e ogni colore si scrive una volta sola, nel `:::part` che apre il suo ambiente. Ogni pagina di parte è un campo al vivo con un numero romano in corpo 150 e le specie dell’ambiente elencate in crema. Il retro del foglio è dipinto in tinta, con la linguetta della parte in negativo sul taglio esterno. Nelle pagine delle specie la linguetta al taglio, il folio, l’occhiello, il filetto sotto il nome latino, i segni distintivi in grassetto, i punti elenco e l’etichetta della tavola prendono il colore della parte. L’indice si apre sotto una striscia dell’estuario e dà a ogni parte una fascia nel suo colore, con il numero di pagina della sua pagina di parte. La copertina, la striscia e le quattro tavole sono dipinti generati con modelli di diffusione, caricati come bitmap JPEG; la palette di una parte non arriva alle immagini, quindi i loro colori restano i loro.
+*Birds of the Estuary* è una guida da campo tascabile in due parti, una per ambiente. Le piane di fango si stampano in marrone fango e i canneti in verde canneto, e ogni colore si scrive una volta sola, nel `:::part` che apre il suo ambiente. Ogni pagina di parte è un campo al vivo con un numero romano in corpo 150 e le specie dell’ambiente elencate in crema. Il retro del foglio è dipinto in tinta, con la linguetta della parte in negativo sul taglio esterno. Nelle pagine delle specie la linguetta al taglio, il numero di pagina, l’occhiello, il filetto sotto il nome latino, i segni distintivi in grassetto, i punti elenco e l’etichetta della tavola prendono il colore della parte. L’indice si apre sotto una striscia dell’estuario e dà a ogni parte una fascia nel suo colore, con il numero di pagina della sua pagina di parte. La copertina, la striscia e le quattro tavole sono dipinti generati con modelli di diffusione, caricati come bitmap JPEG; la tavolozza di una parte non arriva alle immagini, quindi i loro colori restano i loro.
 
 ## Preparazione
 
@@ -18,7 +18,7 @@ pageNotes: { "4": "La pagina 4 è il retro della pagina della parte I. Il testo 
 
 <Excerpt region="palette" />
 
-Una parte sostituisce le voci di palette per id, quindi tutto ciò che deve cambiare con l’ambiente si collega a una sola voce, `band`. Il suo valore proprio, un grigio ardesia, si stampa solo fuori dalle parti (l’occhiello della copertina e il titolo della nota sotto l’indice), e nessun altro colore della configurazione ha lo stesso esadecimale. `col()` dà a ogni colore il suo `paletteId`, ed è quell’id che segue la sostituzione di una parte, allo stesso modo negli stili del testo e negli elementi grafici.
+Una parte sostituisce le voci della tavolozza per id, quindi tutto ciò che deve cambiare con l’ambiente si collega a una sola voce, `band`. Il suo valore proprio, un grigio ardesia, si stampa solo fuori dalle parti (l’occhiello della copertina e il titolo della nota sotto l’indice), e nessun altro colore della configurazione ha lo stesso esadecimale. `col()` dà a ogni colore il suo `paletteId`, ed è quell’id che segue la sostituzione di una parte, allo stesso modo negli stili del testo e negli elementi grafici.
 
 ### 2 · Una pagina di parte, il suo verso e il suo elenco
 
@@ -34,13 +34,13 @@ Da un `:::part` al successivo, ogni colore del testo uguale al valore proprio di
 
 <Excerpt region="species" />
 
-L’apertura della specie stampa tre attributi del titolo: `status` nell’occhiello dopo il numero, `size` a destra dell’occhiello e `latin` sotto il nome. L’occhiello e il filetto sotto il nome latino sono collegati a `band`, così un solo progetto grafico serve entrambi gli ambienti. Il titolo non imposta un’interruzione di pagina propria: ogni specie comincia dopo un `:::pagebreak`, o dopo l’interruzione che segue la parte, così la sua pagina conta come pagina di testo e stampa le testatine. La misura è composta senza le maiuscole dell’etichetta, perché `cm` è un simbolo di unità.
+L’apertura della specie stampa tre attributi del titolo: `status` nell’occhiello dopo il numero, `size` a destra dell’occhiello e `latin` sotto il nome. L’occhiello e il filetto sotto il nome latino sono collegati a `band`, così una sola grafica serve entrambi gli ambienti. Il titolo non imposta un’interruzione di pagina propria: ogni specie comincia dopo un `:::pagebreak`, o dopo l’interruzione che segue la parte, così la sua pagina conta come pagina di testo e stampa le testatine. La misura è composta senza le maiuscole dell’etichetta, perché `cm` è un simbolo di unità.
 
 ### 5 · Una fascia per parte nell’indice
 
 <Excerpt region="contents" />
 
-`:::toc` dà una riga a ogni `:::part` e vi impagina `toc.parts.design` con il numero, il titolo, la pagina di parte e la palette di quella parte ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)), così lo stesso riquadro si stampa marrone per le piane di fango e verde per i canneti. Ogni riga di specie sotto una fascia mostra il suo numero, una linea di puntini e la sua pagina, con il nome latino dell’attributo `latin` sulla riga sotto.
+`:::toc` dà una riga a ogni `:::part` e vi impagina `toc.parts.design` con il numero, il titolo, la pagina di parte e la tavolozza di quella parte ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)), così lo stesso riquadro si stampa marrone per le piane di fango e verde per i canneti. Ogni riga di specie sotto una fascia mostra il suo numero, una linea di puntini e la sua pagina, con il nome latino dell’attributo `latin` sulla riga sotto.
 
 ### 6 · La parte nelle testatine e nella linguetta
 
@@ -72,5 +72,5 @@ Senza l’interruzione verso il recto successivo, la prima specie comincia sul r
 ## Errori frequenti
 
 - Una parte ricolora il testo confrontando i valori: ogni colore del testo uguale al valore proprio di `band` cambia con la parte, anche se è collegato a un’altra voce o a nessuna. Riserva quell’esadecimale solo a `band`.
-- La linguetta stampa `{partNumber}`, che è vuoto fuori da una parte, quindi una pagina di testo prima del primo `:::part` riceve una linguetta grigio ardesia vuota. Tieni ogni pagina di testo dentro una parte.
+- La linguetta stampa `{partNumber}`, che è vuoto fuori da una parte, quindi una pagina di testo prima del primo `:::part` riceve una linguetta grigio ardesia vuota. Tieni ogni pagina di testo in una parte.
 - Le immagini e i campioni di colore in linea conservano i colori scritti in essi. Qui le tavole prendono i colori del loro ambiente da `HABITAT` nel codice, quindi un nuovo colore in un `:::part` va messo anche lì.

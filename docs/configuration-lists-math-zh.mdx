@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '列表与数学公式',
   description: '无序列表和有序列表的标记、缩进与嵌套，任务列表，以及数学公式的大小、颜色和间距',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '12分钟',
   order: 11,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 无序列表
 
-`unorderedLists`属性控制项目符号列表（`-`、`*`、`+`）和GFM任务列表（`- [ ]`、`- [x]`）的渲染方式。最多支持五层嵌套。
+`unorderedLists`属性控制无序列表（`-`、`*`、`+`）和GFM任务列表（`- [ ]`、`- [x]`）的排法。最多支持五层嵌套。
 
 ### 无序列表默认值
 
@@ -148,7 +148,7 @@ GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选�
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>两个默认字符的排法。<code>'drawn'</code>：方框由引擎绘制。<code>'character'</code>：<code>☐</code>和<code>☑</code>按列表的字体作为文字排出，与postext 1.28及更早版本一样；字体里没有这两个字符时，浏览器改用系统里的某个字体，列表项的文字就从那个字体给出的宽度之后开始。版本13之前保存的配置按<code>'character'</code>读取，所以它的各行留在原处。</td>
+      <td>两个默认字符的排法。<code>'drawn'</code>：方框由引擎绘制。<code>'character'</code>：<code>☐</code>和<code>☑</code>按列表的字体作为文字排出，与postext 1.28及更早版本一样；字体里没有这两个字符时，浏览器改用系统里的某个字体，列表项的文字就从那个字体给出的宽度之后开始。<code>configVersion</code> 13之前保存的配置按<code>'character'</code>读取（<code>pinLegacyTaskBox</code>），所以它的各行留在原处。</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -206,7 +206,7 @@ unorderedLists: {
 
 ## 有序列表
 
-`orderedLists`属性控制编号列表（`1.`、`2)`等）。最多支持五层嵌套，每一层可以使用不同的编号格式。
+`orderedLists`属性控制有序列表（`1.`、`2)`等）。最多支持五层嵌套，每一层可以使用不同的编号格式。
 
 ### 有序列表默认值
 
@@ -248,7 +248,7 @@ unorderedLists: {
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>编号样式：<code>'arabic'</code>、<code>'lower-alpha'</code>、<code>'upper-alpha'</code>、<code>'lower-roman'</code>、<code>'upper-roman'</code>。其他设置里的写法也能用（<code>'decimal'</code>、<code>'roman-lower'</code>、<code>'i'</code>……；见<a href="/zh/docs/configuration-page-layout#编号格式的写法">编号格式的写法</a>）；无法识别的值按阿拉伯数字编号，并报告出来。</td>
+      <td>编号样式：<code>'arabic'</code>、<code>'lower-alpha'</code>、<code>'upper-alpha'</code>、<code>'lower-roman'</code>、<code>'upper-roman'</code>，以及东亚和阿拉伯文字的各种样式（<code>'simp-chinese-informal'</code>、<code>'circled-decimal'</code>、<code>'arabic-indic'</code>、<code>'abjad'</code>等）。其他设置里的写法也能用（<code>'decimal'</code>、<code>'roman-lower'</code>、<code>'i'</code>……；见<a href="/zh/docs/configuration-page-layout#编号格式的写法">编号格式的写法</a>）；无法识别的值按阿拉伯数字编号，并报告出来。</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>
@@ -344,7 +344,7 @@ unorderedLists: {
       <td><code>numberAlign</code></td>
       <td><code>'end' | 'start'</code></td>
       <td><code>'end'</code></td>
-      <td>编号在编号栏中的位置。<code>'end'</code>：靠正文一侧，同一连续段的编号末端对齐，<code>9.</code>与<code>10.</code>的圆点对齐。<code>'start'</code>：靠编号栏的起始一侧（从左到右的页面是左侧，从右到左的页面是右侧，竖排时是行首），长短不同的编号都从同一位置开始，如法规的条文编号（<span lang="ja" className="font-body">第九條</span>、<span lang="ja" className="font-body">第十一條</span>）。编号栏仍按<code>numberWidth</code>取宽度，所以两种情况下列表项的文字都从同一位置开始；分隔符另设样式时，分隔符紧跟在自己的编号之后。自 postext 1.26 起提供。设<code>numberWidth: 'item'</code>时，编号栏就是编号本身，两个值排出的列表相同。</td>
+      <td>编号在编号栏中的位置。<code>'end'</code>：靠正文一侧，同一连续段的编号末端对齐，<code>9.</code>与<code>10.</code>的圆点对齐。<code>'start'</code>：靠编号栏的起始一侧（从左到右的页面是左侧，从右到左的页面是右侧，竖排时是行首），长短不同的编号都从同一位置开始，如法规的条文编号（<span lang="ja" className="font-body">第九條</span>、<span lang="ja" className="font-body">第十一條</span>）。编号栏仍按<code>numberWidth</code>取宽度，所以两种情况下列表项的文字都从同一位置开始；分隔符另设样式时，分隔符紧跟在自己的编号之后。自postext 1.26起提供。设<code>numberWidth: 'item'</code>时，编号栏就是编号本身，两个值排出的列表相同。</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -505,7 +505,7 @@ import { pinLegacyMathSize } from 'postext/bundle';
 config = pinLegacyMathSize(config); // 公式及独立公式周围的间距，按1.4的排法
 ```
 
-1.5的其他规则变化也可能让页面移动：标题的断行、行内图周围的间距（正文中和框内）、标题的行内标记、首字下沉的大小、冒号行之下为它引出的列表保留的空间、框的切口在段落或列表项中留下的行数、破折号之后的断行、齐左文字的断行、标题下段落的拆分、复合词连字符之后的断行，以及`:::paragraphs`容器下方的间距。`migrateConfig`与配置所排的markdown一起运行一次，就会固定这段文字需要的那些规则，公式大小也包括在内（见[postext 1.4及以前写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)）：
+1.5的其他规则变化也可能让页面移动：标题的断行、行内图周围的间距（正文中和框内）、标题的行内标记、首字下沉的大小、冒号行之下为它引出的列表保留的空间、框的切口在段落或列表项中留下的行数、破折号之后的断行、齐左文字的断行、标题下段落的拆分、复合词连字符之后的断行，以及`:::paragraphs`容器下方的间距。`migrateConfig`与配置所排的Markdown一起运行一次，就会固定这段文字需要的那些规则，公式大小也包括在内（见[postext 1.4及以前写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)）：
 
 ```ts
 import { migrateConfig } from 'postext/bundle';
@@ -525,13 +525,13 @@ math: {
 } // 公式与1.4排出的一样大，周围留出1.4留的间距
 ```
 
-对于已保存的配置，引擎能识别出来并替你完成这一步：`openBundle` / `readBundle`处理1.5之前写出的`.postext`文件包（见[postext 1.4及以前写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)），沙盒处理当时保存的书、工作副本和`postext-config.json`文件（见**沙盒 → 持久化**）。它们都经过`migrateConfig`读取，由它固定公式大小（`pinLegacyMathSize`）：`fontSizeScale`变为保存的缩放比例（未设置时为1）× 1.1312，以`em`或`rem`计的独立公式外边距（以公式自身大小计的长度）除以同一系数，所以独立公式周围的间距保持1.4的样子（默认的0.8 em变为0.7072 em）。以页面单位（`pt`、`mm`……）计的外边距保持不变，`enabled: false`的配置或书中没有`$`的配置也保持不变。这样旧书就按1.4的方式排版，它的`math`部分显示实际使用的大小。要按现在的大小排这样的书，就把这些值重置：在沙盒中是**公式 → 缩放比例**、*独立公式上边距*和*独立公式下边距*，在代码中是：
+对于已保存的配置，引擎能识别出来并替你完成这一步：`openBundle` / `readBundle`处理1.5之前写出的`.postext`文件包（见[postext 1.4及以前写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)），沙盒处理当时保存的书、工作副本和`postext-config.json`文件（见**沙盒 › 持久化**）。它们都经过`migrateConfig`读取，由它固定公式大小（`pinLegacyMathSize`）：`fontSizeScale`变为保存的缩放比例（未设置时为1）× 1.1312，以`em`或`rem`计的独立公式外边距（以公式自身大小计的长度）除以同一系数，所以独立公式周围的间距保持1.4的样子（默认的0.8 em变为0.7072 em）。以页面单位（`pt`、`mm`……）计的外边距保持不变，`enabled: false`的配置或书中没有`$`的配置也保持不变。这样旧书就按1.4的方式排版，它的`math`部分显示实际使用的大小。要按现在的大小排这样的书，就把这些值重置：在沙盒中是**公式 → 缩放比例**、*独立公式上边距*和*独立公式下边距*，在代码中是：
 
 ```ts
 math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // 现在的大小和外边距
 ```
 
-**带编号的公式**。带编号的独立公式占满它的行长（所在的栏，或所在标注框的内宽）：公式居中，编号右对齐排在公式所在的行上，`align`中每个带编号的行都是如此。编号来自`\label{eq:x}`（postext 1.19起）：带标签的公式，以及`align`、`gather`、`alignat`、`flalign`或`eqnarray`中带标签的行，按阅读顺序依`equationNumbering`编号，除非该行写了`\nonumber`或`\notag`。`equation`之类的环境本身不编号：没有标签的公式就没有编号。`\tag{…}`把你给的标签加上括号打印出来，`\tag*{…}`按原样打印；两者都不参与计数，与它并列的`\label`为它命名。比行长更宽的带编号公式向右溢出，与其他独立公式一样。（postext 1.4及以前，带`\tag`的公式根本不会绘制；1.18及以前，只有`\tag`能为公式编号。）
+**带编号的公式**。带编号的独立公式占满它的行长（所在的栏，或所在标注框的内宽）：公式居中，编号右对齐排在公式所在的行上，`align`中每个带编号的行都是如此。编号来自`\label{eq:x}`（postext 1.19起）：带标签的公式，以及`align`、`gather`、`alignat`、`flalign`或`eqnarray`中带标签的行，按阅读顺序依`equationNumbering`编号，除非该行写了`\nonumber`或`\notag`。`equation`之类的环境本身不编号：没有标签的公式就没有编号。`\tag{…}`把你给的标签加上括号打印出来，`\tag*{…}`按原样打印；两者都不参与计数，与它并列的`\label`为它命名。比行长更宽的带编号公式向右超出行长，与其他独立公式一样。（postext 1.4及以前，带`\tag`的公式根本不会绘制；1.18及以前，只有`\tag`能为公式编号。）
 
 正文中的`\eqref{eq:x}`按`format`印出编号(3)，`\ref{eq:x}`印出不带括号的编号；`:ref{id="eq:x"}`和`@eq:x`也是如此（见[交叉引用](/zh/docs/document-format-notes-references#交叉引用与锚点)）。在公式内部，`\eqref`把编号作为文字印出。逐章排版的书中，计数器接着上一章继续：`continuationAfter`通过`LayoutContinuation.statementCounters`（`equation`）把它带过去，全书大纲为每个标签给出编号（`OutlineEntry.numberLabel`），所以对另一章中公式的引用也能印出编号。
 
@@ -567,7 +567,7 @@ document.body.append(renderPage(doc.pages[0], doc));
 ```
 
 - <strong>引擎运行之前，公式是占位符。</strong>每个公式排成一个估计大小的灰色框。如果在从未调用`initMathEngine()`的情况下排版含公式的文档，控制台会显示一条警告说明这一点。
-- **排版工作线程会替你启动它。**`postext/worker`中的构建在markdown包含`$`时会自行调用`initMathEngine()`。
+- **排版工作线程会替你启动它。**`postext/worker`中的构建在Markdown包含`$`时会自行调用`initMathEngine()`。
 - **先排版，就绪后再排一次。**`isMathReady()`告诉你引擎是否在运行。`onMathReady(fn)`在引擎就绪后调用`fn`一次（已经就绪则立即调用），并返回一个取消这次调用的函数。编辑器可以先显示占位符，等MathJax加载完再重新排版；`initMathEngine()`加载期间不会打印警告。
 - **失败**。MathJax无法加载时，`initMathEngine()`返回的Promise会被拒绝，之后再次调用会重试。
 - <strong>任何打包工具、Node或CDN。</strong>MathJax作为一个预先打包的模块随包发布（压缩前约1.8 MB，只由`initMathEngine`获取）。直接写`import { initMathEngine } from 'https://esm.sh/postext'`就能用，不需要`?bundle`。`mathjax-full`包只在构建postext时需要，所以安装postext不会安装它。MathJax及其打包的mhchem解析器采用Apache-2.0许可证：它们的声明和许可证文本随模块一起发布，位于`dist/math/THIRD_PARTY_LICENSES.txt`。

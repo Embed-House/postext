@@ -22,7 +22,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. Los títulos 
 
 <Excerpt region="answer" highlight="6" />
 
-`buildBundle` arrastra los contadores de figuras y tablas de un capítulo al siguiente, así que la primera tabla del capítulo 3 es la 3.1 y `@tbl:loads` en el capítulo 3 sigue imprimiendo *tabla 1.1*. Un capítulo cuyo texto nombra un título que no contiene se compone con el esquema del libro entero, y se vuelve a componer (tres pasadas como mucho) hasta que las páginas de ese esquema dejan de moverse. Por eso el capítulo 1 puede imprimir *apartado 2.1 … pág. 6* antes de que el capítulo 2 exista en papel.
+`buildBundle` arrastra los contadores de figuras y tablas de un capítulo al siguiente, así que la primera tabla del capítulo 3 es la 3.1 y `@tbl:loads` en el capítulo 3 sigue imprimiendo *tabla 1.1*. Un capítulo cuyo texto remite a un encabezado que no contiene se compone con el esquema del libro entero, y se vuelve a componer (tres pasadas como mucho) hasta que las páginas de ese esquema dejan de moverse. Por eso el capítulo 1 puede imprimir *apartado 2.1 … pág. 6* antes de que el capítulo 2 exista en papel.
 
 ### 3 · Elige las palabras de cada remisión
 
@@ -36,7 +36,7 @@ Una figura o una tabla se numera, y se coloca, donde se cita por primera vez. `@
 
 <Excerpt region="opener" />
 
-La banda baja 55 mm desde el borde superior en cada capítulo y en el índice, que reutiliza los mismos elementos; el número es `{chapterNumber}` y la entradilla, un atributo del título.
+La banda baja 55 mm desde el borde superior en cada capítulo y en el índice, que reutiliza los mismos elementos; el número es `{chapterNumber}` y la entradilla, un atributo del encabezado.
 
 <Excerpt region="cover" />
 

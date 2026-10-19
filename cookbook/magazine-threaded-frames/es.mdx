@@ -15,7 +15,7 @@ Las páginas 46 a 49 de *Patio*, una revista trimestral inventada sobre la vida 
 
 ### 1 · Una plantilla, un texto
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Todo el reportaje es un único bloque `::::page{template="apertura" spread}`: el título va al marco que `takes: 'h1'`, las cifras y la entradilla a sus ranuras, y todo lo demás, que no nombra ninguna, al marco de flujo `col-1`. Cuando `col-1` se llena, el texto sigue en `col-2`, cortado de nuevo a su ancho, y lo que no cabe en `col-2` continúa en una página que se añade tras la doble (`overflow.continueIn: 'template:seguido'`), después de la palabra *Continúa* en el idioma del lector. El texto no nombra columnas ni páginas: si quitas un párrafo, todas las líneas siguientes retroceden.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Todo el reportaje es un único bloque `::::page{template="apertura" spread}`: el título va al marco que `takes: 'h1'`, las cifras y la entradilla a sus ranuras, y todo lo demás, que no indica ninguna, al marco de flujo `col-1`. Cuando `col-1` se llena, el texto sigue en `col-2`, cortado de nuevo a su ancho, y lo que no cabe en `col-2` continúa en una página que se añade tras la doble (`overflow.continueIn: 'template:seguido'`), después de la palabra *Continúa* en el idioma del lector. El texto no menciona columnas ni páginas: si quitas un párrafo, todas las líneas siguientes retroceden.
 
 ### 2 · Las páginas que añade el texto
 

@@ -2,15 +2,15 @@
 title: "Un libro da capitoli separati"
 summary: "buildBundle compone cinque file Markdown come un solo libro: ogni capitolo si apre su un recto e i numeri di pagina, capitolo e figura proseguono tra i file."
 plain: "Un breve manuale di apicoltura scritto in file separati, uno per capitolo. Postext li unisce in un solo libro, e i numeri di pagina, di capitolo e delle immagini proseguono da un file all’altro."
-description: "Un manuale di apicoltura in quattro stagioni, composto con buildBundle da un file Markdown per capitolo; l’indice riporta il folio su cui si apre ogni capitolo."
+description: "Un manuale di apicoltura in quattro stagioni, composto con buildBundle da un file Markdown per capitolo; l’indice riporta la pagina d’apertura di ogni capitolo."
 question: "Come impagino un libro capitolo per capitolo in modo che i numeri di pagina, capitolo e figura proseguano?"
 aliases: ["libro a più capitoli", "capitoli in file separati", "numerazione continua delle pagine", "numerazione progressiva", "capitolo su pagina dispari", "indice del libro", "PDF del libro intero", "buildBundle"]
-pageNotes: { "6": "La pagina 6 resta bianca: «Winter» occupa una pagina, quindi «Spring» si apre a pagina 7, la pagina destra successiva, e il verso tra le due non ha né testatina né folio.", "11": "La pagina 11 è l’unica pagina destra di testo del libro: la sua testatina dice «SUMMER», il titolo del capitolo, accanto al folio." }
+pageNotes: { "6": "La pagina 6 resta bianca: «Winter» occupa una pagina, quindi «Spring» si apre a pagina 7, la pagina destra successiva, e il verso tra le due non ha né testatina né numero di pagina.", "11": "La pagina 11 è l’unica pagina destra di testo del libro: la sua testatina riporta «SUMMER», il titolo del capitolo, accanto al numero di pagina." }
 ---
 
 ## Che cosa comporrai
 
-*A Beekeeper’s Year* è un piccolo manuale in quattro capitoli, uno per stagione. Si apre con l’autunno, perché l’anno dell’apicoltore comincia quando si toglie l’ultimo miele. Ogni capitolo è un file Markdown separato che non contiene né numeri di pagina, né di capitolo, né di figura. `buildBundle` porta quei conteggi da ogni file al successivo e compone i capitoli, con un quinto file per copertina e indice, come un solo libro di undici pagine. Ogni capitolo si apre su una pagina destra sotto un angolo di favo che porta il suo numero. La pagina dell’indice, sul verso di fronte ad Autumn, rispecchia quell’apertura con il titolo allineato contro il dorso ed elenca il folio di ogni capitolo. Un solo telaio da covata, disegnato nel codice, compare una volta in ogni capitolo come figure da 1.1 a 4.1. La pagina 6 resta bianca perché Winter occupa una sola pagina e Spring deve aprirsi su un recto.
+*A Beekeeper’s Year* è un piccolo manuale in quattro capitoli, uno per stagione. Si apre con l’autunno, perché l’anno dell’apicoltore comincia quando si toglie l’ultimo miele. Ogni capitolo è un file Markdown separato che non contiene né numeri di pagina, né di capitolo, né di figura. `buildBundle` passa quei conteggi da ogni file al successivo e compone i capitoli, con un quinto file per copertina e indice, come un solo libro di undici pagine. Ogni capitolo si apre su una pagina destra sotto un angolo di favo che riporta il suo numero. La pagina dell’indice, sul verso di fronte ad Autumn, rispecchia quell’apertura con il titolo allineato contro il dorso ed elenca il numero di pagina di ogni capitolo. Un solo telaio da covata, disegnato nel codice, compare una volta in ogni capitolo come figure da 1.1 a 4.1. La pagina 6 resta bianca perché Winter occupa una sola pagina e Spring deve aprirsi su un recto.
 
 ## Preparazione
 
@@ -18,11 +18,11 @@ pageNotes: { "6": "La pagina 6 resta bianca: «Winter» occupa una pagina, quind
 
 <Excerpt region="chapters" />
 
-Ogni stagione è un documento a sé, così puoi riscrivere un capitolo senza aprire gli altri. Il primo documento contiene il frontmatter, la copertina e l’indice. I suoi metadati sono quelli del libro: `{title}` e `{author}` li stampano in ogni capitolo, e il PDF ne prende titolo e autore.
+Ogni stagione è un documento a sé, così puoi riscrivere un capitolo senza aprire gli altri. Il primo documento contiene il front matter, la copertina e l’indice. I suoi metadati sono quelli del libro: `{title}` e `{author}` li stampano in ogni capitolo, e il PDF ne prende titolo e autore.
 
 ### 2 · Regole che passano da un documento all’altro
 
-Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. [`buildBundle`](/it/docs/configuration-bundles#impaginare-e-disegnare-un-pacchetto) impagina i documenti in ordine con una sola configurazione condivisa e passa a ognuno una `continuation` ricavata dai precedenti: il numero di pagine fisiche già composte, così parità, margini speculari e testatine pari e dispari proseguono; il folio successivo; e i contatori di capitoli e figure. Con `parity: 'odd'`, un capitolo che segue uno finito su un recto comincia con un verso bianco, e quella pagina bianca appartiene al suo documento ([break before](/it/docs/configuration-headings#interruzione-prima-del-titolo)). Copertina e indice sono [stili di titolo](/it/docs/configuration-styles#stili-dei-titoli) con `numbered: false`, quindi Autumn resta il capitolo 1. Entrambi ereditano `span: 'page'` dal livello del capitolo, che mette ognuno su una pagina propria senza un `:::pagebreak`. Lo stile dell’indice disattiva la parità ereditata, che altrimenti lascerebbe bianca la pagina 2.
+Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. [`buildBundle`](/it/docs/configuration-bundles#impaginare-e-disegnare-un-pacchetto) impagina i documenti in ordine con una sola configurazione condivisa e passa a ognuno una `continuation` ricavata dai precedenti: il numero di pagine fisiche già composte, così parità, margini speculari e testatine pari e dispari proseguono; il numero di pagina successivo; e i contatori di capitoli e figure. Con `parity: 'odd'`, un capitolo che segue uno finito su un recto comincia con un verso bianco, e quella pagina bianca appartiene al suo documento ([break before](/it/docs/configuration-headings#interruzione-prima-del-titolo)). Copertina e indice sono [stili di titolo](/it/docs/configuration-styles#stili-dei-titoli) con `numbered: false`, quindi Autumn resta il capitolo 1. Entrambi ereditano `span: 'page'` dal livello del capitolo, che mette ognuno su una pagina propria senza un `:::pagebreak`. Lo stile dell’indice disattiva la parità ereditata, che altrimenti lascerebbe bianca la pagina 2.
 
 ### 3 · L’indice del libro intero
 
@@ -34,13 +34,13 @@ Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. 
 
 <Excerpt region="opener" />
 
-`{chapterNumber}` continua a contare dai documenti impaginati prima, quindi l’apertura di Spring stampa 3 anche se il suo file non contiene alcun numero. Il riquadro del numero si calcola dal centro della sua cella di favo, e numero e favo pendono entrambi dall’angolo superiore destro dell’abbondanza, così se cambi il formato o aggiungi l’abbondanza per la stampa si spostano insieme. Nella pagina dell’indice l’occhiello, letto da `{subtitle}`, e il titolo sono allineati a destra contro il dorso, e il favo passa all’angolo esterno del verso. Il titolo si trova così alla stessa altezza di quello di Autumn nella pagina di fronte.
+`{chapterNumber}` continua a contare dai documenti impaginati prima, quindi l’apertura di Spring stampa 3 anche se il suo file non contiene alcun numero. Il riquadro del numero si calcola dal centro della sua cella di favo, e numero e favo sono agganciati entrambi all’angolo superiore destro dell’abbondanza, così se cambi il formato o aggiungi l’abbondanza per la stampa si spostano insieme. Nella pagina dell’indice l’occhiello, letto da `{subtitle}`, e il titolo sono allineati a destra contro il dorso, e il favo passa all’angolo esterno del verso. Il titolo si trova così alla stessa altezza di quello di Autumn nella pagina di fronte.
 
 ### 5 · Testatine in ogni documento
 
 <Excerpt region="running-heads" />
 
-Solo il primo documento ha il frontmatter, e `buildBundle` lo passa a ogni capitolo, quindi la testatina del verso stampa il `{title}` del libro in tutti e cinque i documenti. `{chapterTitle}` e `{pageNumber}` si risolvono pagina per pagina e si stampano in ogni documento; la pagina 11, l’unica pagina destra di testo, porta SUMMER accanto al suo folio. `pages: 'body'` toglie ogni testatina dalle aperture e dalla pagina bianca.
+Solo il primo documento ha il front matter, e `buildBundle` lo passa a ogni capitolo, quindi la testatina del verso stampa il `{title}` del libro in tutti e cinque i documenti. `{chapterTitle}` e `{pageNumber}` si risolvono pagina per pagina e si stampano in ogni documento; la pagina 11, l’unica pagina destra di testo, riporta SUMMER accanto al numero di pagina. `pages: 'body'` toglie ogni testatina dalle aperture e dalla pagina bianca.
 
 ### 6 · Doppie pagine a schermo, un solo PDF per il libro
 

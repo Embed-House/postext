@@ -10,13 +10,13 @@ pageNotes: { "1": "L’original japonais : deux colonnes de quatre cases ; la
 
 ## Ce que vous allez composer
 
-Une planche d’une anthologie de yonkoma, ねこ喫茶まどろみ (*Café Roupillon*), écrite pour la recette et dessinée dans un style chibi tout en douceur : Mugi tient un café à chats avec un chat blanc, un chat noir et une chatte calico. Les yonkoma, bandes de quatre cases, sont le strip humoristique des journaux tourné d’un quart de tour : quatre cases égales empilées de haut en bas, exposition, développement, retournement, chute. Une planche de magazine en porte deux côte à côte, et comme la planche s’ouvre par la droite, la bande de droite vient en premier. La planche est en A5, 148 × 210 mm, avec l’original japonais d’un côté de la double page et l’édition dans la langue de cette page de l’autre (l’anglais sur la page japonaise).
+Une planche d’une anthologie de yonkoma, ねこ喫茶まどろみ (*Café Roupillon*), écrite pour la recette et dessinée dans un style chibi tout en douceur : Mugi tient un café à chats avec un chat blanc, un chat noir et une chatte calico. Les yonkoma, bandes de quatre cases, sont le strip humoristique des journaux tourné d’un quart de tour : quatre cases égales empilées de haut en bas, exposition, développement, retournement, chute. Une planche de magazine en contient deux côte à côte, et comme la planche s’ouvre par la droite, la bande de droite vient en premier. La planche est en A5, 148 × 210 mm, avec l’original japonais d’un côté de la double page et l’édition dans la langue de cette page de l’autre (l’anglais sur la page japonaise).
 
 ## Préparation
 
 ### 1 · Découper la planche en deux colonnes de quatre cases
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Toute la planche est un seul `:::page` avec `split="* [* / * / * / *] | * [* / * / * / *]"` : deux colonnes égales, chacune découpée en quatre étages égaux. Les huit lignes `::panel` remplissent les cellules dans l’ordre de lecture : les quatre premières appartiennent donc à la première bande, et avec une lecture de droite à gauche la première colonne se place à droite (<Feature id="comic-panel-split">découpage de la planche</Feature>). La gouttière entre les bandes fait 9 mm et celle entre les cases 3 mm, si bien que l’œil descend une bande avant de passer à la suivante.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Toute la planche est un seul `:::page` avec `split="* [* / * / * / *] | * [* / * / * / *]"` : deux colonnes égales, chacune découpée en quatre étages égaux. Les huit lignes `::panel` remplissent les cellules dans l’ordre de lecture : les quatre premières appartiennent donc à la première bande, et avec une lecture de droite à gauche la première colonne se place à droite (<Feature id="comic-panel-split">découpage de la planche</Feature>). La gouttière entre les bandes fait 9 mm et celle entre les cases 3 mm : l’œil descend donc une bande avant de passer à la suivante.
 
 ### 2 · Titrer chaque bande dans sa première case
 
@@ -28,7 +28,7 @@ Un yonkoma a un titre, et une anthologie l’imprime dans un cartouche en tête 
 
 <Excerpt region="art" />
 
-Les chats parlent, `kuro: にゃ` : chaque image marque donc leur bouche et leur visage comme elle marque ceux de Mugi. Deux petites fonctions abrègent la liste : `cat()` pour un chat tourné vers le lecteur et `nose()` pour un chat dont le visage est enfoui dans une gamelle ou un coussin. Dans la troisième case, Mugi est hors champ, et sa réplique `mugi{tail=top}` reçoit un appendice qui va jusqu’au bord supérieur.
+Les chats parlent, `kuro: にゃ` : chaque image marque donc leur bouche et leur visage comme elle marque ceux de Mugi. Deux petites fonctions abrègent la liste : `cat()` pour un chat tourné vers le lecteur et `nose()` pour un chat dont le visage est enfoui dans une gamelle ou un coussin. Dans la troisième case, Mugi est hors champ, et sa réplique `mugi{tail=top}` reçoit une queue qui va jusqu’au bord supérieur.
 
 ### 4 · Charger les polices de chaque édition avec ses mots
 
@@ -45,4 +45,4 @@ Chaque langue du site lettre les bandes dans son propre fichier, face à l’ori
 ## Erreurs fréquentes
 
 - Dans une petite case, une bulle verticale manque de hauteur avant de manquer de largeur : le moteur la compose alors en colonnes plus nombreuses et plus courtes, en coupant entre les mots. Le dernier cri de l’employée reste trop haut pour la case du bas en japonais : il est donc marqué `break` (`kyaku{shout break}`), et il crève le cadre vers la case du dessus au lieu de couvrir les chats, sans entrer dans la marge de la page.
-- Une grande onomatopée se tient à l’écart des visages comme une bulle, et son point d’ancrage se trouve dans la zone sûre de la case, si bien que tout recadrage la garde : « POUF ! » se place à `70% 80%`, sur les pattes des chats. Le ずしっ japonais se compose à la verticale et il est plus haut ; à ce point-là, il couvrait le visage de la calico et la composition émettait l’avertissement `comicBalloonOverflow` : il se place donc à `86% 84%`, à côté d’elle.
+- Une grande onomatopée se tient à l’écart des visages comme une bulle, et son ancre se trouve dans la zone de sécurité de la case : tout recadrage la garde donc. « POUF ! » se place à `70% 80%`, sur les pattes des chats. Le ずしっ japonais se compose à la verticale et il est plus haut ; à ce point-là, il couvrait le visage de la calico et la composition émettait l’avertissement `comicBalloonOverflow` : il se place donc à `86% 84%`, à côté d’elle.

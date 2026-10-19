@@ -5,7 +5,7 @@ plain: "O começo da Muqaddima de Ibn Khaldūn como edição crítica árabe mod
 description: "Uma edição crítica árabe no Postext: fólios em abjad, :::numbering para o texto, notas de rodapé por página como (١) e um índice com ignoreArticle."
 question: "Como faço para numerar os pré-textuais de um livro árabe com letras abjad (أ، ب، ج)?"
 aliases: ["taḥqīq", "tahqiq", "edição crítica", "edição crítica árabe", "edição acadêmica árabe", "abjad", "numerais abjad", "أبجد", "numeração dos pré-textuais", "paginação dos pré-textuais", "notas por página", "(١)", "notas de rodapé em árabe", "Ibn Khaldūn", "Ibn Khaldun", "Muqaddima", "Prolegômenos", "مقدمة ابن خلدون", "índice onomástico", "índice de nomes", "فهرس الأعلام", "تحقيق"]
-pageNotes: { "4": "A última página da introdução do editor, com o fólio د no pé.", "5": "A página que abre o texto, fólio ١: o título da seção em Naskh negrito, o subtítulo longo sob um fio curto, o texto com chamadas de nota elevadas entre parênteses e três notas no pé sob um fio à direita, cada uma abrindo com o seu número (١), (٢), (٣)." }
+pageNotes: { "4": "A última página da introdução do editor, com o fólio د no pé.", "5": "A página que abre o texto, fólio ١: o título da seção em Naskh negrito, o subtítulo longo sob um fio curto, o texto com chamadas de nota elevadas entre parênteses e três notas no pé sob um fio à direita, cada uma abrindo com o número (١), (٢), (٣)." }
 ---
 
 ## O que você vai compor
@@ -16,7 +16,7 @@ Onze páginas de uma edição crítica árabe moderna, um taḥqīq, da primeira
 
 ### 1 · Duas séries de fólios e notas por página
 
-O código é a [resposta curta](#a-resposta-curta) acima. `page.pageNumbering` começa o livro em `'abjad'`, as letras na ordem abjad, com هـ para o cinco. Antes do texto, duas diretivas recomeçam a contagem na página ímpar seguinte, com os algarismos do documento ([`:::numbering`](/pt/docs/document-format-directives#numbering), [Algarismos e estilos de numeração](/pt/docs/arabic-layout#algarismos-e-estilos-de-numeração)). As notas usam `numbering: 'page'`, um `markerTemplate` de `'({n})'` e `noteNumberPosition: 'inline'`, de modo que a chamada fica elevada no texto e a nota abre com o seu número na linha ([Notas de rodapé](/pt/docs/arabic-layout#notas-de-rodapé)).
+O código é a [resposta curta](#a-resposta-curta) acima. `page.pageNumbering` começa o livro em `'abjad'`, as letras na ordem abjad, com هـ para o cinco. Antes do texto, duas diretivas recomeçam a contagem na página ímpar seguinte, com os algarismos do documento ([`:::numbering`](/pt/docs/document-format-directives#numbering), [Algarismos e estilos de numeração](/pt/docs/arabic-layout#algarismos-e-estilos-de-numeração)). As notas usam `numbering: 'page'`, um `markerTemplate` de `'({n})'` e `noteNumberPosition: 'inline'`, de modo que a chamada fica elevada no texto e a nota abre com o número na linha ([Notas de rodapé](/pt/docs/arabic-layout#notas-de-rodapé)).
 
 <PageShot page={5} crop="0,0.62,1,0.33" caption="Página ١: as notas recomeçam em (١), sob um fio no lado da página onde a linha começa." />
 
@@ -24,7 +24,7 @@ O código é a [resposta curta](#a-resposta-curta) acima. `page.pageNumbering` c
 
 <Excerpt region="index" />
 
-Os nomes são marcados no texto, `:index[المسعودي]`, e `:::index` os imprime no fim. Com `ignoreArticle`, المسعودي fica sob م e الطبري sob ط, enquanto ابن إسحاق continua sob ا; uma remissiva manda de إسرائيل para يعقوب ([Sumário e índice](/pt/docs/arabic-layout#sumário-e-índice-remissivo)). Os números de página do índice são os rótulos das páginas, então um nome da introdução remete a ج.
+Os nomes são marcados no texto, `:index[المسعودي]`, e `:::index` os imprime no fim. Com `ignoreArticle`, المسعودي fica sob م e الطبري sob ط, enquanto ابن إسحاق continua sob ا; uma remissiva manda de إسرائيل para يعقوب ([Sumário e índice](/pt/docs/arabic-layout#sumário-e-índice-remissivo)). Os números de página do índice são os rótulos das páginas, por isso um nome da introdução remete a ج.
 
 ### 3 · Cabeços sobre um fio
 
@@ -36,7 +36,7 @@ A página par traz o título do livro e a ímpar a seção, sobre um fio fino co
 
 <Excerpt region="title" />
 
-A folha de rosto e os créditos no verso dela são estilos de título sem nada no fluxo: as linhas vêm de atributos do título, então as linhas latinas dos créditos, que mudam a cada edição, são um atributo no Markdown.
+A folha de rosto e os créditos no verso dela são estilos de título sem nada no fluxo: as linhas vêm de atributos do título, de modo que as linhas latinas dos créditos, que mudam a cada edição, são um atributo no Markdown.
 
 ## Variações
 

@@ -16,13 +16,13 @@ Un breve manuale tecnico, *Power for a Cabin*, composto in IBM Plex su una pagin
 
 ### 1 · Nomina ogni bersaglio una volta, per tutto il libro
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. I titoli prendono un identificatore Pandoc con il suo prefisso, `## Sizing the array {#sec:array-size}`. Figure e tabelle sono risorse dichiarate nello script, e i loro id si scrivono allo stesso modo, `fig:sun` e `tbl:loads`, così il testo dice `@fig:sun` che la figura sia due paragrafi più in là o due capitoli prima. Un id deve essere unico in tutto il libro, non solo nel suo capitolo.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. I titoli prendono un identificatore Pandoc con il suo prefisso, `## Sizing the array {#sec:array-size}`. Figure e tabelle sono risorse dichiarate nello script, e i loro id si scrivono allo stesso modo, `fig:sun` e `tbl:loads`, così il testo scrive `@fig:sun` che la figura sia due paragrafi più in là o due capitoli prima. Un id deve essere unico in tutto il libro, non solo nel suo capitolo.
 
 ### 2 · Impagina i capitoli come un unico libro
 
 <Excerpt region="answer" highlight="6" />
 
-`buildBundle` porta i contatori di figure e tabelle da un capitolo all’altro, così la prima tabella del capitolo 3 è la 3.1 e `@tbl:loads` nel capitolo 3 stampa ancora *table 1.1*. Un capitolo il cui testo nomina un titolo che non contiene viene impaginato con la struttura dell’intero libro, e reimpaginato (al massimo tre giri) finché le pagine di quella struttura non smettono di spostarsi. È così che il capitolo 1 può stampare *section 2.1 … p. 6* prima che il capitolo 2 esista sulla carta.
+`buildBundle` fa proseguire i contatori di figure e tabelle da un capitolo all’altro, così la prima tabella del capitolo 3 è la 3.1 e `@tbl:loads` nel capitolo 3 stampa ancora *table 1.1*. Un capitolo il cui testo rimanda a un titolo che non contiene viene impaginato con la struttura dell’intero libro, e reimpaginato (al massimo tre giri) finché le pagine di quella struttura non smettono di spostarsi. È così che il capitolo 1 può stampare *section 2.1 … p. 6* prima che il capitolo 2 esista sulla carta.
 
 ### 3 · Scegli le parole che stampa un rimando
 
@@ -30,7 +30,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. I titoli pren
 
 ### 4 · Rimanda in avanti alle sezioni, indietro alle figure
 
-Una figura o una tabella si numera, e flotta, dove viene citata per la prima volta. `@fig:soc` nel capitolo 1 la renderebbe la figura 1.2 e la collocherebbe nel capitolo 1. Per questo il capitolo 1 anticipa `@sec:autonomy`, e figure e tabelle si citano per la prima volta nel loro capitolo; ogni capitolo successivo vi rimanda liberamente. Una pagina va con la sezione, `:ref{id="sec:sun-hours" style=page}`: un rimando a una risorsa stampa la sua etichetta e il suo numero, mai la sua pagina.
+Una figura o una tabella riceve il numero, e si colloca come elemento flottante, dove viene citata per la prima volta. `@fig:soc` nel capitolo 1 ne farebbe la figura 1.2 e la collocherebbe nel capitolo 1. Per questo il capitolo 1 anticipa `@sec:autonomy`, e figure e tabelle si citano per la prima volta nel loro capitolo; ogni capitolo successivo vi rimanda liberamente. Una pagina va con la sezione, `:ref{id="sec:sun-hours" style=page}`: un rimando a una risorsa stampa l’etichetta e il numero, mai la pagina.
 
 ### 5 · Le aperture e la copertina vengono dalla stessa fascia
 
@@ -64,5 +64,5 @@ Un libro che scrive per esteso i suoi rimandi usa il nome completo del tipo inve
 
 - Un rimando a un id che nessun capitolo imposta stampa *?*. Controlla gli id dopo aver rinominato un titolo in un capitolo: i rimandi a esso vivono negli altri.
 - Impaginare i capitoli uno per uno con `buildDocument` fa perdere sia i contatori sia la struttura del libro: ogni capitolo numera di nuovo le figure da 1 e un rimando a un altro capitolo stampa *?*. Usa `buildBundle`, oppure concatena `continuation` e passa tu `outline`.
-- In Postext le equazioni non hanno una numerazione propria, quindi `@eq:` trova solo un ancoraggio impostato da te e ne stampa il testo; questo libro scrive le sue due formule senza numero.
-- Un titolo di sezione che apre una pagina, o che sta sotto una tabella flottata in testa come fa la 3.3 a pagina 9, perde per impostazione predefinita tutto lo spazio sopra, e l’aggancio alla griglia mette allora sotto il titolo la frazione di riga di cui ha bisogno, più lontano dal suo testo dei titoli a metà pagina. `headings.columnHeadSpace: 'remainder'` tiene quella frazione di riga sopra il titolo ([titoli](/it/docs/configuration-headings#titoli)). Si addice a un libro a una colonna, dove nessuna colonna accanto mostra che il titolo comincia un po’ più in basso.
+- In Postext le equazioni non hanno una numerazione propria, quindi `@eq:` trova solo un’ancora impostata da te e ne stampa il testo; questo libro scrive le sue due formule senza numero.
+- Un titolo di sezione che apre una pagina, o che sta sotto una tabella flottante in testa come fa la 3.3 a pagina 9, perde per impostazione predefinita tutto lo spazio sopra, e l’aggancio alla griglia mette allora sotto il titolo la frazione di riga di cui ha bisogno, più lontano dal suo testo dei titoli a metà pagina. `headings.columnHeadSpace: 'remainder'` tiene quella frazione di riga sopra il titolo ([titoli](/it/docs/configuration-headings#titoli)). Si addice a un libro a una colonna, dove nessuna colonna accanto mostra che il titolo comincia un po’ più in basso.

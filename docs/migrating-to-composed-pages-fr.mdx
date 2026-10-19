@@ -3,44 +3,44 @@
 export const metadata = {
   title: 'Passer un livre aux pages composées',
   sidebarTitle: 'Passer aux pages composées',
-  description: 'Comment faire passer un livre dont les pages gardent leur texte dans des styles de titre vers des gabarits de page et du Markdown : avec l’assistant du Sandbox Déplacer le texte dans le Markdown ou à la main, et ce qu’il faut vérifier ensuite',
+  description: 'Comment convertir un livre qui range le texte de ses pages dans des styles de titre en gabarits de page et en Markdown, avec l’assistant Déplacer le texte dans le Markdown du Sandbox ou à la main, et ce qu’il faut vérifier ensuite',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 43,
-  plainSummary: "Certains livres faits avec Postext avant les pages composées gardent les mots de chaque page dans les réglages de maquette au lieu de les garder dans le texte. Ils sont alors difficiles à corriger et impossibles à traduire. Cette page montre comment faire passer ces mots dans le Markdown, où chaque page devient un bloc avec son propre gabarit. Le Sandbox fait presque tout le travail avec un seul bouton, et vous vérifiez le résultat page par page. Elle explique aussi comment faire la même chose à la main pour une seule page.",
+  plainSummary: "Certains livres faits avec Postext avant les pages composées gardent les mots de chaque page dans les réglages de maquette, et non dans le texte. Ils sont alors difficiles à corriger et impossibles à traduire. Cette page montre comment faire passer ces mots dans le Markdown, où chaque page devient un bloc avec son propre gabarit. Le Sandbox fait presque tout le travail avec un seul bouton, et vous vérifiez le résultat page par page. Elle explique aussi comment faire la même chose à la main, page par page.",
 };
 
 # Passer un livre aux pages composées
 
-**Un livre qui garde le texte de ses pages dans ses styles peut le voir passer dans le Markdown, où on peut le corriger et le traduire.**
+**Si un livre range le texte de ses pages dans ses styles, ce texte peut passer dans le Markdown, où il devient possible de le corriger et de le traduire.**
 
-Avant les pages composées, un manuel porté dans Postext gardait souvent chaque page sous la forme d’un titre masqué dont l’en-tête plaçait le texte, les boîtes et les images de la page là où les avait la page imprimée. Les pages étaient justes, mais les mots vivaient dans la configuration : pour corriger une faute, il fallait ouvrir un style, et pour traduire, il fallait copier le style. Une page composée fait le même travail avec la forme dans un **gabarit de page** et les mots dans le Markdown, comme le montre [Livres de pages composées](/fr/docs/composed-page-books). Cette page fait passer un ancien livre à cette forme.
+Avant les pages composées, un manuel adapté pour Postext gardait souvent chaque page sous la forme d’un titre masqué : le titre courant de ce titre plaçait le texte, les boîtes et les images de la page aux endroits qu’ils occupaient sur la page imprimée. Les pages avaient le bon aspect, mais les mots vivaient dans la configuration : pour corriger une faute, il fallait ouvrir un style, et pour traduire, il fallait copier le style. Une page composée obtient le même résultat en plaçant la forme dans un **gabarit de page** et les mots dans le Markdown, comme le montre [Livres de pages composées](/fr/docs/composed-page-books). Cette page explique comment convertir un ancien livre à cette forme.
 
-Vous reconnaissez un livre à l’ancienne forme quand le panneau **Vérifications** liste *Texte rangé dans la configuration* (`contentInConfig`), une entrée pour chaque style de titre qui contient des phrases, et propose **Déplacer le texte dans le Markdown** en tête de liste.
+Un livre est sous l’ancienne forme quand le panneau **Vérifications** affiche *Texte rangé dans la configuration* (`contentInConfig`), avec une entrée par style de titre qui contient des phrases, et propose **Déplacer le texte dans le Markdown** en tête de liste.
 
 ## Le livre pour suivre les étapes
 
-Les étapes ci-dessous emploient un petit livre fait pour cette page, *Our World, before composed pages* : trois pages d’un manuel de CE2, chacune un style de titre dont l’en-tête place une image, une carte, un titre et trois blocs de texte, avec une bande jaune sous un mot. Les mots et les images sont inventés. [Téléchargez le livre](/docs-examples/our-world-before.postext) et, dans le Sandbox, ouvrez **Livres**, appuyez sur **Nouveau** et choisissez **Ouvrir un fichier .postext…**.
+Les étapes ci-dessous s’appuient sur un petit livre conçu pour cette page, *Our World, before composed pages* : trois pages d’un manuel de CE2. Chaque page est un style de titre dont le titre courant place une image, une carte, un titre et trois zones de texte, et un mot est souligné d’une bande jaune. Les mots et les images sont inventés. [Téléchargez le livre](/docs-examples/our-world-before.postext) et, dans le Sandbox, ouvrez **Livres**, appuyez sur **Nouveau** et choisissez **Ouvrir un fichier .postext…**.
 
 ## Avec l’assistant
 
-Importer un livre dont le texte est dans ses styles ouvre de lui-même la fenêtre **Déplacer le texte dans le Markdown**. Si vous l’avez fermée, ou si le livre était déjà dans votre liste, ouvrez **Vérifications** et appuyez sur le bouton en tête de liste. Rien ne change tant que vous n’appuyez pas sur **Déplacer le texte**.
+Quand vous importez un livre dont le texte est rangé dans ses styles, la fenêtre **Déplacer le texte dans le Markdown** s’ouvre d’elle-même. Si vous l’avez fermée, ou si le livre était déjà dans votre liste, ouvrez **Vérifications** et appuyez sur le bouton en tête de liste. Rien ne change tant que vous n’appuyez pas sur **Déplacer le texte**.
 
-1. Lisez **Ce qui change**. Pour le livre d’exemple, la fenêtre dit que 16 textes (567 lettres) vont passer dans le Markdown, que 3 pages composées vont être écrites, que les 3 styles de titre deviennent 1, que 3 boîtes de surlignage deviennent des pastilles et que les avertissements *Texte rangé dans la configuration* passent de 3 à 0.
-2. Regardez les options. **Les pages aux blocs placés aux mêmes endroits partagent un gabarit** donne aux pages mises en page de la même façon un gabarit de base, que les autres étendent. **Une boîte de surlignage sous des mots en gras devient une pastille** change une boîte colorée tracée sous des mots en gras en une pastille du style de pastille du livre. **Les mots sur les images deviennent leurs étiquettes** est proposée quand l’ancienne maquette posait des mots courts sur une image, comme les noms d’une carte : ils deviennent des lignes `::label` placées sur des ancres de l’image. Elle est désactivée tant que vous ne l’activez pas, parce que ce sont ces pages qui changent le plus.
-3. Sous **Avant et après**, le Sandbox met chaque chapitre en page deux fois et dessine chaque page qui change, l’ancienne à côté de la nouvelle. La liste dit quelles pages paraissent différentes et pourquoi, quand elle le sait. **Marquer en rouge ce qui change** peint les pixels qui diffèrent. Dans le livre d’exemple, les trois pages sont marquées *Paraît identique*.
+1. Lisez **Ce qui change**. Pour le livre d’exemple, la fenêtre annonce que 16 textes (567 lettres) vont passer dans le Markdown, que 3 pages composées vont être écrites, que les 3 styles de titre deviennent 1, que 3 boîtes de surlignage deviennent des pastilles et que les avertissements *Texte rangé dans la configuration* passent de 3 à 0.
+2. Regardez les options. **Les pages aux blocs placés aux mêmes endroits partagent un gabarit** donne aux pages qui ont la même mise en page un seul gabarit de base, que les autres gabarits étendent. **Une boîte de surlignage sous des mots en gras devient une pastille** transforme une boîte colorée tracée sous des mots en gras en pastille, dans le style de pastille du livre. **Les mots sur les images deviennent leurs étiquettes** est proposée quand l’ancienne maquette posait des mots courts sur une image, comme les noms d’une carte : ils deviennent des lignes `::label` placées sur des ancres de l’image. Elle est désactivée par défaut, car ce sont ces pages qui changent le plus.
+3. Sous **Avant et après**, le Sandbox met chaque chapitre en page deux fois et affiche chaque page qui change, l’ancienne à côté de la nouvelle. La liste indique quelles pages ont un aspect différent et, quand elle le sait, pourquoi. **Marquer en rouge ce qui change** colore les pixels qui diffèrent. Dans le livre d’exemple, les trois pages sont marquées *Paraît identique*.
 4. Appuyez sur **Déplacer le texte**.
 
-<Screenshot src="/docs-shots/fr/move.webp" alt="La fenêtre Déplacer le texte dans le Markdown avec la liste de ce qui change et les trois options." caption="La fenêtre liste ce qu’elle va faire avant de rien faire." />
+<Screenshot src="/docs-shots/fr/move.webp" alt="La fenêtre Déplacer le texte dans le Markdown avec la liste de ce qui change et les trois options." caption="La fenêtre détaille ce qu’elle va faire avant d’agir." />
 
-<Screenshot src="/docs-shots/fr/move-before-after.webp" alt="Le bas de la fenêtre : la liste des pages marquées Paraît identique et, côte à côte, une page avant et après le déplacement." caption="Chaque page est mise en page avec l’ancienne maquette et avec la nouvelle, côte à côte." />
+<Screenshot src="/docs-shots/fr/move-before-after.webp" alt="Le bas de la fenêtre : la liste des pages marquées Paraît identique et, côte à côte, une page avant et après le déplacement." caption="Chaque page est mise en page avec l’ancienne maquette et avec la nouvelle, côte à côte." />
 
-Le déplacement est une étape de l’historique du livre : une étape par chapitre réécrit et une pour la maquette. **Annuler le déplacement**, dans la fenêtre, défait tout tant que rien d’autre n’a changé, et **Cmd/Ctrl+Z** le défait étape par étape. Le livre tel qu’il était reste aussi enregistré jusqu’à ce que vous appuyiez sur **Garder le déplacement** dans le panneau Vérifications ; jusque-là, **Remettre le livre comme avant** réécrit l’ancienne maquette et l’ancien texte.
+Le déplacement est une étape de l’historique du livre : une étape par chapitre réécrit et une pour la maquette. **Annuler le déplacement**, dans la fenêtre, défait tout tant que rien d’autre n’a changé, et **Cmd/Ctrl+Z** le défait étape par étape. Le livre tel qu’il était reste aussi enregistré jusqu’à ce que vous appuyiez sur **Garder le déplacement** dans le panneau Vérifications ; jusque-là, **Remettre le livre comme avant** rétablit l’ancienne maquette et l’ancien texte.
 
 ## Ce qu’il faut vérifier ensuite
 
-Ouvrez le panneau **Texte**. Le chapitre contient maintenant un bloc par page :
+Ouvrez le panneau **Texte**. Le chapitre contient maintenant une section `::::page` par page :
 
 ```md
 ::::page{template="page-base" background="art-p1"}
@@ -57,23 +57,23 @@ Rivers and seas
 
 Passez le résultat en revue dans cet ordre.
 
-- **Les pages qui paraissent différentes.** La liste de la fenêtre a donné les raisons qu’elle connaissait : la boîte, le contour ou la lettrine propres d’un texte, une page dont on ne connaissait pas le côté, du texte courant désormais composé dans le bloc de flux du gabarit. Comparez ces pages sur le canevas.
-- **Les gabarits.** **Maquette › Page et colonnes › Gabarits de page** liste un gabarit par dessin de page, et `page-base` pour les blocs que les pages ont en commun. Une page qui n’ajoute rien emploie la base telle quelle ; les autres l’étendent. Les noms sont fabriqués à partir des anciens : renommez un gabarit avec un nom que vous reconnaîtrez (le renommer le renomme dans toutes les pages qui le nomment).
-- **Les styles de paragraphe.** La police, le corps, la graisse, la couleur, l’alignement et l’interlignage de chaque texte forment un style de paragraphe : un style du livre quand l’un correspondait exactement, sinon un nouveau nommé d’après la police et le corps (`nunito-11`). Regardez **Maquette › Texte** et renommez ou fusionnez les nouveaux.
-- **Les titres.** Les styles de titre devenus identiques ont été fusionnés et les titres renommés ; les titres masqués qui ne faisaient que changer l’en-tête ont disparu. Vérifiez la table des matières si le livre en a une.
-- **Ce qui reste dans la configuration.** La liste *Reste dans la configuration* de la fenêtre nomme un texte qui mêle des mots et des marqueurs (`Page {pageNumber}`), un texte accroché à un autre élément et le texte d’un dessin de titre. Ce n’est pas le contenu d’une page, et les avertissements *Texte rangé dans la configuration* qui restent les concernent.
-- **Les étiquettes.** Si vous avez activé *Les mots sur les images deviennent leurs étiquettes*, regardez chaque carte ou schéma : les étiquettes sont recomposées avec les polices du livre, si bien que leur taille et leur place peuvent différer de celles des anciennes pages.
-- **Le panneau Vérifications.** Les blocs dont le texte ne tient plus apparaissent comme *Le texte déborde de son bloc*, avec les corrections décrites dans [Livres de pages composées](/fr/docs/composed-page-books#6-vérifier-ce-qui-ne-tient-pas). Un livre fait d’après une page imprimée est serré, et les premiers mots un peu plus longs demandent une correction.
+- **Les pages qui paraissent différentes.** La liste de la fenêtre a donné les raisons qu’elle connaissait : la boîte, le contour ou la lettrine propres d’un texte, une page dont le côté était inconnu, du texte courant désormais composé dans le bloc de flux du gabarit. Comparez ces pages dans l’onglet Canvas.
+- **Les gabarits.** **Maquette › Page et colonnes › Gabarits de page** liste un gabarit par mise en page, et `page-base` pour les blocs que les pages ont en commun. Une page qui n’ajoute rien utilise la base telle quelle ; les autres l’étendent. Les noms sont dérivés des anciens : donnez à chaque gabarit un nom parlant (toutes les pages qui l’utilisent reprennent le nouveau nom).
+- **Les styles de paragraphe.** La police, le corps, la graisse, la couleur, l’alignement et l’interlignage de chaque texte sont devenus un style de paragraphe : un style existant du livre quand l’un d’eux correspondait exactement, sinon un nouveau style nommé d’après la police et le corps (`nunito-11`). Regardez **Maquette › Typographie › Styles de paragraphe** et renommez ou fusionnez les nouveaux.
+- **Les titres.** Les styles de titre devenus identiques ont été fusionnés et les titres renommés ; les titres masqués qui servaient seulement à changer de titre courant ont disparu. Vérifiez la table des matières si le livre en a une.
+- **Ce qui reste dans la configuration.** La liste *Reste dans la configuration* de la fenêtre énumère les textes qui y restent : un texte qui mêle des mots et des variables (`Page {pageNumber}`), un texte rattaché à un autre élément et le texte d’une maquette de titre. Ces textes ne font pas partie du contenu d’une page, et ce sont eux que visent les avertissements *Texte rangé dans la configuration* restants.
+- **Les étiquettes.** Si vous avez activé *Les mots sur les images deviennent leurs étiquettes*, regardez chaque carte ou schéma : les étiquettes sont recomposées avec les polices du livre : leur taille et leur position peuvent donc différer de celles des anciennes pages.
+- **Le panneau Vérifications.** Les blocs dont le texte ne tient plus apparaissent comme *Le texte déborde de son bloc*, avec les corrections décrites dans [Livres de pages composées](/fr/docs/composed-page-books#6-vérifier-ce-qui-ne-tient-pas). Un livre recopié d’après des pages imprimées est très juste : le premier texte un peu plus long demande une correction.
 
 Quand le résultat vous convient, appuyez sur **Garder le déplacement**. Le livre peut maintenant être traduit comme n’importe quel livre de pages composées.
 
 ## À la main
 
-Un livre de quelques pages peut passer sans l’assistant, une page à la fois.
+Un livre de quelques pages peut être converti sans l’assistant, une page à la fois.
 
-1. En mode **Maquette**, faites le gabarit de page. Tracez un bloc pour chaque texte sur une page composée du livre, ou suivez les étapes de [Livres de pages composées](/fr/docs/composed-page-books#2-faire-un-gabarit-de-page). Donnez à chaque bloc le style de boîte qui dessine son aspect, et la hauteur qu’avait l’ancien texte comme **Hauteur minimale**.
-2. En mode **Contenu**, écrivez la page comme un bloc `::::page{template="…"}` et déplacez chaque texte de l’ancien en-tête dans un `:::frame{slot="…"}` du nouveau bloc. Gardez le gras et l’italique, et gardez les retours à la ligne de l’ancien texte avec une barre oblique inverse en fin de ligne.
+1. En mode **Maquette**, faites le gabarit de page. Tracez un bloc pour chaque texte sur une page composée du livre, ou suivez les étapes de [Livres de pages composées](/fr/docs/composed-page-books#2-faire-un-gabarit-de-page). Donnez à chaque bloc le style de boîte qui lui donne son aspect et, comme **Hauteur minimale**, la hauteur qu’avait l’ancien texte.
+2. En mode **Contenu**, écrivez la page entre une ligne `::::page{template="…"}` et une ligne `::::`, et déplacez chaque texte de l’ancien titre courant dans un `:::frame{slot="…"}` de la nouvelle page. Gardez le gras et l’italique, et conservez les sauts de ligne de l’ancien texte avec une barre oblique inverse en fin de ligne.
 3. Supprimez les éléments de texte du style de titre, ou le style de titre lui-même quand rien d’autre n’en a besoin. L’avertissement *Texte rangé dans la configuration* de ce style disparaît.
 4. Comparez la page avec l’ancienne et ouvrez **Vérifications**.
 
-Le même déplacement est disponible depuis le code sous le nom `moveTextToMarkdown`, qui rend la nouvelle configuration, les chapitres et le rapport qu’affiche la fenêtre ; voir [Pages composées › Migrer un livre dont le texte est dans ses styles](/fr/docs/composed-pages#migrer-un-livre-dont-le-texte-est-dans-ses-styles). Tout ce que fait la fenêtre est décrit dans [Sandbox : les pages composées › Déplacer le texte dans le Markdown](/fr/docs/sandbox-composed-pages#déplacer-le-texte-dans-le-markdown).
+La même migration existe dans le code : `moveTextToMarkdown` renvoie la nouvelle configuration, les chapitres et le rapport qu’affiche la fenêtre ; voir [Pages composées › Migrer un livre dont le texte est dans ses styles](/fr/docs/composed-pages#migrer-un-livre-dont-le-texte-est-dans-ses-styles). Tout ce que fait la fenêtre est décrit dans [Sandbox : les pages composées › Déplacer le texte dans le Markdown](/fr/docs/sandbox-composed-pages#déplacer-le-texte-dans-le-markdown).

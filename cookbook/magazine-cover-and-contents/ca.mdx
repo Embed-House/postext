@@ -2,7 +2,7 @@
 title: "Portada de revista i sumari per seccions"
 summary: "Una portada amb les crides penjades del nom de la revista i un sumari generat amb una fila de color per secció. Cada secció és una part sense portadella."
 plain: "La portada i les primeres pàgines d'una revista de cuina i camp, amb foto a la portada i un sumari. Ensenya a donar a cada secció el seu color, que es manté a totes les seves pàgines."
-description: "Sis pàgines d'una revista amb Postext. La portada és una ranura sobre una foto, i el sumari agrupa els articles sota pestanyes del color de cada secció."
+description: "Sis pàgines d'una revista amb Postext. La portada és una zona de disseny sobre una foto, i el sumari agrupa els articles sota pestanyes del color de la secció."
 question: "Com faig la portada i el colofó d'una revista, i què substitueix l'avantportada i la portada d'un llibre?"
 aliases: ["portada de revista", "coberta de revista", "crides de portada", "nom de la revista", "capçalera de la revista", "masthead", "sumari", "índex per seccions", "colors per secció", "número de la revista", "pestanya de foli", "carta de l'editor", "colofó"]
 pageNotes: { "1": "La portada: una vall toscana sota un cel pàl·lid, FALLOW en Bodoni negra de banda a banda, un plafó de paper amb tres crides amb els avantítols en oliva, teula i granat, i a la cantonada inferior dreta el preu amb un codi de barres inventat.", "2": "El sumari: un gran 14 de color terra, tres files de secció amb pestanyes de color, el títol, la pàgina i l'entradeta de cada article, una miniatura de la portada i, a la columna dreta, la carta de l'editora, els col·laboradors i un petit colofó.", "3": "Quadern de camp: matrassos amb brots verds a dalt de la pàgina i, muntat sobre el peu de la foto, un plafó teula amb el títol i l'entradeta; a sota, dues columnes justificades i la pestanya teula del foli.", "4": "L'obertura del reportatge: una foto aèria d'un mosaic de camps, un d'ells en guaret, amb un camí blanc al costat d'una masia, i un plafó oliva muntat sobre el peu.", "5": "El reportatge continua sota una foto d'una masia entre vinyes i xiprers, amb un requadre oliva que enumera la rotació de set anys i una cita destacada en oliva.", "6": "Cuina: blat madur i un plafó granat muntat sobre el peu; a sota, els ingredients i l'elaboració, amb ratlles i números en granat." }
@@ -10,7 +10,7 @@ pageNotes: { "1": "La portada: una vall toscana sota un cel pàl·lid, FALLOW en
 
 ## Què compondràs
 
-Sis pàgines de 230 × 300 mm d'un número de *FALLOW*, revista trimestral imaginària de cuina i terra. La portada és una vall toscana a sang sota FALLOW en Bodoni de 118 pt, amb tres crides sobre un plafó de paper, cada avantítol del color de la seva secció, i el preu i el codi de barres a la cantonada. `:::toc` compon el sumari de la pàgina 2: sota la pestanya de color de cada secció, el títol, la pàgina i l'entradeta de l'article; a la dreta, la carta de l'editora, els col·laboradors i el colofó. Segueixen tres seccions, en teula, oliva i granat, amb articles que s'obren amb una imatge a sang al capdamunt de la pàgina i un plafó del seu color muntat a sobre; folis, vinyetes i requadres porten aquest color. El posa la tanca `:::part` que precedeix cada article, sense obrir portadella.
+Sis pàgines de 230 × 300 mm d'un número de *FALLOW*, revista trimestral imaginària de cuina i terra. La portada és una vall toscana a sang sota FALLOW en Bodoni de 118 pt, amb tres crides sobre un plafó de paper, cada avantítol del color de la seva secció, i el preu i el codi de barres a la cantonada. `:::toc` compon el sumari de la pàgina 2: sota la pestanya de color de cada secció, el títol, la pàgina i l'entradeta de l'article; a la dreta, la carta de l'editora, els col·laboradors i el colofó. Segueixen tres seccions, en teula, oliva i granat, amb articles que s'obren amb una imatge a sang al capdamunt de la pàgina i un plafó del seu color muntat a sobre; folis, pics i requadres porten aquest color. El posa la línia `:::part` que precedeix cada article, sense obrir portadella.
 
 ## Elaboració
 
@@ -22,19 +22,19 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. Només la fot
 
 <Excerpt region="sections" />
 
-Amb `parts.page: false`, una tanca com `:::part{title="Reportajes" palette="band=#5d6a2b"}` no obre portadella i només fixa el títol i la paleta de la secció des del bloc següent ([el contenidor `:::part`](/ca/docs/configuration-styles#el-contenidor-part)). L'H1 de cada article fa servir un [estil de títol](/ca/docs/configuration-styles#estils-dencapçalament) amb `numbered: false`, de manera que el sumari el recull sense número. L'estil tria la imatge de l'obertura, i el color el posa la part.
+Amb `parts.page: false`, una línia com `:::part{title="Reportajes" palette="band=#5d6a2b"}` no obre portadella i només fixa el títol i la paleta de la secció des del bloc següent ([el contenidor `:::part`](/ca/docs/configuration-styles#el-contenidor-part)). L'H1 de cada article fa servir un [estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) amb `numbered: false`, de manera que el sumari el recull sense número. L'estil tria la imatge de l'obertura, i el color el posa la part.
 
 ### 3 · Enllaça tots els colors de secció a una entrada
 
 <Excerpt region="palette" />
 
-Una part redefineix entrades de la paleta pel seu id, així que tot el que canvia amb la secció s'enllaça a `band`: el plafó de l'obertura, la pestanya del foli, les vinyetes i els números de les llistes, la cita destacada, i el filet i el títol del requadre de dades. En el text, la redefinició va per valor: qualsevol color amb un hex que coincideixi amb l'hex base de `band` (`#8b6a3e`) pren el de la secció, i per això cap altra entrada no fa servir aquest hex. En els elements de disseny és al revés: la redefinició d'una part els arriba pel `paletteId`, i per això `col()` escriu l'id al costat de l'hex.
+Una part redefineix entrades de la paleta pel seu id, així que tot el que canvia amb la secció s'enllaça a `band`: el plafó de l'obertura, la pestanya del foli, els pics i els números de les llistes, la cita destacada, i el filet i el títol del requadre de dades. En el text, la redefinició va per valor: qualsevol color amb un hex que coincideixi amb l'hex base de `band` (`#8b6a3e`) pren el de la secció, i per això cap altra entrada no fa servir aquest hex. En els elements de disseny és al revés: la redefinició d'una part els arriba pel `paletteId`, i per això `col()` escriu l'id al costat de l'hex.
 
 ### 4 · Deixa que el sumari s'agrupi sol
 
 <Excerpt region="contents" />
 
-`:::toc` recull els articles i dona a cada `:::part` una fila composta amb `toc.parts.design` i la paleta d'aquella part ([índex de continguts](/ca/docs/configuration-notes-references#índex-de-continguts)), de manera que un sol disseny de fila imprimeix tres pestanyes de tres colors. El filet i la pestanya pengen de `mid`, el centre de la fila pujat 1 mm perquè la pestanya no fregui el títol de sota. Sense línia de punts, entre cada títol i la seva pàgina (3, 4 i 6) només queda blanc, i `subtitle.attr` posa a sota, en cursiva, l'atribut `standfirst` de l'obertura. El colofó que tanca la columna dreta és un estil de paràgraf en Jost de 7 pt i color `muted` que el Markdown aplica amb `:::paragraphs{style="colophon"}`.
+`:::toc` recull els articles i dona a cada `:::part` una fila composta amb `toc.parts.design` i la paleta d'aquella part ([índex general](/ca/docs/configuration-notes-references#índex-general)), de manera que un sol disseny de fila imprimeix tres pestanyes de tres colors. El filet i la pestanya pengen de `mid`, el centre de la fila pujat 1 mm perquè la pestanya no fregui el títol de sota. Sense línia de punts, entre cada títol i la seva pàgina (3, 4 i 6) només queda blanc, i `subtitle.attr` posa a sota, en cursiva, l'atribut `standfirst` de l'obertura. El colofó que tanca la columna dreta és un estil de paràgraf en Jost de 7 pt i color `muted` que el Markdown aplica amb `:::paragraphs{style="colophon"}`.
 
 ### 5 · Dona a tots els articles la mateixa obertura
 

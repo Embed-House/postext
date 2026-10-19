@@ -24,19 +24,19 @@ A folha de sala de *Cartografías imaginarias*, uma exposição inventada de map
 
 <Excerpt region="tab" />
 
-A caixa da aba pende do quadro da sangria e tem `BLEED` a mais que a aba já refilada, de modo que um corte que caia um milímetro fora do refile ainda deixa laranja na borda; o fólio pende do quadro da página, que é o refile, e se centraliza nos 10 mm que sobram. `parity` escolhe as páginas em que cada elemento aparece, e `edge` muda junto para chegar à borda externa, enquanto `pages: 'body'` deixa a aba e os cabeços (`{title}` e `{subtitle}`, do frontmatter) fora das duas capas, que contam como aberturas porque cada uma começa com um título que ocupa a página ou salta para uma nova. Qualquer elemento do cabeçalho ou do rodapé se repete do mesmo jeito, então uma `image` com `parity` e `pages` põe uma marca-d'água ou uma imagem decorativa em todas as páginas; os encaixes são pintados por cima do texto, e um fundo de cor por trás dele vai em `page.backgroundColor`.
+A caixa da aba pende do quadro da sangria e tem `BLEED` a mais que a aba já refilada, de modo que um corte que caia um milímetro fora do refile ainda deixa laranja na borda; o fólio pende do quadro da página, que é o refile, e se centraliza nos 10 mm que sobram. `parity` escolhe as páginas em que cada elemento aparece, e `edge` muda junto para chegar à borda externa, enquanto `pages: 'body'` deixa a aba e os cabeços (`{title}` e `{subtitle}`, do front matter) fora das duas capas, que contam como aberturas porque cada uma começa com um título que ocupa a página ou salta para uma nova. Qualquer elemento do cabeçalho ou do rodapé se repete do mesmo jeito, de modo que uma `image` com `parity` e `pages` põe uma marca-d'água ou uma imagem decorativa em todas as páginas; os espaços de design são pintados por cima do texto, e um fundo de cor por trás dele vai em `page.backgroundColor`.
 
 ### 3 · A arte até a sangria, o texto dentro do refile
 
 <Excerpt region="covers" />
 
-`cutLines` soma a cada lado da página a sangria, o afastamento da marca e a marca de 5 mm, 11 mm aqui. O afastamento é de 3 mm por padrão, igual a esta sangria, então as marcas começam na borda da sangria e vão para fora; com uma sangria maior, continuariam começando na borda dela, nunca dentro. Um elemento de imagem ancorado à sangria com `width: 'fill'` toma a largura desse quadro e mantém a própria proporção: o mapa da capa é desenhado com 176 × 233 mm, o formato refilado mais 3 mm de cada lado, e por isso chega à borda da sangria, onde começam as marcas, enquanto o texto pende da mancha, bem dentro do refile. A quarta capa é um estilo de título cujo rodapé substitui o do documento, com uma faixa do mesmo gerador ancorada ao pé da sangria e uma margem inferior que para o texto 8 mm acima dela.
+`cutLines` soma a cada lado da página a sangria, o afastamento da marca e a marca de 5 mm, 11 mm aqui. O afastamento é de 3 mm por padrão, igual a esta sangria, por isso as marcas começam na borda da sangria e vão para fora; com uma sangria maior, continuariam começando na borda dela, nunca dentro. Um elemento de imagem ancorado à sangria com `width: 'fill'` toma a largura desse quadro e mantém a própria proporção: o mapa da capa é desenhado com 176 × 233 mm, o formato refilado mais 3 mm de cada lado, e por isso chega à borda da sangria, onde começam as marcas, enquanto o texto pende da mancha, bem dentro do refile. A quarta capa é um estilo de título cujo rodapé substitui o do documento, com uma faixa do mesmo gerador ancorada ao pé da sangria e uma margem inferior que para o texto 8 mm acima dela.
 
 ### 4 · Títulos que viram marcadores
 
 <Excerpt region="levels" />
 
-`renderToPdf` monta os marcadores a partir dos títulos, então cada sala é um título de nível 1 que segue o anterior sem quebra de página, e `numberingTemplate` dá ao antetítulo o seu `{number}` e ao marcador o seu prefixo: o PDF lista a capa, de “Sala 1 Una isla en ninguna parte” a “Sala 4 La isla del tesoro”, e as informações práticas. Um título desenhado esconde o próprio texto, mas o guarda para os marcadores e as tags; sem `fontFamily`, esse texto oculto sai em Open Sans 700, que as páginas carregariam e o PDF incorporaria só para ele. Os rótulos de página seguem `page.pageNumbering`, mantido no padrão, decimal a partir de 1, e assim a página 3 no visualizador de PDF é a que traz 3 na aba.
+`renderToPdf` monta os marcadores a partir dos títulos, por isso cada sala é um título de nível 1 que segue o anterior sem quebra de página, e `numberingTemplate` dá ao antetítulo o `{number}` e ao marcador o prefixo: o PDF lista a capa, de “Sala 1 Una isla en ninguna parte” a “Sala 4 La isla del tesoro”, e as informações práticas. Um título desenhado esconde o próprio texto, mas o guarda para os marcadores e as tags; sem `fontFamily`, esse texto oculto sai em Open Sans 700, que as páginas carregariam e o PDF incorporaria só para ele. Os rótulos de página seguem `page.pageNumbering`, mantido no padrão, decimal a partir de 1, e assim a página 3 no visualizador de PDF é a que traz 3 na aba.
 
 ### 5 · Matrizes de impressão com tintas exatas
 
@@ -57,7 +57,7 @@ A arte, a aba e a escala gráfica são medidas a partir de `BLEED`, e as marcas 
 
 ### Imprima a arte a partir dos SVGs
 
-Sem `pdfFileId`, o arquivo de impressão desenha cada imagem a partir do seu SVG, ainda em vetores e passando pelo perfil: o verde-escuro, definido em CMYK, mantém C100 M45 Y80 K55, enquanto os outros verdes das ilhas recebem as separações do perfil em vez das escolhidas a dedo.
+Sem `pdfFileId`, o arquivo de impressão desenha cada imagem a partir do SVG, ainda em vetores e passando pelo perfil: o verde-escuro, definido em CMYK, mantém C100 M45 Y80 K55, enquanto os outros verdes das ilhas recebem as separações do perfil em vez das escolhidas a dedo.
 
 ```diff
 -  updatedAt: 0, ...extra, svg: { fileId: `${id}.svg`, pdfFileId: `${id}.pdf`,

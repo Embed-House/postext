@@ -5,7 +5,7 @@ plain: "Un petit livre de trois lettres échangées entre le roi de Prusse et Vo
 description: "Trois lettres de Frédéric II et de Voltaire composées dans Postext en édition 14 × 21 cm, dates tirées d’attributs du titre et signatures alignées à droite."
 question: "Comment composer l’appel, la signature au fer à droite et le post-scriptum de chaque lettre d’un recueil ?"
 aliases: ["lettres", "correspondance", "épistolaire", "date de lieu", "signature", "formule d’appel", "post-scriptum", "vedette", "en-tête de lettre"]
-pageNotes: { "2": "La note liminaire en italique, puis la lettre I : « LETTRE I » en petites capitales rouges, « Frédéric à Voltaire » en italique Fell, la date « À Charlottembourg, le 6 juin 1740 » au fer à droite, l’appel « Mon cher ami, » et, au bas de la lettre, la signature « FÉDÉRIC » au fer à droite.", "3": "La lettre II ouvre la page sous le titre courant « 12 juin 1740 », avec les dix-huit vers de Frédéric en retrait de la marge.", "4": "La lettre II se termine sur « FÉDÉRIC » et un post-scriptum d’un corps plus petit ; plus bas, la lettre III s’ouvre sur sa date « À Paris, le 1er avril 1778 » et l’appel « Sire, ».", "5": "La lettre de Voltaire se termine sur « VOLTAIRE » au fer à droite, puis vient le colophon ; le titre courant porte « 1er avril 1778 »." }
+pageNotes: { "2": "La note liminaire en italique, puis la lettre I : « LETTRE I » en petites capitales rouges, « Frédéric à Voltaire » en italique Fell, la date « À Charlottembourg, le 6 juin 1740 » au fer à droite, l’appel « Mon cher ami, » et, au bas de la lettre, la signature « FÉDÉRIC » au fer à droite.", "3": "La lettre II ouvre la page sous le titre courant « 12 juin 1740 », avec les dix-huit vers de Frédéric en retrait de la marge.", "4": "La lettre II se termine sur « FÉDÉRIC » et un post-scriptum d’un corps plus petit ; plus bas, la lettre III s’ouvre sur sa date « À Paris, le 1er avril 1778 » et l’appel « Sire, ».", "5": "La lettre de Voltaire se termine sur « VOLTAIRE » au fer à droite, puis vient le colophon ; le titre courant affiche « 1er avril 1778 »." }
 ---
 
 ## Ce que vous allez composer
@@ -22,7 +22,7 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque let
 
 <Excerpt region="letters" />
 
-Avec `breakBefore` désactivé, une lettre commence deux lignes de grille (`marginTop`) sous la ligne de grille où finit la précédente. Sur la <PageRef page={4}>page 4</PageRef>, le post-scriptum, composé sur un interlignage de 12,6 pt, se termine entre deux lignes de grille, si bien qu’environ trois lignes de blanc se trouvent au-dessus de la lettre III. En page 2, la lettre I court jusqu’au pied de la page et la lettre II ouvre la page 3. Laissé à sa valeur par défaut, le niveau 1 ouvrirait chaque lettre sur un recto ([saut avant](/fr/docs/configuration-headings#saut-avant)). `numberingTemplate: '{1:I}'` numérote les lettres de I à III, et l’en-tête imprime le chiffre par `{number}`.
+Avec `breakBefore` désactivé, une lettre commence deux lignes de grille (`marginTop`) sous la ligne de grille où finit la précédente. Sur la <PageRef page={4}>page 4</PageRef>, le post-scriptum, composé sur un interlignage de 12,6 pt, se termine entre deux lignes de grille : environ trois lignes de blanc se trouvent donc au-dessus de la lettre III. En page 2, la lettre I court jusqu’au pied de la page et la lettre II ouvre la page 3. Laissé à sa valeur par défaut, le niveau 1 ouvrirait chaque lettre sur un recto ([saut avant](/fr/docs/configuration-headings#saut-avant)). `numberingTemplate: '{1:I}'` numérote les lettres de I à III, et l’en-tête imprime le chiffre par `{number}`.
 
 ### 3 · Dater le recto avec la lettre
 
@@ -34,7 +34,7 @@ Dans un en-tête de page, `{attr.date}` prend l’attribut du dernier titre de n
 
 <Excerpt region="cover" />
 
-La couverture est le premier titre, dans le [style de titre](/fr/docs/configuration-styles#styles-de-titre) `cover` : un élément image ancré au fond perdu porte la reliure dessinée, un second place la photographie 72 mm plus bas, et le titre, les noms et le sous-titre viennent du titre et de l’en-tête du document. `numbered: false` la tient hors du compte, si bien que la première lettre de Frédéric est la I. L’image de la reliure remplit la page, et une ouverture réserve la place jusqu’à son élément le plus bas : la couverture occupe donc toute la page 1, et la note liminaire commence en page 2 sans `:::pagebreak`.
+La couverture est le premier titre, dans le [style de titre](/fr/docs/configuration-styles#styles-de-titre) `cover` : un élément image ancré au fond perdu porte la reliure dessinée, un second place la photographie 72 mm plus bas, et le titre, les noms et le sous-titre viennent du titre et de l’en-tête du document. `numbered: false` la tient hors du compte : la première lettre de Frédéric est donc la I. L’image de la reliure remplit la page, et une ouverture réserve la place jusqu’à son élément le plus bas : la couverture occupe donc toute la page 1, et la note liminaire commence en page 2 sans `:::pagebreak`.
 
 ### 5 · Couper le français, garder les espaces ouvertes
 
@@ -62,7 +62,7 @@ Les mêmes attributs peuvent donner au recto la date de lieu complète, *À Char
 
 ## Erreurs fréquentes
 
-- Le recto prend la date de la dernière lettre qui *commence* sur la page ou avant. Une page qui finit une lettre et ouvre la suivante porte la date de la nouvelle lettre, comme le titre courant d’un dictionnaire nomme la dernière entrée de la page.
+- Le recto prend la date de la dernière lettre qui *commence* sur la page ou avant. Une page qui finit une lettre et ouvre la suivante affiche la date de la nouvelle lettre, comme le titre courant d’un dictionnaire reprend la dernière entrée de la page.
 - Un titre sans l’attribut imprime une chaîne vide, sans avertissement : une lettre sans `place="…"` reçoit une date de lieu qui commence par une virgule. Vérifiez le titre de chaque lettre.
 - Les lettres gardent les signes ; : ? et ! sans espace de la transcription. L’usage français place devant eux une espace fine insécable (U+202F) ; tapée à cet endroit, elle garde chaque signe sur la ligne de son mot.
-- Crimson Pro n’a pas les lettres modificatives ᵉ (U+1D49) ni ʳ (U+02B3) : un 1ᵉʳ écrit en Unicode s’imprimerait dans une police de secours. Écrivez plutôt `1^er^` : la note liminaire, qui est du texte courant, le compose en exposant, tout comme la date de lieu et le titre courant du recto, dont les éléments de texte portent `inlineMarks: true`.
+- Crimson Pro n’a pas les lettres modificatives ᵉ (U+1D49) ni ʳ (U+02B3) : un 1ᵉʳ écrit en Unicode s’imprimerait dans une police de secours. Écrivez plutôt `1^er^` : la note liminaire, qui est du texte courant, le compose en exposant, tout comme la date de lieu et le titre courant du recto, dont les éléments de texte ont `inlineMarks: true`.

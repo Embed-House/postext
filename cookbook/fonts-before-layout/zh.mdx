@@ -5,7 +5,7 @@ plain: "一本展示三款字体的四页样本册。示例说明为什么要等
 description: "每个字体文件声明一个FontFace，让buildDocumentWithFonts在测量第一行之前加载配置和文字要用的每一款字体。"
 question: "为什么我的断行会变，PDF里的词会叠在一起？怎样在排版前加载我自己的字体文件？"
 aliases: ["网页字体", "自托管字体", "字体加载", "后备字体", "字体样张", "字体检查", "断行变化", "web fonts", "self-hosted fonts", "FontFace", "document.fonts", "fallback font", "unicode-range", "latin-ext", "prepareFonts", "buildDocumentWithFonts", "fontFallback", "type specimen"]
-pageNotes: { "1": "House Specimen Nº 3的封面：页面上半部是群青色底，里面是240 pt的白色Noto Serif Display斜体Ag，以及两行等宽字，写着它和正文字体、标签字体的名字；下方是标题Three faces, proofed、一段斜体导语和开篇段落。", "2": "Ysabeau Office从7 pt到14 pt的字号阶梯，每个字号一行，旁边用群青色等宽字标注，然后是13 pt的西班牙语、波兰语和捷克语全字母句。", "3": "检查表：一张IBM Plex Mono排的表格，表头为群青色，列出小册子声明的十款字体，每个字族只写一次，标明页面是否用它排了文字、为它下载了哪些文件，以及一行读自构建结果的状态说明，前后是解释它的段落。", "4": "第1页的第一段排了两次。上面标着early，是提早构建排出的样子：断行位置不同，有几行越过行长边缘的细线，伸进浅群青色的底色里。下面标着last，是最后一次构建排出的样子，每行都没有碰到那条线。一条题注统计提早构建断在别处的行数，以及它用后备字体排的字体数；后面是结尾段落和版权信息。" }
+pageNotes: { "1": "House Specimen Nº 3的封面：页面上半部是群青色底，里面是240 pt的白色Noto Serif Display斜体Ag，以及两行等宽字，写着它和正文字体、标签字体的名字；下方是标题Three faces, proofed、一段斜体导语和开篇段落。", "2": "Ysabeau Office从7 pt到14 pt的字号阶梯，每个字号一行，旁边用群青色等宽字标注，然后是13 pt的西班牙语、波兰语和捷克语全字母句。", "3": "检查表：一张IBM Plex Mono排的表格，表头为群青色，列出小册子声明的十款字体，每个字体族只写一次，标明页面是否用它排了文字、为它下载了哪些文件，以及一行读自构建结果的状态说明，前后是解释它的段落。", "4": "第1页的第一段排了两次。上面标着early，是提早构建排出的样子：断行位置不同，有几行越过行长边缘的细线，伸进浅群青色的底色里。下面标着last，是最后一次构建排出的样子，每行都没有碰到那条线。一条题注统计提早构建断在别处的行数，以及它用后备字体排的字体数；后面是结尾段落和版权信息。" }
 ---
 
 ## 成品一览
@@ -18,7 +18,7 @@ pageNotes: { "1": "House Specimen Nº 3的封面：页面上半部是群青色�
 
 <Excerpt region="declare" />
 
-一个`FontFace`对应一个文件，和一条`@font-face`规则一样，所以一款有latin和latin-ext两个文件的字体要用两个`FontFace`对象声明，它们的字族、字重和样式相同，只有`unicodeRange`不同，照抄字族CSS里的值即可。把它们加进`document.fonts`不会下载任何东西：浏览器只在`load()`调用或某行文字需要其中的字符时才获取文件。页面声明过的字体，Postext通过`document.fonts`加载；没有人声明的字体，它向`resolve`选项要文件，其他食谱就是这样从工具包拿到Fontsource文件的。配置里的`customFonts`只描述`.postext`文件包里的文件，所以用Markdown构建的页面要么自己声明字体，要么提供一个`resolve`。
+一个`FontFace`对应一个文件，和一条`@font-face`规则一样，所以一款有latin和latin-ext两个文件的字体要用两个`FontFace`对象声明，它们的字体族、字重和样式相同，只有`unicodeRange`不同，照抄字体族CSS里的值即可。把它们加进`document.fonts`不会下载任何东西：浏览器只在`load()`调用或某行文字需要其中的字符时才获取文件。页面声明过的字体，Postext通过`document.fonts`加载；没有人声明的字体，它向`resolve`选项要文件，其他食谱就是这样从工具包拿到Fontsource文件的。配置里的`customFonts`只描述`.postext`文件包里的文件，所以用Markdown构建的页面要么自己声明字体，要么提供一个`resolve`。
 
 ### 2 · 先加载字体，再构建
 
@@ -28,13 +28,13 @@ pageNotes: { "1": "House Specimen Nº 3的封面：页面上半部是群青色�
 
 <Excerpt region="audit" />
 
-表格从`FONTS`声明的字体出发，再加上报告对每款字体的说法：页面用它排了文字、浏览器伪造了它，或者它落到了后备字体上。最后一列列出`FontFace`状态变为`loaded`的文件。二十个文件里下载了十六个：Postext会加载正文字族的全部四款，因为任何段落都可能用`**`和`*`要到它们；等宽字体的两款斜体没有任何设置提到，所以始终没有下载。注释还从排好的文档里读三样东西：`contentWarnings`，用后备字体测量的字体在这里列为`fontFallback`；`converged`，版面的各轮计算稳定下来时为true；以及`warnings`。显示或导出页面之前，三样都要检查。
+表格从`FONTS`声明的字体出发，再加上报告对每款字体的说法：页面用它排了文字、浏览器伪造了它，或者它落到了后备字体上。最后一列列出`FontFace`状态变为`loaded`的文件。二十个文件里下载了十六个：Postext会加载正文字体族的全部四款，因为任何段落都可能用`**`和`*`要到它们；等宽字体的两款斜体没有任何设置提到，所以始终没有下载。附注还从排好的文档里读三样东西：`contentWarnings`，用后备字体测量的字体在这里列为`fontFallback`；`converged`，版面的各轮计算稳定下来时为true；以及`warnings`。显示或导出页面之前，三样都要检查。
 
 ### 4 · 留一次提早的构建作证据
 
 <Excerpt region="art-proof" />
 
-pen在声明任何字体之前先调用一次`buildDocument`，所以这次构建用浏览器的后备字体测量每个词。真正的字体到位后，pen把它再画一遍，逐行与最后一次构建比较；题注里的行数来自这次比较，字体数则来自提早构建自己的`fontFallback`警告。一行用较窄的后备字体测量的普通文字会越过行长，直到栏的裁剪边界（边缘外2 pt）截掉最后几个字母，所以pen用加宽的栏绘制第1页，显示完整的越界部分。Canvas和`postext-pdf`把两端对齐或混合样式的行中每一段文字画在版面测量它的位置，所以比后备字体宽的真实字体会压到下一个词上，字体到达之前构建的PDF里，词会叠在一起。提早构建的结果不会带到下一次：`prepareFonts`在`document.fonts`里发现新字体，就丢弃在这些字族里测得的宽度，所以不必调用`clearMeasurementCache()`。
+pen在声明任何字体之前先调用一次`buildDocument`，所以这次构建用浏览器的后备字体测量每个词。真正的字体到位后，pen把它再画一遍，逐行与最后一次构建比较；题注里的行数来自这次比较，字体数则来自提早构建自己的`fontFallback`警告。一行用较窄的后备字体测量的普通文字会越过行长，直到栏的裁剪边界（边缘外2 pt）截掉最后几个字母，所以pen用加宽的栏绘制第1页，显示完整的越界部分。Canvas和`postext-pdf`把两端对齐或混合样式的行中每一段文字画在版面测量它的位置，所以比后备字体宽的真实字体会压到下一个词上，字体到达之前构建的PDF里，词会叠在一起。提早构建的结果不会带到下一次：`prepareFonts`在`document.fonts`里发现新字体，就丢弃在这些字体族里测得的宽度，所以不必调用`clearMeasurementCache()`。
 
 ### 5 · 按正文节奏排的字号阶梯
 
@@ -56,7 +56,7 @@ Ysabeau Office以11/15.5 pt排正文，段落之间空一行而不缩进。正�
 
 ### 漏掉一款字体
 
-去掉IBM Plex Mono的粗体（眉题、表头和题注标签用它排）：浏览器把常规体加粗，表格把这款字体标为`faked`，注释统计到一条`fontFallback`警告，警告指出IBM Plex Mono 700是`synthesized`。
+去掉IBM Plex Mono的粗体（眉题、表头和题注标签用它排）：浏览器把常规体加粗，表格把这款字体标为`faked`，附注统计到一条`fontFallback`警告，警告指出IBM Plex Mono 700是`synthesized`。
 
 ```diff
 -  'IBM Plex Mono': ['400', '400i', '700', '700i'], // labels, chips, the table, captions

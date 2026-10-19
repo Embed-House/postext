@@ -22,7 +22,7 @@ O código é [a resposta curta](#a-resposta-curta) logo acima. Registrado uma ve
 
 <Excerpt region="title" />
 
-O título é o único título de nível 1 do documento, com o estilo `paper`. O estilo ocupa a largura da página e desenha o título a partir do seu design: a linha do evento, o título e três blocos de autor com um terço da medida, cada um lido de um atributo do título em que `\n` quebra as linhas. A faixa é uma caixa ancorada ao refile, por isso chega até a borda superior do papel.
+O título é o único título de nível 1 do documento, com o estilo `paper`. O estilo ocupa a largura da página e desenha o título a partir do design: a linha do evento, o título e três blocos de autor com um terço da medida, cada um lido de um atributo do título em que `\n` quebra as linhas. A faixa é uma caixa ancorada ao refile, por isso chega até a borda superior do papel.
 
 ### 3 · Resumo e termos de indexação em negrito
 
@@ -34,7 +34,7 @@ Um boxe na largura da página leva o resumo e os termos de indexação. O corpo 
 
 <Excerpt region="sections" />
 
-`{2:I}.` numera as seções I., II., III. Uma remissão imprime o número sem o ponto, então `:ref{id="sec:results"}` dá “Section IV” pelo modelo de `crossRefs`, e `:ref{id="sec:results" style=page}` dá “p. 2”. As duas são calculadas sobre as páginas já compostas, e por isso acompanham o texto se um parágrafo for acrescentado ou uma seção mudar de lugar. Os títulos Acknowledgment e References levam o estilo `back` e ficam sem número.
+`{2:I}.` numera as seções I., II., III. Uma remissão imprime o número sem o ponto, de modo que `:ref{id="sec:results"}` dá “Section IV” pelo modelo de `crossRefs`, e `:ref{id="sec:results" style=page}` dá “p. 2”. As duas são calculadas sobre as páginas já compostas, e por isso acompanham o texto se um parágrafo for acrescentado ou uma seção mudar de lugar. Os títulos Acknowledgment e References levam o estilo `back` e ficam sem número.
 
 <Excerpt region="palette" />
 
@@ -60,5 +60,5 @@ Alguns estilos numéricos imprimem [2–4]. O marcador `brackets` escreve os nú
 
 ## Erros comuns
 
-- Quando as duas colunas da última página não terminam na mesma altura, veja o que fica no ponto onde seriam cortadas: o motor não deixa um título de seção no pé de uma coluna, longe do seu texto, e desiste do corte. Uma frase a mais ou a menos nas últimas seções leva o corte para depois do título.
+- Quando as duas colunas da última página não terminam na mesma altura, veja o que fica no ponto onde seriam cortadas: o motor não deixa um título de seção no pé de uma coluna, longe do texto, e desiste do corte. Uma frase a mais ou a menos nas últimas seções leva o corte para depois do título.
 - Comandos do BibTeX como `{\TeX}` não são expandidos. Escreva `The {TeX}book`; as chaves mantêm as maiúsculas como estão.

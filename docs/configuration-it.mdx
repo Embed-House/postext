@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Configurazione',
   description: 'Che cos’è una configurazione di Postext e in quale delle diciannove pagine del riferimento è spiegato ogni gruppo di impostazioni',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '5 min',
   order: 4,
   plainSummary: "Questa pagina apre il riferimento di tutte le impostazioni che decidono l’aspetto delle tue pagine. Un solo gruppo di impostazioni raccoglie tutte le scelte: formato della pagina, numero di colonne, font, corpo del testo, titoli, riquadri, colori e altro ancora. Scrivi solo le impostazioni che vuoi cambiare, perché ognuna parte da un valore ragionevole. Il riferimento è diviso in diciannove pagine. L’elenco di questa pagina rimanda a ogni sezione: vai direttamente alla parte che ti serve.",
@@ -37,21 +37,21 @@ Il riferimento è diviso in diciannove pagine. Ogni gruppo qui sotto è una pagi
 
 **[Pagina e impaginazione](/it/docs/configuration-page-layout)**
 
-- [Pagina](/it/docs/configuration-page-layout#pagina) — formato, margini, griglia della linea di base, segni di taglio, [rilegatura](/it/docs/configuration-page-layout#rilegatura).
+- [Pagina](/it/docs/configuration-page-layout#pagina) — formato, margini, griglia della linea di base, segni di taglio, [numerazione](/it/docs/configuration-page-layout#numerazione), [rilegatura](/it/docs/configuration-page-layout#rilegatura).
 - [Impaginazione](/it/docs/configuration-page-layout#impaginazione) — numero di colonne, intercolonne, filetti, [scrittura verticale](/it/docs/configuration-page-layout#scrittura-verticale).
 
 **[Intestazioni e piè di pagina](/it/docs/configuration-headers-footers)**
 
-- [Intestazioni e piè di pagina](/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina) — elementi di testo e filetti per pagina, con segnaposto, parità e allineamento.
+- [Intestazioni e piè di pagina](/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina) — elementi di testo, filetti, riquadri e immagini per pagina, con segnaposto, parità, ruoli di pagina e collocazione.
 
 **[Testo corrente](/it/docs/configuration-text)**
 
-- [Testo corrente](/it/docs/configuration-text#testo-corrente) — tipografia, sillabazione, tabulazioni, orfane e vedove.
+- [Testo corrente](/it/docs/configuration-text#testo-corrente) — tipografia, giustificazione e interruzione delle righe, [citazioni in blocco](/it/docs/configuration-text#citazioni-in-blocco), [versi](/it/docs/configuration-text#versi), [tabulatori](/it/docs/configuration-text#tabulatori) e [capilettera](/it/docs/configuration-text#capilettera).
 
 **[Sillabazione e lingua](/it/docs/configuration-language)**
 
 - [Sillabazione](/it/docs/configuration-language#sillabazione) — pattern di sillabazione, parole tenute intere, testo in bandiera.
-- [Lingua del documento](/it/docs/configuration-language#lingua-del-documento) — il `locale` di primo livello: la sillabazione di ripiego, i tipi di risorsa predefiniti e le diciture di continuazione delle tabelle e dei riquadri divisi, la lingua marcata in un PDF accessibile; le [cifre](/it/docs/configuration-language#cifre-del-documento) (`numerals`) e la [direzione del testo](/it/docs/configuration-language#direzione-del-testo) (`direction`) che ne derivano; e le [lingue e scritture](/it/docs/configuration-language#lingue-e-scritture) che Postext compone. La guida ai libri da destra a sinistra è [Impaginazione araba](/it/docs/arabic-layout).
+- [Lingua del documento](/it/docs/configuration-language#lingua-del-documento) — il `locale` di primo livello, che determina la sillabazione di ripiego, i tipi di risorsa predefiniti, le diciture di seguito delle tabelle e dei riquadri divisi e la lingua dichiarata nel PDF accessibile; le [cifre](/it/docs/configuration-language#cifre-del-documento) (`numerals`) e la [direzione del testo](/it/docs/configuration-language#direzione-del-testo) (`direction`) che ne derivano; e le [lingue e scritture](/it/docs/configuration-language#lingue-e-scritture) che Postext compone. La guida ai libri da destra a sinistra è [Impaginazione araba](/it/docs/arabic-layout).
 - [Lingue e scritture](/it/docs/configuration-language#lingue-e-scritture) — i sistemi di scrittura che Postext compone e le pagine che spiegano ciascuno.
 - [Testo arabo](/it/docs/configuration-language#testo-arabo) — shaping, kashida, segni vocalici e cifre del testo arabo.
 
@@ -61,7 +61,7 @@ Il riferimento è diviso in diciannove pagine. Ogni gruppo qui sotto è una pagi
 
 **[Vedove, orfane e bilanciamento](/it/docs/configuration-page-flow)**
 
-- [Orfane, vedove, righe finali corte e regole per tenere unito](/it/docs/configuration-page-flow#orfane-vedove-righe-finali-corte-e-regole-per-tenere-unito) — le chiavi di `bodyText` che tengono unite righe e blocchi a cavallo di un’interruzione di colonna.
+- [Orfane, vedove, righe finali corte e regole di tenuta](/it/docs/configuration-page-flow#orfane-vedove-righe-finali-corte-e-regole-di-tenuta) — le chiavi di `bodyText` che tengono unite righe e blocchi a cavallo di un’interruzione di colonna.
 - [Bilanciamento delle colonne](/it/docs/configuration-page-flow#bilanciamento-delle-colonne) — le leve che fanno finire ogni colonna alla stessa altezza, in ordine di priorità editoriale.
 
 **[Elenchi e matematica](/it/docs/configuration-lists-math)**
@@ -72,22 +72,22 @@ Il riferimento è diviso in diciannove pagine. Ogni gruppo qui sotto è una pagi
 **[Note e riferimenti](/it/docs/configuration-notes-references)**
 
 - [Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina) — `footnotes`: dove vanno le note citate con `[^id]`, come sono numerate e che aspetto hanno.
-- [Numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga) — `lineNumbers`: il numero di ogni quinta riga dei versi, o del testo, nel margine; che cosa si conta, dove il conteggio ricomincia, su quale lato stanno i numeri.
+- [Numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga) — `lineNumbers`: un numero nel margine ogni cinque righe dei versi, o del testo; che cosa si conta, dove ricomincia il conteggio e su quale lato vanno i numeri.
 - [Rimandi](/it/docs/configuration-notes-references#rimandi) — `crossRefs`: le parole stampate attorno al numero o alla pagina di un `:ref`, e il suo stile predefinito.
 - [Citazioni](/it/docs/configuration-notes-references#citazioni) — `citations`: lo stile citazionale e l’aspetto delle citazioni e della bibliografia.
-- [Sommario](/it/docs/configuration-notes-references#indice-dei-contenuti) — che cosa stampa `:::toc`: tipografia delle voci, linee guida, numeri di pagina, righe degli autori, righe delle parti.
+- [Indice dei contenuti](/it/docs/configuration-notes-references#indice-dei-contenuti) — che cosa stampa `:::toc`: tipografia delle voci, linee guida, numeri di pagina, righe degli autori, righe delle parti.
 - [Indice analitico](/it/docs/configuration-notes-references#indice-analitico) — che cosa stampa `:::index`: tipografia delle voci, rientri, separatori e intervalli dei numeri di pagina, gruppi per lettera, lingua di ordinamento.
 
 **[Tipografia dell’Asia orientale](/it/docs/configuration-east-asian)**
 
-- [Tipografia dell’Asia orientale](/it/docs/configuration-east-asian#tipografia-dellasia-orientale) — `cjk`: le convenzioni regionali e la divisione in righe del testo cinese, giapponese e coreano, come si distribuiscono le loro righe giustificate, larghezze e sporgenza della punteggiatura, lo spazio tra caratteri han e latini, la griglia dei caratteri, i numeri diritti nel testo verticale, e i segni, il ruby, le note warichu e i segni kanbun. Le guide a tutto questo sono [Impaginazione cinese](/it/docs/chinese-layout) e [Impaginazione giapponese](/it/docs/japanese-layout).
+- [Tipografia dell’Asia orientale](/it/docs/configuration-east-asian#tipografia-dellasia-orientale) — `cjk`: le convenzioni regionali e la divisione in righe del testo cinese, giapponese e coreano, come si distribuiscono le loro righe giustificate, larghezze e sporgenza della punteggiatura, lo spazio tra caratteri han e latini, la griglia dei caratteri, i numeri diritti nel testo verticale, e i segni, il ruby, le note warichu e i segni kanbun. Le guide a tutto questo sono [Composizione del cinese](/it/docs/chinese-layout) e [Composizione giapponese](/it/docs/japanese-layout).
 
 **[Risorse e tabelle](/it/docs/configuration-resources)**
 
 - [Tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa) — numerazione per tipo di figure, tabelle e tipi personalizzati.
 - [Stile delle tabelle](/it/docs/configuration-resources#stile-delle-tabelle) (con gli [stili di tabella con nome](/it/docs/configuration-resources#stili-di-tabella-con-nome)) e [Stile delle didascalie](/it/docs/configuration-resources#stile-delle-didascalie) — tipografia e decorazione delle risorse tabella e delle loro didascalie.
-- [Stile dei diagrammi](/it/docs/configuration-resources#stile-dei-diagrammi) — ricolorazione a inchiostro unico dei diagrammi SVG incorporati, per la stampa a tinta piatta.
-- [Stile dei video](/it/docs/configuration-resources#stile-dei-video) — `videoStyle`: il segno di riproduzione e il codice QR stampati sopra il fotogramma di copertina di un video, e ciò che offrono i suoi lettori nel visualizzatore HTML e in EPUB.
+- [Stile dei diagrammi](/it/docs/configuration-resources#stile-dei-diagrammi) — ricolorazione a inchiostro unico dei diagrammi SVG inseriti, per la stampa a tinta piatta.
+- [Stile dei video](/it/docs/configuration-resources#stile-dei-video) — `videoStyle`: il segno di riproduzione e il codice QR stampati sopra il fotogramma di copertina di un video, e ciò che offrono i lettori video nel visualizzatore HTML e in EPUB.
 
 **[Stili e parti](/it/docs/configuration-styles)**
 
@@ -95,7 +95,7 @@ Il riferimento è diviso in diciannove pagine. Ogni gruppo qui sotto è una pagi
 - [Stili dei chip](/it/docs/configuration-styles#stili-dei-chip) — `chipStyles`: stili con nome per il `:chip[…]` in linea: la casella di una banca di parole, un tasto della tastiera, un’etichetta.
 - [Stili di evidenziazione](/it/docs/configuration-styles#stili-di-evidenziazione) — `markStyles`: stili con nome per il `:mark[…]` in linea: la fascia dietro una frase evidenziata che va a capo.
 - [Listati di codice](/it/docs/configuration-styles#listati-di-codice) — `codeStyle`: il carattere, il riquadro, la larghezza della tabulazione, le righe lunghe, i numeri di riga e i colori dei token dei listati ```` ``` ````, la colorazione della sintassi e il suo hook per l’evidenziatore, e il codice in linea in un carattere monospaziato.
-- [Parti](/it/docs/configuration-styles#parti) — pagine di parte per i contenitori `:::part`: parità, area del testo, progetto dell’apertura, tipografia del testo.
+- [Parti](/it/docs/configuration-styles#parti) — pagine di parte per i contenitori `:::part`: parità, area del testo, grafica dell’apertura, tipografia del testo.
 - [Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli) — stili con nome per i titoli `{style="…"}`: capitoli non numerati, pagine preliminari con le proprie testatine, geometria e tavolozza.
 
 **[Riquadri](/it/docs/configuration-callouts)**
@@ -104,29 +104,29 @@ Il riferimento è diviso in diciannove pagine. Ogni gruppo qui sotto è una pagi
 
 **[Impostazioni dei fumetti](/it/docs/configuration-comics)**
 
-- [Fumetti](/it/docs/configuration-comics#fumetti) — `comics`: la cornice e gli spazi tra vignette delle pagine a fumetti, gli stili delle vignette, il lettering, gli stili delle nuvolette e il cast. La guida è [Fumetti](/it/docs/comics).
+- [Fumetti](/it/docs/configuration-comics#fumetti) — `comics`: la cornice e gli spazi tra le vignette delle tavole, gli stili delle vignette, il lettering, gli stili delle nuvolette e il cast. La guida è [Fumetti](/it/docs/comics).
 
 **[Impostazioni delle pagine composte](/it/docs/configuration-composed-pages)**
 
-- [Modelli di pagina](/it/docs/configuration-composed-pages#modelli-di-pagina) — `pageTemplates`: le cornici, i gruppi e la decorazione di una pagina composta, l’ereditarietà tra modelli e le varianti per pagina dispari e pari. [Stili delle etichette](/it/docs/configuration-composed-pages#stili-delle-etichette) — `labelStyles`: l’aspetto delle etichette poste sugli ancoraggi di un’immagine. Tutti i problemi che un modello può avere sono in [Avvisi dei modelli di pagina](/it/docs/configuration-composed-pages#avvisi-dei-modelli-di-pagina).
+- [Modelli di pagina](/it/docs/configuration-composed-pages#modelli-di-pagina) — `pageTemplates`: le cornici, i gruppi e la decorazione di una pagina composta, l’ereditarietà tra modelli e le varianti per pagina dispari e pari. [Stili delle etichette](/it/docs/configuration-composed-pages#stili-delle-etichette) — `labelStyles`: l’aspetto delle etichette poste sulle ancore di un’immagine. Tutti i problemi che un modello può avere sono in [Avvisi dei modelli di pagina](/it/docs/configuration-composed-pages#avvisi-dei-modelli-di-pagina).
 
 **[Font, colori e output](/it/docs/configuration-fonts-colors-viewers)**
 
 - [Unità e colori](/it/docs/configuration-fonts-colors-viewers#unità-e-colori) + [Tavolozza dei colori](/it/docs/configuration-fonts-colors-viewers#tavolozza-dei-colori) — `Dimension`, `ColorValue`, colori con nome.
 - [Font personalizzati](/it/docs/configuration-fonts-colors-viewers#font-personalizzati) — dichiara famiglie di font caricate dall’utente accanto ai Google Fonts.
 - [Visualizzatore HTML](/it/docs/configuration-fonts-colors-viewers#visualizzatore-html) — larghezza di colonna di riferimento e divisione in righe per il backend HTML.
-- [Visualizzatore Canvas](/it/docs/configuration-fonts-colors-viewers#visualizzatore-canvas) — `canvasViewer`: lo spazio tra le due pagine di una coppia e tra una riga e la successiva nel Canvas del Sandbox.
+- [Visualizzatore Canvas](/it/docs/configuration-fonts-colors-viewers#visualizzatore-canvas) — `canvasViewer`: lo spazio tra le due pagine di una coppia e tra una riga e la successiva nel Canvas della Sandbox.
 - [Generazione del PDF (configurazione)](/it/docs/configuration-fonts-colors-viewers#generazione-del-pdf-configurazione) — segnalibri, output accessibile (marcato), spazio colore forzato per il backend PDF.
 - [Produzione di stampa (configurazione)](/it/docs/configuration-fonts-colors-viewers#produzione-di-stampa-configurazione) — `print`: PDF/X-1a e PDF/X-4, i profili ICC di output, il nero (grigi solo K, sovrastampa, nero ricco), i colori definiti in CMYK, il preflight e l’anteprima di stampa.
 - [Verifica del contrasto (configurazione)](/it/docs/configuration-fonts-colors-viewers#verifica-del-contrasto-configurazione) — `contrast`: il testo contro il suo fondo al livello WCAG AA o AAA, a schermo e sulla carta del profilo di output, e il testo in negativo troppo sottile per la macchina da stampa.
-- [Controllo del contenuto (configurazione)](/it/docs/configuration-fonts-colors-viewers#controllo-del-contenuto-configurazione) — `checks.contentInConfig`: testi di design che tengono il testo del libro al posto dei segnaposto, con un elenco di frasi ammesse per il titolo e l’editore.
+- [Controllo del contenuto (configurazione)](/it/docs/configuration-fonts-colors-viewers#controllo-del-contenuto-configurazione) — `checks.contentInConfig`: segnala i testi grafici che contengono il testo del libro invece dei segnaposto, con un elenco di eccezioni per il titolo e l’editore.
 - [Visualizzatore Folio (configurazione)](/it/docs/configuration-fonts-colors-viewers#visualizzatore-folio-configurazione) — carta, rilegatura, superficie e luce del visualizzatore 3D del libro.
-- [Debug](/it/docs/configuration-fonts-colors-viewers#debug) — sovrapposizioni visive e avvisi di composizione per l’editor.
+- [Debug](/it/docs/configuration-fonts-colors-viewers#debug) — sovrapposizioni visive e avvisi per chi scrive nell’editor.
 
 **[Uso programmatico](/it/docs/configuration-programmatic-usage)**
 
 - [Uso programmatico](/it/docs/configuration-programmatic-usage#uso-programmatico) — `buildDocument`, gli avvisi che riporta, i resolver, le cache.
-- [Impaginare in un Web Worker](/it/docs/configuration-programmatic-usage#eseguire-limpaginazione-in-un-web-worker) — composizioni fuori dal thread principale, con annullamento.
+- [Eseguire l’impaginazione in un Web Worker](/it/docs/configuration-programmatic-usage#eseguire-limpaginazione-in-un-web-worker) — impaginazioni fuori dal thread principale, con possibilità di annullarle.
 
 **[File PDF](/it/docs/configuration-pdf-output)**
 

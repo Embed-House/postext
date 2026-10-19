@@ -5,18 +5,18 @@ plain: "Una pàgina d'un llibre de lectura japonès amb kana petits sobre cada k
 description: "Furigana amb Postext: ruby jukugo {漢字|かん|じ}, ruby de grup {百舌鳥|もず}, alineació JIS 1:2:1 i desbordaments només sobre kana en un llibre escolar japonès."
 question: "Com poso furigana sobre els kanji, una lectura per caràcter o una per a tota la paraula?"
 aliases: ["furigana", "振り仮名", "ルビ", "ruby", "ruby jukugo", "熟語ルビ", "ruby de grup", "グループルビ", "ruby mono", "モノルビ", "熟字訓", "1:2:1", "ruby JIS X 4051", "肩掛け", "desbordament de la lectura", "総ルビ", "llibre de lectura escolar", "教科書", "ごんぎつね", "Niimi Nankichi"]
-pageNotes: { "1": "Pàgina 24, parell: una banda color de palla cobreix el terç superior, amb una insígnia vermella arrodonida 4, el nom de la col·lecció よみもの　四年 i el títol ごんぎつね en una gòtica arrodonida gran, el nom de l'autor en kana i 新美南吉　作. A sota, el número de secció 一 en vermell i el començament del conte en una lletra de llibre de text de 14 pt, amb lectures en kana petit sobre cada kanji.", "3": "Pàgina 26: el final de la secció primera i, després, un recuadre color de palla titulat ふりがなの つけかた amb tres files: una lectura per kanji (村 城 森 穴), una lectura per a la paraula (百舌鳥 一人 黒子) i una lectura per kanji que forma una sola paraula (兵十 小川 菜種). A sota, un colofó petit en lletra llatina." }
+pageNotes: { "1": "Pàgina 24, parell: una banda color de palla cobreix el terç superior, amb una insígnia vermella arrodonida 4, el nom de la col·lecció よみもの　四年 i el títol ごんぎつね en una gòtica arrodonida gran, el nom de l'autor en kana i 新美南吉　作. A sota, el número de secció 一 en vermell i el començament del conte en una lletra de llibre de text de 14 pt, amb lectures en kana petit sobre cada kanji.", "3": "Pàgina 26: el final de la secció primera i, després, un requadre color de palla titulat ふりがなの つけかた amb tres files: una lectura per kanji (村 城 森 穴), una lectura per a la paraula (百舌鳥 一人 黒子) i una lectura per kanji que forma una sola paraula (兵十 小川 菜種). A sota, un colofó petit en lletra llatina." }
 ---
 
 ## Què compondràs
 
-Les primeres pàgines de «Gon, la guineu» (ごんぎつね, 1932), de Niimi Nankichi, tal com les imprimeix un llibre de lectura de quart: el conte que tots els infants japonesos llegeixen als nou o deu anys. Una pàgina B5 porta 28 caràcters per 21 línies de Klee One, una lletra dibuixada a partir de la mà dels llibres de text escolars, de 14 pt sobre una línia de 28 pt, amb una lectura en kana petit sobre cada kanji. Les lectures són el tema: una per caràcter sobre 村 i 森, una per a tota la paraula sobre 百舌鳥 (mozu), els kanji de la qual no tenen lectura pròpia, i lectures jukugo sobre 兵十 (Hyōjū), cadascuna sobre el seu kanji fins que una no hi cap. Un recuadre al final mostra els tres casos per al mestre. <RecipeLink slug="pinyin-primer">La cartilla amb pinyin</RecipeLink> posa lectures xineses sobre cada caràcter de la mateixa manera.
+Les primeres pàgines de «Gon, la guineu» (ごんぎつね, 1932), de Niimi Nankichi, tal com les imprimeix un llibre de lectura de quart: el conte que tots els infants japonesos llegeixen als nou o deu anys. Una pàgina B5 porta 28 caràcters per 21 línies de Klee One, una lletra dibuixada a partir de la mà dels llibres de text escolars, de 14 pt sobre una línia de 28 pt, amb una lectura en kana petit sobre cada kanji. Les lectures són el tema: una per caràcter sobre 村 i 森, una per a tota la paraula sobre 百舌鳥 (mozu), una paraula amb kanji sense lectura pròpia, i lectures jukugo sobre 兵十 (Hyōjū), cadascuna sobre el seu kanji fins que una no hi cap. Un requadre al final mostra els tres casos per al mestre. <RecipeLink slug="pinyin-primer">La cartilla amb pinyin</RecipeLink> posa lectures xineses sobre cada caràcter de la mateixa manera.
 
 ## Elaboració
 
 ### 1 · Tres maneres d'escriure una lectura
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. Al Markdown, `{村|むら}` posa むら sobre 村, i `{兵十|ひょう|じゅう}` dona a cada kanji la seva lectura. En un document amb l'etiqueta `'ja'`, això és ruby jukugo: les lectures es queden sobre els seus kanji quan hi caben, i una de més llarga es pot recolzar en el kanji següent de la mateixa paraula, mai en el d'una altra. `{百舌鳥|もず}`, una lectura per a tres kanji, és ruby de grup, repartit sobre la paraula sencera. `:ruby[菜種]{rt="な たね" mode=jukugo}` escriu l'últim exemple del recuadre amb la directiva, que també admet `mode=mono` i `align` ([Marques, ruby i warichu](/ca/docs/configuration-east-asian#marques-ruby-i-warichu)).
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Al Markdown, `{村|むら}` posa むら sobre 村, i `{兵十|ひょう|じゅう}` dona a cada kanji la seva lectura. En un document amb l'etiqueta `'ja'`, això és ruby jukugo: les lectures es queden sobre els seus kanji quan hi caben, i una de més llarga es pot recolzar en el kanji següent de la mateixa paraula, mai en el d'una altra. `{百舌鳥|もず}`, una lectura per a tres kanji, és ruby de grup, repartit sobre la paraula sencera. `:ruby[菜種]{rt="な たね" mode=jukugo}` escriu l'últim exemple del requadre amb la directiva, que també admet `mode=mono` i `align` ([Marques, ruby i warichu](/ca/docs/configuration-east-asian#marques-ruby-i-warichu)).
 
 <PageShot page={3} crop="0.1,0.492,0.8,0.15" caption="Pàgina 26: una lectura per kanji, una per a la paraula i lectures jukugo, que es queden amb els seus kanji." />
 
@@ -40,7 +40,7 @@ El títol i el nom de l'autor són text de disseny, que no compon ruby, així qu
 
 <Excerpt region="palette" />
 
-Les lectures prenen `reading`, un marró un grau més clar que la tinta, perquè l'ull distingeixi les dues capes sense que el kana es torni pàl·lid. El vermell de les higanbana que floreixen al conte marca la insígnia, el número de secció i el títol del recuadre.
+Les lectures prenen `reading`, un marró un grau més clar que la tinta, perquè l'ull distingeixi les dues capes sense que el kana es torni pàl·lid. El vermell de les higanbana que floreixen al conte marca la insígnia, el número de secció i el títol del requadre.
 
 ## Variants
 

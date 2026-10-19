@@ -16,9 +16,9 @@ Quatre pages d’un livre arabe classique où chaque lettre porte sa voyelle : 
 
 ### 1 · Un interlignage double du corps
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. L’interlignage ne grandit jamais pour faire place aux signes : une kasra sous une ligne et une shadda en haut de la suivante partagent le même espace, qui se choisit donc pour la ligne la plus vocalisée du livre ([Signes de voyelle](/fr/docs/arabic-layout#signes-vocaliques)). Sur ce texte, un interlignage de 1,6 × le corps laisse six paragraphes dont les signes se heurtent, et 1,9 × en laisse encore un ; à 2 ×, aucun. La composition vous le dit : quand deux lignes se heurtent, elle signale `arabicMarksExceedLeading` pour le paragraphe, avec l’interlignage qu’il lui faudrait ([Texte arabe](/fr/docs/configuration-language#texte-arabe)).
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. L’interlignage ne grandit jamais pour faire place aux signes : une kasra sous une ligne et une shadda en haut de la suivante partagent le même espace, qui se choisit donc pour la ligne la plus vocalisée du livre ([Signes de voyelle](/fr/docs/arabic-layout#signes-vocaliques)). Sur ce texte, un interlignage de 1,6 × le corps laisse six paragraphes dont les signes se heurtent, et 1,9 × en laisse encore un ; à 2 ×, aucun. La composition vous l’indique : quand deux lignes se heurtent, elle signale `arabicMarksExceedLeading` pour le paragraphe, avec l’interlignage qu’il lui faudrait ([Texte arabe](/fr/docs/configuration-language#texte-arabe)).
 
-<PageShot page={2} crop="0,0.3,1,0.45" caption="Page 2 : une voyelle sur chaque lettre, et 28 pt entre les lignes de base, si bien que les kasras d’une ligne passent au-dessus des shaddas de la suivante." />
+<PageShot page={2} crop="0,0.3,1,0.45" caption="Page 2 : une voyelle sur chaque lettre, et 28 pt entre les lignes de base : les kasras d’une ligne passent donc au-dessus des shaddas de la suivante." />
 
 ### 2 · Une petite page à la justification large
 
@@ -30,13 +30,13 @@ Une page de 14 × 21 cm avec des marges latérales de 16 et 18 mm laisse une jus
 
 <Excerpt region="titles" />
 
-Les titres n’ont pas de maquette : le titre en Ruqʿa se place dans une boîte de ligne de trois lignes de la grille, et l’auteur et la ligne latine prennent chacun une ligne de 28 pt, si bien que la première ligne du texte tombe sur la grille. La ligne latine porte `{dir=ltr}`, un titre de gauche à droite dans un livre de droite à gauche ([Sens du document, des blocs et du texte en ligne](/fr/docs/arabic-layout#sens-du-document-des-blocs-et-du-texte-en-ligne)).
+Les titres n’ont pas de maquette : le titre en Ruqʿa se place dans une boîte de ligne de trois lignes de la grille, et l’auteur et la ligne latine prennent chacun une ligne de 28 pt : la première ligne du texte tombe donc sur la grille. La ligne latine a `{dir=ltr}`, un titre de gauche à droite dans un livre de droite à gauche ([Sens du document, des blocs et du texte en ligne](/fr/docs/arabic-layout#sens-du-document-des-blocs-et-du-texte-en-ligne)).
 
 ## Variantes
 
 ### Retirer les voyelles pour une édition de lecture
 
-`tashkil: 'strip'` retire de la composition les voyelles brèves et la shadda, si bien que le même texte peut se composer à 1,6 × le corps ; `'strip-vowels'` garde la shadda.
+`tashkil: 'strip'` retire de la composition les voyelles brèves et la shadda : le même texte peut donc se composer à 1,6 × le corps ; `'strip-vowels'` garde la shadda.
 
 ```diff
 -  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh',

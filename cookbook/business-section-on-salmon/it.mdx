@@ -1,6 +1,6 @@
 ---
 title: "Una sezione economica su carta salmone"
-summary: "Un Berliner di otto pagine in cui un solo stile di titolo crea le pagine Business: carta salmone, sei colonne, accento petrolio e un run :::paper per Folio."
+summary: "Un Berliner di otto pagine in cui un solo stile di titolo crea le pagine Business: carta salmone, sei colonne, accento petrolio e un blocco :::paper per Folio."
 plain: "Otto pagine di un quotidiano immaginario. Le prime quattro sono di cronaca su carta grigio chiaro; le pagine economiche che seguono sono stampate su carta salmone, con colonne più strette e colori propri."
 description: "Un quotidiano Berliner in Postext con il codice: cronaca su cinque colonne, poi una sezione Business salmone su sei, con dati di mercato, grafici e carta Folio."
 question: "Come stampo le pagine economiche di un giornale su carta salmone, con griglia propria, anche in 3D?"
@@ -10,7 +10,7 @@ pageNotes: { "1": "La prima pagina di «The Marrowick Ledger»: la testata tra u
 
 ## Che cosa comporrai
 
-Otto pagine di *The Marrowick Ledger*, un quotidiano immaginario, sul foglio Berliner da 315 × 470 mm. Le pagine da 1 a 4 portano la cronaca su carta da giornale grigio chiaro in cinque colonne separate da filetti, con una bandella di sezione rossa su ogni pagina. Dalla pagina 5 la carta cambia. La sezione Business è stampata su carta salmone, come le pagine finanziarie da ben più di un secolo: la pagina diventa #f2d3c0, la griglia si stringe a sei colonne, l’accento passa dal rosso al petrolio e una striscia con le chiusure di mercato del giorno sta sotto il titolo di sezione. Dentro ci sono una pagina dei mercati con un anno dell’indice cittadino, un grafico per settori e quattro tabelle di dati, le notizie sulle aziende e una pagina di quotazioni. Nella vista 3D di Folio i fogli si piegano uno dentro l’altro e le ultime quattro pagine escono su carta salmone.
+Otto pagine di *The Marrowick Ledger*, un quotidiano immaginario, sul foglio Berliner da 315 × 470 mm. Le pagine da 1 a 4 contengono la cronaca su carta da giornale grigio chiaro in cinque colonne separate da filetti, con una bandella di sezione rossa su ogni pagina. Dalla pagina 5 la carta cambia. La sezione Business è stampata su carta salmone, come le pagine finanziarie da ben più di un secolo: la pagina diventa #f2d3c0, la griglia si stringe a sei colonne, l’accento passa dal rosso al petrolio e una striscia con le chiusure di mercato del giorno sta sotto il titolo di sezione. Nella sezione ci sono una pagina dei mercati con un anno dell’indice cittadino, un grafico per settori e quattro tabelle di dati, le notizie sulle aziende e una pagina di quotazioni. Nella vista 3D di Folio i fogli si piegano uno dentro l’altro e le ultime quattro pagine escono su carta salmone.
 
 ## Preparazione
 
@@ -22,29 +22,29 @@ Ogni colore della configurazione è collegato a una delle otto voci della tavolo
 
 ### 2 · Un solo stile di titolo fa di una pagina una pagina Business
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `# Markets {style="business"}` apre una sezione, e le sue pagine prendono `palette`, `layout` e `bodyStyle` dello stile: sei colonne con un intercolonna di 4 mm (45,2 mm l’una, contro i 54,6 mm della cronaca), testo a 8,8 pt sulla stessa interlinea di 11,4 pt. Anche il colore della pagina segue la tavolozza. `page.backgroundColor` è collegato a `paper`, e quando la tavolozza di una sezione dà a `paper` un altro valore, ogni pagina della sezione viene dipinta con quello: la pagina che il suo titolo apre e ogni pagina su cui prosegue il suo testo. Così le pagine Business diventano salmone da bordo a bordo, e il filetto tra le colonne, che il `layout` dello stile lascia come lo imposta il documento, corre tra le sei colonne come tra le cinque.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `# Markets {style="business"}` apre una sezione, e le sue pagine prendono `palette`, `layout` e `bodyStyle` dello stile: sei colonne con un’intercolonna di 4 mm (45,2 mm l’una, contro i 54,6 mm della cronaca), testo a 8,8 pt sulla stessa interlinea di 11,4 pt. Anche il colore della pagina segue la tavolozza. `page.backgroundColor` è collegato a `paper`, e quando la tavolozza di una sezione dà a `paper` un altro valore, ogni pagina della sezione viene dipinta con quello: la pagina che il suo titolo apre e ogni pagina su cui prosegue il suo testo. Così le pagine Business diventano salmone da bordo a bordo, e il filetto tra le colonne, che il `layout` dello stile lascia come lo imposta il documento, corre tra le sei colonne come tra le cinque.
 
 ### 3 · Ogni pagina si apre con una bandella
 
 <Excerpt region="flags" />
 
-L’H1 è un’apertura a tutta pagina con parità `breakBefore` `'any'`, quindi ogni titolo apre la pagina successiva qualunque sia il suo lato. Il suo progetto grafico è una bandella su una barra da 3 pt, profonda tre righe di griglia. La riga del folio è un’intestazione ancorata a 9 mm dal bordo superiore: numero di pagina, testata e data all’esterno, `{chapterTitle}` all’interno nel colore d’accento, che la tavolozza rende petrolio sulle pagine salmone.
+L’H1 è un’apertura a tutta pagina con parità `breakBefore` `'any'`, quindi ogni titolo apre la pagina successiva qualunque sia il suo lato. La sua grafica è una bandella su una barra da 3 pt, profonda tre righe di griglia. La riga del numero di pagina è un’intestazione ancorata a 9 mm dal bordo superiore: numero di pagina, testata e data all’esterno, `{chapterTitle}` all’interno nel colore d’accento, che la tavolozza rende petrolio sulle pagine salmone.
 
 ### 4 · Immagini e grafici su k colonne
 
 <Excerpt region="floats" />
 
-`top(3)` è `placement: { position: 'top', columns: 3 }`: la fotografia del cantiere navale occupa tre delle cinque colonne di cronaca, il traghetto quattro, il panificio tre delle sei colonne Business e il grafico del porto due. Un elemento flottante citato da un paragrafo nella colonna 1 prende la testa delle colonne successive ancora vuote, quindi queste immagini partono dalla colonna 2 e l’articolo scorre accanto a loro. Un’immagine del genere resta con il suo articolo solo finché nessun altro articolo viene composto sotto di lei su quella pagina: un articolo a tutta pagina collocato dopo può portare l’immagine nella propria fascia o alla pagina seguente. Per questo le pagine 2 e 3 si chiudono con una pubblicità fatta flottare al piede anziché con un altro articolo. Le fotografie che coprono tutta la pagina stanno in linea (`here`) nel riquadro del titolo, sotto il titolo stesso. Anche le tabelle stanno nel flusso, dentro riquadri a tutta pagina al piede.
+`top(3)` è `placement: { position: 'top', columns: 3 }`: la fotografia del cantiere navale occupa tre delle cinque colonne di cronaca, il traghetto quattro, il panificio tre delle sei colonne Business e il grafico del porto due. Un elemento flottante citato da un paragrafo nella colonna 1 prende la testa delle colonne successive ancora vuote, quindi queste immagini partono dalla colonna 2 e l’articolo scorre accanto a loro. Un’immagine del genere resta con il suo articolo solo finché nessun altro articolo viene composto sotto di lei su quella pagina: un articolo a tutta pagina collocato dopo può portare l’immagine nella propria fascia o alla pagina seguente. Per questo le pagine 2 e 3 si chiudono con una pubblicità fatta flottare al piede anziché con un altro articolo. Le fotografie che coprono tutta la pagina stanno in linea (`here`) nel riquadro del titolo, sotto il titolo stesso. Anche le tabelle stanno nel flusso, in riquadri a tutta pagina al piede.
 
 ### 5 · Titoli, pannelli, dati e pubblicità sono riquadri
 
 <Excerpt region="boxes" />
 
-Un titolo che attraversa la pagina è un riquadro a tutta pagina senza cornice che contiene un H2 in una di tre dimensioni, e un filetto da 1 pt sopra di esso segna l’articolo successivo. A pagina 5 il pannello *The terminal in numbers* flotta su due delle sei colonne (`columns="2"` sulla sua recinzione), e la citazione in evidenza di pagina 4 fa lo stesso tramite `columns: 2` nel suo stile. I riquadri dei dati contengono da due a quattro tabelle affiancate in un gruppo `:::columns`, e le pubblicità sono riquadri a tutta pagina fatti flottare al piede, incorniciati da un filetto da 0,75 pt.
+Un titolo che attraversa la pagina è un riquadro a tutta pagina senza bordo che contiene un H2 in una di tre dimensioni, e un filetto da 1 pt sopra di esso segna l’articolo successivo. A pagina 5 il riquadro *The terminal in numbers* flotta su due delle sei colonne (`columns="2"` sulla sua riga di apertura), e la citazione in evidenza di pagina 4 fa lo stesso tramite `columns: 2` nel suo stile. I riquadri dei dati contengono da due a quattro tabelle affiancate in un gruppo `:::columns`, e le pubblicità sono riquadri a tutta pagina fatti flottare al piede, incorniciati da un filetto da 0,75 pt.
 
 ### 6 · La carta su cui stampa Folio
 
-Le pagine di cronaca non hanno bisogno di nulla: `folio.paper` è carta da giornale da 45 g/m², e `binding: { type: 'folded', cover: 'pages' }` inserisce i due fogli piegati uno dentro l’altro, con la pagina 1 all’esterno e la pagina 8 come retro. Le pagine Business stanno in un unico run:
+Le pagine di cronaca non hanno bisogno di nulla: `folio.paper` è carta da giornale da 45 g/m², e `binding: { type: 'folded', cover: 'pages' }` inserisce i due fogli piegati uno dentro l’altro, con la pagina 1 all’esterno e la pagina 8 come retro. Le pagine Business stanno in un unico blocco `:::paper`:
 
 ```markdown
 :::paper{type="newsprint" shade="#faede6"}
@@ -55,13 +55,13 @@ Le pagine di cronaca non hanno bisogno di nulla: `folio.paper` è carta da giorn
 :::
 ```
 
-Ogni pagina del run porta `page.paper` con quella tinta, e Folio la stampa su quella carta. La tinta è il colore della pagina portato al 60 % verso il bianco (README §4): la pagina piatta dipinge già #f2d3c0, e una carta salmone piena sotto di essa la tingerebbe due volte. Il canvas, l’HTML e il PDF ignorano `:::paper` e dipingono il colore della pagina, ed è per questo che la tavolozza della sezione imposta anche `paper`.
+Ogni pagina del blocco riceve `page.paper` con quella tinta, e Folio la stampa su quella carta. La tinta è il colore della pagina portato al 60 % verso il bianco (README §4): la pagina piatta dipinge già #f2d3c0, e una carta salmone piena sotto di essa la tingerebbe due volte. Il canvas, l’HTML e il PDF ignorano `:::paper` e dipingono il colore della pagina, ed è per questo che la tavolozza della sezione imposta anche `paper`.
 
 ## Varianti
 
 ### Cambia la carta e conserva la griglia
 
-Uno stile di titolo con una `palette` e senza `layout` conserva le cinque colonne con filetti del documento e dipinge comunque ogni pagina della sua sezione: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` mette un supplemento del fine settimana su carta da giornale color crema. Avvolgi anche le sue pagine in un run `:::paper`, con la tinta portata al 60 % verso il bianco, così Folio le stampa su una carta coordinata.
+Uno stile di titolo con una `palette` e senza `layout` conserva le cinque colonne con filetti del documento e dipinge comunque ogni pagina della sua sezione: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` mette un supplemento del fine settimana su carta da giornale color crema. Racchiudi anche le sue pagine in un blocco `:::paper`, con la tinta portata al 60 % verso il bianco, così Folio le stampa su una carta coordinata.
 
 ### Fai della sezione Business un inserto staccabile
 

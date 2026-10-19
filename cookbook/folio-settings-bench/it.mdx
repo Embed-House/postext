@@ -10,7 +10,7 @@ pageNotes: { "1": "La copertina anteriore: un campo rosso mattone fino a ogni bo
 
 ## Che cosa comporrai
 
-*Six Knots*, un libro tascabile di dieci pagine in formato 110 × 160 mm, aperto in Folio accanto a un pannello con ogni impostazione di `config.folio`. Scegli un tipo di carta e i fogli cambiano colore, superficie e rigidità; passa la legatura da brossura a cartonato e una coperta cresce intorno al blocco; scegli la coperta invece delle copertine stampate, un materiale in tela o in pelle, un piano d’appoggio, una luce, un’inclinazione. Il libro viene impaginato una volta sola. Ogni modifica arriva al visualizzatore con `setAppearance`, così nessuna riga si sposta e nessuna pagina viene ridipinta, e le impostazioni compaiono sotto il modulo come il codice da incollare in `config.folio`.
+*Six Knots*, un libro tascabile di dieci pagine in formato 110 × 160 mm, aperto in Folio accanto a un pannello con ogni impostazione di `config.folio`. Scegli un tipo di carta e i fogli cambiano colore, superficie e rigidità; passa la legatura da brossura a cartonato e una coperta cresce intorno al blocco; scegli la coperta invece delle copertine stampate, un materiale in tela o in pelle, un piano d’appoggio, una luce, un’inclinazione. Il libro si impagina una volta sola. Ogni modifica arriva al visualizzatore con `setAppearance`, così nessuna riga si sposta e nessuna pagina viene ridipinta, e le impostazioni compaiono sotto il modulo come il codice da incollare in `config.folio`.
 
 ## Preparazione
 
@@ -18,17 +18,17 @@ pageNotes: { "1": "La copertina anteriore: un campo rosso mattone fino a ogni bo
 
 <Excerpt region="form" />
 
-Ogni campo del modulo prende il nome dal suo percorso in `config.folio` (`paper.grammage`, `binding.cover`, `lighting.environment`), così un solo ciclo trasforma il modulo nell’oggetto che il visualizzatore accetta: numeri dai cursori, booleani dalle caselle di controllo, un colore `{ hex, model }` dal selettore. Lo stesso oggetto è il `config.folio` del documento quando il pen lo costruisce, così la Sandbox apre il libro come parte il modulo.
+Ogni campo del modulo prende il nome dal suo percorso in `config.folio` (`paper.grammage`, `binding.cover`, `lighting.environment`), così un solo ciclo trasforma il modulo nell’oggetto che il visualizzatore accetta: numeri dai cursori, booleani dalle caselle di controllo, un colore `{ hex, model }` dal selettore. Lo stesso oggetto è il `config.folio` del documento quando il pen lo costruisce, così la Sandbox apre il libro con le impostazioni iniziali del modulo.
 
 ### 2 · Copertine che il visualizzatore può girare come piatti
 
 <Excerpt region="covers" />
 
-Con `binding.cover: 'pages'` la prima pagina è il piatto anteriore e l’ultima il posteriore, quando cade su un verso. Lo stile di titolo della copertina posteriore va a una pagina pari, così il libro finisce sempre su un verso ed entrambe le copertine si girano. Porta il modulo su *A case round the pages* e le stesse due pagine si girano come fogli normali dentro una coperta di tela.
+Con `binding.cover: 'pages'` la prima pagina è il piatto anteriore e l’ultima il posteriore, quando cade su un verso. Lo stile di titolo della copertina posteriore va a una pagina pari, così il libro finisce sempre su un verso ed entrambe le copertine si girano. Imposta il modulo su *A case round the pages* e le stesse due pagine si girano come fogli normali in una coperta di tela.
 
 ### 3 · Ridisegna il libro sul posto
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `setAppearance({ folio })` sostituisce le impostazioni del documento e ridisegna la scena: spessore e rigidità della carta, la coperta, le mappe del piano e la luce. Le pagine conservano i loro dipinti, quindi una modifica arriva al fotogramma successivo. Un tipo di carta imposta la propria grammatura, ed è per questo che sceglierne uno sposta il cursore della grammatura; `resetView()` riporta la camera al suo posto dopo che il lettore ha fatto ruotare il libro trascinando con il tasto destro.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `setAppearance({ folio })` sostituisce le impostazioni del documento e ridisegna la scena: spessore e rigidità della carta, la coperta, le mappe del piano e la luce. Le pagine non vengono ridipinte, quindi una modifica arriva al fotogramma successivo. Un tipo di carta imposta la propria grammatura, ed è per questo che sceglierne uno sposta il cursore della grammatura; `resetView()` riporta la camera al suo posto dopo che il lettore ha fatto ruotare il libro trascinando con il tasto destro.
 
 ## Varianti
 

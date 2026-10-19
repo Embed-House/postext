@@ -105,11 +105,13 @@ from typing import Any
 # character. A manifest stamped 13 (postext 1.29) gets the rules-14 pin:
 # 'host' again when its config names no bodyText.shapingLanguage, since
 # from postext 1.30 a document is shaped in its own language by default.
-# A book ported today is stamped 14 and is shaped in its own. An
+# Rules 15 (postext 1.34) mark a config that may hold pageTemplates and
+# labelStyles and pin nothing, so 14 reads the same. A book ported today is
+# stamped 15 and is shaped in its own language. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
 # one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11,
-# one older than 1.30 reads 14 as 13.
-CONFIG_VERSION = 14
+# one older than 1.30 reads 14 as 13, one older than 1.34 reads 15 as 14.
+CONFIG_VERSION = 15
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -646,7 +648,7 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 14, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 15, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),

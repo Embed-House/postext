@@ -22,13 +22,13 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Les appels
 
 <Excerpt region="title" />
 
-La liste des auteurs est un seul attribut de titre, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, composé en Noto Sans à 7,4 pt sur toute la justification, où 34 noms occupent cinq lignes. `inlineMarks` surélève les numéros d’affiliation. Les affiliations et la note sur les contributions égales vont à la fin, sous *Author information*, comme les imprime Nature, si bien que la première page garde de la place pour le résumé et la figure. Aucun auteur n’est supprimé : le titre courant des versos réduit la liste à *Jumper et al.*
+La liste des auteurs est un seul attribut de titre, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, composé en Noto Sans à 7,4 pt sur toute la justification, où 34 noms occupent cinq lignes. `inlineMarks` surélève les numéros d’affiliation. Les affiliations et la note sur les contributions égales vont à la fin, sous *Author information*, comme les imprime Nature : la première page garde donc de la place pour le résumé et la figure. Aucun auteur n’est supprimé : le titre courant des versos réduit la liste à *Jumper et al.*
 
 ### 3 · Le résumé sur toute la largeur, la Fig. 1 en dessous
 
 <Excerpt region="resources" />
 
-Le résumé est un encadré avec `span: 'page'` et sans cadre, son texte en Noto Sans demi-gras. La Fig. 1 le suit sous la forme `::resource{id="fig1"}`, et son placement, `{ position: 'here', span: 'page' }`, la compose sur les deux colonnes à cet endroit ; les deux colonnes de texte commencent sous sa légende. La légende s’ouvre sur une phrase en gras, comme celles de Nature ; le `captionPrefix` du type et le `labelSeparator` du style de légende font lire l’étiquette *Fig. 1 |*. Le tableau 1 est inséré à sa place dans les Methods avec `position: 'here'` et reste dans sa colonne.
+Le résumé est un encadré avec `span: 'page'` et sans bordure, son texte en Noto Sans demi-gras. La Fig. 1 le suit sous la forme `::resource{id="fig1"}`, et son placement, `{ position: 'here', span: 'page' }`, la compose sur les deux colonnes à cet endroit ; les deux colonnes de texte commencent sous sa légende. La légende s’ouvre sur une phrase en gras, comme celles de Nature ; le `captionPrefix` du type et le `labelSeparator` du style de légende font lire l’étiquette *Fig. 1 |*. Le tableau 1 est inséré à sa place dans les Methods avec `position: 'here'` et reste dans sa colonne.
 
 ### 4 · Un squelette de protéine dessiné à partir de coordonnées ouvertes
 
@@ -38,7 +38,7 @@ Les coordonnées ont été lues une fois, à l’écriture de la recette, dans l
 
 ### 5 · Lettres grecques et accents dans le PDF
 
-Fontsource découpe chaque police par écriture. `kitFonts(FONTS)` lit le texte qu’on lui donne et charge le fichier latin-ext d’une police quand elle compose Ž ou Š, et son fichier greek quand elle compose α ou χ ; `fontsourceProvider` incorpore les mêmes fichiers au PDF d’après les caractères que compose chaque police. Cα, χ, Žídek et Šali ne demandent aucun code particulier : la recette passe le markdown, qui contient chaque emplacement de contenu, et le fournisseur du kit.
+Fontsource découpe chaque police par écriture. `kitFonts(FONTS)` analyse le texte qu’on lui donne et charge le fichier latin-ext d’une police quand elle compose Ž ou Š, et son fichier greek quand elle compose α ou χ ; `fontsourceProvider` incorpore les mêmes fichiers au PDF d’après les caractères que compose chaque police. Cα, χ, Žídek et Šali ne demandent aucun code particulier : la recette passe le markdown, qui contient chaque emplacement de contenu, et le fournisseur du kit.
 
 ## Variantes
 
@@ -75,5 +75,5 @@ Pour une revue médicale, partez du style NLM fourni, comme la recette <RecipeLi
 
 ## Erreurs fréquentes
 
-- Nature nomme jusqu’à cinq auteurs et réduit une liste plus longue au premier, suivi de *et al.* Là où la liste de l’article le fait, écrivez `and others` dans l’entrée BibTeX (`{Senior, Andrew W. and others}`) et le style imprime *Senior, A. W. et al.* ; en CSL-YAML, terminez la liste par `"others"`.
+- Nature cite jusqu’à cinq auteurs et réduit une liste plus longue au premier, suivi de *et al.* Là où la liste de l’article le fait, écrivez `and others` dans l’entrée BibTeX (`{Senior, Andrew W. and others}`) et le style imprime *Senior, A. W. et al.* ; en CSL-YAML, terminez la liste par `"others"`.
 - Le `bodyStyle` d’un style de titre change la taille et l’interlignage du texte, pas la grille de ligne de base : les titres des Methods utilisent `snapToGrid: false`, sans quoi la ligne sous chacun d’eux sauterait à la ligne suivante de la grille du texte principal.

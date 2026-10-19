@@ -26,7 +26,7 @@ Os nomes entram com o sobrenome primeiro: `term="Garamond, Claude"`, `term="Dall
 
 <Excerpt region="build" />
 
-O índice imprime números de página que só existem depois da diagramação, e imprimi-lo ocupa páginas. `buildDocument()` resolve isso: diagrama o capítulo, lê a página de cada marca, imprime os dois índices e diagrama de novo sempre que um número muda. Aqui os índices vêm depois do texto, então uma segunda passada confirma a primeira; um índice posto antes do texto deslocaria todas as páginas seguintes, e as passadas continuariam até concordarem. Acrescente um parágrafo à seção sobre Bodoni e o índice onomástico dá a Whittingham a nova página sozinho.
+O índice imprime números de página que só existem depois da diagramação, e imprimi-lo ocupa páginas. `buildDocument()` resolve isso: diagrama o capítulo, lê a página de cada marca, imprime os dois índices e diagrama de novo sempre que um número muda. Aqui os índices vêm depois do texto, por isso uma segunda passada confirma a primeira; um índice posto antes do texto deslocaria todas as páginas seguintes, e as passadas continuariam até concordarem. Acrescente um parágrafo à seção sobre Bodoni e o índice onomástico dá a Whittingham a nova página sozinho.
 
 ### 4 · Dar a cada índice uma abertura sobre duas colunas
 
@@ -38,7 +38,7 @@ O estilo de título da resposta curta faz três coisas por `# Index of Names {st
 
 <Excerpt region="running-heads" />
 
-O cabeço da página ímpar imprime `{chapterTitle}`, e o título de um índice é de nível um como o de qualquer capítulo, então as páginas seguintes trazem *Index of Subjects* no alto. `pages: 'body'` tira os cabeços das duas aberturas de índice, que levam um fólio no pé.
+O cabeço da página ímpar imprime `{chapterTitle}`, e o título de um índice é de nível um como o de qualquer capítulo, por isso as páginas seguintes trazem *Index of Subjects* no alto. `pages: 'body'` tira os cabeços das duas aberturas de índice, que levam um fólio no pé.
 
 ## Variações
 

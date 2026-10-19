@@ -1,7 +1,7 @@
 name: Recipe request
 description: Ask the Cookbook for a layout you want to see built with Postext, with the code to copy.
 title: "[Recipe]: "
-labels: ["cookbook", "triage"]
+labels: ["type: content", "area: cookbook", "status: triage"]
 body:
   - type: markdown
     attributes:

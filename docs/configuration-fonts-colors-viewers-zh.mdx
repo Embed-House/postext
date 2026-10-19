@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：字体、颜色与输出',
   sidebarTitle: '字体、颜色与输出',
-  description: '单位、颜色与调色板，自定义字体，HTML查看器，PDF与印刷输出，书页视图和调试',
+  description: '单位、颜色和调色板，自定义字体，HTML阅读器，PDF与印刷输出，Folio书页查看器，以及调试用的叠加层',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '28分钟',
   order: 19,
   parent: 'configuration',
-  plainSummary: "本页讲整本书共用的设置，以及每种输出各自的设置。它说明尺寸和颜色怎样写，调色板里的颜色怎样命名。它说明怎样加入你自己的字体。接着讲网页视图、PDF文件、印刷厂要的文件和3D书本。最后一节用来打开工作时帮得上忙的参考线和警告。",
+  plainSummary: "本页讲整本书共用的设置，以及每种输出各自的设置。先说明尺寸和颜色怎样写，调色板里的颜色怎样命名。再介绍怎样加入你自己的字体。接着讲网页视图、PDF文件、印刷厂要的文件和3D书。最后一节讲怎样打开参考线和警告，它们在你工作时很有用。",
 };
 
 # 配置：字体、颜色与输出
@@ -41,12 +41,13 @@ interface ColorValue {
   hex: string;         // '#ff0000'、'transparent' 等
   model: ColorModel;   // 'hex' | 'rgb' | 'cmyk' | 'hsl'
   cmyk?: CmykPercent;  // 以CMYK定义的颜色的准确印刷色数值。
+  paletteId?: string;  // 它所跟随的colorPalette条目。
 }
 ```
 
 `model`字段指明预期的色彩空间。网页渲染通常用`'hex'`或`'rgb'`。印刷流程中，`'cmyk'`表明这个颜色是以CMYK定义的，`cmyk`保存它的数值：CMYK印刷渲染原样使用这些数值，`hex`是它们在屏幕上的呈现（见[以CMYK定义的颜色](#以cmyk定义的颜色)）。
 
-Postext面向出版级输出，所以正文的默认颜色带有`model: 'cmyk'`（`#000000`）。标题、粗体、斜体和列表的颜色默认链接到调色板中的**主色**（`#295AA3`，`model: 'hex'`）。页面背景和界面叠加层（基线网格、裁切标记、调试标记）默认为`model: 'hex'`。如果需要不同的导出语义，可以在任意字段上覆盖`color.model`。
+Postext面向出版级输出，所以正文的默认颜色带有`model: 'cmyk'`（`#000000`）。标题、粗体、斜体和列表的颜色默认链接到调色板中的**主色**（`#295AA3`，`model: 'hex'`）。页面背景和界面叠加层（基线网格、裁切线、调试标记）默认为`model: 'hex'`。如果需要不同的导出语义，可以在任意字段上覆盖`color.model`。
 
 ### 透明度
 
@@ -62,24 +63,24 @@ const config: PostextConfig = {
         anchor: { to: 'bleed', edge: 'top-left' },
         size: { width: 'fill', height: { value: 40, unit: 'mm' } },
       },
-      style: { backgroundColor: { hex: '#ffffffb3', model: 'hex' } }, // 白色，不透明度70 %
+      style: { backgroundColor: { hex: '#ffffffb3', model: 'hex' } }, // 白色，不透明度70%
     }],
   },
   bodyText: { color: { hex: 'rgba(0, 0, 0, 0.85)', model: 'rgb' } },
 };
 ```
 
-三个后端的绘制结果相同。Canvas和HTML查看器把这个值当作CSS颜色。PDF后端把颜色的不透明度设为常量alpha，即一个`ExtGState`，填充用`ca`，描边用`CA`。文字、线条、框、表格填充和边框、行内标签、色块和公式都适用。半透明颜色叠加在它之前绘制的内容之上。页眉或页脚中的框最后绘制，因此会遮在其下的文字上；章首页色带中的框最先绘制，因此会给文字下方的页面着色。当PDF被强制转换到另一色彩空间时（`pdfGeneration.forceColorSpace`配合`colorSpace: 'cmyk'`或`'grayscale'`），颜色会被转换，alpha保持不变。在沙盒中，取色器的不透明度滑块以`#rrggbbaa`写入这些值，取色器也能读取其他写法。
+三个后端的绘制结果相同。Canvas和HTML阅读器把这个值当作CSS颜色。PDF后端把颜色的不透明度设为常量alpha，即一个`ExtGState`，填充用`ca`，描边用`CA`。文字、线条、框、表格的填充和边框、行内标签、色块和公式都是如此。半透明颜色叠加在它之前绘制的内容之上。页眉或页脚中的框最后绘制，因此会遮在其下的文字上；章首页色带中的框最先绘制，因此会给文字下方的页面着色。强制把PDF转换到另一色彩空间时（`pdfGeneration.forceColorSpace`配合`colorSpace: 'cmyk'`或`'grayscale'`），颜色随之转换，alpha保持不变。在沙盒中，取色器的不透明度滑块以`#rrggbbaa`写入这些值，取色器也能读取其他写法。
 
 
 ## 自定义字体
 
-Postext把每个`fontFamily`字符串**同时**与Google Fonts字体目录和文档的`customFonts`列表进行匹配。名称冲突时自定义字体优先：如果你声明了`customFonts: [{ name: 'Roboto', … }]`，Postext会使用你上传的文件，而不是Google Fonts的“Roboto”。
+Postext把每个`fontFamily`字符串**同时**与Google Fonts字体目录和文档的`customFonts`列表匹配。名称冲突时自定义字体优先：如果你声明了`customFonts: [{ name: 'Roboto', … }]`，Postext会使用你上传的文件，而不是Google Fonts的“Roboto”。Google Fonts没有的字体族，沙盒从Fontsource获取。通用名称（`serif`、`system-ui`）和操作系统自带的字体（Arial、Segoe UI、PingFang SC……）从不向Fontsource查询：这样的字体族用读者电脑上已有的字体排版，**字体**面板显示为*未找到*，PDF和SVG图片也没有它的文件可嵌入。书若用它排版，请把它作为自定义字体上传。
 
 以下情况适合使用自定义字体：
 
 - 文档需要品牌字体或授权字体，而Google Fonts上没有。
-- 运行环境无法访问字体CDN，即jsDelivr（沙盒从这里获取Fontsource的文件）或Google Fonts（离线、内网、对隐私敏感）。
+- 运行环境（离线、内网或注重隐私的环境）无法访问字体CDN，即jsDelivr（沙盒从这里获取Fontsource的文件）或Google Fonts。
 - 字体文件必须保密，不能上传给第三方。
 
 ### 配置结构
@@ -97,7 +98,7 @@ interface CustomFontVariant {
 }
 
 interface CustomFontFamily {
-  name: string;             // 可用在任何能填Google Fonts字体家族名的地方
+  name: string;             // 可用在任何能填Google Fonts字体族名的地方
   variants: CustomFontVariant[];
   redistributable?: boolean; // false：只在书里使用，不会被复制出去
   fallback?: string;        // 宽度相近的开放字体，用于没有文件的字形（自postext 1.42起）
@@ -109,43 +110,43 @@ interface PostextConfig {
 }
 ```
 
-各个变体的二进制文件**不**嵌入配置本身。配置只保存`fileId`指针，字节数据存放在配置之外。在沙盒里，这指的是IndexedDB（键值存储，仅限浏览器，归该文档私有）。把Postext嵌入其他宿主的集成方可以用任何方式解析`fileId`，例如服务器接口、service worker缓存等，只要字节数据在`buildDocument`运行前到达主线程即可。
+各个变体的二进制文件**不**嵌入配置本身。配置只保存`fileId`指针，字节数据存放在配置之外。在沙盒里，这指的是IndexedDB（浏览器里的键值存储，只供该文档使用）。把Postext嵌入其他宿主的集成方可以用任何方式解析`fileId`，例如服务器接口、service worker缓存等，只要字节数据在`buildDocument`运行前到达主线程即可。
 
 ### 在沙盒中管理自定义字体
 
-从左侧活动栏打开**字体**面板（位于资源和版面设计之间）。其中的**本书使用的字体**列表列出版面设计用到的每个字体家族，以及它的用途和来源：Google Fonts、Fontsource（Google Fonts没有的字体家族）、你的文件，或者哪里都没有（*未找到*）。在**你的字体文件**下，对每个字体家族：
+从左侧活动栏打开**字体**面板（位于资源和版面设计之间）。其中的**本书使用的字体**列表列出版面设计用到的每个字体族，以及它的用途和来源：Google Fonts、Fontsource（Google Fonts没有的字体族）、你的文件，或者哪里都没有（*未找到*）。在**你的字体文件**下，对每个字体族：
 
-1. **添加字体家族**：新建一个空的字体家族，可直接在原处重命名。
+1. **添加字体族**：新建一个空的字体族，可直接在原处重命名。
 2. **上传变体**：选择字重（100–900）和样式（normal / italic），然后选择一个*或多个*`.woff2`、`.woff`、`.ttf`或`.otf`文件。每个文件成为一个独立变体，绑定到当前选中的（字重，样式）；上传的文件名会被记住并显示在该行，便于区分各个变体。之后随时可以用下拉菜单重新调整变体的字重或样式。
 3. **允许变体重复**。如果两个文件落在同一个（字重，样式）位置，两者都会保留，并出现**字体变体重复**警告，提醒你为多出来的文件调整设置加以区分。
-4. **删除变体**或**删除家族**：从配置中移除该条目，*同时*删除IndexedDB中保存的字节数据。
+4. **删除变体**或**删除字体族**：从配置中移除该条目，*同时*删除IndexedDB中保存的字节数据。
 
-字体家族一经声明，所有字体选择器都会把它归入**自定义**组，排在Google Fonts列表上方。选中它，就会把这个字体家族写入你应用它的每个字体家族字段。
+字体族一经声明，所有字体选择器都会把它归入**自定义**组，排在Google Fonts列表上方。选中它，这个字体族就会写入你用它的每个字体族字段。
 
 ### 授权字体的替代字体
 
-一本书可能用了所有者无权外传的字体。把这个字体家族标为`redistributable: false`，`.postext`文件就不带它的文件。在`fallback`里写一个宽度相近的开放字体家族，缺少这些文件而打开的文件，换行位置就接近真实字体，不会因为备用字体更宽而让框溢出。家族没有文件的字形，会以授权字体的名称，用`fallback`中粗细和倾斜相同的字形排版，预览、排版worker、PDF和命令行都是如此。家族有文件的部分保持不变；它只从`fallback`取自己一个文件也没有的那种倾斜，比如斜体，介于它自己文件之间的字重照常按任何字体家族的方式选取。在字体面板里，**替代字体**（在字体家族内、文件上方）填写名称；留空则与原来一样。这样排版的书，PDF嵌入的是开放字体，所以最终的PDF要用授权字体的文件来生成。自postext 1.42起。自 postext 1.43 起，开放字体也会去到授权字体不能去的地方：从沙盒或 `postext` 导出的 EPUB 或 HTML，会以授权字体的名称带上替代字体的各个字面，文字用该字体排印的 SVG 图片也一样，这样阅读系统排版时用的字体，宽度与断行时所依据的一致。该字体自己的文件始终不会离开书。没有 `fallback`，或替代字体没有文件的字体，仍像以前那样只列名称、不带文件；沙盒的 EPUB 标签页会列出改用替代字体排印的字体。
+一本书可能用了所有者无权转给他人的字体。把这个字体族标为`redistributable: false`，`.postext`文件就不带它的文件。在`fallback`里写一个宽度相近的开放字体族，那么没有这些文件时打开这个文件，断行位置仍接近真实字体，不会因为备用字体更宽而在框里放不下。家族中没有文件的字重和样式，会改用`fallback`中字重和倾斜相同的字体排版，名称仍是授权字体的名称；预览、排版工作线程、PDF和命令行都是如此。有文件的家族照用自己的文件，只从`fallback`借自己没有文件的倾斜（例如斜体）；介于它自己各个文件之间的字重，照常像任何字体族那样选取。在字体面板里，名称填在**替代字体**一栏（在字体族内、文件上方）；留空则家族保持原样。这样排版的书，PDF嵌入的是开放字体，所以最终的PDF要用授权字体的文件来生成。自postext 1.42起。自postext 1.43起，授权字体不能去的地方，开放字体也能去：从沙盒或`postext`导出的EPUB或HTML，会以授权字体的名称带上替代字体，文字用这个家族排的SVG图片也一样；这样阅读系统排这本书时所用字体的宽度，与断行时依据的宽度一致。家族自己的文件始终不会离开这本书。没有`fallback`的家族，或替代字体没有文件的家族，仍像以前一样只写名称、不带文件；沙盒的EPUB标签页会列出改用替代字体排版的家族。
 
 ### 渲染行为
 
 内部机制如下：
 
-- `customFonts`变化时，每个已声明的字体家族都会自动以`FontFace`条目注册到`document.fonts`上。这样HTML查看器、Canvas视口（它通过`document.fonts`测量）以及任何直接引用它的CSS都能用上自定义字体，用户无需先打开字体选择器。
-- 排版工作线程通过现有的字体数据传输通道接收同样的ArrayBuffer，因此测量（`buildFontString`、pretext）的方式与字体目录中的字族相同。
-- 修改或删除某个变体时，工作线程会丢弃该字体家族的缓存字体，并在下次构建时重新注册，使预览与当前的变体集合保持同步。
+- `customFonts`变化时，每个已声明的字体族都会自动以`FontFace`条目注册到`document.fonts`上。这样HTML阅读器、Canvas视口（它通过`document.fonts`测量）以及任何直接引用它的CSS都能用上自定义字体，用户无需先打开字体选择器。
+- 排版工作线程通过现有的字体数据传输通道接收同样的ArrayBuffer，因此测量（`buildFontString`、pretext）的方式与字体目录中的字体族相同。
+- 修改或删除某个变体时，工作线程会丢弃该字体族的缓存字体，并在下次构建时重新注册，使预览与当前的变体集合保持同步。
 - **PDF导出**：上传的二进制文件走同一条`PdfFontProvider`流程。`.woff2`文件会被解压；`.ttf`和`.otf`直接传入。`.woff`会被拒绝并给出明确的错误（pdf-lib无法嵌入原始WOFF，请改为上传`.woff2`/`.ttf`/`.otf`）。CFF风格的OpenType（带`OTTO`标识的`.otf`）**不做子集化**直接嵌入，因为pdf-lib的CFF子集化程序在`save()`时会遍历每个字形，对实际字体可能卡住好几分钟；跳过子集化，PDF会稍大一些，换来稳定的渲染时间。
 
 ### 缺失字体警告
 
 沙盒的**检查**面板在其*字体*组中列出三种自定义字体特有的问题（都由同一个`debug.warnings.missingFont`开关控制，这个开关原本就管着通用的“未加载”警告）：
 
-- **未知字体家族**：某个`fontFamily`引用的名称既不是已知的Google Fonts字体，也不是当前已声明的自定义字体家族。当你删除一个仍被某个`fontFamily`字段引用的自定义字体家族时，这条警告也会立刻出现，不必等DOM察觉。
-- **缺少字体变体**：字体家族存在，但标准的字重/样式位置（400 / 700，normal / italic）中至少有一个没有上传文件。警告会列出具体缺少哪些组合。
-- **字体变体重复**：同一字体家族中，两个或更多上传文件占用同一个（字重，样式）位置。渲染时只会用到其中一个文件；警告提醒你重新调整其余条目。
+- **未知字体族**：某个`fontFamily`引用的名称在Google Fonts和Fontsource中都没有，也不是当前已声明的自定义字体族。当你删除一个仍被某个`fontFamily`字段引用的自定义字体族时，这条警告也会立刻出现，不必等DOM察觉。
+- **缺少字体变体**：字体族存在，但书中用到的某种字重和样式没有上传文件，例如只有常规体的字体族却用于粗体标题。警告会列出缺少的组合。由该字体族的`fallback`提供的斜体不算缺少。
+- **字体变体重复**：同一字体族中，两个或更多上传文件占用同一个（字重，样式）位置。渲染时只会用到其中一个文件；警告提醒你重新调整其余条目。
 
-点击其中任何一条警告都会打开字体面板，方便你上传缺少的变体、重新添加字体家族或区分重复的变体。
+点击其中任何一条警告都会打开字体面板，方便你上传缺少的变体、重新添加字体族或区分重复的变体。
 
-有了排版结果之后，面板还会列出引擎报告的**排版时使用了替代字体**（`fontFallback`）：页面测量时没有用上的字体，要么根本没有，要么是浏览器借同一字体家族的另一个字重或倾斜画出来的。已经作为未知字体家族或缺少变体列出的字体家族不会重复列出。在第一次排版之前，由针对`document.fonts`的检查代替它。
+有了排版结果之后，面板还会列出引擎报告的**排版时使用了后备字体**（`fontFallback`）：页面测量时没有用上的字体，要么根本没有，要么是浏览器借同一字体族的另一个字重或倾斜画出来的。已经作为未知字体族或缺少变体列出的字体族不会重复列出。在第一次排版之前，由针对`document.fonts`的检查代替它。
 
 ## 调色板
 
@@ -198,9 +199,9 @@ const config: PostextConfig = {
 
 ### 引用调色板条目
 
-配置中的任何`ColorValue`都可以带一个可选的`paletteId`字段，指向`colorPalette`中的某个条目：页面背景、正文颜色（包括`:ref`颜色）、标题颜色、栏间线、列表颜色，表、题注、行内标签和标注框的颜色（框、色条、图标、标记、标签、标题、正文），裁切标记和基线网格的颜色，调试标记，以及版面设计中的所有颜色：书眉、标题章首页和栏内设计、标题样式的版面设计和书眉、篇名页以及目录中的篇条目（文字、线条、框的填充和边框、轮廓、首字下沉）。存在`paletteId`时，调色板条目的`hex` / `model`优先于一起保存的备用`hex` / `model`。只有在调色板缺失、为空或不含该id时才会使用内联的备用值；如果配置要交给不理解调色板的工具读取，这一点很有用。
+配置中的任何`ColorValue`都可以带一个可选的`paletteId`字段，指向`colorPalette`中的某个条目：页面背景、正文颜色（包括`:ref`颜色）、标题颜色、栏间线、列表颜色，表、题注、行内标签和标注框的颜色（框、色条、图标、标记、页签、标题、正文），裁切线和基线网格的颜色，调试标记，以及版面设计中的所有颜色：书眉、标题的章首页设计和栏内设计、标题样式的版面设计和书眉、篇名页以及目录中的篇条目（文字、线条、框的填充和边框、轮廓、首字下沉）。存在`paletteId`时，调色板条目的`hex` / `model`优先于一起保存的备用`hex` / `model`。只有在调色板缺失、为空或不含该id时才会使用内联的备用值；如果配置要交给不理解调色板的工具读取，这一点很有用。
 
-**postext 1.5中的变更**。在postext 1.4及以前，调色板只作用于一份固定的设置清单：版面设计的颜色（书眉、章首页、标题样式、篇、目录条目）、`bodyText.referenceColor`、标注框标签的颜色以及标注框正文的粗体/斜体颜色，都保留与其`paletteId`一起保存的`hex`。如果文档中保存的值与调色板条目不同（凡是在条目改动后又在沙盒中编辑过的文档，以及主色不是`#295AA3`时的所有`:ref`），现在会按链接的含义印出调色板中的颜色。要让某个颜色保持原样，删除它的`paletteId`。
+**postext 1.5中的变更**。在postext 1.4及以前，调色板只作用于一份固定的设置清单。其余设置，即版面设计的颜色（书眉、章首页、标题样式、篇、目录条目）、`bodyText.referenceColor`、标注框页签的颜色以及标注框正文的粗体/斜体颜色，都沿用与`paletteId`一起保存的`hex`。保存的值与调色板条目不同的文档（凡是在条目改动后又在沙盒中编辑过的文档，以及主色不是`#295AA3`时的所有`:ref`），现在会照链接所指，印出调色板中的颜色。要让某个颜色保持原样，删除它的`paletteId`。
 
 ### 调色板如何生效
 
@@ -209,7 +210,7 @@ const config: PostextConfig = {
 1. `applyPaletteToConfig(config)`：解析原始用户配置中每个带`paletteId`的`ColorValue`。想查看引擎实际看到的配置时可以用它。
 2. `applyPaletteToResolvedConfig(resolved, palette)`：在默认值解析*之后*运行，把链接到调色板的默认值（标题颜色、正文粗体/斜体颜色、`:ref`颜色、列表颜色、默认版面设计的颜色）改写为当前调色板的值。
 
-两者都会遍历整个配置，不会遗漏任何链接到调色板的颜色。文本流中的大多数颜色（正文、标题、列表、表、题注、行内标签，以及标注框的框、标题和正文）输出为普通值。其余颜色，即版面设计的颜色、`:ref`颜色和标注框标签，取调色板的`hex` / `model`，并**保留各自的`paletteId`**。篇的`palette`属性和标题样式的`palette`正是通过这个链接在各自的页面上覆盖颜色（见[篇](/zh/docs/configuration-styles#篇)），所以必须保留它。`htmlViewer.overrides`保持原样：HTML查看器先合并它，它带的调色板随后会作用于所有内容，版面设计也包括在内。
+两者都会遍历整个配置，不会遗漏任何链接到调色板的颜色。文本流中的大多数颜色（正文、标题、列表、表、题注、行内标签，以及标注框的框、标题和正文）输出为普通值。其余颜色，即版面设计的颜色、`:ref`颜色和标注框页签，取调色板的`hex` / `model`，并**保留各自的`paletteId`**。篇的`palette`属性和标题样式的`palette`正是通过这个链接在各自的页面上覆盖颜色（见[篇](/zh/docs/configuration-styles#篇)），所以必须保留它。`htmlViewer.overrides`保持原样：HTML阅读器先合并它，它带的调色板随后会作用于所有内容，版面设计也包括在内。
 
 你很少需要自己调用这两个函数，但它们都已导出，便于查看或复用：
 
@@ -232,10 +233,10 @@ const flat = applyPaletteToConfig(config);
 
 ### 编辑调色板
 
-如果某个颜色的`paletteId`找不到对应条目，就会印出它保存的`hex` / `model`，而这个值可能早于条目赋予它的颜色。因此，删除条目之前，应先把链接到它的每个`ColorValue`改写为普通颜色，填入该条目的当前值。沙盒的*调色板*部分（**版面设计 → 颜色**）在你删除条目时会自动这样做，无论该颜色位于何处（包括版面设计和标注框标签），并在确认对话框中列出所有用到该条目的设置：按名称，或按它在配置中的路径（`header.elements[2].color`）。
+如果某个颜色的`paletteId`找不到对应条目，就会印出它保存的`hex` / `model`，而这个值可能比条目后来赋予它的颜色更旧。因此，删除条目之前，应先把链接到它的每个`ColorValue`改写为普通颜色，填入该条目的当前值。沙盒的*调色板*部分（**版面设计 › 颜色**）在你删除条目时会自动这样做，无论该颜色位于何处（包括版面设计和标注框页签），并在确认对话框中列出所有用到该条目的设置：按名称，或按它在配置中的路径（`header.elements[2].color`）。
 
 
-## HTML查看器
+## HTML阅读器
 
 `htmlViewer`属性控制HTML后端如何在屏幕上排列页面。它只在使用`renderToHtml` / `renderToHtmlIndexed`渲染时生效；Canvas和PDF路径完全忽略它，直接使用配置的`page.width`、`page.height`和`page.dpi`。
 
@@ -243,7 +244,7 @@ const flat = applyPaletteToConfig(config);
 interface HtmlViewerConfig {
   maxCharsPerLine?: number;     // 目标栏宽，以正文字体的字符数计。
   columnGap?: number;            // 多栏模式下的栏间距（px）。
-  optimalLineBreaking?: boolean; // 在HTML查看器中使用Knuth–Plass，而不是贪心算法。
+  optimalLineBreaking?: boolean; // 在HTML阅读器中使用Knuth–Plass，而不是贪心算法。
   overrides?: HtmlViewerOverrides; // 仅用于屏幕的部分配置，合并到文档配置之上。
 }
 
@@ -276,13 +277,13 @@ type HtmlViewerOverrides = Omit<PostextConfig, 'htmlViewer'>;
       <td><code>optimalLineBreaking</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>在HTML查看器中启用Knuth–Plass断行。默认关闭，因为查看器每次改变窗口大小或字号都会重新排版，贪心的首次适配算法足够快，感觉不到延迟。如果想得到与Canvas后端相同的最优断行，就打开它。</td>
+      <td>在HTML阅读器中启用Knuth–Plass断行。默认关闭，因为查看器每次改变窗口大小或字号都会重新排版，贪心的首次适配算法足够快，感觉不到延迟。如果想得到与Canvas后端相同的最优断行，就打开它。</td>
     </tr>
     <tr>
       <td><code>overrides</code></td>
       <td><code>HtmlViewerOverrides</code></td>
       <td>—</td>
-      <td>只在屏幕上生效的部分文档配置。HTML查看器在排版前把它合并到文档配置之上（<code>applyHtmlViewerOverrides</code>）；Canvas和PDF忽略它。对象递归合并；<code>levels</code>数组（标题、列表、目录）按<code>level</code>逐条合并；其他所有数组，如版面设计位置的<code>elements</code>、<code>calloutStyles</code>、<code>colorPalette</code>……整体替换基础数组。典型用法：去掉印刷用色带的章首页，或篇名页的标题依数字换行，而不是按固定的成品框宽度换行。沙盒以JSON形式编辑它。</td>
+      <td>只在屏幕上生效的部分文档配置。HTML阅读器在排版前把它合并到文档配置之上（<code>applyHtmlViewerOverrides</code>）；Canvas和PDF忽略它。对象递归合并；<code>levels</code>数组（标题、列表、目录）按<code>level</code>逐条合并；其他所有数组，如版面设计位置的<code>elements</code>、<code>calloutStyles</code>、<code>colorPalette</code>……整体替换基础数组。典型用法：章首页不用印刷版的色带，或者篇名页的标题贴着编号换行，而不是按固定的成品框宽度换行。沙盒以JSON形式编辑它。</td>
     </tr>
   </tbody>
 </table>
@@ -313,13 +314,13 @@ const minimal = stripHtmlViewerDefaults(config.htmlViewer);
 // => 所有值都与默认值相同时为undefined
 ```
 
-完整示例见下文的[集成HTML查看器](/zh/docs/configuration-html-folio-epub#集成html查看器)。
+完整示例见下文的[集成HTML阅读器](/zh/docs/configuration-html-folio-epub#集成html阅读器)。
 
 
 
 ## Canvas查看器
 
-`canvasViewer` 属性设置 Sandbox 的 Canvas 标签页中页面之间的间距（自 postext 1.43 起）。它属于查看器，不属于书：数值是屏幕像素，不随缩放变化，修改它只会移动屏幕上的页面，不会重新排版，所以页码、已保存的排版结果和 PDF 都保持原样。PDF、HTML 查看器和其他输出都会忽略它。图片横跨两页的书应设置 `pageGap: 0`。
+`canvasViewer`属性设置沙盒Canvas标签页中各页之间的间距（自postext 1.43起）。它属于查看器，而不属于书：数值是屏幕像素，与缩放无关；修改它只会移动屏幕上的页面，不会重新排版，所以分页、已保存的版面和PDF都保持原样。PDF、HTML阅读器和其他输出都会忽略它。图片横跨左右两页的书应设置`pageGap: 0`。
 
 ```ts
 interface CanvasViewerConfig {
@@ -342,13 +343,13 @@ interface CanvasViewerConfig {
       <td><code>pageGap</code></td>
       <td><code>number</code></td>
       <td><code>24</code></td>
-      <td>双页视图中一对页面的左页与右页之间的间距，单位为屏幕像素。0 到 200 的整数。设为 <code>0</code> 时两页相接，Canvas 在接缝处不画阴影和圆角，横跨两页的图片或设计看起来是一个整体。单页视图没有页面对。</td>
+      <td>双页视图中，一对页面的左页与右页之间的间距，单位为屏幕像素。取0到200的整数。设为<code>0</code>时两页相接，Canvas在接缝处不画阴影和圆角，横跨跨页的图片或设计看起来是一个整体。单页视图中没有成对的页面。</td>
     </tr>
     <tr>
       <td><code>rowGap</code></td>
       <td><code>number</code></td>
       <td><code>24</code></td>
-      <td>两种视图中，一行页面与下一行页面之间的间距，单位为屏幕像素。0 到 200 的整数。</td>
+      <td>两种视图中，一行页面与下一行页面之间的间距，单位为屏幕像素。取0到200的整数。</td>
     </tr>
   </tbody>
 </table>
@@ -374,14 +375,14 @@ stripCanvasViewerDefaults({ pageGap: 24, rowGap: 24 });
 // => undefined when everything matches the defaults
 ```
 
-不是 0 到 200 的整数的值，会按该范围内最接近的整数读取；如果根本不是数字，则按 `24` 读取，并作为未知设置值给出警告（`canvasViewer.pageGap`）。Sandbox 在 **版面设计 › 导出 › Canvas（页面间距）** 中提供这两个字段。
+不是0到200之间整数的值，会按该范围内最接近的整数读取，根本不是数字的则按`24`读取，并作为未知设置值给出警告（`canvasViewer.pageGap`）。沙盒在<strong>版面设计 › 导出 › Canvas（页面间距）</strong>中提供这两个字段。
 
 
 ## PDF生成（配置）
 
-`pdfGeneration`属性控制PDF后端如何输出最终文档。这些设置由`postext-pdf`包在导出时使用；Canvas和HTML查看器会忽略它们。
+`pdfGeneration`属性控制PDF后端如何输出最终文档。这些设置由`postext-pdf`包在导出时使用；Canvas和HTML阅读器会忽略它们。
 
-`buildDocument`把它们放进VDT，即`doc.config.pdfGeneration`；`renderToPdf`对每项设置，从下列来源中第一个给出该设置的地方取值：
+`buildDocument`把它们以`doc.config.pdfGeneration`的形式放进VDT；`renderToPdf`对每项设置，从下列来源中第一个给出该设置的地方取值：
 
 1. 它自己的选项（`outlines`、`accessible`、`colorSpace`）；
 2. 它渲染的第一个文档的`pdfGeneration`（对于一本书，第一章的设置作用于整个文件）；
@@ -396,7 +397,7 @@ interface PdfGenerationConfig {
   outlines?: boolean;          // 根据标题树生成PDF书签。
   forceColorSpace?: boolean;   // 把所有颜色转换为`colorSpace`。
   colorSpace?: PdfColorSpace;  // `forceColorSpace`为true时使用的目标色彩空间。
-  accessible?: boolean;        // 带标签、面向PDF/UA的输出（结构树、替代文本、语言）。
+  accessible?: boolean;        // 带标签、面向PDF/UA的输出（结构树、替代文字、语言）。
 }
 ```
 
@@ -414,7 +415,7 @@ interface PdfGenerationConfig {
       <td><code>outlines</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>根据标题层级生成PDF大纲（书签），读者可以从PDF阅读器的侧边栏直接跳到任一标题。标题树没有意义的文档（例如单页海报）可以关闭它。</td>
+      <td>根据标题层级生成PDF大纲（书签），读者可以从PDF阅读器的侧栏直接跳到任一标题。标题树没有意义的文档（例如单页海报）可以关闭它。</td>
     </tr>
     <tr>
       <td><code>forceColorSpace</code></td>
@@ -432,7 +433,7 @@ interface PdfGenerationConfig {
       <td><code>accessible</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>生成面向PDF/UA-1的无障碍、带标签的PDF：按阅读顺序排列的逻辑结构树（不跳级的标题、段落、列表、块引用、标注框、带表头单元格的表、带替代文本和题注的图、公式、作为链接的可点击引用；`:::toc`的内容作为一个`TOC`，每行一个`TOCI`，其中行的编号为`Lbl`，标题和页码为包含链接的`Reference`），文档标题和语言（顶层的`locale`），XMP元数据中的PDF/UA标识；所有装饰性标记（页面背景、线条、基线网格、页眉页脚、裁切标记、重复的表头、拆分标注框中重复的标题和续接标记）都标为artifact，屏幕阅读器会跳过它们。没有`altText`的图依次退而使用题注、标签。浮动的图或表紧接在首次引用它的文字之后阅读，或紧接在其`::resource`行之前的文字之后；浮动的框紧接在其围栏之前的文字之后阅读，即使浮动体排在后面的页面上也是如此；越过浮动体继续排下去的列表或目录仍是一个元素；浮动的框或锚定在页面上的框（`placement: 'fixed'`）里的列表也是一个列表。只有在不需要额外结构的印刷母版中才关闭它。</td>
+      <td>生成面向PDF/UA-1的无障碍、带标签的PDF：按阅读顺序排列的逻辑结构树（不跳级的标题、段落、列表、块引用、标注框、带表头单元格的表、带替代文字和题注的图、公式、作为链接的可点击引用；`:::toc`的内容作为一个`TOC`，每行一个`TOCI`，其中行的编号为`Lbl`，标题和页码为包含链接的`Reference`），文档标题和语言（顶层的`locale`），XMP元数据中的PDF/UA标识；所有装饰性标记（页面背景、线条、基线网格、页眉页脚、裁切线、重复的表头、拆开的标注框中重复出现的标题和接续标记）都标为artifact，屏幕阅读器会跳过它们。没有`altText`的图先改用题注，再改用标签。浮动的图或表紧接在首次引用它的文字之后阅读，或紧接在其`::resource`行之前的文字之后；浮动的框紧接在其开始行之前的文字之后阅读，即使浮动体排在后面的页面上也是如此；越过浮动体继续排下去的列表或目录仍是一个元素；浮动的框或锚定在页面上的框（`placement: 'fixed'`）里的列表也是一个列表。只有在不需要额外结构的印刷母版中才关闭它。</td>
     </tr>
   </tbody>
 </table>
@@ -518,13 +519,13 @@ interface CustomOutputProfile {
       <td><code>customProfile</code></td>
       <td><code>CustomOutputProfile</code></td>
       <td>无</td>
-      <td>你自己提供的CMYK输出特性文件，也就是印厂给你的那个（例如ECI的`PSOcoated_v3.icc`）。它的字节像字体一样另行存储；`renderToPdf`通过`outputProfile`选项接收这些字节。`registryName`写作输出意图的条件标识符。</td>
+      <td>你自己提供的CMYK输出特性文件，也就是印厂给你的那个（例如ECI的`PSOcoated_v3.icc`）。它的字节像字体一样另行存储；`renderToPdf`通过`outputProfile`选项接收这些字节。`registryName`写入输出意图，作为其中的条件标识符。</td>
     </tr>
     <tr>
       <td><code>renderingIntent</code></td>
       <td><code>'relative' | 'perceptual'</code></td>
       <td><code>'relative'</code></td>
-      <td>相对比色让印刷机能印出的颜色保持准确，其余颜色裁切到最接近的可印刷颜色；可感知压缩整个色域，让色域外的颜色保持彼此之间的关系。</td>
+      <td>相对比色（relative）让印刷机能印出的颜色保持准确，其余颜色裁切到最接近的可印刷颜色；可感知（perceptual）则压缩整个色域，让色域外的颜色保持彼此之间的关系。</td>
     </tr>
     <tr>
       <td><code>blackPointCompensation</code></td>
@@ -621,7 +622,7 @@ const pdf = await renderToPdf(doc, {
 - Info字典中的标识（`GTS_PDFXVersion`、`/Trapped /False`、标题和日期）和XMP元数据中的标识（`pdfxid:GTSPDFXVersion`、文档id和版本id）；文件带标签时，与PDF/UA标识合并；
 - 每一页的TrimBox和BleedBox（没有裁切线时就是整个页面）；
 - 文件尾的`/ID`；
-- 经特性文件转换为DeviceCMYK（或灰度）的所有颜色，以及用套准色绘制的裁切标记；
+- 经特性文件转换为DeviceCMYK（或灰度）的所有颜色，以及用套准色绘制的裁切线；
 - 不含链接注释：交付印刷的文件在出血框内不带任何注释，所以屏幕PDF中的链接被略去（书签保留）。
 
 PDF/X-1a:2003是不带对象流的PDF 1.4，不允许透明：半透明的颜色换算成它印在纸上的颜色，图片的alpha拼合到白色上，调试用的页面负片被略去（并给出`pageNegativeIgnored`警告）。PDF/X-4是PDF 1.6：保留透明，每页带一个在CMYK中混合的透明组，因`convertImages: false`而保留的RGB图片通过`/DefaultRGB`标为sRGB。
@@ -666,7 +667,7 @@ interface PrintBlackConfig {
       <td><code>richBlack</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>短边达到`richBlackMinSize`的黑色填充（背景、色带、方框）用`richBlackColor`印刷并镂空，看起来是深黑而不是深灰。文字从不变成复合黑。</td>
+      <td>短边达到`richBlackMinSize`的黑色填充（背景、色带、方框）用`richBlackColor`印刷并镂空，看起来是深黑而不是深灰。文字从不用复合黑。</td>
     </tr>
     <tr>
       <td><code>richBlackColor</code></td>
@@ -729,7 +730,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)`对排好的文档运行这些检查，返回一个问题列表。每个问题带有`kind`、`severity`（`'critical'`、`'warning'`或`'info'`）、全书范围的页序`pageIndex`、出问题的`rect`（页面px），以及元素有源码范围时的源码范围。`kind`有`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`和`nearTrim`。没有`transform`时，中性色算一种墨，其他颜色算三种，也不检查总墨量；给出`transform`时，墨数和总墨量都是准确的。图片的分辨率按资源声明的像素计算；`imageSize(fileId)`给出文件本身的像素时（对字节调用`bitmapInfo`，或取自解码后的图像），则按文件的像素计算：声明与文件相差超过一个像素时，报告一次`declaredPixelsMismatch`，声明的像素多于文件实有的像素时为警告。`placedImageResolutions(doc, { resources, imageSize })`列出每张放置的位图及其有效ppi，不论印前检查是否开启。图中的标注在`smallProcessText`、`inkLimit`和`safeZone`中按文字计算。
+`preflightDocument(doc, options)`对排好的文档运行这些检查，返回一个问题列表。每个问题带有`kind`、`severity`（`'critical'`、`'warning'`或`'info'`）、全书范围的页序`pageIndex`、出问题的`rect`（页面px），以及元素有源码范围时的源码范围。`kind`有`lowImageResolution`、`declaredPixelsMismatch`、`rgbImage`、`thinRule`、`smallProcessText`、`inkLimit`、`safeZone`和`nearTrim`。没有`transform`时，中性色算一种墨，其他颜色算三种，也不检查总墨量；给出`transform`时，墨数和总墨量都是准确的。图片的分辨率按资源声明的像素计算；`imageSize(fileId)`给出文件本身的像素时（对字节调用`bitmapInfo`，或取自解码后的图像），则按文件的像素计算：声明与文件相差超过一个像素时，报告一次`declaredPixelsMismatch`；如果声明的像素多于文件实有的像素，它的级别为警告。`placedImageResolutions(doc, { resources, imageSize })`列出每张放置的位图及其有效ppi，不论印前检查是否开启。图中的标注在`smallProcessText`、`inkLimit`和`safeZone`中按文字计算。
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -752,7 +753,7 @@ const master = await inspectPrintMaster(masterBytes);
 
 ### 印刷预览
 
-Canvas页面可以按印出来的样子绘制。`createPrintPreview(transform, print, { paper, dpi, grayscale })`为一套设置构建软打样：每个像素都经特性文件分色（中性色只用K，与PDF相同），再显示回屏幕上；`paper`为true时，显示在纸张自身的白色上；大到足以用复合黑的黑色区域显示为复合黑。设置`grayscale`时，打样的是灰度印刷：强制为灰度的PDF把每种颜色的明度只用黑墨印出，不用复合黑。把它作为`printPreview`交给`renderPageToCanvas`。作为工作视图而不是打样时，`guides`加上成品线、出血线和安全区线，`marksFor`勾出页面上的区域（印前检查给出的`rect`）；Sandbox两者都不用，因此它的预览只显示印出来的内容。`postext-folio`接受同一个对象作为`printPreview`；`paper`为true时，期间请给书设置中性的纸色（`folio.paper.shade`），否则纸张会被着色两次。
+Canvas页面可以按印出来的样子绘制。`createPrintPreview(transform, print, { paper, dpi, grayscale })`为一套设置构建软打样：每个像素都经特性文件分色（中性色只用K，与PDF相同），再显示回屏幕上；`paper`为true时，显示在纸张自身的白色上；大到足以用复合黑的黑色区域显示为复合黑。设置`grayscale`时，打样的是灰度印刷：强制为灰度的PDF把每种颜色的明度只用黑墨印出，不用复合黑。把它作为`printPreview`交给`renderPageToCanvas`。作为工作视图而不是打样时，`guides`加上成品线、出血线和安全区线，`marksFor`勾出页面上的区域（印前检查给出的`rect`）；沙盒两者都不用，因此它的预览只显示印出来的内容。`postext-folio`接受同一个对象作为`printPreview`；`paper: true`时，请同时给书设置中性的纸色（`folio.paper.shade`），否则纸张会着两次色。
 
 ```ts
 import { createPrintPreview, renderPageToCanvas } from 'postext';
@@ -805,7 +806,7 @@ interface ContrastConfig {
   <tbody>
     <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>运行检查。</td></tr>
     <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>对比度须达到的WCAG 2等级。见[阈值](#阈值)。</td></tr>
-    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>检查哪种介质：`'screen'`、`'print'`、`'both'`或`'auto'`。`'auto'`始终检查屏幕，为印刷设置的书（`print.standard`中设了PDF/X标准，`pdfGeneration`中设了CMYK PDF，或`page.cutLines`中设了裁切标记）也检查印刷。</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>检查哪种介质：`'screen'`、`'print'`、`'both'`或`'auto'`。`'auto'`始终检查屏幕，为印刷设置的书（`print.standard`中设了PDF/X标准，`pdfGeneration`中设了CMYK PDF，或`page.cutLines`中设了裁切线）也检查印刷。</td></tr>
     <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>在印刷检查中报告反白字。</td></tr>
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>小于此字号的反白字会被报告。</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>斜体和细体笔画更细，改用此字号。</td></tr>
@@ -839,24 +840,24 @@ interface ContrastConfig {
 
 Postext排出的同一批页面既供屏幕显示，也供印刷机印刷，而同一种颜色在两者上看起来并不一样。
 
-- **屏幕**是sRGB颜色的WCAG 2对比度，即对两者的相对亮度计算`(L1 + 0.05) / (L2 + 0.05)`：Canvas、HTML查看器、EPUB和RGB PDF显示的就是这个结果。
+- **屏幕**是sRGB颜色的WCAG 2对比度，即对两者的相对亮度计算`(L1 + 0.05) / (L2 + 0.05)`：Canvas、HTML阅读器、EPUB和RGB PDF显示的就是这个结果。
 - **印刷**用同一个公式，但取每种颜色在纸上的亮度。颜色先经印刷所用的输出特性文件分色（以CMYK定义的颜色保留其数值），再经特性文件把分色结果读回，亮度相对于白纸计算：白纸是印刷页面上的白，正如显示器的白是屏幕上的白。油墨从来不是纯黑：白底上的实地黑，在涂布纸上约为14:1（FOGRA39、FOGRA51），在非涂布纸上约为8:1（FOGRA47、FOGRA52），在新闻纸上约为5:1（IFRA26、SNAP），而屏幕上是21:1。在屏幕上合格的灰色到了纸上可能不合格：白底上的`#767676`在屏幕上是4.54:1，在涂布纸上约为3.3:1。
 
 计算印刷对比度需要输出特性文件的转换（`options.transform`，用`outputTransform`构建）。没有它时，印刷方面只检查反白字。
 
 ### 反白字
 
-反白在有墨底色上的浅色文字，字小或笔画细时印刷会糊版：底色的油墨向字内扩散，由几种油墨叠成的底色还要靠各块印版套准。对比度反映不出这一点，因为深蓝底上的白字超过10:1。印刷检查把这类文字单独报告（`reversedText`）：字号小于`minSize`的，或者是斜体、字重不大于`lightWeight`而字号小于`minFineSize`的。每个问题都写明底色由四色油墨中的几种叠成。
+反白在有墨底色上的浅色文字，字小或笔画细时印刷会糊版：底色的油墨向字内扩散，由几种油墨叠成的底色还要靠各块印版套准。对比度反映不出这一点，因为深蓝底上的白字超过10:1。印刷检查把这类文字单独报告（`reversedText`）：字号小于`minSize`的，或者为斜体或字重不大于`lightWeight`、字号又小于`minFineSize`的。每个问题都写明底色由四色油墨中的几种叠成。
 
 ### 检查哪些内容
 
-检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、篇首页和章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。图中标注的文字会在其底板上读取，没有底板就在光晕内读取；直接放在图片上的标注和其他压在图片上的文字一样被跳过。
+检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。图中标注的文字在其底板上读取，带光晕的则在光晕内读取；直接放在图片上的标注，和其他压在图片上的文字一样跳过。
 
-在组合页面上，检查按页面的绘制顺序进行：各框架按图层排列，模板的 `decoration` 位于第 0 层。框架文字先看框架自身样式绘制的底框；没有底框时，看它下面的装饰方框（下面是装饰图片时跳过，与其他图片上的文字相同）；再没有，就看页面颜色。所以装饰中彩色页签上的白字，是拿那个页签的颜色来衡量的。旋转或缩放过的框架先换算到版面上再读取底色，装饰本身的文字也按同样方式检查。自 postext 1.37 起。
+在模板页上，检查按页面的绘制顺序进行：各个框按图层排列，模板的`decoration`位于第0层。框里的文字，如果框的样式画了底框，就以这个底框为底色；否则看它下面的装饰方框（下面是装饰中的图片时跳过，与其他图片上的文字相同）；再没有，就看页面颜色。所以装饰中彩色页签上的白字，是拿那个页签的颜色来衡量的。旋转或缩放过的框先放到纸面上再读取底色，装饰本身的文字也按同样方式检查。自postext 1.37起。
 
 ### 运行检查
 
-`contrastDocument(doc, options)`返回排好的文档中查出的问题，对比度最低的排在最前。每个问题带有全书范围的页序`pageIndex`、在纸面上的`rect`（页面px）和首次出现处的源码范围，实际绘出的两种颜色（`color`、`background`），这样排的文字所用的最小字号`sizePt`及其`weight`和`italic`，一个`role`（`'body'`、`'heading'`、`'caption'`、`'table'`、`'runningHead'`、`'design'`、`'chip'`或`'marker'`），第一个文本片段的`text`，以及这样排的文本片段数`count`。同一对颜色在每个阈值下只报告一次，不论有多少行用到它。
+`contrastDocument(doc, options)`返回排好的文档中查出的问题，对比度最低的排在最前。每个问题带有全书范围的页序`pageIndex`、在纸面上的`rect`（页面px）和首次出现处的源码范围，实际绘出的两种颜色（`color`、`background`），这样排的文字所用的最小字号`sizePt`及其`weight`和`italic`，一个`role`（`'body'`、`'heading'`、`'caption'`、`'table'`、`'runningHead'`、`'design'`、`'chip'`、`'marker'`或`'label'`（图中标注的文字）），第一个文本片段的`text`，以及这样排的文本片段数`count`。同一对颜色在每个阈值下只报告一次，不论有多少行用到它。
 
 - `lowContrast`另有`level`、`large`、`required`，所检查的每种介质下的对比度（`screen`、`print`），以及`failing`，即低于`required`的那些介质。
 - `reversedText`另有`reasons`（`'small'`、`'italic'`、`'light'`）、`minimumPt`和`inks`。
@@ -889,7 +890,7 @@ for (const issue of contrastDocument(doc, { transform })) {
 
 ## 正文检查（配置）
 
-`checks`属性汇集读取配置本身的检查。目前只有一项：`contentInConfig`，在设计中存放了书的正文时发出警告。页眉、标题设计、部分页和目录中的部分行都属于版式：它们放的是占位符（`{chapterTitle}`、`{titleText}`、`{number}`），自己的文字最多一两个词，例如`{chapterNumber}`两侧的“第”和“章”。属于书本身的文字应写在 Markdown 中，目录、搜索、翻译、带标签的 PDF 和 EPUB 才能看到它。排版不读取这项检查，修改它不会移动任何一行。
+`checks`属性汇集检查配置本身的各项检查。目前只有一项：`contentInConfig`，当设计里存放了书的正文时发出警告。书眉、标题设计、篇名页和目录中的篇条目都属于版式：它们放的是占位符（`{chapterTitle}`、`{titleText}`、`{number}`），自己的文字最多一两个词，例如`{chapterNumber}`两侧的“第”和“章”。属于书本身的文字应写在Markdown中，这样目录、搜索、翻译、带标签的PDF和EPUB才能看到它。排版不读取这项检查，所以修改它不会移动任何一行。
 
 ```ts
 interface ChecksConfig {
@@ -912,7 +913,7 @@ interface ChecksConfig {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>执行检查。</td></tr>
+    <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>运行检查。</td></tr>
     <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>设计可以不限长度重复的短语：书名、出版社名称。比较时不区分大小写，忽略空格和词两侧的标点；长文字中含有的短语先被去掉，再计算剩余部分。</td></tr>
     <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>设计文字在占位符之外最多可含的词数。</td></tr>
     <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>设计文字在占位符之外最多可含的字母和数字。一个中文、日文、韩文或泰文字符按三个计，因此大约八个字可以通过。</td></tr>
@@ -924,14 +925,14 @@ interface ChecksConfig {
 - 它的字面文字是去掉所有占位符（`{name}`、`{attr.key}`、`{firstMark.key}`）后的`content`，转义`{{`和`}}`读作花括号，`\n`读作换行。
 - 没有字母和数字的文字（一排引导点、装饰符、一个`·`）永远不算正文。
 - 词是空格之间含有字母或数字的部分：单独的`·`或`|`不算词，`postext.dev`这样的地址算一个词。中文、日文等不用空格分词的文字不数词，只按字数计算。
-- 先去掉`allow`中的短语，以及文档元数据（front matter）中的`title`、`subtitle`、`author`和`publisher`，页眉常常重复它们。
+- 先去掉`allow`中的短语，以及文档元数据（即前置元数据）中的`title`、`subtitle`、`author`和`publisher`，书眉常常重复这些内容。
 - 剩下的部分超过`maxWords`个词或`maxChars`个字母和数字时，就算正文。
 
-所有设计槽都会读取：`header`、`footer`、各级标题的`advancedDesign.slot`、各标题样式的`advancedDesign.slot`、`header`和`footer`、`parts.design`、`parts.versoDesign`、`toc.parts.design`，以及`htmlViewer.overrides`中的相同位置。`configDesignSlots(config)`列出它们及其路径，`designTextLiteral(content)`返回模板的字面文字。
+所有版面设计槽位都会读取：`header`、`footer`、各级标题的`advancedDesign.slot`、各标题样式的`advancedDesign.slot`、`header`和`footer`、`parts.design`、`parts.versoDesign`、`toc.parts.design`，以及`htmlViewer.overrides`中的相同位置。`configDesignSlots(config)`列出它们及其路径，`designTextLiteral(content)`返回模板的字面文字。
 
 ### 警告
 
-`collectConfigWarnings`（以及`VDTDocument.configWarnings`）为每个存放正文的设置给出一条`contentInConfig`警告：一个标题样式（其`id`在`ownerId`中）、一级标题、页眉、部分设计。`path`指出该设置，`count`是有问题的设计文字数，`chars`是它们的字母和数字数，`elements`是每条文字的路径（前20条），`value`是第一条的开头（最多40个字符）。把文档的元数据作为第二个参数传入，即可允许其书名和作者；排版时会自动这样做。
+`collectConfigWarnings`（以及`VDTDocument.configWarnings`）为每个存放正文的设置给出一条`contentInConfig`警告：某个标题样式（其`id`在`ownerId`中）、某一级标题、页眉、某个篇的设计。`path`指出该设置，`count`是有问题的设计文字数，`chars`是它们的字母和数字数，`elements`是每条文字的路径（前20条），`value`是第一条的开头（最多40个字符）。把文档的元数据作为第二个参数传入，即可允许其书名和作者；排版时会自动这样做。
 
 ```js
 import { collectConfigWarnings } from 'postext';
@@ -942,14 +943,14 @@ collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
 ```
 
-**解决方法**：把文字移到 Markdown 中，作为所属章节的标题、标注框或段落，设计中只保留占位符。每章不同的值可以写在标题行上，用`{attr.key}`读取：`# 地图 {kicker="第四课"}`，设计中写`{attr.kicker}`。属于版式的短语，例如页眉中的出版社名称，放进`allow`。
+**解决方法**：把文字移到Markdown中，作为所属章节的标题、标注框或段落，设计中只保留占位符。每章不同的值可以写在标题行上，用`{attr.key}`读取：`# 地图 {kicker="第四课"}`，设计中写`{attr.kicker}`。属于版式的短语，例如页眉中的出版社名称，放进`allow`。
 
-沙盒在**检查**面板中列出这条警告，并在**版面设计 → 高级 → 配置中的正文**中提供这项检查；`postext check`会打印它。
+沙盒在**检查**面板中列出这条警告，并在**版面设计 › 高级 › 配置中的正文**中提供这项检查；`postext check`会打印它。
 
 
 ## 书页视图（配置）
 
-`folio`属性决定书页视图（`postext-folio`）怎样以3D呈现印好的书：视角、纸张、装订、书下面的台面和光照。排版不读取它，Canvas、HTML和PDF输出也不读取。配置设置了其中任何一项时，`buildDocument`把解析后的设置放进VDT，即`doc.config.folio`；不设置的文档，其排版哈希保持不变。
+`folio`属性决定书页视图（`postext-folio`）怎样以3D呈现印好的书：视角、纸张、装订、书下面的台面和光照。排版不读取它，Canvas、HTML和PDF输出也不读取。配置设置了其中任何一项时，`buildDocument`把解析后的设置以`doc.config.folio`的形式放进VDT；不设置的文档，其排版哈希保持不变。
 
 ```ts
 interface FolioConfig {
@@ -1029,7 +1030,7 @@ interface FolioConfig {
       <td><code>paper.finish</code></td>
       <td><code>FolioPaperFinish</code></td>
       <td><code>'auto'</code></td>
-      <td>非涂布（可见纤维，无光泽），或涂布后压光为哑光、丝光（柔和光泽）或光面。在 Folio 中，光面纸页会映出从上方翻过的书页。<code>'auto'</code>取纸种的设置。</td>
+      <td>非涂布（可见纤维，无光泽），或涂布后压光为哑光、丝光（柔和光泽）或光面。在Folio中，光面纸页会映出从上方翻过的书页。<code>'auto'</code>取纸种的设置。</td>
     </tr>
     <tr>
       <td><code>paper.texture</code></td>
@@ -1065,7 +1066,7 @@ interface FolioConfig {
       <td><code>binding.cover</code></td>
       <td><code>FolioCoverSource</code></td>
       <td><code>'case'</code></td>
-      <td>封面来源。<code>'case'</code> 在书页外画出书壳；<code>'pages'</code> 把全书第一页当作前封面板、最后一页（左页时）当作后封面板：翻开封面之前书是合着的，封面板硬挺地翻动，不再另画书壳。</td>
+      <td>封面。<code>'case'</code>在书页外画出书壳。<code>'pages'</code>把全书第一页当作前封面板，最后一页是偶数页（左页）时把它当作后封面板：翻开封面之前书是合着的，封面板硬挺地翻动（骑马钉装订时，封面是一张比书页稍厚重的纸，翻动方式与书页相同），不再另画书壳。</td>
     </tr>
     <tr>
       <td><code>binding.coverMaterial</code></td>
@@ -1083,7 +1084,7 @@ interface FolioConfig {
       <td><code>binding.spineImage</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>印在书脊上的位图或SVG资源的id：书立起来时看到的书脊，书头朝上、封面在右。图片缩放到铺满书脊并居中。骑马钉和对折装订不使用。</td>
+      <td>印在书脊上的位图或SVG资源的id：书立起来时看到的书脊，书头朝上、封面在右。图片缩放到铺满书脊并居中。骑马钉和对折装订时忽略此项。</td>
     </tr>
     <tr>
       <td><code>surface.type</code></td>
@@ -1133,15 +1134,15 @@ interface FolioConfig {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>uncoated</code> (胶版纸)</td><td>90 g/m²</td><td>1.25</td><td>113 µm</td><td>非涂布</td><td>均匀</td><td><code>#fcfbf8</code></td></tr>
-    <tr><td><code>bookWove</code> (米黄书纸，高松厚)</td><td>80 g/m²</td><td>1.6</td><td>128 µm</td><td>非涂布</td><td>均匀</td><td><code>#f6efdc</code></td></tr>
-    <tr><td><code>coatedMatte</code> (哑粉纸)</td><td>115 g/m²</td><td>1.0</td><td>115 µm</td><td>哑光</td><td>平滑</td><td><code>#fdfdfc</code></td></tr>
-    <tr><td><code>coatedSilk</code> (丝光铜版纸)</td><td>115 g/m²</td><td>0.9</td><td>104 µm</td><td>丝光</td><td>平滑</td><td><code>#ffffff</code></td></tr>
-    <tr><td><code>coatedGloss</code> (光面铜版纸)</td><td>115 g/m²</td><td>0.8</td><td>92 µm</td><td>光面</td><td>平滑</td><td><code>#ffffff</code></td></tr>
-    <tr><td><code>bible</code> (字典纸)</td><td>40 g/m²</td><td>1.1</td><td>44 µm</td><td>非涂布</td><td>细颗粒</td><td><code>#f9f6ee</code></td></tr>
-    <tr><td><code>newsprint</code> (新闻纸)</td><td>48 g/m²</td><td>1.5</td><td>72 µm</td><td>非涂布</td><td>均匀</td><td><code>#ebe7dc</code></td></tr>
-    <tr><td><code>cardStock</code> (卡纸)</td><td>250 g/m²</td><td>1.2</td><td>300 µm</td><td>非涂布</td><td>细颗粒</td><td><code>#fbfaf6</code></td></tr>
-    <tr><td><code>board</code> (纸板)</td><td>1250 g/m²</td><td>1.6</td><td>2000 µm</td><td>丝光</td><td>平滑</td><td><code>#ffffff</code></td></tr>
+    <tr><td><code>uncoated</code>（胶版纸）</td><td>90 g/m²</td><td>1.25</td><td>113 µm</td><td>非涂布</td><td>均匀</td><td><code>#fcfbf8</code></td></tr>
+    <tr><td><code>bookWove</code>（米黄书纸，高松厚）</td><td>80 g/m²</td><td>1.6</td><td>128 µm</td><td>非涂布</td><td>均匀</td><td><code>#f6efdc</code></td></tr>
+    <tr><td><code>coatedMatte</code>（哑粉纸）</td><td>115 g/m²</td><td>1.0</td><td>115 µm</td><td>哑光</td><td>平滑</td><td><code>#fdfdfc</code></td></tr>
+    <tr><td><code>coatedSilk</code>（丝光铜版纸）</td><td>115 g/m²</td><td>0.9</td><td>104 µm</td><td>丝光</td><td>平滑</td><td><code>#ffffff</code></td></tr>
+    <tr><td><code>coatedGloss</code>（光面铜版纸）</td><td>115 g/m²</td><td>0.8</td><td>92 µm</td><td>光面</td><td>平滑</td><td><code>#ffffff</code></td></tr>
+    <tr><td><code>bible</code>（字典纸）</td><td>40 g/m²</td><td>1.1</td><td>44 µm</td><td>非涂布</td><td>细颗粒</td><td><code>#f9f6ee</code></td></tr>
+    <tr><td><code>newsprint</code>（新闻纸）</td><td>48 g/m²</td><td>1.5</td><td>72 µm</td><td>非涂布</td><td>均匀</td><td><code>#ebe7dc</code></td></tr>
+    <tr><td><code>cardStock</code>（卡纸）</td><td>250 g/m²</td><td>1.2</td><td>300 µm</td><td>非涂布</td><td>细颗粒</td><td><code>#fbfaf6</code></td></tr>
+    <tr><td><code>board</code>（纸板）</td><td>1250 g/m²</td><td>1.6</td><td>2000 µm</td><td>丝光</td><td>平滑</td><td><code>#ffffff</code></td></tr>
   </tbody>
 </table>
 
@@ -1178,7 +1179,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
 // => { paper: { type: 'bible' } }
 ```
 
-在沙盒中，这些设置是版面设计面板中的**Folio**组（**版面设计 → Folio → 书页视图（3D）**）。修改时书页标签页会随即显示效果，不必重新排版。查看器本身见[3D书本](/zh/docs/configuration-html-folio-epub#3d书本postext-folio)；要让一段页面换用另一种纸，见[文档格式 › `:::paper`](/zh/docs/document-format-directives#paper)。
+在沙盒中，这些设置是版面设计面板中的**Folio**组（**版面设计 › Folio › 书页视图（3D）**）。修改时书页标签页会随即显示效果，不必重新排版。查看器本身见[3D书本](/zh/docs/configuration-html-folio-epub#3d书本postext-folio)；要让一段页面换用另一种纸，见[文档格式 › `:::paper`](/zh/docs/document-format-directives#paper)。
 
 
 ## 调试
@@ -1207,7 +1208,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
     <tr>
       <td><code>looseLineHighlight</code></td>
       <td><code>LooseLineHighlightConfig</code></td>
-      <td>覆盖在稀松的两端对齐行上的叠加层，见<a href="#可视叠加层">可视叠加层</a>。</td>
+      <td>覆盖在松散的两端对齐行上的叠加层，见<a href="#可视叠加层">可视叠加层</a>。</td>
     </tr>
     <tr>
       <td><code>pageNegative</code></td>
@@ -1274,7 +1275,7 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
       <td><code>looseLineHighlight.threshold</code></td>
       <td><code>number</code></td>
       <td><code>3</code></td>
-      <td>正常空格宽度的倍数，两端对齐行的空格超过它就算作稀松行。<code>looseLines</code>警告使用同一阈值。空格需要拉伸到3倍以上的两端对齐行会改排为齐左，所以在默认值下，叠加层和警告在连续正文中几乎找不到什么；把它调低（1.5或2），就能看到稀松但仍两端对齐的行。</td>
+      <td>正常空格宽度的倍数，两端对齐行的空格超过它就算作松散行。<code>looseLines</code>警告使用同一阈值。空格需要拉伸到3倍以上的两端对齐行会改排为齐左，所以在默认值下，叠加层和警告在连续正文中几乎找不到什么；把它调低（1.5或2），就能看到松散但仍两端对齐的行。</td>
     </tr>
     <tr>
       <td><code>pageNegative.enabled</code></td>
@@ -1298,9 +1299,9 @@ debug: {
 
 这些叠加层由沙盒绘制在它的Canvas预览之上，不属于页面：`renderPage`、HTML输出和PDF都不会绘制它们。
 
-### 在你自己的Canvas中标出稀松行
+### 在你自己的Canvas中标出松散行
 
-引擎把稀松行高亮导出为两个辅助函数，供你在自己绘制的页面上使用：
+引擎把松散行高亮导出为两个辅助函数，供你在自己绘制的页面上使用：
 
 ```ts
 import { buildDocument, renderPageToCanvas, drawLooseLines, findLooseLines } from 'postext';
@@ -1322,9 +1323,9 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 
 ### 警告
 
-`debug.warnings`控制哪些写作问题出现在沙盒的**检查**面板中（在**版面设计 → 高级 → 警告**中编辑）。每个键都是独立的布尔开关；把某个键设为`false`，就只关闭这一条警告，其他警告不受影响。
+`debug.warnings`控制哪些写作问题出现在沙盒的**检查**面板中（在**版面设计 › 高级 › 警告**中编辑）。每个键都是独立的布尔开关；把某个键设为`false`，就只关闭这一条警告，其他警告不受影响。
 
-这些开关只过滤沙盒的面板。引擎自己记录的警告，即`doc.warnings`中溢出所在栏的框，`doc.contentWarnings`中未知的资源id、指令、嵌入和样式id以及不规则的表格网格，无论开关如何设置都会存在；渲染器也会报告它们以占位图绘制的图像。见[文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)。
+这些开关只过滤沙盒的面板。引擎自己记录的警告，即`doc.warnings`中在所在栏里放不下的框，`doc.contentWarnings`中未知的资源id、指令、嵌入和样式id以及不规则的表格网格，无论开关如何设置都会存在；渲染器也会报告它们以占位图绘制的图像。见[文档中的警告](/zh/docs/configuration-programmatic-usage#文档中的警告)。
 
 ```ts
 interface WarningsToggleConfig {
@@ -1351,7 +1352,7 @@ interface WarningsToggleConfig {
       <td><code>missingFont</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>配置引用的字体在浏览器中加载失败时报告。它能及早发现`fontFamily`中的拼写错误和缺失的`@fontsource/...`包，免得它们在渲染结果中悄悄变成后备字体替换。</td>
+      <td>配置引用的字体在浏览器中加载失败时报告。它能及早发现`fontFamily`中的拼写错误和缺失的`@fontsource/...`包，免得渲染结果中悄悄换成了后备字体。</td>
     </tr>
     <tr>
       <td><code>looseLines</code></td>
@@ -1363,13 +1364,13 @@ interface WarningsToggleConfig {
       <td><code>headingHierarchy</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>报告跳级的标题层级，例如H1后面直接跟H3。标题结构上的断层通常说明标题层级写错了，或者对文档大纲的理解有误。</td>
+      <td>报告跳级的标题层级，例如H1后面直接跟H3。标题结构上的断层通常说明标题级别写错了，或者对文档大纲的理解有误。</td>
     </tr>
     <tr>
       <td><code>consecutiveHeadings</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>一个标题后面紧跟另一个标题、中间没有段落或列表时报告。默认关闭，因为在许多模板中连续的标题是正当的（标题 + 副标题，章 + 题词）；如果文稿中每个标题都应引出正文，就打开它。</td>
+      <td>一个标题后面紧跟另一个标题、中间没有段落或列表时报告。默认关闭，因为在许多模板中连续的标题是正常的（标题 + 副标题，章 + 题词）；如果文稿中每个标题都应引出正文，就打开它。</td>
     </tr>
     <tr>
       <td><code>listAfterHeading</code></td>
@@ -1381,7 +1382,7 @@ interface WarningsToggleConfig {
       <td><code>designIssues</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>报告版面设计位置中的完整性问题，包括页眉、页脚、篇名页及其后的空白左页、目录中的篇条目、标题的高级设计位置，以及每个标题样式的版面设计和分节书眉。涵盖循环的锚点链、悬空的锚点引用（元素锚定到已不存在的<code>#id</code>）、<code>breakBefore</code>被禁用的通栏标题，以及已启用但其元素从不渲染<code>{'{titleText}'}</code>的高级设计。</td>
+      <td>报告版面设计槽位中的完整性问题，包括页眉、页脚、篇名页及其后空白的偶数页（左页）、目录中的篇条目、标题的高级设计槽位，以及每个标题样式的版面设计和分节书眉。涵盖循环的锚点链、悬空的锚点引用（元素锚定到已不存在的<code>#id</code>）、<code>breakBefore</code>被禁用的通栏标题，以及已启用但其元素从不渲染<code>{'{titleText}'}</code>的高级设计。</td>
     </tr>
   </tbody>
 </table>
@@ -1399,24 +1400,24 @@ debug: {
 }
 ```
 
-除此之外，面板始终会列出版面本身产生的警告（`VDTDocument.warnings`），例如溢出所在栏的标注框（`calloutOverflow`），以及引擎替换掉的配置值（`VDTDocument.configWarnings`或`collectConfigWarnings(config)`；见下文的[配置警告](#配置警告)）。
+除此之外，面板始终会列出版面本身产生的警告（`VDTDocument.warnings`），例如在所在栏里放不下的标注框（`calloutOverflow`），以及引擎替换掉的配置值（`VDTDocument.configWarnings`或`collectConfigWarnings(config)`；见下文的[配置警告](#配置警告)）。
 
 ### 配置警告
 
-配置本身的下列错误从不静默，也没有开关能隐藏它们，只有最后一项提到的那个除外。引擎不会因此失败：它会替换一个值，或略去该设置，并给出说明：
+配置本身的下列错误一定会报告出来，除了最后一项提到的开关，没有任何开关能隐藏它们。引擎不会因此失败：它会换用一个值，或略去该设置，并说明这样做了：
 
 - **未知编号格式**：有序列表的`numberFormat`、`page.pageNumbering.format`或资源类型的`counterFormat`不属于任何一种[编号格式写法](/zh/docs/configuration-page-layout#编号格式的写法)。此时按十进制编号。
-- **字体家族中写了字体栈**：`fontFamily`（或任何`…FontFamily`）中写了CSS字体栈。文字用字体栈中的第一个字体家族排（见[每个`fontFamily`只写一个字体家族](/zh/docs/configuration-text#每个fontfamily只写一个字体族)）。
+- **字体族中写了字体栈**：`fontFamily`（或任何`…FontFamily`）中写了CSS字体栈。文字用字体栈中的第一个字体族排（见[每个`fontFamily`只写一个字体族](/zh/docs/configuration-text#每个fontfamily只写一个字体族)）。
 - **侧栏没有空间**：`'oneAndHalf'`版式的`sideColumnPercent`（文档的，或标题样式自己的`layout`中的）会使其中一栏不足内容宽度的1%，或者不是数字。各栏按两者都能接受的最接近的值截取，`used`给出该值（`sideColumnPercentClamped`；见[`'oneAndHalf'`版式](/zh/docs/configuration-page-layout#版式类型)）。
 - **栏数超出范围**：`'multiple'`版式的`columnCount`（文档的，或标题样式自己的`layout`中的）不是3到8之间的整数。页面按最接近的有效栏数分栏（不是数字时为3），`used`给出这个数（`columnCountClamped`；见[`'multiple'`版式](/zh/docs/configuration-page-layout#版式类型)）。
-- **字符网格过大**：`cjk.grid`的每行字数或每页行数超出了页边距内能容纳的数量。网格按能容纳的最大数量排，`used`给出这个数（`cjkGridClamped`；见[字符网格](/zh/docs/configuration-east-asian#字格)）。
-- **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`）。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
-- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。`canvasViewer.pageGap` 和 `canvasViewer.rowGap` 的检查方式相同：`used` 是该值被读作的 0 到 200 的整数（自 postext 1.43 起）。
+- **字符网格过大**：`cjk.grid`的每行字数或每页行数超出了页边距内能容纳的数量。网格按能容纳的最大数量排，`used`给出这个数（`cjkGridClamped`；见[字格](/zh/docs/configuration-east-asian#字格)）。
+- **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`），首字下沉、`lineNumbers`、`canvasViewer`、`checks`、`codeStyle`和漫画设置也一样。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
+- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。`canvasViewer.pageGap`和`canvasViewer.rowGap`的检查方式相同：`used`是该值最终读成的0到200之间的整数（自postext 1.43起）。`print.standard`、`print.outputProfile`和`print.renderingIntent`也同样检查（`used`是默认值得出的结果），`checks.contentInConfig`中不是0或更大整数的`maxWords`或`maxChars`也一样。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
-- **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
-- **基于其他样式的标注框样式** — 标注框样式的`extends`指向`calloutStyles`中不存在的样式（`calloutStyleExtendsUnknown`，`suggestion`给出最接近的id），或沿`extends`追溯会回到它自己（`calloutStyleExtendsCycle`，`value`为环`a → b → a`）。该样式单独成立，未设置的项使用内置默认值（见[基于其他样式的样式](/zh/docs/configuration-callouts#基于其他样式的样式)）。
-- **页面模板和注记样式** — `pageTemplates`或`labelStyles`中的问题：id或名称重复，`extends`、锚定或框接续成环，样式、框或模板不存在，最小值大于最大值，锚点的注记样式不在`labelStyles`中（传入资源时检查：`collectConfigWarnings(config, { resources })`）。这些警告的`path`是JSON指针（`/pageTemplates/3/frames/2/style`）；每种警告的原因和解决办法见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
-- **设计中的正文** — 设计文字元素在占位符之外的文字超过一个简短标签的长度：也就是存放在配置中的书的正文。每个设置（一个标题样式、页眉、部分设计）一条警告，附每条文字的路径（`contentInConfig`；见[正文检查](#正文检查配置)）。与其他警告不同，它可以关闭：`checks.contentInConfig.enabled: false`。
+- **竖排中的文字绕排**：竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
+- **基于其他样式的标注框样式**：标注框样式的`extends`指向`calloutStyles`中不存在的样式（`calloutStyleExtendsUnknown`，`suggestion`给出最接近的id），或沿`extends`追溯会回到它自己（`calloutStyleExtendsCycle`，`value`为环`a → b → a`）。该样式单独成立，未设置的项使用内置默认值（见[基于其他样式的样式](/zh/docs/configuration-callouts#基于其他样式的样式)）。
+- **页面模板和标注样式**：`pageTemplates`或`labelStyles`中的问题，包括id或名称重复，`extends`、锚定或框接续成环，样式、框或模板不存在，最小值大于最大值，锚点的标注样式不在`labelStyles`中（传入资源时检查：`collectConfigWarnings(config, { resources })`）。这些警告的`path`是JSON指针（`/pageTemplates/3/frames/2/style`）；每种警告的原因和解决办法见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
+- **设计中的正文**：设计文字元素在占位符之外的文字超过一个简短标签的长度，也就是把书的正文存放在了配置中。每个设置（某个标题样式、页眉、某个篇的设计）一条警告，附每条文字的路径（`contentInConfig`；见[正文检查](#正文检查配置)）。与其他警告不同，它可以关闭：`checks.contentInConfig.enabled: false`。
 
 沙盒在**检查**面板中列出这些警告，并附上设置的路径。在代码中，`buildDocument`把它们作为`configWarnings`放在文档上（配置没有问题时不存在该字段），`collectConfigWarnings(config)`则不做排版直接返回它们：
 

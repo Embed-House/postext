@@ -16,7 +16,7 @@ As duas páginas de abertura de um mangá de kendô, 前の晩 (*A noite anterio
 
 ### 1 · Ler no sentido em que o desenho foi feito
 
-O código é [a resposta curta](#a-resposta-curta) acima. Um mangaká compõe cada página a partir do alto à direita: o primeiro quadro, o primeiro personagem que fala e o percurso do olhar por uma fileira começam ali. `artDirection: 'rtl'` informa isso ao motor, e com o sentido de leitura em `'auto'` todas as edições seguem o desenho; uma edição árabe seria lida da direita para a esquerda de qualquer forma. O desenho nunca é espelhado. As editoras ocidentais espelhavam o mangá até mais ou menos 2002, e os leitores viam todo espadachim virar canhoto e todo quimono se cruzar ao contrário; deixar as páginas como foram desenhadas custa ao leitor um hábito, enquanto espelhá-las custa o desenho. Cada `:::page` traz a sua divisão, `30 / 34 [46 | *] / * [44 | *]`, e a primeira célula de cada fileira é posta à direita (<Feature id="comic-reading-direction">sentido de leitura</Feature>).
+O código é [a resposta curta](#a-resposta-curta) acima. Um mangaká compõe cada página a partir do alto à direita: o primeiro quadro, o primeiro personagem que fala e o percurso do olhar por uma fileira começam ali. `artDirection: 'rtl'` informa isso ao motor, e com o sentido de leitura em `'auto'` todas as edições seguem o desenho; uma edição árabe seria lida da direita para a esquerda de qualquer forma. O desenho nunca é espelhado. As editoras ocidentais espelhavam o mangá até mais ou menos 2002, e os leitores viam todo espadachim virar canhoto e todo quimono se cruzar ao contrário; deixar as páginas como foram desenhadas custa ao leitor um hábito, enquanto espelhá-las custa o desenho. Cada `:::page` traz a divisão, `30 / 34 [46 | *] / * [44 | *]`, e a primeira célula de cada fileira é posta à direita (<Feature id="comic-reading-direction">sentido de leitura</Feature>).
 
 ### 2 · Marcar cada personagem uma vez, sobre o desenho
 
@@ -34,16 +34,16 @@ Os estilos dizem que tipo de voz um balão carrega: um oval simples para a fala,
 
 <Excerpt region="fonts" />
 
-A Zen Antique e a Dela Gothic One vêm em cerca de cem arquivos cada uma, um por faixa de caracteres: cada fonte é carregada com as palavras que compõe, os balões no caso da primeira e as onomatopeias no da segunda, e assim a página baixa só os arquivos de que precisa. `loadComicFonts` declara o negrito de um grito e o itálico de uma voz interior a partir dos arquivos que essas fontes de fato têm, então a tela e o PDF desenham as mesmas letras.
+A Zen Antique e a Dela Gothic One vêm em cerca de cem arquivos cada uma, um por faixa de caracteres: cada fonte é carregada com as palavras que compõe, os balões no caso da primeira e as onomatopeias no da segunda, e assim a página baixa só os arquivos de que precisa. `loadComicFonts` declara o negrito de um grito e o itálico de uma voz interior a partir dos arquivos que essas fontes de fato têm, de modo que a tela e o PDF desenham as mesmas letras.
 
 ### 5 · Pôr o original ao lado de cada edição
 
 <Excerpt region="editions" />
 
-Cada idioma deste site tem a sua edição das duas páginas, escrita no próprio `content.<lang>.md`, e cada edição fica de frente para o original japonês: `/* @content@ja */` insere `content.ja.md` em todas as edições, e a página japonesa faz par do original com o letreiramento em inglês. A edição chinesa também é composta em colunas, porque um livro que abre pela direita não mistura balões verticais e horizontais; a árabe é lida da direita para a esquerda pelo próprio sentido da escrita.
+Cada idioma deste site tem a edição das duas páginas, escrita no próprio `content.<lang>.md`, e cada edição fica de frente para o original japonês: `/* @content@ja */` insere `content.ja.md` em todas as edições, e a página japonesa faz par do original com o letreiramento em inglês. A edição chinesa também é composta em colunas, porque um livro que abre pela direita não mistura balões verticais e horizontais; a árabe é lida da direita para a esquerda pelo próprio sentido da escrita.
 
 ## Erros comuns
 
-- Ponha à direita o primeiro personagem a falar num quadro. Os balões seguem a ordem de leitura, então, no quadro em que Sora entrega o amuleto, o roteiro dá a primeira fala a Hana, que está à direita. Com Sora falando primeiro, os balões dele ficam do lado dele no quadro, mas as colunas japonesas não deixam espaço embaixo para a resposta de Hana: ela fica ao lado deles, à direita, e é lida primeiro.
+- Ponha à direita o primeiro personagem a falar num quadro. Os balões seguem a ordem de leitura, por isso, no quadro em que Sora entrega o amuleto, o roteiro dá a primeira fala a Hana, que está à direita. Com Sora falando primeiro, os balões dele ficam do lado dele no quadro, mas as colunas japonesas não deixam espaço embaixo para a resposta de Hana: ela fica ao lado deles, à direita, e é lida primeiro.
 - Um balão que não encontra espaço no quadro pode atravessar a borda, e o motor avisa (`comicBalloonOverflow`). Dê uma célula maior ao quadro cheio na divisão antes de encurtar o diálogo.
 - Uma figura pequena, de pé num quadro alto, não deixa espaço ao lado para dois balões empilhados: no quadro da porta, a segunda fala do treinador ficava em cima dele, do peito aos joelhos, nas edições letreiradas em linhas. Os roteiros delas fixam a primeira fala ao lado da cabeça (`mori{at="85% 19%"}`), e a fala unida a ela vai junto. A página chinesa quebra um balão à mão, com uma barra invertida no fim de cada linha, onde as colunas cortavam 其实 em dois.

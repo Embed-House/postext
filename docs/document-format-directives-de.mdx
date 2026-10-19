@@ -5,11 +5,11 @@ export const metadata = {
   sidebarTitle: 'Direktiven',
   description: 'Die :::-Direktiven: Container, Spalten, Papier, Seitenumbrüche, Nummerierung, Abstand, Verse, Inhaltsverzeichnis und Register, Zeilenumbrüche und die Auszeichnung von Comicseiten',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '33 min',
   order: 26,
   parent: 'document-format',
-  plainSummary: "Eine Direktive ist ein Block, der mit drei Doppelpunkten beginnt, etwa :::callout oder :::columns. Diese Seite führt jede Direktive auf und sagt, was sie tut. Manche setzen den Text in einen Kasten oder in Spalten oder drucken ihn auf einer anderen Papiersorte. Andere beginnen eine neue Seite, ändern die Nummerierung, fügen Abstand ein, setzen ein Gedicht Zeile für Zeile oder drucken das Inhaltsverzeichnis und das Register. Der letzte Abschnitt behandelt die Zeichen für Comicseiten, Panels und die Worte der Figuren.",
+  plainSummary: "Eine Direktive ist ein Block, der mit drei Doppelpunkten beginnt, etwa :::callout oder :::columns. Diese Seite führt jede Direktive auf und sagt, was sie tut. Manche setzen den Text in einen Kasten oder in Spalten oder drucken ihn auf einer anderen Papiersorte. Andere beginnen eine neue Seite, ändern die Nummerierung, fügen Abstand ein, setzen ein Gedicht Zeile für Zeile oder setzen das Inhaltsverzeichnis und das Register. Der letzte Abschnitt behandelt die Zeichen für Comicseiten, Panels und die Worte der Figuren.",
 };
 
 # Dokumentformat: Direktiven
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Direktiven
 
-Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}` auf einer eigenen Zeile stehen. Sie erzeugen keine sichtbare Ausgabe – sie steuern die Platzierung und die Nummerierung.
+Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}` auf einer eigenen Zeile stehen. Die meisten erzeugen keine sichtbare Ausgabe und steuern die Platzierung und die Nummerierung; `:::toc`, `:::index` und `:::bibliography` setzen an ihrer Stelle das Inhaltsverzeichnis, das Register und das Literaturverzeichnis.
 
 <table>
   <thead>
@@ -33,7 +33,7 @@ Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}
     </tr>
     <tr>
       <td><code>:::pagebreak&#123;parity="odd"&#125;</code></td>
-      <td>Ebenso, und die neue Seite ist zudem ungerade (rechte Seite). Fügt bei Bedarf eine leere Füllseite ein.</td>
+      <td>Ebenso, und die neue Seite ist zudem ungerade (rechte Seite). Fügt bei Bedarf eine Vakatseite ein.</td>
     </tr>
     <tr>
       <td><code>:::pagebreak&#123;parity="even"&#125;</code></td>
@@ -41,7 +41,7 @@ Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}
     </tr>
     <tr>
       <td><code>:::pagebreak&#123;parity="always-odd"&#125;</code></td>
-      <td>Garantiert mindestens eine verpflichtende leere Trennseite, bevor eine ungerade Seite erreicht wird. Die leere Trennseite gehört zum vorangehenden Inhalt, jede weitere Füllseite für die Parität zum folgenden. Nützlich, wenn jedes Kapitel auf einer neuen Doppelseite beginnen muss.</td>
+      <td>Garantiert mindestens eine verpflichtende Vakatseite als Trennseite, bevor eine ungerade Seite erreicht wird. Diese Trennseite gehört zum vorangehenden Inhalt, jede weitere Vakatseite für die Parität zum folgenden. Nützlich, wenn jedes Kapitel auf einer neuen Doppelseite beginnen muss.</td>
     </tr>
     <tr>
       <td><code>:::pagebreak&#123;parity="always-even"&#125;</code></td>
@@ -68,6 +68,10 @@ Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}
       <td>Setzt hier das Register: jeden im Buch mit <code>:index</code> ausgezeichneten Begriff, sortiert und nach Buchstaben gruppiert, mit den Seiten, auf denen er vorkommt, gesetzt nach der Konfiguration <code>index</code>. <code>:::index&#123;index="names"&#125;</code> setzt ein benanntes Register. Siehe <a href="/de/docs/document-format-notes-references#register">Register</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Setzt hier das Verzeichnis der zitierten Werke im Zitierstil. <code>title</code> ändert die Überschrift, <code>scope</code> den Umfang. Siehe <a href="/de/docs/document-format-notes-references#das-literaturverzeichnis">Das Literaturverzeichnis</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Eine Comicseite: ihre Zeilen <code>::panel</code> und deren Skriptzeilen, gesetzt als Panels und geletterte Sprechblasen auf einer eigenen Seite. Siehe <a href="#comics">Comics</a>.</td>
     </tr>
@@ -82,20 +86,21 @@ Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}
   </tbody>
 </table>
 
-Attributwerte können in doppelten (<code>"…"</code>) oder einfachen Anführungszeichen (<code>'…'</code>) stehen oder ohne (<code>startAt=17</code>). Ein Schlüssel ohne `=` gilt als gesetztes, aber leeres Flag.
+Attributwerte können in doppelten (<code>"…"</code>) oder einfachen Anführungszeichen (<code>'…'</code>) stehen oder ohne (<code>startAt=17</code>). Ein Schlüssel ohne `=` gilt als gesetztes, aber leeres Attribut (ein Attribut ohne Wert).
 
-Derzeit werden nur `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` und `index` als einzeilige Direktiven erkannt (und `references`, `verse`, `page` und `strip` als Direktivenblöcke) – jede andere Zeile `:::name`, die kein Container ist (siehe unten), wird als Absatz gelesen und löst in der Sandbox die Warnung **Unbekannte Direktive** aus. Auch die Engine vermerkt sie, als Eintrag `unknownDirective` in den `contentWarnings` des Dokuments (siehe [Konfiguration › Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument)).
+Derzeit werden nur `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` und `bibliography` als einzeilige Direktiven erkannt (und `references`, `verse`, `page`, `strip` und `figure` als Blöcke) – jede andere Zeile `:::name`, die kein Container ist (siehe unten), wird als Absatz gelesen und löst in der Sandbox die Warnung **Unbekannte Direktive** aus. Auch die Engine vermerkt sie, als Eintrag `unknownDirective` in den `contentWarnings` des Dokuments (siehe [Konfiguration › Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument)).
 
 ### Attributwerte
 
-Dieselbe Syntax `key="value"` lesen Attribute von Überschriften, Direktivenblöcke von Direktiven und Containern (`:::name{…}`), Querverweise im Text (`:ref{…}`), Chips (`:chip[…]{…}`), Farbfelder (`:swatch{…}`) und Registermarken (`:index[…]{…}`). Es gelten folgende Regeln:
+Dieselbe Syntax `key="value"` gilt für Attribute von Überschriften, für die öffnenden Zeilen von Direktiven und Containern (`:::name{…}`), Querverweise im Text (`:ref{…}`), Chips (`:chip[…]{…}`), Farbfelder (`:swatch{…}`) und Registermarken (`:index[…]{…}`). Es gelten folgende Regeln:
 
-- **Schlüssel** beginnen mit einem ASCII-Buchstaben oder `_` und setzen sich mit ASCII-Buchstaben, Ziffern, `_` oder `-` fort. Leerzeichen um `=` sind erlaubt, das vollbreite `＝`, das eine chinesische Eingabemethode tippt, wirkt wie `=`, ein wiederholter Schlüssel behält seinen letzten Wert, und ein Schlüssel ohne `=` ist ein Flag mit leerem Wert. Ein Schlüssel in einer anderen Schrift (`作者=曹雪芹`) wird nicht gelesen und löst die Warnung `attributeKeyInvalid` aus; die übrigen Schlüssel des Blocks gelten weiterhin. Werte dürfen in jeder Schrift stehen.
-- **Werte in Anführungszeichen.** Ein Wert in doppelten Anführungszeichen darf alles außer `"` enthalten, einfache Anführungszeichen eingeschlossen; ein Wert in einfachen alles außer `'`. Ein Wert mit doppelten Anführungszeichen steht also in einfachen: `lead='He said "hi"'`. Escape-Sequenzen gibt es nicht – ein Backslash ist ein gewöhnliches Zeichen –, daher nimmt ein Wert, der beide ASCII-Anführungszeichen braucht, typografische (`“…”`, `’`). Ein Wert darf auch mit dem typografischen `“` oder der Eckklammer `「` beginnen, die eine chinesische Eingabemethode tippt, und reicht dann, Leerzeichen eingeschlossen, bis zum passenden `”` bzw. `」`: `title=“甲戌本 眉批”`, `title=「脂批」`.
-- **Werte ohne Anführungszeichen** (`startAt=17`, `year=1998`) reichen bis zum nächsten Leerzeichen: `title=Hello world` ergibt `title="Hello"` und dazu ein Flag `world`.
-- **Keine geschweiften Klammern.** `{` und `}` stehen nie in einem Wert. Die erste `}` beendet den Block: Ein Direktivenblock, dessen Wert eine enthält, ist keine Direktive mehr, sondern ein Absatz, und im Fließtext läuft der Rest des Werts in den Text über. In einer Überschrift bleibt bei einer Klammer in einem Wert der ganze Block im Titel: `# Title {note="a {b"}` wird so gesetzt, wie es geschrieben ist. (Bis postext 1.8 begann ein `{` nach einem Leerzeichen den Block neu, und `b` wurde als Flag gelesen.)
+- **Schlüssel** beginnen mit einem ASCII-Buchstaben oder `_` und setzen sich mit ASCII-Buchstaben, Ziffern, `_` oder `-` fort. Leerzeichen um `=` sind erlaubt, das vollbreite `＝`, das eine chinesische Eingabemethode tippt, wirkt wie `=`, ein wiederholter Schlüssel behält seinen letzten Wert, und ein Schlüssel ohne `=` ist ein Attribut ohne Wert. Ein Schlüssel in einer anderen Schrift (`作者=曹雪芹`) wird nicht gelesen und löst die Warnung `attributeKeyInvalid` aus; die übrigen Schlüssel des Blocks gelten weiterhin. Werte dürfen in jeder Schrift stehen.
+- **Werte in Anführungszeichen.** Ein Wert in doppelten Anführungszeichen darf alles außer `"` enthalten, einfache Anführungszeichen eingeschlossen; ein Wert in einfachen alles außer `'`. Ein Wert mit doppelten Anführungszeichen steht also in einfachen: `lead='He said "hi"'`. Escape-Sequenzen gibt es nicht – ein Backslash ist ein gewöhnliches Zeichen –, daher verwendet ein Wert, der beide ASCII-Anführungszeichen braucht, typografische (`“…”`, `’`). Ein Wert darf auch mit dem typografischen `“` oder der Eckklammer `「` beginnen, die eine chinesische Eingabemethode tippt, und reicht dann, Leerzeichen eingeschlossen, bis zum passenden `”` bzw. `」`: `title=“甲戌本 眉批”`, `title=「脂批」`.
+- **Werte ohne Anführungszeichen** (`startAt=17`, `year=1998`) reichen bis zum nächsten Leerzeichen: `title=Hello world` ergibt `title="Hello"` und dazu ein Attribut `world` ohne Wert.
+- **Keine geschweiften Klammern.** `{` und `}` stehen nie in einem Wert. Die erste `}` beendet den Block: Eine öffnende Zeile, deren Wert eine enthält, ist keine Direktive mehr, sondern ein Absatz, und im Fließtext läuft der Rest des Werts in den Text über. In einer Überschrift bleibt bei einer Klammer in einem Wert der ganze Block im Titel: `# Title {note="a {b"}` wird so gesetzt, wie es geschrieben ist. (Bis postext 1.8 begann ein `{` nach einem Leerzeichen den Block neu, und `b` wurde als Attribut ohne Wert gelesen.)
 - **Dollarzeichen sind gewöhnlicher Text.** Attribute werden vor den Formeln im Text gelesen, daher ist `lead="from $5 to $6"` einfach Text.
 - **Eine Zeile.** Ein Attributblock erstreckt sich nie über mehrere Zeilen.
+- **Kennungen.** `#key-idea`, die Kurzform aus Pandoc, steht für `id="key-idea"`: `{#sec-method}` an einer Überschrift, `:::callout{#box-safety}` an einer öffnenden Zeile. Sie benennt den Block für [Querverweise](/de/docs/document-format-notes-references#querverweise-und-verweisziele).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,11 +110,11 @@ Dieselbe Syntax `key="value"` lesen Attribute von Überschriften, Direktivenblö
 :::
 ```
 
-`::resource{id="…"}` ist strenger: die ID in doppelten Anführungszeichen und kein weiteres Attribut (siehe [Ressourcen](/de/docs/document-format-resources#ressourcen)).
+`::resource{id="…"}` ist strenger: die ID in doppelten Anführungszeichen und kein weiteres Attribut (siehe [Ressourcen](/de/docs/document-format-resources#ressourcen)). Auf einer zusammengesetzten Seite nimmt es außerdem `slot="…"` an (siehe [Zusammengesetzte Seiten](#zusammengesetzte-seiten)).
 
 ### Container
 
-Ein Container fasst eine Folge von Blöcken in einem Direktivenblock zusammen: eine öffnende Zeile `:::name` oder `:::name{attrs}`, danach beliebiger gewöhnlicher Inhalt – Absätze, Überschriften, Listen, Zitate, Formeln, sogar weitere Direktiven – und eine schließende Zeile, die nur `:::` enthält. Container lassen sich verschachteln; jedes schließende `:::` schließt den innersten offenen.
+Ein Container fasst eine Folge von Blöcken zu einem Block zusammen: eine öffnende Zeile `:::name` oder `:::name{attrs}`, danach beliebiger gewöhnlicher Inhalt – Absätze, Überschriften, Listen, Zitate, Formeln, sogar weitere Direktiven – und eine schließende Zeile, die nur `:::` enthält. Container lassen sich verschachteln; jedes schließende `:::` schließt den innersten offenen.
 
 ```
 :::callout{type="note"}
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Im Textfluss werden fünf Containernamen erkannt. Was jeder davon darstellt, legt ein eigener Abschnitt der Konfiguration fest:
+Im Textfluss werden fünf Containernamen erkannt; ein sechster, `:::frame`, nimmt den Inhalt eines Rahmens auf einer [zusammengesetzten Seite](#zusammengesetzte-seiten) auf. Was jeder davon darstellt, legt ein eigener Abschnitt der Konfiguration fest:
 
 <table>
   <thead>
@@ -144,7 +149,7 @@ Im Textfluss werden fünf Containernamen erkannt. Was jeder davon darstellt, leg
     </tr>
     <tr>
       <td><code>:::paper&#123;…&#125;</code> … <code>:::</code></td>
-      <td>Eine Folge von Seiten, die auf einem anderen Papier gedruckt werden, etwa ein Bildteil auf Glanzpapier in einem Buch auf mattem Papier. Nur der Betrachter Folio zeigt das an.</td>
+      <td>Eine Folge von Seiten, die auf einem anderen Papier gedruckt werden, etwa ein Bildteil auf Glanzpapier in einem Buch auf mattem Papier. Nur der Folio-Betrachter zeigt das an.</td>
     </tr>
     <tr>
       <td><code>:::columns&#123;…&#125;</code> … <code>:::</code></td>
@@ -153,7 +158,7 @@ Im Textfluss werden fünf Containernamen erkannt. Was jeder davon darstellt, leg
   </tbody>
 </table>
 
-Welche Attribute jeder Container annimmt und wie er gestaltet wird, beschreibt die [Konfiguration](/de/docs/configuration). Attributwerte folgen derselben Grammatik wie bei Direktiven. Ein Direktivenblock `:::callout` nimmt `type` (die ID eines konfigurierten Kastenformats – unbekannte oder fehlende Typen fallen auf das erste Format zurück), `title` (ersetzt den Standardtitel des Formats) sowie `span` / `placement` (`column`, `page` oder `side`; `here`, `top`, `bottom` oder `fixed`), um Ausdehnung und Position des Formats für diesen Kasten zu überschreiben:
+Welche Attribute jeder Container annimmt und wie er gestaltet wird, beschreibt die [Konfiguration](/de/docs/configuration). Attributwerte folgen derselben Grammatik wie bei Direktiven. Ein `:::callout` nimmt `type` (die ID eines konfigurierten Kastenstils – unbekannte oder fehlende Typen fallen auf den ersten Stil zurück), `title` (ersetzt den Standardtitel des Stils) sowie `span` / `placement` (`column`, `page` oder `side`; `here`, `top`, `bottom` oder `fixed`), um Ausdehnung und Position des Stils für diesen Kasten zu überschreiben:
 
 ```
 :::callout{type="objectives" title="What you will learn" span="page" placement="top"}
@@ -166,9 +171,15 @@ Ein gleitender Kasten (`placement` `auto`, `top` oder `bottom`) nimmt außerdem 
 
 Ein Kasten kann den Text nach ihm auch neben sich laufen lassen: `wrap` (`left`, `right`, `start` oder `end`), `width` (sein Anteil an der Spalte, 0 bis 1; ohne Angabe `layout.wrap.defaultWidth`) und `wrapGap` (eine Länge wie `6pt`), wie in `:::callout{wrap="right" width=0.4}` (siehe [Textumfluss](/de/docs/document-format-resources#textumfluss); seit postext 1.24).
 
-Ein Kasten wird als Box gesetzt – ein optionaler Titel, danach der Inhalt in der Grundtext- und Listentypografie des Formats. Standardmäßig bleibt er zusammen und wandert als Ganzes in die nächste Spalte oder auf die nächste Seite, wenn er nicht passt (ein Kasten, der höher ist als eine ganze Spalte, wird trotzdem geteilt, statt überzulaufen); ein Format mit `keepTogether: false` erlaubt die Teilung zwischen seinen Blöcken oder zwischen Zeilen, wobei auf jeder Seite des Schnitts mindestens `splitMinLines` Textzeilen bleiben – oder eine Abbildung, eine Tabelle, eine abgesetzte Formel bzw. ein verschachtelter Kasten (ein Schnitt innerhalb eines Absatzes oder Listenpunkts lässt zudem auf jeder Seite mindestens `layout.boxChildSplitMinLines` seiner Zeilen stehen: standardmäßig zwei, `splitMinLines`, wenn dieser Wert kleiner ist; vor 1.5 gespeicherte Bücher, deren Kapitel einen Kasten enthalten, werden mit 1 gelesen, dem Schnitt von 1.4). Jeder Teil nach dem ersten beginnt ohne das Symbol, wobei sein Text die Spalte des Symbols beibehält, und ohne den Titel, sofern das Format ihn nicht wiederholt (`repeatTitle`: „Key points (cont.)“); ein Format kann außerdem unter jeden Teil, der weitergeht, einen Vermerk „Fortsetzung“ setzen (`continuesMarkerEnabled`) – siehe [Hinweise an einem geteilten Kasten](/de/docs/configuration-callouts#hinweise-an-einem-geteilten-kasten). Kästen über die ganze Seitenbreite (`span="page"`) teilen die Seite in Spaltenbänder; Kästen mit `span="side"` verlassen den Fluss und wandern in die Randspalte eines anderthalbspaltigen Layouts, die nur Gleitobjekte aufnimmt (`layout.sideColumnRole: 'floats'`), gestapelt neben dem Text, den sie unterbrechen, und werden als Spaltenkästen gesetzt, wo es keine solche Spalte gibt; Kästen mit `placement="fixed"` verlassen den Fluss und werden an Seitenkoordinaten fixiert (etwa ein Selbsttest-Abzeichen in der unteren linken Ecke der letzten Seite eines Kapitels), wobei die überdeckten Spalten diesen Bereich freigeben; gleitende Kästen (`placement="top"` / `"bottom"`) verlassen den Fluss an ihrer Stelle und belegen das erste freie Band nach dieser Position – den Fuß der Seite oder Kopf bzw. Fuß der nächsten –, während der Text nach ihnen die verlassene Seite füllt. Ein Format mit `floatBarrier: true` (typischerweise der abschließende Kasten „Key points“ eines Kapitels) macht den Kasten zu einer **Gleitobjekt-Sperre**: Jede vor ihm referenzierte Abbildung oder Tabelle wird vor ihm platziert – in den freien Plätzen der Seite oder auf Seiten, die vor dem Kasten geöffnet werden –, sodass kein Gleitobjekt über das Ende seines Kapitels hinausrutscht. Ein unbekannter Direktivenblock `:::name` ist kein Container – die Zeile wird als Text behandelt, genau wie eine unbekannte Direktive.
+Ein `:::callout` wird als Kasten gesetzt – ein optionaler Titel, danach der Inhalt in der Grundtext- und Listentypografie des Stils. Standardmäßig bleibt er zusammen und wandert als Ganzes in die nächste Spalte oder auf die nächste Seite, wenn er nicht passt (ein Kasten, der höher ist als eine ganze Spalte, wird trotzdem geteilt, statt überzulaufen); ein Stil mit `keepTogether: false` erlaubt die Teilung zwischen seinen Blöcken oder zwischen Zeilen, wobei auf jeder Seite des Schnitts mindestens `splitMinLines` Textzeilen bleiben – oder eine Abbildung, eine Tabelle, eine abgesetzte Formel bzw. ein verschachtelter Kasten (ein Schnitt innerhalb eines Absatzes oder Listenpunkts lässt zudem auf jeder Seite mindestens `layout.boxChildSplitMinLines` seiner Zeilen stehen: standardmäßig zwei, `splitMinLines`, wenn dieser Wert kleiner ist; vor 1.5 gespeicherte Bücher, deren Kapitel einen Kasten enthalten, werden mit 1 gelesen, dem Schnitt von 1.4).
 
-Ein Direktivenblock `:::part` nimmt `number` (so, wie die Nummer gedruckt werden soll – `"I"`, `"IV"`, `"3"`; sie wird zudem ausgewertet, damit die Gestaltung sie umformatieren kann) und `title`; beide sind optional. Ein drittes Attribut, `palette="band=#hex"` (mehrere Paare `id=#hex`, durch Kommas getrennt), färbt jede Gestaltungsfarbe um, die mit diesen Paletten-IDs verknüpft ist – Kolumnentitel, Auftaktband, Gestaltungen der Teile –, und die Farben des Textflusses mit demselben Grundwert (Überschriften, Fettes, Querverweise, Aufzählungszeichen, Legenden, Tabellen, Kästen, Chips), und zwar für den Teil und die folgenden Kapitel bis zum nächsten Teil; siehe [Konfiguration › Teile](/de/docs/configuration-styles#teile). Der Container öffnet stets eine eigene Seite: davor ein Seitenumbruch mit der konfigurierten Parität, eine einzige Textspalte mit den Rändern `parts.margins`, die Auftaktgestaltung über die ganze Seite und nach der schließenden Zeile des Direktivenblocks ein weiterer Seitenumbruch. Der Inhalt – meist die Liste der Kapitel, die der Teil zusammenfasst, oder gar nichts – wird mit `parts.bodyStyle` gesetzt:
+Jeder Teil nach dem ersten beginnt ohne das Symbol, wobei sein Text die Spalte des Symbols beibehält, und ohne den Titel, sofern der Stil ihn nicht wiederholt (`repeatTitle`: „Key points (cont.)“); ein Stil kann außerdem unter jeden Teil, der weitergeht, einen Vermerk „Fortsetzung“ setzen (`continuesMarkerEnabled`) – siehe [Vermerke an einem geteilten Kasten](/de/docs/configuration-callouts#vermerke-an-einem-geteilten-kasten).
+
+Seitenbreite Kästen (`span="page"`) teilen die Seite in Spaltenbereiche. Kästen mit `span="side"` verlassen den Fluss und kommen in die Randspalte eines anderthalbspaltigen Layouts, die nur Gleitobjekte aufnimmt (`layout.sideColumnRole: 'floats'`), gestapelt neben dem Text, den sie unterbrechen; wo es keine solche Spalte gibt, werden sie als Spaltenkästen gesetzt. Kästen mit `placement="fixed"` verlassen den Fluss und werden an Seitenkoordinaten fixiert (etwa ein Selbsttest-Abzeichen in der unteren linken Ecke der letzten Seite eines Kapitels); die überdeckten Spalten geben diesen Bereich frei. Gleitende Kästen (`placement="top"` / `"bottom"`) verlassen den Fluss an ihrer Stelle und nehmen den ersten freien Platz nach dieser Stelle ein – am Fuß der Seite oder am Kopf bzw. Fuß der nächsten –, während der Text nach ihnen die verlassene Seite füllt.
+
+Ein Stil mit `floatBarrier: true` (typischerweise der abschließende Kasten „Key points“ eines Kapitels) macht den Kasten zu einer **Gleitobjektsperre**: Jede vor ihm referenzierte Abbildung oder Tabelle wird vor ihm platziert – auf den freien Plätzen der Seite oder auf Seiten, die vor dem Kasten geöffnet werden –, sodass kein Gleitobjekt über das Ende seines Kapitels hinausrutscht. Ein unbekanntes `:::name` ist kein Container – die Zeile wird als Text behandelt, genau wie eine unbekannte Direktive.
+
+Ein `:::part` nimmt `number` (die Nummer so, wie sie erscheinen soll – `"I"`, `"IV"`, `"3"`; sie wird zudem ausgewertet, damit die Gestaltung sie umformatieren kann) und `title`; beide sind optional. Ein drittes Attribut, `palette="band=#hex"` (mehrere Paare `id=#hex`, durch Kommas getrennt), färbt jede Gestaltungsfarbe um, die mit diesen Paletten-IDs verknüpft ist – Kolumnentitel, Auftaktband, Gestaltungen der Teile –, und die Farben des Textflusses mit demselben Grundwert (Überschriften, Fettes, Querverweise, Aufzählungszeichen, Legenden, Tabellen, Kästen, Chips), und zwar für den Teil und die folgenden Kapitel bis zum nächsten Teil; siehe [Konfiguration › Teile](/de/docs/configuration-styles#teile). Der Container öffnet stets eine eigene Seite: davor ein Seitenumbruch mit der konfigurierten Parität, eine einzige Textspalte mit den Rändern `parts.margins`, die Auftaktgestaltung über die ganze Seite und nach der schließenden Zeile ein weiterer Seitenumbruch. Der Inhalt – meist die Liste der Kapitel, die der Teil zusammenfasst, oder gar nichts – wird mit `parts.bodyStyle` gesetzt:
 
 ```
 :::part{number="I" title="Foundations"}
@@ -181,11 +192,11 @@ Ein Direktivenblock `:::part` nimmt `number` (so, wie die Nummer gedruckt werden
 
 Mit den Standardeinstellungen für Überschriften ergibt das die klassische Folge: Teiltitelseite rechts, leere linke Seite, Kapitel auf der nächsten rechten Seite. Die Seite wird als `role: 'part'` gemeldet, damit Kopf- und Fußzeilen sie auslassen können, und `{partTitle}` / `{partNumber}` lösen sich auf jeder folgenden Seite in den aktuellen Teil auf. Siehe [Teile](/de/docs/configuration-styles#teile) in der Konfigurationsreferenz.
 
-Vor einem Direktivenblock braucht es keine Leerzeile: Eine öffnende oder schließende Zeile eines Direktivenblocks direkt unter einem Absatz, einer Liste oder einem Zitat beendet diesen Block. Ein Container, der am Ende des Dokuments noch offen ist, wird dort automatisch geschlossen, und die Sandbox meldet die Warnung **Nicht geschlossener Container** mit Verweis auf die öffnende Zeile. Ein einzelnes `:::` ohne offenen Container bleibt als sichtbarer Absatz im Text, statt stillschweigend zu verschwinden.
+Vor einem Block braucht es keine Leerzeile: Eine öffnende oder schließende Zeile direkt unter einem Absatz, einer Liste oder einem Zitat beendet diesen Absatz, diese Liste oder dieses Zitat. Ein Container, der am Ende des Dokuments noch offen ist, wird dort automatisch geschlossen, und die Sandbox meldet die Warnung **Nicht geschlossener Container** mit Verweis auf die öffnende Zeile. Ein einzelnes `:::` ohne offenen Container bleibt als sichtbarer Absatz im Text, statt stillschweigend zu verschwinden.
 
 ### `:::columns`
 
-Eine Gruppe `:::columns{count=2}` … `:::` setzt die Blöcke innerhalb ihres Direktivenblocks in `count` gleich breiten Spalten (2 bis 6); der Text danach nimmt wieder die volle Breite ein. In einem `:::callout` teilen sich die Spalten die Innenbreite des Kastens, im Abstand `columnGap` des Formats, in der Grundtext- und Listentypografie des Kastens, und der Kasten wächst bis zur höchsten Spalte. Im laufenden Text (seit postext 1.25) teilen sie sich die Textspalte, eine Zeile des Grundtexts voneinander entfernt, und die Blöcke behalten die Typografie des Texts; mit `span="page"` auf einer mehrspaltigen Seite teilt die Gruppe die Seite in ein Band, wie es ein Kasten über die ganze Seitenbreite tut: Die Spalten darüber schließen auf gleicher Höhe, die Gruppe wird über die ganze Inhaltsbreite gesetzt (im Abstand des Spaltenabstands), und der Text läuft darunter in allen Spalten weiter. Auf einer einspaltigen Seite setzt `span="page"` sie in die Spalte. Überschriften in einer Gruppe behalten ihr Format, ihre Nummer und ihren Eintrag im Inhaltsverzeichnis, eine darin zitierte Fußnote kommt an den Fuß der Textspalte, und Abbildungen, auf die sie verweist, gleiten wie gewohnt.
+Eine Gruppe `:::columns{count=2}` … `:::` setzt die Blöcke zwischen ihrer öffnenden und ihrer schließenden Zeile in `count` gleich breiten Spalten (2 bis 6); der Text danach nimmt wieder die volle Breite ein. In einem `:::callout` teilen sich die Spalten die Innenbreite des Kastens, im Abstand `columnGap` des Stils, in der Grundtext- und Listentypografie des Kastens, und der Kasten wächst bis zur höchsten Spalte. Im laufenden Text (seit postext 1.25) teilen sie sich die Textspalte, eine Zeile des Grundtexts voneinander entfernt, und die Blöcke behalten die Typografie des Texts. Mit `span="page"` auf einer mehrspaltigen Seite bildet die Gruppe einen eigenen Bereich, wie ein seitenbreiter Kasten: Die Spalten darüber enden auf gleicher Höhe, die Gruppe wird über die ganze Breite des Satzspiegels gesetzt (mit dem Spaltenabstand zwischen ihren Spalten), und der Text läuft darunter in allen Spalten weiter. Auf einer einspaltigen Seite setzt `span="page"` sie in die Spalte. Überschriften in einer Gruppe behalten ihren Stil, ihre Nummer und ihren Eintrag im Inhaltsverzeichnis, eine darin zitierte Fußnote kommt an den Fuß der Textspalte, und Abbildungen, auf die sie verweist, gleiten wie gewohnt.
 
 <table>
   <thead>
@@ -201,7 +212,7 @@ Eine Gruppe `:::columns{count=2}` … `:::` setzt die Blöcke innerhalb ihres Di
     </tr>
     <tr>
       <td><code>gap</code></td>
-      <td>Der Abstand zwischen den Spalten, eine Länge (<code>12pt</code>, <code>1em</code>, <code>4mm</code>). Standard: <code>columnGap</code> des Kastenformats in einem Kasten, eine Zeile des Grundtexts in der Textspalte, <code>layout.gutterWidth</code> über die Seite.</td>
+      <td>Der Abstand zwischen den Spalten, eine Länge (<code>12pt</code>, <code>1em</code>, <code>4mm</code>). Standard: <code>columnGap</code> des Kastenstils in einem Kasten, eine Zeile des Grundtexts in der Textspalte, <code>layout.gutterWidth</code> über die Seite.</td>
     </tr>
     <tr>
       <td><code>rule</code></td>
@@ -230,9 +241,9 @@ Eine Gruppe `:::columns{count=2}` … `:::` setzt die Blöcke innerhalb ihres Di
   </tbody>
 </table>
 
-Eine Gruppe, die als Ganzes gesetzt wird, wird dort geschnitten, wo ihre Spalten am besten auf gleicher Höhe enden – zwischen Blöcken oder zwischen den Zeilen eines Absatzes oder Listenpunkts, dessen Rest am Kopf der nächsten Spalte ohne Aufzählungszeichen weiterläuft –, es sei denn, `breaks` legt die Spaltenanfänge fest, ohne Schnitt innerhalb eines Absatzes: eine Textspalte neben einer Abbildungsspalte. Ein Schnitt innerhalb eines Absatzes oder Listenpunkts lässt mindestens `bodyText.widowMinLines` seiner Zeilen am Fuß der Spalte und `bodyText.orphanMinLines` am Kopf der nächsten (standardmäßig je zwei; eine, wenn `avoidWidows` bzw. `avoidOrphans` aus ist), und der Abstand vor einem Block entfällt am Spaltenkopf. Unter den Schnitten, die diese Regeln erlauben, nimmt die Gruppe den, bei dem die höchste Spalte am niedrigsten ist: Zwei Absätze von sechs und fünf Zeilen stehen 6 | 5, nie 5 | 1 + 5 (seit postext 1.39).
+Eine Gruppe, die als Ganzes gesetzt wird, wird dort geschnitten, wo ihre Spalten am besten auf gleicher Höhe enden – zwischen Blöcken oder zwischen den Zeilen eines Absatzes oder Listenpunkts, dessen Rest am Kopf der nächsten Spalte ohne Aufzählungszeichen weiterläuft –, es sei denn, `breaks` legt die Spaltenanfänge fest; dann wird kein Absatz geschnitten (etwa bei einer Textspalte neben einer Abbildungsspalte). Ein Schnitt innerhalb eines Absatzes oder Listenpunkts lässt mindestens `bodyText.widowMinLines` seiner Zeilen am Fuß der Spalte und `bodyText.orphanMinLines` am Kopf der nächsten (standardmäßig je zwei; eine, wenn `avoidWidows` bzw. `avoidOrphans` aus ist), und der Abstand vor einem Block entfällt am Spaltenkopf. Unter den Schnitten, die diese Regeln erlauben, nimmt die Gruppe den, bei dem die höchste Spalte am niedrigsten ist: Zwei Absätze von sechs und fünf Zeilen stehen 6 | 5, nie 5 | 1 + 5 (seit postext 1.39).
 
-**Der Raum um eine Gruppe.** Im laufenden Text folgt auf eine Gruppe der Absatzabstand des Grundtexts (eine Zeile bei `bodyText.paragraphSpacing`, ohne ihn keiner), in einem Kasten kein eigener Abstand. `marginTop` und `marginBottom` am Direktivenblock legen ihn fest: `:::columns{count=3 span="page" marginBottom="0.75em"}`. Jeder ist ein Mindestwert, der mit dem Abstand verschmilzt, den der benachbarte Block für sich beansprucht, wie es die Ränder eines Kastens tun. Im laufenden Text kehrt der Fluss unter der Gruppe zum Grundlinienraster zurück, sodass der Abstand in ganzen Zeilen ausfällt, und eine auf Spalten oder Seiten verteilte Gruppe behält den oberen Abstand für ihren ersten und den unteren für ihren letzten Teil. Ein `em` ist die Größe des Texts, in dem die Gruppe steht; ein Wert, der keine Länge ist, oder ein negativer Wert wird ignoriert.
+**Der Raum um eine Gruppe.** Im laufenden Text folgt auf eine Gruppe der Absatzabstand des Grundtexts (eine Zeile bei `bodyText.paragraphSpacing`, ohne ihn keiner), in einem Kasten kein eigener Abstand. `marginTop` und `marginBottom` in der öffnenden Zeile legen ihn fest: `:::columns{count=3 span="page" marginBottom="0.75em"}`. Jeder ist ein Mindestwert, der mit dem Abstand verschmilzt, den der benachbarte Block für sich beansprucht, wie es die Ränder eines Kastens tun. Im laufenden Text kehrt der Fluss unter der Gruppe zum Grundlinienraster zurück, sodass der Abstand in ganzen Zeilen ausfällt, und eine auf Spalten oder Seiten verteilte Gruppe behält den oberen Abstand für ihren ersten und den unteren für ihren letzten Teil. Ein `em` ist die Größe des Texts, in dem die Gruppe steht; ein Wert, der keine Länge ist, oder ein negativer Wert wird ignoriert.
 
 ```md
 :::callout{type="summary"}
@@ -244,7 +255,7 @@ Eine Gruppe, die als Ganzes gesetzt wird, wird dort geschnitten, wo ihre Spalten
 :::
 ```
 
-**Wie `breaks` zählt.** `breaks` nummeriert die Blöcke der Gruppe der Reihe nach – Absätze, Listenpunkte (jeder ein Block), abgesetzte Formeln, Abbildungen und Tabellen –, und ein verschachteltes `:::callout` zählt als ein Block, gleich wie viele es enthält. Direktiven sind keine Blöcke: Ein `:::space` zwischen zwei Strophen verschiebt die Zählung nicht. Eine Zahl unter 2, eine jenseits des letzten Blocks der Gruppe oder eine, die nicht nach dem vorigen Umbruch liegt, wird ignoriert. In einer Gruppe trennt `:::space` zwei Blöcke wie überall in einem Kasten und entfällt am Kopf der Gruppe und am Kopf jeder ihrer Spalten (an einer Position aus `breaks` oder einem Ausgleichsschnitt) – um die Gruppe tiefer beginnen zu lassen, setzen Sie den Raum vor den Direktivenblock `:::columns`. Zwei Spalten mit denselben Abständen stehen daher Strophe für Strophe auf gleicher Höhe:
+**Wie `breaks` zählt.** `breaks` nummeriert die Blöcke der Gruppe der Reihe nach – Absätze, Listenpunkte (jeder ein Block), abgesetzte Formeln, Abbildungen und Tabellen –, und ein verschachteltes `:::callout` zählt als ein Block, gleich wie viele es enthält. Direktiven sind keine Blöcke: Ein `:::space` zwischen zwei Strophen verschiebt die Zählung nicht. Eine Zahl unter 2, eine jenseits des letzten Blocks der Gruppe oder eine, die nicht nach dem vorigen Umbruch liegt, wird ignoriert. In einer Gruppe trennt `:::space` zwei Blöcke wie überall in einem Kasten und entfällt am Kopf der Gruppe und am Kopf jeder ihrer Spalten (an einer Position aus `breaks` oder einem Ausgleichsschnitt) – um die Gruppe tiefer beginnen zu lassen, setzen Sie den Raum vor die Zeile `:::columns`. Zwei Spalten mit denselben Abständen stehen daher Strophe für Strophe auf gleicher Höhe:
 
 ```md
 :::callout{type="verse"}
@@ -275,9 +286,9 @@ Hier beginnt der vierte Block, „La lámpara…“, die zweite Spalte; die beid
 Seit postext 1.25 wird eine Gruppe, die nicht in den verfügbaren Raum passt – den Rest ihrer Spalte im laufenden Text oder den Teil eines Kastens, der geteilt wird (`keepTogether: false` oder ein Kasten, der höher ist als eine Spalte) –, zwischen ihren Spalten geschnitten und läuft in der nächsten Spalte oder auf der nächsten Seite weiter, bei einer Gruppe in einem Kasten in einem eigenen Kasten:
 
 - **`flow="snake"`**, der Standard ohne `breaks`: Die Blöcke der Gruppe laufen als eine Fahne durch, wie der Text eines Zeitungsartikels. Ein fortgesetzter Teil füllt seine Spalten nacheinander, so gleich hoch, wie es die Schnitte erlauben, und schneidet zwischen Blöcken oder zwischen den Zeilen eines Absatzes oder Listenpunkts (mindestens `layout.boxChildSplitMinLines` seiner Zeilen auf jeder Seite, standardmäßig zwei); der letzte Teil wird ausgeglichen wie eine ganze Gruppe.
-- **`flow="parallel"`**, der Standard mit `breaks`: Jeder Lauf, den die Umbrüche beginnen, ist ein Strom, der seine eigene Spalte behält. Ein Teil füllt jeden Strom bis zum verfügbaren Raum, und jeder läuft in derselben Spalte des nächsten Teils weiter, sodass ein Gedicht und seine nebeneinander gesetzte Übersetzung Strophe für Strophe auf gleicher Höhe bleiben. Eine parallele Gruppe ohne `breaks` läuft wie eine Snake-Gruppe als Fahne weiter.
+- **`flow="parallel"`**, der Standard mit `breaks`: Jede Folge von Blöcken, die an einem Umbruch beginnt, bildet einen Strang, der seine eigene Spalte behält. Ein Teil füllt jeden Strang so weit, wie der Raum reicht, und jeder läuft in derselben Spalte des nächsten Teils weiter, sodass ein Gedicht und seine nebeneinander gesetzte Übersetzung Strophe für Strophe auf gleicher Höhe bleiben. Eine parallele Gruppe ohne `breaks` läuft wie eine Snake-Gruppe als Fahne weiter.
 
-Ein verschachtelter Kasten in einer Gruppe bleibt ganz und wandert in den nächsten Teil, und eine Gruppe in einem verschachtelten Kasten wird nie geschnitten. Eine Gruppe, die passt, wird genau wie bisher gesetzt. `layout.flowColumns: false` behält die Regeln von postext 1.24 bei: Ein Direktivenblock außerhalb eines Kastens wird ignoriert, und eine Gruppe wird nie geschnitten; vor 1.25 gespeicherte Bücher mit einer Gruppe `:::columns` werden so gelesen. Die Sandbox meldet einen unbekannten Wert für `flow` (**Unbekannter Spaltenfluss**) und Spalten, die schmaler sind als sechs Geviert ihres Texts (**Spalten zu schmal**).
+Ein verschachtelter Kasten in einer Gruppe bleibt ganz und wandert in den nächsten Teil, und eine Gruppe in einem verschachtelten Kasten wird nie geschnitten. Eine Gruppe, die passt, wird genau wie bisher gesetzt. `layout.flowColumns: false` behält die Regeln von postext 1.24 bei: Eine Gruppe `:::columns` außerhalb eines Kastens wird ignoriert, und eine Gruppe wird nie geschnitten; vor 1.25 gespeicherte Bücher mit einer Gruppe `:::columns` werden so gelesen. Die Sandbox meldet einen unbekannten Wert für `flow` (**Unbekannter Spaltenfluss**) und Spalten, die schmaler sind als sechs Geviert ihres Texts (**Spalten zu schmal**).
 
 ```md
 ## Briefs
@@ -291,9 +302,9 @@ Ein verschachtelter Kasten in einer Gruppe bleibt ganz und wandert in den nächs
 :::
 ```
 
-Ein Direktivenblock `:::callout` nimmt außerdem `label="…"` an: den Text, den ein Format mit einem Reiter `label` an der oberen Ecke des Kastens druckt (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+Ein `:::callout` nimmt außerdem `label="…"` an: den Text, den ein Stil mit Etikett (`label`) an der oberen Ecke des Kastens ausgibt (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Jedes weitere Attribut der öffnenden Zeile liest die Gestaltung des Stils, falls er eine hat: `:::callout{type="card" kicker="Hinweis"}` gibt ihren Texten `{attr.kicker}`, und `{boxText}` setzt den Inhalt des Kastens selbst (siehe [Konfiguration › Gestaltung im Kasten](/de/docs/configuration-callouts#gestaltung-im-kasten)).
 
-Ein `:::callout` in einem anderen ist ein eigener Kasten – etwa eine Arbeitsblattkarte mit Antwortkästen. Er nimmt sein eigenes Format an (Hintergrund, Rahmen, Radius, Innenabstand, Titel, Symbol) in der vollen Innenbreite des äußeren Kastens und reiht sich zwischen dessen übrige Blöcke ein; seine Angaben `span` und `placement` werden ignoriert, da ein verschachtelter Kasten stets innerhalb seines Elternkastens fließt. Jede schließende Zeile eines Direktivenblocks schließt den innersten noch offenen Kasten:
+Ein `:::callout` in einem anderen ist ein eigener Kasten – etwa eine Arbeitsblattkarte mit Antwortkästen. Er hat seinen eigenen Stil (Hintergrund, Kontur, Eckenradius, Innenabstand, Titel, Symbol), nimmt die volle Innenbreite des äußeren Kastens ein und reiht sich zwischen dessen übrige Blöcke ein; seine Angaben `span` und `placement` werden ignoriert, da ein verschachtelter Kasten stets innerhalb seines Elternkastens fließt. Jede schließende Zeile schließt den innersten noch offenen Kasten:
 
 ```md
 :::callout{type="card"}
@@ -309,7 +320,7 @@ A second answer box.
 :::
 ```
 
-Wird der äußere Kasten auf Spalten oder Seiten verteilt (`keepTogether: false` oder höher als eine Spalte), wandert ein verschachtelter Kasten als Ganzes in das nächste Fragment, sofern sein eigenes Format nicht ebenfalls eine Teilung erlaubt; jedes Fragment zeichnet die Rahmen neu, die es enthält, und ein fortgesetzter verschachtelter Kasten verliert sein Symbol und seinen Titel, sofern sein Format ihn nicht wiederholt (`repeatTitle`).
+Wird der äußere Kasten auf Spalten oder Seiten verteilt (`keepTogether: false` oder höher als eine Spalte), wandert ein verschachtelter Kasten als Ganzes in den nächsten Teil, sofern sein eigener Stil nicht ebenfalls eine Teilung erlaubt; jeder Teil zeichnet die Konturen der Kästen neu, die er enthält, und ein fortgesetzter verschachtelter Kasten verliert sein Symbol und – sofern sein Stil ihn nicht wiederholt (`repeatTitle`) – seinen Titel.
 
 ### `:::paper`
 
@@ -323,9 +334,9 @@ Ein Buch kann für eine Folge von Seiten das Papier wechseln: ein Bildteil auf g
 :::
 ```
 
-Ein Papier umfasst ganze Bogen, daher beginnt der Inhalt des Direktivenblocks auf einer neuen Seite, und was auf das schließende `:::` folgt, ebenfalls. Ein Lauf am Ende des Dokuments hinterlässt danach keine leere Seite. Abbildungen und Tabellen, auf die innerhalb des Laufs verwiesen wird, werden platziert, bevor er endet. Jede Seite, die mit Inhalt aus dem Container gesetzt ist, trägt das Papier im Layout (`VDTPage.paper`, die Attribute so, wie der Direktivenblock sie schreibt); Seiten außerhalb tragen nichts. Der Betrachter Folio liest es und zeichnet diese Blätter mit Farbe, Oberfläche, Dicke und Steifigkeit des Papiers. Canvas-, PDF- und HTML-Ausgabe ignorieren es: Die Seiten werden wie alle anderen gesetzt und gedruckt.
+Eine Papiersorte umfasst ganze Blätter, daher beginnt der Inhalt des Blocks auf einer neuen Seite, und was auf das schließende `:::` folgt, ebenfalls. Steht ein solcher Block am Ende des Dokuments, folgt ihm keine Vakatseite. Abbildungen und Tabellen, auf die innerhalb des Blocks verwiesen wird, werden platziert, bevor er endet. Jede Seite, die mit Inhalt aus dem Container gesetzt ist, erhält im Layout die Papierangabe (`VDTPage.paper`, mit den Attributen, wie sie in der öffnenden Zeile stehen); Seiten außerhalb erhalten keine. Der Folio-Betrachter wertet sie aus und zeichnet diese Blätter mit Farbe, Oberfläche, Dicke und Steifigkeit des Papiers. Die Canvas-, PDF- und HTML-Ausgabe ignorieren sie: Die Seiten werden wie alle anderen gesetzt und ausgegeben.
 
-Die Attribute sind die der Einstellungen `folio.paper`, und alle sind optional. Was der Direktivenblock auslässt, folgt dem Papier des Dokuments und darüber hinaus den Standardwerten des Papiers:
+Die Attribute sind die der Einstellungen `folio.paper`, und alle sind optional. Ein Attribut, das in der öffnenden Zeile fehlt, übernimmt den Wert des Dokumentpapiers und, falls auch dort keiner steht, den Standardwert der Papiersorte:
 
 <table>
   <thead>
@@ -370,13 +381,13 @@ Die Attribute sind die der Einstellungen `folio.paper`, und alle sind optional. 
   </tbody>
 </table>
 
-Ein `:::paper` in einem anderen überschreibt nur die Attribute, die es setzt, und beginnt und endet ebenfalls mit einem Seitenumbruch. In einem `:::callout` werden die Direktivenblöcke ignoriert. Ein Wert, den die Engine nicht lesen kann, wird verworfen, und die Sandbox führt ihn als Warnung **Ungültiges Papierattribut** auf (`paperAttributeInvalid` in den `contentWarnings` des Dokuments).
+Ein `:::paper` in einem anderen überschreibt nur die Attribute, die es setzt, und beginnt und endet ebenfalls mit einem Seitenumbruch. In einem `:::callout` werden diese Blöcke ignoriert. Ein Wert, den die Engine nicht lesen kann, wird verworfen, und die Sandbox führt ihn als Warnung **Ungültiges Papierattribut** auf (`paperAttributeInvalid` in den `contentWarnings` des Dokuments).
 
 ### `:::pagebreak`
 
-Die Direktive selbst erzwingt keine Parität – nur das Layout des nächsten Blocks. Verwenden Sie sie, um ein Vorwort zu beenden, eine Widmung auf eine eigene Seite zu setzen oder das Ende eines Abschnitts zu markieren. Sollen an derselben Stelle ein Seitenumbruch und ein Neubeginn der Nummerierung stehen, schreiben Sie `:::pagebreak` gefolgt von `:::numbering` – der Wechsel der Nummerierung gilt dann auf der neuen Seite, die `:::pagebreak` gerade erzeugt hat.
+Für sich allein erzwingt die Direktive keine Parität, sondern nur eine neue Seite für den nächsten Block. Verwenden Sie sie, um ein Vorwort zu beenden, eine Widmung auf eine eigene Seite zu setzen oder das Ende eines Abschnitts zu markieren. Sollen an derselben Stelle ein Seitenumbruch und ein Neubeginn der Nummerierung stehen, schreiben Sie `:::pagebreak` gefolgt von `:::numbering` – der Wechsel der Nummerierung gilt dann auf der neuen Seite, die `:::pagebreak` gerade erzeugt hat.
 
-Ein Seitenumbruch auf einer noch leeren Seite bewirkt nichts und fügt daher nie eine leere Seite hinzu. Er ersetzt auch nicht das `breakBefore` einer unmittelbar folgenden Überschrift (Ebene 1 hat standardmäßig eines): Die Überschrift wendet ihre Parität trotzdem an, was nach der von der Direktive geöffneten Seite eine leere Seite hinzufügen kann. Soll eine Überschrift genau dort beginnen, schalten Sie ihren Umbruch aus (siehe **Konfiguration → Überschriftenstile**). Nach einer Titelüberschrift, die ihre Seite füllt, ist der Umbruch optional: Der Titel beansprucht den Rest seiner Seite bereits, in ein- wie mehrspaltigen Layouts, und ein `:::pagebreak` direkt danach schadet nicht. Nötig ist er nur nach einem Titel, dessen Gestaltung vor dem Seitenfuß endet, wenn der Text trotzdem auf der nächsten Seite beginnen soll (siehe **Konfiguration → Reservierte Höhe**).
+Ein Seitenumbruch auf einer noch leeren Seite bewirkt nichts und fügt daher nie eine Vakatseite hinzu. Er ersetzt auch nicht das `breakBefore` einer unmittelbar folgenden Überschrift (Ebene 1 hat standardmäßig eines): Die Überschrift wendet ihre Parität trotzdem an, was nach der von der Direktive geöffneten Seite eine Vakatseite hinzufügen kann. Soll eine Überschrift genau dort beginnen, schalten Sie ihren Umbruch aus (siehe **Konfiguration → Überschriftenstile**). Nach einer Titelüberschrift, die ihre Seite füllt, ist der Umbruch optional: Der Titel beansprucht den Rest seiner Seite bereits, in ein- wie mehrspaltigen Layouts, und ein `:::pagebreak` direkt danach schadet nicht. Nötig ist er nur nach einem Titel, dessen Gestaltung vor dem Seitenfuß endet, wenn der Text trotzdem auf der nächsten Seite beginnen soll (siehe **Konfiguration → Reservierte Höhe**).
 
 ```md
 The old chapter ends here.
@@ -386,7 +397,7 @@ The old chapter ends here.
 # A new chapter
 ```
 
-Das Flag `center` (`:::pagebreak{center}`, aus mit `center=false`) zentriert den Text der Seite, die der Umbruch öffnet, zwischen Kopf und Fuß des Satzspiegels, in vertikalem Text quer über die Seite: das ページの左右中央 eines japanischen Teiltitels oder einer Widmung. Gleitobjekte, Anmerkungen und Kolumnentitel bleiben, wo sie sind, und eine bereits volle Seite bleibt unberührt. Das Flag beendet die Seite nicht: Schließen Sie sie mit einem weiteren `:::pagebreak`.
+Das Attribut `center` (`:::pagebreak{center}`, ausgeschaltet mit `center=false`) zentriert den Text der Seite, die der Umbruch öffnet, zwischen Kopf und Fuß des Satzspiegels, in senkrechtem Text quer über die Seite: das ページの左右中央 eines japanischen Teiltitels oder einer Widmung. Gleitobjekte, Anmerkungen und Kolumnentitel bleiben, wo sie sind, und eine bereits volle Seite bleibt unberührt. Das Attribut beendet die Seite nicht: Schließen Sie sie mit einem weiteren `:::pagebreak`.
 
 ```md
 :::pagebreak{center}
@@ -401,21 +412,21 @@ Das Flag `center` (`:::pagebreak{center}`, aus mit `center=false`) zentriert den
 Das Attribut `parity` nimmt dieselben fünf Werte an wie `headings.levels[*].breakBefore.parity`:
 
 - `'any'` – der Standard: keine Paritätsvorgabe; der Umbruch öffnet einfach eine neue Seite.
-- `'odd'` / `'even'` – die neue Seite beginnt auf der verlangten Seite der Doppelseite; eine einzelne leere Seite wird nur eingefügt, wenn die natürliche nächste Seite auf der falschen Seite liegt.
-- `'always-odd'` / `'always-even'` – garantiert mindestens eine verpflichtende leere Trennseite zwischen dem vorigen Inhalt und der neuen Seite und erzwingt dann die Parität. Die leere Trennseite gehört zum **vorigen** Kapitel; jede weitere Füllseite für die Parität gehört zu dem, was folgt.
+- `'odd'` / `'even'` – die neue Seite beginnt auf der verlangten Seite der Doppelseite; eine einzelne Vakatseite wird nur eingefügt, wenn die natürliche nächste Seite auf der falschen Seite liegt.
+- `'always-odd'` / `'always-even'` – garantiert mindestens eine verpflichtende Vakatseite als Trennseite zwischen dem vorigen Inhalt und der neuen Seite und erzwingt dann die Parität. Diese Trennseite gehört zum **vorigen** Kapitel; jede weitere Vakatseite für die Parität gehört zu dem, was folgt.
 
 #### Zugehörigkeit leerer Seiten
 
-Die beiden Arten leerer Seiten, die `:::pagebreak` (und `breakBefore`) einfügen können, werden im Modell `VDTPage` unterschieden:
+Die beiden Arten von Vakatseiten, die `:::pagebreak` (und `breakBefore`) einfügen können, werden im Modell `VDTPage` unterschieden:
 
-- `blankForParity: true` – eingefügt, um eine Paritätsvorgabe zu erfüllen. In Kopfzeilen mit `{chapterTitle}` trägt diese Seite den Titel des **kommenden** Kapitels, denn die leere Seite existiert nur, um dieses Kapitel auf die richtige Seite zu schieben.
-- `blankForForce: true` – die verpflichtende vorangestellte Trennseite eines Modus `'always-*'`. Sie gehört zum **vorigen** Kapitel – eine bewusste Atempause am Kapitelende, keine Füllseite für die Parität des nächsten Kapitels.
+- `blankForParity: true` – eingefügt, um eine Paritätsvorgabe zu erfüllen. In Kopfzeilen mit `{chapterTitle}` trägt diese Seite den Titel des **kommenden** Kapitels, denn die Vakatseite existiert nur, um dieses Kapitel auf die richtige Seite zu schieben.
+- `blankForForce: true` – die verpflichtende vorangestellte Trennseite eines Modus `'always-*'`. Sie gehört zum **vorigen** Kapitel – eine bewusste Atempause am Kapitelende, keine Vakatseite für die Parität des nächsten Kapitels.
 
-Dieselben beiden Regeln geben einer leeren Seite die Kolumnentitel und die Palette eines gestalteten Abschnitts – siehe [Konfiguration › Überschriftenstile](/de/docs/configuration-styles#überschriftenstile).
+Dieselben beiden Regeln geben einer Vakatseite die Kolumnentitel und die Palette eines gestalteten Abschnitts – siehe [Konfiguration › Überschriftenstile](/de/docs/configuration-styles#überschriftenstile).
 
 #### Ausnahme am Dokumentanfang
 
-Ist `:::pagebreak` das allererste Element eines Dokuments (oder würde eine Überschrift mit `breakBefore` einen solchen Umbruch auslösen), wird die Parität nicht erzwungen, solange die erste Seite noch leer ist. Der nächste Block landet wie geschrieben auf Seite 1, unabhängig von der verlangten Parität – keine überflüssige leere Seite am Anfang.
+Ist `:::pagebreak` das allererste Element eines Dokuments (oder würde eine Überschrift mit `breakBefore` einen solchen Umbruch auslösen), wird die Parität nicht erzwungen, solange die erste Seite noch leer ist. Der nächste Block steht wie geschrieben auf Seite 1, unabhängig von der verlangten Parität – keine überflüssige Vakatseite am Anfang.
 
 ### `:::numbering`
 
@@ -436,7 +447,7 @@ title: "A Book With Front Matter"
 # Chapter 1
 ```
 
-Die Seiten des Vorworts tragen `i`, `ii`, `iii`, …; das erste Kapitel beginnt auf einer rechten Seite mit der Zahl `1`.
+Die Seiten des Vorworts sind mit `i`, `ii`, `iii` … nummeriert; das erste Kapitel beginnt auf einer rechten Seite mit der Seitenzahl `1`.
 
 Änderungen nur des Formats (ohne `startAt`) lassen den Zähler weiterlaufen – nützlich etwa, um von `lower-alpha` zu `upper-alpha` zu wechseln, ohne neu zu zählen.
 
@@ -470,7 +481,7 @@ Two lines lower still.
 - **Er addiert sich.** Der Raum kommt zum Abstand hinzu, der die beiden Blöcke bereits trennt – dem oberen Abstand einer Überschrift, dem unteren einer Liste –, statt darin aufzugehen. Zwei Zeilen `:::space` hintereinander ergeben zwei Zeilen.
 - **An einem Umbruch entfällt er**, wie `\vspace` in LaTeX: Am Kopf einer Spalte oder Seite verschwindet er, sodass eine Seite nie mit einem Loch beginnt; und passt er am Fuß einer Spalte nicht mehr, beendet er einfach diese Spalte, ohne den Rest mitzunehmen.
 - **Der Absatz danach beginnt stumpf.** Ist `bodyText.indentAfterHeading` ausgeschaltet, verliert ein Absatz direkt nach `:::space` seinen Erstzeileneinzug, wie nach einer Überschrift – die übliche Konvention für Text, der nach einer Leerzeile wieder einsetzt.
-- **In einem Kasten** (oder einer Gruppe `:::columns`) trennt er die Kinder des Kastens auf dieselbe Weise, gemessen in den Grundtextzeilen des Kastens. Vor dem ersten Block des Kastens entfällt er, wie am Kopf einer Spalte – der Innenabstand setzt den Inhalt bereits vom Rahmen ab –, außer in zwei Fällen, in denen er entsprechend Raum öffnet: direkt unter dem Titel des Kastens und in einem Kasten, der sonst nichts enthält (ein Antwortkasten, ein Schreibfeld, bemessen in Zeilen). Am Kopf einer Gruppe `:::columns`, am Kopf jeder ihrer Spalten und am Anfang des Teils eines geteilten Kastens, der in der nächsten Spalte oder auf der nächsten Seite weitergeht, verschwindet er immer. In einem Container `:::paragraphs` wirkt er wie zwischen Absätzen des Grundtexts.
+- **In einem Kasten** (oder einer Gruppe `:::columns`) trennt er die Blöcke des Kastens auf dieselbe Weise, gemessen in den Grundtextzeilen des Kastens. Vor dem ersten Block des Kastens entfällt er, wie am Kopf einer Spalte – der Innenabstand setzt den Inhalt bereits von der Kontur ab –, außer in zwei Fällen, in denen er entsprechend Raum öffnet: direkt unter dem Titel des Kastens und in einem Kasten, der sonst nichts enthält (ein Antwortkasten, ein Schreibfeld, bemessen in Zeilen). Am Kopf einer Gruppe `:::columns`, am Kopf jeder ihrer Spalten und am Anfang des Teils eines geteilten Kastens, der in der nächsten Spalte oder auf der nächsten Seite weitergeht, verschwindet er immer. In einem Container `:::paragraphs` wirkt er wie zwischen Absätzen des Grundtexts.
 - **Das Zusammenhalten mit dem Folgenden** zählt ihn mit: Eine Überschrift, auf die `:::space` folgt, wandert weiter, wenn der Raum und die ersten Zeilen ihres Texts nicht darunter passen.
 
 Der Antwortkasten eines Arbeitsblatts ist ein Kasten, dessen einziger Inhalt Raum ist: die Frage im Titel, darunter Platz für vier Zeilen.
@@ -486,7 +497,7 @@ Für einen festen Umbruch statt Raum verwenden Sie `:::columnbreak` oder `:::pag
 
 ### `:::verse`
 
-Ein Gedicht. `:::verse` setzt es in einem von zwei Layouts: **Zeile für Zeile**, wie die meisten Gedichte gedruckt werden, oder im **klassischen arabischen Layout** einer Qaṣīda, jeder Bayt in zwei nebeneinanderstehenden Halbversen. Ein Gedicht, dessen Zeilen ein Trennzeichen für Halbverse tragen (`||` oder ein von Leerzeichen umgebenes `\\`), erhält das arabische Layout, jedes andere das Zeilenlayout; `layout=lines` oder `layout=bayt` am Direktivenblock legt eines fest.
+Ein Gedicht. `:::verse` setzt es in einem von zwei Layouts: **Zeile für Zeile**, wie die meisten Gedichte gedruckt werden, oder im **klassischen arabischen Layout** einer Qaṣīda, jeder Bayt in zwei nebeneinanderstehenden Halbversen. Ein Gedicht, dessen Zeilen ein Trennzeichen für Halbverse enthalten (`||` oder ein von Leerzeichen umgebenes `\\`), erhält das arabische Layout, jedes andere das Zeilenlayout; `layout=lines` oder `layout=bayt` in der öffnenden Zeile legt eines davon fest.
 
 #### Zeile für Zeile
 
@@ -506,12 +517,12 @@ To stop without a farmhouse near
 
 - **Zeilen.** Jede nicht leere Zeile ist ein Vers und wird für sich als Inline-Markdown gelesen: Kursive, Kapitälchen, Anmerkungen und Querverweise funktionieren. Eine Folge von Leerzeilen ist ein einziger Strophenwechsel.
 - **Einzüge.** Jedes führende Leerzeichen ist `indentStep` breit, standardmäßig 0,5 em, sodass zwei Leerzeichen eine Zeile um ein Geviert einziehen; ein Tabulator zählt als vier Leerzeichen, ein ideografisches Leerzeichen (U+3000) als zwei.
-- **Überläufe.** Eine Zeile, die etwas breiter ist als die Satzbreite, verringert zuerst ihre Wortabstände, bis auf `bodyText.minWordSpacing` ihrer natürlichen Breite (die Grenze, bis zu der Blocksatz staucht), und bleibt auf einer Zeile; `tighten=false` am Direktivenblock oder `bodyText.verse.tighten: false` bricht sie stattdessen um. Eine noch breitere Zeile wird an einem Wortzwischenraum umbrochen. Mit `turnover=hang` (Standard) hängt der Rest in der nächsten Zeile, um `hang` vom Anfang der eigenen Zeile eingerückt: den `hangingIndent` des Absatzformats des Gedichts, sonst 2 em (`bodyText.verse.hang`). Mit `turnover=right` wird er bündig mit dem Ende der Satzbreite gesetzt, hinter einer öffnenden eckigen Klammer (`turnoverMark`, standardmäßig `[`), wie in englischen und spanischen Ausgaben üblich. Verse werden nicht getrennt, es sei denn, ihr Absatzformat setzt selbst `hyphenation: true`. Eine Zeile und ihr Überlauf werden an einem Spalten- oder Seitenumbruch nie getrennt.
+- **Überläufe.** Eine Zeile, die etwas breiter ist als die Satzbreite, verringert zuerst ihre Wortabstände, bis auf `bodyText.minWordSpacing` ihrer natürlichen Breite (die Grenze, bis zu der Blocksatz staucht), und bleibt auf einer Zeile; mit `tighten=false` in der öffnenden Zeile oder `bodyText.verse.tighten: false` wird sie stattdessen umbrochen. Eine noch breitere Zeile wird an einem Wortzwischenraum umbrochen. Mit `turnover=hang` (Standard) hängt der Rest in der nächsten Zeile, um `hang` vom Anfang der eigenen Zeile eingerückt: den `hangingIndent` des Absatzformats des Gedichts, sonst 2 em (`bodyText.verse.hang`). Mit `turnover=right` wird er bündig mit dem Ende der Satzbreite gesetzt, hinter einer öffnenden eckigen Klammer (`turnoverMark`, standardmäßig `[`), wie in englischen und spanischen Ausgaben üblich. Verse werden nicht getrennt, es sei denn, ihr Absatzformat setzt selbst `hyphenation: true`. Eine Zeile und ihr Überlauf werden an einem Spalten- oder Seitenumbruch nie getrennt.
 - **Strophen.** Der Abstand zwischen zwei Strophen beträgt eine Zeile des Zeilenabstands des Gedichts; `stanzaSpace=0.5` macht daraus eine halbe Zeile, und eine Länge (`stanzaSpace=6pt`) legt ihn genau fest. Auf dem Grundlinienraster ergibt er ganze Rasterzeilen. Spalten und Seiten brechen bevorzugt zwischen Strophen um; innerhalb einer Strophe gelten die Regeln für Waisen und Witwen, die dann die Zeilen der Strophe zählen. `keepStanzas=N` hält jede Strophe mit N oder weniger Zeilen zusammen: ein Haiku nimmt `keepStanzas=3`, ein Tanka `keepStanzas=5`.
-- **Platzierung.** Das Gedicht wird anhand seiner längsten Zeile in der Satzbreite zentriert, jede Zeile bündig mit dem Anfang des Gedichts (`align=center`, die übliche Einstellung für ein in Prosa zitiertes Gedicht); `align=start` setzt es bündig mit dem Anfang der Satzbreite, der Standard in vertikalem Text. Der Absatz, der das Gedicht einleitet, hält seine letzte Zeile mit den ersten Versen zusammen.
+- **Platzierung.** Das Gedicht wird anhand seiner längsten Zeile in der Satzbreite zentriert, jede Zeile bündig mit dem Anfang des Gedichts (`align=center`, die übliche Einstellung für ein in Prosa zitiertes Gedicht); `align=start` setzt es bündig mit dem Anfang der Satzbreite, der Standard in senkrechtem Text. Der Absatz, der das Gedicht einleitet, hält seine letzte Zeile mit den ersten Versen zusammen.
 - **Gestaffelte Zeilen.** Eine als `+ …` geschriebene Zeile beginnt dort, wo die Zeile darüber endete, einen Wortzwischenraum weiter, wie ein Vers im Drama, den sich zwei Sprecher teilen. Schreiben Sie `\+` für eine Zeile, die mit einem Pluszeichen beginnt.
-- **Zäsuren.** Mit `keepSpaces` am Direktivenblock behält eine Folge von zwei oder mehr Leerzeichen innerhalb einer Zeile ihre Breite; ohne das fallen Leerzeichen wie in jedem Absatz zusammen.
-- **Schrift und Richtung.** `style` nennt ein Absatzformat, das Schriftart, Größe, Zeilenabstand, `indent` sowie den Abstand über und unter dem Gedicht bestimmt. `dir` und `lang` legen Richtung und Sprache fest: Ein lateinisches Gedicht in einem arabischen Buch (`dir=ltr`) wird von seiner eigenen Anfangsseite aus eingezogen. In vertikalem Text ist jeder Vers eine Spalte, eingezogen vom Kopf aus.
+- **Zäsuren.** Mit `keepSpaces` in der öffnenden Zeile behält eine Folge von zwei oder mehr Leerzeichen innerhalb einer Zeile ihre Breite; ohne das fallen Leerzeichen wie in jedem Absatz zusammen.
+- **Schrift und Richtung.** `style` gibt ein Absatzformat an, das Schriftart, Größe, Zeilenabstand, `indent` sowie den Abstand über und unter dem Gedicht bestimmt. `dir` und `lang` legen Richtung und Sprache fest: Ein lateinisches Gedicht in einem arabischen Buch (`dir=ltr`) wird von seiner eigenen Anfangsseite aus eingezogen. In senkrechtem Text ist jeder Vers eine Spalte, eingezogen vom Kopf aus.
 
 <table>
   <thead>
@@ -522,26 +533,26 @@ To stop without a farmhouse near
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>layout</code></td><td><code>auto</code></td><td><code>lines</code>, <code>bayt</code> oder <code>auto</code>: das Bayt-Layout, wenn eine Zeile ein Trennzeichen trägt.</td></tr>
+    <tr><td><code>layout</code></td><td><code>auto</code></td><td><code>lines</code>, <code>bayt</code> oder <code>auto</code>: das Bayt-Layout, wenn eine Zeile ein Trennzeichen enthält.</td></tr>
     <tr><td><code>indentStep</code></td><td><code>0.5em</code></td><td>Breite eines führenden Leerzeichens.</td></tr>
     <tr><td><code>turnover</code></td><td><code>hang</code></td><td><code>hang</code> oder <code>right</code>.</td></tr>
-    <tr><td><code>hang</code></td><td><code>hangingIndent</code> des Formats, sonst <code>2em</code></td><td>Einzug eines hängenden Überlaufs vom Anfang seiner Zeile aus.</td></tr>
+    <tr><td><code>hang</code></td><td><code>hangingIndent</code> des Absatzformats, sonst <code>2em</code></td><td>Einzug eines hängenden Überlaufs vom Anfang seiner Zeile aus.</td></tr>
     <tr><td><code>turnoverMark</code></td><td><code>[</code></td><td>Das Zeichen vor einem rechtsbündig gesetzten Überlauf.</td></tr>
     <tr><td><code>stanzaSpace</code></td><td><code>1</code></td><td>Abstand zwischen Strophen: Eine bloße Zahl zählt Zeilen im Zeilenabstand des Gedichts, eine Länge ist genau diese Länge.</td></tr>
     <tr><td><code>keepStanzas</code></td><td><code>0</code></td><td>Strophen mit höchstens so vielen Zeilen zusammenhalten; 0 schaltet es aus.</td></tr>
     <tr><td><code>tighten</code></td><td><code>true</code></td><td>Die Wortabstände einer etwas zu breiten Zeile bis auf <code>bodyText.minWordSpacing</code> verringern, bevor sie umbrochen wird.</td></tr>
     <tr><td><code>keepSpaces</code></td><td>aus</td><td>Folgen von zwei oder mehr Leerzeichen innerhalb einer Zeile beibehalten.</td></tr>
-    <tr><td><code>align</code></td><td><code>center</code> (<code>start</code> in vertikalem Text)</td><td>Das Gedicht anhand seiner längsten Zeile zentrieren oder bündig mit dem Anfang setzen.</td></tr>
+    <tr><td><code>align</code></td><td><code>center</code> (<code>start</code> in senkrechtem Text)</td><td>Das Gedicht anhand seiner längsten Zeile zentrieren oder bündig mit dem Anfang setzen.</td></tr>
     <tr><td><code>style</code>, <code>dir</code>, <code>lang</code></td><td>—</td><td>Absatzformat, Richtung und Sprache des Gedichts.</td></tr>
     <tr><td><code>numbered</code></td><td><code>true</code></td><td><code>false</code> nimmt das Gedicht von den Zeilennummern aus: Seine Zeilen werden nicht gezählt.</td></tr>
     <tr><td><code>lineStart</code></td><td>—</td><td>Die Zeilennummer der ersten Zeile des Gedichts. Dort beginnt die Zählung neu, gleich was <code>lineNumbers.restart</code> vorgibt.</td></tr>
-    <tr><td><code>interval</code></td><td><code>lineNumbers.interval</code></td><td>Das eigene Intervall des Gedichts: die Nummer jeder N-ten Zeile drucken.</td></tr>
+    <tr><td><code>interval</code></td><td><code>lineNumbers.interval</code></td><td>Das eigene Intervall des Gedichts: die Nummer jeder N-ten Zeile ausgeben.</td></tr>
   </tbody>
 </table>
 
 `bodyText.verse` legt die Standardwerte für jedes Gedicht fest (siehe [Konfiguration › Verse](/de/docs/configuration-text#vers)). Der reine Text bewahrt das Gedicht so, wie es geschrieben ist, mit einem Zeilenvorschub zwischen den Zeilen und einer Leerzeile zwischen den Strophen, sodass eine kopierte Passage und eine Suche es Zeile für Zeile lesen; das umfließende EPUB setzt eine Strophe als Element, dessen Zeilen ihre Überläufe hängen lassen, und das getaggte PDF taggt eine Strophe als Absatz.
 
-**Zeilennummern.** Ist `lineNumbers` eingeschaltet, werden die Zeilen eines Gedichts gezählt (siehe [Konfiguration › Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)). Jeder Vers zählt einmal: Ein Überlauf erhält keine Nummer, und der Abstand zwischen Strophen wird nicht gezählt. Standardmäßig druckt jede fünfte Zeile ihre Nummer im Außensteg, und die Zählung beginnt bei jedem Gedicht neu. Ein Gedicht im klassischen arabischen Layout zählt eine Zeile je Bayt. Der Direktivenblock passt ein einzelnes Gedicht an: `lineStart=N` gibt seiner ersten Zeile eine Nummer, `interval=N` ein eigenes Intervall, und `numbered=false` nimmt es aus.
+**Zeilennummern.** Ist `lineNumbers` eingeschaltet, werden die Zeilen eines Gedichts gezählt (siehe [Konfiguration › Zeilennummern](/de/docs/configuration-notes-references#zeilennummern)). Jeder Vers zählt einmal: Ein Überlauf erhält keine Nummer, und der Abstand zwischen Strophen wird nicht gezählt. Standardmäßig erhält jede fünfte Zeile ihre Nummer im Außensteg, und die Zählung beginnt bei jedem Gedicht neu. Ein Gedicht im klassischen arabischen Layout zählt eine Zeile je Bayt. In der öffnenden Zeile passen Sie ein einzelnes Gedicht an: `lineStart=N` gibt seiner ersten Zeile eine Nummer, `interval=N` ein eigenes Intervall, und `numbered=false` nimmt es aus.
 
 ```md
 :::verse{lineStart=37}
@@ -549,7 +560,7 @@ To stop without a farmhouse near
 :::
 ```
 
-Mit dem Standardintervall von 5 druckt dieses Gedicht 40, 45 und so weiter neben seine Zeilen.
+Mit dem Standardintervall von 5 stehen bei diesem Gedicht 40, 45 und so weiter neben den Zeilen.
 
 #### Klassisches arabisches Layout
 
@@ -565,18 +576,18 @@ Ein Gedicht im klassischen arabischen Layout (eine Qaṣīda, eine Qiṭʿa): je
 ```
 
 - **Eine Breite.** Jeder Halbvers des Gedichts wird auf eine einheitliche Breite gesetzt, sodass jeder Ṣadr auf derselben Senkrechten beginnt und jeder ʿAǧuz auf einer anderen endet und die Reimbuchstaben untereinander stehen. Die Breite ist die des breitesten Halbverses, höchstens die halbe Satzbreite abzüglich des Zwischenraums; `width` legt sie fest (`width=55mm`). Jeder Halbvers wird zuerst mit Kaschidas auf diese Breite gebracht (Verse dehnen stärker als Prosa: doppelt `bodyText.kashidaMaxLength`), dann mit seinen Wortabständen; ein Halbvers aus einem einzigen Wort, der sie nicht füllen kann, lässt den Rest im Zwischenraum.
-- **Der Zwischenraum** beträgt standardmäßig 2 em; `gap` legt ihn fest (`gap=3em`, eine bloße Zahl gilt in Geviert). `ornament` druckt in seiner Mitte ein Zeichen (`ornament="٭"`), das nicht zum Text gehört.
+- **Der Zwischenraum** beträgt standardmäßig 2 em; `gap` legt ihn fest (`gap=3em`, eine bloße Zahl gilt in Geviert). `ornament` setzt in seine Mitte ein Zeichen (`ornament="٭"`), das nicht zum Text gehört.
 - **Zu breit.** Ein Halbvers, der breiter ist als die gemeinsame Breite, verringert zuerst seine Wortabstände bis auf `bodyText.minWordSpacing`. Passt er dann noch nicht, wird sein Bayt gestaffelt gesetzt: der Ṣadr bündig mit der Anfangsseite auf einer eigenen Zeile, der ʿAǧuz bündig mit der Endseite auf der nächsten.
 - **Platzierung.** Das Gedicht wird in der Spalte zentriert; `align=start` setzt es bündig mit der Anfangsseite. Ein Bayt wird nie auf Spalten oder Seiten verteilt, und das Gedicht folgt den Regeln für Waisen und Witwen von Absätzen (ein Gedicht mit drei Bayts oder weniger bleibt ganz). Der Absatz vor dem Gedicht, der es einleitet («فأنشد يقول:»), hält seine letzte Zeile mit den ersten Bayts zusammen.
-- **Schrift.** Das Gedicht übernimmt Schriftart, Größe und Zeilenabstand des Grundtexts; `style` nennt ein Absatzformat dafür (`style="verse"`), so erhält ein vokalisiertes Gedicht den zusätzlichen Zeilenabstand, den seine Harakat brauchen. `dir=ltr` oder `dir=rtl` legt seine Richtung fest wie bei jedem Block; bei einem Gedicht in lateinischer Schrift in einem linksläufigen Buch steht der Ṣadr links.
+- **Schrift.** Das Gedicht übernimmt Schriftart, Größe und Zeilenabstand des Grundtexts; `style` gibt ein Absatzformat dafür an (`style="verse"`); so erhält ein vokalisiertes Gedicht den zusätzlichen Zeilenabstand, den seine Harakat brauchen. `dir=ltr` oder `dir=rtl` legt seine Richtung fest wie bei jedem Block; bei einem Gedicht in lateinischer Schrift in einem Buch, das von links nach rechts läuft, steht der Ṣadr links.
 
 Der reine Text des Gedichts hält Halbverse und Bayts auseinander (ein Tabulator und ein Zeilenumbruch), sodass eine Suche oder eine kopierte Passage es so liest, wie es geschrieben ist; Kaschidas und Ornament bleiben weg.
 
 ### `:::toc`
 
-`:::toc` setzt das Inhaltsverzeichnis an der Stelle, an der es steht. Es entfaltet sich zu gewöhnlichen Blöcken – einem je Überschrift der Ebenen, die `toc.levels` aufführt (standardmäßig Ebene 1), und einem je `:::part` –, sodass das Verzeichnis wie jeder andere Text durch Spalten und Seiten fließt und ein Klick auf einen Eintrag zur Zeile der Direktive führt. Ein Eintrag zeigt die Nummer der Überschrift (die Ausgabe ihres `numberingTemplate`, sonst die Ordnungszahl des Kapitels), ihren Titel, eine Punktlinie und die Bezeichnung der Seite, auf der sie beginnt, und, wenn `toc.subtitle` eingeschaltet ist, eine zweite Zeile mit einem Attribut der Überschrift wie dem `{author="…"}` des Kapitels. Ein Teil erhält eine eigene Zeile, gestaltet von `toc.parts.design` und eingefärbt mit der eigenen `palette` des Teils. Überschriften, deren Format `numbered: false` hat, werden ohne Nummer aufgeführt; `{toc="false"}` an einer Überschrift hält sie heraus (typischerweise die Überschrift des Verzeichnisses selbst).
+`:::toc` setzt das Inhaltsverzeichnis an der Stelle, an der es steht. Es entfaltet sich zu gewöhnlichen Blöcken – einem je Überschrift der Ebenen, die `toc.levels` aufführt (standardmäßig Ebene 1), und einem je `:::part` –, sodass das Verzeichnis wie jeder andere Text durch Spalten und Seiten fließt und ein Klick auf einen Eintrag zur Zeile der Direktive führt. Ein Eintrag zeigt die Nummer der Überschrift (die Ausgabe ihres `numberingTemplate`, sonst die Ordnungszahl des Kapitels), ihren Titel, eine Punktlinie und die Bezeichnung der Seite, auf der sie beginnt, und, wenn `toc.subtitle` eingeschaltet ist, eine zweite Zeile mit einem Attribut der Überschrift wie dem `{author="…"}` des Kapitels. Ein Teil erhält eine eigene Zeile, gestaltet von `toc.parts.design` und eingefärbt mit der eigenen `palette` des Teils. Überschriften, deren Stil `numbered: false` hat, werden ohne Nummer aufgeführt; `{toc="false"}` an einer Überschrift hält sie heraus (typischerweise die Überschrift des Verzeichnisses selbst).
 
-In einer zusammengesetzten Seite setzt ein Rahmen mit `takes: "toc"`, oder ein `:::frame`, der die Direktive enthält, das Verzeichnis mit seinen Teilzeilen, Füllpunkten und `keep` (siehe [Zusammengesetzte Seiten](/de/docs/composed-pages)).
+Auf einer zusammengesetzten Seite setzt ein Rahmen mit `takes: "toc"` oder ein `:::frame` mit dieser Direktive das Verzeichnis – mit Teilzeilen, Füllpunkten und `keep` (siehe [Zusammengesetzte Seiten](/de/docs/composed-pages)).
 
 ```md
 # Contents {style="front-matter" toc="false"}
@@ -584,7 +595,7 @@ In einer zusammengesetzten Seite setzt ein Rahmen mit `takes: "toc"`, oder ein `
 :::toc
 ```
 
-Zwei Attribute ändern, was ein einzelnes Verzeichnis druckt, unabhängig von der Konfiguration. `levels` nennt die Überschriftenebenen, die es aufführt: einen Bereich (`levels="1-2"`), eine Ebene (`levels="2"`) oder eine Liste (`levels="1,3"`); eine Ebene, der `toc.levels` kein Format gibt, übernimmt das Format der nächsthöheren Ebene. `keep` hält jeden Block des Verzeichnisses in einer Spalte und auf einer Seite zusammen, wie es [`toc.groups.keepTogether`](/de/docs/configuration-notes-references#inhaltsverzeichnis) tut: `keep="part"` hält eine Teilzeile mit ihren Kapiteln zusammen, `keep="1"` (bis `"6"`) eine Überschrift dieser Ebene mit den Einträgen darunter, und `keep="none"` schaltet das konfigurierte Zusammenhalten ab. Ein Block, der nicht passt, rückt ganz in die nächste Spalte oder auf die nächste Seite; ein Block, der höher ist als eine Spalte, wird geteilt, und die Spalte, in der er weiterläuft, beginnt erneut mit seiner Kopfzeile, gefolgt von einer Fortsetzungsmarke wie *(Forts.)*.
+Zwei Attribute ändern, was ein einzelnes Verzeichnis enthält, unabhängig von der Konfiguration. `levels` gibt die Überschriftenebenen an, die es aufführt: einen Bereich (`levels="1-2"`), eine Ebene (`levels="2"`) oder eine Liste (`levels="1,3"`); eine Ebene, der `toc.levels` keinen Stil zuweist, übernimmt den Stil der nächsthöheren Ebene. `keep` hält jeden Block des Verzeichnisses in einer Spalte und auf einer Seite zusammen, wie es [`toc.groups.keepTogether`](/de/docs/configuration-notes-references#inhaltsverzeichnis) tut: `keep="part"` hält eine Teilzeile mit ihren Kapiteln zusammen, `keep="1"` (bis `"6"`) eine Überschrift dieser Ebene mit den Einträgen darunter, und `keep="none"` schaltet das konfigurierte Zusammenhalten ab. Ein Block, der nicht passt, rückt ganz in die nächste Spalte oder auf die nächste Seite; ein Block, der höher ist als eine Spalte, wird geteilt, und die Spalte, in der er weiterläuft, beginnt erneut mit seiner Kopfzeile, gefolgt von einem Fortsetzungsvermerk wie *(Forts.)*.
 
 ```md
 # Contents {style="front-matter" toc="false"}
@@ -592,11 +603,11 @@ Zwei Attribute ändern, was ein einzelnes Verzeichnis druckt, unabhängig von de
 :::toc{keep="part" levels="1-2"}
 ```
 
-Die Seitenzahlen sind die, die das Dokument tatsächlich druckt. Ein für sich gesetztes Dokument wird mit den Bezeichnungen des vorigen Durchgangs erneut gesetzt, bis sie sich nicht mehr verschieben – beginnt die Nummerierung nach der Titelei neu (das Rezept `:::numbering` oben), genügt ein zusätzlicher Durchgang. Ein für sich gesetztes Kapitel (die Vorschauen der Sandbox) erhält stattdessen die Gliederung des ganzen Buchs von seinem Host. Siehe [Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis) in der Konfigurationsreferenz.
+Die Seitenzahlen sind die, die das Dokument tatsächlich ausgibt. Ein für sich gesetztes Dokument wird mit den Bezeichnungen des vorigen Durchgangs erneut gesetzt, bis sie sich nicht mehr verschieben – beginnt die Nummerierung nach der Titelei neu (das Rezept `:::numbering` oben), genügt ein zusätzlicher Durchgang. Ein für sich gesetztes Kapitel (die Vorschauen der Sandbox) erhält stattdessen die Gliederung des ganzen Buchs von seinem Host. Siehe [Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis) in der Konfigurationsreferenz.
 
 ### `:::index`
 
-`:::index` setzt das Register an der Stelle, an der es steht: die im ganzen Buch mit `:index[…]` oder `:index{term="…"}` ausgezeichneten Begriffe mit ihren Seiten, die dem Text folgen, wenn er sich verschiebt. Beschrieben wird es zusammen mit den Marken unter [Register](/de/docs/document-format-notes-references#register). Eine Spalte endet nie nach dem ersten Eintrag einer Gruppe und nie vor ihrem letzten: Zwei Einträge der Gruppe bleiben und zwei laufen weiter, oder die Gruppe wandert als Ganzes (`index.groups.splitMinEntries`).
+`:::index` setzt das Register an der Stelle, an der es steht: die im ganzen Buch mit `:index[…]` oder `:index{term="…"}` ausgezeichneten Begriffe mit ihren Seiten, die dem Text folgen, wenn er sich verschiebt. Beschrieben wird es zusammen mit den Registermarken unter [Register](/de/docs/document-format-notes-references#register). Eine Spalte endet nie nach dem ersten Eintrag einer Gruppe und nie vor ihrem letzten: Zwei Einträge der Gruppe bleiben und zwei laufen weiter, oder die Gruppe wandert als Ganzes (`index.groups.splitMinEntries`).
 
 ```md
 # Index {style="index"}
@@ -617,13 +628,13 @@ Ana Ruiz \\ Calle Mayor 4 \\ 28013 Madrid
 
 - Die Zeile vor einem Umbruch wird in ihrer natürlichen Breite gesetzt, wie die letzte Zeile eines Absatzes, nie auf die Satzbreite gedehnt. Der Text danach beginnt eine neue Zeile desselben Absatzes, ohne Erstzeileneinzug und ohne Abstand darüber; bei einem hängenden Einzug hängt er wie jede Zeile nach der ersten.
 - Absätze, Zitate (`> First line\` über `> second line`), Fußnoten und Listenpunkte nehmen ihn an. Ein Listenpunkt ist eine einzige Quellzeile, daher bricht er bei `\\` um.
-- Ein Backslash am Ende des Absatzes wird gedruckt, wie in CommonMark, und zwei Umbrüche hintereinander ergeben einen: Für eine leere Zeile beginnen Sie einen neuen Absatz oder fügen ein [`:::space`](#space) ein.
-- Ein `\\`, das direkt am nächsten Zeichen hängt, ist kein Umbruch: `\\*` druckt einen Backslash und ein maskiertes Sternchen, `C:\\Temp` beide Backslashes. In Inline-Code und in einer Formel gehören die Backslashes zum Code bzw. zur Formel.
+- Ein Backslash am Ende des Absatzes wird ausgegeben, wie in CommonMark, und zwei Umbrüche hintereinander ergeben einen: Für eine leere Zeile beginnen Sie einen neuen Absatz oder fügen ein [`:::space`](#space) ein.
+- Ein `\\`, das direkt am nächsten Zeichen hängt, ist kein Umbruch: `\\*` ergibt einen Backslash und ein maskiertes Sternchen, `C:\\Temp` beide Backslashes. In Inline-Code und in einer Formel gehören die Backslashes zum Code bzw. zur Formel.
 - Zwei Leerzeichen am Zeilenende, der andere harte Umbruch von CommonMark, sind keiner: Sie sind in einem Editor unsichtbar, und viele Editoren lassen sie zurück, sodass sie Zeilen umbrechen würden, die niemand umbrechen wollte.
 - Aus dem HTML-Betrachter kopierter Text hat am Umbruch einen Zeilenvorschub, das umfließende EPUB ein `<br/>`, der Text des PDF ein Zeilenende und ein Word-Export einen manuellen Zeilenumbruch (Umschalt+Eingabe), den der Word-Import wieder als Umbruch liest.
-- Ein Gedicht behält seine Zeilen, Einzüge und Strophen in einem Block [`:::verse`](#verse), ohne Backslash an jeder Zeile.
+- Ein Gedicht behält seine Zeilen, Einzüge und Strophen in einem [`:::verse`](#verse)-Block, ohne Backslash an jeder Zeile.
 
-Bis postext 1.22 wurde der Backslash gedruckt, und die Zeilen wurden mit einem Leerzeichen verbunden. Ein damals gespeichertes Buch, dessen Text eine Zeile mit einem Backslash beendet oder `\\` vor ein Leerzeichen setzt, behält diese Lesart (`bodyText.hardLineBreaks: false`, siehe [Konfiguration › Pakete, die postext 1.4 oder früher geschrieben hat](/de/docs/configuration-bundles#pakete-die-postext-14-oder-früher-geschrieben-hat)).
+Bis postext 1.22 wurde der Backslash ausgegeben, und die Zeilen wurden mit einem Leerzeichen verbunden. Ein damals gespeichertes Buch, dessen Text eine Zeile mit einem Backslash beendet oder `\\` vor ein Leerzeichen setzt, behält diese Lesart (`bodyText.hardLineBreaks: false`, siehe [Konfiguration › Pakete, die postext 1.4 oder früher geschrieben hat](/de/docs/configuration-bundles#pakete-die-postext-14-oder-früher-geschrieben-hat)).
 
 ### Zeilenumbrüche in Titeln
 
@@ -654,11 +665,11 @@ sfx{rotate=-8}: KRAK
 :::
 ```
 
-Ein `:::page`-Block ist eine Comicseite: Er eröffnet eine frische Seite, nimmt sie ganz ein, und der Text nach seinem schließenden `:::` beginnt auf der nächsten Seite. Seine Attribute sind `split` (wie die Seite in Zellen geteilt wird: Größen in Prozent, getrennt durch `/` für Streifen und `|` für nebeneinanderliegende Panels, eine Liste in eckigen Klammern, um eine Zelle erneut zu teilen, `*` für den Rest, `a~b` für eine schräge Linie), `gutter` (eine Länge oder zwei: zwischen Streifen und zwischen Panels; eine bloße Zahl gilt in Millimetern), `style` (ein benannter Panelstil), `bleed`, `direction` (`ltr` oder `rtl`, auch als `dir` geschrieben) und `spread` (siehe [Doppelseiten](#doppelseiten)). Ohne `split` werden die Panels in gleich hohen Streifen übereinandergestapelt. Markdown-Blöcke, Container und Direktiven werden innerhalb des Blocks nicht gelesen; `<!-- comments -->` schon.
+Ein `:::page`-Block ist eine Comicseite: Er beginnt eine neue Seite, nimmt sie ganz ein, und der Text nach seinem schließenden `:::` beginnt auf der nächsten Seite. Seine Attribute sind `split` (wie die Seite in Zellen geteilt wird: Größen in Prozent, getrennt durch `/` für Reihen und `|` für nebeneinanderliegende Panels, eine Liste in eckigen Klammern, um eine Zelle erneut zu teilen, `*` für den Rest, `a~b` für eine schräge Linie), `gutter` (eine Länge oder zwei: zwischen Reihen und zwischen Panels; eine bloße Zahl gilt in Millimetern), `style` (ein benannter Panelstil), `bleed`, `direction` (`ltr` oder `rtl`, auch als `dir` geschrieben) und `spread` (siehe [Doppelseiten](#doppelseiten)). Ohne `split` werden die Panels in gleich hohen Reihen übereinandergestapelt. Markdown-Blöcke, Container und Direktiven werden innerhalb des Blocks nicht gelesen; `<!-- comments -->` schon.
 
 ### Panels
 
-Eine Zeile `::panel{…}` beginnt ein Panel, das die nächste Zelle in Lesereihenfolge füllt und bis zur nächsten `::panel`-Zeile oder zum schließenden Block reicht:
+Eine Zeile `::panel{…}` beginnt ein Panel, das die nächste Zelle in Lesereihenfolge füllt und bis zur nächsten `::panel`-Zeile oder zur schließenden Zeile reicht:
 
 <table>
   <thead>
@@ -671,14 +682,14 @@ Eine Zeile `::panel{…}` beginnt ein Panel, das die nächste Zelle in Lesereihe
     <tr><td><code>art=&lt;id&gt;</code></td><td>Das Bild: eine Bitmap- oder SVG-Ressource. Ohne es bleibt das Panel leer.</td></tr>
     <tr><td><code>fit=cover</code>, <code>fit=contain</code></td><td>Das Bild beschneiden, um die Zelle zu füllen (nie in seinen Sicherheitsbereich hinein), oder es ganz zeigen.</td></tr>
     <tr><td><code>focus="x% y%"</code></td><td>Der Punkt, der zentriert bleiben soll, wo der Sicherheitsbereich Spielraum lässt.</td></tr>
-    <tr><td><code>style=…</code>, <code>border=none</code>, <code>border=0.5mm</code>, <code>bg=#hex</code></td><td>Ein benannter Panelstil, der Rahmen, der Hintergrund (eine Farbe, eine Paletten-ID oder <code>none</code>).</td></tr>
+    <tr><td><code>style=…</code>, <code>border=none</code>, <code>border=0.5mm</code>, <code>bg=#hex</code></td><td>Ein benannter Panelstil, die Randlinie, der Hintergrund (eine Farbe, eine Paletten-ID oder <code>none</code>).</td></tr>
     <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>Die Seiten, die den Rahmen berühren, bis zum Endformat und in den Anschnitt laufen lassen.</td></tr>
     <tr><td><code>pad="…"</code></td><td>Das Panel kleiner als seine Zelle machen: eine bis vier Längen oder Prozentangaben (oben, Ende, unten, Anfang).</td></tr>
-    <tr><td><code>inset="x y w h"</code></td><td>Das Panel über das vorige legen, in diesem Rechteck in Prozent davon, statt ihm eine Zelle zu geben.</td></tr>
+    <tr><td><code>inset="x y w h"</code></td><td>Das Panel über das vorige legen, in dieses Rechteck (in Prozent des vorigen Panels), statt ihm eine Zelle zu geben.</td></tr>
     <tr><td><code>text</code>, <code>valign=middle</code>, <code>shrink</code>, <code>box=&lt;id&gt;</code></td><td>Macht das Panel zum Textpanel: Sein Inhalt ist Markdown, das im Rahmen des Panels gesetzt wird (<code>valign</code> platziert es), kein Skript; <code>box</code> kleidet das Panel in einen Kastenstil. Siehe <a href="/de/docs/comics#textpanels">Comics › Textpanels</a>.</td></tr>
-    <tr><td><code>pop=&lt;id&gt;</code></td><td>Ein transparenter Ausschnitt, der mit dem Beschnitt der Zeichnung über den Rahmen gezeichnet wird (ein durchbrochener Rahmen).</td></tr>
+    <tr><td><code>pop=&lt;id&gt;</code></td><td>Ein transparenter Ausschnitt, der mit dem Beschnitt der Zeichnung über die Randlinie gezeichnet wird (eine durchbrochene Randlinie).</td></tr>
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Das Bild spiegeln oder es auf einer gespiegelten Seite so lassen, wie es gezeichnet ist.</td></tr>
-    <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>Die Textalternative (sonst der <code>altText</code> der Ressource) und eine Anker-ID.</td></tr>
+    <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>Die Textalternative (sonst der <code>altText</code> der Ressource) und eine ID als Verweisziel.</td></tr>
   </tbody>
 </table>
 
@@ -699,11 +710,11 @@ maya: This line goes on
 ```
 
 - Der **Schlüssel** ist eine Sprecher-ID (Buchstaben, Ziffern, `_`, `.`, `-`), in jeder Übersetzung dieselbe; `caption`, `sfx` und `note` sind reserviert. Der Doppelpunkt darf der vollbreite `：` sein.
-- Ein bloßes Wort in den geschweiften Klammern ist ein **Sprechblasenstil** (`thought`, `whisper`, `shout`, `radio`, `inner` oder einer aus `comics.balloonStyles`); `style=` sagt dasselbe.
-- `at` heftet die Sprechblase an: einen Punkt in Prozent des Panelbildes (`at="62% 40%"`) oder eine Ecke oder Kante (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` richtet den Dorn auf einen Punkt des Bildes; `tail=none` entfernt ihn, und `tail=top|bottom|start|end|left|right` lässt ihn aus dem Panel hinauszeigen. `join` und `join=false` verbinden die Sprechblase mit der vorigen desselben Sprechers oder halten sie getrennt; `break` lässt sie den Rahmen überschreiten, und das Überschreiten wird nicht als Überlauf gemeldet. `rotate` (Grad), `size` (ein Faktor, für Geräuscheffekte), `color` und `font` ändern ihr Lettering.
+- Ein bloßes Wort in den geschweiften Klammern ist ein **Sprechblasenstil** (`thought`, `whisper`, `shout`, `radio`, `inner` oder einer aus `comics.balloonStyles`); `style=` bewirkt dasselbe.
+- `at` heftet die Sprechblase an: einen Punkt in Prozent des Panelbildes (`at="62% 40%"`) oder eine Ecke oder Kante (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` richtet den Dorn auf einen Punkt des Bildes; `tail=none` entfernt ihn, und `tail=top|bottom|start|end|left|right` lässt ihn aus dem Panel hinauszeigen. `join` und `join=false` verbinden die Sprechblase mit der vorigen desselben Sprechers oder halten sie getrennt; `break` lässt sie über die Randlinie hinausragen, ohne dass das als Überlauf gemeldet wird. `rotate` (Grad), `skew` (eine Schräge in Grad, für Text auf einem perspektivisch gesehenen Gegenstand), `size` (ein Faktor, für Geräuscheffekte), `color` und `font` ändern ihr Lettering.
 - `vertical` und `horizontal` (oder `mode=vertical`, `mode=horizontal`) setzen die Schreibrichtung der Zeile über die des Buches: ein unübersetztes `ドン` in einer Spalte in einer waagerechten Ausgabe, ein quer geschriebenes Schild in einer Zeile in einer senkrechten. Eine Spalte in einem Buch einer anderen Sprache folgt den Regeln ihres eigenen Textes (mit Kana denen des Japanischen). In einem senkrechten Buch wird eine Zeile ohne chinesische oder japanische Zeichen trotzdem waagerecht gesetzt.
 - Eine Zeile, die um zwei Leerzeichen oder einen Tab eingerückt ist, setzt die Sprechblase darüber fort; ein Backslash am Zeilenende bricht den Text dort um. Leerzeilen werden ignoriert.
-- Der Text ist Markdown im Text: Hervorhebung (als fett-kursives Lettering), `:tcy`, `:ruby` (die Lesung über der Basis, außer über einer Basis, die von rechts nach links läuft), `:ltr` und `:rtl` (ein Abschnitt, der seine eigene Richtung behält). Fußnoten und `:ref`-Markierungen werden nicht gelesen.
+- Der Text ist Inline-Markdown: Hervorhebung (als fett-kursives Lettering), `:tcy`, `:ruby` (die Lesung über der Basis, außer über einer Basis, die von rechts nach links läuft), `:ltr` und `:rtl` (ein Abschnitt, der seine eigene Richtung behält). Fußnoten und `:ref`-Markierungen werden nicht gelesen.
 
 ### `:::strip`
 
@@ -717,7 +728,7 @@ otto: Is it?
 :::
 ```
 
-Ein `:::strip` hat den Inhalt einer Seite, steht im Text aber als ein unteilbarer Kasten, in Panels geteilt: `span` (`column`, der Standard, oder `page`), `placement` (`here`, der Standard, an der Stelle, an der er geschrieben ist; oder `top`, `bottom`, `auto`, gleitend wie eine Abbildung) und seine Größe, entweder `height` (eine Länge, eine bloße Zahl in Millimetern) oder `aspect` (Breite durch Höhe: `3`, `4/1`, `4:1`; standardmäßig die Proportionen, die seine Panels quadratisch machen). Ein seitenbreiter Streifen, der auf einer mehrspaltigen Seite mit `here` gesetzt ist, schneidet die Spalten dort, wo er steht, wie es ein seitenbreiter Kasten tut. `width` macht ihn schmaler als die Satzbreite, über die er läuft (`60%` davon oder eine Länge), und `align` setzt ihn an den Anfang (`start`), in die Mitte (`center`, der Standard) oder ans Ende (`end`) dieser Satzbreite, entlang der Textrichtung. `caption="…"` setzt eine Legende darunter im Legendenstil; mit `type=figure` (einem Ressourcentyp) erhält die Legende Bezeichnung und Nummer des Typs, und der Streifen zählt in dessen Folge, und mit `id=…` kann ein `:ref` ihn nennen. Ohne `split` stehen die Panels nebeneinander. Streifen werden nur auf der obersten Ebene eines Kapitels gelesen.
+Ein `:::strip` hat den Inhalt einer Seite, steht im Text aber als ein unteilbarer Kasten, in Panels geteilt: `span` (`column`, der Standard, oder `page`), `placement` (`here`, der Standard, an der Stelle, an der er geschrieben ist; oder `top`, `bottom`, `auto`, gleitend wie eine Abbildung) und seine Größe, entweder `height` (eine Länge, eine bloße Zahl in Millimetern) oder `aspect` (Breite durch Höhe: `3`, `4/1`, `4:1`; standardmäßig die Proportionen, die seine Panels quadratisch machen). Ein seitenbreiter Streifen, der auf einer mehrspaltigen Seite mit `here` gesetzt ist, schneidet die Spalten dort, wo er steht, wie es ein seitenbreiter Kasten tut. `width` macht ihn schmaler als die Satzbreite, über die er läuft (`60%` davon oder eine Länge), und `align` setzt ihn an den Anfang (`start`), in die Mitte (`center`, der Standard) oder ans Ende (`end`) dieser Satzbreite, entlang der Textrichtung. `caption="…"` setzt eine Legende darunter im Legendenstil; mit `type=figure` (einem Ressourcentyp) erhält die Legende Bezeichnung und Nummer des Typs, und der Streifen zählt in dessen Folge, und mit `id=…` kann ein `:ref` auf ihn verweisen. Ohne `split` stehen die Panels nebeneinander. Streifen werden nur auf der obersten Ebene eines Kapitels gelesen.
 
 ### Doppelseiten
 
@@ -725,9 +736,9 @@ Ein `:::strip` hat den Inhalt einer Seite, steht im Text aber als ein unteilbare
 
 ## Zusammengesetzte Seiten
 
-Eine zusammengesetzte Seite wird nach einer Seitenvorlage der Konfiguration (`pageTemplates`) umbrochen, und ihr Inhalt wird über die Namen auf die Rahmen der Vorlage verteilt. Die Anleitung mit den Warnungen ist [Zusammengesetzte Seiten](/de/docs/composed-pages).
+Eine zusammengesetzte Seite wird nach einer Seitenvorlage der Konfiguration (`pageTemplates`) gesetzt, und ihr Inhalt wird anhand der Namen auf die Rahmen der Vorlage verteilt. Die Anleitung mit den Warnungen ist [Zusammengesetzte Seiten](/de/docs/composed-pages).
 
-- `::::page{template="…"}` … `::::` ist die Seite: vier oder mehr Doppelpunkte, geschlossen von einer Zeile, die nur ebenso viele enthält. Begrenzungen mit drei Doppelpunkten darin (`:::frame`, `:::callout`, `:::figure` …) wirken wie überall, und ein bloßes `:::` schließt nie die Seite. Ein `:::page` mit drei Doppelpunkten bleibt eine Comicseite.
+- `::::page{template="…"}` … `::::` ist die Seite: vier oder mehr Doppelpunkte, geschlossen von einer Zeile, die nur ebenso viele enthält. Blöcke mit drei Doppelpunkten darin (`:::frame`, `:::callout`, `:::figure` …) wirken wie überall, und ein bloßes `:::` schließt nie die Seite. Ein `:::page` mit drei Doppelpunkten bleibt eine Comicseite.
 - `:::frame{slot="…" label="…"}` … `:::` enthält den Inhalt des Rahmens mit diesem Namen: beliebiges Markdown.
-- `slot="…"` an einer Überschrift (`## Retos {slot="retos-titulo"}`), an `::resource{id="…" slot="…"}`, an einem Codeblock oder an einem `:::`-Container schickt nur diesen einen Block. Inhalt ohne Slot kommt in den Flussrahmen der Vorlage.
-- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext.
+- `slot="…"` an einer Überschrift (`## Retos {slot="retos-titulo"}`), an `::resource{id="…" slot="…"}`, an einem Codeblock oder an einem `:::`-Container leitet nur diesen einen Block in den Rahmen. Inhalt ohne Slot kommt in den Flussrahmen der Vorlage.
+- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext. Ihre `alt`, `caption` und `note`, als Attribute der öffnenden Zeile oder als Zeilen `::alt[…]`, `::caption[…]` und `::note[…]`, ersetzen für dieses Kapitel den Wortlaut der Ressource (siehe [Zusammengesetzte Seiten › Der eigene Wortlaut einer Abbildung](/de/docs/composed-pages#der-eigene-wortlaut-einer-abbildung)).

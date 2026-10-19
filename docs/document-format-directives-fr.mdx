@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'Les directives ::: pour les conteneurs, les colonnes, le papier, les sauts de page, la numérotation, l’espace, les vers, la table des matières et l’index, les sauts de ligne, et le balisage des planches de bande dessinée',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '38 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Directives
 
-Les directives sont des balises de contrôle d’une seule ligne, écrites `:::name` ou `:::name{attrs}` sur une ligne à part. Elles ne produisent rien de visible : elles pilotent le placement et la numérotation.
+Les directives sont des balises de contrôle d’une seule ligne, écrites `:::name` ou `:::name{attrs}` sur une ligne à part. La plupart ne produisent rien de visible et pilotent le placement et la numérotation ; `:::toc`, `:::index` et `:::bibliography` impriment la table des matières, l’index et la bibliographie là où ils se trouvent.
 
 <table>
   <thead>
@@ -57,7 +57,7 @@ Les directives sont des balises de contrôle d’une seule ligne, écrites `:::n
     </tr>
     <tr>
       <td><code>:::space</code></td>
-      <td>Laisse ici une ligne de corps vide : la manière explicite d’aérer un peu entre deux blocs. <code>:::space&#123;lines=2&#125;</code> en laisse deux (les fractions comme <code>0.5</code> fonctionnent aussi). L’espace s’ajoute à la marge entre les blocs et disparaît en haut d’une colonne ou d’une page. Voir <a href="#space">plus bas</a>.</td>
+      <td>Laisse ici une ligne vide de texte courant : la manière explicite d’aérer un peu entre deux blocs. <code>:::space&#123;lines=2&#125;</code> en laisse deux (les fractions comme <code>0.5</code> fonctionnent aussi). L’espace s’ajoute à la marge entre les blocs et disparaît en haut d’une colonne ou d’une page. Voir <a href="#space">plus bas</a>.</td>
     </tr>
     <tr>
       <td><code>:::toc</code></td>
@@ -68,8 +68,12 @@ Les directives sont des balises de contrôle d’une seule ligne, écrites `:::n
       <td>Imprime ici l’index : chaque terme marqué avec <code>:index</code> dans le livre, trié et groupé par lettre, avec les pages où il apparaît, composé selon la configuration <code>index</code>. <code>:::index&#123;index="names"&#125;</code> imprime un index nommé. Voir <a href="/fr/docs/document-format-notes-references#index">Index</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Imprime ici la liste des ouvrages cités, dans le style de citation. <code>title</code> en change le titre et <code>scope</code> ce qu’elle contient. Voir <a href="/fr/docs/document-format-notes-references#la-bibliographie">La bibliographie</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
-      <td>Une page de bande dessinée : ses lignes <code>::panel</code> et les lignes de script qui les suivent, mises en page sous forme de cases et de bulles lettrées sur une page à part. Voir <a href="#bandes-dessinées">Bande dessinée</a>.</td>
+      <td>Une planche de bande dessinée : ses lignes <code>::panel</code> et les lignes de script qui les suivent, mises en page sous forme de cases et de bulles lettrées sur une page à part. Voir <a href="#bandes-dessinées">Bande dessinée</a>.</td>
     </tr>
     <tr>
       <td><code>:::strip&#123;…&#125;</code> … <code>:::</code></td>
@@ -82,20 +86,21 @@ Les directives sont des balises de contrôle d’une seule ligne, écrites `:::n
   </tbody>
 </table>
 
-Les valeurs d’attribut peuvent être entre guillemets doubles (<code>"…"</code>), entre guillemets simples (<code>'…'</code>) ou nues (<code>startAt=17</code>). Une clé seule sans `=` est traitée comme un drapeau présent mais vide.
+Les valeurs d’attribut peuvent être entre guillemets doubles (<code>"…"</code>), entre guillemets simples (<code>'…'</code>) ou nues (<code>startAt=17</code>). Une clé seule sans `=` est traitée comme un attribut sans valeur, présent mais vide.
 
-Seules `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` et `index` sont reconnues aujourd’hui comme directives d’une ligne (et `references`, `verse`, `page` et `strip` comme blocs délimités) : toute autre ligne `:::name` qui n’est pas un conteneur (voir plus bas) est analysée comme un paragraphe et déclenche un avertissement **Directive inconnue** dans le Sandbox. Le moteur l’enregistre aussi, sous forme d’une entrée `unknownDirective` dans les `contentWarnings` du document (voir [Configuration › Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)).
+Seules `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` et `bibliography` sont reconnues aujourd’hui comme directives d’une ligne (et `references`, `verse`, `page`, `strip` et `figure` comme blocs délimités) : toute autre ligne `:::name` qui n’est pas un conteneur (voir plus bas) est analysée comme un paragraphe et déclenche un avertissement **Directive inconnue** dans le Sandbox. Le moteur l’enregistre aussi, sous forme d’une entrée `unknownDirective` dans les `contentWarnings` du document (voir [Configuration › Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)).
 
 ### Valeurs d’attribut
 
 La même syntaxe `key="value"` est lue par les attributs de titre, les délimiteurs de directive et de conteneur (`:::name{…}`), les renvois en ligne (`:ref{…}`), les pastilles (`:chip[…]{…}`), les pastilles de couleur (`:swatch{…}`) et les marques d’index (`:index[…]{…}`). Ses règles :
 
-- **Clés.** Elles commencent par une lettre ASCII ou `_` et se poursuivent par des lettres ASCII, des chiffres, `_` ou `-`. Les espaces autour de `=` sont admises, le `＝` pleine chasse que tape une méthode de saisie chinoise vaut `=`, une clé répétée garde sa dernière valeur, et une clé sans `=` est un drapeau à valeur vide. Une clé dans une autre écriture (`作者=曹雪芹`) n’est pas lue et déclenche un avertissement `attributeKeyInvalid` ; les autres clés du bloc s’appliquent quand même. Les valeurs peuvent être dans n’importe quelle écriture.
+- **Clés.** Elles commencent par une lettre ASCII ou `_` et se poursuivent par des lettres ASCII, des chiffres, `_` ou `-`. Les espaces autour de `=` sont admises, le `＝` pleine chasse que tape une méthode de saisie chinoise vaut `=`, une clé répétée garde sa dernière valeur, et une clé sans `=` est un attribut sans valeur (sa valeur est vide). Une clé dans une autre écriture (`作者=曹雪芹`) n’est pas lue et déclenche un avertissement `attributeKeyInvalid` ; les autres clés du bloc s’appliquent quand même. Les valeurs peuvent être dans n’importe quelle écriture.
 - **Valeurs entre guillemets.** Une valeur entre guillemets doubles peut contenir n’importe quoi sauf `"`, y compris des guillemets simples ; une valeur entre guillemets simples, n’importe quoi sauf `'`. Une valeur qui contient des guillemets doubles se place donc entre guillemets simples : `lead='He said "hi"'`. Il n’y a pas d’échappement (une barre oblique inverse est un caractère ordinaire) : une valeur qui a besoin des deux guillemets ASCII prend des guillemets typographiques (`“…”`, `’`). Une valeur peut aussi s’ouvrir par le guillemet courbe `“` ou le crochet d’angle `「` que tape une méthode de saisie chinoise, et court alors jusqu’au `”` ou au `」` correspondant, espaces comprises : `title=“甲戌本 眉批”`, `title=「脂批」`.
-- **Valeurs nues** (`startAt=17`, `year=1998`). Elles courent jusqu’à l’espace suivante : `title=Hello world` équivaut à `title="Hello"` plus un drapeau `world`.
-- **Pas d’accolades.** `{` et `}` ne vont jamais dans une valeur. La première `}` termine le bloc : un délimiteur dont la valeur en contient une n’est plus une directive mais un paragraphe, et en ligne le reste de la valeur déborde dans le texte. Dans un titre, une accolade dans une valeur laisse tout le bloc dans le titre : `# Title {note="a {b"}` est composé tel qu’il est écrit. (Jusqu’à postext 1.8, une `{` après une espace faisait recommencer le bloc et `b` était lu comme un drapeau.)
-- **Les signes dollar sont du texte simple.** Les attributs sont lus avant les mathématiques en ligne : `lead="from $5 to $6"` n’est donc que du texte.
+- **Valeurs nues** (`startAt=17`, `year=1998`). Elles courent jusqu’à l’espace suivante : `title=Hello world` équivaut à `title="Hello"` plus un attribut sans valeur `world`.
+- **Pas d’accolades.** `{` et `}` ne vont jamais dans une valeur. La première `}` termine le bloc : un délimiteur dont la valeur en contient une n’est plus une directive mais un paragraphe, et en ligne le reste de la valeur déborde dans le texte. Dans un titre, une accolade dans une valeur laisse tout le bloc dans le titre : `# Title {note="a {b"}` est composé tel qu’il est écrit. (Jusqu’à postext 1.8, une `{` après une espace faisait recommencer le bloc et `b` était lu comme un attribut sans valeur.)
+- **Les signes dollar sont du texte simple.** Les attributs sont lus avant les formules en ligne : `lead="from $5 to $6"` n’est donc que du texte.
 - **Une seule ligne.** Un bloc d’attributs ne s’étend jamais sur plusieurs lignes.
+- **Identifiants.** `#key-idea`, l’abréviation de Pandoc, équivaut à `id="key-idea"` : `{#sec-method}` sur un titre, `:::callout{#box-safety}` sur un délimiteur. Il nomme le bloc pour les [renvois](/fr/docs/document-format-notes-references#renvois-et-ancres).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ La même syntaxe `key="value"` est lue par les attributs de titre, les délimite
 :::
 ```
 
-`::resource{id="…"}` est plus strict : l’identifiant entre guillemets doubles et aucun autre attribut (voir [Ressources](/fr/docs/document-format-resources#ressources)).
+`::resource{id="…"}` est plus strict : l’identifiant entre guillemets doubles et aucun autre attribut (voir [Ressources](/fr/docs/document-format-resources#ressources)). Dans une page composée, il accepte aussi `slot="…"` (voir [Pages composées](#pages-composées)).
 
 ### Conteneurs
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Cinq noms de conteneur sont reconnus dans le flux du texte. Ce que chacun produit se règle dans sa propre section de la configuration :
+Cinq noms de conteneur sont reconnus dans le flux du texte ; un sixième, `:::frame`, renferme le contenu d’un bloc dans une [page composée](#pages-composées). Ce que chacun produit se règle dans sa propre section de la configuration :
 
 <table>
   <thead>
@@ -132,11 +137,11 @@ Cinq noms de conteneur sont reconnus dans le flux du texte. Ce que chacun produi
   <tbody>
     <tr>
       <td><code>:::callout&#123;…&#125;</code> … <code>:::</code></td>
-      <td>Contenu encadré : une note, une astuce ou un avertissement séparé du corps dans un encadré bordé ou teinté.</td>
+      <td>Contenu encadré : une note, une astuce ou un avertissement séparé du texte courant dans une boîte bordée ou teintée.</td>
     </tr>
     <tr>
       <td><code>:::paragraphs&#123;…&#125;</code> … <code>:::</code></td>
-      <td>Une suite de paragraphes composés avec un style de paragraphe nommé (un chapeau, une épigraphe, une série de notes en petit corps) au lieu du style du corps. <code>align</code>, <code>indent</code> et <code>endIndent</code> règlent l’alignement et les retraits, avec ou sans style : <code>:::paragraphs&#123;align=end endIndent=1&#125;</code> place une date à un caractère de la fin de la ligne (地から1字上げ). <code>dropcap</code> règle une <a href="/fr/docs/document-format#lettrines">lettrine</a> sur son premier paragraphe.</td>
+      <td>Une suite de paragraphes composés avec un style de paragraphe nommé (un chapeau, une épigraphe, une série de notes en petit corps) au lieu du style du texte courant. <code>align</code>, <code>indent</code> et <code>endIndent</code> règlent l’alignement et les retraits, avec ou sans style : <code>:::paragraphs&#123;align=end endIndent=1&#125;</code> place une date à un caractère de la fin de la ligne (地から1字上げ). <code>dropcap</code> règle une <a href="/fr/docs/document-format#lettrines">lettrine</a> sur son premier paragraphe.</td>
     </tr>
     <tr>
       <td><code>:::part&#123;…&#125;</code> … <code>:::</code></td>
@@ -166,9 +171,9 @@ Un encadré flottant (`placement` `auto`, `top` ou `bottom`) accepte aussi `colu
 
 Un encadré peut aussi faire couler à côté de lui le texte qui le suit : `wrap` (`left`, `right`, `start` ou `end`), `width` (sa part de la colonne, de 0 à 1 ; `layout.wrap.defaultWidth` si non défini) et `wrapGap` (une longueur, comme `6pt`), comme dans `:::callout{wrap="right" width=0.4}` (voir [Habillage](/fr/docs/document-format-resources#habillage-du-texte) ; depuis postext 1.24).
 
-Un encadré est mis en page comme une boîte : un titre facultatif, puis son contenu composé avec la typographie de corps et de liste propre au style. Par défaut, il reste d’un seul tenant et passe entier à la colonne ou à la page suivante quand il n’y tient pas (un encadré plus haut qu’une colonne entière est quand même coupé, plutôt que de déborder) ; un style avec `keepTogether: false` permet de le couper entre ses blocs, ou entre deux lignes, en laissant au moins `splitMinLines` lignes de texte (ou une figure, un tableau, une formule centrée ou un encadré imbriqué) de chaque côté de la coupure (une coupure à l’intérieur d’un paragraphe ou d’un élément de liste laisse aussi au moins `layout.boxChildSplitMinLines` de ses lignes de chaque côté : deux par défaut, `splitMinLines` quand cette valeur est plus petite ; les livres enregistrés avant la 1.5 dont les chapitres contiennent un encadré sont lus avec 1, la coupure de la 1.4). Chaque partie après la première s’ouvre sans l’icône, même si son texte garde la colonne de l’icône, et sans le titre, sauf si le style le répète (`repeatTitle` : « Key points (cont.) ») ; un style peut aussi placer une mention « Suite » sous chaque partie qui continue (`continuesMarkerEnabled`) : voir [Marques sur un encadré coupé](/fr/docs/configuration-callouts#marques-sur-un-encadré-coupé). Les encadrés sur toute la largeur (`span="page"`) découpent la page en bandes de colonnes ; les encadrés `span="side"` quittent le flux pour la colonne latérale réservée aux flottants d’une mise en page à colonne et demie (`layout.sideColumnRole: 'floats'`), empilés à côté du texte qu’ils interrompent, et se composent comme des encadrés de colonne là où cette colonne n’existe pas ; les encadrés `placement="fixed"` quittent le flux et sont fixés à des coordonnées de la page (par exemple un badge d’auto-évaluation dans le coin inférieur gauche de la dernière page d’un chapitre), les colonnes qu’ils recouvrent cédant cette zone ; les encadrés flottants (`placement="top"` / `"bottom"`) quittent le flux là où ils apparaissent et prennent la première bande libre après cette position (le pied de la page, ou la tête ou le pied de la suivante), tandis que le texte qui les suit remplit la page qu’ils ont quittée. Un style avec `floatBarrier: true` (typiquement l’encadré « points clés » qui clôt un chapitre) fait de l’encadré une **barrière de flottants** : chaque figure ou tableau référencé avant lui est placé avant lui (dans les emplacements libres de la page, ou sur des pages ouvertes avant l’encadré), si bien qu’aucun flottant ne s’échappe au-delà de la fin de son chapitre. Un délimiteur `:::name` inconnu n’est pas un conteneur : la ligne est traitée comme du texte, exactement comme une directive inconnue.
+Un encadré est mis en page comme une boîte : un titre facultatif, puis son contenu composé avec la typographie de texte et de liste propre au style. Par défaut, il reste d’un seul tenant et passe entier à la colonne ou à la page suivante quand il n’y tient pas (un encadré plus haut qu’une colonne entière est quand même coupé, plutôt que de déborder) ; un style avec `keepTogether: false` permet de le couper entre ses blocs, ou entre deux lignes, en laissant au moins `splitMinLines` lignes de texte (ou une figure, un tableau, une formule hors texte ou un encadré imbriqué) de chaque côté de la coupure (une coupure à l’intérieur d’un paragraphe ou d’un élément de liste laisse aussi au moins `layout.boxChildSplitMinLines` de ses lignes de chaque côté : deux par défaut, `splitMinLines` quand cette valeur est plus petite ; les livres enregistrés avant la 1.5 dont les chapitres contiennent un encadré sont lus avec 1, la coupure de la 1.4). Chaque partie après la première s’ouvre sans l’icône, même si son texte garde la colonne de l’icône, et sans le titre, sauf si le style le répète (`repeatTitle` : « Key points (cont.) ») ; un style peut aussi placer une mention « Suite » sous chaque partie qui continue (`continuesMarkerEnabled`) : voir [Marques sur un encadré coupé](/fr/docs/configuration-callouts#marques-sur-un-encadré-coupé). Les encadrés sur toute la largeur (`span="page"`) découpent la page en bandes de colonnes ; les encadrés `span="side"` quittent le flux pour la colonne latérale réservée aux flottants d’une mise en page à colonne et demie (`layout.sideColumnRole: 'floats'`), empilés à côté du texte qu’ils interrompent, et se composent comme des encadrés de colonne là où cette colonne n’existe pas ; les encadrés `placement="fixed"` quittent le flux et sont fixés à des coordonnées de la page (par exemple un badge d’auto-évaluation dans le coin inférieur gauche de la dernière page d’un chapitre), les colonnes qu’ils recouvrent cédant cette zone ; les encadrés flottants (`placement="top"` / `"bottom"`) quittent le flux là où ils apparaissent et prennent la première bande libre après cette position (le pied de la page, ou la tête ou le pied de la suivante), tandis que le texte qui les suit remplit la page qu’ils ont quittée. Un style avec `floatBarrier: true` (typiquement l’encadré « points clés » qui clôt un chapitre) fait de l’encadré une **barrière de flottants** : chaque figure ou tableau référencé avant lui est placé avant lui (dans les emplacements libres de la page, ou sur des pages ouvertes avant l’encadré) : aucun flottant ne s’échappe donc au-delà de la fin de son chapitre. Un délimiteur `:::name` inconnu n’est pas un conteneur : la ligne est traitée comme du texte, exactement comme une directive inconnue.
 
-Un délimiteur `:::part` accepte `number` (tel que vous voulez le voir imprimé : `"I"`, `"IV"`, `"3"` ; il est aussi analysé pour que le design puisse le reformater) et `title` ; les deux sont facultatifs. Un troisième attribut, `palette="band=#hex"` (plusieurs paires `id=#hex` séparées par des virgules), recolore chaque couleur du design liée à ces identifiants de palette (titres courants, bandeau d’ouverture, designs de partie) ainsi que les couleurs du flux de texte qui partagent leur valeur de base (titres, gras, renvois, puces, légendes, tableaux, encadrés, pastilles) pour la partie et les chapitres qui la suivent, jusqu’à la partie suivante ; voir [Configuration › Parties](/fr/docs/configuration-styles#parties). Le conteneur ouvre toujours une page à part : un saut de page de la parité configurée avant lui, une seule colonne de corps aux marges `parts.margins`, le design d’ouverture sur toute la page, et un autre saut de page après le délimiteur de fermeture. Le corps (en général la liste des chapitres que regroupe la partie, ou rien du tout) est composé avec `parts.bodyStyle` :
+Un délimiteur `:::part` accepte `number` (tel que vous voulez le voir imprimé : `"I"`, `"IV"`, `"3"` ; il est aussi analysé pour que la maquette puisse le reformater) et `title` ; les deux sont facultatifs. Un troisième attribut, `palette="band=#hex"` (plusieurs paires `id=#hex` séparées par des virgules), recolore chaque couleur de la maquette liée à ces identifiants de palette (titres courants, bandeau d’ouverture, maquettes de partie) ainsi que les couleurs du flux de texte qui partagent leur valeur de base (titres, gras, renvois, puces, légendes, tableaux, encadrés, pastilles) pour la partie et les chapitres qui la suivent, jusqu’à la partie suivante ; voir [Configuration › Parties](/fr/docs/configuration-styles#parties). Le conteneur ouvre toujours une page à part : un saut de page de la parité configurée avant lui, une seule colonne de texte aux marges `parts.margins`, la maquette d’ouverture sur toute la page, et un autre saut de page après le délimiteur de fermeture. Le contenu (en général la liste des chapitres que regroupe la partie, ou rien du tout) est composé avec `parts.bodyStyle` :
 
 ```
 :::part{number="I" title="Foundations"}
@@ -185,7 +190,7 @@ Un délimiteur n’a pas besoin d’une ligne vide avant lui : un délimiteur d
 
 ### `:::columns`
 
-Un groupe `:::columns{count=2}` … `:::` compose les blocs placés entre ses délimiteurs en `count` colonnes de même largeur (de 2 à 6), le texte qui le suit reprenant toute la largeur. Dans un `:::callout`, les colonnes se partagent la largeur intérieure de l’encadré, séparées par le `columnGap` du style, dans la typographie de corps et de liste de l’encadré, et l’encadré grandit jusqu’à la colonne la plus haute. Dans le texte courant (depuis postext 1.25), elles se partagent la colonne de texte, séparées d’une ligne de corps, et les blocs gardent la typographie propre au texte ; avec `span="page"`, sur une page à plusieurs colonnes, le groupe découpe la page en une bande comme le fait un encadré sur toute la largeur : les colonnes au-dessus de lui se terminent à la même hauteur, le groupe est composé sur toute la largeur du contenu (séparé par la gouttière) et le texte reprend dans chaque colonne sous lui. Sur une page à une colonne, `span="page"` le compose dans la colonne. Les titres placés dans un groupe gardent leur style, leur numéro et leur entrée dans la table des matières, une note de bas de page appelée dans le groupe va au pied de la colonne de texte, et les figures qu’il cite flottent comme d’habitude.
+Un groupe `:::columns{count=2}` … `:::` compose les blocs placés entre ses délimiteurs en `count` colonnes de même largeur (de 2 à 6), le texte qui le suit reprenant toute la largeur. Dans un `:::callout`, les colonnes se partagent la largeur intérieure de l’encadré, séparées par le `columnGap` du style, dans la typographie de texte et de liste de l’encadré, et l’encadré grandit jusqu’à la colonne la plus haute. Dans le texte courant (depuis postext 1.25), elles se partagent la colonne de texte, séparées d’une ligne de texte courant, et les blocs gardent la typographie propre au texte ; avec `span="page"`, sur une page à plusieurs colonnes, le groupe découpe la page en une bande comme le fait un encadré sur toute la largeur : les colonnes au-dessus de lui se terminent à la même hauteur, le groupe est composé sur toute la largeur du contenu (séparé par la gouttière) et le texte reprend dans chaque colonne sous lui. Sur une page à une colonne, `span="page"` le compose dans la colonne. Les titres placés dans un groupe gardent leur style, leur numéro et leur entrée dans la table des matières, une note de bas de page appelée dans le groupe va au pied de la colonne de texte, et les figures qu’il cite flottent comme d’habitude.
 
 <table>
   <thead>
@@ -201,7 +206,7 @@ Un groupe `:::columns{count=2}` … `:::` compose les blocs placés entre ses d�
     </tr>
     <tr>
       <td><code>gap</code></td>
-      <td>L’espace entre les colonnes, une longueur (<code>12pt</code>, <code>1em</code>, <code>4mm</code>). Par défaut : le <code>columnGap</code> du style d’encadré dans un encadré, une ligne de corps dans la colonne de texte, <code>layout.gutterWidth</code> sur toute la largeur de la page.</td>
+      <td>L’espace entre les colonnes, une longueur (<code>12pt</code>, <code>1em</code>, <code>4mm</code>). Par défaut : le <code>columnGap</code> du style d’encadré dans un encadré, une ligne de texte courant dans la colonne de texte, <code>layout.gutterWidth</code> sur toute la largeur de la page.</td>
     </tr>
     <tr>
       <td><code>rule</code></td>
@@ -225,14 +230,14 @@ Un groupe `:::columns{count=2}` … `:::` compose les blocs placés entre ses d�
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
-      <td>L’espace sous le groupe, une longueur ; <code>0</code> n’en demande aucun. Dans le texte courant, il remplace l’espacement entre paragraphes du corps ; dans un encadré, c’est l’espace avant le bloc suivant. Depuis postext 1.28.</td>
+      <td>L’espace sous le groupe, une longueur ; <code>0</code> n’en demande aucun. Dans le texte courant, il remplace l’espacement entre paragraphes du texte courant ; dans un encadré, c’est l’espace avant le bloc suivant. Depuis postext 1.28.</td>
     </tr>
   </tbody>
 </table>
 
-Un groupe composé en entier est coupé là où ses colonnes s’équilibrent le mieux (entre deux blocs, ou entre les lignes d’un paragraphe ou d’un élément de liste, dont la fin reprend en tête de la colonne suivante sans sa puce), sauf si `breaks` fixe le début des colonnes, sans coupure à l’intérieur d’un paragraphe : une colonne de texte à côté d’une colonne de figures. Une coupure à l’intérieur d’un paragraphe ou d’un élément de liste laisse au moins `bodyText.widowMinLines` de ses lignes au pied de la colonne et `bodyText.orphanMinLines` en tête de la suivante (deux de chaque par défaut ; une quand `avoidWidows` ou `avoidOrphans` est désactivé), et l’espace avant un bloc disparaît en tête de colonne. Parmi les coupures que ces règles permettent, le groupe retient celle dont la colonne la plus haute est la plus basse : deux paragraphes de six et cinq lignes se placent 6 | 5, jamais 5 | 1 + 5 (depuis postext 1.39).
+Un groupe composé en entier est coupé là où ses colonnes s’équilibrent le mieux (entre deux blocs, ou entre les lignes d’un paragraphe ou d’un élément de liste, dont la fin reprend en tête de la colonne suivante sans sa puce), sauf si `breaks` fixe le début des colonnes, sans coupure à l’intérieur d’un paragraphe : une colonne de texte à côté d’une colonne de figures. Une coupure à l’intérieur d’un paragraphe ou d’un élément de liste laisse au moins `bodyText.widowMinLines` de ses lignes au pied de la colonne et `bodyText.orphanMinLines` en tête de la suivante (deux de chaque par défaut ; une quand `avoidWidows` ou `avoidOrphans` est désactivé), et l’espace avant un bloc disparaît en tête de colonne. Parmi les coupures que ces règles permettent, le groupe retient celle dont la colonne la plus haute est la plus basse : deux paragraphes de six et cinq lignes se placent 6 | 5, jamais 5 | 1 + 5 (depuis postext 1.39).
 
-**L’espace autour d’un groupe.** Dans le texte courant, un groupe est suivi de l’espacement entre paragraphes du corps (une ligne avec `bodyText.paragraphSpacing`, rien sans lui), et dans un encadré d’aucun espace propre. `marginTop` et `marginBottom` sur le délimiteur le règlent : `:::columns{count=3 span="page" marginBottom="0.75em"}`. Chacun est un minimum qui se fond avec l’espace que le bloc voisin réserve pour lui-même, comme le font les marges d’un encadré. Dans le texte courant, le flux revient sur la grille de ligne de base sous le groupe, l’espace se compte donc en lignes entières, et un groupe réparti entre plusieurs colonnes ou pages garde la marge du haut pour sa première partie et celle du bas pour sa dernière. Un `em` correspond à la taille du texte dans lequel se trouve le groupe ; une valeur qui n’est pas une longueur, ou une valeur négative, est ignorée.
+**L’espace autour d’un groupe.** Dans le texte courant, un groupe est suivi de l’espacement entre paragraphes du texte courant (une ligne avec `bodyText.paragraphSpacing`, rien sans lui), et dans un encadré d’aucun espace propre. `marginTop` et `marginBottom` sur le délimiteur le règlent : `:::columns{count=3 span="page" marginBottom="0.75em"}`. Chacun est un minimum qui se fond avec l’espace que le bloc voisin réserve pour lui-même, comme le font les marges d’un encadré. Dans le texte courant, le flux revient sur la grille de ligne de base sous le groupe, l’espace se compte donc en lignes entières, et un groupe réparti entre plusieurs colonnes ou pages garde la marge du haut pour sa première partie et celle du bas pour sa dernière. Un `em` correspond à la taille du texte dans lequel se trouve le groupe ; une valeur qui n’est pas une longueur, ou une valeur négative, est ignorée.
 
 ```md
 :::callout{type="summary"}
@@ -244,7 +249,7 @@ Un groupe composé en entier est coupé là où ses colonnes s’équilibrent le
 :::
 ```
 
-**Comment compte `breaks`.** `breaks` numérote dans l’ordre les blocs du groupe (paragraphes, éléments de liste, un bloc chacun, formules centrées, figures et tableaux), et un `:::callout` imbriqué compte pour un bloc, quel que soit son contenu. Les directives ne sont pas des blocs : un `:::space` entre deux strophes ne décale pas le compte. Un numéro inférieur à 2, au-delà du dernier bloc du groupe ou qui ne suit pas la coupure précédente est ignoré. Dans un groupe, `:::space` sépare deux blocs comme partout ailleurs dans un encadré, et disparaît en haut du groupe et en tête de chacune de ses colonnes (une position `breaks` ou une coupure d’équilibrage) : pour faire commencer le groupe plus bas, placez l’espace avant le délimiteur `:::columns`. Deux colonnes qui portent le même espacement s’alignent donc strophe par strophe :
+**Comment compte `breaks`.** `breaks` numérote dans l’ordre les blocs du groupe (paragraphes, éléments de liste, un bloc chacun, formules hors texte, figures et tableaux), et un `:::callout` imbriqué compte pour un bloc, quel que soit son contenu. Les directives ne sont pas des blocs : un `:::space` entre deux strophes ne décale pas le compte. Un numéro inférieur à 2, au-delà du dernier bloc du groupe ou qui ne suit pas la coupure précédente est ignoré. Dans un groupe, `:::space` sépare deux blocs comme partout ailleurs dans un encadré, et disparaît en haut du groupe et en tête de chacune de ses colonnes (une position `breaks` ou une coupure d’équilibrage) : pour faire commencer le groupe plus bas, placez l’espace avant le délimiteur `:::columns`. Deux colonnes qui contiennent les mêmes espacements s’alignent donc strophe par strophe :
 
 ```md
 :::callout{type="verse"}
@@ -291,7 +296,7 @@ Un encadré imbriqué dans un groupe reste entier et passe à la partie suivante
 :::
 ```
 
-Un délimiteur `:::callout` accepte aussi `label="…"` : le texte qu’un style doté d’un onglet `label` imprime dans le coin supérieur de l’encadré (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+Un délimiteur `:::callout` accepte aussi `label="…"` : le texte qu’un style doté d’un onglet `label` imprime dans le coin supérieur de l’encadré (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Tout autre attribut du délimiteur est lu par la maquette du style, s’il en a une : `:::callout{type="card" kicker="Note"}` donne à ses textes `{attr.kicker}`, et `{boxText}` imprime le contenu de l’encadré lui-même (voir [Configuration › Maquettes d’encadré](/fr/docs/configuration-callouts#maquettes-dencadré)).
 
 Un `:::callout` placé dans un autre est un encadré à part entière : une fiche d’exercice contenant des cases de réponse, par exemple. Il prend son propre style (fond, bordure, rayon, marge intérieure, titre, icône) sur toute la largeur intérieure de l’encadré extérieur et s’empile parmi ses autres blocs ; son `span` et son `placement` sont ignorés, puisqu’un encadré imbriqué coule toujours à l’intérieur de son parent. Chaque délimiteur ferme l’encadré le plus intérieur encore ouvert :
 
@@ -323,7 +328,7 @@ Un livre peut changer de papier pour une suite de pages : un cahier de planches
 :::
 ```
 
-Un papier couvre des feuilles entières : le contenu placé entre les délimiteurs commence donc sur une nouvelle page, et ce qui suit le `:::` de fermeture commence aussi sur une nouvelle page. Une suite qui termine le document ne laisse aucune page blanche après elle. Les figures et tableaux cités dans la suite sont placés avant qu’elle ne se ferme. Chaque page composée avec du contenu issu du conteneur porte le papier dans la mise en page (`VDTPage.paper`, avec les attributs tels que les écrit le délimiteur) ; les pages hors du conteneur ne portent rien. La visionneuse Folio le lit et dessine ces feuillets avec la couleur, la surface, l’épaisseur et la rigidité du papier. Les sorties canvas, PDF et HTML l’ignorent : les pages sont composées et imprimées comme les autres.
+Un papier couvre des feuilles entières : le contenu placé entre les délimiteurs commence donc sur une nouvelle page, et ce qui suit le `:::` de fermeture commence aussi sur une nouvelle page. Une suite qui termine le document ne laisse aucune page blanche après elle. Les figures et tableaux cités dans la suite sont placés avant qu’elle ne se ferme. Chaque page composée avec du contenu issu du conteneur enregistre le papier dans la mise en page (`VDTPage.paper`, avec les attributs tels que les écrit le délimiteur) ; les pages hors du conteneur n’ont rien. La visionneuse Folio le lit et dessine ces feuillets avec la couleur, la surface, l’épaisseur et la rigidité du papier. Les sorties canvas, PDF et HTML l’ignorent : les pages sont composées et imprimées comme les autres.
 
 Les attributs sont ceux des réglages `folio.paper`, et tous sont facultatifs. Un attribut que le délimiteur omet suit le papier du document, et à défaut les valeurs par défaut du papier :
 
@@ -376,7 +381,7 @@ Un `:::paper` placé dans un autre ne remplace que les attributs qu’il défini
 
 La directive n’impose pas de parité à elle seule : elle n’agit que sur la mise en page du bloc suivant. Utilisez-la pour terminer une préface, placer une dédicace seule sur sa page, ou marquer la fin d’une section. Quand on veut à la fois un saut de page et une remise à zéro de la numérotation au même endroit, enchaînez `:::pagebreak` puis `:::numbering` : le changement de numérotation s’applique à la nouvelle page que `:::pagebreak` vient de créer.
 
-Un saut de page sur une page encore vide ne fait rien : il n’ajoute donc jamais de page blanche. Il ne remplace pas non plus le `breakBefore` d’un titre qui le suit immédiatement (le niveau 1 en a un par défaut) : le titre applique quand même sa parité, ce qui peut ajouter une page blanche après celle qu’a ouverte la directive. Pour faire commencer un titre exactement là, désactivez son saut (voir **Configuration → Styles de titre**). Après un titre de couverture qui remplit sa page, le saut est facultatif : la couverture occupe déjà le reste de sa page, en mise en page à une ou à plusieurs colonnes, et un `:::pagebreak` juste après ne fait pas de mal. Il n’est nécessaire qu’après une couverture dont le design s’arrête avant le pied de la page, quand le texte doit malgré tout commencer à la page suivante (voir **Configuration → Hauteur réservée**).
+Un saut de page sur une page encore vide ne fait rien : il n’ajoute donc jamais de page blanche. Il ne remplace pas non plus le `breakBefore` d’un titre qui le suit immédiatement (le niveau 1 en a un par défaut) : le titre applique quand même sa parité, ce qui peut ajouter une page blanche après celle qu’a ouverte la directive. Pour faire commencer un titre exactement là, désactivez son saut (voir **Configuration → Styles de titre**). Après un titre de couverture qui remplit sa page, le saut est facultatif : la couverture occupe déjà le reste de sa page, en mise en page à une ou à plusieurs colonnes, et un `:::pagebreak` juste après ne fait pas de mal. Il n’est nécessaire qu’après une couverture dont la maquette s’arrête avant le pied de la page, quand le texte doit malgré tout commencer à la page suivante (voir **Configuration → Hauteur réservée**).
 
 ```md
 The old chapter ends here.
@@ -386,7 +391,7 @@ The old chapter ends here.
 # A new chapter
 ```
 
-Le drapeau `center` (`:::pagebreak{center}`, désactivé avec `center=false`) centre le texte de la page qu’ouvre le saut entre la tête et le pied du bloc de texte, et dans la largeur de la page en texte vertical : le ページの左右中央 d’un titre de partie ou d’une dédicace japonaise. Les flottants, les notes et les titres courants restent à leur place, et une page déjà pleine n’est pas touchée. Le drapeau ne termine pas la page : fermez-la avec un autre `:::pagebreak`.
+L’attribut `center` (`:::pagebreak{center}`, désactivé avec `center=false`) centre le texte de la page qu’ouvre le saut entre la tête et le pied du bloc de texte, et dans la largeur de la page en texte vertical : le ページの左右中央 d’un titre de partie ou d’une dédicace japonaise. Les flottants, les notes et les titres courants restent à leur place, et une page déjà pleine n’est pas touchée. Cet attribut ne termine pas la page : fermez-la avec un autre `:::pagebreak`.
 
 ```md
 :::pagebreak{center}
@@ -408,7 +413,7 @@ L’attribut `parity` accepte les cinq mêmes valeurs que `headings.levels[*].br
 
 Les deux sortes de pages blanches que `:::pagebreak` (et `breakBefore`) peuvent introduire sont distinguées dans le modèle `VDTPage` :
 
-- `blankForParity: true` : insérée pour satisfaire une contrainte de parité. Dans les en-têtes `{chapterTitle}`, cette page porte le titre du chapitre **à venir**, car la page blanche n’existe que pour placer ce chapitre sur la bonne parité.
+- `blankForParity: true` : insérée pour satisfaire une contrainte de parité. Dans les en-têtes `{chapterTitle}`, cette page affiche le titre du chapitre **à venir**, car la page blanche n’existe que pour placer ce chapitre sur la bonne parité.
 - `blankForForce: true` : la page de séparation obligatoire d’un mode `'always-*'`. Elle appartient au chapitre **précédent** : une respiration voulue en fin de chapitre, pas un remplissage de parité pour le chapitre suivant.
 
 Ces deux mêmes règles donnent à une page blanche les titres courants et la palette d’une section stylée : voir [Configuration › Styles de titre](/fr/docs/configuration-styles#styles-de-titre).
@@ -442,7 +447,7 @@ Les changements de format seuls (sans `startAt`) laissent le compteur continuer�
 
 `format` accepte n’importe quelle graphie d’un format de numérotation : `roman-lower` et `i` fonctionnent aussi bien que `lower-roman`, `arabic` aussi bien que `decimal`, `一` et `あ` aussi bien que `japanese-informal` et `hiragana` (voir [Configuration › Graphies des formats de numérotation](/fr/docs/configuration-page-layout#graphies-des-formats-de-numérotation)). Une valeur qui n’est aucune d’elles laisse le format inchangé, et le Sandbox la signale.
 
-`lines` relance le compte des [numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne), pas le compteur de pages : la ligne comptée suivante prend le numéro donné, quoi qu’indique `lineNumbers.restart`. Une valeur qui n’est pas un nombre entier supérieur ou égal à 0 est ignorée.
+`lines` relance le compte des [numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne), pas le compteur de pages : la ligne comptée suivante prend le numéro donné, quelle que soit la valeur de `lineNumbers.restart`. Une valeur qui n’est pas un nombre entier supérieur ou égal à 0 est ignorée.
 
 ```md
 ## Act II
@@ -466,11 +471,11 @@ A new scene begins one line lower.
 Two lines lower still.
 ```
 
-- **`lines`** : la quantité d’espace, en lignes de corps (la grille de ligne de base). Par défaut `1`. Les nombres entiers gardent chaque ligne de texte sur la grille, de sorte que les colonnes restent alignées d’un bout à l’autre de la page ; une fraction (`lines=0.5`) est respectée exactement, au prix de cet alignement jusqu’au prochain bloc qui se cale sur la grille. Une valeur qui n’est pas un nombre supérieur à 0 et inférieur ou égal à 20 revient à une ligne, et le Sandbox la signale (**Taille d’espace non valide**).
+- **`lines`** : la quantité d’espace, en lignes de texte courant (la grille de ligne de base). Par défaut `1`. Les nombres entiers gardent chaque ligne de texte sur la grille, de sorte que les colonnes restent alignées d’un bout à l’autre de la page ; une fraction (`lines=0.5`) est respectée exactement, au prix de cet alignement jusqu’au prochain bloc qui se cale sur la grille. Une valeur qui n’est pas un nombre supérieur à 0 et inférieur ou égal à 20 revient à une ligne, et le Sandbox la signale (**Taille d’espace non valide**).
 - **Il s’additionne.** L’espace s’ajoute à la marge qui sépare déjà les deux blocs (la marge haute d’un titre, la marge basse d’une liste) au lieu de se fondre avec elle. Deux lignes `:::space` d’affilée ajoutent deux lignes.
-- **Il disparaît à une coupure**, comme le `\vspace` de LaTeX : en haut d’une colonne ou d’une page il s’efface, si bien qu’une page ne s’ouvre jamais sur un trou ; et quand il ne tient pas au pied d’une colonne, il termine simplement cette colonne, sans reporter le reste.
+- **Il disparaît à une coupure**, comme le `\vspace` de LaTeX : en haut d’une colonne ou d’une page il s’efface : une page ne s’ouvre donc jamais sur un trou ; et quand il ne tient pas au pied d’une colonne, il termine simplement cette colonne, sans reporter le reste.
 - **Le paragraphe qui le suit est composé sans retrait.** Quand `bodyText.indentAfterHeading` est désactivé, un paragraphe qui suit immédiatement `:::space` perd son retrait de première ligne, comme après un titre : la convention habituelle pour un texte qui reprend après une ligne blanche.
-- **Dans un encadré** (ou un groupe `:::columns`), il sépare de la même façon les enfants de l’encadré, mesuré en lignes de corps propres à l’encadré. Avant le premier bloc de l’encadré, il disparaît, comme en haut d’une colonne (la marge intérieure détache déjà le contenu du cadre), sauf dans deux cas où il ouvre cette place : juste sous le titre de l’encadré, et dans un encadré qui ne contient rien d’autre (une case de réponse, un espace pour écrire, dimensionné en lignes). Il disparaît toujours en haut d’un groupe `:::columns`, en tête de chacune de ses colonnes, et en haut de la partie d’un encadré coupé qui continue dans la colonne ou la page suivante. Dans un conteneur `:::paragraphs`, il fonctionne comme entre deux paragraphes du corps.
+- **Dans un encadré** (ou un groupe `:::columns`), il sépare de la même façon les enfants de l’encadré, mesuré en lignes du texte propre à l’encadré. Avant le premier bloc de l’encadré, il disparaît, comme en haut d’une colonne (la marge intérieure détache déjà le contenu du cadre), sauf dans deux cas où il ouvre cette place : juste sous le titre de l’encadré, et dans un encadré qui ne contient rien d’autre (une case de réponse, un espace pour écrire, dimensionné en lignes). Il disparaît toujours en haut d’un groupe `:::columns`, en tête de chacune de ses colonnes, et en haut de la partie d’un encadré coupé qui continue dans la colonne ou la page suivante. Dans un conteneur `:::paragraphs`, il fonctionne comme entre deux paragraphes du texte courant.
 - **Garder avec le suivant** en tient compte : un titre suivi de `:::space` passe plus loin quand l’espace et les premières lignes de son texte ne tiennent pas sous lui.
 
 La case de réponse d’une fiche d’exercice est un encadré dont le seul contenu est de l’espace : la question dans son titre, quatre lignes de place en dessous.
@@ -486,7 +491,7 @@ Pour une coupure fixe plutôt qu’un espace, utilisez `:::columnbreak` ou `:::p
 
 ### `:::verse`
 
-Un poème. `:::verse` le compose selon l’une de deux dispositions : **vers par vers**, comme on imprime la plupart des poèmes, ou dans la **disposition arabe classique** d’une qaṣīda, chaque bayt en deux hémistiches côte à côte. Un poème dont les vers portent un séparateur d’hémistiches (`||`, ou un `\\` entouré d’espaces) prend la disposition arabe, et tout autre la disposition vers par vers ; `layout=lines` ou `layout=bayt` sur le délimiteur en impose une.
+Un poème. `:::verse` le compose selon l’une de deux dispositions : **vers par vers**, comme on imprime la plupart des poèmes, ou dans la **disposition arabe classique** d’une qaṣīda, chaque bayt en deux hémistiches côte à côte. Un poème dont les vers contiennent un séparateur d’hémistiches (`||`, ou un `\\` entouré d’espaces) prend la disposition arabe, et tout autre la disposition vers par vers ; `layout=lines` ou `layout=bayt` sur le délimiteur en impose une.
 
 #### Vers par vers
 
@@ -511,7 +516,7 @@ To stop without a farmhouse near
 - **Placement.** Le poème est centré dans la justification sur son vers le plus long, tous les vers alignés sur le début du poème (`align=center`, le réglage habituel pour un poème cité dans de la prose) ; `align=start` l’aligne sur le début de la justification, ce qui est le réglage par défaut en texte vertical. Le paragraphe qui introduit le poème garde sa dernière ligne avec les premiers vers.
 - **Vers en escalier.** Un vers écrit `+ …` commence là où s’arrêtait le vers du dessus, une espace entre mots plus loin, comme un vers de théâtre partagé entre deux personnages. Écrivez `\+` pour un vers qui commence par un signe plus.
 - **Césures.** Avec `keepSpaces` sur le délimiteur, une suite de deux espaces ou plus à l’intérieur d’un vers garde sa largeur ; sans lui, les espaces se réduisent comme dans n’importe quel paragraphe.
-- **Caractère et sens d’écriture.** `style` nomme un style de paragraphe, qui donne le caractère, le corps, l’interlignage, `indent`, et l’espace au-dessus et au-dessous du poème. `dir` et `lang` règlent son sens d’écriture et sa langue : un poème latin dans un livre arabe (`dir=ltr`) est mis en retrait depuis son propre côté de début. En texte vertical, chaque vers est une colonne, en retrait depuis la tête.
+- **Caractère et sens d’écriture.** `style` désigne un style de paragraphe, qui donne le caractère, le corps, l’interlignage, `indent`, et l’espace au-dessus et au-dessous du poème. `dir` et `lang` règlent son sens d’écriture et sa langue : un poème latin dans un livre arabe (`dir=ltr`) est mis en retrait depuis son propre côté de début. En texte vertical, chaque vers est une colonne, en retrait depuis la tête.
 
 <table>
   <thead>
@@ -522,7 +527,7 @@ To stop without a farmhouse near
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>layout</code></td><td><code>auto</code></td><td><code>lines</code>, <code>bayt</code> ou <code>auto</code> : la disposition en bayt quand un vers porte un séparateur.</td></tr>
+    <tr><td><code>layout</code></td><td><code>auto</code></td><td><code>lines</code>, <code>bayt</code> ou <code>auto</code> : la disposition en bayt quand un vers contient un séparateur.</td></tr>
     <tr><td><code>indentStep</code></td><td><code>0.5em</code></td><td>Largeur d’une espace en début de ligne.</td></tr>
     <tr><td><code>turnover</code></td><td><code>hang</code></td><td><code>hang</code> ou <code>right</code>.</td></tr>
     <tr><td><code>hang</code></td><td>le <code>hangingIndent</code> du style, à défaut <code>2em</code></td><td>Retrait d’un rejet pendant par rapport au début de son vers.</td></tr>
@@ -534,7 +539,7 @@ To stop without a farmhouse near
     <tr><td><code>align</code></td><td><code>center</code> (<code>start</code> en texte vertical)</td><td>Centre le poème sur son vers le plus long, ou l’aligne sur le début.</td></tr>
     <tr><td><code>style</code>, <code>dir</code>, <code>lang</code></td><td>—</td><td>Style de paragraphe, sens d’écriture et langue du poème.</td></tr>
     <tr><td><code>numbered</code></td><td><code>true</code></td><td><code>false</code> exclut le poème de la numérotation des lignes : ses vers ne sont pas comptés.</td></tr>
-    <tr><td><code>lineStart</code></td><td>—</td><td>Le numéro de ligne du premier vers du poème. Le compte repart de là, quoi qu’indique <code>lineNumbers.restart</code>.</td></tr>
+    <tr><td><code>lineStart</code></td><td>—</td><td>Le numéro de ligne du premier vers du poème. Le compte repart de là, quelle que soit la valeur de <code>lineNumbers.restart</code>.</td></tr>
     <tr><td><code>interval</code></td><td><code>lineNumbers.interval</code></td><td>L’intervalle propre au poème : imprime le numéro d’un vers sur N.</td></tr>
   </tbody>
 </table>
@@ -574,7 +579,7 @@ Le texte brut du poème garde les hémistiches et les bayts séparés (une tabul
 
 ### `:::toc`
 
-`:::toc` imprime la table des matières là où il se trouve. Il se développe en blocs ordinaires (un par titre des niveaux que liste `toc.levels`, le niveau 1 par défaut, et un par `:::part`), si bien que la table des matières coule à travers les colonnes et les pages comme n’importe quel autre texte, et qu’un clic sur une entrée mène à la ligne de la directive. Une entrée affiche le numéro du titre (la sortie de son `numberingTemplate`, à défaut le rang du chapitre), son titre, des points de conduite et le numéro de la page où il commence, et, quand `toc.subtitle` est activé, une deuxième ligne avec un attribut du titre, comme le `{author="…"}` du chapitre. Une partie a sa propre ligne, dessinée par `toc.parts.design` et colorée avec la `palette` propre à la partie. Les titres dont le style indique `numbered: false` sont listés sans numéro ; `{toc="false"}` sur un titre l’exclut (typiquement le titre de la table des matières elle-même).
+`:::toc` imprime la table des matières là où il se trouve. Il se développe en blocs ordinaires (un par titre des niveaux que liste `toc.levels`, le niveau 1 par défaut, et un par `:::part`) : la table des matières coule donc à travers les colonnes et les pages comme n’importe quel autre texte, et un clic sur une entrée mène à la ligne de la directive. Une entrée affiche le numéro du titre (la sortie de son `numberingTemplate`, à défaut le rang du chapitre), son titre, des points de conduite et le numéro de la page où il commence, et, quand `toc.subtitle` est activé, une deuxième ligne avec un attribut du titre, comme le `{author="…"}` du chapitre. Une partie a sa propre ligne, dessinée par `toc.parts.design` et colorée avec la `palette` propre à la partie. Les titres dont le style indique `numbered: false` sont listés sans numéro ; `{toc="false"}` sur un titre l’exclut (typiquement le titre de la table des matières elle-même).
 
 Dans une page composée, un bloc avec `takes: "toc"`, ou un `:::frame` qui contient la directive, compose la table avec ses lignes de partie, ses points de conduite et `keep` (voir [Pages composées](/fr/docs/composed-pages)).
 
@@ -584,7 +589,7 @@ Dans une page composée, un bloc avec `takes: "toc"`, ou un `:::frame` qui conti
 :::toc
 ```
 
-Deux attributs changent ce qu’imprime une table des matières donnée, quelle que soit la configuration. `levels` liste les niveaux de titre qu’elle reprend : une plage (`levels="1-2"`), un seul niveau (`levels="2"`) ou une liste (`levels="1,3"`) ; un niveau auquel `toc.levels` ne donne pas de style prend celui du niveau le plus proche au-dessus de lui. `keep` garde chaque bloc de la table sur une seule colonne et une seule page, comme le fait [`toc.groups.keepTogether`](/fr/docs/configuration-notes-references#table-des-matières) : `keep="part"` garde une rangée de partie avec ses chapitres, `keep="1"` (jusqu’à `"6"`) un titre de ce niveau avec les entrées placées sous lui, et `keep="none"` désactive le regroupement configuré. Un bloc qui ne tient pas passe entier à la colonne ou à la page suivante ; un bloc plus haut qu’une colonne est coupé, et la colonne où il se poursuit s’ouvre de nouveau sur sa tête, suivie d’une marque de continuation comme *(suite)*.
+Deux attributs changent ce qu’imprime une table des matières donnée, quelle que soit la configuration. `levels` liste les niveaux de titre qu’elle reprend : une plage (`levels="1-2"`), un seul niveau (`levels="2"`) ou une liste (`levels="1,3"`) ; un niveau auquel `toc.levels` ne donne pas de style prend celui du niveau le plus proche au-dessus de lui. `keep` garde chaque bloc de la table sur une seule colonne et une seule page, comme le fait [`toc.groups.keepTogether`](/fr/docs/configuration-notes-references#table-des-matières) : `keep="part"` garde une ligne de partie avec ses chapitres, `keep="1"` (jusqu’à `"6"`) un titre de ce niveau avec les entrées placées sous lui, et `keep="none"` désactive le regroupement configuré. Un bloc qui ne tient pas passe entier à la colonne ou à la page suivante ; un bloc plus haut qu’une colonne est coupé, et la colonne où il se poursuit s’ouvre de nouveau sur sa tête, suivie d’une marque de continuation comme *(suite)*.
 
 ```md
 # Contents {style="front-matter" toc="false"}
@@ -627,7 +632,7 @@ Jusqu’à postext 1.22, la barre oblique inverse s’imprimait et les lignes é
 
 ### Sauts de ligne dans les titres
 
-Écrivez `\\` dans un titre (ou dans l’attribut `title` d’une partie) pour forcer un saut de ligne là où le titre est affiché comme un titre : le titre dans la colonne continue de couler et y montre une espace, tandis que le `{titleText}` d’un design d’ouverture coupe la ligne à cet endroit (dans chaque mode `overflow` de l’élément de texte). Les titres courants, `{chapterTitle}`, `{partTitle}` et les signets du PDF affichent toujours le titre sur une seule ligne. En chinois ou en japonais, le saut se lit comme une espace idéographique entre deux caractères de cette écriture (un titre en distique) ; là où l’un d’eux touche un chiffre ou du texte latin (`关于举办 \\ 2026年…`), la page place l’espace entre han et latin, et les signets du PDF et le titre du document joignent les deux moitiés sans rien, comme s’écrit le chinois courant.
+Écrivez `\\` dans un titre (ou dans l’attribut `title` d’une partie) pour forcer un saut de ligne là où le titre est affiché comme un titre : le titre dans la colonne continue de couler et y montre une espace, tandis que le `{titleText}` d’une maquette d’ouverture coupe la ligne à cet endroit (dans chaque mode `overflow` de l’élément de texte). Les titres courants, `{chapterTitle}`, `{partTitle}` et les signets du PDF affichent toujours le titre sur une seule ligne. En chinois ou en japonais, le saut se lit comme une espace idéographique entre deux caractères de cette écriture (un titre en distique) ; là où l’un d’eux touche un chiffre ou du texte latin (`关于举办 \\ 2026年…`), la page place l’espace entre han et latin, et les signets du PDF et le titre du document joignent les deux moitiés sans rien, comme s’écrit le chinois courant.
 
 ```md
 # Concepts of health and illness. \\ Community health {author="I. Zango Martín"}
@@ -636,7 +641,7 @@ Jusqu’à postext 1.22, la barre oblique inverse s’imprimait et les lignes é
 
 ## Bandes dessinées
 
-Les planches, les strips et les doubles pages de bande dessinée s’écrivent dans deux blocs délimités dont le moteur lit lui-même le corps, ligne par ligne : `:::page` et `:::strip`. À l’intérieur, les lignes `::panel` ouvrent les cases et les lignes de script les lettrent. Le guide, avec les règles de mise en page, le lettrage et les sorties, est [Bandes dessinées](/fr/docs/comics) ; les réglages se trouvent dans [Configuration › Bandes dessinées](/fr/docs/configuration-comics#bande-dessinée).
+Les planches, les strips et les doubles pages de bande dessinée s’écrivent dans deux blocs délimités dont le moteur lit lui-même le contenu, ligne par ligne : `:::page` et `:::strip`. À l’intérieur, les lignes `::panel` ouvrent les cases et les lignes de script les lettrent. Le guide, avec les règles de mise en page, le lettrage et les sorties, est [Bandes dessinées](/fr/docs/comics) ; les réglages se trouvent dans [Configuration › Bandes dessinées](/fr/docs/configuration-comics#bande-dessinée).
 
 ### `:::page`
 
@@ -658,7 +663,7 @@ Un bloc `:::page` est une planche : il ouvre une nouvelle page, l’occupe tout
 
 ### Cases
 
-Une ligne `::panel{…}` ouvre une case, qui remplit la cellule suivante dans l’ordre de lecture et s’étend jusqu’à la ligne `::panel` suivante ou jusqu’à la clôture du bloc :
+Une ligne `::panel{…}` ouvre une case, qui remplit la cellule suivante dans l’ordre de lecture et s’étend jusqu’à la ligne `::panel` suivante ou jusqu’au délimiteur de fermeture du bloc :
 
 <table>
   <thead>
@@ -675,10 +680,10 @@ Une ligne `::panel{…}` ouvre une case, qui remplit la cellule suivante dans l�
     <tr><td><code>bleed</code>, <code>bleed="top start"</code>, <code>bleed=false</code></td><td>Prolonger les côtés qui touchent le cadre jusqu’à la coupe et au fond perdu.</td></tr>
     <tr><td><code>pad="…"</code></td><td>Rendre la case plus petite que sa cellule : une à quatre longueurs ou pourcentages (haut, fin, bas, début).</td></tr>
     <tr><td><code>inset="x y w h"</code></td><td>Poser la case sur la précédente, dans ce cadre exprimé en pourcentages de celle-ci, au lieu de lui donner une cellule.</td></tr>
-    <tr><td><code>text</code>, <code>valign=middle</code>, <code>shrink</code>, <code>box=&lt;id&gt;</code></td><td>Fait de la case une case de texte : son corps est du Markdown composé dans le bloc de la case (<code>valign</code> le place), et non un script ; <code>box</code> habille la case d'un style d'encadré. Voir <a href="/fr/docs/comics#cases-de-texte">Bande dessinée › Cases de texte</a>.</td></tr>
+    <tr><td><code>text</code>, <code>valign=middle</code>, <code>shrink</code>, <code>box=&lt;id&gt;</code></td><td>Fait de la case une case de texte : son contenu est du Markdown composé dans le cadre de la case (<code>valign</code> le place), et non un script ; <code>box</code> habille la case d’un style d’encadré. Voir <a href="/fr/docs/comics#cases-de-texte">Bande dessinée › Cases de texte</a>.</td></tr>
     <tr><td><code>pop=&lt;id&gt;</code></td><td>Une découpe transparente dessinée par-dessus la bordure avec le recadrage de l’image (une bordure brisée).</td></tr>
     <tr><td><code>mirror</code>, <code>mirror=false</code></td><td>Retourner l’image, ou la garder telle qu’elle est dessinée sur une page en miroir.</td></tr>
-    <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>L’alternative textuelle (sinon l’<code>altText</code> de la ressource) et un id d’ancre.</td></tr>
+    <tr><td><code>alt="…"</code>, <code>id=…</code></td><td>Le texte de remplacement (sinon l’<code>altText</code> de la ressource) et un identifiant d’ancre.</td></tr>
   </tbody>
 </table>
 
@@ -699,8 +704,8 @@ maya: This line goes on
 ```
 
 - La **clé** est un id de personnage (lettres, chiffres, `_`, `.`, `-`), le même dans toutes les traductions ; `caption`, `sfx` et `note` sont réservés. Les deux-points peuvent être le `：` pleine chasse.
-- Un mot seul entre les accolades est un **style de bulle** (`thought`, `whisper`, `shout`, `radio`, `inner` ou l’un de `comics.balloonStyles`) ; `style=` dit la même chose.
-- `at` fixe la bulle : un point en pourcentages de l’image de la case (`at="62% 40%"`), ou un coin ou un bord (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` dirige l’appendice vers un point de l’image ; `tail=none` le supprime et `tail=top|bottom|start|end|left|right` le dirige hors de la case. `join` et `join=false` rattachent la bulle à la précédente du même personnage ou la tiennent à part ; `break` la laisse franchir la bordure, et ce franchissement n’est pas signalé comme un débordement. `rotate` (en degrés), `size` (un facteur d’échelle, pour les onomatopées), `color` et `font` modifient son lettrage.
+- Un mot seul entre les accolades est un **style de bulle** (`thought`, `whisper`, `shout`, `radio`, `inner` ou l’un de `comics.balloonStyles`) ; `style=` a le même effet.
+- `at` fixe la bulle : un point en pourcentages de l’image de la case (`at="62% 40%"`), ou un coin ou un bord (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` dirige la queue vers un point de l’image ; `tail=none` la supprime et `tail=top|bottom|start|end|left|right` la dirige hors de la case. `join` et `join=false` rattachent la bulle à la précédente du même personnage ou la tiennent à part ; `break` la laisse franchir la bordure, et ce franchissement n’est pas signalé comme un débordement. `rotate` (en degrés), `skew` (une inclinaison en degrés, pour un texte sur un objet vu en perspective), `size` (un facteur d’échelle, pour les onomatopées), `color` et `font` modifient son lettrage.
 - `vertical` et `horizontal` (ou `mode=vertical`, `mode=horizontal`) fixent le sens d’écriture de la ligne, au-dessus de celui du livre : un `ドン` non traduit composé en colonne dans une édition horizontale, une enseigne écrite en travers composée en ligne dans une édition verticale. Une colonne dans un livre d’une autre langue suit les règles de son propre texte (avec des kana, celles du japonais). Dans un livre vertical, une ligne sans caractères chinois ni japonais est de toute façon composée en ligne.
 - Une ligne en retrait de deux espaces ou d’une tabulation prolonge la bulle du dessus ; une barre oblique inverse en fin de ligne y coupe le texte. Les lignes vides sont ignorées.
 - Le texte est du Markdown en ligne : mise en relief (lettrée en gras italique), `:tcy`, `:ruby` (sa lecture composée au-dessus de la base, sauf au-dessus d’une base de droite à gauche), `:ltr` et `:rtl` (un passage maintenu dans son propre sens). Les notes de bas de page et les marques `:ref` ne sont pas lues.
@@ -717,7 +722,7 @@ otto: Is it?
 :::
 ```
 
-Un `:::strip` a le corps d’une planche, mais se place dans le texte comme un seul bloc insécable, découpé en cases : `span` (`column`, la valeur par défaut, ou `page`), `placement` (`here`, la valeur par défaut, là où il est écrit ; ou `top`, `bottom`, `auto`, flottant comme une figure), et sa taille, soit `height` (une longueur ; un nombre seul s’entend en millimètres), soit `aspect` (largeur sur hauteur : `3`, `4/1`, `4:1` ; par défaut, les proportions qui rendent ses cases carrées). Un strip sur toute la largeur de la page placé `here` sur une page de plusieurs colonnes coupe les colonnes à l’endroit où il se trouve, comme le fait un bloc sur toute la largeur de la page. `width` le rend plus étroit que la justification qu’il couvre (`60%` de celle-ci, ou une longueur) et `align` le place au `start`, au `center` (par défaut) ou à l’`end` de cette justification, dans le sens du texte. `caption="…"` compose une légende en dessous dans le style des légendes ; avec `type=figure` (un type de ressource), la légende prend le libellé et le numéro du type et le strip compte dans la séquence de ce type, et avec `id=…` un `:ref` le désigne. Sans `split`, les cases sont côte à côte. Les strips ne sont lus qu’au premier niveau d’un chapitre.
+Un `:::strip` a le même contenu qu’une planche, mais se place dans le texte comme un seul bloc insécable, découpé en cases : `span` (`column`, la valeur par défaut, ou `page`), `placement` (`here`, la valeur par défaut, là où il est écrit ; ou `top`, `bottom`, `auto`, flottant comme une figure), et sa taille, soit `height` (une longueur ; un nombre seul s’entend en millimètres), soit `aspect` (largeur sur hauteur : `3`, `4/1`, `4:1` ; par défaut, les proportions qui rendent ses cases carrées). Un strip sur toute la largeur de la page placé `here` sur une page de plusieurs colonnes coupe les colonnes à l’endroit où il se trouve, comme le fait un bloc sur toute la largeur de la page. `width` le rend plus étroit que la justification qu’il couvre (`60%` de celle-ci, ou une longueur) et `align` le place au `start`, au `center` (par défaut) ou à l’`end` de cette justification, dans le sens du texte. `caption="…"` compose une légende en dessous dans le style des légendes ; avec `type=figure` (un type de ressource), la légende prend le libellé et le numéro du type et le strip compte dans la séquence de ce type, et avec `id=…` un `:ref` le désigne. Sans `split`, les cases sont côte à côte. Les strips ne sont lus qu’au premier niveau d’un chapitre.
 
 ### Doubles pages
 
@@ -725,9 +730,9 @@ Un `:::strip` a le corps d’une planche, mais se place dans le texte comme un s
 
 ## Pages composées
 
-Une page composée est mise en page d’après un modèle de page de la configuration (`pageTemplates`), et son contenu est versé par nom dans les blocs du modèle. Le guide, avec les avertissements, est [Pages composées](/fr/docs/composed-pages).
+Une page composée est mise en page d’après un gabarit de page de la configuration (`pageTemplates`), et son contenu est réparti, par nom, entre les blocs du gabarit. Le guide, avec les avertissements, est [Pages composées](/fr/docs/composed-pages).
 
-- `::::page{template="…"}` … `::::` est la page : quatre deux-points ou plus, fermés par une ligne qui n’en contient que le même nombre. Les délimiteurs à trois deux-points qu’elle renferme (`:::frame`, `:::callout`, `:::figure`…) fonctionnent comme partout, et un `:::` seul ne ferme jamais la page. Un `:::page` à trois deux-points reste une page de bande dessinée.
+- `::::page{template="…"}` … `::::` est la page : quatre deux-points ou plus, fermés par une ligne qui n’en contient que le même nombre. Les délimiteurs à trois deux-points qu’elle renferme (`:::frame`, `:::callout`, `:::figure`…) fonctionnent comme partout, et un `:::` seul ne ferme jamais la page. Un `:::page` à trois deux-points reste une planche de bande dessinée.
 - `:::frame{slot="…" label="…"}` … `:::` renferme le contenu du bloc de ce nom : n’importe quel Markdown.
-- `slot="…"` sur un titre (`## Retos {slot="retos-titulo"}`), sur `::resource{id="…" slot="…"}`, sur un délimiteur de code ou sur un conteneur `:::` envoie ce seul élément. Le contenu sans slot va dans le bloc de flux du modèle.
-- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant.
+- `slot="…"` sur un titre (`## Retos {slot="retos-titulo"}`), sur `::resource{id="…" slot="…"}`, sur un délimiteur de code ou sur un conteneur `:::` envoie ce seul élément. Le contenu sans emplacement (attribut `slot`) va dans le bloc de flux du gabarit.
+- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant. Ses `alt`, `caption` et `note`, en attributs du délimiteur ou en lignes `::alt[…]`, `::caption[…]` et `::note[…]`, remplacent les textes de la ressource pour ce chapitre (voir [Pages composées › Les textes d’une figure](/fr/docs/composed-pages#les-textes-dune-figure)).

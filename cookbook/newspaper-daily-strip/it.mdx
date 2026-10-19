@@ -16,13 +16,13 @@ L’inserto fumetti di un giornale del fine settimana, *La Gazzetta di Corringto
 
 ### 1 · Scrivi la striscia dove la vuole il giornale
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un `:::strip` ha il corpo di una pagina di fumetto (il suo `split`, le sue righe `::panel` e il loro copione), ma è un blocco nel testo ([strisce](/it/docs/comics#strisce)). Sulla copertina a una colonna la striscia domenicale è composta dove è scritta, alta 210 mm, e il sommario la segue. La sua suddivisione, `55 / * [40 | *]`, dà alla scena larga della pesca una striscia tutta sua e alle due gag una riga sotto. Una striscia non si divide mai: una che non ci sta passa intera alla pagina successiva.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un `:::strip` ha il contenuto di una tavola (il suo `split`, le sue righe `::panel` e il loro copione), ma è un blocco nel testo ([strisce](/it/docs/comics#strisce)). Sulla copertina a una colonna la striscia domenicale è composta dove è scritta, alta 210 mm, e il sommario la segue. La sua suddivisione, `55 / * [40 | *]`, dà alla scena larga della pesca una striscia tutta sua e alle due gag una riga sotto. Una striscia non si divide mai: una che non ci sta passa intera alla pagina successiva.
 
 <PageShot page={1} crop="0,0,1,0.8" caption="La copertina: la mezza pagina domenicale composta nel testo, con il sommario sotto." />
 
 ### 2 · Fai flottare la striscia quotidiana attraverso le colonne
 
-La pagina interna si apre con un H1 il cui stile di titolo porta la sezione a quattro colonne. La striscia quotidiana è scritta dopo l’articolo con `span=page`: viene composta sulle quattro colonne dove finisce il testo, e le colonne dell’articolo finiscono alla pari sopra di essa. Senza `height` né `aspect`, una striscia prende la forma che rende quadrate le sue vignette, qui quattro a uno. Con `placement=bottom` flotterebbe al piede della pagina, il che va bene per un articolo abbastanza lungo da arrivarci; con `placement=top` aprirebbe la pagina successiva, perché un elemento flottante non sale mai sopra il punto in cui è scritto.
+La pagina interna si apre con un H1 il cui stile di titolo imposta la sezione su quattro colonne. La striscia quotidiana è scritta dopo l’articolo con `span=page`: viene composta sulle quattro colonne dove finisce il testo, e le colonne dell’articolo finiscono alla pari sopra di essa. Senza `height` né `aspect`, una striscia prende la forma che rende quadrate le sue vignette, qui quattro a uno. Con `placement=bottom` flotterebbe al piede della pagina, il che va bene per un articolo abbastanza lungo da arrivarci; con `placement=top` aprirebbe la pagina successiva, perché un elemento flottante non sale mai sopra il punto in cui è scritto.
 
 ### 3 · Adatta ogni immagine alla sua cella
 
@@ -34,7 +34,7 @@ Le immagini sono state disegnate quadrate o larghe, e le celle della suddivision
 
 <Excerpt region="editions" />
 
-Ogni edizione compone il giornale in caratteri adatti alla sua scrittura e letteringa le strisce nei propri caratteri da fumetto. I balloon giapponesi corrono in verticale. Le edizioni giapponese e araba leggono le strisce da destra a sinistra, quindi le vignette di ogni riga si scambiano di posto; quella araba, composta da destra a sinistra, specchia anche le colonne della pagina. Le immagini e la suddivisione restano le stesse; cambia solo `content.<lang>.md` ([direzione di lettura](/it/docs/comics#direzione-di-lettura)).
+Ogni edizione compone il giornale in caratteri adatti alla sua scrittura e compone il lettering delle strisce nei propri caratteri da fumetto. Le nuvolette giapponesi corrono in verticale. Le edizioni giapponese e araba leggono le strisce da destra a sinistra, quindi le vignette di ogni riga si scambiano di posto; quella araba, composta da destra a sinistra, specchia anche le colonne della pagina. Le immagini e la suddivisione restano le stesse; cambia solo `content.<lang>.md` ([direzione di lettura](/it/docs/comics#direzione-di-lettura)).
 
 ## Varianti
 
@@ -56,5 +56,5 @@ Senza `span=page` una striscia è larga quanto la sua colonna e viene composta d
 
 ## Errori frequenti
 
-- La bandella di sezione è disegnata dall’intestazione, non da un’apertura H1, quindi sopra la striscia della copertina non c’è nulla tranne la riga del folio.
-- Una zona sicura più larga della forma della sua cella mette l’immagine in letterbox con lo sfondo della vignetta, e la build avvisa `comicPanelLetterbox`.
+- La bandella di sezione è disegnata dall’intestazione, non da un’apertura H1, quindi sopra la striscia della copertina non c’è nulla tranne la riga dell’intestazione.
+- Una zona sicura più larga della forma della sua cella mette l’immagine in letterbox con lo sfondo della vignetta, e la build segnala `comicPanelLetterbox`.

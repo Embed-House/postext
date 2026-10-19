@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notes and references',
   description: 'Footnotes, line numbers, cross-references and citations, the table of contents and the back-of-book index',
   lang: 'en',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // The note symbols of numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -115,7 +117,7 @@ interface FootnotesConfig {
       <td><code>chapterEndAlign</code></td>
       <td><code>'foot' | 'text'</code></td>
       <td><code>'foot'</code></td>
-      <td>With <code>placement: 'chapterEnd'</code>: <code>'foot'</code> sets the notes that close a column at its foot, the lines left over staying between the text and the notes, as notes at the column foot stand. <code>'text'</code> sets them right under the text.</td>
+      <td>With <code>placement: 'chapterEnd'</code>: <code>'foot'</code> sets the notes that close a column at its foot, leaving the spare lines between the text and the notes, as with notes at the column foot. <code>'text'</code> sets them right under the text.</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
@@ -145,7 +147,7 @@ interface FootnotesConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>
-      <td>Where the notes break between Chinese, Japanese and Korean characters, apart from the body (see <a href="/en/docs/configuration-east-asian#east-asian-typography"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> keeps a run of such characters whole: the readings an English note quotes (<code>看月光</code>) no longer need a word joiner between every two characters, while the poems of the page go on breaking between any two. <code>'normal'</code> does the reverse under a document that sets <code>'keep-all'</code>. Notes at the foot of the column, at the end of the chapter and beside a spread take it. Since postext 1.28.</td>
+      <td>Where the notes break between Chinese, Japanese and Korean characters, independently of the body (see <a href="/en/docs/configuration-east-asian#east-asian-typography"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> keeps a run of such characters whole: the readings an English note quotes (<code>看月光</code>) no longer need a word joiner between every two characters, while the poems of the page go on breaking between any two. <code>'normal'</code> does the reverse under a document that sets <code>'keep-all'</code>. Notes at the foot of the column, at the end of the chapter and beside a spread take it. Since postext 1.28.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -219,7 +221,7 @@ How the notes are laid out at the column foot:
 - **Output.** Canvas, HTML and PDF paint the notes, the markers (a superscript number) and the rule. In the PDF each marker links to its note, and a tagged PDF sets each note as a `Note` element with a unique `/ID` listed in the structure tree's `/IDTree` (PDF/UA-1). The notes are `VDTBlock`s with `footnoteNote` set, in `page.floats`; the rules are in `page.footnoteAreas`.
 - **Warnings.** `undefinedFootnote` (a marker with no definition: the number prints over an empty note) and `unusedFootnote` (a definition no marker cites: it is not set).
 
-Resolver and stripper match the other sections:
+The resolver and the stripper work as in the other sections:
 
 ```ts
 import { DEFAULT_FOOTNOTES_CONFIG, resolveFootnotesConfig, stripFootnotesDefaults, footnoteDocumentDefaults } from 'postext';
@@ -388,7 +390,7 @@ With `position: 'side'` the numbers share the side column with side boxes, side 
 
 **Not supported**: line numbers in vertical text, a cross-reference that prints the number of a line, notes keyed to line numbers, and numbers for the lines of table cells, captions or code listings.
 
-In the Sandbox these settings are the **Line numbers** section of the Design panel. Resolver and stripper match the other sections; the font, the weight and the colour come from the body text:
+In the Sandbox these settings are the **Line numbers** section of the Design panel. The resolver and the stripper work as in the other sections; the font, the weight and the colour come from the body text:
 
 ```ts
 import { DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults } from 'postext';
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Cross-references
 
-The `crossRefs` property sets the words a [cross-reference](/en/docs/document-format-notes-references#cross-references-and-anchors) prints around a number or a page, and the style a `:ref` takes when it sets none. Each template holds `{n}` where the number goes; one without it gets the number after a no-break space (`"§"` prints *§ 3.2*). An unset template follows the document language: *chapter / section / p.* in English, *capítulo / sección / pág.* in Spanish, `第{n}章` / `第{n}节` / `第{n}页` in Chinese, and so on for French, German, Italian, Portuguese, Catalan and Dutch.
+The `crossRefs` property sets the words a [cross-reference](/en/docs/document-format-notes-references#cross-references-and-anchors) prints around a number or a page, and the style a `:ref` takes when it sets none. Each template holds `{n}` where the number goes; one without it gets the number after a no-break space (`"§"` prints *§ 3.2*). An unset template follows the document language: *chapter / section / p.* in English, *capítulo / sección / pág.* in Spanish, `第{n}章` / `第{n}节` / `第{n}页` in Chinese, `第{n}章` / `{n}節` / `{n}ページ` in Japanese, `الفصل {n}` / `القسم {n}` / `ص {n}` in Arabic, and so on for French, German, Italian, Portuguese, Catalan and Dutch.
 
 ```ts
 interface CrossRefsConfig {
@@ -449,7 +451,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Let a line break at the spaces of a reference whose label is words: the text of a <code>[words]{'{#id}'}</code> anchor, the title of a heading or a box, a <code>text="…"</code> override (on a reference to a figure or a table too). The label's spaces then stretch and shrink with the line, and the reference stays one link; its words are not hyphenated. A number, a Roman numeral or a single letter inside such a label keeps to the word before it (<code>Fig. 1a</code>, <code>plate IV</code>). A label with a number or a page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) never breaks, even when its template holds an ordinary space. <code>false</code> sets every label as one word no line breaks inside, as up to postext 1.27. A configuration stored before <code>configVersion</code> 12 whose text holds a reference reads with <code>false</code>, so its lines stay where they were (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
+      <td>Let a line break at the spaces of a reference whose label is words: the text of a <code>[words]{'{#id}'}</code> anchor, the title of a heading or a box, a <code>text="…"</code> override (on a reference to a figure or a table too). The label's spaces then stretch and shrink with the line, and the reference stays one link; its words are not hyphenated. A number, a Roman numeral or a single letter inside such a label keeps to the word before it (<code>Fig. 1a</code>, <code>plate IV</code>). A label with a number or a page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) never breaks, even when its template holds an ordinary space. <code>false</code> sets every label as one word that no line breaks inside, as up to postext 1.27. A configuration stored before <code>configVersion</code> 12 whose text holds a reference is read with <code>false</code>, so its lines stay where they were (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -739,7 +741,7 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-The page labels are the ones the document prints. `buildDocument()` lays a document with a `:::toc` out again with the labels of the previous pass until they settle (at most three extra passes); a host laying a book out chapter by chapter supplies the whole book's outline as `PostextContent.outline` instead, assembled from `contentOutline()` (headings and parts from the text alone) and `outlineFromDoc()` (the same entries with the page labels of a layout), and lays the contents chapter out again whenever `outlineKey()` of that outline changes. Each heading entry carries the `number` the contents print and, for a numbered heading, its `counter`: the level's running count after any `startAt`, whatever the template prints — what a host shows beside a chapter in its own lists.
+The page labels are the ones the document prints. `buildDocument()` lays out a document with a `:::toc` again, using the labels of the previous pass, until they settle (at most three extra passes); a host laying a book out chapter by chapter supplies the whole book's outline as `PostextContent.outline` instead, assembled from `contentOutline()` (headings and parts from the text alone) and `outlineFromDoc()` (the same entries with the page labels of a layout), and lays the contents chapter out again whenever `outlineKey()` of that outline changes. Each heading entry carries the `number` the contents print and, for a numbered heading, its `counter`: the level's running count after any `startAt`, whatever the template prints — what a host shows beside a chapter in its own lists.
 
 ## Back-of-book index
 
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>by language, italic (upright in Arabic script)</td>
+      <td>by language, italic (upright in Arabic script and in Japanese)</td>
       <td>The words before a cross-reference. Unset, they follow the document language: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in Traditional Chinese)… A Chinese index sets the reference after a full stop, with no space: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>
@@ -881,4 +883,4 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-The page numbers come from the book's outline, as the contents' do: `computeOutline()` and `contentOutline()` list the index marks of a text as entries of kind `'indexMark'` (with `indexMark.path`, `sort`, `see`, `seeAlso`, `main`, `range` and `index`), and `outlineFromDoc()` gives each the page it landed on, which the build records in `doc.indexMarks` (`{ sourceStart, pageIndex }` per mark). `buildDocument()` lays a document that prints its own index out again until the numbers settle; a host laying out a book chapter by chapter hands the chapter holding `:::index` the whole book's outline as `PostextContent.outline`. `tocOutline()` and `indexOutline()` split an outline into what the contents and the index read, so a host can key each chapter to the part it prints: the Sandbox lays the index chapter out again only when a mark moves, and the contents chapter only when a heading does. `contentOutline()` also says whether a text prints an index (`hasIndex`).
+The page numbers come from the book's outline, as the contents' do: `computeOutline()` and `contentOutline()` list the index marks of a text as entries of kind `'indexMark'` (with `indexMark.path`, `sort`, `see`, `seeAlso`, `main`, `range` and `index`), and `outlineFromDoc()` gives each the page it landed on, which the build records in `doc.indexMarks` (`{ sourceStart, pageIndex }` per mark). `buildDocument()` lays out a document that prints its own index again until the numbers settle; a host laying out a book chapter by chapter hands the chapter holding `:::index` the whole book's outline as `PostextContent.outline`. `tocOutline()` and `indexOutline()` split an outline into what the contents and the index read, so a host can key each chapter to the part it prints: the Sandbox lays the index chapter out again only when a mark moves, and the contents chapter only when a heading does. `contentOutline()` also says whether a text prints an index (`hasIndex`).

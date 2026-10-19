@@ -1,7 +1,7 @@
 ---
 title: "Una edició magribina d'un text àrab, amb xifres europees"
 summary: "Un capítol d'un llibre àrab imprès per al Marroc: locale 'ar-MA' manté el text de dreta a esquerra i escriu cada número generat com 1, 2, 3."
-plain: "Al Marroc, Algèria i Tunísia els llibres en àrab imprimeixen els números amb les xifres que fa servir Europa, 1, 2, 3, i no amb ١، ٢، ٣. Un sol ajust, la llengua i el país del document, dona aquestes xifres a tot el llibre."
+plain: "Al Marroc, Algèria i Tunísia els llibres en àrab imprimeixen els números amb les xifres que fa servir Europa, 1, 2, 3, i no amb ١، ٢، ٣. Un sol paràmetre, la llengua i el país del document, dona aquestes xifres a tot el llibre."
 description: "Un capítol àrab per a una edició marroquina amb Postext: ar-MA dona xifres europees a folis, títols, llistes, notes i figures, i conserva el llom a la dreta."
 question: "Com imprimeixo xifres europees (1, 2, 3) en un llibre àrab per a una edició magribina?"
 aliases: ["Magrib", "Marroc", "ar-MA", "xifres europees", "nombres aràbics", "xifres àrabs", "numeració", "latn", "Fes", "zellige", "أرقام", "المغرب"]
@@ -10,7 +10,7 @@ pageNotes: { "1": "L'obertura del capítol, pàgina 41: الفصل 3: أبواب
 
 ## Què compondràs
 
-Un capítol d'una guia de les ciutats antigues del Marroc, dedicat a les portes de Fes, tal com l'imprimiria una editorial marroquina: 13,5 × 21 cm, Noto Naskh Arabic de 12,5 pt i títols en Noto Kufi Arabic amb el verd de les rajoles de Fes. El text va de dreta a esquerra i el llibre s'enquaderna per la dreta, com qualsevol llibre àrab, però tots els números de la pàgina s'escriuen 1, 2, 3: els folis del 41 al 44, الفصل 3, els apartats 3-1 i 3-2, la llista de portes de l'1- al 5-, les crides de nota (1) i el número de figura شكل 3-1. És l'ús del Magrib, del Marroc a Tunísia, i la pàgina ho aconsegueix amb un sol ajust. <RecipeLink slug="arabic-novel-right-bound">Una novel·la àrab enquadernada per la dreta</RecipeLink> mostra el mateix llibre amb les xifres ١٢ del Màixriq.
+Un capítol d'una guia de les ciutats antigues del Marroc, dedicat a les portes de Fes, tal com l'imprimiria una editorial marroquina: 13,5 × 21 cm, Noto Naskh Arabic de 12,5 pt i títols en Noto Kufi Arabic amb el verd de les rajoles de Fes. El text va de dreta a esquerra i el llibre s'enquaderna per la dreta, com qualsevol llibre àrab, però tots els números de la pàgina s'escriuen 1, 2, 3: els folis del 41 al 44, الفصل 3, els apartats 3-1 i 3-2, la llista de portes de l'1- al 5-, les crides de nota (1) i el número de figura شكل 3-1. És l'ús del Magrib, del Marroc a Tunísia, i la pàgina ho aconsegueix amb un sol paràmetre. <RecipeLink slug="arabic-novel-right-bound">Una novel·la àrab enquadernada per la dreta</RecipeLink> mostra el mateix llibre amb les xifres ١٢ del Màixriq.
 
 ## Elaboració
 
@@ -43,7 +43,7 @@ L'edició egípcia o llevantina del mateix capítol: canvia l'etiqueta, no el Ma
 
 ### Mantén l'etiqueta marroquina i imprimeix ١٢٣
 
-Un ajust escrit guanya al valor per defecte de la regió.
+Un paràmetre escrit té prioritat sobre el valor per defecte de la regió.
 
 ```diff
    locale: 'ar-MA',

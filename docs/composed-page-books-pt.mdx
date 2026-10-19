@@ -3,55 +3,55 @@
 export const metadata = {
   title: 'Livros de páginas compostas',
   sidebarTitle: 'Livros de páginas compostas',
-  description: 'Um passo a passo no Sandbox com um livro didático feito de páginas compostas: montar um modelo de página, preenchê-lo a partir do Markdown, rotular um mapa, traduzir a página, corrigir o que não cabe e selecionar na página e no texto',
+  description: 'Um passo a passo no Sandbox com um livro didático feito de páginas compostas: como montar um modelo de página, preenchê-lo a partir do Markdown, rotular um mapa, traduzir a página, corrigir o texto que não cabe e selecionar elementos na página e no texto',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
-  plainSummary: "Esta página ensina, passo a passo, a fazer no Sandbox uma página de livro didático, com uma faixa de título, um texto e caixas coloridas. Você parte de um livro de exemplo pronto e acrescenta mais uma página a ele. Primeiro desenha a página como um modelo, depois despeja nela o texto vindo do Markdown, depois dá nome aos lugares de um mapa e traduz a página para outro idioma. No fim, vê o que fazer quando um texto é maior que a sua caixa e como saltar entre a página e o seu texto.",
+  plainSummary: "Esta página ensina, passo a passo, a fazer no Sandbox uma página de livro didático, com uma faixa de título, um texto e caixas coloridas. Você parte de um livro de exemplo pronto e acrescenta mais uma página a ele. Primeiro desenha a página como um modelo, depois coloca nela o texto escrito no Markdown, depois dá nome aos lugares de um mapa e traduz a página para outro idioma. No fim, vê o que fazer quando um texto não cabe na caixa e como passar da página para o texto dela, e vice-versa.",
 };
 
 # Livros de páginas compostas
 
 **Você monta uma página de livro didático a partir de um modelo, preenche-a com texto do Markdown, rotula um mapa, traduz a página e corrige o que não cabe.**
 
-A página de um livro didático é um conjunto de caixas: uma faixa de título, um texto, uma caixa para uma definição, outra para uma atividade, um mapa. O Postext diagrama uma página assim a partir de um **modelo de página**, que guarda as caixas (seus blocos), e o Markdown só diz quais palavras vão em qual bloco. Esta página percorre o trabalho inteiro no Sandbox, num livro que já existe, e acrescenta uma página a ele. As páginas de referência dizem o que faz cada campo e cada linha de Markdown; aqui você faz cada coisa uma vez, em ordem, e vê o que ela muda: [Páginas compostas](/pt/docs/composed-pages) para o Markdown, [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages) para o modelo, [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages) para as telas.
+A página de um livro didático é um conjunto de caixas: uma faixa de título, um texto, uma caixa para uma definição, outra para uma atividade, um mapa. O Postext diagrama uma página assim a partir de um **modelo de página**, que guarda as caixas (seus blocos), e o Markdown só indica que palavras vão em cada bloco. Esta página percorre o trabalho inteiro no Sandbox, num livro que já existe, e acrescenta uma página a ele. As páginas de referência explicam o que faz cada campo e cada linha de Markdown; aqui você faz cada coisa uma vez, em ordem, e vê o que ela muda: [Páginas compostas](/pt/docs/composed-pages) para o Markdown, [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages) para o modelo, [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages) para as telas.
 
 Você precisa só de um navegador. Tudo acontece no Sandbox, e o que você muda fica no seu navegador.
 
 ## 1. Abrir o livro
 
-O livro é *Our river*, uma unidade de um livro didático do 3º ano que o [Cookbook](/pt/cookbook/children-textbook-pages) publica como a receita Nº 156. O rio, as cidades e as imagens foram inventados para ele. Tem nove páginas, com um mapa pintado que atravessa uma página dupla, e vem em espanhol, catalão e inglês.
+O livro é *Our river*, uma unidade de um livro didático do 3º ano que as [Receitas](/pt/cookbook/children-textbook-pages) publicam como a receita Nº 156. O rio, as cidades e as imagens foram inventados para ele. Tem nove páginas, com um mapa pintado que atravessa uma página dupla, e vem em espanhol, catalão e inglês.
 
-[Abra-o no Sandbox](/pt/sandbox#recipe=children-textbook-pages&lang=en). Na primeira visita ele entra em **Livros** como um livro seu, que você pode mudar à vontade; com `lang=es` ou `lang=ca` no link você obtém as outras edições. Se voltar ao mesmo link mais tarde, o Sandbox pergunta se você quer abrir a sua cópia ou trocá-la pela publicada.
+[Abra-o no Sandbox](/pt/sandbox#recipe=children-textbook-pages&lang=en). Na primeira visita ele entra em **Livros** como um livro seu, que você pode mudar à vontade; com `lang=es` ou `lang=ca` no link você abre as outras edições. Se voltar ao mesmo link mais tarde, o Sandbox pergunta se você quer abrir sua cópia ou trocá-la pela publicada.
 
 Duas coisas para saber antes de mexer em qualquer coisa:
 
-- A barra acima da visualização tem um seletor com **Conteúdo** e **Design**. No modo Conteúdo você edita palavras, no painel **Texto** ou na página. No modo Design você edita modelos de página e estilos, e o texto fica só para leitura. **Alt+Shift+M** (**⌥⇧M** no Mac) troca de um para o outro.
-- O painel **Texto** mostra um capítulo em Markdown. Cada página composta é um trecho que começa com `::::page{template="…"}` e termina com quatro dois-pontos. Clique em algumas palavras de uma página na visualização e o cursor vai para elas no Markdown.
+- A barra acima da visualização tem uma chave com **Conteúdo** e **Design**. No modo Conteúdo você edita palavras, no painel **Texto** ou na página. No modo Design você edita modelos de página e estilos, e o texto fica só para leitura. **Alt+Shift+M** (**⌥⇧M** no Mac) troca de um para o outro.
+- O painel **Texto** mostra um capítulo em Markdown. Cada página composta é um contêiner que começa com `::::page{template="…"}` e termina com uma linha de quatro sinais de dois-pontos. Clique em algumas palavras de uma página na visualização e o cursor vai para elas no Markdown.
 
 ## 2. Fazer um modelo de página
 
-A página nova será uma página de revisão: uma faixa de título, um texto curto embaixo dela e duas caixas, uma para lembrar o que se aprendeu e outra para experimentar. Ela precisa de um modelo com quatro blocos.
+A página nova será uma página de revisão: uma faixa de título, um texto curto embaixo dela e duas caixas, uma para lembrar o que se aprendeu e outra para praticar. Ela precisa de um modelo com quatro blocos.
 
-1. Passe para **Design** e abra o painel **Design**, à esquerda. Escolha **Página e colunas** e depois **Modelos de página**. A lista mostra cada modelo do livro com um desenho dos seus blocos.
-2. Clique em **Novo**. Abre-se um modelo novo. Dê a ele o **ID** `review` (o que o Markdown vai citar) e o **Nome** `Página de revisão` (o que este painel mostra). O ID aceita letras minúsculas, dígitos e hifens.
-3. O modelo começa com um bloco, `text`, que **Recebe o texto solto da página**. Transforme-o na faixa de título: **Nome (vaga)**: `title`; **Estilo de caixa**: `portada`, a faixa azul que o livro já usa nos seus títulos; desligue **Recebe o texto solto da página**; **Recebe o primeiro título**: *Nível 1*, para que esse bloco receba o primeiro título `#` da página.
-4. Clique em **Adicionar bloco**. O bloco novo abre embaixo da lista de blocos. **Nome (vaga)**: `text`, e ligue **Recebe o texto solto da página**: tudo o que a página escreve fora de um bloco vai para ele.
-5. Adicione um bloco. **Nome (vaga)**: `remember`. **Estilo de caixa**: `dato-campo`, uma caixa verde com uma aba. **Altura mínima**: 30 mm, para que a caixa mantenha um bom tamanho quando o texto for curto.
-6. Adicione um último bloco. **Nome (vaga)**: `try`. **Estilo de caixa**: `actividad-sol`. **Altura mínima**: 30 mm.
-7. Em `text`, `remember` e `try`, ajuste **Largura** para *Até a borda* e **Altura** para *O conteúdo*: assim eles ocupam toda a largura da página e têm a altura do próprio texto.
-8. Em **Grupos**, clique em **Adicionar grupo**. Dê a ele o nome `column`, deixe-o *Empilhados* e ajuste **Espaço entre blocos** para 6 mm. Em **Blocos do grupo, na ordem da página**, marque os quatro blocos. Marque-os na ordem em que vão, com o título primeiro: a lista numera os membros e as setas sobem ou descem um deles. Um grupo põe seus blocos um embaixo do outro e desloca os de baixo quando um bloco cresce; por isso um texto mais longo na primeira caixa empurra a segunda para baixo em vez de passar por cima dela.
+1. Passe para **Design** e abra o painel **Design**, à esquerda. Escolha **Página e colunas** e depois **Modelos de página**. A lista mostra cada modelo do livro com um desenho dos blocos dele.
+2. Clique em **Novo**. Abre-se um modelo chamado *Modelo novo*. Dê a ele o **ID** `review` (o nome que o Markdown vai usar) e o **Nome** `Página de revisão` (o que este painel mostra). O ID aceita letras minúsculas, dígitos e hifens.
+3. O modelo começa com um bloco, `text`, que **Recebe o texto solto da página**. Transforme-o na faixa de título: **Nome (slot)**: `title`; **Estilo de boxe**: `portada`, a faixa azul que o livro já usa nos títulos; desligue **Recebe o texto solto da página**; **Recebe**: *Nível 1*, para que esse bloco receba o primeiro título `#` da página.
+4. Clique em **Adicionar bloco**. O bloco novo abre embaixo da lista de blocos. **Nome (slot)**: `text`, e ligue **Recebe o texto solto da página**: tudo o que a página tiver fora de um bloco vai para ele.
+5. Adicione um bloco. **Nome (slot)**: `remember`. **Estilo de boxe**: `dato-campo`, uma caixa verde com uma aba. **Altura mínima**: 30 mm, para que a caixa mantenha um bom tamanho quando o texto for curto.
+6. Adicione um último bloco. **Nome (slot)**: `try`. **Estilo de boxe**: `actividad-sol`. **Altura mínima**: 30 mm.
+7. Em `text`, `remember` e `try`, defina **Largura** como *Até a borda* e **Altura** como *O conteúdo*: assim eles ocupam toda a largura da página e têm a altura do próprio texto.
+8. Em **Grupos**, clique em **Adicionar grupo**. Dê a ele o nome `column`, mantenha *Empilhados* e ajuste **Espaço entre blocos** para 6 mm. Em **Blocos do grupo, na ordem da página**, marque os quatro blocos. Marque-os na ordem em que vão, com o título primeiro: a lista numera os membros e as setas sobem ou descem um deles. Um grupo põe seus blocos um embaixo do outro e desloca os de baixo quando um bloco cresce; por isso, um texto mais longo na primeira caixa empurra a segunda para baixo em vez de passar por cima dela.
 
-<Screenshot src="/docs-shots/pt/template.webp" alt="O painel Design em Modelos de página com o modelo Página de revisão: seus quatro blocos e seu grupo, e os mesmos blocos desenhados com contornos tracejados na página." caption="O modelo: quatro blocos e um grupo. Na página, as caixas tracejadas são os blocos, e as etiquetas verdes dizem como cada um é dimensionado." />
+<Screenshot src="/docs-shots/pt/template.webp" alt="O painel Design em Modelos de página com o modelo Página de revisão: os quatro blocos e o grupo dele, e os mesmos blocos desenhados com contornos tracejados na página." caption="O modelo: quatro blocos e um grupo. Na página, as caixas tracejadas são os blocos, e os rótulos verdes indicam como cada um é dimensionado." />
 
-O modelo não tem palavras. Nada do que você ajustou diz qual é o título nem o que as caixas contêm; o estilo de caixa dá a um bloco a sua aparência, e o grupo, a sua ordem. Há outros caminhos até o mesmo modelo. No modo Design você pode desenhar um bloco com o mouse num espaço vazio de uma página composta e mover ou redimensionar os blocos que já tem (veja [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages#modelos-de-página)); **Duplicar** copia um modelo para você alterá-lo; **Salvar diagramação como modelo** transforma uma página composta de que você gostou num modelo novo.
+O modelo não tem palavras. Nada do que você ajustou diz qual é o título nem o que as caixas contêm; o estilo de caixa define a aparência de um bloco, e o grupo define a ordem dos blocos. Há outros caminhos até o mesmo modelo. No modo Design você pode desenhar um bloco com o mouse num espaço vazio de uma página composta e mover ou redimensionar os blocos que já tem (veja [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages#modelos-de-página)); **Duplicar** copia um modelo para você alterá-lo; **Salvar diagramação como modelo** transforma uma página composta de que você gostou num modelo novo.
 
 ## 3. Preencher a página a partir do Markdown
 
 1. Passe para **Conteúdo**, abra o painel **Texto** e pressione **Ctrl+End** (**Cmd+↓** no Mac) para ir ao fim do capítulo.
 2. Clique em **Página composta** na barra de ferramentas do painel Texto. Um seletor lista os modelos de página do livro, cada um desenhado com seus blocos vazios. Escolha *Página de revisão*.
-3. O Sandbox escreve a página para você, com um bloco vazio por vaga, e seleciona a palavra `title` do título. Digite o título por cima.
+3. O Sandbox escreve a página para você, com um bloco vazio por slot, e seleciona a palavra `title` do título. Digite o título por cima.
 
 ```md
 ::::page{template="review"}
@@ -69,15 +69,15 @@ Draw a river from its spring to the sea. Write the names of the three courses on
 ::::
 ```
 
-O título vai para o bloco que recebe o nível 1, o parágrafo que vem depois dele para o bloco que recebe o texto solto, e cada `:::frame` para o bloco da sua `slot`. O `label` são as palavras na aba de uma caixa. A página aparece no canvas como a página 10, depois das nove da unidade: uma página composta sempre começa uma página nova.
+O título vai para o bloco que recebe o nível 1, o parágrafo que vem depois dele para o bloco que recebe o texto solto, e cada `:::frame` para o bloco indicado no `slot` dele. O `label` é o texto da aba de uma caixa. A página aparece no canvas como a página 10, depois das nove da unidade: uma página composta sempre começa uma página nova.
 
 <Screenshot src="/docs-shots/pt/fill.webp" alt="O painel Texto com o Markdown da página nova e, ao lado, a página pronta, com um título azul, um parágrafo e duas caixas com abas." caption="A página no Markdown e no canvas." />
 
-Repare no que o Markdown não diz: nenhuma posição, nenhum tamanho, nenhuma cor. Isso é do modelo, e o mesmo Markdown diagramado com outro modelo teria outro aspecto.
+Repare no que o Markdown não diz: nenhuma posição, nenhum tamanho, nenhuma cor. Tudo isso pertence ao modelo, e o mesmo Markdown diagramado com outro modelo teria outro aspecto.
 
 ## 4. Rotular o mapa
 
-As páginas 6 e 7 trazem um mapa pintado que atravessa a página dupla. As palavras dele não fazem parte da imagem. Cada nome é uma linha do Markdown, dentro da `:::figure` do mapa:
+As páginas 6 e 7 trazem um mapa pintado que atravessa a página dupla. As palavras dele não fazem parte da imagem. Cada nome do mapa é uma linha do Markdown, dentro da `:::figure` do mapa:
 
 ```md
 :::figure{resource="mapa" slot="mapa"}
@@ -87,14 +87,14 @@ As páginas 6 e 7 trazem um mapa pintado que atravessa a página dupla. As palav
 :::
 ```
 
-`at` nomeia uma **âncora**: um ponto da imagem, definido uma só vez no recurso da imagem e compartilhado por todos os idiomas. Para acrescentar a ponte de pedra de Molinar:
+`at` indica uma **âncora**: um ponto da imagem, definido uma só vez no recurso da imagem e compartilhado por todos os idiomas. Para acrescentar a ponte de pedra de Molinar:
 
 1. No painel Texto, vá até a figura do mapa (procure `at="bajo"`) e acrescente uma linha embaixo do último rótulo: `::label[Stone bridge]{at="bridge"}`.
 2. Abra **Verificações**. A lista tem uma entrada *Rótulo numa âncora inexistente* para a página 6: a imagem não tem nenhuma âncora chamada `bridge`. Clique no botão de alfinete da entrada, *Colocar a âncora bridge na imagem*.
-3. Uma janela mostra o mapa com as âncoras que ele tem. O nome `bridge` está escolhido em *Rótulos sem âncora*. Clique na imagem, no lugar onde fica a ponte.
+3. Uma janela mostra o mapa com as âncoras que ele tem. O nome `bridge` já vem selecionado em *Rótulos sem âncora*. Clique na imagem, no lugar onde fica a ponte.
 4. Ajuste o **Estilo de rótulo** da âncora nova para `pueblo`, o estilo das cidades, e clique em **Salvar**.
 
-<Screenshot src="/docs-shots/pt/anchor.webp" alt="A janela Âncoras: o mapa com seus pontos, a âncora nova chamada bridge selecionada e o seu campo de estilo de rótulo." caption="A âncora nova é um clique na imagem; o estilo de rótulo a deixa com o aspecto dos nomes das cidades." />
+<Screenshot src="/docs-shots/pt/anchor.webp" alt="A janela Âncoras: o mapa com os pontos, a nova âncora bridge selecionada e o campo de estilo de rótulo dela." caption="A âncora nova é um clique na imagem; o estilo de rótulo a deixa com o aspecto dos nomes das cidades." />
 
 <Screenshot src="/docs-shots/pt/map.webp" alt="O mapa nas páginas 6 e 7 com o rótulo novo Stone bridge sobre a ponte, ao lado dos rótulos das cidades." caption="O rótulo fica no ponto em que você clicou, com as fontes do próprio livro." />
 
@@ -102,9 +102,9 @@ A expressão *Stone bridge* é Markdown; o ponto faz parte da imagem. Quando voc
 
 ## 5. Traduzir a página
 
-Uma tradução é o mesmo modelo com outras palavras. O Sandbox a guarda como outra edição do mesmo livro: a barra acima do canvas alterna entre as edições e o painel Verificações lê todas (veja [Edições de um livro](/pt/docs/sandbox-previews#edições-de-um-livro)). Para criar uma:
+Uma tradução é o mesmo modelo com outras palavras. O Sandbox a guarda como outra edição do mesmo livro: uma barra de ferramentas na borda esquerda do canvas alterna entre as edições, e o painel Verificações lê todas (veja [Edições de um livro](/pt/docs/sandbox-previews#edições-de-um-livro)). Essa barra aparece quando o ponteiro chega à borda, e o botão de fixar a mantém aberta. Para criar uma:
 
-1. Abra **Livros**, clique em **⋯** no seu livro e escolha **Adicionar um idioma…**. Selecione o idioma e clique em **Adicionar e abrir**. O Sandbox copia a edição em tela para uma nova, define o **Idioma do documento** dela como o idioma escolhido e a abre. A hifenização, as aspas e as palavras que o motor escreve por conta própria (como o *Continua* no corte de uma caixa) seguem esse idioma. O texto ainda é o do original.
+1. Abra **Livros**, clique em **⋯** no seu livro e escolha **Adicionar um idioma…**. Selecione o idioma e clique em **Adicionar e abrir**. O Sandbox copia a edição que está na tela para uma nova, define o **Idioma do documento** dela como o idioma escolhido e a abre. A hifenização, as aspas e as palavras que o motor escreve por conta própria (como o *Continua* no corte de uma caixa) seguem esse idioma. O texto continua sendo o original.
 2. No painel **Texto**, traduza as palavras e deixe o resto.
 
 <table>
@@ -117,7 +117,7 @@ Uma tradução é o mesmo modelo com outras palavras. O Sandbox a guarda como ou
   <tbody>
     <tr>
       <td>O texto dos títulos, parágrafos e listas</td>
-      <td>Os quatro dois-pontos, a palavra <code>page</code> e o <code>template="…"</code> da cerca</td>
+      <td>Os quatro sinais de dois-pontos, a palavra <code>page</code> e o <code>template="…"</code> da linha de abertura</td>
     </tr>
     <tr>
       <td>O <code>label="…"</code> de um bloco</td>
@@ -152,31 +152,31 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
 
 ## 6. Revisar o que não cabe
 
-As palavras têm comprimentos diferentes de um idioma para outro, e uma caixa que comportava o texto em inglês pode não comportar o texto em espanhol. O painel Verificações encontra esses blocos. Para ver um, cole mais três ou quatro parágrafos de qualquer texto no bloco `remember` da página traduzida, de modo que ele guarde mais do que a página comporta.
+As palavras têm comprimentos diferentes de um idioma para outro, e uma caixa que comportava o texto em inglês pode não comportar o texto em espanhol. O painel Verificações encontra esses blocos. Para ver um, cole mais três ou quatro parágrafos de qualquer texto no bloco `remember` da página traduzida, para que ele tenha mais texto do que cabe na página.
 
-A página agora mostra o bloco com um contorno vermelho e, embaixo do seu pé, uma faixa que diz quanto falta (*faltam 26 mm*). Em **Verificações**, sob *Páginas compostas*, a entrada *O texto não cabe no bloco* diz o que a diagramação tentou antes de desistir (mais espaço tomado dos blocos vizinhos e, depois, texto menor) e lista as saídas como botões:
+A página agora mostra o bloco com um contorno vermelho e, logo abaixo dele, uma faixa que indica quanto falta (*faltam 26 mm*). Em **Verificações**, sob *Páginas compostas*, a entrada *O texto não cabe no bloco* diz o que a diagramação tentou antes de desistir (mais espaço tomado dos blocos vizinhos e, depois, texto menor) e lista as saídas como botões:
 
 - *deixe o texto descer a 82,5 %* permite que o texto deste bloco diminua até esse tamanho. Serve quando sobram poucas linhas.
 - *faça-o continuar na página seguinte* manda o que não cabe para uma página acrescentada depois desta. Serve para um texto mais longo.
 - *corte cerca de 495 caracteres* não muda nada. Seleciona o texto do bloco e diz quanto você deve cortar.
 
-Um botão que muda o modelo (e com ele toda página diagramada por ele) pergunta antes, nomeando o ajuste. Clique em **Mudar**. A página é diagramada de novo, a caixa termina com a palavra do corte (*Continúa*) e o resto segue no começo de uma página acrescentada. **Cmd/Ctrl+Z** desfaz a mudança. **Rearranjo**, na barra acima do canvas, abre *O que se moveu e por quê*: os blocos cujo tamanho ou lugar a diagramação alterou para acomodar o conteúdo, com a razão em palavras.
+Um botão que muda o modelo (e, com ele, todas as páginas diagramadas com esse modelo) pede confirmação antes e indica qual ajuste vai mudar. Clique em **Mudar**. A página é diagramada de novo, a caixa termina com a palavra que marca o corte (*Continúa*) e o resto segue no começo de uma página acrescentada. **Cmd/Ctrl+Z** desfaz a mudança. **Rearranjo**, na mesma barra da borda do canvas, abre *O que se moveu e por quê*: os blocos cujo tamanho ou lugar a diagramação alterou para acomodar o conteúdo, com o motivo explicado por extenso.
 
-<Screenshot src="/docs-shots/pt/checks.webp" alt="O painel Verificações com a entrada O texto não cabe no bloco e três botões com saídas, e a página com a primeira caixa contornada em vermelho e uma faixa que diz faltam 26 mm." caption="Um bloco que não cabe e as correções que a diagramação preparou para ele." />
+<Screenshot src="/docs-shots/pt/checks.webp" alt="O painel Verificações com a entrada O texto não cabe no bloco e três botões com soluções, e a página com a primeira caixa contornada em vermelho e uma faixa com a mensagem faltam 26 mm." caption="Um bloco que não cabe e as correções que a diagramação preparou para ele." />
 
 ## 7. Selecionar na página e no texto
 
-A página e o seu Markdown se acompanham.
+A página e o Markdown dela andam juntos.
 
-- **Da página para o texto.** Clique nas palavras de um bloco: o cursor vai para esse parágrafo no painel Texto, e um caminho embaixo da visualização diz onde você está (*Página 10 › column › try › parágrafo 1*). No modo Design, o mesmo clique escolhe o bloco para o editor de modelos.
-- **Do texto para a página.** Ponha o cursor num parágrafo e o bloco que o contém e o próprio parágrafo ficam contornados na página, e o mesmo caminho diz onde estão.
+- **Da página para o texto.** Clique nas palavras de um bloco: o cursor vai para esse parágrafo no painel Texto, e um caminho embaixo da visualização mostra onde você está (*Página 10 › column › try › parágrafo 1*). No modo Design, o mesmo clique seleciona o bloco no editor de modelos.
+- **Do texto para a página.** Ponha o cursor num parágrafo: o parágrafo e o bloco que o contém ficam contornados na página, e o mesmo caminho mostra onde estão.
 - **De uma verificação.** Clique numa entrada do painel Verificações e o Sandbox leva você à página, escolhe o bloco e põe o cursor no texto dele. Num livro com várias edições, passa para a edição que tem o problema.
 
-<Screenshot src="/docs-shots/pt/select.webp" alt="A página com a segunda caixa contornada em laranja e o painel Texto mostrando o bloco selecionado no seu Markdown." caption="Um clique na página põe o cursor no Markdown dela, e o caminho embaixo da visualização diz qual é o bloco." />
+<Screenshot src="/docs-shots/pt/select.webp" alt="A página com a segunda caixa contornada em laranja e o painel Texto mostrando o bloco selecionado no Markdown." caption="Um clique na página põe o cursor no Markdown dela, e o caminho embaixo da visualização indica qual é o bloco." />
 
 ## Para continuar
 
-- [Levar um livro para páginas compostas](/pt/docs/migrating-to-composed-pages): um livro que guarda o texto de suas páginas nos estilos pode ter esse texto levado para o Markdown.
-- [Páginas compostas](/pt/docs/composed-pages): cada atributo da cerca de página, da figura e das linhas de rótulo, como uma página é composta e cada aviso com a sua correção.
+- [Levar um livro para páginas compostas](/pt/docs/migrating-to-composed-pages): se um livro guarda o texto das páginas nos estilos, esse texto pode passar para o Markdown.
+- [Páginas compostas](/pt/docs/composed-pages): cada atributo do contêiner de página (aberto com quatro sinais de dois-pontos), da figura e das linhas de rótulo; como uma página é diagramada; e cada aviso com a correção.
 - [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages): cada campo de um modelo, de um bloco e de um grupo, a herança e as páginas duplas.
 - [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages): as telas para modelos, estilos de bloco, verificações em todas as edições e correções.

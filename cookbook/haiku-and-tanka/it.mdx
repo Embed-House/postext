@@ -16,7 +16,7 @@ Otto pagine di un piccolo libro di poesia su una pagina 四六判 di 127 × 188 
 
 ### 1 · Un verso è un paragrafo, e il suo stile dice dove comincia
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un haiku è una riga, quindi è un paragrafo a sé dentro un blocco `:::paragraphs`, e lo stile del blocco imposta il rientro: `indent: em(3)` mette un haiku tre caratteri sotto la testa della riga (il testo di Aozora li compone due più in basso; tre danno più aria alle poesie), e `firstLineIndent: em(0)` impedisce al rientro di un carattere del testo di sommarsi. I circa 17 caratteri di un haiku entrano in qualunque riga da 36, quindi non va mai a capo. La firma è un paragrafo a sé: `textAlign: 'end'` la mette contro il piede della riga (地付き, jitsuki) e `endIndent: em(5)` la solleva di cinque caratteri da lì (地から五字上げ), come fa l’edizione da cui viene questo testo ([Paragraph styles](/it/docs/configuration-styles#stili-di-paragrafo)).
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un haiku è una riga, quindi è un paragrafo a sé in un blocco `:::paragraphs`, e lo stile del blocco imposta il rientro: `indent: em(3)` mette un haiku tre caratteri sotto la testa della riga (il testo di Aozora li compone due più in basso; tre danno più aria alle poesie), e `firstLineIndent: em(0)` impedisce al rientro di un carattere del testo di sommarsi. I circa 17 caratteri di un haiku entrano in qualunque riga da 36, quindi non va mai a capo. La firma è un paragrafo a sé: `textAlign: 'end'` la mette contro il piede della riga (地付き, jitsuki) e `endIndent: em(5)` la solleva di cinque caratteri da lì (地から五字上げ), come fa l’edizione da cui viene questo testo ([Paragraph styles](/it/docs/configuration-styles#stili-di-paragrafo)).
 
 ### 2 · Tieni ogni tanka su una pagina
 
@@ -28,13 +28,13 @@ I tanka di Takuboku sono un blocco `:::verse`, ogni tanka una strofa: le sue tre
 
 <Excerpt region="places" />
 
-Le tappe del cammino di Bashō sono titoli di secondo livello alti due righe di testo (2行取り), così la prosa e gli haiku che seguono restano sulla griglia. `jidori: 3` spazia un nome più corto fino a tre dei suoi caratteri (字取り): 平泉 si stampa 平　泉 con un carattere intero in mezzo, e ogni nome finisce alla stessa altezza di 立石寺 e 最上川. Un nome già lungo tre caratteri resta com’è ([Per-level overrides](/it/docs/configuration-headings#sovrascritture-per-livello)).
+Le tappe del cammino di Bashō sono titoli di secondo livello alti due righe di testo (2行取り), così la prosa e gli haiku che seguono restano sulla griglia. `jidori: 3` spazia un nome più corto fino a tre dei suoi caratteri (字取り): 平泉 si stampa 平　泉 con un carattere intero in mezzo, e ogni nome finisce alla stessa altezza di 立石寺 e 最上川. Un nome già lungo tre caratteri resta com’è ([Personalizzazioni per livello](/it/docs/configuration-headings#personalizzazioni-per-livello)).
 
 ### 4 · Apri ogni parte su una pagina propria
 
 <Excerpt region="part" />
 
-Ogni parte è un titolo di livello 1 il cui design compone il titolo, un piccolo （抄）, “selezione”, collocato subito dopo con `anchor.to: '#title'`, un breve filetto color cachi accanto al titolo e il poeta vicino al piede della riga. Il design riserva cinque righe, e il testo comincia dopo di esse sulla stessa griglia.
+Ogni parte è un titolo di livello 1 la cui grafica compone il titolo, un piccolo （抄）, «selezione», collocato subito dopo con `anchor.to: '#title'`, un breve filetto color cachi accanto al titolo e il poeta vicino al piede della riga. La grafica riserva cinque righe, e il testo comincia dopo di esse sulla stessa griglia.
 
 ### 5 · Scegli un carattere che abbia i segni antichi
 

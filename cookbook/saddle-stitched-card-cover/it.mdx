@@ -1,6 +1,6 @@
 ---
 title: "Una fanzine spillata con copertina in cartoncino"
-summary: "Due recinzioni :::paper mettono un cartoncino salmone sul foglio esterno di una fanzine di otto pagine, e postext-folio la mostra spillata su carta da giornale."
+summary: "Due blocchi :::paper mettono un cartoncino salmone sul foglio esterno di una fanzine di otto pagine, e postext-folio la mostra spillata su carta da giornale."
 plain: "Una piccola rivista piegata su un fiume, con una copertina spessa e colorata e carta da giornale sottile all’interno. Nel visualizzatore 3D sta chiusa sulla scrivania e si apre come quella vera."
 description: "Fanzine di otto pagine con copertina in cartoncino e interno in carta da giornale: due :::paper, punto metallico e cover: 'pages' in config.folio, in un pen."
 question: "Come stampo una copertina, un inserto o una sezione di tavole su una carta diversa dal resto del libro?"
@@ -10,7 +10,7 @@ pageNotes: { "1": "La copertina su bianco: la riga del numero, «Low Tide» in u
 
 ## Che cosa comporrai
 
-Il numero 3 di *Low Tide*, una fanzine gratuita su un estuario: otto pagine di 140 × 200 mm, due fogli piegati e spillati nella piega. Il foglio esterno, pagine 1–2 e 7–8, è un cartoncino salmone; il foglio interno, pagine 3–6, è carta da giornale economica. La copertina è stampata in un solo blu riso sul cartoncino nudo, senza un campo di colore proprio, quindi nelle pagine piatte qui sotto si stampa su bianco, e in Folio sta chiusa sulla scrivania nel colore del cartoncino finché non la giri. Le due carte sono due recinzioni nel Markdown, e la legatura sono tre impostazioni in `config.folio`.
+Il numero 3 di *Low Tide*, una fanzine gratuita su un estuario: otto pagine di 140 × 200 mm, due fogli piegati e spillati nella piega. Il foglio esterno, pagine 1–2 e 7–8, è un cartoncino salmone; il foglio interno, pagine 3–6, è carta da giornale economica. La copertina è stampata in un solo blu riso sul cartoncino nudo, senza un campo di colore proprio, quindi nelle pagine piatte qui sotto si stampa su bianco, e in Folio sta chiusa sulla scrivania nel colore del cartoncino finché non la giri. Le due carte sono due blocchi delimitati nel Markdown, e la legatura sono tre impostazioni in `config.folio`.
 
 ## Preparazione
 
@@ -18,19 +18,19 @@ Il numero 3 di *Low Tide*, una fanzine gratuita su un estuario: otto pagine di 1
 
 <Excerpt region="cover-sheet" />
 
-Un opuscolo a punto metallico è una pila di fogli piegati, quindi il foglio di copertina contiene le prime due e le ultime due pagine. Una recinzione contiene le pagine 1–2, un’altra le pagine 7–8, e le pagine in mezzo restano fuori da entrambe, sulla carta del libro. Ogni recinzione comincia e finisce su una nuova pagina, che qui è comunque la pagina di cui hanno bisogno la copertina e il benvenuto.
+Un opuscolo a punto metallico è una pila di fogli piegati, quindi il foglio di copertina contiene le prime due e le ultime due pagine. Un blocco delimitato contiene le pagine 1–2, un altro le pagine 7–8, e le pagine in mezzo restano fuori da entrambi, sulla carta del libro. Ogni blocco comincia e finisce su una nuova pagina, che qui è comunque la pagina di cui hanno bisogno la copertina e il benvenuto.
 
 ### 2 · Carta da giornale, spillata, copertine dalle pagine
 
 <Excerpt region="folio" />
 
-`folio.paper` è la carta da giornale di ogni pagina fuori da una recinzione. `saddleStitch` piega i fogli attorno ai punti metallici senza dorso piatto, e `cover: 'pages'` fa girare la pagina 1 e la pagina 8 come copertine. Con il punto metallico la copertina si gira come gli altri fogli, solo più rigida, e un foglio di copertina che nomina la propria carta (il cartoncino) viene disegnato su quella carta.
+`folio.paper` è la carta da giornale di ogni pagina fuori da un blocco `:::paper`. `saddleStitch` piega i fogli attorno ai punti metallici senza dorso piatto, e `cover: 'pages'` fa girare la pagina 1 e la pagina 8 come copertine. Con il punto metallico la copertina si gira come gli altri fogli, solo più rigida, e un foglio di copertina che indica la propria carta (il cartoncino) viene disegnato su quella carta.
 
 ### 3 · Una copertina in un solo inchiostro
 
 <Excerpt region="covers" />
 
-La copertina è uno stile di titolo con margini a zero e un progetto grafico a pagina intera: la riga del numero, il titolo in Bricolage Grotesque da 70 pt, il sottotitolo in Newsreader corsivo e undici linee di marea le cui lunghezze vengono da un generatore con seme fisso, così ogni esecuzione disegna le stesse. Nulla dipinge il fondo della pagina: lo fa il cartoncino.
+La copertina è uno stile di titolo con margini a zero e una grafica a pagina intera: la riga del numero, il titolo in Bricolage Grotesque da 70 pt, il sottotitolo in Newsreader corsivo e undici linee di marea le cui lunghezze vengono da un generatore con seme fisso, così ogni esecuzione disegna le stesse. Nulla colora il fondo della pagina: lo fa il cartoncino.
 
 ### 4 · Una sola apertura per ogni pezzo
 
@@ -46,7 +46,7 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `createFolioFrom
 
 ### Una copertina più pesante e bianca
 
-Cambia entrambe le recinzioni e il foglio di copertina diventa un cartoncino bianco da 300 g; le pagine interne restano su carta da giornale.
+Cambia entrambi i blocchi e il foglio di copertina diventa un cartoncino bianco da 300 g; le pagine interne restano su carta da giornale.
 
 ```diff
 -:::paper{type=cardStock grammage=250 shade=#f2c9b4}
@@ -55,4 +55,4 @@ Cambia entrambe le recinzioni e il foglio di copertina diventa un cartoncino bia
 
 ### Un opuscolo semplice
 
-Togli le recinzioni e la copertina diventa un foglio della stessa carta da giornale delle pagine, un po’ più pesante. <RecipeLink slug="paper-swatch-book">Il campionario di carte</RecipeLink> fa il contrario e dà a ogni foglio una carta propria.
+Togli i blocchi `:::paper` e la copertina diventa un foglio della stessa carta da giornale delle pagine, un po’ più pesante. <RecipeLink slug="paper-swatch-book">Il campionario di carte</RecipeLink> fa il contrario e dà a ogni foglio una carta propria.

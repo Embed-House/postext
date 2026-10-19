@@ -30,3 +30,4 @@ export { FieldRow } from './FieldRow';
 export { useFieldIds, HelpModeContext } from './fieldContext';
 export { ChoiceInput } from './ChoiceInput';
 export { FieldGroup } from './FieldGroup';
+export { ItemCard, ItemCardListActions, openCard, moveCardState, setCardsOpen } from './ItemCard';

@@ -1,11 +1,11 @@
 ---
 title: "Un articolo cinese citato secondo GB/T 7714"
-summary: "Un articolo di rivista cinese su due colonne: le citazioni [@key] si stampano in apice come [1] e [2–4], i riferimenti portano [M], [J], [D] e [EB/OL]."
+summary: "Un articolo di rivista cinese su due colonne: le citazioni [@key] si stampano in apice come [1] e [2–4], i riferimenti riportano [M], [J], [D] e [EB/OL]."
 plain: "Un breve articolo di ricerca di una rivista cinese. L’autore scrive un codice per ogni fonte; Postext numera le fonti nell’ordine in cui sono citate e stampa la bibliografia come la vogliono le riviste cinesi."
 description: "Un articolo di rivista cinese in Postext citato secondo GB/T 7714—2015: citazioni numerate in apice, intervalli, codici di tipo, 等 ed et al. secondo la lingua."
 question: "Come cito secondo GB/T 7714 in un articolo cinese, con numeri in apice e codici di tipo?"
 aliases: ["GB/T 7714", "GB/T 7714—2015", "参考文献著录规则", "顺序编码制", "riferimenti cinesi", "bibliografia cinese", "文献类型标识", "[M] [J] [D]", "et al. 等", "articolo di rivista cinese", "学报", "citazioni in apice", "CSL-YAML", "citeproc"]
-pageNotes: { "1": "Pagina 1 di un articolo in una rivista fittizia, 示例出版研究. Una fascia indaco in alto porta il nome della rivista in bianco e, a destra, volume e numero. Sotto, un titolo centrato su due righe in Hei grassetto, i nomi dei due autori, le loro affiliazioni in piccolo e in grigio, e l’abstract su entrambe le colonne con le etichette indaco 摘　要：, 关键词：, 文献标志码： e 文章编号：. Più in basso, due colonne di testo cinese su una griglia di caratteri: il 引言 non numerato, con piccole citazioni in apice [1], [2–4], [5,6], [7], [4] e [8], poi 1 实验方法 con le sezioni da 1.1 a 1.3.", "2": "Pagina 2: la testatina 42 示例出版研究 2026年第3期 sopra un filetto sottile; le sezioni 2 结果 e 3 讨论 nella colonna sinistra; 4 结论 apre la colonna destra, poi il titolo 参考文献 e l’elenco numerato da [1] a [8] in corpo minore: tre voci inglesi in maiuscolo con et al. e i codici [M], [J/OL], voci cinesi con 等 e [J], [M], [D], [EB/OL], [C]. In fondo all’elenco una nota grigia in caratteri latini dice quali opere sono fittizie." }
+pageNotes: { "1": "Pagina 1 di un articolo in una rivista fittizia, 示例出版研究. Una fascia indaco in alto riporta il nome della rivista in bianco e, a destra, volume e numero. Sotto, un titolo centrato su due righe in Hei grassetto, i nomi dei due autori, le loro affiliazioni in piccolo e in grigio, e l’abstract su entrambe le colonne con le etichette indaco 摘　要：, 关键词：, 文献标志码： e 文章编号：. Più in basso, due colonne di testo cinese su una griglia di caratteri: il 引言 non numerato, con piccole citazioni in apice [1], [2–4], [5,6], [7], [4] e [8], poi 1 实验方法 con le sezioni da 1.1 a 1.3.", "2": "Pagina 2: la testatina 42 示例出版研究 2026年第3期 sopra un filetto sottile; le sezioni 2 结果 e 3 讨论 nella colonna sinistra; 4 结论 apre la colonna destra, poi il titolo 参考文献 e l’elenco numerato da [1] a [8] in corpo minore: tre voci inglesi in maiuscolo con et al. e i codici [M], [J/OL], voci cinesi con 等 e [J], [M], [D], [EB/OL], [C]. In fondo all’elenco una nota grigia in caratteri latini dice quali opere sono fittizie." }
 ---
 
 ## Che cosa comporrai
@@ -30,7 +30,7 @@ Le opere sono elencate in un blocco `:::references{format=csl-yaml}` alla fine d
 
 <Excerpt region="masthead" />
 
-Il blocco del titolo è il progetto grafico dell’H1, uno stile di titolo che occupa entrambe le colonne. La fascia è un riquadro ancorato al rifilo, e il nome della rivista ci sta sopra in bianco. Il titolo, gli autori e le affiliazioni vengono dal titolo e dai suoi attributi, ciascuno posto sotto il precedente (`#title`, `below`), così un titolo su tre righe spinge in basso il resto ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)).
+Il blocco del titolo è il progetto grafico dell’H1, uno stile di titolo che occupa entrambe le colonne. La fascia è un riquadro ancorato al rifilo, e il nome della rivista ci sta sopra in bianco. Il titolo, gli autori e le affiliazioni vengono dal titolo e dai suoi attributi, ciascuno posto sotto il precedente (`#title`, `below`), così un titolo su tre righe spinge in basso il resto ([Estensione e grafica avanzata](/it/docs/configuration-headings#estensione-e-grafica-avanzata)).
 
 ### 4 · L’abstract e le sue etichette
 
@@ -44,7 +44,7 @@ L’abstract è un riquadro a tutta larghezza, rientrato di due caratteri per la
 
 ### Parentesi d’angolo invece dell’apice
 
-Alcune riviste stampano i numeri delle citazioni sulla riga, in corpo del testo. `marker` cambia il modo in cui il numero è segnato e lascia stare lo stile: `'brackets'` dà [1] sulla riga, `'corner'` dà 〔1〕.
+Alcune riviste stampano i numeri delle citazioni sulla riga, nel corpo del testo corrente. `marker` cambia il modo in cui il numero è segnato e lascia stare lo stile: `'brackets'` dà [1] sulla riga, `'corner'` dà 〔1〕.
 
 ```diff
    locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
@@ -65,7 +65,7 @@ Le bibliografie miste a volte si ordinano con le opere cinesi prima di quelle oc
 
 ## Errori frequenti
 
-- Una citazione narrativa, `@zhou2019` senza parentesi, nomina gli autori e aggiunge il numero, ma una chiave prosegue attraverso i caratteri cinesi, quindi `@zhou2019认为` si legge come una chiave che non esiste. Scrivi il nome nel testo e la citazione dopo, `周明远[@zhou2019]认为`, come fanno comunque gli articoli cinesi.
+- Una citazione narrativa, `@zhou2019` senza parentesi, stampa i nomi degli autori e aggiunge il numero, ma una chiave prosegue attraverso i caratteri cinesi, quindi `@zhou2019认为` si legge come una chiave che non esiste. Scrivi il nome nel testo e la citazione dopo, `周明远[@zhou2019]认为`, come fanno comunque gli articoli cinesi.
 - Lo stile numerico incluso non stampa localizzatori: `[@zhou2019, 页 45]` dà [5] senza la pagina. GB/T 7714 mette la pagina dopo la parentesi nell’apice, [5]45; finché lo stile non lo fa, scrivi la pagina nella frase.
 - LXGW WenKai TC, l’unico Kai su Fontsource, è un carattere di Taiwan: disegna ，e 。 al centro della cella, e con `zh-Hans` il motore taglia la metà destra della cella, che intacca il glifo. L’abstract è composto in Noto Serif SC, e il Kai resta per i nomi degli autori, che non hanno punteggiatura.
 - Su una griglia di caratteri il bilanciamento delle colonne è disattivato per impostazione predefinita: ogni riga resta sulla griglia, e una colonna che non può accogliere il titolo successivo finisce corta. Lasciato disattivato, la seconda colonna di pagina 1 finirebbe tre righe più corta (il titolo 2 结果 ha bisogno delle sue due righe e di due righe di testo sotto, quindi apre pagina 2), e l’ultima pagina riempirebbe la prima colonna lasciando vuota metà della seconda. La ricetta imposta `headings.balancing.enabled: true`: una colonna corta prende righe di griglia intere sopra i suoi titoli, mai spostando i caratteri fuori dalle loro celle, e le due colonne dell’ultima pagina finiscono alla stessa altezza.

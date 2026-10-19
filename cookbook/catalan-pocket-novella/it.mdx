@@ -20,7 +20,7 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `locale: 'ca'` s
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Pagina 27: «titil·laven» a fine riga, composto «titil-» | «laven». È l’unica l·l che cade a fine riga in queste 32 pagine." />
 
-`compounds: false` tiene interi un verbo e il suo pronome, salvo che sul loro trattino (*arrossegar-* | *se*), come preferisce l’IEC ([sillabazione](/it/docs/configuration-language#sillabazione)). Costa una riga troppo spaziata: a pagina 7 la riga prima di *d’inaugurar-se* allarga gli spazi a 1,88×, anche con `maxJustifyTracking: 10` che assorbe l’eccesso sulle altre righe.
+`compounds: false` tiene interi un verbo e il suo pronome, salvo che sul loro trattino (*arrossegar-* | *se*), come preferisce l’IEC ([sillabazione](/it/docs/configuration-language#sillabazione)). Costa una riga lasca: a pagina 7 la riga prima di *d’inaugurar-se* allarga gli spazi a 1,88×, anche con `maxJustifyTracking: 10` che assorbe l’eccesso sulle altre righe.
 
 ### 2 · Una pagina tascabile di righe intere
 
@@ -32,19 +32,19 @@ Il margine inferiore si ricava dal formato, dal margine superiore e da `LINES`, 
 
 <Excerpt region="opener" />
 
-`resourceId: '{attr.art}'` disegna l’immagine che il titolo nomina, così `# II {style="capitol" art="cap2"}` apre il capitolo II sotto la sua incisione con lo stesso stile degli altri ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). `minHeight` occupa sedici righe, dodici per l’immagine e quattro per il numerale e il suo filetto, così il testo comincia sulla diciassettesima riga della pagina, uguale in ogni capitolo.
+`resourceId: '{attr.art}'` disegna l’immagine che il titolo indica, così `# II {style="capitol" art="cap2"}` apre il capitolo II sotto la sua incisione con lo stesso stile degli altri ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). `minHeight` occupa sedici righe, dodici per l’immagine e quattro per il numerale e il suo filetto, così il testo comincia sulla diciassettesima riga della pagina, uguale in ogni capitolo.
 
 ### 4 · Quattro pagine prima del capitolo I
 
 <Excerpt region="front" />
 
-Ogni elemento delle pagine preliminari è un titolo di primo livello con uno stile proprio: `# El transplantat {style="portada"}` stampa l’autore e il sottotitolo dal frontmatter e il titolo come titolo del libro. Ogni stile ribadisce la sua interruzione di pagina, perché uno stile eredita quella del suo livello, e svuota intestazione e piè di pagina, così queste pagine non portano testatine né folio. L’antiporta cade a pagina 2, un verso, quindi sta di fronte al frontespizio nella doppia pagina.
+Ogni elemento delle pagine preliminari è un titolo di primo livello con uno stile proprio: `# El transplantat {style="portada"}` stampa l’autore e il sottotitolo dal front matter e il titolo come titolo del libro. Ogni stile ribadisce la sua interruzione di pagina, perché uno stile eredita quella del suo livello, e svuota intestazione e piè di pagina, così queste pagine non hanno testatine né numeri di pagina. L’antiporta cade a pagina 2, un verso, quindi sta di fronte al frontespizio nella doppia pagina.
 
 ### 5 · L’autore sul verso, il titolo sul recto
 
 <Excerpt region="heads" />
 
-`parity` mette l’autore sui versi e il titolo sui recti; `pages: 'body'` li tiene lontani dalle aperture, dove al loro posto c’è un folio al piede con `pages: 'opener'`. `SHIFT` sposta ogni testatina al centro della gabbia del testo, mezzo millimetro fuori dal centro della pagina perché i due margini sono diversi.
+`parity` mette l’autore sui versi e il titolo sui recti; `pages: 'body'` li tiene lontani dalle aperture, dove al loro posto c’è un numero di pagina al piede con `pages: 'opener'`. `SHIFT` sposta ogni testatina al centro della gabbia del testo, mezzo millimetro fuori dal centro della pagina perché i due margini sono diversi.
 
 ### 6 · Cinque incisioni, nessuna etichetta
 
@@ -56,7 +56,7 @@ Le immagini appartengono a un tipo di risorsa con `captionPrefix` vuoto, così n
 
 ### Lascia dividere anche i pronomi
 
-Con il `compounds: true` predefinito, *d’inaugurar-se* si divide dentro il verbo, come *d’i-* | *naugurar-se*, e pagina 7 perde la sua riga troppo spaziata: nessuna riga del libro si allarga oltre 1,6×. La divisione `titil-` | `laven` resta a pagina 27. Il prezzo è una *i* isolata dopo l’apostrofo a fine riga.
+Con il `compounds: true` predefinito, *d’inaugurar-se* si divide dentro il verbo, come *d’i-* | *naugurar-se*, e pagina 7 perde la sua riga lasca: nessuna riga del libro si allarga oltre 1,6×. La divisione `titil-` | `laven` resta a pagina 27. Il prezzo è una *i* isolata dopo l’apostrofo a fine riga.
 
 ```diff
 -  hyphenation: { compounds: false },

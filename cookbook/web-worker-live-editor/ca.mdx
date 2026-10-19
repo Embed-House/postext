@@ -24,7 +24,7 @@ El codi d'aquest pas és [la resposta curta](#la-resposta-curta). `createLayoutW
 
 <Excerpt region="fonts" />
 
-El worker té el seu propi `FontFaceSet` i no veu les fonts que ha carregat la pàgina, així que la resposta curta baixa els mateixos fitxers de Fontsource i passa els seus bytes a `registerFonts()`, amb el pes com a cadena (`'400'`). Si treus aquesta crida, el worker mesura amb una font de reserva: compon aquest capítol en 175 línies en lloc de 190, ja la primera línia acaba en «him)» en lloc d'en «of», i la consola de la pàgina anomena una vegada cada família que falta. Un fitxer que no es baixa es veu pitjor. Si al worker li arriba una pàgina 404 en lloc de la Baskervville rodona, `registerFonts()` es resol igualment i el capítol surt en 186 línies, amb un avís només a la consola del worker. Per això la resposta curta comprova el codi HTTP de cada baixada abans d'enviar cap byte, i si alguna falla llança un error amb la font i el codi. La pàgina carrega a més les mateixes fonts amb `loadFonts()`, perquè el canvas pinta amb les de la pàgina.
+El worker té el seu propi `FontFaceSet` i no veu les fonts que ha carregat la pàgina, així que la resposta curta baixa els mateixos fitxers de Fontsource i passa els seus bytes a `registerFonts()`, amb el gruix com a cadena (`'400'`). Si treus aquesta crida, el worker mesura amb una font de reserva: compon aquest capítol en 175 línies en lloc de 190, ja la primera línia acaba en «him)» en lloc d'en «of», i la consola de la pàgina anomena una vegada cada família que falta. Un fitxer que no es baixa es veu pitjor. Si al worker li arriba una pàgina 404 en lloc de la Baskervville rodona, `registerFonts()` es resol igualment i el capítol surt en 186 línies, amb un avís només a la consola del worker. Per això la resposta curta comprova el codi HTTP de cada baixada abans d'enviar cap byte, i si alguna falla llança un error amb la font i el codi. La pàgina carrega a més les mateixes fonts amb `loadFonts()`, perquè el canvas pinta amb les de la pàgina.
 
 ### 3 · Compon a cada pulsació, pinta al fil principal
 
@@ -34,11 +34,11 @@ El worker té el seu propi `FontFaceSet` i no veu les fonts que ha carregat la p
 
 <Note>Temps presos a l'equip on es va fer la captura, en dotze càrregues de la pàgina a més de la que mostra la targeta. La línia d'estat cronometra cada composició des de la petició fins al primer fotograma posterior a l'arribada de les pàgines. La primera composició del worker triga entre 66 i 141 ms i les següents entre 10 i 36 ms, perquè el worker conserva una memòria cau de mesures mentre viu; mentrestant, el fotograma més llarg es queda entre 8 i 18 ms. Al fil principal, la primera composició atura l'agulla entre 54 i 74 ms. Les següents, amb una memòria cau pròpia, triguen entre 5 i 17 ms i allarguen el fotograma més llarg fins a 25 ms com a màxim, fotograma i mig a 60 Hz. Una composició que dura més que un fotograma (16,7 ms a 60 Hz), com la primera d'aquest capítol o les d'un llibre de molts capítols, congela l'editor al fil principal i no al worker.</Note>
 
-### 4 · Una portada que és un estil de títol
+### 4 · Una portada que és un estil d'encapçalament
 
 <Excerpt region="title" />
 
-La línia `# The Time Machine {style="title"}` compon la pàgina 1 amb l'estil de títol `title`, els `header` i `footer` buits del qual la deixen sense capçaleres ni foli. `numbered: false` deixa el títol fora del compte de capítols, així que Introduction continua sent el capítol I. La làmina s'ancora a la cantonada superior esquerra de la sang, i el nom de l'autor queda per sota del peu de la columna. Un disseny que es queda a la seva columna es talla al peu de la columna, així que l'estil porta `span: 'page'`; sense aquesta opció, el nom de l'autor no es pinta.
+La línia `# The Time Machine {style="title"}` compon la pàgina 1 amb l'estil d'encapçalament `title`, amb un `header` i un `footer` buits que la deixen sense capçaleres ni foli. `numbered: false` deixa el títol fora del compte de capítols, així que Introduction continua sent el capítol I. La làmina s'ancora a la cantonada superior esquerra de la sang, i el nom de l'autor queda per sota del peu de la columna. Un disseny que es queda a la seva columna es talla al peu de la columna, així que l'estil porta `span: 'page'`; sense aquesta opció, el nom de l'autor no es pinta.
 
 ### 5 · Capçaleres segons el tipus de pàgina
 

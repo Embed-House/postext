@@ -20,6 +20,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     settingsOverriddenOnly: t("settingsOverriddenOnly"),
     settingsOverriddenOnlyEmpty: t("settingsOverriddenOnlyEmpty"),
     settingsModifiedCount: t("settingsModifiedCount"),
+    cardsExpandAll: t("cardsExpandAll"),
+    cardsCollapseAll: t("cardsCollapseAll"),
     resources: t("resources"),
     markdownEditor: t("markdownEditor"),
     refPickerHeading: t("refPickerHeading"),

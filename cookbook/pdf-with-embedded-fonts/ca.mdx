@@ -28,13 +28,13 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. Postext mesur
 
 <Excerpt region="pdf" />
 
-`renderToPdf` crida `onProgress` en tres fases: `prepare` quan ja ha incrustat les fonts i la coberta, `pages` després de cada pàgina i `save` abans d'escriure el fitxer. Només demana al proveïdor les fonts que pinten les pàgines, aquí cinc. La línia d'estat enumera els cinc fitxers que va servir el proveïdor, que són exactament els de `FONTS`, i cap substituta. Una substituta delata una font que falta a `FONTS`. Si treus Crimson Text 600, la línia mostra `Crimson Text 600 → 400` i la negreta de *The Harbour Consort*, a la pàgina 4, surt amb el pes normal. La previsualització de CodePen no pot mostrar un PDF, així que `offerPdf`, del kit, canvia el botó per dos enllaços: un obre el PDF en una altra pestanya i l'altre el baixa ([Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf)).
+`renderToPdf` crida `onProgress` en tres fases: `prepare` quan ja ha incrustat les fonts i la coberta, `pages` després de cada pàgina i `save` abans d'escriure el fitxer. Només demana al proveïdor les fonts que pinten les pàgines, aquí cinc. La línia d'estat enumera els cinc fitxers que va servir el proveïdor, que són exactament els de `FONTS`, i cap substituta. Una substituta delata una font que falta a `FONTS`. Si treus Crimson Text 600, la línia mostra `Crimson Text 600 → 400` i la negreta de *The Harbour Consort*, a la pàgina 4, surt amb el gruix normal. La previsualització de CodePen no pot mostrar un PDF, així que `offerPdf`, del kit, canvia el botó per dos enllaços: un obre el PDF en una altra pestanya i l'altre el baixa ([Generació de PDF](/ca/docs/configuration-pdf-output#generació-de-pdf)).
 
 ### 4 · L'arbre de títols és l'arbre de marcadors
 
 <Excerpt region="headings" />
 
-Al tauler de marcadors del PDF apareixen el títol de la coberta, *Programme* amb *About the music* a sota, *The texts* amb les tres cançons i *The performers*. Els marcadors reprodueixen els nivells de títol, així que l'índex del PDF es decideix en triar aquests nivells: aquí, un H1 per secció i un H2 per cançó. *The performers* té un estil de títol propi, un H1 sense salt de pàgina ni obertura, de manera que comparteix la pàgina 4 amb el poema de Tennyson i tot i així té un marcador de primer nivell. El `\\` que parteix en dos el títol de la coberta queda com un espai al marcador.
+Al tauler de marcadors del PDF apareixen el títol de la coberta, *Programme* amb *About the music* a sota, *The texts* amb les tres cançons i *The performers*. Els marcadors reprodueixen els nivells de títol, així que l'índex del PDF es decideix en triar aquests nivells: aquí, un H1 per secció i un H2 per cançó. *The performers* té un estil d'encapçalament propi, un H1 sense salt de pàgina ni obertura, de manera que comparteix la pàgina 4 amb el poema de Tennyson i tot i així té un marcador de primer nivell. El `\\` que parteix en dos el títol de la coberta queda com un espai al marcador.
 
 ### 5 · Títol i autor des del frontmatter
 
@@ -55,7 +55,7 @@ Un full solt o un cartell no necessiten marcadors, i sense marcadors el PDF s'ob
 
 ### Serveix tu les fonts
 
-Canvia l'URL de Fontsource per la de les teves còpies dels mateixos fitxers WOFF2 estàtics, un per pes i estil, amb els noms que fa servir Fontsource. La pàgina i el PDF continuen compartint cada baixada.
+Canvia l'URL de Fontsource per la de les teves còpies dels mateixos fitxers WOFF2 estàtics, un per gruix i estil, amb els noms que fa servir Fontsource. La pàgina i el PDF continuen compartint cada baixada.
 
 ```diff
 -    files.set(file, fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${file}.woff2`)
@@ -69,4 +69,4 @@ Canvia l'URL de Fontsource per la de les teves còpies dels mateixos fitxers WOF
 
 Enumera a `FONTS` totes les fonts amb què es componen les teves pàgines, també la negreta i la cursiva del text. Si n'oblides una, a la pantalla no ho notaràs, perquè el kit la carrega sense avisar; el PDF, en canvi, imprimeix la font més propera que tingui el proveïdor, i només ho delaten les substitutes de la línia d'estat.
 
-Fes servir fitxers estàtics, un per pes i estil. D'un WOFF2 variable només s'incrusta la instància per defecte, així que una negreta sortiria amb el pes normal ([Per què un proveïdor de fonts?](/ca/docs/configuration-pdf-output#per-què-un-proveïdor-de-fonts)).
+Fes servir fitxers estàtics, un per gruix i estil. D'un WOFF2 variable només s'incrusta la instància per defecte, així que una negreta sortiria amb el gruix normal ([Per què un proveïdor de fonts?](/ca/docs/configuration-pdf-output#per-què-un-proveïdor-de-fonts)).

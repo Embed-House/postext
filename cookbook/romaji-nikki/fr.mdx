@@ -16,7 +16,7 @@ Quatre pages du *Rōmaji nikki*, le journal qu’Ishikawa Takuboku tint à Tokyo
 
 ### 1 · Étiqueter le texte ja-Latn
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `ja-Latn` est l’étiquette BCP 47 du japonais écrit en alphabet latin. Sa langue est `ja` : la lecture sous chaque paragraphe reçoit donc les règles japonaises, le kinsoku, l’espacement de 、。 et l’espace cadratin que le moteur ajoute après ！ à l’intérieur d’une phrase, comme dans 「ええ！　ええ！」. Le japonais n’a pas de motifs de césure, si bien que le rōmaji n’est jamais coupé ; avec `en`, les motifs anglais couperaient des mots comme *tatinobotta* ou *Surigarasu* selon les syllabes anglaises, et non selon les mores qu’entend un lecteur japonais. Sans traits d’union, ce sont les espaces qui absorbent le jeu : la justification compte donc environ 70 caractères et `maxWordSpacing` vaut 1,8 ([césure](/fr/docs/configuration-language#césure)).
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `ja-Latn` est l’étiquette BCP 47 du japonais écrit en alphabet latin. Sa langue est `ja` : la lecture sous chaque paragraphe reçoit donc les règles japonaises, le kinsoku, l’espacement de 、。 et l’espace cadratin que le moteur ajoute après ！ à l’intérieur d’une phrase, comme dans 「ええ！　ええ！」. Le japonais n’a pas de motifs de césure : le rōmaji n’est donc jamais coupé ; avec `en`, les motifs anglais couperaient des mots comme *tatinobotta* ou *Surigarasu* selon les syllabes anglaises, et non selon les mores qu’entend un lecteur japonais. Sans traits d’union, ce sont les espaces qui absorbent le jeu : la justification compte donc environ 70 caractères et `maxWordSpacing` vaut 1,8 ([césure](/fr/docs/configuration-language#césure)).
 
 <PageShot page={2} crop="0,0.1,1,0.45" caption="Page 2 : le jour, l’adresse, les deux premiers paragraphes en rōmaji et leurs lectures en kana, plus petites et en retrait." />
 
@@ -36,13 +36,13 @@ Le carnet commence par « NIKKI. I. MEIDI 42 NEN. 1909. APRIL. TOKYO. », un �
 
 <Excerpt region="heads" />
 
-Le verso porte le nom du journal et le recto le lieu et le mois, avec les folios aux angles extérieurs, en Source Sans 3 de 7,5 pt.
+Le verso affiche le nom du journal et le recto le lieu et le mois, avec les folios aux angles extérieurs, en Source Sans 3 de 7,5 pt.
 
 ## Variantes
 
 ### Écrire le rōmaji en Hepburn
 
-Une édition moderne peut réécrire le journal en Hepburn avec macrons, *Tōkyō* pour *Tôkyô*. Le PDF porte déjà ō : seul le texte change ; gardez une note qui précise que la graphie est celle de l’éditeur.
+Une édition moderne peut réécrire le journal en Hepburn avec macrons, *Tōkyō* pour *Tôkyô*. Le PDF contient déjà ō : seul le texte change ; gardez une note qui précise que la graphie est celle de l’éditeur.
 
 ### Couper entre les mores
 

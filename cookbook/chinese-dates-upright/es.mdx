@@ -26,29 +26,29 @@ Los textos de 1912 quedan como se imprimieron. Las notas del editor siguen las n
 
 <Excerpt region="opener" />
 
-En un flujo vertical, la cabeza de la página es el borde derecho de la hoja, donde empieza la lectura. Un diseño de título anclado a la cabeza de la sangre es, por tanto, una banda que baja por el borde derecho, y su `size.height` es su anchura sobre el papel. Los desplazamientos giran con el flujo: `x` se mide hacia abajo y `y` hacia la izquierda. La retícula centra la mancha entre los márgenes, y `HEAD` repite esa cuenta para que el título empiece a la altura del primer carácter de cada línea. `align: 'right'` lleva la fecha al pie de su línea, donde terminan las líneas de texto, y `cjk.uprightDigits` alcanza también al texto del diseño: el 11 de 3月11日 ocupa una sola casilla, como en el cuerpo. La banda es la de <RecipeLink slug="chapter-opener-bleed-band">Apertura de capítulo sobre banda a sangre</RecipeLink>, girada un cuarto de vuelta.
+En un flujo vertical, la cabeza de la página es el borde derecho de la hoja, donde empieza la lectura. Un diseño de encabezado anclado a la cabeza del sangrado es, por tanto, una banda que baja por el borde derecho, y su `size.height` es su anchura sobre el papel. Los desplazamientos giran con el flujo: `x` se mide hacia abajo y `y` hacia la izquierda. La retícula centra la caja de texto entre los márgenes, y `HEAD` repite esa cuenta para que el título empiece a la altura del primer carácter de cada línea. `align: 'right'` lleva la fecha al pie de su línea, donde terminan las líneas de texto, y `cjk.uprightDigits` alcanza también al texto del diseño: el 11 de 3月11日 ocupa una sola casilla, como en el cuerpo. La banda es la de <RecipeLink slug="chapter-opener-bleed-band">Apertura de capítulo sobre banda a sangre</RecipeLink>, girada un cuarto de vuelta.
 
-Un diseño de título no distingue páginas pares e impares, así que la banda baja siempre por el borde derecho de la hoja. En la página 2, que queda a la derecha, ese borde es el corte; en la página 5, que en un libro encuadernado por la derecha queda a la izquierda, es el lomo, y el título empieza a 8 mm de él, dentro del margen interior de 21,6 mm. Un cuadernillo grapado se abre lo bastante para eso. En un libro cosido o encolado, abre cada documento en una página de la derecha con `breakBefore.parity: 'even'`, que deja en blanco la página 5.
+Un diseño de encabezado no distingue páginas pares e impares, así que la banda baja siempre por el borde derecho de la hoja. En la página 2, que queda a la derecha, ese borde es el corte; en la página 5, que en un libro encuadernado por la derecha queda a la izquierda, es el lomo, y el título empieza a 8 mm de él, dentro del margen interior de 21,6 mm. Un cuadernillo grapado se abre lo bastante para eso. En un libro cosido o encolado, abre cada documento en una página de la derecha con `breakBefore.parity: 'even'`, que deja en blanco la página 5.
 
-<PageShot page={2} crop="0.55,0.13,0.45,0.52" caption="Página 2: el título desde la cabeza de la mancha, la fecha al pie de la banda, el 10 de 晚上10時 y el 29 de 同月29日 en pie en la presentación." />
+<PageShot page={2} crop="0.55,0.13,0.45,0.52" caption="Página 2: el título desde la cabeza de la caja de texto, la fecha al pie de la banda, el 10 de 晚上10時 y el 29 de 同月29日 en pie en la presentación." />
 
 ### 3 · Lleva las cabeceras al corte
 
 <Excerpt region="heads" />
 
-`anchor.to: 'outer'` es el margen del lado opuesto al lomo, así que en un libro encuadernado por la derecha las cabeceras bajan por el borde izquierdo de la página impar y por el derecho de la par. El título queda cuatro caracteres por debajo de la cabeza de la mancha y el folio termina cinco por encima de su pie, ambos en vertical, al 80 % del cuerpo del texto ([elementos de texto verticales](/es/docs/configuration-headers-footers#elementos-de-texto-verticales)). `pageNumbering.format: 'trad-chinese-informal'` imprime los folios 三, 四, 六 y 七, y `pages: 'body'` los quita de las dos aperturas.
+`anchor.to: 'outer'` es el margen del lado opuesto al lomo, así que en un libro encuadernado por la derecha las cabeceras bajan por el borde izquierdo de la página impar y por el derecho de la par. El título queda cuatro caracteres por debajo de la cabeza de la caja de texto y el folio termina cinco por encima de su pie, ambos en vertical, al 80 % del cuerpo del texto ([elementos de texto verticales](/es/docs/configuration-headers-footers#elementos-de-texto-verticales)). `pageNumbering.format: 'trad-chinese-informal'` imprime los folios 三, 四, 六 y 七, y `pages: 'body'` los quita de las dos aperturas.
 
 ### 4 · Lleva la cubierta a sangre con un diseño de página
 
 <Excerpt region="cover" />
 
-Un diseño de título en una columna se corta al pie de la columna, y en una página vertical ese pie es el margen izquierdo: un campo anclado a la sangre se quedaba a 21,6 mm del corte izquierdo. Con `span: 'page'` el título se compone como banda de página, que no se corta, y el campo llega a los dos bordes. Los dos marcos dibujan el filete doble, grueso y fino, de los libros impresos chinos: 1,6 pt y 0,5 pt, separados 2 mm.
+Un diseño de encabezado en una columna se corta al pie de la columna, y en una página vertical ese pie es el margen izquierdo: un campo anclado al sangrado se quedaba a 21,6 mm del corte izquierdo. Con `span: 'page'` el título se compone como banda de página, que no se corta, y el campo llega a los dos bordes. Los dos marcos dibujan el filete doble, grueso y fino, de los libros impresos chinos: 1,6 pt y 0,5 pt, separados 2 mm.
 
 ### 5 · Carga cada voz con el texto que compone
 
 <Excerpt region="voices" />
 
-Fontsource sirve cada peso de estas fuentes en un centenar de archivos, cada uno con un tramo de caracteres, y `loadCjkFonts` carga los archivos que toca un texto. Con solo los títulos, los avisos de sello, el colofón, las líneas de la cubierta y los folios, cada peso de Noto Sans TC carga 10 archivos; con la muestra entera cargaría 35, y son tres pesos. LXGW WenKai TC recibe las presentaciones y las notas, y carga 16. Una fuente que recibe menos texto del que compone hace fallar la captura (C12), que nombra los caracteres que tuvo que tomar de otra fuente.
+Fontsource sirve cada peso de estas fuentes en un centenar de archivos, cada uno con un tramo de caracteres, y `loadCjkFonts` carga los archivos que toca un texto. Con solo los títulos, los avisos de sello, el colofón, las líneas de la cubierta y los folios, cada peso de Noto Sans TC carga 10 archivos; con la muestra entera cargaría 35, y son tres pesos. LXGW WenKai TC recibe las presentaciones y las notas, y carga 16. Una fuente que recibe menos texto del que compone hace fallar la captura (C12), que indica los caracteres que tuvo que tomar de otra fuente.
 
 ## Variantes
 
@@ -72,6 +72,6 @@ Con 0 ningún número se pone en pie por sí solo: 10月10日 se gira como 1912,
 
 ## Errores frecuentes
 
-- Noto Serif TC, tal como la sirve Fontsource, no tiene 爲 ni 敎: su hoja de estilos los declara, pero ningún archivo trae el glifo. La constitución, tal como se imprimió en 1912, usa esas formas para 為 y 教. El lienzo dibujó 敎 con una fuente del sistema y el PDF no tenía glifo para él, de lo que avisó la captura (C25). La edición compone 為 y 教, lleva con ellos 靑 y 决 a 青 y 決, y la presentación lo dice.
+- Noto Serif TC, tal como la sirve Fontsource, no tiene 爲 ni 敎: su hoja de estilos los declara, pero ningún archivo trae el glifo. La constitución, tal como se imprimió en 1912, usa esas formas para 為 y 教. El canvas dibujó 敎 con una fuente del sistema y el PDF no tenía glifo para él, de lo que avisó la captura (C25). La edición compone 為 y 教, lleva con ellos 靑 y 决 a 青 y 決, y la presentación lo dice.
 - LXGW WenKai TC, tal como la sirve Fontsource, dibuja 即, 為, 青 y 教 con sus formas antiguas, 卽, 爲, 靑 y 敎, que desentonan junto a los mismos caracteres del texto en Song. Las notas se redactaron sin esos cuatro; solo la presentación que enumera las formas antiguas de la constitución las quiere. Lee a tamaño real el texto en Kai de tus propias notas.
 - Un número compuesto de lado se separa del chino que lo rodea como una palabra latina, un cuarto de cuadratín a cada lado (`cjk.latinSpacing`), y por eso las presentaciones muestran `1912 年`; un número en una casilla no lleva espacio, como un carácter chino.

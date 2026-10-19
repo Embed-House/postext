@@ -1,6 +1,6 @@
 ---
 title: "Une planche lettrée en six langues"
-summary: "Une planche de BD, découpage et images fixes, lettrée par langue : la locale choisit le caractère ; japonais vertical, japonais et arabe de droite à gauche."
+summary: "Une planche de BD, découpage et images fixes, lettrée par langue : la langue choisit le caractère ; japonais vertical, japonais et arabe de droite à gauche."
 plain: "La même planche de bande dessinée en anglais, espagnol, français, japonais, chinois et arabe : seuls les mots changent, et Postext redessine chaque bulle autour d’eux."
 description: "Une planche de BD relettrée avec Postext : un découpage, cinq images, un script par langue, bulles japonaises verticales, japonais et arabe de droite à gauche."
 question: "Comment relettrer une bande dessinée dans une autre langue ?"
@@ -15,7 +15,7 @@ Une planche de bande dessinée, *The Lighthouse Radio* : Maya arrive au phare d
 
 ### 1 · Une configuration pour toutes les langues
 
-Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Rien dans la configuration ne nomme une langue, sauf `locale`. Sans `fontFamily`, le lettrage prend le caractère de bande dessinée de la langue du document (`defaultComicFont`) : Comic Neue, Zen Antique, Noto Sans SC ou Playpen Sans Arabic, et l’onomatopée le caractère de titrage assorti. `writingMode: 'auto'` transforme les bulles japonaises en colonnes verticales ; `readingDirection: 'auto'` lit les planches japonaise et arabe de droite à gauche, comme leurs langues, si bien que le même `split="30 / 35 [* | * | *] / *"` place la case de la radio à droite et le chat à gauche. Les identifiants des personnages (`maya`, `tomas`) sont les mêmes dans tous les scripts, et les ancrages des images y répondent.
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Rien dans la configuration ne désigne une langue, sauf `locale`. Sans `fontFamily`, le lettrage prend le caractère de bande dessinée de la langue du document (`defaultComicFont`) : Comic Neue, Zen Antique, Noto Sans SC ou Playpen Sans Arabic, et l’onomatopée le caractère de titrage assorti. `writingMode: 'auto'` transforme les bulles japonaises en colonnes verticales ; `readingDirection: 'auto'` fait lire les planches japonaise et arabe de droite à gauche, comme leurs langues : le même `split="30 / 35 [* | * | *] / *"` place donc la case de la radio à droite et le chat à gauche. Les identifiants des personnages (`maya`, `tomas`) sont les mêmes dans tous les scripts, et les ancres des images y répondent.
 
 Le corps est le même pour tout le livre. Le script anglais compte 216 lettres, l’espagnol 220, le français 224, le chinois 74 caractères ; les scripts plus longs reçoivent des bulles plus grandes, jamais un texte plus petit.
 
@@ -29,7 +29,7 @@ Les éditions de cette recette n’ont pas de planche française à elles : cha
 
 <Excerpt region="art" />
 
-Les zones sûres sont plus étroites que les cases de ce découpage : la bande du milieu contient trois cases d’environ 46 mm de large et 80 mm de haut, si bien que chaque image carrée montre une colonne d’environ 58 % de sa largeur, tandis que sa zone sûre, le visage de celui qui parle et ce dont parle la réplique, en occupe 36 à 42 %. Les images ne sont pas retournées pour le japonais ni pour l’arabe (`mirrorArt` reste à false) : Maya monte toujours le sentier depuis la gauche, et seul l’ordre des cases suit le sens de lecture.
+Les zones de sécurité sont plus étroites que les cases de ce découpage : la bande du milieu contient trois cases d’environ 46 mm de large et 80 mm de haut : chaque image carrée montre donc une colonne d’environ 58 % de sa largeur, tandis que sa zone de sécurité, le visage de celui qui parle et ce dont parle la réplique, en occupe 36 à 42 %. Les images ne sont pas retournées pour le japonais ni pour l’arabe (`mirrorArt` reste à false) : Maya monte toujours le sentier depuis la gauche, et seul l’ordre des cases suit le sens de lecture.
 
 ## Variantes
 
@@ -45,4 +45,4 @@ Les zones sûres sont plus étroites que les cases de ce découpage : la bande 
 ## Erreurs fréquentes
 
 - Une réplique du script désigne celui qui parle par son identifiant, pas par son nom : écrivez `maya:` dans toutes les langues. Le nom qu’annonce un lecteur d’écran est `cast[].name`.
-- La planche française partage les images de l’édition : le texte alternatif de ses cases est donc dans la langue de l’édition ; donnez `::panel{alt="…"}` dans `content.fr.en.md` pour un texte alternatif en français.
+- La planche française partage les images de l’édition : le texte de remplacement de ses cases est donc dans la langue de l’édition ; donnez `::panel{alt="…"}` dans `content.fr.en.md` pour un texte de remplacement en français.

@@ -22,7 +22,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `{宋人|ㄙㄨ
 
 <Excerpt region="upper-tier" />
 
-Im vertikalen Text sind die Spalten eines Layouts `oneAndHalf` Zonen, und `sideColumnSide: 'left'` legt die Zone nur für Gleitobjekte nach oben. `::resource{id="plate-1"}` im Text schickt das erste Bild dorthin; der Typ `plate` hat kein Legendenpräfix und die Bilder keine Bildunterschrift, darunter wird also nichts gedruckt. Ein Kasten mit `span="side"` an seinem Direktivenblock landet in der Zone ab der Zeile, an der dieser Direktivenblock steht, und sein Text läuft die Zone hinab. Die Anmerkungen beider Fabeln sind ein Kasten, durch die Lektion nummeriert und nach dem ersten Original gesetzt, das auf Seite 86 endet: Sie füllen die Zone von Seite 87, sodass die Anmerkungen beider Fabeln auf der Doppelseite liegen, die ihre Originale enthält. Zhuyin misst 0,3 em des Textes, den es liest, und `cjk.ruby` ist eine Einstellung für das ganze Buch; Anmerkungen und Autorenkasten stehen daher in 13 pt, damit ihre Lesungen bei 3,9 pt bleiben.
+Im vertikalen Text sind die Spalten eines Layouts `oneAndHalf` Zonen, und `sideColumnSide: 'left'` legt die Zone nur für Gleitobjekte nach oben. `::resource{id="plate-1"}` im Text setzt das erste Bild dorthin; der Typ `plate` hat kein Legendenpräfix und die Bilder keine Legende, darunter erscheint also nichts. Ein Kasten mit `span="side"` in seiner öffnenden Zeile kommt in die Zone, ab der Zeile, an der sein Block steht, und sein Text läuft die Zone hinab. Die Anmerkungen beider Fabeln sind ein Kasten, durch die Lektion nummeriert und nach dem ersten Original gesetzt, das auf Seite 86 endet: Sie füllen die Zone von Seite 87, sodass die Anmerkungen beider Fabeln auf der Doppelseite liegen, die ihre Originale enthält. Zhuyin misst 0,3 em des Textes, zu dem es gehört, und `cjk.ruby` ist eine Einstellung für das ganze Buch; Anmerkungen und Autorenkasten stehen daher in 13 pt, damit ihre Lesungen bei 3,9 pt bleiben.
 
 ### 3 · Vier Schriften, jede mit ihrem eigenen Text geladen
 
@@ -34,7 +34,7 @@ Die Lektion steht in Iansui, einer Kai-Schrift, die aus Klee One nach Taiwans St
 
 <Excerpt region="furniture" />
 
-In einem rechts gebundenen Buch liegt die linke Seite (verso) rechts in der Doppelseite, gerade Seiten tragen den Reiter der Einheit und die Pagina also an der rechten Kante und ungerade an der linken. Der Reiter ist ein Kasten mit einem Textelement darüber; `writingMode: 'vertical-rl'` am Element setzt 第三單元　寓言故事 den Reiter hinab, während Paginas und Fußzeilen horizontal bleiben. Lektions- und Fabelnummern stammen aus der `numberingTemplate` der Überschriften (`第{1:一}課` und `{2:一}`, ein ideografisches Leerzeichen als `numberSeparator`, `{startAt=12}` an der Lektion), vom Titel abgesetzt, damit das Zhuyin von 寓 über 寓 bleibt; die ungerade Fußzeile druckt `{chapterNumber}　{chapterTitle}`, da `{chapterTitle}` die Nummer weglässt.
+In einem rechts gebundenen Buch liegt die linke Seite rechts in der Doppelseite, gerade Seiten haben den Reiter der Einheit und die Pagina also an der rechten Kante und ungerade an der linken. Der Reiter ist ein Rechteck mit einem Textelement darüber; `writingMode: 'vertical-rl'` am Element setzt 第三單元　寓言故事 den Reiter hinab, während Paginas und Fußzeilen horizontal bleiben. Lektions- und Fabelnummern stammen aus der `numberingTemplate` der Überschriften (`第{1:一}課` und `{2:一}`, ein ideografisches Leerzeichen als `numberSeparator`, `{startAt=12}` an der Lektion), vom Titel abgesetzt, damit das Zhuyin von 寓 über 寓 bleibt; die ungerade Fußzeile gibt `{chapterNumber}　{chapterTitle}` aus, da `{chapterTitle}` die Nummer weglässt.
 
 ## Varianten
 
@@ -55,6 +55,6 @@ Manche Lesebücher drucken die Lesungen heller als den Text, sodass die Zeichen 
 
 - Nehmen Sie die Lesungen aus dem taiwanischen Wörterbuch. Werkzeuge auf Grundlage festlandchinesischer Wörterbücher, darunter pypinyin, geben 度 duó, 寧 nìng, 時候 shíhou und 市場 shìchǎng an; das *Revised Mandarin Chinese Dictionary* des Bildungsministeriums, dem Taiwans Lesebücher folgen, liest ㄉㄨㄛˋ, ㄋㄧㄥˊ, ㄕˊ ㄏㄡˋ und ㄕˋ ㄔㄤˊ und setzt 故事, 家裡 und 過來 mit neutraler zweiter Silbe. moedict.tw liefert es Wort für Wort. Es lässt 一 und 不 in ihrem eigenen Ton, und diese Lektion ebenso.
 
-- Setzen Sie in jeder Schrift ein paar Zeichen zur Probe, bevor Sie die Schriften mischen. LXGW WenKai TC folgt den überlieferten Formen und zeichnet 為 (U+70BA) als 爲, sodass eine Lektion in dieser Schrift auf derselben Doppelseite 爲宋國笑 im Text und 為宋國笑 in der Ming-Anmerkung druckte. Iansui zeichnet das Standard-為.
+- Setzen Sie in jeder Schrift ein paar Zeichen zur Probe, bevor Sie die Schriften mischen. LXGW WenKai TC folgt den überlieferten Formen und zeichnet 為 (U+70BA) als 爲, sodass eine Lektion in dieser Schrift auf derselben Doppelseite 爲宋國笑 im Text und 為宋國笑 in der Ming-Anmerkung zeigte. Iansui zeichnet das Standard-為.
 
 - Iansui hat nur eine Schriftstärke. Die Überschriften heben sich durch Größe ab und die Stichwörter der Redewendungen durch Farbe: Das Format `idiom` setzt `boldFontWeight: 400` mit der Akzentfarbe als `boldColor`, sodass `**…**` die Farbe ändert und nicht den Schnitt.

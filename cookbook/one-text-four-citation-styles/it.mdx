@@ -10,13 +10,13 @@ pageNotes: { "1": "Pagina 1: una fascia blu con l’etichetta «CITATION STYLE �
 
 ## Che cosa comporrai
 
-Un saggio di due paragrafi sul perché la buona tipografia passa inosservata, con sei fonti: una citazione narrativa, una con la pagina, una che omette l’autore perché la frase lo nomina, e due opere citate insieme. Il testo è composto quattro volte su una pagina di 155 × 235 mm, e l’unica differenza tra le quattro costruzioni è `citations.style`: APA 7, Chicago autore-data, IEEE e ISO 690. Ogni pagina porta il nome dello stile in una fascia di un colore proprio, così, affiancate, si leggono come una tabella di confronto. Le citazioni cambiano forma, ordine e punteggiatura, la lista cambia ordinamento e nomi, e il saggio è sempre lo stesso file.
+Un saggio di due paragrafi sul perché la buona tipografia passa inosservata, con sei fonti: una citazione narrativa, una con la pagina, una che omette l’autore perché la frase lo nomina, e due opere citate insieme. Il testo è composto quattro volte su una pagina di 155 × 235 mm, e l’unica differenza tra le quattro costruzioni è `citations.style`: APA 7, Chicago autore-data, IEEE e ISO 690. Ogni pagina riporta il nome dello stile in una fascia di un colore proprio, così, affiancate, si leggono come una tabella di confronto. Le citazioni cambiano forma, ordine e punteggiatura, la lista cambia ordinamento e nomi, e il saggio è sempre lo stesso file.
 
 ## Preparazione
 
 ### 1 · Una sola impostazione
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Le citazioni si scrivono una volta sola nel contenuto, con la sintassi di Pandoc, e i riferimenti stanno in un blocco BibTeX alla fine. `citations.style` nomina uno stile CSL, e citeproc-js scrive da esso ogni citazione e ogni voce: APA mette una virgola prima dell’anno e ordina due opere per autore, Chicago mantiene l’ordine in cui sono state scritte, IEEE le trasforma in numeri in ordine di prima citazione, ISO 690 mette in maiuscolo i cognomi della lista. Per un libro in lavorazione questo è tutto il cambiamento: un valore nella configurazione, e il testo non si tocca.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Le citazioni si scrivono una volta sola nel contenuto, con la sintassi di Pandoc, e i riferimenti stanno in un blocco BibTeX alla fine. `citations.style` indica uno stile CSL, e citeproc-js scrive da esso ogni citazione e ogni voce: APA mette una virgola prima dell’anno e ordina due opere per autore, Chicago mantiene l’ordine in cui sono state scritte, IEEE le trasforma in numeri in ordine di prima citazione, ISO 690 mette in maiuscolo i cognomi della lista. Per un libro in lavorazione questo è tutto il cambiamento: un valore nella configurazione, e il testo non si tocca.
 
 ### 2 · Quattro costruzioni, due doppie pagine
 
@@ -28,11 +28,11 @@ Lo stile vale per l’intero documento, quindi le quattro versioni sono quattro 
 
 <Excerpt region="band" />
 
-Il progetto grafico del titolo disegna la fascia dal rifilo, l’occhiello con il numero e il sistema dello stile, e il nome in corpo 54. Il nome e il sistema vengono dallo script, non dal Markdown, perché il testo è lo stesso in tutti e quattro i documenti.
+La grafica del titolo disegna la fascia dal rifilo, l’occhiello con il numero e il sistema dello stile, e il nome in corpo 54. Il nome e il sistema vengono dallo script, non dal Markdown, perché il testo è lo stesso in tutti e quattro i documenti.
 
 <Excerpt region="palette" />
 
-Ogni documento punta `main-color` sulla propria fascia, così i quattro colori sono voci di palette collegate, e ogni valore predefinito che la configurazione non dichiara segue la fascia della sua pagina.
+Ogni documento punta `main-color` sulla propria fascia, così i quattro colori sono voci collegate della tavolozza, e ogni valore predefinito che la configurazione non dichiara segue la fascia della sua pagina.
 
 ## Varianti
 

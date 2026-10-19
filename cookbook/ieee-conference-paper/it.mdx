@@ -16,19 +16,19 @@ Un articolo di due pagine per un piccolo workshop di ingegneria dei documenti, c
 
 ### 1 · Lo stile IEEE, con i suoi intervalli
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Registrato una volta, `postext-citeproc` formatta ogni `[@key]` con citeproc-js e lo stile CSL IEEE, numerando le opere nell’ordine in cui sono citate per la prima volta. Il file di stile fornito con il motore elenca tre opere consecutive come [2], [3], [4]; la guida editoriale IEEE le unisce come [2]–[4]. Aggiungere `collapse="citation-number"` all’elemento `<citation>` dello stile e passare il risultato come `customStyle` fa sì che citeproc-js lo faccia. `labelWidth` dà ai numeri dell’elenco una colonna propria, così la seconda riga di una voce comincia sotto la prima parola e non sotto la parentesi.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Registrato una volta, `postext-citeproc` formatta ogni `[@key]` con citeproc-js e lo stile CSL IEEE, numerando le opere nell’ordine in cui sono citate per la prima volta. Il file di stile fornito con il motore elenca tre opere consecutive come [2], [3], [4]; la guida editoriale IEEE le unisce come [2]–[4]. Se aggiungi `collapse="citation-number"` all’elemento `<citation>` dello stile e passi il risultato come `customStyle`, citeproc-js fa lo stesso. `labelWidth` dà ai numeri dell’elenco una colonna propria, così la seconda riga di una voce comincia sotto la prima parola e non sotto la parentesi.
 
 ### 2 · Un blocco del titolo su entrambe le colonne
 
 <Excerpt region="title" />
 
-Il titolo è l’unico titolo di livello 1 del documento, con lo stile `paper`. Lo stile occupa tutta la larghezza della pagina e disegna il titolo a partire dal suo design: la riga della sede, il titolo e tre blocchi di autori larghi un terzo della giustezza, ciascuno letto da un attributo del titolo in cui `\n` spezza le righe. La fascia è un riquadro ancorato al formato rifilato, così arriva fino al bordo superiore della carta.
+Il titolo è l’unico titolo di livello 1 del documento, con lo stile `paper`. Lo stile occupa tutta la larghezza della pagina e disegna il titolo a partire dalla sua grafica: la riga della sede, il titolo e tre blocchi di autori larghi un terzo della giustezza, ciascuno letto da un attributo del titolo in cui `\n` spezza le righe. La fascia è un riquadro ancorato al formato rifilato, così arriva fino al bordo superiore della carta.
 
 ### 3 · Abstract e parole chiave in grassetto
 
 <Excerpt region="abstract" />
 
-Un riquadro a tutta larghezza contiene l’abstract e le parole chiave. Il suo corpo è un 9 pt grassetto, come lo compone IEEE, e `***Abstract*—**` nel testo dà l’etichetta in corsivo con la sua lineetta. Il filetto sottile sopra è la striscia del riquadro, e la spaziatura interna restringe la giustezza a circa cento caratteri.
+Un riquadro a tutta larghezza contiene l’abstract e le parole chiave. Il suo corpo è un 9 pt grassetto, come lo compone IEEE, e `***Abstract*—**` nel testo dà l’etichetta in corsivo con la sua lineetta. Il filetto sottile sopra è la banda del riquadro, e la spaziatura interna restringe la giustezza a circa cento caratteri.
 
 ### 4 · Sezioni numerate e rimandi a esse
 

@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuration : styles et parties',
   sidebarTitle: 'Styles et parties',
-  description: 'Les styles nommés des paragraphes, des pastilles, des listings de code et des titres, et les pages qui ouvrent chaque partie',
+  description: 'Les styles nommés des paragraphes, des pastilles, des surlignages, des listings de code et des titres, et les pages qui ouvrent chaque partie',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '38 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "Cette page présente les styles nommés que vous définissez une fois et utilisez autant de fois que nécessaire. Un style de paragraphe règle un genre de texte, comme une bibliographie ou un glossaire. Un style de pastille dessine une petite étiquette dans une ligne. Les listings de code ont leur propre police, leur cadre et leurs couleurs. La page traite aussi des pages qui ouvrent chaque partie d’un livre, et des styles des titres particuliers. Les encadrés ont leur propre page.",
+  plainSummary: "Cette page présente les styles nommés que vous définissez une fois et utilisez autant de fois que nécessaire. Un style de paragraphe règle un genre de texte, comme une bibliographie ou un glossaire. Un style de pastille dessine une petite étiquette dans une ligne, et un style de surlignage une bande de couleur derrière une expression. Les listings de code ont leur propre police, leur cadre et leurs couleurs. La page traite aussi des pages qui ouvrent chaque partie d’un livre, et des styles des titres particuliers. Les encadrés ont leur propre page.",
 };
 
 # Configuration : styles et parties
@@ -132,7 +132,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>smallCaps</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Composer les paragraphes en petites capitales : les minuscules en capitales à 70 % du corps, les capitales en pleine taille, dessinées de la même façon par tous les moteurs de rendu (voir <a href="/fr/docs/document-format-inline#petites-capitales">Petites capitales</a>) ; une liste des personnages, les entrées d’un glossaire.</td>
+      <td>Composer les paragraphes en petites capitales : les minuscules en capitales à 70 % du corps, les capitales en pleine taille, dessinées de la même façon par tous les moteurs de rendu (voir <a href="/fr/docs/document-format-inline#petites-capitales">Petites capitales</a>) ; une liste des personnages, les entrées d’un glossaire.</td>
     </tr>
     <tr>
       <td><code>hyphenation</code></td>
@@ -144,7 +144,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>indent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Retrait de chaque ligne depuis le bord gauche de la colonne (ou de l’encadré qui contient les paragraphes) ; <code>em</code> vaut le corps propre du style. Le retrait de première ligne et le retrait suspendu se mesurent à partir de lui : un vers en retrait peut ainsi renfoncer son retour (la suite d’un vers trop long pour la ligne) plus loin que son propre début. <code>indent: 1.5em</code> avec <code>hangingIndent: 2.5em</code> compose le vers à 1,5 em et son retour à 4 em. Une valeur négative compte comme <code>0</code>.</td>
+      <td>Retrait de chaque ligne depuis le bord gauche de la colonne (ou de l’encadré qui contient les paragraphes) ; <code>em</code> vaut le corps propre du style. Le retrait de première ligne et le retrait suspendu se mesurent à partir de lui : un vers en retrait peut ainsi renfoncer son retour (la suite d’un vers trop long pour la ligne) plus loin que son propre début. <code>indent: 1.5em</code> avec <code>hangingIndent: 2.5em</code> compose le vers à 1,5 em et son retour à 4 em. Une valeur négative compte comme <code>0</code>.</td>
     </tr>
     <tr>
       <td><code>endIndent</code></td>
@@ -156,7 +156,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>firstLineIndent</code></td>
       <td><code>Dimension</code></td>
       <td>retrait de première ligne du texte courant</td>
-      <td>Retrait de la première ligne, à partir d’<code>indent</code>. Avec un <code>hangingIndent</code> non nul, il ne s’applique que si le style le définit lui-même : la première ligne commence à <code>indent + firstLineIndent</code> et les retours à <code>indent + hangingIndent</code>, si bien qu’un vers peut commencer à 1 em du bord et renfoncer son retour à 3 em. Hérité du texte courant, il cède la place au retrait suspendu et la première ligne commence à <code>indent</code>, comme jusqu’à postext 1.22 (une configuration enregistrée auparavant voit supprimé le retrait explicite d’un tel style).</td>
+      <td>Retrait de la première ligne, à partir d’<code>indent</code>. Avec un <code>hangingIndent</code> non nul, il ne s’applique que si le style le définit lui-même : la première ligne commence à <code>indent + firstLineIndent</code> et les retours à <code>indent + hangingIndent</code> : un vers peut ainsi commencer à 1 em du bord et renfoncer son retour à 3 em. Hérité du texte courant, il cède la place au retrait suspendu et la première ligne commence à <code>indent</code>, comme jusqu’à postext 1.22 (dans une configuration enregistrée auparavant, le retrait explicite d’un tel style est supprimé).</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -186,25 +186,25 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Recaler le flux sur la grille de ligne de base sous le conteneur, l’espace en dessous étant un minimum. <code>false</code> garde l’espace exact : le texte qui suit le conteneur reste hors de la grille jusqu’au prochain bloc qui se recale (un titre, la fin d’une liste, des mathématiques en display), pour un document qui ne suit pas la grille ou un groupe qui a son propre interlignage. À l’intérieur d’un encadré, qui n’a pas de grille, cela ne change rien.</td>
+      <td>Recaler le flux sur la grille de ligne de base sous le conteneur, l’espace en dessous étant un minimum. <code>false</code> garde l’espace exact : le texte qui suit le conteneur reste hors de la grille jusqu’au prochain bloc qui se recale (un titre, la fin d’une liste, une formule hors texte), pour un document qui ne suit pas la grille ou un groupe qui a son propre interlignage. À l’intérieur d’un encadré, qui n’a pas de grille, cela ne change rien.</td>
     </tr>
     <tr>
       <td><code>containerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td>non défini</td>
-      <td>La règle de l’espace sous les conteneurs de ce style, dans le texte courant et à l’intérieur d’un encadré : l’une des deux valeurs de <code>bodyText.paragraphContainerSpacing</code>, pour les conteneurs qui nomment le style. Non défini : ils suivent le document. Avec <code>'add'</code>, les groupes du style se terminent sur leur propre espace, sans ligne d’espacement de paragraphe ajoutée, tandis que le reste du document garde <code>'collapse'</code>. Depuis postext 1.28.</td>
+      <td>La règle de l’espace sous les conteneurs de ce style, dans le texte courant et à l’intérieur d’un encadré : l’une des deux valeurs de <code>bodyText.paragraphContainerSpacing</code>, pour les conteneurs qui indiquent ce style. Non défini : ils suivent le document. Avec <code>'add'</code>, les groupes du style se terminent sur leur propre espace, sans ligne d’espacement de paragraphe ajoutée, tandis que le reste du document garde <code>'collapse'</code>. Depuis postext 1.28.</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>Casse des paragraphes : <code>'uppercase'</code> les compose en capitales (une liste des personnages, une indication de jeu de scène), y compris les mots d’une pastille et le libellé d’un <code>:ref</code>. Longueur pour longueur, pour que la correspondance avec la source dans l’éditeur reste un pour un : une lettre dont la capitale est plus longue (<code>ß</code>) reste telle qu’elle est écrite. Les mathématiques ne sont pas modifiées, et un titre courant qui lit le paragraphe comme une marque (<code>&#123;firstMark.<em>style</em>&#125;</code>) prend le texte tel qu’il est écrit ; le <code>textTransform</code> propre à un texte de maquette le compose en capitales.</td>
+      <td>Casse des paragraphes : <code>'uppercase'</code> les compose en capitales (une liste des personnages, une indication de jeu de scène), y compris les mots d’une pastille et le libellé d’un <code>:ref</code>. La transformation conserve la longueur, pour que la correspondance avec la source dans l’éditeur reste caractère pour caractère : une lettre dont la capitale est plus longue (<code>ß</code>) reste telle qu’elle est écrite. Les mathématiques ne sont pas modifiées, et un titre courant qui lit le paragraphe comme une marque (<code>&#123;firstMark.<em>style</em>&#125;</code>) prend le texte tel qu’il est écrit ; le <code>textTransform</code> propre à un texte de maquette le compose en capitales.</td>
     </tr>
     <tr>
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Approche ajoutée après chaque lettre des paragraphes, comme le <code>letter-spacing</code> de CSS : une valeur positive espace les lettres (un titre de page en capitales, <code>&#123; value: 0.015, unit: 'em' &#125;</code> pour +15/1000 em), une valeur négative resserre un grand corps. Une valeur en <code>em</code> compte le <code>fontSize</code> du style lui-même. Elle entre dans la mesure des lignes : un paragraphe interlettré coupe là où tombent ses mots élargis ; les lignes justifiées répartissent leurs espaces entre mots en plus, et une ligne courte que la mise en page resserre (<code>bodyText.maxRuntTracking</code>) part de cette valeur. Canvas, HTML, PDF et EPUB la peignent de la même façon, et un export Word l'écrit comme l'espacement des caractères du style. Les mots d'une écriture liée (arabe, syriaque, n'ko) restent sans approche et lèvent <code>joiningScriptLetterSpacing</code>. Depuis postext 1.37.</td>
+      <td>Approche ajoutée après chaque lettre des paragraphes, comme le <code>letter-spacing</code> de CSS : une valeur positive espace les lettres (un titre de page en capitales, <code>&#123; value: 0.015, unit: 'em' &#125;</code> pour +15/1000 em), une valeur négative resserre un grand corps. Une valeur en <code>em</code> compte le <code>fontSize</code> du style lui-même. Elle entre dans la mesure des lignes : un paragraphe interlettré coupe là où tombent ses mots élargis ; les lignes justifiées répartissent leurs espaces entre mots en plus, et une ligne courte que la mise en page resserre (<code>bodyText.maxRuntTracking</code>) part de cette valeur. Canvas, HTML, PDF et EPUB la peignent de la même façon, et un export Word l’écrit comme l’espacement des caractères du style. Les mots d’une écriture liée (arabe, syriaque, n’ko) restent sans approche et déclenchent <code>joiningScriptLetterSpacing</code>. Depuis postext 1.37.</td>
     </tr>
     <tr>
       <td><code>wordBreak</code></td>
@@ -234,7 +234,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>dropCap</code></td>
       <td><code>ParagraphDropCap</code></td>
       <td>aucune</td>
-      <td>Une lettrine qui ouvre le premier paragraphe de chaque groupe <code>:::paragraphs</code> du style, ou chaque paragraphe avec <code>each: true</code> (voir <a href="/fr/docs/configuration-text#lettrines">Lettrines</a>). <code>&#123;dropcap=false&#125;</code> sur la clôture d’ouverture d’un groupe la désactive, <code>&#123;dropcap=2&#125;</code> fixe son nombre de lignes. Depuis postext 1.23.</td>
+      <td>Une lettrine qui ouvre le premier paragraphe de chaque groupe <code>:::paragraphs</code> du style, ou chaque paragraphe avec <code>each: true</code> (voir <a href="/fr/docs/configuration-text#lettrines">Lettrines</a>). <code>&#123;dropcap=false&#125;</code> sur le délimiteur d’ouverture d’un groupe la désactive, <code>&#123;dropcap=2&#125;</code> fixe son nombre de lignes. Depuis postext 1.23.</td>
     </tr>
   </tbody>
 </table>
@@ -265,7 +265,7 @@ paragraphStyles: [
 ],
 ```
 
-Un vers en `verse-indented` commence à 1,5 em et son retour à 4 em, au même niveau que les retours des vers en `verse`. Sans `indent`, un style peut mettre en retrait la première ligne ou suspendre les autres, mais pas les deux : `firstLineIndent` est ignoré dès que `hangingIndent` est défini.
+Un vers en `verse-indented` commence à 1,5 em et son retour à 4 em, au même niveau que les retours des vers en `verse`. Sans `indent`, un style peut mettre en retrait la première ligne ou suspendre les autres, mais pas les deux : `firstLineIndent` est ignoré dès que `hangingIndent` est défini.
 
 Un menu aligne chaque prix sur la fin de la ligne, derrière des points de conduite :
 
@@ -292,15 +292,15 @@ Les points de chaque ligne s’arrêtent un demi-cadratin avant le prix (`leader
 
 ### Le conteneur `:::paragraphs`
 
-Une ligne `:::paragraphs{style="<id>"}` ouvre le conteneur et une ligne `:::` seule le ferme ; chaque paragraphe compris entre les deux prend le style nommé, tandis que les titres, les listes et les autres blocs à l’intérieur gardent leur style habituel. Les conteneurs peuvent s’imbriquer dans d’autres conteneurs délimités. Un id de `style` inconnu n’est pas une erreur : les paragraphes se rendent comme du texte courant ordinaire.
+Une ligne `:::paragraphs{style="<id>"}` ouvre le conteneur et une ligne `:::` seule le ferme ; chaque paragraphe compris entre les deux prend le style nommé, tandis que les titres, les listes et les autres blocs à l’intérieur gardent leur style habituel. Les conteneurs peuvent s’imbriquer dans d’autres conteneurs délimités. Un identifiant de `style` inconnu n’est pas une erreur : les paragraphes se rendent comme du texte courant ordinaire, et le Sandbox signale l’identifiant.
 
-La clôture d’ouverture accepte aussi `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` et `endIndent` (les nombres seuls sont en em), avec ou sans style : avec un style, ils le surchargent ; sans style, ils s’appliquent par-dessus le style du conteneur englobant, ou par-dessus le style de texte de l’endroit où se trouve la clôture (le texte courant, une partie, une section stylée ou un encadré). `:::paragraphs{align=end}` compose un bloc aligné sur la fin de la ligne (地付き) et `:::paragraphs{align=end endIndent=1}` un caractère avant elle. Depuis postext 1.16.
+Le délimiteur d’ouverture accepte aussi `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` et `endIndent` (les nombres seuls sont en em), avec ou sans style : avec un style, ils le surchargent ; sans style, ils s’appliquent par-dessus le style du conteneur englobant, ou par-dessus le style de texte de l’endroit où se trouve le délimiteur (le texte courant, une partie, une section stylée ou un encadré). `:::paragraphs{align=end}` compose un bloc aligné sur la fin de la ligne (地付き) et `:::paragraphs{align=end endIndent=1}` un caractère avant elle. Depuis postext 1.16.
 
-À l’intérieur du conteneur, le flux quitte la grille de ligne de base (une entrée de 7 pt avec un interlignage de 1,2 em ne peut pas tenir sur une grille de 8 pt/1,5 em) et le dernier paragraphe recale le flux sur la grille (la grille l’emporte ; l’espace en dessous est un minimum, la même convention que suivent les titres). Les entrées se coupent d’une colonne et d’une page à l’autre comme les paragraphes du texte courant, avec la même protection contre les orphelines et les veuves ; un titre placé juste avant le conteneur reste avec son premier paragraphe.
+À l’intérieur du conteneur, le flux quitte la grille de ligne de base (une entrée de 7 pt avec un interlignage de 1,2 em ne peut pas tenir sur une grille de 8 pt/1,5 em) et le dernier paragraphe recale le flux sur la grille (la grille l’emporte ; l’espace en dessous est un minimum, la même convention que suivent les titres). Les entrées se coupent d’une colonne et d’une page à l’autre comme les paragraphes du texte courant, avec la même protection contre les orphelines et les veuves ; un titre placé juste avant le conteneur reste avec son premier paragraphe.
 
-L’espace sous le conteneur est le plus grand de `spaceBetween` et `marginBottom` du style et de l’espacement de paragraphe du texte qui l’entoure (une ligne quand `bodyText.paragraphSpacing` est actif), et il se fond avec l’espace que le bloc suivant garde au-dessus de lui, comme l’espace entre deux paragraphes du texte courant : un titre placé après une bibliographie se trouve à son propre `marginTop` sous la dernière entrée (ou à l’espace du style, s’il est plus grand), et un paragraphe qui suit un groupe d’entrées plus serrées garde l’espacement de paragraphe du texte. Le flux se recale d’abord sur la grille sous le texte, et ce que le recalage n’a pas couvert est reporté en lignes de grille entières, si bien que le texte qui suit le conteneur tombe sur la grille. Jusqu’à postext 1.4, l’espace du style se plaçait sous la dernière ligne avant le recalage, l’espace au-dessus du bloc suivant s’ajoutait en dessous, et l’espacement de paragraphe n’était pas pris en compte ; `bodyText.paragraphContainerSpacing: 'add'` garde cette règle, et les configurations enregistrées avant elle se lisent avec elle. Un style avec `snapToGrid: false` ne se recale pas : le texte qui suit le conteneur se place exactement à cet espace en dessous, hors de la grille jusqu’au prochain bloc qui se recale. Un conteneur qui se ferme sur une liste est composé comme dans la 1.4 avec l’une ou l’autre règle : la liste garde son propre espace en dessous, et `marginBottom` suit cet espace, en se fondant avec celui du bloc suivant.
+L’espace sous le conteneur est le plus grand de `spaceBetween` et `marginBottom` du style et de l’espacement de paragraphe du texte qui l’entoure (une ligne quand `bodyText.paragraphSpacing` est actif), et il se fond avec l’espace que le bloc suivant garde au-dessus de lui, comme l’espace entre deux paragraphes du texte courant : un titre placé après une bibliographie se trouve à son propre `marginTop` sous la dernière entrée (ou à l’espace du style, s’il est plus grand), et un paragraphe qui suit un groupe d’entrées plus serrées garde l’espacement de paragraphe du texte. Le flux se recale d’abord sur la grille sous le texte, et ce que le recalage n’a pas couvert est reporté en lignes de grille entières : le texte qui suit le conteneur tombe ainsi sur la grille. Jusqu’à postext 1.4, l’espace du style se plaçait sous la dernière ligne avant le recalage, l’espace au-dessus du bloc suivant s’ajoutait en dessous, et l’espacement de paragraphe n’était pas pris en compte ; `bodyText.paragraphContainerSpacing: 'add'` garde cette règle, et les configurations enregistrées avant elle se lisent avec elle. Un style avec `snapToGrid: false` ne se recale pas : le texte qui suit le conteneur se place exactement à cet espace en dessous, hors de la grille jusqu’au prochain bloc qui se recale. Un conteneur qui se ferme sur une liste est composé comme dans la 1.4 avec l’une ou l’autre règle : la liste garde son propre espace en dessous, et `marginBottom` suit cet espace, en se fondant avec celui du bloc suivant.
 
-Un style peut fixer la règle de ses propres conteneurs avec `containerSpacing` : `'add'` sur le style d’une grande figure ou d’une liste de références termine ses groupes sur l’espace propre du style, dans le texte comme à l’intérieur d’un encadré, tandis que tous les autres conteneurs du document gardent `'collapse'` ; `'collapse'` sur un style fait l’inverse dans un document qui se lit avec `'add'`. Un conteneur qui ne nomme aucun style suit le document.
+Un style peut fixer la règle de ses propres conteneurs avec `containerSpacing` : `'add'` sur le style d’un grand chiffre (un nombre composé en grand) ou d’une liste de références termine ses groupes sur l’espace propre du style, dans le texte comme à l’intérieur d’un encadré, tandis que tous les autres conteneurs du document gardent `'collapse'` ; `'collapse'` sur un style fait l’inverse dans un document qui se lit avec `'add'`. Un conteneur qui n’indique aucun style suit le document.
 
 À l’intérieur d’un `:::callout`, le conteneur prend les marges de son style de la même façon : `marginTop` et `marginBottom` fusionnent avec l’espacement des blocs qui l’entourent (une valeur négative les rapproche), et un conteneur qui ouvre l’encadré ne prend pas de marge supérieure, comme en haut d’une colonne. Un encadré n’a pas de grille de ligne de base sur laquelle se recaler : l’espace sous le dernier paragraphe est donc le plus grand de `marginBottom`, de `spaceBetween` et de l’espacement de paragraphe propre à l’encadré (son `body.paragraphSpacing`, une ligne de son texte ; non pris en compte avec `paragraphContainerSpacing: 'add'`), ou la marge supérieure propre au bloc suivant, si elle est plus grande encore ; un `marginBottom` négatif remonte au contraire le bloc suivant. (Jusqu’à postext 1.4, un conteneur à l’intérieur d’un encadré ignorait les deux marges.)
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Styles de pastille
 
-La propriété `chipStyles` déclare les styles nommés de la pastille en ligne `:chip[text]{style="…"}` : les petits cadres arrondis et teintés d’une banque de mots, d’une touche de clavier, d’une étiquette (la syntaxe et ses règles de coupure de ligne se trouvent dans la référence du format du document). Un style, `chip`, est fourni par défaut (un fond bleu pâle avec un filet extra-fin dans la couleur principale, légèrement arrondi, le texte comme les mots qui l’entourent) : `:chip[…]` fonctionne donc sans aucune configuration ; déclarer `chipStyles` remplace cette liste par défaut. Une pastille sans `style`, ou dont l’id n’est déclaré par aucun style, prend le premier style.
+La propriété `chipStyles` déclare les styles nommés de la pastille en ligne `:chip[text]{style="…"}` : les petits cadres arrondis et teintés d’une banque de mots, d’une touche de clavier, d’une étiquette (la syntaxe et ses règles de coupure de ligne se trouvent dans la référence du format du document). Un style, `chip`, est fourni par défaut (un fond bleu pâle avec un filet extra-fin dans la couleur principale, légèrement arrondi, le texte comme les mots qui l’entourent) : `:chip[…]` fonctionne donc sans aucune configuration ; déclarer `chipStyles` remplace cette liste par défaut. Une pastille sans `style`, ou dont l’identifiant n’est déclaré par aucun style, prend le premier style (le Sandbox signale l’identifiant inconnu).
 
 ```ts
 const config: PostextConfig = {
@@ -407,7 +407,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>paddingTop</code>, <code>paddingBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
-      <td>Espace au-dessus ou au-dessous de la bande du texte, chacun à la place de <code>paddingY</code>. La bande s’étend de 0,8 em au-dessus de la ligne de base à 0,25 em en dessous : son milieu se trouve donc à 0,275 em au-dessus de la ligne de base, plus bas que le milieu d’une capitale (environ 0,35 em dans la plupart des polices), et une capitale ou un chiffre dans une pastille ronde (<code>borderRadius: 1em</code>) paraît trop haut. Une marge supérieure qui dépasse l’inférieure du double de l’écart le centre : <code>paddingTop: 0.2em</code> avec <code>paddingBottom: 0.05em</code> pour un caractère dont les capitales mesurent 0,7 em.</td>
+      <td>Espace au-dessus ou au-dessous de la bande du texte, chacun à la place de <code>paddingY</code>. La bande s’étend de 0,8 em au-dessus de la ligne de base à 0,25 em en dessous : son milieu se trouve donc à 0,275 em au-dessus de la ligne de base, plus bas que le milieu d’une capitale (environ 0,35 em dans la plupart des polices), et une capitale ou un chiffre dans une pastille ronde (<code>borderRadius: 1em</code>) paraît trop haut. Une marge supérieure qui dépasse l’inférieure du double de l’écart le centre : <code>paddingTop: 0.2em</code> avec <code>paddingBottom: 0.05em</code> pour un caractère dont les capitales mesurent 0,7 em.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -443,7 +443,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.25em</code></td>
-      <td>Espace minimal gardé entre le cadre et un mot ou une pastille voisins, de part et d’autre d’une espace entre mots ; une espace plus étroite est complétée à l’intérieur de la chasse de la pastille, si bien que la justification ne la rogne jamais. Rien n’est ajouté en bord de ligne ni contre une ponctuation collée.</td>
+      <td>Espace minimal gardé entre le cadre et un mot ou une pastille voisins, de part et d’autre d’une espace entre mots ; une espace plus étroite est complétée à l’intérieur de la chasse de la pastille : la justification ne la réduit donc jamais. Rien n’est ajouté en bord de ligne ni contre une ponctuation collée.</td>
     </tr>
     <tr>
       <td><code>dotted</code></td>
@@ -454,9 +454,9 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
   </tbody>
 </table>
 
-Les longueurs en em du cadre (`paddingX`, `paddingY`, `borderRadius`, `borderWidth`, `gap`) sont relatives au corps propre de la pastille. Le cadre est une bande de 0,8 em au-dessus et de 0,25 em au-dessous de la ligne de base, agrandie de `paddingY` et du contour ; il est peint hors de la boîte de ligne et ne change jamais l’interlignage : la grille de ligne de base tient. Quand le cadre devient plus haut que le pas de ligne, une pastille peut empiéter sur une pastille de la ligne du dessus ou du dessous : le sandbox affiche alors un avertissement « Chips touch the next line » quand deux pastilles de lignes différentes se chevauchent, avec le chevauchement en points, pour que vous puissiez réduire `paddingY`, le contour ou `fontSize`. Une haute pastille sans pastille au-dessus ou au-dessous n’est pas signalée.
+Les longueurs en em du cadre (`paddingX`, `paddingY`, `borderRadius`, `borderWidth`, `gap`) sont relatives au corps propre de la pastille. Le cadre est une bande de 0,8 em au-dessus et de 0,25 em au-dessous de la ligne de base, agrandie de `paddingY` et du contour ; il est peint hors de la boîte de ligne et ne change jamais l’interlignage : la grille de ligne de base tient. Quand le cadre devient plus haut que le pas de ligne, une pastille peut empiéter sur une pastille de la ligne du dessus ou du dessous : le Sandbox affiche alors un avertissement « Pastilles touchant la ligne voisine » quand deux pastilles de lignes différentes se chevauchent, avec le chevauchement en points, pour que vous puissiez réduire `paddingY`, le contour ou `fontSize`. Une haute pastille sans pastille au-dessus ou au-dessous n’est pas signalée.
 
-Dans le VDT, une pastille est un segment de ligne de `kind: 'chip'` dont le champ `chip` porte les segments de texte (chacun avec sa chaîne de police et sa largeur), la géométrie du cadre (`boxWidth`, `ascent`, `descent`, `paddingX`, `borderWidth`, `borderRadius`, les marges d’espacement) et ses couleurs ; le `text` du segment est un caractère de substitution unique, si bien que les positions en texte brut et les correspondances avec la source comptent une pastille comme un seul caractère.
+Dans le VDT, une pastille est un segment de ligne de `kind: 'chip'` dont le champ `chip` contient les segments de texte (chacun avec sa chaîne de police et sa largeur), la géométrie du cadre (`boxWidth`, `ascent`, `descent`, `paddingX`, `borderWidth`, `borderRadius`, les marges d’espacement) et ses couleurs ; le `text` du segment est un caractère de substitution unique : les positions en texte brut et les correspondances avec la source comptent donc une pastille comme un seul caractère.
 
 ```ts
 const resolved = resolveChipStylesConfig(config.chipStyles);
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Styles de surlignage
 
-La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités légèrement arrondies, le texte dans sa propre couleur), si bien que `:mark[…]` fonctionne sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style.
+La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités légèrement arrondies, le texte dans sa propre couleur) : `:mark[…]` fonctionne donc sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style (le Sandbox signale l’identifiant inconnu).
 
 ```ts
 const config: PostextConfig = {
@@ -520,7 +520,7 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>background</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#fff0a0</code></td>
-      <td>Couleur de la bande (liable à la palette).</td>
+      <td>Couleur de la bande (peut être liée à la palette).</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -555,7 +555,7 @@ The sun warms the sea and :mark[water rises into the air as vapour].
   </tbody>
 </table>
 
-Les longueurs en em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) se rapportent à la taille du texte marqué. La bande ne prend aucune place : le texte est composé comme sans la marque, la bande est peinte dessous, et sa marge empiète sur les espaces entre les mots et sur l’interligne. Dans le VDT, les segments des mots marqués portent un `mark` (`{ style, id, start?, end?, from?, to? }`) et chaque ligne garde ses bandes dans `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relatives au `bbox.x` et à la ligne de base de la ligne), que les moteurs canevas, PDF et HTML peignent avant le texte de la ligne.
+Les longueurs en em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) se rapportent à la taille du texte marqué. La bande ne prend aucune place : le texte est composé comme sans la marque, la bande est peinte dessous, et sa marge empiète sur les espaces entre les mots et sur l’interligne. Dans le VDT, les segments des mots marqués ont un `mark` (`{ style, id, start?, end?, from?, to? }`) et chaque ligne garde ses bandes dans `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relatives au `bbox.x` et à la ligne de base de la ligne), que les moteurs de rendu canvas, PDF et HTML peignent avant le texte de la ligne.
 
 ```ts
 const resolved = resolveMarkStylesConfig(config.markStyles);
@@ -775,7 +775,7 @@ const config: PostextConfig = {
       <td><code>label</code></td>
       <td><code>CalloutLabelConfig</code></td>
       <td>aucun</td>
-      <td>S’il est défini, le titre s’imprime plutôt dans un onglet d’étiquette posé sur le bord supérieur du cadre (dans la police et le corps du code, sauf si l’étiquette nomme les siens).</td>
+      <td>S’il est défini, le titre s’imprime plutôt dans un onglet d’étiquette posé sur le bord supérieur du cadre (dans la police et le corps du code, sauf si l’étiquette indique les siens).</td>
     </tr>
     <tr>
       <td><code>highlight</code></td>
@@ -787,7 +787,7 @@ const config: PostextConfig = {
       <td><code>tokens</code></td>
       <td><code>Partial&lt;Record&lt;CodeTokenKind, &#123; color?, bold?, italic? &#125;&gt;&gt;</code></td>
       <td>une palette discrète</td>
-      <td>L’aspect de chaque genre de jeton, fusionné genre par genre avec les valeurs par défaut (voir plus bas). Une couleur liée à la palette suit <code>colorPalette</code> et la palette d’une partie.</td>
+      <td>L’aspect de chaque type de jeton, fusionné type par type avec les valeurs par défaut (voir plus bas). Une couleur liée à la palette suit <code>colorPalette</code> et la palette d’une partie.</td>
     </tr>
     <tr>
       <td><code>inline</code></td>
@@ -800,7 +800,7 @@ const config: PostextConfig = {
 
 ### Coloration syntaxique
 
-Un petit analyseur lexical intégré au moteur nomme les jetons de `js` et `ts` (`javascript`, `jsx`, `typescript`, `tsx`), `json`, `python`, `bash` (`sh`, `zsh`, `shell`), `console` (une session de terminal), `css`, `html` et `xml` (`svg`), `markdown` et `sql` ; un listing dans tout autre langage, ou sans langage, est composé en `color`. Il lit le listing entier : un commentaire ou une chaîne qui s’étend sur plusieurs lignes reste un seul jeton. Dans un listing `console`, une ligne qui commence par une invite (`$ `, `% `, `# `, `> `, `>>> `, `PS …> `) est ce que l’utilisateur a tapé (`prompt`) et toute autre ligne est ce que les programmes ont affiché (`output`).
+Un petit analyseur lexical intégré au moteur identifie les jetons de `js` et `ts` (`javascript`, `jsx`, `typescript`, `tsx`), `json`, `python`, `bash` (`sh`, `zsh`, `shell`), `console` (une session de terminal), `css`, `html` et `xml` (`svg`), `markdown` et `sql` ; un listing dans tout autre langage, ou sans langage, est composé en `color`. Il lit le listing entier : un commentaire ou une chaîne qui s’étend sur plusieurs lignes reste un seul jeton. Dans un listing `console`, une ligne qui commence par une invite (`$ `, `% `, `# `, `> `, `>>> `, `PS …> `) est ce que l’utilisateur a tapé (`prompt`) et toute autre ligne est ce que les programmes ont affiché (`output`).
 
 <table>
   <thead>
@@ -838,7 +838,7 @@ registerCodeHighlighter('rust', (code) => code.split('\n').map((line) => [
 registerCodeHighlighter('*', null); // remove the one registered for every language
 ```
 
-Un surligneur enregistré pour un langage l’emporte sur un surligneur enregistré pour `'*'`, qui l’emporte lui-même sur l’analyseur intégré. Un segment nomme un genre de jeton `token` (coloré par `tokens`) ou une `color` propre (un hexadécimal CSS). Un surligneur qui renvoie `undefined`, lève une exception ou renvoie des lignes qui ne reconstituent pas celles du listing est ignoré. La mise en page lit le registre au moment de composer un listing : enregistrez avant de construire, et dans un web worker (le Sandbox met en page dans l’un d’eux), enregistrez à l’intérieur du worker.
+Un surligneur enregistré pour un langage l’emporte sur un surligneur enregistré pour `'*'`, qui l’emporte lui-même sur l’analyseur intégré. Un segment indique soit un type de jeton, `token` (coloré par `tokens`), soit une `color` propre (un hexadécimal CSS). Un surligneur qui renvoie `undefined`, lève une exception ou renvoie des lignes qui ne reconstituent pas celles du listing est ignoré. La mise en page lit le registre au moment de composer un listing : enregistrez avant de construire, et dans un web worker (le Sandbox met en page dans l’un d’eux), enregistrez à l’intérieur du worker.
 
 ### Code en ligne
 
@@ -875,7 +875,7 @@ Un surligneur enregistré pour un langage l’emporte sur un surligneur enregist
 
 ## Parties
 
-La propriété `parts` configure les pages de partie qu’un document ouvre avec un conteneur `:::part{number="…" title="…"}` : la page « Partie I — Fondements » qui regroupe une suite de chapitres. Une partie occupe toujours une page à elle : le conteneur saute à une nouvelle page de la parité configurée, la convertit en page à une seule colonne dont la zone de texte vient de `parts.margins`, pose la maquette d’ouverture sur toute la page, et saute de nouveau après la clôture finale pour que le chapitre suivant (avec son propre `breakBefore.parity`) commence proprement ; avec les réglages par défaut du H1, on obtient la page de partie classique sur un recto, un verso blanc, et le chapitre sur le recto suivant.
+La propriété `parts` configure les pages de partie qu’un document ouvre avec un conteneur `:::part{number="…" title="…"}` : la page « Partie I — Fondements » qui regroupe une suite de chapitres. Une partie occupe toujours une page à elle seule : le conteneur saute à une nouvelle page de la parité configurée, la convertit en page à une seule colonne dont la zone de texte vient de `parts.margins`, pose la maquette d’ouverture sur toute la page, et saute de nouveau après le délimiteur de fermeture pour que le chapitre suivant (avec son propre `breakBefore.parity`) commence proprement ; avec les réglages par défaut du H1, on obtient la page de partie classique sur un recto, un verso blanc, et le chapitre sur le recto suivant.
 
 ```ts
 const config: PostextConfig = {
@@ -926,7 +926,7 @@ const config: PostextConfig = {
       <td><code>page</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Indique si un <code>:::part</code> ouvre une page de partie. Avec <code>false</code>, aucune page n’est ouverte et le contenu de la clôture n’est pas composé : le numéro, le titre et la palette de la partie s’appliquent à partir du contenu suivant, sans saut propre. Usage type : <code>htmlViewer.overrides.parts.page: false</code>, une édition pour écran sans pages de partie.</td>
+      <td>Indique si un <code>:::part</code> ouvre une page de partie. Avec <code>false</code>, aucune page n’est ouverte et le contenu du conteneur n’est pas composé : le numéro, le titre et la palette de la partie s’appliquent à partir du contenu suivant, sans saut propre. Usage type : <code>htmlViewer.overrides.parts.page: false</code>, une édition pour écran sans pages de partie.</td>
     </tr>
     <tr>
       <td><code>breakBefore.parity</code></td>
@@ -938,25 +938,25 @@ const config: PostextConfig = {
       <td><code>breakAfter.enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Renvoie le contenu qui suit la clôture finale sur une nouvelle page. Avec <code>false</code>, il continue dans la colonne unique de la page de partie.</td>
+      <td>Renvoie sur une nouvelle page le contenu qui suit le délimiteur de fermeture. Avec <code>false</code>, il continue dans la colonne unique de la page de partie.</td>
     </tr>
     <tr>
       <td><code>breakAfter.parity</code></td>
       <td><code>HeadingBreakParity</code></td>
       <td><code>'any'</code></td>
-      <td>Parité de cette nouvelle page. Laissez-la à <code>'any'</code> et laissez le <code>breakBefore.parity</code> du chapitre suivant décider si un verso blanc suit. Le saut s’applique au placement du bloc suivant, si bien qu’une partie qui clôt le document ne laisse pas de page vide à la fin.</td>
+      <td>Parité de cette nouvelle page. Laissez-la à <code>'any'</code> et laissez le <code>breakBefore.parity</code> du chapitre suivant décider si un verso blanc suit. Le saut s’applique au placement du bloc suivant : une partie qui clôt le document ne laisse donc pas de page vide à la fin.</td>
     </tr>
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>marges de la page</td>
-      <td>Zone de texte de la page de partie : la colonne unique dans laquelle s’écoulent les blocs de la clôture. Chaque côté hérite de la marge de la page quand il n’est pas défini ; <code>mirror</code> échange intérieur et extérieur sur les pages paires exactement comme les marges de la page.</td>
+      <td>Zone de texte de la page de partie : la colonne unique dans laquelle s’écoulent les blocs du conteneur. Chaque côté hérite de la marge de la page quand il n’est pas défini ; <code>mirror</code> échange intérieur et extérieur sur les pages paires exactement comme les marges de la page.</td>
     </tr>
     <tr>
       <td><code>design</code></td>
       <td><code>DesignSlot</code></td>
       <td>vide</td>
-      <td>Maquette d’ouverture. Son conteneur est la <strong>zone de coupe</strong> de la page, si bien que les ancres de conteneur et les ancres <code>'page'</code> coïncident et que <code>'bleed'</code> va jusqu’au fond perdu quand les traits de coupe sont activés. Purement décorative : elle ne réserve jamais d’espace de texte ; augmentez <code>margins.top</code> pour que le texte ne la chevauche pas. Quand elle est vide, un texte <code>{'{number} {titleText}'}</code> par défaut dans la typographie du H1 est généré en haut à gauche de la zone de texte, avec le <code>numberSeparator</code> du H1 entre le numéro et le titre.</td>
+      <td>Maquette d’ouverture. Son conteneur est la <strong>zone de rognage</strong> de la page : les ancrages au conteneur et les ancrages <code>'page'</code> coïncident donc, et <code>'bleed'</code> va jusqu’au fond perdu quand les traits de coupe sont activés. Purement décorative : elle ne réserve jamais d’espace de texte ; augmentez <code>margins.top</code> pour que le texte ne la chevauche pas. Quand elle est vide, un texte <code>{'{number} {titleText}'}</code> par défaut dans la typographie du H1 est généré en haut à gauche de la zone de texte, avec le <code>numberSeparator</code> du H1 entre le numéro et le titre.</td>
     </tr>
     <tr>
       <td><code>versoDesign</code></td>
@@ -968,7 +968,7 @@ const config: PostextConfig = {
       <td><code>bodyStyle.fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>color</code>, <code>textAlign</code></td>
       <td>comme dans <code>bodyText</code></td>
       <td>héritent de <code>bodyText</code></td>
-      <td>Typographie des paragraphes, citations et éléments de liste de la clôture. Les graisses, les couleurs d’emphase et la césure viennent du texte courant.</td>
+      <td>Typographie des paragraphes, citations et éléments de liste du conteneur. Les graisses, les couleurs d’emphase et la césure viennent du texte courant.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.bulletColor</code></td>
@@ -980,7 +980,7 @@ const config: PostextConfig = {
       <td><code>bodyStyle.numberColor</code></td>
       <td><code>ColorValue</code></td>
       <td><code>orderedLists.color</code></td>
-      <td>Couleur des numéros des listes numérotées dans la partie. Les numéros sont toujours composés dans la graisse grasse du texte, si bien qu’une liste de chapitres se lit comme une table des matières.</td>
+      <td>Couleur des numéros des listes numérotées dans la partie. Les numéros sont toujours composés dans la graisse grasse du texte : une liste de chapitres se lit ainsi comme une table des matières.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.unorderedLists</code></td>
@@ -999,16 +999,16 @@ const config: PostextConfig = {
 
 ### Variables de la maquette de partie
 
-L’emplacement de maquette résout le jeu de variables des titres avec les valeurs propres à la partie : `{titleText}` est le `title` de la clôture ; `{number}`, le `number` tel qu’il est écrit ; `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}` le reformatent. Le numéro est lu comme un nombre décimal, un chiffre romain ou des chiffres chinois, avec ou sans les mots qui les encadrent (`"IV"`, `"iv"`, `"4"`, `"４"`, `"四"`, `"卷四"` et `"第四卷"` donnent tous `{numberDecimal}` = `4`), et ces variables valent `''` pour toute autre chose. `{partTitle}` / `{partNumber}`, `{chapterTitle}` / `{chapterNumber}` (le chapitre qui précède la partie), `{pageNumber}`, `{totalPages}`, `{bookTotalPages}` et les variables de métadonnées sont aussi disponibles. `{attr.<key>}` lit les attributs du H1 du chapitre en cours.
+La zone de maquette résout le jeu de variables des titres avec les valeurs propres à la partie : `{titleText}` est le `title` du délimiteur ; `{number}`, le `number` tel qu’il est écrit ; `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}` le reformatent. Le numéro est lu comme un nombre décimal, un chiffre romain ou des chiffres chinois, avec ou sans les mots qui les encadrent (`"IV"`, `"iv"`, `"4"`, `"４"`, `"四"`, `"卷四"` et `"第四卷"` donnent tous `{numberDecimal}` = `4`), et ces variables valent `''` pour toute autre chose. `{partTitle}` / `{partNumber}`, `{chapterTitle}` / `{chapterNumber}` (le chapitre qui précède la partie), `{pageNumber}`, `{totalPages}`, `{bookTotalPages}` et les variables de métadonnées sont aussi disponibles. `{attr.<key>}` lit les attributs du H1 du chapitre en cours.
 
 ### La maquette du verso
 
-`versoDesign` décore la page qui suit immédiatement une page de partie quand cette page ne contient rien : le dos du feuillet de partie. La partie elle-même ne laisse jamais cette page blanche. `breakAfter.parity` vaut `'any'` par défaut, si bien que le contenu qui suit la clôture commence sur la page suivante, sauf si quelque chose demande une parité :
+`versoDesign` décore la page qui suit immédiatement une page de partie quand cette page ne contient rien : le dos du feuillet de partie. La partie elle-même ne laisse jamais cette page blanche. `breakAfter.parity` vaut `'any'` par défaut : le contenu qui suit le délimiteur de fermeture commence donc sur la page suivante, sauf si quelque chose demande une parité :
 
 - **Le titre du chapitre suivant.** Le `breakBefore` par défaut du H1 est `'always-odd'`, et `'odd'` fait de même après une page de partie sur un recto : le chapitre passe au recto suivant et le verso reste blanc. La maquette du verso se peint.
 - **`parts.breakAfter: { enabled: true, parity: 'odd' }`.** La partie demande elle-même le recto suivant, quoi que fasse le titre suivant. Utilisez-le quand les chapitres peuvent s’ouvrir d’un côté comme de l’autre (`breakBefore.parity: 'any'`, ou `breakBefore.enabled: false`).
 
-Sans l’un ni l’autre, le chapitre s’ouvre sur le verso et aucune maquette de verso n’est dessinée. Avec `breakAfter.enabled: false`, le contenu continue sur la page de partie elle-même. Le verso prend la palette de la partie : un `palette="band=#…"` sur la clôture le recolore aussi.
+Sans l’un ni l’autre, le chapitre s’ouvre sur le verso et aucune maquette de verso n’est dessinée. Avec `breakAfter.enabled: false`, le contenu continue sur la page de partie elle-même. Le verso prend la palette de la partie : un `palette="band=#…"` sur le délimiteur le recolore aussi.
 
 ```ts
 parts: {
@@ -1024,13 +1024,13 @@ parts: {
 }
 ```
 
-**Une partie qui clôt son chapitre.** Dans un livre mis en page chapitre par chapitre (le Sandbox, `buildBundle`), une clôture `:::part` peut être un chapitre à elle seule, ou la fin d’un chapitre. Sa page de partie est alors la dernière page du chapitre, et le chapitre suivant reprend ce que la partie doit encore : il applique `breakAfter` avant son premier bloc et peint `versoDesign` sur sa première page quand cette page reste blanche. Les pages sortent comme elles sortiraient avec tout le livre dans un seul document. Seules des directives qui ne placent rien (`:::numbering`, `:::space`) peuvent suivre la clôture ; tout le reste est du contenu du chapitre, qui prend alors le saut lui-même. Un chapitre vide juste après la partie est une page à lui seul : cette page est le verso. Un hôte qui met lui-même les chapitres en page obtient ce comportement de `continuationAfter()`, qui signale `afterPartPage: true` pour un chapitre qui se termine par une partie ; transmettez-le dans la `continuation` du chapitre suivant.
+**Une partie qui clôt son chapitre.** Dans un livre mis en page chapitre par chapitre (le Sandbox, `buildBundle`), une partie `:::part` peut former un chapitre à elle seule, ou terminer un chapitre. Sa page de partie est alors la dernière page du chapitre, et le chapitre suivant reprend ce que la partie doit encore : il applique `breakAfter` avant son premier bloc et peint `versoDesign` sur sa première page quand cette page reste blanche. Les pages sortent comme elles sortiraient avec tout le livre dans un seul document. Seules des directives qui ne placent rien (`:::numbering`, `:::space`) peuvent suivre le délimiteur de fermeture ; tout le reste est du contenu du chapitre, qui prend alors le saut lui-même. Un chapitre vide juste après la partie est une page à lui seul : cette page est le verso. Un hôte qui met lui-même les chapitres en page obtient ce comportement de `continuationAfter()`, qui signale `afterPartPage: true` pour un chapitre qui se termine par une partie ; transmettez-le dans la `continuation` du chapitre suivant.
 
 ### Le conteneur `:::part`
 
-Une ligne `:::part{number="…" title="…"}` ouvre la partie et un `:::` seul la ferme ; les deux attributs sont facultatifs (ils valent `''` par défaut). Les blocs placés entre les deux (en général la liste des chapitres) s’écoulent dans la colonne unique de la page de partie avec `bodyStyle`, à partir de `margins.top` ; un contenu plus long que la page continue sur des pages ordinaires. La page est classée `role: 'part'` (`VDTPage.partInfo` porte le numéro et le titre), si bien que les éléments d’en-tête et de pied de page peuvent la cibler ou l’éviter avec `pages: 'part'` / `pages: 'body'` ; le moteur PDF ajoute la partie aux signets, au-dessus de ses chapitres. Un contenu vide (`:::part{…}` directement suivi de `:::`) est le cas courant et produit quand même la page : des parties consécutives ne partagent jamais une page. Un `:::part` imbriqué dans une autre partie est aplati dans la partie extérieure.
+Une ligne `:::part{number="…" title="…"}` ouvre la partie et un `:::` seul la ferme ; les deux attributs sont facultatifs (ils valent `''` par défaut). Les blocs placés entre les deux (en général la liste des chapitres) s’écoulent dans la colonne unique de la page de partie avec `bodyStyle`, à partir de `margins.top` ; un contenu plus long que la page continue sur des pages ordinaires. La page est classée `role: 'part'` (`VDTPage.partInfo` contient le numéro et le titre) : les éléments d’en-tête et de pied de page peuvent donc la cibler ou l’éviter avec `pages: 'part'` / `pages: 'body'` ; le moteur PDF ajoute la partie aux signets, au-dessus de ses chapitres. Un contenu vide (`:::part{…}` directement suivi de `:::`) est le cas courant et produit quand même la page : des parties consécutives ne partagent jamais une page. Un `:::part` imbriqué dans une autre partie est aplati dans la partie extérieure.
 
-Un troisième attribut, `palette="<id>=<hex>[, <id>=<hex>…]"`, donne à la partie ses propres couleurs : sur la page de partie et sur chaque page qui la suit, jusqu’à la partie suivante, chaque couleur de maquette (en-tête, pied de page, bandeau d’ouverture, maquettes de partie et de verso) liée à l’un de ces id de palette prend la valeur de la partie au lieu de celle de la palette du document. C’est ainsi que les sections d’un livre recolorent l’onglet de coin, le point du titre courant et le bandeau d’ouverture de chapitre sans seconde maquette : `:::part{number="II" title="…" palette="band=#f6c297"}`. Le flux de texte suit aussi : sur les mêmes pages, toute couleur du flux égale à la valeur de base d’une entrée de palette remplacée (titres, couleurs du gras, de l’italique et des renvois, puces et numéros de liste, étiquettes et barres de légende, texte, filets et fonds des tableaux (en-tête, corps, lignes alternées et fond propre d’une cellule), encadrés (fond, bordure, bande, titre) et pastilles (fond, contour et texte)) prend la valeur de la partie, si bien qu’un `headings.levels[1].color` lié à `band` compose les titres de chaque section dans sa propre couleur. Les pastilles de couleur en ligne gardent la couleur écrite en elles. Les paires sont séparées par des virgules, des points-virgules ou des espaces, `=` ou `:` joint l’id et la couleur, le `#` est facultatif. Une partie reste en vigueur après la fermeture de sa clôture : `{partTitle}`, `{partNumber}` et la palette suivent le flux dans les chapitres qui la suivent et, grâce à `continuation.part`, que signale `continuationAfter()`, dans les chapitres mis en page séparément, si bien que le deuxième chapitre d’une section affiche la section dans ses titres courants exactement comme le premier.
+Un troisième attribut, `palette="<id>=<hex>[, <id>=<hex>…]"`, donne à la partie ses propres couleurs : sur la page de partie et sur chaque page qui la suit, jusqu’à la partie suivante, chaque couleur de maquette (en-tête, pied de page, bandeau d’ouverture, maquettes de partie et de verso) liée à l’un de ces identifiants de palette prend la valeur de la partie au lieu de celle de la palette du document. C’est ainsi que les sections d’un livre recolorent l’onglet de coin, le point du titre courant et le bandeau d’ouverture de chapitre sans seconde maquette : `:::part{number="II" title="…" palette="band=#f6c297"}`. Le flux de texte suit aussi : sur les mêmes pages, toute couleur du flux égale à la valeur de base d’une entrée de palette remplacée (titres, couleurs du gras, de l’italique et des renvois, puces et numéros de liste, étiquettes et barres de légende, texte, filets et fonds des tableaux (en-tête, corps, lignes alternées et fond propre d’une cellule), encadrés (fond, bordure, bande, titre) et pastilles (fond, contour et texte)) prend la valeur de la partie : un `headings.levels[1].color` lié à `band` compose donc les titres de chaque section dans sa propre couleur. Les pastilles de couleur en ligne gardent la couleur écrite en elles. Les paires sont séparées par des virgules, des points-virgules ou des espaces, `=` ou `:` joint l’identifiant et la couleur, le `#` est facultatif. Une partie reste en vigueur après son délimiteur de fermeture : `{partTitle}`, `{partNumber}` et la palette suivent le flux dans les chapitres qui la suivent et, grâce à `continuation.part`, que signale `continuationAfter()`, dans les chapitres mis en page séparément : le deuxième chapitre d’une section affiche donc la section dans ses titres courants exactement comme le premier.
 
 Deux entrées de palette peuvent partager une valeur de base et prendre pourtant des valeurs différentes dans une partie, quand la partie remplace l’une et pas l’autre ou leur donne des couleurs différentes. La valeur seule ne dit pas de quelle entrée vient une couleur du flux : chaque couleur du flux est donc rapprochée des réglages dont elle peut venir, et prend la valeur à laquelle ces réglages sont liés. Sont distingués :
 
@@ -1091,7 +1091,7 @@ const config: PostextConfig = {
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td>Identifiant référencé par <code>{'{style="…"}'}</code> sur une ligne de titre. Un id inconnu laisse le titre tel quel.</td>
+      <td>Identifiant référencé par <code>{'{style="…"}'}</code> sur une ligne de titre. Un identifiant inconnu laisse le titre tel quel.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -1115,7 +1115,7 @@ const config: PostextConfig = {
       <td><code>runningChapter</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Indique si un titre de niveau 1 de ce style devient le chapitre courant : le chapitre que nomment <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> et leurs formes <code>…AtTop</code> sur sa page et les pages suivantes. <code>false</code> pour une planche, une carte ou une couverture composée comme un H1 à l’intérieur d’un chapitre : les titres courants l’ignorent, sur sa propre page aussi, et continuent de nommer le chapitre qu’elle interrompt ; elle ne fixe pas non plus de mot-repère <code>h1</code>. Le titre compte toujours quand <code>numbered</code> est actif (sa propre maquette lit son propre <code>{'{chapterNumber}'}</code>) et reste listé par <code>:::toc</code> quand <code>toc</code> l’est. Avec <code>toc: false</code> en plus, il n’a pas de signet PDF : la planche d’un chapitre, sur la page qui précède son ouverture, laisse les signets aux chapitres. Les titres des autres niveaux l’ignorent. Avec la valeur par défaut, les pages qui suivent une planche impriment le titre de la planche. Une préface ou un prologue avec <code>numbered: false</code> reste un chapitre à part entière et garde la valeur par défaut. L’option ne change que le chapitre que nomment les variables : le style ouvre toujours sa propre section, comme tout style de titre, si bien que jusqu’au titre de niveau 1 suivant les pages prennent les emplacements de titres courants, les marges, les colonnes, le style de texte et la palette du style de la planche (ceux du document quand le style n’en fixe pas), et non ceux d’une section stylée qu’aurait ouverte le chapitre interrompu. Dans un livre mis en page chapitre par chapitre, les titres courants ne passent pas d’un fichier de chapitre au suivant : une planche qui ouvre un fichier affiche des variables de chapitre vides jusqu’au premier titre de chapitre du fichier.</td>
+      <td>Indique si un titre de niveau 1 de ce style devient le chapitre courant : le chapitre que désignent <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> et leurs formes <code>…AtTop</code> sur sa page et les pages suivantes. <code>false</code> pour une planche, une carte ou une couverture composée comme un H1 à l’intérieur d’un chapitre : les titres courants l’ignorent, sur sa propre page aussi, et continuent de désigner le chapitre qu’elle interrompt ; elle ne fixe pas non plus de mot-repère <code>h1</code>. Le titre compte toujours quand <code>numbered</code> est actif (sa propre maquette lit son propre <code>{'{chapterNumber}'}</code>) et reste listé par <code>:::toc</code> quand <code>toc</code> l’est. Avec <code>toc: false</code> en plus, il n’a pas de signet PDF : la planche d’un chapitre, sur la page qui précède son ouverture, laisse les signets aux chapitres. Les titres des autres niveaux l’ignorent. Avec la valeur par défaut, les pages qui suivent une planche impriment le titre de la planche. Une préface ou un prologue avec <code>numbered: false</code> reste un chapitre à part entière et garde la valeur par défaut. L’option ne change que le chapitre que désignent les variables : le style ouvre toujours sa propre section, comme tout style de titre. Jusqu’au titre de niveau 1 suivant, les pages prennent donc les zones de titres courants, les marges, les colonnes, le style de texte et la palette du style de la planche (ceux du document quand le style n’en fixe pas), et non ceux d’une section stylée qu’aurait ouverte le chapitre interrompu. Dans un livre mis en page chapitre par chapitre, les titres courants ne passent pas d’un fichier de chapitre au suivant : une planche qui ouvre un fichier affiche des variables de chapitre vides jusqu’au premier titre de chapitre du fichier.</td>
     </tr>
     <tr>
       <td><code>sectionEnd</code></td>
@@ -1127,7 +1127,7 @@ const config: PostextConfig = {
       <td>champs de niveau</td>
       <td>comme dans <code>headings.levels[]</code></td>
       <td>les valeurs du niveau</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code> : chacun, une fois défini, remplace la valeur du niveau de titre pour les titres de ce style (<code>dropCap: false</code> retire la lettrine du niveau). <code>breakBefore</code> se fusionne champ par champ avec celui du niveau : un style qui ne fixe que <code>parity</code> garde le <code>enabled</code> du niveau, et un style qui ne fixe que <code>enabled: true</code> garde sa parité (jusqu’à postext 1.4, le champ manquant venait plutôt de la valeur par défaut sans saut).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>numberSeparator</code>, <code>numberPosition</code>, <code>breakBefore</code>, <code>span</code>, <code>spanBreak</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code> : chacun, une fois défini, remplace la valeur du niveau de titre pour les titres de ce style (<code>dropCap: false</code> retire la lettrine du niveau). <code>breakBefore</code> se fusionne champ par champ avec celui du niveau : un style qui ne fixe que <code>parity</code> garde le <code>enabled</code> du niveau, et un style qui ne fixe que <code>enabled: true</code> garde sa parité (jusqu’à postext 1.4, le champ manquant venait plutôt de la valeur par défaut sans saut).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1139,7 +1139,7 @@ const config: PostextConfig = {
       <td><code>header</code>, <code>footer</code></td>
       <td><code>DesignSlot</code></td>
       <td>ceux du document</td>
-      <td>Titres courants des pages de la section, qui y remplacent <code>header</code> / <code>footer</code> (les filtres <code>parity</code> et <code>pages</code> des éléments s’appliquent toujours). Un emplacement vide les supprime.</td>
+      <td>Titres courants des pages de la section, qui y remplacent <code>header</code> / <code>footer</code> (les filtres <code>parity</code> et <code>pages</code> des éléments s’appliquent toujours). Une zone vide les supprime.</td>
     </tr>
     <tr>
       <td><code>margins</code></td>
@@ -1163,7 +1163,7 @@ const config: PostextConfig = {
       <td><code>palette</code></td>
       <td><code>Record&lt;string, string&gt;</code></td>
       <td><code>{'{}'}</code></td>
-      <td>Remplacements de palette (id → hex) pour les pages de la section, par-dessus ceux de la partie en cours : le même mécanisme que l’attribut <code>palette</code> d’une partie, avec la même portée. Ils touchent les emplacements de maquette disposés sur ces pages (titres courants, bandeau d’ouverture : toute couleur liée à un id remplacé), mais aussi le flux de texte, par valeur : toute couleur du flux égale à la valeur de base d’une entrée remplacée (titres, couleurs du gras, de l’italique et des renvois, puces et numéros de liste, étiquettes et barres de légende, texte, filets et fonds des tableaux, encadrés (fond, bordure, bande, titre) et pastilles (fond, contour et texte)) prend la valeur de la section, comme sous une partie, y compris la règle pour deux entrées qui partagent une valeur de base (voir <a href="#le-conteneur-part">Le conteneur <code>:::part</code></a>). Les pastilles de couleur en ligne gardent la couleur écrite en elles. La couleur de la page suit aussi : quand <code>page.backgroundColor</code> est lié à une entrée remplacée (ou, non lié, a sa valeur de base), les pages de la section sont peintes dans la valeur de la section, si bien que les pages économie d’un journal s’impriment sur fond saumon tandis que les autres restent blanches. Depuis postext 1.18.</td>
+      <td>Remplacements de palette (id → hex) pour les pages de la section, par-dessus ceux de la partie en cours : le même mécanisme que l’attribut <code>palette</code> d’une partie, avec la même portée. Ils touchent les zones de maquette disposées sur ces pages (titres courants, bandeau d’ouverture : toute couleur liée à un id remplacé), mais aussi le flux de texte, par valeur : toute couleur du flux égale à la valeur de base d’une entrée remplacée (titres, couleurs du gras, de l’italique et des renvois, puces et numéros de liste, étiquettes et barres de légende, texte, filets et fonds des tableaux, encadrés (fond, bordure, bande, titre) et pastilles (fond, contour et texte)) prend la valeur de la section, comme sous une partie, y compris la règle pour deux entrées qui partagent une valeur de base (voir <a href="#le-conteneur-part">Le conteneur <code>:::part</code></a>). Les pastilles de couleur en ligne gardent la couleur écrite en elles. La couleur de la page suit aussi : quand <code>page.backgroundColor</code> est lié à une entrée remplacée (ou, non lié, a sa valeur de base), les pages de la section sont peintes dans la valeur de la section : les pages économie d’un journal s’impriment ainsi sur fond saumon tandis que les autres restent blanches. Depuis postext 1.18.</td>
     </tr>
   </tbody>
 </table>
@@ -1186,7 +1186,7 @@ headingStyles: [
 
 La page de la couverture n’imprime aucun titre courant, et à partir de *La chambre de la lanterne* les pages reprennent l’en-tête et le pied de page du document. Avec la valeur par défaut, `'level'`, la section de la couverture durerait jusqu’au titre de niveau 1 suivant, que ce livre n’a pas, et aucune de ses pages ne porterait de titre courant.
 
-**Un saut de page ne remplace pas le saut propre au titre.** Un style hérite du `breakBefore` de son niveau (la valeur par défaut du niveau 1 est `{ enabled: true, parity: 'always-odd' }`), et un titre l’applique où qu’il se trouve, juste après un `:::pagebreak` aussi. Le saut de page ouvre une nouvelle page, puis le titre demande encore son côté de la double page. Avec `parity: 'odd'`, un saut qui tombe sur un verso est suivi d’une page blanche, si bien que le titre s’ouvre sur le recto suivant. Avec `'always-odd'`, la page blanche de séparation s’ajoute aussi, et le saut de page ne change rien, puisque le titre aurait de toute façon ouvert cette page. Un style destiné à commencer sur la page qu’ouvre un saut manuel, comme une page de table des matières après la page de titre, désactive son propre saut :
+**Un saut de page ne remplace pas le saut propre au titre.** Un style hérite du `breakBefore` de son niveau (la valeur par défaut du niveau 1 est `{ enabled: true, parity: 'always-odd' }`), et un titre l’applique où qu’il se trouve, juste après un `:::pagebreak` aussi. Le saut de page ouvre une nouvelle page, puis le titre demande encore son côté de la double page. Avec `parity: 'odd'`, un saut qui tombe sur un verso est suivi d’une page blanche : le titre s’ouvre donc sur le recto suivant. Avec `'always-odd'`, la page blanche de séparation s’ajoute aussi, et le saut de page ne change rien, puisque le titre aurait de toute façon ouvert cette page. Un style destiné à commencer sur la page qu’ouvre un saut manuel, comme une page de table des matières après la page de titre, désactive son propre saut :
 
 ```ts
 headingStyles: [
@@ -1197,7 +1197,7 @@ headingStyles: [
 
 Pour garder une page à soi sans choisir de côté, réglez plutôt `breakBefore: { parity: 'any' }` et omettez le `:::pagebreak`.
 
-**À quelle section appartient une page.** Les titres courants et la palette se choisissent par page, non par titre. Une page prend la section en vigueur après le dernier changement de section qu’elle contient : là où une section se termine et une autre commence sur la même page (deux courtes lettres d’un dictionnaire, par exemple), la page porte les titres courants et la palette de la seconde ; là où une section stylée se termine au milieu de la page sur un titre sans style, la page revient à ceux du document. `{chapterTitle}` suit la même règle : une page où deux chapitres se rencontrent affiche le titre du second. Les pages blanches suivent la règle des [titres de chapitre](/fr/docs/configuration-headings#à-qui-appartiennent-les-pages-blanches) : une page blanche de parité (`blankForParity`) appartient à la section qui s’ouvre après elle, et la page de séparation qu’ajoute un saut `'always-odd'` / `'always-even'` (`blankForForce`) à la section qui la précède. Une page de partie ferme la section ouverte.
+**À quelle section appartient une page.** Les titres courants et la palette se choisissent par page, non par titre. Une page prend la section en vigueur après le dernier changement de section qu’elle contient : là où une section se termine et une autre commence sur la même page (deux courtes lettres d’un dictionnaire, par exemple), la page affiche les titres courants et la palette de la seconde ; là où une section stylée se termine au milieu de la page sur un titre sans style, la page revient à ceux du document. `{chapterTitle}` suit la même règle : une page où deux chapitres se rencontrent affiche le titre du second. Les pages blanches suivent la règle des [titres de chapitre](/fr/docs/configuration-headings#à-qui-appartiennent-les-pages-blanches) : une page blanche de parité (`blankForParity`) appartient à la section qui s’ouvre après elle, et la page de séparation qu’ajoute un saut `'always-odd'` / `'always-even'` (`blankForForce`) à la section qui la précède. Une page de partie ferme la section ouverte.
 
 ```md
 # A {style="letter"}
@@ -1209,7 +1209,8 @@ Aardvark, abacus.
 Babble, badger… (runs on to the next page)
 ```
 
-Les deux lettres commencent en page 1 : la page 1 prend donc les titres courants de la section `B`. Un onglet de tranche placé dans l’en-tête du style y affiche « B », et aucune page ne porte l’onglet de « A ». Donnez à chaque section une page à elle (`breakBefore`) quand chacune a besoin de son onglet.
+Les deux lettres commencent en page 1 : la page 1 prend donc les titres courants de la section `B`. Un onglet de tranche placé dans l’en-tête du style y affiche « B », et aucune page n’affiche l’onglet de « A ». Donnez à chaque section une page à elle (`breakBefore`) quand chacune a besoin de son onglet.
+
 Des annexes désignées par des lettres après des chapitres numérotés, et une page de dédicace que la table des matières et les signets PDF listent, mais dont la page n’affiche pas le titre :
 
 ```ts

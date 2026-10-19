@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Architecture',
   description: 'Technical architecture of the Postext layout engine: its concepts, the document tree, rhythm, backends and performance',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26 min',
   order: 2,
   plainSummary: "This page explains how Postext works inside, and it is written for programmers. First, Postext measures every word without drawing anything on screen, which makes it very fast. Then it works out where every line, picture and column goes, and keeps that plan in memory. Last, it draws the finished pages as a web page, a canvas image or a PDF file. When you change a word, it lays the pages out again and reuses the measurements of the paragraphs that did not change. The next page explains, step by step, how the lines and pictures are placed.",
@@ -43,7 +43,7 @@ has gone fuzzy.
   <tbody>
     <tr>
       <td><strong>VDT</strong></td>
-      <td>Virtual Document Tree. The mutable in-place data structure that represents the entire document: pages, columns, blocks, inline segments, and bounding boxes. Analogous to a virtual DOM but for document layout geometry.</td>
+      <td>Virtual Document Tree. The mutable data structure, updated in place, that represents the entire document: pages, columns, blocks, inline segments, and bounding boxes. Analogous to a virtual DOM but for document layout geometry.</td>
     </tr>
     <tr>
       <td><strong>Page</strong></td>
@@ -95,7 +95,7 @@ has gone fuzzy.
     </tr>
     <tr>
       <td><strong>Backend</strong></td>
-      <td>A rendering target that consumes the finished VDT. Four are shipping today: <strong>canvas</strong> (bitmap preview), <strong>HTML</strong> (DOM-based screen reading), <strong>PDF</strong> (print-ready output via <code>postext-pdf</code>) and <strong>EPUB</strong> (<code>postext-epub</code>, the book as an e-book). All four render from the same measurement (the measure module over Pretext).</td>
+      <td>A rendering target that consumes the finished VDT. Four are shipping today: <strong>canvas</strong> (bitmap preview), <strong>HTML</strong> (DOM-based screen reading), <strong>PDF</strong> (print-ready output via <code>postext-pdf</code>) and <strong>EPUB</strong> (<code>postext-epub</code>, the book as an e-book). All four render from the same measurement (the measure module over Pretext). The 3D viewer <code>postext-folio</code> paints its leaves with the canvas backend.</td>
     </tr>
     <tr>
       <td><strong>Placement Pass</strong></td>
@@ -117,7 +117,7 @@ has gone fuzzy.
 
 1. The **parser** reads your enriched markdown and turns it into a flat list of typed content blocks: content and structure, no positions yet
 2. A **placement pass** walks that list once and builds the VDT. It measures each block through Pretext at the width of the column the block is about to enter, places text, floats and boxes into pages and columns, and applies the break and keep rules as it goes
-3. The **driver** (`buildDocument`) runs the pass again when a decision needs the result of a whole layout: a table of contents that prints page numbers, a page-span box that has to cut the columns above it level, a column that ended short. Each re-run takes hints from the pass before it, and each kind of re-run has its own limit
+3. The **driver** (`buildDocument`) runs the pass again when a decision needs the result of a whole layout: a table of contents that prints page numbers, a page-span box above which the columns must end level, a column that ended short. Each re-run takes hints from the pass before it, and each kind of re-run has its own limit
 4. The **final VDT** is the complete layout geometry: every element knows its page number, column assignment, position, and bounding box. The document is fully "typeset" before any rendering happens
 5. A **backend** walks the finished VDT and renders it to the target format: a rasterized canvas bitmap, a DOM tree of positioned HTML elements, a PDF document with embedded fonts, or an EPUB. The same VDT feeds all four; picking a backend is purely an output decision
 
@@ -138,6 +138,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
   notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+  continuation?: LayoutContinuation; // counters and page numbers carried from earlier chapters
+  outline?: OutlineEntry[];    // the book's headings with their page labels, for :::toc / :::index
+  citations?: CitationContext; // this chapter's share of the book's citations
+  laterPageIds?: Record<string, number>; // page fences of later chapters a story may continue on
 }
 
 interface Resource {
@@ -193,7 +197,7 @@ Italy by 1465 and France by 1470.
 
 Resources are connected to the prose by id, and **referencing one is enough to incorporate it**. The inline `:ref{id="printing-press"}` does two jobs at once: it renders the resource's computed number in the running text ("Fig. 1"), and — at the first reference in reading order — it *floats* the resource onto the page, reserving a band at the top or bottom near that reference, exactly as a print typesetter would. You never place the figure a second time. For the occasional resource that must sit at an exact point in the flow, `::resource{id="…"}` on its own line is an optional block embed: it only renders inline when the resource's resolved `placement.position` is `'here'` (which opts it out of floating); for a floated resource it is treated as just another reference. The author never has to think about placement. The engine does.
 
-<Illustration name="ReferenceResolution" data='{"title": "Reference resolution", "desc": "A markdown source references a figure inline with :ref{id=printing-press}. The resources array provides the actual content by ID. The engine resolves the reference, renders the computed number in the text, and floats the figure to a band at the top of the page.", "caption": "References in the markdown are just names. The engine resolves them against resources, numbers them, and floats the figure near the reference.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "optional embed for placement &#39;here&#39;", "resolveLabel": "resolve", "outputTitle": "laid-out page", "outputFigure": "[ Figure 1 — floated to a band ]", "outputFootnote": "…shown in Fig. 1…"}' />
+<Illustration name="ReferenceResolution" data='{"title": "Reference resolution", "desc": "A markdown source references a figure inline with :ref{id=printing-press}. The resources array provides the actual content by ID. The engine resolves the reference, renders the computed number in the text, and floats the figure to a band at the top of the page.", "caption": "References in the markdown are just names. The engine resolves them against resources, numbers them, and floats the figure near the reference.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "optional embed to place it &#39;here&#39;", "resolveLabel": "resolve", "outputTitle": "laid-out page", "outputFigure": "[ Figure 1 — floated to a band ]", "outputFootnote": "…shown in Fig. 1…"}' />
 
 ### Configuration
 
@@ -259,7 +263,7 @@ A finished pass is not patched. When `buildDocument` needs another attempt (a ba
 
 ### Structure
 
-<Illustration name="VdtStructure" data='{"title": "Virtual Document Tree structure", "desc": "Hierarchical VDT: document contains pages, each page contains columns, each column contains blocks (heading, paragraph, resource), each text block contains measured lines. Every block carries a bounding box, its type, and page/column indices.", "caption": "Every block carries its bbox, its type, and page/column indices.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["heading", "paragraph", "resource"], "lineLabels": ["line 0", "line 1"], "legendHeader": "Every block carries:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Lines also carry:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "Virtual Document Tree structure", "desc": "The VDT is a hierarchy: the document contains pages, each page contains columns, each column contains blocks (heading, paragraph, resource), and each text block contains measured lines. Every block carries a bounding box, its type, and its page and column indices.", "caption": "Every block carries its bbox, its type, and its page and column indices.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["heading", "paragraph", "resource"], "lineLabels": ["line 0", "line 1"], "legendHeader": "Every block carries:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Lines also carry:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### Type Definitions
 
@@ -368,7 +372,7 @@ A few of these fields deserve a note:
 - **`isLastLine`** drives justified rendering: final lines render ragged even when the paragraph is justified — except *overfull* final lines, whose inter-word spaces compress to fit the measure (TeX glue-setting semantics).
 - **`sourceStart`/`sourceEnd` and `plainStart`/`plainEnd`** are source maps from each line back to the original markdown and to the block's plain text — they power cursor and selection sync in editor integrations.
 - **`VDTResourceTableLayout`** (with its `VDTResourceTableCell` entries) carries the full laid-out geometry of a table resource: column x-edges, row y-edges, and per-cell rects with their measured content lines, so every backend draws the same table.
-- **`dirty` and `snappedToGrid`** are written when a block is placed and read by no stage and no backend. `dirty` starts `true` on a new block and is set to `false` as the block is placed; the engine does not track changes on the tree, it runs the placement pass again (see [The Pass Driver](/en/docs/architecture-layout-pipeline#the-pass-driver)). `snappedToGrid` is `true` on the first part of a text block that the flow returns to the grid after (see [Vertical Rhythm System](#vertical-rhythm-system)).
+- **`dirty` and `snappedToGrid`** are written when a block is placed and read by no stage and no backend. `dirty` starts `true` on a new block and is set to `false` as the block is placed; the engine does not track changes on the tree, it runs the placement pass again (see [The Pass Driver](/en/docs/architecture-layout-pipeline#the-pass-driver)). `snappedToGrid` is `true` on the first part of a text block after which the flow returns to the grid (see [Vertical Rhythm System](#vertical-rhythm-system)).
 - **`balancing`** says which column-balancing levers moved or stretched the block; a block the balancing left alone has none (see [Column Balancing](/en/docs/architecture-layout-pipeline#column-balancing)).
 - **`computePageTextExtent(page)`** is a small public helper that returns the vertical extent actually covered by text on a page (including float captions). Debug overlays use it so the baseline-grid lines span only real text, not empty page bottom.
 
@@ -491,6 +495,12 @@ Because binary resource payloads live out-of-band, each backend resolves `fileId
       <td><strong>Shipping</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong> (3D viewer)</td>
+      <td>Consumes the VDT already measured with Pretext</td>
+      <td>Each page painted by the canvas backend (<code>renderPageToCanvas</code>) and shown as the texture of a three.js leaf, only around the open spread (<code>createFolioFromDocument</code> in <code>postext-folio</code>)</td>
+      <td><strong>Shipping</strong></td>
+    </tr>
+    <tr>
       <td><strong>Command line</strong></td>
       <td>Pretext over Skia (<code>@napi-rs/canvas</code>), in place of the browser's canvas</td>
       <td>The PDF, HTML and EPUB writers, page images and Word, run from a terminal with no browser (<code>postext-cli</code>)</td>
@@ -499,7 +509,7 @@ Because binary resource payloads live out-of-band, each backend resolves `fileId
   </tbody>
 </table>
 
-All four shipping backends consume the same `VDTDocument`. The split between `postext` (which exports the canvas and HTML backends) and `postext-pdf` (which exports the PDF backend) is purely about dependencies: the PDF path pulls in `pdf-lib` and `@pdf-lib/fontkit`, and most web integrations do not need them. Install `postext-pdf` only when you actually want to emit PDF bytes. `postext-epub` is a package of its own for the same reason, and is needed only for e-books. The command line is not a fifth backend: `postext-cli` runs these same writers where there is no browser.
+The four backends and the Folio viewer consume the same `VDTDocument`. The split between `postext` (which exports the canvas and HTML backends) and `postext-pdf` (which exports the PDF backend) is purely about dependencies: the PDF path pulls in `pdf-lib` and `@pdf-lib/fontkit`, and most web integrations do not need them. Install `postext-pdf` only when you actually want to emit PDF bytes. `postext-epub` is a package of its own for the same reason, and is needed only for e-books. The command line is not a fifth backend: `postext-cli` runs these same writers where there is no browser. Word files are not one either: `postextToDocx` (from `postext/word`) writes the Markdown chapters and their styles to a `.docx`, with no layout, and `readDocx` with `wordToPostext` reads one back into Markdown.
 
 **Where layout runs:** The engine measures text on a canvas, so it runs wherever it is given one. In a browser the pipeline runs either on the main thread (`buildDocument`) or inside a dedicated Web Worker (`createLayoutWorker` from `postext/worker`) — the worker path is the recommended integration for UI-driven apps because it keeps measurement and the placement passes off the main thread, supports last-wins cancellation via `AbortSignal`, and owns its own measurement cache and math raster cache so successive rebuilds stay cheap. See [Configuration → Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) for the full integration pattern. Outside a browser, the [command line](/en/docs/command-line) runs the same pipeline with Skia standing in for the browser's canvas, so a book breaks into the same pages in a terminal, a script or a build server.
 
@@ -534,14 +544,19 @@ Consider what the engine is up against: thousands of text blocks across hundreds
    an explicit measurement cache keyed on text, fonts, width, and every layout-affecting option,
    on top of Pretext's own `prepare()` cache and a raw text-width cache. Re-measuring an
    unchanged paragraph costs a map lookup. When a family's faces change, the engine drops that
-   family's widths and Pretext's cache, and a measurement cache drops the blocks set in it at its
-   next lookup (it carries the generation it was filled under), so glyph widths are correct after
-   fonts finish loading with no call from the host; `clearMeasurementCache()` drops every family.
+   family's widths and Pretext's cache, and a measurement cache drops the blocks set in that family
+   at its next lookup (it carries the generation it was filled under), so glyph widths are correct once
+   fonts finish loading, without any call from the host; `clearMeasurementCache()` drops every family.
 
 6. **Hot-path line breaking.** The Knuth-Plass active-node handling was rewritten for speed:
    the active set is compacted in place as nodes retire, and candidates are deduplicated
    per (line, fitness class) so only the lowest-demerit node per key survives. The algorithmic
-   results are identical — same break sets, just computed faster.
+   results are identical — same break sets, just computed faster. The same breaker is also written
+   in Rust (`rust/crates/linebreak`) and compiled to WebAssembly, embedded in the package: it does
+   the same arithmetic in the same order, two to three times faster, and answers wherever the module
+   has compiled. On a page's main thread it compiles in the background, and until then, or where
+   WebAssembly is missing or refused, the TypeScript breaker answers. `initLineBreaker()` starts the
+   compilation early; `useWasmLineBreaker(false)` keeps every paragraph on the TypeScript breaker.
 
 7. **Off-main-thread builds.** The `postext/worker` entry point runs the entire pipeline
    inside a dedicated Web Worker. The main thread posts `{ content, config }` and an
@@ -564,13 +579,17 @@ Consider what the engine is up against: thousands of text blocks across hundreds
 
 There is no incremental entry point: no call takes a finished VDT and updates it. When the content or the configuration changes (a keystroke, another page size), the host calls `buildDocument` again and gets a new document.
 
-What carries over from one build to the next is the measuring. Create a `MeasurementCache` once with `createMeasurementCache()` and pass it as the third argument of every `buildDocument` call. A paragraph whose text, fonts, width and breaking options did not change is read from it, so an editor that lays the document out on every keystroke measures only the paragraph being typed in. A change of page size or of column count changes the widths, and those paragraphs are measured again; Pretext's `prepare()` results still hold, since they depend on the font and the text and not on the width, so only the cheap `layout()` arithmetic runs. The parse is memoized too.
+What carries over from one build to the next is the measuring. Create a `MeasurementCache` once with `createMeasurementCache()` and pass it as the third argument of every `buildDocument` call. A paragraph whose text, fonts, width and breaking options did not change is read from it, so an editor that lays the document out on every keystroke measures only the paragraph being typed in. A change of page size or of column count changes the widths, and those paragraphs are measured again; Pretext's `prepare()` results still hold, since they depend on the font and the text and not on the width, so only the cheap `layout()` arithmetic runs. The parse is memoized too. Composed pages carry over as well: a composed page whose template,
+Markdown, styles and fonts did not change is reused from the build before (`composed/pageMemo.ts`),
+so an edit on one page of a chapter of composed pages sets that page alone. A page that holds a
+footnote, a cross-reference, a citation, a contents or index listing or a comic strip is always set
+again.
 
 For a live editor, `createLayoutWorker` (from `postext/worker`) does all of this off the main thread: the worker owns a measurement cache that lives as long as it does, and a newer `build()` cancels the one in flight. See [Configuration → Measurement cache](/en/docs/configuration-programmatic-usage#measurement-cache) and [Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker).
 
 ### Benchmarks
 
-Two benchmarks live in `packages/postext/src/__bench__/`. `pnpm test` skips them; `pnpm bench`, run in `packages/postext`, runs them. `chapter.bench.test.ts` lays out one textbook-sized chapter (forty sections of headings, paragraphs and lists) five times against an empty measurement cache and five times against a warm one, and reports both medians and the number of passes. `cjkChapter.bench.test.ts` lays out chapter 1 of 红楼梦 and counts the characters sent to `measureText`, to hold the CJK composer to a cost linear in the length of the paragraph.
+Three benchmarks live in `packages/postext/src/__bench__/`. `pnpm test` skips them; `pnpm bench`, run in `packages/postext`, runs them. `chapter.bench.test.ts` lays out one textbook-sized chapter (forty sections of headings, paragraphs and lists) five times against an empty measurement cache and five times against a warm one, and reports both medians and the number of passes. `cjkChapter.bench.test.ts` lays out chapter 1 of 红楼梦 and counts the characters sent to `measureText`, to hold the CJK composer to a cost linear in the length of the paragraph. `composedPage.bench.test.ts` times a chapter of twenty composed pages: a cold build, a rebuild with nothing changed, a change of one page's attribute and an edit inside one of its frames, each with the composed-page memo and without it.
 
 ```typescript
 // From packages/postext/src/__bench__/chapter.bench.test.ts
@@ -587,12 +606,12 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-A caveat for honesty: there is no canvas in Node, so both benchmarks stub text measurement and their absolute times are not the browser's. The ratio of cold to warm and the number of passes are, and a regression in either shows here before it shows in the Sandbox. The chapter benchmark reports numbers and does not break the build; the Chinese one asserts that the characters measured stay under three times the length of the longest paragraph. Neither runs in CI: regressions are caught by comparing the numbers across runs when a hot path changes (as was done for the Knuth-Plass active-node rewrite). Performance is a feature, not a hope — but the enforcement today is measurement and review, not a failing pipeline.
+A caveat for honesty: there is no canvas in Node, so the benchmarks stub text measurement and their absolute times are not the browser's. The ratio of cold to warm and the number of passes are, and a regression in either shows here before it shows in the Sandbox. The chapter and composed-page benchmarks report numbers and do not break the build; the Chinese one asserts that the characters measured stay under three times the length of the longest paragraph. None runs in CI: regressions are caught by comparing the numbers across runs when a hot path changes (as was done for the Knuth-Plass active-node rewrite). No build fails on a slower time yet: a slowdown is found by measuring and in review.
 
 
 ## Data Flow
 
-<Illustration name="DataFlow" data='{"title": "Data flow through the engine", "desc": "Content and config enter the placement pass, which structures, measures and places every block, floats the resources and applies the break and keep rules. buildDocument runs the pass again with hints until every round settles. The finished VDT is handed to the backend, which renders HTML or PDF.", "caption": "End-to-end data flow: one placement pass, run again with hints, then render.", "input": ["Content +", "Config"], "loopBadge": "placement pass", "passesInLoop": [{"num": "1", "name": "structure"}, {"num": "2", "name": "measure"}, {"num": "3", "name": "place"}, {"num": "4", "name": "floats"}, {"num": "5", "name": "keep rules"}], "loopCondition": "run again with hints, each round up to its limit", "convergedLabel": "VDT (finished)", "backend": "Backend: Render", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "Data flow through the engine", "desc": "Content and config enter the placement pass, which structures, measures and places every block, floats the resources and applies the break and keep rules. buildDocument runs the pass again with hints until every round settles. The finished VDT is handed to the backend, which renders HTML or PDF.", "caption": "End-to-end data flow: one placement pass, run again with hints, then rendered.", "input": ["Content +", "Config"], "loopBadge": "placement pass", "passesInLoop": [{"num": "1", "name": "structure"}, {"num": "2", "name": "measure"}, {"num": "3", "name": "place"}, {"num": "4", "name": "floats"}, {"num": "5", "name": "keep rules"}], "loopCondition": "run again with hints, each round up to its limit", "convergedLabel": "VDT (finished)", "backend": "Backend: Render", "output": "HTML / PDF"}' />
 
 
 ## Non-Goals

@@ -16,19 +16,19 @@ Cinco páginas de un artículo de revista de ciencias de la vida en A4: *Highly 
 
 ### 1 · Dos listas de referencias y una sola numeración
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Las citas se numeran por orden de primera aparición, así que no hay que hacer nada para seguir la cuenta: jackhmmer, que se cita por primera vez en los Métodos, recibe el 36, mientras que el campo de fuerzas Amber, citado antes en el texto, conserva su 30. Las listas salen de `:::bibliography{scope=new}`, que imprime solo las obras que ninguna lista anterior ha impreso. El script pone el mismo bloque tras la Discusión y tras los Métodos: el primero compone de la 1 a la 35, el segundo de la 36 a la 55, y Amber no se repite. El título de los Métodos es un título de primer nivel con estilo propio; su `bodyStyle` compone la sección en 8,2 pt sobre 10,8 pt, `breakBefore: { enabled: false }` lo deja en la columna y `runningChapter: false` mantiene en las cabeceras el título del artículo. Para tu propio artículo, pega la exportación de tu `.bib` en un bloque `:::references{format=bibtex}`, cita con `[@clave]` pegado a la palabra y cambia `nature` por el estilo de tu revista.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Las citas se numeran por orden de primera aparición, así que no hay que hacer nada para seguir la cuenta: jackhmmer, que se cita por primera vez en los Métodos, recibe el 36, mientras que el campo de fuerzas Amber, citado antes en el texto, conserva su 30. Las listas salen de `:::bibliography{scope=new}`, que imprime solo las obras que ninguna lista anterior ha impreso. El script pone el mismo bloque tras la Discusión y tras los Métodos: el primero compone de la 1 a la 35, el segundo de la 36 a la 55, y Amber no se repite. El título de los Métodos es un encabezado de primer nivel con estilo propio; su `bodyStyle` compone la sección en 8,2 pt sobre 10,8 pt, `breakBefore: { enabled: false }` lo deja en la columna y `runningChapter: false` mantiene en las cabeceras el título del artículo. Para tu propio artículo, pega la exportación de tu `.bib` en un bloque `:::references{format=bibtex}`, cita con `[@clave]` pegado a la palabra y cambia `nature` por el estilo de tu revista.
 
 ### 2 · Un bloque de título para 34 autores
 
 <Excerpt region="title" />
 
-La lista de autores es un solo atributo del título, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, compuesto en Noto Sans de 7,4 pt a toda la medida, donde los 34 nombres ocupan cinco líneas. `inlineMarks` sube los números de filiación. Las filiaciones y la nota de contribución igual van al final, en *Author information*, como las imprime Nature, y así la primera página conserva sitio para el resumen y la figura. No se omite ningún autor: la cabecera de las páginas pares abrevia la lista a *Jumper et al.*
+La lista de autores es un solo atributo del encabezado, `authors="John Jumper^1,4^, Richard Evans^1,4^, …"`, compuesto en Noto Sans de 7,4 pt a toda la medida, donde los 34 nombres ocupan cinco líneas. `inlineMarks` sube los números de filiación. Las filiaciones y la nota de contribución igual van al final, en *Author information*, como las imprime Nature, y así la primera página conserva sitio para el resumen y la figura. No se omite ningún autor: la cabecera de las páginas pares abrevia la lista a *Jumper et al.*
 
 ### 3 · El resumen a todo el ancho y la figura 1 debajo
 
 <Excerpt region="resources" />
 
-El resumen es un recuadro con `span: 'page'` y sin marco, con el texto en Noto Sans seminegrita. La figura 1 lo sigue como `::resource{id="fig1"}`, y su colocación, `{ position: 'here', span: 'page' }`, la compone sobre las dos columnas en ese punto; las dos columnas de texto empiezan bajo su pie. El pie empieza con una frase en negrita, como los de Nature; el `captionPrefix` del tipo y el `labelSeparator` del estilo de pie hacen que la etiqueta diga *Fig. 1 |*. La tabla 1 va incrustada donde está, en los Métodos, con `position: 'here'`, y se queda en su columna.
+El resumen es un recuadro con `span: 'page'` y sin borde, con el texto en Noto Sans seminegrita. La figura 1 lo sigue como `::resource{id="fig1"}`, y su colocación, `{ position: 'here', span: 'page' }`, la compone sobre las dos columnas en ese punto; las dos columnas de texto empiezan bajo su pie. El pie empieza con una frase en negrita, como los de Nature; el `captionPrefix` del tipo y el `labelSeparator` del estilo de pie hacen que la etiqueta diga *Fig. 1 |*. La tabla 1 va incrustada donde está, en los Métodos, con `position: 'here'`, y se queda en su columna.
 
 ### 4 · El esqueleto de una proteína a partir de coordenadas abiertas
 
@@ -75,5 +75,5 @@ Para una revista médica, parte del estilo NLM incluido, como hace el <RecipeLin
 
 ## Errores frecuentes
 
-- Nature nombra hasta cinco autores y abrevia una lista más larga al primero seguido de *et al.* Donde la lista del propio artículo lo hace, escribe `and others` en la entrada BibTeX (`{Senior, Andrew W. and others}`) y el estilo imprime *Senior, A. W. et al.*; en CSL-YAML, termina la lista con `"others"`.
-- El `bodyStyle` de un estilo de título cambia el cuerpo y el interlineado del texto, no la rejilla base: los títulos de los Métodos usan `snapToGrid: false`, o la línea bajo cada uno saltaría a la siguiente línea de la rejilla del texto principal.
+- Nature cita hasta cinco autores y abrevia una lista más larga al primero seguido de *et al.* Donde la lista del propio artículo lo hace, escribe `and others` en la entrada BibTeX (`{Senior, Andrew W. and others}`) y el estilo imprime *Senior, A. W. et al.*; en CSL-YAML, termina la lista con `"others"`.
+- El `bodyStyle` de un estilo de encabezado cambia el cuerpo y el interlineado del texto, no la rejilla base: los títulos de los Métodos usan `snapToGrid: false`, o la línea bajo cada uno saltaría a la siguiente línea de la rejilla del texto principal.

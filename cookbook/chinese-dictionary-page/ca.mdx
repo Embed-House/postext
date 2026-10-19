@@ -22,13 +22,13 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada lema és
 
 <Excerpt region="headwords" />
 
-`{天|tiān}` és la forma curta de `:ruby[天]{rt="tiān"}`, una lectura sobre un caràcter ([marques xineses, ruby i warichu](/ca/docs/document-format-inline#marques-xineses-ruby-i-warichu)). Un títol sense disseny propi compon la seva lectura; amb un disseny, el títol imprimiria 天 sol. La lectura pren la font del títol, la supernegra, llevat que `cjk.ruby.fontFamily` n'anomeni una altra, i per això s'anomena la song regular. La meitat de 15 pt són 7,5 pt, i la línia de 30 pt del títol deixa lloc per a la lectura sobre el lema: el títol ocupa dues línies de la retícula i el text que va a sota continua en les línies de 15 pt de les dues columnes. El pinyin puja el que baixen els traços descendents de la seva font i 0,04 em més, de manera que la g de tīng acaba 0,6 pt per sobre de la caixa de 汀.
+`{天|tiān}` és la forma curta de `:ruby[天]{rt="tiān"}`, una lectura sobre un caràcter ([marques xineses, ruby i warichu](/ca/docs/document-format-inline#marques-xineses-ruby-i-warichu)). Un títol sense disseny propi compon la seva lectura; amb un disseny, el títol imprimiria 天 sol. La lectura pren la font del títol, la supernegra, llevat que `cjk.ruby.fontFamily` n'indiqui una altra, i per això s'hi indica la song regular. La meitat de 15 pt són 7,5 pt, i la línia de 30 pt del títol deixa lloc per a la lectura sobre el lema: el títol ocupa dues línies de la retícula i el text que va a sota continua en les línies de 15 pt de les dues columnes. El pinyin puja el que baixen els traços descendents de la seva font i 0,04 em més, de manera que la g de tīng acaba 0,6 pt per sobre de la caixa de 汀.
 
 ### 3 · Un paràgraf per a cada entrada
 
 <Excerpt region="senses" />
 
-El Diccionari de Kangxi compon cada entrada seguida: primer les lectures dels diccionaris de rimes i després cada accepció, introduïda per 又. Aquí el 又 s'ha canviat per números en cercle, escrits com `**②**`, i `boldColor` els imprimeix en el vermell dels lemes; no hi ha cap altra negreta al text. Una accepció que el Kangxi llegeix d'una altra manera conserva la seva lectura, com 跳 ② amb 徒刀切. El compositor tracta de ① a ⑳ com a caràcters xinesos: cap línia no acaba en un número l'accepció del qual comença a la línia següent, i no hi entra espai entre xinès i llatí entre el número i el seu text, així que els números s'escriuen tal com són. L'equilibratge de columnes està desactivat (`headings.balancing.enabled: false`): cap columna obre espai sobre els seus lemes i cada entrada segueix l'anterior a la mateixa distància.
+El Diccionari de Kangxi compon cada entrada seguida: primer les lectures dels diccionaris de rimes i després cada accepció, introduïda per 又. Aquí el 又 s'ha canviat per números en cercle, escrits com `**②**`, i `boldColor` els imprimeix en el vermell dels lemes; no hi ha cap altra negreta al text. Una accepció que el Kangxi llegeix d'una altra manera conserva la seva lectura, com 跳 ② amb 徒刀切. El compositor tracta de ① a ⑳ com a caràcters xinesos: cap línia no acaba en un número si la seva accepció comença a la línia següent, i no hi entra espai entre xinès i llatí entre el número i el seu text, així que els números s'escriuen tal com són. L'equilibratge de columnes està desactivat (`headings.balancing.enabled: false`): cap columna obre espai sobre els seus lemes i cada entrada segueix l'anterior a la mateixa distància.
 
 ### 4 · La pestanya de la T
 
@@ -46,7 +46,7 @@ Fontsource talla cada font xinesa en un centenar de fitxers per intervals de car
 
 ### El primer lema a la parella i l'últim a la senar
 
-Hi ha diccionaris que imprimeixen una sola paraula guia per pàgina: la primera a dalt a la parella i l'última a dalt a la senar, de manera que el plec diu 天 … 髫.
+Hi ha diccionaris que imprimeixen una sola paraula guia per pàgina: la primera a dalt a la parella i l'última a dalt a la senar, de manera que la doble pàgina diu 天 … 髫.
 
 ```diff
 -  head('verso-guide', '{firstMark.h2}—{lastMark.h2}', 'even', SIDE + 8, GUIDE),
@@ -57,7 +57,7 @@ Hi ha diccionaris que imprimeixen una sola paraula guia per pàgina: la primera 
 
 ### Pinyin amb ɑ i ɡ d'un sol ull
 
-Els diccionaris xinesos componen el pinyin en una font amb la a i la g d'un sol ull. Anomena Andika per a les lectures i afegeix-la a `FONTS` (`'Andika': ['400']`, amb el seu crèdit OFL).
+Els diccionaris xinesos componen el pinyin en una font amb la a i la g d'un sol ull. Indica Andika per a les lectures i afegeix-la a `FONTS` (`'Andika': ['400']`, amb el seu crèdit OFL).
 
 ```diff
 -  ruby: { fontFamily: SONG, fontSize: em(0.5), color: col('cinnabar') },

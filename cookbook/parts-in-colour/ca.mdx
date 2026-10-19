@@ -1,7 +1,7 @@
 ---
 title: "Parts en color amb un sol atribut"
 summary: "En aquesta guia de camp, cada :::part redefineix un color de paleta que tenyeix la portadella, el dors pintat, la pestanya, les negretes i la fila de l'índex."
-plain: "Una guia de butxaca d'ocells de l'estuari en dues parts, una bruna i una altra verda. Ensenya com un sol ajust de color per part tenyeix la seva pàgina d'obertura, les pestanyes, els números de pàgina i la seva línia de l'índex."
+plain: "Una guia de butxaca d'ocells de l'estuari en dues parts, una bruna i una altra verda. Ensenya com un sol paràmetre de color per part tenyeix la seva pàgina d'obertura, les pestanyes, els números de pàgina i la seva línia de l'índex."
 description: "Guia de camp de dos hàbitats, feta amb Postext, on cada :::part tenyeix del seu color la portadella, el dors pintat, la pestanya i la fila de l'índex."
 question: "Com dono a cada part del llibre el seu color, la portadella i un dors pintat, amb files de color a l'índex?"
 aliases: ["guia de camp", "parts", "colors per secció", "seccions per colors", "portadella", "verso pintat", "dors pintat", "pestanya", "color de la part"]
@@ -10,7 +10,7 @@ pageNotes: { "4": "La pàgina 4 és el dors de la portadella de la part I. El te
 
 ## Què compondràs
 
-*Aves del estuario* és una guia de camp de butxaca, amb una part per hàbitat. Els fangars van en bru i els canyissars en verd canyís, i cada color es fixa una vegada, al `:::part` del seu hàbitat. La portadella és un camp de color a sang amb un número romà de 150 pt i la llista d'espècies en crema; el dors es pinta igual, amb la pestanya en negatiu al tall. A les pàgines d'espècie prenen aquest color la pestanya, el foli, l'avanttítol, el filet sota el nom científic, els trets en negreta, les vinyetes i l'etiqueta de la làmina. L'índex, sota una vista de l'estuari, dona a cada part una banda del seu color amb la pàgina de la seva portadella. La coberta, la franja i les quatre làmines són pintures generades amb models de difusió i carregades com a mapes de bits JPEG; la paleta d'una part no arriba a les imatges, així que els seus colors són els seus.
+*Aves del estuario* és una guia de camp de butxaca, amb una part per hàbitat. Els fangars van en bru i els canyissars en verd canyís, i cada color es fixa una vegada, al `:::part` del seu hàbitat. La portadella és un camp de color a sang amb un número romà de 150 pt i la llista d'espècies en crema; el dors es pinta igual, amb la pestanya en negatiu al tall. A les pàgines d'espècie prenen aquest color la pestanya, el foli, l'avanttítol, el filet sota el nom científic, els trets en negreta, els pics i l'etiqueta de la làmina. L'índex, sota una vista de l'estuari, dona a cada part una banda del seu color amb la pàgina de la seva portadella. La coberta, la franja i les quatre làmines són pintures generades amb models de difusió i carregades com a mapes de bits JPEG; la paleta d'una part no arriba a les imatges, així que els seus colors són els seus.
 
 ## Elaboració
 
@@ -22,13 +22,13 @@ Una part redefineix entrades de la paleta pel seu id, així que tot el que ha de
 
 ### 2 · Una portadella, el seu dors i la seva llista
 
-El codi d'aquest pas és [la resposta curta](#la-resposta-curta), més amunt. Un `:::part` obre una [portadella](/ca/docs/configuration-styles#parts) en pàgina senar, i `parts.design` la compon sobre tota la pàgina, a sang. El Markdown entre les seves tanques comença a 125 mm de la vora superior, sota el títol: unes línies sobre l'hàbitat amb l'estil de paràgraf `habitat` i després la llista de les seves espècies amb `bodyStyle`. `versoDesign` pinta el dors del full (el camp i la pestanya en negatiu) només si aquella pàgina queda en blanc, i `breakAfter: { parity: 'odd' }` la deixa en blanc en enviar la primera espècie a la pàgina senar següent. `{numberRoman}` imprimeix el `number="I"` de la part en xifres romanes (amb `"1"` sortiria la mateixa I), mentre que les espècies es numeren de l'1 al 4 en aràbigues. El `\\` del títol parteix la línia només a la portadella; l'índex i les capçaleres el componen en una sola línia.
+El codi d'aquest pas és [la resposta curta](#la-resposta-curta), més amunt. Un `:::part` obre una [portadella](/ca/docs/configuration-styles#parts) en pàgina senar, i `parts.design` la compon sobre tota la pàgina, a sang. El Markdown de dins del bloc comença a 125 mm de la vora superior, sota el títol: unes línies sobre l'hàbitat amb l'estil de paràgraf `habitat` i després la llista de les seves espècies amb `bodyStyle`. `versoDesign` pinta el dors del full (el camp i la pestanya en negatiu) només si aquella pàgina queda en blanc, i `breakAfter: { parity: 'odd' }` la deixa en blanc en enviar la primera espècie a la pàgina senar següent. `{numberRoman}` imprimeix el `number="I"` de la part en xifres romanes (amb `"1"` sortiria la mateixa I), mentre que les espècies es numeren de l'1 al 4 en aràbigues. El `\\` del títol parteix la línia només a la portadella; l'índex i les capçaleres el componen en una sola línia.
 
 ### 3 · Els accents del text canvien amb la part
 
 <Excerpt region="flow" />
 
-Des d'un `:::part` fins al següent, tot color del text igual al valor propi de `band` pren el valor de la part ([el contenidor `:::part`](/ca/docs/configuration-styles#el-contenidor-part)). Aquí són els trets en negreta, les vinyetes i les etiquetes de les làmines. El text corregut i les cursives es queden en el color `ink`. Les làmines són un tipus de recurs propi, amb l'etiqueta Làmina i una numeració que no es reinicia, així que van de l'1 al 4, com les espècies.
+Des d'un `:::part` fins al següent, tot color del text igual al valor propi de `band` pren el valor de la part ([el contenidor `:::part`](/ca/docs/configuration-styles#el-contenidor-part)). Aquí són els trets en negreta, els pics i les etiquetes de les làmines. El text corregut i les cursives es queden en el color `ink`. Les làmines són un tipus de recurs propi, amb l'etiqueta Làmina i una numeració que no es reinicia, així que van de l'1 al 4, com les espècies.
 
 ### 4 · L'obertura de cada espècie
 
@@ -40,19 +40,19 @@ L'obertura de cada espècie imprimeix tres atributs del seu títol: `status` a l
 
 <Excerpt region="contents" />
 
-`:::toc` dona una fila a cada `:::part` i hi compon `toc.parts.design` amb el número, el títol, la pàgina de la portadella i la paleta d'aquella part ([índex de continguts](/ca/docs/configuration-notes-references#índex-de-continguts)), així que la mateixa caixa surt bruna per als fangars i verda per als canyissars. Cada espècie sota la banda porta el seu número, una línia de punts i la seva pàgina, i a sota el nom científic que dona l'atribut `latin`.
+`:::toc` dona una fila a cada `:::part` i hi compon `toc.parts.design` amb el número, el títol, la pàgina de la portadella i la paleta d'aquella part ([índex general](/ca/docs/configuration-notes-references#índex-general)), així que la mateixa caixa surt bruna per als fangars i verda per als canyissars. Cada espècie sota la banda porta el seu número, una línia de punts i la seva pàgina, i a sota el nom científic que dona l'atribut `latin`.
 
 ### 6 · La part a les capçaleres i a la pestanya
 
 <Excerpt region="running-heads" />
 
-Amb `pages: 'body'`, les capçaleres només surten a les pàgines de text. Les portadelles són pàgines `part` i els seus dorsos pintats, pàgines `blank`; la coberta i l'índex s'obren amb un títol a tota l'amplada de la pàgina, que les converteix en pàgines d'obertura. La capçalera de la pàgina senar imprimeix `{partTitle}` en una sola línia, i la pestanya del tall imprimeix `{partNumber}` sobre una caixa el fons de la qual s'enllaça a `band`.
+Amb `pages: 'body'`, les capçaleres només surten a les pàgines de text. Les portadelles són pàgines `part` i els seus dorsos pintats, pàgines `blank`; la coberta i l'índex s'obren amb un títol a tota l'amplada de la pàgina, que les converteix en pàgines d'obertura. La capçalera de la pàgina senar imprimeix `{partTitle}` en una sola línia, i la pestanya del tall imprimeix `{partNumber}` sobre una caixa amb el fons enllaçat a `band`.
 
 ## Variants
 
 ### Afegeix un tercer hàbitat
 
-Una tanca més, davant de la primera espècie de l'aiguamoll, afegeix un tercer color amb la seva portadella, el seu dors pintat i la seva fila a l'índex, sense tocar la configuració. Treu també la nota de l'índex, perquè la tercera banda i les seves espècies necessiten aquell lloc.
+Una línia `:::part` més, davant de la primera espècie de l'aiguamoll, afegeix un tercer color amb la seva portadella, el seu dors pintat i la seva fila a l'índex, sense tocar la configuració. Treu també la nota de l'índex, perquè la tercera banda i les seves espècies necessiten aquell lloc.
 
 ```diff
 +:::part{number="III" title="Las \\ marismas" palette="band=#6b4a7a"}

@@ -10,7 +10,7 @@ pageNotes: { "4": "A página 4 é o verso da página divisória da parte I. O te
 
 ## O que você vai compor
 
-*Birds of the Estuary* é um guia de campo de bolso em duas partes, uma para cada hábitat. Os lodaçais saem em marrom de lama e os juncais em verde-junco, e cada cor é escrita uma vez só, no `:::part` que abre o seu hábitat. Cada página divisória é um campo de cor com sangria, com um numeral romano de 150 pt e a lista das espécies do hábitat em creme. O verso da folha é pintado na mesma cor, com a aba da parte em negativo no corte. Nas páginas de espécies, a aba lateral, o fólio, o antetítulo, o fio sob o nome científico, as marcas de campo em negrito, os marcadores e o rótulo da prancha assumem a cor da parte. O sumário abre sob uma faixa com uma vista do estuário e dá a cada parte uma tarja na sua cor, com o número da página divisória. A capa, a faixa e as quatro pranchas são pinturas geradas com modelos de difusão, carregadas como bitmaps JPEG; a paleta de uma parte não alcança as imagens, então as cores delas são as delas mesmas.
+*Birds of the Estuary* é um guia de campo de bolso em duas partes, uma para cada hábitat. Os lodaçais saem em marrom de lama e os juncais em verde-junco, e cada cor é escrita uma vez só, no `:::part` que abre o hábitat. Cada página divisória é um campo de cor com sangria, com um numeral romano de 150 pt e a lista das espécies do hábitat em creme. O verso da folha é pintado na mesma cor, com a aba da parte em negativo no corte. Nas páginas de espécies, a aba lateral, o fólio, o antetítulo, o fio sob o nome científico, as marcas de campo em negrito, os marcadores e o rótulo da prancha assumem a cor da parte. O sumário abre sob uma faixa com uma vista do estuário e dá a cada parte uma tarja na cor, com o número da página divisória. A capa, a faixa e as quatro pranchas são pinturas geradas com modelos de difusão, carregadas como bitmaps JPEG; a paleta de uma parte não alcança as imagens, por isso as cores delas são as delas mesmas.
 
 ## Preparo
 
@@ -18,7 +18,7 @@ pageNotes: { "4": "A página 4 é o verso da página divisória da parte I. O te
 
 <Excerpt region="palette" />
 
-Uma parte redefine entradas da paleta pelo id, então tudo o que deve mudar com o hábitat fica vinculado a uma só entrada, `band`. O valor próprio dela, um cinza-ardósia, só aparece fora das partes (no antetítulo da capa e no título da nota sob o sumário), e nenhuma outra cor da configuração tem o mesmo hex. `col()` dá a cada cor o seu `paletteId`, e é esse id que a redefinição de uma parte segue, tanto nos estilos de texto quanto nos elementos de design.
+Uma parte redefine entradas da paleta pelo id, de modo que tudo o que deve mudar com o hábitat fica vinculado a uma só entrada, `band`. O valor próprio dela, um cinza-ardósia, só aparece fora das partes (no antetítulo da capa e no título da nota sob o sumário), e nenhuma outra cor da configuração tem o mesmo hex. `col()` dá a cada cor o `paletteId`, e é esse id que a redefinição de uma parte segue, tanto nos estilos de texto quanto nos elementos de design.
 
 ### 2 · Uma página divisória, o verso e a lista
 
@@ -28,19 +28,19 @@ O código deste passo é [a resposta curta](#a-resposta-curta) logo acima. Um `:
 
 <Excerpt region="flow" />
 
-De um `:::part` até o seguinte, toda cor de texto igual ao valor próprio de `band` assume o valor da parte ([o contêiner `:::part`](/pt/docs/configuration-styles#o-contêiner-part)). Aqui são as marcas de campo em negrito, os marcadores e os rótulos das pranchas. O texto corrido e os itálicos ficam na cor da tinta. As pranchas são um tipo de recurso próprio, com o rótulo Plate e uma numeração que nunca reinicia, então contam de 1 a 4 junto com as espécies.
+De um `:::part` até o seguinte, toda cor de texto igual ao valor próprio de `band` assume o valor da parte ([o contêiner `:::part`](/pt/docs/configuration-styles#o-contêiner-part)). Aqui são as marcas de campo em negrito, os marcadores e os rótulos das pranchas. O texto corrido e os itálicos ficam na cor da tinta. As pranchas são um tipo de recurso próprio, com o rótulo Plate e uma numeração que nunca reinicia, por isso contam de 1 a 4 junto com as espécies.
 
 ### 4 · A abertura de cada espécie
 
 <Excerpt region="species" />
 
-A abertura de cada espécie imprime três atributos do título: `status` no antetítulo, depois do número, `size` à direita do antetítulo e `latin` sob o nome. O antetítulo e o fio sob o nome científico ficam vinculados a `band`, então um só design serve aos dois hábitats. O título não define quebra de página própria: cada espécie começa depois de um `:::pagebreak`, ou depois da quebra que vem após a parte, e assim sua página conta como página de texto e leva os cabeços. O tamanho sai sem as maiúsculas do rótulo, porque `cm` é um símbolo de unidade.
+A abertura de cada espécie imprime três atributos do título: `status` no antetítulo, depois do número, `size` à direita do antetítulo e `latin` sob o nome. O antetítulo e o fio sob o nome científico ficam vinculados a `band`, por isso um só design serve aos dois hábitats. O título não define quebra de página própria: cada espécie começa depois de um `:::pagebreak`, ou depois da quebra que vem após a parte, e assim sua página conta como página de texto e leva os cabeços. O tamanho sai sem as maiúsculas do rótulo, porque `cm` é um símbolo de unidade.
 
 ### 5 · Uma tarja por parte no sumário
 
 <Excerpt region="contents" />
 
-`:::toc` dá uma linha a cada `:::part` e diagrama nela `toc.parts.design` com o número, o título, a página divisória e a paleta dessa parte ([sumário](/pt/docs/configuration-notes-references#sumário)), então a mesma caixa sai marrom para os lodaçais e verde para os juncais. Cada espécie sob a tarja mostra o número, uma linha pontilhada e a página, com o nome científico do atributo `latin` na linha de baixo.
+`:::toc` dá uma linha a cada `:::part` e diagrama nela `toc.parts.design` com o número, o título, a página divisória e a paleta dessa parte ([sumário](/pt/docs/configuration-notes-references#sumário)), de modo que a mesma caixa sai marrom para os lodaçais e verde para os juncais. Cada espécie sob a tarja mostra o número, uma linha pontilhada e a página, com o nome científico do atributo `latin` na linha de baixo.
 
 ### 6 · A parte nos cabeços e na aba
 
@@ -72,5 +72,5 @@ Sem a quebra para a próxima página ímpar, a primeira espécie começa no vers
 ## Erros comuns
 
 - Uma parte recolore o texto comparando valores: qualquer cor de texto igual ao valor próprio de `band` muda com a parte, mesmo que esteja vinculada a outra entrada ou a nenhuma. Reserve esse hex só para `band`.
-- A aba imprime `{partNumber}`, que fica vazio fora de uma parte, então uma página de texto antes do primeiro `:::part` recebe uma aba cinza-ardósia vazia. Mantenha todas as páginas de texto dentro de alguma parte.
-- As imagens e as amostras de cor no texto mantêm as cores escritas nelas. As pranchas daqui tiram as cores do hábitat de `HABITAT`, no código, então uma cor nova num `:::part` precisa ser posta lá também.
+- A aba imprime `{partNumber}`, que fica vazio fora de uma parte, por isso uma página de texto antes do primeiro `:::part` recebe uma aba cinza-ardósia vazia. Mantenha todas as páginas de texto dentro de alguma parte.
+- As imagens e as amostras de cor no texto mantêm as cores escritas nelas. As pranchas daqui tiram as cores do hábitat de `HABITAT`, no código, por isso uma cor nova num `:::part` precisa ser posta lá também.

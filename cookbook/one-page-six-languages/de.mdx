@@ -1,6 +1,6 @@
 ---
 title: "Eine Seite, in sechs Sprachen gelettert"
-summary: "Eine Comicseite, Aufteilung und Bilder fest, je Sprache gelettert: Die Locale wählt die Schrift; Japanisch läuft senkrecht und liest wie Arabisch von rechts."
+summary: "Eine Comicseite mit fester Aufteilung, je Sprache gelettert: Die Sprache wählt die Schrift; Japanisch steht senkrecht und liest sich wie Arabisch von rechts."
 plain: "Dieselbe Comicseite auf Englisch, Spanisch, Französisch, Japanisch, Chinesisch und Arabisch: Nur die Wörter ändern sich, und Postext zeichnet jede Sprechblase um sie herum neu."
 description: "Comicseite, in Postext neu gelettert: eine Aufteilung, fünf Bilder, ein Skript pro Sprache, senkrechte japanische Blasen, Japanisch und Arabisch von rechts."
 question: "Wie lettere ich einen Comic in einer anderen Sprache neu?"
@@ -15,7 +15,7 @@ Eine Seite eines Comics, *The Lighthouse Radio*: Maya kommt beim Leuchtturm ihre
 
 ### 1 · Eine Konfiguration für jede Sprache
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Nichts in der Konfiguration nennt eine Sprache außer `locale`. Ohne `fontFamily` nimmt das Lettering die Comicschrift der Dokumentsprache (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC oder Playpen Sans Arabic, und das Geräuschwort die passende Displayschrift. `writingMode: 'auto'` macht aus den japanischen Sprechblasen senkrechte Spalten; `readingDirection: 'auto'` liest die japanische und die arabische Seite von rechts, wie ihre Sprachen es tun, sodass dieselbe Aufteilung `split="30 / 35 [* | * | *] / *"` das Panel mit dem Funkgerät rechts und die Katze links setzt. Die Sprecher-IDs (`maya`, `tomas`) sind in jedem Skript dieselben, und die Anker der Bilder richten sich nach ihnen.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Außer `locale` gibt nichts in der Konfiguration eine Sprache an. Ohne `fontFamily` nimmt das Lettering die Comicschrift der Dokumentsprache (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC oder Playpen Sans Arabic, und das Geräuschwort die passende Displayschrift. `writingMode: 'auto'` macht aus den japanischen Sprechblasen senkrechte Spalten; `readingDirection: 'auto'` lässt die japanische und die arabische Seite von rechts lesen, wie ihre Sprachen es tun, sodass dieselbe Aufteilung `split="30 / 35 [* | * | *] / *"` das Panel mit dem Funkgerät rechts und die Katze links setzt. Die Sprecher-IDs (`maya`, `tomas`) sind in jedem Skript dieselben, und die Anker der Bilder richten sich nach ihnen.
 
 Der Schriftgrad gilt für das ganze Buch. Das englische Skript hat 216 Buchstaben, das spanische 220, das französische 224, das chinesische 74 Schriftzeichen; die längeren Skripte bekommen größere Sprechblasen, nie kleinere Schrift.
 
@@ -44,5 +44,5 @@ Die Sicherheitsbereiche sind schmaler als die Zellen dieser Aufteilung: Die mitt
 
 ## Häufige Fehler
 
-- Eine Skriptzeile nennt einen Sprecher über seine ID, nicht über seinen Namen: Schreiben Sie in jeder Sprache `maya:`. Den Namen, den ein Screenreader ansagt, liefert `cast[].name`.
+- Eine Skriptzeile gibt einen Sprecher über seine ID an, nicht über seinen Namen: Schreiben Sie in jeder Sprache `maya:`. Den Namen, den ein Screenreader ansagt, liefert `cast[].name`.
 - Die französische Seite teilt sich die Bilder der Ausgabe, deshalb steht der Alternativtext ihrer Panels in der Sprache der Ausgabe; geben Sie in `content.fr.en.md` `::panel{alt="…"}` für französischen Alternativtext an.

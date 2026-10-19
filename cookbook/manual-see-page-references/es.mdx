@@ -10,7 +10,7 @@ pageNotes: { "1": "Página 1: una banda azul marino en la mitad superior con MAN
 
 ## Lo que vas a componer
 
-El manual del usuario de una bicicleta de cicloturismo ficticia, la Ardena T3: cuatro páginas A5 en Archivo, con el nombre del modelo en una banda azul marino sobre la primera. Un manual no se lee en orden, así que cada instrucción que depende de otra dice dónde está: *consulta el apartado 3.2, en la página 3*. Quien lo escribe nombra un título, un párrafo o una frase de un paso con un identificador y escribe `:ref` allí donde el texto remite a él; Postext imprime el número, el título o la página y lo convierte en enlace. El índice de la portada se escribe igual, así que mover un apartado, o traducir el manual y dejar que se recomponga, nunca deja un número viejo.
+El manual del usuario de una bicicleta de cicloturismo ficticia, la Ardena T3: cuatro páginas A5 en Archivo, con el nombre del modelo en una banda azul marino sobre la primera. Un manual no se lee en orden, así que cada instrucción que depende de otra dice dónde está: *consulta el apartado 3.2, en la página 3*. Quien lo escribe da un identificador a un encabezado, un párrafo o una frase de un paso y escribe `:ref` allí donde el texto remite a él; Postext imprime el número, el título o la página y lo convierte en enlace. El índice de la portada se escribe igual, así que mover un apartado, o traducir el manual y dejar que se recomponga, nunca deja un número viejo.
 
 ## Elaboración
 
@@ -30,13 +30,13 @@ El número de página solo se conoce cuando el manual ya está compuesto. El mot
 
 <Excerpt region="numbers" />
 
-El manual tiene un solo título de nivel 1, el nombre del modelo en la portada, así que sus apartados se numeran desde el nivel 2: `{2}` da del 1 al 5 y `{2}.{3}` da 1.1, 1.2.
+El manual tiene un solo encabezado de nivel 1, el nombre del modelo en la portada, así que sus apartados se numeran desde el nivel 2: `{2}` da del 1 al 5 y `{2}.{3}` da 1.1, 1.2.
 
 ### 5 · La portada es la apertura de ese título
 
 <Excerpt region="cover" />
 
-La banda mide 104 mm, media página, y la cierra una franja naranja. El antetítulo, el subtítulo y la línea de la edición son atributos del título, así que la edición española los cambia en su propio texto.
+La banda mide 104 mm, media página, y la cierra una franja naranja. El antetítulo, el subtítulo y la línea de la edición son atributos del encabezado, así que la edición española los cambia en su propio texto.
 
 <Excerpt region="palette" />
 
@@ -63,4 +63,4 @@ Cuando la página está llena de remisiones, déjalas en el color del texto y en
 ## Errores frecuentes
 
 - Una remisión a un `:anchor` sin estilo imprime la página, porque un ancla invisible no tiene palabras propias. Usa `[palabras]{#id}` cuando la remisión deba citar el texto.
-- Un identificador debe ser único en el libro. Las remisiones llegan al primer `{#sec-brakes}`, y el panel de comprobaciones del Sandbox avisa del segundo como `duplicateAnchor`.
+- Un identificador debe ser único en el libro. Las remisiones llegan al primer `{#sec-brakes}`, y el panel Revisión del Sandbox avisa del segundo como `duplicateAnchor`.

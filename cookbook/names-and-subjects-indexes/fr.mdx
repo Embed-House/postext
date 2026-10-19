@@ -10,7 +10,7 @@ pageNotes: { "6": "L’index des noms : noms de famille inversés sous des lett
 
 ## Ce que vous allez composer
 
-Le chapitre quatre de *Letters of Metal*, une monographie savante sur les caractères d’imprimerie composée en 155 × 235 mm : une colonne de Crimson Pro, de l’italique Bodoni pour les titres, une couleur d’accent rouge brique. L’essai va de la textura de Gutenberg aux modernes de Bodoni, en passant par Jenson, Alde et Griffo, Garamond et Plantin, Caslon et Baskerville, les points de Fournier et les caractères espagnols que Pradell et Gil ont gravés et qu’Ibarra a imprimés. Il se termine comme ces livres se terminent, par deux index sur une double page : les imprimeurs, graveurs de poinçons et mécènes au verso, les caractères, outils et livres au recto. Les deux viennent du même texte balisé, et chaque numéro de page qu’ils portent est la page où la marque est tombée.
+Le chapitre quatre de *Letters of Metal*, une monographie savante sur les caractères d’imprimerie composée en 155 × 235 mm : une colonne de Crimson Pro, de l’italique Bodoni pour les titres, une couleur d’accent rouge brique. L’essai va de la textura de Gutenberg aux modernes de Bodoni, en passant par Jenson, Alde et Griffo, Garamond et Plantin, Caslon et Baskerville, les points de Fournier et les caractères espagnols que Pradell et Gil ont gravés et qu’Ibarra a imprimés. Il se termine comme ces livres se terminent, par deux index sur une double page : les imprimeurs, graveurs de poinçons et mécènes au verso, les caractères, outils et livres au recto. Les deux viennent du même texte balisé, et chaque numéro de page qu’ils donnent est la page où la marque est tombée.
 
 ## Préparation
 
@@ -20,13 +20,13 @@ Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut ; l
 
 ### 2 · Inverser les noms, et trier selon les lettres où le lecteur cherchera
 
-Les noms sont rangés nom de famille en tête : `term="Garamond, Claude"`, `term="Dall’Aglio, Margherita"`. La virgule fait partie du terme : l’interclassement range donc *Didot, Firmin* avant *Didot, François-Ambroise*, comme le ferait un indexeur. Quand la forme imprimée se rangerait sous la mauvaise lettre, `sort` donne la clé : l’édition anglaise marque `term="42-line Bible" sort="Forty-two-line Bible"`, si bien que la Bible se place sous F au lieu d’ouvrir un groupe 0–9. Les sous-entrées (`term="Foundries!Plantin-Moretus"`), les pages principales en gras (`main`), `range="start"` et `range="end"` autour de la section sur Bodoni, et les renvois (`see="Italic"`, `seealso="Matrices"`) font le reste ; une cible `see` à plusieurs niveaux s’imprime avec deux-points, comme dans *Humanist type. See Roman type: Venetian*.
+Les noms sont rangés nom de famille en tête : `term="Garamond, Claude"`, `term="Dall’Aglio, Margherita"`. La virgule fait partie du terme : l’interclassement range donc *Didot, Firmin* avant *Didot, François-Ambroise*, comme le ferait un indexeur. Quand la forme imprimée se rangerait sous la mauvaise lettre, `sort` donne la clé : l’édition anglaise marque `term="42-line Bible" sort="Forty-two-line Bible"` : la Bible se place donc sous F au lieu d’ouvrir un groupe 0–9. Les sous-entrées (`term="Foundries!Plantin-Moretus"`), les pages principales en gras (`main`), `range="start"` et `range="end"` autour de la section sur Bodoni, et les renvois (`see="Italic"`, `seealso="Matrices"`) font le reste ; une cible `see` à plusieurs niveaux s’imprime avec deux-points, comme dans *Humanist type. See Roman type: Venetian*.
 
 ### 3 · Construire une fois ; le document fixe ses propres numéros
 
 <Excerpt region="build" />
 
-L’index imprime des numéros de page qui n’existent qu’après la mise en page, et l’imprimer occupe des pages à lui. `buildDocument()` s’en charge : il met le chapitre en page, lit la page de chaque marque, imprime les deux index et recommence la mise en page chaque fois qu’un numéro a changé. Ici les index suivent le texte : une seconde passe confirme donc la première ; un index placé avant le texte décalerait toutes les pages qui le suivent, et les passes continueraient jusqu’à ce qu’elles concordent. Ajoutez un paragraphe à la section sur Bodoni, et l’index des noms donne de lui-même sa nouvelle page à Whittingham.
+L’index imprime des numéros de page qui n’existent qu’après la mise en page, et l’imprimer occupe des pages à lui. `buildDocument()` s’en charge : il met le chapitre en page, relève la page de chaque marque, imprime les deux index et recommence la mise en page chaque fois qu’un numéro a changé. Ici les index suivent le texte : une seconde passe confirme donc la première ; un index placé avant le texte décalerait toutes les pages qui le suivent, et les passes continueraient jusqu’à ce qu’elles concordent. Ajoutez un paragraphe à la section sur Bodoni, et l’index des noms donne de lui-même sa nouvelle page à Whittingham.
 
 ### 4 · Donner à chaque index une ouverture sur deux colonnes
 
@@ -38,7 +38,7 @@ Le style de titre de la réponse courte fait trois choses pour `# Index of Names
 
 <Excerpt region="running-heads" />
 
-Le titre courant du recto imprime `{chapterTitle}`, et un titre d’index est un titre de niveau 1 comme n’importe quel chapitre : les pages qui le suivent portent donc *Index of Subjects* en tête. `pages: 'body'` tient les titres courants à l’écart des deux ouvertures d’index, qui portent à la place un folio en pied.
+Le titre courant du recto imprime `{chapterTitle}`, et un titre d’index est un titre de niveau 1 comme n’importe quel chapitre : les pages qui le suivent affichent donc *Index of Subjects* en tête. `pages: 'body'` tient les titres courants à l’écart des deux ouvertures d’index, qui reçoivent à la place un folio en pied.
 
 ## Variantes
 

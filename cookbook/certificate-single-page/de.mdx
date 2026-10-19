@@ -1,6 +1,6 @@
 ---
 title: "Urkunde mit Guillochenrahmen"
-summary: "Kursurkunden aus einem Überschriftenformat: ein Guillochenrahmen in der Kopfzeile, Siegel und Unterschriftslinien in der Fußzeile, der Name im Auftakt."
+summary: "Kursurkunden aus einem Überschriftenstil: ein Guillochenrahmen in der Kopfzeile, Siegel und Unterschriftslinien in der Fußzeile, der Name im Auftakt."
 plain: "Teilnahmeurkunden für eine Druckwerkstatt, eine Seite je Teilnehmer, mit gemustertem Rahmen und Siegel. Wer den Namen eines Teilnehmers einmal schreibt, bekommt eine ganze Urkunde."
 description: "Kursurkunden in Postext: Guillochenrahmen und Siegel, im Code gezeichnet, der Name in Schreibschrift aus jeder Überschrift und der ganze Kurs in einem PDF."
 question: "Wie setze ich einen Guillochenrahmen, ein Siegel und Unterschriftslinien auf jede Seite einer Urkunde?"
@@ -10,43 +10,43 @@ pageNotes: { "1": "Eine Urkunde im Format US Letter auf cremefarbenem Papier, ge
 
 ## Was Sie setzen
 
-Abschlussurkunden für den Quoin Room, eine erfundene Buchdruckwerkstatt in Providence: eine Seite im Format US Letter je Teilnehmer. Die spanische Ausgabe setzt sie als A4-Diplome für La Cuña, eine Werkstatt in Saragossa. Ein petrolfarbenes Band voller cremefarbener Guillochen-Linsen rahmt das Blatt, mit einer cremefarbenen Rosette in jeder Ecke; beides ist im Code aus Sinuskurven und Hypotrochoiden gezeichnet. Unter einem Titel in gesperrten Versalien steht der Name des Teilnehmers in der Pinyon Script zu 48 pt über einer goldenen Linie, und die Würdigung ist zentriert in der Rosarivo gesetzt. Ein rotes Siegel mit zwei Bandenden sitzt zwischen den Unterschriftslinien, darunter ein einzeiliges Impressum. Weil ein einziges Überschriftenformat die ganze Seite zeichnet, ist jeder Teilnehmer eine Markdown-Überschrift, und das PDF enthält den ganzen Kurs mit einem Lesezeichen je Name.
+Abschlussurkunden für den Quoin Room, eine erfundene Buchdruckwerkstatt in Providence: eine Seite im Format US Letter je Teilnehmer. Die spanische Ausgabe setzt sie als A4-Diplome für La Cuña, eine Werkstatt in Saragossa. Ein petrolfarbenes Band voller cremefarbener Guillochen-Linsen rahmt das Blatt, mit einer cremefarbenen Rosette in jeder Ecke; beides ist im Code aus Sinuskurven und Hypotrochoiden gezeichnet. Unter einem Titel in gesperrten Versalien steht der Name des Teilnehmers in der Pinyon Script zu 48 pt über einer goldenen Linie, und die Würdigung ist zentriert in der Rosarivo gesetzt. Ein rotes Siegel mit zwei Bandenden sitzt zwischen den Unterschriftslinien, darunter ein einzeiliges Impressum. Weil ein einziger Überschriftenstil die ganze Seite zeichnet, ist jeder Teilnehmer eine Markdown-Überschrift, und das PDF enthält den ganzen Kurs mit einem Lesezeichen je Name.
 
 ## Zubereitung
 
 ### 1 · Ein Überschriftenformat die Seite zeichnen lassen
 
-Das Format selbst steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Überschriftenformat bestimmt die Seiten seines Abschnitts ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)): Sein `header` und sein `footer` ersetzen die des Dokuments, die hier leer sind, seine `margins` legen den Textbereich fest, und sein `advancedDesign` zeichnet den Auftakt. Die Höhe eines Auftakts wird auf ganze Zeilen des Grundrasters von 17 pt aufgerundet. Eine `minHeight` von 106 mm wird zu 18 Zeilen, die Würdigung beginnt also 140 mm unter der Oberkante; auf A4 macht `y()` daraus 112,7 mm oder 19 Zeilen, und die Würdigung beginnt bei 146 mm. Der Titelblock allein ließe die Würdigung bei 128 mm beginnen (134 mm auf A4). Ohne `marginBottom: 0` würde der Standardabstand von 0,5 em unter einer Überschrift dieselben 106 mm auf 19 Zeilen bringen.
+Der Stil selbst steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Überschriftenstil bestimmt die Seiten seines Abschnitts ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)): Sein `header` und sein `footer` ersetzen die des Dokuments, die hier leer sind, seine `margins` legen den Satzspiegel fest, und sein `advancedDesign` zeichnet den Auftakt. Die Höhe eines Auftakts wird auf ganze Zeilen des Grundrasters von 17 pt aufgerundet. Eine `minHeight` von 106 mm wird zu 18 Zeilen, die Würdigung beginnt also 140 mm unter der Oberkante; auf A4 macht `y()` daraus 112,7 mm oder 19 Zeilen, und die Würdigung beginnt bei 146 mm. Der Titelblock allein ließe die Würdigung bei 128 mm beginnen (134 mm auf A4). Ohne `marginBottom: 0` würde der Standardabstand von 0,5 em unter einer Überschrift dieselben 106 mm auf 19 Zeilen bringen.
 
 ### 2 · Den Rahmen in der Kopfzeile an der Seite aufhängen
 
 <Excerpt region="frame" />
 
-Ein Bildelement zeichnet eine Ressource in der Größe ihrer Platzierung ([Bildelemente](/de/docs/configuration-headers-footers#bildelemente)): an der linken oberen Ecke der Seite verankert und mit `'fill'` auf beiden Seiten, bedeckt die Guilloche das Endformat, und das SVG, mit den Proportionen der Seite angelegt, füllt es, ohne sich zu verzerren. Die Kopfzeile malt es über `page.backgroundColor` und reserviert keinen Platz, sodass allein die Ränder den Text mindestens 32 mm vom Beschnitt fernhalten, innerhalb der inneren Linie bei 26 mm. Ein Wasserzeichen in der Kopfzeile würde über den Wörtern drucken, weil die Kopfzeile nach dem Text gemalt wird. In einer Kopfzeile liest `{attr.serial}` das Attribut der Überschrift, zu deren Abschnitt die Seite gehört, sodass jede Urkunde ihre eigene Nummer druckt.
+Ein Bildelement zeichnet eine Ressource in der Größe ihrer Platzierung ([Bildelemente](/de/docs/configuration-headers-footers#bildelemente)): an der linken oberen Ecke der Seite verankert und mit `'fill'` auf beiden Seiten, bedeckt die Guilloche das Endformat, und das SVG, mit den Proportionen der Seite angelegt, füllt es, ohne sich zu verzerren. Die Kopfzeile malt es über `page.backgroundColor` und reserviert keinen Platz, sodass allein die Ränder den Text mindestens 32 mm von der Schnittkante fernhalten, innerhalb der inneren Linie bei 26 mm. Ein Wasserzeichen in der Kopfzeile würde über den Wörtern stehen, weil die Kopfzeile nach dem Text gemalt wird. In einer Kopfzeile übernimmt `{attr.serial}` das Attribut der Überschrift, zu deren Abschnitt die Seite gehört, sodass jede Urkunde ihre eigene Nummer erhält.
 
 ### 3 · Nur den Titelblock im Auftakt behalten
 
 <Excerpt region="title" />
 
-Jede Zeile ist an der Kante `'top'` der Seite verankert, was sie zentriert, mit einem `y`, das vom Beschnitt aus gemessen wird, sodass der Block unabhängig von den Rändern seinen Platz behält; `y()` dehnt diese Positionen von Letter auf A4. Der Name ist der eigene Text der Überschrift, gelesen über `{titleText}`, sodass PDF-Lesezeichen und Tags ihn tragen. Ein langer Name nimmt eine zweite Zeile, da eine Überschriftengestaltung ihren Text umbricht (`overflow: 'wrap'`). Die gesperrten Zeilen brauchen keine Korrektur: Die Sperrung nach dem letzten Buchstaben bleibt aus der Messung heraus, sodass die Buchstaben selbst zentriert stehen.
+Jede Zeile ist an der Kante `'top'` der Seite verankert, was sie zentriert, mit einem `y`, das von der Schnittkante aus gemessen wird, sodass der Block unabhängig von den Rändern seinen Platz behält; `y()` dehnt diese Positionen von Letter auf A4. Der Name ist der eigene Text der Überschrift, übernommen über `{titleText}`, sodass PDF-Lesezeichen und Tags ihn enthalten. Ein langer Name nimmt eine zweite Zeile, da eine Überschriftengestaltung ihren Text umbricht (`overflow: 'wrap'`). Die gesperrten Zeilen brauchen keine Korrektur: Die Sperrung nach dem letzten Buchstaben bleibt aus der Messung heraus, sodass die Buchstaben selbst zentriert stehen.
 
 ### 4 · Siegel und Unterschriften an einer Kante aufhängen
 
 <Excerpt region="signatures" />
 
-Alles in der Fußzeile wird von `SIGN` aus gemessen, der Oberkante des Siegels, und der untere Rand des Formats beendet den Textbereich an derselben Kante, sodass eine für die Seite zu lange Würdigung auf die nächste Seite weiterläuft, statt unter das Siegel zu laufen. In den Auftakt verschoben, zählten die Linien und die Namen zu seiner Höhe ([Span und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)); da sie unter den Textbereich reichen, beanspruchte der Auftakt die ganze Seite und schickte die Würdigung auf die nächste. `LINE` nimmt die Breite zwischen den Seitenrändern, zieht die 34 mm der Siegelscheibe ab, halbiert den Rest und zieht 3 mm ab, sodass jede Linie in beiden Formaten 3 mm vor dem Siegel endet (56 mm lang auf Letter, 53 mm auf A4). Jeder Name und jede Funktion ist ein Textelement so breit wie seine Linie, was ihn unter der Linie zentriert.
+Alles in der Fußzeile wird von `SIGN` aus gemessen, der Oberkante des Siegels, und der untere Rand des Stils beendet den Satzspiegel an derselben Kante, sodass eine für die Seite zu lange Würdigung auf die nächste Seite weiterläuft, statt unter das Siegel zu laufen. Lägen die Linien und die Namen im Auftakt, zählten sie zu seiner Höhe ([Span und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)); da sie unter den Satzspiegel reichen, beanspruchte der Auftakt die ganze Seite und schöbe die Würdigung auf die nächste. `LINE` nimmt die Breite zwischen den Seitenrändern, zieht die 34 mm der Siegelscheibe ab, halbiert den Rest und zieht 3 mm ab, sodass jede Linie in beiden Formaten 3 mm vor dem Siegel endet (56 mm lang auf Letter, 53 mm auf A4). Jeder Name und jede Funktion ist ein Textelement so breit wie seine Linie, was ihn unter der Linie zentriert.
 
 ### 5 · Die Teilnehmerliste in Überschriften einfügen
 
 <Excerpt region="merge" />
 
-Jede Zeile wird zu einer Überschrift `#`, die das Format nennt und die laufende Nummer als Attribut trägt ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)), gefolgt vom Wortlaut aus `content.en.md`, sodass drei Zeilen drei Seiten ergeben. Das `breakBefore` der Ebene 1 mit der Parität `'any'` beginnt jede Überschrift auf einer neuen Seite ohne Vakatseite zwischen den Urkunden; das Format erbt es.
+Jede Zeile wird zu einer Überschrift `#`, die den Stil angibt und die laufende Nummer als Attribut enthält ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)), gefolgt vom Wortlaut aus `content.en.md`, sodass drei Zeilen drei Seiten ergeben. Das `breakBefore` der Ebene 1 mit der Parität `'any'` beginnt jede Überschrift auf einer neuen Seite ohne Vakatseite zwischen den Urkunden; der Stil erbt es.
 
 ### 6 · Ein PDF für den ganzen Kurs bauen
 
 <Excerpt region="pdf" />
 
-Der Kurs ist ein einziges Dokument, deshalb schreibt `renderToPdf` eine dreiseitige Datei mit einem Lesezeichen je Überschrift, jedes nach einem Teilnehmer benannt. `renderToPdf` nimmt auch ein Array von Dokumenten an, etwa die Kapitel eines Buches, aber ein Dokument je Teilnehmer bedeutet einen Aufruf von `buildDocument` für jeden. Als Überschriften wird der ganze Kurs in einem Build gesetzt, und der Betrachter zeigt alle drei Urkunden aus diesem Build. Das PDF bettet die vier Schriften ein, die die Seiten drucken und die der Schriften-Provider des Kits von Fontsource holt ([Warum ein Schriften-Provider?](/de/docs/configuration-pdf-output#warum-ein-font-provider)).
+Der Kurs ist ein einziges Dokument, deshalb schreibt `renderToPdf` eine dreiseitige Datei mit einem Lesezeichen je Überschrift, jedes nach einem Teilnehmer benannt. `renderToPdf` nimmt auch ein Array von Dokumenten an, etwa die Kapitel eines Buches, aber ein Dokument je Teilnehmer bedeutet einen Aufruf von `buildDocument` für jeden. Als Überschriften wird der ganze Kurs in einem Build gesetzt, und der Betrachter zeigt alle drei Urkunden aus diesem Build. Das PDF bettet die vier Schriften ein, in denen die Seiten gesetzt sind und die der Schriften-Provider des Kits von Fontsource holt ([Warum ein Schriften-Provider?](/de/docs/configuration-pdf-output#warum-ein-font-provider)).
 
 ## Varianten
 
@@ -70,7 +70,7 @@ Eine Schaltfläche je Teilnehmer baut dessen Urkunde als eigenes Dokument, mit `
 
 ### Rahmen und Titel in Marineblau drucken
 
-Die SVG-Grafik und die Konfiguration lesen dasselbe Objekt `palette`, sodass die Änderung eines Eintrags das Band, die Rosettenmuster und die Titelzeilen umfärbt.
+Die SVG-Grafik und die Konfiguration verwenden dasselbe Objekt `palette`, sodass die Änderung eines Eintrags das Band, die Rosettenmuster und die Titelzeilen umfärbt.
 
 ```diff
 -  teal: '#1f5f5b', // the frame, the title lines

@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Composed-page books',
   sidebarTitle: 'Composed-page books',
-  description: 'A walk through the Sandbox with a school textbook made of composed pages: build a page template, fill it from the Markdown, label a map, translate the page, fix what does not fit and select on the page and in the text',
+  description: 'A walk through the Sandbox with a school textbook made of composed pages: build a page template, fill it from the Markdown, label a map, translate the page, fix text that does not fit, and select on the page and in the text',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
-  plainSummary: "This page teaches, step by step, how to make a page of a school textbook in the Sandbox, the page with a title band, a text and coloured boxes. You start from a finished example book and add one more page to it. First you draw the page as a template, then you pour the text into it from the Markdown, then you name the places on a map and translate the page into another language. At the end you see what to do when a text is too long for its box and how to jump between the page and its text.",
+  plainSummary: "This page teaches, step by step, how to make a school textbook page in the Sandbox: a page with a title band, some text and coloured boxes. You start from a finished example book and add one more page to it. First you draw the page as a template, then you pour the text into it from the Markdown, then you name the places on a map and translate the page into another language. At the end you see what to do when a text is too long for its box and how to jump between the page and its text.",
 };
 
 # Composed-page books
@@ -35,17 +35,17 @@ Two things to know before you touch anything:
 The new page will be a review page: a title band, a short text under it and two boxes, one to recall what was learned and one to try. It needs a template with four frames.
 
 1. Switch to **Design** and open the **Design** panel on the left. Choose **Page & columns**, then **Page templates**. The list shows each template of the book with a drawing of its frames.
-2. Press **New**. A template called *New template* opens. Give it the **ID** `review` (what the Markdown will name) and the **Name** `Review page` (what this panel shows). The ID takes lowercase letters, digits and dashes.
-3. The template starts with one frame, `text`, that **Takes the page's loose text**. Make it the title band: **Name (slot)**: `title`; **Box style**: `portada`, the blue band the book already uses for its titles; switch **Takes the page's loose text** off; **Takes the first heading**: *Level 1*, so that this frame receives the page's first `#` heading.
+2. Press **New**. A template called *New template* opens. Give it the **ID** `review` (the name the Markdown will use) and the **Name** `Review page` (what this panel shows). The ID takes lowercase letters, digits and dashes.
+3. The template starts with one frame, `text`, that **Takes the page's loose text**. Make it the title band: **Name (slot)**: `title`; **Box style**: `portada`, the blue band the book already uses for its titles; switch **Takes the page's loose text** off; **Takes**: *Level 1*, so that this frame receives the page's first `#` heading.
 4. Press **Add frame**. The new frame opens below the list of frames. **Name (slot)**: `text`, and switch **Takes the page's loose text** on: whatever the page writes outside a frame goes here.
 5. Add a frame. **Name (slot)**: `remember`. **Box style**: `dato-campo`, a green box with a tab. **Smallest height**: 30 mm, so that the box keeps a good size when its text is short.
 6. Add a last frame. **Name (slot)**: `try`. **Box style**: `actividad-sol`. **Smallest height**: 30 mm.
 7. In `text`, `remember` and `try` set **Width** to *Up to the edge* and **Height** to *Its content*: they then fill the width of the page and are as tall as their text.
 8. Under **Groups** press **Add group**. Name it `column`, leave it *Stacked* and set **Space between frames** to 6 mm. Under **Members, in page order** tick the four frames. Tick them in the order they go, the title first: the list numbers the members and the arrows move one up or down. A group lays its frames one under the other and moves the ones below when a frame grows, so a longer text in the first box pushes the second box down instead of running over it.
 
-<Screenshot src="/docs-shots/en/template.webp" alt="The Design panel on Page templates with the Review page template: its four frames and its group, and the same frames drawn with dashed outlines on the page." caption="The template: four frames and one group. On the page, the dashed boxes are the frames and the green labels say how each one is sized." />
+<Screenshot src="/docs-shots/en/template.webp" alt="The Design panel open at Page templates, showing the Review page template: its four frames and its group, and the same frames drawn with dashed outlines on the page." caption="The template: four frames and one group. On the page, the dashed boxes are the frames and the green labels say how each one is sized." />
 
-The template has no words in it. Nothing you set says what the title is or what the boxes contain; the box style gives a frame its look, the group its order. There are other ways to the same template. In Design mode you can draw a frame on an empty spot of a composed page with the mouse and move or resize the frames you have (see [Sandbox: composed pages](/en/docs/sandbox-composed-pages#page-templates)); **Duplicate** copies a template to change it; **Save layout as template** turns a composed page you like into a new template.
+The template has no words in it. Nothing you set says what the title is or what the boxes contain; the box style gives a frame its look, and the group gives the frames their order. There are other ways to the same template. In Design mode you can draw a frame on an empty spot of a composed page with the mouse and move or resize the frames you have (see [Sandbox: composed pages](/en/docs/sandbox-composed-pages#page-templates)); **Duplicate** copies a template to change it; **Save layout as template** turns a composed page you like into a new template.
 
 ## 3. Fill the page from the Markdown
 
@@ -69,7 +69,7 @@ Draw a river from its spring to the sea. Write the names of the three courses on
 ::::
 ```
 
-The heading goes to the frame that takes level 1, the paragraph that follows it to the frame that takes the loose text, and each `:::frame` to the frame of its `slot`. The `label` is the words on the tab of a box. The page is on the canvas as page 10, after the nine of the unit: a composed page always starts a new page.
+The heading goes to the frame that takes level 1, the paragraph that follows it to the frame that takes the loose text, and each `:::frame` to the frame of its `slot`. The `label` is the text on the tab of a box. The page is on the canvas as page 10, after the nine of the unit: a composed page always starts a new page.
 
 <Screenshot src="/docs-shots/en/fill.webp" alt="The Text panel with the Markdown of the new page, and the finished page beside it with a blue title, a paragraph and two boxes with tabs." caption="The page in the Markdown and on the canvas." />
 
@@ -94,7 +94,7 @@ Pages 6 and 7 hold a painted map across the spread. Its words are not part of th
 3. A dialog shows the map with the anchors it has. The name `bridge` is picked under *Labels without an anchor*. Click the picture where the bridge stands.
 4. Set the **Label style** of the new anchor to `pueblo`, the style of the towns, and press **Save**.
 
-<Screenshot src="/docs-shots/en/anchor.webp" alt="The Anchors dialog: the map with its points, the new anchor named bridge selected and its label style field." caption="The new anchor is a click on the picture; its label style makes it look like the names of the towns." />
+<Screenshot src="/docs-shots/en/anchor.webp" alt="The Anchors dialog: the map with its points, the new anchor named bridge selected, and its Label style field." caption="A click on the picture adds the anchor; its label style makes it look like the names of the towns." />
 
 <Screenshot src="/docs-shots/en/map.webp" alt="The map across pages 6 and 7 with the new label Stone bridge on the bridge, beside the labels of the towns." caption="The label is set at the point you clicked, in the book's own fonts." />
 
@@ -102,7 +102,7 @@ The word *Stone bridge* is Markdown; the point is part of the picture. When you 
 
 ## 5. Translate the page
 
-A translation is the same template with other words. The Sandbox holds it as another edition of the same book: the bar above the canvas switches between the editions and the Checks panel reads all of them (see [Editions of a book](/en/docs/sandbox-previews#editions-of-a-book)). To make one:
+A translation is the same template with other words. The Sandbox holds it as another edition of the same book: a toolbar at the left edge of the canvas switches between the editions, and the Checks panel reads all of them (see [Editions of a book](/en/docs/sandbox-previews#editions-of-a-book)). That toolbar shows when the pointer reaches the edge, and its pin button keeps it open. To make one:
 
 1. Open **Books**, press **⋯** on your book and choose **Add a language…**. Pick the language and press **Add and open**. The Sandbox copies the edition on screen into a new one, sets its **Document language** to the language you picked and opens it. Hyphenation, quotation marks and the words the engine writes itself (such as *Continued* at the cut of a box) follow that language. The text is still the original's.
 2. In the **Text** panel translate the words and leave the rest.
@@ -117,7 +117,7 @@ A translation is the same template with other words. The Sandbox holds it as ano
   <tbody>
     <tr>
       <td>The text of headings, paragraphs and lists</td>
-      <td>The four colons, the word <code>page</code> and the <code>template="…"</code> of the fence</td>
+      <td>The four colons, the word <code>page</code> and the <code>template="…"</code> of the opening line</td>
     </tr>
     <tr>
       <td>The <code>label="…"</code> of a frame</td>
@@ -160,16 +160,16 @@ The page now shows the frame outlined in red with a band under its foot that say
 - *continue it on the next page* sends what does not fit to a page added after this one. It suits a longer text.
 - *cut about 495 characters* changes nothing. It selects the text of the frame and tells you how much to cut.
 
-A button that changes the template (every page set with it) asks first, naming the setting. Press **Change it**. The page is laid out again, the box ends with the word of the cut (*Continúa*) and the rest runs on at the head of an added page. **Cmd/Ctrl+Z** takes the change back. **Reflow**, in the bar above the canvas, opens *What moved and why*: the frames whose size or place the layout changed to fit their content, with the reason in words.
+A button that changes the template (and so every page set with it) asks first and names the setting. Press **Change it**. The page is laid out again, the box ends with the word that marks the cut (*Continúa*) and the rest runs on at the head of an added page. **Cmd/Ctrl+Z** takes the change back. **Reflow**, in the same toolbar at the edge of the canvas, opens *What moved and why*: the frames whose size or place the layout changed to fit their content, with the reason in words.
 
-<Screenshot src="/docs-shots/en/checks.webp" alt="The Checks panel with the entry Text does not fit its frame and three buttons with ways out, and the page with its first box outlined in red and a band saying 26 mm short." caption="A frame that does not fit, and the fixes the layout worked out for it." />
+<Screenshot src="/docs-shots/en/checks.webp" alt="The Checks panel with the entry Text does not fit its frame and three buttons offering fixes, and the page with its first box outlined in red and a band saying 26 mm short." caption="A frame that does not fit, and the fixes the layout worked out for it." />
 
 ## 7. Select on the page and in the text
 
 The page and its Markdown follow each other.
 
 - **From the page to the text.** Click on the words of a frame: the caret goes to that paragraph in the Text panel, and a path under the preview names where you are (*Page 10 › column › try › paragraph 1*). In Design mode the same click picks the frame for the template editor instead.
-- **From the text to the page.** Put the caret in a paragraph and the frame that holds it and the paragraph itself are outlined on the page, and the same path says where they are.
+- **From the text to the page.** Put the caret in a paragraph: the paragraph and the frame that holds it are outlined on the page, and the same path says where they are.
 - **From a check.** Click an entry of the Checks panel and the Sandbox takes you to the page, picks the frame and puts the caret at its text. In a book with several editions it switches to the edition that has the problem.
 
 <Screenshot src="/docs-shots/en/select.webp" alt="The page with the second box outlined in orange, and the Text panel showing the selected frame in its Markdown." caption="A click on the page puts the caret in its Markdown, and the path under the preview says which frame it is." />
@@ -177,6 +177,6 @@ The page and its Markdown follow each other.
 ## Where to go next
 
 - [Moving a book to composed pages](/en/docs/migrating-to-composed-pages): a book that keeps the text of its pages in its styles can have it moved into the Markdown.
-- [Composed pages](/en/docs/composed-pages): every attribute of the page fence, the figure and the label lines, how a page is set and every warning with its fix.
+- [Composed pages](/en/docs/composed-pages): every attribute of the page fence (the four-colon block), the figure and the label lines, how a page is set and every warning with its fix.
 - [Configuration › Composed pages](/en/docs/configuration-composed-pages): every field of a template, a frame and a group, inheritance and spreads.
 - [Sandbox: composed pages](/en/docs/sandbox-composed-pages): the screens for templates, frame styles, checks in every edition and fixes.

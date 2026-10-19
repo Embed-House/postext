@@ -1,7 +1,7 @@
 ---
 title: "Une unité de manuel scolaire en trois langues"
 summary: "Neuf pages d’une unité de CE2 en espagnol, catalan et anglais : doubles pages sur fonds colorés, encadrés à onglet qui grandissent, carte peinte nommée."
-plain: "Une unité de manuel scolaire sur un fleuve, de neuf pages. Chaque thème est une double page sur un fond coloré, avec onglet de titre, texte, images et encadrés. La carte ne porte aucun mot peint : ses noms viennent du texte."
+plain: "Une unité de manuel scolaire sur un fleuve, de neuf pages. Chaque thème est une double page sur un fond coloré, avec onglet de titre, texte, images et encadrés. La carte ne comporte aucun mot peint : ses noms viennent du texte."
 description: "Une unité de manuel scolaire dans Postext : maquettes qui héritent d’une base, styles d’encadré enchaînés et carte peinte nommée depuis le Markdown."
 question: "Comment composer une unité de manuel en trois langues avec les mêmes maquettes de page ?"
 aliases: ["manuel scolaire", "livre de classe", "école primaire", "unité", "double page", "page de thème", "fond de page", "onglet de titre", "carte légendée", "sommaire par parties", "héritage de maquettes", "espagnol catalan anglais", "textbook"]
@@ -24,7 +24,7 @@ Un style d’encadré se fait en trois temps. `caja` garde la forme, la typograp
 
 <Excerpt region="answer" />
 
-La base est une double page : un fond jusqu’au fond perdu, un onglet de titre avec son numéro et un texte sur deux colonnes. Un thème l’étend (`extends: 'tema'`), fixe sa `palette` (les trois entrées `tema` prennent les couleurs de la famille, et le fond, l’onglet, le numéro et tous les encadrés changent ensemble) et ajoute ses blocs. L’onglet et le numéro sont du décor ancré au bloc du titre : l’onglet est donc aussi haut que le titre que la langue demande. Le numéro est `{headingNumber}`, le compteur du titre que le bloc a pris, peint sur la marge intérieure gauche du bloc : aucune clôture de page ne le répète, et un clic dessus atteint le numéro, pas le bloc.
+La base est une double page : un fond jusqu’au fond perdu, un onglet de titre avec son numéro et un texte sur deux colonnes. Un thème l’étend (`extends: 'tema'`), fixe sa `palette` (les trois entrées `tema` prennent les couleurs de la famille, et le fond, l’onglet, le numéro et tous les encadrés changent ensemble) et ajoute ses blocs. L’onglet et le numéro sont du décor ancré au bloc du titre : l’onglet est donc aussi haut que le titre que la langue demande. Le numéro est `{headingNumber}`, le compteur du titre que le bloc a pris, peint sur la marge intérieure gauche du bloc : aucun délimiteur de page ne le répète, et un clic dessus atteint le numéro, pas le bloc.
 
 ### 3 · Laissez les groupes se partager la place
 
@@ -40,7 +40,7 @@ La carte est une peinture sans une lettre. Chaque lieu est une ancre de l’imag
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` liste les thèmes et leurs sections et garde chaque ligne de partie avec ses entrées. Un délimiteur `:::part` avec `parts.page: false` n’est qu’une ligne du sommaire et une section pour les titres courants : il n’ajoute pas de page de titre. Le sommaire est une page composée : son modèle a un bloc avec `takes: "toc"` qui reçoit le `:::toc` et le compose selon les règles du sommaire, si bien que les lignes de partie, les points de conduite et `keep` fonctionnent comme dans le texte courant, et le fond clair est la décoration du modèle.
+`:::toc{keep="part" levels="1-2"}` liste les thèmes et leurs sections et garde chaque ligne de partie avec ses entrées. Un délimiteur `:::part` avec `parts.page: false` n’est qu’une ligne du sommaire et une section pour les titres courants : il n’ajoute pas de page de titre. Le sommaire est une page composée : son gabarit a un bloc avec `takes: "toc"` qui reçoit le `:::toc` et le compose selon les règles du sommaire : les lignes de partie, les points de conduite et `keep` fonctionnent donc comme dans le texte courant, et le fond clair est le décor du gabarit.
 
 ## Variantes
 
@@ -67,6 +67,6 @@ Un bloc qui ne doit pas réduire son texte prend `fit: { shrinkText: false }`. U
 
 ## Erreurs fréquentes
 
-- Un nom peint dans une image ne pourrait pas changer avec la langue : la carte ne porte aucun mot et chaque nom est une étiquette.
+- Un nom peint dans une image ne pourrait pas changer avec la langue : la carte ne comporte aucun mot et chaque nom est une étiquette.
 La palette d’un thème ne change que les entrées `tema`. Les folios et la table des matières utilisent `agua`, qui a le même bleu : ils restent bleus sur les pages vertes et sable ; liez-les à `tema` et ils suivront le thème.
 - Deux figures qui posent la même ressource prennent les mots de la première : la petite carte du sommaire est le même fichier sous une autre ressource, `rio`, sans ancres.

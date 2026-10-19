@@ -5,12 +5,12 @@ plain: "Un dépliant recto verso pour un ancien moulin à marée, en anglais et 
 description: "createBundle écrit le dépliant dans un fichier .postext et openBundle le relit avec ses polices et ses dessins, pour une édition anglaise et une espagnole."
 question: "Comment mettre en page un fichier .postext avec les polices, les images et la configuration qu’il contient ?"
 aliases: ["fichier postext", "paquet", "bundle", "createBundle", "openBundle", "loadBundleFonts", "aller-retour", "round trip", "dépliant bilingue", "transmettre au Sandbox", "dépliant DL", "moulin à marée"]
-pageNotes: { "1": "Le recto d’un dépliant DL : sur un fond sable, le surtitre « Arenal estuary · Visitor leaflet 3 » et le titre « The Tide Mill » en italique bleu, au-dessus d’une roue de moulin dont la moitié inférieure paraît pâle sous l’estuaire bleu ; un onglet bleu au bord supérieur porte « EN ». Un chapeau en italique et la ligne « Open all year · Free on Sundays » se trouvent dans l’eau.", "2": "Le verso : le moulin en coupe en tête, le bassin à gauche, l’estuaire à droite sous une ligne de pleine mer en tirets, avec la légende « Figure 1 » ; la section « Two tides a day » en DM Sans justifié ; les horaires d’ouverture en « Table 1 » avec un en-tête bleu ; trois lignes sur l’accès et les billets, un colophon, et une bande bleue avec le nom de l’éditeur." }
+pageNotes: { "1": "Le recto d’un dépliant DL : sur un fond sable, le surtitre « Arenal estuary · Visitor leaflet 3 » et le titre « The Tide Mill » en italique bleu, au-dessus d’une roue de moulin dont la moitié inférieure paraît pâle sous l’estuaire bleu ; un onglet bleu au bord supérieur affiche « EN ». Un chapeau en italique et la ligne « Open all year · Free on Sundays » se trouvent dans l’eau.", "2": "Le verso : le moulin en coupe en tête, le bassin à gauche, l’estuaire à droite sous une ligne de pleine mer en tirets, avec la légende « Figure 1 » ; la section « Two tides a day » en DM Sans justifié ; les horaires d’ouverture en « Table 1 » avec un en-tête bleu ; trois lignes sur l’accès et les billets, un colophon, et une bande bleue avec le nom de l’éditeur." }
 ---
 
 ## Ce que vous allez composer
 
-Les deux faces d’un dépliant de visite DL, 99 × 210 mm, pour un moulin à marée sur un estuaire inventé. Le recto est un seul dessin : une roue de moulin sur la ligne d’eau, sa moitié supérieure sur le sable et sa moitié inférieure pâle sous l’eau bleue, avec le titre en DM Serif Display italique de 50 pt et un onglet bleu qui nomme l’édition, « EN » ou « ES ». Le verso s’ouvre sur le moulin en coupe, puis le texte en DM Sans justifié, les horaires d’ouverture dans un tableau à en-tête bleu, les légendes en Instrument Sans, un colophon et une bande bleue avec l’éditeur. Chaque édition est écrite dans un fichier `.postext`, et chaque page présentée ici est mise en page à partir des octets de ce fichier, avec les polices et les dessins qu’il contient.
+Les deux faces d’un dépliant de visite DL, 99 × 210 mm, pour un moulin à marée sur un estuaire inventé. Le recto est un seul dessin : une roue de moulin sur la ligne d’eau, sa moitié supérieure sur le sable et sa moitié inférieure pâle sous l’eau bleue, avec le titre en DM Serif Display italique de 50 pt et un onglet bleu qui indique l’édition, « EN » ou « ES ». Le verso s’ouvre sur le moulin en coupe, puis le texte en DM Sans justifié, les horaires d’ouverture dans un tableau à en-tête bleu, les légendes en Instrument Sans, un colophon et une bande bleue avec l’éditeur. Chaque édition est écrite dans un fichier `.postext`, et chaque page présentée ici est mise en page à partir des octets de ce fichier, avec les polices et les dessins qu’il contient.
 
 ## Préparation
 
@@ -18,19 +18,19 @@ Les deux faces d’un dépliant de visite DL, 99 × 210 mm, pour un moulin à ma
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` met dans un zip le chapitre, la configuration, les ressources et chaque fichier qu’ils nomment ; `openBundle` ne reçoit rien d’autre que ces octets. Les polices viennent de `loadBundleFonts`, les dessins de `registerBundleImages` et la maquette de `bundle.config`. Une police absente de `files` s’imprime dans la police de secours du navigateur, et un dessin absent est retiré avec un avertissement, son renvoi imprimant (?). Dans le zip, chaque `fileId` devient un chemin (`mill.svg` devient `resources/mill.svg`), et les ressources et les `customFonts` que renvoie `openBundle` utilisent déjà les nouveaux noms ([ouvrir un paquet](/fr/docs/configuration-bundles#ouvrir-un-paquet)).
+`createBundle` met dans un zip le chapitre, la configuration, les ressources et chaque fichier qu’ils citent ; `openBundle` ne reçoit rien d’autre que ces octets. Les polices viennent de `loadBundleFonts`, les dessins de `registerBundleImages` et la maquette de `bundle.config`. Une police absente de `files` s’imprime dans la police de secours du navigateur, et un dessin absent est retiré avec un avertissement, son renvoi imprimant (?). Dans le zip, chaque `fileId` devient un chemin (`mill.svg` devient `resources/mill.svg`), et les ressources et les `customFonts` que renvoie `openBundle` utilisent déjà les nouveaux noms ([ouvrir un paquet](/fr/docs/configuration-bundles#ouvrir-un-paquet)).
 
 ### 2 · Mettre les polices dans le fichier
 
 <Excerpt region="faces" />
 
-Un paquet contient une police quand `customFonts` la nomme et que `files` détient ses octets sous le `fileId` de la variante ; `createBundle` range DM Sans 400 sous `fonts/dm-sans-400-normal.woff2`. Le pen télécharge les sept fichiers woff2 depuis Fontsource mais n’en enregistre aucun : `loadBundleFonts` ajoute les copies du paquet à `document.fonts` avant que `buildBundle` ne mesure une ligne, et le PDF prend ses polices dans ces mêmes sept fichiers.
+Un paquet contient une police quand `customFonts` la déclare et que `files` détient ses octets sous le `fileId` de la variante ; `createBundle` range DM Sans 400 sous `fonts/dm-sans-400-normal.woff2`. Le pen télécharge les sept fichiers woff2 depuis Fontsource mais n’en enregistre aucun : `loadBundleFonts` ajoute les copies du paquet à `document.fonts` avant que `buildBundle` ne mesure une ligne, et le PDF prend ses polices dans ces mêmes sept fichiers.
 
 ### 3 · Nommer chaque fichier par son fileId
 
 <Excerpt region="resources" />
 
-Les deux dessins sont du balisage SVG produit par le pen, confié à `files` sous le `svg.fileId` de leurs ressources ; le tableau est une donnée, et il voyage dans `preset.json` avec sa légende. La coupe et le tableau sont placés avec `position: 'here'` : la coupe en tête du verso, les horaires sous le paragraphe qui les cite. Le dépliant règle `layout.inlineResourceGap: 'above'`, qui ne garde l’espace d’une ressource en ligne qu’au-dessus d’elle, si bien que le verso tient sur une face : le titre sous la coupe apporte son propre espace, et une ligne `:::space{lines=0.5}` après le tableau laisse 3,7 mm sous sa légende.
+Les deux dessins sont du balisage SVG produit par le pen, confié à `files` sous le `svg.fileId` de leurs ressources ; le tableau est une donnée, et il voyage dans `preset.json` avec sa légende. La coupe et le tableau sont placés avec `position: 'here'` : la coupe en tête du verso, les horaires sous le paragraphe qui les cite. Le dépliant règle `layout.inlineResourceGap: 'above'`, qui ne garde l’espace d’une ressource en ligne qu’au-dessus d’elle : le verso tient donc sur une face, car le titre sous la coupe apporte son propre espace, et une ligne `:::space{lines=0.5}` après le tableau laisse 3,7 mm sous sa légende.
 
 ### 4 · Garder les étiquettes dans la langue du fichier
 
@@ -48,13 +48,13 @@ Le lien propose les `bytes` à partir desquels les pages ont été mises en page
 
 <Excerpt region="cover" />
 
-Le recto est la maquette du titre de couverture : le dessin ancré à la page en taille réelle, le texte du titre par `{titleText}`, le surtitre, le chapeau et la ligne d’informations tirés de ses attributs, et un élément de texte avec une boîte pour l’onglet de langue. Le niveau H1 est en `span: 'page'` : le dessin descend donc jusqu’au bord inférieur du papier. Une maquette de titre gardée dans la colonne est coupée au pied du bloc de texte : le dessin s’arrêterait 13 mm au-dessus du bord inférieur.
+Le recto est la maquette du titre de couverture : le dessin ancré à la page en taille réelle, le texte du titre par `{titleText}`, le surtitre, le chapeau et la ligne d’informations tirés de ses attributs, et un élément de texte avec une boîte pour l’onglet de langue. Le niveau H1 est en `span: 'page'` : le dessin descend donc jusqu’au bord inférieur du papier. Une maquette de titre gardée dans la colonne est coupée au pied de la zone de contenu : le dessin s’arrêterait 13 mm au-dessus du bord inférieur.
 
 ## Variantes
 
 ### Lire un paquet bilingue
 
-Le guide de Postext porte ses chapitres, sa configuration et ses légendes en anglais et en espagnol dans un seul fichier ; `{ locale }` choisit l’édition, qui s’ouvre en douze chapitres sur 48 pages dans l’une ou l’autre langue, tandis que le lien propose toujours le fichier du dépliant et que le bouton PDF compose le guide.
+Le guide de Postext contient ses chapitres, sa configuration et ses légendes en anglais et en espagnol dans un seul fichier ; `{ locale }` choisit l’édition, qui s’ouvre en douze chapitres sur 48 pages dans l’une ou l’autre langue, tandis que le lien propose toujours le fichier du dépliant et que le bouton PDF compose le guide.
 
 ```diff
 -const bundle = await openBundle(bytes);
@@ -72,4 +72,4 @@ Sans les types, le lecteur les construit dans la langue du fichier avec la numé
 
 ## Erreurs fréquentes
 
-- Chaque édition est ici un fichier à part. Pour porter les deux langues dans un seul fichier, donnez à `createBundle` une table `localized` ([Paquets bilingues](/fr/docs/configuration-bundles#paquets-bilingues)) ; `openBundle(bytes, { locale })` lit alors l’une ou l’autre édition.
+- Chaque édition est ici un fichier à part. Pour réunir les deux langues dans un seul fichier, donnez à `createBundle` une table `localized` ([Paquets bilingues](/fr/docs/configuration-bundles#paquets-bilingues)) ; `openBundle(bytes, { locale })` ouvre alors l’une ou l’autre édition.

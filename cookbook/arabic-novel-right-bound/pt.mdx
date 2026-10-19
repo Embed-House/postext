@@ -16,7 +16,7 @@ A abertura de *حروف من رصاص* (Letras de chumbo), um romance sobre um n
 
 ### 1 · Um idioma, três decisões
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. `locale: 'ar'` é tudo o que a configuração diz, e o motor tira três coisas daí: o texto corre da direita para a esquerda (`direction: 'auto'`), o livro é encadernado à direita (`page.binding: 'auto'`) e todo número que o motor escreve usa os algarismos arábico-índicos (`numerals: 'auto'`), inclusive os fólios ([Como começar um livro em árabe](/pt/docs/arabic-layout#como-começar-um-livro-em-árabe)). Margens e alinhamentos continuam com as palavras `left` e `right`, mas num livro da direita para a esquerda elas nomeiam os lados do fluxo: `margins.left` é o lado da lombada, e o recuo de primeira linha fica à direita. As linhas justificadas abrem primeiro os espaços e depois alongam as letras ligadas com o tatweel, a kashida dos livros árabes; o texto nunca é hifenizado ([Justificação e kashida](/pt/docs/arabic-layout#justificação-e-kashida)).
+O código é [a resposta curta](#a-resposta-curta) logo acima. `locale: 'ar'` é tudo o que a configuração diz, e o motor tira três coisas daí: o texto corre da direita para a esquerda (`direction: 'auto'`), o livro é encadernado à direita (`page.binding: 'auto'`) e todo número que o motor escreve usa os algarismos arábico-índicos (`numerals: 'auto'`), inclusive os fólios ([Como começar um livro em árabe](/pt/docs/arabic-layout#como-começar-um-livro-em-árabe)). Margens e alinhamentos continuam com as palavras `left` e `right`, mas num livro da direita para a esquerda elas se referem aos lados do fluxo: `margins.left` é o lado da lombada, e o recuo de primeira linha fica à direita. As linhas justificadas abrem primeiro os espaços e depois alongam as letras ligadas com o tatweel, a kashida dos livros árabes; o texto nunca é hifenizado ([Justificação e kashida](/pt/docs/arabic-layout#justificação-e-kashida)).
 
 <PageShot page={3} crop="0.1,0.12,0.8,0.3" caption="Página 12: linhas justificadas alargadas com kashida, o recuo à direita e o fólio ١٢ na borda externa." />
 
@@ -24,13 +24,13 @@ O código é [a resposta curta](#a-resposta-curta) logo acima. `locale: 'ar'` é
 
 <Excerpt region="opener" />
 
-O `numberingTemplate` do nível escreve الفصل e o número como ordinal masculino, então o segundo capítulo é الفصل الثاني sem nenhuma mudança no Markdown; `{1:ordinal-feminine}` dá الأولى, الثانية para um substantivo feminino como الليلة ([Ordinais e cardinais por extenso](/pt/docs/arabic-layout#ordinais-e-cardinais-por-extenso)). A abertura o imprime com `{number}` acima do título. Aberturas árabes costumam ser centralizadas, então `align: 'center'` elimina qualquer dúvida sobre o lado em que o design começa.
+O `numberingTemplate` do nível escreve الفصل e o número como ordinal masculino, por isso o segundo capítulo é الفصل الثاني sem nenhuma mudança no Markdown; `{1:ordinal-feminine}` dá الأولى, الثانية para um substantivo feminino como الليلة ([Ordinais e cardinais por extenso](/pt/docs/arabic-layout#ordinais-e-cardinais-por-extenso)). A abertura o imprime com `{number}` acima do título. Aberturas árabes costumam ser centralizadas, de modo que `align: 'center'` elimina qualquer dúvida sobre o lado em que o design começa.
 
 ### 3 · Os cabeços ficam nas suas páginas
 
 <Excerpt region="heads" />
 
-O texto corrido segue o fluxo, mas cabeços e fólios mantêm os seus lados físicos. A página 12 é par e, neste livro, uma página direita, então o fólio vai no alto à direita com o título do livro ao lado; a página 13 fica à esquerda e leva o capítulo. Leia a página dupla a partir da direita, como faz um leitor árabe, e o título do livro vem primeiro. `showBook` dispõe as páginas espelhadas, a 11 à esquerda da 10, e a tela mostra as páginas duplas como o livro abre.
+O texto corrido segue o fluxo, mas cabeços e fólios mantêm os lados físicos. A página 12 é par e, neste livro, uma página direita, por isso o fólio vai no alto à direita com o título do livro ao lado; a página 13 fica à esquerda e leva o capítulo. Leia a página dupla a partir da direita, como faz um leitor árabe, e o título do livro vem primeiro. `showBook` dispõe as páginas espelhadas, a 11 à esquerda da 10, e a tela mostra as páginas duplas como o livro abre.
 
 ### 4 · Uma página de parte desenhada em código
 
@@ -60,4 +60,4 @@ Algumas editoras não usam tatweel no texto corrido: os espaços absorvem toda a
 
 ## Erros comuns
 
-- Um colofão em inglês ou em espanhol no fim de um livro árabe precisa de `{dir=ltr}` no seu bloco: sem isso, a linha latina é alinhada e pontuada como um parágrafo da direita para a esquerda, com o ponto final à esquerda.
+- Um colofão em inglês ou em espanhol no fim de um livro árabe precisa de `{dir=ltr}` no bloco: sem isso, a linha latina é alinhada e pontuada como um parágrafo da direita para a esquerda, com o ponto final à esquerda.

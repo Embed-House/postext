@@ -16,13 +16,13 @@ Six pages du numéro de novembre de *Meridian*, un mensuel de voyage, sur une pa
 
 ### 1 · Découper la page en trois colonnes, et laisser les flottants en prendre une, deux ou trois
 
-Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. `layoutType: 'multiple'` avec `columnCount: 3` divise le bloc de texte de 195 mm en trois colonnes égales : avec une gouttière de 5 mm, chacune mesure 61,7 mm, soit environ 40 caractères de Source Serif en 9,6 pt. Le `placement.columns` d’une image prend autant de colonnes voisines, avec les gouttières qui les séparent : la photo du râteau mesure 128,3 mm de large, et les marais, avec `span: 'page'`, les 195 mm entiers. Le style de la citation fait de même pour un encadré, avec `columns: 2` sur un style `placement: 'top'` : elle flotte en tête de deux colonnes libres et le texte continue autour. Une grille de trois colonnes convient à un reportage de magazine riche en images, car chaque image peut prendre une, deux ou trois colonnes. Un texte long avec peu d’images se lit mieux sur deux colonnes plus larges.
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. `layoutType: 'multiple'` avec `columnCount: 3` divise la zone de contenu de 195 mm en trois colonnes égales : avec une gouttière de 5 mm, chacune mesure 61,7 mm, soit environ 40 caractères de Source Serif en 9,6 pt. Le `placement.columns` d’une image prend autant de colonnes voisines, avec les gouttières qui les séparent : la photo du râteau mesure 128,3 mm de large, et les marais, avec `span: 'page'`, les 195 mm entiers. Le style de la citation fait de même pour un encadré, avec `columns: 2` sur un style `placement: 'top'` : elle flotte en tête de deux colonnes libres et le texte continue autour. Une grille de trois colonnes convient à un reportage de magazine riche en images, car chaque image peut prendre une, deux ou trois colonnes. Un texte long avec peu d’images se lit mieux sur deux colonnes plus larges.
 
 ### 2 · Ouvrir sur une double page, une seule photographie sur deux pages
 
 <Excerpt region="spread" />
 
-Chaque moitié de la photographie appartient à un style de titre avec `span: 'page'`, et un titre sur toute la largeur de la page ouvre toujours une nouvelle page : la page du titre et celle du chapeau se suivent donc. La moitié gauche remplit le verso et ne réserve rien (`reserve: false`), si bien que le titre peut se poser sur l’eau, en pied. La moitié droite est coupée à 165 mm, et le paragraphe d’attaque, le chapeau et la signature sont suspendus au conteneur sous elle. Le paragraphe d’attaque est un texte de maquette avec une `dropCap` de quatre lignes, large d’une colonne ; sa marge intérieure basse, vide, compte dans la hauteur de l’ouverture, si bien que les colonnes commencent 6 mm dessous. `continuation.pageIndexOffset: 83` fait de la page 84 un verso : les deux moitiés se font donc face.
+Chaque moitié de la photographie appartient à un style de titre avec `span: 'page'`, et un titre sur toute la largeur de la page ouvre toujours une nouvelle page : la page du titre et celle du chapeau se suivent donc. La moitié gauche remplit le verso et ne réserve rien (`reserve: false`) : le titre peut donc se poser sur l’eau, en pied. La moitié droite est coupée à 165 mm, et le paragraphe d’attaque, le chapeau et la signature sont suspendus au conteneur sous elle. Le paragraphe d’attaque est un texte de maquette avec une `dropCap` de quatre lignes, large d’une colonne ; sa marge intérieure basse, vide, compte dans la hauteur de l’ouverture : les colonnes commencent donc 6 mm dessous. `continuation.pageIndexOffset: 83` fait de la page 84 un verso : les deux moitiés se font donc face.
 
 ### 3 · Déclarer les photographies, et citer chacune là où elle doit tomber
 
@@ -34,13 +34,13 @@ Un flottant va à la première tête (ou au premier pied) libre de ses colonnes 
 
 <Excerpt region="heads" />
 
-Les éléments d’en-tête se peignent par-dessus la page et ne réservent aucune place : le folio et l’étiquette sont donc ancrés à la page dans la marge de tête. `pages: 'body'` les tient à l’écart des deux pages de la double page, qui sont des pages d’ouverture puisque chacune commence par un titre sur toute la largeur. Le recto de la double page reçoit à la place son folio en pied, par `pages: 'opener'` et `parity: 'odd'` ; le verso, tout en photo, n’en porte aucun.
+Les éléments d’en-tête se peignent par-dessus la page et ne réservent aucune place : le folio et l’étiquette sont donc ancrés à la page dans la marge de tête. `pages: 'body'` les tient à l’écart des deux pages de la double page, qui sont des pages d’ouverture puisque chacune commence par un titre sur toute la largeur. Le recto de la double page reçoit à la place son folio en pied, par `pages: 'opener'` et `parity: 'odd'` ; le verso, tout en photo, n’en a aucun.
 
 ### 5 · Dessiner la carte de l’encadré en code
 
 <Excerpt region="art" />
 
-La carte est une ressource SVG avec `placement: 'here'`, citée dans le bloc de l’encadré : elle se place donc sous le titre de l’encadré, à sa justification. Elle ne porte aucun texte : le texte d’un SVG ne peut pas utiliser les polices web de la page, et c’est la légende qui nomme les formes. La pointe de flèche sur la route du ferry est un tracé, car un `<marker>` ne survivrait pas à un export PDF.
+La carte est une ressource SVG avec `placement: 'here'`, citée dans le bloc de l’encadré : elle se place donc sous le titre de l’encadré, à sa justification. Elle ne contient aucun texte : le texte d’un SVG ne peut pas utiliser les polices web de la page, et c’est la légende qui désigne les formes. La pointe de flèche sur la route du ferry est un tracé, car un `<marker>` ne survivrait pas à un export PDF.
 
 ## Variantes
 

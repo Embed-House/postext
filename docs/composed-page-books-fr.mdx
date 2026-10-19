@@ -3,55 +3,55 @@
 export const metadata = {
   title: 'Livres de pages composées',
   sidebarTitle: 'Livres de pages composées',
-  description: 'Un pas à pas dans le Sandbox avec un manuel scolaire fait de pages composées : construire un gabarit de page, le remplir depuis le Markdown, étiqueter une carte, traduire la page, corriger ce qui ne tient pas, puis sélectionner sur la page et dans le texte',
+  description: 'Visite guidée du Sandbox avec un manuel scolaire en pages composées : créer un gabarit de page, le remplir depuis le Markdown, étiqueter une carte, traduire la page, corriger le texte qui ne tient pas, puis sélectionner sur la page et dans le texte',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
-  plainSummary: "Cette page montre pas à pas comment faire une page de manuel scolaire dans le Sandbox, avec un bandeau de titre, un texte et des encadrés de couleur. Vous partez d’un livre d’exemple terminé et vous lui ajoutez une page. Vous dessinez d’abord la page comme un gabarit, puis vous y versez le texte depuis le Markdown, puis vous nommez les endroits d’une carte et vous traduisez la page dans une autre langue. Pour finir, vous voyez quoi faire quand un texte est trop long pour son bloc et comment passer de la page à son texte et inversement.",
+  plainSummary: "Cette page montre pas à pas comment créer une page de manuel scolaire dans le Sandbox : un bandeau de titre, un peu de texte et des boîtes de couleur. Vous partez d’un livre d’exemple déjà terminé et vous lui ajoutez une page. Vous dessinez d’abord la page sous forme de gabarit, puis vous y versez le texte depuis le Markdown ; ensuite, vous écrivez les noms des lieux d’une carte et vous traduisez la page dans une autre langue. Pour finir, vous voyez quoi faire quand un texte est trop long pour sa boîte, et comment passer de la page à son texte.",
 };
 
 # Livres de pages composées
 
 **Vous construisez une page de manuel à partir d’un gabarit, vous la remplissez avec le texte du Markdown, vous étiquetez une carte, vous traduisez la page et vous corrigez ce qui ne tient pas.**
 
-Une page de manuel scolaire est un ensemble de boîtes : un bandeau de titre, un texte, un encadré pour une définition, un encadré pour une activité, une carte. Postext met une telle page en forme d’après un **gabarit de page** qui contient les boîtes (ses blocs), et le Markdown dit seulement quels mots vont dans quel bloc. Cette page fait tout le travail dans le Sandbox, sur un livre qui existe déjà, et lui ajoute une page. Les pages de référence disent ce que fait chaque champ et chaque ligne de Markdown ; ici, vous faites chaque chose une fois, dans l’ordre, et vous voyez ce qu’elle change : [Pages composées](/fr/docs/composed-pages) pour le Markdown, [Configuration › Pages composées](/fr/docs/configuration-composed-pages) pour le gabarit, [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages) pour les écrans.
+Une page de manuel scolaire est un assemblage de boîtes : un bandeau de titre, un texte, une boîte pour une définition, une autre pour une activité, une carte. Postext compose une telle page d’après un **gabarit de page** qui contient ces boîtes (ses blocs) ; le Markdown indique seulement quels mots vont dans quel bloc. Ce tutoriel fait tout le travail dans le Sandbox, sur un livre existant, auquel il ajoute une page. Les pages de référence expliquent ce que fait chaque champ et chaque ligne de Markdown ; ici, vous faites chaque chose une fois, dans l’ordre, et vous voyez ce qu’elle change : [Pages composées](/fr/docs/composed-pages) pour le Markdown, [Configuration › Pages composées](/fr/docs/configuration-composed-pages) pour le gabarit, [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages) pour les écrans.
 
 Il vous faut un navigateur, rien d’autre. Tout se passe dans le Sandbox, et ce que vous modifiez reste dans votre navigateur.
 
 ## 1. Ouvrir le livre
 
-Le livre s’appelle *Our river*. C’est une unité d’un manuel de CE2 que le [livre de recettes](/fr/cookbook/children-textbook-pages) publie comme la recette Nº 156. La rivière, les villages et les images sont inventés pour lui. Il compte neuf pages, avec une carte peinte sur deux pages en regard, et il existe en espagnol, en catalan et en anglais.
+Le livre s’appelle *Our river*. C’est une unité d’un manuel de CE2, publiée comme recette nº 156 dans le [livre de recettes](/fr/cookbook/children-textbook-pages). La rivière, les villages et les images ont été inventés pour l’occasion. Il compte neuf pages, avec une carte peinte sur deux pages en regard, et il existe en espagnol, en catalan et en anglais.
 
-[Ouvrez-le dans le Sandbox](/fr/sandbox#recipe=children-textbook-pages&lang=en). À la première visite, il s’ajoute à **Livres** comme un livre à vous, que vous pouvez modifier à votre guise ; avec `lang=es` ou `lang=ca` dans le lien, vous obtenez les autres éditions. Si vous revenez plus tard au même lien, le Sandbox demande s’il faut ouvrir votre copie ou la remplacer par la version publiée.
+[Ouvrez-le dans le Sandbox](/fr/sandbox#recipe=children-textbook-pages&lang=en). À la première visite, il s’ajoute à **Livres** comme un livre à vous, que vous pouvez modifier à votre guise ; avec `lang=es` ou `lang=ca` dans le lien, vous obtenez les autres éditions. Si vous revenez plus tard au même lien, le Sandbox demande s’il faut ouvrir votre copie ou la remplacer par la version publiée.
 
 Deux choses à savoir avant de toucher à quoi que ce soit :
 
-- La barre au-dessus de l’aperçu a un sélecteur avec **Contenu** et **Maquette**. En mode Contenu, vous modifiez les mots, dans le panneau **Texte** ou sur la page. En mode Maquette, vous modifiez les gabarits de page et les styles, et le texte est en lecture seule. **Alt+Maj+M** (**⌥⇧M** sur un Mac) passe de l’un à l’autre.
-- Le panneau **Texte** montre un chapitre de Markdown. Chaque page composée est un bloc qui commence par `::::page{template="…"}` et finit par quatre deux-points. Cliquez sur des mots dans l’aperçu : le curseur va jusqu’à eux dans le Markdown.
+- La barre au-dessus de l’aperçu comporte un sélecteur à deux positions, **Contenu** et **Maquette**. En mode Contenu, vous modifiez les mots, dans le panneau **Texte** ou sur la page. En mode Maquette, vous modifiez les gabarits de page et les styles, et le texte est en lecture seule. **Alt+Maj+M** (**⌥⇧M** sur un Mac) passe de l’un à l’autre.
+- Le panneau **Texte** montre un chapitre de Markdown. Chaque page composée est un passage qui commence par `::::page{template="…"}` et se termine par une ligne de quatre deux-points. Cliquez sur des mots d’une page dans l’aperçu : le curseur se place sur eux dans le Markdown.
 
 ## 2. Faire un gabarit de page
 
 La nouvelle page sera une page de révision : un bandeau de titre, un court texte dessous et deux boîtes, l’une pour se rappeler ce qu’on a appris et l’autre pour s’exercer. Il lui faut un gabarit de quatre blocs.
 
 1. Passez en **Maquette** et ouvrez le panneau **Maquette** à gauche. Choisissez **Page et colonnes**, puis **Gabarits de page**. La liste montre chaque gabarit du livre avec un dessin de ses blocs.
-2. Appuyez sur **Nouveau**. Un nouveau gabarit s’ouvre. Donnez-lui l’**ID** `review` (c’est le nom que le Markdown emploiera) et le **Nom** `Review page` (c’est le nom que ce panneau affiche). L’ID accepte des minuscules, des chiffres et des tirets.
-3. Le gabarit commence avec un seul bloc, `text`, qui **Reçoit le texte libre de la page**. Faites-en le bandeau de titre : **Nom (emplacement)** : `title` ; **Style de boîte** : `portada`, le bandeau bleu que le livre emploie déjà pour ses titres ; désactivez **Reçoit le texte libre de la page** ; **Reçoit le premier titre** : *Niveau 1*, pour que ce bloc reçoive le premier titre `#` de la page.
-4. Appuyez sur **Ajouter un bloc**. Le nouveau bloc s’ouvre sous la liste des blocs. **Nom (emplacement)** : `text`, et activez **Reçoit le texte libre de la page** : tout ce que la page écrit hors d’un bloc arrive ici.
-5. Ajoutez un bloc. **Nom (emplacement)** : `remember`. **Style de boîte** : `dato-campo`, une boîte verte avec un onglet. **Hauteur minimale** : 30 mm, pour que la boîte garde une bonne taille quand son texte est court.
-6. Ajoutez un dernier bloc. **Nom (emplacement)** : `try`. **Style de boîte** : `actividad-sol`. **Hauteur minimale** : 30 mm.
+2. Appuyez sur **Nouveau**. Un gabarit nommé *Nouveau gabarit* s’ouvre. Donnez-lui l’**ID** `review` (le nom qu’emploiera le Markdown) et le **Nom** `Review page` (le nom qu’affiche ce panneau). L’ID n’accepte que des minuscules, des chiffres et des tirets.
+3. Le gabarit commence avec un seul bloc, `text`, qui **Reçoit le texte libre de la page**. Faites-en le bandeau de titre : **Nom (emplacement)** : `title` ; **Style de bloc** : `portada`, le bandeau bleu que le livre utilise déjà pour ses titres ; désactivez **Reçoit le texte libre de la page** ; **Reçoit le premier titre** : *Niveau 1*, pour que ce bloc reçoive le premier titre `#` de la page.
+4. Appuyez sur **Ajouter un bloc**. Le nouveau bloc s’ouvre sous la liste des blocs. **Nom (emplacement)** : `text`, et activez **Reçoit le texte libre de la page** : tout ce que la page contient hors d’un bloc arrive ici.
+5. Ajoutez un bloc. **Nom (emplacement)** : `remember`. **Style de bloc** : `dato-campo`, une boîte verte avec un onglet. **Hauteur minimale** : 30 mm, pour que la boîte garde une bonne taille quand son texte est court.
+6. Ajoutez un dernier bloc. **Nom (emplacement)** : `try`. **Style de bloc** : `actividad-sol`. **Hauteur minimale** : 30 mm.
 7. Dans `text`, `remember` et `try`, réglez **Largeur** sur *Jusqu’au bord* et **Hauteur** sur *Son contenu* : ils occupent alors toute la largeur de la page et ont la hauteur de leur texte.
-8. Sous **Groupes**, appuyez sur **Ajouter un groupe**. Nommez-le `column`, laissez-le *Empilés* et réglez **Espace entre les blocs** sur 6 mm. Sous **Blocs du groupe, dans l’ordre de la page**, cochez les quatre blocs. Cochez-les dans l’ordre voulu, le titre d’abord : la liste numérote les membres et les flèches en montent ou en descendent un. Un groupe place ses blocs les uns sous les autres et fait descendre ceux du dessous quand un bloc grandit : un texte plus long dans la première boîte pousse la deuxième boîte vers le bas au lieu de la recouvrir.
+8. Sous **Groupes**, appuyez sur **Ajouter un groupe**. Nommez-le `column`, laissez-le *Empilés* et réglez **Espace entre les blocs** sur 6 mm. Sous **Blocs du groupe, dans l’ordre de la page**, cochez les quatre blocs. Cochez-les dans l’ordre où ils se succèdent, le titre d’abord : la liste numérote les blocs, et les flèches font monter ou descendre l’un d’eux d’un rang. Un groupe place ses blocs les uns sous les autres et fait descendre ceux du dessous quand un bloc grandit : un texte plus long dans la première boîte pousse donc la deuxième vers le bas au lieu de déborder sur elle.
 
-<Screenshot src="/docs-shots/fr/template.webp" alt="Le panneau Maquette sur Gabarits de page avec le gabarit Review page : ses quatre blocs et son groupe, et les mêmes blocs tracés en pointillés sur la page." caption="Le gabarit : quatre blocs et un groupe. Sur la page, les boîtes en pointillés sont les blocs et les étiquettes vertes disent comment chacun est dimensionné." />
+<Screenshot src="/docs-shots/fr/template.webp" alt="Le panneau Maquette sur Gabarits de page avec le gabarit Review page : ses quatre blocs et son groupe, et les mêmes blocs tracés en pointillés sur la page." caption="Le gabarit : quatre blocs et un groupe. Sur la page, les boîtes en pointillés sont les blocs, et les étiquettes vertes indiquent comment chacun est dimensionné." />
 
-Le gabarit ne contient aucun mot. Rien de ce que vous avez réglé ne dit ce qu’est le titre ni ce que contiennent les boîtes : le style de boîte donne son aspect à un bloc, le groupe donne leur ordre. Il y a d’autres chemins vers le même gabarit. En mode Maquette, vous pouvez tracer un bloc à la souris sur un endroit vide d’une page composée, et déplacer ou redimensionner ceux qui existent (voir [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages#gabarits-de-page)) ; **Dupliquer** copie un gabarit pour le modifier ; **Enregistrer la mise en page comme gabarit** fait d’une page composée qui vous plaît un nouveau gabarit.
+Le gabarit ne contient aucun mot. Rien de ce que vous avez réglé n’indique quel est le titre ni ce que contiennent les boîtes : le style de boîte donne son aspect à un bloc, et le groupe fixe l’ordre des blocs. On peut aussi arriver au même gabarit par d’autres chemins. En mode Maquette, vous pouvez tracer un bloc à la souris sur un endroit vide d’une page composée, et déplacer ou redimensionner ceux qui existent (voir [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages#gabarits-de-page)) ; **Dupliquer** copie un gabarit pour le modifier ; **Enregistrer la mise en page comme gabarit** fait d’une page composée qui vous plaît un nouveau gabarit.
 
 ## 3. Remplir la page depuis le Markdown
 
 1. Passez en **Contenu**, ouvrez le panneau **Texte** et appuyez sur **Ctrl+Fin** (**Cmd+↓** sur un Mac) pour aller à la fin du chapitre.
 2. Appuyez sur **Page composée** dans la barre d’outils du panneau Texte. Un sélecteur liste les gabarits de page du livre, chacun dessiné avec ses blocs vides. Choisissez *Review page*.
-3. Le Sandbox écrit la page à votre place, avec un bloc vide par slot, et sélectionne le mot `title` du titre. Tapez votre titre par-dessus.
+3. Le Sandbox écrit la page à votre place, avec un bloc vide par emplacement, et sélectionne le mot `title` du titre. Tapez votre titre par-dessus.
 
 ```md
 ::::page{template="review"}
@@ -69,15 +69,15 @@ Draw a river from its spring to the sea. Write the names of the three courses on
 ::::
 ```
 
-Le titre va dans le bloc qui reçoit le niveau 1, le paragraphe qui le suit dans le bloc qui reçoit le texte libre, et chaque `:::frame` dans le bloc de son `slot`. Le `label` est le texte de l’onglet d’une boîte. La page apparaît sur le canevas en page 10, après les neuf de l’unité : une page composée commence toujours une nouvelle page.
+Le titre va dans le bloc qui reçoit le niveau 1, le paragraphe qui le suit dans le bloc qui reçoit le texte libre, et chaque `:::frame` dans le bloc de son `slot`. Le `label` est le texte de l’onglet d’une boîte. La page apparaît dans l’onglet Canvas en page 10, après les neuf pages de l’unité : une page composée commence toujours sur une nouvelle page.
 
-<Screenshot src="/docs-shots/fr/fill.webp" alt="Le panneau Texte avec le Markdown de la nouvelle page, et à côté la page terminée avec un titre bleu, un paragraphe et deux boîtes à onglet." caption="La page dans le Markdown et sur le canevas." />
+<Screenshot src="/docs-shots/fr/fill.webp" alt="Le panneau Texte avec le Markdown de la nouvelle page, et à côté la page terminée avec un titre bleu, un paragraphe et deux boîtes à onglet." caption="La page dans le Markdown et dans l’onglet Canvas." />
 
-Remarquez ce que le Markdown ne dit pas : aucune position, aucune taille, aucune couleur. Tout cela appartient au gabarit, et le même Markdown mis en page avec un autre gabarit aurait un autre aspect.
+Remarquez ce que le Markdown n’indique pas : aucune position, aucune taille, aucune couleur. Tout cela appartient au gabarit, et le même Markdown mis en page avec un autre gabarit aurait un autre aspect.
 
 ## 4. Étiqueter la carte
 
-Les pages 6 et 7 portent une carte peinte sur la double page. Ses mots ne font pas partie de l’image. Chaque nom est une ligne du Markdown, à l’intérieur du `:::figure` de la carte :
+Les pages 6 et 7 contiennent une carte peinte qui s’étend sur la double page. Ses mots ne font pas partie de l’image : chaque nom est une ligne du Markdown, à l’intérieur du `:::figure` de la carte :
 
 ```md
 :::figure{resource="mapa" slot="mapa"}
@@ -87,24 +87,24 @@ Les pages 6 et 7 portent une carte peinte sur la double page. Ses mots ne font p
 :::
 ```
 
-`at` nomme une **ancre** : un point de l’image, défini une seule fois dans la ressource de l’image et commun à toutes les langues. Pour ajouter le pont de pierre de Molinar :
+`at` désigne une **ancre** : un point de l’image, défini une seule fois dans la ressource de l’image et commun à toutes les langues. Pour ajouter le pont de pierre de Molinar :
 
 1. Dans le panneau Texte, allez à la figure de la carte (cherchez `at="bajo"`) et ajoutez une ligne sous la dernière étiquette : `::label[Stone bridge]{at="bridge"}`.
-2. Ouvrez **Vérifications**. La liste contient une entrée *Étiquette sur une ancre inconnue* pour la page 6 : l’image n’a pas d’ancre nommée `bridge`. Appuyez sur le bouton en forme d’épingle de l’entrée, *Poser l’ancre bridge sur l’image*.
-3. Une fenêtre montre la carte avec les ancres qu’elle a. Le nom `bridge` est choisi sous *Étiquettes sans ancre (1)*. Cliquez sur l’image à l’endroit où se trouve le pont.
+2. Ouvrez **Vérifications**. La liste contient une entrée *Étiquette sur une ancre inconnue* pour la page 6 : l’image n’a pas d’ancre nommée `bridge`. Appuyez sur le bouton en forme d’épingle de cette entrée, *Poser l’ancre bridge sur l’image*.
+3. Une fenêtre montre la carte et ses ancres. Le nom `bridge` est déjà sélectionné sous *Étiquettes sans ancre (1)*. Cliquez sur l’image à l’endroit où se trouve le pont.
 4. Réglez le **Style d’étiquette** de la nouvelle ancre sur `pueblo`, le style des villages, et appuyez sur **Enregistrer**.
 
-<Screenshot src="/docs-shots/fr/anchor.webp" alt="La fenêtre Ancres : la carte avec ses points, la nouvelle ancre nommée bridge sélectionnée et son champ de style d’étiquette." caption="La nouvelle ancre est un clic sur l’image ; son style d’étiquette lui donne l’aspect des noms de villages." />
+<Screenshot src="/docs-shots/fr/anchor.webp" alt="La fenêtre Ancres : la carte avec ses points, la nouvelle ancre nommée bridge sélectionnée et son champ de style d’étiquette." caption="Un clic sur l’image suffit à créer l’ancre ; son style d’étiquette lui donne l’aspect des noms de villages." />
 
 <Screenshot src="/docs-shots/fr/map.webp" alt="La carte sur les pages 6 et 7 avec la nouvelle étiquette Stone bridge sur le pont, à côté des étiquettes des villages." caption="L’étiquette est posée au point où vous avez cliqué, dans les polices du livre." />
 
-Le mot *Stone bridge* est du Markdown ; le point fait partie de l’image. Quand vous traduisez la page, la même ancre reçoit un autre mot.
+Le mot *Stone bridge* est du Markdown ; le point fait partie de l’image. Quand vous traduisez la page, la même ancre reçoit un autre mot.
 
 ## 5. Traduire la page
 
-Une traduction est le même gabarit avec d’autres mots. Le Sandbox la garde comme une autre édition du même livre : la barre au-dessus du canevas passe d’une édition à l’autre et le panneau Vérifications les lit toutes (voir [Éditions d’un livre](/fr/docs/sandbox-previews#éditions-dun-livre)). Pour en créer une :
+Une traduction, c’est le même gabarit avec d’autres mots. Le Sandbox la conserve comme une autre édition du même livre : une barre d’outils sur le bord gauche de l’aperçu permet de passer d’une édition à l’autre, et le panneau Vérifications les examine toutes (voir [Éditions d’un livre](/fr/docs/sandbox-previews#éditions-dun-livre)). Cette barre apparaît quand le pointeur atteint ce bord, et son bouton d’épingle la garde ouverte. Pour en créer une :
 
-1. Ouvrez **Livres**, appuyez sur **⋯** à côté de votre livre et choisissez **Ajouter une langue…**. Prenez la langue et appuyez sur **Ajouter et ouvrir**. Le Sandbox copie l’édition à l’écran dans une nouvelle, règle sa **Langue du document** sur la langue choisie et l’ouvre. La coupure des mots, les guillemets et les mots que le moteur écrit lui-même (comme *Continued* à la coupure d’une boîte) suivent cette langue. Le texte est encore celui de l’original.
+1. Ouvrez **Livres**, appuyez sur **⋯** à côté de votre livre et choisissez **Ajouter une langue…**. Choisissez la langue et appuyez sur **Ajouter et ouvrir**. Le Sandbox copie l’édition affichée dans une nouvelle édition, règle sa **Langue du document** sur la langue choisie et l’ouvre. La césure, les guillemets et les mots que le moteur écrit lui-même (comme *Continued* à l’endroit où une boîte est coupée) suivent cette langue. Le texte, lui, est encore celui de l’original.
 2. Dans le panneau **Texte**, traduisez les mots et laissez le reste.
 
 <table>
@@ -130,7 +130,7 @@ Une traduction est le même gabarit avec d’autres mots. Le Sandbox la garde co
   </tbody>
 </table>
 
-Les images, les ancres, les boîtes et leurs couleurs suivent avec la copie et n’exigent aucun travail. Voici la page de révision en espagnol :
+Les images, les ancres, les boîtes et leurs couleurs sont copiées avec le reste et ne demandent aucun travail. Voici à quoi ressemble la page de révision en espagnol :
 
 ```md
 ::::page{template="review"}
@@ -148,35 +148,35 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
 ::::
 ```
 
-<Screenshot src="/docs-shots/fr/translate.webp" alt="La copie du livre dans l’autre langue : le panneau Texte avec la page traduite et, sur le canevas, la page avec son titre, son texte et ses onglets traduits." caption="La page traduite : le gabarit est le même, les mots ne le sont pas." />
+<Screenshot src="/docs-shots/fr/translate.webp" alt="La copie du livre dans l’autre langue : le panneau Texte avec la page traduite et, dans l’onglet Canvas, la page avec son titre, son texte et ses onglets traduits." caption="La page traduite : le gabarit ne change pas, le texte si." />
 
 ## 6. Vérifier ce qui ne tient pas
 
-Les mots n’ont pas la même longueur d’une langue à l’autre, et une boîte qui contenait le texte anglais peut ne pas contenir le texte espagnol. Le panneau Vérifications repère ces blocs. Pour en voir un, collez trois ou quatre paragraphes de n’importe quel texte dans le bloc `remember` de la page traduite, afin qu’il contienne plus que la page n’a de place.
+Les mots n’ont pas la même longueur d’une langue à l’autre : une boîte assez grande pour le texte anglais peut être trop petite pour le texte espagnol. Le panneau Vérifications repère ces blocs. Pour en voir un, collez trois ou quatre paragraphes de n’importe quel texte dans le bloc `remember` de la page traduite, de façon qu’il contienne plus de texte que la page ne peut en accueillir.
 
-La page montre alors le bloc entouré de rouge, avec sous son pied une bande qui dit ce qui manque (*26 mm de trop*). Dans **Vérifications**, sous *Pages composées*, l’entrée *Le texte déborde de son bloc* dit ce que la mise en page a essayé avant de renoncer (plus de place prise aux blocs voisins, puis un texte plus petit) et liste les issues sous forme de boutons :
+La page montre alors le bloc entouré de rouge, avec sous son bord inférieur une bande qui indique la place qui manque (*26 mm de trop*). Dans **Vérifications**, sous *Pages composées*, l’entrée *Le texte déborde de son bloc* indique ce que la mise en page a tenté avant de renoncer (prendre de la place aux blocs voisins, puis réduire le texte) et propose les solutions sous forme de boutons :
 
-- *laissez le texte descendre à 82,5 % (fit.minScale)* permet au texte de ce bloc de descendre jusqu’à cette taille. Ce bouton convient pour quelques lignes de trop.
-- *faites-le continuer sur la page suivante (overflow.continueIn)* envoie ce qui ne tient pas sur une page ajoutée après celle-ci. Ce bouton convient pour un texte plus long.
+- *laissez le texte descendre à 82,5 % (fit.minScale)* autorise le texte de ce bloc à réduire jusqu’à cette taille. C’est la solution pour quelques lignes de trop.
+- *faites-le continuer sur la page suivante (overflow.continueIn)* envoie ce qui ne tient pas sur une page ajoutée après celle-ci. C’est la solution pour un texte plus long.
 - *coupez environ 495 caractères* ne change rien : il sélectionne le texte du bloc et vous dit combien de caractères retirer.
 
-Un bouton qui modifie le gabarit (donc toutes les pages composées avec lui) demande d’abord confirmation, en nommant le réglage. Appuyez sur **Modifier**. La page est recomposée, la boîte se termine par le mot de la coupure (*Continúa*) et le reste continue en tête d’une page ajoutée. **Cmd/Ctrl+Z** annule le changement. **Recomposition**, dans la barre au-dessus du canevas, ouvre *Ce qui a bougé, et pourquoi* : les blocs dont la mise en page a changé la taille ou la place pour qu’ils contiennent leur contenu, avec la raison en toutes lettres.
+Un bouton qui modifie le gabarit (et donc toutes les pages composées avec lui) demande d’abord confirmation et précise le réglage concerné. Appuyez sur **Modifier**. La page est recomposée : la boîte se termine par le mot qui signale la coupure (*Continúa*) et la suite reprend en haut d’une page ajoutée. **Cmd/Ctrl+Z** annule la modification. Le bouton **Recomposition**, dans la même barre d’outils au bord de l’aperçu, ouvre *Ce qui a bougé, et pourquoi* : la liste des blocs dont la mise en page a changé la taille ou la position pour y faire tenir leur contenu, avec la raison expliquée en clair.
 
-<Screenshot src="/docs-shots/fr/checks.webp" alt="Le panneau Vérifications avec l’entrée Le texte déborde de son bloc et trois boutons d’issue, et la page dont la première boîte est entourée de rouge avec une bande qui indique 26 mm de trop." caption="Un bloc qui ne tient pas, et les corrections que la mise en page a calculées pour lui." />
+<Screenshot src="/docs-shots/fr/checks.webp" alt="Le panneau Vérifications avec l’entrée Le texte déborde de son bloc et trois boutons de solution, et la page dont la première boîte est entourée de rouge avec une bande qui indique 26 mm de trop." caption="Un bloc qui ne tient pas, et les corrections que la mise en page a calculées pour lui." />
 
 ## 7. Sélectionner sur la page et dans le texte
 
-La page et son Markdown se suivent l’un l’autre.
+La page et son Markdown restent synchronisés.
 
-- **De la page au texte.** Cliquez sur les mots d’un bloc : le curseur va à ce paragraphe dans le panneau Texte, et un chemin sous l’aperçu dit où vous êtes (*Page 10 › column › try › paragraphe 1*). En mode Maquette, le même clic choisit le bloc pour l’éditeur de gabarits.
-- **Du texte à la page.** Mettez le curseur dans un paragraphe : le bloc qui le contient et le paragraphe lui-même sont entourés sur la page, et le même chemin dit où ils se trouvent.
-- **D’une vérification.** Cliquez sur une entrée du panneau Vérifications : le Sandbox vous mène à la page, choisit le bloc et place le curseur dans son texte. Dans un livre à plusieurs éditions, il passe à l’édition qui pose le problème.
+- **De la page au texte.** Cliquez sur les mots d’un bloc : le curseur se place sur ce paragraphe dans le panneau Texte, et un chemin sous l’aperçu indique où vous êtes (*Page 10 › column › try › paragraphe 1*). En mode Maquette, le même clic sélectionne plutôt le bloc dans l’éditeur de gabarits.
+- **Du texte à la page.** Mettez le curseur dans un paragraphe : le paragraphe et le bloc qui le contient sont entourés sur la page, et le même chemin indique où ils se trouvent.
+- **D’une vérification.** Cliquez sur une entrée du panneau Vérifications : le Sandbox vous mène à la page, sélectionne le bloc et place le curseur dans son texte. Dans un livre à plusieurs éditions, il passe à l’édition où se trouve le problème.
 
-<Screenshot src="/docs-shots/fr/select.webp" alt="La page dont la deuxième boîte est entourée d’orange, et le panneau Texte qui montre le bloc sélectionné dans son Markdown." caption="Un clic sur la page place le curseur dans son Markdown, et le chemin sous l’aperçu dit de quel bloc il s’agit." />
+<Screenshot src="/docs-shots/fr/select.webp" alt="La page dont la deuxième boîte est entourée d’orange, et le panneau Texte qui montre le bloc sélectionné dans son Markdown." caption="Un clic sur la page place le curseur dans son Markdown, et le chemin sous l’aperçu indique de quel bloc il s’agit." />
 
 ## Pour aller plus loin
 
-- [Passer un livre aux pages composées](/fr/docs/migrating-to-composed-pages) : un livre qui garde le texte de ses pages dans ses styles peut le voir passer dans le Markdown.
-- [Pages composées](/fr/docs/composed-pages) : tous les attributs du délimiteur de page, de la figure et des lignes d’étiquette, la façon dont une page est composée et chaque avertissement avec sa correction.
+- [Passer un livre aux pages composées](/fr/docs/migrating-to-composed-pages) : le texte qu’un livre garde dans ses styles peut être déplacé dans le Markdown.
+- [Pages composées](/fr/docs/composed-pages) : tous les attributs du délimiteur de page (la ligne `::::page`), de la figure et des lignes d’étiquette, la façon dont une page est composée, et chaque avertissement avec sa correction.
 - [Configuration › Pages composées](/fr/docs/configuration-composed-pages) : tous les champs d’un gabarit, d’un bloc et d’un groupe, l’héritage et les doubles pages.
 - [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages) : les écrans des gabarits, des styles de bloc, des vérifications dans toutes les éditions et des corrections.

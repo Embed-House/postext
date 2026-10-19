@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postextの設定',
   sidebarTitle: '設定',
-  description: 'Postextの設定とは何か、そして19ページに分かれたリファレンスのどこに各設定の説明があるか',
+  description: 'Postextの設定のしくみと、19ページに分かれたリファレンスのどこで各設定を説明しているかの案内',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '5分',
   order: 4,
-  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは19のページに分かれています。このページの一覧からすべての節へ進めるので、必要なところへ直接進んでください。",
+  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは19のページに分かれています。このページの一覧にはすべての節へのリンクがあるので、必要なところへ直接移動してください。",
 };
 
 # 設定
@@ -37,22 +37,22 @@ const document = buildDocument(content, {
 
 **[ページとレイアウト](/ja/docs/configuration-page-layout)**
 
-- [ページ](/ja/docs/configuration-page-layout#ページ)：サイズ、余白、ベースライングリッド、トンボ、[綴じ](/ja/docs/configuration-page-layout#綴じ)。
+- [ページ](/ja/docs/configuration-page-layout#ページ)：サイズ、余白、ベースライングリッド、トンボ、[ノンブル](/ja/docs/configuration-page-layout#ノンブル)、[綴じ](/ja/docs/configuration-page-layout#綴じ)。
 - [レイアウト](/ja/docs/configuration-page-layout#レイアウト)：段数、段間、段間罫、[縦組み](/ja/docs/configuration-page-layout#縦組み)。
 
 **[柱とノンブル](/ja/docs/configuration-headers-footers)**
 
-- [柱とノンブル](/ja/docs/configuration-headers-footers#柱とノンブル)：ページごとに置くテキスト要素と罫線要素。プレースホルダー、奇偶、そろえ位置を指定できます。
+- [柱とノンブル](/ja/docs/configuration-headers-footers#柱とノンブル)：ページごとに置くテキスト、罫線、ボックス、画像の要素。プレースホルダー、奇偶、ページの役割、配置を指定できます。
 
 **[本文](/ja/docs/configuration-text)**
 
-- [本文](/ja/docs/configuration-text#本文)：文字組み、ハイフネーション、タブ位置、オーファンとウィドウ。
+- [本文](/ja/docs/configuration-text#本文)：文字組み、行そろえと改行、[引用ブロック](/ja/docs/configuration-text#引用ブロック)、[詩](/ja/docs/configuration-text#詩)、[タブ位置](/ja/docs/configuration-text#タブ位置)、[ドロップキャップ](/ja/docs/configuration-text#ドロップキャップ)。
 
 **[ハイフネーションと言語](/ja/docs/configuration-language)**
 
 - [ハイフネーション](/ja/docs/configuration-language#ハイフネーション)：ハイフネーションのパターン、分割しない語、行末不ぞろいのテキスト。
 - [文書の言語](/ja/docs/configuration-language#文書の言語)：最上位の`locale`。ハイフネーションのフォールバック、組み込みのリソースタイプ、表と分割された囲みの続きを示す文字列、アクセシブルなPDFにタグ付けされる言語を決めます。そこから導かれる[数字](/ja/docs/configuration-language#文書の数字)（`numerals`）と[テキストの方向](/ja/docs/configuration-language#テキストの方向)（`direction`）、Postextが組める[言語と文字体系](/ja/docs/configuration-language#言語と文字体系)もここで説明します。右から左に組む本のガイドは[アラビア語の組版](/ja/docs/arabic-layout)です。
-- [言語と文字体系](/ja/docs/configuration-language#言語と文字体系)：Postext が組める文字体系と、それぞれを説明するページ。
+- [言語と文字体系](/ja/docs/configuration-language#言語と文字体系)：Postextが組める文字体系と、それぞれを説明するページ。
 - [アラビア文字のテキスト](/ja/docs/configuration-language#アラビア文字のテキスト)：アラビア文字の字形、カシーダ、母音記号、数字。
 
 **[見出し](/ja/docs/configuration-headings)**
@@ -61,7 +61,7 @@ const document = buildDocument(content, {
 
 **[オーファン、ウィドウ、段末そろえ](/ja/docs/configuration-page-flow)**
 
-- [オーファン、ウィドウ、ラント、分割禁止の規則](/ja/docs/configuration-page-flow#オーファンウィドウラント分割禁止の規則)：段の区切りをまたいで行やブロックを離さないための`bodyText`のキー。
+- [オーファン、ウィドウ、ラント、分割禁止の規則](/ja/docs/configuration-page-flow#オーファンウィドウラント分割禁止の規則)：改段をまたいでも行やブロックを離さないための`bodyText`のキー。
 - [段末そろえ](/ja/docs/configuration-page-flow#段末そろえ)：すべての段の終わりをそろえる調整手段。編集上の優先順に並べています。
 
 **[リストと数式](/ja/docs/configuration-lists-math)**
@@ -80,7 +80,7 @@ const document = buildDocument(content, {
 
 **[東アジアの組版](/ja/docs/configuration-east-asian)**
 
-- [東アジアの組版](/ja/docs/configuration-east-asian#東アジアの組版)：`cjk`。中国語・日本語・韓国語のテキストの地域ごとの慣習と行分割、両端そろえの行の空け方、約物の幅とぶら下げ、漢字とラテン文字の間のスペース、文字グリッド、縦組みでの数字の正立、そして圏点、ルビ、割注、漢文の訓点。全体のガイドは[中国語の組版](/ja/docs/chinese-layout)と[日本語の組版](/ja/docs/japanese-layout)です。
+- [東アジアの組版](/ja/docs/configuration-east-asian#東アジアの組版)：`cjk`。中国語・日本語・韓国語のテキストの地域ごとの慣習と行分割、両端そろえの行の伸ばし方、約物の幅とぶら下げ、漢字とラテン文字の間のスペース、文字グリッド、縦組みでの数字の正立、そして圏点、ルビ、割注、漢文の訓点。全体のガイドは[中国語の組版](/ja/docs/chinese-layout)と[日本語の組版](/ja/docs/japanese-layout)です。
 
 **[リソースと表](/ja/docs/configuration-resources)**
 
@@ -94,9 +94,9 @@ const document = buildDocument(content, {
 - [段落スタイル](/ja/docs/configuration-styles#段落スタイル)：`:::paragraphs`コンテナー用の名前付きスタイル。参考文献、用語集、注記などに使います。
 - [チップスタイル](/ja/docs/configuration-styles#チップスタイル)：`chipStyles`。行内の`:chip[…]`用の名前付きスタイル。語群の枠、キーボードのキー、タグなどに使います。
 - [ハイライトのスタイル](/ja/docs/configuration-styles#ハイライトのスタイル)：`markStyles`。行内の`:mark[…]`用の名前付きスタイル。行をまたぐハイライトの語句の後ろに敷く帯です。
-- [コードリスト](/ja/docs/configuration-styles#コードリスト)：`codeStyle`。```` ``` ````のコードリストの書体、枠、タブ幅、長い行、行番号、字句の色、構文の色分けとそのハイライタのフック、そしてコードの書体で組むインラインコード。
-- [部](/ja/docs/configuration-styles#部)：`:::part`コンテナー用の部扉ページ。奇偶、本文領域、扉のデザイン、本文の文字組み。
-- [見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)：`{style="…"}`を付けた見出し用の名前付きスタイル。番号のない章や、独自の柱、ジオメトリー、パレットを持つ前付けに使います。
+- [コードリスト](/ja/docs/configuration-styles#コードリスト)：`codeStyle`。```` ``` ````のコードリストの書体、枠、タブ幅、長い行、行番号、字句の色、構文の色分けとそのハイライターのフック、そしてコードの書体で組むインラインコード。
+- [部](/ja/docs/configuration-styles#部)：`:::part`コンテナー用の部扉ページ。奇偶、版面、扉のデザイン、本文の文字組み。
+- [見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)：`{style="…"}`を付けた見出し用の名前付きスタイル。番号のない章、独自の柱を立てる前付け、ジオメトリーとパレット。
 
 **[囲み](/ja/docs/configuration-callouts)**
 
@@ -115,11 +115,11 @@ const document = buildDocument(content, {
 - [単位と色](/ja/docs/configuration-fonts-colors-viewers#単位と色)、[カラーパレット](/ja/docs/configuration-fonts-colors-viewers#カラーパレット)：`Dimension`、`ColorValue`、名前付きの色。
 - [カスタムフォント](/ja/docs/configuration-fonts-colors-viewers#カスタムフォント)：ユーザーがアップロードしたフォントファミリーを、Google Fontsと並べて宣言します。
 - [HTMLビューアー](/ja/docs/configuration-fonts-colors-viewers#htmlビューアー)：HTMLバックエンドの目標段幅と行分割。
-- [Canvasビューアー](/ja/docs/configuration-fonts-colors-viewers#canvasビューアー)：`canvasViewer`：Sandbox の Canvas で、見開きの左右のページの間隔と、行どうしの間隔。
+- [Canvasビューアー](/ja/docs/configuration-fonts-colors-viewers#canvasビューアー)：`canvasViewer`。SandboxのCanvasで、見開きの左右のページの間隔と、ページの行と次の行の間隔。
 - [PDF生成（設定）](/ja/docs/configuration-fonts-colors-viewers#pdf生成設定)：PDFバックエンドのしおり、アクセシブルな（タグ付きの）出力、色空間の強制。
 - [印刷出力（設定）](/ja/docs/configuration-fonts-colors-viewers#印刷出力設定)：`print`の設定。PDF/X-1aとPDF/X-4、ICC出力プロファイル、黒の扱い（K版のみのグレー、オーバープリント、リッチブラック）、CMYKで指定した色、プリフライト、印刷プレビュー。
 - [コントラストの検査（設定）](/ja/docs/configuration-fonts-colors-viewers#コントラストの検査設定)：`contrast`の設定。地の色に対する文字色をWCAGのAAまたはAAAで、画面と出力プロファイルの用紙について検査し、印刷には細すぎる白抜き文字も報告します。
-- [本文の検査（設定）](/ja/docs/configuration-fonts-colors-viewers#本文の検査設定) — `checks.contentInConfig`：プレースホルダーではなく本の本文を抱えるデザインのテキストを検査します。書名や出版社名のための許可リスト付きです。
+- [本文の検査（設定）](/ja/docs/configuration-fonts-colors-viewers#本文の検査設定)：`checks.contentInConfig`。プレースホルダーの代わりに本の本文そのものが入ったデザイン内のテキストを報告します。書名と出版社名は許可リストで除外できます。
 - [Folioビューアー（設定）](/ja/docs/configuration-fonts-colors-viewers#folioビューアー設定)：3Dの本のビューアーの用紙、綴じ、表面、光。
 - [デバッグ](/ja/docs/configuration-fonts-colors-viewers#デバッグ)：エディター用の視覚的なオーバーレイと、執筆中の警告。
 

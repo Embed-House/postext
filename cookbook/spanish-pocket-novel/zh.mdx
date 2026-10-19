@@ -16,13 +16,13 @@ pageNotes: { "1": "卷首插图：一幅推想的Socartes矿区地图，用虚�
 
 ### 1 · 西班牙语音节，收紧词间距
 
-代码见上面的[简短回答](#简短回答)。`locale: 'es'`选用西班牙语的断词规则，`'es-ES'`或`'es-MX'`这样带地区的标签也一样；默认语言的美式规则则会断成*cabal-los*、*hi-erro*和*establec-imiento*（[支持的语言](/zh/docs/justification#支持的语言区域)）。两端对齐、Knuth–Plass以及段首孤行、段末孤行规则默认都已开启。86 mm的行长还需要收紧词间距：用默认的`maxWordSpacing: 2`时，有八行超过1.6倍，最宽的达到1.89倍；设为1.7时最宽为1.65倍，因为断行程序改为断开*hie-rro*和*ca-lles*（[词间距上下限](/zh/docs/justification#词间距上下限)）。超过上限的行代价高得多，但仍然允许，所以在更窄、没有更好断点的行长上，仍可能超出。`runtMinCharacters: 26`能抓住默认的20个空格宽度放过的断词残片：*siem- / pre adelante.*变成*Adelante, / siempre adelante.*，*So- / cartes [fig. 1].*变成*de / Socartes [fig. 1].*（[孤字](/zh/docs/configuration-page-flow#段首孤行段末孤行孤字与不拆分规则)）。
+代码见上面的[简短回答](#简短回答)。`locale: 'es'`选用西班牙语的断词规则，`'es-ES'`或`'es-MX'`这样带地区的标签也一样；默认语言的美式规则则会断成*cabal-los*、*hi-erro*和*establec-imiento*（[支持的语言](/zh/docs/justification#支持的语言)）。两端对齐、Knuth–Plass以及段首孤行、段末孤行规则默认都已开启。86 mm的行长还需要收紧词间距：用默认的`maxWordSpacing: 2`时，有八行超过1.6倍，最宽的达到1.89倍；设为1.7时最宽为1.65倍，因为断行程序改为断开*hie-rro*和*ca-lles*（[词间距上下限](/zh/docs/justification#词间距上下限)）。超过上限的行代价高得多，但仍然允许，所以在更窄、没有更好断点的行长上，仍可能超出。`runtMinCharacters: 26`能抓住默认的20个空格宽度放过的断词残片：*siem- / pre adelante.*变成*Adelante, / siempre adelante.*，*So- / cartes [fig. 1].*变成*de / Socartes [fig. 1].*（[孤字](/zh/docs/configuration-page-flow#段首孤行段末孤行孤字与不拆分规则)）。
 
 ### 2 · 由整行构成的口袋本页面
 
 <Excerpt region="page" />
 
-下页边距由成品尺寸、上页边距和`LINES`算出，所以版心恰好容纳30行13.8 pt，每个满页都止于同一条基线，<PageRef page={3}>第10页和第11页</PageRef>就是如此。设`mirror: true`后，在跨页的两页上，15 mm的内侧页边距都在书脊一侧，14 mm的外侧页边距都在切口一侧（[镜像页边距](/zh/docs/configuration-page-layout#镜像页边距)），86 mm的行长可容纳约57个10 pt的Gentium Book Plus字符。
+下页边距由成品尺寸、上页边距和`LINES`算出，所以版心恰好容纳30行13.8 pt，每个满页都止于同一条基线，<PageRef page={3}>第10页和第11页</PageRef>就是如此。设`mirror: true`后，在跨页的两页上，15 mm的内侧页边距都在书脊一侧，14 mm的外侧页边距都在切口一侧（[对称页边距](/zh/docs/configuration-page-layout#对称页边距)），86 mm的行长可容纳约57个10 pt的Gentium Book Plus字符。
 
 ### 3 · 用文字写出的章序与抬高的首字
 
@@ -48,7 +48,7 @@ pageNotes: { "1": "卷首插图：一幅推想的Socartes矿区地图，用虚�
 
 <Excerpt region="styles" />
 
-最后一页<PageRef page={5}>第12页</PageRef>以三个段落样式收尾。牛血红色Bodoni的星号居中排在一个[`:::space{lines=2}`](/zh/docs/document-format-directives#space)之后，因为空行不会增加空白。版本说明是8.3 pt、11 pt行距，版权页信息是7.5 pt，用书眉的灰色。版本说明保持墨色；如果改成灰色，样式还要设`italicColor`，否则斜体的*Marianela*会比周围的字印得更深。在Markdown中，对白以raya（—）开头，绝不能用连字符，因为行首的连字符加空格会开启一个列表。说明开头的*1878.*会开启一个编号列表，所以在年份前加一个词连接符（U+2060）。星号要转义（`\*`）；不转义的话，第一个会开启项目符号列表，另两个会开启一段斜体，这一行就消失了。
+最后一页<PageRef page={5}>第12页</PageRef>以三个段落样式收尾。牛血红色Bodoni的星号居中排在一个[`:::space{lines=2}`](/zh/docs/document-format-directives#space)之后，因为空行不会增加空白。版本说明是8.3 pt、11 pt行距，版权页信息是7.5 pt，用书眉的灰色。版本说明保持墨色；如果改成灰色，样式还要设`italicColor`，否则斜体的*Marianela*会比周围的字印得更深。在Markdown中，对白以raya（—）开头，绝不能用连字符，因为行首的连字符加空格会开启一个列表。说明开头的*1878.*会开启一个有序列表，所以在年份前加一个词连接符（U+2060）。星号要转义（`\*`）；不转义的话，第一个会开启无序列表，另两个会开启一段斜体，这一行就消失了。
 
 ## 变化
 

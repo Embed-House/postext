@@ -16,13 +16,13 @@ Seis páginas de un boletín epidemiológico semanal en tamaño carta US, que re
 
 ### 1 · Un estilo de párrafo para cada voz
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Un informe de boletín se escribe en varios registros: los casos, la lista de quienes los comunicaron y el comentario de la redacción. Envolver cada tramo en `:::paragraphs{style="…"}` le da su aspecto sin tocar las palabras: la línea *Reported by* baja a 7,8 pt en cursiva condensada, fuera de la rejilla base, mientras los casos conservan la textura del cuerpo con sus etiquetas `**Patient 1:**` en el color de acento. Las citas se escriben `[@walzer1974]`; `american-medical-association` con `marker: 'parentheses'` las imprime como (1) y ordena la lista por orden de cita, como hacía el boletín, `numbering: 'chapter'` cuenta las citas de cada informe desde 1, y `scope: 'chapter'` pone su lista debajo con esos mismos números.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Un informe de boletín se escribe en varios registros: los casos, la lista de quienes los comunicaron y el comentario de la redacción. Envolver cada tramo en `:::paragraphs{style="…"}` le da su aspecto sin tocar las palabras: la línea *Reported by* baja a 7,8 pt en cursiva condensada, fuera de la rejilla base, mientras los casos conservan la textura del texto base con sus etiquetas `**Patient 1:**` en el color de acento. Las citas se escriben `[@walzer1974]`; `american-medical-association` con `marker: 'parentheses'` las imprime como (1) y ordena la lista por orden de cita, como hacía el boletín, `numbering: 'chapter'` cuenta las citas de cada informe desde 1, y `scope: 'chapter'` pone su lista debajo con esos mismos números.
 
 ### 2 · Una cabecera que abre el primer informe
 
 <Excerpt region="masthead" />
 
-La cabecera es el diseño del estilo de título del primer informe, así que se imprime una sola vez, en la página 1, y las cabeceras de página se la saltan (`pages: 'body'`). El antetítulo y la fecha salen de atributos del H1 de cada informe, y el título es `{titleText}`: un elemento de texto con `inlineMarks: true` conserva el género en cursiva del título. El informe de julio se abre con esos tres elementos bajo un filete doble. Su estilo de título ocupa toda la página con `spanBreak: false`, así que empieza donde acaba el informe de junio: las columnas de encima terminan a la misma altura y el texto sigue debajo en las dos, como el boletín encadenaba un informe tras otro.
+La cabecera es el diseño del estilo de encabezado del primer informe, así que se imprime una sola vez, en la página 1, y las cabeceras de página se la saltan (`pages: 'body'`). El antetítulo y la fecha salen de atributos del H1 de cada informe, y el título es `{titleText}`: un elemento de texto con `inlineMarks: true` conserva el género en cursiva del título. El informe de julio se abre con esos tres elementos bajo un filete doble. Su estilo de encabezado ocupa toda la página con `spanBreak: false`, así que empieza donde acaba el informe de junio: las columnas de encima terminan a la misma altura y el texto sigue debajo en las dos, como el boletín encadenaba un informe tras otro.
 
 ### 3 · Tres tablas a partir de texto con tabuladores
 
@@ -34,7 +34,7 @@ Cada tabla es una ranura de contenido con texto separado por tabuladores, el for
 
 <Excerpt region="palette" />
 
-La banda, las etiquetas, los folios, las cabeceras de tabla y el gráfico nombran la misma entrada de la paleta: quien cambie `accent` por el color de su boletín recolorea las seis páginas de una vez.
+La banda, las etiquetas, los folios, las cabeceras de tabla y el gráfico remiten a la misma entrada de la paleta: quien cambie `accent` por el color de su boletín recolorea las seis páginas de una vez.
 
 ## Variantes
 

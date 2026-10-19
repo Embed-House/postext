@@ -16,7 +16,7 @@ Un ensayo de una revista literaria trimestral: cuatro páginas sobre quién dice
 
 ### 1 · El estilo es MLA; los datos, BibTeX
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. El motor de citas se registra una vez y `citations.style` nombra el estilo MLA incluido; citeproc-js redacta con él cada cita y la lista. Las referencias van en un bloque `:::references{format=bibtex}` al final del ensayo, escritas como las exporta un gestor de referencias. MLA necesita un título abreviado para las dos obras de Keats, y el campo `shorttitle` de cada entrada lo da (en CSL se llama `title-short`).
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. El motor de citas se registra una vez y `citations.style` elige el estilo MLA incluido; citeproc-js redacta con él cada cita y la lista. Las referencias van en un bloque `:::references{format=bibtex}` al final del ensayo, escritas como las exporta un gestor de referencias. MLA necesita un título abreviado para las dos obras de Keats, y el campo `shorttitle` de cada entrada lo da (en CSL se llama `title-short`).
 
 ### 2 · Cuatro maneras de citar
 
@@ -40,13 +40,13 @@ El título lleva un estilo que salta a página nueva, y `:::bibliography{title="
 
 <Excerpt region="palette" />
 
-La banda mide 116 mm y lleva el antetítulo, el título de 56 pt en Spectral Light cursiva, el subtítulo y la firma, todos tomados de atributos del título. La franja de arcilla es una segunda caja anclada 3 mm por encima del pie de la banda.
+La banda mide 116 mm y lleva el antetítulo, el título de 56 pt en Spectral Light cursiva, el subtítulo y la firma, todos tomados de atributos del encabezado. La franja de arcilla es una segunda caja anclada 3 mm por encima del pie de la banda.
 
 ## Variantes
 
 ### Pon la lista a continuación del ensayo
 
-Una revista que compone las obras citadas tras el último párrafo, sin página nueva, quita el salto del estilo del título.
+Una revista que compone las obras citadas tras el último párrafo, sin página nueva, quita el salto del estilo del encabezado.
 
 ```diff
 -  headingStyles: [{ id: 'works-cited', breakBefore: { enabled: true, parity: 'any' } }],

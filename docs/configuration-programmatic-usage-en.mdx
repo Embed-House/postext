@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Programmatic usage',
   description: 'Calling Postext from code: buildDocument and its warnings, defaults, fonts, caches and the Web Worker',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '28 min',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Programmatic Usage
 
-> **Recommended path: use the Web Worker.** In a browser, the overwhelming majority of integrations should drive the layout pipeline through `createLayoutWorker()` from `postext/worker`, **not** by calling `buildDocument` directly on the main thread. The worker keeps the UI responsive during builds, caches text measurements across incremental rebuilds, and wires up last-wins cancellation so a new keystroke aborts any stale build already in flight. Jump straight to [Running layout in a Web Worker](#running-layout-in-a-web-worker) for the canonical recipe. Everything in the rest of this section (direct `buildDocument`, resolvers, strippers, caches) is still useful — the worker exposes the exact same inputs and outputs — but for UI code the worker wrapper is the correct starting point. Only fall back to calling `buildDocument` on the main thread for one-shot exports, server-side rendering (Node), or tests.
+> **Recommended path: use the Web Worker.** In a browser, drive the layout through `createLayoutWorker()` from `postext/worker` rather than calling `buildDocument` on the main thread. The worker keeps the page responsive during a build, keeps text measurements cached between rebuilds, and cancels a build in flight when a newer one starts, so a keystroke never waits for the layout of older text. The recipe is in [Running layout in a Web Worker](#running-layout-in-a-web-worker). The rest of this section (direct `buildDocument`, resolvers, strippers, caches) still applies: the worker takes the same inputs and returns the same outputs. Call `buildDocument` on the main thread only for one-off exports, server-side rendering (Node) or tests.
 
 ### Building a document
 
@@ -126,7 +126,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>The content laid into a frame of a composed page does not fit it after the reflow ladder, and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> and <code>imageScale</code>, where its text and pictures were left; <code>proposals</code>, each <code>{'{'} kind, path, value {'}'}</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
+      <td>The content laid into a frame of a composed page does not fit it after the reflow ladder (the fixes the layout tries in turn), and the frame has no <code>next</code> frame left (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, the height cut; <code>configPath</code>, the JSON pointer of the template frame, such as <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> and <code>imageScale</code>, where its text and pictures were left; <code>proposals</code>, each <code>{'{'} kind, path, value {'}'}</code>). Raised by the layout, with the <code>pageIndex</code> of the page.</td>
       <td>Paged output cuts what does not fit at the frame's foot; it stays in the document, the source map and the reflowable EPUB.</td>
     </tr>
     <tr>
@@ -137,7 +137,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     <tr>
       <td><code>continueTargetMissing</code></td>
       <td>A frame's <code>overflow.continueIn: 'page:&lt;id&gt;'</code> names no page fence after the one its story is on (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> when that fence comes earlier, <code>configPath</code>). Raised by the layout, with the <code>pageIndex</code> of the sending page.</td>
-      <td>The rest goes on on a page added after the sending page, as with <code>'next-page'</code>.</td>
+      <td>The rest continues on a page added after the sending page, as with <code>'next-page'</code>.</td>
     </tr>
     <tr>
       <td><code>spreadMismatch</code></td>
@@ -226,7 +226,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>A paragraph a <a href="/en/docs/configuration-text#drop-caps">drop cap</a> opens that cannot take it as configured. <code>reason</code>: <code>'shortParagraph'</code> (fewer lines than the initial sinks; <code>handling</code> is what <code>shortParagraph</code> did, <code>lines</code> the lines a shrunk initial spans), <code>'split'</code> (it breaks before the initial's last line, alone in a column too short), <code>'joiningScript'</code> (its first letter joins the next), <code>'verticalText'</code> or <code>'noLetter'</code> (it opens with a reference, a formula or a note mark). <code>text</code> is its first line. <code>'inBox'</code>: a <code>:::paragraphs</code> group or a paragraph style asks for one inside a <code>:::callout</code> box, where none is set.</td>
+      <td>A paragraph opened by a <a href="/en/docs/configuration-text#drop-caps">drop cap</a> that it cannot take as configured. <code>reason</code>: <code>'shortParagraph'</code> (fewer lines than the initial sinks; <code>handling</code> is what <code>shortParagraph</code> did, <code>lines</code> the lines a shrunk initial spans), <code>'split'</code> (it breaks before the initial's last line, alone in a column too short), <code>'joiningScript'</code> (its first letter joins the next), <code>'verticalText'</code> or <code>'noLetter'</code> (it opens with a reference, a formula or a note mark). <code>text</code> is its first line. <code>'inBox'</code>: a <code>:::paragraphs</code> group or a paragraph style asks for one inside a <code>:::callout</code> box, where none is set.</td>
       <td>The room is kept, the initial shrinks or is left out, as the warning says.</td>
     </tr>
     <tr>
@@ -241,12 +241,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>A bitmap with a print size (its own <code>bitmap.resolution</code>, or a number in <code>layout.bitmapResolution</code>; not a resolution read from the file) set in a column that holds it at under half of it, on a page whose text block is wider than the column. <code>resourceId</code> names it, <code>scale</code> is the share of its print width it keeps, <code>printWidthPx</code>, <code>widthPx</code> and <code>pageWidthPx</code> the print, column and text block widths. A picture narrowed by <code>placement.width</code>, shrunk to its slot, turned or set in a composed page's frame is not reported. Points at the paragraph that first cites it. Since postext 1.37.</td>
+      <td>A bitmap with a print size (its own <code>bitmap.resolution</code>, or a number in <code>layout.bitmapResolution</code>; not a resolution read from the file) set in a column that holds it at less than half that size, on a page whose text block is wider than the column. <code>resourceId</code> names it, <code>scale</code> is the share of its print width it keeps, <code>printWidthPx</code>, <code>widthPx</code> and <code>pageWidthPx</code> the print, column and text block widths. A picture narrowed by <code>placement.width</code>, shrunk to its slot, turned or set in a composed page's frame is not reported. Points at the paragraph that first cites it. Since postext 1.37.</td>
       <td>The picture is printed at its column's width. A picture in the flow is never wider than its column and the default page has two (<code>layout.layoutType: 'double'</code>): set the page in one column, float it across the page (<code>placement.span: 'page'</code>), or raise its resolution if that size is the one wanted.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>A resource or a box set to wrap the text round it (<code>placement.wrap</code>, a box's <code>wrap</code>) that does not as asked. <code>reason</code>: <code>'tooNarrow'</code> (the text beside it would be narrower than <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (it is shorter than <code>layout.wrap.minLinesBeside</code> lines), <code>'moved'</code> (an inline one too tall for the room left in its column moved on to the next, its anchor with it) <code>'verticalText'</code>, or <code>'noContour'</code> (a contour wrap round a picture whose shape is not known: an SVG with no <code>contour.points</code>, a bitmap with no transparency, or an alpha channel the host did not trace). <code>resourceId</code> names a resource, <code>box</code> a box's style. Points at the embed or the box.</td>
+      <td>A resource or a box set to wrap the text round it (<code>placement.wrap</code>, a box's <code>wrap</code>) that does not wrap as asked. <code>reason</code>: <code>'tooNarrow'</code> (the text beside it would be narrower than <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (it is shorter than <code>layout.wrap.minLinesBeside</code> lines), <code>'moved'</code> (an inline one too tall for the room left in its column moved on to the next, its anchor with it), <code>'verticalText'</code>, or <code>'noContour'</code> (a contour wrap round a picture whose shape is not known: an SVG with no <code>contour.points</code>, a bitmap with no transparency, or an alpha channel the host did not trace). <code>resourceId</code> names a resource, <code>box</code> a box's style. Points at the embed or the box.</td>
       <td>The item takes its band whole, or stands in the next column, as the reason says; with <code>'noContour'</code> the text runs round the picture's box. Give the picture a polygon, use a PNG with transparency, or read it through <code>readBundle</code> or the Sandbox, which trace it.</td>
     </tr>
     <tr>
@@ -291,6 +291,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
   </tbody>
 </table>
+
+The table lists the kinds any document can raise. The kinds of one feature are described with it: comics (`comicPanelCount`, `comicBalloonOverflow`…) on the [Comics](/en/docs/comics) page, videos (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) under [Resources](/en/docs/document-format-resources), citations and the index (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) under [Notes and references](/en/docs/document-format-notes-references), Chinese, Japanese and Arabic text (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) on the pages of those scripts, and the line breaker's (`raggedLine`, `unbreakableWordOverflow`) under [Justification](/en/docs/justification).
 
 The warnings about a resource — its table style, its grid, a reference inside its caption, note or cells — point at the resource's first embed or reference in the text, and each is listed once per resource. Only the resources the document uses are checked: a chapter of a book reports the tables it cites, not every table the book holds.
 
@@ -485,11 +487,11 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **Faces the page declares** (an `@font-face` rule, a `FontFace` already added) are loaded through the font set (`document.fonts.load`, or `self.fonts` in a worker). **Faces it does not declare** are asked of `resolve(family, weight, style, { text, codePoints })`, which answers with a file (bytes, or a URL), several files (the slices of a face), `{ source, unicodeRange, weight, style }` for a slice or a variable range, or `null`. The engine adds them as `FontFace`s once all have loaded, in the order of the configuration and of each answer (latin, then latin-ext, then greek when the resolver answers so), so the font set is the same whatever order the files arrive in. It also registers them with the font registry that [SVG pictures](/en/docs/configuration-resources#fonts-in-svg-text) and layout workers read. A resolver may declare the face itself (add a style sheet) and answer `null`.
-- **The report** lists the faces a loaded face answers for (or an installed family), the ones still `missing`, and the ones the browser would `synthesize` from another weight or slant. `timeoutMs` (10 000 by default) bounds the wait; a face still loading then counts as missing. Where there is no font set (Node), `prepareFonts` does nothing and reports every face loaded.
+- **The report** lists in `loaded` the faces a loaded face (or an installed family) answers for, in `missing` the ones still missing, and in `synthesized` the ones the browser would draw from another weight or slant; `added` counts the `FontFace`s added from the resolver's files. `timeoutMs` (10 000 by default) bounds the wait; a face still loading then counts as missing. Where there is no font set (Node), `prepareFonts` does nothing and reports every face loaded.
 - **`buildDocumentWithFonts(content, config, options)`** prepares, builds with `buildDocumentAsync`, reads the faces the pages actually set text in, loads any the font set could not give (a weight only the pages reveal is asked of `resolve` even when another weight of the family would answer for it), and builds again (at most two extra builds). `withLoadedFonts(build, options)` does the same around any build function, for a book built chapter by chapter or a bundle (`buildBundle`) that returns several documents. `options.onFonts` receives the final report.
 - **After the build**, every face the text was set in that the font set could not give is listed in `doc.contentWarnings` as `fontFallback` (see [Warnings in the document](#warnings-in-the-document)).
 
-Faces that arrive later are picked up on their own. The engine keeps, per font set, which faces of each family were loaded when it last looked; a build looks again at its start (only when the set grew or shrank, is loading, or finished loading a face) and drops what was measured in the families whose faces changed. `watchFonts(fontSet)` does the same as faces load, at most once per animation frame however many slices a burst brings, and `onFontsChanged(listener)` tells the host which families changed, so it can lay the pages out again:
+Faces that arrive later are picked up on their own. For each font set, the engine records which faces of each family were loaded when it last looked; a build looks again at its start (only when the set grew or shrank, is loading, or finished loading a face) and drops what was measured in the families whose faces changed. `watchFonts(fontSet)` does the same as faces load, at most once per animation frame however many slices a burst brings, and `onFontsChanged(listener)` tells the host which families changed, so it can lay the pages out again:
 
 ```ts
 import { watchFonts, onFontsChanged } from 'postext';
@@ -555,6 +557,29 @@ Some of Postext's state lives in module-level variables. Everything that imports
 
 The simplest isolation is a realm per document: an iframe per live example (a CodePen embed is one), or a [layout worker](#running-layout-in-a-web-worker) per document for the measurements and the hyphenation (images are still registered on the page).
 
+### Word documents (`postext/word`)
+
+The `postext/word` subpath reads and writes Word documents (`.docx`) without a DOM. The Sandbox's Word import and export and the command line's `import-docx` and `docx` are built on it (see [Command line › docx and import-docx](/en/docs/command-line#docx-and-import-docx)).
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // a Uint8Array or an ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict, report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`** reads the file into a Word model: its styles, paragraphs, notes and pictures, the document's `title`, and the import template a Postext export carries (`embeddedTemplate`). A file that is not a Word document throws a `DocxReadError`.
+- **`wordToPostext(word, settings)`** turns the model into chapters (`{ title, markdown }`), pictures and tables. The template maps each Word style to a heading, a paragraph style, a box, a quotation or a caption of the configuration. `chapters: 'split'` opens a chapter at each level-1 heading, `'single'` keeps one. The pictures (`id`, `media.bytes`, `caption`, `alt`) and tables (`id`, `model`, `caption`) are the host's to store as resources; `skippedPictures` names the EMF, WMF and TIFF pictures left out.
+- **`analyzeDocx(word, template, config)`** is the quality report the Sandbox shows before an import: the styles in use, how many paragraphs are styled, and findings such as `directFormatting`, `manualHeadings` and `typedNumbering`, each with a count and examples.
+- **`postextToDocx(chapters, settings)`** writes chapters as a `.docx` (a `Uint8Array`) with Word styles for headings, paragraphs, boxes, quotes, lists and notes. What Word cannot express is kept verbatim in the *Postext Markup* styles, and the template goes inside the file, so the document imports back unchanged. `book: true` opens each chapter with a `Postext Chapter` paragraph, from which the import rebuilds the chapters.
+- **`wordStyleTracking(word, template, config)`** and **`applyStyleTracking(config, tracking)`** carry the character spacing of Word's styles onto the styles of the configuration that set none.
+
 
 ## Running layout in a Web Worker
 
@@ -581,7 +606,7 @@ The same `VDTDocument` that comes back from `build(...)` feeds every downstream 
 - **Per-worker measurement cache.** The worker keeps a single `MeasurementCache` for its lifetime. Subsequent builds that share font, text, and width reuse the cached line measurements — typing a single character into a long document only re-measures blocks whose input actually changed.
 - **Identical metrics to the main thread.** Fonts are shipped into the worker as transferable `ArrayBuffer`s and registered via `new FontFace(...)` on the worker's own `FontFaceSet`. The worker measures with the same canvas font metrics the main thread would use, so line breaks and column heights are byte-for-byte identical.
 - **Math raster cache survives worker builds.** The math renderer ships a content-keyed raster cache alongside the identity-keyed one — structured-cloning a `MathRender` across the worker boundary would otherwise miss the identity cache on every rebuild.
-- **The same lines as on the page.** A canvas made in a worker has no page to take a language from, and a font answers with other glyphs under a language. The engine sets the document's language (`locale`) on every context it measures with, in the worker as on the page, so `build()` returns the lines `buildDocument` gives on a page in any language ([`bodyText.shapingLanguage: 'document'`](/en/docs/configuration-text#body-text), the default since postext 1.30). With `'host'`, which a configuration stored before 1.30 keeps, a worker measures with no language and a page with its own, as up to postext 1.28.
+- **The same lines as on the page.** A canvas made in a worker has no page to take a language from, and a font can give different glyphs depending on the language. The engine sets the document's language (`locale`) on every context it measures with, in the worker as on the page, so `build()` returns the lines `buildDocument` gives on a page in any language ([`bodyText.shapingLanguage: 'document'`](/en/docs/configuration-text#body-text), the default since postext 1.30). With `'host'`, which a configuration stored before 1.30 keeps, a worker measures with no language and a page with its own, as up to postext 1.28.
 
 ### Public API
 
@@ -589,7 +614,10 @@ The worker client lives at the `postext/worker` subpath and is a handful of name
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`** — spawns a dedicated worker (or wraps one you pass in via `opts.worker`, or starts the worker entry at `opts.url`) and returns a typed handle. See [Loading the worker from a CDN](#loading-the-worker-from-a-cdn).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`** — ship font bytes into the worker. Buffers are transferred, so keep a fresh copy on the main thread if you need to re-send later.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`** — run the pipeline. Aborting the signal cancels the in-flight build.
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`** — drop the worker's faces of those families, so that the next `registerFonts` for a family takes effect instead of being matched against the face it already holds.
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`** — run the pipeline. `options` is `{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`. Aborting `signal` cancels the in-flight build. `onProgress({ pass, blocks, totalBlocks, pages })` is called as the placement advances; `onStats({ passes, totalMs, cached?, missingFonts? })` receives the finished build's pass timings. `resourcesKey` is a fingerprint of `content.resources`: consecutive builds with the same key send the list once, and the worker keeps it. `cacheKey` is a fingerprint of the whole build: the worker keeps its last few documents by it and answers a build whose key it holds from that cache.
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`** — build into the worker's document cache without sending the document back, for a chapter the reader may open next; the next `build` with that `cacheKey` is answered from the cache.
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`** — `prepareFonts` on the page, then the faces it found sent to the worker; see [Loading the worker from a CDN](#loading-the-worker-from-a-cdn).
 - **`LayoutWorkerHandle.dispose(): void`** — terminate the worker and reject any pending builds with `AbortError`.
 - **`FontPayload`** — `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` is a CSS weight string (`'700'`, `'bold'`); `registerFonts` also takes it as a number (`700`). The `buffer` is transferred to the worker when you call `registerFonts`.
 - **`BuildCancelledError`** (re-exported from `postext`) — what `buildDocument` throws internally when `options.shouldCancel` returns `true`. You do not usually see this on the main thread: the worker protocol converts it to an `AbortError` before it reaches your code.
@@ -722,9 +750,9 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 **A worker does not see the page's fonts.** It has a font set of its own, holding only the faces sent with `registerFonts` and the fonts installed on the system. When a build sets text in a family the worker cannot find, that text is measured with a fallback font, so its line breaks will not match the page. The client then prints one console warning per family (`"EB Garamond" is not available inside the layout worker…`), and lists the families in `BuildStats.missingFonts`, which the `onStats` callback of `build` receives. The document itself carries the same faces as `fontFallback` content warnings.
 
-`handle.prepareFonts(content, config, options)` runs [`prepareFonts`](#loading-fonts-before-layout) on the page and then sends the worker the files of every face it found that the font registry holds (the resolver's files, a bundle's faces, the page's readable `@font-face` rules), only the slices that hold the document's characters. When faces reach the worker, it drops the measurements of those families only and its cache of finished documents.
+`handle.prepareFonts(content, config, options)` runs [`prepareFonts`](#loading-fonts-before-layout) on the page and then sends the worker the files of every face it found that the font registry holds (the resolver's files, a bundle's faces, the page's readable `@font-face` rules), limited to the slices that hold the document's characters. When faces reach the worker, it drops the measurements of those families only and its cache of finished documents.
 
-Faces may also reach the worker after a build: a weight the pages turn out to need, another `unicode-range` slice of a cut, a file uploaded again under the same family name. The next build measures with them. A worker's canvas would not do so on its own: in Chrome it resolves a font the first time a font shorthand is set and does not look at the font set again for that shorthand, so the text would keep the widths of the face that answered first. The worker therefore names a family once more in the shorthands it sets once a face of that family has arrived late (`Geist, Geist`): another family list for the canvas, the same font and the same widths. The documents it returns keep the font strings as the engine writes them, and a worker that has its faces before its first build sets every shorthand as written.
+Faces may also reach the worker after a build: a weight the pages turn out to need, another `unicode-range` slice of a cut, a file uploaded again under the same family name. The next build measures with them. A worker's canvas would not do so on its own: in Chrome it resolves a font the first time a font shorthand is set and does not look at the font set again for that shorthand, so the text would keep the widths of the face that answered first. So once a face of a family has arrived late, the worker names that family twice in the shorthands it sets (`Geist, Geist`): to the canvas this is a new family list, but it gives the same font and the same widths. The documents it returns keep the font strings as the engine writes them, and a worker that has its faces before its first build sets every shorthand as written.
 
 ### Font payload collection (Fontsource / Google Fonts)
 
@@ -733,11 +761,11 @@ Faces may also reach the worker after a build: a weight the pages turn out to ne
 The sandbox's `collectFontPayloadsForFamilies` (`packages/postext-sandbox/src/controls/fontLoader.ts`) is a reference implementation. It:
 
 1. Queries `https://api.fontsource.org/v1/fonts/{family-id}` for the weights and styles the family has.
-2. Reads the family's subsets and their `unicode-range` from its package on jsDelivr (`@fontsource/{family-id}@5/400.css`), once per family. The files are then asked of the exact version that style sheet was answered from (jsDelivr's `x-jsd-version`), so a family never arrives from two versions of its package.
-3. Downloads every file of the regular, the bold and their italics of each family (`files/{family-id}-{subset}-{weight}-{style}.woff2`); `collectFontPayloadsForConfig(config, markdown)` takes the weights and styles a configuration asks for instead. They are static files, the ones the PDF embeds, so the worker measures with what the PDF draws. A variable file gives other advances between two of its masters, and a line a fraction of a pixel from its measure breaks elsewhere.
+2. Reads the family's subsets and their `unicode-range` from its package on jsDelivr (`@fontsource/{family-id}@5/400.css`), once per family. The files are then requested from the exact version that served that style sheet (jsDelivr's `x-jsd-version`), so a family never arrives from two versions of its package.
+3. Downloads every file of the regular, bold, italic and bold italic faces of each family (`files/{family-id}-{subset}-{weight}-{style}.woff2`); `collectFontPayloadsForConfig(config, markdown)` takes the weights and styles a configuration asks for instead. They are static files, the ones the PDF embeds, so the worker measures with what the PDF draws. A variable file gives other advances between two of its masters, and a line a fraction of a pixel from its measure breaks elsewhere.
 4. Returns a `FontPayload[]` where `buffer` is a fresh `ArrayBuffer` per call — important, because `registerFonts` transfers the buffer and leaves the sender-side copy detached.
 
-The files of a cut go in the order a pen declares them, `latin` first and the script's own files last (`arabic`, the numbered slices of a Chinese or Japanese family), since the file added last answers for a character two files hold. A family Fontsource has no files for is read from Google's CSS2 style sheet instead, which only returns WOFF2 to browser-like User-Agent strings.
+The files of a face go in the order a Cookbook pen (a CodePen example) declares them, `latin` first and the script's own files last (`arabic`, the numbered slices of a Chinese or Japanese family), since, when two files hold the same character, the file added last answers for it. A family Fontsource has no files for is read from Google's CSS2 style sheet instead, which only returns WOFF2 to browser-like User-Agent strings.
 
 Pair it with `getConfigFontFamilies(config)` to get the list of families a given `PostextConfig` will actually render (body, headings, list bullets, ordered-list numbers).
 

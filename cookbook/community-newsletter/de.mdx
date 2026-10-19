@@ -1,6 +1,6 @@
 ---
 title: "Vereinsblatt: Aufmacher und Kurzmeldungen"
-summary: "Zweiseitiges Kleingärtnerblatt, anderthalbspaltig: Der Aufmacher füllt die breite Spalte, springt auf Seite 2; Umbrüche schicken Meldungen in die schmale."
+summary: "Zweiseitiges Kleingärtnerblatt, anderthalbspaltig: Der Aufmacher füllt die breite Spalte, springt auf Seite 2; Spaltenumbrüche setzen Meldungen in die schmale."
 plain: "Ein zweiseitiges Mitteilungsblatt für einen Gartenverein. Der Hauptartikel füllt eine breite Spalte und geht auf Seite 2 weiter, kurze Meldungen füllen eine schmale Spalte daneben."
 description: "Vereinsblatt in Postext: Text in beiden Spalten einer anderthalbspaltigen Seite, Spaltenumbrüche, Sprung auf Seite 2, Chips als Etiketten, Text neben Grafik."
 question: "Wie setze ich einen Aufmacher breit neben eine schmale Spalte mit Kurzmeldungen, und Text neben ein Bild?"
@@ -34,13 +34,13 @@ Wer `chipStyles` deklariert, ersetzt den eingebauten blassblauen Chip, und ein C
 
 <Excerpt region="wrap" />
 
-`wrap: 'right'` setzt die Beetzeichnung an den rechten Rand der 113 mm breiten Spalte, 45 % davon breit (51 mm), und der Absatz nach der Zeile `::resource` läuft daneben auf den verbleibenden 57 mm, eine Grundtextzeile Abstand zur Zeichnung und ihrer Bildunterschrift ([Textumfluss](/de/docs/document-format-resources#textumfluss)). Die Oberkante der Zeichnung steht auf Höhe der ersten Zeile des Absatzes, und jede Zeile bleibt im 13,4-pt-Raster. Ein längerer Absatz liefe unter der Zeichnung auf vollen 113 mm weiter, als ein Absatz; eine Überschrift oder eine weitere Abbildung, die käme, solange die Zeichnung noch neben dem Text steht, rückte darunter. Die Überschrift der Ebene 4 darüber nimmt einen Überschriftenstil, der nur ihre Farbe in das Blattgrün ändert.
+`wrap: 'right'` setzt die Beetzeichnung an den rechten Rand der 113 mm breiten Spalte, 45 % davon breit (51 mm), und der Absatz nach der Zeile `::resource` läuft daneben auf den verbleibenden 57 mm, eine Grundtextzeile Abstand zur Zeichnung und ihrer Legende ([Textumfluss](/de/docs/document-format-resources#textumfluss)). Die Oberkante der Zeichnung steht auf Höhe der ersten Zeile des Absatzes, und jede Zeile bleibt im 13,4-pt-Raster. Ein längerer Absatz liefe unter der Zeichnung auf vollen 113 mm weiter, als ein Absatz; eine Überschrift oder eine weitere Abbildung, die käme, solange die Zeichnung noch neben dem Text steht, rückte darunter. Die Überschrift der Ebene 4 darüber nimmt einen Überschriftenstil, der nur ihre Farbe in das Blattgrün ändert.
 
 ### 5 · Ein schmales Diagramm in seinem Band zentrieren
 
 <Excerpt region="band" />
 
-`width: 0.62` setzt das Diagramm 70,1 mm breit in die 113 mm breite Spalte, und `align: 'center'` lässt auf jeder Seite 21,5 mm Papier frei ([Platzierung](/de/docs/document-format-resources#platzierung)). Der Text darüber und darunter behält die volle Satzbreite und fließt nie in diesen Weißraum. Die Zeichnungen gehören zu einem Ressourcentyp mit leerem `captionPrefix`, sodass jede Bildunterschrift mit ihren eigenen fetten Wörtern beginnt, ohne ein „Figure 1“ davor.
+`width: 0.62` setzt das Diagramm 70,1 mm breit in die 113 mm breite Spalte, und `align: 'center'` lässt auf jeder Seite 21,5 mm Papier frei ([Platzierung](/de/docs/document-format-resources#platzierung)). Der Text darüber und darunter behält die volle Satzbreite und fließt nie in diesen Weißraum. Die Zeichnungen gehören zu einem Ressourcentyp mit leerem `captionPrefix`, sodass jede Legende mit ihren eigenen fetten Wörtern beginnt, ohne ein „Figure 1“ davor.
 
 ## Varianten
 

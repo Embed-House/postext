@@ -437,8 +437,8 @@ Director of the Observatory
   (`H~2~O + H~2~O ⇌ H~3~O^+^ + OH^−^`), in an `equation` paragraph style
   (centred, no indent) when displayed. mhchem works too:
   `$\ce{H2O}$`.
-- There is no math in captions, table cells or heading attribute values; use
-  `^ ^`, `~ ~` and Unicode there.
+- Captions, table cells and notes take inline `$…$` (postext ≥ 1.19; Pandoc's rule, so "$5 to $10" stays
+  text). Heading attribute values and chip texts have none: use `^ ^`, `~ ~` and Unicode there.
 - Escape every literal `$` as `\$` (prices!).
 
 ### B6. Headings deeper than six levels

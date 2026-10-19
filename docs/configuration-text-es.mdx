@@ -1,27 +1,27 @@
 {/* docs/configuration-text-es.mdx */}
 
 export const metadata = {
-  title: 'Configuración: texto de cuerpo',
-  sidebarTitle: 'Texto de cuerpo',
-  description: 'La tipografía del texto corrido: la fuente, el cuerpo y el interlineado, los colores, las sangrías, las citas, el verso, las tabulaciones y las letras capitulares',
+  title: 'Configuración: texto base',
+  sidebarTitle: 'Texto base',
+  description: 'Cómo se configura la tipografía del texto corrido: la fuente, el cuerpo y el interlineado, los colores, las sangrías, las citas, la poesía, las tabulaciones y las letras capitulares',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 7,
   parent: 'configuration',
-  plainSummary: "Esta página reúne los ajustes del texto principal de un libro. Eliges su tipografía, su cuerpo y el espacio entre sus líneas, y el color de las palabras en negrita y en cursiva. Fijas la sangría de la primera línea y el espacio entre párrafos. La página también explica las citas que se separan del texto, los poemas, las tabulaciones para el texto en columnas y la letra grande con la que empiezan algunos capítulos. La separación silábica, los encabezados y las listas tienen páginas propias.",
+  plainSummary: "Esta página reúne los ajustes del texto principal de un libro. Eliges su tipo de letra, su tamaño y el espacio entre sus líneas, y el color de las palabras en negrita y en cursiva. Fijas la sangría de la primera línea y el espacio entre párrafos. La página también explica las citas que se separan del texto, los poemas, las tabulaciones para el texto en columnas y la letra grande con la que empiezan algunos capítulos. La separación silábica, los encabezados y las listas tienen páginas propias.",
 };
 
-# Configuración: texto de cuerpo
+# Configuración: texto base
 
 
-## Texto de cuerpo
+## Texto base
 
-La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
+La propiedad `bodyText` controla la tipografía de todo el texto de los párrafos.
 
-<Illustration name="TypographyScale" data='{"title": "Escala tipográfica", "desc": "Jerarquía tipográfica desde H1 hasta texto pequeño, mostrando tamaños relativos de encabezados, texto de cuerpo y pies.", "caption": "Una escala consistente mantiene la jerarquía legible de un vistazo.", "rows": [{"role": "H1", "sample": "Encabezado 1", "size": "32px"}, {"role": "H2", "sample": "Encabezado 2", "size": "24px"}, {"role": "H3", "sample": "Encabezado 3", "size": "20px"}, {"role": "Cuerpo", "sample": "Texto de cuerpo", "size": "16px"}, {"role": "Pequeño", "sample": "Pie / nota", "size": "13px"}]}' />
+<Illustration name="TypographyScale" data='{"title": "Escala tipográfica", "desc": "La jerarquía tipográfica, de H1 al texto pequeño, con los tamaños relativos de los encabezados, el texto base y los pies.", "caption": "Con una escala coherente, la jerarquía se lee de un vistazo.", "rows": [{"role": "H1", "sample": "Encabezado 1", "size": "32px"}, {"role": "H2", "sample": "Encabezado 2", "size": "24px"}, {"role": "H3", "sample": "Encabezado 3", "size": "20px"}, {"role": "Base", "sample": "Texto base", "size": "16px"}, {"role": "Pequeño", "sample": "Pie / nota", "size": "13px"}]}' />
 
-<Illustration name="SpacingScale" data='{"title": "Escala de espaciado", "desc": "Una escala de espaciado por pasos con valores crecientes usados en márgenes, rellenos y huecos.", "caption": "Los pasos de espaciado construyen un ritmo predecible en la maquetación.", "steps": [{"name": "xs", "value": "4 px", "px": 4}, {"name": "sm", "value": "8 px", "px": 8}, {"name": "md", "value": "16 px", "px": 16}, {"name": "lg", "value": "24 px", "px": 24}, {"name": "xl", "value": "40 px", "px": 40}, {"name": "2xl", "value": "64 px", "px": 64}]}' />
+<Illustration name="SpacingScale" data='{"title": "Escala de espaciado", "desc": "Una escala de espaciado por pasos, con valores crecientes para márgenes, rellenos y separaciones.", "caption": "Con estos pasos de espaciado, la maquetación tiene un ritmo predecible.", "steps": [{"name": "xs", "value": "4 px", "px": 4}, {"name": "sm", "value": "8 px", "px": 8}, {"name": "md", "value": "16 px", "px": 16}, {"name": "lg", "value": "24 px", "px": 24}, {"name": "xl", "value": "40 px", "px": 40}, {"name": "2xl", "value": "64 px", "px": 64}]}' />
 
 <table>
   <thead>
@@ -37,25 +37,25 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td><code>'EB Garamond'</code></td>
-      <td>Familia tipográfica para el cuerpo de texto. Cualquier fuente de Google Fonts, del sistema, o declarada como [fuente personalizada](/es/docs/configuration-fonts-colors-viewers#fuentes-personalizadas). Una sola familia, no una lista de fuentes CSS (ver más abajo).</td>
+      <td>Familia tipográfica del texto base. Cualquier fuente de Google Fonts, del sistema o declarada en [`customFonts`](/es/docs/configuration-fonts-colors-viewers#fuentes-personalizadas). Una sola familia, no una lista de fuentes de CSS (véase más abajo).</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>8 pt</code></td>
-      <td>Tamaño de fuente base para el cuerpo de texto.</td>
+      <td>Cuerpo base del texto.</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Espaciado vertical entre líneas. Las unidades relativas (em, rem) escalan con el tamaño de fuente.</td>
+      <td>Espacio vertical entre líneas. Las unidades relativas (em, rem) se escalan con el cuerpo.</td>
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Cuando está activado, inserta una línea en blanco (igual al <code>lineHeight</code>) entre párrafos consecutivos, como hacen algunas editoriales.</td>
+      <td>Cuando está activado, inserta una línea en blanco (igual a <code>lineHeight</code>) entre párrafos consecutivos, como hacen algunas editoriales.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -67,37 +67,37 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
       <td><code>boldColor</code></td>
       <td><code>ColorValue</code></td>
       <td>Color principal (<code>#295AA3</code>)</td>
-      <td>Color aplicado a los fragmentos en negrita. Se resuelve contra la entrada <code>main-color</code> de la paleta por defecto, de modo que cambiar ese color retintea todos los fragmentos en negrita del documento.</td>
+      <td>Color de los fragmentos en negrita. Se resuelve con la entrada <code>main-color</code> de la paleta por defecto, de modo que, al cambiar ese color, cambia el de todos los fragmentos en negrita del documento.</td>
     </tr>
     <tr>
       <td><code>italicColor</code></td>
       <td><code>ColorValue</code></td>
       <td>Color principal (<code>#295AA3</code>)</td>
-      <td>Color aplicado a los fragmentos en cursiva. Mismo enlace a la paleta que <code>boldColor</code>.</td>
+      <td>Color de los fragmentos en cursiva. Por defecto está vinculado a la paleta, igual que <code>boldColor</code>.</td>
     </tr>
     <tr>
       <td><code>referenceColor</code></td>
       <td><code>ColorValue</code></td>
       <td>Color principal (<code>#295AA3</code>)</td>
-      <td>Color aplicado a las etiquetas de <code>:ref</code> en línea (referencias a recursos). Mismo enlace a la paleta que <code>boldColor</code>. Sigue a la paleta desde postext 1.5; hasta la 1.4 se quedaba en <code>#295AA3</code> fuera cual fuera el color principal.</td>
+      <td>Color de las etiquetas de <code>:ref</code> en línea (referencias a recursos). Por defecto está vinculado a la paleta, igual que <code>boldColor</code>. Sigue la paleta desde postext 1.5; hasta la 1.4 se quedaba en <code>#295AA3</code> fuera cual fuera el color principal.</td>
     </tr>
     <tr>
       <td><code>referenceBold</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Renderizar las etiquetas de <code>:ref</code> en línea con la fuente en negrita. Una referencia conserva el énfasis del texto que la rodea (dentro de <code>***…***</code> sigue en negrita cursiva con cualquier valor); esta opción solo añade la negrita.</td>
+      <td>Compone las etiquetas de <code>:ref</code> en línea con la fuente en negrita. Una referencia conserva el énfasis del texto que la rodea (dentro de <code>***…***</code> sigue en negrita cursiva con cualquier valor); esta opción solo añade la negrita.</td>
     </tr>
     <tr>
       <td><code>referenceItalic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Renderizar las etiquetas de <code>:ref</code> en línea en cursiva. Una referencia dentro de texto en cursiva sigue en cursiva con cualquier valor.</td>
+      <td>Compone las etiquetas de <code>:ref</code> en línea en cursiva. Una referencia dentro de un texto en cursiva sigue en cursiva con cualquier valor.</td>
     </tr>
     <tr>
       <td><code>emphasis</code></td>
       <td><code>'auto' | 'italic' | 'bold' | 'color' | 'overline'</code></td>
       <td><code>'auto'</code></td>
-      <td>Cómo se compone <code>*…*</code>: en cursiva, en la negrita y <code>boldColor</code>, en redonda con <code>italicColor</code>, o en redonda con una raya encima de las palabras. <code>'auto'</code> es <code>'bold'</code> en un documento escrito en alfabeto árabe e <code>'italic'</code> en cualquier otro. Véase <a href="/es/docs/configuration-language#texto-árabe">Texto árabe</a>.</td>
+      <td>Cómo se compone <code>*…*</code>: en cursiva, en negrita y con <code>boldColor</code>, en redonda con <code>italicColor</code> o en redonda con un filete sobre las palabras. <code>'auto'</code> es <code>'bold'</code> en un documento escrito en alfabeto árabe e <code>'italic'</code> en cualquier otro. Véase <a href="/es/docs/configuration-language#texto-árabe">Texto árabe</a>.</td>
     </tr>
     <tr>
       <td><code>tashkil</code></td>
@@ -107,27 +107,27 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Alineación del texto. <code>'left'</code> (o <code>'start'</code>) es el lado por el que empieza la línea: la derecha de un párrafo de derecha a izquierda (véase <a href="/es/docs/configuration-language#dirección-del-texto">Dirección del texto</a>). El texto justificado distribuye el espaciado a lo largo de cada línea para bordes uniformes. Las últimas líneas de los párrafos justificados se componen en bandera, a su ancho natural — salvo cuando Knuth-Plass aceptó una línea final sobrellenada confiando en la compresión del pegamento (glue): en ese caso los espacios entre palabras se comprimen para que la línea encaje exactamente en la medida (semántica de glue-setting de TeX, aplicada de forma idéntica en los backends canvas, HTML y PDF).</td>
+      <td>Alineación del texto. <code>'left'</code> (o <code>'start'</code>) es el lado por el que empieza la línea: la derecha de un párrafo de derecha a izquierda (véase <a href="/es/docs/configuration-language#dirección-del-texto">Dirección del texto</a>). <code>'right'</code> (o <code>'end'</code>) es el lado por el que termina, y <code>'center'</code> centra cada línea. El texto justificado reparte el espacio a lo largo de cada línea para que los bordes queden rectos. Las últimas líneas de los párrafos justificados se componen en bandera, a su ancho natural, salvo cuando Knuth-Plass aceptó una última línea demasiado llena contando con la compresión del pegamento (glue): en ese caso, los espacios entre palabras se comprimen para que la línea encaje exactamente en la medida (semántica de glue-setting de TeX, aplicada de forma idéntica en los backends canvas, HTML y PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
       <td><code>number</code></td>
       <td><code>400</code></td>
-      <td>Peso para el texto normal (100–900).</td>
+      <td>Peso del texto normal (100–900).</td>
     </tr>
     <tr>
       <td><code>boldFontWeight</code></td>
       <td><code>number</code></td>
       <td><code>700</code></td>
-      <td>Peso para texto en negrita/strong (100–900).</td>
+      <td>Peso del texto en negrita (100–900).</td>
     </tr>
     <tr>
       <td><code>hyphenation</code></td>
       <td><code>HyphenationConfig</code></td>
       <td>activada, <code>'en-us'</code></td>
-      <td>Configuración de separación silábica automática. Ver más abajo.</td>
+      <td>Ajustes de la separación silábica automática. Véase más abajo.</td>
     </tr>
     <tr>
       <td><code>firstLineIndent</code></td>
@@ -145,37 +145,37 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
       <td><code>indentAfterHeading</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando vale <code>false</code>, el primer párrafo inmediatamente posterior a un encabezado se compone sin sangría de primera línea — convención tipográfica habitual en publicaciones científicas y en muchos estilos editoriales. Lo mismo vale para un párrafo justo después de una línea <a href="/es/docs/document-format-directives#space"><code>:::space</code></a>. Un recuadro que sale del texto entre ambos —a la columna lateral (<code>span: 'side'</code>), flotado a la cabeza o al pie de una página, o fijo— y una figura flotante no cuentan: en su columna, el párrafo sigue al encabezado y se compone sin sangría. Un recuadro compuesto en el texto (<code>placement: 'here'</code>) sí cuenta, y el párrafo que lo sigue lleva sangría. No tiene efecto cuando <code>hangingIndent</code> está activado.</td>
+      <td>Cuando vale <code>false</code>, el primer párrafo inmediatamente posterior a un encabezado se compone sin sangría de primera línea, una convención tipográfica habitual en publicaciones científicas y en muchos estilos editoriales. Lo mismo vale para un párrafo justo después de una línea <a href="/es/docs/document-format-directives#space"><code>:::space</code></a>. Un recuadro que sale del texto entre ambos —en la columna lateral (<code>span: 'side'</code>), flotante en la cabeza o en el pie de una página, o fijo— y una figura flotante no cuentan: en su columna, el párrafo sigue al encabezado y se compone sin sangría. Un recuadro compuesto en el texto (<code>placement: 'here'</code>) sí cuenta, y el párrafo que lo sigue lleva sangría. No tiene efecto cuando <code>hangingIndent</code> está activado.</td>
     </tr>
     <tr>
       <td><code>maxWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Límite superior del espaciado entre palabras en texto justificado, expresado como multiplicador del ancho del espacio normal. Knuth-Plass mantiene dentro de él todas las líneas que el párrafo permite, y antes separa una palabra o reparte la holgura entre las líneas vecinas; una línea que ningún conjunto de cortes deja dentro del límite lo supera, y la que pasa de 3 veces el espacio normal se compone en bandera. Las líneas que superan esta proporción se consideran "flojas": ver <a href="/es/docs/justification#líneas-que-el-algoritmo-no-puede-llenar">Líneas que el algoritmo no puede llenar</a>, y <code>maxJustifyTracking</code> para que tomen algo de tracking en su lugar.</td>
+      <td>Límite superior del espaciado entre palabras en texto justificado, expresado como multiplicador del ancho del espacio normal. Knuth-Plass mantiene dentro de él todas las líneas que el párrafo permite; para ello, primero separa una palabra con guion o reparte la holgura entre las líneas vecinas; una línea que ningún conjunto de cortes deja dentro del límite lo supera, y la que pasa de 3 veces el espacio normal se compone en bandera. Las líneas que superan esta proporción se consideran «flojas»: véase <a href="/es/docs/justification#líneas-que-el-algoritmo-no-puede-llenar">Líneas que el algoritmo no puede llenar</a>, y <code>maxJustifyTracking</code> para que tomen en su lugar un poco de espaciado entre letras.</td>
     </tr>
     <tr>
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Límite inferior del espaciado entre palabras en texto justificado, como multiplicador del ancho del espacio normal. Los dos límites acotan el cambio de cada espacio respecto a su propio ancho, contado en espacios de redonda: una línea que contiene un espacio en cursiva o en negrita, más estrecho o más ancho que el de la redonda, se pinta unas centésimas de espacio por debajo o por encima del límite dentro del cual se cortó. <code>lineWordSpacing(line)</code> da el número que acotan los límites; ver <a href="/es/docs/justification#implementación-de-postext">Separación silábica y justificación</a>.</td>
+      <td>Límite inferior del espaciado entre palabras en texto justificado, como multiplicador del ancho del espacio normal. Los dos límites acotan el cambio de cada espacio respecto a su propio ancho, contado en espacios de redonda: una línea que contiene un espacio en cursiva o en negrita, más estrecho o más ancho que el de la redonda, se pinta unas centésimas de espacio por debajo o por encima del límite dentro del cual se cortó. <code>lineWordSpacing(line)</code> da el número que acotan los límites; véase <a href="/es/docs/justification#implementación-de-postext">Separación silábica y justificación</a>.</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Tracking máximo que puede tomar una línea justificada, en milésimas de eme en uno u otro sentido (la unidad de InDesign: 10 = 0,01 em por carácter), cuando con solo sus espacios entre palabras se estiraría más allá de <code>maxWordSpacing</code> o se comprimiría por debajo de <code>minWordSpacing</code>. La parte del ajuste que pasa del límite va a las letras, así que los espacios de una línea floja vuelven a <code>maxWordSpacing</code> y una línea apretada cabe con <code>minWordSpacing</code>. Knuth-Plass lo tiene en cuenta al elegir los cortes, y solo en las líneas que el espaciado entre palabras llevaría más allá de los límites: las demás, la última línea de un párrafo (salvo que se desborde), una línea de una sola palabra y una línea con un chip no lo usan. La línea lo guarda como <code>letterSpacing</code>, y canvas, HTML y PDF lo pintan. Requiere <code>optimalLineBreaking</code>. Con <code>0</code> queda desactivado. Ver <a href="/es/docs/justification#tracking-como-último-recurso">Tracking como último recurso</a>.</td>
+      <td>Espaciado entre letras máximo que puede tomar una línea justificada, en milésimas de cuadratín en uno u otro sentido (la unidad de InDesign: 10 = 0,01 em por carácter), cuando con solo sus espacios entre palabras se estiraría más allá de <code>maxWordSpacing</code> o se comprimiría por debajo de <code>minWordSpacing</code>. La parte del ajuste que pasa del límite va a las letras, así que los espacios de una línea floja vuelven a <code>maxWordSpacing</code> y una línea apretada cabe con <code>minWordSpacing</code>. Knuth-Plass lo tiene en cuenta al elegir los cortes, y solo en las líneas que el espaciado entre palabras llevaría por sí solo más allá de los límites: las demás líneas, la última de un párrafo (salvo que se desborde), una línea de una sola palabra y una línea con un chip no lo usan. La línea lo guarda como <code>letterSpacing</code>, y canvas, HTML y PDF lo pintan. Requiere <code>optimalLineBreaking</code>. Con <code>0</code> queda desactivado. Véase <a href="/es/docs/justification#espaciado-entre-letras-como-último-recurso">Espaciado entre letras como último recurso</a>.</td>
     </tr>
     <tr>
       <td><code>kashida</code></td>
       <td><code>'auto' | 'none'</code></td>
       <td><code>'auto'</code> en un documento en alfabeto árabe; si no, <code>'none'</code></td>
-      <td>Justificación con cachida: una línea justificada de texto en alfabeto árabe toma su holgura en los espacios entre palabras (hasta una cuarta parte de su anchura) y después en cachidas, tatweels enteros (U+0640) insertados entre dos letras enlazadas, nunca como espaciado entre letras. Knuth-Plass cuenta el alargamiento de cada palabra como estiramiento. Nunca en palabras latinas, cifras, títulos, líneas en bandera ni en la última línea de un párrafo. Los tatweels se pintan pero quedan fuera del texto plano y del copiado. Ver <a href="/es/docs/justification#cachida-en-el-texto-árabe">Cachida en el texto árabe</a>.</td>
+      <td>Justificación con cachida: una línea justificada de texto en alfabeto árabe toma su holgura en los espacios entre palabras (hasta una cuarta parte de su anchura) y después en cachidas (tatweels enteros, U+0640, insertados entre dos letras enlazadas), nunca como espaciado entre letras. Knuth-Plass cuenta el alargamiento de cada palabra como estiramiento. Nunca en palabras latinas, cifras, encabezados, líneas en bandera ni en la última línea de un párrafo. Los tatweels se pintan, pero quedan fuera del texto plano y del texto copiado. Véase <a href="/es/docs/justification#cachida-en-el-texto-árabe">Cachida en el texto árabe</a>.</td>
     </tr>
     <tr>
       <td><code>kashidaPatterns</code></td>
       <td><code>'auto' | 'naskh' | 'simple' | 'nastaliq'</code></td>
       <td><code>'auto'</code></td>
-      <td>Qué enlaces toman cachida y en qué orden: las reglas clásicas del naskh, las prioridades de Microsoft o las reglas del naskh adaptadas al nastaʿlīq (según raqim-kashida). <code>'auto'</code> mira la fuente del texto: ninguna en un tipo ruqʿa o dīwānī (Aref Ruqaa), reglas de nastaʿlīq en un tipo nastaʿlīq, naskh en los demás.</td>
+      <td>Qué uniones entre letras admiten cachida y en qué orden: las reglas clásicas del naskh, las prioridades de Microsoft o las reglas del naskh adaptadas al nastaʿlīq (según raqim-kashida). <code>'auto'</code> se fija en la fuente del texto base: ninguna en un tipo ruqʿa o dīwānī (Aref Ruqaa), reglas de nastaʿlīq en un tipo nastaʿlīq, naskh en los demás.</td>
     </tr>
     <tr>
       <td><code>kashidaPerWord</code></td>
@@ -187,61 +187,61 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
       <td><code>kashidaMaxLength</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Alargamiento máximo en un enlace, en em; toma tantos tatweels enteros como quepan.</td>
+      <td>Alargamiento máximo en una unión, en em; toma tantos tatweels enteros como quepan.</td>
     </tr>
     <tr>
       <td><code>optimalLineBreaking</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Usar ruptura óptima de líneas Knuth-Plass en lugar de voraz de primer ajuste. Produce un espaciado entre palabras más uniforme en todo el párrafo. Un párrafo en chino, japonés o coreano (ver <a href="/es/docs/configuration-east-asian#tipografía-de-asia-oriental">Tipografía de Asia oriental</a>), o con una palabra más ancha que la columna, se compone igualmente línea a línea; un párrafo latino que cita unas pocas palabras CJK la conserva. El texto en bandera también la usa con <code>optimalRagged</code>. Ver <a href="/es/docs/justification">Separación silábica y justificación</a>.</td>
+      <td>Usa el corte de líneas óptimo de Knuth-Plass en lugar del voraz, de primer ajuste. Produce un espaciado entre palabras más uniforme en todo el párrafo. Un párrafo en chino, japonés o coreano (véase <a href="/es/docs/configuration-east-asian#tipografía-de-asia-oriental">Tipografía de Asia oriental</a>), o con una palabra más ancha que la columna, se sigue componiendo línea a línea; un párrafo latino que cita unas pocas palabras CJK lo conserva. El texto en bandera también lo usa con <code>optimalRagged</code>. Véase <a href="/es/docs/justification">Separación silábica y justificación</a>.</td>
     </tr>
     <tr>
       <td><code>optimalRagged</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Compone también con Knuth-Plass el texto corrido en bandera: el texto de cuerpo, las citas y los elementos de lista alineados a la izquierda, a la derecha o centrados, y los estilos de párrafo, los cuerpos de recuadro y los cuerpos de las partes y de los estilos de sección en bandera. Los espacios entre palabras no cambian de ancho. El algoritmo pondera cuánto se queda corta cada línea respecto de la medida (una línea 3 em más corta cuesta lo que una línea justificada con <code>maxWordSpacing</code>), así que empareja el margen irregular en lugar de llenar cada línea antes de pasar a la siguiente, y las reglas contra las líneas cortas (<code>avoidRunts</code>, <code>tightenRunts</code>) y <code>hyphenateAcrossColumns</code> actúan en el texto en bandera como en el justificado. Con <code>hyphenation.ragged</code>, la zona sigue decidiendo qué sílabas pueden terminar una línea (ver <a href="/es/docs/configuration-language#texto-en-bandera">Texto en bandera</a>). Los títulos en bandera, los pies, las notas, las celdas de tabla y el índice de contenidos se siguen componiendo línea a línea. Requiere <code>optimalLineBreaking</code>. <code>false</code> compone el texto en bandera línea a línea, como hasta postext 1.4; así se leen las configuraciones guardadas antes que ponen en bandera algún texto corrido (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>).</td>
+      <td>Compone también con Knuth-Plass el texto corrido en bandera: el texto base, las citas y los elementos de lista alineados a la izquierda, a la derecha o centrados, y los estilos de párrafo, el contenido de los recuadros y el de las partes y los estilos de sección en bandera. Los espacios entre palabras no cambian de ancho. El algoritmo pondera cuánto se queda corta cada línea respecto de la medida (una línea 3 em más corta cuesta lo que una línea justificada con <code>maxWordSpacing</code>), así que empareja el margen irregular en lugar de llenar cada línea antes de pasar a la siguiente, y las reglas contra las líneas cortas (<code>avoidRunts</code>, <code>tightenRunts</code>) y <code>hyphenateAcrossColumns</code> actúan en el texto en bandera como en el justificado. Con <code>hyphenation.ragged</code>, la zona sigue decidiendo qué sílabas pueden terminar una línea (véase <a href="/es/docs/configuration-language#texto-en-bandera">Texto en bandera</a>). Los encabezados en bandera, los pies, las notas, las celdas de tabla y el índice se siguen componiendo línea a línea. Requiere <code>optimalLineBreaking</code>. <code>false</code> compone el texto en bandera línea a línea, como hasta postext 1.4; con este valor se leen las configuraciones guardadas antes que componen en bandera algún texto corrido (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>).</td>
     </tr>
     <tr>
       <td><code>breakAfterDashes</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite que una línea termine tras una raya o una semirraya puesta entre dos palabras sin espacios: <code>Madrid–Barcelona</code>, <code>I.—Que trata</code> (un título de capítulo a la antigua) o, en un texto en inglés, <code>say—that’s</code>, también cuando la palabra que sigue a la raya va en otro estilo (<code>calidad–*precio*</code>). Knuth-Plass la toma como un espacio entre palabras, y la línea termina en la raya sin añadir nada. Nunca tras la raya que abre un inciso o un diálogo (<code>—dijo</code>, <code>dijo "—Hola</code>, <code>sagte »—Ich</code>: con un espacio, o un espacio y unas comillas, delante de la raya; tras unas comillas que cierran una palabra, como en <code>«no»—y</code>, el alemán <code>„nein“—und</code> o el francés <code>« non »—et</code>, la línea sí puede terminar), delante de un signo de puntuación (<code>él—,</code>), delante de unas comillas o un paréntesis (<code>pensaba—» y</code>, <code>dijo—«no»</code>, <code>dijo—(no)</code>: tras una raya, unas comillas suelen cerrar la cita que la raya interrumpe), dentro de una serie de rayas ni dentro de un intervalo de números con semirraya (<code>1914–1918</code>). <code>false</code> mantiene los cortes de la 1.4: Knuth-Plass nunca corta tras una raya, y el divisor línea a línea del texto con formato o del texto en bandera con separación silábica solo entre dos letras; así se leen las configuraciones guardadas antes cuyo texto tiene alguna de esas rayas (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Se aplica al texto corrido, los títulos, las listas, las citas y los recuadros. Los pies, las notas, las celdas de tabla y el índice de contenidos conservan los cortes de la 1.4, y un párrafo en bandera sin formato compuesto línea a línea sigue en ambos casos las reglas propias de pretext.</td>
+      <td>Permite que una línea termine tras una raya o una semirraya puesta entre dos palabras sin espacios: <code>Madrid–Barcelona</code>, <code>I.—Que trata</code> (un título de capítulo a la antigua) o, en un texto en inglés, <code>say—that’s</code>, también cuando la palabra que sigue a la raya va en otro estilo (<code>calidad–*precio*</code>). Knuth-Plass la toma como un espacio entre palabras, y la línea termina en la raya sin añadir nada. Nunca tras la raya que abre un inciso o un diálogo (<code>—dijo</code>, <code>dijo "—Hola</code>, <code>sagte »—Ich</code>: con un espacio, o un espacio y unas comillas, delante de la raya; tras unas comillas que cierran una palabra, como en <code>«no»—y</code>, el alemán <code>„nein“—und</code> o el francés <code>« non »—et</code>, la línea sí puede terminar), delante de un signo de puntuación (<code>él—,</code>), delante de unas comillas o un paréntesis (<code>pensaba—» y</code>, <code>dijo—«no»</code>, <code>dijo—(no)</code>: tras una raya, unas comillas suelen cerrar la cita que la raya interrumpe), dentro de una serie de rayas ni dentro de un intervalo de números con semirraya (<code>1914–1918</code>). <code>false</code> mantiene los cortes de la 1.4: Knuth-Plass nunca corta tras una raya, y el divisor línea a línea del texto con formato o del texto en bandera con separación silábica solo corta entre dos letras; con este valor se leen las configuraciones guardadas antes cuyo texto tiene alguna de esas rayas (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Se aplica al texto corrido, los encabezados, las listas, las citas y los recuadros. Los pies, las notas, las celdas de tabla y el índice conservan los cortes de la 1.4, y un párrafo en bandera sin formato compuesto línea a línea sigue en ambos casos las reglas propias de pretext.</td>
     </tr>
     <tr>
       <td><code>breakAfterHyphens</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite que una línea termine tras el guion de un compuesto, un guion entre dos letras (<code>físico-</code> · <code>química</code>, <code>vencer-</code> · <code>se</code>), en todo párrafo que corta Knuth-Plass. La línea termina en el guion y no se añade nada; el corte cuesta lo que una sílaba. Nunca tras un guion junto a una cifra o un signo (<code>COVID-19</code>, <code>-5 °C</code>). Un párrafo justificado sin formato en línea solo corta ahí con dos letras a cada lado del guion, para que ninguna línea termine en la <code>e-</code> de <code>e-mail</code>. <code>false</code> mantiene los cortes de la 1.4: un párrafo justificado sin formato en línea nunca corta ahí, mientras que el mismo párrafo con una palabra en cursiva en cualquier parte, un párrafo en bandera y uno compuesto línea a línea sí lo hacen; así se leen las configuraciones guardadas antes cuyo texto tiene algún compuesto (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Se aplica al texto corrido, los títulos, las listas, las citas y los recuadros. Ver <a href="/es/docs/justification#palabras-compuestas">Palabras compuestas</a>.</td>
+      <td>Permite que una línea termine tras el guion de un compuesto, un guion entre dos letras (<code>físico-</code> · <code>química</code>, <code>vencer-</code> · <code>se</code>), en todo párrafo que corta Knuth-Plass. La línea termina en el guion y no se añade nada; el corte cuesta lo que una sílaba. Nunca tras un guion junto a una cifra o un signo (<code>COVID-19</code>, <code>-5 °C</code>). Un párrafo justificado sin formato en línea solo corta ahí con dos letras a cada lado del guion, para que ninguna línea termine en la <code>e-</code> de <code>e-mail</code>. <code>false</code> mantiene los cortes de la 1.4: un párrafo justificado sin formato en línea nunca corta ahí, mientras que el mismo párrafo con una palabra en cursiva en cualquier parte, un párrafo en bandera y uno compuesto línea a línea sí lo hacen; con este valor se leen las configuraciones guardadas antes cuyo texto tiene algún compuesto (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Se aplica al texto corrido, los encabezados, las listas, las citas y los recuadros. Véase <a href="/es/docs/justification#palabras-compuestas">Palabras compuestas</a>.</td>
     </tr>
     <tr>
       <td><code>repeatHyphen</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Empieza también con un guion la línea que sigue a un corte en el guion de un compuesto: <code>léxico-</code> · <code>-semántico</code>, como piden las normas de la Real Academia Española desde 2010, y <code>vencer-</code> · <code>-se</code>, como pide la ortografía portuguesa. El guion repetido se mide y se pinta con su línea, que lo anota como <code>repeatedHyphen</code>; su <code>plainStart</code> y su <code>sourceStart</code> apuntan detrás de él, de modo que los enlaces, los titulillos y el Sandbox leen la palabra tal como está escrita. El PDF lo pinta bajo un <code>/ActualText</code> que lo omite, así que el texto que se copia o se extrae del PDF lee la palabra una sola vez. Una dirección web nunca lo lleva. Se aplica al texto corrido, los títulos, las listas, las citas y los recuadros; un párrafo sin formato que contiene un compuesto se corta entonces con el divisor del texto con formato.</td>
+      <td>Empieza también con un guion la línea que sigue a un corte en el guion de un compuesto: <code>léxico-</code> · <code>-semántico</code>, como piden las normas de la Real Academia Española desde 2010, y <code>vencer-</code> · <code>-se</code>, como pide la ortografía portuguesa. El guion repetido se mide y se pinta con su línea, que lo anota como <code>repeatedHyphen</code>; su <code>plainStart</code> y su <code>sourceStart</code> apuntan detrás de él, de modo que los enlaces, los titulillos y el Sandbox leen la palabra tal como está escrita. El PDF lo pinta bajo un <code>/ActualText</code> que lo omite, así que el texto que se copia o se extrae del PDF lee la palabra una sola vez. Una dirección web nunca lo lleva. Se aplica al texto corrido, los encabezados, las listas, las citas y los recuadros; un párrafo sin formato que contiene un compuesto se corta entonces con el divisor del texto con formato.</td>
     </tr>
     <tr>
       <td><code>hardLineBreaks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Lee una barra invertida al final de una línea del texto, y <code>{'\\\\'}</code> ante un espacio, como un salto de línea forzado dentro de un párrafo, una cita o un elemento de lista (el salto forzado de CommonMark): las palabras siguientes empiezan una línea nueva del mismo párrafo, y la línea anterior se compone con su anchura natural, como una última línea. Una barra invertida al final del párrafo se imprime, y dos espacios al final de una línea no son un salto (ver <a href="/es/docs/document-format-directives#saltos-de-línea">Formato del documento › Saltos de línea</a>). <code>false</code> conserva la lectura de la 1.22: las barras se imprimen y las líneas se unen con un espacio; las configuraciones guardadas antes cuyo texto tiene una barra así se leen con ella (ver <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Los títulos, los pies, las notas y las celdas de tabla se parten en <code>{'\\\\'}</code> en ambos casos.</td>
+      <td>Lee una barra invertida al final de una línea del texto de origen, y <code>{'\\\\'}</code> ante un espacio, como un salto de línea forzado dentro de un párrafo, una cita o un elemento de lista (el salto forzado de CommonMark): las palabras siguientes empiezan una línea nueva del mismo párrafo, y la línea anterior se compone con su anchura natural, como una última línea. Una barra invertida al final del párrafo se imprime, y dos espacios al final de una línea no son un salto (véase <a href="/es/docs/document-format-directives#saltos-de-línea">Formato del documento › Saltos de línea</a>). <code>false</code> conserva la lectura de la 1.22: las barras se imprimen y las líneas se unen con un espacio; las configuraciones guardadas antes cuyo texto tiene una barra así se leen con este valor (véase <a href="/es/docs/configuration-bundles#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>). Los títulos, los pies, las notas y las celdas de tabla se parten en <code>{'\\\\'}</code> en ambos casos.</td>
     </tr>
     <tr>
       <td><code>scriptContext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Compone una palabra sin letras (<code>46.</code>, <code>1367)</code>, <code>».</code>: cifras, signos de puntuación o símbolos solos) en la escritura del texto que la rodea. Una fuente puede dibujar esos signos según la escritura (Amiri compone el punto y los paréntesis latinos en texto latino y los árabes en el resto, con otros anchos), y un motor que recibe la palabra aislada elige una escritura con su propia regla, distinta entre versiones de navegador y el PDF. Con esto activado, la palabra toma la escritura de la letra más cercana antes de ella dentro de su aislado (y si no, después), la de la letra de derecha a izquierda más cercana cuando se pinta de derecha a izquierda, y la de la lengua del documento si no hay letras cerca; la maquetación la mide en esa escritura, y el canvas, el HTML, el EPUB de maquetación fija y el PDF pintan esas formas con ese ancho. Actúa en contextos latino, griego, cirílico, árabe y hebreo, y solo en una fuente cuya puntuación o cuyas cifras cambian con la escritura; una palabra compuesta en la escritura árabe no lleva espaciado entre letras. Un trozo sin letras de una palabra que sí las tiene (<code>10.1006/</code> y <code>.2001</code> de un DOI que acaba la línea en sus junturas) toma la escritura que tiene dentro de la palabra. En un documento chino o japonés, los puntos suspensivos dobles y la raya doble (<code>……</code>, <code>——</code>) citados en una frase de otra escritura conservan las formas del texto han. No afecta a los marcadores de lista, los rótulos de las referencias cruzadas, el texto de diseño, la rotulación de cómic ni los párrafos del compositor CJK. <code>false</code> compone la palabra aislada, como hasta postext 1.27; una configuración guardada antes de <code>configVersion</code> 12 se lee así (<code>pinLegacyScriptContext</code>). Véase <a href="/es/docs/arabic-layout#palabras-sin-letras">Palabras sin letras</a>.</td>
+      <td>Compone una palabra sin letras (<code>46.</code>, <code>1367)</code>, <code>».</code>: cifras, signos de puntuación o símbolos solos) en la escritura del texto que la rodea. Una fuente puede dibujar esos signos según la escritura (Amiri compone el punto y los paréntesis latinos en texto latino y los árabes en el resto, con otros anchos), y un motor que recibe la palabra aislada elige una escritura con su propia regla, distinta entre versiones de navegador y el PDF. Con esto activado, la palabra toma la escritura de la letra más cercana anterior a ella dentro de su fragmento aislado (o, si no la hay, posterior), la de la letra de derecha a izquierda más cercana cuando se pinta de derecha a izquierda, y la de la lengua del documento si no hay letras cerca; la maquetación la mide en esa escritura, y el canvas, el HTML, el EPUB de maquetación fija y el PDF pintan esas formas con ese ancho. Actúa en contextos latino, griego, cirílico, árabe y hebreo, y solo en una fuente cuya puntuación o cuyas cifras cambian con la escritura; una palabra compuesta en la escritura árabe no lleva espaciado entre letras. Un trozo sin letras de una palabra que sí las tiene (<code>10.1006/</code> y <code>.2001</code> de un DOI que se corta a final de línea por sus junturas) toma la escritura que tiene dentro de la palabra. En un documento chino o japonés, los puntos suspensivos dobles y la raya doble (<code>……</code>, <code>——</code>) citados en una frase de otra escritura conservan las formas del texto han. No afecta a los marcadores de lista, los rótulos de las referencias cruzadas, el texto de diseño, la rotulación de cómic ni los párrafos del compositor CJK. <code>false</code> compone esa palabra por separado, como hasta postext 1.27; una configuración guardada antes de <code>configVersion</code> 12 se lee así (<code>pinLegacyScriptContext</code>). Véase <a href="/es/docs/arabic-layout#palabras-sin-letras">Palabras sin letras</a>.</td>
     </tr>
     <tr>
       <td><code>shapingLanguage</code></td>
       <td><code>'document' | 'host'</code></td>
       <td><code>'document'</code></td>
-      <td>El idioma en el que se compone el texto: en el que se mide, se pinta y se incrusta. Una fuente responde con otros glifos según el idioma (<code>locl</code> de OpenType): Noto Serif SC compone sus cifras de otra manera en chino, una fuente con una forma catalana dibuja <code>l·l</code> de otra manera, una con la regla turca deja <code>fi</code> sin ligar. <code>'document'</code> (el valor por defecto desde postext 1.30): el del propio documento (<code>locale</code> y, si no, el idioma de la separación silábica; un documento que no nombra ninguno es inglés, <code>en-US</code>, y uno cuyo <code>locale</code> no es una etiqueta de idioma se compone sin idioma), y el de un tramo cuando este nombra el suyo (<code>:ltr[…]&#123;lang=en&#125;</code>). La maquetación lo fija en cada contexto con el que mide, así que un documento parte sus líneas igual en una página en cualquier idioma y en un worker de composición; el canvas pinta en él, el visor HTML y el EPUB lo declaran en el documento y en cada página, y el PDF compone con el sistema de idioma OpenType de ese idioma. Desde postext 1.30, con este valor el texto se mide como se pinta. Una cadena tiene un solo ancho, se haya medido lo que se haya medido antes: Chrome guarda las palabras que ya ha compuesto, y Noto Serif SC compone <code>2026</code> con 2,20 cuadratines de ancho en una cadena sin caracteres por encima de U+00FF y con 2,23 en una que tiene alguno, así que las dos clases de cadena se miden en contextos distintos. Una palabra de derecha a izquierda se mide de derecha a izquierda con cualquier fuente. Una palabra que el corte de líneas puede partir (por una sílaba o por un guion) se mide entera y se compone entera cuando queda en una sola línea, en el canvas, en el visor HTML y en el PDF, en cualquier párrafo (desde postext 1.31: hasta la 1.30.1 un párrafo sin formato medía por separado cada trozo de una palabra así, de modo que lo que una fuente dibuja a través de un punto de separación silábica, la <code>ff</code> de <code>of·fice</code> en EB Garamond o el punto catalán ancho de Crimson Pro en <code>l·l</code>, aparecía en una palabra de un párrafo con una cursiva y no en la misma palabra de un párrafo sin formato). Con <code>'host'</code> un párrafo sin formato sigue midiendo por separado cada trozo de una palabra así. De una palabra partida al final de una línea, cada parte se mide como el texto que se pinta: la que abre la línea siguiente como un texto propio, y la primera parte de un <code>col·lecció</code> catalán como <code>col-</code>. Un texto de diseño (un titulillo, una apertura, el diseño de un encabezado) se mide tramo a tramo, cada tramo en la dirección en la que se pinta. El PDF compone palabra a palabra como el canvas del navegador (una palabra acaba en un espacio, una tabulación, U+3000 o U+200B, y antes de un carácter han), compone uno a uno los caracteres chinos y japoneses que la maquetación midió así, y toma cada carácter del archivo de fuente del que lo tomó el navegador cuando el proveedor de fuentes dice cuál es (véase <a href="/es/docs/configuration-pdf-output#fuentes-chinas-japonesas-y-coreanas">Fuentes chinas, japonesas y coreanas</a>). <code>'host'</code>: como hasta postext 1.28, la maquetación mide en el idioma de la página que la aloja (en ninguno dentro de un worker) y el canvas pinta en ese mismo idioma; el visor HTML declara el idioma de un documento chino, japonés, coreano o de derecha a izquierda. Un documento con <code>'host'</code> conserva los anchos y el PDF que tenía; en un párrafo con formato, su canvas y su visor HTML también componen entera la palabra que queda en una sola línea (hasta postext 1.29.2 la pintaban trozo a trozo). Con este valor, la parte de una palabra partida que abre la línea siguiente se mide como la palabra entera menos su primera parte, así que una fuente cuya forma para el idioma necesita las letras de los dos lados del corte (la <code>l·l</code> catalana de Crimson Pro, un punto ancho que solo se pone entre dos <code>l</code>) deja un hueco detrás del resto de la palabra, de un tercio de cuadratín en esa fuente, en una página en ese idioma. El valor por defecto fue <code>'document'</code> solo en postext 1.29.0, cuyo canvas y cuyo PDF no seguían la medida, <code>'host'</code> en la 1.29.1 y la 1.29.2, y vuelve a ser <code>'document'</code> desde la 1.30.0. A una configuración guardada antes de <code>configVersion</code> 14 que no nombra el ajuste se le escribe <code>'host'</code> (<code>pinLegacyShapingLanguage</code>), así que un documento guardado conserva sus líneas; la que nombra un valor lo conserva. Un navegador cuyo canvas no tiene <code>lang</code> (Chrome anterior a la 136, y Firefox y Safari donde falta) no recibe ningún idioma y conserva las formas que siempre midió, y la línea de comandos maqueta siempre con <code>'host'</code> (véase <a href="/es/docs/command-line#diferencias-con-el-sandbox">Diferencias con el Sandbox</a>).</td>
+      <td>El idioma en el que se compone el texto: en el que se mide, se pinta y se incrusta. Una fuente responde con otros glifos según el idioma (<code>locl</code> de OpenType): Noto Serif SC compone sus cifras de otra manera en chino, una fuente con una forma catalana dibuja <code>l·l</code> de otra manera, una con la regla turca deja <code>fi</code> sin ligar. <code>'document'</code> (el valor por defecto desde postext 1.30): el del propio documento (<code>locale</code> y, si no, el idioma de la separación silábica; un documento que no indica ninguno es inglés, <code>en-US</code>, y uno cuyo <code>locale</code> no es una etiqueta de idioma se compone sin idioma), y el de un tramo cuando este indica el suyo (<code>:ltr[…]&#123;lang=en&#125;</code>). La maquetación lo fija en cada contexto con el que mide, así que un documento parte sus líneas igual en una página en cualquier idioma y en un worker de composición; el canvas pinta en él, el visor HTML y el EPUB lo declaran en el documento y en cada página, y el PDF compone con el sistema de idioma OpenType de ese idioma. Desde postext 1.30, con este valor el texto se mide como se pinta. Una cadena tiene un solo ancho, se haya medido lo que se haya medido antes: Chrome guarda las palabras que ya ha compuesto, y Noto Serif SC compone <code>2026</code> con 2,20 cuadratines de ancho en una cadena sin caracteres por encima de U+00FF y con 2,23 en una que tiene alguno, así que las dos clases de cadena se miden en contextos distintos. Una palabra de derecha a izquierda se mide de derecha a izquierda con cualquier fuente. Una palabra que el corte de líneas puede partir (por una sílaba o por un guion) se mide entera y se compone entera cuando queda en una sola línea, en el canvas, en el visor HTML y en el PDF, en cualquier párrafo (desde postext 1.31: hasta la 1.30.1 un párrafo sin formato medía por separado cada trozo de una palabra así, de modo que lo que una fuente dibuja a través de un punto de separación silábica, la <code>ff</code> de <code>of·fice</code> en EB Garamond o el punto catalán ancho de Crimson Pro en <code>l·l</code>, aparecía en una palabra de un párrafo con una cursiva y no en la misma palabra de un párrafo sin formato). Con <code>'host'</code> un párrafo sin formato sigue midiendo por separado cada trozo de una palabra así. De una palabra partida al final de una línea, cada parte se mide como el texto que se pinta: la que abre la línea siguiente como un texto propio, y la primera parte de un <code>col·lecció</code> catalán como <code>col-</code>. Un texto de diseño (un titulillo, una apertura, el diseño de un encabezado) se mide tramo a tramo, cada tramo en la dirección en la que se pinta. El PDF compone palabra a palabra como el canvas del navegador (una palabra acaba en un espacio, una tabulación, U+3000 o U+200B, y antes de un carácter han), compone uno a uno los caracteres chinos y japoneses que la maquetación midió así, y toma cada carácter del archivo de fuente del que lo tomó el navegador cuando el proveedor de fuentes dice cuál es (véase <a href="/es/docs/configuration-pdf-output#fuentes-chinas-japonesas-y-coreanas">Fuentes chinas, japonesas y coreanas</a>). <code>'host'</code>: como hasta postext 1.28, la maquetación mide en el idioma de la página que la aloja (en ninguno dentro de un worker) y el canvas pinta en ese mismo idioma; el visor HTML declara el idioma de un documento chino, japonés, coreano o de derecha a izquierda. Un documento con <code>'host'</code> conserva los anchos y el PDF que tenía; en un párrafo con formato, su canvas y su visor HTML también componen entera la palabra que queda en una sola línea (hasta postext 1.29.2 la pintaban trozo a trozo). Con este valor, la parte de una palabra partida que abre la línea siguiente se mide como la palabra entera menos su primera parte, así que una fuente cuya forma para el idioma necesita las letras de los dos lados del corte (la <code>l·l</code> catalana de Crimson Pro, un punto ancho que solo se pone entre dos <code>l</code>) deja un hueco detrás del resto de la palabra, de un tercio de cuadratín en esa fuente, en una página en ese idioma. El valor por defecto fue <code>'document'</code> solo en postext 1.29.0, cuyo canvas y cuyo PDF no seguían la medida, <code>'host'</code> en la 1.29.1 y la 1.29.2, y vuelve a ser <code>'document'</code> desde la 1.30.0. A una configuración guardada antes de <code>configVersion</code> 14 que no incluye el ajuste se le asigna <code>'host'</code> (<code>pinLegacyShapingLanguage</code>), así que un documento guardado conserva sus líneas; la que ya tiene un valor lo conserva. Un navegador cuyo canvas no tiene <code>lang</code> (Chrome anterior a la 136, y Firefox y Safari donde falta) no recibe ningún idioma y conserva las formas que siempre midió, y la línea de comandos maqueta siempre con <code>'host'</code> (véase <a href="/es/docs/command-line#diferencias-con-el-sandbox">Diferencias con el Sandbox</a>).</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td>sin fijar</td>
-      <td>Tabulaciones de todos los párrafos, elementos de lista y citas: adónde lleva un tabulador (<code>:tab</code>, o un carácter de tabulación en el texto) las palabras que lo siguen. Un estilo de párrafo o el cuerpo de un recuadro que fija las suyas las sustituye. Sin fijar, un carácter de tabulación es un espacio entre palabras, como antes, y un <code>:tab</code> sin tabulación a la que ir también. Ver <a href="#tabulaciones">Tabulaciones</a>. Desde postext 1.23.</td>
+      <td>Tabulaciones de todos los párrafos, elementos de lista y citas: adónde lleva un tabulador (<code>:tab</code>, o un carácter de tabulación en el texto) las palabras que lo siguen. Un estilo de párrafo o el contenido de un recuadro que fija las suyas las sustituye. Sin fijar, un carácter de tabulación es un espacio entre palabras, como antes, y un <code>:tab</code> sin tabulación a la que ir también. Véase <a href="#tabulaciones">Tabulaciones</a>. Desde postext 1.23.</td>
     </tr>
     <tr>
       <td><code>tabInterval</code></td>
@@ -252,15 +252,21 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
     <tr>
       <td><code>blockquote</code></td>
       <td><code>BlockquoteConfig</code></td>
-      <td>ver abajo</td>
-      <td>Cómo se componen las citas de Markdown (<code>&gt; …</code>): color, cursiva y sangrías. Ver <a href="#citas">Citas</a>.</td>
+      <td>véase más abajo</td>
+      <td>Cómo se componen las citas de Markdown (<code>&gt; …</code>): color, cursiva y sangrías. Véase <a href="#citas">Citas</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>véase más abajo</td>
+      <td>Cómo se componen los poemas <code>:::verse</code> que se disponen verso a verso: sangrías, versos que no caben, espacio entre estrofas y estrofas que no se parten. Véase <a href="#verso">Verso</a>.</td>
     </tr>
   </tbody>
 </table>
 
 ### Citas
 
-Una cita (las líneas que empiezan por `>`) toma la familia, el cuerpo, el interlineado, los pesos, la alineación y la separación silábica del texto de cuerpo. `bodyText.blockquote` fija lo demás; sin fijar, una cita se ve como hasta postext 1.4: gris, en cursiva, con la sangría de primera línea del cuerpo y sin sangría lateral.
+Una cita (las líneas que empiezan por `>`) toma la familia, el cuerpo, el interlineado, los pesos, la alineación y la separación silábica del texto base. `bodyText.blockquote` fija lo demás; sin fijar, una cita se ve como hasta postext 1.4: gris, en cursiva, con la sangría de primera línea del texto base y sin sangría lateral.
 
 <table>
   <thead>
@@ -276,7 +282,7 @@ Una cita (las líneas que empiezan por `>`) toma la familia, el cuerpo, el inter
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#666666</code></td>
-      <td>Color del texto. Un color enlazado a una entrada de la paleta (<code>paletteId</code>) sigue a esa entrada, como en todas partes; los colores de negrita, cursiva y referencias del cuerpo no se aplican dentro de una cita.</td>
+      <td>Color del texto. Un color vinculado a una entrada de la paleta (<code>paletteId</code>) sigue esa entrada, como en todas partes; los colores de negrita, cursiva y referencias del texto base no se aplican dentro de una cita.</td>
     </tr>
     <tr>
       <td><code>italic</code></td>
@@ -288,13 +294,13 @@ Una cita (las líneas que empiezan por `>`) toma la familia, el cuerpo, el inter
       <td><code>indent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Sangría de todas las líneas desde el borde izquierdo de la columna o del recuadro. La medida se estrecha en esa cantidad, así que las líneas justificadas terminan en el borde derecho. <code>em</code> es el cuerpo del texto.</td>
+      <td>Sangría de todas las líneas desde el borde izquierdo de la columna o del recuadro. La medida se estrecha en esa cantidad, así que las líneas justificadas terminan en el borde derecho. <code>em</code> es el cuerpo del texto base.</td>
     </tr>
     <tr>
       <td><code>firstLineIndent</code></td>
       <td><code>Dimension</code></td>
-      <td>la del cuerpo</td>
-      <td>Sangría de la primera línea de cada párrafo citado, contada desde <code>indent</code> (con el <code>hangingIndent</code> del cuerpo, la de todas las líneas menos la primera). Sin fijar: <code>bodyText.firstLineIndent</code>.</td>
+      <td>la del texto base</td>
+      <td>Sangría de la primera línea de cada párrafo citado, contada desde <code>indent</code> (con el <code>hangingIndent</code> del texto base, la de todas las líneas menos la primera). Sin fijar: <code>bodyText.firstLineIndent</code>.</td>
     </tr>
   </tbody>
 </table>
@@ -311,7 +317,7 @@ En el Sandbox son el grupo **Citas** de la sección **Texto base**.
 
 ### Verso
 
-Un poema `:::verse` cuyas líneas no llevan separador de hemistiquios se compone línea a línea (véase [Formato del documento › `:::verse`](/es/docs/document-format-directives#verse)). `bodyText.verse` da los valores por defecto de esos poemas; un atributo del mismo nombre en la apertura de un poema lo fija para ese poema.
+Un poema `:::verse` cuyas líneas no llevan separador de hemistiquios se compone línea a línea (véase [Formato del documento › `:::verse`](/es/docs/document-format-directives#verse)). `bodyText.verse` da los valores por defecto de esos poemas; un atributo del mismo nombre en la línea de apertura de un poema lo fija para ese poema.
 
 <table>
   <thead>
@@ -327,19 +333,19 @@ Un poema `:::verse` cuyas líneas no llevan separador de hemistiquios se compone
       <td><code>layout</code></td>
       <td><code>'auto' | 'bayt'</code></td>
       <td><code>'auto'</code></td>
-      <td>Cómo se compone un poema cuya apertura no nombra composición. <code>'auto'</code>: en baits cuando una línea lleva separador (<code>||</code>), línea a línea si no. <code>'bayt'</code>: siempre en baits, y un poema sin separador como hemistiquios sueltos centrados, como hasta postext 1.22.</td>
+      <td>Cómo se compone un poema cuya línea de apertura no indica ninguna disposición. <code>'auto'</code>: en baits (versos de dos hemistiquios) cuando una línea tiene separador (<code>||</code>), y línea a línea si no. <code>'bayt'</code>: siempre en baits, y un poema sin separador, como hemistiquios sueltos centrados, como hasta postext 1.22.</td>
     </tr>
     <tr>
       <td><code>indentStep</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.5em</code></td>
-      <td>Anchura de un espacio inicial de un verso (un tabulador cuenta cuatro, un espacio ideográfico dos); <code>em</code> es el cuerpo del poema.</td>
+      <td>Anchura de cada espacio inicial de un verso (un tabulador cuenta cuatro, un espacio ideográfico dos); <code>em</code> es el cuerpo del poema.</td>
     </tr>
     <tr>
       <td><code>turnover</code></td>
       <td><code>'hang' | 'right'</code></td>
       <td><code>'hang'</code></td>
-      <td>Cómo se parte un verso más ancho que la caja: colgado en la línea siguiente, o contra el final de la caja tras <code>turnoverMark</code>.</td>
+      <td>Cómo se parte un verso más ancho que la medida: con el resto colgado en la línea siguiente, o alineado con el final de la medida tras <code>turnoverMark</code>.</td>
     </tr>
     <tr>
       <td><code>hang</code></td>
@@ -357,19 +363,19 @@ Un poema `:::verse` cuyas líneas no llevan separador de hemistiquios se compone
       <td><code>stanzaSpace</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>Espacio entre estrofas, en líneas del interlineado del poema. En la retícula de base resulta en líneas enteras; un estilo de párrafo con <code>snapToGrid: false</code> lo conserva exacto.</td>
+      <td>Espacio entre estrofas, en líneas del interlineado del poema. En la rejilla base se redondea a líneas enteras de la rejilla; un estilo de párrafo con <code>snapToGrid: false</code> lo conserva exacto.</td>
     </tr>
     <tr>
       <td><code>keepStanzas</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Mantener en una sola columna toda estrofa de estos versos o menos. <code>0</code> lo desactiva.</td>
+      <td>Mantiene en una sola columna toda estrofa de este número de versos o menos. <code>0</code> lo desactiva.</td>
     </tr>
     <tr>
       <td><code>tighten</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Apretar los espacios entre palabras de un verso un poco más ancho que la caja, hasta <code>bodyText.minWordSpacing</code> de su ancho natural, y mantenerlo en una línea; solo se parte el que sigue sin caber. Las letras nunca se espacian para ello. <code>false</code> parte todo verso más ancho que la caja, como hacía postext 1.23. El EPUB adaptable, cuyas líneas corta el sistema de lectura, no aprieta.</td>
+      <td>Aprieta los espacios entre palabras de un verso un poco más ancho que la medida, hasta <code>bodyText.minWordSpacing</code> de su ancho natural, y lo mantiene en una línea; solo se parte el que sigue sin caber. Para ello nunca se espacian las letras. <code>false</code> parte todo verso más ancho que la medida, como hacía postext 1.23. El EPUB de maquetación fluida, cuyas líneas corta el sistema de lectura, no aprieta.</td>
     </tr>
   </tbody>
 </table>
@@ -388,7 +394,7 @@ En el Sandbox son el grupo **Verso** de la sección **Texto base**.
 
 ### Tabulaciones
 
-`bodyText.tabStops` enumera las tabulaciones a las que va un tabulador: `:tab`, o un carácter de tabulación en un párrafo que tiene tabulaciones (ver [Formato del documento › Tabuladores y tabulaciones](/es/docs/document-format-inline#tabuladores-y-tabulaciones) para el marcado y cómo se compone una línea). El `tabStops` de un estilo de párrafo las sustituye para sus párrafos, y el `body.tabStops` de un estilo de recuadro dentro de sus cajas; una lista vacía no fija ninguna. Cada tabulación es un `TabStop`:
+`bodyText.tabStops` enumera las tabulaciones a las que va un tabulador: `:tab`, o un carácter de tabulación en un párrafo que tiene tabulaciones (el marcado y la composición de una línea se explican en [Formato del documento › Tabuladores y tabulaciones](/es/docs/document-format-inline#tabuladores-y-tabulaciones)). El `tabStops` de un estilo de párrafo las sustituye en sus párrafos, y el `body.tabStops` de un estilo de recuadro, dentro de sus recuadros; una lista vacía no fija ninguna. Cada tabulación es un `TabStop`:
 
 ```ts
 bodyText: {
@@ -426,13 +432,13 @@ bodyText: {
       <td><code>leader</code></td>
       <td><code>string</code></td>
       <td>ninguno</td>
-      <td>Relleno que se repite en el hueco anterior a la tabulación: <code>'.'</code>, <code>'. '</code>, <code>'·'</code>, <code>'_'</code>, <code>'-'</code> o cualquier texto breve, en la fuente y el color del párrafo; <code>'rule'</code> traza una línea un poco por debajo de la línea base. El relleno termina a ras del final de su hueco, de modo que los rellenos de varias líneas quedan alineados. Se mide como una tira entera, igual que la línea de puntos de una fila del índice general.</td>
+      <td>Relleno que se repite en el espacio anterior a la tabulación: <code>'.'</code>, <code>'. '</code>, <code>'·'</code>, <code>'_'</code>, <code>'-'</code> o cualquier texto breve, en la fuente y el color del párrafo; <code>'rule'</code> traza una línea un poco por debajo de la línea base. El relleno termina a ras del final de ese espacio, de modo que los rellenos de varias líneas quedan alineados. Se mide como una tira entera, igual que la línea de puntos de una fila del índice.</td>
     </tr>
     <tr>
       <td><code>leaderGap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.5em</code></td>
-      <td>Espacio que se deja entre el relleno y el texto a cada lado, como el <code>leader.gap</code> del índice general. No hay ninguno antes del relleno cuando el tabulador abre su línea, ni después cuando no le sigue nada.</td>
+      <td>Espacio que se deja entre el relleno y el texto a cada lado, como el <code>leader.gap</code> del índice. No hay ninguno antes del relleno cuando el tabulador abre su línea, ni después cuando no le sigue nada.</td>
     </tr>
     <tr>
       <td><code>decimalChar</code></td>
@@ -443,15 +449,15 @@ bodyText: {
   </tbody>
 </table>
 
-`tabInterval` añade tabulaciones a intervalos regulares desde el principio de la medida, pasada la última de la lista; sin él, un tabulador más allá de la última tabulación es un espacio entre palabras. Un carácter de tabulación escrito en el texto solo es un tabulador en un párrafo cuyo estilo tiene tabulaciones o un intervalo, propios o del cuerpo; en los demás sigue siendo el espacio entre palabras que siempre fue, así que un documento guardado se compone como antes y no necesita fijar versión.
+`tabInterval` añade tabulaciones a intervalos regulares desde el principio de la medida, pasada la última de la lista; sin él, un tabulador más allá de la última tabulación es un espacio entre palabras. Un carácter de tabulación escrito en el texto solo es un tabulador en un párrafo cuyo estilo tiene tabulaciones o un intervalo, propios o del texto base; en los demás sigue siendo el espacio entre palabras que siempre fue, así que un documento guardado se compone como antes y no necesita ninguna fijación.
 
-Las tabulaciones se comprueban con el resto de la configuración (ver [Avisos de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración)): una clave desconocida en una tabulación (`leaders`) se notifica como `unknownConfigKey` con la clave a la que más se parece; un `align` que no es ninguno de los cuatro, como `unknownConfigValue`, y la tabulación se compone como `'start'`; una `position` que no es una longitud, `'end'` ni un porcentaje, como `unknownConfigValue` con `used: 'none'`, y la tabulación se descarta.
+Las tabulaciones se comprueban con el resto de la configuración (véase [Avisos de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración)): una clave desconocida en una tabulación (`leaders`) se notifica como `unknownConfigKey` con la clave a la que más se parece; un `align` que no es ninguno de los cuatro, como `unknownConfigValue`, y la tabulación se compone como `'start'`; una `position` que no es una longitud, `'end'` ni un porcentaje, como `unknownConfigValue` con `used: 'none'`, y la tabulación se descarta.
 
 El color y la fuente del relleno son los del párrafo; todavía no tienen un ajuste propio.
 
 ### Letras capitulares
 
-Un párrafo de cuerpo puede abrirse con una capitular: su primera letra, grande, junto a sus primeras líneas, que se acortan en el ancho de la letra más un espacio y se componen como cualquier otra línea (cortadas por Knuth-Plass, justificadas, con división silábica). Un estilo de párrafo se la da al primer párrafo de cada grupo `:::paragraphs` con ese estilo (a todos los párrafos con `each: true`, para un catálogo de entradas); un nivel de encabezado o un estilo de encabezado se la da al primer párrafo de cuerpo que sigue al encabezado (ver el campo `dropCap` de [Configuración por nivel](/es/docs/configuration-headings#configuración-por-nivel), [Estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo) y [Estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). El párrafo que sigue al encabezado se busca pasando por encima de vallas de contenedor, directivas, cajas que salieron del flujo y figuras flotantes, igual que lo busca `indentAfterHeading`; un párrafo dentro de un recuadro, de un elemento de lista, de una cita, de un poema o de una nota nunca la lleva. En el texto, `{dropcap}`, `{dropcap=false}` y `{dropcap=N}` en la línea de un encabezado o en la valla de un `:::paragraphs` la activan, la quitan o fijan sus líneas para ese capítulo o ese grupo (ver [Formato del documento › Letras capitulares](/es/docs/document-format#letras-capitulares)). Desde postext 1.23.
+Un párrafo del texto base puede abrirse con una capitular: su primera letra, grande, junto a sus primeras líneas, que se acortan en el ancho de la letra más un espacio y se componen como cualquier otra línea (cortadas por Knuth-Plass, justificadas, con separación silábica). Un estilo de párrafo se la da al primer párrafo de cada grupo `:::paragraphs` con ese estilo (a todos los párrafos con `each: true`, para un catálogo de entradas); un nivel de encabezado o un estilo de encabezado se la da al primer párrafo del texto base que sigue al encabezado (véase el campo `dropCap` de [Configuración por nivel](/es/docs/configuration-headings#configuración-por-nivel), [Estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo) y [Estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). El párrafo que sigue al encabezado se busca saltando las líneas de apertura y cierre de los contenedores, las directivas, los recuadros que salieron del flujo y las figuras flotantes, igual que lo busca `indentAfterHeading`; un párrafo dentro de un recuadro, de un elemento de lista, de una cita, de un poema o de una nota nunca la lleva. En el texto, `{dropcap}`, `{dropcap=false}` y `{dropcap=N}` en la línea de un encabezado o en la línea de apertura de un `:::paragraphs` la activan, la quitan o fijan sus líneas para ese capítulo o ese grupo (véase [Formato del documento › Letras capitulares](/es/docs/document-format#letras-capitulares)). Desde postext 1.23.
 
 Un marco de una página compuesta no es un recuadro: es texto corrido, y sus párrafos llevan capitular como los del flujo, por un grupo `:::paragraphs`, por un estilo de párrafo o por el nivel de un encabezado que está en el mismo marco (un encabezado que la plantilla manda a un marco propio, `takes: 'h1'`, da la capitular de su nivel al párrafo que lo sigue en el Markdown cuando ese párrafo abre el texto del marco de flujo, desde postext 1.39). Un grupo que pide capitular dentro de un recuadro `:::callout` se compone sin ella y da un aviso `dropCap` (`inBox`). Desde postext 1.38. Un párrafo que abre una capitular nunca se corta antes de la última línea de la inicial, ni en una cadena de marcos (`next`) ni en un marco que sigue en otra página, igual que en el flujo: pasa entero, y solo se corta ahí cuando abre un marco demasiado bajo para esas líneas, con un aviso `dropCap` (`split`). Desde postext 1.39.
 
@@ -500,14 +506,14 @@ headings: {
     <tr>
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
-      <td>ver abajo</td>
+      <td>véase más abajo</td>
       <td>Cuerpo de la capitular. Sin fijar: el cuerpo que enrasa la parte alta de sus mayúsculas con las mayúsculas de la primera línea mientras se apoya <code>lines</code> líneas más abajo.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>el del párrafo</td>
-      <td>Un color enlazado a la paleta sigue las paletas de la parte y de la sección.</td>
+      <td>Un color vinculado a la paleta sigue las paletas de la parte y de la sección.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -544,18 +550,18 @@ headings: {
 
 Cómo se compone la letra:
 
-- **Cuerpo.** Las dos alturas de mayúsculas, la del texto y la de la capitular, se miden en sus fuentes (la tinta de una `H`; en texto chino o japonés, la de la propia capitular), y una fuente que no da medidas de tinta cuenta sus mayúsculas como 0,72 de su cuerpo. El cuerpo por defecto sirve para cualquier pareja de fuentes, así que no hace falta una corrección por fuente. El `dropCap` de un texto de diseño conserva su 0,72 fijo (ver [Elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)).
-- **La letra y su palabra.** La capitular toma grupos de grafemas enteros. El resto de la primera palabra sigue tras ella sin espacio; una palabra de una sola letra (*A*, *Y*) conserva su espacio al principio de la primera línea. Se quita la sangría de primera línea del propio párrafo. Al copiar, al buscar, en el mapa de fuente y con el cursor del Sandbox el párrafo se lee tal como está escrito: el texto plano del bloque incluye la letra, el `plainStart` de la primera línea cuenta a partir de ella, y `VDTBlock.dropCap` guarda su rango y su geometría en el fragmento que tiene la primera línea.
-- **Una capitular alzada** (`lines: 1` con un `fontSize` mayor, o un `sink` menor que `lines`) sobresale por encima de la primera línea, y el párrafo deja libre esa altura por encima, en líneas enteras de la retícula, para no pisar el texto anterior.
+- **Cuerpo.** Las dos alturas de mayúsculas, la del texto y la de la capitular, se miden en sus fuentes (la tinta de una `H`; en texto chino o japonés, la de la propia capitular), y una fuente que no da medidas de tinta cuenta sus mayúsculas como 0,72 de su cuerpo. El cuerpo por defecto sirve para cualquier pareja de fuentes, así que no hace falta una corrección por fuente. El `dropCap` de un texto de diseño conserva su 0,72 fijo (véase [Elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)).
+- **La letra y su palabra.** La capitular toma grupos de grafemas enteros. El resto de la primera palabra sigue tras ella sin espacio; una palabra de una sola letra (*A*, *Y*) conserva su espacio al principio de la primera línea. Se quita la sangría de primera línea del propio párrafo. Al copiar, al buscar, en el mapa de origen y con el cursor del Sandbox el párrafo se lee tal como está escrito: el texto plano del bloque incluye la letra, el `plainStart` de la primera línea cuenta a partir de ella, y `VDTBlock.dropCap` guarda su rango y su geometría en el fragmento que tiene la primera línea.
+- **Una capitular alzada** (`lines: 1` con un `fontSize` mayor, o un `sink` menor que `lines`) sobresale por encima de la primera línea, y el párrafo deja libre esa altura por encima, en líneas enteras de la rejilla, para no pisar el texto anterior.
 - **Cortes.** El párrafo nunca se corta antes de la línea `sink`: pasa entero a la columna o la página siguiente, salvo que esté solo en una columna vacía que no admite esas líneas; entonces se corta de todos modos y da un aviso `dropCap`. Un encabezado que se mantiene con su texto se lleva esas líneas consigo. La parte que sigue en la columna siguiente no lleva capitular y tiene las líneas a ancho completo; si se vuelve a cortar para una columna de otro ancho, las primeras líneas conservan su sangría. El equilibrado de columnas puede componer el párrafo más flojo o más apretado como cualquier otro, y nunca añade espacio entre las líneas acortadas.
 - **Escrituras.** Las líneas se acortan por el lado inicial: la izquierda en texto latino, la derecha en árabe y hebreo. Una letra que se enlaza con la siguiente (árabe, siríaco, n'ko) no se separa, y el párrafo da un aviso `dropCap`; el chino y el japonés horizontales llevan una capitular de un carácter (首字下沉). El texto vertical no lleva ninguna (con aviso). Un párrafo que no empieza por una letra o una cifra (una referencia, una fórmula, una llamada de nota) tampoco (con aviso).
-- **Salidas.** El canvas, el visor HTML y el EPUB de maquetación fija pintan la capitular junto a las líneas; el HTML la escribe justo antes del texto de la primera línea, sin nada en medio, para que un lector de pantalla lea la palabra entera. En un PDF etiquetado la capitular forma parte del `P` del párrafo y, con el resto de su palabra, de un `Span` cuyo `/ActualText` es la palabra: la extracción de texto lee *Mucho antes*, nunca *M ucho antes*. Un EPUB adaptable la compone como `initial-letter` de CSS (líneas, hundimiento), flotada donde el sistema de lectura no lo admite.
+- **Salidas.** El canvas, el visor HTML y el EPUB de maquetación fija pintan la capitular junto a las líneas; el HTML la escribe justo antes del texto de la primera línea, sin nada en medio, para que un lector de pantalla lea la palabra entera. En un PDF etiquetado la capitular forma parte del `P` del párrafo y, con el resto de su palabra, de un `Span` cuyo `/ActualText` es la palabra: la extracción de texto lee *Mucho antes*, nunca *M ucho antes*. Un EPUB de maquetación fluida la compone como `initial-letter` de CSS (líneas, hundimiento), y como flotante donde el sistema de lectura no lo admite.
 
-Los ajustes se comprueban con el resto de la configuración (ver [Avisos de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración)): una clave desconocida en una capitular o en sus primeras palabras se notifica como `unknownConfigKey`; un `punctuation` o un `shortParagraph` que no es ninguno de sus valores, o un `lines`, `sink` o `characters` que no es un número entero desde 1, como `unknownConfigValue`, y se usa el valor por defecto. Las capitulares están desactivadas por defecto, así que ningún documento guardado cambia.
+Los ajustes se comprueban con el resto de la configuración (véase [Avisos de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración)): una clave desconocida en una capitular o en sus primeras palabras se notifica como `unknownConfigKey`; un `punctuation` o un `shortParagraph` que no es ninguno de sus valores, o un `lines`, `sink` o `characters` que no es un número entero desde 1, como `unknownConfigValue`, y se usa el valor por defecto. Las capitulares están desactivadas por defecto, así que ningún documento guardado cambia.
 
 ### Una sola familia por `fontFamily`
 
-`fontFamily` —aquí y en cualquier otro campo de familia tipográfica (`headings.fontFamily`, `tableStyle.bodyFontFamily`, `separatorFontFamily`, el `fontFamily` de un estilo de chip o de un elemento de diseño…)— nombra **una** familia. El canvas, la salida HTML y el PDF tienen que componer con la misma fuente, y el PDF incrusta una fuente por familia, sin cadena de respaldo, así que una lista de fuentes CSS no tiene a qué recurrir. Una lista se compone en su primera familia y se notifica como [aviso de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración):
+`fontFamily` (aquí y en cualquier otro campo de familia tipográfica: `headings.fontFamily`, `tableStyle.bodyFontFamily`, `separatorFontFamily`, el `fontFamily` de un estilo de chip o de un elemento de diseño…) indica **una** familia. El canvas, la salida HTML y el PDF tienen que componer con la misma fuente, y el PDF incrusta una fuente por familia, sin cadena de respaldo, así que una lista de fuentes CSS no tiene a qué recurrir. Una lista se compone en su primera familia y se notifica como [aviso de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración):
 
 ```ts
 bodyText: { fontFamily: "'EB Garamond', Georgia, serif" } // se compone en EB Garamond

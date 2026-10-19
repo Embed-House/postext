@@ -10,17 +10,17 @@ pageNotes: { "1": "Página 1: uma faixa verde-escura na metade de cima da págin
 
 ## O que você vai compor
 
-Uma separata da série de história da tecnologia de uma revista: um ensaio de cerca de 1.100 palavras sobre como as cidades britânicas trocaram o seu próprio meio-dia pelo de Londres entre 1840 e 1880. A página tem 156 × 234 mm, com margens espelhadas, em Crimson Pro de 11/14 pt, e uma faixa verde-ferrovia cobre a metade de cima da primeira página. A autora escreve cada fonte como uma chave, `[@howse1980, 87]`, e o Postext compõe cada uma como uma nota numerada no pé da página no estilo de notas e bibliografia de Chicago. A primeira nota de uma obra traz autor, título e editora; todas as seguintes trazem a forma curta. As notas discursivas da própria autora tiram os números da mesma sequência, e a bibliografia fecha o ensaio.
+Uma separata da série de história da tecnologia de uma revista: um ensaio de cerca de 1.100 palavras sobre como as cidades britânicas trocaram o próprio meio-dia pelo de Londres entre 1840 e 1880. A página tem 156 × 234 mm, com margens espelhadas, em Crimson Pro de 11/14 pt, e uma faixa verde-ferrovia cobre a metade de cima da primeira página. A autora escreve cada fonte como uma chave, `[@howse1980, 87]`, e o Postext compõe cada uma como uma nota numerada no pé da página no estilo de notas e bibliografia de Chicago. A primeira nota de uma obra traz autor, título e editora; todas as seguintes trazem a forma curta. As notas discursivas da própria autora tiram os números da mesma sequência, e a bibliografia fecha o ensaio.
 
 ## Preparo
 
 ### 1 · Uma nota para cada citação
 
-O código está na [resposta curta](#a-resposta-curta), mais acima. `chicago-notes-bibliography` é um estilo de notas, então uma citação deixa no texto um número sobrescrito e as suas palavras vão para uma nota de rodapé numerada junto com as `[^notes]` da própria autora; `notes: 'footnote'` diz isso de forma explícita. O citeproc-js controla quais obras já citou, então a nota 3 diz *Derek Howse, Greenwich Time and the Discovery of the Longitude (Oxford University Press, 1980), 87* e a nota 4, que cita o mesmo livro de novo, diz *Howse, Greenwich Time and the Discovery of the Longitude, 90–91*. O estilo incluído é a 18ª edição do Manual de Chicago, que abandona o *Ibid.* e repete a forma curta, por isso as notas 11 e 12 imprimem a forma curta duas vezes.
+O código está na [resposta curta](#a-resposta-curta), mais acima. `chicago-notes-bibliography` é um estilo de notas, por isso uma citação deixa no texto um número sobrescrito e as palavras vão para uma nota de rodapé numerada junto com as `[^notes]` da própria autora; `notes: 'footnote'` diz isso de forma explícita. O citeproc-js controla quais obras já citou, por isso a nota 3 diz *Derek Howse, Greenwich Time and the Discovery of the Longitude (Oxford University Press, 1980), 87* e a nota 4, que cita o mesmo livro de novo, diz *Howse, Greenwich Time and the Discovery of the Longitude, 90–91*. O estilo incluído é a 18ª edição do Manual de Chicago, que abandona o *Ibid.* e repete a forma curta, por isso as notas 11 e 12 imprimem a forma curta duas vezes.
 
 ### 2 · As notas da autora também citam
 
-Uma citação dentro de uma `[^note]` fica nessa nota e é composta na linha, por extenso se for a primeira aparição da obra: a nota 1 é a frase da autora seguida da referência completa de Schivelbusch. Toda citação termina com o ponto final do estilo, então uma nota que fecha com uma citação não precisa de ponto final próprio no Markdown.
+Uma citação dentro de uma `[^note]` fica nessa nota e é composta na linha, por extenso se for a primeira aparição da obra: a nota 1 é a frase da autora seguida da referência completa de Schivelbusch. Toda citação termina com o ponto final do estilo, de modo que uma nota que fecha com uma citação não precisa de ponto final próprio no Markdown.
 
 ### 3 · Prefixos, sufixos e localizadores
 
@@ -56,5 +56,5 @@ A 17ª edição do estilo Chicago imprime *Ibid.* na nota que repete a obra ante
 
 ## Erros comuns
 
-- Não termine com ponto final uma nota que acaba numa citação: o estilo já fecha a citação com um, e o Postext não junta os dois, então a nota terminaria com dois pontos finais.
+- Não termine com ponto final uma nota que acaba numa citação: o estilo já fecha a citação com um, e o Postext não junta os dois, por isso a nota terminaria com dois pontos finais.
 - Num estilo de notas, `@howse1980` sem colchetes deixa na frase só o número da nota, *As ¹ says*, sem o nome do autor. Escreva você mesmo o nome e cite entre colchetes: `As Howse says,[@howse1980]`.

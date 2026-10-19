@@ -1,8 +1,8 @@
 ---
 title: "Tang-Gedichte gegenüber ihren englischen Versen"
-summary: "Jedes Tang-Gedicht eröffnet eine getönte rechte Seite, Giles’ Englisch die linke gegenüber: Ein Format bricht auf gerade Seiten um, das andere auf ungerade."
+summary: "Jedes Tang-Gedicht eröffnet eine getönte rechte Seite, Giles’ Englisch die linke gegenüber: Ein Stil bricht auf gerade Seiten um, der andere auf ungerade."
 plain: "Ein kleines Buch mit chinesischen Gedichten aus der Tang-Dynastie und einer alten englischen Übersetzung auf der gegenüberliegenden Seite. Jede Reihe chinesischer Verse steht auf gleicher Höhe mit den englischen Zeilen, die sie übersetzen."
-description: "Zweisprachige Tang-Lyrik in Postext: Überschriftenformate mit Umbruch nach links und rechts, Chinesisch zentriert auf dem Raster, Glossen als Fußnoten."
+description: "Zweisprachige Tang-Lyrik in Postext: Überschriftenstile mit Umbruch nach links und rechts, Chinesisch zentriert auf dem Raster, Glossen als Fußnoten."
 question: "Wie setze ich ein Gedicht und seine Übersetzung auf gegenüberliegende Seiten, das Original immer rechts?"
 aliases: ["Übersetzung gegenüber", "Paralleltext", "zweisprachige Ausgabe", "en face", "zweisprachige Lyrik", "Original rechts", "Tang-Gedichte", "唐詩", "chinesische Lyrik auf Englisch", "Li Bai", "Du Fu", "Wang Wei", "Herbert Giles", "Glossen", "注釋", "linke und rechte Seite", "facing translation"]
 pageNotes: { "1": "Das Titelblatt: die Zeichen 唐詩 in Schwarz über einem blassgoldenen Mond, darunter „TANG POEMS“ in roten Versalien, die Namen der drei Dichter, eine Zeile, die Giles’ englische Verse nennt, und ein kleines rotes Siegel mit 明月 nahe am Fuß.", "3": "Die rechte Seite gegenüber „Night Thoughts“, blassgold getönt: der Titel 靜夜思 fett, darunter 〔唐〕李白 in Rot, das Gedicht in zwei Reihen pinselartiger Schriftzeichen, jede Reihe mit einer kleinen Fußnotenziffer am Ende, und zwei Fußnoten am Fuß der Seite unter einer kurzen roten Linie." }
@@ -16,7 +16,7 @@ Ein kleiner zweisprachiger Band mit Tang-Gedichten, gesetzt, wie Paralleltextaus
 
 ### 1 · Ein Überschriftenformat für jede Seite der Doppelseite
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht besteht aus zwei Überschriften der Ebene 1: `# Night Thoughts {style="en" …}` mit Giles’ Versen, dann `# 靜夜思 {style="zh" …}` mit dem Gedicht. Das Format `en` bricht auf die nächste gerade Seite um, eine linke; das Format `zh` auf die nächste ungerade, die rechte Seite gegenüber. Solange jedes Gedicht auf seine Seite passt, kommt keine leere Seite hinzu; eine englische Fassung, die überliefe, schöbe ihr Original auf die folgende rechte Seite, hinter eine leere linke ([Umbruch davor](/de/docs/configuration-headings#umbruch-davor)). Beide Gestaltungen reservieren sechs Rasterzeilen, sodass Englisch und Chinesisch auf derselben Zeile beginnen. Das chinesische Format hat `span: 'page'`, weil sein erstes Element, ein Kasten in Seitengröße, das getönte Blatt ist, und eine in der Spalte gehaltene Gestaltung am Fuß der Spalte endet ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)).
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht besteht aus zwei Überschriften der Ebene 1: `# Night Thoughts {style="en" …}` mit Giles’ Versen, dann `# 靜夜思 {style="zh" …}` mit dem Gedicht. Der Stil `en` bricht auf die nächste gerade Seite um, eine linke; der Stil `zh` auf die nächste ungerade, die rechte Seite gegenüber. Solange jedes Gedicht auf seine Seite passt, kommt keine Vakatseite hinzu; eine englische Fassung, die überliefe, schöbe ihr Original auf die folgende rechte Seite, hinter eine linke Vakatseite ([Umbruch davor](/de/docs/configuration-headings#umbruch-davor)). Beide Gestaltungen reservieren sechs Rasterzeilen, sodass Englisch und Chinesisch auf derselben Zeile beginnen. Der chinesische Stil hat `span: 'page'`, weil sein erstes Element, ein Kasten in Seitengröße, das getönte Blatt ist, und eine in der Spalte gehaltene Gestaltung am Fuß der Spalte endet ([Seitenbreite und erweiterte Gestaltung](/de/docs/configuration-headings#seitenbreite-und-erweiterte-gestaltung)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Seite 2: Das Englische beginnt auf der linken Seite sechs Zeilen tiefer, auf der Rasterzeile, auf der das Chinesische auf Seite 3 beginnt." />
 
@@ -30,19 +30,19 @@ Die chinesischen Reihen haben den doppelten Zeilenabstand der englischen Zeilen,
 
 <Excerpt region="notes" />
 
-Die Glossen sind Fußnoten, eine pro Reihe: `疑是地上霜。[^bed]` schließt die erste Reihe des Gedichts, und `[^bed]: …` folgt ihr und nennt jedes erklärte Wort fett, da die Ziffer nicht mehr neben ihm steht. Sie sind nummeriert, wie ein chinesisches Buch seine Anmerkungen nummeriert (页下注): eingekreiste Ziffern auf der Grundlinie, auf jeder Seite wieder ab ① gezählt (`numberFormat: 'circled-decimal'`, `numbering: 'page'`). Im Vers steht das Zeichen in sechs Zehnteln der Gedichtgröße, `markerSize: em(0.6)`, nahe am Grad der Fußnoten; am Fuß der Seite beginnt jede Fußnote mit ihrem ① im Grad des Fußnotentextes ([Fußnoten](/de/docs/configuration-notes-references#fußnoten)). Fußnoten stehen in der Grundschrift, und die Grundschrift dieses Buches ist die Noto Serif TC, weil eine Glosse Schriftzeichen und Pinyin mischt; die lateinischen Buchstaben der Noto Serif TC stammen aus der Source Serif, deshalb sind die englischen Seiten in der Source Serif 4 gesetzt. Die Fußnoten sind in der Sprache der Ausgabe geschrieben: Mit dem Kolumnentitel der linken Seite und der Anmerkung zum Text sind sie das, was die spanische Ausgabe ändert.
+Die Glossen sind Fußnoten, eine pro Reihe: `疑是地上霜。[^bed]` schließt die erste Reihe des Gedichts, und `[^bed]: …` folgt ihr und wiederholt jedes erklärte Wort fett, da die Ziffer nicht mehr neben ihm steht. Sie sind nummeriert, wie ein chinesisches Buch seine Anmerkungen nummeriert (页下注): eingekreiste Ziffern auf der Grundlinie, auf jeder Seite wieder ab ① gezählt (`numberFormat: 'circled-decimal'`, `numbering: 'page'`). Im Vers steht das Zeichen in sechs Zehnteln der Gedichtgröße, `markerSize: em(0.6)`, nahe am Grad der Fußnoten; am Fuß der Seite beginnt jede Fußnote mit ihrem ① im Grad des Fußnotentextes ([Fußnoten](/de/docs/configuration-notes-references#fußnoten)). Fußnoten stehen in der Grundschrift, und die Grundschrift dieses Buches ist die Noto Serif TC, weil eine Glosse Schriftzeichen und Pinyin mischt; die lateinischen Buchstaben der Noto Serif TC stammen aus der Source Serif, deshalb sind die englischen Seiten in der Source Serif 4 gesetzt. Die Fußnoten sind in der Sprache der Ausgabe geschrieben: Mit dem Kolumnentitel der linken Seite und der Anmerkung zum Text sind sie das, was die spanische Ausgabe ändert.
 
 ### 4 · Kolumnentitel in der Sprache jeder Seite
 
 <Excerpt region="heads" />
 
-Jede Seite dieses Buches beginnt mit einer Überschrift, jede Seite ist also eine Eröffnungsseite, und die Kolumnentitel verwenden `pages: 'opener'`. Eine durch einen Umbruch eingefügte leere Seite bliebe leer, und das Titelblatt räumt sie mit einer eigenen leeren Kopfzeile ab. Die linke Seite nimmt den Buchtitel aus `subtitle` im Frontmatter, das jede Ausgabe in ihrer Sprache schreibt; die rechte nimmt den Namen des Dichters aus dem Attribut `name` der chinesischen Überschrift ([Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen)).
+Jede Seite dieses Buches beginnt mit einer Überschrift, jede Seite ist also eine Auftaktseite, und die Kolumnentitel verwenden `pages: 'opener'`. Eine durch einen Umbruch eingefügte Vakatseite bliebe leer, und das Titelblatt räumt sie mit einer eigenen leeren Kopfzeile ab. Die linke Seite nimmt den Buchtitel aus `subtitle` im Frontmatter, das jede Ausgabe in ihrer Sprache schreibt; die rechte nimmt den Namen des Dichters aus dem Attribut `name` der chinesischen Überschrift ([Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen)).
 
 ### 5 · Ein Titelblatt auf einem Mond
 
 <Excerpt region="title" />
 
-Auch das Titelblatt ist ein Überschriftenformat, mit `runningChapter: false`, damit es kein Kapitel nennt. Der Mond ist ein Gestaltungskasten, dessen Eckenradius die Hälfte seiner Seitenlänge ist, und 唐詩 wird rechnerisch darauf zentriert: die Mitte des Mondes abzüglich der halben Höhe des Titels. Das Siegel setzt 明月 mit `writingMode: 'vertical-rl'`, ein Zeichen über dem anderen, wie Siegel geschnitten werden.
+Auch das Titelblatt ist ein Überschriftenstil, mit `runningChapter: false`, damit es in keinem Kolumnentitel als Kapitel erscheint. Der Mond ist ein Gestaltungskasten, dessen Eckenradius die Hälfte seiner Seitenlänge ist, und 唐詩 wird rechnerisch darauf zentriert: die Mitte des Mondes abzüglich der halben Höhe des Titels. Das Siegel setzt 明月 mit `writingMode: 'vertical-rl'`, ein Zeichen über dem anderen, wie Siegel geschnitten werden.
 
 ### 6 · Jede chinesische Schrift lädt, was sie setzt
 
@@ -54,7 +54,7 @@ Fontsource zerlegt jede chinesische Schrift nach Zeichenbereichen in etwa hunder
 
 ### Das Original auf die linke Seite setzen
 
-Loeb-Ausgaben und viele chinesisch-englische Lesebücher setzen das Original links: Tauschen Sie die Paritäten der beiden Überschriftenformate und der beiden Kolumnentitel, die Buch und Dichter nennen, und schreiben Sie im Markdown jede chinesische Überschrift und jedes Gedicht vor sein Englisch.
+Loeb-Ausgaben und viele chinesisch-englische Lesebücher setzen das Original links: Tauschen Sie die Paritäten der beiden Überschriftenstile und der beiden Kolumnentitel, die Buch und Dichter zeigen, und schreiben Sie im Markdown jede chinesische Überschrift und jedes Gedicht vor sein Englisch.
 
 ```diff
 -const english = { id: 'en', breakBefore: { enabled: true, parity: 'even' }, // a verso

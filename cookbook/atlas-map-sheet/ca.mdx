@@ -18,7 +18,7 @@ El primer full d'un atles de les illes Solan, un arxipèlag inventat i dibuixat 
 
 <Excerpt region="palette" />
 
-Les sis tintes dels mapes són claus del mateix objecte que els colors de la pàgina, així que `colorPalette` les inclou com a entrades de la paleta i els dibuixos prenen de `palette[id]` els farcits del seu SVG. El blanc del paper té un contrast de 9,2:1 sobre `band`, el blau de l'obertura, de les barres dels peus i de la fila de capçalera de la taula. `road`, l'únic vermell, es reserva per a carreteres, fars i números de lloc, amb un contrast de 5,4:1 sobre el paper. `main-color` pren l'hex de `band`, i els valors per defecte enllacen amb aquest identificador els títols, les barres dels peus i les vinyetes de les llistes, així que qualsevol d'ells que la configuració no fixi surt en el blau de l'atles.
+Les sis tintes dels mapes són claus del mateix objecte que els colors de la pàgina, així que `colorPalette` les inclou com a entrades de la paleta i els dibuixos prenen de `palette[id]` els emplenaments del seu SVG. El blanc del paper té un contrast de 9,2:1 sobre `band`, el blau de l'obertura, de les barres dels peus i de la fila de capçalera de la taula. `road`, l'únic vermell, es reserva per a carreteres, fars i números de lloc, amb un contrast de 5,4:1 sobre el paper. `main-color` pren l'hex de `band`, i els valors per defecte enllacen amb aquest identificador els títols, les barres dels peus i els pics de les llistes, així que qualsevol d'ells que la configuració no fixi surt en el blau de l'atles.
 
 ### 2 · On va cada mapa
 
@@ -34,13 +34,13 @@ El codi és [la resposta curta](#la-resposta-curta), més amunt. El mapa 1 és u
 
 <Excerpt region="resources" />
 
-Un recurs rep el seu número a la primera citació del text, i `:ref{id="north" case="lower"}` imprimeix l'etiqueta curta del tipus i aquest número en minúscula, «mapa 2», tant al text com en una nota. La carta i el nomenclàtor es citen per primera vegada a la pàgina 2, en aquest ordre, així que la carta ocupa la pàgina 3, i el nomenclàtor, el capdamunt de la pàgina 4. La rosa dels vents és un recurs del mateix tipus, però només la dibuixa l'obertura i el text no la cita mai, així que els mapes continuen numerats de l'1 al 4. Cada entrada de la clau del port és un sol chip sense fons, vora ni farciment, de manera que el número, el nom i el punt que va darrere queden a la mateixa línia.
+Un recurs rep el seu número a la primera citació del text, i `:ref{id="north" case="lower"}` imprimeix l'etiqueta curta del tipus i aquest número en minúscula, «mapa 2», tant al text com en una nota. La carta i el nomenclàtor es citen per primera vegada a la pàgina 2, en aquest ordre, així que la carta ocupa la pàgina 3, i el nomenclàtor, el capdamunt de la pàgina 4. La rosa dels vents és un recurs del mateix tipus, però només la dibuixa l'obertura i el text no la cita mai, així que els mapes continuen numerats de l'1 al 4. Cada entrada de la clau del port és un sol xip sense fons, vora ni farciment, de manera que el número, el nom i el punt que va darrere queden a la mateixa línia.
 
 ### 5 · Números que comparteixen els mapes i el nomenclàtor
 
 <Excerpt region="gazetteer" />
 
-`PLACES` va ordenada de nord a sud i numerada en aquest ordre; els mapes imprimeixen aquests números en discos vermells, i la taula, en chips vermells. `square()` calcula el quadre de la carta amb les mateixes coordenades en quilòmetres que situen cada marca als mapes, així que Kirkwick, el número 6, cau a D3 tant a la carta com a la taula. El blau pàl·lid d'una fila de cada dues el posa l'estil de taula: `bodyAlternateBackgroundEnabled`, amb `bodyAlternateBackground` enllaçat a `sea`.
+`PLACES` va ordenada de nord a sud i numerada en aquest ordre; els mapes imprimeixen aquests números en discos vermells, i la taula, en xips vermells. `square()` calcula el quadre de la carta amb les mateixes coordenades en quilòmetres que situen cada marca als mapes, així que Kirkwick, el número 6, cau a D3 tant a la carta com a la taula. El blau pàl·lid d'una fila de cada dues el posa l'estil de taula: `bodyAlternateBackgroundEnabled`, amb `bodyAlternateBackground` enllaçat a `sea`.
 
 ### 6 · El nom de l'atles en una banda del seu propi blau
 

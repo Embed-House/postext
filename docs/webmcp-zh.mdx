@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: '浏览器里的AI智能体借助沙盒的41个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9分钟',
   order: 46,
   plainSummary: "本页写给想让AI助手替自己在沙盒里处理一本书的人。沙盒打开时，会交给助手一套工具，用来查看任意一页、修改设计、编辑文字、添加图片和表格、找出问题和保存文件。你用自己的话提出要求，比如“把字稍微放大一点，再看看书是不是还能排在40页以内”，助手就去使用这些工具，并把页面给你看。一切都留在你的浏览器里。本页说明怎样接入助手、它能做什么，以及每个工具怎样调用。",
@@ -133,7 +133,7 @@ await browser.close();
 { "chapter": 3, "page": 24, "crop": { "x": 0.5, "y": 0.5, "width": 0.5, "height": 0.5 }, "width": 1600 }
 ```
 
-`printPreview: true`绘制印刷特性文件的软打样，带成品线、出血线和安全区参考线；`trimmed: true`去掉带裁切标记的那圈边缘。
+`printPreview: true`绘制印刷特性文件的软打样，带成品线、出血线和安全区参考线；`trimmed: true`去掉带裁切线的那圈边缘。
 
 **同一页的数据**。比如“这一页哪些行排得太松？”“第二栏排满了吗？”：
 
@@ -152,7 +152,7 @@ await browser.close();
 }
 ```
 
-给出`page`或`position`时，它会列出这一页上的每个块：类型、所在栏、文字、行数、以连字符结尾的行、两端对齐的稀松行及其空格的宽度、它在页面上的框，另外还有每一栏排了多满（`fill: 0.99`）。
+给出`page`或`position`时，它会列出这一页上的每个块：类型、所在栏、文字、行数、以连字符结尾的行、两端对齐的松散行及其空格的宽度、它在页面上的框，另外还有每一栏排了多满（`fill: 0.99`）。
 
 **某一点上是什么**。智能体在图像里看到什么东西时，就用裁切时同样的比例去问那是什么：
 
@@ -161,9 +161,9 @@ await browser.close();
 { "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
 ```
 
-回答给出那里的块、Markdown源文本中对应的行号和列号（以及那个词）、链接及其通往的页面、资源的表格单元格或图注。加上`select: true`时，它还会做点击所做的事：打开正文面板，把光标放在那个位置（`word: true`选中那个词，`to`一直选到第二个点）。
+回答给出那里的块、Markdown源文本中对应的行号和列号（以及那个词）、链接及其通往的页面、资源的表格单元格或题注。加上`select: true`时，它还会做点击所做的事：打开正文面板，把光标放在那个位置（`word: true`选中那个词，`to`一直选到第二个点）。
 
-回答中还会给出 `elements`：该点上的各个元素，由内到外排列，顺序与在页面上单击选中、再次单击或按 Esc 向外升级的顺序一致（字符、所在段落、包着它的方框、模板页中的框、框组、页面及其模板；或者设计元素及其 slot）。每个元素都带有稳定的 id、来源（Markdown 中的一段范围、配置路径、属性或资源），以及它在 Sandbox 所示路径（`path`）中的名称。配合 `select: true`，`level`（`block`、`frame`、`template`、`design`…）会像用户那样选中其中之一：内容模式下选中它的 Markdown，版面设计模式下打开它的框、样式或模板。`sandbox_get_state` 会在 `pageSelection` 中报告当前选中的元素。
+回答中还会给出`elements`：该点上的各个元素，由内到外排列，顺序与在页面上单击选中、再次单击或按Esc向外升级的顺序一致（字符、所在段落、包着它的方框、模板页中的框、框组、页面及其模板；或者设计元素及其槽位）。每个元素都带有稳定的id、来源（Markdown中的一段范围、配置路径、属性或资源），以及它在沙盒所示路径（`path`）中的名称。配合`select: true`，`level`（`block`、`frame`、`template`、`design`…）会像用户那样选中其中之一：内容模式下选中它的Markdown，版面设计模式下打开它的框、样式或模板。`sandbox_get_state`会在`pageSelection`中报告当前选中的元素。
 
 ### 修改设计
 
@@ -231,7 +231,7 @@ await browser.close();
 
 `from`是修改前保存的值（这里是`null`，即书没有设置它），所以拿`from`作为值再调用一次，就能撤销这次修改。`followed`列出依赖这项设置、随它一起变动的其他设置。引擎解析出的结果与所要求的不同时（碰到了限度，或者这项设置取决于另一项），会出现`note`；形状不对的值，或者引擎无法解析的配置，会被拒绝，什么都不改。
 
-每次调用都是沙盒历史中的一步：`sandbox_undo`可以撤回它，就像 Cmd/Ctrl+Z 撤回在设计面板里做的修改一样。
+每次调用都是沙盒历史中的一步：`sandbox_undo`可以撤回它，就像Cmd/Ctrl+Z撤回在版面设计面板里做的修改一样。
 
 改动较大时，`patch`把一个对象合并进配置（对象合并，`null`删除，列表整个替换），`replace`则用一整份配置取代书的配置，比如导出的`postext-config.json`。`sandbox_reset_to_original`加上`part: "config"`，会恢复这本书最初的设计。
 
@@ -291,7 +291,7 @@ await browser.close();
 `sandbox_save_resource`添加或修改资源，和资源面板的做法一样。文件可以通过`url`提供（页面能够获取的`https:`地址，或者`data:` URL），也可以用`base64`提供：
 
 ```jsonc
-// 一张带图注和替代文本的图片
+// 一张带题注和替代文字的图片
 {
   "id": "harbour",
   "image": { "url": "https://example.org/harbour.jpg" },
@@ -315,9 +315,9 @@ await browser.close();
 { "id": "interview", "video": { "url": "https://www.youtube.com/watch?v=…" }, "caption": "工作中的作者" }
 ```
 
-回答给出保存下来的记录，以及安放它的那一行`::resource{id="prices"}`，智能体随后用`sandbox_edit_text`把这一行写进文字。对已有的`id`，调用只改动它给出的部分：图注、表格的单元格、安放位置、图片的安全区。`newId`给资源改名，默认同时改掉书中对它的所有引用。`sandbox_list_resources`列出全部资源；给出`id`时，返回其中一个的完整内容（表格的单元格及其格式、SVG的源代码）。
+回答给出保存下来的记录，以及安放它的那一行`::resource{id="prices"}`，智能体随后用`sandbox_edit_text`把这一行写进文字。对已有的`id`，调用只改动它给出的部分：题注、表格的单元格、安放位置、图片的安全区。`newId`给资源改名，默认同时改掉书中对它的所有引用。`sandbox_list_resources`列出全部资源；给出`id`时，返回其中一个的完整内容（表格的单元格及其格式、SVG的源代码）。
 
-图片的 `marks` 也包含它的锚点。对地图或示意图来说，锚点就是其 `::label` 行所在的位置：一个 `id`，`x` 和 `y`（整张图片的比例），以及放在那里的标注所沿用的标注字段（`style`、`align`、`verticalAlign`、`rotate`、`width`、`writingMode`）。若版面设计中没有某个标注样式，回答会注明；资源的新标记算历史中的一步（`sandbox_undo` 回答 `kind: "resource"`）。对 SVG，`marks.svgSymbols`（`idPrefix`、`className`）会在其所指的每个元素上添加一个避让区，叠加到调用给出的或图片已有的区域上（自 postext 1.43 起）。
+图片的`marks`也包含它的锚点。对地图或示意图来说，锚点就是其`::label`行所在的位置：一个`id`，`x`和`y`（整张图片的比例），以及放在那里的标注所沿用的标注字段（`style`、`align`、`verticalAlign`、`rotate`、`width`、`writingMode`）。若版面设计中没有某个标注样式，回答会注明；资源的新标记算历史中的一步（`sandbox_undo`回答`kind: "resource"`）。对SVG，`marks.svgSymbols`（`idPrefix`、`className`）会在其所指的每个元素上添加一个避让区，叠加到调用给出的或图片已有的区域上（自postext 1.43起）。
 
 ```jsonc
 // 一张地图的两个锚点及其标注样式
@@ -340,7 +340,7 @@ await browser.close();
 { "scope": "book" }
 ```
 
-回答的内容就是检查面板所显示的，适用于任意一章或整本书，不管屏幕上显示的是什么：缺少的字体和图片、引擎读不懂的标记、放不下的设计元素、相对于背景太淡的文字、稀松行、段首孤行、溢出的框，以及印前检查。每条警告都带有类别、章、行号和偏移量、所在页，以及它涉及的设置或资源：
+回答的内容就是检查面板所显示的，适用于任意一章或整本书，不管屏幕上显示的是什么：缺少的字体和图片、引擎读不懂的标记、放不下的设计元素、相对于背景太淡的文字、松散行、段首孤行、内容放不下的框，以及印前检查。每条警告都带有类别、章、行号和偏移量、所在页，以及它涉及的设置或资源：
 
 ```json
 {
@@ -361,7 +361,7 @@ await browser.close();
 
 智能体可以从一条警告跳到它所在的位置（`sandbox_select_text`加上`offset`和`toOffset`，或者用`sandbox_go_to_page`），查看那一页，然后修改文字或设置。`category`可以缩小列表的范围；书很长时，`scope: "book"`要把每一章都排一遍，需要一段时间。
 
-带有多个版本的书（示例的文件包，或由它导入的项目），其合成页检查在每种语言中同样有：`sandbox_get_composed_checks`会排出每个版本，按语言、章、页和框列出检查，与面板的“合成页”一节相同，用`language`可只看其中一个（postext 1.40起）。`sandbox_get_warnings`仍只检查屏幕上语言的某一章。
+带有多个版本的书（示例的文件包，或由它导入的项目），其模板页检查在每种语言中同样有：`sandbox_get_composed_checks`会排出每个版本，按语言、章、页和框列出检查，与检查面板的“模板页”一节相同，用`language`可只看其中一个（postext 1.40起）。`sandbox_get_warnings`仍只检查屏幕上语言的某一章。
 
 ### 指给你看
 
@@ -377,7 +377,7 @@ await browser.close();
 { "anchor": "harbour" }
 ```
 
-`sandbox_set_view`还能选择查看器（`canvas`、`pdf`、`folio`、`html`、`epub`，分别对应Canvas、PDF、书页、HTML和EPUB标签页）、侧面板、单章或整本书、缩放、阅读字号、印刷预览，以及版面设计面板中的组。`sandbox_go_to_page`按`step`、`page`、`position`、一段`text`、一个`anchor`或EPUB的`contents`条目翻页。`sandbox_run_viewer`按下工具栏上的按钮：`regenerate`重新生成PDF或EPUB并等它完成，`print`打开打印对话框，由你确认，`play_video`播放页面上的视频。
+`sandbox_set_view`还能选择查看器（`canvas`、`pdf`、`folio`、`html`、`epub`，分别对应Canvas、PDF、书页、HTML和EPUB标签页）、内容模式或版面设计模式（`mode`）、侧面板、单章或整本书、缩放、阅读字号、印刷预览，以及版面设计面板中的组。`sandbox_go_to_page`按`step`、`page`、`position`、一段`text`、一个`anchor`或EPUB的`contents`条目翻页。`sandbox_run_viewer`按下工具栏上的按钮：`regenerate`重新生成PDF或EPUB并等它完成，`print`打开打印对话框，由你确认，`download`保存PDF或EPUB，`play_video`和`stop_video`播放和停止页面上的视频。
 
 ### 漫画页
 
@@ -387,7 +387,7 @@ await browser.close();
 // 把对白框的中心移到它所在分格画面中的某一点，单位为百分比
 { "comic": 1, "action": "move_balloon", "balloon": 2, "at": { "x": 30, "y": 18 } }
 
-// 把第一条分格线移到它所在格子的45 %处
+// 把第一条分格线移到它所在格子的45%处
 { "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
 ```
 
@@ -395,7 +395,7 @@ await browser.close();
 
 ### 书、文件和Word
 
-- **打开和保存书**。`sandbox_list_books`列出示例书和你的项目；`sandbox_open_book`打开其中一本（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）；`sandbox_save_book`加上`action: "copy_current"`把屏幕上的书保存为你自己的项目，加上`new_blank`则新建一本空书。
+- **打开和保存书**。`sandbox_list_books`列出示例书和你的项目；`sandbox_open_book`打开其中一本（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）；`sandbox_save_book`加上`action: "copy_current"`把屏幕上的书保存为你自己的项目，加上`new_blank`则新建一本空书。对于项目，`add_language`加上`language`（`"fr"`、`"zh-Hant"`）会把屏幕上的语言复制成该语言的新版本并打开它，`rename`加上`thisLanguageOnly: true`只给屏幕上的语言命名；`set_cover`和`remove_cover`为它设置或去掉封面。
 - **导出**。`sandbox_export`写出`pdf`、`epub`、`postext`、`docx`、`markdown`或`config`。默认由浏览器下载文件；加上`deliver: "data"`时，PDF或EPUB以base64编码返回给智能体：
 
   ```json
@@ -414,7 +414,7 @@ await browser.close();
   }
   ```
 
-  `characterSpacing`（有内容可采用时默认开启；postext 1.40起）会把所用 Word 样式的字符间距按 em 写入它们所对应的书中段落样式、标题样式、标题级别和标注框标题，书中已设间距的除外。试运行会在`characterSpacing`下列出。
+  `characterSpacing`（有内容可采用时默认开启；postext 1.40起）会把所用Word样式的字符间距按em写入它们所对应的书中段落样式、标题样式、标题级别和标注框标题，书中已设间距的除外。试运行会在`characterSpacing`下列出。
 
   `sandbox_word_templates`列出、读取、保存和删除已保存的对应关系，Word导出也会用到它们。
 
@@ -426,7 +426,7 @@ await browser.close();
 
 “**把字稍微放大一点，但书要控制在220页以内**”：`sandbox_get_state`（212页）→ `sandbox_set_config`把`bodyText.fontSize`设为`"10.5pt"`（219页）→ 对一个排得很密的页面运行`sandbox_render_page`，看看效果 → `sandbox_get_warnings`加上`category: "typesetting"`，查有没有新出现的段首孤行 → 如果哪里不对，再调用一次`sandbox_set_config`，用第一次回答中的`from`值。
 
-“**把检查在第4章发现的问题改掉**”：`sandbox_get_warnings`加上`chapter: 4` → 对每条警告，围绕它的`line`运行`sandbox_read_text`，对它的`page`运行`sandbox_render_page` → `sandbox_edit_text`或`sandbox_set_config` → 再次运行`sandbox_get_warnings`，直到返回空列表。 模板页上放不下的框会附带修正办法（`proposals`）：用`sandbox_apply_proposal`加上它的`frame`和某个办法的编号即可执行，章节会重新排版，回答中的`fits`说明是否已经放下。
+“**把检查在第4章发现的问题改掉**”：`sandbox_get_warnings`加上`chapter: 4` → 对每条警告，围绕它的`line`运行`sandbox_read_text`，对它的`page`运行`sandbox_render_page` → `sandbox_edit_text`或`sandbox_set_config` → 再次运行`sandbox_get_warnings`，直到返回空列表。模板页上放不下的框会附带修正办法（`proposals`）：用`sandbox_apply_proposal`加上它的`frame`和某个办法的编号即可执行，章节会重新排版，回答中的`fits`说明是否已经放下。
 
 “**用这个Word文件做一本书，把PDF给我**”：`sandbox_save_book`加上`action: "new_blank"` → `sandbox_import_word`加上`dryRun: true` → 修正`mapping`，再用`destination: "book"`正式导入 → `sandbox_get_warnings`加上`scope: "book"` → `sandbox_export`加上`format: "pdf"`和`scope: "book"`。
 
@@ -440,8 +440,8 @@ await browser.close();
 
 - **一切都留在你的浏览器里**。沙盒本身触及不到的东西，工具也触及不到：你的书保存在这个浏览器的存储里，通过`url`提供的文件由页面去获取，所以文件所在的服务器必须允许这样做（CORS）。`data:` URL或`base64`总是可用。
 - **耗时的工作要等**。工具会等排版完成再回答；加上`wait: false`则立即回答。一本长书的PDF或EPUB要花几分钟。
-- **撤销**：`sandbox_undo` 按修改的先后撤回最近一次修改，无论改的是文字还是设计，和沙盒里的 Cmd/Ctrl+Z 一样：在正文面板里输入的文字、工具做的修改和在预览上做的编辑、用`sandbox_set_config`或在设计面板里改动的设置、拖动的框。`redo: true`重做。`sandbox_undo_text`只撤回文字修改；最近一次修改是设计时，它会说明。新增、删除或移动的章节、资源和字体不在历史中；打开另一本书会清空历史，重新加载页面也会。`sandbox_get_state`会说明两者各自会撤回什么（`history`）。
-- **屏幕上的书**。工具作用于打开的那本书。只有导出`.postext`文件的`sandbox_export`、带`duplicate`的`sandbox_save_book`和带`sample`的`sandbox_reset_to_original`，可以不打开另一本书就对它操作。
+- **撤销**：`sandbox_undo`按修改的先后撤回最近一次修改，无论改的是文字还是设计，和沙盒里的Cmd/Ctrl+Z一样：在正文面板里输入的文字、工具做的修改和在预览上做的编辑、用`sandbox_set_config`或在版面设计面板里改动的设置、拖动的框。`redo: true`重做。`sandbox_undo_text`只撤回文字修改；最近一次修改是设计时，它会说明。新增、删除或移动的章节、资源和字体不在历史中；打开另一本书会清空历史，重新加载页面也会。`sandbox_get_state`会说明两者各自会撤回什么（`history`）。
+- **屏幕上的书**。工具作用于打开的那本书。只有导出`.postext`文件的`sandbox_export`、带`duplicate`、`rename`或封面操作的`sandbox_save_book`、`sandbox_delete_book`和带`sample`的`sandbox_reset_to_original`，可以不打开另一本书就对它操作。
 
 ## 网站的工具
 
@@ -464,7 +464,7 @@ await browser.close();
 - **打开的内容**：`sandbox_get_state`。
 - **页面**：`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`。
 - **文字**：`sandbox_read_text`、`sandbox_write_text`、`sandbox_edit_text`、`sandbox_undo_text`、`sandbox_select_text`、`sandbox_search_text`、`sandbox_manage_chapters`、`sandbox_remove_chapter`。
-- **设计**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`、`sandbox_frame_styles`、`sandbox_merge_styles`。
+- **版面设计**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`、`sandbox_frame_styles`、`sandbox_merge_styles`。
 - **撤销**：`sandbox_undo`。
 - **显示方式**：`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`。
 - **资源和字体**：`sandbox_list_resources`、`sandbox_save_resource`、`sandbox_delete_resource`、`sandbox_list_fonts`、`sandbox_save_font`。

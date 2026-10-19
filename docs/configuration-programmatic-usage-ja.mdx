@@ -3,9 +3,9 @@
 export const metadata = {
   title: '設定：プログラムからの利用',
   sidebarTitle: 'プログラムからの利用',
-  description: 'コードからPostextを使う：buildDocumentとその警告、既定値、フォント、キャッシュ、Web Worker',
+  description: 'コードからPostextを呼び出す方法。buildDocumentとその警告、既定値、フォント、キャッシュ、そしてWeb Worker',
   lang: 'ja',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '32分',
   order: 20,
   parent: 'configuration',
@@ -17,11 +17,11 @@ export const metadata = {
 
 ## プログラムからの利用
 
-> **推奨する方法：Web Workerを使う**。ブラウザーでの統合は、ほぼすべての場合、メインスレッドで`buildDocument`を直接呼ぶの**ではなく**、`postext/worker`の`createLayoutWorker()`を通して組版パイプラインを動かすべきです。ワーカーを使えば、ビルド中もUIが応答し続け、差分の再ビルドをまたいでテキストの計測結果がキャッシュされ、「最後の要求が勝つ」キャンセル（last-wins）が組み込まれるので、新しいキー入力が実行中の古いビルドを中止します。標準の手順は[Web Workerでレイアウトを実行する](#web-workerでレイアウトを実行する)にまとめてあります。この節の残りの内容（`buildDocument`の直接呼び出し、リゾルバー、既定値の除去関数、キャッシュ）も役に立ちます。ワーカーはまったく同じ入力と出力を公開しているからです。ただし、UIのコードではワーカーのラッパーから始めるのが正解です。メインスレッドで`buildDocument`を呼ぶのは、1回きりの書き出し、サーバーサイドでの描画（Node）、テストに限ってください。
+> **推奨する方法：Web Workerを使う**。ブラウザでは、メインスレッドで `buildDocument` を呼ぶのではなく、`postext/worker` の `createLayoutWorker()` を通してレイアウトします。ワーカーはレイアウト中もページの応答を保ち、再レイアウトの間も文字の計測をキャッシュし、新しいレイアウトが始まると実行中のものを取り消すので、キー入力が古いテキストのレイアウトを待つことはありません。手順は[Web Workerでレイアウトを実行する](#web-workerでレイアウトを実行する)にあります。この節の残り（`buildDocument` の直接呼び出し、リゾルバー、ストリッパー、キャッシュ）もそのまま使えます。ワーカーは同じ入力を受け取り、同じ出力を返します。メインスレッドで `buildDocument` を呼ぶのは、一回限りの書き出し、サーバー側のレンダリング（Node）、テストの場合だけにしてください。
 
 ### 文書のビルド
 
-`buildDocument`関数は組版パイプライン全体を実行し、すべての要素の正確な座標を持つ仮想文書ツリー（Virtual Document Tree、VDT）を返します。これが最も低レベルの入口です。UIのコードでは[Web Workerのラッパー](#web-workerでレイアウトを実行する)を使ってください。ラッパーは専用のワーカースレッドの中で、同じ引数で`buildDocument`を呼びます。
+`buildDocument`関数は組版パイプライン全体を実行し、すべての要素の正確な座標が入った仮想文書ツリー（Virtual Document Tree、VDT）を返します。これが最も低レベルの入口です。UIのコードでは[Web Workerのラッパー](#web-workerでレイアウトを実行する)を使ってください。ラッパーは専用のワーカースレッドの中で、同じ引数で`buildDocument`を呼びます。
 
 ```ts
 import { buildDocument } from 'postext';
@@ -43,7 +43,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
 
 ### 文書の中の警告
 
-`buildDocument`は、誤った参照や未知のスタイルがあっても止まりません。代わりの値を当て、何をしたかを`doc.contentWarnings`に記録します。レイアウトがやむを得ず配置したボックスは`doc.warnings`に入ります。こちらはpostext 1.4のときの形を保っており、各項目は`pageIndex`、`columnIndex`、`overflowPx`を持つ`calloutOverflow`です。報告することがなければ、それぞれのフィールドは存在しません。どの項目にも`kind`があります。内容に関する種類は、その構文のソース範囲（渡したMarkdown内のオフセットである`sourceStart` / `sourceEnd`。フロントマターも含めて数えます）と、構文がページに配置された場合はその`pageIndex`を持ちます。
+`buildDocument`は、誤った参照や未知のスタイルがあっても止まりません。代わりの値を当て、何をしたかを`doc.contentWarnings`に記録します。レイアウトがやむを得ず配置した囲みは`doc.warnings`に入ります。こちらはpostext 1.4のときの形を保っており、各項目は`pageIndex`、`columnIndex`、`overflowPx`を含む`calloutOverflow`です。報告することがなければ、それぞれのフィールドは存在しません。どの項目にも`kind`があります。内容に関する種類は、その構文のソース範囲（渡したMarkdown内のオフセットである`sourceStart` / `sourceEnd`。フロントマターも含めて数えます）と、構文がページに配置された場合はその`pageIndex`が付きます。
 
 <table>
   <thead>
@@ -56,7 +56,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
   <tbody>
     <tr>
       <td><code>calloutOverflow</code></td>
-      <td><code>:::callout</code>のボックスがどの段にも収まらず、どこで切っても分割できない。空のサイド段より高い<code>span: 'side'</code>のボックスも同じです（postext 1.25から）。</td>
+      <td><code>:::callout</code>の囲みがどの段にも収まらず、どこで切っても分割できません。空のサイド段より高い<code>span: 'side'</code>の囲みも同じです（postext 1.25以降）。</td>
       <td>それでも配置され、段から<code>overflowPx</code>だけはみ出します（<code>pageIndex</code> / <code>columnIndex</code>の位置）。<code>doc.warnings</code>に入る唯一の種類で、以下の種類は<code>doc.contentWarnings</code>に入ります。</td>
     </tr>
     <tr>
@@ -66,77 +66,77 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownResourceId</code></td>
-      <td><code>::resource</code>の埋め込み（<code>usage: 'embed'</code>）、インラインの<code>:ref</code>（<code>'ref'</code>）、表のセルの画像（<code>'cellImage'</code>）が、どのリソースにもないidを指している。</td>
+      <td><code>::resource</code>の埋め込み（<code>usage: 'embed'</code>）、インラインの<code>:ref</code>（<code>'ref'</code>）、表のセルの画像（<code>'cellImage'</code>）が、どのリソースにもないidを指しています。</td>
       <td>埋め込みは省かれ、参照は番号もリンクもなしに<code>?</code>（または<code>text=</code>のラベル）を印字し、セルはテキストだけになります。<code>inResource</code>は、その参照をキャプション、注、セルに含むリソースを示します。</td>
     </tr>
     <tr>
       <td><code>unknownDirective</code></td>
-      <td>名前がディレクティブでもコンテナーでもない<code>:::name</code>の行。</td>
+      <td>名前がディレクティブでもコンテナーでもない<code>:::name</code>の行です。</td>
       <td>その行はテキストとして組まれます。</td>
     </tr>
     <tr>
       <td><code>malformedEmbed</code></td>
-      <td>単独で立つ正しい形の埋め込みになっていない<code>::name</code>の行。idが引用符なしか一重引用符で書かれている、または別の属性を持つ<code>::resource</code>や、空行を挟まずに段落の下に続けて書かれた行です。</td>
+      <td>単独で立つ正しい形の埋め込みになっていない<code>::name</code>の行です。idが引用符なしか一重引用符で書かれている、または別の属性が付いた<code>::resource</code>や、空行を挟まずに段落の下に続けて書かれた行です。</td>
       <td>その行はテキストとして組まれます。</td>
     </tr>
     <tr>
       <td><code>fullwidthMarkup</code></td>
-      <td>中国語や日本語の入力方式で入力されたマークアップを含む行。<code>：：：</code>のフェンス、<code>＃</code>の見出し、<code>［＾…］</code>の脚注記号、フェンスや見出しの後の<code>｛…｝</code>属性、<code>＊＊…＊＊</code>の太字が対象です。<code>typed</code>は書かれたままのマークアップ、<code>ascii</code>は入力すべき形です。1行につき1件。</td>
+      <td>中国語や日本語の入力方式で入力されたマークアップを含む行です。<code>：：：</code>のフェンス、<code>＃</code>の見出し、<code>［＾…］</code>の脚注記号、フェンスや見出しの後の<code>｛…｝</code>属性、<code>＊＊…＊＊</code>の太字が対象です。<code>typed</code>は書かれたままのマークアップ、<code>ascii</code>は入力すべき形です。1行につき1件です。</td>
       <td>その行はテキストとして組まれ、何も変換されません。</td>
     </tr>
     <tr>
       <td><code>attributeKeyInvalid</code></td>
-      <td>属性のキーにASCII以外の文字が含まれている（<code>作者=曹雪芹</code>）。キーの位置を指します。</td>
+      <td>属性のキーにASCII以外の文字が含まれています（<code>作者=曹雪芹</code>）。キーの位置を指します。</td>
       <td>その属性は無視されます。</td>
     </tr>
     <tr>
       <td><code>unknownParagraphStyle</code></td>
-      <td><code>:::paragraphs{'{'}style{'}'}</code>の名前に該当する段落スタイルがない。</td>
+      <td><code>:::paragraphs{'{'}style{'}'}</code>の名前に該当する段落スタイルがありません。</td>
       <td>段落は本文として組まれます。</td>
     </tr>
     <tr>
       <td><code>unknownCalloutType</code></td>
-      <td><code>:::callout{'{'}type{'}'}</code>の名前が<code>calloutStyles</code>のどれにも該当しない。囲みスタイルが1つ以上設定されているときにだけ発生します。</td>
-      <td>ボックスには最初の囲みスタイルが使われます。</td>
+      <td><code>:::callout{'{'}type{'}'}</code>の名前が<code>calloutStyles</code>のどれにも該当しません。囲みスタイルが1つ以上設定されているときにだけ発生します。</td>
+      <td>囲みには最初の囲みスタイルが使われます。</td>
     </tr>
     <tr>
       <td><code>columnsFlowUnknown</code></td>
-      <td><code>:::columns{'{'}flow{'}'}</code>が<code>snake</code>でも<code>parallel</code>でもない。<code>value</code>は書かれている値です。</td>
+      <td><code>:::columns{'{'}flow{'}'}</code>が<code>snake</code>でも<code>parallel</code>でもありません。<code>value</code>は書かれている値です。</td>
       <td>グループには既定値が使われます。<code>breaks</code>があれば<code>parallel</code>、なければ<code>snake</code>です。</td>
     </tr>
     <tr>
       <td><code>templateUnknown</code></td>
-      <td>テンプレートページ（<code>::::page&#123;template&#125;</code>）が<code>pageTemplates</code>のどの項目も指していないか、テンプレートを指定していない。<code>template</code>は書かれているID、<code>fenceIndex</code>は章のテンプレートページの中でのそのページの位置です。</td>
+      <td>テンプレートページ（<code>::::page&#123;template&#125;</code>）が<code>pageTemplates</code>のどの項目も指していないか、テンプレートを指定していません。<code>template</code>は書かれているID、<code>fenceIndex</code>は章のテンプレートページの中でのそのページの位置です。</td>
       <td>スロットは検査されません。テンプレートが割り付けられるようになるまでは、中身は本文の流れに組まれ、専用のページに置かれます。</td>
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を名乗っている（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>。<code>frame</code>はその内容を受け取る流し込み枠）。</td>
+      <td>テンプレートページの内容が、ページのテンプレートのどの枠でもない<code>slot</code>を指定しています（<code>slot</code>、<code>template</code>、<code>fenceIndex</code>。<code>frame</code>はその内容を受け取る流し込み枠）。</td>
       <td>その内容はテンプレートの流し込み枠に入ります。</td>
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>テンプレートの枠が、そのページで何も受け取らない（<code>frame</code>、<code>template</code>、<code>fenceIndex</code>）。<code>optional</code>の枠と、ほかの枠からの続きを受け取るだけの枠では発生しません。</td>
+      <td>テンプレートの枠が、そのページで何も受け取りません（<code>frame</code>、<code>template</code>、<code>fenceIndex</code>）。<code>optional</code>の枠と、ほかの枠からの続きを受け取るだけの枠では発生しません。</td>
       <td>枠は空のままです。<code>postext check</code>では注記として挙がります。</td>
     </tr>
     <tr>
       <td><code>pageFenceLength</code></td>
-      <td>コロン3つの<code>:::page</code>が<code>template=</code>を持っている。</td>
-      <td>コミックのページとして読まれます。テンプレートページにはコロンが4つ要ります。</td>
+      <td>コロン3つの<code>:::page</code>に<code>template=</code>が付いています。</td>
+      <td>漫画のページとして読まれます。テンプレートページにはコロンが4つ要ります。</td>
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>テンプレートページの枠の内容が、収めるための手順を経ても枠に収まらず、続きを流す<code>next</code>の枠も残っていない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>locale</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>。<code>stepsTried</code>。<code>scale</code>と<code>imageScale</code>はテキストと画像が最後にとどまった縮小率。<code>proposals</code>はそれぞれ<code>{'{'} kind, path, value {'}'}</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
+      <td>テンプレートページの枠の内容が、収めるための手順を経ても枠に収まらず、続きを流す<code>next</code>の枠も残っていません（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>locale</code>。<code>overflowMm</code>は切れた高さ、<code>configPath</code>はテンプレートの枠を指すJSONポインタで、たとえば<code>/pageTemplates/0/frames/2</code>。<code>stepsTried</code>。<code>scale</code>と<code>imageScale</code>はテキストと画像が最後にとどまった縮小率。<code>proposals</code>はそれぞれ<code>{'{'} kind, path, value {'}'}</code>）。割り付けが出す警告で、ページの<code>pageIndex</code>が付きます。</td>
       <td>ページ単位の出力では、収まらない部分が枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
       <td><code>frameContinuationLimit</code></td>
-      <td>枠の内容が、テンプレートページの後に加えるページへ（<code>overflow.continueIn: 'next-page'</code>または<code>'template:&lt;id&gt;'</code>）、テンプレートページが加えられる上限の16ページ分続いても、まだ収まらない（<code>template</code>と<code>frame</code>は最後の追加ページのもの、<code>fenceIndex</code>、<code>pages</code>、<code>overflowMm</code>、<code>configPath</code>）。割り付けが出す警告で、最後の追加ページの<code>pageIndex</code>が付きます。</td>
+      <td>枠の内容が、テンプレートページの後に加えるページへ（<code>overflow.continueIn: 'next-page'</code>または<code>'template:&lt;id&gt;'</code>）、テンプレートページが加えられる上限の16ページ分続いても、まだ収まりません（<code>template</code>と<code>frame</code>は最後の追加ページのもの、<code>fenceIndex</code>、<code>pages</code>、<code>overflowMm</code>、<code>configPath</code>）。割り付けが出す警告で、最後の追加ページの<code>pageIndex</code>が付きます。</td>
       <td>ページ単位の出力では、残りがその枠の下端で切れます。文書、ソースとの対応表、リフロー型のEPUBには残ります。</td>
     </tr>
     <tr>
       <td><code>continueTargetMissing</code></td>
-      <td>枠の<code>overflow.continueIn: 'page:&lt;id&gt;'</code>が、記事のあるページフェンスより後ろのどのページフェンスも指していない（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>target</code>、そのフェンスが前にあるときは<code>before</code>、<code>configPath</code>）。割り付けが出す警告で、送り出したページの<code>pageIndex</code>が付きます。</td>
+      <td>枠の<code>overflow.continueIn: 'page:&lt;id&gt;'</code>が、記事のあるページブロックより後ろのどのページブロックも指していません（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>target</code>、そのフェンスが前にあるときは<code>before</code>、<code>configPath</code>）。割り付けが出す警告で、送り出したページの<code>pageIndex</code>が付きます。</td>
       <td>残りは、<code>'next-page'</code>と同じく、送り出したページの後に加えるページに続きます。</td>
     </tr>
     <tr>
@@ -171,7 +171,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>
-      <td><code>:chip[…]{'{'}style{'}'}</code>の名前に該当するチップスタイルがない。</td>
+      <td><code>:chip[…]{'{'}style{'}'}</code>の名前に該当するチップスタイルがありません。</td>
       <td>チップには最初のチップスタイルが使われます。</td>
     </tr>
     <tr>
@@ -181,118 +181,120 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>
-      <td>どの<code>[^id]:</code>段落でも定義されていない脚注記号<code>[^id]</code>（<code>id</code>はその注のid）。</td>
+      <td>どの<code>[^id]:</code>段落でも定義されていない脚注記号<code>[^id]</code>です（<code>id</code>はその注のid）。</td>
       <td>番号は印字され、注は空になります。</td>
     </tr>
     <tr>
       <td><code>unusedFootnote</code></td>
-      <td>どの記号からも参照されていない脚注定義<code>[^id]:</code>。</td>
+      <td>どの記号からも参照されていない脚注定義<code>[^id]:</code>です。</td>
       <td>注は組まれません。</td>
     </tr>
     <tr>
       <td><code>indexMarkInvalid</code></td>
-      <td>語のない索引マーク。<code>:index{'{}'}</code>、または角かっこのテキストを持たないマークに<code>term</code>のない属性を付けたものです。</td>
+      <td>語のない索引マークです。<code>:index{'{}'}</code>、または角括弧のテキストのないマークに<code>term</code>のない属性を付けたものが当たります。</td>
       <td>そのマークは何も索引に載せません。</td>
     </tr>
     <tr>
       <td><code>indexSeeUnknown</code></td>
-      <td><code>see</code>または<code>seealso</code>の参照先（<code>target</code>）が、その索引（<code>index</code>。主索引は<code>''</code>）の項目にない。<code>:::index</code>の行を指します。</td>
+      <td><code>see</code>または<code>seealso</code>の参照先（<code>target</code>）が、その索引（<code>index</code>。主索引は<code>''</code>）の項目にありません。<code>:::index</code>の行を指します。</td>
       <td>相互参照はそのまま印字されます。</td>
     </tr>
     <tr>
       <td><code>indexRangeUnclosed</code></td>
-      <td>対応する<code>range="end"</code>のない<code>range="start"</code>のマーク、またはその逆（<code>missing</code>は欠けている側、<code>term</code>は項目を示します）。<code>:::index</code>の行を指します。</td>
+      <td>対応する<code>range="end"</code>のない<code>range="start"</code>のマーク、またはその逆です（<code>missing</code>は欠けている側、<code>term</code>は項目を示します）。<code>:::index</code>の行を指します。</td>
       <td>範囲はその1ページだけを印字します。</td>
     </tr>
     <tr>
       <td><code>unknownHeadingStyle</code></td>
-      <td>見出しの<code>{'{'}style="…"{'}'}</code>の名前に該当する見出しスタイルがない（<code>level</code>はその見出しのレベル）。</td>
+      <td>見出しの<code>{'{'}style="…"{'}'}</code>の名前に該当する見出しスタイルがありません（<code>level</code>はその見出しのレベル）。</td>
       <td>見出しとその節は、そのレベル自体の設定のままになります。</td>
     </tr>
     <tr>
       <td><code>unknownTableStyle</code></td>
-      <td>表リソースの<code>table.styleId</code>が<code>tableStyles</code>のどの項目にも該当しない。</td>
+      <td>表リソースの<code>table.styleId</code>が<code>tableStyles</code>のどの項目にも該当しません。</td>
       <td>表は<code>tableStyle</code>で組まれます。</td>
     </tr>
     <tr>
       <td><code>raggedTableGrid</code></td>
-      <td>結合を数に入れると、表のグリッドが長方形にならない（<a href="/ja/docs/configuration-resources#表モデルの構築">表モデルの構築</a>を参照）。</td>
+      <td>結合を数に入れると、表のグリッドが長方形になりません（<a href="/ja/docs/configuration-resources#表モデルの構築">表モデルの構築</a>を参照）。</td>
       <td>セルが結合部分にずれ込むか、穴が残ります。<code>reason</code>（<code>'spanOverlap'</code> / <code>'missingCells'</code>）、<code>row</code>、<code>col</code>が最初の問題の位置を示し、<code>count</code>が問題の数を示します。</td>
     </tr>
     <tr>
       <td><code>lineNumberOverlap</code></td>
-      <td><code>lineNumbers.position: 'side'</code>で、行番号がサイド段の囲み、キャプション、図に重なる。番号を付けた行を指し、<code>number</code>は印字される番号です。</td>
+      <td><code>lineNumbers.position: 'side'</code>で、行番号がサイド段の囲み、キャプション、図に重なります。番号を付けた行を指し、<code>number</code>は印字される番号です。</td>
       <td>番号はそのまま描かれ、どちらも動きません。</td>
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td><a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>で始まる段落が、設定どおりにそれを組めない。<code>reason</code>は、<code>'shortParagraph'</code>（頭文字が沈む行数より段落の行が少ない。<code>handling</code>は<code>shortParagraph</code>が行った処理、<code>lines</code>は縮めた頭文字がまたがる行数）、<code>'split'</code>（短すぎる段に単独で置かれ、頭文字の最後の行より前で分割される）、<code>'joiningScript'</code>（最初の文字が次の文字と連結する）、<code>'verticalText'</code>、<code>'noLetter'</code>（参照、数式、注の印で始まる）のいずれかです。<code>text</code>はその1行目です。 <code>'inBox'</code>：<code>:::paragraphs</code>のグループか段落スタイルが、ドロップキャップを付けない<code>:::callout</code>の囲みの中でそれを求めた。</td>
+      <td><a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>で始まる段落が、設定どおりにそれを組めません。<code>reason</code>は、<code>'shortParagraph'</code>（頭文字が沈む行数より段落の行が少ない。<code>handling</code>は<code>shortParagraph</code>が行った処理、<code>lines</code>は縮めた頭文字がまたがる行数）、<code>'split'</code>（短すぎる段に単独で置かれ、頭文字の最後の行より前で分割される）、<code>'joiningScript'</code>（最初の文字が次の文字と連結する）、<code>'verticalText'</code>、<code>'noLetter'</code>（参照、数式、注の印で始まる）のいずれかです。<code>text</code>はその1行目です。<code>'inBox'</code>は、<code>:::paragraphs</code>のグループか段落スタイルが、ドロップキャップを付けない<code>:::callout</code>の囲みの中でそれを求めた場合です。</td>
       <td>警告が示すとおり、スペースが確保されるか、頭文字が縮むか、頭文字が省かれます。</td>
     </tr>
     <tr>
       <td><code>codeOverflow</code></td>
-      <td><a href="/ja/docs/configuration-styles#コードリスト">コードリスト</a>に枠より長い行がある。<code>mode</code>は<code>codeStyle.overflow</code>が行った処理（<code>'wrap'</code>、<code>'shrink'</code>、<code>'clip'</code>）、<code>lines</code>は長すぎた元の行の数、<code>scale</code>は縮小したコードリストを組んだサイズ（<code>fontSize</code>に対する割合）、<code>lang</code>はフェンスの言語です。コードリストを指します。</td>
+      <td><a href="/ja/docs/configuration-styles#コードリスト">コードリスト</a>に枠より長い行があります。<code>mode</code>は<code>codeStyle.overflow</code>が行った処理（<code>'wrap'</code>、<code>'shrink'</code>、<code>'clip'</code>）、<code>lines</code>は長すぎた元の行の数、<code>scale</code>は縮小したコードリストを組んだサイズ（<code>fontSize</code>に対する割合）、<code>lang</code>はフェンスの言語です。コードリストを指します。</td>
       <td><code>mode</code>が示すとおり、行は折り返されるか、小さく組まれるか、切られます。</td>
     </tr>
     <tr>
       <td><code>floatShrunk</code></td>
-      <td>フロートの図版を、置き場所の空きに収めるため元より小さく組みました（<code>placement.shrink</code>）。<code>resourceId</code>はその図版、<code>scale</code>は保った幅の比率です。<code>overflowPx</code>があれば、ほかに行き場のない新しいページで、最小倍率（<code>placement.minScale</code>）で組んでもなお版面の下端からはみ出す量です。最初に引用している段落を指します。</td>
+      <td>フロートの図版を、置き場所の空きに収めるため元より小さく組みました（<code>placement.shrink</code>）。<code>resourceId</code>はその図版、<code>scale</code>は保った幅の比率です。<code>overflowPx</code>があれば、ほかに行き場のない新しいページで、最小倍率（<code>placement.minScale</code>）で組んでもなお版面の下端からはみ出す量です。最初に参照している段落を指します。</td>
       <td>図版はその倍率で印刷されます。版面からはみ出すのは<code>overflowPx</code>があるときだけです。</td>
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>印刷サイズを持つビットマップ（自身の <code>bitmap.resolution</code>、または <code>layout.bitmapResolution</code> の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code> が画像を示し、<code>scale</code> は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code> は印刷・段・版面の幅です。<code>placement.width</code> で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページの枠に置いた画像は報告しません。最初に参照する段落を指します。postext 1.37 から。</td>
+      <td>印刷サイズが決まっているビットマップ（自身の<code>bitmap.resolution</code>、または<code>layout.bitmapResolution</code>の数値。ファイルから読んだ解像度は含みません）が、印刷サイズの半分未満にしか収まらない段に組まれ、そのページの版面は段より広い場合です。<code>resourceId</code>が画像を示し、<code>scale</code>は印刷幅のうち残る割合、<code>printWidthPx</code>、<code>widthPx</code>、<code>pageWidthPx</code>は印刷・段・版面の幅です。<code>placement.width</code>で狭めた画像、置き場所に合わせて縮小した画像、回転した画像、テンプレートページの枠に置いた画像は報告しません。最初に参照する段落を指します。postext 1.37以降。</td>
       <td>画像は段の幅で印刷されます。本文の流れの中の画像は段より広くならず、既定のページは2段です（<code>layout.layoutType: 'double'</code>）。ページを1段組みにするか、画像をページ全幅のフロートにする（<code>placement.span: 'page'</code>）か、そのサイズでよければ解像度を上げてください。</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>本文を回り込ませる設定のリソースまたはボックス（<code>placement.wrap</code>、ボックスの<code>wrap</code>）が指定どおりに組まれなかったこと。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>、<code>'noContour'</code>（形がわからない画像に輪郭に沿った回り込みを指定した。<code>contour.points</code>のないSVG、透明部分のないビットマップ、ホストがトレースしていないアルファチャンネル）。<code>resourceId</code>はリソース、<code>box</code>はボックスのスタイル。埋め込みまたはボックスを指します。</td>
+      <td>本文を回り込ませる設定のリソースまたは囲み（<code>placement.wrap</code>、囲みの<code>wrap</code>）が、指定どおりに組まれなかった場合です。<code>reason</code>：<code>'tooNarrow'</code>（横の本文が<code>layout.wrap.minTextWidth</code>より狭くなる）、<code>'fewLines'</code>（<code>layout.wrap.minLinesBeside</code>行より低い）、<code>'moved'</code>（段の残りに収まらない本文中の対象がアンカーとともに次の段へ移った）、<code>'verticalText'</code>、<code>'noContour'</code>（形がわからない画像に輪郭に沿った回り込みを指定した。<code>contour.points</code>のないSVG、透明部分のないビットマップ、ホストがトレースしていないアルファチャンネル）。<code>resourceId</code>はリソース、<code>box</code>は囲みのスタイルを示します。埋め込みまたは囲みを指します。</td>
       <td>理由に応じて、対象は全幅を占めるか、次の段に置かれます。<code>'noContour'</code>では、本文は画像の枠で回り込みます。画像に多角形を与えるか、透明部分のあるPNGを使うか、トレースを行う<code>readBundle</code>かSandboxで読み込んでください。</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
-      <td><code>:::columns</code>グループの小段が、そのテキストの6 em より狭い。<code>columns</code>段で、それぞれ<code>widthPx</code>。グループのフェンスを指します。</td>
+      <td><code>:::columns</code>グループの小段が、そのテキストの6 emより狭い場合です。小段は<code>columns</code>段で、幅はそれぞれ<code>widthPx</code>です。グループのフェンスを指します。</td>
       <td>グループは指定どおりに組まれ、1行に入る語はわずかになります。</td>
     </tr>
     <tr>
       <td><code>afterText</code></td>
-      <td><code>span: 'side'</code>のボックス、またはサイド段の図・表（<code>resourceId</code>）が、本文のないページに置かれた。サイド段の空きを待っているうちに、章または文書の本文が終わった。ボックスまたはフロートごとに1件。ボックス（またはフロートを参照するブロック）を指し、ページが付きます。postext 1.25から。</td>
-      <td>本文の後に開いたページのサイド段に置かれます。ボックスはフェンスの順に並びます。</td>
+      <td><code>span: 'side'</code>の囲み、またはサイド段の図・表（<code>resourceId</code>）が、本文のないページに置かれた場合です。サイド段の空きを待っているうちに、章または文書の本文が終わったためです。囲みまたはフロートごとに1件で、囲み（フロートならそれを参照するブロック）を指し、ページが付きます。postext 1.25以降。</td>
+      <td>本文の後に開いたページのサイド段に置かれます。囲みはフェンスの順に並びます。</td>
     </tr>
     <tr>
       <td><code>unplaced</code></td>
-      <td>組版が終わった時点でまだ空き位置を待っていたボックスまたはフロートのリソース（<code>resourceId</code>）。そのために開いたページには置けなかった（サイド段のないページでのサイド段のボックスなど）。ボックス、またはリソースを参照するブロックを指します。ページはありません。postext 1.25から。</td>
+      <td>組版が終わった時点でまだ空き位置を待っていた囲み、またはフロートのリソース（<code>resourceId</code>）です。そのために開いたページには置けなかったものです（サイド段のないページでのサイド段の囲みなど）。囲み、またはリソースを参照するブロックを指します。ページはありません。postext 1.25以降。</td>
       <td>どのページにもありません。postext 1.24までは、警告なしに消えていました。</td>
     </tr>
     <tr>
       <td><code>shortListSplit</code></td>
-      <td><code>bodyText.shortListMaxItems</code>の基準で短いリスト（<code>items</code>項目）が、2つの段またはページに分かれた。<code>bodyText.shortListSplit: 'warn'</code>ではそうしたリストをすべて報告し、<code>'avoid'</code>では、どの段にも全体が収まらなかったリストだけを報告します。リストごとに1件。リストを指し、最初の項目のページが付きます。postext 1.28から。</td>
+      <td><code>bodyText.shortListMaxItems</code>の基準で短いリスト（<code>items</code>項目）が、2つの段またはページに分かれた場合です。<code>bodyText.shortListSplit: 'warn'</code>ではそうしたリストをすべて報告し、<code>'avoid'</code>では、どの段にも全体が収まらなかったリストだけを報告します。リストごとに1件。リストを指し、最初の項目のページが付きます。postext 1.28以降。</td>
       <td>リストは段の終わりで切られます。</td>
     </tr>
     <tr>
       <td><code>tocGroupSplit</code></td>
-      <td>まとめて組むよう指定した目次のグループ（<code>toc.groups.keepTogether</code>、<code>:::toc{'{keep="…"}'}</code>）。先頭は<code>title</code>で、<code>columns</code>段に組まれています。1段の高さを超えているか、グループが始まる段が短い（ページ幅の囲みの下、フロートの横）。グループごとに1件。<code>:::toc</code>ディレクティブを指し、グループが始まるページが付きます。解消するには、載せるレベルを減らす（<code>levels="1"</code>）、もっと下位のレベルを先頭にする（<code>toc.groups.head: 2</code>）、項目を小さくするか詰めて組む、のいずれかを行います。postext 1.34から。</td>
+      <td>まとめて組むよう指定した目次のグループ（<code>toc.groups.keepTogether</code>、<code>:::toc{'{keep="…"}'}</code>）です。先頭は<code>title</code>で、<code>columns</code>段に組まれています。1段の高さを超えているか、グループが始まる段が短い場合です（ページ幅の囲みの下、フロートの横）。グループごとに1件。<code>:::toc</code>ディレクティブを指し、グループが始まるページが付きます。解消するには、載せるレベルを減らす（<code>levels="1"</code>）、もっと下位のレベルを先頭にする（<code>toc.groups.head: 2</code>）、項目を小さくするか詰めて組む、のいずれかを行います。postext 1.34以降。</td>
       <td>グループは分割されます。<code>toc.groups.continuation</code>が有効なら、続きが入る各段の頭に先頭行と続きの印を組みます。</td>
     </tr>
     <tr>
       <td><code>openerFloat</code></td>
-      <td><code>layout.openerFloats: 'warn'</code>のときに開始ページに置かれたフロート。図、表、帯漫画（<code>resourceId</code>）、またはフロートのボックス。フロートごとに1件。フロートを参照するブロック（ボックスならそのボックス）を指し、ページが付きます。postext 1.28から。</td>
+      <td><code>layout.openerFloats: 'warn'</code>のときに開始ページに置かれたフロートです。図、表、帯漫画（<code>resourceId</code>）、またはフロートとして配置した囲みが対象です。フロートごとに1件で、フロートを参照するブロック（囲みならその囲み）を指し、ページが付きます。postext 1.28以降。</td>
       <td>フロートは開始ページに置かれたままです。<code>'avoid'</code>にすると、そのページより後の最初の空き位置に移ります。</td>
     </tr>
     <tr>
       <td><code>headingClaimsColumn</code></td>
-      <td>段内の見出し（<code>span: 'column'</code>）のデザインが段全体の高さを確保し、見出しのあとの本文が次の段か次のページから始まる場合です（<code>level</code>、<code>element</code>：最も下まで届くデザイン要素。高さを <code>minHeight</code> が決めているときはありません）。見出しごとに一件で、見出しとそのページを指します。ページ幅の章扉、段が一つのページの見出し、明示的な区切りが続く見出しは対象外です。postext 1.43 から。</td>
-      <td>見出しのあとの本文は次の段か次のページから始まります。要素に <code>reserve: false</code> を指定する、<code>minHeight</code> を下げる、または <code>span: 'page'</code> を指定すると解消します。</td>
+      <td>段内の見出し（<code>span: 'column'</code>）のデザインが段全体の高さを確保し、見出しのあとの本文が次の段か次のページから始まる場合です（<code>level</code>、<code>element</code>：最も下まで届くデザイン要素。高さを<code>minHeight</code>が決めているときはありません）。見出しごとに1件で、見出しとそのページを指します。ページ幅の章扉、1段のページの見出し、明示的な区切りが続く見出しは対象外です。postext 1.43以降。</td>
+      <td>見出しのあとの本文は次の段か次のページから始まります。要素に<code>reserve: false</code>を指定する、<code>minHeight</code>を下げる、または<code>span: 'page'</code>を指定すると解消します。</td>
     </tr>
     <tr>
       <td><code>fontFallback</code></td>
-      <td>テキストを組んだフェイス（<code>family</code>、<code>weight</code>、<code>style</code>）を、ビルドの時点でフォントセットが用意できなかったこと。<code>reason: 'missing'</code>は、そのファミリーのフェイスが1つも読み込まれておらず、インストールもされていない場合、またはそのウェイトと傾きに対応するフェイスがまだ読み込まれていなかった場合。<code>'synthesized'</code>は、ファミリーにそのウェイトや傾きのフェイスがなく、ブラウザーが別のフェイスをそのまま、あるいは太くしたり傾けたりして使っている場合です（600を700のフェイスで組んだとき、400のレギュラーしかないファミリーに700のイタリックを求めたときなど）。フォントセットがある環境（<code>document.fonts</code>、ワーカーの<code>self.fonts</code>、<code>BuildDocumentOptions.fontSet</code>）で検査し、<code>debug.warnings.missingFont</code>で切り替えます。ページもソースの範囲も持ちません。</td>
+      <td>テキストを組んだフェイス（<code>family</code>、<code>weight</code>、<code>style</code>）を、ビルドの時点でフォントセットが用意できなかった場合です。<code>reason: 'missing'</code>は、そのファミリーのフェイスが1つも読み込まれておらず、インストールもされていない場合、またはそのウェイトと傾きに対応するフェイスがまだ読み込まれていなかった場合。<code>'synthesized'</code>は、ファミリーにそのウェイトや傾きのフェイスがなく、ブラウザーが別のフェイスをそのまま、あるいは太くしたり傾けたりして使っている場合です（600を700のフェイスで組んだとき、400のレギュラーしかないファミリーに700のイタリックを求めたときなど）。フォントセットがある環境（<code>document.fonts</code>、ワーカーの<code>self.fonts</code>、<code>BuildDocumentOptions.fontSet</code>）で検査し、<code>debug.warnings.missingFont</code>で切り替えます。ページもソースの範囲も付きません。</td>
       <td>テキストは代替フォントで、またはファミリーの別のフェイス（そのまま、あるいはブラウザーが太くしたり傾けたりしたもの）で計測・描画されます。そのフェイスが届くと改行が変わります。<a href="#レイアウトの前にフォントを読み込む">レイアウトの前にフォントを読み込む</a>を参照してください。</td>
     </tr>
   </tbody>
 </table>
 
-リソースに関する警告（表スタイル、グリッド、キャプションや注、セルの中の参照）は、本文の中でそのリソースが最初に埋め込まれた位置か参照された位置を指し、リソースごとに1回だけ挙がります。検査するのは文書が使うリソースだけです。本の1章は、本が持つすべての表ではなく、その章が参照する表について報告します。
+表には、どの文書でも出うる種類を挙げています。1つの機能に属する種類は、その機能と一緒に説明しています。漫画（`comicPanelCount`、`comicBalloonOverflow`…）は[漫画](/ja/docs/comics)のページ、動画（`videoWithoutUrl`、`videoUrlInvalid`、`videoWithoutPoster`）は[リソース](/ja/docs/document-format-resources)、引用と索引（`unknownCitationKey`、`referencesUnreadable`、`indexMark`…）は[注と参照](/ja/docs/document-format-notes-references)、中国語・日本語・アラビア語のテキスト（`cjkLooseLine`、`rubyExceedsLeading`、`arabicMarksExceedLeading`…）はそれぞれの文字のページ、改行器の種類（`raggedLine`、`unbreakableWordOverflow`）は[ハイフネーションと両端そろえ](/ja/docs/justification)にあります。
+
+リソースに関する警告（表スタイル、グリッド、キャプションや注、セルの中の参照）は、本文の中でそのリソースが最初に埋め込まれた位置か参照された位置を指し、リソースごとに1回だけ挙がります。検査するのは文書が使うリソースだけです。本の1章は、本に含まれるすべての表ではなく、その章が参照する表について報告します。
 
 ```ts
 import { buildDocument, formatWarning } from 'postext';
@@ -308,7 +310,7 @@ const missing = (doc.contentWarnings ?? []).flatMap((w) => (w.kind === 'unknownR
 
 `formatWarning(w)`は英語の説明を1行で返します。メッセージをローカライズするホストは、代わりに`kind`で分岐してください。マイナーリリースで種類が増えることがあるので、既定の分岐も残しておきます。`collectContentWarnings(markdown, config, resources)`は、何もレイアウトせずに内容の警告を返します（ビルドが加えるのと同じリストで、`pageIndex`はありません）。入力しながらテキストを検査するエディター向けです。`collectHeadingDesignCuts(doc)`は、組み上がったレイアウトを調べ、見出しデザインのテキストがページや段の下端を越えているものを探します（`kind: 'headingDesignCut'`。[確保する高さ](/ja/docs/configuration-headings#確保する高さ)を参照）。これはレイアウト自体は報告しないもので、その結果も`formatWarning`で説明できます。Sandboxの**検査**パネルは、これらをすべて一覧にします。
 
-レンダラーは、指定どおりに描けなかったものを`onWarning`オプションで報告します。対象は`renderPageToCanvas`、`renderPage`、`renderToCanvas`（`RenderPageOptions`）、`renderToHtml`と`renderToHtmlIndexed`（`RenderHtmlOptions`）、`renderToPdf`（`RenderToPdfOptions`。PDFワーカー経由でも可）です。描画時の主な種類は`missingImage`です。描くものがない画像（図、表のセルの画像、囲みのアイコン、デザイン画像）は中立的なプレースホルダーとして描かれ、`fileId`と描画呼び出しごとに1回報告されます。報告には`pageIndex`、描画側がわかる場合は`resourceId`（図とセルの画像）、PDFでは複数文書の描画における`documentIndex`が含まれます。描くものがないとは、canvasではその`fileId`の`registerResourceImage`がないこと、HTMLでは`resourceImageUrl`からURLが得られないこと、PDFでは`resourceBytes`からバイト列が得られないか、得られたバイト列をデコードできないことを指します。`fileId`をまったく持たないビットマップやSVGのリソースは、要求するものがないので、報告なしにプレースホルダーとして描かれます。ほかに2つの種類が、SVGの画像にフォントを埋め込むホスト（`registerSvgImage`、`registerBundleImages`、`bundleImageUrl`、`inlineSvgFonts`を指定した`renderToHtml`、postext-epub。[SVGの文字のフォント](/ja/docs/configuration-resources#svgの文字のフォント)を参照）から、画像の`fileId`と`resourceId`とともに報告されます。`svgFontUnavailable`（`family`、`weight`、`style`）は、文字が指定するファミリーに埋め込めるフェイスがないことを示し、画像はその文字を代替のフェイスで組みます。`svgFontsTooLarge`（`bytes`、`maxBytes`）は、フェイスがサイズ上限を超え、1つも埋め込まれなかったことを示します。描画時の警告はVDTには保存されません。ホストが用意できるものはレイアウトの後で変わるからです。
+レンダラーは、指定どおりに描けなかったものを`onWarning`オプションで報告します。対象は`renderPageToCanvas`、`renderPage`、`renderToCanvas`（`RenderPageOptions`）、`renderToHtml`と`renderToHtmlIndexed`（`RenderHtmlOptions`）、`renderToPdf`（`RenderToPdfOptions`。PDFワーカー経由でも可）です。描画時の主な種類は`missingImage`です。描くものがない画像（図、表のセルの画像、囲みのアイコン、デザイン画像）は中立的なプレースホルダーとして描かれ、`fileId`と描画呼び出しごとに1回報告されます。報告には`pageIndex`、描画側がわかる場合は`resourceId`（図とセルの画像）、PDFでは複数文書の描画における`documentIndex`が含まれます。描くものがないとは、canvasではその`fileId`の`registerResourceImage`がないこと、HTMLでは`resourceImageUrl`からURLが得られないこと、PDFでは`resourceBytes`からバイト列が得られないか、得られたバイト列をデコードできないことを指します。`fileId`をまったく指定していないビットマップやSVGのリソースは、要求するものがないので、報告なしにプレースホルダーとして描かれます。ほかに2つの種類が、SVGの画像にフォントを埋め込むホスト（`registerSvgImage`、`registerBundleImages`、`bundleImageUrl`、`inlineSvgFonts`を指定した`renderToHtml`、postext-epub。[SVGの文字のフォント](/ja/docs/configuration-resources#svgの文字のフォント)を参照）から、画像の`fileId`と`resourceId`とともに報告されます。`svgFontUnavailable`（`family`、`weight`、`style`）は、文字が指定するファミリーに埋め込めるフェイスがないことを示し、画像はその文字を代替のフェイスで組みます。`svgFontsTooLarge`（`bytes`、`maxBytes`）は、フェイスがサイズ上限を超え、1つも埋め込まれなかったことを示します。描画時の警告はVDTには保存されません。ホストが用意できるものはレイアウトの後で変わるからです。
 
 ```ts
 import { buildDocument, renderPage, type RenderWarning, type Resource } from 'postext';
@@ -358,7 +360,7 @@ const ctx = canvas.getContext('2d')!;
 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 ```
 
-すでに持っているcanvas（たとえば特定のレイアウトでDOMに配置したもの）に描きたい場合は、`renderPageToCanvas(page, doc, canvas)`を使います。新しいcanvasを作る代わりに、渡したcanvasの大きさを変えて描画します。
+手元にあるcanvas（たとえば特定のレイアウトでDOMに配置したもの）に描きたい場合は、`renderPageToCanvas(page, doc, canvas)`を使います。新しいcanvasを作る代わりに、渡したcanvasの大きさを変えて描画します。
 
 全ページを描画するには`vdt.pages`を順に処理します。
 
@@ -370,7 +372,7 @@ const bitmaps = vdt.pages.map((page) => renderPage(page, vdt));
 
 ここまでの内容をブラウザーで動かしたものです。このCodePenのサンプルは、最新の`postext`リリースをCDNからインポートし、Webフォントを待ってから短い2段組みの文書をレイアウトし、最初のページをcanvasに描いて、そのビットマップをPNGとして提供します。**CodePenで実行**を押すとエディターが読み込まれ、Markdownや設定を変更できます。編集するたびにページが描き直されます。
 
-<CodePenExample name="render-page" title="Postext · ページを画像に描画する" description="postextでMarkdown文書をレイアウトし、最初のページをcanvas / PNGにラスタライズします。" height={600} />
+<CodePenExample name="render-page" title="Postext · ページを画像に描画する" description="postextでMarkdown文書を組み、最初のページをcanvas / PNGにラスタライズします。" height={600} />
 
 ### React
 
@@ -461,7 +463,7 @@ Postextが認識するMarkdownの構文の全一覧は、[文書形式](/ja/docs
 
 ### 組版結果のソースマップ
 
-`sourceAt(doc, pageIndex, x, y, options?)`は、ページ上の一点に表示されているものを内側から順に返します。各要素は安定した`id`、`source`（Markdownの範囲、設定のJSONポインタ、ページフェンスの属性、リソースのいずれか）、`rect`を持ちます。`elementsForSource(doc, start, end, options?)`はMarkdownの範囲がページごとに何になったかを返し、`findElement(doc, id)`は組み直したあとで要素をもう一度見つけます。どれも組版がVDTに残した印を読むだけで、組版はしません。`composedPagePaintKey(page)`は、テンプレートページが前と同じものを描くかどうかを示します。ソースの種類、id、変わったところだけテンプレートページを組み直すしくみは、[テンプレートページ › ソースマップ](/ja/docs/composed-pages#ソースマップ)にあります。
+`sourceAt(doc, pageIndex, x, y, options?)`は、ページ上の1点に表示されているものを内側から順に返します。各要素には、変わらない`id`、`source`（Markdownの範囲、設定のJSONポインタ、ページブロックの属性、リソースのいずれか）、`rect`が付きます。`elementsForSource(doc, start, end, options?)`はMarkdownの範囲がページごとに何になったかを返し、`findElement(doc, id)`は組み直したあとで要素をもう一度見つけます。どれも組版がVDTに残した印を読むだけで、組版はしません。`composedPagePaintKey(page)`は、テンプレートページが前と同じものを描くかどうかを示します。ソースの種類、id、変わったところだけテンプレートページを組み直すしくみは、[テンプレートページ › ソースマップ](/ja/docs/composed-pages#ソースマップ)にあります。
 
 ### レイアウトの前にフォントを読み込む
 
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **ページが宣言しているフェイス**（`@font-face`規則、追加済みの`FontFace`）は、フォントセットを通して読み込みます（`document.fonts.load`、ワーカーでは`self.fonts`）。**宣言していないフェイス**は`resolve(family, weight, style, { text, codePoints })`に問い合わせます。リゾルバーは、ファイル1つ（バイト列またはURL）、複数のファイル（1つのフェイスのスライス）、スライスや可変の範囲を表す`{ source, unicodeRange, weight, style }`、または`null`を返します。エンジンはすべての読み込みが終わってから、設定の順と各回答の順（リゾルバーがそう返せば、latin、latin-ext、greekの順）にそれらを`FontFace`として追加します。そのため、ファイルがどんな順で届いてもフォントセットは同じになります。さらに、[SVGの画像](/ja/docs/configuration-resources#svgの文字のフォント)とレイアウトのワーカーが読むフォントレジストリにも登録します。リゾルバーが自分でフェイスを宣言し（スタイルシートを追加して）、`null`を返してもかまいません。
-- **レポート**には、読み込んだフェイス（またはインストール済みのファミリー）で賄えるフェイス、まだ`missing`のフェイス、ブラウザーが別のウェイトや傾きから`synthesize`するフェイスが並びます。待ち時間の上限は`timeoutMs`（既定は10 000）で、その時点でまだ読み込み中のフェイスは欠落として数えます。フォントセットがない環境（Node）では、`prepareFonts`は何もせず、すべてのフェイスを読み込み済みとして報告します。
+- **レポート**は、読み込んだフェイス（またはインストール済みのファミリー）で賄えるフェイスを`loaded`に、まだ欠けているフェイスを`missing`に、ブラウザーが別のウェイトや傾きから描くフェイスを`synthesized`に挙げます。`added`は、リゾルバーのファイルから追加した`FontFace`の数です。待ち時間の上限は`timeoutMs`（既定は10 000）で、その時点でまだ読み込み中のフェイスは欠落として数えます。フォントセットがない環境（Node）では、`prepareFonts`は何もせず、すべてのフェイスを読み込み済みとして報告します。
 - **`buildDocumentWithFonts(content, config, options)`**：フォントを準備し、`buildDocumentAsync`でビルドし、ページが実際にテキストを組んだフェイスを読み取り、フォントセットが用意できなかったものを読み込んで（ページを組んで初めてわかるウェイトは、ファミリーの別のウェイトで代用できる場合でも`resolve`に求めます）、もう一度ビルドします（追加のビルドは最大2回）。`withLoadedFonts(build, options)`は、任意のビルド関数のまわりで同じことを行います。章ごとにビルドする本や、複数の文書を返すバンドル（`buildBundle`）に使えます。`options.onFonts`は最終的なレポートを受け取ります。
 - **ビルドの後**、テキストを組んだフェイスのうちフォントセットが用意できなかったものは、すべて`doc.contentWarnings`に`fontFallback`として挙がります（[文書の中の警告](#文書の中の警告)を参照）。
 
@@ -504,8 +506,8 @@ const off = onFontsChanged((families) => relayout());
 
 テキストの計測は、レイアウトの中で負荷の高い処理です。2種類のキャッシュがこれを軽くしています。
 
-- **自分で持つブロックキャッシュ**。`createMeasurementCache()`は`MeasurementCache`を返します。これは計測したすべての段落を、テキスト、フォント、幅、改行のオプション、有効なハイフネーション辞書をキーとして記憶します。`buildDocument`（または`buildDocumentAsync`）の3番目の引数に渡すと、1回のビルドの配置のパスの間やビルドの間で計測結果を再利用できます。キー入力のたびに文書をレイアウトするエディターなら、変更された段落だけを計測すれば済みます。キャッシュがなければ、パスのたびにすべてのブロックを計測し直します。キャッシュから読んだ段落は新たに計測した段落と同じなので、キャッシュを使ったビルドは、使わないビルドとすべての行を同じように組みます。postext 1.4.1では、キャッシュした段落から最終行がラントであるという印が失われ、ラントの詰めや段末そろえで違う改行になることがありました。キャッシュは、自分が埋められたときの計測の世代を持っています。あるファミリーのフェイスが届いたり消えたりすると、次の参照のときにそのファミリーで組んだブロックを捨てるので、フォントの読み込みをまたいで保持したキャッシュが、代替フォントで計測した行を返すことはありません。
-- **グローバルな幅のキャッシュ**。語の幅は、ページ内のすべてのビルドが共有するモジュールの状態に、フォント文字列ごとにキャッシュされます。pretextも独自のキャッシュを持っています。エンジンは、あるファミリーのフェイスが変わると（ビルドの開始時、`watchFonts`、`prepareFonts`、`loadBundleFonts`）、そのファミリーの幅を捨てます。pretextのキャッシュにはファミリーごとの索引がないので、丸ごと消去します。
+- **自分で持つブロックキャッシュ**。`createMeasurementCache()`は`MeasurementCache`を返します。これは計測したすべての段落を、テキスト、フォント、幅、改行のオプション、有効なハイフネーション辞書をキーとして記憶します。`buildDocument`（または`buildDocumentAsync`）の3番目の引数に渡すと、1回のビルドの配置のパスの間やビルドの間で計測結果を再利用できます。キー入力のたびに文書をレイアウトするエディターなら、変更された段落だけを計測すれば済みます。キャッシュがなければ、パスのたびにすべてのブロックを計測し直します。キャッシュから読んだ段落は新たに計測した段落と同じなので、キャッシュを使ったビルドは、使わないビルドとすべての行を同じように組みます。postext 1.4.1では、キャッシュした段落から最終行がラントであるという印が失われ、ラントの詰めや段末そろえで違う改行になることがありました。キャッシュは、自分が埋められたときの計測の世代を記録しています。あるファミリーのフェイスが届いたり消えたりすると、次の参照のときにそのファミリーで組んだブロックを捨てるので、フォントの読み込みをまたいで保持したキャッシュが、代替フォントで計測した行を返すことはありません。
+- **グローバルな幅のキャッシュ**。語の幅は、ページ内のすべてのビルドが共有するモジュールの状態に、フォント文字列ごとにキャッシュされます。pretextにも独自のキャッシュがあります。エンジンは、あるファミリーのフェイスが変わると（ビルドの開始時、`watchFonts`、`prepareFonts`、`loadBundleFonts`）、そのファミリーの幅を捨てます。pretextのキャッシュにはファミリーごとの索引がないので、丸ごと消去します。
 
 ```ts
 import { buildDocument, createMeasurementCache, evictFontFamilies, clearMeasurementCache } from 'postext';
@@ -526,13 +528,13 @@ clearMeasurementCache();              // すべてのファミリー
 
 ### 改行器（WebAssembly）
 
-段落はKnuth–Plassで行に分けられます。postext 1.33からは、Rustで書かれWebAssemblyにコンパイルされた改行器（30 KB、パッケージに同梱）がこれを実行します。TypeScriptの改行器と同じ演算を同じ順序で行い、同じ改行位置を選びます。本1冊の組版は約15 %速くなります。設定は不要です。
+段落はKnuth–Plassで行に分けられます。postext 1.33以降は、Rustで書かれWebAssemblyにコンパイルされた改行器（30 KB、パッケージに同梱）がこれを実行します。TypeScriptの改行器と同じ演算を同じ順序で行い、同じ改行位置を選びます。本1冊の組版は約15%速くなります。設定は不要です。
 
-- worker、Node、Bunでは、最初の段落でモジュールがコンパイルされます。
-- ページのメインスレッドでは、ブラウザがこの大きさのモジュールを非同期でしかコンパイルしないため、バックグラウンドでコンパイルされ、それまではTypeScriptの改行器が処理します。最初の組版の前に`await initLineBreaker()`を呼ぶと、最初の段落から使われます。WebAssemblyが使えない環境では`false`を返します。
+- ワーカー、Node、Bunでは、最初の段落でモジュールがコンパイルされます。
+- ページのメインスレッドでは、ブラウザーがこの大きさのモジュールを非同期でしかコンパイルしないため、バックグラウンドでコンパイルされ、それまではTypeScriptの改行器が処理します。最初の組版の前に`await initLineBreaker()`を呼ぶと、最初の段落から使われます。WebAssemblyが使えない環境では`false`を返します。
 - WebAssemblyがない環境や、コンテンツセキュリティポリシーが拒否する環境（`'wasm-unsafe-eval'`のない`script-src`）では、すべての段落をTypeScriptの改行器が処理します。
 
-両者は同じ改行位置を選ぶので、どちらが処理しても組版は変わりません。`useWasmLineBreaker(false)`はTypeScriptの改行器を使い続けます。両者の比較用です。
+両者は同じ改行位置を選ぶので、どちらが処理しても組版は変わりません。`useWasmLineBreaker(false)`を呼ぶと、TypeScriptの改行器だけを使います。2つを比べるためのものです。
 
 ```ts
 import { initLineBreaker, buildDocument } from 'postext';
@@ -544,16 +546,39 @@ const doc = buildDocument({ markdown }, config);
 
 ### 1つのページで共有されるグローバルな状態
 
-Postextの状態の一部は、モジュールレベルの変数にあります。同じJavaScriptのレルム（realm）で`postext`をインポートするものは、すべてこれを共有します。ページとそのスクリプトは1つのコピーを共有し、iframeやワーカーはそれぞれ自分のコピーを持ちます。1ページに1文書なら問題は起きません。1ページに複数の文書がある場合（2つのライブプレビュー、サンプルのギャラリーなど）は影響が出ます。
+Postextの状態の一部は、モジュールレベルの変数にあります。同じJavaScriptのレルム（realm）で`postext`をインポートするものは、すべてこれを共有します。ページとそのスクリプトは1つのコピーを共有し、iframeやワーカーはそれぞれ別のコピーを使います。1ページに1文書なら問題は起きません。1ページに複数の文書がある場合（2つのライブプレビュー、サンプルのギャラリーなど）は影響が出ます。
 
 - **リソースの画像**。`registerResourceImage(fileId, image)`は、`fileId`をキーとする1つの登録簿に書き込み、`renderPage`と`renderPageToCanvas`がそこから読みます。2つの文書がどちらも`figure.svg`を登録すると、その項目を共有し、最後の登録が両方に適用されます。ファイルidには文書ごとの接頭辞を付け、文書が不要になったら`unregisterResourceImage(fileId)`か`clearResourceImages()`を呼んでください。canvasバックエンドがキャッシュするラスターも同じキーで管理され、画像と一緒に破棄されます。
 - **テキストの計測**。計測した幅は、フォント文字列とテキストごとにレルム全体でキャッシュされます。あるファミリーのフェイスが届いたり消えたりすると、エンジンはすべての文書についてそのファミリーの幅を捨てます（[レイアウトの前にフォントを読み込む](#レイアウトの前にフォントを読み込む)を参照）。`clearMeasurementCache()`はすべてを捨てます。
 - **解決済みの設定**。設定オブジェクトはそれぞれ1回だけ解決され、その結果がオブジェクトに結び付けてキャッシュされます。ビルドのたびに、まずオブジェクトを解決したときのテキストと比べるので（`JSON.stringify`を1回。55 KBの本の設定で約0.1 ms、240 KBの設定で約1.5 ms）、その場で書き換えた設定は、どの深さの変更でも（`config.bodyText.fontSize = …`、パレットの色）解決し直されます。`invalidateConfig(config)`を呼べば、解決結果を手動で捨てられます。`stableStringify`と`hashString`は、キーの順序に左右されない内容のキーを返します。設定ごとにレイアウトをキャッシュするホスト向けです。
 - **ハイフネーションの言語**。ビルドのたびに、プロセス全体のハイフネーション言語が、その文書の`bodyText.hyphenation.locale`に設定されます。公開されている`hyphenateText(text)`と`layoutDesignSlot`は、言語を渡さなければ最後のビルドの言語を使います。`hyphenateText(text, 'es')`のように呼んでください。
-- **数式エンジン**。MathJaxのエンジンと描画済み数式のキャッシュは、レルムに1つずつです。`initMathEngine()`は全員のためにそれを起動します。
-- **改行器**。WebAssemblyの改行器はレルムに1つで、コンパイルは1回だけです。`useWasmLineBreaker(false)`は全員に対してこれを無効にします。
+- **数式エンジン**。MathJaxのエンジンと描画済み数式のキャッシュは、レルムに1つずつです。`initMathEngine()`で一度起動すれば、レルム内のすべての文書で使われます。
+- **改行器**。WebAssemblyの改行器はレルムに1つで、コンパイルは1回だけです。`useWasmLineBreaker(false)`は、レルム内のすべての文書についてこれを無効にします。
 
 最も簡単な分離は、文書ごとにレルムを分けることです。ライブサンプルごとにiframeを使う（CodePenの埋め込みがこれにあたります）か、計測とハイフネーションのために文書ごとに[レイアウトのワーカー](#web-workerでレイアウトを実行する)を使います（画像は引き続きページに登録されます）。
+
+### Word文書（`postext/word`）
+
+`postext/word`サブパスは、DOMを使わずにWord文書（`.docx`）を読み書きします。SandboxのWordの読み込みと書き出し、コマンドラインの`import-docx`と`docx`は、これを土台にしています（[コマンドライン › docxとimport-docx](/ja/docs/command-line#docxとimport-docx)を参照）。
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // Uint8ArrayかArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict、report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`**：ファイルを読んでWordのモデルにします。モデルには、スタイル、段落、注、画像、文書の`title`、Postextが書き出したファイルなら読み込み用のテンプレート（`embeddedTemplate`）が入ります。Word文書でないファイルでは`DocxReadError`を投げます。
+- **`wordToPostext(word, settings)`**：モデルを章（`{ title, markdown }`）、画像、表に変換します。テンプレートは、Wordの各スタイルを、設定の見出し、段落スタイル、囲み、引用、キャプションのどれかに対応づけます。`chapters: 'split'`はレベル1の見出しごとに章を始め、`'single'`は1つの章にまとめます。画像（`id`、`media.bytes`、`caption`、`alt`）と表（`id`、`model`、`caption`）は、ホストがリソースとして保存します。`skippedPictures`には、取り込まなかったEMF、WMF、TIFFの画像が並びます。
+- **`analyzeDocx(word, template, config)`**：Sandboxが読み込みの前に表示する品質レポートです。使われているスタイル、スタイルの付いた段落の数、`directFormatting`、`manualHeadings`、`typedNumbering`などの指摘を、それぞれ件数と例を添えて返します。
+- **`postextToDocx(chapters, settings)`**：章を`.docx`（`Uint8Array`）として書き出し、見出し、段落、囲み、引用、リスト、注にWordのスタイルを付けます。Wordで表せないものは*Postext Markup*のスタイルにそのまま残し、テンプレートをファイルの中に入れるので、この文書は元どおりに読み込み直せます。`book: true`は各章を`Postext Chapter`の段落で始め、読み込みではそこから章を組み立て直します。
+- <strong>`wordStyleTracking(word, template, config)`</strong>と<strong>`applyStyleTracking(config, tracking)`</strong>：Wordのスタイルの文字間隔を、文字間隔を指定していない設定のスタイルに引き継ぎます。
 
 
 ## Web Workerでレイアウトを実行する
@@ -578,9 +603,9 @@ Postextには専用のWeb Workerのエントリーポイント`postext/worker`�
 
 - **メインスレッドが空いたまま**。解析、計測、そしてすべての配置のパスが、ワーカーの中で動きます。メインスレッドに処理が戻るのは、完成した`VDTDocument`が送り返されるときだけです。
 - **「最後の要求が勝つ」キャンセル**。`build(content, config, { signal })`は`AbortSignal`をワーカーまで通します。完了前に中止すると、メイン側では`AbortError`が発生します。ワーカーの中では、パイプラインが次のブロックごとのキャンセル確認点で`BuildCancelledError`を投げ、すぐに止まります。
-- **ワーカーごとの計測キャッシュ**。ワーカーは、存続している間1つの`MeasurementCache`を持ちます。フォント、テキスト、幅が同じ後続のビルドは、キャッシュした行の計測を再利用します。長い文書に1文字入力しても、計測し直すのは入力が実際に変わったブロックだけです。
+- **ワーカーごとの計測キャッシュ**。ワーカーは、存続している間1つの`MeasurementCache`を保持します。フォント、テキスト、幅が同じ後続のビルドは、キャッシュした行の計測を再利用します。長い文書に1文字入力しても、計測し直すのは入力が実際に変わったブロックだけです。
 - **メインスレッドと同一の計量値**。フォントは転送可能な`ArrayBuffer`としてワーカーに送られ、ワーカー自身の`FontFaceSet`に`new FontFace(...)`で登録されます。ワーカーはメインスレッドと同じcanvasのフォント計量値で計測するので、改行と段の高さはバイト単位で一致します。
-- **数式のラスターキャッシュがワーカーのビルドをまたいで残る**。数式レンダラーは、同一性をキーとするキャッシュに加えて、内容をキーとするラスターキャッシュを持っています。そうしなければ、`MathRender`をワーカーの境界を越えて構造化複製するたびに、再ビルドのたびに同一性のキャッシュが外れてしまいます。
+- **数式のラスターキャッシュがワーカーのビルドをまたいで残る**。数式レンダラーは、同一性をキーとするキャッシュに加えて、内容をキーとするラスターキャッシュも用意しています。そうしなければ、`MathRender`はワーカーの境界を越えるときに構造化複製されるため、再ビルドのたびに同一性のキャッシュが外れてしまいます。
 - **ページ上と同じ行**。ワーカーで作ったcanvasには言語を受け継ぐページがなく、フォントは言語によって別の字形を返します。エンジンは、ワーカーでもページ上と同じく、計測に使うすべてのコンテキストに文書の言語（`locale`）を設定します。そのため、`build()`が返す行は、`buildDocument`がどの言語のページで返す行とも同じです（[`bodyText.shapingLanguage: 'document'`](/ja/docs/configuration-text#本文)。postext 1.30以降の既定値です）。`'host'`では（1.30より前に保存した設定はこの値のままです）、postext 1.28までと同じく、ワーカーは言語なしで計測し、ページはそのページの言語で計測します。
 
 ### 公開API
@@ -589,10 +614,13 @@ Postextには専用のWeb Workerのエントリーポイント`postext/worker`�
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**：専用のワーカーを起動し（`opts.worker`で渡したワーカーを包むか、`opts.url`のワーカーエントリーを起動することもできます）、型付きのハンドルを返します。[CDNからワーカーを読み込む](#cdnからワーカーを読み込む)を参照してください。
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**：フォントのバイト列をワーカーに送ります。バッファーは転送されるので、後で送り直す必要があるなら、メインスレッドに新しいコピーを残しておいてください。
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**：パイプラインを実行します。シグナルを中止すると、実行中のビルドがキャンセルされます。
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`**：それらのファミリーについてワーカーが持っているフェイスを捨てます。これで、次にそのファミリーを`registerFonts`したとき、すでに持っているフェイスと照合されずに、送ったフェイスが使われます。
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`**：パイプラインを実行します。`options`は`{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`です。`signal`を中止すると、実行中のビルドがキャンセルされます。`onProgress({ pass, blocks, totalBlocks, pages })`は配置が進むたびに呼ばれ、`onStats({ passes, totalMs, cached?, missingFonts? })`は終わったビルドのパスごとの所要時間を受け取ります。`resourcesKey`は`content.resources`のフィンガープリントです。同じキーのビルドが続くとリストは1回だけ送られ、ワーカーがそれを保持します。`cacheKey`はビルド全体のフィンガープリントです。ワーカーは直近のいくつかの文書をこのキーで保持し、手元にあるキーのビルドにはそのキャッシュから答えます。
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`**：文書を送り返さずに、ワーカーの文書キャッシュへビルドしておきます。読者が次に開きそうな章に使います。その`cacheKey`での次の`build`には、キャッシュから答えます。
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`**：ページで`prepareFonts`を実行し、見つかったフェイスをワーカーに送ります。[CDNからワーカーを読み込む](#cdnからワーカーを読み込む)を参照してください。
 - **`LayoutWorkerHandle.dispose(): void`**：ワーカーを終了し、保留中のビルドを`AbortError`で拒否します。
 - **`FontPayload`**：`{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`。`weight`はCSSのウェイトの文字列（`'700'`、`'bold'`）です。`registerFonts`は数値（`700`）も受け付けます。`buffer`は、`registerFonts`を呼んだときにワーカーへ転送されます。
-- **`BuildCancelledError`**（`postext`から再エクスポート）：`options.shouldCancel`が`true`を返したときに`buildDocument`が内部で投げるものです。メインスレッドでは通常目にしません。ワーカーのプロトコルが、コードに届く前に`AbortError`に変換するからです。
+- **`BuildCancelledError`**（`postext`からも再公開）：`options.shouldCancel`が`true`を返したときに`buildDocument`が内部で投げるものです。メインスレッドでは通常目にしません。ワーカーのプロトコルが、コードに届く前に`AbortError`に変換するからです。
 
 パッケージは、コンパイル済みのワーカースクリプトを指す`postext/worker/entry`パスも公開しています。`createLayoutWorker()`はこのURLを自動で解決します。明示的に参照する必要があるのは、バンドラーが手で組み立てた`new Worker(new URL(...), { type: 'module' })`呼び出しを要求する場合か、エントリーを自分で配信する場合（`opts.url`）だけです。
 
@@ -720,9 +748,9 @@ await layout.registerFonts(await Promise.all([face(400, 'normal'), face(700, 'no
 const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garamond' } });
 ```
 
-**ワーカーにはページのフォントが見えません**。ワーカーは独自のフォントセットを持ち、そこにあるのは`registerFonts`で送ったフェイスと、システムにインストールされたフォントだけです。ワーカーが見つけられないファミリーでテキストを組むビルドでは、そのテキストは代替フォントで計測されるため、改行がページと一致しません。このときクライアントは、ファミリーごとに1回コンソールに警告を出し（`"EB Garamond" is not available inside the layout worker…`）、そのファミリーを`BuildStats.missingFonts`に挙げます。これは`build`の`onStats`コールバックが受け取ります。文書自体も、同じフェイスを`fontFallback`のコンテンツ警告として持っています。
+**ワーカーにはページのフォントが見えません**。ワーカーには独自のフォントセットがあり、そこにあるのは`registerFonts`で送ったフェイスと、システムにインストールされたフォントだけです。ワーカーが見つけられないファミリーでテキストを組むビルドでは、そのテキストは代替フォントで計測されるため、改行がページと一致しません。このときクライアントは、ファミリーごとに1回コンソールに警告を出し（`"EB Garamond" is not available inside the layout worker…`）、そのファミリーを`BuildStats.missingFonts`に挙げます。これは`build`の`onStats`コールバックが受け取ります。文書自体も、同じフェイスを`fontFallback`のコンテンツ警告として含んでいます。
 
-`handle.prepareFonts(content, config, options)`は、ページで[`prepareFonts`](#レイアウトの前にフォントを読み込む)を実行し、見つかったフェイスのうちフォントレジストリがファイルを持っているもの（リゾルバーのファイル、バンドルのフェイス、ページの読み取り可能な`@font-face`規則）を、文書の文字を含むスライスに限ってワーカーに送ります。フェイスがワーカーに届くと、ワーカーはそのファミリーの計測結果と、仕上がった文書のキャッシュだけを捨てます。
+`handle.prepareFonts(content, config, options)`は、ページで[`prepareFonts`](#レイアウトの前にフォントを読み込む)を実行し、見つかったフェイスのうちフォントレジストリにファイルがあるもの（リゾルバーのファイル、バンドルのフェイス、ページの読み取り可能な`@font-face`規則）を、文書の文字を含むスライスに限ってワーカーに送ります。フェイスがワーカーに届くと、ワーカーはそのファミリーの計測結果と、仕上がった文書のキャッシュだけを捨てます。
 
 フェイスは、レイアウトの後からワーカーに届いてもかまいません。ページが実際に必要としたウェイト、同じウェイトの別の`unicode-range`スライス、同じファミリー名でアップロードし直したファイルなどです。次のレイアウトはそのフェイスで計測します。ワーカーのcanvasだけではそうなりません。Chromeでは、フォントの一括指定が最初に設定された時点でフォントを解決し、その指定についてはフォントセットを見直さないので、文字は最初に応えたフェイスの幅のままになります。そこでワーカーは、あるファミリーのフェイスが遅れて届いた後は、設定する一括指定の中でそのファミリー名をもう一度書きます（`Geist, Geist`）。canvasにとっては別のファミリーリストですが、フォントも幅も同じです。ワーカーが返す文書のフォント文字列はエンジンが書いたままで、最初のレイアウトより前にフェイスがそろっているワーカーは、どの一括指定もそのまま設定します。
 
@@ -732,12 +760,12 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 Sandboxの`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）は参考実装です。次の処理を行います。
 
-1. `https://api.fontsource.org/v1/fonts/{family-id}`に問い合わせ、ファミリーが持つウェイトとスタイルを調べます。
+1. `https://api.fontsource.org/v1/fonts/{family-id}`に問い合わせ、ファミリーにあるウェイトとスタイルを調べます。
 2. jsDelivrにあるファミリーのパッケージ（`@fontsource/{family-id}@5/400.css`）から、サブセットとそれぞれの`unicode-range`を読みます。ファミリーごとに1回です。その後、各ファイルはそのスタイルシートを返した正確なバージョン（jsDelivrの`x-jsd-version`）に対して取得するので、ファミリーがパッケージの2つのバージョンから届くことはありません。
 3. 各ファミリーのレギュラー、ボールド、それぞれのイタリックについて、すべてのファイル（`files/{family-id}-{subset}-{weight}-{style}.woff2`）をダウンロードします。`collectFontPayloadsForConfig(config, markdown)`は、代わりに設定が求めるウェイトとスタイルを取得します。どれも静的ファイルで、PDFに埋め込むファイルと同じなので、ワーカーはPDFが描くのと同じフォントで計測します。可変ファイルは2つのマスターの間で送り幅が異なり、行長との差が1ピクセルに満たない行は別の位置で改行されます。
 4. 呼び出しごとに`buffer`が新しい`ArrayBuffer`になっている`FontPayload[]`を返します。`registerFonts`はバッファーを転送し、送信側のコピーを切り離された（detached）状態にするので、これが重要です。
 
-同じウェイトとスタイルのファイルは、CodePenが宣言する順に並べます。`latin`が先で、その文字体系のファイル（`arabic`、中国語や日本語のファミリーの番号付きスライス）が最後です。2つのファイルが同じ文字を持つ場合、最後に追加したファイルが使われるからです。Fontsourceにファイルがないファミリーは、GoogleのCSS2スタイルシートから読みます。こちらはブラウザーらしいユーザーエージェント文字列にしかWOFF2を返しません。
+同じウェイトとスタイルのファイルは、レシピ集のPen（CodePenの例）が宣言する順に並べます。`latin`が先で、その文字体系のファイル（`arabic`、中国語や日本語のファミリーの番号付きスライス）が最後です。2つのファイルが同じ文字を含む場合、最後に追加したファイルが使われるからです。Fontsourceにファイルがないファミリーは、GoogleのCSS2スタイルシートから読みます。こちらはブラウザーらしいユーザーエージェント文字列にしかWOFF2を返しません。
 
 `getConfigFontFamilies(config)`と組み合わせると、ある`PostextConfig`が実際に描画するファミリー（本文、見出し、リストの記号、番号付きリストの番号）の一覧が得られます。
 
@@ -800,7 +828,7 @@ export async function exportPdf(
 
 - **ライブプレビュー、エディター、試用環境**。ユーザーの入力に応じて文書をビルドし直すものすべて。
 - **サイズ変更に追従するHTMLビューアー**。`ResizeObserver`が通知するたびにレイアウトを再実行するもの。
-- **ブラウザー内でのPDF書き出し**。ライブプレビューをすでに持つUIから実行する場合。既存のワーカーのハンドルを再利用すれば、書き出しが計測キャッシュの恩恵を受けられます。
+- **ブラウザー内でのPDF書き出し**。ライブプレビューがすでにあるUIから実行する場合。既存のワーカーのハンドルを再利用すれば、書き出しが計測キャッシュの恩恵を受けられます。
 - **複数の出力タブ**。すべてが同じVDTを必要とする場合（SandboxのCanvas / HTML / PDFのビューポートは、ビューポートのマウントごとに1つのワーカーのハンドルを共有します）。
 
 ワーカーを使わないのは次の場合です。

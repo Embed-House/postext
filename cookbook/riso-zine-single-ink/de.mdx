@@ -2,10 +2,10 @@
 title: "Riso-Zine in zwei Farben: Grafik in einer Sonderfarbe"
 summary: "Ein vierseitiges Zine für einen Risographen mit zwei Trommeln: farbige Zeichnungen drucken als Pinktöne, umgefärbt von der Engine im Canvas und im PDF."
 plain: "Ein kleines gefaltetes Heft über Nachtbusse, gemacht für eine Druckmaschine, die nur zwei Farben druckt. Farbige Zeichnungen werden zu Abstufungen einer einzigen pinken Farbe."
-description: "Ein Riso-Zine, dessen farbige SVGs am Bildschirm und im PDF als Tönungen einer Sonderfarbe drucken, über diagramStyle.singleInk und ein Registrierungs-Flag."
+description: "Ein Riso-Zine, dessen farbige SVGs am Bildschirm und im PDF als Tönungen einer Sonderfarbe drucken, über diagramStyle.singleInk und eine Registrierungsoption."
 question: "Wie drucke ich jede SVG-Zeichnung in Tönungen einer Sonderfarbe und jede andere Farbe in einer zweiten?"
 aliases: ["Risograph", "Riso", "Zweifarbdruck", "Sonderfarbe", "Duplex", "Duotone", "eine Druckfarbe", "Zine", "Passerversatz", "nicht passergenau", "Graustufen-Proof", "zweifarbiges Schulbuch", "Raster", "single ink"]
-pageNotes: { "1": "Der Umschlag: die Heftnummer und die Zeile „Six routes after midnight, three ridden end to end“, darunter ein pinker gerasterter Vollmond hinter zwei blauen Oberleitungen, ein blauer Haltestellenmast, dessen Schild „NIGHT“, „N12“, „N27“ und „N41“ nennt, und „NIGHT BUSES“ in hohen schmalen Versalien, blau über einer leicht versetzten pinken Kopie.", "2": "Seite 2: die Dachzeile „Brackwater, 00:10 to 06:00“ über „AFTER THE LAST TRAIN“, der erste Absatz, die Notiz zur N12 nach ihrem pinken Linien-Chip, die Worte eines Fahrers in schmalen Versalien unter einem pinken Streifen und der Anfang der Notiz zur N27.", "3": "Seite 3: das Nachtnetz in Pinktönen über einer blassrosa Bildunterschrift, das Ende der Notiz zur N27, die Notiz zur N41 und ein kleiner Einschub derselben Karte in sechs Farben neben der Notiz „As drawn“.", "4": "Die Rückseite: ein pinkes Zielschild mit „NOT IN SERVICE“, die Ankündigung von Heft 5 mit drei Orten, an denen es ausliegt, das Impressum in einer dicktengleichen Schrift und ein pinker gerasterter Mond in der unteren Ecke." }
+pageNotes: { "1": "Der Umschlag: die Heftnummer und die Zeile „Six routes after midnight, three ridden end to end“, darunter ein pinker gerasterter Vollmond hinter zwei blauen Oberleitungen, ein blauer Haltestellenmast, dessen Schild „NIGHT“, „N12“, „N27“ und „N41“ nennt, und „NIGHT BUSES“ in hohen schmalen Versalien, blau über einer leicht versetzten pinken Kopie.", "2": "Seite 2: die Dachzeile „Brackwater, 00:10 to 06:00“ über „AFTER THE LAST TRAIN“, der erste Absatz, die Notiz zur N12 nach ihrem pinken Linien-Chip, die Worte eines Fahrers in schmalen Versalien unter einem pinken Streifen und der Anfang der Notiz zur N27.", "3": "Seite 3: das Nachtnetz in Pinktönen über einer blassrosa Legende, das Ende der Notiz zur N27, die Notiz zur N41 und ein kleiner Einschub derselben Karte in sechs Farben neben der Notiz „As drawn“.", "4": "Die Rückseite: ein pinkes Zielschild mit „NOT IN SERVICE“, die Ankündigung von Heft 5 mit drei Orten, an denen es ausliegt, das Impressum in einer dicktengleichen Schrift und ein pinker gerasterter Mond in der unteren Ecke." }
 ---
 
 ## Was Sie setzen
@@ -18,35 +18,35 @@ pageNotes: { "1": "Der Umschlag: die Heftnummer und die Zeile „Six routes afte
 
 <Excerpt region="inks" />
 
-Ein Risograph druckt jede Farbe von einer eigenen Trommel, eine dritte Farbe irgendwo in der Konfiguration bräuchte also eine dritte Trommel. `screen()` mischt einen Anteil einer Druckfarbe mit der Papierfarbe, so wie ein Raster nur einen Teil der Punkte druckt und dazwischen Papier stehen lässt. Ein 25-%-Raster des Pinks ist `#f2c7d3`, der Grund der Chips und der Bildunterschrift. `main-color` zeigt auf das Pink, sodass jede Voreinstellung, die die Konfiguration nicht ändert, von dieser Trommel druckt und nicht im eigenen Blau der Engine, `#295AA3`.
+Ein Risograph druckt jede Farbe von einer eigenen Trommel, eine dritte Farbe irgendwo in der Konfiguration bräuchte also eine dritte Trommel. `screen()` mischt einen Anteil einer Druckfarbe mit der Papierfarbe, so wie ein Raster nur einen Teil der Punkte druckt und dazwischen Papier stehen lässt. Ein 25-%-Raster des Pinks ist `#f2c7d3`, der Grund der Chips und der Legende. `main-color` zeigt auf das Pink, sodass jede Voreinstellung, die die Konfiguration nicht ändert, von dieser Trommel druckt und nicht im eigenen Blau der Engine, `#295AA3`.
 
 ### 2 · Jede Zeichnung einmal pro Ausgabe umfärben
 
-Der Code ist [die kurze Antwort](#die-kurze-antwort) oben. Mit `diagramStyle.singleInk` macht `renderToPdf` aus jeder Farbe eines SVG eine Tönung von `inkColor`, deren Stärke 1 minus die relative Leuchtdichte der Farbe ist ([Diagrammstil](/de/docs/configuration-resources#diagrammstil)); so druckt die marineblaue N12 mit 84 % und die gelbe N50 mit 24 %. Der Canvas tönt ein Bild auf dieselbe Weise, wenn es mit `singleInk: true` registriert ist; deshalb registriert `loadSvg(fileId, svg, { singleInk: true })` aus dem Kit jede Zeichnung so, wie sie gezeichnet ist, mit diesem Flag und behält dasselbe Markup, das `imageBytes` an `resourceBytes` übergibt. Im Canvas und im mit 300 dpi gerasterten PDF gemessen, hat die Linie der N12 den Wert (242, 109, 171), die Tönung, die die Formel für eine Stärke von 0,836 ergibt. Jede Ausgabe färbt die Zeichnung einmal um: Zweimal durch die Formel geschickt, würde die Linie auf 44 % aufhellen.
+Der Code ist [die kurze Antwort](#die-kurze-antwort) oben. Mit `diagramStyle.singleInk` macht `renderToPdf` aus jeder Farbe eines SVG eine Tönung von `inkColor`, deren Stärke 1 minus die relative Leuchtdichte der Farbe ist ([Diagrammstil](/de/docs/configuration-resources#diagrammstil)); so druckt die marineblaue N12 mit 84 % und die gelbe N50 mit 24 %. Das Canvas tönt ein Bild auf dieselbe Weise, wenn es mit `singleInk: true` registriert ist; deshalb registriert `loadSvg(fileId, svg, { singleInk: true })` aus dem Kit jede Zeichnung so, wie sie gezeichnet ist, mit dieser Option und behält dasselbe Markup, das `imageBytes` an `resourceBytes` übergibt. Im Canvas und im mit 300 dpi gerasterten PDF gemessen, hat die Linie der N12 den Wert (242, 109, 171), die Tönung, die die Formel für eine Stärke von 0,836 ergibt. Jedes Ausgabeformat färbt die Zeichnung einmal um: Liefe sie zweimal durch die Formel, würde die Linie auf 44 % aufhellen.
 
 ### 3 · Den Titel zweimal drucken, versetzt
 
 <Excerpt region="cover" />
 
-Ein Risograph druckt eine Trommel nach der anderen, und der Bogen landet nie zweimal genau an derselben Stelle. `twice()` gibt zwei Kopien eines Textelements zurück, die pinke zuerst, 0,8 mm nach rechts und 0,5 mm nach oben verschoben. Die Reihenfolge im Array ist die Zeichenreihenfolge, also deckt die blaue Kopie die pinke bis auf einen schmalen Saum an der Ober- und der rechten Kante jedes Buchstabens. Canvas und PDF zeichnen deckende Farbe, deshalb bleibt die Überlappung blau, wo ein Riso Violett drucken würde. Die Gestaltung reicht über die ganze Seitenbreite, weil der Mast über den Fuß des Satzspiegels hinausläuft, wo eine in ihrer Spalte gehaltene Gestaltung abgeschnitten wird.
+Ein Risograph druckt eine Trommel nach der anderen, und das Blatt liegt nie zweimal genau an derselben Stelle. `twice()` gibt zwei Kopien eines Textelements zurück, die pinke zuerst, 0,8 mm nach rechts und 0,5 mm nach oben verschoben. Die Reihenfolge im Array ist die Zeichenreihenfolge, also deckt die blaue Kopie die pinke bis auf einen schmalen Saum an der Ober- und der rechten Kante jedes Buchstabens. Canvas und PDF zeichnen deckende Farbe, deshalb bleibt die Überlappung blau, wo ein Riso Violett drucken würde. Die Gestaltung reicht über die ganze Seitenbreite, weil der Mast über den Fuß des Satzspiegels hinausläuft, wo eine in ihrer Spalte gehaltene Gestaltung abgeschnitten wird.
 
 ### 4 · Kleine Schrift in der dunklen Farbe halten
 
 <Excerpt region="inside" />
 
-Auf dem cremefarbenen Papier erreicht das Blau 6,4:1 und das fluoreszierende Pink 2,9:1, zu schwach für Schrift in 8 oder 9 pt. Jedes Wort, das die Engine setzt, druckt deshalb von der blauen Trommel. Die Chips sind blaue Space Mono auf dem 25-%-Raster (4,85:1) in einer pinken Kontur, die Bildunterschrift blaue Epilogue auf demselben Raster. Das Pink druckt den Streifen über dem Zitat, die Konturen der Chips, die Aufzählungszeichen, die Quadrate an den Seitenzahlen und die versetzten Kopien der Titel. Die Schrift in den Zeichnungen gehört zur Grafik und druckt mit ihr in Pink. Der Name des Sprechers ist der Titel des Kastens, in fetten Versalien der Space Mono in 7,5 pt über dem Zitat gesetzt.
+Auf dem cremefarbenen Papier erreicht das Blau 6,4:1 und das fluoreszierende Pink 2,9:1, zu schwach für Schrift in 8 oder 9 pt. Jedes Wort, das die Engine setzt, druckt deshalb von der blauen Trommel. Die Chips sind blaue Space Mono auf dem 25-%-Raster (4,85:1) in einer pinken Kontur, die Legende blaue Epilogue auf demselben Raster. Das Pink druckt den Streifen über dem Zitat, die Konturen der Chips, die Aufzählungszeichen, die Quadrate an den Seitenzahlen und die versetzten Kopien der Titel. Die Schrift in den Zeichnungen gehört zur Grafik und druckt mit ihr in Pink. Der Name des Sprechers ist der Titel des Kastens, in fetten Versalien der Space Mono in 7,5 pt über dem Zitat gesetzt.
 
 ### 5 · Den Einschub neben seine Notiz setzen
 
 <Excerpt region="drawn" />
 
-In einer Spalte nimmt ein Gleitobjekt die ganze Breite seines Bandes ein, ein kleines Bild würde dort also den Rest des Bandes leer lassen. Der Einschub ist deshalb eine Überschriftengestaltung: `### As drawn {style="drawn" note="…"}` druckt das Bild und rechts daneben die Überschrift als Label mit der Notiz darunter. Das Bild zählt zu der Höhe, die die Gestaltung reserviert, sodass der nächste Block auch bei kürzerer Notiz darunter beginnt. `registerSnapshot()` zeichnet dieselbe Karte `network()` in ein PNG, und weil die Einfarbigkeit nur SVG umfärbt, behält der Einschub am Bildschirm und im PDF seine sechs Farben.
+In einer Spalte nimmt ein Gleitobjekt die ganze Spaltenbreite ein, ein kleines Bild ließe dort also den Rest der Breite leer. Der Einschub ist deshalb eine Überschriftengestaltung: `### As drawn {style="drawn" note="…"}` setzt das Bild und rechts daneben die Überschrift als Beschriftung mit der Notiz darunter. Das Bild zählt zu der Höhe, die die Gestaltung reserviert, sodass der nächste Block auch bei kürzerer Notiz darunter beginnt. `registerSnapshot()` zeichnet dieselbe Karte `network()` in ein PNG, und weil die Einfarbigkeit nur SVG umfärbt, behält der Einschub am Bildschirm und im PDF seine sechs Farben.
 
 ## Varianten
 
 ### Eine orange Trommel einlegen
 
-Mond, Karte, Zielschild, Chips, Streifen und die versetzten Kopien beider Titel werden orange, die Schrift bleibt blau; Bildunterschrift, Notiz und Impressum nennen weiter die pinke Trommel, bis Sie sie bearbeiten.
+Mond, Karte, Zielschild, Chips, Streifen und die versetzten Kopien beider Titel werden orange, die Schrift bleibt blau; Legende, Notiz und Impressum nennen weiter die pinke Trommel, bis Sie sie bearbeiten.
 
 ```diff
 -const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
@@ -55,7 +55,7 @@ Mond, Karte, Zielschild, Chips, Streifen und die versetzten Kopien beider Titel 
 
 ### Ein zweifarbiges Lehrbuch drucken
 
-Mit schwarzer Schrift und einer blauen Sonderfarbe auf weißem Papier drucken dieselben Zeichnungen als Blautöne, wie die Diagramme in einem zweifarbigen Schulbuch; Bildunterschrift, Notiz und Impressum nennen weiterhin die pinke Trommel, bis Sie sie bearbeiten.
+Mit schwarzer Schrift und einer blauen Sonderfarbe auf weißem Papier drucken dieselben Zeichnungen als Blautöne, wie die Diagramme in einem zweifarbigen Schulbuch; Legende, Notiz und Impressum nennen weiterhin die pinke Trommel, bis Sie sie bearbeiten.
 
 ```diff
 -const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
@@ -66,7 +66,7 @@ Mit schwarzer Schrift und einer blauen Sonderfarbe auf weißem Papier drucken di
 
 ## Häufige Fehler
 
-- Im PDF schreibt die Umfärbung das Markup um: Hex-Farben, `rgb()`, `rgba()`, `hsl()` und `hsla()` sowie die Schlüsselwörter `white` und `black`. Eine Form, die `red` nennt oder ihre Füllung beim voreingestellten Schwarz belässt, behält dort diese Farbe, die eine dritte Trommel bräuchte. Geben Sie jeder Füllung und jeder Kontur einen Hex-Wert.
+- Im PDF schreibt die Umfärbung das Markup um: Hex-Farben, `rgb()`, `rgba()`, `hsl()` und `hsla()` sowie die Schlüsselwörter `white` und `black`. Eine Form, die `red` angibt oder ihre Füllung beim voreingestellten Schwarz belässt, behält dort diese Farbe, die eine dritte Trommel bräuchte. Geben Sie jeder Füllung und jeder Kontur einen Hex-Wert.
 - `colorSpace: 'grayscale'` setzt in Grau, was postext zeichnet, und bettet Bitmaps unverändert ein, deshalb bleibt der PNG-Einschub im Graustufen-Proof farbig. Nur der zweite Button des Pens erzeugt den Proof; die Seiten oben stammen aus dem Canvas, und das auf dieser Seite angebotene PDF ist das farbige.
 - Der Spaltenausgleich kann unter einem Gleitobjekt oben eine Zeile Leerraum lassen, vor dem Rest eines Absatzes, der von der vorigen Seite weiterläuft; `headings.balancing.stretchAfterFloats: false` hält den Text direkt unter dem Gleitobjekt. Der Text hier löst das nicht aus. Prüfen Sie nach Änderungen am Text die erste Zeile unter der Karte, denn eine zusätzliche Zeile kann den Einschub auf eine fünfte Seite schieben.
 - Im Pen heißen beide Buttons „Build the PDF“. Der erste erzeugt das farbige PDF, der zweite den Graustufen-Proof; sobald eine Datei erzeugt ist, weicht ihr Button einem Link „Open the PDF ↗“ und einem Download-Link mit dem Namen der Datei.

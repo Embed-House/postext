@@ -22,7 +22,7 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada `{attr.<
 
 <Excerpt region="resources" />
 
-Un element de disseny anomena la seva imatge per l'id del recurs, així que la foto de l'obertura es declara com qualsevol figura però no es cita mai: només l'obertura la dibuixa, fins al tall, on no arriba cap flotant. Els mapes de bits es mesuren als 150 `dpi` de la pàgina, així que els 2000 px de la pineda donen 339 mm i es redueixen a l'amplada de la caixa de text, 195 mm, uns 260 ppp a la impressió. Les imatges tenen un tipus propi, amb el prefix del peu i la plantilla de numeració buits, així que el peu de la pineda no porta número de figura. La banda és un flotant `top` a tota l'amplada, i un flotant `top` obre la pàgina següent a la que el cita. La seva línia `::resource` queda a la pàgina parella, després del paràgraf de 1944, així que la banda encapçala la senar.
+Un element de disseny fa referència a la seva imatge per l'id del recurs, així que la foto de l'obertura es declara com qualsevol figura però no es cita mai: només l'obertura la dibuixa, fins al tall, on no arriba cap flotant. Els mapes de bits es mesuren als 150 `dpi` de la pàgina, així que els 2000 px de la pineda donen 339 mm i es redueixen a l'amplada de la caixa de text, 195 mm, uns 260 ppp a la impressió. Les imatges tenen un tipus propi, amb el prefix del peu i la plantilla de numeració buits, així que el peu de la pineda no porta número de figura. La banda és un flotant `top` a tota l'amplada, i un flotant `top` obre la pàgina següent a la que el cita. La seva línia `::resource` queda a la pàgina parella, després del paràgraf de 1944, així que la banda encapçala la senar.
 
 ### 3 · Penja les cometes al marge
 
@@ -34,7 +34,7 @@ Una icona de glif ocupa una columna pròpia al costat del text, i això sagnaria
 
 <Excerpt region="boxes" />
 
-Amb `placement: 'top'` el requadre de dades flota: surt del flux i pren el següent capdamunt de columna lliure, així que el text continua fins al peu de la columna en comptes de deixar un blanc on el requadre no hi cabia. El plafó de xifres flota cap al costat contrari, al peu de la pàgina, i ocupa les dues columnes; les seves tres xifres són títols de nivell 4, un nivell que el reportatge no fa servir, repartits amb `breaks="3,5"`, que compta blocs, no línies. El signe final és un xip sense text visible. El seu `paddingX` dona l'amplada al quadrat, i el cos del xip, l'alçada; totes dues fan 1,05 em del mateix xip.
+Amb `placement: 'top'` el requadre de dades flota: surt del flux i ocupa el següent capdamunt de columna lliure, així que el text continua fins al peu de la columna en comptes de deixar un blanc on el requadre no hi cabia. El plafó de xifres flota cap al costat contrari, al peu de la pàgina, i ocupa les dues columnes; les seves tres xifres són títols de nivell 4, un nivell que el reportatge no fa servir, repartits amb `breaks="3,5"`, que compta blocs, no línies. El signe final és un xip sense text visible. El seu `paddingX` dona l'amplada al quadrat, i el cos del xip, l'alçada; totes dues fan 1,05 em del mateix xip.
 
 ### 5 · Capçaleres que anomenen el número i el reportatge
 
@@ -46,7 +46,7 @@ Els elements de capçalera es pinten sobre la pàgina i no reserven lloc, així 
 
 <Excerpt region="guide" />
 
-L'obertura és una funció, així que la guia de camp rep el mateix disseny amb la seva pròpia imatge i la seva pròpia alçada mitjançant un estil de títol, `# Cinco clases \\ de hielo {style="guide" …}`; la `\\` [parteix el titular](/ca/docs/document-format-directives#salts-de-línia-als-títols) per on vol la redacció. El dibuix baixa 126 mm per la pàgina en comptes de 160; el crèdit i l'avantítol es mesuren des de `depth - TOP` i els altres textos pengen de l'avantítol, així que tots pugen 34 mm i el text de la guia comença més amunt. La paleta de l'estil canvia `lake` pel teula en aquestes pàgines, així que l'avantítol, i qualsevol intertítol o requadre enllaçat a `lake`, es torna teula sense afegir un argument de color a `opener()`; un xip enllaçat a `lake` també es tornaria teula, i el signe final és negre a totes dues peces.
+L'obertura és una funció, així que la guia de camp rep el mateix disseny amb la seva pròpia imatge i la seva pròpia alçada mitjançant un estil d'encapçalament, `# Cinco clases \\ de hielo {style="guide" …}`; la `\\` [parteix el titular](/ca/docs/document-format-directives#salts-de-línia-als-títols) per on vol la redacció. El dibuix baixa 126 mm per la pàgina en comptes de 160; el crèdit i l'avantítol es mesuren des de `depth - TOP` i els altres textos pengen de l'avantítol, així que tots pugen 34 mm i el text de la guia comença més amunt. La paleta de l'estil canvia `lake` pel teula en aquestes pàgines, així que l'avantítol, i qualsevol intertítol o requadre enllaçat a `lake`, es torna teula sense afegir un argument de color a `opener()`; un xip enllaçat a `lake` també es tornaria teula, i el signe final és negre a totes dues peces.
 
 ## Variants
 

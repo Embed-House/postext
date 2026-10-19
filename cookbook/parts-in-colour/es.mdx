@@ -4,7 +4,7 @@ summary: "En esta guía de campo, cada :::part redefine un color de la paleta, q
 plain: "Una guía de bolsillo de aves del estuario en dos partes, una parda y otra verde. Enseña cómo un solo ajuste de color por parte tiñe su página de apertura, las pestañas, los números de página y su línea del índice."
 description: "Guía de campo de dos hábitats, compuesta con Postext, en la que cada :::part tiñe de su color la portadilla, el dorso pintado, la pestaña y su fila del índice."
 question: "¿Cómo doy a cada parte del libro su color, su portadilla y un dorso pintado, con filas de color en el índice?"
-aliases: ["guía de campo", "partes", "colores por sección", "secciones por colores", "portadilla", "verso pintado", "dorso pintado", "pestaña", "color de la parte"]
+aliases: ["guía de campo", "partes", "colores por sección", "secciones por colores", "portadilla", "dorso pintado", "pestaña", "color de la parte"]
 pageNotes: { "4": "La página 4 es el dorso de la portadilla de la parte I. El texto la deja en blanco y parts.versoDesign la pinta entera en el pardo de la parte, con la pestaña en negativo en el corte y el nombre de la parte al pie.", "8": "La página 8 es el dorso de la portadilla de la parte II, pintada en verde carrizo con el mismo diseño." }
 ---
 
@@ -22,7 +22,7 @@ Una parte redefine entradas de la paleta por su id, así que todo lo que debe ca
 
 ### 2 · Una portadilla, su dorso y su lista
 
-El código de este paso es [la respuesta corta](#la-respuesta-corta), más arriba. Un `:::part` abre una [portadilla](/es/docs/configuration-styles#partes) en página impar, y `parts.design` la compone sobre toda la página, a sangre. El Markdown entre sus vallas empieza a 125 mm del borde superior, bajo el título: unas líneas sobre el hábitat con el estilo de párrafo `habitat` y después la lista de sus especies con `bodyStyle`. `versoDesign` pinta el dorso de la hoja (el campo y la pestaña en negativo) solo si esa página queda en blanco, y `breakAfter: { parity: 'odd' }` la deja en blanco al mandar la primera especie a la siguiente página impar. `{numberRoman}` imprime el `number="I"` de la parte en números romanos (con `"1"` saldría la misma I), mientras que las especies se numeran del 1 al 4 en arábigos. El `\\` del título parte la línea solo en la portadilla; el índice y las cabeceras lo componen en una sola línea.
+El código de este paso es [la respuesta corta](#la-respuesta-corta), más arriba. Un `:::part` abre una [portadilla](/es/docs/configuration-styles#partes) en página impar, y `parts.design` la compone sobre toda la página, a sangre. El Markdown entre sus delimitadores empieza a 125 mm del borde superior, bajo el título: unas líneas sobre el hábitat con el estilo de párrafo `habitat` y después la lista de sus especies con `bodyStyle`. `versoDesign` pinta el dorso de la hoja (el campo y la pestaña en negativo) solo si esa página queda en blanco, y `breakAfter: { parity: 'odd' }` la deja en blanco al mandar la primera especie a la siguiente página impar. `{numberRoman}` imprime el `number="I"` de la parte en números romanos (con `"1"` saldría la misma I), mientras que las especies se numeran del 1 al 4 en arábigos. El `\\` del título parte la línea solo en la portadilla; el índice y las cabeceras lo componen en una sola línea.
 
 ### 3 · Los acentos del texto cambian con la parte
 
@@ -40,7 +40,7 @@ La apertura de cada especie imprime tres atributos de su título: `status` en el
 
 <Excerpt region="contents" />
 
-`:::toc` da una fila a cada `:::part` y compone en ella `toc.parts.design` con el número, el título, la página de la portadilla y la paleta de esa parte ([índice de contenidos](/es/docs/configuration-notes-references#índice-de-contenidos)), así que la misma caja sale parda para los fangales y verde para los carrizales. Cada especie bajo la banda lleva su número, una línea de puntos y su página, y debajo el nombre científico que da el atributo `latin`.
+`:::toc` da una fila a cada `:::part` y compone en ella `toc.parts.design` con el número, el título, la página de la portadilla y la paleta de esa parte ([índice general](/es/docs/configuration-notes-references#índice-general)), así que la misma caja sale parda para los fangales y verde para los carrizales. Cada especie bajo la banda lleva su número, una línea de puntos y su página, y debajo el nombre científico que da el atributo `latin`.
 
 ### 6 · La parte en las cabeceras y en la pestaña
 
@@ -52,7 +52,7 @@ Con `pages: 'body'`, las cabeceras solo salen en las páginas de texto. Las port
 
 ### Añade un tercer hábitat
 
-Una valla más, delante de la primera especie de la marisma, añade un tercer color con su portadilla, su dorso pintado y su fila en el índice, sin tocar la configuración. Quita también la nota del índice, porque la tercera banda y sus especies necesitan ese sitio.
+Un bloque `:::part` más, delante de la primera especie de la marisma, añade un tercer color con su portadilla, su dorso pintado y su fila en el índice, sin tocar la configuración. Quita también la nota del índice, porque la tercera banda y sus especies necesitan ese sitio.
 
 ```diff
 +:::part{number="III" title="Las \\ marismas" palette="band=#6b4a7a"}

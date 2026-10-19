@@ -5,12 +5,12 @@ plain: "Una unitat de llibre de text sobre un riu, de nou pàgines. Cada tema é
 description: "Una unitat de llibre de text infantil a Postext: plantilles que hereten d’una base, estils de requadre encadenats i un mapa pintat retolat des del Markdown."
 question: "Com composo una unitat de llibre de text en tres idiomes amb les mateixes plantilles?"
 aliases: ["llibre de text", "llibre escolar", "primària", "unitat didàctica", "doble pàgina", "pàgina de tema", "fons de pàgina", "solapa de títol", "mapa retolat", "índex per parts", "herència de plantilles", "castellà català anglès", "textbook"]
-pageNotes: {"1": "L’obertura de la unitat: una pintura d’una vall amb el seu riu, de les muntanyes nevades al mar, ocupa la part de dalt, amb dos nens asseguts a l’herba en un racó. A sota, una solapa blava amb el títol El nostre riu, un paràgraf i un requadre blau clar, Aprendràs.", "2": "L’índex: sobre fons blau clar, una solapa blava de títol, dues files de part (A i B) amb els seus temes i apartats, punts guia i números de pàgina, i el mapa com a imatge petita al peu.", "4": "Tema 1, On neix un riu, sobre un fons blau clar: solapa de títol amb el número, dues columnes de text, una tira de tres pintures amb peu, un requadre Prova-ho; a la pàgina dreta, tres requadres amb solapa.", "6": "Tema 2, De la muntanya al mar, sobre un fons verd clar: un sol mapa pintat a doble pàgina amb els noms posats a sobre i tres requadres de curs sota la pàgina dreta.", "8": "Tema 3, Les persones i el riu, sobre un fons arena: text i dos requadres a la pàgina esquerra, tres requadres amb una pintura cadascun a la dreta."}
+pageNotes: {"1": "L’obertura de la unitat: una pintura d’una vall amb el seu riu, de les muntanyes nevades al mar, ocupa la part de dalt, amb dos nens asseguts a l’herba en un racó. A sota, una solapa blava amb el títol El nostre riu, un paràgraf i un requadre blau clar, Aprendràs.", "2": "L’índex: sobre fons blau clar, una solapa blava de títol, dues files de part (A i B) amb els seus temes i apartats, punts conductors i números de pàgina, i el mapa com a imatge petita al peu.", "4": "Tema 1, On neix un riu, sobre un fons blau clar: solapa de títol amb el número, dues columnes de text, una tira de tres pintures amb peu, un requadre Prova-ho; a la pàgina dreta, tres requadres amb solapa.", "6": "Tema 2, De la muntanya al mar, sobre un fons verd clar: un sol mapa pintat a doble pàgina amb els noms posats a sobre i tres requadres de curs sota la pàgina dreta.", "8": "Tema 3, Les persones i el riu, sobre un fons arena: text i dos requadres a la pàgina esquerra, tres requadres amb una pintura cadascun a la dreta."}
 ---
 
 ## Què compondràs
 
-Nou pàgines d’*El nostre riu*, unitat 4 d’un llibre inventat de Ciències socials de 3r, en una pàgina de 210 × 280 mm, en castellà, català i anglès. Una vall pintada obre la unitat, una pàgina d’índex llista dues parts i segueixen tres temes a doble pàgina, cadascun sobre el seu fons: blau aigua, verd camp, arena sol. Cada tema porta una solapa amb el número i el títol, text a dues columnes i requadres amb solapa que creixen amb el seu text. El segon tema és un únic mapa pintat a doble pàgina, amb el riu, els pobles i els tres cursos anomenats des del Markdown. Els tres textos difereixen en una cinquena part o més i caben a les mateixes plantilles: un requadre pren l’alçada que demanen les seves paraules i empeny el següent, i el mapa es redueix una mica abans que qualsevol text.
+Nou pàgines d’*El nostre riu*, unitat 4 d’un llibre inventat de Ciències socials de 3r, en una pàgina de 210 × 280 mm, en castellà, català i anglès. Una vall pintada obre la unitat, una pàgina d’índex llista dues parts i segueixen tres temes a doble pàgina, cadascun sobre el seu fons: blau aigua, verd camp, arena sol. Cada tema porta una solapa amb el número i el títol, text a dues columnes i requadres amb solapa que creixen amb el seu text. El segon tema és un únic mapa pintat a doble pàgina, amb el riu, els pobles i els tres cursos retolats des del Markdown. Els tres textos difereixen en una cinquena part o més i caben a les mateixes plantilles: un requadre pren l’alçada que demanen les seves paraules i empeny el següent, i el mapa es redueix una mica abans que qualsevol text.
 
 ## Elaboració
 
@@ -18,13 +18,13 @@ Nou pàgines d’*El nostre riu*, unitat 4 d’un llibre inventat de Ciències s
 
 <Excerpt region="boxes" />
 
-Un estil de requadre es fa en tres passos. `caja` guarda la forma, la tipografia i la geometria de la solapa; `caja-tema` posa el color del tema a la solapa i a les vinyetes; `dato`, `palabras` i `actividad` fixen el tipus: requadre amb fons, amb vora o amb franja. Els seus colors són entrades de la paleta (`tema`, `tema-tint`), de manera que cada estil s’escriu una vegada i la plantilla d’un tema el tenyeix.
+Un estil de requadre es fa en tres passos. `caja` guarda la forma, la tipografia i la geometria de la solapa; `caja-tema` posa el color del tema a la solapa i als pics; `dato`, `palabras` i `actividad` fixen el tipus: requadre amb fons, amb vora o amb franja. Els seus colors són entrades de la paleta (`tema`, `tema-tint`), de manera que cada estil s’escriu una vegada i la plantilla d’un tema el tenyeix.
 
 ### 2 · Fes que cada tema hereti d’una plantilla base
 
 <Excerpt region="answer" />
 
-La base és una doble pàgina: un fons fins al sagnat, una solapa de títol amb el seu número i un text a dues columnes. Un tema l’estén (`extends: 'tema'`), fixa la seva `palette` (les tres entrades `tema` prenen els colors de la família, i el fons, la solapa, el número i tots els requadres canvien alhora) i hi afegeix els seus marcs. La solapa i el número són decoració ancorada al marc del títol, de manera que la solapa és tan alta com el títol que demani l’idioma. El número és `{headingNumber}`, el comptador del títol que ha pres el marc, pintat sobre el farciment esquerre del marc: cap tanca de pàgina el repeteix, i un clic sobre ell arriba al número, no al marc.
+La base és una doble pàgina: un fons fins a la sang, una solapa de títol amb el seu número i un text a dues columnes. Un tema l’estén (`extends: 'tema'`), fixa la seva `palette` (les tres entrades `tema` prenen els colors de la família, i el fons, la solapa, el número i tots els requadres canvien alhora) i hi afegeix els seus marcs. La solapa i el número són decoració ancorada al marc del títol, de manera que la solapa és tan alta com el títol que demani l’idioma. El número és `{headingNumber}`, el comptador del títol que ha rebut el marc, pintat sobre el farciment esquerre del marc: cap bloc de pàgina el repeteix, i un clic sobre ell arriba al número, no al marc.
 
 ### 3 · Deixa que els grups es repartin el lloc
 
@@ -40,7 +40,7 @@ El mapa és una pintura sense una sola lletra. Cada lloc és una àncora de la i
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` llista els temes i els seus apartats i manté cada fila de part amb les seves entrades. Una tanca `:::part` amb `parts.page: false` és només una fila de l’índex i una secció per a les capçaleres: no afegeix portadella. L’índex és una pàgina composta: la seva plantilla té un marc amb `takes: "toc"` que rep el `:::toc` i el compon amb les regles de l’índex mateix, de manera que les files de part, els punts guia i `keep` funcionen com al text corregut, i el fons clar és la decoració de la plantilla.
+`:::toc{keep="part" levels="1-2"}` llista els temes i els seus apartats i manté cada fila de part amb les seves entrades. Una línia `:::part` amb `parts.page: false` és només una fila de l’índex i una secció per a les capçaleres: no afegeix portadella. L’índex és una pàgina composta: la seva plantilla té un marc amb `takes: "toc"` que rep el `:::toc` i el compon amb les regles de l’índex mateix, de manera que les files de part, els punts conductors i `keep` funcionen com al text corregut, i el fons clar és la decoració de la plantilla.
 
 ## Variants
 

@@ -5,17 +5,17 @@ export const metadata = {
   sidebarTitle: 'Configuración',
   description: 'Qué es una configuración de Postext y en cuál de las diecinueve páginas de la referencia se explica cada grupo de ajustes',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '5 min',
   order: 4,
-  plainSummary: "Esta página abre la referencia de todos los ajustes que deciden el aspecto de tus páginas. Un solo grupo de ajustes guarda todas las decisiones: tamaño de página, número de columnas, tipografías, cuerpo del texto, títulos, recuadros, colores y mucho más. Solo escribes los ajustes que quieres cambiar, porque cada uno parte de un valor razonable. La referencia está repartida en diecinueve páginas. La lista de esta página enlaza todas las secciones, así que puedes ir directamente a la parte que necesitas.",
+  plainSummary: "Esta página abre la referencia de todos los ajustes que deciden el aspecto de tus páginas. Un solo grupo de ajustes reúne todas las decisiones: tamaño de página, número de columnas, tipos de letra, tamaño del texto, títulos, recuadros, colores y mucho más. Solo escribes los ajustes que quieres cambiar, porque cada uno tiene ya un valor razonable. La referencia está repartida en diecinueve páginas. La lista de esta página enlaza todas las secciones, así que puedes ir directamente a la parte que necesitas.",
 };
 
 # Configuración
 
-**Cada decisión de composición en Postext está controlada por un único objeto de configuración.**
+**En Postext, todas las decisiones de maquetación dependen de un único objeto de configuración.**
 
-`PostextConfig` controla las dimensiones de página, la disposición de columnas, la tipografía del cuerpo de texto, los estilos de encabezado, el idioma del documento (`locale`) y más. Todas las propiedades son opcionales — Postext incluye valores por defecto sensatos, inspirados en la tipografía tradicional de libros. Solo necesitas especificar lo que quieras cambiar.
+`PostextConfig` controla las dimensiones de la página, la disposición de las columnas, la tipografía del texto base, los estilos de los encabezados, el idioma del documento (`locale`) y mucho más. Todas las propiedades son opcionales: Postext trae valores por defecto razonables, inspirados en la tipografía tradicional del libro. Solo tienes que indicar lo que quieras cambiar.
 
 ```ts
 import { buildDocument } from 'postext';
@@ -28,7 +28,7 @@ const document = buildDocument(content, {
 });
 ```
 
-Para una visión general de cómo el motor procesa esta configuración, consulta la página de [Arquitectura](/es/docs/architecture).
+Para ver en conjunto cómo procesa el motor esta configuración, consulta la página [Arquitectura](/es/docs/architecture).
 
 
 ## Índice
@@ -37,107 +37,107 @@ La referencia está repartida en diecinueve páginas. Cada grupo de esta lista e
 
 **[Página y disposición](/es/docs/configuration-page-layout)**
 
-- [Página](/es/docs/configuration-page-layout#página) — tamaño, márgenes, rejilla base, marcas de corte, [encuadernación](/es/docs/configuration-page-layout#encuadernación).
-- [Disposición](/es/docs/configuration-page-layout#disposición) — número de columnas, medianil, filetes, [escritura vertical](/es/docs/configuration-page-layout#escritura-vertical).
+- [Página](/es/docs/configuration-page-layout#página): tamaño, márgenes, rejilla base, marcas de corte, [numeración](/es/docs/configuration-page-layout#numeración) y [encuadernación](/es/docs/configuration-page-layout#encuadernación).
+- [Disposición](/es/docs/configuration-page-layout#disposición): número de columnas, medianiles, filetes y [escritura vertical](/es/docs/configuration-page-layout#escritura-vertical).
 
-**[Encabezados y pies de página](/es/docs/configuration-headers-footers)**
+**[Cabeceras y pies de página](/es/docs/configuration-headers-footers)**
 
-- [Encabezados y pies](/es/docs/configuration-headers-footers#encabezados-y-pies) — elementos de texto y línea por página con marcadores, paridad y alineación.
+- [Cabeceras y pies](/es/docs/configuration-headers-footers#cabeceras-y-pies): los elementos de texto, filetes, cajas e imágenes de cada página, con marcadores de posición, paridad, tipos de página y colocación.
 
-**[Texto de cuerpo](/es/docs/configuration-text)**
+**[Texto base](/es/docs/configuration-text)**
 
-- [Texto de cuerpo](/es/docs/configuration-text#texto-de-cuerpo) — tipografía, separación silábica, tabulaciones, viudas y huérfanas.
+- [Texto base](/es/docs/configuration-text#texto-base): tipografía, justificación y corte de líneas, [citas](/es/docs/configuration-text#citas), [verso](/es/docs/configuration-text#verso), [tabulaciones](/es/docs/configuration-text#tabulaciones) y [letras capitulares](/es/docs/configuration-text#letras-capitulares).
 
 **[Separación silábica e idioma](/es/docs/configuration-language)**
 
-- [Separación silábica](/es/docs/configuration-language#separación-silábica) — patrones de separación silábica, palabras que no se parten, texto en bandera.
-- [Idioma del documento](/es/docs/configuration-language#idioma-del-documento) — el `locale` de primer nivel: respaldo de la separación silábica, tipos de recurso integrados y cadenas de continuación de tablas y de avisos partidos, lengua etiquetada en un PDF accesible; las [cifras](/es/docs/configuration-language#cifras-del-documento) (`numerals`) y la [dirección del texto](/es/docs/configuration-language#dirección-del-texto) (`direction`) que de él se siguen; y los [idiomas y escrituras](/es/docs/configuration-language#idiomas-y-escrituras) que Postext compone. La guía de los libros de derecha a izquierda es [Composición árabe](/es/docs/arabic-layout).
-- [Idiomas y escrituras](/es/docs/configuration-language#idiomas-y-escrituras) — las escrituras que compone Postext y las páginas que tratan cada una.
-- [Texto árabe](/es/docs/configuration-language#texto-árabe) — formas de las letras, kashida, signos vocálicos y cifras del texto árabe.
+- [Separación silábica](/es/docs/configuration-language#separación-silábica): patrones de separación, palabras que no se parten y texto en bandera.
+- [Idioma del documento](/es/docs/configuration-language#idioma-del-documento): el `locale` de primer nivel, que fija el idioma de respaldo de la separación silábica, los tipos de recurso integrados, los textos de continuación de las tablas y de los recuadros partidos y el idioma que se declara en un PDF accesible; las [cifras](/es/docs/configuration-language#cifras-del-documento) (`numerals`) y la [dirección del texto](/es/docs/configuration-language#dirección-del-texto) (`direction`) que se deducen de él, y los [idiomas y escrituras](/es/docs/configuration-language#idiomas-y-escrituras) que Postext compone. La guía de los libros de derecha a izquierda es [Composición árabe](/es/docs/arabic-layout).
+- [Idiomas y escrituras](/es/docs/configuration-language#idiomas-y-escrituras): los sistemas de escritura que compone Postext y las páginas que explican cada uno.
+- [Texto árabe](/es/docs/configuration-language#texto-árabe): formas contextuales de las letras, kashida, signos vocálicos y cifras del texto árabe.
 
 **[Encabezados](/es/docs/configuration-headings)**
 
-- [Encabezados](/es/docs/configuration-headings#encabezados) — valores generales y sobrescrituras H1–H6.
+- [Encabezados](/es/docs/configuration-headings#encabezados): valores comunes a todos los niveles y valores propios de cada uno, de H1 a H6.
 
 **[Viudas, huérfanas y equilibrado](/es/docs/configuration-page-flow)**
 
-- [Huérfanas, viudas, *runts* y reglas de cohesión](/es/docs/configuration-page-flow#huérfanas-viudas-runts-y-reglas-de-cohesión) — claves de `bodyText` que mantienen juntas las líneas y los bloques en un salto de columna.
-- [Equilibrado de columnas](/es/docs/configuration-page-flow#equilibrado-de-columnas) — las palancas que igualan el final de todas las columnas, en orden editorial.
+- [Huérfanas, viudas, líneas cortas y reglas de cohesión](/es/docs/configuration-page-flow#huérfanas-viudas-líneas-cortas-y-reglas-de-cohesión): las claves de `bodyText` que mantienen juntas líneas y bloques cuando hay un salto de columna.
+- [Equilibrado de columnas](/es/docs/configuration-page-flow#equilibrado-de-columnas): los recursos que hacen que todas las columnas terminen a la misma altura, aplicados por orden de prioridad editorial.
 
 **[Listas y matemáticas](/es/docs/configuration-lists-math)**
 
-- [Listas no ordenadas](/es/docs/configuration-lists-math#listas-no-ordenadas) y [Listas ordenadas](/es/docs/configuration-lists-math#listas-ordenadas) — viñetas, numeración, anidamiento.
-- [Matemáticas](/es/docs/configuration-lists-math#matemáticas) — renderizado LaTeX, escala, color, márgenes.
+- [Listas no ordenadas](/es/docs/configuration-lists-math#listas-no-ordenadas) y [Listas ordenadas](/es/docs/configuration-lists-math#listas-ordenadas): viñetas, numeración y anidamiento.
+- [Matemáticas](/es/docs/configuration-lists-math#matemáticas): cómo se dibujan las fórmulas LaTeX (escala, color y márgenes).
 
 **[Notas y referencias](/es/docs/configuration-notes-references)**
 
-- [Notas al pie](/es/docs/configuration-notes-references#notas-al-pie) — `footnotes`: adónde van las notas citadas con `[^id]`, cómo se numeran y qué aspecto tienen.
-- [Numeración de líneas](/es/docs/configuration-notes-references#numeración-de-líneas) — `lineNumbers`: el número de cada quinta línea de los versos, o del texto, en el margen; qué se cuenta, dónde vuelve a empezar la cuenta, a qué lado van los números.
-- [Referencias cruzadas](/es/docs/configuration-notes-references#referencias-cruzadas) — `crossRefs`: las palabras que se imprimen junto al número o la página de un `:ref`, y su estilo por defecto.
-- [Citas](/es/docs/configuration-notes-references#citas) — `citations`: el estilo de cita y el aspecto de las citas y de la bibliografía.
-- [Índice de contenidos](/es/docs/configuration-notes-references#índice-de-contenidos) — lo que imprime `:::toc`: tipografía de las entradas, líneas de puntos, números de página, líneas de autores, filas de parte.
-- [Índice analítico](/es/docs/configuration-notes-references#índice-analítico) — lo que imprime `:::index`: tipografía de las entradas, sangrías, separadores e intervalos de páginas, grupos por inicial, idioma de ordenación.
+- [Notas al pie](/es/docs/configuration-notes-references#notas-al-pie) (`footnotes`): adónde van las notas citadas con `[^id]`, cómo se numeran y qué aspecto tienen.
+- [Numeración de líneas](/es/docs/configuration-notes-references#numeración-de-líneas) (`lineNumbers`): un número en el margen cada cinco líneas de verso, o de texto; qué se cuenta, dónde vuelve a empezar la cuenta y en qué lado van los números.
+- [Referencias cruzadas](/es/docs/configuration-notes-references#referencias-cruzadas) (`crossRefs`): las palabras que se imprimen alrededor del número o de la página de un `:ref`, y su estilo por defecto.
+- [Citas](/es/docs/configuration-notes-references#citas) (`citations`): el estilo de cita y el aspecto de las citas y de la bibliografía.
+- [Índice general](/es/docs/configuration-notes-references#índice-general): qué imprime `:::toc` (tipografía de las entradas, líneas de puntos, números de página, líneas de autor y filas de parte).
+- [Índice analítico](/es/docs/configuration-notes-references#índice-analítico): qué imprime `:::index` (tipografía de las entradas, sangrías, separadores e intervalos de páginas, grupos por letra inicial e idioma de ordenación).
 
 **[Tipografía de Asia oriental](/es/docs/configuration-east-asian)**
 
-- [Tipografía de Asia oriental](/es/docs/configuration-east-asian#tipografía-de-asia-oriental) — `cjk`: las convenciones regionales y el corte de línea del texto en chino, japonés y coreano, cómo se ensanchan sus líneas justificadas, los anchos de la puntuación y la puntuación colgada, el espacio entre chino y latín, la retícula de caracteres, los números que van de pie en texto vertical, y las marcas, el ruby, las notas warichu y las marcas de kanbun. Las guías de todo ello son [Composición china](/es/docs/chinese-layout) y [Composición japonesa](/es/docs/japanese-layout).
+- [Tipografía de Asia oriental](/es/docs/configuration-east-asian#tipografía-de-asia-oriental) (`cjk`): las convenciones regionales y el corte de líneas del texto chino, japonés y coreano; cómo se reparte el espacio en sus líneas justificadas; el ancho de la puntuación y la puntuación colgada; el espacio entre caracteres chinos y latinos; la retícula de caracteres; los números que van de pie en el texto vertical, y las marcas de énfasis, el ruby, las notas warichu y las marcas de kanbun. Las guías completas son [Composición china](/es/docs/chinese-layout) y [Composición japonesa](/es/docs/japanese-layout).
 
 **[Recursos y tablas](/es/docs/configuration-resources)**
 
-- [Tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso) — numeración tipada para figuras, tablas y tipos personalizados.
-- [Estilo de tablas](/es/docs/configuration-resources#estilo-de-tablas) (con [estilos de tabla con nombre](/es/docs/configuration-resources#estilos-de-tabla-con-nombre)) y [Estilo de pies de recurso](/es/docs/configuration-resources#estilo-de-pies-de-recurso) — tipografía y decoración de las tablas-recurso y sus pies.
-- [Estilo de diagramas](/es/docs/configuration-resources#estilo-de-diagramas) — recoloreado a una sola tinta de los diagramas SVG incrustados para impresión con tinta plana.
-- [Estilo de vídeo](/es/docs/configuration-resources#estilo-de-vídeo) — `videoStyle`: la marca de reproducción y el código QR sobre el póster de un vídeo, y lo que ofrecen sus reproductores en el visor HTML y en EPUB.
+- [Tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso): numeración propia de cada tipo, para figuras, tablas y tipos personalizados.
+- [Estilo de tablas](/es/docs/configuration-resources#estilo-de-tablas) (con [estilos de tabla con nombre](/es/docs/configuration-resources#estilos-de-tabla-con-nombre)) y [Estilo de pies de recurso](/es/docs/configuration-resources#estilo-de-pies-de-recurso): tipografía y decoración de las tablas y de sus pies.
+- [Estilo de diagramas](/es/docs/configuration-resources#estilo-de-diagramas): cómo se recolorean a una sola tinta los diagramas SVG insertados, para imprimir con tinta directa.
+- [Estilo de vídeo](/es/docs/configuration-resources#estilo-de-vídeo) (`videoStyle`): la marca de reproducción y el código QR que se imprimen sobre el póster de un vídeo, y lo que ofrecen sus reproductores en el visor HTML y en EPUB.
 
 **[Estilos y partes](/es/docs/configuration-styles)**
 
-- [Estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo) — estilos con nombre para contenedores `:::paragraphs`: bibliografías, glosarios, notas.
-- [Estilos de chip](/es/docs/configuration-styles#estilos-de-chip) — `chipStyles`: estilos con nombre para el `:chip[…]` en línea: la caja de un banco de palabras, una tecla, una etiqueta.
-- [Estilos de resaltado](/es/docs/configuration-styles#estilos-de-resaltado) — `markStyles`: estilos con nombre para el `:mark[…]` en línea: la franja detrás de una frase resaltada que pasa de línea.
-- [Listados de código](/es/docs/configuration-styles#listados-de-código) — `codeStyle`: la letra, la caja, el ancho del tabulador, las líneas largas, los números de línea y los colores de los elementos de los listados ```` ``` ````, el coloreado de sintaxis y su enganche para resaltadores, y el código en línea en una letra de código.
-- [Partes](/es/docs/configuration-styles#partes) — páginas separadoras de parte para contenedores `:::part`: paridad, área de cuerpo, diseño de apertura, tipografía del cuerpo.
-- [Estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado) — estilos con nombre para encabezados `{style="…"}`: capítulos sin numerar, preliminares con sus propias cabeceras, geometría y paleta.
+- [Estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo): estilos con nombre para los contenedores `:::paragraphs` (bibliografías, glosarios, notas).
+- [Estilos de chip](/es/docs/configuration-styles#estilos-de-chip) (`chipStyles`): estilos con nombre para el `:chip[…]` en línea, como la caja de un banco de palabras, una tecla o una etiqueta.
+- [Estilos de resaltado](/es/docs/configuration-styles#estilos-de-resaltado) (`markStyles`): estilos con nombre para el `:mark[…]` en línea, es decir, la franja que hay detrás de una frase resaltada y que la acompaña cuando pasa a la línea siguiente.
+- [Listados de código](/es/docs/configuration-styles#listados-de-código) (`codeStyle`): la letra, la caja, el ancho del tabulador, las líneas largas, los números de línea y los colores de los elementos sintácticos de los listados ```` ``` ````; el coloreado de sintaxis y su enganche para resaltadores externos, y el código en línea con letra de código.
+- [Partes](/es/docs/configuration-styles#partes): las páginas que separan las partes en los contenedores `:::part` (paridad, caja de texto, diseño de la apertura y tipografía del texto).
+- [Estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado): estilos con nombre para los encabezados con `{style="…"}`, como los capítulos sin numerar o los preliminares con sus propios titulillos; su geometría y su paleta.
 
-**[Recuadros de aviso](/es/docs/configuration-callouts)**
+**[Recuadros](/es/docs/configuration-callouts)**
 
-- [Estilos de aviso](/es/docs/configuration-callouts#estilos-de-aviso) — notas, consejos y objetivos en caja para contenedores `:::callout`.
+- [Estilos de recuadro](/es/docs/configuration-callouts#estilos-de-recuadro): notas, consejos y objetivos en recuadro para los contenedores `:::callout`.
 
 **[Ajustes de cómics](/es/docs/configuration-comics)**
 
-- [Cómics](/es/docs/configuration-comics#cómics) — `comics`: el marco y las calles de las páginas de cómic, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto. La guía es [Cómics](/es/docs/comics).
+- [Cómics](/es/docs/configuration-comics#cómics) (`comics`): el marco y las calles de las páginas de cómic, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto. La guía es [Cómics](/es/docs/comics).
 
 **[Ajustes de páginas compuestas](/es/docs/configuration-composed-pages)**
 
-- [Plantillas de página](/es/docs/configuration-composed-pages#plantillas-de-página) — `pageTemplates`: los marcos, grupos y decoración de una página compuesta, la herencia entre plantillas y las variantes de página impar y par. [Estilos de rótulo](/es/docs/configuration-composed-pages#estilos-de-rótulo) — `labelStyles`: el aspecto de los rótulos que se colocan en los anclajes de una imagen. Todos los problemas que puede tener una plantilla están en [Avisos de las plantillas de página](/es/docs/configuration-composed-pages#avisos-de-las-plantillas-de-página).
+- [Plantillas de página](/es/docs/configuration-composed-pages#plantillas-de-página) (`pageTemplates`): los marcos, grupos y decoración de una página compuesta, la herencia entre plantillas y las variantes para páginas impares y pares. [Estilos de rótulo](/es/docs/configuration-composed-pages#estilos-de-rótulo) (`labelStyles`): el aspecto de los rótulos que se colocan sobre las anclas de una imagen. Todos los problemas que puede tener una plantilla se enumeran en [Avisos de las plantillas de página](/es/docs/configuration-composed-pages#avisos-de-las-plantillas-de-página).
 
 **[Fuentes, colores y salida](/es/docs/configuration-fonts-colors-viewers)**
 
-- [Unidades y colores](/es/docs/configuration-fonts-colors-viewers#unidades-y-colores) + [Paleta de colores](/es/docs/configuration-fonts-colors-viewers#paleta-de-colores) — `Dimension`, `ColorValue`, colores con nombre.
-- [Fuentes personalizadas](/es/docs/configuration-fonts-colors-viewers#fuentes-personalizadas) — declarar familias tipográficas subidas por el usuario junto con Google Fonts.
-- [Visor HTML](/es/docs/configuration-fonts-colors-viewers#visor-html) — ancho objetivo de columna y cortes para el backend HTML.
-- [Visor Canvas](/es/docs/configuration-fonts-colors-viewers#visor-canvas) — `canvasViewer`: el espacio entre las dos páginas de un par y entre una fila y la siguiente en el Canvas del Sandbox.
-- [Generación de PDF (configuración)](/es/docs/configuration-fonts-colors-viewers#generación-de-pdf-configuración) — outlines, salida accesible (etiquetada) y espacio de color forzado para el backend PDF.
-- [Producción para imprenta (configuración)](/es/docs/configuration-fonts-colors-viewers#producción-para-imprenta-configuración) — `print`: PDF/X-1a y PDF/X-4, los perfiles de salida ICC, el negro (grises solo en K, sobreimpresión, negro enriquecido), los colores definidos en CMYK, el preflight y la simulación de impresión.
-- [Comprobación del contraste (configuración)](/es/docs/configuration-fonts-colors-viewers#comprobación-del-contraste-configuración) — `contrast`: el texto frente a su fondo en el nivel AA o AAA de WCAG, en pantalla y sobre el papel del perfil de salida, y el texto calado demasiado fino para imprenta.
-- [Comprobación del contenido (configuración)](/es/docs/configuration-fonts-colors-viewers#comprobación-del-contenido-configuración) — `checks.contentInConfig`: textos de diseño que guardan el texto del libro en lugar de marcadores, con una lista de frases permitidas para el título y la editorial.
-- [Visor Folio (configuración)](/es/docs/configuration-fonts-colors-viewers#visor-folio-configuración) — papel, encuadernación, superficie y luz del visor del libro en 3D.
-- [Depuración](/es/docs/configuration-fonts-colors-viewers#depuración) — superposiciones visuales y avisos de autoría para el editor.
+- [Unidades y colores](/es/docs/configuration-fonts-colors-viewers#unidades-y-colores) y [Paleta de colores](/es/docs/configuration-fonts-colors-viewers#paleta-de-colores): `Dimension`, `ColorValue` y los colores con nombre.
+- [Fuentes personalizadas](/es/docs/configuration-fonts-colors-viewers#fuentes-personalizadas): cómo declarar las familias tipográficas que sube el usuario, junto a las de Google Fonts.
+- [Visor HTML](/es/docs/configuration-fonts-colors-viewers#visor-html): el ancho de columna deseado y el corte de líneas de la salida HTML.
+- [Visor Canvas](/es/docs/configuration-fonts-colors-viewers#visor-canvas) (`canvasViewer`): el espacio entre las dos páginas de un par y entre una fila y la siguiente en el Canvas del Sandbox.
+- [Generación de PDF (configuración)](/es/docs/configuration-fonts-colors-viewers#generación-de-pdf-configuración): marcadores del documento (outlines), salida accesible (etiquetada) y espacio de color forzado en la salida PDF.
+- [Producción para imprenta (configuración)](/es/docs/configuration-fonts-colors-viewers#producción-para-imprenta-configuración) (`print`): PDF/X-1a y PDF/X-4, los perfiles ICC de salida, el negro (grises solo en K, sobreimpresión, negro enriquecido), los colores definidos en CMYK, la verificación previa (preflight) y la simulación de impresión.
+- [Comprobación del contraste (configuración)](/es/docs/configuration-fonts-colors-viewers#comprobación-del-contraste-configuración) (`contrast`): el contraste del texto con su fondo según los niveles AA o AAA de WCAG, en pantalla y sobre el papel del perfil de salida, y el texto calado demasiado fino para la imprenta.
+- [Comprobación del contenido (configuración)](/es/docs/configuration-fonts-colors-viewers#comprobación-del-contenido-configuración) (`checks.contentInConfig`): avisa de los textos del diseño que contienen el propio texto del libro en lugar de marcadores de posición, con una lista de frases permitidas para el título y la editorial.
+- [Visor Folio (configuración)](/es/docs/configuration-fonts-colors-viewers#visor-folio-configuración): papel, encuadernación, superficie y luz del visor del libro en 3D.
+- [Depuración](/es/docs/configuration-fonts-colors-viewers#depuración): superposiciones visuales y avisos de autoría para el editor.
 
 **[Uso programático](/es/docs/configuration-programmatic-usage)**
 
-- [Uso programático](/es/docs/configuration-programmatic-usage#uso-programático) — `buildDocument`, los avisos que registra, resolvers, cachés.
-- [Ejecutar la composición en un Web Worker](/es/docs/configuration-programmatic-usage#ejecutar-la-composición-en-un-web-worker) — builds fuera del hilo principal con cancelación.
+- [Uso programático](/es/docs/configuration-programmatic-usage#uso-programático): `buildDocument`, los avisos que devuelve, los resolvers y las cachés.
+- [Ejecutar la composición en un Web Worker](/es/docs/configuration-programmatic-usage#ejecutar-la-composición-en-un-web-worker): la composición fuera del hilo principal, con posibilidad de cancelarla.
 
 **[Archivos PDF](/es/docs/configuration-pdf-output)**
 
-- [Generación de PDF](/es/docs/configuration-pdf-output#generación-de-pdf) — `postext-pdf`: proveedores de fuentes, fuentes CJK, workers y archivos listos para imprenta.
+- [Generación de PDF](/es/docs/configuration-pdf-output#generación-de-pdf) (`postext-pdf`): proveedores de fuentes, fuentes CJK, workers y archivos listos para imprenta.
 
 **[HTML, Folio y EPUB](/es/docs/configuration-html-folio-epub)**
 
-- [Integrar el visor HTML](/es/docs/configuration-html-folio-epub#integrar-el-visor-html) y [Generación de PDF](/es/docs/configuration-pdf-output#generación-de-pdf) — recetas completas.
-- [Un libro en 3D (`postext-folio`)](/es/docs/configuration-html-folio-epub#un-libro-en-3d-postext-folio) — el documento compuesto como un libro impreso abierto sobre una mesa, con hojas que el lector pasa.
-- [Libros EPUB](/es/docs/configuration-html-folio-epub#libros-epub-postext-epub) — archivos EPUB 3 de maquetación fija y fluida a partir de la misma maquetación, y cómo comprobarlos con EPUBCheck.
+- [Integrar el visor HTML](/es/docs/configuration-html-folio-epub#integrar-el-visor-html) y [Generación de PDF](/es/docs/configuration-pdf-output#generación-de-pdf): recetas completas, de principio a fin.
+- [Un libro en 3D (`postext-folio`)](/es/docs/configuration-html-folio-epub#un-libro-en-3d-postext-folio): el documento maquetado como un libro impreso abierto sobre una mesa, con hojas que el lector puede pasar.
+- [Libros EPUB](/es/docs/configuration-html-folio-epub#libros-epub-postext-epub): archivos EPUB 3 de maquetación fija y de maquetación fluida generados a partir de la misma composición, y cómo validarlos con EPUBCheck.
 
 **[Paquetes .postext](/es/docs/configuration-bundles)**
 
-- [Paquetes (archivos `.postext`)](/es/docs/configuration-bundles#paquetes-archivos-postext) — un libro entero en un solo archivo: crear, abrir y construir archivos `.postext` desde el código.
+- [Paquetes (archivos `.postext`)](/es/docs/configuration-bundles#paquetes-archivos-postext): un libro entero en un solo archivo; cómo crear, abrir y compilar archivos `.postext` desde el código.

@@ -398,8 +398,8 @@
       "heading": {
         "en": "Mirrored margins",
         "es": "Márgenes simétricos (espejo)",
-        "ca": "Marges simètrics (mirall)",
-        "zh": "镜像页边距",
+        "ca": "Marges simètrics",
+        "zh": "对称页边距",
         "ar": "الهوامش المتناظرة",
         "ja": "見開きの余白",
         "pt": "Margens espelhadas",
@@ -902,7 +902,7 @@
         "ja": "グリッドを崩す要素",
         "pt": "Elementos que rompem a grade",
         "fr": "Éléments qui rompent la grille",
-        "de": "Rasterbrechende Elemente",
+        "de": "Elemente, die das Raster brechen",
         "it": "Elementi che rompono la griglia"
       }
     },
@@ -2217,7 +2217,7 @@
       "slug": "configuration-text",
       "heading": {
         "en": "Body text",
-        "es": "Texto de cuerpo",
+        "es": "Texto base",
         "ca": "Text de cos",
         "zh": "正文",
         "ar": "نص المتن",
@@ -2348,7 +2348,7 @@
       "slug": "configuration-text",
       "heading": {
         "en": "Body text",
-        "es": "Texto de cuerpo",
+        "es": "Texto base",
         "ca": "Text de cos",
         "zh": "正文",
         "ar": "نص المتن",
@@ -2471,7 +2471,7 @@
       "slug": "configuration-text",
       "heading": {
         "en": "Body text",
-        "es": "Texto de cuerpo",
+        "es": "Texto base",
         "ca": "Text de cos",
         "zh": "正文",
         "ar": "نص المتن",
@@ -2748,15 +2748,15 @@
       "slug": "configuration-page-flow",
       "heading": {
         "en": "Orphans, widows, runts, and keep-together rules",
-        "es": "Huérfanas, viudas, *runts* y reglas de cohesión",
-        "ca": "Òrfenes, vídues, *runts* i regles de cohesió",
+        "es": "Huérfanas, viudas, líneas cortas y reglas de cohesión",
+        "ca": "Òrfenes, vídues, línies curtes i regles de cohesió",
         "zh": "段首孤行、段末孤行、孤字与不拆分规则",
         "ar": "الأسطر اليتيمة والأرامل والكلمات المعزولة وقواعد الإبقاء معًا",
         "ja": "オーファン、ウィドウ、ラント、分割禁止の規則",
         "pt": "Órfãs, viúvas, linhas curtas e regras de manter junto",
         "fr": "Orphelines, veuves, lignes creuses et règles de maintien",
         "de": "Waisen, Witwen, zu kurze Ausgangszeilen und Regeln zum Zusammenhalten",
-        "it": "Orfane, vedove, righe finali corte e regole per tenere unito"
+        "it": "Orfane, vedove, righe finali corte e regole di tenuta"
       }
     },
     "research": [
@@ -3348,7 +3348,7 @@
         "pt": "Paradas de tabulação",
         "fr": "Taquets de tabulation",
         "de": "Tabulatoren",
-        "it": "Punti di tabulazione"
+        "it": "Tabulatori"
       }
     },
     "detect": {
@@ -3896,7 +3896,7 @@
       "heading": {
         "en": "Unordered Lists",
         "es": "Listas no ordenadas",
-        "ca": "Llistes no ordenades",
+        "ca": "Llistes amb pics",
         "zh": "无序列表",
         "ar": "القوائم غير المرقّمة",
         "ja": "箇条書きリスト",
@@ -4029,7 +4029,7 @@
       "heading": {
         "en": "Ordered Lists",
         "es": "Listas ordenadas",
-        "ca": "Llistes ordenades",
+        "ca": "Llistes numerades",
         "zh": "有序列表",
         "ar": "القوائم المرقّمة",
         "ja": "番号付きリスト",
@@ -4408,7 +4408,7 @@
         "es": "Formato en línea",
         "ca": "Format en línia",
         "zh": "行内格式",
-        "ar": "التنسيق المضمّن",
+        "ar": "التنسيق داخل السطر",
         "ja": "インライン書式",
         "pt": "Formatação em linha",
         "fr": "Mise en forme en ligne",
@@ -4538,7 +4538,7 @@
         "es": "Formato en línea",
         "ca": "Format en línia",
         "zh": "行内格式",
-        "ar": "التنسيق المضمّن",
+        "ar": "التنسيق داخل السطر",
         "ja": "インライン書式",
         "pt": "Formatação em linha",
         "fr": "Mise en forme en ligne",
@@ -4795,8 +4795,8 @@
         "zh": "块结构",
         "ar": "البنى الكتلية",
         "ja": "ブロック要素",
-        "pt": "Construções de bloco",
-        "fr": "Constructions de bloc",
+        "pt": "Elementos de bloco",
+        "fr": "Types de blocs",
         "de": "Blockelemente",
         "it": "Costrutti di blocco"
       }
@@ -5090,7 +5090,7 @@
         "zh": "排版前加载字体",
         "ar": "تحميل الخطوط قبل الإخراج",
         "ja": "レイアウトの前にフォントを読み込む",
-        "pt": "Carregar as fontes antes do layout",
+        "pt": "Carregar as fontes antes da diagramação",
         "fr": "Charger les polices avant la mise en page",
         "de": "Schriften vor dem Layout laden",
         "it": "Caricare i font prima dell’impaginazione"
@@ -5496,9 +5496,9 @@
       "slug": "justification",
       "heading": {
         "en": "Supported Locales",
-        "es": "Idiomas soportados",
+        "es": "Idiomas admitidos",
         "ca": "Llengües compatibles",
-        "zh": "支持的语言区域",
+        "zh": "支持的语言",
         "ar": "اللغات المدعومة",
         "ja": "対応するロケール",
         "pt": "Idiomas compatíveis",
@@ -5872,10 +5872,10 @@
         "zh": "按级别覆盖",
         "ar": "تجاوزات كل مستوى",
         "ja": "レベルごとの上書き",
-        "pt": "Sobrescritas por nível",
+        "pt": "Valores por nível",
         "fr": "Réglages par niveau",
         "de": "Überschreibungen pro Ebene",
-        "it": "Sovrascritture per livello"
+        "it": "Personalizzazioni per livello"
       }
     },
     "research": [
@@ -5996,10 +5996,10 @@
         "zh": "按级别覆盖",
         "ar": "تجاوزات كل مستوى",
         "ja": "レベルごとの上書き",
-        "pt": "Sobrescritas por nível",
+        "pt": "Valores por nível",
         "fr": "Réglages par niveau",
         "de": "Überschreibungen pro Ebene",
-        "it": "Sovrascritture per livello"
+        "it": "Personalizzazioni per livello"
       }
     },
     "research": [
@@ -6115,8 +6115,8 @@
       "slug": "configuration-headings",
       "heading": {
         "en": "Break before",
-        "es": "Saltar antes",
-        "ca": "Saltar abans",
+        "es": "Salto de página antes del encabezado",
+        "ca": "Salt de pàgina previ",
         "zh": "前置分页",
         "ar": "الفاصل قبل العنوان",
         "ja": "前で改ページ",
@@ -6226,15 +6226,15 @@
       "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
-        "es": "Span y diseño avanzado",
-        "ca": "Span i disseny avançat",
+        "es": "Apertura a toda página y diseño avanzado",
+        "ca": "Extensió i disseny avançat",
         "zh": "通栏与高级设计",
         "ar": "الامتداد والتصميم المتقدم",
         "ja": "幅と詳細デザイン",
         "pt": "Largura e design avançado",
         "fr": "Étendue et maquette avancée",
         "de": "Seitenbreite und erweiterte Gestaltung",
-        "it": "Estensione e progetto grafico avanzato"
+        "it": "Estensione e grafica avanzata"
       }
     },
     "research": [
@@ -6358,15 +6358,15 @@
       "slug": "configuration-headings",
       "heading": {
         "en": "Span and advanced design",
-        "es": "Span y diseño avanzado",
-        "ca": "Span i disseny avançat",
+        "es": "Apertura a toda página y diseño avanzado",
+        "ca": "Extensió i disseny avançat",
         "zh": "通栏与高级设计",
         "ar": "الامتداد والتصميم المتقدم",
         "ja": "幅と詳細デザイン",
         "pt": "Largura e design avançado",
         "fr": "Étendue et maquette avancée",
         "de": "Seitenbreite und erweiterte Gestaltung",
-        "it": "Estensione e progetto grafico avanzato"
+        "it": "Estensione e grafica avanzata"
       }
     },
     "research": [
@@ -7225,12 +7225,12 @@
       "slug": "configuration-headers-footers",
       "heading": {
         "en": "Headers & footers",
-        "es": "Encabezados y pies",
+        "es": "Cabeceras y pies",
         "ca": "Capçaleres i peus",
         "zh": "页眉与页脚",
-        "ar": "رؤوس الصفحات وتذييلاتها",
+        "ar": "الترويسات والتذييلات",
         "ja": "柱とノンブル",
-        "pt": "Cabeços e rodapés",
+        "pt": "Cabeçalhos e rodapés",
         "fr": "En-têtes et pieds de page",
         "de": "Kopf- und Fußzeilen",
         "it": "Intestazioni e piè di pagina"
@@ -7494,12 +7494,12 @@
       "slug": "configuration-headers-footers",
       "heading": {
         "en": "Headers & footers",
-        "es": "Encabezados y pies",
+        "es": "Cabeceras y pies",
         "ca": "Capçaleres i peus",
         "zh": "页眉与页脚",
-        "ar": "رؤوس الصفحات وتذييلاتها",
+        "ar": "الترويسات والتذييلات",
         "ja": "柱とノンブル",
-        "pt": "Cabeços e rodapés",
+        "pt": "Cabeçalhos e rodapés",
         "fr": "En-têtes et pieds de page",
         "de": "Kopf- und Fußzeilen",
         "it": "Intestazioni e piè di pagina"
@@ -7743,7 +7743,7 @@
       "slug": "configuration-headers-footers",
       "heading": {
         "en": "Element placement",
-        "es": "Posicionamiento de elementos",
+        "es": "Colocación de elementos",
         "ca": "Posicionament d'elements",
         "zh": "元素定位",
         "ar": "تموضع العناصر",
@@ -7870,7 +7870,7 @@
       "slug": "configuration-headers-footers",
       "heading": {
         "en": "Element placement",
-        "es": "Posicionamiento de elementos",
+        "es": "Colocación de elementos",
         "ca": "Posicionament d'elements",
         "zh": "元素定位",
         "ar": "تموضع العناصر",
@@ -8282,8 +8282,8 @@
       "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
-        "es": "Estilos de aviso",
-        "ca": "Estils d'avís",
+        "es": "Estilos de recuadro",
+        "ca": "Estils de requadre",
         "zh": "标注框样式",
         "ar": "أنماط الإطارات",
         "ja": "囲みスタイル",
@@ -8404,8 +8404,8 @@
       "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
-        "es": "Estilos de aviso",
-        "ca": "Estils d'avís",
+        "es": "Estilos de recuadro",
+        "ca": "Estils de requadre",
         "zh": "标注框样式",
         "ar": "أنماط الإطارات",
         "ja": "囲みスタイル",
@@ -8513,8 +8513,8 @@
       "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
-        "es": "Estilos de aviso",
-        "ca": "Estils d'avís",
+        "es": "Estilos de recuadro",
+        "ca": "Estils de requadre",
         "zh": "标注框样式",
         "ar": "أنماط الإطارات",
         "ja": "囲みスタイル",
@@ -8621,8 +8621,8 @@
       "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
-        "es": "Estilos de aviso",
-        "ca": "Estils d'avís",
+        "es": "Estilos de recuadro",
+        "ca": "Estils de requadre",
         "zh": "标注框样式",
         "ar": "أنماط الإطارات",
         "ja": "囲みスタイル",
@@ -9071,8 +9071,8 @@
       "slug": "configuration-callouts",
       "heading": {
         "en": "Callout styles",
-        "es": "Estilos de aviso",
-        "ca": "Estils d'avís",
+        "es": "Estilos de recuadro",
+        "ca": "Estils de requadre",
         "zh": "标注框样式",
         "ar": "أنماط الإطارات",
         "ja": "囲みスタイル",
@@ -10498,7 +10498,7 @@
         "zh": "块级嵌入（可选，显式的行内放置）",
         "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
         "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-        "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+        "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
         "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
         "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
         "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -11576,7 +11576,7 @@
         "zh": "块级嵌入（可选，显式的行内放置）",
         "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
         "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-        "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+        "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
         "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
         "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
         "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -12082,7 +12082,7 @@
         "zh": "块级嵌入（可选，显式的行内放置）",
         "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
         "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-        "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+        "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
         "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
         "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
         "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -12195,7 +12195,7 @@
         "zh": "块级嵌入（可选，显式的行内放置）",
         "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
         "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-        "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+        "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
         "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
         "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
         "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -12580,10 +12580,10 @@
         "zh": "前置元数据",
         "ar": "البيانات التمهيدية (frontmatter)",
         "ja": "フロントマター",
-        "pt": "Frontmatter",
-        "fr": "Frontmatter",
+        "pt": "Front matter",
+        "fr": "En-tête YAML",
         "de": "Frontmatter",
-        "it": "Frontmatter"
+        "it": "Front matter"
       }
     },
     "research": [
@@ -12866,8 +12866,8 @@
   "toc": {
     "label": {
       "en": "Table of contents",
-      "es": "Índice de contenidos",
-      "ca": "Índex de continguts",
+      "es": "Índice general",
+      "ca": "Índex general",
       "zh": "目录",
       "ar": "جدول المحتويات",
       "ja": "目次",
@@ -12970,8 +12970,8 @@
       "slug": "configuration-notes-references",
       "heading": {
         "en": "Table of contents",
-        "es": "Índice de contenidos",
-        "ca": "Índex de continguts",
+        "es": "Índice general",
+        "ca": "Índex general",
         "zh": "目录",
         "ar": "جدول المحتويات",
         "ja": "目次",
@@ -14114,7 +14114,7 @@
         "en": "Integrating the HTML viewer",
         "es": "Integrar el visor HTML",
         "ca": "Integrar el visor HTML",
-        "zh": "集成HTML查看器",
+        "zh": "集成HTML阅读器",
         "ar": "دمج عارض HTML",
         "ja": "HTMLビューアーの統合",
         "pt": "Integração do visualizador HTML",
@@ -14230,7 +14230,7 @@
         "en": "HTML Viewer",
         "es": "Visor HTML",
         "ca": "Visor HTML",
-        "zh": "HTML查看器",
+        "zh": "HTML阅读器",
         "ar": "عارض HTML",
         "ja": "HTMLビューアー",
         "pt": "Visualizador HTML",
@@ -14365,15 +14365,15 @@
       "slug": "configuration-programmatic-usage",
       "heading": {
         "en": "Rendering a page to a bitmap",
-        "es": "Renderizar una página a un bitmap",
-        "ca": "Renderitzar una pàgina a un bitmap",
+        "es": "Renderizar una página como mapa de bits",
+        "ca": "Renderitzar una pàgina en un mapa de bits",
         "zh": "把页面渲染为位图",
         "ar": "رسم صفحة في صورة نقطية",
         "ja": "ページをビットマップに描画する",
         "pt": "Renderizar uma página como bitmap",
         "fr": "Rendre une page en bitmap",
         "de": "Eine Seite als Bitmap rendern",
-        "it": "Rendere una pagina come bitmap"
+        "it": "Rasterizzare una pagina"
       }
     }
   },
@@ -14625,7 +14625,7 @@
         "zh": "在Web Worker中运行排版",
         "ar": "تشغيل الإخراج في Web Worker",
         "ja": "Web Workerでレイアウトを実行する",
-        "pt": "Executar o layout em um Web Worker",
+        "pt": "Executar a diagramação em um Web Worker",
         "fr": "Mise en page dans un Web Worker",
         "de": "Layout in einem Web Worker ausführen",
         "it": "Eseguire l’impaginazione in un Web Worker"
@@ -15421,7 +15421,7 @@
         "pt": "Espaço entre han e latim",
         "fr": "Espace entre han et latin",
         "de": "Abstand zwischen Han und Latein",
-        "it": "Spazio tra han e latino"
+        "it": "Spazio tra cinese e latino"
       }
     },
     "since": "1.9.0",
@@ -16312,7 +16312,7 @@
         "es": "Marcas chinas, ruby y warichu",
         "ca": "Marques xineses, ruby i warichu",
         "zh": "中文标记、注音和双行夹注",
-        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات السطرية (warichu)",
+        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات داخل السطر (warichu)",
         "ja": "中国語の記号、ルビ、割注",
         "pt": "Marcas chinesas, rubi e warichu",
         "fr": "Marques chinoises, ruby et warichu",
@@ -16473,7 +16473,7 @@
         "es": "Marcas chinas, ruby y warichu",
         "ca": "Marques xineses, ruby i warichu",
         "zh": "中文标记、注音和双行夹注",
-        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات السطرية (warichu)",
+        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات داخل السطر (warichu)",
         "ja": "中国語の記号、ルビ、割注",
         "pt": "Marcas chinesas, rubi e warichu",
         "fr": "Marques chinoises, ruby et warichu",
@@ -16617,7 +16617,7 @@
         "es": "Marcas chinas, ruby y warichu",
         "ca": "Marques xineses, ruby i warichu",
         "zh": "中文标记、注音和双行夹注",
-        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات السطرية (warichu)",
+        "ar": "العلامات الصينية والقراءات (ruby) والتعليقات داخل السطر (warichu)",
         "ja": "中国語の記号、ルビ、割注",
         "pt": "Marcas chinesas, rubi e warichu",
         "fr": "Marques chinoises, ruby et warichu",
@@ -19736,7 +19736,7 @@
         "ca": "Començar un llibre en àrab",
         "zh": "开始一本阿拉伯文书",
         "ar": "البدء بكتاب عربي",
-        "ja": "アラビア語の本を始める",
+        "ja": "アラビア語の本の始め方",
         "pt": "Como começar um livro em árabe",
         "fr": "Commencer un livre en arabe",
         "de": "Ein arabisches Buch anlegen",
@@ -20320,7 +20320,7 @@
         "ja": "引用と参考文献",
         "pt": "Citações e bibliografia",
         "fr": "Citations et bibliographie",
-        "de": "Zitate und Literaturverzeichnis",
+        "de": "Zitationen und Literaturverzeichnis",
         "it": "Citazioni e bibliografia"
       }
     },
@@ -20463,7 +20463,7 @@
         "ja": "引用と参考文献",
         "pt": "Citações e bibliografia",
         "fr": "Citations et bibliographie",
-        "de": "Zitate und Literaturverzeichnis",
+        "de": "Zitationen und Literaturverzeichnis",
         "it": "Citazioni e bibliografia"
       }
     },
@@ -20599,7 +20599,7 @@
         "ja": "引用と参考文献",
         "pt": "Citações e bibliografia",
         "fr": "Citations et bibliographie",
-        "de": "Zitate und Literaturverzeichnis",
+        "de": "Zitationen und Literaturverzeichnis",
         "it": "Citazioni e bibliografia"
       }
     },
@@ -20739,7 +20739,7 @@
         "ja": "相互参照とアンカー",
         "pt": "Referências cruzadas e âncoras",
         "fr": "Renvois et ancres",
-        "de": "Querverweise und Anker",
+        "de": "Querverweise und Verweisziele",
         "it": "Rimandi e ancore"
       }
     },
@@ -22209,7 +22209,7 @@
         "zh": "分格与画面",
         "ar": "الإطارات والرسوم",
         "ja": "コマと絵",
-        "pt": "Quadros e arte",
+        "pt": "Quadros e desenhos",
         "fr": "Cases et dessins",
         "de": "Panels und Bilder",
         "it": "Vignette e disegni"
@@ -22335,7 +22335,7 @@
         "zh": "分格与画面",
         "ar": "الإطارات والرسوم",
         "ja": "コマと絵",
-        "pt": "Quadros e arte",
+        "pt": "Quadros e desenhos",
         "fr": "Cases et dessins",
         "de": "Panels und Bilder",
         "it": "Vignette e disegni"
@@ -22451,7 +22451,7 @@
         "zh": "分格与画面",
         "ar": "الإطارات والرسوم",
         "ja": "コマと絵",
-        "pt": "Quadros e arte",
+        "pt": "Quadros e desenhos",
         "fr": "Cases et dessins",
         "de": "Panels und Bilder",
         "it": "Vignette e disegni"
@@ -22700,7 +22700,7 @@
       "en": "Balloon styles",
       "es": "Estilos de bocadillo",
       "ca": "Estils de bafarada",
-      "zh": "对话框样式",
+      "zh": "对白框样式",
       "ar": "أنماط الفقاعات",
       "ja": "吹き出しのスタイル",
       "pt": "Estilos de balão",
@@ -22803,7 +22803,7 @@
         "en": "Balloon styles",
         "es": "Estilos de bocadillo",
         "ca": "Estils de bafarada",
-        "zh": "对话框样式",
+        "zh": "对白框样式",
         "ar": "أنماط الفقاعات",
         "ja": "吹き出しのスタイル",
         "pt": "Estilos de balão",
@@ -22917,7 +22917,7 @@
         "en": "Balloon styles",
         "es": "Estilos de bocadillo",
         "ca": "Estils de bafarada",
-        "zh": "对话框样式",
+        "zh": "对白框样式",
         "ar": "أنماط الفقاعات",
         "ja": "吹き出しのスタイル",
         "pt": "Estilos de balão",
@@ -22939,7 +22939,7 @@
       "es": "Personajes y anclas",
       "ca": "Personatges i àncores",
       "zh": "说话人与锚点",
-      "ar": "المتحدثون ونقاط الارتكاز",
+      "ar": "الشخصيات ونقاط الارتكاز",
       "ja": "話者とアンカー",
       "pt": "Personagens e âncoras",
       "fr": "Personnages et ancres",
@@ -23042,7 +23042,7 @@
         "es": "Personajes y anclas",
         "ca": "Personatges i àncores",
         "zh": "说话人与锚点",
-        "ar": "المتحدثون ونقاط الارتكاز",
+        "ar": "الشخصيات ونقاط الارتكاز",
         "ja": "話者とアンカー",
         "pt": "Personagens e âncoras",
         "fr": "Locuteurs et ancres",
@@ -23498,7 +23498,7 @@
         "ja": "漫画の出力",
         "pt": "Saída dos quadrinhos",
         "fr": "Sorties de la bande dessinée",
-        "de": "Comic-Ausgabe",
+        "de": "Comics in jedem Ausgabeformat",
         "it": "Output dei fumetti"
       }
     },
@@ -23847,7 +23847,7 @@
         "en": "When the text continues",
         "es": "Cuando el texto sigue",
         "ca": "Quan el text continua",
-        "zh": "文字续排时",
+        "zh": "文字接续时",
         "ar": "حين يستمر النص في صفحات مضافة",
         "ja": "文章が追加ページに続くとき",
         "pt": "Quando o texto continua",
@@ -24151,10 +24151,10 @@
         "ca": "Decoració, capçaleres i capes",
         "zh": "装饰、书眉与层",
         "ar": "الزخرفة والترويسات والطبقات",
-        "ja": "飾り、柱、レイヤー",
+        "ja": "装飾、柱、レイヤー",
         "pt": "Decoração, cabeços e camadas",
         "fr": "Décor, titres courants et calques",
-        "de": "Dekor, Kolumnentitel und Ebenen",
+        "de": "Dekoration, Kolumnentitel und Ebenen",
         "it": "Decorazione, testatine e livelli"
       }
     },

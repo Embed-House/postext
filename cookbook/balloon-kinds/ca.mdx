@@ -4,7 +4,7 @@ summary: "Una pàgina de còmic amb diàleg, pensament, xiuxiueig, crit, ràdio,
 plain: "Una pàgina de còmic sobre un rescat enmig de la tempesta que fa servir tots els tipus de bafarada, amb el full d’estil del retolador que ensenya com s’escriu cadascuna al guió."
 description: "Una pàgina de còmic amb Postext i totes les bafarades: diàleg, pensament, xiuxiueig, crit, ràdio, cartel·les, veu interior, notes i onomatopeies."
 question: "Com retolo bafarades de pensament, xiuxiueig, crit i ràdio, i apunto cada rabet a qui parla?"
-aliases: ["bafarada", "globus", "bafarada de pensament", "xiuxiueig", "crit", "bafarada de ràdio", "cartel·la", "onomatopeia", "fora de camp", "rabet", "speech balloon", "吹き出し", "对话框"]
+aliases: ["bafarada", "bafarada de pensament", "xiuxiueig", "crit", "bafarada de ràdio", "cartel·la", "onomatopeia", "fora de camp", "rabet", "speech balloon", "吹き出し", "对话框"]
 pageNotes: { "1": "El full d’estil: el títol en majúscules vermelles i dotze tipus de bafarada, cadascun amb el seu marcatge del guió en una pastilla groga.", "2": "La pàgina: una trucada per ràdio a la sala de la llanterna, amb cartel·la, bafarada trencada de ràdio i nota de l’editor; la Maya xiuxiuejant al gat, que pensa en un núvol; el faroner cridant en un esclat; el pesquer a la tempesta amb BRRROOM en vermell; la Maya a la finestra amb la veu interior en una caixa grisa; l’endemà al matí a les roques, amb bafarades unides." }
 ---
 
@@ -16,7 +16,7 @@ La pàgina 7 de *La llum de Porthcove*, un còmic sobre una nit de tempesta en u
 
 ### 1 · Anomena el tipus a la línia del guió
 
-El codi és [la resposta curta](#la-resposta-curta) de dalt. Una línia del guió és `personatge{tipus}: text`, i el tipus és l’identificador d’un estil de bafarada. Els nou estils de sèrie cobreixen els tipus habituals: un oval amb rabet corbat per al diàleg, un núvol amb bombolles per al pensament, un contorn discontinu per al xiuxiueig, un esclat amb rabet en falca per al crit i un contorn trencat amb rabet en zig-zag per a una veu per ràdio ([estils de bafarada](/ca/docs/comics#estils-de-bafarada)). Un estil de la configuració amb el mateix identificador canvia només el que anomena: aquí el color del traç, el groc de les cartel·les i les 16 puntes de l’esclat. `caption`, `note` i `sfx` són personatges reservats: cartel·les encaixades en un racó, la nota de l’editor a 0,8 vegades el cos i lletres de cartell sense bafarada.
+El codi és [la resposta curta](#la-resposta-curta) de dalt. Una línia del guió és `personatge{tipus}: text`, i el tipus és l’identificador d’un estil de bafarada. Els nou estils de sèrie cobreixen els tipus habituals: un oval amb rabet corbat per al diàleg, un núvol amb bombolles per al pensament, un contorn discontinu per al xiuxiueig, un esclat amb rabet en falca per al crit i un contorn trencat amb rabet en zig-zag per a una veu per ràdio ([estils de bafarada](/ca/docs/comics#estils-de-bafarada)). Un estil de la configuració amb el mateix identificador canvia només el que indica: aquí el color del traç, el groc de les cartel·les i les 16 puntes de l’esclat. `caption`, `note` i `sfx` són personatges reservats: cartel·les encaixades en un racó, la nota de l’editor a 0,8 vegades el cos i lletres de cartell sense bafarada.
 
 <PageShot page={2} crop="0,0,1,0.34" caption="La trucada per ràdio: una cartel·la, la bafarada de ràdio del patró apuntant a l’aparell, la resposta del faroner i la nota de l’editor." />
 
@@ -28,7 +28,7 @@ Cada imatge porta àncores en fraccions de la imatge: la boca a què apunta el r
 
 ### 3 · Dona a un personatge la seva pròpia veu
 
-El repartiment de la resposta curta dona a cada línia `skipper:` l’estil de ràdio, de manera que el guió no repeteix `{radio}`. Una línia pot dir una altra cosa: a la vinyeta del matí el patró crida des del vaixell, `skipper{speech tail=bottom}:`, amb una bafarada normal el rabet de la qual surt pel peu de la vinyeta.
+El repartiment de la resposta curta dona a cada línia `skipper:` l’estil de ràdio, de manera que el guió no repeteix `{radio}`. Una línia pot dir una altra cosa: a la vinyeta del matí el patró crida des del vaixell, `skipper{speech tail=bottom}:`, amb una bafarada normal amb la cua que surt pel peu de la vinyeta.
 
 ### 4 · Retola cada edició amb les seves lletres
 

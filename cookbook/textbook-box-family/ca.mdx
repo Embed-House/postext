@@ -24,23 +24,23 @@ Sis tipus de requadre es reparteixen tres tons: magenta per als objectius i l'au
 
 <Excerpt region="base" />
 
-`box()` aplega els paràmetres comuns a tots els requadres: els marges, el farciment, la lletra del títol i del cos, i l'espaiat de les llistes. El seu argument `hue` acoloreix el títol, les vinyetes i els números i les negretes. `body.boldColor` posa en magenta el **model de mosaic fluid** dels objectius i en ocre la **paret cel·lular** de l'advertiment; les negretes del text corrent continuen en tinta ([tipografia dins d'un requadre](/ca/docs/configuration-callouts#tipografia-dins-dun-requadre)). Si declares `calloutStyles`, substitueixes l'únic estil que porta el motor, un requadre gris anomenat `note`. Un requadre que no té `type` o el té mal escrit pren el primer estil, així que la llista comença pels objectius, que apareixen a tots els capítols.
+`box()` aplega els paràmetres comuns a tots els requadres: els marges, el farciment, la lletra del títol i del cos, i l'espaiat de les llistes. El seu argument `hue` acoloreix el títol, els pics i els números i les negretes. `body.boldColor` posa en magenta el **model de mosaic fluid** dels objectius i en ocre la **paret cel·lular** de l'advertiment; les negretes del text corrent continuen en tinta ([tipografia dins d'un requadre](/ca/docs/configuration-callouts#tipografia-dins-dun-requadre)). Si declares `calloutStyles`, substitueixes l'únic estil que porta el motor, un requadre gris anomenat `note`. Un requadre que no té `type` o el té mal escrit fa servir el primer estil, així que la llista comença pels objectius, que apareixen a tots els capítols.
 
 ### 3 · Franja, pestanya i distintiu
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. La franja dels objectius fa 7,5 mm i la diana 5 mm, així que la icona queda dins del color amb aire a tots dos costats. L'`offset` de la pestanya és igual a la seva alçada (`height`), de manera que la pestanya es recolza a la vora superior del requadre, sense tocar el títol. `'top-left'` és la cantonada exterior d'aquesta pàgina parella; el matràs va a continuació de la pestanya, i el filet recorre la vora superior des del matràs fins a la cantonada oposada. `position: 'corner'` penja el distintiu de l'advertiment amb la meitat de l'amplada fora de la vora, i `cornerSide: 'outer'` el porta al costat exterior, l'esquerre en aquesta pàgina parella. En aquest costat el motor sagna el títol perquè no topi amb el distintiu, tret que el farciment ja cobreixi mig distintiu més l'espai del títol; per això l'advertiment porta `BADGE / 2 + GAP` de farciment a tots dos costats, i el títol queda alineat amb el text. Només aquest requadre porta `borderRadius`: és l'únic amb marc, i un radi d'1,4 mm li suavitza les cantonades. En un requadre amb franja, el radi arrodoniria també les cantonades exteriors de la franja ([estils d'avís](/ca/docs/configuration-callouts#estils-davís)).
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. La franja dels objectius fa 7,5 mm i la diana 5 mm, així que la icona queda dins del color amb aire a tots dos costats. L'`offset` de la pestanya és igual a la seva alçada (`height`), de manera que la pestanya es recolza a la vora superior del requadre, sense tocar el títol. `'top-left'` és la cantonada exterior d'aquesta pàgina parella; el matràs va a continuació de la pestanya, i el filet recorre la vora superior des del matràs fins a la cantonada oposada. `position: 'corner'` penja el distintiu de l'advertiment amb la meitat de l'amplada fora de la vora, i `cornerSide: 'outer'` el porta al costat exterior, l'esquerre en aquesta pàgina parella. En aquest costat el motor sagna el títol perquè no topi amb el distintiu, tret que el farciment ja cobreixi mig distintiu més l'espai del títol; per això l'advertiment porta `BADGE / 2 + GAP` de farciment a tots dos costats, i el títol queda alineat amb el text. Només aquest requadre porta `borderRadius`: és l'únic amb marc, i un radi d'1,4 mm li suavitza les cantonades. En un requadre amb franja, el radi arrodoniria també les cantonades exteriors de la franja ([estils de requadre](/ca/docs/configuration-callouts#estils-de-requadre)).
 
 ### 4 · Tres elements gràfics més
 
 <Excerpt region="more" />
 
-La franja del «Para recordar» fa 2,5 pt, enfront dels 6,4 mm del distintiu, de manera que es veu com un filet fi amb la bombeta damunt de l'extrem superior; un farciment esquerre de mig distintiu més 2 mm aparta el text de la bombeta. `icon.width` encaixa la imatge en una caixa ampla en lloc d'un quadrat, així que els tres pictogrames de seguretat, dibuixats com una sola imatge de 24,5 mm, formen la columna d'icones del requadre de seguretat, centrada respecte al text. La marca de l'autoavaluació va fora del marc, en aquest ordre: marca, filet, espai i caixa. La casella quadrada sobre un filet de 0,75 pt la distingeix del «Para recordar», que porta un distintiu rodó. La tanca hi afegeix `span="page" placement="bottom"` perquè l'autoavaluació floti al peu de la <PageRef page={3}>pàgina 29</PageRef>.
+La franja del «Para recordar» fa 2,5 pt, enfront dels 6,4 mm del distintiu, de manera que es veu com un filet fi amb la bombeta damunt de l'extrem superior; un farciment esquerre de mig distintiu més 2 mm aparta el text de la bombeta. `icon.width` encaixa la imatge en una caixa ampla en lloc d'un quadrat, així que els tres pictogrames de seguretat, dibuixats com una sola imatge de 24,5 mm, formen la columna d'icones del requadre de seguretat, centrada respecte al text. La marca de l'autoavaluació va fora del marc, en aquest ordre: marca, filet, espai i caixa. La casella quadrada sobre un filet de 0,75 pt la distingeix del «Para recordar», que porta un distintiu rodó. La línia d'obertura hi afegeix `span="page" placement="bottom"` perquè l'autoavaluació floti al peu de la <PageRef page={3}>pàgina 29</PageRef>.
 
 ### 5 · Les icones també són recursos
 
 <Excerpt region="icons" />
 
-Totes les icones, el matràs de la pestanya i la cèl·lula de l'obertura són recursos SVG declarats al costat del contingut i registrats pel seu identificador de fitxer. Els estils els anomenen pel seu id de recurs i, com que el text no els cita, cap no es converteix en una figura numerada. Glifs com ✓ o ☞ serien més còmodes d'escriure, però no són als fitxers latin de Fontsource que carreguen les pàgines: el llenç els prendria d'una font del sistema i un PDF els perdria. Els dibuixos tampoc no porten text: els colors s'anomenen als peus, de manera que un mateix dibuix serveix per a les dues edicions.
+Totes les icones, el matràs de la pestanya i la cèl·lula de l'obertura són recursos SVG declarats al costat del contingut i registrats pel seu identificador de fitxer. Els estils hi fan referència pel seu id de recurs i, com que el text no els cita, cap no es converteix en una figura numerada. Glifs com ✓ o ☞ serien més còmodes d'escriure, però no són als fitxers latin de Fontsource que carreguen les pàgines: el canvas els prendria d'una font del sistema i un PDF els perdria. Els dibuixos tampoc no porten text: els colors s'anomenen als peus, de manera que un mateix dibuix serveix per a les dues edicions.
 
 ### 6 · Obre el capítol amb una cèl·lula
 
@@ -52,7 +52,7 @@ La cèl·lula és un element d'imatge ancorat a la cantonada superior dreta de l
 
 ### Estén un requadre sobre les dues columnes
 
-`span="page"` a la tanca estén qualsevol requadre sobre les dues columnes; el RECUADRO 2.1, a més, hi niua un grup `:::columns` per posar la figura al costat del text.
+`span="page"` a la línia d'obertura estén qualsevol requadre sobre les dues columnes; el RECUADRO 2.1, a més, hi niua un grup `:::columns` per posar la figura al costat del text.
 
 ```diff
 -:::callout{type="warning" title="¿Membrana o pared?"}
@@ -70,7 +70,7 @@ La cèl·lula és un element d'imatge ancorat a la cantonada superior dreta de l
 
 ### Posa la pestanya a la cantonada dreta
 
-`'top-right'`, el valor per defecte, reflecteix tota l'etiqueta: la pestanya passa a la cantonada dreta, el matràs a la seva esquerra i el filet arriba des de l'esquerra.
+`'top-right'`, el valor per defecte, emmiralla tota la pestanya: la pestanya passa a la cantonada dreta, el matràs a la seva esquerra i el filet arriba des de l'esquerra.
 
 ```diff
 -      position: 'top-left', // this verso's outer corner, above the badge ('top-right' by default)
@@ -79,7 +79,7 @@ La cèl·lula és un element d'imatge ancorat a la cantonada superior dreta de l
 
 ## Errors freqüents
 
-- La pestanya només s'imprimeix si la tanca porta l'atribut `label="RECUADRO 2.1"` i l'estil té un objecte `label`. Un estil sense aquest objecte ignora l'atribut.
-- Postext no numera els requadres. L'etiqueta és el text literal de la tanca, així que cada número, RECUADRO 2.1, RECUADRO 2.2, s'escriu a mà.
+- La pestanya només s'imprimeix si la línia d'obertura porta l'atribut `label="RECUADRO 2.1"` i l'estil té un objecte `label`. Un estil sense aquest objecte ignora l'atribut.
+- Postext no numera els requadres. El text de la pestanya és el text literal de la línia d'obertura, així que cada número, RECUADRO 2.1, RECUADRO 2.2, s'escriu a mà.
 - Un distintiu de cantonada sobresurt la meitat de la seva amplada pel costat del requadre, cap al marge al costat exterior de la pàgina. A l'altra columna d'aquella mateixa pàgina sobresurt cap a l'espai entre columnes, així que deixa els requadres amb distintiu a la columna exterior o fes-los lloc.
-- El `lists.color` d'un requadre acoloreix igual les vinyetes i els números de les llistes numerades, així que aquí els passos i les preguntes numerats surten en el color del seu requadre. Per acolorir només les vinyetes d'un requadre, deixa `lists.color` fora del seu estil i fixa `unorderedLists.color` per al document; els números conserven llavors `orderedLists.color`.
+- El `lists.color` d'un requadre acoloreix igual els pics i els números de les llistes numerades, així que aquí els passos i les preguntes numerats surten en el color del seu requadre. Per acolorir només els pics d'un requadre, deixa `lists.color` fora del seu estil i fixa `unorderedLists.color` per al document; els números conserven llavors `orderedLists.color`.

@@ -3,7 +3,7 @@
 # summary 60–160 (la risposta in una frase, che nomina il meccanismo); description 120–160.
 title: "Una pagina di libro con le testatine"
 summary: "Margini speculari, un’apertura di capitolo abbassata e testatine che sanno su quale lato della doppia pagina si trovano, su una pagina di narrativa."
-description: "Una pagina di narrativa in Postext: margini speculari, apertura abbassata di 52 mm, testatine per parità, folio al piede nelle aperture, con il codice completo."
+description: "Una pagina di narrativa in Postext: margini speculari, apertura abbassata di 52 mm, testatine per parità, numero al piede nelle aperture, codice completo."
 # plain: "…"           40–240 caratteri: il riassunto in parole di tutti i giorni, senza gergo (mostrato come «In breve»)
 # question: "…"        facoltativo, ≤ 110 caratteri: riformula answers[0] per questa pagina
 # pageNotes: { "3": "…" }  facoltativo: testo alternativo in più per una pagina catturata
@@ -19,7 +19,7 @@ aliases: ["pagina di libro", "testatine", "testatina", "apertura di capitolo", "
   La pagina aggiunge da sola, sotto questa sezione, l’elenco «Questa ricetta risponde a» (preso da answers).
 */}
 
-Le prime pagine di un romanzo in brossura: un capitolo che comincia su un recto a un terzo dell’altezza, sotto un piccolo occhiello spaziato e un filetto corto nell’unico colore d’accento del libro, poi pagina dopo pagina di testo giustificato, con il titolo del libro a sinistra e il capitolo a destra. Nulla sulla pagina alza la voce. Il mestiere sta nella geometria: margini che si specchiano sulla doppia pagina, testatine che sanno da che lato si trovano e un folio che scende al piede nell’apertura, dove una testatina affollerebbe il titolo.
+Le prime pagine di un romanzo in brossura: un capitolo che comincia su un recto a un terzo dell’altezza, sotto un piccolo occhiello spaziato e un filetto corto nell’unico colore d’accento del libro, poi pagina dopo pagina di testo giustificato, con il titolo del libro a sinistra e il capitolo a destra. Nulla sulla pagina alza la voce. Il mestiere sta nella geometria: margini che si specchiano sulla doppia pagina, testatine che sanno da che lato si trovano e un numero di pagina che scende al piede nell’apertura, dove una testatina affollerebbe il titolo.
 
 ## Preparazione
 
@@ -34,19 +34,19 @@ Le prime pagine di un romanzo in brossura: un capitolo che comincia su un recto 
 
 ### 1 · L’apertura è un progetto grafico, non un titolo
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il titolo di livello 1 mantiene il suo posto nel testo e nell’indice, ma si disegna da uno slot di elementi: l’occhiello viene da un attributo del titolo, il titolo va a capo su una giustezza fissa e il filetto si ancora sotto l’altezza che il titolo occupa, qualunque sia. `minHeight` abbassa il testo corrente alla stessa riga in ogni apertura, per quanto lungo sia il titolo.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il titolo di livello 1 mantiene il suo posto nel testo e nell’indice, ma si disegna da uno spazio grafico fatto di elementi: l’occhiello viene da un attributo del titolo, il titolo va a capo su una giustezza fissa e il filetto si ancora sotto l’altezza che il titolo occupa, qualunque sia. `minHeight` abbassa il testo corrente alla stessa riga in ogni apertura, per quanto lungo sia il titolo.
 
 ### 2 · Le testatine sanno su quale pagina si trovano
 
 <Excerpt region="running-heads" />
 
-Ogni elemento è ancorato alla pagina fisica e filtrato per parità, così il folio sta sempre sul margine esterno e il titolo del libro sul verso. `pages: 'body'` le tiene lontane dall’apertura, che riceve invece un folio centrato al piede dal piè di pagina.
+Ogni elemento è ancorato alla pagina fisica e filtrato per parità, così il numero di pagina sta sempre sul margine esterno e il titolo del libro sul verso. `pages: 'body'` le tiene lontane dall’apertura, che riceve invece un numero di pagina centrato al piede dal piè di pagina.
 
 ### 3 · Un solo accento, collegato ovunque
 
 <Excerpt region="palette" />
 
-Ogni colore della configurazione nomina la sua voce di palette: un lettore che cambia un campione di colore ritinge tutto il libro, e una parte o uno stile di titolo può ricolorare una sezione tramite il suo id. Puntare `main-color` sull’accento cattura tutti i valori predefiniti che la configurazione non ridichiara.
+Ogni colore della configurazione indica la sua voce della tavolozza: un lettore che cambia un campione di colore ritinge tutto il libro, e una parte o uno stile di titolo può ricolorare una sezione tramite il suo id. Puntare `main-color` sull’accento cattura tutti i valori predefiniti che la configurazione non ridichiara.
 
 ## Varianti
 

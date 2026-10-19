@@ -24,7 +24,7 @@ El código de este paso es [la respuesta corta](#la-respuesta-corta). `createLay
 
 <Excerpt region="fonts" />
 
-El worker tiene su propio `FontFaceSet` y no ve las fuentes que ha cargado la página, así que la respuesta corta descarga los mismos archivos de Fontsource y pasa sus bytes a `registerFonts()`, con el peso como cadena (`'400'`). Si quitas esa llamada, el worker mide con una fuente de reserva: compone este capítulo en 175 líneas en vez de 190, ya la primera línea termina en «him)» en lugar de en «of», y la consola de la página nombra una vez cada familia que falta. Un archivo que no se descarga se ve peor. Si al worker le llega una página 404 en lugar de la Baskervville redonda, `registerFonts()` se resuelve igual y el capítulo sale en 186 líneas, con un aviso solo en la consola del worker. Por eso la respuesta corta comprueba el código HTTP de cada descarga antes de enviar ningún byte, y si alguna falla lanza un error con la fuente y el código. La página carga además las mismas fuentes con `loadFonts()`, porque el canvas pinta con las de la página.
+El worker tiene su propio `FontFaceSet` y no ve las fuentes que ha cargado la página, así que la respuesta corta descarga los mismos archivos de Fontsource y pasa sus bytes a `registerFonts()`, con el peso como cadena (`'400'`). Si quitas esa llamada, el worker mide con una fuente de reserva: compone este capítulo en 175 líneas en vez de 190, ya la primera línea termina en «him)» en lugar de en «of», y la consola de la página cita una vez cada familia que falta. Un archivo que no se descarga se ve peor. Si al worker le llega una página 404 en lugar de la Baskervville redonda, `registerFonts()` se resuelve igual y el capítulo sale en 186 líneas, con un aviso solo en la consola del worker. Por eso la respuesta corta comprueba el código HTTP de cada descarga antes de enviar ningún byte, y si alguna falla lanza un error con la fuente y el código. La página carga además las mismas fuentes con `loadFonts()`, porque el canvas pinta con las de la página.
 
 ### 3 · Compón en cada pulsación, pinta en el hilo principal
 
@@ -38,7 +38,7 @@ El worker tiene su propio `FontFaceSet` y no ve las fuentes que ha cargado la p�
 
 <Excerpt region="title" />
 
-La línea `# The Time Machine {style="title"}` compone la página 1 con el estilo de título `title`, cuyos `header` y `footer` vacíos la dejan sin cabeceras ni folio. `numbered: false` deja el título fuera de la cuenta de capítulos, así que Introduction sigue siendo el capítulo I. La lámina se ancla a la esquina superior izquierda del sangrado, y el nombre del autor queda por debajo del pie de la columna. Un diseño que se queda en su columna se corta en el pie de la columna, así que el estilo lleva `span: 'page'`; sin esa opción, el nombre del autor no se pinta.
+La línea `# The Time Machine {style="title"}` compone la página 1 con el estilo de encabezado `title`, cuyos `header` y `footer` vacíos la dejan sin cabeceras ni folio. `numbered: false` deja el título fuera de la cuenta de capítulos, así que Introduction sigue siendo el capítulo I. La lámina se ancla a la esquina superior izquierda del sangrado, y el nombre del autor queda por debajo del pie de la columna. Un diseño que se queda en su columna se corta en el pie de la columna, así que el estilo lleva `span: 'page'`; sin esa opción, el nombre del autor no se pinta.
 
 ### 5 · Cabeceras según el tipo de página
 

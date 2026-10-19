@@ -39,6 +39,10 @@ import {
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import {
   CollapsibleSection,
+  ItemCard,
+  ItemCardListActions,
+  moveCardState,
+  openCard,
   ColorPicker,
   DimensionInput,
   FontPicker,
@@ -322,17 +326,20 @@ function HeadingStyleCard({ style, otherIds, base, onChange, onRename, onRemove 
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
-      <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="truncate text-xs font-medium" style={{ color: 'var(--foreground)' }} title={style.name ?? style.id}>
-          {style.name || style.id}
-        </span>
+    <ItemCard
+      list="headingStyles"
+      id={style.id}
+      styleId={style.id}
+      title={style.name || style.id}
+      subtitle={style.name && style.name !== style.id ? style.id : undefined}
+      actions={
         <ConfirmPopover message={labels.headingStyleDeleteConfirm} onConfirm={onRemove}>
           {({ open }) => (
             <IconButton label={labels.headingStyleDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
           )}
         </ConfirmPopover>
-      </div>
+      }
+    >
 
       <div className="mb-2 flex flex-col gap-2">
         <Field
@@ -967,7 +974,7 @@ function HeadingStyleCard({ style, otherIds, base, onChange, onRename, onRemove 
           );
         })}
       </CollapsibleSection>
-    </div>
+    </ItemCard>
     </SearchScope>
   );
 }
@@ -999,7 +1006,9 @@ export const HeadingStylesSection = memo(function HeadingStylesSection() {
   };
 
   const addStyle = () => {
-    write([...styles, { id: nextStyleId(styles), name: labels.headingStyleNewName }]);
+    const id = nextStyleId(styles);
+    openCard('headingStyles', id);
+    write([...styles, { id, name: labels.headingStyleNewName }]);
   };
 
   const updateStyle = (id: string, partial: Partial<HeadingStyleConfig>) => {
@@ -1017,6 +1026,7 @@ export const HeadingStylesSection = memo(function HeadingStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
+    moveCardState('headingStyles', id, nextId);
     write(styles.map((s) => (s.id === id ? { ...s, id: nextId } : s)));
   };
 
@@ -1038,6 +1048,7 @@ export const HeadingStylesSection = memo(function HeadingStylesSection() {
           {labels.headingStylesEmpty}
         </p>
       )}
+      <ItemCardListActions list="headingStyles" ids={styles.map((s) => s.id)} />
       {styles.map((style) => (
         <HeadingStyleCard
           key={style.id}

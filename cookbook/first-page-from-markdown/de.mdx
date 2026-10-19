@@ -10,7 +10,7 @@ pageNotes: { "1": "Ein Foto füllt den oberen Teil der Seite: Salzgärten in der
 
 ## Was Sie setzen
 
-Die ersten Seiten einer Reisereportage in *Unterwegs*, einem kleinen Magazin. Seite 1 ist ein Auftakt auf einer rechten Seite: ein Foto von Salzpfannen und einer Düne in der Abenddämmerung über die oberen 58 % der Seite, der Titel in der Young Serif in 54 pt und darunter zwei Spalten im Blocksatz, die den Text mit einem fetten Einstieg beginnen. Seite 2, umseitig, läuft unter einem Kolumnentitel in gesperrten Versalien weiter und endet mit einem Schlusszeichen und einem Impressum. Die Gestaltung entsteht aus einer einzigen Konfigurationsfabrik und einer Palette von sechs Farben. Der Titel kommt aus der Überschrift der Ebene 1, Vorspann, Autor und Datum kommen aus dem Frontmatter des Markdown-Strings; derselbe Pen setzt also jeden Artikel, dessen Titel in zwei Zeilen passt, nur das Foto gehört zu diesem.
+Die ersten Seiten einer Reisereportage in *Unterwegs*, einem kleinen Magazin. Seite 1 ist ein Auftakt auf einer rechten Seite: ein Foto von Salzpfannen und einer Düne in der Abenddämmerung über die oberen 58 % der Seite, der Titel in der Young Serif in 54 pt und darunter zwei Spalten im Blocksatz, die den Text mit einem fetten Einstieg beginnen. Seite 2, umseitig, läuft unter einem Kolumnentitel in gesperrten Versalien weiter und endet mit einem Schlusszeichen und einem Impressum. Die Gestaltung entsteht aus einer einzigen Funktion, die die Konfiguration erzeugt, und einer Palette von sechs Farben. Der Titel kommt aus der Überschrift der Ebene 1, Vorspann, Autor und Datum kommen aus dem Frontmatter des Markdown-Strings; derselbe Pen setzt also jeden Artikel, dessen Titel in zwei Zeilen passt, nur das Foto gehört zu diesem.
 
 ## Zubereitung
 
@@ -18,25 +18,25 @@ Die ersten Seiten einer Reisereportage in *Unterwegs*, einem kleinen Magazin. Se
 
 <Excerpt region="fonts" />
 
-Postext misst Text mit den Schriften, die der Browser zum Zeitpunkt des Layouts bereithält; ein Build, der vor dem Eintreffen der Schriften liefe, behielte also die Zeilenumbrüche einer Ersatzschrift. `buildDocumentWithFonts` lädt vor dem ersten Build jede Schrift, die die Konfiguration nennt, und die in `FONTS`; `kitFonts(FONTS)` liefert ihm die Dateien von Fontsource, dieselben Dateien, die ein PDF einbetten würde. Danach geht es die Schriften durch, die die Seiten verwenden, lädt jede noch fehlende und baut erneut. Eine Schrift, die Fontsource nicht anbietet, bleibt bei einer Ersatzschrift und wird in `doc.contentWarnings` als `fontFallback` aufgeführt. Fett und Kursiv einer Textschrift werden nur geladen, wenn die Familie sie hat.
+Postext misst Text mit den Schriften, die der Browser zum Zeitpunkt des Layouts bereithält; ein Build, der vor dem Eintreffen der Schriften liefe, behielte also die Zeilenumbrüche einer Ersatzschrift. `buildDocumentWithFonts` lädt vor dem ersten Build jede Schrift, die in der Konfiguration angegeben ist, und die in `FONTS`; `kitFonts(FONTS)` liefert ihm die Dateien von Fontsource, dieselben Dateien, die ein PDF einbetten würde. Danach geht es die Schriften durch, die die Seiten verwenden, lädt jede noch fehlende und baut erneut. Eine Schrift, die Fontsource nicht anbietet, bleibt bei einer Ersatzschrift und wird in `doc.contentWarnings` als `fontFallback` aufgeführt. Fett und Kursiv einer Textschrift werden nur geladen, wenn die Familie sie hat.
 
 ### 2 · Die Farben benennen, dann auf die Namen verweisen
 
 <Excerpt region="palette" />
 
-Jede Farbe der Konfiguration ist `col('id')`, eine Paletten-ID mit ihrem Hexwert daneben. `bodyText.boldColor`, `italicColor`, `referenceColor` und `unorderedLists.color` nennen `ink`, und `headings.color` nennt die Akzentfarbe. Die Standardwerte der Engine für Überschriften, Fett, Kursiv und Aufzählungszeichen sind mit `main-color` verknüpft, und diese Palette richtet diesen Eintrag auf die Akzentfarbe, sodass jeder davon, den Sie weglassen, indigofarben statt blau erscheint. Die Gestaltungsobjekte sind Funktionen, die `config()` bei jedem Build aufruft, und `col()` kopiert jedes Mal den aktuellen Hexwert aus `palette`, sodass eine einzige Änderung an `palette` Text, Seitenzahlen und Auftakt gleichermaßen erreicht. Das Schlusszeichen ist ein Inline-Farbfeld, das `band` nennt, also erreicht eine Umfärbung auch es. Der Standard-Kolumnentitel ist ebenfalls mit `main-color` verknüpft und würde deshalb in der Akzentfarbe gedruckt, bis Sie ihn ersetzen (Schritt 5).
+Jede Farbe der Konfiguration ist `col('id')`, eine Paletten-ID mit ihrem Hexwert daneben. `bodyText.boldColor`, `italicColor`, `referenceColor` und `unorderedLists.color` verweisen auf `ink`, und `headings.color` verweist auf die Akzentfarbe. Die Standardwerte der Engine für Überschriften, Fett, Kursiv und Aufzählungszeichen sind mit `main-color` verknüpft, und diese Palette richtet diesen Eintrag auf die Akzentfarbe, sodass jeder davon, den Sie weglassen, indigofarben statt blau erscheint. Die Gestaltungsobjekte sind Funktionen, die `config()` bei jedem Build aufruft, und `col()` kopiert jedes Mal den aktuellen Hexwert aus `palette`, sodass eine einzige Änderung an `palette` Text, Seitenzahlen und Auftakt gleichermaßen erreicht. Das Schlusszeichen ist ein Inline-Farbfeld, das auf `band` verweist, also erreicht eine Umfärbung auch es. Der Standard-Kolumnentitel ist ebenfalls mit `main-color` verknüpft und erschiene deshalb in der Akzentfarbe, bis Sie ihn ersetzen (Schritt 5).
 
 ### 3 · Ein Foto, auf seinen Rahmen zugeschnitten
 
 <Excerpt region="art" />
 
-Salzpfannen, Düne und Steinmann sind ein mit Diffusionsmodellen erzeugtes Foto, in der Abenddämmerung aufgenommen, damit sich der helle Titel vom dunklen Himmel abhebt. Das JPEG ist auf den Rahmen des Bands zugeschnitten, `PAGE.width` × `BAND` Millimeter, und die Ressource gibt ihre Pixel an, 1440 × 1120, sodass das Bild in voller Breite das Band genau füllt. Ein tieferes Band braucht ein auf den neuen Rahmen zugeschnittenes Bild. Der Auftakt zeigt es über ein Bildelement, das die Ressource per ID nennt.
+Salzpfannen, Düne und Steinmann sind ein mit Diffusionsmodellen erzeugtes Foto, in der Abenddämmerung aufgenommen, damit sich der helle Titel vom dunklen Himmel abhebt. Das JPEG ist auf den Rahmen des Bands zugeschnitten, `PAGE.width` × `BAND` Millimeter, und die Ressource gibt ihre Pixel an, 1440 × 1120, sodass das Bild in voller Breite das Band genau füllt. Ein tieferes Band braucht ein auf den neuen Rahmen zugeschnittenes Bild. Der Auftakt zeigt es über ein Bildelement, das per ID auf die Ressource verweist.
 
 ### 4 · Das Frontmatter schreibt den Auftakt
 
 <Excerpt region="opener" />
 
-Die Überschrift der Ebene 1 reicht über beide Spalten, und ihr Auftakt ist ein Feld aus Elementen: das Foto bis in den Anschnitt und vier untereinander verkettete Texte. Ein längerer Titel schiebt Vorspann und Autorenzeile nach unten, statt sie zu überlagern, doch ab mehr als zwei Zeilen landet die Autorenzeile auf den hellen Salzpfannen. `{titleText}` ist der Text der Überschrift; `{subtitle}`, `{author}` und `{publishDate}` sind Felder des Frontmatters. Das `\\` in der Überschrift bricht den Titel dort um, wo Sie es setzen ([Zeilenumbrüche in Titeln](/de/docs/document-format-directives#zeilenumbrüche-in-titeln)). `minHeight` zählt ab dem oberen Rand, sodass die reservierte Höhe 5 mm unter dem Band endet.
+Die Überschrift der Ebene 1 reicht über beide Spalten, und ihr Auftakt ist ein Gestaltungsfeld aus Elementen: das Foto bis in den Anschnitt und vier untereinander verkettete Texte. Ein längerer Titel schiebt Vorspann und Autorenzeile nach unten, statt sie zu überlagern, doch ab mehr als zwei Zeilen gerät die Autorenzeile auf die hellen Salzpfannen. `{titleText}` ist der Text der Überschrift; `{subtitle}`, `{author}` und `{publishDate}` sind Felder des Frontmatters. Das `\\` in der Überschrift bricht den Titel dort um, wo Sie es setzen ([Zeilenumbrüche in Titeln](/de/docs/document-format-directives#zeilenumbrüche-in-titeln)). `minHeight` zählt ab dem oberen Rand, sodass die reservierte Höhe 5 mm unter dem Band endet.
 
 ### 5 · Kolumnentitel statt des blauen Standards
 
@@ -48,13 +48,13 @@ Lassen Sie `header` weg, kehrt der Standard der Engine zurück: Open Sans über 
 
 <Excerpt region="build" />
 
-`config()` ist eine Funktion, damit jeder Build die Palette in ihrem aktuellen Zustand liest: Sie ruft die Gestaltungsfunktionen aus Schritt 2 erneut auf. Ein einziges, an Ort und Stelle geändertes Konfigurationsobjekt ginge ebenso: Seit postext 1.25 erkennt die Engine die Änderung beim nächsten Build. `buildDocumentWithFonts` nimmt den Inhalt, diese Konfiguration und die Schriftoptionen des Kits und liefert das Dokument. `showPages` legt die Seiten so aus, wie sie in einem gebundenen Buch liegen, Seite 1 allein rechts, und zeichnet jede mit `renderPageToCanvas`.
+`config()` ist eine Funktion, damit jeder Build die Palette in ihrem aktuellen Zustand übernimmt: Sie ruft die Gestaltungsfunktionen aus Schritt 2 erneut auf. Ein einziges, an Ort und Stelle geändertes Konfigurationsobjekt ginge ebenso: Seit postext 1.25 erkennt die Engine die Änderung beim nächsten Build. `buildDocumentWithFonts` nimmt den Inhalt, diese Konfiguration und die Schriftoptionen des Kits und liefert das Dokument. `showPages` legt die Seiten so aus, wie sie in einem gebundenen Buch liegen, Seite 1 allein rechts, und zeichnet jede mit `renderPageToCanvas`.
 
 ## Varianten
 
 ### Sehen, was die Konfiguration ersetzt
 
-Bauen Sie mit einer leeren Konfiguration, und dasselbe Markdown erscheint auf einer Seite von 17 × 24 cm in der EB Garamond in 8 pt, mit blauen Überschriften aus der Open Sans und einem blauen Kolumnentitel über einer Linie; die Engine lädt auch diese beiden Familien, weil die Standardkonfiguration sie nennt.
+Bauen Sie mit einer leeren Konfiguration, und dasselbe Markdown erscheint auf einer Seite von 17 × 24 cm in der EB Garamond in 8 pt, mit blauen Überschriften aus der Open Sans und einem blauen Kolumnentitel über einer Linie; die Engine lädt auch diese beiden Familien, weil die Standardkonfiguration sie angibt.
 
 ```diff
 -const doc = await buildDocumentWithFonts({ markdown, resources }, config(), kitFonts(FONTS));

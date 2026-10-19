@@ -4,13 +4,13 @@ summary: "La tavola che decide una finale di kendo: intervalli inclinati (40~55)
 plain: "Una tavola di un combattimento in un fumetto giapponese, con spazi inclinati tra le vignette perché l’azione sembri pendere, e il grande suono giapponese del colpo lasciato al suo posto con una piccola traduzione accanto."
 description: "Una tavola d’azione manga in Postext: intervalli inclinati scritti 40~55 nella suddivisione, vignetta senza bordo per il colpo, ドン in giapponese sottotitolato."
 question: "Come inclino gli intervalli tra le vignette per una scena d’azione in un fumetto?"
-aliases: ["vignette inclinate", "intervalli diagonali", "斜めのコマ割り", "tavola d’azione", "scena di combattimento", "linee cinetiche", "効果線", "effetti sonori", "SFX", "描き文字", "onomatopea", "onomatopee", "vignetta senza bordo", "枠なし", "sottotitolare gli effetti sonori", "ドン"]
+aliases: ["vignette inclinate", "intervalli diagonali", "斜めのコマ割り", "tavola d’azione", "scena di combattimento", "linee cinetiche", "効果線", "SFX", "描き文字", "onomatopea", "onomatopee", "vignetta senza bordo", "枠なし", "sottotitolare le onomatopee", "ドン"]
 pageNotes: { "1": "L’originale giapponese: un campo lungo della finale, una striscia con gli occhi di Hana dietro la grata, una fila divisa da un intervallo che pende verso sinistra, l’affondo dell’avversaria a destra e il colpo di Hana a sinistra sotto un enorme ドン verticale, poi un’ultima fila inclinata nell’altro senso.", "2": "L’edizione italiana della stessa tavola: ドン di traverso sul colpo con «SDENG!» in piccolo sotto; «TUMP!» e il «MEEEN!» dell’avversaria a destra, il «MEN!!» di Hana a sinistra, e nell’ultima fila «Ce l’ha fatta!!» di Sora, «Men! Punto!» dell’arbitro e «…Mmh. Niente male.» nel pensiero di Mori." }
 ---
 
 ## Che cosa comporrai
 
-La tavola in cui si decide la finale di kendo, dallo stesso manga della <RecipeLink slug="manga-right-to-left">ricetta da destra a sinistra</RecipeLink>, in due edizioni affiancate: l’originale giapponese e il suo lettering nella lingua di questa pagina (l’inglese nella pagina giapponese). Quattro file: la palestra, gli occhi di Hana attraverso la grata dell’elmo, lo scambio e le reazioni. La terza fila è tagliata da un intervallo che pende, così l’affondo dell’avversaria e il contrattacco di Hana sembrano lanciarsi l’uno contro l’altro; la quarta pende nell’altro senso e rallenta la tavola. Il colpo di Hana non ha alcuna cornice, e il suo effetto sonoro, ドン, è composto in un gotico giapponese nero che ogni edizione mantiene, con una piccola traduzione sotto nelle tavole tradotte.
+La tavola in cui si decide la finale di kendo, dallo stesso manga della <RecipeLink slug="manga-right-to-left">ricetta da destra a sinistra</RecipeLink>, in due edizioni affiancate: l’originale giapponese e il suo lettering nella lingua di questa pagina (l’inglese nella pagina giapponese). Quattro file: la palestra, gli occhi di Hana attraverso la grata dell’elmo, lo scambio e le reazioni. La terza fila è tagliata da un intervallo che pende, così l’affondo dell’avversaria e il contrattacco di Hana sembrano lanciarsi l’uno contro l’altro; la quarta pende nell’altro senso e rallenta la tavola. Il colpo di Hana non ha alcun bordo, e la sua onomatopea, ドン, è composta in un gotico giapponese nero che ogni edizione mantiene, con una piccola traduzione sotto nelle tavole tradotte.
 
 ## Preparazione
 
@@ -22,27 +22,27 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una misura scrit
 
 <Excerpt region="balloons" />
 
-I kiai di entrambe le combattenti sono grida: un’esplosione a 18 punte con punte più profonde del valore predefinito. Gli effetti sonori non hanno alcun balloon; sono scritti sul disegno con un bordo bianco, 2,2 pt, così si leggono sopra le linee cinetiche. La vignetta del colpo è scritta `::panel{art=strike border=none}`, e il suo ドン porta `break`, così può attraversare l’intervallo inclinato fino alla vignetta accanto, come un letterista lascia che un suono trabocchi dalla cornice (<Feature id="sound-effects">effetti sonori</Feature>).
+I kiai di entrambe le combattenti sono grida: un’esplosione a 18 punte con punte più profonde del valore predefinito. Le onomatopee non hanno alcuna nuvoletta; sono scritte sul disegno con un bordo bianco, 2,2 pt, così si leggono sopra le linee cinetiche. La vignetta del colpo è scritta `::panel{art=strike border=none}`, e il suo ドン ha `break`, così può attraversare l’intervallo inclinato fino alla vignetta accanto, come un letterista lascia che un suono trabocchi dal bordo (<Feature id="sound-effects">onomatopee</Feature>).
 
 ### 3 · Tieni ドン in giapponese e sottotitolalo
 
 <Excerpt region="fonts" />
 
-Nei manga gli effetti sonori fanno parte del disegno, e le edizioni su licenza di solito li lasciano al loro posto e aggiungono accanto una piccola traduzione. Lo script fa lo stesso: ogni edizione ha la riga `sfx{… font="Dela Gothic One" break}: ドン`; le edizioni scritte in orizzontale vi aggiungono `vertical`, così ドン mantiene la colonna che ha nell’originale, e compongono sotto un secondo effetto più piccolo, SDENG! o WHAM. Poiché il carattere è nominato nella riga, ogni edizione carica Dela Gothic One con i soli caratteri di ドン, qualunque sia il suo carattere di lettering.
+Nei manga le onomatopee fanno parte del disegno, e le edizioni su licenza di solito le lasciano al loro posto e aggiungono accanto una piccola traduzione. Lo script fa lo stesso: ogni edizione ha la riga `sfx{… font="Dela Gothic One" break}: ドン`; le edizioni scritte in orizzontale vi aggiungono `vertical`, così ドン mantiene la colonna che ha nell’originale, e compongono sotto una seconda onomatopea più piccola, SDENG! o WHAM. Poiché il carattere è indicato nella riga, ogni edizione carica Dela Gothic One con i soli caratteri di ドン, qualunque sia il suo carattere di lettering.
 
 ### 4 · Adatta le zone sicure alle celle inclinate
 
 <Excerpt region="art" />
 
-Una cella inclinata è più larga a un’estremità che all’altra, e l’immagine deve coprirla tutta. Ogni zona sicura è tagliata su ciò che serve alla vignetta, gli occhi per il primo piano della grata e la parte superiore del corpo di Sora per l’esultanza, così sta dentro il ritaglio più largo della cella e il motore non deve mai aggiungere bande all’immagine.
+Una cella inclinata è più larga a un’estremità che all’altra, e l’immagine deve coprirla tutta. Ogni zona sicura è tagliata su ciò che serve alla vignetta, gli occhi per il primo piano della grata e la parte superiore del corpo di Sora per l’esultanza, così rientra nel ritaglio più largo della cella e il motore non deve mai aggiungere bande all’immagine.
 
 ### 5 · Metti l’originale accanto a ogni edizione
 
 <Excerpt region="editions" />
 
-Ogni lingua del sito scrive il lettering della tavola nel proprio file, e l’originale giapponese le sta di fronte sull’altro lato della doppia pagina (la pagina giapponese sta di fronte all’edizione inglese). ドン resta in ogni edizione, ognuna porta il suo sottotitolo (SDENG!, WHAM, ZAS!, PÁ!, PAF !, WUMM, 咚, بوم!), e le inclinazioni non si spostano mai.
+Ogni lingua del sito scrive il lettering della tavola nel proprio file, e l’originale giapponese le sta di fronte sull’altro lato della doppia pagina (la pagina giapponese sta di fronte all’edizione inglese). ドン resta in ogni edizione, ognuna ha il suo sottotitolo (SDENG!, WHAM, ZAS!, PÁ!, PAF !, WUMM, 咚, بوم!), e le inclinazioni non si spostano mai.
 
 ## Errori frequenti
 
-- Un effetto sonoro lasciato in giapponese in un’edizione scritta in orizzontale si compone in orizzontale, come il resto dell’edizione, a meno che la sua riga non dica `vertical`.
-- L’esultanza di Sora è più lunga della sua piccola vignetta in giapponese, spagnolo e catalano: lasciata al motore attraversava il bordo e la composizione avvisava `comicBalloonOverflow`. Quelle edizioni la marcano `break` (`sora{shout break}`): esplode verso l’alto attraverso la cornice nell’intervallo e nella vignetta sopra di proposito, e non viene segnalato nulla. Un balloon `break` non entra mai nel margine della pagina a meno che la sua vignetta non sia al vivo; un ancoraggio (`at=`) lo mette in qualunque altro punto.
+- Un’onomatopea lasciata in giapponese in un’edizione scritta in orizzontale si compone in orizzontale, come il resto dell’edizione, a meno che la sua riga non contenga `vertical`.
+- L’esultanza di Sora è più lunga della sua piccola vignetta in giapponese, spagnolo e catalano: lasciata al motore attraversava il bordo e la composizione segnalava `comicBalloonOverflow`. Quelle edizioni la marcano `break` (`sora{shout break}`): esplode verso l’alto attraverso il bordo nell’intervallo e nella vignetta sopra di proposito, e non viene segnalato nulla. Una nuvoletta `break` non entra mai nel margine della pagina a meno che la sua vignetta non sia al vivo; un ancoraggio (`at=`) la mette in qualunque altro punto.

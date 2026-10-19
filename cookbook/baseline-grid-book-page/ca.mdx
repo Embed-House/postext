@@ -3,7 +3,7 @@ title: "Una pàgina de llibre sobre una retícula de base"
 summary: "Una pàgina a dues columnes amb marges en mirall i una caixa de 44 interlineats justos, de manera que el text cau a la mateixa retícula als dos costats del llom."
 plain: "Tres pàgines d'un assaig sobre com es componien els llibres antics. Ensenya a fer que cada línia de text quedi a la mateixa alçada a les dues columnes i a les dues pàgines encarades."
 description: "Un assaig sobre el cànon de les proporcions de la pàgina, compost amb Postext amb marges 2:3:4:6 en mirall i dues columnes de 44 línies en una retícula de base."
-question: "Com componc una pàgina a dues columnes amb cada línia sobre la mateixa retícula en tot el plec?"
+question: "Com componc una pàgina a dues columnes amb cada línia sobre la mateixa retícula en tota la doble pàgina?"
 aliases: ["ritme vertical", "alinear línies entre columnes", "alçada de la caixa", "caixa de text", "cànon de Van de Graaf", "marges 2:3:4:6", "llistes fora de la retícula", "columnes arran del peu"]
 pageNotes: { "1": "L'obertura: el títol en cursiva vermella ocupa la primera columna i el dibuix del cànon encapçala la segona; sota cada línia de text corren les ratlles vermell pàl·lid de la retícula.", "2": "Una pàgina parella amb el marge exterior a l'esquerra. La nota de taller, en cos menor, cau entre les ratlles de la retícula; el títol que la segueix queda mitja línia fora i el text que va a sota hi torna.", "3": "Una pàgina senar amb el marge interior a l'esquerra: el dibuix comparatiu a tota l'amplada encapçala la pàgina i l'assaig acaba a sota en dues columnes anivellades; el colofó tanca la segona." }
 ---
@@ -40,13 +40,13 @@ Un flotant mai no cau per sobre del paràgraf que el cita ([col·locació](/ca/d
 
 <Excerpt region="balance" />
 
-Tota columna plena de les pàgines 9 i 10 acaba a la línia 44, perquè la caixa fa exactament 44 interlineats i el text s'hi va ajustar. Les regles que mantenen cada títol amb el seu text i eviten vídues, òrfenes i línies curtes vénen activades per defecte. Si una d'elles deixa una columna amb una línia de menys, l'equilibrat posa l'espai que falta sobre un títol anterior ([equilibrat de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes)), on es veu com un forat; retoca el text fins que l'equilibrat no tingui res a omplir. A l'última pàgina reparteix les línies que queden perquè les dues columnes acabin a la mateixa ratlla.
+Tota columna plena de les pàgines 9 i 10 acaba a la línia 44, perquè la caixa fa exactament 44 interlineats i el text s'hi va ajustar. Les regles que mantenen cada títol amb el seu text i eviten vídues, òrfenes i línies curtes vénen activades per defecte. Si una d'elles deixa una columna amb una línia de menys, l'equilibratge posa l'espai que falta sobre un títol anterior ([equilibrat de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes)), on es veu com un forat; retoca el text fins que l'equilibratge no tingui res a omplir. A l'última pàgina reparteix les línies que queden perquè les dues columnes acabin a la mateixa ratlla.
 
 ### 5 · Marges en mirall, i folis des de la pàgina 9
 
 <Excerpt region="heads" />
 
-La resposta curta calcula el marge de peu: als 280 mm del format els resta els 24 mm del marge de capçalera i una caixa d'exactament `LINES` interlineats (44 × 13,4 pt = 208 mm), i queden 48 mm, les sis unitats que demana la progressió 2:3:4:6. Amb `mirror: true`, els 16 mm de `left` són el marge interior, que cau a l'esquerra a les pàgines senars i a la dreta a les parelles ([marges simètrics](/ca/docs/configuration-page-layout#marges-simètrics-mirall)), així que les capçaleres, ancorades a `OUTER` mil·límetres de la vora de la pàgina, acaben on ho fa la caixa, del costat del tall; `pages: 'body'` les treu de l'obertura. `startAt: 9` imprimeix els folis 9 a 11, i `pageIndexOffset: 8` compta les vuit pàgines anteriors, de manera que el mirall, la paritat de les capçaleres i `breakBefore: 'odd'` segueixen el llibre enquadernat. Amb un desplaçament de 7, la primera pàgina comptaria com a parella i el salt hi ficaria una pàgina en blanc abans de l'assaig.
+La resposta curta calcula el marge de peu: als 280 mm del format els resta els 24 mm del marge de capçalera i una caixa d'exactament `LINES` interlineats (44 × 13,4 pt = 208 mm), i queden 48 mm, les sis unitats que demana la progressió 2:3:4:6. Amb `mirror: true`, els 16 mm de `left` són el marge interior, que cau a l'esquerra a les pàgines senars i a la dreta a les parelles ([marges simètrics](/ca/docs/configuration-page-layout#marges-simètrics)), així que les capçaleres, ancorades a `OUTER` mil·límetres de la vora de la pàgina, acaben on ho fa la caixa, del costat del tall; `pages: 'body'` les treu de l'obertura. `startAt: 9` imprimeix els folis 9 a 11, i `pageIndexOffset: 8` compta les vuit pàgines anteriors, de manera que el mirall, la paritat de les capçaleres i `breakBefore: 'odd'` segueixen el llibre enquadernat. Amb un desplaçament de 7, la primera pàgina comptaria com a parella i el salt hi ficaria una pàgina en blanc abans de l'assaig.
 
 ## Variants
 
@@ -61,7 +61,7 @@ La resposta curta calcula el marge de peu: als 280 mm del format els resta els 2
 
 ### Veure què fa l'equilibrat
 
-Sense equilibrat, les deu últimes línies de la pàgina 11 i el colofó van totes a la primera columna, i la segona queda buida.
+Sense equilibratge, les deu últimes línies de la pàgina 11 i el colofó van totes a la primera columna, i la segona queda buida.
 
 ```diff
 -const balancing = { enabled: true };

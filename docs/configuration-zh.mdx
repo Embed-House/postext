@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '配置',
   description: '什么是Postext配置，以及参考的十九个页面各讲哪一组设置',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '3分钟',
   order: 4,
   plainSummary: "本页是参考的入口，这份参考列出控制页面外观的所有设置。所有选择都放在一组设置里：页面大小、栏数、字体、字号、标题、框、颜色等等。每项设置都有合理的默认值，你只需写出想改的那几项。整份参考分为十九个页面。本页的列表链接到每一节，可以直接跳到需要的部分。",
@@ -37,22 +37,22 @@ const document = buildDocument(content, {
 
 **[页面与版式](/zh/docs/configuration-page-layout)**
 
-- [页面](/zh/docs/configuration-page-layout#页面)：尺寸、页边距、基线网格、裁切线、[装订](/zh/docs/configuration-page-layout#装订)。
+- [页面](/zh/docs/configuration-page-layout#页面)：尺寸、页边距、基线网格、裁切线、[页码编号](/zh/docs/configuration-page-layout#页码编号)、[装订](/zh/docs/configuration-page-layout#装订)。
 - [版式](/zh/docs/configuration-page-layout#版式)：栏数、栏间距、栏线、[竖排](/zh/docs/configuration-page-layout#竖排)。
 
 **[页眉与页脚](/zh/docs/configuration-headers-footers)**
 
-- [页眉与页脚](/zh/docs/configuration-headers-footers#页眉与页脚)：每页的文字元素和线条元素，支持占位符、奇偶页和对齐方式。
+- [页眉与页脚](/zh/docs/configuration-headers-footers#页眉与页脚)：每页的文本、线条、方框和图像元素，支持占位符、奇偶页、页面角色和定位。
 
 **[正文](/zh/docs/configuration-text)**
 
-- [正文](/zh/docs/configuration-text#正文)：排印、断词、制表位、段首孤行与段末孤行。
+- [正文](/zh/docs/configuration-text#正文)：排印、对齐与断行、[引用块](/zh/docs/configuration-text#引用块)、[诗歌](/zh/docs/configuration-text#诗歌)、[制表位](/zh/docs/configuration-text#制表位)和[首字下沉](/zh/docs/configuration-text#首字下沉)。
 
 **[断词与语言](/zh/docs/configuration-language)**
 
-- [断词](/zh/docs/configuration-language#断词)：断词模式、不拆分的词、不齐行文字。
-- [文档语言](/zh/docs/configuration-language#文档语言)：顶层的`locale`，决定断词的后备语言、内置资源类型、表格和拆分标注框的续接文字、写入无障碍PDF的语言标签，以及由它决定的[数字](/zh/docs/configuration-language#文档数字)（`numerals`）和[文本方向](/zh/docs/configuration-language#文本方向)（`direction`）；另见Postext排版所支持的[语言与文字](/zh/docs/configuration-language#语言与文字)。从右到左书籍的说明见[阿拉伯文排版](/zh/docs/arabic-layout)。
-- [语言与文字](/zh/docs/configuration-language#语言与文字)：Postext 能排的文字体系，以及分别讲解它们的页面。
+- [断词](/zh/docs/configuration-language#断词)：断词模式、不断开的词、齐左排的文字。
+- [文档语言](/zh/docs/configuration-language#文档语言)：顶层的`locale`，决定断词的后备语言、内置资源类型、表格和拆开的标注框接续处印的文字、写入无障碍PDF的语言标签，以及由它决定的[数字](/zh/docs/configuration-language#文档数字)（`numerals`）和[文本方向](/zh/docs/configuration-language#文本方向)（`direction`）；另见Postext排版所支持的[语言与文字](/zh/docs/configuration-language#语言与文字)。从右到左书籍的说明见[阿拉伯文排版](/zh/docs/arabic-layout)。
+- [语言与文字](/zh/docs/configuration-language#语言与文字)：Postext能排的文字体系，以及分别讲解它们的页面。
 - [阿拉伯文](/zh/docs/configuration-language#阿拉伯文)：阿拉伯文的字形、kashida、元音符号与数字。
 
 **[标题](/zh/docs/configuration-headings)**
@@ -61,8 +61,8 @@ const document = buildDocument(content, {
 
 **[孤行与各栏齐底](/zh/docs/configuration-page-flow)**
 
-- [段首孤行、段末孤行、孤字与不拆分规则](/zh/docs/configuration-page-flow#段首孤行段末孤行孤字与不拆分规则)：`bodyText`中让行与块在换栏处保持在一起的键。
-- [各栏齐底](/zh/docs/configuration-page-flow#各栏齐底)：让每一栏底部齐平的调整手段，按编辑上的先后顺序排列。
+- [段首孤行、段末孤行、孤字与不拆分规则](/zh/docs/configuration-page-flow#段首孤行段末孤行孤字与不拆分规则)：`bodyText`中让行与块在换栏时不被拆开的键。
+- [各栏齐底](/zh/docs/configuration-page-flow#各栏齐底)：让每一栏底部齐平的各种手段，按编辑处理时的先后顺序排列。
 
 **[列表与数学公式](/zh/docs/configuration-lists-math)**
 
@@ -72,7 +72,7 @@ const document = buildDocument(content, {
 **[注释与引用](/zh/docs/configuration-notes-references)**
 
 - [脚注](/zh/docs/configuration-notes-references#脚注)：`footnotes`，用`[^id]`引用的注放在哪里、怎样编号、是什么样子。
-- [行号](/zh/docs/configuration-notes-references#行号)：`lineNumbers`，在页边印出诗行或正文每第五行的行号；哪些行计数，在哪里重新计数，行号放在哪一侧。
+- [行号](/zh/docs/configuration-notes-references#行号)：`lineNumbers`，在诗歌或正文的页边每隔五行印一个行号；哪些行计数，从哪里重新计数，行号放在哪一侧。
 - [交叉引用](/zh/docs/configuration-notes-references#交叉引用)：`crossRefs`，`:ref`的编号或页码前后印出的文字，以及它的默认样式。
 - [引用](/zh/docs/configuration-notes-references#引用)：`citations`，引用格式，以及引用和参考文献的样子。
 - [目录](/zh/docs/configuration-notes-references#目录)：`:::toc`排出的内容，包括条目排印、前导符、页码、作者行、篇条目。
@@ -80,23 +80,23 @@ const document = buildDocument(content, {
 
 **[东亚排版](/zh/docs/configuration-east-asian)**
 
-- [东亚排版](/zh/docs/configuration-east-asian#东亚排版)：`cjk`，涵盖中文、日文和韩文的地区惯例与断行、两端对齐时行内空白的分配、标点宽度与悬挂、汉字与拉丁字母之间的空白、字符网格、竖排中的直立数字，以及着重号、注音、割注和汉文训读记号。完整指南见[中文排版](/zh/docs/chinese-layout)和[日文排版](/zh/docs/japanese-layout)。
+- [东亚排版](/zh/docs/configuration-east-asian#东亚排版)：`cjk`，涵盖中文、日文和韩文的地区惯例与断行、两端对齐时行内空白的分配、标点宽度与悬挂、汉字与拉丁字母之间的空白、字符网格、竖排中的直立数字，以及着重号、注音、双行夹注和汉文训读记号。完整指南见[中文排版](/zh/docs/chinese-layout)和[日文排版](/zh/docs/japanese-layout)。
 
 **[资源与表格](/zh/docs/configuration-resources)**
 
 - [资源类型](/zh/docs/configuration-resources#资源类型)：图、表及自定义类型的分类编号。
 - [表格样式](/zh/docs/configuration-resources#表格样式)（含[命名表格样式](/zh/docs/configuration-resources#命名表格样式)）与[题注样式](/zh/docs/configuration-resources#题注样式)：表格资源及其题注的排印与装饰。
-- [图示样式](/zh/docs/configuration-resources#图示样式)：把嵌入的SVG图示改为单一油墨，用于专色印刷。
-- [视频样式](/zh/docs/configuration-resources#视频样式)：`videoStyle`，印在视频封面上的播放标记和二维码，以及HTML查看器和EPUB中播放器提供的功能。
+- [图示样式](/zh/docs/configuration-resources#图示样式)：把嵌入的SVG图示改成单一油墨的颜色，用于专色印刷。
+- [视频样式](/zh/docs/configuration-resources#视频样式)：`videoStyle`，印在视频封面上的播放标记和二维码，以及HTML阅读器和EPUB中播放器提供的功能。
 
 **[样式与篇](/zh/docs/configuration-styles)**
 
 - [段落样式](/zh/docs/configuration-styles#段落样式)：供`:::paragraphs`容器使用的命名样式，如参考文献、术语表、注释。
 - [行内标签样式](/zh/docs/configuration-styles#行内标签样式)：`chipStyles`，行内`:chip[…]`的命名样式，如词库里的词框、键帽、标签。
-- [高亮样式](/zh/docs/configuration-styles#高亮样式)：`markStyles`，行内`:mark[…]`的命名样式，即跨行的高亮短语后面的色带。
+- [高亮样式](/zh/docs/configuration-styles#高亮样式)：`markStyles`，行内`:mark[…]`的命名样式，即衬在高亮短语下面、可以跨行的色带。
 - [代码清单](/zh/docs/configuration-styles#代码清单)：`codeStyle`，即```` ``` ````清单的字体、框、制表符宽度、过长的行、行号和记号颜色，语法着色及其高亮器接口，以及用代码字体排的行内代码。
-- [篇](/zh/docs/configuration-styles#篇)：`:::part`容器生成的篇章分隔页，包括奇偶页、正文区域、篇首页版面设计、正文排印。
-- [标题样式](/zh/docs/configuration-styles#标题样式)：供`{style="…"}`标题使用的命名样式，如不编号的章、带独立书眉的前置部分、页面几何与调色板。
+- [篇](/zh/docs/configuration-styles#篇)：`:::part`容器生成的篇名页，包括奇偶页、版心、篇名页的设计、正文的字体排印。
+- [标题样式](/zh/docs/configuration-styles#标题样式)：供`{style="…"}`标题使用的命名样式，如不编号的章、带独立书眉的前辅文，以及页面几何和配色。
 
 **[标注框](/zh/docs/configuration-callouts)**
 
@@ -106,22 +106,22 @@ const document = buildDocument(content, {
 
 - [漫画](/zh/docs/configuration-comics#漫画)：`comics`，包括漫画页的画框和格间距、分格样式、嵌字、对白框样式和角色表。指南见[漫画](/zh/docs/comics)。
 
-**[组合页面设置](/zh/docs/configuration-composed-pages)**
+**[模板页设置](/zh/docs/configuration-composed-pages)**
 
-- [页面模板](/zh/docs/configuration-composed-pages#页面模板)：`pageTemplates`，包括组合页面的框、组和装饰，模板之间的继承，以及奇数页和偶数页的变体。[注记样式](/zh/docs/configuration-composed-pages#注记样式)：`labelStyles`，即放在图片锚点上的注记的外观。模板可能出现的所有问题见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
+- [页面模板](/zh/docs/configuration-composed-pages#页面模板)：`pageTemplates`，包括模板页的框、组和装饰，模板之间的继承，以及奇偶页变体。[标注样式](/zh/docs/configuration-composed-pages#标注样式)：`labelStyles`，即放在图片锚点上的标注的外观。模板可能出现的所有问题见[页面模板警告](/zh/docs/configuration-composed-pages#页面模板警告)。
 
 **[字体、颜色与输出](/zh/docs/configuration-fonts-colors-viewers)**
 
 - [单位与颜色](/zh/docs/configuration-fonts-colors-viewers#单位与颜色) + [调色板](/zh/docs/configuration-fonts-colors-viewers#调色板)：`Dimension`、`ColorValue`、命名颜色。
 - [自定义字体](/zh/docs/configuration-fonts-colors-viewers#自定义字体)：在Google Fonts之外声明用户上传的字体族。
-- [HTML查看器](/zh/docs/configuration-fonts-colors-viewers#html查看器)：HTML后端的目标栏宽与断行。
-- [Canvas查看器](/zh/docs/configuration-fonts-colors-viewers#canvas查看器)：`canvasViewer`：Sandbox 的 Canvas 中一对页面的两页之间、以及相邻两行之间的间距。
+- [HTML阅读器](/zh/docs/configuration-fonts-colors-viewers#html阅读器)：HTML后端的目标栏宽与断行。
+- [Canvas查看器](/zh/docs/configuration-fonts-colors-viewers#canvas查看器)：`canvasViewer`，沙盒Canvas标签页中并排两页之间、以及上下两排之间的间距。
 - [PDF生成（配置）](/zh/docs/configuration-fonts-colors-viewers#pdf生成配置)：PDF后端的书签大纲、无障碍（带标签的）输出、强制色彩空间。
 - [印刷输出（配置）](/zh/docs/configuration-fonts-colors-viewers#印刷输出配置)：`print`，包括PDF/X-1a和PDF/X-4、ICC输出特性文件、黑色（只用K的灰色、叠印、复合黑）、以CMYK定义的颜色、印前检查和印刷预览。
-- [对比度检查（配置）](/zh/docs/configuration-fonts-colors-viewers#对比度检查配置)：`contrast`，按WCAG AA或AAA检查文字与其底色的对比度，屏幕上和输出特性文件的纸张上都算，并检查过细而不宜印刷的反白字。
-- [正文检查（配置）](/zh/docs/configuration-fonts-colors-viewers#正文检查配置)：`checks.contentInConfig`，检查存放书的正文而不是占位符的设计文字，并可为书名和出版社设置允许的短语。
+- [对比度检查（配置）](/zh/docs/configuration-fonts-colors-viewers#对比度检查配置)：`contrast`，按WCAG AA或AAA检查文字与底色的对比度，既按屏幕计算，也按输出特性文件的纸张计算；还检查细得不宜印刷的反白字。
+- [正文检查（配置）](/zh/docs/configuration-fonts-colors-viewers#正文检查配置)：`checks.contentInConfig`，找出设计中直接存放书的正文、而不是占位符的文字，并可为书名和出版社设置允许的短语。
 - [书页视图（配置）](/zh/docs/configuration-fonts-colors-viewers#书页视图配置)：3D书本视图的纸种、装订、台面和光照。
-- [调试](/zh/docs/configuration-fonts-colors-viewers#调试)：编辑器中的可视化叠加层与编写警告。
+- [调试](/zh/docs/configuration-fonts-colors-viewers#调试)：编辑器中的可视化叠加层，以及写作时的警告。
 
 **[以编程方式使用](/zh/docs/configuration-programmatic-usage)**
 
@@ -134,7 +134,7 @@ const document = buildDocument(content, {
 
 **[HTML、3D书本与EPUB](/zh/docs/configuration-html-folio-epub)**
 
-- [集成HTML查看器](/zh/docs/configuration-html-folio-epub#集成html查看器)与[生成PDF](/zh/docs/configuration-pdf-output#生成pdf)：端到端的完整做法。
+- [集成HTML阅读器](/zh/docs/configuration-html-folio-epub#集成html阅读器)与[生成PDF](/zh/docs/configuration-pdf-output#生成pdf)：端到端的完整做法。
 - [3D书本（`postext-folio`）](/zh/docs/configuration-html-folio-epub#3d书本postext-folio)：把排好的文档显示成一本摊开在桌上的印刷书，读者可以翻页。
 - [EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)：由同一份排版生成固定版式和流式版式的EPUB 3文件，并用EPUBCheck检查。
 

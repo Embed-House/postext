@@ -18,7 +18,7 @@ pageNotes: { "1": "La page de titre : l’auteur en petites capitales bleues, l
 
 <Excerpt region="openers" />
 
-`buildBundle` met en page chaque chapitre comme un document à part, en reportant numéros de page et parité de l’un à l’autre : `docs` est donc le tableau que `renderToPdf` imprimerait. Le générateur d’EPUB lit le même tableau : chaque chapitre devient une entrée de navigation, et le fichier recomposable écrit un document XHTML par chapitre. La page de titre et sa page de crédits forment le premier chapitre, dont le frontmatter contient le titre, le sous-titre et l’auteur du livre.
+`buildBundle` met en page chaque chapitre comme un document à part, en reportant numéros de page et parité de l’un à l’autre : `docs` est donc le tableau que `renderToPdf` imprimerait. Le générateur d’EPUB utilise le même tableau : chaque chapitre devient une entrée de navigation, et le fichier recomposable écrit un document XHTML par chapitre. La page de titre et sa page de crédits forment le premier chapitre, dont l’en-tête YAML contient le titre, le sous-titre et l’auteur du livre.
 
 ### 2 · Fournir les fichiers de police au générateur
 
@@ -28,13 +28,13 @@ Les caractères chargés par le navigateur ne sont pas des fichiers que le gén�
 
 ### 3 · Écrire les deux versions
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layout: 'fixed'` écrit un document XHTML par page imprimée au format rogné, avec un vrai texte sélectionnable ; `layout: 'reflowable'` reconstruit les paragraphes à partir des lignes mises en page, supprime les traits d’union ajoutés par les coupures de ligne et dérive une feuille de style de la configuration. Une date `modified` fixe fait produire les mêmes octets à chaque exécution. Les métadonnées viennent du frontmatter du premier chapitre : le titre et l’auteur du fichier sont ceux imprimés sur la page de titre.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layout: 'fixed'` écrit un document XHTML par page imprimée au format rogné, avec un vrai texte sélectionnable ; `layout: 'reflowable'` reconstruit les paragraphes à partir des lignes mises en page, supprime les traits d’union ajoutés par les coupures de ligne et dérive une feuille de style de la configuration. Une date `modified` fixe fait produire les mêmes octets à chaque exécution. Les métadonnées viennent de l’en-tête YAML du premier chapitre : le titre et l’auteur du fichier sont ceux imprimés sur la page de titre.
 
 ### 4 · Relire chaque fichier
 
 <Excerpt region="shelf" />
 
-`readEpub` ouvre le fichier comme le fait un système de lecture : la spine dans l’ordre de lecture, la table des matières, la liste des pages et la mise en page. Le fichier fixe a une entrée de spine par page ; le recomposable en a quatre, une par chapitre. Les deux portent une liste des folios imprimés : un lecteur peut suivre une citation jusqu’à la page 9 dans l’un comme dans l’autre. Le lien `<a download>` donne un nom de fichier aux octets ; rien ne passe par un serveur.
+`readEpub` ouvre le fichier comme le fait un système de lecture : la spine dans l’ordre de lecture, la table des matières, la liste des pages et la mise en page. Le fichier fixe a une entrée de spine par page ; le recomposable en a quatre, une par chapitre. Les deux contiennent une liste des folios imprimés : un lecteur peut suivre une citation jusqu’à la page 9 dans l’un comme dans l’autre. Le lien `<a download>` donne un nom de fichier aux octets ; rien ne passe par un serveur.
 
 ## Variantes
 

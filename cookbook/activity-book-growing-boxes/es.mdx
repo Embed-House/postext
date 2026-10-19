@@ -10,13 +10,13 @@ pageNotes: { "1": "La cubierta: una pintura del ciclo del agua llega hasta los b
 
 ## Lo que vas a componer
 
-Cinco páginas de *El agua, de viaje*, la unidad 3 de un cuaderno de Ciencias de la Naturaleza inventado para 4.º de Primaria, en 210 × 280 mm. En la cubierta, una pintura del ciclo del agua, generada con un modelo de difusión, llega hasta la sangre y se funde con el papel al pie; cinco flechas vectoriales se apoyan en sus elementos, sobre un título de 54 pt y una línea para el nombre. Todas las fichas salen de la misma plantilla de página: la línea de la unidad, una banda azul con el título, un texto breve junto a una viñeta pintada y tres recuadros de actividad en azul pálido con una pestaña numerada. Debajo del primer y del tercer recuadro van las líneas para responder. Cada recuadro mide lo que su texto, así que la ficha francesa, una línea más larga aquí y allá, baja sus líneas más que la inglesa sin que cambie ninguna posición de la plantilla. El proyecto, un pluviómetro hecho con una botella, tiene más pasos de los que caben en una página: su recuadro se corta al pie con *Continúa* y sigue arriba de una página añadida, con seis líneas para las observaciones. Todas las palabras, también las de las pestañas y el título de las observaciones, están en el Markdown.
+Cinco páginas de *El agua, de viaje*, la unidad 3 de un cuaderno de Ciencias de la Naturaleza inventado para 4.º de Primaria, en 210 × 280 mm. En la cubierta, una pintura del ciclo del agua, generada con un modelo de difusión, llega hasta el sangrado y se funde con el papel al pie; cinco flechas vectoriales se apoyan en sus elementos, sobre un título de 54 pt y una línea para el nombre. Todas las fichas salen de la misma plantilla de página: la línea de la unidad, una banda azul con el título, un texto breve junto a una viñeta pintada y tres recuadros de actividad en azul pálido con una pestaña numerada. Debajo del primer y del tercer recuadro van las líneas para responder. Cada recuadro mide lo que su texto, así que la ficha francesa, una línea más larga aquí y allá, baja sus líneas más que la inglesa sin que cambie ninguna posición de la plantilla. El proyecto, un pluviómetro hecho con una botella, tiene más pasos de los que caben en una página: su recuadro se corta al pie con *Continúa* y sigue arriba de una página añadida, con seis líneas para las observaciones. Todas las palabras, también las de las pestañas y el título de las observaciones, están en el Markdown.
 
 ## Elaboración
 
 ### 1 · Vierte cada actividad en su recuadro por su nombre
 
-La plantilla es [la respuesta corta](#la-respuesta-corta) de arriba. En el Markdown, cada ficha es una valla `::::page`: el primer título va al marco que tiene `takes: 'h1'`, el párrafo al marco de flujo y cada `:::frame{slot="…"}` al marco de ese nombre, con las palabras de la pestaña en `label`. Los marcos de respuesta no reciben nada, y por eso llevan `optional: true`: un marco vacío daría el aviso `slotEmpty`. Una actividad de dibujo guarda su hueco en blanco dentro del propio recuadro con `:::space{lines=3}`, porque el sitio que necesita el dibujo forma parte de la pregunta.
+La plantilla es [la respuesta corta](#la-respuesta-corta) de arriba. En el Markdown, cada ficha es un bloque `::::page`: el primer título va al marco que tiene `takes: 'h1'`, el párrafo al marco de flujo y cada `:::frame{slot="…"}` al marco de ese nombre, con las palabras de la pestaña en `label`. Los marcos de respuesta no reciben nada, y por eso llevan `optional: true`: un marco vacío daría el aviso `slotEmpty`. Una actividad de dibujo guarda su hueco en blanco dentro del propio recuadro con `:::space{lines=3}`, porque el sitio que necesita el dibujo forma parte de la pregunta.
 
 ```md
 :::frame{slot="act-1" label="1 · Lee y contesta"}
@@ -32,13 +32,13 @@ Cada recuadro tiene un `minHeight` de 22 mm, la altura a la que está dibujado, 
 
 <Excerpt region="continue" />
 
-El recuadro de los pasos no tiene altura fija: mide lo que su texto y se detiene al pie del área. Un marco que puede seguir en otra página sigue antes de componer su texto más pequeño, así que el recuadro se corta entre dos líneas a cuerpo completo, termina con la marca del idioma (*Continúa*, *Continued*, *À suivre*, según `locale`) y sigue en el marco del mismo nombre de una página de `proyecto-sigue` ([cuando el texto sigue](/es/docs/composed-pages#cuando-el-texto-sigue)). La página añadida dibuja las líneas de las observaciones bajo el resto del recuadro, con el título que la valla da en `notas="Mis observaciones"`, de modo que las palabras siguen en el Markdown y cambian con cada edición.
+El recuadro de los pasos no tiene altura fija: mide lo que su texto y se detiene al pie del área. Un marco que puede seguir en otra página sigue antes de componer su texto más pequeño, así que el recuadro se corta entre dos líneas a cuerpo completo, termina con la marca del idioma (*Continúa*, *Continued*, *À suivre*, según `locale`) y sigue en el marco del mismo nombre de una página de `proyecto-sigue` ([cuando el texto sigue](/es/docs/composed-pages#cuando-el-texto-sigue)). La página añadida dibuja las líneas de las observaciones bajo el resto del recuadro, con el título que da la línea de apertura en `notas="Mis observaciones"`, de modo que las palabras siguen en el Markdown y cambian con cada edición.
 
 ### 4 · Dibuja la cubierta hasta la sangre
 
 <Excerpt region="cover" />
 
-La cubierta también es una página compuesta: su dibujo es decoración anclada a la sangre, y el título, la línea de la colección y el campo del nombre forman una pila que empieza 162 mm por debajo de la caja. El filete del nombre va anclado al pie de su marco, de modo que una etiqueta que ocupe dos líneas en otro idioma mantiene la línea debajo de las palabras. `header: false` y `footer: false` dejan la cubierta sin folio.
+La cubierta también es una página compuesta: su dibujo es decoración anclada al sangrado, y el título, la línea de la colección y el campo del nombre forman una pila que empieza 162 mm por debajo de la caja. El filete del nombre va anclado al pie de su marco, de modo que una etiqueta que ocupe dos líneas en otro idioma mantiene la línea debajo de las palabras. `header: false` y `footer: false` dejan la cubierta sin folio.
 
 ## Variantes
 

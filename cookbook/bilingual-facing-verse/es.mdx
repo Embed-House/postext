@@ -1,6 +1,6 @@
 ---
 title: "Traducción enfrentada, estrofa a estrofa"
-summary: "Cada poema es un recuadro sin marco con dos columnas: un corte fijo abre la inglesa en su título y :::space deja cada estrofa a la altura de su original."
+summary: "Cada poema es un recuadro sin borde con dos columnas: un corte fijo abre la inglesa en su título y :::space deja cada estrofa a la altura de su original."
 plain: "Un poemario con el original en español a un lado y la traducción inglesa al lado. Cada estrofa de la traducción empieza a la misma altura que la original."
 description: "Un cuaderno bilingüe compuesto con Postext: poemas en español y su versión inglesa enfrentados en recuadros de dos columnas, con un corte fijo entre ellas."
 question: "¿Cómo pongo un poema y su traducción uno al lado del otro, empezando en la misma línea y estrofa a estrofa?"
@@ -10,7 +10,7 @@ pageNotes: { "3": "La acuarela de las salinas baja hasta 84 mm del borde superio
 
 ## Lo que vas a componer
 
-Un cuaderno bilingüe de cinco poemas sobre una salina del sur de España, de 156 × 234 mm, con el español a la izquierda y la versión inglesa de la propia autora a la derecha, verso a verso. Abren el libro una portada con un flamenco y una nota de la autora; los poemas empiezan bajo una acuarela de balsas rosas, montones de sal y flamencos al amanecer. Cada poema va en un recuadro sin marco, bajo un número romano granate en Castoro Titling, con el español en una columna y el inglés en la otra. El inglés arranca siempre en la misma línea que el español, y cada estrofa, a la altura de su original. Cuando un verso inglés no cabe en su columna, sigue en la línea de abajo sangrado 2 em, y la estrofa española de enfrente termina con una línea en blanco más.
+Un cuaderno bilingüe de cinco poemas sobre una salina del sur de España, de 156 × 234 mm, con el español a la izquierda y la versión inglesa de la propia autora a la derecha, verso a verso. Abren el libro una portada con un flamenco y una nota de la autora; los poemas empiezan bajo una acuarela de balsas rosas, montones de sal y flamencos al amanecer. Cada poema va en un recuadro sin borde, bajo un número romano granate en Castoro Titling, con el español en una columna y el inglés en la otra. El inglés arranca siempre en la misma línea que el español, y cada estrofa, a la altura de su original. Cuando un verso inglés no cabe en su columna, sigue en la línea de abajo sangrado 2 em, y la estrofa española de enfrente termina con una línea en blanco más.
 
 ## Elaboración
 
@@ -30,13 +30,13 @@ Cada mitad de un poema es un bloque `:::verse`: un verso por línea del Markdown
 
 <Excerpt region="note" />
 
-`locale` elige los patrones de separación silábica. Con `'es'`, la nota española corta *ori-ginal* y *Duna-liella*; con los patrones ingleses las dos palabras pasan enteras a la línea siguiente, y solo *arras-traba* se corta con ambos ([idiomas soportados](/es/docs/justification#idiomas-soportados)). Los espacios entre palabras pueden encogerse hasta 0,8 y estirarse hasta 1,35 de su ancho normal, y ninguna línea justificada de las dos notas pasa de ahí. El título de la nota es un diseño de un solo elemento, situado 36 mm por debajo del inicio de la caja de texto, así que la nota empieza a 73 mm del borde superior de su página.
+`locale` elige los patrones de separación silábica. Con `'es'`, la nota española corta *ori-ginal* y *Duna-liella*; con los patrones ingleses las dos palabras pasan enteras a la línea siguiente, y solo *arras-traba* se corta con ambos ([idiomas admitidos](/es/docs/justification#idiomas-admitidos)). Los espacios entre palabras pueden encogerse hasta 0,8 y estirarse hasta 1,35 de su ancho normal, y ninguna línea justificada de las dos notas pasa de ahí. El título de la nota es un diseño de un solo elemento, situado 36 mm por debajo del inicio de la caja de texto, así que la nota empieza a 73 mm del borde superior de su página.
 
 ### 4 · La portada y la acuarela son títulos
 
 <Excerpt region="front" />
 
-Cada uno es un título de nivel 1 con un estilo propio ([estilos de título](/es/docs/configuration-styles#estilos-de-encabezado)): el diseño de la portada toma `{author}` del frontmatter, y los dos diseños toman `{attr.other}` de los atributos del título. La acuarela está anclada al borde superior de la página, por encima de la caja de texto, y el título reserva hasta su pie, a 84 mm del borde. El estilo pone `marginBottom: pt(0)`, así que el hueco bajo la acuarela es el margen superior del propio poema, de dos líneas, y el poema I empieza en la primera línea de la rejilla que queda al menos dos líneas por debajo de la imagen.
+Cada uno es un encabezado de nivel 1 con un estilo propio ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)): el diseño de la portada toma `{author}` del frontmatter, y los dos diseños toman `{attr.other}` de los atributos del encabezado. La acuarela está anclada al borde superior de la página, por encima de la caja de texto, y el título reserva hasta su pie, a 84 mm del borde. El estilo pone `marginBottom: pt(0)`, así que el hueco bajo la acuarela es el margen superior del propio poema, de dos líneas, y el poema I empieza en la primera línea de la rejilla que queda al menos dos líneas por debajo de la imagen.
 
 ### 5 · Las cabeceras nombran los dos idiomas
 
@@ -66,5 +66,5 @@ Con 3 em, *reflection.* empieza en la página 3 un em más adentro.
 
 ## Errores frecuentes
 
-- Un `:::space` puesto antes del título inglés desaparece: la segunda columna se abre en el bloque que nombra `breaks`, y el espacio cae en el corte. Ponlo después del título, como el `:::space{lines=0.5}` que sigue aquí al título de cada columna.
+- Un `:::space` puesto antes del título inglés desaparece: la segunda columna se abre en el bloque que indica `breaks`, y el espacio cae en el corte. Ponlo después del título, como el `:::space{lines=0.5}` que sigue aquí al título de cada columna.
 - Cuenta `breaks` desde el título español: con un título y tres estrofas, el título inglés es el bloque 5. Cada estrofa es un bloque, así que una estrofa española más lleva el título inglés al bloque 6, y `breaks` tiene que subir con él; un verso más dentro de una estrofa no mueve nada.

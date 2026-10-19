@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuration : pages composées',
   sidebarTitle: 'Réglages des pages composées',
-  description: 'Les gabarits des pages composées : blocs, groupes, décor, héritage et variantes recto/verso, styles d’étiquette des ancrages d’image, et avertissements qu’un gabarit peut donner',
+  description: 'Les gabarits des pages composées (blocs, groupes, décor, héritage, variantes recto et verso), les styles des étiquettes placées sur les ancres d’une image, et les avertissements qu’un gabarit peut déclencher',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
-  plainSummary: "Cette page présente les gabarits de page. Un gabarit est une page dessinée dans les réglages : des boîtes nommées, appelées blocs, la place de chacune, la taille qu’elle peut prendre et son apparence. Le Markdown d’une page composée remplit ensuite les blocs par leur nom, si bien que le texte ne contient jamais de positions et que les réglages ne contiennent jamais de texte. Un gabarit peut partir d’un autre et ne changer que quelques blocs, et il peut différer entre les pages de gauche et de droite. La page liste aussi les styles d’étiquette des mots posés sur les images, ainsi que chaque avertissement qu’un gabarit peut donner, avec la façon de le corriger.",
+  plainSummary: "Cette page présente les gabarits de page. Un gabarit est une page dessinée dans les réglages : des boîtes nommées, appelées blocs, la place de chacune, la taille qu’elle peut prendre et son apparence. Le Markdown d’une page composée remplit ensuite les blocs par leur nom : le texte ne contient donc jamais de positions, et les réglages jamais de texte. Un gabarit peut partir d’un autre et ne changer que quelques blocs, et il peut différer entre les pages de gauche et de droite. La page liste aussi les styles d’étiquette des mots posés sur les images, ainsi que chaque avertissement qu’un gabarit peut déclencher, avec la façon de le corriger.",
 };
 
 # Configuration : pages composées
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Gabarits de page
 
-Une page composée est une page dont la forme vient d’un **gabarit** de la configuration et dont le contenu vient du Markdown d’une clôture `::::page{template="…"}`. Le gabarit nomme des rectangles, appelés **blocs** ; le Markdown envoie chaque morceau de contenu vers un bloc par son nom (son emplacement). La géométrie n’apparaît jamais dans le Markdown, et le texte du contenu n’apparaît jamais dans le gabarit. La propriété `pageTemplates` contient les gabarits du livre :
+Une page composée est une page dont la forme vient d’un **gabarit** de la configuration et dont le contenu vient du Markdown placé sous un délimiteur de page `::::page{template="…"}`. Le gabarit définit des rectangles nommés, appelés **blocs** ; le Markdown envoie chaque morceau de contenu vers un bloc d’après son nom (son emplacement, attribut `slot`). La géométrie n’apparaît jamais dans le Markdown, et le texte du contenu n’apparaît jamais dans le gabarit. La propriété `pageTemplates` contient les gabarits du livre :
 
 ```ts
 const config: PostextConfig = {
@@ -46,7 +46,7 @@ const config: PostextConfig = {
 };
 ```
 
-Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce bloc remplit la zone de contenu. Tous les autres champs sont facultatifs :
+Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce bloc remplit la zone de contenu. Tous les autres champs sont facultatifs :
 
 <table>
   <thead>
@@ -62,25 +62,25 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obligatoire</td>
-      <td>Le nom que demande une clôture de page (<code>template="tema-cajas"</code>). Unique parmi les gabarits : un second gabarit avec le même id est ignoré.</td>
+      <td>Le nom qu’indique un délimiteur de page (<code>template="tema-cajas"</code>). Unique parmi les gabarits : un second gabarit avec le même identifiant est ignoré.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
       <td><code>string</code></td>
-      <td>l’id</td>
-      <td>Le nom affiché dans le Sandbox. La mise en page ne le lit jamais.</td>
+      <td>l’identifiant</td>
+      <td>Le nom affiché dans le Sandbox. La mise en page ne s’en sert jamais.</td>
     </tr>
     <tr>
       <td><code>extends</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>L’id du gabarit dont celui-ci part. Voir <a href="#héritage-et-variantes">Héritage et variantes</a>.</td>
+      <td>L’identifiant du gabarit dont celui-ci part. Voir <a href="#héritage-et-variantes">Héritage et variantes</a>.</td>
     </tr>
     <tr>
       <td><code>area</code></td>
       <td><code>'content' | 'trim' | 'bleed'</code></td>
       <td><code>'content'</code></td>
-      <td>Le rectangle auquel se rapportent les positions des blocs. <code>'content'</code> est la zone de contenu de la page, en miroir sur les pages de gauche et de droite comme le texte courant ; <code>'trim'</code> est la page rognée ; <code>'bleed'</code> la page avec son fond perdu.</td>
+      <td>Le rectangle auquel se rapportent les positions des blocs. <code>'content'</code> est la zone de contenu de la page, en miroir sur les pages de gauche et de droite comme le texte courant ; <code>'trim'</code> est la page rognée ; <code>'bleed'</code> la page avec son fond perdu.</td>
     </tr>
     <tr>
       <td><code>grid</code></td>
@@ -92,7 +92,7 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>frames</code></td>
       <td><code>FrameConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Les blocs, dans l’ordre du gabarit : celui dans lequel ils sont mesurés et celui qui départage les égalités. Voir <a href="#blocs">Blocs</a>.</td>
+      <td>Les blocs, dans l’ordre du gabarit : celui dans lequel ils sont mesurés et celui qui départage les égalités. Voir <a href="#blocs">Blocs</a>.</td>
     </tr>
     <tr>
       <td><code>groups</code></td>
@@ -104,49 +104,49 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>aucun</td>
-      <td>Des images, des filets et des boîtes peints avec la page, dans le langage d’éléments des <a href="/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page">en-têtes et pieds de page</a>. Les éléments de texte ne contiennent que des variables (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> pour un attribut de la clôture de page). Un élément peut s’ancrer à un bloc ou à un groupe (<code>'#dinero'</code>) et se déplace alors avec lui. Le décor est posé après les blocs et ne repousse jamais le texte. Depuis postext 1.42, <code>&#123;headingNumber&#125;</code> écrit le compteur du premier titre numéroté que contiennent les blocs de la page (un bloc avec <code>takes</code>) et <code>&#123;headingNumber.titulo&#125;</code> celui du bloc <code>titulo</code>, avec les chiffres du document : une pastille portant le numéro d’un thème le lit dans le titre, sans que la clôture de page ait à le répéter. Le décor est peint sous les blocs ; un clic sur un texte du décor posé sur un bloc, à un endroit où le bloc n’a pas de texte propre, atteint le texte et non le bloc. Un bloc de <code>layer</code> négatif est peint sous le décor.</td>
+      <td>Des images, des filets et des boîtes dessinés avec la page, dans le langage d’éléments des <a href="/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page">en-têtes et pieds de page</a>. Les éléments de texte ne contiennent que des variables (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> pour un attribut du délimiteur de page). Un élément peut s’ancrer à un bloc ou à un groupe (<code>'#dinero'</code>) et se déplace alors avec lui. Le décor est posé après les blocs et ne repousse jamais le texte. Depuis postext 1.42, <code>&#123;headingNumber&#125;</code> écrit le compteur du premier titre numéroté que contiennent les blocs de la page (un bloc avec <code>takes</code>) et <code>&#123;headingNumber.titulo&#125;</code> celui du bloc <code>titulo</code>, avec les chiffres du document : une pastille qui affiche le numéro d’un thème le prend dans le titre, sans que le délimiteur de page ait à le répéter. Le décor est dessiné sous les blocs ; un clic sur un texte du décor posé sur un bloc, à un endroit où le bloc n’a pas de texte propre, atteint le texte et non le bloc. Un bloc de <code>layer</code> négatif est dessiné sous le décor.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
       <td><code>DesignSlot | false</code></td>
       <td>hérité</td>
-      <td>Le titre courant et le folio de la page. Non définis, la page garde ceux de son chapitre ; <code>false</code> les masque.</td>
+      <td>Le titre courant et le folio de la page. Non définis, la page garde ceux de son chapitre ; <code>false</code> les masque.</td>
     </tr>
     <tr>
       <td><code>spread</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Le gabarit décrit deux pages en regard composées comme une seule feuille (voir <a href="/fr/docs/composed-pages#doubles-pages">Pages composées › Doubles pages</a>). Une double page commence sur une page paire, celle de gauche d’un livre qui se lit de gauche à droite et celle de droite d’un livre qui se lit de droite à gauche, avec une page blanche avant elle si besoin. Son ouverture porte aussi la marque <code>spread</code> ; si elles ne s’accordent pas, le gabarit décide (<code>spreadMismatch</code>).</td>
+      <td>Le gabarit décrit deux pages en regard composées comme une seule feuille (voir <a href="/fr/docs/composed-pages#doubles-pages">Pages composées › Doubles pages</a>). Une double page commence sur une page paire, celle de gauche d’un livre qui se lit de gauche à droite et celle de droite d’un livre qui se lit de droite à gauche, avec une page blanche avant elle si besoin. Son délimiteur de page porte lui aussi l’attribut <code>spread</code> ; s’ils ne s’accordent pas, c’est le gabarit qui décide (<code>spreadMismatch</code>).</td>
     </tr>
     <tr>
       <td><code>gutter</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Sur une double page, une bande de cette largeur centrée sur le dos que les blocs évitent, sauf s’ils ont <code>crossGutter: true</code> : un bloc qui la traverse est coupé à son bord, du côté de son centre ; un bloc qui commence dedans en sort. Avec <code>0</code>, la bande est le dos lui-même.</td>
+      <td>Sur une double page, une bande de cette largeur centrée sur le dos que les blocs évitent, sauf s’ils ont <code>crossGutter: true</code> : un bloc qui la traverse est coupé à son bord, du côté de son centre ; un bloc qui commence dedans en sort. Avec <code>0</code>, la bande est le dos lui-même.</td>
     </tr>
     <tr>
       <td><code>variants</code></td>
       <td><code>&#123; recto?, verso? &#125;</code></td>
       <td>aucune</td>
-      <td>Des changements pour une page de droite (<code>recto</code>) ou de gauche (<code>verso</code>), écrits comme le gabarit lui-même. Le côté est le côté physique, si bien que les livres de gauche à droite et de droite à gauche fonctionnent tous deux.</td>
+      <td>Des changements pour une page de droite (<code>recto</code>) ou de gauche (<code>verso</code>), écrits comme le gabarit lui-même. Le côté est le côté physique : les livres de gauche à droite et de droite à gauche fonctionnent donc tous deux.</td>
     </tr>
     <tr>
       <td><code>overflowTemplate</code></td>
       <td><code>string</code></td>
       <td>ce gabarit</td>
-      <td>Le gabarit des pages ajoutées quand un bloc continue sur la page suivante (<code>overflow.continueIn: 'next-page'</code>). Non défini, la page ajoutée est ce gabarit posé à nouveau, avec seulement les blocs continués remplis ; les autres ne prennent aucune place. Une double page ici fait de la suite une double page. Voir <a href="/fr/docs/composed-pages#quand-le-texte-se-poursuit">Pages composées › Quand le texte se poursuit</a>.</td>
+      <td>Le gabarit des pages ajoutées quand un bloc continue sur la page suivante (<code>overflow.continueIn: 'next-page'</code>). Non défini, la page ajoutée est ce gabarit posé à nouveau, avec seulement les blocs continués remplis ; les autres ne prennent aucune place. Une double page ici fait de la suite une double page. Voir <a href="/fr/docs/composed-pages#quand-le-texte-se-poursuit">Pages composées › Quand le texte se poursuit</a>.</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Un style de paragraphe pour le texte de la page, comme en ont les styles de titre.</td>
+      <td>Un style de paragraphe pour le texte de la page, comme en ont les styles de titre. La mise en page ne l’applique pas encore.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
       <td><code>string</code></td>
       <td>aucune</td>
-      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties : des paires <code>entrée=#hex</code> séparées par des virgules (<code>teinte=#f6c3d0</code>). Toute couleur des blocs et du décor de la page liée à cette entrée de la palette (ou égale à sa valeur) la prend, et l’attribut <code>palette</code> de la clôture de page passe par-dessus. Depuis postext 1.42 la valeur est appliquée ; auparavant elle était lue puis ignorée.</td>
+      <td>Une palette de remplacement pour la page, comme en ont les styles de titre et les parties : des paires <code>entrée=#hex</code> séparées par des virgules (<code>teinte=#f6c3d0</code>). Toute couleur des blocs et du décor de la page liée à cette entrée de la palette (ou égale à sa valeur) la prend, et l’attribut <code>palette</code> du délimiteur de page l’emporte. Depuis postext 1.42, la valeur est appliquée ; auparavant elle était lue puis ignorée.</td>
     </tr>
     <tr>
       <td><code>role</code></td>
@@ -159,9 +159,9 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
 
 ### Blocs
 
-Un bloc est un rectangle nommé qui reçoit du contenu composé. Son `name` est l’emplacement que demande le Markdown, et il est unique dans son gabarit (un groupe ne peut pas non plus prendre le nom d’un bloc, puisque les ancrages nomment les deux de la même façon).
+Un bloc est un rectangle nommé qui reçoit du contenu composé. Son `name` est l’emplacement qu’indique le Markdown, et il est unique dans son gabarit (un groupe ne peut pas non plus prendre le nom d’un bloc, puisque les ancrages les désignent tous deux de la même façon).
 
-Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par son `placement`, qui fonctionne comme celui d’un élément de maquette : un ancrage (`'container'` est la zone, `'page'`, `'bleed'`, ou `'#name'` pour un autre bloc ou groupe), un bord, un décalage et une taille. Un bloc ancré à un autre se déplace avec lui. Sans l’un ni l’autre, le bloc commence au coin supérieur gauche de la zone, sur toute sa largeur, et aussi haut que le dit sa règle de hauteur. La façon dont le contenu est versé dans les blocs, chaîné et rogné est décrite dans [Pages composées › Comment la page est composée](/fr/docs/composed-pages#comment-la-page-est-composée).
+Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par son `placement`, qui fonctionne comme celui d’un élément de maquette : un ancrage (`'container'` est la zone, `'page'`, `'bleed'`, ou `'#name'` pour un autre bloc ou groupe), un bord, un décalage et une taille. Un bloc ancré à un autre se déplace avec lui. Sans l’un ni l’autre, le bloc commence au coin supérieur gauche de la zone, sur toute sa largeur, et aussi haut que le prévoit sa règle de hauteur. La façon dont le contenu est versé dans les blocs, chaîné et rogné est décrite dans [Pages composées › Comment la page est composée](/fr/docs/composed-pages#comment-la-page-est-composée).
 
 <table>
   <thead>
@@ -195,7 +195,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>width</code>, <code>height</code></td>
       <td><code>Dimension | &#123; percent &#125; | 'auto' | 'fill'</code></td>
       <td><code>'fill'</code>, <code>'auto'</code></td>
-      <td>Une longueur fixe, un pourcentage de la zone (de 0 à 100), <code>'auto'</code> (la taille propre du contenu) ou <code>'fill'</code> (ce qui reste jusqu’au bord auquel le bloc est ancré). Non défini, le bloc lit <code>placement.size</code>, puis la valeur par défaut : toute la largeur, aussi haut que son contenu. Depuis postext 1.42, une largeur <code>'auto'</code> donne au bloc la largeur de sa ligne la plus longue plus ses marges intérieures, sans dépasser la place que laisse l’ancre ni <code>maxWidth</code> (le texte qui n’y tient pas y passe à la ligne) et sans descendre sous <code>minWidth</code>. Le texte est mesuré composé au fer à gauche : un titre centré occupe la largeur de ses mots. Le bloc part du bord que désigne son ancre, et les blocs ancrés à lui le suivent. Utile pour un onglet ou un encadré qui doit épouser son titre dans toutes les langues. Une valeur que le moteur ne peut pas utiliser (une longueur négative, une unité inconnue) est lue comme la valeur par défaut.</td>
+      <td>Une longueur fixe, un pourcentage de la zone (de 0 à 100), <code>'auto'</code> (la taille propre du contenu) ou <code>'fill'</code> (ce qui reste jusqu’au bord auquel le bloc est ancré). Non défini, le bloc utilise <code>placement.size</code>, puis la valeur par défaut : toute la largeur, aussi haut que son contenu. Depuis postext 1.42, une largeur <code>'auto'</code> donne au bloc la largeur de sa ligne la plus longue plus ses marges intérieures, sans dépasser la place que laisse l’ancrage ni <code>maxWidth</code> (le texte qui n’y tient pas y passe à la ligne) et sans descendre sous <code>minWidth</code>. Le texte est mesuré composé au fer à gauche : un titre centré occupe la largeur de ses mots. Le bloc part du bord que désigne son ancrage, et les blocs ancrés à lui le suivent. Utile pour un onglet ou un encadré qui doit épouser son titre dans toutes les langues. Une valeur que le moteur ne peut pas utiliser (une longueur négative, une unité inconnue) est traitée comme la valeur par défaut.</td>
     </tr>
     <tr>
       <td><code>minWidth</code>, <code>maxWidth</code>, <code>minHeight</code>, <code>maxHeight</code></td>
@@ -207,19 +207,19 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>sans encadré</td>
-      <td>Un id de <a href="/fr/docs/configuration-callouts#styles-dencadré">style d’encadré</a> : les blocs se dessinent avec les styles d’encadré (fond, bordure, marge intérieure, bande, icône, onglet d’étiquette, titre). Les mots d’un onglet viennent du Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Les réglages d’encadré qui décident où va une boîte dans le texte courant (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) ne s’appliquent pas à un bloc.</td>
+      <td>Un identifiant de <a href="/fr/docs/configuration-callouts#styles-dencadré">style d’encadré</a> : les blocs se dessinent avec les styles d’encadré (fond, bordure, marge intérieure, bande, icône, onglet d’étiquette, titre). Les mots d’un onglet viennent du Markdown (<code>:::frame&#123;slot="dinero" label="El dinero"&#125;</code>). Les réglages d’encadré qui décident où va une boîte dans le texte courant (<code>placement</code>, <code>span</code>, <code>columns</code>, <code>width</code>, <code>fixed</code>…) ne s’appliquent pas à un bloc.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
       <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
       <td>celle du style</td>
-      <td>Remplace la marge intérieure du style, côté par côté : de la place pour les photos posées sur une boîte, par exemple.</td>
+      <td>Remplace la marge intérieure du style, côté par côté : de la place pour les photos posées sur une boîte, par exemple.</td>
     </tr>
     <tr>
       <td><code>layer</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>L’ordre de peinture. Le décor est le calque 0 ; un calque négatif se peint en dessous.</td>
+      <td>L’ordre de superposition. Le décor est le calque 0 ; un calque négatif est dessiné en dessous.</td>
     </tr>
     <tr>
       <td><code>rotate</code></td>
@@ -237,49 +237,49 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, celle du style</td>
-      <td>Des colonnes à l’intérieur du bloc.</td>
+      <td>Des colonnes à l’intérieur du bloc. Un titre ne termine jamais l’une d’elles : il passe à la colonne suivante avec le texte qu’il introduit (avec <code>headings.keepWithNext</code>, depuis postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
       <td><code>'none' | 'push'</code></td>
       <td><code>'none'</code></td>
-      <td><code>'push'</code> : le texte des autres blocs habille le rectangle de celui-ci.</td>
+      <td><code>'push'</code> : le texte des autres blocs habille le rectangle de celui-ci.</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>'box' | 'contour'</code></td>
       <td><code>'box'</code></td>
-      <td>Avec <code>exclude: 'push'</code> : ce que le texte des autres blocs habille. <code>'contour'</code> est la forme des images que contient le bloc (leur polygone ou leur canal alpha, voir <a href="/fr/docs/document-format-resources#habillage-au-contour">Habillage au contour</a>) ; un bloc pivoté, ou un bloc dont les images n’ont pas de forme connue, repousse le texte avec son rectangle.</td>
+      <td>Avec <code>exclude: 'push'</code> : ce que le texte des autres blocs habille. <code>'contour'</code> est la forme des images que contient le bloc (leur polygone ou leur canal alpha, voir <a href="/fr/docs/document-format-resources#habillage-au-contour">Habillage au contour</a>) ; un bloc pivoté, ou un bloc dont les images n’ont pas de forme connue, repousse le texte avec son rectangle.</td>
     </tr>
     <tr>
       <td><code>flow</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Le bloc reçoit le contenu qui ne nomme aucun emplacement.</td>
+      <td>Le bloc reçoit le contenu qui n’indique aucun emplacement.</td>
     </tr>
     <tr>
       <td><code>takes</code></td>
       <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>aucun</td>
-      <td>Le bloc reçoit le premier titre de ce niveau qui ne nomme aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> en haut de la clôture. Avec <code>'toc'</code>, il reçoit le <code>:::toc</code> de la page qui ne nomme aucun emplacement et le compose selon les règles de la table des matières (depuis postext 1.42 ; voir <a href="/fr/docs/composed-pages">Pages composées</a>).</td>
+      <td>Le bloc reçoit le premier titre de ce niveau qui n’indique aucun emplacement : un titre de page s’écrit donc simplement <code># Title</code> juste sous le délimiteur de page. Avec <code>'toc'</code>, il reçoit le <code>:::toc</code> de la page qui n’indique aucun emplacement et le compose selon les règles de la table des matières (depuis postext 1.42 ; voir <a href="/fr/docs/composed-pages">Pages composées</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Un chaînage : le contenu qui ne tient pas continue dans le bloc de ce nom, sur la même page.</td>
+      <td>Un chaînage : le contenu qui ne tient pas continue dans le bloc de ce nom, sur la même page.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Où continue le contenu qui ne tient pas : <code>'#frame'</code> (un autre bloc de la page, comme <code>next</code>), <code>'next-page'</code> (le même bloc sur une page ajoutée après celle-ci, d’après <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (une page de ce gabarit : son bloc du même nom, sinon son bloc de flux) ou <code>'page:&lt;id&gt;'</code> (un bloc du délimiteur de page <code>::::page&#123;id=…&#125;</code> qui vient plus loin : celui que nomme <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>, sinon un bloc que son propre contenu laisse vide ; <code>&lt;id&gt;</code> peut être <code>&#123;attr.name&#125;</code>, lu sur le délimiteur de page ; voir <a href="/fr/docs/composed-pages#renvoyer-la-suite-à-une-page-plus-loin">Pages composées › Renvoyer la suite à une page plus loin</a>). Un bloc d’une page ajoutée sans règle propre continue avec la règle qui a amené le contenu (après un saut, <code>'next-page'</code>), jusqu’à 16 pages ajoutées. La page peut se trouver dans un fichier de chapitre ultérieur du livre (depuis postext 1.41).</td>
+      <td>Où continue le contenu qui ne tient pas : <code>'#frame'</code> (un autre bloc de la page, comme <code>next</code>), <code>'next-page'</code> (le même bloc sur une page ajoutée après celle-ci, d’après <code>overflowTemplate</code>), <code>'template:&lt;id&gt;'</code> (une page de ce gabarit : son bloc du même nom, sinon son bloc de flux) ou <code>'page:&lt;id&gt;'</code> (un bloc du délimiteur de page <code>::::page&#123;id=…&#125;</code> qui vient plus loin : celui que désigne <code>'page:&lt;id&gt;#&lt;frame&gt;'</code>, sinon un bloc que son propre contenu laisse vide ; <code>&lt;id&gt;</code> peut être <code>&#123;attr.name&#125;</code>, lu sur le délimiteur de page ; voir <a href="/fr/docs/composed-pages#renvoyer-la-suite-à-une-page-plus-loin">Pages composées › Renvoyer la suite à une page plus loin</a>). Un bloc d’une page ajoutée sans règle propre continue avec la règle qui a amené le contenu (après un saut, <code>'next-page'</code>), jusqu’à 16 pages ajoutées. La page peut se trouver dans un fichier de chapitre ultérieur du livre (depuis postext 1.41).</td>
     </tr>
     <tr>
       <td><code>overflow.mark</code></td>
       <td><code>string | false</code></td>
       <td>celle de la langue</td>
-      <td>La marque à la fin d’un morceau coupé pour une autre page. Non définie, le <code>continuesMarker</code> du style du bloc, qui suit la langue du document (« Continued », « Continúa », « À suivre »…, les mots des tableaux coupés) ; une chaîne fixe ces mots, <code>&#123;page&#125;</code> y étant le numéro de la page où se poursuit le reste ; <code>false</code> n’en met aucune. Un bloc chaîné par <code>next</code> sur la même page n’en porte pas.</td>
+      <td>La mention placée à la fin d’un morceau coupé pour une autre page. Non définie, le <code>continuesMarker</code> du style du bloc, qui suit la langue du document (« Continued », « Continúa », « À suivre »…, les mots des tableaux coupés) ; une chaîne fixe ces mots, <code>&#123;page&#125;</code> y étant le numéro de la page où se poursuit le reste ; <code>false</code> n’en met aucune. Un bloc chaîné par <code>next</code> sur la même page n’en porte pas.</td>
     </tr>
     <tr>
       <td><code>overflow.fromMark</code></td>
@@ -291,13 +291,13 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>fit.shrinkText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quand rien d’autre ne fait tenir le contenu, son texte peut être composé plus petit, par paliers de 2,5 % (voir <a href="#quand-le-contenu-ne-tient-pas">Quand le contenu ne tient pas</a>).</td>
+      <td>Quand rien d’autre ne fait tenir le contenu, son texte peut être composé plus petit, par paliers de 2,5 % (voir <a href="#quand-le-contenu-ne-tient-pas">Quand le contenu ne tient pas</a>).</td>
     </tr>
     <tr>
       <td><code>fit.minScale</code></td>
       <td><code>number</code></td>
       <td><code>0.9</code></td>
-      <td>La plus petite échelle du texte, au-dessus de 0 et au plus 1 (une valeur plus grande est lue comme 1). Corps, interlignage et espacements suivent la même échelle.</td>
+      <td>La plus petite échelle du texte, au-dessus de 0 et au plus 1 (une valeur plus grande est traitée comme 1). Corps, interlignage et espacements suivent la même échelle.</td>
     </tr>
     <tr>
       <td><code>fit.scaleImages</code>, <code>fit.imageMinScale</code></td>
@@ -309,7 +309,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>fit.preferContinue</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Un bloc dont l’<code>overflow.continueIn</code> envoie le contenu sur une autre page y continue avant que ses images et son texte ne soient réduits, si bien qu’un article garde le même corps d’une page à l’autre. <code>false</code> : ils sont réduits d’abord, et le bloc ne continue que si cela ne suffit pas.</td>
+      <td>Un bloc dont l’<code>overflow.continueIn</code> envoie le contenu sur une autre page y continue avant que ses images et son texte ne soient réduits : un article garde ainsi le même corps d’une page à l’autre. <code>false</code> : ils sont réduits d’abord, et le bloc ne continue que si cela ne suffit pas.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -321,7 +321,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>grow</code>, <code>shrink</code>, <code>priority</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>La façon dont le bloc partage l’espace de son groupe : <code>grow</code> prend une part de l’espace libre, <code>shrink</code> permet au bloc de rendre de l’espace, et les blocs de <code>priority</code> plus basse le rendent en premier.</td>
+      <td>La façon dont le bloc partage l’espace de son groupe : <code>grow</code> prend une part de l’espace libre, <code>shrink</code> permet au bloc de rendre de l’espace, et les blocs de <code>priority</code> plus basse le rendent en premier.</td>
     </tr>
     <tr>
       <td><code>optional</code></td>
@@ -333,36 +333,36 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>crossGutter</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Sur une double page, le bloc peut traverser la bande du dos. Son texte est lu sur la page qui contient son centre ; la page en regard peint sa moitié.</td>
+      <td>Sur une double page, le bloc peut traverser la bande du dos. Son texte appartient à la page qui contient son centre ; la page en regard en dessine la moitié.</td>
     </tr>
     <tr>
       <td><code>rules</code></td>
       <td><code>&#123; every?, color?, width?, inset? &#125;</code></td>
       <td>—</td>
-      <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.38.</td>
+      <td>Des lignes d’écriture en travers de la boîte de contenu du bloc : une au pied de chaque ligne, autant que sa hauteur en contient. <code>every</code> est le pas, <code>'line'</code> (par défaut : l’interlignage du texte du bloc) ou une longueur ; <code>color</code> est un gris moyen par défaut, <code>width</code> l’épaisseur (0,5 pt), <code>inset</code> le retrait laissé à chaque bout de filet, ou <code>&#123; left, right &#125;</code>. Voir Blocs réglés, plus bas. Depuis postext 1.38.</td>
     </tr>
     <tr>
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un modèle enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Depuis postext 1.42.</td>
+      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un gabarit enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Depuis postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code>, <code>'ltr' | 'rtl'</code></td>
       <td>ceux de la page</td>
-      <td>Un bloc composé dans son propre mode d’écriture ou sa propre direction : une boîte verticale sur une page horizontale, une fiche horizontale sur une page verticale, une citation de droite à gauche dans un livre de gauche à droite. Un bloc de l’autre mode d’écriture est composé dans sa boîte tournée d’un quart de tour : ses lignes suivent la hauteur de la boîte et se succèdent dans sa largeur, et une hauteur <code>'auto'</code> est la plus petite qui les tient dans cette largeur. Son texte est peint comme une page de ce mode peint le sien. <code>direction</code> compose l’histoire du bloc dans cette direction, comme une boîte marquée <code>&#123;dir=…&#125;</code> ; un bloc de texte ou une boîte qui écrit son propre <code>dir</code> le garde. Depuis postext 1.39. Depuis postext 1.40, un bloc vertical fonctionne aussi sur une page de droite à gauche : il est composé comme sur une page de gauche à droite et placé là où le flux en miroir le met, son texte peint sans miroir ; une image dans un bloc vertical d’une page horizontale reste droite, avec sa légende, et prend la place que la boîte lui laisse en travers de la page ; l’EPUB recomposable écrit un bloc d’un autre mode d’écriture comme une boîte avec ce mode et la longueur le long de laquelle courent ses lignes (en em du texte courant). Depuis postext 1.42, une image dans un bloc d’une page verticale qui suit le mode de la page reste droite elle aussi, avec sa légende.</td>
+      <td>Un bloc composé dans son propre mode d’écriture ou sa propre direction : une boîte verticale sur une page horizontale, une fiche horizontale sur une page verticale, une citation de droite à gauche dans un livre de gauche à droite. Un bloc de l’autre mode d’écriture est composé dans sa boîte tournée d’un quart de tour : ses lignes suivent la hauteur de la boîte et se succèdent dans sa largeur, et une hauteur <code>'auto'</code> est la plus petite qui les tient dans cette largeur. Son texte est dessiné comme une page de ce mode dessine le sien. <code>direction</code> compose le texte du bloc dans cette direction, comme un conteneur marqué <code>&#123;dir=…&#125;</code> ; un élément de texte ou un encadré qui précise son propre <code>dir</code> le garde. Depuis postext 1.39. Depuis postext 1.40, un bloc vertical fonctionne aussi sur une page de droite à gauche : il est composé comme sur une page de gauche à droite et placé là où le flux en miroir le met, son texte dessiné sans miroir ; une image dans un bloc vertical d’une page horizontale reste droite, avec sa légende, et prend la place que la boîte lui laisse en travers de la page ; l’EPUB recomposable écrit un bloc d’un autre mode d’écriture comme une boîte avec ce mode et la longueur le long de laquelle courent ses lignes (en em du texte courant). Depuis postext 1.42, une image dans un bloc d’une page verticale qui suit le mode de la page reste droite elle aussi, avec sa légende.</td>
     </tr>
     <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Dans un gabarit qui en étend un autre, ou dans une variante : supprime le bloc hérité de ce nom.</td>
+      <td>Dans un gabarit qui en étend un autre, ou dans une variante : supprime le bloc hérité de ce nom.</td>
     </tr>
   </tbody>
 </table>
 
-**Blocs réglés.** Un espace de réponse dans un cahier d’activités est un bloc avec `rules` : ses lignes suivent sa hauteur, si bien que c’est le Markdown qui décide de leur nombre. Un bloc vide de hauteur fixe reçoit les lignes qui y tiennent ; un bloc `'auto'` qui reçoit `:::space{lines=4}` en reçoit quatre, et un bloc qui grandit avec son texte en reçoit davantage. Les filets sont tracés par-dessus le fond du bloc et sous son texte, sur le canevas, dans le HTML, le PDF et l’EPUB à mise en page fixe ; l’inspecteur de blocs du Sandbox les active dans Apparence.
+**Blocs réglés.** Un espace de réponse dans un cahier d’activités est un bloc avec `rules` : ses lignes suivent sa hauteur : c’est donc le Markdown qui décide de leur nombre. Un bloc vide de hauteur fixe reçoit les lignes qui y tiennent ; un bloc `'auto'` qui reçoit `:::space{lines=4}` en reçoit quatre, et un bloc qui grandit avec son texte en reçoit davantage. Les filets sont tracés par-dessus le fond du bloc et sous son texte, sur le canvas, dans le HTML, le PDF et l’EPUB à mise en page fixe ; l’inspecteur de blocs du Sandbox les active dans Apparence.
 
 ```ts
 frames: [
@@ -382,7 +382,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
 
 ### Groupes
 
-Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de blocs qui se partagent l’espace et se déplacent ensemble. Dans un groupe, la position propre des blocs dans le sens du groupe est ignorée : le groupe les dispose dans l’ordre, avec `gap` entre eux. Quand le texte d’un bloc s’allonge, les blocs qui le suivent se décalent. Un groupe est une boîte à laquelle les blocs et le décor peuvent s’ancrer (`'#pagina'`).
+Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de blocs qui se partagent l’espace et se déplacent ensemble. Dans un groupe, la position propre des blocs dans le sens du groupe est ignorée : le groupe les dispose dans l’ordre, avec `gap` entre eux. Quand le texte d’un bloc s’allonge, les blocs qui le suivent se décalent. Un groupe est une boîte à laquelle les blocs et le décor peuvent s’ancrer (`'#pagina'`).
 
 <table>
   <thead>
@@ -410,7 +410,7 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Les blocs du groupe, dans leur ordre sur la page. Un bloc appartient à un groupe au plus ; un nom qui n’est aucun bloc du gabarit, ou un bloc déjà listé, est sauté.</td>
+      <td>Les blocs du groupe, dans leur ordre sur la page. Un bloc appartient à un groupe au plus ; un nom qui ne correspond à aucun bloc du gabarit, ou un bloc déjà listé, est sauté.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -434,25 +434,25 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Dans un gabarit qui en étend un autre, ou dans une variante : supprime le groupe hérité.</td>
+      <td>Dans un gabarit qui en étend un autre, ou dans une variante : supprime le groupe hérité.</td>
     </tr>
   </tbody>
 </table>
 
 ### Comment les groupes se partagent l’espace
 
-Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu’il contient, maintenue entre `minHeight` et `maxHeight`. Pour un gabarit relevé sur une page imprimée, donnez à chaque boîte comme `minHeight` la hauteur qu’elle a sur la page : avec un texte court, la boîte reste telle qu’elle est dessinée, et un texte plus long l’agrandit. La page est mise en page deux fois au cours du même passage, une fois telle que le gabarit la déclare, une fois selon ce que demande son contenu, et les différences entre les deux forment le [journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
+Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu’il contient, maintenue entre `minHeight` et `maxHeight`. Pour un gabarit relevé sur une page imprimée, donnez à chaque boîte comme `minHeight` la hauteur qu’elle a sur la page : avec un texte court, la boîte reste telle qu’elle est dessinée, et un texte plus long l’agrandit. La page est mise en page deux fois au cours du même passage, une fois telle que le gabarit la déclare, une fois selon ce que demande son contenu, et les différences entre les deux forment le [journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
 
-**Pile.** Les blocs d’une pile se placent les uns sous les autres, chacun à sa hauteur, séparés par `gap`. Chacun garde sa position horizontale et sa largeur ; sa position verticale propre est ignorée.
+**Pile.** Les blocs d’une pile se placent les uns sous les autres, chacun à sa hauteur, séparés par `gap`. Chacun garde sa position horizontale et sa largeur ; sa position verticale propre est ignorée.
 
 - Un groupe sans `placement` ni `grid` à lui commence là où son premier bloc est placé (son `placement`, ou sa cellule `grid` dans un gabarit à grille) et descend aussi loin que ses blocs l’exigent, jusqu’au pied de la zone du gabarit. Quand un bloc grandit, les blocs qui le suivent descendent d’autant.
-- Un groupe qui a sa propre boîte y dispose ses blocs. Quand ils demandent plus de place que la boîte n’en offre, les blocs dont le `shrink` dépasse 0 rendent de l’espace, ceux de plus basse `priority` en premier ; à priorité égale, chacun cède en proportion de son `shrink`, et aucun ne descend sous son `minHeight`. L’espace libre va aux blocs dont le `grow` dépasse 0, en proportion de cette valeur, jusqu’à leur `maxHeight` ; s’il n’y en a aucun, `align` place les blocs (`'end'` en pied, `'center'`, `'space-between'`). Un bloc du groupe sans placement propre prend la boîte du groupe pour zone.
-- Quand plus rien ne peut céder, les blocs les plus proches du pied du groupe cèdent les premiers, chacun jusqu’à son `minHeight` ; un bloc de hauteur fixe la garde, si bien qu’un espace de réponse vide ou l’emplacement d’une image sous une boîte qui grandit reste sur la page, et c’est le texte de la boîte qui cède. Aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par la cascade de recomposition (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`. Un bloc réduit sous son `minHeight` ou sa hauteur fixe est signalé lui aussi, qu’il ait du contenu ou non.
+- Un groupe qui a sa propre boîte y dispose ses blocs. Quand ils demandent plus de place que la boîte n’en offre, les blocs dont le `shrink` dépasse 0 rendent de l’espace, ceux de plus basse `priority` en premier ; à priorité égale, chacun cède en proportion de son `shrink`, et aucun ne descend sous son `minHeight`. L’espace libre va aux blocs dont le `grow` dépasse 0, en proportion de cette valeur, jusqu’à leur `maxHeight` ; s’il n’y en a aucun, `align` place les blocs (`'end'` en pied, `'center'`, `'space-between'`). Un bloc du groupe sans placement propre prend la boîte du groupe pour zone.
+- Quand plus rien ne peut céder, les blocs les plus proches du pied du groupe cèdent les premiers, chacun jusqu’à son `minHeight` ; un bloc de hauteur fixe la garde : un espace de réponse vide ou la place d’une image sous une boîte qui grandit reste donc sur la page, et c’est le texte de la boîte qui cède. Aucun bloc ne dépasse le pied du groupe : le bloc dont le contenu ne tient pas passe par les étapes d’ajustement (voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)), et ce qui ne tient toujours pas y est coupé et signalé par `frameOverflow`. Un bloc réduit sous son `minHeight` ou sa hauteur fixe est signalé lui aussi, qu’il ait du contenu ou non.
 - Un bloc en `height: 'fill'` demande son `minHeight` et prend l’espace libre comme s’il avait `grow: 1`.
 
-**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs qu’écrivent ses blocs : une `height` fixe, sinon un `minHeight` (un bloc `'auto'` n’en déclare pas plus), ou, s’ils n’en écrivent aucune, celle du contenu le plus haut (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. Des cartes en `height: 'auto'` avec un `minHeight` se partagent donc la largeur à cette hauteur, et la rangée ne grandit que si aucune n’a de largeur à céder. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
+**Rangée.** Les blocs d’une rangée se placent côte à côte à leurs largeurs déclarées, tous à la hauteur de la rangée : celle de la boîte du groupe ou, si le groupe n’a pas de boîte à lui, la plus grande des hauteurs que déclarent ses blocs : une `height` fixe, sinon un `minHeight` (un bloc `'auto'` n’en déclare pas plus), ou, s’ils n’en déclarent aucune, celle du contenu le plus haut (un bloc de hauteur fixe garde la sienne). Quand le texte d’un bloc dépasse la hauteur de la rangée, le bloc s’élargit : d’abord sur la largeur libre de la rangée, puis sur celle des autres blocs dont le `shrink` dépasse 0, ceux de plus basse `priority` en premier, sans jamais rendre l’un d’eux plus étroit que la largeur où son propre texte tient encore. La largeur prise est le plus petit nombre de millimètres entiers qui fait tenir le texte ; si toute la place disponible n’y suffit pas, le bloc n’en prend aucune, et une rangée sans boîte à elle gagne en hauteur. Des cartes en `height: 'auto'` avec un `minHeight` se partagent donc la largeur à cette hauteur, et la rangée ne grandit que si aucune n’a de largeur à céder. La largeur libre va aux blocs dont le `grow` dépasse 0, puis à `align`. Les rangées vont de gauche à droite.
 
-**Blocs épinglés.** Un bloc en `pin: true` garde la boîte que le gabarit lui déclare, même quand le bloc auquel il est ancré grandit ou se déplace : une boîte dessinée pour tomber juste sur l’illustration y reste. Dans un groupe, un bloc épinglé garde sa place et les autres blocs passent au-delà, avec `gap` conservé de part et d’autre ; un bloc épinglé hors du groupe fait de même pour les blocs du groupe qu’il chevaucherait.
+**Blocs épinglés.** Un bloc en `pin: true` garde la boîte que le gabarit lui déclare, même quand le bloc auquel il est ancré grandit ou se déplace : une boîte dessinée pour tomber juste sur l’illustration y reste. Dans un groupe, un bloc épinglé garde sa place et les autres blocs passent au-delà, avec `gap` conservé de part et d’autre ; un bloc épinglé hors du groupe fait de même pour les blocs du groupe qu’il chevaucherait.
 
 **Décor.** Un élément de décor ancré à un bloc (`anchor: { to: '#dinero' }`) suit le bloc quand celui-ci grandit ou se déplace. Un élément en `pin: true` reste là où le gabarit dessine ce bloc.
 
@@ -470,12 +470,12 @@ Un bloc déclare sa taille : une `height` fixe, ou `'auto'`, la hauteur de ce qu
       <td><code>pin</code> (élément de décor)</td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Dans le décor d’une page composée : un élément ancré à un bloc reste là où le gabarit place ce bloc, quoi que fassent le contenu du bloc ou son groupe. Ignoré dans les en-têtes, les pieds de page et les styles de titre.</td>
+      <td>Dans le décor d’une page composée : un élément ancré à un bloc reste là où le gabarit place ce bloc, quoi que fassent le contenu du bloc ou son groupe. Ignoré dans les en-têtes, les pieds de page et les styles de titre.</td>
     </tr>
   </tbody>
 </table>
 
-Les trois boîtes d’une page de manuel, chacune à la hauteur où elle est dessinée, qui grandissent avec leur texte :
+Les trois boîtes d’une page de manuel, chacune à la hauteur où elle est dessinée, qui grandissent avec leur texte :
 
 ```ts
 frames: [
@@ -489,9 +489,9 @@ frames: [
 groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], gap: { value: 12, unit: 'mm' } }],
 ```
 
-Le résultat ne dépend que du contenu de la page, du gabarit et de la typographie : la même entrée donne la même page, mesurée dans le même ordre, par les mêmes étapes. La négociation ne lit jamais une autre page ; modifier une page composée laisse donc toutes les autres telles qu’elles étaient, tant que le contenu reste sur sa page.
+Le résultat ne dépend que du contenu de la page, du gabarit et de la typographie : la même entrée donne la même page, mesurée dans le même ordre, par les mêmes étapes. La négociation ne lit jamais une autre page ; modifier une page composée laisse donc toutes les autres telles qu’elles étaient, tant que le contenu reste sur sa page.
 
-**Tenir des blocs au pied d’une carte (depuis postext 1.42).** Un bloc ancré sous le texte qui le surmonte suit ce texte : dans une édition où le texte compte une ligne de moins ou de plus, les blocs situés dessous montent ou descendent, tandis que ce que dessine le modèle (une carte, un bandeau, le pied) reste en place. Pour que des blocs restent au pied d’une carte, là où le modèle les met, réunissez les blocs de la carte en une pile dotée d’une boîte de la hauteur de la carte. Les blocs placés au-dessus de ceux qu’on retient prennent l’espace en trop (`grow: 1`) et le rendent (`shrink: 1`) ; les blocs retenus écrivent un `minHeight`. Un texte plus court laisse les blocs retenus où ils étaient. Un texte plus long est comprimé au-dessus d’eux : ils gardent leur `minHeight`, le texte du dessus est réduit et, si cela ne suffit pas, la mise en page signale `frameOverflow` et le journal de recomposition note `textScaled` et `overflow` pour le bloc du dessus. Un bloc ancré au pied du conteneur (`bottom-left`) garde aussi sa place, mais rien ne le lie aux blocs qui le surmontent : un texte plus long le recouvre, rien n’est comprimé pour lui et le chevauchement n’est pas signalé.
+**Tenir des blocs au pied d’une carte (depuis postext 1.42).** Un bloc ancré sous le texte qui le surmonte suit ce texte : dans une édition où le texte compte une ligne de moins ou de plus, les blocs situés dessous montent ou descendent, tandis que ce que dessine le gabarit (une carte, un bandeau, le pied) reste en place. Pour que des blocs restent au pied d’une carte, là où le gabarit les met, réunissez les blocs de la carte en une pile dotée d’une boîte de la hauteur de la carte. Les blocs placés au-dessus de ceux qu’on retient prennent l’espace en trop (`grow: 1`) et le rendent (`shrink: 1`) ; les blocs retenus déclarent un `minHeight`. Un texte plus court laisse les blocs retenus où ils étaient. Un texte plus long est comprimé au-dessus d’eux : ils gardent leur `minHeight`, le texte du dessus est réduit et, si cela ne suffit pas, la mise en page signale `frameOverflow` et le journal de recomposition note `textScaled` et `overflow` pour le bloc du dessus. Un bloc ancré au pied du conteneur (`bottom-left`) garde aussi sa place, mais rien ne le lie aux blocs qui le surmontent : un texte plus long le recouvre, rien n’est comprimé pour lui et le chevauchement n’est pas signalé.
 
 ```json
 {
@@ -509,36 +509,36 @@ Le résultat ne dépend que du contenu de la page, du gabarit et de la typograph
 }
 ```
 
-Le bloc qui grandit est aussi haut que la place disponible, quoi qu’il contienne ; un style à fond visible le peindrait donc tout entier : peignez la carte dans la décoration du modèle et laissez le bloc de texte sans style.
+Le bloc qui grandit est aussi haut que la place disponible, quoi qu’il contienne ; un style à fond visible le remplirait donc tout entier : dessinez la carte dans le décor du gabarit et laissez sans style le bloc qui reçoit le texte.
 
 ### Quand le contenu ne tient pas
 
-Quand le contenu d’un bloc est plus haut que la place que lui donne son groupe, la mise en page essaie dans l’ordre les étapes de la [cascade de recomposition](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) et s’arrête à la première qui le fait tenir : l’espace libre jusqu’à `maxHeight`, le groupe qui pousse et qui cède, des images plus petites, les autres blocs du groupe ramenés à leur minimum, un texte plus petit, la suite sur une autre page. Ces réglages du bloc fixent jusqu’où chaque étape peut aller :
+Quand le contenu d’un bloc est plus haut que la place que lui donne son groupe, la mise en page essaie dans l’ordre les [étapes d’ajustement](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) et s’arrête à la première qui le fait tenir : l’espace libre jusqu’à `maxHeight`, le groupe qui pousse et qui cède, des images plus petites, les autres blocs du groupe ramenés à leur minimum, un texte plus petit, la suite sur une autre page. Ces réglages du bloc fixent jusqu’où chaque étape peut aller :
 
-- `maxHeight` sur un bloc de `height` fixe : le bloc peut grandir jusque-là avant toute réduction.
-- `minHeight` sur les autres blocs du groupe : jusqu’où ils rendent de l’espace ; un bloc ne descend jamais sous ce que demande son propre contenu.
-- `fit.scaleImages` et `fit.imageMinScale` : si les images du bloc et de son groupe peuvent être réduites, et jusqu’à quelle échelle (80 % par défaut).
-- `fit.shrinkText` et `fit.minScale` : si le texte du bloc peut être réduit, et jusqu’à quelle échelle (90 % par défaut). L’échelle est la même pour le corps, l’interlignage et les espacements ; le bloc garde sa taille.
-- `overflow.continueIn` : où le contenu se poursuit quand rien de tout cela ne suffit, soit un autre bloc, soit une autre page (`'next-page'`, `'template:<id>'`, `'page:<id>'`), où le texte reprend à sa taille normale après l’`overflow.mark` du morceau. Un bloc qui peut continuer sur une autre page le fait avant que ses images et son texte ne soient réduits, sauf si son `fit.preferContinue` vaut `false`.
+- `maxHeight` sur un bloc de `height` fixe : le bloc peut grandir jusque-là avant toute réduction.
+- `minHeight` sur les autres blocs du groupe : jusqu’où ils rendent de l’espace ; un bloc ne descend jamais sous ce que demande son propre contenu.
+- `fit.scaleImages` et `fit.imageMinScale` : si les images du bloc et de son groupe peuvent être réduites, et jusqu’à quelle échelle (80 % par défaut).
+- `fit.shrinkText` et `fit.minScale` : si le texte du bloc peut être réduit, et jusqu’à quelle échelle (90 % par défaut). L’échelle est la même pour le corps, l’interlignage et les espacements ; le bloc garde sa taille.
+- `overflow.continueIn` : où le contenu se poursuit quand rien de tout cela ne suffit, soit un autre bloc, soit une autre page (`'next-page'`, `'template:<id>'`, `'page:<id>'`), où le texte reprend à sa taille normale après l’`overflow.mark` du morceau. Un bloc qui peut continuer sur une autre page le fait avant que ses images et son texte ne soient réduits, sauf si son `fit.preferContinue` vaut `false`.
 
-Les échelles vont par paliers de 2,5 % et la mise en page prend la plus grande qui convient : un texte trop long d’une ligne est composé à 97,5 %, pas au minimum. Un encadré qui doit garder son corps prend `fit: { shrinkText: false }` ; une page dont les images doivent garder leur taille met `fit: { scaleImages: false }` sur les blocs de son groupe :
+Les échelles vont par paliers de 2,5 % et la mise en page prend la plus grande qui convient : un texte trop long d’une ligne est composé à 97,5 %, pas au minimum. Un encadré qui doit garder son corps prend `fit: { shrinkText: false }` ; une page dont les images doivent garder leur taille met `fit: { scaleImages: false }` sur les blocs de son groupe :
 
 ```ts
 { name: 'recuadro', style: 'recuadro', height: { value: 63, unit: 'mm' }, maxHeight: { value: 75, unit: 'mm' },
   fit: { minScale: 0.85, imageMinScale: 0.9 } }
 ```
 
-Ce qui ne tient toujours pas est signalé par `frameOverflow`, avec les étapes essayées et des propositions qui portent leurs valeurs : voir [L’avertissement et ses propositions](/fr/docs/composed-pages#lavertissement-et-ses-propositions).
+Ce qui ne tient toujours pas est signalé par `frameOverflow`, avec les étapes essayées et des propositions qui indiquent leurs valeurs : voir [L’avertissement et ses propositions](/fr/docs/composed-pages#lavertissement-et-ses-propositions).
 
 ### Héritage et variantes
 
-Un gabarit doté d’`extends` part du gabarit qu’il nomme (qui peut lui-même en étendre un autre) et ne change que ce qu’il écrit :
+Un gabarit doté d’`extends` part du gabarit qu’il désigne (qui peut lui-même en étendre un autre) et ne change que ce qu’il précise :
 
-- Un champ comme `area`, `header` ou `overflowTemplate` remplace celui du parent. `grid` se fusionne clé par clé. `spread`, `gutter` et `role` sont hérités aussi ; `id`, `name` et `extends` sont propres au gabarit.
-- `frames` et `groups` se fusionnent **par nom** : une entrée qui porte le nom d’une entrée héritée change les champs qu’elle écrit et garde les autres (`fit`, `overflow` et `padding` se fusionnent clé par clé ; `placement` est remplacé en entier) ; `remove: true` la supprime ; un nom nouveau s’ajoute après les entrées héritées.
-- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un id nouveau, ou sans id, s’ajoute. Depuis postext 1.42, `{ id: 'tete-paire', remove: true }` dans `decoration.elements` d’un gabarit enfant ou d’une variante retire l’élément hérité portant cet `id`, comme `remove: true` le fait pour un bloc ; un `id` que le gabarit n’hérite pas ne change rien. Un nouvel élément du même `id` peut suivre le retrait dans la même liste.
+- Un champ comme `area`, `header` ou `overflowTemplate` remplace celui du parent. `grid` se fusionne clé par clé. `spread`, `gutter` et `role` sont hérités aussi ; `id`, `name` et `extends` sont propres au gabarit.
+- `frames` et `groups` se fusionnent **par nom** : une entrée qui porte le nom d’une entrée héritée change les champs qu’elle précise et garde les autres (`fit`, `overflow` et `padding` se fusionnent clé par clé ; `placement` est remplacé en entier) ; `remove: true` la supprime ; un nom nouveau s’ajoute après les entrées héritées.
+- Les éléments du décor se fusionnent par `id` de la même façon ; un élément avec un identifiant nouveau, ou sans identifiant, s’ajoute. Depuis postext 1.42, `{ id: 'tete-paire', remove: true }` dans `decoration.elements` d’un gabarit enfant ou d’une variante retire l’élément hérité portant cet `id`, comme `remove: true` le fait pour un bloc ; un `id` que le gabarit n’hérite pas ne change rien. Un nouvel élément du même `id` peut suivre le retrait dans la même liste.
 
-`variants.recto` et `variants.verso` s’écrivent comme un gabarit et se fusionnent de la même façon, sur une page de droite ou de gauche. Elles s’appliquent après toute la chaîne d’`extends`, la variante de la racine en premier. Une double page a les deux côtés : aucune variante ne s’y applique.
+`variants.recto` et `variants.verso` s’écrivent comme un gabarit et se fusionnent de la même façon, sur une page de droite ou de gauche. Elles s’appliquent après toute la chaîne d’`extends`, la variante de la racine en premier. Une double page a les deux côtés : aucune variante ne s’y applique.
 
 ```ts
 pageTemplates: [
@@ -549,17 +549,17 @@ pageTemplates: [
 ]
 ```
 
-Une valeur égale à une valeur par défaut n’est jamais abandonnée quand le Sandbox enregistre un gabarit : dans un gabarit qui en étend un autre, ou dans une variante, elle remplace la valeur du parent.
+Une valeur égale à une valeur par défaut n’est jamais abandonnée quand le Sandbox enregistre un gabarit : dans un gabarit qui en étend un autre, ou dans une variante, elle remplace la valeur du parent.
 
-Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit avec sa chaîne fusionnée, la variante du côté appliquée, toutes les valeurs par défaut remplies et chaque référence réglée comme le décrivent les avertissements ci-dessous ; `validatePageTemplates(config)` renvoie les avertissements.
+Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit avec sa chaîne fusionnée, la variante du côté appliquée, toutes les valeurs par défaut remplies et chaque référence réglée comme le décrivent les avertissements ci-dessous ; `validatePageTemplates(config)` renvoie les avertissements.
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images de l’échelle de réajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : le `bodyStyle` et la `palette` du gabarit. Le `writingMode` et la `direction` d’un bloc sont appliqués depuis postext 1.39. Une largeur `'auto'` se lit comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images des étapes d’ajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Depuis postext 1.42, elle applique aussi la `palette` du gabarit, le `look` d’un bloc et la largeur `'auto'` (celle de la plus longue ligne du bloc). Le `writingMode` et la `direction` d’un bloc sont appliqués depuis postext 1.39. Est lu et vérifié, mais pas encore appliqué : le `bodyStyle` du gabarit.
 
 ### Doubles pages
 
-Dans un gabarit de double page, toutes les coordonnées portent sur la feuille de ses deux pages, le dos au milieu : `area`, `grid`, les ancrages à `container`, `page` et `bleed` et les tailles `fill` lisent la double largeur. `bleed` atteint la tête, le pied et les deux bords extérieurs, jamais le dos. La frise chronologique en double page d’un manuel tient en un seul gabarit :
+Dans un gabarit de double page, toutes les coordonnées portent sur la feuille de ses deux pages, le dos au milieu : `area`, `grid`, les ancrages à `container`, `page` et `bleed` et les tailles `fill` se rapportent à la double largeur. `bleed` atteint la tête, le pied et les deux bords extérieurs, jamais le dos. La frise chronologique en double page d’un manuel tient en un seul gabarit :
 
 ```ts
 pageTemplates: [{
@@ -582,13 +582,13 @@ pageTemplates: [{
 }]
 ```
 
-Un écart entre colonnes plus large que le `gutter` tient les fiches d’une grille symétrique à l’écart du dos : aucune n’est déplacée. Le second bandeau et la frise d’images ont `crossGutter` pour le traverser : chacun est lu sur la page qui contient son centre et peint sur les deux. Tous les mots de la page, y compris les noms des époques sur les onglets, restent dans le Markdown.
+Un écart entre colonnes plus large que le `gutter` tient les fiches d’une grille symétrique à l’écart du dos : aucune n’est déplacée. Le second bandeau et la frise d’images ont `crossGutter` pour le traverser : chacun appartient à la page qui contient son centre et est dessiné sur les deux. Tous les mots de la page, y compris les noms des époques sur les onglets, restent dans le Markdown.
 
-Dans un livre vertical (`vertical-rl`), la double page se compose dans le repère du flux des pages, comme ses pages composées seules : le haut d’une page est le bord droit de la feuille et les lignes descendent, si bien que le `x` du gabarit descend le long de la feuille et son `y` va du bord droit de la feuille vers le gauche. La feuille est la page de droite suivie de celle de gauche le long de `y`, le dos est une ligne qui traverse le gabarit, et `gutter`, `crossGutter` et la coupe entre les pages lisent cet axe ; le décor se compose toujours sur la feuille physique et se coupe au dos. Une frise horizontale dessinée pour un livre horizontal sort tournée dans un livre vertical : écrivez le gabarit d’un livre vertical dans le repère de son flux. Depuis postext 1.38. Une fiche qui doit se lire dans la largeur de la feuille prend `writingMode: 'horizontal-tb'` : elle est composée à l’horizontale et se tient droite sur la page verticale (depuis postext 1.39).
+Dans un livre vertical (`vertical-rl`), la double page se compose dans le repère du flux des pages, comme ses pages composées seules : le haut d’une page est le bord droit de la feuille et les lignes descendent : le `x` du gabarit descend donc le long de la feuille et son `y` va du bord droit de la feuille vers le gauche. La feuille est la page de droite suivie de celle de gauche le long de `y`, le dos est une ligne qui traverse le gabarit, et `gutter`, `crossGutter` et la coupe entre les pages se rapportent à cet axe ; le décor se compose toujours sur la feuille physique et se coupe au dos. Une frise horizontale dessinée pour un livre horizontal sort tournée dans un livre vertical : écrivez le gabarit d’un livre vertical dans le repère de son flux. Depuis postext 1.38. Une fiche qui doit se lire dans la largeur de la feuille prend `writingMode: 'horizontal-tb'` : elle est composée à l’horizontale et se tient droite sur la page verticale (depuis postext 1.39).
 
 ## Styles d’étiquette
 
-La propriété `labelStyles` nomme les apparences des étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place à un ancrage de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que nomme l’ancrage ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42).
+La propriété `labelStyles` définit des apparences nommées pour les étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place sur une ancre de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que désigne l’ancre ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42). Renommer un style à cet endroit réécrit les ancres et les lignes `::label` qui le nomment (depuis postext 1.43).
 
 ```ts
 labelStyles: [
@@ -612,19 +612,19 @@ labelStyles: [
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obligatoire</td>
-      <td>Le nom qu’utilisent les ancrages et les étiquettes.</td>
+      <td>Le nom qu’utilisent les ancres et les étiquettes.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
       <td><code>string</code></td>
-      <td>l’id</td>
+      <td>l’identifiant</td>
       <td>Le nom affiché dans le Sandbox.</td>
     </tr>
     <tr>
       <td><code>paragraphStyle</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Un style de paragraphe dont l’étiquette emprunte la typographie ; les champs ci-dessous le remplacent.</td>
+      <td>Un style de paragraphe dont l’étiquette emprunte la typographie ; les champs ci-dessous le remplacent.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
@@ -674,38 +674,26 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>La taille minimale à laquelle une étiquette peut être réduite quand elle ne tient pas dans sa largeur.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
-      <td>Écriture verticale pour les étiquettes de ce style : caractères droits dans des cellules l’une sous l’autre, colonnes de droite à gauche, comme on inscrit une carte chinoise ou japonaise. Le <code>writingMode</code> propre à une ancre l’emporte.</td>
+      <td>Écriture verticale pour les étiquettes de ce style : caractères debout dans des cellules l’une sous l’autre, colonnes de droite à gauche, comme on inscrit une carte chinoise ou japonaise. Le <code>writingMode</code> propre à une ancre l’emporte.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
       <td><code>'check' | 'allow'</code></td>
       <td><code>'check'</code></td>
-      <td><code>'allow'</code> dit que l’étiquette posée sur cette ancre peut toucher ses voisines, comme la source l’imprime : <code>labelOverlap</code> n’est pas levé pour une paire où elle figure. L’emporte sur l’<code>overlap</code> du style. Depuis postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>Sur une figure qui traverse le dos d’une double page, <code>'keep'</code> écarte l’étiquette de la bande du petit fond, du côté où se trouve son point ; <code>'cross'</code> la laisse où le point la met, comme l’exige un titre posé sur les deux pages. Depuis postext 1.43.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> écarte les étiquettes de ce style du contrôle <code>labelOverlap</code>, pour une carte dont les noms se touchent dans la source. L’<code>overlap</code> propre à une ancre l’emporte. Depuis postext 1.42.</td>
+      <td><code>'allow'</code> écarte les étiquettes de ce style de la vérification <code>labelOverlap</code>, pour une carte dont les noms se touchent dans la source. L’<code>overlap</code> propre à une ancre l’emporte. Depuis postext 1.42.</td>
     </tr>
   </tbody>
 </table>
 
-Une étiquette sans style, ou dont le style ne fixe pas la typographie, prend la famille, le corps, la graisse et la couleur du texte courant. Les lignes d’une étiquette sur plusieurs lignes sont espacées de 1,15 fois son corps, ou de l’interligne du style de paragraphe emprunté. Par `paragraphStyle`, l’étiquette prend aussi l’italique et les capitales de ce style ; `fontStyle: 'italic'` et `textTransform: 'uppercase'` les ajoutent à un style qui n’en emprunte aucun. Un style d’étiquette qui écrit `fontStyle: 'normal'` ou `textTransform: 'none'` éteint l’italique ou les capitales du style de paragraphe emprunté (depuis postext 1.40) ; sinon, ceux du style de paragraphe valent. Une étiquette réduite pour tenir garde son halo en proportion.
+Une étiquette sans style, ou dont le style ne fixe pas la typographie, prend la famille, le corps, la graisse et la couleur du texte courant. Les lignes d’une étiquette sur plusieurs lignes sont espacées de 1,15 fois son corps, ou de l’interligne du style de paragraphe emprunté. Par `paragraphStyle`, l’étiquette prend aussi l’italique et les capitales de ce style ; `fontStyle: 'italic'` et `textTransform: 'uppercase'` les ajoutent à un style qui n’en emprunte aucun. Un style d’étiquette qui précise `fontStyle: 'normal'` ou `textTransform: 'none'` annule l’italique ou les capitales du style de paragraphe emprunté (depuis postext 1.40) ; sinon, ceux du style de paragraphe s’appliquent. Une étiquette réduite pour tenir garde son halo en proportion.
 
-### Champs d’étiquette d’un ancrage
+### Champs d’étiquette d’une ancre
 
-Les ancrages d’une image (`Resource.anchors`, les points que la bande dessinée utilise pour les locuteurs) acceptent quelques champs facultatifs pour les étiquettes. Ce sont des fractions de l’image : ils restent valables dans toutes les langues et quel que soit le recadrage de l’image. La bande dessinée les ignore.
+Les ancres d’une image (`Resource.anchors`, les points que la bande dessinée utilise pour les locuteurs) acceptent quelques champs facultatifs pour les étiquettes. Ce sont des fractions de l’image : ils restent valables dans toutes les langues et quel que soit le recadrage de l’image. La bande dessinée les ignore.
 
 <table>
   <thead>
@@ -721,7 +709,7 @@ Les ancrages d’une image (`Resource.anchors`, les points que la bande dessiné
       <td><code>width</code></td>
       <td><code>number</code></td>
       <td>celle de l’étiquette</td>
-      <td>La justification de l’étiquette, en fraction de la largeur de l’image : un nom long s’y coupe sur deux lignes.</td>
+      <td>La justification de l’étiquette, en fraction de la largeur de l’image : un nom long s’y coupe sur deux lignes.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
@@ -733,36 +721,48 @@ Les ancrages d’une image (`Resource.anchors`, les points que la bande dessiné
       <td><code>verticalAlign</code></td>
       <td><code>'top' | 'middle' | 'bottom'</code></td>
       <td><code>'middle'</code></td>
-      <td>Le bord de l’étiquette qui se place à la hauteur de l’ancrage.</td>
+      <td>Le bord de l’étiquette qui se place à la hauteur de l’ancre.</td>
     </tr>
     <tr>
       <td><code>rotate</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>En degrés, dans le sens des aiguilles d’une montre, autour du point d’ancrage : le nom d’un fleuve le long de son cours.</td>
+      <td>En degrés, dans le sens des aiguilles d’une montre, autour de l’ancre : le nom d’un fleuve le long de son cours.</td>
     </tr>
     <tr>
       <td><code>style</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Un id de <code>labelStyles</code>. Une étiquette qui nomme son propre style le remplace.</td>
+      <td>Un identifiant de <code>labelStyles</code>. Une étiquette qui indique son propre style le remplace.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> compose l’étiquette à la verticale, comme on inscrit une carte chinoise ou japonaise ou un dos de livre. Sa <code>width</code> est alors une fraction de la hauteur de l’image, <code>align</code> court le long de la colonne (<code>start</code> en est le haut) et <code>verticalAlign</code> en travers des colonnes (<code>top</code> est la première, celle de droite).</td>
     </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> indique que l’étiquette posée sur cette ancre peut toucher ses voisines, comme la source l’imprime : <code>labelOverlap</code> n’est pas déclenché pour une paire où elle figure. L’emporte sur l’<code>overlap</code> du style. Depuis postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>Sur une figure qui traverse le dos d’une double page, <code>'keep'</code> écarte l’étiquette de la bande du petit fond, du côté où se trouve son point ; <code>'cross'</code> la laisse où le point la met, comme l’exige un titre posé sur les deux pages. Depuis postext 1.43.</td>
+    </tr>
   </tbody>
 </table>
 
-`start` et `end` suivent la direction de l’étiquette : dans une étiquette arabe, `start` est son bord droit. Un ancrage partagé par les éditions de gauche à droite et de droite à gauche d’une même carte se lit mieux avec l’étiquette centrée au-dessus ou au-dessous du point. Une étiquette avec une `width` se coupe entre les mots ; un mot plus large que la justification réduit toute l’étiquette, jusqu’au `minScale` de son style. La façon dont les étiquettes sont dessinées est décrite dans [Pages composées](/fr/docs/composed-pages).
+`start` et `end` suivent la direction de l’étiquette : dans une étiquette arabe, `start` est son bord droit. Une ancre partagée par les éditions de gauche à droite et de droite à gauche d’une même carte se lit mieux avec l’étiquette centrée au-dessus ou au-dessous du point. Une étiquette avec une `width` se coupe entre les mots ; un mot plus large que la justification réduit toute l’étiquette, jusqu’au `minScale` de son style. La façon dont les étiquettes sont dessinées est décrite dans [Pages composées](/fr/docs/composed-pages).
 
 ## Avertissements des gabarits de page
 
-Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur nomme le gabarit qui l’a écrit. Un avertissement qui nomme un id ou un nom inexistant propose aussi le plus proche qui existe.
+Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur désigne le gabarit qui l’a défini. Un avertissement qui cite un identifiant ou un nom inexistant propose aussi le plus proche qui existe.
 
-Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
+Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
 
 <table>
   <thead>
@@ -780,27 +780,27 @@ Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une 
     </tr>
     <tr>
       <td><code>templateExtendsCycle</code></td>
-      <td>En suivant <code>extends</code>, on revient au même gabarit (<code>a → b → a</code>). Tous les gabarits de la boucle, et tous ceux qui étendent l’un d’eux, sont écartés : aucune page ne peut les utiliser.</td>
+      <td>En suivant <code>extends</code>, on revient au même gabarit (<code>a → b → a</code>). Tous les gabarits de la boucle, et tous ceux qui étendent l’un d’eux, sont écartés : aucune page ne peut les utiliser.</td>
       <td>Retirer l’<code>extends</code> d’un gabarit de la boucle.</td>
     </tr>
     <tr>
       <td><code>templateExtendsUnknown</code></td>
-      <td><code>extends</code> nomme un id qu’aucun gabarit n’a. Le gabarit est utilisé seul, sans rien hériter.</td>
-      <td>Corriger l’id (l’avertissement propose le plus proche), ou ajouter le gabarit parent.</td>
+      <td><code>extends</code> désigne un identifiant qu’aucun gabarit ne porte. Le gabarit est utilisé seul, sans rien hériter.</td>
+      <td>Corriger l’identifiant (l’avertissement propose le plus proche), ou ajouter le gabarit parent.</td>
     </tr>
     <tr>
       <td><code>frameDuplicate</code></td>
-      <td>Deux blocs, ou deux groupes, d’une même liste ont le même <code>name</code>, ou un groupe porte le nom d’un bloc. L’entrée suivante est ignorée ; un ancrage à ce nom lit le bloc.</td>
+      <td>Deux blocs, ou deux groupes, d’une même liste ont le même <code>name</code>, ou un groupe porte le nom d’un bloc. L’entrée suivante est ignorée ; un ancrage à ce nom vise le bloc.</td>
       <td>Donner à chaque bloc et à chaque groupe un nom qui lui soit propre. Pour changer un bloc hérité, écrire une seule entrée avec son nom.</td>
     </tr>
     <tr>
       <td><code>frameStyleUnknown</code></td>
-      <td>Le <code>style</code> d’un bloc ne nomme aucun style d’encadré. Le bloc est dessiné sans boîte.</td>
-      <td>Corriger l’id, ou ajouter le style à <code>calloutStyles</code>.</td>
+      <td>Le <code>style</code> d’un bloc ne correspond à aucun style d’encadré. Le bloc est dessiné sans boîte.</td>
+      <td>Corriger l’identifiant, ou ajouter le style à <code>calloutStyles</code>.</td>
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Un bloc, un groupe ou un élément de décor est ancré à <code>'#name'</code> et le gabarit n’a aucun bloc, groupe ou élément de ce nom ; ou des blocs et des groupes sont ancrés les uns aux autres en boucle (y compris par un groupe sans ancrage propre, dont la boîte est celle de ses blocs). L’ancrage est lu comme <code>'container'</code>, la zone.</td>
+      <td>Un bloc, un groupe ou un élément de décor est ancré à <code>'#name'</code> et le gabarit n’a aucun bloc, groupe ou élément de ce nom ; ou des blocs et des groupes sont ancrés les uns aux autres en boucle (y compris par un groupe sans ancrage propre, dont la boîte est celle de ses blocs). L’ancrage est traité comme <code>'container'</code>, la zone.</td>
       <td>Ancrer à un bloc ou à un groupe qui existe, ou casser la boucle en ancrant l’un d’eux à la zone.</td>
     </tr>
     <tr>
@@ -810,30 +810,30 @@ Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une 
     </tr>
     <tr>
       <td><code>groupFrameUnknown</code></td>
-      <td>Les <code>frames</code> d’un groupe listent un nom qui n’est aucun bloc du gabarit (peut-être supprimé par un gabarit enfant ou par une variante). Le groupe le saute.</td>
+      <td>Les <code>frames</code> d’un groupe listent un nom qui ne correspond à aucun bloc du gabarit (peut-être supprimé par un gabarit enfant ou par une variante). Le groupe le saute.</td>
       <td>Corriger le nom, ou le retirer de la liste.</td>
     </tr>
     <tr>
       <td><code>groupFrameTwice</code></td>
-      <td>Un bloc est listé dans deux groupes, ou deux fois dans le même. Un bloc n’appartient qu’à un seul groupe : la mention suivante est sautée.</td>
+      <td>Un bloc est listé dans deux groupes, ou deux fois dans le même. Un bloc n’appartient qu’à un seul groupe : la mention suivante est sautée.</td>
       <td>Garder le bloc dans le seul groupe avec lequel il se déplace.</td>
     </tr>
     <tr>
       <td><code>frameChainLoop</code></td>
-      <td>Des blocs se continuent les uns dans les autres en boucle par <code>next</code> ou <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). Le lien qui ferme la boucle est écarté : la chaîne s’arrête au bloc qui le précède.</td>
-      <td>Terminer la chaîne à son dernier bloc : retirer son <code>next</code>, ou le faire continuer sur la page suivante.</td>
+      <td>Des blocs se continuent les uns dans les autres en boucle par <code>next</code> ou <code>overflow.continueIn: '#frame'</code> (<code>a → b → a</code>). Le lien qui ferme la boucle est écarté : la chaîne s’arrête au bloc qui le précède.</td>
+      <td>Terminer la chaîne à son dernier bloc : retirer son <code>next</code>, ou le faire continuer sur la page suivante.</td>
     </tr>
     <tr>
       <td><code>overflowTargetUnknown</code></td>
-      <td>Un <code>next</code> ne nomme aucun bloc du gabarit ; un <code>overflow.continueIn</code> ne nomme aucun bloc (<code>'#x'</code>) ou aucun gabarit (<code>'template:x'</code>), ou n’a aucune des formes <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> et <code>'page:&lt;id&gt;'</code> ; ou <code>overflowTemplate</code> ne nomme aucun gabarit. Le contenu qui ne tient pas n’y continue pas.</td>
-      <td>Corriger le nom ou l’id, ou écrire l’une des quatre formes.</td>
+      <td>Un <code>next</code> ne désigne aucun bloc du gabarit ; un <code>overflow.continueIn</code> ne désigne aucun bloc (<code>'#x'</code>) ni aucun gabarit (<code>'template:x'</code>), ou n’a aucune des formes <code>'#frame'</code>, <code>'next-page'</code>, <code>'template:&lt;id&gt;'</code> et <code>'page:&lt;id&gt;'</code> ; ou <code>overflowTemplate</code> ne désigne aucun gabarit. Le contenu qui ne tient pas n’y continue pas.</td>
+      <td>Corriger le nom ou l’identifiant, ou écrire l’une des quatre formes.</td>
     </tr>
     <tr>
       <td><code>labelStyleUnknown</code></td>
-      <td>Un ancrage d’une image nomme un <code>style</code> que <code>labelStyles</code> n’a pas. L’avertissement nomme la ressource. Les étiquettes de cet ancrage prennent l’apparence par défaut.</td>
-      <td>Corriger l’id du style sur l’ancrage, ou ajouter le style à <code>labelStyles</code>.</td>
+      <td>Une ancre d’une image désigne un <code>style</code> absent de <code>labelStyles</code>. L’avertissement indique la ressource. Les étiquettes de cette ancre prennent l’apparence par défaut.</td>
+      <td>Corriger l’identifiant du style sur l’ancre, ou ajouter le style à <code>labelStyles</code>.</td>
     </tr>
   </tbody>
 </table>
 
-La version de la configuration est 15 depuis les gabarits de page (les bundles écrits avant continuent de se charger sans changement : rien de ce que dit une configuration plus ancienne ne change de sens).
+La version de la configuration est 15 depuis les gabarits de page (les paquets écrits avant continuent de se charger sans changement : rien de ce que dit une configuration plus ancienne ne change de sens).

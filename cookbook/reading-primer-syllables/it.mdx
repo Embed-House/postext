@@ -18,19 +18,19 @@ L’edizione spagnola è un’altra unità, non una traduzione: l’unità 7 di 
 
 ### 1 · Uno stile di chip per vocale e una funzione che scrive i chip
 
-[La risposta breve](#la-risposta-breve) costruisce 21 stili di chip espandendo un unico oggetto `syllable`. C’è uno stile pieno per vocale per la m, uno a contorno per vocale per gli altri suoni, un gemello `-frase` di ciascuno di questi dieci, e `pinta`, il contorno a inchiostro che un bambino colora. `syllables()` trasforma `{m·a·p}` in tre `:chip[…]` senza nulla in mezzo, così i suoni di una parola si toccano e il bordo bianco disegna la giuntura. Un chip prende il colore della sua vocale, e un pezzo senza vocale, qui la m e la p, prende la vocale della sua parola, così *map* è rossa da cima a fondo. Attraverso uno spazio tra parole un chip conserva almeno il suo `gap`, e 0,5 em distanzia le parole di una fila a 24 pt di 4,2 mm, dove il solo spazio lascerebbe 2,3 mm. Dentro una frase quel distacco quasi raddoppierebbe lo spazio prima della parola nuova, quindi una parola che segue un’altra parola riceve i gemelli `-frase`, il cui `gap` di 0 lascia lo spazio di 2,3 mm così com’è. Nell’edizione spagnola i pezzi sono sillabe, `{mi·mo·sa}`, e ognuna ha una sua vocale.
+[La risposta breve](#la-risposta-breve) costruisce 21 stili di chip espandendo un unico oggetto `syllable`. C’è uno stile pieno per vocale per la m, uno a contorno per vocale per gli altri suoni, un gemello `-frase` di ciascuno di questi dieci, e `pinta`, il contorno a inchiostro che un bambino colora. `syllables()` trasforma `{m·a·p}` in tre `:chip[…]` senza nulla in mezzo, così i suoni di una parola si toccano e il bordo bianco disegna la giuntura. Un chip prende il colore della sua vocale, e un pezzo senza vocale, qui la m e la p, prende la vocale della sua parola, così *map* è rossa da cima a fondo. Attraverso uno spazio tra parole un chip conserva almeno il suo `gap`, e 0,5 em distanzia le parole di una fila a 24 pt di 4,2 mm, dove il solo spazio lascerebbe 2,3 mm. In una frase quel distacco quasi raddoppierebbe lo spazio prima della parola nuova, quindi una parola che segue un’altra parola riceve i gemelli `-frase`, il cui `gap` di 0 lascia lo spazio di 2,3 mm così com’è. Nell’edizione spagnola i pezzi sono sillabe, `{mi·mo·sa}`, e ognuna ha una sua vocale.
 
 ### 2 · Un’interlinea che lascia spazio ai chip
 
 <Excerpt region="reading" />
 
-La spaziatura interna verticale e il bordo di un chip si dipingono fuori dalla sua riga e non aggiungono interlinea, quindi un chip più alto del passo delle righe invade i chip della riga sotto. Un chip a 24 pt è alto 10,4 mm; con un’interlinea di 30 pt (10,6 mm), i chip di due frasi starebbero a 0,1 mm di distanza. Le righe che un bambino legge ricevono 45 pt e le file a 34 pt della prima attività 60 pt, tre e quattro righe della griglia da 15 pt delle istruzioni.
+La spaziatura interna verticale e il bordo di un chip si disegnano fuori dalla sua riga e non aggiungono interlinea, quindi un chip più alto del passo delle righe invade i chip della riga sotto. Un chip a 24 pt è alto 10,4 mm; con un’interlinea di 30 pt (10,6 mm), i chip di due frasi starebbero a 0,1 mm di distanza. Le righe che un bambino legge ricevono 45 pt e le file a 34 pt della prima attività 60 pt, tre e quattro righe della griglia da 15 pt delle istruzioni.
 
 ### 3 · Un’immagine in ogni cella
 
 <Excerpt region="pictures" />
 
-`setCellImage` mette un’immagine sopra il testo di una cella a una frazione della larghezza interna della cella, qui 0,72 (36,5 mm), e la riga cresce per contenerla. Ogni immagine è un JPEG dipinto su bianco e moltiplicato per il crema delle tessere, così sta sulla tessera senza riquadro. Sotto ogni immagine c’è la parola in chip di suoni. Una cella di tabella accetta il markup dei chip come qualunque paragrafo. Lo stile di tabella `dibujos` arrotonda la cornice e i suoi riempimenti a 5 mm e separa le tessere color crema con filetti bianchi da 4 pt.
+`setCellImage` mette un’immagine sopra il testo di una cella a una frazione della larghezza interna della cella, qui 0,72 (36,5 mm), e la riga cresce per contenerla. Ogni immagine è un JPEG dipinto su bianco e moltiplicato per il crema delle tessere, così sta sulla tessera senza riquadro. Sotto ogni immagine c’è la parola in chip di suoni. Una cella di tabella accetta il markup dei chip come qualunque paragrafo. Lo stile di tabella `dibujos` arrotonda il bordo e i riempimenti a 5 mm e separa le tessere color crema con filetti bianchi da 4 pt.
 
 ### 4 · Una riga di spazio prima del riquadro
 
@@ -48,13 +48,13 @@ La «Mm» è il testo del titolo (`{titleText}`); il numero dell’unità, la co
 
 <Excerpt region="activities" />
 
-Ogni titolo di attività nomina il suo stile di titolo, come in `## Read the sentences {style="lee"}`, e lo stile disegna un’icona con il titolo centrato accanto. I titoli restano titoli di livello 2, quindi è il livello `H2` a spaziarli: due righe della griglia di `lineHeight` per il titolo e altre due di `marginTop` sopra di esso.
+Ogni titolo di attività indica il proprio stile di titolo, come in `## Read the sentences {style="lee"}`, e lo stile disegna un’icona con il titolo centrato accanto. I titoli restano titoli di livello 2, quindi è il livello `H2` a spaziarli: due righe della griglia di `lineHeight` per il titolo e altre due di `marginTop` sopra di esso.
 
 ## Varianti
 
 ### Arrotonda i chip in pillole
 
-Un raggio maggiore di metà dell’altezza del chip viene limitato a quella metà, quindi un valore grande disegna estremità tonde. Un chip di una sola lettera diventa quasi un cerchio, e le giunture dentro una parola diventano tacche.
+Un raggio maggiore di metà dell’altezza del chip viene limitato a quella metà, quindi un valore grande disegna estremità tonde. Un chip di una sola lettera diventa quasi un cerchio, e le giunture in una parola diventano tacche.
 
 ```diff
 -  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5) };

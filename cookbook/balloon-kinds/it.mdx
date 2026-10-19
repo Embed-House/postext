@@ -1,22 +1,22 @@
 ---
 title: "Ogni tipo di nuvoletta in una pagina col faro"
-summary: "Una pagina di fumetto con fumetti parlati, pensieri, sussurri, urla, radio, didascalie, voce interiore, nota e onomatopee, ognuno nominato tra graffe."
-plain: "Una pagina di fumetto su un salvataggio nella tempesta che usa ogni tipo di nuvoletta, con un foglio di stile del letterista che mostra come si scrive ciascuna nella sceneggiatura."
-description: "Un fumetto in Postext con ogni nuvoletta: parlato, pensiero, sussurro, urlo, radio, didascalie, voce interiore, note, onomatopee, fuori campo e fissate."
-question: "Come letterizzo nuvolette di pensiero, sussurro, urlo e radio, e punto ogni codino verso chi parla?"
-aliases: ["nuvoletta", "balloon", "fumetto parlato", "nuvoletta di pensiero", "sussurro", "nuvoletta a esplosione", "nuvoletta radio", "didascalia", "onomatopea", "SFX", "fuori campo", "codino", "speech bubble", "吹き出し", "对话框"]
+summary: "Una tavola con nuvolette di parlato, pensiero, sussurro, grido e radio, didascalie, voce interiore, nota e onomatopee, ognuna indicata tra graffe."
+plain: "Una tavola a fumetti su un salvataggio nella tempesta che usa ogni tipo di nuvoletta, con un foglio di stile del letterista che mostra come si scrive ciascuna nella sceneggiatura."
+description: "Un fumetto in Postext con ogni nuvoletta: parlato, pensiero, sussurro, grido, radio, didascalie, voce interiore, note, onomatopee, fuori campo e fissate."
+question: "Come lettero nuvolette di pensiero, sussurro, grido e radio, e punto ogni coda verso chi parla?"
+aliases: ["nuvoletta", "balloon", "fumetto parlato", "nuvoletta di pensiero", "sussurro", "nuvoletta a esplosione", "nuvoletta radio", "didascalia", "onomatopea", "SFX", "fuori campo", "coda", "speech bubble", "吹き出し", "对话框"]
 pageNotes: { "1": "Il foglio di stile: il titolo «Foglio di stile del lettering» in maiuscole da titolo rosse, poi dodici tipi di nuvoletta, ciascuno con il suo markup di sceneggiatura in un chip giallo.", "2": "La pagina: una chiamata radio nella stanza della lanterna con una didascalia, una nuvoletta radio frastagliata e una nota della redazione; Maya che sussurra «Tranquillo, Biscuit.» al gatto, che pensa «Ne sei sicura?» in una nuvola; il guardiano che urla «Gannet! Punta sulla luce!» in un’esplosione; il peschereccio nella tempesta con «KRA-BUUM» in rosso; Maya alla finestra con «Dai. Dai. Dai.» in un riquadro grigio di voce interiore; il mattino dopo sugli scogli, con le nuvolette unite «Facciamo due.» e «Una è per il gatto.»." }
 ---
 
 ## Che cosa comporrai
 
-La pagina 7 del *Faro di Porthcove*, un fumetto su una notte di tempesta in un faro, preceduta dal foglio di stile del letterista. Un peschereccio resta senza motore, il guardiano lo guida via radio, Maya aspetta con il gatto e al mattino il capitano li ringrazia. La pagina usa ogni tipo di nuvoletta che Postext disegna: parlato, parlato unito, pensiero, sussurro, urlo, radio, didascalie narrative, una voce interiore, una nota del redattore, un’onomatopea, una voce fuori campo e una nuvoletta fissata. Il formato è quello del comic book americano, 168 × 259 mm, e la pagina esiste in dieci lingue.
+La pagina 7 del *Faro di Porthcove*, un fumetto su una notte di tempesta in un faro, preceduta dal foglio di stile del letterista. Un peschereccio resta senza motore, il guardiano lo guida via radio, Maya aspetta con il gatto e al mattino il capitano li ringrazia. La pagina usa ogni tipo di nuvoletta che Postext disegna: parlato, parlato unito, pensiero, sussurro, grido, radio, didascalie narrative, una voce interiore, una nota del redattore, un’onomatopea, una voce fuori campo e una nuvoletta fissata. Il formato è quello del comic book americano, 168 × 259 mm, e la pagina esiste in dieci lingue.
 
 ## Preparazione
 
 ### 1 · Nomina il tipo nella riga di sceneggiatura
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una riga della sceneggiatura è `speaker{kind}: text`, e il tipo è l’id di uno stile di nuvoletta. I nove stili predefiniti coprono i tipi abituali: un ovale con codino curvo per il parlato, una nuvola con bollicine per il pensiero, un contorno tratteggiato per il sussurro, un’esplosione con codino a cuneo per l’urlo, un contorno frastagliato con codino a zigzag per una voce che passa dalla radio ([stili delle nuvolette](/it/docs/comics#stili-delle-nuvolette)). Uno stile nella configurazione con lo stesso id cambia solo ciò che nomina: qui il colore del tratto, il giallo delle didascalie e le 16 punte dell’esplosione. `caption`, `note` e `sfx` sono parlanti riservati: riquadri narrativi accostati a un angolo, la nota del redattore a 0,8 × la dimensione e lettere da titolo senza nuvoletta.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una riga della sceneggiatura è `speaker{kind}: text`, e il tipo è l’id di uno stile di nuvoletta. I nove stili predefiniti coprono i tipi abituali: un ovale con coda curva per il parlato, una nuvola con bollicine per il pensiero, un contorno tratteggiato per il sussurro, un’esplosione con coda a cuneo per il grido, un contorno frastagliato con coda a zigzag per una voce che passa dalla radio ([stili delle nuvolette](/it/docs/comics#stili-delle-nuvolette)). Uno stile nella configurazione con lo stesso id cambia solo ciò che indica: qui il colore del tratto, il giallo delle didascalie e le 16 punte dell’esplosione. `caption`, `note` e `sfx` sono parlanti riservati: riquadri narrativi accostati a un angolo, la nota del redattore a 0,8 × il corpo e lettere da titolo senza nuvoletta.
 
 <PageShot page={2} crop="0,0,1,0.34" caption="La chiamata radio: una didascalia, la nuvoletta radio del capitano che punta all’apparecchio, la risposta del guardiano e la nota del redattore." />
 
@@ -24,11 +24,11 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una riga della s
 
 <Excerpt region="art" />
 
-Ogni immagine porta degli ancoraggi espressi in frazioni dell’immagine: la bocca a cui mira il codino del parlato, la testa a cui mira il pensiero, il volto che nessuna nuvoletta può coprire ([parlanti e ancoraggi](/it/docs/comics#personaggi-e-ancore)). Il capitano non viene mai disegnato: il suo ancoraggio nell’immagine della tempesta è l’apparecchio radio, in quella del mare la sua barca. Quando chi parla non è nella vignetta, `tail=right` (o `left`, `top`, `bottom`) porta il codino fino a quel bordo, e `at="44% 22%"` fissa il centro di una nuvoletta a un punto dell’immagine, dove resta qualunque sia il ritaglio. Due righe consecutive dello stesso parlante si uniscono in un solo contorno con un solo codino. `left` e `right` sono lati dell’immagine, quindi le dieci edizioni scrivono la stessa riga per il guardiano nella vignetta del mare, la cui luce sta a destra dell’immagine: `tail=right`, letta da sinistra a destra o da destra a sinistra. `start` ed `end` seguono invece la direzione di lettura della pagina.
+Ogni immagine ha delle ancore espresse in frazioni dell’immagine: la bocca a cui mira la coda del parlato, la testa a cui mira il pensiero, il volto che nessuna nuvoletta può coprire ([parlanti e ancoraggi](/it/docs/comics#personaggi-e-ancore)). Il capitano non viene mai disegnato: la sua ancora nell’immagine della tempesta è l’apparecchio radio, in quella del mare la sua barca. Quando chi parla non è nella vignetta, `tail=right` (o `left`, `top`, `bottom`) porta la coda fino a quel bordo, e `at="44% 22%"` fissa il centro di una nuvoletta a un punto dell’immagine, dove resta qualunque sia il ritaglio. Due righe consecutive dello stesso parlante si uniscono in un solo contorno con una sola coda. `left` e `right` sono lati dell’immagine, quindi le dieci edizioni scrivono la stessa riga per il guardiano nella vignetta del mare, la cui luce sta a destra dell’immagine: `tail=right`, letta da sinistra a destra o da destra a sinistra. `start` ed `end` seguono invece la direzione di lettura della pagina.
 
 ### 3 · Dai a un personaggio una voce sua
 
-Il cast nella risposta breve assegna lo stile radio a ogni riga `skipper:`, così la sceneggiatura non ripete mai `{radio}`. Una riga può comunque dire altro: nella vignetta del mattino il capitano chiama dalla sua barca, `skipper{speech tail=bottom}:`, in una nuvoletta normale il cui codino esce dal piede della vignetta.
+Il cast nella risposta breve assegna lo stile radio a ogni riga `skipper:`, così la sceneggiatura non ripete mai `{radio}`. Una riga può comunque indicare altro: nella vignetta del mattino il capitano chiama dalla sua barca, `skipper{speech tail=bottom}:`, in una nuvoletta normale la cui coda esce dal piede della vignetta.
 
 ### 4 · Letterizza ogni edizione nei suoi caratteri
 
@@ -59,4 +59,4 @@ Qualsiasi altro id diventa uno stile a sé, sovrapposto alla nuvoletta del parla
 ## Errori frequenti
 
 - Un fissaggio è un punto dell’immagine, mantenuto qualunque sia il ritaglio. Un’onomatopea fissata così vicino al bordo da uscire dalla vignetta («KRA-BUUM» a `at="16% 28%"`) viene riportata dentro, quindi può trovarsi un po’ lontana dal punto scritto.
-- Una voce fuori campo viene letterizzata in base al bordo verso cui punta il suo codino: il ringraziamento del capitano, `tail=bottom`, sta al piede della vignetta del mattino anche se è la prima riga della vignetta. Punta il codino verso il bordo superiore quando una riga del genere va letta per prima.
+- Una voce fuori campo viene letterata in base al bordo verso cui punta la sua coda: il ringraziamento del capitano, `tail=bottom`, sta al piede della vignetta del mattino anche se è la prima riga della vignetta. Punta la coda verso il bordo superiore quando una riga del genere va letta per prima.

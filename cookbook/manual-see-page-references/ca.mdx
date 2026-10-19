@@ -10,7 +10,7 @@ pageNotes: { "1": "Pàgina 1: una banda blau marí a la meitat superior amb MANU
 
 ## Què compondràs
 
-El manual de l'usuari d'una bicicleta de cicloturisme fictícia, l'Ardena T3: quatre pàgines A5 en Archivo, amb el nom del model en una banda blau marí sobre la primera. Un manual no es llegeix en ordre, així que cada instrucció que depèn d'una altra diu on és: *consulta l'apartat 3.2, a la pàgina 3*. Qui l'escriu anomena un títol, un paràgraf o una frase d'un pas amb un identificador i escriu `:ref` allà on el text hi remet; Postext imprimeix el número, el títol o la pàgina i el converteix en enllaç. L'índex de la portada s'escriu igual, així que moure un apartat, o traduir el manual i deixar que es recompongui, no deixa mai un número vell.
+El manual de l'usuari d'una bicicleta de cicloturisme fictícia, l'Ardena T3: quatre pàgines A5 en Archivo, amb el nom del model en una banda blau marí sobre la primera. Un manual no es llegeix en ordre, així que cada instrucció que depèn d'una altra diu on és: *consulta l'apartat 3.2, a la pàgina 3*. Qui l'escriu dona un identificador a un títol, un paràgraf o una frase d'un pas i escriu `:ref` allà on el text hi remet; Postext imprimeix el número, el títol o la pàgina i el converteix en enllaç. L'índex de la portada s'escriu igual, així que moure un apartat, o traduir el manual i deixar que es recompongui, no deixa mai un número vell.
 
 ## Elaboració
 
@@ -63,4 +63,4 @@ Quan la pàgina és plena de remissions, deixa-les en el color del text i en neg
 ## Errors freqüents
 
 - Una remissió a un `:anchor` sense estil imprimeix la pàgina, perquè una àncora invisible no té paraules pròpies. Fes servir `[palabras]{#id}` quan la remissió hagi de citar el text.
-- Un identificador ha de ser únic al llibre. Les remissions arriben al primer `{#sec-brakes}`, i el tauler de comprovacions del Sandbox avisa del segon com a `duplicateAnchor`.
+- Un identificador ha de ser únic al llibre. Les remissions arriben al primer `{#sec-brakes}`, i el tauler Revisió del Sandbox avisa del segon com a `duplicateAnchor`.

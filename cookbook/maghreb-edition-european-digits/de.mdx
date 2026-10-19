@@ -16,25 +16,25 @@ Ein Kapitel aus einem Führer durch die Altstädte Marokkos, über die Tore von 
 
 ### 1 · Das Land wählt die Ziffern
 
-Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `numerals` bleibt auf `'auto'`, und die Engine liest die Ziffern aus dem Sprach-Tag: `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` und `ar-EH` ergeben europäische Ziffern, `ar` allein und die Regionen des Maschrek ergeben ١٢٣ ([Ziffern und Zahlstile](/de/docs/arabic-layout#ziffern-und-zahlstile)). Es ändern sich nur die Zahlen, die die Engine schreibt: die Pagina, die Zähler der Überschriften, die Listennummern, die Notenzeichen, die Abbildungsnummern. Die Jahreszahlen im Text, 789 und 1913, stammen vom Autor, sind in den Ziffern der Ausgabe getippt, und die Engine schreibt sie nie um. Das `{startAt=3}` der Überschrift liest ٣ ebenso wie 3, sodass dasselbe Markdown beiden Ausgaben dient.
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `numerals` bleibt auf `'auto'`, und die Engine entnimmt die Ziffern der Sprachkennung: `ar-MA`, `ar-DZ`, `ar-TN`, `ar-LY`, `ar-MR` und `ar-EH` ergeben europäische Ziffern, `ar` allein und die Regionen des Maschrek ergeben ١٢٣ ([Ziffern und Zahlstile](/de/docs/arabic-layout#ziffern-und-zahlstile)). Es ändern sich nur die Zahlen, die die Engine schreibt: die Pagina, die Zähler der Überschriften, die Listennummern, die Notenzeichen, die Abbildungsnummern. Die Jahreszahlen im Text, 789 und 1913, stammen vom Autor, sind in den Ziffern der Ausgabe getippt, und die Engine schreibt sie nie um. Das `{startAt=3}` der Überschrift versteht ٣ ebenso wie 3, sodass dasselbe Markdown beiden Ausgaben dient.
 
 ### 2 · Zeichen rund um die Zahlen
 
 <Excerpt region="marks" />
 
-Arabische Bücher schreiben eine Listennummer mit einem nachgestellten Bindestrich, 1-, und ein Notenzeichen in Klammern, (1); beide Vorlagen übernehmen die Ziffern des Dokuments, sodass die Maschrek-Ausgabe aus denselben Einstellungen ١- und (١) druckt ([Fußnoten](/de/docs/arabic-layout#fußnoten)). Das Etikett der Bildunterschrift endet mit einem Doppelpunkt, شكل 3-1:, weil ein Punkt nach einer Zahl wie ein Dezimalpunkt gelesen wird. Die Noten beginnen auf jeder Seite wieder bei (1), wie die meisten arabischen Bücher sie zählen.
+Arabische Bücher schreiben eine Listennummer mit einem nachgestellten Bindestrich, 1-, und ein Notenzeichen in Klammern, (1); beide Vorlagen übernehmen die Ziffern des Dokuments, sodass die Maschrek-Ausgabe aus denselben Einstellungen ١- und (١) setzt ([Fußnoten](/de/docs/arabic-layout#fußnoten)). Die Bezeichnung in der Legende endet mit einem Doppelpunkt, شكل 3-1:, weil ein Punkt nach einer Zahl wie ein Dezimalpunkt gelesen wird. Die Noten beginnen auf jeder Seite wieder bei (1), wie die meisten arabischen Bücher sie zählen.
 
 ### 3 · Ein Fliesenband, im Code gezeichnet
 
 <Excerpt region="art" />
 
-Die Abbildung ist ein im Pen erzeugtes SVG: achtzackige Sterne aus zwei um 45° gedrehten Quadraten, kleine Quadrate dazwischen, in Grün, Kobaltblau und Ocker aus der Palette. Ihre Bildunterschrift ist in beiden Ausgaben arabisch und wird nach dem Kapitel nummeriert, `{h1}-{n}`, so wie die arabischen Ressourcentypen ihre Abbildungen zählen.
+Die Abbildung ist ein im Pen erzeugtes SVG: achtzackige Sterne aus zwei um 45° gedrehten Quadraten, kleine Quadrate dazwischen, in Grün, Kobaltblau und Ocker aus der Palette. Ihre Legende ist in beiden Ausgaben arabisch und wird nach dem Kapitel nummeriert, `{h1}-{n}`, so wie die arabischen Ressourcentypen ihre Abbildungen zählen.
 
 ## Varianten
 
 ### Die Ziffern des Maschrek drucken
 
-Die ägyptische oder levantinische Ausgabe desselben Kapitels: Das Tag ändert sich, das Markdown nicht.
+Die ägyptische oder levantinische Ausgabe desselben Kapitels: Die Sprachkennung ändert sich, das Markdown nicht.
 
 ```diff
 -  locale: 'ar-MA',

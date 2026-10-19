@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configurazione: fumetti',
   sidebarTitle: 'Impostazioni dei fumetti',
-  description: 'Le impostazioni dei fumetti: cornice e spazi tra le vignette delle tavole, stili delle vignette, lettering, stili delle nuvolette e personaggi',
+  description: 'Le impostazioni dei fumetti: la cornice delle tavole e gli spazi tra le vignette, gli stili delle vignette, il lettering, gli stili delle nuvolette e i personaggi',
   lang: 'it',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
-  plainSummary: "Questa pagina presenta le impostazioni delle tavole a fumetti. Fissi la cornice della pagina e lo spazio tra le vignette. Scegli il font e la dimensione del lettering. Definisci come vengono disegnate le nuvolette, le didascalie e le onomatopee. Puoi anche elencare i personaggi, così che ognuno parli con il proprio stile. La guida Fumetti spiega come scrivere le tavole vere e proprie.",
+  plainSummary: "Questa pagina presenta le impostazioni delle tavole a fumetti. Fissi la cornice della tavola e lo spazio tra le vignette. Scegli il font e la dimensione del lettering. Definisci come vengono disegnate le nuvolette, le didascalie e le onomatopee. Puoi anche elencare i personaggi, così che ognuno parli con il proprio stile. La guida Fumetti spiega come scrivere le tavole vere e proprie.",
 };
 
 # Configurazione: fumetti
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Fumetti
 
-La proprietà `comics` configura le tavole a fumetti (`:::page`), le strisce (`:::strip`) e le doppie pagine: la cornice e gli spazi da cui si ritagliano le vignette, gli stili delle vignette, il lettering, gli stili delle nuvolette e i personaggi. La leggono solo i documenti che contengono fumetti; un documento senza fumetti si impagina esattamente come prima, e un documento con fumetti ma senza una sezione `comics` prende i valori predefiniti della sua lingua. Il markup e il modo in cui si letterano le tavole sono spiegati in [Fumetti](/it/docs/comics).
+La proprietà `comics` configura le tavole a fumetti (`:::page`), le strisce (`:::strip`) e le doppie pagine: la cornice da cui si ritagliano le vignette e gli spazi che le separano, gli stili delle vignette, il lettering, gli stili delle nuvolette e i personaggi. La leggono solo i documenti che contengono fumetti; un documento senza fumetti si impagina esattamente come prima, e un documento con fumetti ma senza una sezione `comics` prende i valori predefiniti della sua lingua. Il markup e il modo in cui si letterano le tavole sono spiegati in [Fumetti](/it/docs/comics).
 
 ```ts
 const config: PostextConfig = {
@@ -47,37 +47,37 @@ const config: PostextConfig = {
       <td><code>readingDirection</code></td>
       <td><code>'auto' | 'ltr' | 'rtl'</code></td>
       <td><code>'auto'</code></td>
-      <td>L’ordine delle vignette in una fila. <code>'auto'</code> legge da destra a sinistra in un documento da destra a sinistra, in uno verticale e in giapponese e cinese tradizionale, e altrimenti nella direzione di <code>artDirection</code> (cinese semplificato e coreano compresi). L’attributo <code>direction</code> di una tavola ha la precedenza. Con <code>page.binding: 'auto'</code>, un libro i cui fumetti si leggono da destra a sinistra viene rilegato a destra.</td>
+      <td>L’ordine delle vignette in una striscia. <code>'auto'</code> legge da destra a sinistra in un documento da destra a sinistra, in uno verticale e in giapponese e cinese tradizionale, e altrimenti nella direzione di <code>artDirection</code> (cinese semplificato e coreano compresi). L’attributo <code>direction</code> di una tavola ha la precedenza. Con <code>page.binding: 'auto'</code>, un libro i cui fumetti si leggono da destra a sinistra viene rilegato a destra.</td>
     </tr>
     <tr>
       <td><code>artDirection</code></td>
       <td><code>'ltr' | 'rtl'</code></td>
       <td><code>'ltr'</code></td>
-      <td>Il verso di lettura per cui sono stati disegnati i disegni: <code>'rtl'</code> per i manga.</td>
+      <td>Il verso di lettura previsto da chi ha disegnato le tavole: <code>'rtl'</code> per i manga.</td>
     </tr>
     <tr>
       <td><code>mirrorArt</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Rovescia specularmente i disegni di una tavola letta nel verso opposto ad <code>artDirection</code>. Con <code>mirror=false</code> una vignetta mantiene il disegno così com’è stato disegnato.</td>
+      <td>Rovescia specularmente i disegni di una tavola letta nel verso opposto ad <code>artDirection</code>. Con <code>mirror=false</code> una vignetta mantiene il disegno così com’è.</td>
     </tr>
     <tr>
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>i margini della pagina</td>
-      <td>Margini propri per le tavole a fumetti (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Le vignette si ritagliano dal riquadro che lasciano; se non sono impostati, dalla gabbia del testo della pagina.</td>
+      <td>Margini propri per le tavole a fumetti (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Le vignette si ritagliano dall’area che questi margini lasciano libera; se non sono impostati, dalla gabbia del testo della pagina.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
       <td><code>Dimension</code></td>
       <td><code>4mm</code></td>
-      <td>Lo spazio tra le file. L’attributo <code>gutter</code> di una tavola ha la precedenza.</td>
+      <td>Lo spazio tra le strisce. L’attributo <code>gutter</code> di una tavola ha la precedenza.</td>
     </tr>
     <tr>
       <td><code>gutter.vertical</code></td>
       <td><code>Dimension</code></td>
       <td><code>2mm</code></td>
-      <td>Lo spazio tra vignette affiancate nella stessa fila.</td>
+      <td>Lo spazio tra vignette affiancate nella stessa striscia.</td>
     </tr>
     <tr>
       <td><code>panel</code></td>
@@ -95,13 +95,13 @@ const config: PostextConfig = {
       <td><code>lettering</code></td>
       <td><code>LetteringConfig</code></td>
       <td>vedi sotto</td>
-      <td>Il carattere, la dimensione e le regole redazionali di tutte le nuvolette del libro.</td>
+      <td>Il carattere, il corpo e le regole redazionali di tutte le nuvolette del libro.</td>
     </tr>
     <tr>
       <td><code>balloonStyles</code></td>
       <td><code>BalloonStyleConfig[]</code></td>
       <td>i nove stili predefiniti</td>
-      <td>Stili delle nuvolette per tipo. Quelli predefiniti ci sono sempre; una voce con uno dei loro id lo modifica, una voce con un id nuovo aggiunge uno stile sovrapposto a <code>speech</code>.</td>
+      <td>Stili delle nuvolette per tipo. Quelli predefiniti ci sono sempre: una voce con l’id di uno di essi lo modifica, mentre una voce con un id nuovo aggiunge uno stile che parte da <code>speech</code> e ne cambia solo i campi indicati.</td>
     </tr>
     <tr>
       <td><code>cast</code></td>
@@ -113,13 +113,13 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Stampa le testatine e i folio sulle tavole a fumetti. Se è disattivato, una tavola è fatta solo di vignette e il suo numero conta comunque.</td>
+      <td>Stampa le testatine e i numeri di pagina sulle tavole a fumetti. Se è disattivato, una tavola contiene solo vignette, ma il suo numero conta comunque.</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>non impostato</td>
-      <td>Per gli ambienti le cui pagine non sono fogli: impagina le tavole su un foglio di stampa (<code>width</code>, <code>height</code>, <code>margins</code>) scalato a <code>fitWidth</code> px (e alto al massimo <code>fitHeight</code> px) in cima alla pagina. Lo imposta il visualizzatore HTML della Sandbox; non viene mai salvato con un documento.</td>
+      <td>Per le applicazioni ospiti le cui pagine non sono fogli: impagina le tavole su un foglio di stampa (<code>width</code>, <code>height</code>, <code>margins</code>) scalato a <code>fitWidth</code> px (e alto al massimo <code>fitHeight</code> px) in cima alla pagina. Lo imposta il visualizzatore HTML della Sandbox; non viene mai salvato con un documento.</td>
     </tr>
   </tbody>
 </table>
@@ -148,7 +148,7 @@ const config: PostextConfig = {
       <td><code>borderColor</code></td>
       <td><code>ColorValue</code></td>
       <td>nero</td>
-      <td>Colore del bordo (collegabile alla palette).</td>
+      <td>Colore del bordo (collegabile alla tavolozza).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
@@ -160,7 +160,7 @@ const config: PostextConfig = {
       <td><code>borderStyle</code></td>
       <td><code>'solid' | 'rough' | 'none'</code></td>
       <td><code>'solid'</code></td>
-      <td>Una linea netta, una linea tracciata a mano che ondeggia un poco (con un seme ricavato dalla vignetta, quindi uguale a ogni build) oppure nessuna.</td>
+      <td>Una linea netta, una linea tracciata a mano che ondeggia un poco (generata a partire dalla vignetta, quindi identica a ogni build) oppure nessuna.</td>
     </tr>
     <tr>
       <td><code>background</code></td>
@@ -172,7 +172,7 @@ const config: PostextConfig = {
       <td><code>fit</code></td>
       <td><code>'cover' | 'contain'</code></td>
       <td><code>'cover'</code></td>
-      <td><code>cover</code> ritaglia il disegno per riempire la vignetta, senza mai entrare nella sua zona sicura; <code>contain</code> lo mostra per intero.</td>
+      <td><code>cover</code> ritaglia il disegno per riempire la vignetta, senza mai tagliarne la zona sicura; <code>contain</code> lo mostra per intero.</td>
     </tr>
     <tr>
       <td><code>bleed</code></td>
@@ -185,7 +185,7 @@ const config: PostextConfig = {
 
 ### Lettering
 
-`comics.lettering` imposta tutte le nuvolette del libro. La dimensione è una sola: uno stile di nuvoletta può scalarla (`fontScale`), e il testo non viene mai rimpicciolito per farlo entrare in una nuvoletta.
+`comics.lettering` imposta tutte le nuvolette del libro. Il corpo è uno solo: uno stile di nuvoletta può scalarlo (`fontScale`), ma il testo non viene mai rimpicciolito per farlo entrare in una nuvoletta.
 
 <table>
   <thead>
@@ -207,13 +207,13 @@ const config: PostextConfig = {
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>7.5pt</code></td>
-      <td>La dimensione del testo delle nuvolette. Sulla pagina stampata i fumetti si letterano di solito tra 7 e 9 pt.</td>
+      <td>Il corpo del testo delle nuvolette. Sulla pagina stampata i fumetti si letterano di solito tra 7 e 9 pt.</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
       <td><code>number</code></td>
       <td><code>1.15</code></td>
-      <td>Distanza tra le righe, come multiplo della dimensione. Se resta al valore predefinito, le nuvolette verticali, cinesi e giapponesi prendono 1,5 e quelli arabi 1,45.</td>
+      <td>Distanza tra le righe, come multiplo del corpo. Se resta al valore predefinito, le nuvolette verticali, cinesi e giapponesi usano 1,5 e quelle arabe 1,45.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -231,7 +231,7 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Spazio aggiuntivo tra le lettere; <code>em</code> è relativo alla dimensione del testo. Non si applica mai all’arabo. Non cambia i glifi: le legature restano.</td>
+      <td>Spazio aggiuntivo tra le lettere; <code>em</code> è relativo al corpo del testo. Non si applica mai all’arabo. Non cambia i glifi: le legature restano.</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
@@ -267,7 +267,7 @@ const config: PostextConfig = {
       <td><code>joinSameSpeaker</code></td>
       <td><code>'butt' | 'connector' | 'none'</code></td>
       <td><code>'butt'</code></td>
-      <td>Due nuvolette consecutive dello stesso personaggio: corpi fusi in un unico contorno, uniti da un collo stretto o tenuti separati. Una battuta della sceneggiatura chiede il proprio con <code>join</code> o <code>join=false</code>.</td>
+      <td>Due nuvolette consecutive dello stesso personaggio: corpi fusi in un unico contorno, uniti da un collo stretto o tenuti separati. Una battuta della sceneggiatura sceglie il proprio comportamento con <code>join</code> o <code>join=false</code>.</td>
     </tr>
     <tr>
       <td><code>maxColumnChars</code></td>
@@ -279,14 +279,14 @@ const config: PostextConfig = {
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Una nuvoletta rimodellata per entrare nella sua vignetta non spezza per farlo una parola cinese: ogni parola tagliata dalle sue nuove righe, che la forma preferita lascia intera, costa più di una nuvoletta letta fuori ordine, quindi il posizionamento sposta prima la nuvoletta o cambia l’ordine. Il lettering giapponese, diviso per sintagmi, non viene toccato. Con <code>false</code> il lettering funziona come in postext 1.27; un documento salvato prima della 1.28 che contiene un fumetto viene letto con questo valore.</td>
+      <td>Una nuvoletta rimodellata per entrare nella vignetta non spezza per questo una parola cinese: ogni parola che la forma preferita lascia intera e che le nuove righe taglierebbero costa più di una nuvoletta letta fuori ordine, quindi il posizionamento prova prima a spostare la nuvoletta o a cambiare l’ordine. Il lettering giapponese, che va a capo per sintagmi, non cambia. Con <code>false</code> il lettering funziona come in postext 1.27; un documento salvato prima della 1.28 che contiene un fumetto si legge con <code>false</code>.</td>
     </tr>
   </tbody>
 </table>
 
 ### Stili delle nuvolette
 
-Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo stesso id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), oppure a `speech` per un id nuovo. I valori predefiniti qui sotto sono quelli di `speech`; la [pagina Fumetti](/it/docs/comics#stili-delle-nuvolette) elenca che cosa cambia ogni stile predefinito. Le lunghezze in `em` sono relative alla dimensione del testo della nuvoletta.
+Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo stesso id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), oppure a `speech` per un id nuovo. I valori predefiniti qui sotto sono quelli di `speech`; la [pagina Fumetti](/it/docs/comics#stili-delle-nuvolette) elenca che cosa cambia ogni stile predefinito. Le lunghezze in `em` sono relative al corpo del testo della nuvoletta.
 
 <table>
   <thead>
@@ -302,7 +302,7 @@ Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo 
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obbligatorio</td>
-      <td>La parola con cui una battuta della sceneggiatura nomina lo stile: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
+      <td>La parola con cui una battuta della sceneggiatura indica lo stile: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -380,37 +380,37 @@ Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo 
       <td><code>aspect</code></td>
       <td><code>number</code></td>
       <td><code>1.6</code></td>
-      <td>Il rapporto tra larghezza e altezza a cui la divisione in righe punta per il blocco di testo (lettering orizzontale).</td>
+      <td>Il rapporto tra larghezza e altezza che la divisione in righe cerca di dare al blocco di testo (lettering orizzontale).</td>
     </tr>
     <tr>
       <td><code>tail</code></td>
       <td><code>'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'</code></td>
       <td><code>'curved'</code></td>
-      <td>La codina.</td>
+      <td>La coda.</td>
     </tr>
     <tr>
       <td><code>tailWidth</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.9em</code></td>
-      <td>La larghezza della codina nel punto in cui lascia il contorno.</td>
+      <td>La larghezza della coda nel punto in cui lascia il contorno.</td>
     </tr>
     <tr>
       <td><code>tailReach</code></td>
       <td><code>number</code></td>
       <td><code>0.55</code></td>
-      <td>Quanto si allunga la codina verso chi parla, come frazione della distanza tra il contorno e la bocca.</td>
+      <td>Quanto si allunga la coda verso chi parla, come frazione della distanza tra il contorno e la bocca.</td>
     </tr>
     <tr>
       <td><code>target</code></td>
       <td><code>'mouth' | 'head'</code></td>
       <td><code>'mouth'</code></td>
-      <td>Dove punta la codina: la bocca dell’ancora o la sua testa (nuvolette di pensiero).</td>
+      <td>Dove punta la coda: la bocca dell’ancora o la sua testa (nuvolette di pensiero).</td>
     </tr>
     <tr>
       <td><code>position</code></td>
       <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
       <td><code>'auto'</code></td>
-      <td>Dove va la nuvoletta quando la battuta non ne fissa nessuna: collocata dal lettering, oppure in un angolo o lungo un lato della vignetta.</td>
+      <td>Dove va la nuvoletta quando la battuta non fissa una posizione: collocata dal lettering, oppure in un angolo o lungo un lato della vignetta.</td>
     </tr>
     <tr>
       <td><code>butt</code></td>
@@ -428,7 +428,7 @@ Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo 
       <td><code>fontScale</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>La dimensione del testo, come multiplo della dimensione del lettering.</td>
+      <td>Il corpo del testo, come multiplo del corpo del lettering.</td>
     </tr>
     <tr>
       <td><code>bold</code>, <code>italic</code></td>
@@ -464,7 +464,7 @@ Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo 
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>nessuno</td>
-      <td>Un contorno tracciato attorno alle lettere, di cui indica lo spessore, perché il testo si legga sopra il disegno (onomatopee).</td>
+      <td>Lo spessore di un contorno tracciato attorno alle lettere, perché il testo si legga sul disegno (onomatopee).</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -477,6 +477,12 @@ Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo 
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Rotazione in gradi, in senso orario. Prevale l’attributo <code>rotate</code> di una battuta.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Inclinazione delle lettere in gradi, applicata prima di <code>rotate</code>: positiva in avanti come il corsivo, negativa all’indietro. Il testo scritto su un oggetto visto in prospettiva (un’insegna, la copertina di un libro) ne segue il bordo superiore con <code>rotate</code> e i lati con <code>skew</code>. Prevale l’attributo <code>skew</code> di una battuta.</td>
     </tr>
   </tbody>
 </table>
@@ -534,7 +540,7 @@ Ogni voce di `comics.cast` descrive un personaggio:
   </tbody>
 </table>
 
-`color` e `font` propri di una battuta prevalgono sui personaggi, e i personaggi sullo stile della nuvoletta. Ogni colore dei fumetti può essere una voce della palette, che segue la palette come qualsiasi colore collegato.
+Il `color` e il `font` di una battuta prevalgono sulle impostazioni del personaggio, e queste sullo stile della nuvoletta. Ogni colore dei fumetti può essere una voce della tavolozza, e allora la segue come qualsiasi colore collegato.
 
 ```ts
 const resolved = resolveComicsConfig(config.comics, 'ja');

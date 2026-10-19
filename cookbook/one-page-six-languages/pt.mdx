@@ -15,7 +15,7 @@ Uma página de quadrinhos, *The Lighthouse Radio*: Maya chega ao farol do avô q
 
 ### 1 · Uma configuração para todos os idiomas
 
-O código é [a resposta curta](#a-resposta-curta) acima. Nada na configuração indica um idioma além de `locale`. Sem `fontFamily`, o letreiramento usa a fonte de quadrinhos do idioma do documento (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC ou Playpen Sans Arabic, e a onomatopeia a fonte de display correspondente. `writingMode: 'auto'` transforma os balões japoneses em colunas verticais; `readingDirection: 'auto'` faz as páginas japonesa e árabe serem lidas a partir da direita, como as suas línguas, de modo que o mesmo `split="30 / 35 [* | * | *] / *"` põe o quadro do rádio à direita e o do gato à esquerda. Os ids dos personagens (`maya`, `tomas`) são os mesmos em todos os roteiros, e as âncoras dos desenhos respondem a eles.
+O código é [a resposta curta](#a-resposta-curta) acima. Nada na configuração indica um idioma além de `locale`. Sem `fontFamily`, o letreiramento usa a fonte de quadrinhos do idioma do documento (`defaultComicFont`): Comic Neue, Zen Antique, Noto Sans SC ou Playpen Sans Arabic, e a onomatopeia a fonte de display correspondente. `writingMode: 'auto'` transforma os balões japoneses em colunas verticais; `readingDirection: 'auto'` faz as páginas japonesa e árabe serem lidas a partir da direita, como as línguas, de modo que o mesmo `split="30 / 35 [* | * | *] / *"` põe o quadro do rádio à direita e o do gato à esquerda. Os ids dos personagens (`maya`, `tomas`) são os mesmos em todos os roteiros, e as âncoras dos desenhos respondem a eles.
 
 O corpo é um só para o livro todo. O roteiro em inglês tem 216 letras, o espanhol 220, o francês 224 e o chinês 74 caracteres; os roteiros mais longos ganham balões maiores, nunca letra menor.
 
@@ -23,13 +23,13 @@ O corpo é um só para o livro todo. O roteiro em inglês tem 216 letras, o espa
 
 <Excerpt region="editions" />
 
-O francês não é uma das edições desta receita, então cada edição monta dois documentos: a sua própria página e depois a francesa, a partir de `content.fr.en.md`, com a mesma configuração e `locale` igual a `'fr'`. O roteiro francês usa o espaço fino inseparável antes de `!` e `?`, como pede a tipografia francesa.
+O francês não é uma das edições desta receita, por isso cada edição monta dois documentos: a própria página e depois a francesa, a partir de `content.fr.en.md`, com a mesma configuração e `locale` igual a `'fr'`. O roteiro francês usa o espaço fino inseparável antes de `!` e `?`, como pede a tipografia francesa.
 
 ### 3 · Os desenhos não mudam
 
 <Excerpt region="art" />
 
-As áreas seguras são mais estreitas que as células desta divisão: a fileira do meio tem três quadros de cerca de 46 mm de largura por 80 mm de altura, então cada desenho quadrado mostra uma coluna de cerca de 58 % da sua largura, enquanto a sua área segura, o rosto do personagem e aquilo de que a fala trata, ocupa de 36 a 42 %. Os desenhos não são espelhados para o japonês nem para o árabe (`mirrorArt` continua false): Maya continua subindo o caminho a partir da esquerda, e só a ordem dos quadros acompanha a leitura.
+As áreas seguras são mais estreitas que as células desta divisão: a fileira do meio tem três quadros de cerca de 46 mm de largura por 80 mm de altura, de modo que cada desenho quadrado mostra uma coluna de cerca de 58 % da largura, enquanto a área segura, o rosto do personagem e aquilo de que a fala trata, ocupa de 36 a 42 %. Os desenhos não são espelhados para o japonês nem para o árabe (`mirrorArt` continua false): Maya continua subindo o caminho a partir da esquerda, e só a ordem dos quadros acompanha a leitura.
 
 ## Variações
 
@@ -45,4 +45,4 @@ As áreas seguras são mais estreitas que as células desta divisão: a fileira 
 ## Erros comuns
 
 - Uma linha do roteiro indica o personagem pelo id, não pelo nome: escreva `maya:` em todos os idiomas. O nome que um leitor de tela anuncia é `cast[].name`.
-- A página francesa compartilha os desenhos da edição, então o texto alternativo dos quadros dela está no idioma da edição; escreva `::panel{alt="…"}` em `content.fr.en.md` para ter o texto alternativo em francês.
+- A página francesa compartilha os desenhos da edição, por isso o texto alternativo dos quadros dela está no idioma da edição; escreva `::panel{alt="…"}` em `content.fr.en.md` para ter o texto alternativo em francês.

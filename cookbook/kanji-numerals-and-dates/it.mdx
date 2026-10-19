@@ -16,7 +16,7 @@ Quattro pagine verticali di un notiziario di quartiere, 東若葉台だより, n
 
 ### 1 · Scegli la grafia secondo il posto del numero
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `formatNumeral` è il contatore con cui il motore numera pagine, elenchi e titoli, e il pen lo chiama per i numeri che compone da sé: `japanese-informal` conta (120 → 百二十, senza 一 davanti a 十 百 千), `cjk-decimal` scrive cifra per cifra (2026 → 二〇二六) e `japanese-formal` dà il daiji di una somma (12000 → 壱萬弐阡). Un `{{daiji:12000}}` nel testo diventa l’importo della ricevuta, così la cifra si digita una volta sola, in cifre. Gli stessi stili nominano i contatori: le sezioni sono `{2:一}、`, e `orderedLists.levels` imposta （一）, poi `katakana-iroha` (イ ロ ハ), poi `hiragana` con 、 (あ、い、う). `cjk.uprightDigits: 2` mette in piedi 8月22日 e 23日 senza markup, e il `!?` di 「雨が降ったら中止!?」 occupa una sola cella, un comportamento predefinito del giapponese ([numeri nel testo verticale](/it/docs/configuration-east-asian#numeri-nel-testo-verticale)).
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `formatNumeral` è il contatore con cui il motore numera pagine, elenchi e titoli, e il pen lo chiama per i numeri che compone da sé: `japanese-informal` conta (120 → 百二十, senza 一 davanti a 十 百 千), `cjk-decimal` scrive cifra per cifra (2026 → 二〇二六) e `japanese-formal` dà il daiji di una somma (12000 → 壱萬弐阡). Un `{{daiji:12000}}` nel testo diventa l’importo della ricevuta, così la cifra si digita una volta sola, in cifre. Gli stessi stili indicano i contatori: le sezioni sono `{2:一}、`, e `orderedLists.levels` imposta （一）, poi `katakana-iroha` (イ ロ ハ), poi `hiragana` con 、 (あ、い、う). `cjk.uprightDigits: 2` mette in piedi 8月22日 e 23日 senza markup, e il `!?` di 「雨が降ったら中止!?」 occupa una sola cella, un comportamento predefinito del giapponese ([numeri nel testo verticale](/it/docs/configuration-east-asian#numeri-nel-testo-verticale)).
 
 <PageShot page={2} crop="0.3,0.06,0.7,0.6" caption="Pagina 2: イ ロ ハ sotto （三）, あ、い、う sotto ハ, 23日 e 4時 in piedi, !? composto in una sola cella." />
 
@@ -24,7 +24,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `formatNumera
 
 <Excerpt region="masthead" />
 
-Su una pagina verticale l’inizio del flusso è il bordo destro del foglio, quindi un progetto grafico di titolo ancorato alla testa dell’abbondanza è una fascia lungo quel bordo, e il suo `size.height` è la sua larghezza sul foglio. Il numero del notiziario e la data sono testo del progetto grafico costruito con `kan()` e `pos()`, e la data finisce al piede della gabbia con `align: 'right'`.
+Su una pagina verticale l’inizio del flusso è il bordo destro del foglio, quindi una grafica di titolo ancorata alla testa dell’abbondanza è una fascia lungo quel bordo, e il suo `size.height` è la sua larghezza sul foglio. Il numero del notiziario e la data sono testo grafico costruito con `kan()` e `pos()`, e la data finisce al piede della gabbia con `align: 'right'`.
 
 ### 3 · Dai al calendario una pagina tutta sua
 
@@ -60,5 +60,5 @@ Con 3, anche un 100 o un 365 nel testo occupa una sola cella.
 
 ## Errori frequenti
 
-- Il calendario è una pagina perché una tabella in piedi occupa tutte le righe di una pagina verticale (lacuna: tabelle nel testo verticale). Una tabella che deve dividere la pagina con il testo ha bisogno di una pagina orizzontale, o di un disegno SVG collocato da un progetto grafico di titolo.
+- Il calendario è una pagina perché una tabella in piedi occupa tutte le righe di una pagina verticale (lacuna: tabelle nel testo verticale). Una tabella che deve dividere la pagina con il testo ha bisogno di una pagina orizzontale, o di un disegno SVG collocato da una grafica di titolo.
 - In cinese lo stesso contatore scrive 一百二十 e 一千零一; in giapponese 百二十 e 千一. Scrivi `locale: 'ja'`, altrimenti il token 一 sceglie lo stile cinese. Il libro di lettura cinese <RecipeLink slug="chinese-dates-upright">Date e sigle in piedi nel testo verticale</RecipeLink> compone le sue date con lo stesso `uprightDigits`.

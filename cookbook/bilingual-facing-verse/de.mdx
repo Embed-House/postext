@@ -1,6 +1,6 @@
 ---
 title: "Übersetzung gegenüber, Strophe für Strophe"
-summary: "Jedes Gedicht ist ein randloser Kasten mit zwei Spalten: Ein fester Spaltenumbruch beginnt das Englische beim Titel, :::space hält die Strophen auf einer Höhe."
+summary: "Jedes Gedicht ist ein randloser Kasten mit zwei Spalten; ein fester Spaltenumbruch setzt den englischen Titel oben in die zweite, :::space gleicht Strophen an."
 plain: "Ein kleiner Gedichtband mit dem spanischen Text auf der einen Seite und der englischen Übersetzung daneben. Jede Gruppe von Versen in der Übersetzung beginnt auf gleicher Höhe wie das Original."
 description: "Zweisprachiger Gedichtband in Postext: jedes spanische Gedicht neben seiner englischen Fassung im Zweispaltenkasten, fester Spaltenumbruch, :::space je Strophe."
 question: "Wie setze ich ein Gedicht und seine Übersetzung nebeneinander, jede Strophe auf derselben Zeile beginnend?"
@@ -16,7 +16,7 @@ Ein zweisprachiger Gedichtband mit fünf Gedichten über eine Saline im Süden S
 
 ### 1 · Ein Gedicht ist ein Kasten mit festem Spaltenumbruch
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht ist ein Kasten um eine Gruppe `:::columns`; sein Stil verzichtet auf Fläche und Innenabstand und druckt den `title` des Direktivenblocks, die Ziffer ([`:::columns`](/de/docs/document-format-directives#columns)). Ohne `breaks` bricht die Gruppe dort um, wo ihre beiden Spalten gleich hoch ausgehen. Beide Hälften dieser Gedichte sind gleich hoch, also fällt der Umbruch ohnehin auf den englischen Titel; verlängern Sie zwei Zeilen von *The Rake*, bis sie umbrechen, und der Umbruch rückt einen Block nach unten und lässt THE RAKE am Fuß der spanischen Spalte stehen. `breaks="5"` nennt den Block, der die zweite Spalte eröffnet, sodass der englische Titel sie anführt, wie hoch die beiden Hälften auch sind.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jedes Gedicht ist ein Kasten um eine Gruppe `:::columns`; sein Stil verzichtet auf Fläche und Innenabstand und gibt den `title` des Containers aus, die Ziffer ([`:::columns`](/de/docs/document-format-directives#columns)). Ohne `breaks` bricht die Gruppe dort um, wo ihre beiden Spalten gleich hoch ausgehen. Beide Hälften dieser Gedichte sind gleich hoch, also fällt der Umbruch ohnehin auf den englischen Titel; verlängern Sie zwei Zeilen von *The Rake*, bis sie umbrechen, und der Umbruch rückt einen Block nach unten und lässt THE RAKE am Fuß der spanischen Spalte stehen. `breaks="5"` gibt den Block an, mit dem die zweite Spalte beginnt, sodass der englische Titel sie anführt, wie hoch die beiden Hälften auch sind.
 
 ### 2 · Ein Block :::verse pro Spalte, eine Leerzeile pro Strophenwechsel
 
@@ -42,7 +42,7 @@ Beide sind Überschriften der Ebene 1 mit eigenem Stil ([Überschriftenstile](/d
 
 <Excerpt region="heads" />
 
-Die linke Seite trägt den spanischen Titel, die rechte den englischen, in der Reihenfolge der Spalten. `pages: 'body'` hält sie von den drei Seiten fern, die mit einer Überschrift beginnen. Vorbemerkung und Aquarell bekommen stattdessen eine Seitenzahl am Fuß, und der Stil der Titelseite leert Kopf- und Fußzeile ([Textelemente](/de/docs/configuration-headers-footers#textelemente)).
+Auf der linken Seite steht der spanische Titel, auf der rechten der englische, in der Reihenfolge der Spalten. `pages: 'body'` hält sie von den drei Seiten fern, die mit einer Überschrift beginnen. Vorbemerkung und Aquarell bekommen stattdessen eine Seitenzahl am Fuß, und der Stil der Titelseite leert Kopf- und Fußzeile ([Textelemente](/de/docs/configuration-headers-footers#textelemente)).
 
 ## Varianten
 
@@ -66,5 +66,5 @@ Bei 3 em beginnt *reflection.* auf Seite 3 ein Geviert weiter innen.
 
 ## Häufige Fehler
 
-- Ein `:::space` vor dem englischen Titel verschwindet: Die zweite Spalte beginnt bei dem Block, den `breaks` nennt, und der Abstand fällt genau auf den Umbruch. Setzen Sie ihn nach den Titel, wie das `:::space{lines=0.5}` unter jedem Spaltentitel hier.
+- Ein `:::space` vor dem englischen Titel verschwindet: Die zweite Spalte beginnt bei dem Block, den `breaks` angibt, und der Abstand fällt genau auf den Umbruch. Setzen Sie ihn nach den Titel, wie das `:::space{lines=0.5}` unter jedem Spaltentitel hier.
 - Zählen Sie `breaks` ab dem spanischen Titel: Bei einem Titel und drei Strophen ist der englische Titel Block 5. Jede Strophe ist ein Block, also schiebt eine spanische Strophe mehr den englischen Titel auf Block 6, und `breaks` muss mitwachsen; eine Zeile mehr innerhalb einer Strophe verschiebt nichts.

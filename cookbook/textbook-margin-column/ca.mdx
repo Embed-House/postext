@@ -10,37 +10,37 @@ pageNotes: { "1": "El capítol 4 s'obre amb el títol Luz y lentes a la columna 
 
 ## Què compondràs
 
-El capítol 4 de *Palanca y lente*, un manual de física en pàgina de 210 × 275 mm. El text ocupa una columna ampla i no entra mai al marge exterior, un canal de 53 mm. El número del capítol, un 4 verd, va en aquest canal a l'altura del títol, i els objectius, a sota. Els diagrames s'apilen des del capdamunt del canal, i els termes clau van en glosses verd clar al costat del passatge que els defineix. Les figures que es queden a la columna de text, sobre fons fosc o clar, porten el peu al marge, a l'altura de la seva base. Només el panell del prisma creua les dues columnes. Els marges són simètrics, així que el canal queda sempre al costat exterior de la pàgina, a la dreta a les senars i a l'esquerra a les parelles.
+El capítol 4 de *Palanca y lente*, un manual de física en pàgina de 210 × 275 mm. El text ocupa una columna ampla i no entra mai al marge exterior, una columna lateral de 53 mm. El número del capítol, un 4 verd, va en aquesta columna lateral a l'altura del títol, i els objectius, a sota. Els diagrames s'apilen des del capdamunt de la columna lateral, i els termes clau van en glosses verd clar al costat del passatge que els defineix. Les figures que es queden a la columna de text, sobre fons fosc o clar, porten el peu al marge, a l'altura de la seva base. Només el panell del prisma creua les dues columnes. Els marges són simètrics, així que la columna lateral queda sempre al costat exterior de la pàgina, a la dreta a les senars i a l'esquerra a les parelles.
 
 ## Elaboració
 
 ### 1 · Reserva el marge per als flotants
 
-El codi d'aquest pas és [la resposta curta](#la-resposta-curta) de més amunt. En una [disposició en columna i mitja](/ca/docs/configuration-page-layout#tipus-de-disposició), `sideColumnPercent: 30` dona a la columna lateral el 30 % dels 176 mm d'amplada de la caixa (52,8 mm), i la columna de text es queda amb el que sobra després de l'espai entre columnes de 7 mm (116 mm, uns 75 caràcters de Merriweather de 9,3 pt). `sideColumnRole: 'floats'` tanca la columna lateral al text, i `sideColumnSide: 'outer'` la posa al costat exterior, que amb marges simètrics canvia d'una pàgina a l'altra. Les figures hi van amb `span: 'side'`. Un requadre amb `span="side"` a la tanca surt del flux i entra al canal a l'altura per on va el text, així que cada glossa comença al costat del bloc que segueix la seva tanca.
+El codi d'aquest pas és [la resposta curta](#la-resposta-curta) de més amunt. En una [disposició en columna i mitja](/ca/docs/configuration-page-layout#tipus-de-disposició), `sideColumnPercent: 30` dona a la columna lateral el 30 % dels 176 mm d'amplada de la caixa (52,8 mm), i la columna de text es queda amb el que sobra després de l'espai entre columnes de 7 mm (116 mm, uns 75 caràcters de Merriweather de 9,3 pt). `sideColumnRole: 'floats'` tanca la columna lateral al text, i `sideColumnSide: 'outer'` la posa al costat exterior, que amb marges simètrics canvia d'una pàgina a l'altra. Les figures hi van amb `span: 'side'`. Un requadre amb `span="side"` a la línia d'obertura surt del flux i entra a la columna lateral a l'altura per on va el text, així que cada glossa comença al costat del bloc que segueix la seva tanca.
 
 ### 2 · Deixa que la cita col·loqui cada figura
 
 <Excerpt region="figures" />
 
-El primer `:ref` a una figura la numera i la situa on indica la seva [col·locació](/ca/docs/document-format-resources#collocació). Una figura amb `span: 'side'` s'apila des del capdamunt del canal de la pàgina que la cita, encara que la cita quedi més avall, i passa a la pàgina següent si no li basta la resta del canal. Les figures 4.2 i 4.3, citades totes dues a la <PageRef page={2}>pàgina 88</PageRef>, baixen pel canal d'aquella pàgina amb la glossa de l'angle límit entre elles. El prisma és un flotant `top` a tota l'amplada citat a la pàgina 88, i un flotant no queda mai per sobre de la seva cita, així que obre la 89 sobre les dues columnes. Les figures 4.1, 4.4 i 4.6 es queden a la columna de text i prenen `captionSide` del `defaultPlacement` del tipus figura. Ocupen l'espai inferior de la columna, així que cada peu queda a l'altura de la base de la seva figura; a l'espai superior s'alinearia amb la vora de dalt.
+El primer `:ref` a una figura la numera i la situa on indica la seva [col·locació](/ca/docs/document-format-resources#collocació). Una figura amb `span: 'side'` s'apila des del capdamunt de la columna lateral de la pàgina que la cita, encara que la cita quedi més avall, i passa a la pàgina següent si no li basta la resta de la columna lateral. Les figures 4.2 i 4.3, citades totes dues a la <PageRef page={2}>pàgina 88</PageRef>, baixen per la columna lateral d'aquella pàgina amb la glossa de l'angle límit entre elles. El prisma és un flotant `top` a tota l'amplada citat a la pàgina 88, i un flotant no queda mai per sobre de la seva cita, així que obre la 89 sobre les dues columnes. Les figures 4.1, 4.4 i 4.6 es queden a la columna de text i prenen `captionSide` del `defaultPlacement` del tipus figura. Ocupen l'espai inferior de la columna, així que cada peu queda a l'altura de la base de la seva figura; a l'espai superior s'alinearia amb la vora de dalt.
 
 ### 3 · Obre el capítol al marge
 
 <Excerpt region="opener" />
 
-El títol de primer nivell es queda a la columna de text, on una [ranura de disseny](/ca/docs/configuration-headings#span-i-disseny-avançat) n'apila el text, el filet i l'entradeta; l'avanttítol penja de la cantonada superior dreta de la pàgina i el número, de l'avanttítol, tots dos amb l'amplada del canal. `minHeight` fixa l'alçada de l'obertura en nou línies de la retícula (42,9 mm), que donen cabuda a un títol d'una línia, el filet i una entradeta de quatre, així que amb una entradeta més curta el text no puja. L'avanttítol i el número de 104 pt acaben 40,6 mm per sota del marge superior, dins d'aquestes nou línies, així que tampoc no fan baixar el text. El canal només és a la dreta a les pàgines senars, i per això el títol de primer nivell salta a pàgina senar. El requadre d'objectius va després del primer paràgraf, i cap figura del marge no es cita abans que ell, així que queda sota el número (ho explica «Errors freqüents»).
+El títol de primer nivell es queda a la columna de text, on una [ranura de disseny](/ca/docs/configuration-headings#extensió-i-disseny-avançat) n'apila el text, el filet i l'entradeta; l'avanttítol penja de la cantonada superior dreta de la pàgina i el número, de l'avanttítol, tots dos amb l'amplada de la columna lateral. `minHeight` fixa l'alçada de l'obertura en nou línies de la retícula (42,9 mm), que donen cabuda a un títol d'una línia, el filet i una entradeta de quatre, així que amb una entradeta més curta el text no puja. L'avanttítol i el número de 104 pt acaben 40,6 mm per sota del marge superior, dins d'aquestes nou línies, així que tampoc no fan baixar el text. La columna lateral només és a la dreta a les pàgines senars, i per això el títol de primer nivell salta a pàgina senar. El requadre d'objectius va després del primer paràgraf, i cap figura del marge no es cita abans que ell, així que queda sota el número (ho explica «Errors freqüents»).
 
 ### 4 · Porta els folis al costat del canal
 
 <Excerpt region="heads" />
 
-Cada element s'ancora a la pàgina física i es filtra per `parity`, així que el foli i la capçalera queden a la mateixa vora que el canal a totes dues bandes del plec. `pages: 'body'` els aparta de l'obertura, que porta en canvi un foli al peu del canal.
+Cada element s'ancora a la pàgina física i es filtra per `parity`, així que el foli i la capçalera queden a la mateixa vora que la columna lateral a totes dues bandes de la doble pàgina. `pages: 'body'` els aparta de l'obertura, que porta en canvi un foli al peu de la columna lateral.
 
 ### 5 · Comença el llibre al capítol 4
 
 <Excerpt region="build" />
 
-Aquestes pàgines són el capítol 4 d'un llibre més llarg. La continuació deixa el comptador de capítols en 3, així que `{chapterNumber}` imprimeix 4 i el `numberingTemplate: '{1}.{2}'` del segon nivell numera els apartats del 4.1 al 4.3; les figures van de la 4.1 a la 4.7. `## Preguntas {style="plain"}` pren una entrada de `headingStyles` amb `numbered: false`, així que aquest títol no porta número. Els folis comencen al 87 perquè la primera pàgina cau a la dreta, i a la dreta van els folis senars.
+Aquestes pàgines són el capítol 4 d'un llibre més llarg. La continuació deixa el comptador de capítols en 3, així que `{chapterNumber}` imprimeix 4 i el `numberingTemplate: '{1}.{2}'` del segon nivell numera els apartats del 4.1 al 4.3; les figures van de la 4.1 a la 4.7. `## Preguntas {style="plain"}` fa servir una entrada de `headingStyles` amb `numbered: false`, així que aquest títol no porta número. Els folis comencen al 87 perquè la primera pàgina cau a la dreta, i a la dreta van els folis senars.
 
 ### 6 · Anomena els colors una sola vegada
 
@@ -52,7 +52,7 @@ Cada color de la configuració enllaça amb una entrada de la paleta i porta a m
 
 ### Deixa els peus sota les figures
 
-Amb els valors per defecte del tipus figura, els peus de les figures 4.1, 4.4 i 4.6 ocupen línies de la columna de text, i el canal queda només per a diagrames i glosses.
+Amb els valors per defecte del tipus figura, els peus de les figures 4.1, 4.4 i 4.6 ocupen línies de la columna de text, i la columna lateral queda només per a diagrames i glosses.
 
 ```diff
 -const resourceTypes = defaultResourceTypes(LANG).map((type) => (type.id !== 'figure' ? type
@@ -87,5 +87,5 @@ Per a un document que es llegeix pàgina a pàgina en pantalla, desactiva els ma
 
 ## Errors freqüents
 
-- Figures i glosses s'apilen al canal en l'ordre en què el text hi arriba, mai l'una al costat de l'altra. La glossa de l'angle límit va després del paràgraf de la llei de Snell i abans del que cita la figura 4.3, així que a la <PageRef page={2}>pàgina 88</PageRef> s'apila entre les figures 4.2 i 4.3, al costat del paràgraf que presenta el terme. Amb la tanca després d'aquesta cita, cauria sota la figura 4.3.
-- A la primera pàgina d'un capítol, les figures laterals s'apilen sota l'avanttítol i el número. Una figura citada al primer paràgraf ocupa aquest lloc i fa baixar el requadre d'objectius pel canal, així que aquest capítol cita la seva primera figura del marge després del requadre.
+- Figures i glosses s'apilen a la columna lateral en l'ordre en què el text hi arriba, mai l'una al costat de l'altra. La glossa de l'angle límit va després del paràgraf de la llei de Snell i abans del que cita la figura 4.3, així que a la <PageRef page={2}>pàgina 88</PageRef> s'apila entre les figures 4.2 i 4.3, al costat del paràgraf que presenta el terme. Amb la línia d'obertura després d'aquesta cita, cauria sota la figura 4.3.
+- A la primera pàgina d'un capítol, les figures laterals s'apilen sota l'avanttítol i el número. Una figura citada al primer paràgraf ocupa aquest lloc i fa baixar el requadre d'objectius per la columna lateral, així que aquest capítol cita la seva primera figura del marge després del requadre.

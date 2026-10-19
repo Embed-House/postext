@@ -16,7 +16,7 @@ Siete páginas de un preprint de aprendizaje automático en tamaño carta: *Chai
 
 ### 1 · La figura 1 son tres estilos de recuadro
 
-El código es [la respuesta corta](#la-respuesta-corta). La figura es un recuadro a todo el ancho de la página, sin marco propio; dentro, `:::columns{count=2 breaks="4"}` abre la columna derecha en el cuarto bloque, y cada recuadro anidado cuenta como un bloque. Los recuadros de prompt y de respuesta salen de la misma función, así que solo cambian el fondo, el color de la pestaña y el distintivo de la esquina: un `icon` con `position: 'corner'` admite un recurso SVG, y así llegan a la página la marca y el aspa, que las fuentes del documento no tienen. En tu artículo, escribe cada ejemplo como párrafos normales dentro de un recuadro y marca el razonamiento con `**…**`: el `boldColor` del estilo lo convierte en el resaltado.
+El código es [la respuesta corta](#la-respuesta-corta). La figura es un recuadro a todo el ancho de la página, sin borde propio; dentro, `:::columns{count=2 breaks="4"}` abre la columna derecha en el cuarto bloque, y cada recuadro anidado cuenta como un bloque. Los recuadros de prompt y de respuesta salen de la misma función, así que solo cambian el fondo, el color de la pestaña y el distintivo de la esquina: un `icon` con `position: 'corner'` admite un recurso SVG, y así llegan a la página la marca y el aspa, que las fuentes del documento no tienen. En tu artículo, escribe cada ejemplo como párrafos normales dentro de un recuadro y marca el razonamiento con `**…**`: el `boldColor` del estilo lo convierte en el resaltado.
 
 ### 2 · Citas autor-año, al modo de natbib
 
@@ -28,7 +28,7 @@ Los congresos de aprendizaje automático usan el aspecto autor-año de natbib: u
 
 <Excerpt region="title" />
 
-El título es el único título de nivel 1 del documento, con un estilo que ocupa las dos columnas y dibuja un bloque diseñado: la línea del congreso, el título, los autores en dos filas, la afiliación y una nota sobre la versión abreviada. Los autores y la nota son atributos del título, y un `\n` dentro de un atributo abre una fila nueva, como `\\` en el `\author` de LaTeX. Para tu artículo, cambia los atributos; el diseño se queda.
+El título es el único encabezado de nivel 1 del documento, con un estilo que ocupa las dos columnas y dibuja un bloque diseñado: la línea del congreso, el título, los autores en dos filas, la afiliación y una nota sobre la versión abreviada. Los autores y la nota son atributos del encabezado, y un `\n` dentro de un atributo abre una fila nueva, como `\\` en el `\author` de LaTeX. Para tu artículo, cambia los atributos; el diseño se queda.
 
 ### 4 · Números de figura iguales a los del original
 

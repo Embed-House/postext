@@ -5,15 +5,15 @@ export const metadata = {
   sidebarTitle: 'Konfiguration',
   description: 'Was eine Postext-Konfiguration ist und auf welcher der neunzehn Seiten der Referenz jede Gruppe von Einstellungen erklärt wird',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '4 min',
   order: 4,
-  plainSummary: "Diese Seite eröffnet die Referenz aller Einstellungen, die das Aussehen Ihrer Seiten bestimmen. Eine einzige Gruppe von Einstellungen enthält alle Entscheidungen: Seitenformat, Spaltenzahl, Schriften, Schriftgröße, Überschriften, Kästen, Farben und mehr. Sie schreiben nur die Einstellungen auf, die Sie ändern wollen, denn jede beginnt mit einem sinnvollen Wert. Die Referenz ist auf neunzehn Seiten verteilt. Die Liste auf dieser Seite verlinkt jeden Abschnitt, springen Sie also direkt zu dem Teil, den Sie brauchen.",
+  plainSummary: "Diese Seite eröffnet die Referenz aller Einstellungen, die das Aussehen Ihrer Seiten bestimmen. Eine einzige Gruppe von Einstellungen enthält alle Entscheidungen: Seitenformat, Spaltenzahl, Schriften, Schriftgröße, Überschriften, Kästen, Farben und mehr. Sie geben nur die Einstellungen an, die Sie ändern wollen, denn jede hat bereits einen sinnvollen Wert. Die Referenz ist auf neunzehn Seiten verteilt. Die Liste auf dieser Seite führt zu jedem Abschnitt; so springen Sie direkt zu dem Teil, den Sie brauchen.",
 };
 
 # Konfiguration
 
-**Jede Layout-Entscheidung in Postext wird von einem einzigen Konfigurationsobjekt gesteuert.**
+**In Postext steuert ein einziges Konfigurationsobjekt jede Entscheidung über das Layout.**
 
 `PostextConfig` legt die Seitenmaße, den Spaltenaufbau, die Typografie des Fließtexts, die Gestaltung der Überschriften, die Sprache des Dokuments (`locale`) und mehr fest. Jede Eigenschaft ist optional – Postext bringt sinnvolle Voreinstellungen mit, die sich an der klassischen Buchtypografie orientieren. Sie geben nur an, was Sie ändern wollen.
 
@@ -37,22 +37,22 @@ Die Referenz ist auf neunzehn Seiten verteilt. Jede Gruppe unten ist eine Seite,
 
 **[Seite und Layout](/de/docs/configuration-page-layout)**
 
-- [Seite](/de/docs/configuration-page-layout#seite) – Format, Ränder, Grundlinienraster, Schnittmarken, [Bindung](/de/docs/configuration-page-layout#bindung).
+- [Seite](/de/docs/configuration-page-layout#seite) – Format, Ränder, Grundlinienraster, Schnittmarken, [Seitennummerierung](/de/docs/configuration-page-layout#seitennummerierung), [Bindung](/de/docs/configuration-page-layout#bindung).
 - [Layout](/de/docs/configuration-page-layout#layout) – Spaltenzahl, Spaltenabstände, Linien, [vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift).
 
 **[Kopf- und Fußzeilen](/de/docs/configuration-headers-footers)**
 
-- [Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen) – Text- und Linienelemente je Seite mit Platzhaltern, Seitenparität und Ausrichtung.
+- [Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen) – Text-, Linien-, Kasten- und Bildelemente je Seite mit Platzhaltern, Seitenparität, Seitenrollen und Platzierung.
 
 **[Fließtext](/de/docs/configuration-text)**
 
-- [Fließtext](/de/docs/configuration-text#fließtext) – Typografie, Silbentrennung, Tabulatoren, Waisen und Witwen.
+- [Fließtext](/de/docs/configuration-text#fließtext) – Typografie, Blocksatz und Zeilenumbruch, [Zitate](/de/docs/configuration-text#zitate), [Vers](/de/docs/configuration-text#vers), [Tabulatoren](/de/docs/configuration-text#tabulatoren) und [Initialen](/de/docs/configuration-text#initialen).
 
 **[Silbentrennung und Sprache](/de/docs/configuration-language)**
 
 - [Silbentrennung](/de/docs/configuration-language#silbentrennung) – Trennmuster, ungetrennte Wörter, Flattersatz.
-- [Dokumentsprache](/de/docs/configuration-language#dokumentsprache) – das oberste `locale`: Rückfall für die Silbentrennung, eingebaute Ressourcentypen und die Fortsetzungstexte von Tabellen und geteilten Kästen, die Sprache, die in ein barrierefreies PDF eingetragen wird; die [Ziffern](/de/docs/configuration-language#ziffern-des-dokuments) (`numerals`) und die [Schreibrichtung](/de/docs/configuration-language#schreibrichtung) (`direction`), die daraus folgen; und die [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme), die Postext setzt. Der Leitfaden für Bücher von rechts nach links ist [Arabischer Satz](/de/docs/arabic-layout).
-- [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme) – die Schriftsysteme, die Postext setzt, und die Seiten, die jedes erklären.
+- [Dokumentsprache](/de/docs/configuration-language#dokumentsprache) – die Einstellung `locale` auf oberster Ebene: Sie bestimmt die Rückfallsprache der Silbentrennung, die eingebauten Ressourcentypen, die Fortsetzungstexte von Tabellen und geteilten Kästen und die Sprache, die ein barrierefreies PDF ausweist; die [Ziffern](/de/docs/configuration-language#ziffern-des-dokuments) (`numerals`) und die [Schreibrichtung](/de/docs/configuration-language#schreibrichtung) (`direction`), die daraus folgen; und die [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme), die Postext setzt. Der Leitfaden für Bücher von rechts nach links ist [Arabischer Satz](/de/docs/arabic-layout).
+- [Sprachen und Schriftsysteme](/de/docs/configuration-language#sprachen-und-schriftsysteme) – die Schriftsysteme, die Postext setzt, und die Seiten, auf denen sie jeweils erklärt werden.
 - [Arabischer Text](/de/docs/configuration-language#arabischer-text) – Formung, Kaschida, Vokalzeichen und Ziffern arabischer Texte.
 
 **[Überschriften](/de/docs/configuration-headings)**
@@ -71,12 +71,12 @@ Die Referenz ist auf neunzehn Seiten verteilt. Jede Gruppe unten ist eine Seite,
 
 **[Anmerkungen und Verweise](/de/docs/configuration-notes-references)**
 
-- [Fußnoten](/de/docs/configuration-notes-references#fußnoten) – `footnotes`: wohin die mit `[^id]` zitierten Anmerkungen kommen, wie sie nummeriert werden und wie sie aussehen.
-- [Zeilennummern](/de/docs/configuration-notes-references#zeilennummern) – `lineNumbers`: die Nummer jeder fünften Vers- oder Textzeile im Rand; was gezählt wird, wo die Zählung neu beginnt, auf welcher Seite die Nummern stehen.
-- [Querverweise](/de/docs/configuration-notes-references#querverweise) – `crossRefs`: die Wörter, die um die Nummer oder die Seite eines `:ref` gedruckt werden, und seine Standardgestaltung.
-- [Zitationen](/de/docs/configuration-notes-references#zitationen) – `citations`: der Zitierstil und das Aussehen der Zitate und des Literaturverzeichnisses.
-- [Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis) – was `:::toc` druckt: Typografie der Einträge, Füllzeichen, Seitenzahlen, Autorenzeilen, Zeilen für Teile.
-- [Register](/de/docs/configuration-notes-references#register) – was `:::index` druckt: Typografie der Einträge, Einzüge, Trennzeichen und Bereiche der Seitenzahlen, Buchstabengruppen, Sortiersprache.
+- [Fußnoten](/de/docs/configuration-notes-references#fußnoten) – `footnotes`: wo die Anmerkungen stehen, auf die `[^id]` verweist, wie sie nummeriert werden und wie sie aussehen.
+- [Zeilennummern](/de/docs/configuration-notes-references#zeilennummern) – `lineNumbers`: eine Nummer im Rand an jeder fünften Vers- oder Textzeile; was gezählt wird, wo die Zählung neu beginnt und auf welcher Seite die Nummern stehen.
+- [Querverweise](/de/docs/configuration-notes-references#querverweise) – `crossRefs`: die Wörter, die ein `:ref` vor und nach der Nummer oder Seitenzahl ausgibt, und seine Standardgestaltung.
+- [Zitationen](/de/docs/configuration-notes-references#zitationen) – `citations`: der Zitierstil und das Aussehen der Zitationen und des Literaturverzeichnisses.
+- [Inhaltsverzeichnis](/de/docs/configuration-notes-references#inhaltsverzeichnis) – was `:::toc` ausgibt: Typografie der Einträge, Füllzeichen, Seitenzahlen, Autorenzeilen, Zeilen für Teile.
+- [Register](/de/docs/configuration-notes-references#register) – was `:::index` ausgibt: Typografie der Einträge, Einzüge, Trennzeichen und Bereiche der Seitenzahlen, Buchstabengruppen, Sortiersprache.
 
 **[Ostasiatische Typografie](/de/docs/configuration-east-asian)**
 
@@ -86,14 +86,14 @@ Die Referenz ist auf neunzehn Seiten verteilt. Jede Gruppe unten ist eine Seite,
 
 - [Ressourcentypen](/de/docs/configuration-resources#ressourcentypen) – typisierte Nummerierung für Abbildungen, Tabellen und eigene Arten.
 - [Tabellenstil](/de/docs/configuration-resources#tabellenstil) (mit [benannten Tabellenstilen](/de/docs/configuration-resources#benannte-tabellenstile)) und [Legendenstil](/de/docs/configuration-resources#legendenstil) – Typografie und Ausstattung von Tabellenressourcen und ihren Legenden.
-- [Diagrammstil](/de/docs/configuration-resources#diagrammstil) – einfarbige Umfärbung eingebetteter SVG-Diagramme für den Druck mit Sonderfarben.
+- [Diagrammstil](/de/docs/configuration-resources#diagrammstil) – eingebettete SVG-Diagramme in einer einzigen Druckfarbe umfärben, für den Druck mit Sonderfarben.
 - [Videostil](/de/docs/configuration-resources#videostil) – `videoStyle`: das Abspielzeichen und der QR-Code, die über das Vorschaubild eines Videos gedruckt werden, und was seine Player im HTML-Betrachter und im EPUB bieten.
 
 **[Stile und Teile](/de/docs/configuration-styles)**
 
 - [Absatzformate](/de/docs/configuration-styles#absatzformate) – benannte Formate für Container `:::paragraphs`: Literaturverzeichnisse, Glossare, Anmerkungen.
 - [Chip-Stile](/de/docs/configuration-styles#chip-stile) – `chipStyles`: benannte Formate für das Inline-Element `:chip[…]`: der Kasten einer Wortbank, eine Taste, ein Schlagwort.
-- [Hervorhebungsstile](/de/docs/configuration-styles#hervorhebungsstile) – `markStyles`: benannte Stile für das Inline-Element `:mark[…]`: das Band hinter einer hervorgehobenen Wendung, die umbricht.
+- [Hervorhebungsstile](/de/docs/configuration-styles#hervorhebungsstile) – `markStyles`: benannte Stile für das Inline-Element `:mark[…]`: das Band hinter einer hervorgehobenen Wendung, auch wenn sie über mehrere Zeilen umbricht.
 - [Code-Listings](/de/docs/configuration-styles#code-listings) – `codeStyle`: Schrift, Kasten, Tabulatorbreite, lange Zeilen, Zeilennummern und Token-Farben von Listings mit ```` ``` ````, die Syntaxhervorhebung mit ihrem Highlighter-Hook und Inline-Code in einer Codeschrift.
 - [Teile](/de/docs/configuration-styles#teile) – Teiltitelseiten für Container `:::part`: Seitenparität, Textbereich, Gestaltung des Auftakts, Typografie des Texts.
 - [Überschriftenstile](/de/docs/configuration-styles#überschriftenstile) – benannte Formate für Überschriften mit `{style="…"}`: unnummerierte Kapitel, Titelei mit eigenen Kolumnentiteln, Geometrie und Farbpalette.
@@ -108,7 +108,7 @@ Die Referenz ist auf neunzehn Seiten verteilt. Jede Gruppe unten ist eine Seite,
 
 **[Einstellungen für zusammengesetzte Seiten](/de/docs/configuration-composed-pages)**
 
-- [Seitenvorlagen](/de/docs/configuration-composed-pages#seitenvorlagen) – `pageTemplates`: Rahmen, Gruppen und Schmuck einer zusammengesetzten Seite, Vererbung zwischen Vorlagen und Varianten für rechte und linke Seiten. [Beschriftungsstile](/de/docs/configuration-composed-pages#beschriftungsstile) – `labelStyles`: das Aussehen der Beschriftungen an den Ankern eines Bildes. Jedes Problem, das eine Vorlage haben kann, steht unter [Warnungen zu Seitenvorlagen](/de/docs/configuration-composed-pages#warnungen-zu-seitenvorlagen).
+- [Seitenvorlagen](/de/docs/configuration-composed-pages#seitenvorlagen) – `pageTemplates`: Rahmen, Gruppen und Dekoration einer zusammengesetzten Seite, Vererbung zwischen Vorlagen und Varianten für rechte und linke Seiten. [Beschriftungsstile](/de/docs/configuration-composed-pages#beschriftungsstile) – `labelStyles`: das Aussehen der Beschriftungen an den Ankern eines Bildes. Jedes Problem, das eine Vorlage haben kann, steht unter [Warnungen zu Seitenvorlagen](/de/docs/configuration-composed-pages#warnungen-zu-seitenvorlagen).
 
 **[Schriften, Farben und Ausgabe](/de/docs/configuration-fonts-colors-viewers)**
 
@@ -121,7 +121,7 @@ Die Referenz ist auf neunzehn Seiten verteilt. Jede Gruppe unten ist eine Seite,
 - [Kontrastprüfung (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#kontrastprüfung-konfiguration) – `contrast`: Text gegen seinen Untergrund nach WCAG AA oder AAA, am Bildschirm und auf dem Papier des Ausgabeprofils, sowie negativer Text, der für die Druckmaschine zu fein ist.
 - [Inhaltsprüfung (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#inhaltsprüfung-konfiguration) – `checks.contentInConfig`: Gestaltungstexte, die den Text des Buches statt Platzhaltern enthalten, mit einer Liste erlaubter Wendungen für Titel und Verlag.
 - [Folio-Betrachter (Konfiguration)](/de/docs/configuration-fonts-colors-viewers#folio-betrachter-konfiguration) – Papiersorte, Bindung, Oberfläche und Licht des 3D-Buchbetrachters.
-- [Debug](/de/docs/configuration-fonts-colors-viewers#debug) – visuelle Überlagerungen und Warnungen beim Schreiben für den Editor.
+- [Debug](/de/docs/configuration-fonts-colors-viewers#debug) – Einblendungen zur Fehlersuche und Warnungen für Autoren im Editor.
 
 **[Programmatische Nutzung](/de/docs/configuration-programmatic-usage)**
 
@@ -134,9 +134,9 @@ Die Referenz ist auf neunzehn Seiten verteilt. Jede Gruppe unten ist eine Seite,
 
 **[HTML, Folio und EPUB](/de/docs/configuration-html-folio-epub)**
 
-- [Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden) und [PDFs erzeugen](/de/docs/configuration-pdf-output#pdfs-erzeugen) – Anleitungen von Anfang bis Ende.
+- [Den HTML-Betrachter einbinden](/de/docs/configuration-html-folio-epub#den-html-betrachter-einbinden) und [PDFs erzeugen](/de/docs/configuration-pdf-output#pdfs-erzeugen) – vollständige Anleitungen.
 - [Ein 3D-Buch (`postext-folio`)](/de/docs/configuration-html-folio-epub#ein-3d-buch-postext-folio) – das gesetzte Dokument als gedrucktes Buch, das aufgeschlagen auf einem Tisch liegt, mit Blättern, die der Leser umblättert.
-- [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub) – EPUB-3-Dateien mit festem Layout und umfließend aus demselben Layout, und ihre Prüfung mit EPUBCheck.
+- [EPUB-Bücher](/de/docs/configuration-html-folio-epub#epub-bücher-postext-epub) – EPUB-3-Dateien mit festem Layout oder umfließend, erzeugt aus demselben Layout, und ihre Prüfung mit EPUBCheck.
 
 **[.postext-Pakete](/de/docs/configuration-bundles)**
 

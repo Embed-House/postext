@@ -30,23 +30,23 @@ Un blocco `:::paper` comincia su una nuova pagina e così fa il testo che lo seg
 
 <Excerpt region="covers" />
 
-Ogni copertina è uno stile di titolo il cui progetto grafico contiene un campo di colore grande quanto il formato rifilato. Lo stile azzera i margini per la durata della sua sezione, la sola pagina di copertina, così il campo raggiunge ogni bordo e le pagine che seguono conservano i loro margini.
+Ogni copertina è uno stile di titolo la cui grafica contiene un campo di colore grande quanto il formato rifilato. Lo stile azzera i margini per la durata della sua sezione, la sola pagina di copertina, così il campo raggiunge ogni bordo e le pagine che seguono conservano i loro margini.
 
 ### 4 · La scheda della carta
 
 <Excerpt region="stock-card" />
 
-Ogni foglio si apre con un titolo di primo livello disegnato da uno slot: l’occhiello dagli attributi del titolo, il nome della carta e un filetto sottile. Le righe delle specifiche sono uno stile di paragrafo nel carattere condensato delle etichette, con le etichette in grassetto nel colore d’accento.
+Ogni foglio si apre con un titolo di primo livello disegnato da uno spazio grafico: l’occhiello dagli attributi del titolo, il nome della carta e un filetto sottile. Le righe delle specifiche sono uno stile di paragrafo nel carattere condensato delle etichette, con le etichette in grassetto nel colore d’accento.
 
 ### 5 · Rileggi la carta dall’impaginazione
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni pagina impaginata dentro un blocco porta gli attributi del blocco in `page.paper`, così come sono scritti: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` li passa al visualizzatore, che disegna ogni foglio con la sua carta; il pen li legge anche per la riga di stato e per il testo alternativo di ogni pagina.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni pagina impaginata in un blocco riporta gli attributi del blocco in `page.paper`, così come sono scritti: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` li passa al visualizzatore, che disegna ogni foglio con la sua carta; il pen li legge anche per la riga di stato e per il testo alternativo di ogni pagina.
 
 ## Varianti
 
 ### Aggiungi una sezione di tavole su patinata più pesante
 
-Un blocco dentro il testo di qualunque libro stampa quelle pagine sulla loro carta; le figure citate al suo interno vengono collocate prima che si chiuda.
+Un blocco nel testo di qualunque libro stampa quelle pagine sulla loro carta; le figure citate al suo interno vengono collocate prima che si chiuda.
 
 ```diff
 +:::paper{type=coatedGloss grammage=170 showThrough=false}

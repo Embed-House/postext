@@ -22,7 +22,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Der Satzspiegel
 
 <Excerpt region="figures" />
 
-Ein Kasten mit `span="page"` schneidet eine zweispaltige Seite in Bänder. Auf <PageRef page={2}>Seite 2</PageRef> endet der Brief des Vorsitzes über dem Kasten nach acht Zeilen in jeder Spalte und läuft darunter in beiden Spalten weiter. Im Kasten öffnet `:::columns{count=3 breaks="3,5"}` die zweite und dritte Spalte bei der zweiten und dritten Zahl (dem dritten und fünften Block der Gruppe), statt den Lauf dort zu schneiden, wo sich die Spalten am besten ausgleichen. Das Absatzformat `figure` setzt diese Zahlen in 26 pt, und sein `boldColor` druckt sie gelb.
+Ein Kasten mit `span="page"` schneidet eine zweispaltige Seite in Spaltenbereiche. Auf <PageRef page={2}>Seite 2</PageRef> endet der Brief des Vorsitzes über dem Kasten nach acht Zeilen in jeder Spalte und läuft darunter in beiden Spalten weiter. Im Kasten öffnet `:::columns{count=3 breaks="3,5"}` die zweite und dritte Spalte bei der zweiten und dritten Zahl (dem dritten und fünften Block der Gruppe), statt den Lauf dort zu schneiden, wo sich die Spalten am besten ausgleichen. Das Absatzformat `figure` setzt diese Zahlen in 26 pt, und sein `boldColor` färbt sie gelb.
 
 ### 3 · Einen Kasten an den Kopf der nächsten Seite gleiten lassen
 
@@ -34,13 +34,13 @@ Im Markdown folgt die Notiz zur Zählung dem ersten Absatz über Harrow Down auf
 
 <Excerpt region="palette" />
 
-Mit `parts: { page: false }` öffnet ein Direktivenblock wie `:::part{number="02" title="Operations" palette="band=#1c6e67"}` keine Seite. Er benennt den Abschnitt für den Auftaktstreifen und die lebenden Fußzeilen und tauscht `band` auf jeder Seite bis zum nächsten Teil aus. Streifen, Zwischentitel, Aufzählungszeichen, Bezeichnungen der Bildunterschriften und die Linie der Notiz nehmen alle `band`, deshalb drucken die Betriebsseiten in Petrol und die Finanzseite in Ziegelrot, während der Brief des Vorsitzes das Meerblau der Grundgestaltung behält (<Feature id="part-palettes">Farben pro Teil</Feature>).
+Mit `parts: { page: false }` öffnet ein Container wie `:::part{number="02" title="Operations" palette="band=#1c6e67"}` keine Seite. Er benennt den Abschnitt für den Auftaktstreifen und die lebenden Fußzeilen und tauscht `band` auf jeder Seite bis zum nächsten Teil aus. Streifen, Zwischentitel, Aufzählungszeichen, Bezeichnungen der Legenden und die Linie der Notiz nehmen alle `band`, deshalb erscheinen die Betriebsseiten in Petrol und die Finanzseite in Ziegelrot, während der Brief des Vorsitzes das Meerblau der Grundgestaltung behält (<Feature id="part-palettes">Farben pro Teil</Feature>).
 
 ### 5 · Die Tabellen aus den Daten bauen und die letzte Seite bündig schließen
 
 <Excerpt region="data" />
 
-`statement()` macht aus `DATA.accounts` Zeile für Zeile die Gewinn- und Verlustrechnung. Eine Bezeichnung, die mit `=` beginnt, druckt die laufende Summe jedes Jahres fett auf der Tönung; Kosten sind in den Daten negativ, also ergibt sich *Operating surplus* aus dieser Summe, ohne dass eine Summe von Hand eingetragen wird. Eine Bezeichnung ohne Zahlen, *Income* oder *Operating costs*, wird zu einer kursiven Zelle über die ganze Tabelle, zusammengeführt mit `mergeCells`, das auch die Platzhalterzellen schreibt, die eine Zusammenführung braucht. Auf <PageRef page={5}>Seite 5</PageRef> gleitet die Rechnung quer über den Fuß der Seite, unter den Bericht des Schatzmeisters, der das Dokument schließt. Ohne Ausgleich liefen die Spalten links auf 12 und rechts auf 9 Zeilen; der Schlussschnitt setzt beide auf 11, und der Überschriftenhebel fügt über *Cash and reserves* die Zeile hinzu, die der rechten Spalte noch fehlt.
+`statement()` macht aus `DATA.accounts` Zeile für Zeile die Gewinn- und Verlustrechnung. Eine Bezeichnung, die mit `=` beginnt, gibt die laufende Summe jedes Jahres fett auf der Tönung aus; Kosten sind in den Daten negativ, also ergibt sich *Operating surplus* aus dieser Summe, ohne dass eine Summe von Hand eingetragen wird. Eine Bezeichnung ohne Zahlen, *Income* oder *Operating costs*, wird zu einer kursiven Zelle über die ganze Tabelle, zusammengeführt mit `mergeCells`, das auch die Platzhalterzellen schreibt, die eine Zusammenführung braucht. Auf <PageRef page={5}>Seite 5</PageRef> gleitet die Rechnung quer über den Fuß der Seite, unter den Bericht des Schatzmeisters, der das Dokument schließt. Ohne Ausgleich liefen die Spalten links auf 12 und rechts auf 9 Zeilen; der Schlussschnitt setzt beide auf 11, und der Überschriftenhebel fügt über *Cash and reserves* die Zeile hinzu, die der rechten Spalte noch fehlt.
 
 ## Varianten
 

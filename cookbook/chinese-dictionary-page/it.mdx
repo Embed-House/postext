@@ -1,16 +1,16 @@
 ---
 title: "Una pagina di dizionario cinese con i lemmi guida"
 summary: "Quattro pagine di un Dizionario Kangxi in ordine pinyin: {firstMark.h2} e {lastMark.h2} stampano il primo e l’ultimo lemma di ogni pagina nella testatina."
-plain: "Quattro pagine di un classico dizionario cinese. L’angolo in alto di ogni pagina mostra la sua prima e la sua ultima voce, così il lettore trova una parola sfogliando."
+plain: "Quattro pagine di un classico dizionario cinese. L’angolo in alto di ogni pagina mostra la prima e l’ultima voce della pagina, così il lettore trova una parola sfogliando."
 description: "Un dizionario cinese a due colonne in Postext: lemmi con il pinyin sopra, accezioni di seguito numerate ① ② e lemmi guida nella testatina, con il codice."
 question: "Come stampo il primo e l’ultimo lemma di ogni pagina nella testatina di un dizionario cinese?"
 aliases: ["dizionario", "dizionario cinese", "字典", "康熙字典", "Dizionario Kangxi", "lemmi guida", "parole guida", "richiami", "书眉", "書眉", "lemmi", "ordine pinyin", "pinyin sopra i lemmi", "反切", "fanqie", "numeri cerchiati", "numeri delle accezioni", "unghiatura", "guide words"]
-pageNotes: { "1": "Pagina 634, un verso. La testatina dice 634 e 天—殄, sopra un filetto sottile. Due colonne di voci da 天 tiān a 殄 tiǎn: ogni lemma in Song Black rosso con il suo pinyin sopra, poi le letture dei dizionari di rime e le accezioni di seguito, numerate ① ② in rosso. Le voci si susseguono senza spazio tra loro, ed entrambe le colonne finiscono sull’ultima riga di griglia. Un’unghiatura rossa con una T sul bordo sinistro.", "2": "Pagina 635, un recto: 腆—髫 e il folio in alto a destra. La prima colonna si apre con la fine della voce 殄, poi le voci da 腆 tiǎn a 髫 tiáo; l’unghiatura T sul bordo destro.", "3": "Pagina 636: la pagina si apre con la fine della voce 髫, e la testatina dice 挑—鐵, il primo e l’ultimo lemma che vi cominciano; 挑 compare una seconda volta sotto la lettura tiǎo.", "4": "Pagina 637: 餮—庭, la fine di 鐵, le voci da 餮 tiè a 庭 tíng e sotto di esse un colophon: una frase di cinese in Kai, due righe, e sei righe di crediti in inglese." }
+pageNotes: { "1": "Pagina 634, un verso. La testatina riporta 634 e 天—殄, sopra un filetto sottile. Due colonne di voci da 天 tiān a 殄 tiǎn: ogni lemma in Song Black rosso con il suo pinyin sopra, poi le letture dei dizionari di rime e le accezioni di seguito, numerate ① ② in rosso. Le voci si susseguono senza spazio tra loro, ed entrambe le colonne finiscono sull’ultima riga di griglia. Un’unghiatura rossa con una T sul bordo sinistro.", "2": "Pagina 635, un recto: 腆—髫 e il numero di pagina in alto a destra. La prima colonna si apre con la fine della voce 殄, poi le voci da 腆 tiǎn a 髫 tiáo; l’unghiatura T sul bordo destro.", "3": "Pagina 636: la pagina si apre con la fine della voce 髫, e la testatina riporta 挑—鐵, il primo e l’ultimo lemma che vi cominciano; 挑 compare una seconda volta sotto la lettura tiǎo.", "4": "Pagina 637: 餮—庭, la fine di 鐵, le voci da 餮 tiè a 庭 tíng e sotto di esse un colophon: una frase di cinese in Kai, due righe, e sei righe di crediti in inglese." }
 ---
 
 ## Che cosa comporrai
 
-Quattro pagine dal mezzo di un’edizione di lettura del Dizionario Kangxi (康熙字典, 1716), riordinato in ordine pinyin da 天 tiān a 庭 tíng. Ogni lemma è in Song Black rosso con il suo pinyin sopra; le letture dei dizionari di rime (反切) e le accezioni seguono in un solo paragrafo, con le accezioni numerate ① ② nello stesso rosso. La pagina è un 大32开, 140 × 203 mm, due colonne di 17 caratteri di 小五 (9 pt) su una griglia di 31 righe, ogni colonna piena fino all’ultima riga. All’angolo esterno di ogni pagina la testatina nomina il primo e l’ultimo lemma che contiene, così un lettore che cerca 蜩 va alla pagina intitolata 腆—髫. <RecipeLink slug="dictionary-thumb-index">The Sailor’s Word-Book</RecipeLink> è il dizionario in alfabeto latino con cui confrontarlo.
+Quattro pagine dal mezzo di un’edizione di lettura del Dizionario Kangxi (康熙字典, 1716), riordinato in ordine pinyin da 天 tiān a 庭 tíng. Ogni lemma è in Song Black rosso con il suo pinyin sopra; le letture dei dizionari di rime (反切) e le accezioni seguono in un solo paragrafo, con le accezioni numerate ① ② nello stesso rosso. La pagina è un 大32开, 140 × 203 mm, due colonne di 17 caratteri di 小五 (9 pt) su una griglia di 31 righe, ogni colonna piena fino all’ultima riga. All’angolo esterno di ogni pagina la testatina riporta il primo e l’ultimo lemma della pagina, così un lettore che cerca 蜩 va alla pagina intitolata 腆—髫. <RecipeLink slug="dictionary-thumb-index">The Sailor’s Word-Book</RecipeLink> è il dizionario in alfabeto latino con cui confrontarlo.
 
 ## Preparazione
 
@@ -22,7 +22,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni lemma è
 
 <Excerpt region="headwords" />
 
-`{天|tiān}` è la forma compatta di `:ruby[天]{rt="tiān"}`, una lettura sopra un carattere ([Segni cinesi, ruby e warichu](/it/docs/document-format-inline#segni-cinesi-ruby-e-warichu)). Un titolo senza una grafica propria compone la sua lettura; una grafica del titolo stamperebbe 天 da solo. La lettura prende il carattere del titolo stesso, Black, a meno che `cjk.ruby.fontFamily` non ne nomini uno, quindi si nomina il Song regolare. Metà di 15 pt fa 7,5 pt, e la riga di 30 pt del titolo le lascia spazio sopra il lemma, così il titolo occupa due righe della griglia e il testo sotto resta sulle righe di 15 pt di entrambe le colonne. Una lettura pinyin viene alzata della profondità dei discendenti del suo carattere più 0,04 em, così la g di tīng finisce 0,6 pt sopra il quadratone di 汀.
+`{天|tiān}` è la forma compatta di `:ruby[天]{rt="tiān"}`, una lettura sopra un carattere ([Segni cinesi, ruby e warichu](/it/docs/document-format-inline#segni-cinesi-ruby-e-warichu)). Un titolo senza una grafica propria compone la sua lettura; una grafica del titolo stamperebbe 天 da solo. La lettura prende il carattere del titolo stesso, Black, a meno che `cjk.ruby.fontFamily` non ne indichi uno, quindi si indica il Song regolare. Metà di 15 pt fa 7,5 pt, e la riga di 30 pt del titolo le lascia spazio sopra il lemma, così il titolo occupa due righe della griglia e il testo sotto resta sulle righe di 15 pt di entrambe le colonne. Una lettura pinyin viene alzata della profondità dei discendenti del suo carattere più 0,04 em, così la g di tīng finisce 0,6 pt sopra il quadratone di 汀.
 
 ### 3 · Un paragrafo per voce
 
@@ -34,7 +34,7 @@ Il Dizionario Kangxi compone una voce di seguito: le letture dei dizionari di ri
 
 <Excerpt region="tab" />
 
-Le sillabe pinyin cominciano con 23 delle 26 lettere (nessuna con I, U o V), quindi l’altezza della gabbia è divisa in 23 gradini di 7,13 mm, e la T prende il 19º. L’unghiatura è larga 9 mm e comincia 3 mm oltre il rifilo, così la pagina la taglia di netto sul margine esterno e solo i suoi angoli interni mostrano l’arrotondamento; un file di stampa con `page.cutLines` porterebbe quei 3 mm nella sua abbondanza. La lettera è centrata sui 6 mm interni alla pagina. Tutte e quattro le pagine sono nella T, quindi l’unghiatura resta alla stessa altezza; <RecipeLink slug="dictionary-thumb-index">the Sailor’s Word-Book</RecipeLink> la fa scendere lungo il bordo da una lettera all’altra.
+Le sillabe pinyin cominciano con 23 delle 26 lettere (nessuna con I, U o V), quindi l’altezza della gabbia è divisa in 23 gradini di 7,13 mm, e la T prende il 19º. L’unghiatura è larga 9 mm e comincia 3 mm oltre il rifilo, così la pagina la taglia di netto sul margine esterno e solo i suoi angoli interni mostrano l’arrotondamento; un file di stampa con `page.cutLines` includerebbe quei 3 mm nell’abbondanza. La lettera è centrata sui 6 mm interni alla pagina. Tutte e quattro le pagine sono nella T, quindi l’unghiatura resta alla stessa altezza; <RecipeLink slug="dictionary-thumb-index">the Sailor’s Word-Book</RecipeLink> la fa scendere lungo il bordo da una lettera all’altra.
 
 ### 5 · Ogni carattere carica i propri glifi
 
@@ -57,7 +57,7 @@ Alcuni dizionari stampano un solo lemma guida per pagina, il primo in testa al v
 
 ### Pinyin con ɑ e ɡ
 
-I dizionari cinesi compongono il pinyin in un carattere con la a e la g a un solo occhiello. Nomina Andika per le letture e aggiungilo a `FONTS` (`'Andika': ['400']`, con il suo credito OFL).
+I dizionari cinesi compongono il pinyin in un carattere con la a e la g a un solo occhiello. Indica Andika per le letture e aggiungilo a `FONTS` (`'Andika': ['400']`, con il suo credito OFL).
 
 ```diff
 -  ruby: { fontFamily: SONG, fontSize: em(0.5), color: col('cinnabar') },
@@ -66,7 +66,7 @@ I dizionari cinesi compongono il pinyin in un carattere con la a e la g a un sol
 
 ### Lemmi al corpo del testo
 
-Un dizionario compatto compone il lemma in grassetto all’inizio del suo paragrafo. Metti le voci in `:::paragraphs{style="entry"}`, apri ognuna con `**{天|tiān}**` e stampa `{firstMark.entry}`: un paragrafo che si apre con un tratto in grassetto segna la pagina con esso.
+Un dizionario compatto compone il lemma in grassetto all’inizio del suo paragrafo. Metti le voci in `:::paragraphs{style="entry"}`, apri ognuna con `**{天|tiān}**` e stampa `{firstMark.entry}`: un paragrafo che si apre con una parte in grassetto segna la pagina con esso.
 
 ## Errori frequenti
 

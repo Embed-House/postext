@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '日文排版',
   description: 'Postext如何排日文横排与竖排：日本地区、禁则、约物间距、段首括号、竖排字形、振假名、傍点与傍线、汉文训读、编号、行取り标题、注释、五十音索引、引用、字体以及青空文库源文本',
   lang: 'zh',
-  lastUpdated: '2026-10-05',
+  lastUpdated: '2026-10-19',
   readingTime: '25分钟',
   order: 32,
   plainSummary: "本页说明Postext怎样排日文。日文书可以竖排成从右往左读的一列列文字，也可以像本页这样横排。语言设为日语的文档，按日文的规则断行、安排标点的空白、在字旁加小字读音和强调记号。本页还介绍注释、用汉字写的数字、占固定行数的标题、按读音排序的书后索引，以及怎样导入青空文库的文本。最后给出两套完整的示例配置，并列出尚未解决的问题。",
@@ -17,13 +17,13 @@ export const metadata = {
 
 Postext用同一份Markdown源文件和同一套配置，既能横排日文，也能竖排日文。语言为日语的文档按禁则断行，给每个括号和逗号留出日文排版规定的空白，两个标点相遇时再收回这段空白；像大多数小说那样排段首的括号；小假名和竖排行中的标点使用竖排字形；振假名按1:2:1的比例排在汉字上方；被强调的词上方加芝麻点；章按第一章编号；索引按读音排序。从postext 1.16起，这一切都由`locale: 'ja'`推出；更早的版本用中国大陆的默认值排日文。本页说明引擎做了什么、由哪些设置控制。[配置参考](/zh/docs/configuration-east-asian#东亚排版)列出了每个键及其默认值，[文档格式](/zh/docs/document-format-inline#中文标记注音和双行夹注)介绍了相关标记。
 
-这些规则依据W3C的《日文排版需求》（*Requirements for Japanese Text Layout*，[JLReq](https://www.w3.org/TR/jlreq/)），下文按章节号引用；也依据JLReq所介绍的日本工业标准JIS X 4051。很多机制与中文共用，本页只是提到的部分，即字符网格、竖排页面转过的坐标系、右侧装订和各种输出，由[中文排版](/zh/docs/chinese-layout)详细说明。参考资料列在本页末尾。
+这些规则依据W3C的《日文排版需求》（*Requirements for Japanese Text Layout*，[JLReq](https://www.w3.org/TR/jlreq/)），下文按章节号引用；也依据JLReq所介绍的日本工业标准JIS X 4051。很多机制与中文共用：字符网格、竖排页面转过的坐标系、右侧装订和各种输出，本页只简单提及，详见[中文排版](/zh/docs/chinese-layout)。参考资料列在本页末尾。
 
 ## 日本地区
 
 `locale`为日语的文档（`ja`、`ja-JP`、`ja-Jpan`，大小写不限，用`-`或`_`都可以）采用`cjk`设置中的`japan`地区。于是每个保持`'auto'`的`cjk`字段都取日文惯例，注释、索引、引用和内置用词也是如此。也可以在任何文档中手动设置`cjk.region: 'japan'`，按日文的规则排页面；这时内置用词以及注释、索引和引用的默认值仍跟随语言。沙盒**文档语言**下拉框所显示的列表`DOCUMENT_LANGUAGES`中，日本語排在各个中文条目和阿拉伯语之间。
 
-### 随语言区域变化的设置
+### 随地区变化的设置
 
 <table>
   <thead>
@@ -42,26 +42,26 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
     <tr><td>悬挂（<code>hangingPunctuation</code>）</td><td><code>allow</code>，仅限、。，．</td><td><code>none</code></td></tr>
     <tr><td><code>&#42;…&#42;</code>（<code>emphasis</code>、<code>emphasisMark</code>）</td><td>文字上方加芝麻点，竖排时在右侧</td><td>文字下方加圆点</td></tr>
     <tr><td><code>:book[…]</code>（<code>bookTitleMark</code>、<code>bookTitleBrackets</code>）</td><td><span lang="ja" className="font-body">『』</span>，书名中的书名用<span lang="ja" className="font-body">「」</span></td><td><span lang="ja" className="font-body">《》</span>，书名中的书名用<span lang="ja" className="font-body">〈〉</span></td></tr>
-    <tr><td>割注的括号（<code>warichu.open</code>、<code>close</code>）</td><td><span lang="ja" className="font-body">（）</span></td><td>无</td></tr>
+    <tr><td>双行夹注的括号（<code>warichu.open</code>、<code>close</code>）</td><td><span lang="ja" className="font-body">（）</span></td><td>无</td></tr>
     <tr><td>注音（<code>ruby.overhang</code>、<code>ruby.align</code>）</td><td>只伸到假名上，按1:2:1排</td><td>可伸到任何相邻字上，最多为注音字号的四分之一，居中</td></tr>
     <tr><td><code>&#123;漢字|かん|じ&#125;</code></td><td>熟语注音</td><td>单字注音</td></tr>
     <tr><td>编号中的<code>一</code></td><td><code>japanese-informal</code>：百一</td><td><code>simp-chinese-informal</code>：一百零一</td></tr>
     <tr><td>竖排书中的注释</td><td>排在章末（後注），注码（1）在行的右侧</td><td>排在栏的下端</td></tr>
     <tr><td>索引分组（<code>index.groupBy</code>）</td><td>按读音分五十音行（あ行、か行…）</td><td>拼音首字母</td></tr>
-    <tr><td>引用的语言区域</td><td><code>ja-JP</code></td><td><code>zh-CN</code></td></tr>
+    <tr><td>引用所用的CSL本地化文件</td><td><code>ja-JP</code></td><td><code>zh-CN</code></td></tr>
     <tr><td>图、表、续表</td><td><span lang="ja" className="font-body">図、表、（続き）</span></td><td>图、表、（续）</td></tr>
   </tbody>
 </table>
 
 内置用词也是日文：交叉引用印作<span lang="ja" className="font-body">第3章</span>、<span lang="ja" className="font-body">2.3節</span>和<span lang="ja" className="font-body">12ページ</span>，参考文献的标题是<span lang="ja" className="font-body">参考文献</span>，拆开的表格或标注框写<span lang="ja" className="font-body">次ページへ続く</span>，索引的符号组和数字组分别以<span lang="ja" className="font-body">記号</span>和<span lang="ja" className="font-body">数字</span>为组名，交叉引用用箭头写出（<span lang="ja" className="font-body">金之助　→夏目漱石</span>，页码之后则是<span lang="ja" className="font-body">→夏目漱石、森鷗外も見よ</span>），EPUB的导航名为<span lang="ja" className="font-body">目次</span>、<span lang="ja" className="font-body">表紙</span>、<span lang="ja" className="font-body">本文</span>。字符串表中没有日文条目时，给出的是英文，而不是中文。图和表按章编号，题注排成<span lang="ja" className="font-body">図1-1　東京の地図</span>：标签与编号之间不留空，编号与文字之间加一个全角空格，不加句点（JLReq §4.3）。`:ref`读作<span lang="ja" className="font-body">図1-1</span>，续表读作<span lang="ja" className="font-body">表1-1　東京の区（続き）</span>。这是日文文档中`captionStyle.labelNumberGap`和`labelSeparator`的默认值；在那里设置的值优先。和所有CJK文档一样，断词默认关闭，除非你为其中的拉丁单词打开它。
 
-各种输出也声明同一个标签：HTML文档及其每一页都带`lang="ja"`，PDF声明`/Lang (ja)`并用日文字形整形（见[字体](#字体)）。排版在每个上下文上都按这个语言测量，Canvas也按它绘制（`ctx.lang`）：在其他语言的页面上（显示日文书的英文页面、CodePen）和在排版工作线程里，排出的行与日文页面上的相同。Noto Serif JP的数字在日文下宽0.47 em，在它没有专门字形的语言下宽0.55 em。这是[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，postext 1.30起的默认值；设为`'host'`时（1.30之前保存的书保持这个值），排版按宿主页面的语言测量，Canvas也按它绘制。Unicode只给直、骨和角各一个码位，日文字体和中文字体的写法却不同。
+各种输出也声明同一个标签：HTML文档及其每一页都带`lang="ja"`，PDF声明`/Lang (ja)`并用日文字形成形（见[字体](#字体)）。排版在每个上下文上都按这个语言测量，Canvas也按它绘制（`ctx.lang`）：在其他语言的页面上（显示日文书的英文页面、CodePen）和在排版工作线程里，排出的行与日文页面上的相同。Noto Serif JP的数字在日文下宽0.47 em，在它没有专门字形的语言下宽0.55 em。这是[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，postext 1.30起的默认值；设为`'host'`时（1.30之前保存的书保持这个值），排版按宿主页面的语言测量，Canvas也按它绘制。Unicode只给直、骨和角各一个码位，日文字体和中文字体的写法却不同。
 
 ### 汉字、假名与罗马字
 
 一行日文里有汉字、平假名、片假名，还有拉丁字母和数字，即罗马字。Postext不需要任何设置来区分它们：CJK字符（汉字和假名都算）多于词间空格的段落由CJK排版器逐字排版，其中的拉丁单词或数字是一个单元，行不会在单元内部断开。日文与拉丁文字之间，排版器加四分之一个字宽（`cjk.latinSpacing`），两端对齐的行可以把它拉宽到半个字宽（JLReq §3.2.2）；作者在那里输入的空格会被它替换，而不是叠加。西文单词以括号或符号结尾的一侧也加这个间距（`normalize()関数`、`(abc)関数`、`100%関数`；`cjk.latinSpacingEdge: 'western'`，日本地区的默认值，JLReq §3.2.6），但单独夹在日文字符之间的括号或符号不加（`関数(かんすう)は`）。日文正文的词与词之间没有空格，所以两个日文词之间输入的空格仍是空格。
 
-修订黑本式拼写的罗马字带长音符号（<span lang="ja" className="font-body">Tōkyō</span>、<span lang="ja" className="font-body">Sōseki</span>），字体必须有这些字形：Postext不会向另一个字体族借缺少的字形。其他语言的词可以用隔离标记标注，`:ltr[the Meiji era]{lang=en}`：HTML把它标为`lang="en"`，PDF把它放进带自己`/Lang`的`/Span`，并按该语言的字形整形。全角字母和数字（Ｋ、１２）是日文字符：竖排时直立，各占一个字宽。
+修订黑本式拼写的罗马字带长音符号（<span lang="ja" className="font-body">Tōkyō</span>、<span lang="ja" className="font-body">Sōseki</span>），字体必须有这些字形：Postext不会向另一个字体族借缺少的字形。其他语言的词可以用隔离标记标注，`:ltr[the Meiji era]{lang=en}`：HTML把它标为`lang="en"`，PDF把它放进带自己`/Lang`的`/Span`，并按该语言的字形成形。全角字母和数字（Ｋ、１２）是日文字符：竖排时直立，各占一个字宽。
 
 图书不用半角片假名（ｶﾀｶﾅ）；请写全角形式，或者交给[青空文库转换器](#青空文库源文本)转换。波浪号〜（U+301C）以及Windows文本中代替它的全角波浪号～（U+FF5E），都按日文的连接号类处理。
 
@@ -103,7 +103,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 当下一个字符不能出现在行首时，排版器先按下文JLReq的顺序放弃行内的空白，尝试把它挤进本行（追い込み，挤进），不行才把它前面的字符带到下一行（追い出し，挤出）。`々`位于行首时从不替换成它所重复的汉字（JLReq提到了这种做法，但它改动了文字）。
 
-用假名排的绘本和识字课本在词组之间加空格（<span lang="ja" className="font-body">分かち書き</span>，<span lang="ja" className="font-body">むかし むかし、 ある ところに</span>），只在空格处断行。`cjk.wordBreak: 'keep-all'`就这样断行：在空格（U+0020或U+3000）处，以及级别允许时在标点旁（<span lang="ja" className="font-body">、。」</span>之后，<span lang="ja" className="font-body">「</span>之前）断开，两个文字（假名、汉字或拉丁字母）之间从不断开。空格处照常执行该级别的禁则，比一行还长的词组仍按该级别在内部断开。段落样式可以用`wordBreak`单独设置，例如普通散文书里引用的一段识字课文。两端对齐的行先把多余的空白分给空格，每个最多半个全角，再分到字符之间。可重排EPUB写出`word-break: keep-all`。词与词（어절）之间加空格的韩文也用这个设置。
+用假名排的绘本和识字课本在词组之间加空格（<span lang="ja" className="font-body">分かち書き</span>，<span lang="ja" className="font-body">むかし むかし、 ある ところに</span>），只在空格处断行。`cjk.wordBreak: 'keep-all'`就这样断行：在空格（U+0020或U+3000）处，以及级别允许时在标点旁（<span lang="ja" className="font-body">、。」</span>之后，<span lang="ja" className="font-body">「</span>之前）断开，两个文字（假名、汉字或拉丁字母）之间从不断开。空格处照常执行该级别的禁则，比一行还长的词组仍按该级别在内部断开。段落样式可以用`wordBreak`单独设置，例如普通散文书里引用的一段识字课文。两端对齐的行先把多余的空白分给空格，每个最多半个全角，再分到字符之间。流式EPUB写出`word-break: keep-all`。词与词（어절）之间加空格的韩文也用这个设置。
 
 ### 约物：标点间距
 
@@ -115,7 +115,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 - <strong>？和！</strong>在句子继续时，其后加一个字宽的空白（JLReq §3.1.6）：<span lang="ja" className="font-body">本当？　そう思う</span>。在后括号或另一个？！之前、段末或行末都不加，作者已在那里输入U+3000时也不再加。这段空白从不伸缩。`cjk.spaceAfterQuestion`可以关闭它（或在其他地区打开它）。
 - **数字。** 两个汉字数字之间的、和・密排，从不断开：<span lang="ja" className="font-body">二、三日</span>、<span lang="ja" className="font-body">三・一四</span>。
 
-<Illustration name="YakumonoSpacing" data='{"title": "日文标点的间距", "desc": "彼は「本当？うそ」、「いいえ」と答えた。这一行排了两次，每个字格一个字宽。第一排中每个字符都占满一个字宽，不加任何空白，共20个字宽。第二排中，逗号前的后括号、前括号前的逗号以及句号前的后括号各放弃半个字宽的空白，这些空白在第一排用浅色标出；问号之后加一个字宽的空白，共19.5个字宽。", "caption": "相邻的标点彼此挤紧，后面接着文字的？加一个字宽的空白。", "solid": "每个标点一个字宽，不加空白", "jlreq": "JLReq间距（日本地区）", "blank": "相邻标点放弃的半个字宽", "aki": "？后的空白", "sample": "彼は「本当？うそ」、「いいえ」と答えた。", "ems": "字"}' />
+<Illustration name="YakumonoSpacing" data='{"title": "日文标点的间距", "desc": "彼は「本当？うそ」、「いいえ」と答えた。这一行排了两次，每个字格一个字宽。第一排中每个字符都占满一个字宽，不加任何空白，共20个字宽。第二排中，逗号前的后括号、前括号前的逗号以及句号前的后括号各放弃半个字宽的空白，这些空白在第一排用浅色标出；问号之后加一个字宽的空白，共19.5个字宽。", "caption": "相邻的标点彼此挤紧，后面接着文字的？加一个字宽的空白。", "solid": "每个标点一个字宽，不加空白", "jlreq": "JLReq间距（日本地区）", "blank": "相邻标点放弃的半个字宽", "aki": "？后的空白", "sample": "彼は「本当？うそ」、「いいえ」と答えた。", "ems": "字宽"}' />
 
 一行稍长时，按以下顺序让出空白（JLReq §3.8.3）：先是词间空格，然后是行尾标点后的半个字宽（整个放弃或完全不放弃），然后是行尾中点的四分之一个字宽，然后是行内中点的四分之一个字宽，然后是括号和、，的半个字宽，最后是日文与拉丁文字之间的间距，最多缩到八分之一个字宽。一行稍短时，像中文行一样把差额分配到字与字之间，只是前括号之后、后括号之前不加空白，、。・：；？！和全角空格旁边也不加（JLReq §3.1.11）。
 
@@ -123,7 +123,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 缩进一个字的段落可以以括号开头，小说中的对话大多如此。JLReq §3.1.5介绍了三种排法，由`cjk.paragraphStartBracket`选择：
 
-<Illustration name="BracketPatterns" data='{"title": "段首括号的三种排法", "desc": "网格上四个段落开头，每个两行。普通段落从一个字宽的缩进之后开始。第一种排法保留缩进，括号另占一个字宽，因此文字从第2个字宽开始。第三种排法把括号放在缩进的后半个字宽中，文字从第1个字宽开始，与普通段落相同。顶格排法把括号放在边缘，不缩进。第二行都从边缘开始。", "caption": "日本地区默认用第③种：括号填满缩进的后半个字宽。", "plain": "普通段落", "indent": "① 保留缩进", "half": "③ 缩进内", "flush": "顶格（天付き）", "indentValue": "indent", "halfValue": "half", "flushValue": "flush", "plainSample": "私はその人を常に先生と呼んでいた。だからここでもただ先生と書くだけで本名は打ち明けない。", "bracketSample": "「先生はいつごろ東京へお帰りになるのですか」と私は母に聞いてみた。", "indentLegend": "一个字宽的段首缩进"}' />
+<Illustration name="BracketPatterns" data='{"title": "段首括号的三种排法", "desc": "网格上四个段落开头，每个两行。普通段落从一个字宽的缩进之后开始。第一种排法保留缩进，括号另占一个字宽，因此文字从第2个字宽开始。第三种排法把括号放在缩进的后半个字宽中，文字从第1个字宽开始，与普通段落相同。顶格排法把括号放在边缘，不缩进。第二行都从边缘开始。", "caption": "日本地区默认用第③种：括号填满缩进的后半个字宽。", "plain": "普通段落", "indent": "① 保留缩进", "half": "③ 半字缩进", "flush": "顶格（天付き）", "indentValue": "indent", "halfValue": "half", "flushValue": "flush", "plainSample": "私はその人を常に先生と呼んでいた。だからここでもただ先生と書くだけで本名は打ち明けない。", "bracketSample": "「先生はいつごろ東京へお帰りになるのですか」と私は母に聞いてみた。", "indentLegend": "一个字宽的段首缩进"}' />
 
 - **`'indent'`**（①）：保留缩进，括号在其后另占一个字宽。
 - **`'half'`**（③，日本地区的默认值）：括号放弃字形之前的空白，填满缩进的后半个字宽，文字与其他段落的文字对齐。缩进两个字时，文字从第2个字宽开始。
@@ -161,7 +161,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 ### 页面、栏与页码
 
-竖排日文书通常在页面下端用阿拉伯数字印页码；如果设计要在切口竖排页码，则用汉字：`page.pageNumbering.format: 'cjk-decimal'`把第105页写成一〇五，这是页码所用的逐位写法（JLReq §2.6）。章从右页（recto）开始，在右侧装订的书中就是左手边的页面：`breakBefore: { enabled: true, parity: 'odd' }`。[竖排文本元素](/zh/docs/configuration-headers-footers#竖排文本元素)中的切口书眉不加改动即可用于日文书。
+竖排日文书通常在页面下端用阿拉伯数字印页码；如果设计要在切口竖排页码，则用汉字：`page.pageNumbering.format: 'cjk-decimal'`把第105页写成一〇五，这是页码所用的逐位写法（JLReq §2.6）。章从奇数页（recto）开始，在右侧装订的书中就是左手边的页面：`breakBefore: { enabled: true, parity: 'odd' }`。[竖排文本元素](/zh/docs/configuration-headers-footers#竖排文本元素)中的切口书眉不加改动即可用于日文书。
 
 在字符网格（`cjk.grid`）上，日文页面排满网格所数的每一行：`bodyText.avoidWidows`和`bodyText.avoidOrphans`在那里默认都关闭。JLReq §3.5.4计的是段落末行的字数，没有规定换页处要留几行，所以段落可以在页末留下一行，也可以带一行到下一页。把其中任一键设为`true`即可恢复该规则。不设网格的文档两条规则都保持开启。
 
@@ -218,9 +218,9 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 `style`为`solid`（默认）、`double`、`wavy`或`dotted`；`pos`为`over`或`under`（竖排时over在右侧，under在左侧）。两条傍线相接时，各让出八分之一个字宽。它适用于任何文字：加了下划线的英文短语也是一条傍线。与振假名在同一侧的傍线会和读音重叠；请把其中一个放到另一侧。
 
-### 书名与割注
+### 书名与双行夹注
 
-`:book[こころ]`印作<span lang="ja" className="font-body">『こころ』</span>，书名中的书名用<span lang="ja" className="font-body">「」</span>。`cjk.bookTitleBrackets`可以设置别的括号，由外向内排列：`[{ open: '《', close: '》' }]`。`:warichu[…]`在行内把注释排成两行、字号减半的小字（割注），在日本地区默认用<span lang="ja" className="font-body">（）</span>括起；`cjk.warichu.open: ''`和`close: ''`则不加括号。`**…**`用正文字体族的粗体排；JLReq所说的用黑体强调，需要单独设置一个段落样式或字符样式。
+`:book[こころ]`印作<span lang="ja" className="font-body">『こころ』</span>，书名中的书名用<span lang="ja" className="font-body">「」</span>。`cjk.bookTitleBrackets`可以设置别的括号，由外向内排列：`[{ open: '《', close: '》' }]`。`:warichu[…]`在行内把注释排成两行、字号减半的小字（双行夹注，日文称割注），在日本地区默认用<span lang="ja" className="font-body">（）</span>括起；`cjk.warichu.open: ''`和`close: ''`则不加括号。`**…**`用正文字体族的粗体排；JLReq所说的用黑体强调，需要单独设置一个段落样式或字符样式。
 
 ## 汉文训读
 
@@ -309,7 +309,7 @@ headings: {
 :::
 ```
 
-`endIndent`也是段落样式的一个字段。`:::pagebreak{center}`让它开启的页面上的文字在版心的上下之间居中（竖排时在左右之间居中）：即篇名页或献词页的ページの左右中央。请再用一个`:::pagebreak`结束这一页。
+`endIndent`也是段落样式的一个字段。`:::pagebreak{center}`让它开启的页面上的文字在版心的上下之间居中（竖排时在左右之间居中）：即篇名页或献词页上的“ページの左右中央”。请再用一个`:::pagebreak`结束这一页。
 
 ### 偶数页末的标题
 
@@ -381,11 +381,11 @@ headings: {
 
 标记没有`yomi`时，依次用其振假名的读音（第二个标记按とうきょう排序）、`sort`键、文字本身来代替。排序键中仍有汉字的条目报为`indexReadingMissing`，排在假名之后，不归入任何组。在`:index[…]`里请用简写形式写振假名，因为`:ruby[…]`需要把它的方括号转义。
 
-排序遵循JIS X 4061：片假名按平假名排，小假名按大假名排，ー按它前面的元音排（コーヒー排在こうちゃ和こおり之间），叠字符按它所重复的假名排；相同时清音在浊音前，浊音在半浊音前（は ば ぱ）。符号在最前，然后是按数值排序的数字，然后是拉丁单词，最后是假名。`index.groupBy: 'gojuon'`（日文索引的auto值）按五十音行分组，组名为あ行、か行、さ行 … わ行；`'kana'`按首个假名分组，像词典那样。拉丁条目在假名之前，按字母分组。索引的标签是日文（见[随语言区域变化的设置](#随语言区域变化的设置)）。
+排序遵循JIS X 4061：片假名按平假名排，小假名按大假名排，ー按它前面的元音排（コーヒー排在こうちゃ和こおり之间），叠字符按它所重复的假名排；相同时清音在浊音前，浊音在半浊音前（は ば ぱ）。符号在最前，然后是按数值排序的数字，然后是拉丁单词，最后是假名。`index.groupBy: 'gojuon'`（日文索引的auto值）按五十音行分组，组名为あ行、か行、さ行 … わ行；`'kana'`按首个假名分组，像词典那样。拉丁条目在假名之前，按字母分组。索引的标签是日文（见[随地区变化的设置](#随地区变化的设置)）。
 
 ## 引用
 
-日文文档用CSL语言区域`ja-JP`引用：叙述式引用用と连接两位作者，三位及以上作者缩写为ほか（<span lang="ja" className="font-body">山田と佐藤</span>、<span lang="ja" className="font-body">鈴木ほか</span>），给标题加引号的样式使用<span lang="ja" className="font-body">「」</span>和<span lang="ja" className="font-body">『』</span>。随包附带样式`sist02`（SIST 02，日本科学技术期刊的指南）：
+日文文档用CSL本地化文件`ja-JP`排引用：叙述式引用用と连接两位作者，三位及以上作者缩写为ほか（<span lang="ja" className="font-body">山田と佐藤</span>、<span lang="ja" className="font-body">鈴木ほか</span>），给标题加引号的样式使用<span lang="ja" className="font-body">「」</span>和<span lang="ja" className="font-body">『』</span>。随包附带样式`sist02`（SIST 02，日本科学技术期刊的指南）：
 
 ```ts
 citations: { style: 'sist02' },
@@ -393,27 +393,27 @@ citations: { style: 'sist02' },
 
 在BibTeX以及YAML或JSON数据中，用CJK字符书写、中间有空格的人名按姓在前读取：`author = {夏目 漱石}`的姓是夏目，名是漱石。罗马字拼写的人名保持通常的顺序。参考文献的标题是<span lang="ja" className="font-body">参考文献</span>。见[引用与参考文献](/zh/docs/document-format-notes-references#引用与参考文献)。
 
-## 表格、题注与资源注释
+## 表格、题注与资源附注
 
-振假名、傍点、傍线、书名和割注在表格单元格、题注和资源注释中的画法与正文相同，字号取单元格或题注的字号，Canvas、PDF和HTML都是如此，行间空隙也按同样方式检查。表格和题注的文字在每一页上都横排：在竖排页面上整个块直立，所以纵中横在那里不起作用，也没有竖排的表格文字（縦組みの表）。
+振假名、傍点、傍线、书名和双行夹注在表格单元格、题注和资源附注中的画法与正文相同，字号取单元格或题注的字号，Canvas、PDF和HTML都是如此，行间空隙也按同样方式检查。表格和题注的文字在每一页上都横排：在竖排页面上整个块直立，所以纵中横在那里不起作用，也没有竖排的表格文字（縦組みの表）。
 
 ## HTML与EPUB
 
 HTML输出把每个读音写成语义化的注音：`<ruby>東<rt>とう</rt>京<rt>きょう</rt></ruby>`，每个词一个`<ruby>`，屏幕阅读器会读出来。日文文档的每一页都带`lang="ja"`，所以逐页挂载页面的宿主程序也能得到日文字形。固定版式的EPUB由这些页面组成。
 
-流式EPUB带有阅读系统能够自行应用的规则：三个禁则级别对应`line-break: strict`、`normal`或`loose`，书悬挂标点时用`hanging-punctuation: allow-end`，文字上方的芝麻点用`text-emphasis`，竖排书中的短数字和`!?`组合排在直立字格中，？！之后的一个字宽，傍线、训点、注码、标题的占行与缩进，竖排书还在包文件中声明`primary-writing-mode`。导航用日文命名。导出的其余部分见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)。
+流式EPUB带有阅读系统能够自行应用的规则：三个禁则级别对应`line-break: strict`、`normal`或`loose`，书悬挂标点时用`hanging-punctuation: allow-end`，文字上方的芝麻点用`text-emphasis`，竖排书中的短数字和`!?`组合排在直立字格中，？！之后的一个字宽，傍线、训点、注码、标题的占行与缩进，竖排书还在EPUB包文档中声明`primary-writing-mode`。导航用日文命名。导出的其余部分见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)。
 
 ## 字体
 
 Postext为每种样式只用一个字体族，缺字时不会退回到另一个字体族，所以日文书需要一款覆盖书中所印每个字符的日文字体。
 
 - **Noto Serif JP**（明朝体，明朝）用于正文，**Noto Sans JP**（黑体，ゴシック）用于标题和标签，这是常用的搭配；它们覆盖JIS X 0213，包括罗马字的长音符号，并带有竖排字形。**Shippori Mincho**和**Shippori Mincho B1**有文库本页面的样貌，但没有ō和ū。**BIZ UDPMincho**的假名是比例宽度；它的等宽版本**BIZ UDMincho**适合字符网格。**Zen Old Mincho**、**Klee One**（教科书字体）和**Kaisei Decol**适合标题和展示用途。
-- **字体的语言。** 中文字体（Noto Serif SC或TC）用中文字形画汉字：不要用它排日文。泛CJK字体（Source Han Serif、Noto Serif CJK）两种字形都有，PDF用OpenType语言系统`JAN `为日文文档以及任何文档中的`{lang=ja}`隔离段整形，所以其中的汉字和引号取日文字形。
+- **字体的语言。** 中文字体（Noto Serif SC或TC）用中文字形画汉字：不要用它排日文。泛CJK字体（Source Han Serif、Noto Serif CJK）两种字形都有，PDF用OpenType语言系统`JAN `为日文文档以及任何文档中的`{lang=ja}`隔离段成形，所以其中的汉字和引号取日文字形。
 - **用TrueType，不用CFF。** Google Fonts和Fontsource的TrueType版本会按用到的字形取子集。Source Han和Noto CJK的CFF `.otf`文件会被整个嵌入，每个字重8到25 MB（`cffEmbeddedWhole`）。为竖排书取子集时，保留`vert`、`vrt2`、`vhea`和`vmtx`。
 - **在浏览器中**，Fontsource把一个日文字体族拆成约一百个编号文件，每个文件包含一部分字符；沙盒及其PDF标签页只加载文字用到的文件。Fontsource的文件都不包含变体假名（𛀁）或其他历史假名。
 - **没有斜体。** 日文字体没有斜体；强调用傍点。
 
-配置参考中的[中日韩字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)给出了字体提供器的代码。
+配置参考中的[中日韩字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)给出了字体提供函数的代码。
 
 ## 青空文库源文本
 
@@ -439,7 +439,7 @@ python3 aozora.py 773_ruby_5968.zip -o kokoro.md --report report.json --styles s
 
 ### 竖排的文库本小说
 
-一本文库本（文庫，105 × 148 mm），Noto Serif JP 9 pt，每行38字，竖排，右侧装订。章从右页开始，按第一章编号，缩进四个字；节标题占三行，缩进六个字。禁则、约物间距、第③种段首括号、悬挂、芝麻点、『』、振假名间距和章末注都来自语言区域设置：
+一本文库本（文庫，105 × 148 mm），Noto Serif JP 9 pt，每行38字，竖排，右侧装订。章从奇数页开始，按第一章编号，缩进四个字；节标题占三行，缩进六个字。禁则、约物间距、第③种段首括号、悬挂、芝麻点、『』、振假名间距和章末注都来自语言标签：
 
 ```json
 {
@@ -501,7 +501,7 @@ python3 aozora.py 773_ruby_5968.zip -o kokoro.md --report report.json --styles s
 }
 ```
 
-没有设置`linesPerPage`，所以页面按宽度能容纳多少行就排多少行（这里是15行）。`parity: 'odd'`让每章从左页开始，即右侧装订的书的右页（recto）。注释不需要任何设置：它们排在每章之后，注码（1）在行的右侧。
+没有设置`linesPerPage`，所以页面按宽度能容纳多少行就排多少行（这里是15行）。`parity: 'odd'`让每章从奇数页（recto）开始，在右侧装订的书中就是左页。注释不需要任何设置：它们排在每章之后，注码（1）在行的右侧。
 
 ### 横排的技术书
 
@@ -570,31 +570,31 @@ python3 aozora.py 773_ruby_5968.zip -o kokoro.md --report report.json --styles s
 }
 ```
 
-不需要`cjk`和`footnotes`键：语言区域给横排日文带来它的禁则和间距，注释排在页面下端、按页编号，上面有一条长为行长三分之一的线。题注读作<span lang="ja" className="font-body">図1-1　構成</span>。
+不需要`cjk`和`footnotes`键：语言标签给横排日文带来它的禁则和间距，注释排在页面下端、按页编号，上面有一条长为行长三分之一的线。题注读作<span lang="ja" className="font-body">図1-1　構成</span>。
 
 ## 在沙盒和排版食谱中
 
-在沙盒中，**设计 › 书写系统**包含文档语言（日本語）、书写方向、装订方式和所有`cjk`设置，日文的设置也在其中。<strong>日语默认设置 › 查看…</strong>可以一步把书设为日文排版，可选竖排文库本或横排技术书，并先列出每一项改动：Noto Serif JP和Noto Sans JP，1.75 em的行距，一个字的缩进，竖排书的字符网格，図和表，第一章，占行并缩进的标题，日文列表编号，以及把会妨碍日文设置的中文设置恢复为*自动*。字体选择器把日文字体族列为一组，字体样张显示一段带傍点的<span lang="ja" className="font-body">吾輩は猫である</span>，日文书的编辑器工具栏有注音按钮和纵中横按钮。见[沙盒](/zh/docs/sandbox-design-checks#版面设计面板)。
+在沙盒中，**版面设计 › 书写系统**包含文档语言（日本語）、书写方向、装订方式和所有`cjk`设置，日文的设置也在其中。<strong>日语默认设置 › 查看…</strong>可以一步把书设为日文排版，可选竖排文库本或横排技术书，并先列出每一项改动：Noto Serif JP和Noto Sans JP，1.75 em的行距，一个字的缩进，竖排书的字符网格，図和表，第一章，占行并缩进的标题，日文列表编号，以及把会妨碍日文设置的中文设置恢复为*自动*。字体选择器把日文字体族列为一组，字体样张显示一段带傍点的<span lang="ja" className="font-body">吾輩は猫である</span>，日文书的编辑器工具栏有注音按钮和纵中横按钮。见[沙盒](/zh/docs/sandbox-design-checks#版面设计面板)。用<strong>添加语言…</strong>给一本书加上的日文版本也会得到这些改动，按原书是竖排还是横排而定，但书本身已经设定的项保持不变（见[沙盒：书、Word文件与保存](/zh/docs/sandbox-books-saving)）。
 
 展示书架上有夏目漱石的《心》（<span lang="ja" className="font-body">こころ</span>，1914年）日文版，根据青空文库的文本[竖排、右侧装订](/zh/sandbox#preset=kokoro&lang=ja)；沙盒自带的指南也有[日文版](/zh/sandbox#preset=postext-guide&lang=ja)。[排版食谱](/zh/cookbook?col=japanese-layout)在“日文排版”合集中收录了日文食谱，每个食谱是一页或一组跨页，附有排出它的脚本。
 
 ## 已知限制
 
-- **禁则**：位于行首的々不会替换成它所重复的汉字；JLReq中介于两者之间、用于杂志的“宽松”惯例没有单独的级别；在割注中，‥‥可能被分到两行。
+- **禁则**：位于行首的々不会替换成它所重复的汉字；JLReq中介于两者之间、用于杂志的“宽松”惯例没有单独的级别；在双行夹注中，‥‥可能被分到两行。
 - **约物**：汉字数字之间密排的、也作用于写成一、二、三的列举；位于行尾的中点只放弃其后的四分之一个字宽。
 - **振假名**：熟语注音的排法是让每个读音尽量靠近自己的汉字，并未覆盖JLReq附录F列出的每一种情况；段首的读音不会伸到缩进上；在同一行中两侧都被截断的词，排出来可能略长。
 - **记号**：青空文库的三角、双圆、蛇目和叉号（三角、二重丸、蛇の目、ばつ傍点），`pos=under`以外的左侧记号，以及虚线或点划线的傍线都不绘制（转换器会报告它们）；与振假名同侧的傍线会和读音重叠；`**…**`不会换成黑体。
-- **汉文训读**：组合返点（一レ）是两个半尺寸字形，而不是一个合成的记号；在行间模式下，较长的送假名可能碰到下一个字的记号；割注、题注和单元格中的记号会被丢弃。
+- **汉文训读**：组合返点（一レ）是两个半尺寸字形，而不是一个合成的记号；在行间模式下，较长的送假名可能碰到下一个字的记号；双行夹注、题注和单元格中的记号会被丢弃。
 - **标题与文字块**：行取り不作用于标注框内的标题或章首页标题；`:::pagebreak{center}`本身不会结束这一页；正文中的单个词没有行内的字取り。
 - **注释**：在分为几栏的页面上，跨页旁注排到正文所在栏的下端；横排书没有跨页旁注；推迟注释所需的空间在左页的图确定之前估算。
-- **索引**：分隔符保持为`, `；拉丁条目排在假名之前，不能改为排在最后；不可见的标记不会从同一行别处的注音借读音。
+- **索引**：条目与页码之间、页码与页码之间默认用`, `分隔，可用`index.separator`和`index.locatorSeparator`改为别的符号；拉丁条目排在假名之前，不能改为排在最后；不可见的标记不会从同一行别处的注音借读音。
 - **引用**：SIST 02是唯一随包附带的日文样式；著者-出版年式引用保留ASCII标点；参考文献不按读音排序。
 - **表格**：单元格和题注的文字在每一页上都横排。
-- **行号**：竖排文字不印行号；竖排的书打开`lineNumbers`也没有行号，并给出配置警告`lineNumbersUnsupported`。横排的书照常标注行号（[配置 › 行号](/zh/docs/configuration-notes-references#行号)）。
+- **行号**：竖排文字不印行号；竖排的书打开`lineNumbers`也没有行号，并给出配置警告`lineNumbersUnsupported`。横排的书照常加行号（[配置 › 行号](/zh/docs/configuration-notes-references#行号)）。
 - **文字绕排。** 横排中，图片或框可以放在栏的一侧，正文排在旁边（见[文字绕排](/zh/docs/document-format-resources#文字绕排)）；使用字格时，它占的宽度取整到整字，旁边的行仍在网格上。竖排不在图旁排正文：绕排的图片保持整条，并给出`textWrap`警告（资源类型的默认值则为`wrapUnsupported`）。
-- **制表符**：含有制表符（`:tab`，或设有制表位的样式下的制表符字符）的横排段落逐行排：按禁则在字与字之间断开，但不做约物挤压，也不在字与字之间分配空白来两端对齐。竖排文字没有制表位：制表符是一个词间空格，`:tab`会引发内容警告`tabInVerticalText`。带振假名、割注或汉文训读记号的段落也把其中的制表符排成词间空格。见[制表符与制表位](/zh/docs/document-format-inline#制表符与制表位)。
+- **制表符**：含有制表符（`:tab`，或设有制表位的样式下的制表符字符）的横排段落逐行排：按禁则在字与字之间断开，但不做约物挤压，也不在字与字之间分配空白来两端对齐。竖排文字没有制表位：制表符是一个词间空格，`:tab`会引发内容警告`tabInVerticalText`。带振假名、双行夹注或汉文训读记号的段落也把其中的制表符排成词间空格。见[制表符与制表位](/zh/docs/document-format-inline#制表符与制表位)。
 - **首字下沉**：横排段落可以以一个字的首字下沉开头，由段落样式或标题级别设定（见[首字下沉](/zh/docs/configuration-text#首字下沉)）：它的字号按这个字本身的高度与正文的高度来定，缩短的行由排版器照常按禁则排出。竖排文字没有首字下沉：本应以首字下沉开头的段落不带首字排出，并引发内容警告`dropCap`。
-- **代码清单**：横排的代码清单用代码字体逐行排；在含汉字的等宽字体（BIZ UDGothic）中，一个全角字符占两格，所以各列能对齐，制表符也把它算作两格。在竖排文字中，代码清单随竖排方向排，其中的拉丁文按竖排的惯例横躺，不带行号。见[代码清单](/zh/docs/configuration-styles#代码清单)。
+- **代码清单**：横排的代码清单用代码字体逐行排；在含汉字的等宽字体（BIZ UDGothic）中，一个全角字符占两格，所以各列能对齐，制表符也把它算作两格。在竖排文字中，代码清单随竖排方向排，其中的拉丁文按竖排的惯例横躺，不带行号。行内代码中的汉字和假名用周围正文的字体排（`codeStyle.inline.otherScripts: 'text'`，默认值），因为很少有代码字体包含它们。见[代码清单](/zh/docs/configuration-styles#代码清单)。
 - **字体**：每种样式一个字体族，不回退；CFF字体整个嵌入；不使用比例竖排度量（`vpal`）。
 - **设计文字**（书眉、章首页、标注框标题）与正文一样遵循禁则、约物间距以及日文与罗马字之间的间距（`cjk.composeDesignText`，自postext 1.25起），但各行不齐，读音和记号印成普通文字。
 
@@ -606,4 +606,4 @@ python3 aozora.py 773_ruby_5968.zip -o kokoro.md --report report.json --styles s
 - W3C，[CSS Text Level 3](https://www.w3.org/TR/css-text-3/)和[Level 4](https://www.w3.org/TR/css-text-4/)、[CSS Text Decoration Level 3](https://www.w3.org/TR/css-text-decor-3/)（`text-emphasis`）、[CSS Ruby Annotation Layout](https://www.w3.org/TR/css-ruby-1/)、[CSS Writing Modes Level 4](https://www.w3.org/TR/css-writing-modes-4/)和[CSS Counter Styles Level 3](https://www.w3.org/TR/css-counter-styles-3/#limited-japanese)。
 - Unicode标准附件第14号[Line Breaking Algorithm](https://www.unicode.org/reports/tr14/)和第50号[Unicode Vertical Text Layout](https://www.unicode.org/reports/tr50/)。
 - 青空文库，[注記一覧](https://www.aozora.gr.jp/annotation/)（青空文库注记指南）。
-- SIST 02《参照文献の書き方》（日本科学技术振兴机构），以及CSL的[ja-JP语言区域](https://github.com/citation-style-language/locales)。
+- SIST 02《参照文献の書き方》（日本科学技术振兴机构），以及CSL的[ja-JP本地化文件](https://github.com/citation-style-language/locales)。

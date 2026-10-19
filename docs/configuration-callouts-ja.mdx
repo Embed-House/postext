@@ -3,9 +3,9 @@
 export const metadata = {
   title: '設定：囲み',
   sidebarTitle: '囲み',
-  description: ':::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコンと外側のマーカー、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み',
+  description: ':::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコン、外側のマーカー、ラベルのタブ、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み、囲みの中に描くデザイン',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26分',
   order: 16,
   parent: 'configuration',
@@ -69,7 +69,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td><code>:::callout&#123;type="…"&#125;</code>で選ぶ識別子です。<code>type</code>が未知または欠けているフェンスには、設定した最初のスタイルが適用されます（未知のtypeはSandboxが警告します）。</td>
+      <td><code>:::callout&#123;type="…"&#125;</code>で選ぶ識別子です。<code>type</code>が未知または未指定のブロックには、設定した最初のスタイルが適用されます（未知のtypeはSandboxが警告します）。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -81,19 +81,19 @@ The glass stays hot for an hour after the flame is out.
       <td><code>extends</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td>このスタイルが元にする別のスタイルの id。設定していない項目はそのスタイルから受け継ぎます。<a href="#ほかのスタイルを元にしたスタイル">ほかのスタイルを元にしたスタイル</a>を参照。</td>
+      <td>このスタイルが元にする別のスタイルのidです。設定していない項目は、そのスタイルから受け継ぎます。<a href="#ほかのスタイルを元にしたスタイル">ほかのスタイルを元にしたスタイル</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>title</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
-      <td>既定のタイトルの文字列です。空ならタイトルはありません。フェンスの<code>title</code>属性で個別に上書きできます。</td>
+      <td>既定のタイトルの文字列です。空ならタイトルはありません。ブロックの<code>title</code>属性で個別に上書きできます。</td>
     </tr>
     <tr>
       <td><code>span</code></td>
       <td><code>'column' | 'page' | 'side'</code></td>
       <td><code>'column'</code></td>
-      <td>横方向の広がりです。段、版面の全幅、または1段半レイアウトのフロート専用のサイド段（<code>layout.sideColumnRole: 'floats'</code>）のいずれかです。サイド段のとき、囲みは流れから外れ、割り込んだ位置のテキストの横にあるその段に積まれます。<code>span</code>属性で個別に上書きできます。段組みのレイアウトでは<code>'page'</code>の囲みは<em>ページ幅のブロック</em>（span block）になります。ページを段の帯に分け、全幅の独自の段に収まります（後述のコンテナーの節を参照）。そのページのサイド段に収まらないサイド段の囲みは、次のページのサイド段に置かれます。その前に章（または文書）が終わると、待っている囲みはそれぞれ、フェンスの順に本文の後のページのサイド段に置かれ、ビルドがそれを知らせます（<code>afterText</code>。postext 1.24までは、そうした最初のページより後の囲みは失われていました）。</td>
+      <td>横方向の広がりです。段、版面の全幅、または1段半レイアウトのフロート専用のサイド段（<code>layout.sideColumnRole: 'floats'</code>）のいずれかです。サイド段のとき、囲みは流れから外れ、割り込んだ位置のテキストの横にあるその段に積まれます。<code>span</code>属性で個別に上書きできます。段組みのレイアウトでは<code>'page'</code>の囲みは<em>ページ幅のブロック</em>（span block）になります。ページを段の帯に分け、全幅の独自の段に収まります（後述のコンテナーの節を参照）。そのページのサイド段に収まらないサイド段の囲みは、次のページのサイド段に置かれます。その前に章（または文書）が終わると、待っている囲みはそれぞれ、ブロックの順に、本文の後のページのサイド段に置かれ、ビルドがそれを知らせます（<code>afterText</code>。postext 1.24までは、そうした最初のページより後の囲みは失われていました）。</td>
     </tr>
     <tr>
       <td><code>columns</code></td>
@@ -111,19 +111,19 @@ The glass stays hot for an hour after the flame is out.
       <td><code>sideAtColumnEnd</code></td>
       <td><code>'before' | 'after'</code></td>
       <td><code>'before'</code></td>
-      <td>フェンスの後のテキストが同じ段で続かないときに、サイドの囲み（<code>span: 'side'</code>）を置く位置です。続かないのは、段にそのテキストの入る余地がないときや、改段・改ページの規則がテキストを先へ送るとき（ウィドウとオーファンの規則で段落ごと送られる場合、見出しが本文と一緒に送られる場合）です。<code>'before'</code>は囲みをフェンスの位置、つまりそのページで前のテキストの横に置きます。フェンスの下に収まらないときは段の下端からせり上げます。説明する箇所の後に書いた注釈に向いています。<code>'after'</code>はフェンスの後のテキストの最初の行と高さをそろえ、そのテキストが続くページのサイド段に置きます。行の前に書いた行番号や欄外見出しに向いています。テキストが同じ段で続くときは、どちらもフェンスの位置に置きます。章の中で後に何も続かない囲みは、どちらの場合も前のテキストとともに残り、続けて書いたサイドの囲みは順序を保ちます。postext 1.4まではすべてのサイドの囲みが<code>'before'</code>として動作しており、これが既定のままです。注釈用のスタイルでは、囲みは説明する箇所のページにとどまります。</td>
+      <td>ブロックの後のテキストが同じ段で続かないときに、サイドの囲み（<code>span: 'side'</code>）を置く位置です。続かないのは、段にそのテキストの入る余地がないときや、改段・改ページの規則がテキストを先へ送るとき（ウィドウとオーファンの規則で段落ごと送られる場合、見出しが本文と一緒に送られる場合）です。<code>'before'</code>は囲みをブロックの位置、つまりそのページで前のテキストの横に置きます。その位置から下に収まらないときは、段の下端からせり上げます。説明する箇所の後に書いた注釈に向いています。<code>'after'</code>はブロックの後のテキストの最初の行と高さをそろえ、そのテキストが続くページのサイド段に置きます。行の前に書いた行番号や欄外見出しに向いています。テキストが同じ段で続くときは、どちらもブロックの位置に置きます。章の中で後に何も続かない囲みは、どちらの場合も前のテキストとともに残り、続けて書いたサイドの囲みは順序を保ちます。postext 1.4まではすべてのサイドの囲みが<code>'before'</code>として動作しており、これが既定のままです。注釈用のスタイルでは、囲みは説明する箇所のページにとどまります。</td>
     </tr>
     <tr>
       <td><code>fixed</code></td>
       <td><code>{'{ anchor?, offset? }'}</code></td>
       <td><code>{'{ anchor: { to: \'container\', edge: \'bottom-left\' } }'}</code></td>
-      <td><code>'fixed'</code>の囲みの位置です。<code>ElementAnchor</code>（<code>to</code>：<code>'container'</code>＝版面、偶数ページでは左右反転、<code>'page'</code>＝仕上がり枠、<code>'bleed'</code>＝裁ち落とし枠。<code>edge</code>：コンテナーの9つの基準位置のいずれか）と、省略できる<code>offset</code>（<code>x</code>/<code>y</code>の寸法）で指定します。</td>
+      <td><code>'fixed'</code>の囲みの位置です。<code>ElementAnchor</code>（<code>to</code>：<code>'container'</code>＝版面、偶数ページでは左右反転、<code>'page'</code>＝仕上がり枠、<code>'bleed'</code>＝塗り足しを含む枠。<code>edge</code>：コンテナーの9つの基準位置のいずれか）と、省略できる<code>offset</code>（<code>x</code>/<code>y</code>の寸法）で指定します。</td>
     </tr>
     <tr>
       <td><code>floatBarrier</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>囲みをフロートの区切りにします。囲みより前で参照された図や表は、すべて囲みより前に配置されます（ページの空き位置、なければ囲みより先に開くページ）。こうして、章を締めくくる囲み（典型的には「要点」のまとめ）を越えてフロートが流れ出ることはありません。章扉、<code>:::part</code>、文書の末尾は常に区切りになります。</td>
+      <td>囲みをフロートの区切りにします。囲みより前で参照された図や表は、すべて囲みより前に配置されます（ページの空いている場所、なければ囲みより先に開くページ）。こうして、章を締めくくる囲み（典型的には「要点」のまとめ）を越えてフロートが流れ出ることはありません。章扉、<code>:::part</code>、文書の末尾は常に区切りになります。</td>
     </tr>
     <tr>
       <td colSpan="4">段組みのページにある<code>span: 'page'</code>の囲みは、直前のテキストの下で帯を切ります。囲みより前で参照された全幅の図は、先にその切れ目を使います。テキストの段の高さをそろえ、テキストが終わった位置に図を置き、囲みはその下に続きます（収まらなくなったときは次のページへ送ります）。高さをそろえたテキストの後に収まらないほど高い図は次のページの先頭に置き、囲みはその後に続きます。図が抜けた帯も高さをそろえて終わります。分割できる囲み（<code>keepTogether: false</code>）は、テキストと図の下で、入るだけの項目を収めて始まり、残りは次のページに続きます。</td>
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>、見出しのフォント、<code>400</code>、<code>1.5em</code>、メインカラー、<code>'top'</code>、<code>'inline'</code>、<code>'right'</code></td>
-      <td>内容の横に置く、文字のグリフ（<code>kind: 'glyph'</code>）またはビットマップやSVGのリソース（<code>kind: 'resource'</code>＋<code>resourceId</code>）です。側辺に帯があるときアイコンは帯の上の中央に置き、帯がなければ専用の列（<code>size</code>＋<code>titleStyle.gap</code>）を確保します。<code>align: 'center'</code>は内容に対して縦方向の中央に置きます。リソースの画像は縦横比を保って正方形の中に収めます。<code>width</code>を設定すると<code>width</code>×<code>size</code>の枠の中に収めます（横長のアイコンの列など）。内容より高いアイコンは、囲みをその高さまで広げます（<code>align: 'center'</code>のときは内容をアイコンの中央にそろえます）。<code>position: 'corner'</code>はアイコンをバッジとして上の角に掛け、半分を枠の外に出し、内容の場所は取りません。横長のアイコン（<code>width</code>）は描画される幅を基準に角の中央に置き、左の角ではタイトルをアイコンの内側の半分より先から始めます（postext 1.4までは高さを基準に置いていたため、横長の列が囲みからはみ出してタイトルに重なっていました）。<code>cornerSide</code>は角を選びます。<code>'right'</code>/<code>'left'</code>、または左右対称の余白のページの奇偶に従う<code>'outer'</code>/<code>'inner'</code>です（outerは奇数ページでは右、偶数ページでは左）。</td>
+      <td>内容の横に置く、文字のグリフ（<code>kind: 'glyph'</code>）またはビットマップやSVGのリソース（<code>kind: 'resource'</code>＋<code>resourceId</code>）です。側辺に帯があるときアイコンは帯の上の中央に置き、帯がなければ専用の列（<code>size</code>＋<code>titleStyle.gap</code>）を確保します。<code>align: 'center'</code>は内容に対して縦方向の中央に置きます。リソースの画像は縦横比を保って正方形の中に収めます。<code>width</code>を設定すると<code>width</code>×<code>size</code>の枠の中に収めます（横長のアイコンの列など）。内容より高いアイコンは、囲みをその高さまで広げます（<code>align: 'center'</code>のときは内容をアイコンの中央にそろえます）。<code>position: 'corner'</code>はアイコンをバッジとして上の角に掛け、半分を枠の外に出し、内容の場所は取りません。横長のアイコン（<code>width</code>）は描画される幅を基準に角の中央に置き、左の角ではタイトルをアイコンの内側の半分より先から始めます（postext 1.4までは高さを基準に置いていたため、横長の列が囲みからはみ出してタイトルに重なっていました）。<code>cornerSide</code>は角を選びます。<code>'right'</code>/<code>'left'</code>、左右対称の余白のページの奇偶に従う<code>'outer'</code>/<code>'inner'</code>（outerは奇数ページでは右、偶数ページでは左）、または帯と同じく囲み自身の書字方向に従う<code>'start'</code>/<code>'end'</code>です。</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -186,7 +186,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>body</code></td>
       <td><code>&#123; fontFamily, fontSize, lineHeight, color, boldColor, italicColor, fontWeight, boldFontWeight, italic, smallCaps, letterSpacing, textAlign, hyphenation, paragraphSpacing, firstLineIndent, tabStops, tabInterval &#125;</code></td>
       <td><code>bodyText</code>を継承。<code>italic</code>/<code>smallCaps</code>は<code>false</code></td>
-      <td>囲みの中の段落とリスト項目の文字組みです。未設定のフィールドはすべて本文テキストを継承します。<code>italicColor</code>はイタリックの部分の色を設定します（囲みの色でイタリックにした引用文など）。<code>fontWeight</code>/<code>boldFontWeight</code>は通常と太字の部分のウェイトを設定します。<code>italic</code>は囲み全体をイタリックにし、<code>*…*</code>の部分は立体に戻ります。<code>smallCaps</code>は囲み全体をスモールキャピタルにします。<code>tabStops</code>と<code>tabInterval</code>は囲みの中で本文のものを置き換えます（<a href="/ja/docs/configuration-text#タブ位置">タブ位置</a>を参照）。囲みのテキストがほかに何を引き継ぐかは<a href="#囲みの中の文字組み">囲みの中の文字組み</a>を参照してください。postext 1.42 から、<code>letterSpacing</code>で囲みの段落とリスト項目の字間を調整できます。<code>em</code>では本文のサイズが基準で、負の値は詰めます。字間は行の測定に含まれるので、数パーセント詰めて組んだ囲みは原稿と同じ位置で改行します。<code>:::paragraphs</code>フェンス内の段落は、そのスタイル自身の字間を保ちます。このスタイルを使う枠にも同じ設定が適用されます。</td>
+      <td>囲みの中の段落とリスト項目の文字組みです。未設定のフィールドはすべて本文テキストを継承します。<code>italicColor</code>はイタリックの部分の色を設定します（囲みの色でイタリックにした引用文など）。<code>fontWeight</code>/<code>boldFontWeight</code>は通常と太字の部分のウェイトを設定します。<code>italic</code>は囲み全体をイタリックにし、<code>*…*</code>の部分は正体に戻ります。<code>smallCaps</code>は囲み全体をスモールキャピタルにします。<code>tabStops</code>と<code>tabInterval</code>は囲みの中で本文のものを置き換えます（<a href="/ja/docs/configuration-text#タブ位置">タブ位置</a>を参照）。囲みのテキストがほかに何を引き継ぐかは<a href="#囲みの中の文字組み">囲みの中の文字組み</a>を参照してください。postext 1.42以降は、<code>letterSpacing</code>で囲みの段落とリスト項目の字間を調整できます。<code>em</code>は本文のサイズが基準で、負の値は字間を詰めます。字間は行の測定に含まれるので、数パーセント詰めて組んだ囲みは原稿と同じ位置で改行します。<code>:::paragraphs</code>ブロック内の段落は、そのスタイル自身の字間を保ちます。このスタイルを使う枠にも同じ設定が適用されます。</td>
     </tr>
     <tr>
       <td><code>lists</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>未設定（タブなし）</td>
-      <td>囲みの上辺に付け、フェンスの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>です。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。postext 1.42 から、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、パディングの合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43 から、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
+      <td>囲みの上辺に付け、ブロックの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>、または帯の<code>'start'</code>/<code>'end'</code>と同じく囲み自身の書字方向に従う<code>'top-start'</code>/<code>'top-end'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>、持ち上げと内側へのずらしはなし、画像は幅<code>1em</code>で文字から<code>0.3em</code>離します。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。postext 1.42以降は、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、内側余白の合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43以降は、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -210,19 +210,19 @@ The glass stays hot for an hour after the flame is out.
       <td><code>marginTop</code> / <code>marginBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.75em</code> / <code>0.75em</code></td>
-      <td>囲みの上のアキ（前のブロックのマージンと相殺されます）と、下の最小のアキ（<code>snapToGrid: false</code>のときは正確なアキ）です。フロートとして配置した囲み（<code>placement: 'top'</code>、<code>'bottom'</code>、<code>'auto'</code>）は、帯とテキストの間にフロートのアキ（本文1行分）を保ちます。それより広い<code>marginBottom</code>は上の帯にある囲みの下のアキを、それより広い<code>marginTop</code>は下の帯にある囲みの上のアキを決め、帯とともにグリッドに切り上げられます。postext 1.4までは、フロートとして配置した囲みはマージンを無視していました。</td>
+      <td>囲みの上のアキ（前のブロックの下のアキと相殺されます）と、下の最小のアキ（<code>snapToGrid: false</code>のときは正確なアキ）です。フロートとして配置した囲み（<code>placement: 'top'</code>、<code>'bottom'</code>、<code>'auto'</code>）は、帯とテキストの間にフロートのアキ（本文1行分）を保ちます。それより広い<code>marginBottom</code>は上の帯にある囲みの下のアキを、それより広い<code>marginTop</code>は下の帯にある囲みの上のアキを決め、帯とともにグリッドに切り上げられます。postext 1.4までは、フロートとして配置した囲みはこれらのアキを無視していました。</td>
     </tr>
     <tr>
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>true</code>のとき、囲みの後の流れはベースライングリッドに戻るので、下のアキは<code>marginBottom</code>をグリッドの行単位に切り上げた値になります。<code>false</code>のとき、囲みは正確な<code>marginBottom</code>を保ち、それが次のブロックの上マージンと相殺されます。このスタイルの囲みが2つ続けば、間隔はちょうど<code>max(marginBottom, marginTop)</code>です。囲みの後のテキストは、次にグリッドに戻る位置（見出し、リストの終わり）までグリッドから外れることがあり、<code>headings.snapToGrid: false</code>の見出しの後と同じ動作になります。囲みを積み重ねて作る文書（ワークシート、書式）向けです。これが効くのは流れの中の囲みです。段組みのレイアウトのページ全幅の囲み、フロートとして配置した囲み、固定の囲み、サイドの囲みはグリッドを保ちます。段の帯とフロートの領域はグリッドに沿って組まれるためです。段末そろえの手段は変わりません。段を締めくくる囲みは、引き続き段の最後のグリッド位置まで押し下げられます。</td>
+      <td><code>true</code>のとき、囲みの後の流れはベースライングリッドに戻るので、下のアキは<code>marginBottom</code>をグリッドの行単位に切り上げた値になります。<code>false</code>のとき、囲みは正確な<code>marginBottom</code>を保ち、それが次のブロックの上のアキと相殺されます。このスタイルの囲みが2つ続けば、間隔はちょうど<code>max(marginBottom, marginTop)</code>です。囲みの後のテキストは、次にグリッドに戻る位置（見出し、リストの終わり）までグリッドから外れることがあり、<code>headings.snapToGrid: false</code>の見出しの後と同じ動作になります。囲みを積み重ねて作る文書（ワークシート、書式）向けです。これが効くのは流れの中の囲みです。段組みのレイアウトのページ全幅の囲み、フロートとして配置した囲み、固定の囲み、サイドの囲みはグリッドを保ちます。段の帯とフロートの領域はグリッドに沿って組まれるためです。段末そろえの手段は変わりません。段を締めくくる囲みは、引き続き段の最後のグリッド位置まで押し下げられます。</td>
     </tr>
     <tr>
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>true</code>のとき、囲みは分割しません。残りの場所に収まらない囲みは、まるごと次の段かページに送ります。分割せずに保てないのは、何も入っていない1段分（<code>span: 'page'</code>の囲みでは1ページ分）より高い囲みだけです。そうした囲みは、はみ出す代わりに後述の<code>false</code>の規則で分割し、現れた位置から始めます。1段に収まる続きは、そこからまるごと送ります。それほど高いフロートの囲み（<code>placement: 'top' | 'bottom' | 'auto'</code>）はフロートにならず、現れた位置で流れの中にとどまります。<code>false</code>のとき、どの囲みも子ブロックの間、または段落やリスト項目の行の間で分割できます。収まる最も深い切れ目で現在の段（<code>span: 'page'</code>の囲みではページ。段の下端にそろえます）を閉じ、残りは次の段の先頭で独立した囲みとして続きます。枠と帯は同じで、アイコンはなく、<code>repeatTitle</code>で繰り返さない限りタイトルもありません。それでも高すぎれば、さらに分割します。インラインのアイコンが先頭の部分で占める列は、どの断片でも空けたまま残すので、囲みはどのページでも同じ行長になります。リスト項目の中で切るときは、行頭記号を先頭の部分に残します。どの断片の枠もフェンスの<code>contentIndex</code>/<code>containerId</code>を共有し、<code>callout.part</code>/<code>callout.continued</code>を記録します。章を締めくくる長い「要点」の囲みには<code>headings.balancing.beforeSpan</code>と組み合わせて、また囲みが図をページから押し出してはならない注記のスタイルに使います。入れ子の囲み（別の囲みの中の<code>:::callout</code>）は親の子要素の1つとして扱います。切れ目はその前後に入り、入れ子の囲みの中で切るのは、そのスタイルが分割を許すとき（<code>keepTogether: false</code>、または1段より高いとき）だけで、そのスタイル自身の<code>splitMinLines</code>に従います。postext 1.39 からは、組版ページの枠と同じく本文の規則に従って切ります。見出しで断片が終わることはなく（<code>headings.keepWithNext</code>）、リスト項目の間で切るときは前後に少なくとも2項目を残し（<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>。オフなら1項目）、<code>shortListSplit: 'avoid'</code> のもとで <code>bodyText.shortListMaxItems</code> 項目以下のリストは項目の間では切りません。どの切り方も規則を満たさないときは、見出しやリストの前で断片を終えるか、項目の途中で切ります。</td>
+      <td><code>true</code>のとき、囲みは分割しません。残りの場所に収まらない囲みは、まるごと次の段かページに送ります。分割せずに保てないのは、何も入っていない1段分（<code>span: 'page'</code>の囲みでは1ページ分）より高い囲みだけです。そうした囲みは、はみ出す代わりに後述の<code>false</code>の規則で分割し、現れた位置から始めます。1段に収まる続きは、そこからまるごと送ります。それほど高いフロートの囲み（<code>placement: 'top' | 'bottom' | 'auto'</code>）はフロートにならず、現れた位置で流れの中にとどまります。<code>false</code>のとき、どの囲みも子ブロックの間、または段落やリスト項目の行の間で分割できます。収まる最も深い切れ目で現在の段（<code>span: 'page'</code>の囲みではページ。段の下端にそろえます）を閉じ、残りは次の段の先頭で独立した囲みとして続きます。枠と帯は同じで、アイコンはなく、<code>repeatTitle</code>で繰り返さない限りタイトルもありません。それでも高すぎれば、さらに分割します。インラインのアイコンが先頭の部分で占める列は、どの断片でも空けたまま残すので、囲みはどのページでも同じ行長になります。リスト項目の中で切るときは、行頭記号を先頭の部分に残します。どの断片の枠もブロックの<code>contentIndex</code>/<code>containerId</code>を共有し、<code>callout.part</code>/<code>callout.continued</code>を記録します。章を締めくくる長い「要点」の囲みには<code>headings.balancing.beforeSpan</code>と組み合わせて、また囲みが図をページから押し出してはならない注記のスタイルに使います。入れ子の囲み（別の囲みの中の<code>:::callout</code>）は親の子要素の1つとして扱います。切れ目はその前後に入り、入れ子の囲みの中で切るのは、そのスタイルが分割を許すとき（<code>keepTogether: false</code>、または1段より高いとき）だけで、そのスタイル自身の<code>splitMinLines</code>に従います。postext 1.39以降は、テンプレートページの枠と同じく本文の規則に従って切ります。見出しで断片が終わることはなく（<code>headings.keepWithNext</code>）、リスト項目の間で切るときは前後に少なくとも2項目を残し（<code>bodyText.avoidOrphansInLists</code> / <code>avoidWidowsInLists</code>。オフなら1項目）、<code>shortListSplit: 'avoid'</code>のもとでは、<code>bodyText.shortListMaxItems</code>項目以下のリストを項目の間で切りません。どの切り方も規則を満たさないときは、見出しやリストの前で断片を終えるか、項目の途中で切ります。</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>そのマーカーの文字列です（脚本の「(MORE)」など）。囲みの本文の書体とサイズで組み、文書の言語ごとに既定値があります。</td>
+      <td><code>'Continued'</code></td>
+      <td>そのマーカーの文字列です（脚本の「(MORE)」など）。囲みの本文の書体とサイズで組みます。既定値は分割された表と同じく文書の言語に従い、日本語では<code>'次ページへ続く'</code>、スペイン語では<code>'Continúa'</code>です。</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -289,7 +289,7 @@ The glass stays hot for an hour after the flame is out.
 
 ### ほかのスタイルを元にしたスタイル
 
-`extends` には `calloutStyles` の別のスタイルを指定します。このスタイルで設定していない項目は、すべてそのスタイルから受け継ぎます。`padding`、`border`、`titleStyle`、`fixed` のようなオブジェクトはキーごとに合わせるので、内側のアキの一辺だけ、あるいは `fixed.offset` だけを変えられます。色と長さは丸ごと受け継ぎ、`id` と `name` は受け継ぎません。元のスタイル自体がさらに別のスタイルを元にしてもかまいません。囲みをいろいろな場所に置く本では、見た目を一つのスタイルにまとめ、置き場所ごとに場所だけを書いた小さなスタイルを作れます。
+`extends`には`calloutStyles`の別のスタイルを指定します。このスタイルで設定していない項目は、すべてそのスタイルから受け継ぎます。`padding`、`border`、`titleStyle`、`fixed`のようなオブジェクトはキーごとに合成するので、内側余白の1辺だけ、あるいは`fixed.offset`だけを変えられます。色と長さは丸ごと受け継ぎ、`id`と`name`は受け継ぎません。元のスタイル自体が、さらに別のスタイルを元にしていてもかまいません。囲みをいろいろな場所に置く本では、見た目を1つのスタイルにまとめ、置き場所ごとに、場所だけを書いた小さなスタイルを作れます。
 
 ```ts
 calloutStyles: [
@@ -303,11 +303,11 @@ calloutStyles: [
 ]
 ```
 
-`caja` の見た目を変えれば、どの囲みもそれぞれの場所のまま変わります。存在しないスタイルを指す `extends` は `calloutStyleExtendsUnknown` を出し（警告がいちばん近い id を示し、スタイルは既定値で単独に使われます）、互いを元にして循環するスタイルは `calloutStyleExtendsCycle` を出します（どれかが循環の外のスタイルを元にするまで、単独で使われます）。Sandbox では囲みスタイルの **元にするスタイル** で設定します。ほかのスタイルの元になっているスタイルを削除すると、その設定を子のスタイルに書き込むので、囲みは変わりません。**枠のスタイル** の節で **見た目だけを比べる** で統合するとき、**囲みを今の場所に残す** がオン（既定）なら、置き場所の違うスタイルはこうした小さなスタイルとして残り、囲みは動きません。postext 1.39 から。
+`caja`の見た目を変えれば、どの囲みもそれぞれの場所のまま見た目が変わります。存在しないスタイルを指す`extends`は`calloutStyleExtendsUnknown`の警告を出し（警告はいちばん近いidを示し、スタイルは既定値をもとに単独で使われます）、互いを元にして循環するスタイルは`calloutStyleExtendsCycle`の警告を出します（どれかが循環の外のスタイルを元にするまで、単独で使われます）。Sandboxでは、囲みスタイルの**元にするスタイル**で設定します。ほかのスタイルの元になっているスタイルを削除すると、その設定を子のスタイルに書き込むので、囲みは変わりません。**枠のスタイル**の節で**見た目だけを比べる**を使って統合するとき、**囲みを今の場所に残す**がオン（既定）なら、置き場所の違うスタイルはこうした小さなスタイルとして残り、囲みは動きません（postext 1.39以降）。
 
 ### `:::callout`コンテナー
 
-`:::callout{type="<id>"}`の行で囲みを開き、`:::`だけの行で閉じます。フェンスは5つの属性を受け付けます。`type`（スタイルのid）、`title`（スタイルのタイトルを上書き）、`span`、`placement`、`columns`（スタイルの値を上書き）です。間の内容は囲みの中に組まれます。省略できるタイトルの後に段落、リスト、引用、数式、リソースの埋め込みが続き、それぞれスタイルの`body`/`lists`の文字組みで組まれます（見出しは通常のスタイルのままです）。子要素の間のマージンは本文と同じく相殺されます。囲みの内部はベースライングリッドから外れ、囲みの後で流れはグリッドに戻り、下に少なくとも`marginBottom`のアキを取ります（グリッドが優先され、マージンは最小値です。リソースと同じ約束です）。`snapToGrid: false`のスタイルでは代わりに正確な`marginBottom`を保ち、囲みの後のテキストは次の見出しかリストの終わりまでグリッドから外れます。囲みの直前の見出しは囲みと一緒に送られます。
+`:::callout{type="<id>"}`の行で囲みを開き、`:::`だけの行で閉じます。開始行には5つの属性を書けます。`type`（スタイルのid）、`title`（スタイルのタイトルを上書き）、`span`、`placement`、`columns`（スタイルの値を上書き）です。間の内容は囲みの中に組まれます。省略できるタイトルの後に段落、リスト、引用、数式、リソースの埋め込みが続き、それぞれスタイルの`body`/`lists`の文字組みで組まれます（見出しは通常のスタイルのままです）。子要素の間のアキは本文と同じく相殺されます。囲みの内部はベースライングリッドから外れ、囲みの後で流れはグリッドに戻り、下に少なくとも`marginBottom`のアキを取ります（グリッドが優先され、`marginBottom`は最小値です。リソースと同じ約束です）。`snapToGrid: false`のスタイルでは代わりに正確な`marginBottom`を保ち、囲みの後のテキストは次の見出しかリストの終わりまでグリッドから外れます。囲みの直前の見出しは囲みと一緒に送られます。
 
 このバージョンでの制約は次のとおりです。
 
@@ -315,13 +315,13 @@ calloutStyles: [
 - フロートは分割できない囲みに譲ります。図の参照の直後のブロックが`keepTogether`の囲みのとき、その囲みが現在の帯の中で入る段（フロートの前に囲みを収めていた参照元の段、またはその後の空の段）をなくしてしまう位置は使いません。図は次の候補の位置（たいていは次のページ）に移り、囲みは流れの中にとどまります。囲みをページから押し出して段に図だけを残すのではなく、組版者が組むとおりに組みます。
 - 段組みのレイアウトで`span: 'page'`を指定すると、囲みは**ページ幅のブロック**になります。版面の全幅で組まれ、ページを段の帯に分けます。囲みの上の段は切れ目の線で閉じ、囲みは全幅の独自の段に入り、その下で新しい段の帯が始まるので、流れはすべての段で囲みの下に続きます。段の高さが*そろっている*位置（ページの先頭、`span: 'page'`の章扉の見出しの直下、別のページ幅のブロックの直下、上のフロートの帯の直下）では、囲みはそこでそのまま切ります。段の高さがそろわないページの途中に来たときは、組版者が組むとおりに組みます。囲みの上のテキストをすべての段で同じ高さに切り（エンジンは帯の段を同じグリッド行数に縮めて配置をやり直すので、テキストは段から段へ自然にあふれ、オーファン、ウィドウ、次と分離しない規則もすべて適用されます）、囲みはページ全幅に広がり、その下で段が再開します。切るには配置を何回か余分にやり直します。切れ目の線で、囲みと、その下にウィドウの最小行数分の本文行を入れる余地がなくなるとき、または数回試しても収まる配置がないときは、囲みを次のページの先頭へ送ります。囲みの上のテキストは切れ目に従います。図の下で段が上に残す数行に入りきらない段落は次の段に送り（その図は段の中で単独になります）、それでもあるブロックが切れ目を越えるときは、そのブロックの終わる位置ではなく、切れ目を1行下げます。帯を開く分割された囲みもそこで切るので、残りが切れ目を越えることはありません。`headings.balancing.beforeSpan`（既定）のときは、囲みが抜けた帯は章の最後の帯と同じように後ろで高さをそろえて切ります。スタイルが分割を許す（`keepTogether: false`）ときは、高さをそろえた段の下に収まる囲みの部分がページを締めくくり、残りが次のページの先頭に来ます。`beforeSpan: false`のときは、抜けたページは通常どおり段末をそろえるだけで、改ページは強制しません。ページ幅のブロックの直前の見出しは、囲みと一緒には送られません。1段のレイアウトでは、`span: 'page'`はただのインラインです。
 - `placement: 'fixed'`は囲みを流れから外します。囲みは組まれた後（`width: 'auto'`はタイトルに合わせて縮み、`'fill'`はアンカーの点の下にあるテキストの段の幅を取ります）、流れの中で現れたページの、`fixed.anchor`/`fixed.offset`が示す位置に固定されます。既定は版面の左下の角です。囲みが覆うテキストの段は、フロートの帯とまったく同じようにその領域を明け渡します（下から削り、段がまだ空なら上から削ります）。その領域にすでにテキスト、フロート、ページ幅のブロックがあるときは、囲みを次のページへ送ります。章を締めくくる固定の囲み（次のブロックが章扉、`:::part`、フロートの区切りの囲み、または文書の末尾のもの）は、まず上の段の高さをそろえる（`headings.balancing.trailing`）ので、短い最終ページは下のバッジとそろって終わります。枠と子要素は`page.floats`に入り、どのバックエンドでも段のクリップの外に描画されます。
-- `placement: 'top' | 'bottom'`は囲みをリソースと同じように**フロート**として配置します。囲みは現れた位置で流れから外れ、その位置以降で最初に空いている帯（現在のページの下（`'bottom'`）、または流れが次に開くページの上か下）に、段の幅（`span: 'column'`）または版面の全幅（`span: 'page'`）で入ります。後に続くテキストが、囲みの抜けたページを埋めます。枠と子要素は、固定の囲みと同じく`page.floats`に入ります。新しいページの先頭に来るフロートの囲みは、そのページを待っている図より先に組まれます。前のページで引用され、その下に収まる図は、テキストが3行未満しか残らないときでも、そのページの残りを使います（図版のページ：囲みと図だけで、間にテキストはありません）。`span: 'side'`の囲みはフロートになりません。placementにかかわらず、テキストの横に積まれます。`columns`が1より大きいとき（スタイルでもフェンスの属性でも指定でき、postext 1.18以降）、`span: 'column'`の囲みはその数の隣り合う段を使います。上端のそろった空の段の並びの頭か、現在の段とその後の空の段の足です。例：`:::callout{placement="top" columns="2"}`。
+- `placement: 'top' | 'bottom'`は囲みをリソースと同じように**フロート**として配置します。囲みは現れた位置で流れから外れ、その位置以降で最初に空いている帯（現在のページの下（`'bottom'`）、または流れが次に開くページの上か下）に、段の幅（`span: 'column'`）または版面の全幅（`span: 'page'`）で入ります。後に続くテキストが、囲みの抜けたページを埋めます。枠と子要素は、固定の囲みと同じく`page.floats`に入ります。新しいページの先頭に来るフロートの囲みは、そのページを待っている図より先に組まれます。前のページで引用され、その下に収まる図は、テキストが3行未満しか残らないときでも、そのページの残りを使います（図版のページ：囲みと図だけで、間にテキストはありません）。`span: 'side'`の囲みはフロートになりません。placementにかかわらず、テキストの横に積まれます。`columns`が1より大きいとき（スタイルでもブロックの属性でも指定できます。postext 1.18以降）、`span: 'column'`の囲みはその数の隣り合う段を使います。上端のそろった空の段の並びの頭か、現在の段とその後の空の段の足です。例：`:::callout{placement="top" columns="2"}`。
 - `width: 'auto'`はタイトルにだけ合わせて縮み、子要素は無視します。
-- ほかの囲みの中に入れ子にした`:::callout`は、独立した囲みです。自分のスタイル（背景、枠線、角の半径、内側余白、帯、タイトル、アイコン、マーカー、ラベル、文字組み）で、親の内側の全幅に組まれ、親の子要素の1つとして積まれます。`marginTop`/`marginBottom`は隣の要素と相殺されます。`span`と`placement`（フェンスまたはスタイル）は無視され、入れ子の囲みは常に親の中を流れます。`floatBarrier`と`snapToGrid`も無視されます。囲みは何重にでも入れ子にでき、`:::columns`グループの中にも置けます（それぞれ1つの段にまるごと入ります）。親が分割されるとき、切れ目は入れ子の囲みの前後に入り、入れ子のスタイルが分割を許すときはその中にも入ります。どの断片も、切れ目が通る枠を描き直します。前の断片から続く入れ子の囲みは、トップレベルの続きと同じく、タイトルとアイコンを省きます。
-- 子要素の中の`:::columns{count=N}`…`:::`グループは、囲みの中で、その子要素を等幅の`N`段に`columnGap`の間隔で組みます。段の高さが最もそろうブロックや行の境界で切り（途中で切れた段落やリスト項目は、次の段の先頭で行頭記号なしに続きます）、どの段もグループの上端から始まり、グループの高さは最も高い段に合わせます。グループの後の子要素は全幅に戻ります。分割される囲み（`keepTogether: false`、または段より高い囲み）は、グループの中でも段と段の間で切ります。snake のグループは段を順に埋めて次の断片に続き、parallel のグループ（`breaks`）は流れごとに続きます（postext 1.25から。[ドキュメント形式 › `:::columns`](/ja/docs/document-format-directives#columns)を参照）。フェンスの`gap`はそのグループについて`columnGap`の代わりになり、`rule`は各段間に罫線を引きます。要点を2段にまとめたり、幅の広い囲みで表を横に並べたりするのに使います。
-- フェンスの6つ目の属性`label`は、スタイルのラベルタブに印字されます（前述の`label`を参照）。例：`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`。`label`スタイルがなければこの属性は無視されます。
+- ほかの囲みの中に入れ子にした`:::callout`は、独立した囲みです。自分のスタイル（背景、枠線、角の半径、内側余白、帯、タイトル、アイコン、マーカー、ラベル、文字組み）で、親の内側の全幅に組まれ、親の子要素の1つとして積まれます。`marginTop`/`marginBottom`は隣の要素と相殺されます。`span`と`placement`（ブロックの属性でもスタイルでも）は無視され、入れ子の囲みは常に親の中を流れます。`floatBarrier`と`snapToGrid`も無視されます。囲みは何重にでも入れ子にでき、`:::columns`グループの中にも置けます（それぞれ1つの段にまるごと入ります）。親が分割されるとき、切れ目は入れ子の囲みの前後に入り、入れ子のスタイルが分割を許すときはその中にも入ります。どの断片も、切れ目が通る枠を描き直します。前の断片から続く入れ子の囲みは、トップレベルの続きと同じく、タイトルとアイコンを省きます。
+- 子要素の中の`:::columns{count=N}`…`:::`グループは、囲みの中で、その子要素を等幅の`N`段に`columnGap`の間隔で組みます。段の高さが最もそろうブロックや行の境界で切り（途中で切れた段落やリスト項目は、次の段の先頭で行頭記号なしに続きます）、どの段もグループの上端から始まり、グループの高さは最も高い段に合わせます。グループの後の子要素は全幅に戻ります。分割される囲み（`keepTogether: false`、または段より高い囲み）は、グループの中でも段と段の間で切ります。snakeのグループは段を順に埋めて次の断片に続き、parallelのグループ（`breaks`）は流れごとに続きます（postext 1.25以降。[文書形式 › `:::columns`](/ja/docs/document-format-directives#columns)を参照）。ブロックの`gap`はそのグループについて`columnGap`の代わりになり、`rule`は各段間に罫線を引きます。要点を2段にまとめたり、幅の広い囲みで表を横に並べたりするのに使います。
+- ブロックの6つ目の属性`label`は、スタイルのラベルタブに印字されます（前述の`label`を参照）。例：`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`。`label`スタイルがなければこの属性は無視されます。
 
-VDTでは、囲みは`type: 'callout'`の枠ブロックになり、その装飾（背景、帯、アイコン、タイトル）は`designOverlay`に入ります。その後に、同じ段の中で子ブロックが続きます。枠とすべての子要素はフェンスの`containerId`を持ちます。入れ子の囲みは、子要素の中の独立した`type: 'callout'`の枠で、その後に自分のブロックが続きます。それらはトップレベルのフェンスの`containerId`を保ち（配置と段末そろえからは1つの単位に見えます）、`calloutPath`を加えます。これは周りの入れ子のフェンスのコンテナーidを外側から順に並べたものです（入れ子の枠自身のidが最後の要素です）。タグ付きPDFは、入れ子の囲みごとに、親の囲みの中に`Div`を作ります。アイコンの画像はリソースの画像と同じ方法で解決されます。canvasの画像レジストリー、HTMLの`resourceImageUrl`オプション、PDFの`resourceBytes`プロバイダーです。
+VDTでは、囲みは`type: 'callout'`の枠ブロックになり、その装飾（背景、帯、アイコン、タイトル）は`designOverlay`に入ります。その後に、同じ段の中で子ブロックが続きます。枠とすべての子要素には、そのブロックの`containerId`が付きます。入れ子の囲みは、子要素の中の独立した`type: 'callout'`の枠で、その後に自分のブロックが続きます。それらはトップレベルのブロックの`containerId`を保ち（配置と段末そろえからは1つの単位に見えます）、さらに`calloutPath`が加わります。これは、周りを囲む入れ子のブロックのコンテナーidを外側から順に並べたものです（入れ子の枠自身のidが最後の要素です）。タグ付きPDFは、入れ子の囲みごとに、親の囲みの中に`Div`を作ります。アイコンの画像は、リソースの画像と同じ方法で取得されます。canvasの画像レジストリー、HTMLの`resourceImageUrl`オプション、PDFの`resourceBytes`プロバイダーです。
 
 ```ts
 const resolved = resolveCalloutStylesConfig(config.calloutStyles, resolvedBodyText, resolvedHeadings, resolvedUnorderedLists, config.locale);
@@ -334,7 +334,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
 
 ### 番号付きの定理と証明
 
-`numbering`を持つスタイルは、LaTeXの`amsthm`が定理環境を数えるように、その囲みを数えます（postext 1.19以降）。各囲みはラベルと番号を印字し（最初の段落の先頭に「**定理2.**」）、フェンスの`title`は番号の後に括弧に入れて続きます。`:::callout{type="theorem" title="Bradley–Terry"}`は「**定理2**（Bradley–Terry）**.**」で始まります。識別子を付けて開いた囲み（`{#thm:main}`）は相互参照の対象になり、参照は「定理2」と印字し（`:ref{id="thm:main"}`）、`\ref{thm:main}`や`style=number`は2を印字します。
+`numbering`を設定したスタイルは、LaTeXの`amsthm`が定理環境を数えるように、その囲みを数えます（postext 1.19以降）。各囲みはラベルと番号を印字し（最初の段落の先頭に「**定理2.**」）、ブロックの`title`は番号の後に括弧に入れて続きます。`:::callout{type="theorem" title="Bradley–Terry"}`は「**定理2**（Bradley–Terry）**.**」で始まります。識別子を付けて開いた囲み（`{#thm:main}`）は相互参照の対象になり、参照は「定理2」と印字し（`:ref{id="thm:main"}`）、`\ref{thm:main}`や`style=number`は2を印字します。
 
 <table>
   <thead>
@@ -374,7 +374,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
       <td><code>bold</code> / <code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code> / <code>false</code></td>
-      <td>段落頭のラベルとその後に付く文字の書体で、囲みの本文にかかわりません。本文がイタリック（<code>body.italic</code>）でも、立体のラベルは立体のままです。括弧内のタイトルは、通常のウェイトの立体で組みます。</td>
+      <td>段落頭のラベルとその後に付く文字の書体で、囲みの本文にかかわりません。本文がイタリック（<code>body.italic</code>）でも、正体のラベルは正体のままです。括弧内のタイトルは、通常のウェイトの正体で組みます。</td>
     </tr>
     <tr>
       <td><code>suffix</code></td>
@@ -385,7 +385,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
   </tbody>
 </table>
 
-証明は、番号のないラベルと終わりの記号を持つスタイルです。
+証明は、番号のないラベルと終わりの記号を設定したスタイルです。
 
 ```ts
 calloutStyles: [
@@ -411,7 +411,7 @@ calloutStyles: [
 - **引用**は、囲みの本文の書体、サイズ、ウェイト（本文と同じくイタリックでグレー）と、スモールキャピタルに従います。**見出し**は見出しのスタイルのまま、**別行立ての数式**は数式の設定のままです。
 - **図と表**は文書のキャプションと表のスタイルのまま、囲みの内側の幅で組まれます。通常と太字のウェイトは囲みの`body`のウェイトに従います。
 - **チップ**はチップのスタイルのままです。`em`のサイズは囲みの本文のサイズを基準に読みます。
-- **`:::space`の空き**は囲みの本文の行で測ります（どこで省かれるかは[`:::space`](/ja/docs/document-format-directives#space)を参照）。
+- **`:::space`のアキ**は囲みの本文の行で測ります（どこで省かれるかは[`:::space`](/ja/docs/document-format-directives#space)を参照）。
 - **入れ子の囲み**は自分のスタイルにすべて従います。`span`、`placement`、`floatBarrier`、`snapToGrid`は無視されます。
 
 ### 分割された囲みの目印
@@ -494,7 +494,7 @@ A speech long enough to run over the foot of the page…
 
 画像の`resourceId`にも同じプレースホルダーが使えるため、囲みごとに別のリソースを描けます。`{boxText}`を読むのは囲みのデザインだけで、見出しのデザインでは何も印字されません。
 
-`setsContent: true`にすると、同じ形の囲みすべてに1つのスタイルを使い、それぞれに別の言葉を入れられます。書き方練習帳では、練習の1行ごとに、なぞる言葉を内容とする囲みを置きます。デザインはその言葉を手本の書体で印字し、同じ名前の点線のリソースを描きます。
+`setsContent: true`にすると、同じ形の囲みすべてに1つのスタイルを使い、それぞれに別の言葉を入れられます。書き方練習帳では、練習の1行ごとに、なぞる言葉を内容とする囲みを置きます。デザインはその言葉を手本の書体で印字し、続けてなぞるための点線の文字（`dotted`）で、行に入るだけ繰り返して組みます（`repeat`。[インラインの書式記号と輪郭線](/ja/docs/configuration-headers-footers#インラインの書式記号と輪郭線)を参照）。
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Klee One', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Klee One', fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ calloutStyles: [{
 :::
 ```
 
-1行目は「ねこ」を印字してリソース`trace-ねこ`を描き、2行目は「つき」を印字して`trace-つき`を描きます。どちらの言葉も帯の下にもう一度組まれることはありません。`setsContent`が`false`のままでも、デザインは同じように`{boxText}`を読み、内容は帯の下に組まれます。
+1行目は「ねこ」を印字し、その後に点線の「ねこ」を並べます。2行目は「つき」で同じように組みます。どちらの言葉も帯の下にもう一度組まれることはありません。Markdownの言葉を書き換えると、手本もすべての写しも変わります。`setsContent`が`false`のままでも、デザインは同じように`{boxText}`を読み、内容は帯の下に組まれます。
 
 VDTでは、帯の要素はタイトルと並んで、枠の`designOverlay`のデザインブロックになります。

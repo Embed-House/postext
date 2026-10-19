@@ -17,7 +17,7 @@ Die Seiten 48 und 49 eines Geschichtsbuchs für die Mittelstufe: *Der Weg des Pa
 
 <Excerpt region="answer" />
 
-`spread: true` macht die Vorlage zu einem Bogen, so breit wie beide Seiten, und der Seitenblock sagt dasselbe mit `spread`. Eine Doppelseite beginnt auf einer linken Seite, deshalb bekommt der Satz `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: Seite 1 dieses Auszugs ist Seite 48 des Buchs, eine linke Seite, und keine Leerseite steht davor. Das Raster hat eine Spalte pro Seite, getrennt durch den doppelten Innenrand, sodass nur das Band in die Nähe des Falzes kommt. Das zweite Band setzt `crossGutter` und einen linken Innenabstand von 36 mm: Seine Farbe läuft vom Ende des ersten Bands über den Bund, seine Wörter beginnen auf der rechten Seite, wo der Satz sie liest.
+`spread: true` macht die Vorlage zu einem Blatt, so breit wie beide Seiten, und der Seitenblock sagt dasselbe mit `spread`. Eine Doppelseite beginnt auf einer linken Seite, deshalb übergibt der Build `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: Seite 1 dieses Auszugs ist Seite 48 des Buchs, eine linke Seite, und keine Vakatseite steht davor. Das Raster hat eine Spalte pro Seite, getrennt durch den doppelten Innenrand, sodass nur das Band in die Nähe des Falzes kommt. Das zweite Band setzt `crossGutter` und einen linken Innenabstand von 36 mm: Seine Farbe läuft vom Ende des ersten Bands über den Bund, seine Wörter beginnen auf der rechten Seite, wo sie gelesen werden.
 
 ### 2 · Karten, die sich die Breite teilen
 
@@ -29,7 +29,7 @@ Jede Reihe aus drei Karten ist eine `row`-Gruppe, und jede Karte hat eine `minHe
 
 <Excerpt region="marks" />
 
-Punkte und Striche sind das Dekor (`decoration`) der Vorlage, an `#c1` … `#c6` an ihrer Oberkante (`top`) verankert und um den Abstand zum Band hochgesetzt. Das Dekor wird nach den Rahmen gesetzt: Wenn eine Karte wandert oder breiter wird, bleibt ihr Punkt über ihrer Mitte. Auch der cremefarbene Grund ist Dekor, ein Kasten, der am Fuß des Anschnitts verankert ist und dessen Höhe bis zum Fuß von `#band-1` reicht (`size: { height: { to: '#band-1', edge: 'bottom' } }`): Er folgt dem Band.
+Punkte und Striche sind die Dekoration (`decoration`) der Vorlage, an `#c1` … `#c6` an ihrer Oberkante (`top`) verankert und um den Abstand zum Band hochgesetzt. Die Dekoration wird nach den Rahmen gesetzt: Wenn eine Karte wandert oder breiter wird, bleibt ihr Punkt über ihrer Mitte. Auch der cremefarbene Grund ist Dekoration, ein Rechteck, das am Fuß des Anschnitts verankert ist und dessen Höhe bis zum Fuß von `#band-1` reicht (`size: { height: { to: '#band-1', edge: 'bottom' } }`): Er folgt dem Band.
 
 ### 4 · Bilder in ihrer Druckgröße
 
@@ -51,4 +51,4 @@ Mit `shrink: 0` gibt keine Karte Breite ab: Die Reihe wächst stattdessen nach u
 ## Häufige Fehler
 
 - Eine Karte mit fester `height` nimmt am Breitentausch nicht teil, weil sie nie über die Reihe hinausragt: Geben Sie den Karten eine `minHeight`, wie hier, und lassen Sie die Höhe auf `auto`.
-- Eine Größe, die bis zum Rand eines anderen Kastens reicht, wird vom Ankerpunkt des Elements aus gezählt: Der Grund ist am Fuß des Anschnitts verankert und wächst bis `#band-1` nach oben. Ein Rand hinter dem Anker ergibt eine Höhe von 0.
+- Eine Größe, die bis zum Rand eines anderen Elements reicht, wird vom Bezugspunkt des Elements aus gezählt: Der Grund ist am Fuß des Anschnitts verankert und wächst bis `#band-1` nach oben. Ein Rand hinter dem Bezugspunkt ergibt eine Höhe von 0.

@@ -1,6 +1,6 @@
 ---
 title: "Notes finals en pàgina pròpia, a dues columnes"
-summary: "Un preprocessador breu numera les notes [^1] i les reuneix sota un títol Notes, l'estil del qual les compon en pàgina pròpia, a dues columnes."
+summary: "Un preprocessador breu numera les notes [^1] i les reuneix sota un títol Notes, amb un estil que les compon en pàgina pròpia, a dues columnes."
 plain: "Una petita edició d'una famosa conferència científica sobre una espelma. Ensenya a reunir les notes al final, en una pàgina pròpia a dues columnes, en lloc de fer-ho al peu de cada pàgina."
 description: "La primera conferència de Faraday sobre l'espelma, amb sis notes finals. Cada crida [^1] surt volada, i les notes van en pàgina pròpia a dues columnes."
 question: "Com componc les notes [^1] com a notes finals, en pàgina pròpia i sota el seu títol?"
@@ -10,13 +10,13 @@ pageNotes: { "1": "L'obertura de la conferència I: un camp de sutge ocupa la me
 
 ## Què compondràs
 
-La primera conferència de *The Chemical History of a Candle*, de Michael Faraday, en anglès, composta com una petita edició de lectura de 156 × 234 mm. S'obre sobre un camp de sutge amb una espelma encesa recolzada a la seva vora inferior, una fotografia generada amb models de difusió el negre de la qual és el del sutge, i continua en una columna justificada de Libre Bodoni. On un llibre posaria notes a peu de pàgina, uns números petits i volats, en taronja fosc, remeten a les notes, reunides en una pàgina pròpia sota una banda de sutge amb l'espelma ja apagada. Van a dues columnes en bandera, en cos de 8,2 pt i amb el número en negreta penjat al sagnat. Tres de les sis són de William Crookes, editor del text el 1861, i surten de la reimpressió del 1908; les altres tres, noves, van signades *Ed.* Les dues columnes acaben a la mateixa línia, i el colofó tanca la segona.
+La primera conferència de *The Chemical History of a Candle*, de Michael Faraday, en anglès, composta com una petita edició de lectura de 156 × 234 mm. S'obre sobre un camp de sutge amb una espelma encesa recolzada a la seva vora inferior, una fotografia generada amb models de difusió, amb el negre del sutge, i continua en una columna justificada de Libre Bodoni. On un llibre posaria notes a peu de pàgina, uns números petits i volats, en taronja fosc, remeten a les notes, reunides en una pàgina pròpia sota una banda de sutge amb l'espelma ja apagada. Van a dues columnes en bandera, en cos de 8,2 pt i amb el número en negreta penjat al sagnat. Tres de les sis són de William Crookes, editor del text el 1861, i surten de la reimpressió del 1908; les altres tres, noves, van signades *Ed.* Les dues columnes acaben a la mateixa línia, i el colofó tanca la segona.
 
 ## Elaboració
 
 ### 1 · Converteix les notes a peu de pàgina en notes finals abans de compondre
 
-El preprocessador és [la resposta curta](#la-resposta-curta) de més amunt. Postext compon per si mateix les notes `[^1]` ([notes a peu de pàgina](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina)): al peu de la columna que les cita o, amb `placement: 'chapterEnd'`, darrere de l'últim bloc del capítol. En tots dos casos es queden a la columna del capítol, amb la lletra del text i sota un filet curt. Aquesta edició vol per a les notes un títol, una banda i una pàgina a dues columnes, i això un estil de títol només ho dona a un títol escrit al Markdown. Per això el pen reescriu el Markdown abans de passar-lo a `buildDocument`, i el motor no veu mai una crida `[^1]`. Numera les crides per l'ordre en què el text les cita per primera vegada i col·loca totes les definicions, en aquest ordre, on hi ha la primera, sota `## Notes`. Cada nota comença per `**1**`, perquè `1. ` obriria una llista numerada. Un unidor de paraules (U+2060) obre cada crida; sense ell, el `**` de la crida que segueix `*Royal George*` s'ajuntaria amb l'asterisc que tanca la cursiva en un `***`, i els asteriscs sortirien impresos.
+El preprocessador és [la resposta curta](#la-resposta-curta) de més amunt. Postext compon per si mateix les notes `[^1]` ([notes a peu de pàgina](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina)): al peu de la columna que les cita o, amb `placement: 'chapterEnd'`, darrere de l'últim bloc del capítol. En tots dos casos es queden a la columna del capítol, amb la lletra del text i sota un filet curt. Aquesta edició vol per a les notes un títol, una banda i una pàgina a dues columnes, i això un estil d'encapçalament només ho dona a un títol escrit al Markdown. Per això el pen reescriu el Markdown abans de passar-lo a `buildDocument`, i el motor no veu mai una crida `[^1]`. Numera les crides per l'ordre en què el text les cita per primera vegada i col·loca totes les definicions, en aquest ordre, on hi ha la primera, sota `## Notes`. Cada nota comença per `**1**`, perquè `1. ` obriria una llista numerada. Un unidor de paraules (U+2060) obre cada crida; sense ell, el `**` de la crida que segueix `*Royal George*` s'ajuntaria amb l'asterisc que tanca la cursiva en un `***`, i els asteriscs sortirien impresos.
 
 ### 2 · Reserva la negreta per a les crides
 
@@ -34,7 +34,7 @@ Les notes van a 8,2 pt sobre 10,7 pt, uns quatre cinquens del cos del text. El `
 
 <Excerpt region="section" />
 
-El títol `## Notes {style="notes" …}` obre una secció les pàgines de la qual prenen la disposició i el disseny de l'estil. `parity: 'any'` la comença a la pàgina següent, sigui parella o senar, i `span: 'page'` estén la banda sobre les dues columnes, de manera que arriba al tall i la segona columna comença a sota ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). La banda fixa la reserva, però la primera línia de la retícula de base lliure d'ella queda només 3 mm per sota del sutge; amb els 5 mm que `BAND_GAP` suma a `minHeight`, les notes comencen una línia més avall. El filet de columna és el `columnRule` del `layout` del mateix estil, de manera que només el dibuixen les pàgines de les notes. L'equilibrat de columnes, actiu per defecte, talla l'última pàgina perquè les dues columnes acabin a la mateixa línia ([equilibrat de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes)).
+El títol `## Notes {style="notes" …}` obre una secció amb pàgines que fan servir la disposició i el disseny de l'estil. `parity: 'any'` la comença a la pàgina següent, sigui parella o senar, i `span: 'page'` estén la banda sobre les dues columnes, de manera que arriba al tall i la segona columna comença a sota ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). La banda fixa la reserva, però la primera línia de la retícula de base lliure d'ella queda només 3 mm per sota del sutge; amb els 5 mm que `BAND_GAP` suma a `minHeight`, les notes comencen una línia més avall. El filet de columna és el `columnRule` del `layout` del mateix estil, de manera que només el dibuixen les pàgines de les notes. L'equilibratge de columnes, actiu per defecte, talla l'última pàgina perquè les dues columnes acabin a la mateixa línia ([equilibrat de columnes](/ca/docs/configuration-page-flow#equilibratge-de-columnes)).
 
 ### 5 · Obre la conferència sobre un camp de sutge
 
@@ -67,7 +67,7 @@ Si el text fa servir la negreta per al seu propi èmfasi, posa les crides en tin
 
 ### Deixa que les columnes de notes acabin desiguals
 
-Sense l'equilibrat de l'última pàgina, la primera columna s'omple fins al peu abans que comenci la segona.
+Sense l'equilibratge de l'última pàgina, la primera columna s'omple fins al peu abans que comenci la segona.
 
 ```diff
 -  headings: { fontFamily: DISPLAY, color: col('ink'), levels: [

@@ -16,31 +16,31 @@ Duas páginas de *الساحل*, um diário imaginário de uma cidade portuária
 
 ### 1 · Duas colunas, a primeira à direita
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. `layoutType: 'double'` e o fio entre colunas são as mesmas configurações de um jornal em inglês; `locale: 'ar'` vira a página, então a matéria preenche primeiro a coluna da direita e continua no alto da coluna da esquerda ([Ordem das páginas e encadernação à direita](/pt/docs/arabic-layout#ordem-das-páginas-e-encadernação-à-direita)). Uma manchete sobre as duas colunas é um boxe na largura da página sem moldura, e as colunas abaixo dela começam niveladas. A faixa de notas breves é um boxe na largura da página que flutua para o pé, com `:::columns{count=3}` dentro, e as suas colunas também correm da direita para a esquerda, assim como a tabela de horários de oração da página 2: uma tabela composta na direção do documento põe a primeira coluna à direita.
+O código é [a resposta curta](#a-resposta-curta) logo acima. `layoutType: 'double'` e o fio entre colunas são as mesmas configurações de um jornal em inglês; `locale: 'ar'` vira a página, por isso a matéria preenche primeiro a coluna da direita e continua no alto da coluna da esquerda ([Ordem das páginas e encadernação à direita](/pt/docs/arabic-layout#ordem-das-páginas-e-encadernação-à-direita)). Uma manchete sobre as duas colunas é um boxe na largura da página sem moldura, e as colunas abaixo dela começam niveladas. A faixa de notas breves é um boxe na largura da página que flutua para o pé, com `:::columns{count=3}` dentro, e as colunas também correm da direita para a esquerda, assim como a tabela de horários de oração da página 2: uma tabela composta na direção do documento põe a primeira coluna à direita.
 
 ### 2 · Um cabeçalho entre duas orelhas
 
 <Excerpt region="nameplate" />
 
-O título de nível 1 da primeira página é o nome do jornal, pintado por um estilo de título. O design dele é desenhado na página espelhada, então `top-right` é o início da linha: o número da edição e a data vão ali, a cidade e o preço na outra ponta ([O que significam esquerda, direita, início e fim](/pt/docs/arabic-layout#o-que-significam-esquerda-direita-início-e-fim)). A ruqʿa é uma letra de título para poucas palavras em corpo grande; não tem kashida, e o texto corrido nunca a usa.
+O título de nível 1 da primeira página é o nome do jornal, pintado por um estilo de título. O design dele é desenhado na página espelhada, de modo que `top-right` é o início da linha: o número da edição e a data vão ali, a cidade e o preço na outra ponta ([O que significam esquerda, direita, início e fim](/pt/docs/arabic-layout#o-que-significam-esquerda-direita-início-e-fim)). A ruqʿa é uma letra de título para poucas palavras em corpo grande; não tem kashida, e o texto corrido nunca a usa.
 
 ### 3 · Retrancas de seção e linhas de fólio
 
 <Excerpt region="inside" />
 
-Uma página interna abre com um título de nível 1 desenhado como retranca sobre um fio grosso. A linha do fólio é um cabeçalho, então mantém os seus lados físicos: a página 2, par, tem o número no canto direito, o externo num jornal que abre pela direita. A primeira página esvazia o cabeçalho no seu estilo de título.
+Uma página interna abre com um título de nível 1 desenhado como retranca sobre um fio grosso. A linha do fólio é um cabeçalho, por isso mantém os lados físicos: a página 2, par, tem o número no canto direito, o externo num jornal que abre pela direita. A primeira página esvazia o cabeçalho no estilo de título.
 
 ### 4 · Um mapa desenhado em código
 
 <Excerpt region="art" />
 
-O mapa do bonde é um SVG de traçados e círculos nas cores da paleta, sem nenhum texto: os nomes dos lugares ficam na legenda, na letra da página. O tipo de imagem não tem contador nem rótulo, porque jornais não numeram as suas fotos.
+O mapa do bonde é um SVG de traçados e círculos nas cores da paleta, sem nenhum texto: os nomes dos lugares ficam na legenda, na letra da página. O tipo de imagem não tem contador nem rótulo, porque jornais não numeram as fotos.
 
 ## Variações
 
 ### Três colunas nas notas breves, quatro numa página mais larga
 
-A faixa é um boxe com colunas próprias, então pode ter mais que as duas do texto.
+A faixa é um boxe com colunas próprias, por isso pode ter mais que as duas do texto.
 
 ```diff
 -:::columns{count=3 breaks="2,3"}
@@ -56,4 +56,4 @@ A faixa é um boxe com colunas próprias, então pode ter mais que as duas do te
 
 ## Erros comuns
 
-- Os horários de oração estão digitados com algarismos arábico-índicos nas células da tabela: `locale` só muda os números que o motor escreve, então uma edição do Magreb precisa digitá-los de novo.
+- Os horários de oração estão digitados com algarismos arábico-índicos nas células da tabela: `locale` só muda os números que o motor escreve, de modo que uma edição do Magreb precisa digitá-los de novo.

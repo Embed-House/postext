@@ -5,7 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import type { DimensionUnit, MarkStyleConfig, ResolvedBodyTextConfig, ResolvedMarkStyleConfig } from 'postext';
 import { DEFAULT_MARK_STYLES, resolveBodyTextConfig, resolveMarkStylesConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, DimensionInput } from '../../controls';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput } from '../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
@@ -69,17 +69,20 @@ function MarkStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden={stored}>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
-      <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="truncate text-xs font-medium" style={{ color: 'var(--foreground)' }} title={style.name ?? style.id}>
-          {style.name || style.id}
-        </span>
+    <ItemCard
+      list="markStyles"
+      id={style.id}
+      styleId={style.id}
+      title={style.name || style.id}
+      subtitle={style.name && style.name !== style.id ? style.id : undefined}
+      actions={
         <ConfirmPopover message={labels.markStyleDeleteConfirm} onConfirm={onRemove}>
           {({ open }) => (
             <IconButton label={labels.chipStyleDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
           )}
         </ConfirmPopover>
-      </div>
+      }
+    >
 
       <div className="mb-2 flex flex-col gap-2">
         <FieldRow
@@ -189,7 +192,7 @@ function MarkStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
         isDefault={unset('paddingBottom')}
         onReset={() => onResetField('paddingBottom')}
       />
-    </div>
+    </ItemCard>
     </SearchScope>
   );
 }
@@ -212,7 +215,9 @@ export const MarkStylesSection = memo(function MarkStylesSection() {
   };
 
   const addStyle = () => {
-    write([...styles, { id: nextStyleId(styles), name: labels.markStyleNewName }]);
+    const id = nextStyleId(styles);
+    openCard('markStyles', id);
+    write([...styles, { id, name: labels.markStyleNewName }]);
   };
 
   const updateStyle = (id: string, partial: Partial<MarkStyleConfig>) => {
@@ -232,6 +237,7 @@ export const MarkStylesSection = memo(function MarkStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
+    moveCardState('markStyles', id, nextId);
     write(styles.map((s) => (s.id === id ? { ...s, id: nextId } : s)));
   };
 
@@ -253,6 +259,7 @@ export const MarkStylesSection = memo(function MarkStylesSection() {
           {labels.markStylesEmpty}
         </p>
       )}
+      <ItemCardListActions list="markStyles" ids={styles.map((s) => s.id)} />
       {styles.map((style, i) => (
         <MarkStyleCard
           key={style.id}

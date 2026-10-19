@@ -1,8 +1,8 @@
 ---
 title: "Poemes Tang davant de la versió anglesa"
-summary: "Cada poema Tang obre una pàgina senar tenyida i la versió de Giles, la parella del davant: un estil de títol salta a pàgina parella i l'altre a senar."
+summary: "Cada poema Tang obre una pàgina senar tenyida i la versió de Giles, la parella del davant: un estil d'encapçalament salta a pàgina parella i l'altre a senar."
 plain: "Un llibret de poemes xinesos de la dinastia Tang amb una traducció anglesa antiga a la pàgina del davant. Cada filera de versos xinesos queda a l'altura dels versos anglesos que la tradueixen."
-description: "Un llibre bilingüe de poesia Tang amb Postext: estils de títol que salten a pàgina parella i senar, el xinès centrat a la retícula i notes a peu de pàgina."
+description: "Llibre bilingüe de poesia Tang amb Postext: estils d'encapçalament que salten a pàgina parella i senar, xinès centrat a la retícula i notes a peu de pàgina."
 question: "Com componc un poema i la seva traducció en pàgines encarades, amb l'original sempre a la senar?"
 aliases: ["traducció encarada", "text paral·lel", "edició bilingüe", "poesia bilingüe", "original a la dreta", "poemes Tang", "唐詩", "poesia xinesa en anglès", "Li Bai", "Du Fu", "Wang Wei", "Herbert Giles", "glosses", "注釋", "pàgina parella i senar"]
 pageNotes: { "1": "La portada: els caràcters 唐詩 en negre sobre una lluna daurada pàl·lida, POEMES TANG en versaletes vermelles a sota, els noms dels tres poetes, una línia que acredita els versos anglesos de Giles i un segell vermell petit amb 明月 a prop del peu.", "3": "La pàgina senar davant de Night Thoughts, sobre un fons daurat pàl·lid: el títol 靜夜思 en negreta, 〔唐〕李白 en vermell a sota, el poema en dues rengleres de caràcters de traç de pinzell, cadascuna tancada per una crida de nota petita, i dues notes a peu de pàgina sota un filet vermell curt." }
@@ -10,13 +10,13 @@ pageNotes: { "1": "La portada: els caràcters 唐詩 en negre sobre una lluna da
 
 ## Què compondràs
 
-Un petit llibre bilingüe de poemes Tang, compost com les edicions bilingües dels clàssics: el xinès a la pàgina senar, sobre un full tenyit com paper vell, i els versos rimats d'Herbert A. Giles, de 1901, a la parella del davant. Quatre poemes de Li Bai, Du Fu i Wang Wei ocupen un plec cadascun, amb títol en cada llengua i el nom del poeta. El xinès va en LXGW WenKai, una Kai dibuixada a partir del pinzell, a dos versos per renglera, de manera que cada renglera queda a l'altura dels dos versos anglesos que la tradueixen. Al peu de la pàgina xinesa van les notes, en la llengua del lector. <RecipeLink slug="bilingual-facing-verse">Traducció encarada, estrofa a estrofa</RecipeLink> posa un poema espanyol al costat de la seva versió anglesa en una sola pàgina; aquí cada llengua té la seva pàgina.
+Un petit llibre bilingüe de poemes Tang, compost com les edicions bilingües dels clàssics: el xinès a la pàgina senar, sobre un full tenyit com paper vell, i els versos rimats d'Herbert A. Giles, de 1901, a la parella del davant. Quatre poemes de Li Bai, Du Fu i Wang Wei ocupen una doble pàgina cadascun, amb títol en cada llengua i el nom del poeta. El xinès va en LXGW WenKai, una Kai dibuixada a partir del pinzell, a dos versos per renglera, de manera que cada renglera queda a l'altura dels dos versos anglesos que la tradueixen. Al peu de la pàgina xinesa van les notes, en la llengua del lector. <RecipeLink slug="bilingual-facing-verse">Traducció encarada, estrofa a estrofa</RecipeLink> posa un poema espanyol al costat de la seva versió anglesa en una sola pàgina; aquí cada llengua té la seva pàgina.
 
 ## Elaboració
 
-### 1 · Un estil de títol per a cada costat del plec
+### 1 · Un estil d'encapçalament per a cada costat del plec
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. Cada poema són dos títols de nivell 1: `# Night Thoughts {style="en" …}` amb els versos de Giles i després `# 靜夜思 {style="zh" …}` amb el poema. L'estil `en` salta a la pàgina parella següent; el `zh`, a la senar següent, la que queda al davant. Mentre cada poema càpiga a la seva pàgina no hi entra cap pàgina en blanc; una versió anglesa que passés de pàgina empenyeria el seu original a la senar següent, darrere d'una parella en blanc ([Saltar abans](/ca/docs/configuration-headings#saltar-abans)). Els dos dissenys reserven sis línies de la retícula, així que l'anglès i el xinès comencen a la mateixa línia. L'estil xinès porta `span: 'page'` perquè el seu primer element, una caixa de la mida de la pàgina, és el full tenyit, i un disseny que es queda a la columna es talla al peu de la columna ([Span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)).
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. Cada poema són dos títols de nivell 1: `# Night Thoughts {style="en" …}` amb els versos de Giles i després `# 靜夜思 {style="zh" …}` amb el poema. L'estil `en` salta a la pàgina parella següent; el `zh`, a la senar següent, la que queda al davant. Mentre cada poema càpiga a la seva pàgina no hi entra cap pàgina en blanc; una versió anglesa que passés de pàgina empenyeria el seu original a la senar següent, darrere d'una parella en blanc ([Salt de pàgina previ](/ca/docs/configuration-headings#salt-de-pàgina-previ)). Els dos dissenys reserven sis línies de la retícula, així que l'anglès i el xinès comencen a la mateixa línia. L'estil xinès porta `span: 'page'` perquè el seu primer element, una caixa de la mida de la pàgina, és el full tenyit, i un disseny que es queda a la columna es talla al peu de la columna ([Extensió i disseny avançat](/ca/docs/configuration-headings#extensió-i-disseny-avançat)).
 
 <PageShot page={2} crop="0,0.05,1,0.28" caption="Pàgina 2: l'anglès comença a la pàgina parella sis línies més avall, a la mateixa línia de la retícula on comença el xinès a la pàgina 3." />
 
@@ -24,7 +24,7 @@ El codi és a [la resposta curta](#la-resposta-curta), més amunt. Cada poema s�
 
 <Excerpt region="verse" />
 
-Les rengleres xineses tenen el doble d'interlineat que els versos anglesos, 32 pt contra 16, i així una renglera de dos versos de cinc caràcters queda davant de l'apariat que Giles en treu. Al poema de la lluna de les <PageRef page={4}>pàgines 4 i 5</PageRef> una línia en blanc entre les estrofes angleses i un `:::space{lines=1}` entre les xineses deixen una línia cadascun, i les seves tres estrofes continuen a la mateixa altura en tot el plec. La renglera xinesa entra 51 pt, cosa que centra els seus dotze quadratins en els 28 de la retícula, i cada crida de nota va després del 。 de la seva renglera, fora dels dotze: dins de la renglera empenyeria sis dècimes de quadratí a la dreta tots els caràcters que la segueixen, que deixarien de caure sobre els de la renglera de sota. Cada poema anglès és un bloc `:::verse`, centrat sobre el seu vers més llarg, així que no cal mesurar cap sagnat. Giles sagna un vers de cada dos; el Markdown conserva els seus dos espais, que `bodyText.verse.indentStep` converteix en dos quadratins de sagnat.
+Les rengleres xineses tenen el doble d'interlineat que els versos anglesos, 32 pt contra 16, i així una renglera de dos versos de cinc caràcters queda davant de l'apariat que Giles en treu. Al poema de la lluna de les <PageRef page={4}>pàgines 4 i 5</PageRef> una línia en blanc entre les estrofes angleses i un `:::space{lines=1}` entre les xineses deixen una línia cadascun, i les seves tres estrofes continuen a la mateixa altura en tota la doble pàgina. La renglera xinesa entra 51 pt, cosa que centra els seus dotze quadratins en els 28 de la retícula, i cada crida de nota va després del 。 de la seva renglera, fora dels dotze: dins de la renglera empenyeria sis dècimes de quadratí a la dreta tots els caràcters que la segueixen, que deixarien de caure sobre els de la renglera de sota. Cada poema anglès és un bloc `:::verse`, centrat sobre el seu vers més llarg, així que no cal mesurar cap sagnat. Giles sagna un vers de cada dos; el Markdown conserva els seus dos espais, que `bodyText.verse.indentStep` converteix en dos quadratins de sagnat.
 
 ### 3 · Notes a peu de la pàgina xinesa
 
@@ -42,19 +42,19 @@ Totes les pàgines d'aquest llibre comencen amb un títol, així que totes són 
 
 <Excerpt region="title" />
 
-La portada també és un estil de títol, amb `runningChapter: false` perquè no anomeni cap capítol. La lluna és una caixa de disseny el radi de cantonada de la qual mesura la meitat del costat, i 唐詩 es centra al damunt amb un càlcul: el centre de la lluna menys la meitat de l'alçada del títol. El segell compon 明月 amb `writingMode: 'vertical-rl'`, un caràcter sobre l'altre, com es graven els segells.
+La portada també és un estil d'encapçalament, amb `runningChapter: false` perquè no anomeni cap capítol. La lluna és una caixa de disseny amb un radi de cantonada de la meitat del costat, i 唐詩 es centra al damunt amb un càlcul: el centre de la lluna menys la meitat de l'alçada del títol. El segell compon 明月 amb `writingMode: 'vertical-rl'`, un caràcter sobre l'altre, com es graven els segells.
 
 ### 6 · Cada font xinesa carrega el que compon
 
 <Excerpt region="voices" />
 
-Fontsource parteix cada font xinesa en uns cent fitxers per rangs de caràcters, i `loadCjkFonts` baixa només els que necessita el seu text ([Fonts xineses, japoneses i coreanes](/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes)). La Kai rep els poemes i el segell; la Hei, els noms dels poetes; la Song en negreta, els quatre títols i les paraules glossades de les notes, i el seu pes més negre, els dos caràcters de la portada.
+Fontsource parteix cada font xinesa en uns cent fitxers per rangs de caràcters, i `loadCjkFonts` baixa només els que necessita el seu text ([Fonts xineses, japoneses i coreanes](/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes)). La Kai rep els poemes i el segell; la Hei, els noms dels poetes; la Song en negreta, els quatre títols i les paraules glossades de les notes, i el seu gruix més negre, els dos caràcters de la portada.
 
 ## Variants
 
 ### Posa l'original a la pàgina parella
 
-Les edicions Loeb i molts llibres bilingües de xinès i anglès posen l'original a l'esquerra: intercanvia les paritats dels dos estils de títol i de les dues capçaleres que anomenen el llibre i el poeta, i escriu al Markdown cada títol i poema xinesos abans que la seva versió anglesa.
+Les edicions Loeb i molts llibres bilingües de xinès i anglès posen l'original a l'esquerra: intercanvia les paritats dels dos estils d'encapçalament i de les dues capçaleres que anomenen el llibre i el poeta, i escriu al Markdown cada títol i poema xinesos abans que la seva versió anglesa.
 
 ```diff
 -const english = { id: 'en', breakBefore: { enabled: true, parity: 'even' }, // a verso

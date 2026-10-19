@@ -24,7 +24,7 @@ Das Programm der *Riverside Music Week*, eines erfundenen Festivals in einer Flu
 
 <Excerpt region="links" />
 
-Das Blau der Engine ist ein Paletteneintrag, `main-color` (#295AA3), und [ihre Voreinstellungen](/de/docs/configuration-fonts-colors-viewers#die-standardpalette) richten Überschriften, Fettes, Kursives, Verweise, Aufzählungszeichen und den Kolumnentitel darauf aus. Hier trägt jedes davon eine Paletten-ID: Uhrzeiten und Schlüsselbegriffe fett in `deep`, Kursives in Schwarz, Aufzählungszeichen in `band`, und auf Seite 2 ein Kolumnentitel in `deep` und die Pagina in `onBand` auf einer Pille in `band`. `retint()` richtet auch `main-color` auf das Band aus; da diese Konfiguration jede Farbe setzt, ändert das auf diesen Seiten nichts, aber ein später hinzugefügtes Format ohne Farbe nimmt dann das Band statt Blau. Der Ticketkasten setzt keine eigene Farbe für Fettes, also erbt er `bodyText.boldColor` mit seiner Paletten-ID, und sein Fettes ändert sich mit der Farbvariante.
+Das Blau der Engine ist ein Paletteneintrag, `main-color` (#295AA3), und [ihre Voreinstellungen](/de/docs/configuration-fonts-colors-viewers#die-standardpalette) richten Überschriften, Fettes, Kursives, Verweise, Aufzählungszeichen und den Kolumnentitel darauf aus. Hier hat jedes davon eine Paletten-ID: Uhrzeiten und Schlüsselbegriffe fett in `deep`, Kursives in Schwarz, Aufzählungszeichen in `band`, und auf Seite 2 ein Kolumnentitel in `deep` und die Pagina in `onBand` auf einer Pille in `band`. `retint()` richtet auch `main-color` auf das Band aus; da diese Konfiguration jede Farbe setzt, ändert das auf diesen Seiten nichts, aber ein später hinzugefügter Stil ohne Farbe nimmt dann das Band statt Blau. Der Ticketkasten setzt keine eigene Farbe für Fettes, also erbt er `bodyText.boldColor` mit seiner Paletten-ID, und sein Fettes ändert sich mit der Farbvariante.
 
 ### 3 · Das Bildwerk mit Gestaltungskästen zeichnen
 
@@ -36,7 +36,7 @@ Der Auftakt ist ein [Gestaltungsplatz](/de/docs/configuration-headers-footers#ka
 
 <Excerpt region="grid" />
 
-Das Raster ist eine Tabellenressource außerhalb der Konfiguration. Ihre [Zellfüllungen](/de/docs/document-format-resources#blockeinbettung-optional-ausdrückliche-platzierung-im-text) tragen dennoch Paletten-IDs, und die Engine löst sie aus der Palette des Dokuments auf, wenn sie die Tabelle setzt; `:swatch{color="band"}` und `:swatch{color="tint"}` der Legende in der Tabellennotiz werden genauso aufgelöst. Die Chips in den Auflistungen verwenden dieselben zwei IDs, sodass ein gefülltes Quadrat, der Chip neben einer Uhrzeit und das Farbfeld der Legende in jeder Farbvariante übereinstimmen.
+Das Raster ist eine Tabellenressource außerhalb der Konfiguration. Ihre [Zellfüllungen](/de/docs/document-format-resources#blockeinbettung-optional-ausdrückliche-platzierung-im-text) haben dennoch Paletten-IDs, und die Engine löst sie aus der Palette des Dokuments auf, wenn sie die Tabelle setzt; `:swatch{color="band"}` und `:swatch{color="tint"}` der Legende in der Tabellennotiz werden genauso aufgelöst. Die Chips in den Auflistungen verwenden dieselben zwei IDs, sodass ein gefülltes Quadrat, der Chip neben einer Uhrzeit und das Farbfeld der Legende in jeder Farbvariante übereinstimmen.
 
 ### 5 · Die Palette tauschen und neu bauen
 
