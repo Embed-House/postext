@@ -1,7 +1,7 @@
 name: Bug report
 description: A postext layout, rendering, or API behavior is wrong.
 title: "[Bug]: "
-labels: ["bug", "triage"]
+labels: ["type: bug", "status: triage"]
 body:
   - type: markdown
     attributes:
