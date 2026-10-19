@@ -884,7 +884,10 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
             {help}
           </Dialog.Description>
 
-          <div className={`flex flex-wrap items-start gap-4 ${mode === 'labels' ? 'min-h-0 flex-1' : ''}`}>
+          {/* In Anchors mode the row takes the fixed height that is left and
+              scrolls by itself, so nothing in it spills over the footer
+              (#1039). */}
+          <div className={`flex flex-wrap items-start gap-4 ${mode === 'labels' ? 'min-h-0 flex-1 overflow-y-auto' : ''}`}>
             {/* The picture with the marks over it, in a viewport that
                 scrolls when the picture is zoomed (#956). */}
             <div className="flex flex-col gap-1.5" style={{ maxWidth: '100%' }}>
@@ -1066,7 +1069,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
             </div>
 
             {/* The side panel of the mode. */}
-            <div className="flex min-w-[220px] flex-1 flex-col gap-2">
+            <div className={`flex min-w-[220px] flex-1 flex-col gap-2 ${mode === 'labels' ? 'max-h-full self-stretch' : ''}`}>
               {mode === 'safe' && !area && (
                 <div className="flex flex-col items-start gap-2">
                   <span className="text-xs text-(--slate)">{labels.resourceSafeAreaNone}</span>
