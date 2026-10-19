@@ -25,7 +25,7 @@ export const RECIPES_DIR = process.env.COOKBOOK_RECIPES_DIR
  *  Every file name has a dot, so these URLs skip the locale proxy.
  *  `COOKBOOK_CAPTURE_DIR` names another folder: a copy of it, to try a
  *  capture or a `--verify` round without touching the committed files. */
-export const PUBLIC_COOKBOOK_DIR = process.env.COOKBOOK_CAPTURE_DIR ?? path.join(WEB_DIR, "public", "cookbook");
+export const PUBLIC_COOKBOOK_DIR = process.env.COOKBOOK_CAPTURE_DIR ?? path.join(/*turbopackIgnore: true*/ WEB_DIR, "public", "cookbook");
 /** URL prefix of the generated media. */
 export const PUBLIC_COOKBOOK_URL = "/cookbook";
 
