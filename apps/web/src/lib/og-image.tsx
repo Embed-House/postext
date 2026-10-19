@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { HeroArt, HERO_ART_NIGHT } from "@/components/landing/HeroArt";
-import { cjkFamily, loadCjkOgFonts, loadOgFonts } from "./og-fonts";
+import { cjkFamily, loadCjkOgFonts, loadOgFonts, loadSymbolOgFonts } from "./og-fonts";
 import { svgMarkup } from "./og-svg";
 
 // The landing's hero in the dark theme, as a social card: night ground
@@ -149,11 +149,12 @@ export async function generateOgImage({
   if (!ogDrawable(description)) description = undefined;
   if (!ogDrawable(kicker)) kicker = "Programmable typesetter · postext.dev";
   const plainTitle = title.replace(/<\/?em>/g, "");
-  const [latin, cjk] = await Promise.all([
+  const [latin, cjk, symbols] = await Promise.all([
     loadOgFonts(),
     loadCjkOgFonts({ display: plainTitle, lead: description, kicker }),
+    loadSymbolOgFonts([plainTitle, description, kicker]),
   ]);
-  const fonts = [...latin, ...cjk];
+  const fonts = [...latin, ...cjk, ...symbols];
   const clusters = titleClusters(title);
   // In Latin letters: a Chinese or Japanese character is about as wide as two.
   const length = clusters.flat().reduce((n, w) => n + (w.cjk ? 2 * [...w.word].length : w.word.length + 1), 0);

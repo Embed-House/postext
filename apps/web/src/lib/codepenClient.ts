@@ -6,9 +6,9 @@
 
 const CODEPEN_DEFINE = "https://codepen.io/pen/define";
 
-/** Opens a new pen prefilled with `data` (CodePen's "POST to prefill
- *  editors" JSON) in a popup window, or a new tab when popups are blocked. */
-export function openInCodePen(data: string, windowName: string) {
+/** Opens the popup a pen will load in, inside the click that asked for
+ *  it (a popup opened later is blocked); null when popups are blocked. */
+export function openCodePenWindow(windowName: string): Window | null {
   const width = Math.min(1280, window.screen.availWidth - 80);
   const height = Math.min(860, window.screen.availHeight - 80);
   const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2));
@@ -16,7 +16,12 @@ export function openInCodePen(data: string, windowName: string) {
   const popup = window.open("", windowName, `popup,width=${width},height=${height},left=${left},top=${top}`);
   // The pen must not be able to navigate this page.
   if (popup) popup.opener = null;
+  return popup;
+}
 
+/** Posts `data` to CodePen, into the popup {@link openCodePenWindow}
+ *  opened, or a new tab when there is none. */
+export function submitToCodePen(data: string, windowName: string, popup: Window | null) {
   const form = document.createElement("form");
   form.action = CODEPEN_DEFINE;
   form.method = "POST";
@@ -30,4 +35,10 @@ export function openInCodePen(data: string, windowName: string) {
   document.body.append(form);
   form.submit();
   form.remove();
+}
+
+/** Opens a new pen prefilled with `data` (CodePen's "POST to prefill
+ *  editors" JSON) in a popup window, or a new tab when popups are blocked. */
+export function openInCodePen(data: string, windowName: string) {
+  submitToCodePen(data, windowName, openCodePenWindow(windowName));
 }

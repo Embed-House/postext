@@ -1731,8 +1731,6 @@ export const DEFAULT_LABELS: SandboxLabels = {
   editionCompareSync: 'Scroll together',
   editionCompareLoading: 'Laying out the __locale__ edition…',
   editionCompareNoChapter: 'The __locale__ edition has no such chapter',
-  composedFrameEdit: 'Text of the frame __frame__',
-  composedFrameEditHint: 'Enter keeps the change, Shift+Enter starts a new line, Esc leaves the text as it was.',
   selectionPath: 'Selected on the page',
   selectionUp: 'Select what holds it (Esc)',
   selectionClear: 'Let go of the selection',

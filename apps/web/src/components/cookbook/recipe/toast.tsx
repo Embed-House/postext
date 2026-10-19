@@ -9,10 +9,17 @@ export function showToast(message: string) {
   window.dispatchEvent(new CustomEvent<string>(EVENT, { detail: message }));
 }
 
-/** Copies `text`, then confirms with `ok` (or reports `failed`). */
-export async function copyText(text: string, ok: string, failed: string): Promise<boolean> {
+/** Copies `text`, then confirms with `ok` (or reports `failed`). A text
+ *  still on its way is handed to the clipboard as a promise, which keeps
+ *  the click's permission where the browser supports it (Safari requires
+ *  the write to start inside the click). */
+export async function copyText(text: string | Promise<string>, ok: string, failed: string): Promise<boolean> {
   try {
-    await navigator.clipboard.writeText(text);
+    if (typeof text === "string") await navigator.clipboard.writeText(text);
+    else if (typeof ClipboardItem !== "undefined" && navigator.clipboard.write) {
+      const blob = text.then((value) => new Blob([value], { type: "text/plain" }));
+      await navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]);
+    } else await navigator.clipboard.writeText(await text);
     showToast(ok);
     return true;
   } catch {

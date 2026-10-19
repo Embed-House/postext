@@ -283,8 +283,6 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     dispatchRef,
     activePanelRef,
     sourceOfPage: (page) => sourceOfPage(page),
-    ...(opts.labelsRef ? { labelsRef: opts.labelsRef } : {}),
-    ...(opts.comicSurface ? { surface: opts.comicSurface } : {}),
   });
   /** A press on a frame in Design mode picks it: no text is selected. */
   const designFrameAt = (at: PagePointer): boolean => editModeNow() === 'design' && frames?.frameAt(at.pageIndex, at.x, at.y) != null;
@@ -436,7 +434,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
     if (!doc) return null;
     const pt = resolvePagePoint(ev);
     if (!pt) return null;
-    return resourceTextAtPixel(doc, pt.pageIndex, pt.x, pt.y, getSvgTextIndex);
+    return resourceTextAtPixel(doc, pt.pageIndex, pt.x, pt.y, getSvgTextIndex, sourceOfPage(pt.pageIndex)?.markdown);
   };
 
   const focusEditor = (anchor: number, head: number, selectWord: boolean, chapter?: number): void => {
@@ -464,9 +462,15 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   };
 
   // Open the Resources panel on the hit resource and hand its editor the
-  // selection. The three dispatches land in one render, so `ResourceDetail`
-  // mounts with the request already present.
+  // selection (words a figure gives in the Markdown go to the editor). The
+  // three dispatches land in one render, so `ResourceDetail` mounts with the
+  // request already present.
   const focusResource = (hit: ResourceTextHit, anchor: number, head: number, selectWord: boolean): void => {
+    // Words a figure gives in the Markdown (#935) are selected there.
+    if (hit.source !== undefined) {
+      focusEditor(hit.source + anchor, hit.source + head, selectWord);
+      return;
+    }
     const dispatch = dispatchRef.current;
     if (activePanelRef.current !== 'resources') {
       dispatch({ type: 'SET_PANEL', payload: 'resources' });
@@ -768,7 +772,7 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
       ev.preventDefault();
       return;
     }
-    // A frame's label tab or paragraph is edited on the page (#864).
+    // A frame in Design mode is picked, its words not selected.
     if (frames?.dblclick(at.pageIndex, at.x, at.y)) {
       ev.preventDefault();
       return;

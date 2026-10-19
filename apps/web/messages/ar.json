@@ -2332,8 +2332,6 @@
     "editionCompareSync": "مرّر معًا",
     "editionCompareLoading": "جارٍ تنضيد نسخة __locale__…",
     "editionCompareNoChapter": "نسخة __locale__ لا تتضمن هذا الفصل",
-    "composedFrameEdit": "نص الإطار __frame__",
-    "composedFrameEditHint": "يحفظ Enter التغيير، ويبدأ Shift+Enter سطرًا جديدًا، ويترك Esc النص كما كان.",
     "selectionPath": "التحديد على الصفحة",
     "selectionUp": "تحديد العنصر الذي يحتويه (Esc)",
     "selectionClear": "إلغاء التحديد",

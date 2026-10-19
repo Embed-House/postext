@@ -8,7 +8,7 @@ import "@/components/cookbook/recipe.css";
 import { LightTable } from "@/components/cookbook/recipe/LightTable";
 import { formatKb, LICENSES, recipeView, type RecipeView } from "@/components/cookbook/recipe/model";
 import { RecipeActionBar, RecipeActions, type RecipeActionsData } from "@/components/cookbook/recipe/RecipeActions";
-import { SOURCES_ID, type RecipeSourcesPayload } from "@/components/cookbook/recipe/sources";
+import { SOURCES_ID, wholeCodeUrl, type RecipeSourcesPayload } from "@/components/cookbook/recipe/sources";
 import { RecipeAside, RecipeAsideMobile } from "@/components/cookbook/recipe/RecipeAside";
 import { RecipeBand, RecipeBreadcrumb } from "@/components/cookbook/recipe/RecipeBand";
 import { CollectionStrips, PrevNext } from "@/components/cookbook/recipe/RecipeNeighbours";
@@ -168,10 +168,11 @@ export default async function RecipePage({ params }: { params: Params }) {
     pdf: view.pdf ? { href: view.pdf.href, size: formatKb(view.pdf.bytes, locale), pages: view.pdf.pages } : null,
     sandbox: sandboxAction(recipe, locale),
     githubUrl: view.githubUrl,
+    code: wholeCodeUrl(locale, slug),
   };
   // Only pen.json travels as JSON: Copy, CodePen and the .html download
-  // rebuild the composed files from the whole-recipe view at click time
-  // (a server-rendered script would travel twice, in the HTML and the RSC
+  // rebuild the composed files from `code.json` at click time (a
+  // server-rendered script would travel twice, in the HTML and the RSC
   // payload).
   const sources: RecipeSourcesPayload = { [pen.variant]: { pen: pen.pen } };
   // The code's token colours, as classes (lib/cookbook/highlight).

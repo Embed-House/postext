@@ -2332,8 +2332,6 @@
     "editionCompareSync": "同步滚动",
     "editionCompareLoading": "正在排版__locale__版本…",
     "editionCompareNoChapter": "__locale__版本没有这一章",
-    "composedFrameEdit": "框 __frame__ 的文字",
-    "composedFrameEditHint": "按 Enter 保留修改，Shift+Enter 换行，Esc 放弃修改。",
     "selectionPath": "页面上的选择",
     "selectionUp": "选择外层元素（Esc）",
     "selectionClear": "取消选择",

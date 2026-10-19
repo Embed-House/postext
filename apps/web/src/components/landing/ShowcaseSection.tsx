@@ -53,7 +53,7 @@ function editionNames(p: PresetEntry, lang: string): { name?: string; descriptio
  *  gets a new URL instead of a stale cached copy. */
 function bundleVersion(dir: string): string {
   try {
-    const file = path.join(process.cwd(), "public/presets", dir, "fingerprint.json");
+    const file = path.join(/*turbopackIgnore: true*/ process.cwd(), "public/presets", dir, "fingerprint.json");
     const { fingerprint } = JSON.parse(fs.readFileSync(file, "utf-8")) as { fingerprint?: string };
     return fingerprint ? fingerprint.slice(0, 12) : "";
   } catch {
@@ -66,7 +66,7 @@ function bundleVersion(dir: string): string {
  *  the bundle's own language), else the default. */
 function localizedThumbnail(dir: string, thumbnail: string, lang: string): string {
   const localized = thumbnail.replace(/(\.[a-z]+)$/i, `-${lang}$1`);
-  return fs.existsSync(path.join(process.cwd(), "public/presets", dir, localized)) ? localized : thumbnail;
+  return fs.existsSync(path.join(/*turbopackIgnore: true*/ process.cwd(), "public/presets", dir, localized)) ? localized : thumbnail;
 }
 
 /** Book titles and descriptions are in the `Showcase.books` and

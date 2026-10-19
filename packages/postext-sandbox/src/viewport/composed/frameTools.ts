@@ -4,9 +4,8 @@
  *
  * - Content mode: a click on a frame (off its words) puts the editor's
  *   caret in its slot, writing an empty slot fence first for an empty
- *   frame; a double click on its label tab or on a paragraph opens a field
- *   on the page that writes the Markdown back. A click on its words places
- *   the caret at the word, as anywhere else (the caller's).
+ *   frame. A click or a double click on its words (its label tab
+ *   included) selects and edits them as anywhere else (the caller's).
  * - Design mode: a click picks the frame (`selectFrame`) for the template
  *   editor; the text is not edited.
  */
@@ -16,30 +15,25 @@ import { resolvePageTemplate, type PageTemplateSource, type VDTComicPage, type V
 import type { SandboxAction } from '../../context/SandboxContext';
 import type { ComposedBook } from '../../book/types';
 import type { PanelId } from '../../types';
-import type { SandboxLabels } from '../../types/labels';
 import { segmentAtOffset } from '../../book/compose';
 import { applyViewerEdit } from '../../editor/viewerEdits';
 import { editModeNow, selectFrame } from '../../editing/editMode';
-import { comicTextHitAt, flowBoxOnSheet, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
+import { comicTextHitAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
 import { emptyMarkRect } from './frameOverlay';
-import { comicTextCaret, comicTextTargetAt, frameClickTarget, frameTextChange, frameTextTargetAt, type FrameTextTarget } from './frameLink';
-import { openFrameTextEditor, type FrameEditSurface } from './frameTextEditor';
+import { comicTextCaret, frameClickTarget } from './frameLink';
 
 export interface FrameToolsDeps {
   docRef: MutableRefObject<VDTDocument | null>;
   dispatchRef: MutableRefObject<Dispatch<SandboxAction>>;
   activePanelRef: MutableRefObject<PanelId | null>;
   sourceOfPage: (pageIndex: number) => ComposedBook | null;
-  labelsRef?: MutableRefObject<SandboxLabels>;
-  /** Where a field over a frame's text goes; none: no editing on the page. */
-  surface?: FrameEditSurface;
 }
 
 export interface FrameTools {
   /** Handle a click at a sheet point; true when it was the frame's. */
   click(pageIndex: number, x: number, y: number): boolean;
-  /** Handle a double click; true when it opened a field (or picked a
-   *  frame in Design mode). */
+  /** Handle a double click; true when it was the frame's (Design mode:
+   *  a frame is picked, its words are not selected). */
   dblclick(pageIndex: number, x: number, y: number): boolean;
   /** Whether the point is on a frame of a composed page. */
   frameAt(pageIndex: number, x: number, y: number): VDTFrame | null;
@@ -121,27 +115,10 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     return true;
   };
 
-  /** Open a field over a frame's text that writes the Markdown back. */
-  const editOnPage = (pageIndex: number, book: ComposedBook, frame: VDTFrame, target: FrameTextTarget, pageStart: number): boolean => {
-    const labels = deps.labelsRef?.current;
-    return openFrameTextEditor(deps.surface!, pageIndex, target, {
-      label: (labels?.composedFrameEdit ?? 'Text of the frame __frame__').replace('__frame__', frame.name),
-      hint: labels?.composedFrameEditHint ?? '',
-      onCommit: (text) => {
-        const change = frameTextChange(target, text);
-        // The page may have been laid out again meanwhile: write only
-        // where the source still reads what the field was opened on.
-        const now = deps.sourceOfPage(pageIndex) ?? book;
-        if (!change || now.markdown.slice(target.start, target.end) !== target.text) return;
-        write(now, pageStart, [change]);
-      },
-    });
-  };
-
   /** A comic's text frame (`::panel{text}`, #885) under the point, on a
    *  comic page or a strip (#959): in Content mode a click off its words
-   *  puts the caret at its text, a double click on a paragraph edits it on
-   *  the page. Its words keep the viewer's own click; Design mode leaves
+   *  puts the caret at its text. Its words keep the viewer's own click and
+   *  double click; Design mode leaves
    *  the comic to its tools. */
   const comicText = (page: VDTPage | null, x: number, y: number): { comic: VDTComicPage; frame: VDTFrame } | null =>
     page && !page.composed && editModeNow() !== 'design' ? comicTextHitAt(page, x, y) : null;
@@ -174,27 +151,11 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     },
     openSlot,
     dblclick(pageIndex, x, y) {
+      // Content mode: the words are selected as anywhere else.
+      if (editModeNow() !== 'design') return false;
       const page = pageOf(pageIndex);
-      const hit = comicText(page, x, y);
-      if (page && hit) {
-        const book = deps.sourceOfPage(pageIndex);
-        if (!book || !deps.surface) return false;
-        const f = sheetToFlow(page, x, y);
-        const target = comicTextTargetAt(page, book.markdown, hit.frame, f.x, f.y);
-        return target ? editOnPage(pageIndex, book, hit.frame, { ...target, rect: flowBoxOnSheet(page, target.rect).rect }, hit.comic.sourceStart) : false;
-      }
       const f = sheetToFlow(page, x, y);
-      const frame = page?.composed ? frameHitAt(page, f.x, f.y) : null;
-      if (!page?.composed || !frame) return false;
-      if (editModeNow() === 'design') return true;
-      const book = deps.sourceOfPage(pageIndex);
-      const doc = deps.docRef.current;
-      if (!book || !doc || !deps.surface) return false;
-      const target = frameTextTargetAt(doc, page, book.markdown, frame, f.x, f.y);
-      if (!target) return false;
-      // The field opens over the words where the sheet shows them.
-      const onSheet = { ...target, rect: flowBoxOnSheet(page, target.rect).rect };
-      return editOnPage(pageIndex, book, frame, onSheet, page.composed.sourceStart);
+      return !!page?.composed && frameHitAt(page, f.x, f.y) !== null;
     },
   };
 }

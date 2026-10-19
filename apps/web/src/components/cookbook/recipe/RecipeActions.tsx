@@ -4,20 +4,12 @@ import { useTranslations } from "next-intl";
 import { AppWindow, ArrowUpRight, Copy, Download, FileDown, Play } from "lucide-react";
 import { defineData, pageHtml } from "@/lib/cookbook/compose";
 import type { ComposedPen, SampleLocale, PenJson } from "@/lib/cookbook/types";
-import { openInCodePen } from "@/lib/codepenClient";
+import { openCodePenWindow, openInCodePen, submitToCodePen } from "@/lib/codepenClient";
 import { cn } from "@/lib/utils";
-import { SOURCE_ATTR, SOURCE_EOL_ATTR, SOURCES_ID, type RecipeSourcesPayload } from "./sources";
+import { SOURCES_ID, type RecipeSourcesPayload, type WholeCode } from "./sources";
 import { copyText, showToast } from "./toast";
+import { loadedWholeCode, loadWholeCode, prefetchWholeCode, wholeFileText } from "./wholeCode";
 import { NewTabNote } from "@/components/ui/NewTabNote";
-
-/** A composed file rebuilt from its highlighted lines (one `.cb-lc` span
- *  per line, in order, folds included), or "" when the page has none. */
-function sourceText(id: "js" | "html" | "css"): string {
-  const pre = document.querySelector(`pre[${SOURCE_ATTR}="${id}"]`);
-  if (!pre) return "";
-  const lines = [...pre.querySelectorAll(".cb-lc")].map((el) => el.textContent ?? "");
-  return lines.join("\n") + (pre.hasAttribute(SOURCE_EOL_ATTR) ? "\n" : "");
-}
 
 export interface RecipeActionsData {
   slug: string;
@@ -34,6 +26,8 @@ export interface RecipeActionsData {
    *  document only. */
   sandbox: { href: string; live: boolean } | null;
   githubUrl: string;
+  /** The page's `code.json` (sources.ts): the composed files, whole. */
+  code: string;
 }
 
 /** Open in Sandbox, the lead action of the band or the bar. */
@@ -48,43 +42,74 @@ function SandboxAction({ sandbox, short }: { sandbox: NonNullable<RecipeActionsD
   );
 }
 
-/** The composed files of an edition, read at click time from the page:
- *  pen.json from the embedded JSON, the files from the whole-recipe view. */
-export function readSources(variant: SampleLocale): { js: string; html: string; css: string; pen: PenJson } | null {
+type Sources = { js: string; html: string; css: string; pen: PenJson };
+
+/** The composed files of an edition: pen.json from the page's embedded
+ *  JSON, the files from `code.json`. */
+function sourcesOf(code: WholeCode, variant: SampleLocale): Sources | null {
   const el = document.getElementById(SOURCES_ID);
   if (!el?.textContent) return null;
   const payload = (JSON.parse(el.textContent) as RecipeSourcesPayload)[variant];
-  const js = sourceText("js");
+  const js = wholeFileText(code.js);
   if (!payload || !js) return null;
-  return { js, html: sourceText("html"), css: sourceText("css"), pen: payload.pen };
+  return { js, html: wholeFileText(code.html), css: wholeFileText(code.css), pen: payload.pen };
 }
 
-/** The composed pen, read from the page's embedded JSON at click time. */
-function readPen(slug: string, variant: SampleLocale): ComposedPen | null {
-  const files = readSources(variant);
-  if (!files) return null;
-  return { slug, variant, ...files, ranges: { content: [], kit: null, regions: {} }, ownLines: 0 };
+/** The composed files, when `code.json` has arrived (null otherwise). */
+export function readSources(data: RecipeActionsData): Sources | null {
+  const code = loadedWholeCode(data.code);
+  return code ? sourcesOf(code, data.variant) : null;
 }
+
+/** The composed files, fetching `code.json` first if need be. */
+export async function loadSources(data: RecipeActionsData): Promise<Sources | null> {
+  return sourcesOf(await loadWholeCode(data.code), data.variant);
+}
+
+const penOf = (data: RecipeActionsData, files: Sources | null): ComposedPen | null =>
+  files && { slug: data.slug, variant: data.variant, ...files, ranges: { content: [], kit: null, regions: {} }, ownLines: 0 };
 
 /** Open in CodePen, Copy code and the `.html` download, for any control. */
 export function useRecipeActions(data: RecipeActionsData) {
   const t = useTranslations("CookbookRecipe");
+  const define = (pen: ComposedPen) => defineData(pen, { title: data.penTitle, description: data.description, tags: data.tags });
+  const windowName = `codepen-${data.slug.replace(/[^a-z0-9]/g, "")}`;
+  const failed = () => showToast(t("copyFailed"));
   return {
     t,
+    /** Fetches `code.json` ahead of a click (hover, focus, touch). */
+    prefetch() {
+      prefetchWholeCode(data.code);
+    },
     codepen() {
-      const pen = readPen(data.slug, data.variant);
-      if (!pen) return;
-      openInCodePen(
-        defineData(pen, { title: data.penTitle, description: data.description, tags: data.tags }),
-        `codepen-${data.slug.replace(/[^a-z0-9]/g, "")}`,
+      const ready = penOf(data, readSources(data));
+      if (ready) return openInCodePen(define(ready), windowName);
+      // The popup opens inside the click; the pen is posted when the files arrive.
+      const popup = openCodePenWindow(windowName);
+      loadSources(data).then(
+        (files) => {
+          const pen = penOf(data, files);
+          if (pen) submitToCodePen(define(pen), windowName, popup);
+          else popup?.close();
+        },
+        () => {
+          popup?.close();
+          failed();
+        },
       );
     },
     copy() {
-      const pen = readPen(data.slug, data.variant);
-      if (pen) void copyText(pen.js, t("copiedCode"), t("copyFailed"));
+      const ready = readSources(data);
+      const text = ready ? ready.js : loadSources(data).then((files) => files?.js ?? Promise.reject(new Error("no script")));
+      void copyText(text, t("copiedCode"), t("copyFailed"));
     },
-    download() {
-      const pen = readPen(data.slug, data.variant);
+    async download() {
+      let pen: ComposedPen | null;
+      try {
+        pen = penOf(data, readSources(data) ?? (await loadSources(data)));
+      } catch {
+        return failed();
+      }
       if (!pen) return;
       const file = `${data.slug}.html`;
       const url = URL.createObjectURL(new Blob([pageHtml(pen, { title: data.penTitle })], { type: "text/html" }));
@@ -109,9 +134,16 @@ function codepenClass(data: RecipeActionsData): string {
 /** The band's actions: Open in Sandbox and Open in CodePen (both filled), Copy
  *  code, the `.html` and PDF downloads and the GitHub folder. */
 export function RecipeActions({ data, className }: { data: RecipeActionsData; className?: string }) {
-  const { t, codepen, copy, download } = useRecipeActions(data);
+  const { t, prefetch, codepen, copy, download } = useRecipeActions(data);
   return (
-    <div role="group" aria-label={t("actionsLabel")} className={cn("cb-actions", className)}>
+    <div
+      role="group"
+      aria-label={t("actionsLabel")}
+      className={cn("cb-actions", className)}
+      onPointerEnter={prefetch}
+      onFocus={prefetch}
+      onTouchStart={prefetch}
+    >
       {data.sandbox && <SandboxAction sandbox={data.sandbox} />}
       <button type="button" className={codepenClass(data)} title={t("openInCodePenTitle")} onClick={codepen}>
         <Play aria-hidden="true" className="size-3.5 fill-current" />
@@ -154,10 +186,17 @@ export function RecipeActions({ data, className }: { data: RecipeActionsData; cl
 /** Below `sm` the band drops its actions; Sandbox, CodePen, Copy and PDF
  *  sit in a bar fixed to the foot of the screen instead. */
 export function RecipeActionBar({ data }: { data: RecipeActionsData }) {
-  const { t, codepen, copy } = useRecipeActions(data);
+  const { t, prefetch, codepen, copy } = useRecipeActions(data);
   return (
     <div className="cb-action-bar on-night">
-      <div role="group" aria-label={t("actionsLabel")} className="cb-action-bar-row">
+      <div
+        role="group"
+        aria-label={t("actionsLabel")}
+        className="cb-action-bar-row"
+        onPointerEnter={prefetch}
+        onFocus={prefetch}
+        onTouchStart={prefetch}
+      >
         {data.sandbox && <SandboxAction sandbox={data.sandbox} short />}
         <button type="button" className={codepenClass(data)} onClick={codepen} title={t("openInCodePenTitle")}>
           <Play aria-hidden="true" className="size-3.5 fill-current" />

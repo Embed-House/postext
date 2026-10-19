@@ -24,11 +24,11 @@ Douze pages d’un cahier d’écriture de CP au format A4, en dix éditions qui
 
 <Excerpt region="answer" />
 
-Une ligne d’exercice est un encadré, et le mot à travailler en est le contenu : `:::callout{type="palabra" title="Repasse et écris"}`, puis `mouton` seul sur sa ligne, puis `:::`. Toutes les lignes d’une même forme partagent un style d’encadré et ne diffèrent que par leurs mots. Le `design` du style dessine une seule image, la réglure avec les copies en pointillés, et compose par-dessus le mot en texte, dans l’écriture scolaire, au moyen de `{boxText}` ; `setsContent` empêche l’encadré de composer une seconde fois son contenu sous le dessin. L’image porte le nom du mot (`trazo-{boxText}`), et le pen en dessine une pour chaque mot qu’il trouve dans les encadrés. La ligne de base d’un texte de maquette tombe à 0,8 de son interlignage sous le haut de sa boîte. La boîte du modèle commence donc 0,8 interlignage au-dessus de la ligne de base de sa ligne d’écriture, et les lettres reposent sur le trait que dessine la réglure. L’interlignage vaut dix hauteurs d’x pour que la découpe de la boîte tombe 2 u sous la ligne de base, assez bas pour la boucle du g. Le titre de l’encadré sert d’étiquette à la ligne. Les titres de section reviennent au plan du livre : la couverture porte son seul titre de niveau 1, chaque leçon un titre de niveau 2, et `sectionEnd: 'heading'` dans le style de la couverture arrête ses titres courants vides à la première leçon.
+Une ligne d’exercice est un encadré, et le mot à travailler en est le contenu : `:::callout{type="palabra" title="Repasse et écris"}`, puis `mouton` seul sur sa ligne, puis `:::`. Toutes les lignes d’une même forme partagent un style d’encadré et ne diffèrent que par leurs mots. Le `design` du style dessine la réglure en image et compose par-dessus le mot en texte, dans l’écriture scolaire, au moyen de `{boxText}`, pour le modèle comme pour ses copies ; `setsContent` empêche l’encadré de composer une seconde fois son contenu sous le dessin. La ligne de base d’un texte de maquette tombe à 0,8 de son interlignage sous le haut de sa boîte. La boîte du modèle commence donc 0,8 interlignage au-dessus de la ligne de base de sa ligne d’écriture, et les lettres reposent sur le trait que dessine la réglure. L’interlignage vaut dix hauteurs d’x pour que la découpe de la boîte tombe 2 u sous la ligne de base, assez bas pour la boucle du g. Le titre de l’encadré sert d’étiquette à la ligne. Les titres de section reviennent au plan du livre : la couverture porte son seul titre de niveau 1, chaque leçon un titre de niveau 2, et `sectionEnd: 'heading'` dans le style de la couverture arrête ses titres courants vides à la première leçon.
 
-### 3 · Tirer les pointillés des contours de la police
+### 3 · Écrire les copies en pointillés
 
-Postext compose une lettre en couleur, en contour ou en teinte pâle, mais ne peut pas la dessiner comme une suite de points le long de son tracé. Les points sont donc dessinés avant la composition du cahier, à partir des contours de la graisse Thin de chaque famille Playwrite : un point tous les 0,2 hauteur d’x le long de chaque contour, gardé seulement si aucun autre ne se trouve à moins de 0,8 de ce pas, de sorte que les deux bords d’un trait fin donnent une seule rangée de points. Le point du i et les accents restent de petites formes pleines. Les points de chaque édition, avec les chasses de la copie et du modèle, sont dans `traces-<lang>.json`, et le pen répartit les copies sur les lignes : après le modèle, sur toute une ligne, une seule après le modèle, puis une ligne vide pour finir.
+Une copie est le même `{boxText}` avec `dotted` : le moteur peint ses lettres en rangées de points le long du milieu de chaque trait, à 0,2 hauteur d’x d’intervalle, sans rien changer à la composition. Les points suivent la police telle que le navigateur la met en forme : les liaisons de l’écriture scolaire et les formes d’un mot arabe sont justes, et le point du i ou un accent n’est qu’un seul point. `repeat` reprend le mot à sa suite autant de fois entières que la ligne en contient, à 3 u d’intervalle : les copies après le modèle sont un texte ancré au modèle par `right-of`, la ligne pleine un texte aussi large que l’encadré, la copie après le second modèle le même texte sans `repeat`. Changez le mot dans le Markdown, et toutes les copies et leurs points changent avec lui.
 
 ### 4 · Repasser les caractères dans leurs cases
 
@@ -38,13 +38,13 @@ Un sinogramme ou un kana occupe un cadratin : une approche égale à la case mo
 
 ### 5 · Ne rien mettre en miroir pour l’arabe
 
-L’édition arabe partage toutes ses maquettes avec les autres. Le moteur met en miroir une maquette posée dans le flux d’une page de droite à gauche, celle d’un titre comme celle d’un encadré : le disque des lettres, le modèle et la première image de l’imagier passent d’eux-mêmes à droite. Seules les copies en pointillés, dessinées à l’intérieur d’une image, sont placées depuis le bord droit dans le code, et les vagues de l’échauffement vont de droite à gauche. `locale: 'ar'` relie le livre à droite.
+L’édition arabe partage toutes ses maquettes avec les autres. Le moteur met en miroir une maquette posée dans le flux d’une page de droite à gauche, celle d’un titre comme celle d’un encadré : le disque des lettres, le modèle, ses copies et la première image de l’imagier passent d’eux-mêmes à droite ; un texte répété part du côté où commence son sens d’écriture. Seules les vagues de l’échauffement, dessinées à l’intérieur d’une image, vont de droite à gauche dans le code. `locale: 'ar'` relie le livre à droite.
 
 ## Variantes
 
 ### Prendre la cursive américaine
 
-Playwrite propose une famille pour de nombreux modèles scolaires. Pour la cursive des États-Unis, changez la police anglaise et générez de nouveau ses pointillés.
+Playwrite propose une famille pour de nombreux modèles scolaires. Pour la cursive des États-Unis, changez la police anglaise ; les pointillés la suivent.
 
 ```diff
 -  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },

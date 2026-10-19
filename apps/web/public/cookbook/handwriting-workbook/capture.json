@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "handwriting-workbook",
-  "sourceHash": "52308a4bcfc0570b8d6fa2f3ca8158bdcbd6d24f534daac6a804a74366d4947c",
+  "sourceHash": "e93b446198fcd31b48d0e0dd7a63334ce30c3f38b64e5e63e0c476f1e3654d69",
   "engine": {
-    "postext": "1.45.0",
-    "postextPdf": "1.45.0",
+    "postext": "1.46.0",
+    "postextPdf": "1.46.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T22:35:30.836Z",
+  "capturedAt": "2026-10-19T09:07:15.910Z",
   "variants": {
     "en": {
-      "hash8": "533ddb53",
-      "vdtHash": "d3b134ca0b550c4b5655a406359cae33571be7b3",
+      "hash8": "5c971a38",
+      "vdtHash": "e4da08b466b45848fe6f61a8639605fb5a371359",
       "timings": {
-        "importMs": 27640,
-        "fontsMs": 876,
-        "buildMs": 100,
-        "totalMs": 31400,
+        "importMs": 1157,
+        "fontsMs": 202,
+        "buildMs": 118,
+        "totalMs": 2283,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63594,
+          "bytes": 62148,
           "alt": "Opening page 3: Round letters."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 65332,
+          "bytes": 63952,
           "alt": "Opening page 4: Sh, ch and th."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 59150,
+          "bytes": 58140,
           "alt": "Opening page 5: Ck and ng."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 62418,
+          "bytes": 60124,
           "alt": "Opening page 6: Magic e."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 59880,
+          "bytes": 59208,
           "alt": "Opening page 7: Ee, ai and oa."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 62356,
+          "bytes": 61556,
           "alt": "Opening page 8: Tricky words."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 64500,
+          "bytes": 63800,
           "alt": "Opening page 9: Capital letters."
         },
         {
@@ -160,7 +160,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 54896,
+          "bytes": 54284,
           "alt": "Opening page 11: Copy a sentence."
         },
         {
@@ -219,17 +219,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1113502,
+        "bytes": 1156849,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 932672,
+        "bytes": 918790,
         "chapters": [
           {
             "pages": 12,
-            "hash": "786315f97d6215eb",
-            "lines": "03e751848d7c5520"
+            "hash": "f711cddea1227c36",
+            "lines": "e4a554f63e1d3a0e"
           }
         ]
       },
@@ -301,10 +301,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -391,8 +395,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -401,7 +405,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 19,
           "table": 0
         },
@@ -463,28 +467,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 31.4 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "bea5e3cc",
-      "vdtHash": "6d2257e4a9ac02bc1448d58f9af565c177d43081",
+      "hash8": "8a98b3e4",
+      "vdtHash": "64880385fc5c39e8e6db9e303adc27a403b7481f",
       "timings": {
-        "importMs": 27509,
-        "fontsMs": 1332,
-        "buildMs": 102,
-        "totalMs": 32425,
+        "importMs": 1154,
+        "fontsMs": 322,
+        "buildMs": 132,
+        "totalMs": 2433,
         "builds": 1
       },
       "specimen": {
@@ -539,7 +532,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 59410,
+          "bytes": 58310,
           "alt": "Página de apertura 3: Las vocales."
         },
         {
@@ -550,7 +543,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 60440,
+          "bytes": 59712,
           "alt": "Página de apertura 4: La m y la p."
         },
         {
@@ -561,7 +554,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 57520,
+          "bytes": 56616,
           "alt": "Página de apertura 5: La eñe."
         },
         {
@@ -572,7 +565,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 60884,
+          "bytes": 60232,
           "alt": "Página de apertura 6: La ll y la rr."
         },
         {
@@ -583,7 +576,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 60856,
+          "bytes": 60760,
           "alt": "Página de apertura 7: La c, la qu y la z."
         },
         {
@@ -594,7 +587,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 67434,
+          "bytes": 66900,
           "alt": "Página de apertura 8: La g, la gu y la gü."
         },
         {
@@ -605,7 +598,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 66646,
+          "bytes": 66184,
           "alt": "Página de apertura 9: La h y la tilde."
         },
         {
@@ -627,7 +620,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 46772,
+          "bytes": 46332,
           "alt": "Página de apertura 11: Copio frases."
         },
         {
@@ -686,17 +679,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1144471,
+        "bytes": 1225674,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 958232,
+        "bytes": 944612,
         "chapters": [
           {
             "pages": 12,
-            "hash": "cd10f42024c33026",
-            "lines": "5892ced4f8d42996"
+            "hash": "024bc4d6b20dac24",
+            "lines": "e9d6258a80b20170"
           }
         ]
       },
@@ -768,10 +761,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -858,8 +855,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -868,7 +865,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 21,
           "table": 0
         },
@@ -930,28 +927,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 32.4 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "474e7094",
-      "vdtHash": "63447abde6251b92bef521e8880122d00a6e965a",
+      "hash8": "caf3141e",
+      "vdtHash": "1e6380b815e57609aabd99d284e9775e294867c1",
       "timings": {
-        "importMs": 27504,
-        "fontsMs": 592,
-        "buildMs": 130,
-        "totalMs": 31349,
+        "importMs": 1181,
+        "fontsMs": 229,
+        "buildMs": 142,
+        "totalMs": 2356,
         "builds": 1
       },
       "specimen": {
@@ -1006,7 +992,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 65980,
+          "bytes": 65110,
           "alt": "Pàgina d'obertura 3: Les vocals i els accents."
         },
         {
@@ -1017,7 +1003,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 55278,
+          "bytes": 54304,
           "alt": "Pàgina d'obertura 4: La m i la p."
         },
         {
@@ -1028,7 +1014,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 62948,
+          "bytes": 61868,
           "alt": "Pàgina d'obertura 5: La ny i la ll."
         },
         {
@@ -1039,7 +1025,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 73622,
+          "bytes": 72966,
           "alt": "Pàgina d'obertura 6: La ela geminada."
         },
         {
@@ -1050,7 +1036,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 58724,
+          "bytes": 58344,
           "alt": "Pàgina d'obertura 7: La ç i la qu."
         },
         {
@@ -1061,7 +1047,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 69418,
+          "bytes": 68626,
           "alt": "Pàgina d'obertura 8: La g, la gu i la gü."
         },
         {
@@ -1072,7 +1058,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 69692,
+          "bytes": 66304,
           "alt": "Pàgina d'obertura 9: L’apòstrof i la dièresi."
         },
         {
@@ -1094,7 +1080,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 47136,
+          "bytes": 46510,
           "alt": "Pàgina d'obertura 11: Copio frases."
         },
         {
@@ -1153,17 +1139,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1152175,
+        "bytes": 1226269,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 955124,
+        "bytes": 940060,
         "chapters": [
           {
             "pages": 12,
-            "hash": "eb058c50843306de",
-            "lines": "1bdd2ebcc594ee0e"
+            "hash": "87d6a0524024edf2",
+            "lines": "1bb33aeaaba1f2b0"
           }
         ]
       },
@@ -1235,10 +1221,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -1325,8 +1315,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -1335,7 +1325,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 20,
           "table": 0
         },
@@ -1397,28 +1387,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 31.3 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "852f19ee",
+      "hash8": "2786a34b",
       "vdtHash": "36599b3f63f98d33721a4df5579939ac3c04cbde",
       "timings": {
-        "importMs": 5370,
-        "fontsMs": 5368,
-        "buildMs": 113,
-        "totalMs": 14766,
+        "importMs": 658,
+        "fontsMs": 512,
+        "buildMs": 87,
+        "totalMs": 2070,
         "builds": 1
       },
       "specimen": {
@@ -1621,12 +1600,12 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 995736,
+        "bytes": 995740,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 811693,
+        "bytes": 811756,
         "chapters": [
           {
             "pages": 12,
@@ -1701,10 +1680,14 @@
           "calloutStyles[].titleStyle.lineHeight",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -1789,7 +1772,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 870,
+        "configLeaves": 878,
         "designElements": 53,
         "directives": [
           ":::callout"
@@ -1865,23 +1848,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "e56e60b3",
-      "vdtHash": "4f688aeb88f893cfeec37c38eb055819dedb49ca",
+      "hash8": "648f9836",
+      "vdtHash": "c7f4ceec58c3e049e14fac43559b093245c2721c",
       "timings": {
-        "importMs": 5063,
-        "fontsMs": 606,
-        "buildMs": 113,
-        "totalMs": 7421,
+        "importMs": 497,
+        "fontsMs": 172,
+        "buildMs": 91,
+        "totalMs": 1448,
         "builds": 1
       },
       "specimen": {
@@ -1936,7 +1913,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 47960,
+          "bytes": 47846,
           "alt": "صفحة الافتتاح ٣: أَشْكَالُ الحَرْفِ."
         },
         {
@@ -1947,7 +1924,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 47656,
+          "bytes": 47578,
           "alt": "صفحة الافتتاح ٤: النِّقَاطُ."
         },
         {
@@ -1958,7 +1935,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 49158,
+          "bytes": 48788,
           "alt": "صفحة الافتتاح ٥: حُرُوفٌ لَا تَتَّصِلُ بِمَا بَعْدَهَا."
         },
         {
@@ -1969,7 +1946,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 47206,
+          "bytes": 47772,
           "alt": "صفحة الافتتاح ٦: الحَرَكَاتُ."
         },
         {
@@ -1980,7 +1957,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 45496,
+          "bytes": 45092,
           "alt": "صفحة الافتتاح ٧: المُدُودُ."
         },
         {
@@ -1991,7 +1968,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 52348,
+          "bytes": 52552,
           "alt": "صفحة الافتتاح ٨: الشَّدَّةُ وَالتَّنْوِينُ."
         },
         {
@@ -2002,7 +1979,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 52828,
+          "bytes": 52826,
           "alt": "صفحة الافتتاح ٩: الشَّمْسُ وَالقَمَرُ."
         },
         {
@@ -2024,7 +2001,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 39844,
+          "bytes": 39790,
           "alt": "صفحة الافتتاح ١١: أَنْسَخُ جُمَلًا."
         },
         {
@@ -2084,17 +2061,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1065973,
+        "bytes": 1111974,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 870356,
+        "bytes": 856353,
         "chapters": [
           {
             "pages": 12,
-            "hash": "f8a0a7d3c2ae8901",
-            "lines": "9eec6d3ee3dae24a"
+            "hash": "d750cbac8231a0be",
+            "lines": "c724dcfb53efa907"
           }
         ]
       },
@@ -2164,10 +2141,14 @@
           "calloutStyles[].titleStyle.lineHeight",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -2252,8 +2233,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 696,
-        "designElements": 42,
+        "configLeaves": 763,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -2261,7 +2242,7 @@
           "{attrs}"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 18,
           "table": 0
         },
@@ -2335,13 +2316,13 @@
       }
     },
     "ja": {
-      "hash8": "ef3fa224",
+      "hash8": "15608295",
       "vdtHash": "3dec642d767e314ff20b3d66a9fdb10979a29069",
       "timings": {
-        "importMs": 6800,
-        "fontsMs": 2760,
-        "buildMs": 90,
-        "totalMs": 11801,
+        "importMs": 574,
+        "fontsMs": 366,
+        "buildMs": 73,
+        "totalMs": 1852,
         "builds": 1
       },
       "specimen": {
@@ -2547,7 +2528,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 986999,
+        "bytes": 987059,
         "chapters": [
           {
             "pages": 12,
@@ -2622,10 +2603,14 @@
           "calloutStyles[].titleStyle.lineHeight",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -2710,7 +2695,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 787,
+        "configLeaves": 795,
         "designElements": 48,
         "directives": [
           ":::callout"
@@ -2771,23 +2756,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "b800b617",
-      "vdtHash": "9b8da1262560d671ba1c97e602ef0eb9f573ccc5",
+      "hash8": "5bd5ad14",
+      "vdtHash": "55306373789fb4809478b0e0ca841bed2c7f1d77",
       "timings": {
-        "importMs": 5951,
-        "fontsMs": 3296,
-        "buildMs": 90,
-        "totalMs": 12946,
+        "importMs": 563,
+        "fontsMs": 573,
+        "buildMs": 79,
+        "totalMs": 1866,
         "builds": 1
       },
       "specimen": {
@@ -2842,7 +2821,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62074,
+          "bytes": 61588,
           "alt": "Página de abertura 3: As vogais."
         },
         {
@@ -2853,7 +2832,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61894,
+          "bytes": 61390,
           "alt": "Página de abertura 4: Sílabas simples."
         },
         {
@@ -2864,7 +2843,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 55286,
+          "bytes": 54754,
           "alt": "Página de abertura 5: O til."
         },
         {
@@ -2875,7 +2854,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 57820,
+          "bytes": 57120,
           "alt": "Página de abertura 6: A cedilha."
         },
         {
@@ -2886,7 +2865,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 60618,
+          "bytes": 60138,
           "alt": "Página de abertura 7: O nh e o lh."
         },
         {
@@ -2897,7 +2876,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 56464,
+          "bytes": 54770,
           "alt": "Página de abertura 8: O ch e o x."
         },
         {
@@ -2908,7 +2887,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 61832,
+          "bytes": 60988,
           "alt": "Página de abertura 9: O rr, o ss e os acentos."
         },
         {
@@ -2930,7 +2909,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 48882,
+          "bytes": 49090,
           "alt": "Página de abertura 11: Copio frases."
         },
         {
@@ -2989,17 +2968,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1200367,
+        "bytes": 1290419,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 991605,
+        "bytes": 976448,
         "chapters": [
           {
             "pages": 12,
-            "hash": "3fa6e1cfda882fe5",
-            "lines": "cd299dde42f72284"
+            "hash": "5e09c6a83938aefe",
+            "lines": "bc9c11a7bb897227"
           }
         ]
       },
@@ -3071,10 +3050,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -3161,8 +3144,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -3171,7 +3154,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 21,
           "table": 0
         },
@@ -3243,13 +3226,13 @@
       }
     },
     "fr": {
-      "hash8": "59c2297e",
-      "vdtHash": "ede6ababf8655265c7dd6b53492726495e3728ce",
+      "hash8": "4750d144",
+      "vdtHash": "33dca3c904d95ad503f10eb8ac176e9a4667d3fb",
       "timings": {
-        "importMs": 4689,
-        "fontsMs": 2969,
-        "buildMs": 87,
-        "totalMs": 11110,
+        "importMs": 887,
+        "fontsMs": 170,
+        "buildMs": 106,
+        "totalMs": 2227,
         "builds": 1
       },
       "specimen": {
@@ -3304,7 +3287,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67138,
+          "bytes": 67682,
           "alt": "Page d’ouverture 3 : Les accents."
         },
         {
@@ -3315,7 +3298,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 62988,
+          "bytes": 63924,
           "alt": "Page d’ouverture 4 : Ou, on et an."
         },
         {
@@ -3326,7 +3309,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 69220,
+          "bytes": 69734,
           "alt": "Page d’ouverture 5 : Les sons ch et gn."
         },
         {
@@ -3337,7 +3320,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 67266,
+          "bytes": 67702,
           "alt": "Page d’ouverture 6 : Le c, le ç et le ge."
         },
         {
@@ -3348,7 +3331,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 60204,
+          "bytes": 60730,
           "alt": "Page d’ouverture 7 : Au et eau."
         },
         {
@@ -3359,7 +3342,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 61834,
+          "bytes": 62050,
           "alt": "Page d’ouverture 8 : Le s et le ss."
         },
         {
@@ -3370,7 +3353,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 66282,
+          "bytes": 67074,
           "alt": "Page d’ouverture 9 : Lettres muettes."
         },
         {
@@ -3392,7 +3375,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 50624,
+          "bytes": 50778,
           "alt": "Page d’ouverture 11 : Les phrases."
         },
         {
@@ -3451,17 +3434,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1141644,
+        "bytes": 1278469,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 910815,
+        "bytes": 893661,
         "chapters": [
           {
             "pages": 12,
-            "hash": "ee63b6d4603e3b0a",
-            "lines": "1c37861ddf734f75"
+            "hash": "19a74db8018dde0c",
+            "lines": "86c8a65be947e1df"
           }
         ]
       },
@@ -3533,10 +3516,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -3623,8 +3610,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -3633,7 +3620,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 19,
           "table": 0
         },
@@ -3705,13 +3692,13 @@
       }
     },
     "de": {
-      "hash8": "f13a09b6",
-      "vdtHash": "27b192f487eebcce3f2628c6d686e1e2f040e583",
+      "hash8": "04536b43",
+      "vdtHash": "6a71e86b360848c394580ea0560991047d209c04",
       "timings": {
-        "importMs": 5426,
-        "fontsMs": 2946,
-        "buildMs": 80,
-        "totalMs": 10014,
+        "importMs": 908,
+        "fontsMs": 232,
+        "buildMs": 118,
+        "totalMs": 2286,
         "builds": 1
       },
       "specimen": {
@@ -3766,7 +3753,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67868,
+          "bytes": 66334,
           "alt": "Kapitelauftakt, Seite 3: Die Selbstlaute."
         },
         {
@@ -3777,7 +3764,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 65666,
+          "bytes": 65108,
           "alt": "Kapitelauftakt, Seite 4: Die Umlaute."
         },
         {
@@ -3788,7 +3775,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 70308,
+          "bytes": 68882,
           "alt": "Kapitelauftakt, Seite 5: sch und ch."
         },
         {
@@ -3799,7 +3786,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 59992,
+          "bytes": 58954,
           "alt": "Kapitelauftakt, Seite 6: ie und ei."
         },
         {
@@ -3810,7 +3797,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 64728,
+          "bytes": 63674,
           "alt": "Kapitelauftakt, Seite 7: eu und äu."
         },
         {
@@ -3821,7 +3808,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 70420,
+          "bytes": 70394,
           "alt": "Kapitelauftakt, Seite 8: ß und ss."
         },
         {
@@ -3832,7 +3819,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 68302,
+          "bytes": 64830,
           "alt": "Kapitelauftakt, Seite 9: ck und tz."
         },
         {
@@ -3854,7 +3841,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 62494,
+          "bytes": 62552,
           "alt": "Kapitelauftakt, Seite 11: Nomen schreibt man groß."
         },
         {
@@ -3913,17 +3900,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1104199,
+        "bytes": 1198013,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 903672,
+        "bytes": 888567,
         "chapters": [
           {
             "pages": 12,
-            "hash": "cf207b15f11b8b83",
-            "lines": "4ada3fe1c474605d"
+            "hash": "8f4d2f79edf7c9c3",
+            "lines": "1852bf912b67ac83"
           }
         ]
       },
@@ -3995,10 +3982,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -4085,8 +4076,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -4095,7 +4086,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 18,
           "table": 0
         },
@@ -4167,13 +4158,13 @@
       }
     },
     "it": {
-      "hash8": "b04072bc",
-      "vdtHash": "e766a9ce8c01389f9d4cb1e00d61f815f54a2cb3",
+      "hash8": "c2de5854",
+      "vdtHash": "8d78f234c494408b36d3fbcc54776df388d36b8b",
       "timings": {
-        "importMs": 5876,
-        "fontsMs": 905,
-        "buildMs": 81,
-        "totalMs": 9532,
+        "importMs": 885,
+        "fontsMs": 206,
+        "buildMs": 97,
+        "totalMs": 2094,
         "builds": 1
       },
       "specimen": {
@@ -4228,7 +4219,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63358,
+          "bytes": 62420,
           "alt": "Pagina d’apertura 3: Le vocali."
         },
         {
@@ -4239,7 +4230,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 67476,
+          "bytes": 65772,
           "alt": "Pagina d’apertura 4: Le doppie."
         },
         {
@@ -4250,7 +4241,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66110,
+          "bytes": 64888,
           "alt": "Pagina d’apertura 5: Gn e gl."
         },
         {
@@ -4261,7 +4252,7 @@
           "h": 1414,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 58980,
+          "bytes": 58014,
           "alt": "Pagina d’apertura 6: Ce e ci, che e chi."
         },
         {
@@ -4272,7 +4263,7 @@
           "h": 1414,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 64958,
+          "bytes": 63134,
           "alt": "Pagina d’apertura 7: Ge e gi, ghe e ghi."
         },
         {
@@ -4283,7 +4274,7 @@
           "h": 1414,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 63502,
+          "bytes": 61558,
           "alt": "Pagina d’apertura 8: Sc, sce e sci."
         },
         {
@@ -4294,7 +4285,7 @@
           "h": 1414,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 62274,
+          "bytes": 61156,
           "alt": "Pagina d’apertura 9: L'acca e l'accento."
         },
         {
@@ -4316,7 +4307,7 @@
           "h": 1414,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 46822,
+          "bytes": 46284,
           "alt": "Pagina d’apertura 11: Copio le frasi."
         },
         {
@@ -4375,17 +4366,17 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 1103326,
+        "bytes": 1174253,
         "pages": 12
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 906606,
+        "bytes": 891046,
         "chapters": [
           {
             "pages": 12,
-            "hash": "c41ffaa68a0852a8",
-            "lines": "5c35622d1cce4a5b"
+            "hash": "0cc4cacdff0b8d9b",
+            "lines": "305b856935877487"
           }
         ]
       },
@@ -4457,10 +4448,14 @@
           "calloutStyles[].titleStyle.textTransform",
           "chipStyles",
           "chipStyles[].background",
+          "chipStyles[].backgroundEnabled",
           "chipStyles[].borderColor",
           "chipStyles[].borderRadius",
           "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].dotted",
           "chipStyles[].fontFamily",
+          "chipStyles[].fontSize",
           "chipStyles[].id",
           "chipStyles[].paddingX",
           "chipStyles[].paddingY",
@@ -4547,8 +4542,8 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 714,
-        "designElements": 42,
+        "configLeaves": 781,
+        "designElements": 46,
         "directives": [
           ":::callout"
         ],
@@ -4557,7 +4552,7 @@
           ":chip"
         ],
         "resources": {
-          "svg": 19,
+          "svg": 5,
           "bitmap": 19,
           "table": 0
         },

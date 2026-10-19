@@ -130,7 +130,7 @@ describe('the contents in a frame (#983)', () => {
 
   it('a block of the contents goes whole to the page that follows when a cut would split it', () => {
     // 45 mm of contents: part A with its entries fit, part B does not.
-    const tall = book(TAKING.replace('::::page{template="contents"}', '::::page{template="contents"}'), 2, 5);
+    const tall = book(TAKING, 2, 5);
     const t = template({ overflow: { continueIn: 'next-page' } }, mm(50));
     const doc = build(tall, [t]);
     const pages = composed(doc);

@@ -1,13 +1,12 @@
 /**
  * The text panels of a comic page (#885) in the page viewers: their frames
- * found under the pointer, the caret a click off their words puts, the
- * paragraph a double click edits on the page.
+ * found under the pointer and the caret a click off their words puts.
  */
 import { describe, expect, it } from 'vitest';
 import { buildDocument, comicBlockOnSheet, flowToPage } from 'postext';
 import type { VDTPage } from 'postext';
 import { comicTextFrameAt, comicTextHitAt, frameHitAt, pointInComicFrame, sheetToFlow } from './frameHit';
-import { comicTextCaret, comicTextTargetAt, frameTextChange } from './frameLink';
+import { comicTextCaret } from './frameLink';
 
 class StubCtx {
   font = '';
@@ -44,16 +43,11 @@ describe('text panels in the viewers', () => {
     expect(pointInComicFrame(frame, corner.x, corner.y)).toBe(false);
   });
 
-  it('puts the caret at the text and edits a paragraph in place', () => {
+  it('puts the caret at the text', () => {
     const page = comicPage();
     const frame = page.comic!.frames![0]!;
     const at = comicTextCaret(page, frame)!;
     expect(markdown.slice(at)).toMatch(/^The narrator speaks here\./);
-    const para = page.floats!.filter((b) => b.type === 'paragraph')[1]!;
-    const target = comicTextTargetAt(page, markdown, frame, para.bbox.x + 2, para.bbox.y + 2)!;
-    expect(target.kind).toBe('block');
-    expect(target.text).toBe('A second paragraph.');
-    expect(frameTextChange(target, 'Another paragraph.')).toEqual({ from: target.start, to: target.end, insert: 'Another paragraph.' });
   });
 
   it('on a right-to-left page: the frame on the sheet, its words in the mirrored flow (#909)', () => {
@@ -66,11 +60,12 @@ describe('text panels in the viewers', () => {
     const sheet = flowToPage(page, para.bbox.x + 2, para.bbox.y + 2);
     expect(comicTextFrameAt(page, sheet.x, sheet.y)?.id).toBe('cm0:p1');
     const inFlow = sheetToFlow(page, sheet.x, sheet.y);
-    const target = comicTextTargetAt(page, md, frame, inFlow.x, inFlow.y)!;
-    expect(target.text).toBe('A second paragraph.');
+    expect(comicTextHitAt(page, sheet.x, sheet.y)?.frame.id).toBe(frame.id);
+    expect(md.slice(comicTextCaret(page, frame)!)).toMatch(/^The narrator speaks here\./);
+    expect(inFlow.x).toBeCloseTo(para.bbox.x + 2, 3);
   });
 
-  it('finds the text frame of a strip, with the strip\'s comic, and its caret and paragraph (#959)', () => {
+  it('finds the text frame of a strip, with the strip\'s comic, and its caret (#959)', () => {
     const md = 'Before.\n\n:::strip{split="* | *" aspect=2.5}\n::panel{text}\nThe narrator speaks here.\n\nA second paragraph.\n::panel\nana: Hello!\n:::\n';
     const doc = buildDocument({ markdown: md, resources: [] }, {});
     const page = doc.pages.find((p) => p.columns.some((c) => c.blocks.some((b) => b.comic)))!;
@@ -86,7 +81,5 @@ describe('text panels in the viewers', () => {
     expect(comicTextHitAt(page, second.x + second.width / 2, second.y + second.height / 2)).toBeNull();
     const at = comicTextCaret(page, hit.frame)!;
     expect(md.slice(at)).toMatch(/^The narrator speaks here\./);
-    const target = comicTextTargetAt(page, md, hit.frame, para.bbox.x + 2, para.bbox.y + 2)!;
-    expect(target.text).toBe('A second paragraph.');
   });
 });

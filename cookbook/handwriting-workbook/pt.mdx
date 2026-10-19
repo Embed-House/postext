@@ -24,11 +24,11 @@ Doze páginas de um caderno de caligrafia do 1.º ano em A4, em dez edições qu
 
 <Excerpt region="answer" />
 
-Uma linha de treino é um boxe, e a palavra a treinar é o seu conteúdo: `:::callout{type="palabra" title="Cubra e escreva"}`, depois `pipa` numa linha própria, depois `:::`. Todas as linhas de um mesmo formato compartilham um estilo de boxe e só mudam nas palavras. O `design` do estilo desenha uma imagem, a pauta com as cópias pontilhadas, e compõe a palavra por cima como texto na letra escolar por meio de `{boxText}`; `setsContent` impede que o boxe componha o conteúdo uma segunda vez sob o desenho. A imagem leva o nome da palavra (`trazo-{boxText}`), e o pen desenha uma para cada palavra que encontra nos boxes. A linha de base de um texto de design cai a 0,8 da sua entrelinha abaixo do topo da caixa, então a caixa do modelo começa 0,8 da entrelinha acima da linha de base da linha de treino, e as letras pousam na linha que a pauta desenha. A entrelinha mede dez alturas de x para que o recorte da caixa caia 2 u abaixo da linha de base, com espaço para a perna do g. O título do boxe vira o rótulo da linha. Os títulos de seção ficam para a estrutura do livro: a capa tem o único título de nível 1, cada lição um de nível 2, e `sectionEnd: 'heading'` no estilo da capa encerra seus cabeços em branco na primeira lição.
+Uma linha de treino é um boxe, e a palavra a treinar é o seu conteúdo: `:::callout{type="palabra" title="Cubra e escreva"}`, depois `pipa` numa linha própria, depois `:::`. Todas as linhas de um mesmo formato compartilham um estilo de boxe e só mudam nas palavras. O `design` do estilo desenha a pauta como imagem e compõe a palavra por cima como texto na letra escolar por meio de `{boxText}`, tanto o modelo quanto as cópias; `setsContent` impede que o boxe componha o conteúdo uma segunda vez sob o desenho. A linha de base de um texto de design cai a 0,8 da sua entrelinha abaixo do topo da caixa, então a caixa do modelo começa 0,8 da entrelinha acima da linha de base da linha de treino, e as letras pousam na linha que a pauta desenha. A entrelinha mede dez alturas de x para que o recorte da caixa caia 2 u abaixo da linha de base, com espaço para a perna do g. O título do boxe vira o rótulo da linha. Os títulos de seção ficam para a estrutura do livro: a capa tem o único título de nível 1, cada lição um de nível 2, e `sectionEnd: 'heading'` no estilo da capa encerra seus cabeços em branco na primeira lição.
 
-### 3 · Desenhe os pontos com os contornos da própria fonte
+### 3 · Escreva as cópias em pontos
 
-O Postext compõe uma letra em cor, contornada ou clara, mas não a desenha como uma fileira de pontos ao longo do traço. Os pontos são desenhados antes de compor o caderno, a partir dos contornos do corte Thin de cada família Playwrite: um ponto a cada 0,2 altura de x ao longo de cada contorno, e um ponto só fica se nenhum outro estiver a menos de 0,8 desse passo, de modo que os dois lados de um traço fino dão uma só fileira. O pingo do i e os acentos ficam como pequenas formas cheias. Os pontos de cada edição, com o avanço da cópia e o do modelo, estão em `traces-<lang>.json`, e o pen distribui as cópias pelas linhas: na primeira, depois do modelo; na segunda, a linha inteira; na terceira, uma só depois do modelo; a quarta fica vazia.
+Uma cópia é o mesmo `{boxText}` com `dotted`: o motor pinta as letras como fileiras de pontos pelo meio de cada traço, a 0,2 altura de x um do outro, e deixa a composição como está. Os pontos seguem a fonte do jeito que o navegador a forma, então as ligações da letra escolar e as formas de uma palavra árabe saem certas, e o pingo do i ou um acento é um ponto só. `repeat` escreve a palavra de novo depois dela mesma tantas vezes inteiras quantas cabem na linha, a 3 u de distância: as cópias depois do modelo são um texto ancorado ao modelo com `right-of`, a linha inteira é um texto da largura do boxe e a cópia depois do segundo modelo é o mesmo texto sem `repeat`. Mude a palavra no Markdown e todas as cópias e seus pontos mudam junto.
 
 ### 4 · Cubra os caracteres nas suas quadrículas
 
@@ -38,13 +38,13 @@ Um caractere chinês ou um kana tem um quadratim de largura, então um espaçame
 
 ### 5 · Não espelhe nada para o árabe
 
-A edição árabe compartilha todos os designs com as outras. O motor espelha um design posto no fluxo de uma página da direita para a esquerda, seja o de um título ou o de um boxe, então o disco das letras, o modelo e a primeira imagem do dicionário passam sozinhos para a direita. Só as cópias pontilhadas, desenhadas dentro de uma imagem, são postas a partir da borda direita no código, e as ondas do aquecimento correm da direita para a esquerda. `locale: 'ar'` encaderna o livro pela direita.
+A edição árabe compartilha todos os designs com as outras. O motor espelha um design posto no fluxo de uma página da direita para a esquerda, seja o de um título ou o de um boxe, então o disco das letras, o modelo, as cópias e a primeira imagem do dicionário passam sozinhos para a direita; um texto repetido começa pelo lado em que começa a sua direção. Só as ondas do aquecimento, desenhadas dentro de uma imagem, correm da direita para a esquerda no código. `locale: 'ar'` encaderna o livro pela direita.
 
 ## Variações
 
 ### Use a cursiva americana
 
-A Playwrite tem uma família para muitos modelos escolares. Para a cursiva dos Estados Unidos, troque a fonte inglesa e gere os pontos de novo.
+A Playwrite tem uma família para muitos modelos escolares. Para a cursiva dos Estados Unidos, troque a fonte inglesa; os pontos a acompanham.
 
 ```diff
 -  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },

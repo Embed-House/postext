@@ -2333,8 +2333,6 @@
     "editionCompareSync": "Gemeinsam blättern",
     "editionCompareLoading": "Ausgabe __locale__ wird gesetzt …",
     "editionCompareNoChapter": "Die Ausgabe __locale__ hat dieses Kapitel nicht",
-    "composedFrameEdit": "Text des Rahmens __frame__",
-    "composedFrameEditHint": "Eingabe übernimmt die Änderung, Umschalt+Eingabe beginnt eine neue Zeile, Esc lässt den Text, wie er war.",
     "selectionPath": "Auswahl auf der Seite",
     "selectionUp": "Das Umgebende auswählen (Esc)",
     "selectionClear": "Auswahl aufheben",

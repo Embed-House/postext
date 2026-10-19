@@ -18,9 +18,10 @@
     "primary": [
       "opener-design",
       "callout-styles",
-      "design-images"
+      "dotted-text"
     ],
     "also": [
+      "design-images",
       "heading-attributes",
       "heading-styles",
       "covers",
@@ -45,8 +46,8 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.45.0",
-    "postextPdf": "1.45.0"
+    "postext": "1.46.0",
+    "postextPdf": "1.46.0"
   },
   "kit": [
     "core",
@@ -351,78 +352,6 @@
         "who": "Generated With Diffusion Models",
         "license": "original",
         "file": "medal-480.jpg"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the en edition, traced along the outlines of Playwrite GB J Thin.",
-          "es": "Las letras punteadas de la edición en, trazadas sobre los contornos de Playwrite GB J Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-en.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the es edition, traced along the outlines of Playwrite ES Thin.",
-          "es": "Las letras punteadas de la edición es, trazadas sobre los contornos de Playwrite ES Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-es.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the ca edition, traced along the outlines of Playwrite ES Thin.",
-          "es": "Las letras punteadas de la edición ca, trazadas sobre los contornos de Playwrite ES Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-ca.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the fr edition, traced along the outlines of Playwrite FR Trad Thin.",
-          "es": "Las letras punteadas de la edición fr, trazadas sobre los contornos de Playwrite FR Trad Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-fr.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the de edition, traced along the outlines of Playwrite DE VA Thin.",
-          "es": "Las letras punteadas de la edición de, trazadas sobre los contornos de Playwrite DE VA Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-de.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the it edition, traced along the outlines of Playwrite IT Trad Thin.",
-          "es": "Las letras punteadas de la edición it, trazadas sobre los contornos de Playwrite IT Trad Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-it.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the pt edition, traced along the outlines of Playwrite BR Thin.",
-          "es": "Las letras punteadas de la edición pt, trazadas sobre los contornos de Playwrite BR Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-pt.json"
-      },
-      {
-        "what": {
-          "en": "The dotted letters of the ar edition, traced along the outlines of Playpen Sans Arabic Thin.",
-          "es": "Las letras punteadas de la edición ar, trazadas sobre los contornos de Playpen Sans Arabic Thin."
-        },
-        "who": "Ignacio Ferro",
-        "license": "original",
-        "file": "traces-ar.json"
       }
     ],
     "fonts": [
@@ -501,7 +430,5 @@
   "downloads": {
     "pdf": true
   },
-  "gaps": [
-    "tracing-letters"
-  ]
+  "gaps": []
 }

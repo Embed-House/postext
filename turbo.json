@@ -33,6 +33,7 @@
       ]
     },
     "web#build": {
+      "cache": false,
       "dependsOn": [
         "^build"
       ],

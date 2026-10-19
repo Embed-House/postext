@@ -142,11 +142,12 @@ export function mergeCarriedOutline(
   outlines: readonly (readonly OutlineEntry[])[],
   places: readonly (readonly CarriedPlace[] | undefined)[],
 ): (readonly OutlineEntry[])[] {
-  const out = outlines.slice();
-  const copied = new Set<number>();
+  // The pages found per chapter, by entry index. Kept in a Map and folded
+  // into fresh arrays below, so no write goes through a key of the input.
+  const found = new Map<number, Map<number, CarriedPlace>>();
   for (const list of places) {
     for (const c of list ?? []) {
-      const entries = out[c.chapter];
+      const entries = outlines[c.chapter];
       if (!entries) continue;
       const at = entries.findIndex((e) => (
         c.kind === 'indexMark' ? e.kind === 'indexMark' && e.indexMark?.sourceStart === c.sourceStart
@@ -154,18 +155,26 @@ export function mergeCarriedOutline(
             : e.kind === 'heading' && e.headingSource === c.sourceStart
       ));
       if (at < 0) continue;
-      if (!copied.has(c.chapter)) {
-        out[c.chapter] = entries.slice();
-        copied.add(c.chapter);
+      let byEntry = found.get(c.chapter);
+      if (!byEntry) {
+        byEntry = new Map();
+        found.set(c.chapter, byEntry);
       }
-      const mutable = out[c.chapter] as OutlineEntry[];
-      mutable[at] = {
-        ...mutable[at]!,
+      byEntry.set(at, c);
+    }
+  }
+  return outlines.map((entries, chapter) => {
+    const byEntry = found.get(chapter);
+    if (!byEntry) return entries;
+    return entries.map((e, at) => {
+      const c = byEntry.get(at);
+      if (!c) return e;
+      return {
+        ...e,
         pageLabel: c.pageLabel,
         pageIndex: c.pageIndex,
         ...(c.kind === 'indexMark' ? { pageFormat: c.pageFormat } : {}),
       };
-    }
-  }
-  return out;
+    });
+  });
 }

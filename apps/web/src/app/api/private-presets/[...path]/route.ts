@@ -113,8 +113,9 @@ export async function GET(_request: Request, ctx: RouteContext): Promise<Respons
   }
 
   let bytes: Buffer;
+  // Development only (production has no root): never traced into the build.
   try {
-    bytes = await fs.promises.readFile(file);
+    bytes = await fs.promises.readFile(/*turbopackIgnore: true*/ file);
   } catch {
     return notFound(true);
   }
@@ -133,7 +134,7 @@ export async function HEAD(_request: Request, ctx: RouteContext): Promise<Respon
 
   let size: number | undefined;
   try {
-    size = (await fs.promises.stat(file)).size;
+    size = (await fs.promises.stat(/*turbopackIgnore: true*/ file)).size;
   } catch {
     return notFound(false);
   }
