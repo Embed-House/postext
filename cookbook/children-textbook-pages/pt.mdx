@@ -1,42 +1,48 @@
 ---
-title: "Uma unidade de livro didático infantil em três idiomas"
-summary: "Nove páginas de uma unidade do 3.º ano em espanhol, catalão e inglês: páginas duplas sobre fundos coloridos, caixas com aba que crescem e um mapa rotulado."
+title: "Uma unidade de livro didático infantil em dez idiomas"
+summary: "Nove páginas de uma unidade do 3.º ano em dez idiomas, também em árabe e na vertical: páginas duplas em fundos coloridos, caixas com aba e um mapa rotulado."
 plain: "Uma unidade de livro didático sobre um rio, com nove páginas. Cada tema é uma página dupla sobre um fundo colorido, com aba de título, texto, imagens e caixas. O mapa não tem nenhuma palavra pintada: os nomes vêm do texto."
 description: "Uma unidade de livro didático infantil no Postext: modelos que estendem uma base, estilos de caixa encadeados e um mapa pintado rotulado a partir do Markdown."
-question: "Como componho uma unidade de livro didático em três idiomas com os mesmos modelos de página?"
-aliases: ["livro didático", "livro escolar", "ensino fundamental", "unidade", "página dupla", "página de tema", "fundo de página", "aba de título", "mapa rotulado", "sumário por partes", "herança de modelos", "espanhol catalão inglês", "textbook"]
+question: "Como componho um livro didático em dez idiomas, também em árabe e na vertical, com os mesmos modelos?"
+aliases: ["livro didático", "livro escolar", "ensino fundamental", "unidade", "página dupla", "página de tema", "fundo de página", "aba de título", "mapa rotulado", "sumário por partes", "herança de modelos", "espanhol catalão inglês", "da direita para a esquerda", "texto vertical", "tategaki", "textbook"]
 pageNotes: {"1": "A abertura da unidade: uma pintura de um vale com seu rio, das montanhas nevadas ao mar, ocupa a parte de cima, com duas crianças sentadas na grama num canto. Abaixo, uma aba azul com o título Nosso rio, um parágrafo e uma caixa azul-clara, Você vai aprender.", "2": "O sumário: sobre fundo azul-claro, uma aba azul de título, duas linhas de parte (A e B) com seus temas e seções, pontilhados e números de página, e o mapa como imagem pequena no pé.", "4": "Tema 1, Onde nasce um rio, sobre fundo azul-claro: aba de título numerada, duas colunas de texto, uma tira de três pinturas com legenda, uma caixa Experimente; na página direita, três caixas com aba.", "6": "Tema 2, Da montanha ao mar, sobre fundo verde-claro: um único mapa pintado em página dupla com os nomes postos por cima e três caixas de curso sob a página direita.", "8": "Tema 3, As pessoas e o rio, sobre fundo areia: texto e duas caixas na página esquerda, três caixas com uma pintura cada na direita."}
 ---
 
 ## O que você vai compor
 
-Nove páginas de *Nosso rio*, unidade 4 de um livro inventado de Ciências Sociais do 3.º ano, numa página de 210 × 280 mm, em espanhol, catalão e inglês. Um vale pintado abre a unidade, uma página de sumário lista duas partes e seguem três temas em página dupla, cada um sobre o fundo: azul-água, verde-campo, areia-sol. Cada tema tem uma aba com o número e o título, texto em duas colunas e caixas com aba que crescem com o texto. O segundo tema é um único mapa pintado em página dupla, com o rio, as aldeias e os três cursos nomeados a partir do Markdown. Os três textos diferem em um quinto ou mais e cabem nos mesmos modelos: uma caixa toma a altura que as palavras pedem e empurra a seguinte, e o mapa é reduzido um pouco antes de qualquer texto.
+Nove páginas de *Nosso rio*, unidade 4 de um livro inventado de Ciências Sociais do 3.º ano, numa página de 210 × 280 mm, em dez idiomas: espanhol, catalão, inglês, português, francês, alemão, italiano, árabe, chinês e japonês. Um vale pintado abre a unidade, uma página de sumário lista duas partes e seguem três temas em página dupla, cada um sobre o fundo: azul-água, verde-campo, areia-sol. Cada tema tem uma aba com o número e o título, texto em duas colunas e caixas com aba que crescem com o texto. O segundo tema é um único mapa pintado em página dupla, com o rio, as aldeias e os três cursos nomeados a partir do Markdown. Os textos diferem em um quinto ou mais e cabem nos mesmos modelos: uma caixa toma a altura que as palavras pedem e empurra a seguinte, e o mapa é reduzido um pouco antes de qualquer texto. O livro árabe corre da direita para a esquerda e o chinês e o japonês de cima para baixo; os três são encadernados pela direita e lidos da página direita de cada página dupla para a esquerda.
 
 ## Preparo
 
-### 1 · Construa as caixas com `extends`
+### 1 · Saiba por qual lado cada idioma começa
+
+<Excerpt region="editions" />
+
+Os blocos de um modelo ficam no referencial do fluxo da página, onde o x corre ao longo das linhas. Com `locale: 'ar'` o motor espelha esse referencial, de modo que o livro árabe usa os blocos latinos sem mudanças: o título vem primeiro na página direita, as três fotografias e as três caixas dos cursos vão da direita para a esquerda, e as abas, as faixas e os preenchimentos das caixas seguem as linhas. Com `layout.writingMode: 'vertical-rl'` o x desce pela página e o y vai da direita para a esquerda: o `width` de um bloco é um comprimento para baixo, uma pilha avança para a esquerda, `columns: 2` dá dois andares (段) de 27 caracteres e um bloco posto `below` de outro fica à sua esquerda. A decoração (os fundos, a aba do título, o número, os cabeçalhos e os folios) fica sobre a própria folha, por isso é posicionada a partir de `START`, o lado por onde começa a leitura da página. Cada escrita tem uma fonte de texto e uma arredondada para títulos, e as edições árabe, chinesa e japonesa não têm itálico, versais nem espacejamento.
+
+### 2 · Construa as caixas com `extends`
 
 <Excerpt region="boxes" />
 
 Um estilo de caixa se faz em três passos. `caja` guarda a forma, a tipografia e a geometria da aba; `caja-tema` põe a cor do tema na aba e nos marcadores; `dato`, `palabras` e `actividad` fixam o tipo: caixa com fundo, com borda ou com faixa. Suas cores são entradas da paleta (`tema`, `tema-tint`): cada estilo se escreve uma vez e o modelo de um tema o tinge.
 
-### 2 · Faça cada tema herdar de um modelo base
+### 3 · Faça cada tema herdar de um modelo base
 
 <Excerpt region="answer" />
 
-A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), fixa sua `palette` (as três entradas `tema` tomam as cores da família, e o fundo, a aba, o número e todas as caixas mudam juntos) e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede. O número é `{headingNumber}`, o contador do título que o bloco tomou, pintado sobre o preenchimento esquerdo do bloco: nenhum contêiner de página o repete, e um clique nele chega ao número, não ao bloco.
+A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), fixa sua `palette` (as três entradas `tema` tomam as cores da família, e o fundo, a aba, o número e todas as caixas mudam juntos) e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede. O número é `{headingNumber}`, o contador do título que o bloco tomou, pintado sobre o preenchimento do bloco que precede suas palavras: nenhum contêiner de página o repete, e um clique nele chega ao número, não ao bloco.
 
-### 3 · Deixe os grupos dividirem o espaço
+### 4 · Deixe os grupos dividirem o espaço
 
-Cada tema tem dois grupos. A página esquerda é uma pilha: título, texto e depois a tira de imagens ou o mapa. A direita é outra pilha de caixas, ou uma fileira de três caixas que dividem a largura. Um bloco é tão alto quanto as palavras e nunca menos que o `minHeight`: o texto em espanhol empurra tudo o que tem embaixo e nenhuma posição do modelo muda. Quando falta espaço a uma página, a [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço, reduz o mapa e as imagens e deixa o texto por último, até 90 %. O `pnpm cookbook bench` recompõe as três edições com o texto 30 % mais longo.
+Cada tema tem dois grupos. A página esquerda é uma pilha: título, texto e depois a tira de imagens ou o mapa. A direita é outra pilha de caixas, ou uma fileira de três caixas que dividem a largura. Um bloco é tão alto quanto as palavras e nunca menos que o `minHeight`: o texto em espanhol empurra tudo o que tem embaixo e nenhuma posição do modelo muda. Quando falta espaço a uma página, a [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço, reduz o mapa e as imagens e deixa o texto por último, até 90 %. O `pnpm cookbook bench` recompõe cada edição com o texto 30 % mais longo. Numa página vertical, a página dupla verde-campo estende o mapa ao longo da cabeça das duas páginas, e o título, o texto e os três cursos ficam embaixo.
 
-### 4 · Ponha os nomes do mapa a partir do texto
+### 5 · Ponha os nomes do mapa a partir do texto
 
 <Excerpt region="art-labels" />
 
-O mapa é uma pintura sem uma letra. Cada lugar é uma âncora da imagem, um ponto em frações da largura e da altura com um estilo de rótulo, e cada edição escreve as próprias linhas `::label` nessas âncoras. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* ficam no mesmo lugar, e um nome mais longo se quebra dentro do `width` da âncora.
+O mapa é uma pintura sem uma letra. Cada lugar é uma âncora da imagem, um ponto em frações da largura e da altura com um estilo de rótulo, e cada edição escreve as próprias linhas `::label` nessas âncoras. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* ficam no mesmo lugar, e um nome mais longo se quebra dentro do `width` da âncora. Um livro encadernado pela direita mostra a mesma pintura espelhada (`mapa-1900-rtl.jpg`), de modo que o rio vai das montanhas, à direita, ao mar, à esquerda, no sentido em que se leem suas páginas; `flipped` leva cada âncora para o outro lado e gira uma rotação no sentido contrário.
 
-### 5 · Mantenha cada parte do sumário unida
+### 6 · Mantenha cada parte do sumário unida
 
 <Excerpt region="contents" />
 
@@ -59,14 +65,15 @@ Um tema sobre o mar é uma quarta entrada de `FAMILIES` e um modelo feito com `t
 Um bloco que não deve reduzir o texto leva `fit: { shrinkText: false }`. Um texto mais longo empurra então com mais força os blocos em volta e a escada chega antes às imagens.
 
 ```diff
--  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
--    fit: { minScale: 0.9 } }],
-+  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
-+    fit: { shrinkText: false } }],
+   frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(CJK ? 16 : 7), // 段
+-    width: mm(MEASURE), fit: { minScale: 0.9 } }],
++    width: mm(MEASURE), fit: { shrinkText: false } }],
 ```
 
 ## Erros comuns
 
 - Um nome pintado dentro de uma imagem não poderia mudar com o idioma: o mapa não leva nenhuma palavra e cada nome é um rótulo.
-A paleta de um tema muda só as entradas `tema`. Os folios e o sumário usam `agua`, que tem o mesmo azul: continuam azuis nas páginas verdes e areia; ligue-os a `tema` e eles seguirão o tema.
+- A paleta de um tema muda só as entradas `tema`. Os folios e o sumário usam `agua`, que tem o mesmo azul: continuam azuis nas páginas verdes e areia; ligue-os a `tema` e eles seguirão o tema.
+- Um algarismo arábico-índico ao lado de um ponto médio se lê como dois algarismos: `١ · ماء` parece `٠١ ماء`, porque o zero árabe é um ponto. A edição árabe escreve `١- ماء للحقول` e escreve por extenso o número da unidade.
+- Um elemento de decoração fica sobre a folha, não no fluxo: um selo posto no canto `top-left` de um bloco continua à esquerda em árabe. `corner('top')` e `inward(x)` o posicionam a partir do lado por onde começa a leitura da página.
 - Duas figuras que definem o mesmo recurso tomam as palavras da primeira: o mapa pequeno do sumário é o mesmo arquivo sob outro recurso, `rio`, sem âncoras.

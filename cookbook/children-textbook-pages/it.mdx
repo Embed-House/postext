@@ -1,42 +1,48 @@
 ---
-title: "Un'unità di libro di testo per bambini in tre lingue"
-summary: "Nove pagine di un’unità di terza elementare in spagnolo, catalano e inglese: doppie pagine su fondi colorati, riquadri con linguetta che crescono, mappa."
+title: "Un'unità di libro di testo per bambini in dieci lingue"
+summary: "Nove pagine di un’unità di terza elementare in dieci lingue, anche in arabo e in verticale: doppie pagine su fondi colorati, riquadri con linguetta, mappa."
 plain: "Un’unità di libro di testo su un fiume, di nove pagine. Ogni argomento è una doppia pagina su fondo colorato, con linguetta del titolo, testo, immagini e riquadri. La mappa non ha parole dipinte: i nomi vengono dal testo."
 description: "Un’unità di libro di testo per bambini in Postext: modelli che estendono una base, stili di riquadro a catena e una mappa dipinta etichettata dal Markdown."
-question: "Come compongo un’unità di libro di testo in tre lingue con gli stessi modelli di pagina?"
-aliases: ["libro di testo", "libro scolastico", "scuola primaria", "unità didattica", "doppia pagina", "pagina di argomento", "fondo di pagina", "linguetta del titolo", "mappa etichettata", "indice per parti", "ereditarietà dei modelli", "spagnolo catalano inglese", "textbook"]
+question: "Come compongo un libro di testo in dieci lingue, anche in arabo e in verticale, con gli stessi modelli?"
+aliases: ["libro di testo", "libro scolastico", "scuola primaria", "unità didattica", "doppia pagina", "pagina di argomento", "fondo di pagina", "linguetta del titolo", "mappa etichettata", "indice per parti", "ereditarietà dei modelli", "spagnolo catalano inglese", "da destra a sinistra", "testo verticale", "tategaki", "textbook"]
 pageNotes: {"1": "L’apertura dell’unità: un dipinto di una valle con il suo fiume, dai monti innevati al mare, occupa la parte alta, con due bambini seduti sull’erba in un angolo. Sotto, una linguetta blu con il titolo Il nostro fiume, un paragrafo e un riquadro azzurro, Imparerai.", "2": "L’indice: su fondo azzurro, una linguetta blu del titolo, due righe di parte (A e B) con i loro argomenti e paragrafi, puntini di guida e numeri di pagina, e la mappa come piccola immagine in fondo.", "4": "Argomento 1, Dove nasce un fiume, su fondo azzurro: linguetta del titolo numerata, due colonne di testo, una striscia di tre dipinti con didascalia, un riquadro Prova a farlo; nella pagina destra tre riquadri con linguetta.", "6": "Argomento 2, Dalla montagna al mare, su fondo verde chiaro: un’unica mappa dipinta su due pagine con i nomi sopra e tre riquadri dei corsi sotto la pagina destra.", "8": "Argomento 3, Le persone e il fiume, su fondo sabbia: testo e due riquadri nella pagina sinistra, tre riquadri con un dipinto ciascuno nella destra."}
 ---
 
 ## Che cosa comporrai
 
-Nove pagine di *Il nostro fiume*, unità 4 di un libro inventato di scienze sociali per la terza elementare, su una pagina di 210 × 280 mm, in spagnolo, catalano e inglese. Una valle dipinta apre l’unità, una pagina d’indice elenca due parti e seguono tre argomenti a doppia pagina, ciascuno sul suo fondo: azzurro acqua, verde campo, sabbia sole. Ogni argomento ha una linguetta con numero e titolo, testo su due colonne e riquadri con linguetta che crescono con il loro testo. Il secondo argomento è un’unica mappa dipinta su due pagine, con il fiume, i paesi e i tre corsi, i cui nomi vengono dal Markdown. I tre testi differiscono di un quinto o più ed entrano negli stessi modelli: un riquadro prende l’altezza che chiedono le sue parole e spinge giù il successivo, e la mappa si riduce un poco prima di qualsiasi testo.
+Nove pagine di *Il nostro fiume*, unità 4 di un libro inventato di scienze sociali per la terza elementare, su una pagina di 210 × 280 mm, in dieci lingue: spagnolo, catalano, inglese, portoghese, francese, tedesco, italiano, arabo, cinese e giapponese. Una valle dipinta apre l’unità, una pagina d’indice elenca due parti e seguono tre argomenti a doppia pagina, ciascuno sul suo fondo: azzurro acqua, verde campo, sabbia sole. Ogni argomento ha una linguetta con numero e titolo, testo su due colonne e riquadri con linguetta che crescono con il loro testo. Il secondo argomento è un’unica mappa dipinta su due pagine, con il fiume, i paesi e i tre corsi, i cui nomi vengono dal Markdown. I testi differiscono di un quinto o più ed entrano negli stessi modelli: un riquadro prende l’altezza che chiedono le sue parole e spinge giù il successivo, e la mappa si riduce un poco prima di qualsiasi testo. Il libro arabo va da destra a sinistra e quelli cinese e giapponese scendono lungo la pagina; tutti e tre sono rilegati a destra e si leggono dalla pagina destra di ogni doppia pagina alla sinistra.
 
 ## Preparazione
 
-### 1 · Costruisci i riquadri con `extends`
+### 1 · Sappi da quale lato comincia ogni lingua
+
+<Excerpt region="editions" />
+
+Le cornici di un modello stanno nel riferimento del flusso della pagina, dove la x corre lungo le righe. Con `locale: 'ar'` il motore specchia quel riferimento, così il libro arabo usa le cornici latine senza modifiche: il titolo viene prima nella pagina destra, le tre fotografie e i tre riquadri dei corsi vanno da destra a sinistra, e linguette, filetti e margini interni dei riquadri seguono le righe. Con `layout.writingMode: 'vertical-rl'` la x scende lungo la pagina e la y va da destra a sinistra: il `width` di una cornice è una lunghezza verso il basso, una pila avanza verso sinistra, `columns: 2` dà due fasce (段) di 27 caratteri e una cornice posta `below` di un’altra sta alla sua sinistra. La decorazione (i fondi, la linguetta del titolo, il numero, le testatine e i numeri di pagina) sta sul foglio stesso, quindi si colloca da `START`, il lato da cui comincia la lettura della pagina. Ogni scrittura ha un carattere da testo e uno arrotondato per i titoli, e le edizioni araba, cinese e giapponese non hanno corsivo, maiuscole né spaziatura.
+
+### 2 · Costruisci i riquadri con `extends`
 
 <Excerpt region="boxes" />
 
 Uno stile di riquadro si fa in tre passi. `caja` tiene la forma, il carattere e la geometria della linguetta; `caja-tema` mette il colore dell’argomento su linguetta ed elenchi; `dato`, `palabras` e `actividad` fissano il genere: riquadro con fondo, con bordo o con filetto. I loro colori sono voci della tavolozza (`tema`, `tema-tint`): ogni stile si scrive una volta e il modello di un argomento lo tinge.
 
-### 2 · Fai ereditare a ogni argomento un modello di base
+### 3 · Fai ereditare a ogni argomento un modello di base
 
 <Excerpt region="answer" />
 
-La base è una doppia pagina: un fondo fino all’abbondanza, una linguetta del titolo con il numero e un testo su due colonne. Un argomento la estende (`extends: 'tema'`), fissa la sua `palette` (le tre voci `tema` prendono i colori della famiglia, e fondo, linguetta, numero e tutti i riquadri cambiano insieme) e aggiunge le sue cornici. Linguetta e numero sono decorazione ancorata alla cornice del titolo: la linguetta è alta quanto il titolo che la lingua richiede. Il numero è `{headingNumber}`, il contatore del titolo che la cornice ha preso, dipinto sul margine interno sinistro della cornice: nessun blocco di pagina lo ripete, e un clic su di esso raggiunge il numero, non la cornice.
+La base è una doppia pagina: un fondo fino all’abbondanza, una linguetta del titolo con il numero e un testo su due colonne. Un argomento la estende (`extends: 'tema'`), fissa la sua `palette` (le tre voci `tema` prendono i colori della famiglia, e fondo, linguetta, numero e tutti i riquadri cambiano insieme) e aggiunge le sue cornici. Linguetta e numero sono decorazione ancorata alla cornice del titolo: la linguetta è alta quanto il titolo che la lingua richiede. Il numero è `{headingNumber}`, il contatore del titolo che la cornice ha preso, dipinto sul margine interno della cornice che precede le sue parole: nessun blocco di pagina lo ripete, e un clic su di esso raggiunge il numero, non la cornice.
 
-### 3 · Lascia che i gruppi si dividano lo spazio
+### 4 · Lascia che i gruppi si dividano lo spazio
 
-Ogni argomento ha due gruppi. La pagina sinistra è una pila: titolo, testo, poi la striscia di immagini o la mappa. La destra è un’altra pila di riquadri, o una fila di tre riquadri che si dividono la larghezza. Una cornice è alta quanto le sue parole e mai meno del suo `minHeight`: il testo spagnolo spinge giù tutto ciò che ha sotto e nessuna posizione del modello cambia. Quando una pagina è stretta, la [scala di adattamento](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) recupera spazio, riduce mappa e immagini e lascia il testo per ultimo, fino al 90 %. `pnpm cookbook bench` ricompone le tre edizioni con il testo più lungo del 30 %.
+Ogni argomento ha due gruppi. La pagina sinistra è una pila: titolo, testo, poi la striscia di immagini o la mappa. La destra è un’altra pila di riquadri, o una fila di tre riquadri che si dividono la larghezza. Una cornice è alta quanto le sue parole e mai meno del suo `minHeight`: il testo spagnolo spinge giù tutto ciò che ha sotto e nessuna posizione del modello cambia. Quando una pagina è stretta, la [scala di adattamento](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) recupera spazio, riduce mappa e immagini e lascia il testo per ultimo, fino al 90 %. `pnpm cookbook bench` ricompone ogni edizione con il testo più lungo del 30 %. In una pagina verticale la doppia pagina verde campo stende la mappa lungo la testa delle due pagine, e titolo, testo e i tre corsi stanno sotto.
 
-### 4 · Metti i nomi della mappa dal testo
+### 5 · Metti i nomi della mappa dal testo
 
 <Excerpt region="art-labels" />
 
-La mappa è un dipinto senza una lettera. Ogni luogo è un’ancora dell’immagine, un punto in frazioni di larghezza e altezza con uno stile di etichetta, e ogni edizione scrive le proprie righe `::label` per quelle ancore. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* stanno nello stesso punto, e un nome più lungo va a capo entro il `width` dell’ancora.
+La mappa è un dipinto senza una lettera. Ogni luogo è un’ancora dell’immagine, un punto in frazioni di larghezza e altezza con uno stile di etichetta, e ogni edizione scrive le proprie righe `::label` per quelle ancore. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* stanno nello stesso punto, e un nome più lungo va a capo entro il `width` dell’ancora. Un libro rilegato a destra mostra lo stesso dipinto specchiato (`mapa-1900-rtl.jpg`), così il fiume va dai monti a destra al mare a sinistra, nel verso in cui si leggono le sue pagine; `flipped` porta ogni ancora dall’altra parte e gira una rotazione nel verso opposto.
 
-### 5 · Tieni unita ogni parte dell'indice
+### 6 · Tieni unita ogni parte dell'indice
 
 <Excerpt region="contents" />
 
@@ -59,14 +65,15 @@ Un argomento sul mare è una quarta voce di `FAMILIES` e un modello fatto con `t
 Una cornice che non deve ridurre il testo prende `fit: { shrinkText: false }`. Un testo più lungo spinge allora più forte le cornici attorno e la scala arriva prima alle immagini.
 
 ```diff
--  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
--    fit: { minScale: 0.9 } }],
-+  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
-+    fit: { shrinkText: false } }],
+   frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(CJK ? 16 : 7), // 段
+-    width: mm(MEASURE), fit: { minScale: 0.9 } }],
++    width: mm(MEASURE), fit: { shrinkText: false } }],
 ```
 
 ## Errori frequenti
 
 - Un nome dipinto in un’immagine non potrebbe cambiare con la lingua: la mappa non contiene parole e ogni nome è un’etichetta.
-La tavolozza di un argomento cambia solo le voci `tema`. I numeri di pagina e l’indice usano `agua`, che ha lo stesso azzurro: restano azzurri sulle pagine verdi e sabbia; collegali a `tema` e seguiranno l’argomento.
+- La tavolozza di un argomento cambia solo le voci `tema`. I numeri di pagina e l’indice usano `agua`, che ha lo stesso azzurro: restano azzurri sulle pagine verdi e sabbia; collegali a `tema` e seguiranno l’argomento.
+- Una cifra arabo-indica accanto a un punto mediano si legge come due cifre: `١ · ماء` sembra `٠١ ماء`, perché lo zero arabo è un punto. L’edizione araba scrive `١- ماء للحقول` e scrive in lettere il numero dell’unità.
+- Un elemento di decorazione sta sul foglio, non nel flusso: un badge posto `top-left` di una cornice resta a sinistra in arabo. `corner('top')` e `inward(x)` lo collocano dal lato da cui comincia la lettura della pagina.
 - Due figure che impostano la stessa risorsa prendono le parole della prima: la piccola mappa dell’indice è lo stesso file sotto un’altra risorsa, `rio`, senza ancore.
