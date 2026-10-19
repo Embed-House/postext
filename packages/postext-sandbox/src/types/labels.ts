@@ -2389,6 +2389,18 @@ export interface SandboxLabels {
   headerFooterElementStrokeColorTooltip: string;
   headerFooterElementStrokeHollow: string;
   headerFooterElementStrokeHollowTooltip: string;
+  textDots: string;
+  textDotsTooltip: string;
+  textDotsSpacing: string;
+  textDotsSpacingTooltip: string;
+  textDotsSize: string;
+  textDotsSizeTooltip: string;
+  headerFooterElementRepeat: string;
+  headerFooterElementRepeatTooltip: string;
+  headerFooterElementRepeatGap: string;
+  headerFooterElementRepeatGapTooltip: string;
+  headerFooterElementRepeatCount: string;
+  headerFooterElementRepeatCountTooltip: string;
   headerFooterElementReserve: string;
   headerFooterElementReserveTooltip: string;
   warningsHeaderFooterUnknownPlaceholderTitle: string;

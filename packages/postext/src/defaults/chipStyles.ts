@@ -42,6 +42,7 @@ function resolveChipStyleConfig(partial: ChipStyleConfig): ResolvedChipStyleConf
     bold: partial.bold ?? d.bold,
     italic: partial.italic ?? d.italic,
     gap: partial.gap ?? d.gap,
+    ...(partial.dotted ? { dotted: partial.dotted } : {}),
   };
 }
 
@@ -93,6 +94,7 @@ export function stripChipStylesDefaults(styles: ChipStyleConfig[] | undefined): 
     if (s.bold !== undefined && s.bold !== d.bold) r.bold = s.bold;
     if (s.italic !== undefined && s.italic !== d.italic) r.italic = s.italic;
     if (s.gap !== undefined && !dimensionsEqual(s.gap, d.gap)) r.gap = s.gap;
+    if (s.dotted) r.dotted = s.dotted;
     return r;
   });
   // The built-in default (a single bare `chip` style) needs no persisting.

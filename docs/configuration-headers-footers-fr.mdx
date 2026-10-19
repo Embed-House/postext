@@ -206,6 +206,18 @@ Les valeurs par défaut du tableau ci-dessous sont celles d’un élément de te
       <td>Contour tracé autour des lettres : <code>width</code> (une <code>Dimension</code>, centrée sur les bords des glyphes), <code>color</code> (par défaut, la couleur du texte ; une lettrine prend sa propre couleur) et <code>hollow</code> (<code>true</code> ne peint que le contour). Voir <a href="#marques-en-ligne-et-contours">Marques en ligne et contours</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Peint les lettres en rangées de points le long du milieu de leurs traits, pour qu’un enfant les repasse : <code>spacing</code> entre deux points (par défaut <code>0.1em</code>) et <code>size</code> d’un point (par défaut <code>0.05em</code>), tous deux relatifs au corps du texte. La mise en page ne change pas. Sans effet sur un texte vertical. Voir <a href="#marques-en-ligne-et-contours">Marques en ligne et contours</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Compose de nouveau un texte d’une ligne à sa propre suite, à <code>gap</code> d’intervalle (par défaut <code>1em</code>), autant de fois entières que sa place le permet, ou <code>count</code> fois au plus : une rangée de copies d’un mot à repasser. Les copies forment une seule ligne, alignée d’un bloc et commencée du côté où commence le sens du texte. Un texte sur plusieurs lignes, un texte vertical ou un texte à lettrine n’est composé qu’une fois.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ Les marques sont lues une fois les variables remplies, si bien qu’une valeur p
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` peint les lettres en rangées de points qu’un enfant repasse, l’exercice d’un cahier d’écriture. Le texte est mesuré et placé comme s’il était plein ; le navigateur le dessine sur un petit canvas et les points sont posés le long du milieu de chaque trait, à `spacing` d’intervalle, si bien qu’une cursive scolaire garde ses liaisons et un mot arabe ses formes. Un signe trop petit pour une rangée (le point d’un i, un accent, une voyelle diacritique) devient un seul point. Toutes les graisses conviennent, et la plus maigre d’une famille donne les rangées les plus régulières. Les points prennent la couleur du texte et remplacent le remplissage et le `stroke`. Le canvas, le HTML (un SVG posé sur le texte, laissé transparent) et le PDF peignent les mêmes points ; le PDF garde le texte dessous, invisible (mode de rendu du texte 3), pour qu’on puisse encore le rechercher, le copier et le baliser.
+
+`repeat` compose de nouveau un texte d’une ligne à sa propre suite jusqu’à remplir sa place : avec `{boxText}` pour contenu et une largeur `fill`, un style d’encadré imprime une rangée de copies du mot que l’encadré contient dans le Markdown, et changer le mot change toutes les copies et leurs points.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 Dans le PDF, les segments en gras et en italique incorporent les polices correspondantes de la famille de l’élément : le fournisseur de polices doit donc les fournir.

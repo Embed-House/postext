@@ -206,6 +206,18 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td>Contorno tracciato intorno alle lettere: <code>width</code> (una <code>Dimension</code>, centrata sui bordi dei glifi), <code>color</code> (predefinito: il colore del testo; un capolettera prende il proprio colore) e <code>hollow</code> (<code>true</code> disegna solo il contorno). Vedi <a href="#segni-in-linea-e-contorni">Segni in linea e contorni</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Disegna le lettere come file di puntini lungo il centro dei loro tratti, perché un bambino le ripassi: <code>spacing</code> tra due puntini (predefinito <code>0.1em</code>) e <code>size</code> di un puntino (predefinito <code>0.05em</code>), entrambi relativi al corpo del testo. L’impaginazione non cambia. Non vale per un testo verticale. Vedi <a href="#segni-in-linea-e-contorni">Segni in linea e contorni</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Compone di nuovo un testo di una riga dopo sé stesso, a distanza <code>gap</code> (predefinito <code>1em</code>), tante volte intere quante ne entrano nel suo spazio, o al massimo <code>count</code> volte: una fila di copie di una parola da ripassare. Le copie formano una sola riga, allineata in blocco e iniziata dal lato da cui parte la direzione del testo. Un testo che va a capo, uno verticale o uno con capolettera si compone una volta sola.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ I segni si leggono dopo che i segnaposto sono stati riempiti, quindi un valore p
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` disegna le lettere come file di puntini che un bambino ripassa, l’esercizio di un quaderno di scrittura. Il testo si misura e si colloca come se fosse pieno; il browser lo disegna su un piccolo canvas e i puntini si dispongono lungo il centro di ogni tratto, a distanza `spacing`, così un corsivo scolastico legato conserva i suoi legamenti e una parola araba le sue forme. Un segno troppo piccolo per una fila (il puntino della i, un accento, un segno vocalico) diventa un solo puntino. Va bene qualunque peso, e il più sottile di una famiglia dà le file più regolari. I puntini prendono il colore del testo e sostituiscono il riempimento e lo `stroke`. Il canvas, l’HTML (un SVG sopra il testo, lasciato trasparente) e il PDF disegnano gli stessi puntini; il PDF mantiene sotto il testo, invisibile (modalità di rendering del testo 3), così lo si può ancora cercare, copiare e taggare.
+
+`repeat` compone di nuovo un testo di una riga dopo sé stesso finché il suo spazio è pieno: con `{boxText}` come contenuto e una larghezza `fill`, uno stile di riquadro stampa una fila di copie della parola che il riquadro contiene nel Markdown, e cambiando la parola cambiano tutte le copie e i loro puntini.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 Nel PDF le sequenze in grassetto e in corsivo incorporano i caratteri corrispondenti della famiglia dell’elemento, quindi il provider di font deve fornirli.

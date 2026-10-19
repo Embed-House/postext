@@ -206,6 +206,18 @@ Los valores por defecto de la tabla siguiente son los de un elemento de texto qu
       <td>Contorno trazado alrededor de las letras: <code>width</code> (un <code>Dimension</code>, centrado en los bordes de los glifos), <code>color</code> (por defecto, el del texto; la letra capital toma su propio color) y <code>hollow</code> (<code>true</code> pinta solo el contorno). Ver <a href="#marcas-en-línea-y-contornos">Marcas en línea y contornos</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Pinta las letras como hileras de puntos por el centro de sus trazos, para que un niño las repase: <code>spacing</code> entre dos puntos (por defecto <code>0.1em</code>) y <code>size</code> de cada punto (por defecto <code>0.05em</code>), ambos relativos al tamaño del texto. La composición no cambia. No se aplica a un texto vertical. Ver <a href="#marcas-en-línea-y-contornos">Marcas en línea y contornos</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Vuelve a componer un texto de una línea detrás de sí mismo, separado por <code>gap</code> (por defecto <code>1em</code>), tantas veces enteras como quepan en su espacio, o <code>count</code> veces como máximo: una fila de copias de una palabra para repasar. Las copias forman una sola línea, se alinean en bloque y empiezan por el lado en que empieza la dirección del texto. Un texto que ocupa varias líneas, uno vertical o uno con letra capital se compone una sola vez.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ Las marcas se leen después de sustituir los marcadores, así que un valor puede
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` pinta las letras como hileras de puntos para que un niño las repase, el ejercicio de un cuaderno de caligrafía. El texto se mide y se coloca como si estuviera relleno; el navegador lo dibuja en un lienzo pequeño y los puntos se reparten por el centro de cada trazo, separados por `spacing`, de modo que una letra escolar ligada conserva sus enlaces y una palabra árabe sus formas. Un signo demasiado pequeño para una hilera (el punto de la i, una tilde, un signo vocálico) se queda en un solo punto. Sirve cualquier peso, y el más fino de una familia da las hileras más regulares. Los puntos toman el color del texto y sustituyen al relleno y al `stroke`. El lienzo, el HTML (un SVG sobre el texto, que queda transparente) y el PDF pintan los mismos puntos; el PDF conserva debajo el texto, invisible (modo de renderizado de texto 3), para que se pueda buscar, copiar y etiquetar.
+
+`repeat` vuelve a componer un texto de una línea detrás de sí mismo hasta llenar su espacio: con `{boxText}` como contenido y un ancho `fill`, un estilo de recuadro imprime una fila de copias de la palabra que el recuadro lleve en el Markdown, y al cambiar la palabra cambian todas las copias y sus puntos.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 En el PDF, los tramos en negrita y en cursiva incrustan las variantes correspondientes de la familia del elemento, así que el proveedor de fuentes debe suministrarlas.

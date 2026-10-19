@@ -206,6 +206,18 @@ Os padrões da tabela abaixo são os de um elemento de texto que você mesmo adi
       <td>Contorno desenhado em volta das letras: <code>width</code> (uma <code>Dimension</code>, centrada nas bordas dos glifos), <code>color</code> (padrão: a cor do texto; uma capitular usa a própria cor) e <code>hollow</code> (<code>true</code> pinta só o contorno). Veja <a href="#marcas-inline-e-contornos">Marcas inline e contornos</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Pinta as letras como fileiras de pontos pelo meio dos traços, para uma criança cobrir: <code>spacing</code> entre dois pontos (padrão <code>0.1em</code>) e <code>size</code> de cada ponto (padrão <code>0.05em</code>), ambos relativos ao tamanho do texto. O layout não muda. Não vale para texto vertical. Veja <a href="#marcas-inline-e-contornos">Marcas inline e contornos</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Compõe de novo um texto de uma linha depois dele mesmo, a <code>gap</code> de distância (padrão <code>1em</code>), quantas vezes inteiras couberem no espaço, ou no máximo <code>count</code> vezes: uma fileira de cópias de uma palavra para cobrir. As cópias formam uma só linha, alinhada como um todo e começada pelo lado em que começa a direção do texto. Um texto que quebra linha, um vertical ou um com capitular é composto uma vez só.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ As marcas são lidas depois que os marcadores são preenchidos, então um valor 
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` pinta as letras como fileiras de pontos para uma criança cobrir, o exercício de um caderno de caligrafia. O texto é medido e posicionado como se estivesse preenchido; o navegador o desenha num canvas pequeno e os pontos são distribuídos pelo meio de cada traço, a `spacing` de distância, de modo que uma letra cursiva escolar mantém suas ligações e uma palavra árabe suas formas. Um sinal pequeno demais para uma fileira (o pingo do i, um acento, um sinal vocálico) vira um ponto só. Qualquer peso funciona, e o mais fino de uma família dá as fileiras mais regulares. Os pontos usam a cor do texto e substituem o preenchimento e o `stroke`. O canvas, o HTML (um SVG sobre o texto, que fica transparente) e o PDF pintam os mesmos pontos; o PDF mantém o texto embaixo, invisível (modo de renderização de texto 3), para que ele ainda possa ser buscado, copiado e marcado.
+
+`repeat` compõe de novo um texto de uma linha depois dele mesmo até encher o espaço: com `{boxText}` como conteúdo e largura `fill`, um estilo de boxe imprime uma fileira de cópias da palavra que o boxe traz no Markdown, e trocar a palavra muda todas as cópias e seus pontos.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 No PDF, os trechos em negrito e itálico incorporam as fontes correspondentes da família do elemento, então o provedor de fontes precisa fornecê-las.

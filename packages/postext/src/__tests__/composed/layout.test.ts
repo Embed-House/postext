@@ -298,6 +298,24 @@ describe('composed pages laid out (#855)', () => {
     expect(xs.size).toBe(2);
   });
 
+  it('never ends a column of a frame with a heading: it goes on with what follows it', () => {
+    const tpl: PageTemplate = { id: 'c', frames: [{ name: 'f', flow: true, columns: 2, columnGap: mm(5), width: mm(150), placement: { anchor: { to: 'container', edge: 'top-left' } } }] };
+    let columnsSeen = 0;
+    for (let before = 30; before <= 180; before += 30) {
+      for (let after = 30; after <= 270; after += 30) {
+        const doc = build(`::::page{template="c"}\n${words(before, 'a')}\n\n## Looking after the river\n\n${words(after, 'b')}\n::::`, [tpl]);
+        const blocks = blocksOf(doc, frame(doc, 'f'));
+        const xs = [...new Set(blocks.map((b) => Math.round(b.bbox.x)))].sort((a, b) => a - b);
+        if (xs.length > 1) columnsSeen++;
+        for (const x of xs.slice(0, -1)) {
+          const column = blocks.filter((b) => Math.round(b.bbox.x) === x).sort((a, b) => a.bbox.y - b.bbox.y);
+          expect(column[column.length - 1]!.type, `${before} + ${after} words`).not.toBe('heading');
+        }
+      }
+    }
+    expect(columnsSeen).toBeGreaterThan(0);
+  });
+
   it('records layer and turn; paints frames in layer order around the decoration', () => {
     const tpl: PageTemplate = { id: 'l', decoration: { elements: [{ kind: 'box', id: 'bg', placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: mm(10), height: mm(10) } }, style: { backgroundColor: { hex: '#ff0000' } } } as never] }, frames: [
       { name: 'over', layer: 3, rotate: 12, placement: { anchor: { to: 'container', edge: 'top-left' } } },

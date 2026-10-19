@@ -30,6 +30,7 @@ import { NestedGroup } from '../../../controls';
 import { lineHeightFieldValue, lineHeightFromField } from './lineHeight';
 import { PlaceholderPicker } from './PlaceholderPicker';
 import { DropCapFields } from '../../settings/DropCapFields';
+import { TextDotsFields } from '../../settings/TextDotsFields';
 import { useRightToLeftFlow } from '../../settings/flowSides';
 import { SizeToFields, defaultSizeTo, isSizeTo, type FrameTarget } from './sizeTo';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
@@ -50,6 +51,8 @@ const BOX_SIZE_UNITS: DimensionUnit[] = ['pt', 'mm', 'cm', 'in', 'em', 'px'];
 const ZERO: Dimension = { value: 0, unit: 'pt' };
 const DEFAULT_CUSTOM_WIDTH: Dimension = { value: 40, unit: 'mm' };
 const DEFAULT_CUSTOM_HEIGHT: Dimension = { value: 10, unit: 'mm' };
+/** The engine's default room between two copies of a repeated text. */
+const REPEAT_GAP: Dimension = { value: 1, unit: 'em' };
 
 type SizeMode = 'auto' | 'fill' | 'custom' | 'edge';
 
@@ -598,6 +601,70 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
             tooltip={labels.headerFooterElementStrokeHollowTooltip}
             isDefault={!raw.stroke.hollow}
             onReset={() => updateStroke({ hollow: false })}
+          />
+        </NestedGroup>
+      )}
+      <TextDotsFields
+        value={raw.dotted}
+        onChange={(dotted) => {
+          const next: DesignTextElement = { ...raw };
+          if (dotted) next.dotted = dotted;
+          else delete next.dotted;
+          onChange(next);
+        }}
+      />
+      <ToggleSwitch
+        label={labels.headerFooterElementRepeat}
+        checked={raw.repeat !== undefined}
+        onChange={(v) => {
+          const next: DesignTextElement = { ...raw };
+          if (v) next.repeat = {};
+          else delete next.repeat;
+          onChange(next);
+        }}
+        tooltip={labels.headerFooterElementRepeatTooltip}
+        isDefault={raw.repeat === undefined}
+        onReset={() => {
+          const next: DesignTextElement = { ...raw };
+          delete next.repeat;
+          onChange(next);
+        }}
+      />
+      {raw.repeat && (
+        <NestedGroup>
+          <DimensionInput
+            label={labels.headerFooterElementRepeatGap}
+            value={raw.repeat.gap ?? REPEAT_GAP}
+            onChange={(dim: Dimension) => update({ repeat: { ...raw.repeat, gap: dim } })}
+            min={0}
+            step={0.5}
+            units={BOX_SIZE_UNITS}
+            tooltip={labels.headerFooterElementRepeatGapTooltip}
+            isDefault={raw.repeat.gap === undefined}
+            onReset={() => {
+              const repeat = { ...raw.repeat };
+              delete repeat.gap;
+              update({ repeat });
+            }}
+          />
+          <NumberInput
+            label={labels.headerFooterElementRepeatCount}
+            value={raw.repeat.count ?? 0}
+            onChange={(n: number) => {
+              const repeat = { ...raw.repeat };
+              if (n >= 1) repeat.count = Math.floor(n);
+              else delete repeat.count;
+              update({ repeat });
+            }}
+            min={0}
+            step={1}
+            tooltip={labels.headerFooterElementRepeatCountTooltip}
+            isDefault={raw.repeat.count === undefined}
+            onReset={() => {
+              const repeat = { ...raw.repeat };
+              delete repeat.count;
+              update({ repeat });
+            }}
           />
         </NestedGroup>
       )}

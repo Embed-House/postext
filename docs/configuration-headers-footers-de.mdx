@@ -206,6 +206,18 @@ Die Standardwerte in der folgenden Tabelle sind die eines Textelements, das Sie 
       <td>Kontur um die Buchstaben: <code>width</code> (eine <code>Dimension</code>, auf den Glyphenkanten zentriert), <code>color</code> (Standardwert: die Textfarbe; eine Initiale nimmt ihre eigene Farbe) und <code>hollow</code> (<code>true</code> zeichnet nur die Kontur). Siehe <a href="#inline-auszeichnungen-und-konturen">Inline-Auszeichnungen und Konturen</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Zeichnet die Buchstaben als Punktreihen entlang der Mitte ihrer Striche, zum Nachspuren für Kinder: <code>spacing</code> zwischen zwei Punkten (Standardwert <code>0.1em</code>) und <code>size</code> eines Punkts (Standardwert <code>0.05em</code>), beide relativ zur Textgröße. Das Layout ändert sich nicht. Nicht bei vertikalem Text. Siehe <a href="#inline-auszeichnungen-und-konturen">Inline-Auszeichnungen und Konturen</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Setzt einen einzeiligen Text hinter sich selbst noch einmal, im Abstand <code>gap</code> (Standardwert <code>1em</code>), so oft ganz, wie sein Platz fasst, oder höchstens <code>count</code>-mal: eine Reihe von Kopien eines Worts zum Nachspuren. Die Kopien bilden eine Zeile, werden als Ganzes ausgerichtet und beginnen auf der Seite, auf der die Textrichtung beginnt. Ein umbrechender Text, ein vertikaler oder einer mit Initiale wird nur einmal gesetzt.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ Auszeichnungen werden gelesen, nachdem die Platzhalter ausgefüllt sind, sodass 
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` zeichnet die Buchstaben als Punktreihen, die ein Kind nachspurt, die Übung eines Schreiblernhefts. Der Text wird gemessen und platziert, als wäre er gefüllt; der Browser zeichnet ihn auf ein kleines Canvas, und die Punkte liegen entlang der Mitte jedes Strichs im Abstand `spacing`, sodass eine verbundene Schulschrift ihre Verbindungen behält und ein arabisches Wort seine Formen. Ein Zeichen, das für eine Reihe zu klein ist (der i-Punkt, ein Akzent, ein Vokalzeichen), wird zu einem einzelnen Punkt. Jede Strichstärke funktioniert; der dünnste Schnitt einer Schrift ergibt die gleichmäßigsten Reihen. Die Punkte nehmen die Textfarbe an und ersetzen Füllung und `stroke`. Canvas, HTML (ein SVG über dem Text, der transparent bleibt) und PDF zeichnen dieselben Punkte; das PDF behält den Text unsichtbar darunter (Textdarstellungsmodus 3), damit er durchsuchbar, kopierbar und getaggt bleibt.
+
+`repeat` setzt einen einzeiligen Text so lange hinter sich selbst, bis sein Platz voll ist: Mit `{boxText}` als Inhalt und der Breite `fill` druckt ein Kastenstil eine Reihe von Kopien des Worts, das der Kasten im Markdown enthält, und wer das Wort ändert, ändert jede Kopie samt ihren Punkten.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 Im PDF betten fette und kursive Folgen die passenden Schnitte der Schriftfamilie des Elements ein, der Schriftanbieter muss sie also liefern.

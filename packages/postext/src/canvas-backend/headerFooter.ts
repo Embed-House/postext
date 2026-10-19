@@ -6,6 +6,7 @@ import type {
   VDTDesignImageBlock,
   VDTDesignBoxStyle,
 } from '../vdt';
+import { fillTextDots } from './textDots';
 import { drawResourceImage, roundedOutlinePath } from './renderResourceBlock';
 import { fillFlowText, drawUprightInBox, setVerticalPaint, verticalPaintActive } from './verticalText';
 import { segmentOrientation, type ForcedOrientation } from '../writingMode';
@@ -124,13 +125,17 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
   // An outline is stroked over the filled glyphs (or alone, for hollow
   // letters), centred on their edges — as PDF render mode 2 / 1 and CSS
   // `-webkit-text-stroke` do.
-  const stroke = block.stroke && block.stroke.widthPx > 0 ? block.stroke : undefined;
+  // Letters to trace (#1017) are dots in the fill colour, no outline.
+  const dotted = block.dotted && !block.vertical ? block.dotted : undefined;
+  const stroke = !dotted && block.stroke && block.stroke.widthPx > 0 ? block.stroke : undefined;
   if (stroke) {
     ctx.strokeStyle = stroke.color;
     ctx.lineWidth = stroke.widthPx;
   }
   const mode = stroke?.hollow ? 'stroke' : stroke ? 'fillStroke' : 'fill';
-  const put = (text: string, x: number, y: number, orient?: ForcedOrientation) => fillFlowText(ctx, text, x, y, mode, undefined, 'text', orient);
+  const put = (text: string, x: number, y: number, orient?: ForcedOrientation): void => {
+    if (!dotted || !fillTextDots(ctx, text, x, y, dotted)) fillFlowText(ctx, text, x, y, mode, undefined, 'text', orient);
+  };
   // A tracked text keeps its ligatures, as it was measured (#703): one
   // that would lose them to the letter-spacing is painted in pieces
   // (`fillTrackedWord`), fill and outline alike, turned back as one run on
@@ -138,7 +143,7 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
   // vertical painter; text whose CJK marks are painted apart stays as it
   // was.
   const paint = (text: string, x: number, y: number, orient?: ForcedOrientation): void => {
-    if (!tracked || verticalPaintActive() || (hasCJK(text) && markCuts(text, 'text').length > 0)) put(text, x, y, orient);
+    if (!tracked || dotted || verticalPaintActive() || (hasCJK(text) && markCuts(text, 'text').length > 0)) put(text, x, y, orient);
     else fillTrackedWord(ctx, text, x, y, block.letterSpacingPx!, (piece, px, py) => put(piece, px, py, orient));
   };
   // A vertical block (`VDTDesignTextBlock.vertical`) paints its lines in
@@ -173,7 +178,7 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
         // A run whose width is its box (`inkOffset`) comes from the CJK
         // composer, which measured its characters one by one: its cells
         // are painted where they were measured (#770, `cellText.ts`).
-        const cells = run.inkOffset !== undefined && !run.rtl && !verticalPaintActive()
+        const cells = run.inkOffset !== undefined && !run.rtl && !dotted && !verticalPaintActive()
           && fillCellRuns(ctx, run.text, runX, runY, (cell, cx, cy) => put(cell, cx, cy));
         if (!cells) paintRunInDirection(ctx, run.rtl, () => paint(run.text, runX, runY, segmentOrientation(run)), run.text);
       } else {

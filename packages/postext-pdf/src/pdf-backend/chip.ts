@@ -2,7 +2,7 @@ import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTChip, VDTChipRun } from 'postext';
 import { parseFontString } from '../fontString';
 import type { FontCache } from '../fontCache';
-import { type PageCtx, drawChipBoxPx, drawTextPx } from './primitives';
+import { type PageCtx, drawChipBoxPx, drawTextDotsPx, drawTextPx, invisibleText } from './primitives';
 import { tagArtifact, tagContent, type StructElem } from './tagging';
 import { drawRightToLeftRun } from './rtlRun';
 
@@ -35,8 +35,11 @@ export function paintChip(
     const font = fontCache.get(run.fontString) ?? fallbackFont;
     const size = parseFontString(run.fontString)?.sizePx ?? fallbackSize;
     const y = baselinePx + (run.baselineShift ?? 0);
-    if (run.rtl) drawRightToLeftRun(ctx, run.text, tx, y, font, size, colorFor(run));
-    else drawTextPx(ctx, run.text, tx, y, font, size, colorFor(run));
+    const color = colorFor(run);
+    // Letters to trace (#1017): the dots, the text invisible under them.
+    const outline = chip.dotted && drawTextDotsPx(ctx, run.text, tx, y, run.fontString, chip.dotted, color, run.rtl === true) ? invisibleText(color) : undefined;
+    if (run.rtl) drawRightToLeftRun(ctx, run.text, tx, y, font, size, color, outline);
+    else drawTextPx(ctx, run.text, tx, y, font, size, color, outline);
     tx += run.width;
   }
 }

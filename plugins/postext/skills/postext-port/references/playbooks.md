@@ -663,8 +663,11 @@ owl
 { id: 'word', backgroundEnabled: false, padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) },
   titleStyle: { fontSize: pt(9), lineHeight: mm(5), gap: mm(2) }, snapToGrid: false,
   design: { setsContent: true, minHeight: mm(40), slot: { elements: [
-    { kind: 'image', id: 'ruling', resourceId: 'trace-{boxText}', decorative: true, placement: {…} },
+    { kind: 'image', id: 'ruling', resourceId: 'ruling', decorative: true, placement: {…} },
     { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite GB J', placement: {…} },
+    // the copies to trace: the same word in dots, as many as the row holds (postext ≥ 1.46)
+    { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite GB J', fontWeight: 100,
+      dotted: {}, repeat: { gap: mm(8) }, placement: { …, size: { width: 'fill' } } },
   ] } } }
 // dictionary: texts '{boxText.1}'…'{boxText.4}', images '{attr.p1}'…'{attr.p4}'
 ```

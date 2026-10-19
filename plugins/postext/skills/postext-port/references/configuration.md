@@ -859,6 +859,12 @@ bottom folio only there). Parity/pages are ignored inside heading slots.
   paragraphIndent?: Dimension     ('\n' in content separates paragraphs)
   inlineMarks?: boolean   (read **b** *i* ^sup^ ~sub~ in the resolved text, values included)
   stroke?: { width: Dimension, color?: ColorValue (= text colour), hollow?: boolean }
+  dotted?: { spacing = 0.1em, size = 0.05em }   (≥ 1.46: letters painted as rows of dots along their strokes, to
+    trace; layout unchanged, text colour, replaces fill and stroke; the thinnest weight gives the evenest rows;
+    the PDF keeps the text invisible under the dots; not on vertical text)
+  repeat?: { gap = 1em, count? }   (≥ 1.46: a one-line text set again after itself, as many whole copies as its
+    room holds or count at most, one line aligned as a whole, first copy on the start side; a row of {boxText}
+    copies to trace with width 'fill')
   reserve?: boolean       (heading slots: false = don't count toward the reserved height)
   parity?, pages?,
   writingMode?: 'horizontal-tb' | 'vertical-rl'   (≥ 1.9: set top to bottom, lines right to left, in a
@@ -1189,7 +1195,7 @@ All em values = the callout body font size.
                                      inner width (anchor.to: 'container' = the band); the box's content follows the band.
                                      Texts read {titleText} (the box title), {boxText} (the content: each paragraph / list
                                      item on a line), {boxText.<n>} (the n-th, from 1), {attr.key} (fence attributes) and
-                                     {title}/{author}…; image resourceId may use them ('trace-{boxText}'). setsContent: the
+                                     {title}/{author}…; image resourceId may use them ('ruling-{attr.r}'). setsContent: the
                                      design prints the content and the box does not set it again (and never splits): one
                                      style per shape, the words in each fence. First fragment only. }
 ```
@@ -1258,7 +1264,9 @@ Inline `:chip[text]{style="id"}` (word banks, keys, tags). Chip without style �
 { id (REQUIRED), name?, backgroundEnabled=true, background=#e8eef7, borderColor=main,
   borderWidth=0.5pt (0 = none), borderRadius=0.3em, paddingX=0.3em, paddingY=0.1em (paints outside line box),
   paddingTop?/paddingBottom? (= paddingY; top larger than bottom, e.g. 0.2em/0.05em, centres a capital in a round chip),
-  fontFamily?/fontSize?/color? (= surrounding text; fontSize em = surrounding), bold=false, italic=false, gap=0.25em }
+  fontFamily?/fontSize?/color? (= surrounding text; fontSize em = surrounding), bold=false, italic=false, gap=0.25em,
+  dotted?: { spacing = 0.1em, size = 0.05em } (≥ 1.46: the chip's letters as dots to trace; with no fill, no outline
+  and no padding a chip is a dotted word in the line, :chip[gato]{style="dots"}) }
 ```
 
 ---------------------------------------------------------------------------------

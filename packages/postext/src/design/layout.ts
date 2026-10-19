@@ -25,6 +25,7 @@ import type {
   VAlign,
 } from '../types';
 import { dimensionToPx } from '../units';
+import { resolveTextDots } from '../textDots';
 import { resolveDesignLineHeight } from '../defaults/headerFooter';
 import { createBoundingBox, pictureTraits, type BoundingBox } from '../vdt';
 import { buildFontString } from '../measure';
@@ -141,6 +142,8 @@ export interface ResolvedTextPrimitive extends ResolvedElementGeometry {
   startRight?: true;
   /** Outline stroked over the glyphs; absent when the element sets none. */
   stroke?: { widthPx: number; color: string; hollow?: boolean };
+  /** Letters painted as dots to trace; absent when the element sets none. */
+  dotted?: { spacingPx: number; sizePx: number };
   /** Content box (inside padding) offsets, relative to element x/y. */
   contentX: number;
   contentY: number;
@@ -1498,6 +1501,8 @@ function layoutTextElement(
   const stroke = el.stroke && strokeWidthPx > 0
     ? { widthPx: strokeWidthPx, color: colorHex(el.stroke.color ?? el.color), ...(el.stroke.hollow ? { hollow: true } : {}) }
     : undefined;
+  // Dots to trace (#1017), on a horizontal text.
+  const dotted = el.dotted && !vertical ? resolveTextDots(el.dotted, dpi, fontSizePx) : undefined;
 
   const widthSize = resolveFixedSize(el.placement.size?.width, dpi, fontSizePx);
   const heightSize = resolveFixedSize(el.placement.size?.height, dpi, fontSizePx);
@@ -1698,6 +1703,11 @@ function layoutTextElement(
       m.contentWidth = m.needsClip && contentMax !== undefined ? Math.min(widest, contentMax) : widest;
     }
   }
+  // A text of one line set again after itself (#1017).
+  if (el.repeat && !vertical && !cap && m.lines.length === 1 && contentMax !== undefined) {
+    const gapPx = el.repeat.gap ? Math.max(0, dimPx(el.repeat.gap, dpi, fontSizePx)) : fontSizePx;
+    repeatLine(m, contentMax, gapPx, el.repeat.count, fontString, (base === 'rtl') !== mirrored);
+  }
   // The tracking after a line's last glyph is advance, not ink: a box that
   // shrink-wraps its text leaves it out (EF-153), as the alignment of each
   // line does (`textPrimitiveToBlock`), so a tracked title anchored to a
@@ -1758,6 +1768,7 @@ function layoutTextElement(
     contentHeight: Math.max(0, elementHeight - padding.top - padding.bottom),
     box,
     ...(stroke ? { stroke } : {}),
+    ...(dotted ? { dotted } : {}),
   };
   if (!cap) return [main];
   // The drop cap: its baseline on the baseline of the last line it spans,
@@ -1790,6 +1801,46 @@ function layoutTextElement(
     ...(stroke ? { stroke: { ...stroke, color: el.stroke?.color ? stroke.color : cap.color } } : {}),
   };
   return [main, capPrim];
+}
+
+/**
+ * Set the one line of `m` again after itself (`DesignTextElement.repeat`,
+ * #1017): as many whole copies as `room` holds, `gap` apart, `count` at
+ * most. The copies stay one line, aligned as a whole: its runs are the
+ * line's runs once per copy with a run of the gap's width between two
+ * (a word space, read as one when the text is copied), and its `order`
+ * puts the first copy on the start side (`startRight`).
+ */
+function repeatLine(m: TextMeasurement, room: number, gap: number, count: number | undefined, fontString: string, startRight: boolean): void {
+  const line = m.lines[0]!;
+  const w = line.width;
+  if (!(w > 0)) return;
+  const fits = Math.floor((room - w) / (w + gap) + 1e-9) + 1;
+  const n = Math.max(1, Math.min(fits, count !== undefined && count >= 1 ? Math.floor(count) : Infinity));
+  if (n < 2) return;
+  const base: DesignTextRun[] = line.runs ?? [{ text: line.text, fontString, width: w }];
+  const r = base.length;
+  const runs: DesignTextRun[] = [];
+  for (let k = 0; k < n; k++) {
+    for (const run of base) runs.push({ ...run });
+    if (k < n - 1) runs.push({ text: ' ', fontString, width: gap });
+  }
+  // Copy k's runs start at k · (r + 1); the gap after it stands at
+  // k · (r + 1) + r.
+  const within = line.order ?? base.map((_, i) => i);
+  if (line.order || startRight) {
+    const order: number[] = [];
+    const copies = Array.from({ length: n }, (_, k) => (startRight ? n - 1 - k : k));
+    copies.forEach((k, j) => {
+      for (const i of within) order.push(k * (r + 1) + i);
+      if (j < n - 1) order.push(Math.min(k, copies[j + 1]!) * (r + 1) + r);
+    });
+    line.order = order;
+  }
+  line.runs = runs;
+  line.text = runs.map((run) => run.text).join('');
+  line.width = n * w + (n - 1) * gap;
+  m.contentWidth = Math.max(m.contentWidth, line.width + (line.xOffset ?? 0));
 }
 
 /**

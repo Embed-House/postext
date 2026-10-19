@@ -80,9 +80,11 @@ in the config, and its bundle broke the Sandbox's import.
   `design` (postext ≥ 1.45) whose texts print the box content with
   `{boxText}` (all of it) and `{boxText.<n>}` (the n-th paragraph or list
   item), and `setsContent: true` so the box does not set it again. A
-  picture that belongs to each instance can be named after the content
-  (`resourceId: "trace-{boxText}"`) or by a fence attribute. Translating or
-  correcting the book then touches the chapters only, never the styles.
+  picture that belongs to each instance is named by a fence attribute.
+  Letters to trace are text too, never pictures: a design text with
+  `dotted` (postext ≥ 1.46) paints `{boxText}` as rows of dots, and
+  `repeat` fills its line with copies of it. Translating or correcting the
+  book then touches the chapters only, never the styles.
 - **Headings are the outline, not design slots.** Use heading levels for
   the book's real structure, one level after another (a single `#` for the
   book or each chapter, `##` for its sections…), never a deeper level just

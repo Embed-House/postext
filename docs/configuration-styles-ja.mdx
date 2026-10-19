@@ -445,6 +445,12 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>0.25em</code></td>
       <td>語間のスペースを挟んで隣り合う語やチップとボックスとの間に確保する最小の間隔です。それより狭いスペースはチップの送り幅の内側で補われるため、両端そろえで削られることはありません。行の端や、詰めて組む約物に接する側には何も加えません。</td>
     </tr>
+    <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>チップの文字を、なぞるための点の列として描きます。デザインのテキストの<a href="/ja/docs/configuration-headers-footers#インラインの書式記号と輪郭線"><code>dotted</code></a>と同じで、em単位の長さはチップのテキストに対する値です。背景、枠線、パディングがなければ、チップは行の中の点で描いた語になります。例：<code>:chip[gato]&#123;style="dots"&#125;</code></td>
+    </tr>
   </tbody>
 </table>
 

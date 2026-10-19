@@ -36,15 +36,17 @@ import {
   TextRenderingMode,
   setGraphicsState,
   setCharacterSpacing,
+  setLineCap,
+  LineCapStyle,
 } from 'pdf-lib';
 import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode';
-import { graphemesOf, joinsLetters, scriptContextUntracked, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
+import { graphemesOf, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging';
 import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces';
 import { fileRuns, inRun, noteMissingGlyphs, wordRuns, type FileRun } from '../faceFiles';
 import { needsComplexShaping } from '../complexShaping';
-import { shapesAsCanvas, shapingKey, withShapingScript } from '../shapingLanguage';
+import { shapesAsCanvas, shapingKey, shapingLanguage, withShapingScript } from '../shapingLanguage';
 
 export interface PageCtx {
   page: PDFPage;
@@ -1211,6 +1213,63 @@ export interface TextOutline {
   color: Color;
   widthPx: number;
   hollow?: boolean;
+  /** Show the glyphs invisibly (render mode 3): text that reads, copies
+   *  and is tagged under ink drawn otherwise (letters to trace, #1017). */
+  invisible?: boolean;
+}
+
+/** The outline of text shown invisibly (see {@link TextOutline.invisible}). */
+export function invisibleText(color: Color): TextOutline {
+  return { color, widthPx: 0, invisible: true };
+}
+
+/**
+ * Letters to trace (#1017): the dots of `text` set at `xPx` on the
+ * baseline in `fontString`, as the canvas paints them (`textDots`), each a
+ * round-capped stroke a hundredth of a point long (a stroke of no length
+ * draws nothing in some viewers) as wide as the dot. On a mirrored page
+ * they are turned back about the run's box. Returns `false`, drawing
+ * nothing, where there is no canvas to read the letters from or the text
+ * is set vertically.
+ */
+export function drawTextDotsPx(
+  ctx: PageCtx,
+  text: string,
+  xPx: number,
+  baselinePx: number,
+  fontString: string,
+  dots: VDTTextDots,
+  color: Color,
+  rtl: boolean,
+): boolean {
+  if (ctx.vertical) return false;
+  const found = textDots({
+    text,
+    font: fontString,
+    spacingPx: dots.spacingPx,
+    letterSpacingPx: joinsLetters(text) ? 0 : ctx.trackingPx ?? 0,
+    rtl,
+    lang: shapingLanguage(),
+  });
+  if (!found) return false;
+  const { scale, pageHeightPt } = ctx;
+  const { points, width } = found;
+  const ops: PDFOperator[] = [
+    pushGraphicsState(),
+    ...opt(alphaStateOp(ctx, 1, alphaOf(color))),
+    setStrokingColor(color),
+    setLineWidth(dots.sizePx * scale),
+    setLineCap(LineCapStyle.Round),
+  ];
+  for (let i = 0; i < points.length; i += 2) {
+    const dx = ctx.mirror ? width - points[i]! : points[i]!;
+    const x = (xPx + dx) * scale;
+    const y = pageHeightPt - (baselinePx + points[i + 1]!) * scale;
+    ops.push(moveTo(x, y), lineTo(x + 0.01, y));
+  }
+  ops.push(stroke(), popGraphicsState());
+  ctx.page.pushOperators(...ops);
+  return true;
 }
 
 /** `actualText`, when set, is what copying, text extraction and assistive
@@ -1374,13 +1433,15 @@ export function pushTextObject(
     ? setTextMatrix(-1, 0, 0, 1, (xPx + (advancePx ?? ctx.runAdvancePx ?? 0)) * scale, pageHeightPt - baselinePx * scale)
     : setTextMatrix(1, 0, 0, 1, xPx * scale, pageHeightPt - baselinePx * scale);
   // Text render mode 2 fills then strokes the glyphs; mode 1 only strokes.
-  const outlineOps = outline && outline.widthPx > 0
-    ? [
-        setStrokingColor(outline.color),
-        setLineWidth(outline.widthPx * scale),
-        setTextRenderingMode(outline.hollow ? TextRenderingMode.Outline : TextRenderingMode.FillAndOutline),
-      ]
-    : [];
+  const outlineOps = outline?.invisible
+    ? [setTextRenderingMode(TextRenderingMode.Invisible)]
+    : outline && outline.widthPx > 0
+      ? [
+          setStrokingColor(outline.color),
+          setLineWidth(outline.widthPx * scale),
+          setTextRenderingMode(outline.hollow ? TextRenderingMode.Outline : TextRenderingMode.FillAndOutline),
+        ]
+      : [];
   // The first show's font is set with the text matrix; each later show in
   // another file of the face switches to it.
   const first = shows[0]?.font ?? font;

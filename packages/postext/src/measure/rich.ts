@@ -715,6 +715,7 @@ export function chipToken(
       ...(box?.background ? { background: box.background } : {}),
       ...(box?.borderColor ? { borderColor: box.borderColor } : {}),
       ...(box?.color ? { color: box.color } : {}),
+      ...(box?.dotted ? { dotted: box.dotted } : {}),
       ...(chip.joinNext ? { joinNext: true } : {}),
       // The words' source (#857), while the runs read as written.
       ...(chip.sourceOffsets && directed.runs.reduce((n, r) => n + r.text.length, 0) === chip.sourceOffsets.length ? { sourceOffsets: chip.sourceOffsets } : {}),

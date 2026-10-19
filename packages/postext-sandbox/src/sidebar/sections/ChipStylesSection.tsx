@@ -9,6 +9,7 @@ import { CollapsibleSection, ColorPicker, DimensionInput, FontPicker, ToggleSwit
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
+import { TextDotsFields } from '../settings/TextDotsFields';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const BOX_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
@@ -167,6 +168,7 @@ function ChipStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
           isDefault={unset('italic')}
           onReset={() => onResetField('italic')}
         />
+        <TextDotsFields value={style.dotted} onChange={(dotted) => (dotted ? onChange({ dotted }) : onResetField('dotted'))} />
       </CollapsibleSection>
 
       <CollapsibleSection title={labels.chipStyleBoxGroup} sectionId={`${sectionId}.box`} variant="subsection">

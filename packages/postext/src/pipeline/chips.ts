@@ -13,6 +13,7 @@ import type { ResolvedConfig } from '../vdt';
 import { pickChipStyle } from '../defaults/chipStyles';
 import { dimensionToPx } from '../units';
 import { INLINE_CODE_CHIP_STYLE } from './codeInline';
+import { resolveTextDots } from '../textDots';
 
 /** What chip resolution needs from the resolved config. */
 export interface ChipContext {
@@ -47,6 +48,7 @@ export function resolveChipBox(style: ResolvedChipStyleConfig, dpi: number, base
     ...(style.paddingTop ? { paddingTopPx: px(style.paddingTop) } : {}),
     ...(style.paddingBottom ? { paddingBottomPx: px(style.paddingBottom) } : {}),
     gapPx: px(style.gap),
+    ...(style.dotted ? { dotted: resolveTextDots(style.dotted, dpi, fontSizePx) } : {}),
   };
 }
 

@@ -3,6 +3,7 @@ import { joiningScriptIn } from '../measure/joining';
 import { paintRunInDirection, runPaintOrder } from './runDirection';
 import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
 import { fillContextText } from './contextText';
+import { fillTextDots } from './textDots';
 
 /** Trace a rounded rect (radius already clamped to half the box). */
 function roundedRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
@@ -64,7 +65,11 @@ export function paintChip(
     const untracked = spacing !== 0 && joiningScriptIn(run.text);
     if (untracked) setLetterSpacing(ctx, 0);
     const runX = tx;
-    paintRunInDirection(ctx, run.rtl, () => fillContextText(ctx, run.text, runX, baseline + (run.baselineShift ?? 0)), run.text);
+    const runY = baseline + (run.baselineShift ?? 0);
+    // Letters to trace (#1017): dots, else the glyphs filled.
+    paintRunInDirection(ctx, run.rtl, () => {
+      if (!chip.dotted || !fillTextDots(ctx, run.text, runX, runY, chip.dotted)) fillContextText(ctx, run.text, runX, runY);
+    }, run.text);
     if (untracked) setLetterSpacing(ctx, spacing);
     tx += run.width;
   }

@@ -55,6 +55,8 @@ export type { AlphaRaster, ContourRows, RgbaPixels, TraceContourOptions } from '
 export type { CropMarkSegment } from './cropMarks';
 export { columnClipRect, designOverlayOverhang, headingDesignOverhangAbove, hangingPunctuationOverhang } from './columnClip';
 export { lineInkExtent } from './lineInk';
+export { textDots, clearTextDots } from './textDots';
+export type { TextDots, TextDotsRequest } from './textDots';
 // The pieces of a word set as the word the layout measured (#770): the one
 // rule of the canvas, the HTML and the PDF.
 export { joinedWordPieces, lineWordSegments, lineWordSegmentsInOrder, cellsOf } from './wordPieces';
@@ -477,6 +479,8 @@ export type {
   ElementBoxStyle,
   TextOverflow,
   DesignTextStroke,
+  TextDotsStyle,
+  DesignTextRepeat,
   DesignTextElement,
   DesignRuleElement,
   DesignBoxElement,
@@ -534,6 +538,7 @@ export type {
   VDTDesignTextLine,
   VDTDesignTextRun,
   VDTDesignTextStroke,
+  VDTTextDots,
   VDTDesignRuleBlock,
   VDTDesignBoxBlock,
   VDTDesignImageBlock,

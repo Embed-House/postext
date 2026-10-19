@@ -206,6 +206,18 @@ export const metadata = {
       <td>文字の周りに描く輪郭線。<code>width</code>（<code>Dimension</code>。字形の縁を中心に描きます）、<code>color</code>（既定はテキストの色。ドロップキャップは自身の色を使います）、<code>hollow</code>（<code>true</code>で輪郭線だけを描きます）を指定します。<a href="#インラインの書式記号と輪郭線">インラインの書式記号と輪郭線</a>を参照してください。</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>文字を、画の中心線に沿った点の列として描きます。子どもがなぞるためのものです。<code>spacing</code>は点と点の間隔（既定は<code>0.1em</code>）、<code>size</code>は点の大きさ（既定は<code>0.05em</code>）で、どちらもテキストのサイズに対する値です。レイアウトは変わりません。縦組みのテキストには使えません。<a href="#インラインの書式記号と輪郭線">インラインの書式記号と輪郭線</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>1行のテキストを、自身の後ろに<code>gap</code>（既定は<code>1em</code>）の間隔で繰り返し組みます。回数は領域に収まるだけの完全な回数で、<code>count</code>で上限を指定できます。なぞり書き用に、ひとつの語の写しを1行に並べるときに使います。写しは全体で1行になり、まとめてそろえられ、テキストの方向が始まる側から並びます。折り返すテキスト、縦組みのテキスト、ドロップキャップのあるテキストは1回だけ組まれます。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ Sandboxの見出しエディターは、アンカーの基準辺や対象を変�
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted`は、子どもがなぞるための点の列として文字を描きます。書き方練習帳の課題に使います。テキストは塗りがあるものとして測定・配置されます。ブラウザーが小さなcanvasにテキストを描き、各画の中心線に沿って`spacing`の間隔で点を置きます。そのため、続け書きの学校用書体はつながりを保ち、アラビア語の語は字形を保ちます。列にするには小さすぎる記号（iの点、アクセント、母音記号）は点ひとつになります。どのウェイトでも使えますが、書体のいちばん細いウェイトがもっとも均一な点列になります。点はテキストの色を使い、塗りと`stroke`の代わりに描かれます。canvas、HTML（テキストの上に重ねたSVG。テキスト自体は透明にします）、PDFは同じ点を描きます。PDFでは点の下にテキストを見えない状態（テキスト描画モード3）で残すため、検索、コピー、タグ付けができます。
+
+`repeat`は、1行のテキストを領域がいっぱいになるまで自身の後ろに繰り返し組みます。内容を`{boxText}`、幅を`fill`にすると、囲みスタイルは、Markdownでその囲みに書いた語の写しを1行に並べて印字します。語を書き換えると、すべての写しとその点が変わります。
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 PDFでは、太字とイタリックのランに要素のファミリーの対応する書体を埋め込むため、フォントプロバイダーがそれらを提供する必要があります。

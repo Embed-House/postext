@@ -445,6 +445,12 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>0.25em</code></td>
       <td>Least room kept between the box and a neighbouring word or chip across a word space; a narrower space is topped up inside the chip's advance, so justification never eats it. Nothing is added at a line edge or against glued punctuation.</td>
     </tr>
+    <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Paint the chip's letters as rows of dots to trace, as a design text's <a href="/en/docs/configuration-headers-footers#inline-marks-and-outlines"><code>dotted</code></a> does, its em lengths relative to the chip text. With no fill, no outline and no padding the chip is a dotted word in the line: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
+    </tr>
   </tbody>
 </table>
 

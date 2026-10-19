@@ -45,7 +45,9 @@ import {
   type PageCtx,
   alphaOf,
   colorFromHex,
+  drawTextDotsPx,
   drawTextPx,
+  invisibleText,
   setTrackingPx,
   pushFrame,
   popFrame,
@@ -197,9 +199,17 @@ export function renderTextBlock(
   // Negative tracking tightens the letters (EF-82).
   const tracked = block.letterSpacingPx !== undefined && block.letterSpacingPx !== 0;
   if (tracked) setTrackingPx(ctx, block.letterSpacingPx!);
-  const outline: TextOutline | undefined = block.stroke && block.stroke.widthPx > 0
+  const stroked: TextOutline | undefined = block.stroke && block.stroke.widthPx > 0
     ? { color: colorFromHex(block.stroke.color, ctx.colorSpace), widthPx: block.stroke.widthPx, hollow: block.stroke.hollow }
     : undefined;
+  // Letters to trace (#1017): each run's dots, the text invisible under
+  // them (a run whose dots cannot be drawn is filled, as it was).
+  const dotted = block.dotted && !block.vertical ? block.dotted : undefined;
+  let outline = stroked;
+  const dotsOf = (text: string, x: number, y: number, fontString: string, rtl: boolean): void => {
+    if (!dotted) return;
+    outline = drawTextDotsPx(ctx, text, x, y, fontString, dotted, color, rtl) ? invisibleText(color) : stroked;
+  };
   tagSlotText(ctx, mark, block);
   // A vertical block (`VDTDesignTextBlock.vertical`) paints its lines in
   // its own frame, turned a quarter turn clockwise about the box's top
@@ -214,6 +224,7 @@ export function renderTextBlock(
   const originX = vertical ? 0 : block.bbox.x;
   for (const line of block.lines) {
     if (!line.runs) {
+      dotsOf(line.text, originX + line.xOffset, line.baselineY, block.fontString, false);
       drawTextPx(ctx, line.text, originX + line.xOffset, line.baselineY, font, size, color, outline, actualText);
       continue;
     }
@@ -229,6 +240,7 @@ export function renderTextBlock(
       // A run whose width is its box (a CJK mark that gave up blank, #637)
       // paints its glyphs `inkOffset` into it.
       const gx = x + (run.inkOffset ?? 0);
+      if (!run.leader) dotsOf(run.text, gx, y, run.fontString, run.rtl === true);
       if (run.rtl && actualText !== undefined) drawTextPx(ctx, run.text, gx, y, runFont, runSize, color, outline, actualText, undefined, 'rtl');
       else if (run.rtl) drawRightToLeftRun(ctx, run.text, gx, y, runFont, runSize, color, outline);
       else if (run.inkScale !== undefined) {

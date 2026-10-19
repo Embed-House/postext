@@ -49,7 +49,8 @@ import { fontFamilyOf } from './measure/vertical';
 import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
-import type { VDTResourceVideo } from './vdt';
+import type { VDTDesignTextRun, VDTResourceVideo, VDTTextDots } from './vdt';
+import { textDots } from './textDots';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
@@ -1832,6 +1833,58 @@ function renderSwatch(x: number, baselineOffset: number, side: number, fill: str
  *  gap margin), then the text runs as ordinary text spans on the line's
  *  baseline (`baselineOffset` from the line top), so the words stay real,
  *  selectable text. `lineFont` / `lineColor` are the line box's own. */
+/**
+ * Letters to trace (#1017): the dots of `text` (its run painted at `left`
+ * on the baseline `baseline`, `width` wide) in an SVG as wide as the run,
+ * so that a mirrored flow turns them back about the run's box as it turns
+ * every SVG; each dot a round cap of a stroke a hundredth of a pixel long.
+ * `null` where there is no canvas to read the letters from.
+ */
+function textDotsSvg(
+  text: string,
+  fontString: string,
+  dots: VDTTextDots,
+  color: string,
+  left: number,
+  baseline: number,
+  letterSpacingPx: number,
+  rtl: boolean,
+): string | null {
+  const found = textDots({ text, font: fontString, spacingPx: dots.spacingPx, letterSpacingPx: joiningScriptIn(text) ? 0 : letterSpacingPx, rtl });
+  if (!found) return null;
+  if (found.points.length === 0) return '';
+  let d = '';
+  for (let i = 0; i < found.points.length; i += 2) d += `M${found.points[i]!.toFixed(2)} ${found.points[i + 1]!.toFixed(2)}h.01`;
+  const w = Math.max(0.01, found.width);
+  return (
+    `<svg aria-hidden="true" focusable="false" width="${w.toFixed(3)}" height="1" viewBox="0 0 ${w.toFixed(3)} 1" ` +
+    `style="position:absolute;left:${left.toFixed(3)}px;top:${baseline.toFixed(3)}px;overflow:visible;">` +
+    `<path d="${d}" fill="none" stroke="${color}" stroke-width="${dots.sizePx.toFixed(3)}" stroke-linecap="round"/></svg>`
+  );
+}
+
+/** The dots of every run of a design text block, in its box's frame
+ *  (see {@link textDotsSvg}); `null` when they cannot be drawn. */
+function designTextDotsHtml(block: VDTDesignTextBlock, dots: VDTTextDots): string | null {
+  const out: string[] = [];
+  for (const line of block.lines) {
+    const baseline = line.baselineY - block.bbox.y;
+    const runs = line.runs ?? [{ text: line.text, fontString: block.fontString, width: line.width }];
+    const order = line.order && line.order.length === runs.length ? line.order : runs.map((_, i) => i);
+    let x = line.xOffset;
+    for (const i of order) {
+      const run = runs[i]! as VDTDesignTextRun;
+      if (!run.leader) {
+        const svg = textDotsSvg(run.text, run.fontString, dots, block.color, x + (run.inkOffset ?? 0), baseline + (run.baselineShift ?? 0), block.letterSpacingPx ?? 0, run.rtl === true);
+        if (svg === null) return null;
+        out.push(svg);
+      }
+      x += run.width;
+    }
+  }
+  return out.join('');
+}
+
 function renderChip(
   chip: VDTChip,
   x: number,
@@ -1863,7 +1916,10 @@ function renderChip(
     const font = quoteFontString(run.fontString);
     const color = chip.color ?? inkFor(run);
     const fontDecl = font !== lineFont ? `font:${font};` : '';
-    const colorDecl = color !== lineColor ? `color:${color};` : '';
+    // Letters to trace (#1017): the dots, the text transparent under them.
+    const dots = chip.dotted ? textDotsSvg(run.text, run.fontString, chip.dotted, color, tx, baselineOffset + (run.baselineShift ?? 0), 0, run.rtl === true) : null;
+    if (dots) parts.push(dots);
+    const colorDecl = dots !== null ? 'color:transparent;' : color !== lineColor ? `color:${color};` : '';
     const top = run.baselineShift ? `${run.baselineShift.toFixed(3)}px` : '0';
     // A chip's runs were measured one by one, as a whole each.
     // A run whose direction differs from what it inherits says so, so its
@@ -3084,9 +3140,13 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
   }
   const clipDecl = block.clip ? 'overflow:hidden;' : '';
   const trackingDecl = block.letterSpacingPx ? `letter-spacing:${block.letterSpacingPx}px;${ligaturesDecl()}` : '';
+  // Letters to trace (#1017): the dots over the text, which stays,
+  // transparent, to be selected and read.
+  const dots = block.dotted ? designTextDotsHtml(block, block.dotted) : null;
+  if (dots !== null) lineParts.push(dots);
   // An outline over the glyphs (centred on their edges, as on canvas and in
   // the PDF); hollow letters leave the fill transparent.
-  const strokeDecl = block.stroke && block.stroke.widthPx > 0
+  const strokeDecl = dots !== null ? '' : block.stroke && block.stroke.widthPx > 0
     ? `-webkit-text-stroke:${block.stroke.widthPx}px ${block.stroke.color};` +
       (block.stroke.hollow ? '-webkit-text-fill-color:transparent;' : '')
     : '';
@@ -3098,7 +3158,7 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     `position:absolute;` +
     `left:${block.bbox.x}px;top:${block.bbox.y}px;` +
     `width:${block.bbox.width}px;height:${block.bbox.height}px;` +
-    `font:${font};color:${block.color};` +
+    `font:${font};color:${dots !== null ? 'transparent' : block.color};` +
     clipDecl + trackingDecl + strokeDecl +
     `">${lineParts.join('')}</div>`,
   );

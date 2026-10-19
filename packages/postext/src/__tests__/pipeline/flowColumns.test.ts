@@ -387,4 +387,13 @@ describe('galley fill', () => {
     expect(minFillHeight(g, b, 2)).toBeCloseTo(60, 1);
     expect(minFillHeight(g, b, 3)).toBeCloseTo(40, 1);
   });
+
+  it('offers no cut right after an item that keeps with the next (a heading, #1019)', () => {
+    const g = galley([40, 20, 40]);
+    g[1]!.keepWithNext = true;
+    const b = galleyBreaks(g, 1);
+    expect(b.map((x) => x.item)).toEqual([1]);
+    // The balanced fill takes the heading on with its text.
+    expect(fillGalley(g, b, 2, minFillHeight(g, b, 2)).cuts.map((j) => b[j]!.item)).toEqual([1]);
+  });
 });

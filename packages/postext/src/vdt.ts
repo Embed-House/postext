@@ -259,6 +259,9 @@ export interface VDTChip {
   /** Text colour (hex); absent to paint the runs in the surrounding text
    *  colour (bold / italic colours included). */
   color?: string;
+  /** Letters painted as dots to trace, in the runs' colour (the chip
+   *  style's `dotted`). Absent = filled. */
+  dotted?: VDTTextDots;
   /** The order in which renderers advance through `runs` from the box's
    *  start (indices into it), when it is not 0, 1, … n − 1: as
    *  {@link VDTLine.order}, the visual order of the runs (UAX #9 L2 on
@@ -2256,6 +2259,13 @@ export interface VDTDesignTextStroke {
   hollow?: boolean;
 }
 
+/** Letters painted as dots to trace (`TextDotsStyle`), resolved to px:
+ *  the painters lay the dots along each run's strokes (`textDots`). */
+export interface VDTTextDots {
+  spacingPx: number;
+  sizePx: number;
+}
+
 /** Rounded-rectangle box style resolved to absolute px / hex values. */
 export interface VDTDesignBoxStyle {
   backgroundColor?: string;
@@ -2299,6 +2309,9 @@ export interface VDTDesignTextBlock extends VDTDesignBlockOrigin {
    *  `strokeText`, CSS `-webkit-text-stroke`, PDF text render mode 1/2).
    *  Absent = none. */
   stroke?: VDTDesignTextStroke;
+  /** Letters painted as dots to trace, in the block's colour, in place of
+   *  the filled glyphs (and of `stroke`). Absent = filled. */
+  dotted?: VDTTextDots;
   /** Source range of the text this block displays when it mirrors document
    *  text (an opener's `{titleText}`), so editors can map clicks on the
    *  band back to the markdown. */

@@ -206,6 +206,18 @@ export const metadata = {
       <td>围绕字母绘制的描边：<code>width</code>（一个<code>Dimension</code>，以字形边缘为中心）、<code>color</code>（默认取文本颜色；首字下沉取它自己的颜色）和<code>hollow</code>（<code>true</code>表示只画描边）。见<a href="#行内标记与描边">行内标记与描边</a>。</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>把字母画成沿笔画中线排列的一串串圆点，供儿童描写：<code>spacing</code>是两点的间距（默认<code>0.1em</code>），<code>size</code>是圆点的大小（默认<code>0.05em</code>），都相对于文本字号。版面不变。不适用于竖排文本。见<a href="#行内标记与描边">行内标记与描边</a>。</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>把单行文本接在自身后面再排，间隔<code>gap</code>（默认<code>1em</code>），在可用空间内排满尽可能多的完整份数，或最多排<code>count</code>份：同一个词的一行副本，供描写练习。这些副本合为一行，整体对齐，从文本方向开始的一侧排起。会换行的文本、竖排文本或带首字下沉的文本只排一次。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ header: {
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted`把字母画成一串串圆点，供儿童描写，也就是习字册里的练习。文本按有填充时的样子测量和定位；浏览器把它画在一块小Canvas上，再沿每一笔的中线按`spacing`的间距排布圆点，因此连写的学校手写体保留连笔，阿拉伯文单词保留字形变化。小到排不成一串的符号（i上的点、重音符号、元音符号）变成一个圆点。任何字重都可以用，字族中最细的字重排出的点列最均匀。圆点取文本颜色，取代填充和`stroke`。Canvas、HTML（文本上覆盖一层SVG，文本本身设为透明）和PDF画出相同的圆点；PDF在圆点下面保留不可见的文本（文本渲染模式3），因此仍可搜索、复制和加标签。
+
+`repeat`把单行文本接在自身后面反复排，直到排满可用空间：以`{boxText}`为内容、宽度设为`fill`时，标注框样式印出一行副本，内容是该框在Markdown中所写的那个词；改动这个词，所有副本和它们的圆点都随之改变。
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 在PDF中，粗体和斜体部分会嵌入元素字体族中对应的字面，所以字体提供程序必须提供这些字面。

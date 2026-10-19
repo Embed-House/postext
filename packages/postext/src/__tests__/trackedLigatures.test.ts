@@ -52,7 +52,7 @@ function naturalWidth(text: string, size: number, ligatures: boolean): number {
   }
   return w;
 }
-const sizeOf = (font: string): number => parseFloat(/(\d*\.?\d+)px/.exec(font)?.[1] ?? '10');
+const sizeOf = (font: string): number => parseFloat(/(?<![\d.])(\d+(?:\.\d+)?|\.\d+)px/.exec(font)?.[1] ?? '10');
 
 /** The measuring half of a browser's 2D context. `keeps`: a browser that
  *  keeps the ligatures under a letter-spacing, so no word is cut. */
