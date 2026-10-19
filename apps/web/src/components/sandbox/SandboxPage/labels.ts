@@ -1714,8 +1714,6 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     editionCompareSync: t("editionCompareSync"),
     editionCompareLoading: t("editionCompareLoading"),
     editionCompareNoChapter: t("editionCompareNoChapter"),
-    composedFrameEdit: t("composedFrameEdit"),
-    composedFrameEditHint: t("composedFrameEditHint"),
     selectionPath: t("selectionPath"),
     selectionUp: t("selectionUp"),
     selectionClear: t("selectionClear"),

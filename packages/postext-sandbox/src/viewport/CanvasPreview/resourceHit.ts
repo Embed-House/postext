@@ -1,5 +1,5 @@
 import type { VDTDocument } from 'postext';
-import { mapInlineSnippet, resourceBlockRectToPage, resourceBlockToLocal, uncroppedPictureBox } from 'postext';
+import { mapInlineSnippet, parseMarkdown, resourceBlockRectToPage, resourceBlockToLocal, uncroppedPictureBox } from 'postext';
 import type { ResourceFocusTarget } from '../../context/SandboxContext';
 import { hitSvgTextIndex, type SvgTextIndex } from '../../controls/svgSource';
 import { addsHyphen, foldRefRuns, resourceBlocksOnPage, segmentPlainLength } from './geometry';
@@ -187,6 +187,54 @@ export interface ResourceTextHit {
   resourceId: string;
   target: ResourceFocusTarget;
   offset: number;
+  /** Where the run's words start in the Markdown (book offset), when the
+   *  `:::figure` that shows the resource gives them in place of the
+   *  resource's (a `::caption[…]` line, #935): the words are selected
+   *  there, not in the Resources panel. `offset` then counts from it. */
+  source?: number;
+}
+
+/** The words the `:::figure` fences of a Markdown give (#935), by resource
+ *  id, in source order: read once per text. */
+type FigureWords = Map<string, { kind: 'caption' | 'note'; text: string; start: number }[]>;
+let figureWordsCache: { markdown: string; byResource: FigureWords } | null = null;
+
+function figureWordsOf(markdown: string): FigureWords {
+  if (figureWordsCache?.markdown === markdown) return figureWordsCache.byResource;
+  const byResource: FigureWords = new Map();
+  // Cheap test first: no fence gives words, nothing to parse.
+  if (/::(?:caption|note)\[|\b(?:caption|note)="/.test(markdown)) {
+    for (const b of parseMarkdown(markdown)) {
+      const words = b.figure?.words;
+      if (!words || !b.resourceId) continue;
+      for (const kind of ['caption', 'note'] as const) {
+        const w = words[kind];
+        if (!w) continue;
+        const list = byResource.get(b.resourceId) ?? [];
+        list.push({ kind, text: w.text, start: w.sourceStart });
+        byResource.set(b.resourceId, list);
+      }
+    }
+  }
+  figureWordsCache = { markdown, byResource };
+  return byResource;
+}
+
+/**
+ * Where the `kind` words of the figure `block` start in `markdown`, when a
+ * `:::figure` fence gives them (`::caption[…]`, `caption="…"`, #935) and
+ * they are what the page shows; null when the words are the resource's
+ * own. Offsets into the run map one to one while the source reads as the
+ * words do (no escape in them).
+ */
+export function figureWordsSource(markdown: string, block: VDTBlock, kind: 'caption' | 'note'): number | null {
+  const resource = block.resourceBlock?.resource;
+  const shown = resource?.[kind];
+  if (!resource || !shown) return null;
+  for (const w of figureWordsOf(markdown).get(resource.id) ?? []) {
+    if (w.kind === kind && w.text === shown && markdown.slice(w.start, w.start + shown.length) === shown) return w.start;
+  }
+  return null;
 }
 
 /** Index of the line whose vertical band contains `y`, else the nearest. */
@@ -228,6 +276,9 @@ export function resourceTextAtPixel(
   xPage: number,
   yPage: number,
   svgIndexFor?: (fileId: string) => SvgTextIndex | undefined,
+  /** The page's Markdown: a caption or a note a `:::figure` gives in its
+   *  own words maps there (`ResourceTextHit.source`). */
+  markdown?: string,
 ): ResourceTextHit | null {
   const page = doc.pages[pageIndex];
   for (const block of resourceBlocksOnPage(doc, pageIndex)) {
@@ -246,7 +297,8 @@ export function resourceTextAtPixel(
       if (hitIdx < 0) continue;
       const run = resolveResourceRun(rb, { kind });
       if (!run) continue;
-      return { resourceId, target: { kind }, offset: offsetInRun(run, hitIdx, xLocal) };
+      const source = markdown === undefined ? null : figureWordsSource(markdown, block, kind);
+      return { resourceId, target: { kind }, offset: offsetInRun(run, hitIdx, xLocal), ...(source !== null ? { source } : {}) };
     }
 
     if (rb.table) {

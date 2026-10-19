@@ -1808,8 +1808,6 @@ export interface SandboxLabels {
   /** The other edition was laid out without the chapter on screen (it has
    *  fewer chapters). `__locale__` is its language. */
   editionCompareNoChapter: string;
-  composedFrameEdit: string;
-  composedFrameEditHint: string;
   selectionPath: string;
   selectionUp: string;
   selectionClear: string;

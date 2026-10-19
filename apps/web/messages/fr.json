@@ -2332,8 +2332,6 @@
     "editionCompareSync": "Défiler ensemble",
     "editionCompareLoading": "Mise en page de l’édition __locale__…",
     "editionCompareNoChapter": "L’édition __locale__ n’a pas ce chapitre",
-    "composedFrameEdit": "Texte du bloc __frame__",
-    "composedFrameEditHint": "Entrée garde la modification, Maj+Entrée passe à la ligne, Échap laisse le texte tel qu’il était.",
     "selectionPath": "Sélection sur la page",
     "selectionUp": "Sélectionner ce qui le contient (Échap)",
     "selectionClear": "Annuler la sélection",

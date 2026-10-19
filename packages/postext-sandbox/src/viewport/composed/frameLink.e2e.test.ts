@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildDocument, resolvePageTemplate } from 'postext';
 import type { PostextConfig, VDTDocument, VDTPage } from 'postext';
 import { frameByName, frameHitAt, frameIsEmpty } from './frameHit';
-import { chainHeadOf, frameAtCaret, frameClickTarget, frameTextChange, frameTextTargetAt } from './frameLink';
+import { chainHeadOf, frameAtCaret, frameClickTarget } from './frameLink';
 import { frameMarksFor } from './frameOverlay';
 
 class StubCtx {
@@ -115,23 +115,13 @@ describe('frame ↔ slot on a laid-out composed page', () => {
     expect(frameAtCaret(MD, page, MD.indexOf('Antes'))).toBeNull();
   });
 
-  it('a double click on the label tab edits the fence label; on a paragraph, its source', () => {
+  it('the label tab maps back to the fence label, to be selected and edited in place', () => {
     const caja = frameByName(page, 'caja')!;
     // The tab rises above the box's top-left corner.
     const box = page.floats!.find((b) => b.id === caja.blockIds[0])!;
     const tab = box.designOverlay!.blocks.find((b) => b.kind === 'text')!;
-    const tx = tab.bbox.x + tab.bbox.width / 2;
-    const ty = tab.bbox.y + tab.bbox.height / 2;
-    const label = frameTextTargetAt(doc, page, MD, caja, tx, ty);
-    expect(label).toMatchObject({ kind: 'label', text: 'Para qué sirve' });
-    expect(MD.slice(label!.start, label!.end)).toBe('Para qué sirve');
-    const change = frameTextChange(label!, 'Para qué "sirve" el dinero');
-    expect(change).toEqual({ from: label!.start, to: label!.end, insert: 'Para qué ”sirve” el dinero' });
-
-    const para = page.floats!.find((b) => caja.blockIds.includes(b.id) && b.type === 'paragraph')!;
-    const body = frameTextTargetAt(doc, page, MD, caja, para.bbox.x + 4, para.bbox.y + 4);
-    expect(body).toMatchObject({ kind: 'block', text: 'El dinero nos deja cambiar nuestro trabajo por cosas.' });
-    expect(frameTextChange(body!, body!.text)).toBeNull();
+    expect(tab.kind === 'text' && tab.attr).toBe('label');
+    expect(tab.kind === 'text' && MD.slice(tab.sourceStart, tab.sourceEnd)).toBe('Para qué sirve');
   });
 
   it('marks the empty frames, the caret\'s frame, and every frame in Design mode', () => {

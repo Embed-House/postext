@@ -2332,8 +2332,6 @@
     "editionCompareSync": "一緒にスクロール",
     "editionCompareLoading": "__locale__版を組版しています…",
     "editionCompareNoChapter": "__locale__版にはこの章がありません",
-    "composedFrameEdit": "枠 __frame__ の本文",
-    "composedFrameEditHint": "Enter で変更を確定、Shift+Enter で改行、Esc で元のまま閉じます。",
     "selectionPath": "ページ上の選択",
     "selectionUp": "外側の要素を選択（Esc）",
     "selectionClear": "選択を解除",

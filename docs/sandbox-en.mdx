@@ -254,7 +254,7 @@ You can also drag and drop files from disk onto the panel, video files (MP4, Web
 - **Paste as table**: pasting TSV (or simple quoted CSV) fills the grid
 - **Undo/redo**: Cmd/Ctrl+Z and Shift+Cmd/Ctrl+Z
 - **Keyboard navigation**: Tab / Shift-Tab (with row wrap) and the arrow keys move between cells
-- **Click to edit from the preview**: click a table cell, a caption, a note, or a text fragment of an SVG figure on either preview tab. The Resources panel opens on that resource and focuses the matching field, with the caret on the clicked glyph. Dragging selects a range inside the same cell or field, and a double-click selects the word. While the field has focus, its selection is mirrored back onto the page as a highlight (a thin caret when collapsed) on both the Canvas and HTML tabs.
+- **Click to edit from the preview**: click a table cell, a caption, a note, or a text fragment of an SVG figure on either preview tab. The Resources panel opens on that resource and focuses the matching field, with the caret on the clicked glyph. Dragging selects a range inside the same cell or field, and a double-click selects the word. While the field has focus, its selection is mirrored back onto the page as a highlight (a thin caret when collapsed) on both the Canvas and HTML tabs. A caption or a note that a `:::figure` writes in its own words (`::caption[…]`, `::note[…]`) is selected in the Markdown instead, where it is written.
 
 All edits go through pure model functions exported by the postext core (`addRow`, `addColumn`, `removeRow`, `removeColumn`, `mergeCells`, `unmergeCell`, `setCellContent`, `setAlignment` and `parseTSV`), so the same table model behaves identically inside and outside the Sandbox.
 
