@@ -468,7 +468,7 @@ take em; `lettering.fontSize`, `lettering.inset`, `gutter.*`,
 | `readingDirection` | `'auto'` | `'ltr'`, `'rtl'`; §11 |
 | `artDirection` | `'ltr'` | the direction the art was drawn for: `'rtl'` for manga |
 | `mirrorArt` | `false` | flip pictures on pages read against `artDirection` |
-| `frame.margins` | page margins | `{top, bottom, left, right, mirror}` for comic pages only |
+| `frame.margins` | the page's content area | `{top, bottom, left, right, mirror}` for comic pages only; once `frame.margins` is written, every side left out is 0 mm (not the page's margin) and `mirror` is `false`: write all four |
 | `gutter.horizontal` | `4mm` | between tiers |
 | `gutter.vertical` | `2mm` | between panels side by side |
 | `panel` | 1 pt black solid border, white, `cover` | `borderWidth`, `borderColor`, `borderRadius`, `borderStyle` (`solid` \| `none` \| `rough`), `background`, `fit`, `bleed` |
@@ -488,6 +488,7 @@ take em; `lettering.fontSize`, `lettering.inset`, `gutter.*`,
 | `balloonStyles[]` | the nine built-ins | an entry with a built-in id changes it; another id adds a style (over `speech`) |
 | `cast[]` | none | `{id, name?, balloonStyle?, color?, fill?, fontFamily?}`: a speaker's default style (speech lines only), text colour, balloon fill, face; `name` is printed in the reflowable EPUB and read in the HTML |
 | `runningHeads` | `false` | running heads and folios on comic pages |
+| `viewerLeaf` | unset | host only (the Sandbox's HTML viewer sets it: `{width, height, margins?, fitWidth px, fitHeight? px}` lays comic pages on the print leaf, scaled); never saved with a document: do not write it in preset.json |
 
 Built-in balloon styles (keys of a `balloonStyles` entry: `shape`, `fill`,
 `stroke`, `strokeWidth`, `dash`, `double`, `wobble` 0–1, `roundness`,
@@ -495,6 +496,12 @@ Built-in balloon styles (keys of a `balloonStyles` entry: `shape`, `fill`,
 `tailReach`, `target` `mouth|head`, `position`, `butt`, `fontFamily`,
 `fontScale`, `bold`, `italic`, `color`, `textTransform`, `letterSpacing`,
 `align` `center|start`, `halo`, `haloColor`, `rotate`, `skew`):
+
+Base every style starts from (a `speech` balloon; a new id is laid over it): `shape` oval, `fill` white,
+`stroke` black, `strokeWidth` 0.6 pt, `dash`/`double` false, `wobble` 0, `roundness` 2.2, `burstPoints` 14,
+`burstDepth` 0.22, `padding` 0.55 em, `aspect` 1.6, `tail` curved, `tailWidth` 0.9 em, `tailReach` 0.55,
+`target` mouth, `position` auto, `butt` false, `fontScale` 1, `align` center, `rotate` 0, `skew` 0.
+`shout` adds `strokeWidth` 0.8 pt; `sfx` has `halo` 1.5 pt white and `strokeWidth` 0.
 
 | id | Look |
 |---|---|

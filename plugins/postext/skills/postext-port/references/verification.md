@@ -33,6 +33,18 @@ Fix every ERROR. Common ones:
 - comics: a `split` that does not parse, `art=` naming no picture, `em` in the lettering size, gutters or
   panel borders, malformed anchors, faces, avoid zones or safe areas.
 
+**Misspelt setting names.** A config key nobody knows is dropped in silence in most of the config.
+- `postext check` reports `unknownConfigKey` (with `suggestion`) only in `headings` (its `balancing` and
+  `levels[]`), `headingStyles[]`, `paragraphStyles[]` (and the same under `htmlViewer.overrides`), tab stops,
+  drop caps (and `leadIn`), `lineNumbers`, `canvasViewer`, `checks` (and `contentInConfig`), `codeStyle` (its
+  `tokens` and `inline`), `comics`, `pageTemplates` and `labelStyles`.
+- `lint_project.py` checks the top-level keys (`bodyTex`, `pageTemplate` are reported), and the keys of `folio`,
+  `comics`, `lineNumbers`, `codeStyle`, tab stops and drop caps.
+- Nothing checks the keys inside `page`, `layout`, `bodyText`, `tableStyle(s)`, `captionStyle`, `diagramStyle`,
+  `videoStyle`, `calloutStyles`, `chipStyles`, `markStyles`, `parts`, `toc`, `index`, the lists, `math`,
+  `footnotes`, `crossRefs`, `citations`, `cjk`, `header`, `footer`, `htmlViewer`, `pdfGeneration`, `print`,
+  `contrast`, `debug`, `colorPalette` and `resourceTypes`: check the generator's keys against configuration.md by
+  hand, and look at the page a changed key should move.
 Read every WARN:
 
 - H1 without `breakBefore` once `headings` exists;
@@ -67,9 +79,9 @@ resource lays the whole book out again with the engine and fonts still
 loaded, about a second on a long book, and rewrites `/tmp/pages/page-NNN.jpg`
 (NNN = position in the book); the log gets the build's warnings, with chapter
 file:line and page, and a `rebuilt in N ms` line, or `error …` when the save
-breaks the book (the last good pages stay). Files that are not part of the
-book (`source/`, `*.py`, `resources.json`, `report.md`, `layouts*.json`) are
-neither read nor watched. To look at other pages, stop it
+breaks the book (the last good pages stay). Only the files the manifest names are read; dot files,
+`__pycache__`, `node_modules`, `source/`, `*.py`, `resources.json`, `chapters.json`, `report.md`, `roles.json`
+and `layouts*.json` are neither read nor watched. To look at other pages, stop it
 (`pkill -f "postext build my-book"`) and start it with the new `--pages`.
 `--pages` takes printed numbers (`12-15`, `iv`) or positions (`'#40'`,
 `'#10-#20'`). Add `--pdf /tmp/my-book.pdf` to the same command when the PDF
@@ -91,10 +103,40 @@ postext pdf my-book --locale es -o /tmp/my-book.pdf              # print checks;
 postext info my-book --pages                                     # chapters, pages, where each font family comes from
 ```
 
+More of the command line (`postext help <command>` lists every option):
+
+```bash
+postext images my-book --pages 40 --set bodyText.fontSize.value=10.5 --set headings.levels.0.italic=true -o /tmp/try   # try a value without the generator
+postext check my-book --locale es --strict --json   # exit 3 on any warning too
+postext image my-book --page 12 --print-preview -o /tmp/p12-print.png   # through the output profile, trim and bleed drawn
+postext pdf my-book --color-space grayscale --no-outlines --no-accessible -o /tmp/gray.pdf
+postext docx my-book -o /tmp/my-book.docx            # Word for an editor; imports back unchanged (sources.md § Word)
+```
+
+- `--set PATH=VALUE` (repeatable) works on every command that reads a book. It applies after
+  `localized.<lang>.config`; numeric segments index arrays; the value is read as JSON when it parses (`10.5`,
+  `true`, `{"value":11,"unit":"pt"}`), otherwise as text. Try a value with it, then write the one you keep into
+  `build_preset.py`.
+- `--config FILE` is deep-merged over the book's config (a bare config or a whole `preset.json`). It differs from
+  `localized.<lang>.config`, which replaces each top-level key it names.
+- `--font-dir DIR` (repeatable) is searched before the faces compiled into the executable, the cache
+  (`--cache-dir`, `POSTEXT_CACHE_DIR`, default `~/.cache/postext`) and Google Fonts / Fontsource: licensed faces
+  kept outside the bundle.
+- `--pattern` gives `images` file names from `{n}`, `{n:03}`, `{label}` and `{chapter}` (default `page-{n:03}`);
+  `--jobs N` encodes in parallel; `--quality` is for JPEG/WebP (default 90); `--dpi` defaults to 150.
+- Exit codes: `0` done, `1` failed, `2` wrong usage (an unknown option, a missing input), `3` `check` found errors
+  (or warnings with `--strict`). `--json` writes one object on stdout (`outputs`, `pages`, `warnings[]` with
+  `kind`, `severity`, `message`, `at` = file:line, `page`, `timings`) and logs to stderr.
+- Loose Markdown needs no `preset.json`: `postext pdf a.md b.md --config design.json --resources pics/ --fonts
+  fonts/ --name "Title"`. The `--resources` file names are the ids; a `resources.json` in that folder describes
+  them in the manifest's form.
+- EPUB, HTML and press PDF deliverables: configuration.md §21, "Delivering EPUB, HTML and PDF files".
+
 Differences from `render.mjs`: `--chapters` is 1-based (`--chapters 3`
 is the third chapter file) and lays those chapters out as a short book;
 `check` reports the engine's warnings and the print preflight but not the
-Sandbox's extra checks that `render.mjs` adds with `SANDBOX-WARN`; a font
+Sandbox's extra checks (`render.mjs --repo <checkout>` adds them as `SANDBOX-WARN`, and the Sandbox itself
+lists them, §4); a font
 family the project does not bundle is downloaded and cached, from Google
 Fonts or, for a family Google Fonts does not have, from Fontsource, as the
 Sandbox loads it, where `render.mjs` downloads nothing and measures the
@@ -112,8 +154,12 @@ node scripts/render.mjs my-book --lang es --out /tmp/my-book.pdf            # + 
 ```
 
 Each call loads the engine afresh (a few seconds): use it at milestones for its
-`SANDBOX-WARN`, `NOTE` and `PARSE` lines, or for the loop when the executable
-cannot be had.
+`NOTE` and `PARSE` lines, or for the loop when the executable cannot be had.
+`SANDBOX-WARN` lines (heading hierarchy, design anchors, placeholders, parity; loose lines with
+`--show-loose`) come only with `--repo /path/to/postext`, a Postext checkout with `packages/postext-sandbox`
+built; the npm tools give none. `render.mjs` does not read a font family's `fallback`: a family with empty
+`variants` is measured with a stand-in face and listed as not bundled, so check a plain bundle with `postext
+check` / `composed_check.py`.
 
 ### Page JPEGs from `render.mjs`
 
@@ -330,6 +376,16 @@ those lines, or run the script.
   page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
   fails (composed-pages.md §7).
 - `CONFIG cjkGridClamped`: `cjk.grid` asked for more characters or lines than the margins leave room for.
+- `CONFIG fontFamilyStack`: a `fontFamily` (or any `…FontFamily`) holds a CSS stack (`'EB Garamond',
+  Georgia, serif`); the text is set in the first family only (canvas, HTML and PDF embed one face per
+  family, with no fallback). Write one family name.
+- `CONFIG sideColumnPercentClamped`: a `oneAndHalf` `sideColumnPercent` that would leave a column with
+  no width (or is not a number); `used` is the percent applied (path names the heading style when its
+  own `layout` sets it). `CONFIG columnCountClamped`: `multiple` with `columnCount` outside 3–8.
+- `CONFIG unknownNumberFormat`: a list `numberFormat`, `page.pageNumbering.format` or a resource
+  `counterFormat` in no known spelling; it numbers in decimal.
+- `CONFIG unknownNumerals`: `numerals` other than `auto`/`latn`/`arab`/`arabext`; the digits follow
+  `locale` (`used`).
 - `PDF-WARN missingGlyph` (with `--out`): characters no file of a face has a glyph for; they print as
   empty boxes. `variableFontDefaultInstance`: a variable font printed at its default weight.
   `cffEmbeddedWhole`: a CFF font over 2 MB embedded whole. Fix the font files (playbooks E6).
@@ -341,7 +397,7 @@ those lines, or run the script.
   (heading breaks, formula size, space around inline resources, plain
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
   compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers).
-  Set `"configVersion": 14` and check the pages again when the config is meant for today's rules.
+  Set `"configVersion": 15` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page
@@ -440,6 +496,35 @@ tab (the book bound, on its `config.folio` paper: cover, spine image,
 `:::paper` plate sections, thickness) and the PDF tab. The sandbox shows its own warnings panel: loose lines, heading
 hierarchy, design anchors and placeholders, parity issues. The PDF tab's
 output is the reference; headless metrics can differ slightly.
+
+### Driving the Sandbox from an agent (WebMCP)
+
+With a browser it can script (Claude in Chrome, Chrome DevTools MCP, Puppeteer, Playwright), an agent checks the
+bundle in the real Sandbox, with the Sandbox's own measure (`shapingLanguage: 'document'`) and its extra checks
+(loose lines, heading hierarchy, placeholders, parity), which `postext check` does not give. Open
+`https://postext.dev/en/sandbox`. The page registers 41 `sandbox_*` tools on `document.modelContext` (WebMCP) and on
+`window.postextWebMcp` in every browser:
+
+```js
+await page.waitForFunction(async () => (await window.postextWebMcp?.executeTool('sandbox_get_state', {}))?.ready);
+const run = (name, args) => page.evaluate(([n, a]) => window.postextWebMcp.executeTool(n, a), [name, args]);
+await run('sandbox_import_book', { file: { base64: b64, fileName: 'my-book.postext' }, language: 'es' }); // inspect: true lists its languages only
+await run('sandbox_get_warnings', { scope: 'book' });               // the Checks panel: kind, category, chapter, line, offsets, page
+await run('sandbox_render_page', { chapter: 3, page: 41, count: 2, width: 1200, format: 'jpeg' }); // { content: [json text, image parts (base64)] }
+await run('sandbox_get_composed_checks', {});                       // every edition (`language` keeps one)
+await run('sandbox_export', { format: 'pdf', scope: 'book', deliver: 'data' }); // pdf|epub|postext|docx|markdown|config; `epubLayout: 'reflowable'`
+```
+
+- Every tool waits for the layout before it answers and gives each chapter's page count. Answers are `{ ok, … }`
+  or `{ ok: false, error }`; misspelt arguments are refused with the right names.
+- Trying a design value: `sandbox_set_config { changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }] }`, look,
+  then `sandbox_undo`. Copy the setting that works into `build_preset.py`: the Sandbox copy is not the source.
+- A fresh browser profile has empty storage: the import makes a new project there, and nothing reaches the user's
+  own browser.
+- `sandbox_import_word` (`dryRun: true` first) runs the Word import of sources.md § Word in the Sandbox.
+- `sandbox_remove_chapter`, `sandbox_delete_resource`, `sandbox_delete_book`, `sandbox_reset_to_original`,
+  `sandbox_import_word` and `sandbox_answer` cannot be undone; do not call them on the user's own books unless asked.
+- Full list and arguments: https://postext.dev/en/docs/webmcp
 
 If you cannot open a browser, say so and hand the user the `.postext` and
 the page images instead of claiming the port is visually verified.

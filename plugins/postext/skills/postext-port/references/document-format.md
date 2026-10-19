@@ -1,7 +1,7 @@
 # Postext document (Markdown) format
 
 What a chapter file may contain, exactly as the Postext parser reads it
-(postext 1.2). Postext Markdown looks like Markdown but is **not CommonMark**:
+(postext 1.46). Postext Markdown looks like Markdown but is **not CommonMark**:
 many habits from GitHub/pandoc Markdown print literally or change meaning.
 Where the online docs disagree, this file is right (§14).
 
@@ -36,7 +36,9 @@ Every line is `trim`med before the tests in steps 3–7 and 9. Indentation is th
 ## 1. Frontmatter
 
 - **Syntax:** an optional YAML block at the very start of the file, between `---` lines. It is parsed with `gray-matter`.
-- **Keys Postext uses:** `title`, `subtitle`, `author`, `publishDate`. They feed the `{title}`, `{subtitle}`, `{author}` and `{publishDate}` design placeholders. Other keys are kept on `doc.metadata` but no built-in placeholder reads them.
+- **Keys Postext uses:** `title`, `subtitle`, `author`, `publishDate` (the `{title}` … `{publishDate}` placeholders, the PDF title and author), and `references` / `nocite` (citations, §10.7). An EPUB also reads `authors`, `date`, `isbn` / `identifier`, `publisher`, `rights`, `description` (configuration.md §21, "Delivering EPUB, HTML and PDF files"). Other keys are kept on `doc.metadata`; no built-in placeholder reads them.
+- **YAML types are printed as text** (≥ 1.5): a number in plain decimal (`title: 1984` → 1984, but `1.50` → 1.5, `017` → 15), a boolean as `true`/`false`, a date as its long calendar day in the document's `locale` (`2026-04-15` → *April 15, 2026* / *15 de abril de 2026*, UTC day, Gregorian in Arabic), a list joined by `, ` (`، ` in Arabic script). Quote a value to keep it as typed: `publishDate: "15/04/2026"`, `title: "1984"`. A nested map or an empty value is dropped.
+- **Invalid YAML** (an unclosed quote) does not stop the build: no metadata, the body after the closing `---`, and an `invalidFrontmatter` warning (≥ 1.24). A `---js` / `---javascript` block is refused the same way (≥ 1.33.3).
 - **Books / multi-chapter projects:** only the **first chapter's** frontmatter counts. The frontmatter of every later chapter is blanked (length-preserving) and never parsed, and the sandbox raises `chapterFrontmatterIgnored`. Put book metadata in chapter 1 only.
 - Chapters are joined with `\n\n`. No page break is inserted between chapters; a chapter opens on a new page only through its H1's `breakBefore` config.
 
@@ -70,7 +72,7 @@ A heading's inline content is read like a paragraph's while `headings.inlineMark
 - With `headings.inlineMarks: false` (and in a preset without `configVersion` 6 whose headings carry marks) they are **reduced to plain text**: the markers are removed and the heading's look comes only from the level/style config.
 - `` `code` `` becomes its text. Images are removed.
 - Escapes `\* \_ \^ \~ \`` produce the literal character.
-- **Kept as live spans:** `:ref{…}`, `:swatch{…}` (`:326`) and inline `$math$` (`:327`).
+- **Kept as live spans:** `:ref{…}`, the `@sec:id` / `[@fig:id]` / `\ref{…}` / `\eqref{…}` cross-references, `:swatch{…}` and inline `$math$`. `:mark`, the CJK marks, ruby and `:tcy`/`:upright`/`:sideways` are read with the other inline marks. **Printed as written** in a heading: `:chip[…]`, footnote markers `[^id]`, citations `[@key]` / `@key`, and `:tab`.
 - **`:chip[…]` is NOT processed in headings.** It stays literal text.
 
 ### 2.2 Heading attributes: trailing `{…}`
@@ -87,14 +89,16 @@ The blob is parsed with the shared attribute grammar (§8). Since 1.9 it is take
 
 **Attributes with engine meaning:**
 
-| attr | values | effect | source |
-|---|---|---|---|
-| `style` | id of a `headingStyles[]` entry | Merges the style's level overrides and opens a *styled section* (running heads, geometry, body typography, palette) up to the next heading of the same or higher level, or the next part. The style's `numbered: false` makes the heading unnumbered (no counter advance, no number, `{chapterNumber}` empty). An unknown id is ignored. | , 54-72`;  |
-| `toc` | `false`/`no`/`0` or `true`/`yes`/`1` | Overrides whether `:::toc` lists this heading. Default: the style's `toc`, else `true`. |  |
-| `jidori` | number (≥ 1.16) | 字取り: a one-line heading narrower than N of its own ems is spaced evenly to that width (`# 序章 {jidori=3}` → 序　章); `0` turns its level's `jidori` off. |  |
-| `dropcap` | bare, `false`/`no`/`0`, or a number of lines (≥ 1.23) | The drop cap of the first body paragraph after this heading (configuration.md §4b): `{dropcap=false}` leaves this chapter without its level's or style's, `{dropcap=2}` sets it over 2 lines, a bare `{dropcap}` gives one (3 lines) where the level sets none. |  |
-| `indent` | length; a bare number is **body** ems (≥ 1.16) | 字下げ of this heading: `## 一 {indent=5}` sets it 5 body characters from the line start (the top of a vertical line), over its level's or heading style's `indent`; `em` counts body ems too, `pt`/`mm` work; `0` sets it at the line start. A value that is no length is ignored. Same in vertical and horizontal text. |  |
-| `firstLineIndent` | length; a bare number is **body** ems (≥ 1.24) | The first line of this heading only, over its level's or heading style's `firstLineIndent`; its other lines start at `indent` (GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`). Reads lengths as `indent`; `0` clears the level's. |  |
+| attr | values | effect |
+|---|---|---|
+| `style` | id of a `headingStyles[]` entry | Merges the style's level overrides and opens a *styled section* (running heads, geometry, body typography, palette) up to the next heading of the same or higher level, or the next part. The style's `numbered: false` makes the heading unnumbered (no counter advance, no number, `{chapterNumber}` empty). An unknown id is ignored. |
+| `toc` | `false`/`no`/`0` or `true`/`yes`/`1` | Overrides whether `:::toc` lists this heading. Default: the style's `toc`, else `true`. |
+| `jidori` | number (≥ 1.16) | 字取り: a one-line heading narrower than N of its own ems is spaced evenly to that width (`# 序章 {jidori=3}` → 序　章); `0` turns its level's `jidori` off. |
+| `dropcap` | bare, `false`/`no`/`0`, or a number of lines (≥ 1.23) | The drop cap of the first body paragraph after this heading (configuration.md §4b): `{dropcap=false}` leaves this chapter without its level's or style's, `{dropcap=2}` sets it over 2 lines, a bare `{dropcap}` gives one (3 lines) where the level sets none. |
+| `indent` | length; a bare number is **body** ems (≥ 1.16) | 字下げ of this heading: `## 一 {indent=5}` sets it 5 body characters from the line start (the top of a vertical line), over its level's or heading style's `indent`; `em` counts body ems too, `pt`/`mm` work; `0` sets it at the line start. A value that is no length is ignored. Same in vertical and horizontal text. |
+| `firstLineIndent` | length; a bare number is **body** ems (≥ 1.24) | The first line of this heading only, over its level's or heading style's `firstLineIndent`; its other lines start at `indent` (GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`). Reads lengths as `indent`; `0` clears the level's. |
+| `hidden` | `true`/`yes`/`1` or `false`/`no`/`0` (≥ 1.5) | Overrides the level's or style's `hidden`. A hidden heading prints nothing and takes no room (in the flow and in a box), but still opens its page and its style's section, counts, and is listed in `:::toc`, `{chapterTitle}` and the PDF bookmarks (a dedication or colophon listed but not titled). A hidden H1 draws no opener design. |
+| `startAt` | positive integer, any digits (≥ 1.5) | Sets this heading's level counter to N instead of advancing it; later headings count on from there, in later chapters too. Use it on the first lettered appendix: `# Survey {style="appendix" startAt=1}` → *Appendix A*. Anything else is ignored. |
 
 - A heading's 字下げ is usually the same for a whole level: set it once as the level's (or a heading style's) `indent` (configuration.md §5.1) and use `{indent=N}` for the heading that differs. `aozora.py` writes `{indent="5"}` from the source's ［＃５字下げ］ on every heading; it takes effect as written (before 1.16 it was a free attribute and did nothing).
 - There is **no** `numbered` heading attribute. `{numbered=false}` is only stored as a free attr; use a heading style with `numbered: false` instead.
@@ -104,7 +108,6 @@ The blob is parsed with the shared attribute grammar (§8). Since 1.9 it is take
 - In the heading's own advanced-design slot, the heading's attrs are used.
 - In headers and footers, the attrs of the current chapter's H1 are used.
 - A missing key resolves to `''`.
-- Sources: ; .
 
 `toc.subtitle.attr` (config) chooses the attr printed as the TOC subtitle line, e.g. `author`.
 
@@ -188,7 +191,7 @@ The same triggers also end a running paragraph mid-way (§3.1): a continuation l
 
 - **Syntax:** an opening line of 3+ backticks or 3+ tildes (up to 3 spaces in), an info string, the lines, and a closing fence of the same character at least as long. A backtick fence's info string holds no backtick. The fence's indentation comes off each line.
 - **Literal:** every character, space, tab and blank line is kept; nothing inside is Markdown (no emphasis, `:ref`, maths, chips, directives, `#` headings, list items, index marks or anchors). Nothing needs escaping. A listing that shows a ```` ``` ```` fence goes in a longer fence or in tildes.
-- **Info string:** first word = language (`js`, `ts`, `python`, `bash`, `console`, `json`, `css`, `html`, `xml`, `markdown`, `sql` are coloured by the built-in tokenizer; any other is set plain); then attributes in the §8 grammar, braced or bare: `title="…"`, `label="…"`, `lineNumbers` / `lineNumbers=false`, `start=N`, `highlight="3,5-7"`, `span=page`. A bare rest is the title: `` ```console Terminal ``.
+- **Info string:** first word = language (`js`, `ts`, `python`, `bash`, `console`, `json`, `css`, `html`, `xml`, `markdown`, `sql` are coloured by the built-in tokenizer; any other is set plain); then attributes in the §8 grammar, braced or bare: `title="…"`, `label="…"`, `lineNumbers` / `lineNumbers=false`, `start=N`, `highlight="3,5-7"`, `span=page`, `placement="here|auto|top|bottom|fixed"` (the listing's box floats like a `:::callout`, §7.1), `slot="…"` on a composed page (§12.2). `lineNumbers` may be written `linenumbers` or `numbered`; `false`/`no`/`0`/`off` turn it off; `start=N` alone numbers the listing. A bare rest is the title: `` ```console Terminal ``.
 - **Placement:** a fence interrupts a paragraph; one left open runs to the end of the text (`unclosedCodeBlock`). Inside `:::callout` it is a nested box; inside `:::paragraphs` it keeps `codeStyle`. A fence after a list item closes the list (no list continuation).
 - **Layout:** one line per source line in the code face, in a box (`codeStyle`, configuration.md §12b): never hyphenated or justified, spaces at full width, tabs to the next `tabSize` stop, overlong lines wrapped / shrunk / clipped (`codeOverflow`), numbers in a gutter (not copied), split between lines across columns and pages.
 - **Indented code** (4 spaces / a tab after a blank line) is a listing only under `codeStyle.indentedCode: true`.
@@ -199,39 +202,43 @@ The same triggers also end a running paragraph mid-way (§3.1): a continuation l
 ## 4. Inline formatting (paragraphs, list items, blockquotes)
 
 Pipeline order per block:
-1. `extractInlineChips`
-2. `extractInlineRefs`
-3. `extractInlineSwatches`
-4. `extractInlineMath`
-5. `parseInlineFormatting` (link syntax reduced to its text, with the URL kept as a range on the span; images and code stripped; then bold, italic and scripts)
+1. inline code protected (its characters print as written)
+2. `:chip[…]`
+3. footnote markers `[^id]`
+4. references: `:ref{…}`, `@sec:id` / `[@fig:id]`, `\ref{…}` / `\eqref{…}`
+5. citations `[@key]`, `@key`
+6. `:swatch{…}`
+7. inline `$…$`
+8. tabs (`:tab`, tab characters)
+9. forced line breaks, then `parseInlineFormatting`: `:mark[…]`, `:smallcaps[…]`, `:tcy`/`:upright`/`:sideways`, the CJK marks and ruby, links (text kept, URL as a range), images removed, code backticks dropped, then bold, italic and scripts
 
 Earlier passes shield their content from later ones. Math is extracted before emphasis, so `*` inside `$…$` is safe. Tabs (`:tab`, tab characters, §10.9) are taken out after the maths, outside inline code, link destinations and directive attributes.
 
-| Markup | Syntax | Result / notes | Source |
-|---|---|---|---|
-| Bold | `**x**` or `__x__` | bold span |  |
-| Italic | `*x*` or `_x_` | italic span | `:323-344` |
-| Bold italic | `***x***` or `___x___` | both | `:355` |
-| Italic inside bold | `**a *b* c**` | works | |
-| Bold inside italic | `*a **b** c*` | **does not work.** The outer `*` stay literal; only `b` is bold | |
-| Superscript | `^x^` | 58% of the size, raised 1/3 em. Content must start and end with a non-space; no newline; no inner `^` | `:289-308` |
-| Subscript | `~x~` | 58% of the size, lowered 0.15 em. Same rules. A subscript and a superscript that touch (`T~0~^2^`, either order) are stacked, the subscript 0.25 em down; a space, a letter or a word joiner (U+2060) between them sets them one after the other. A stacked pair never parts at a line break (a word too wide for the line breaks before it) | `:289-308` |
-| Tab (≥ 1.23) | `:tab`, `:tab{at=… align=… leader=…}` | goes to the paragraph's next tab stop, or to the one-off stop of its attributes; see §10.9 | |
-| Small caps | `:smallcaps[x]` | lowercase letters as capitals at 70% of the size (synthesised, identical on every backend). Takes marks inside and around it; `\]` for a literal `]`; empty or unclosed stays literal. Headings strip the markup. See §10.3 | |
-| Inline code | `` `x` `` | **backticks removed, rendered literally**: emphasis markers, `$`, links, `:ref{…}` and chips inside it print as written (the way to show syntax). Set in the body face, or with `codeStyle.inline` (≥ 1.23, configuration.md §12b) in a code face as one unbreakable unit, optionally on a fill. | `:313-318` |
-| Link | `[text](url)` | text kept and set exactly as without the link. The URL becomes a live link in HTML (`<a>`) and PDF (a URI annotation), not on canvas. Only `http`, `https`, `mailto`, `tel`, `ftp` and relative URLs are linked; any other scheme keeps the text only. The destination takes **balanced parentheses** as in CommonMark (`[Wiki](…/A_(b))` links the whole URL); an unbalanced one ends at the first `)` and the text is set with no link. A `"title"` is ignored; `<…>` may hold spaces. Works in paragraphs, lists, quotes, callouts, captions, notes and cells, not in headings or chips | `replaceLinkSyntax`, `linkHref` |
-| Image | `![alt](src)` | **removed** from the text | `:315` |
-| Escapes | `\*` `\_` `\^` `\~` `` \` `` | the literal character (body, captions, cells, notes) | `:261-273` |
-| Emphasis dots (≥ 1.9) | `:dots[不可]`, `{style="dot\|circle\|sesame" fill="open" pos="over\|under"}` | 着重号: under each character (right in vertical text), none on punctuation. `*…*` on Chinese characters does the same under `cjk.emphasis: 'dots'` (default in a Chinese document). Japanese (≥ 1.16): 傍点 are sesame ﹅ over the text (right in vertical text) by default (`cjk.emphasisMark`); `fill="open"` = 白ゴマ, `style="circle" fill="filled"` = 丸傍点 (a circle is open by default: 白丸); dots skip punctuation and go outside a ruby reading | |
-| Side line (≥ 1.16) | `:sideline[注意]{style="solid\|double\|wavy\|dotted" pos="over\|under"}` | 傍線: a line along the run (under in horizontal text, right in vertical text), through its punctuation; Aozora 鎖線 → `dotted`; 破線 has no shape (falls back to solid) | |
-| Proper-name line (≥ 1.9) | `:name[賈寶玉]` | 专名号: straight line under (left in vertical); adjacent names keep a gap | |
-| Book title (≥ 1.9) | `:book[石頭記]` | 书名号 per `cjk.bookTitleMark`: 《》 inserted (mainland default), wavy line (Taiwan/HK), or bare; 『』 in Japanese (「」 for a title inside one, `cjk.bookTitleBrackets`, ≥ 1.16). If the source already TYPES the brackets, keep them as text instead | |
-| Ruby (≥ 1.9) | `:ruby[紅樓]{rt="hóng lóu"}`, `{rt="hónglóu" group}`, `pos="over\|under\|right"`; compact `{紅樓\|hóng\|lóu}`; `mode="mono\|group\|jukugo"`, `align="center\|jis\|start"` (≥ 1.16) | one reading per character when the counts match (line may break between), else one group reading. Zhuyin (bopomofo) goes right of each character. Compact form only when the base holds Han/kana/bopomofo; `\{紅\|hóng}` is text. Japanese (`locale: ja`): a reading per character of a word (`{東京\|とう\|きょう}`) is jukugo ruby (`mode=mono` keeps it mono); one reading (`{東京\|とうきょう}`, the Aozora 《》) is group ruby | |
-| Warichu (≥ 1.9) | `:warichu[note]{open="〔" close="〕"}` | 双行夹注 / 割注: two half-size rows inside the line, breaking across lines and pages with two of its characters on each side of a break (`cjk.warichu.minChars`, ≥ 1.28); （） by default in Japanese | |
-| Kanbun marks (≥ 1.16) | `:kunten[學]{okuri="ビテ" kaeri="レ" tate}` | 返り点 (`kaeri`: レ 一 二 三 上 中 下 甲 乙 天 地 人, 一レ 上レ…; ㆑–㆟ read as those) small at the lower left of the character (the last one when the brackets hold several), 送り仮名 (`okuri`; Aozora's （ヲ） brackets dropped) small at its right from mid-character (over and after it in horizontal text), `tate` = 竪点 joining it to the next character. The text is not reordered; copy and screen readers get 學ビテ. Nested ruby works (`:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`). Size and placement: `cjk.kunten`; `kuntenExceedsLeading` when the gap is short | |
-| Tate-chu-yoko (≥ 1.9) | `:tcy[12]` | vertical text: one upright cell. In Japanese (≥ 1.16) `!!` `!?` `?!` `??` (and ！？ pairs) get it automatically too. Numbers of ≤ `cjk.uprightDigits` (2) digits get it automatically, except inside a Latin sentence (a Latin word on both sides: `chapters 49 and 32`, `(7) of`, `pages 3–5 of`), where they run sideways with the words; postext 1.9.0 and 1.9.1 stand those upright too (`:sideways[49]` there). No effect horizontally | |
-| Upright / sideways (≥ 1.9) | `:upright[GDP]`, `:sideways[12]` | vertical text: each character upright in its own cell / the run turned | |
-| Dollar | `\$` | literal `$`; otherwise `$` opens inline math. Captions, cells and notes set inline maths too (postext ≥ 1.19), by Pandoc's rule: no space after the opening `$`, none before the closing one, no digit right after it ("$5 to $10" stays text); up to 1.18 `$` was literal there. Chip texts have no maths. `\$` gives `$` everywhere (postext ≥ 1.5; 1.4 printed `\$` in snippets). In an attribute value (`:ref{text="…"}`) a backslash is ordinary: `\$` stays `\$` |  |
+| Markup | Syntax | Result / notes |
+|---|---|---|
+| Bold | `**x**` or `__x__` | bold span |
+| Italic | `*x*` or `_x_` | italic span |
+| Bold italic | `***x***` or `___x___` | both |
+| Italic inside bold | `**a *b* c**` | works |
+| Bold inside italic | `*a **b** c*` | **does not work.** The outer `*` stay literal; only `b` is bold |
+| Superscript | `^x^` | 58% of the size, raised 1/3 em. Content must start and end with a non-space; no newline; no inner `^` |
+| Subscript | `~x~` | 58% of the size, lowered 0.15 em. Same rules. A subscript and a superscript that touch (`T~0~^2^`, either order) are stacked, the subscript 0.25 em down; a space, a letter or a word joiner (U+2060) between them sets them one after the other. A stacked pair never parts at a line break (a word too wide for the line breaks before it) |
+| Tab (≥ 1.23) | `:tab`, `:tab{at=… align=… leader=…}` | goes to the paragraph's next tab stop, or to the one-off stop of its attributes; see §10.9 |
+| Small caps | `:smallcaps[x]` | lowercase letters as capitals at 70% of the size (synthesised, identical on every backend). Takes marks inside and around it; `\]` for a literal `]`; empty or unclosed stays literal. Headings strip the markup. See §10.3 |
+| Inline code | `` `x` `` | **backticks removed, rendered literally**: emphasis markers, `$`, links, `:ref{…}` and chips inside it print as written (the way to show syntax). Set in the body face, or with `codeStyle.inline` (≥ 1.23, configuration.md §12b) in a code face as one unbreakable unit, optionally on a fill. |
+| Link | `[text](url)` | text kept and set exactly as without the link. The URL becomes a live link in HTML (`<a>`) and PDF (a URI annotation), not on canvas. Only `http`, `https`, `mailto`, `tel`, `ftp` and relative URLs are linked; any other scheme keeps the text only. The destination takes **balanced parentheses** as in CommonMark (`[Wiki](…/A_(b))` links the whole URL); an unbalanced one ends at the first `)` and the text is set with no link. A `"title"` is ignored; `<…>` may hold spaces. Works in paragraphs, lists, quotes, callouts, captions, notes and cells, not in headings or chips |
+| Image | `![alt](src)` | **removed** from the text |
+| Escapes | `\*` `\_` `\^` `\~` `` \` `` | the literal character (body, captions, cells, notes) |
+| Emphasis dots (≥ 1.9) | `:dots[不可]`, `{style="dot\|circle\|sesame" fill="open" pos="over\|under"}` | 着重号: under each character (right in vertical text), none on punctuation. `*…*` on Chinese characters does the same under `cjk.emphasis: 'dots'` (default in a Chinese document). Japanese (≥ 1.16): 傍点 are sesame ﹅ over the text (right in vertical text) by default (`cjk.emphasisMark`); `fill="open"` = 白ゴマ, `style="circle" fill="filled"` = 丸傍点 (a circle is open by default: 白丸); dots skip punctuation and go outside a ruby reading |
+| Side line (≥ 1.16) | `:sideline[注意]{style="solid\|double\|wavy\|dotted" pos="over\|under"}` | 傍線: a line along the run (under in horizontal text, right in vertical text), through its punctuation; Aozora 鎖線 → `dotted`; 破線 has no shape (falls back to solid) |
+| Proper-name line (≥ 1.9) | `:name[賈寶玉]` | 专名号: straight line under (left in vertical); adjacent names keep a gap |
+| Book title (≥ 1.9) | `:book[石頭記]` | 书名号 per `cjk.bookTitleMark`: 《》 inserted (mainland default), wavy line (Taiwan/HK), or bare; 『』 in Japanese (「」 for a title inside one, `cjk.bookTitleBrackets`, ≥ 1.16). If the source already TYPES the brackets, keep them as text instead |
+| Ruby (≥ 1.9) | `:ruby[紅樓]{rt="hóng lóu"}`, `{rt="hónglóu" group}`, `pos="over\|under\|right"`; compact `{紅樓\|hóng\|lóu}`; `mode="mono\|group\|jukugo"`, `align="center\|jis\|start"` (≥ 1.16) | one reading per character when the counts match (line may break between), else one group reading. Zhuyin (bopomofo) goes right of each character. Compact form only when the base holds Han/kana/bopomofo; `\{紅\|hóng}` is text. Japanese (`locale: ja`): a reading per character of a word (`{東京\|とう\|きょう}`) is jukugo ruby (`mode=mono` keeps it mono); one reading (`{東京\|とうきょう}`, the Aozora 《》) is group ruby |
+| Warichu (≥ 1.9) | `:warichu[note]{open="〔" close="〕"}` | 双行夹注 / 割注: two half-size rows inside the line, breaking across lines and pages with two of its characters on each side of a break (`cjk.warichu.minChars`, ≥ 1.28); （） by default in Japanese |
+| Kanbun marks (≥ 1.16) | `:kunten[學]{okuri="ビテ" kaeri="レ" tate}` | 返り点 (`kaeri`: レ 一 二 三 上 中 下 甲 乙 天 地 人, 一レ 上レ…; ㆑–㆟ read as those) small at the lower left of the character (the last one when the brackets hold several), 送り仮名 (`okuri`; Aozora's （ヲ） brackets dropped) small at its right from mid-character (over and after it in horizontal text), `tate` = 竪点 joining it to the next character. The text is not reordered; copy and screen readers get 學ビテ. Nested ruby works (`:kunten[:ruby[未]{rt="ザル" pos=under}]{kaeri="レ" okuri="ダ"}`). Size and placement: `cjk.kunten`; `kuntenExceedsLeading` when the gap is short |
+| Tate-chu-yoko (≥ 1.9) | `:tcy[12]` | vertical text: one upright cell. In Japanese (≥ 1.16) `!!` `!?` `?!` `??` (and ！？ pairs) get it automatically too. Numbers of ≤ `cjk.uprightDigits` (2) digits get it automatically, except inside a Latin sentence (a Latin word on both sides: `chapters 49 and 32`, `(7) of`, `pages 3–5 of`), where they run sideways with the words; postext 1.9.0 and 1.9.1 stand those upright too (`:sideways[49]` there). No effect horizontally |
+| Upright / sideways (≥ 1.9) | `:upright[GDP]`, `:sideways[12]` | vertical text: each character upright in its own cell / the run turned |
+| Dollar | `\$` | literal `$`; otherwise `$` opens inline math. Captions, cells and notes set inline maths too (postext ≥ 1.19), by Pandoc's rule: no space after the opening `$`, none before the closing one, no digit right after it ("$5 to $10" stays text); up to 1.18 `$` was literal there. Chip texts have no maths. `\$` gives `$` everywhere (postext ≥ 1.5; 1.4 printed `\$` in snippets). In an attribute value (`:ref{text="…"}`) a backslash is ordinary: `\$` stays `\$` |
 
 **Emphasis gotchas:**
 - (≥ 1.9) Han, kana and hangul do not block `_` flanking: `中文_斜体_中文` is italic. A `~` with a digit on both sides (`3~5天`) or between two Chinese words (`周一~周五`) is literal; `^_^` is always text.
@@ -247,12 +254,12 @@ Earlier passes shield their content from later ones. Math is extracted before em
 
 ---
 
-## 5. Lists (, 361-447`; numbering )
+## 5. Lists
 
 | Kind | Regex (on the raw line) | Notes |
 |---|---|---|
 | Task | `^(\s*)([-*+])\s+\[([ xX])\]\s+(.*)$` | `checked = mark !== ' '`. Only `[ ]`, `[x]`, `[X]`. |
-| Ordered | `^(\s*)(\d+)([.)])\s+(.*)$` | Digits only. **No `a.`, `i.` or `A)` markers.** They are paragraph text. |
+| Ordered | `^(\s*)([0-9]+\|[٠-٩]+\|[۰-۹]+)([.)])\s+(.*)$` | European, Arabic-Indic (`٣.`) or Persian (`۳.`) digits; the value is read as a number. **No `a.`, `i.` or `A)` markers.** They are paragraph text. |
 | Unordered | `^(\s*)([-*+])\s+(.*)$` | |
 
 - **Depth** follows the items above (≥ 1.16, #465): an item nests under the nearest open item whose marker sits at least 2 columns to its left, and its depth is the number of items it is nested in plus one, capped at 5. Indent to the text of the item above: 2 spaces under `- `, 3 under `1. `, 4 under `10. ` (2 under `1.` nest too). One space nests nothing, a level is never skipped (`- a` / `    - b` is depth 2), a tab reaches the next multiple of 4 columns, and a list's first item is depth 1 however far it is indented. Any other block between items restarts the nesting; blank lines do not. Up to 1.15 the depth was `min(5, floor(leadingSpaces / 2) + 1)`, which put `      1.` under `   1.` at depth 4.
@@ -286,9 +293,9 @@ Earlier passes shield their content from later ones. Math is extracted before em
 - The attribute blob cannot contain `}`.
 - Nothing may follow on the line. `:::pagebreak now` is literal.
 
-**Close:** a bare `:::` line closes the **innermost** open container (`:21, 216-236`). A stray `:::` with nothing open is a literal paragraph.
+**Close:** a bare `:::` line closes the **innermost** open container. A stray `:::` with nothing open is a literal paragraph.
 
-**Known containers:** `callout`, `paragraphs`, `part`, `columns`, `paper`.
+**Known containers:** `callout`, `paragraphs`, `part`, `columns`, `paper`, `frame` (composed pages, §12.2).
 
 **Unknown names** such as `:::note`, `:::figure` or `:::aside` are **not** containers (`:::verse` is a raw-body block, §12, not a container either). The fence line becomes paragraph text, the content parses normally, and the closing `:::` becomes a literal paragraph too. The sandbox raises `unknownDirective`.
 
@@ -299,11 +306,10 @@ Earlier passes shield their content from later ones. Math is extracted before em
 
 ### 7.1 `:::callout` (boxed content)
 
-Plan: , 299-318`. Placement: .
 
 | attr | values | default | notes |
 |---|---|---|---|
-| `type` | id of a `calloutStyles[]` entry | the **first** configured style | An unknown or missing type falls back to the first style, with an `unknownCalloutType` warning. The built-in default has one style, `note`. |
+| `type` | id of a `calloutStyles[]` entry | the **first** configured style | An unknown or missing type falls back to the first style; only an unknown one raises `unknownCalloutType`. The built-in default has one style, `note`. |
 | `title` | text | the style's `title` (default `''`) | **Plain text only.** `**…**` is not parsed and shows literally. Cannot contain `}` or the quote character used. The style may uppercase it. Dropped on continuation fragments, unless the style has `repeatTitle` (then repeated with `continuedSuffix`). |
 | `label` | text | `''` | Printed in the label tab, **only if the style configures `label`**. E.g. `label="BOX 1-1"`. |
 | `span` | `column` \| `page` \| `side` | the style's `span` (default `column`) | `page`: full-width band cutting the columns. `side`: into the float-only side column of a one-and-a-half layout (`layout.sideColumnRole:'floats'`), otherwise acts as `column`. Invalid values are ignored. |
@@ -333,11 +339,10 @@ Answer box.
 
 ### 7.2 `:::paragraphs{style="…"}` (named paragraph style)
 
-; applied at .
 
 | attr | values | notes |
 |---|---|---|
-| `style` | id of a `paragraphStyles[]` entry | Required unless the fence sets `align`/`indent`/`endIndent`. Unknown: the paragraphs render as body text, with an `unknownParagraphStyle` warning. |
+| `style` | id of a `paragraphStyles[]` entry | Optional: without it the group is body text with the fence's `align`/`indent`/`endIndent`/`dropcap`/`dir`/`lang`. Unknown: the paragraphs render as body text, with an `unknownParagraphStyle` warning. |
 | `align` (≥ 1.16) | `start` \| `end` \| `left` \| `right` \| `center` \| `justify` | overrides the style's (or, without `style`, the enclosing text's) alignment: 地付き = `{align=end}` |
 | `indent` / `endIndent` (≥ 1.16) | length; a bare number is ems (`indent=2` = 2字下げ) | every line from the start / from the end (right of a horizontal line, foot of a vertical one): 地から1字上げ = `{align=end endIndent=1}` |
 | `dropcap` (≥ 1.23) | bare, `false`, or a number of lines | the group's first paragraph (every one when the style's `dropCap.each`) opens with a drop cap: the style's (configuration.md §4b), switched off by `false`, set over N lines by a number, or a default one (3 lines) where the style has none |
@@ -359,7 +364,6 @@ de damas tan bien servido
 
 ### 7.3 `:::part{number="…" title="…" palette="…"}` (part/section divider)
 
-Sources: ; .
 
 | attr | values | notes |
 |---|---|---|
@@ -384,7 +388,6 @@ Sources: ; .
 
 ### 7.4 `:::columns{count=N breaks="…"}` (multi-column group)
 
-Source: ; .
 - **In a `:::callout`, or (postext ≥ 1.25, `layout.flowColumns`) in the running text.** In a box the columns share its inner width, `columnGap` apart, in the box typography. In the text they share the text column, a body line apart, in the text's own typography; `span="page"` on a page of several columns cuts the page into a band, like a page-span box (columns above close level, text resumes in every column below). Headings inside keep their style, number and TOC entry; footnotes go to the column foot. Up to 1.24 (and with `flowColumns: false`) the fences are ignored outside a box.
 - Use a main-flow group for column bands in the text (newspaper briefs, a poster's three columns, an index-like list) instead of a frameless page-span callout that only holds a group.
 - `count`: integer 2–6, default 2. `gap`: a length (`12pt`, `1em`); default `columnGap` in a box, a body line in the column, `layout.gutterWidth` across the page. `rule`: a rule down each gap (`layout.columnRule` colour/width).
@@ -410,6 +413,7 @@ Source: ; .
 ### 7.5 `:::paper{type=… grammage=…}` (a run of pages on another paper stock)
 
 - The content starts on a new page, and whatever follows the closing `:::` starts on a new page too (a stock covers whole sheets). A run that ends the document leaves no blank page.
+- Figures and tables cited inside the run are placed before it closes (a float barrier), so a plate section keeps its plates.
 - Every page set from inside the run carries `page.paper` (the attributes as written) in the VDT. Only the Folio 3D viewer reads it (the look, thickness and stiffness of those leaves); canvas, PDF and HTML output ignore it.
 - Attributes (all optional; unset ones follow `config.folio.paper`): `type` (`uncoated`, `bookWove`, `coatedMatte`, `coatedSilk`, `coatedGloss`, `bible`, `newsprint`, `cardStock`, `board`), `grammage` (g/m², > 0), `bulk` (cm³/g, > 0), `finish` (`auto`, `uncoated`, `matte`, `silk`, `gloss`), `texture` (`auto`, `smooth`, `vellum`, `wove`, `laid`, `linen`, `felt`), `textureStrength` (0 to 2), `shade` (`#rgb`, `#rrggbb` or a `colorPalette` id), `showThrough` (`true` / `false`). An invalid value is dropped with a `paperAttributeInvalid` warning.
 - Nested `:::paper`: the inner fence's attributes override the outer one's, and it breaks pages on both sides as well.
@@ -426,9 +430,11 @@ Source: ; .
 
 ## 8. Attribute grammar (shared by fences, directives, heading attrs, `:ref`, `:swatch`, `:chip{…}`, `:tab{…}`)
 
-. Token regex: `([A-Za-z_][A-Za-z0-9_-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+)))?`
+Token regex: `([A-Za-z_][A-Za-z0-9_-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+)))?`
 - Forms: `key="v"`, `key='v'`, `key=bare`, and a bare `key` (becomes `""`).
 - Any order. A repeated key keeps the last value. Values are always strings.
+- Pandoc's `#id` (after a space or at the start) is `id="…"` in every blob: headings, `:::callout{#box}`, `:::frame{#p47}`, `:anchor{#key}`. Ids take letters of any script, digits and `_ - . :`.
+- Numeric values (`startAt`, `lines`, `{startAt=٣}`) read Arabic-Indic and Persian digits as well.
 - **No escapes.** A value cannot contain its own quote. Use the other quote style: `title='He said "hi"'` works.
 - For fences, directives and `:ref`/`:swatch`, the blob ends at the first `}`, so **values can never contain `}`**. `:ref{id="a" text="x}y"}` breaks.
 - Unknown keys are kept but ignored.
@@ -439,7 +445,7 @@ Source: ; .
 ## 9. Resources: figures, images, SVGs, tables
 
 Resources are JSON records in `PostextContent.resources` (in a preset: `preset.json → resources[]` plus the files). They are not Markdown. Main fields:
-- `id`, `typeId` (e.g. `figure`, `table`), `kind: bitmap|svg|table`, `caption`, `note`, `altText`, `placement`
+- `id`, `typeId` (e.g. `figure`, `table`, `video`), `kind: bitmap|svg|table|video` (video ≥ 1.16: YouTube, Vimeo, a file or HLS; cited and floated like a picture, numbered as *Video 1.1*; project-format.md §3, configuration.md §18a), `caption`, `note`, `altText`, `placement`
 - the payload (`bitmap{fileId, format, width, height, resolution?, fileResolution?}`, `svg{fileId, pdfFileId?, inlineFonts?}` (`inlineFonts: false` keeps the SVG's markup as stored; by default the faces its text names are embedded when it is shown, ≥ 1.25), `table{model, styleId?}`)
 - a bitmap's natural size: its pixels at `page.dpi`, or (≥ 1.24) `width × page.dpi / resolution` when it has a `resolution` (its own, or `layout.bitmapResolution`: a ppi, or `'file'` for the file's stated one, 72/96 counting as unset); the slot caps it and a smaller picture is never enlarged; `placement.width` narrows the slot
 - `safeArea` (bitmap/svg only, optional): `{x, y, width, height}` in fractions of the picture, top-left origin; the part always shown. With it the engine may crop outside it to make the figure taller or shorter (fit the room left, `fitFiguresToPage`, `placement.shrink` before it scales, column balancing lever `flexFigure`); without it the picture is always whole
@@ -453,11 +459,11 @@ The Markdown only cites them.
 | attr | values | notes |
 |---|---|---|
 | `id` | resource id | Required. `:ref{}` without an id stays literal text. |
-| `style` | `default` \| `number` \| `full` | default gives `Fig. 1.7` (the type's `shortLabel` + NBSP + number); `number` gives `1.7`; `full` gives `Figure 1.7` (the type's `name`). An invalid value is ignored. |
+| `style` | `default` \| `number` \| `full` \| `title` \| `page` \| `pageNumber` | On a resource: default `Fig. 1.7` (the type's `shortLabel` + `captionStyle.labelNumberGap` + number), `number` `1.7`, `full` `Figure 1.7` (the type's `name`). `title`, `page` and `pageNumber` apply to headings, anchors, equations and numbered boxes only (§10.6); on a resource they print the default label. Any other value is ignored. |
 | `case` | `lower` \| `upper` \| `capitalize` | Recases the label word only, never the number. Ignored when `text` is set. |
 | `text` | any text (no `}`) | Verbatim override of the whole label. An empty `text=""` falls back to the computed label. |
 
-- The label is resolved in . It renders as **one atomic unbreakable box**.
+- The label renders as **one atomic unbreakable box**.
 - An unknown id renders `?`, with an `unknownResourceId` warning.
 - Recognised in paragraphs, list items, blockquotes, **headings**, callouts, and in resource captions, notes and table cells.
 - **Not recognised inside `:chip[…]`** (stays literal).
@@ -470,7 +476,7 @@ The Markdown only cites them.
 
 ### 9.2 Block embed `::resource{id="…"}` (inline placement)
 
-**Regex (strict):** `^::resource\s*\{id="([^"]+)"\}\s*$` on the trimmed line. It takes **exactly** the one attribute `id`, in **double quotes**, and nothing else. `id='x'` or any extra attribute makes it literal paragraph text. Leading indentation is fine.
+**Regex (strict):** `^::resource\s*\{id="([^"]+)"\}\s*$` on the trimmed line: the one attribute `id`, in **double quotes**. The only other key accepted is `slot` (postext ≥ 1.34, composed pages: `::resource{id="x" slot="photo"}`). `id='x'` or any other attribute makes it literal paragraph text with a `malformedEmbed` warning, and so does a well-formed embed glued under a paragraph line. Leading indentation is fine.
 - Renders the resource inline **only if** its resolved placement is `position: "here"`. For floated resources it counts as just another reference.
 - A `here` resource that is only `:ref`'d, never `::resource`'d, is numbered but **never placed**.
 - **Needs blank lines around it.** A glued line is swallowed into the previous paragraph (§3.1).
@@ -486,7 +492,6 @@ The keeper's quarters occupy the eastern wing.
 
 ### 9.3 Numbering
 
-Source: , 259-263`.
 - Assigned in **order of first reference** (a `:ref` or `::resource` in a body block), per resource type.
 - Template `ResourceType.numberingTemplate` with `{n}` and `{h1}`..`{h6}` (default `{h1}.{n}`), `resetOn` (default `h1`) and `counterFormat` (decimal, roman-lower/upper, alpha-lower/upper).
 - Defaults: `figure` gives Figure/Fig. in English and Figura/Fig. in Spanish; `table` gives Table/Tab. in English and Tabla/Tabla in Spanish.
@@ -495,7 +500,7 @@ Source: , 259-263`.
 
 ### 9.4 Placement (resource JSON, not Markdown)
 
-`placement: { position: auto|top|bottom|here, span: column|page|side, rotate?: ccw|cw, width?: 0..1, align?: left|center|right, captionSide?: bool, columns?: int, wrap?: none|left|right|start|end, wrapGap?: Dimension }`.
+`placement: { position: auto|top|bottom|here, span: column|page|side, rotate?: ccw|cw, width?: 0..1, align?: left|center|right, captionSide?: bool, columns?: int, wrap?: none|left|right|start|end|contour, wrapGap?: Dimension }`. `align` also takes `start|end` (≥ 1.15, logical sides). `position: here` with `span: page` (≥ 1.19) cuts a multi-column band like a page-span box. `wrap: contour` (≥ 1.36) runs the text round the picture's shape (`Resource.contour`). Other placement fields (`shrink`, `minScale`, `captionMeasure`, `citingPage`): configuration.md §15.
 - `wrap` (≥ 1.24): text beside a picture narrower than its column. With `position: here` the text after the `::resource` line runs beside it and then under it (a paragraph may start beside it and end under it); on a one-column float at the head or foot of a column, the column's first or last lines. Headings, display maths, figures, tables, boxes and poems go under it. `width` defaults to `layout.wrap.defaultWidth` (0.45); `wrapGap` to one body line. This replaces a `:::columns{count=2 breaks=…}` group holding the text and the picture.
 - `columns` (≥ 1.18): a `span: column` float across that many adjacent columns (a newspaper picture across 2 of 5 columns); as many as the page has = page-wide; ignored for page/side spans, rotated resources and `here` embeds; `captionSide` only on 1-column floats.
 - `captionSide` (the float-only side column of `oneAndHalf`): a column float and, ≥ 1.28, a `here` embed one column wide. The embed's caption and note stand in the side column level with the body's top, its block is as tall as the body, and later side figures and boxes keep clear of the caption; where the side column is taken beside it the caption stays under the body. Not in a box, on a vertical page or with `wrap`. `layout.inlineCaptionSide: false` = floats only (1.27).
@@ -510,9 +515,10 @@ Tables are `kind:"table"` resources with a `TableModel`:
 - Per cell: `content` (inline snippet), `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`, `background` (ColorValue), `image {resourceId, width}`, `hiddenBy` (a cell covered by a merge).
 - `table.styleId` names a `tableStyles` entry.
 
-**Snippet syntax** (cell content, caption, note), from :
+**Snippet syntax** (cell content, caption, note):
 - Recognised: `**bold**`, `*italic*`, `^sup^`, `~sub~`, escapes, `:ref{…}`, `:swatch{…}`, `:chip[…]` and `:smallcaps[…]`.
-- **Inline `$math$` is NOT supported in snippets.** The `$` stays literal.
+- **Maths in snippets follows Pandoc's `$` rule** (postext ≥ 1.19; up to 1.18 the `$` stayed literal): no space after the opening `$`, none before the closing one, no digit right after it. So "$5 to $10" stays text. `\$` prints `$`. A chip label takes no maths. Display maths (`$$`) is never read in a snippet.
+- **Citations** (`[@key]`, `@key`) are read in a caption and a note (postext ≥ 1.19), and their works enter the bibliography with no `nocite`. In a table cell a citation stays text. Footnote markers `[^id]`, `:tab` and index marks print as written in every snippet.
 - In **cells**, `\n` separates paragraphs. A paragraph starting with a marker is a hanging list item: `•·◦○▪‣-*–—` or `1.`/`1)` (up to 3 digits) followed by whitespace. Two leading spaces per nesting level.
 - A cell paragraph of ordinary spaces sets nothing; one holding a U+00A0 sets a line (postext ≥ 1.5), and a trailing U+00A0 keeps its width, so `'760\u00A0'` right-aligned over `'(231)'` ends a space short of the edge and sets the 0 close to the 1 (exactly under it only if the space is as wide as `)`, which it rarely is). 1.4 dropped both (there, a word joiner U+2060 after the no-break space keeps it).
 - **Line breaks** (postext ≥ 1.5): `\\`, or a backslash ending a line, breaks the line in a caption or a note (`¹ At 20 °C. \\ ² Mean of three runs.`); in a cell it opens a new paragraph, as `\n` does. A plain newline in a caption or note is a space. The two backslashes stay literal only in inline code, link destinations and directive attributes, and read as a space inside a chip label.
@@ -526,6 +532,7 @@ Tables are `kind:"table"` resources with a `TableModel`:
 **Regex:** `:chip\[((?:\\.|[^\]\\\n])+)\](?:\{([^}\n]*)\})?`.
 - The text is non-empty and on one line in the source. Paragraph lines are pre-joined, so a chip may straddle source lines inside a paragraph. Whitespace collapses to a single space. `\]` gives a literal `]`.
 - `{…}` must follow `]` immediately. **Only `style` is read.** Missing or unknown: the first `chipStyles` entry (built-in id `chip`), with an `unknownChipStyle` warning.
+- **Empty chip** (≥ 1.5): `:chip[ ]` (spaces or no-break spaces only) is a blank box as wide as its style's horizontal padding and outline, as tall as a chip with words: an answer blank or an end mark. Size it with a style's `paddingX` (`:chip[ ]{style="blank"}`). `:chip[]` with nothing inside stays literal.
 - The chip text takes its own emphasis and scripts (`:chip[**bold** x^2^]`). Refs, swatches and math inside a chip stay literal; `\$` gives `$` (postext ≥ 1.5; 1.4 printed `\$`). Surrounding emphasis applies (`**:chip[a]**`).
 - Works in paragraphs, list items, blockquotes, callouts, cells, captions and notes. **Not in headings** (literal). Not in callout `title` attributes.
 - Never broken or hyphenated. Line breaks happen at the spaces around it.
@@ -628,7 +635,8 @@ Heart failure:index{term="Heart!failure" range="start"} … :index{term="Heart!f
 
 - **Anchors:** a heading `## Method {#sec-method}` (or `id="…"`), a container `:::callout{#box title="…"}`, an invisible `:anchor{#key}`, or `[words]{#key}` (the words stay). Like index marks, inline anchors are taken out before parsing and never change the layout. Ids: letters, digits, `-_.:`; unique in the book (`duplicateAnchor`).
 - **References:** `:ref{id="sec-method"}` → *section 1.1* (a level-1 heading: *chapter 1*; an unnumbered heading: its title; an anchor: its text). `style=number` (*1.1*), `title`, `page` (*p. 12*), `pageNumber` (*12*); `text=`, `case=` as for resources. Words follow `locale` (*sección*, *第1.1节*) and config `crossRefs` (configuration.md). Page references converge over layout rounds like `:::toc`; a chapter's references reach anchors in other chapters of the book.
-- **pandoc-crossref:** `@sec:id`, `[@fig:id]`, `[-@tbl:id]` (number only), `@Sec:id` (capitalised). The prefix may be part of the id or left off it. An `@` glued to a word stays text.
+- **pandoc-crossref:** `@sec:id`, `[@fig:id]`, `[-@tbl:id]` (number only), `@Sec:id` (capitalised). Only the prefixes `sec`, `fig`, `tbl`, `eq` and `lst` are references. The prefix may be part of the id or left off it: `@fig:map` names the resource `map` when no anchor `fig:map` exists. Any other prefix (`@thm:main`, `[@lem:2]`) is read as a **citation** key and prints as written. Refer to theorem boxes and other ids with `:ref{id="thm:main"}` or `\ref{thm:main}`. An `@` glued to a word stays text.
+- **LaTeX in the text** (postext ≥ 1.19): `\ref{x}` = `:ref{id="x" style=number}`, `\eqref{x}` = `:ref{id="x"}` (an equation prints "(3)"). A `~` right before one is a no-break space (`Theorem~\ref{thm:main}`). Inside `$…$` they belong to the formula.
 - **Links:** PDF link annotations + named destinations (`file.pdf#nameddest=id`), HTML `<a href="#pt-a-id">`, clickable in the Sandbox.
 - **Porting:** turn LaTeX `\label{sec:x}` / `\ref{sec:x}` / `\pageref{x}` into `{#sec:x}` / `:ref{id="sec:x" style=number}` / `:ref{id="x" style=page}`; Word cross-reference fields and InDesign text anchors likewise. Keep the source's words ("see section", "véase el capítulo") outside the reference when the reference prints the number only.
 
@@ -637,6 +645,11 @@ Heart failure:index{term="Heart!failure" range="start"} … :index{term="Heart!f
 - **Syntax (Pandoc):** `[@key]`, `[@a, p. 33; @b]`, `[see @a, chap. 2, emphasis added]`, `[-@a]` (author left out), narrative `@a` and `@a [p. 33]`. Locator labels: p./pp./pág./页, chap./cap./章, sec./§, fig., vol., n., l., para.; a bare number is a page. An `@` after a letter/digit (e-mail), in code, or `\@` is text. A citation whose key the book does not define prints as written (`unknownCitationKey` warns for bracketed ones).
 - **References:** front matter `references:` (CSL-YAML list; `author: ["García, Ana"]` or `[{family, given}]`, `issued: 2020`) and/or `:::references{format=bibtex|csl-json|csl-yaml}` … `:::` (raw body, prints nothing). `nocite: "@a, @b"` / `"@*"`. References in any chapter count for the whole book.
 - **Bibliography:** `:::bibliography{title="…" scope=book|chapter}` where it goes; without it, after the last chapter (title in the document language; `title=""` none). Entries are anchors `ref-<key>`; `[text](#ref-key)` links to one.
+- **`scope=new`** (≥ 1.19): the works cited so far that no earlier list printed, numbered on from it (the main and Methods lists of a Nature paper). `citations.numbering: 'chapter'` numbers each chapter's citations from 1.
+- **Captions and notes cite** like the text (≥ 1.19). A numbered style numbers them where the resource is placed. A citation in a table cell stays text.
+- In a citation of several works, a key no reference defines prints in bold after the others (`(Glen, 1955) **@nye1953**`). A colon after a citation is text: `[@a]: the land…`.
+- More locator labels: col., bk., pt., v./vv. (verse), no. (issue), op., s.v., art.; `pp. 4--6` prints 4–6.
+- `:::references` without `format` is guessed (`@` → BibTeX, `[`/`{` → CSL-JSON, else CSL-YAML). `biblatex`/`bib` and `json` are accepted as aliases. BibTeX `and others`, or `others` last in a YAML name list, prints *et al.* A block that cannot be read raises `referencesUnreadable`.
 - **Style:** config `citations.style` (configuration.md §19a3): bundled `apa`, `chicago-author-date`, `chicago-notes-bibliography`, `modern-language-association`, `harvard-cite-them-right`, `ieee`, `elsevier-vancouver`, `american-medical-association`, `nature`, `iso690-*`, `oscola`, `china-national-standard-gb-t-7714-{2025,2015}-{numeric,author-date,note}`; or `'custom'` + `customStyle` (CSL XML). Note styles turn each citation into a footnote (or 夹注 with `citations.notes: 'warichu'`).
 - **Engine:** `import 'postext-citeproc/register'` before building (render.mjs and Node scripts too); the Sandbox loads it itself. Without it citations print as written (`citationsUnavailable`).
 - **Porting:** LaTeX `\cite{a,b}` → `[@a; @b]`, `\cite[p.~33]{a}` → `[@a, p. 33]`, `\textcite{a}` → `@a`, `\parencite[see][12]{a}` → `[see @a, p. 12]`, `\nocite{*}` → `nocite: "@*"`; keep the `.bib` as a `:::references{format=bibtex}` block (or convert to front matter). Word/Zotero field citations: export the library as CSL-JSON or BibTeX and rewrite each field as `[@key]`. A printed book's hand-made bibliography can stay as text under `:::paragraphs{style=…}` when its sources are not worth re-keying.
@@ -719,16 +732,16 @@ With `menu` and `cast` styles holding one stop `{position: 'end', align:
 stop `bodyText.tabStops: [{position: 'end', align: 'end'}]` (or, with no
 style at all, `:tab{at=end align=end}`).
 
-## 11. Math (MathJax TeX, `AllPackages`, so amsmath, mhchem etc.; )
+## 11. Math (MathJax TeX, `AllPackages`: amsmath, mhchem etc.)
 
 - **Inline `$…$`**:
   - Must close within the same block. `$$` inside running text is left literal. `\$` inside or outside gives a literal `$`.
   - An unmatched `$` produces an `unclosedMath` warning, and the rest of the block stays literal.
   - `$a$$b$` gives two formulas.
   - **Every bare `$` in prose opens math.** `costs $5 and $10` turns `5 and ` into a formula. Escape currency as `\$`.
-  - Allowed in paragraphs, list items, blockquotes and headings. **Not** in captions, cells, notes or chips.
+  - Allowed in paragraphs, list items, blockquotes, headings, and (postext ≥ 1.19, Pandoc's `$` rule, §9.5) captions, cells and notes. Not in chips.
   - Rendered as one atomic box, scaled down if taller than the line.
-- **Display, single line:** the whole line is `$$…$$` (regex `^\s*\$\$([\s\S]+?)\$\$\s*$`, , 140-156`). Text after it (`$$x$$ and more`) makes it an ordinary paragraph.
+- **Display, single line:** the whole line is `$$…$$` (regex `^\s*\$\$([\s\S]+?)\$\$\s*$`). Text after it (`$$x$$ and more`) makes it an ordinary paragraph.
 - **Display, multi-line:** a `$$` line, the TeX lines, then a `$$` line. Unclosed: runs to the end of the document, with an `unclosedMathBlock` warning.
   - **No blank line is needed before it** (postext ≥ 1.5). Written under a paragraph line, a whole display (fence closed before the next blank line) interrupts the paragraph. Up to 1.4 the fences were swallowed into the paragraph.
 - **Text after a display:** text written right under the closing `$$` of a display that interrupted a paragraph continues that paragraph, flush, as TeX sets the "where …". Leave a blank line after the display to start a new, indented paragraph. A display with a blank line above it interrupts nothing: the text after it is a new paragraph, indented unless `math.indentAfterDisplay: false`. `math.keepWithLeadIn: true` keeps the formula in the column of its lead-in line.
@@ -747,14 +760,14 @@ $$
 
 ## 12. Single-line directives `:::name{attrs}`
 
-Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index`; the raw-body blocks `:::references`, `:::verse`, `:::page` and `:::strip` (comics, below); `:::figure` (postext 1.34, §12.2). Execution: . They must be alone on their line (same fence regex as §7).
+Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index`, `bibliography` (§10.7); the raw-body blocks `:::references`, `:::verse`, `:::page` and `:::strip` (comics, below); `:::figure` (postext 1.34, §12.2). They must be alone on their line (same fence regex as §7).
 
 | Directive | Attributes | Effect |
 |---|---|---|
 | `:::pagebreak` | `parity`: `odd` \| `even` \| `always-odd` \| `always-even`. Anything else (incl. `any`) means no parity; the sandbox warns `pagebreakInvalidParity`. `center` flag (≥ 1.16; `center=false` off). | Next block on a new page. `odd`/`even` add a blank page if needed. `always-*` forces at least one separator blank, which belongs to the previous content. Pending floats go to the new page. Skipped while the first page is still empty. With `center`, the text of the page it opens is centred between the head and foot of the type area (across the page in vertical text: ページの左右中央, a dedication, a part title); end that page with another `:::pagebreak`. |
 | `:::columnbreak` | none | Ends the current column; continues in the next column, or on the next page from the last column. A no-op in an empty column. The column keeps its gap (balancing skips it). |
 | `:::space` | `lines`: body lines (baseline grid), default `1`; fractions allowed; > 0 and ≤ 20, else one line and the sandbox warns `spaceInvalidLines`. | Vertical space between two blocks, **added** to their margin (not collapsed into a heading's top margin); repeated lines add up. Dropped at a column/page top; one that does not fit ends the column without carrying over. A paragraph right after it loses its first-line indent when `indentAfterHeading` is off. Keep-with-next counts it. The only directive honoured inside a `:::callout`/`:::columns` (measured in the box's body lines). Before a box's first block it is dropped, **except** right under the title or in a box holding nothing else (answer box sized in lines: `:::callout{type="answer" title="Q1"}` + `:::space{lines=4}` + `:::`). Always dropped at the top of a `:::columns` group, at each of its column heads, and at the top of a split box's continuation. Works inside `:::paragraphs`. In a frame of a composed page with `rules` (≥ 1.38), `:::space{lines=N}` gives an `auto` frame N ruled lines (the Markdown decides the count). Extra blank lines in the Markdown never add space. |
-| `:::numbering` | `format`: `decimal` \| `lower-roman` \| `upper-roman` \| `lower-alpha` \| `upper-alpha`. `startAt`: integer ≥ 1. Both optional; invalid values are ignored, with `numberingInvalidFormat`/`numberingInvalidStartAt` warnings. `lines`: whole number ≥ 0 (postext ≥ 1.23; line numbers, configuration.md §19f). | `format`/`startAt` switch the page-number format and/or restart the counter **at the next page boundary** (or at the current page if it has no numbered content yet). Canonical form: `:::pagebreak{parity="odd"}` followed by `:::numbering{format="decimal" startAt=1}` before chapter 1. `lines=N`: the next counted line is numbered N (the count restarts there; with `lineNumbers` off it does nothing). |
+| `:::numbering` | `format`: any numbering-format spelling: `decimal` / `arabic` / `1`, `lower-roman` / `roman-lower` / `i`, `upper-roman` / `I`, `lower-alpha` / `lower-latin` / `a`, `upper-alpha` / `A`; the CSS East Asian names and their tokens (`一` informal numerals in the document's language, `壹`, `〇`, `①`, `甲`, `子`, `１`, `壱`, `あ`, `ア`, `い`, `イ`); the Arabic styles (`١` arabic-indic, `۱` persian, `أبجد` abjad, `أبتث` hijai, `urdu`, `maghrebi-abjad`). Names are case-insensitive. `startAt`: integer ≥ 1. Both optional; invalid values are ignored, with `numberingInvalidFormat`/`numberingInvalidStartAt` warnings. `lines`: whole number ≥ 0 (postext ≥ 1.23; line numbers, configuration.md §19f). | `format`/`startAt` switch the page-number format and/or restart the counter **at the next page boundary** (or at the current page if it has no numbered content yet). Canonical form: `:::pagebreak{parity="odd"}` followed by `:::numbering{format="decimal" startAt=1}` before chapter 1. `lines=N`: the next counted line is numbered N (the count restarts there; with `lineNumbers` off it does nothing). |
 | `:::toc` | `keep`, `levels` (postext ≥ 1.34) | Expands, before layout, into one entry per listed heading (levels in `toc.levels`, default level 1) and one row per part. Page labels converge over passes. In the sandbox the book outline is supplied, so chapter files work. Exclude the contents heading itself with `{toc="false"}`. `keep="part"` keeps each part row with its chapters on one column and page; `keep="1"`…`"6"` keeps a heading of that level with the entries under it (a part row right above it goes along); `keep="none"` turns a configured `toc.groups` off. `levels="1-2"` (also `"2"`, `"1,3"`) lists those levels for this contents only; a level with no `toc.levels` style takes the nearest level above's. A hand-written contents (`:::paragraphs` + `:ref{… style="pageNumber"}` + a `:::pagebreak` placed by eye) becomes one `:::toc{keep="part"}` (or `keep="1" levels="1-2"` when the blocks are chapters with sections); style the rows with `toc.levels` / `toc.parts.design`. |
 | `:::verse` … `:::` (line layout, postext ≥ 1.23) | `layout` (`auto` default \| `lines` \| `bayt`), `indentStep` (default `0.5em`: two spaces = 1 em), `turnover` (`hang` default \| `right`), `hang` (default the style's `hangingIndent`, else `2em`), `turnoverMark` (default `[`), `stanzaSpace` (bare number = lines of the poem's leading, default 1; or a length), `keepStanzas` (N: stanzas of ≤ N lines stay whole; haiku 3, tanka 5), `keepSpaces` (flag: runs of ≥ 2 spaces inside a line keep their width), `tighten` (≥ 1.24, default `true`; `false` turns every overlong line over), `align` (`center` on the longest line, default; `start`, default in vertical text), `style`, `dir`, `lang`. Defaults in config `bodyText.verse`. Line numbers (≥ 1.23, config `lineNumbers`): `numbered=false` (the poem takes no numbers and is not counted), `lineStart=N` (its first line is N; restarts the count in any mode), `interval=N` (the poem's own interval). | A poem with no `||` (or `layout=lines`): every non-blank line is a line of verse (inline Markdown per line), a run of blank lines one stanza break, leading spaces the indent (tab = 4, U+3000 = 2), `+ ` opens a stepped line that starts where the line above ended (`\\+` for a literal plus). Each stanza is a block: pages break between stanzas, inside one by orphan/widow rules; a line never parts from its turnover. A line a little wider than the measure tightens its word spaces down to `bodyText.minWordSpacing` and stays on one line (≥ 1.24; no tracking); a line still too wide turns over at word spaces (no hyphenation unless the style sets `hyphenation: true` itself). Do not shorten or re-break a source line that is only a few points too long. Copy, EPUB and tagged PDF read it line by line. |
 | `:::verse` … `:::` (bayt layout) | `gap` (default `2em`; bare number = em), `width` (fixed hemistich width), `align` (`center` default \| `start`), `ornament` (mark printed mid-gap, not text), `style` (paragraph style id), `dir`; `numbered`, `lineStart`, `interval` as above (one number per bayt). | Classical Arabic poem (#378), chosen when any line carries `||` (or `layout=bayt`): one bayt per line, hemistichs split at `||` (or a spaced `\\`); a line without one is a single centred hemistich. Every hemistich justified to one common width (widest, ≤ half the measure less the gap), kashida first (2× `kashidaMaxLength`) then spaces; ṣadr on the start side, ʿajuz on the end side; poem centred. Too wide even at `minWordSpacing` → staggered (ṣadr flush start, ʿajuz flush end on the next line). A bayt never splits between columns; paragraph orphan/widow rules apply; the paragraph before it (the introducer, «فأنشد يقول:») keeps its last line with the poem. Vocalised verse: give it a `style` with more leading. Map Wikisource `{{أبيات}}` blocks to it. |
@@ -831,7 +844,7 @@ North, south, east and west.
 ::::
 ```
 
-- `::::page{template="<pageTemplates id>" [spread] [id=…] [anyAttr=…]}` …
+- `::::page{template="<pageTemplates id>" [spread] [id=…] [palette="tint=#f6c3d0, …"] [anyAttr=…]}` …
   `::::`: **four or more colons**, closed by a bare line of the **same**
   number of colons. `:::frame`, `:::callout`, `:::figure` and `:::columns`
   nest inside with three; a bare `:::` never closes the page. Other
@@ -925,7 +938,7 @@ label styles before any layout.
 
 | Placeholder | Available in |
 |---|---|
-| `{pageNumber}` `{totalPages}` `{title}` `{subtitle}` `{author}` `{publishDate}` `{chapterTitle}` `{chapterNumber}` `{partTitle}` `{partNumber}` | header/footer and heading/part designs |
+| `{pageNumber}` `{totalPages}` `{bookTotalPages}` `{title}` `{subtitle}` `{author}` `{publishDate}` `{chapterTitle}` `{chapterNumber}` `{partTitle}` `{partNumber}` | header/footer and heading/part designs |
 | `{chapterTitleAtTop}` `{chapterNumberAtTop}` `{firstMark.<key>}` `{lastMark.<key>}` | header/footer only |
 | `{titleText}` `{number}` `{numberDecimal}` `{numberRoman}` `{numberRomanLower}` `{numberAlpha}` `{numberAlphaLower}` | heading/part designs only |
 | `{leader}` | `toc.parts.design` only (≥ 1.34.1): the contents' `toc.leader` dots between the text before it and the text after it, in ONE element (`{number} {titleText}{leader}{pageNumber}`); prints nothing elsewhere and on vertical pages |
@@ -957,6 +970,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 - `dropCap` (≥ 1.23: a paragraph a drop cap opens could not take it as configured; `reason` `shortParagraph` (with `handling` reserve/shrink/skip), `split`, `joiningScript`, `verticalText`, `noLetter`), and the config warnings `unknownConfigKey` / `unknownConfigValue` for a drop cap's unknown key, `punctuation`, `shortParagraph`, `lines`, `sink` or `characters` (configuration.md §4b)
 - `fontFallback` (≥ 1.25, browser and worker builds: a face the text was set in that was not loaded, `missing`, or that the browser drew from another weight or slant, `synthesized`; load it with `prepareFonts` / `buildDocumentWithFonts`)
 - `fullwidthMarkup` (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊` typed with a Chinese input method: set as text), `attributeKeyInvalid` (a key outside ASCII, `作者=曹雪芹`: dropped, the block's other keys still apply)
+- `invalidFrontmatter` (≥ 1.24, §1), `unclosedMathBlock`, `spaceInvalidLines`, `paperAttributeInvalid`, `columnsFlowUnknown` / `columnsTooNarrow` (§7.4), `undefinedFootnote` / `unusedFootnote` (§10.4), `indexMarkInvalid` / `indexRangeUnclosed` / `indexSeeUnknown` / `indexReadingMissing` (§10.5), `duplicateAnchor` (§10.6), `unknownCitationKey` / `referencesUnreadable` / `citationsUnavailable` (§10.7)
 
 ---
 
@@ -976,7 +990,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 12. **`:::pagebreak{parity="any"}`:** documented as the default value. It is accepted by being ignored (the same as no parity), and the sandbox may flag it.
 13. **Heading attrs eat any trailing `{word …}`** (e.g. `{a, b}`). Undocumented.
 14. **`::resource` glued under a paragraph** is swallowed, like an ordered-list line. The docs say a fence "does not need a blank line before it", which is true only for `:::` fences, not for `::resource`. (Fixed in 1.5 for display maths: a whole `$$` display under a paragraph line interrupts it, and the text right under its closing `$$` continues the paragraph flush, §11.)
-15. **Captions, cells and notes do not support inline math.** The docs only say they share the "inline formatting and `:ref` marks".
+15. (Fixed in 1.19) Captions, cells and notes set inline maths (§9.5); engines up to 1.18 printed the `$` literally.
 16. **NBSP:** (Fixed in 1.5) U+00A0, U+202F and U+2007 glue their neighbours, and the docs say so (`document-format` › No-break space, `justification` › Where a Line Never Breaks). Older engines could break at them in text with inline formatting or a `:ref`.
 17. The **Spanish** doc (`docs/document-format-es.mdx`) was not diffed separately. Assume it has the same gaps.
 
@@ -1010,7 +1024,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 | Sidebar / box / "Key points" / exercise | `:::callout{type="…" title="…" label="…"}`. Two columns inside use `:::columns`. Answer boxes use a nested callout. |
 | Column bands in the running text (briefs in three columns, a poster's columns across a two-column page, a bilingual poem side by side) | `:::columns{count=3 span="page" rule}` … `:::` in the text (≥ 1.25); `breaks` + the default `flow="parallel"` for side-by-side streams that must stay level across pages. No frameless box needed. |
 | Figure / photo / diagram | A resource plus `:ref{id="…"}` in the sentence that first cites it (auto float). For an unnumbered ornament or a fixed spot: `placement.position:"here"` plus `::resource{id="…"}` on its own line. |
-| Table | A table resource (`TableModel` JSON). Cite it with `:ref`. Math inside cells is impossible; use `^ ^`/`~ ~`/Unicode. Text the source aligned with tab stops (a menu, a cast list, marks at the margin, a form) is not a table: paragraphs with tab stops (rows above). |
+| Table | A table resource (`TableModel` JSON). Cite it with `:ref`. Inline `$…$` works in cells (postext ≥ 1.19); display maths does not. Text the source aligned with tab stops (a menu, a cast list, marks at the margin, a form) is not a table: paragraphs with tab stops (rows above). |
 | Cross-reference "see Fig. 3.2" | `see :ref{id="fig-x"}`. For "Figure 3.2" use `style="full"`; for "figure 3.2" add `case="lower"`; for a bare number use `style="number"`. |
 | Cross-reference to a section or page | `:ref{id="sec-method"}` to a heading with `{#sec-method}` (or `id="…"`) or to an anchor (`:anchor{#key}`, `[words]{#key}`), postext ≥ 1.12 (§10.6): *section 3.2* by default, `style=number` *3.2*, `style=title`, `style=page` *p. 12*, `style=pageNumber` *12*. Keep the source's words ("see section") outside the reference. Never type the number or page. |
 | Footnote | Convert each to a `[^n]` marker after the cited word or punctuation plus a `[^n]: text` definition paragraph in the same chapter (under the paragraph, or all at the chapter's end). Numbers come from the order of citation, not the source. A note cited in a heading, caption or table cell: move the marker into the text, or set the note in the caption/cell itself. Endnotes: `footnotes.placement: 'chapterEnd'` (§10.4). |
@@ -1065,7 +1079,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 7. Every opened `:::callout|paragraphs|part|columns` has its closing `:::`. A `:::columns` outside a callout needs postext ≥ 1.25 (`layout.flowColumns`; below `configVersion` 11 it is ignored).
 8. No headings end in brace text unless it is meant as attributes. No `:chip` in headings.
 9. Frontmatter appears only in the book's first chapter.
-10. No GFM tables, code fences, HTML, or `---` rules remain. Every `[^id]` marker has one `[^id]:` definition in its chapter, and none sits in a heading, caption or cell.
+10. No GFM tables, HTML, or `---` rules remain. A code listing is a ```` ``` ```` / `~~~` fence (postext ≥ 1.23, §3.4), never one paragraph per line. Every `[^id]` marker has one `[^id]:` definition in its chapter, and none sits in a heading, caption or cell.
 11. Index marks sit in running text (not captions or cells), never right after a colon; ranges are paired; every `see`/`seealso` target is an entry; each index that has marks has its `:::index`.
 12. Chinese text: no U+3000 opening a paragraph, no full-width markup (`：：：`, `＃`), 《》 kept as typed, readings as `:ruby`/`{字|zì}`, and `config.locale` names the script (`zh-Hans`/`zh-Hant`).
 13. Japanese text: `config.locale: 'ja'`; no Aozora notation left (`《》` readings, `｜`, `［＃…］`, ／＼); every kanji index entry has a `yomi`; full-width Latin and digits as the source types them (never NFKC); unbalanced 「 kept.

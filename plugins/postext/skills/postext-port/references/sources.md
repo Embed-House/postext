@@ -109,6 +109,47 @@ Gotchas:
   so an edited manuscript returns unchanged (docs: Sandbox → Word
   documents). Point them there; use the scripts below for the original's
   layout rules, batches of files, or what the dialog does not read.
+- **Draft with the engine's own importer** before reaching for pandoc: `postext import-docx manuscript.docx -o
+  draft/ --locale es --config design.json --template map.json --report --json` writes a project folder (or `-o
+  x.postext`): `preset.json`, `chapters/NN-slug.md` (a chapter at each level-1 heading; `--no-split` keeps one),
+  pictures as figure resources with their Word print resolution, tables as table resources (header rows, merged
+  cells, widths, fills), each placed with `::resource` where it stood and captioned by the Caption paragraph
+  beside it (its typed "Figure 3." label dropped). Footnotes and endnotes become `[^n]` notes, XE fields `:index`
+  marks, OMML `$…$`/`$$…$$`, hyperlinks links, tabs `:tab{at=… align=… leader=…}`, Word lists Postext lists.
+  Tracked insertions are kept and deletions dropped, comments are not imported, EMF/WMF/TIFF pictures are left out
+  (`unsupportedPicture`), and notes on headings are dropped (`headingNote`). `--report` (and `report` in `--json`)
+  is the Sandbox's quality report: styled share, hand formatting, typed numbering, manual breaks. Move the draft's
+  chapters into `chapters/<lang>/` of the real project and curate them as for any extractor.
+- The mapping is a template JSON (the Sandbox saves the same file, and an exported `.docx` carries it). Unmapped
+  styles are mapped by name: Word's built-in headings, Title, Quote, Caption, and any style named like a paragraph
+  style, callout type, heading style or chip style of `--config`:
+
+  ```json
+  { "postextWordTemplate": { "version": 1, "name": "Publisher",
+    "paragraphs": {
+      "Chapter Title": { "kind": "chapter" },
+      "Heading 2": { "kind": "heading", "level": 2, "style": "seccion" },
+      "Epigraph": { "kind": "paragraphs", "style": "epigraph" },
+      "Poem": { "kind": "verse", "style": "verse" },
+      "Box Title": { "kind": "calloutTitle", "type": "box" }, "Box Text": { "kind": "callout", "type": "box" },
+      "Quote": { "kind": "quote" }, "Caption": { "kind": "caption" },
+      "Postext": { "kind": "markup" }, "Header": { "kind": "drop" } },
+    "characters": { "Key Term": { "kind": "chip", "style": "term" }, "Foreign": { "kind": "italic" } },
+    "options": { "lineBreaks": "break", "directFormatting": "keep", "manualHeadings": 0, "pageBreaks": "drop", "images": true, "tables": true } } }
+  ```
+
+  Paragraph kinds: `body`, `heading` (`level` 1–6, optional `style`), `paragraphs` (`style`), `verse` (optional
+  `style`), `callout` / `calloutTitle` (`type`), `quote`, `caption`, `markup` (passed through verbatim), `chapter`
+  (starts a chapter titled by the paragraph), `drop`. Character kinds: `text`, `bold`, `italic`, `boldItalic`,
+  `smallCaps`, `sup`, `sub`, `chip` (`style`), `markup`, `drop`. Options: `lineBreaks` `break` (default) | `space`
+  | `paragraph`; `directFormatting` `keep` | `ignore`; `manualHeadings` 0–6 (short bold paragraphs become headings
+  of that level; 0 = off); `pageBreaks` `drop` (default) | `keep` (`:::pagebreak`); `images`, `tables` (default
+  true). A bare `{ "paragraphs": …, "characters": … }` object is read too.
+- `postext docx my-book -o book.docx` (or `build --docx`) writes the chapters for an editor: Word heading styles,
+  *Callout: …* and *Chip: …* styles, Word lists and footnotes, a *Postext Chapter* paragraph per chapter. Fences,
+  directives, `:ref`, maths, `:index` and `::resource` lines stay verbatim in the grey *Postext Markup* styles. The
+  template travels inside the file, so `postext import-docx` reads the edited file back unchanged (footnote labels
+  renumbered).
 - `postext import-docx` (postext ≥ 1.39) sets the character spacing of Word paragraph and heading styles as
   `letterSpacing` (em of the style's size) on the bundle's config styles that set none (`styleTracking` in
   `--json`: `applied`, `skipped`; never into the Markdown), and `docx` export writes the levels' and heading

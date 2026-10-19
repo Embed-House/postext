@@ -240,11 +240,12 @@ Postext Markdown is **not CommonMark**. These habits break a port:
 - **Inline marks do not nest** the CommonMark way: write `**a** ***b***`.
   Marks in headings print as in a paragraph (`headings.inlineMarks`, on by default
   since configVersion 6); an italic run in an italic heading comes out upright.
-- Only five containers exist (`:::callout`, `:::paragraphs`, `:::part`,
-  `:::columns`, only inside a callout, and `:::paper`, a run of pages on
-  another paper stock for the Folio viewer) and six directives
-  (`:::pagebreak`, `:::numbering`, `:::columnbreak`, `:::space`, `:::toc`,
-  `:::index`), the fenced `:::references` and `:::verse` (a poem: line by
+- The containers are `:::callout`, `:::paragraphs`, `:::part`, `:::columns`
+  (in a box, or in the running text from postext 1.25), `:::paper` (a run of
+  pages on another paper stock, for the Folio viewer) and, on composed pages,
+  `:::frame`. The directives are `:::pagebreak`, `:::numbering`,
+  `:::columnbreak`, `:::space`, `:::toc`, `:::index` and `:::bibliography`.
+  The fenced raw-body blocks are `:::references` and `:::verse` (a poem: line by
   line as written, or a classical Arabic poem, one bayt a line split at
   `||`), plus inline index marks
   (`:index[…]`, `:index{term="…"}`), and the comic blocks `:::page` and
@@ -493,9 +494,13 @@ one self-contained executable per system (`postext-macos-arm64`,
 Node, `npx postext-cli` works too. It runs the real engine and reads a project
 folder as the Sandbox does. **Iterate with it in watch mode** (step 7).
 
-The Node tools are optional: `scripts/render.mjs` adds the Sandbox's extra
-checks (`SANDBOX-WARN`) and is the fallback when the executable cannot be
-downloaded:
+The Node tools are optional: `scripts/render.mjs` is the fallback when the
+executable cannot be downloaded. Its `SANDBOX-WARN` lines (the Sandbox's own
+checks) come only with `--repo /path/to/postext`, a Postext checkout with
+`packages/postext-sandbox` built; the npm install below gives none. Without a
+checkout, get those checks from the Sandbox itself (verification.md §4, WebMCP
+`sandbox_get_warnings`). `--tools DIR` (or `POSTEXT_TOOLS`) names the npm tools
+folder when it is not `~/.cache/postext-tools`:
 
 ```bash
 mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools \
@@ -816,8 +821,8 @@ At each milestone (a chapter done, before delivery) run the full checks, which
 the watch log does not replace: `lint_project.py`, `preset_kit.py lint my-book`
 (content in the config, config size), `postext check my-book --locale es
 --json` for **every** locale (every warning with chapter file:line and page;
-exit 3 on errors) and, with the Node tools, `render.mjs` for its
-`SANDBOX-WARN` lines. With composed pages, `composed_check.py check my-book
+exit 3 on errors) and the Sandbox's own checks (`sandbox_get_warnings`, or
+`render.mjs --repo <checkout>` for its `SANDBOX-WARN` lines). With composed pages, `composed_check.py check my-book
 --stress 1.3` runs every edition and fails on `frameOverflow`,
 `contentInConfig`, template and slot warnings and a page whose HTML reading
 order is not the Markdown's, and lays the text out 30 % longer as the
@@ -854,6 +859,11 @@ anchors shared.
 `pack` without `--manifest-only` zips the whole folder except `source/`,
 scripts, dot files and caches: a `work/` folder, label sources or tool
 outputs would ship too (`--exclude GLOB` leaves more out).
+
+When the brief asks for other files, write them from the delivered bundle:
+`postext epub` (fixed or reflowable, checked with EPUBCheck), `postext html`, a press
+`postext pdf` (`--pdfx`, `--profile`) and `postext docx` for an editor who works in
+Word (configuration.md §21, "Delivering EPUB, HTML and PDF files"; sources.md § Word).
 
 Import it at https://postext.dev/en/sandbox (Books → New → Open a .postext file…). A
 bundle with several languages is kept whole as one book (postext ≥ 1.39: the
