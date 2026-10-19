@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "71f82bc5b1916c5fe5ccaf3d29cb6d213c3e183f84e7eb8e75b5b6f0fa2ff338",
+  "sourceHash": "781e568c46ad768ad56f201037a2a1fb99d25908ec709e2bbaca09facf966054",
   "engine": {
     "postext": "1.46.3",
     "postextPdf": "1.46.3",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T19:02:20.094Z",
+  "capturedAt": "2026-10-19T19:23:02.127Z",
   "variants": {
     "en": {
       "hash8": "c12c5327",
       "vdtHash": "395f0907f0aca5df321febad16d07d480f1a41c0",
       "timings": {
-        "importMs": 2237,
-        "fontsMs": 299,
-        "buildMs": 50,
-        "totalMs": 4025,
+        "importMs": 1423,
+        "fontsMs": 226,
+        "buildMs": 44,
+        "totalMs": 2613,
         "builds": 2
       },
       "specimen": {
@@ -561,10 +561,10 @@
       "hash8": "56ae92de",
       "vdtHash": "04417c030281d911bab0f05c33f13aad0ee37e55",
       "timings": {
-        "importMs": 2249,
-        "fontsMs": 242,
-        "buildMs": 48,
-        "totalMs": 4025,
+        "importMs": 1411,
+        "fontsMs": 231,
+        "buildMs": 46,
+        "totalMs": 2610,
         "builds": 2
       },
       "specimen": {
@@ -1108,10 +1108,10 @@
       "hash8": "5e8e617f",
       "vdtHash": "c28f779ba57cbb879de30f931f9821acc92f6bbf",
       "timings": {
-        "importMs": 2254,
-        "fontsMs": 282,
-        "buildMs": 49,
-        "totalMs": 4028,
+        "importMs": 1266,
+        "fontsMs": 364,
+        "buildMs": 45,
+        "totalMs": 2623,
         "builds": 2
       },
       "specimen": {
@@ -1655,10 +1655,10 @@
       "hash8": "e7bf0750",
       "vdtHash": "30874eb2b9a16dff9d12ef18acd5d5ac12345659",
       "timings": {
-        "importMs": 1564,
-        "fontsMs": 823,
-        "buildMs": 132,
-        "totalMs": 3601,
+        "importMs": 1371,
+        "fontsMs": 509,
+        "buildMs": 112,
+        "totalMs": 2675,
         "builds": 1
       },
       "specimen": {
@@ -2184,7 +2184,7 @@
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.35 MB, and the edition weighs 1.12 MB: state 1.15 MB"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.12 MB: state 1.15 MB"
           }
         ]
       }
@@ -2193,10 +2193,10 @@
       "hash8": "315d6745",
       "vdtHash": "743451482ba7d34043af04e9f40ccc3615510221",
       "timings": {
-        "importMs": 1544,
-        "fontsMs": 228,
-        "buildMs": 144,
-        "totalMs": 2983,
+        "importMs": 1101,
+        "fontsMs": 624,
+        "buildMs": 171,
+        "totalMs": 2687,
         "builds": 1
       },
       "specimen": {
@@ -2721,6 +2721,11 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 86 line, 1 text"
+          },
+          {
+            "check": "C20",
+            "severity": "info",
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
           }
         ]
       }
@@ -2729,10 +2734,10 @@
       "hash8": "b791d946",
       "vdtHash": "4a0b3ba35b9ee88d24d9259d1f907eb0cb314949",
       "timings": {
-        "importMs": 688,
-        "fontsMs": 479,
-        "buildMs": 114,
-        "totalMs": 2359,
+        "importMs": 567,
+        "fontsMs": 550,
+        "buildMs": 118,
+        "totalMs": 1931,
         "builds": 1
       },
       "specimen": {
@@ -3268,7 +3273,7 @@
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.35 MB, and the edition weighs 1.15 MB: state 1.15 MB"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.15 MB: state 1.15 MB"
           }
         ]
       }
@@ -3277,10 +3282,10 @@
       "hash8": "47dfce33",
       "vdtHash": "119c5ef953d0cff45219222b1c5cd555ca726f56",
       "timings": {
-        "importMs": 2571,
-        "fontsMs": 646,
-        "buildMs": 45,
-        "totalMs": 4739,
+        "importMs": 1381,
+        "fontsMs": 288,
+        "buildMs": 38,
+        "totalMs": 2851,
         "builds": 2
       },
       "specimen": {
@@ -3824,10 +3829,10 @@
       "hash8": "e41f4cf0",
       "vdtHash": "8e79ad3e3df2fb141901de26153039caefbd876f",
       "timings": {
-        "importMs": 2444,
-        "fontsMs": 597,
-        "buildMs": 53,
-        "totalMs": 4683,
+        "importMs": 1383,
+        "fontsMs": 256,
+        "buildMs": 47,
+        "totalMs": 2827,
         "builds": 2
       },
       "specimen": {
@@ -4376,10 +4381,10 @@
       "hash8": "ee971e15",
       "vdtHash": "694dd071505f0d9b8e3e6e92794eb0405ac8cea6",
       "timings": {
-        "importMs": 2510,
-        "fontsMs": 563,
-        "buildMs": 49,
-        "totalMs": 4232,
+        "importMs": 1445,
+        "fontsMs": 269,
+        "buildMs": 40,
+        "totalMs": 2666,
         "builds": 2
       },
       "specimen": {
@@ -4923,10 +4928,10 @@
       "hash8": "b13f39c6",
       "vdtHash": "e5dc46f2b3deced3d1783c3e93b89ec6040c23c3",
       "timings": {
-        "importMs": 1544,
-        "fontsMs": 193,
-        "buildMs": 52,
-        "totalMs": 3239,
+        "importMs": 1100,
+        "fontsMs": 429,
+        "buildMs": 51,
+        "totalMs": 2660,
         "builds": 2
       },
       "specimen": {
