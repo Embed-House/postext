@@ -85,21 +85,36 @@ function percentText(n: number): string {
 }
 
 /**
- * Walk a config for values the engine replaces: an unknown numbering
- * format (lists, page labels, resource counters — any of their spellings
- * is fine, see `parseNumberFormat`), a CSS font stack in a font-family
- * field, and the `sideColumnPercent` of a one-and-a-half layout — the
- * document's, and every heading style's own `layout` — that would leave
- * one of the columns with no width (see `sideColumnPercentUsed`). Every
- * nested partial config is covered (heading styles, part list overrides,
- * `htmlViewer.overrides`, design elements). Also a key the heading
- * settings or a paragraph style do not have (`unknownConfigKey`:
- * `headings`, its `balancing` and `levels`, `headingStyles`,
- * `paragraphStyles`). And a setting with a value outside its choices
- * (`unknownConfigValue`: `direction`, the comics settings' words), and a `numerals` value that names
- * no digit system (`unknownNumerals`). And the design texts that hold
- * the book's content instead of placeholders (`contentInConfig`, #849,
- * tuned by `checks.contentInConfig`). Pure.
+ * Walk a config for values the engine replaces or leaves out:
+ * - an unknown numbering format (lists, page labels, resource counters —
+ *   any of their spellings is fine, see `parseNumberFormat`) and a CSS font
+ *   stack in a font-family field, in every nested partial config (heading
+ *   styles, part list overrides, `htmlViewer.overrides`, design elements);
+ * - the `sideColumnPercent` of a one-and-a-half layout that would leave one
+ *   of the columns with no width (see `sideColumnPercentUsed`), and the
+ *   column count of a `multiple` layout that is no whole number from 3 to
+ *   8 — the document's, and every heading style's own `layout`;
+ * - a character grid (`cjk.grid`) larger than the page leaves room for;
+ * - a key the heading settings or a paragraph style do not have
+ *   (`unknownConfigKey`: `headings`, its `balancing` and `levels`,
+ *   `headingStyles`, `paragraphStyles`);
+ * - a setting with a value outside its choices (`unknownConfigValue`):
+ *   `direction`, the Arabic body text words (`emphasis`, `tashkil`,
+ *   `kashida`, `kashidaPatterns`), the composition rules, `toc.groups.head`,
+ *   a heading's `numberPosition`, spread footnotes in a horizontal
+ *   document, the comics words, `print.standard`, `outputProfile` and
+ *   `renderingIntent`, the contrast check, the Canvas gaps
+ *   (`canvasViewer`), the `checks.contentInConfig` limits (`maxWords`,
+ *   `maxChars`), the line numbers, a resource type's `resetOn` and text
+ *   wrap, the code style, tab stops and drop caps; line numbers or text
+ *   wrap asked of a vertical document (`lineNumbersUnsupported`,
+ *   `wrapUnsupported`);
+ * - a `numerals` value that names no digit system (`unknownNumerals`);
+ * - page templates and label styles (see `validatePageTemplates`), and a
+ *   box style whose `extends` names no style or comes back to itself;
+ * - the design texts that hold the book's content instead of placeholders
+ *   (`contentInConfig`, #849, tuned by `checks.contentInConfig`).
+ * Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
   if (!config) return [];

@@ -61,13 +61,3 @@ export interface PostextSandboxProps {
   homeUrl?: string;
   homeLink?: ReactNode;
 }
-
-export interface ToolbarAction {
-  id: string;
-  icon: ReactNode;
-  label: string;
-  action: (params: {
-    insert: (before: string, after?: string) => void;
-    wrapSelection: (before: string, after: string) => void;
-  }) => void;
-}

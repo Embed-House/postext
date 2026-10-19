@@ -28,14 +28,12 @@ import type { EditorView } from '@codemirror/view';
 import { useRef, useState, type ReactNode } from 'react';
 import { useSandbox } from '../context/SandboxContext';
 import { useHistoryAvailability, useHistoryCommands } from '../history/HistoryButtons';
-import type { ToolbarAction } from '../types';
 import { IconButton } from '../ui';
 import { composedPageInsertion } from './composedInsert';
 import { TemplatePicker } from './TemplatePicker';
 
 interface EditorToolbarProps {
   viewRef: React.RefObject<EditorView | null>;
-  extraActions?: ToolbarAction[];
   /** The document language: a Chinese or Japanese one adds the ruby and
    *  tate-chū-yoko buttons. */
   lang?: string;
@@ -63,15 +61,6 @@ function wrapSelection(view: EditorView, before: string, after: string) {
   view.dispatch({
     changes: { from, to, insert: `${before}${selected}${after}` },
     selection: { anchor: from + before.length, head: to + before.length },
-  });
-  view.focus();
-}
-
-function insertAtCursor(view: EditorView, text: string) {
-  const { from } = view.state.selection.main;
-  view.dispatch({
-    changes: { from, to: from, insert: text },
-    selection: { anchor: from + text.length },
   });
   view.focus();
 }
@@ -141,7 +130,7 @@ export function insertBlockSelecting(view: EditorView, text: string, anchor: num
   view.focus();
 }
 
-export function EditorToolbar({ viewRef, extraActions, lang, readOnly = false }: EditorToolbarProps) {
+export function EditorToolbar({ viewRef, lang, readOnly = false }: EditorToolbarProps) {
   const { state } = useSandbox();
   const { labels } = state;
   const composedRef = useRef<HTMLButtonElement>(null);
@@ -320,21 +309,6 @@ export function EditorToolbar({ viewRef, extraActions, lang, readOnly = false }:
           insertBlockSelecting(v, ins.text, ins.anchor, ins.head);
         }}
       />
-
-      {extraActions?.map((a) => (
-        <ToolbarButton
-          key={a.id}
-          disabled={readOnly}
-          icon={a.icon}
-          label={a.label}
-          onClick={() =>
-            a.action({
-              insert: (text) => { const v = getView(); if (v) insertAtCursor(v, text); },
-              wrapSelection: (before, after) => { const v = getView(); if (v) wrapSelection(v, before, after); },
-            })
-          }
-        />
-      ))}
     </div>
   );
 }
