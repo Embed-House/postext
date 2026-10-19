@@ -107,8 +107,9 @@ async function googleSubset(family: string, weight: Weight, text: string): Promi
   return res.arrayBuffer();
 }
 
-/** Subsets by family, weight and characters: a build renders the same
- *  kicker and the same site titles on many cards. */
+/** Subsets by family, weight and characters (the CJK faces and the
+ *  symbols): a build renders the same kicker and the same site titles on
+ *  many cards. */
 const cjkCuts = new Map<string, Promise<OgFont | null>>();
 
 /** One subset, or null when it cannot be fetched: the card then renders
@@ -144,4 +145,22 @@ export async function loadCjkOgFonts(texts: { display?: string; lead?: string; k
   ];
   const cuts = await Promise.all(wanted.filter(([, , text]) => text).map(([name, weight, text]) => cjkCut(name, weight, text)));
   return cuts.filter((cut): cut is OgFont => cut !== null);
+}
+
+// ─── Symbols ────────────────────────────────────────────────────────────────
+// Nor do they carry arrows, mathematical operators, geometric shapes or
+// dingbats (a proof's □, ∎, ✓): next/og's own fallback fetch answers some of
+// them with HTTP 400 and the glyph is left out. Noto Sans Symbols 2, cut to
+// the characters, draws them.
+
+export const SYMBOLS = "Noto Sans Symbols 2";
+const SYMBOL_CHAR = /[\u2190-\u23FF\u25A0-\u27BF\u2900-\u2BFF]/gu;
+
+/** The symbols cut a card's texts need (Noto Sans Symbols 2 has one
+ *  weight), or none. */
+export async function loadSymbolOgFonts(texts: (string | undefined)[]): Promise<OgFont[]> {
+  const chars = [...new Set(texts.join("").match(SYMBOL_CHAR) ?? [])].sort().join("");
+  if (!chars) return [];
+  const cut = await cjkCut(SYMBOLS, 400, chars);
+  return cut ? [cut] : [];
 }
