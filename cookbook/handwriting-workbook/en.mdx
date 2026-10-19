@@ -24,11 +24,11 @@ Twelve pages of a first-year handwriting book on A4, in ten editions that are te
 
 <Excerpt region="answer" />
 
-A practice row is a box, and the word to practise is its content: `:::callout{type="palabra" title="Trace and write"}`, then `owl` on a line of its own, then `:::`. All the rows of one shape share a box style and differ only in their words. The style's `design` draws one picture, the ruling with the dotted copies, and sets the word on it as text in the school face through `{boxText}`; `setsContent` keeps the box from setting its content a second time under the drawing. The picture is named after the word (`trazo-{boxText}`), and the pen draws one for each word it finds in the boxes. A design text's baseline falls at 0.8 of its line height below the top of its box, so the model's box is placed at the row's baseline minus 0.8 of its line, and the letters stand on the line the ruling draws. The line is ten x-heights tall so that the box's clip falls 2 u below the baseline, deep enough for the tail of a g. The box's title is the row's label. The headings are left to the book's outline: the cover is its only level-1 heading, each lesson a level-2 one, and the cover style's `sectionEnd: 'heading'` stops its blank running heads at the first lesson.
+A practice row is a box, and the word to practise is its content: `:::callout{type="palabra" title="Trace and write"}`, then `owl` on a line of its own, then `:::`. All the rows of one shape share a box style and differ only in their words. The style's `design` draws the ruling as a picture and sets the word on it as text in the school face through `{boxText}`, the model and its copies alike; `setsContent` keeps the box from setting its content a second time under the drawing. A design text's baseline falls at 0.8 of its line height below the top of its box, so the model's box is placed at the row's baseline minus 0.8 of its line, and the letters stand on the line the ruling draws. The line is ten x-heights tall so that the box's clip falls 2 u below the baseline, deep enough for the tail of a g. The box's title is the row's label. The headings are left to the book's outline: the cover is its only level-1 heading, each lesson a level-2 one, and the cover style's `sectionEnd: 'heading'` stops its blank running heads at the first lesson.
 
-### 3 · Draw the dots from the face's own outlines
+### 3 · Write the copies in dots
 
-Postext sets a letter in colour, outlined or pale, but it cannot draw it as a row of dots along its stroke. The dots are drawn before the book is set, from the outlines of each Playwrite family's Thin cut: points every 0.2 x-height along each contour, a point kept only when no other lies within 0.8 of that pitch, so the two sides of a thin stroke give a single row. The dot of an i or an accent stays a small filled shape. Each edition's dots, with the copy's and the model's advances, are in `traces-<lang>.json`, and the pen lays the copies along the rows: after the model, across a whole row, one after the model, and an empty row last.
+A copy is the same `{boxText}` with `dotted`: the engine paints its letters as rows of dots along the middle of each stroke, 0.2 x-heights apart, and leaves the layout as it is. The dots follow the face as the browser shapes it, so the joins of the school script and the forms of an Arabic word come out right, and the dot of an i or an accent is one dot. `repeat` sets the word again after itself as many whole times as the row holds, 3 u apart: the copies after the model are a text anchored `right-of` the model, the full row one as wide as the box, the copy after the second model the same text without `repeat`. Edit the word in the Markdown and every copy and its dots change with it.
 
 ### 4 · Trace characters in their squares
 
@@ -38,13 +38,13 @@ A Han character or a kana is one em wide, so tracking of the square minus the em
 
 ### 5 · Mirror nothing for Arabic
 
-The Arabic edition shares every design with the others. A design laid in the flow of a right-to-left page, a heading's or a box's, is mirrored by the engine, so the letter disc, the model and the dictionary's first picture move to the right by themselves; only the dotted copies, drawn inside a picture, are laid from the right edge in code, and the warm-up waves run from right to left. `locale: 'ar'` binds the book on the right.
+The Arabic edition shares every design with the others. A design laid in the flow of a right-to-left page, a heading's or a box's, is mirrored by the engine, so the letter disc, the model, its copies and the dictionary's first picture move to the right by themselves; a repeated text starts on the side its direction starts on. Only the warm-up waves, drawn inside a picture, run from right to left in code. `locale: 'ar'` binds the book on the right.
 
 ## Variations
 
 ### Use the US cursive
 
-Playwrite has a family for many school models. For American cursive, change the English face and generate its dots again.
+Playwrite has a family for many school models. For American cursive, change the English face; the dots follow it.
 
 ```diff
 -  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },

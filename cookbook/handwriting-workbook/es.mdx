@@ -24,11 +24,11 @@ Doce páginas de un cuaderno de caligrafía de primero en A4, en diez ediciones 
 
 <Excerpt region="answer" />
 
-Un renglón de práctica es un recuadro, y la palabra que se practica es su contenido: `:::callout{type="palabra" title="Repasa y escribe"}`, luego `oso` en una línea aparte y luego `:::`. Todos los renglones de una misma forma comparten un estilo de recuadro y solo cambian en sus palabras. El `design` del estilo dibuja una imagen, la pauta con las copias punteadas, y compone encima la palabra como texto en la letra escolar mediante `{boxText}`; `setsContent` evita que el recuadro vuelva a componer su contenido debajo del dibujo. La imagen lleva el nombre de la palabra (`trazo-{boxText}`), y el pen dibuja una por cada palabra que encuentra en los recuadros. La línea base de un texto de diseño cae a 0,8 de su interlineado bajo el borde superior de su caja, así que la caja del modelo se coloca en la línea base del renglón menos 0,8 de su interlineado y las letras se apoyan en la línea que dibuja la pauta. El interlineado mide diez alturas de x para que el recorte de la caja caiga 2 u bajo la línea base, con sitio para el rabo de la g. El título del recuadro es la etiqueta del renglón. Los títulos de sección quedan para el esquema del libro: la portada es su único título de nivel 1, cada lección lleva uno de nivel 2, y `sectionEnd: 'heading'` en el estilo de la portada corta sus titulillos en blanco en la primera lección.
+Un renglón de práctica es un recuadro, y la palabra que se practica es su contenido: `:::callout{type="palabra" title="Repasa y escribe"}`, luego `oso` en una línea aparte y luego `:::`. Todos los renglones de una misma forma comparten un estilo de recuadro y solo cambian en sus palabras. El `design` del estilo dibuja la pauta como imagen y compone encima la palabra como texto en la letra escolar mediante `{boxText}`, tanto el modelo como sus copias; `setsContent` evita que el recuadro vuelva a componer su contenido debajo del dibujo. La línea base de un texto de diseño cae a 0,8 de su interlineado bajo el borde superior de su caja, así que la caja del modelo se coloca en la línea base del renglón menos 0,8 de su interlineado y las letras se apoyan en la línea que dibuja la pauta. El interlineado mide diez alturas de x para que el recorte de la caja caiga 2 u bajo la línea base, con sitio para el rabo de la g. El título del recuadro es la etiqueta del renglón. Los títulos de sección quedan para el esquema del libro: la portada es su único título de nivel 1, cada lección lleva uno de nivel 2, y `sectionEnd: 'heading'` en el estilo de la portada corta sus titulillos en blanco en la primera lección.
 
-### 3 · Dibuja los puntos con los contornos de la propia letra
+### 3 · Escribe las copias en puntos
 
-Postext compone una letra en color, perfilada o pálida, pero no la dibuja como una fila de puntos a lo largo de su trazo. Los puntos se dibujan antes de componer el cuaderno, con los contornos del corte Thin de cada Playwrite: un punto cada 0,2 alturas de x a lo largo de cada contorno, y solo se guarda si no hay otro a menos de 0,8 de ese paso, así que los dos lados de un trazo fino dan una sola fila. El punto de la i y los acentos quedan como pequeñas formas rellenas. Los puntos de cada edición, con el avance de la copia y el del modelo, están en `traces-<lang>.json`, y el pen reparte las copias por los renglones: tras el modelo, un renglón entero, una tras el modelo y, al final, un renglón vacío.
+Una copia es el mismo `{boxText}` con `dotted`: el motor pinta sus letras como filas de puntos por el centro de cada trazo, a 0,2 alturas de x, y deja la composición como estaba. Los puntos siguen la letra tal como la da forma el navegador, así que los enlaces de la letra escolar y las formas de una palabra árabe salen bien, y el punto de la i o un acento es un solo punto. `repeat` vuelve a escribir la palabra detrás de sí misma tantas veces enteras como caben en el renglón, a 3 u: las copias tras el modelo son un texto anclado `right-of` del modelo, el renglón entero uno tan ancho como el recuadro y la copia tras el segundo modelo el mismo texto sin `repeat`. Cambia la palabra en el Markdown y cambian con ella todas las copias y sus puntos.
 
 ### 4 · Repasa los caracteres en su cuadrícula
 
@@ -38,13 +38,13 @@ Un carácter chino o un kana mide un cuadratín, así que un espaciado de cuadro
 
 ### 5 · No reflejes nada para el árabe
 
-La edición árabe comparte todos los diseños con las demás. El motor refleja un diseño que se compone en el flujo de una página de derecha a izquierda, sea el de un título o el de un recuadro, así que el disco de letras, el modelo y la primera imagen del diccionario pasan solos a la derecha; solo las copias punteadas, dibujadas dentro de una imagen, se colocan desde el borde derecho en el código, y las olas del calentamiento corren de derecha a izquierda. `locale: 'ar'` encuaderna el libro por la derecha.
+La edición árabe comparte todos los diseños con las demás. El motor refleja un diseño que se compone en el flujo de una página de derecha a izquierda, sea el de un título o el de un recuadro, así que el disco de letras, el modelo, sus copias y la primera imagen del diccionario pasan solos a la derecha; un texto repetido empieza por el lado en que empieza su dirección. Solo las olas del calentamiento, dibujadas dentro de una imagen, corren de derecha a izquierda en el código. `locale: 'ar'` encuaderna el libro por la derecha.
 
 ## Variantes
 
 ### Usa la cursiva estadounidense
 
-Playwrite tiene una familia para muchos modelos escolares. Para la cursiva de Estados Unidos, cambia la letra inglesa y vuelve a generar sus puntos.
+Playwrite tiene una familia para muchos modelos escolares. Para la cursiva de Estados Unidos, cambia la letra inglesa; los puntos la siguen.
 
 ```diff
 -  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },

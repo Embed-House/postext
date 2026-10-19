@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 161 · Handwriting workbook in ten scripts ═══════════════
 // https://postext.dev/en/cookbook/handwriting-workbook
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Playwrite, Playpen Sans Arabic, Klee One and others (SIL OFL) · Needs postext ≥ 1.45.0
+// Fonts: Playwrite, Playpen Sans Arabic, Klee One and others (SIL OFL) · Needs postext ≥ 1.46.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -13,12 +13,9 @@ const RECIPE = 'handwriting-workbook';
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
 // #region palette: a navy ink, one coral accent, the sun and the pale fields of the bands
 const palette = {
-  ink: '#22304a', // text and the models
-  accent: '#bf4630', // kickers, labels, folios
-  sun: '#f4b73f', // the boxes' stripe
-  tint: '#fdf0da', // opener bands, boxes
-  rule: '#7f9ccc', // the ruling
-  dots: '#4d5b76', // the dotted letters
+  ink: '#22304a', accent: '#bf4630', // text and models; kickers, labels, folios
+  sun: '#f4b73f', tint: '#fdf0da', // the boxes' stripe; opener bands, boxes
+  rule: '#7f9ccc', dots: '#4d5b76', // the ruling; the dotted letters
   trace: LANG === 'ja' ? '#b4bccb' : '#e7a9a0', // traced over: 描红 in red, なぞり書き in grey
   paper: '#ffffff',
 };
@@ -70,21 +67,25 @@ const image = (id, resourceId, placement) => ({ kind: 'image', id, resourceId, p
   decorative: true });
 
 // #region answer: a practice box: the model in the school face, then dots, then nothing
-// The word is the box's content, and boxes of one shape share a style: :::callout{type=
-// "palabra" title="Repasa y escribe"} / niña / ::: draws four rows on the ruling: the model
-// and dotted copies, a row of dots, the model and one copy, an empty row. The design sets the
-// content ({boxText}, setsContent): ruling and dots are one picture per word ('trazo-' + the
-// word, #region art), the models live text on its baselines. A design text's baseline falls
-// 0.8 of its line below its top, so a box of line L set at baseline − 0.8 L sits on the line.
+// :::callout{type="palabra" title="Repasa y escribe"} / niña / ::: draws four rows: the model
+// and copies, a row of copies, the model and a copy, an empty row, all of them the box's word
+// ({boxText}); a copy has `dotted`, `repeat` fills its row. A design text's baseline falls 0.8
+// of its line below its top; a tall line keeps the descenders inside its clip.
 const G = CJK ? null : geometry(ED.ruling, ED.u); // rows, baselines and the face's size
-const LABEL_H = 7; // mm: the box's title above its ruling
-const model = (id, row) => text(id, '{boxText}', HAND, G.size / 0.3528,
-  at('container', 'top-left', 0, G.base[row] - 0.8 * G.line, { width: mm(W) }),
-  { lineHeight: mm(G.line), overflow: 'clip' });
-// rows: of ruling; picture: its resource; models: the rows the word is written out on.
-const ruled = (rows, picture, models) => ({ setsContent: true, minHeight: mm(G.height(rows)),
-  slot: { elements: [image('trazo', picture, at('container', 'top-left', 0, 0,
-    box(W, G.height(rows)))), ...models.map((n) => model(`model-${n + 1}`, n))] } });
+const [LABEL_H, GAP] = [7, 3 * ED.u]; // mm: the box's title above its ruling; between copies
+const hand = (id, placement, extra) => text(id, '{boxText}', HAND, G.size / 0.3528, placement,
+  { lineHeight: mm(G.line), overflow: 'clip', ...extra });
+const dots = (many) => ({ color: col('dots'), dotted: { spacing: mm(0.2 * ED.u),
+  size: mm(0.11 * ED.u) }, ...(many && { repeat: { gap: mm(GAP) } }) });
+const onRow = (n, size) => at('container', 'top-left', 0, G.base[n] - 0.8 * G.line, size);
+const model = (n) => hand(`model-${n}`, onRow(n));
+// Copies after the model of row n (as many as fit, or one), or from the row's start.
+const after = (n, many) => hand(`after-${n}`, { anchor: { to: `#model-${n}`,
+  edge: 'right-of' }, offset: { x: mm(GAP) } }, dots(many));
+const copies = (n, many) => hand(`copies-${n}`, onRow(n, { width: 'fill' }), dots(many));
+const ruled = (rows, picture, texts) => ({ setsContent: true, minHeight: mm(G.height(rows)),
+  slot: { elements: [image('ruling', picture, at('container', 'top-left', 0, 0,
+    box(W, G.height(rows)))), ...texts] } });
 // Every practice box: no frame, its title in the label face LABEL_H above the drawing.
 const practice = (id, design, gap = mm(4)) => ({ id, design, backgroundEnabled: false,
   padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) }, titleStyle: {
@@ -119,12 +120,12 @@ const P = ED.pinyin ? geometry('sixian', 3.6) : null;
 const pinyin = (id, n, x, content, color) => text(id, content, ED.pinyin, P.size / 0.3528,
   at('container', 'top-left', x, P.base[n] - 0.8 * P.line, { width: mm(W - x) }),
   { lineHeight: mm(P.line), overflow: 'clip', color: col(color) });
-const copies = Array(5).fill('{boxText}').join('\u00a0\u00a0\u00a0\u00a0');
+const syllables = Array(5).fill('{boxText}').join('\u00a0\u00a0\u00a0\u00a0');
 const pinyinBlock = P && { setsContent: true, minHeight: mm(P.height(3)),
   slot: { elements: [
     image('lines', 'sixian', at('container', 'top-left', 0, 0, box(W, P.height(3)))),
-    pinyin('p1', 0, 0, '{boxText}', 'ink'), pinyin('p1-copies', 0, 36, copies, 'trace'),
-    pinyin('p2', 1, 0, copies, 'trace'), pinyin('p3', 2, 0, '{boxText}', 'ink'),
+    pinyin('p1', 0, 0, '{boxText}', 'ink'), pinyin('p1-copies', 0, 36, syllables, 'trace'),
+    pinyin('p2', 1, 0, syllables, 'trace'), pinyin('p3', 2, 0, '{boxText}', 'ink'),
   ] } };
 // #endregion
 
@@ -237,11 +238,13 @@ const config = {
     ],
   },
   headingStyles: [cover, diploma],
-  chipStyles: [ // a blank to write a letter in, and a letter tile
+  chipStyles: [ // a blank to write a letter in, a letter tile, a word in dots to trace
     { id: 'hueco', fontFamily: LABEL, background: col('paper'), borderColor: col('rule'),
       borderWidth: pt(1), borderRadius: mm(1.2), paddingX: mm(4), paddingY: em(0.12) },
     { id: 'letra', fontFamily: HAND, background: col('tint'), borderColor: col('sun'),
-      borderWidth: pt(1), borderRadius: mm(1.6), paddingX: mm(2), paddingY: em(0.08) }],
+      borderWidth: pt(1), borderRadius: mm(1.6), paddingX: mm(2), paddingY: em(0.08) },
+    { id: 'puntos', fontFamily: HAND, fontSize: em(1.25), color: col('dots'), dotted: {},
+      backgroundEnabled: false, borderWidth: pt(0), paddingX: pt(0), paddingY: pt(0) }],
   calloutStyles: [{ id: 'recuerda', background: col('tint'), borderRadius: mm(3),
     stripe: { enabled: true, side: 'left', width: pt(4), color: col('sun') },
     padding: { top: mm(3), right: mm(5), bottom: mm(3.5), left: mm(5) },
@@ -253,8 +256,9 @@ const config = {
     // One style per shape of exercise, whatever its words (the box's content).
     ...(CJK ? [practice('caracteres', squareBlock(4)), practice('frase', squareBlock(3, true))] : [
       practice('trazos', ruled(4, 'trazo-{attr.pattern}', [])),
-      practice('palabra', ruled(4, 'trazo-{boxText}', [0, 2])),
-      practice('frase', ruled(3, 'trazo-{boxText}', [0]))]), // a sentence is written out once
+      practice('palabra', ruled(4, 'ruling-4',
+        [model(0), after(0, true), copies(1, true), model(2), after(2)])),
+      practice('frase', ruled(3, 'ruling-3', [model(0), copies(1)]))]), // a sentence: once
     ...(P ? [practice('pinyin', pinyinBlock)] : []),
     { ...practice('diccionario', dictionary, mm(3)), marginBottom: mm(3) }],
   header: { elements: [] },
@@ -264,7 +268,7 @@ const config = {
 // ─── 2 · Content ────────────────────────────────────────────────────────────
 const markdown = /* @content */ ''; // content.<lang>.md, inlined by the Cookbook
 
-// #region art: the edition's ruling drawn in code, the dots from the face's own outlines
+// #region art: the edition's ruling and the warm-up strokes, drawn in code
 // Each country's paper, in x-heights (u) above and below the baseline. lines: [height,
 // weight] pairs; band: a filled band; seyes: the French grid of 1 u squares, a heavy line
 // every 4 u, verticals every 4 u; Seyès and the Italian page rule a red margin where the
@@ -314,73 +318,40 @@ function ruling(g, rows) {
   if (g.margin) out.push(`<path d="M.2 0V${n2(h)}" stroke="#d9534f" stroke-width=".3"/>`);
   return out.join('');
 }
-// The dots of a word: TRACES holds, for each model, the dots along the outlines of the face's
-// thin cut (one row of dots, the two sides of a stroke merged) as a path of zero-length,
-// round-capped segments, its advance, and the model's advance in the regular cut, all in mm.
-function dotted(word, x, y) {
-  const t = TRACES.words[word];
-  return `<g transform="translate(${n2(x)} ${n2(y)})"><path d="${t.d}" stroke="${palette.dots}" `
-    + `stroke-width="${TRACES.dot}" stroke-linecap="round" fill="none"/>`
-    + (t.f ? `<path d="${t.f}" fill="${palette.dots}"/>` : '') + '</g>';
-}
-// Warm-up strokes: curves drawn by code, dotted at the same pitch as the letters.
+// Warm-up strokes: curves drawn by code, in dots as far apart as the letters' copies.
 const PATTERNS = { // s runs along the stroke; x and y in 2 u, from the baseline up
   lines: (s) => [Math.floor(s) * 0.5, s % 1], // sticks, each drawn from the foot up
   waves: (s) => [s * 0.5, (1 - Math.cos(s * Math.PI)) / 4], // waves in the x-height band
   loops: (s) => [s * 0.5 - 0.2 * Math.sin(2 * Math.PI * s), (1 - Math.cos(2 * Math.PI * s)) / 2],
 };
 function pattern(name, x0, x1, base, u) {
-  const f = PATTERNS[name]; const pts = [];
+  const f = PATTERNS[name]; const pts = []; const pitch = 0.2 * u;
   let prev = null; let acc = 0;
   for (let s = 0; s < 400; s += 0.002) {
     const [px, py] = f(s); const p = [x0 + px * u * 2, base - py * u * 2];
     if (p[0] > x1) break;
-    acc += prev ? Math.hypot(p[0] - prev[0], p[1] - prev[1]) : TRACES.pitch;
+    acc += prev ? Math.hypot(p[0] - prev[0], p[1] - prev[1]) : pitch;
     prev = p;
-    if (acc < TRACES.pitch) continue;
+    if (acc < pitch) continue;
     pts.push(`M${n2(RTL ? W - p[0] : p[0])} ${n2(p[1])}h.01`); acc = 0;
   }
-  return `<path d="${pts.join('')}" stroke="${palette.dots}" stroke-width="${TRACES.dot}" `
+  return `<path d="${pts.join('')}" stroke="${palette.dots}" stroke-width="${n2(0.11 * u)}" `
     + 'stroke-linecap="round" fill="none"/>';
 }
-// One box's picture: the ruling, then the dotted copies laid out from the start side. A word
-// (palabra): copies after the model, a row of copies, one copy after the model, an empty row.
-// A sentence (frase): one copy under the model, then an empty row. A warm-up pattern (trazos):
-// two rows of it and the start of a third.
-function traceSvg(g, w, word, sentence) {
-  const rows = sentence ? 3 : 4; const gap = 3 * g.u; const parts = [ruling(g, rows)];
-  const copies = (row, from, count = 99) => {
-    const t = TRACES.words[word];
-    for (let x = from, k = 0; x + t.a <= W && k < count; x += t.a + gap, k++) {
-      parts.push(dotted(word, RTL ? W - x - t.a : x, g.base[row]));
-    }
-  };
-  if (PATTERNS[w]) {
-    [W, W, W * 0.4].forEach((end, row) => parts.push(pattern(w, 2, end - 2, g.base[row], g.u)));
-  } else if (sentence) copies(1, 0, 1);
-  else {
-    const lead = TRACES.words[word].m + gap;
-    copies(0, lead); copies(1, 0); copies(2, lead, 1);
-  }
-  const h = g.height(rows);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W * 10}" height="${n2(h * 10)}" `
-    + `viewBox="0 0 ${W} ${n2(h)}">${parts.join('')}</svg>`;
-}
-// The pictures the practice boxes name: one per word or pattern, read off the boxes, named as
-// the style's design asks for it ('trazo-' + the box's content, or + its pattern), or the
+// The pictures the practice boxes name: the ruling of a word (four rows) and of a sentence
+// (three), a warm-up pattern on its ruling (two rows of it and the start of a third), or the
 // edition's squares and its pinyin lines.
 async function practicePictures(add) {
   const svg = (w, h, body) => `<svg xmlns="http://www.w3.org/2000/svg" width="${W * 10}" `
     + `height="${n2(h * 10)}" viewBox="0 0 ${w} ${n2(h)}">${body}</svg>`;
-  const boxes = CJK ? []
-    : markdown.matchAll(/^:::callout\{type="(palabra|frase|trazos)"([^}]*)\}\n(.*?)\n?^:::$/gms);
-  const done = new Set();
-  for (const [, type, attrs, body] of boxes) {
-    const key = type === 'trazos' ? /pattern="([^"]+)"/.exec(attrs)[1] : body.trim();
-    if (done.has(key) || !done.add(key)) continue;
-    const file = `trazo-${done.size}.svg`;
-    await loadSvg(file, traceSvg(G, key, body.trim(), type === 'frase'));
-    add(`trazo-${key}`, file, 'svg', W * 10, G.height(type === 'frase' ? 3 : 4) * 10);
+  const put = async (id, rows, body) => {
+    await loadSvg(`${id}.svg`, svg(W, G.height(rows), body));
+    add(id, `${id}.svg`, 'svg', W * 10, G.height(rows) * 10);
+  };
+  if (G) {
+    for (const rows of [3, 4]) await put(`ruling-${rows}`, rows, ruling(G, rows));
+    for (const name of Object.keys(PATTERNS)) await put(`trazo-${name}`, 4, ruling(G, 4)
+      + [W, W, W * 0.4].map((end, row) => pattern(name, 2, end - 2, G.base[row], G.u)).join(''));
   }
   if (P) {
     await loadSvg('sixian.svg', svg(W, P.height(3), ruling(P, 3)));
@@ -432,10 +403,6 @@ for (const family of Object.keys(FONTS)) if (!used.includes(family)) delete FONT
 await loadFonts(FONTS, markdown);
 await loadCjkFonts(FONTS, markdown);
 await loadArabicFonts(FONTS, markdown);
-const TRACES = CJK ? null : await (await fetch({
-  en: asset('traces-en.json'), es: asset('traces-es.json'), ca: asset('traces-ca.json'),
-  fr: asset('traces-fr.json'), de: asset('traces-de.json'), it: asset('traces-it.json'),
-  pt: asset('traces-pt.json'), ar: asset('traces-ar.json') }[LANG])).json();
 const resources = []; // every picture, painted or drawn
 const add = (id, fileId, kind, width, height, more = {}) => resources.push({ id, kind,
   typeId: 'dibujo', createdAt: 0, updatedAt: 0, [kind]: { fileId, width, height, ...more } });
@@ -446,7 +413,7 @@ await Promise.all([['cover', 'cover-1600.jpg', 1600, 1356],
   ...[...named].map((id) => [id, `${id}-480.jpg`, 480, 480])].map(async ([id, file, w, h]) => {
   await loadImage(file, asset(file)); add(id, file, 'bitmap', w, h, { format: 'jpeg' });
 }));
-await practicePictures(add); // the rulings, the dots and the squares (#region art)
+await practicePictures(add); // the rulings, the warm-up strokes and the squares (#region art)
 const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, config),
   { ...kitFonts(FONTS), text: markdown });
 showBook(doc, { title: t({ en: 'Handwriting workbook', es: 'Cuaderno de caligrafía',

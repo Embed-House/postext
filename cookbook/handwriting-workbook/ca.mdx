@@ -24,11 +24,11 @@ Dotze pàgines d’un quadern de cal·ligrafia de primer en A4, en deu edicions 
 
 <Excerpt region="answer" />
 
-Una ratlla de pràctica és un requadre, i la paraula que s’hi practica n’és el contingut: `:::callout{type="palabra" title="Repassa i escriu"}`, després `poma` en una línia a part i després `:::`. Totes les ratlles d’una mateixa forma comparteixen un estil de requadre i només en canvien les paraules. El `design` de l’estil dibuixa una imatge, la pauta amb les còpies puntejades, i hi compon a sobre la paraula com a text en la lletra escolar amb `{boxText}`; `setsContent` evita que el requadre torni a compondre el contingut sota el dibuix. La imatge porta el nom de la paraula (`trazo-{boxText}`), i el pen en dibuixa una per cada paraula que troba als requadres. La línia de base d’un text de disseny cau a 0,8 del seu interlineat sota la vora superior de la caixa, així que la caixa del model comença 0,8 del seu interlineat per sobre de la línia de base de la ratlla, i les lletres s’aguanten sobre la línia que dibuixa la pauta. L’interlineat fa deu alçades de x perquè el retall de la caixa caigui 2 u sota la línia de base, amb lloc per a la cua de la g. El títol del requadre és l’etiqueta de la ratlla. Els títols de secció queden per a l’esquema del llibre: la coberta n’és l’únic títol de nivell 1, cada lliçó en porta un de nivell 2, i `sectionEnd: 'heading'` a l’estil de la coberta talla els seus titolets en blanc a la primera lliçó.
+Una ratlla de pràctica és un requadre, i la paraula que s’hi practica n’és el contingut: `:::callout{type="palabra" title="Repassa i escriu"}`, després `poma` en una línia a part i després `:::`. Totes les ratlles d’una mateixa forma comparteixen un estil de requadre i només en canvien les paraules. El `design` de l’estil dibuixa la pauta com a imatge i hi compon a sobre la paraula com a text en la lletra escolar amb `{boxText}`, tant el model com les seves còpies; `setsContent` evita que el requadre torni a compondre el contingut sota el dibuix. La línia de base d’un text de disseny cau a 0,8 del seu interlineat sota la vora superior de la caixa, així que la caixa del model comença 0,8 del seu interlineat per sobre de la línia de base de la ratlla, i les lletres s’aguanten sobre la línia que dibuixa la pauta. L’interlineat fa deu alçades de x perquè el retall de la caixa caigui 2 u sota la línia de base, amb lloc per a la cua de la g. El títol del requadre és l’etiqueta de la ratlla. Els títols de secció queden per a l’esquema del llibre: la coberta n’és l’únic títol de nivell 1, cada lliçó en porta un de nivell 2, i `sectionEnd: 'heading'` a l’estil de la coberta talla els seus titolets en blanc a la primera lliçó.
 
-### 3 · Dibuixa els punts amb els contorns de la mateixa lletra
+### 3 · Escriu les còpies en punts
 
-Postext compon una lletra en color, perfilada o pàl·lida, però no la dibuixa com una filera de punts al llarg del traç. Els punts es dibuixen abans de compondre el quadern, amb els contorns del tall Thin de cada Playwrite: un punt cada 0,2 alçades de x al llarg de cada contorn, i només es conserva si no n’hi ha cap altre a menys de 0,8 d’aquest pas, de manera que els dos costats d’un traç prim donen una sola filera. El punt de la i i els accents queden com a petites formes plenes. Els punts de cada edició, amb l’avanç de la còpia i el del model, són a `traces-<lang>.json`, i el pen reparteix les còpies per les ratlles: a la primera, després del model; a la segona, de punta a punta; a la tercera, una sola després del model; la quarta queda buida.
+Una còpia és el mateix `{boxText}` amb `dotted`: el motor pinta les seves lletres com a fileres de punts pel centre de cada traç, a 0,2 alçades de x, i deixa la composició com era. Els punts segueixen la lletra amb la forma que li dona el navegador, així que els enllaços de la lletra escolar i les formes d’una paraula àrab surten bé, i el punt de la i o un accent és un sol punt. `repeat` torna a escriure la paraula darrere seu tantes vegades senceres com caben a la ratlla, a 3 u: les còpies després del model són un text ancorat `right-of` del model, la ratlla sencera n’és un tan ample com el requadre i la còpia després del segon model és el mateix text sense `repeat`. Canvia la paraula al Markdown i canvien amb ella totes les còpies i els seus punts.
 
 ### 4 · Repassa els caràcters a la seva quadrícula
 
@@ -38,13 +38,13 @@ Un caràcter xinès o un kana fa un quadratí d’amplada, així que un espaiat 
 
 ### 5 · No reflecteixis res per a l’àrab
 
-L’edició àrab comparteix tots els dissenys amb les altres. El motor reflecteix un disseny que es compon en el flux d’una pàgina de dreta a esquerra, sigui el d’un títol o el d’un requadre, així que el disc de lletres, el model i la primera imatge del diccionari passen sols a la dreta. Només les còpies puntejades, dibuixades dins d’una imatge, es col·loquen des de la vora dreta al codi, i les ones de l’escalfament corren de dreta a esquerra. `locale: 'ar'` enquaderna el llibre per la dreta.
+L’edició àrab comparteix tots els dissenys amb les altres. El motor reflecteix un disseny que es compon en el flux d’una pàgina de dreta a esquerra, sigui el d’un títol o el d’un requadre, així que el disc de lletres, el model, les seves còpies i la primera imatge del diccionari passen sols a la dreta; un text repetit comença pel costat per on comença la seva direcció. Només les ones de l’escalfament, dibuixades dins d’una imatge, corren de dreta a esquerra al codi. `locale: 'ar'` enquaderna el llibre per la dreta.
 
 ## Variants
 
 ### Fes servir la cursiva dels Estats Units
 
-Playwrite té una família per a molts models escolars. Per a la cursiva nord-americana, canvia la lletra anglesa i torna a generar-ne els punts.
+Playwrite té una família per a molts models escolars. Per a la cursiva nord-americana, canvia la lletra anglesa; els punts la segueixen.
 
 ```diff
 -  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },

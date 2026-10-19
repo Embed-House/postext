@@ -24383,5 +24383,94 @@
         "pageTemplates[].frames[].exclude"
       ]
     }
+  },
+  "dotted-text": {
+    "label": {
+      "en": "Dotted letters to trace",
+      "es": "Letras punteadas para repasar",
+      "ca": "Lletres puntejades per repassar",
+      "zh": "描点字",
+      "ar": "حروف منقّطة للتتبّع",
+      "ja": "なぞり書きの点線文字",
+      "pt": "Letras pontilhadas para cobrir",
+      "fr": "Lettres en pointillés à repasser",
+      "de": "Gepunktete Buchstaben zum Nachspuren",
+      "it": "Lettere puntinate da ripassare"
+    },
+    "definition": {
+      "en": "A design text or a chip whose letters are painted as rows of dots along their strokes, and a design text repeated along its line: the copies a child traces.",
+      "es": "Un texto de diseño o un chip cuyas letras se pintan como filas de puntos a lo largo de sus trazos, y un texto de diseño repetido a lo largo de su línea: las copias que repasa un niño.",
+      "ca": "Un text de disseny o un xip amb les lletres pintades com a fileres de punts al llarg dels traços, i un text de disseny repetit al llarg de la línia: les còpies que repassa un infant.",
+      "zh": "把字母画成沿笔画排列的点的设计文本或标签，以及沿行重复的设计文本：供孩子描写的副本。",
+      "ar": "نص تصميم أو شريحة تُرسم حروفها صفوفًا من النقاط على امتداد خطوطها، ونص تصميم يتكرّر على امتداد سطره: النسخ التي يتتبّعها الطفل.",
+      "ja": "文字を筆画に沿った点の列で描くデザインのテキストやチップと、行に沿って繰り返すデザインのテキスト。子どもがなぞる見本です。",
+      "pt": "Um texto de design ou um chip cujas letras são pintadas como fileiras de pontos ao longo dos traços, e um texto de design repetido ao longo da linha: as cópias que a criança cobre.",
+      "fr": "Un texte de maquette ou une puce dont les lettres sont peintes en rangées de points le long de leurs tracés, et un texte de maquette répété le long de sa ligne : les copies qu’un enfant repasse.",
+      "de": "Ein Gestaltungstext oder Chip, dessen Buchstaben als Punktreihen entlang ihrer Striche gemalt werden, und ein Gestaltungstext, der sich entlang seiner Zeile wiederholt: die Vorlagen, die ein Kind nachspurt.",
+      "it": "Un testo di progetto grafico o un chip con le lettere dipinte come file di punti lungo i tratti, e un testo ripetuto lungo la riga: le copie che un bambino ripassa."
+    },
+    "aliases": {
+      "en": [
+        "tracing letters",
+        "dotted letters",
+        "dot font",
+        "repeat text"
+      ],
+      "es": [
+        "letras punteadas",
+        "repasar letras",
+        "texto repetido"
+      ],
+      "ca": [
+        "lletres puntejades",
+        "repassar lletres"
+      ],
+      "zh": [
+        "描红",
+        "虚线字",
+        "描点字"
+      ],
+      "ar": [
+        "حروف منقطة",
+        "تتبع الحروف"
+      ],
+      "ja": [
+        "なぞり書き",
+        "点線文字"
+      ],
+      "pt": [
+        "letras pontilhadas",
+        "cobrir letras"
+      ],
+      "fr": [
+        "lettres en pointillés",
+        "repasser les lettres"
+      ],
+      "de": [
+        "Punktschrift",
+        "Nachspurschrift"
+      ],
+      "it": [
+        "lettere puntinate",
+        "ripassare le lettere"
+      ]
+    },
+    "group": "furniture",
+    "docs": {
+      "slug": "configuration-headers-footers",
+      "heading": {
+        "en": "Text elements",
+        "es": "Elementos de texto",
+        "ca": "Elements de text",
+        "zh": "文本元素",
+        "ar": "عناصر النص",
+        "ja": "テキスト要素",
+        "pt": "Elementos de texto",
+        "fr": "Éléments de texte",
+        "de": "Textelemente",
+        "it": "Elementi di testo"
+      }
+    },
+    "research": []
   }
 }

@@ -24,11 +24,11 @@ Dodici pagine di un quaderno di scrittura di prima elementare in A4, in dieci ed
 
 <Excerpt region="answer" />
 
-Una riga di esercizio è un riquadro, e la parola da esercitare ne è il contenuto: `:::callout{type="palabra" title="Ripassa e scrivi"}`, poi `gallo` su una linea a sé, poi `:::`. Tutte le righe di una stessa forma condividono uno stile di riquadro e cambiano solo nelle parole. Il `design` dello stile disegna una sola immagine, la rigatura con le copie a puntini, e sopra compone la parola come testo nel corsivo scolastico tramite `{boxText}`; `setsContent` impedisce al riquadro di comporre una seconda volta il suo contenuto sotto il disegno. L’immagine prende il nome dalla parola (`trazo-{boxText}`), e il pen ne disegna una per ogni parola che trova nei riquadri. La linea di base di un elemento di testo del design cade a 0,8 della sua interlinea sotto il bordo superiore della sua area. L’area del modello parte quindi 0,8 interlinee sopra la linea di base della riga, e le lettere poggiano sulla linea che disegna la rigatura. L’interlinea misura dieci altezze della x perché il ritaglio dell’area cada 2 u sotto la linea di base, abbastanza in basso per la coda della g. Il titolo del riquadro diventa l’etichetta della riga. I titoli di sezione restano alla struttura del libro: la copertina ha l’unico titolo di livello 1, ogni lezione uno di livello 2, e `sectionEnd: 'heading'` nello stile della copertina ferma le sue testatine vuote alla prima lezione.
+Una riga di esercizio è un riquadro, e la parola da esercitare ne è il contenuto: `:::callout{type="palabra" title="Ripassa e scrivi"}`, poi `gallo` su una linea a sé, poi `:::`. Tutte le righe di una stessa forma condividono uno stile di riquadro e cambiano solo nelle parole. Il `design` dello stile disegna la rigatura come immagine e sopra compone la parola come testo nel corsivo scolastico tramite `{boxText}`, sia il modello sia le sue copie; `setsContent` impedisce al riquadro di comporre una seconda volta il suo contenuto sotto il disegno. La linea di base di un elemento di testo del design cade a 0,8 della sua interlinea sotto il bordo superiore della sua area. L’area del modello parte quindi 0,8 interlinee sopra la linea di base della riga, e le lettere poggiano sulla linea che disegna la rigatura. L’interlinea misura dieci altezze della x perché il ritaglio dell’area cada 2 u sotto la linea di base, abbastanza in basso per la coda della g. Il titolo del riquadro diventa l’etichetta della riga. I titoli di sezione restano alla struttura del libro: la copertina ha l’unico titolo di livello 1, ogni lezione uno di livello 2, e `sectionEnd: 'heading'` nello stile della copertina ferma le sue testatine vuote alla prima lezione.
 
-### 3 · Ricava i puntini dai contorni del font
+### 3 · Scrivi le copie a puntini
 
-Postext compone una lettera a colori, solo nel contorno o in tinta pallida, ma non può disegnarla come una fila di puntini lungo il tratto. I puntini si disegnano quindi prima di comporre il quaderno, dai contorni del peso Thin di ogni famiglia Playwrite: un punto ogni 0,2 altezze della x lungo ogni contorno, tenuto solo se nessun altro cade entro 0,8 di quel passo, così i due bordi di un tratto sottile danno una sola fila. Il puntino della i e gli accenti restano piccole forme piene. I puntini di ogni edizione, con gli avanzamenti della copia e del modello, sono in `traces-<lang>.json`, e il pen distribuisce le copie sulle righe: dopo il modello, su una riga intera, una sola dopo il modello e, per ultima, una riga vuota.
+Una copia è lo stesso `{boxText}` con `dotted`: il motore dipinge le sue lettere come file di puntini lungo il centro di ogni tratto, a 0,2 altezze della x l’uno dall’altro, e lascia la composizione com’è. I puntini seguono il font così come lo forma il browser, quindi i legamenti del corsivo scolastico e le forme di una parola araba vengono giusti, e il puntino della i o un accento è un solo puntino. `repeat` riscrive la parola dopo sé stessa tante volte intere quante ne entrano nella riga, a 3 u di distanza: le copie dopo il modello sono un testo ancorato al modello con `right-of`, la riga intera uno largo quanto il riquadro, la copia dopo il secondo modello lo stesso testo senza `repeat`. Cambia la parola nel Markdown e cambiano con essa tutte le copie e i loro puntini.
 
 ### 4 · Ripassa i caratteri nei loro quadretti
 
@@ -38,13 +38,13 @@ Un carattere cinese o un kana è largo un em, quindi una spaziatura pari al quad
 
 ### 5 · Non specchiare niente per l’arabo
 
-L’edizione araba condivide tutti i design con le altre. Il motore specchia un design composto nel flusso di una pagina da destra a sinistra, che sia quello di un titolo o di un riquadro, così il disco delle lettere, il modello e la prima immagine del dizionario passano da soli a destra. Solo le copie a puntini, disegnate dentro un’immagine, vengono collocate dal bordo destro nel codice, e le onde del riscaldamento corrono da destra a sinistra. `locale: 'ar'` rilega il libro a destra.
+L’edizione araba condivide tutti i design con le altre. Il motore specchia un design composto nel flusso di una pagina da destra a sinistra, che sia quello di un titolo o di un riquadro, così il disco delle lettere, il modello, le sue copie e la prima immagine del dizionario passano da soli a destra; un testo ripetuto parte dal lato da cui parte la sua direzione. Solo le onde del riscaldamento, disegnate dentro un’immagine, corrono da destra a sinistra nel codice. `locale: 'ar'` rilega il libro a destra.
 
 ## Varianti
 
 ### Usa il corsivo americano
 
-Playwrite ha una famiglia per molti modelli scolastici. Per il corsivo degli Stati Uniti cambia il font inglese e rigenera i suoi puntini.
+Playwrite ha una famiglia per molti modelli scolastici. Per il corsivo degli Stati Uniti cambia il font inglese; i puntini lo seguono.
 
 ```diff
 -  en: { hand: 'Playwrite GB J', ruling: 'gb', u: 3.6 },

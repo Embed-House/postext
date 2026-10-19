@@ -82,7 +82,7 @@ kite
 cake
 :::
 
-Add the magic e and read: tap, :chip[tape]{style="letra"} · pin, :chip[pine]{style="letra"} · cub, :chip[cube]{style="letra"}
+Add the magic e and read: tap, :chip[tape]{style="puntos"} · pin, :chip[pine]{style="puntos"} · cub, :chip[cube]{style="puntos"}
 
 :::callout{type="recuerda" title="Remember"}
 The magic e joins to the letter before it like any other letter.
