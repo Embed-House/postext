@@ -20,7 +20,7 @@ describe('the documented renderToPdf options', () => {
 
   for (const doc of ['configuration-pdf-output-en.mdx', 'configuration-pdf-output-es.mdx']) {
     it(`are all listed in the RenderToPdfOptions summary of ${doc}`, () => {
-      const summary = /\*\*`RenderToPdfOptions`\*\* — `\{([^}]*)\}`/.exec(read(`../../../../docs/${doc}`))?.[1] ?? '';
+      const summary = /\*\*`RenderToPdfOptions`\*\*(?: —|:) `\{([^}]*)\}`/.exec(read(`../../../../docs/${doc}`))?.[1] ?? '';
       const listed = summary.split(',').map((f) => f.trim().replace(/\?$/, '')).filter(Boolean).sort();
       expect(listed).toEqual(FIELDS);
     });

@@ -127,12 +127,12 @@ describe('the Reflow panel on the p. 8 stand-in (#868)', () => {
     const pct = new Intl.NumberFormat('en', { maximumFractionDigits: 1 }).format(Math.round(scale * 1000) / 10);
     expect(entry!.entries.find((e) => e.frame === 'dinero')!.lines).toContain(`dinero: its pictures are at ${pct} %`);
     expect(reflowShort({ frame: 'x', kind: 'textScaled', scale: 0.875 }, 'es')).toBe('87,5 %');
-    expect(reflowSentence({ frame: 'x', kind: 'textScaled', scale: 0.875 }, labelsOf('de'), { locale: 'de' })).toBe('x: sein Text steht bei 87,5 %, damit er passt');
+    expect(reflowSentence({ frame: 'x', kind: 'textScaled', scale: 0.875 }, labelsOf('de'), { locale: 'de' })).toBe('x: sein Text ist auf 87,5 % skaliert, damit er passt');
   });
 
   it('words every kind of event, with its cause, in each locale', () => {
     const l = labelsOf('fr');
-    expect(reflowSentence({ frame: 'gasto', kind: 'resized', fromMm: 62, toMm: 58.5, cause: 'dinero' }, l, { locale: 'fr' })).toBe('gasto a cédé 3,5 mm à dinero');
+    expect(reflowSentence({ frame: 'gasto', kind: 'resized', fromMm: 62, toMm: 58.5, cause: 'dinero' }, l, { locale: 'fr' })).toBe('gasto a cédé 3,5\u00a0mm à dinero');
     expect(reflowSentence({ frame: 'foto', kind: 'resized', fromMm: 40, toMm: 36, axis: 'x' }, DEFAULT_LABELS)).toBe('foto is 4 mm narrower than drawn');
     expect(reflowSentence({ frame: 'b', kind: 'moved', fromMm: 20, toMm: 14, axis: 'x', cause: 'gutter' }, DEFAULT_LABELS)).toBe('b moved left 6 mm to keep clear of the spine');
     expect(reflowSentence({ frame: 'dinero', kind: 'continued', toPage: 8, cause: 'resto' }, DEFAULT_LABELS, { pageLabel: (i) => String(i + 1) })).toBe('dinero continues on page 9, in resto');

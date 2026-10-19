@@ -375,7 +375,7 @@ Eine Seite besteht nicht immer von oben bis unten aus einem einzigen Satz von Sp
 Die Schlussspalten eines Kapitels werden ebenso behandelt. Statt die letzte Seite mit einer vollen und einer fast leeren Spalte zurückzulassen, verteilt eine abschließende Kappung die verbleibenden Zeilen auf beide, und die Ausgleichshebel erledigen den Rest. Explizite Spaltenumbrüche werden respektiert: \`:::columnbreak\` beendet eine Spalte dort, wo der Autor es will, und der Ausgleich lässt den Fuß dieser Spalte in Ruhe.
 
 :::callout{type="try"}
-Öffnen Sie im Bedienfeld **Gestaltung** die Gruppe **Überschriften & Inhalt** und schalten Sie **Spaltenausgleich** aus. Sehen Sie sich den Fuß der Spalten dieses Kapitels an, schalten Sie die Option dann wieder ein und achten Sie darauf, welchen Hebel die Engine auf jeder Seite eingesetzt hat.
+Öffnen Sie im Bedienfeld **Gestaltung** die Gruppe **Überschriften und Inhaltsverzeichnis** und schalten Sie **Spaltenausgleich** aus. Sehen Sie sich den Fuß der Spalten dieses Kapitels an, schalten Sie die Option dann wieder ein und achten Sie darauf, welchen Hebel die Engine auf jeder Seite eingesetzt hat.
 :::
 
 # Abbildungen, Tabellen und Gleitobjekte {lead="Ein Verweis ist ein Versprechen, keine Position. Erwähnen Sie eine Abbildung, und Postext findet ihr einen Platz: die erste freie Stelle nach der Erwähnung, in Lesereihenfolge nummeriert, beschriftet, nie vor den Worten, die sie aufrufen." summary="Wo Ressourcen landen, wie sie nummeriert werden, Tabellen, die sich teilen"}
@@ -588,7 +588,7 @@ Der Editor behält auch das Buch im Blick. Sein Kapitelmenü listet jedes Kapite
 
 ## Konfiguration
 
-Das Bedienfeld **Gestaltung** bearbeitet die gesamte Konfiguration – mehr als fünfhundert Felder – in Gruppen: Seite und Spalten, Schriftsystem, Farben, Typografie, Überschriften und Inhalt, Listen, Abbildungen und Tabellen, Kästen, Comics, Kopf- und Fußzeilen, Teile, Export, Folio (das Buch in 3D) und erweiterte Einstellungen. Ein Suchfeld findet jede Option über ihren Namen, und der Filter **Geändert** zeigt, was von den Standardwerten abweicht. Jedes Feld und jeder Abschnitt lässt sich einzeln zurücksetzen, und die Konfiguration kann als Datei exportiert und importiert werden.
+Das Bedienfeld **Gestaltung** bearbeitet die gesamte Konfiguration – mehr als fünfhundert Felder – in Gruppen: Seite und Spalten, Schriftsystem, Farben, Typografie, Überschriften und Inhaltsverzeichnis, Listen, Abbildungen und Tabellen, Kästen, Comics, Kopf- und Fußzeilen, Teile, Export, Folio (das Buch in 3D) und erweiterte Einstellungen. Ein Suchfeld findet jede Option über ihren Namen, und der Filter **Geändert** zeigt, was von den Standardwerten abweicht. Jedes Feld und jeder Abschnitt lässt sich einzeln zurücksetzen, und die Konfiguration kann als Datei exportiert und importiert werden.
 
 ## Die fünf Ansichten
 
