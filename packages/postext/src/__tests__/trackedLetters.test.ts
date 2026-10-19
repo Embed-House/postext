@@ -45,7 +45,7 @@ function naturalWidth(text: string, size: number, ligatures: boolean): number {
   }
   return w;
 }
-const sizeOf = (font: string): number => parseFloat(/(\d*\.?\d+)px/.exec(font)?.[1] ?? '10');
+const sizeOf = (font: string): number => parseFloat(/(?<![\d.])(\d+(?:\.\d+)?|\.\d+)px/.exec(font)?.[1] ?? '10');
 
 class BrowserCtx {
   font = '10px Body';
