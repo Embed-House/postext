@@ -647,6 +647,8 @@
     "settingsOverriddenOnly": "المعدّلة",
     "settingsOverriddenOnlyEmpty": "لم يُعدَّل أي شيء عن الإعداد المسبق بعد.",
     "settingsModifiedCount": "المعدّلة: __count__",
+    "cardsExpandAll": "توسيع الكل",
+    "cardsCollapseAll": "طي الكل",
     "resources": "الموارد",
     "markdownEditor": "نص الفصل",
     "refPickerHeading": "عنوان",

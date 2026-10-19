@@ -1559,6 +1559,8 @@
     "settingsOverriddenOnly": "Cambiados",
     "settingsOverriddenOnlyEmpty": "Todavía no se ha modificado nada respecto al libro de ejemplo.",
     "settingsModifiedCount": "__count__ modificados",
+    "cardsExpandAll": "Desplegar todo",
+    "cardsCollapseAll": "Plegar todo",
     "resources": "Recursos",
     "markdownEditor": "Texto del capítulo",
     "refPickerHeading": "Título",

@@ -68,12 +68,20 @@ export function focusSettingsEntry(root: HTMLElement, scroller: HTMLElement | nu
     requestAnimationFrame(() => { focusSettingsEntry(root, scroller, focus, attempt + 1); });
     return true;
   }
+  // A folded card (#1031) opens first; its controls are reached next frame.
+  if (entry.hasAttribute('data-item-card') && entry.hasAttribute('data-closed') && attempt < 10) {
+    entry.querySelector<HTMLElement>('[data-item-card-trigger]')?.click();
+    requestAnimationFrame(() => { focusSettingsEntry(root, scroller, focus, attempt + 1); });
+    return true;
+  }
   if (scroller) {
     const top = scroller.scrollTop + entry.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     scroller.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
   }
-  const control = entry.querySelector<HTMLElement>('input, select, textarea, button, [tabindex="0"]');
+  // A card's first control is under its header (the fold button).
+  const body = entry.querySelector<HTMLElement>('[data-item-card-body]') ?? entry;
+  const control = body.querySelector<HTMLElement>('input, select, textarea, button, [tabindex="0"]');
   control?.focus({ preventScroll: true });
   return true;
 }

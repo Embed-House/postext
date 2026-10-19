@@ -647,6 +647,8 @@
     "settingsOverriddenOnly": "Canviats",
     "settingsOverriddenOnlyEmpty": "Encara no s'ha modificat res respecte al preset.",
     "settingsModifiedCount": "__count__ modificats",
+    "cardsExpandAll": "Desplega-ho tot",
+    "cardsCollapseAll": "Plega-ho tot",
     "resources": "Recursos",
     "markdownEditor": "Text del capítol",
     "refPickerHeading": "Títol",

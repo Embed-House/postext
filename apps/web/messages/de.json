@@ -648,6 +648,8 @@
     "settingsOverriddenOnly": "Geändert",
     "settingsOverriddenOnlyEmpty": "Gegenüber dem Beispielbuch wurde noch nichts geändert.",
     "settingsModifiedCount": "__count__ geändert",
+    "cardsExpandAll": "Alle aufklappen",
+    "cardsCollapseAll": "Alle zuklappen",
     "resources": "Ressourcen",
     "markdownEditor": "Kapiteltext",
     "refPickerHeading": "Überschrift",

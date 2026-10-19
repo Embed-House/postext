@@ -647,6 +647,8 @@
     "settingsOverriddenOnly": "已更改",
     "settingsOverriddenOnlyEmpty": "与示例书相比，还没有修改任何设置。",
     "settingsModifiedCount": "已修改__count__项",
+    "cardsExpandAll": "全部展开",
+    "cardsCollapseAll": "全部折叠",
     "resources": "资源",
     "markdownEditor": "章节正文",
     "refPickerHeading": "标题",

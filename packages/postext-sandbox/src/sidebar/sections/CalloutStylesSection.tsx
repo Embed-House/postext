@@ -53,6 +53,10 @@ import {
 } from '../../context/SandboxContext';
 import {
   CollapsibleSection,
+  ItemCard,
+  ItemCardListActions,
+  moveCardState,
+  openCard,
   ColorPicker,
   DimensionInput,
   FontPicker,
@@ -561,16 +565,14 @@ export function CalloutStyleCard({
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden={stored}>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }} data-style-id={style.id}>
-      <div className="mb-2 flex items-center justify-between gap-1">
-        <span
-          className="truncate text-xs font-medium"
-          style={{ color: 'var(--foreground)' }}
-          title={style.name ?? style.id}
-        >
-          {style.name || style.id}
-        </span>
-        <div className="flex items-center">
+    <ItemCard
+      list="calloutStyles"
+      id={style.id}
+      styleId={style.id}
+      title={style.name || style.id}
+      subtitle={style.name && style.name !== style.id ? style.id : undefined}
+      actions={
+        <>
           <CardButton label={labels.calloutStyleDuplicate} onClick={onDuplicate}>
             <Copy size={13} aria-hidden="true" />
           </CardButton>
@@ -581,8 +583,9 @@ export function CalloutStyleCard({
               </CardButton>
             )}
           </ConfirmPopover>
-        </div>
-      </div>
+        </>
+      }
+    >
 
       <div className="mb-2 flex flex-col gap-2">
         <Field
@@ -1687,7 +1690,7 @@ export function CalloutStyleCard({
           onReset={() => resetGroupField('lists', 'itemSpacing')}
         />
       </CollapsibleSection>
-    </div>
+    </ItemCard>
     </SearchScope>
   );
 }
@@ -1728,7 +1731,9 @@ export function useCalloutStyleEdits() {
   };
 
   const addStyle = () => {
-    write([...styles, { id: nextStyleId(styles), name: labels.calloutStyleNewName }]);
+    const id = nextStyleId(styles);
+    openCard('calloutStyles', id);
+    write([...styles, { id, name: labels.calloutStyleNewName }]);
   };
 
   const duplicateStyle = (id: string) => {
@@ -1737,6 +1742,7 @@ export function useCalloutStyleEdits() {
     if (!source) return;
     const taken = new Set(styles.map((s) => s.id));
     const copy: CalloutStyleConfig = structuredClone({ ...source, id: uniqueId(`${source.id}-copy`, taken) });
+    openCard('calloutStyles', copy.id);
     const next = styles.slice();
     next.splice(index + 1, 0, copy);
     write(next);
@@ -1759,6 +1765,7 @@ export function useCalloutStyleEdits() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
+    moveCardState('calloutStyles', id, nextId);
     const plan = planRename({ calloutStyles: raw, pageTemplates }, styles, chapters, id, nextId);
     applyStyleRewrite(dispatch, { calloutStyles: raw, pageTemplates }, plan, labels.frameStylesRenamed.replace('__from__', id).replace('__to__', nextId), activeChapterId);
   };
@@ -1818,6 +1825,7 @@ export const CalloutStylesSection = memo(function CalloutStylesSection() {
           {labels.calloutStylesEmpty}
         </p>
       )}
+      <ItemCardListActions list="calloutStyles" ids={styles.map((s) => s.id)} />
       {styles.map((style) => (
         <CalloutStyleCard key={style.id} {...cardProps(style)} />
       ))}

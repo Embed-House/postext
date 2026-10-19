@@ -648,6 +648,8 @@
     "settingsOverriddenOnly": "Modificate",
     "settingsOverriddenOnlyEmpty": "Non hai ancora modificato nulla rispetto al preset.",
     "settingsModifiedCount": "__count__ modificate",
+    "cardsExpandAll": "Espandi tutto",
+    "cardsCollapseAll": "Comprimi tutto",
     "resources": "Risorse",
     "markdownEditor": "Testo del capitolo",
     "refPickerHeading": "Titolo",

@@ -16,6 +16,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   settingsOverriddenOnly: 'Changed',
   settingsOverriddenOnlyEmpty: 'Nothing has been modified from the preset yet.',
   settingsModifiedCount: '__count__ modified',
+  cardsExpandAll: 'Expand all',
+  cardsCollapseAll: 'Collapse all',
   resources: 'Resources',
   markdownEditor: 'Chapter text',
   refPickerHeading: 'Heading',

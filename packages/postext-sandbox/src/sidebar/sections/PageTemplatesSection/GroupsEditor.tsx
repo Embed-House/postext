@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import type { AnchorEdge, Dimension, ElementPlacement, FrameGroupConfig } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import { DimensionInput, FieldRow, SelectInput, TextControl } from '../../../controls';
+import { DimensionInput, FieldRow, ItemCard, ItemCardListActions, moveCardState, openCard, SelectInput, TextControl } from '../../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../../ui';
 import { addGroup, moveMember, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits';
 import { resolveAt, usePageTemplates } from './model';
@@ -26,8 +26,10 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
   const own = templateAt(templates, templateId)?.template;
   const entries = (scope === 'base' ? own?.groups : own?.variants?.[scope]?.groups) ?? [];
 
+  const cardList = `templateGroups:${templateId}:${scope}`;
   const add = () => {
     const name = uniqueName(namesInUse(templates, templateId), 'group');
+    openCard(cardList, name);
     write(addGroup(templates, templateId, scope, { name, kind: 'stack', frames: [] }));
   };
 
@@ -36,12 +38,14 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
       {template.groups.length === 0 && (
         <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupsEmpty}</p>
       )}
+      <ItemCardListActions list={cardList} ids={template.groups.map((g) => g.name)} />
       {template.groups.map((g) => {
         const entry = entries.find((e) => e.name === g.name);
         const inOther = new Set(template.groups.filter((o) => o.name !== g.name).flatMap((o) => o.frames));
         return (
           <GroupCard
             key={g.name}
+            cardList={cardList}
             group={g}
             entry={entry}
             frames={template.frames.map((f) => f.name)}
@@ -49,7 +53,9 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
             taken={inOther}
             onChange={(patch) => write(updateGroup(templates, templateId, scope, g.name, patch))}
             onRename={(next) => {
-              if (!namesInUse(templates, templateId).has(next)) write(renameFrame(templates, templateId, g.name, next));
+              if (namesInUse(templates, templateId).has(next)) return;
+              moveCardState(cardList, g.name, next);
+              write(renameFrame(templates, templateId, g.name, next));
             }}
             onRemove={() => write(removeGroup(templates, templateId, scope, g.name))}
           />
@@ -63,6 +69,8 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
 }
 
 interface GroupCardProps {
+  /** Where the card's fold is kept (#1031). */
+  cardList: string;
   group: { name: string; kind: 'stack' | 'row'; frames: string[]; gap: Dimension; align: string; placement?: ElementPlacement };
   entry: FrameGroupConfig | undefined;
   frames: string[];
@@ -76,7 +84,7 @@ interface GroupCardProps {
   onRemove: () => void;
 }
 
-function GroupCard({ group, entry, frames, targets, taken, onChange, onRename, onRemove }: GroupCardProps) {
+function GroupCard({ cardList, group, entry, frames, targets, taken, onChange, onRename, onRemove }: GroupCardProps) {
   const labels = useSandboxLabels();
   const [draft, setDraft] = useState(group.name);
   useEffect(() => setDraft(group.name), [group.name]);
@@ -89,13 +97,16 @@ function GroupCard({ group, entry, frames, targets, taken, onChange, onRename, o
   };
   const listed = [...members.filter((m) => frames.includes(m)), ...frames.filter((f) => !members.includes(f))];
   return (
-    <div className="mb-2 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
-      <div className="mb-1 flex items-center justify-between gap-1">
-        <span className="truncate text-xs font-medium">{group.name}</span>
+    <ItemCard
+      list={cardList}
+      id={group.name}
+      title={group.name}
+      actions={
         <ConfirmPopover message={labels.pageTemplatesGroupDeleteConfirm.replace('__name__', group.name)} onConfirm={onRemove}>
           {({ open }) => <IconButton label={labels.pageTemplatesGroupDelete} icon={<Trash2 size={12} aria-hidden="true" />} onClick={open} />}
         </ConfirmPopover>
-      </div>
+      }
+    >
       <FieldRow label={labels.pageTemplatesGroupName}>
         <TextControl
           value={draft}
@@ -162,7 +173,7 @@ function GroupCard({ group, entry, frames, targets, taken, onChange, onRename, o
           })}
         </ul>
       </fieldset>
-    </div>
+    </ItemCard>
   );
 }
 

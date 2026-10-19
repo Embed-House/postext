@@ -1,11 +1,11 @@
 'use client';
 
 import { memo } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import type { ComicCastMember } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, FontPicker, SelectInput } from '../../../controls';
-import { Button } from '../../../ui';
+import { CollapsibleSection, ColorPicker, FontPicker, ItemCard, ItemCardListActions, moveCardState, openCard, SelectInput } from '../../../controls';
+import { Button, ConfirmPopover, IconButton } from '../../../ui';
 import { SearchScope } from '../../search/SearchScope';
 import { nextFreeId, removeById, renameById, resetFieldById, sanitizeSpeakerId, setComicsField, upsertById } from './comicsConfig';
 import { ComicsCardHeader } from './ComicsCardHeader';
@@ -42,6 +42,7 @@ export const ComicsCastSection = memo(function ComicsCastSection() {
       resetConfirmMessage={labels.comicsCastResetConfirm}
     >
       {cast.length === 0 && <p className="mb-2 text-xs text-(--slate) [text-wrap:pretty]">{labels.comicsCastEmpty}</p>}
+      <ItemCardListActions list="comicsCast" ids={cast.map((x) => x.id)} />
       {cast.map((member) => {
         const unset = (field: keyof ComicCastMember) => member[field] === undefined;
         const reset = (field: keyof ComicCastMember) => () => setList(resetFieldById(cast, member.id, field));
@@ -49,8 +50,19 @@ export const ComicsCastSection = memo(function ComicsCastSection() {
         const style = resolved.balloonStyles.find((s) => s.id === member.balloonStyle) ?? speech;
         return (
           <SearchScope key={member.id} title={`${member.name ?? ''} ${member.id}`} overridden>
-            <div className="mb-3 rounded border border-(--rule) p-2">
+            <ItemCard
+              list="comicsCast"
+              id={member.id}
+              title={member.name || member.id}
+              subtitle={member.name && member.name !== member.id ? member.id : undefined}
+              actions={
+                <ConfirmPopover message={labels.comicsCastDeleteConfirm} onConfirm={() => setList(removeById(cast, member.id))}>
+                  {({ open }) => <IconButton label={`${labels.comicsCastDelete}: ${member.name || member.id}`} icon={<Trash2 size={13} />} destructive onClick={open} />}
+                </ConfirmPopover>
+              }
+            >
               <ComicsCardHeader
+                hideTitle
                 title={member.name || member.id}
                 id={member.id}
                 sanitizeId={sanitizeSpeakerId}
@@ -60,7 +72,7 @@ export const ComicsCastSection = memo(function ComicsCastSection() {
                 idAria={labels.comicsCastIdAria}
                 idHint={labels.comicsCastUsageHint.replace('__id__', member.id)}
                 idDuplicateHint={labels.comicsCastIdDuplicate}
-                onRename={(nextId) => setList(renameById(cast, member.id, nextId))}
+                onRename={(nextId) => { moveCardState('comicsCast', member.id, nextId); setList(renameById(cast, member.id, nextId)); }}
                 name={member.name}
                 nameLabel={labels.comicsCastNameLabel}
                 nameHelp={labels.comicsCastNameHelp}
@@ -68,7 +80,6 @@ export const ComicsCastSection = memo(function ComicsCastSection() {
                 onName={(name) => (name === undefined ? reset('name')() : change({ name }))}
                 deleteLabel={labels.comicsCastDelete}
                 deleteConfirm={labels.comicsCastDeleteConfirm}
-                onRemove={() => setList(removeById(cast, member.id))}
               />
               <SelectInput
                 label={labels.comicsCastBalloonStyle}
@@ -107,7 +118,7 @@ export const ComicsCastSection = memo(function ComicsCastSection() {
                 searchPlaceholder={labels.bodyFontSearch}
                 noResultsLabel={labels.bodyFontNoResults}
               />
-            </div>
+            </ItemCard>
           </SearchScope>
         );
       })}
@@ -115,7 +126,11 @@ export const ComicsCastSection = memo(function ComicsCastSection() {
         variant="outline"
         size="xs"
         icon={<Plus size={12} />}
-        onClick={() => setList([...cast, { id: nextFreeId('speaker', cast.map((c) => c.id)) }])}
+        onClick={() => {
+          const id = nextFreeId('speaker', cast.map((c) => c.id));
+          openCard('comicsCast', id);
+          setList([...cast, { id }]);
+        }}
         className="mt-1"
       >
         {labels.comicsCastAdd}

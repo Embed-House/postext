@@ -1,11 +1,11 @@
 'use client';
 
 import { memo } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import type { NamedPanelStyleConfig } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import { CollapsibleSection } from '../../../controls';
-import { Button } from '../../../ui';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../../controls';
+import { Button, ConfirmPopover, IconButton } from '../../../ui';
 import { SearchScope } from '../../search/SearchScope';
 import { nextFreeId, removeById, renameById, resetFieldById, setComicsField, slugifyStyleId, upsertById } from './comicsConfig';
 import { ComicsCardHeader } from './ComicsCardHeader';
@@ -30,12 +30,24 @@ export const ComicsPanelStylesSection = memo(function ComicsPanelStylesSection()
       resetConfirmMessage={labels.comicsPanelStylesResetConfirm}
     >
       {styles.length === 0 && <p className="mb-2 text-xs text-(--slate)">{labels.comicsPanelStylesEmpty}</p>}
+      <ItemCardListActions list="comicsPanelStyles" ids={styles.map((x) => x.id)} />
       {styles.map((style) => {
         const r = resolved.panelStyles.find((s) => s.id === style.id) ?? { ...resolved.panel, id: style.id, name: style.id };
         return (
           <SearchScope key={style.id} title={`${style.name ?? ''} ${style.id}`} overridden>
-            <div className="mb-3 rounded border border-(--rule) p-2">
+            <ItemCard
+              list="comicsPanelStyles"
+              id={style.id}
+              title={style.name || style.id}
+              subtitle={style.name && style.name !== style.id ? style.id : undefined}
+              actions={
+                <ConfirmPopover message={labels.comicsPanelStyleDeleteConfirm} onConfirm={() => setList(removeById(styles, style.id))}>
+                  {({ open }) => <IconButton label={`${labels.comicsStyleDelete}: ${style.name || style.id}`} icon={<Trash2 size={13} />} destructive onClick={open} />}
+                </ConfirmPopover>
+              }
+            >
               <ComicsCardHeader
+                hideTitle
                 title={style.name || style.id}
                 id={style.id}
                 sanitizeId={slugifyStyleId}
@@ -45,7 +57,7 @@ export const ComicsPanelStylesSection = memo(function ComicsPanelStylesSection()
                 idAria={labels.comicsPanelStyleIdAria}
                 idHint={labels.comicsPanelStyleUsageHint.replaceAll('__id__', style.id)}
                 idDuplicateHint={labels.comicsStyleIdDuplicate}
-                onRename={(nextId) => setList(renameById(styles, style.id, nextId))}
+                onRename={(nextId) => { moveCardState('comicsPanelStyles', style.id, nextId); setList(renameById(styles, style.id, nextId)); }}
                 name={style.name}
                 nameLabel={labels.comicsStyleNameLabel}
                 nameHelp={labels.styleNameHelp}
@@ -53,7 +65,6 @@ export const ComicsPanelStylesSection = memo(function ComicsPanelStylesSection()
                 onName={(name) => setList(upsertById(styles, style.id, { name }))}
                 deleteLabel={labels.comicsStyleDelete}
                 deleteConfirm={labels.comicsPanelStyleDeleteConfirm}
-                onRemove={() => setList(removeById(styles, style.id))}
               />
               <PanelStyleFields
                 raw={style}
@@ -62,7 +73,7 @@ export const ComicsPanelStylesSection = memo(function ComicsPanelStylesSection()
                 onResetField={(field) => setList(resetFieldById(styles, style.id, field))}
                 fieldIdPrefix={`comics-panelStyle-${style.id}`}
               />
-            </div>
+            </ItemCard>
           </SearchScope>
         );
       })}
@@ -70,7 +81,11 @@ export const ComicsPanelStylesSection = memo(function ComicsPanelStylesSection()
         variant="outline"
         size="xs"
         icon={<Plus size={12} />}
-        onClick={() => setList([...styles, { id: nextFreeId('panel', styles.map((s) => s.id)), name: labels.comicsPanelStyleNewName }])}
+        onClick={() => {
+          const id = nextFreeId('panel', styles.map((s) => s.id));
+          openCard('comicsPanelStyles', id);
+          setList([...styles, { id, name: labels.comicsPanelStyleNewName }]);
+        }}
         className="mt-1"
       >
         {labels.comicsPanelStyleAdd}

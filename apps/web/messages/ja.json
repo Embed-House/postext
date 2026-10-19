@@ -647,6 +647,8 @@
     "settingsOverriddenOnly": "変更あり",
     "settingsOverriddenOnlyEmpty": "プリセットから変更した設定はまだありません。",
     "settingsModifiedCount": "__count__件の変更",
+    "cardsExpandAll": "すべて展開",
+    "cardsCollapseAll": "すべて折りたたむ",
     "resources": "リソース",
     "markdownEditor": "章の本文",
     "refPickerHeading": "見出し",

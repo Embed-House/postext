@@ -5,7 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import type { ChipStyleConfig, DimensionUnit, ResolvedBodyTextConfig, ResolvedChipStyleConfig } from 'postext';
 import { DEFAULT_CHIP_STYLES, resolveBodyTextConfig, resolveChipStylesConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, DimensionInput, FontPicker, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, ToggleSwitch } from '../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
@@ -74,17 +74,20 @@ function ChipStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden={stored}>
-    <div className="mb-3 rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
-      <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="truncate text-xs font-medium" style={{ color: 'var(--foreground)' }} title={style.name ?? style.id}>
-          {style.name || style.id}
-        </span>
+    <ItemCard
+      list="chipStyles"
+      id={style.id}
+      styleId={style.id}
+      title={style.name || style.id}
+      subtitle={style.name && style.name !== style.id ? style.id : undefined}
+      actions={
         <ConfirmPopover message={labels.chipStyleDeleteConfirm} onConfirm={onRemove}>
           {({ open }) => (
             <IconButton label={labels.chipStyleDelete} icon={<Trash2 size={13} />} destructive onClick={open} />
           )}
         </ConfirmPopover>
-      </div>
+      }
+    >
 
       <div className="mb-2 flex flex-col gap-2">
         <FieldRow
@@ -276,7 +279,7 @@ function ChipStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
           onReset={() => onResetField('gap')}
         />
       </CollapsibleSection>
-    </div>
+    </ItemCard>
     </SearchScope>
   );
 }
@@ -298,7 +301,9 @@ export const ChipStylesSection = memo(function ChipStylesSection() {
   };
 
   const addStyle = () => {
-    write([...styles, { id: nextStyleId(styles), name: labels.chipStyleNewName }]);
+    const id = nextStyleId(styles);
+    openCard('chipStyles', id);
+    write([...styles, { id, name: labels.chipStyleNewName }]);
   };
 
   const updateStyle = (id: string, partial: Partial<ChipStyleConfig>) => {
@@ -318,6 +323,7 @@ export const ChipStylesSection = memo(function ChipStylesSection() {
 
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
+    moveCardState('chipStyles', id, nextId);
     write(styles.map((s) => (s.id === id ? { ...s, id: nextId } : s)));
   };
 
@@ -339,6 +345,7 @@ export const ChipStylesSection = memo(function ChipStylesSection() {
           {labels.chipStylesEmpty}
         </p>
       )}
+      <ItemCardListActions list="chipStyles" ids={styles.map((s) => s.id)} />
       {styles.map((style, i) => (
         <ChipStyleCard
           key={style.id}

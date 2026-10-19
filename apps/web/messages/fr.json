@@ -647,6 +647,8 @@
     "settingsOverriddenOnly": "Modifiés",
     "settingsOverriddenOnlyEmpty": "Rien n’a encore été modifié par rapport au préréglage.",
     "settingsModifiedCount": "__count__ modifié(s)",
+    "cardsExpandAll": "Tout déplier",
+    "cardsCollapseAll": "Tout replier",
     "resources": "Ressources",
     "markdownEditor": "Texte du chapitre",
     "refPickerHeading": "Titre",

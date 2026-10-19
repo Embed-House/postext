@@ -16,6 +16,9 @@ export interface SandboxLabels {
   settingsOverriddenOnly: string;
   settingsOverriddenOnlyEmpty: string;
   settingsModifiedCount: string;
+  /** A Design panel list with foldable cards (#1031). */
+  cardsExpandAll: string;
+  cardsCollapseAll: string;
   resources: string;
   markdownEditor: string;
   refPickerHeading: string;

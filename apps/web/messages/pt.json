@@ -647,6 +647,8 @@
     "settingsOverriddenOnly": "Alteradas",
     "settingsOverriddenOnlyEmpty": "Ainda não há nada alterado em relação à predefinição.",
     "settingsModifiedCount": "__count__ alteradas",
+    "cardsExpandAll": "Expandir tudo",
+    "cardsCollapseAll": "Recolher tudo",
     "resources": "Recursos",
     "markdownEditor": "Texto do capítulo",
     "refPickerHeading": "Título",
