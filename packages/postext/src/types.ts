@@ -3865,6 +3865,11 @@ export interface ChipStyleConfig {
    *  not stretched by justification). Nothing is added at a line edge or
    *  against glued punctuation. Default `0.25em`. */
   gap?: Dimension;
+  /** Paint the chip's letters as dots to trace (see {@link TextDotsStyle};
+   *  em = the chip text). With no fill, no outline and no padding, a chip
+   *  is a dotted word in the line: `:chip[gato]{style="dots"}`. Absent:
+   *  filled. */
+  dotted?: TextDotsStyle;
 }
 
 /**
@@ -3941,6 +3946,8 @@ export interface ResolvedChipStyleConfig {
   bold: boolean;
   italic: boolean;
   gap: Dimension;
+  /** Unset: the letters are filled. */
+  dotted?: TextDotsStyle;
 }
 
 /** Parity constraint for a forced page break.
@@ -6393,6 +6400,35 @@ export interface ElementBoxStyle {
  *  `designTextTruncated` content warning. */
 export type TextOverflow = 'wrap' | 'ellipsis-start' | 'ellipsis-end' | 'ellipsis-middle' | 'clip';
 
+/**
+ * Letters painted as round dots along the middle of their strokes, for a
+ * child to trace (a handwriting workbook, #1017): the text is laid out as
+ * it would be filled (same face, same widths) and only its ink changes.
+ * The dots follow the face as the browser shapes it, so a joined school
+ * script keeps its joins and an Arabic word its forms; a mark too small
+ * for a row (the dot of an i, an accent, a vowel sign) becomes one dot.
+ * Any weight works; the thinnest weight of a face gives the most even
+ * rows. The PDF keeps the text, invisible, under the dots (search, copy,
+ * tagging). The dots take the text colour.
+ */
+export interface TextDotsStyle {
+  /** Distance between the centres of two dots along a stroke (em = the
+   *  text size). Default `0.1em`. */
+  spacing?: Dimension;
+  /** Diameter of a dot. Default `0.05em`. */
+  size?: Dimension;
+}
+
+/** A design text set again after itself along its line (#1017): a row of
+ *  copies of a word to trace, a band of a repeated name. */
+export interface DesignTextRepeat {
+  /** Room between two copies. Default `1em`. */
+  gap?: Dimension;
+  /** At most this many copies, the first included. Default: as many whole
+   *  copies as fit in the element's room. */
+  count?: number;
+}
+
 /** Outline drawn around the glyphs of a design text (a hollow display
  *  number, a title that stands off a photograph). */
 export interface DesignTextStroke {
@@ -6525,6 +6561,15 @@ export interface DesignTextElement {
   inlineMarks?: boolean;
   /** Outline drawn around the glyphs (see `DesignTextStroke`). */
   stroke?: DesignTextStroke;
+  /** Paint the letters as dots to trace (see {@link TextDotsStyle}).
+   *  Absent: filled. Not on a vertical text. */
+  dotted?: TextDotsStyle;
+  /** Set a text of one line again after itself, `gap` apart, as many whole
+   *  times as its room holds (or `count`), from the start side of its
+   *  direction; the copies are one line, aligned as a whole (see
+   *  {@link DesignTextRepeat}). A text that wraps to several lines, a
+   *  vertical one or one with a drop cap is set once. */
+  repeat?: DesignTextRepeat;
   /** `'vertical-rl'`: the text is set vertically, top to bottom, lines
    *  right to left, with the characters upright (a running head down the
    *  fore-edge of a vertical book, a vertical title beside a horizontal

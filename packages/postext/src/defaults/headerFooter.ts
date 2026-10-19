@@ -403,6 +403,8 @@ function resolveTextElement(el: DesignTextElement, idx: number, kind: DesignSlot
     ...(el.paragraphIndent ? { paragraphIndent: el.paragraphIndent } : {}),
     ...(el.inlineMarks ? { inlineMarks: true } : {}),
     ...(el.stroke ? { stroke: el.stroke } : {}),
+    ...(el.dotted ? { dotted: el.dotted } : {}),
+    ...(el.repeat ? { repeat: el.repeat } : {}),
     ...(el.reserve === false ? { reserve: false } : {}),
     ...(el.pin ? { pin: true } : {}),
     ...(el.writingMode === 'vertical-rl' ? { writingMode: 'vertical-rl' as const } : {}),

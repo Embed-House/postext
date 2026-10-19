@@ -172,6 +172,7 @@ function textPrimitiveToBlock(prim: ResolvedTextPrimitive): VDTDesignTextBlock {
       ? { letterSpacingPx: prim.letterSpacingPx }
       : {}),
     ...(prim.stroke ? { stroke: { ...prim.stroke } } : {}),
+    ...(prim.dotted ? { dotted: { ...prim.dotted } } : {}),
     ...(prim.direction ? { direction: prim.direction } : {}),
     ...(prim.vertical ? { vertical: verticalTextOf(prim) } : {}),
   };

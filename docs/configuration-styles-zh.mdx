@@ -445,6 +445,12 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>0.25em</code></td>
       <td>隔着词间空格时，框与相邻词语或行内标签之间保留的最小间距；较窄的空格在行内标签的前进宽度内补足，因此两端对齐永远不会把它吃掉。在行首行尾或紧贴标点处不额外添加。</td>
     </tr>
+    <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>把行内标签的字母画成一串串圆点供描写，与设计文本的<a href="/zh/docs/configuration-headers-footers#行内标记与描边"><code>dotted</code></a>相同，其中以em表示的长度相对于行内标签的文字。没有背景、轮廓和内边距时，行内标签就是行中一个由圆点组成的词，例如：<code>:chip[gato]&#123;style="dots"&#125;</code>。</td>
+    </tr>
   </tbody>
 </table>
 

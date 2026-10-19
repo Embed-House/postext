@@ -603,6 +603,8 @@ export interface ChipBox {
    *  otherwise. */
   paddingBottomPx?: number;
   gapPx: number;
+  /** Letters painted as dots to trace (the style's `dotted`), px. */
+  dotted?: { spacingPx: number; sizePx: number };
 }
 
 /** Convenience discriminants for inline span iteration. */

@@ -134,6 +134,8 @@ describe("package exports", () => {
       "headingDesignOverhangAbove",
       "hangingPunctuationOverhang",
       "lineInkExtent",
+      "textDots",
+      "clearTextDots",
       "joinedWordPieces",
       "lineWordSegments",
       "lineWordSegmentsInOrder",

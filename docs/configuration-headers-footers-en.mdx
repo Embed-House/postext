@@ -206,6 +206,18 @@ The defaults in the table below are those of a text element you add yourself. Th
       <td>Outline drawn around the letters: <code>width</code> (a <code>Dimension</code>, centred on the glyph edges), <code>color</code> (default: the text colour; a drop cap takes its own colour) and <code>hollow</code> (<code>true</code> paints the outline only). See <a href="#inline-marks-and-outlines">Inline marks and outlines</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Paint the letters as rows of dots along the middle of their strokes, for a child to trace: <code>spacing</code> between two dots (default <code>0.1em</code>) and <code>size</code> of a dot (default <code>0.05em</code>), both relative to the text size. The layout does not change. Not on a vertical text. See <a href="#inline-marks-and-outlines">Inline marks and outlines</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Set a text of one line again after itself, <code>gap</code> apart (default <code>1em</code>), as many whole times as its room holds, or <code>count</code> times at most: a row of copies of a word to trace. The copies are one line, aligned as a whole and started on the side the text's direction starts on. A text that wraps, a vertical one or one with a drop cap is set once.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -356,6 +368,18 @@ Marks are read after the placeholders are filled in, so a value can carry them: 
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` paints the letters as rows of dots for a child to trace, the exercise of a handwriting workbook. The text is measured and placed as if it were filled; the browser draws it on a small canvas and the dots are laid along the middle of each stroke, `spacing` apart, so a joined school script keeps its joins and an Arabic word its forms. A mark too small for a row (the dot of an i, an accent, a vowel sign) becomes one dot. Any weight works, and the thinnest weight of a face gives the most even rows. The dots take the text colour and replace the fill and `stroke`. The canvas, the HTML (an SVG over the text, left transparent) and the PDF paint the same dots; the PDF keeps the text under them, invisible (render mode 3), so it can still be searched, copied and tagged.
+
+`repeat` sets a one-line text again after itself until its room is full: with `{boxText}` as content and a `fill` width, a box style prints a row of copies of whatever word the box holds in the Markdown, and editing the word changes every copy and its dots.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 In the PDF, bold and italic runs embed the matching faces of the element's family, so the font provider must supply them.

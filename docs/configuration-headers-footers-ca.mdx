@@ -205,6 +205,18 @@ Els valors per defecte de la taula següent són els d'un element de text que af
       <td>Contorn traçat al voltant de les lletres: <code>width</code> (un <code>Dimension</code>, centrat a les vores dels glifs), <code>color</code> (per defecte, el del text; la caplletra pren el seu propi color) i <code>hollow</code> (<code>true</code> pinta només el contorn). Vegeu <a href="#marques-en-línia-i-contorns">Marques en línia i contorns</a>.</td>
     </tr>
     <tr>
+      <td><code>dotted</code></td>
+      <td><code>&#123; spacing?, size? &#125;</code></td>
+      <td>—</td>
+      <td>Pinta les lletres com a fileres de punts pel mig dels traços, perquè un infant les repassi: <code>spacing</code> entre dos punts (per defecte <code>0.1em</code>) i <code>size</code> de cada punt (per defecte <code>0.05em</code>), tots dos relatius a la mida del text. La composició no canvia. No s’aplica a un text vertical. Vegeu <a href="#marques-en-línia-i-contorns">Marques en línia i contorns</a>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; gap?, count? &#125;</code></td>
+      <td>—</td>
+      <td>Torna a compondre un text d’una línia darrere seu, separat per <code>gap</code> (per defecte <code>1em</code>), tantes vegades senceres com hi càpiguen, o <code>count</code> vegades com a màxim: una filera de còpies d’una paraula per repassar. Les còpies formen una sola línia, s’alineen en bloc i comencen pel costat on comença la direcció del text. Un text que ocupa més d’una línia, un de vertical o un amb caplletra es compon una sola vegada.</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
@@ -355,6 +367,18 @@ Les marques es llegeixen després de substituir els marcadors, així que un valo
   "color": { "hex": "#1d3557", "model": "hex" },
   "stroke": { "width": { "value": 1.5, "unit": "pt" }, "hollow": true },
   "placement": { "anchor": { "to": "page", "edge": "bottom-right" }, "offset": { "x": { "value": -15, "unit": "mm" }, "y": { "value": -20, "unit": "mm" } } } }
+```
+
+`dotted` pinta les lletres com a fileres de punts perquè un infant les repassi, l’exercici d’un quadern de cal·ligrafia. El text es mesura i es col·loca com si fos ple; el navegador el dibuixa en un llenç petit i els punts es reparteixen pel mig de cada traç, separats per `spacing`, de manera que una lletra escolar lligada conserva els enllaços i una paraula àrab les seves formes. Un signe massa petit per a una filera (el punt de la i, un accent, un signe vocàlic) queda en un sol punt. Qualsevol pes serveix, i el més fi d’una família dona les fileres més regulars. Els punts prenen el color del text i substitueixen el farciment i el `stroke`. El llenç, l’HTML (un SVG damunt del text, que queda transparent) i el PDF pinten els mateixos punts; el PDF conserva el text a sota, invisible (mode de renderització de text 3), perquè es pugui cercar, copiar i etiquetar.
+
+`repeat` torna a compondre un text d’una línia darrere seu fins a omplir l’espai: amb `{boxText}` com a contingut i una amplada `fill`, un estil d’avís imprimeix una filera de còpies de la paraula que el requadre porti al Markdown, i en canviar la paraula canvien totes les còpies i els seus punts.
+
+```json
+{ "kind": "text", "id": "copies", "content": "{boxText}", "fontFamily": "Playwrite ES", "fontWeight": 100,
+  "fontSize": { "value": 20, "unit": "pt" }, "color": { "hex": "#4d5b76", "model": "hex" },
+  "dotted": { "size": { "value": 0.06, "unit": "em" } },
+  "repeat": { "gap": { "value": 8, "unit": "mm" } },
+  "placement": { "anchor": { "to": "container", "edge": "top-left" }, "size": { "width": "fill" } } }
 ```
 
 Al PDF, els trams en negreta i en cursiva incrusten les variants corresponents de la família de l'element, així que el proveïdor de fonts les ha de subministrar.
