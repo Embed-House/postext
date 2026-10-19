@@ -496,7 +496,9 @@ the `CalloutCut` cursor, re-broken at the new width. A frame is cut as the runni
 (`headings.keepWithNext`), a cut between the items of a list leaves two items on each side
 (`bodyText.avoidOrphansInLists` / `avoidWidowsInLists`; one when off), and a list of up to
 `bodyText.shortListMaxItems` items under `shortListSplit: 'avoid'` is not cut between items. When
-no cut allows it the piece ends before the heading or the list, or inside one of its items. Marks: `overflow.mark` text (string, or the
+no cut allows it the piece ends before the heading or the list, or inside one of its items. A frame
+set in columns (and any `:::columns` group) offers no column cut right after a heading either, nor
+inside one: the heading opens the next column with its text (#1019). Marks: `overflow.mark` text (string, or the
 localized default from the engine's continuation words, as tables' `continuesLines` uses: es
 «sigue», en «continued», …; `false` for none), set at the end of the cut piece. Added pages keep
 page numbering, running heads and parity rules (they are ordinary pages with `role:

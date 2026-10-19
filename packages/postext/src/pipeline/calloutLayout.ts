@@ -1569,16 +1569,20 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     // Where the stack ends, a `:::space` after its last item included.
     return Object.assign(stack, { end: gst.cursorY });
   };
-  /** The galley of stacked items, for the split code (see `columnsGroup.ts`). */
+  /** The galley of stacked items, for the split code (see `columnsGroup.ts`).
+   *  A heading is never cut, and under `headings.keepWithNext` no cut
+   *  follows it: it goes to the next column with what it heads (#1019). */
   const galleyOf = (stack: readonly GroupItem[]): GalleyItem[] => stack.map((it) => {
     const blk = it.blocks[0]!;
-    const cuttable = it.unit.kind === 'block' && blk.type !== 'resource' && blk.type !== 'mathDisplay' && blk.lines.length > 1 && !blk.mathRender;
+    const heading = it.unit.kind === 'block' && blk.type === 'heading';
+    const cuttable = it.unit.kind === 'block' && !heading && blk.type !== 'resource' && blk.type !== 'mathDisplay' && blk.lines.length > 1 && !blk.mathRender;
     return {
       child: it.k,
       lineBase: it.lineBase,
       y: blk.bbox.y,
       height: blk.bbox.height,
       ...(cuttable ? { lineBottoms: blk.lines.map((l) => l.bbox.y + l.bbox.height - blk.bbox.y) } : {}),
+      ...(heading && input.resolved.headings.keepWithNext ? { keepWithNext: true } : {}),
     };
   });
   /** A column start in a group's stack: before item `block`, or past its

@@ -27,6 +27,9 @@ export interface GalleyItem {
    *  relative to `y`. Absent for an item never cut (a figure, a table, a
    *  display formula, a nested box, a one-line paragraph). */
   lineBottoms?: number[];
+  /** A heading under `headings.keepWithNext`: no cut right after it, so
+   *  it never closes a column (#1019). */
+  keepWithNext?: boolean;
 }
 
 /** Where a galley may be cut: before item `item` (`line` 0), or after the
@@ -45,14 +48,15 @@ const EPS = 0.01;
 /** The places a galley may be cut, in order (the galley's start and end
  *  are not among them). A cut inside a text item leaves at least
  *  `minLines` of its lines before it and `minAfter` (default `minLines`)
- *  after it, counted over this galley's part of it. */
+ *  after it, counted over this galley's part of it. An item that keeps
+ *  with the next one (a heading) is never followed by a cut. */
 export function galleyBreaks(items: readonly GalleyItem[], minLines: number, minAfter = minLines): GalleyBreak[] {
   const min = Math.max(1, minLines);
   const after = Math.max(1, minAfter);
   const out: GalleyBreak[] = [];
   items.forEach((it, i) => {
-    if (i > 0) {
-      const prev = items[i - 1]!;
+    const prev = items[i - 1];
+    if (prev && !prev.keepWithNext) {
       out.push({ item: i, line: 0, endY: prev.y + prev.height, startY: it.y });
     }
     const lines = it.lineBottoms;
