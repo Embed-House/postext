@@ -76,7 +76,21 @@ function extractMetadataFromSource(source: string): Omit<DocMeta, "slug"> {
   };
 }
 
+const PRODUCTION = process.env.NODE_ENV === "production";
+const DEV_TTL_MS = 1500;
+let loadedDocs: { at: number; docs: DocEntry[] } | null = null;
+
+/** Every doc with its locales, in sidebar order. Read once in production;
+ *  elsewhere at most every 1.5 s, so an edited page shows in development
+ *  and a rendition of every page (llms-full.txt, the Markdown routes) does
+ *  not reread the whole folder once per page. Treat it as read-only. */
 export function getAllDocs(): DocEntry[] {
+  if (loadedDocs && (PRODUCTION || Date.now() - loadedDocs.at < DEV_TTL_MS)) return loadedDocs.docs;
+  loadedDocs = { at: Date.now(), docs: readAllDocs() };
+  return loadedDocs.docs;
+}
+
+function readAllDocs(): DocEntry[] {
   if (!fs.existsSync(DOCS_DIR)) return [];
 
   const files = fs.readdirSync(DOCS_DIR).filter((f) => f.endsWith(".mdx"));
