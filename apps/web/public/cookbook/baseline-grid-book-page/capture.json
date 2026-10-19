@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "ccd17923a9597a08b1ddd98a49d99875318aa1489fbb1a4a13ada2783c970d2f",
+  "sourceHash": "54a87fb1e854e9af0e886b8fda79d2935870561fd86b2bb2e92373eac7754c20",
   "engine": {
-    "postext": "1.33.7",
+    "postext": "1.46.2",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:41:55.147Z",
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-19T15:25:22.337Z",
   "variants": {
     "en": {
-      "hash8": "54fd38d6",
+      "hash8": "c259867a",
       "vdtHash": "f55297049f1e5f9ea49a89f52e109267aee3fbe3",
       "timings": {
-        "importMs": 404,
-        "fontsMs": 6,
-        "buildMs": 72,
-        "totalMs": 1244,
+        "importMs": 11338,
+        "fontsMs": 5,
+        "buildMs": 102,
+        "totalMs": 17113,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43189,
+        "bytes": 43191,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -302,7 +302,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.8800000000000001
+          "worst": 1.88
         },
         "raggedLines": {
           "count": 0
@@ -319,6 +319,11 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The ruling fixed the lines as well as the frame.…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -327,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "ecae0af0",
+      "hash8": "85d1ecaa",
       "vdtHash": "18cb678cde83a6862dc2b5d160a0456d970249e3",
       "timings": {
-        "importMs": 414,
-        "fontsMs": 4,
-        "buildMs": 66,
-        "totalMs": 1247,
+        "importMs": 7594,
+        "fontsMs": 10,
+        "buildMs": 106,
+        "totalMs": 16816,
         "builds": 1
       },
       "specimen": {
@@ -417,7 +422,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43987,
+        "bytes": 43988,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -626,6 +631,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -634,13 +644,13 @@
       }
     },
     "pt": {
-      "hash8": "3e62988a",
+      "hash8": "648b5c8c",
       "vdtHash": "2acdd6b557c1c08659556959a5561aab4bda1812",
       "timings": {
-        "importMs": 406,
-        "fontsMs": 3,
-        "buildMs": 65,
-        "totalMs": 1233,
+        "importMs": 10130,
+        "fontsMs": 5,
+        "buildMs": 98,
+        "totalMs": 15214,
         "builds": 1
       },
       "specimen": {
@@ -724,7 +734,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42992,
+        "bytes": 42994,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -933,6 +943,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -941,13 +956,13 @@
       }
     },
     "fr": {
-      "hash8": "8d9b5648",
-      "vdtHash": "71332f07970bfbd9fff78f945206a795088f1f07",
+      "hash8": "8d2538b8",
+      "vdtHash": "b24b689c34e1d1c30909531fb94be60796f23188",
       "timings": {
-        "importMs": 408,
+        "importMs": 10008,
         "fontsMs": 4,
-        "buildMs": 83,
-        "totalMs": 1273,
+        "buildMs": 96,
+        "totalMs": 15289,
         "builds": 1
       },
       "specimen": {
@@ -992,7 +1007,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 192320,
+          "bytes": 190924,
           "alt": "Page 10 : Des lignes où se poser."
         },
         {
@@ -1031,13 +1046,13 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42996,
+        "bytes": 43003,
         "folio": "e8c31713",
         "chapters": [
           {
             "pages": 3,
-            "hash": "3e45fe58d7580726",
-            "lines": "a1d79b2497512c20"
+            "hash": "bf27cad226e33898",
+            "lines": "4f2191c466fb1e48"
           }
         ]
       },
@@ -1231,9 +1246,9 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 0,
-          "share": 0,
-          "worst": 1.99
+          "count": 2,
+          "share": 0.0142,
+          "worst": 2.74
         },
         "raggedLines": {
           "count": 0
@@ -1250,6 +1265,16 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “la réglure elle-même, devenue une grille de lign…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1258,13 +1283,13 @@
       }
     },
     "de": {
-      "hash8": "e523ddf9",
+      "hash8": "39ed8d7d",
       "vdtHash": "49cb48b979a884c8b97affd133e774a9ead74d64",
       "timings": {
-        "importMs": 407,
+        "importMs": 8596,
         "fontsMs": 4,
-        "buildMs": 88,
-        "totalMs": 1237,
+        "buildMs": 123,
+        "totalMs": 18929,
         "builds": 1
       },
       "specimen": {
@@ -1348,7 +1373,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43451,
+        "bytes": 43453,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1567,6 +1592,11 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Ziehen Sie die beiden Diagonalen der Doppelseite…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1575,13 +1605,13 @@
       }
     },
     "it": {
-      "hash8": "9b4b7f12",
+      "hash8": "ebec6eed",
       "vdtHash": "cc050837b4128f5b234c89b533b97ae4c550b877",
       "timings": {
-        "importMs": 413,
-        "fontsMs": 4,
-        "buildMs": 94,
-        "totalMs": 1231,
+        "importMs": 10779,
+        "fontsMs": 5,
+        "buildMs": 141,
+        "totalMs": 18388,
         "builds": 1
       },
       "specimen": {
@@ -1665,7 +1695,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43616,
+        "bytes": 43618,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1873,6 +1903,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

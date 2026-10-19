@@ -22,7 +22,7 @@
   "gotchas": ["page-span-heading-new-page", "cjk-fonts-slices", "cjk-locale-tag", "cjk-spread-order"],
   "explainsWarnings": [],
   "related": ["newspaper-front-page", "chinese-dates-upright", "vertical-novel-right-bound", "red-ink-commentary"],
-  "engine": { "postext": "1.25.0", "postextPdf": "1.25.0" },
+  "engine": { "postext": "1.46.2", "postextPdf": "1.46.2" },
   "kit": ["core", "fonts", "viewer", "pdf", "cjk"],
   "sample": { "locales": ["en", "es"] },
   "capture": { "hero": 1, "card": "page", "expect": { "pages": [2, 2] } },
