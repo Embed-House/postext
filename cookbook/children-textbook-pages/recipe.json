@@ -52,13 +52,22 @@
     "fonts",
     "viewer",
     "pdf",
-    "images"
+    "images",
+    "cjk",
+    "arabic"
   ],
   "sample": {
     "locales": [
       "es",
       "en",
-      "ca"
+      "ca",
+      "pt",
+      "fr",
+      "de",
+      "it",
+      "ar",
+      "zh",
+      "ja"
     ]
   },
   "capture": {
@@ -73,7 +82,7 @@
         9,
         9
       ],
-      "imageMb": 1.35,
+      "imageMb": 1.4,
       "cardKb": {
         "card": 110
       }
@@ -89,8 +98,8 @@
     "text": [
       {
         "what": {
-          "en": "Our river, a children's textbook unit written for this recipe in Spanish, Catalan and English",
-          "es": "Nuestro río, una unidad de libro de texto infantil escrita para esta receta en español, catalán e inglés"
+          "en": "Our river, a children's textbook unit written for this recipe in Spanish and set in ten languages",
+          "es": "Nuestro río, una unidad de libro de texto infantil escrita en español para esta receta y compuesta en diez lenguas"
         },
         "who": "Postext Cookbook",
         "license": "CC-BY-4.0"
@@ -114,6 +123,15 @@
         "who": "Generated With Diffusion Models",
         "license": "original",
         "file": "mapa-1900.jpg"
+      },
+      {
+        "what": {
+          "en": "The same painted map mirrored, the mountains on the right, for the books bound on the right (Arabic, Chinese, Japanese).",
+          "es": "El mismo mapa pintado en espejo, con las montañas a la derecha, para los libros encuadernados por la derecha (árabe, chino, japonés)."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mapa-1900-rtl.jpg"
       },
       {
         "what": {
@@ -187,6 +205,30 @@
       {
         "family": "Fredoka",
         "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Naskh Arabic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Baloo Bhaijaan 2",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Klee One",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Zen Maru Gothic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Serif SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "ZCOOL KuaiLe",
+        "license": "OFL-1.1"
       }
     ]
   },
@@ -195,7 +237,7 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-17",
-  "updated": "2026-10-17",
+  "updated": "2026-10-19",
   "downloads": {
     "pdf": true
   },

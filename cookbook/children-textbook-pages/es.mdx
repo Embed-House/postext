@@ -1,42 +1,48 @@
 ---
-title: "Una unidad de libro de texto infantil en tres idiomas"
-summary: "Nueve páginas de una unidad de 3.º en español, catalán e inglés: dobles páginas sobre fondos de color, recuadros con pestaña que crecen y un mapa rotulado."
+title: "Una unidad de libro de texto infantil en diez idiomas"
+summary: "Nueve páginas de una unidad de 3.º en diez idiomas, de derecha a izquierda en árabe y vertical en chino y japonés: dobles páginas de color y un mapa rotulado."
 plain: "Una unidad de libro de texto sobre un río, de nueve páginas. Cada tema es una doble página sobre un fondo de color, con pestaña de título, texto, imágenes y recuadros. El mapa no lleva ninguna palabra pintada: sus nombres salen del texto."
 description: "Una unidad de libro de texto infantil en Postext: plantillas que heredan de una base, estilos de recuadro encadenados y un mapa rotulado desde el Markdown."
-question: "¿Cómo compongo una unidad de libro de texto en tres idiomas con las mismas plantillas?"
-aliases: ["libro de texto", "libro escolar", "primaria", "unidad didáctica", "doble página", "página de tema", "fondo de página", "pestaña de título", "mapa rotulado", "índice por partes", "herencia de plantillas", "español catalán inglés", "textbook"]
+question: "¿Cómo compongo una unidad en diez idiomas, también en árabe y en vertical, con las mismas plantillas?"
+aliases: ["libro de texto", "libro escolar", "primaria", "unidad didáctica", "doble página", "página de tema", "fondo de página", "pestaña de título", "mapa rotulado", "índice por partes", "herencia de plantillas", "español catalán inglés", "de derecha a izquierda", "texto vertical", "tategaki", "textbook"]
 pageNotes: {"1": "La apertura de la unidad: una pintura de un valle con su río, de las montañas nevadas al mar, ocupa la parte de arriba, con dos niños sentados en la hierba en una esquina. Debajo, una pestaña azul con el título Nuestro río, un párrafo y un recuadro azul claro, Vas a aprender.", "2": "El índice: sobre fondo azul claro, una pestaña azul de título, dos filas de parte (A y B) con sus temas y apartados, puntos guía y números de página, y el mapa como imagen pequeña al pie.", "4": "Tema 1, Dónde nace un río, sobre un fondo azul claro: pestaña de título con su número, dos columnas de texto, una tira de tres pinturas con pie, un recuadro Pruébalo; en la página derecha, tres recuadros con pestaña.", "6": "Tema 2, De la montaña al mar, sobre un fondo verde claro: un solo mapa pintado a doble página con los nombres puestos encima y tres recuadros de curso bajo la página derecha.", "8": "Tema 3, Las personas y el río, sobre un fondo arena: texto y dos recuadros en la página izquierda, tres recuadros con una pintura cada uno en la derecha."}
 ---
 
 ## Lo que vas a componer
 
-Nueve páginas de *Nuestro río*, unidad 4 de un libro inventado de Ciencias sociales de 3.º, en una página de 210 × 280 mm, en español, catalán e inglés. Un valle pintado abre la unidad, una página de índice lista dos partes y siguen tres temas a doble página, cada uno sobre su fondo: azul agua, verde campo, arena sol. Cada tema lleva una pestaña con su número y su título, texto a dos columnas y recuadros con pestaña que crecen con su texto. El segundo tema es un único mapa pintado a doble página, con el río, los pueblos y los tres cursos rotulados desde el Markdown. Los tres textos difieren en un quinto o más y caben en las mismas plantillas: un recuadro toma la altura que piden sus palabras y empuja al siguiente, y el mapa se reduce un poco antes que cualquier texto.
+Nueve páginas de *Nuestro río*, unidad 4 de un libro inventado de Ciencias sociales de 3.º, en una página de 210 × 280 mm, en diez idiomas: español, catalán, inglés, portugués, francés, alemán, italiano, árabe, chino y japonés. Un valle pintado abre la unidad, una página de índice lista dos partes y siguen tres temas a doble página, cada uno sobre su fondo: azul agua, verde campo, arena sol. Cada tema lleva una pestaña con su número y su título, texto a dos columnas y recuadros con pestaña que crecen con su texto. El segundo tema es un único mapa pintado a doble página, con el río, los pueblos y los tres cursos rotulados desde el Markdown. Los textos difieren en un quinto o más y caben en las mismas plantillas: un recuadro toma la altura que piden sus palabras y empuja al siguiente, y el mapa se reduce un poco antes que cualquier texto. El libro árabe corre de derecha a izquierda y el chino y el japonés de arriba abajo; los tres se encuadernan por la derecha y se leen de la página derecha de cada doble página a la izquierda.
 
 ## Elaboración
 
-### 1 · Construye los recuadros con `extends`
+### 1 · Ten en cuenta por qué lado empieza cada idioma
+
+<Excerpt region="editions" />
+
+Los marcos de una plantilla están en el marco del flujo de la página, donde la x corre a lo largo de las líneas. Con `locale: 'ar'` el motor refleja ese marco, así que el libro árabe usa los marcos latinos sin cambios: el título va primero en la página derecha, las tres fotografías y los tres recuadros de los cursos van de derecha a izquierda, y las pestañas, las franjas y los rellenos de los recuadros siguen a las líneas. Con `layout.writingMode: 'vertical-rl'` la x baja por la página y la y va de derecha a izquierda: el `width` de un marco es una longitud hacia abajo, una pila avanza hacia la izquierda, `columns: 2` da dos pisos (段) de 27 caracteres y un marco puesto `below` de otro queda a su izquierda. La decoración (los fondos, la pestaña del título, el número, las cabeceras y los folios) está sobre el pliego, así que se coloca desde `START`, el lado por el que empieza a leerse la página. Cada escritura tiene una letra de texto y una redondeada para títulos, y las ediciones árabe, china y japonesa no usan cursiva, versalitas ni espaciado.
+
+### 2 · Construye los recuadros con `extends`
 
 <Excerpt region="boxes" />
 
 Un estilo de recuadro se hace en tres pasos. `caja` guarda la forma, la tipografía y la geometría de la pestaña; `caja-tema` pone el color del tema en la pestaña y las viñetas; `dato`, `palabras` y `actividad` fijan el tipo: recuadro con fondo, con borde o con franja. Sus colores son entradas de la paleta (`tema`, `tema-tint`), así que cada estilo se escribe una vez y la plantilla de un tema lo tiñe.
 
-### 2 · Haz que cada tema herede de una plantilla base
+### 3 · Haz que cada tema herede de una plantilla base
 
 <Excerpt region="answer" />
 
-La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), fija su `palette` (las tres entradas `tema` toman los colores de la familia, y el fondo, la pestaña, el número y todos los recuadros cambian a la vez) y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma. El número es `{headingNumber}`, el contador del título que tomó el marco, pintado sobre el relleno izquierdo del marco: ningún bloque de página lo repite, y un clic sobre él llega al número, no al marco.
+La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), fija su `palette` (las tres entradas `tema` toman los colores de la familia, y el fondo, la pestaña, el número y todos los recuadros cambian a la vez) y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma. El número es `{headingNumber}`, el contador del título que tomó el marco, pintado sobre el relleno del marco que precede a sus palabras: ningún bloque de página lo repite, y un clic sobre él llega al número, no al marco.
 
-### 3 · Deja que los grupos se repartan el sitio
+### 4 · Deja que los grupos se repartan el sitio
 
-Cada tema tiene dos grupos. La página izquierda es una pila: título, texto y luego la tira de imágenes o el mapa. La derecha es otra pila de recuadros, o una fila de tres recuadros que se reparten su anchura. Un marco es tan alto como sus palabras y nunca menos que su `minHeight`, así que el texto en español empuja todo lo que tiene debajo y ninguna posición de la plantilla cambia. Cuando a una página le falta sitio, la [escalera de ajuste](/es/docs/composed-pages#cuando-aun-así-no-cabe) recupera espacio, reduce el mapa y las imágenes y deja el texto para el final, hasta el 90 %. `pnpm cookbook bench` vuelve a componer las tres ediciones con el texto un 30 % más largo.
+Cada tema tiene dos grupos. La página izquierda es una pila: título, texto y luego la tira de imágenes o el mapa. La derecha es otra pila de recuadros, o una fila de tres recuadros que se reparten su anchura. Un marco es tan alto como sus palabras y nunca menos que su `minHeight`, así que el texto en español empuja todo lo que tiene debajo y ninguna posición de la plantilla cambia. Cuando a una página le falta sitio, la [escalera de ajuste](/es/docs/composed-pages#cuando-aun-así-no-cabe) recupera espacio, reduce el mapa y las imágenes y deja el texto para el final, hasta el 90 %. `pnpm cookbook bench` vuelve a componer cada edición con el texto un 30 % más largo. En una página vertical, la doble página del campo pone el mapa a lo ancho de la cabeza de las dos páginas, y el título, el texto y los tres cursos quedan debajo.
 
-### 4 · Pon los nombres del mapa desde el texto
+### 5 · Pon los nombres del mapa desde el texto
 
 <Excerpt region="art-labels" />
 
-El mapa es una pintura sin una sola letra. Cada lugar es un ancla de la imagen, un punto en fracciones de su ancho y alto con un estilo de rótulo, y cada edición escribe sus propias líneas `::label` en esas anclas. *Penalta Reservoir*, *Pantà de Penyalta* y *Embalse de Peñalta* quedan en el mismo sitio, y un nombre más largo se parte dentro del `width` del ancla.
+El mapa es una pintura sin una sola letra. Cada lugar es un ancla de la imagen, un punto en fracciones de su ancho y alto con un estilo de rótulo, y cada edición escribe sus propias líneas `::label` en esas anclas. *Penalta Reservoir*, *Pantà de Penyalta* y *Embalse de Peñalta* quedan en el mismo sitio, y un nombre más largo se parte dentro del `width` del ancla. Un libro encuadernado por la derecha muestra la misma pintura en espejo (`mapa-1900-rtl.jpg`), así que el río va de las montañas, a la derecha, al mar, a la izquierda, en el sentido en que se leen sus páginas; `flipped` lleva cada ancla al otro lado y gira al revés su rotación.
 
-### 5 · Mantén unida cada parte del índice
+### 6 · Mantén unida cada parte del índice
 
 <Excerpt region="contents" />
 
@@ -59,14 +65,15 @@ Un tema sobre el mar es una cuarta entrada de `FAMILIES` y una plantilla hecha c
 Un marco que no debe reducir su texto lleva `fit: { shrinkText: false }`. Un texto más largo empuja entonces con más fuerza a los marcos de alrededor y la escalera llega antes a las imágenes.
 
 ```diff
--  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
--    fit: { minScale: 0.9 } }],
-+  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
-+    fit: { shrinkText: false } }],
+   frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(CJK ? 16 : 7), // 段
+-    width: mm(MEASURE), fit: { minScale: 0.9 } }],
++    width: mm(MEASURE), fit: { shrinkText: false } }],
 ```
 
 ## Errores frecuentes
 
 - Un nombre pintado dentro de una imagen no podría cambiar con el idioma: el mapa no lleva ninguna palabra y cada nombre es un rótulo.
-La paleta de un tema cambia solo las entradas `tema`. Los folios y el índice usan `agua`, que tiene el mismo azul, así que siguen azules en las páginas verdes y arena; enlázalos con `tema` y seguirán al tema.
+- La paleta de un tema cambia solo las entradas `tema`. Los folios y el índice usan `agua`, que tiene el mismo azul, así que siguen azules en las páginas verdes y arena; enlázalos con `tema` y seguirán al tema.
+- Una cifra arábigo-índica junto a un punto medio se lee como dos cifras: `١ · ماء` parece `٠١ ماء`, porque el cero árabe es un punto. La edición árabe escribe `١- ماء للحقول` y pone con letras el número de la unidad.
+- Un elemento de decoración está sobre el pliego, no en el flujo: una insignia puesta en la esquina `top-left` de un marco sigue a la izquierda en árabe. `corner('top')` e `inward(x)` la colocan desde el lado por el que empieza a leerse la página.
 - Dos figuras que fijan el mismo recurso toman las palabras de la primera: el mapa pequeño del índice es el mismo archivo bajo otro recurso, `rio`, sin anclas.

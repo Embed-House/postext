@@ -146,4 +146,36 @@ describe('the labels of a page on the sheet (#866)', () => {
     close(after.point.x, target.x, 0.05);
     close(after.point.y, target.y, 0.05);
   });
+
+  it('on a spread, the facing page answers for the half of a picture across the spine (#1040)', () => {
+    const doc = build(
+      ['::::page{template="s" spread}', ':::frame{slot="pic"}', ':::figure{resource="mapa"}', ...LABELS, ':::', ':::', '::::'].join('\n'),
+      { pageTemplates: [{ id: 's', spread: true, gutter: mm(10), frames: [{ name: 'pic', crossGutter: true, width: 'fill' }] }] as never },
+      // A strip across the two pages, as the painted map of Nº 156.
+      [{ ...MAP, bitmap: { ...MAP.bitmap!, width: 1600, height: 400 } }],
+    );
+    const [verso, recto] = doc.pages.filter((p) => p.composed?.spread);
+    expect(verso && recto).toBeTruthy();
+    const read = labelsOnPage(doc, verso!.index);
+    const facing = labelsOnPage(doc, recto!.index);
+    expect(read.map((l) => l.anchorId ?? null)).toEqual(['madrid', 'rio', null]);
+    expect(facing.map((l) => l.anchorId ?? null)).toEqual(['madrid', 'rio', null]);
+    // The copy stands one page further left on its own sheet, and its
+    // points go back to the same places of the picture.
+    const shift = read[0]!.point.x - facing[0]!.point.x;
+    expect(shift).toBeGreaterThan(0);
+    const want = [[0.3, 0.6], [0.55, 0.35], [0.7, 0.4]] as const;
+    facing.forEach((pl, i) => {
+      close(pl.point.x, read[i]!.point.x - shift, 1e-4);
+      close(pl.point.y, read[i]!.point.y, 1e-4);
+      const back = sheetToPicture(pl, pl.point.x, pl.point.y)!;
+      close(back.x, want[i]![0]);
+      close(back.y, want[i]![1]);
+    });
+    // The label at 70 % lies on the right page: a press there takes it.
+    const mar = facing[2]!;
+    expect(mar.point.x).toBeGreaterThan(0);
+    expect(mar.point.x).toBeLessThan(recto!.width);
+    expect(labelAt(facing, mar.point.x, mar.point.y, 5)).toBe(mar);
+  });
 });

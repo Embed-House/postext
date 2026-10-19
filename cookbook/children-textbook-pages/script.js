@@ -1,13 +1,14 @@
-// ═══ Postext Cookbook · Nº 156 · A children's textbook unit in three languages ═══
+// ═══ Postext Cookbook · Nº 156 · A children's textbook unit in ten languages ═════
 // https://postext.dev/en/cookbook/children-textbook-pages
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Nunito, Fredoka (SIL OFL 1.1) · Needs postext ≥ 1.46.0
+// Fonts: Nunito, Fredoka and three pairs for Arabic, Chinese, Japanese · Needs postext ≥ 1.46.0
 import {
-  buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
+  buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
+  loadVerticalAlternates,
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'es'; // @lang: the language of the sample document ('es' | 'en' | 'ca')
+const LANG = 'es'; // @lang: the language of the unit (es en ca pt fr de it ar zh ja)
 const RECIPE = 'children-textbook-pages';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -32,38 +33,50 @@ const colorPalette = [
 ];
 // #endregion
 
-const [TEXT, DISPLAY] = ['Nunito', 'Fredoka'];
+// #region editions: how each language runs and is bound, and the two faces of its script
+// Arabic runs right to left, Chinese and Japanese down the page, all bound on the right. Frames
+// stand in the flow (x along the lines, mirrored in Arabic, down the page when vertical).
+const AR = LANG === 'ar', CJK = LANG === 'zh' || LANG === 'ja';
+const RIGHT_BOUND = AR || CJK, LATIN = !RIGHT_BOUND; // italics, capitals, tracking, hyphens
+const [TEXT, DISPLAY] = { ar: ['Noto Naskh Arabic', 'Baloo Bhaijaan 2'], ja: ['Klee One',
+  'Zen Maru Gothic'], zh: ['Noto Serif SC', 'ZCOOL KuaiLe'] }[LANG] ?? ['Nunito', 'Fredoka'];
+const START = RIGHT_BOUND ? 'right' : 'left'; // the side a page starts reading from
+const corner = (v) => `${v}-${START}`, inward = (x) => (RIGHT_BOUND ? -x : x);
+const [SLANT, CAPS] = LATIN ? ['italic', 'uppercase'] : ['normal', 'none'];
+const LEAD = AR ? 20 : CJK ? 21 : 17.5, track = (v) => (LATIN ? v : 0); // Naskh, ruby need room
+const fw = (w) => ({ 'ZCOOL KuaiLe': 400, 'Zen Maru Gothic': w > 550 ? 700 : 500 })[DISPLAY] ?? w;
+const BOLD = TEXT === 'Klee One' ? 600 : 700; // and the weights the faces have
+// #endregion
+
 const PAGE = { w: 210, h: 280, top: 18, bottom: 18, inner: 14, outer: 12 }; // mm, mirrored
-const HALF = PAGE.w - PAGE.inner - PAGE.outer; // one page's type area: 184 mm
+const HALF = PAGE.w - PAGE.inner - PAGE.outer, TALL = PAGE.h - PAGE.top - PAGE.bottom; // 184, 244
+const MEASURE = CJK ? TALL : HALF; // a page's type area along the lines
 const SHEET = 2 * HALF + 2 * PAGE.inner; // a spread's content area: 396 mm
-const RIGHT = HALF + 2 * PAGE.inner; // where the right page's type area starts on the sheet
-const LINE = 8; // mm between two answer lines
-const TAB = 22; // mm of the title frame left of its words: the number badge stands there
+const RIGHT = HALF + 2 * PAGE.inner; // where the second page's type area starts on the sheet
+const LINE = 8, TAB = 22; // mm between answer lines; of the title before its words (the badge)
+const NONE = { top: mm(0), right: mm(0), bottom: mm(0), left: mm(0) }; // no padding
 const at = (to, edge, x = 0, y = 0) => ({ anchor: { to, edge }, offset: { x: mm(x), y: mm(y) } });
-const onRight = at('container', 'top-left', RIGHT); // every frame of the right page's stack
+const onSecond = at('container', 'top-left', CJK ? 0 : RIGHT, CJK ? RIGHT : 0); // flow x or y
+const DOWN = 156; // mm: a vertical field spread's map takes the head, its frames stand under it
 
 // #region boxes: callout styles that extend each other
 // Two steps of `extends`: the box (shape, type, tab), then the kind. The colours are `tema`
-// entries, so one style serves the three topics and the page's palette tints it.
+// entries, so one style serves the three topics; paddings, stripes and tabs are in the flow.
 const tab = (f) => ({ position: 'top-left', background: col(f), color: col('paper'),
-  fontFamily: DISPLAY, fontSize: pt(12), fontWeight: 600, height: mm(7), paddingX: mm(3.2),
+  fontFamily: DISPLAY, fontSize: pt(12), fontWeight: fw(600), height: mm(7), paddingX: mm(3.2),
   offset: mm(7), inset: mm(5), rule: { enabled: false, color: col(f) } });
-const boxText = { fontFamily: TEXT, fontSize: pt(12), lineHeight: pt(17.5), color: col('ink'),
-  boldColor: col('ink'), italicColor: col('ink'), firstLineIndent: pt(0), textAlign: 'left',
-  paragraphSpacing: true };
-const none = { top: mm(0), right: mm(0), bottom: mm(0), left: mm(0) }; // no padding
+const boxText = { fontFamily: TEXT, fontSize: pt(12), lineHeight: pt(LEAD), color: col('ink'),
+  boldColor: col('ink'), italicColor: col('ink'), boldFontWeight: BOLD, firstLineIndent: pt(0),
+  textAlign: CJK ? 'justify' : 'left', paragraphSpacing: true };
 const calloutStyles = [
   { id: 'caja', backgroundEnabled: true, background: col('paper'), borderRadius: mm(3),
     border: { enabled: false }, padding: { top: mm(3.4), right: mm(5), bottom: mm(4), left: mm(5) },
     body: boxText, lists: { color: col('ink'), gap: mm(2), itemSpacing: mm(1.6) } },
   { id: 'caja-tema', extends: 'caja', label: tab('tema'), lists: { color: col('tema') } },
   { id: 'dato', extends: 'caja-tema', background: col('tema-tint') },
-  { id: 'palabras', extends: 'caja-tema',
-    border: { enabled: true, color: col('tema'), width: pt(1.4) } },
-  { id: 'actividad', extends: 'caja-tema',
+  { id: 'palabras', extends: 'caja-tema', border: { enabled: true, color: col('tema'),
+    width: pt(1.4) } }, { id: 'actividad', extends: 'caja-tema',
     stripe: { enabled: true, side: 'left', width: pt(4), color: col('tema') } },
-  // Plain frames: the title (its tab and number are decoration), a picture's card and an answer
-  // space. The title leaves room on the left for the number.
   { id: 'titulo', extends: 'caja', backgroundEnabled: false,
     padding: { top: mm(2.6), right: mm(6), bottom: mm(3.2), left: mm(TAB) } },
   { id: 'titulo-plano', extends: 'titulo', padding: { left: mm(8) } },
@@ -71,185 +84,189 @@ const calloutStyles = [
     padding: { top: mm(2.6), right: mm(8), bottom: mm(3.6), left: mm(8) } },
   { id: 'foto', extends: 'caja', borderRadius: mm(2),
     padding: { top: mm(1.8), right: mm(1.8), bottom: mm(2.2), left: mm(1.8) } },
-  { id: 'respuesta', extends: 'caja', padding: none },
-  { id: 'colofon', extends: 'caja', backgroundEnabled: false, padding: none,
-    body: { ...boxText, fontSize: pt(8), lineHeight: pt(11), color: col('muted') } },
+  { id: 'respuesta', extends: 'caja', padding: NONE }, { id: 'colofon', extends: 'caja',
+    backgroundEnabled: false, padding: NONE,
+    body: { ...boxText, fontSize: pt(8), lineHeight: pt(AR ? 13 : 11), color: col('muted') } },
 ];
 // #endregion
 
 // #region answer: one base template and a family of topics that extend it
-// Ground, title tab and number are decoration anchored to the title frame, so the tab is as
-// tall as the title needs. The number is the title's own counter, `{headingNumber}`, painted
-// over the frame's left padding. A topic extends the base, swaps the palette and adds frames.
+// Ground, tab and number are decoration anchored to the title frame; the number,
+// `{headingNumber}`, stands over the padding before its words. A topic extends the base.
 const ground = () => ({ kind: 'box', id: 'ground', decorative: true,
   placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: 'fill' } },
   style: { backgroundColor: col('tema-ground') } });
-const titleTab = () => ({ kind: 'box', id: 'tab', decorative: true,
-  placement: { ...at('#titulo', 'top-left'),
-    size: { width: mm(HALF), height: { to: '#titulo', edge: 'bottom' } } },
-  style: { backgroundColor: col('tema'), borderRadius: mm(4) } });
+const titleTab = () => ({ kind: 'box', id: 'tab', decorative: true, placement: { ...at('#titulo',
+  'top-left'), size: { width: { to: '#titulo', edge: 'right' }, height: { to: '#titulo',
+    edge: 'bottom' } } }, style: { backgroundColor: col('tema'), borderRadius: mm(4) } });
 const badge = () => ({ kind: 'text', id: 'number', content: '{headingNumber}',
-  fontFamily: DISPLAY, fontSize: pt(22), fontWeight: 700, color: col('tema'), align: 'center',
-  box: { backgroundColor: col('paper'), borderRadius: mm(6) },
-  placement: { ...at('#titulo', 'top-left', 5, 2.4), size: { width: mm(12), height: mm(12) } } });
-const title = { name: 'titulo', takes: 'h1', style: 'titulo', width: mm(HALF),
+  fontFamily: DISPLAY, fontSize: pt(22), fontWeight: fw(700), color: col('tema'), align: 'center',
+  box: { backgroundColor: col('paper'), borderRadius: mm(6) }, placement: { ...at('#titulo',
+    corner('top'), inward(CJK ? 2.6 : 5), CJK ? 5 : 2.4), size: { width: mm(12), height: mm(12) } },
+});
+const title = { name: 'titulo', takes: 'h1', style: 'titulo', width: mm(MEASURE),
   placement: at('container', 'top-left') };
 
 const base = {
   id: 'tema', spread: true, gutter: mm(12),
   decoration: { elements: [ground(), titleTab(), badge()] },
-  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
-    fit: { minScale: 0.9 } }],
+  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(CJK ? 16 : 7), // 段
+    width: mm(MEASURE), fit: { minScale: 0.9 } }],
   groups: [{ name: 'izquierda', kind: 'stack', gap: mm(6), frames: ['titulo', 'texto'] }],
 };
 const topic = (id, f, more) => ({ id, extends: 'tema', palette: swap(f), ...more });
-const box = (name, style, minHeight, more) => ({ name, style, width: mm(HALF),
+const box = (name, style, minHeight, more) => ({ name, style, width: mm(MEASURE),
   minHeight: mm(minHeight), ...more });
-const answer = (name, lines) => ({ name, optional: true, style: 'respuesta', width: mm(HALF),
+const answer = (name, lines) => ({ name, optional: true, style: 'respuesta', width: mm(MEASURE),
   height: mm(LINE * lines), minHeight: mm(LINE * lines),
   rules: { every: mm(LINE), color: col('rule'), width: pt(0.75) } });
-// A picture that sits at the corner of a box and pushes its text aside.
-const corner = (name) => ({ name: `${name}-foto`, layer: 2, width: mm(56), exclude: 'push',
-  placement: at(`#${name}`, 'top-right', -5, 8) });
+const PIC = CJK ? 44 : 56; // a picture at the end of a box's first lines pushes the text aside
+const withPic = (name, style, minHeight, more) => [box(name, style, minHeight,
+  { padding: { right: mm(PIC + 8) }, ...more }), { name: `${name}-foto`, layer: 2, width: mm(PIC),
+  exclude: 'push', placement: at(`#${name}`, 'top-right', -5, 8) }];
 // #endregion
 
-const questions = [1, 2, 3].flatMap((n) => [box(`pregunta-${n}`, 'dato', 14),
-  answer(`respuesta-${n}`, 3)]);
+const questions = [1, 2, 3].flatMap((n) => [box(`pregunta-${n}`, 'dato', CJK ? 22 : 14),
+  answer(`respuesta-${n}`, CJK ? 2 : 3)]);
+const under = ({ placement, ...frame }) => ({ ...frame, width: mm(TALL - DOWN) }); // the map's
+const stack = (name, frames, more) => ({ name, kind: 'stack', frames, gap: mm(CJK ? 8 : 12),
+  ...more });
 const pageTemplates = [
   base,
-  // Water: text, a strip of three pictures and a box; three boxes grow down the right page.
+  // Water: text, a strip of three pictures and a box; three boxes follow on the second page.
   topic('tema-agua', 'agua', {
     frames: [
-      ...[1, 2, 3].map((n) => ({ name: `foto-${n}`, style: 'foto', width: mm((HALF - 10) / 3),
+      ...[1, 2, 3].map((n) => ({ name: `foto-${n}`, style: 'foto', width: mm((MEASURE - 10) / 3),
         ...(n === 1 && { placement: at('#texto', 'below', 0, 8) }) })),
-      box('probar', 'palabras', 46, { placement: at('#foto-1', 'below', 0, 10) }),
-      { ...box('sabias', 'dato', 40), placement: onRight },
-      { ...box('palabras', 'palabras', 62), placement: onRight },
-      { ...box('actividades', 'actividad', 58), placement: onRight },
+      box('probar', 'palabras', CJK ? 30 : 46, { placement: at('#foto-1', 'below', 0, 10) }),
+      ...[['sabias', 'dato', 40], ['palabras', 'palabras', CJK ? 50 : 62],
+        ['actividades', 'actividad', CJK ? 46 : 58]].map((f) => box(...f, { placement: onSecond })),
     ],
-    groups: [
-      { name: 'fotos', kind: 'row', gap: mm(5), frames: ['foto-1', 'foto-2', 'foto-3'] },
-      { name: 'derecha', kind: 'stack', gap: mm(12),
-        frames: ['sabias', 'palabras', 'actividades'] },
-    ],
+    groups: [{ name: 'fotos', kind: 'row', gap: mm(5), frames: ['foto-1', 'foto-2', 'foto-3'] },
+      stack('derecha', ['sabias', 'palabras', 'actividades'])],
   }),
-  // Field: one map across the spread; under it a text, and three boxes that share a width.
+  // Field: one map across the spread, under it a text and three boxes.
   topic('tema-campo', 'campo', {
     frames: [
-      { name: 'mapa', crossGutter: true, width: mm(SHEET) },
-      box('actividad', 'actividad', 24),
-      ...[1, 2, 3].map((n) => ({ name: `curso-${n}`, style: 'dato', width: mm(56),
-        minHeight: mm(46), shrink: 1,
-        ...(n === 1 && { placement: at('#mapa', 'below', RIGHT, 6) }) })),
+      { name: 'mapa', crossGutter: true, width: mm(CJK ? DOWN - 6 : SHEET),
+        ...(CJK && { height: mm(SHEET), placement: at('container', 'top-left') }) },
+      ...(CJK ? [{ ...under(title), placement: at('container', 'top-left', DOWN) },
+        under({ name: 'texto', flow: true, columns: 1 }), under(box('actividad', 'actividad', 24))]
+        : [box('actividad', 'actividad', 24)]),
+      ...[1, 2, 3].map((n) => ({ name: `curso-${n}`, style: 'dato', minHeight: mm(46), shrink: 1,
+        width: mm(CJK ? TALL - DOWN : 56),
+        ...(n === 1 && !CJK && { placement: at('#mapa', 'below', RIGHT, 6) }) })),
     ],
     groups: [
-      { name: 'izquierda', kind: 'stack', gap: mm(6),
-        frames: ['titulo', 'mapa', 'texto', 'actividad'] },
-      { name: 'cursos', kind: 'row', gap: mm(6), frames: ['curso-1', 'curso-2', 'curso-3'] },
+      stack('izquierda', CJK ? ['titulo', 'texto', 'actividad'] : ['titulo', 'mapa', 'texto',
+        'actividad'], { gap: mm(6), ...(CJK && { placement: at('container', 'top-left', DOWN) }) }),
+      { name: 'cursos', kind: CJK ? 'stack' : 'row', gap: mm(6), frames: ['curso-1', 'curso-2',
+        'curso-3'], ...(CJK && { placement: at('container', 'top-left', DOWN, RIGHT) }) },
     ],
   }),
   // Sun: boxes with a picture at their corner that pushes the text aside.
   topic('tema-sol', 'sol', {
     frames: [
-      box('cuidar', 'palabras', 64, { padding: { right: mm(64) } }), corner('cuidar'),
-      box('turno', 'actividad', 40),
-      ...[1, 2, 3].flatMap((n) => [
-        box(`uso-${n}`, 'dato', 66, { padding: { right: mm(64) }, placement: onRight }),
-        corner(`uso-${n}`),
-      ]),
+      ...withPic('cuidar', 'palabras', CJK ? 52 : 64), box('turno', 'actividad', CJK ? 30 : 40),
+      ...[1, 2, 3].flatMap((n) => withPic(`uso-${n}`, 'dato', CJK ? 52 : 66,
+        n === 1 || !CJK ? { placement: onSecond } : {})),
     ],
-    groups: [
-      { name: 'izquierda', kind: 'stack', gap: mm(12),
-        frames: ['titulo', 'texto', 'cuidar', 'turno'] },
-      { name: 'derecha', kind: 'stack', gap: mm(12), frames: ['uso-1', 'uso-2', 'uso-3'] },
-    ],
+    groups: [stack('izquierda', ['titulo', 'texto', 'cuidar', 'turno']),
+      stack('derecha', ['uso-1', 'uso-2', 'uso-3'])],
   }),
   // Before the unit: questions, each with room to write.
   { id: 'saberes', header: false,
     decoration: { elements: [titleTab()] },
     frames: [{ ...title, style: 'titulo-plano' },
-      { name: 'texto', flow: true, width: mm(HALF) }, ...questions],
-    groups: [{ name: 'pagina', kind: 'stack', gap: mm(7),
-      frames: ['titulo', 'texto', ...questions.map((q) => q.name)] }] },
-  // The contents: a frame takes the :::toc and lays it by the contents' own rules (part rows,
-  // leaders, each part kept with its entries); the ground is the template's decoration.
+      { name: 'texto', flow: true, width: mm(MEASURE) }, ...questions],
+    groups: [stack('pagina', ['titulo', 'texto', ...questions.map((q) => q.name)],
+      { gap: mm(CJK ? 4 : 7) })] },
+  // The contents: a frame takes the :::toc and lays it by the contents' own rules.
   { id: 'indice',
     decoration: { elements: [ground(), titleTab()] },
     frames: [{ ...title, style: 'titulo-plano' },
-      { name: 'lista', takes: 'toc', width: mm(HALF) },
-      { name: 'mapa', style: 'foto', width: mm(HALF) }],
+      { name: 'lista', takes: 'toc', width: mm(MEASURE) },
+      { name: 'mapa', style: 'foto', width: mm(CJK ? 44 : HALF), ...(CJK && { height: mm(76) }) }],
     groups: [{ name: 'pagina', kind: 'stack', gap: mm(7), frames: ['titulo', 'lista', 'mapa'] }] },
-  // The opener: a painting to the bleed, the title over its foot.
+  // The opener: a painting to the bleed, the title over its foot (down its right when vertical).
   { id: 'unidad', header: false, footer: false,
     decoration: { elements: [
       { kind: 'image', id: 'portada', resourceId: 'portada', decorative: true,
         placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: mm(157.5) } } },
-      { kind: 'text', id: 'kicker', content: '{attr.unidad}', fontFamily: DISPLAY,
-        fontSize: pt(11), fontWeight: 600, letterSpacing: pt(1), textTransform: 'uppercase',
-        color: col('agua'), // the room the 7 mm band leaves over the capitals, at the sides too
-        box: { backgroundColor: col('paper'), borderRadius: mm(2),
-          padding: { left: mm(2), right: mm(2) } },
-        placement: { ...at('#titulo', 'top-left', 0, -9), size: { height: mm(7) } } },
+      { kind: 'text', id: 'kicker', content: '{attr.unidad}', fontFamily: DISPLAY, fontSize: pt(11),
+        fontWeight: fw(600), letterSpacing: pt(track(1)), textTransform: CAPS, color: col('agua'),
+        align: START, box: { backgroundColor: col('paper'), borderRadius: mm(2), padding: {
+          left: mm(2), right: mm(2) } }, placement: { ...at('#titulo', corner('top'), 0, -9),
+          size: { height: mm(7), ...(CJK && { width: mm(60) }) } } }, // the room over capitals
     ] },
     frames: [
-      { name: 'titulo', takes: 'h1', style: 'portada', width: mm(120),
-        placement: at('container', 'top-left', 0, 104) },
-      { name: 'texto', flow: true, width: mm(160) },
-      box('aprenderas', 'dato', 36),
-      { name: 'colofon', style: 'colofon', width: mm(HALF),
-        placement: at('container', 'bottom-left') },
+      { name: 'titulo', takes: 'h1', style: 'portada', width: mm(CJK ? TALL - 104 : 120),
+        placement: CJK ? at('container', 'top-left', 104) : at('container', 'top-left', 0, 104) },
+      { name: 'texto', flow: true, width: mm(CJK ? TALL - 142 : 160) },
+      box('aprenderas', 'dato', 36, CJK ? { width: mm(TALL - 142) } : {}),
+      { name: 'colofon', style: 'colofon', width: mm(CJK ? TALL - 142 : HALF),
+        placement: at('container', CJK ? 'bottom-right' : 'bottom-left') },
     ],
-    groups: [{ name: 'pagina', kind: 'stack', gap: mm(7),
-      frames: ['titulo', 'texto', 'aprenderas'] }] },
+    groups: [{ name: 'pagina', kind: 'stack', gap: mm(7), ...(CJK
+      ? { frames: ['texto', 'aprenderas'], placement: at('container', 'top-left', 142, 26) }
+      : { frames: ['titulo', 'texto', 'aprenderas'] }) }] },
 ];
 
-const head = (id, content, parity, edge, x) => ({ kind: 'text', id, content, parity,
-  fontFamily: TEXT, fontSize: pt(8), fontWeight: 700, letterSpacing: pt(1), color: col('muted'),
-  textTransform: 'uppercase', placement: at('page', edge, x, 9) });
-const folio = (id, parity, edge, x) => ({ kind: 'text', id, content: '{pageNumber}', parity,
-  fontFamily: DISPLAY, fontSize: pt(11), fontWeight: 600, color: col('paper'), align: 'center',
+// The running heads and the folios, on the outer side: an even page's left when left-bound.
+const outside = (parity) => (parity === 'even') !== RIGHT_BOUND ? 'left' : 'right';
+const outer = (parity, v, x, y) => at('page', `${v}-${outside(parity)}`,
+  outside(parity) === 'left' ? x : -x, y);
+const head = (id, content, parity) => ({ kind: 'text', id, content, parity,
+  fontFamily: LATIN ? TEXT : DISPLAY, fontSize: pt(8), fontWeight: LATIN ? 700 : fw(500),
+  letterSpacing: pt(track(1)), color: col('muted'), textTransform: CAPS, align: outside(parity),
+  placement: outer(parity, 'top', PAGE.outer, 9) });
+const folio = (id, parity) => ({ kind: 'text', id, content: '{pageNumber}', parity,
+  fontFamily: DISPLAY, fontSize: pt(11), fontWeight: fw(600), color: col('paper'), align: 'center',
   box: { backgroundColor: col('agua'), borderRadius: mm(4) },
-  placement: { ...at('page', edge, x, -8), size: { width: mm(8), height: mm(8) } } });
+  placement: { ...outer(parity, 'bottom', PAGE.outer, -8), size: { width: mm(8), height: mm(8) } },
+});
 
 // #region contents: the toc settings; a frame of the 'indice' template takes the :::toc
+const partAt = (x) => (CJK ? at('container', 'left', x) : at('container', START, inward(x)));
 const toc = {
-  levels: [
-    { level: 1, fontFamily: DISPLAY, fontSize: pt(15), lineHeight: pt(22), fontWeight: 500,
-      color: col('ink'), numberFontWeight: 600, numberColor: col('agua'), numberWidth: mm(9),
-      marginTop: pt(4) },
-    { level: 2, fontFamily: TEXT, fontSize: pt(11.5), lineHeight: pt(18), indent: mm(9),
-      color: col('ink') },
-  ],
-  pageNumber: { fontFamily: DISPLAY, fontWeight: 500, width: mm(9), color: col('agua') },
-  leader: { char: '.', gap: mm(1.5) },
+  levels: [{ level: 1, fontFamily: DISPLAY, fontSize: pt(15), lineHeight: pt(22),
+    fontWeight: fw(500), color: col('ink'), numberFontWeight: fw(600), numberColor: col('agua'),
+    numberWidth: mm(9), marginTop: pt(4) }, { level: 2, fontFamily: TEXT, fontSize: pt(11.5),
+    lineHeight: pt(18), indent: mm(9), color: col('ink') }],
+  pageNumber: { fontFamily: DISPLAY, fontWeight: fw(500), width: mm(9), color: col('agua') },
+  leader: { char: CJK ? '…' : '.', gap: mm(1.5) },
   parts: { height: pt(34), marginTop: pt(12), marginBottom: pt(4), design: { elements: [
     { kind: 'box', id: 'band', decorative: true,
       placement: { ...at('container', 'top-left'), size: { width: 'fill', height: 'fill' } },
       style: { backgroundColor: col('paper'), borderRadius: mm(3) } },
     { kind: 'text', id: 'letter', content: '{number}', fontFamily: DISPLAY, fontSize: pt(16),
-      fontWeight: 700, color: col('paper'), align: 'center',
+      fontWeight: fw(700), color: col('paper'), align: 'center',
       box: { backgroundColor: col('agua'), borderRadius: mm(4) },
-      placement: { ...at('container', 'left', 2, 0), size: { width: mm(8), height: mm(8) } } },
+      placement: { ...partAt(2), size: { width: mm(8), height: mm(8) } } },
     { kind: 'text', id: 'name', content: '{titleText}', fontFamily: DISPLAY, fontSize: pt(13),
-      fontWeight: 600, color: col('agua'), placement: at('container', 'left', 14, 0) },
+      fontWeight: fw(600), color: col('agua'), align: START, placement: partAt(14) },
   ] } },
 };
 // #endregion
 
 // #region art-labels: the map's label styles and anchors; the words are in the Markdown
 // An anchor is a point of the painting (fractions of its width and height) and a label style;
-// every language's ::label lines use the same anchors.
+// every language's ::label lines use the same anchors. A right-bound book shows the painting
+// mirrored, the mountains on the right, so the river runs the way its pages are read: x comes
+// from the other edge and a turn goes the other way. `start` is a label's own start, so the
+// spring's label keeps it in Arabic and takes `end` in a label set left to right.
 const halo = { color: col('paper'), width: pt(1.8) };
 const labelStyles = [
-  { id: 'sierra', fontFamily: DISPLAY, fontSize: pt(13), fontWeight: 600, color: col('ink'),
-    textTransform: 'uppercase', letterSpacing: 0.14, halo },
-  { id: 'agua', fontFamily: TEXT, fontSize: pt(11), fontWeight: 700, fontStyle: 'italic',
+  { id: 'sierra', fontFamily: DISPLAY, fontSize: pt(13), fontWeight: fw(600), color: col('ink'),
+    textTransform: CAPS, letterSpacing: track(0.14), halo },
+  { id: 'agua', fontFamily: TEXT, fontSize: pt(11), fontWeight: BOLD, fontStyle: SLANT,
     color: { hex: '#0b3a5c', model: 'hex' }, halo },
-  { id: 'mar', fontFamily: TEXT, fontSize: pt(12), fontWeight: 700, fontStyle: 'italic',
+  { id: 'mar', fontFamily: TEXT, fontSize: pt(12), fontWeight: BOLD, fontStyle: SLANT,
     color: col('paper'), halo: { color: { hex: '#0b3a5c', model: 'hex' }, width: pt(1.8) } },
-  { id: 'pueblo', fontFamily: DISPLAY, fontSize: pt(12), fontWeight: 600, color: col('ink'), halo },
-  { id: 'curso', fontFamily: DISPLAY, fontSize: pt(10.5), fontWeight: 600, color: col('paper'),
-    textTransform: 'uppercase', letterSpacing: 0.08, background: col('campo'),
+  { id: 'pueblo', fontFamily: DISPLAY, fontSize: pt(12), fontWeight: fw(600), color: col('ink'),
+    halo },
+  { id: 'curso', fontFamily: DISPLAY, fontSize: pt(10.5), fontWeight: fw(600), color: col('paper'),
+    textTransform: CAPS, letterSpacing: track(0.08), background: col('campo'),
     padding: mm(1.6) },
 ];
 const ANCHORS = [
@@ -265,49 +282,47 @@ const ANCHORS = [
   { id: 'medio', x: 0.4, y: 0.77, style: 'curso' },
   { id: 'bajo', x: 0.74, y: 0.865, style: 'curso' },
 ];
+const flipped = (a) => ({ ...a, x: Math.round((1 - a.x) * 1000) / 1000,
+  ...(a.rotate && { rotate: -a.rotate }), ...(a.align && !AR && { align: 'end' }) });
+const anchors = RIGHT_BOUND ? ANCHORS.map(flipped) : ANCHORS;
 // #endregion
 
 const config = {
   canvasViewer: { pageGap: 0 }, // the Canvas joins the two pages of a spread
-  locale: t({ es: 'es', en: 'en-gb', ca: 'ca' }),
-  resourceTypes: [{ id: 'dibujo', name: t({ es: 'Dibujo', en: 'Picture', ca: 'Dibuix' }),
-    shortLabel: '', numberingTemplate: '', resetOn: 'never', counterFormat: 'decimal',
-    captionPrefix: '', defaultPlacement: { position: 'here' } }],
+  locale: t({ es: 'es', en: 'en-gb', ca: 'ca', pt: 'pt-BR', fr: 'fr', de: 'de', it: 'it',
+    ar: 'ar', zh: 'zh-Hans', ja: 'ja' }), // written out: Arabic sets its pages right to left
+  resourceTypes: [{ id: 'dibujo', name: t({ es: 'Dibujo', en: 'Picture', ca: 'Dibuix',
+    pt: 'Desenho', fr: 'Dessin', de: 'Bild', it: 'Disegno', ar: 'رسم', zh: '图', ja: '絵' }),
+  shortLabel: '', numberingTemplate: '', resetOn: 'never', counterFormat: 'decimal',
+  captionPrefix: '', defaultPlacement: { position: 'here' } }],
   colorPalette,
-  page: { sizePreset: 'custom', width: mm(PAGE.w), height: mm(PAGE.h), dpi: 150,
-    margins: { top: mm(PAGE.top), bottom: mm(PAGE.bottom), left: mm(PAGE.inner),
-      right: mm(PAGE.outer), mirror: true } },
-  layout: { layoutType: 'single' },
-  bodyText: { fontFamily: TEXT, fontSize: pt(12), lineHeight: pt(17.5), color: col('ink'),
+  page: { sizePreset: 'custom', width: mm(PAGE.w), height: mm(PAGE.h), dpi: 150, margins: {
+    top: mm(PAGE.top), bottom: mm(PAGE.bottom), left: mm(PAGE.inner), right: mm(PAGE.outer),
+    mirror: true } },
+  layout: { layoutType: 'single', ...(CJK && { writingMode: 'vertical-rl' }) }, // right-bound
+  bodyText: { fontFamily: TEXT, fontSize: pt(12), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
-    textAlign: 'left', firstLineIndent: pt(0), paragraphSpacing: true,
-    hyphenation: { enabled: true }, optimalLineBreaking: true,
+    boldFontWeight: BOLD, textAlign: CJK ? 'justify' : 'left', firstLineIndent: CJK ? em(1) : pt(0),
+    paragraphSpacing: !CJK, hyphenation: { enabled: LATIN }, optimalLineBreaking: true,
     avoidWidows: true, avoidOrphans: true, avoidRunts: true },
-  headings: { fontFamily: DISPLAY, fontWeight: 600, color: col('ink'), levels: [
-    { level: 1, fontSize: pt(28), lineHeight: pt(32), color: col('paper'), marginTop: pt(0),
-      marginBottom: pt(0), breakBefore: { enabled: false } },
-    { level: 2, fontSize: pt(15), lineHeight: pt(19), marginTop: pt(9), marginBottom: pt(3) },
-  ] },
+  headings: { fontFamily: DISPLAY, fontWeight: fw(600), color: col('ink'), levels: [{ level: 1,
+    fontSize: pt(28), lineHeight: pt(AR ? 40 : 32), color: col('paper'), marginTop: pt(0),
+    marginBottom: pt(0), breakBefore: { enabled: false } }, { level: 2, fontSize: pt(15),
+    lineHeight: pt(AR ? 24 : 19), marginTop: pt(9), marginBottom: pt(3) }] },
   // Headings that are not entries of the unit: no number, no row in the contents.
-  headingStyles: [
-    { id: 'portada', numbered: false, toc: false, fontSize: pt(46), lineHeight: pt(48) },
-    { id: 'previo', numbered: false, toc: false },
-  ],
+  headingStyles: [{ id: 'portada', numbered: false, toc: false, fontSize: pt(46),
+    lineHeight: pt(AR ? 64 : 48) }, { id: 'previo', numbered: false, toc: false }],
   toc,
   parts: { page: false }, // a part is a row of the contents, with no divider page
-  unorderedLists: { bulletChar: '•', color: col('agua'), fontWeight: 700, itemSpacing: pt(3) },
-  orderedLists: { numberFormat: 'arabic', fontFamily: DISPLAY, fontWeight: 600,
-    color: col('agua'), itemSpacing: pt(4) },
+  unorderedLists: { bulletChar: '•', color: col('agua'), fontWeight: BOLD, itemSpacing: pt(3) },
+  orderedLists: { numberFormat: { zh: 'simp-chinese-informal', ja: 'japanese-informal' }[LANG]
+    ?? 'arabic', fontFamily: DISPLAY, fontWeight: fw(600), color: col('agua'), itemSpacing: pt(4) },
   labelStyles,
-  captionStyle: { fontFamily: TEXT, fontSize: pt(9), color: col('ink'), descriptionItalic: true,
+  captionStyle: { fontFamily: TEXT, fontSize: pt(9), color: col('ink'), descriptionItalic: LATIN,
     gap: pt(4) },
   calloutStyles,
-  header: { elements: [
-    head('materia', '{subtitle}', 'even', 'top-left', PAGE.outer),
-    head('unidad', '{title}', 'odd', 'top-right', -PAGE.outer),
-  ] },
-  footer: { elements: [folio('folio-par', 'even', 'bottom-left', PAGE.outer),
-    folio('folio-impar', 'odd', 'bottom-right', -PAGE.outer)] },
+  header: { elements: [head('materia', '{subtitle}', 'even'), head('unidad', '{title}', 'odd')] },
+  footer: { elements: [folio('folio-par', 'even'), folio('folio-impar', 'odd')] },
   pageTemplates,
 };
 
@@ -317,28 +332,43 @@ const markdown = /* @content */ ''; // content.<lang>.md, inlined by the Cookboo
 // #region art: nine paintings (JPEGs in assets/), the pictures of the unit
 // Painted with a diffusion model in a coloured-pencil and watercolour manner, cut to the shape
 // of the frames that show them and declared with their pixels. Nothing is written on them: the
-// names on the map are ::label lines of the Markdown, standing at the anchors below.
+// names on the map are ::label lines of the Markdown, standing at the anchors above. A
+// right-bound book's map is the same painting mirrored.
 const ART = { portada: ['portada-1400.jpg', 1400, 1021, 165],
-  mapa: ['mapa-1900.jpg', 1900, 730, 122],
+  mapa: [RIGHT_BOUND ? 'mapa-1900-rtl.jpg' : 'mapa-1900.jpg', 1900, 730, 122],
   ...Object.fromEntries(['nacimiento', 'arroyo', 'cascada', 'riego', 'molino', 'piraguas',
     'limpieza'].map((id) => [id, [`${id}-720.jpg`, 720, 540, 330]])) };
 const resources = await Promise.all(Object.entries(ART).map(async ([id, [fileId, w, h, ppi]]) => {
   await loadImage(fileId, asset(fileId));
   return { id, typeId: 'dibujo', kind: 'bitmap', caption: '', altText: '', createdAt: 0,
     updatedAt: 0, bitmap: { fileId, format: 'jpeg', width: w, height: h, resolution: ppi },
-    ...(id === 'mapa' && { anchors: ANCHORS }) };
+    ...(id === 'mapa' && { anchors }) };
 }));
 // The map again with no anchors, small, under the contents.
 resources.push({ ...resources.find((r) => r.id === 'mapa'), id: 'rio', anchors: [] });
 // #endregion
 
 // ─── 3 · Fonts ──────────────────────────────────────────────────────────────
-const FONTS = { Nunito: ['400', '400i', '700'], Fredoka: ['500', '600', '700'] };
+// Every face of the ten editions; each loads its own two, with the cjk and arabic blocks' files.
+const FONTS = {
+  Nunito: ['400', '400i', '700'], Fredoka: ['500', '600', '700'],
+  'Noto Naskh Arabic': ['400', '700'], 'Baloo Bhaijaan 2': ['500', '600', '700'],
+  'Klee One': ['400', '600'], 'Zen Maru Gothic': ['500', '700'], // a textbook hand, rounded heads
+  'Noto Serif SC': ['400', '700'], 'ZCOOL KuaiLe': ['400'],
+};
+for (const face of Object.keys(FONTS)) if (![TEXT, DISPLAY].includes(face)) delete FONTS[face];
+await loadFonts(FONTS, markdown);
+await loadCjkFonts(FONTS, markdown, { vertical: CJK });
+await loadArabicFonts(FONTS, markdown);
 
 // ─── 4 · Build & show ───────────────────────────────────────────────────────
-const doc = await buildDocumentWithFonts({ markdown, resources }, config, kitFonts(FONTS));
-showPages(doc, { title: t({ es: 'Nuestro río', en: 'Our river', ca: 'El nostre riu' }) });
-offerPdf(() => renderToPdf(doc, { fontProvider: fontsourceProvider, resourceBytes: imageBytes }),
-  `${RECIPE}.pdf`);
+const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, config),
+  { ...kitFonts(FONTS), text: markdown });
+showBook(doc, { title: t({ es: 'Nuestro río', en: 'Our river', ca: 'El nostre riu',
+  pt: 'Nosso rio', fr: 'Notre fleuve', de: 'Unser Fluss', it: 'Il nostro fiume', ar: 'نهرنا',
+  zh: '我们的河流', ja: 'わたしたちの川' }) });
+offerPdf(() => renderToPdf(doc, { resourceBytes: imageBytes,
+  fontProvider: { zh: cjkPdfProvider, ja: cjkPdfProvider, ar: arabicPdfProvider }[LANG]
+    ?? fontsourceProvider }), `${RECIPE}.pdf`);
 
-// @kit core fonts viewer pdf images · the Cookbook inlines cookbook/_kit/*.js here
+// @kit core fonts viewer pdf images cjk arabic · the Cookbook inlines cookbook/_kit/*.js here

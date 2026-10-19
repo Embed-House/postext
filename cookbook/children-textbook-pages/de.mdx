@@ -1,42 +1,48 @@
 ---
-title: "Eine Schulbuch-Einheit für Kinder in drei Sprachen"
-summary: "Neun Seiten einer Einheit der 3. Klasse auf Spanisch, Katalanisch und Englisch: Doppelseiten auf Farbgrund, wachsende Kästen mit Etikett, beschriftete Karte."
+title: "Eine Schulbuch-Einheit für Kinder in zehn Sprachen"
+summary: "Neun Seiten einer Einheit der 3. Klasse in zehn Sprachen, auch Arabisch und senkrecht: Doppelseiten auf Farbgrund, wachsende Kästen, beschriftete Karte."
 plain: "Eine Schulbuch-Einheit über einen Fluss, neun Seiten lang. Jedes Thema ist eine Doppelseite auf Farbgrund mit Titeletikett, Text, Bildern und Kästen. Auf der Karte ist kein Wort gemalt: Ihre Namen kommen aus dem Text."
 description: "Eine Schulbuch-Einheit in Postext: Vorlagen, die eine Basis erweitern, verkettete Kastenstile und eine gemalte Karte, aus dem Markdown beschriftet."
-question: "Wie setze ich eine Schulbuch-Einheit in drei Sprachen mit denselben Seitenvorlagen?"
-aliases: ["Schulbuch", "Lehrbuch", "Grundschule", "Einheit", "Doppelseite", "Themenseite", "Seitenhintergrund", "Titeletikett", "beschriftete Karte", "Inhalt nach Teilen", "Vorlagenvererbung", "Spanisch Katalanisch Englisch", "textbook"]
+question: "Wie setze ich mit denselben Vorlagen ein Schulbuch in zehn Sprachen, auch auf Arabisch und senkrecht?"
+aliases: ["Schulbuch", "Lehrbuch", "Grundschule", "Einheit", "Doppelseite", "Themenseite", "Seitenhintergrund", "Titeletikett", "beschriftete Karte", "Inhalt nach Teilen", "Vorlagenvererbung", "Spanisch Katalanisch Englisch", "von rechts nach links", "senkrechter Text", "tategaki", "textbook"]
 pageNotes: {"1": "Der Einheitenauftakt: ein Gemälde eines Flusstals von schneebedeckten Bergen bis zum Meer füllt den oberen Teil, in der Ecke sitzen zwei Kinder im Gras. Darunter ein blaues Etikett mit dem Titel Unser Fluss, ein Absatz und ein hellblauer Kasten, Das lernst du.", "2": "Das Inhaltsverzeichnis: auf hellblauem Grund ein blaues Titeletikett, zwei Teilzeilen (A und B) mit ihren Themen und Abschnitten, Füllpunkte und Seitenzahlen, unten die Karte als kleines Bild.", "4": "Thema 1, Wo ein Fluss entsteht, auf hellblauem Grund: ein nummeriertes Titeletikett, zwei Textspalten, ein Streifen aus drei gemalten Bildern mit Legenden und ein Kasten Probier es aus; rechts drei Kästen mit Etikett.", "6": "Thema 2, Vom Gebirge zum Meer, auf hellgrünem Grund: eine gemalte Karte über beide Seiten mit aufgesetzten Namen, unter der rechten Seite drei Kästen für die Flussläufe.", "8": "Thema 3, Die Menschen und der Fluss, auf Sandgrund: Text und zwei Kästen links, rechts drei Kästen mit je einem Gemälde."}
 ---
 
 ## Was Sie setzen
 
-Neun Seiten von *Unser Fluss*, Einheit 4 eines erfundenen Sachkundebuchs für die 3. Klasse, auf einer Seite von 210 × 280 mm, auf Spanisch, Katalanisch und Englisch. Ein gemaltes Tal eröffnet die Einheit, eine Inhaltsseite führt zwei Teile auf, dann folgen drei Themen als Doppelseiten, jedes auf eigenem Grund: Wasserblau, Feldgrün, Sonnensand. Jedes Thema hat ein Etikett mit Nummer und Titel, Text in zwei Spalten und Kästen mit Etikett, die mit ihrem Text wachsen. Das zweite Thema ist eine einzige gemalte Karte über beide Seiten, auf der Fluss, Dörfer und die drei Flussläufe aus dem Markdown benannt sind. Die drei Texte sind um ein Fünftel oder mehr verschieden lang und passen in dieselben Vorlagen: Ein Kasten nimmt die Höhe, die seine Wörter brauchen, und schiebt den nächsten nach unten, und die Karte wird etwas kleiner gesetzt, bevor irgendein Text es wird.
+Neun Seiten von *Unser Fluss*, Einheit 4 eines erfundenen Sachkundebuchs für die 3. Klasse, auf einer Seite von 210 × 280 mm, in zehn Sprachen: Spanisch, Katalanisch, Englisch, Portugiesisch, Französisch, Deutsch, Italienisch, Arabisch, Chinesisch und Japanisch. Ein gemaltes Tal eröffnet die Einheit, eine Inhaltsseite führt zwei Teile auf, dann folgen drei Themen als Doppelseiten, jedes auf eigenem Grund: Wasserblau, Feldgrün, Sonnensand. Jedes Thema hat ein Etikett mit Nummer und Titel, Text in zwei Spalten und Kästen mit Etikett, die mit ihrem Text wachsen. Das zweite Thema ist eine einzige gemalte Karte über beide Seiten, auf der Fluss, Dörfer und die drei Flussläufe aus dem Markdown benannt sind. Die Texte sind um ein Fünftel oder mehr verschieden lang und passen in dieselben Vorlagen: Ein Kasten nimmt die Höhe, die seine Wörter brauchen, und schiebt den nächsten nach unten, und die Karte wird etwas kleiner gesetzt, bevor irgendein Text es wird. Das arabische Buch läuft von rechts nach links, das chinesische und das japanische laufen die Seite hinab; alle drei sind rechts gebunden und werden in jeder Doppelseite von der rechten zur linken Seite gelesen.
 
 ## Zubereitung
 
-### 1 · Die Kästen mit `extends` bauen
+### 1 · Wissen, auf welcher Seite jede Sprache beginnt
+
+<Excerpt region="editions" />
+
+Die Rahmen einer Vorlage stehen im Bezugssystem des Seitenflusses, in dem x entlang der Zeilen läuft. Mit `locale: 'ar'` spiegelt die Engine dieses Bezugssystem, sodass das arabische Buch die lateinischen Rahmen unverändert nutzt: Der Titel steht zuerst auf der rechten Seite, die drei Fotos und die drei Kästen der Flussläufe laufen von rechts nach links, und Etiketten, Streifen und Innenabstände der Kästen folgen den Zeilen. Mit `layout.writingMode: 'vertical-rl'` läuft x die Seite hinab und y von rechts nach links: Die `width` eines Rahmens ist eine Länge nach unten, ein Stapel wächst nach links, `columns: 2` ergibt zwei Stufen (段) zu 27 Zeichen, und ein Rahmen, der `below` eines anderen steht, steht links davon. Die Dekoration (die Gründe, das Titeletikett, die Nummer, die Kolumnentitel und die Seitenzahlen) steht auf dem Blatt selbst und wird daher von `START` aus gesetzt, der Seite, an der das Lesen einer Seite beginnt. Jede Schrift hat eine Textschrift und eine gerundete Auszeichnungsschrift, und die arabische, die chinesische und die japanische Ausgabe haben weder Kursive noch Versalien noch Sperrung.
+
+### 2 · Die Kästen mit `extends` bauen
 
 <Excerpt region="boxes" />
 
 Ein Kastenstil entsteht in drei Schritten. `caja` hält Form, Schrift und die Geometrie des Etiketts; `caja-tema` legt die Farbe des Themas auf Etikett und Aufzählungszeichen; `dato`, `palabras` und `actividad` bestimmen die Art: getönter Kasten, umrandeter oder mit Streifen. Ihre Farben sind Einträge der Palette (`tema`, `tema-tint`): Jeder Stil wird einmal geschrieben, und die Vorlage eines Themas färbt ihn ein.
 
-### 2 · Jedes Thema eine Basisvorlage erweitern lassen
+### 3 · Jedes Thema eine Basisvorlage erweitern lassen
 
 <Excerpt region="answer" />
 
-Die Basis ist eine Doppelseite: ein Grund bis zum Anschnitt, ein Titeletikett mit Nummer und ein Text in zwei Spalten. Ein Thema erweitert sie (`extends: 'tema'`), setzt seine `palette` (die drei `tema`-Einträge nehmen die Farben der Familie an, und Grund, Etikett, Nummer und alle Kästen wechseln gemeinsam) und fügt eigene Rahmen hinzu. Etikett und Nummer sind am Titelrahmen verankerte Dekoration: Das Etikett ist so hoch wie der Titel, den die Sprache braucht. Die Nummer ist `{headingNumber}`, der Zähler der Überschrift, die der Rahmen übernommen hat, gemalt über den linken Innenabstand des Rahmens: Kein Seitenblock wiederholt sie, und ein Klick darauf trifft die Nummer, nicht den Rahmen.
+Die Basis ist eine Doppelseite: ein Grund bis zum Anschnitt, ein Titeletikett mit Nummer und ein Text in zwei Spalten. Ein Thema erweitert sie (`extends: 'tema'`), setzt seine `palette` (die drei `tema`-Einträge nehmen die Farben der Familie an, und Grund, Etikett, Nummer und alle Kästen wechseln gemeinsam) und fügt eigene Rahmen hinzu. Etikett und Nummer sind am Titelrahmen verankerte Dekoration: Das Etikett ist so hoch wie der Titel, den die Sprache braucht. Die Nummer ist `{headingNumber}`, der Zähler der Überschrift, die der Rahmen übernommen hat, gemalt über den Innenabstand des Rahmens vor seinen Wörtern: Kein Seitenblock wiederholt sie, und ein Klick darauf trifft die Nummer, nicht den Rahmen.
 
-### 3 · Die Gruppen den Platz teilen lassen
+### 4 · Die Gruppen den Platz teilen lassen
 
-Jedes Thema hat zwei Gruppen. Die linke Seite ist ein Stapel: Titel, Text, dann der Bildstreifen oder die Karte. Die rechte ist ein weiterer Stapel aus Kästen oder eine Reihe aus drei Kästen, die sich die Breite teilen. Ein Rahmen ist so hoch wie seine Wörter, nie niedriger als sein `minHeight`; der spanische Text schiebt also alles unter sich nach unten, und keine Position der Vorlage ändert sich. Wird eine Seite knapp, holt die [Anpassungsleiter](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) Platz zurück, setzt Karte und Bilder kleiner und den Text zuletzt, bis auf 90 %. `pnpm cookbook bench` setzt die drei Ausgaben noch einmal mit 30 % längerem Text.
+Jedes Thema hat zwei Gruppen. Die linke Seite ist ein Stapel: Titel, Text, dann der Bildstreifen oder die Karte. Die rechte ist ein weiterer Stapel aus Kästen oder eine Reihe aus drei Kästen, die sich die Breite teilen. Ein Rahmen ist so hoch wie seine Wörter, nie niedriger als sein `minHeight`; der spanische Text schiebt also alles unter sich nach unten, und keine Position der Vorlage ändert sich. Wird eine Seite knapp, holt die [Anpassungsleiter](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) Platz zurück, setzt Karte und Bilder kleiner und den Text zuletzt, bis auf 90 %. `pnpm cookbook bench` setzt jede Ausgabe noch einmal mit 30 % längerem Text. Auf einer senkrechten Seite legt die feldgrüne Doppelseite die Karte quer über den Kopf beider Seiten, und Titel, Text und die drei Flussläufe stehen darunter.
 
-### 4 · Die Namen der Karte aus dem Text setzen
+### 5 · Die Namen der Karte aus dem Text setzen
 
 <Excerpt region="art-labels" />
 
-Die Karte ist ein Gemälde ohne einen Buchstaben. Jeder Ort ist ein Anker des Bildes, ein Punkt in Bruchteilen von Breite und Höhe mit einem Beschriftungsstil, und jede Ausgabe schreibt ihre eigenen `::label`-Zeilen an diese Anker. *Penalta Reservoir*, *Pantà de Penyalta* und *Embalse de Peñalta* stehen an derselben Stelle, und ein längerer Name bricht innerhalb der `width` des Ankers um.
+Die Karte ist ein Gemälde ohne einen Buchstaben. Jeder Ort ist ein Anker des Bildes, ein Punkt in Bruchteilen von Breite und Höhe mit einem Beschriftungsstil, und jede Ausgabe schreibt ihre eigenen `::label`-Zeilen an diese Anker. *Penalta Reservoir*, *Pantà de Penyalta* und *Embalse de Peñalta* stehen an derselben Stelle, und ein längerer Name bricht innerhalb der `width` des Ankers um. Ein rechts gebundenes Buch zeigt dasselbe Gemälde gespiegelt (`mapa-1900-rtl.jpg`), sodass der Fluss von den Bergen rechts zum Meer links läuft, in der Richtung, in der seine Seiten gelesen werden; `flipped` bringt jeden Anker auf die andere Seite und kehrt die Richtung einer Drehung um.
 
-### 5 · Jeden Teil des Inhaltsverzeichnisses zusammenhalten
+### 6 · Jeden Teil des Inhaltsverzeichnisses zusammenhalten
 
 <Excerpt region="contents" />
 
@@ -59,14 +65,15 @@ Ein Thema über das Meer ist ein vierter Eintrag in `FAMILIES` und eine Vorlage 
 Ein Rahmen, der seinen Text nicht verkleinern darf, bekommt `fit: { shrinkText: false }`. Ein längerer Text drückt dann stärker auf die Rahmen ringsum, und die Einpassstufen erreichen die Bilder früher.
 
 ```diff
--  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
--    fit: { minScale: 0.9 } }],
-+  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
-+    fit: { shrinkText: false } }],
+   frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(CJK ? 16 : 7), // 段
+-    width: mm(MEASURE), fit: { minScale: 0.9 } }],
++    width: mm(MEASURE), fit: { shrinkText: false } }],
 ```
 
 ## Häufige Fehler
 
 - Ein ins Bild gemalter Name könnte sich nicht mit der Sprache ändern: Auf der Karte steht kein Wort, und jeder Name ist eine Beschriftung.
-Die Palette eines Themas ändert nur die `tema`-Einträge. Die Seitenzahlen und das Inhaltsverzeichnis nutzen `agua`, das dasselbe Blau hat; sie bleiben auf den grünen und sandfarbenen Seiten blau. Verknüpfen Sie sie mit `tema`, dann folgen sie dem Thema.
+- Die Palette eines Themas ändert nur die `tema`-Einträge. Die Seitenzahlen und das Inhaltsverzeichnis nutzen `agua`, das dasselbe Blau hat; sie bleiben auf den grünen und sandfarbenen Seiten blau. Verknüpfen Sie sie mit `tema`, dann folgen sie dem Thema.
+- Eine arabisch-indische Ziffer neben einem Mittelpunkt liest sich als zwei Ziffern: `١ · ماء` sieht aus wie `٠١ ماء`, weil die arabische Null ein Punkt ist. Die arabische Ausgabe schreibt `١- ماء للحقول` und schreibt die Nummer der Einheit aus.
+- Ein Dekorationselement steht auf dem Blatt, nicht im Fluss: Ein Badge, das `top-left` an einem Rahmen sitzt, bleibt im Arabischen links. `corner('top')` und `inward(x)` setzen es von der Seite aus, an der das Lesen der Seite beginnt.
 - Zwei Abbildungen, die dieselbe Ressource belegen, übernehmen die Worte der ersten: Die kleine Karte auf der Inhaltsseite ist dieselbe Datei unter einer eigenen Ressource, `rio`, ohne Anker.

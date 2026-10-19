@@ -504,6 +504,9 @@ export function attachLabelAnchorEditor(slot: HTMLElement, pageIndex: number, pa
           return;
         }
         if (svg.parentNode !== slot) slot.appendChild(svg);
+        // A page of a spread draws its own half of a label across the
+        // spine; the facing page draws the other half from its copy (#1040).
+        svg.style.overflow = refs.docRef.current?.pages[pageIndex]?.composed?.spread ? 'hidden' : 'visible';
         paintShapesSvg(svg, shapes);
       },
       sheetPxPerCssPx: sheetPerCss,

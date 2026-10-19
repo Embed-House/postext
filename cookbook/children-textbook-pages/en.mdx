@@ -1,42 +1,48 @@
 ---
-title: "A children's textbook unit in three languages"
-summary: "Nine pages of a Year 3 unit in Spanish, Catalan and English: spreads on coloured grounds, boxes with tabs that grow, a painted map named from the text."
+title: "A children's textbook unit in ten languages"
+summary: "Nine pages of a Year 3 unit in ten languages, right to left in Arabic and vertical in Chinese and Japanese: coloured spreads, growing boxes, a labelled map."
 plain: "A school textbook unit about a river, nine pages long. Each topic is a double page on a coloured ground with a title tab, text, pictures and boxes. The map has no word painted on it: its names come from the text."
 description: "A children's textbook unit in Postext: templates that extend a base, box styles that extend each other, a painted map labelled from the Markdown, contents."
-question: "How do I set a textbook unit in three languages from the same page templates?"
-aliases: ["textbook", "school book", "primary school", "unit", "double page", "topic page", "page ground", "title tab", "labelled map", "contents by part", "template inheritance", "Spanish Catalan English", "libro de texto"]
+question: "How do I set a textbook unit in ten languages, right to left and vertical too, from the same templates?"
+aliases: ["textbook", "school book", "primary school", "unit", "double page", "topic page", "page ground", "title tab", "labelled map", "contents by part", "template inheritance", "Spanish Catalan English", "right to left", "vertical text", "tategaki", "libro de texto"]
 pageNotes: {"1": "The unit opener: a painting of a river valley from snow-capped mountains to the sea fills the top, with two children sitting on the grass in the corner. Under it a blue tab with the title Our river, a paragraph and a pale blue box, You will learn.", "2": "The contents: on a pale blue ground, a blue title tab, two part rows (A and B) with their topics and sections, dotted leaders and page numbers, and the map as a small picture at the foot.", "4": "Topic 1, Where a river is born, on a pale blue ground: a numbered title tab, two columns of text, a strip of three painted pictures with captions and a Try it box; on the right page three boxes with tabs.", "6": "Topic 2, From the mountains to the sea, on a pale green ground: one painted map across both pages with names set on it, and three course boxes under the right page.", "8": "Topic 3, People and the river, on a sand ground: text and two boxes on the left page, three boxes with a painting each on the right page."}
 ---
 
 ## What you'll build
 
-Nine pages of *Our river*, unit 4 of an invented Year 3 social science book, on a 210 × 280 mm page, in Spanish, Catalan and English. A painted valley opens the unit, a contents page lists two parts, and three topics follow as double pages, each on its own ground: water blue, field green, sun sand. Every topic has a tab with its number and title, text in two columns and boxes with tabs that grow with their text. The second topic is one painted map across both pages, with the river, the villages and the three courses named on it from the Markdown. The three texts differ in length by a fifth or more and settle in the same templates: a box takes the height its words need and pushes the next one down, and the map is set a little smaller before any text is.
+Nine pages of *Our river*, unit 4 of an invented Year 3 social science book, on a 210 × 280 mm page, in ten languages: Spanish, Catalan, English, Portuguese, French, German, Italian, Arabic, Chinese and Japanese. A painted valley opens the unit, a contents page lists two parts, and three topics follow as double pages, each on its own ground: water blue, field green, sun sand. Every topic has a tab with its number and title, text in two columns and boxes with tabs that grow with their text. The second topic is one painted map across both pages, with the river, the villages and the three courses named on it from the Markdown. The texts differ in length by a fifth or more and settle in the same templates: a box takes the height its words need and pushes the next one down, and the map is set a little smaller before any text is. The Arabic book runs right to left and the Chinese and Japanese books run down the page; all three are bound on the right and read from the right page of each spread to the left one.
 
 ## Method
 
-### 1 · Build the boxes with `extends`
+### 1 · Know which side each language starts from
+
+<Excerpt region="editions" />
+
+A template's frames stand in the page's flow frame, where x runs along the lines. With `locale: 'ar'` the engine mirrors that frame, so the Arabic book uses the Latin frames unchanged: the title comes first on the right page, the three photographs and the three course boxes run from right to left, and the boxes' tabs, stripes and paddings follow the lines. With `layout.writingMode: 'vertical-rl'` x runs down the page and y from right to left: a frame's `width` is a length down the page, a stack moves leftward, `columns: 2` gives two tiers (段) of 27 characters, and a frame set `below` another stands to its left. Decoration (the grounds, the title tab, the number, the running heads and the folios) stands on the sheet itself, so it is placed from `START`, the side a page starts reading from. Each script has a text face and a rounded display face, and the Arabic, Chinese and Japanese editions have no italics, capitals or tracking.
+
+### 2 · Build the boxes with `extends`
 
 <Excerpt region="boxes" />
 
 A box style is made in three steps. `caja` holds the shape, the type and the geometry of the tab; `caja-tema` puts the topic's colour on the tab and the bullets; `dato`, `palabras` and `actividad` set the kind: a tinted box, an outlined one or one with a stripe. Their colours are palette entries (`tema`, `tema-tint`), so each style is written once and a topic's template tints it.
 
-### 2 · Let every topic extend one base template
+### 3 · Let every topic extend one base template
 
 <Excerpt region="answer" />
 
-The base is a spread: a ground to the bleed, a title tab with its number, and a text in two columns. A topic extends it (`extends: 'tema'`), sets its `palette` (the three `tema` entries take the family's colours, and the ground, the tab, the number and every box change together) and adds its own frames. The tab and the number are decoration anchored to the title frame, so the tab is as tall as the title the language needs. The number is `{headingNumber}`, the counter of the heading the frame took, painted over the frame's left padding: no page fence repeats it, and a click on it reaches the number, not the frame.
+The base is a spread: a ground to the bleed, a title tab with its number, and a text in two columns. A topic extends it (`extends: 'tema'`), sets its `palette` (the three `tema` entries take the family's colours, and the ground, the tab, the number and every box change together) and adds its own frames. The tab and the number are decoration anchored to the title frame, so the tab is as tall as the title the language needs. The number is `{headingNumber}`, the counter of the heading the frame took, painted over the frame's padding before its words: no page fence repeats it, and a click on it reaches the number, not the frame.
 
-### 3 · Let the groups share the room
+### 4 · Let the groups share the room
 
-Each topic has two groups. The left page is a stack: title, text, then the strip of pictures or the map. The right page is another stack of boxes, or a row of three boxes that share its width. A frame is as tall as its words, never less than its `minHeight`, so the Spanish text pushes everything under it down and no position in the template changes. When a page runs short, the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) takes space back, then sets the map and the pictures smaller, and the text last, down to 90 %. `pnpm cookbook bench` runs the three editions again with the text 30 % longer.
+Each topic has two groups. The left page is a stack: title, text, then the strip of pictures or the map. The right page is another stack of boxes, or a row of three boxes that share its width. A frame is as tall as its words, never less than its `minHeight`, so the Spanish text pushes everything under it down and no position in the template changes. When a page runs short, the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) takes space back, then sets the map and the pictures smaller, and the text last, down to 90 %. `pnpm cookbook bench` runs every edition again with the text 30 % longer. On a vertical page the field spread lays the map across the head of both pages, and the title, the text and the three courses stand under it.
 
-### 4 · Put the names on the map from the text
+### 5 · Put the names on the map from the text
 
 <Excerpt region="art-labels" />
 
-The map is a painting with no letter on it. Each place is an anchor of the picture, a point in fractions of its width and height with a label style, and each edition writes its own `::label` lines at those anchors. *Penalta Reservoir*, *Pantà de Penyalta* and *Embalse de Peñalta* stand at the same place, and a longer name breaks inside the anchor's `width`.
+The map is a painting with no letter on it. Each place is an anchor of the picture, a point in fractions of its width and height with a label style, and each edition writes its own `::label` lines at those anchors. *Penalta Reservoir*, *Pantà de Penyalta* and *Embalse de Peñalta* stand at the same place, and a longer name breaks inside the anchor's `width`. A right-bound book shows the same painting mirrored (`mapa-1900-rtl.jpg`), so the river runs from the mountains on the right to the sea on the left, the way its pages are read; `flipped` takes each anchor to the other side and turns a rotation the other way.
 
-### 5 · Keep each part of the contents together
+### 6 · Keep each part of the contents together
 
 <Excerpt region="contents" />
 
@@ -59,14 +65,15 @@ A topic about the sea is a fourth entry in `FAMILIES` and a template made with `
 A frame that must not shrink its text takes `fit: { shrinkText: false }`. A longer text then pushes harder on the frames around it, and the ladder reaches the pictures first.
 
 ```diff
--  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
--    fit: { minScale: 0.9 } }],
-+  frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(7), width: mm(HALF),
-+    fit: { shrinkText: false } }],
+   frames: [title, { name: 'texto', flow: true, columns: 2, columnGap: mm(CJK ? 16 : 7), // 段
+-    width: mm(MEASURE), fit: { minScale: 0.9 } }],
++    width: mm(MEASURE), fit: { shrinkText: false } }],
 ```
 
 ## Pitfalls
 
 - A name painted into a picture could not change with the language: the map carries no word, and every name is a label.
-A topic's palette changes the `tema` entries only. The folios and the contents use `agua`, which has the same blue, so they stay blue on the green and sand pages; link them to `tema` and they follow the topic.
+- A topic's palette changes the `tema` entries only. The folios and the contents use `agua`, which has the same blue, so they stay blue on the green and sand pages; link them to `tema` and they follow the topic.
+- An Arabic-Indic digit next to a middle dot reads as two digits: `١ · ماء` looks like `٠١ ماء`, because the Arabic zero is a dot. The Arabic edition writes `١- ماء للحقول` and spells the unit's number out.
+- A decoration element stands on the sheet, not in the flow: a badge placed `top-left` of a frame stays at the left in Arabic. `corner('top')` and `inward(x)` place it from the side the page starts reading from.
 - Two figures that set the same resource take the words of the first one: the small map on the contents page is the same file under its own resource, `rio`, with no anchors.
