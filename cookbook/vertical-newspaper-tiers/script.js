@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 084 · A vertical newspaper page in tiers ═══════════════
 // https://postext.dev/en/cookbook/vertical-newspaper-tiers
 // Code: MIT · Text: Shenbao, 1912 (PD); gazette, stele report: zh.wikisource (CC BY-SA 4.0)
-// Fonts: Noto Serif TC, Noto Sans TC, LXGW WenKai TC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif TC, Noto Sans TC, LXGW WenKai TC (SIL OFL 1.1) · Needs postext ≥ 1.46.2
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, loadVerticalAlternates,
 } from 'https://esm.sh/postext';

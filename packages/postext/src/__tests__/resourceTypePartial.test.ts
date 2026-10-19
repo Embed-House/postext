@@ -45,8 +45,22 @@ describe('a resource type written in part (#916)', () => {
   });
 
   it('takes the built-in type of the same id first, in the document language', () => {
+    const [figure] = effectiveResourceTypes({ locale: 'es', resourceTypes: [{ id: 'figure' } as unknown as ResourceType] });
+    expect(figure).toMatchObject({ name: 'Figura', shortLabel: 'Fig.', captionPrefix: 'Figura', resetOn: 'h1', numberingTemplate: '{h1}.{n}' });
+  });
+
+  // #1037: before #916 a type with no `shortLabel` was cited by its `name`;
+  // the built-in short label of the same id must not replace a name the type gives.
+  it('cites a type that names itself by that name, not by the built-in short label', () => {
     const [figure] = effectiveResourceTypes({ locale: 'es', resourceTypes: [{ id: 'figure', name: 'Lámina' } as unknown as ResourceType] });
-    expect(figure).toMatchObject({ name: 'Lámina', shortLabel: 'Fig.', captionPrefix: 'Figura', resetOn: 'h1', numberingTemplate: '{h1}.{n}' });
+    expect(figure).toMatchObject({ name: 'Lámina', shortLabel: 'Lámina', captionPrefix: 'Figura', resetOn: 'h1', numberingTemplate: '{h1}.{n}' });
+    const table = { id: 'table', name: 'Table', captionPrefix: 'Table', numberingTemplate: '{n}', resetOn: 'never', counterFormat: 'decimal' } as unknown as ResourceType;
+    const config: PostextConfig = { locale: 'en-us', resourceTypes: [table] };
+    const markdown = 'The roofs made most of it (:ref{id="a"}).\n\n::resource{id="a"}\n';
+    const doc = buildDocument({ markdown, resources: [{ ...resources[0]!, typeId: 'table' }] }, config);
+    const text = doc.pages.flatMap((page) => page.columns.flatMap((col) => col.blocks.flatMap((b) => b.lines.map((l) => l.text)))).join(' ');
+    expect(text).toMatch(/\(Table\s1\)/); // a no-break space before the number
+    expect(text).not.toMatch(/Tab\.\s1/);
   });
 
   it('returns the same list when every type is whole', () => {

@@ -69,28 +69,15 @@ export interface ReadBundleOptions {
    *  a bundle in one language gets resource types in that language,
    *  whatever `locale` asks for. A host that passes its own base should
    *  localise it to the same language. It is taken in today's terms, with
-   *  one exception: under a manifest older than `CONFIG_VERSION` whose
-   *  chapters set maths, a base `math` that neither the manifest nor the
-   *  locale replaces is pinned with the bundle's (`fontSizeScale` ×
-   *  `LEGACY_MATH_SIZE`, see `pinLegacyMathSize`), since 1.4 set the
-   *  bundle's formulas at that size; so is a base `layout`'s inline gap
-   *  (`pinLegacyInlineGap`) when the chapters embed a resource, and its
-   *  gap in boxes (`pinLegacyBoxResourceGap`) when they embed one inside a
-   *  `:::callout`; a base `bodyText`'s colon-list room
-   *  (`pinLegacyColonListRoom`) when they introduce a list with a colon; a
-   *  base `headings`' inline marks (`pinLegacyHeadingMarks`) when a heading
-   *  of theirs carries one; a base `layout`'s box cut
-   *  (`pinLegacyBoxChildCut`) when they hold a `:::callout`; a base
-   *  `bodyText`'s dash breaks (`pinLegacyDashBreaks`) when they set a dash
-   *  closed between words, its compound breaks (`pinLegacyHyphenBreaks`)
-   *  when they set a hyphen between two letters, and its ragged breaking
-   *  (`pinLegacyRaggedBreaking`) when the configuration sets some running
-   *  text ragged; a base `headings`' split under a heading
-   *  (`pinLegacyHeadingSplit`) when they have a heading; a base
-   *  `bodyText`'s space under `:::paragraphs` containers
-   *  (`pinLegacyParagraphContainerSpacing`) when they hold one and the
-   *  configuration declares a paragraph style; and the size of every drop
-   *  cap in the base that names none (`pinLegacyDropCapSize`). */
+   *  one exception: under a manifest older than `CONFIG_VERSION`, the pins
+   *  its stamp calls for (see `migrateBundleConfig`) also apply to the keys
+   *  of the base that the manifest and the locale leave in force, all but
+   *  the heading breaks, since the old reader laid the bundle out with
+   *  them too: a base `math` is pinned with the bundle's maths size
+   *  (`fontSizeScale` × `LEGACY_MATH_SIZE`), a base `layout` with its
+   *  inline gap, a base `bodyText` with its dash breaks, and so on, each
+   *  under the same conditions on the chapters and the configuration as a
+   *  key of the manifest. */
   baseConfig?: PostextConfig;
   /** Intrinsic size of an SVG whose spec omits it. Defaults to `svgSize`. */
   measureSvg?: (markup: string) => BundleImageSize | undefined;
@@ -125,19 +112,10 @@ export interface ReadBundleResult {
   /** Base config + manifest `config` + the locale's overrides, with the
    *  bundle's font families appended to `customFonts`. A manifest stored
    *  under older rules than `CONFIG_VERSION` (none: postext 1.4 or earlier)
-   *  is read in today's terms (see `migrateConfig`): its heading breaks,
-   *  its maths size when its chapters set maths, the space around its
-   *  inline resources when they embed one (inside a box too, when a box
-   *  embeds one), its headings' inline marks when a heading carries one,
-   *  the size of its drop caps, the room kept for a list under a colon line
-   *  when its chapters introduce one so, the lines a box cut leaves of a
-   *  paragraph or list item when they hold a box, the line breaks after a
-   *  closed dash when they set one, the line breaks at a compound's hyphen
-   *  when they set one, the line-by-line breaking of its ragged text when
-   *  it has some, the split of a paragraph under a heading when they have
-   *  a heading, and the space under its `:::paragraphs` containers when
-   *  they hold one, are the ones 1.4 laid out. The layout
-   *  fixes of postext 1.5 that no pin holds back apply to it as to any
+   *  is read in today's terms (see `migrateBundleConfig`): every pin its
+   *  stamp calls for, from the heading breaks and the maths size of 1.4 on,
+   *  keeps what that version laid out (most only when the chapters show
+   *  something they are for). The layout fixes that no pin holds back apply to it as to any
    *  book. */
   config: PostextConfig;
   resources: Resource[];
@@ -179,19 +157,11 @@ async function mapConcurrent<T, R>(items: readonly T[], limit: number, fn: (item
 
 /** Read a manifest plus its files. Throws on an invalid manifest or a
  *  missing chapter, picture or font file. The configuration of a manifest
- *  written by postext 1.4 or earlier (no `configVersion`) keeps the heading
- *  breaks, the maths size, the space around inline resources in the text
- *  and inside boxes, the heading marks, the drop-cap sizes, the room under
- *  a colon line that introduces a list, the lines a box cut leaves of a
- *  paragraph or list item, the breaks at dashes and at compounds'
- *  hyphens, the breaking of ragged text, the split under a heading and the
- *  space under `:::paragraphs` containers it laid out then (see
- *  `pinLegacyHeadingBreaks`, `pinLegacyMathSize`, `pinLegacyInlineGap`,
- *  `pinLegacyBoxResourceGap`, `pinLegacyHeadingMarks`,
- *  `pinLegacyDropCapSize`, `pinLegacyColonListRoom`, `pinLegacyBoxChildCut`,
- *  `pinLegacyDashBreaks`, `pinLegacyHyphenBreaks`,
- *  `pinLegacyRaggedBreaking`, `pinLegacyHeadingSplit` and
- *  `pinLegacyParagraphContainerSpacing`). */
+ *  stored under older rules than `CONFIG_VERSION` (none: postext 1.4 or
+ *  earlier) keeps what that version laid out: the pins its stamp calls for
+ *  (see `migrateBundleConfig`) apply to the manifest, the locale's
+ *  overrides and the keys of the base they leave in force (all but the
+ *  heading breaks). */
 export async function readBundle(
   manifest: unknown,
   readFile: BundleFileReader,
@@ -337,11 +307,10 @@ export async function readBundle(
   }
 
   // A manifest written for older rules (postext 1.4 or earlier has no
-  // `configVersion`) is read with the heading breaks, the maths size and
-  // the inline gap it laid out then. The reader's own base configuration
-  // keeps its heading breaks, but its `math` and `layout`, when no layer
-  // replaces them, are the ones 1.4 set the book with, so they are pinned
-  // with the rest.
+  // `configVersion`) is read with what its version laid out. The reader's
+  // own base configuration keeps its heading breaks, but its other keys,
+  // when no layer replaces them, are the ones the old reader set the book
+  // with, so they are pinned with the rest.
   const baseConfig = migrateBundleConfig(
     options.baseConfig ?? bundleBaseConfig(resolveBundleConfigLocale(manifest, locale)),
     [manifest.config ?? {}, overrides?.config ?? {}],

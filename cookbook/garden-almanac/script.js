@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 035 · Garden almanac: calendar grid and landscape chart ═════
 // https://postext.dev/en/cookbook/garden-almanac
 // Code: MIT · Text: original, Italian (CC BY 4.0) · Field: diffusion models · Icons: CC BY 4.0
-// Fonts: Piazzolla, Gilda Display, Commissioner (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Piazzolla, Gilda Display, Commissioner (SIL OFL 1.1) · Needs postext ≥ 1.46.2
 import {
   buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage, parseTSV,
   mergeCells, setCellContent, setCellBackground, setCellImage, setAlignment,

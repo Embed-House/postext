@@ -10,5 +10,4 @@ export type {
   SandboxLabels,
   PanelId,
   ViewportTab,
-  ToolbarAction,
 } from './types';

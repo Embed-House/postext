@@ -3561,9 +3561,10 @@ export interface CalloutStyleConfig {
    *  column or page ("Continued", a screenplay's "(MORE)"), inside the box
    *  under its last line. Default `false`. */
   continuesMarkerEnabled?: boolean;
-  /** Text of that marker, in the box's body face and size. Defaults to
-   *  `"Continued"` (`"Continúa"` for Spanish documents), like a split
-   *  table's marker. */
+  /** Text of that marker, in the box's body face and size. Defaults to a
+   *  split table's marker in the document language (`"Continued"`,
+   *  `"Continúa"`, `"À suivre"`, `"次ページへ続く"`…; English for a
+   *  language with none, see `defaultTableContinuationStrings`). */
   continuesMarker?: string;
   /** Alignment of the marker in the box's inner width. Default `'right'`. */
   continuesMarkerAlign?: CalloutMarkerTextAlign;
@@ -5100,9 +5101,9 @@ export interface ResolvedMathConfig {
  *    configuration warning (`footnoteSpreadHorizontal`) says so. */
 export type FootnotePlacement = 'column' | 'chapterEnd' | 'spread';
 
-/** When the note numbers start again at 1: at each chapter (a heading
- *  that opens a page, `breakBefore`, and the start of each document of a
- *  book), never within the document, on every page (`'page'`, the usual
+/** When the note numbers start again at 1: at each chapter (every level-1
+ *  heading, and the start of each document of a book), never within the
+ *  document, on every page (`'page'`, the usual
  *  页下注 of a Chinese book), in every column (`'column'`, for books that
  *  set their notes column by column) or on every spread (`'spread'`, the
  *  sidenotes of a Japanese book). `'page'`, `'column'` and `'spread'`

@@ -210,7 +210,7 @@ export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
       {ticked.size > 0 && (
         <TickedFields marks={marks} ticked={ticked} styleOptions={styleOptions} commit={commit} />
       )}
-      <ul ref={list} className="relative m-0 flex max-h-[58dvh] list-none flex-col gap-1 overflow-y-auto p-0" aria-label={labels.resourceMarksModeAnchors}>
+      <ul ref={list} className="relative m-0 flex min-h-24 shrink list-none flex-col gap-1 overflow-y-auto p-0" aria-label={labels.resourceMarksModeAnchors}>
         {visible.map(({ a, i }) => {
           const open = selected === i;
           const color = labelStyleColor(a.style, labelStyles);

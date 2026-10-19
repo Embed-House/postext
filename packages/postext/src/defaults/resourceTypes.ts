@@ -172,7 +172,8 @@ export function isResourceCounterReset(value: unknown): value is ResourceType['r
  *  filled in: the built-in type of the same id gives them (`figure`,
  *  `table`, `video` in the document's language), else the built-in
  *  numbering (`{h1}.{n}`, reset on every `h1`, decimal) and the type's own
- *  name for the labels (`name` falls back to the id). A `resetOn` that names
+ *  name for the labels (`name` falls back to the id). The short label
+ *  follows a `name` the type gives before the built-in one. A `resetOn` that names
  *  no level becomes `h1` too (`collectConfigWarnings` reports it). */
 export function completeResourceType(type: Partial<ResourceType> & { id: string }, locale = 'en'): ResourceType {
   const builtIn = defaultResourceTypes(locale).find((t) => t.id === type.id);
@@ -182,7 +183,10 @@ export function completeResourceType(type: Partial<ResourceType> & { id: string 
     ...builtIn,
     ...type,
     name,
-    shortLabel: str(type.shortLabel) ? type.shortLabel : builtIn?.shortLabel ?? name,
+    // A type that names itself is cited by that name, as references read a
+    // type with no `shortLabel` before #916 (#1037): `{ id: 'table', name:
+    // 'Table' }` reads «Table 1», not the built-in «Tab. 1».
+    shortLabel: str(type.shortLabel) ? type.shortLabel : str(type.name) ? type.name : builtIn?.shortLabel ?? name,
     captionPrefix: str(type.captionPrefix) ? type.captionPrefix : builtIn?.captionPrefix ?? name,
     numberingTemplate: str(type.numberingTemplate) ? type.numberingTemplate : builtIn?.numberingTemplate ?? stringsForLocale(locale).numberingTemplate ?? '{h1}.{n}',
     resetOn: isResourceCounterReset(type.resetOn) ? type.resetOn : builtIn?.resetOn ?? 'h1',

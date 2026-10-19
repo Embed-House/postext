@@ -179,7 +179,8 @@ describe("links and inline HTML", () => {
       }
     }
     expect(offending).toEqual([]);
-    // Seven locales of renditions: past the CI default of 120 s.
+    // Seven locales of renditions, about 95 s: room over the CI default of
+    // 120 s. It took 342 s when every doc rendition reread the docs folder.
   }, 300_000);
 });
 

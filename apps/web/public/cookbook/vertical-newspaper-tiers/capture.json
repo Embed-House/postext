@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-newspaper-tiers",
-  "sourceHash": "93f1678702f2f38da294e22e21a2be79153b474ae5673701d7bc6ae3ccd8a7b4",
+  "sourceHash": "2a03604479c345e456c68205e3bdae860f4527d2e91a25071b609ee396cbdbe5",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.46.2",
+    "postextPdf": "1.46.2",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.238Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.600Z"
-  },
+  "chrome": "155.0.8059.82",
+  "capturedAt": "2026-10-19T15:25:22.385Z",
   "variants": {
     "en": {
-      "hash8": "0f3700f2",
-      "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
+      "hash8": "e418d443",
+      "vdtHash": "3cb3f8c2c382b9e5b0a8bbe0b17ead559c365b63",
       "timings": {
-        "importMs": 3926,
-        "fontsMs": 3273,
-        "buildMs": 72,
-        "totalMs": 8723,
+        "importMs": 11818,
+        "fontsMs": 9203,
+        "buildMs": 88,
+        "totalMs": 27258,
         "builds": 1
       },
       "specimen": {
@@ -68,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171112,
+          "bytes": 170646,
           "alt": "Page 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -97,18 +91,18 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 378606,
+        "bytes": 378611,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22520,
+        "bytes": 22522,
         "folio": "e5cb273f",
         "chapters": [
           {
             "pages": 2,
-            "hash": "73b89024258160aa",
-            "lines": "0accc5ddbe9c3f29"
+            "hash": "fa6c993a74ea7210",
+            "lines": "0ab335fd60b3f951"
           }
         ]
       },
@@ -353,17 +347,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "c01690cf",
-      "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
+      "hash8": "74eb9bf9",
+      "vdtHash": "6d18265a591d2a884635d8e297772bfbd0541759",
       "timings": {
-        "importMs": 3937,
-        "fontsMs": 3287,
-        "buildMs": 91,
-        "totalMs": 8718,
+        "importMs": 6513,
+        "fontsMs": 6744,
+        "buildMs": 70,
+        "totalMs": 17086,
         "builds": 1
       },
       "specimen": {
@@ -408,7 +413,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171302,
+          "bytes": 171010,
           "alt": "Página 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -437,18 +442,18 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 378753,
+        "bytes": 378760,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22548,
+        "bytes": 22550,
         "folio": "e5cb273f",
         "chapters": [
           {
             "pages": 2,
-            "hash": "ead2a2bebbb52dc6",
-            "lines": "5cfceb898f35ac01"
+            "hash": "475a4c10cad33174",
+            "lines": "55ff21a9162bfef9"
           }
         ]
       },
@@ -693,7 +698,18 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

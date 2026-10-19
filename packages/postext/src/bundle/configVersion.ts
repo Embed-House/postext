@@ -1666,52 +1666,20 @@ function mayHaveCjkDesignText(content: string | readonly string[] | undefined, c
 export interface MigrateConfigOptions {
   /**
    * The markdown the configuration lays out (a bundle's chapters, a book's),
-   * when the caller has it. Maths is written between `$` signs, so text with
-   * none sets no formula and its configuration is not given a maths size
-   * (see {@link pinLegacyMathSize}); an inline resource is embedded with a
-   * `::resource{id="…"}` line, so text with none (a mention in running text
-   * or in a code span does not count) is not given the inline gap either
-   * (see {@link pinLegacyInlineGap}), nor the box gap when no such line
-   * stands inside a `:::callout` (see {@link pinLegacyBoxResourceGap}); a
-   * list introduced by a line ending in a colon is what the colon-list room
-   * is for, so text with none is not given it (see {@link
-   * pinLegacyColonListRoom}); text with no heading whose title carries an
-   * inline mark (`*`, `_`, `^`, `~`, `:smallcaps[`, a link) is not given
-   * `headings.inlineMarks: false` (see {@link pinLegacyHeadingMarks});
-   * text with no `:::callout` is not given the box cut (see {@link
-   * pinLegacyBoxChildCut}); text with no em or en dash set closed between
-   * words is not given the 1.4 dash breaks (see {@link
-   * pinLegacyDashBreaks}); text with no heading is not given the 1.4 split
-   * under a heading (see {@link pinLegacyHeadingSplit}); text with no
-   * `:::paragraphs` container is not given the 1.4 space under containers
-   * (see {@link pinLegacyParagraphContainerSpacing}); and text with no
-   * hyphen between two letters is not given the 1.4 compound breaks (see
-   * {@link pinLegacyHyphenBreaks}); and text with no `:::verse` poem whose
-   * lines carry no hemistich separator is not given the 1.22 verse layout
-   * (see {@link pinLegacyVerseLayout}); and text with no backslash ending a
-   * line a paragraph goes on after, and no `\\` in running text, is not
-   * given the 1.22 literal backslashes (see {@link pinLegacyHardBreaks});
-   * and text with no ```` ``` ```` or `~~~` fence is not given the 1.22
-   * reading of fences (see {@link pinLegacyCodeBlocks}); and text with no
-   * poem set line by line is not given the 1.23 turnovers (see {@link
-   * pinLegacyVerseTightening}); and text with no book title is not given
-   * the 1.24 title breaks (see {@link pinLegacyTitleBreaks}), text with no
-   * circled number not the 1.24 Western circled numbers (see {@link
-   * pinLegacyCircledNumbers}), and text with no CJK (in a configuration
-   * whose own text holds none) not the 1.24 design text (see {@link
-   * pinLegacyDesignText}); and text with no heading (in a configuration
-   * that sets a page-span heading) is not given the 1.24 slots under an
-   * opener (see {@link pinLegacyOpenerHeadFloats}); and text with no task
-   * item (`- [ ]`, `- [x]`) is not given the 1.28 box set as a character
-   * (see {@link pinLegacyTaskBox}).
-   * That keeps a stored configuration as
-   * short as it was. Without it the size is pinned whenever maths is on,
-   * and the gaps, the room, the heading marks, the box cut, the dash
-   * breaks, the split under a heading, the compound breaks, the verse
-   * layout, the literal backslashes and the 1.23 verse turnovers always,
-   * and
-   * the container space always when the configuration declares a paragraph
-   * style.
+   * when the caller has it. Most pins are there for something the text
+   * sets (maths for {@link pinLegacyMathSize}, a `::resource{id="…"}` line
+   * for {@link pinLegacyInlineGap}, a `:::callout` for {@link
+   * pinLegacyBoxChildCut}, a heading for {@link pinLegacyHeadingSplit}, a
+   * task item for {@link pinLegacyTaskBox}…): a pin the content shows
+   * nothing for is not given, which keeps a stored configuration as short
+   * as it was. {@link migrateConfig} says what each pin looks for; a few
+   * read the configuration too (CJK in its design text, a note it sets as
+   * warichu, a page-span heading, a bayt verse layout), and the pins that
+   * look for nothing in the text are given whatever it holds (the heading
+   * breaks, the drop-cap sizes, the ragged breaking, the paired indents,
+   * the design overflow, the grid balancing and break rules, the script
+   * context, the shaping language). Without it every pin the stamp calls for is given, each
+   * still under the conditions on the configuration it names.
    * Any iterable of texts will do, a generator or a Map's `values()`
    * included: it is read once.
    */
