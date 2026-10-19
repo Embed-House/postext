@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "40197bd1548d47478d23825aa10599b4c031faf0f60a2316b9970f2e1ad8950e",
+  "sourceHash": "25cc054693c741a3d031534ac5739ebd987899a2b7790700aa7efe785a379ecd",
   "engine": {
-    "postext": "1.45.1",
-    "postextPdf": "1.45.1",
+    "postext": "1.46.0",
+    "postextPdf": "1.46.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T07:14:52.345Z",
+  "capturedAt": "2026-10-19T09:12:51.758Z",
   "variants": {
     "en": {
-      "hash8": "1acca1aa",
-      "vdtHash": "31ce1776c1ac1e5206c97118c137a2d42670b81d",
+      "hash8": "71b8a288",
+      "vdtHash": "395f0907f0aca5df321febad16d07d480f1a41c0",
       "timings": {
-        "importMs": 30973,
-        "fontsMs": 201,
-        "buildMs": 130,
-        "totalMs": 32954,
+        "importMs": 1325,
+        "fontsMs": 156,
+        "buildMs": 186,
+        "totalMs": 2625,
         "builds": 1
       },
       "specimen": {
@@ -82,7 +82,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 118538,
+          "bytes": 118350,
           "alt": "Page 4: Where a river is born. A spring. The water has been underground for months. · A stream, steep and fast, with pebbles worn smooth. · A waterfall, where the stream drops over a step of rock."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 79634,
+          "bytes": 81040,
           "alt": "Page 8: People and the river."
         },
         {
@@ -177,7 +177,7 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1730979,
+        "bytes": 1731006,
         "pages": 9
       },
       "sandbox": {
@@ -187,7 +187,7 @@
         "chapters": [
           {
             "pages": 9,
-            "hash": "464629cb8764fd8f",
+            "hash": "012ebbad1244ffaf",
             "lines": "40ba681cf34e7a94"
           }
         ]
@@ -545,11 +545,6 @@
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 103 line, 1 text"
           },
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 33.0 s to finish (warning at 30 s)"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "3 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “The valley is wider and the river slows down. Fa…”, p. 7 −10‰ “The land is almost flat. The river is wide and s…”, p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
@@ -558,13 +553,13 @@
       }
     },
     "es": {
-      "hash8": "c2fbce3a",
-      "vdtHash": "f47e204624c2f8ff2e079b2968e90ed1058c5082",
+      "hash8": "11f851b5",
+      "vdtHash": "04417c030281d911bab0f05c33f13aad0ee37e55",
       "timings": {
-        "importMs": 30965,
-        "fontsMs": 236,
-        "buildMs": 128,
-        "totalMs": 32947,
+        "importMs": 1349,
+        "fontsMs": 178,
+        "buildMs": 216,
+        "totalMs": 2688,
         "builds": 1
       },
       "specimen": {
@@ -629,7 +624,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121296,
+          "bytes": 120912,
           "alt": "Página 4: Dónde nace un río. Un manantial. El agua ha pasado meses bajo tierra. · Un arroyo, empinado y rápido, con guijarros pulidos. · Una cascada, donde el arroyo cae por un escalón de roca."
         },
         {
@@ -673,7 +668,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 83678,
+          "bytes": 84738,
           "alt": "Página 8: Las personas y el río."
         },
         {
@@ -724,7 +719,7 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732046,
+        "bytes": 1732059,
         "pages": 9
       },
       "sandbox": {
@@ -734,8 +729,8 @@
         "chapters": [
           {
             "pages": 9,
-            "hash": "e12fb732c39e0986",
-            "lines": "7d56d28abc6aa868"
+            "hash": "e28b5d2bf10cc327",
+            "lines": "da593694d2a09cea"
           }
         ]
       },
@@ -1089,12 +1084,7 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 106 line, 1 text"
-          },
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 32.9 s to finish (warning at 30 s)"
+            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 106 line, 1 text"
           },
           {
             "check": "C35",
@@ -1105,13 +1095,13 @@
       }
     },
     "ca": {
-      "hash8": "fefe29d5",
-      "vdtHash": "e13eeaf3d5e0e3718998812e4cfe832dd3fbc524",
+      "hash8": "bcdee002",
+      "vdtHash": "c28f779ba57cbb879de30f931f9821acc92f6bbf",
       "timings": {
-        "importMs": 30964,
-        "fontsMs": 178,
-        "buildMs": 150,
-        "totalMs": 32953,
+        "importMs": 1374,
+        "fontsMs": 194,
+        "buildMs": 194,
+        "totalMs": 2681,
         "builds": 1
       },
       "specimen": {
@@ -1176,7 +1166,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 116174,
+          "bytes": 115940,
           "alt": "Pàgina 4: On neix un riu. Una font. L’aigua ha passat mesos sota terra. · Un rierol, costerut i ràpid, amb còdols polits. · Una cascada, on el rierol cau per un esglaó de roca."
         },
         {
@@ -1271,7 +1261,7 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731708,
+        "bytes": 1731697,
         "pages": 9
       },
       "sandbox": {
@@ -1281,8 +1271,8 @@
         "chapters": [
           {
             "pages": 9,
-            "hash": "01f7c1a060b41416",
-            "lines": "ed3b6937420118d5"
+            "hash": "4e9eb6d37cbba1f7",
+            "lines": "2440f49dddf177ff"
           }
         ]
       },
@@ -1636,12 +1626,7 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 104 line, 1 text"
-          },
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 33.0 s to finish (warning at 30 s)"
+            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 104 line, 1 text"
           },
           {
             "check": "C35",
