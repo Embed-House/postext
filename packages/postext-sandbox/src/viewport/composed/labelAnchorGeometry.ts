@@ -12,11 +12,18 @@
  * page's flow frame (a vertical page, a right-to-left page, where the
  * label's layout is mirrored about the body). Every step is affine, so the
  * whole is one matrix and its inverse.
+ *
+ * On a spread, a frame that crosses the spine is read on one page and
+ * painted on the facing one from a copy of its blocks
+ * (`VDTFrame.facingBlocks`, #861): the facing page lists the copy's labels
+ * through the copy's frame, so they are pressed and dragged there too
+ * (#1040).
  */
 
 import {
   figureLabelMatrix,
   flowToPage,
+  frameMatrix,
   frameOfBlock,
   pageIsMirrored,
   type VDTDocument,
@@ -26,6 +33,7 @@ import { blockFrameMatrix } from './frameHit';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTPage = VDTDocument['pages'][number];
+type VDTFrame = NonNullable<VDTPage['composed']>['frames'][number];
 
 /** `[a, b, c, d, e, f]`: `(x, y) → (a·x + c·y + e, b·x + d·y + f)`. */
 export type Affine = [number, number, number, number, number, number];
@@ -97,17 +105,27 @@ function flowAffine(page: VDTPage): Affine {
   return [ex.x - o.x, ex.y - o.y, ey.x - o.x, ey.y - o.y, o.x, o.y];
 }
 
-/** The blocks of page `pageIndex` that hold drawn labels. */
-function labelledBlocks(doc: VDTDocument, pageIndex: number): VDTBlock[] {
-  const out: VDTBlock[] = [];
+/** The blocks of page `pageIndex` that hold drawn labels, each with the
+ *  facing frame it is painted in when it is the copy a spread frame leaves
+ *  on the facing page. */
+function labelledBlocks(doc: VDTDocument, pageIndex: number): Array<{ block: VDTBlock; facing?: VDTFrame }> {
+  const out: Array<{ block: VDTBlock; facing?: VDTFrame }> = [];
   const seen = new Set<VDTBlock>();
+  const holds = (b: VDTBlock) => !seen.has(b) && !b.hidden && b.resourceBlock?.labels?.some((l) => l.layout) === true;
   const add = (b: VDTBlock) => {
-    if (seen.has(b) || b.hidden || !b.resourceBlock?.labels?.some((l) => l.layout)) return;
+    if (!holds(b)) return;
     seen.add(b);
-    out.push(b);
+    out.push({ block: b });
   };
   for (const b of doc.blocks) if (b.pageIndex === pageIndex) add(b);
   for (const b of doc.pages[pageIndex]?.floats ?? []) add(b);
+  for (const frame of doc.pages[pageIndex]?.composed?.frames ?? []) {
+    for (const b of frame.facingBlocks ?? []) {
+      if (!holds(b)) continue;
+      seen.add(b);
+      out.push({ block: b, facing: frame });
+    }
+  }
   return out;
 }
 
@@ -116,12 +134,14 @@ export function labelsOnPage(doc: VDTDocument, pageIndex: number): PageLabel[] {
   const page = doc.pages[pageIndex];
   if (!page) return [];
   const out: PageLabel[] = [];
-  for (const block of labelledBlocks(doc, pageIndex)) {
+  for (const { block, facing } of labelledBlocks(doc, pageIndex)) {
     const rb = block.resourceBlock!;
     // In a frame of a composed page: its matrix (none for an upright frame
     // at full size); else the page's flow frame.
-    const inFrame = frameOfBlock(page.composed, block.id) !== undefined;
-    const outer: Affine = inFrame ? blockFrameMatrix(page, block.id) ?? IDENTITY : flowAffine(page);
+    const inFrame = facing !== undefined || frameOfBlock(page.composed, block.id) !== undefined;
+    const outer: Affine = facing
+      ? (frameMatrix(facing) as Affine | undefined) ?? IDENTITY
+      : inFrame ? blockFrameMatrix(page, block.id) ?? IDENTITY : flowAffine(page);
     const { bx, by, turn } = bodyFrame(block);
     const matrix = composeAffine(outer, turn);
     const mirrored = pageIsMirrored(page);
