@@ -1,7 +1,7 @@
 import type { HighlightedLine, HighlightToken } from "@/lib/cookbook/highlight";
 import { cn } from "@/lib/utils";
 
-const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const escapeAttr = (text: string) => escapeHtml(text).replace(/"/g, "&quot;");
 
 function tokenHtml(token: HighlightToken): string {
@@ -14,22 +14,7 @@ function tokenHtml(token: HighlightToken): string {
   return text;
 }
 
-/** Lines `from`–`to` (1-based, inclusive) of a highlighted file, as a
- *  `<code>` grid with line numbers. The numbers are CSS content, so they
- *  never end up in a copied selection; with `anchors` each line carries
- *  the `L<n>` id the rest of the page links to, otherwise the numbers link
- *  there. Server component. The lines are one HTML string rather than an
- *  element per token, so the page's RSC payload repeats a string, not a
- *  tree of thousands of spans. */
-export function CodeLines({
-  lines,
-  from,
-  to,
-  anchors = false,
-  linkNumbers = true,
-  highlight,
-  className,
-}: {
+interface CodeLinesOptions {
   lines: HighlightedLine[];
   from: number;
   to: number;
@@ -38,8 +23,11 @@ export function CodeLines({
   linkNumbers?: boolean;
   /** 1-based line numbers to mark. */
   highlight?: ReadonlySet<number>;
-  className?: string;
-}) {
+}
+
+/** The lines of {@link CodeLines} as an HTML string (one `.cb-line` per
+ *  line), for the whole recipe's `code.json` as well. */
+export function codeLinesHtml({ lines, from, to, anchors = false, linkNumbers = true, highlight }: CodeLinesOptions): string {
   let html = "";
   for (let n = from; n <= to && n <= lines.length; n++) {
     const id = anchors ? ` id="L${n}"` : "";
@@ -49,7 +37,18 @@ export function CodeLines({
       : `<span class="cb-ln" data-n="${n}" aria-hidden="true"></span>`;
     html += `<span${id} class="cb-line"${marked}>${number}<span class="cb-lc">${(lines[n - 1] ?? []).map(tokenHtml).join("")}</span></span>\n`;
   }
-  return <code className={cn("cb-code-lines", className)} dangerouslySetInnerHTML={{ __html: html }} />;
+  return html;
+}
+
+/** Lines `from`–`to` (1-based, inclusive) of a highlighted file, as a
+ *  `<code>` grid with line numbers. The numbers are CSS content, so they
+ *  never end up in a copied selection; with `anchors` each line carries
+ *  the `L<n>` id the rest of the page links to, otherwise the numbers link
+ *  there. Server component. The lines are one HTML string rather than an
+ *  element per token, so the page's RSC payload repeats a string, not a
+ *  tree of thousands of spans. */
+export function CodeLines({ className, ...options }: CodeLinesOptions & { className?: string }) {
+  return <code className={cn("cb-code-lines", className)} dangerouslySetInnerHTML={{ __html: codeLinesHtml(options) }} />;
 }
 
 /** The plain text of lines `from`–`to` (for Copy). */

@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { useTranslations } from "next-intl";
 import { AppWindow, Copy, Download, Play } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { readSources, useRecipeActions, type RecipeActionsData } from "./RecipeActions";
+import { loadSources, readSources, useRecipeActions, type RecipeActionsData } from "./RecipeActions";
+import { COLLAPSED_LINES, type WholeCode } from "./sources";
 import { copyText } from "./toast";
+import { loadWholeCode } from "./wholeCode";
 
 const LINE_HASH = /^#L(\d+)$/;
 const FLASH_MS = 2600;
-/** Lines shown before "Show all" (recipe.css sizes the block to match). */
-const COLLAPSED_LINES = 40;
 /** The fade over the collapsed block's last lines (recipe.css, 5rem). */
 const FADE_PX = 80;
 
@@ -19,16 +20,22 @@ export interface WholeRecipePanel {
   file: string;
   /** Lines shown when expanded (the fold summaries aside). */
   lines: number;
-  content: React.ReactNode;
+  /** The file's first rows, as the inner HTML of its `<pre>` (WholeRecipe). */
+  head: string;
+  /** `head` holds the whole file. */
+  complete: boolean;
 }
 
-/** Brings line `from` (to `to`) of script.js into view: switches to its
- *  tab, expands the block, opens the fold that holds it, flashes it (a
- *  steady tint under reduced motion, recipe.css) and moves focus there, so
- *  the next Tab continues from the line rather than from the link. */
-function revealLines(from: number, to: number, show: () => void) {
-  show();
-  requestAnimationFrame(() => {
+/** `code.json` starts loading when the block comes this near. */
+const PREFETCH_MARGIN = "800px 0px";
+
+/** Brings line `from` (to `to`) of script.js into view once `show` has
+ *  switched to its tab, expanded the block and loaded the whole file: opens
+ *  the fold that holds it, flashes it (a steady tint under reduced motion,
+ *  recipe.css) and moves focus there, so the next Tab continues from the
+ *  line rather than from the link. */
+function revealLines(from: number, to: number, show: () => Promise<unknown>) {
+  void show().then(() => requestAnimationFrame(() => {
     const first = document.getElementById(`L${from}`);
     if (!first) return;
     first.closest("details")?.setAttribute("open", "");
@@ -43,7 +50,7 @@ function revealLines(from: number, to: number, show: () => void) {
     }
     lines.forEach((el) => el.setAttribute("data-flash", ""));
     setTimeout(() => lines.forEach((el) => el.removeAttribute("data-flash")), FLASH_MS);
-  });
+  }));
 }
 
 /** The whole recipe: one tab per file (script.js, then index.html and
@@ -52,15 +59,52 @@ function revealLines(from: number, to: number, show: () => void) {
  *  to `#L<n>` anywhere on the page reveal that line here. */
 export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; data: RecipeActionsData }) {
   const t = useTranslations("CookbookRecipe");
-  const { codepen, download } = useRecipeActions(data);
+  const { prefetch, codepen, download } = useRecipeActions(data);
   const [tab, setTab] = useState<string>("js");
   const [expanded, setExpanded] = useState(false);
+  // The whole files, once `code.json` has arrived.
+  const [whole, setWhole] = useState<WholeCode | null>(null);
+  const root = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLDivElement>(null);
   const current = panels.find((p) => p.id === tab) ?? panels[0];
+
+  /** Loads the whole files and renders them before resolving, so the
+   *  caller finds every line in the DOM. */
+  const loadWhole = useCallback(async () => {
+    const code = await loadWholeCode(data.code);
+    flushSync(() => setWhole(code));
+  }, [data.code]);
+
+  // The whole files load as the block comes near, so they are in place
+  // (for find-in-page too) before the reader gets there; opening a fold
+  // still cut short loads them at once.
+  useEffect(() => {
+    if (panels.every((p) => p.complete)) return;
+    const el = root.current;
+    const fold = body.current;
+    const load = () => void loadWhole().catch(() => {});
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        load();
+      },
+      { rootMargin: PREFETCH_MARGIN },
+    );
+    if (el) observer.observe(el);
+    // `toggle` does not bubble: listen in the capture phase.
+    fold?.addEventListener("toggle", load, true);
+    return () => {
+      observer.disconnect();
+      fold?.removeEventListener("toggle", load, true);
+    };
+  }, [panels, loadWhole]);
 
   useEffect(() => {
     const show = () => {
       setTab("js");
       setExpanded(true);
+      return loadWhole();
     };
     const fromLocation = () => {
       const m = LINE_HASH.exec(window.location.hash);
@@ -84,12 +128,13 @@ export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; 
       window.removeEventListener("hashchange", fromLocation);
       document.removeEventListener("click", onClick);
     };
-  }, []);
+  }, [loadWhole]);
 
   const copyFile = () => {
-    const files = readSources(data.variant);
-    const text = files?.[current.id];
-    if (text !== undefined) void copyText(text, t("copiedFile", { file: current.file }), t("copyFailed"));
+    const { id, file } = current;
+    const ready = readSources(data);
+    const text = ready ? ready[id] : loadSources(data).then((files) => files?.[id] ?? Promise.reject(new Error("no file")));
+    void copyText(text, t("copiedFile", { file }), t("copyFailed"));
   };
 
   const collapsible = current.lines > COLLAPSED_LINES;
@@ -115,7 +160,7 @@ export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; 
   };
 
   return (
-    <Tabs value={tab} onValueChange={(value) => setTab(String(value))} className="cb-whole">
+    <Tabs ref={root} value={tab} onValueChange={(value) => setTab(String(value))} className="cb-whole">
       <div className="cb-whole-bar">
         <TabsList variant="line" aria-label={t("wholeLabel")} className="cb-whole-tabs">
           {panels.map((p) => (
@@ -124,7 +169,7 @@ export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; 
             </TabsTrigger>
           ))}
         </TabsList>
-        <div className="cb-whole-actions">
+        <div className="cb-whole-actions" onPointerEnter={prefetch} onFocus={prefetch} onTouchStart={prefetch}>
           <button type="button" className="cb-code-button" onClick={copyFile} aria-label={t("copyFile", { file: current.file })}>
             <Copy aria-hidden="true" className="size-3.5" />
             {t("copyShort")}
@@ -150,6 +195,7 @@ export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; 
         </div>
       </div>
       <div
+        ref={body}
         className="cb-whole-body"
         data-collapsed={collapsed ? "" : undefined}
         onFocusCapture={onBodyFocus}
@@ -157,7 +203,7 @@ export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; 
       >
         {panels.map((p) => (
           <TabsContent key={p.id} value={p.id} keepMounted className="cb-whole-panel">
-            {p.content}
+            <pre className="cb-code cb-code-whole" dangerouslySetInnerHTML={{ __html: whole?.[p.id]?.html ?? p.head }} />
           </TabsContent>
         ))}
       </div>
@@ -169,6 +215,7 @@ export function WholeRecipeTabs({ panels, data }: { panels: WholeRecipePanel[]; 
           onClick={(event) => {
             // Collapsing from far down: bring the block's head back into view.
             if (expanded) event.currentTarget.closest(".cb-whole")?.scrollIntoView({ block: "start" });
+            else void loadWhole().catch(() => {});
             setExpanded(!expanded);
           }}
         >
