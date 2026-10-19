@@ -1,14 +1,14 @@
 /**
  * The link between a frame on a composed page and its slot in the
  * Markdown (#864): where a click on a frame puts the caret, which frame
- * the caret is in, and what on a frame a double click edits.
+ * the caret is in, and where a comic's text frame puts it.
  *
  * Pure: offsets are those of the text the page was laid out from (the
  * composed book), sheet px for points.
  */
 
-import type { ResolvedPageTemplate, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { frameAtSource, frameByName, pointInFrame } from './frameHit';
+import type { ResolvedPageTemplate, VDTComposedPage, VDTFrame, VDTPage } from 'postext';
+import { frameAtSource, frameByName } from './frameHit';
 import { emptyFrameInsertion, flowInsertion, pageSites, siteCaret, sitesOf, slotAtOffset, type PageSites } from './slotSource';
 
 /** The frame of the template whose content `name`'s content goes on
