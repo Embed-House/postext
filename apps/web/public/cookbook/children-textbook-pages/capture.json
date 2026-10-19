@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "e9a09026587afa2ab30f9047500c8cd82d4297965b5101bf577f9528ee6f5adc",
+  "sourceHash": "40197bd1548d47478d23825aa10599b4c031faf0f60a2316b9970f2e1ad8950e",
   "engine": {
-    "postext": "1.43.0",
-    "postextPdf": "1.43.0",
+    "postext": "1.45.1",
+    "postextPdf": "1.45.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T10:43:13.396Z",
+  "capturedAt": "2026-10-19T07:14:52.345Z",
   "variants": {
     "en": {
-      "hash8": "d31b0a14",
+      "hash8": "1acca1aa",
       "vdtHash": "31ce1776c1ac1e5206c97118c137a2d42670b81d",
       "timings": {
-        "importMs": 662,
-        "fontsMs": 132,
-        "buildMs": 119,
-        "totalMs": 1668,
+        "importMs": 30973,
+        "fontsMs": 201,
+        "buildMs": 130,
+        "totalMs": 32954,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 277
+        "ownLines": 279
       },
       "pages": [
         {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 203156,
+          "bytes": 202998,
           "alt": "Page 1: Our river."
         },
         {
@@ -182,7 +182,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100225,
+        "bytes": 2100243,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -453,7 +453,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 761,
+        "configLeaves": 763,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -545,6 +545,11 @@
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 103 line, 1 text"
           },
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 33.0 s to finish (warning at 30 s)"
+          },
+          {
             "check": "C35",
             "severity": "info",
             "detail": "3 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “The valley is wider and the river slows down. Fa…”, p. 7 −10‰ “The land is almost flat. The river is wide and s…”, p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
@@ -553,13 +558,13 @@
       }
     },
     "es": {
-      "hash8": "b1f0f39c",
+      "hash8": "c2fbce3a",
       "vdtHash": "f47e204624c2f8ff2e079b2968e90ed1058c5082",
       "timings": {
-        "importMs": 646,
-        "fontsMs": 100,
-        "buildMs": 124,
-        "totalMs": 1683,
+        "importMs": 30965,
+        "fontsMs": 236,
+        "buildMs": 128,
+        "totalMs": 32947,
         "builds": 1
       },
       "specimen": {
@@ -580,7 +585,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 277
+        "ownLines": 279
       },
       "pages": [
         {
@@ -591,7 +596,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 206216,
+          "bytes": 206024,
           "alt": "Página 1: Nuestro río."
         },
         {
@@ -724,7 +729,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100083,
+        "bytes": 2100101,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -995,7 +1000,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 761,
+        "configLeaves": 763,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -1087,6 +1092,11 @@
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 106 line, 1 text"
           },
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 32.9 s to finish (warning at 30 s)"
+          },
+          {
             "check": "C35",
             "severity": "info",
             "detail": "6 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El valle es más ancho y el río va más despacio. …”, p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
@@ -1095,13 +1105,13 @@
       }
     },
     "ca": {
-      "hash8": "f8478a18",
+      "hash8": "fefe29d5",
       "vdtHash": "e13eeaf3d5e0e3718998812e4cfe832dd3fbc524",
       "timings": {
-        "importMs": 656,
-        "fontsMs": 114,
-        "buildMs": 121,
-        "totalMs": 1690,
+        "importMs": 30964,
+        "fontsMs": 178,
+        "buildMs": 150,
+        "totalMs": 32953,
         "builds": 1
       },
       "specimen": {
@@ -1122,7 +1132,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 277
+        "ownLines": 279
       },
       "pages": [
         {
@@ -1133,7 +1143,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 202480,
+          "bytes": 202410,
           "alt": "Pàgina 1: El nostre riu."
         },
         {
@@ -1261,12 +1271,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731710,
+        "bytes": 1731708,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100166,
+        "bytes": 2100185,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1537,7 +1547,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 761,
+        "configLeaves": 763,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -1627,6 +1637,11 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 104 line, 1 text"
+          },
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 33.0 s to finish (warning at 30 s)"
           },
           {
             "check": "C35",

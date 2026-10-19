@@ -186,7 +186,9 @@ const pageTemplates = [
         placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: mm(157.5) } } },
       { kind: 'text', id: 'kicker', content: '{attr.unidad}', fontFamily: DISPLAY,
         fontSize: pt(11), fontWeight: 600, letterSpacing: pt(1), textTransform: 'uppercase',
-        color: col('agua'), box: { backgroundColor: col('paper'), borderRadius: mm(2) },
+        color: col('agua'), // the room the 7 mm band leaves over the capitals, at the sides too
+        box: { backgroundColor: col('paper'), borderRadius: mm(2),
+          padding: { left: mm(2), right: mm(2) } },
         placement: { ...at('#titulo', 'top-left', 0, -9), size: { height: mm(7) } } },
     ] },
     frames: [
