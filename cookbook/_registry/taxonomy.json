@@ -203,6 +203,35 @@
         "de": "In Panels geteilte Comicseiten, aus einem Markdown-Skript geletterte Sprechblasen, von rechts nach links gelesene Manga, Strips auf einer Zeitungsseite, Doppelseiten und eine Seite, die in sechs Sprachen neu gelettert wird.",
         "it": "Pagine di fumetto divise in vignette, nuvolette scritte da una sceneggiatura in Markdown, manga letti da destra a sinistra, strisce su una pagina di giornale, doppie pagine e una pagina con il lettering rifatto in sei lingue."
       }
+    },
+    {
+      "id": "textbooks",
+      "number": 12,
+      "part": "practice",
+      "title": {
+        "en": "Textbooks",
+        "es": "Libros de texto",
+        "ca": "Llibres de text",
+        "zh": "教科书",
+        "ar": "الكتب المدرسية",
+        "ja": "教科書",
+        "pt": "Livros didáticos",
+        "fr": "Manuels scolaires",
+        "de": "Schulbücher",
+        "it": "Libri di testo"
+      },
+      "intro": {
+        "en": "A textbook page with a margin column, a colour-coded family of boxes, a school reader with furigana, a timeline across a spread, a labelled atlas, activity and handwriting workbooks and a children's unit in three languages.",
+        "es": "Una página de libro de texto con columna al margen, una familia de recuadros por colores, un libro de lectura con furigana, una cronología a doble página, un atlas escolar rotulado, cuadernos de actividades y de caligrafía y una unidad infantil en tres idiomas.",
+        "ca": "Una pàgina de llibre de text amb columna al marge, una família de requadres per colors, un llibre de lectura amb furigana, una cronologia a doble pàgina, un atles escolar retolat, quaderns d'activitats i de cal·ligrafia i una unitat infantil en tres llengües.",
+        "zh": "带边栏的教科书页面、按颜色区分的一组方框、汉字全部注音的日语读本、跨页时间轴、带标注的学校地图册、活动练习册和习字册，以及一个三种语言的儿童教材单元。",
+        "ar": "صفحة كتاب مدرسي بعمود في الهامش، وعائلة من الصناديق مميّزة بالألوان، وكتاب قراءة بالفوريغانا فوق كل كانجي، وخط زمني على صفحتين متقابلتين، وأطلس مدرسي بأسماء مكتوبة، وكراسات أنشطة وتدريب على الخط، ووحدة تعليمية للأطفال بثلاث لغات.",
+        "ja": "欄外の段を持つ教科書のページ、色分けした囲みの一式、すべての漢字にふりがなを付けた読本、見開きの年表、地名を書き込んだ学校地図帳、ワークブックと書き方練習帳、3言語の子ども向け教科書の1単元。",
+        "pt": "Uma página de livro didático com coluna na margem, uma família de boxes por cores, um livro de leitura com furigana, uma linha do tempo em página dupla, um atlas escolar com rótulos, cadernos de atividades e de caligrafia e uma unidade infantil em três idiomas.",
+        "fr": "Une page de manuel avec colonne en marge, une famille d’encadrés par couleur, un livre de lecture avec furigana, une frise chronologique sur une double page, un atlas scolaire légendé, des cahiers d’activités et d’écriture et une unité pour enfants en trois langues.",
+        "de": "Eine Schulbuchseite mit Randspalte, eine farbcodierte Familie von Kästen, ein Lesebuch mit Furigana, ein Zeitstrahl über eine Doppelseite, ein beschrifteter Schulatlas, Übungs- und Schreiblernhefte und eine Lerneinheit für Kinder in drei Sprachen.",
+        "it": "Una pagina di libro di testo con colonna a margine, una famiglia di riquadri per colore, un libro di lettura con furigana, una linea del tempo su una doppia pagina, un atlante scolastico con didascalie, quaderni di attività e di scrittura e un’unità per bambini in tre lingue."
+      }
     }
   ],
   "genres": [

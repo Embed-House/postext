@@ -58,6 +58,7 @@ in Headings; a whole magazine *issue* belongs in Complete publications.
 | III · In practice | 9 | `publications` | Complete publications | Publicaciones completas |
 | | 10 | `output` | Output & integration | Salida e integración |
 | | 11 | `comics` | Comics & manga | Cómic y manga |
+| | 12 | `textbooks` | Textbooks | Libros de texto |
 
 A recipe in `publications` composes at least eight features over at least four pages.
 Chapter numbers are permanent and new chapters are appended, so `comics` (11) sits in part III
@@ -66,6 +67,9 @@ after `output`: it holds the recipes whose subject is a comic page or strip (`::
 its articles stays in `publications`. Its features are in the `comics` group of
 `features.json`, its questions are Q162–Q178 and its planned recipes are wave 11 of
 `_roadmap.json` (Nº 144–155).
+`textbooks` (12) follows it: the recipes whose subject is a textbook as a whole (a unit, a
+spread, a reader, a workbook). A technique that only carries the `textbook` genre stays in the
+chapter of what it teaches.
 
 ## 2. Folder anatomy
 

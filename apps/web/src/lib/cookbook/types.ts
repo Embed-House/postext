@@ -55,10 +55,10 @@ export type PartColor = "blue" | "gilt" | "vermilion";
 export type ChapterId =
   | "page" | "type" | "headings"
   | "running-heads" | "structure" | "boxes" | "figures" | "tables"
-  | "publications" | "output" | "comics";
+  | "publications" | "output" | "comics" | "textbooks";
 export const CHAPTER_IDS: readonly ChapterId[] = [
   "page", "type", "headings", "running-heads", "structure", "boxes", "figures", "tables",
-  "publications", "output", "comics",
+  "publications", "output", "comics", "textbooks",
 ];
 export type GenreId =
   | "novel" | "poetry" | "textbook" | "workbook" | "manual" | "paper" | "report"
