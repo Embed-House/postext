@@ -3664,7 +3664,7 @@
     "calloutStyleLabelIconWidth": "Largeur de l’icône d’onglet",
     "calloutStyleLabelIconGap": "Écart avec l’onglet",
     "calloutStyleLabelIconPlacement": "Place de l’image",
-    "calloutStyleLabelIconPlacementTooltip": "À côté de l’onglet, au-delà de son bord, ou à l’intérieur, à son début, avant le texte (l’onglet s’élargit alors de l’image et de l’écart). À l’intérieur, l’image garde ses propres couleurs : prévoyez une image pour un anneau blanc et une autre pour un anneau de couleur.",
+    "calloutStyleLabelIconPlacementTooltip": "À côté de l’onglet, au-delà de son bord, ou à l’intérieur, à son début, avant le texte (l’onglet s’élargit alors de l’image et de l’écart). À l’intérieur, l’image garde ses propres couleurs, sauf si Image dans la couleur du texte est activé : un même anneau sert alors pour toutes les teintes du livre.",
     "calloutStyleLabelIconBeside": "À côté de l’onglet",
     "calloutStyleLabelIconInside": "Dans l’onglet",
     "calloutStyleLabelIconTint": "Image dans la couleur du texte",

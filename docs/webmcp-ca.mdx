@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: "Què pot fer un agent d'IA al navegador amb les 41 eines WebMCP del Sandbox (mirar les pàgines, canviar qualsevol paràmetre, editar el text, afegir imatges, taules i fonts, fer les revisions, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 46,
   plainSummary: "Aquesta pàgina és per a qui vol que un assistent d'intel·ligència artificial li faci la feina en un llibre del Sandbox. Mentre el Sandbox és obert, dona a l'assistent un joc d'eines per mirar qualsevol pàgina, canviar el disseny, editar el text, afegir imatges i taules, trobar problemes i desar fitxers. Li demanes les coses amb les teves paraules, per exemple «fes la lletra una mica més grossa i comprova que el llibre encara cap en 40 pàgines», i l'assistent fa servir les eines i et mostra les pàgines. Tot es queda al teu navegador. La pàgina explica com connectar-hi un assistent, què pot fer i com es crida cada eina.",
@@ -492,14 +492,14 @@ El que canvia l'agent, ho veus tu. Per assenyalar-te alguna cosa:
 ```
 
 `sandbox_set_view` també tria el visor (`canvas`, `pdf`, `folio`, `html`,
-`epub`), el tauler lateral, capítol o llibre sencer, el zoom, la mida de lletra
+`epub`), el mode Contingut o Disseny (`mode`), el tauler lateral, capítol o llibre sencer, el zoom, la mida de lletra
 del lector, la previsualització d'impressió i el grup del tauler Disseny.
 `sandbox_go_to_page` passa pàgines per `step`, `page`, `position`, un passatge
 de `text`, una `anchor` o una entrada `contents` del sumari d'un EPUB.
 `sandbox_run_viewer` prem un botó de la barra d'eines: `regenerate` torna a
 generar el PDF o l'EPUB i n'espera el resultat, `print` obre el diàleg
-d'impressió perquè el confirmis tu i `play_video` reprodueix un vídeo d'una
-pàgina.
+d'impressió perquè el confirmis tu, `download` desa el PDF o l'EPUB, i
+`play_video` i `stop_video` reprodueixen i aturen un vídeo d'una pàgina.
 
 ### Pàgines de còmic
 
@@ -524,6 +524,10 @@ vinyeta. El format és a [Còmics](/ca/docs/comics).
   projectes; `sandbox_open_book` n'obre un (`{ "kind": "sample", "id": "postext-guide", "language": "es" }`);
   `sandbox_save_book` amb `action: "copy_current"` desa el llibre de la pantalla
   com a projecte teu, i `new_blank` en comença un de buit.
+  En un projecte, `add_language` amb `language` (`"fr"`, `"zh-Hant"`) copia
+  la llengua en pantalla en una edició nova en aquella llengua i l'obre, i
+  `rename` amb `thisLanguageOnly: true` dona nom només a la llengua en pantalla;
+  `set_cover` i `remove_cover` li posen o li treuen una portada.
 - **Exportar.** `sandbox_export` escriu `pdf`, `epub`, `postext`, `docx`,
   `markdown` o `config`. Per defecte, el navegador baixa el fitxer; amb
   `deliver: "data"`, un PDF o un EPUB torna a l'agent codificat en base64:
@@ -615,8 +619,9 @@ navegador pugui evitar que aquest text es prengui per instruccions.
 - **Desfer**: `sandbox_undo` desfà l'últim canvi, del text o del disseny, en l'ordre en què es van fer, com Cmd/Ctrl+Z al Sandbox: el que s'ha escrit al tauler Text, les edicions de les eines i les fetes damunt de les previsualitzacions, els paràmetres canviats amb `sandbox_set_config` o al tauler Disseny, els marcs arrossegats. `redo: true` el refà. `sandbox_undo_text` només desfà una edició del text, i ho diu quan l'últim canvi va ser del disseny. Els capítols afegits, suprimits o moguts, els recursos i les fonts no són a l'historial; obrir un altre llibre el buida, i tornar a carregar la pàgina també. `sandbox_get_state` diu què desfaria cadascuna (`history`).
 - **El llibre de la pantalla.** Les eines treballen sobre el llibre obert.
   Només `sandbox_export` d'un fitxer `.postext`, `sandbox_save_book` amb
-  `duplicate` i `sandbox_reset_to_original` amb `sample` arriben a un altre
-  llibre sense obrir-lo.
+  `duplicate`, `rename` o una portada, `sandbox_delete_book` i
+  `sandbox_reset_to_original` amb `sample` arriben a un altre llibre sense
+  obrir-lo.
 
 ## Les eines del lloc
 

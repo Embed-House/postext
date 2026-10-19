@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Hyphenation and language',
   description: 'Hyphenation patterns and exceptions, ragged text, the document language and its digits and direction, and the scripts Postext sets',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '20 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a console warning
 ```
 
-Words shorter than 5 characters are never hyphenated. The engine requires at least 2 characters before and 3 characters after a break point.
+Words shorter than 5 letters are never hyphenated, except in Catalan, where 4 are enough (`ca-sa`). A break leaves at least 2 letters before it, and after it 3 in English and French (`read-ing`), 4 in Portuguese (`ca-misa`) and 2 in the other languages (`pa-red`, `Ta-fel`). In English, French and Italian an apostrophe does not count as a letter for these minimums (no `is-n't`), and in French and Italian the consonants before an elision stay with their word: `dell’ac-qua`, never `del-l’acqua`.
 
 ### Words kept whole
 
@@ -170,7 +170,7 @@ Chinese takes `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`, `z
   </tbody>
 </table>
 
-The caption prefix is the type's name (*Figure 1.1.*). The Chinese types number within the chapter with a hyphen, `{h1}-{n}` (图 1-1); with the caption settings `labelNumberGap: ''` and `labelSeparator: '　'` the caption reads 图1-1　标题 (see [Caption style](/en/docs/configuration-resources#caption-style)). The back-of-book index follows the language too: 见 and 另见 before a cross-reference, 符号 and 数字 over the symbols and the numbers in Simplified; 見, 另見, 符號 and 數字 in Traditional. Japanese numbers its types the same way and sets its captions 図1-1　題 without the two settings, writes cross-references as 第3章, 2.3節 and 12ページ, titles the bibliography 参考文献, and its index prints 記号 and 数字 over symbols and numbers and writes its cross-references with an arrow, `→夏目漱石` for *see* and `→夏目漱石、森鷗外も見よ` after the pages for *see also*, the labels upright. Arabic numbers its types the same way, `{h1}-{n}` (شكل 2-3), writes cross-references as الفصل 3, القسم 2-1 and ص 12, titles the bibliography المراجع, and its index prints انظر / انظر أيضًا, رموز and أرقام, with the Arabic comma and semicolon (، ؛).
+The caption prefix is the type's name (*Figure 1.1.*). The third built-in type, `video`, is named *Video* in English, German, Italian and Dutch, *Vídeo* in Spanish, Portuguese and Catalan, *Vidéo* in French, 视频 in Simplified and 影片 in Traditional Chinese, 動画 in Japanese and فيديو in Arabic. The Chinese types number within the chapter with a hyphen, `{h1}-{n}` (图 1-1); with the caption settings `labelNumberGap: ''` and `labelSeparator: '　'` the caption reads 图1-1　标题 (see [Caption style](/en/docs/configuration-resources#caption-style)). The back-of-book index follows the language too: 见 and 另见 before a cross-reference, 符号 and 数字 over the symbols and the numbers in Simplified; 見, 另見, 符號 and 數字 in Traditional. Japanese numbers its types the same way and sets its captions 図1-1　題 without the two settings, writes cross-references as 第3章, 2.3節 and 12ページ, titles the bibliography 参考文献, and its index prints 記号 and 数字 over symbols and numbers and writes its cross-references with an arrow, `→夏目漱石` for *see* and `→夏目漱石、森鷗外も見よ` after the pages for *see also*, the labels upright. Arabic numbers its types the same way, `{h1}-{n}` (شكل 2-3), writes cross-references as الفصل 3, القسم 2-1 and ص 12, titles the bibliography المراجع, and its index prints انظر / انظر أيضًا, رموز and أرقام, with the Arabic comma and semicolon (، ؛).
 
 A Chinese, Japanese or Korean document declares its language in the HTML output (`lang` on the `.pt-doc` root, `zh-Hant-TW` kept whole) and on the canvas it paints (`ctx.lang`, in Chrome 136 and later), so the browser draws the region's glyph forms: Unicode unifies the Han characters, and one code point looks different in a Taiwanese and in a Japanese font. Since postext 1.30 every other document does too, in the language its text is shaped in ([`bodyText.shapingLanguage: 'document'`](/en/docs/configuration-text#body-text), the default); with `'host'` the other documents carry no `lang`, and every canvas paints in the language of the page that hosts it. The PDF declares `/Lang` from `locale` for every document, tagged or not, with its script and region. A document in a language written right to left (Arabic, Persian, Urdu, Hebrew…) declares its language too: the font's language forms (`locl`) and the fallback font follow it.
 

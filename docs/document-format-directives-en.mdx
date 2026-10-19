@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'The ::: directives: containers, columns, paper, page breaks, numbering, space, verse, contents and index, line breaks, and the markup of comic pages',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '34 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Directives
 
-Directives are single-line control tags written as `:::name` or `:::name{attrs}` on their own line. They produce no visible output — they drive the placement and numbering pipeline.
+Directives are single-line control tags written as `:::name` or `:::name{attrs}` on their own line. Most produce nothing visible and drive the placement and numbering; `:::toc`, `:::index` and `:::bibliography` print the contents, the index and the bibliography where they stand.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Directives are single-line control tags written as `:::name` or `:::name{attrs}`
       <td>Print the back-of-book index here: every term marked with <code>:index</code> in the book, sorted and grouped by letter, with the pages it falls on, typeset per the <code>index</code> configuration. <code>:::index&#123;index="names"&#125;</code> prints a named index. See <a href="/en/docs/document-format-notes-references#back-of-book-index">Back-of-book index</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Print the list of works cited here, in the citation style. <code>title</code> changes its heading and <code>scope</code> what it lists. See <a href="/en/docs/document-format-notes-references#the-bibliography">The bibliography</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>A comic page: its <code>::panel</code> lines and their script lines, laid out as panels and lettered balloons on a page of its own. See <a href="#comics">Comics</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Directives are single-line control tags written as `:::name` or `:::name{attrs}`
 
 Attribute values may be double-quoted (<code>"…"</code>), single-quoted (<code>'…'</code>), or bare (<code>startAt=17</code>). A bare key without `=` is treated as a present-but-empty flag.
 
-Only `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` and `index` are recognized as single-line directives today (and `references`, `verse`, `page` and `strip` as fenced blocks) — any other `:::name` line that is not a container (below) is parsed as a paragraph and surfaces an **Unknown directive** warning in the sandbox. The engine records it too, as an `unknownDirective` entry in the document's `contentWarnings` (see [Configuration › Warnings in the document](/en/docs/configuration-programmatic-usage#warnings-in-the-document)).
+Only `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` and `bibliography` are recognized as single-line directives today (and `references`, `verse`, `page`, `strip` and `figure` as fenced blocks) — any other `:::name` line that is not a container (below) is parsed as a paragraph and surfaces an **Unknown directive** warning in the sandbox. The engine records it too, as an `unknownDirective` entry in the document's `contentWarnings` (see [Configuration › Warnings in the document](/en/docs/configuration-programmatic-usage#warnings-in-the-document)).
 
 ### Attribute values
 
@@ -96,6 +100,7 @@ The same `key="value"` syntax is read by heading attributes, directive and conta
 - **No braces.** `{` and `}` never go in a value. The first `}` ends the block: a fence whose value holds one is no longer a directive but a paragraph, and inline the rest of the value spills into the text. In a heading, a brace in a value leaves the whole block in the title: `# Title {note="a {b"}` is set as written. (Up to postext 1.8 a `{` after a space started the block over and `b` was read as a flag.)
 - **Dollar signs are plain text.** Attributes are read before inline maths, so `lead="from $5 to $6"` is just text.
 - **One line.** An attribute block never spans lines.
+- **Identifiers.** `#key-idea`, Pandoc's shorthand, is the same as `id="key-idea"`: `{#sec-method}` on a heading, `:::callout{#box-safety}` on a fence. It names the block for [cross-references](/en/docs/document-format-notes-references#cross-references-and-anchors).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ The same `key="value"` syntax is read by heading attributes, directive and conta
 :::
 ```
 
-`::resource{id="…"}` is stricter: the id in double quotes and no other attribute (see [Resources](/en/docs/document-format-resources#resources)).
+`::resource{id="…"}` is stricter: the id in double quotes and no other attribute (see [Resources](/en/docs/document-format-resources#resources)). In a composed page it also takes `slot="…"` (see [Composed pages](#composed-pages)).
 
 ### Containers
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Five container names are recognized in the text flow. What each one renders is set in its own section of the configuration:
+Five container names are recognized in the text flow; a sixth, `:::frame`, holds the content of a frame in a [composed page](#composed-pages). What each one renders is set in its own section of the configuration:
 
 <table>
   <thead>
@@ -297,7 +302,7 @@ A nested box in a group stays whole, moving to the next part, and a group inside
 :::
 ```
 
-A `:::callout` fence also accepts `label="…"`: the text a style with a `label` tab prints on the box's top corner (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+A `:::callout` fence also accepts `label="…"`: the text a style with a `label` tab prints on the box's top corner (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Any other attribute on the fence is read by the style's design, if it has one: `:::callout{type="card" kicker="Note"}` gives its texts `{attr.kicker}`, and `{boxText}` prints the box's own content (see [Configuration › Box designs](/en/docs/configuration-callouts#box-designs)).
 
 A `:::callout` inside another one is a box of its own — a worksheet card holding answer boxes, say. It takes its own style (background, border, radius, padding, title, icon) at the full inner width of the outer box and stacks among its other blocks; its `span` and `placement` are ignored, since a nested box always flows inside its parent. Each fence closes the innermost box still open:
 
@@ -706,7 +711,7 @@ maya: This line goes on
 
 - The **key** is a speaker id (letters, digits, `_`, `.`, `-`), the same in every translation; `caption`, `sfx` and `note` are reserved. The colon may be the full-width `：`.
 - A bare word in the braces is a **balloon style** (`thought`, `whisper`, `shout`, `radio`, `inner` or one of `comics.balloonStyles`); `style=` says the same.
-- `at` pins the balloon: a point in percentages of the panel's picture (`at="62% 40%"`), or a corner or edge (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` points the tail at a point of the picture; `tail=none` drops it and `tail=top|bottom|start|end|left|right` points it off the panel. `join` and `join=false` join the balloon to the previous one of the same speaker or keep it apart; `break` lets it cross the border, and the crossing is not reported as an overflow. `rotate` (degrees), `size` (a scale, for sound effects), `color` and `font` change its lettering.
+- `at` pins the balloon: a point in percentages of the panel's picture (`at="62% 40%"`), or a corner or edge (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` points the tail at a point of the picture; `tail=none` drops it and `tail=top|bottom|start|end|left|right` points it off the panel. `join` and `join=false` join the balloon to the previous one of the same speaker or keep it apart; `break` lets it cross the border, and the crossing is not reported as an overflow. `rotate` (degrees), `skew` (a slant in degrees, for text on an object seen in perspective), `size` (a scale, for sound effects), `color` and `font` change its lettering.
 - `vertical` and `horizontal` (or `mode=vertical`, `mode=horizontal`) set the line's writing mode over the book's: an untranslated `ドン` set in a column in a horizontal edition, a sign written across set in a row in a vertical one. A column in a book of another language follows the rules of its own text (with kana, those of Japanese). In a vertical book a line with no Chinese or Japanese characters is set in a row anyway.
 - A line indented by two spaces or a tab continues the balloon above; a backslash at the end of a line breaks the text there. Blank lines are ignored.
 - The text is inline Markdown: emphasis (lettered bold italic), `:tcy`, `:ruby` (its reading set over the base, except over a right-to-left base), `:ltr` and `:rtl` (a run kept in its own direction). Footnotes and `:ref` marks are not read.
@@ -736,4 +741,4 @@ A composed page is laid out from a page template of the configuration (`pageTemp
 - `::::page{template="…"}` … `::::` is the page: four or more colons, closed by a bare fence of as many. Three-colon fences inside it (`:::frame`, `:::callout`, `:::figure`…) work as they do everywhere, and a bare `:::` never closes the page. A three-colon `:::page` stays a comic page.
 - `:::frame{slot="…" label="…"}` … `:::` holds the content of the frame of that name: any Markdown.
 - `slot="…"` on a heading (`## Retos {slot="retos-titulo"}`), on `::resource{id="…" slot="…"}`, on a code fence or on a `:::` container sends that block alone. Content with no slot goes to the template's flow frame.
-- `:::figure{resource="…" slot="…"}` … `:::` places one resource with its `::label[TEXT]{at="…" style="…"}` lines, `at` being an anchor of the picture or a point `"x% y%"`. A figure works in the running text too.
+- `:::figure{resource="…" slot="…"}` … `:::` places one resource with its `::label[TEXT]{at="…" style="…"}` lines, `at` being an anchor of the picture or a point `"x% y%"`. A figure works in the running text too. Its `alt`, `caption` and `note`, as fence attributes or as `::alt[…]`, `::caption[…]` and `::note[…]` lines, replace the resource's own words for that chapter (see [Composed pages › A figure's own words](/en/docs/composed-pages#a-figures-own-words)).

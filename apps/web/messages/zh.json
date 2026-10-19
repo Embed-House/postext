@@ -3664,7 +3664,7 @@
     "calloutStyleLabelIconWidth": "页签图标宽度",
     "calloutStyleLabelIconGap": "与页签的间距",
     "calloutStyleLabelIconPlacement": "图片位置",
-    "calloutStyleLabelIconPlacementTooltip": "在页签旁边（越过页签边缘），或在页签内部、文字之前的起始处（页签随之加宽，多出图片和间距的宽度）。在内部时图片保留自己的颜色：白色圆环和彩色圆环各用一张图片。",
+    "calloutStyleLabelIconPlacementTooltip": "在页签旁边（越过页签边缘），或在页签内部、文字之前的起始处（页签随之加宽，多出图片和间距的宽度）。在内部时图片保留自己的颜色，除非打开“图片使用文字颜色”：这时一个圆环可用于全书的每种色调。",
     "calloutStyleLabelIconBeside": "页签旁边",
     "calloutStyleLabelIconInside": "页签内部",
     "calloutStyleLabelIconTint": "图片使用文字颜色",

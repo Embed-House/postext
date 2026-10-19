@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Anmerkungen und Verweise',
   description: 'Fußnoten, Zeilennummern, Querverweise und Zitationen, das Inhaltsverzeichnis und das Register',
   lang: 'de',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // The note symbols of numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Querverweise
 
-Die Eigenschaft `crossRefs` legt die Wörter fest, die ein [Querverweis](/de/docs/document-format-notes-references#querverweise-und-verweisziele) um eine Nummer oder eine Seite herum ausgibt, sowie den Stil, den ein `:ref` ohne eigenen Stil erhält. Jede Vorlage enthält `{n}` an der Stelle der Nummer; eine Vorlage ohne `{n}` erhält die Nummer nach einem geschützten Leerzeichen (`"§"` ergibt *§ 3.2*). Eine nicht gesetzte Vorlage folgt der Sprache des Dokuments: *chapter / section / p.* im Englischen, *capítulo / sección / pág.* im Spanischen, `第{n}章` / `第{n}节` / `第{n}页` im Chinesischen und entsprechend im Französischen, Deutschen, Italienischen, Portugiesischen, Katalanischen und Niederländischen.
+Die Eigenschaft `crossRefs` legt die Wörter fest, die ein [Querverweis](/de/docs/document-format-notes-references#querverweise-und-verweisziele) um eine Nummer oder eine Seite herum ausgibt, sowie den Stil, den ein `:ref` ohne eigenen Stil erhält. Jede Vorlage enthält `{n}` an der Stelle der Nummer; eine Vorlage ohne `{n}` erhält die Nummer nach einem geschützten Leerzeichen (`"§"` ergibt *§ 3.2*). Eine nicht gesetzte Vorlage folgt der Sprache des Dokuments: *chapter / section / p.* im Englischen, *capítulo / sección / pág.* im Spanischen, `第{n}章` / `第{n}节` / `第{n}页` im Chinesischen, `第{n}章` / `{n}節` / `{n}ページ` im Japanischen, `الفصل {n}` / `القسم {n}` / `ص {n}` im Arabischen und entsprechend im Französischen, Deutschen, Italienischen, Portugiesischen, Katalanischen und Niederländischen.
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>je nach Sprache, kursiv (aufrecht in arabischer Schrift)</td>
+      <td>je nach Sprache, kursiv (aufrecht in arabischer Schrift und im Japanischen)</td>
       <td>Die Wörter vor einem Verweis. Sind sie nicht gesetzt, folgen sie der Sprache des Dokuments: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in traditionellem Chinesisch) … Ein chinesisches Register setzt den Verweis nach einem Satzpunkt, ohne Leerzeichen: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

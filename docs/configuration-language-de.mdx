@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Silbentrennung und Sprache',
   description: 'Trennmuster und Ausnahmen, Flattersatz, die Dokumentsprache mit ihren Ziffern und ihrer Schreibrichtung und die Schriftsysteme, die Postext setzt',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '19 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a console warning
 ```
 
-Wörter mit weniger als 5 Zeichen werden nie getrennt. Die Engine verlangt mindestens 2 Zeichen vor und 3 Zeichen nach einer Trennstelle.
+Wörter mit weniger als 5 Buchstaben werden nie getrennt, außer im Katalanischen, wo 4 genügen (`ca-sa`). Eine Trennung lässt mindestens 2 Buchstaben davor und danach 3 im Englischen und Französischen (`read-ing`), 4 im Portugiesischen (`ca-misa`) und 2 in den übrigen Sprachen (`pa-red`, `Ta-fel`). Im Englischen, Französischen und Italienischen zählt ein Apostroph dabei nicht als Buchstabe (kein `is-n't`), und im Französischen und Italienischen bleiben die Konsonanten vor einer Elision bei ihrem Wort: `dell’ac-qua`, nie `del-l’acqua`.
 
 ### Ungetrennte Wörter
 
@@ -170,7 +170,7 @@ Chinesisch nimmt `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`,
   </tbody>
 </table>
 
-Das Präfix der Legende ist der Name des Typs (*Abbildung 1.1.*). Die chinesischen Typen nummerieren innerhalb des Kapitels mit einem Bindestrich, `{h1}-{n}` (图 1-1); mit den Legendeneinstellungen `labelNumberGap: ''` und `labelSeparator: '　'` lautet die Legende 图1-1　标题 (siehe [Legendenstil](/de/docs/configuration-resources#legendenstil)). Auch das Register folgt der Sprache: 见 und 另见 vor einem Querverweis, 符号 und 数字 über den Symbolen und den Zahlen in vereinfachten Schriftzeichen; 見, 另見, 符號 und 數字 in traditionellen. Japanisch nummeriert seine Typen ebenso und setzt seine Legenden ohne die beiden Einstellungen als 図1-1　題, schreibt Querverweise als 第3章, 2.3節 und 12ページ, betitelt das Literaturverzeichnis mit 参考文献, und sein Register setzt 記号 und 数字 über Symbole und Zahlen und schreibt seine Querverweise mit einem Pfeil, `→夏目漱石` für *siehe* und `→夏目漱石、森鷗外も見よ` nach den Seitenzahlen für *siehe auch*, die Bezeichnungen aufrecht. Arabisch nummeriert seine Typen ebenso, `{h1}-{n}` (شكل 2-3), schreibt Querverweise als الفصل 3, القسم 2-1 und ص 12, betitelt das Literaturverzeichnis mit المراجع, und sein Register verwendet انظر / انظر أيضًا, رموز und أرقام, mit dem arabischen Komma und Semikolon (، ؛).
+Das Präfix der Legende ist der Name des Typs (*Abbildung 1.1.*). Der dritte eingebaute Typ, `video`, heißt *Video* im Englischen, Deutschen, Italienischen und Niederländischen, *Vídeo* im Spanischen, Portugiesischen und Katalanischen, *Vidéo* im Französischen, 视频 im vereinfachten und 影片 im traditionellen Chinesisch, 動画 im Japanischen und فيديو im Arabischen. Die chinesischen Typen nummerieren innerhalb des Kapitels mit einem Bindestrich, `{h1}-{n}` (图 1-1); mit den Legendeneinstellungen `labelNumberGap: ''` und `labelSeparator: '　'` lautet die Legende 图1-1　标题 (siehe [Legendenstil](/de/docs/configuration-resources#legendenstil)). Auch das Register folgt der Sprache: 见 und 另见 vor einem Querverweis, 符号 und 数字 über den Symbolen und den Zahlen in vereinfachten Schriftzeichen; 見, 另見, 符號 und 數字 in traditionellen. Japanisch nummeriert seine Typen ebenso und setzt seine Legenden ohne die beiden Einstellungen als 図1-1　題, schreibt Querverweise als 第3章, 2.3節 und 12ページ, betitelt das Literaturverzeichnis mit 参考文献, und sein Register setzt 記号 und 数字 über Symbole und Zahlen und schreibt seine Querverweise mit einem Pfeil, `→夏目漱石` für *siehe* und `→夏目漱石、森鷗外も見よ` nach den Seitenzahlen für *siehe auch*, die Bezeichnungen aufrecht. Arabisch nummeriert seine Typen ebenso, `{h1}-{n}` (شكل 2-3), schreibt Querverweise als الفصل 3, القسم 2-1 und ص 12, betitelt das Literaturverzeichnis mit المراجع, und sein Register verwendet انظر / انظر أيضًا, رموز und أرقام, mit dem arabischen Komma und Semikolon (، ؛).
 
 Ein chinesisches, japanisches oder koreanisches Dokument deklariert seine Sprache in der HTML-Ausgabe (`lang` auf der Wurzel `.pt-doc`, `zh-Hant-TW` ungekürzt) und auf dem Canvas, das es zeichnet (`ctx.lang`, in Chrome 136 und neuer), sodass der Browser die Glyphenformen der Region zeichnet: Unicode vereinheitlicht die Han-Zeichen, und ein Codepoint sieht in einer taiwanischen und in einer japanischen Schrift verschieden aus. Seit postext 1.30 tut das auch jedes andere Dokument, in der Sprache, in der sein Text geformt wird ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard); mit `'host'` tragen die übrigen Dokumente kein `lang`, und jedes Canvas zeichnet in der Sprache der Seite, die es einbettet. Das PDF deklariert für jedes Dokument, getaggt oder nicht, `/Lang` aus `locale`, mit Schrift und Region. Ein Dokument in einer Sprache, die von rechts nach links geschrieben wird (Arabisch, Persisch, Urdu, Hebräisch …), deklariert seine Sprache ebenfalls: Die Sprachformen der Schrift (`locl`) und die Ersatzschrift folgen ihr.
 

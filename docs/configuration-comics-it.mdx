@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Impostazioni dei fumetti',
   description: 'Le impostazioni dei fumetti: la cornice delle tavole e gli spazi tra le vignette, gli stili delle vignette, il lettering, gli stili delle nuvolette e i personaggi',
   lang: 'it',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ Ogni voce di `comics.balloonStyles` si sovrappone allo stile predefinito con lo 
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Rotazione in gradi, in senso orario. Prevale l’attributo <code>rotate</code> di una battuta.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Inclinazione delle lettere in gradi, applicata prima di <code>rotate</code>: positiva in avanti come il corsivo, negativa all’indietro. Il testo scritto su un oggetto visto in prospettiva (un’insegna, la copertina di un libro) ne segue il bordo superiore con <code>rotate</code> e i lati con <code>skew</code>. Prevale l’attributo <code>skew</code> di una battuta.</td>
     </tr>
   </tbody>
 </table>

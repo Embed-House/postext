@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Bücher aus zusammengesetzten Seiten',
   description: 'Ein Rundgang durch die Sandbox an einem Schulbuch aus zusammengesetzten Seiten: Sie legen eine Seitenvorlage an, füllen sie aus dem Markdown, beschriften eine Karte, übersetzen die Seite, beheben zu langen Text und wählen auf der Seite und im Text aus',
   lang: 'de',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "Diese Seite zeigt Schritt für Schritt, wie Sie in der Sandbox eine Schulbuchseite mit Titelband, Text und farbigen Kästen bauen. Sie beginnen mit einem fertigen Beispielbuch und fügen ihm eine Seite hinzu. Zuerst zeichnen Sie die Seite als Vorlage, dann füllen Sie sie aus dem Markdown mit Text. Danach beschriften Sie die Orte auf einer Karte und übersetzen die Seite in eine andere Sprache. Am Ende sehen Sie, was zu tun ist, wenn ein Text für seinen Kasten zu lang ist, und wie Sie zwischen der Seite und ihrem Text hin- und herspringen.",
@@ -102,7 +102,7 @@ Das Wort *Stone bridge* steht im Markdown, der Punkt gehört zum Bild. Übersetz
 
 ## 5. Die Seite übersetzen
 
-Eine Übersetzung ist dieselbe Vorlage mit anderen Wörtern. Die Sandbox führt sie als weitere Ausgabe desselben Buchs: Über die Leiste über der Leinwand wechseln Sie zwischen den Ausgaben, und das Bedienfeld Prüfungen prüft alle (siehe [Ausgaben eines Buchs](/de/docs/sandbox-previews#ausgaben-eines-buchs)). So legen Sie eine an:
+Eine Übersetzung ist dieselbe Vorlage mit anderen Wörtern. Die Sandbox führt sie als weitere Ausgabe desselben Buchs: Über die Werkzeugleiste am linken Rand der Leinwand wechseln Sie zwischen den Ausgaben, und das Bedienfeld Prüfungen prüft alle (siehe [Ausgaben eines Buchs](/de/docs/sandbox-previews#ausgaben-eines-buchs)). Die Leiste erscheint, wenn der Zeiger diesen Rand erreicht; mit der Schaltfläche zum Anheften bleibt sie offen. So legen Sie eine an:
 
 1. Öffnen Sie **Bücher**, klicken Sie bei Ihrem Buch auf **⋯** und wählen Sie **Sprache hinzufügen …**. Wählen Sie die Sprache und klicken Sie auf **Hinzufügen und öffnen**. Die Sandbox kopiert die angezeigte Ausgabe in eine neue, stellt deren **Dokumentsprache** auf die gewählte Sprache und öffnet sie. Silbentrennung, Anführungszeichen und die Wörter, die die Engine selbst setzt (etwa *Fortsetzung* an der Stelle, an der ein Kasten geteilt wird), richten sich nach dieser Sprache. Der Text ist noch der des Originals.
 2. Übersetzen Sie im Bedienfeld **Text** die Wörter und lassen Sie alles andere stehen.
@@ -160,7 +160,7 @@ Auf der Seite ist der Rahmen jetzt rot umrandet, und ein Band unter seinem unter
 - *auf der nächsten Seite fortsetzen (overflow.continueIn)* setzt, was nicht passt, auf eine Seite, die hinter dieser eingefügt wird. Das eignet sich für einen längeren Text.
 - *etwa 495 Zeichen kürzen* ändert nichts. Es wählt den Text des Rahmens aus und zeigt, wie viel Sie kürzen müssen.
 
-Eine Schaltfläche, die die Vorlage ändert (und damit jede Seite, die nach ihr gesetzt ist), fragt zuerst nach und nennt die betroffene Einstellung. Klicken Sie auf **Ändern**. Die Seite wird neu gesetzt, der Kasten endet mit dem Fortsetzungsvermerk (*Continúa*), und der Rest läuft oben auf einer eingefügten Seite weiter. **Cmd/Strg+Z** nimmt die Änderung zurück. **Verschiebungen** in der Leiste über der Leinwand öffnet *Was sich bewegt hat und warum*: eine Liste der Rahmen, deren Größe oder Position der Satz geändert hat, damit ihr Inhalt hineinpasst, jeweils mit einer Begründung.
+Eine Schaltfläche, die die Vorlage ändert (und damit jede Seite, die nach ihr gesetzt ist), fragt zuerst nach und nennt die betroffene Einstellung. Klicken Sie auf **Ändern**. Die Seite wird neu gesetzt, der Kasten endet mit dem Fortsetzungsvermerk (*Continúa*), und der Rest läuft oben auf einer eingefügten Seite weiter. **Cmd/Strg+Z** nimmt die Änderung zurück. **Verschiebungen** in derselben Werkzeugleiste am Rand der Leinwand öffnet *Was sich bewegt hat und warum*: eine Liste der Rahmen, deren Größe oder Position der Satz geändert hat, damit ihr Inhalt hineinpasst, jeweils mit einer Begründung.
 
 <Screenshot src="/docs-shots/de/checks.webp" alt="Das Bedienfeld Prüfungen mit dem Eintrag Text passt nicht in seinen Rahmen und drei Schaltflächen mit Lösungen; daneben die Seite, deren erster Kasten rot umrandet ist, mit einem Band und der Angabe 26 mm zu kurz." caption="Ein Rahmen, der nicht passt, und die Lösungen, die der Satz für ihn errechnet hat." />
 

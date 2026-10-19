@@ -3,9 +3,9 @@
 export const metadata = {
   title: '配置：标注框',
   sidebarTitle: '标注框',
-  description: '怎样为:::callout标注框定义命名样式：边框、底色、色条、标题、图标和框外标记；怎样给命题编号；框内文字怎样排；框跨页拆分时怎样处理',
+  description: '怎样为:::callout标注框定义命名样式：边框、底色、色条、标题、图标、框外标记和标签页签；怎样给命题编号；框内文字怎样排；框跨页拆分时怎样处理；怎样在框内绘制设计',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分钟',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>、标题字体、<code>400</code>、<code>1.5em</code>、主色、<code>'top'</code>、<code>'inline'</code>、<code>'right'</code></td>
-      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>，或<code>'outer'</code> / <code>'inner'</code>，后两者在对称页边距下随奇偶页变化（外侧在奇数页上是右边，在偶数页上是左边）。</td>
+      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>；<code>'outer'</code> / <code>'inner'</code>，在对称页边距下随奇偶页变化（外侧在奇数页上是右边，在偶数页上是左边）；或<code>'start'</code> / <code>'end'</code>，随框自身的书写方向而定，与色条的这两个值相同。</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>未设置（无页签）</td>
-      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。</td>
+      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>，或按框自身书写方向的<code>'top-start'</code> / <code>'top-end'</code>，与色条的<code>'start'</code> / <code>'end'</code>相同），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>，不上移也不内缩，图片宽<code>1em</code>、与文字相距<code>0.3em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>该标记的文字（剧本里的“(MORE)”），使用框的正文字体和字号，随文档语言而定。</td>
+      <td><code>'Continued'</code></td>
+      <td>该标记的文字（剧本里的“(MORE)”），使用框的正文字体和字号。默认值随文档语言而定，与拆分表格的相同：中文为<code>'接下页'</code>，西班牙语为<code>'Continúa'</code>。</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ A speech long enough to run over the foot of the page…
 
 图片的`resourceId`接受同样的占位符，因此每个框可以画出各自的资源。只有框的设计读取`{boxText}`；标题设计在此处不印任何内容。
 
-设`setsContent: true`后，一个样式就能用于所有同样形状的框，每个框带着自己的字词。在习字册中，每一行练习都是一个框，框的内容就是要描写的字：设计用习字字体印出这个字，并画出以它命名的虚线资源。
+设`setsContent: true`后，一个样式就能用于所有同样形状的框，每个框带着自己的字词。在习字册中，每一行练习都是一个框，框的内容就是要描写的字：设计用习字字体印出这个字，再把它排成供描写的点线字（`dotted`），一行能放几个就排几个（`repeat`；见[行内标记与描边](/zh/docs/configuration-headers-footers#行内标记与描边)）。
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'LXGW WenKai', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'LXGW WenKai', fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ calloutStyles: [{
 :::
 ```
 
-第一行印出“猫”并画出资源`trace-猫`，第二行印出“月”并画出`trace-月`，两个字都不会在带下方再排一次。`setsContent`保持`false`时，设计照样读取`{boxText}`，内容排在带下方。
+第一行印出“猫”，后面跟着一排点线的“猫”；第二行对“月”做同样的处理；两个字都不会在带下方再排一次。在Markdown中改动这个字，范字和所有描写字都随之改变。`setsContent`保持`false`时，设计照样读取`{boxText}`，内容排在带下方。
 
 在VDT中，带的元素是框架`designOverlay`上的设计块，与标题并列。

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pictures, tables and videos',
   description: 'Resources in the text: references and embeds, numbering, placement and where a float lands, text wrap, bitmap size, safe areas, comic anchors and videos',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '39 min',
   order: 29,
   parent: 'document-format',
@@ -63,7 +63,7 @@ A cell can carry its own fill. `TableCell.background` is a colour value (`{ "hex
 
 SVG resources can additionally be recoloured for single-spot-colour printing via `diagramStyle.singleInk` (default `false`). When enabled, every colour in an SVG diagram is remapped to a luminance-mapped tint of `diagramStyle.inkColor` (which defaults to the main palette colour, `#295AA3`) — white maps to paper, black to the full ink — so figures reproduce faithfully when the document is printed with a single spot colour. See [Configuration › Diagram style](/en/docs/configuration-resources#diagram-style).
 
-A malformed embed (missing or empty `id`, an unquoted or single-quoted `id`, extra attributes) is not promoted to a resource block; it falls through to ordinary paragraph parsing and remains visible in the output. So does a well-formed embed line glued under a paragraph line without a blank line between them: it is read as part of that paragraph. Both raise a `malformedEmbed` warning — an **Embed set as text** entry in the sandbox's Checks panel.
+A malformed embed (missing or empty `id`, an unquoted or single-quoted `id`, attributes other than a composed page's `slot`) is not promoted to a resource block; it falls through to ordinary paragraph parsing and remains visible in the output. So does a well-formed embed line glued under a paragraph line without a blank line between them: it is read as part of that paragraph. Both raise a `malformedEmbed` warning — an **Embed set as text** entry in the sandbox's Checks panel.
 
 Inline references are recognised inside any text block — paragraphs, headings, blockquotes, and list items — and may sit alongside bold, italic, inline code, and inline math.
 
@@ -83,7 +83,7 @@ The `:ref` directive accepts three optional attributes, in any order. `style` se
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>Default style: the type's <code>shortLabel</code> followed by the number, joined with a non-breaking space so they never wrap apart.</td>
+      <td>Default style: the type's <code>shortLabel</code> followed by the number, joined with a non-breaking space (or the caption style's <code>labelNumberGap</code>) so they never wrap apart.</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

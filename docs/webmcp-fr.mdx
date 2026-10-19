@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 41 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 46,
   plainSummary: "Cette page s’adresse aux personnes qui veulent qu’un assistant d’intelligence artificielle travaille pour elles sur un livre dans le Sandbox. Tant que le Sandbox est ouvert, il donne à l’assistant une série d’outils : regarder n’importe quelle page, changer la maquette, modifier le texte, ajouter des images et des tableaux, trouver les problèmes et enregistrer des fichiers. Vous demandez avec vos propres mots, par exemple « grossissez un peu le texte et vérifiez que le livre tient toujours en 40 pages », et l’assistant utilise les outils et vous montre les pages. Tout reste dans votre navigateur. La page explique comment connecter un assistant, ce qu’il peut faire et comment chaque outil s’appelle.",
@@ -484,12 +484,13 @@ Ce que l’agent modifie, vous le voyez. Pour attirer votre attention sur quelqu
 ```
 
 `sandbox_set_view` choisit aussi la visionneuse (`canvas`, `pdf`, `folio`, `html`,
-`epub`), le panneau latéral, chapitre ou livre entier, le zoom, la taille de caractère du lecteur,
+`epub`), le mode Contenu ou Maquette (`mode`), le panneau latéral, chapitre ou livre entier, le zoom, la taille de caractère du lecteur,
 l’aperçu d’impression et le groupe du panneau Maquette. `sandbox_go_to_page` tourne
 les pages par `step`, `page`, `position`, un passage `text`, une `anchor` ou une
 entrée `contents` d’un EPUB. `sandbox_run_viewer` actionne un bouton de barre d’outils :
 `regenerate` écrit de nouveau le PDF ou l’EPUB et attend la fin, `print` ouvre la
-boîte de dialogue d’impression pour que vous confirmiez, `play_video` lit une vidéo sur une page.
+boîte de dialogue d’impression pour que vous confirmiez, `download` enregistre le PDF ou l’EPUB, et
+`play_video` et `stop_video` lancent et arrêtent une vidéo sur une page.
 
 ### Pages de bande dessinée
 
@@ -514,6 +515,10 @@ La réponse prévient quand une bulle tombe sur un visage ou sort de sa case. Vo
   projets ; `sandbox_open_book` en ouvre un (`{ "kind": "sample", "id": "postext-guide",
   "language": "es" }`) ; `sandbox_save_book` avec `action: "copy_current"` garde
   le livre à l’écran comme votre propre projet, `new_blank` en commence un vide.
+  Sur un projet, `add_language` avec `language` (`"fr"`, `"zh-Hant"`) copie
+  la langue à l’écran dans une nouvelle édition dans cette langue et l’ouvre, et
+  `rename` avec `thisLanguageOnly: true` ne nomme que la langue à l’écran ;
+  `set_cover` et `remove_cover` lui donnent une couverture ou la lui retirent.
 - **Exporter.** `sandbox_export` écrit `pdf`, `epub`, `postext`, `docx`,
   `markdown` ou `config`. Par défaut, le navigateur télécharge le fichier ; avec
   `deliver: "data"`, un PDF ou un EPUB revient à l’agent encodé en base64 :
@@ -602,8 +607,9 @@ des instructions.
 - **Annuler** : `sandbox_undo` annule la dernière modification, du texte ou de la maquette, dans l’ordre où elles ont été faites, comme Cmd/Ctrl+Z dans le Sandbox : ce qui a été tapé dans le panneau Texte, les modifications des outils et celles faites sur les aperçus, les réglages changés par `sandbox_set_config` ou dans le panneau Maquette, les blocs déplacés. `redo: true` la rétablit. `sandbox_undo_text` n’annule qu’une modification du texte, et le signale quand la dernière portait sur la maquette. Les chapitres ajoutés, supprimés ou déplacés, les ressources et les polices ne sont pas dans l’historique ; ouvrir un autre livre le vide, tout comme recharger la page. `sandbox_get_state` indique ce que chacun annulerait (`history`).
 - **Le livre à l’écran.** Les outils agissent sur le livre ouvert. Seuls
   `sandbox_export` d’un fichier `.postext`, `sandbox_save_book` avec
-  `duplicate` et `sandbox_reset_to_original` avec `sample` agissent sur un autre livre
-  sans l’ouvrir.
+  `duplicate`, `rename` ou une couverture, `sandbox_delete_book` et
+  `sandbox_reset_to_original` avec `sample` agissent sur un autre livre sans
+  l’ouvrir.
 
 ## Les outils du site
 

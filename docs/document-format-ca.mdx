@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Format del document',
   description: 'Quina part del Markdown llegeix Postext: el frontmatter, els encapçalaments, les llistes i els blocs de codi; què hi ignora, i les normes per redactar els documents font',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 25,
   plainSummary: "Aquesta pàgina explica com s'escriu un text que Postext pugui compondre. S'escriu en Markdown, una manera senzilla d'escriure en què uns quants signes marquen els títols, les llistes, les negretes i els enllaços. Aquesta pàgina tracta les línies del començament del fitxer, els títols, les llistes, el codi i les marques que Postext no té en compte. Quatre pàgines més expliquen els blocs (com els requadres i les columnes), les marques dins de la línia, les notes i les referències, i les imatges i les taules. La pàgina acaba amb consells per escriure un text fàcil de llegir.",
@@ -53,7 +53,7 @@ Posa el valor entre cometes per imprimir-lo exactament com està escrit (un nomb
 
 ## Construccions de bloc
 
-Postext reconeix set tipus de bloc de prosa i els blocs de codi, a més de les directives i les insercions de recursos que es descriuen més endavant. Un bloc sempre s'acaba en una línia en blanc o on comença un altre bloc.
+Postext reconeix set tipus de bloc de prosa i els blocs de codi, a més de les [directives](/ca/docs/document-format-directives) i les [insercions de recursos](/ca/docs/document-format-resources), que tenen una pàgina pròpia. Un bloc sempre s'acaba en una línia en blanc o on comença un altre bloc.
 
 <Illustration name="BlockTypesGallery" data='{"title": "Construccions de bloc de prosa d’un cop d’ull", "desc": "Els set tipus de bloc de prosa que reconeix Postext: encapçalament, paràgraf, cita, llista no ordenada, llista ordenada, llista de tasques i fórmula en bloc, cadascun amb la sintaxi Markdown corresponent. Les directives i les insercions de recursos es descriuen a part.", "caption": "Cada tipus de bloc de prosa i com s’escriu en Markdown.", "blocks": [{"name": "Encapçalament", "syntax": "# Títol", "color": "blue"}, {"name": "Paràgraf", "syntax": "Línies de text pla", "color": "orange"}, {"name": "Cita", "syntax": "> text citat", "color": "green"}, {"name": "Llista no ordenada", "syntax": "- element", "color": "purple"}, {"name": "Llista ordenada", "syntax": "1. element", "color": "pink"}, {"name": "Llista de tasques", "syntax": "- [x] fet", "color": "teal"}, {"name": "Fórmula en bloc", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ Postext reconeix set tipus de bloc de prosa i els blocs de codi, a més de les d
     <tr>
       <td>Llista ordenada</td>
       <td><code>1. element</code>, <code>2) element</code></td>
-      <td>Xifres seguides de <code>.</code> o <code>)</code>. Es conserva el número inicial (una llista pot començar pel 5 o pel 0). El separador que es renderitza a la sortida surt d'<code>orderedLists.separator</code>, no del codi font.</td>
+      <td>Xifres seguides de <code>.</code> o <code>)</code>: xifres europees, o les arabigoíndiques (<code>١.</code>) i perses (<code>۱.</code>) que escriu un teclat àrab o persa. Es conserva el número inicial (una llista pot començar pel 5 o pel 0). El separador que es renderitza a la sortida surt d'<code>orderedLists.separator</code>, no del codi font.</td>
     </tr>
     <tr>
       <td>Llista de tasques (GFM)</td>
@@ -210,6 +210,10 @@ El text que segueix la línia d'obertura indica el llenguatge (amb la primera pa
       <td><code>span=page</code></td>
       <td>En una pàgina de diverses columnes, el llistat les ocupa totes.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>Fa flotar el llistat fins a la primera banda lliure al capdamunt o al peu d'una columna, com un <code>:::callout</code> flotant.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Tres propietats són determinants:
 
 1. L'amplada de línia — entre 40 i 75 caràcters per línia.
 2. L'interlineat — entre 1,3 i 1,5 vegades la mida de la font.
-   a. Més ajustat en amplades curtes.
-   b. Més generós en amplades llargues.
+   1. Més ajustat en amplades curtes.
+   2. Més generós en amplades llargues.
 3. El contrast entre cos i encapçalaments.
 
 Entre les errades habituals hi ha:

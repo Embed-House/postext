@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuration : encadrés',
   sidebarTitle: 'Encadrés',
-  description: 'Les styles nommés des encadrés :::callout (cadre, fond, bande, titre, icône et marqueur) ; les énoncés numérotés ; la typographie à l’intérieur de l’encadré ; et les encadrés coupés d’une page à l’autre',
+  description: 'Les styles nommés des encadrés :::callout (cadre, fond, bande, titre, icône, marqueur et onglet d’étiquette) ; les énoncés numérotés ; la typographie à l’intérieur de l’encadré ; les encadrés coupés d’une page à l’autre ; et les maquettes dessinées dans un encadré',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '28 min',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>, police des titres, <code>400</code>, <code>1.5em</code>, couleur principale, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
-      <td>Un glyphe de texte (<code>kind: 'glyph'</code>) ou une ressource bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) à côté du contenu. Avec une bande latérale, l’icône est centrée sur la bande ; sinon elle réserve sa propre colonne (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> la centre verticalement sur le contenu. Une image de ressource est ajustée dans le carré en gardant ses proportions, ou dans une boîte <code>width</code> × <code>size</code> quand <code>width</code> est défini (une large bande d’icônes) ; une icône plus haute que le contenu agrandit l’encadré pour la contenir (et, avec <code>align: 'center'</code>, centre le contenu sur elle). <code>position: 'corner'</code> accroche l’icône à un coin supérieur comme un badge, à moitié au-delà de la bordure, sans prendre de place au contenu ; une icône large (<code>width</code>) est centrée sur le coin selon la largeur à laquelle elle est dessinée, et sur le coin gauche le titre commence après sa moitié intérieure (jusqu’à postext 1.4, elle était placée selon sa hauteur : une large bande dépassait alors de l’encadré et recouvrait le titre) ; <code>cornerSide</code> choisit le coin : <code>'right'</code> / <code>'left'</code>, ou <code>'outer'</code> / <code>'inner'</code>, qui suivent la parité de page des marges en miroir (extérieur = droite sur un recto, gauche sur un verso).</td>
+      <td>Un glyphe de texte (<code>kind: 'glyph'</code>) ou une ressource bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) à côté du contenu. Avec une bande latérale, l’icône est centrée sur la bande ; sinon elle réserve sa propre colonne (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> la centre verticalement sur le contenu. Une image de ressource est ajustée dans le carré en gardant ses proportions, ou dans une boîte <code>width</code> × <code>size</code> quand <code>width</code> est défini (une large bande d’icônes) ; une icône plus haute que le contenu agrandit l’encadré pour la contenir (et, avec <code>align: 'center'</code>, centre le contenu sur elle). <code>position: 'corner'</code> accroche l’icône à un coin supérieur comme un badge, à moitié au-delà de la bordure, sans prendre de place au contenu ; une icône large (<code>width</code>) est centrée sur le coin selon la largeur à laquelle elle est dessinée, et sur le coin gauche le titre commence après sa moitié intérieure (jusqu’à postext 1.4, elle était placée selon sa hauteur : une large bande dépassait alors de l’encadré et recouvrait le titre) ; <code>cornerSide</code> choisit le coin : <code>'right'</code> / <code>'left'</code> ; <code>'outer'</code> / <code>'inner'</code>, qui suivent la parité de page des marges en miroir (extérieur = droite sur un recto, gauche sur un verso) ; ou <code>'start'</code> / <code>'end'</code>, qui suivent la direction propre de l’encadré, comme ceux de la bande.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>non défini (sans onglet)</td>
-      <td>Un onglet sur le bord supérieur de l’encadré qui imprime l’attribut <code>label</code> du délimiteur : le numéro d’un encadré numéroté (« BOX 1-1 »). Il se colle au coin <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>), en retrait de <code>inset</code>, s’élève de <code>offset</code> au-dessus du haut de l’encadré (cet espace fait partie du bloc, en plus de <code>marginTop</code> : l’onglet le garde donc aussi en tête de colonne), mesure <code>height</code> de haut avec <code>paddingX</code> de chaque côté du texte, et peut comporter une ressource <code>icon</code> à côté (<code>&#123; resourceId, width, gap &#125;</code>, du côté opposé au coin) et un <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) le long du bord supérieur, du coin opposé jusqu’à lui. Valeurs par défaut : police des titres, taille du texte, <code>700</code>, blanc sur la couleur principale, <code>1.4em</code> de haut, <code>0.6em</code> de marge intérieure. L’onglet est une forme à part posée sur le cadre : il garde des coins carrés quel que soit le <code>borderRadius</code> de l’encadré. Depuis postext 1.42, <code>icon.placement: 'inside'</code> place l’image dans l’onglet, au début et avant les mots (à l’extrémité droite dans un encadré composé de droite à gauche), à <code>gap</code> d’eux : l’onglet a la largeur de l’image, de l’espace, des mots et du remplissage, et l’image, ajustée à <code>icon.width</code> et à la hauteur de l’onglet, y est centrée. L’image garde ses couleurs : un anneau blanc sur un onglet coloré et un anneau coloré sur un onglet blanc font deux ressources, une par style. <code>'beside'</code>, la valeur par défaut, place l’image au-delà du bord de l’onglet. Depuis postext 1.43, <code>icon.tint: true</code> peint l’image dans la <code>color</code> de l’onglet au lieu de la sienne : seule sa silhouette est peinte, dans la couleur des mots : un seul anneau sert ainsi à toutes les teintes d’un livre. Une image sans transparence devient un simple rectangle. Dans le PDF, un SVG garde ses bords et un bitmap est découpé là où il est à moitié transparent ; le fichier d’impression (<code>svg.pdfFileId</code>) n’est pas utilisé, car une page PDF ne se recolore pas.</td>
+      <td>Un onglet sur le bord supérieur de l’encadré qui imprime l’attribut <code>label</code> du délimiteur : le numéro d’un encadré numéroté (« BOX 1-1 »). Il se colle au coin <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, ou <code>'top-start'</code> / <code>'top-end'</code> dans la direction propre de l’encadré, comme <code>'start'</code> / <code>'end'</code> pour la bande), en retrait de <code>inset</code>, s’élève de <code>offset</code> au-dessus du haut de l’encadré (cet espace fait partie du bloc, en plus de <code>marginTop</code> : l’onglet le garde donc aussi en tête de colonne), mesure <code>height</code> de haut avec <code>paddingX</code> de chaque côté du texte, et peut comporter une ressource <code>icon</code> à côté (<code>&#123; resourceId, width, gap &#125;</code>, du côté opposé au coin) et un <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) le long du bord supérieur, du coin opposé jusqu’à lui. Valeurs par défaut : police des titres, taille du texte, <code>700</code>, blanc sur la couleur principale, <code>1.4em</code> de haut, <code>0.6em</code> de marge intérieure, ni décalage ni retrait, une image de <code>1em</code> de large à <code>0.3em</code> du texte. L’onglet est une forme à part posée sur le cadre : il garde des coins carrés quel que soit le <code>borderRadius</code> de l’encadré. Depuis postext 1.42, <code>icon.placement: 'inside'</code> place l’image dans l’onglet, au début et avant les mots (à l’extrémité droite dans un encadré composé de droite à gauche), à <code>gap</code> d’eux : l’onglet a la largeur de l’image, de l’espace, des mots et du remplissage, et l’image, ajustée à <code>icon.width</code> et à la hauteur de l’onglet, y est centrée. L’image garde ses couleurs : un anneau blanc sur un onglet coloré et un anneau coloré sur un onglet blanc font deux ressources, une par style. <code>'beside'</code>, la valeur par défaut, place l’image au-delà du bord de l’onglet. Depuis postext 1.43, <code>icon.tint: true</code> peint l’image dans la <code>color</code> de l’onglet au lieu de la sienne : seule sa silhouette est peinte, dans la couleur des mots : un seul anneau sert ainsi à toutes les teintes d’un livre. Une image sans transparence devient un simple rectangle. Dans le PDF, un SVG garde ses bords et un bitmap est découpé là où il est à moitié transparent ; le fichier d’impression (<code>svg.pdfFileId</code>) n’est pas utilisé, car une page PDF ne se recolore pas.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Texte de cette marque (le « (MORE) » d’un scénario), dans le caractère et la taille du texte de l’encadré, selon la langue du document.</td>
+      <td><code>'Continued'</code></td>
+      <td>Texte de cette marque (le « (MORE) » d’un scénario), dans le caractère et la taille du texte de l’encadré. La valeur par défaut est dans la langue du document, comme celle d’un tableau coupé : <code>'À suivre'</code> en français, <code>'Continúa'</code> en espagnol.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ Les textes de la maquette lisent ces espaces réservés :
 
 Le `resourceId` d’une image accepte les mêmes espaces réservés, si bien que chaque encadré peut dessiner sa propre ressource. Seule une maquette d’encadré lit `{boxText}` ; une maquette de titre n’imprime rien à sa place.
 
-Avec `setsContent: true`, un seul style sert à tous les encadrés de même forme, chacun avec ses propres mots. Dans un cahier d’écriture, chaque ligne d’exercice est un encadré dont le contenu est le mot à recopier : la maquette imprime le mot dans une écriture scolaire et dessine la ressource en pointillés qui porte son nom.
+Avec `setsContent: true`, un seul style sert à tous les encadrés de même forme, chacun avec ses propres mots. Dans un cahier d’écriture, chaque ligne d’exercice est un encadré dont le contenu est le mot à recopier : la maquette imprime le mot dans une écriture scolaire, puis le reprend en points à repasser (`dotted`), autant de fois que la ligne en contient (`repeat` ; voir [Marques en ligne et contours](/fr/docs/configuration-headers-footers#marques-en-ligne-et-contours)).
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite FR Moderne', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite FR Moderne', fontWeight: 100, fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ lune
 :::
 ```
 
-La première ligne imprime *chat* et dessine la ressource `trace-chat`, la seconde imprime *lune* et dessine `trace-lune`, et aucun des deux mots n’est composé une seconde fois sous son bandeau. Avec `setsContent` laissé à `false`, la maquette lit `{boxText}` de la même façon, et le contenu est composé sous le bandeau.
+La première ligne imprime *chat* suivi d’une rangée de copies de *chat* en pointillés, la seconde fait de même avec *lune*, et aucun des deux mots n’est composé une seconde fois sous son bandeau. Changer le mot dans le Markdown change le modèle et toutes les copies. Avec `setsContent` laissé à `false`, la maquette lit `{boxText}` de la même façon, et le contenu est composé sous le bandeau.
 
 Dans le VDT, les éléments du bandeau sont des blocs de maquette sur le `designOverlay` du cadre, à côté du titre.

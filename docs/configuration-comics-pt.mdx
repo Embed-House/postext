@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ajustes de quadrinhos',
   description: 'Como configurar os quadrinhos: a moldura e as sarjetas das páginas, os estilos de quadro e de balão, o letreiramento e o elenco',
   lang: 'pt',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ Cada entrada de `comics.balloonStyles` se sobrepõe ao estilo integrado de mesmo
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Rotação em graus, no sentido horário. O atributo <code>rotate</code> da linha tem prioridade.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Inclinação das letras em graus, aplicada antes de <code>rotate</code>: positiva para a frente, como o itálico, e negativa para trás. O texto escrito sobre um objeto visto em perspectiva (uma placa, a capa de um livro) acompanha a borda de cima com <code>rotate</code> e os lados com <code>skew</code>. O atributo <code>skew</code> da linha tem prioridade.</td>
     </tr>
   </tbody>
 </table>

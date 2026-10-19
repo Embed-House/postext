@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Immagini, tabelle e video',
   description: 'Le risorse nel testo: rimandi e inserimenti, numerazione, collocazione e dove finisce un elemento flottante, testo intorno alle immagini, dimensione delle bitmap, zone sicure, ancore dei personaggi e video',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '42 min',
   order: 29,
   parent: 'document-format',
@@ -63,7 +63,7 @@ Una cella può avere un riempimento proprio. `TableCell.background` è un valore
 
 Le risorse SVG si possono inoltre ricolorare per la stampa con un solo colore piatto tramite `diagramStyle.singleInk` (predefinito `false`). Quando è attivo, ogni colore di un diagramma SVG viene rimappato su una tinta di `diagramStyle.inkColor` ricavata dalla luminanza (`inkColor` ha come valore predefinito il colore principale della tavolozza, `#295AA3`): il bianco diventa carta, il nero l’inchiostro pieno, così le figure si riproducono fedelmente quando il documento viene stampato con un unico colore piatto. Vedi [Configurazione › Stile dei diagrammi](/it/docs/configuration-resources#stile-dei-diagrammi).
 
-Un inserimento malformato (`id` mancante o vuoto, `id` senza virgolette o tra apici singoli, attributi in più) non viene promosso a blocco di risorsa; ricade nell’analisi come paragrafo ordinario e resta visibile nell’output. Lo stesso vale per una riga di inserimento ben formata attaccata sotto una riga di paragrafo senza una riga vuota in mezzo: viene letta come parte di quel paragrafo. Entrambi i casi generano un avviso `malformedEmbed`, una voce **Inserimento composto come testo** nel pannello **Verifiche** della Sandbox.
+Un inserimento malformato (`id` mancante o vuoto, `id` senza virgolette o tra apici singoli, attributi in più oltre allo `slot` di una pagina composta) non viene promosso a blocco di risorsa; ricade nell’analisi come paragrafo ordinario e resta visibile nell’output. Lo stesso vale per una riga di inserimento ben formata attaccata sotto una riga di paragrafo senza una riga vuota in mezzo: viene letta come parte di quel paragrafo. Entrambi i casi generano un avviso `malformedEmbed`, una voce **Inserimento composto come testo** nel pannello **Verifiche** della Sandbox.
 
 I rimandi in linea sono riconosciuti in qualsiasi blocco di testo (paragrafi, titoli, citazioni e voci di elenco) e possono stare accanto a grassetto, corsivo, codice in linea e matematica in linea.
 
@@ -83,7 +83,7 @@ La direttiva `:ref` accetta tre attributi facoltativi, in qualsiasi ordine. `sty
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>Stile predefinito: lo <code>shortLabel</code> del tipo seguito dal numero, uniti da uno spazio indivisibile perché non vadano mai a capo separati.</td>
+      <td>Stile predefinito: lo <code>shortLabel</code> del tipo seguito dal numero, uniti da uno spazio indivisibile (o dal <code>labelNumberGap</code> dello stile della didascalia) perché non vadano mai a capo separati.</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

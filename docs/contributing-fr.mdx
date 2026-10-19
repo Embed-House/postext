@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Contribuer',
   description: 'Comment rejoindre la communauté Postext et contribuer au projet',
   lang: 'fr',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 35,
   plainSummary: "Postext est construit par une communauté de bénévoles, et tout le monde peut aider. Inutile d’être programmeur : vous pouvez aussi aider en testant, en rédigeant de la documentation, en traduisant ou en partageant ce que vous savez de la maquette et de l’impression. Cette page explique comment l’équipe travaille, où l’aide manque le plus et comment faire votre première contribution. Elle se termine par les objectifs à long terme du projet.",
@@ -82,19 +82,21 @@ particulièrement précieuses :
   couleurs et traitement des octets de ressources pour les figures en une seule encre.
 - **Rendu du texte** : rendu sur canvas, sortie SVG, recoloration des SVG en une seule encre
   (`diagramStyle.singleInk`), métriques des polices.
-- **Optimisation des performances** : la couche de cache des mesures, et un moteur de mise en page
+- **Optimisation des performances** : la couche de cache des mesures, l’algorithme de coupure de
+  lignes Knuth-Plass écrit en Rust et compilé en WebAssembly (`rust/`), et un moteur de mise en page
   assez rapide pour un usage en temps réel à chaque redimensionnement.
 
 ### Sandbox et interface
 Le [Sandbox](/fr/docs/sandbox) est devenu une interface React conséquente à part entière : un panneau
 Ressources avec un éditeur de tableaux interactif et l’import d’images et de SVG, un panneau des
-polices et un panneau Maquette dont les douze groupes couvrent tous les recoins du moteur. Ses contrôles
-reposent sur les primitives Base UI (`packages/postext-sandbox/src/ui/`) et sont vérifiés avec axe-core
-pour WCAG 2.1 AA ; les nouveaux contrôles doivent donc les réutiliser et garder chaque champ nommé par
-son libellé et décrit par son texte d’aide. Chaque chaîne de l’interface suit une convention d’i18n
-stricte : chaque libellé passe par cinq fichiers, répartis entre le paquet du Sandbox et les
-catalogues de langues de l’application web. Si vous contribuez au frontend ou à l’UX, c’est ici que
-votre travail trouvera sa place.
+polices, des éditeurs de gabarits de page et de pages de bande dessinée, et un panneau Maquette dont
+les groupes couvrent toutes les parties du moteur. Ses contrôles reposent sur les primitives Base UI
+(`packages/postext-sandbox/src/ui/`) et sont vérifiés avec axe-core et avec des contrôles propres au
+projet pour WCAG 2.2 au niveau AAA ; les nouveaux contrôles doivent donc les réutiliser et garder
+chaque champ nommé par son libellé et décrit par son texte d’aide. Chaque chaîne de l’interface suit
+une convention d’i18n stricte : chaque libellé passe par le paquet du Sandbox, par le pont des
+libellés de l’application web et par le catalogue de chacune des dix langues. Si vous contribuez au
+frontend ou à l’UX, c’est ici que votre travail trouvera sa place.
 
 ### Maquette et typographie
 - **Expertise en maquette éditoriale** : si vous avez l’expérience de la mise en page de magazines,
@@ -106,8 +108,9 @@ votre travail trouvera sa place.
 ### Documentation et communauté
 - **Documentation** : améliorer, étoffer et entretenir la documentation. Une documentation claire
   fait la différence entre un projet que l’on adopte et un projet que l’on abandonne.
-- **Traductions** : la documentation est actuellement bilingue (anglais et espagnol). D’autres
-  langues sont les bienvenues.
+- **Traductions** : la documentation et le site existent en dix langues : anglais, espagnol,
+  catalan, français, allemand, italien, portugais du Brésil, chinois simplifié, japonais et arabe.
+  D’autres langues sont les bienvenues, et les relectures des langues existantes aussi.
 - **Tests** : tester sur différents navigateurs et systèmes d’exploitation, et sur les cas limites.
   Trouver les mises en page qui cassent vaut autant que construire celles qui fonctionnent.
 
@@ -116,8 +119,8 @@ Le format n’est plus une page blanche : les blocs `::resource`, les référen
 sections de configuration `tableStyle`, `captionStyle` et `diagramStyle` sont déjà disponibles. Le travail
 consiste désormais à faire évoluer un format établi sans le casser :
 
-- **Grammaire du document** : les notes marginales et les renvois au-delà des ressources restent des
-  questions ouvertes, chacune autant un problème de conception qu’un problème technique.
+- **Grammaire du document** : les notes marginales restent une question ouverte, autant un
+  problème de conception qu’un problème technique.
 - **Schéma de configuration** : garder le système assez puissant pour les professionnels et assez
   simple pour les débutants à mesure qu’il grandit.
 
@@ -139,9 +142,9 @@ plus lourd :
 2. **Prenez une [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** :
    elles sont choisies pour être un point d’entrée réaliste, sans contexte historique caché à
    connaître.
-3. **Traduisez la documentation dans une nouvelle langue** : aujourd’hui, la documentation existe en
-   anglais et en espagnol. Toute troisième langue est un cadeau pour les lecteurs actuellement
-   laissés de côté.
+3. **Traduisez la documentation dans une nouvelle langue, ou relisez-en une** : aujourd’hui, la
+   documentation existe en dix langues. Chaque nouvelle langue touche des lecteurs qui ne lisent
+   pas les autres.
 
 Si vous comptez écrire du code, ouvrez d’abord une issue pour discuter de l’approche : cela évite le
 travail en double, et une courte conversation en amont fait gagner du temps à tout le monde.

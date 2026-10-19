@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Titres',
   description: 'Les valeurs communes des titres, les réglages propres à chaque niveau, les sauts de page avant un titre, les ouvertures de chapitre sur toute la largeur de la page et les numéros en toutes lettres',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '35 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ La propriété `headings` règle la typographie de tous les niveaux de titre (H1
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>À <code>true</code>, un titre n’est jamais placé comme dernier élément d’une colonne ou d’une page. Si le bloc suivant ne disposait pas d’au moins <code>bodyText.widowMinLines</code> lignes de place après le titre (ou d’une ligne quand <code>bodyText.avoidWidows</code> vaut <code>false</code>), le titre est repoussé pour rester avec son texte. Interagit avec <code>bodyText.keepColonWithList</code> : si cette règle doit repousser en entier un paragraphe terminé par un deux-points, le ou les titres qui ferment la colonne partent avec lui au lieu de rester isolés.</td>
+      <td>À <code>true</code>, un titre n’est jamais placé comme dernier élément d’une colonne ou d’une page. Si le bloc suivant ne disposait pas d’au moins <code>bodyText.widowMinLines</code> lignes de place après le titre (ou d’une ligne quand <code>bodyText.avoidWidows</code> vaut <code>false</code>), le titre est repoussé pour rester avec son texte. Interagit avec <code>bodyText.keepColonWithList</code> : si cette règle doit repousser en entier un paragraphe terminé par un deux-points, le ou les titres qui ferment la colonne partent avec lui au lieu de rester isolés. Dans un groupe composé en colonnes (un bloc de page composée avec <code>columns</code>, un groupe <code>:::columns</code>), une colonne ne se termine jamais non plus juste après un titre : le titre part avec l’élément qui le suit.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ La propriété `headings` règle la typographie de tous les niveaux de titre (H1
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>activé</td>
-      <td>Équilibrage vertical des colonnes : espace ajouté au-dessus des titres pour que les colonnes se terminent au ras du bas de la page. Voir plus bas.</td>
+      <td>activé (désactivé en texte vertical et sur une grille de caractères)</td>
+      <td>Équilibrage vertical des colonnes : espace ajouté au-dessus des titres pour que les colonnes se terminent au ras du bas de la page. Voir <a href="/fr/docs/configuration-page-flow#équilibrage-des-colonnes">Équilibrage des colonnes</a>.</td>
     </tr>
   </tbody>
 </table>

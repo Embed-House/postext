@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'العناوين',
   description: 'القيم الافتراضية للعناوين، والقيم الخاصة بكل مستوى، وبدء صفحة جديدة قبل العنوان، وصفحات افتتاح الفصول بعرض الصفحة كله، والأعداد المكتوبة بالحروف',
   lang: 'ar',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32 دقيقة',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ export const metadata = {
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>عند <code>true</code> لا يوضع العنوان أبدًا عنصرًا أخيرًا في عمود أو صفحة. إذا لم يبقَ للكتلة التالية بعد العنوان متسع لعدد من الأسطر لا يقل عن <code>bodyText.widowMinLines</code> (أو لسطر واحد حين تكون قيمة <code>bodyText.avoidWidows</code> هي <code>false</code>)، يُدفع العنوان إلى الأمام ليبقى ملتصقًا بنصه. ويتفاعل مع <code>bodyText.keepColonWithList</code>: إذا اضطرت تلك القاعدة إلى دفع الفقرة المنتهية بنقطتين كاملةً، انتقلت معها العناوين الأخيرة في العمود بدل أن تُترك معزولة.</td>
+      <td>عند <code>true</code> لا يوضع العنوان أبدًا عنصرًا أخيرًا في عمود أو صفحة. إذا لم يبقَ للكتلة التالية بعد العنوان متسع لعدد من الأسطر لا يقل عن <code>bodyText.widowMinLines</code> (أو لسطر واحد حين تكون قيمة <code>bodyText.avoidWidows</code> هي <code>false</code>)، يُدفع العنوان إلى الأمام ليبقى ملتصقًا بنصه. ويتفاعل مع <code>bodyText.keepColonWithList</code>: إذا اضطرت تلك القاعدة إلى دفع الفقرة المنتهية بنقطتين كاملةً، انتقلت معها العناوين الأخيرة في العمود بدل أن تُترك معزولة. وفي مجموعة مصفوفة في أعمدة (إطار صفحة مركّبة له <code>columns</code>، أو مجموعة <code>:::columns</code>) لا ينتهي عمود أيضًا بعد عنوان مباشرة: ينتقل العنوان مع العنصر الذي يليه.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ export const metadata = {
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>مفعّلة</td>
-      <td>موازنة الأعمدة عموديًا — مسافة إضافية فوق العناوين كي تنتهي الأعمدة محاذية لأسفل الصفحة. انظر أدناه.</td>
+      <td>مفعّلة (معطّلة في النص العمودي وعلى شبكة الحروف)</td>
+      <td>موازنة الأعمدة عموديًا — مسافة إضافية فوق العناوين كي تنتهي الأعمدة محاذية لأسفل الصفحة. انظر <a href="/ar/docs/configuration-page-flow#موازنة-الأعمدة">موازنة الأعمدة</a>.</td>
     </tr>
   </tbody>
 </table>

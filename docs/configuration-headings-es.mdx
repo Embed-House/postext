@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Encabezados',
   description: 'Cómo se configuran los encabezados: los valores por defecto y los de cada nivel, los saltos de página antes de un encabezado, las aperturas de capítulo a todo el ancho de la página y los números escritos con letras',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '35 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ La propiedad `headings` controla la tipografía de todos los niveles de encabeza
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Cuando es <code>true</code>, un encabezado nunca se coloca como último elemento de una columna o página. Si el siguiente bloque no tuviera al menos <code>bodyText.widowMinLines</code> líneas de espacio tras el encabezado (o una línea cuando <code>bodyText.avoidWidows</code> es <code>false</code>), el encabezado pasa a la columna siguiente para quedar unido a su texto. Funciona junto con <code>bodyText.keepColonWithList</code>: si esa regla tiene que llevar entero a la columna siguiente el párrafo que termina en dos puntos, los encabezados que lo preceden en la columna van con él en vez de quedarse atrás.</td>
+      <td>Cuando es <code>true</code>, un encabezado nunca se coloca como último elemento de una columna o página. Si el siguiente bloque no tuviera al menos <code>bodyText.widowMinLines</code> líneas de espacio tras el encabezado (o una línea cuando <code>bodyText.avoidWidows</code> es <code>false</code>), el encabezado pasa a la columna siguiente para quedar unido a su texto. Funciona junto con <code>bodyText.keepColonWithList</code>: si esa regla tiene que llevar entero a la columna siguiente el párrafo que termina en dos puntos, los encabezados que lo preceden en la columna van con él en vez de quedarse atrás. En un grupo compuesto en columnas (un marco de página compuesta con <code>columns</code>, un grupo <code>:::columns</code>) tampoco termina nunca una columna justo después de un encabezado: el encabezado pasa con el elemento que lo sigue.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ La propiedad `headings` controla la tipografía de todos los niveles de encabeza
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>activado</td>
-      <td>Equilibrado vertical de columnas: espacio adicional sobre los encabezados para que las columnas terminen a ras del pie de la página. Véase más abajo.</td>
+      <td>activado (desactivado en texto vertical y en una retícula de caracteres)</td>
+      <td>Equilibrado vertical de columnas: espacio adicional sobre los encabezados para que las columnas terminen a ras del pie de la página. Véase <a href="/es/docs/configuration-page-flow#equilibrado-de-columnas">Equilibrado de columnas</a>.</td>
     </tr>
   </tbody>
 </table>

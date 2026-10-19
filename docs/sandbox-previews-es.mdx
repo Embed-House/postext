@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vistas previas',
   description: 'Las pestañas Canvas, PDF, Folio, HTML y EPUB 3 de la zona de vista previa: qué muestra cada una y qué se puede hacer en ella',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 39,
   parent: 'sandbox',
@@ -50,14 +50,15 @@ En una página compuesta (`::::page{template="…"}`), el canvas relaciona cada 
 
 #### Ediciones de un libro
 
-En un libro en varios idiomas, una barra sobre el canvas muestra sus ediciones (*ES · EN · CA*) y **En paralelo**.
+Un carril en el borde inicial del canvas reúne las ediciones de un libro en varios idiomas (*ES · EN · CA*) con **En paralelo**, y **Reajuste** cuando el capítulo tiene páginas compuestas (desde postext 1.44). Como la barra de herramientas del borde opuesto, permanece oculto hasta que el puntero llega a ese borde y se retira cuando el puntero se va; su botón para fijarlo lo mantiene abierto, y empieza sin fijar. Sigue sobre la vista en paralelo, que abre y cierra. En un teléfono es una fila en la parte superior de la vista previa.
 
 - Un clic en una edición la abre en la misma página compuesta. La página se busca por su bloque `::::page` en el capítulo, que es el mismo en todos los idiomas, así que sigues en ella aunque en la otra edición tenga otro número; el marco seleccionado sigue seleccionado. En cualquier otra página se conserva el número de página.
-- **En paralelo** muestra el capítulo en pantalla junto al mismo capítulo de otra edición (**junto a** permite elegirla cuando el libro tiene más de dos). Las dos columnas muestran la misma página y se desplazan juntas; **Desplazar a la vez** lo desactiva. Entre páginas compuestas, las columnas cuentan a partir de la última página compuesta que comparten. Los marcos que no caben, o cuyo texto se ha reducido, se marcan en las dos columnas. La otra edición aquí es de solo lectura: un clic en una de sus páginas abre esa edición en esa página.
+- **En paralelo** muestra el capítulo en pantalla junto al mismo capítulo de otra edición (**junto a** permite elegirla cuando el libro tiene más de dos). Con el canvas en **Libro completo**, las dos columnas contienen el libro entero y se abren en la página que muestra el canvas. Las dos columnas muestran el mismo lugar y se desplazan juntas; **Desplazar a la vez** lo desactiva. Se encuentran por el texto, no por los números de página: una página compuesta se empareja con el mismo bloque, y cualquier otra página con la página de la otra edición que compone el mismo párrafo del capítulo, más o menos a la misma altura de él; una página sin texto (una página en blanco, una imagen a toda página) se cuenta a partir de la página más cercana que lo tenga. Los marcos que no caben, o cuyo texto se ha reducido, se marcan en las dos columnas. La otra edición aquí es de solo lectura: un clic en una de sus páginas abre esa edición en esa página. Cuando la otra edición no tiene ningún capítulo en ese lugar, su columna lo indica.
+- Un libro abierto desde un enlace de la aplicación que integra el Sandbox (una receta del Recetario, `#recipe=…&lang=…`) muestra los idiomas en los que esa aplicación lo publica. Un clic en uno abre el mismo enlace en ese idioma: tu copia tal como está, si tienes una, o si no el libro publicado, importado de nuevo.
 
 #### Qué se ha movido y por qué
 
-En una página compuesta, la maquetación puede cambiar lo que dibuja la plantilla para que quepa el contenido: una caja crece con su texto, las cajas que la siguen en su grupo bajan, un marco cede altura a otro, las imágenes o el texto se componen más pequeños, lo que sobra pasa a una página añadida. **Reajuste**, en la barra sobre el canvas (aparece cuando el capítulo tiene páginas compuestas), abre el panel **Qué se ha movido y por qué** y marca esos cambios en las páginas.
+En una página compuesta, la maquetación puede cambiar lo que dibuja la plantilla para que quepa el contenido: una caja crece con su texto, las cajas que la siguen en su grupo bajan, un marco cede altura a otro, las imágenes o el texto se componen más pequeños, lo que sobra pasa a una página añadida. **Reajuste**, en el carril del borde inicial del canvas (aparece cuando el capítulo tiene páginas compuestas), abre el panel **Qué se ha movido y por qué** y marca esos cambios en las páginas.
 
 - El panel enumera cada página compuesta en la que ha cambiado algo y, bajo un número, cada marco que ha cambiado, con sus cambios explicados en palabras: *dinero ha crecido 13,9 mm para que quepa su contenido*, *gasto ha bajado 13,9 mm para dejar sitio a dinero*, *ahorro-fotos: sus imágenes están al 82,5 %*, *dinero sigue en la página 9*. Cada cambio indica su causa, si la tiene: el marco cuyo crecimiento ha movido este, o el lomo de una doble página.
 - En la página, cada uno de esos marcos lleva una insignia con el mismo número y sus cambios abreviados (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). La caja que declara la plantilla se dibuja con línea discontinua, y unas flechas van de ella a la caja tal como ha quedado: una desde su borde superior si se ha movido, y otra en su pie o en su borde final si ha cambiado de tamaño.

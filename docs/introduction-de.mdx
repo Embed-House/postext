@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Einführung',
   description: 'Was Postext ist, warum es existiert und welches Problem es löst',
   lang: 'de',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 1,
   plainSummary: "Postext ist freie Software, die die Seiten von Büchern, Zeitschriften und Berichten im Web gestaltet. Gedruckte Bücher folgen seit Jahrhunderten sorgfältigen Satzregeln: Spalten sind gleich hoch, Bilder stehen nahe beim Text, der sie erwähnt. Webseiten kannten diese Regeln nie, und Postext bringt sie ins Web. Sie schreiben den Text, und Postext setzt jede Zeile, jedes Bild und jede Anmerkung für Sie auf die Seite. Diese Seite erklärt, warum es das Projekt gibt und wie es begann.",
@@ -25,10 +25,10 @@ wirkt.
 auf sie verweisen. Das Web hat uns responsives Layout gegeben – aber nie ein *verlegerisches* Layout.
 
 Postext schließt diese Lücke. Es ist eine Layout-Engine, die Ihre Inhalte entgegennimmt – Markdown-Text
-und deklarierte Ressourcen (Bitmap-Bilder, SVG-Diagramme und Tabellen), die per Verweis eingebunden
+und deklarierte Ressourcen (Bitmap-Bilder, SVG-Diagramme, Tabellen und Videos), die per Verweis eingebunden
 werden – und dieselben Regeln anwendet wie ein professioneller Setzer: Vermeiden von Waisen und Witwen,
 Spaltenausgleich, Text, der um Hindernisse fließt, bewusst gesetzte Abstände. Das Ergebnis ist eine
-Layoutgeometrie in Verlagsqualität, für HTML wie für PDF.
+Layoutgeometrie in Verlagsqualität, ausgegeben als Canvas, HTML, PDF, EPUB oder als Buch in 3D.
 
 Grundlage ist [`@chenglou/pretext`](https://github.com/chenglou/pretext): Die Bibliothek misst Text
 ohne DOM, und zwar so schnell, dass all das erst möglich wird.
@@ -156,7 +156,7 @@ Pretext liefert Ihnen die Maße. Postext liefert Ihnen das Layout.
 Der Vorgang hat drei Stufen:
 
 1. **Sie liefern den Inhalt.** Markdown-Text und deklarierte Ressourcen – Bitmap-Bilder,
-   SVG-Diagramme und Tabellen. Ein `:ref{id="..."}` im Text nummeriert eine Ressource und setzt sie
+   SVG-Diagramme, Tabellen und Videos. Ein `:ref{id="..."}` im Text nummeriert eine Ressource und setzt sie
    zugleich als Gleitobjekt an den Kopf oder Fuß der Seite, nahe ihrem ersten Verweis – so wie ein
    Setzer im Druck Abbildungen platziert. Der Inhalt bleibt rein semantisch: Er beschreibt, *was*
    dargestellt wird, nicht *wie*; Layoutentscheidungen stehen nie fest in der Quelle. Die vollständige
@@ -175,9 +175,11 @@ Der Vorgang hat drei Stufen:
 3. **Sie erhalten ein vollständiges Layout.** Genaue Koordinaten und Maße für jedes Element auf jeder
    Seite. Renderer übertragen diese Geometrie in das Zielformat – **Canvas** für eine pixelgenaue
    Bitmap-Vorschau (`renderToCanvas`, `renderPage`), **HTML** für auswählbare Typografie im Web, die auf
-   Größenänderungen reagiert (`renderToHtml`, `renderToHtmlIndexed`), und **PDF** für eine druckfertige
-   Ausgabe mit eingebetteten Schriften (`renderToPdf`, aus dem Paket `postext-pdf`). Derselbe Inhalt,
-   dieselben Regeln, drei austauschbare Ausgaben.
+   Größenänderungen reagiert (`renderToHtml`, `renderToHtmlIndexed`), **PDF** für eine druckfertige
+   Ausgabe mit eingebetteten Schriften (`renderToPdf`, aus dem Paket `postext-pdf`), **EPUB 3** für
+   E-Book-Reader (`renderToEpub`, aus `postext-epub`) und ein **Buch in 3D**, dessen Seiten man im
+   Browser umblättert (`createFolioFromDocument`, aus `postext-folio`). Alle Ausgaben werden aus
+   demselben Layout gezeichnet.
 
 <Illustration name="LayoutProcess" data='{"title": "Layout in drei Stufen", "desc": "Erweitertes Markdown samt Konfiguration geht in die Engine, die eine Layout-Pipeline in mehreren Durchgängen mit eingebauter Pretext-Messung ausführt und gerendertes HTML oder PDF ausgibt.", "caption": "Inhalt hinein, Geometrie heraus – dann im Zielformat gerendert.", "inputTitle": "Erweitertes Markdown", "inputSubtitle": "+ Konfiguration", "parse": "einlesen", "engineTitle": "Postext-Engine", "engineSub1": "mit Pretext-Messung", "engineSub2": "Layout in Durchgängen", "render": "rendern", "outputTitle": "HTML / PDF", "outputSubtitle": "gerenderte Ausgabe"}' />
 
@@ -188,7 +190,7 @@ Tabellen, Legenden und Diagrammen – finden Sie auf der Seite
 [Konfiguration](/de/docs/configuration). Und um alles live auszuprobieren – einen Texteditor für
 Kapitel, ein Bedienfeld Ressourcen mit Tabelleneditor und Upload von Bildern und SVGs, ein Bedienfeld
 Gestaltung, das jede Einstellung in der Sprache des Verlagswesens zeigt, und Live-Vorschauen als Canvas,
-HTML und PDF –, öffnen Sie die [Sandbox](/de/docs/sandbox).
+PDF, Folio (3D), HTML und EPUB –, öffnen Sie die [Sandbox](/de/docs/sandbox).
 
 
 ## Danksagung

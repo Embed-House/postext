@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Separación silábica e idioma',
   description: 'Cómo se configuran los patrones y las excepciones de la separación silábica y el texto en bandera; el idioma del documento, con sus cifras y su dirección, y qué escrituras compone Postext.',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '23 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: se divide con 'en-us', con un aviso en la consola
 ```
 
-Las palabras de menos de 5 caracteres nunca se dividen. El motor exige al menos 2 caracteres antes de un punto de corte y 3 después.
+Las palabras de menos de 5 letras nunca se dividen, salvo en catalán, donde bastan 4 (`ca-sa`). Un corte deja al menos 2 letras antes y, después, 3 en inglés y en francés (`read-ing`), 4 en portugués (`ca-misa`) y 2 en las demás lenguas (`pa-red`, `Ta-fel`). En inglés, francés e italiano el apóstrofo no cuenta como letra para estos mínimos (nada de `is-n't`), y en francés e italiano las consonantes que preceden a una elisión se quedan con su palabra: `dell’ac-qua`, nunca `del-l’acqua`.
 
 ### Palabras que no se dividen
 
@@ -170,7 +170,7 @@ El chino admite `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`, 
   </tbody>
 </table>
 
-El prefijo del pie es el nombre del tipo (*Figura 1.1.*). Los tipos chinos numeran dentro del capítulo con un guion, `{h1}-{n}` (图 1-1); con los ajustes de pie `labelNumberGap: ''` y `labelSeparator: '　'`, el pie queda 图1-1　标题 (véase [Estilo de pies de recurso](/es/docs/configuration-resources#estilo-de-pies-de-recurso)). El índice analítico también sigue el idioma: en chino simplificado, 见 y 另见 delante de una remisión, y 符号 y 数字 sobre los símbolos y los números; en tradicional, 見, 另見, 符號 y 數字. El japonés numera sus tipos del mismo modo y compone sus pies como 図1-1　題 sin necesidad de esos dos ajustes; escribe las referencias cruzadas como 第3章, 2.3節 y 12ページ y titula la bibliografía 参考文献; su índice imprime 記号 y 数字 sobre los símbolos y los números, y escribe las remisiones con una flecha, `→夏目漱石` para *véase* y `→夏目漱石、森鷗外も見よ` tras las páginas para *véase también*, con las etiquetas en redonda. El árabe numera sus tipos del mismo modo, `{h1}-{n}` (شكل 2-3), escribe las referencias cruzadas como الفصل 3, القسم 2-1 y ص 12, titula la bibliografía المراجع, y su índice imprime انظر / انظر أيضًا, رموز y أرقام, con la coma y el punto y coma árabes (، ؛).
+El prefijo del pie es el nombre del tipo (*Figura 1.1.*). El tercer tipo integrado, `video`, se llama *Video* en inglés, alemán, italiano y neerlandés, *Vídeo* en español, portugués y catalán, *Vidéo* en francés, 视频 en chino simplificado y 影片 en chino tradicional, 動画 en japonés y فيديو en árabe. Los tipos chinos numeran dentro del capítulo con un guion, `{h1}-{n}` (图 1-1); con los ajustes de pie `labelNumberGap: ''` y `labelSeparator: '　'`, el pie queda 图1-1　标题 (véase [Estilo de pies de recurso](/es/docs/configuration-resources#estilo-de-pies-de-recurso)). El índice analítico también sigue el idioma: en chino simplificado, 见 y 另见 delante de una remisión, y 符号 y 数字 sobre los símbolos y los números; en tradicional, 見, 另見, 符號 y 數字. El japonés numera sus tipos del mismo modo y compone sus pies como 図1-1　題 sin necesidad de esos dos ajustes; escribe las referencias cruzadas como 第3章, 2.3節 y 12ページ y titula la bibliografía 参考文献; su índice imprime 記号 y 数字 sobre los símbolos y los números, y escribe las remisiones con una flecha, `→夏目漱石` para *véase* y `→夏目漱石、森鷗外も見よ` tras las páginas para *véase también*, con las etiquetas en redonda. El árabe numera sus tipos del mismo modo, `{h1}-{n}` (شكل 2-3), escribe las referencias cruzadas como الفصل 3, القسم 2-1 y ص 12, titula la bibliografía المراجع, y su índice imprime انظر / انظر أيضًا, رموز y أرقام, con la coma y el punto y coma árabes (، ؛).
 
 Un documento en chino, japonés o coreano declara su idioma en la salida HTML (`lang` en la raíz `.pt-doc`, con `zh-Hant-TW` completo) y en el canvas en el que se dibuja (`ctx.lang`, en Chrome 136 y posteriores), para que el navegador dibuje las formas de los glifos propias de su región: Unicode unifica los caracteres han, y un mismo punto de código tiene un aspecto distinto en una fuente taiwanesa y en una japonesa. Desde postext 1.30, los demás documentos también lo declaran, en el idioma que se usa para dar forma a los glifos de su texto ([`bodyText.shapingLanguage: 'document'`](/es/docs/configuration-text#texto-base), el valor por defecto); con `'host'`, los demás documentos no llevan `lang`, y cada canvas se dibuja en el idioma de la página que lo contiene. El PDF declara `/Lang` a partir de `locale` en todos los documentos, etiquetados o no, con su escritura y su región. Un documento en un idioma que se escribe de derecha a izquierda (árabe, persa, urdu, hebreo…) también declara su idioma: las formas locales de la fuente (`locl`) y la fuente de reserva dependen de él.
 

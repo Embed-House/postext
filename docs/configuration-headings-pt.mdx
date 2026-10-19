@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Títulos',
   description: 'Os padrões dos títulos, os valores próprios de cada nível, as quebras de página antes de um título, as aberturas de capítulo na largura da página e os números por extenso',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '34 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ A propriedade `headings` controla a tipografia de todos os níveis de título (H
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Com <code>true</code>, um título nunca é o último elemento de uma coluna ou página. Se o bloco seguinte não tiver espaço para pelo menos <code>bodyText.widowMinLines</code> linhas depois do título (ou uma linha quando <code>bodyText.avoidWidows</code> é <code>false</code>), o título é levado adiante para continuar junto do texto que o segue. Interage com <code>bodyText.keepColonWithList</code>: se essa regra precisar empurrar inteiro um parágrafo com dois-pontos, os títulos que o antecedem no fim da coluna vão junto em vez de ficarem isolados.</td>
+      <td>Com <code>true</code>, um título nunca é o último elemento de uma coluna ou página. Se o bloco seguinte não tiver espaço para pelo menos <code>bodyText.widowMinLines</code> linhas depois do título (ou uma linha quando <code>bodyText.avoidWidows</code> é <code>false</code>), o título é levado adiante para continuar junto do texto que o segue. Interage com <code>bodyText.keepColonWithList</code>: se essa regra precisar empurrar inteiro um parágrafo com dois-pontos, os títulos que o antecedem no fim da coluna vão junto em vez de ficarem isolados. Num grupo composto em colunas (um bloco de página composta com <code>columns</code>, um grupo <code>:::columns</code>) uma coluna também nunca termina logo depois de um título: o título segue com o item que vem depois dele.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ A propriedade `headings` controla a tipografia de todos os níveis de título (H
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>ativado</td>
-      <td>Equilíbrio vertical de colunas: espaço extra acima dos títulos para que as colunas terminem alinhadas com o pé da página. Veja abaixo.</td>
+      <td>ativado (desativado em texto vertical e numa grade de caracteres)</td>
+      <td>Equilíbrio vertical de colunas: espaço extra acima dos títulos para que as colunas terminem alinhadas com o pé da página. Veja <a href="/pt/docs/configuration-page-flow#equilíbrio-de-colunas">Equilíbrio de colunas</a>.</td>
     </tr>
   </tbody>
 </table>

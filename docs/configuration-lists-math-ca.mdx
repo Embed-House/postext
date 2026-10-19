@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Llistes i matemàtiques',
   description: "Les llistes amb pics i les numerades (marques, sagnats i llistes imbricades), les llistes de tasques, i la mida, el color i l'espaiat de les fórmules matemàtiques",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '19 min',
   order: 11,
   parent: 'configuration',
@@ -148,7 +148,7 @@ Els elements de tasca GFM (`- [ ] …`, `- [x] …`) es renderitzen com a elemen
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>Com es componen els dos caràcters per defecte. <code>'drawn'</code>: el motor dibuixa la casella. <code>'character'</code>: <code>☐</code> i <code>☑</code> són text en la font de la llista, com fins a postext 1.28; en una font que no els té, el navegador tria una font del sistema, i el text de l'element comença després de l'amplada que dona aquesta font. Una configuració desada abans de la versió 13 es llegeix amb <code>'character'</code>, de manera que les seves línies continuen on eren.</td>
+      <td>Com es componen els dos caràcters per defecte. <code>'drawn'</code>: el motor dibuixa la casella. <code>'character'</code>: <code>☐</code> i <code>☑</code> són text en la font de la llista, com fins a postext 1.28; en una font que no els té, el navegador tria una font del sistema, i el text de l'element comença després de l'amplada que dona aquesta font. Una configuració desada abans de <code>configVersion</code> 13 es llegeix amb <code>'character'</code> (<code>pinLegacyTaskBox</code>), de manera que les seves línies continuen on eren.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -247,7 +247,7 @@ La propietat `orderedLists` controla les llistes numerades (`1.`, `2)`, etc.). S
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>Estil de numeració: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. També valen les grafies de les altres opcions (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; consulta <a href="/ca/docs/configuration-page-layout#grafies-dels-formats-de-numeració">Grafies dels formats de numeració</a>); amb un valor desconegut, la llista es numera amb xifres aràbigues i Postext en dona un avís.</td>
+      <td>Estil de numeració: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>, i els estils de l'Àsia oriental i de l'escriptura àrab (<code>'simp-chinese-informal'</code>, <code>'circled-decimal'</code>, <code>'arabic-indic'</code>, <code>'abjad'</code>…). També valen les grafies de les altres opcions (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; consulta <a href="/ca/docs/configuration-page-layout#grafies-dels-formats-de-numeració">Grafies dels formats de numeració</a>); amb un valor desconegut, la llista es numera amb xifres aràbigues i Postext en dona un avís.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>

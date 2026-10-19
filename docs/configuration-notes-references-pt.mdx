@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notas e referências',
   description: 'Como configurar as notas de rodapé, a numeração de linhas, as referências cruzadas e as citações, o sumário e o índice remissivo',
   lang: 'pt',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // Os símbolos de nota de numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Elevado, na linha de base, ao lado da palavra, ou à direita de uma linha vertical.
   markerSize?: Dimension;     // Tamanho do marcador em linha, lateral ou à direita; em é o texto ao redor.
+  markerTemplate?: string;    // Como se escreve o número: '({n})' dá «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // O número da própria nota, elevado ou na linha.
   numberGap?: 'en' | 'em';    // Espaço depois do número da própria nota.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notas no pé da coluna ou logo abaixo do texto.
   fontSize?: Dimension;       // Tamanho das notas; em é o tamanho do corpo.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // fonte, peso e
 
 ## Referências cruzadas
 
-A propriedade `crossRefs` define as palavras que uma [referência cruzada](/pt/docs/document-format-notes-references#referências-cruzadas-e-âncoras) imprime em volta de um número ou de uma página, e o estilo que um `:ref` assume quando não define nenhum. Cada modelo contém `{n}` onde vai o número; um modelo sem ele recebe o número depois de um espaço inseparável (`"§"` imprime *§ 3.2*). Um modelo não definido segue o idioma do documento: *chapter / section / p.* em inglês, *capítulo / sección / pág.* em espanhol, `第{n}章` / `第{n}节` / `第{n}页` em chinês, e assim por diante em francês, alemão, italiano, português, catalão e neerlandês.
+A propriedade `crossRefs` define as palavras que uma [referência cruzada](/pt/docs/document-format-notes-references#referências-cruzadas-e-âncoras) imprime em volta de um número ou de uma página, e o estilo que um `:ref` assume quando não define nenhum. Cada modelo contém `{n}` onde vai o número; um modelo sem ele recebe o número depois de um espaço inseparável (`"§"` imprime *§ 3.2*). Um modelo não definido segue o idioma do documento: *chapter / section / p.* em inglês, *capítulo / sección / pág.* em espanhol, `第{n}章` / `第{n}节` / `第{n}页` em chinês, `第{n}章` / `{n}節` / `{n}ページ` em japonês, `الفصل {n}` / `القسم {n}` / `ص {n}` em árabe, e assim por diante em francês, alemão, italiano, português, catalão e neerlandês.
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>conforme o idioma, itálico (redondo em escrita árabe)</td>
+      <td>conforme o idioma, itálico (redondo em escrita árabe e em japonês)</td>
       <td>As palavras antes de uma referência cruzada. Sem valor, seguem o idioma do documento: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 em chinês tradicional)… Um índice em chinês compõe a referência depois de um ponto final, sem espaço: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

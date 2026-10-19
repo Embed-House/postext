@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuració: requadres',
   sidebarTitle: 'Requadres',
-  description: 'Com es defineixen estils amb nom per als requadres :::callout: el marc, el fons, la franja, el títol, la icona i el marcador; els enunciats numerats; la tipografia de dins del requadre, i què passa quan un requadre es parteix entre pàgines',
+  description: "Com es defineixen estils amb nom per als requadres :::callout: el marc, el fons, la franja, el títol, la icona, el marcador i la pestanya d'etiqueta; els enunciats numerats; la tipografia de dins del requadre; què passa quan un requadre es parteix entre pàgines, i els dissenys dibuixats dins d'un requadre",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '28 min',
   order: 16,
   parent: 'configuration',
@@ -167,8 +167,8 @@ El vidre continua calent una hora després d'apagar la flama.
     <tr>
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
-      <td><code>'none'</code>, font d'encapçalaments, <code>400</code>, <code>1.5em</code>, color principal, <code>'top'</code></td>
-      <td>Un glif de text (<code>kind: 'glyph'</code>) o un recurs de mapa de bits o SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) al costat del contingut. Amb una franja lateral, la icona se centra sobre la franja; si no, reserva una columna pròpia (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> la centra verticalment respecte del contingut. Una imatge de recurs s'ajusta dins del quadrat i conserva la proporció; una icona més alta que el contingut fa créixer la caixa per contenir-la (i, amb <code>align: 'center'</code>, hi centra el contingut). Amb <code>width</code>, la imatge s'ajusta a una caixa de <code>width</code> × <code>size</code> (una tira ampla d'icones). <code>position: 'corner'</code> penja la icona d'una cantonada superior com una insígnia, mig fora de la vora i sense ocupar lloc dins del contingut; una icona ampla (<code>width</code>) se centra a la cantonada segons l'amplada amb què es dibuixa, i a la cantonada esquerra el títol comença passada la meitat interior de la icona (fins a postext 1.4 es col·locava segons l'alçada, de manera que una tira ampla sobresortia de la caixa i tapava el títol); <code>cornerSide</code> tria la cantonada: <code>'right'</code> / <code>'left'</code>, o <code>'outer'</code> / <code>'inner'</code>, que segueixen la paritat de la pàgina amb marges simètrics (exterior = dreta en una pàgina senar, esquerra en una parella).</td>
+      <td><code>'none'</code>, font d'encapçalaments, <code>400</code>, <code>1.5em</code>, color principal, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
+      <td>Un glif de text (<code>kind: 'glyph'</code>) o un recurs de mapa de bits o SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) al costat del contingut. Amb una franja lateral, la icona se centra sobre la franja; si no, reserva una columna pròpia (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> la centra verticalment respecte del contingut. Una imatge de recurs s'ajusta dins del quadrat i conserva la proporció; una icona més alta que el contingut fa créixer la caixa per contenir-la (i, amb <code>align: 'center'</code>, hi centra el contingut). Amb <code>width</code>, la imatge s'ajusta a una caixa de <code>width</code> × <code>size</code> (una tira ampla d'icones). <code>position: 'corner'</code> penja la icona d'una cantonada superior com una insígnia, mig fora de la vora i sense ocupar lloc dins del contingut; una icona ampla (<code>width</code>) se centra a la cantonada segons l'amplada amb què es dibuixa, i a la cantonada esquerra el títol comença passada la meitat interior de la icona (fins a postext 1.4 es col·locava segons l'alçada, de manera que una tira ampla sobresortia de la caixa i tapava el títol); <code>cornerSide</code> tria la cantonada: <code>'right'</code> / <code>'left'</code>; <code>'outer'</code> / <code>'inner'</code>, que segueixen la paritat de la pàgina amb marges simètrics (exterior = dreta en una pàgina senar, esquerra en una parella), o <code>'start'</code> / <code>'end'</code>, que segueixen la direcció del mateix requadre, com els de la franja.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ El vidre continua calent una hora després d'apagar la flama.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>sense definir (sense pestanya)</td>
-      <td>Una pestanya sobre la vora superior de la caixa que imprimeix l'atribut <code>label</code> de la línia d'obertura, com ara el número d'un requadre numerat («REQUADRE 1-1»). S'enganxa a la cantonada <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>) amb una separació <code>inset</code>, sobresurt <code>offset</code> per sobre de la vora (aquest espai forma part del bloc, a més de <code>marginTop</code>, i també es conserva al capdamunt d'una columna), fa <code>height</code> d'alçada amb <code>paddingX</code> a cada costat del text i pot portar al costat un recurs <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>, cap a l'interior) i un filet <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) que va per la vora superior des de la cantonada oposada fins a la pestanya. Per defecte: font dels encapçalaments, cos del text, <code>700</code>, blanc sobre el color principal, <code>1.4em</code> d'alçada i <code>0.6em</code> de farciment. La pestanya és una forma pròpia que s'aguanta sobre el marc, així que conserva les cantonades rectes sigui quin sigui el <code>borderRadius</code> de la caixa. Des de postext 1.42, <code>icon.placement: 'inside'</code> col·loca la imatge dins de la pestanya, al principi i abans de les paraules (a l'extrem dret en una caixa composta de dreta a esquerra), a una distància <code>gap</code>: la pestanya fa l'amplada de la imatge, l'espai, les paraules i el farciment, i la imatge, ajustada a <code>icon.width</code> i a l'alçada de la pestanya, hi queda centrada. La imatge conserva els seus colors, de manera que un anell blanc sobre una pestanya de color i un anell de color sobre una pestanya blanca són dos recursos, un per a cada estil. <code>'beside'</code>, el valor per defecte, posa la imatge fora de la pestanya, al costat de la vora. Des de postext 1.43, <code>icon.tint: true</code> pinta la imatge amb el <code>color</code> de la pestanya en lloc dels colors originals: la silueta de la imatge surt del color de les paraules, i un mateix anell serveix per a totes les tintes d'un llibre. Una imatge sense transparència esdevé un rectangle llis. Al PDF un SVG conserva les vores i un mapa de bits es retalla per on és mig transparent; l'original d'impremta (<code>svg.pdfFileId</code>) no s'usa, perquè una pàgina PDF no es pot recolorar.</td>
+      <td>Una pestanya sobre la vora superior de la caixa que imprimeix l'atribut <code>label</code> de la línia d'obertura, com ara el número d'un requadre numerat («REQUADRE 1-1»). S'enganxa a la cantonada <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, o <code>'top-start'</code> / <code>'top-end'</code> en la direcció del mateix requadre, com <code>'start'</code> / <code>'end'</code> a la franja) amb una separació <code>inset</code>, sobresurt <code>offset</code> per sobre de la vora (aquest espai forma part del bloc, a més de <code>marginTop</code>, i també es conserva al capdamunt d'una columna), fa <code>height</code> d'alçada amb <code>paddingX</code> a cada costat del text i pot portar al costat un recurs <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>, cap a l'interior) i un filet <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) que va per la vora superior des de la cantonada oposada fins a la pestanya. Per defecte: font dels encapçalaments, cos del text, <code>700</code>, blanc sobre el color principal, <code>1.4em</code> d'alçada, <code>0.6em</code> de farciment, sense desplaçament ni separació, i una imatge de <code>1em</code> d'amplada a <code>0.3em</code> del text. La pestanya és una forma pròpia que s'aguanta sobre el marc, així que conserva les cantonades rectes sigui quin sigui el <code>borderRadius</code> de la caixa. Des de postext 1.42, <code>icon.placement: 'inside'</code> col·loca la imatge dins de la pestanya, al principi i abans de les paraules (a l'extrem dret en una caixa composta de dreta a esquerra), a una distància <code>gap</code>: la pestanya fa l'amplada de la imatge, l'espai, les paraules i el farciment, i la imatge, ajustada a <code>icon.width</code> i a l'alçada de la pestanya, hi queda centrada. La imatge conserva els seus colors, de manera que un anell blanc sobre una pestanya de color i un anell de color sobre una pestanya blanca són dos recursos, un per a cada estil. <code>'beside'</code>, el valor per defecte, posa la imatge fora de la pestanya, al costat de la vora. Des de postext 1.43, <code>icon.tint: true</code> pinta la imatge amb el <code>color</code> de la pestanya en lloc dels colors originals: la silueta de la imatge surt del color de les paraules, i un mateix anell serveix per a totes les tintes d'un llibre. Una imatge sense transparència esdevé un rectangle llis. Al PDF un SVG conserva les vores i un mapa de bits es retalla per on és mig transparent; l'original d'impremta (<code>svg.pdfFileId</code>) no s'usa, perquè una pàgina PDF no es pot recolorar.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ El vidre continua calent una hora després d'apagar la flama.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Text d'aquest indicador (el «(CONTINUA)» d'un guió), amb la font i el cos del text de la caixa, en la llengua del document.</td>
+      <td><code>'Continued'</code></td>
+      <td>Text d'aquest indicador (el «(CONTINUA)» d'un guió), amb la font i el cos del text de la caixa. El valor per defecte és en la llengua del document, com el d'una taula partida: <code>'Continua'</code> en català, <code>'À suivre'</code> en francès.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -493,7 +493,7 @@ Els textos del disseny llegeixen aquests marcadors:
 
 El `resourceId` d'una imatge admet els mateixos marcadors, de manera que cada requadre pot dibuixar un recurs propi. Només un disseny de requadre llegeix `{boxText}`; un disseny d'encapçalament no hi imprimeix res.
 
-Amb `setsContent: true` un sol estil serveix per a tots els requadres de la mateixa forma, cadascun amb les seves paraules. En un quadern de cal·ligrafia cada ratlla de pràctica és un requadre el contingut del qual és la paraula que cal copiar: el disseny imprimeix la paraula en una lletra escolar i dibuixa el recurs puntejat que porta el seu nom.
+Amb `setsContent: true` un sol estil serveix per a tots els requadres de la mateixa forma, cadascun amb les seves paraules. En un quadern de cal·ligrafia cada ratlla de pràctica és un requadre el contingut del qual és la paraula que cal copiar: el disseny imprimeix la paraula en una lletra escolar i després la torna a posar en punts per repassar (`dotted`), tantes vegades com caben a la ratlla (`repeat`; vegeu [Marques en línia i contorns](/ca/docs/configuration-headers-footers#marques-en-línia-i-contorns)).
 
 ```ts
 calloutStyles: [{
@@ -506,9 +506,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite ES', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite ES', fontWeight: 100, fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -524,6 +524,6 @@ pa
 :::
 ```
 
-La primera ratlla imprimeix *sol* i dibuixa el recurs `trace-sol`; la segona imprimeix *pa* i dibuixa `trace-pa`, i cap de les dues paraules no es torna a compondre sota la seva banda. Amb `setsContent` a `false` el disseny llegeix `{boxText}` igualment, i el contingut es compon sota la banda.
+La primera ratlla imprimeix *sol* seguit d'una filera de còpies puntejades de *sol*; la segona fa el mateix amb *pa*, i cap de les dues paraules no es torna a compondre sota la seva banda. Si es canvia la paraula al Markdown, canvien el model i totes les còpies. Amb `setsContent` a `false` el disseny llegeix `{boxText}` igualment, i el contingut es compon sota la banda.
 
 Al VDT els elements de la banda són blocs de disseny al `designOverlay` del marc, al costat del títol.

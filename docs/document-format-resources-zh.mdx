@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '图片、表格与视频',
   description: '正文中的资源：引用与嵌入、编号、位置与浮动体落在哪里、文字绕排、位图尺寸、安全区、漫画锚点和视频',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '28分钟',
   order: 29,
   parent: 'document-format',
@@ -63,7 +63,7 @@ The keeper's quarters occupy the eastern wing.
 
 SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着色，以便用单一专色印刷。启用后，SVG示意图中的每一种颜色都会按亮度映射为`diagramStyle.inkColor`（默认为主调色板颜色`#295AA3`）的某个色调：白色对应纸色，黑色对应满版油墨。这样文档用单一专色印刷时，图仍能如实再现。见[配置 › 图示样式](/zh/docs/configuration-resources#图示样式)。
 
-格式错误的嵌入（缺少`id`或`id`为空、`id`没有加引号或用了单引号、带有多余的属性）不会被提升为资源块；它会退回到普通的段落解析，在输出中仍然可见。格式正确、但紧贴在某个段落行下方、中间没有空行的嵌入行也是如此：它会被当作那个段落的一部分。两种情况都会发出`malformedEmbed`警告，即沙盒“检查”面板中的一条**嵌入行被排成了文字**。
+格式错误的嵌入（缺少`id`或`id`为空、`id`没有加引号或用了单引号、带有多余的属性，模板页的`slot`除外）不会被提升为资源块；它会退回到普通的段落解析，在输出中仍然可见。格式正确、但紧贴在某个段落行下方、中间没有空行的嵌入行也是如此：它会被当作那个段落的一部分。两种情况都会发出`malformedEmbed`警告，即沙盒“检查”面板中的一条**嵌入行被排成了文字**。
 
 行内引用在任何文本块中都能识别，包括段落、标题、引用块和列表项，并且可以与粗体、斜体、行内代码和行内公式并用。
 
@@ -83,7 +83,7 @@ SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着�
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>默认样式：类型的<code>shortLabel</code>后接编号，两者之间用不换行空格连接，永远不会被拆到两行。</td>
+      <td>默认样式：类型的<code>shortLabel</code>后接编号，两者之间用不换行空格（或题注样式的<code>labelNumberGap</code>）连接，永远不会被拆到两行。</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

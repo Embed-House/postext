@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '智能体、嵌入与预设',
   description: 'AI智能体可用的WebMCP工具；怎样把PostextSandbox组件嵌入你自己的应用，它有哪些属性、需要哪些CSS；以及预设文件包的格式',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '9分钟',
   order: 41,
   parent: 'sandbox',
@@ -35,10 +35,10 @@ WebMCP还是草案：Chrome以源试用（origin trial）的形式提供，也�
 
 ## 独立使用
 
-沙盒也有独立的React包（`postext-sandbox`），可以嵌入任何React应用：
+沙盒是一个React包`postext-sandbox`，位于postext仓库中，没有发布到npm。同一pnpm工作区中的React应用像网站（`apps/web`）那样依赖它，写作`"postext-sandbox": "workspace:*"`；它的对等依赖是React和React DOM（18或更高版本）以及`postext`：
 
 ```bash
-npm install postext-sandbox postext
+pnpm add postext-sandbox@workspace:* postext@workspace:*
 ```
 
 ```tsx
@@ -101,6 +101,16 @@ function App() {
       <td><code>hashBundles</code></td>
       <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
       <td>用宿主自己定义的片段键（URL中<code>#</code>后的部分）链接书：<code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code>让<code>#recipe=&lt;slug&gt;&amp;lang=es</code>打开那个文件包。返回页面同源的<code>.postext</code>文件URL，或者按顺序尝试的多个URL（用第一个有响应的），宿主不提供的id则返回<code>null</code>。第一次访问时，文件会导入为项目，并记下对应的链接（<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>）；之后再访问，会询问是打开这个项目（连同其中的修改），还是用当前提供的文件替换它。随后URL片段改写为<code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>hashBundleEditions</code></td>
+      <td><code>Record&lt;string, (id: string) =&gt; string[] | null | Promise&lt;string[] | null&gt;&gt;</code></td>
+      <td>每一类链接的书以哪些语言发布，键与<code>hashBundles</code>相同；每种语言都是同一链接加上<code>lang=</code>即可打开的文件包。用这种链接打开的书会在画布的版本栏和<strong>并排对照</strong>中列出这些语言，切换时用那种语言打开该链接。网站返回某个食谱已采集的语言。不知道时为<code>null</code>（自postext 1.44起）</td>
+    </tr>
+    <tr>
+      <td><code>outputProfileBaseUrl</code></td>
+      <td><code>string</code></td>
+      <td>印刷输出特性文件的获取位置，形式为<code>&lt;base&gt;/&lt;id&gt;.icc</code>（即<code>postext</code>包<code>icc/</code>文件夹中的文件）。默认使用npm CDN上的副本<code>https://cdn.jsdelivr.net/npm/postext/icc/</code>；网站从<code>/icc/</code>提供自己的副本</td>
     </tr>
     <tr>
       <td><code>onConfigChange</code></td>
@@ -212,7 +222,7 @@ function App() {
   "description": "Two-column journal article",       // 可选
   "locale": "en",                                     // 可选
   "default": true,                                    // 可选
-  "configVersion": 8,                                 // 可选：`config`所遵循的配置规则版本
+  "configVersion": 15,                                // 可选：`config`所遵循的配置规则版本
   // 与索引条目相同的可选展示字段：
   // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
 
@@ -266,7 +276,7 @@ function App() {
 说明：
 
 - `preset.json`中的`id`必须与`index.json`条目一致；预设加载后，清单中的`description`、`locale`和`default`会覆盖索引中的值，展示字段`locales`、`openLocale`、`license`、`credits`和`tags`也是如此。`openLocale`是`locales`中的一项，指链接或点击没有指定语言时书打开所用的语言（首页的书架也链接到它）：原作的语言与读者的语言不同时，就要设置它。《紅樓夢》示例设为`zh-Hant`，这样讲英语的读者不会一律打开它的英译本。不设置时由界面语言决定。选择器把`locales`（或`locale`）中的每种语言和许可证显示为标签，把出处信息显示在描述下方，并用`thumbnail`（相对于预设目录的一张小页面图）代替该行的勾选标记列；从预设复制出的书（**建立我的副本**）把它保留为封面。`apps/web/public/presets/`下的公开示例预设用到了所有字段，并附有一个`CREDITS.md`，写明每段文字和每张图片的许可证和来源。
-- `configVersion`（可选）指明`config`和`localized`中各配置所遵循的配置规则。自postext 1.5起，所有写出清单的程序都把它设为8。没有它的清单是postext 1.4或更早版本写出的，其标题分页、公式字号、行内图周围的间距（正文中和框中）、标题标记、首字下沉、冒号行下方空间、框断开、破折号和复合词连字符处的断行、齐左排的文字、标题下拆分以及段落容器下方的间距，都按1.4的排法读取（见[持久化](/zh/docs/sandbox-books-saving#持久化)下的*postext 1.4及更早版本保存的标题分页*、*postext 1.5之前保存的公式字号*、*postext 1.5之前保存的行内图*、*postext 1.5之前保存的框内行内图*、*postext 1.5之前保存的标题标记和首字下沉*、*postext 1.5之前保存的冒号后列表*、*postext 1.5之前保存的框断开*、*postext 1.5之前保存的破折号和不齐行文字*、*postext 1.5之前保存的复合词*、*postext 1.5之前保存的标题下拆分*和*postext 1.5之前保存的段落容器*）；标记为3到7的清单（1.5的预发布版）只固定其后各版规则带来的变化：为3时，固定公式字号、行内间距、规则6的五项、规则7的两项和规则8的三项；为4时，固定行内间距以及规则6、7、8的各项；为5时，固定规则6、7、8的各项；为6时，固定规则7和8的各项；为7时，只固定规则8的各项。手写清单并按现行规则排版时，把它设为8。
+- `configVersion`（可选）指明`config`和`localized`中各配置所遵循的配置规则。所有写出清单的程序都把它设为引擎的`CONFIG_VERSION`，当前版本为15。没有它的清单是postext 1.4或更早版本写出的，其标题分页、公式字号、行内图周围的间距（正文中和框中）、标题标记、首字下沉、冒号行下方空间、框断开、破折号和复合词连字符处的断行、齐左排的文字、标题下拆分以及段落容器下方的间距，都按1.4的排法读取（见[持久化](/zh/docs/sandbox-books-saving#持久化)下的*postext 1.4及更早版本保存的标题分页*、*postext 1.5之前保存的公式字号*、*postext 1.5之前保存的行内图*、*postext 1.5之前保存的框内行内图*、*postext 1.5之前保存的标题标记和首字下沉*、*postext 1.5之前保存的冒号后列表*、*postext 1.5之前保存的框断开*、*postext 1.5之前保存的破折号和不齐行文字*、*postext 1.5之前保存的复合词*、*postext 1.5之前保存的标题下拆分*和*postext 1.5之前保存的段落容器*）；标记为3到7的清单（1.5的预发布版）只固定其后各版规则带来的变化：为3时，固定公式字号、行内间距、规则6的五项、规则7的两项和规则8的三项；为4时，固定行内间距以及规则6、7、8的各项；为5时，固定规则6、7、8的各项；为6时，固定规则7和8的各项；为7时，只固定规则8的各项。标记为8到14的清单由postext 1.5至1.33写出，会得到其标记之后各版规则的固定措施，列在[postext 1.4及更早版本写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)中。手写清单并按现行规则排版时，把它设为15。
 - `view`（可选）说明沙盒如何打开文件包：`{ "canvasScope": "book" }`在Canvas上排出整本书（见[书与章](/zh/docs/sandbox-books-saving#书与章)）；省略时，Canvas一次显示一章。导出的书如果设置了它，会一并带上。超过200章的书无论文件包怎么要求，都一次打开一章。
 - `start`（可选）说明文件包只含一本更长的书的一部分时，这本书从哪里开始：`{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }`让它从第58页（偶数页）、第4章开始。它就是第一章的`continuation`（`buildDocument`）；沙盒从这里开始排整本书，把书存为项目时随书保存，导出时再写回去。没有面板可以编辑它。`localized`的条目可以为自己的版本带一个`start`。
 - `localized`（可选）存放双语文件包的各语言覆盖项：`{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`。沙盒按哪种语言选取章，就应用哪种语言的覆盖项：它们叠加在共用的`config`之上（顶层键整体替换，通常是换成题注前缀已译好的`resourceTypes`），也叠加在共用的`resources`之上（题注、附注、替代文字和表格单元格按id合并）；没有条目的语言沿用共用的文字。条目还可以带自己的`view`，在该版本中覆盖共用的`view`：《紅樓夢》的各个中文版本以整本书打开，而Joly的英译本整本绘制要慢得多，所以一次打开一章（`"en": { "view": { "canvasScope": "chapter" } }`）。

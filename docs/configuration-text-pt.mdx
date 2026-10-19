@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Texto do corpo',
   description: 'A tipografia do texto corrido: fonte, tamanho e entrelinha, cores, recuos, citações, verso, paradas de tabulação e capitulares',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26 min',
   order: 7,
   parent: 'configuration',
@@ -107,9 +107,9 @@ A propriedade `bodyText` controla a tipografia de todo o texto dos parágrafos.
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Alinhamento do texto. <code>'left'</code> (ou <code>'start'</code>) é o lado em que a linha começa: a direita, em um parágrafo da direita para a esquerda (veja <a href="/pt/docs/configuration-language#direção-do-texto">Direção do texto</a>). O texto justificado distribui o espaçamento em cada linha para obter bordas regulares. As últimas linhas dos parágrafos justificados ficam em bandeira, na largura natural, exceto quando o Knuth-Plass aceitou uma última linha cheia demais contando com a compressão da cola; nesse caso, os espaços entre palavras são comprimidos para que a linha caiba exatamente na medida (a semântica de ajuste da cola do TeX, aplicada do mesmo jeito nos renderizadores canvas, HTML e PDF).</td>
+      <td>Alinhamento do texto. <code>'left'</code> (ou <code>'start'</code>) é o lado em que a linha começa: a direita, em um parágrafo da direita para a esquerda (veja <a href="/pt/docs/configuration-language#direção-do-texto">Direção do texto</a>). <code>'right'</code> (ou <code>'end'</code>) é o lado em que ela termina, e <code>'center'</code> centraliza cada linha. O texto justificado distribui o espaçamento em cada linha para obter bordas regulares. As últimas linhas dos parágrafos justificados ficam em bandeira, na largura natural, exceto quando o Knuth-Plass aceitou uma última linha cheia demais contando com a compressão da cola; nesse caso, os espaços entre palavras são comprimidos para que a linha caiba exatamente na medida (a semântica de ajuste da cola do TeX, aplicada do mesmo jeito nos renderizadores canvas, HTML e PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -254,6 +254,12 @@ A propriedade `bodyText` controla a tipografia de todo o texto dos parágrafos.
       <td><code>BlockquoteConfig</code></td>
       <td>veja abaixo</td>
       <td>Como as citações em bloco do Markdown (<code>&gt; …</code>) são compostas: cor, itálico e recuos. Veja <a href="#citações">Citações</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>veja abaixo</td>
+      <td>Como são compostos os poemas <code>:::verse</code> dispostos verso a verso: recuos, versos que não cabem na linha, espaço entre estrofes e estrofes mantidas inteiras. Veja <a href="#verso">Verso</a>.</td>
     </tr>
   </tbody>
 </table>

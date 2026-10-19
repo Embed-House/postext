@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Images, tableaux et vidéos',
   description: 'Les ressources dans le texte : renvois et insertions, numérotation, placement des flottants et endroit où ils arrivent, habillage du texte, taille des bitmaps, zones de sécurité, ancres des personnages et vidéos',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '45 min',
   order: 29,
   parent: 'document-format',
@@ -63,7 +63,7 @@ Une cellule peut avoir son propre fond. `TableCell.background` est une valeur de
 
 Les ressources SVG peuvent en outre être recolorées pour une impression en un seul ton direct grâce à `diagramStyle.singleInk` (`false` par défaut). Une fois activé, chaque couleur d’un diagramme SVG est ramenée à une teinte de `diagramStyle.inkColor` (par défaut la couleur principale de la palette, `#295AA3`) selon sa luminance : le blanc devient le papier, le noir l’encre pleine. Les figures se reproduisent ainsi fidèlement quand le document est imprimé en un seul ton direct. Voir [Configuration › Style des diagrammes](/fr/docs/configuration-resources#style-des-diagrammes).
 
-Une insertion mal formée (`id` absent ou vide, `id` sans guillemets ou entre apostrophes, attributs en trop) n’est pas promue en bloc de ressource ; elle retombe dans l’analyse ordinaire des paragraphes et reste visible dans la sortie. Il en va de même d’une ligne d’insertion bien formée collée sous une ligne de paragraphe sans ligne vide entre elles : elle est lue comme faisant partie de ce paragraphe. Les deux cas déclenchent un avertissement `malformedEmbed`, une entrée **Insertion composée comme du texte** dans le panneau Vérifications du Sandbox.
+Une insertion mal formée (`id` absent ou vide, `id` sans guillemets ou entre apostrophes, attributs en trop autres que le `slot` d’une page composée) n’est pas promue en bloc de ressource ; elle retombe dans l’analyse ordinaire des paragraphes et reste visible dans la sortie. Il en va de même d’une ligne d’insertion bien formée collée sous une ligne de paragraphe sans ligne vide entre elles : elle est lue comme faisant partie de ce paragraphe. Les deux cas déclenchent un avertissement `malformedEmbed`, une entrée **Insertion composée comme du texte** dans le panneau Vérifications du Sandbox.
 
 Les renvois sont reconnus dans n’importe quel bloc de texte (paragraphes, titres, citations et éléments de liste) et peuvent côtoyer le gras, l’italique, le code en ligne et les formules en ligne.
 
@@ -83,7 +83,7 @@ La directive `:ref` accepte trois attributs facultatifs, dans n’importe quel o
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>Style par défaut : le <code>shortLabel</code> du type suivi du numéro, reliés par une espace insécable pour ne jamais être séparés en fin de ligne.</td>
+      <td>Style par défaut : le <code>shortLabel</code> du type suivi du numéro, reliés par une espace insécable (ou par le <code>labelNumberGap</code> du style de légende) pour ne jamais être séparés en fin de ligne.</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

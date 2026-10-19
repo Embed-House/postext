@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'إعدادات الصفحات المركّبة',
   description: 'قوالب الصفحات المركّبة: الإطارات والمجموعات والزخرفة والوراثة ونسختا الصفحة الفردية والزوجية؛ وأنماط التسميات التي تُكتب عند نقاط محددة من الصورة؛ والتحذيرات التي قد يصدرها القالب',
   lang: 'ar',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 دقائق',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ const config: PostextConfig = {
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>لا شيء</td>
-      <td>نمط فقرة لنص الصفحة، كما في أنماط العناوين.</td>
+      <td>نمط فقرة لنص الصفحة، كما في أنماط العناوين. ولا يطبّقه التنضيد بعد.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ const config: PostextConfig = {
       <td><code>columns</code> و<code>columnGap</code></td>
       <td><code>number</code> و<code>Dimension</code></td>
       <td><code>1</code> وقيمة النمط</td>
-      <td>الأعمدة داخل الإطار.</td>
+      <td>الأعمدة داخل الإطار. ولا يُختم أحدها بعنوان أبدًا: ينتقل العنوان إلى العمود التالي مع النص الذي يقدّمه (مع <code>headings.keepWithNext</code>، منذ postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ pageTemplates: [
 
 ### ما يطبّقه التنضيد
 
-يطبّق الإخراج موضع كل إطار وأحجامه (الشبكة، ونقاط الربط، و`min`/`max`، و`verticalAlign`)، ونمطه و`padding` الخاص به، و`columns` و`rules` و`layer` و`rotate` و`exclude` (ومعه `wrap`) و`flow` و`takes` و`next` و`overflow.continueIn` (`"#frame"` و`"next-page"` و`"template:<id>"` و`"page:<id>"`) مع `overflow.mark` و`overflow.fromMark`، و`fit` الخاص به (تصغير النص والصور ضمن خطوات الملاءمة، انظر [حين لا يتسع المحتوى](#حين-لا-يتسع-المحتوى))؛ ويطبّق تقاسم المساحة داخل المجموعة (`grow` و`shrink` و`priority` و`pin`، و`gap` و`align` الخاصّين بالمجموعة، انظر [كيف تتقاسم المجموعات المساحة](#كيف-تتقاسم-المجموعات-المساحة))؛ ويطبّق من القالب `area` و`grid` و`decoration` و`header` و`footer` و`variants` و`spread` و`overflowTemplate`. أما ما يُقرأ ويُفحص ولا يُطبَّق بعد فهو `bodyStyle` و`palette` في القالب. ويُطبَّق `writingMode` و`direction` في الإطار منذ postext 1.39. والعرض `'auto'` يُقرأ على أنه `'fill'`.
+يطبّق الإخراج موضع كل إطار وأحجامه (الشبكة، ونقاط الربط، و`min`/`max`، و`verticalAlign`)، ونمطه و`padding` الخاص به، و`columns` و`rules` و`layer` و`rotate` و`exclude` (ومعه `wrap`) و`flow` و`takes` و`next` و`overflow.continueIn` (`"#frame"` و`"next-page"` و`"template:<id>"` و`"page:<id>"`) مع `overflow.mark` و`overflow.fromMark`، و`fit` الخاص به (تصغير النص والصور ضمن خطوات الملاءمة، انظر [حين لا يتسع المحتوى](#حين-لا-يتسع-المحتوى))؛ ويطبّق تقاسم المساحة داخل المجموعة (`grow` و`shrink` و`priority` و`pin`، و`gap` و`align` الخاصّين بالمجموعة، انظر [كيف تتقاسم المجموعات المساحة](#كيف-تتقاسم-المجموعات-المساحة))؛ ويطبّق من القالب `area` و`grid` و`decoration` و`header` و`footer` و`variants` و`spread` و`overflowTemplate`. ومنذ postext 1.42 يطبّق أيضًا `palette` في القالب، و`look` في الإطار، والعرض `'auto'` (بعرض أطول سطر في الإطار). ويُطبَّق `writingMode` و`direction` في الإطار منذ postext 1.39. أما ما يُقرأ ويُفحص ولا يُطبَّق بعد فهو `bodyStyle` في القالب.
 
 ### الصفحتان المتقابلتان
 
@@ -588,7 +588,7 @@ pageTemplates: [{
 
 ## أنماط التسميات
 
-تحدّد الخاصية `labelStyles` هيئات التسميات المكتوبة على صورة: البحار والمدن في خريطة، وأجزاء الرسم التوضيحي. وتقف التسمية عند مرساة في الصورة (نقطة محفوظة مع المورد، كما تُحفظ نقاط ارتكاز الشخصيات في القصص المصورة)، وتأخذ النمط الذي تحدّده المرساة أو التسمية. وتُحرَّر في Sandbox ضمن **التصميم › الأشكال والجداول › أنماط التسميات** (منذ postext 1.42).
+تحدّد الخاصية `labelStyles` هيئات التسميات المكتوبة على صورة: البحار والمدن في خريطة، وأجزاء الرسم التوضيحي. وتقف التسمية عند مرساة في الصورة (نقطة محفوظة مع المورد، كما تُحفظ نقاط ارتكاز الشخصيات في القصص المصورة)، وتأخذ النمط الذي تحدّده المرساة أو التسمية. وتُحرَّر في Sandbox ضمن **التصميم › الأشكال والجداول › أنماط التسميات** (منذ postext 1.42). وإعادة تسمية نمط هناك تعيد كتابة المراسي وأسطر `::label` التي تسمّيه (منذ postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>أصغر ما يجوز أن تُنضَّد به التسمية حين لا تتسع لعرضها.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>كتابة عمودية لتسميات هذا النمط: حروف قائمة في خانات بعضها تحت بعض، وأعمدة من اليمين إلى اليسار، كما تُكتب أسماء الخرائط الصينية واليابانية. ويتقدّم <code>writingMode</code> الخاص بالمرساة.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td>يعني <code>'allow'</code> أن التسمية الموضوعة عند هذه المرساة يجوز أن تلامس جاراتها كما يطبعها الأصل: فلا يصدر <code>labelOverlap</code> لزوج تكون طرفًا فيه. ويتقدّم على <code>overlap</code> في النمط. منذ postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>في شكل يعبر كعب صفحتين متقابلتين، <code>'keep'</code> يُبعد التسمية عن شريط الكعب إلى الجهة التي فيها نقطتها؛ و<code>'cross'</code> يتركها حيث تضعها النقطة، كما يحتاج عنوان ممتد على الصفحتين. منذ postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ labelStyles: [
       <td>لا شيء</td>
       <td>معرّف من <code>labelStyles</code>. والتسمية التي تحدّد نمطها الخاص تتقدّم عليه.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> يضع التسمية عموديًّا، كما تُكتب الخرائط الصينية واليابانية وظهر الكتاب. ويصبح <code>width</code> جزءًا من ارتفاع الصورة، ويمتد <code>align</code> على طول العمود (<code>start</code> هو الأعلى) و<code>verticalAlign</code> عبر الأعمدة (<code>top</code> هو العمود الأول، الأيمن).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td>يعني <code>'allow'</code> أن التسمية الموضوعة عند هذه المرساة يجوز أن تلامس جاراتها كما يطبعها الأصل: فلا يصدر <code>labelOverlap</code> لزوج تكون طرفًا فيه. ويتقدّم على <code>overlap</code> في النمط. منذ postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>في شكل يعبر كعب صفحتين متقابلتين، <code>'keep'</code> يُبعد التسمية عن شريط الكعب إلى الجهة التي فيها نقطتها؛ و<code>'cross'</code> يتركها حيث تضعها النقطة، كما يحتاج عنوان ممتد على الصفحتين. منذ postext 1.43.</td>
     </tr>
   </tbody>
 </table>

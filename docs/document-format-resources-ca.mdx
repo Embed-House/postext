@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Imatges, taules i vídeos',
   description: "Com s'afegeixen imatges, taules i vídeos al text: referències i insercions, numeració, col·locació i lloc on va a parar un flotant, text al voltant de les imatges, mida dels mapes de bits, zones segures, àncores de còmic i vídeos",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '44 min',
   order: 29,
   parent: 'document-format',
@@ -62,7 +62,7 @@ Una cel·la pot tenir un farciment propi. `TableCell.background` és un valor de
 
 Els recursos SVG també es poden tornar a pintar per imprimir-los amb una sola tinta plana amb `diagramStyle.singleInk` (per defecte, `false`). Si s'activa, cada color del diagrama SVG es converteix en un matís de `diagramStyle.inkColor` segons la luminància (per defecte, el color principal de la paleta, `#295AA3`): el blanc correspon al paper i el negre a la tinta plena, de manera que les figures es reprodueixen amb fidelitat quan el document s'imprimeix amb una única tinta plana. Vegeu [Configuració › Estil de diagrames](/ca/docs/configuration-resources#estil-dels-diagrames).
 
-Una inserció mal formada (sense `id`, amb un `id` buit, amb l'`id` sense cometes o entre cometes simples, o amb atributs de més) no es converteix en un bloc de recurs: s'analitza com un paràgraf normal i continua sent visible a la sortida. El mateix passa amb una línia d'inserció ben formada enganxada sota una línia de paràgraf, sense cap línia en blanc entremig: es llegeix com a part d'aquest paràgraf. Tots dos casos generen un avís `malformedEmbed`, que el tauler Revisió del Sandbox mostra com a **Inserció composta com a text**.
+Una inserció mal formada (sense `id`, amb un `id` buit, amb l'`id` sense cometes o entre cometes simples, o amb atributs de més, llevat del `slot` d'una pàgina composta) no es converteix en un bloc de recurs: s'analitza com un paràgraf normal i continua sent visible a la sortida. El mateix passa amb una línia d'inserció ben formada enganxada sota una línia de paràgraf, sense cap línia en blanc entremig: es llegeix com a part d'aquest paràgraf. Tots dos casos generen un avís `malformedEmbed`, que el tauler Revisió del Sandbox mostra com a **Inserció composta com a text**.
 
 Les referències en línia es reconeixen dins de qualsevol bloc de text (paràgrafs, encapçalaments, cites i elements de llista) i es poden combinar amb negreta, cursiva, codi en línia i fórmules en línia.
 
@@ -82,7 +82,7 @@ La directiva `:ref` admet tres atributs opcionals, en qualsevol ordre. `style` t
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>Estil per defecte: l'etiqueta curta (<code>shortLabel</code>) del tipus seguida del número, units amb un espai de no separació perquè no se separin mai al final de la línia.</td>
+      <td>Estil per defecte: l'etiqueta curta (<code>shortLabel</code>) del tipus seguida del número, units amb un espai de no separació (o amb el <code>labelNumberGap</code> de l'estil de peu) perquè no se separin mai al final de la línia.</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

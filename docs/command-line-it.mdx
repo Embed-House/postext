@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Riga di comando',
   description: 'Un unico eseguibile autonomo per macOS, Linux e Windows. Trasforma un libro .postext, una cartella di libro o file Markdown sparsi in PDF, HTML, EPUB, immagini delle pagine e Word; crea pacchetti, controlla i libri e fornisce un output JSON per script e agenti',
   lang: 'it',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
   plainSummary: "Questa pagina è per chi vuole fare libri con Postext da un terminale invece che dal sito. Scarichi un solo file per il tuo computer e lo esegui, senza installare nulla. Gli dai il tuo libro, o qualche file di testo, e il programma produce un PDF, una pagina web, un e-book, immagini delle pagine o un documento Word. Può anche cercare problemi in un libro e riunire i suoi file in uno solo. Lo possono usare anche i programmi e gli assistenti di intelligenza artificiale, perché sa rispondere in un formato che leggono facilmente.",
@@ -156,7 +156,7 @@ configurazione del libro. Un pacchetto multilingue viene letto nella sua lingua,
 </table>
 
 Ogni comando scrive nella cartella da cui lo esegui, con il nome dell’input, a meno che
-`-o` non indichi il percorso. `-o -` scrive un singolo output sullo standard output.
+`-o` non indichi il percorso (`images` scrive in `pages/`). `-o -` scrive un singolo output sullo standard output.
 
 ### pdf
 
@@ -233,7 +233,8 @@ passare da un PDF.
   `page-{n:03}` per impostazione predefinita.
 - `--print-preview`: la pagina come la riprodurrà la tipografia, attraverso il
   profilo di output, con il rifilo e l’abbondanza disegnati.
-- `--jobs N`: quante immagini vengono codificate contemporaneamente.
+- `--jobs N`: quante immagini vengono codificate contemporaneamente (per impostazione
+  predefinita, tante quanti sono i processori del computer).
 
 ### docx e import-docx
 
@@ -272,7 +273,10 @@ postext unpack my-book.postext -o my-book/
 
 `pack` comprime una cartella di libro così com’è, o costruisce un pacchetto da Markdown sparso.
 Lo stesso input dà sempre gli stessi byte, quindi due pacchetti si possono confrontare,
-anche tramite il loro hash. `unpack` si rifiuta di scrivere in una cartella non vuota a meno che
+anche tramite il loro hash. Per il Markdown sparso, `--id`, `--description` e `--thumbnail FILE`
+(un’immagine di copertina) impostano l’id, la descrizione e la miniatura del pacchetto; l’id è
+per impostazione predefinita uno slug del nome. Una cartella mantiene ciò che dice il suo
+`preset.json`. `unpack` si rifiuta di scrivere in una cartella non vuota a meno che
 non venga indicato `--force`.
 
 ### info e check
@@ -340,7 +344,7 @@ file validi.
 </table>
 
 E per ogni comando: `--json`, `--quiet` (`-q`, solo errori), `--verbose`
-(avanzamento e tutti gli avvisi), `--no-color`, `--help`.
+(avanzamento e tutti gli avvisi), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Font
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '以编程方式使用',
   description: '用代码调用Postext：buildDocument及其报告的警告、默认值、字体、缓存，以及Web Worker',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '22分钟',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 以编程方式使用
 
-> <strong>推荐做法：使用Web Worker。</strong>在浏览器中，绝大多数集成都应通过`postext/worker`导出的`createLayoutWorker()`运行排版流水线，**而不是**在主线程上直接调用`buildDocument`。工作线程在构建期间让界面保持响应，在增量重建之间缓存文本测量结果，并且只保留最新的一次构建（“后到者胜出”）：新的按键会中止仍在进行的过时构建。标准用法请直接看[在Web Worker中运行排版](#在web-worker中运行排版)。本节其余内容（直接调用`buildDocument`、解析函数、剥离函数、缓存）依然有用，因为工作线程的输入和输出与之完全相同；但对界面代码来说，正确的起点是工作线程封装。只有在一次性导出、服务端渲染（Node）或测试中，才退回到在主线程上调用`buildDocument`。
+> <strong>推荐做法：使用Web Worker。</strong>在浏览器中，请通过 `postext/worker` 的 `createLayoutWorker()` 排版，而不要在主线程上调用 `buildDocument`。worker 在排版期间保持页面可响应，在两次重排之间保留文字测量缓存，并在新的排版开始时取消正在进行的排版，因此一次按键不会等待旧文本的排版。具体做法见[在Web Worker中运行排版](#在web-worker中运行排版)。本节其余内容（直接调用 `buildDocument`、解析函数、剥离函数、缓存）依然适用：worker 接受相同的输入，返回相同的输出。只有一次性导出、服务器端渲染（Node）或测试才在主线程上调用 `buildDocument`。
 
 ### 构建文档
 
@@ -292,6 +292,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
+上表列出任何文档都可能产生的警告类型。某一功能特有的类型与该功能一起介绍：漫画的（`comicPanelCount`、`comicBalloonOverflow`……）在[漫画](/zh/docs/comics)页，视频的（`videoWithoutUrl`、`videoUrlInvalid`、`videoWithoutPoster`）在[资源](/zh/docs/document-format-resources)中，引用和索引的（`unknownCitationKey`、`referencesUnreadable`、`indexMark`……）在[注释与引用](/zh/docs/document-format-notes-references)中，中文、日文和阿拉伯文的（`cjkLooseLine`、`rubyExceedsLeading`、`arabicMarksExceedLeading`……）在这几种文字各自的页面上，断行器的（`raggedLine`、`unbreakableWordOverflow`）在[断词与两端对齐](/zh/docs/justification)中。
+
 关于某个资源的警告（它的表格样式、网格，或其题注、附注、单元格中的引用）都指向正文中该资源的第一次嵌入或引用，并且每个资源只列出一次。只检查文档用到的资源：书中的一章只报告它引用的表格，而不是书中的所有表格。
 
 ```ts
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **页面声明的字体**（一条`@font-face`规则、一个已添加的`FontFace`）通过字体集加载（`document.fonts.load`，在工作线程中是`self.fonts`）。**页面没有声明的字体**交给`resolve(family, weight, style, { text, codePoints })`，它返回一个文件（字节或URL）、多个文件（一个字体的各个切片）、表示一个切片或一段可变范围的`{ source, unicodeRange, weight, style }`，或者`null`。引擎等它们全部加载完毕，再按配置的顺序和每次返回的顺序（解析函数这样返回时，先latin，再latin-ext，再greek）作为`FontFace`添加，所以无论文件以什么顺序到达，字体集都相同。引擎还把它们注册到字体注册表中，[SVG图片](/zh/docs/configuration-resources#svg文字中的字体)和排版工作线程都从那里读取。解析函数也可以自己声明字体（添加一张样式表），然后返回`null`。
-- **报告**列出三类字体：已有着落的字体（由某个已加载的字体或已安装的字体族提供）、仍然`missing`的字体，以及浏览器会借另一个字重或倾斜`synthesize`（合成）出来的字体。`timeoutMs`（默认10 000）限定等待的时间，到时仍在加载的字体算作缺失。在没有字体集的环境（Node）中，`prepareFonts`什么也不做，并报告所有字体都已加载。
+- **报告**在`loaded`中列出已有着落的字体（由某个已加载的字体或已安装的字体族提供），在`missing`中列出仍然缺失的字体，在`synthesized`中列出浏览器会借另一个字重或倾斜合成出来的字体；`added`是根据解析函数返回的文件添加的`FontFace`的数量。`timeoutMs`（默认10 000）限定等待的时间，到时仍在加载的字体算作缺失。在没有字体集的环境（Node）中，`prepareFonts`什么也不做，并报告所有字体都已加载。
 - **`buildDocumentWithFonts(content, config, options)`**：准备字体，用`buildDocumentAsync`构建，读出页面实际排字所用的字体，加载其中字体集给不出来的（排出页面后才知道要用的字重，即使族内另一个字重可以顶替，也会向`resolve`索要），再构建一次（最多多构建两次）。`withLoadedFonts(build, options)`对任意构建函数做同样的事，适用于逐章构建的书，或返回多个文档的文件包（`buildBundle`）。`options.onFonts`接收最终的报告。
 - **构建之后**，文字排版所用而字体集给不出来的每个字体，都在`doc.contentWarnings`中列为`fontFallback`（见[文档中的警告](#文档中的警告)）。
 
@@ -555,6 +557,29 @@ Postext的部分状态存放在模块级变量中。同一个JavaScript realm中
 
 最简单的隔离方式是每个文档一个realm：每个实时示例一个iframe（CodePen嵌入就是一个iframe），或者每个文档一个[排版工作线程](#在web-worker中运行排版)，用于隔离测量和断词（图片仍在页面上注册）。
 
+### Word文档（`postext/word`）
+
+`postext/word`子路径不借助DOM读写Word文档（`.docx`）。沙盒的Word导入和导出，以及命令行的`import-docx`和`docx`，都建立在它上面（见[命令行 › docx和import-docx](/zh/docs/command-line#docx和import-docx)）。
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // Uint8Array或ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict、report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- <strong>`readDocx(bytes)`</strong>把文件读成一个Word模型：其中有它的样式、段落、注释和图片，文档的`title`，以及Postext导出的文件所带的导入模板（`embeddedTemplate`）。不是Word文档的文件会抛出`DocxReadError`。
+- <strong>`wordToPostext(word, settings)`</strong>把模型转换为章节（`{ title, markdown }`）、图片和表格。模板把每个Word样式对应到配置中的一个标题、段落样式、框、引文或题注。`chapters: 'split'`在每个一级标题处开始新的一章，`'single'`只保留一章。图片（`id`、`media.bytes`、`caption`、`alt`）和表格（`id`、`model`、`caption`）由宿主作为资源存储；`skippedPictures`列出被略去的EMF、WMF和TIFF图片。
+- <strong>`analyzeDocx(word, template, config)`</strong>是沙盒在导入前显示的质量报告：用到的样式、有多少段落套用了样式，以及`directFormatting`、`manualHeadings`、`typedNumbering`等发现，每项都附有数量和示例。
+- <strong>`postextToDocx(chapters, settings)`</strong>把章节写成`.docx`（一个`Uint8Array`），标题、段落、框、引文、列表和注释都使用Word样式。Word无法表达的内容原样保留在*Postext Markup*样式中，模板也放进文件里，所以文档导入回来时不会改变。`book: true`用一个`Postext Chapter`段落开始每一章，导入时据此重建各章。
+- <strong>`wordStyleTracking(word, template, config)`</strong>和<strong>`applyStyleTracking(config, tracking)`</strong>把Word样式的字间距带到配置中没有设置字间距的样式上。
+
 
 ## 在Web Worker中运行排版
 
@@ -589,7 +614,10 @@ Postext提供一个专用的Web Worker入口`postext/worker`，把流水线移�
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**：创建一个专用工作线程（或包装你通过`opts.worker`传入的工作线程，或从`opts.url`启动工作线程入口），返回一个带类型的句柄。见[从CDN加载工作线程](#从cdn加载工作线程)。
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**：把字体字节送入工作线程。缓冲区会被转移，如果之后需要重新发送，请在主线程上保留一份新的副本。
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**：运行流水线。中止signal会取消进行中的构建。
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`**：丢弃工作线程中这些字体族的字体，这样下一次为某个字体族调用`registerFonts`时，新字体才会生效，而不是与工作线程已有的字体相匹配。
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`**：运行流水线。`options`是`{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`。中止`signal`会取消进行中的构建。放置推进时调用`onProgress({ pass, blocks, totalBlocks, pages })`；`onStats({ passes, totalMs, cached?, missingFonts? })`接收完成的构建各遍的耗时。`resourcesKey`是`content.resources`的指纹：连续几次构建的键相同时，资源列表只发送一次，由工作线程保留。`cacheKey`是整次构建的指纹：工作线程按它保留最近的几个文档，收到它已有其键的构建时，直接从这份缓存作答。
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`**：构建到工作线程的文档缓存中，不把文档发回，用于读者接下来可能打开的章节；之后带同一`cacheKey`的`build`直接从缓存作答。
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`**：先在页面上执行`prepareFonts`，再把找到的字体发送给工作线程；见[从CDN加载工作线程](#从cdn加载工作线程)。
 - **`LayoutWorkerHandle.dispose(): void`**：终止工作线程，并以`AbortError`拒绝所有待完成的构建。
 - **`FontPayload`**：`{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`。`weight`是CSS字重字符串（`'700'`、`'bold'`）；`registerFonts`也接受数字形式（`700`）。调用`registerFonts`时，`buffer`会被转移给工作线程。
 - **`BuildCancelledError`**（从`postext`重新导出）：`options.shouldCancel`返回`true`时`buildDocument`在内部抛出的错误。通常你在主线程上看不到它：工作线程协议在它到达你的代码之前就把它转换成了`AbortError`。

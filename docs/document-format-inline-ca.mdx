@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Format en línia i fórmules',
   description: "Com es marca el text dins d'una línia: èmfasi, enllaços, xips, versaletes, tabuladors, text vertical, marques xineses i japoneses, direcció del text i fórmules LaTeX",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '28 min',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ El marcatge en línia es reconeix dins de qualsevol bloc de text (encapçalament
       <td>Una nota composta en dues files de mig cos dins de la línia (双行夹注), que es talla entre línies i pàgines.</td>
     </tr>
     <tr>
+      <td>Marques japoneses</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>Una línia lateral (傍線) i les marques de kanbun (訓点: marques de retorn, okurigana) al costat dels caràcters. El text queda tal com s'ha escrit; vegeu <a href="#marques-xineses-ruby-i-warichu">Marques xineses, ruby i warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Direcció del text</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>Aïlla un fragment en la seva pròpia direcció: un nom anglès en una frase àrab, un d'àrab en una frase anglesa. Vegeu <a href="#direcció-del-text-al-marcatge">Direcció del text al marcatge</a>.</td>
+    </tr>
+    <tr>
       <td>Codi en línia</td>
       <td><code>`código`</code></td>
       <td>Els accents greus s'eliminen; el tram es renderitza com a text pla, tal com es va escriure: un <code>{':ref{…}'}</code>, un xip, una fórmula, un enllaç o un signe de marcatge a dins s'imprimeixen literalment, que és la manera de mostrar la sintaxi en un text. Es compon amb la lletra del text o, amb <code>codeStyle.inline</code>, amb la lletra del codi, com una sola unitat (vegeu <a href="/ca/docs/configuration-styles#llistats-de-codi">Configuració › Llistats de codi</a>). Un llistat va en un <a href="/ca/docs/document-format#blocs-de-codi">bloc de codi</a>.</td>
     </tr>
     <tr>
       <td>Escapament</td>
-      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
-      <td>Una barra inversa fa que es compongui el caràcter de marcatge mateix (l'asterisc d'una nota de taula, <code>{'\\* pOH = −log [OH^−^]'}</code>; un accent circumflex literal; un signe de dòlar que no obre cap fórmula) en lloc d'obrir un tram. Funciona al text de cos, als xips, als peus, a les cel·les i a les notes. (Fins a postext 1.4, els peus, les cel·les, les notes i els xips imprimien la barra de <code>{'\\$'}</code>.)</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code>, <code>{'\\@'}</code></td>
+      <td>Una barra inversa fa que es compongui el caràcter de marcatge mateix (l'asterisc d'una nota de taula, <code>{'\\* pOH = −log [OH^−^]'}</code>; un accent circumflex literal; un signe de dòlar que no obre cap fórmula; una arrova que no cita res) en lloc d'obrir un tram. Funciona al text de cos, als xips, als peus, a les cel·les i a les notes. (Fins a postext 1.4, els peus, les cel·les, les notes i els xips imprimien la barra de <code>{'\\$'}</code>.)</td>
     </tr>
     <tr>
       <td>Espai de no separació</td>
@@ -116,6 +126,11 @@ El marcatge en línia es reconeix dins de qualsevol bloc de text (encapçalament
       <td>Un fragment de text dins d'una caixa que passa a la línia següent com una sola unitat: un banc de paraules, una tecla, una etiqueta. L'estil el defineixen els <code>chipStyles</code>; vegeu <a href="#xips-en-línia">Xips en línia</a>.</td>
     </tr>
     <tr>
+      <td>Ressaltat</td>
+      <td><code>:mark[text]</code></td>
+      <td>Una banda de color darrere de paraules que continuen sent text normal: es tallen, es divideixen i es justifiquen com sempre. L'estil el dona <code>markStyles</code>; vegeu <a href="#marques-de-ressaltat">Marques de ressaltat</a>.</td>
+    </tr>
+    <tr>
       <td>Tabulador</td>
       <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>Porta les paraules que el segueixen fins a la tabulació següent: una de les tabulacions de l'estil del paràgraf, o la que fixen els seus atributs. Un caràcter de tabulació escrit al text només funciona com a tabulador on l'estil fixa tabulacions. Vegeu <a href="#tabuladors-i-tabulacions">Tabuladors i tabulacions</a>.</td>
@@ -127,6 +142,8 @@ El marcatge en línia es reconeix dins de qualsevol bloc de text (encapçalament
     </tr>
   </tbody>
 </table>
+
+Les marques que remeten a un altre lloc es descriuen amb allò a què remeten: les crides de nota `[^id]` a [Notes a peu de pàgina](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina); `:ref{…}`, `:anchor{#id}`, `[text]{#id}` i l'`@sec:…` de pandoc-crossref a [Referències creuades i àncores](/ca/docs/document-format-notes-references#referències-creuades-i-àncores); les citacions `[@clave]` i `@clave` a [Citar](/ca/docs/document-format-notes-references#citar); les marques d'índex `:index[…]` a [Marques d'índex](/ca/docs/document-format-notes-references#marques-díndex). La mostra de color `:swatch{color="…"}` es descriu amb els emplenaments de taula a [Recursos](/ca/docs/document-format-resources#recursos), i el salt de línia dins d'un paràgraf a [Salts de línia](/ca/docs/document-format-directives#salts-de-línia).
 
 ### Enllaços
 
@@ -164,7 +181,7 @@ Prem :chip[Ctrl]{style="tecla"} + :chip[C]{style="tecla"} per copiar.
 - **Una unitat.** Un xip no es parteix mai ni es divideix amb guionet per dins; la línia es talla entre xips, als espais que els envolten. Un xip més ample que tota la línia desborda la línia en lloc de partir-se.
 - **Amplada.** L'avanç del xip és el text més el farciment horitzontal i el contorn dels dos costats. La justificació només estira els espais entre paraules, mai l'interior d'un xip. El `gap` de l'estil és l'espai mínim entre la caixa i la paraula o el xip veí, separats per un espai: si l'espai és més estret, es completa (excepte a la vora de la línia o al costat de la puntuació enganxada, com a `:chip[a],`).
 - **Alçada.** La caixa és una banda al voltant de la línia de base, de 0,8 em per sobre i 0,25 em per sota en el cos del xip, que creix amb el farciment vertical i el contorn. El farciment vertical es pinta fora de la caixa de línia i no canvia mai l'interlineat, així que la retícula es manté; una caixa més alta que l'interlineat pot envair un xip de la línia de sobre o de sota, i el Sandbox avisa quan dos xips de línies diferents se superposen («Els xips toquen la línia següent») perquè redueixis el farciment, el contorn o el cos.
-- **Text.** El text del xip admet marques pròpies (`:chip[**negrita** palabra]`, `:chip[x^2^]`) i l'èmfasi que l'envolta (`**:chip[a]**`); l'estil en pot fixar la família, el cos, el color, la negreta i la cursiva. Escriu `\]` per a un claudàtor literal a dins. Les referències, les mostres de color i les fórmules dins d'un xip queden com a text literal, i `\$` imprimeix un signe de dòlar (fins a postext 1.4 imprimia també la barra).
+- **Text.** El text del xip admet marques pròpies (`:chip[**negrita** palabra]`, `:chip[x^2^]`) i l'èmfasi que l'envolta (`**:chip[a]**`); l'estil en pot fixar la família, el cos, el color, la negreta i la cursiva. Escriu `\]` per a un claudàtor literal a dins. Les referències, les mostres de color i les fórmules dins d'un xip queden com a text literal, i `\$` imprimeix un signe de dòlar (fins a postext 1.4 imprimia també la barra). Un estil amb `dotted` pinta les lletres com a fileres de punts perquè un infant les resegueixi, i un sense emplenament, contorn ni marges interiors converteix el xip en una paraula puntejada dins de la línia: `:chip[gat]{style="dots"}` (vegeu [Estils de xip](/ca/docs/configuration-styles#estils-de-xip)).
 - **Buit.** Un xip format només per espais (`:chip[ ]`, espais de no separació inclosos) és una caixa buida (un espai per a la resposta, una marca de final): tan ampla com el farciment horitzontal i el contorn del seu estil, i tan alta com un xip amb paraules. Pots donar mida a aquest espai amb el `paddingX` d'un estil (`:chip[ ]{style="hueco"}`). Sense res entre els claudàtors, `:chip[]` queda com a text literal.
 - **On.** Paràgrafs, elements de llista, cites, requadres, cel·les de taula, peus i notes. Als encapçalaments, `:chip[…]` queda com a text literal.
 - **Sortida.** Canvas, HTML i PDF pinten la caixa i componen les paraules com a text real: seleccionable a l'HTML, extraïble i en ordre de lectura al PDF (en un PDF etiquetat la caixa és un artefacte de maquetació i les paraules pertanyen al paràgraf).

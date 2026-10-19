@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Direktiven',
   description: 'Die :::-Direktiven: Container, Spalten, Papier, Seitenumbrüche, Nummerierung, Abstand, Verse, Inhaltsverzeichnis und Register, Zeilenumbrüche und die Auszeichnung von Comicseiten',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '33 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Direktiven
 
-Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}` auf einer eigenen Zeile stehen. Sie erzeugen keine sichtbare Ausgabe – sie steuern die Platzierung und die Nummerierung.
+Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}` auf einer eigenen Zeile stehen. Die meisten erzeugen keine sichtbare Ausgabe und steuern die Platzierung und die Nummerierung; `:::toc`, `:::index` und `:::bibliography` setzen an ihrer Stelle das Inhaltsverzeichnis, das Register und das Literaturverzeichnis.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}
       <td>Setzt hier das Register: jeden im Buch mit <code>:index</code> ausgezeichneten Begriff, sortiert und nach Buchstaben gruppiert, mit den Seiten, auf denen er vorkommt, gesetzt nach der Konfiguration <code>index</code>. <code>:::index&#123;index="names"&#125;</code> setzt ein benanntes Register. Siehe <a href="/de/docs/document-format-notes-references#register">Register</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Setzt hier das Verzeichnis der zitierten Werke im Zitierstil. <code>title</code> ändert die Überschrift, <code>scope</code> den Umfang. Siehe <a href="/de/docs/document-format-notes-references#das-literaturverzeichnis">Das Literaturverzeichnis</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Eine Comicseite: ihre Zeilen <code>::panel</code> und deren Skriptzeilen, gesetzt als Panels und geletterte Sprechblasen auf einer eigenen Seite. Siehe <a href="#comics">Comics</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Direktiven sind einzeilige Steuerbefehle, die als `:::name` oder `:::name{attrs}
 
 Attributwerte können in doppelten (<code>"…"</code>) oder einfachen Anführungszeichen (<code>'…'</code>) stehen oder ohne (<code>startAt=17</code>). Ein Schlüssel ohne `=` gilt als gesetztes, aber leeres Attribut (ein Attribut ohne Wert).
 
-Derzeit werden nur `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` und `index` als einzeilige Direktiven erkannt (und `references`, `verse`, `page` und `strip` als Blöcke) – jede andere Zeile `:::name`, die kein Container ist (siehe unten), wird als Absatz gelesen und löst in der Sandbox die Warnung **Unbekannte Direktive** aus. Auch die Engine vermerkt sie, als Eintrag `unknownDirective` in den `contentWarnings` des Dokuments (siehe [Konfiguration › Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument)).
+Derzeit werden nur `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` und `bibliography` als einzeilige Direktiven erkannt (und `references`, `verse`, `page`, `strip` und `figure` als Blöcke) – jede andere Zeile `:::name`, die kein Container ist (siehe unten), wird als Absatz gelesen und löst in der Sandbox die Warnung **Unbekannte Direktive** aus. Auch die Engine vermerkt sie, als Eintrag `unknownDirective` in den `contentWarnings` des Dokuments (siehe [Konfiguration › Warnungen im Dokument](/de/docs/configuration-programmatic-usage#warnungen-im-dokument)).
 
 ### Attributwerte
 
@@ -96,6 +100,7 @@ Dieselbe Syntax `key="value"` gilt für Attribute von Überschriften, für die �
 - **Keine geschweiften Klammern.** `{` und `}` stehen nie in einem Wert. Die erste `}` beendet den Block: Eine öffnende Zeile, deren Wert eine enthält, ist keine Direktive mehr, sondern ein Absatz, und im Fließtext läuft der Rest des Werts in den Text über. In einer Überschrift bleibt bei einer Klammer in einem Wert der ganze Block im Titel: `# Title {note="a {b"}` wird so gesetzt, wie es geschrieben ist. (Bis postext 1.8 begann ein `{` nach einem Leerzeichen den Block neu, und `b` wurde als Attribut ohne Wert gelesen.)
 - **Dollarzeichen sind gewöhnlicher Text.** Attribute werden vor den Formeln im Text gelesen, daher ist `lead="from $5 to $6"` einfach Text.
 - **Eine Zeile.** Ein Attributblock erstreckt sich nie über mehrere Zeilen.
+- **Kennungen.** `#key-idea`, die Kurzform aus Pandoc, steht für `id="key-idea"`: `{#sec-method}` an einer Überschrift, `:::callout{#box-safety}` an einer öffnenden Zeile. Sie benennt den Block für [Querverweise](/de/docs/document-format-notes-references#querverweise-und-verweisziele).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ Dieselbe Syntax `key="value"` gilt für Attribute von Überschriften, für die �
 :::
 ```
 
-`::resource{id="…"}` ist strenger: die ID in doppelten Anführungszeichen und kein weiteres Attribut (siehe [Ressourcen](/de/docs/document-format-resources#ressourcen)).
+`::resource{id="…"}` ist strenger: die ID in doppelten Anführungszeichen und kein weiteres Attribut (siehe [Ressourcen](/de/docs/document-format-resources#ressourcen)). Auf einer zusammengesetzten Seite nimmt es außerdem `slot="…"` an (siehe [Zusammengesetzte Seiten](#zusammengesetzte-seiten)).
 
 ### Container
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Im Textfluss werden fünf Containernamen erkannt. Was jeder davon darstellt, legt ein eigener Abschnitt der Konfiguration fest:
+Im Textfluss werden fünf Containernamen erkannt; ein sechster, `:::frame`, nimmt den Inhalt eines Rahmens auf einer [zusammengesetzten Seite](#zusammengesetzte-seiten) auf. Was jeder davon darstellt, legt ein eigener Abschnitt der Konfiguration fest:
 
 <table>
   <thead>
@@ -297,7 +302,7 @@ Ein verschachtelter Kasten in einer Gruppe bleibt ganz und wandert in den nächs
 :::
 ```
 
-Ein `:::callout` nimmt außerdem `label="…"` an: den Text, den ein Stil mit Etikett (`label`) an der oberen Ecke des Kastens ausgibt (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+Ein `:::callout` nimmt außerdem `label="…"` an: den Text, den ein Stil mit Etikett (`label`) an der oberen Ecke des Kastens ausgibt (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Jedes weitere Attribut der öffnenden Zeile liest die Gestaltung des Stils, falls er eine hat: `:::callout{type="card" kicker="Hinweis"}` gibt ihren Texten `{attr.kicker}`, und `{boxText}` setzt den Inhalt des Kastens selbst (siehe [Konfiguration › Gestaltung im Kasten](/de/docs/configuration-callouts#gestaltung-im-kasten)).
 
 Ein `:::callout` in einem anderen ist ein eigener Kasten – etwa eine Arbeitsblattkarte mit Antwortkästen. Er hat seinen eigenen Stil (Hintergrund, Kontur, Eckenradius, Innenabstand, Titel, Symbol), nimmt die volle Innenbreite des äußeren Kastens ein und reiht sich zwischen dessen übrige Blöcke ein; seine Angaben `span` und `placement` werden ignoriert, da ein verschachtelter Kasten stets innerhalb seines Elternkastens fließt. Jede schließende Zeile schließt den innersten noch offenen Kasten:
 
@@ -706,7 +711,7 @@ maya: This line goes on
 
 - Der **Schlüssel** ist eine Sprecher-ID (Buchstaben, Ziffern, `_`, `.`, `-`), in jeder Übersetzung dieselbe; `caption`, `sfx` und `note` sind reserviert. Der Doppelpunkt darf der vollbreite `：` sein.
 - Ein bloßes Wort in den geschweiften Klammern ist ein **Sprechblasenstil** (`thought`, `whisper`, `shout`, `radio`, `inner` oder einer aus `comics.balloonStyles`); `style=` bewirkt dasselbe.
-- `at` heftet die Sprechblase an: einen Punkt in Prozent des Panelbildes (`at="62% 40%"`) oder eine Ecke oder Kante (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` richtet den Dorn auf einen Punkt des Bildes; `tail=none` entfernt ihn, und `tail=top|bottom|start|end|left|right` lässt ihn aus dem Panel hinauszeigen. `join` und `join=false` verbinden die Sprechblase mit der vorigen desselben Sprechers oder halten sie getrennt; `break` lässt sie über die Randlinie hinausragen, ohne dass das als Überlauf gemeldet wird. `rotate` (Grad), `size` (ein Faktor, für Geräuscheffekte), `color` und `font` ändern ihr Lettering.
+- `at` heftet die Sprechblase an: einen Punkt in Prozent des Panelbildes (`at="62% 40%"`) oder eine Ecke oder Kante (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` richtet den Dorn auf einen Punkt des Bildes; `tail=none` entfernt ihn, und `tail=top|bottom|start|end|left|right` lässt ihn aus dem Panel hinauszeigen. `join` und `join=false` verbinden die Sprechblase mit der vorigen desselben Sprechers oder halten sie getrennt; `break` lässt sie über die Randlinie hinausragen, ohne dass das als Überlauf gemeldet wird. `rotate` (Grad), `skew` (eine Schräge in Grad, für Text auf einem perspektivisch gesehenen Gegenstand), `size` (ein Faktor, für Geräuscheffekte), `color` und `font` ändern ihr Lettering.
 - `vertical` und `horizontal` (oder `mode=vertical`, `mode=horizontal`) setzen die Schreibrichtung der Zeile über die des Buches: ein unübersetztes `ドン` in einer Spalte in einer waagerechten Ausgabe, ein quer geschriebenes Schild in einer Zeile in einer senkrechten. Eine Spalte in einem Buch einer anderen Sprache folgt den Regeln ihres eigenen Textes (mit Kana denen des Japanischen). In einem senkrechten Buch wird eine Zeile ohne chinesische oder japanische Zeichen trotzdem waagerecht gesetzt.
 - Eine Zeile, die um zwei Leerzeichen oder einen Tab eingerückt ist, setzt die Sprechblase darüber fort; ein Backslash am Zeilenende bricht den Text dort um. Leerzeilen werden ignoriert.
 - Der Text ist Inline-Markdown: Hervorhebung (als fett-kursives Lettering), `:tcy`, `:ruby` (die Lesung über der Basis, außer über einer Basis, die von rechts nach links läuft), `:ltr` und `:rtl` (ein Abschnitt, der seine eigene Richtung behält). Fußnoten und `:ref`-Markierungen werden nicht gelesen.
@@ -736,4 +741,4 @@ Eine zusammengesetzte Seite wird nach einer Seitenvorlage der Konfiguration (`pa
 - `::::page{template="…"}` … `::::` ist die Seite: vier oder mehr Doppelpunkte, geschlossen von einer Zeile, die nur ebenso viele enthält. Blöcke mit drei Doppelpunkten darin (`:::frame`, `:::callout`, `:::figure` …) wirken wie überall, und ein bloßes `:::` schließt nie die Seite. Ein `:::page` mit drei Doppelpunkten bleibt eine Comicseite.
 - `:::frame{slot="…" label="…"}` … `:::` enthält den Inhalt des Rahmens mit diesem Namen: beliebiges Markdown.
 - `slot="…"` an einer Überschrift (`## Retos {slot="retos-titulo"}`), an `::resource{id="…" slot="…"}`, an einem Codeblock oder an einem `:::`-Container leitet nur diesen einen Block in den Rahmen. Inhalt ohne Slot kommt in den Flussrahmen der Vorlage.
-- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext.
+- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext. Ihre `alt`, `caption` und `note`, als Attribute der öffnenden Zeile oder als Zeilen `::alt[…]`, `::caption[…]` und `::note[…]`, ersetzen für dieses Kapitel den Wortlaut der Ressource (siehe [Zusammengesetzte Seiten › Der eigene Wortlaut einer Abbildung](/de/docs/composed-pages#der-eigene-wortlaut-einer-abbildung)).

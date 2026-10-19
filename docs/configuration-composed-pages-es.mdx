@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ajustes de páginas compuestas',
   description: 'Cómo se define una plantilla de página: sus marcos, grupos y decoración, la herencia entre plantillas y las variantes para páginas pares e impares; los estilos de los rótulos que se ponen sobre una imagen, y los avisos que puede dar una plantilla',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>ninguno</td>
-      <td>Un estilo de párrafo para el texto de la página, como el que tienen los estilos de encabezado.</td>
+      <td>Un estilo de párrafo para el texto de la página, como el que tienen los estilos de encabezado. La maquetación todavía no lo aplica.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, el del estilo</td>
-      <td>Columnas dentro del marco.</td>
+      <td>Columnas dentro del marco. Un encabezado nunca cierra una de ellas: pasa a la columna siguiente con el texto que encabeza (con <code>headings.keepWithNext</code>, desde postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una planti
 
 ### Lo que aplica la maquetación
 
-La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` y `overflow.fromMark`, y su `fit` (la reducción del texto y de las imágenes en la escalera de reajuste, véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)); el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo, véase [Cómo se reparten el espacio los grupos](#cómo-se-reparten-el-espacio-los-grupos)); y el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants`, `spread` y el `overflowTemplate` de la plantilla. Se leen y se comprueban, pero todavía no se aplican: el `bodyStyle` y la `palette` de la plantilla. El `writingMode` y la `direction` de un marco se aplican desde postext 1.39. Un ancho `'auto'` se lee como `'fill'`.
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` y `overflow.fromMark`, y su `fit` (la reducción del texto y de las imágenes en la escalera de reajuste, véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)); el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo, véase [Cómo se reparten el espacio los grupos](#cómo-se-reparten-el-espacio-los-grupos)); y el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants`, `spread` y el `overflowTemplate` de la plantilla. Desde postext 1.42 aplica también la `palette` de la plantilla, el `look` de un marco y el ancho `'auto'` (el de la línea más larga del marco). El `writingMode` y la `direction` de un marco se aplican desde postext 1.39. Se lee y se comprueba, pero todavía no se aplica: el `bodyStyle` de la plantilla.
 
 ### Dobles páginas
 
@@ -588,7 +588,7 @@ En un libro vertical (`vertical-rl`) la doble página se compone en el marco del
 
 ## Estilos de rótulo
 
-La propiedad `labelStyles` define, cada uno con su nombre, los aspectos de los rótulos que se ponen sobre una imagen: los mares y las ciudades de un mapa, las partes de un esquema. Un rótulo se sitúa en un ancla de la imagen (un punto con nombre guardado con el recurso, como los personajes de un cómic) y toma el estilo que indica el ancla o el propio rótulo. En el Sandbox se editan en **Diseño › Figuras y tablas › Estilos de rótulo** (desde postext 1.42).
+La propiedad `labelStyles` define, cada uno con su nombre, los aspectos de los rótulos que se ponen sobre una imagen: los mares y las ciudades de un mapa, las partes de un esquema. Un rótulo se sitúa en un ancla de la imagen (un punto con nombre guardado con el recurso, como los personajes de un cómic) y toma el estilo que indica el ancla o el propio rótulo. En el Sandbox se editan en **Diseño › Figuras y tablas › Estilos de rótulo** (desde postext 1.42). Al renombrar ahí un estilo se reescriben las anclas y las líneas `::label` que lo nombran (desde postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Hasta qué tamaño se puede reducir un rótulo cuando no cabe en su ancho.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Escritura vertical para los rótulos de este estilo: caracteres de pie en celdas, uno bajo otro, columnas de derecha a izquierda, como se rotula un mapa chino o japonés. El <code>writingMode</code> propio de un ancla manda.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> indica que el rótulo puesto en esta ancla puede tocar a sus vecinos, como lo imprime el original: no se avisa con <code>labelOverlap</code> de una pareja en la que esté. Prevalece sobre el <code>overlap</code> del estilo. Desde postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>En una figura que cruza el lomo de una doble página, <code>'keep'</code> aparta el rótulo de la banda del lomo, hacia el lado donde está su punto; <code>'cross'</code> lo deja donde lo pone el punto, como pide un título a lo ancho de las dos páginas. Desde postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ Las anclas de una imagen (`Resource.anchors`, los puntos que usan los cómics pa
       <td>ninguno</td>
       <td>Un id de <code>labelStyles</code>. Un rótulo que indica su propio estilo lo sustituye.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> compone el rótulo en vertical, como se rotula un mapa chino o japonés o un lomo. Entonces su <code>width</code> es una fracción de la altura de la imagen, <code>align</code> corre a lo largo de la columna (<code>start</code> es el extremo superior) y <code>verticalAlign</code> a lo ancho de las columnas (<code>top</code> es la primera, la de la derecha).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> indica que el rótulo puesto en esta ancla puede tocar a sus vecinos, como lo imprime el original: no se avisa con <code>labelOverlap</code> de una pareja en la que esté. Prevalece sobre el <code>overlap</code> del estilo. Desde postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>En una figura que cruza el lomo de una doble página, <code>'keep'</code> aparta el rótulo de la banda del lomo, hacia el lado donde está su punto; <code>'cross'</code> lo deja donde lo pone el punto, como pide un título a lo ancho de las dos páginas. Desde postext 1.43.</td>
     </tr>
   </tbody>
 </table>

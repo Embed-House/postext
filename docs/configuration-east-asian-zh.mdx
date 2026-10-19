@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '东亚排版',
   description: 'cjk设置：中文、日文和韩文的断行、标点宽度、间距、字符网格、注音与各种标记',
   lang: 'zh',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '24分钟',
   order: 13,
   parent: 'configuration',
@@ -161,7 +161,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>grid</code></td>
-      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show?, fullLines? &#125;</code></td>
       <td>关闭</td>
       <td>以每行字数和每页行数规定版心（见<a href="#字格">字格</a>）。</td>
     </tr>
@@ -193,7 +193,7 @@ interface CjkConfig {
       <td><code>annotationColor</code></td>
       <td><code>ColorValue</code></td>
       <td>文字颜色</td>
-      <td>着重号、专名线和书名线的颜色；也是注音和夹注颜色的默认值。</td>
+      <td>着重号、专名线、书名线和傍线（<code>:sideline[…]</code>）的颜色；也是注音、夹注和汉文训读记号颜色的默认值。</td>
     </tr>
     <tr>
       <td><code>ruby</code></td>
@@ -203,7 +203,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>warichu</code></td>
-      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close?, minChars? &#125;</code></td>
       <td>正文的一半大小；日本用括号（），其他地区无括号</td>
       <td><code>:warichu[…]</code>的双行夹注：夹注的字号（默认半个em，两行正好填满一行的em）、颜色，以及按正文字号排在第一行之前、最后一行之后的括号（夹注自己的<code>open</code> / <code>close</code>优先）。在日本，空的<code>open</code>或<code>close</code>（<code>''</code>）让夹注不加这一侧的括号。<code>minChars</code>（默认<code>2</code>）是在夹注内部断行时断点两侧至少各留的字数：不超过三个字的夹注不会被拆开，找不到其他断点的行退回到<code>lineBreak</code>允许的断点，设为<code>1</code>时凡允许之处都可断行，与postext 1.27及更早版本相同。postext 1.28之前保存、正文中有夹注的配置按<code>1</code>读取。自postext 1.28起。</td>
     </tr>
@@ -364,14 +364,15 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 在VDT中，带标注的片段带有`cjkMarks`，排版把着重号和线标作为`VDTLine.marks`放在各行上（点、圆圈、芝麻点、直线、双线、点线和波浪线，位于该行的排版方向坐标系中），Canvas、HTML和PDF按原样绘制（PDF：`Artifact /Layout`；HTML：`aria-hidden`框，带着重号的文字放在`<em>`中）。注音基字的片段带有`ruby`（注音及其各段；日文读音还带有它与熟语中其他字共用的注音`id`以及`jukugo`），注音把基字拉开时在`inkOffset`处并按`tracking`绘制基字；带汉文训读记号的字带有`kunten`（各段及其竖点）；夹注在一行上的部分是一个片段，其`text`先是上一行、再是下一行，其`warichu`保存渲染器实际绘制的两行。带标签的PDF把注音放进其基字`Ruby`的`RT`中，把夹注放进`Warichu`中，该行的`/ActualText`读出基字文字，夹注只读一次。着重号、注音和夹注在正文、标题、列表和标注框中绘制，也在资源的题注、表格单元格和注释中绘制，其行与正文行一样带有`marks`和`ruby`；设计元素中的文字保留原文，但不绘制这些标注。
 
-解析函数和精简函数与其他部分一致。`spaceAfterQuestion`、`paragraphStartBracket`和`wordBreak`，以及注音的`overhang`、`align`和`smallKana`，只在它们改变了什么时（在日本，或者明确设置时）才出现在解析后的配置中。`setCjkLineBreak`和`setCjkComposition`为在`buildDocument`之外进行的测量设定级别和排版方式（标点宽度、悬挂、汉字与拉丁字母间距；`cjkCompositionOf(resolved.cjk, dpi)`），`buildDocument`则根据配置设定它们。在构建之外，标点保留完整的前进宽度，也不加汉字与拉丁字母间距：
+解析函数和精简函数与其他部分一致。`spaceAfterQuestion`、`paragraphStartBracket`和`wordBreak`，以及注音的`overhang`、`align`和`smallKana`，只在它们改变了什么时（在日本，或者明确设置时）才出现在解析后的配置中。`circledNumbers`只以`'western'`出现，`composeDesignText`只以`false`出现。`setCjkLineBreak`和`setCjkComposition`为在`buildDocument`之外进行的测量设定级别和排版方式（标点宽度、悬挂、汉字与拉丁字母间距；`cjkCompositionOf(resolved.cjk, dpi, locale)`，`locale`为文档语言），`buildDocument`则根据配置设定它们。在构建之外，标点保留完整的前进宽度，也不加汉字与拉丁字母间距：
 
 ```ts
 import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
 
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   trimLineStart: true, hangingPunctuation: 'none', titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' },
+//   latinSpacingEdge: 'letters', uprightDigits: 2,
 //   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
@@ -380,7 +381,8 @@ resolveCjkConfig(undefined, 'zh-HK');
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half',
+//   titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' }, latinSpacingEdge: 'western', …,
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },

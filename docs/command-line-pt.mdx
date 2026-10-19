@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Linha de comando',
   description: 'Um único executável autossuficiente para macOS, Linux e Windows. Ele transforma um livro .postext, uma pasta de livro ou arquivos Markdown soltos em PDF, HTML, EPUB, imagens das páginas e Word, monta pacotes, verifica livros e oferece saída JSON para scripts e agentes',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
   plainSummary: "Esta página é para quem quer fazer livros com o Postext a partir de um terminal, sem usar o site. Você baixa um único arquivo feito para o seu computador e o executa, sem instalar mais nada. Você entrega a ele o livro, ou alguns arquivos de texto, e ele faz um PDF, uma página da web, um livro digital, imagens das páginas ou um documento do Word. Ele também verifica se o livro tem problemas e junta todos os arquivos do livro em um só. Programas e assistentes de inteligência artificial também podem usá-lo, porque ele responde em um formato que esses programas leem com facilidade.",
@@ -158,7 +158,7 @@ próprio idioma, a menos que `--locale` peça outro (`--locale en`).
 </table>
 
 Todo comando grava na pasta de onde você o executa, com o nome da entrada, a
-menos que `-o` indique o caminho. `-o -` grava uma saída única na saída
+menos que `-o` indique o caminho (`images` grava em `pages/`). `-o -` grava uma saída única na saída
 padrão.
 
 ### pdf
@@ -238,7 +238,8 @@ por um PDF.
   impresso) e `{chapter}`; `page-{n:03}` por padrão.
 - `--print-preview`: a página como a gráfica vai reproduzi-la, passando pelo
   perfil de saída, com o refile e a sangria desenhados.
-- `--jobs N`: quantas imagens são codificadas ao mesmo tempo.
+- `--jobs N`: quantas imagens são codificadas ao mesmo tempo (por padrão, tantas
+  quantos processadores o computador tiver).
 
 ### docx e import-docx
 
@@ -278,7 +279,10 @@ postext unpack my-book.postext -o my-book/
 
 `pack` compacta uma pasta de livro como ela está, ou monta um pacote a partir
 de Markdown solto. A mesma entrada sempre gera os mesmos bytes; por isso, um
-pacote pode ser comparado ou ter o hash calculado. `unpack` se recusa a gravar em
+pacote pode ser comparado ou ter o hash calculado. Para Markdown solto,
+`--id`, `--description` e `--thumbnail FILE` (uma imagem de capa) definem o id,
+a descrição e a miniatura do pacote; por padrão, o id é um slug do nome. Uma
+pasta mantém o que o seu `preset.json` diz. `unpack` se recusa a gravar em
 uma pasta que não está vazia, a menos que se passe `--force`.
 
 ### info e check
@@ -346,7 +350,7 @@ arquivos bons.
 </table>
 
 E para qualquer comando: `--json`, `--quiet` (`-q`, só erros), `--verbose`
-(progresso e todos os avisos), `--no-color`, `--help`.
+(progresso e todos os avisos), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Fontes
 

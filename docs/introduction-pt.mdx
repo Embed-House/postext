@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Introdução',
   description: 'O que é o Postext, por que ele existe e que problema resolve',
   lang: 'pt',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 1,
   plainSummary: "O Postext é um software livre que diagrama as páginas de livros, revistas e relatórios na web. Há séculos os livros impressos seguem regras cuidadosas de diagramação, como manter as colunas da mesma altura e as imagens perto do texto que fala delas. As páginas da web nunca tiveram essas regras, e o Postext as traz. Você escreve o texto, e o Postext coloca cada linha, imagem e nota na página para você. Esta página conta por que o projeto existe e como ele começou.",
@@ -24,10 +24,11 @@ transbordam ou ficam pela metade. As notas de rodapé vão parar no fim da pági
 palavras que as citam. A web nos deu o layout responsivo, mas nunca nos deu a diagramação *editorial*.
 
 O Postext fecha essa lacuna. É um motor de layout que recebe o conteúdo (texto em Markdown mais
-recursos declarados, como imagens bitmap, diagramas SVG e tabelas, incorporados por referência) e
+recursos declarados, como imagens bitmap, diagramas SVG, tabelas e vídeos, incorporados por referência) e
 aplica as mesmas regras que um compositor profissional aplicaria: prevenção de órfãs e viúvas,
 equilíbrio de colunas, texto que contorna obstáculos, espaçamento deliberado. O resultado é uma
-geometria de página com qualidade de publicação, tanto para HTML quanto para PDF.
+geometria de página com qualidade de publicação, desenhada em canvas, HTML, PDF, EPUB ou como livro
+em 3D.
 
 Ele é construído sobre o [`@chenglou/pretext`](https://github.com/chenglou/pretext), que mede texto
 sem DOM a uma velocidade que torna tudo isso possível.
@@ -152,7 +153,7 @@ O Pretext fornece as medidas. O Postext fornece a diagramação.
 O processo tem três etapas:
 
 1. **Você fornece o conteúdo.** Texto em Markdown mais recursos declarados: imagens bitmap, diagramas
-   SVG e tabelas. Um `:ref{id="..."}` no meio do texto numera o recurso e o leva, como flutuante, a uma
+   SVG, tabelas e vídeos. Um `:ref{id="..."}` no meio do texto numera o recurso e o leva, como flutuante, a uma
    faixa superior ou inferior perto da primeira referência, do mesmo modo que um compositor de
    impressos posiciona as figuras. O conteúdo continua puramente semântico: descreve *o que* apresentar, não *como*; as decisões
    de diagramação nunca ficam fixadas no texto de origem. A seção Recursos do documento
@@ -170,9 +171,11 @@ O processo tem três etapas:
 3. **Você recebe uma diagramação completa.** Coordenadas e dimensões precisas de cada elemento em cada
    página. Os renderizadores traduzem essa geometria para o formato de destino: **canvas** para uma
    visualização em bitmap exata até o pixel (`renderToCanvas`, `renderPage`), **HTML** para tipografia
-   selecionável e sensível ao redimensionamento na web (`renderToHtml`, `renderToHtmlIndexed`) e **PDF**
-   para uma saída pronta para impressão com fontes incorporadas (`renderToPdf`, do pacote `postext-pdf`).
-   O mesmo conteúdo, as mesmas regras, três saídas intercambiáveis.
+   selecionável e sensível ao redimensionamento na web (`renderToHtml`, `renderToHtmlIndexed`), **PDF**
+   para uma saída pronta para impressão com fontes incorporadas (`renderToPdf`, do pacote `postext-pdf`),
+   **EPUB 3** para leitores de e-books (`renderToEpub`, de `postext-epub`) e um **livro em 3D** cujas
+   páginas se viram no navegador (`createFolioFromDocument`, de `postext-folio`). Todas as saídas são
+   desenhadas a partir da mesma diagramação.
 
 <Illustration name="LayoutProcess" data='{"title": "Diagramação em três etapas", "desc": "O Markdown enriquecido e a configuração entram no motor, que diagrama em várias passadas, com a medição do Pretext embutida, e produz HTML ou PDF renderizado.", "caption": "Entra conteúdo, sai geometria, que depois é renderizada no formato de destino.", "inputTitle": "Markdown enriquecido", "inputSubtitle": "+ configuração", "parse": "análise", "engineTitle": "Motor do Postext", "engineSub1": "com a medição do Pretext", "engineSub2": "diagramação em várias passadas", "render": "renderização", "outputTitle": "HTML / PDF", "outputSubtitle": "saída renderizada"}' />
 
@@ -182,7 +185,7 @@ referência completa de todas as opções de configuração, da geometria da pá
 legendas e diagramas, consulte a página [Configuração](/pt/docs/configuration). E para experimentar tudo
 ao vivo (um editor de texto por capítulo, um painel Recursos com editor de tabelas e envio de imagens e
 SVG, um painel Design que percorre todas as configurações em termos editoriais e visualizações ao vivo
-em canvas, HTML e PDF), abra o [Sandbox](/pt/docs/sandbox).
+em canvas, PDF, Folio (3D), HTML e EPUB), abra o [Sandbox](/pt/docs/sandbox).
 
 
 ## Agradecimentos

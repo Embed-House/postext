@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notes et références',
   description: 'Les notes de bas de page, les numéros de ligne, les renvois et les citations, la table des matières et l’index en fin d’ouvrage',
   lang: 'fr',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '30 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // The note symbols of numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Renvois
 
-La propriété `crossRefs` définit les mots qu’un [renvoi](/fr/docs/document-format-notes-references#renvois-et-ancres) imprime autour d’un numéro ou d’une page, et le style que prend un `:ref` qui n’en définit aucun. Chaque modèle contient `{n}` à l’endroit du numéro ; un modèle qui ne le contient pas reçoit le numéro après une espace insécable (`"§"` imprime *§ 3.2*). Un modèle non défini suit la langue du document : *chapter / section / p.* en anglais, *capítulo / sección / pág.* en espagnol, `第{n}章` / `第{n}节` / `第{n}页` en chinois, et ainsi de suite pour le français, l’allemand, l’italien, le portugais, le catalan et le néerlandais.
+La propriété `crossRefs` définit les mots qu’un [renvoi](/fr/docs/document-format-notes-references#renvois-et-ancres) imprime autour d’un numéro ou d’une page, et le style que prend un `:ref` qui n’en définit aucun. Chaque modèle contient `{n}` à l’endroit du numéro ; un modèle qui ne le contient pas reçoit le numéro après une espace insécable (`"§"` imprime *§ 3.2*). Un modèle non défini suit la langue du document : *chapter / section / p.* en anglais, *capítulo / sección / pág.* en espagnol, `第{n}章` / `第{n}节` / `第{n}页` en chinois, `第{n}章` / `{n}節` / `{n}ページ` en japonais, `الفصل {n}` / `القسم {n}` / `ص {n}` en arabe, et ainsi de suite pour le français, l’allemand, l’italien, le portugais, le catalan et le néerlandais.
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>selon la langue, italique (romain en écriture arabe)</td>
+      <td>selon la langue, italique (romain en écriture arabe et en japonais)</td>
       <td>Les mots qui précèdent un renvoi. Non définis, ils suivent la langue du document : <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en chinois traditionnel)… Un index chinois place le renvoi après un point, sans espace : <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Lists and maths',
   description: 'Bulleted and numbered lists, their markers, indents and nesting, task lists, and the size, colour and spacing of mathematical formulas',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '17 min',
   order: 11,
   parent: 'configuration',
@@ -148,7 +148,7 @@ GFM task items (`- [ ] …`, `- [x] …`) are rendered as unordered items with a
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>How the two default characters are set. <code>'drawn'</code>: the engine draws the box. <code>'character'</code>: <code>☐</code> and <code>☑</code> are text in the list's face, as up to postext 1.28; in a face that lacks them the browser picks a font of the system, and the item's text starts after the width that font gives. A configuration stored before version 13 reads with <code>'character'</code>, so its lines stay where they were.</td>
+      <td>How the two default characters are set. <code>'drawn'</code>: the engine draws the box. <code>'character'</code>: <code>☐</code> and <code>☑</code> are text in the list's face, as up to postext 1.28; in a face that lacks them the browser picks a font of the system, and the item's text starts after the width that font gives. A configuration stored before <code>configVersion</code> 13 reads with <code>'character'</code> (<code>pinLegacyTaskBox</code>), so its lines stay where they were.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -248,7 +248,7 @@ The `orderedLists` property controls numbered lists (`1.`, `2)`, etc.). Up to fi
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>Number style: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. The other settings' spellings work too (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; see <a href="/en/docs/configuration-page-layout#numbering-format-spellings">Numbering format spellings</a>); an unknown value numbers in arabic and is reported.</td>
+      <td>Number style: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>, and the East Asian and Arabic-script styles (<code>'simp-chinese-informal'</code>, <code>'circled-decimal'</code>, <code>'arabic-indic'</code>, <code>'abjad'</code>…). The other settings' spellings work too (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; see <a href="/en/docs/configuration-page-layout#numbering-format-spellings">Numbering format spellings</a>); an unknown value numbers in arabic and is reported.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>

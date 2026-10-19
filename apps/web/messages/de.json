@@ -3665,7 +3665,7 @@
     "calloutStyleLabelIconWidth": "Breite des Etikettsymbols",
     "calloutStyleLabelIconGap": "Abstand zum Etikett",
     "calloutStyleLabelIconPlacement": "Lage des Bildes",
-    "calloutStyleLabelIconPlacementTooltip": "Neben dem Etikett über seinen Rand hinaus oder im Etikett an dessen Anfang vor dem Text (das Etikett wird dann um Bild und Abstand breiter). Im Etikett behält das Bild seine Farben: ein Bild für einen weißen Ring, ein anderes für einen farbigen.",
+    "calloutStyleLabelIconPlacementTooltip": "Neben dem Etikett über seinen Rand hinaus oder im Etikett an dessen Anfang vor dem Text (das Etikett wird dann um Bild und Abstand breiter). Im Etikett behält das Bild seine Farben, außer wenn „Bild in der Textfarbe“ eingeschaltet ist: Dann dient ein Ring für jede Farbe des Buchs.",
     "calloutStyleLabelIconBeside": "Neben dem Etikett",
     "calloutStyleLabelIconInside": "Im Etikett",
     "calloutStyleLabelIconTint": "Bild in der Textfarbe",

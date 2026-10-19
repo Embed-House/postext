@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Utilisation programmatique',
   description: 'Appeler Postext depuis le code : buildDocument et ses avertissements, les valeurs par défaut, les polices, les caches et le Web Worker',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '33 min',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Utilisation programmatique
 
-> **Voie recommandée : utilisez le Web Worker.** Dans un navigateur, la très grande majorité des intégrations devraient piloter la chaîne de mise en page par `createLayoutWorker()` de `postext/worker`, **et non** en appelant `buildDocument` directement sur le thread principal. Le worker garde l’interface réactive pendant les constructions, met en cache les mesures de texte d’une reconstruction incrémentale à l’autre et met en place une annulation où la dernière demande l’emporte, de sorte qu’une nouvelle frappe interrompt toute construction périmée déjà en cours. Passez directement à [Mise en page dans un Web Worker](#mise-en-page-dans-un-web-worker) pour la recette de référence. Tout le reste de cette section (`buildDocument` en direct, résolveurs, fonctions d’élagage, caches) reste utile, puisque le worker expose exactement les mêmes entrées et sorties, mais pour du code d’interface, l’enveloppe du worker est le bon point de départ. N’appelez `buildDocument` sur le thread principal que pour des exports ponctuels, le rendu côté serveur (Node) ou des tests.
+> **Voie recommandée : utilisez le Web Worker.** Dans un navigateur, mettez en page par `createLayoutWorker()` de `postext/worker` plutôt qu’en appelant `buildDocument` sur le thread principal. Le worker garde la page réactive pendant la mise en page, conserve les mesures du texte d’une mise en page à l’autre et annule celle qui est en cours quand une plus récente commence : une frappe n’attend jamais la mise en page d’un texte plus ancien. La recette est dans [Mise en page dans un Web Worker](#mise-en-page-dans-un-web-worker). Le reste de cette section (`buildDocument` en direct, résolveurs, fonctions de nettoyage, caches) reste valable : le worker prend les mêmes entrées et rend les mêmes sorties. N’appelez `buildDocument` sur le thread principal que pour un export ponctuel, le rendu côté serveur (Node) ou les tests.
 
 ### Construire un document
 
@@ -292,6 +292,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
+Le tableau liste les types que n’importe quel document peut produire. Les types propres à une fonctionnalité sont décrits avec elle : la bande dessinée (`comicPanelCount`, `comicBalloonOverflow`…) sur la page [Bande dessinée](/fr/docs/comics), les vidéos (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) dans [Ressources](/fr/docs/document-format-resources), les citations et l’index (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) dans [Notes et références](/fr/docs/document-format-notes-references), le texte chinois, japonais et arabe (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) sur les pages de ces écritures, et ceux de l’algorithme de coupure des lignes (`raggedLine`, `unbreakableWordOverflow`) dans [Justification](/fr/docs/justification).
+
 Les avertissements qui concernent une ressource (son style de tableau, sa grille, une référence dans sa légende, sa note ou ses cellules) pointent sur la première insertion ou la première référence de la ressource dans le texte, et chacun n’est listé qu’une fois par ressource. Seules les ressources que le document utilise sont vérifiées : un chapitre d’un livre signale les tableaux qu’il cite, pas tous les tableaux du livre.
 
 ```ts
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **Les polices que la page déclare** (une règle `@font-face`, une `FontFace` déjà ajoutée) sont chargées par le jeu de polices (`document.fonts.load`, ou `self.fonts` dans un worker). **Celles qu’elle ne déclare pas** sont demandées à `resolve(family, weight, style, { text, codePoints })`, qui répond par un fichier (des octets, ou une URL), par plusieurs fichiers (les tranches d’une police), par `{ source, unicodeRange, weight, style }` pour une tranche ou une plage variable, ou par `null`. Le moteur les ajoute comme `FontFace` une fois que toutes sont chargées, dans l’ordre de la configuration et de chaque réponse (latin, puis latin-ext, puis greek quand le résolveur répond ainsi) : le jeu de polices est donc le même quel que soit l’ordre d’arrivée des fichiers. Il les enregistre aussi dans le registre de polices que lisent les [images SVG](/fr/docs/configuration-resources#polices-du-texte-svg) et les workers de mise en page. Un résolveur peut déclarer la police lui-même (en ajoutant une feuille de style) et répondre `null`.
-- **Le rapport** liste les polices couvertes par une police chargée (ou par une famille installée), celles qui restent `missing`, et celles que le navigateur devrait `synthesize` à partir d’une autre graisse ou inclinaison. `timeoutMs` (10 000 par défaut) borne l’attente ; une police encore en cours de chargement compte alors comme manquante. Là où il n’y a pas de jeu de polices (Node), `prepareFonts` ne fait rien et signale toutes les polices comme chargées.
+- **Le rapport** liste dans `loaded` les polices couvertes par une police chargée (ou par une famille installée), dans `missing` celles qui manquent encore, et dans `synthesized` celles que le navigateur dessinerait à partir d’une autre graisse ou inclinaison ; `added` compte les `FontFace` ajoutées à partir des fichiers du résolveur. `timeoutMs` (10 000 par défaut) borne l’attente ; une police encore en cours de chargement compte alors comme manquante. Là où il n’y a pas de jeu de polices (Node), `prepareFonts` ne fait rien et signale toutes les polices comme chargées.
 - **`buildDocumentWithFonts(content, config, options)`** prépare, construit avec `buildDocumentAsync`, lit les polices dans lesquelles les pages composent réellement du texte, charge celles que le jeu de polices n’a pas pu fournir (une graisse que seules les pages révèlent est demandée à `resolve` même si une autre graisse de la famille pourrait la remplacer), puis reconstruit (deux constructions supplémentaires au plus). `withLoadedFonts(build, options)` fait de même autour de n’importe quelle fonction de construction, pour un livre construit chapitre par chapitre ou pour un paquet (`buildBundle`) qui renvoie plusieurs documents. `options.onFonts` reçoit le rapport final.
 - **Après la construction**, chaque police dans laquelle le texte a été composé et que le jeu de polices n’a pas pu fournir figure dans `doc.contentWarnings` sous la forme `fontFallback` (voir [Avertissements dans le document](#avertissements-dans-le-document)).
 
@@ -555,6 +557,29 @@ Une partie de l’état de Postext vit dans des variables de niveau module. Tout
 
 L’isolation la plus simple consiste à donner un domaine d’exécution à chaque document : une iframe pour chaque exemple en direct (une intégration CodePen en est une), ou un [worker de mise en page](#mise-en-page-dans-un-web-worker) par document pour les mesures et la césure (les images restent enregistrées sur la page).
 
+### Documents Word (`postext/word`)
+
+Le sous-chemin `postext/word` lit et écrit des documents Word (`.docx`) sans DOM. L’importation et l’exportation Word du Sandbox, ainsi que les commandes `import-docx` et `docx` de la ligne de commande, reposent sur lui (voir [Ligne de commande › docx et import-docx](/fr/docs/command-line#docx-et-import-docx)).
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // a Uint8Array or an ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict, report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`** lit le fichier et en tire un modèle Word : ses styles, ses paragraphes, ses notes et ses images, le `title` du document et le modèle d’importation que contient une exportation Postext (`embeddedTemplate`). Un fichier qui n’est pas un document Word lève une `DocxReadError`.
+- **`wordToPostext(word, settings)`** transforme le modèle en chapitres (`{ title, markdown }`), images et tableaux. Le modèle d’importation fait correspondre chaque style Word à un titre, un style de paragraphe, un encadré, une citation ou une légende de la configuration. `chapters: 'split'` ouvre un chapitre à chaque titre de niveau 1, `'single'` en garde un seul. L’hôte range comme ressources les images (`id`, `media.bytes`, `caption`, `alt`) et les tableaux (`id`, `model`, `caption`) ; `skippedPictures` nomme les images EMF, WMF et TIFF laissées de côté.
+- **`analyzeDocx(word, template, config)`** est le rapport de qualité que montre le Sandbox avant une importation : les styles utilisés, le nombre de paragraphes stylés et des constats comme `directFormatting`, `manualHeadings` et `typedNumbering`, chacun avec un nombre et des exemples.
+- **`postextToDocx(chapters, settings)`** écrit des chapitres en `.docx` (un `Uint8Array`) avec des styles Word pour les titres, les paragraphes, les encadrés, les citations, les listes et les notes. Ce que Word ne sait pas exprimer reste tel quel dans les styles *Postext Markup*, et le modèle d’importation va dans le fichier : le document se réimporte donc sans changement. `book: true` ouvre chaque chapitre par un paragraphe `Postext Chapter`, à partir duquel l’importation reconstruit les chapitres.
+- **`wordStyleTracking(word, template, config)`** et **`applyStyleTracking(config, tracking)`** reportent l’espacement des caractères des styles Word sur les styles de la configuration qui n’en définissent aucun.
+
 
 ## Mise en page dans un Web Worker
 
@@ -589,7 +614,10 @@ Le client du worker se trouve dans le sous-chemin `postext/worker` et tient en q
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`** : lance un worker dédié (ou enveloppe celui que vous passez par `opts.worker`, ou démarre le point d’entrée du worker situé à `opts.url`) et renvoie un handle typé. Voir [Charger le worker depuis un CDN](#charger-le-worker-depuis-un-cdn).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`** : envoie les octets des polices dans le worker. Les buffers sont transférés : gardez une copie neuve sur le thread principal si vous devez les renvoyer plus tard.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`** : exécute la chaîne. Interrompre le signal annule la construction en cours.
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`** : retire du worker les polices de ces familles, pour que le prochain `registerFonts` d’une famille prenne effet au lieu d’être rapproché de la police qu’il détient déjà.
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`** : exécute la chaîne. `options` vaut `{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`. Interrompre `signal` annule la construction en cours. `onProgress({ pass, blocks, totalBlocks, pages })` est appelé à mesure que le placement avance ; `onStats({ passes, totalMs, cached?, missingFonts? })` reçoit les temps des passes de la construction terminée. `resourcesKey` est une empreinte de `content.resources` : des constructions successives avec la même clé n’envoient la liste qu’une fois, et le worker la garde. `cacheKey` est une empreinte de toute la construction : le worker garde ses derniers documents sous cette clé et répond depuis ce cache à une construction dont il détient la clé.
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`** : construit dans le cache de documents du worker sans renvoyer le document, pour un chapitre que le lecteur ouvrira peut-être ensuite ; le prochain `build` avec ce `cacheKey` est servi depuis le cache.
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`** : `prepareFonts` sur la page, puis les polices trouvées envoyées au worker ; voir [Charger le worker depuis un CDN](#charger-le-worker-depuis-un-cdn).
 - **`LayoutWorkerHandle.dispose(): void`** : termine le worker et rejette toute construction en attente avec `AbortError`.
 - **`FontPayload`** : `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` est une chaîne de graisse CSS (`'700'`, `'bold'`) ; `registerFonts` l’accepte aussi sous forme de nombre (`700`). Le `buffer` est transféré au worker lorsque vous appelez `registerFonts`.
 - **`BuildCancelledError`** (réexportée depuis `postext`) : ce que `buildDocument` lève en interne lorsque `options.shouldCancel` renvoie `true`. Vous ne la voyez généralement pas sur le thread principal : le protocole du worker la convertit en `AbortError` avant qu’elle n’atteigne votre code.

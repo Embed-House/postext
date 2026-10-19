@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '東アジアの組版',
   description: 'cjkの設定：中国語、日本語、韓国語の行分割、約物の幅、アキ、文字グリッド、ルビ、各種の記号',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '32分',
   order: 13,
   parent: 'configuration',
@@ -161,7 +161,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>grid</code></td>
-      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show?, fullLines? &#125;</code></td>
       <td>オフ</td>
       <td>版面を1行の字数と1ページの行数で指定します（<a href="#文字グリッド">文字グリッド</a>を参照）。</td>
     </tr>
@@ -193,7 +193,7 @@ interface CjkConfig {
       <td><code>annotationColor</code></td>
       <td><code>ColorValue</code></td>
       <td>本文の色</td>
-      <td>圏点、専名号、書名号の色です。ルビと割注の色の既定値にもなります。</td>
+      <td>圏点、専名号、書名号、傍線（<code>:sideline[…]</code>）の色です。ルビ、割注、訓点の色の既定値にもなります。</td>
     </tr>
     <tr>
       <td><code>ruby</code></td>
@@ -203,7 +203,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>warichu</code></td>
-      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close?, minChars? &#125;</code></td>
       <td>半分のサイズ。括弧は日本では（）、それ以外ではなし</td>
       <td><code>:warichu[…]</code>の2行の注です。注のサイズ（既定値は二分で、2行で行の全角を埋めます）、色、そして1行目の前と最終行の後に本文サイズで組む括弧を決めます（注自身の<code>open</code>／<code>close</code>が優先されます）。日本では、空の<code>open</code>や<code>close</code>（<code>''</code>）を指定すると、その括弧なしで注を組みます。<code>minChars</code>（既定値<code>2</code>）は、注の途中で改行するときに改行位置の前後へそれぞれ最低何字残すかを決めます。3字以下の注は分割されず、ほかに改行位置のない行は<code>lineBreak</code>が許す位置で改行します。<code>1</code>にすると、postext 1.27までと同じく、許される位置ならどこでも改行します。postext 1.28より前に保存され、本文に注のある設定は<code>1</code>として読み込まれます。postext 1.28以降。</td>
     </tr>
@@ -364,14 +364,15 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 VDTでは、記号付きのセグメントには`cjkMarks`が付き、レイアウトは点や線を`VDTLine.marks`（点、丸、ゴマ点、直線、二重線、点線、波線。行の流れの座標系で表します）としてその行に置きます。Canvas、HTML、PDFはこれをそのまま描画します（PDFでは`Artifact /Layout`、HTMLでは`aria-hidden`のボックスと、圏点付きテキストの`<em>`）。ルビの親文字のセグメントには`ruby`（ルビとそのラン。日本語のルビでは、熟語のほかの文字と共有する注釈の`id`と`jukugo`も）が付き、ルビによって字間が広がった場合は`tracking`付きで親文字を`inkOffset`の位置に描画します。訓点の付いた文字には`kunten`（そのランと竪点）が付きます。行上にある割注の部分は1つのセグメントで、その`text`は上の行、次に下の行で、`warichu`にはレンダラーが代わりに描画する2行が入ります。タグ付きPDFは、ルビを親文字の`Ruby`の`RT`に、注を`Warichu`に入れ、行の`/ActualText`は親文字と注を1回ずつ読み取ります。圏点、ルビ、注は、本文、見出し、リスト、囲み、そしてリソースのキャプション、表のセル、注に描画され、それらの行にも本文の行と同じく`marks`と`ruby`が付きます。デザインのテキストは、これらを付けずにテキストだけを保ちます。
 
-設定の解決と既定値の除去は、ほかの節と同じ仕組みです。`spaceAfterQuestion`、`paragraphStartBracket`、`wordBreak`と、ルビの`overhang`、`align`、`smallKana`は、何かを変える場合（日本の場合、または設定した場合）にだけ解決済みの設定に含まれます。`setCjkLineBreak`と`setCjkComposition`は、`buildDocument`の外で行う計測のために、レベルと組み方（約物の幅、ぶら下げ、和欧間のアキ。`cjkCompositionOf(resolved.cjk, dpi)`）を設定します。ビルドの中では、設定からこれらが自動で設定されます。ビルドの外では、約物は送り幅をすべて保ち、和欧間のアキは入りません。
+設定の解決と既定値の除去は、ほかの節と同じ仕組みです。`spaceAfterQuestion`、`paragraphStartBracket`、`wordBreak`と、ルビの`overhang`、`align`、`smallKana`は、何かを変える場合（日本の場合、または設定した場合）にだけ解決済みの設定に含まれます。`circledNumbers`は`'western'`のときだけ、`composeDesignText`は`false`のときだけ含まれます。`setCjkLineBreak`と`setCjkComposition`は、`buildDocument`の外で行う計測のために、レベルと組み方（約物の幅、ぶら下げ、和欧間のアキ。`cjkCompositionOf(resolved.cjk, dpi, locale)`。`locale`は文書の言語）を設定します。ビルドの中では、設定からこれらが自動で設定されます。ビルドの外では、約物は送り幅をすべて保ち、和欧間のアキは入りません。
 
 ```ts
 import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
 
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   trimLineStart: true, hangingPunctuation: 'none', titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' },
+//   latinSpacingEdge: 'letters', uprightDigits: 2,
 //   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
@@ -380,7 +381,8 @@ resolveCjkConfig(undefined, 'zh-HK');
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half',
+//   titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' }, latinSpacingEdge: 'western', …,
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },

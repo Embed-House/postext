@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages settings',
   description: 'Page templates for composed pages: frames, groups, decoration, inheritance and recto/verso variants, the label styles of picture anchors, and the warnings a template can give',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>none</td>
-      <td>A paragraph style for the text of the page, as heading styles have one.</td>
+      <td>A paragraph style for the text of the page, as heading styles have one. The layout does not apply it yet.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, the style's</td>
-      <td>Columns inside the frame.</td>
+      <td>Columns inside the frame. A heading never ends one of them: it goes on to the next column with the text it introduces (under <code>headings.keepWithNext</code>, since postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Read and checked, but not yet applied: the template's `bodyStyle` and `palette`. A frame's `writingMode` and `direction` are applied since postext 1.39. An `'auto'` width reads as `'fill'`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Since postext 1.42 it also applies the template's `palette`, a frame's `look` and an `'auto'` width (as wide as the frame's longest line). A frame's `writingMode` and `direction` are applied since postext 1.39. Read and checked, but not yet applied: the template's `bodyStyle`.
 
 ### Spreads
 
@@ -588,7 +588,7 @@ On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as
 
 ## Label styles
 
-The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42).
+The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42). Renaming a style there rewrites the anchors and the `::label` lines that name it (since postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>How small a label may be set when it does not fit its width.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Vertical writing for the labels of this style: characters upright in cells one under another, columns from right to left, as a Chinese or Japanese map is lettered. An anchor's own <code>writingMode</code> wins.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> says the label set at this anchor may touch its neighbours, as the source prints it: <code>labelOverlap</code> is not raised for a pair it belongs to. It takes precedence over the style's <code>overlap</code>. Since postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>On a figure across the spine of a spread, <code>'keep'</code> slides the label off the gutter band, to the side its point lies on; <code>'cross'</code> leaves it where the point puts it, as a title across both pages needs. Since postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
       <td>none</td>
       <td>A <code>labelStyles</code> id. A label that names its own style overrides it.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> sets the label vertically, as a Chinese or Japanese map or a spine is lettered. Its <code>width</code> is then a fraction of the picture's height, <code>align</code> runs along the column (<code>start</code> is the top) and <code>verticalAlign</code> across the columns (<code>top</code> is the first, right-hand one).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> says the label set at this anchor may touch its neighbours, as the source prints it: <code>labelOverlap</code> is not raised for a pair it belongs to. It takes precedence over the style's <code>overlap</code>. Since postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>On a figure across the spine of a spread, <code>'keep'</code> slides the label off the gutter band, to the side its point lies on; <code>'cross'</code> leaves it where the point puts it, as a title across both pages needs. Since postext 1.43.</td>
     </tr>
   </tbody>
 </table>

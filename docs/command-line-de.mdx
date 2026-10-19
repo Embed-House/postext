@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Kommandozeile',
   description: 'Eine eigenständige ausführbare Datei für macOS, Linux und Windows. Sie wandelt ein .postext-Buch, einen Buchordner oder lose Markdown-Dateien in PDF, HTML, EPUB, Seitenbilder und Word um, packt Pakete, prüft Bücher und liefert JSON-Ausgabe für Skripte und Agenten',
   lang: 'de',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 45,
   plainSummary: "Diese Seite richtet sich an alle, die Bücher mit Postext im Terminal statt auf der Website machen wollen. Sie laden eine einzige Datei für Ihren Computer herunter und führen sie aus, ohne etwas zu installieren. Sie geben ihr Ihr Buch oder ein paar Textdateien, und sie erzeugt ein PDF, eine Webseite, ein E-Book, Bilder der Seiten oder ein Word-Dokument. Sie kann ein Buch auch auf Probleme prüfen und seine Dateien zu einer einzigen packen. Auch Programme und KI-Assistenten können sie nutzen, denn sie kann in einem Format antworten, das diese leicht lesen.",
@@ -156,7 +156,7 @@ Konfiguration des Buchs gelegt. Ein mehrsprachiges Paket wird in seiner eigenen 
 </table>
 
 Jeder Befehl schreibt in das Verzeichnis, in dem Sie ihn aufrufen, benannt nach der Eingabe, es sei denn,
-`-o` gibt den Pfad an. `-o -` schreibt eine einzelne Ausgabe auf die Standardausgabe.
+`-o` gibt den Pfad an (`images` schreibt in `pages/`). `-o -` schreibt eine einzelne Ausgabe auf die Standardausgabe.
 
 ### pdf
 
@@ -233,7 +233,8 @@ ohne den Umweg über ein PDF.
   standardmäßig `page-{n:03}`.
 - `--print-preview`: die Seite so, wie die Druckerei sie wiedergeben wird, über das
   Ausgabeprofil, mit eingezeichnetem Endformat und Anschnitt.
-- `--jobs N`: wie viele Bilder gleichzeitig kodiert werden.
+- `--jobs N`: wie viele Bilder gleichzeitig kodiert werden (standardmäßig so viele, wie
+  der Rechner Prozessoren hat).
 
 ### docx und import-docx
 
@@ -272,7 +273,9 @@ postext unpack my-book.postext -o my-book/
 
 `pack` packt einen Buchordner so, wie er ist, als ZIP oder baut ein Paket aus losen Markdown-Dateien.
 Dieselbe Eingabe ergibt immer dieselben Bytes, sodass sich ein Paket vergleichen oder
-hashen lässt. `unpack` weigert sich, in einen Ordner zu schreiben, der nicht leer ist, es sei denn,
+hashen lässt. Bei losen Markdown-Dateien setzen `--id`, `--description` und `--thumbnail FILE`
+(ein Titelbild) die ID, die Beschreibung und das Vorschaubild des Pakets; die ID ist
+standardmäßig ein Slug des Namens. Ein Ordner behält, was seine `preset.json` angibt. `unpack` weigert sich, in einen Ordner zu schreiben, der nicht leer ist, es sei denn,
 `--force` ist angegeben.
 
 ### info und check
@@ -340,7 +343,7 @@ und die zuletzt fehlerfreien Dateien bleiben erhalten.
 </table>
 
 Und für jeden Befehl: `--json`, `--quiet` (`-q`, nur Fehler), `--verbose`
-(Fortschritt und jede Warnung), `--no-color`, `--help`.
+(Fortschritt und jede Warnung), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Schriften
 

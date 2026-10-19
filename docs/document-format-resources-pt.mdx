@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Imagens, tabelas e vídeos',
   description: 'Como pôr recursos no texto: referências e inserções, numeração, posicionamento e o lugar onde cada flutuante vai parar, contorno de texto, tamanho dos bitmaps, áreas seguras, âncoras de quadrinhos e vídeos',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '42 min',
   order: 29,
   parent: 'document-format',
@@ -63,7 +63,7 @@ Uma célula pode ter seu próprio preenchimento. `TableCell.background` é um va
 
 Os recursos SVG também podem ser recoloridos para impressão com uma única cor especial por meio de `diagramStyle.singleInk` (padrão `false`). Quando ativado, todas as cores de um diagrama SVG são convertidas numa retícula de `diagramStyle.inkColor` (que por padrão é a cor principal da paleta, `#295AA3`) proporcional à luminância (o branco vira papel, o preto a tinta cheia), de modo que as figuras se reproduzem fielmente quando o documento é impresso com uma única cor especial. Veja [Configuração › Estilo de diagramas](/pt/docs/configuration-resources#estilo-de-diagramas).
 
-Uma inserção malformada (`id` ausente ou vazio, `id` sem aspas ou com aspas simples, atributos extras) não vira um bloco de recurso; ela passa para a análise comum de parágrafo e continua visível na saída. O mesmo acontece com uma linha de inserção bem formada colada embaixo de uma linha de parágrafo sem linha em branco entre elas: ela é lida como parte desse parágrafo. Os dois casos geram um aviso `malformedEmbed`, uma entrada **Inserção composta como texto** no painel Verificações do Sandbox.
+Uma inserção malformada (`id` ausente ou vazio, `id` sem aspas ou com aspas simples, atributos extras além do `slot` de uma página composta) não vira um bloco de recurso; ela passa para a análise comum de parágrafo e continua visível na saída. O mesmo acontece com uma linha de inserção bem formada colada embaixo de uma linha de parágrafo sem linha em branco entre elas: ela é lida como parte desse parágrafo. Os dois casos geram um aviso `malformedEmbed`, uma entrada **Inserção composta como texto** no painel Verificações do Sandbox.
 
 As referências em linha são reconhecidas dentro de qualquer bloco de texto (parágrafos, títulos, citações em bloco e itens de lista) e podem conviver com negrito, itálico, código em linha e fórmulas em linha.
 
@@ -83,7 +83,7 @@ A diretiva `:ref` aceita três atributos opcionais, em qualquer ordem. `style` e
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>Estilo padrão: o <code>shortLabel</code> do tipo seguido do número, unidos por um espaço inseparável para que nunca se separem numa quebra de linha.</td>
+      <td>Estilo padrão: o <code>shortLabel</code> do tipo seguido do número, unidos por um espaço inseparável (ou pelo <code>labelNumberGap</code> do estilo de legenda) para que nunca se separem numa quebra de linha.</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

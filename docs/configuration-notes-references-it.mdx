@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Note e riferimenti',
   description: 'Note a piè di pagina, numeri di riga, rimandi e citazioni, l’indice dei contenuti e l’indice analitico',
   lang: 'it',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // The note symbols of numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // unset font, w
 
 ## Rimandi
 
-La proprietà `crossRefs` stabilisce le parole che un [rimando](/it/docs/document-format-notes-references#rimandi-e-ancore) stampa attorno a un numero o a una pagina, e lo stile che prende un `:ref` quando non ne imposta uno. Ogni modello contiene `{n}` dove va il numero; uno senza riceve il numero dopo uno spazio indivisibile (`"§"` stampa *§ 3.2*). Un modello non impostato segue la lingua del documento: *chapter / section / p.* in inglese, *capítulo / sección / pág.* in spagnolo, `第{n}章` / `第{n}节` / `第{n}页` in cinese, e così via per francese, tedesco, italiano, portoghese, catalano e olandese.
+La proprietà `crossRefs` stabilisce le parole che un [rimando](/it/docs/document-format-notes-references#rimandi-e-ancore) stampa attorno a un numero o a una pagina, e lo stile che prende un `:ref` quando non ne imposta uno. Ogni modello contiene `{n}` dove va il numero; uno senza riceve il numero dopo uno spazio indivisibile (`"§"` stampa *§ 3.2*). Un modello non impostato segue la lingua del documento: *chapter / section / p.* in inglese, *capítulo / sección / pág.* in spagnolo, `第{n}章` / `第{n}节` / `第{n}页` in cinese, `第{n}章` / `{n}節` / `{n}ページ` in giapponese, `الفصل {n}` / `القسم {n}` / `ص {n}` in arabo, e così via per francese, tedesco, italiano, portoghese, catalano e olandese.
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>secondo la lingua, corsivo (tondo nella scrittura araba)</td>
+      <td>secondo la lingua, corsivo (tondo nella scrittura araba e in giapponese)</td>
       <td>Le parole prima di un rimando. Se non impostate, seguono la lingua del documento: <em>See</em> / <em>See also</em>, <em>Véase</em> / <em>Véase también</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 in cinese tradizionale)… Un indice cinese colloca il rimando dopo un punto fermo, senza spazio: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

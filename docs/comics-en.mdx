@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Comics',
   description: 'How Postext sets comics and manga from Markdown: comic pages cut by a split tree, panel pictures cropped around their safe area, lettering generated from a script (speech, thought, whisper, shout, radio, captions, sound effects), balloon styles, speaker anchors on the pictures, strips in the text, two-page spreads, right-to-left reading and vertical lettering, translations, and the canvas, PDF, HTML and EPUB outputs',
   lang: 'en',
-  lastUpdated: '2026-10-07',
+  lastUpdated: '2026-10-19',
   readingTime: '38 min',
   order: 33,
   plainSummary: "This page explains how to make a comic with Postext. The pictures are the panels, and everything the characters say, think or hear is written as text in the Markdown file. Postext places the panels on the page and draws the speech balloons, captions and sound effects around the words by itself. To translate the comic you rewrite only the words, and Postext letters the new language again: Japanese in columns, Arabic from right to left. The page also covers comic strips inside a book, pages across two facing pages, the outputs and the limits that remain.",
@@ -519,7 +519,7 @@ Text that does not fit its frame is set smaller, down to 90 %, then clipped at t
 
 ### Frames in the source map and the Sandbox
 
-`sourceAt`, `elementsForSource` and `findElement` ([Composed pages › Source map](/en/docs/composed-pages#source-map)) answer for comics too: a balloon's glyph, the balloon (level `box`), a panel's picture (`resource`), its frame (`frame`) and the comic (`template`), with the ids above. A text panel's words answer as text does, then their line, paragraph and box, the frame and the comic. In the Sandbox a text panel's words take the caret and the selection like the rest of the text, a click in a text panel off its words puts the caret at its text, and a double click on one of its paragraphs edits it on the page. Splitters, panels and balloons are edited as before.
+`sourceAt`, `elementsForSource` and `findElement` ([Composed pages › Source map](/en/docs/composed-pages#source-map)) answer for comics too: a balloon's glyph, the balloon (level `box`), a panel's picture (`resource`), its frame (`frame`) and the comic (`template`), with the ids above. A text panel's words answer as text does, then their line, paragraph and box, the frame and the comic. In the Sandbox a text panel's words take the caret and the selection like the rest of the text, a click in a text panel off its words puts the caret at its text, and a double click selects a word, as in any text. Splitters, panels and balloons are edited as before.
 
 ## Comics output
 

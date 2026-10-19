@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '字体、颜色与输出',
   description: '单位、颜色和调色板，自定义字体，HTML阅读器，PDF与印刷输出，Folio书页查看器，以及调试用的叠加层',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '28分钟',
   order: 19,
   parent: 'configuration',
@@ -41,6 +41,7 @@ interface ColorValue {
   hex: string;         // '#ff0000'、'transparent' 等
   model: ColorModel;   // 'hex' | 'rgb' | 'cmyk' | 'hsl'
   cmyk?: CmykPercent;  // 以CMYK定义的颜色的准确印刷色数值。
+  paletteId?: string;  // 它所跟随的colorPalette条目。
 }
 ```
 
@@ -74,7 +75,7 @@ const config: PostextConfig = {
 
 ## 自定义字体
 
-Postext把每个`fontFamily`字符串**同时**与Google Fonts字体目录和文档的`customFonts`列表匹配。名称冲突时自定义字体优先：如果你声明了`customFonts: [{ name: 'Roboto', … }]`，Postext会使用你上传的文件，而不是Google Fonts的“Roboto”。
+Postext把每个`fontFamily`字符串**同时**与Google Fonts字体目录和文档的`customFonts`列表匹配。名称冲突时自定义字体优先：如果你声明了`customFonts: [{ name: 'Roboto', … }]`，Postext会使用你上传的文件，而不是Google Fonts的“Roboto”。Google Fonts没有的字体族，沙盒从Fontsource获取。通用名称（`serif`、`system-ui`）和操作系统自带的字体（Arial、Segoe UI、PingFang SC……）从不向Fontsource查询：这样的字体族用读者电脑上已有的字体排版，**字体**面板显示为*未找到*，PDF和SVG图片也没有它的文件可嵌入。书若用它排版，请把它作为自定义字体上传。
 
 以下情况适合使用自定义字体：
 
@@ -139,8 +140,8 @@ interface PostextConfig {
 
 沙盒的**检查**面板在其*字体*组中列出三种自定义字体特有的问题（都由同一个`debug.warnings.missingFont`开关控制，这个开关原本就管着通用的“未加载”警告）：
 
-- **未知字体族**：某个`fontFamily`引用的名称既不是已知的Google Fonts字体，也不是当前已声明的自定义字体族。当你删除一个仍被某个`fontFamily`字段引用的自定义字体族时，这条警告也会立刻出现，不必等DOM察觉。
-- **缺少字体变体**：字体族存在，但标准的字重/样式位置（400 / 700，normal / italic）中至少有一个没有上传文件。警告会列出具体缺少哪些组合。
+- **未知字体族**：某个`fontFamily`引用的名称在Google Fonts和Fontsource中都没有，也不是当前已声明的自定义字体族。当你删除一个仍被某个`fontFamily`字段引用的自定义字体族时，这条警告也会立刻出现，不必等DOM察觉。
+- **缺少字体变体**：字体族存在，但书中用到的某种字重和样式没有上传文件，例如只有常规体的字体族却用于粗体标题。警告会列出缺少的组合。由该字体族的`fallback`提供的斜体不算缺少。
 - **字体变体重复**：同一字体族中，两个或更多上传文件占用同一个（字重，样式）位置。渲染时只会用到其中一个文件；警告提醒你重新调整其余条目。
 
 点击其中任何一条警告都会打开字体面板，方便你上传缺少的变体、重新添加字体族或区分重复的变体。
@@ -856,7 +857,7 @@ Postext排出的同一批页面既供屏幕显示，也供印刷机印刷，而�
 
 ### 运行检查
 
-`contrastDocument(doc, options)`返回排好的文档中查出的问题，对比度最低的排在最前。每个问题带有全书范围的页序`pageIndex`、在纸面上的`rect`（页面px）和首次出现处的源码范围，实际绘出的两种颜色（`color`、`background`），这样排的文字所用的最小字号`sizePt`及其`weight`和`italic`，一个`role`（`'body'`、`'heading'`、`'caption'`、`'table'`、`'runningHead'`、`'design'`、`'chip'`或`'marker'`），第一个文本片段的`text`，以及这样排的文本片段数`count`。同一对颜色在每个阈值下只报告一次，不论有多少行用到它。
+`contrastDocument(doc, options)`返回排好的文档中查出的问题，对比度最低的排在最前。每个问题带有全书范围的页序`pageIndex`、在纸面上的`rect`（页面px）和首次出现处的源码范围，实际绘出的两种颜色（`color`、`background`），这样排的文字所用的最小字号`sizePt`及其`weight`和`italic`，一个`role`（`'body'`、`'heading'`、`'caption'`、`'table'`、`'runningHead'`、`'design'`、`'chip'`、`'marker'`或`'label'`（图中标注的文字）），第一个文本片段的`text`，以及这样排的文本片段数`count`。同一对颜色在每个阈值下只报告一次，不论有多少行用到它。
 
 - `lowContrast`另有`level`、`large`、`required`，所检查的每种介质下的对比度（`screen`、`print`），以及`failing`，即低于`required`的那些介质。
 - `reversedText`另有`reasons`（`'small'`、`'italic'`、`'light'`）、`minimumPt`和`inks`。
@@ -1410,8 +1411,8 @@ debug: {
 - **侧栏没有空间**：`'oneAndHalf'`版式的`sideColumnPercent`（文档的，或标题样式自己的`layout`中的）会使其中一栏不足内容宽度的1%，或者不是数字。各栏按两者都能接受的最接近的值截取，`used`给出该值（`sideColumnPercentClamped`；见[`'oneAndHalf'`版式](/zh/docs/configuration-page-layout#版式类型)）。
 - **栏数超出范围**：`'multiple'`版式的`columnCount`（文档的，或标题样式自己的`layout`中的）不是3到8之间的整数。页面按最接近的有效栏数分栏（不是数字时为3），`used`给出这个数（`columnCountClamped`；见[`'multiple'`版式](/zh/docs/configuration-page-layout#版式类型)）。
 - **字符网格过大**：`cjk.grid`的每行字数或每页行数超出了页边距内能容纳的数量。网格按能容纳的最大数量排，`used`给出这个数（`cjkGridClamped`；见[字格](/zh/docs/configuration-east-asian#字格)）。
-- **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`）。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
-- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。`canvasViewer.pageGap`和`canvasViewer.rowGap`的检查方式相同：`used`是该值最终读成的0到200之间的整数（自postext 1.43起）。
+- **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`），首字下沉、`lineNumbers`、`canvasViewer`、`checks`、`codeStyle`和漫画设置也一样。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
+- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。`canvasViewer.pageGap`和`canvasViewer.rowGap`的检查方式相同：`used`是该值最终读成的0到200之间的整数（自postext 1.43起）。`print.standard`、`print.outputProfile`和`print.renderingIntent`也同样检查（`used`是默认值得出的结果），`checks.contentInConfig`中不是0或更大整数的`maxWords`或`maxChars`也一样。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
 - **竖排中的文字绕排**：竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
 - **基于其他样式的标注框样式**：标注框样式的`extends`指向`calloutStyles`中不存在的样式（`calloutStyleExtendsUnknown`，`suggestion`给出最接近的id），或沿`extends`追溯会回到它自己（`calloutStyleExtendsCycle`，`value`为环`a → b → a`）。该样式单独成立，未设置的项使用内置默认值（见[基于其他样式的样式](/zh/docs/configuration-callouts#基于其他样式的样式)）。

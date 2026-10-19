@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Page et mise en page',
   description: 'Le format de la page, les marges et la grille de ligne de base, la numérotation des pages, les colonnes et leurs gouttières',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '37 min',
   order: 5,
   parent: 'configuration',
@@ -50,7 +50,7 @@ La propriété `page` contrôle les dimensions physiques et l’apparence de la 
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td><code>2 cm</code> de chaque côté</td>
+      <td><code>2 cm</code> en haut et en bas, <code>1.5 cm</code> à gauche et à droite</td>
       <td>Espace entre le bord de la page et la zone de contenu. Chaque côté (haut, bas, gauche, droite) se règle indépendamment. Avec <code>mirror: true</code>, les marges sont des marges <em>de pages en regard</em> : <code>left</code> est la marge intérieure (côté dos) et <code>right</code> la marge extérieure ; les pages impaires (la page 1 est impaire) les gardent telles qu’écrites et les pages paires les inversent : la zone de contenu (et avec elle les colonnes, les bandes de flottants, les conteneurs d’en-tête et de pied de page et les bandes d’ouverture) se déplace donc d’une page à l’autre de la double page. Par défaut <code>false</code>. Voir ci-dessous.</td>
     </tr>
     <tr>
@@ -76,6 +76,12 @@ La propriété `page` contrôle les dimensions physiques et l’apparence de la 
       <td><code>BaselineGridConfig</code></td>
       <td>désactivée</td>
       <td>Dessiner la grille de ligne de base sur les pages, pour vérifier le rythme vertical. La mise en page s’aligne sur la grille, qu’elle soit dessinée ou non. Voir ci-dessous.</td>
+    </tr>
+    <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>Le format des étiquettes de page et la valeur de départ du compteur. Voir <a href="#numérotation">Numérotation</a>.</td>
     </tr>
     <tr>
       <td><code>binding</code></td>
@@ -327,7 +333,7 @@ Les styles japonais (depuis postext 1.16) suivent eux aussi CSS Counter Styles. 
 
 Les styles arabes gardent le nom CSS quand CSS en a un (`arabic-indic`, `persian` ; `urdu` et `maghrebi-abjad`, issus des *Ready-made Counter Styles* du W3C, sont lus comme `persian` et `arabic-abjad-maghrebi`). `arabic` garde son ancien sens, les chiffres européens. `arabic-abjad` écrit la numération abjad additive de l’arabe classique et de la foliotation des manuscrits, la plus haute valeur en premier : 11 s’écrit يا, 1446 غتمو, et le nombre de milliers se place avant غ (2000 بغ, 1002 غب) ; au-delà de 999 999, le nombre s’imprime en chiffres. La note du W3C utilise ce nom pour une série de 28 lettres où 11 vaut ك ; Postext appelle cette série `abjad`, la numérotation par lettres des éléments de liste dans l’ordre abjad (أ، ب، ج، د، هـ), et `hijai` l’ordre alphabétique (أ، ب، ت، ث). Les deux écrivent la première lettre avec sa hamza (أ), et un hâ qui serait isolé sous la forme هـ, avec un tatweel, pour qu’aucune ne soit lue comme les chiffres ١ et ٥ ; au-delà de 28, elles doublent, comme le fait `lower-alpha` (أأ, أب). Les valeurs maghrébines suivent le moyen mnémotechnique صعفض قرست ثخذ ظغش (ص 60, ض 90) ; la liste du W3C intervertit ص et ض. Un أ seul ne permet pas de distinguer les deux séries de lettres : leurs jetons sont donc leurs quatre premières lettres : `{1:أبجد}`, `{1:أبتث}`. Les chiffres propres d’un document se règlent avec [`numerals`](/fr/docs/configuration-language#chiffres-du-document).
 
-Les autres graphies sont destinées aux configurations que rien ne vérifie par typage : préréglages JSON et JavaScript simple. Les types TypeScript n’acceptent toujours que la graphie propre de chaque réglage (celle qu’écrit le Sandbox et que renvoie `resolveAllConfig`, noms d’Asie orientale compris) : une `PostextConfig` typée s’y tient donc, et une autre graphie nécessite un transtypage (*cast*).
+Les autres graphies sont destinées aux configurations que rien ne vérifie par typage : préréglages JSON et JavaScript simple. Les types TypeScript n’acceptent toujours que la graphie propre de chaque réglage (celle qu’écrit le Sandbox et que contient la configuration résolue (`doc.config`), noms d’Asie orientale compris) : une `PostextConfig` typée s’y tient donc, et une autre graphie nécessite un transtypage (*cast*).
 
 ```js
 // JavaScript or a JSON preset (in TypeScript, each setting's own spelling)
@@ -336,7 +342,7 @@ page: { pageNumbering: { format: 'roman-lower' } }, // same as 'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 'roman-upper'
 ```
 
-`resolveAllConfig` convertit les formats de liste et de page dans la graphie propre à leur réglage (`'decimal'` se résout en `'arabic'` dans `orderedLists`, `'roman-lower'` en `'lower-roman'` dans `page.pageNumbering`) et `stripConfigDefaults` supprime toute graphie de la valeur par défaut. Les panneaux du Sandbox affichent chacun des trois réglages dans sa propre graphie, quelle que soit celle qu’utilise la configuration. Toute autre valeur (`roman`, `01`, une faute de frappe) numérote en décimal au lieu d’imprimer `undefined`, et est signalée par un [avertissement de configuration](/fr/docs/configuration-fonts-colors-viewers#avertissements-de-configuration). Les modèles de numérotation des titres acceptent les mêmes noms après les deux-points (`{1:roman-upper}` équivaut à `{1:I}`), à côté de leur propre `{1:01}` complété par des zéros.
+La résolution de la configuration (`doc.config`) convertit les formats de liste et de page dans la graphie propre à leur réglage (`'decimal'` se résout en `'arabic'` dans `orderedLists`, `'roman-lower'` en `'lower-roman'` dans `page.pageNumbering`) et `stripConfigDefaults` supprime toute graphie de la valeur par défaut. Les panneaux du Sandbox affichent chacun des trois réglages dans sa propre graphie, quelle que soit celle qu’utilise la configuration. Toute autre valeur (`roman`, `01`, une faute de frappe) numérote en décimal au lieu d’imprimer `undefined`, et est signalée par un [avertissement de configuration](/fr/docs/configuration-fonts-colors-viewers#avertissements-de-configuration). Les modèles de numérotation des titres acceptent les mêmes noms après les deux-points (`{1:roman-upper}` équivaut à `{1:I}`), à côté de leur propre `{1:01}` complété par des zéros.
 
 
 ## Mise en page

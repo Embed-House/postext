@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuración: recuadros',
   sidebarTitle: 'Recuadros',
-  description: 'Los estilos con nombre de los recuadros :::callout (borde, fondo, franja, título, icono y marcador), los enunciados numerados, la tipografía dentro del recuadro y los recuadros partidos entre páginas',
+  description: 'Los estilos con nombre de los recuadros :::callout (borde, fondo, franja, título, icono, marcador y pestaña de etiqueta), los enunciados numerados, la tipografía dentro del recuadro, los recuadros partidos entre páginas y los diseños dibujados en un recuadro',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '28 min',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ El cristal sigue caliente una hora después de apagar la llama.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>, fuente de encabezados, <code>400</code>, <code>1.5em</code>, color principal, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
-      <td>Un glifo de texto (<code>kind: 'glyph'</code>) o un recurso de mapa de bits o SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) junto al contenido. Con franja lateral el icono se centra sobre la franja; si no, reserva su propia columna (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> lo centra verticalmente sobre el contenido. Una imagen de recurso se ajusta dentro del cuadrado conservando su proporción; un icono más alto que el contenido agranda el recuadro para contenerlo (y, con <code>align: 'center'</code>, centra el contenido sobre él). Con <code>width</code> la imagen se ajusta a una caja de <code>width</code> × <code>size</code> (una tira ancha de iconos). <code>position: 'corner'</code> cuelga el icono de una esquina superior como una insignia, medio fuera del borde y sin ocupar sitio en el contenido; un icono ancho (<code>width</code>) se centra en la esquina según el ancho con que se dibuja, y en la esquina izquierda el título empieza pasada su mitad interior (hasta postext 1.4 se colocaba según su alto, de modo que una tira ancha sobresalía del recuadro y tapaba el título); <code>cornerSide</code> elige la esquina: <code>'right'</code> / <code>'left'</code>, o <code>'outer'</code> / <code>'inner'</code>, que siguen la paridad de la página con márgenes simétricos (exterior = derecha en una página impar, izquierda en una par).</td>
+      <td>Un glifo de texto (<code>kind: 'glyph'</code>) o un recurso de mapa de bits o SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) junto al contenido. Con franja lateral el icono se centra sobre la franja; si no, reserva su propia columna (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> lo centra verticalmente sobre el contenido. Una imagen de recurso se ajusta dentro del cuadrado conservando su proporción; un icono más alto que el contenido agranda el recuadro para contenerlo (y, con <code>align: 'center'</code>, centra el contenido sobre él). Con <code>width</code> la imagen se ajusta a una caja de <code>width</code> × <code>size</code> (una tira ancha de iconos). <code>position: 'corner'</code> cuelga el icono de una esquina superior como una insignia, medio fuera del borde y sin ocupar sitio en el contenido; un icono ancho (<code>width</code>) se centra en la esquina según el ancho con que se dibuja, y en la esquina izquierda el título empieza pasada su mitad interior (hasta postext 1.4 se colocaba según su alto, de modo que una tira ancha sobresalía del recuadro y tapaba el título); <code>cornerSide</code> elige la esquina: <code>'right'</code> / <code>'left'</code>; <code>'outer'</code> / <code>'inner'</code>, que siguen la paridad de la página con márgenes simétricos (exterior = derecha en una página impar, izquierda en una par), o <code>'start'</code> / <code>'end'</code>, que siguen la dirección del propio recuadro, como los de la franja.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ El cristal sigue caliente una hora después de apagar la llama.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>sin definir (sin pestaña)</td>
-      <td>Una pestaña sobre el borde superior del recuadro que imprime el atributo <code>label</code> del bloque: el número de un recuadro numerado («RECUADRO 1-1»). Se pega a la esquina <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>) con un retranqueo <code>inset</code>, sobresale <code>offset</code> por encima del borde (ese espacio forma parte del bloque, además de <code>marginTop</code>, y se conserva también en cabeza de columna), mide <code>height</code> de alto con <code>paddingX</code> a cada lado del texto, y puede llevar un recurso <code>icon</code> a su lado (<code>&#123; resourceId, width, gap &#125;</code>, hacia el interior) y un filete <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) a lo largo del borde superior desde la esquina opuesta hasta ella. Por defecto: fuente de encabezados, cuerpo del texto base, <code>700</code>, blanco sobre el color principal, <code>1.4em</code> de alto, <code>0.6em</code> de relleno. La pestaña es una forma propia apoyada en el marco, así que conserva las esquinas rectas sea cual sea el <code>borderRadius</code> del recuadro. Desde postext 1.42, <code>icon.placement: 'inside'</code> coloca la imagen dentro de la pestaña, al principio y antes de las palabras (en el extremo derecho en un recuadro compuesto de derecha a izquierda), a <code>gap</code> de ellas: la pestaña mide lo que la imagen, el espacio, las palabras y el relleno, y la imagen, ajustada a <code>icon.width</code> y a la altura de la pestaña, queda centrada en ella. La imagen conserva sus colores, así que un anillo blanco sobre una pestaña de color y uno de color sobre una blanca son dos recursos, uno en cada estilo. <code>'beside'</code>, el valor predeterminado, coloca la imagen fuera del borde de la pestaña. Desde postext 1.43, <code>icon.tint: true</code> pinta la imagen con el <code>color</code> de la pestaña en lugar de con sus propios colores: solo se pinta su silueta, en el color de las palabras, así que un mismo anillo sirve para todos los tonos de un libro. Una imagen sin transparencia se convierte en un rectángulo liso. En el PDF un SVG conserva sus bordes y un mapa de bits se recorta por donde es medio transparente; el original de imprenta (<code>svg.pdfFileId</code>) no se usa, porque una página PDF no se puede recolorear.</td>
+      <td>Una pestaña sobre el borde superior del recuadro que imprime el atributo <code>label</code> del bloque: el número de un recuadro numerado («RECUADRO 1-1»). Se pega a la esquina <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, o <code>'top-start'</code> / <code>'top-end'</code> en la dirección del propio recuadro, como <code>'start'</code> / <code>'end'</code> en la franja) con un retranqueo <code>inset</code>, sobresale <code>offset</code> por encima del borde (ese espacio forma parte del bloque, además de <code>marginTop</code>, y se conserva también en cabeza de columna), mide <code>height</code> de alto con <code>paddingX</code> a cada lado del texto, y puede llevar un recurso <code>icon</code> a su lado (<code>&#123; resourceId, width, gap &#125;</code>, hacia el interior) y un filete <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) a lo largo del borde superior desde la esquina opuesta hasta ella. Por defecto: fuente de encabezados, cuerpo del texto base, <code>700</code>, blanco sobre el color principal, <code>1.4em</code> de alto, <code>0.6em</code> de relleno, sin desplazamiento ni retranqueo, y una imagen de <code>1em</code> de ancho a <code>0.3em</code> del texto. La pestaña es una forma propia apoyada en el marco, así que conserva las esquinas rectas sea cual sea el <code>borderRadius</code> del recuadro. Desde postext 1.42, <code>icon.placement: 'inside'</code> coloca la imagen dentro de la pestaña, al principio y antes de las palabras (en el extremo derecho en un recuadro compuesto de derecha a izquierda), a <code>gap</code> de ellas: la pestaña mide lo que la imagen, el espacio, las palabras y el relleno, y la imagen, ajustada a <code>icon.width</code> y a la altura de la pestaña, queda centrada en ella. La imagen conserva sus colores, así que un anillo blanco sobre una pestaña de color y uno de color sobre una blanca son dos recursos, uno en cada estilo. <code>'beside'</code>, el valor predeterminado, coloca la imagen fuera del borde de la pestaña. Desde postext 1.43, <code>icon.tint: true</code> pinta la imagen con el <code>color</code> de la pestaña en lugar de con sus propios colores: solo se pinta su silueta, en el color de las palabras, así que un mismo anillo sirve para todos los tonos de un libro. Una imagen sin transparencia se convierte en un rectángulo liso. En el PDF un SVG conserva sus bordes y un mapa de bits se recorta por donde es medio transparente; el original de imprenta (<code>svg.pdfFileId</code>) no se usa, porque una página PDF no se puede recolorear.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ El cristal sigue caliente una hora después de apagar la llama.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Texto de ese indicador (el «(SIGUE)» de un guion), en la fuente y el cuerpo del texto del recuadro, en el idioma del documento.</td>
+      <td><code>'Continued'</code></td>
+      <td>Texto de ese indicador (el «(SIGUE)» de un guion), en la fuente y el cuerpo del texto del recuadro. El valor por defecto está en el idioma del documento, como el de una tabla partida: <code>'Continúa'</code> en español, <code>'À suivre'</code> en francés.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ Los textos del diseño leen estos marcadores:
 
 El `resourceId` de una imagen admite los mismos marcadores, así que cada recuadro puede dibujar un recurso propio. Solo un diseño de recuadro lee `{boxText}`; un diseño de encabezado no imprime nada en su lugar.
 
-Con `setsContent: true` un solo estilo sirve para todos los recuadros de la misma forma, cada uno con sus palabras. En un cuaderno de caligrafía cada renglón de práctica es un recuadro cuyo contenido es la palabra que hay que copiar: el diseño imprime la palabra en una letra escolar y dibuja el recurso punteado que lleva su nombre.
+Con `setsContent: true` un solo estilo sirve para todos los recuadros de la misma forma, cada uno con sus palabras. En un cuaderno de caligrafía cada renglón de práctica es un recuadro cuyo contenido es la palabra que hay que copiar: el diseño imprime la palabra en una letra escolar y luego la vuelve a poner en puntos para repasar (`dotted`), tantas veces como caben en el renglón (`repeat`; véase [Marcas en línea y contornos](/es/docs/configuration-headers-footers#marcas-en-línea-y-contornos)).
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite ES', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite ES', fontWeight: 100, fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ pan
 :::
 ```
 
-El primer renglón imprime *sol* y dibuja el recurso `trace-sol`; el segundo imprime *pan* y dibuja `trace-pan`, y ninguna de las dos palabras se vuelve a componer bajo su banda. Con `setsContent` en `false` el diseño lee `{boxText}` igualmente, y el contenido se compone bajo la banda.
+El primer renglón imprime *sol* seguido de una fila de copias punteadas de *sol*; el segundo hace lo mismo con *pan*, y ninguna de las dos palabras se vuelve a componer bajo su banda. Si se cambia la palabra en el Markdown, cambian el modelo y todas las copias. Con `setsContent` en `false` el diseño lee `{boxText}` igualmente, y el contenido se compone bajo la banda.
 
 En el VDT los elementos de la banda son bloques de diseño en el `designOverlay` del marco, junto al título.

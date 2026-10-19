@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'صيغة المستند',
   description: 'الجزء من Markdown الذي يقرؤه Postext: البيانات التمهيدية في أول الملف، والعناوين، والقوائم، وكتل الشيفرة؛ وما يتجاهله؛ وقواعد كتابة المستندات المصدرية',
   lang: 'ar',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 دقيقة',
   order: 25,
   plainSummary: "تشرح هذه الصفحة كيف تكتب نصًا يستطيع Postext أن يُخرجه في صفحات. تكتب بلغة Markdown، وهي طريقة بسيطة في الكتابة تدلّ فيها رموز قليلة على العناوين والقوائم والكلمات العريضة والروابط. وتتناول هذه الصفحة الأسطر التي في أعلى الملف، والعناوين، والقوائم، والشيفرة، والعلامات التي يتجاهلها Postext. وتتناول أربع صفحات أخرى الكتل مثل الإطارات والأعمدة، والعلامات داخل السطر، والحواشي والإحالات، والصور والجداول. وتنتهي الصفحة بنصائح لكتابة نص سهل القراءة.",
@@ -53,7 +53,7 @@ The story begins here…
 
 ## البنى الكتلية
 
-يتعرّف Postext على سبعة أنواع من كتل النص وعلى قوائم الشيفرة، إضافة إلى التوجيهات وتضمين الموارد المشروحة لاحقًا في هذه الصفحة. تنتهي الكتل دائمًا بسطر فارغ أو ببداية كتلة أخرى.
+يتعرّف Postext على سبعة أنواع من كتل النص وعلى قوائم الشيفرة، إضافة إلى [التوجيهات](/ar/docs/document-format-directives) و[تضمين الموارد](/ar/docs/document-format-resources)، ولكل منهما صفحة خاصة. تنتهي الكتل دائمًا بسطر فارغ أو ببداية كتلة أخرى.
 
 <Illustration name="BlockTypesGallery" data='{"title": "أنواع كتل النص في لمحة", "desc": "أنواع كتل النص السبعة التي يتعرّف عليها Postext: العنوان والفقرة والاقتباس الكتلي والقائمة غير المرقّمة والقائمة المرقّمة وقائمة المهام والصيغة المعروضة، ولكل منها صياغته في Markdown. أما التوجيهات وتضمين الموارد فلها شرح مستقل.", "caption": "كل نوع من كتل النص وصياغته في Markdown.", "blocks": [{"name": "عنوان", "syntax": "# Title", "color": "blue"}, {"name": "فقرة", "syntax": "أسطر نص عادي", "color": "orange"}, {"name": "اقتباس كتلي", "syntax": "> quoted text", "color": "green"}, {"name": "قائمة غير مرقّمة", "syntax": "- item", "color": "purple"}, {"name": "قائمة مرقّمة", "syntax": "1. item", "color": "pink"}, {"name": "قائمة مهام", "syntax": "- [x] done", "color": "teal"}, {"name": "صيغة معروضة", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ The story begins here…
     <tr>
       <td>قائمة مرقّمة</td>
       <td><code>1. item</code>، <code>2) item</code></td>
-      <td>أرقام تليها <code>.</code> أو <code>)</code>. يُحفظ رقم البداية (فيمكن أن تبدأ القائمة من 5 أو من 0). أما الفاصل الذي يظهر في المخرجات فيأتي من <code>orderedLists.separator</code> لا من المصدر.</td>
+      <td>أرقام تليها <code>.</code> أو <code>)</code>: أرقام أوروبية، أو الأرقام الهندية العربية (<code>١.</code>) والفارسية (<code>۱.</code>) التي تكتبها لوحة المفاتيح العربية أو الفارسية. يُحفظ رقم البداية (فيمكن أن تبدأ القائمة من 5 أو من 0). أما الفاصل الذي يظهر في المخرجات فيأتي من <code>orderedLists.separator</code> لا من المصدر.</td>
     </tr>
     <tr>
       <td>قائمة مهام (GFM)</td>
@@ -210,6 +210,10 @@ echo "done: $(date)"
       <td><code>span=page</code></td>
       <td>في صفحة من عدة أعمدة، تمتد القائمة عليها كلها.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>تطفو القائمة إلى أول شريط فارغ في رأس عمود أو أسفله، كما يطفو <code>:::callout</code>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

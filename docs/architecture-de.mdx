@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Architektur',
   description: 'Technische Architektur der Layout-Engine Postext: Grundbegriffe, Dokumentbaum, vertikaler Rhythmus, Backends und Leistung',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26 min',
   order: 2,
   plainSummary: "Diese Seite erklärt, wie Postext im Inneren arbeitet, und richtet sich an Programmiererinnen und Programmierer. Zuerst misst Postext jedes Wort, ohne etwas auf dem Bildschirm zu zeichnen, und ist dadurch sehr schnell. Dann berechnet es, wohin jede Zeile, jedes Bild und jede Spalte gehört, und behält diesen Plan im Speicher. Zuletzt zeichnet es die fertigen Seiten als Webseite, als Canvas-Bild oder als PDF-Datei. Wenn Sie ein Wort ändern, setzt es die Seiten neu und verwendet die Messungen der Absätze wieder, die sich nicht geändert haben. Die nächste Seite erklärt Schritt für Schritt, wie Zeilen und Bilder platziert werden.",
@@ -95,7 +95,7 @@ unscharf geworden ist.
     </tr>
     <tr>
       <td><strong>Backend</strong></td>
-      <td>Ein Ausgabeziel, das den fertigen VDT verarbeitet. Vier gibt es heute: <strong>Canvas</strong> (Bitmap-Vorschau), <strong>HTML</strong> (Lesen am Bildschirm über das DOM), <strong>PDF</strong> (druckfertige Ausgabe über <code>postext-pdf</code>) und <strong>EPUB</strong> (<code>postext-epub</code>, das Buch als E-Book). Alle vier rendern aus derselben Messung (dem Messmodul über Pretext).</td>
+      <td>Ein Ausgabeziel, das den fertigen VDT verarbeitet. Vier gibt es heute: <strong>Canvas</strong> (Bitmap-Vorschau), <strong>HTML</strong> (Lesen am Bildschirm über das DOM), <strong>PDF</strong> (druckfertige Ausgabe über <code>postext-pdf</code>) und <strong>EPUB</strong> (<code>postext-epub</code>, das Buch als E-Book). Alle vier rendern aus derselben Messung (dem Messmodul über Pretext). Der 3D-Betrachter <code>postext-folio</code> malt seine Blätter mit dem Canvas-Backend.</td>
     </tr>
     <tr>
       <td><strong>Platzierungsdurchlauf</strong></td>
@@ -138,6 +138,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
   notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+  continuation?: LayoutContinuation; // counters and page numbers carried from earlier chapters
+  outline?: OutlineEntry[];    // the book's headings with their page labels, for :::toc / :::index
+  citations?: CitationContext; // this chapter's share of the book's citations
+  laterPageIds?: Record<string, number>; // page fences of later chapters a story may continue on
 }
 
 interface Resource {
@@ -490,6 +494,12 @@ Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `f
       <td><strong>Verfügbar</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong> (3D-Betrachter)</td>
+      <td>Verarbeitet den bereits mit Pretext gemessenen VDT</td>
+      <td>Jede Seite vom Canvas-Backend gemalt (<code>renderPageToCanvas</code>) und als Textur eines three.js-Blatts gezeigt, nur rund um die aufgeschlagene Doppelseite (<code>createFolioFromDocument</code> in <code>postext-folio</code>)</td>
+      <td><strong>Verfügbar</strong></td>
+    </tr>
+    <tr>
       <td><strong>Kommandozeile</strong></td>
       <td>Pretext über Skia (<code>@napi-rs/canvas</code>) statt des Canvas im Browser</td>
       <td>Die Schreiber für PDF, HTML und EPUB, Seitenbilder und Word, ausgeführt in einem Terminal ohne Browser (<code>postext-cli</code>)</td>
@@ -498,7 +508,7 @@ Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `f
   </tbody>
 </table>
 
-Alle vier verfügbaren Backends verarbeiten dasselbe `VDTDocument`. Die Aufteilung zwischen `postext` (das die Canvas- und HTML-Backends exportiert) und `postext-pdf` (das das PDF-Backend exportiert) hat allein mit Abhängigkeiten zu tun: Der PDF-Weg zieht `pdf-lib` und `@pdf-lib/fontkit` nach sich, und die meisten Web-Integrationen brauchen sie nicht. Installieren Sie `postext-pdf` nur, wenn Sie tatsächlich PDF-Bytes erzeugen wollen. `postext-epub` ist aus demselben Grund ein eigenes Paket und wird nur für E-Books gebraucht. Die Kommandozeile ist kein fünftes Backend: `postext-cli` führt dieselben Schreiber dort aus, wo es keinen Browser gibt.
+Die vier Backends und der Folio-Betrachter verarbeiten dasselbe `VDTDocument`. Die Aufteilung zwischen `postext` (das die Canvas- und HTML-Backends exportiert) und `postext-pdf` (das das PDF-Backend exportiert) hat allein mit Abhängigkeiten zu tun: Der PDF-Weg zieht `pdf-lib` und `@pdf-lib/fontkit` nach sich, und die meisten Web-Integrationen brauchen sie nicht. Installieren Sie `postext-pdf` nur, wenn Sie tatsächlich PDF-Bytes erzeugen wollen. `postext-epub` ist aus demselben Grund ein eigenes Paket und wird nur für E-Books gebraucht. Die Kommandozeile ist kein fünftes Backend: `postext-cli` führt dieselben Schreiber dort aus, wo es keinen Browser gibt. Word-Dateien sind auch keines: `postextToDocx` (aus `postext/word`) schreibt die Markdown-Kapitel und ihre Stile in eine `.docx`, ohne Layout, und `readDocx` mit `wordToPostext` liest eine solche Datei wieder als Markdown ein.
 
 **Wo das Layout läuft:** Die Engine misst Text auf einem Canvas, läuft also überall, wo sie eines bekommt. Im Browser läuft die Pipeline entweder im Hauptthread (`buildDocument`) oder in einem eigenen Web Worker (`createLayoutWorker` aus `postext/worker`) – der Worker-Weg ist die empfohlene Integration für Anwendungen mit Benutzeroberfläche, weil er Messung und Platzierungsdurchläufe vom Hauptthread fernhält, Abbruch nach dem Prinzip „der letzte gewinnt“ über `AbortSignal` unterstützt und seinen eigenen Messcache und Raster-Cache für Formeln besitzt, sodass aufeinanderfolgende Neuaufbauten günstig bleiben. Das vollständige Integrationsmuster beschreibt [Konfiguration → Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen). Außerhalb des Browsers führt die [Kommandozeile](/de/docs/command-line) dieselbe Pipeline aus, wobei Skia das Canvas des Browsers ersetzt, sodass ein Buch in einem Terminal, einem Skript oder auf einem Build-Server in dieselben Seiten umbricht.
 
@@ -539,7 +549,13 @@ Bedenken Sie, womit es die Engine zu tun hat: Tausende von Textblöcken auf Hund
 6. **Zeilenumbruch auf dem heißen Pfad.** Die Behandlung der aktiven Knoten in Knuth-Plass wurde für Geschwindigkeit neu geschrieben:
    Die aktive Menge wird an Ort und Stelle verdichtet, während Knoten ausscheiden, und Kandidaten werden
    je (Zeile, Fitness-Klasse) dedupliziert, sodass je Schlüssel nur der Knoten mit den niedrigsten Demerits überlebt. Die algorithmischen
-   Ergebnisse sind identisch – dieselben Umbruchmengen, nur schneller berechnet.
+   Ergebnisse sind identisch – dieselben Umbruchmengen, nur schneller berechnet. Derselbe Umbruch
+   ist auch in Rust geschrieben (`rust/crates/linebreak`) und nach WebAssembly kompiliert, eingebettet
+   im Paket: Er rechnet dieselbe Arithmetik in derselben Reihenfolge, zwei- bis dreimal so schnell,
+   und antwortet überall, wo das Modul kompiliert ist. Im Hauptthread einer Seite wird es im
+   Hintergrund kompiliert; bis dahin, und wo WebAssembly fehlt oder verweigert wird, antwortet der
+   TypeScript-Umbruch. `initLineBreaker()` startet die Kompilierung früher;
+   `useWasmLineBreaker(false)` lässt jeden Absatz beim TypeScript-Umbruch.
 
 7. **Builds außerhalb des Hauptthreads.** Der Einstiegspunkt `postext/worker` führt die gesamte Pipeline
    in einem eigenen Web Worker aus. Der Hauptthread sendet `{ content, config }` und ein
@@ -562,13 +578,18 @@ Bedenken Sie, womit es die Engine zu tun hat: Tausende von Textblöcken auf Hund
 
 Es gibt keinen inkrementellen Einstiegspunkt: Kein Aufruf nimmt einen fertigen VDT und aktualisiert ihn. Ändern sich Inhalt oder Konfiguration (ein Tastendruck, ein anderes Seitenformat), ruft der Host `buildDocument` erneut auf und erhält ein neues Dokument.
 
-Was von einem Build zum nächsten erhalten bleibt, ist das Messen. Legen Sie einmal mit `createMeasurementCache()` einen `MeasurementCache` an und übergeben Sie ihn als drittes Argument bei jedem Aufruf von `buildDocument`. Ein Absatz, dessen Text, Schriften, Breite und Umbruchoptionen sich nicht geändert haben, wird daraus gelesen, sodass ein Editor, der das Dokument bei jedem Tastendruck setzt, nur den Absatz misst, in dem getippt wird. Eine Änderung des Seitenformats oder der Spaltenzahl ändert die Breiten, und diese Absätze werden neu gemessen; die Ergebnisse von `prepare()` in Pretext gelten weiterhin, da sie von Schrift und Text abhängen und nicht von der Breite, sodass nur die günstige Arithmetik von `layout()` läuft. Auch das Einlesen wird memoisiert.
+Was von einem Build zum nächsten erhalten bleibt, ist das Messen. Legen Sie einmal mit `createMeasurementCache()` einen `MeasurementCache` an und übergeben Sie ihn als drittes Argument bei jedem Aufruf von `buildDocument`. Ein Absatz, dessen Text, Schriften, Breite und Umbruchoptionen sich nicht geändert haben, wird daraus gelesen, sodass ein Editor, der das Dokument bei jedem Tastendruck setzt, nur den Absatz misst, in dem getippt wird. Eine Änderung des Seitenformats oder der Spaltenzahl ändert die Breiten, und diese Absätze werden neu gemessen; die Ergebnisse von `prepare()` in Pretext gelten weiterhin, da sie von Schrift und Text abhängen und nicht von der Breite, sodass nur die günstige Arithmetik von `layout()` läuft. Auch das Einlesen wird memoisiert. Zusammengesetzte Seiten bleiben ebenfalls erhalten: Eine
+zusammengesetzte Seite, deren Vorlage, Markdown, Stile und Schriften sich nicht geändert haben,
+wird aus dem vorigen Build übernommen (`composed/pageMemo.ts`), sodass eine Änderung auf einer Seite
+eines Kapitels aus zusammengesetzten Seiten nur diese Seite neu setzt. Eine Seite mit einer
+Fußnote, einem Querverweis, einem Zitat, einem Inhalts- oder Stichwortverzeichnis oder einem
+Comicstrip wird immer neu gesetzt.
 
 Für einen Live-Editor erledigt `createLayoutWorker` (aus `postext/worker`) all das außerhalb des Hauptthreads: Der Worker besitzt einen Messcache, der so lange lebt wie er selbst, und ein neuerer Aufruf von `build()` bricht den laufenden ab. Siehe [Konfiguration → Mess-Cache](/de/docs/configuration-programmatic-usage#mess-cache) und [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen).
 
 ### Benchmarks
 
-Zwei Benchmarks liegen in `packages/postext/src/__bench__/`. `pnpm test` überspringt sie; `pnpm bench`, ausgeführt in `packages/postext`, führt sie aus. `chapter.bench.test.ts` setzt ein Kapitel im Umfang eines Lehrbuchkapitels (vierzig Abschnitte aus Überschriften, Absätzen und Listen) fünfmal mit leerem und fünfmal mit gefülltem Messcache und meldet beide Mediane und die Zahl der Durchläufe. `cjkChapter.bench.test.ts` setzt Kapitel 1 von 红楼梦 und zählt die an `measureText` gesendeten Zeichen, um das CJK-Satzmodul auf Kosten zu halten, die linear mit der Länge des Absatzes wachsen.
+Drei Benchmarks liegen in `packages/postext/src/__bench__/`. `pnpm test` überspringt sie; `pnpm bench`, ausgeführt in `packages/postext`, führt sie aus. `chapter.bench.test.ts` setzt ein Kapitel im Umfang eines Lehrbuchkapitels (vierzig Abschnitte aus Überschriften, Absätzen und Listen) fünfmal mit leerem und fünfmal mit gefülltem Messcache und meldet beide Mediane und die Zahl der Durchläufe. `cjkChapter.bench.test.ts` setzt Kapitel 1 von 红楼梦 und zählt die an `measureText` gesendeten Zeichen, um das CJK-Satzmodul auf Kosten zu halten, die linear mit der Länge des Absatzes wachsen. `composedPage.bench.test.ts` misst ein Kapitel aus zwanzig zusammengesetzten Seiten: einen kalten Build, einen Neuaufbau ohne Änderung, die Änderung eines Attributs einer Seite und eine Bearbeitung in einem ihrer Rahmen, jeweils mit und ohne den Speicher für zusammengesetzte Seiten.
 
 ```typescript
 // From packages/postext/src/__bench__/chapter.bench.test.ts
@@ -585,7 +606,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-Der Ehrlichkeit halber eine Einschränkung: In Node gibt es keine Canvas, deshalb ersetzen beide Benchmarks die Textmessung durch eine Attrappe, und ihre absoluten Zeiten sind nicht die des Browsers. Das Verhältnis von kaltem zu warmem Cache und die Zahl der Durchläufe sind es aber, und eine Verschlechterung bei einem von beiden zeigt sich hier, bevor sie sich in der Sandbox zeigt. Der Kapitel-Benchmark meldet Zahlen und lässt den Build nicht scheitern; der chinesische prüft, dass die gemessenen Zeichen unter dem Dreifachen der Länge des längsten Absatzes bleiben. Keiner von beiden läuft in der CI: Verschlechterungen werden erkannt, indem die Zahlen über mehrere Läufe verglichen werden, wenn sich ein heißer Pfad ändert (so geschehen bei der Neufassung der aktiven Knoten in Knuth-Plass). Leistung ist ein Feature, keine Hoffnung – aber durchgesetzt wird sie heute durch Messung und Review, nicht durch eine fehlschlagende Pipeline.
+Der Ehrlichkeit halber eine Einschränkung: In Node gibt es keine Canvas, deshalb ersetzen die Benchmarks die Textmessung durch eine Attrappe, und ihre absoluten Zeiten sind nicht die des Browsers. Das Verhältnis von kaltem zu warmem Cache und die Zahl der Durchläufe sind es aber, und eine Verschlechterung bei einem von beiden zeigt sich hier, bevor sie sich in der Sandbox zeigt. Die Benchmarks für das Kapitel und die zusammengesetzten Seiten melden Zahlen und lassen den Build nicht scheitern; der chinesische prüft, dass die gemessenen Zeichen unter dem Dreifachen der Länge des längsten Absatzes bleiben. Keiner läuft in der CI: Verschlechterungen werden erkannt, indem die Zahlen über mehrere Läufe verglichen werden, wenn sich ein heißer Pfad ändert (so geschehen bei der Neufassung der aktiven Knoten in Knuth-Plass). Noch schlägt kein Build wegen einer langsameren Zeit fehl: Eine Verlangsamung fällt beim Messen und im Review auf.
 
 
 ## Datenfluss

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notes i referències',
   description: "Com es configuren les notes a peu de pàgina, la numeració de línies, les referències creuades i les cites, l'índex general i l'índex analític",
   lang: 'ca',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // Els símbols de crida de numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Volada, sobre la línia de base, al costat de la paraula, o a la dreta d'una línia vertical.
   markerSize?: Dimension;     // Mida de la crida en línia, lateral o a la dreta; em és el text que l'envolta.
+  markerTemplate?: string;    // Com s'escriu el número: '({n})' dona «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // El número de la nota mateixa, volat o sobre la línia.
   numberGap?: 'en' | 'em';    // Espai després del número de la nota mateixa.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes al peu de la columna, o sota el text.
   fontSize?: Dimension;       // Cos de la nota; em és el cos del text.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // font, pes i c
 
 ## Referències creuades
 
-La propietat `crossRefs` fixa les paraules que una [referència creuada](/ca/docs/document-format-notes-references#referències-creuades-i-àncores) imprimeix al voltant d'un número o d'una pàgina, i l'estil que fa servir un `:ref` que no n'indica cap. Cada plantilla porta `{n}` allà on va el número; si una plantilla no el porta, el número s'hi afegeix després d'un espai de no separació (`"§"` imprimeix *§ 3.2*). Una plantilla sense definir segueix la llengua del document: *capítulo / sección / pág.* en castellà, *chapter / section / p.* en anglès, `第{n}章` / `第{n}节` / `第{n}页` en xinès, i el mateix per al francès, l'alemany, l'italià, el portuguès, el català i el neerlandès.
+La propietat `crossRefs` fixa les paraules que una [referència creuada](/ca/docs/document-format-notes-references#referències-creuades-i-àncores) imprimeix al voltant d'un número o d'una pàgina, i l'estil que fa servir un `:ref` que no n'indica cap. Cada plantilla porta `{n}` allà on va el número; si una plantilla no el porta, el número s'hi afegeix després d'un espai de no separació (`"§"` imprimeix *§ 3.2*). Una plantilla sense definir segueix la llengua del document: *capítulo / sección / pág.* en castellà, *chapter / section / p.* en anglès, `第{n}章` / `第{n}节` / `第{n}页` en xinès, `第{n}章` / `{n}節` / `{n}ページ` en japonès, `الفصل {n}` / `القسم {n}` / `ص {n}` en àrab, i el mateix per al francès, l'alemany, l'italià, el portuguès, el català i el neerlandès.
 
 ```ts
 interface CrossRefsConfig {
@@ -820,7 +822,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>segons la llengua, en cursiva (rodona en escriptura àrab)</td>
+      <td>segons la llengua, en cursiva (rodona en escriptura àrab i en japonès)</td>
       <td>Les paraules que precedeixen una remissió. Sense fixar, segueixen la llengua del document: <em>Véase</em> / <em>Véase también</em>, <em>See</em> / <em>See also</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en xinès tradicional)… Un índex en xinès posa la remissió després d'un punt, sense espai: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

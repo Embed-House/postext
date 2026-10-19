@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'コマンドライン',
   description: 'macOS、Linux、Windowsで動く、自己完結した1つの実行ファイル。.postextの本、本のフォルダー、ばらのMarkdownからのPDF、HTML、EPUB、ページ画像、Word文書の作成、バンドルの作成、本の検査、そしてスクリプトやエージェント向けのJSON出力',
   lang: 'ja',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13分',
   order: 45,
   plainSummary: "このページは、Webサイトではなくターミナルを使ってPostextで本を作りたい人のためのものです。自分のコンピューター用のファイルを1つダウンロードして実行するだけで、ほかに何もインストールする必要はありません。本や何本かのテキストファイルを渡すと、PDF、Webページ、電子書籍、ページの画像、Wordの文書を作ります。本に問題がないかを調べたり、本のファイルを1つにまとめたりすることもできます。結果をプログラムが読みやすい形で返せるので、ほかのプログラムやAIアシスタントからも使えます。",
@@ -121,7 +121,7 @@ postext image my-book.postext --page 1 -o cover.png
   </tbody>
 </table>
 
-どのコマンドも、`-o`でパスを指定しない限り、実行した場所に入力の名前で書き出します。`-o -`は、1つの出力を標準出力に書き出します。
+どのコマンドも、`-o`でパスを指定しない限り、実行した場所に入力の名前で書き出します（`images`は`pages/`に書き出します）。`-o -`は、1つの出力を標準出力に書き出します。
 
 ### pdf
 
@@ -173,7 +173,7 @@ postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}
 - `--dpi`：解像度。既定は150です。ページを読むには72〜100で足り、印刷用には300です。
 - `--pattern`：`images`が書き出すファイルの名前。`{n}`（位置。`{n:03}`は3桁にゼロで埋めます）、`{label}`（印刷された番号）、`{chapter}`から作ります。既定は`page-{n:03}`です。
 - `--print-preview`：出力プロファイルを通して、印刷所が再現するとおりのページを、仕上がり線と塗り足しを描いて示します。
-- `--jobs N`：同時にエンコードする画像の数。
+- `--jobs N`：同時にエンコードする画像の数（既定では、コンピューターのプロセッサーの数）。
 
 ### docxとimport-docx
 
@@ -195,7 +195,7 @@ postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o
 postext unpack my-book.postext -o my-book/
 ```
 
-`pack`は本のフォルダーをそのままzipにするか、ばらのMarkdownからバンドルを作ります。同じ入力からはつねに同じバイト列ができるので、バンドルを比べたり、ハッシュを取ったりできます。`unpack`は、`--force`を付けない限り、空でないフォルダーには書き込みません。
+`pack`は本のフォルダーをそのままzipにするか、ばらのMarkdownからバンドルを作ります。同じ入力からはつねに同じバイト列ができるので、バンドルを比べたり、ハッシュを取ったりできます。ばらのMarkdownでは、`--id`、`--description`、`--thumbnail FILE`（表紙の画像）でバンドルのid、説明、サムネイルを設定します。idは既定で名前のスラッグです。フォルダーでは、その`preset.json`の内容がそのまま使われます。`unpack`は、`--force`を付けない限り、空でないフォルダーには書き込みません。
 
 ### infoとcheck
 
@@ -240,7 +240,7 @@ postext build chapters/ --pdf book.pdf --watch
   </tbody>
 </table>
 
-さらに、すべてのコマンドで`--json`、`--quiet`（`-q`、エラーのみ）、`--verbose`（進行状況とすべての警告）、`--no-color`、`--help`が使えます。
+さらに、すべてのコマンドで`--json`、`--quiet`（`-q`、エラーのみ）、`--verbose`（進行状況とすべての警告）、`--no-color`、`--help`（`-h`）、`--version`（`-v`）が使えます。
 
 ## フォント
 

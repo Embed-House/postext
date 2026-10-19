@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vídues, òrfenes i equilibratge',
   description: 'Les regles que mantenen juntes les línies i els blocs quan una columna s’acaba, i les palanques que fan que totes les columnes acabin a la mateixa altura',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -185,6 +185,8 @@ Les editorials esperen que totes les columnes comencin a la part superior de la 
 En una retícula de caràcters (`cjk.grid`, vegeu [Composició xinesa › La retícula de caràcters](/ca/docs/chinese-layout#la-retícula-de-caràcters)) cada caràcter ocupa una casella d'un quadratí d'amplada i cada línia cau al pas de línies de la retícula, que també és la retícula de base. Aquí l'equilibratge està desactivat per defecte, com en el text vertical: una pàgina composta línia a línia sobre una retícula, a la manera de la GB/T 9704, que compta 22 línies de 28 caràcters, deixa curta la columna que ha quedat curta. Una configuració que fixa `enabled: true` rep palanques que respecten la retícula: els encapçalaments, els finals de llista, les fórmules en bloc i les figures reben línies senceres de la retícula, de manera que el text de sota es desplaça files senceres, i `gridLines: 'off'` exclou aquestes palanques per a una norma que no té cap fila buida per cedir. Un paràgraf xinès o japonès només guanya una línia quan cap espai entre dos caràcters no s'obre més de `maxTracking`, i no s'aplica tracking a les lletres: a una línia que es queda un caràcter curta li cal repartir un quadratí entre els espais, molt per sobre dels 0,01 em per defecte, així que, en una retícula de caselles senceres, la palanca dels paràgrafs fluixos gairebé mai no troba res. La caixa que tanca una columna i les imatges amb zona segura queden fora de la retícula per disseny i funcionen com a qualsevol altra pàgina.
 
 L'última columna d'una pàgina només s'equilibra quan el text continua de manera natural a la pàgina següent: és normal que la pàgina final d'un capítol acabi curta. Aquesta pàgina, i una banda de tancament tallada a nivell per `trailing`, mantenen a més els caps de les columnes a la mateixa altura: no s'afegeix cap línia sota una figura o una taula que encapçali una de les columnes (la palanca de després dels flotants), i un encapçalament o una caixa que obre una columna sota aquesta figura es queda al capdamunt, digui el que digui `stretchAfterFloats`. Passa el mateix amb l'encapçalament que va just a sota d'una obertura `span: 'page'`, a la columna d'aquesta obertura. Així, cap columna no comença més avall que la del costat només per igualar els peus.
+
+Aquests paràmetres van a `headings.balancing`.
 
 <table>
   <thead>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Agenti, integrazione e preset',
   description: 'Gli strumenti WebMCP con cui gli agenti di IA lavorano sul libro; il componente PostextSandbox da inserire nella tua applicazione, con le prop e il CSS che richiede; il formato dei pacchetti preset',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 41,
   parent: 'sandbox',
@@ -35,10 +35,10 @@ La pagina [WebMCP](/it/docs/webmcp) mostra che cosa si può chiedere a un agente
 
 ## Uso autonomo
 
-La Sandbox è disponibile come pacchetto React autonomo (`postext-sandbox`) che puoi integrare in qualsiasi applicazione React:
+La Sandbox è un pacchetto React, `postext-sandbox`, che si trova nel repository di postext e non è pubblicato su npm. Un’applicazione React dello stesso workspace pnpm ne dipende come fa il sito (`apps/web`), con `"postext-sandbox": "workspace:*"`; le sue dipendenze peer sono React e React DOM (18 o successivo) e `postext`:
 
 ```bash
-npm install postext-sandbox postext
+pnpm add postext-sandbox@workspace:* postext@workspace:*
 ```
 
 ```tsx
@@ -101,6 +101,16 @@ function App() {
       <td><code>hashBundles</code></td>
       <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
       <td>Libri aperti tramite una chiave di frammento scelta dall’host: <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> fa sì che <code>#recipe=&lt;slug&gt;&amp;lang=es</code> apra quel pacchetto. Restituisci l’URL di un file <code>.postext</code> sulla stessa origine della pagina, oppure più URL da provare in ordine (vince il primo che risponde), o <code>null</code> per un id che l’host non serve. La prima visita importa il file come progetto registrato con il link (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>); una visita successiva chiede se aprire quel progetto, con le modifiche, o sostituirlo con il file nella versione servita adesso. Poi il frammento diventa <code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>hashBundleEditions</code></td>
+      <td><code>Record&lt;string, (id: string) =&gt; string[] | null | Promise&lt;string[] | null&gt;&gt;</code></td>
+      <td>Le lingue in cui è pubblicato ogni tipo di libro collegato, con le stesse chiavi di <code>hashBundles</code>: ciascuna è un pacchetto che lo stesso link apre con <code>lang=</code>. Un libro aperto da un link così le elenca nella barra delle edizioni del Canvas e in <strong>Affiancate</strong>; cambiando lingua si apre il link in quella lingua. Il sito restituisce le lingue in cui è stata catturata una ricetta del Cookbook. <code>null</code> quando non si conoscono (da postext 1.44)</td>
+    </tr>
+    <tr>
+      <td><code>outputProfileBaseUrl</code></td>
+      <td><code>string</code></td>
+      <td>Da dove si scaricano i profili di output per la stampa, come <code>&lt;base&gt;/&lt;id&gt;.icc</code> (i file della cartella <code>icc/</code> del pacchetto <code>postext</code>). Per impostazione predefinita è la copia sulla CDN di npm, <code>https://cdn.jsdelivr.net/npm/postext/icc/</code>; il sito serve la propria da <code>/icc/</code></td>
     </tr>
     <tr>
       <td><code>onConfigChange</code></td>
@@ -212,7 +222,7 @@ Appendice. Una sorgente di preset è una directory (servita via HTTP) la cui rad
   "description": "Two-column journal article",       // optional
   "locale": "en",                                     // optional
   "default": true,                                    // optional
-  "configVersion": 8,                                 // optional: the configuration rules `config` is written for
+  "configVersion": 15,                                // optional: the configuration rules `config` is written for
   // The same optional showcase fields as the index entry:
   // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
 
@@ -266,7 +276,7 @@ Appendice. Una sorgente di preset è una directory (servita via HTTP) la cui rad
 Note:
 
 - `id` in `preset.json` deve corrispondere alla voce di `index.json`; `description`, `locale` e `default` nel manifesto prevalgono sui valori dell’indice una volta caricato il preset, e lo stesso vale per i campi della vetrina `locales`, `openLocale`, `license`, `credits` e `tags`. `openLocale`, una delle `locales`, è la lingua in cui il libro si apre quando un link o un clic non ne chiedono nessuna (è anche quella a cui rimanda lo scaffale della home page): impostalo quando l’originale non è nella lingua del lettore, come fa la vetrina di 紅樓夢 con `zh-Hant`, perché la traduzione inglese non si apra a tutti i lettori anglofoni. Se manca, decide la lingua dell’interfaccia. Il selettore mostra come etichette ogni lingua di `locales` (o `locale`) e la licenza, i crediti sotto la descrizione, e `thumbnail` (una piccola immagine di pagina, con percorso relativo alla directory del preset) al posto della colonna con il segno di spunta della riga; un libro copiato dal preset (**Crea una mia copia**) la conserva come copertina. I preset pubblici della vetrina in `apps/web/public/presets/` usano tutti i campi e contengono un `CREDITS.md` con la licenza e la fonte di ogni testo e immagine.
-- `configVersion` (facoltativo) indica le regole di configurazione per cui sono scritte `config` e le configurazioni `localized`. Da postext 1.5 in poi, tutto ciò che scrive un manifesto lo imposta a 8. Un manifesto senza questo campo è stato scritto da postext 1.4 o precedente, e le sue interruzioni dei titoli, la dimensione delle formule, lo spazio intorno alle figure in linea (nel testo e nei riquadri), le marche nei titoli, i capilettera, lo spazio sotto una riga che termina con i due punti, i tagli dei riquadri, gli a capo dopo le lineette e dopo i trattini delle parole composte, il testo non giustificato, le divisioni sotto un titolo e lo spazio sotto i contenitori di paragrafi vengono letti come li impaginava la 1.4 (vedi *Interruzioni dei titoli salvate da postext 1.4 o precedenti*, *Dimensione delle formule salvata prima di postext 1.5*, *Figure in linea salvate prima di postext 1.5*, *Figure in linea nei riquadri salvate prima di postext 1.5*, *Marche nei titoli e capilettera salvati prima di postext 1.5*, *Elenchi dopo i due punti salvati prima di postext 1.5*, *Tagli dei riquadri salvati prima di postext 1.5*, *Lineette e testo non giustificato salvati prima di postext 1.5*, *Parole composte salvate prima di postext 1.5*, *Divisioni sotto un titolo salvate prima di postext 1.5* e *Contenitori di paragrafi salvati prima di postext 1.5* in [Persistenza](/it/docs/sandbox-books-saving#persistenza)); un manifesto con un valore da 3 a 7 (una pre-release della 1.5) riceve solo i vincoli delle regole successive. Con 3 si tratta della dimensione delle formule, lo spazio in linea, i cinque vincoli delle regole 6, i due delle regole 7 e i tre delle regole 8; con 4, lo spazio in linea e i vincoli delle regole 6, 7 e 8; con 5, i vincoli delle regole 6, 7 e 8; con 6, i vincoli delle regole 7 e 8; con 7, solo i vincoli delle regole 8. Impostalo a 8 quando scrivi a mano un manifesto per le regole attuali.
+- `configVersion` (facoltativo) indica le regole di configurazione per cui sono scritte `config` e le configurazioni `localized`. Tutto ciò che scrive un manifesto lo imposta al `CONFIG_VERSION` del motore, 15 in questa versione. Un manifesto senza questo campo è stato scritto da postext 1.4 o precedente, e le sue interruzioni dei titoli, la dimensione delle formule, lo spazio intorno alle figure in linea (nel testo e nei riquadri), le marche nei titoli, i capilettera, lo spazio sotto una riga che termina con i due punti, i tagli dei riquadri, gli a capo dopo le lineette e dopo i trattini delle parole composte, il testo non giustificato, le divisioni sotto un titolo e lo spazio sotto i contenitori di paragrafi vengono letti come li impaginava la 1.4 (vedi *Interruzioni dei titoli salvate da postext 1.4 o precedenti*, *Dimensione delle formule salvata prima di postext 1.5*, *Figure in linea salvate prima di postext 1.5*, *Figure in linea nei riquadri salvate prima di postext 1.5*, *Segni in linea nei titoli e capilettera salvati prima di postext 1.5*, *Elenchi dopo i due punti salvati prima di postext 1.5*, *Tagli dei riquadri salvati prima di postext 1.5*, *Lineette e testo non giustificato salvati prima di postext 1.5*, *Parole composte salvate prima di postext 1.5*, *Divisioni sotto un titolo salvate prima di postext 1.5* e *Contenitori di paragrafi salvati prima di postext 1.5* in [Persistenza](/it/docs/sandbox-books-saving#persistenza)); un manifesto con un valore da 3 a 7 (una pre-release della 1.5) riceve solo i vincoli delle regole successive. Con 3 si tratta della dimensione delle formule, lo spazio in linea, i cinque vincoli delle regole 6, i due delle regole 7 e i tre delle regole 8; con 4, lo spazio in linea e i vincoli delle regole 6, 7 e 8; con 5, i vincoli delle regole 6, 7 e 8; con 6, i vincoli delle regole 7 e 8; con 7, solo i vincoli delle regole 8. Un manifesto con un valore da 8 a 14, scritto da postext 1.5 fino alla 1.33, riceve i vincoli delle regole successive al suo valore, elencati in [Pacchetti scritti da postext 1.4 o precedenti](/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti). Impostalo a 15 quando scrivi a mano un manifesto per le regole attuali.
 - `view` (facoltativo) indica come la Sandbox apre il pacchetto: `{ "canvasScope": "book" }` impagina l’intero libro sul canvas (vedi [Libri e capitoli](/it/docs/sandbox-books-saving#libri-e-capitoli)); se manca, il canvas mostra un capitolo alla volta. I libri esportati lo contengono quando è impostato. Un libro di oltre 200 capitoli si apre un capitolo alla volta, qualunque cosa indichi.
 - `start` (facoltativo) indica dove comincia il libro quando il pacchetto contiene solo una parte di un libro più lungo: `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` lo apre a pagina 58, una pagina pari, nel capitolo 4. Corrisponde alla `continuation` del primo capitolo (`buildDocument`): la Sandbox impagina il libro da quel punto, conserva il valore con il libro quando lo salvi come progetto e lo riscrive all’esportazione. Nessun pannello permette di modificarlo. Una voce `localized` può avere un `start` proprio per la sua edizione.
 - `localized` (facoltativo) contiene le sostituzioni per lingua di un pacchetto bilingue: `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. Le sostituzioni della lingua da cui sono stati scelti i capitoli si applicano alla `config` condivisa (le chiavi di primo livello vengono sostituite per intero: di solito `resourceTypes` con i prefissi delle didascalie tradotti) e alle `resources` (didascalia, nota, testo alternativo e celle di tabella uniti per id); una lingua senza voce conserva la formulazione condivisa. Una voce può anche avere una `view` propria, che per quell’edizione prevale su quella condivisa: 紅樓夢 apre le edizioni cinesi sul libro intero e quella inglese di Joly, molto più lenta da disegnare per intero, un capitolo alla volta (`"en": { "view": { "canvasScope": "chapter" } }`).

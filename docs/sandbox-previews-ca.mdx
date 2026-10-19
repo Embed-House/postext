@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Previsualitzacions',
   description: "Les pestanyes Canvas, PDF, Folio, HTML i EPUB 3 de l'àrea de previsualització: què mostra cadascuna i què s'hi pot fer",
   lang: 'ca',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 39,
   parent: 'sandbox',
@@ -50,14 +50,15 @@ En una pàgina composta (`::::page{template="…"}`), el canvas relaciona cada m
 
 #### Edicions d'un llibre
 
-En un llibre en diverses llengües, una barra sobre el canvas mostra les edicions (*ES · EN · CA*) i el botó **En paral·lel**.
+Una barra vertical al costat inicial del canvas conté les edicions d'un llibre en diverses llengües (*ES · EN · CA*) amb **En paral·lel**, i **Reajustament** quan el capítol té pàgines compostes (des de postext 1.44). Com la barra d'eines de l'altre costat, està amagada fins que el punter arriba a aquell costat i se'n va quan el punter se'n va; el botó per fixar-la la manté oberta, i al principi no està fixada. Es manté sobre la vista en paral·lel, que obre i tanca. En un mòbil és una fila a la part superior de la previsualització.
 
 - Un clic en una edició l'obre a la mateixa pàgina composta. La pàgina es busca pel bloc `::::page` del capítol, que és el mateix en totes les llengües, de manera que hi continues encara que a l'altra edició tingui un altre número; el marc seleccionat continua seleccionat. En qualsevol altra pàgina es conserva el número de pàgina.
-- **En paral·lel** mostra el capítol que hi ha a la pantalla al costat del mateix capítol d'una altra edició (que es tria amb **al costat de** quan el llibre en té més de dues). Les dues columnes mostren la mateixa pàgina i es desplacen juntes; **Desplaçar alhora** ho desactiva. Entre pàgines compostes, les columnes compten a partir de l'última pàgina composta que comparteixen. Els marcs que no hi caben, o amb el text reduït, es marquen a totes dues columnes. Aquí l'altra edició només es pot llegir: un clic en una de les seves pàgines obre aquella edició en aquella pàgina.
+- **En paral·lel** mostra el capítol que hi ha a la pantalla al costat del mateix capítol d'una altra edició (que es tria amb **al costat de** quan el llibre en té més de dues). Amb el canvas a **Llibre complet**, totes dues columnes contenen el llibre sencer i s'obren a la pàgina que mostra el canvas. Les dues columnes mostren el mateix lloc i es desplacen juntes; **Desplaçar alhora** ho desactiva. Es corresponen pel text, no pels números de pàgina: una pàgina composta es correspon amb el mateix bloc `::::page`, i qualsevol altra pàgina, amb la pàgina de l'altra edició que compon el mateix paràgraf del capítol, a una distància semblant dins seu; una pàgina sense text (un verso en blanc, una imatge a pàgina completa) es compta a partir de la pàgina més propera que en té. Els marcs que no hi caben, o amb el text reduït, es marquen a totes dues columnes. Aquí l'altra edició només es pot llegir: un clic en una de les seves pàgines obre aquella edició en aquella pàgina. Quan l'altra edició no té cap capítol en aquell lloc, la seva columna ho indica.
+- Un llibre obert des d'un enllaç d'una aplicació amfitriona (una recepta del Receptari, `#recipe=…&lang=…`) mostra les llengües en què l'amfitrió el publica. Un clic en una obre el mateix enllaç en aquella llengua: la teva còpia tal com és, si en tens una, o si no el llibre publicat, importat de nou.
 
 #### Què s'ha mogut i per què
 
-En una pàgina composta, la maquetació pot modificar el que dibuixa la plantilla perquè hi càpiga el contingut: una caixa creix amb el text, les que la segueixen dins del grup baixen, un marc cedeix alçada a un altre, les imatges o el text es componen més petits, i el que sobra continua en una pàgina afegida. **Reajustament**, a la barra que hi ha sobre el canvas (apareix quan el capítol té pàgines compostes), obre el tauler **Què s'ha mogut i per què** i marca aquests canvis a les pàgines.
+En una pàgina composta, la maquetació pot modificar el que dibuixa la plantilla perquè hi càpiga el contingut: una caixa creix amb el text, les que la segueixen dins del grup baixen, un marc cedeix alçada a un altre, les imatges o el text es componen més petits, i el que sobra continua en una pàgina afegida. **Reajustament**, a la barra vertical del costat inicial del canvas (apareix quan el capítol té pàgines compostes), obre el tauler **Què s'ha mogut i per què** i marca aquests canvis a les pàgines.
 
 - El tauler recorre cada pàgina composta on ha canviat alguna cosa i, sota un número, cada marc que ha canviat, amb els canvis explicats en paraules: *dinero ha crescut 13,9 mm perquè hi càpiga el contingut*, *gasto ha baixat 13,9 mm per fer lloc a dinero*, *ahorro-fotos: les imatges són al 82,5 %*, *dinero continua a la pàgina 9*. Cada canvi indica la causa, si n'hi ha: el marc que, en créixer, ha desplaçat aquest, o el llom d'una doble pàgina.
 - A la pàgina, cadascun d'aquests marcs porta una insígnia amb el mateix número i els canvis abreujats (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). La caixa que declara la plantilla es dibuixa amb traços, i unes fletxes van d'aquesta caixa a la caixa tal com ha quedat: una des de la vora superior si el marc s'ha mogut, i una altra al peu o a la vora final si ha canviat de mida.

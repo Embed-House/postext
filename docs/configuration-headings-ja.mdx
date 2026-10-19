@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '見出し',
   description: '見出しの共通の既定値、レベルごとの上書き、見出しの前の改ページ、ページ幅いっぱいの章の書き出し、語で綴る番号',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32分',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ export const metadata = {
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>true</code>のとき、見出しが段やページの最後の要素として置かれることはありません。続くブロックが見出しの後に少なくとも<code>bodyText.widowMinLines</code>行（<code>bodyText.avoidWidows</code>が<code>false</code>のときは1行）の余地を得られない場合、見出しは本文から離れないよう先へ送られます。<code>bodyText.keepColonWithList</code>と連動し、この規則がコロンで終わる段落をまるごと送る場合、段の末尾にある見出しも取り残されずに一緒に移ります。</td>
+      <td><code>true</code>のとき、見出しが段やページの最後の要素として置かれることはありません。続くブロックが見出しの後に少なくとも<code>bodyText.widowMinLines</code>行（<code>bodyText.avoidWidows</code>が<code>false</code>のときは1行）の余地を得られない場合、見出しは本文から離れないよう先へ送られます。<code>bodyText.keepColonWithList</code>と連動し、この規則がコロンで終わる段落をまるごと送る場合、段の末尾にある見出しも取り残されずに一緒に移ります。段組みで組むグループ（<code>columns</code>を指定したテンプレートページの枠、<code>:::columns</code>のグループ）でも、見出しの直後で段が終わることはありません。見出しは次の要素と一緒に移ります。</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ export const metadata = {
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>有効</td>
-      <td>縦方向の段末そろえ。段がページの下端にそろって終わるよう、見出しの上にアキを足します。後述します。</td>
+      <td>有効（縦組みと文字グリッドでは無効）</td>
+      <td>縦方向の段末そろえ。段がページの下端にそろって終わるよう、見出しの上にアキを足します。<a href="/ja/docs/configuration-page-flow#段末そろえ">段末そろえ</a>を参照してください。</td>
     </tr>
   </tbody>
 </table>

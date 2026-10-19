@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Césure et langue',
   description: 'Les motifs de césure et les exceptions, le texte en drapeau, la langue du document avec ses chiffres et son sens d’écriture, et les écritures que compose Postext',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '22 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a console warning
 ```
 
-Les mots de moins de 5 caractères ne sont jamais coupés. Le moteur exige au moins 2 caractères avant et 3 caractères après un point de coupure.
+Les mots de moins de 5 lettres ne sont jamais coupés, sauf en catalan, où 4 suffisent (`ca-sa`). Une coupure laisse au moins 2 lettres avant elle et, après elle, 3 en anglais et en français (`read-ing`), 4 en portugais (`ca-misa`) et 2 dans les autres langues (`pa-red`, `Ta-fel`). En anglais, en français et en italien, l’apostrophe ne compte pas comme une lettre dans ces minimums (pas de `is-n't`), et en français et en italien les consonnes qui précèdent une élision restent avec leur mot : `dell’ac-qua`, jamais `del-l’acqua`.
 
 ### Mots gardés entiers
 
@@ -170,7 +170,7 @@ Le chinois accepte `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK
   </tbody>
 </table>
 
-Le préfixe de légende est le nom du type (*Figure 1.1.*). Les types chinois numérotent dans le chapitre avec un trait d’union, `{h1}-{n}` (图 1-1) ; avec les réglages de légende `labelNumberGap: ''` et `labelSeparator: '　'`, la légende se lit 图1-1　标题 (voir [Style de légende](/fr/docs/configuration-resources#style-de-légende)). L’index suit lui aussi la langue : 见 et 另见 devant un renvoi, 符号 et 数字 au-dessus des symboles et des nombres en chinois simplifié ; 見, 另見, 符號 et 數字 en chinois traditionnel. Le japonais numérote ses types de la même façon et compose ses légendes 図1-1　題 sans ces deux réglages, écrit les renvois 第3章, 2.3節 et 12ページ, intitule la bibliographie 参考文献, et son index imprime 記号 et 数字 au-dessus des symboles et des nombres et écrit ses renvois avec une flèche, `→夏目漱石` pour *voir* et `→夏目漱石、森鷗外も見よ` après les pages pour *voir aussi*, les libellés en romain. L’arabe numérote ses types de la même façon, `{h1}-{n}` (شكل 2-3), écrit les renvois الفصل 3, القسم 2-1 et ص 12, intitule la bibliographie المراجع, et son index imprime انظر / انظر أيضًا, رموز et أرقام, avec la virgule et le point-virgule arabes (، ؛).
+Le préfixe de légende est le nom du type (*Figure 1.1.*). Le troisième type intégré, `video`, s’appelle *Video* en anglais, en allemand, en italien et en néerlandais, *Vídeo* en espagnol, en portugais et en catalan, *Vidéo* en français, 视频 en chinois simplifié et 影片 en chinois traditionnel, 動画 en japonais et فيديو en arabe. Les types chinois numérotent dans le chapitre avec un trait d’union, `{h1}-{n}` (图 1-1) ; avec les réglages de légende `labelNumberGap: ''` et `labelSeparator: '　'`, la légende se lit 图1-1　标题 (voir [Style de légende](/fr/docs/configuration-resources#style-de-légende)). L’index suit lui aussi la langue : 见 et 另见 devant un renvoi, 符号 et 数字 au-dessus des symboles et des nombres en chinois simplifié ; 見, 另見, 符號 et 數字 en chinois traditionnel. Le japonais numérote ses types de la même façon et compose ses légendes 図1-1　題 sans ces deux réglages, écrit les renvois 第3章, 2.3節 et 12ページ, intitule la bibliographie 参考文献, et son index imprime 記号 et 数字 au-dessus des symboles et des nombres et écrit ses renvois avec une flèche, `→夏目漱石` pour *voir* et `→夏目漱石、森鷗外も見よ` après les pages pour *voir aussi*, les libellés en romain. L’arabe numérote ses types de la même façon, `{h1}-{n}` (شكل 2-3), écrit les renvois الفصل 3, القسم 2-1 et ص 12, intitule la bibliographie المراجع, et son index imprime انظر / انظر أيضًا, رموز et أرقام, avec la virgule et le point-virgule arabes (، ؛).
 
 Un document chinois, japonais ou coréen déclare sa langue dans la sortie HTML (`lang` sur la racine `.pt-doc`, `zh-Hant-TW` gardé entier) et sur le canvas qu’il peint (`ctx.lang`, dans Chrome 136 et ultérieur) : le navigateur dessine ainsi les formes de glyphes de la région. Unicode unifie les caractères han, et un même point de code n’a pas le même aspect dans une police taïwanaise et dans une police japonaise. Depuis postext 1.30, tous les autres documents le font aussi, dans la langue dans laquelle leur texte est mis en forme ([`bodyText.shapingLanguage: 'document'`](/fr/docs/configuration-text#texte-courant), la valeur par défaut) ; avec `'host'`, les autres documents n’ont pas de `lang`, et chaque canvas peint dans la langue de la page qui l’héberge. Le PDF déclare `/Lang` d’après `locale` pour tout document, balisé ou non, avec son écriture et sa région. Un document dans une langue écrite de droite à gauche (arabe, persan, ourdou, hébreu…) déclare aussi sa langue : les formes propres à la langue de la police (`locl`) et la police de repli la suivent.
 

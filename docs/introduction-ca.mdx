@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Introducció',
   description: 'Què és Postext, per què existeix i quin problema resol',
   lang: 'ca',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 1,
   plainSummary: "Postext és un programa lliure i gratuït que compon les pàgines de llibres, revistes i informes al web. Els llibres impresos segueixen des de fa segles regles de maquetació molt acurades, com igualar les columnes o posar cada imatge a prop del text que l'esmenta. Les pàgines web no han tingut mai aquestes regles, i Postext les hi afegeix. Tu escrius el text i Postext col·loca a la pàgina cada línia, imatge i nota. Aquesta pàgina explica per què existeix el projecte i com va començar.",
@@ -25,11 +25,11 @@ final de la pàgina en lloc de quedar-se a prop de les paraules que hi remeten. 
 donar la maquetació responsiva, però mai no ens ha donat la maquetació *editorial*.
 
 Postext omple aquest buit. És un motor de composició que rep el teu contingut (text en
-Markdown i recursos declarats, com imatges de mapa de bits, diagrames SVG i taules, que s'hi
+Markdown i recursos declarats, com imatges de mapa de bits, diagrames SVG, taules i vídeos, que s'hi
 incorporen per referència) i hi aplica les mateixes regles que un tipògraf professional: evita
 òrfenes i vídues, equilibra les columnes, fa córrer el text al voltant dels obstacles i cuida
-l'espaiat. El resultat és una geometria de pàgina de qualitat editorial, tant per a HTML com per
-a PDF.
+l'espaiat. El resultat és una geometria de pàgina de qualitat editorial, que es dibuixa en canvas,
+HTML, PDF, EPUB o com a llibre en 3D.
 
 Es basa en [`@chenglou/pretext`](https://github.com/chenglou/pretext), que mesura el text sense
 el DOM a una velocitat que fa possible tot això.
@@ -161,7 +161,7 @@ Pretext proporciona les mesures. Postext proporciona la composició.
 El procés té tres etapes:
 
 1. **Tu proporciones el contingut.** Text en Markdown i recursos declarats: imatges de mapa
-   de bits, diagrames SVG i taules. Una referència en línia `:ref{id="..."}` numera el recurs i,
+   de bits, diagrames SVG, taules i vídeos. Una referència en línia `:ref{id="..."}` numera el recurs i,
    alhora, el fa flotar fins a una banda superior o inferior prop de la primera referència, tal
    com un tipògraf d'impremta col·loca les figures. El contingut continua sent purament semàntic:
    descriu *què* cal presentar, no *com*, i les decisions de composició no queden mai fixades
@@ -182,9 +182,11 @@ El procés té tres etapes:
    cada pàgina. Els renderitzadors tradueixen aquesta geometria al format de destinació:
    **canvas** per a una previsualització en mapa de bits exacta al píxel (`renderToCanvas`, `renderPage`),
    **HTML** per a una tipografia seleccionable al web que s'adapta quan canvia la mida
-   (`renderToHtml`, `renderToHtmlIndexed`), i **PDF** per a una sortida a punt per imprimir amb
-   les fonts incrustades (`renderToPdf`, del paquet `postext-pdf`). El mateix contingut, les mateixes
-   regles i tres sortides intercanviables.
+   (`renderToHtml`, `renderToHtmlIndexed`), **PDF** per a una sortida a punt per imprimir amb
+   les fonts incrustades (`renderToPdf`, del paquet `postext-pdf`), **EPUB 3** per als lectors de
+   llibres electrònics (`renderToEpub`, de `postext-epub`) i un **llibre en 3D** que es fulleja al
+   navegador (`createFolioFromDocument`, de `postext-folio`). Totes les sortides es dibuixen a partir
+   de la mateixa composició.
 
 <Illustration name="LayoutProcess" data='{"title": "Procés de composició en tres etapes", "desc": "El Markdown enriquit i la configuració entren al motor, que compon en diverses passades amb la mesura de Pretext integrada i genera HTML o PDF renderitzat.", "caption": "Hi entra contingut i en surt geometria, que després es renderitza al format de destinació.", "inputTitle": "Markdown enriquit", "inputSubtitle": "+ configuració", "parse": "analitzar", "engineTitle": "Motor de Postext", "engineSub1": "mesura amb Pretext", "engineSub2": "composició en diverses passades", "render": "renderitzar", "outputTitle": "HTML / PDF", "outputSubtitle": "sortida renderitzada"}' />
 
@@ -195,7 +197,8 @@ configuració, des de la geometria de la pàgina fins als estils de les taules, 
 i dels diagrames, consulta la pàgina de [Configuració](/ca/docs/configuration). I per provar-ho
 tot en viu, obre el [Sandbox](/ca/docs/sandbox): hi trobaràs un editor per al text de cada
 capítol, un tauler Recursos amb editor de taules i pujada d'imatges i SVG, un tauler Disseny que
-presenta tots els paràmetres en termes editorials i previsualitzacions en viu en canvas, HTML i PDF.
+presenta tots els paràmetres en termes editorials i previsualitzacions en viu en canvas, PDF,
+Folio (3D), HTML i EPUB.
 
 
 ## Reconeixements

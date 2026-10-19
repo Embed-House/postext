@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Formato del documento',
   description: 'Il sottoinsieme di Markdown che Postext legge: il front matter, i titoli, gli elenchi e i blocchi di codice; ciò che ignora; le regole per scrivere i documenti sorgente',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 25,
   plainSummary: "Questa pagina spiega come scrivere un testo che Postext sappia impaginare. Scrivi in Markdown, un modo semplice di scrivere in cui pochi simboli indicano titoli, elenchi, parole in grassetto e link. Questa pagina tratta le righe in cima a un file, i titoli, gli elenchi, il codice e i segni che Postext ignora. Altre quattro pagine trattano i blocchi come riquadri e colonne, i segni dentro una riga, le note e i rimandi, e le immagini e le tabelle. La pagina si chiude con qualche consiglio per scrivere un testo facile da leggere.",
@@ -53,7 +53,7 @@ Metti un valore tra virgolette per stamparlo esattamente come è scritto (un num
 
 ## Costrutti di blocco
 
-Postext riconosce sette tipi di blocco di prosa e i listati di codice, più le direttive e gli inserimenti di risorse trattati più avanti in questa pagina. I blocchi terminano sempre con una riga vuota o con l’inizio di un altro blocco.
+Postext riconosce sette tipi di blocco di prosa e i listati di codice, più le [direttive](/it/docs/document-format-directives) e gli [inserimenti di risorse](/it/docs/document-format-resources), descritti in pagine a parte. I blocchi terminano sempre con una riga vuota o con l’inizio di un altro blocco.
 
 <Illustration name="BlockTypesGallery" data='{"title": "I tipi di blocco di prosa a colpo d’occhio", "desc": "I sette tipi di blocco di prosa che Postext riconosce: titolo, paragrafo, citazione, elenco puntato, elenco numerato, elenco di attività e formula in evidenza, ciascuno con la sua sintassi Markdown. Direttive e inserimenti di risorse sono trattati a parte.", "caption": "Ogni tipo di blocco di prosa e la sua sintassi Markdown.", "blocks": [{"name": "Titolo", "syntax": "# Title", "color": "blue"}, {"name": "Paragrafo", "syntax": "Righe di testo semplice", "color": "orange"}, {"name": "Citazione", "syntax": "> testo citato", "color": "green"}, {"name": "Elenco puntato", "syntax": "- voce", "color": "purple"}, {"name": "Elenco numerato", "syntax": "1. voce", "color": "pink"}, {"name": "Elenco di attività", "syntax": "- [x] fatto", "color": "teal"}, {"name": "Formula in evidenza", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ Postext riconosce sette tipi di blocco di prosa e i listati di codice, più le d
     <tr>
       <td>Elenco numerato</td>
       <td><code>1. item</code>, <code>2) item</code></td>
-      <td>Cifre seguite da <code>.</code> o <code>)</code>. Il numero iniziale viene conservato (quindi un elenco può cominciare da 5, o da 0). Il separatore mostrato nell’output viene da <code>orderedLists.separator</code>, non dal sorgente.</td>
+      <td>Cifre seguite da <code>.</code> o <code>)</code>: cifre europee, o quelle indo-arabe (<code>١.</code>) e persiane (<code>۱.</code>) che digita una tastiera araba o persiana. Il numero iniziale viene conservato (quindi un elenco può cominciare da 5, o da 0). Il separatore mostrato nell’output viene da <code>orderedLists.separator</code>, non dal sorgente.</td>
     </tr>
     <tr>
       <td>Elenco di attività (GFM)</td>
@@ -210,6 +210,10 @@ La stringa informativa dopo il delimitatore di apertura indica il linguaggio (la
       <td><code>span=page</code></td>
       <td>In una pagina con più colonne, il listato le occupa tutte.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>Fa galleggiare il listato fino alla prima fascia libera in testa o al piede di una colonna, come un <code>:::callout</code> flottante.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

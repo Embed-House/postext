@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Contribuire',
   description: 'Come entrare nella comunità di Postext e contribuire al progetto',
   lang: 'it',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 35,
   plainSummary: "Postext è costruito da una comunità di volontari, e chiunque può dare una mano. Non serve essere programmatori. Puoi aiutare anche facendo test, scrivendo documentazione, traducendo o condividendo ciò che sai di grafica e di stampa. Questa pagina spiega come lavora il gruppo, dove serve più aiuto e come fare il tuo primo contributo. Si chiude con gli obiettivi a lungo termine del progetto.",
@@ -81,19 +81,22 @@ particolarmente preziosi:
   colore e trattamento dei byte delle risorse per le figure a inchiostro unico.
 - **Rendering del testo**: rendering su canvas, output SVG, ricolorazione degli SVG a inchiostro
   unico (`diagramStyle.singleInk`), metriche dei font.
-- **Ottimizzazione delle prestazioni**: lo strato di cache delle misure, e mantenere il motore di
-  impaginazione abbastanza veloce da lavorare in tempo reale a ogni ridimensionamento.
+- **Ottimizzazione delle prestazioni**: lo strato di cache delle misure, l’algoritmo di
+  spezzatura delle righe Knuth-Plass scritto in Rust e compilato in WebAssembly (`rust/`), e
+  mantenere il motore di impaginazione abbastanza veloce da lavorare in tempo reale a ogni
+  ridimensionamento.
 
 ### Sandbox e interfaccia
 La [Sandbox](/it/docs/sandbox) è diventata un’applicazione React di tutto rispetto: un
 pannello **Risorse** con un editor di tabelle interattivo e il caricamento di immagini e SVG, un pannello
-**Font** e un pannello **Grafica** i cui dodici gruppi coprono ogni angolo del motore. I suoi controlli
-si basano sulle primitive di Base UI (`packages/postext-sandbox/src/ui/`) e sono verificati con
-axe-core per WCAG 2.1 AA, quindi i nuovi controlli dovrebbero riusarle, e ogni campo deve
-prendere il nome dalla propria etichetta e la descrizione dal testo di aiuto. Ogni stringa
-dell’interfaccia segue una rigida convenzione di i18n: ogni etichetta passa per cinque file, nel
-pacchetto della Sandbox e nei cataloghi delle lingue dell’app web. Se contribuisci al frontend o
-alla UX, è qui che lavorerai.
+**Font**, gli editor dei modelli di pagina e delle pagine a fumetti e un pannello **Grafica** i cui
+gruppi coprono ogni parte del motore. I suoi controlli si basano sulle primitive di Base UI
+(`packages/postext-sandbox/src/ui/`) e sono verificati con axe-core e con controlli propri per WCAG
+2.2 al livello AAA, quindi i nuovi controlli dovrebbero riusarle, e ogni campo deve prendere il
+nome dalla propria etichetta e la descrizione dal testo di aiuto. Ogni stringa dell’interfaccia
+segue una rigida convenzione di i18n: ogni etichetta passa per il pacchetto della Sandbox, per il
+ponte delle etichette dell’app web e per il catalogo di ognuna delle dieci lingue. Se contribuisci
+al frontend o alla UX, è qui che lavorerai.
 
 ### Grafica e tipografia
 - **Competenza in progettazione editoriale**: se hai esperienza nell’impaginare riviste, quotidiani
@@ -105,8 +108,9 @@ alla UX, è qui che lavorerai.
 ### Documentazione e comunità
 - **Documentazione**: migliorare, ampliare e mantenere la documentazione. Una documentazione chiara
   è ciò che separa un progetto che la gente adotta da uno che finisce per abbandonare.
-- **Traduzioni**: la documentazione oggi è bilingue (inglese e spagnolo). Altre lingue sono
-  benvenute.
+- **Traduzioni**: la documentazione e il sito sono in dieci lingue: inglese, spagnolo, catalano,
+  francese, tedesco, italiano, portoghese brasiliano, cinese semplificato, giapponese e arabo.
+  Altre lingue sono benvenute, e così le revisioni di quelle che ci sono già.
 - **Test**: provare il motore su browser e sistemi operativi diversi e nei casi limite. Trovare gli impaginati che si rompono
   vale quanto costruire quelli che funzionano.
 
@@ -115,8 +119,8 @@ Il formato non è più un foglio bianco: i blocchi `::resource`, i rimandi in li
 sezioni di configurazione `tableStyle`, `captionStyle` e `diagramStyle` sono già stati rilasciati.
 Ora il lavoro consiste nel far evolvere un formato consolidato senza romperlo:
 
-- **Grammatica del documento**: le note a margine e i rimandi ad altro che non siano risorse sono
-  ancora questioni aperte, e ognuna è un problema di progettazione quanto un problema tecnico.
+- **Grammatica del documento**: le note a margine sono ancora una questione aperta, un problema
+  di progettazione quanto un problema tecnico.
 - **Schema di configurazione**: mantenere il sistema abbastanza potente per i professionisti e
   abbastanza semplice per chi comincia, man mano che cresce.
 
@@ -137,8 +141,8 @@ Una volta pronto, ecco tre azioni concrete, in ordine di impegno crescente:
 2. **Prendi una [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**:
    sono scelte apposta come punto d’ingresso realistico e non richiedono di conoscere la storia del
    progetto.
-3. **Traduci la documentazione in una nuova lingua**: oggi la documentazione è in inglese e in
-   spagnolo. Qualsiasi altra lingua è un regalo per i lettori che oggi restano esclusi.
+3. **Traduci la documentazione in una nuova lingua, o rivedine una**: oggi la documentazione è in
+   dieci lingue. Ogni lingua nuova raggiunge lettori che non leggono le altre.
 
 Se pensi di scrivere codice, apri prima una issue per discutere l’approccio: eviti lavoro doppio, e
 una breve conversazione all’inizio fa risparmiare tempo a tutti.

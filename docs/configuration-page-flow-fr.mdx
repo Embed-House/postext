@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Veuves, orphelines et équilibrage',
   description: 'Les règles qui gardent ensemble les lignes et les blocs de part et d’autre d’un saut de colonne, et les leviers qui font finir chaque colonne au même niveau',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '25 min',
   order: 10,
   parent: 'configuration',
@@ -185,6 +185,8 @@ Les éditeurs attendent que chaque colonne commence en haut de la page et se ter
 Sur une grille de caractères (`cjk.grid`, voir [Composition du chinois › La grille de caractères](/fr/docs/chinese-layout#la-grille-de-caractères)), chaque caractère occupe une case d’un em de large et chaque ligne suit le pas de ligne de la grille, qui est aussi la grille de ligne de base. L’équilibrage y est désactivé par défaut, comme en texte vertical : une page composée ligne à ligne sur une grille, à la manière dont GB/T 9704 compte 22 lignes de 28 caractères, laisse une colonne courte telle quelle. Une configuration qui fixe `enabled: true` obtient des leviers qui respectent la grille : les titres, les fins de liste, les formules hors texte et les figures prennent des lignes entières de la grille, de sorte que le texte qui les suit se déplace par rangées entières, et `gridLines: 'off'` les exclut pour une norme qui n’a aucune rangée vide à donner. Un paragraphe chinois ou japonais ne s’allonge d’une ligne que si aucun intervalle entre deux de ses caractères ne s’élargit au-delà de `maxTracking`, et ses lettres ne reçoivent aucune approche : une ligne à qui il manque un caractère répartit un em sur ses intervalles, bien au-delà des 0,01 em par défaut : sur une grille de cases entières, le levier des paragraphes lâches ne trouve donc généralement rien. L’encadré qui ferme une colonne et les images avec zone de sécurité sont hors grille par conception et fonctionnent comme partout ailleurs.
 
 La dernière colonne d’une page n’est équilibrée que si la page se poursuit naturellement sur la suivante : la page de fin d’un chapitre peut légitimement s’arrêter plus haut. Une telle page, ainsi qu’une bande finale coupée à niveau par `trailing`, garde aussi ses têtes de colonne alignées : aucune ligne n’est ajoutée sous une figure ou un tableau qui ouvre l’une de ses colonnes (le levier après flottant), et un titre ou un encadré qui ouvre une colonne sous une telle figure reste en tête, quelle que soit la valeur de `stretchAfterFloats`. Il en va de même du titre placé juste sous une ouverture `span: 'page'`, dans la colonne de cette ouverture. Une colonne ne commence donc jamais plus bas que sa voisine dans le seul but d’aligner les pieds.
+
+Ces réglages se trouvent sous `headings.balancing`.
 
 <table>
   <thead>

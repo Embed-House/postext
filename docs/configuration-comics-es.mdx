@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ajustes de cómics',
   description: 'Los ajustes de los cómics: el marco y las calles de las páginas de cómic, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto',
   lang: 'es',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ Cada entrada de `comics.balloonStyles` se aplica sobre el estilo integrado del m
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Giro en grados, en el sentido de las agujas del reloj. El atributo <code>rotate</code> de la línea tiene prioridad.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Inclinación de las letras en grados, aplicada antes de <code>rotate</code>: positiva hacia delante, como la cursiva, y negativa hacia atrás. El texto escrito sobre un objeto visto en perspectiva (un cartel, la cubierta de un libro) sigue su borde superior con <code>rotate</code> y sus lados con <code>skew</code>. El atributo <code>skew</code> de la línea tiene prioridad.</td>
     </tr>
   </tbody>
 </table>

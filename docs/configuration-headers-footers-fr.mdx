@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'En-têtes et pieds de page',
   description: 'Ce qui s’imprime en haut et en bas de chaque page : texte avec variables, filets, boîtes et images, selon la parité de la page, et la place de chaque élément',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '34 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Les propriétés `header` et `footer` règlent les zones d’en-tête et de pied
 
 Ces zones suivent le modèle unifié des **zones de maquette** : chaque élément a un `placement` doté d’une `anchor` (au conteneur, ou à un autre élément par `#id`), d’un `offset` facultatif et d’une `size` facultative. Les anciens champs à plat `align`, `marginFromBody`, `marginFromEdge` et `width: 'full'` sont toujours acceptés en entrée et migrés automatiquement vers la nouvelle forme ; la description équivalente dans la nouvelle forme est documentée plus bas.
 
-Chaque zone contient une liste d’éléments **texte**, **filet** et **boîte**. L’ordre du tableau est l’ordre de peinture (le premier élément est peint en premier, le dernier par-dessus tous les autres). Cela vaut quelles que soient les ancres : un élément peut s’ancrer à un élément listé après lui (`anchor.to: '#ttl'`), de sorte qu’une boîte de fond peut venir en premier et être tout de même positionnée par rapport au texte derrière lequel elle se trouve.
+Chaque zone contient une liste d’éléments **texte**, **filet**, **boîte** et **image**. L’ordre du tableau est l’ordre de peinture (le premier élément est peint en premier, le dernier par-dessus tous les autres). Cela vaut quelles que soient les ancres : un élément peut s’ancrer à un élément listé après lui (`anchor.to: '#ttl'`), de sorte qu’une boîte de fond peut venir en premier et être tout de même positionnée par rapport au texte derrière lequel elle se trouve.
 
 **Valeurs par défaut intégrées.** Lorsque `header` ou `footer` vaut `undefined`, postext applique une valeur par défaut intégrée raisonnable plutôt qu’une zone vide :
 
@@ -46,7 +46,7 @@ Pour renoncer aux valeurs par défaut intégrées, définissez `header: { elemen
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valeurs par défaut intégrées si <code>undefined</code> ; <code>[]</code> les désactive</td>
-      <td>Liste ordonnée d’éléments texte et filet.</td>
+      <td>Liste ordonnée d’éléments texte, filet, boîte et image.</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ Les valeurs par défaut du tableau ci-dessous sont celles d’un élément de te
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>Les <em>rôles</em> de page sur lesquels l’élément apparaît, combinés avec <code>parity</code>. Après le placement, chaque page est classée comme <code>'blank'</code> (remplissage de parité ou séparateur, ou page sans contenu), <code>'part'</code> (une page de partie), <code>'opener'</code> (son premier bloc est un titre dont le niveau s’étend sur toute la page ou force un saut de page avant lui : la première page d’un chapitre) ou <code>'body'</code> (tout le reste). <code>pages: 'body'</code> masque un titre courant sur les ouvertures de chapitre ; <code>pages: 'opener'</code> n’affiche un folio que là.</td>
+      <td>Les <em>rôles</em> de page sur lesquels l’élément apparaît, combinés avec <code>parity</code>. Après le placement, chaque page est classée comme <code>'blank'</code> (remplissage de parité ou séparateur, ou page sans contenu), <code>'part'</code> (une page de partie), <code>'opener'</code> (son premier bloc est un titre dont le niveau s’étend sur toute la page ou force un saut de page avant lui : la première page d’un chapitre), <code>'comic'</code> (une page de bande dessinée, <code>:::page</code>), <code>'composed'</code> (une page composée, ou le <code>role</code> que nomme son gabarit) ou <code>'body'</code> (tout le reste). <code>pages: 'body'</code> masque un titre courant sur les ouvertures de chapitre ; <code>pages: 'opener'</code> n’affiche un folio que là.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ Les valeurs par défaut du tableau ci-dessous sont celles d’un élément de te
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> dans les maquettes de titre et de partie, sinon <code>'ellipsis-end'</code></td>
-      <td>Ce que fait le moteur d’un texte qui dépasse la largeur disponible de l’élément. <code>'wrap'</code> répartit la ligne sur plusieurs lignes ; les variantes à points de suspension gardent chaque ligne sur une seule ligne et la tronquent avec <code>…</code> au début, au milieu ou à la fin ; <code>'clip'</code> rogne net au cadre de l’élément sans insérer de caractère. Les sauts de ligne du contenu s’appliquent dans tous les modes : les modes à points de suspension et de rognage tronquent ou rognent chaque ligne séparément. Un élément qui omet <code>overflow</code> prend la valeur par défaut de sa zone de maquette : dans la maquette d’un titre (<code>advancedDesign.slot</code>) ou sur une page de partie (<code>parts.design</code>, <code>parts.versoDesign</code>), il passe à la ligne ; dans un titre courant, un folio ou une ligne de partie de la table des matières (<code>toc.parts.design</code>, une ligne de hauteur fixe), il se termine par <code>…</code>. Définissez <code>'wrap'</code> sur un titre courant qui peut occuper plusieurs lignes (une adresse), ou des points de suspension sur un surtitre qui doit tenir sur une ligne dans une ouverture. Une ligne coupée par des points de suspension, ou rognée avec de l’encre au-delà de la boîte, est signalée par un avertissement de contenu <code>designTextTruncated</code>, une fois par élément et par page (une fois par élément et par chapitre pour un titre courant ou un folio). Une configuration enregistrée avant postext 1.24 (<code>configVersion</code> 9 ou antérieure) est lue avec <code>'ellipsis-end'</code> sur chaque texte de titre et de partie qui n’en définit pas, afin que ses pages ne bougent pas. Un texte doté d’une <code>dropCap</code> passe à la ligne quelle que soit la valeur de cette propriété ; avec <code>'clip'</code>, ses lignes sont tout de même coupées au bord d’une boîte de hauteur fixe. <code>'ellipsis-end'</code> et <code>'ellipsis-start'</code> coupent à une limite de mot (<em>The history of…</em>, et non <em>The history of th…</em>) et aucune espace ni ponctuation de liaison (virgule, deux-points, tiret, barre oblique, parenthèse ouvrante) ne touche les points de suspension. Un mot n’est coupé en son milieu que lorsque la coupe à la limite de mot, une fois cette ponctuation retirée, garderait moins de la moitié de ce qui tient : un seul mot long, ou une URL (<em>http://exampl…</em>, et non <em>http…</em>). Une espace insécable ou un trait d’union insécable (U+2011, comme dans <em>MS‑DOS</em>) n’est pas une limite de mot ; <code>'ellipsis-middle'</code> coupe n’importe où mais supprime les espaces qui l’entourent. Jusqu’à postext 1.4, tous les modes coupaient au dernier caractère qui tenait, espaces compris.</td>
+      <td><code>'wrap'</code> dans les maquettes de titre, de partie et d’encadré, sinon <code>'ellipsis-end'</code></td>
+      <td>Ce que fait le moteur d’un texte qui dépasse la largeur disponible de l’élément. <code>'wrap'</code> répartit la ligne sur plusieurs lignes ; les variantes à points de suspension gardent chaque ligne sur une seule ligne et la tronquent avec <code>…</code> au début, au milieu ou à la fin ; <code>'clip'</code> rogne net au cadre de l’élément sans insérer de caractère. Les sauts de ligne du contenu s’appliquent dans tous les modes : les modes à points de suspension et de rognage tronquent ou rognent chaque ligne séparément. Un élément qui omet <code>overflow</code> prend la valeur par défaut de sa zone de maquette : dans la maquette d’un titre (<code>advancedDesign.slot</code>), sur une page de partie (<code>parts.design</code>, <code>parts.versoDesign</code>) ou dans la <a href="/fr/docs/configuration-callouts#maquettes-dencadré">maquette d’un encadré</a> (<code>calloutStyles[].design</code>), il passe à la ligne ; dans un titre courant, un folio ou une ligne de partie de la table des matières (<code>toc.parts.design</code>, une ligne de hauteur fixe), il se termine par <code>…</code>. Définissez <code>'wrap'</code> sur un titre courant qui peut occuper plusieurs lignes (une adresse), ou des points de suspension sur un surtitre qui doit tenir sur une ligne dans une ouverture. Une ligne coupée par des points de suspension, ou rognée avec de l’encre au-delà de la boîte, est signalée par un avertissement de contenu <code>designTextTruncated</code>, une fois par élément et par page (une fois par élément et par chapitre pour un titre courant ou un folio). Une configuration enregistrée avant postext 1.24 (<code>configVersion</code> 9 ou antérieure) est lue avec <code>'ellipsis-end'</code> sur chaque texte de titre et de partie qui n’en définit pas, afin que ses pages ne bougent pas. Un texte doté d’une <code>dropCap</code> passe à la ligne quelle que soit la valeur de cette propriété ; avec <code>'clip'</code>, ses lignes sont tout de même coupées au bord d’une boîte de hauteur fixe. <code>'ellipsis-end'</code> et <code>'ellipsis-start'</code> coupent à une limite de mot (<em>The history of…</em>, et non <em>The history of th…</em>) et aucune espace ni ponctuation de liaison (virgule, deux-points, tiret, barre oblique, parenthèse ouvrante) ne touche les points de suspension. Un mot n’est coupé en son milieu que lorsque la coupe à la limite de mot, une fois cette ponctuation retirée, garderait moins de la moitié de ce qui tient : un seul mot long, ou une URL (<em>http://exampl…</em>, et non <em>http…</em>). Une espace insécable ou un trait d’union insécable (U+2011, comme dans <em>MS‑DOS</em>) n’est pas une limite de mot ; <code>'ellipsis-middle'</code> coupe n’importe où mais supprime les espaces qui l’entourent. Jusqu’à postext 1.4, tous les modes coupaient au dernier caractère qui tenait, espaces compris.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ Les valeurs par défaut du tableau ci-dessous sont celles d’un élément de te
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Maquettes de titre uniquement : indique si l’élément compte dans la hauteur que le titre réserve dans le flux du texte. <code>false</code> pour une décoration qui peut passer sous le texte (un sceau en pied de page, un cadre, une bande latérale). Voir <a href="/fr/docs/configuration-headings#hauteur-réservée">Hauteur réservée</a>. Les maquettes d’en-tête, de pied de page et de partie l’ignorent.</td>
+      <td>Maquettes de titre et d’encadré uniquement : indique si l’élément compte dans la hauteur que le titre réserve dans le flux du texte, ou dans la hauteur du bandeau de la maquette d’un encadré (<code>calloutStyles[].design</code>). <code>false</code> pour une décoration qui peut passer sous le texte (un sceau en pied de page, un cadre, une bande latérale). Voir <a href="/fr/docs/configuration-headings#hauteur-réservée">Hauteur réservée</a>. Les maquettes d’en-tête, de pied de page et de partie l’ignorent.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ Variables disponibles :
 - `{bookTotalPages}` : nombre total de pages du livre entier, tous les chapitres et toutes les pages blanches compris. Pour un document mis en page seul, il est égal à `{totalPages}`. Voir [Nombre de pages du livre](#nombre-de-pages-du-livre) plus bas.
 - `{title}`, `{subtitle}`, `{author}`, `{publishDate}` : valeurs lues dans `content.metadata`. Une métadonnée inconnue ou vide donne une chaîne vide (et déclenche un avertissement dans le Sandbox).
 - `{chapterTitle}` : texte du dernier H1 situé sur la page courante ou avant elle. Un H1 dont le [style de titre](/fr/docs/configuration-styles#styles-de-titre) définit `runningChapter: false` (une planche, une carte) est ignoré.
+- `{chapterNumber}` : le numéro de ce chapitre, celui de son H1 quand le niveau ou son style de titre a un `numberingTemplate`, sinon son rang (`1`, `2`…). Vide pour un chapitre non numéroté.
 - `{chapterTitleAtTop}`, `{chapterNumberAtTop}` : titre et numéro du chapitre en cours en haut de la page, qui diffèrent de `{chapterTitle}` et de `{chapterNumber}` sur une page où un nouveau chapitre commence sous d’autre texte. Voir [Chapitre en haut de la page](#chapitre-en-haut-de-la-page) plus bas.
 - `{partTitle}`, `{partNumber}` : titre et numéro de la partie courante (la dernière page `:::part` située sur la page courante ou avant elle ; les pages blanches de parité placées juste avant une page de partie lui appartiennent déjà). Vides avant la première partie.
 - `{firstMark.<key>}`, `{lastMark.<key>}` : premier et dernier mot-repère de la page, soit un titre d’un niveau donné (`h1`–`h6`), soit une entrée d’un style de paragraphe. Voir [Mots-repères](#mots-repères-première-et-dernière-marque) plus bas.
@@ -388,7 +389,7 @@ Dans le PDF, les segments en gras et en italique incorporent les polices corresp
 
 Un élément de texte que vous écrivez vous-même part de ces valeurs, dont certaines surprennent :
 
-- **`overflow` dépend de la zone de maquette.** Dans la maquette d’un titre ou sur une page de partie, un long titre passe sur plusieurs lignes ; dans un titre courant, un folio ou une ligne de partie de la table des matières, un texte trop large pour sa place est ramené à une ligne terminée par `…`. Définissez `overflow: 'wrap'` sur un titre courant qui peut s’allonger (une adresse, une signature), et consultez les avertissements `designTextTruncated` pour repérer les textes coupés. Un saut de ligne dans le contenu (un retour à la ligne, ou `\n` dans le modèle ou dans une valeur d’attribut) commence une nouvelle ligne dans tous les modes ; les modes à points de suspension coupent chaque ligne séparément.
+- **`overflow` dépend de la zone de maquette.** Dans la maquette d’un titre, sur une page de partie ou dans la maquette d’un encadré, un long titre passe sur plusieurs lignes ; dans un titre courant, un folio ou une ligne de partie de la table des matières, un texte trop large pour sa place est ramené à une ligne terminée par `…`. Définissez `overflow: 'wrap'` sur un titre courant qui peut s’allonger (une adresse, une signature), et consultez les avertissements `designTextTruncated` pour repérer les textes coupés. Un saut de ligne dans le contenu (un retour à la ligne, ou `\n` dans le modèle ou dans une valeur d’attribut) commence une nouvelle ligne dans tous les modes ; les modes à points de suspension coupent chaque ligne séparément.
 - **`align` vaut `'center'` et `verticalAlign` vaut `'middle'`.** Un élément à largeur automatique s’ajuste à sa ligne la plus longue : ses lignes sont donc centrées les unes par rapport aux autres ; définissez `align: 'left'` pour un bloc au fer à gauche (un élément à largeur automatique ancré à un autre élément aligne de lui-même ses lignes du côté de son ancre, voir plus haut).
 - **La police est EB Garamond 8 pt, en noir, `lineHeight` 1,2**, quelle que soit celle du texte courant. Contrairement aux autres interlignages de la configuration, la `lineHeight` d’un texte de maquette est en général un simple multiple (`1.2`) ; une `Dimension` fonctionne aussi (voir plus haut).
 
@@ -520,7 +521,7 @@ Les éléments filet tracent une ligne : horizontale en travers de la zone, ou 
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Rôles de page sur lesquels le filet apparaît (voir le champ <code>pages</code> des éléments de texte).</td>
     </tr>
@@ -603,7 +604,7 @@ Les éléments boîte peignent un rectangle aux coins arrondis dans la zone : u
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Rôles de page sur lesquels la boîte apparaît (voir le champ <code>pages</code> des éléments de texte).</td>
     </tr>
@@ -696,7 +697,7 @@ Une image dessinée par une maquette est du contenu lorsque sa ressource la déc
 
 ### Placement des éléments
 
-`ElementPlacement` est le modèle de positionnement unifié qu’utilisent tous les types d’éléments (texte, filet, boîte) dans n’importe quelle zone de maquette : en-tête de page, pied de page ou maquette avancée d’un niveau de titre. Trois données décrivent un placement :
+`ElementPlacement` est le modèle de positionnement unifié qu’utilisent tous les types d’éléments (texte, filet, boîte, image) dans n’importe quelle zone de maquette : en-tête de page, pied de page ou maquette avancée d’un niveau de titre. Trois données décrivent un placement :
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge` accepte :
 
-- **Bords du conteneur** (lorsque `anchor.to` vaut `'container'`, `'page'` ou `'bleed'`) : `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
+- **Bords du conteneur** (lorsque `anchor.to` vaut `'container'`, `'page'`, `'bleed'` ou `'outer'`) : `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right` et `center`, le centre du cadre.
 - **Bords relatifs à un élément** (lorsque `anchor.to === '#someId'`) : `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
 
 Chaque bord relatif à un élément place un coin de l’élément sur un coin de l’élément auquel il s’ancre, et `offset` le déplace à partir de là :

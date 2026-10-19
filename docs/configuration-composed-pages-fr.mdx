@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Réglages des pages composées',
   description: 'Les gabarits des pages composées (blocs, groupes, décor, héritage, variantes recto et verso), les styles des étiquettes placées sur les ancres d’une image, et les avertissements qu’un gabarit peut déclencher',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Un style de paragraphe pour le texte de la page, comme en ont les styles de titre.</td>
+      <td>Un style de paragraphe pour le texte de la page, comme en ont les styles de titre. La mise en page ne l’applique pas encore.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, celle du style</td>
-      <td>Des colonnes à l’intérieur du bloc.</td>
+      <td>Des colonnes à l’intérieur du bloc. Un titre ne termine jamais l’une d’elles : il passe à la colonne suivante avec le texte qu’il introduit (avec <code>headings.keepWithNext</code>, depuis postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit
 
 ### Ce que la mise en page applique
 
-La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images des étapes d’ajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Sont lus et vérifiés, mais pas encore appliqués : le `bodyStyle` et la `palette` du gabarit. Le `writingMode` et la `direction` d’un bloc sont appliqués depuis postext 1.39. Une largeur `'auto'` est traitée comme `'fill'`.
+La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images des étapes d’ajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Depuis postext 1.42, elle applique aussi la `palette` du gabarit, le `look` d’un bloc et la largeur `'auto'` (celle de la plus longue ligne du bloc). Le `writingMode` et la `direction` d’un bloc sont appliqués depuis postext 1.39. Est lu et vérifié, mais pas encore appliqué : le `bodyStyle` du gabarit.
 
 ### Doubles pages
 
@@ -588,7 +588,7 @@ Dans un livre vertical (`vertical-rl`), la double page se compose dans le repèr
 
 ## Styles d’étiquette
 
-La propriété `labelStyles` définit des apparences nommées pour les étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place sur une ancre de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que désigne l’ancre ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42).
+La propriété `labelStyles` définit des apparences nommées pour les étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place sur une ancre de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que désigne l’ancre ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42). Renommer un style à cet endroit réécrit les ancres et les lignes `::label` qui le nomment (depuis postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>La taille minimale à laquelle une étiquette peut être réduite quand elle ne tient pas dans sa largeur.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Écriture verticale pour les étiquettes de ce style : caractères debout dans des cellules l’une sous l’autre, colonnes de droite à gauche, comme on inscrit une carte chinoise ou japonaise. Le <code>writingMode</code> propre à une ancre l’emporte.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> indique que l’étiquette posée sur cette ancre peut toucher ses voisines, comme la source l’imprime : <code>labelOverlap</code> n’est pas déclenché pour une paire où elle figure. L’emporte sur l’<code>overlap</code> du style. Depuis postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>Sur une figure qui traverse le dos d’une double page, <code>'keep'</code> écarte l’étiquette de la bande du petit fond, du côté où se trouve son point ; <code>'cross'</code> la laisse où le point la met, comme l’exige un titre posé sur les deux pages. Depuis postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ Les ancres d’une image (`Resource.anchors`, les points que la bande dessinée 
       <td>aucun</td>
       <td>Un identifiant de <code>labelStyles</code>. Une étiquette qui indique son propre style le remplace.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> compose l’étiquette à la verticale, comme on inscrit une carte chinoise ou japonaise ou un dos de livre. Sa <code>width</code> est alors une fraction de la hauteur de l’image, <code>align</code> court le long de la colonne (<code>start</code> en est le haut) et <code>verticalAlign</code> en travers des colonnes (<code>top</code> est la première, celle de droite).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> indique que l’étiquette posée sur cette ancre peut toucher ses voisines, comme la source l’imprime : <code>labelOverlap</code> n’est pas déclenché pour une paire où elle figure. L’emporte sur l’<code>overlap</code> du style. Depuis postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>Sur une figure qui traverse le dos d’une double page, <code>'keep'</code> écarte l’étiquette de la bande du petit fond, du côté où se trouve son point ; <code>'cross'</code> la laisse où le point la met, comme l’exige un titre posé sur les deux pages. Depuis postext 1.43.</td>
     </tr>
   </tbody>
 </table>

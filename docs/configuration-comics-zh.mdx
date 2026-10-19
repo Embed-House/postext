@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '漫画设置',
   description: 'comics属性的各项设置：漫画页的画框和格间距、分格样式、嵌字、对白框样式和角色表',
   lang: 'zh',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '6分钟',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>按顺时针旋转的角度。台词行的<code>rotate</code>属性优先。</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>字母倾斜的角度，在<code>rotate</code>之前应用：正值向前倾，如斜体；负值向后倾。透视中的物体（招牌、书的封面）上写的字，用<code>rotate</code>贴合其上边，用<code>skew</code>贴合其两侧。台词行的<code>skew</code>属性优先。</td>
     </tr>
   </tbody>
 </table>

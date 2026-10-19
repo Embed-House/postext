@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Command line',
   description: 'A single self-contained executable for macOS, Linux and Windows. It turns a .postext book, a book folder or loose Markdown into PDF, HTML, EPUB, page images and Word, packs bundles, checks books, and gives JSON output for scripts and agents',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 45,
   plainSummary: "This page is for people who want to make books with Postext from a terminal instead of the website. You download one file for your computer and run it, with nothing to install. You give it your book, or a few text files, and it makes a PDF, a web page, an e-book, pictures of the pages or a Word document. It can also check a book for problems and pack its files into one. Programs and AI helpers can use it too, because it can answer in a format they read easily.",
@@ -156,7 +156,7 @@ own configuration. A multilingual bundle is read in its own language unless
 </table>
 
 Every command writes next to where you run it, named after the input, unless
-`-o` gives the path. `-o -` writes a single output to the standard output.
+`-o` gives the path (`images` writes into `pages/`). `-o -` writes a single output to the standard output.
 
 ### pdf
 
@@ -233,7 +233,8 @@ going through a PDF.
   `page-{n:03}` by default.
 - `--print-preview`: the page as the printer will reproduce it, through the
   output profile, with the trim and bleed drawn.
-- `--jobs N`: how many pictures are encoded at once.
+- `--jobs N`: how many pictures are encoded at once (by default, as many as the
+  computer has processors).
 
 ### docx and import-docx
 
@@ -272,7 +273,9 @@ postext unpack my-book.postext -o my-book/
 
 `pack` zips a book folder as it is, or builds a bundle from loose Markdown.
 The same input always gives the same bytes, so a bundle can be compared or
-hashed. `unpack` refuses to write into a folder that is not empty unless
+hashed. For loose Markdown, `--id`, `--description` and `--thumbnail FILE` (a
+cover picture) set the bundle's id, description and thumbnail; the id is a slug
+of the name by default. A folder keeps what its `preset.json` says. `unpack` refuses to write into a folder that is not empty unless
 `--force` is given.
 
 ### info and check
@@ -339,7 +342,7 @@ good files.
 </table>
 
 And for every command: `--json`, `--quiet` (`-q`, errors only), `--verbose`
-(progress and every warning), `--no-color`, `--help`.
+(progress and every warning), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Fonts
 

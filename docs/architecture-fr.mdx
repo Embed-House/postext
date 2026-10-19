@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Architecture',
   description: 'Architecture technique du moteur de mise en page Postext : ses concepts, l’arbre de document, le rythme vertical, les moteurs de rendu et les performances',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '31 min',
   order: 2,
   plainSummary: "Cette page explique le fonctionnement interne de Postext ; elle s’adresse aux programmeurs. D’abord, Postext mesure chaque mot sans rien dessiner à l’écran, ce qui le rend très rapide. Ensuite, il calcule l’emplacement de chaque ligne, de chaque image et de chaque colonne, et garde ce plan en mémoire. Enfin, il dessine les pages terminées sous forme de page web, d’image canvas ou de fichier PDF. Quand vous modifiez un mot, il refait la mise en page et réutilise les mesures des paragraphes qui n’ont pas changé. La page suivante explique, étape par étape, comment les lignes et les images sont placées.",
@@ -95,7 +95,7 @@ d’eux vous paraît flou.
     </tr>
     <tr>
       <td><strong>Moteur de rendu (backend)</strong></td>
-      <td>Une cible de rendu qui consomme le VDT terminé. Quatre sont disponibles aujourd’hui : <strong>canvas</strong> (aperçu bitmap), <strong>HTML</strong> (lecture à l’écran fondée sur le DOM), <strong>PDF</strong> (sortie prête pour l’impression via <code>postext-pdf</code>) et <strong>EPUB</strong> (<code>postext-epub</code>, le livre en livre numérique). Tous quatre rendent à partir de la même mesure (le module measure, au-dessus de Pretext).</td>
+      <td>Une cible de rendu qui consomme le VDT terminé. Quatre sont disponibles aujourd’hui : <strong>canvas</strong> (aperçu bitmap), <strong>HTML</strong> (lecture à l’écran fondée sur le DOM), <strong>PDF</strong> (sortie prête pour l’impression via <code>postext-pdf</code>) et <strong>EPUB</strong> (<code>postext-epub</code>, le livre en livre numérique). Tous quatre rendent à partir de la même mesure (le module measure, au-dessus de Pretext). La visionneuse 3D <code>postext-folio</code> peint ses feuillets avec le moteur canvas.</td>
     </tr>
     <tr>
       <td><strong>Passe de placement</strong></td>
@@ -138,6 +138,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
   notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+  continuation?: LayoutContinuation; // counters and page numbers carried from earlier chapters
+  outline?: OutlineEntry[];    // the book's headings with their page labels, for :::toc / :::index
+  citations?: CitationContext; // this chapter's share of the book's citations
+  laterPageIds?: Record<string, number>; // page fences of later chapters a story may continue on
 }
 
 interface Resource {
@@ -490,6 +494,12 @@ Comme les données binaires des ressources circulent hors bande, chaque moteur d
       <td><strong>Disponible</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong> (visionneuse 3D)</td>
+      <td>Consomme le VDT déjà mesuré avec Pretext</td>
+      <td>Chaque page peinte par le moteur canvas (<code>renderPageToCanvas</code>) et affichée comme texture d’un feuillet three.js, seulement autour de la double page ouverte (<code>createFolioFromDocument</code> dans <code>postext-folio</code>)</td>
+      <td><strong>Disponible</strong></td>
+    </tr>
+    <tr>
       <td><strong>Ligne de commande</strong></td>
       <td>Pretext sur Skia (<code>@napi-rs/canvas</code>), à la place du canvas du navigateur</td>
       <td>Les générateurs PDF, HTML et EPUB, les images de page et Word, lancés depuis un terminal sans navigateur (<code>postext-cli</code>)</td>
@@ -498,7 +508,7 @@ Comme les données binaires des ressources circulent hors bande, chaque moteur d
   </tbody>
 </table>
 
-Les quatre moteurs de rendu disponibles consomment le même `VDTDocument`. La séparation entre `postext` (qui exporte les moteurs canvas et HTML) et `postext-pdf` (qui exporte le moteur PDF) ne tient qu’aux dépendances : la voie PDF tire `pdf-lib` et `@pdf-lib/fontkit`, dont la plupart des intégrations web n’ont pas besoin. N’installez `postext-pdf` que si vous voulez réellement produire des octets PDF. `postext-epub` est un paquet à part pour la même raison, et ne sert qu’aux livres numériques. La ligne de commande n’est pas un cinquième moteur de rendu : `postext-cli` exécute ces mêmes générateurs là où il n’y a pas de navigateur.
+Les quatre moteurs de rendu et la visionneuse Folio consomment le même `VDTDocument`. La séparation entre `postext` (qui exporte les moteurs canvas et HTML) et `postext-pdf` (qui exporte le moteur PDF) ne tient qu’aux dépendances : la voie PDF tire `pdf-lib` et `@pdf-lib/fontkit`, dont la plupart des intégrations web n’ont pas besoin. N’installez `postext-pdf` que si vous voulez réellement produire des octets PDF. `postext-epub` est un paquet à part pour la même raison, et ne sert qu’aux livres numériques. La ligne de commande n’est pas un cinquième moteur de rendu : `postext-cli` exécute ces mêmes générateurs là où il n’y a pas de navigateur. Les fichiers Word n’en sont pas un non plus : `postextToDocx` (de `postext/word`) écrit les chapitres Markdown et leurs styles dans un `.docx`, sans mise en page, et `readDocx` avec `wordToPostext` le relisent en Markdown.
 
 **Où s’exécute la mise en page :** le moteur mesure le texte sur un canvas, il s’exécute donc partout où on lui en fournit un. Dans un navigateur, la chaîne s’exécute soit sur le thread principal (`buildDocument`), soit dans un Web Worker dédié (`createLayoutWorker` de `postext/worker`). La voie du worker est l’intégration recommandée pour les applications pilotées par une interface, car elle tient la mesure et les passes de placement hors du thread principal, permet l’annulation où la dernière demande l’emporte via `AbortSignal`, et possède son propre cache de mesure et son propre cache de rastérisation des formules, pour que les reconstructions successives restent peu coûteuses. Voir [Configuration → Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker) pour le schéma d’intégration complet. Hors du navigateur, la [ligne de commande](/fr/docs/command-line) exécute la même chaîne avec Skia à la place du canvas du navigateur : un livre se découpe donc en pages identiques dans un terminal, un script ou un serveur de build.
 
@@ -543,7 +553,13 @@ Voyez à quoi le moteur doit faire face : des milliers de blocs de texte sur de
    Knuth-Plass a été réécrite pour la vitesse : l’ensemble actif est compacté sur place à mesure que
    les nœuds sont retirés, et les candidats sont dédoublonnés par (ligne, classe d’ajustement) :
    seul le nœud au plus faible démérite survit donc pour chaque clé. Les résultats de l’algorithme sont
-   identiques : mêmes jeux de coupures, simplement calculés plus vite.
+   identiques : mêmes jeux de coupures, simplement calculés plus vite. Le même algorithme existe aussi
+   en Rust (`rust/crates/linebreak`), compilé en WebAssembly et incorporé au paquet : il fait la même
+   arithmétique dans le même ordre, deux à trois fois plus vite, et répond partout où le module a été
+   compilé. Sur le fil principal d’une page, il se compile en arrière-plan ; d’ici là, ou là où
+   WebAssembly manque ou est refusé, c’est la version TypeScript qui répond. `initLineBreaker()`
+   lance la compilation plus tôt ; `useWasmLineBreaker(false)` garde tous les paragraphes sur la
+   version TypeScript.
 
 7. **Des constructions hors du thread principal.** Le point d’entrée `postext/worker` exécute toute la
    chaîne dans un Web Worker dédié. Le thread principal envoie `{ content, config }` et un
@@ -567,13 +583,18 @@ Voyez à quoi le moteur doit faire face : des milliers de blocs de texte sur de
 
 Il n’existe pas de point d’entrée incrémental : aucun appel ne prend un VDT achevé pour le mettre à jour. Quand le contenu ou la configuration change (une frappe au clavier, un autre format de page), l’hôte rappelle `buildDocument` et obtient un nouveau document.
 
-Ce qui passe d’une construction à la suivante, c’est la mesure. Créez un `MeasurementCache` une fois avec `createMeasurementCache()` et passez-le comme troisième argument de chaque appel à `buildDocument`. Un paragraphe dont le texte, les polices, la largeur et les options de coupure n’ont pas changé y est lu : un éditeur qui remet le document en page à chaque frappe ne mesure donc que le paragraphe en cours de saisie. Un changement de format de page ou de nombre de colonnes change les largeurs, et ces paragraphes sont mesurés à nouveau ; les résultats de `prepare()` de Pretext restent valables, puisqu’ils dépendent de la police et du texte et non de la largeur, et seule tourne l’arithmétique peu coûteuse de `layout()`. L’analyse est elle aussi mémoïsée.
+Ce qui passe d’une construction à la suivante, c’est la mesure. Créez un `MeasurementCache` une fois avec `createMeasurementCache()` et passez-le comme troisième argument de chaque appel à `buildDocument`. Un paragraphe dont le texte, les polices, la largeur et les options de coupure n’ont pas changé y est lu : un éditeur qui remet le document en page à chaque frappe ne mesure donc que le paragraphe en cours de saisie. Un changement de format de page ou de nombre de colonnes change les largeurs, et ces paragraphes sont mesurés à nouveau ; les résultats de `prepare()` de Pretext restent valables, puisqu’ils dépendent de la police et du texte et non de la largeur, et seule tourne l’arithmétique peu coûteuse de `layout()`. L’analyse est elle aussi mémoïsée. Les pages composées passent aussi d’une construction à
+l’autre : une page composée dont le gabarit, le Markdown, les styles et les polices n’ont pas changé
+est reprise de la construction précédente (`composed/pageMemo.ts`), si bien qu’une modification sur
+une page d’un chapitre de pages composées ne remet en page que cette page. Une page qui contient
+une note de bas de page, un renvoi, une citation, une table des matières, un index ou un strip de
+bande dessinée est toujours remise en page.
 
 Pour un éditeur en direct, `createLayoutWorker` (de `postext/worker`) fait tout cela hors du thread principal : le worker possède un cache de mesure qui vit aussi longtemps que lui, et un `build()` plus récent annule celui en cours. Voir [Configuration → Cache de mesure](/fr/docs/configuration-programmatic-usage#cache-de-mesures) et [Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker).
 
 ### Bancs d’essai
 
-Deux bancs d’essai se trouvent dans `packages/postext/src/__bench__/`. `pnpm test` les ignore ; `pnpm bench`, lancé dans `packages/postext`, les exécute. `chapter.bench.test.ts` met en page un chapitre de la taille d’un manuel (quarante sections de titres, de paragraphes et de listes) cinq fois avec un cache de mesure vide et cinq fois avec un cache déjà rempli, et indique les deux médianes ainsi que le nombre de passes. `cjkChapter.bench.test.ts` met en page le chapitre 1 de 红楼梦 et compte les caractères envoyés à `measureText`, pour tenir le compositeur CJK à un coût linéaire en la longueur du paragraphe.
+Trois bancs d’essai se trouvent dans `packages/postext/src/__bench__/`. `pnpm test` les ignore ; `pnpm bench`, lancé dans `packages/postext`, les exécute. `chapter.bench.test.ts` met en page un chapitre de la taille d’un manuel (quarante sections de titres, de paragraphes et de listes) cinq fois avec un cache de mesure vide et cinq fois avec un cache déjà rempli, et indique les deux médianes ainsi que le nombre de passes. `cjkChapter.bench.test.ts` met en page le chapitre 1 de 红楼梦 et compte les caractères envoyés à `measureText`, pour tenir le compositeur CJK à un coût linéaire en la longueur du paragraphe. `composedPage.bench.test.ts` chronomètre un chapitre de vingt pages composées : une construction à froid, une reconstruction sans changement, le changement d’un attribut d’une page et une modification dans l’un de ses blocs, chacune avec la mémoire des pages composées et sans elle.
 
 ```typescript
 // From packages/postext/src/__bench__/chapter.bench.test.ts
@@ -590,7 +611,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-Une réserve, par honnêteté : il n’y a pas de canvas dans Node : les deux bancs d’essai simulent donc la mesure du texte, et leurs temps absolus ne sont pas ceux du navigateur. Le rapport entre cache vide et cache rempli et le nombre de passes, eux, le sont, et une régression de l’un ou de l’autre se voit ici avant de se voir dans le Sandbox. Le banc d’essai du chapitre rapporte des chiffres et ne fait pas échouer la construction ; celui du chinois vérifie que les caractères mesurés restent en dessous de trois fois la longueur du paragraphe le plus long. Aucun des deux ne tourne en CI : les régressions se repèrent en comparant les chiffres d’une exécution à l’autre quand un chemin critique change (comme on l’a fait pour la réécriture des nœuds actifs de Knuth-Plass). La performance est une fonctionnalité, pas un vœu ; mais aujourd’hui elle est garantie par la mesure et la relecture, pas par une chaîne d’intégration qui échoue.
+Une réserve, par honnêteté : il n’y a pas de canvas dans Node : les bancs d’essai simulent donc la mesure du texte, et leurs temps absolus ne sont pas ceux du navigateur. Le rapport entre cache vide et cache rempli et le nombre de passes, eux, le sont, et une régression de l’un ou de l’autre se voit ici avant de se voir dans le Sandbox. Les bancs d’essai du chapitre et des pages composées rapportent des chiffres et ne font pas échouer la construction ; celui du chinois vérifie que les caractères mesurés restent en dessous de trois fois la longueur du paragraphe le plus long. Aucun ne tourne en CI : les régressions se repèrent en comparant les chiffres d’une exécution à l’autre quand un chemin critique change (comme on l’a fait pour la réécriture des nœuds actifs de Knuth-Plass). Aucune compilation n’échoue encore sur un temps plus lent : un ralentissement se repère en mesurant et à la relecture.
 
 
 ## Flux de données

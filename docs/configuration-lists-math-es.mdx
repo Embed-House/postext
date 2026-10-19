@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Listas y matemáticas',
   description: 'Cómo se configuran las listas con viñetas y las numeradas (sus marcas, sus sangrías y su anidamiento) y las listas de tareas, y qué cuerpo, color y espaciado tienen las fórmulas matemáticas',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '19 min',
   order: 11,
   parent: 'configuration',
@@ -148,7 +148,7 @@ Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se componen como elementos
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>Cómo se componen los dos caracteres predeterminados. <code>'drawn'</code>: el motor dibuja la casilla. <code>'character'</code>: <code>☐</code> y <code>☑</code> son texto en la fuente de la lista, como hasta postext 1.28; en una fuente que no los tiene, el navegador elige una fuente del sistema, y el texto del elemento empieza tras el ancho que le da esa fuente. Una configuración guardada antes de la versión 13 se lee con <code>'character'</code>, así que sus líneas siguen donde estaban.</td>
+      <td>Cómo se componen los dos caracteres predeterminados. <code>'drawn'</code>: el motor dibuja la casilla. <code>'character'</code>: <code>☐</code> y <code>☑</code> son texto en la fuente de la lista, como hasta postext 1.28; en una fuente que no los tiene, el navegador elige una fuente del sistema, y el texto del elemento empieza tras el ancho que le da esa fuente. Una configuración guardada antes de <code>configVersion</code> 13 se lee con <code>'character'</code> (<code>pinLegacyTaskBox</code>), así que sus líneas siguen donde estaban.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -248,7 +248,7 @@ La propiedad `orderedLists` controla las listas numeradas (`1.`, `2)`, etc.). Se
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>Estilo de numeración: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. También valen las grafías de los otros ajustes (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; véase <a href="/es/docs/configuration-page-layout#grafías-de-los-formatos-de-numeración">Grafías de los formatos de numeración</a>); un valor desconocido numera en cifras arábigas y da un aviso.</td>
+      <td>Estilo de numeración: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>, y los estilos de Asia oriental y de la escritura árabe (<code>'simp-chinese-informal'</code>, <code>'circled-decimal'</code>, <code>'arabic-indic'</code>, <code>'abjad'</code>…). También valen las grafías de los otros ajustes (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; véase <a href="/es/docs/configuration-page-layout#grafías-de-los-formatos-de-numeración">Grafías de los formatos de numeración</a>); un valor desconocido numera en cifras arábigas y da un aviso.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>

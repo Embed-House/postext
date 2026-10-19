@@ -3,13 +3,13 @@
 export const metadata = {
   title: '設定：スタイルと部',
   sidebarTitle: 'スタイルと部',
-  description: '段落、チップ、コードリスト、見出しの名前付きスタイルと、各部の扉ページ',
+  description: '段落、チップ、ハイライト、コードリスト、見出しの名前付きスタイルと、各部の扉ページ',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '35分',
   order: 15,
   parent: 'configuration',
-  plainSummary: "このページでは、一度決めれば何度でも使える名前付きスタイルを説明します。段落スタイルは、参考文献や用語集のような種類の文章の組み方を決めます。チップスタイルは行の中に小さなラベルを描きます。コードリストには専用のフォント、枠、色があります。本の各部の最初に置くページと、特別な見出しのスタイルも扱います。囲みは別のページで説明します。",
+  plainSummary: "このページでは、一度決めれば何度でも使える名前付きスタイルを説明します。段落スタイルは、参考文献や用語集のような種類の文章の組み方を決めます。チップスタイルは行の中に小さなラベルを描き、ハイライトスタイルは語句の後ろに色の帯を敷きます。コードリストには専用のフォント、枠、色があります。本の各部の最初に置くページと、特別な見出しのスタイルも扱います。囲みは別のページで説明します。",
 };
 
 # 設定：スタイルと部
@@ -292,7 +292,7 @@ paragraphStyles: [
 
 ### `:::paragraphs`コンテナー
 
-`:::paragraphs{style="<id>"}`の行でコンテナーを開き、`:::`だけの行で閉じます。間にあるすべての段落は名前付きのスタイルを取り、中にある見出し、リスト、その他のブロックは通常のスタイルを保ちます。コンテナーは、ほかのコロンで囲んだコンテナーの中に入れ子にできます。不明な`style`のidはエラーにならず、段落は通常の本文として描画されます。
+`:::paragraphs{style="<id>"}`の行でコンテナーを開き、`:::`だけの行で閉じます。間にあるすべての段落は名前付きのスタイルを取り、中にある見出し、リスト、その他のブロックは通常のスタイルを保ちます。コンテナーは、ほかのコロンで囲んだコンテナーの中に入れ子にできます。不明な`style`のidはエラーにならず、段落は通常の本文として描画されます。Sandboxはそのidを警告します。
 
 開始行には、スタイルの有無にかかわらず`align`（`start`、`end`、`left`、`right`、`center`、`justify`）、`indent`、`endIndent`（単位のない数値はem）も書けます。スタイルがあればそれを上書きし、なければ外側のコンテナーのスタイル、またはブロックを置いた場所のテキストのスタイル（本文、部、スタイル付きの節、囲み）の上に適用されます。`:::paragraphs{align=end}`はブロックを行末にそろえて組み（地付き）、`:::paragraphs{align=end endIndent=1}`はそこから1字上げて組みます。postext 1.16から使えます。
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## チップスタイル
 
-`chipStyles`プロパティは、インラインの`:chip[text]{style="…"}`の名前付きスタイルを宣言します。単語リストや、キーボードのキー、タグに使う、角を丸めた色付きのボックスです（構文と改行の規則は文書形式のリファレンスにあります）。既定では`chip`というスタイルが1つ用意されています（淡い青の塗りに、メインカラーのヘアラインの枠、わずかな角丸、テキストは周囲の語と同じ）。そのため`:chip[…]`は設定なしで使えます。`chipStyles`を宣言すると、この既定のリストが置き換えられます。`style`のないチップや、どのスタイルも宣言していないidを指定したチップは、最初のスタイルになります。
+`chipStyles`プロパティは、インラインの`:chip[text]{style="…"}`の名前付きスタイルを宣言します。単語リストや、キーボードのキー、タグに使う、角を丸めた色付きのボックスです（構文と改行の規則は文書形式のリファレンスにあります）。既定では`chip`というスタイルが1つ用意されています（淡い青の塗りに、メインカラーのヘアラインの枠、わずかな角丸、テキストは周囲の語と同じ）。そのため`:chip[…]`は設定なしで使えます。`chipStyles`を宣言すると、この既定のリストが置き換えられます。`style`のないチップや、どのスタイルも宣言していないidを指定したチップは、最初のスタイルになります（Sandboxは不明なidを警告します）。
 
 ```ts
 const config: PostextConfig = {
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## ハイライトのスタイル
 
-`markStyles`プロパティは、インラインの`:mark[テキスト]{style="…"}`の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書形式のリファレンスにあります）。既定では`mark`というスタイルが1つあります（語句から少しはみ出す淡い黄色の帯で、両端はわずかに丸く、文字は自分の色のまま）。そのため設定なしで`:mark[…]`が使えます。`markStyles`を宣言すると、この既定のリストを置き換えます。`style`のないマーク、またはどのスタイルにも宣言されていないidのマークは、最初のスタイルになります。
+`markStyles`プロパティは、インラインの`:mark[テキスト]{style="…"}`の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書形式のリファレンスにあります）。既定では`mark`というスタイルが1つあります（語句から少しはみ出す淡い黄色の帯で、両端はわずかに丸く、文字は自分の色のまま）。そのため設定なしで`:mark[…]`が使えます。`markStyles`を宣言すると、この既定のリストを置き換えます。`style`のないマーク、またはどのスタイルにも宣言されていないidのマークは、最初のスタイルになります（Sandboxは不明なidを警告します）。
 
 ```ts
 const config: PostextConfig = {
@@ -1128,7 +1128,7 @@ const config: PostextConfig = {
       <td>レベルのフィールド</td>
       <td><code>headings.levels[]</code>と同じ</td>
       <td>そのレベルの値</td>
-      <td><code>fontFamily</code>、<code>fontSize</code>、<code>lineHeight</code>、<code>fontWeight</code>、<code>italic</code>、<code>color</code>、<code>marginTop</code>、<code>marginBottom</code>、<code>snapToGrid</code>、<code>breakBefore</code>、<code>span</code>、<code>advancedDesign</code>、<code>textTransform</code>、<code>letterSpacing</code>、<code>lineSpan</code>、<code>indent</code>、<code>firstLineIndent</code>、<code>jidori</code>、<code>dropCap</code>、<code>hidden</code>：設定したものはそれぞれ、このスタイルの見出しについて見出しのレベルの値を置き換えます（<code>dropCap: false</code>はレベルのドロップキャップを外します）。<code>breakBefore</code>はレベルの値にフィールドごとにマージされます。<code>parity</code>だけを設定したスタイルはレベルの<code>enabled</code>を保ち、<code>enabled: true</code>だけを設定したスタイルはレベルの奇偶を保ちます（postext 1.4までは、欠けたフィールドは改ページなしの既定値から取られていました）。</td>
+      <td><code>fontFamily</code>、<code>fontSize</code>、<code>lineHeight</code>、<code>fontWeight</code>、<code>italic</code>、<code>color</code>、<code>marginTop</code>、<code>marginBottom</code>、<code>snapToGrid</code>、<code>numberSeparator</code>、<code>numberPosition</code>、<code>breakBefore</code>、<code>span</code>、<code>spanBreak</code>、<code>advancedDesign</code>、<code>textTransform</code>、<code>letterSpacing</code>、<code>lineSpan</code>、<code>indent</code>、<code>firstLineIndent</code>、<code>jidori</code>、<code>dropCap</code>、<code>hidden</code>：設定したものはそれぞれ、このスタイルの見出しについて見出しのレベルの値を置き換えます（<code>dropCap: false</code>はレベルのドロップキャップを外します）。<code>breakBefore</code>はレベルの値にフィールドごとにマージされます。<code>parity</code>だけを設定したスタイルはレベルの<code>enabled</code>を保ち、<code>enabled: true</code>だけを設定したスタイルはレベルの奇偶を保ちます（postext 1.4までは、欠けたフィールドは改ページなしの既定値から取られていました）。</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1210,7 +1210,9 @@ Aardvark, abacus.
 Babble, badger… (runs on to the next page)
 ```
 
-どちらの文字もページ1から始まるので、ページ1は`B`の節の柱を取ります。スタイルのヘッダーに置いた爪見出しはそこで「B」になり、「A」の爪見出しが付くページはありません。どの節にも爪見出しが必要なら、各節に独立したページ（`breakBefore`）を与えてください。番号付きの章の後のアルファベット付きの付録と、目次とPDFのしおりには載るがページ上にはタイトルを出さない献辞のページの例です。
+どちらの文字もページ1から始まるので、ページ1は`B`の節の柱を取ります。スタイルのヘッダーに置いた爪見出しはそこで「B」になり、「A」の爪見出しが付くページはありません。どの節にも爪見出しが必要なら、各節に独立したページ（`breakBefore`）を与えてください。
+
+番号付きの章の後のアルファベット付きの付録と、目次とPDFのしおりには載るがページ上にはタイトルを出さない献辞のページの例です。
 
 ```ts
 headingStyles: [

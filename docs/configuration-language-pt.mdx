@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Hifenização e idioma',
   description: 'Padrões e exceções de hifenização, texto em bandeira, o idioma do documento (com os algarismos e a direção que ele define) e os sistemas de escrita que o Postext compõe',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '21 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: hifenizado com 'en-us', com um aviso no console
 ```
 
-Palavras com menos de 5 caracteres nunca são hifenizadas. O motor exige pelo menos 2 caracteres antes e 3 caracteres depois de um ponto de quebra.
+Palavras com menos de 5 letras nunca são hifenizadas, exceto em catalão, em que 4 bastam (`ca-sa`). Uma quebra deixa pelo menos 2 letras antes dela e, depois dela, 3 em inglês e em francês (`read-ing`), 4 em português (`ca-misa`) e 2 nas demais línguas (`pa-red`, `Ta-fel`). Em inglês, francês e italiano o apóstrofo não conta como letra nesses mínimos (nada de `is-n't`), e em francês e italiano as consoantes antes de uma elisão ficam com a sua palavra: `dell’ac-qua`, nunca `del-l’acqua`.
 
 ### Palavras que não se dividem
 
@@ -170,7 +170,7 @@ O chinês aceita `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`,
   </tbody>
 </table>
 
-O prefixo da legenda é o nome do tipo (*Figura 1.1.*). Os tipos chineses numeram dentro do capítulo com hífen, `{h1}-{n}` (图 1-1); com os ajustes de legenda `labelNumberGap: ''` e `labelSeparator: '　'` a legenda fica 图1-1　标题 (veja [Estilo de legenda](/pt/docs/configuration-resources#estilo-de-legenda)). O índice remissivo também segue o idioma: 见 e 另见 antes de uma referência cruzada, 符号 e 数字 sobre os símbolos e os números em chinês simplificado; 見, 另見, 符號 e 數字 em tradicional. O japonês numera seus tipos da mesma forma e compõe as legendas como 図1-1　題 sem os dois ajustes, escreve as referências cruzadas como 第3章, 2.3節 e 12ページ, dá à bibliografia o título 参考文献, e seu índice imprime 記号 e 数字 sobre os símbolos e os números e escreve as remissões com uma seta, `→夏目漱石` para *ver* e `→夏目漱石、森鷗外も見よ` depois das páginas para *ver também*, com os rótulos em pé. O árabe numera seus tipos da mesma forma, `{h1}-{n}` (شكل 2-3), escreve as referências cruzadas como الفصل 3, القسم 2-1 e ص 12, dá à bibliografia o título المراجع, e seu índice imprime انظر / انظر أيضًا, رموز e أرقام, com a vírgula e o ponto e vírgula árabes (، ؛).
+O prefixo da legenda é o nome do tipo (*Figura 1.1.*). O terceiro tipo embutido, `video`, chama-se *Video* em inglês, alemão, italiano e neerlandês, *Vídeo* em espanhol, português e catalão, *Vidéo* em francês, 视频 em chinês simplificado e 影片 em chinês tradicional, 動画 em japonês e فيديو em árabe. Os tipos chineses numeram dentro do capítulo com hífen, `{h1}-{n}` (图 1-1); com os ajustes de legenda `labelNumberGap: ''` e `labelSeparator: '　'` a legenda fica 图1-1　标题 (veja [Estilo de legenda](/pt/docs/configuration-resources#estilo-de-legenda)). O índice remissivo também segue o idioma: 见 e 另见 antes de uma referência cruzada, 符号 e 数字 sobre os símbolos e os números em chinês simplificado; 見, 另見, 符號 e 數字 em tradicional. O japonês numera seus tipos da mesma forma e compõe as legendas como 図1-1　題 sem os dois ajustes, escreve as referências cruzadas como 第3章, 2.3節 e 12ページ, dá à bibliografia o título 参考文献, e seu índice imprime 記号 e 数字 sobre os símbolos e os números e escreve as remissões com uma seta, `→夏目漱石` para *ver* e `→夏目漱石、森鷗外も見よ` depois das páginas para *ver também*, com os rótulos em pé. O árabe numera seus tipos da mesma forma, `{h1}-{n}` (شكل 2-3), escreve as referências cruzadas como الفصل 3, القسم 2-1 e ص 12, dá à bibliografia o título المراجع, e seu índice imprime انظر / انظر أيضًا, رموز e أرقام, com a vírgula e o ponto e vírgula árabes (، ؛).
 
 Um documento em chinês, japonês ou coreano declara o idioma na saída HTML (`lang` na raiz `.pt-doc`, com `zh-Hant-TW` inteiro) e no canvas que ele pinta (`ctx.lang`, no Chrome 136 e posteriores), para que o navegador desenhe as formas de glifo da região: o Unicode unifica os caracteres han, e um mesmo ponto de código tem aspecto diferente numa fonte taiwanesa e numa japonesa. Desde o postext 1.30 os demais documentos também o declaram, no idioma em que o texto deles é composto ([`bodyText.shapingLanguage: 'document'`](/pt/docs/configuration-text#texto-do-corpo), o padrão); com `'host'` os demais documentos não levam `lang`, e todo canvas pinta no idioma da página que o hospeda. O PDF declara `/Lang` a partir de `locale` em todo documento, marcado ou não, com a escrita e a região. Um documento num idioma escrito da direita para a esquerda (árabe, persa, urdu, hebraico…) também declara o idioma: as formas linguísticas da fonte (`locl`) e a fonte substituta o seguem.
 

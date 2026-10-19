@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Contribuir',
   description: 'Cómo unirte a la comunidad de Postext y colaborar en el proyecto.',
   lang: 'es',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 35,
   plainSummary: "Postext lo construye una comunidad de voluntarios, y cualquiera puede ayudar. No hace falta saber programar. También puedes ayudar probando, escribiendo documentación, traduciendo o compartiendo lo que sabes de diseño y de imprenta. Esta página explica cómo trabaja el equipo, dónde hace más falta ayuda y cómo hacer tu primera aportación. Termina con los objetivos del proyecto a largo plazo.",
@@ -82,19 +82,21 @@ son especialmente valiosas:
   color y tratamiento de los bytes de los recursos para las figuras de tinta única.
 - **Renderizado de texto**: renderizado en canvas, salida SVG, recoloreado de SVG en tinta única
   (`diagramStyle.singleInk`) y métricas de fuente.
-- **Optimización del rendimiento**: la capa de caché de mediciones y el reto de que el motor siga
+- **Optimización del rendimiento**: la capa de caché de mediciones, el algoritmo de cortes de línea
+  Knuth-Plass escrito en Rust y compilado a WebAssembly (`rust/`), y el reto de que el motor siga
   siendo lo bastante rápido para trabajar en tiempo real cada vez que cambia el tamaño.
 
 ### Sandbox e interfaz
 El [Sandbox](/es/docs/sandbox) se ha convertido en una aplicación React considerable por derecho
 propio: un panel Recursos con un editor interactivo de tablas y subida de imágenes y SVG, un panel
-Fuentes y un panel Diseño cuyos doce grupos cubren todos los rincones del motor. Sus controles se
-construyen sobre los componentes básicos de Base UI (`packages/postext-sandbox/src/ui/`) y se
-revisan con axe-core según WCAG 2.1 AA, así que los controles nuevos deben reutilizarlos y procurar
-que cada campo tome su nombre de su etiqueta y su descripción de su texto de ayuda. Todas las
-cadenas de la interfaz siguen una convención estricta de i18n: cada etiqueta se conecta a través de
-cinco archivos, repartidos entre el paquete del Sandbox y los catálogos de idiomas de la aplicación
-web. Si colaboras en el frontend o en la experiencia de usuario, este es tu terreno.
+Fuentes, editores de plantillas de página y de páginas de cómic, y un panel Diseño cuyos grupos
+cubren todas las partes del motor. Sus controles se construyen sobre los componentes básicos de
+Base UI (`packages/postext-sandbox/src/ui/`) y se revisan con axe-core y con comprobaciones propias
+según WCAG 2.2 en el nivel AAA, así que los controles nuevos deben reutilizarlos y procurar que cada
+campo tome su nombre de su etiqueta y su descripción de su texto de ayuda. Todas las cadenas de la
+interfaz siguen una convención estricta de i18n: cada etiqueta se conecta en el paquete del
+Sandbox, en el puente de etiquetas de la aplicación web y en el catálogo de cada uno de los diez
+idiomas. Si colaboras en el frontend o en la experiencia de usuario, este es tu terreno.
 
 ### Diseño y tipografía
 - **Experiencia en diseño editorial**: si has maquetado revistas, periódicos o libros, lo que sabes
@@ -105,8 +107,9 @@ web. Si colaboras en el frontend o en la experiencia de usuario, este es tu terr
 ### Documentación y comunidad
 - **Documentación**: mejorar, ampliar y mantener la documentación. Una documentación clara marca la
   diferencia entre un proyecto que la gente adopta y uno que abandona.
-- **Traducciones**: la documentación está ahora en dos idiomas (inglés y español). Cualquier idioma
-  nuevo es bienvenido.
+- **Traducciones**: la documentación y el sitio están en diez idiomas: inglés, español, catalán,
+  francés, alemán, italiano, portugués de Brasil, chino simplificado, japonés y árabe. Cualquier
+  idioma nuevo es bienvenido, y también las revisiones de los que ya hay.
 - **Pruebas**: probar en distintos navegadores, sistemas operativos y casos límite. Encontrar las
   maquetaciones que se rompen vale tanto como construir las que funcionan.
 
@@ -115,9 +118,8 @@ El formato ya no es una hoja en blanco: los bloques `::resource`, las referencia
 y las secciones de configuración `tableStyle`, `captionStyle` y `diagramStyle` ya están publicados.
 Ahora se trata de hacer evolucionar un formato asentado sin romperlo:
 
-- **Gramática del documento**: las notas al margen y las referencias cruzadas que van más allá de
-  los recursos siguen siendo cuestiones abiertas, y cada una es tanto un problema de diseño como uno
-  técnico.
+- **Gramática del documento**: las notas al margen siguen siendo una cuestión abierta, tanto de
+  diseño como técnica.
 - **Esquema de configuración**: que el sistema siga siendo lo bastante potente para los
   profesionales y lo bastante sencillo para los recién llegados a medida que crece.
 
@@ -139,8 +141,8 @@ Una vez que lo tengas todo listo, aquí tienes tres pasos concretos, de menor a 
 2. **Elige un issue etiquetado como [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**:
    están seleccionados para ser un punto de entrada realista, sin necesidad de conocer la historia
    del proyecto.
-3. **Traduce la documentación a un idioma nuevo**: hoy la documentación está en inglés y español.
-   Cualquier tercer idioma es un regalo para los lectores que ahora se quedan fuera.
+3. **Traduce la documentación a un idioma nuevo, o revisa uno**: hoy la documentación está en diez
+   idiomas. Cada idioma nuevo llega a lectores que no pueden leer los demás.
 
 Si piensas escribir código, abre antes un issue para hablar del enfoque: así se evita el trabajo
 duplicado, y una conversación breve al principio ahorra tiempo a todos.

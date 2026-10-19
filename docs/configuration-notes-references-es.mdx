@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notas y referencias',
   description: 'Las notas al pie, la numeración de líneas, las referencias cruzadas, las citas bibliográficas, el índice general y el índice analítico',
   lang: 'es',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '30 min',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // Los símbolos de llamada de numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Volada, sobre la línea de base, junto a la palabra, o a la derecha de una línea vertical.
   markerSize?: Dimension;     // Tamaño de la llamada en línea, lateral o a la derecha; em es el texto que la rodea.
+  markerTemplate?: string;    // Cómo se escribe el número: '({n})' da «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // El número de la propia nota, en superíndice o sobre la línea.
   numberGap?: 'en' | 'em';    // Espacio tras el número de la propia nota.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notas al pie de la columna, o bajo el texto.
   fontSize?: Dimension;       // Cuerpo de la nota; em es el cuerpo del texto.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // fuente, peso 
 
 ## Referencias cruzadas
 
-La propiedad `crossRefs` fija las palabras que una [referencia cruzada](/es/docs/document-format-notes-references#referencias-cruzadas-y-anclas) imprime alrededor de un número o de una página, y el estilo que toma un `:ref` que no indica ninguno. Cada plantilla lleva `{n}` donde va el número; una que no lo lleva recibe el número detrás de un espacio de no separación (`"§"` imprime *§ 3.2*). Una plantilla sin definir sigue al idioma del documento: *capítulo / sección / pág.* en español, *chapter / section / p.* en inglés, `第{n}章` / `第{n}节` / `第{n}页` en chino, y lo mismo para francés, alemán, italiano, portugués, catalán y neerlandés.
+La propiedad `crossRefs` fija las palabras que una [referencia cruzada](/es/docs/document-format-notes-references#referencias-cruzadas-y-anclas) imprime alrededor de un número o de una página, y el estilo que toma un `:ref` que no indica ninguno. Cada plantilla lleva `{n}` donde va el número; una que no lo lleva recibe el número detrás de un espacio de no separación (`"§"` imprime *§ 3.2*). Una plantilla sin definir sigue al idioma del documento: *capítulo / sección / pág.* en español, *chapter / section / p.* en inglés, `第{n}章` / `第{n}节` / `第{n}页` en chino, `第{n}章` / `{n}節` / `{n}ページ` en japonés, `الفصل {n}` / `القسم {n}` / `ص {n}` en árabe, y lo mismo para francés, alemán, italiano, portugués, catalán y neerlandés.
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>según el idioma, en cursiva (redonda en escritura árabe)</td>
+      <td>según el idioma, en cursiva (redonda en escritura árabe y en japonés)</td>
       <td>Las palabras que preceden a una remisión. Sin fijar, siguen el idioma del documento: <em>Véase</em> / <em>Véase también</em>, <em>See</em> / <em>See also</em>, <em>Voir</em> / <em>Voir aussi</em>, 见 / 另见 (見 / 另見 en chino tradicional)… Un índice en chino pone la remisión tras un punto y sin espacio: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

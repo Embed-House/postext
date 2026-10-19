@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'الحواشي والإحالات',
   description: 'الحواشي السفلية، وترقيم الأسطر، والإحالات والاستشهادات، وجدول المحتويات، والفهرس الأبجدي في آخر الكتاب',
   lang: 'ar',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '27 دقيقة',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // رموز الإحالة التي يكتبها numberFormat: 'symbols'.
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // الخط وا
 
 ## الإحالات
 
-تحدد الخاصية `crossRefs` الكلمات التي تطبعها [الإحالة](/ar/docs/document-format-notes-references#الإحالات-والمراسي) حول رقم أو صفحة، والنمطَ الذي تأخذه `:ref` حين لا تحدد نمطًا. في كل قالب `{n}` في موضع الرقم؛ والقالب الذي يخلو منه يأتي الرقم بعده مسبوقًا بمسافة غير قابلة للكسر (`"§"` يطبع *§ 3.2*). والقالب الذي لم يُحدَّد يتبع لغة المستند: *chapter / section / p.* بالإنجليزية، و*capítulo / sección / pág.* بالإسبانية، و`第{n}章` / `第{n}节` / `第{n}页` بالصينية، وهكذا للفرنسية والألمانية والإيطالية والبرتغالية والكتالونية والهولندية.
+تحدد الخاصية `crossRefs` الكلمات التي تطبعها [الإحالة](/ar/docs/document-format-notes-references#الإحالات-والمراسي) حول رقم أو صفحة، والنمطَ الذي تأخذه `:ref` حين لا تحدد نمطًا. في كل قالب `{n}` في موضع الرقم؛ والقالب الذي يخلو منه يأتي الرقم بعده مسبوقًا بمسافة غير قابلة للكسر (`"§"` يطبع *§ 3.2*). والقالب الذي لم يُحدَّد يتبع لغة المستند: *chapter / section / p.* بالإنجليزية، و*capítulo / sección / pág.* بالإسبانية، و`第{n}章` / `第{n}节` / `第{n}页` بالصينية، و`第{n}章` / `{n}節` / `{n}ページ` باليابانية، و`الفصل {n}` / `القسم {n}` / `ص {n}` بالعربية، وهكذا للفرنسية والألمانية والإيطالية والبرتغالية والكتالونية والهولندية.
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>حسب اللغة، مائل (قائم في الخط العربي)</td>
+      <td>حسب اللغة، مائل (قائم في الخط العربي وفي اليابانية)</td>
       <td>الكلمات التي تسبق الإحالة. إن لم تُضبط تتبع لغة المستند: <em>See</em> / <em>See also</em>، <em>Véase</em> / <em>Véase también</em>، <em>Voir</em> / <em>Voir aussi</em>، 见 / 另见 (見 / 另見 في الصينية التقليدية)… يضع الفهرس الصيني الإحالة بعد نقطة، بلا مسافة: <code>贾琏 12。见贾政</code>.</td>
     </tr>
     <tr>

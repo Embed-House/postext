@@ -3664,7 +3664,7 @@
     "calloutStyleLabelIconWidth": "Amplada de la icona",
     "calloutStyleLabelIconGap": "Espai fins a la pestanya",
     "calloutStyleLabelIconPlacement": "Posició de la imatge",
-    "calloutStyleLabelIconPlacementTooltip": "Al costat de la pestanya, fora de la vora, o a dins, al començament, abans del text (aleshores la pestanya s'eixampla el que ocupen la imatge i la separació). A dins, la imatge conserva els colors propis: fes servir una imatge per a un anell blanc i una altra per a un de color.",
+    "calloutStyleLabelIconPlacementTooltip": "Al costat de la pestanya, fora de la vora, o a dins, al començament, abans del text (aleshores la pestanya s'eixampla el que ocupen la imatge i la separació). A dins, la imatge conserva els colors propis llevat que Imatge amb el color del text estigui activada: aleshores un mateix anell serveix per a tots els tons del llibre.",
     "calloutStyleLabelIconBeside": "Al costat de la pestanya",
     "calloutStyleLabelIconInside": "Dins de la pestanya",
     "calloutStyleLabelIconTint": "Imatge amb el color del text",

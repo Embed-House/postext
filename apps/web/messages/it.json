@@ -3665,7 +3665,7 @@
     "calloutStyleLabelIconWidth": "Larghezza dell’icona della linguetta",
     "calloutStyleLabelIconGap": "Distanza dalla linguetta",
     "calloutStyleLabelIconPlacement": "Posizione dell’immagine",
-    "calloutStyleLabelIconPlacementTooltip": "Accanto alla linguetta, oltre il suo bordo, oppure dentro, all’inizio, prima delle parole (in quel caso la linguetta si allarga della larghezza dell’immagine e della distanza). Dentro, l’immagine conserva i suoi colori: usa un’immagine per un anello bianco e un’altra per uno colorato.",
+    "calloutStyleLabelIconPlacementTooltip": "Accanto alla linguetta, oltre il suo bordo, oppure dentro, all’inizio, prima delle parole (in quel caso la linguetta si allarga della larghezza dell’immagine e della distanza). Dentro, l’immagine conserva i suoi colori, a meno che Immagine nel colore del testo sia attiva: allora un solo anello serve per tutte le tinte del libro.",
     "calloutStyleLabelIconBeside": "Accanto alla linguetta",
     "calloutStyleLabelIconInside": "Dentro la linguetta",
     "calloutStyleLabelIconTint": "Immagine nel colore del testo",

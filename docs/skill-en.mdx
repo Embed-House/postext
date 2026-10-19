@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Install the postext-port skill in Claude Code, Codex or any agent and let it turn a PDF, Word, PowerPoint, EPUB, InDesign or HTML source into a Postext project that follows the original layout',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9 min',
   order: 44,
   plainSummary: "This page is for people who already have a book or document in another format, such as PDF, Word or InDesign, and want to move it into Postext. An AI helper, called an agent, can do most of the work if you give it a small add-on called a skill. The skill teaches the agent how to copy the text and rebuild the design of the original. The page explains how to install it, what to ask for and how to check the result. A video of about five minutes shows every step.",
@@ -92,6 +92,10 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     effects), right-to-left manga and Arabic editions, and how to port from
     text-free art plus translations, from lettered scans or from a script
     with generated art (see [Comics](/en/docs/comics));
+  - composed pages: fixed textbook, workbook and magazine pages ported as
+    page templates whose frames are filled from the Markdown, which porting
+    round the installed Postext supports, and the checks each edition must
+    pass (see [Composed pages](/en/docs/composed-pages));
   - the printed object: how to read the paper, binding, covers and spine of
     the source and set them as the `folio` settings that the [Folio viewer](/en/docs/sandbox-previews#folio-tab)
     shows, checked by the linter.
@@ -123,6 +127,8 @@ Also on YouTube: [watch it there](https://www.youtube.com/watch?v=Hh-mWtZGWHw&li
     <tr><td><code>lint_project.py</code></td><td>Catches everything the parser and loader silently get wrong, and, for Chinese, Japanese and Korean text, the characters the bundled fonts cannot set; for Japanese text, kana under a Chinese locale, Chinese faces or settings, Aozora notation left in the chapters and kanji index entries without a reading; for Arabic text, a missing Arabic locale, Latin-only or unjoined faces, letter-spacing, forced hyphenation and italic emphasis; in comics, split expressions that do not parse, panels that do not match the cells, unknown pictures and balloon or panel styles, malformed speaker anchors, lettering faces the project does not bundle, and editions whose pages differ</td></tr>
     <tr><td><code>render.mjs</code></td><td>Lays the project (a folder or a <code>.postext</code> file) out headlessly with the real engine, reading its configuration as the Sandbox does, and prints warnings. With <code>--jpeg</code> it paints the pages you ask for (<code>--pages 12-15</code>) as JPEG files with the engine's own canvas renderer, in a second or two, so the agent looks at its pages without building a PDF; <code>--out</code> writes the PDF. A book set up for print gets PREFLIGHT lines (low-resolution pictures, thin rules, small text in several inks, ink over the limit, text near the trim), and its PDF is separated through the ICC output profile.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Places source and Postext pages side by side, from the render's PDF or its folder of JPEGs</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>Composed pages: <code>round</code> reads the installed engine's version and says which porting round it supports and which composed-page features it lacks; <code>check</code> runs <code>postext check</code> and <code>postext html</code> on every edition and fails on frame overflows, unknown templates or slots, labels that do not fit their anchor, text typed into the configuration, and frames the HTML reads in another order than the Markdown fills them</td></tr>
+    <tr><td><code>postext_md.py</code></td><td>The helper the other scripts import to write text in the Postext Markdown dialect: flat runs of inline marks, live characters escaped, and paragraphs that would read as a list, a heading or a fence kept as text</td></tr>
   </tbody>
 </table>
 
@@ -180,7 +186,7 @@ page and the install command there.
 ### Tools the scripts use
 
 ```bash
-python3 -m pip install pymupdf pillow fonttools brotli
+python3 -m pip install pymupdf pillow fonttools brotli numpy
 ```
 
 ```bash
@@ -191,11 +197,17 @@ brew install pandoc poppler
 mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && npm i postext postext-pdf postext-citeproc react @pdf-lib/fontkit @napi-rs/canvas
 ```
 
-Pandoc is needed for Word, PowerPoint, EPUB and HTML sources, and poppler for
-the source's page images. The Node packages power the headless renderer (Node 22.15 or
+Pandoc is needed for Word, PowerPoint, EPUB and HTML sources, poppler for
+the source's page images, and numpy for `comic_panels.py`. The Node packages power the headless renderer (Node 22.15 or
 newer); `@napi-rs/canvas` is a prebuilt canvas that lets it paint the book's
 pages straight to JPEG. Optional tools: `ocrmypdf` for scans, ImageMagick, and veraPDF for
 PDF/UA checks.
+
+```bash
+mkdir -p ~/.local/bin && curl -fL -o ~/.local/bin/postext https://github.com/drnachio/postext/releases/latest/download/postext-macos-arm64 && chmod +x ~/.local/bin/postext
+```
+
+Pick your system's file (`postext-macos-arm64`, `postext-macos-x64`, `postext-linux-x64`, `postext-linux-arm64`, `postext-linux-x64-musl`, `postext-windows-x64.exe`); with Node, `npx postext-cli` works too.
 
 The work loop runs on the [command line](/en/docs/command-line), one self-contained executable with nothing to install: the agent keeps the project unpacked and leaves `postext build --watch` running on the pages it is working on, so every change shows up as a JPEG about a second later, even in a long book. The Node packages are optional: they run `render.mjs`, which adds the Sandbox's extra checks. Both lay the book out with `bodyText.shapingLanguage: 'host'`, whatever its configuration says, so a line may break at a different word than in the Sandbox (see [Differences from the Sandbox](/en/docs/command-line#differences-from-the-sandbox)).
 

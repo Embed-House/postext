@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Anmerkungen und Verweise',
   description: 'Fußnoten, Querverweise und ihre Verweisziele, Zitate und das Literaturverzeichnis sowie die Marken für das Register am Ende des Buchs',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 28,
   parent: 'document-format',
@@ -28,7 +28,7 @@ so he learned to count the steps in the dark.
 
 - **Fußnotenzeichen.** `[^id]` setzt die Nummer der Anmerkung hochgestellt und ohne Abstand an das Wort davor (schreiben Sie es wie oben nach dem Satzzeichen). Die ID besteht aus Buchstaben, Ziffern, `-`, `_`, `.` und `:`. Das Zeichen funktioniert in Absätzen, Listeneinträgen, Zitatblöcken und Kästen; in Überschriften, Legenden und Tabellenzellen erscheint es so, wie es geschrieben ist.
 - **Definition.** Ein Absatz, der mit `[^id]:` beginnt; sein Text reicht bis zur nächsten Leerzeile und kann die üblichen Inline-Auszeichnungen enthalten (fett, kursiv, Links, `:ref`, Formeln, Chips). Definitionen werden aus dem Textfluss herausgenommen, wo immer sie stehen; sie können also unter dem Absatz stehen, der auf sie verweist, oder gesammelt am Ende des Kapitels. Die erste Definition einer ID gilt.
-- **Nummern.** Anmerkungen werden in der Reihenfolge nummeriert, in der zum ersten Mal auf sie verwiesen wird, und die Zählung beginnt in jedem Kapitel neu (bei jeder Überschrift der Ebene 1 und in jedem Dokument eines Buchs); eine Anmerkung, auf die zweimal verwiesen wird, behält ihre erste Nummer und wird nur einmal gesetzt. `footnotes.numbering: 'document'` zählt die Nummern durch das ganze Buch weiter, und `'page'` beginnt sie auf jeder Seite neu, wie es chinesische Bücher tun; `footnotes.numberFormat: 'circled-decimal'` schreibt ① ② ③ auf die Grundlinie. `footnotes.numberFormat: 'symbols'` kennzeichnet sie mit `*`, `†`, `‡`, `§`, `‖`, `¶`, danach verdoppelt, auf jeder Seite neu beginnend, wie in Fachzeitschriften.
+- **Nummern.** Anmerkungen werden in der Reihenfolge nummeriert, in der zum ersten Mal auf sie verwiesen wird, und die Zählung beginnt in jedem Kapitel neu (bei jeder Überschrift der Ebene 1 und in jedem Dokument eines Buchs); eine Anmerkung, auf die zweimal verwiesen wird, behält ihre erste Nummer und wird nur einmal gesetzt. `footnotes.numbering: 'document'` zählt die Nummern durch das ganze Buch weiter, und `'page'` beginnt sie auf jeder Seite neu, wie es chinesische Bücher tun, `'column'` in jeder Spalte und `'spread'` auf jeder Doppelseite (die Seitennoten eines japanischen Buchs); `footnotes.numberFormat: 'circled-decimal'` schreibt ① ② ③ auf die Grundlinie. `footnotes.numberFormat: 'symbols'` kennzeichnet sie mit `*`, `†`, `‡`, `§`, `‖`, `¶`, danach verdoppelt, auf jeder Seite neu beginnend, wie in Fachzeitschriften.
 - **Japanischer Text.** Schreiben Sie das Fußnotenzeichen vor ein satzschließendes 。 (`先生[^1]。`): Es bleibt beim Zeichen davor, und 。 steht nie am Zeilenanfang. Ein senkrecht gesetztes japanisches Buch setzt seine Fußnotenzeichen （1） standardmäßig rechts neben die Zeile und seine Anmerkungen hinter das Kapitel; `footnotes.markerPosition: 'side'` setzt ein kleines Zeichen neben das Wort, ohne Platz in der Zeile einzunehmen, und `footnotes.placement: 'spread'` setzt die Anmerkungen neben den Text jeder Doppelseite (siehe [Konfiguration › Fußnoten](/de/docs/configuration-notes-references#fußnoten)).
 - **Wo die Anmerkung steht.** Standardmäßig am Fuß der Spalte, die die verweisende Zeile enthält, unter einer kurzen Linie: Zeile und Anmerkung teilen sich immer eine Spalte, und eine Zeile, deren Anmerkung nicht passt, wandert mit ihr weiter. In einem einspaltigen Layout ist das der Fuß der Seite. `footnotes.placement: 'chapterEnd'` setzt stattdessen alle Anmerkungen eines Kapitels hinter dessen letzten Block, standardmäßig an den Fuß der Spalte, in der sie enden. Größen, Linie und Abstände finden Sie unter [Fußnoten](/de/docs/configuration-notes-references#fußnoten) in der Konfigurationsreferenz.
 - **Prüfungen.** Ein Fußnotenzeichen ohne Definition (`undefinedFootnote`) setzt seine Nummer über eine leere Anmerkung; eine Definition, auf die kein Zeichen verweist (`unusedFootnote`), wird nicht gesetzt. Die Sandbox führt beide im Bedienfeld Prüfungen auf.
@@ -74,7 +74,7 @@ The results of :ref{id="sec-method"} hold on :ref{id="sec-method" style=page}.
 
 **Seitenverweise** sind erst bekannt, wenn das Buch gesetzt ist. Die Engine setzt das Dokument mit den Seiten des vorigen Durchlaufs erneut, bis sie sich nicht mehr ändern, wie beim Inhaltsverzeichnis; bis dahin erscheint statt der Seite ein *?*.
 
-**pandoc-crossref.** Für pandoc-crossref geschriebener Text wird genauso gelesen: `@sec:method`, `[@fig:map]` und `[-@tbl:data]` für die bloße Nummer. Das Präfix (`sec`, `fig`, `tbl`, `eq`, `lst`) kann Teil des Bezeichners sein (`{#sec:method}`) oder fehlen (`{#method}`). Ein `@`, das direkt an einem Wort klebt, wie in einer E-Mail-Adresse, bleibt Text.
+**pandoc-crossref.** Für pandoc-crossref geschriebener Text wird genauso gelesen: `@sec:method`, `[@fig:map]` und `[-@tbl:data]` für die bloße Nummer. Ein großgeschriebenes Präfix (`@Sec:method`) beginnt die Bezeichnung mit einem Großbuchstaben, wie `case=capitalize`. Das Präfix (`sec`, `fig`, `tbl`, `eq`, `lst`) kann Teil des Bezeichners sein (`{#sec:method}`) oder fehlen (`{#method}`). Ein `@`, das direkt an einem Wort klebt, wie in einer E-Mail-Adresse, bleibt Text.
 
 Ein Verweis auf eine ID, die nirgends vergeben ist, gibt *?* aus, und das Bedienfeld Prüfungen führt ihn auf (`unknownResourceId`). Im Editor der Sandbox bietet `@` die Abbildungen, Tabellen, Überschriften mit ID und Verweisziele des Buchs an.
 
@@ -176,7 +176,7 @@ Bei einem **Anmerkungsstil** wird jedes Zitat zu einer Fußnote, platziert und n
 import 'postext-citeproc/register';
 ```
 
-Das Bedienfeld Prüfungen führt einen Schlüssel auf, den keine Literaturangabe definiert (`unknownCitationKey`), sowie einen Literaturblock, der sich nicht lesen lässt (`referencesUnreadable`).
+Das Bedienfeld Prüfungen führt einen Schlüssel auf, den keine Literaturangabe definiert (`unknownCitationKey`), sowie einen Literaturblock, der sich nicht lesen lässt (`referencesUnreadable`). Ein Text, der Werke zitiert, ohne dass eine Zitier-Engine registriert ist, erhält die Warnung `citationsUnavailable`, und seine Zitate werden so gesetzt, wie sie geschrieben sind.
 
 
 ## Register

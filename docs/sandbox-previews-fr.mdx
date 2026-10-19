@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Aperçus',
   description: 'Les onglets Canvas, PDF, Folio, HTML et EPUB 3 de la zone d’aperçu principale : ce que chacun montre et ce qu’il permet de faire',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 39,
   parent: 'sandbox',
@@ -50,14 +50,15 @@ Sur une page composée (`::::page{template="…"}`), le canvas relie chaque bloc
 
 #### Éditions d’un livre
 
-Pour un livre en plusieurs langues, une barre au-dessus du canvas présente ses éditions (*ES · EN · CA*) et **Côte à côte**.
+Un rail au bord de début du canvas réunit les éditions d’un livre en plusieurs langues (*ES · EN · CA*) avec **Côte à côte**, et **Recomposition** quand le chapitre a des pages composées (depuis postext 1.44). Comme la barre d’outils du bord opposé, il reste caché jusqu’à ce que le pointeur atteigne ce bord et disparaît quand le pointeur s’en éloigne ; son épingle le garde ouvert, et il démarre désépinglé. Il reste au-dessus de la vue côte à côte, qu’il ouvre et ferme. Sur un téléphone, c’est une rangée en haut de l’aperçu.
 
 - Un clic sur une édition l’ouvre à la même page composée. La page est retrouvée par son délimiteur `::::page` dans le chapitre, la même dans toutes les langues : vous restez sur cette page même si son numéro diffère dans l’autre édition, et le bloc sélectionné le reste. Sur toute autre page, le numéro de page est conservé.
-- **Côte à côte** montre le chapitre à l’écran à côté du même chapitre d’une autre édition (**à côté de** la choisit quand le livre en a plus de deux). Les deux colonnes montrent la même page et défilent ensemble ; **Défiler ensemble** désactive ce lien. Entre deux pages composées, les colonnes comptent à partir de la dernière page composée qu’elles partagent. Les blocs qui ne tiennent pas, ou dont le texte a été réduit, sont marqués dans les deux colonnes. L’autre édition n’est ici qu’en lecture : un clic sur une de ses pages ouvre cette édition à cette page.
+- **Côte à côte** montre le chapitre à l’écran à côté du même chapitre d’une autre édition (**à côté de** la choisit quand le livre en a plus de deux). Avec le canvas sur **Livre entier**, les deux colonnes contiennent le livre entier et s’ouvrent à la page que montre le canvas. Les deux colonnes montrent le même endroit et défilent ensemble ; **Défiler ensemble** désactive ce lien. Elles se rejoignent sur le texte, non sur les numéros de page : une page composée retrouve le même délimiteur, et toute autre page la page de l’autre édition qui compose le même paragraphe du chapitre, à peu près aussi loin dans celui-ci ; une page sans texte (un verso blanc, une image pleine page) se compte à partir de la page la plus proche qui en a. Les blocs qui ne tiennent pas, ou dont le texte a été réduit, sont marqués dans les deux colonnes. L’autre édition n’est ici qu’en lecture : un clic sur une de ses pages ouvre cette édition à cette page. Quand l’autre édition n’a pas de chapitre à cet endroit, sa colonne l’indique.
+- Un livre ouvert depuis le lien d’un hôte (une recette du livre de recettes, `#recipe=…&lang=…`) liste les langues dans lesquelles l’hôte le publie. Un clic sur l’une d’elles ouvre le même lien dans cette langue : votre copie telle qu’elle est quand vous en avez une, sinon le livre publié, importé de nouveau.
 
 #### Ce qui a bougé, et pourquoi
 
-Sur une page composée, la mise en page peut modifier ce que dessine le gabarit pour que le contenu tienne : un bloc grandit avec son texte, ceux qui le suivent dans son groupe descendent, un bloc cède de la hauteur à un autre, les images ou le texte sont composés plus petits, le reste continue sur une page ajoutée. **Recomposition**, dans la barre au-dessus du canvas (elle apparaît quand le chapitre a des pages composées), ouvre le panneau **Ce qui a bougé, et pourquoi** et marque ces changements sur les pages.
+Sur une page composée, la mise en page peut modifier ce que dessine le gabarit pour que le contenu tienne : un bloc grandit avec son texte, ceux qui le suivent dans son groupe descendent, un bloc cède de la hauteur à un autre, les images ou le texte sont composés plus petits, le reste continue sur une page ajoutée. **Recomposition**, dans le rail du bord de début du canvas (elle apparaît quand le chapitre a des pages composées), ouvre le panneau **Ce qui a bougé, et pourquoi** et marque ces changements sur les pages.
 
 - Le panneau reprend chaque page composée où quelque chose a changé et, sous un numéro, chaque bloc qui a changé, avec ses changements en toutes lettres : *dinero a grandi de 13,9 mm pour que son contenu tienne*, *gasto est descendu de 13,9 mm pour faire place à dinero*, *ahorro-fotos : ses images sont à 82,5 %*, *dinero continue page 9*. Un changement indique sa cause quand il en a une : le bloc qui, en grandissant, a déplacé celui-ci, ou le pli d’une double page.
 - Sur la page, chacun de ces blocs est marqué d’une pastille au même numéro, avec ses changements en bref (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). Le bloc tel que le gabarit le déclare est tracé en tirets, et des flèches vont de lui au bloc tel qu’il a été posé : une depuis son bord supérieur pour un déplacement, une à son pied ou à son bord de fin pour un changement de taille.

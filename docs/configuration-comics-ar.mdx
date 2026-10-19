@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'إعدادات القصص المصورة',
   description: 'إعدادات القصص المصورة: الإطار العام لصفحاتها والفواصل بين إطاراتها، وأنماط الإطارات، وكتابة الحوار، وأنماط الفقاعات، وقائمة الشخصيات',
   lang: 'ar',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 دقائق',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>الدوران بالدرجات، في اتجاه عقارب الساعة. وسمة <code>rotate</code> في السطر تتقدّم عليه.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>ميل الحروف بالدرجات، ويُطبَّق قبل <code>rotate</code>: الموجب يميلها إلى الأمام كالخط المائل، والسالب إلى الخلف. والكتابة على شيء مرسوم بالمنظور (لافتة، غلاف كتاب) تتبع حافته العليا بـ<code>rotate</code> وجانبيه بـ<code>skew</code>. وسمة <code>skew</code> في السطر تتقدّم عليه.</td>
     </tr>
   </tbody>
 </table>

@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configurazione: riquadri',
   sidebarTitle: 'Riquadri',
-  description: 'Stili con nome per i riquadri :::callout: bordo, sfondo, banda, titolo, icona e marcatore; enunciati numerati; tipografia dentro il riquadro; riquadri divisi tra più pagine',
+  description: 'Stili con nome per i riquadri :::callout: bordo, sfondo, banda, titolo, icona, marcatore e linguetta dell’etichetta; enunciati numerati; tipografia dentro il riquadro; riquadri divisi tra più pagine; progetti grafici disegnati in un riquadro',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>, font dei titoli, <code>400</code>, <code>1.5em</code>, colore principale, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
-      <td>Un glifo di testo (<code>kind: 'glyph'</code>) o una risorsa bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) accanto al contenuto. Con una banda laterale l’icona si centra sulla banda; altrimenti riserva una propria colonna (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> la centra verticalmente sul contenuto. Un’immagine di risorsa si adatta al quadrato mantenendo le proporzioni, oppure a un riquadro <code>width</code> × <code>size</code> quando è impostato <code>width</code> (una larga striscia di icone); un’icona più alta del contenuto fa crescere il riquadro per contenerla (e, con <code>align: 'center'</code>, centra il contenuto su di essa). <code>position: 'corner'</code> appende l’icona a un angolo superiore come un bollino, per metà oltre il bordo, senza togliere spazio al contenuto; un’icona larga (<code>width</code>) si centra sull’angolo in base alla larghezza a cui è disegnata, e sull’angolo sinistro il titolo inizia oltre la sua metà interna (fino a postext 1.4 si collocava in base all’altezza, quindi una striscia larga sporgeva dal riquadro e sopra il titolo); <code>cornerSide</code> sceglie l’angolo: <code>'right'</code> / <code>'left'</code>, oppure <code>'outer'</code> / <code>'inner'</code>, che seguono la parità della pagina dei margini speculari (esterno = destra su un recto, sinistra su un verso).</td>
+      <td>Un glifo di testo (<code>kind: 'glyph'</code>) o una risorsa bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) accanto al contenuto. Con una banda laterale l’icona si centra sulla banda; altrimenti riserva una propria colonna (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> la centra verticalmente sul contenuto. Un’immagine di risorsa si adatta al quadrato mantenendo le proporzioni, oppure a un riquadro <code>width</code> × <code>size</code> quando è impostato <code>width</code> (una larga striscia di icone); un’icona più alta del contenuto fa crescere il riquadro per contenerla (e, con <code>align: 'center'</code>, centra il contenuto su di essa). <code>position: 'corner'</code> appende l’icona a un angolo superiore come un bollino, per metà oltre il bordo, senza togliere spazio al contenuto; un’icona larga (<code>width</code>) si centra sull’angolo in base alla larghezza a cui è disegnata, e sull’angolo sinistro il titolo inizia oltre la sua metà interna (fino a postext 1.4 si collocava in base all’altezza, quindi una striscia larga sporgeva dal riquadro e sopra il titolo); <code>cornerSide</code> sceglie l’angolo: <code>'right'</code> / <code>'left'</code>; <code>'outer'</code> / <code>'inner'</code>, che seguono la parità della pagina dei margini speculari (esterno = destra su un recto, sinistra su un verso); oppure <code>'start'</code> / <code>'end'</code>, che seguono la direzione del riquadro stesso, come quelli della banda.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>non impostato (nessuna linguetta)</td>
-      <td>Una linguetta sul bordo superiore del riquadro che stampa l’attributo <code>label</code> della riga di apertura: il numero di un riquadro numerato («BOX 1-1»). Aderisce all’angolo <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>), rientrata di <code>inset</code>, sporge di <code>offset</code> sopra la sommità del riquadro (quello spazio fa parte del blocco, in aggiunta a <code>marginTop</code>, così la linguetta lo conserva anche in testa a una colonna), è alta <code>height</code> con <code>paddingX</code> su ogni lato del testo, e può portare accanto una risorsa <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>, sul lato opposto all’angolo) e un <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) lungo il bordo superiore dall’angolo opposto fino a essa. Valori predefiniti: font dei titoli, corpo del testo corrente, <code>700</code>, bianco sul colore principale, alta <code>1.4em</code>, spaziatura interna <code>0.6em</code>. La linguetta è una forma a sé appoggiata sul bordo, quindi mantiene gli angoli vivi qualunque sia il <code>borderRadius</code> del riquadro. Da postext 1.42, <code>icon.placement: 'inside'</code> mette l’immagine dentro la linguetta, all’inizio e prima delle parole (all’estremo destro in un riquadro composto da destra a sinistra), a <code>gap</code> da esse: la linguetta è larga quanto immagine, spazio, parole e margine interno, e l’immagine, adattata a <code>icon.width</code> e all’altezza della linguetta, vi è centrata. L’immagine conserva i propri colori, quindi un anello bianco su una linguetta colorata e un anello colorato su una bianca sono due risorse, una per stile. <code>'beside'</code>, il valore predefinito, colloca l’immagine fuori dal bordo della linguetta. Da postext 1.43, <code>icon.tint: true</code> colora l’immagine con il <code>color</code> della linguetta invece che con i propri colori: si colora solo la sagoma dell’immagine, nel colore delle parole, così un solo anello serve a tutte le tinte di un libro. Un’immagine senza trasparenza diventa un semplice rettangolo. Nel PDF un SVG mantiene i bordi e una bitmap viene ritagliata dove è semitrasparente; l’originale di stampa (<code>svg.pdfFileId</code>) non si usa, perché una pagina PDF non si può ricolorare.</td>
+      <td>Una linguetta sul bordo superiore del riquadro che stampa l’attributo <code>label</code> della riga di apertura: il numero di un riquadro numerato («BOX 1-1»). Aderisce all’angolo <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, oppure <code>'top-start'</code> / <code>'top-end'</code> nella direzione del riquadro stesso, come <code>'start'</code> / <code>'end'</code> per la banda), rientrata di <code>inset</code>, sporge di <code>offset</code> sopra la sommità del riquadro (quello spazio fa parte del blocco, in aggiunta a <code>marginTop</code>, così la linguetta lo conserva anche in testa a una colonna), è alta <code>height</code> con <code>paddingX</code> su ogni lato del testo, e può portare accanto una risorsa <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>, sul lato opposto all’angolo) e un <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) lungo il bordo superiore dall’angolo opposto fino a essa. Valori predefiniti: font dei titoli, corpo del testo corrente, <code>700</code>, bianco sul colore principale, alta <code>1.4em</code>, spaziatura interna <code>0.6em</code>, senza sollevamento né rientro, un’immagine larga <code>1em</code> a <code>0.3em</code> dal testo. La linguetta è una forma a sé appoggiata sul bordo, quindi mantiene gli angoli vivi qualunque sia il <code>borderRadius</code> del riquadro. Da postext 1.42, <code>icon.placement: 'inside'</code> mette l’immagine dentro la linguetta, all’inizio e prima delle parole (all’estremo destro in un riquadro composto da destra a sinistra), a <code>gap</code> da esse: la linguetta è larga quanto immagine, spazio, parole e margine interno, e l’immagine, adattata a <code>icon.width</code> e all’altezza della linguetta, vi è centrata. L’immagine conserva i propri colori, quindi un anello bianco su una linguetta colorata e un anello colorato su una bianca sono due risorse, una per stile. <code>'beside'</code>, il valore predefinito, colloca l’immagine fuori dal bordo della linguetta. Da postext 1.43, <code>icon.tint: true</code> colora l’immagine con il <code>color</code> della linguetta invece che con i propri colori: si colora solo la sagoma dell’immagine, nel colore delle parole, così un solo anello serve a tutte le tinte di un libro. Un’immagine senza trasparenza diventa un semplice rettangolo. Nel PDF un SVG mantiene i bordi e una bitmap viene ritagliata dove è semitrasparente; l’originale di stampa (<code>svg.pdfFileId</code>) non si usa, perché una pagina PDF non si può ricolorare.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Testo di quel segno (il «(MORE)» di una sceneggiatura), nel carattere e nel corpo del testo del riquadro, secondo la lingua del documento.</td>
+      <td><code>'Continued'</code></td>
+      <td>Testo di quel segno (il «(MORE)» di una sceneggiatura), nel carattere e nel corpo del testo del riquadro. Il valore predefinito è nella lingua del documento, come quello di una tabella divisa: <code>'Continua'</code> in italiano, <code>'Continúa'</code> in spagnolo.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ I testi del progetto grafico leggono questi segnaposto:
 
 Il `resourceId` di un’immagine accetta gli stessi segnaposto, così ogni riquadro può disegnare una risorsa propria. Solo il progetto grafico di un riquadro legge `{boxText}`; quello di un titolo non stampa nulla al suo posto.
 
-Con `setsContent: true` un solo stile serve tutti i riquadri della stessa forma, ognuno con le sue parole. In un quaderno di scrittura ogni riga di esercizio è un riquadro il cui contenuto è la parola da ricopiare: il progetto grafico stampa la parola in una grafia scolastica e disegna la risorsa tratteggiata che porta il suo nome.
+Con `setsContent: true` un solo stile serve tutti i riquadri della stessa forma, ognuno con le sue parole. In un quaderno di scrittura ogni riga di esercizio è un riquadro il cui contenuto è la parola da ricopiare: il progetto grafico stampa la parola in una grafia scolastica e poi la ripete a puntini da ricalcare (`dotted`), tante volte quante ne stanno nella riga (`repeat`; vedi [Segni in linea e contorni](/it/docs/configuration-headers-footers#segni-in-linea-e-contorni)).
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite IT Moderna', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite IT Moderna', fontWeight: 100, fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ luna
 :::
 ```
 
-La prima riga stampa *gatto* e disegna la risorsa `trace-gatto`, la seconda stampa *luna* e disegna `trace-luna`, e nessuna delle due parole si compone di nuovo sotto la sua banda. Con `setsContent` lasciato a `false` il progetto grafico legge `{boxText}` allo stesso modo, e il contenuto si compone sotto la banda.
+La prima riga stampa *gatto* seguito da una fila di copie a puntini di *gatto*, la seconda fa lo stesso con *luna*, e nessuna delle due parole si compone di nuovo sotto la sua banda. Cambiando la parola nel Markdown cambiano il modello e tutte le copie. Con `setsContent` lasciato a `false` il progetto grafico legge `{boxText}` allo stesso modo, e il contenuto si compone sotto la banda.
 
 Nel VDT gli elementi della banda sono blocchi di progetto grafico nel `designOverlay` della cornice, accanto al titolo.

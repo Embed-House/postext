@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuration : styles et parties',
   sidebarTitle: 'Styles et parties',
-  description: 'Les styles nommés des paragraphes, des pastilles, des listings de code et des titres, et les pages qui ouvrent chaque partie',
+  description: 'Les styles nommés des paragraphes, des pastilles, des surlignages, des listings de code et des titres, et les pages qui ouvrent chaque partie',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '38 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "Cette page présente les styles nommés que vous définissez une fois et utilisez autant de fois que nécessaire. Un style de paragraphe règle un genre de texte, comme une bibliographie ou un glossaire. Un style de pastille dessine une petite étiquette dans une ligne. Les listings de code ont leur propre police, leur cadre et leurs couleurs. La page traite aussi des pages qui ouvrent chaque partie d’un livre, et des styles des titres particuliers. Les encadrés ont leur propre page.",
+  plainSummary: "Cette page présente les styles nommés que vous définissez une fois et utilisez autant de fois que nécessaire. Un style de paragraphe règle un genre de texte, comme une bibliographie ou un glossaire. Un style de pastille dessine une petite étiquette dans une ligne, et un style de surlignage une bande de couleur derrière une expression. Les listings de code ont leur propre police, leur cadre et leurs couleurs. La page traite aussi des pages qui ouvrent chaque partie d’un livre, et des styles des titres particuliers. Les encadrés ont leur propre page.",
 };
 
 # Configuration : styles et parties
@@ -292,7 +292,7 @@ Les points de chaque ligne s’arrêtent un demi-cadratin avant le prix (`leader
 
 ### Le conteneur `:::paragraphs`
 
-Une ligne `:::paragraphs{style="<id>"}` ouvre le conteneur et une ligne `:::` seule le ferme ; chaque paragraphe compris entre les deux prend le style nommé, tandis que les titres, les listes et les autres blocs à l’intérieur gardent leur style habituel. Les conteneurs peuvent s’imbriquer dans d’autres conteneurs délimités. Un identifiant de `style` inconnu n’est pas une erreur : les paragraphes se rendent comme du texte courant ordinaire.
+Une ligne `:::paragraphs{style="<id>"}` ouvre le conteneur et une ligne `:::` seule le ferme ; chaque paragraphe compris entre les deux prend le style nommé, tandis que les titres, les listes et les autres blocs à l’intérieur gardent leur style habituel. Les conteneurs peuvent s’imbriquer dans d’autres conteneurs délimités. Un identifiant de `style` inconnu n’est pas une erreur : les paragraphes se rendent comme du texte courant ordinaire, et le Sandbox signale l’identifiant.
 
 Le délimiteur d’ouverture accepte aussi `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` et `endIndent` (les nombres seuls sont en em), avec ou sans style : avec un style, ils le surchargent ; sans style, ils s’appliquent par-dessus le style du conteneur englobant, ou par-dessus le style de texte de l’endroit où se trouve le délimiteur (le texte courant, une partie, une section stylée ou un encadré). `:::paragraphs{align=end}` compose un bloc aligné sur la fin de la ligne (地付き) et `:::paragraphs{align=end endIndent=1}` un caractère avant elle. Depuis postext 1.16.
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Styles de pastille
 
-La propriété `chipStyles` déclare les styles nommés de la pastille en ligne `:chip[text]{style="…"}` : les petits cadres arrondis et teintés d’une banque de mots, d’une touche de clavier, d’une étiquette (la syntaxe et ses règles de coupure de ligne se trouvent dans la référence du format du document). Un style, `chip`, est fourni par défaut (un fond bleu pâle avec un filet extra-fin dans la couleur principale, légèrement arrondi, le texte comme les mots qui l’entourent) : `:chip[…]` fonctionne donc sans aucune configuration ; déclarer `chipStyles` remplace cette liste par défaut. Une pastille sans `style`, ou dont l’identifiant n’est déclaré par aucun style, prend le premier style.
+La propriété `chipStyles` déclare les styles nommés de la pastille en ligne `:chip[text]{style="…"}` : les petits cadres arrondis et teintés d’une banque de mots, d’une touche de clavier, d’une étiquette (la syntaxe et ses règles de coupure de ligne se trouvent dans la référence du format du document). Un style, `chip`, est fourni par défaut (un fond bleu pâle avec un filet extra-fin dans la couleur principale, légèrement arrondi, le texte comme les mots qui l’entourent) : `:chip[…]` fonctionne donc sans aucune configuration ; déclarer `chipStyles` remplace cette liste par défaut. Une pastille sans `style`, ou dont l’identifiant n’est déclaré par aucun style, prend le premier style (le Sandbox signale l’identifiant inconnu).
 
 ```ts
 const config: PostextConfig = {
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Styles de surlignage
 
-La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités légèrement arrondies, le texte dans sa propre couleur) : `:mark[…]` fonctionne donc sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style.
+La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités légèrement arrondies, le texte dans sa propre couleur) : `:mark[…]` fonctionne donc sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style (le Sandbox signale l’identifiant inconnu).
 
 ```ts
 const config: PostextConfig = {
@@ -1127,7 +1127,7 @@ const config: PostextConfig = {
       <td>champs de niveau</td>
       <td>comme dans <code>headings.levels[]</code></td>
       <td>les valeurs du niveau</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code> : chacun, une fois défini, remplace la valeur du niveau de titre pour les titres de ce style (<code>dropCap: false</code> retire la lettrine du niveau). <code>breakBefore</code> se fusionne champ par champ avec celui du niveau : un style qui ne fixe que <code>parity</code> garde le <code>enabled</code> du niveau, et un style qui ne fixe que <code>enabled: true</code> garde sa parité (jusqu’à postext 1.4, le champ manquant venait plutôt de la valeur par défaut sans saut).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>numberSeparator</code>, <code>numberPosition</code>, <code>breakBefore</code>, <code>span</code>, <code>spanBreak</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code> : chacun, une fois défini, remplace la valeur du niveau de titre pour les titres de ce style (<code>dropCap: false</code> retire la lettrine du niveau). <code>breakBefore</code> se fusionne champ par champ avec celui du niveau : un style qui ne fixe que <code>parity</code> garde le <code>enabled</code> du niveau, et un style qui ne fixe que <code>enabled: true</code> garde sa parité (jusqu’à postext 1.4, le champ manquant venait plutôt de la valeur par défaut sans saut).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1210,6 +1210,7 @@ Babble, badger… (runs on to the next page)
 ```
 
 Les deux lettres commencent en page 1 : la page 1 prend donc les titres courants de la section `B`. Un onglet de tranche placé dans l’en-tête du style y affiche « B », et aucune page n’affiche l’onglet de « A ». Donnez à chaque section une page à elle (`breakBefore`) quand chacune a besoin de son onglet.
+
 Des annexes désignées par des lettres après des chapitres numérotés, et une page de dédicace que la table des matières et les signets PDF listent, mais dont la page n’affiche pas le titre :
 
 ```ts

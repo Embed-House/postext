@@ -3,9 +3,9 @@
 export const metadata = {
   title: '設定：囲み',
   sidebarTitle: '囲み',
-  description: ':::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコンと外側のマーカー、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み',
+  description: ':::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコン、外側のマーカー、ラベルのタブ、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み、囲みの中に描くデザイン',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26分',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>、見出しのフォント、<code>400</code>、<code>1.5em</code>、メインカラー、<code>'top'</code>、<code>'inline'</code>、<code>'right'</code></td>
-      <td>内容の横に置く、文字のグリフ（<code>kind: 'glyph'</code>）またはビットマップやSVGのリソース（<code>kind: 'resource'</code>＋<code>resourceId</code>）です。側辺に帯があるときアイコンは帯の上の中央に置き、帯がなければ専用の列（<code>size</code>＋<code>titleStyle.gap</code>）を確保します。<code>align: 'center'</code>は内容に対して縦方向の中央に置きます。リソースの画像は縦横比を保って正方形の中に収めます。<code>width</code>を設定すると<code>width</code>×<code>size</code>の枠の中に収めます（横長のアイコンの列など）。内容より高いアイコンは、囲みをその高さまで広げます（<code>align: 'center'</code>のときは内容をアイコンの中央にそろえます）。<code>position: 'corner'</code>はアイコンをバッジとして上の角に掛け、半分を枠の外に出し、内容の場所は取りません。横長のアイコン（<code>width</code>）は描画される幅を基準に角の中央に置き、左の角ではタイトルをアイコンの内側の半分より先から始めます（postext 1.4までは高さを基準に置いていたため、横長の列が囲みからはみ出してタイトルに重なっていました）。<code>cornerSide</code>は角を選びます。<code>'right'</code>/<code>'left'</code>、または左右対称の余白のページの奇偶に従う<code>'outer'</code>/<code>'inner'</code>です（outerは奇数ページでは右、偶数ページでは左）。</td>
+      <td>内容の横に置く、文字のグリフ（<code>kind: 'glyph'</code>）またはビットマップやSVGのリソース（<code>kind: 'resource'</code>＋<code>resourceId</code>）です。側辺に帯があるときアイコンは帯の上の中央に置き、帯がなければ専用の列（<code>size</code>＋<code>titleStyle.gap</code>）を確保します。<code>align: 'center'</code>は内容に対して縦方向の中央に置きます。リソースの画像は縦横比を保って正方形の中に収めます。<code>width</code>を設定すると<code>width</code>×<code>size</code>の枠の中に収めます（横長のアイコンの列など）。内容より高いアイコンは、囲みをその高さまで広げます（<code>align: 'center'</code>のときは内容をアイコンの中央にそろえます）。<code>position: 'corner'</code>はアイコンをバッジとして上の角に掛け、半分を枠の外に出し、内容の場所は取りません。横長のアイコン（<code>width</code>）は描画される幅を基準に角の中央に置き、左の角ではタイトルをアイコンの内側の半分より先から始めます（postext 1.4までは高さを基準に置いていたため、横長の列が囲みからはみ出してタイトルに重なっていました）。<code>cornerSide</code>は角を選びます。<code>'right'</code>/<code>'left'</code>、左右対称の余白のページの奇偶に従う<code>'outer'</code>/<code>'inner'</code>（outerは奇数ページでは右、偶数ページでは左）、または帯と同じく囲み自身の書字方向に従う<code>'start'</code>/<code>'end'</code>です。</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>未設定（タブなし）</td>
-      <td>囲みの上辺に付け、ブロックの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>です。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。postext 1.42以降は、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、内側余白の合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43以降は、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
+      <td>囲みの上辺に付け、ブロックの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>、または帯の<code>'start'</code>/<code>'end'</code>と同じく囲み自身の書字方向に従う<code>'top-start'</code>/<code>'top-end'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>、持ち上げと内側へのずらしはなし、画像は幅<code>1em</code>で文字から<code>0.3em</code>離します。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。postext 1.42以降は、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、内側余白の合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43以降は、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>そのマーカーの文字列です（脚本の「(MORE)」など）。囲みの本文の書体とサイズで組み、文書の言語ごとに既定値があります。</td>
+      <td><code>'Continued'</code></td>
+      <td>そのマーカーの文字列です（脚本の「(MORE)」など）。囲みの本文の書体とサイズで組みます。既定値は分割された表と同じく文書の言語に従い、日本語では<code>'次ページへ続く'</code>、スペイン語では<code>'Continúa'</code>です。</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ A speech long enough to run over the foot of the page…
 
 画像の`resourceId`にも同じプレースホルダーが使えるため、囲みごとに別のリソースを描けます。`{boxText}`を読むのは囲みのデザインだけで、見出しのデザインでは何も印字されません。
 
-`setsContent: true`にすると、同じ形の囲みすべてに1つのスタイルを使い、それぞれに別の言葉を入れられます。書き方練習帳では、練習の1行ごとに、なぞる言葉を内容とする囲みを置きます。デザインはその言葉を手本の書体で印字し、同じ名前の点線のリソースを描きます。
+`setsContent: true`にすると、同じ形の囲みすべてに1つのスタイルを使い、それぞれに別の言葉を入れられます。書き方練習帳では、練習の1行ごとに、なぞる言葉を内容とする囲みを置きます。デザインはその言葉を手本の書体で印字し、続けてなぞるための点線の文字（`dotted`）で、行に入るだけ繰り返して組みます（`repeat`。[インラインの書式記号と輪郭線](/ja/docs/configuration-headers-footers#インラインの書式記号と輪郭線)を参照）。
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Klee One', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Klee One', fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ calloutStyles: [{
 :::
 ```
 
-1行目は「ねこ」を印字してリソース`trace-ねこ`を描き、2行目は「つき」を印字して`trace-つき`を描きます。どちらの言葉も帯の下にもう一度組まれることはありません。`setsContent`が`false`のままでも、デザインは同じように`{boxText}`を読み、内容は帯の下に組まれます。
+1行目は「ねこ」を印字し、その後に点線の「ねこ」を並べます。2行目は「つき」で同じように組みます。どちらの言葉も帯の下にもう一度組まれることはありません。Markdownの言葉を書き換えると、手本もすべての写しも変わります。`setsContent`が`false`のままでも、デザインは同じように`{boxText}`を読み、内容は帯の下に組まれます。
 
 VDTでは、帯の要素はタイトルと並んで、枠の`designOverlay`のデザインブロックになります。

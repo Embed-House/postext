@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Überschriften',
   description: 'Standardwerte für Überschriften, Überschreibungen pro Ebene, Seitenumbrüche vor einer Überschrift, Kapitelauftakte über die ganze Seitenbreite und ausgeschriebene Zahlen',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '31 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ Die Eigenschaft `headings` steuert die Typografie aller Überschriftenebenen (H1
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Mit <code>true</code> steht eine Überschrift nie als letztes Element einer Spalte oder Seite. Hätte der folgende Block nach der Überschrift nicht mindestens <code>bodyText.widowMinLines</code> Zeilen Platz (oder eine Zeile, wenn <code>bodyText.avoidWidows</code> <code>false</code> ist), wird die Überschrift weitergeschoben, damit sie mit ihrem Text verbunden bleibt. Wirkt mit <code>bodyText.keepColonWithList</code> zusammen: Muss diese Regel einen Absatz, der mit einem Doppelpunkt endet, ganz verschieben, wandern Überschriften am Ende der Spalte mit, statt allein zurückzubleiben.</td>
+      <td>Mit <code>true</code> steht eine Überschrift nie als letztes Element einer Spalte oder Seite. Hätte der folgende Block nach der Überschrift nicht mindestens <code>bodyText.widowMinLines</code> Zeilen Platz (oder eine Zeile, wenn <code>bodyText.avoidWidows</code> <code>false</code> ist), wird die Überschrift weitergeschoben, damit sie mit ihrem Text verbunden bleibt. Wirkt mit <code>bodyText.keepColonWithList</code> zusammen: Muss diese Regel einen Absatz, der mit einem Doppelpunkt endet, ganz verschieben, wandern Überschriften am Ende der Spalte mit, statt allein zurückzubleiben. In einer Gruppe, die in Spalten gesetzt wird (ein Rahmen einer zusammengesetzten Seite mit <code>columns</code>, eine <code>:::columns</code>-Gruppe), endet eine Spalte ebenfalls nie direkt nach einer Überschrift: Die Überschrift wandert mit dem folgenden Element weiter.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ Die Eigenschaft `headings` steuert die Typografie aller Überschriftenebenen (H1
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>aktiviert</td>
-      <td>Vertikaler Spaltenausgleich – zusätzlicher Abstand über Überschriften, damit Spalten bündig mit dem Seitenfuß enden. Siehe unten.</td>
+      <td>aktiviert (aus bei vertikalem Text und auf einem Zeichenraster)</td>
+      <td>Vertikaler Spaltenausgleich – zusätzlicher Abstand über Überschriften, damit Spalten bündig mit dem Seitenfuß enden. Siehe <a href="/de/docs/configuration-page-flow#spaltenausgleich">Spaltenausgleich</a>.</td>
     </tr>
   </tbody>
 </table>

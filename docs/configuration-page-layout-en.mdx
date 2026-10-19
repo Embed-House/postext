@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Page and layout',
   description: 'The page size, margins and baseline grid, page numbering, and the columns and their gutters',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32 min',
   order: 5,
   parent: 'configuration',
@@ -50,7 +50,7 @@ The `page` property controls the physical dimensions and appearance of the page.
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td><code>2 cm</code> all sides</td>
+      <td><code>2 cm</code> top and bottom, <code>1.5 cm</code> left and right</td>
       <td>Space between the page edge and the content area. Each side (top, bottom, left, right) is set independently. With <code>mirror: true</code> the margins are <em>facing-page</em> margins: <code>left</code> is the inner (spine-side) margin and <code>right</code> the outer one; odd pages (page 1 is odd) keep them as written and even pages swap them, so the content area — and with it the columns, float bands, header/footer containers and opener bands — moves across the spread. Default <code>false</code>. See below.</td>
     </tr>
     <tr>
@@ -76,6 +76,12 @@ The `page` property controls the physical dimensions and appearance of the page.
       <td><code>BaselineGridConfig</code></td>
       <td>disabled</td>
       <td>Draw the baseline grid over the pages, to check the vertical rhythm. The layout snaps to the grid whether or not it is drawn. See below.</td>
+    </tr>
+    <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>How page labels are written and the number the count starts at. See <a href="#numbering">Numbering</a>.</td>
     </tr>
     <tr>
       <td><code>binding</code></td>
@@ -327,7 +333,7 @@ The Japanese styles (since postext 1.16) follow CSS Counter Styles too. `japanes
 
 The Arabic styles keep the CSS names where CSS has one (`arabic-indic`, `persian`; `urdu` and `maghrebi-abjad` from the W3C *Ready-made Counter Styles* are read as `persian` and `arabic-abjad-maghrebi`). `arabic` keeps its old meaning, the European digits. `arabic-abjad` writes the additive abjad numerals of Classical Arabic and manuscript foliation, highest value first: 11 is يا, 1446 غتمو, and the thousands count goes before غ (2000 بغ, 1002 غب); past 999 999 the number prints in digits. The W3C note uses the name for a 28-letter series where 11 is ك; Postext calls that series `abjad`, the lettering of list items in abjad order (أ، ب، ج، د، هـ), and `hijai` the alphabetical order (أ، ب، ت، ث). Both write the first letter with its hamza (أ), and a heh that would stand alone as هـ, with a tatweel, so neither is read as the digits ١ and ٥; past 28 they double, as `lower-alpha` does (أأ, أب). The Maghrebi values follow the mnemonic صعفض قرست ثخذ ظغش (ص 60, ض 90); the W3C list swaps ص and ض. A single أ cannot tell the two letter series apart, so their tokens are their first four letters: `{1:أبجد}`, `{1:أبتث}`. A document's own digits are set with [`numerals`](/en/docs/configuration-language#document-digits).
 
-The other spellings are for configurations that nothing type-checks: JSON presets and plain JavaScript. The TypeScript types still name only each setting's own spelling — the one the Sandbox writes and `resolveAllConfig` returns, the East Asian names included — so a typed `PostextConfig` keeps to it, and another spelling needs a cast.
+The other spellings are for configurations that nothing type-checks: JSON presets and plain JavaScript. The TypeScript types still name only each setting's own spelling — the one the Sandbox writes and the resolved configuration (`doc.config`) holds, the East Asian names included — so a typed `PostextConfig` keeps to it, and another spelling needs a cast.
 
 ```js
 // JavaScript or a JSON preset (in TypeScript, each setting's own spelling)
@@ -336,7 +342,7 @@ page: { pageNumbering: { format: 'roman-lower' } }, // same as 'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 'roman-upper'
 ```
 
-`resolveAllConfig` turns the list and page formats into their own setting's spelling — `'decimal'` resolves to `'arabic'` in `orderedLists`, `'roman-lower'` to `'lower-roman'` in `page.pageNumbering` — and `stripConfigDefaults` drops a spelling of the default. The Sandbox panels show each of the three settings in its own spelling, whichever one the configuration uses. Any other value — `roman`, `01`, a typo — numbers in decimal instead of printing `undefined`, and is reported as a [configuration warning](/en/docs/configuration-fonts-colors-viewers#configuration-warnings). The heading numbering templates take the same names after the colon (`{1:roman-upper}` is `{1:I}`), next to their own zero-padded `{1:01}`.
+Resolving the configuration (`doc.config`) turns the list and page formats into their own setting's spelling — `'decimal'` resolves to `'arabic'` in `orderedLists`, `'roman-lower'` to `'lower-roman'` in `page.pageNumbering` — and `stripConfigDefaults` drops a spelling of the default. The Sandbox panels show each of the three settings in its own spelling, whichever one the configuration uses. Any other value — `roman`, `01`, a typo — numbers in decimal instead of printing `undefined`, and is reported as a [configuration warning](/en/docs/configuration-fonts-colors-viewers#configuration-warnings). The heading numbering templates take the same names after the colon (`{1:roman-upper}` is `{1:I}`), next to their own zero-padded `{1:01}`.
 
 
 ## Layout

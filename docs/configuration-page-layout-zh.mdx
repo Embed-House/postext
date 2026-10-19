@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '页面与版式',
   description: '页面尺寸、页边距和基线网格，页码的编排，以及分栏和栏间距',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '22分钟',
   order: 5,
   parent: 'configuration',
@@ -50,7 +50,7 @@ export const metadata = {
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td>四边均为<code>2 cm</code></td>
+      <td>上下<code>2 cm</code>，左右<code>1.5 cm</code></td>
       <td>页面边缘与版心之间的空白。上、下、左、右四边各自独立设置。设了<code>mirror: true</code>时，这些页边距就成了左右页<em>对称</em>的页边距：<code>left</code>是内侧（订口一侧）页边距，<code>right</code>是外侧页边距；奇数页（第1页是奇数页）按原样使用，偶数页左右互换。这样版心就会在跨页中左右移动，其中的栏、浮动体横带、页眉页脚容器和章首横带也随之移动。默认为<code>false</code>。详见下文。</td>
     </tr>
     <tr>
@@ -76,6 +76,12 @@ export const metadata = {
       <td><code>BaselineGridConfig</code></td>
       <td>关闭</td>
       <td>在页面上画出基线网格，用来检查纵向节奏。无论画不画出来，版面都会对齐到网格。详见下文。</td>
+    </tr>
+    <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>页码标签的写法，以及计数从哪个数开始。详见<a href="#页码编号">页码编号</a>。</td>
     </tr>
     <tr>
       <td><code>binding</code></td>
@@ -327,7 +333,7 @@ page: {
 
 阿拉伯样式凡是CSS已有名称的，都沿用CSS的名称（`arabic-indic`、`persian`；W3C《Ready-made Counter Styles》中的`urdu`和`maghrebi-abjad`分别读作`persian`和`arabic-abjad-maghrebi`）。`arabic`仍表示欧洲数字。`arabic-abjad`输出古典阿拉伯语和抄本页码所用的累加式阿布贾德数字，数值大的在前：11为يا，1446为غتمو，千位的倍数写在غ之前（2000为بغ，1002为غب）；超过999 999时以数字输出。W3C的说明把这个名称用于一个28个字母的序列，其中11为ك；Postext把这个序列称为`abjad`，即按阿布贾德顺序给列表项编字母（أ، ب، ج، د، هـ），按字母表顺序的则是`hijai`（أ، ب، ت، ث）。两者都把第一个字母写成带hamza的أ，把单独出现的he写成带tatweel的هـ，以免被读作数字١和٥；超过28个后按`lower-alpha`的方式双写（أأ、أب）。马格里布数值依照口诀صعفض قرست ثخذ ظغش（ص为60，ض为90）；W3C的列表把ص与ض对调。单个أ无法区分两种字母序列，因此它们的记号是各自的前四个字母：`{1:أبجد}`、`{1:أبتث}`。文档本身的数字由[`numerals`](/zh/docs/configuration-language#文档数字)设定。
 
-其他写法是为不经类型检查的配置准备的，即JSON预设和纯JavaScript。TypeScript类型仍然只列出每处设置自己的写法，也就是沙盒写入、`resolveAllConfig`返回的那种（东亚名称也包括在内），所以带类型的`PostextConfig`只能用这种写法，用别的写法需要类型断言。
+其他写法是为不经类型检查的配置准备的，即JSON预设和纯JavaScript。TypeScript类型仍然只列出每处设置自己的写法，也就是沙盒写入、解析后的配置（`doc.config`）中的那种（东亚名称也包括在内），所以带类型的`PostextConfig`只能用这种写法，用别的写法需要类型断言。
 
 ```js
 // JavaScript或JSON预设（在TypeScript中，用每处设置自己的写法）
@@ -336,7 +342,7 @@ page: { pageNumbering: { format: 'roman-lower' } }, // 等同于'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同于'roman-upper'
 ```
 
-`resolveAllConfig`会把列表格式和页码格式转换成各自设置的写法：在`orderedLists`中`'decimal'`解析为`'arabic'`，在`page.pageNumbering`中`'roman-lower'`解析为`'lower-roman'`；`stripConfigDefaults`会去掉默认值的任一写法。无论配置用的是哪种写法，沙盒的面板都按三处设置各自的写法显示。其他任何值，如`roman`、`01`或拼写错误，都按十进制编号，不会印出`undefined`，并作为[配置警告](/zh/docs/configuration-fonts-colors-viewers#配置警告)报告。标题编号模板在冒号后接受同样的名称（`{1:roman-upper}`即`{1:I}`），此外还有它们自己的补零形式`{1:01}`。
+解析配置（`doc.config`）时会把列表格式和页码格式转换成各自设置的写法：在`orderedLists`中`'decimal'`解析为`'arabic'`，在`page.pageNumbering`中`'roman-lower'`解析为`'lower-roman'`；`stripConfigDefaults`会去掉默认值的任一写法。无论配置用的是哪种写法，沙盒的面板都按三处设置各自的写法显示。其他任何值，如`roman`、`01`或拼写错误，都按十进制编号，不会印出`undefined`，并作为[配置警告](/zh/docs/configuration-fonts-colors-viewers#配置警告)报告。标题编号模板在冒号后接受同样的名称（`{1:roman-upper}`即`{1:I}`），此外还有它们自己的补零形式`{1:01}`。
 
 
 ## 版式

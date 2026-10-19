@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ligne de commande',
   description: 'Un exécutable autonome pour macOS, Linux et Windows qui transforme un livre .postext, un dossier de livre ou des fichiers Markdown isolés en PDF, HTML, EPUB, images de pages et Word, crée des paquets et vérifie des livres, avec une sortie JSON pour les scripts et les agents',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
   plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
@@ -161,8 +161,8 @@ sa propre langue, sauf si `--locale` en demande une autre (`--locale en`).
 </table>
 
 Chaque commande écrit dans le dossier d’où vous la lancez, sous le nom de
-l’entrée, sauf si `-o` donne le chemin. `-o -` écrit une sortie unique sur la
-sortie standard.
+l’entrée, sauf si `-o` donne le chemin (`images` écrit dans `pages/`). `-o -`
+écrit une sortie unique sur la sortie standard.
 
 ### pdf
 
@@ -242,7 +242,8 @@ exactement telle qu’elle a été mise en page, sans passer par un PDF.
   imprimé) et `{chapter}` ; `page-{n:03}` par défaut.
 - `--print-preview` : la page telle que l’imprimeur la reproduira, à travers le
   profil de sortie, avec le rognage et le fond perdu dessinés.
-- `--jobs N` : le nombre d’images encodées en même temps.
+- `--jobs N` : le nombre d’images encodées en même temps (par défaut, autant
+  que l’ordinateur a de processeurs).
 
 ### docx et import-docx
 
@@ -283,7 +284,11 @@ postext unpack my-book.postext -o my-book/
 
 `pack` compresse un dossier de livre tel quel, ou construit un paquet à partir
 de fichiers Markdown isolés. La même entrée donne toujours les mêmes octets :
-un paquet peut donc être comparé ou haché. `unpack` refuse d’écrire dans un
+un paquet peut donc être comparé ou haché. Pour des fichiers Markdown isolés,
+`--id`, `--description` et `--thumbnail FILE` (une image de couverture)
+fixent l’identifiant, la description et la vignette du paquet ; l’identifiant
+est par défaut une version simplifiée du nom (un slug). Un dossier garde ce
+qu’indique son `preset.json`. `unpack` refuse d’écrire dans un
 dossier qui n’est pas vide, sauf avec `--force`.
 
 ### info et check
@@ -353,7 +358,8 @@ les derniers fichiers valides.
 </table>
 
 Et pour toutes les commandes : `--json`, `--quiet` (`-q`, erreurs seulement),
-`--verbose` (progression et tous les avertissements), `--no-color`, `--help`.
+`--verbose` (progression et tous les avertissements), `--no-color`, `--help`
+(`-h`), `--version` (`-v`).
 
 ## Polices
 

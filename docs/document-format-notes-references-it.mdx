@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Note e riferimenti',
   description: 'Come si scrivono note a piè di pagina, rimandi e ancore, citazioni e bibliografia, e come si segnano i termini dell’indice analitico',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 28,
   parent: 'document-format',
@@ -28,7 +28,7 @@ so he learned to count the steps in the dark.
 
 - **Richiamo.** `[^id]` stampa il numero della nota in apice, attaccato alla parola che lo precede (scrivilo dopo la punteggiatura, come sopra). L’id accetta lettere, cifre, `-`, `_`, `.` e `:`. Il richiamo funziona in paragrafi, voci di elenco, citazioni e riquadri; in titoli, didascalie e celle di tabella si stampa così com’è scritto.
 - **Definizione.** Un paragrafo che inizia con `[^id]:`; il testo prosegue fino alla riga vuota successiva e accetta la consueta formattazione in linea (grassetto, corsivo, link, `:ref`, formule, chip). Ovunque siano scritte, le definizioni escono dal flusso del testo, quindi possono stare sotto il paragrafo che le richiama o tutte insieme alla fine del capitolo. Se un id ha più definizioni, vale la prima.
-- **Numeri.** Le note si numerano nell’ordine in cui vengono richiamate la prima volta, ricominciando da 1 a ogni capitolo (cioè a ogni titolo di livello 1 e a ogni documento di un libro); una nota richiamata due volte mantiene il primo numero e si compone una volta sola. `footnotes.numbering: 'document'` prosegue la numerazione per tutto il libro, e `'page'` la fa ripartire a ogni pagina, come nei libri cinesi; `footnotes.numberFormat: 'circled-decimal'` scrive ① ② ③ sulla linea di base. `footnotes.numberFormat: 'symbols'` le contrassegna con `*`, `†`, `‡`, `§`, `‖`, `¶`, poi con gli stessi segni raddoppiati, ricominciando a ogni pagina, come si usa nelle riviste.
+- **Numeri.** Le note si numerano nell’ordine in cui vengono richiamate la prima volta, ricominciando da 1 a ogni capitolo (cioè a ogni titolo di livello 1 e a ogni documento di un libro); una nota richiamata due volte mantiene il primo numero e si compone una volta sola. `footnotes.numbering: 'document'` prosegue la numerazione per tutto il libro, e `'page'` la fa ripartire a ogni pagina, come nei libri cinesi, `'column'` a ogni colonna e `'spread'` a ogni doppia pagina (le note laterali di un libro giapponese); `footnotes.numberFormat: 'circled-decimal'` scrive ① ② ③ sulla linea di base. `footnotes.numberFormat: 'symbols'` le contrassegna con `*`, `†`, `‡`, `§`, `‖`, `¶`, poi con gli stessi segni raddoppiati, ricominciando a ogni pagina, come si usa nelle riviste.
 - **Testo giapponese.** Scrivi il richiamo prima di un 。 finale di frase (`先生[^1]。`): resta con il carattere che lo precede, e 。 non apre mai una riga. In un libro giapponese a scrittura verticale, per impostazione predefinita i richiami （1） vanno a destra della riga e le note dopo il capitolo; `footnotes.markerPosition: 'side'` compone un piccolo richiamo accanto alla parola, senza occupare spazio nella riga, e `footnotes.placement: 'spread'` compone le note accanto al testo di ogni doppia pagina (vedi [Configurazione › Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina)).
 - **Dove va la nota.** Per impostazione predefinita, in fondo alla colonna in cui si trova la riga che la richiama, sotto un breve filetto: la riga e la sua nota stanno sempre nella stessa colonna, e se la nota non entra, la riga va avanti insieme a lei. In un’impaginazione a una colonna, è il piede della pagina. `footnotes.placement: 'chapterEnd'` raccoglie invece tutte le note di un capitolo dopo l’ultimo blocco, per impostazione predefinita in fondo alla colonna che chiudono. Vedi [Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina) nel riferimento della configurazione per i corpi, il filetto e la spaziatura.
 - **Controlli.** Un richiamo senza definizione (`undefinedFootnote`) stampa il suo numero sopra una nota vuota; una definizione che nessun richiamo usa (`unusedFootnote`) non si compone. La Sandbox segnala entrambi i casi nel pannello **Verifiche**.
@@ -74,7 +74,7 @@ Anche `\eqref{x}` e `\ref{x}` di LaTeX funzionano nel testo: `\eqref` come un ri
 
 **I rimandi alle pagine** si conoscono solo a impaginazione finita. Il motore reimpagina il documento con le pagine trovate nella passata precedente, finché non smettono di cambiare, come fa per l’indice; fino ad allora, al posto della pagina si stampa *?*.
 
-**pandoc-crossref.** Il testo scritto per pandoc-crossref funziona allo stesso modo: `@sec:method`, `[@fig:map]`, e `[-@tbl:data]` per il solo numero. Il prefisso (`sec`, `fig`, `tbl`, `eq`, `lst`) può far parte dell’identificatore (`{#sec:method}`) o esserne omesso (`{#method}`). Una `@` attaccata a una parola, come in un indirizzo e-mail, resta testo.
+**pandoc-crossref.** Il testo scritto per pandoc-crossref funziona allo stesso modo: `@sec:method`, `[@fig:map]`, e `[-@tbl:data]` per il solo numero. Un prefisso con l’iniziale maiuscola (`@Sec:method`) fa iniziare l’etichetta con la maiuscola, come `case=capitalize`. Il prefisso (`sec`, `fig`, `tbl`, `eq`, `lst`) può far parte dell’identificatore (`{#sec:method}`) o esserne omesso (`{#method}`). Una `@` attaccata a una parola, come in un indirizzo e-mail, resta testo.
 
 Un rimando a un id che non è definito da nessuna parte stampa *?*, e il pannello **Verifiche** lo segnala (`unknownResourceId`). Nell’editor della Sandbox, `@` propone le figure, le tabelle, i titoli con un id e le ancore del libro.
 
@@ -176,7 +176,7 @@ Con uno **stile a note** ogni citazione diventa una nota a piè di pagina, collo
 import 'postext-citeproc/register';
 ```
 
-Il pannello **Verifiche** segnala una chiave che nessun riferimento definisce (`unknownCitationKey`) e un blocco di riferimenti illeggibile (`referencesUnreadable`).
+Il pannello **Verifiche** segnala una chiave che nessun riferimento definisce (`unknownCitationKey`) e un blocco di riferimenti illeggibile (`referencesUnreadable`). Un testo che cita opere senza alcun motore di citazione registrato riceve un avviso `citationsUnavailable`, e le sue citazioni si stampano così come sono scritte.
 
 
 ## Indice analitico

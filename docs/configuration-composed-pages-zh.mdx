@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '模板页设置',
   description: '模板页所用的页面模板：框、组、装饰、继承与奇偶页变体、图片锚点上的标注样式，以及模板可能给出的警告',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6分钟',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ const config: PostextConfig = {
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>页面文字的段落样式，用法与标题样式中的相同。</td>
+      <td>页面文字的段落样式，用法与标题样式中的相同。排版目前还不应用它。</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ const config: PostextConfig = {
       <td><code>columns</code>、<code>columnGap</code></td>
       <td><code>number</code>、<code>Dimension</code></td>
       <td><code>1</code>、样式的值</td>
-      <td>框内的分栏。</td>
+      <td>框内的分栏。标题不会落在某一栏的末尾，而是与它引出的文字一起移到下一栏（在<code>headings.keepWithNext</code>下，自postext 1.46起）。</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。模板的`bodyStyle`和`palette`会被读取和检查，但还没有应用。框的`writingMode`和`direction`自postext 1.39起生效。宽度`'auto'`按`'fill'`处理。
+排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。自postext 1.42起，排版也会应用模板的`palette`、框的`look`和宽度`'auto'`（与框中最长的一行同宽）。框的`writingMode`和`direction`自postext 1.39起生效。模板的`bodyStyle`会被读取和检查，但还没有应用。
 
 ### 跨页
 
@@ -588,7 +588,7 @@ pageTemplates: [{
 
 ## 标注样式
 
-`labelStyles`属性为写在图片上的标注命名各种外观：地图上的海洋和城镇，示意图的各个部分。标注位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或标注所指定的样式。在沙盒中，它们在**版面设计 › 图与表 › 标注样式**里编辑（自postext 1.42起）。
+`labelStyles`属性为写在图片上的标注命名各种外观：地图上的海洋和城镇，示意图的各个部分。标注位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或标注所指定的样式。在沙盒中，它们在**版面设计 › 图与表 › 标注样式**里编辑（自postext 1.42起）。在那里重命名一个样式时，引用它的锚点和`::label`行也会随之改写（自postext 1.43起）。
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>标注放不进其宽度时，最多可以缩小到多少。</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>这种样式的标注竖排：字符直立，一格一格自上而下，各列从右向左，如同中文或日文地图上的标注。锚点自己的<code>writingMode</code>优先。</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code>表示放在这个锚点上的标注可以挨着邻近的标注，就像原稿印的那样：包含它的一对不会给出<code>labelOverlap</code>。优先于样式的<code>overlap</code>。自postext 1.42起。</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>在跨过跨页书脊的插图上，<code>'keep'</code>把标注从订口带移开，移向其点所在的一侧；<code>'cross'</code>让标注留在点所定的位置，横跨两页的标题需要这样。自postext 1.43起。</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ labelStyles: [
       <td>无</td>
       <td>一个<code>labelStyles</code>的id。标注自己指定样式时，以标注的为准。</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code>让标注竖排，如同中文或日文地图、书脊上的文字。这时它的<code>width</code>是图片高度的一部分，<code>align</code>沿列的方向（<code>start</code>是上端），<code>verticalAlign</code>横跨各列（<code>top</code>是第一列，即最右一列）。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>表示放在这个锚点上的标注可以挨着邻近的标注，就像原稿印的那样：包含它的一对不会给出<code>labelOverlap</code>。优先于样式的<code>overlap</code>。自postext 1.42起。</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>在跨过跨页书脊的插图上，<code>'keep'</code>把标注从订口带移开，移向其点所在的一侧；<code>'cross'</code>让标注留在点所定的位置，横跨两页的标题需要这样。自postext 1.43起。</td>
     </tr>
   </tbody>
 </table>

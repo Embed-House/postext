@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'Lo que ofrece el Sandbox para las páginas compuestas: editar las plantillas y sus marcos sobre la propia página, ordenar los estilos de marco en una biblioteca, revisar las páginas compuestas en todas las ediciones, pasar al Markdown el texto de un libro y arreglar un marco con un clic',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -33,6 +33,8 @@ Esta página reúne las partes de los paneles **Diseño** y **Revisión** que tr
 
 **Una historia que salta a otro capítulo.** En un libro con un archivo de capítulo por artículo, una historia cuyo marco la envía a `page:<id>` continúa en el capítulo que tiene esa página (desde postext 1.41; véase [Páginas compuestas › Saltar a una página posterior](/es/docs/composed-pages#saltar-a-una-página-posterior)). El canvas, el Folio y las pestañas PDF y EPUB componen el resto en la página de ese capítulo, con los números de página del libro en las marcas. El registro de maquetación de un capítulo guarda las historias que envía, de modo que el capítulo que tiene la página se vuelve a maquetar cuando cambia el artículo y no cuando cambia un capítulo intermedio. Un clic en las palabras que llegaron de otro capítulo pone el cursor en el Markdown del artículo, y la ruta que hay bajo la vista previa indica la página posterior cuando el cursor está en ese texto. La vista previa de un solo capítulo muestra únicamente lo que contienen sus propias páginas: el resto aparece con el capítulo que tiene la página.
 
+**Las palabras propias de una figura.** Un clic en un pie o una nota que escribe la propia figura lleva el cursor a su línea `::caption[…]` o `::note[…]`, o al atributo de la línea de apertura, en la letra pulsada (véase [Páginas compuestas › Las palabras propias de una figura](/es/docs/composed-pages#las-palabras-propias-de-una-figura)).
+
 
 ## Estilos de marco
 
@@ -59,7 +61,7 @@ La sección recoge:
 - *El texto sigue sin caber tras las páginas añadidas* (`frameContinuationLimit`): el contenido del marco siguió en todas las páginas que puede añadir una página compuesta y aún no cabe;
 - *Un texto continúa en una página que no viene después* (`continueTargetMissing`): ningún bloque de página posterior tiene el id que indica el `continueIn` del marco;
 - *Rótulo en un ancla que no existe* y *Ancla sin rótulo* (`labelAnchorUnknown`, `anchorUnlabelled`), en el marco que compone la figura;
-- *Rótulo más ancho que su medida* y *Rótulos que se pisan* (`labelOverflow`, `labelOverlap`), en ese mismo marco: los rótulos de cada edición se miden con sus propias palabras, así que en un idioma de palabras más largas pueden desbordarse donde en otro no;
+- *Rótulo más ancho que su medida* y *Rótulos que se pisan* (`labelOverflow`, `labelOverlap`), en ese mismo marco: los rótulos de cada edición se miden con sus propias palabras, así que en un idioma de palabras más largas pueden desbordarse donde en otro no. Un rótulo que invade una de las zonas `avoid` de la imagen, que se dibujan en el modo **Zonas libres** de sus marcas, también aparece aquí; en un SVG, **Símbolos del dibujo**, en ese mismo modo, añade una zona sobre cada elemento del dibujo cuyo id empieza por un prefijo dado o que lleva una clase dada (desde postext 1.43);
 - *Ranura sin marco*, *Marco vacío*, *Plantilla de página desconocida*, *Página compuesta abierta con :::* y *La marca spread no coincide con la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Bloque del índice partido entre columnas* (`tocGroupSplit`);
 - los avisos de las propias plantillas (un estilo o un ancla de marco que no existe, tamaños que se contradicen, una cadena que vuelve sobre sí misma) y el texto de diseño que guarda contenido del libro (`contentInConfig`).

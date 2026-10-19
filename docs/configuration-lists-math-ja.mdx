@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'リストと数式',
   description: '箇条書きリストと番号付きリスト、その行頭記号、字下げ、入れ子、タスクリスト、数式の大きさ、色、間隔',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分',
   order: 11,
   parent: 'configuration',
@@ -148,7 +148,7 @@ GFMのタスク項目（`- [ ] …`、`- [x] …`）は、行頭記号の代わ�
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>既定の2文字の組み方です。<code>'drawn'</code>ではエンジンがボックスを描きます。<code>'character'</code>では、postext 1.28までと同じく、<code>☐</code>と<code>☑</code>をリストのフォントでテキストとして組みます。フォントにこの文字がなければブラウザーがシステムのフォントを選び、項目のテキストはそのフォントが返す幅のあとから始まります。バージョン13より前に保存した設定は<code>'character'</code>として読み込まれるので、行の位置は変わりません。</td>
+      <td>既定の2文字の組み方です。<code>'drawn'</code>ではエンジンがボックスを描きます。<code>'character'</code>では、postext 1.28までと同じく、<code>☐</code>と<code>☑</code>をリストのフォントでテキストとして組みます。フォントにこの文字がなければブラウザーがシステムのフォントを選び、項目のテキストはそのフォントが返す幅のあとから始まります。<code>configVersion</code> 13より前に保存した設定は<code>'character'</code>として読み込まれるので（<code>pinLegacyTaskBox</code>）、行の位置は変わりません。</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -248,7 +248,7 @@ unorderedLists: {
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>番号のスタイルで、<code>'arabic'</code>、<code>'lower-alpha'</code>、<code>'upper-alpha'</code>、<code>'lower-roman'</code>、<code>'upper-roman'</code>のいずれかです。ほかの設定での表記も使えます（<code>'decimal'</code>、<code>'roman-lower'</code>、<code>'i'</code>…。<a href="/ja/docs/configuration-page-layout#番号書式の表記">番号書式の表記</a>を参照）。未知の値はアラビア数字で番号を付け、報告されます。</td>
+      <td>番号のスタイルで、<code>'arabic'</code>、<code>'lower-alpha'</code>、<code>'upper-alpha'</code>、<code>'lower-roman'</code>、<code>'upper-roman'</code>、または東アジアやアラビア文字のスタイル（<code>'simp-chinese-informal'</code>、<code>'circled-decimal'</code>、<code>'arabic-indic'</code>、<code>'abjad'</code>など）のいずれかです。ほかの設定での表記も使えます（<code>'decimal'</code>、<code>'roman-lower'</code>、<code>'i'</code>…。<a href="/ja/docs/configuration-page-layout#番号書式の表記">番号書式の表記</a>を参照）。未知の値はアラビア数字で番号を付け、報告されます。</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>

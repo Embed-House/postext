@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '排版流水线',
   description: '放置遍及其轮次：引擎怎样放置行、浮动体、注释和栏，并反复运行直到版面稳定',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '19分钟',
   order: 3,
   parent: 'architecture',
@@ -65,6 +65,8 @@ const { height } = layout(prepared, columnWidth, 24); // 行距24px
 **栏带与通栏栏**。`page.columns`是一个按阅读顺序排列的扁平数组，但一页并不总是只有一排栏。在多栏版面中，通栏的行内块会把页面切成上下堆叠的*栏带*。有四种东西算作这样的块：样式或围栏设置了`span: 'page'`的`:::callout`，正文中的`:::columns{span="page"}`组，放置规则解析为`{ position: 'here', span: 'page' }`的行内`::resource`，以及在书写处横跨页面排出的漫画条（`:::strip{span=page}`）。后三种在放置之前先被包进一个无边框的通栏框（`pipeline/flowColumns.ts`、`pipeline/spanEmbeds.ts`），所以四种都由同一个机制排出。在切割处，当前栏带的文本栏在切割线处封闭（高度被截断，`availableHeight`为零），该块获得自己的一个全宽栏，`kind: 'span'`，并在它下方追加一个新的文本栏带（`band + 1`，x和宽度相同，底边与被替代的栏带相同）。栏只会被追加，因此`columnIndex`始终对应`page.columns[i]`，渲染器也无需特殊绘制：每栏按自己的bbox裁剪（由`columnClipRect`放宽：字形墨迹留2pt，再加上该栏的设计覆盖层（如标题页签或标注框徽标）超出其两侧的距离，以及标题设计超出其顶部的距离；底边仍是栏的边缘；Canvas和PDF后端使用同一个矩形）。栏间分隔线按栏带在相邻文本栏之间绘制，从页首通栏标题所占栏带的下方开始（`columnRuleSegments`）；带样式的章节设置了分隔线时，使用该页自己的分隔线（`VDTPage.columnRule`，通过`pageColumnRule`读取）。各栏齐底会忽略通栏栏、侧栏和高度为零的栏带。通栏块在栏带齐平的位置（页首、紧接章首标题之后、另一个通栏块之后或顶部浮动带之后）直接切割；如果到达时栏带各栏不齐，它就提出一个*栏带上限*（`packages/postext/src/pipeline/bandCaps.ts`）：以某个内容块开头的栏带，其各栏被缩短到`ceil(Σ used / N / grid)`行。`buildDocument`带着这个上限重新运行放置遍（受限栏带放不下时每次增加一行，最多`MAX_BAND_CAP_RETRIES` = 3次，之后放弃这个上限，该块于是退回到下一页的顶部），于是文本在遵守所有放置规则的前提下填满缩短后的各栏，在切割处齐平结束，封闭的栏把剩余的空白保留为`availableHeight`，交给各栏齐底去吸收。同一机制也用于让章节末尾和文档末尾的*收尾*栏带齐平（`headings.balancing.trailing`）：遇到章首页、`:::part`、结束一章的`placement: 'fixed'`标注框或文档末尾时，如果当前栏带各栏不齐，就提出一个`kind: 'trailing'`上限，以该边界块为键。由于上限以开启其栏带的块为键，而只要前面某页吸收了额外的齐底行，这个块就会移动，因此收尾上限要在各栏齐底稳定*之后*、在冻结齐底提示的情况下求解，然后再进行一轮简短的润色，让各个齐底手段补足切割留下的空缺。`placement: 'fixed'`的标注框脱离文本流：框锚定在页面版心、成品框或出血框上，它覆盖的文本栏让出该区域（像浮动带一样从底部或顶部切掉，冲突时移到下一页），框体及其子元素进入`page.floats`。
 
 **竖排页面**。设置`layout.writingMode: 'vertical-rl'`时，这一遍排出的是一个顺时针旋转了90度的横排页面。在这样的页面上，版心、栏、块、行、浮动体和脚注区都使用**流坐标**，`VDTPage.flow`携带把它们变换到纸面上的旋转：流坐标中的点(x, y)落在(页宽 − y, x)。下游无需知道这一点：断行、浮动体、保持同页规则和各栏齐底都在流坐标系中照常工作，流中的一栏就是纸面上的一层，各后端在绘制时应用旋转（`flowToPage`和`pageToFlow`在两个方向上映射点）。书眉、页码、裁切线和背景保持纸面坐标。图和表作为直立的块排版，在框内转回原方向；需要直立的字符在绘制时逐个转回。
+
+**漫画页和模板页**。有两种页面不由分栏文字流填充，它们的栏保持为空。漫画页（`:::page`，`role: 'comic'`）按分割表达式切成分格，每格的图片裁切到它的格子，对白框、旁白和拟声词根据脚本排字（`comics/layoutPage.ts`），结果放在`VDTPage.comic`中。模板页（`::::page{template="…"}`，`role: 'composed'`）由`layoutComposedPage`（`pipeline/composedLayout.ts`）按`pageTemplates`中的模板排版：它放置模板的各个框，用框排版器把每个框接收的内容排进去；某个框的内容放不下时，就逐级尝试一系列重排步骤（空余空间、框所在的组、缩小图片、缩小文字、续排到另一页），每一步都重排整页。仍然放不下的内容被裁掉，并报告为`frameOverflow`。各个框在`VDTPage.composed`中，框的盒子和内容放进`page.floats`。这种页面前后的正文在它周围的页面上继续排。参见[模板页](/zh/docs/composed-pages)和[漫画](/zh/docs/comics)。
 
 ### 第4阶段：资源放置
 

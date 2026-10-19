@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'East Asian typography',
   description: 'The cjk settings: line breaking, punctuation widths, spacing, the character grid, ruby and the marks of Chinese, Japanese and Korean text',
   lang: 'en',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '34 min',
   order: 13,
   parent: 'configuration',
@@ -161,7 +161,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>grid</code></td>
-      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show?, fullLines? &#125;</code></td>
       <td>off</td>
       <td>The type area in characters per line and lines per page (see <a href="#character-grid">Character grid</a>).</td>
     </tr>
@@ -193,7 +193,7 @@ interface CjkConfig {
       <td><code>annotationColor</code></td>
       <td><code>ColorValue</code></td>
       <td>the text colour</td>
-      <td>Colour of the emphasis dots and the proper-name and book-title lines; the default of the ruby and warichu colours.</td>
+      <td>Colour of the emphasis dots, the proper-name and book-title lines and the side lines (<code>:sideline[…]</code>); the default of the ruby, warichu and kanbun colours.</td>
     </tr>
     <tr>
       <td><code>ruby</code></td>
@@ -203,7 +203,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>warichu</code></td>
-      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close?, minChars? &#125;</code></td>
       <td>half-size; brackets （） in Japan, none elsewhere</td>
       <td>The two-row notes of <code>:warichu[…]</code>: the note's size (default half an em, so the two rows fill the line's em), its colour, and the brackets set at the text size before its first row and after its last (a note's own <code>open</code> / <code>close</code> win). In Japan an empty <code>open</code> or <code>close</code> (<code>''</code>) sets the note without that bracket. <code>minChars</code> (default <code>2</code>) is the fewest characters of a note that a line break leaves on either side of it: a note of up to three characters is never divided, a line with no other break falls back on the breaks <code>lineBreak</code> allows, and <code>1</code> breaks anywhere they allow, as up to postext 1.27. A configuration stored before postext 1.28 whose text holds a note is read with <code>1</code>. Since postext 1.28.</td>
     </tr>
@@ -364,14 +364,15 @@ The line pitch never changes: marks and readings live in the leading. A paragrap
 
 In the VDT a marked segment carries `cjkMarks`, and the layout places the dots and lines on its lines as `VDTLine.marks` (dots, circles, sesames, straight, double, dotted and wavy lines, in the line's flow frame), which the canvas, HTML and PDF draw as they are (PDF: `Artifact /Layout`; HTML: `aria-hidden` boxes, dotted text in `<em>`). A ruby base's segment carries `ruby` (the reading and its runs; for a Japanese reading also the `id` its annotation shares with the other characters of a jukugo word, and `jukugo`) and paints its base at `inkOffset`, with `tracking`, when the reading spread it; a character with kanbun marks carries `kunten` (its runs and its tatesen); a warichu note's part on a line is one segment whose `text` is its upper row then its lower one and whose `warichu` holds the rows the renderers paint instead. Tagged PDF puts a reading in the `RT` of its base's `Ruby` and a note in a `Warichu`, and the line's `/ActualText` reads the base text and the note once. Marks, readings and notes are drawn in body text, headings, lists and boxes, and in the captions, table cells and notes of resources, whose lines carry `marks` and `ruby` as body lines do; design text keeps the text without them.
 
-The resolver and the stripper work as in the other sections. `spaceAfterQuestion`, `paragraphStartBracket` and `wordBreak`, and the ruby's `overhang`, `align` and `smallKana`, are in the resolved config only when they change something (in Japan, or when set). `setCjkLineBreak` and `setCjkComposition` set the level and the composition (punctuation widths, hanging, the Han–Latin space; `cjkCompositionOf(resolved.cjk, dpi)`) for measurements made outside `buildDocument`, which sets them from the config. Outside a build, marks keep their full advance and no Han–Latin space is set:
+The resolver and the stripper work as in the other sections. `spaceAfterQuestion`, `paragraphStartBracket` and `wordBreak`, and the ruby's `overhang`, `align` and `smallKana`, are in the resolved config only when they change something (in Japan, or when set). `circledNumbers` is there only as `'western'`, and `composeDesignText` only as `false`. `setCjkLineBreak` and `setCjkComposition` set the level and the composition (punctuation widths, hanging, the Han–Latin space; `cjkCompositionOf(resolved.cjk, dpi, locale)`, `locale` being the document language) for measurements made outside `buildDocument`, which sets them from the config. Outside a build, marks keep their full advance and no Han–Latin space is set:
 
 ```ts
 import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
 
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   trimLineStart: true, hangingPunctuation: 'none', titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' },
+//   latinSpacingEdge: 'letters', uprightDigits: 2,
 //   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
@@ -380,7 +381,8 @@ resolveCjkConfig(undefined, 'zh-HK');
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half',
+//   titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' }, latinSpacingEdge: 'western', …,
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },

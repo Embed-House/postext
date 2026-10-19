@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'Les directives ::: pour les conteneurs, les colonnes, le papier, les sauts de page, la numérotation, l’espace, les vers, la table des matières et l’index, les sauts de ligne, et le balisage des planches de bande dessinée',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '38 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Directives
 
-Les directives sont des balises de contrôle d’une seule ligne, écrites `:::name` ou `:::name{attrs}` sur une ligne à part. Elles ne produisent rien de visible : elles pilotent le placement et la numérotation.
+Les directives sont des balises de contrôle d’une seule ligne, écrites `:::name` ou `:::name{attrs}` sur une ligne à part. La plupart ne produisent rien de visible et pilotent le placement et la numérotation ; `:::toc`, `:::index` et `:::bibliography` impriment la table des matières, l’index et la bibliographie là où ils se trouvent.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Les directives sont des balises de contrôle d’une seule ligne, écrites `:::n
       <td>Imprime ici l’index : chaque terme marqué avec <code>:index</code> dans le livre, trié et groupé par lettre, avec les pages où il apparaît, composé selon la configuration <code>index</code>. <code>:::index&#123;index="names"&#125;</code> imprime un index nommé. Voir <a href="/fr/docs/document-format-notes-references#index">Index</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Imprime ici la liste des ouvrages cités, dans le style de citation. <code>title</code> en change le titre et <code>scope</code> ce qu’elle contient. Voir <a href="/fr/docs/document-format-notes-references#la-bibliographie">La bibliographie</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Une planche de bande dessinée : ses lignes <code>::panel</code> et les lignes de script qui les suivent, mises en page sous forme de cases et de bulles lettrées sur une page à part. Voir <a href="#bandes-dessinées">Bande dessinée</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Les directives sont des balises de contrôle d’une seule ligne, écrites `:::n
 
 Les valeurs d’attribut peuvent être entre guillemets doubles (<code>"…"</code>), entre guillemets simples (<code>'…'</code>) ou nues (<code>startAt=17</code>). Une clé seule sans `=` est traitée comme un attribut sans valeur, présent mais vide.
 
-Seules `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` et `index` sont reconnues aujourd’hui comme directives d’une ligne (et `references`, `verse`, `page` et `strip` comme blocs délimités) : toute autre ligne `:::name` qui n’est pas un conteneur (voir plus bas) est analysée comme un paragraphe et déclenche un avertissement **Directive inconnue** dans le Sandbox. Le moteur l’enregistre aussi, sous forme d’une entrée `unknownDirective` dans les `contentWarnings` du document (voir [Configuration › Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)).
+Seules `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` et `bibliography` sont reconnues aujourd’hui comme directives d’une ligne (et `references`, `verse`, `page`, `strip` et `figure` comme blocs délimités) : toute autre ligne `:::name` qui n’est pas un conteneur (voir plus bas) est analysée comme un paragraphe et déclenche un avertissement **Directive inconnue** dans le Sandbox. Le moteur l’enregistre aussi, sous forme d’une entrée `unknownDirective` dans les `contentWarnings` du document (voir [Configuration › Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)).
 
 ### Valeurs d’attribut
 
@@ -96,6 +100,7 @@ La même syntaxe `key="value"` est lue par les attributs de titre, les délimite
 - **Pas d’accolades.** `{` et `}` ne vont jamais dans une valeur. La première `}` termine le bloc : un délimiteur dont la valeur en contient une n’est plus une directive mais un paragraphe, et en ligne le reste de la valeur déborde dans le texte. Dans un titre, une accolade dans une valeur laisse tout le bloc dans le titre : `# Title {note="a {b"}` est composé tel qu’il est écrit. (Jusqu’à postext 1.8, une `{` après une espace faisait recommencer le bloc et `b` était lu comme un attribut sans valeur.)
 - **Les signes dollar sont du texte simple.** Les attributs sont lus avant les formules en ligne : `lead="from $5 to $6"` n’est donc que du texte.
 - **Une seule ligne.** Un bloc d’attributs ne s’étend jamais sur plusieurs lignes.
+- **Identifiants.** `#key-idea`, l’abréviation de Pandoc, équivaut à `id="key-idea"` : `{#sec-method}` sur un titre, `:::callout{#box-safety}` sur un délimiteur. Il nomme le bloc pour les [renvois](/fr/docs/document-format-notes-references#renvois-et-ancres).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ La même syntaxe `key="value"` est lue par les attributs de titre, les délimite
 :::
 ```
 
-`::resource{id="…"}` est plus strict : l’identifiant entre guillemets doubles et aucun autre attribut (voir [Ressources](/fr/docs/document-format-resources#ressources)).
+`::resource{id="…"}` est plus strict : l’identifiant entre guillemets doubles et aucun autre attribut (voir [Ressources](/fr/docs/document-format-resources#ressources)). Dans une page composée, il accepte aussi `slot="…"` (voir [Pages composées](#pages-composées)).
 
 ### Conteneurs
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Cinq noms de conteneur sont reconnus dans le flux du texte. Ce que chacun produit se règle dans sa propre section de la configuration :
+Cinq noms de conteneur sont reconnus dans le flux du texte ; un sixième, `:::frame`, renferme le contenu d’un bloc dans une [page composée](#pages-composées). Ce que chacun produit se règle dans sa propre section de la configuration :
 
 <table>
   <thead>
@@ -291,7 +296,7 @@ Un encadré imbriqué dans un groupe reste entier et passe à la partie suivante
 :::
 ```
 
-Un délimiteur `:::callout` accepte aussi `label="…"` : le texte qu’un style doté d’un onglet `label` imprime dans le coin supérieur de l’encadré (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+Un délimiteur `:::callout` accepte aussi `label="…"` : le texte qu’un style doté d’un onglet `label` imprime dans le coin supérieur de l’encadré (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Tout autre attribut du délimiteur est lu par la maquette du style, s’il en a une : `:::callout{type="card" kicker="Note"}` donne à ses textes `{attr.kicker}`, et `{boxText}` imprime le contenu de l’encadré lui-même (voir [Configuration › Maquettes d’encadré](/fr/docs/configuration-callouts#maquettes-dencadré)).
 
 Un `:::callout` placé dans un autre est un encadré à part entière : une fiche d’exercice contenant des cases de réponse, par exemple. Il prend son propre style (fond, bordure, rayon, marge intérieure, titre, icône) sur toute la largeur intérieure de l’encadré extérieur et s’empile parmi ses autres blocs ; son `span` et son `placement` sont ignorés, puisqu’un encadré imbriqué coule toujours à l’intérieur de son parent. Chaque délimiteur ferme l’encadré le plus intérieur encore ouvert :
 
@@ -700,7 +705,7 @@ maya: This line goes on
 
 - La **clé** est un id de personnage (lettres, chiffres, `_`, `.`, `-`), le même dans toutes les traductions ; `caption`, `sfx` et `note` sont réservés. Les deux-points peuvent être le `：` pleine chasse.
 - Un mot seul entre les accolades est un **style de bulle** (`thought`, `whisper`, `shout`, `radio`, `inner` ou l’un de `comics.balloonStyles`) ; `style=` a le même effet.
-- `at` fixe la bulle : un point en pourcentages de l’image de la case (`at="62% 40%"`), ou un coin ou un bord (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` dirige la queue vers un point de l’image ; `tail=none` la supprime et `tail=top|bottom|start|end|left|right` la dirige hors de la case. `join` et `join=false` rattachent la bulle à la précédente du même personnage ou la tiennent à part ; `break` la laisse franchir la bordure, et ce franchissement n’est pas signalé comme un débordement. `rotate` (en degrés), `size` (un facteur d’échelle, pour les onomatopées), `color` et `font` modifient son lettrage.
+- `at` fixe la bulle : un point en pourcentages de l’image de la case (`at="62% 40%"`), ou un coin ou un bord (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` dirige la queue vers un point de l’image ; `tail=none` la supprime et `tail=top|bottom|start|end|left|right` la dirige hors de la case. `join` et `join=false` rattachent la bulle à la précédente du même personnage ou la tiennent à part ; `break` la laisse franchir la bordure, et ce franchissement n’est pas signalé comme un débordement. `rotate` (en degrés), `skew` (une inclinaison en degrés, pour un texte sur un objet vu en perspective), `size` (un facteur d’échelle, pour les onomatopées), `color` et `font` modifient son lettrage.
 - `vertical` et `horizontal` (ou `mode=vertical`, `mode=horizontal`) fixent le sens d’écriture de la ligne, au-dessus de celui du livre : un `ドン` non traduit composé en colonne dans une édition horizontale, une enseigne écrite en travers composée en ligne dans une édition verticale. Une colonne dans un livre d’une autre langue suit les règles de son propre texte (avec des kana, celles du japonais). Dans un livre vertical, une ligne sans caractères chinois ni japonais est de toute façon composée en ligne.
 - Une ligne en retrait de deux espaces ou d’une tabulation prolonge la bulle du dessus ; une barre oblique inverse en fin de ligne y coupe le texte. Les lignes vides sont ignorées.
 - Le texte est du Markdown en ligne : mise en relief (lettrée en gras italique), `:tcy`, `:ruby` (sa lecture composée au-dessus de la base, sauf au-dessus d’une base de droite à gauche), `:ltr` et `:rtl` (un passage maintenu dans son propre sens). Les notes de bas de page et les marques `:ref` ne sont pas lues.
@@ -730,4 +735,4 @@ Une page composée est mise en page d’après un gabarit de page de la configur
 - `::::page{template="…"}` … `::::` est la page : quatre deux-points ou plus, fermés par une ligne qui n’en contient que le même nombre. Les délimiteurs à trois deux-points qu’elle renferme (`:::frame`, `:::callout`, `:::figure`…) fonctionnent comme partout, et un `:::` seul ne ferme jamais la page. Un `:::page` à trois deux-points reste une planche de bande dessinée.
 - `:::frame{slot="…" label="…"}` … `:::` renferme le contenu du bloc de ce nom : n’importe quel Markdown.
 - `slot="…"` sur un titre (`## Retos {slot="retos-titulo"}`), sur `::resource{id="…" slot="…"}`, sur un délimiteur de code ou sur un conteneur `:::` envoie ce seul élément. Le contenu sans emplacement (attribut `slot`) va dans le bloc de flux du gabarit.
-- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant.
+- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant. Ses `alt`, `caption` et `note`, en attributs du délimiteur ou en lignes `::alt[…]`, `::caption[…]` et `::note[…]`, remplacent les textes de la ressource pour ce chapitre (voir [Pages composées › Les textes d’une figure](/fr/docs/composed-pages#les-textes-dune-figure)).

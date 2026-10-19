@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Viúvas, órfãs e equilíbrio',
   description: 'As regras que mantêm linhas e blocos juntos numa quebra de coluna, e as alavancas que fazem todas as colunas terminarem na mesma altura',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '23 min',
   order: 10,
   parent: 'configuration',
@@ -185,6 +185,8 @@ As editoras esperam que toda coluna comece no alto da página e termine alinhada
 Numa grade de caracteres (`cjk.grid`, veja [Composição chinesa › A grade de caracteres](/pt/docs/chinese-layout#a-grade-de-caracteres)) cada caractere ocupa uma célula de um em de largura e cada linha cai no passo de linhas da grade, que é também a grade de linhas de base. Ali o equilíbrio fica desativado por padrão, como no texto vertical: uma página composta linha a linha sobre uma grade, à maneira da GB/T 9704, que conta 22 linhas de 28 caracteres, não corrige uma coluna curta. Uma configuração que define `enabled: true` recebe alavancas que respeitam a grade: os títulos, os finais de lista, as fórmulas em destaque e as figuras ocupam linhas inteiras da grade, de modo que o texto abaixo deles se desloca em fileiras inteiras, e `gridLines: 'off'` deixa essas alavancas de fora para uma norma que não tem nenhuma fileira vazia para ceder. Um parágrafo chinês ou japonês ganha uma linha só quando nenhum vão entre dois dos seus caracteres se abre mais que `maxTracking`, e não recebe tracking nas letras: uma linha a que falta um caractere distribui um em pelos vãos, muito acima dos 0,01 em do padrão; por isso, numa grade de células inteiras a alavanca dos parágrafos frouxos quase nunca encontra nada. O boxe que fecha uma coluna e as imagens com área segura ficam fora da grade por concepção e funcionam como em qualquer outra página.
 
 A última coluna de uma página só é equilibrada quando a página continua naturalmente na seguinte: a página de fechamento de um capítulo pode, legitimamente, terminar curta. Uma página assim, e uma faixa de fechamento cortada por igual por `trailing`, também mantém niveladas as cabeças de coluna: nenhuma linha é somada sob uma figura ou tabela que encabeça uma das colunas (a alavanca de depois do flutuante), e um título ou um boxe que abre uma coluna sob essa figura fica no alto dela, independentemente do valor de `stretchAfterFloats`. O mesmo vale para o título composto logo abaixo de uma abertura `span: 'page'`, na coluna dessa abertura. Assim, uma coluna nunca começa mais abaixo que a vizinha só para alinhar os pés.
+
+Esses ajustes ficam em `headings.balancing`.
 
 <table>
   <thead>

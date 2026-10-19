@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notes i referències',
   description: "Les notes a peu de pàgina, les referències creuades i les àncores, les citacions i la bibliografia, i les marques de l'índex analític",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 28,
   parent: 'document-format',
@@ -28,7 +28,7 @@ així que va aprendre a comptar els graons a les fosques.
 
 - **Crida.** `[^id]` imprimeix el número de la nota volat, enganxat a la paraula anterior (escriu-la després de la puntuació, com a dalt). L'id admet lletres, xifres, `-`, `_`, `.` i `:`. La crida funciona en paràgrafs, elements de llista, citacions i requadres; en títols, peus de figura i cel·les de taula s'imprimeix tal qual.
 - **Definició.** Un paràgraf que comença per `[^id]:`; el seu text arriba fins a la línia en blanc següent i admet les marques en línia habituals (negreta, cursiva, enllaços, `:ref`, fórmules, xips). Les definicions surten del flux siguin on siguin, de manera que poden anar sota el paràgraf que les cita o totes juntes al final del capítol. Si un id es defineix dues vegades, val la primera.
-- **Números.** Les notes es numeren en l'ordre en què se citen per primera vegada, i la numeració torna a començar a cada capítol (un títol de nivell 1, i cada document d'un llibre); una nota citada dues vegades conserva el primer número i es compon una sola vegada. `footnotes.numbering: 'document'` continua la numeració per tot el llibre, i `'page'` la reinicia a cada pàgina, com fan els llibres xinesos; `footnotes.numberFormat: 'circled-decimal'` escriu ① ② ③ sobre la línia de base. `footnotes.numberFormat: 'symbols'` les marca amb `*`, `†`, `‡`, `§`, `‖`, `¶`, després dobles, i torna a començar a cada pàgina, com fan les revistes.
+- **Números.** Les notes es numeren en l'ordre en què se citen per primera vegada, i la numeració torna a començar a cada capítol (un títol de nivell 1, i cada document d'un llibre); una nota citada dues vegades conserva el primer número i es compon una sola vegada. `footnotes.numbering: 'document'` continua la numeració per tot el llibre, i `'page'` la reinicia a cada pàgina, com fan els llibres xinesos, `'column'` a cada columna i `'spread'` a cada doble pàgina (les notes laterals d'un llibre japonès); `footnotes.numberFormat: 'circled-decimal'` escriu ① ② ③ sobre la línia de base. `footnotes.numberFormat: 'symbols'` les marca amb `*`, `†`, `‡`, `§`, `‖`, `¶`, després dobles, i torna a començar a cada pàgina, com fan les revistes.
 - **Text japonès.** La crida s'escriu davant d'un 。 que tanca la frase (`先生[^1]。`): es queda amb el caràcter anterior, i 。 mai no obre una línia. Un llibre japonès vertical compon per defecte les crides （1） a la dreta de la línia i les notes després del capítol; `footnotes.markerPosition: 'side'` posa una crida petita al costat de la paraula, sense ocupar lloc a la línia, i `footnotes.placement: 'spread'` compon les notes al costat del text de cada doble pàgina (vegeu [Configuració › Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina)).
 - **On va la nota.** Per defecte, al peu de la columna que conté la línia que la cita, sota un filet curt: la línia i la nota sempre comparteixen columna, i si la nota d'una línia no hi cap, la línia passa amb la nota a la columna següent. En una maquetació d'una sola columna, és el peu de la pàgina. `footnotes.placement: 'chapterEnd'`, en canvi, compon totes les notes d'un capítol després del darrer bloc, per defecte al peu de la columna que tanquen. Les mides, el filet i els espais són a [Notes a peu de pàgina](/ca/docs/configuration-notes-references#notes-a-peu-de-pàgina), a la referència de configuració.
 - **Comprovacions.** Una crida sense definició (`undefinedFootnote`) imprimeix el número sobre una nota buida; una definició que cap crida no cita (`unusedFootnote`) no es compon. El Sandbox mostra totes dues al tauler Revisió.
@@ -74,7 +74,7 @@ Els resultats de :ref{id="sec-metodo"} es compleixen a :ref{id="sec-metodo" styl
 
 **Les referències de pàgina** només es coneixen quan el llibre està compost. El motor torna a compondre el document amb les pàgines de la passada anterior fins que no canvien, com fa amb l'índex general; fins llavors la pàgina s'imprimeix com a *?*.
 
-**pandoc-crossref.** Un text escrit per a pandoc-crossref es llegeix igual: `@sec:metodo`, `[@fig:mapa]`, i `[-@tbl:datos]` per al número sol. El prefix (`sec`, `fig`, `tbl`, `eq`, `lst`) pot formar part de l'identificador (`{#sec:metodo}`) o quedar-ne fora (`{#metodo}`). Una `@` enganxada a una paraula, com en una adreça de correu, continua sent text.
+**pandoc-crossref.** Un text escrit per a pandoc-crossref es llegeix igual: `@sec:metodo`, `[@fig:mapa]`, i `[-@tbl:datos]` per al número sol. Un prefix amb majúscula (`@Sec:metodo`) posa en majúscula la inicial de l'etiqueta, com `case=capitalize`. El prefix (`sec`, `fig`, `tbl`, `eq`, `lst`) pot formar part de l'identificador (`{#sec:metodo}`) o quedar-ne fora (`{#metodo}`). Una `@` enganxada a una paraula, com en una adreça de correu, continua sent text.
 
 Una referència a un id que res no defineix imprimeix *?* i apareix al tauler Revisió (`unknownResourceId`). A l'editor del Sandbox, `@` ofereix les figures, les taules, els títols amb id i les àncores del llibre.
 
@@ -176,7 +176,7 @@ Amb un **estil de notes**, cada citació es converteix en una nota a peu de pàg
 import 'postext-citeproc/register';
 ```
 
-El tauler Revisió avisa d'una clau que cap referència no defineix (`unknownCitationKey`) i d'un bloc de referències que no es pot llegir (`referencesUnreadable`).
+El tauler Revisió avisa d'una clau que cap referència no defineix (`unknownCitationKey`) i d'un bloc de referències que no es pot llegir (`referencesUnreadable`). Un text que cita obres sense cap motor de citació registrat rep un avís `citationsUnavailable`, i les citacions s'imprimeixen tal com s'han escrit.
 
 
 ## Índex analític

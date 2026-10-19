@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Bilder, Tabellen und Videos',
   description: 'Ressourcen im Text: Verweise und Einbettungen, Nummerierung, Platzierung und wohin ein Gleitobjekt kommt, Textumfluss, Bitmap-Größe, Sicherheitsbereiche, Anker für Comics und Videos',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '38 min',
   order: 29,
   parent: 'document-format',
@@ -63,7 +63,7 @@ Eine Zelle kann eine eigene Füllung haben. `TableCell.background` ist ein Farbw
 
 SVG-Ressourcen lassen sich zusätzlich für den Druck mit einer einzigen Sonderfarbe umfärben, über `diagramStyle.singleInk` (Standard `false`). Ist es eingeschaltet, wird jede Farbe in einem SVG-Diagramm auf einen helligkeitsabhängigen Tonwert von `diagramStyle.inkColor` abgebildet (standardmäßig die Hauptfarbe der Palette, `#295AA3`) – Weiß wird zu Papier, Schwarz zur vollen Farbe –, sodass Abbildungen getreu wiedergegeben werden, wenn das Dokument mit einer einzigen Sonderfarbe gedruckt wird. Siehe [Konfiguration › Diagrammstil](/de/docs/configuration-resources#diagrammstil).
 
-Eine fehlerhafte Einbettung (fehlende oder leere `id`, eine `id` ohne Anführungszeichen oder in einfachen Anführungszeichen, zusätzliche Attribute) wird nicht zu einem Ressourcenblock; sie fällt auf das normale Lesen als Absatz zurück und bleibt in der Ausgabe sichtbar. Ebenso eine korrekt geschriebene Einbettungszeile, die ohne Leerzeile direkt unter einer Absatzzeile steht: Sie wird als Teil dieses Absatzes gelesen. Beide lösen eine Warnung `malformedEmbed` aus – einen Eintrag **Einbettung als Text gesetzt** im Bedienfeld Prüfungen der Sandbox.
+Eine fehlerhafte Einbettung (fehlende oder leere `id`, eine `id` ohne Anführungszeichen oder in einfachen Anführungszeichen, zusätzliche Attribute außer dem `slot` einer zusammengesetzten Seite) wird nicht zu einem Ressourcenblock; sie fällt auf das normale Lesen als Absatz zurück und bleibt in der Ausgabe sichtbar. Ebenso eine korrekt geschriebene Einbettungszeile, die ohne Leerzeile direkt unter einer Absatzzeile steht: Sie wird als Teil dieses Absatzes gelesen. Beide lösen eine Warnung `malformedEmbed` aus – einen Eintrag **Einbettung als Text gesetzt** im Bedienfeld Prüfungen der Sandbox.
 
 Verweise im Text werden in jedem Textblock erkannt – Absätzen, Überschriften, Zitaten und Listenpunkten – und können neben fett, kursiv, Code und Formeln im Text stehen.
 
@@ -83,7 +83,7 @@ Die Direktive `:ref` nimmt drei optionale Attribute in beliebiger Reihenfolge an
     <tr>
       <td><code>:ref&#123;id="…"&#125;</code></td>
       <td><code>Fig. 1.7</code></td>
-      <td>Standardstil: die <code>shortLabel</code> des Typs, gefolgt von der Nummer, verbunden durch ein geschütztes Leerzeichen, sodass beide nie getrennt umbrochen werden.</td>
+      <td>Standardstil: die <code>shortLabel</code> des Typs, gefolgt von der Nummer, verbunden durch ein geschütztes Leerzeichen (oder das <code>labelNumberGap</code> des Legendenstils), sodass beide nie getrennt umbrochen werden.</td>
     </tr>
     <tr>
       <td><code>:ref&#123;id="…" style="number"&#125;</code></td>

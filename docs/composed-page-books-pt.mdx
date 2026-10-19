@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Livros de páginas compostas',
   description: 'Um passo a passo no Sandbox com um livro didático feito de páginas compostas: como montar um modelo de página, preenchê-lo a partir do Markdown, rotular um mapa, traduzir a página, corrigir o texto que não cabe e selecionar elementos na página e no texto',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "Esta página ensina, passo a passo, a fazer no Sandbox uma página de livro didático, com uma faixa de título, um texto e caixas coloridas. Você parte de um livro de exemplo pronto e acrescenta mais uma página a ele. Primeiro desenha a página como um modelo, depois coloca nela o texto escrito no Markdown, depois dá nome aos lugares de um mapa e traduz a página para outro idioma. No fim, vê o que fazer quando um texto não cabe na caixa e como passar da página para o texto dela, e vice-versa.",
@@ -102,7 +102,7 @@ A expressão *Stone bridge* é Markdown; o ponto faz parte da imagem. Quando voc
 
 ## 5. Traduzir a página
 
-Uma tradução é o mesmo modelo com outras palavras. O Sandbox a guarda como outra edição do mesmo livro: a barra acima do canvas alterna entre as edições e o painel Verificações lê todas (veja [Edições de um livro](/pt/docs/sandbox-previews#edições-de-um-livro)). Para criar uma:
+Uma tradução é o mesmo modelo com outras palavras. O Sandbox a guarda como outra edição do mesmo livro: uma barra de ferramentas na borda esquerda do canvas alterna entre as edições, e o painel Verificações lê todas (veja [Edições de um livro](/pt/docs/sandbox-previews#edições-de-um-livro)). Essa barra aparece quando o ponteiro chega à borda, e o botão de fixar a mantém aberta. Para criar uma:
 
 1. Abra **Livros**, clique em **⋯** no seu livro e escolha **Adicionar um idioma…**. Selecione o idioma e clique em **Adicionar e abrir**. O Sandbox copia a edição que está na tela para uma nova, define o **Idioma do documento** dela como o idioma escolhido e a abre. A hifenização, as aspas e as palavras que o motor escreve por conta própria (como o *Continua* no corte de uma caixa) seguem esse idioma. O texto continua sendo o original.
 2. No painel **Texto**, traduza as palavras e deixe o resto.
@@ -160,7 +160,7 @@ A página agora mostra o bloco com um contorno vermelho e, logo abaixo dele, uma
 - *faça-o continuar na página seguinte* manda o que não cabe para uma página acrescentada depois desta. Serve para um texto mais longo.
 - *corte cerca de 495 caracteres* não muda nada. Seleciona o texto do bloco e diz quanto você deve cortar.
 
-Um botão que muda o modelo (e, com ele, todas as páginas diagramadas com esse modelo) pede confirmação antes e indica qual ajuste vai mudar. Clique em **Mudar**. A página é diagramada de novo, a caixa termina com a palavra que marca o corte (*Continúa*) e o resto segue no começo de uma página acrescentada. **Cmd/Ctrl+Z** desfaz a mudança. **Rearranjo**, na barra acima do canvas, abre *O que se moveu e por quê*: os blocos cujo tamanho ou lugar a diagramação alterou para acomodar o conteúdo, com o motivo explicado por extenso.
+Um botão que muda o modelo (e, com ele, todas as páginas diagramadas com esse modelo) pede confirmação antes e indica qual ajuste vai mudar. Clique em **Mudar**. A página é diagramada de novo, a caixa termina com a palavra que marca o corte (*Continúa*) e o resto segue no começo de uma página acrescentada. **Cmd/Ctrl+Z** desfaz a mudança. **Rearranjo**, na mesma barra da borda do canvas, abre *O que se moveu e por quê*: os blocos cujo tamanho ou lugar a diagramação alterou para acomodar o conteúdo, com o motivo explicado por extenso.
 
 <Screenshot src="/docs-shots/pt/checks.webp" alt="O painel Verificações com a entrada O texto não cabe no bloco e três botões com soluções, e a página com a primeira caixa contornada em vermelho e uma faixa com a mensagem faltam 26 mm." caption="Um bloco que não cabe e as correções que a diagramação preparou para ele." />
 

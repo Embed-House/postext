@@ -3661,7 +3661,7 @@
     "calloutStyleLabelIconWidth": "Largura do ícone da aba",
     "calloutStyleLabelIconGap": "Distância até a aba",
     "calloutStyleLabelIconPlacement": "Posição da imagem",
-    "calloutStyleLabelIconPlacementTooltip": "Ao lado da aba, fora da borda dela, ou dentro dela, no início, antes das palavras (a aba então cresce na medida da imagem e do espaço). Dentro, a imagem mantém as próprias cores: use uma imagem para um anel branco e outra para um colorido.",
+    "calloutStyleLabelIconPlacementTooltip": "Ao lado da aba, fora da borda dela, ou dentro dela, no início, antes das palavras (a aba então cresce na medida da imagem e do espaço). Dentro, a imagem mantém as próprias cores, a menos que Imagem na cor do texto esteja ativada: aí um mesmo anel serve para todos os tons do livro.",
     "calloutStyleLabelIconBeside": "Ao lado da aba",
     "calloutStyleLabelIconInside": "Dentro da aba",
     "calloutStyleLabelIconTint": "Imagem na cor do texto",

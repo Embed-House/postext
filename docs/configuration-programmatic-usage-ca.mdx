@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ús programàtic',
   description: 'Com es fa servir Postext des del codi: buildDocument i els avisos que retorna, els valors per defecte, la càrrega de fonts, les memòries cau i el Web Worker',
   lang: 'ca',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '32 min',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Ús programàtic
 
-> **Camí recomanat: fes servir el Web Worker.** Al navegador, la gran majoria de les integracions han d'executar la composició amb `createLayoutWorker()` de `postext/worker`, **no** cridant `buildDocument` directament al fil principal. El worker manté fluida la interfície mentre es maqueta, desa a la memòria cau les mesures del text entre maquetacions successives i aplica la cancel·lació *last-wins*, de manera que una pulsació nova atura qualsevol maquetació obsoleta en curs. Per a la recepta recomanada, ves directament a [Executar la composició en un Web Worker](#executar-la-composició-en-un-web-worker). Tota la resta d'aquesta secció (cridar `buildDocument` directament, les funcions que resolen i eliminen els valors per defecte, les memòries cau) continua sent útil, perquè el worker ofereix exactament les mateixes entrades i sortides, però per al codi d'una interfície el punt de partida correcte és el worker. Fes servir `buildDocument` al fil principal només per a exportacions puntuals, per renderitzar al servidor (Node) o per als tests.
+> **Camí recomanat: fes servir el Web Worker.** Al navegador, compon a través de `createLayoutWorker()` de `postext/worker` en lloc de cridar `buildDocument` al fil principal. El worker manté la pàgina receptiva mentre compon, conserva les mesures del text d'una composició a la següent i cancel·la la que està en curs quan en comença una de més recent, de manera que una pulsació mai no espera que es compongui un text anterior. La recepta és a [Executar la composició en un Web Worker](#executar-la-composició-en-un-web-worker). La resta d'aquesta secció (`buildDocument` directe, resolutors, funcions de neteja, memòries cau) continua sent vàlida: el worker rep les mateixes entrades i retorna les mateixes sortides. Crida `buildDocument` al fil principal només per a exportacions puntuals, renderització al servidor (Node) o proves.
 
 ### Construir un document
 
@@ -292,6 +292,8 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
   </tbody>
 </table>
 
+La taula enumera els tipus que pot generar qualsevol document. Els tipus d'una funció concreta es descriuen amb ella: els dels còmics (`comicPanelCount`, `comicBalloonOverflow`…) a la pàgina [Còmics](/ca/docs/comics), els dels vídeos (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) a [Recursos](/ca/docs/document-format-resources), els de les citacions i l'índex (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) a [Notes i referències](/ca/docs/document-format-notes-references), els del text xinès, japonès i àrab (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) a les pàgines d'aquestes escriptures, i els del separador de línies (`raggedLine`, `unbreakableWordOverflow`) a [Justificació](/ca/docs/justification).
+
 Els avisos sobre un recurs (l'estil de taula, la graella, una referència dins del peu, de la nota o de les cel·les) apunten a la primera inserció o referència del recurs al text, i cadascun es registra una sola vegada per recurs. Només es comproven els recursos que fa servir el document: un capítol d'un llibre notifica les taules que cita, no totes les taules del llibre.
 
 ```ts
@@ -484,7 +486,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **Les variants que declara la pàgina** (una regla `@font-face`, un `FontFace` ja afegit) es carreguen a través del conjunt de fonts (`document.fonts.load`, o `self.fonts` en un worker). **Les que no declara** es demanen a `resolve(family, weight, style, { text, codePoints })`, que respon amb un fitxer (bytes o una URL), amb diversos (els trams d'una variant), amb `{ source, unicodeRange, weight, style }` per a un tram o un interval variable, o amb `null`. El motor les afegeix com a `FontFace` quan s'han carregat totes, en l'ordre de la configuració i de cada resposta (latin, després latin-ext, després greek si el resolutor respon així), de manera que el conjunt de fonts queda igual sigui quin sigui l'ordre en què arribin els fitxers. També les inscriu al registre de fonts que llegeixen les [imatges SVG](/ca/docs/configuration-resources#fonts-al-text-dels-svg) i els workers de composició. Un resolutor pot declarar la variant pel seu compte (afegint un full d'estils) i respondre `null`.
-- **L'informe** llista a `loaded` les variants que cobreix una variant carregada (o una família instal·lada); a `missing`, les que encara falten, i a `synthesized`, les que el navegador generaria a partir d'un altre pes o d'una altra inclinació. `timeoutMs` (10 000 per defecte) limita l'espera; una variant que en aquell moment encara s'estigui carregant compta com a absent. On no hi ha conjunt de fonts (Node), `prepareFonts` no fa res i dona totes les variants per carregades.
+- **L'informe** llista a `loaded` les variants que cobreix una variant carregada (o una família instal·lada); a `missing`, les que encara falten, i a `synthesized`, les que el navegador generaria a partir d'un altre pes o d'una altra inclinació; `added` compta els `FontFace` afegits a partir dels fitxers del resolutor. `timeoutMs` (10 000 per defecte) limita l'espera; una variant que en aquell moment encara s'estigui carregant compta com a absent. On no hi ha conjunt de fonts (Node), `prepareFonts` no fa res i dona totes les variants per carregades.
 - **`buildDocumentWithFonts(content, config, options)`** prepara les fonts, maqueta amb `buildDocumentAsync`, llegeix les variants amb què les pàgines han compost realment text, carrega les que el conjunt de fonts no podia proporcionar (un pes que només revelen les pàgines es demana a `resolve` encara que un altre pes de la família pogués respondre per ell) i torna a maquetar (dues vegades més com a màxim). `withLoadedFonts(build, options)` fa el mateix al voltant de qualsevol funció de composició, per a un llibre que es maqueta capítol a capítol o per a un paquet (`buildBundle`) que retorna diversos documents. `options.onFonts` rep l'informe final.
 - **Després de la construcció**, cada variant amb què s'ha compost el text i que el conjunt de fonts no ha pogut proporcionar apareix a `doc.contentWarnings` com a `fontFallback` (vegeu [Avisos del document](#avisos-del-document)).
 
@@ -554,6 +556,29 @@ Part de l'estat de Postext és en variables de mòdul. Tot el que importa `poste
 
 L'aïllament més senzill és un context per document: un iframe per exemple en directe (una inserció de CodePen ho és), o un [worker de composició](#executar-la-composició-en-un-web-worker) per document per a les mesures i la partició de mots (les imatges es continuen registrant a la pàgina).
 
+### Documents de Word (`postext/word`)
+
+El subcamí `postext/word` llegeix i escriu documents de Word (`.docx`) sense DOM. La importació i l'exportació de Word del Sandbox i les ordres `import-docx` i `docx` de la línia d'ordres s'hi basen (vegeu [Línia d'ordres › docx i import-docx](/ca/docs/command-line#docx-i-import-docx)).
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // un Uint8Array o un ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict, report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Sense títol',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Notes de camp' });
+```
+
+- **`readDocx(bytes)`** llegeix el fitxer en un model de Word: els estils, els paràgrafs, les notes i les imatges, el `title` del document i la plantilla d'importació que porta una exportació de Postext (`embeddedTemplate`). Un fitxer que no és un document de Word llança un `DocxReadError`.
+- **`wordToPostext(word, settings)`** converteix el model en capítols (`{ title, markdown }`), imatges i taules. La plantilla fa correspondre cada estil de Word a un títol, un estil de paràgraf, un requadre, una cita o un peu de la configuració. `chapters: 'split'` obre un capítol a cada títol de nivell 1, i `'single'` en conserva un de sol. Les imatges (`id`, `media.bytes`, `caption`, `alt`) i les taules (`id`, `model`, `caption`) les ha de desar l'amfitrió com a recursos; `skippedPictures` enumera les imatges EMF, WMF i TIFF que s'han deixat fora.
+- **`analyzeDocx(word, template, config)`** és l'informe de qualitat que mostra el Sandbox abans d'una importació: els estils en ús, quants paràgrafs tenen estil i observacions com `directFormatting`, `manualHeadings` i `typedNumbering`, cadascuna amb un recompte i exemples.
+- **`postextToDocx(chapters, settings)`** escriu els capítols com un `.docx` (un `Uint8Array`) amb estils de Word per als títols, els paràgrafs, els requadres, les cites, les llistes i les notes. El que Word no pot expressar es conserva tal com està escrit amb els estils *Postext Markup*, i la plantilla va dins del fitxer, de manera que el document es torna a importar sense canvis. `book: true` obre cada capítol amb un paràgraf `Postext Chapter`, a partir del qual la importació reconstrueix els capítols.
+- **`wordStyleTracking(word, template, config)`** i **`applyStyleTracking(config, tracking)`** passen l'espaiat entre caràcters dels estils de Word als estils de la configuració que no en defineixen cap.
+
 
 ## Executar la composició en un Web Worker
 
@@ -588,7 +613,10 @@ El client del worker és al subcamí `postext/worker` i té pocs noms:
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**: crea un worker dedicat (o n'embolcalla un que passis amb `opts.worker`, o engega l'entrada del worker que hi ha a `opts.url`) i retorna un objecte tipat per controlar-lo. Consulta [Carregar el worker des d'una CDN](#carregar-el-worker-des-duna-cdn).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**: envia bytes de font al worker. Els buffers es transfereixen, així que desa'n una còpia nova al fil principal si després els necessites.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**: executa la composició. Si avortes el senyal, es cancel·la la construcció en curs.
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`**: descarta les variants d'aquestes famílies que té el worker, perquè el `registerFonts` següent d'una família tingui efecte en lloc de comparar-se amb la variant que ja té.
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`**: executa la composició. `options` és `{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`. Si avortes `signal`, es cancel·la la construcció en curs. `onProgress({ pass, blocks, totalBlocks, pages })` es crida a mesura que avança la col·locació; `onStats({ passes, totalMs, cached?, missingFonts? })` rep els temps de cada passada de la construcció acabada. `resourcesKey` és una empremta de `content.resources`: les construccions consecutives amb la mateixa clau envien la llista una sola vegada, i el worker la conserva. `cacheKey` és una empremta de tota la construcció: el worker hi associa els seus últims documents i respon des d'aquesta memòria cau una construcció amb una clau que ja té.
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`**: construeix dins de la memòria cau de documents del worker sense tornar el document, per a un capítol que el lector pot obrir tot seguit; el `build` següent amb aquest `cacheKey` es respon des de la memòria cau.
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`**: `prepareFonts` a la pàgina i, després, l'enviament al worker de les variants que ha trobat; vegeu [Carregar el worker des d'una CDN](#carregar-el-worker-des-duna-cdn).
 - **`LayoutWorkerHandle.dispose(): void`**: tanca el worker i rebutja qualsevol construcció pendent amb `AbortError`.
 - **`FontPayload`**: `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` és un pes CSS en forma de cadena (`'700'`, `'bold'`); `registerFonts` també l'accepta com a nombre (`700`). El `buffer` es transfereix al worker quan crides `registerFonts`.
 - **`BuildCancelledError`** (reexportat des de `postext`): el que llança `buildDocument` internament quan `options.shouldCancel` retorna `true`. Normalment no el veus al fil principal: el protocol del worker el converteix en un `AbortError` abans d'arribar al teu codi.

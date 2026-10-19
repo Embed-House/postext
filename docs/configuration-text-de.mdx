@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Fließtext',
   description: 'Die Typografie des Fließtexts: Schrift, Größe und Zeilenabstand, Farben, Einzüge, Zitate, Verse, Tabulatoren und Initialen',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '23 min',
   order: 7,
   parent: 'configuration',
@@ -106,9 +106,9 @@ Die Eigenschaft `bodyText` steuert die Typografie aller Absätze.
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Textausrichtung. <code>'left'</code> (oder <code>'start'</code>) ist die Seite, an der eine Zeile beginnt: in einem Absatz von rechts nach links die rechte (siehe <a href="/de/docs/configuration-language#schreibrichtung">Schreibrichtung</a>). Blocksatz verteilt den Weißraum über jede Zeile, sodass beide Kanten gerade sind. Die letzten Zeilen von Absätzen im Blocksatz laufen in ihrer natürlichen Breite aus – außer wenn Knuth-Plass eine überlange letzte Zeile in Kauf genommen hat, die auf das Stauchen des Leerraums angewiesen ist; dann werden die Wortabstände gestaucht, bis die Zeile genau die Satzbreite füllt (die Leimsetzung von TeX, im Canvas-, HTML- und PDF-Backend identisch angewendet).</td>
+      <td>Textausrichtung. <code>'left'</code> (oder <code>'start'</code>) ist die Seite, an der eine Zeile beginnt: in einem Absatz von rechts nach links die rechte (siehe <a href="/de/docs/configuration-language#schreibrichtung">Schreibrichtung</a>). <code>'right'</code> (oder <code>'end'</code>) ist die Seite, an der sie endet, und <code>'center'</code> zentriert jede Zeile. Blocksatz verteilt den Weißraum über jede Zeile, sodass beide Kanten gerade sind. Die letzten Zeilen von Absätzen im Blocksatz laufen in ihrer natürlichen Breite aus – außer wenn Knuth-Plass eine überlange letzte Zeile in Kauf genommen hat, die auf das Stauchen des Leerraums angewiesen ist; dann werden die Wortabstände gestaucht, bis die Zeile genau die Satzbreite füllt (die Leimsetzung von TeX, im Canvas-, HTML- und PDF-Backend identisch angewendet).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -253,6 +253,12 @@ Die Eigenschaft `bodyText` steuert die Typografie aller Absätze.
       <td><code>BlockquoteConfig</code></td>
       <td>siehe unten</td>
       <td>Wie Markdown-Zitate (<code>&gt; …</code>) gesetzt werden: Farbe, Kursive und Einzüge. Siehe <a href="#zitate">Zitate</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>siehe unten</td>
+      <td>Wie <code>:::verse</code>-Gedichte gesetzt werden, die Vers für Vers stehen: Einzüge, Umbrüche zu langer Verse, Abstand zwischen Strophen und Strophen, die ganz bleiben. Siehe <a href="#vers">Vers</a>.</td>
     </tr>
   </tbody>
 </table>

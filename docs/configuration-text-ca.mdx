@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Text de cos',
   description: "La tipografia del text corregut: la font, la mida i l'interlineat, els colors, els sagnats, les cites, el vers, les tabulacions i les caplletres",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 7,
   parent: 'configuration',
@@ -37,7 +37,7 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td><code>'EB Garamond'</code></td>
-      <td>Família de fonts del text de cos. Qualsevol font de Google Fonts, del sistema, o declarada com a [font personalitzada](/ca/docs/configuration-fonts-colors-viewers#fonts-personalitzades). Una sola família, no una llista de fonts CSS (vegeu més avall).</td>
+      <td>Família de fonts del text de cos. Qualsevol font de Google Fonts, del sistema, o declarada a [`customFonts`](/ca/docs/configuration-fonts-colors-viewers#fonts-personalitzades). Una sola família, no una llista de fonts CSS (vegeu més avall).</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
@@ -107,9 +107,9 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Alineació del text. <code>'left'</code> (o <code>'start'</code>) és el costat per on comença la línia: la dreta d'un paràgraf de dreta a esquerra (vegeu <a href="/ca/docs/configuration-language#direcció-del-text">Direcció del text</a>). El text justificat distribueix l'espaiat al llarg de cada línia per obtenir vores uniformes. Les últimes línies dels paràgrafs justificats es componen en bandera, a la seva amplada natural. L'excepció és quan Knuth-Plass ha acceptat una línia final sobreomplerta comptant que la cola (*glue*) es pot comprimir: en aquest cas, els espais entre paraules es comprimeixen perquè la línia encaixi exactament en la mesura (la semàntica de *glue-setting* de TeX, aplicada igual a les sortides canvas, HTML i PDF).</td>
+      <td>Alineació del text. <code>'left'</code> (o <code>'start'</code>) és el costat per on comença la línia: la dreta d'un paràgraf de dreta a esquerra (vegeu <a href="/ca/docs/configuration-language#direcció-del-text">Direcció del text</a>). <code>'right'</code> (o <code>'end'</code>) és el costat per on acaba, i <code>'center'</code> centra cada línia. El text justificat distribueix l'espaiat al llarg de cada línia per obtenir vores uniformes. Les últimes línies dels paràgrafs justificats es componen en bandera, a la seva amplada natural. L'excepció és quan Knuth-Plass ha acceptat una línia final sobreomplerta comptant que la cola (*glue*) es pot comprimir: en aquest cas, els espais entre paraules es comprimeixen perquè la línia encaixi exactament en la mesura (la semàntica de *glue-setting* de TeX, aplicada igual a les sortides canvas, HTML i PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -254,6 +254,12 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>BlockquoteConfig</code></td>
       <td>vegeu a sota</td>
       <td>Com es componen les cites de Markdown (<code>&gt; …</code>): color, cursiva i sagnats. Vegeu <a href="#cites">Cites</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>vegeu a sota</td>
+      <td>Com es componen els poemes <code>:::verse</code> disposats vers a vers: sagnats, versos que no hi caben, espai entre estrofes i estrofes que no es parteixen. Vegeu <a href="#vers">Vers</a>.</td>
     </tr>
   </tbody>
 </table>

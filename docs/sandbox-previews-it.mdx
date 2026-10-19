@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Anteprime',
   description: 'Le schede Canvas, PDF, Folio, HTML ed EPUB 3 dell’area di visualizzazione principale: che cosa mostra ciascuna e che cosa permette di fare',
   lang: 'it',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 39,
   parent: 'sandbox',
@@ -50,14 +50,15 @@ In una pagina composta (`::::page{template="…"}`) il canvas collega ogni corni
 
 #### Edizioni di un libro
 
-In un libro in più lingue, una barra sopra il canvas mostra le sue edizioni (*ES · EN · CA*) e **Affiancate**.
+Una barra sul bordo iniziale del canvas raccoglie le edizioni di un libro in più lingue (*ES · EN · CA*) con **Affiancate**, e **Spostamenti** quando il capitolo ha pagine composte (da postext 1.44). Come la barra degli strumenti sul bordo opposto, resta nascosta finché il puntatore non arriva a quel bordo e se ne va quando il puntatore lo lascia; la sua puntina la tiene aperta, e all’inizio non è fissata. Resta sopra la vista affiancata, che apre e chiude. Su un telefono è una fila in cima all’anteprima.
 
 - Un clic su un’edizione la apre sulla stessa pagina composta. La pagina si ritrova grazie al suo blocco `::::page` nel capitolo, che è lo stesso in ogni lingua, quindi resti su quella pagina anche se nell’altra edizione ha un altro numero; la cornice selezionata resta selezionata. In ogni altra pagina il numero di pagina resta lo stesso.
-- **Affiancate** mostra il capitolo a schermo accanto allo stesso capitolo di un’altra edizione (**accanto a** la sceglie quando il libro ne ha più di due). Le due colonne mostrano la stessa pagina e scorrono insieme; **Scorri insieme** lo disattiva. Tra una pagina composta e l’altra le colonne proseguono la numerazione dall’ultima pagina composta che hanno in comune. Le cornici che non entrano, o il cui testo è stato ridotto, sono segnate in entrambe le colonne. L’altra edizione qui si legge soltanto: un clic su una delle sue pagine apre quell’edizione a quella pagina.
+- **Affiancate** mostra il capitolo a schermo accanto allo stesso capitolo di un’altra edizione (**accanto a** la sceglie quando il libro ne ha più di due). Con il canvas su **Libro intero**, entrambe le colonne contengono il libro intero e si aprono sulla pagina che mostra il canvas. Le due colonne mostrano lo stesso punto e scorrono insieme; **Scorri insieme** lo disattiva. Si incontrano sul testo, non sui numeri di pagina: una pagina composta incontra lo stesso blocco, e ogni altra pagina la pagina dell’altra edizione che compone lo stesso paragrafo del capitolo, più o meno allo stesso punto; una pagina senza testo (una pagina pari bianca, un’immagine a piena pagina) si conta dalla pagina più vicina che ne ha. Le cornici che non entrano, o il cui testo è stato ridotto, sono segnate in entrambe le colonne. L’altra edizione qui si legge soltanto: un clic su una delle sue pagine apre quell’edizione a quella pagina. Quando l’altra edizione non ha alcun capitolo in quel punto, la sua colonna lo dice.
+- Un libro aperto da un link di un host (una ricetta del Cookbook, `#recipe=…&lang=…`) elenca le lingue in cui l’host lo pubblica. Un clic su una apre lo stesso link in quella lingua: la tua copia così com’è, se ne hai una, altrimenti il libro pubblicato, importato da capo.
 
 #### Che cosa si è spostato e perché
 
-In una pagina composta l’impaginazione può cambiare ciò che il modello disegna perché il contenuto ci stia: una cornice cresce con il suo testo, quelle che la seguono nel gruppo scendono, una cornice cede altezza a un’altra, le immagini o il testo vengono composti più piccoli, il resto prosegue in una pagina aggiunta. **Spostamenti**, nella barra sopra il canvas (compare quando il capitolo ha pagine composte), apre il pannello **Che cosa si è spostato e perché** e segna questi cambiamenti sulle pagine.
+In una pagina composta l’impaginazione può cambiare ciò che il modello disegna perché il contenuto ci stia: una cornice cresce con il suo testo, quelle che la seguono nel gruppo scendono, una cornice cede altezza a un’altra, le immagini o il testo vengono composti più piccoli, il resto prosegue in una pagina aggiunta. **Spostamenti**, nella barra sul bordo iniziale del canvas (compare quando il capitolo ha pagine composte), apre il pannello **Che cosa si è spostato e perché** e segna questi cambiamenti sulle pagine.
 
 - Il pannello elenca ogni pagina composta in cui qualcosa è cambiato e, sotto un numero, ogni cornice che è cambiata, con i suoi cambiamenti a parole: *dinero è cresciuta di 13,9 mm perché il contenuto ci stia*, *gasto è scesa di 13,9 mm per fare posto a dinero*, *ahorro-fotos: le sue immagini sono al 82,5 %*, *dinero prosegue a pagina 9*. Un cambiamento nomina la sua causa quando ne ha una: la cornice che, crescendo, ha spostato questa, o il dorso di una doppia pagina.
 - Sulla pagina, ciascuna di queste cornici ha un bollino con lo stesso numero e i suoi cambiamenti in breve (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). La cornice come la dichiara il modello è disegnata tratteggiata, e delle frecce vanno da essa alla cornice come è stata impaginata: una dal bordo superiore per uno spostamento, una al piede o al bordo finale per un cambio di misura.

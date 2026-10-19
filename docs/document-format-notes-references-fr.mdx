@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notes et références',
   description: 'Les notes de bas de page, les renvois et les ancres, les citations et la bibliographie, et les marques d’index',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 28,
   parent: 'document-format',
@@ -28,7 +28,7 @@ so he learned to count the steps in the dark.
 
 - **Appel.** `[^id]` imprime le numéro de la note en exposant, collé au mot qui le précède (écrivez-le après la ponctuation, comme ci-dessus). L’identifiant accepte les lettres, les chiffres, `-`, `_`, `.` et `:`. L’appel fonctionne dans les paragraphes, les éléments de liste, les citations et les encadrés ; dans les titres, les légendes et les cellules de tableau, il s’imprime tel qu’il est écrit.
 - **Définition.** Un paragraphe qui commence par `[^id]:` ; son texte court jusqu’à la ligne vide suivante et accepte les marques en ligne habituelles (gras, italique, liens, `:ref`, formules, pastilles). Les définitions sortent du flux où qu’elles soient écrites : elles peuvent donc se trouver sous le paragraphe qui les cite ou toutes ensemble à la fin du chapitre. La première définition d’un identifiant l’emporte.
-- **Numéros.** Les notes sont numérotées dans l’ordre de leur première citation, en recommençant à chaque chapitre (un titre de niveau 1, et chaque document d’un livre) ; une note citée deux fois garde son premier numéro et n’est composée qu’une fois. `footnotes.numbering: 'document'` continue la numérotation dans tout le livre, et `'page'` la recommence à chaque page, comme le font les livres chinois ; `footnotes.numberFormat: 'circled-decimal'` écrit ① ② ③ sur la ligne de base. `footnotes.numberFormat: 'symbols'` les marque `*`, `†`, `‡`, `§`, `‖`, `¶`, puis doublés, en recommençant à chaque page, comme le font les revues.
+- **Numéros.** Les notes sont numérotées dans l’ordre de leur première citation, en recommençant à chaque chapitre (un titre de niveau 1, et chaque document d’un livre) ; une note citée deux fois garde son premier numéro et n’est composée qu’une fois. `footnotes.numbering: 'document'` continue la numérotation dans tout le livre, et `'page'` la recommence à chaque page, comme le font les livres chinois, `'column'` à chaque colonne et `'spread'` à chaque double page (les notes latérales d’un livre japonais) ; `footnotes.numberFormat: 'circled-decimal'` écrit ① ② ③ sur la ligne de base. `footnotes.numberFormat: 'symbols'` les marque `*`, `†`, `‡`, `§`, `‖`, `¶`, puis doublés, en recommençant à chaque page, comme le font les revues.
 - **Texte japonais.** Écrivez l’appel avant un 。 de fin de phrase (`先生[^1]。`) : il reste avec le caractère qui le précède, et 。 n’ouvre jamais une ligne. Un livre japonais vertical compose par défaut ses appels （1） à droite de la ligne et ses notes après le chapitre ; `footnotes.markerPosition: 'side'` place un petit appel à côté du mot, sans prendre de place dans la ligne, et `footnotes.placement: 'spread'` compose les notes à côté du texte de chaque double page (voir [Configuration › Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page)).
 - **Où va la note.** Par défaut, au pied de la colonne qui contient la ligne qui la cite, sous un court filet : la ligne et sa note partagent toujours une colonne, et une ligne dont la note ne tient pas passe plus loin avec elle. Dans une mise en page à une colonne, c’est le pied de la page. `footnotes.placement: 'chapterEnd'` compose plutôt toutes les notes d’un chapitre après son dernier bloc, par défaut au pied de la colonne qu’elles terminent. Voir [Notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page) dans la référence de configuration pour les tailles, le filet et l’espacement.
 - **Vérifications.** Un appel sans définition (`undefinedFootnote`) imprime son numéro au-dessus d’une note vide ; une définition qu’aucun appel ne cite (`unusedFootnote`) n’est pas composée. Le Sandbox liste les deux dans le panneau Vérifications.
@@ -74,7 +74,7 @@ Les commandes LaTeX `\eqref{x}` et `\ref{x}` fonctionnent aussi dans le texte :
 
 **Les renvois de page** ne sont connus qu’une fois le livre mis en page. Le moteur remet le document en page avec les pages de la passe précédente jusqu’à ce qu’elles se stabilisent, comme il le fait pour la table des matières ; d’ici là, une page s’imprime *?*.
 
-**pandoc-crossref.** Un texte écrit pour pandoc-crossref est compris de la même façon : `@sec:method`, `[@fig:map]`, et `[-@tbl:data]` pour le numéro seul. Le préfixe (`sec`, `fig`, `tbl`, `eq`, `lst`) peut faire partie de l’identifiant (`{#sec:method}`) ou en être omis (`{#method}`). Un `@` collé à un mot, comme dans une adresse électronique, reste du texte.
+**pandoc-crossref.** Un texte écrit pour pandoc-crossref est compris de la même façon : `@sec:method`, `[@fig:map]`, et `[-@tbl:data]` pour le numéro seul. Un préfixe en majuscule (`@Sec:method`) met une capitale au début de l’étiquette, comme `case=capitalize`. Le préfixe (`sec`, `fig`, `tbl`, `eq`, `lst`) peut faire partie de l’identifiant (`{#sec:method}`) ou en être omis (`{#method}`). Un `@` collé à un mot, comme dans une adresse électronique, reste du texte.
 
 Un renvoi vers un identifiant que rien ne définit imprime *?* et le panneau Vérifications le liste (`unknownResourceId`). Dans l’éditeur du Sandbox, `@` propose les figures, les tableaux, les titres munis d’un identifiant et les ancres du livre.
 
@@ -176,7 +176,7 @@ Avec un **style à notes**, chaque citation devient une note de bas de page, pla
 import 'postext-citeproc/register';
 ```
 
-Le panneau Vérifications liste une clé qu’aucune référence ne définit (`unknownCitationKey`) et un bloc de références illisible (`referencesUnreadable`).
+Le panneau Vérifications liste une clé qu’aucune référence ne définit (`unknownCitationKey`) et un bloc de références illisible (`referencesUnreadable`). Un texte qui cite des ouvrages sans moteur de citations enregistré reçoit un avertissement `citationsUnavailable`, et ses citations s’impriment telles qu’elles sont écrites.
 
 
 ## Index

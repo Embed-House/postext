@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '命令行',
   description: '适用于macOS、Linux和Windows的单个独立可执行文件。它能把.postext图书、图书文件夹或零散的Markdown文件转成PDF、HTML、EPUB、页面图像和Word文档，还能打包文件包、检查图书，并为脚本和智能体输出JSON',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9分钟',
   order: 45,
   plainSummary: "本页写给想在终端里而不是在网站上用Postext做书的人。你下载一个适合自己电脑的文件，直接运行，不用另装任何东西。你把书或者几个文本文件交给它，它就能做出PDF、网页、电子书、页面图片或Word文档。它还能检查书里的问题，并把书的所有文件打包成一个文件。其他程序和AI助手也能使用它，因为它可以用这些程序容易读懂的格式回答。",
@@ -121,7 +121,7 @@ postext image my-book.postext --page 1 -o cover.png
   </tbody>
 </table>
 
-每个命令都把文件写到你运行命令的位置，按输入的名称命名；`-o`可以另给路径。`-o -`把单个输出写到标准输出。
+每个命令都把文件写到你运行命令的位置，按输入的名称命名；`-o`可以另给路径（`images`写入`pages/`）。`-o -`把单个输出写到标准输出。
 
 ### pdf
 
@@ -173,7 +173,7 @@ postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}
 - `--dpi`：分辨率，默认150；阅读页面用72–100就够了，印刷用300。
 - `--pattern`：`images`的文件名，由`{n}`（位置，`{n:03}`补足到三位数）、`{label}`（印出的页码）和`{chapter}`组成；默认为`page-{n:03}`。
 - `--print-preview`：按印厂印出来的样子显示页面（经过输出特性文件转换），并画出裁切线和出血。
-- `--jobs N`：同时编码多少张图片。
+- `--jobs N`：同时编码多少张图片（默认与计算机的处理器数量相同）。
 
 ### docx和import-docx
 
@@ -195,7 +195,7 @@ postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o
 postext unpack my-book.postext -o my-book/
 ```
 
-`pack`把图书文件夹原样压缩，或者用零散的Markdown构建一个文件包。同样的输入总是生成逐字节相同的文件，所以可以比较文件包，或计算它的哈希。`unpack`拒绝写入非空的文件夹，除非给出`--force`。
+`pack`把图书文件夹原样压缩，或者用零散的Markdown构建一个文件包。同样的输入总是生成逐字节相同的文件，所以可以比较文件包，或计算它的哈希。对于零散的Markdown，`--id`、`--description`和`--thumbnail FILE`（一张封面图片）设置文件包的id、描述和缩略图；id默认由名称生成slug。文件夹保留它的`preset.json`所写的内容。`unpack`拒绝写入非空的文件夹，除非给出`--force`。
 
 ### info和check
 
@@ -240,7 +240,7 @@ postext build chapters/ --pdf book.pdf --watch
   </tbody>
 </table>
 
-此外，所有命令都有：`--json`、`--quiet`（`-q`，只显示错误）、`--verbose`（进度和每条警告）、`--no-color`、`--help`。
+此外，所有命令都有：`--json`、`--quiet`（`-q`，只显示错误）、`--verbose`（进度和每条警告）、`--no-color`、`--help`（`-h`）、`--version`（`-v`）。
 
 ## 字体
 

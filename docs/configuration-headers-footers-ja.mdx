@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '柱とノンブル',
   description: '各ページの上下に印刷するものの設定。プレースホルダーを含むテキスト、罫線、ボックス、画像、奇偶ページごとの指定、そして各要素の配置',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '31分',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ export const metadata = {
 
 スロットは統一された**デザインスロット**モデルを使います。どの要素にも`placement`があり、そこに`anchor`（コンテナー、または`#id`で指定する別の要素へのアンカー）、省略可能な`offset`、省略可能な`size`を指定します。従来のフラットなフィールド`align`、`marginFromBody`、`marginFromEdge`、`width: 'full'`も入力としては引き続き受け付け、新しい形へ自動的に移行します。新しい形での同等の記述は以下で説明します。
 
-各スロットには**テキスト**、**罫線**、**ボックス**の要素のリストが入ります。配列の順序が描画順です（最初の要素が最初に描かれ、最後の要素がいちばん上に描かれます）。これはアンカーの指定にかかわらず変わりません。要素はリストで後に来る要素にもアンカーできる（`anchor.to: '#ttl'`）ため、背景のボックスを先頭に置いたまま、その前面に来るテキストを基準に位置を決められます。
+各スロットには**テキスト**、**罫線**、**ボックス**、**画像**の要素のリストが入ります。配列の順序が描画順です（最初の要素が最初に描かれ、最後の要素がいちばん上に描かれます）。これはアンカーの指定にかかわらず変わりません。要素はリストで後に来る要素にもアンカーできる（`anchor.to: '#ttl'`）ため、背景のボックスを先頭に置いたまま、その前面に来るテキストを基準に位置を決められます。
 
 **組み込みの既定値**。`header`または`footer`が`undefined`のとき、postextは空のスロットではなく、適切な組み込みの既定値を適用します。
 
@@ -46,7 +46,7 @@ export const metadata = {
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td><code>undefined</code>のときは組み込みの既定値、<code>[]</code>で無効</td>
-      <td>テキスト要素と罫線要素の順序付きリスト。</td>
+      <td>テキスト、罫線、ボックス、画像の要素の順序付きリスト。</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ export const metadata = {
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>要素を表示するページの<em>役割</em>。<code>parity</code>と組み合わせて使います。配置が終わると、各ページは<code>'blank'</code>（奇偶合わせや区切りのための埋め、または内容なし）、<code>'part'</code>（部扉のページ）、<code>'opener'</code>（最初のブロックが、ページ全幅にわたる、または直前で改ページを強制するレベルの見出しであるページ。章の最初のページ）、<code>'body'</code>（それ以外すべて）のいずれかに分類されます。<code>pages: 'body'</code>は章扉で柱を隠し、<code>pages: 'opener'</code>はそこにだけノンブルを表示します。</td>
+      <td>要素を表示するページの<em>役割</em>。<code>parity</code>と組み合わせて使います。配置が終わると、各ページは<code>'blank'</code>（奇偶合わせや区切りのための埋め、または内容なし）、<code>'part'</code>（部扉のページ）、<code>'opener'</code>（最初のブロックが、ページ全幅にわたる、または直前で改ページを強制するレベルの見出しであるページ。章の最初のページ）、<code>'comic'</code>（漫画のページ、<code>:::page</code>）、<code>'composed'</code>（テンプレートページ、またはそのテンプレートの<code>role</code>が示す役割）、<code>'body'</code>（それ以外すべて）のいずれかに分類されます。<code>pages: 'body'</code>は章扉で柱を隠し、<code>pages: 'opener'</code>はそこにだけノンブルを表示します。</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ export const metadata = {
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td>見出しと部のデザインでは<code>'wrap'</code>、それ以外は<code>'ellipsis-end'</code></td>
-      <td>要素で使える幅を超えるテキストを、エンジンがどう扱うか。<code>'wrap'</code>は行を複数行に折り返します。省略記号の各モードは各行を1行に保ち、先頭、中央、末尾のいずれかを<code>…</code>で省略します。<code>'clip'</code>は文字を挿入せずに、要素のバウンディングボックスで切り取ります。内容中の改行はどのモードでも有効で、省略と切り取りのモードは各行を個別に省略または切り取ります。<code>overflow</code>を省略した要素は配置先の既定値に従います。見出しのデザイン（<code>advancedDesign.slot</code>）と部扉（<code>parts.design</code>、<code>parts.versoDesign</code>）では折り返し、柱・ノンブル・目次の部の行（<code>toc.parts.design</code>、高さ固定の行）では<code>…</code>で終わります。複数行になりうる柱（住所など）には<code>'wrap'</code>を、章扉で1行に収めたいリードには省略記号を指定してください。省略記号で切り詰められた行や、<code>'clip'</code>でボックスの外にはみ出した部分を切り取られた行は、内容の警告<code>designTextTruncated</code>として要素とページごとに1回（柱とノンブルは要素と章ごとに1回）報告されます。postext 1.24より前に保存した設定（<code>configVersion</code>が9以前）は、overflowを設定していない見出しと部のテキストを<code>'ellipsis-end'</code>として読み込むので、ページは動きません。<code>dropCap</code>のあるテキストは、この値にかかわらず折り返します。<code>'clip'</code>の場合も、高さ固定のボックスの端で行は切り取られます。<code>'ellipsis-end'</code>と<code>'ellipsis-start'</code>は単語の境界で切り（<em>The history of th…</em>ではなく<em>The history of…</em>）、省略記号にスペースやつなぎの約物（コンマ、コロン、ダッシュ、スラッシュ、始め括弧）が接することはありません。単語の途中で切るのは、それが避けられない場合、つまりその約物を除いた境界で切ると収まる分の半分未満しか残らない場合だけです。長い1語やURLがこれに当たります（<em>http…</em>ではなく<em>http://exampl…</em>）。ノーブレークスペースとノーブレークハイフン（U+2011。<em>MS‑DOS</em>など）は単語の境界になりません。<code>'ellipsis-middle'</code>はどこででも切りますが、その両側のスペースは取り除きます。postext 1.4までは、どのモードもスペースを含め、収まる最後の文字で切っていました。</td>
+      <td>見出し、部、囲みのデザインでは<code>'wrap'</code>、それ以外は<code>'ellipsis-end'</code></td>
+      <td>要素で使える幅を超えるテキストを、エンジンがどう扱うか。<code>'wrap'</code>は行を複数行に折り返します。省略記号の各モードは各行を1行に保ち、先頭、中央、末尾のいずれかを<code>…</code>で省略します。<code>'clip'</code>は文字を挿入せずに、要素のバウンディングボックスで切り取ります。内容中の改行はどのモードでも有効で、省略と切り取りのモードは各行を個別に省略または切り取ります。<code>overflow</code>を省略した要素は配置先の既定値に従います。見出しのデザイン（<code>advancedDesign.slot</code>）、部扉（<code>parts.design</code>、<code>parts.versoDesign</code>）、<a href="/ja/docs/configuration-callouts#囲みのデザイン">囲みのデザイン</a>（<code>calloutStyles[].design</code>）では折り返し、柱・ノンブル・目次の部の行（<code>toc.parts.design</code>、高さ固定の行）では<code>…</code>で終わります。複数行になりうる柱（住所など）には<code>'wrap'</code>を、章扉で1行に収めたいリードには省略記号を指定してください。省略記号で切り詰められた行や、<code>'clip'</code>でボックスの外にはみ出した部分を切り取られた行は、内容の警告<code>designTextTruncated</code>として要素とページごとに1回（柱とノンブルは要素と章ごとに1回）報告されます。postext 1.24より前に保存した設定（<code>configVersion</code>が9以前）は、overflowを設定していない見出しと部のテキストを<code>'ellipsis-end'</code>として読み込むので、ページは動きません。<code>dropCap</code>のあるテキストは、この値にかかわらず折り返します。<code>'clip'</code>の場合も、高さ固定のボックスの端で行は切り取られます。<code>'ellipsis-end'</code>と<code>'ellipsis-start'</code>は単語の境界で切り（<em>The history of th…</em>ではなく<em>The history of…</em>）、省略記号にスペースやつなぎの約物（コンマ、コロン、ダッシュ、スラッシュ、始め括弧）が接することはありません。単語の途中で切るのは、それが避けられない場合、つまりその約物を除いた境界で切ると収まる分の半分未満しか残らない場合だけです。長い1語やURLがこれに当たります（<em>http…</em>ではなく<em>http://exampl…</em>）。ノーブレークスペースとノーブレークハイフン（U+2011。<em>MS‑DOS</em>など）は単語の境界になりません。<code>'ellipsis-middle'</code>はどこででも切りますが、その両側のスペースは取り除きます。postext 1.4までは、どのモードもスペースを含め、収まる最後の文字で切っていました。</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ export const metadata = {
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>見出しのデザイン専用。見出しがテキストの流れの中に確保する高さに、要素を含めるかどうか。テキストの下に重なってもよい装飾（ページ下部の印章、枠、側面の帯）には<code>false</code>を指定します。<a href="/ja/docs/configuration-headings#確保する高さ">確保する高さ</a>を参照してください。ヘッダー、フッター、部のデザインはこの値を無視します。</td>
+      <td>見出しと囲みのデザイン専用。見出しがテキストの流れの中に確保する高さ、または囲みのデザイン（<code>calloutStyles[].design</code>）の帯の高さに、要素を含めるかどうか。テキストの下に重なってもよい装飾（ページ下部の印章、枠、側面の帯）には<code>false</code>を指定します。<a href="/ja/docs/configuration-headings#確保する高さ">確保する高さ</a>を参照してください。ヘッダー、フッター、部のデザインはこの値を無視します。</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ export const metadata = {
 - `{bookTotalPages}` — 本全体の総ページ数。すべての章と白ページを含みます。単独でレイアウトする文書では`{totalPages}`と同じです。下の[本全体のページ数](#本全体のページ数)を参照してください。
 - `{title}`、`{subtitle}`、`{author}`、`{publishDate}` — `content.metadata`から読む値。不明または空のメタデータは空文字列になります（Sandboxでは警告も出ます）。
 - `{chapterTitle}` — 現在のページまで（そのページを含む）で最後に現れたH1のテキスト。[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)で`runningChapter: false`を指定したH1（図版、地図）は飛ばします。
+- `{chapterNumber}` — その章の番号。レベルまたは見出しスタイルに`numberingTemplate`があればH1の番号、なければ章の通し番号（`1`、`2`…）です。番号のない章では空になります。
 - `{chapterTitleAtTop}`、`{chapterNumberAtTop}` — ページ上端の時点で有効な章のタイトルと番号。ほかのテキストの下で新しい章が始まるページでは、`{chapterTitle}`や`{chapterNumber}`と異なります。下の[ページ上端の章](#ページ上端の章)を参照してください。
 - `{partTitle}`、`{partNumber}` — 現在の部のタイトルと番号（現在のページまでで最後の`:::part`ページ。部扉の直前にある奇偶合わせの白ページは、すでにその部に属します）。最初の部より前では空です。
 - `{firstMark.<key>}`、`{lastMark.<key>}` — ページの最初と最後の柱の見出し語。あるレベル（`h1`〜`h6`）の見出し、または段落スタイルの項目です。下の[柱の見出し語：最初と最後のマーク](#柱の見出し語最初と最後のマーク)を参照してください。
@@ -388,7 +389,7 @@ PDFでは、太字とイタリックのランに要素のファミリーの対�
 
 自分で書いたテキスト要素は次の値から始まります。意外に思えるものもあります。
 
-- **`overflow`は配置先で決まる**。見出しのデザインと部扉では長い題が複数行に折り返し、柱・ノンブル・目次の部の行では幅に収まらないテキストが`…`付きの1行に切り詰められます。長くなりうる柱（住所、著者名の行）には`overflow: 'wrap'`を指定し、切り詰められたテキストについては`designTextTruncated`警告を確認してください。内容中の改行（改行文字、またはテンプレートや属性値に書いた`\n`）はどのモードでも新しい行を始め、省略記号のモードは各行を個別に切り詰めます。
+- **`overflow`は配置先で決まる**。見出しのデザイン、部扉、囲みのデザインでは長い題が複数行に折り返し、柱・ノンブル・目次の部の行では幅に収まらないテキストが`…`付きの1行に切り詰められます。長くなりうる柱（住所、著者名の行）には`overflow: 'wrap'`を指定し、切り詰められたテキストについては`designTextTruncated`警告を確認してください。内容中の改行（改行文字、またはテンプレートや属性値に書いた`\n`）はどのモードでも新しい行を始め、省略記号のモードは各行を個別に切り詰めます。
 - **`align`は`'center'`、`verticalAlign`は`'middle'`**。自動幅の要素は最も長い行に合わせて縮むため、各行は互いに中央そろえになります。左そろえのブロックにするには`align: 'left'`を指定します（別の要素にアンカーした自動幅の要素は、アンカー側に自動的に行をそろえます。前述）。
 - **書体はEB Garamond 8 pt、黒、`lineHeight`は1.2**。本文が何を使っていても変わりません。設定内のほかの行送りと異なり、デザインのテキストの`lineHeight`は通常は単純な倍数（`1.2`）で書きます。`Dimension`も使えます（前述）。
 
@@ -520,7 +521,7 @@ VDTでは、縦組みのブロックに`vertical`が付きます（`VDTDesignTex
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>罫線を表示するページの役割（テキスト要素の<code>pages</code>フィールドを参照）。</td>
     </tr>
@@ -603,7 +604,7 @@ VDTでは、縦組みのブロックに`vertical`が付きます（`VDTDesignTex
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>ボックスを表示するページの役割（テキスト要素の<code>pages</code>フィールドを参照）。</td>
     </tr>
@@ -696,7 +697,7 @@ PDFバックエンドはリソースを図と同じように埋め込み（印�
 
 ### 要素の配置
 
-`ElementPlacement`は、あらゆるデザインスロット（ページのヘッダー、ページのフッター、見出しレベルの詳細デザインのスロット）の中で、すべての種類の要素（テキスト、罫線、ボックス）が使う統一された配置モデルです。配置は3つの状態で記述します。
+`ElementPlacement`は、あらゆるデザインスロット（ページのヘッダー、ページのフッター、見出しレベルの詳細デザインのスロット）の中で、すべての種類の要素（テキスト、罫線、ボックス、画像）が使う統一された配置モデルです。配置は3つの状態で記述します。
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge`には次の値を指定できます。
 
-- **コンテナーの辺**（`anchor.to`が`'container'`、`'page'`、`'bleed'`のとき）：`top`、`top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right`、`left`、`right`。
+- **コンテナーの辺**（`anchor.to`が`'container'`、`'page'`、`'bleed'`、`'outer'`のとき）：`top`、`top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right`、`left`、`right`、そして枠の中央を指す`center`。
 - **要素基準の辺**（`anchor.to === '#someId'`のとき）：`right-of`、`left-of`、`below`、`above`、`align-top`、`align-bottom`、`align-left`、`align-right`。
 
 要素基準の各辺は、要素の角の1つをアンカー先の要素の角に合わせ、`offset`でそこから移動します。

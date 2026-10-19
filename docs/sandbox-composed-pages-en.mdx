@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: "Editing page templates and frames on the page, the library of frame styles, checking composed pages in every edition, moving a book's text to the Markdown, and fixing a frame in one click",
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 38,
   parent: 'sandbox',
@@ -33,6 +33,8 @@ This page gathers the parts of the Design and Checks panels that deal with compo
 
 **A story that jumps to another chapter.** In a book with one chapter file per article, a story whose frame sends it to `page:<id>` goes on in the chapter that has that page (since postext 1.41; see [Composed pages › Jumping to a later page](/en/docs/composed-pages#jumping-to-a-later-page)). The canvas, the Folio and the PDF and EPUB tabs set the rest on that chapter's page, with the book's page numbers in the marks. A chapter's layout record keeps the stories it sends, so the chapter that has the page is laid out again when the article changes and not when a chapter in between does. A click on the carried words puts the caret in the article's Markdown, and the path under the preview names the later page when the caret is in the carried text. The preview of one chapter shows only what its own pages hold: the rest appears with the chapter that has the page.
 
+**A figure's own words.** A click on a caption or a note that a figure writes itself puts the caret in its `::caption[…]` or `::note[…]` line, or in the attribute of the opening line, at the letter clicked (see [Composed pages › A figure's own words](/en/docs/composed-pages#a-figures-own-words)).
+
 
 ## Frame styles
 
@@ -59,7 +61,7 @@ The section lists:
 - *Text still runs past its last added page* (`frameContinuationLimit`): the frame's content went on to the maximum number of pages a composed page may add and still does not fit;
 - *A story jumps to a page that does not follow* (`continueTargetMissing`): no later page fence has the id the frame's `continueIn` names;
 - *Label at an unknown anchor* and *Anchor without a label* (`labelAnchorUnknown`, `anchorUnlabelled`), filed under the frame that sets the figure;
-- *Label wider than its measure* and *Labels run into each other* (`labelOverflow`, `labelOverlap`), filed under the same frame: each edition's labels are measured with its own words, so a language with longer words overflows where another does not;
+- *Label wider than its measure* and *Labels run into each other* (`labelOverflow`, `labelOverlap`), filed under the same frame: each edition's labels are measured with its own words, so a language with longer words overflows where another does not. A label that runs onto one of the picture's avoid zones, drawn in the **Avoid zones** mode of the picture's marks, is listed here too; on an SVG, **Symbols of the drawing** in that mode adds a zone over each element of the drawing whose id starts with a given prefix or that carries a given class (since postext 1.43);
 - *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Contents block cut between columns* (`tocGroupSplit`);
 - the page templates' own warnings (a frame style or anchor that does not exist, sizes that contradict each other, a chain that loops) and design text that holds the book's content (`contentInConfig`).

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Cabeçalhos e rodapés',
   description: 'O que é impresso no alto e no pé de cada página: texto com marcadores, fios, caixas e imagens, conforme a paridade da página, e onde cada elemento fica',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ As propriedades `header` e `footer` controlam os espaços de cabeçalho e de rod
 
 Os espaços usam o modelo unificado de **espaço de design**: todo elemento tem um `placement` com uma `anchor` (no contêiner ou em outro elemento, por `#id`), um `offset` opcional e um `size` opcional. Os campos planos antigos `align`, `marginFromBody`, `marginFromEdge` e `width: 'full'` continuam aceitos na entrada e são migrados automaticamente para o novo formato; a descrição equivalente no novo formato está documentada abaixo.
 
-Cada espaço contém uma lista de elementos de **texto**, **fio** e **caixa**. A ordem do array é a ordem de pintura (o primeiro elemento é pintado primeiro, o último fica por cima). Isso vale independentemente das âncoras: um elemento pode se ancorar em outro listado depois dele (`anchor.to: '#ttl'`), de modo que uma caixa de fundo pode vir primeiro e ainda assim ser posicionada em relação ao texto que fica sobre ela.
+Cada espaço contém uma lista de elementos de **texto**, **fio**, **caixa** e **imagem**. A ordem do array é a ordem de pintura (o primeiro elemento é pintado primeiro, o último fica por cima). Isso vale independentemente das âncoras: um elemento pode se ancorar em outro listado depois dele (`anchor.to: '#ttl'`), de modo que uma caixa de fundo pode vir primeiro e ainda assim ser posicionada em relação ao texto que fica sobre ela.
 
 **Padrões embutidos.** Quando `header` ou `footer` é `undefined`, o postext aplica um padrão embutido razoável em vez de um espaço vazio:
 
@@ -46,7 +46,7 @@ Para dispensar os padrões embutidos, defina `header: { elements: [] }` (ou `foo
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>padrões embutidos quando <code>undefined</code>; <code>[]</code> desativa</td>
-      <td>Lista ordenada de elementos de texto e de fio.</td>
+      <td>Lista ordenada de elementos de texto, fio, caixa e imagem.</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ Os padrões da tabela abaixo são os de um elemento de texto que você mesmo adi
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>Em quais <em>funções</em> de página o elemento aparece, combinado com <code>parity</code>. Depois do posicionamento, cada página é classificada como <code>'blank'</code> (página de preenchimento por paridade ou separador, ou sem conteúdo), <code>'part'</code> (uma página divisória de parte), <code>'opener'</code> (seu primeiro bloco é um título cujo nível ocupa a página ou força uma quebra de página antes dele: a primeira página de um capítulo) ou <code>'body'</code> (todas as outras). <code>pages: 'body'</code> esconde um cabeço nas aberturas de capítulo; <code>pages: 'opener'</code> mostra um fólio só nelas.</td>
+      <td>Em quais <em>funções</em> de página o elemento aparece, combinado com <code>parity</code>. Depois do posicionamento, cada página é classificada como <code>'blank'</code> (página de preenchimento por paridade ou separador, ou sem conteúdo), <code>'part'</code> (uma página divisória de parte), <code>'opener'</code> (seu primeiro bloco é um título cujo nível ocupa a página ou força uma quebra de página antes dele: a primeira página de um capítulo), <code>'comic'</code> (uma página de quadrinhos, <code>:::page</code>), <code>'composed'</code> (uma página composta, ou o <code>role</code> que seu modelo indica) ou <code>'body'</code> (todas as outras). <code>pages: 'body'</code> esconde um cabeço nas aberturas de capítulo; <code>pages: 'opener'</code> mostra um fólio só nelas.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ Os padrões da tabela abaixo são os de um elemento de texto que você mesmo adi
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> em designs de título e de parte; senão, <code>'ellipsis-end'</code></td>
-      <td>Como o motor trata o texto que excede a largura disponível do elemento. <code>'wrap'</code> quebra o texto em várias linhas; as variantes com reticências mantêm cada linha em uma só linha e a truncam com <code>…</code> no início, no meio ou no fim; <code>'clip'</code> corta rente à caixa delimitadora do elemento, sem inserir nenhum caractere. As quebras de linha do conteúdo valem em todos os modos: os modos de reticências e de corte truncam ou cortam cada linha separadamente. Um elemento que omite <code>overflow</code> segue o padrão do espaço: num design de título (<code>advancedDesign.slot</code>) ou numa página de parte (<code>parts.design</code>, <code>parts.versoDesign</code>) quebra linha; num cabeço, num fólio ou numa linha de parte do sumário (<code>toc.parts.design</code>, uma linha de altura fixa) termina em <code>…</code>. Defina <code>'wrap'</code> num cabeço que possa ocupar várias linhas (um endereço), ou reticências num antetítulo que deva ficar numa linha dentro de uma abertura. Uma linha cortada com reticências, ou recortada com tinta além da caixa, gera o aviso de conteúdo <code>designTextTruncated</code>, uma vez por elemento e página (no caso de um cabeço ou de um fólio, uma vez por elemento e capítulo). Uma configuração salva antes do postext 1.24 (<code>configVersion</code> 9 ou anterior) é lida com <code>'ellipsis-end'</code> em cada texto de título ou de parte que não o define, para que as páginas não se movam. Um texto com <code>dropCap</code> quebra linhas independentemente deste valor; com <code>'clip'</code>, as linhas dele ainda são cortadas na borda de uma caixa de altura fixa. <code>'ellipsis-end'</code> e <code>'ellipsis-start'</code> cortam em um limite de palavra (<em>The history of…</em>, não <em>The history of th…</em>), e nenhum espaço ou pontuação de ligação (vírgula, dois-pontos, travessão, barra, parêntese de abertura) encosta nas reticências. Uma palavra só é cortada no meio quando cortar no limite de palavra, descartada essa pontuação, manteria menos da metade do que cabe: uma única palavra longa, ou um URL (<em>http://exampl…</em>, não <em>http…</em>). Um espaço não separável ou um hífen não separável (U+2011, como em <em>MS‑DOS</em>) não é limite de palavra; <code>'ellipsis-middle'</code> corta em qualquer ponto, mas descarta os espaços ao lado das reticências. Até o postext 1.4, todos os modos cortavam no último caractere que cabia, espaços incluídos.</td>
+      <td><code>'wrap'</code> em designs de título, de parte e de boxe; senão, <code>'ellipsis-end'</code></td>
+      <td>Como o motor trata o texto que excede a largura disponível do elemento. <code>'wrap'</code> quebra o texto em várias linhas; as variantes com reticências mantêm cada linha em uma só linha e a truncam com <code>…</code> no início, no meio ou no fim; <code>'clip'</code> corta rente à caixa delimitadora do elemento, sem inserir nenhum caractere. As quebras de linha do conteúdo valem em todos os modos: os modos de reticências e de corte truncam ou cortam cada linha separadamente. Um elemento que omite <code>overflow</code> segue o padrão do espaço: num design de título (<code>advancedDesign.slot</code>), numa página de parte (<code>parts.design</code>, <code>parts.versoDesign</code>) ou no <a href="/pt/docs/configuration-callouts#designs-de-boxe">design de um boxe</a> (<code>calloutStyles[].design</code>) quebra linha; num cabeço, num fólio ou numa linha de parte do sumário (<code>toc.parts.design</code>, uma linha de altura fixa) termina em <code>…</code>. Defina <code>'wrap'</code> num cabeço que possa ocupar várias linhas (um endereço), ou reticências num antetítulo que deva ficar numa linha dentro de uma abertura. Uma linha cortada com reticências, ou recortada com tinta além da caixa, gera o aviso de conteúdo <code>designTextTruncated</code>, uma vez por elemento e página (no caso de um cabeço ou de um fólio, uma vez por elemento e capítulo). Uma configuração salva antes do postext 1.24 (<code>configVersion</code> 9 ou anterior) é lida com <code>'ellipsis-end'</code> em cada texto de título ou de parte que não o define, para que as páginas não se movam. Um texto com <code>dropCap</code> quebra linhas independentemente deste valor; com <code>'clip'</code>, as linhas dele ainda são cortadas na borda de uma caixa de altura fixa. <code>'ellipsis-end'</code> e <code>'ellipsis-start'</code> cortam em um limite de palavra (<em>The history of…</em>, não <em>The history of th…</em>), e nenhum espaço ou pontuação de ligação (vírgula, dois-pontos, travessão, barra, parêntese de abertura) encosta nas reticências. Uma palavra só é cortada no meio quando cortar no limite de palavra, descartada essa pontuação, manteria menos da metade do que cabe: uma única palavra longa, ou um URL (<em>http://exampl…</em>, não <em>http…</em>). Um espaço não separável ou um hífen não separável (U+2011, como em <em>MS‑DOS</em>) não é limite de palavra; <code>'ellipsis-middle'</code> corta em qualquer ponto, mas descarta os espaços ao lado das reticências. Até o postext 1.4, todos os modos cortavam no último caractere que cabia, espaços incluídos.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ Os padrões da tabela abaixo são os de um elemento de texto que você mesmo adi
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Só em designs de título: se o elemento conta para a altura que o título reserva no fluxo do texto. <code>false</code> para decoração que pode ficar sob o texto (um selo no pé da página, uma moldura, uma faixa lateral). Veja <a href="/pt/docs/configuration-headings#altura-reservada">Altura reservada</a>. Os designs de cabeçalho, de rodapé e de parte o ignoram.</td>
+      <td>Só em designs de título e de boxe: se o elemento conta para a altura que o título reserva no fluxo do texto, ou para a altura da faixa do design de um boxe (<code>calloutStyles[].design</code>). <code>false</code> para decoração que pode ficar sob o texto (um selo no pé da página, uma moldura, uma faixa lateral). Veja <a href="/pt/docs/configuration-headings#altura-reservada">Altura reservada</a>. Os designs de cabeçalho, de rodapé e de parte o ignoram.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ Marcadores disponíveis:
 - `{bookTotalPages}`: total de páginas do livro inteiro: todos os capítulos, páginas em branco incluídas. Para um documento diagramado sozinho, é igual a `{totalPages}`. Veja [Contagem de páginas do livro](#contagem-de-páginas-do-livro) abaixo.
 - `{title}`, `{subtitle}`, `{author}`, `{publishDate}`: valores lidos de `content.metadata`. Metadados desconhecidos ou vazios viram uma string vazia (e geram um aviso no Sandbox).
 - `{chapterTitle}`: texto do H1 mais recente na página atual ou antes dela. Um H1 cujo [estilo de título](/pt/docs/configuration-styles#estilos-de-título) define `runningChapter: false` (uma prancha, um mapa) é ignorado.
+- `{chapterNumber}`: o número desse capítulo, que é o do seu H1 quando o nível ou o seu estilo de título têm `numberingTemplate` e, senão, o seu ordinal (`1`, `2`…). Vazio num capítulo sem numeração.
 - `{chapterTitleAtTop}`, `{chapterNumberAtTop}`: título e número do capítulo vigente no topo da página, que diferem de `{chapterTitle}` e `{chapterNumber}` em uma página onde um novo capítulo começa abaixo de outro texto. Veja [Capítulo no topo da página](#capítulo-no-topo-da-página) abaixo.
 - `{partTitle}`, `{partNumber}`: título e número da parte atual (a página `:::part` mais recente na página atual ou antes dela; as páginas em branco de paridade logo antes de uma página de parte já pertencem a ela). Vazios antes da primeira parte.
 - `{firstMark.<key>}`, `{lastMark.<key>}`: a primeira e a última palavra-guia da página: um título de um nível (`h1`–`h6`) ou uma entrada de um estilo de parágrafo. Veja [Palavras-guia](#palavras-guia-primeira-e-última-marca) abaixo.
@@ -388,7 +389,7 @@ No PDF, os trechos em negrito e itálico incorporam as fontes correspondentes da
 
 Um elemento de texto que você mesmo escreve parte destes valores, alguns deles surpreendentes:
 
-- **`overflow` depende do espaço.** Num design de título ou numa página de parte, um título longo quebra em mais linhas; num cabeço, num fólio ou numa linha de parte do sumário, um texto largo demais para o espaço é cortado em uma linha com `…`. Defina `overflow: 'wrap'` num cabeço que possa ficar longo (um endereço, uma linha de autoria) e confira os avisos `designTextTruncated` dos textos cortados. Uma quebra de linha no conteúdo (uma quebra real, ou `\n` no modelo ou no valor de um atributo) começa uma nova linha em todos os modos; os modos de reticências cortam cada linha separadamente.
+- **`overflow` depende do espaço.** Num design de título, numa página de parte ou no design de um boxe, um título longo quebra em mais linhas; num cabeço, num fólio ou numa linha de parte do sumário, um texto largo demais para o espaço é cortado em uma linha com `…`. Defina `overflow: 'wrap'` num cabeço que possa ficar longo (um endereço, uma linha de autoria) e confira os avisos `designTextTruncated` dos textos cortados. Uma quebra de linha no conteúdo (uma quebra real, ou `\n` no modelo ou no valor de um atributo) começa uma nova linha em todos os modos; os modos de reticências cortam cada linha separadamente.
 - **`align` é `'center'` e `verticalAlign` é `'middle'`.** Um elemento de largura automática se ajusta à linha mais longa; por isso, as linhas ficam centralizadas umas em relação às outras; defina `align: 'left'` para um bloco alinhado à esquerda (um elemento de largura automática ancorado em outro elemento alinha as linhas sozinho pelo lado da âncora, veja acima).
 - **A fonte é EB Garamond 8 pt, preta, `lineHeight` 1.2**, qualquer que seja a do texto corrido. Ao contrário das outras entrelinhas da configuração, a `lineHeight` de um texto de design costuma ser um múltiplo simples (`1.2`); uma `Dimension` também funciona (veja acima).
 
@@ -520,7 +521,7 @@ Os elementos de fio desenham uma linha: horizontal, atravessando o espaço, ou v
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Funções de página em que o fio aparece (veja o campo <code>pages</code> dos elementos de texto).</td>
     </tr>
@@ -603,7 +604,7 @@ Os elementos de caixa pintam um retângulo de cantos arredondados dentro do espa
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Funções de página em que a caixa aparece (veja o campo <code>pages</code> dos elementos de texto).</td>
     </tr>
@@ -696,7 +697,7 @@ Uma imagem desenhada por um design é conteúdo quando o recurso dela a descreve
 
 ### Posicionamento de elementos
 
-`ElementPlacement` é o modelo unificado de posicionamento usado por todos os tipos de elemento (texto, fio, caixa) dentro de qualquer espaço de design: cabeçalho da página, rodapé da página ou o espaço de design avançado de um nível de título. Três informações descrevem um posicionamento:
+`ElementPlacement` é o modelo unificado de posicionamento usado por todos os tipos de elemento (texto, fio, caixa, imagem) dentro de qualquer espaço de design: cabeçalho da página, rodapé da página ou o espaço de design avançado de um nível de título. Três informações descrevem um posicionamento:
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge` aceita:
 
-- **Bordas do contêiner** (quando `anchor.to` é `'container'`, `'page'` ou `'bleed'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
+- **Bordas do contêiner** (quando `anchor.to` é `'container'`, `'page'`, `'bleed'` ou `'outer'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right` e `center`, o centro do quadro.
 - **Bordas relativas a um elemento** (quando `anchor.to === '#someId'`): `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
 
 Cada borda relativa a um elemento põe um canto do elemento sobre um canto do elemento em que ele se ancora, e `offset` o desloca a partir dali:

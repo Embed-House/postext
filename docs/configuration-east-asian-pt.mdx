@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Tipografia do Leste Asiático',
   description: 'Como configurar o texto chinês, japonês e coreano (cjk): a quebra de linha, a largura da pontuação, o espaçamento, a grade de caracteres, o rubi e as marcas',
   lang: 'pt',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '36 min',
   order: 13,
   parent: 'configuration',
@@ -161,7 +161,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>grid</code></td>
-      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show?, fullLines? &#125;</code></td>
       <td>desativado</td>
       <td>A mancha em caracteres por linha e linhas por página (veja <a href="#grade-de-caracteres">Grade de caracteres</a>).</td>
     </tr>
@@ -193,7 +193,7 @@ interface CjkConfig {
       <td><code>annotationColor</code></td>
       <td><code>ColorValue</code></td>
       <td>a cor do texto</td>
-      <td>Cor dos pontos de ênfase e das linhas de nome próprio e de título de obra; o padrão das cores do rubi e do warichu.</td>
+      <td>Cor dos pontos de ênfase, das linhas de nome próprio e de título de obra e das linhas laterais (<code>:sideline[…]</code>); o padrão das cores do rubi, do warichu e das marcas de kanbun.</td>
     </tr>
     <tr>
       <td><code>ruby</code></td>
@@ -203,7 +203,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>warichu</code></td>
-      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close?, minChars? &#125;</code></td>
       <td>meio corpo; parênteses （） no Japão, nenhum nas demais regiões</td>
       <td>As notas em duas linhas de <code>:warichu[…]</code>: o corpo da nota (por padrão meio eme, para que as duas linhas preencham o eme da linha), sua cor e os parênteses compostos no corpo do texto antes da primeira linha e depois da última (o <code>open</code> / <code>close</code> da própria nota prevalecem). No Japão, um <code>open</code> ou <code>close</code> vazio (<code>''</code>) compõe a nota sem esse parêntese. <code>minChars</code> (padrão <code>2</code>) é quantos caracteres de uma nota uma quebra de linha deixa no mínimo de cada lado: uma nota de até três caracteres nunca é partida, uma linha sem outra quebra recorre às que <code>lineBreak</code> permite, e <code>1</code> quebra onde elas permitirem, como até o postext 1.27. Uma configuração gravada antes do postext 1.28 cujo texto tem uma nota é lida com <code>1</code>. Desde o postext 1.28.</td>
     </tr>
@@ -364,14 +364,15 @@ O passo das linhas nunca muda: marcas e leituras vivem na entrelinha. Um parágr
 
 No VDT, um segmento marcado carrega `cjkMarks`, e a diagramação põe os pontos e as linhas nas linhas dele como `VDTLine.marks` (pontos, círculos, gergelins, linhas retas, duplas, pontilhadas e onduladas, no referencial de fluxo da linha), que o canvas, o HTML e o PDF desenham como estão (PDF: `Artifact /Layout`; HTML: caixas `aria-hidden`, texto pontilhado em `<em>`). O segmento de uma base de rubi carrega `ruby` (a leitura e seus trechos; numa leitura japonesa, também o `id` que sua anotação compartilha com os outros caracteres de uma palavra jukugo, e `jukugo`) e pinta sua base em `inkOffset`, com `tracking`, quando a leitura a espaçou; um caractere com marcas de kanbun carrega `kunten` (seus trechos e seu tatesen); a parte de uma nota warichu numa linha é um único segmento cujo `text` é a linha de cima seguida da de baixo e cujo `warichu` contém as linhas que os renderizadores pintam no lugar. O PDF marcado põe uma leitura no `RT` do `Ruby` da base e uma nota num `Warichu`, e o `/ActualText` da linha lê o texto da base e a nota uma única vez. Marcas, leituras e notas são desenhadas no texto do corpo, nos títulos, nas listas e nos boxes, e nas legendas, células de tabela e notas dos recursos, cujas linhas carregam `marks` e `ruby` como as linhas do corpo; o texto de design mantém o texto sem elas.
 
-O resolvedor e o removedor de padrões funcionam como nas outras seções. `spaceAfterQuestion`, `paragraphStartBracket` e `wordBreak`, e os `overhang`, `align` e `smallKana` do rubi, só aparecem na configuração resolvida quando mudam alguma coisa (no Japão, ou quando definidos). `setCjkLineBreak` e `setCjkComposition` definem o nível e a composição (larguras da pontuação, pontuação pendente, espaço entre han e latim; `cjkCompositionOf(resolved.cjk, dpi)`) para medições feitas fora de `buildDocument`, que os define a partir da configuração. Fora de uma composição, os sinais mantêm o avanço completo e nenhum espaço entre han e latim é posto:
+O resolvedor e o removedor de padrões funcionam como nas outras seções. `spaceAfterQuestion`, `paragraphStartBracket` e `wordBreak`, e os `overhang`, `align` e `smallKana` do rubi, só aparecem na configuração resolvida quando mudam alguma coisa (no Japão, ou quando definidos). `circledNumbers` só aparece como `'western'`, e `composeDesignText` só como `false`. `setCjkLineBreak` e `setCjkComposition` definem o nível e a composição (larguras da pontuação, pontuação pendente, espaço entre han e latim; `cjkCompositionOf(resolved.cjk, dpi, locale)`, sendo `locale` o idioma do documento) para medições feitas fora de `buildDocument`, que os define a partir da configuração. Fora de uma composição, os sinais mantêm o avanço completo e nenhum espaço entre han e latim é posto:
 
 ```ts
 import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
 
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   trimLineStart: true, hangingPunctuation: 'none', titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' },
+//   latinSpacingEdge: 'letters', uprightDigits: 2,
 //   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
@@ -380,7 +381,8 @@ resolveCjkConfig(undefined, 'zh-HK');
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half',
+//   titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' }, latinSpacingEdge: 'western', …,
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },

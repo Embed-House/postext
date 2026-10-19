@@ -1486,7 +1486,7 @@
     "calloutStyleLabelIconWidth": "Anchura del icono",
     "calloutStyleLabelIconGap": "Espacio hasta la pestaña",
     "calloutStyleLabelIconPlacement": "Posición de la imagen",
-    "calloutStyleLabelIconPlacementTooltip": "Junto a la pestaña, más allá de su borde, o dentro de ella, al principio y antes de las palabras (la pestaña crece entonces lo que miden la imagen y el espacio). Dentro, la imagen conserva sus colores: usa una imagen para un anillo blanco y otra para uno de color.",
+    "calloutStyleLabelIconPlacementTooltip": "Junto a la pestaña, más allá de su borde, o dentro de ella, al principio y antes de las palabras (la pestaña crece entonces lo que miden la imagen y el espacio). Dentro, la imagen conserva sus colores salvo que esté activada Imagen en el color del texto: entonces un mismo anillo sirve para todos los tonos del libro.",
     "calloutStyleLabelIconBeside": "Junto a la pestaña",
     "calloutStyleLabelIconInside": "Dentro de la pestaña",
     "calloutStyleLabelIconTint": "Imagen en el color del texto",

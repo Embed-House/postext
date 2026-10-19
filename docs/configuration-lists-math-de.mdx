@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Listen und Mathematik',
   description: 'Aufzählungen und nummerierte Listen, ihre Listenzeichen, Einzüge und Verschachtelung, Aufgabenlisten sowie Größe, Farbe und Abstände mathematischer Formeln',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 11,
   parent: 'configuration',
@@ -148,7 +148,7 @@ GFM-Aufgabenpunkte (`- [ ] …`, `- [x] …`) werden als Punkte einer Aufzählun
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>Wie die beiden Standardzeichen gesetzt werden. <code>'drawn'</code>: Die Engine zeichnet das Kästchen. <code>'character'</code>: <code>☐</code> und <code>☑</code> sind Text in der Schrift der Liste, wie bis postext 1.28; in einer Schrift, der sie fehlen, wählt der Browser eine Systemschrift, und der Text des Punkts beginnt nach der Breite, die diese Schrift ergibt. Eine vor Version 13 gespeicherte Konfiguration wird mit <code>'character'</code> gelesen, sodass ihre Zeilen bleiben, wo sie waren.</td>
+      <td>Wie die beiden Standardzeichen gesetzt werden. <code>'drawn'</code>: Die Engine zeichnet das Kästchen. <code>'character'</code>: <code>☐</code> und <code>☑</code> sind Text in der Schrift der Liste, wie bis postext 1.28; in einer Schrift, der sie fehlen, wählt der Browser eine Systemschrift, und der Text des Punkts beginnt nach der Breite, die diese Schrift ergibt. Eine vor <code>configVersion</code> 13 gespeicherte Konfiguration wird mit <code>'character'</code> gelesen (<code>pinLegacyTaskBox</code>), sodass ihre Zeilen bleiben, wo sie waren.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -248,7 +248,7 @@ Die Eigenschaft `orderedLists` steuert nummerierte Listen (`1.`, `2)` usw.). Bis
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>Zahlenstil: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. Die Schreibweisen der anderen Einstellungen funktionieren ebenfalls (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code> …; siehe <a href="/de/docs/configuration-page-layout#schreibweisen-der-nummernformate">Schreibweisen der Nummernformate</a>); ein unbekannter Wert nummeriert mit arabischen Ziffern und wird gemeldet.</td>
+      <td>Zahlenstil: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>, dazu die ostasiatischen und arabischen Stile (<code>'simp-chinese-informal'</code>, <code>'circled-decimal'</code>, <code>'arabic-indic'</code>, <code>'abjad'</code> …). Die Schreibweisen der anderen Einstellungen funktionieren ebenfalls (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code> …; siehe <a href="/de/docs/configuration-page-layout#schreibweisen-der-nummernformate">Schreibweisen der Nummernformate</a>); ein unbekannter Wert nummeriert mit arabischen Ziffern und wird gemeldet.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: '浏览器里的AI智能体借助沙盒的41个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9分钟',
   order: 46,
   plainSummary: "本页写给想让AI助手替自己在沙盒里处理一本书的人。沙盒打开时，会交给助手一套工具，用来查看任意一页、修改设计、编辑文字、添加图片和表格、找出问题和保存文件。你用自己的话提出要求，比如“把字稍微放大一点，再看看书是不是还能排在40页以内”，助手就去使用这些工具，并把页面给你看。一切都留在你的浏览器里。本页说明怎样接入助手、它能做什么，以及每个工具怎样调用。",
@@ -377,7 +377,7 @@ await browser.close();
 { "anchor": "harbour" }
 ```
 
-`sandbox_set_view`还能选择查看器（`canvas`、`pdf`、`folio`、`html`、`epub`，分别对应Canvas、PDF、书页、HTML和EPUB标签页）、侧面板、单章或整本书、缩放、阅读字号、印刷预览，以及版面设计面板中的组。`sandbox_go_to_page`按`step`、`page`、`position`、一段`text`、一个`anchor`或EPUB的`contents`条目翻页。`sandbox_run_viewer`按下工具栏上的按钮：`regenerate`重新生成PDF或EPUB并等它完成，`print`打开打印对话框，由你确认，`play_video`播放页面上的视频。
+`sandbox_set_view`还能选择查看器（`canvas`、`pdf`、`folio`、`html`、`epub`，分别对应Canvas、PDF、书页、HTML和EPUB标签页）、内容模式或版面设计模式（`mode`）、侧面板、单章或整本书、缩放、阅读字号、印刷预览，以及版面设计面板中的组。`sandbox_go_to_page`按`step`、`page`、`position`、一段`text`、一个`anchor`或EPUB的`contents`条目翻页。`sandbox_run_viewer`按下工具栏上的按钮：`regenerate`重新生成PDF或EPUB并等它完成，`print`打开打印对话框，由你确认，`download`保存PDF或EPUB，`play_video`和`stop_video`播放和停止页面上的视频。
 
 ### 漫画页
 
@@ -395,7 +395,7 @@ await browser.close();
 
 ### 书、文件和Word
 
-- **打开和保存书**。`sandbox_list_books`列出示例书和你的项目；`sandbox_open_book`打开其中一本（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）；`sandbox_save_book`加上`action: "copy_current"`把屏幕上的书保存为你自己的项目，加上`new_blank`则新建一本空书。
+- **打开和保存书**。`sandbox_list_books`列出示例书和你的项目；`sandbox_open_book`打开其中一本（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）；`sandbox_save_book`加上`action: "copy_current"`把屏幕上的书保存为你自己的项目，加上`new_blank`则新建一本空书。对于项目，`add_language`加上`language`（`"fr"`、`"zh-Hant"`）会把屏幕上的语言复制成该语言的新版本并打开它，`rename`加上`thisLanguageOnly: true`只给屏幕上的语言命名；`set_cover`和`remove_cover`为它设置或去掉封面。
 - **导出**。`sandbox_export`写出`pdf`、`epub`、`postext`、`docx`、`markdown`或`config`。默认由浏览器下载文件；加上`deliver: "data"`时，PDF或EPUB以base64编码返回给智能体：
 
   ```json
@@ -441,7 +441,7 @@ await browser.close();
 - **一切都留在你的浏览器里**。沙盒本身触及不到的东西，工具也触及不到：你的书保存在这个浏览器的存储里，通过`url`提供的文件由页面去获取，所以文件所在的服务器必须允许这样做（CORS）。`data:` URL或`base64`总是可用。
 - **耗时的工作要等**。工具会等排版完成再回答；加上`wait: false`则立即回答。一本长书的PDF或EPUB要花几分钟。
 - **撤销**：`sandbox_undo`按修改的先后撤回最近一次修改，无论改的是文字还是设计，和沙盒里的Cmd/Ctrl+Z一样：在正文面板里输入的文字、工具做的修改和在预览上做的编辑、用`sandbox_set_config`或在版面设计面板里改动的设置、拖动的框。`redo: true`重做。`sandbox_undo_text`只撤回文字修改；最近一次修改是设计时，它会说明。新增、删除或移动的章节、资源和字体不在历史中；打开另一本书会清空历史，重新加载页面也会。`sandbox_get_state`会说明两者各自会撤回什么（`history`）。
-- **屏幕上的书**。工具作用于打开的那本书。只有导出`.postext`文件的`sandbox_export`、带`duplicate`的`sandbox_save_book`和带`sample`的`sandbox_reset_to_original`，可以不打开另一本书就对它操作。
+- **屏幕上的书**。工具作用于打开的那本书。只有导出`.postext`文件的`sandbox_export`、带`duplicate`、`rename`或封面操作的`sandbox_save_book`、`sandbox_delete_book`和带`sample`的`sandbox_reset_to_original`，可以不打开另一本书就对它操作。
 
 ## 网站的工具
 

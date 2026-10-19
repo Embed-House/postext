@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Formato en línea y fórmulas',
   description: 'Las marcas dentro de la línea: énfasis, enlaces, chips, versalitas, tabuladores, texto vertical, marcas chinas y japonesas, dirección del texto y fórmulas LaTeX',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ El marcado en línea se reconoce dentro de cualquier bloque de texto (encabezado
       <td>Una nota compuesta en dos filas de medio cuerpo dentro de la línea (双行夹注), que se corta entre líneas y páginas.</td>
     </tr>
     <tr>
+      <td>Marcas japonesas</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>Una línea lateral (傍線) y las marcas de kanbun (訓点: marcas de retorno, okurigana) junto a los caracteres. El texto queda como está escrito; véase <a href="#marcas-chinas-ruby-y-warichu">Marcas chinas, ruby y warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Dirección del texto</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>Aísla un fragmento en su propia dirección: un nombre inglés en una frase árabe, uno árabe en una frase inglesa. Véase <a href="#dirección-del-texto-en-el-marcado">Dirección del texto en el marcado</a>.</td>
+    </tr>
+    <tr>
       <td>Código en línea</td>
       <td><code>`código`</code></td>
       <td>Las comillas invertidas se eliminan, y el tramo se compone como texto sin formato, tal como se escribió: un <code>{':ref{…}'}</code>, un chip, una fórmula, un enlace o un signo de marca dentro de él se imprimen literalmente, que es como un texto muestra la sintaxis. Se compone en la letra del texto o, con <code>codeStyle.inline</code>, en la letra del código como una sola unidad (véase <a href="/es/docs/configuration-styles#listados-de-código">Configuración › Listados de código</a>). Un listado va en un <a href="/es/docs/document-format#bloques-de-código">bloque de código</a>.</td>
     </tr>
     <tr>
       <td>Escape</td>
-      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
-      <td>Una barra invertida compone el propio carácter de marca (el asterisco de una nota de tabla, <code>{'\\* pOH = −log [OH^−^]'}</code>; un acento circunflejo literal; un signo de dólar que no abre ninguna fórmula) en vez de abrir un tramo. Funciona en el texto, en los chips y en pies, celdas y notas. (Hasta postext 1.4 los pies, las celdas, las notas y los chips imprimían la barra de <code>{'\\$'}</code>).</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code>, <code>{'\\@'}</code></td>
+      <td>Una barra invertida compone el propio carácter de marca (el asterisco de una nota de tabla, <code>{'\\* pOH = −log [OH^−^]'}</code>; un acento circunflejo literal; un signo de dólar que no abre ninguna fórmula; una arroba que no cita nada) en vez de abrir un tramo. Funciona en el texto, en los chips y en pies, celdas y notas. (Hasta postext 1.4 los pies, las celdas, las notas y los chips imprimían la barra de <code>{'\\$'}</code>).</td>
     </tr>
     <tr>
       <td>Espacio de no separación</td>
@@ -116,6 +126,11 @@ El marcado en línea se reconoce dentro de cualquier bloque de texto (encabezado
       <td>Un fragmento de texto en una caja que pasa de línea como una unidad: un banco de palabras, una tecla, una etiqueta. Su aspecto lo definen los <code>chipStyles</code>; véase <a href="#chips-en-línea">Chips en línea</a>.</td>
     </tr>
     <tr>
+      <td>Resaltado</td>
+      <td><code>:mark[texto]</code></td>
+      <td>Una banda de color detrás de palabras que siguen siendo texto normal: se cortan, se dividen y se justifican como siempre. Se le da estilo con <code>markStyles</code>; véase <a href="#marcas-de-resaltado">Marcas de resaltado</a>.</td>
+    </tr>
+    <tr>
       <td>Tabulador</td>
       <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>Lleva las palabras que lo siguen a la tabulación siguiente: una de las tabulaciones del estilo del párrafo, o la que fijan sus atributos. Un tabulador escrito en el texto solo actúa como tal donde el estilo fija tabulaciones. Consulta <a href="#tabuladores-y-tabulaciones">Tabuladores y tabulaciones</a>.</td>
@@ -127,6 +142,8 @@ El marcado en línea se reconoce dentro de cualquier bloque de texto (encabezado
     </tr>
   </tbody>
 </table>
+
+Las marcas que remiten a otro lugar se describen junto a aquello a lo que remiten: las llamadas de nota `[^id]` en [Notas al pie](/es/docs/document-format-notes-references#notas-al-pie); `:ref{…}`, `:anchor{#id}`, `[texto]{#id}` y el `@sec:…` de pandoc-crossref en [Referencias cruzadas y anclas](/es/docs/document-format-notes-references#referencias-cruzadas-y-anclas); las citas `[@clave]` y `@clave` en [Citar](/es/docs/document-format-notes-references#citar); las marcas de índice `:index[…]` en [Marcas de índice](/es/docs/document-format-notes-references#marcas-de-índice). La muestra de color `:swatch{color="…"}` se describe con los rellenos de tabla en [Recursos](/es/docs/document-format-resources#recursos), y el salto de línea dentro de un párrafo en [Saltos de línea](/es/docs/document-format-directives#saltos-de-línea).
 
 ### Enlaces
 
@@ -164,7 +181,7 @@ Pulsa :chip[Ctrl]{style="tecla"} + :chip[C]{style="tecla"} para copiar.
 - **Una unidad.** Un chip nunca se parte ni se divide con guion por dentro; la línea se corta entre chips, en los espacios que los rodean. Un chip más ancho que toda la línea la desborda en lugar de partirse.
 - **Ancho.** Su avance es el texto más el relleno horizontal y el contorno a ambos lados. La justificación solo estira los espacios entre palabras, nunca el interior de un chip. El `gap` del estilo es el espacio mínimo que se deja entre la caja y la palabra o el chip vecinos cuando los separa un espacio: si el espacio es más estrecho, se completa (no en el borde de la línea, ni junto a la puntuación pegada, como en `:chip[a],`).
 - **Alto.** La caja es una banda alrededor de la línea base, 0,8 em por encima y 0,25 em por debajo al cuerpo del chip, que crece con el relleno vertical y el contorno. El relleno vertical se pinta fuera de la caja de línea y nunca cambia el interlineado, así que la rejilla base se mantiene; una caja más alta que la distancia entre líneas puede chocar con un chip de la línea de encima o de debajo, y el Sandbox da un aviso cuando dos chips de líneas distintas se solapan (**Los chips tocan la línea siguiente**) para que puedas reducir el relleno, el contorno o el cuerpo.
-- **Texto.** El texto del chip admite sus propias marcas (`:chip[**negrita** palabra]`, `:chip[x^2^]`) y el énfasis que lo rodea (`**:chip[a]**`); el estilo puede fijar su familia, cuerpo, color, negrita y cursiva. Escribe `\]` para un corchete literal dentro. Las referencias, las muestras de color y las fórmulas dentro de un chip quedan como texto literal, y `\$` imprime un signo de dólar (hasta postext 1.4 imprimía también la barra).
+- **Texto.** El texto del chip admite sus propias marcas (`:chip[**negrita** palabra]`, `:chip[x^2^]`) y el énfasis que lo rodea (`**:chip[a]**`); el estilo puede fijar su familia, cuerpo, color, negrita y cursiva. Escribe `\]` para un corchete literal dentro. Las referencias, las muestras de color y las fórmulas dentro de un chip quedan como texto literal, y `\$` imprime un signo de dólar (hasta postext 1.4 imprimía también la barra). Un estilo con `dotted` pinta las letras como hileras de puntos para que un niño las repase, y uno sin relleno, contorno ni márgenes interiores convierte el chip en una palabra punteada dentro de la línea: `:chip[gato]{style="dots"}` (véase [Estilos de chip](/es/docs/configuration-styles#estilos-de-chip)).
 - **Vacío.** Un chip hecho solo de espacios (`:chip[ ]`, espacios de no separación incluidos) es una caja vacía (un hueco para la respuesta, una marca de fin): tan ancha como el relleno horizontal y el contorno de su estilo, tan alta como un chip con palabras. Da tamaño al hueco con el `paddingX` de un estilo (`:chip[ ]{style="hueco"}`). Sin nada entre los corchetes, `:chip[]` queda como texto literal.
 - **Dónde.** Párrafos, elementos de lista, citas, recuadros, celdas de tabla, pies y notas. En los encabezados, `:chip[…]` queda como texto literal.
 - **Salida.** Canvas, HTML y PDF pintan la caja y componen las palabras como texto real: seleccionable en el HTML, extraíble y en orden de lectura en el PDF (en un PDF etiquetado la caja es un artefacto de maquetación y las palabras pertenecen al párrafo).

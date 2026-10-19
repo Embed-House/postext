@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pàgines compostes',
   description: "Com s'editen les plantilles de pàgina i els marcs directament sobre la pàgina, com s'ordena la biblioteca d'estils de marc, com es revisen les pàgines compostes en totes les edicions, com es passa el text al Markdown i com s'arregla un marc amb un clic",
   lang: 'ca',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -33,6 +33,8 @@ Aquesta pàgina reuneix les parts dels taulers Disseny i Revisió que tracten de
 
 **Una història que salta a un altre capítol.** En un llibre amb un fitxer de capítol per article, si el marc d'una història l'envia a `page:<id>`, la història continua al capítol que conté aquella pàgina (des de postext 1.41; vegeu [Pàgines compostes › Saltar a una pàgina posterior](/ca/docs/composed-pages#saltar-a-una-pàgina-posterior)). El canvas, el Folio i les pestanyes PDF i EPUB componen la resta a la pàgina d'aquell capítol, amb els números de pàgina del llibre a les marques. El registre de maquetació d'un capítol desa les històries que envia, de manera que el capítol que conté la pàgina es torna a compondre quan canvia l'article, però no quan canvia un capítol intermedi. Un clic a les paraules que han arribat d'un altre capítol posa el cursor al Markdown de l'article, i la ruta que hi ha sota la previsualització indica la pàgina posterior quan el cursor és dins d'aquell text. La previsualització d'un sol capítol mostra només el que contenen les pàgines d'aquest capítol: la resta apareix amb el capítol que conté la pàgina.
 
+**Les paraules pròpies d'una figura.** Un clic en un peu o una nota que escriu la mateixa figura porta el cursor a la seva línia `::caption[…]` o `::note[…]`, o a l'atribut de la línia d'obertura, a la lletra clicada (vegeu [Pàgines compostes › Les paraules pròpies d'una figura](/ca/docs/composed-pages#les-paraules-pròpies-duna-figura)).
+
 
 ## Estils de marc
 
@@ -59,7 +61,7 @@ La secció recull:
 - *El text encara no cap després de les pàgines afegides* (`frameContinuationLimit`): el contingut del marc ha continuat en totes les pàgines que pot afegir una pàgina composta i encara no hi cap;
 - *Un text salta a una pàgina que no ve després* (`continueTargetMissing`): cap bloc de pàgina posterior no té l'id que indica el `continueIn` del marc;
 - *Rètol en una àncora que no existeix* i *Àncora sense rètol* (`labelAnchorUnknown`, `anchorUnlabelled`), amb el marc que compon la figura;
-- *Rètol més ample que la mesura* i *Rètols que es trepitgen* (`labelOverflow`, `labelOverlap`), amb el mateix marc: els rètols de cada edició es mesuren amb les paraules d'aquella llengua, de manera que una llengua amb paraules més llargues pot desbordar on una altra no ho fa;
+- *Rètol més ample que la mesura* i *Rètols que es trepitgen* (`labelOverflow`, `labelOverlap`), amb el mateix marc: els rètols de cada edició es mesuren amb les paraules d'aquella llengua, de manera que una llengua amb paraules més llargues pot desbordar on una altra no ho fa. Un rètol que envaeix una de les zones `avoid` de la imatge, dibuixades en el mode **Zones lliures** de les marques de la imatge, també surt aquí; en un SVG, **Símbols del dibuix**, en aquest mateix mode, afegeix una zona sobre cada element del dibuix que té un id que comença per un prefix donat o una classe donada (des de postext 1.43);
 - *Ranura sense marc*, *Marc buit*, *Plantilla de pàgina desconeguda*, *Pàgina composta amb tres signes de dos punts* i *La doble pàgina no coincideix amb la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Bloc de l'índex general partit entre columnes* (`tocGroupSplit`);
 - els avisos de les plantilles mateixes (un estil o un ancoratge de marc que no existeix, mides que es contradiuen, una cadena que torna sobre si mateixa) i el text de disseny que conté text del llibre (`contentInConfig`).

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed-page books',
   description: 'A walk through the Sandbox with a school textbook made of composed pages: build a page template, fill it from the Markdown, label a map, translate the page, fix text that does not fit, and select on the page and in the text',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "This page teaches, step by step, how to make a school textbook page in the Sandbox: a page with a title band, some text and coloured boxes. You start from a finished example book and add one more page to it. First you draw the page as a template, then you pour the text into it from the Markdown, then you name the places on a map and translate the page into another language. At the end you see what to do when a text is too long for its box and how to jump between the page and its text.",
@@ -102,7 +102,7 @@ The word *Stone bridge* is Markdown; the point is part of the picture. When you 
 
 ## 5. Translate the page
 
-A translation is the same template with other words. The Sandbox holds it as another edition of the same book: the bar above the canvas switches between the editions and the Checks panel reads all of them (see [Editions of a book](/en/docs/sandbox-previews#editions-of-a-book)). To make one:
+A translation is the same template with other words. The Sandbox holds it as another edition of the same book: a toolbar at the left edge of the canvas switches between the editions, and the Checks panel reads all of them (see [Editions of a book](/en/docs/sandbox-previews#editions-of-a-book)). That toolbar shows when the pointer reaches the edge, and its pin button keeps it open. To make one:
 
 1. Open **Books**, press **⋯** on your book and choose **Add a language…**. Pick the language and press **Add and open**. The Sandbox copies the edition on screen into a new one, sets its **Document language** to the language you picked and opens it. Hyphenation, quotation marks and the words the engine writes itself (such as *Continued* at the cut of a box) follow that language. The text is still the original's.
 2. In the **Text** panel translate the words and leave the rest.
@@ -160,7 +160,7 @@ The page now shows the frame outlined in red with a band under its foot that say
 - *continue it on the next page* sends what does not fit to a page added after this one. It suits a longer text.
 - *cut about 495 characters* changes nothing. It selects the text of the frame and tells you how much to cut.
 
-A button that changes the template (and so every page set with it) asks first and names the setting. Press **Change it**. The page is laid out again, the box ends with the word that marks the cut (*Continúa*) and the rest runs on at the head of an added page. **Cmd/Ctrl+Z** takes the change back. **Reflow**, in the bar above the canvas, opens *What moved and why*: the frames whose size or place the layout changed to fit their content, with the reason in words.
+A button that changes the template (and so every page set with it) asks first and names the setting. Press **Change it**. The page is laid out again, the box ends with the word that marks the cut (*Continúa*) and the rest runs on at the head of an added page. **Cmd/Ctrl+Z** takes the change back. **Reflow**, in the same toolbar at the edge of the canvas, opens *What moved and why*: the frames whose size or place the layout changed to fit their content, with the reason in words.
 
 <Screenshot src="/docs-shots/en/checks.webp" alt="The Checks panel with the entry Text does not fit its frame and three buttons offering fixes, and the page with its first box outlined in red and a band saying 26 mm short." caption="A frame that does not fit, and the fixes the layout worked out for it." />
 

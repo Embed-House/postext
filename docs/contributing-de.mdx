@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Mitwirken',
   description: 'Wie Sie der Postext-Community beitreten und zum Projekt beitragen',
   lang: 'de',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '5 min',
   order: 35,
   plainSummary: "Postext wird von einer Gemeinschaft Freiwilliger gebaut, und jeder kann helfen. Sie müssen nicht programmieren können. Sie können auch helfen, indem Sie testen, Dokumentation schreiben, übersetzen oder Ihr Wissen über Gestaltung und Druck weitergeben. Diese Seite erklärt, wie das Team arbeitet, wo Hilfe am dringendsten gebraucht wird und wie Ihr erster Beitrag aussieht. Am Ende stehen die langfristigen Ziele des Projekts.",
@@ -81,19 +81,21 @@ besonders wertvoll sind:
   der Umgang mit den Ressourcen-Bytes einfarbiger Abbildungen.
 - **Textdarstellung** – Darstellung auf dem Canvas, SVG-Ausgabe, einfarbige Umfärbung von SVGs
   (`diagramStyle.singleInk`), Schriftmetriken.
-- **Leistungsoptimierung** – die Cache-Schicht für Messungen und eine Layout-Engine, die schnell
+- **Leistungsoptimierung** – die Cache-Schicht für Messungen, der in Rust geschriebene und nach
+  WebAssembly kompilierte Knuth-Plass-Zeilenumbruch (`rust/`) und eine Layout-Engine, die schnell
   genug bleibt, um bei jeder Größenänderung in Echtzeit zu arbeiten.
 
 ### Sandbox und Oberfläche
 Die [Sandbox](/de/docs/sandbox) ist zu einer umfangreichen eigenen React-Oberfläche gewachsen: ein
 Bedienfeld Ressourcen mit interaktivem Tabelleneditor und Hochladen von Bildern und SVGs, ein
-Bedienfeld Schriften und ein Bedienfeld Gestaltung, dessen zwölf Gruppen jeden Winkel der Engine
-abdecken. Ihre Bedienelemente bauen auf Primitiven von Base UI (`packages/postext-sandbox/src/ui/`)
-auf und werden mit axe-core auf WCAG 2.1 AA geprüft. Neue Bedienelemente sollten daher auf diese
-Primitive zurückgreifen, und jedes Feld braucht eine Beschriftung als Namen und einen Hilfetext als
-Beschreibung. Jeder Text der Oberfläche folgt einer strengen i18n-Konvention: Jede Beschriftung
-wird über fünf Dateien verdrahtet, im Sandbox-Paket und in den Sprachkatalogen der Web-App. Wenn
-Sie zu Frontend oder UX beitragen, kommt Ihre Arbeit hier zum Einsatz.
+Bedienfeld Schriften, Editoren für Seitenvorlagen und Comicseiten und ein Bedienfeld Gestaltung,
+dessen Gruppen jeden Teil der Engine abdecken. Ihre Bedienelemente bauen auf Primitiven von Base UI
+(`packages/postext-sandbox/src/ui/`) auf und werden mit axe-core und eigenen Prüfungen auf WCAG 2.2
+Stufe AAA geprüft. Neue Bedienelemente sollten daher auf diese Primitive zurückgreifen, und jedes
+Feld braucht eine Beschriftung als Namen und einen Hilfetext als Beschreibung. Jeder Text der
+Oberfläche folgt einer strengen i18n-Konvention: Jede Beschriftung wird im Sandbox-Paket, in der
+Beschriftungsbrücke der Web-App und im Katalog jeder der zehn Sprachen verdrahtet. Wenn Sie zu
+Frontend oder UX beitragen, kommt Ihre Arbeit hier zum Einsatz.
 
 ### Gestaltung und Typografie
 - **Erfahrung in der Verlagsgestaltung** – wenn Sie Zeitschriften, Zeitungen oder Bücher gesetzt
@@ -105,8 +107,10 @@ Sie zu Frontend oder UX beitragen, kommt Ihre Arbeit hier zum Einsatz.
 ### Dokumentation und Community
 - **Dokumentation** – die Dokumentation verbessern, erweitern und pflegen. Klare Dokumentation
   entscheidet darüber, ob Menschen ein Projekt übernehmen oder es wieder fallen lassen.
-- **Übersetzungen** – die Dokumentation ist derzeit zweisprachig (Englisch und Spanisch). Weitere
-  Sprachen sind willkommen.
+- **Übersetzungen** – die Dokumentation und die Website gibt es in zehn Sprachen: Englisch,
+  Spanisch, Katalanisch, Französisch, Deutsch, Italienisch, brasilianisches Portugiesisch,
+  vereinfachtes Chinesisch, Japanisch und Arabisch. Weitere Sprachen sind willkommen, ebenso
+  Durchsichten der vorhandenen.
 - **Testen** – Tests in verschiedenen Browsern und Betriebssystemen und mit Grenzfällen. Die Layouts zu
   finden, die brechen, ist genauso wertvoll, wie die zu bauen, die funktionieren.
 
@@ -115,8 +119,8 @@ Das Format ist kein unbeschriebenes Blatt mehr: Blöcke `::resource`, Inline-Ver
 Konfigurationsabschnitte `tableStyle`, `captionStyle` und `diagramStyle` sind ausgeliefert. Jetzt
 geht es darum, ein etabliertes Format weiterzuentwickeln, ohne es zu brechen:
 
-- **Grammatik des Dokuments** – Randnoten und Querverweise über Ressourcen hinaus sind noch
-  offene Fragen, jede ebenso sehr ein Gestaltungs- wie ein technisches Problem.
+- **Grammatik des Dokuments** – Randnoten sind noch eine offene Frage, ebenso sehr ein
+  Gestaltungs- wie ein technisches Problem.
 - **Konfigurationsschema** – das System beim Wachsen leistungsfähig genug für Profis und einfach
   genug für Einsteiger halten.
 
@@ -138,9 +142,9 @@ Engagement:
 2. **Übernehmen Sie ein [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** –
    diese Aufgaben sind als realistischer Einstieg ausgewählt und setzen kein verborgenes Vorwissen
    aus der Projektgeschichte voraus.
-3. **Übersetzen Sie die Dokumentation in eine neue Sprache** – heute liegt die Dokumentation auf
-   Englisch und Spanisch vor. Jede dritte Sprache ist ein Geschenk für Leser, die bisher außen vor
-   bleiben.
+3. **Übersetzen Sie die Dokumentation in eine neue Sprache, oder sehen Sie eine durch** – heute
+   liegt die Dokumentation in zehn Sprachen vor. Jede neue erreicht Leser, die keine der anderen
+   lesen.
 
 Wenn Sie Code schreiben wollen, eröffnen Sie zuerst ein Issue, um den Ansatz zu besprechen – das
 vermeidet doppelte Arbeit, und ein kurzes Gespräch vorab spart allen Zeit.

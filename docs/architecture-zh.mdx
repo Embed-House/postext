@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '架构',
   description: 'Postext排版引擎的技术架构：核心概念、文档树、垂直韵律、后端与性能',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '20分钟',
   order: 2,
   plainSummary: "本页讲解Postext的内部工作原理，面向程序员。首先，Postext在不往屏幕上画任何东西的情况下测量每个词，所以速度很快。然后它算出每一行、每张图和每一栏的位置，并把这份排版方案保存在内存里。最后，它把排好的页面输出为网页、Canvas图像或PDF文件。你改动一个词时，它会把各页重新排一遍，并沿用未改动段落的测量结果。下一页一步步说明各行和各张图是怎样放上去的。",
@@ -94,7 +94,7 @@ export const metadata = {
     </tr>
     <tr>
       <td><strong>后端</strong></td>
-      <td>消费完成的VDT的渲染目标。目前已有四种：<strong>canvas</strong>（位图预览）、<strong>HTML</strong>（基于DOM的屏幕阅读）、<strong>PDF</strong>（通过<code>postext-pdf</code>输出可付印的文件）和<strong>EPUB</strong>（<code>postext-epub</code>，把整本书做成电子书）。四者共用同一套测量（基于Pretext的measure模块）。</td>
+      <td>消费完成的VDT的渲染目标。目前已有四种：<strong>canvas</strong>（位图预览）、<strong>HTML</strong>（基于DOM的屏幕阅读）、<strong>PDF</strong>（通过<code>postext-pdf</code>输出可付印的文件）和<strong>EPUB</strong>（<code>postext-epub</code>，把整本书做成电子书）。四者共用同一套测量（基于Pretext的measure模块）。3D查看器<code>postext-folio</code>用Canvas后端绘制书页。</td>
     </tr>
     <tr>
       <td><strong>放置遍（Placement Pass）</strong></td>
@@ -137,6 +137,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // 标题、副标题、作者、发布日期……
   resources?: Resource[];      // 位图、SVG、表格、视频，按id引用
   notes?: PostextNote[];       // 不读取：脚注在markdown中写成[^id]
+  continuation?: LayoutContinuation; // 从前面各章延续下来的计数器和页码
+  outline?: OutlineEntry[];    // 全书标题及其页码标签，供:::toc / :::index使用
+  citations?: CitationContext; // 全书引文中属于本章的部分
+  laterPageIds?: Record<string, number>; // 后续各章中可续排文字的页面块
 }
 
 interface Resource {
@@ -490,6 +494,12 @@ renderToEpub(docs, options): Promise<Uint8Array>;
       <td><strong>已发布</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong>（3D查看器）</td>
+      <td>接收已用Pretext测量好的VDT</td>
+      <td>每一页由Canvas后端绘制（<code>renderPageToCanvas</code>），作为three.js书页的纹理显示，只绘制打开的跨页附近（<code>postext-folio</code>中的<code>createFolioFromDocument</code>）</td>
+      <td><strong>已发布</strong></td>
+    </tr>
+    <tr>
       <td><strong>命令行</strong></td>
       <td>基于Skia（<code>@napi-rs/canvas</code>）的Pretext，由Skia代替浏览器的Canvas</td>
       <td>PDF、HTML和EPUB写入器，以及页面图像和Word，在终端中运行，不需要浏览器（<code>postext-cli</code>）</td>
@@ -498,7 +508,7 @@ renderToEpub(docs, options): Promise<Uint8Array>;
   </tbody>
 </table>
 
-四个已发布的后端都接收同一个`VDTDocument`。`postext`（导出Canvas和HTML后端）与`postext-pdf`（导出PDF后端）的拆分纯粹是出于依赖考虑：PDF路径会引入`pdf-lib`和`@pdf-lib/fontkit`，而大多数Web集成并不需要它们。只有在确实要输出PDF字节时才安装`postext-pdf`。`postext-epub`出于同样的原因单独成包，只在制作电子书时需要。命令行不是第五个后端：`postext-cli`在没有浏览器的地方运行同样这些写入器。
+四个后端和Folio查看器都接收同一个`VDTDocument`。`postext`（导出Canvas和HTML后端）与`postext-pdf`（导出PDF后端）的拆分纯粹是出于依赖考虑：PDF路径会引入`pdf-lib`和`@pdf-lib/fontkit`，而大多数Web集成并不需要它们。只有在确实要输出PDF字节时才安装`postext-pdf`。`postext-epub`出于同样的原因单独成包，只在制作电子书时需要。命令行不是第五个后端：`postext-cli`在没有浏览器的地方运行同样这些写入器。Word文件也不是：`postextToDocx`（来自`postext/word`）把Markdown各章及其样式写成`.docx`，不经过排版；`readDocx`配合`wordToPostext`再把它读回成Markdown。
 
 **排版在哪里运行**：引擎在Canvas上测量文本，所以只要有Canvas就能运行。在浏览器中，流水线既可以在主线程上运行（`buildDocument`），也可以在专用的Web Worker中运行（`postext/worker`中的`createLayoutWorker`）。对于由UI驱动的应用，推荐使用工作线程方式：它让测量和放置遍远离主线程，可以用`AbortSignal`取消旧的构建、只保留最后一次，并拥有自己的测量缓存和数学公式光栅缓存，使连续的重新构建保持低开销。完整的集成模式参见[配置 › 在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)。在浏览器之外，[命令行](/zh/docs/command-line)用Skia代替浏览器的Canvas运行同一条流水线，所以同一本书在终端、脚本或构建服务器上分出的页面完全相同。
 
@@ -521,7 +531,7 @@ renderToEpub(docs, options): Promise<Uint8Array>;
 
 5. **分层的测量缓存**。测量模块（`packages/postext/src/measure/`）在Pretext自己的`prepare()`缓存和底层文本宽度缓存之上，维护一个显式的测量缓存，以文本、字体、宽度和所有影响版面的选项为键。重新测量一个未改动的段落只需一次映射查找。某个字体族的字体变化时，引擎丢弃该字体族的宽度和Pretext的缓存，测量缓存则在下一次查找时丢弃用该字体族排出的块（它记着自己是在哪个代次下填充的），因此字体加载完成后字形宽度是正确的，宿主不必调用任何函数；`clearMeasurementCache()`丢弃所有字体族。
 
-6. **热路径上的断行**。Knuth-Plass的活动节点处理为速度而重写：节点退出时就地压缩活动集合，候选节点按（行，适配等级）去重，每个键只保留缺陷值最低的节点。算法结果完全相同：断点组合不变，只是计算得更快。
+6. **热路径上的断行**。Knuth-Plass的活动节点处理为速度而重写：节点退出时就地压缩活动集合，候选节点按（行，适配等级）去重，每个键只保留缺陷值最低的节点。算法结果完全相同：断点组合不变，只是计算得更快。同一个断行算法也用Rust写了一份（`rust/crates/linebreak`），编译成WebAssembly并内嵌在包中：它以相同的顺序做相同的运算，速度快两到三倍，只要模块已编译完成就由它作答。在页面主线程上，模块在后台编译；在此之前，或在缺少WebAssembly、WebAssembly被拒绝的环境中，由TypeScript版本作答。`initLineBreaker()`可以提前开始编译；`useWasmLineBreaker(false)`让所有段落都用TypeScript版本断行。
 
 7. **在主线程之外构建。**`postext/worker`入口在专用的Web Worker中运行整个流水线。主线程发送`{ content, config }`和一个`AbortSignal`；工作线程注册字体（以`ArrayBuffer`转移），运行放置遍，再发回完成的`VDTDocument`。新的`build()`调用会以协作方式取消上一次调用：工作线程运行`buildDocumentAsync`，它在每个块处和各遍之间查询取消钩子，并抛出`BuildCancelledError`，因此在编辑器中打字的用户从不需要等待一个已被取代的排版。工作线程还维护自己的持久测量缓存和一个以内容为键的数学公式光栅缓存，使经过结构化克隆的`MathRender`对象在多次重新构建之间保留下来，无需重新光栅化。
 
@@ -531,13 +541,13 @@ renderToEpub(docs, options): Promise<Uint8Array>;
 
 没有增量式的入口：没有哪个调用接收一个完成的VDT并更新它。内容或配置发生变化时（一次按键，换一种页面尺寸），宿主再次调用`buildDocument`，得到一份新文档。
 
-从一次构建延续到下一次构建的是测量结果。用`createMeasurementCache()`创建一次`MeasurementCache`，把它作为第三个参数传给每一次`buildDocument`调用。文本、字体、宽度和断行选项都没有变化的段落从缓存中读出，所以每次按键都重新排版的编辑器只需测量正在输入的那个段落。页面尺寸或栏数的变化会改变宽度，这些段落就要重新测量；Pretext的`prepare()`结果仍然有效，因为它们取决于字体和文本，与宽度无关，所以只需运行低开销的`layout()`算术。解析结果也有记忆化。
+从一次构建延续到下一次构建的是测量结果。用`createMeasurementCache()`创建一次`MeasurementCache`，把它作为第三个参数传给每一次`buildDocument`调用。文本、字体、宽度和断行选项都没有变化的段落从缓存中读出，所以每次按键都重新排版的编辑器只需测量正在输入的那个段落。页面尺寸或栏数的变化会改变宽度，这些段落就要重新测量；Pretext的`prepare()`结果仍然有效，因为它们取决于字体和文本，与宽度无关，所以只需运行低开销的`layout()`算术。解析结果也有记忆化。模板页也会延续下来：模板、Markdown、样式和字体都没有变化的模板页直接沿用上一次构建的结果（`composed/pageMemo.ts`），所以在由模板页组成的章里编辑某一页，只会重排这一页。含有脚注、交叉引用、引文、目录或索引列表、漫画条的页面则总是重新排版。
 
 对于实时编辑器，`createLayoutWorker`（来自`postext/worker`）在主线程之外完成这一切：工作线程拥有一个与它同寿命的测量缓存，新的`build()`会取消正在进行的那一次。见[配置 › 测量缓存](/zh/docs/configuration-programmatic-usage#测量缓存)和[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)。
 
 ### 基准测试
 
-`packages/postext/src/__bench__/`中有两个基准测试。`pnpm test`跳过它们；在`packages/postext`中运行`pnpm bench`才会执行。`chapter.bench.test.ts`把一个教材篇幅的章（四十节，含标题、段落和列表）对着空的测量缓存排五次，再对着热缓存排五次，报告两个中位数和放置遍数。`cjkChapter.bench.test.ts`排《红楼梦》第1回，并统计送入`measureText`的字符数，以确保CJK排版器的开销与段落长度成线性关系。
+`packages/postext/src/__bench__/`中有三个基准测试。`pnpm test`跳过它们；在`packages/postext`中运行`pnpm bench`才会执行。`chapter.bench.test.ts`把一个教材篇幅的章（四十节，含标题、段落和列表）对着空的测量缓存排五次，再对着热缓存排五次，报告两个中位数和放置遍数。`cjkChapter.bench.test.ts`排《红楼梦》第1回，并统计送入`measureText`的字符数，以确保CJK排版器的开销与段落长度成线性关系。`composedPage.bench.test.ts`对一章二十个模板页计时：冷构建、无改动的重新构建、修改某一页的一个属性、在某一页的一个框内编辑，每种情况都分别在启用和不启用模板页记忆时测量。
 
 ```typescript
 // 摘自packages/postext/src/__bench__/chapter.bench.test.ts
@@ -554,7 +564,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-需要如实说明一点：Node中没有Canvas，所以两个基准测试都用桩代替文本测量，它们的绝对时间不是浏览器中的时间。冷缓存与热缓存的比值以及放置遍数则与浏览器中一致，其中任何一项退化，都会先在这里显现，然后才在沙盒中显现。章的基准测试只报告数字，不会让构建失败；中文的那个则断言测量的字符数低于最长段落长度的三倍。两者都不在CI中运行：性能退化是在热路径改动时通过对比多次运行的数字发现的（Knuth-Plass活动节点重写时就是这样做的）。性能是一项实实在在的功能，不是一种愿望；不过目前靠的是测量和代码审查，而不是一条会因退化而失败的流水线。
+需要如实说明一点：Node中没有Canvas，所以这些基准测试都用桩代替文本测量，它们的绝对时间不是浏览器中的时间。冷缓存与热缓存的比值以及放置遍数则与浏览器中一致，其中任何一项退化，都会先在这里显现，然后才在沙盒中显现。章和模板页的基准测试只报告数字，不会让构建失败；中文的那个则断言测量的字符数低于最长段落长度的三倍。它们都不在CI中运行：性能退化是在热路径改动时通过对比多次运行的数字发现的（Knuth-Plass活动节点重写时就是这样做的）。目前没有哪次构建会因为耗时变长而失败：性能退化要靠测量和代码审查来发现。
 
 
 ## 数据流

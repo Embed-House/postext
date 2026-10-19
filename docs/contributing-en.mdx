@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Contributing',
   description: 'How to join the Postext community and contribute to the project',
   lang: 'en',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '5 min',
   order: 35,
   plainSummary: "Postext is built by a community of volunteers, and anyone can help. You do not have to be a programmer. You can also help by testing, writing documentation, translating, or sharing what you know about design and printing. This page explains how the team works, where help is most needed and how to make your first contribution. It ends with the long-term goals of the project.",
@@ -78,18 +78,20 @@ especially valuable:
   byte handling for single-ink figures.
 - **Text rendering** — canvas-based rendering, SVG output, single-ink SVG recoloring
   (`diagramStyle.singleInk`), font metrics.
-- **Performance optimization** — the measurement cache layer, and keeping the layout engine fast
-  enough for real-time use on every resize.
+- **Performance optimization** — the measurement cache layer, the Knuth-Plass line breaker written
+  in Rust and compiled to WebAssembly (`rust/`), and keeping the layout engine fast enough for
+  real-time use on every resize.
 
 ### Sandbox and UI
 The [sandbox](/en/docs/sandbox) has grown into a substantial React surface in its own right: a
-Resources panel with an interactive table editor and image/SVG upload, a fonts panel, and a Design
-panel whose twelve groups cover every corner of the engine. Its controls are built on Base UI
-primitives (`packages/postext-sandbox/src/ui/`) and checked with axe-core for WCAG 2.1 AA, so new
-controls should reuse them and keep every field named by its label and described by its help
-text. Every UI string follows a strict i18n
-convention: each label is wired through five files, in the sandbox package and in the web app's
-locale catalogs. If you contribute frontend or UX work, this is where it lands.
+Resources panel with an interactive table editor and image/SVG upload, a fonts panel, editors for
+page templates and comic pages, and a Design panel whose groups cover every part of the engine. Its
+controls are built on Base UI primitives (`packages/postext-sandbox/src/ui/`) and checked with
+axe-core and the project's own checks for WCAG 2.2 at level AAA, so new controls should reuse them
+and keep every field named by its label and described by its help text. Every UI string follows a
+strict i18n convention: each label is wired through the sandbox package, the web app's labels
+bridge and the locale catalog of each of the ten languages. If you contribute frontend or UX work,
+this is where it lands.
 
 ### Design and typography
 - **Editorial design expertise** — if you have experience laying out magazines, newspapers, or
@@ -100,8 +102,9 @@ locale catalogs. If you contribute frontend or UX work, this is where it lands.
 ### Documentation and community
 - **Documentation** — improving, expanding, and maintaining the docs. Clear documentation is what
   makes the difference between a project that people can adopt and one they abandon.
-- **Translations** — the documentation is currently bilingual (English and Spanish). More languages
-  are welcome.
+- **Translations** — the documentation and the site are in ten languages: English, Spanish,
+  Catalan, French, German, Italian, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic.
+  More languages are welcome, and so are reviews of the existing ones.
 - **Testing** — testing across browsers, operating systems, and edge cases. Finding the layouts that
   break is just as valuable as building the ones that work.
 
@@ -110,8 +113,8 @@ The format is no longer a blank slate: `::resource` blocks, `:ref` inline refere
 `tableStyle`, `captionStyle`, and `diagramStyle` configuration sections have all shipped. The work
 now is evolving an established format without breaking it:
 
-- **Document grammar** — margin notes and cross-references beyond resources are still
-  open questions, each as much a design problem as a technical one.
+- **Document grammar** — margin notes are still an open question, as much a design problem as a
+  technical one.
 - **Configuration schema** — keeping the system powerful enough for professionals and simple enough
   for newcomers as it grows.
 
@@ -131,8 +134,8 @@ Once you are set up, three concrete actions, from lightest to heaviest commitmen
    way for the community to know you have arrived.
 2. **Pick up a [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)** —
    curated to be a realistic entry point, with no hidden historical context required.
-3. **Translate the docs into a new language** — today the documentation is in English and
-   Spanish. Any third language is a gift for readers who are currently left out.
+3. **Translate the docs into a new language, or review one** — today the documentation is in ten
+   languages. Each new one reaches readers who cannot read the others.
 
 If you plan to write code, open an issue first to discuss the approach — it avoids duplicate work,
 and a quick conversation upfront saves everyone time.

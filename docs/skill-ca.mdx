@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Instal·la la skill postext-port a Claude Code, Codex o qualsevol agent i deixa que converteixi un PDF, Word, PowerPoint, EPUB, InDesign o HTML en un projecte de Postext que segueix la maquetació original',
   lang: 'ca',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '10 min',
   order: 44,
   plainSummary: "Aquesta pàgina és per a qui ja té un llibre o un document en un altre format, com ara PDF, Word o InDesign, i el vol passar a Postext. Un assistent d'intel·ligència artificial, que s'anomena agent, pot fer gairebé tota la feina si li dones un petit complement anomenat skill. La skill ensenya l'agent a copiar el text i a reconstruir el disseny de l'original. La pàgina explica com instal·lar-la, què demanar-li i com revisar el resultat. Un vídeo d'uns cinc minuts mostra cada pas.",
@@ -100,6 +100,10 @@ També a YouTube: [mira'l allà](https://www.youtube.com/watch?v=d6eKBFjVhqA&lis
     àrabs, i com adaptar-los a partir de dibuixos sense text i les
     traduccions, des de pàgines escanejades amb text o des d'un guió amb
     imatges generades (vegeu [Còmics](/ca/docs/comics));
+  - les pàgines compostes: les pàgines fixes de llibres de text, quaderns i
+    revistes portades com a plantilles de pàgina amb marcs que s'omplen des del
+    Markdown, quina ronda de port admet el Postext instal·lat i les
+    comprovacions que ha de passar cada edició (consulta [Pàgines compostes](/ca/docs/composed-pages));
   - l'objecte imprès: com llegir el paper, l'enquadernació, les cobertes
     i el llom de l'original i traduir-los als paràmetres `folio` que mostra el
     [visor Folio](/ca/docs/sandbox-previews#pestanya-folio) i que el linter comprova.
@@ -131,6 +135,8 @@ També a YouTube: [mira'l allà](https://www.youtube.com/watch?v=d6eKBFjVhqA&lis
     <tr><td><code>lint_project.py</code></td><td>Detecta tot el que l'analitzador i el carregador fan malament sense avisar i, en text xinès, japonès o coreà, els caràcters que les fonts del projecte no poden compondre; en text japonès, els kana sota una llengua xinesa, les fonts o els paràmetres xinesos, la notació d'Aozora que ha quedat als capítols i les entrades d'índex amb kanji sense lectura; en text àrab, la manca d'una llengua àrab, les fonts només llatines o sense enllaços, l'espaiat entre lletres, la partició de mots forçada i l'èmfasi en cursiva; en còmics, les expressions <code>split</code> que no es poden llegir, les vinyetes que no coincideixen amb les cel·les, les imatges i els estils de bafarada o de vinyeta desconeguts, les àncores de personatge mal formades, les fonts de retolació que falten al projecte i les edicions amb pàgines diferents</td></tr>
     <tr><td><code>render.mjs</code></td><td>Compon el projecte (una carpeta o un fitxer <code>.postext</code>) sense navegador amb el motor real, llegint-ne la configuració igual que el Sandbox, i mostra els avisos. Amb <code>--jpeg</code> pinta les pàgines que li demanis (<code>--pages 12-15</code>) com a fitxers JPEG amb el renderitzador de canvas del mateix motor, en un o dos segons, perquè l'agent pugui veure les pàgines sense generar un PDF; <code>--out</code> escriu el PDF. Un llibre preparat per a impremta rep línies PREFLIGHT (imatges de baixa resolució, filets fins, text petit en diverses tintes, tinta per sobre del límit, text a prop del tall), i el PDF se separa en tintes amb el perfil ICC de sortida.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Posa les pàgines de l'original i les de Postext l'una al costat de l'altra, a partir del PDF de la composició o de la carpeta de JPEG</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>Pàgines compostes: <code>round</code> llegeix la versió del motor instal·lat i diu quina ronda de port admet i quines funcions de les pàgines compostes li falten; <code>check</code> executa <code>postext check</code> i <code>postext html</code> a cada edició i falla si un marc es desborda, si hi ha plantilles o ranures desconegudes, etiquetes que no caben a la seva àncora, text escrit a la configuració o marcs que l'HTML llegeix en un ordre diferent del que segueix el Markdown en omplir-los</td></tr>
+    <tr><td><code>postext_md.py</code></td><td>El mòdul auxiliar que importen els altres scripts per escriure text en el dialecte Markdown de Postext: trams plans de marques en línia, caràcters actius escapats i paràgrafs que es llegirien com a llista, títol o bloc conservats com a text</td></tr>
   </tbody>
 </table>
 
@@ -187,7 +193,7 @@ d'instal·lació.
 ### Eines que fan servir els scripts
 
 ```bash
-python3 -m pip install pymupdf pillow fonttools brotli
+python3 -m pip install pymupdf pillow fonttools brotli numpy
 ```
 
 ```bash
@@ -198,12 +204,18 @@ brew install pandoc poppler
 mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && npm i postext postext-pdf postext-citeproc react @pdf-lib/fontkit @napi-rs/canvas
 ```
 
-Cal Pandoc per a fonts en Word, PowerPoint, EPUB i HTML, i poppler
-per a les imatges de pàgina de la font. Els paquets de Node fan funcionar el
+Cal Pandoc per a fonts en Word, PowerPoint, EPUB i HTML, poppler
+per a les imatges de pàgina de la font, i numpy per a `comic_panels.py`. Els paquets de Node fan funcionar el
 renderitzador sense navegador (Node 22.15 o posterior); `@napi-rs/canvas` és un
 canvas precompilat amb què pinta les pàgines del llibre directament en
 JPEG. Eines opcionals: `ocrmypdf` per a
 escanejos, ImageMagick, i veraPDF per comprovar PDF/UA.
+
+```bash
+mkdir -p ~/.local/bin && curl -fL -o ~/.local/bin/postext https://github.com/drnachio/postext/releases/latest/download/postext-macos-arm64 && chmod +x ~/.local/bin/postext
+```
+
+Tria el fitxer del teu sistema (`postext-macos-arm64`, `postext-macos-x64`, `postext-linux-x64`, `postext-linux-arm64`, `postext-linux-x64-musl`, `postext-windows-x64.exe`); amb Node, també funciona `npx postext-cli`.
 
 El cicle de treball funciona amb la [línia d'ordres](/ca/docs/command-line), un executable autònom que no cal instal·lar: l'agent manté el projecte descomprimit i deixa `postext build --watch` en marxa sobre les pàgines en què treballa, de manera que cada canvi apareix com a JPEG al voltant d'un segon després, fins i tot en un llibre llarg. Els paquets de Node són opcionals: executen `render.mjs`, que afegeix les comprovacions addicionals del Sandbox. Tots dos maqueten el llibre amb `bodyText.shapingLanguage: 'host'`, digui el que digui la configuració, de manera que una línia pot acabar en una paraula diferent que al Sandbox (vegeu [Diferències amb el Sandbox](/ca/docs/command-line#diferències-amb-el-sandbox)).
 

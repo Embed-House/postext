@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Partició de mots i llengua',
   description: 'Com es parteixen els mots (patrons i excepcions), com es compon el text en bandera, què fixa la llengua del document (les xifres i la direcció del text, entre altres coses) i quines escriptures sap compondre Postext',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '23 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: es divideix amb 'en-us', amb un avís a la consola
 ```
 
-Les paraules de menys de 5 caràcters no es parteixen mai. El motor exigeix com a mínim 2 caràcters abans del punt de tall i 3 després.
+Les paraules de menys de 5 lletres no es parteixen mai, llevat del català, on n'hi ha prou amb 4 (`ca-sa`). Un tall deixa com a mínim 2 lletres abans i, després, 3 en anglès i en francès (`read-ing`), 4 en portuguès (`ca-misa`) i 2 en les altres llengües (`pa-red`, `Ta-fel`). En anglès, francès i italià l'apòstrof no compta com a lletra per a aquests mínims (res de `is-n't`), i en francès i italià les consonants que precedeixen una elisió es queden amb la seva paraula: `dell’ac-qua`, mai `del-l’acqua`.
 
 ### Mots que no es divideixen
 
@@ -170,7 +170,7 @@ El xinès admet `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`, 
   </tbody>
 </table>
 
-L'etiqueta del peu és el nom del tipus (*Figura 1.1.*). Els tipus xinesos numeren dins del capítol amb un guionet, `{h1}-{n}` (图 1-1); amb els paràmetres de peu `labelNumberGap: ''` i `labelSeparator: '　'`, el peu queda 图1-1　标题 (vegeu [Estil de peus de recurs](/ca/docs/configuration-resources#estil-dels-peus-de-recurs)). L'índex analític també segueix la llengua: 见 i 另见 davant d'una remissió, i 符号 i 数字 sobre els símbols i els números, en xinès simplificat; 見, 另見, 符號 i 數字, en tradicional. El japonès numera els tipus de la mateixa manera i compon els peus com 図1-1　題 sense aquests dos paràmetres, escriu les referències creuades com 第3章, 2.3節 i 12ページ i titula la bibliografia 参考文献; el seu índex posa 記号 i 数字 sobre els símbols i els números, i escriu les remissions amb una fletxa: `→夏目漱石` per a *vegeu* i, després de les pàgines, `→夏目漱石、森鷗外も見よ` per a *vegeu també*, amb les etiquetes en rodona. L'àrab numera els tipus de la mateixa manera, `{h1}-{n}` (شكل 2-3), escriu les referències creuades com الفصل 3, القسم 2-1 i ص 12 i titula la bibliografia المراجع; el seu índex fa servir انظر / انظر أيضًا, رموز i أرقام, amb la coma i el punt i coma àrabs (، ؛).
+L'etiqueta del peu és el nom del tipus (*Figura 1.1.*). El tercer tipus integrat, `video`, es diu *Video* en anglès, alemany, italià i neerlandès, *Vídeo* en castellà, portuguès i català, *Vidéo* en francès, 视频 en xinès simplificat i 影片 en xinès tradicional, 動画 en japonès i فيديو en àrab. Els tipus xinesos numeren dins del capítol amb un guionet, `{h1}-{n}` (图 1-1); amb els paràmetres de peu `labelNumberGap: ''` i `labelSeparator: '　'`, el peu queda 图1-1　标题 (vegeu [Estil de peus de recurs](/ca/docs/configuration-resources#estil-dels-peus-de-recurs)). L'índex analític també segueix la llengua: 见 i 另见 davant d'una remissió, i 符号 i 数字 sobre els símbols i els números, en xinès simplificat; 見, 另見, 符號 i 數字, en tradicional. El japonès numera els tipus de la mateixa manera i compon els peus com 図1-1　題 sense aquests dos paràmetres, escriu les referències creuades com 第3章, 2.3節 i 12ページ i titula la bibliografia 参考文献; el seu índex posa 記号 i 数字 sobre els símbols i els números, i escriu les remissions amb una fletxa: `→夏目漱石` per a *vegeu* i, després de les pàgines, `→夏目漱石、森鷗外も見よ` per a *vegeu també*, amb les etiquetes en rodona. L'àrab numera els tipus de la mateixa manera, `{h1}-{n}` (شكل 2-3), escriu les referències creuades com الفصل 3, القسم 2-1 i ص 12 i titula la bibliografia المراجع; el seu índex fa servir انظر / انظر أيضًا, رموز i أرقام, amb la coma i el punt i coma àrabs (، ؛).
 
 Un document en xinès, japonès o coreà declara la llengua a la sortida HTML (`lang` a l'arrel `.pt-doc`, amb `zh-Hant-TW` sencer) i al canvas on es pinta (`ctx.lang`, a Chrome 136 i posteriors), de manera que el navegador dibuixa les formes dels glifs pròpies de la regió: Unicode unifica els caràcters han, i un mateix punt de codi es veu diferent en una font taiwanesa i en una de japonesa. Des de postext 1.30 també ho fan els altres documents, amb la llengua en què es compon el text ([`bodyText.shapingLanguage: 'document'`](/ca/docs/configuration-text#text-de-cos), el valor per defecte); amb `'host'`, els altres documents no porten `lang`, i cada canvas pinta en la llengua de la pàgina que l'allotja. El PDF declara `/Lang` a partir de `locale` en tots els documents, etiquetats o no, amb l'escriptura i la regió. Un document en una llengua que s'escriu de dreta a esquerra (àrab, persa, urdú, hebreu…) també declara la llengua, i les formes locals de la font (`locl`) i la font de reserva la tenen en compte.
 

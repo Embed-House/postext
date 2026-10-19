@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Kopf- und Fußzeilen',
   description: 'Was oben und unten auf jeder Seite steht – Text mit Platzhaltern, Linien, Kästen und Bilder, getrennt für gerade und ungerade Seiten – und wie jedes Element platziert wird',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Die Eigenschaften `header` und `footer` steuern die Felder für Kopf- und Fußze
 
 Die Felder verwenden das einheitliche Modell der **Gestaltungsfelder**: Jedes Element hat eine `placement` mit einem `anchor` (am Container oder über `#id` an einem anderen Element), einem optionalen `offset` und einer optionalen `size`. Die alten flachen Felder `align`, `marginFromBody`, `marginFromEdge` und `width: 'full'` werden bei der Eingabe weiterhin akzeptiert und automatisch in die neue Form überführt; die entsprechende Beschreibung in der neuen Form ist unten dokumentiert.
 
-Jedes Feld enthält eine Liste von Elementen der Arten **Text**, **Linie** und **Kasten**. Die Reihenfolge im Array ist die Zeichenreihenfolge (das erste Element wird zuerst gezeichnet, das letzte obenauf). Das gilt unabhängig von den Ankern: Ein Element kann an einem später aufgeführten verankert sein (`anchor.to: '#ttl'`), sodass ein Hintergrundkasten zuerst kommen und trotzdem an dem Text ausgerichtet werden kann, hinter dem er liegt.
+Jedes Feld enthält eine Liste von Elementen der Arten **Text**, **Linie**, **Kasten** und **Bild**. Die Reihenfolge im Array ist die Zeichenreihenfolge (das erste Element wird zuerst gezeichnet, das letzte obenauf). Das gilt unabhängig von den Ankern: Ein Element kann an einem später aufgeführten verankert sein (`anchor.to: '#ttl'`), sodass ein Hintergrundkasten zuerst kommen und trotzdem an dem Text ausgerichtet werden kann, hinter dem er liegt.
 
 **Mitgelieferte Standardwerte.** Wenn `header` oder `footer` `undefined` ist, wendet postext einen sinnvollen mitgelieferten Standard an statt eines leeren Felds:
 
@@ -46,7 +46,7 @@ Um auf die mitgelieferten Standardwerte zu verzichten, setzen Sie `header: { ele
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>mitgelieferte Standardwerte bei <code>undefined</code>; <code>[]</code> schaltet ab</td>
-      <td>Geordnete Liste von Text- und Linienelementen.</td>
+      <td>Geordnete Liste von Text-, Linien-, Kasten- und Bildelementen.</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ Die Standardwerte in der folgenden Tabelle sind die eines Textelements, das Sie 
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>Auf welchen <em>Seitenrollen</em> das Element erscheint, kombiniert mit <code>parity</code>. Nach der Platzierung wird jede Seite eingeordnet als <code>'blank'</code> (Vakatseite für die Parität oder als Trennseite oder ohne Inhalt), <code>'part'</code> (eine Teiltitelseite), <code>'opener'</code> (ihr erster Block ist eine Überschrift, deren Ebene über die ganze Seite reicht oder einen Seitenumbruch davor erzwingt – die erste Seite eines Kapitels) oder <code>'body'</code> (alles andere). <code>pages: 'body'</code> blendet einen Kolumnentitel auf Kapitelauftakten aus; <code>pages: 'opener'</code> zeigt eine Pagina nur dort.</td>
+      <td>Auf welchen <em>Seitenrollen</em> das Element erscheint, kombiniert mit <code>parity</code>. Nach der Platzierung wird jede Seite eingeordnet als <code>'blank'</code> (Vakatseite für die Parität oder als Trennseite oder ohne Inhalt), <code>'part'</code> (eine Teiltitelseite), <code>'opener'</code> (ihr erster Block ist eine Überschrift, deren Ebene über die ganze Seite reicht oder einen Seitenumbruch davor erzwingt – die erste Seite eines Kapitels), <code>'comic'</code> (eine Comicseite, <code>:::page</code>), <code>'composed'</code> (eine zusammengesetzte Seite, oder die <code>role</code>, die ihre Vorlage nennt) oder <code>'body'</code> (alles andere). <code>pages: 'body'</code> blendet einen Kolumnentitel auf Kapitelauftakten aus; <code>pages: 'opener'</code> zeigt eine Pagina nur dort.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ Die Standardwerte in der folgenden Tabelle sind die eines Textelements, das Sie 
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> in Überschriften- und Teilgestaltungen, sonst <code>'ellipsis-end'</code></td>
-      <td>Wie die Engine Text behandelt, der die verfügbare Breite des Elements überschreitet. <code>'wrap'</code> bricht die Zeile in mehrere Zeilen um; die Varianten mit Auslassungspunkten halten jede Zeile auf einer Zeile und kürzen sie mit <code>…</code> am Anfang, in der Mitte oder am Ende; <code>'clip'</code> schneidet hart am umschließenden Rechteck des Elements ab, ohne ein Zeichen einzufügen. Zeilenumbrüche im Inhalt gelten in jedem Modus: Die Modi mit Auslassungspunkten und Abschneiden kürzen bzw. beschneiden jede Zeile für sich. Ein Element, das <code>overflow</code> weglässt, übernimmt den Standardwert seines Felds: In einer Überschriftengestaltung (<code>advancedDesign.slot</code>) oder auf einer Teiltitelseite (<code>parts.design</code>, <code>parts.versoDesign</code>) bricht es um, in einem Kolumnentitel, einer Pagina oder einer Teilzeile des Inhaltsverzeichnisses (<code>toc.parts.design</code>, eine Zeile fester Höhe) endet es mit <code>…</code>. Setzen Sie <code>'wrap'</code> bei einem Kolumnentitel, der mehrere Zeilen lang werden kann (eine Adresse), oder Auslassungspunkte bei einer Dachzeile, die in einem Auftakt auf einer Zeile bleiben muss. Eine durch Auslassungspunkte gekürzte Zeile oder eine, deren Farbe über den Kasten hinaus abgeschnitten wird, wird als Inhaltswarnung <code>designTextTruncated</code> gemeldet, einmal pro Element und Seite (bei einem Kolumnentitel oder einer Pagina einmal pro Element und Kapitel). Eine Konfiguration, die vor postext 1.24 gespeichert wurde (<code>configVersion</code> 9 oder älter), wird bei jedem Überschriften- und Teiltext, der keinen Wert setzt, mit <code>'ellipsis-end'</code> gelesen, damit sich ihre Seiten nicht verschieben. Ein Text mit einer <code>dropCap</code> bricht unabhängig von dieser Einstellung um; mit <code>'clip'</code> werden seine Zeilen weiterhin am Rand eines Kastens fester Höhe abgeschnitten. <code>'ellipsis-end'</code> und <code>'ellipsis-start'</code> kürzen an einer Wortgrenze – <em>The history of…</em>, nicht <em>The history of th…</em> –, und kein Leerzeichen und kein verbindendes Satzzeichen (Komma, Doppelpunkt, Strich, Schrägstrich, öffnende Klammer) berührt die Auslassungspunkte. Ein Wort wird nur dann an beliebiger Stelle gekürzt, wenn die Wortgrenze ohne dieses Satzzeichen weniger als die Hälfte dessen behielte, was passt: ein einziges langes Wort oder eine URL (<em>http://exampl…</em>, nicht <em>http…</em>). Ein geschütztes Leerzeichen oder ein geschützter Bindestrich (U+2011, wie in <em>MS‑DOS</em>) ist keine Wortgrenze; <code>'ellipsis-middle'</code> kürzt an beliebiger Stelle, verwirft aber die Leerzeichen daneben. Bis postext 1.4 kürzte jeder Modus beim letzten Zeichen, das passte, Leerzeichen eingeschlossen.</td>
+      <td><code>'wrap'</code> in Überschriften-, Teil- und Kastengestaltungen, sonst <code>'ellipsis-end'</code></td>
+      <td>Wie die Engine Text behandelt, der die verfügbare Breite des Elements überschreitet. <code>'wrap'</code> bricht die Zeile in mehrere Zeilen um; die Varianten mit Auslassungspunkten halten jede Zeile auf einer Zeile und kürzen sie mit <code>…</code> am Anfang, in der Mitte oder am Ende; <code>'clip'</code> schneidet hart am umschließenden Rechteck des Elements ab, ohne ein Zeichen einzufügen. Zeilenumbrüche im Inhalt gelten in jedem Modus: Die Modi mit Auslassungspunkten und Abschneiden kürzen bzw. beschneiden jede Zeile für sich. Ein Element, das <code>overflow</code> weglässt, übernimmt den Standardwert seines Felds: In einer Überschriftengestaltung (<code>advancedDesign.slot</code>), auf einer Teiltitelseite (<code>parts.design</code>, <code>parts.versoDesign</code>) oder in der <a href="/de/docs/configuration-callouts#gestaltung-im-kasten">Gestaltung eines Kastens</a> (<code>calloutStyles[].design</code>) bricht es um, in einem Kolumnentitel, einer Pagina oder einer Teilzeile des Inhaltsverzeichnisses (<code>toc.parts.design</code>, eine Zeile fester Höhe) endet es mit <code>…</code>. Setzen Sie <code>'wrap'</code> bei einem Kolumnentitel, der mehrere Zeilen lang werden kann (eine Adresse), oder Auslassungspunkte bei einer Dachzeile, die in einem Auftakt auf einer Zeile bleiben muss. Eine durch Auslassungspunkte gekürzte Zeile oder eine, deren Farbe über den Kasten hinaus abgeschnitten wird, wird als Inhaltswarnung <code>designTextTruncated</code> gemeldet, einmal pro Element und Seite (bei einem Kolumnentitel oder einer Pagina einmal pro Element und Kapitel). Eine Konfiguration, die vor postext 1.24 gespeichert wurde (<code>configVersion</code> 9 oder älter), wird bei jedem Überschriften- und Teiltext, der keinen Wert setzt, mit <code>'ellipsis-end'</code> gelesen, damit sich ihre Seiten nicht verschieben. Ein Text mit einer <code>dropCap</code> bricht unabhängig von dieser Einstellung um; mit <code>'clip'</code> werden seine Zeilen weiterhin am Rand eines Kastens fester Höhe abgeschnitten. <code>'ellipsis-end'</code> und <code>'ellipsis-start'</code> kürzen an einer Wortgrenze – <em>The history of…</em>, nicht <em>The history of th…</em> –, und kein Leerzeichen und kein verbindendes Satzzeichen (Komma, Doppelpunkt, Strich, Schrägstrich, öffnende Klammer) berührt die Auslassungspunkte. Ein Wort wird nur dann an beliebiger Stelle gekürzt, wenn die Wortgrenze ohne dieses Satzzeichen weniger als die Hälfte dessen behielte, was passt: ein einziges langes Wort oder eine URL (<em>http://exampl…</em>, nicht <em>http…</em>). Ein geschütztes Leerzeichen oder ein geschützter Bindestrich (U+2011, wie in <em>MS‑DOS</em>) ist keine Wortgrenze; <code>'ellipsis-middle'</code> kürzt an beliebiger Stelle, verwirft aber die Leerzeichen daneben. Bis postext 1.4 kürzte jeder Modus beim letzten Zeichen, das passte, Leerzeichen eingeschlossen.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ Die Standardwerte in der folgenden Tabelle sind die eines Textelements, das Sie 
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Nur Überschriftengestaltungen: ob das Element zur Höhe zählt, die die Überschrift im Textfluss reserviert. <code>false</code> für Dekoration, die unter dem Text liegen darf (ein Siegel am Seitenfuß, eine Umrandung, ein seitliches Band). Siehe <a href="/de/docs/configuration-headings#reservierte-höhe">Reservierte Höhe</a>. Kopfzeilen-, Fußzeilen- und Teilgestaltungen ignorieren es.</td>
+      <td>Nur Überschriften- und Kastengestaltungen: ob das Element zur Höhe zählt, die die Überschrift im Textfluss reserviert, oder zur Höhe des Bands einer Kastengestaltung (<code>calloutStyles[].design</code>). <code>false</code> für Dekoration, die unter dem Text liegen darf (ein Siegel am Seitenfuß, eine Umrandung, ein seitliches Band). Siehe <a href="/de/docs/configuration-headings#reservierte-höhe">Reservierte Höhe</a>. Kopfzeilen-, Fußzeilen- und Teilgestaltungen ignorieren es.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ Verfügbare Platzhalter:
 - `{bookTotalPages}` – Gesamtzahl der Seiten des ganzen Buchs: jedes Kapitel, Vakatseiten eingeschlossen. Bei einem für sich allein gesetzten Dokument entspricht sie `{totalPages}`. Siehe [Seitenzahl des ganzen Buchs](#seitenzahl-des-ganzen-buchs) unten.
 - `{title}`, `{subtitle}`, `{author}`, `{publishDate}` – Werte aus `content.metadata`. Unbekannte oder leere Metadaten ergeben eine leere Zeichenkette (und lösen in der Sandbox eine Warnung aus).
 - `{chapterTitle}` – Text der letzten H1 auf oder vor der aktuellen Seite. Eine H1, deren [Überschriftenstil](/de/docs/configuration-styles#überschriftenstile) `runningChapter: false` setzt (eine Tafel, eine Karte), wird übergangen.
+- `{chapterNumber}` – die Nummer dieses Kapitels: die Nummer seiner H1, wenn die Ebene oder ihr Überschriftenstil eine `numberingTemplate` hat, sonst die Ordnungszahl des Kapitels (`1`, `2`…). Leer bei einem Kapitel ohne Nummer.
 - `{chapterTitleAtTop}`, `{chapterNumberAtTop}` – Titel und Nummer des Kapitels, das am Kopf der Seite gilt; sie unterscheiden sich von `{chapterTitle}` und `{chapterNumber}` auf einer Seite, auf der ein neues Kapitel unterhalb anderen Texts beginnt. Siehe [Kapitel am Kopf der Seite](#kapitel-am-kopf-der-seite) unten.
 - `{partTitle}`, `{partNumber}` – Titel und Nummer des aktuellen Teils (die letzte `:::part`-Seite auf oder vor der aktuellen Seite; Vakatseiten für die Parität direkt vor einer Teiltitelseite gehören bereits zu ihr). Leer vor dem ersten Teil.
 - `{firstMark.<key>}`, `{lastMark.<key>}` – das erste und letzte Leitwort der Seite: eine Überschrift einer Ebene (`h1`–`h6`) oder ein Eintrag eines Absatzformats. Siehe [Leitwörter](#leitwörter-erste-und-letzte-marke) unten.
@@ -388,7 +389,7 @@ Im PDF betten fette und kursive Folgen die passenden Schnitte der Schriftfamilie
 
 Ein Textelement, das Sie selbst schreiben, beginnt mit diesen Werten, von denen einige überraschen:
 
-- **`overflow` folgt dem Feld.** In einer Überschriftengestaltung oder auf einer Teiltitelseite bricht ein langer Titel auf weitere Zeilen um; in einem Kolumnentitel, einer Pagina oder einer Teilzeile des Inhaltsverzeichnisses wird ein Text, der für sein Feld zu breit ist, mit `…` auf eine Zeile gekürzt. Setzen Sie `overflow: 'wrap'` bei einem Kolumnentitel, der lang werden kann (eine Adresse, eine Autorenzeile), und sehen Sie sich die Warnungen `designTextTruncated` für die gekürzten Texte an. Ein Zeilenumbruch im Inhalt (ein Zeilenumbruchzeichen oder `\n` in der Vorlage oder in einem Attributwert) beginnt in jedem Modus eine neue Zeile; die Modi mit Auslassungspunkten kürzen jede Zeile für sich.
+- **`overflow` folgt dem Feld.** In einer Überschriftengestaltung, auf einer Teiltitelseite oder in der Gestaltung eines Kastens bricht ein langer Titel auf weitere Zeilen um; in einem Kolumnentitel, einer Pagina oder einer Teilzeile des Inhaltsverzeichnisses wird ein Text, der für sein Feld zu breit ist, mit `…` auf eine Zeile gekürzt. Setzen Sie `overflow: 'wrap'` bei einem Kolumnentitel, der lang werden kann (eine Adresse, eine Autorenzeile), und sehen Sie sich die Warnungen `designTextTruncated` für die gekürzten Texte an. Ein Zeilenumbruch im Inhalt (ein Zeilenumbruchzeichen oder `\n` in der Vorlage oder in einem Attributwert) beginnt in jedem Modus eine neue Zeile; die Modi mit Auslassungspunkten kürzen jede Zeile für sich.
 - **`align` ist `'center'` und `verticalAlign` ist `'middle'`.** Ein Element mit automatischer Breite schmiegt sich an seine längste Zeile, sodass seine Zeilen zueinander zentriert sind; setzen Sie `align: 'left'` für einen linksbündigen Block (ein Element mit automatischer Breite, das an einem anderen Element verankert ist, richtet seine Zeilen von selbst auf der Seite seines Ankers aus, siehe oben).
 - **Die Schrift ist EB Garamond 8 pt, schwarz, `lineHeight` 1,2**, gleich was der Fließtext verwendet. Anders als die übrigen Zeilenabstände der Konfiguration ist der `lineHeight` eines Gestaltungstexts meist ein einfaches Vielfaches (`1.2`); eine `Dimension` funktioniert ebenfalls (siehe oben).
 
@@ -520,7 +521,7 @@ Linienelemente zeichnen eine Linie: waagerecht über das Feld oder senkrecht an 
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Seitenrollen, auf denen die Linie erscheint (siehe das Feld <code>pages</code> der Textelemente).</td>
     </tr>
@@ -603,7 +604,7 @@ Kastenelemente zeichnen ein abgerundetes Rechteck in das Feld – nützlich als 
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Seitenrollen, auf denen der Kasten erscheint (siehe das Feld <code>pages</code> der Textelemente).</td>
     </tr>
@@ -696,7 +697,7 @@ Ein Bild, das eine Gestaltung zeichnet, ist Inhalt, wenn seine Ressource es besc
 
 ### Platzierung von Elementen
 
-`ElementPlacement` ist das einheitliche Positionierungsmodell, das jeder Elementtyp (Text, Linie, Kasten) in jedem Gestaltungsfeld verwendet – Kopfzeile, Fußzeile oder das erweiterte Gestaltungsfeld einer Überschriftenebene. Drei Zustandsangaben beschreiben eine Platzierung:
+`ElementPlacement` ist das einheitliche Positionierungsmodell, das jeder Elementtyp (Text, Linie, Kasten, Bild) in jedem Gestaltungsfeld verwendet – Kopfzeile, Fußzeile oder das erweiterte Gestaltungsfeld einer Überschriftenebene. Drei Zustandsangaben beschreiben eine Platzierung:
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge` akzeptiert:
 
-- **Containerkanten** (wenn `anchor.to` `'container'`, `'page'` oder `'bleed'` ist): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
+- **Containerkanten** (wenn `anchor.to` `'container'`, `'page'`, `'bleed'` oder `'outer'` ist): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right` und `center`, die Mitte des Rahmens.
 - **Kanten relativ zu einem Element** (wenn `anchor.to === '#someId'`): `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
 
 Jede elementrelative Kante setzt eine Ecke des Elements auf eine Ecke des Elements, an dem es verankert ist, und `offset` verschiebt es von dort:

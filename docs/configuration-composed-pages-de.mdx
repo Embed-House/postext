@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Einstellungen für zusammengesetzte Seiten',
   description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Dekoration, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>keins</td>
-      <td>Ein Absatzformat für den Text der Seite, wie es auch Überschriftenstile haben.</td>
+      <td>Ein Absatzformat für den Text der Seite, wie es auch Überschriftenstile haben. Der Umbruch setzt es noch nicht um.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ Ein Rahmen wird über seine Rasterzelle (`grid`) platziert, wenn die Vorlage ein
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, der des Stils</td>
-      <td>Spalten innerhalb des Rahmens.</td>
+      <td>Spalten innerhalb des Rahmens. Eine Überschrift beendet nie eine davon: Sie geht mit dem Text, den sie einleitet, in die nächste Spalte (unter <code>headings.keepWithNext</code>, seit postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Verankerungen, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Einpassstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Gelesen und geprüft, aber noch nicht umgesetzt werden `bodyStyle` und `palette` der Vorlage. `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Eine Breite `'auto'` wird als `'fill'` gelesen.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Verankerungen, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Einpassstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Seit postext 1.42 setzt er auch die `palette` der Vorlage, den `look` eines Rahmens und die Breite `'auto'` um (so breit wie die längste Zeile des Rahmens). `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Gelesen und geprüft, aber noch nicht umgesetzt wird `bodyStyle` der Vorlage.
 
 ### Doppelseiten
 
@@ -588,7 +588,7 @@ In einem senkrecht gesetzten Buch (`vertical-rl`) wird eine Doppelseite im Fluss
 
 ## Beschriftungsstile
 
-Die Eigenschaft `labelStyles` legt das Aussehen der Beschriftungen auf einem Bild fest: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung angibt. In der Sandbox werden sie unter **Gestaltung › Abbildungen und Tabellen › Beschriftungsstile** bearbeitet (seit postext 1.42).
+Die Eigenschaft `labelStyles` legt das Aussehen der Beschriftungen auf einem Bild fest: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung angibt. In der Sandbox werden sie unter **Gestaltung › Abbildungen und Tabellen › Beschriftungsstile** bearbeitet (seit postext 1.42). Wird ein Stil dort umbenannt, schreibt die Sandbox die Anker und die `::label`-Zeilen um, die ihn nennen (seit postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Wie klein eine Beschriftung gesetzt werden darf, wenn sie nicht in ihre Breite passt.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Vertikale Schreibrichtung für die Beschriftungen dieses Stils: aufrechte Zeichen in Zellen untereinander, Spalten von rechts nach links, wie eine chinesische oder japanische Karte beschriftet wird. Das eigene <code>writingMode</code> eines Ankers hat Vorrang.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> besagt, dass die an diesem Anker gesetzte Beschriftung ihre Nachbarn berühren darf, wie in der gedruckten Quelle: Für ein Paar, zu dem sie gehört, wird <code>labelOverlap</code> nicht ausgelöst. Hat Vorrang vor dem <code>overlap</code> des Stils. Seit postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>Bei einer Abbildung über den Bund einer Doppelseite rückt <code>'keep'</code> die Beschriftung aus dem Bundsteg, auf die Seite, auf der ihr Punkt liegt; <code>'cross'</code> lässt sie dort, wo der Punkt sie hinsetzt, wie es ein Titel über beide Seiten braucht. Seit postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
       <td>keiner</td>
       <td>Eine ID aus <code>labelStyles</code>. Eine Beschriftung, die ihren eigenen Stil angibt, überschreibt ihn.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> setzt die Beschriftung senkrecht, wie eine chinesische oder japanische Karte oder ein Buchrücken beschriftet wird. Ihre <code>width</code> ist dann ein Bruchteil der Bildhöhe, <code>align</code> läuft entlang der Spalte (<code>start</code> ist oben) und <code>verticalAlign</code> quer zu den Spalten (<code>top</code> ist die erste, rechte).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> besagt, dass die an diesem Anker gesetzte Beschriftung ihre Nachbarn berühren darf, wie in der gedruckten Quelle: Für ein Paar, zu dem sie gehört, wird <code>labelOverlap</code> nicht ausgelöst. Hat Vorrang vor dem <code>overlap</code> des Stils. Seit postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>Bei einer Abbildung über den Bund einer Doppelseite rückt <code>'keep'</code> die Beschriftung aus dem Bundsteg, auf die Seite, auf der ihr Punkt liegt; <code>'cross'</code> lässt sie dort, wo der Punkt sie hinsetzt, wie es ein Titel über beide Seiten braucht. Seit postext 1.43.</td>
     </tr>
   </tbody>
 </table>

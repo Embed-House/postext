@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Impostazioni delle pagine composte',
   description: 'I modelli delle pagine composte: cornici, gruppi, decorazione, ereditarietà e varianti per pagina dispari e pari (recto/verso); gli stili delle etichette poste sulle ancore delle immagini, e gli avvisi che un modello può dare',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>nessuno</td>
-      <td>Uno stile di paragrafo per il testo della pagina, come quello degli stili dei titoli.</td>
+      <td>Uno stile di paragrafo per il testo della pagina, come quello degli stili dei titoli. L’impaginazione non lo applica ancora.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ Una cornice si colloca nella cella indicata da `grid`, se il modello ha una grig
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, quello dello stile</td>
-      <td>Colonne dentro la cornice.</td>
+      <td>Colonne dentro la cornice. Un titolo non ne chiude mai una: passa alla colonna successiva con il testo che introduce (con <code>headings.keepWithNext</code>, da postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Vengono letti e controllati, ma non ancora applicati: il `bodyStyle` e la `palette` del modello. Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Una larghezza `'auto'` si legge come `'fill'`.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Da postext 1.42 applica anche la `palette` del modello, il `look` di una cornice e la larghezza `'auto'` (quella della riga più lunga della cornice). Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Viene letto e controllato, ma non ancora applicato: il `bodyStyle` del modello.
 
 ### Doppie pagine
 
@@ -588,7 +588,7 @@ In un libro verticale (`vertical-rl`) la doppia pagina si compone nel sistema di
 
 ## Stili delle etichette
 
-La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta su un’ancora dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile indicato dall’ancora o dall’etichetta. Nella Sandbox si modificano in **Grafica › Figure e tabelle › Stili di etichetta** (da postext 1.42).
+La proprietà `labelStyles` dà un nome agli aspetti delle etichette messe su un’immagine: i mari e le città di una carta, le parti di uno schema. Un’etichetta sta su un’ancora dell’immagine (un punto salvato con la risorsa, come i personaggi dei fumetti) e prende lo stile indicato dall’ancora o dall’etichetta. Nella Sandbox si modificano in **Grafica › Figure e tabelle › Stili di etichetta** (da postext 1.42). Rinominare lì uno stile riscrive le ancore e le righe `::label` che lo nominano (da postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Quanto si può rimpicciolire un’etichetta che non entra nella sua larghezza.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Scrittura verticale per le etichette di questo stile: caratteri dritti in celle una sotto l’altra, colonne da destra a sinistra, come si scrive una mappa cinese o giapponese. Il <code>writingMode</code> proprio di un’ancora prevale.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> dice che l’etichetta posta su questa ancora può toccare le vicine, come la stampa l’originale: <code>labelOverlap</code> non viene segnalato per una coppia di cui fa parte. Ha la precedenza sull’<code>overlap</code> dello stile. Da postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>Su una figura che attraversa il dorso di una doppia pagina, <code>'keep'</code> sposta l’etichetta fuori dalla fascia del margine del dorso, dalla parte in cui cade il suo punto; <code>'cross'</code> la lascia dove la mette il punto, come richiede un titolo disteso sulle due pagine. Da postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ Le ancore di un’immagine (`Resource.anchors`, i punti che i fumetti usano per 
       <td>nessuno</td>
       <td>Un id di <code>labelStyles</code>. Un’etichetta che indica il proprio stile lo sostituisce.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> compone l’etichetta in verticale, come si scrive una mappa cinese o giapponese o un dorso. La sua <code>width</code> è allora una frazione dell’altezza dell’immagine, <code>align</code> corre lungo la colonna (<code>start</code> è l’alto) e <code>verticalAlign</code> attraverso le colonne (<code>top</code> è la prima, quella di destra).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> dice che l’etichetta posta su questa ancora può toccare le vicine, come la stampa l’originale: <code>labelOverlap</code> non viene segnalato per una coppia di cui fa parte. Ha la precedenza sull’<code>overlap</code> dello stile. Da postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>Su una figura che attraversa il dorso di una doppia pagina, <code>'keep'</code> sposta l’etichetta fuori dalla fascia del margine del dorso, dalla parte in cui cade il suo punto; <code>'cross'</code> la lascia dove la mette il punto, come richiede un titolo disteso sulle due pagine. Da postext 1.43.</td>
     </tr>
   </tbody>
 </table>

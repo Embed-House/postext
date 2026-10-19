@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '文書形式',
   description: 'Postextが解析するMarkdownのサブセット。フロントマター、見出し、リスト、コードブロック、無視される記法、そしてソースを書くときの決まり',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '16分',
   order: 25,
   plainSummary: "このページでは、Postextが組める文章の書き方を説明します。文章はMarkdownで書きます。Markdownは、いくつかの記号で見出し、リスト、太字、リンクを表す簡単な書き方です。このページでは、ファイルの先頭に書く行、見出し、リスト、コードと、Postextが無視する記号を扱います。囲みや段組みのようなブロック、行の中の記号、注と参照、画像と表は、ほかの4つのページで説明します。最後に、読みやすい文章を書くための助言があります。",
@@ -53,7 +53,7 @@ YAMLは値に型を付けます。`1984`は数値、`2026-04-15`は日付、`[An
 
 ## ブロック要素
 
-Postextが認識するのは7種類の本文ブロックとコードリストで、ほかにこのページの後半で扱うディレクティブとリソースの埋め込みがあります。ブロックは必ず、空行か別のブロックの開始で終わります。
+Postextが認識するのは7種類の本文ブロックとコードリストで、ほかに[ディレクティブ](/ja/docs/document-format-directives)と[リソースの埋め込み](/ja/docs/document-format-resources)があり、それぞれ専用のページで説明します。ブロックは必ず、空行か別のブロックの開始で終わります。
 
 <Illustration name="BlockTypesGallery" data='{"title": "本文のブロック要素の一覧", "desc": "Postextが認識する7種類の本文ブロック（見出し、段落、引用ブロック、箇条書きリスト、番号付きリスト、タスクリスト、別行立て数式）と、それぞれのMarkdown記法。ディレクティブとリソースの埋め込みは別に扱います。", "caption": "本文のブロックの種類と、それぞれのMarkdownでの書き方。", "blocks": [{"name": "見出し", "syntax": "# Title", "color": "blue"}, {"name": "段落", "syntax": "プレーンテキストの行", "color": "orange"}, {"name": "引用ブロック", "syntax": "> quoted text", "color": "green"}, {"name": "箇条書きリスト", "syntax": "- item", "color": "purple"}, {"name": "番号付きリスト", "syntax": "1. item", "color": "pink"}, {"name": "タスクリスト", "syntax": "- [x] done", "color": "teal"}, {"name": "別行立て数式", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ Postextが認識するのは7種類の本文ブロックとコードリストで
     <tr>
       <td>番号付きリスト</td>
       <td><code>1. item</code>, <code>2) item</code></td>
-      <td>数字のあとに<code>.</code>か<code>)</code>を付けます。開始番号は保持されます（リストを5や0から始めることもできます）。出力に描く区切り記号は、ソースではなく<code>orderedLists.separator</code>で決まります。</td>
+      <td>数字のあとに<code>.</code>か<code>)</code>を付けます。数字はヨーロッパ式のほか、アラビア語やペルシア語のキーボードで入力するアラビア・インド数字（<code>١.</code>）とペルシア数字（<code>۱.</code>）も使えます。開始番号は保持されます（リストを5や0から始めることもできます）。出力に描く区切り記号は、ソースではなく<code>orderedLists.separator</code>で決まります。</td>
     </tr>
     <tr>
       <td>タスクリスト（GFM）</td>
@@ -210,6 +210,10 @@ echo "done: $(date)"
       <td><code>span=page</code></td>
       <td>複数の段があるページで、コードリストがすべての段にまたがります。</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>浮動する <code>:::callout</code> と同じように、コードリストを段の頭か足の最初の空いた帯へ送ります。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'الاستخدام البرمجي',
   description: 'استعمال Postext من الشيفرة: buildDocument وتحذيراته، والقيم الافتراضية، والخطوط، والذاكرات المؤقتة، وWeb Worker',
   lang: 'ar',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '31 دقيقة',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## الاستخدام البرمجي
 
-> **المسار الموصى به: استخدم عامل الويب (Web Worker).** في المتصفح، ينبغي أن تُشغّل الغالبية العظمى من عمليات التكامل خطَّ معالجة الإخراج (pipeline) عبر `createLayoutWorker()` من `postext/worker`، **لا** باستدعاء `buildDocument` مباشرة على الخيط الرئيسي (main thread). يُبقي العامل واجهة المستخدم سريعة الاستجابة أثناء البناء، ويحفظ قياسات النص في ذاكرة مؤقتة عبر عمليات إعادة البناء التدريجية، ويُفعّل الإلغاء بقاعدة «الأحدث يفوز» (last-wins)، فتُلغي كل ضغطة مفتاح جديدة أي بناء قديم لا يزال قيد التنفيذ. انتقل مباشرة إلى [تشغيل الإخراج في Web Worker](#تشغيل-الإخراج-في-web-worker) لتجد الطريقة المعتمدة. كل ما يرد في بقية هذا القسم (استدعاء `buildDocument` مباشرة، ودوال الاستكمال، ودوال الحذف، والذاكرات المؤقتة) يظل مفيدًا، فالعامل يقبل المدخلات نفسها تمامًا ويُعيد المخرجات نفسها، لكن غلاف العامل هو نقطة البداية الصحيحة لشيفرة واجهة المستخدم. لا تلجأ إلى استدعاء `buildDocument` على الخيط الرئيسي إلا للتصدير الذي يجري مرة واحدة، أو للعرض على جانب الخادم (Node)، أو للاختبارات.
+> **المسار الموصى به: استخدم عامل الويب (Web Worker).** في المتصفح، شغّل الإخراج عبر `createLayoutWorker()` من `postext/worker` بدل استدعاء `buildDocument` في الخيط الرئيسي. يُبقي العامل الصفحة مستجيبة أثناء الإخراج، ويحتفظ بقياسات النص بين إعادة إخراج وأخرى، ويلغي الإخراج الجاري حين يبدأ إخراج أحدث، فلا تنتظر ضغطة مفتاح إخراج نص أقدم. الطريقة في [تشغيل الإخراج في Web Worker](#تشغيل-الإخراج-في-web-worker). وبقية هذا القسم (`buildDocument` مباشرةً، والمحلِّلات، ودوال التجريد، والذاكرات المؤقتة) تبقى صالحة: يأخذ العامل المدخلات نفسها ويعيد المخرجات نفسها. لا تستدعِ `buildDocument` في الخيط الرئيسي إلا للتصدير لمرة واحدة، أو للعرض على الخادم (Node)، أو للاختبارات.
 
 ### بناء مستند
 
@@ -292,6 +292,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
+يسرد الجدول الأنواع التي يمكن أن يُصدرها أي مستند. أما أنواع الميزة الواحدة فتُوصف معها: القصص المصورة (`comicPanelCount`، `comicBalloonOverflow`…) في صفحة [القصص المصورة](/ar/docs/comics)، ومقاطع الفيديو (`videoWithoutUrl`، `videoUrlInvalid`، `videoWithoutPoster`) في [الصور والجداول ومقاطع الفيديو](/ar/docs/document-format-resources)، والاستشهادات والفهرس (`unknownCitationKey`، `referencesUnreadable`، `indexMark`…) في [الحواشي والإحالات](/ar/docs/document-format-notes-references)، والنص الصيني والياباني والعربي (`cjkLooseLine`، `rubyExceedsLeading`، `arabicMarksExceedLeading`…) في صفحات هذه الكتابات، وأنواع مقسِّم الأسطر (`raggedLine`، `unbreakableWordOverflow`) في [تقسيم الكلمات وضبط الأسطر](/ar/docs/justification).
+
 التحذيرات المتعلقة بمورد ما، سواء نمط جدوله أو شبكته أو مرجع داخل تعليقه أو ملاحظته أو خلاياه، تشير إلى أول تضمين لذلك المورد أو أول مرجع إليه في النص، ويُسجَّل كل منها مرة واحدة لكل مورد. ولا تُفحص إلا الموارد التي يستخدمها المستند: ففصل من كتاب يُصدر تحذيرات عن الجداول التي يستشهد بها، لا عن كل جدول في الكتاب.
 
 ```ts
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **أشكال الخطوط التي تصرّح بها الصفحة** (قاعدة `@font-face`، أو `FontFace` أُضيف من قبل) تُحمَّل عبر مجموعة الخطوط (`document.fonts.load`، أو `self.fonts` داخل عامل). **أما أشكال الخطوط التي لا تصرّح بها** فتُطلب من `resolve(family, weight, style, { text, codePoints })`، التي تجيب بملف (بايتات أو عنوان URL)، أو بعدة ملفات (شرائح شكل واحد)، أو بـ`{ source, unicodeRange, weight, style }` لشريحة أو لمدى متغيّر، أو بـ`null`. ويضيفها المحرّك كائناتِ `FontFace` بعد أن يكتمل تحميلها جميعًا، بترتيب الإعدادات وترتيب كل إجابة (latin، ثم latin-ext، ثم greek إن أجاب المحلِّل بذلك)، فتبقى مجموعة الخطوط هي نفسها أيًّا كان الترتيب الذي تصل به الملفات. ويسجّلها أيضًا في سجل الخطوط الذي تقرؤه [صور SVG](/ar/docs/configuration-resources#الخطوط-في-نصوص-svg) وعمّال الإخراج. ويجوز للمحلِّل أن يصرّح بالشكل بنفسه (بإضافة ورقة أنماط) ثم يجيب بـ`null`.
-- **التقرير** يسرد أشكال الخطوط التي يغطيها شكل محمَّل (أو عائلة مثبّتة)، وأشكال الخطوط التي لا تزال مفقودة (`missing`)، وأشكال الخطوط التي سيركّبها المتصفح من وزن أو ميل آخر (`synthesized`). ويحدّ `timeoutMs` (10 000 افتراضيًا) من مدة الانتظار؛ فالشكل الذي لم يكتمل تحميله عندئذ يُعدّ مفقودًا. وحيث لا توجد مجموعة خطوط (Node) لا تفعل `prepareFonts` شيئًا، وتعدّ كل أشكال الخطوط محمَّلة.
+- **التقرير** يسرد في `loaded` أشكال الخطوط التي يغطيها شكل محمَّل (أو عائلة مثبّتة)، وفي `missing` الأشكال التي لا تزال مفقودة، وفي `synthesized` الأشكال التي سيرسمها المتصفح من وزن أو ميل آخر؛ ويعدّ `added` كائنات `FontFace` التي أُضيفت من ملفات المحلِّل. ويحدّ `timeoutMs` (10 000 افتراضيًا) من مدة الانتظار؛ فالشكل الذي لم يكتمل تحميله عندئذ يُعدّ مفقودًا. وحيث لا توجد مجموعة خطوط (Node) لا تفعل `prepareFonts` شيئًا، وتعدّ كل أشكال الخطوط محمَّلة.
 - **`buildDocumentWithFonts(content, config, options)`** تحضّر، ثم تبني بـ`buildDocumentAsync`، ثم تقرأ أشكال الخطوط التي نُضّد بها النص فعلًا في الصفحات، فتحمّل ما لم تستطع مجموعة الخطوط توفيره منها (الوزن الذي لا تكشفه إلا الصفحات يُطلب من `resolve` ولو كان في العائلة وزن آخر ينوب عنه)، وتبني من جديد (بنائين إضافيين على الأكثر). وتفعل `withLoadedFonts(build, options)` الشيء نفسه حول أي دالة بناء، لكتاب يُبنى فصلًا فصلًا أو لحزمة (`buildBundle`) تُعيد عدة مستندات. ويتلقى `options.onFonts` التقرير النهائي.
 - **بعد البناء**، يُضاف إلى `doc.contentWarnings` كل شكل خط نُضّد به النص ولم تستطع مجموعة الخطوط توفيره، بوصفه `fontFallback` (انظر [التحذيرات في المستند](#التحذيرات-في-المستند)).
 
@@ -555,6 +557,29 @@ const doc = buildDocument({ markdown }, config);
 
 أبسط طريقة للعزل نطاقٌ لكل مستند: إطار iframe لكل مثال حيّ (وتضمين CodePen واحد منها)، أو [عامل إخراج](#تشغيل-الإخراج-في-web-worker) لكل مستند للقياسات وتقسيم الكلمات (أما الصور فلا تزال تُسجَّل في الصفحة).
 
+### مستندات Word (`postext/word`)
+
+يقرأ المسار الفرعي `postext/word` مستندات Word (`.docx`) ويكتبها دون DOM. وعليه يقوم استيراد Word وتصديره في Sandbox، والأمران `import-docx` و`docx` في سطر الأوامر (انظر [سطر الأوامر › docx وimport-docx](/ar/docs/command-line#docx-وimport-docx)).
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // Uint8Array أو ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict, report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`** يقرأ الملف إلى نموذج Word: أنماطه وفقراته وحواشيه وصوره، و`title` المستند، وقالب الاستيراد الذي يحمله الملف الذي صدّره Postext (`embeddedTemplate`). والملف الذي ليس مستند Word يرمي `DocxReadError`.
+- **`wordToPostext(word, settings)`** يحوّل النموذج إلى فصول (`{ title, markdown }`) وصور وجداول. ويربط القالب كل نمط من أنماط Word بعنوان أو نمط فقرة أو إطار أو اقتباس أو تعليق في الإعدادات. ويفتح `chapters: 'split'` فصلًا عند كل عنوان من المستوى 1، ويُبقي `'single'` فصلًا واحدًا. وعلى المضيف أن يخزّن الصور (`id`، `media.bytes`، `caption`، `alt`) والجداول (`id`، `model`، `caption`) بوصفها موارد؛ ويذكر `skippedPictures` صور EMF وWMF وTIFF التي تُركت.
+- **`analyzeDocx(word, template, config)`** هو تقرير الجودة الذي يعرضه Sandbox قبل الاستيراد: الأنماط المستعملة، وعدد الفقرات التي لها نمط، وملاحظات مثل `directFormatting` و`manualHeadings` و`typedNumbering`، لكل منها عدد وأمثلة.
+- **`postextToDocx(chapters, settings)`** يكتب الفصول ملفَّ `.docx` (`Uint8Array`) بأنماط Word للعناوين والفقرات والإطارات والاقتباسات والقوائم والحواشي. وما لا يستطيع Word التعبير عنه يُحفظ حرفيًا في أنماط *Postext Markup*، ويوضع القالب داخل الملف، فيعود المستند عند استيراده دون تغيير. ويفتح `book: true` كل فصل بفقرة `Postext Chapter`، يعيد منها الاستيراد بناء الفصول.
+- **`wordStyleTracking(word, template, config)`** و<strong>`applyStyleTracking(config, tracking)`</strong> ينقلان تباعد الحروف في أنماط Word إلى أنماط الإعدادات التي لا تحدّده.
+
 
 ## تشغيل الإخراج في Web Worker
 
@@ -589,7 +614,10 @@ const doc = buildDocument({ markdown }, config);
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**: ينشئ عاملًا مخصّصًا (أو يغلّف عاملًا تمرّره عبر `opts.worker`، أو يشغّل مدخل العامل الموجود في `opts.url`) ويُعيد مقبضًا محدّد الأنواع. انظر [تحميل العامل من CDN](#تحميل-العامل-من-cdn).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**: يرسل بايتات الخطوط إلى العامل. تُنقل المخازن (buffers)، فاحتفظ بنسخة جديدة على الخيط الرئيسي إن احتجت إلى إعادة إرسالها لاحقًا.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**: يشغّل خطّ المعالجة. وإلغاء الإشارة يُلغي البناء الجاري.
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`**: يحذف من العامل أشكال خطوط تلك العائلات، فيسري `registerFonts` التالي لعائلة منها بدل أن يُطابَق بالشكل الذي يحمله العامل من قبل.
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`**: يشغّل خطّ المعالجة. و`options` هو `{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`. وإلغاء `signal` يُلغي البناء الجاري. ويُستدعى `onProgress({ pass, blocks, totalBlocks, pages })` كلما تقدّم وضع الكتل؛ ويتلقى `onStats({ passes, totalMs, cached?, missingFonts? })` توقيتات مراحل البناء المكتمل. و`resourcesKey` بصمة لـ`content.resources`: فعمليات البناء المتتالية بالمفتاح نفسه ترسل القائمة مرة واحدة، ويحتفظ بها العامل. و`cacheKey` بصمة للبناء كله: يحتفظ العامل بآخر بضعة مستندات بحسبها، ويجيب البناءَ الذي يحمل مفتاحًا عنده من تلك الذاكرة المؤقتة.
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`**: يبني في ذاكرة المستندات المؤقتة في العامل دون أن يعيد المستند، لفصل قد يفتحه القارئ بعد ذلك؛ ويُجاب `build` التالي بذلك `cacheKey` من الذاكرة المؤقتة.
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`**: يشغّل `prepareFonts` في الصفحة، ثم يرسل إلى العامل أشكال الخطوط التي وجدها؛ انظر [تحميل العامل من CDN](#تحميل-العامل-من-cdn).
 - **`LayoutWorkerHandle.dispose(): void`**: يُنهي العامل ويرفض أي عمليات بناء معلّقة بـ`AbortError`.
 - **`FontPayload`**: `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` سلسلة وزن CSS (`'700'`، `'bold'`)؛ وتقبله `registerFonts` أيضًا رقمًا (`700`). ويُنقل `buffer` إلى العامل حين تستدعي `registerFonts`.
 - **`BuildCancelledError`** (يُعاد تصديره من `postext`): ما ترميه `buildDocument` داخليًا حين تُعيد `options.shouldCancel` القيمة `true`. لا تراه عادة على الخيط الرئيسي: فبروتوكول العامل يحوّله إلى `AbortError` قبل أن يصل إلى شيفرتك.

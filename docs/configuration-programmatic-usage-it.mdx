@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Uso programmatico',
   description: 'Chiamare Postext dal codice: buildDocument e i suoi avvisi, i valori predefiniti, i font, le cache e il Web Worker',
   lang: 'it',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '31 min',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Uso programmatico
 
-> **Percorso consigliato: usa il Web Worker.** In un browser, la stragrande maggioranza delle integrazioni dovrebbe guidare la pipeline di impaginazione tramite `createLayoutWorker()` da `postext/worker`, **non** chiamando `buildDocument` direttamente sul thread principale. Il worker mantiene reattiva l’interfaccia durante le generazioni, mette in cache le misure del testo tra una rigenerazione incrementale e l’altra e predispone l’annullamento in cui vince l’ultima richiesta, così un nuovo tasto premuto interrompe qualsiasi generazione superata ancora in corso. Vai direttamente a [Eseguire l’impaginazione in un Web Worker](#eseguire-limpaginazione-in-un-web-worker) per la ricetta canonica. Tutto il resto di questa sezione (`buildDocument` diretto, resolver, funzioni di pulizia, cache) resta utile, perché il worker espone esattamente gli stessi input e output, ma per il codice dell’interfaccia il wrapper del worker è il punto di partenza giusto. Ripiega sulla chiamata di `buildDocument` nel thread principale solo per esportazioni una tantum, rendering lato server (Node) o test.
+> **Percorso consigliato: usa il Web Worker.** Nel browser, impagina tramite `createLayoutWorker()` di `postext/worker` invece di chiamare `buildDocument` sul thread principale. Il worker mantiene la pagina reattiva durante l’impaginazione, conserva le misure del testo da un’impaginazione all’altra e annulla quella in corso quando ne parte una più recente, così un tasto premuto non aspetta mai l’impaginazione di un testo precedente. La ricetta è in [Eseguire l’impaginazione in un Web Worker](#eseguire-limpaginazione-in-un-web-worker). Il resto di questa sezione (`buildDocument` diretto, resolver, funzioni di pulizia, cache) resta valido: il worker riceve gli stessi input e restituisce gli stessi output. Chiama `buildDocument` sul thread principale solo per esportazioni occasionali, rendering lato server (Node) o test.
 
 ### Costruire un documento
 
@@ -292,6 +292,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
+La tabella elenca i tipi che qualsiasi documento può segnalare. I tipi di una singola funzionalità sono descritti insieme a essa: i fumetti (`comicPanelCount`, `comicBalloonOverflow`…) nella pagina [Fumetti](/it/docs/comics), i video (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) in [Risorse](/it/docs/document-format-resources), le citazioni e l’indice analitico (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) in [Note e riferimenti](/it/docs/document-format-notes-references), il testo cinese, giapponese e arabo (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) nelle pagine di queste scritture, e quelli della divisione in righe (`raggedLine`, `unbreakableWordOverflow`) in [Giustificazione](/it/docs/justification).
+
 Gli avvisi su una risorsa (il suo stile di tabella, la sua griglia, un rimando dentro la sua didascalia, nota o celle) puntano al primo inserimento o al primo rimando della risorsa nel testo, e ciascuno viene elencato una volta per risorsa. Si controllano solo le risorse che il documento usa: un capitolo di un libro segnala le tabelle che cita, non tutte le tabelle del libro.
 
 ```ts
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **I caratteri che la pagina dichiara** (una regola `@font-face`, un `FontFace` già aggiunto) vengono caricati tramite l’insieme dei font (`document.fonts.load`, o `self.fonts` in un worker). **I caratteri che non dichiara** vengono chiesti a `resolve(family, weight, style, { text, codePoints })`, che risponde con un file (byte o un URL), più file (le fette di un carattere), `{ source, unicodeRange, weight, style }` per una fetta o un intervallo variabile, oppure `null`. Il motore li aggiunge come `FontFace` una volta caricati tutti, nell’ordine della configurazione e di ogni risposta (latin, poi latin-ext, poi greek quando il resolver risponde così), così l’insieme dei font è lo stesso in qualunque ordine arrivino i file. Li registra anche nel registro dei font che leggono le [immagini SVG](/it/docs/configuration-resources#font-nel-testo-svg) e i worker di impaginazione. Un resolver può dichiarare il carattere da sé (aggiungendo un foglio di stile) e rispondere `null`.
-- **Il resoconto** elenca i caratteri a cui risponde un carattere caricato (o una famiglia installata), quelli ancora `missing`, e quelli che il browser ricaverebbe (`synthesize`) da un altro peso o inclinazione. `timeoutMs` (10.000 per impostazione predefinita) limita l’attesa; un carattere ancora in caricamento a quel punto conta come mancante. Dove non c’è un insieme di font (Node), `prepareFonts` non fa nulla e segnala tutti i caratteri come caricati.
+- **Il resoconto** elenca in `loaded` i caratteri a cui risponde un carattere caricato (o una famiglia installata), in `missing` quelli ancora mancanti e in `synthesized` quelli che il browser ricaverebbe da un altro peso o inclinazione; `added` conta i `FontFace` aggiunti dai file del resolver. `timeoutMs` (10.000 per impostazione predefinita) limita l’attesa; un carattere ancora in caricamento a quel punto conta come mancante. Dove non c’è un insieme di font (Node), `prepareFonts` non fa nulla e segnala tutti i caratteri come caricati.
 - **`buildDocumentWithFonts(content, config, options)`** prepara, genera con `buildDocumentAsync`, legge i caratteri con cui le pagine compongono effettivamente il testo, carica quelli che l’insieme dei font non poteva fornire (un peso che solo le pagine rivelano viene chiesto a `resolve` anche quando un altro peso della famiglia risponderebbe per lui) e genera di nuovo (al massimo due generazioni in più). `withLoadedFonts(build, options)` fa lo stesso attorno a qualsiasi funzione di generazione, per un libro generato capitolo per capitolo o per un pacchetto (`buildBundle`) che restituisce più documenti. `options.onFonts` riceve il resoconto finale.
 - **Dopo la generazione**, ogni carattere con cui è stato composto il testo e che l’insieme dei font non poteva fornire viene elencato in `doc.contentWarnings` come `fontFallback` (vedi [Avvisi nel documento](#avvisi-nel-documento)).
 
@@ -555,6 +557,29 @@ Parte dello stato di Postext vive in variabili a livello di modulo. Tutto ciò c
 
 L’isolamento più semplice è un realm per documento: un iframe per esempio dal vivo (un embed di CodePen lo è), oppure un [worker di impaginazione](#eseguire-limpaginazione-in-un-web-worker) per documento per le misure e la sillabazione (le immagini vengono comunque registrate sulla pagina).
 
+### Documenti Word (`postext/word`)
+
+Il sottopercorso `postext/word` legge e scrive documenti Word (`.docx`) senza un DOM. L’importazione e l’esportazione Word della Sandbox e i comandi `import-docx` e `docx` della riga di comando si basano su di esso (vedi [Riga di comando › docx e import-docx](/it/docs/command-line#docx-e-import-docx)).
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // a Uint8Array or an ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict, report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`** legge il file in un modello Word: i suoi stili, paragrafi, note e immagini, il `title` del documento e il modello di importazione che contiene un’esportazione di Postext (`embeddedTemplate`). Un file che non è un documento Word solleva un `DocxReadError`.
+- **`wordToPostext(word, settings)`** trasforma il modello in capitoli (`{ title, markdown }`), immagini e tabelle. Il modello di importazione associa ogni stile Word a un titolo, a uno stile di paragrafo, a un riquadro, a una citazione o a una didascalia della configurazione. `chapters: 'split'` apre un capitolo a ogni titolo di livello 1, `'single'` ne tiene uno solo. Le immagini (`id`, `media.bytes`, `caption`, `alt`) e le tabelle (`id`, `model`, `caption`) le salva l’host come risorse; `skippedPictures` indica le immagini EMF, WMF e TIFF lasciate fuori.
+- **`analyzeDocx(word, template, config)`** è il rapporto di qualità che la Sandbox mostra prima di un’importazione: gli stili in uso, quanti paragrafi hanno uno stile e rilievi come `directFormatting`, `manualHeadings` e `typedNumbering`, ciascuno con un conteggio ed esempi.
+- **`postextToDocx(chapters, settings)`** scrive i capitoli come `.docx` (un `Uint8Array`) con stili Word per titoli, paragrafi, riquadri, citazioni, elenchi e note. Ciò che Word non sa esprimere resta tale e quale negli stili *Postext Markup*, e il modello di importazione va dentro il file, così il documento si reimporta senza modifiche. `book: true` apre ogni capitolo con un paragrafo `Postext Chapter`, da cui l’importazione ricostruisce i capitoli.
+- **`wordStyleTracking(word, template, config)`** e **`applyStyleTracking(config, tracking)`** riportano la spaziatura tra i caratteri degli stili Word sugli stili della configurazione che non ne impostano una.
+
 
 ## Eseguire l’impaginazione in un Web Worker
 
@@ -589,7 +614,10 @@ Il client del worker si trova nel sottopercorso `postext/worker` ed è composto 
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**: avvia un worker dedicato (o avvolge quello che passi tramite `opts.worker`, o avvia il punto d’ingresso del worker in `opts.url`) e restituisce un handle tipizzato. Vedi [Caricare il worker da una CDN](#caricare-il-worker-da-una-cdn).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**: spedisce i byte dei font nel worker. I buffer vengono trasferiti, quindi tieni una copia nuova sul thread principale se devi rinviarli più tardi.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**: esegue la pipeline. Se annulli il segnale, la generazione in corso si interrompe.
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`**: elimina i font del worker di quelle famiglie, così il successivo `registerFonts` per una famiglia ha effetto invece di essere confrontato con il font che il worker ha già.
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`**: esegue la pipeline. `options` è `{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`. Se annulli `signal`, la generazione in corso si interrompe. `onProgress({ pass, blocks, totalBlocks, pages })` viene chiamata man mano che il posizionamento avanza; `onStats({ passes, totalMs, cached?, missingFonts? })` riceve i tempi dei passaggi della generazione conclusa. `resourcesKey` è un’impronta di `content.resources`: generazioni consecutive con la stessa chiave inviano l’elenco una volta sola, e il worker lo conserva. `cacheKey` è un’impronta dell’intera generazione: il worker conserva con questa chiave i suoi ultimi documenti e risponde dalla cache a una generazione di cui possiede la chiave.
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`**: genera nella cache dei documenti del worker senza rinviare il documento, per un capitolo che il lettore potrebbe aprire subito dopo; la successiva `build` con quel `cacheKey` riceve la risposta dalla cache.
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`**: `prepareFonts` sulla pagina, poi i font trovati inviati al worker; vedi [Caricare il worker da una CDN](#caricare-il-worker-da-una-cdn).
 - **`LayoutWorkerHandle.dispose(): void`**: termina il worker e rifiuta tutte le generazioni in sospeso con `AbortError`.
 - **`FontPayload`**: `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` è una stringa di peso CSS (`'700'`, `'bold'`); `registerFonts` lo accetta anche come numero (`700`). Il `buffer` viene trasferito al worker quando chiami `registerFonts`.
 - **`BuildCancelledError`** (riesportato da `postext`): ciò che `buildDocument` lancia internamente quando `options.shouldCancel` restituisce `true`. Di solito non lo vedi sul thread principale: il protocollo del worker lo converte in un `AbortError` prima che raggiunga il tuo codice.

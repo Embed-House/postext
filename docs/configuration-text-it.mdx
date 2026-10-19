@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Testo corrente',
   description: 'La tipografia del testo corrente: font, corpo e interlinea, colori, rientri, citazioni in blocco, versi, tabulatori e capilettera',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26 min',
   order: 7,
   parent: 'configuration',
@@ -106,9 +106,9 @@ La proprietà `bodyText` controlla la tipografia di tutto il testo dei paragrafi
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Allineamento del testo. <code>'left'</code> (o <code>'start'</code>) è il lato da cui comincia una riga: la destra di un paragrafo da destra a sinistra (vedi <a href="/it/docs/configuration-language#direzione-del-testo">Direzione del testo</a>). Il testo giustificato distribuisce lo spazio su ogni riga, così i margini risultano regolari. Le ultime righe dei paragrafi giustificati vengono composte in bandiera alla loro larghezza naturale, tranne quando Knuth-Plass ha accettato un’ultima riga troppo piena contando sulla compressione degli spazi: in quel caso gli spazi tra le parole si stringono in modo che la riga occupi esattamente la giustezza (la semantica di composizione della glue di TeX, applicata allo stesso modo nei backend canvas, HTML e PDF).</td>
+      <td>Allineamento del testo. <code>'left'</code> (o <code>'start'</code>) è il lato da cui comincia una riga: la destra di un paragrafo da destra a sinistra (vedi <a href="/it/docs/configuration-language#direzione-del-testo">Direzione del testo</a>). <code>'right'</code> (o <code>'end'</code>) è il lato in cui finisce, e <code>'center'</code> centra ogni riga. Il testo giustificato distribuisce lo spazio su ogni riga, così i margini risultano regolari. Le ultime righe dei paragrafi giustificati vengono composte in bandiera alla loro larghezza naturale, tranne quando Knuth-Plass ha accettato un’ultima riga troppo piena contando sulla compressione degli spazi: in quel caso gli spazi tra le parole si stringono in modo che la riga occupi esattamente la giustezza (la semantica di composizione della glue di TeX, applicata allo stesso modo nei backend canvas, HTML e PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -253,6 +253,12 @@ La proprietà `bodyText` controlla la tipografia di tutto il testo dei paragrafi
       <td><code>BlockquoteConfig</code></td>
       <td>vedi più sotto</td>
       <td>Come vengono composte le citazioni Markdown (<code>&gt; …</code>): colore, corsivo e rientri. Vedi <a href="#citazioni-in-blocco">Citazioni in blocco</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>vedi più sotto</td>
+      <td>Come vengono composte le poesie <code>:::verse</code> disposte verso per verso: rientri, versi troppo lunghi che vanno a capo, spazio tra le strofe e strofe tenute intere. Vedi <a href="#versi">Versi</a>.</td>
     </tr>
   </tbody>
 </table>

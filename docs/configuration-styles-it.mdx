@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configurazione: stili e parti',
   sidebarTitle: 'Stili e parti',
-  description: 'Stili con nome per paragrafi, chip, listati di codice e titoli, e le pagine che aprono ogni parte',
+  description: 'Stili con nome per paragrafi, chip, evidenziazioni, listati di codice e titoli, e le pagine che aprono ogni parte',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '36 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "Questa pagina tratta gli stili con nome che definisci una volta e usi molte volte. Uno stile di paragrafo imposta un tipo di testo, come una bibliografia o un glossario. Uno stile di chip disegna una piccola etichetta dentro una riga. I listati di codice hanno un proprio carattere, un proprio riquadro e propri colori. La pagina tratta anche le pagine che aprono ogni parte di un libro e gli stili per i titoli speciali. I riquadri hanno una pagina a parte.",
+  plainSummary: "Questa pagina tratta gli stili con nome che definisci una volta e usi molte volte. Uno stile di paragrafo imposta un tipo di testo, come una bibliografia o un glossario. Uno stile di chip disegna una piccola etichetta dentro una riga, e uno stile di evidenziazione una fascia di colore dietro una frase. I listati di codice hanno un proprio carattere, un proprio riquadro e propri colori. La pagina tratta anche le pagine che aprono ogni parte di un libro e gli stili per i titoli speciali. I riquadri hanno una pagina a parte.",
 };
 
 # Configurazione: stili e parti
@@ -292,7 +292,7 @@ I punti di ogni riga finiscono mezzo em prima del prezzo (`leaderGap`). Un piatt
 
 ### Il contenitore `:::paragraphs`
 
-Una riga `:::paragraphs{style="<id>"}` apre il contenitore e una riga `:::` da sola lo chiude; ogni paragrafo compreso tra le due prende lo stile indicato, mentre titoli, elenchi e altri blocchi al suo interno mantengono il loro stile abituale. I contenitori si possono annidare dentro altri contenitori delimitati. Un id di `style` sconosciuto non è un errore: i paragrafi si compongono come semplice testo corrente.
+Una riga `:::paragraphs{style="<id>"}` apre il contenitore e una riga `:::` da sola lo chiude; ogni paragrafo compreso tra le due prende lo stile indicato, mentre titoli, elenchi e altri blocchi al suo interno mantengono il loro stile abituale. I contenitori si possono annidare dentro altri contenitori delimitati. Un id di `style` sconosciuto non è un errore: i paragrafi si compongono come semplice testo corrente, e il Sandbox segnala l’id.
 
 La riga di apertura accetta anche `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` ed `endIndent` (i numeri senza unità sono em), con o senza uno stile: con uno stile, lo sostituiscono; senza, si applicano sopra lo stile del contenitore che lo racchiude, o sopra lo stile del testo nel punto in cui si trova il blocco (il testo corrente, una parte, una sezione con stile o un riquadro). `:::paragraphs{align=end}` compone un blocco allineato alla fine della riga (地付き) e `:::paragraphs{align=end endIndent=1}` un carattere prima. Da postext 1.16.
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Stili dei chip
 
-La proprietà `chipStyles` dichiara gli stili con nome del `:chip[text]{style="…"}` in linea: le caselle arrotondate e colorate di una banca di parole, un tasto della tastiera, un’etichetta (la sintassi e le sue regole di divisione in righe sono nel riferimento del formato del documento). Uno stile, `chip`, è presente di serie (un riempimento azzurro chiaro con un filetto sottile nel colore principale, leggermente arrotondato, il testo uguale alle parole attorno), così `:chip[…]` funziona senza alcuna configurazione; dichiarare `chipStyles` sostituisce quell’elenco predefinito. Un chip senza `style`, o con un id che nessuno stile dichiara, prende il primo stile.
+La proprietà `chipStyles` dichiara gli stili con nome del `:chip[text]{style="…"}` in linea: le caselle arrotondate e colorate di una banca di parole, un tasto della tastiera, un’etichetta (la sintassi e le sue regole di divisione in righe sono nel riferimento del formato del documento). Uno stile, `chip`, è presente di serie (un riempimento azzurro chiaro con un filetto sottile nel colore principale, leggermente arrotondato, il testo uguale alle parole attorno), così `:chip[…]` funziona senza alcuna configurazione; dichiarare `chipStyles` sostituisce quell’elenco predefinito. Un chip senza `style`, o con un id che nessuno stile dichiara, prende il primo stile (il Sandbox segnala l’id sconosciuto).
 
 ```ts
 const config: PostextConfig = {
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Stili di evidenziazione
 
-La proprietà `markStyles` dichiara gli stili con nome del `:mark[testo]{style="…"}` in linea: la fascia colorata dietro una frase, come un libro di scuola evidenzia le sue parole chiave (la sintassi e le sue regole di a capo sono nella guida al formato del documento). Uno stile, `mark`, è fornito di serie (una fascia giallo pallido che sporge un poco dalla frase, con le estremità leggermente arrotondate e il testo nel suo colore), quindi `:mark[…]` funziona senza alcuna configurazione; dichiarare `markStyles` sostituisce questo elenco. Un segno senza `style`, o con un id che nessuno stile dichiara, prende il primo stile.
+La proprietà `markStyles` dichiara gli stili con nome del `:mark[testo]{style="…"}` in linea: la fascia colorata dietro una frase, come un libro di scuola evidenzia le sue parole chiave (la sintassi e le sue regole di a capo sono nella guida al formato del documento). Uno stile, `mark`, è fornito di serie (una fascia giallo pallido che sporge un poco dalla frase, con le estremità leggermente arrotondate e il testo nel suo colore), quindi `:mark[…]` funziona senza alcuna configurazione; dichiarare `markStyles` sostituisce questo elenco. Un segno senza `style`, o con un id che nessuno stile dichiara, prende il primo stile (il Sandbox segnala l’id sconosciuto).
 
 ```ts
 const config: PostextConfig = {
@@ -1127,7 +1127,7 @@ const config: PostextConfig = {
       <td>campi del livello</td>
       <td>come in <code>headings.levels[]</code></td>
       <td>i valori del livello</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: ognuno di quelli impostati sostituisce il valore del livello per i titoli con questo stile (<code>dropCap: false</code> toglie il capolettera del livello). <code>breakBefore</code> si fonde campo per campo con quello del livello: uno stile che imposta solo <code>parity</code> mantiene l’<code>enabled</code> del livello, e uno che imposta solo <code>enabled: true</code> ne mantiene la parità (fino a postext 1.4, il campo mancante veniva invece dal valore predefinito senza interruzione).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>numberSeparator</code>, <code>numberPosition</code>, <code>breakBefore</code>, <code>span</code>, <code>spanBreak</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: ognuno di quelli impostati sostituisce il valore del livello per i titoli con questo stile (<code>dropCap: false</code> toglie il capolettera del livello). <code>breakBefore</code> si fonde campo per campo con quello del livello: uno stile che imposta solo <code>parity</code> mantiene l’<code>enabled</code> del livello, e uno che imposta solo <code>enabled: true</code> ne mantiene la parità (fino a postext 1.4, il campo mancante veniva invece dal valore predefinito senza interruzione).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1210,6 +1210,7 @@ Babble, badger… (runs on to the next page)
 ```
 
 Entrambe le lettere cominciano a pagina 1, quindi la pagina 1 prende le testatine della sezione `B`: un’unghiatura posta nell’intestazione dello stile mostra lì «B», e nessuna pagina porta l’unghiatura di «A». Dai a ogni sezione una pagina propria (`breakBefore`) quando ognuna ha bisogno della sua unghiatura.
+
 Appendici con lettere dopo capitoli numerati, e una pagina di dedica che l’indice e i segnalibri PDF elencano ma che nella pagina non mostra il titolo:
 
 ```ts

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Libri di pagine composte',
   description: 'Un percorso guidato nella Sandbox, su un libro di testo scolastico fatto di pagine composte: crei un modello di pagina e lo riempi dal Markdown, metti i nomi su una mappa, traduci la pagina, sistemi il testo che non entra e impari a selezionare sia sulla pagina sia nel testo',
   lang: 'it',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "Questa pagina insegna, passo dopo passo, a fare nella Sandbox una pagina di un libro di testo scolastico, con una fascia per il titolo, un testo e dei riquadri colorati. Si parte da un libro d’esempio già finito e gli si aggiunge una pagina. Prima si disegna la pagina come modello, poi la si riempie con il testo scritto in Markdown; quindi si scrivono i nomi dei luoghi su una mappa e si traduce la pagina in un’altra lingua. Alla fine si vede che cosa fare quando un testo è troppo lungo per il suo riquadro e come passare dalla pagina al testo e viceversa.",
@@ -102,7 +102,7 @@ La parola *Stone bridge* è Markdown; il punto fa parte dell’immagine. Quando 
 
 ## 5. Tradurre la pagina
 
-Una traduzione è lo stesso modello con altre parole. La Sandbox la conserva come un’altra edizione dello stesso libro: con la barra sopra il canvas passi da un’edizione all’altra, e il pannello **Verifiche** le controlla tutte (vedi [Edizioni di un libro](/it/docs/sandbox-previews#edizioni-di-un-libro)). Per crearne una:
+Una traduzione è lo stesso modello con altre parole. La Sandbox la conserva come un’altra edizione dello stesso libro: con la barra degli strumenti sul bordo sinistro del canvas passi da un’edizione all’altra, e il pannello **Verifiche** le controlla tutte (vedi [Edizioni di un libro](/it/docs/sandbox-previews#edizioni-di-un-libro)). La barra compare quando il puntatore raggiunge quel bordo, e il pulsante per fissarla la tiene aperta. Per crearne una:
 
 1. Apri **Libri**, premi **⋯** sul tuo libro e scegli **Aggiungi una lingua…**. Scegli la lingua e premi **Aggiungi e apri**. La Sandbox copia l’edizione aperta in una nuova, ne imposta la **Lingua del documento** sulla lingua scelta e la apre. La sillabazione, le virgolette e le parole che il motore scrive da sé (come *Continued* al taglio di un riquadro) seguono quella lingua. Il testo, però, è ancora quello dell’originale.
 2. Nel pannello **Testo** traduci le parole e lascia il resto.
@@ -160,7 +160,7 @@ Ora la pagina mostra la cornice contornata di rosso, con una fascia sotto il bor
 - *fallo proseguire nella pagina seguente (overflow.continueIn)* manda ciò che non entra in una pagina aggiunta dopo questa. Va bene per un testo più lungo.
 - *taglia circa 495 caratteri* non cambia nulla. Seleziona il testo della cornice e ti dice quanto devi tagliare.
 
-Un pulsante che modifica il modello (e quindi ogni pagina impaginata con esso) chiede prima conferma e indica quale impostazione cambia. Premi **Cambia**. La pagina viene impaginata di nuovo: il riquadro termina con la parola che segnala il taglio (*Continúa*) e il resto prosegue in cima a una pagina aggiunta. **Cmd/Ctrl+Z** annulla la modifica. **Spostamenti**, nella barra sopra il canvas, apre *Che cosa si è spostato e perché*: le cornici a cui l’impaginazione ha cambiato misura o posizione per far entrare il contenuto, ciascuna con il motivo spiegato a parole.
+Un pulsante che modifica il modello (e quindi ogni pagina impaginata con esso) chiede prima conferma e indica quale impostazione cambia. Premi **Cambia**. La pagina viene impaginata di nuovo: il riquadro termina con la parola che segnala il taglio (*Continúa*) e il resto prosegue in cima a una pagina aggiunta. **Cmd/Ctrl+Z** annulla la modifica. **Spostamenti**, nella stessa barra sul bordo del canvas, apre *Che cosa si è spostato e perché*: le cornici a cui l’impaginazione ha cambiato misura o posizione per far entrare il contenuto, ciascuna con il motivo spiegato a parole.
 
 <Screenshot src="/docs-shots/it/checks.webp" alt="Il pannello Verifiche con la voce «Il testo non entra nella cornice» e tre pulsanti con le possibili soluzioni, e la pagina con il primo riquadro contornato di rosso e una fascia con la scritta «mancano 26 mm»." caption="Una cornice in cui il testo non entra, e le correzioni che l’impaginazione ha calcolato." />
 

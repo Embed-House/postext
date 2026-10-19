@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Página y disposición',
   description: 'El tamaño de página, los márgenes y la rejilla base; la numeración de las páginas, y las columnas y sus medianiles.',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '36 min',
   order: 5,
   parent: 'configuration',
@@ -50,7 +50,7 @@ La propiedad `page` controla las dimensiones físicas y la apariencia de la pág
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td><code>2 cm</code> por cada lado</td>
+      <td><code>2 cm</code> arriba y abajo, <code>1.5 cm</code> a izquierda y derecha</td>
       <td>Espacio entre el borde de la página y el área de contenido. Cada lado (superior, inferior, izquierdo, derecho) se fija por separado. Con <code>mirror: true</code>, los márgenes son <em>simétricos</em>: <code>left</code> es el margen interior (el del lomo) y <code>right</code>, el exterior; las páginas impares (la página 1 es impar) los mantienen tal como se escriben y las pares los intercambian, de modo que el área de contenido (y con ella las columnas, las bandas de flotantes, los contenedores de la cabecera y el pie y las bandas de apertura) cambia de posición en cada doble página. Por defecto, <code>false</code>. Véase más abajo.</td>
     </tr>
     <tr>
@@ -76,6 +76,12 @@ La propiedad `page` controla las dimensiones físicas y la apariencia de la pág
       <td><code>BaselineGridConfig</code></td>
       <td>desactivado</td>
       <td>Dibuja la rejilla base sobre las páginas, para comprobar el ritmo vertical. La maquetación se ajusta a la rejilla tanto si se dibuja como si no. Véase más abajo.</td>
+    </tr>
+    <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>Cómo se escriben los números de página y el valor con el que empieza el contador. Véase <a href="#numeración">Numeración</a>.</td>
     </tr>
     <tr>
       <td><code>binding</code></td>
@@ -327,7 +333,7 @@ Los estilos japoneses (desde postext 1.16) también siguen CSS Counter Styles. `
 
 Los estilos árabes conservan el nombre de CSS cuando existe (`arabic-indic`, `persian`; `urdu` y `maghrebi-abjad`, de la nota del W3C *Ready-made Counter Styles*, se leen como `persian` y `arabic-abjad-maghrebi`). `arabic` mantiene su sentido de siempre: las cifras europeas. `arabic-abjad` escribe los numerales abyad aditivos del árabe clásico y de la foliación de los manuscritos, con el valor más alto primero: 11 es يا, 1446 es غتمو, y el número de millares va antes de غ (2000 بغ, 1002 غب); por encima de 999 999, el número se imprime en cifras. La nota del W3C usa ese nombre para una serie de 28 letras en la que 11 es ك; Postext llama `abjad` a esa serie, la que se usa para numerar con letras los elementos de una lista en orden abyad (أ، ب، ج، د، هـ), y `hijai`, al orden alfabético (أ، ب، ت، ث). Las dos escriben la primera letra con su hamza (أ), y una he que quedaría aislada, como هـ, con tatweel, para que ninguna se lea como las cifras ١ y ٥; pasadas las 28 letras, se duplican, como hace `lower-alpha` (أأ, أب). Los valores magrebíes siguen la regla mnemotécnica صعفض قرست ثخذ ظغش (ص 60, ض 90); la lista del W3C intercambia ص y ض. Una sola أ no permite distinguir las dos series de letras, así que su forma abreviada son sus cuatro primeras letras: `{1:أبجد}`, `{1:أبتث}`. Las cifras del propio documento se eligen con [`numerals`](/es/docs/configuration-language#cifras-del-documento).
 
-Las demás grafías existen para las configuraciones cuyos tipos nadie comprueba: los presets en JSON y el JavaScript sin tipos. Los tipos de TypeScript solo incluyen la grafía propia de cada ajuste (la que escribe el Sandbox y devuelve `resolveAllConfig`, incluidos los nombres de Asia oriental), así que un `PostextConfig` tipado se ciñe a ella, y cualquier otra grafía necesita una conversión de tipo explícita.
+Las demás grafías existen para las configuraciones cuyos tipos nadie comprueba: los presets en JSON y el JavaScript sin tipos. Los tipos de TypeScript solo incluyen la grafía propia de cada ajuste (la que escribe el Sandbox y guarda la configuración resuelta (`doc.config`), incluidos los nombres de Asia oriental), así que un `PostextConfig` tipado se ciñe a ella, y cualquier otra grafía necesita una conversión de tipo explícita.
 
 ```js
 // JavaScript o un preset en JSON (en TypeScript, la grafía propia de cada ajuste)
@@ -336,7 +342,7 @@ page: { pageNumbering: { format: 'roman-lower' } }, // igual que 'lower-roman'
 resourceTypes: [{ id: 'lamina', counterFormat: 'upper-roman', … }], // igual que 'roman-upper'
 ```
 
-`resolveAllConfig` convierte los formatos de las listas y de las páginas a la grafía de su propio ajuste (`'decimal'` se resuelve como `'arabic'` en `orderedLists`, y `'roman-lower'`, como `'lower-roman'` en `page.pageNumbering`), y `stripConfigDefaults` elimina cualquier grafía del valor por defecto. Los paneles del Sandbox muestran cada uno de los tres ajustes con su propia grafía, sea cual sea la que use la configuración. Cualquier otro valor (`roman`, `01`, una errata) numera en decimal en lugar de imprimir `undefined`, y genera un [aviso de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración). Las plantillas de numeración de los encabezados aceptan los mismos nombres tras los dos puntos (`{1:roman-upper}` equivale a `{1:I}`), además de su propio `{1:01}`, con cero a la izquierda.
+La resolución de la configuración (`doc.config`) convierte los formatos de las listas y de las páginas a la grafía de su propio ajuste (`'decimal'` se resuelve como `'arabic'` en `orderedLists`, y `'roman-lower'`, como `'lower-roman'` en `page.pageNumbering`), y `stripConfigDefaults` elimina cualquier grafía del valor por defecto. Los paneles del Sandbox muestran cada uno de los tres ajustes con su propia grafía, sea cual sea la que use la configuración. Cualquier otro valor (`roman`, `01`, una errata) numera en decimal en lugar de imprimir `undefined`, y genera un [aviso de configuración](/es/docs/configuration-fonts-colors-viewers#avisos-de-configuración). Las plantillas de numeración de los encabezados aceptan los mismos nombres tras los dos puntos (`{1:roman-upper}` equivale a `{1:I}`), además de su propio `{1:01}`, con cero a la izquierda.
 
 
 ## Disposición

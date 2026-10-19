@@ -1,39 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# web
 
-## Getting Started
+The [postext.dev](https://postext.dev/) site: the landing page, the documentation, the hosted Sandbox and the Cookbook, in ten languages (`en`, `es`, `ca`, `de`, `fr`, `it`, `pt`, `zh`, `ja`, `ar`; `src/i18n/routing.ts`). It is a Next.js 16 app with Tailwind CSS 4 and next-intl, and it uses the workspace's `postext`, `postext-folio` and `postext-sandbox` packages.
 
-First, run the development server:
+## Getting started
+
+From the repository root, `pnpm install` once, then:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev            # builds the packages, then runs `next dev` on http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Inside `apps/web`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev            # next dev (the packages must have been built)
+pnpm build          # next build
+pnpm test           # vitest
+pnpm check-types    # tsc --noEmit
+pnpm lint           # eslint
+pnpm cookbook …     # the Cookbook tools (see cookbook/README.md); `pnpm cookbook` from the root too
+pnpm wiki <dir>     # regenerates the doc pages of the GitHub wiki from docs/*-en.mdx into a clone at <dir>
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Where things are
 
-## Learn More
+- `src/app/[locale]/` — the routes of every locale: landing, `docs`, `sandbox`, `cookbook`, `glossary`, `accessibility` and the legal pages, with `llms.txt`. `src/app/md/` serves the Markdown version of each page for agents (`<page>.md`).
+- `../../docs/` — the documentation, one MDX file per topic and locale (`<topic>-<locale>.mdx`), read at build time.
+- `../../cookbook/` — the Cookbook recipes; their captures are written to `public/cookbook/`.
+- `messages/<locale>.json` — the interface strings of the site and the Sandbox, one catalogue per locale.
+- `public/presets/` — the showcase books the Sandbox opens; `public/icc/` the print output profiles; `public/folio/` the Folio desk textures.
+- `src/lib/webmcp/` — the WebMCP tools the site gives an agent in the browser on every page.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pushes to `develop` deploy nothing (`vercel.json`); the site is deployed from `main`.
 
 ## Private presets (local only)
 

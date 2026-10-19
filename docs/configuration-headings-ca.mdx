@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Encapçalaments',
   description: "Els valors per defecte dels encapçalaments, la configuració de cada nivell, els salts de pàgina abans d'un encapçalament, les obertures de capítol a tota l'amplada de la pàgina i els nombres escrits en lletres",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '35 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ La propietat `headings` controla la tipografia de tots els nivells d'encapçalam
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quan és <code>true</code>, un encapçalament mai no es col·loca com a últim element d'una columna o pàgina. Si el bloc següent no tingués almenys <code>bodyText.widowMinLines</code> línies de buit després de l'encapçalament (o una línia quan <code>bodyText.avoidWidows</code> és <code>false</code>), l'encapçalament passa endavant per quedar unit al seu text. Actua juntament amb <code>bodyText.keepColonWithList</code>: si aquesta regla ha de fer passar sencer el paràgraf acabat en dos punts, els encapçalaments que el precedeixen a la columna passen amb ell en lloc de quedar-se sols.</td>
+      <td>Quan és <code>true</code>, un encapçalament mai no es col·loca com a últim element d'una columna o pàgina. Si el bloc següent no tingués almenys <code>bodyText.widowMinLines</code> línies de buit després de l'encapçalament (o una línia quan <code>bodyText.avoidWidows</code> és <code>false</code>), l'encapçalament passa endavant per quedar unit al seu text. Actua juntament amb <code>bodyText.keepColonWithList</code>: si aquesta regla ha de fer passar sencer el paràgraf acabat en dos punts, els encapçalaments que el precedeixen a la columna passen amb ell en lloc de quedar-se sols. En un grup compost en columnes (un marc de pàgina composta amb <code>columns</code>, un grup <code>:::columns</code>) tampoc no s'acaba mai una columna just després d'un encapçalament: l'encapçalament passa amb l'element que el segueix.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ La propietat `headings` controla la tipografia de tots els nivells d'encapçalam
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>activat</td>
-      <td>Equilibratge vertical de columnes: espai addicional sobre els encapçalaments perquè les columnes acabin alineades amb el peu de pàgina. Vegeu més avall.</td>
+      <td>activat (desactivat en text vertical i en una retícula de caràcters)</td>
+      <td>Equilibratge vertical de columnes: espai addicional sobre els encapçalaments perquè les columnes acabin alineades amb el peu de pàgina. Vegeu <a href="/ca/docs/configuration-page-flow#equilibratge-de-columnes">Equilibratge de columnes</a>.</td>
     </tr>
   </tbody>
 </table>

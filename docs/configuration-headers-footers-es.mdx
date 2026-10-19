@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Cabeceras y pies de página',
   description: 'Qué se imprime en la cabecera y al pie de cada página: textos con marcadores, filetes, cajas e imágenes, según la página sea par o impar, y dónde se coloca cada elemento.',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '33 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Las propiedades `header` y `footer` controlan las zonas de cabecera y de pie de 
 
 Las zonas usan el modelo unificado de **zona de diseño**: cada elemento tiene un `placement` con un `anchor` (al contenedor o a otro elemento, mediante `#id`), un `offset` opcional y un `size` opcional. Los antiguos campos planos `align`, `marginFromBody`, `marginFromEdge` y `width: 'full'` se siguen aceptando como entrada y se convierten automáticamente al formato nuevo; más abajo se explica a qué equivalen.
 
-Cada zona contiene una lista de elementos de **texto**, de **línea** (`rule`, un filete) y de **caja** (`box`). El orden del array es el orden de pintado (el primer elemento se pinta primero y el último queda encima). Esto se cumple sean cuales sean los anclajes: un elemento puede anclarse a otro que aparece después en la lista (`anchor.to: '#ttl'`), así que una caja de fondo puede ir primero y colocarse respecto al texto que queda encima de ella.
+Cada zona contiene una lista de elementos de **texto**, de **línea** (`rule`, un filete), de **caja** (`box`) y de **imagen** (`image`). El orden del array es el orden de pintado (el primer elemento se pinta primero y el último queda encima). Esto se cumple sean cuales sean los anclajes: un elemento puede anclarse a otro que aparece después en la lista (`anchor.to: '#ttl'`), así que una caja de fondo puede ir primero y colocarse respecto al texto que queda encima de ella.
 
 **Valores por defecto incluidos.** Cuando `header` o `footer` son `undefined`, postext aplica unos valores integrados razonables en lugar de dejar la zona vacía:
 
@@ -46,7 +46,7 @@ Para prescindir de los valores integrados, fija `header: { elements: [] }` (o `f
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valores por defecto integrados cuando es <code>undefined</code>; <code>[]</code> los desactiva</td>
-      <td>Lista ordenada de elementos de texto y línea.</td>
+      <td>Lista ordenada de elementos de texto, línea, caja e imagen.</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ Los valores por defecto de la tabla siguiente son los de un elemento de texto qu
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>En qué <em>tipos</em> de página aparece el elemento, en combinación con <code>parity</code>. Tras la colocación, cada página se clasifica como <code>'blank'</code> (página de relleno para la paridad o separadora, o sin contenido), <code>'part'</code> (una página de parte), <code>'opener'</code> (su primer bloque es un encabezado cuyo nivel ocupa toda la página o fuerza un salto de página antes de él: la primera página de un capítulo) o <code>'body'</code> (todas las demás). <code>pages: 'body'</code> oculta un titulillo en las aperturas de capítulo; <code>pages: 'opener'</code> muestra un folio solo en ellas.</td>
+      <td>En qué <em>tipos</em> de página aparece el elemento, en combinación con <code>parity</code>. Tras la colocación, cada página se clasifica como <code>'blank'</code> (página de relleno para la paridad o separadora, o sin contenido), <code>'part'</code> (una página de parte), <code>'opener'</code> (su primer bloque es un encabezado cuyo nivel ocupa toda la página o fuerza un salto de página antes de él: la primera página de un capítulo), <code>'comic'</code> (una página de cómic, <code>:::page</code>), <code>'composed'</code> (una página compuesta, o el <code>role</code> que nombra su plantilla) o <code>'body'</code> (todas las demás). <code>pages: 'body'</code> oculta un titulillo en las aperturas de capítulo; <code>pages: 'opener'</code> muestra un folio solo en ellas.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ Los valores por defecto de la tabla siguiente son los de un elemento de texto qu
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> en los diseños de encabezado y de parte; en los demás, <code>'ellipsis-end'</code></td>
-      <td>Qué hace el motor con un texto que supera el ancho disponible del elemento. <code>'wrap'</code> lo parte en varias líneas; las variantes de elipsis mantienen cada línea en una sola y la truncan con <code>…</code> al principio, en el centro o al final; <code>'clip'</code> la recorta sin más en el rectángulo del elemento, sin añadir ningún carácter. Los saltos de línea del contenido valen en todos los modos: la elipsis y el recorte se aplican a cada línea por separado. Un elemento que no indica <code>overflow</code> toma el valor por defecto de su zona: en el diseño de un encabezado (<code>advancedDesign.slot</code>) o en una página de parte (<code>parts.design</code>, <code>parts.versoDesign</code>) se parte en líneas; en un titulillo, en un folio o en una fila de parte del índice (<code>toc.parts.design</code>, una fila de alto fijo) termina en <code>…</code>. Usa <code>'wrap'</code> en un titulillo que pueda ocupar varias líneas (una dirección postal), o una elipsis en un antetítulo que deba quedarse en una línea dentro de una apertura. Una línea cortada con elipsis, o recortada con tinta fuera de la caja, genera un aviso de contenido <code>designTextTruncated</code>, una vez por elemento y página (en un titulillo o un folio, una vez por elemento y capítulo). Una configuración guardada antes de postext 1.24 (<code>configVersion</code> 9 o anterior) se lee con <code>'ellipsis-end'</code> en todos los textos de encabezado o de parte que no indican nada, para que sus páginas no cambien. Un texto con <code>dropCap</code> se parte en líneas diga lo que diga este valor; con <code>'clip'</code>, sus líneas se siguen cortando en el borde de una caja de alto fijo. <code>'ellipsis-end'</code> y <code>'ellipsis-start'</code> cortan entre palabras (<em>La historia de la…</em>, no <em>La historia de la na…</em>), y ningún espacio ni signo de unión (coma, dos puntos, raya, barra, signo de apertura) queda junto a la elipsis. Solo se corta una palabra por la mitad cuando, cortando entre palabras y sin esos signos, se conservaría menos de la mitad de lo que cabe: una palabra larga o una URL (<em>http://exampl…</em>, no <em>http…</em>). Un espacio de no separación o un guion de no separación (U+2011, como en <em>MS‑DOS</em>) no separan palabras; <code>'ellipsis-middle'</code> corta en cualquier punto, pero elimina los espacios que tiene al lado. Hasta postext 1.4, todos los modos cortaban en el último carácter que cabía, espacios incluidos.</td>
+      <td><code>'wrap'</code> en los diseños de encabezado, de parte y de recuadro; en los demás, <code>'ellipsis-end'</code></td>
+      <td>Qué hace el motor con un texto que supera el ancho disponible del elemento. <code>'wrap'</code> lo parte en varias líneas; las variantes de elipsis mantienen cada línea en una sola y la truncan con <code>…</code> al principio, en el centro o al final; <code>'clip'</code> la recorta sin más en el rectángulo del elemento, sin añadir ningún carácter. Los saltos de línea del contenido valen en todos los modos: la elipsis y el recorte se aplican a cada línea por separado. Un elemento que no indica <code>overflow</code> toma el valor por defecto de su zona: en el diseño de un encabezado (<code>advancedDesign.slot</code>), en una página de parte (<code>parts.design</code>, <code>parts.versoDesign</code>) o en el <a href="/es/docs/configuration-callouts#diseños-de-recuadro">diseño de un recuadro</a> (<code>calloutStyles[].design</code>) se parte en líneas; en un titulillo, en un folio o en una fila de parte del índice (<code>toc.parts.design</code>, una fila de alto fijo) termina en <code>…</code>. Usa <code>'wrap'</code> en un titulillo que pueda ocupar varias líneas (una dirección postal), o una elipsis en un antetítulo que deba quedarse en una línea dentro de una apertura. Una línea cortada con elipsis, o recortada con tinta fuera de la caja, genera un aviso de contenido <code>designTextTruncated</code>, una vez por elemento y página (en un titulillo o un folio, una vez por elemento y capítulo). Una configuración guardada antes de postext 1.24 (<code>configVersion</code> 9 o anterior) se lee con <code>'ellipsis-end'</code> en todos los textos de encabezado o de parte que no indican nada, para que sus páginas no cambien. Un texto con <code>dropCap</code> se parte en líneas diga lo que diga este valor; con <code>'clip'</code>, sus líneas se siguen cortando en el borde de una caja de alto fijo. <code>'ellipsis-end'</code> y <code>'ellipsis-start'</code> cortan entre palabras (<em>La historia de la…</em>, no <em>La historia de la na…</em>), y ningún espacio ni signo de unión (coma, dos puntos, raya, barra, signo de apertura) queda junto a la elipsis. Solo se corta una palabra por la mitad cuando, cortando entre palabras y sin esos signos, se conservaría menos de la mitad de lo que cabe: una palabra larga o una URL (<em>http://exampl…</em>, no <em>http…</em>). Un espacio de no separación o un guion de no separación (U+2011, como en <em>MS‑DOS</em>) no separan palabras; <code>'ellipsis-middle'</code> corta en cualquier punto, pero elimina los espacios que tiene al lado. Hasta postext 1.4, todos los modos cortaban en el último carácter que cabía, espacios incluidos.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ Los valores por defecto de la tabla siguiente son los de un elemento de texto qu
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Solo en los diseños de encabezado: si el elemento cuenta para la altura que el encabezado reserva en el flujo del texto. <code>false</code> para la decoración que puede quedar debajo del texto (un sello al pie de la página, un marco, una banda lateral). Véase <a href="/es/docs/configuration-headings#altura-reservada">Altura reservada</a>. Las cabeceras, los pies y los diseños de parte no lo tienen en cuenta.</td>
+      <td>Solo en los diseños de encabezado y de recuadro: si el elemento cuenta para la altura que el encabezado reserva en el flujo del texto, o para la altura de la banda del diseño de un recuadro (<code>calloutStyles[].design</code>). <code>false</code> para la decoración que puede quedar debajo del texto (un sello al pie de la página, un marco, una banda lateral). Véase <a href="/es/docs/configuration-headings#altura-reservada">Altura reservada</a>. Las cabeceras, los pies y los diseños de parte no lo tienen en cuenta.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ Marcadores disponibles:
 - `{bookTotalPages}`: el número total de páginas de todo el libro, es decir, de todos los capítulos, incluidas las páginas en blanco. En un documento maquetado por sí solo coincide con `{totalPages}`. Consulta [Recuento de páginas del libro](#recuento-de-páginas-del-libro), más abajo.
 - `{title}`, `{subtitle}`, `{author}`, `{publishDate}`: valores tomados de `content.metadata`. Un metadato desconocido o vacío se sustituye por una cadena vacía (y genera un aviso en el Sandbox).
 - `{chapterTitle}`: el texto del último H1 aparecido en la página en curso o antes. Se salta el H1 cuyo [estilo de encabezado](/es/docs/configuration-styles#estilos-de-encabezado) fija `runningChapter: false` (una lámina, un mapa).
+- `{chapterNumber}`: el número de ese capítulo, que es el de su H1 cuando el nivel o su estilo de encabezado tienen `numberingTemplate` y, si no, su ordinal (`1`, `2`…). Vacío en un capítulo sin numerar.
 - `{chapterTitleAtTop}`, `{chapterNumberAtTop}`: el título y el número del capítulo vigente en la cabeza de la página, que no coinciden con `{chapterTitle}` y `{chapterNumber}` en una página en la que un capítulo nuevo empieza debajo de otro texto. Consulta [Capítulo en cabeza de página](#capítulo-en-cabeza-de-página), más abajo.
 - `{partTitle}`, `{partNumber}`: el título y el número de la parte en curso (la última página `:::part` aparecida en la página en curso o antes; las páginas en blanco de paridad que preceden justo a una página de parte ya pertenecen a ella). Vacíos antes de la primera parte.
 - `{firstMark.<clave>}`, `{lastMark.<clave>}`: la primera y la última palabra guía de la página: un encabezado de un nivel (`h1`–`h6`) o una entrada de un estilo de párrafo. Consulta [Palabras guía](#palabras-guía-primera-y-última-marca), más abajo.
@@ -388,7 +389,7 @@ En el PDF, los tramos en negrita y en cursiva incrustan los estilos correspondie
 
 Un elemento de texto que escribes tú parte de estos valores, y alguno puede sorprenderte:
 
-- **`overflow` depende de la zona.** En el diseño de un encabezado o en una página de parte, un título largo se parte en más líneas; en un titulillo, en un folio o en una fila de parte del índice, un texto demasiado ancho para su espacio se corta en una línea con `…`. Usa `overflow: 'wrap'` en un titulillo que pueda alargarse (una dirección, una firma) y revisa los avisos `designTextTruncated` para ver qué textos se han cortado. Un salto de línea en el contenido (un salto real, o `\n` en la plantilla o en el valor de un atributo) empieza una línea nueva en todos los modos; los modos de elipsis cortan cada línea por separado.
+- **`overflow` depende de la zona.** En el diseño de un encabezado, en una página de parte o en el diseño de un recuadro, un título largo se parte en más líneas; en un titulillo, en un folio o en una fila de parte del índice, un texto demasiado ancho para su espacio se corta en una línea con `…`. Usa `overflow: 'wrap'` en un titulillo que pueda alargarse (una dirección, una firma) y revisa los avisos `designTextTruncated` para ver qué textos se han cortado. Un salto de línea en el contenido (un salto real, o `\n` en la plantilla o en el valor de un atributo) empieza una línea nueva en todos los modos; los modos de elipsis cortan cada línea por separado.
 - **`align` vale `'center'` y `verticalAlign` vale `'middle'`.** Un elemento de ancho automático se ajusta a su línea más larga, así que sus líneas quedan centradas entre sí; usa `align: 'left'` para un bloque alineado a la izquierda (un elemento de ancho automático anclado a otro elemento alinea sus líneas por sí solo del lado de su anclaje; véase más arriba).
 - **La fuente es EB Garamond de 8 pt, en negro, con `lineHeight` de `1.2`**, sea cual sea la del texto base. A diferencia de los demás interlineados de la configuración, el `lineHeight` de un texto de diseño suele ser un múltiplo sin unidad (`1.2`); un `Dimension` también vale (véase más arriba).
 
@@ -520,7 +521,7 @@ Los elementos de línea dibujan un filete: horizontal, a lo ancho de la zona, o 
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Tipos de página en los que aparece el filete (véase el campo <code>pages</code> de los elementos de texto).</td>
     </tr>
@@ -603,7 +604,7 @@ Los elementos de caja pintan un rectángulo redondeado dentro de la zona; sirven
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Tipos de página en los que aparece la caja (véase el campo <code>pages</code> de los elementos de texto).</td>
     </tr>
@@ -696,7 +697,7 @@ Una imagen que dibuja un diseño cuenta como contenido cuando su recurso la desc
 
 ### Colocación de elementos
 
-`ElementPlacement` es el modelo unificado de colocación que usan todos los tipos de elemento (texto, línea, caja) dentro de cualquier zona de diseño: la cabecera, el pie de página o la zona de diseño avanzado de un nivel de encabezado. Tres datos describen una colocación:
+`ElementPlacement` es el modelo unificado de colocación que usan todos los tipos de elemento (texto, línea, caja, imagen) dentro de cualquier zona de diseño: la cabecera, el pie de página o la zona de diseño avanzado de un nivel de encabezado. Tres datos describen una colocación:
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge` admite:
 
-- **Bordes del contenedor** (cuando `anchor.to` es `'container'`, `'page'` o `'bleed'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
+- **Bordes del contenedor** (cuando `anchor.to` es `'container'`, `'page'`, `'bleed'` o `'outer'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right` y `center`, el centro del marco.
 - **Bordes relativos a otro elemento** (cuando `anchor.to === '#someId'`): `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
 
 Cada borde relativo a otro elemento pone una esquina del elemento sobre una esquina del elemento al que se ancla, y `offset` lo desplaza desde ahí:

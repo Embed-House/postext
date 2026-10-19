@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Intestazioni e piè di pagina',
   description: 'Che cosa si stampa in cima e in fondo a ogni pagina: testi con segnaposto, filetti, riquadri e immagini, diversi per le pagine pari e dispari; e dove si colloca ogni elemento',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Le proprietà `header` e `footer` controllano gli spazi di intestazione e piè d
 
 Gli spazi usano il modello unificato degli **spazi della grafica**: ogni elemento ha un `placement` con un `anchor` (al contenitore o a un altro elemento tramite `#id`), un `offset` facoltativo e una `size` facoltativa. I vecchi campi piatti `align`, `marginFromBody`, `marginFromEdge` e `width: 'full'` sono ancora accettati in ingresso e vengono convertiti automaticamente nella nuova forma; la descrizione equivalente nella nuova forma è documentata più sotto.
 
-Ogni spazio contiene un elenco di elementi **text**, **rule** e **box**. L’ordine dell’array è l’ordine di disegno (il primo elemento si disegna per primo, l’ultimo sopra tutti). Questo vale indipendentemente dagli ancoraggi: un elemento può ancorarsi a uno elencato dopo di lui (`anchor.to: '#ttl'`), così un riquadro di sfondo può venire per primo ed essere comunque posizionato rispetto al testo che gli sta davanti.
+Ogni spazio contiene un elenco di elementi **text**, **rule**, **box** e **image**. L’ordine dell’array è l’ordine di disegno (il primo elemento si disegna per primo, l’ultimo sopra tutti). Questo vale indipendentemente dagli ancoraggi: un elemento può ancorarsi a uno elencato dopo di lui (`anchor.to: '#ttl'`), così un riquadro di sfondo può venire per primo ed essere comunque posizionato rispetto al testo che gli sta davanti.
 
 **Valori predefiniti incorporati.** Quando `header` o `footer` è `undefined`, postext applica un valore predefinito incorporato ragionevole invece di uno spazio vuoto:
 
@@ -46,7 +46,7 @@ Per rinunciare ai valori predefiniti incorporati, imposta `header: { elements: [
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valori predefiniti incorporati quando è <code>undefined</code>; <code>[]</code> li disattiva</td>
-      <td>Elenco ordinato di elementi di testo e filetti.</td>
+      <td>Elenco ordinato di elementi di testo, filetti, riquadri e immagini.</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>Su quali <em>ruoli</em> di pagina compare l’elemento, in combinazione con <code>parity</code>. Dopo la collocazione ogni pagina viene classificata come <code>'blank'</code> (riempimento di parità o di separazione, o nessun contenuto), <code>'part'</code> (una pagina di parte), <code>'opener'</code> (il suo primo blocco è un titolo il cui livello occupa tutta la pagina o forza un’interruzione di pagina prima di sé: la prima pagina di un capitolo) o <code>'body'</code> (tutto il resto). <code>pages: 'body'</code> nasconde una testatina sulle aperture di capitolo; <code>pages: 'opener'</code> mostra un numero di pagina solo lì.</td>
+      <td>Su quali <em>ruoli</em> di pagina compare l’elemento, in combinazione con <code>parity</code>. Dopo la collocazione ogni pagina viene classificata come <code>'blank'</code> (riempimento di parità o di separazione, o nessun contenuto), <code>'part'</code> (una pagina di parte), <code>'opener'</code> (il suo primo blocco è un titolo il cui livello occupa tutta la pagina o forza un’interruzione di pagina prima di sé: la prima pagina di un capitolo), <code>'comic'</code> (una pagina di fumetto, <code>:::page</code>), <code>'composed'</code> (una pagina composta, o il <code>role</code> indicato dal suo modello) o <code>'body'</code> (tutto il resto). <code>pages: 'body'</code> nasconde una testatina sulle aperture di capitolo; <code>pages: 'opener'</code> mostra un numero di pagina solo lì.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> nella grafica dei titoli e delle parti, altrimenti <code>'ellipsis-end'</code></td>
-      <td>Come il motore tratta il testo che supera la larghezza disponibile dell’elemento. <code>'wrap'</code> divide la riga in più righe; le varianti con puntini di sospensione tengono ogni riga su una sola riga e la troncano con <code>…</code> all’inizio, al centro o alla fine; <code>'clip'</code> taglia di netto sul riquadro di delimitazione dell’elemento senza inserire alcun carattere. Gli a capo del contenuto valgono in ogni modalità: le modalità con puntini e con taglio troncano o tagliano ogni riga per conto suo. Un elemento che omette <code>overflow</code> prende il valore predefinito del suo spazio: nella grafica di un titolo (<code>advancedDesign.slot</code>) o in una pagina di parte (<code>parts.design</code>, <code>parts.versoDesign</code>) va a capo; in una testatina, in un numero di pagina o in una riga di parte dell’indice (<code>toc.parts.design</code>, una riga di altezza fissa) termina con <code>…</code>. Imposta <code>'wrap'</code> su una testatina che può occupare più righe (un indirizzo), o i puntini su un occhiello che deve restare su una riga in un’apertura. Una riga troncata dai puntini, o tagliata con inchiostro oltre il riquadro, viene segnalata come avviso di contenuto <code>designTextTruncated</code>, una volta per elemento e pagina (una testatina o un numero di pagina, una volta per elemento e capitolo). Una configurazione salvata prima di postext 1.24 (<code>configVersion</code> 9 o precedente) viene letta con <code>'ellipsis-end'</code> su ogni testo di titolo e di parte che non ne imposta uno, così le sue pagine non si spostano. Un testo con un <code>dropCap</code> va a capo qualunque sia il valore di questo campo; con <code>'clip'</code> le sue righe vengono comunque tagliate al bordo di un riquadro di altezza fissa. <code>'ellipsis-end'</code> e <code>'ellipsis-start'</code> tagliano al confine di una parola (<em>The history of…</em>, non <em>The history of th…</em>) e nessuno spazio o punteggiatura di collegamento (virgola, due punti, trattino, barra, parentesi di apertura) tocca i puntini. Una parola viene tagliata dove serve solo quando il confine, tolta quella punteggiatura, conserverebbe meno della metà di ciò che entra: una sola parola lunga, o un URL (<em>http://exampl…</em>, non <em>http…</em>). Uno spazio non separabile o un trattino non separabile (U+2011, come in <em>MS‑DOS</em>) non è un confine di parola; <code>'ellipsis-middle'</code> taglia ovunque ma elimina gli spazi accanto ai puntini. Fino a postext 1.4 ogni modalità tagliava all’ultimo carattere che entrava, spazi compresi.</td>
+      <td><code>'wrap'</code> nella grafica dei titoli, delle parti e dei riquadri, altrimenti <code>'ellipsis-end'</code></td>
+      <td>Come il motore tratta il testo che supera la larghezza disponibile dell’elemento. <code>'wrap'</code> divide la riga in più righe; le varianti con puntini di sospensione tengono ogni riga su una sola riga e la troncano con <code>…</code> all’inizio, al centro o alla fine; <code>'clip'</code> taglia di netto sul riquadro di delimitazione dell’elemento senza inserire alcun carattere. Gli a capo del contenuto valgono in ogni modalità: le modalità con puntini e con taglio troncano o tagliano ogni riga per conto suo. Un elemento che omette <code>overflow</code> prende il valore predefinito del suo spazio: nella grafica di un titolo (<code>advancedDesign.slot</code>), in una pagina di parte (<code>parts.design</code>, <code>parts.versoDesign</code>) o nel <a href="/it/docs/configuration-callouts#progetti-grafici-nei-riquadri">progetto grafico di un riquadro</a> (<code>calloutStyles[].design</code>) va a capo; in una testatina, in un numero di pagina o in una riga di parte dell’indice (<code>toc.parts.design</code>, una riga di altezza fissa) termina con <code>…</code>. Imposta <code>'wrap'</code> su una testatina che può occupare più righe (un indirizzo), o i puntini su un occhiello che deve restare su una riga in un’apertura. Una riga troncata dai puntini, o tagliata con inchiostro oltre il riquadro, viene segnalata come avviso di contenuto <code>designTextTruncated</code>, una volta per elemento e pagina (una testatina o un numero di pagina, una volta per elemento e capitolo). Una configurazione salvata prima di postext 1.24 (<code>configVersion</code> 9 o precedente) viene letta con <code>'ellipsis-end'</code> su ogni testo di titolo e di parte che non ne imposta uno, così le sue pagine non si spostano. Un testo con un <code>dropCap</code> va a capo qualunque sia il valore di questo campo; con <code>'clip'</code> le sue righe vengono comunque tagliate al bordo di un riquadro di altezza fissa. <code>'ellipsis-end'</code> e <code>'ellipsis-start'</code> tagliano al confine di una parola (<em>The history of…</em>, non <em>The history of th…</em>) e nessuno spazio o punteggiatura di collegamento (virgola, due punti, trattino, barra, parentesi di apertura) tocca i puntini. Una parola viene tagliata dove serve solo quando il confine, tolta quella punteggiatura, conserverebbe meno della metà di ciò che entra: una sola parola lunga, o un URL (<em>http://exampl…</em>, non <em>http…</em>). Uno spazio non separabile o un trattino non separabile (U+2011, come in <em>MS‑DOS</em>) non è un confine di parola; <code>'ellipsis-middle'</code> taglia ovunque ma elimina gli spazi accanto ai puntini. Fino a postext 1.4 ogni modalità tagliava all’ultimo carattere che entrava, spazi compresi.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Solo per la grafica dei titoli: se l’elemento conta nell’altezza che il titolo riserva nel flusso del testo. <code>false</code> per le decorazioni che possono stare sotto il testo (un sigillo al piede della pagina, una cornice, una fascia laterale). Vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>. La grafica di intestazioni, piè di pagina e parti lo ignora.</td>
+      <td>Solo per la grafica dei titoli e i progetti grafici dei riquadri: se l’elemento conta nell’altezza che il titolo riserva nel flusso del testo, o nell’altezza della banda del progetto grafico di un riquadro (<code>calloutStyles[].design</code>). <code>false</code> per le decorazioni che possono stare sotto il testo (un sigillo al piede della pagina, una cornice, una fascia laterale). Vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>. La grafica di intestazioni, piè di pagina e parti lo ignora.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ Segnaposto disponibili:
 - `{bookTotalPages}`: numero totale di pagine dell’intero libro: tutti i capitoli, pagine bianche comprese. Per un documento impaginato da solo è uguale a `{totalPages}`. Vedi [Numero di pagine del libro](#numero-di-pagine-del-libro) più sotto.
 - `{title}`, `{subtitle}`, `{author}`, `{publishDate}`: valori letti da `content.metadata`. I metadati sconosciuti o vuoti producono una stringa vuota (e generano un avviso nella Sandbox).
 - `{chapterTitle}`: testo dell’H1 più recente sulla pagina corrente o prima di essa. Un H1 il cui [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli) imposta `runningChapter: false` (una tavola, una mappa) viene saltato.
+- `{chapterNumber}`: il numero di quel capitolo, cioè quello del suo H1 quando il livello o il suo stile di titolo ha un `numberingTemplate`, altrimenti il suo ordinale (`1`, `2`…). Vuoto per un capitolo senza numero.
 - `{chapterTitleAtTop}`, `{chapterNumberAtTop}`: titolo e numero del capitolo in vigore in cima alla pagina, che differiscono da `{chapterTitle}` e `{chapterNumber}` su una pagina dove un nuovo capitolo inizia sotto altro testo. Vedi [Il capitolo in cima alla pagina](#il-capitolo-in-cima-alla-pagina) più sotto.
 - `{partTitle}`, `{partNumber}`: titolo e numero della parte corrente (la pagina `:::part` più recente sulla pagina corrente o prima di essa; le pagine bianche di parità appena prima di una pagina di parte le appartengono già). Vuoti prima della prima parte.
 - `{firstMark.<key>}`, `{lastMark.<key>}`: la prima e l’ultima parola guida della pagina: un titolo di un livello (`h1`–`h6`) o una voce di uno stile di paragrafo. Vedi [Parole guida](#parole-guida-primo-e-ultimo-segno) più sotto.
@@ -388,7 +389,7 @@ Nel PDF le sequenze in grassetto e in corsivo incorporano i caratteri corrispond
 
 Un elemento di testo che scrivi tu parte da questi valori, alcuni dei quali sorprendono:
 
-- **`overflow` dipende dallo spazio.** Nella grafica di un titolo o in una pagina di parte un titolo lungo va a capo su più righe; in una testatina, in un numero di pagina o in una riga di parte dell’indice un testo troppo largo per il suo spazio viene tagliato a una riga con `…`. Imposta `overflow: 'wrap'` su una testatina che può allungarsi (un indirizzo, una firma) e controlla gli avvisi `designTextTruncated` per i testi tagliati. Un a capo nel contenuto (un fine riga, o `\n` nel modello o nel valore di un attributo) inizia una nuova riga in ogni modalità; le modalità con puntini tagliano ogni riga per conto suo.
+- **`overflow` dipende dallo spazio.** Nella grafica di un titolo, in una pagina di parte o nel progetto grafico di un riquadro un titolo lungo va a capo su più righe; in una testatina, in un numero di pagina o in una riga di parte dell’indice un testo troppo largo per il suo spazio viene tagliato a una riga con `…`. Imposta `overflow: 'wrap'` su una testatina che può allungarsi (un indirizzo, una firma) e controlla gli avvisi `designTextTruncated` per i testi tagliati. Un a capo nel contenuto (un fine riga, o `\n` nel modello o nel valore di un attributo) inizia una nuova riga in ogni modalità; le modalità con puntini tagliano ogni riga per conto suo.
 - **`align` è `'center'` e `verticalAlign` è `'middle'`.** Un elemento a larghezza automatica si adatta alla sua riga più lunga, quindi le sue righe sono centrate l’una rispetto all’altra; imposta `align: 'left'` per un blocco allineato a sinistra (un elemento a larghezza automatica ancorato a un altro elemento allinea da sé le righe sul lato della sua ancora, vedi sopra).
 - **Il carattere è EB Garamond 8 pt, nero, `lineHeight` 1.2**, qualunque carattere usi il testo corrente. A differenza delle altre interlinee della configurazione, il `lineHeight` di un testo grafico è di solito un semplice multiplo (`1.2`); funziona anche una `Dimension` (vedi sopra).
 
@@ -520,7 +521,7 @@ Gli elementi filetto disegnano una linea: orizzontale attraverso lo spazio, o ve
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Ruoli di pagina su cui compare il filetto (vedi il campo <code>pages</code> degli elementi di testo).</td>
     </tr>
@@ -603,7 +604,7 @@ Gli elementi riquadro dipingono un rettangolo arrotondato dentro lo spazio: util
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Ruoli di pagina su cui compare il riquadro (vedi il campo <code>pages</code> degli elementi di testo).</td>
     </tr>
@@ -696,7 +697,7 @@ Un’immagine disegnata dalla grafica conta come contenuto quando la sua risorsa
 
 ### Collocazione degli elementi
 
-`ElementPlacement` è il modello di posizionamento unificato usato da ogni tipo di elemento (testo, filetto, riquadro) dentro qualsiasi spazio della grafica: intestazione della pagina, piè di pagina, o spazio della **Grafica avanzata** di un livello di titolo. Tre informazioni descrivono una collocazione:
+`ElementPlacement` è il modello di posizionamento unificato usato da ogni tipo di elemento (testo, filetto, riquadro, immagine) dentro qualsiasi spazio della grafica: intestazione della pagina, piè di pagina, o spazio della **Grafica avanzata** di un livello di titolo. Tre informazioni descrivono una collocazione:
 
 ```ts
 interface ElementPlacement {
@@ -718,7 +719,7 @@ interface ElementPlacement {
 
 `AnchorEdge` accetta:
 
-- **Bordi del contenitore** (quando `anchor.to` è `'container'`, `'page'` o `'bleed'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right`.
+- **Bordi del contenitore** (quando `anchor.to` è `'container'`, `'page'`, `'bleed'` o `'outer'`): `top`, `top-left`, `top-right`, `bottom`, `bottom-left`, `bottom-right`, `left`, `right` e `center`, il centro della cornice.
 - **Bordi relativi a un elemento** (quando `anchor.to === '#someId'`): `right-of`, `left-of`, `below`, `above`, `align-top`, `align-bottom`, `align-left`, `align-right`.
 
 Ogni bordo relativo a un elemento mette un angolo dell’elemento su un angolo dell’elemento a cui si ancora, e `offset` lo sposta da lì:

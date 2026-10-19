@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Hyphenation & Justification',
   description: 'How Postext breaks lines, justifies text, and controls word spacing using the Knuth-Plass algorithm',
   lang: 'en',
-  lastUpdated: '2026-09-29',
+  lastUpdated: '2026-10-19',
   readingTime: '40 min',
   order: 24,
   plainSummary: "This page explains how Postext spreads words along each line. When both edges of a paragraph are straight, the gaps between words can grow too wide and look bad. Postext looks at the whole paragraph before it decides where each line ends, so the gaps stay even. It can also split long words with a hyphen in the right place. You can set how wide the gaps may grow and mark the lines that still look loose. The page also shows how Postext makes columns end at the same height.",
@@ -119,7 +119,7 @@ When the penalty loses anyway — every alternative break is infeasible — the 
 
 A block set shorter this way says so: `VDTBlock.runtFix` holds `{ tracking }`, the negative tracking used in thousandths of an em, 0 when the word spaces alone carried the line. No renderer reads it; it is there for whoever fits the copy, since a paragraph at the cap reads tight beside its neighbours and a few words less would have set it without tracking.
 
-The runt penalty is added to the candidate node's demerits inside the line breaker, so the solver is free to trade a slightly looser line for a longer final one — but only within `maxWordSpacing`: a line stretched beyond that limit carries an extra badness larger than any runt or hyphen penalty, so the breaker prefers a short last line, or a hyphenated last word, over word spacing that overshoots the limit. Orphan and widow penalties enter a separate optimisation that runs when a paragraph crosses a column boundary: every candidate split is scored — slack, orphan, and widow demerits summed — and the cheapest split wins, so the engine will naturally prefer splits that avoid both whenever possible. Tune the trade-off by adjusting `orphanPenalty`, `widowPenalty`, or `runtPenalty`; set any of them to `0` to disable that rule entirely. List items opt in via `avoidOrphansInLists`, `avoidWidowsInLists`, and `avoidRuntsInLists` (all `true` by default). Those rules keep the lines of one item together; `shortListSplit` keeps the items of a short list together (off by default, see [Body text](/en/docs/configuration-text#body-text)).
+The runt penalty is added to the candidate node's demerits inside the line breaker, so the solver is free to trade a slightly looser line for a longer final one — but only within `maxWordSpacing`: a line stretched beyond that limit carries an extra badness larger than any runt or hyphen penalty, so the breaker prefers a short last line, or a hyphenated last word, over word spacing that overshoots the limit. Orphan and widow penalties enter a separate optimisation that runs when a paragraph crosses a column boundary: every candidate split is scored — slack, orphan, and widow demerits summed — and the cheapest split wins, so the engine will naturally prefer splits that avoid both whenever possible. Tune the trade-off by adjusting `orphanPenalty`, `widowPenalty`, or `runtPenalty`; set any of them to `0` to disable that rule entirely, or switch a rule off with `avoidOrphans`, `avoidWidows` or `avoidRunts` (all `true` by default). List items opt in via `avoidOrphansInLists`, `avoidWidowsInLists`, and `avoidRuntsInLists` (all `true` by default). Those rules keep the lines of one item together; `shortListSplit` keeps the items of a short list together (off by default, see [Body text](/en/docs/configuration-text#body-text)).
 
 ### Why It Matters
 
@@ -133,6 +133,8 @@ Postext implements the full Knuth-Plass algorithm in the core package's `knuthPl
 
 - **Plain text path**: uses `@chenglou/pretext` for DOM-free text measurement. Pretext provides segment widths and discretionary-hyphen widths; Postext converts them to KP items.
 - **Rich text path**: handles bold and italic spans using Canvas-based measurement. Each styled token becomes one or more boxes, with hyphenation break points inserted as penalties.
+
+The dynamic-programming core exists twice and the two choose the same breaks: in TypeScript, and, since postext 1.33, in Rust compiled to WebAssembly, which answers by default and is faster. The TypeScript breaker answers until the module is compiled and wherever WebAssembly is unavailable, so which one set a paragraph never changes the layout (see [The line breaker (WebAssembly)](/en/docs/configuration-programmatic-usage#the-line-breaker-webassembly)).
 
 Both paths compute per-line `justifiedSpaceRatio`: the width every space of the line is painted at, divided by the space of the regular face. A line's spaces are all painted alike, whatever face each comes from. The limits bound something a little different: the change of each space from its own width, counted in regular spaces. An italic or a bold space is narrower or wider than the regular one, so a line that holds one is painted a little under `minWordSpacing` or over `maxWordSpacing` though it was broken within them. Such a line also carries `justifiedSpaceLimitRatio`, the number the limits bound: 1 plus the line's slack over its spaces, each at its own width. `lineWordSpacing(line)` returns it, or `justifiedSpaceRatio` on a line whose spaces are all regular, where the two are the same number. It feeds the loose-line debug system described below; the layout itself (the ragged fallback, the runt fix, the loose-paragraph lever) goes on reading the painted ratio. The ratios are only computed for non-last lines; how the final line is set is covered in [The Final Line](#the-final-line).
 
@@ -183,7 +185,7 @@ Each locale loads its own pattern set. Hypher instances are lazily created and c
 - A break leaves at least two letters on each side (`ter-ra`, `cai-xa`, `plu-ja`).
 - The *ela geminada* breaks between its two *l*, and the hyphen takes the place of the middle dot: *il·lusió* becomes `il-` | `lusió`. The line is measured without the dot, so justification and Knuth–Plass see its real width.
 - Two vowels in hiatus stay together (`cièn-cia`, `ca-mions`). An *i* or *u* between vowels counts as a consonant and opens its syllable (`fe-ia`, `ve-ient`).
-- No break follows an apostrophe (`s'ha-via`, never `s'-havia`).
+- No break follows an apostrophe (`s'ha-via`, never `s'-havia`). English, French and Italian have apostrophe rules of their own (see [Hyphenation](/en/docs/configuration-language#hyphenation)).
 - Common prefixed words break at the prefix (`vos-altres`, `cel-obert`, `ben-estar`).
 - To keep words with enclitic pronouns whole except at their own hyphen (`portar-` | `lo`), as the IEC prefers, set [`hyphenation.compounds`](/en/docs/configuration-language#hyphenation) to `false`.
 

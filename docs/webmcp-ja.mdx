@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'ブラウザーで動くAIエージェントが41のWebMCPツールでSandboxに対してできること（ページを見る、どの設定でも変える、本文を編集する、画像・表・フォントを加える、検査する、書き出す）と、実際の引数と応答で示す各ツールの呼び出し方',
   lang: 'ja',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13分',
   order: 46,
   plainSummary: "このページは、Sandboxでの本の作業をAIアシスタントに任せたい人のためのものです。Sandboxを開いている間、アシスタントには、ページを見る、デザインを変える、本文を直す、画像や表を加える、問題を見つける、ファイルを保存するための道具が渡されます。たとえば「本文を少し大きくして、本が40ページに収まるか確かめて」と普段の言葉で頼むと、アシスタントが道具を使い、そのページを見せてくれます。作業はすべてお使いのブラウザーの中で行われます。このページでは、アシスタントのつなぎ方、アシスタントにできること、各ツールの呼び出し方を説明します。",
@@ -377,7 +377,7 @@ await browser.close();
 { "anchor": "harbour" }
 ```
 
-`sandbox_set_view`では、ほかに、ビューアー（`canvas`、`pdf`、`folio`、`html`、`epub`）、サイドパネル、章か本全体か、拡大率、読者側の文字サイズ、印刷プレビュー、**デザイン**パネルのグループも選べます。`sandbox_go_to_page`は、`step`、`page`、`position`、本文の一節`text`、`anchor`、EPUBの目次の項目`contents`でページを移します。`sandbox_run_viewer`はツールバーのボタンを押します。`regenerate`はPDFやEPUBを作り直してそれを待ち、`print`は印刷ダイアログを開いてあなたの確認を待ち、`play_video`はページ上の動画を再生します。
+`sandbox_set_view`では、ほかに、ビューアー（`canvas`、`pdf`、`folio`、`html`、`epub`）、内容モードかデザインモードか（`mode`）、サイドパネル、章か本全体か、拡大率、読者側の文字サイズ、印刷プレビュー、**デザイン**パネルのグループも選べます。`sandbox_go_to_page`は、`step`、`page`、`position`、本文の一節`text`、`anchor`、EPUBの目次の項目`contents`でページを移します。`sandbox_run_viewer`はツールバーのボタンを押します。`regenerate`はPDFやEPUBを作り直してそれを待ち、`print`は印刷ダイアログを開いてあなたの確認を待ち、`download`はPDFかEPUBを保存し、`play_video`と`stop_video`はページ上の動画を再生・停止します。
 
 ### 漫画のページの編集
 
@@ -395,7 +395,7 @@ await browser.close();
 
 ### 本、ファイル、Word
 
-- **本を開いて保存する**：`sandbox_list_books`は見本の本とあなたのプロジェクトを一覧にし、`sandbox_open_book`はそのうちの1冊を開きます（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）。`sandbox_save_book`に`action: "copy_current"`を渡すと画面の本を自分のプロジェクトとして保存し、`new_blank`を渡すと空の本を始めます。
+- **本を開いて保存する**：`sandbox_list_books`は見本の本とあなたのプロジェクトを一覧にし、`sandbox_open_book`はそのうちの1冊を開きます（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）。`sandbox_save_book`に`action: "copy_current"`を渡すと画面の本を自分のプロジェクトとして保存し、`new_blank`を渡すと空の本を始めます。プロジェクトでは、`language`（`"fr"`、`"zh-Hant"`）を付けた`add_language`が画面の言語をその言語の新しい版として複製して開き、`thisLanguageOnly: true`を付けた`rename`は画面の言語だけに名前を付けます。`set_cover`と`remove_cover`は表紙を付けたり外したりします。
 - **書き出す**：`sandbox_export`は`pdf`、`epub`、`postext`、`docx`、`markdown`、`config`を書き出します。既定ではブラウザーがファイルをダウンロードします。`deliver: "data"`を渡すと、PDFやEPUBがbase64でエンコードされてエージェントに返ります。
 
   ```json
@@ -441,7 +441,7 @@ await browser.close();
 - **すべてはブラウザーの中にとどまります**：ツールが届くのは、Sandbox自身が届く範囲だけです。本はこのブラウザーの保存領域にあり、`url`で渡したファイルはページが取得するので、そのサーバーが許可している必要があります（CORS）。`data:` URLや`base64`なら必ず使えます。
 - **長い作業には時間がかかります**：ツールはレイアウトを待ってから応答します。`wait: false`を渡すとすぐに応答します。長い本のPDFやEPUBには数分かかります。
 - **取り消し**：`sandbox_undo`は、本文でもデザインでも、変更した順に直前の変更を取り消します。SandboxでのCmd/Ctrl+Zと同じです。本文パネルで入力した文字、ツールによる編集とプレビュー上での編集、`sandbox_set_config`やデザインパネルで変えた設定、動かした枠が対象です。`redo: true`でやり直します。`sandbox_undo_text`は本文の編集だけを取り消し、直前の変更がデザインだったときはそう伝えます。章の追加・削除・移動、リソースとフォントは履歴に入りません。別の本を開くと履歴は空になり、ページを再読み込みしても同じです。それぞれが何を取り消すかは`sandbox_get_state`が示します（`history`）。
-- **画面の本が対象です**：ツールは開いている本に対して働きます。開かずに別の本に届くのは、`.postext`ファイルを書き出す`sandbox_export`、`duplicate`を渡した`sandbox_save_book`、`sample`を渡した`sandbox_reset_to_original`だけです。
+- **画面の本が対象です**：ツールは開いている本に対して働きます。開かずに別の本に届くのは、`.postext`ファイルを書き出す`sandbox_export`、`duplicate`、`rename`、表紙の操作を渡した`sandbox_save_book`、`sandbox_delete_book`、`sample`を渡した`sandbox_reset_to_original`だけです。
 
 ## サイトのツール
 

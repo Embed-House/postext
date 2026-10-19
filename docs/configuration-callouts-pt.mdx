@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuração: boxes',
   sidebarTitle: 'Boxes',
-  description: 'Como definir estilos nomeados para os boxes :::callout (moldura, fundo, faixa, título, ícone e marcador), numerar enunciados, escolher a tipografia dentro do boxe e marcar os boxes divididos entre páginas',
+  description: 'Como definir estilos nomeados para os boxes :::callout (moldura, fundo, faixa, título, ícone, marcador e aba de rótulo), numerar enunciados, escolher a tipografia dentro do boxe, marcar os boxes divididos entre páginas e desenhar designs dentro de um boxe',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>, fonte dos títulos, <code>400</code>, <code>1.5em</code>, cor principal, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
-      <td>Um glifo de texto (<code>kind: 'glyph'</code>) ou um recurso bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) ao lado do conteúdo. Com uma faixa lateral, o ícone é centralizado sobre a faixa; caso contrário, reserva uma coluna própria (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> o centraliza verticalmente em relação ao conteúdo. Uma imagem de recurso é ajustada dentro do quadrado mantendo a proporção, ou dentro de uma caixa <code>width</code> × <code>size</code> quando <code>width</code> está definido (uma tira larga de ícones); um ícone mais alto que o conteúdo faz o boxe crescer para contê-lo (e, com <code>align: 'center'</code>, centraliza o conteúdo nele). <code>position: 'corner'</code> pendura o ícone em um canto superior como um selo, com metade dele para fora da borda, sem tirar espaço do conteúdo; um ícone largo (<code>width</code>) é centralizado no canto pela largura com que é desenhado, e no canto esquerdo o título começa depois da metade interna dele (até o postext 1.4 era posicionado pela altura, de modo que uma tira larga ficava pendurada para fora do boxe e sobre o título); <code>cornerSide</code> escolhe o canto: <code>'right'</code> / <code>'left'</code>, ou <code>'outer'</code> / <code>'inner'</code>, que seguem a paridade da página das margens espelhadas (externo = direita em uma página ímpar, esquerda em uma par).</td>
+      <td>Um glifo de texto (<code>kind: 'glyph'</code>) ou um recurso bitmap / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) ao lado do conteúdo. Com uma faixa lateral, o ícone é centralizado sobre a faixa; caso contrário, reserva uma coluna própria (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> o centraliza verticalmente em relação ao conteúdo. Uma imagem de recurso é ajustada dentro do quadrado mantendo a proporção, ou dentro de uma caixa <code>width</code> × <code>size</code> quando <code>width</code> está definido (uma tira larga de ícones); um ícone mais alto que o conteúdo faz o boxe crescer para contê-lo (e, com <code>align: 'center'</code>, centraliza o conteúdo nele). <code>position: 'corner'</code> pendura o ícone em um canto superior como um selo, com metade dele para fora da borda, sem tirar espaço do conteúdo; um ícone largo (<code>width</code>) é centralizado no canto pela largura com que é desenhado, e no canto esquerdo o título começa depois da metade interna dele (até o postext 1.4 era posicionado pela altura, de modo que uma tira larga ficava pendurada para fora do boxe e sobre o título); <code>cornerSide</code> escolhe o canto: <code>'right'</code> / <code>'left'</code>; <code>'outer'</code> / <code>'inner'</code>, que seguem a paridade da página das margens espelhadas (externo = direita em uma página ímpar, esquerda em uma par); ou <code>'start'</code> / <code>'end'</code>, que seguem a direção do próprio boxe, como os da faixa.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>não definido (sem aba)</td>
-      <td>Uma aba na borda superior do boxe que imprime o atributo <code>label</code> do delimitador: o número de um boxe numerado (“BOXE 1-1”). Ela encosta no canto indicado por <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>), recuada em <code>inset</code>, sobe <code>offset</code> acima do topo do boxe (esse espaço faz parte do bloco, somado a <code>marginTop</code>, para que a aba o mantenha também no alto de uma coluna), tem <code>height</code> de altura com <code>paddingX</code> de cada lado do texto e pode levar um recurso <code>icon</code> ao lado (<code>&#123; resourceId, width, gap &#125;</code>, do lado oposto ao canto) e um <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) ao longo da borda superior, do canto oposto até ela. Padrões: fonte dos títulos, tamanho do corpo, <code>700</code>, branco sobre a cor principal, <code>1.4em</code> de altura, <code>0.6em</code> de margem interna. A aba é uma forma própria apoiada sobre a moldura, por isso mantém os cantos retos qualquer que seja o <code>borderRadius</code> do boxe. Desde o postext 1.42, <code>icon.placement: 'inside'</code> põe a imagem dentro da aba, no início, antes das palavras (na extremidade direita num boxe composto da direita para a esquerda), a uma distância <code>gap</code> delas: a aba tem a largura da imagem, do espaço, das palavras e do preenchimento, e a imagem, ajustada a <code>icon.width</code> e à altura da aba, fica centralizada nela. A imagem mantém as próprias cores; por isso, um anel branco sobre uma aba colorida e um anel colorido sobre uma branca são dois recursos, um em cada estilo. <code>'beside'</code>, o padrão, põe a imagem além da borda da aba. Desde o postext 1.43, <code>icon.tint: true</code> pinta a imagem com a <code>color</code> da aba em vez das cores próprias: só a forma dela é pintada, na cor das palavras, e assim um mesmo anel serve a todas as cores de um livro. Uma imagem sem transparência vira um retângulo liso. No PDF um SVG mantém as bordas e um bitmap é recortado onde é meio transparente; o original de impressão (<code>svg.pdfFileId</code>) não é usado, porque uma página PDF não pode ser recolorida.</td>
+      <td>Uma aba na borda superior do boxe que imprime o atributo <code>label</code> do delimitador: o número de um boxe numerado (“BOXE 1-1”). Ela encosta no canto indicado por <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, ou <code>'top-start'</code> / <code>'top-end'</code> na direção do próprio boxe, como <code>'start'</code> / <code>'end'</code> na faixa), recuada em <code>inset</code>, sobe <code>offset</code> acima do topo do boxe (esse espaço faz parte do bloco, somado a <code>marginTop</code>, para que a aba o mantenha também no alto de uma coluna), tem <code>height</code> de altura com <code>paddingX</code> de cada lado do texto e pode levar um recurso <code>icon</code> ao lado (<code>&#123; resourceId, width, gap &#125;</code>, do lado oposto ao canto) e um <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) ao longo da borda superior, do canto oposto até ela. Padrões: fonte dos títulos, tamanho do corpo, <code>700</code>, branco sobre a cor principal, <code>1.4em</code> de altura, <code>0.6em</code> de margem interna, sem deslocamento nem recuo, e uma imagem de <code>1em</code> de largura a <code>0.3em</code> do texto. A aba é uma forma própria apoiada sobre a moldura, por isso mantém os cantos retos qualquer que seja o <code>borderRadius</code> do boxe. Desde o postext 1.42, <code>icon.placement: 'inside'</code> põe a imagem dentro da aba, no início, antes das palavras (na extremidade direita num boxe composto da direita para a esquerda), a uma distância <code>gap</code> delas: a aba tem a largura da imagem, do espaço, das palavras e do preenchimento, e a imagem, ajustada a <code>icon.width</code> e à altura da aba, fica centralizada nela. A imagem mantém as próprias cores; por isso, um anel branco sobre uma aba colorida e um anel colorido sobre uma branca são dois recursos, um em cada estilo. <code>'beside'</code>, o padrão, põe a imagem além da borda da aba. Desde o postext 1.43, <code>icon.tint: true</code> pinta a imagem com a <code>color</code> da aba em vez das cores próprias: só a forma dela é pintada, na cor das palavras, e assim um mesmo anel serve a todas as cores de um livro. Uma imagem sem transparência vira um retângulo liso. No PDF um SVG mantém as bordas e um bitmap é recortado onde é meio transparente; o original de impressão (<code>svg.pdfFileId</code>) não é usado, porque uma página PDF não pode ser recolorida.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Texto dessa marca (o “(MORE)” de um roteiro), na fonte e no tamanho do corpo do boxe, conforme o idioma do documento.</td>
+      <td><code>'Continued'</code></td>
+      <td>Texto dessa marca (o “(MORE)” de um roteiro), na fonte e no tamanho do corpo do boxe. O padrão fica no idioma do documento, como o de uma tabela dividida: <code>'Continua'</code> em português, <code>'Continúa'</code> em espanhol.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ Os textos do design leem estes marcadores:
 
 O `resourceId` de uma imagem aceita os mesmos marcadores, de modo que cada boxe pode desenhar um recurso próprio. Só o design de um boxe lê `{boxText}`; o design de um título não imprime nada no lugar dele.
 
-Com `setsContent: true` um único estilo serve a todos os boxes da mesma forma, cada um com as suas palavras. Num caderno de caligrafia cada linha de exercício é um boxe cujo conteúdo é a palavra a copiar: o design imprime a palavra numa letra escolar e desenha o recurso pontilhado que leva o nome dela.
+Com `setsContent: true` um único estilo serve a todos os boxes da mesma forma, cada um com as suas palavras. Num caderno de caligrafia cada linha de exercício é um boxe cujo conteúdo é a palavra a copiar: o design imprime a palavra numa letra escolar e depois a repete em pontos para cobrir (`dotted`), quantas vezes couberem na linha (`repeat`; veja [Marcas em linha e contornos](/pt/docs/configuration-headers-footers#marcas-em-linha-e-contornos)).
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite BR', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite BR', fontWeight: 100, fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ lua
 :::
 ```
 
-A primeira linha imprime *gato* e desenha o recurso `trace-gato`, a segunda imprime *lua* e desenha `trace-lua`, e nenhuma das duas palavras é composta de novo sob a sua faixa. Com `setsContent` em `false` o design lê `{boxText}` do mesmo jeito, e o conteúdo é composto sob a faixa.
+A primeira linha imprime *gato* seguido de uma fileira de cópias pontilhadas de *gato*, a segunda faz o mesmo com *lua*, e nenhuma das duas palavras é composta de novo sob a sua faixa. Mudar a palavra no Markdown muda o modelo e todas as cópias. Com `setsContent` em `false` o design lê `{boxText}` do mesmo jeito, e o conteúdo é composto sob a faixa.
 
 No VDT os elementos da faixa são blocos de design no `designOverlay` do quadro, ao lado do título.

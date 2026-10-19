@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：样式与篇',
   sidebarTitle: '样式与篇',
-  description: '段落、行内标签、代码清单和标题的命名样式，以及每一篇开头的篇名页',
+  description: '段落、行内标签、高亮、代码清单和标题的命名样式，以及每一篇开头的篇名页',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24分钟',
   order: 15,
   parent: 'configuration',
-  plainSummary: "本页讲命名样式：定义一次，就可以反复使用。段落样式规定某一类文字的样子，比如参考文献或术语表。行内标签样式在一行文字中间画出一个小标签。代码清单有自己的字体、边框和颜色。本页还讲书中每一篇开头的那一页，以及特殊标题的样式。标注框另有一页说明。",
+  plainSummary: "本页讲命名样式：定义一次，就可以反复使用。段落样式规定某一类文字的样子，比如参考文献或术语表。行内标签样式在一行文字中间画出一个小标签，高亮样式在一个短语后面铺一条色带。代码清单有自己的字体、边框和颜色。本页还讲书中每一篇开头的那一页，以及特殊标题的样式。标注框另有一页说明。",
 };
 
 # 配置：样式与篇
@@ -292,7 +292,7 @@ paragraphStyles: [
 
 ### `:::paragraphs`容器
 
-以`:::paragraphs{style="<id>"}`一行开始容器，以单独一行`:::`结束；其间的每个段落都用指定的样式，其中的标题、列表等其他块保持各自平常的样式。容器可以嵌在其他容器指令里。`style`写了未知的id不算错误：这些段落按普通正文排。
+以`:::paragraphs{style="<id>"}`一行开始容器，以单独一行`:::`结束；其间的每个段落都用指定的样式，其中的标题、列表等其他块保持各自平常的样式。容器可以嵌在其他容器指令里。`style`写了未知的id不算错误：这些段落按普通正文排，Sandbox会标出这个id。
 
 开始行还可以写`align`（`start`、`end`、`left`、`right`、`center`、`justify`）、`indent`和`endIndent`（不带单位的数字按em计），有没有样式都行：有样式时，它们覆盖样式的设置；没有样式时，它们叠加在外层容器的样式上，或者叠加在容器所在位置的文字样式上（正文、篇、带样式的区段或标注框）。`:::paragraphs{align=end}`把一块文字排得与行尾对齐（地付き），`:::paragraphs{align=end endIndent=1}`则离行尾一个字。自postext 1.16起。
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## 行内标签样式
 
-`chipStyles`属性为行内的`:chip[text]{style="…"}`声明命名样式。行内标签是带底色的圆角小框，用于词库、键盘按键、标签等（语法和断行规则见文档格式参考）。默认自带一个样式`chip`（浅蓝色底，主色细线轮廓，略带圆角，文字与周围文字相同），所以`:chip[…]`不做任何配置也能用；声明`chipStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的行内标签，套用第一个样式。
+`chipStyles`属性为行内的`:chip[text]{style="…"}`声明命名样式。行内标签是带底色的圆角小框，用于词库、键盘按键、标签等（语法和断行规则见文档格式参考）。默认自带一个样式`chip`（浅蓝色底，主色细线轮廓，略带圆角，文字与周围文字相同），所以`:chip[…]`不做任何配置也能用；声明`chipStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的行内标签，套用第一个样式（Sandbox会标出未知的id）。
 
 ```ts
 const config: PostextConfig = {
@@ -471,7 +471,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## 高亮样式
 
-`markStyles`属性为行内的`:mark[文字]{style="…"}`声明命名样式。高亮是铺在短语底下的色带，就像课本给关键词划重点（语法和断行规则见文档格式参考）。默认自带一个样式`mark`（浅黄色色带，略超出短语，两端稍圆，文字保持自身颜色），所以`:mark[…]`不做任何配置也能用；声明`markStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的高亮，套用第一个样式。
+`markStyles`属性为行内的`:mark[文字]{style="…"}`声明命名样式。高亮是铺在短语底下的色带，就像课本给关键词划重点（语法和断行规则见文档格式参考）。默认自带一个样式`mark`（浅黄色色带，略超出短语，两端稍圆，文字保持自身颜色），所以`:mark[…]`不做任何配置也能用；声明`markStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的高亮，套用第一个样式（Sandbox会标出未知的id）。
 
 ```ts
 const config: PostextConfig = {
@@ -1127,7 +1127,7 @@ const config: PostextConfig = {
       <td>级别字段</td>
       <td>同<code>headings.levels[]</code></td>
       <td>该级别的值</td>
-      <td><code>fontFamily</code>、<code>fontSize</code>、<code>lineHeight</code>、<code>fontWeight</code>、<code>italic</code>、<code>color</code>、<code>marginTop</code>、<code>marginBottom</code>、<code>snapToGrid</code>、<code>breakBefore</code>、<code>span</code>、<code>advancedDesign</code>、<code>textTransform</code>、<code>letterSpacing</code>、<code>lineSpan</code>、<code>indent</code>、<code>firstLineIndent</code>、<code>jidori</code>、<code>dropCap</code>、<code>hidden</code>：设置了哪一项，这种样式的标题就用它替换标题级别的值（<code>dropCap: false</code>去掉级别的首字下沉）。<code>breakBefore</code>逐个字段合并到级别的设置上：只设<code>parity</code>的样式保留级别的<code>enabled</code>，只设<code>enabled: true</code>的样式保留级别的奇偶（postext 1.4及以前，缺少的字段取自不断页的默认值）。</td>
+      <td><code>fontFamily</code>、<code>fontSize</code>、<code>lineHeight</code>、<code>fontWeight</code>、<code>italic</code>、<code>color</code>、<code>marginTop</code>、<code>marginBottom</code>、<code>snapToGrid</code>、<code>numberSeparator</code>、<code>numberPosition</code>、<code>breakBefore</code>、<code>span</code>、<code>spanBreak</code>、<code>advancedDesign</code>、<code>textTransform</code>、<code>letterSpacing</code>、<code>lineSpan</code>、<code>indent</code>、<code>firstLineIndent</code>、<code>jidori</code>、<code>dropCap</code>、<code>hidden</code>：设置了哪一项，这种样式的标题就用它替换标题级别的值（<code>dropCap: false</code>去掉级别的首字下沉）。<code>breakBefore</code>逐个字段合并到级别的设置上：只设<code>parity</code>的样式保留级别的<code>enabled</code>，只设<code>enabled: true</code>的样式保留级别的奇偶（postext 1.4及以前，缺少的字段取自不断页的默认值）。</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1210,6 +1210,7 @@ Babble, badger… (runs on to the next page)
 ```
 
 两个字母都从第1页开始，所以第1页采用`B`区段的书眉：样式页眉里设置的书口索引标签在这一页上显示“B”，没有哪一页带“A”的标签。如果每个区段都需要自己的标签，就给每个区段单独一页（`breakBefore`）。
+
 下面是排在编号章之后、用字母编号的附录，以及一张目录和PDF书签都列出、但页面上不印标题的献词页：
 
 ```ts

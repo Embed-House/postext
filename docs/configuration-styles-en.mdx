@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuration: styles and parts',
   sidebarTitle: 'Styles and parts',
-  description: 'Named styles for paragraphs, chips, code listings and headings, and the pages that open each part',
+  description: 'Named styles for paragraphs, chips, highlights, code listings and headings, and the pages that open each part',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '33 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "This page covers the named styles you define once and use many times. A paragraph style sets a kind of text, such as a bibliography or a glossary. A chip style draws a small label inside a line. Code listings have their own font, box and colours. The page also covers the pages that open each part of a book, and the styles for special headings. Callout boxes have a page of their own.",
+  plainSummary: "This page covers the named styles you define once and use many times. A paragraph style sets a kind of text, such as a bibliography or a glossary. A chip style draws a small label inside a line, and a highlight style a coloured band behind a phrase. Code listings have their own font, box and colours. The page also covers the pages that open each part of a book, and the styles for special headings. Callout boxes have a page of their own.",
 };
 
 # Configuration: styles and parts
@@ -292,7 +292,7 @@ The dots of every line end half an em before the price (`leaderGap`). A dish too
 
 ### The `:::paragraphs` container
 
-A `:::paragraphs{style="<id>"}` line opens the container and a bare `:::` line closes it; every paragraph in between takes the named style, while headings, lists, and other blocks inside keep their usual styling. Containers may be nested inside other fenced containers. An unknown `style` id is not an error: the paragraphs render as plain body text.
+A `:::paragraphs{style="<id>"}` line opens the container and a bare `:::` line closes it; every paragraph in between takes the named style, while headings, lists, and other blocks inside keep their usual styling. Containers may be nested inside other fenced containers. An unknown `style` id is not an error: the paragraphs render as plain body text, and the Sandbox flags the id.
 
 The fence also takes `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` and `endIndent` (bare numbers are ems), with or without a style: with one, they override it; without, they apply over the enclosing container's style, or over the text style where the fence stands (the body, a part, a styled section or a box). `:::paragraphs{align=end}` sets a block flush with the end of the line (地付き) and `:::paragraphs{align=end endIndent=1}` one character up from it. Since postext 1.16.
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Chip styles
 
-The `chipStyles` property declares the named styles of the inline `:chip[text]{style="…"}` — the rounded, tinted boxes of a word bank, a keyboard key, a tag (the syntax and its line-breaking rules are in the document format reference). One style, `chip`, ships by default (a pale blue fill with a hairline in the main colour, slightly rounded, the text as the words around it), so `:chip[…]` works without any configuration; declaring `chipStyles` replaces that default list. A chip without `style`, or with an id no style declares, takes the first style.
+The `chipStyles` property declares the named styles of the inline `:chip[text]{style="…"}` — the rounded, tinted boxes of a word bank, a keyboard key, a tag (the syntax and its line-breaking rules are in the document format reference). One style, `chip`, ships by default (a pale blue fill with a hairline in the main colour, slightly rounded, the text as the words around it), so `:chip[…]` works without any configuration; declaring `chipStyles` replaces that default list. A chip without `style`, or with an id no style declares, takes the first style (the Sandbox flags an unknown id).
 
 ```ts
 const config: PostextConfig = {
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Highlight styles
 
-The `markStyles` property declares the named styles of the inline `:mark[text]{style="…"}`: the coloured band behind a phrase, as a textbook highlights its key words (the syntax and its line-breaking rules are in the document format reference). One style, `mark`, ships by default (a pale yellow band reaching a little past the phrase, its ends slightly rounded, the text in its own colour), so `:mark[…]` works without any configuration; declaring `markStyles` replaces that default list. A mark without `style`, or with an id no style declares, takes the first style.
+The `markStyles` property declares the named styles of the inline `:mark[text]{style="…"}`: the coloured band behind a phrase, as a textbook highlights its key words (the syntax and its line-breaking rules are in the document format reference). One style, `mark`, ships by default (a pale yellow band reaching a little past the phrase, its ends slightly rounded, the text in its own colour), so `:mark[…]` works without any configuration; declaring `markStyles` replaces that default list. A mark without `style`, or with an id no style declares, takes the first style (the Sandbox flags an unknown id).
 
 ```ts
 const config: PostextConfig = {
@@ -1128,7 +1128,7 @@ const config: PostextConfig = {
       <td>level fields</td>
       <td>as in <code>headings.levels[]</code></td>
       <td>the level's values</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: each one set replaces the heading level's value for headings of this style (<code>dropCap: false</code> takes the level's drop cap off). <code>breakBefore</code> merges field by field over the level's: a style that only sets <code>parity</code> keeps the level's <code>enabled</code>, and one that only sets <code>enabled: true</code> keeps its parity (up to postext 1.4, the missing field came from the no-break default instead).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>numberSeparator</code>, <code>numberPosition</code>, <code>breakBefore</code>, <code>span</code>, <code>spanBreak</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: each one set replaces the heading level's value for headings of this style (<code>dropCap: false</code> takes the level's drop cap off). <code>breakBefore</code> merges field by field over the level's: a style that only sets <code>parity</code> keeps the level's <code>enabled</code>, and one that only sets <code>enabled: true</code> keeps its parity (up to postext 1.4, the missing field came from the no-break default instead).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1211,6 +1211,7 @@ Babble, badger… (runs on to the next page)
 ```
 
 Both letters start on page 1, so page 1 takes the running heads of the `B` section: a thumb tab set in the style's header reads "B" there, and no page carries the tab for "A". Give each section a page of its own (`breakBefore`) when every one needs its tab.
+
 Lettered appendices after numbered chapters, and a dedication page that the contents and the PDF bookmarks list but the page does not title:
 
 ```ts

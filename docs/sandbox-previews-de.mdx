@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vorschauen',
   description: 'Die Tabs Canvas, PDF, Folio, HTML und EPUB 3 im Hauptansichtsbereich: was jeder zeigt und was er kann',
   lang: 'de',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 39,
   parent: 'sandbox',
@@ -50,14 +50,15 @@ Auf einer zusammengesetzten Seite (`::::page{template="…"}`) verbindet das Can
 
 #### Ausgaben eines Buchs
 
-Bei einem Buch in mehreren Sprachen zeigt eine Leiste über dem Canvas seine Ausgaben (*ES · EN · CA*) und **Nebeneinander**.
+Eine Leiste am Anfangsrand des Canvas enthält die Ausgaben eines Buchs in mehreren Sprachen (*ES · EN · CA*) mit **Nebeneinander** und, wenn das Kapitel zusammengesetzte Seiten hat, **Verschiebungen** (seit postext 1.44). Wie die Werkzeugleiste am anderen Rand bleibt sie verborgen, bis der Zeiger diesen Rand erreicht, und verschwindet, wenn er ihn verlässt; ihre Pinnadel hält sie offen, und anfangs ist sie nicht angeheftet. Sie bleibt über der Ansicht Nebeneinander, die sie öffnet und schließt. Auf einem Telefon ist sie eine Reihe oben in der Vorschau.
 
 - Ein Klick auf eine Ausgabe öffnet sie auf derselben zusammengesetzten Seite. Die Seite wird über ihren `::::page`-Block im Kapitel gefunden, der in jeder Sprache derselbe ist; Sie bleiben also auf ihr, auch wenn sie in der anderen Ausgabe eine andere Nummer trägt, und der ausgewählte Rahmen bleibt ausgewählt. Auf jeder anderen Seite bleibt die Seitenzahl erhalten.
-- **Nebeneinander** zeigt das angezeigte Kapitel neben demselben Kapitel einer anderen Ausgabe (**neben** wählt sie, wenn das Buch mehr als zwei hat). Beide Spalten zeigen dieselbe Seite und blättern gemeinsam; **Gemeinsam blättern** schaltet das ab. Zwischen zusammengesetzten Seiten zählen die Spalten von der letzten zusammengesetzten Seite weiter, die sie teilen. Rahmen, die nicht passen oder deren Text verkleinert wurde, sind in beiden Spalten markiert. Die andere Ausgabe wird hier nur gelesen: Ein Klick auf eine ihrer Seiten öffnet diese Ausgabe auf dieser Seite.
+- **Nebeneinander** zeigt das angezeigte Kapitel neben demselben Kapitel einer anderen Ausgabe (**neben** wählt sie, wenn das Buch mehr als zwei hat). Steht das Canvas auf **Ganzes Buch**, enthalten beide Spalten das ganze Buch und öffnen sich auf der Seite, die das Canvas zeigt. Beide Spalten zeigen dieselbe Stelle und blättern gemeinsam; **Gemeinsam blättern** schaltet das ab. Sie treffen sich am Text, nicht an den Seitenzahlen: Eine zusammengesetzte Seite trifft auf denselben Block, jede andere Seite auf die Seite der anderen Ausgabe, die denselben Absatz des Kapitels setzt, etwa gleich weit darin; eine Seite ohne Text (eine leere linke Seite, ein ganzseitiges Bild) wird von der nächsten Seite aus gezählt, die Text hat. Rahmen, die nicht passen oder deren Text verkleinert wurde, sind in beiden Spalten markiert. Die andere Ausgabe wird hier nur gelesen: Ein Klick auf eine ihrer Seiten öffnet diese Ausgabe auf dieser Seite. Hat die andere Ausgabe an dieser Stelle kein Kapitel, sagt ihre Spalte das.
+- Ein Buch, das über einen Link des Hosts geöffnet wurde (ein Rezept, `#recipe=…&lang=…`), führt die Sprachen auf, in denen der Host es veröffentlicht. Ein Klick auf eine öffnet denselben Link in dieser Sprache: Ihre Kopie davon so, wie sie ist, wenn Sie eine haben, sonst das veröffentlichte Buch, neu importiert.
 
 #### Was sich bewegt hat und warum
 
-Auf einer zusammengesetzten Seite kann das Layout ändern, was die Vorlage zeichnet, damit der Inhalt passt: Ein Kasten wächst mit seinem Text, die folgenden Kästen seiner Gruppe rücken nach unten, ein Rahmen gibt einem anderen Höhe ab, Bilder oder Text werden kleiner gesetzt, der Rest geht auf einer hinzugefügten Seite weiter. **Verschiebungen** in der Leiste über dem Canvas (sie erscheint, wenn das Kapitel zusammengesetzte Seiten hat) öffnet das Bedienfeld **Was sich bewegt hat und warum** und markiert diese Änderungen auf den Seiten.
+Auf einer zusammengesetzten Seite kann das Layout ändern, was die Vorlage zeichnet, damit der Inhalt passt: Ein Kasten wächst mit seinem Text, die folgenden Kästen seiner Gruppe rücken nach unten, ein Rahmen gibt einem anderen Höhe ab, Bilder oder Text werden kleiner gesetzt, der Rest geht auf einer hinzugefügten Seite weiter. **Verschiebungen** in der Leiste am Anfangsrand des Canvas (die Schaltfläche erscheint, wenn das Kapitel zusammengesetzte Seiten hat) öffnet das Bedienfeld **Was sich bewegt hat und warum** und markiert diese Änderungen auf den Seiten.
 
 - Das Bedienfeld führt jede zusammengesetzte Seite auf, auf der sich etwas geändert hat, und unter einer Nummer jeden Rahmen, der sich geändert hat, mit seinen Änderungen in Worten: *dinero ist um 13,9 mm gewachsen, damit sein Inhalt passt*, *gasto ist um 13,9 mm nach unten gerückt, um dinero Platz zu machen*, *ahorro-fotos: seine Bilder stehen bei 82,5 %*, *dinero geht auf Seite 9 weiter*. Eine Änderung nennt ihre Ursache, wenn sie eine hat: den Rahmen, der diesen beim Wachsen verschoben hat, oder den Bund einer Doppelseite.
 - Auf der Seite trägt jeder dieser Rahmen ein Abzeichen mit derselben Nummer und seinen Änderungen in Kürze (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). Der Rahmen, wie die Vorlage ihn angibt, wird gestrichelt gezeichnet, und Pfeile führen von ihm zum gesetzten Rahmen: einer von seiner Oberkante bei einer Verschiebung, einer an seinem Fuß oder seiner Endkante bei einer Größenänderung.

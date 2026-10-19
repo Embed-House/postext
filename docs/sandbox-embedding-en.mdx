@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Agents, embedding and presets',
   description: 'WebMCP tools for AI agents, the PostextSandbox component in your own app with its props and CSS, and the preset bundle format',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 41,
   parent: 'sandbox',
@@ -35,10 +35,10 @@ The [WebMCP](/en/docs/webmcp) page shows what an agent can be asked to do and ho
 
 ## Standalone usage
 
-The Sandbox is available as a standalone React package (`postext-sandbox`) that can be embedded in any React application:
+The Sandbox is a React package, `postext-sandbox`, that lives in the postext repository and is not published to npm. A React application in the same pnpm workspace depends on it the way the website (`apps/web`) does, with `"postext-sandbox": "workspace:*"`; its peer dependencies are React and React DOM (18 or later) and `postext`:
 
 ```bash
-npm install postext-sandbox postext
+pnpm add postext-sandbox@workspace:* postext@workspace:*
 ```
 
 ```tsx
@@ -101,6 +101,16 @@ function App() {
       <td><code>hashBundles</code></td>
       <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
       <td>Books linked by a fragment key of the host's own: <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> makes <code>#recipe=&lt;slug&gt;&amp;lang=es</code> open that bundle. Return the URL of a <code>.postext</code> file on the page's own origin, several to try in order (the first that answers wins), or <code>null</code> for an id the host does not serve. The first visit imports the file as a project recorded with the link (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>); a later visit asks whether to open that project, edits included, or replace it with the file as served now. The fragment is then rewritten to <code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>hashBundleEditions</code></td>
+      <td><code>Record&lt;string, (id: string) =&gt; string[] | null | Promise&lt;string[] | null&gt;&gt;</code></td>
+      <td>The languages each kind of linked book is published in, by the same keys as <code>hashBundles</code>, each one a bundle that the same link opens with <code>lang=</code>. A book opened by such a link lists them in the editions rail of the Canvas and in <strong>Side by side</strong>; switching opens the link in that language. The website returns the languages a Cookbook recipe was captured in. <code>null</code> when they are not known (since postext 1.44)</td>
+    </tr>
+    <tr>
+      <td><code>outputProfileBaseUrl</code></td>
+      <td><code>string</code></td>
+      <td>Where the print output profiles are fetched from, as <code>&lt;base&gt;/&lt;id&gt;.icc</code> (the files of the <code>icc/</code> folder of the <code>postext</code> package). Defaults to the copy on the npm CDN, <code>https://cdn.jsdelivr.net/npm/postext/icc/</code>; the website serves its own from <code>/icc/</code></td>
     </tr>
     <tr>
       <td><code>onConfigChange</code></td>
@@ -212,7 +222,7 @@ Appendix. A preset source is a directory (served over HTTP) whose root holds an 
   "description": "Two-column journal article",       // optional
   "locale": "en",                                     // optional
   "default": true,                                    // optional
-  "configVersion": 8,                                 // optional: the configuration rules `config` is written for
+  "configVersion": 15,                                // optional: the configuration rules `config` is written for
   // The same optional showcase fields as the index entry:
   // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
 
@@ -266,7 +276,7 @@ Appendix. A preset source is a directory (served over HTTP) whose root holds an 
 Notes:
 
 - `id` in `preset.json` must match the `index.json` entry; `description`, `locale` and `default` in the manifest override the index values once the preset is loaded, as do the showcase fields `locales`, `openLocale`, `license`, `credits` and `tags`. `openLocale`, one of `locales`, is the language the book opens in when a link or a click asks for none (the home page's shelf links to it too): set it when the original is not in the reader's language, as the 紅樓夢 showcase does with `zh-Hant`, so that its English translation does not open for every English-speaking reader. Without it the interface language picks. The picker shows every locale in `locales` (or `locale`) and the licence as tags, the credits under the description, and `thumbnail` — a small page image relative to the preset directory — in place of the row's check-mark column; a book copied from the preset (**Make my own copy**) keeps it as its cover. The public showcase presets under `apps/web/public/presets/` use every field and carry a `CREDITS.md` with the licence and source of each text and image.
-- `configVersion` (optional) names the configuration rules `config` and the `localized` configurations are written for. Every writer since postext 1.5 sets it to 8. A manifest without it was written by postext 1.4 or earlier, and its heading breaks, maths size, space around inline figures (in the text and in boxes), heading marks, drop caps, room under a colon line, box cuts, breaks at dashes and at compounds' hyphens, ragged text, splits under a heading and space under paragraph containers are read as 1.4 laid them out (see *Heading breaks saved by postext 1.4 or earlier*, *Maths size saved before postext 1.5*, *Inline figures saved before postext 1.5*, *Inline figures in boxes saved before postext 1.5*, *Heading marks and drop caps saved before postext 1.5*, *Lists after a colon saved before postext 1.5*, *Box cuts saved before postext 1.5*, *Dashes and ragged text saved before postext 1.5*, *Compounds saved before postext 1.5*, *Splits under a heading saved before postext 1.5* and *Paragraph containers saved before postext 1.5* under [Persistence](/en/docs/sandbox-books-saving#persistence)); one stamped 3 to 7 (a 1.5 prerelease) gets the pins of the later rules only. With 3 that is the maths size, the inline gap, the five pins of rules 6, the two of rules 7 and the three of rules 8; with 4, the inline gap and the pins of rules 6, 7 and 8; with 5, the pins of rules 6, 7 and 8; with 6, the pins of rules 7 and 8; with 7, the pins of rules 8 alone. Set it to 8 when you write a manifest by hand for today's rules.
+- `configVersion` (optional) names the configuration rules `config` and the `localized` configurations are written for. Every writer sets it to the engine's `CONFIG_VERSION`, 15 in this version. A manifest without it was written by postext 1.4 or earlier, and its heading breaks, maths size, space around inline figures (in the text and in boxes), heading marks, drop caps, room under a colon line, box cuts, breaks at dashes and at compounds' hyphens, ragged text, splits under a heading and space under paragraph containers are read as 1.4 laid them out (see *Heading breaks saved by postext 1.4 or earlier*, *Maths size saved before postext 1.5*, *Inline figures saved before postext 1.5*, *Inline figures in boxes saved before postext 1.5*, *Heading marks and drop caps saved before postext 1.5*, *Lists after a colon saved before postext 1.5*, *Box cuts saved before postext 1.5*, *Dashes and ragged text saved before postext 1.5*, *Compounds saved before postext 1.5*, *Splits under a heading saved before postext 1.5* and *Paragraph containers saved before postext 1.5* under [Persistence](/en/docs/sandbox-books-saving#persistence)); one stamped 3 to 7 (a 1.5 prerelease) gets the pins of the later rules only. With 3 that is the maths size, the inline gap, the five pins of rules 6, the two of rules 7 and the three of rules 8; with 4, the inline gap and the pins of rules 6, 7 and 8; with 5, the pins of rules 6, 7 and 8; with 6, the pins of rules 7 and 8; with 7, the pins of rules 8 alone. One stamped 8 to 14, written by postext 1.5 to 1.33, gets the pins of the rules after its stamp, listed under [Bundles written by postext 1.4 or earlier](/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier). Set it to 15 when you write a manifest by hand for today's rules.
 - `view` (optional) says how the sandbox opens the bundle: `{ "canvasScope": "book" }` lays the whole book out on the canvas (see [Books and chapters](/en/docs/sandbox-books-saving#books-and-chapters)); absent, the canvas shows one chapter at a time. Exported books carry it when it is set. A book of more than 200 chapters opens a chapter at a time whatever it asks.
 - `start` (optional) says where the book starts when the bundle holds part of a longer one: `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` opens it on page 58, an even page, in chapter 4. It is the `continuation` of the first chapter (`buildDocument`); the sandbox lays the book out from there, keeps it with the book when it is saved as a project and writes it back on export. No panel edits it. A `localized` entry may carry a `start` of its own for its edition.
 - `localized` (optional) holds per-locale overrides for a bilingual bundle: `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. The overrides of the locale the chapters were picked from apply on top of the shared `config` (top-level keys replaced wholesale — `resourceTypes` with translated caption prefixes, typically) and `resources` (caption, note, alt text and table cells merged by id); a locale without an entry keeps the shared wording. An entry may also carry a `view` of its own, which applies over the shared one to that edition: 紅樓夢 opens its Chinese editions on the whole book and Joly's English, much slower to paint whole, a chapter at a time (`"en": { "view": { "canvasScope": "chapter" } }`).

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Agents, incrustació i presets',
   description: "Les eines WebMCP per a agents d'IA; com s'integra el component PostextSandbox a la teva aplicació, amb les props i el CSS que necessita, i el format dels paquets de preset",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 41,
   parent: 'sandbox',
@@ -35,10 +35,10 @@ La pàgina [WebMCP](/ca/docs/webmcp) explica què es pot demanar a un agent i co
 
 ## Ús independent
 
-El Sandbox està disponible com un paquet React independent (`postext-sandbox`) que es pot incrustar en qualsevol aplicació React:
+El Sandbox és un paquet React, `postext-sandbox`, que viu al repositori de postext i no es publica a npm. Una aplicació React del mateix espai de treball de pnpm en depèn com ho fa el lloc web (`apps/web`), amb `"postext-sandbox": "workspace:*"`; les seves dependències d'iguals són React i React DOM (18 o posterior) i `postext`:
 
 ```bash
-npm install postext-sandbox postext
+pnpm add postext-sandbox@workspace:* postext@workspace:*
 ```
 
 ```tsx
@@ -101,6 +101,16 @@ function App() {
       <td><code>hashBundles</code></td>
       <td><code>Record&lt;string, (id: string, lang: string | null) =&gt; string | string[] | null&gt;</code></td>
       <td>Llibres enllaçats amb una clau de fragment definida per l'integrador: <code>&#123; recipe: (slug, lang) =&gt; `/cookbook/$&#123;slug&#125;/$&#123;lang&#125;/$&#123;slug&#125;.postext` &#125;</code> fa que <code>#recipe=&lt;slug&gt;&amp;lang=es</code> obri aquest paquet. La funció retorna l'URL d'un fitxer <code>.postext</code> del mateix origen que la pàgina, diversos URL per provar per ordre (s'obre el primer que respon) o <code>null</code> per a un id que no se serveix. La primera visita importa el fitxer com un projecte que recorda l'enllaç (<code>recipe:&lt;slug&gt;:&lt;lang&gt;</code>); en una visita posterior, el Sandbox pregunta si vols obrir aquest projecte, amb els teus canvis, o substituir-lo pel fitxer tal com se serveix ara. Després, el fragment passa a ser <code>#project=&lt;id&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>hashBundleEditions</code></td>
+      <td><code>Record&lt;string, (id: string) =&gt; string[] | null | Promise&lt;string[] | null&gt;&gt;</code></td>
+      <td>Les llengües en què es publica cada tipus de llibre enllaçat, amb les mateixes claus que <code>hashBundles</code>; cadascuna és un paquet que el mateix enllaç obre amb <code>lang=</code>. Un llibre obert amb un enllaç d'aquests les mostra a la barra d'edicions del Canvas i a <strong>En paral·lel</strong>, i en canviar-ne s'obre l'enllaç en aquella llengua. El lloc web retorna les llengües en què s'ha capturat una recepta del Receptari. <code>null</code> quan no se saben (des de postext 1.44)</td>
+    </tr>
+    <tr>
+      <td><code>outputProfileBaseUrl</code></td>
+      <td><code>string</code></td>
+      <td>D'on es baixen els perfils de sortida d'impressió, com a <code>&lt;base&gt;/&lt;id&gt;.icc</code> (els fitxers de la carpeta <code>icc/</code> del paquet <code>postext</code>). Per defecte, la còpia del CDN d'npm, <code>https://cdn.jsdelivr.net/npm/postext/icc/</code>; el lloc web serveix la seva des de <code>/icc/</code></td>
     </tr>
     <tr>
       <td><code>onConfigChange</code></td>
@@ -168,9 +178,9 @@ Els menús emergents, els menús i els indicadors de funció es renderitzen en u
 Apèndix. Un origen de presets és un directori (servit per HTTP) amb un `index.json` a l'arrel que llista els directoris de preset; cada directori conté un manifest `preset.json` i els fitxers de Markdown, de recursos i de fonts a què fa referència. Les eines de `scripts/presets/` del repositori generen paquets exactament amb aquesta estructura, i un fitxer `.postext` exportat des del Sandbox és un d'aquests directoris comprimit en zip (sense l'`index.json`).
 
 ```
-<raíz-de-presets>/
+<arrel-dels-presets>/
   index.json
-  <directorio-del-preset>/
+  <directori-del-preset>/
     preset.json
     chapters/              un .md per capítol, en ordre (un manifest versió 1 anomena un únic document)
     resources/             figures: .svg / .png / .jpg / .jpeg / .webp / .gif (+ originals d'impremta .pdf opcionals)
@@ -201,6 +211,7 @@ Apèndix. Un origen de presets és un directori (servit per HTTP) amb un `index.
   ]
 }
 ```
+
 ### `preset.json`
 
 ```jsonc
@@ -211,7 +222,7 @@ Apèndix. Un origen de presets és un directori (servit per HTTP) amb un `index.
   "description": "Article de revista a dues columnes",       // opcional
   "locale": "es",                                     // opcional
   "default": true,                                    // opcional
-  "configVersion": 8,                                 // opcional: les regles de configuració per a les quals es va escriure `config`
+  "configVersion": 15,                                // opcional: les regles de configuració per a les quals es va escriure `config`
   // Els mateixos camps opcionals d'aparador que l'entrada de l'índex:
   // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
 
@@ -265,7 +276,7 @@ Apèndix. Un origen de presets és un directori (servit per HTTP) amb un `index.
 Notes:
 
 - L'`id` de `preset.json` ha de coincidir amb l'entrada d'`index.json`. Un cop carregat el preset, els valors `description`, `locale` i `default` del manifest tenen prioritat sobre els de l'índex, igual que els camps d'aparador `locales`, `openLocale`, `license`, `credits` i `tags`. `openLocale`, que ha de ser un dels `locales`, és la llengua en què s'obre el llibre quan un enllaç o un clic no en demanen cap (la prestatgeria de la pàgina d'inici també hi enllaça): fes-lo servir quan l'original no és en la llengua del lector, com fa l'aparador de 紅樓夢 amb `zh-Hant`, perquè no s'obri la traducció anglesa a tots els lectors de parla anglesa. Sense aquest camp, decideix l'idioma de la interfície. El selector mostra com a etiquetes totes les llengües de `locales` (o `locale`) i la llicència; els crèdits, sota la descripció, i `thumbnail` (una petita imatge de pàgina, amb una ruta relativa al directori del preset) en lloc de la columna de la marca de verificació. Un llibre copiat del preset (**Fer una còpia pròpia**) conserva aquesta imatge com a portada. Els presets públics d'aparador d'`apps/web/public/presets/` fan servir tots els camps i inclouen un `CREDITS.md` amb la llicència i la procedència de cada text i de cada imatge.
-- `configVersion` (opcional) indica per a quines regles de configuració es van escriure `config` i les configuracions de `localized`. Totes les versions des de postext 1.5 el fixen en 8. Un manifest sense aquest camp l'ha escrit postext 1.4 o una versió anterior, i els salts d'encapçalament, la mida de les fórmules, l'espai al voltant de les figures en línia (en el text i en els requadres), les marques dels títols, les caplletres, el lloc sota una línia de dos punts, els talls dels requadres, els talls després d'una ratlla i després del guionet d'un compost, el text en bandera, les divisions sota un títol i l'espai sota els contenidors de paràgrafs es llegeixen tal com els componia la 1.4 (vegeu *Salts d'encapçalament desats amb postext 1.4 o anterior*, *Mida de les fórmules desada abans de postext 1.5*, *Figures en línia desades abans de postext 1.5*, *Figures en línia dels requadres desades abans de postext 1.5*, *Marques dels títols i caplletres desades abans de postext 1.5*, *Llistes després de dos punts desades abans de postext 1.5*, *Talls dels requadres desats abans de postext 1.5*, *Ratlles i text en bandera desats abans de postext 1.5*, *Compostos desats abans de postext 1.5*, *Divisions sota un títol desades abans de postext 1.5* i *Contenidors de paràgrafs desats abans de postext 1.5* a [Persistència](/ca/docs/sandbox-books-saving#persistència)). A un manifest marcat amb un valor de 3 a 7 (una versió preliminar de la 1.5) només se li apliquen les fixacions de les regles posteriors: amb 3, la mida de les fórmules, l'espai de les figures en línia, les cinc fixacions de les regles 6, les dues de les regles 7 i les tres de les regles 8; amb 4, l'espai de les figures en línia i les fixacions de les regles 6, 7 i 8; amb 5, les de les regles 6, 7 i 8; amb 6, les de les regles 7 i 8; amb 7, només les de les regles 8. Fixa'l en 8 quan escriguis a mà un manifest per a les regles actuals.
+- `configVersion` (opcional) indica per a quines regles de configuració es van escriure `config` i les configuracions de `localized`. Totes les versions que l'escriuen el fixen en el `CONFIG_VERSION` del motor, 15 en aquesta versió. Un manifest sense aquest camp l'ha escrit postext 1.4 o una versió anterior, i els salts d'encapçalament, la mida de les fórmules, l'espai al voltant de les figures en línia (en el text i en els requadres), les marques dels títols, les caplletres, el lloc sota una línia de dos punts, els talls dels requadres, els talls després d'una ratlla i després del guionet d'un compost, el text en bandera, les divisions sota un títol i l'espai sota els contenidors de paràgrafs es llegeixen tal com els componia la 1.4 (vegeu *Salts d'encapçalament desats amb postext 1.4 o anterior*, *Mida de les fórmules desada abans de postext 1.5*, *Figures en línia desades abans de postext 1.5*, *Figures en línia dels requadres desades abans de postext 1.5*, *Marques dels títols i caplletres desades abans de postext 1.5*, *Llistes després de dos punts desades abans de postext 1.5*, *Talls dels requadres desats abans de postext 1.5*, *Ratlles i text en bandera desats abans de postext 1.5*, *Compostos desats abans de postext 1.5*, *Divisions sota un títol desades abans de postext 1.5* i *Contenidors de paràgrafs desats abans de postext 1.5* a [Persistència](/ca/docs/sandbox-books-saving#persistència)). A un manifest marcat amb un valor de 3 a 7 (una versió preliminar de la 1.5) només se li apliquen les fixacions de les regles posteriors: amb 3, la mida de les fórmules, l'espai de les figures en línia, les cinc fixacions de les regles 6, les dues de les regles 7 i les tres de les regles 8; amb 4, l'espai de les figures en línia i les fixacions de les regles 6, 7 i 8; amb 5, les de les regles 6, 7 i 8; amb 6, les de les regles 7 i 8; amb 7, només les de les regles 8. A un manifest marcat amb un valor de 8 a 14, escrit per postext 1.5 a 1.33, se li apliquen les fixacions de les regles posteriors a la seva marca, que es detallen a [Paquets escrits per postext 1.4 o anterior](/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior). Fixa'l en 15 quan escriguis a mà un manifest per a les regles actuals.
 - `view` (opcional) indica com obre el paquet el Sandbox: `{ "canvasScope": "book" }` maqueta el llibre sencer al canvas (vegeu [Llibres i capítols](/ca/docs/sandbox-books-saving#llibres-i-capítols)); si no hi és, el canvas mostra els capítols d'un en un. Els llibres exportats l'inclouen quan està activat. Un llibre de més de 200 capítols s'obre capítol a capítol, demani el que demani.
 - `start` (opcional) indica on comença el llibre quan el paquet en conté només una part: `{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }` l'obre a la pàgina 58, parella, al capítol 4. És la `continuation` del primer capítol (`buildDocument`); el Sandbox maqueta el llibre a partir d'aquí, el conserva amb el llibre quan el desa com a projecte i el torna a escriure quan l'exporta. Cap tauler no permet editar-lo. Una entrada de `localized` pot tenir un `start` propi per a la seva edició.
 - `localized` (opcional) conté les variants per llengua d'un paquet bilingüe: `{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`. Les variants de la llengua dels capítols triats s'apliquen sobre el `config` compartit (les claus de primer nivell se substitueixen senceres; normalment, `resourceTypes` amb les etiquetes dels peus traduïdes) i sobre `resources` (peu, nota, text alternatiu i cel·les de taula, fusionats per id); una llengua sense entrada conserva els textos compartits. Una entrada també pot tenir una `view` pròpia, que en aquella edició substitueix la compartida: 紅樓夢 obre les edicions xineses amb el llibre complet, i l'anglesa de Joly, molt més lenta de pintar sencera, capítol a capítol (`"en": { "view": { "canvasScope": "chapter" } }`).
@@ -277,4 +288,4 @@ Notes:
 - `table.model` és un `TableModel` de Postext: `rows` és un array de cel·les ordenades per files (`content` i, opcionalment, `colSpan`, `rowSpan`, `isHeader`, `align`, `verticalAlign`); `headerRowCount`, el nombre de files de capçalera inicials, i `columnWidths`, un array opcional de pesos relatius de les columnes. `table.styleId` pot indicar un dels `tableStyles` de la configuració.
 - Els fitxers de font es desen a IndexedDB amb ids que es formen a partir de l'id del preset i la ruta del fitxer, i les famílies s'afegeixen a `config.customFonts` quan s'aplica el preset; si l'`index.json` no hi és o està mal format, no hi ha cap preset, però tampoc cap error.
 - Una família que el paquet no pot redistribuir es llista amb `"redistributable": false` i `variants` buit; afegeix-hi `"fallback"` amb el nom d'una família oberta d'amplada semblant, i el Sandbox, la línia d'ordres i els amfitrions del motor en componen les variants amb aquesta família (des de postext 1.42). Sense aquest camp, el llibre passa a la font per defecte i les línies es tallen en un altre lloc.
-- `<directorio-del-preset>/fingerprint.json` és opcional i, a la ruta de desenvolupament, **virtual**: quan aquest fitxer no existeix, `GET` respon `{ "fingerprint": "<sha1 hex>", "files": <n> }`, calculat a partir de les metadades dels fitxers del directori (ruta relativa, data de modificació i mida de cada fitxer fins a quatre nivells de profunditat, sense els fitxers ocults ni `node_modules`), mai a partir del contingut, amb `Cache-Control: no-store`. El Sandbox el consulta periòdicament per seguir les edicions del paquet (vegeu [Tauler de llibres](/ca/docs/sandbox#tauler-de-llibres)). Un servidor estàtic pot servir un `fingerprint.json` real amb la mateixa estructura, o no servir-ne cap; en aquest cas, no se segueixen els canvis dels seus presets.
+- `<directori-del-preset>/fingerprint.json` és opcional i, a la ruta de desenvolupament, **virtual**: quan aquest fitxer no existeix, `GET` respon `{ "fingerprint": "<sha1 hex>", "files": <n> }`, calculat a partir de les metadades dels fitxers del directori (ruta relativa, data de modificació i mida de cada fitxer fins a quatre nivells de profunditat, sense els fitxers ocults ni `node_modules`), mai a partir del contingut, amb `Cache-Control: no-store`. El Sandbox el consulta periòdicament per seguir les edicions del paquet (vegeu [Tauler de llibres](/ca/docs/sandbox#tauler-de-llibres)). Un servidor estàtic pot servir un `fingerprint.json` real amb la mateixa estructura, o no servir-ne cap; en aquest cas, no se segueixen els canvis dels seus presets.

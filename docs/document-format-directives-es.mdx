@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Directivas',
   description: 'Las directivas que empiezan con ::: (contenedores, columnas, papel, saltos de página, numeración, espacio, verso, índice e índice analítico, saltos de línea) y las marcas de las páginas de cómic.',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '37 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Directivas
 
-Las directivas son marcas de control de una sola línea, escritas como `:::nombre` o `:::nombre{atributos}` en una línea propia. No producen nada visible: controlan la colocación y la numeración.
+Las directivas son marcas de control de una sola línea, escritas como `:::nombre` o `:::nombre{atributos}` en una línea propia. La mayoría no produce nada visible y controla la colocación y la numeración; `:::toc`, `:::index` y `:::bibliography` imprimen el índice general, el índice analítico y la bibliografía donde están.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Las directivas son marcas de control de una sola línea, escritas como `:::nombr
       <td>Imprime aquí el índice analítico: todos los términos marcados con <code>:index</code> en el libro, ordenados y agrupados por la inicial, con las páginas en las que aparecen, compuestos según la configuración <code>index</code>. <code>:::index&#123;index="nombres"&#125;</code> imprime un índice con nombre. Véase <a href="/es/docs/document-format-notes-references#índice-analítico">Índice analítico</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Imprime aquí la lista de obras citadas, en el estilo de citas. <code>title</code> cambia su título y <code>scope</code>, lo que incluye. Véase <a href="/es/docs/document-format-notes-references#la-bibliografía">La bibliografía</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Una página de cómic: sus líneas <code>::panel</code> y sus líneas de guion, que se maquetan como viñetas y bocadillos rotulados en una página propia. Véase <a href="#cómics">Cómics</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Las directivas son marcas de control de una sola línea, escritas como `:::nombr
 
 Los valores de los atributos pueden ir entre comillas dobles (<code>"…"</code>), entre comillas simples (<code>'…'</code>) o sin comillas (<code>startAt=17</code>). Una clave sin `=` se trata como un indicador presente, con valor vacío.
 
-Por ahora, solo se reconocen como directivas de una sola línea `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` e `index` (y, como bloques delimitados, `references`, `verse`, `page` y `strip`); cualquier otra línea `:::nombre` que no sea un contenedor (véase más abajo) se lee como un párrafo y genera un aviso **Directiva desconocida** en el Sandbox. El motor también lo registra, como una entrada `unknownDirective` en los `contentWarnings` del documento (véase [Configuración › Avisos del documento](/es/docs/configuration-programmatic-usage#avisos-del-documento)).
+Por ahora, solo se reconocen como directivas de una sola línea `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` y `bibliography` (y, como bloques delimitados, `references`, `verse`, `page`, `strip` y `figure`); cualquier otra línea `:::nombre` que no sea un contenedor (véase más abajo) se lee como un párrafo y genera un aviso **Directiva desconocida** en el Sandbox. El motor también lo registra, como una entrada `unknownDirective` en los `contentWarnings` del documento (véase [Configuración › Avisos del documento](/es/docs/configuration-programmatic-usage#avisos-del-documento)).
 
 ### Valores de los atributos
 
@@ -96,6 +100,7 @@ La misma sintaxis `clave="valor"` la leen los atributos de los encabezados, las 
 - **Sin llaves.** `{` y `}` nunca pueden ir en un valor. La primera `}` cierra el bloque: una línea de apertura cuyo valor contenga una deja de ser una directiva y pasa a leerse como un párrafo, y, en línea, el resto del valor pasa al texto. En un encabezado, una llave dentro de un valor hace que todo el bloque se quede en el título: `# Título {nota="a {b"}` se compone tal cual. (Hasta postext 1.8, una `{` detrás de un espacio volvía a empezar el bloque, y `b` se leía como un indicador).
 - **El signo `$` es texto normal.** Los atributos se leen antes que las fórmulas en línea, así que `lead="de 5 $ a 6 $"` es solo texto.
 - **Una línea.** Un bloque de atributos nunca ocupa más de una línea.
+- **Identificadores.** `#idea-clave`, la abreviatura de Pandoc, equivale a `id="idea-clave"`: `{#sec-metodo}` en un encabezado, `:::callout{#caja-seguridad}` en una línea de apertura. Da nombre al bloque para las [referencias cruzadas](/es/docs/document-format-notes-references#referencias-cruzadas-y-anclas).
 
 ```markdown
 # El largo camino {lead='Una "novela de carretera", dijeron' precio="18 $"}
@@ -105,7 +110,7 @@ La misma sintaxis `clave="valor"` la leen los atributos de los encabezados, las 
 :::
 ```
 
-`::resource{id="…"}` es más estricto: el id va entre comillas dobles y no se admite ningún otro atributo (véase [Recursos](/es/docs/document-format-resources#recursos)).
+`::resource{id="…"}` es más estricto: el id va entre comillas dobles y no se admite ningún otro atributo (véase [Recursos](/es/docs/document-format-resources#recursos)). En una página compuesta admite además `slot="…"` (véase [Páginas compuestas](#páginas-compuestas)).
 
 ### Contenedores
 
@@ -120,7 +125,7 @@ Mantén la linterna encendida **todas** las noches.
 :::
 ```
 
-En el flujo del texto se reconocen cinco nombres de contenedor. Lo que dibuja cada uno se define en su propia sección de la configuración:
+En el flujo del texto se reconocen cinco nombres de contenedor; un sexto, `:::frame`, recoge el contenido de un marco en una [página compuesta](#páginas-compuestas). Lo que dibuja cada uno se define en su propia sección de la configuración:
 
 <table>
   <thead>
@@ -297,7 +302,7 @@ Un recuadro anidado dentro de un grupo se mantiene entero y pasa a la parte sigu
 :::
 ```
 
-La línea de apertura de un `:::callout` también admite `label="…"`: el texto que un estilo con pestaña `label` imprime en la esquina superior del recuadro (`:::callout{type="recuadro" label="RECUADRO 1-1" title="La regla del octeto"}`).
+La línea de apertura de un `:::callout` también admite `label="…"`: el texto que un estilo con pestaña `label` imprime en la esquina superior del recuadro (`:::callout{type="recuadro" label="RECUADRO 1-1" title="La regla del octeto"}`). Cualquier otro atributo de la línea de apertura lo lee el diseño del estilo, si lo tiene: `:::callout{type="tarjeta" kicker="Nota"}` da a sus textos `{attr.kicker}`, y `{boxText}` imprime el contenido del propio recuadro (véase [Configuración › Diseños de recuadro](/es/docs/configuration-callouts#diseños-de-recuadro)).
 
 Un `:::callout` dentro de otro es un recuadro independiente: por ejemplo, una ficha de ejercicios con recuadros para las respuestas. Tiene su propio estilo (fondo, borde, radio, relleno, título, icono), ocupa todo el ancho interior del recuadro exterior y se apila entre sus demás bloques; su `span` y su `placement` se ignoran, porque un recuadro anidado siempre fluye dentro del que lo contiene. Cada línea de cierre cierra el recuadro abierto más interior:
 
@@ -706,7 +711,7 @@ maya: Esta línea sigue
 
 - La **clave** es el id de un personaje (letras, cifras, `_`, `.`, `-`), el mismo en todas las traducciones; `caption`, `sfx` y `note` están reservadas. Los dos puntos pueden ser los de ancho completo (`：`).
 - Una palabra suelta entre llaves es un **estilo de bocadillo** (`thought`, `whisper`, `shout`, `radio`, `inner` o uno de `comics.balloonStyles`); `style=` dice lo mismo.
-- `at` fija la posición del bocadillo: un punto en porcentajes del dibujo de la viñeta (`at="62% 40%"`), o una esquina o un borde (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` dirige el rabillo hacia un punto del dibujo; `tail=none` lo quita, y `tail=top|bottom|start|end|left|right` lo dirige hacia fuera de la viñeta. `join` y `join=false` unen el bocadillo al anterior del mismo personaje o lo mantienen separado; `break` le permite cruzar el borde, y el cruce no se avisa como desbordamiento. `rotate` (grados), `size` (una escala, para las onomatopeyas), `color` y `font` cambian su rotulación.
+- `at` fija la posición del bocadillo: un punto en porcentajes del dibujo de la viñeta (`at="62% 40%"`), o una esquina o un borde (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` dirige el rabillo hacia un punto del dibujo; `tail=none` lo quita, y `tail=top|bottom|start|end|left|right` lo dirige hacia fuera de la viñeta. `join` y `join=false` unen el bocadillo al anterior del mismo personaje o lo mantienen separado; `break` le permite cruzar el borde, y el cruce no se avisa como desbordamiento. `rotate` (grados), `skew` (una inclinación en grados, para un texto sobre un objeto visto en perspectiva), `size` (una escala, para las onomatopeyas), `color` y `font` cambian su rotulación.
 - `vertical` y `horizontal` (o `mode=vertical`, `mode=horizontal`) fijan la dirección de escritura de la línea, por encima de la del libro: un `ドン` sin traducir, compuesto en columna en una edición horizontal, o un cartel escrito en horizontal, compuesto en una fila en una edición vertical. Una columna en un libro en otro idioma sigue las reglas de su propio texto (con kana, las del japonés). En un libro vertical, una línea sin caracteres chinos ni japoneses se compone en horizontal de todos modos.
 - Una línea sangrada con dos espacios o con un tabulador continúa el bocadillo anterior; una barra invertida al final de una línea corta ahí el texto. Las líneas en blanco se ignoran.
 - El texto es Markdown en línea: el énfasis (rotulado en negrita cursiva), `:tcy`, `:ruby` (con la lectura encima de la base, salvo sobre una base de derecha a izquierda), `:ltr` y `:rtl` (un tramo que conserva su propia dirección). Las notas al pie y las marcas `:ref` no se leen.
@@ -736,5 +741,5 @@ Una página compuesta se maqueta a partir de una plantilla de página de la conf
 - `::::page{template="…"}` … `::::` es la página: se abre con cuatro o más signos de dos puntos y se cierra con una línea que solo tiene el mismo número de signos. Los bloques de tres signos de dos puntos que hay dentro (`:::frame`, `:::callout`, `:::figure`…) funcionan igual que en cualquier otro sitio, y un `:::` solo nunca cierra la página. Un `:::page` con tres signos de dos puntos sigue siendo una página de cómic.
 - `:::frame{slot="…" label="…"}` … `:::` recoge el contenido del marco con ese nombre: cualquier Markdown.
 - `slot="…"` en un encabezado (`## Retos {slot="retos-titulo"}`), en `::resource{id="…" slot="…"}`, en un bloque de código o en un contenedor `:::` envía solo ese bloque a la ranura indicada. El contenido sin ranura va al marco de la plantilla que recibe el texto suelto.
-- `:::figure{resource="…" slot="…"}` … `:::` coloca un recurso con sus líneas `::label[TEXTO]{at="…" style="…"}`, donde `at` es un ancla de la imagen o un punto `"x% y%"`. Una figura también funciona en el texto corrido.
+- `:::figure{resource="…" slot="…"}` … `:::` coloca un recurso con sus líneas `::label[TEXTO]{at="…" style="…"}`, donde `at` es un ancla de la imagen o un punto `"x% y%"`. Una figura también funciona en el texto corrido. Sus `alt`, `caption` y `note`, como atributos de la línea de apertura o como líneas `::alt[…]`, `::caption[…]` y `::note[…]`, sustituyen los textos del recurso en ese capítulo (véase [Páginas compuestas › Las palabras propias de una figura](/es/docs/composed-pages#las-palabras-propias-de-una-figura)).
 

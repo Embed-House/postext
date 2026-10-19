@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Witwen, Waisen und Spaltenausgleich',
   description: 'Die Regeln, die Zeilen und Blöcke über einen Spaltenumbruch hinweg zusammenhalten, und die Hebel, mit denen jede Spalte auf gleicher Höhe endet',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '21 min',
   order: 10,
   parent: 'configuration',
@@ -185,6 +185,8 @@ Verlage erwarten, dass jede Spalte oben auf der Seite beginnt und bündig mit ih
 Auf einem Zeichenraster (`cjk.grid`, siehe [Chinesischer Satz › Das Zeichenraster](/de/docs/chinese-layout#das-zeichenraster)) steht jedes Zeichen in einer Zelle von einem Geviert Breite und jede Zeile im Zeilenschritt des Rasters, der auch das Grundlinienraster ist. Der Ausgleich ist dort standardmäßig aus, wie im senkrechten Text: Eine Seite, die Zeile für Zeile auf einem Raster gesetzt ist, so wie GB/T 9704 22 Zeilen zu 28 Zeichen zählt, lässt eine kurze Spalte kurz. Eine Konfiguration mit `enabled: true` erhält Hebel, die das Raster einhalten: Überschriften, Listenenden, abgesetzte Elemente und Abbildungen nehmen ganze Rasterzeilen, sodass sich der Text darunter um ganze Zeilen verschiebt, und `gridLines: 'off'` hält diese für einen Standard heraus, der keine leere Zeile herzugeben hat. Ein chinesischer oder japanischer Absatz läuft nur dann eine Zeile länger, wenn sich keine Lücke zwischen zwei seiner Zeichen über `maxTracking` hinaus dehnt, und nimmt keine Laufweite auf seine Buchstaben: Eine Zeile, der ein Zeichen fehlt, verteilt ein Geviert auf ihre Lücken, weit über den Standard von 0,01 em hinaus, sodass der Hebel für lockere Absätze auf einem Raster aus ganzen Zellen meist nichts findet. Der Kasten, der eine Spalte schließt, und die Bilder mit Sicherheitsbereich liegen bewusst außerhalb des Rasters und funktionieren wie überall.
 
 Die letzte Spalte einer Seite wird nur ausgeglichen, wenn die Seite natürlich in die nächste weiterläuft – die Schlussseite eines Kapitels endet zu Recht kurz. Eine solche Seite und ein von `trailing` auf gleicher Höhe abgeschnittener letzter Spaltenbereich halten auch ihre Spaltenköpfe auf gleicher Höhe: Unter einer Abbildung oder Tabelle, die eine ihrer Spalten anführt, wird keine Zeile hinzugefügt (der Hebel nach Gleitobjekten), und eine Überschrift oder ein Kasten, der unter einer solchen Abbildung eine Spalte eröffnet, bleibt an ihrem Kopf, was auch immer `stretchAfterFloats` sagt, ebenso wie die Überschrift direkt unter einem Auftakt mit `span: 'page'` in dessen eigener Spalte, sodass eine Spalte nie tiefer beginnt als die daneben, nur damit die Füße fluchten.
+
+Diese Einstellungen stehen unter `headings.balancing`.
 
 <table>
   <thead>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Inline-Formatierung und Formeln',
   description: 'Auszeichnungen innerhalb einer Zeile: Hervorhebung, Links, Chips, Kapitälchen, Tabulatoren, senkrechter Text, chinesische und japanische Zeichen, Schreibrichtung und LaTeX-Formeln',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24 min',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ Inline-Auszeichnungen werden in jedem Textblock erkannt (Überschriften, Absätz
       <td>Eine Anmerkung, in zwei Zeilen halber Größe innerhalb der Zeile gesetzt (双行夹注), über Zeilen und Seiten umbrochen.</td>
     </tr>
     <tr>
+      <td>Japanische Zeichen</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>Eine Seitenlinie (傍線) und die Kanbun-Zeichen (訓点: Rückkehrzeichen, Okurigana) neben den Schriftzeichen. Der Text bleibt, wie er geschrieben ist; siehe <a href="#chinesische-zeichen-ruby-und-warichu">Chinesische Zeichen, Ruby und Warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Schreibrichtung</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>Isoliert eine Folge in ihrer eigenen Richtung: einen englischen Namen in einem arabischen Satz, einen arabischen in einem englischen. Siehe <a href="#schreibrichtung-in-der-auszeichnung">Schreibrichtung in der Auszeichnung</a>.</td>
+    </tr>
+    <tr>
       <td>Inline-Code</td>
       <td><code>`code`</code></td>
       <td>Die Backticks werden entfernt; die Folge wird als einfacher Text gesetzt, genau so, wie sie geschrieben ist: Ein <code>{':ref{…}'}</code>, ein Chip, eine Formel, ein Link oder eine Hervorhebungsmarkierung darin wird wörtlich ausgegeben, und so zeigt ein Text die Syntax. Gesetzt wird sie in der Schrift des Texts oder, mit <code>codeStyle.inline</code>, als Einheit in der Code-Schrift (siehe <a href="/de/docs/configuration-styles#code-listings">Konfiguration › Code-Listings</a>). Ein Listing gehört in einen <a href="/de/docs/document-format#codeblöcke">Codeblock</a>.</td>
     </tr>
     <tr>
       <td>Escape</td>
-      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
-      <td>Ein Backslash setzt das Markierungszeichen selbst – das Sternchen einer Tabellenfußnote (<code>{'\\* pOH = −log [OH^−^]'}</code>), ein wörtliches Caret, ein Dollarzeichen, das keine Formel öffnet –, statt eine Folge zu öffnen. Funktioniert im Fließtext, in Chips sowie in Legenden, Zellen und Anmerkungen. (Bis postext 1.4 gaben Legenden, Zellen, Anmerkungen und Chips den Backslash von <code>{'\\$'}</code> mit aus.)</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code>, <code>{'\\@'}</code></td>
+      <td>Ein Backslash setzt das Markierungszeichen selbst – das Sternchen einer Tabellenfußnote (<code>{'\\* pOH = −log [OH^−^]'}</code>), ein wörtliches Caret, ein Dollarzeichen, das keine Formel öffnet, ein @, das nichts zitiert –, statt eine Folge zu öffnen. Funktioniert im Fließtext, in Chips sowie in Legenden, Zellen und Anmerkungen. (Bis postext 1.4 gaben Legenden, Zellen, Anmerkungen und Chips den Backslash von <code>{'\\$'}</code> mit aus.)</td>
     </tr>
     <tr>
       <td>Geschütztes Leerzeichen</td>
@@ -116,6 +126,11 @@ Inline-Auszeichnungen werden in jedem Textblock erkannt (Überschriften, Absätz
       <td>Eine eingerahmte Textfolge, die als Einheit umbricht – eine Wortbank, eine Taste, ein Schlagwort. Gestaltet über <code>chipStyles</code>; siehe <a href="#inline-chips">Inline-Chips</a>.</td>
     </tr>
     <tr>
+      <td>Hervorhebung</td>
+      <td><code>:mark[Text]</code></td>
+      <td>Ein farbiges Band hinter Wörtern, die gewöhnlicher Text bleiben: Sie brechen um, werden getrennt und ausgeglichen wie sonst auch. Gestaltet über <code>markStyles</code>; siehe <a href="#hervorhebungen">Hervorhebungen</a>.</td>
+    </tr>
+    <tr>
       <td>Tabulator</td>
       <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>Rückt die Wörter danach zum nächsten Tabstopp: einem der Tabstopps des Absatzformats oder dem, den seine Attribute festlegen. Ein im Text getippter Tabulator ist nur dort ein Tabulator, wo das Format Tabstopps setzt. Siehe <a href="#tabulatoren-und-tabstopps">Tabulatoren und Tabstopps</a>.</td>
@@ -127,6 +142,8 @@ Inline-Auszeichnungen werden in jedem Textblock erkannt (Überschriften, Absätz
     </tr>
   </tbody>
 </table>
+
+Auszeichnungen, die auf etwas anderes verweisen, sind bei ihrem Ziel beschrieben: Fußnotenzeichen `[^id]` unter [Fußnoten](/de/docs/document-format-notes-references#fußnoten); `:ref{…}`, `:anchor{#id}`, `[Text]{#id}` und das `@sec:…` von pandoc-crossref unter [Querverweise und Verweisziele](/de/docs/document-format-notes-references#querverweise-und-verweisziele); Zitate `[@key]` und `@key` unter [Zitieren](/de/docs/document-format-notes-references#zitieren); Registermarken `:index[…]` unter [Registermarken](/de/docs/document-format-notes-references#registermarken). Das Farbfeld `:swatch{color="…"}` ist mit den Zellfüllungen unter [Ressourcen](/de/docs/document-format-resources#ressourcen) beschrieben, der Zeilenumbruch innerhalb eines Absatzes unter [Zeilenumbrüche](/de/docs/document-format-directives#zeilenumbrüche).
 
 ### Links
 
@@ -164,7 +181,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **Eine Einheit.** Ein Chip wird innen nie umbrochen oder getrennt; die Zeile bricht zwischen Chips um, an den Wortzwischenräumen um sie herum. Ein Chip, der breiter ist als die ganze Zeile, ragt über sie hinaus, statt geteilt zu werden.
 - **Breite.** Seine Dickte ist der Text plus der waagerechte Innenabstand und die Kontur auf beiden Seiten. Der Blocksatz dehnt nur die Wortzwischenräume, nie das Innere eines Chips. Das `gap` des Stils ist der geringste Abstand, der über einen Zwischenraum hinweg zwischen dem Kästchen und einem benachbarten Wort oder Chip bleibt – ein schmalerer Zwischenraum wird aufgefüllt (nicht an einem Zeilenrand und nicht vor anhängender Interpunktion wie in `:chip[a],`).
 - **Höhe.** Das Kästchen ist ein Band um die Grundlinie, 0,8 em darüber und 0,25 em darunter in der Größe des Chips, erweitert um den senkrechten Innenabstand und die Kontur. Der senkrechte Innenabstand wird außerhalb des Zeilenkastens gezeichnet und ändert nie die Zeilenhöhe, sodass das Grundlinienraster hält; ein Kästchen, das höher ist als der Zeilenabstand, kann in einen Chip der Zeile darüber oder darunter hineinreichen, und die Sandbox kennzeichnet zwei Chips auf verschiedenen Zeilen, die sich überlappen („Chips berühren die nächste Zeile“), damit Innenabstand, Kontur oder Größe verringert werden können.
-- **Text.** Der Text des Chips nimmt eigene Inline-Auszeichnungen an (`:chip[**bold** word]`, `:chip[x^2^]`) sowie die Hervorhebung um ihn herum (`**:chip[a]**`); der Stil kann Familie, Größe, Farbe, fett und kursiv festlegen. Schreiben Sie `\]` für eine wörtliche Klammer darin. Verweise, Farbfelder und Formeln in einem Chip bleiben wörtlich, und `\$` ergibt ein Dollarzeichen (bis postext 1.4 erschien auch der Backslash).
+- **Text.** Der Text des Chips nimmt eigene Inline-Auszeichnungen an (`:chip[**bold** word]`, `:chip[x^2^]`) sowie die Hervorhebung um ihn herum (`**:chip[a]**`); der Stil kann Familie, Größe, Farbe, fett und kursiv festlegen. Schreiben Sie `\]` für eine wörtliche Klammer darin. Verweise, Farbfelder und Formeln in einem Chip bleiben wörtlich, und `\$` ergibt ein Dollarzeichen (bis postext 1.4 erschien auch der Backslash). Ein Stil mit `dotted` malt die Buchstaben als Punktreihen zum Nachspuren, und einer ohne Füllung, Kontur und Innenabstand macht den Chip zu einem gepunkteten Wort in der Zeile: `:chip[Katze]{style="dots"}` (siehe [Chip-Stile](/de/docs/configuration-styles#chip-stile)).
 - **Leer.** Ein Chip nur aus Leerzeichen (`:chip[ ]`, geschützte Leerzeichen eingeschlossen) ist ein leeres Kästchen – eine Antwortlücke, ein Schlusszeichen: so breit wie waagerechter Innenabstand und Kontur seines Stils, so hoch wie ein Chip mit Wörtern. Die Breite der Lücke bestimmen Sie über das `paddingX` eines Stils (`:chip[ ]{style="blank"}`). Steht gar nichts zwischen den Klammern, bleibt `:chip[]` wörtlicher Text.
 - **Wo.** Absätze, Listeneinträge, Zitate, Kästen, Tabellenzellen, Legenden und Anmerkungen. Überschriften behalten `:chip[…]` als wörtlichen Text.
 - **Ausgabeformate.** Canvas, HTML und PDF zeichnen das Kästchen und setzen die Wörter als echten Text: im HTML auswählbar, im PDF extrahierbar und in Lesereihenfolge (in einem getaggten PDF ist das Kästchen ein Layout-Artefakt, und die Wörter gehören zum Absatz).

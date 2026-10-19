@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'HTML、3D书本与EPUB',
   description: '把排好的书放进网页，用postext-folio做成3D书本，用postext-epub做成固定版式或流式版式的EPUB 3',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '12分钟',
   order: 22,
   parent: 'configuration',
@@ -308,7 +308,7 @@ book.setDocument(buildDocument({ markdown: edited }, config));
 - **读者可以绕着书看。** 按住右键拖动可让视角绕书旋转（最低到偏离正上方70°），翻页过程中也可以；`resetView()`把视角平缓地恢复到设置中的`tilt`和`yaw`；`getView()`返回当前看到的视角（`{ tilt, yaw }`，单位为度），可以存为这两项设置。沙盒把它们做成了**重置视角**和**保存为默认视角**两个按钮。
 - **视频在页面上播放。** 无论处于哪种`interaction`模式，点击视频的封面，它就在页面上播放，翻动这一叶时也不停；再点击一次暂停，书停在不显示它的跨页上时停止。设置了`player.autoplay`的视频在它的跨页第一次出现时自动开始播放；如果它还与其他视频同时播放（`player.exclusive: false`），则每次都静音开始，翻走时停止，几段可以同时播放。相关的选项是`videos`、`videoUrl`和`onVideo`，查看器上还有`stopVideo()`；见[文档格式 › Folio视图中的视频](/zh/docs/document-format-resources#folio视图中的视频)。
 - **先加载字体和图片。** 与`renderPage`一样，绘制页面之前，文档用到的字体必须已在`document.fonts`中加载，资源图片必须已通过`registerResourceImage`注册。
-- **无障碍。** 查看器是可获得焦点的组，响应←/→（右侧装订的书方向相反）、Page Up/Down、Home和End；按钮和页码都有标签（用`labels`翻译），每个页面画布都带有替代文字（`alt: (index) => …`）。
+- **无障碍。** 查看器是可获得焦点的组，响应←/→（右侧装订的书方向相反）、Page Up/Down、Home和End；按钮和页码都有标签（用`labels`翻译），每个页面画布都带有`alt`替代文字（`alt: (index) => …`）。
 - **没有WebGL2**，或读者要求减少动画时，跨页直接切换。WebGL书本对手机来说负担很重（每个页面的每一面都要一张纹理）：沙盒只在支持WebGL2、且屏幕短边至少600像素的地方提供书页标签页。`canFlip()`表明此处书页能否以3D方式翻动：需要WebGL2，且没有要求减少动画。
 
 ### 外观
@@ -430,11 +430,12 @@ const bytes = await renderToEpub(docs, {
 
 单个文档就是只有一章的书：`renderToEpub([doc], options)`。
 
-- <strong>`renderToEpub(docs, options): Promise<Uint8Array>`</strong>写出文件。`options`为`{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal? }`。
+- <strong>`renderToEpub(docs, options): Promise<Uint8Array>`</strong>写出文件。`options`为`{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal?, kindlePanelView? }`。
 - **`metadata`**：`title`和`language`（BCP 47语言标签）必填；`subtitle`、`creators`、`identifier`、`date`、`publisher`、`rights`、`description`和`modified`可选。不带前缀的ISBN会写成`urn:isbn:…`。没有`identifier`时，书会得到一个由书名、作者和语言派生的`urn:uuid:`，这样同一本书的新版本在读者书库中保持原位。再传入`modified`即可得到逐字节相同的输出。
 - **`fonts`**：要嵌入的字面（字体文件），`{ family, weight, style, bytes, format, unicodeRange? }`，`format`为`woff2`、`woff`、`ttf`、`otf`之一。每个字面成为一个文件和一条`@font-face`规则；带各自`unicodeRange`的多个文件合成一个字面（Google Fonts的分片）。页面用到却没有嵌入字面的字体族、字重或样式会以`missingFont`报告，阅读系统会改用自己的字体。只嵌入许可证允许嵌入的字体：`redistributable: false`的字面绝不写入文件（书可以用它排版，但它的文件不会放进去，SVG图片中也不会）。宿主也可以改为以授权字体的名称提供开放字体的字面（它们是普通字面），沙盒和`postext`对指定了`fallback`的字体就是这样做的（自postext 1.43起）。
 - **`resourceBytes(fileId)`**：页面放置的图片，同步或异步返回`{ bytes, mediaType }`；`mediaType`为空时从字节判断类型。位图按存储时的样子给出，SVG给出源代码，而不是PDF印刷母版（`svg.pdfFileId`）。每张图片只存一次。单色书（`diagramStyle.singleInk`）的SVG会在文件中重新着色。SVG会嵌入其文字指定的字面，因为阅读系统把它作为图像显示，而图像看不到书的字体（见[SVG文字中的字体](/zh/docs/configuration-resources#svg文字中的字体)）：先取自`fonts`（包含其字符的分片），书的正文没有用到的字体族再取自<strong>`svgFonts.provider`</strong>。标记为`redistributable: false`的字面所属的字体族，以及`svgFonts.withhold(family)`指定的字体族，不放进SVG，每个以`fontWithheld`报告一次；没有字面的字体族以`svgFontUnavailable`报告，超出`svgFonts.maxBytes`（2 MiB）的字面以`svgFontsTooLarge`报告。`svgFonts.inline: false`、`diagramStyle.inlineFonts: false`和资源的`svg.inlineFonts: false`都让字节保持原样。没有字节的图片以`missingImage`报告，原处留下空框。`svgFonts.standIn(family)`（自postext 1.43起）为其中一种字体指定一个开放字体：向`svgFonts.provider`索取这种开放字体中字重和倾斜方式都相同的字面，以被保留字体的名称放进图片；如果取不到，被保留的字体仍不收入，并给出报告。
-- **`cover`**：`{ bytes, mediaType, alt? }`，JPEG、PNG、WebP或SVG图片。书会以包含它的封面文档开头，它也是包文件的`cover-image`（书库中的缩略图）。没有封面时，固定版式把第一页标为封面，流式版式的书没有封面图片。
+- **`cover`**：`{ bytes, mediaType, alt?, showsFirstPage? }`，JPEG、PNG、WebP或SVG图片。书会以包含它的封面文档开头，它也是包文件的`cover-image`（书库中的缩略图）。没有封面时，固定版式把第一页标为封面，流式版式的书没有封面图片。`showsFirstPage: true`表示这张图片是印刷版第一页的截图：此时固定版式只把它用作`cover-image`，并从那一页开始，否则这一页会显示两次；流式版式的书仍从封面文档开始。
+- **`kindlePanelView`**：用于含漫画页的固定版式，加上Kindle Panel View：每个分格上有一个点按区域，点按后放大显示该分格，并写入Kindle要求的元数据。每个点按区域都带有所在页面漫画的一份副本，所以每页每多一个分格就多一份副本；只在面向Kindle的书中开启。默认为`false`。任何阅读系统都能使用的基于区域的导航，无论开不开都会写入（见[漫画的输出](/zh/docs/comics#漫画的输出)）。
 - **`onProgress({ phase, done, total })`**：依次为`resources`（字体和图片）、`documents`（固定版式为页，流式版式为章）、`package`。<strong>`signal`</strong>可在步骤之间中止。
 - <strong>`readEpub(bytes)`</strong>为查看器读回文件，不需要`DOMParser`：版式、元数据、阅读方向、按路径列出的所有文件、清单、spine、目录、页码列表、固定版式的视口和封面。沙盒的阅读器就建立在它之上。
 

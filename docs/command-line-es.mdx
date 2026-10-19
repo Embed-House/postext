@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Línea de comandos',
   description: 'Un único ejecutable autónomo para macOS, Linux y Windows. Convierte un libro .postext, una carpeta de libro o archivos Markdown sueltos en PDF, HTML, EPUB, imágenes de las páginas y Word; además, crea paquetes, revisa libros y devuelve resultados en JSON para scripts y agentes',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
   plainSummary: "Esta página es para quien quiere hacer libros con Postext desde una terminal en lugar de desde la web. Descargas un único archivo para tu ordenador y lo ejecutas, sin instalar nada más. Le das tu libro, o unos cuantos archivos de texto, y te hace un PDF, una página web, un libro electrónico, imágenes de las páginas o un documento de Word. También puede revisar un libro en busca de problemas y juntar todos sus archivos en uno. Otros programas y los asistentes de inteligencia artificial también pueden usarlo, porque sabe responder en un formato que leen con facilidad.",
@@ -155,7 +155,7 @@ pida otro (`--locale en`).
 </table>
 
 Cada comando escribe en la carpeta desde la que lo ejecutas, con el nombre de
-la entrada, salvo que `-o` indique la ruta. `-o -` escribe una única salida en
+la entrada, salvo que `-o` indique la ruta (`images` escribe en `pages/`). `-o -` escribe una única salida en
 la salida estándar.
 
 ### pdf
@@ -237,7 +237,8 @@ se maquetó, sin pasar por un PDF.
   `page-{n:03}`.
 - `--print-preview`: la página tal como la reproducirá la imprenta, a través
   del perfil de salida, con el corte y el sangrado dibujados.
-- `--jobs N`: cuántas imágenes se codifican a la vez.
+- `--jobs N`: cuántas imágenes se codifican a la vez (por defecto, tantas como
+  procesadores tenga el ordenador).
 
 ### docx e import-docx
 
@@ -275,7 +276,9 @@ postext unpack my-book.postext -o my-book/
 
 `pack` comprime en zip una carpeta de libro tal como está, o crea un paquete a partir de Markdown
 suelto. La misma entrada da siempre los mismos bytes, así que se pueden comparar paquetes o calcular
-su hash. `unpack` no escribe en una carpeta que no esté vacía, salvo que se indique `--force`.
+su hash. Con Markdown suelto, `--id`, `--description` y `--thumbnail FILE` (una
+imagen de cubierta) fijan el id, la descripción y la miniatura del paquete; por defecto, el id
+es el nombre convertido en slug. Una carpeta conserva lo que diga su `preset.json`. `unpack` no escribe en una carpeta que no esté vacía, salvo que se indique `--force`.
 
 ### info y check
 
@@ -341,7 +344,7 @@ archivos correctos.
 </table>
 
 Y para todos los comandos: `--json`, `--quiet` (`-q`, solo errores),
-`--verbose` (el progreso y todos los avisos), `--no-color`, `--help`.
+`--verbose` (el progreso y todos los avisos), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Fuentes
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pagine composte',
   description: 'Come modificare modelli di pagina e cornici direttamente sulla pagina; la raccolta degli stili delle cornici; i controlli delle pagine composte in tutte le edizioni; lo spostamento del testo di un libro nel Markdown e la correzione di una cornice con un clic',
   lang: 'it',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 38,
   parent: 'sandbox',
@@ -33,6 +33,8 @@ Questa pagina raccoglie le parti dei pannelli **Grafica** e **Verifiche** che ri
 
 **Un articolo che rimanda a un altro capitolo.** In un libro con un file di capitolo per articolo, un articolo la cui cornice lo manda a `page:<id>` prosegue nel capitolo che ha quella pagina (da postext 1.41; vedi [Pagine composte › Saltare a una pagina più avanti](/it/docs/composed-pages#saltare-a-una-pagina-più-avanti)). Il canvas, il Folio e le schede PDF ed EPUB compongono il resto nella pagina di quel capitolo, con i numeri di pagina del libro nelle indicazioni di seguito. Il registro di impaginazione di un capitolo conserva gli articoli che invia, quindi il capitolo che ha la pagina viene reimpaginato quando cambia l’articolo e non quando cambia un capitolo intermedio. Un clic sulle parole arrivate da un altro capitolo mette il cursore nel Markdown dell’articolo, e il percorso sotto l’anteprima indica la pagina successiva quando il cursore è in quel testo. L’anteprima di un solo capitolo mostra soltanto ciò che contengono le sue pagine: il resto compare con il capitolo che ha la pagina.
 
+**Le parole proprie di una figura.** Un clic su una didascalia o una nota che la figura scrive da sé porta il cursore nella sua riga `::caption[…]` o `::note[…]`, o nell’attributo della riga di apertura, sulla lettera cliccata (vedi [Pagine composte › Le parole proprie di una figura](/it/docs/composed-pages#le-parole-proprie-di-una-figura)).
+
 
 ## Stili delle cornici
 
@@ -59,7 +61,7 @@ La sezione raccoglie:
 - *Il testo non entra nemmeno dopo le pagine aggiunte* (`frameContinuationLimit`): il contenuto della cornice è proseguito su tutte le pagine che una pagina composta può aggiungere e ancora non entra;
 - *Un articolo prosegue in una pagina che non viene dopo* (`continueTargetMissing`): nessun blocco di pagina successivo ha l’id indicato dal `continueIn` della cornice;
 - *Etichetta su un’ancora inesistente* e *Ancora senza etichetta* (`labelAnchorUnknown`, `anchorUnlabelled`), sotto la cornice che compone la figura;
-- *Etichetta più larga della giustezza* e *Etichette che si sovrappongono* (`labelOverflow`, `labelOverlap`), sotto la stessa cornice: le etichette di ogni edizione sono misurate con le sue parole, quindi una lingua con parole più lunghe può eccedere dove un’altra no;
+- *Etichetta più larga della giustezza* e *Etichette che si sovrappongono* (`labelOverflow`, `labelOverlap`), sotto la stessa cornice: le etichette di ogni edizione sono misurate con le sue parole, quindi una lingua con parole più lunghe può eccedere dove un’altra no. Anche un’etichetta che invade una delle zone `avoid` dell’immagine, tracciate nella modalità **Zone da evitare** dei segni dell’immagine, compare qui; in un SVG, **Simboli del disegno**, nella stessa modalità, aggiunge una zona su ogni elemento del disegno il cui id inizia con un prefisso dado o che ha una classe data (da postext 1.43);
 - *Slot senza cornice*, *Cornice vuota*, *Modello di pagina sconosciuto*, *Pagina composta con tre segni di due punti* e *L’indicazione spread non corrisponde al modello* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Blocco dell’indice diviso tra colonne* (`tocGroupSplit`);
 - gli avvisi dei modelli stessi (uno stile o un’ancora di cornice che non esiste, misure che si contraddicono, una catena che torna su sé stessa) e il testo grafico che contiene il testo del libro (`contentInConfig`).

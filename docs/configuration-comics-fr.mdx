@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Réglages de bande dessinée',
   description: 'Les réglages de bande dessinée : le cadre et les gouttières des planches, les styles de case, le lettrage, les styles de bulles et les personnages',
   lang: 'fr',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ Chaque entrée de `comics.balloonStyles` s’applique par-dessus le style préd�
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Rotation en degrés, dans le sens des aiguilles d’une montre. L’attribut <code>rotate</code> d’une ligne l’emporte.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Inclinaison des lettres en degrés, appliquée avant <code>rotate</code> : positive vers l’avant comme l’italique, négative vers l’arrière. Un texte écrit sur un objet vu en perspective (une enseigne, une couverture de livre) en suit le bord supérieur avec <code>rotate</code> et les côtés avec <code>skew</code>. L’attribut <code>skew</code> d’une ligne l’emporte.</td>
     </tr>
   </tbody>
 </table>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Mise en forme en ligne et formules',
   description: 'Les marques dans une ligne : emphase, liens, pastilles, petites capitales, tabulations, texte vertical, marques chinoises et japonaises, sens du texte, et formules LaTeX',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ Le balisage en ligne est reconnu dans tout bloc de texte (titres, paragraphes, c
       <td>Une note composée sur deux rangées à demi-taille à l’intérieur de la ligne (双行夹注), coupée d’une ligne et d’une page à l’autre.</td>
     </tr>
     <tr>
+      <td>Marques japonaises</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>Un trait latéral (傍線) et les marques de kanbun (訓点 : marques de retour, okurigana) à côté des caractères. Le texte reste tel qu’il est écrit ; voir <a href="#marques-chinoises-ruby-et-warichu">Marques chinoises, ruby et warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Sens du texte</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>Isole un passage dans son propre sens : un nom anglais dans une phrase arabe, un nom arabe dans une phrase anglaise. Voir <a href="#sens-du-texte-dans-le-balisage">Sens du texte dans le balisage</a>.</td>
+    </tr>
+    <tr>
       <td>Code en ligne</td>
       <td><code>`code`</code></td>
       <td>Les accents graves sont retirés ; le passage est rendu en texte brut, exactement comme il est écrit : un <code>{':ref{…}'}</code>, une pastille, une formule, un lien ou un marqueur d’emphase qu’il contient s’imprime littéralement, ce qui permet à un texte de montrer la syntaxe. Il est composé dans le caractère du texte ou, avec <code>codeStyle.inline</code>, dans le caractère du code, comme une seule unité (voir <a href="/fr/docs/configuration-styles#listings-de-code">Configuration › Listings de code</a>). Un listing se place dans un <a href="/fr/docs/document-format#blocs-de-code">bloc de code</a>.</td>
     </tr>
     <tr>
       <td>Échappement</td>
-      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
-      <td>Une barre oblique inverse compose le caractère marqueur lui-même (l’astérisque d’une note de tableau, <code>{'\\* pOH = −log [OH^−^]'}</code>, un accent circonflexe littéral, un signe dollar qui n’ouvre aucune formule) au lieu d’ouvrir un passage. Fonctionne dans le corps du texte, dans les pastilles ainsi que dans les légendes, les cellules et les notes. (Jusqu’à postext 1.4, les légendes, les cellules, les notes et les pastilles imprimaient la barre oblique inverse de <code>{'\\$'}</code>.)</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code>, <code>{'\\@'}</code></td>
+      <td>Une barre oblique inverse compose le caractère marqueur lui-même (l’astérisque d’une note de tableau, <code>{'\\* pOH = −log [OH^−^]'}</code>, un accent circonflexe littéral, un signe dollar qui n’ouvre aucune formule, une arobase qui ne cite rien) au lieu d’ouvrir un passage. Fonctionne dans le corps du texte, dans les pastilles ainsi que dans les légendes, les cellules et les notes. (Jusqu’à postext 1.4, les légendes, les cellules, les notes et les pastilles imprimaient la barre oblique inverse de <code>{'\\$'}</code>.)</td>
     </tr>
     <tr>
       <td>Espace insécable</td>
@@ -116,6 +126,11 @@ Le balisage en ligne est reconnu dans tout bloc de texte (titres, paragraphes, c
       <td>Un passage de texte encadré qui passe à la ligne comme une seule unité : une banque de mots, une touche, une étiquette. Mis en forme par <code>chipStyles</code> ; voir <a href="#pastilles-en-ligne">Pastilles en ligne</a>.</td>
     </tr>
     <tr>
+      <td>Surlignage</td>
+      <td><code>:mark[texte]</code></td>
+      <td>Une bande de couleur derrière des mots qui restent du texte ordinaire : ils se coupent, se divisent et se justifient comme d’habitude. Son style vient de <code>markStyles</code> ; voir <a href="#surlignages">Surlignages</a>.</td>
+    </tr>
+    <tr>
       <td>Tabulation</td>
       <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>Envoie les mots qui la suivent au taquet de tabulation suivant : l’un des taquets du style du paragraphe, ou celui que fixent ses attributs. Un caractère de tabulation tapé dans le texte n’est une tabulation que là où le style définit des taquets. Voir <a href="#tabulations-et-taquets">Tabulations et taquets</a>.</td>
@@ -127,6 +142,8 @@ Le balisage en ligne est reconnu dans tout bloc de texte (titres, paragraphes, c
     </tr>
   </tbody>
 </table>
+
+Les marques qui renvoient ailleurs sont décrites avec ce qu’elles désignent : les appels de note `[^id]` dans [Notes de bas de page](/fr/docs/document-format-notes-references#notes-de-bas-de-page) ; `:ref{…}`, `:anchor{#id}`, `[texte]{#id}` et le `@sec:…` de pandoc-crossref dans [Renvois et ancres](/fr/docs/document-format-notes-references#renvois-et-ancres) ; les citations `[@key]` et `@key` dans [Citer](/fr/docs/document-format-notes-references#citer) ; les marques d’index `:index[…]` dans [Marques d’index](/fr/docs/document-format-notes-references#marques-dindex). La pastille de couleur `:swatch{color="…"}` est décrite avec les fonds de cellule dans [Ressources](/fr/docs/document-format-resources#ressources), et le saut de ligne dans un paragraphe dans [Sauts de ligne](/fr/docs/document-format-directives#sauts-de-ligne).
 
 ### Liens
 
@@ -164,7 +181,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **Une seule unité.** Une pastille n’est jamais coupée ni divisée par une césure à l’intérieur ; la ligne est coupée entre les pastilles, aux espaces qui les entourent. Une pastille plus large que la ligne entière déborde plutôt que de se scinder.
 - **Largeur.** Sa chasse est celle du texte plus la marge intérieure horizontale et le contour des deux côtés. La justification n’étire que les espaces entre les mots, jamais l’intérieur d’une pastille. Le `gap` du style est l’espace minimal conservé entre la boîte et un mot ou une pastille voisins de l’autre côté d’une espace ; une espace plus étroite est complétée (pas en bord de ligne, ni contre une ponctuation collée comme `:chip[a],`).
 - **Hauteur.** La boîte est une bande autour de la ligne de base, 0,8 em au-dessus et 0,25 em en dessous à la taille de la pastille, agrandie de la marge intérieure verticale et du contour. La marge intérieure verticale est peinte hors de la boîte de ligne et ne change jamais la hauteur de ligne : la grille de ligne de base tient donc ; une boîte plus haute que le pas de ligne peut empiéter sur une pastille de la ligne au-dessus ou en dessous, et le Sandbox signale deux pastilles de lignes différentes qui se chevauchent (« Pastilles touchant la ligne voisine ») pour que vous puissiez réduire la marge intérieure, le contour ou la taille.
-- **Texte.** Le texte de la pastille accepte ses propres marques en ligne (`:chip[**bold** word]`, `:chip[x^2^]`) et l’emphase qui l’entoure (`**:chip[a]**`) ; le style peut fixer sa famille, sa taille, sa couleur, le gras et l’italique. Écrivez `\]` pour un crochet littéral à l’intérieur. Les renvois, les pastilles de couleur et les formules à l’intérieur d’une pastille restent littéraux, et `\$` imprime un signe dollar (jusqu’à postext 1.4, il imprimait aussi la barre oblique inverse).
+- **Texte.** Le texte de la pastille accepte ses propres marques en ligne (`:chip[**bold** word]`, `:chip[x^2^]`) et l’emphase qui l’entoure (`**:chip[a]**`) ; le style peut fixer sa famille, sa taille, sa couleur, le gras et l’italique. Écrivez `\]` pour un crochet littéral à l’intérieur. Les renvois, les pastilles de couleur et les formules à l’intérieur d’une pastille restent littéraux, et `\$` imprime un signe dollar (jusqu’à postext 1.4, il imprimait aussi la barre oblique inverse). Un style avec `dotted` peint les lettres en rangées de points qu’un enfant repasse, et un style sans fond, sans contour ni marge intérieure fait de la pastille un mot pointillé dans la ligne : `:chip[chat]{style="dots"}` (voir [Styles de pastille](/fr/docs/configuration-styles#styles-de-pastille)).
 - **Vide.** Une pastille composée seulement d’espaces (`:chip[ ]`, espaces insécables comprises) est une boîte vide (un blanc à remplir, une marque de fin) : aussi large que la marge intérieure horizontale et le contour de son style, aussi haute qu’une pastille contenant des mots. Dimensionnez le blanc avec le `paddingX` d’un style (`:chip[ ]{style="blank"}`). Sans rien du tout entre les crochets, `:chip[]` reste du texte littéral.
 - **Où.** Paragraphes, éléments de liste, citations, encadrés, cellules de tableau, légendes et notes. Les titres gardent `:chip[…]` comme texte littéral.
 - **Sortie.** Le canvas, le HTML et le PDF peignent la boîte et composent les mots comme du vrai texte : sélectionnable dans le HTML, extractible et dans l’ordre de lecture dans le PDF (dans un PDF balisé, la boîte est un artefact de mise en page et les mots appartiennent au paragraphe).

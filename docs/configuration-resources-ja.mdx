@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'リソースと表',
   description: 'リソースの種類とその番号付け、表とキャプションのスタイル、単色のダイアグラム、紙面上の動画',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '44分',
   order: 14,
   parent: 'configuration',
@@ -19,9 +19,9 @@ export const metadata = {
 
 **リソースの種類**は、ユーザーが定義できる分類です。たとえば「図」「表」「ダイアグラム」「コードリスト」などで、その種類のリソースにどう番号を付け、キャプションを付け、参照するかを決めます。リストは`config.resourceTypes`にあり、Sandboxでは**デザイン › 図と表 › 番号付けと配置**で編集します。
 
-`config.resourceTypes`が未設定の場合、Postextは3つの組み込みの既定の種類、**図**（Figure）、**表**（Table）、**動画**（Video）を用意します。それぞれ独自の`{h1}.{n}`で番号を付け（レベル1の見出しのたびにリセット）、カウンターは10進数です。`video`の種類を含まないリスト（動画が導入される前に保存された本）でも、種類が`video`の動画リソースには番号が付きます。そのために組み込みの動画の種類が追加されます（`effectiveResourceTypes(config, resources)`）。`defaultVideoResourceType(locale)`はこの種類だけを返します。名前は文書の言語で付きます。`config.locale`、なければ`bodyText.hyphenation.locale`、それもなければ英語です（[文書の言語](/ja/docs/configuration-language#文書の言語)を参照）。
+`config.resourceTypes`が未設定の場合、Postextは3つの組み込みの既定の種類、**図**（Figure）、**表**（Table）、**動画**（Video）を用意します。それぞれ独自の`{h1}.{n}`（中国語、日本語、アラビア語では`{h1}-{n}`）で番号を付け、レベル1の見出しのたびにリセットし、カウンターは10進数です。`video`の種類を含まないリスト（動画が導入される前に保存された本）でも、種類が`video`の動画リソースには番号が付きます。そのために組み込みの動画の種類が追加されます（`effectiveResourceTypes(config, resources)`）。`defaultVideoResourceType(locale)`はこの種類だけを返します。名前は文書の言語で付きます。`config.locale`、なければ`bodyText.hyphenation.locale`、それもなければ英語です（[文書の言語](/ja/docs/configuration-language#文書の言語)を参照）。
 
-組み込みの既定値はロケールに対応しています。公開されている`defaultResourceTypes(locale = 'en')`は、種類の名前、略称、キャプションの接頭辞を文書のロケールに合わせてローカライズします。英語では「*Figure*/*Fig.*」と「*Table*/*Tab.*」、スペイン語では「*Figura*/*Fig.*」と「*Tabla*/*Tabla*」になり、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語にもそれぞれの名前があります（一覧は[文書の言語](/ja/docs/configuration-language#文書の言語)の表にあります）。`es-ES`のような地域付きのタグは言語の部分で照合され、翻訳のないロケールは英語にフォールバックします。番号付けの動作（`numberingTemplate: '{h1}.{n}'`、`resetOn: 'h1'`、10進数のカウンター）は言語に依存しません。呼び出すたびに新しいオブジェクトを返すので、結果は自由に変更できます。
+組み込みの既定値はロケールに対応しています。公開されている`defaultResourceTypes(locale = 'en')`は、種類の名前、略称、キャプションの接頭辞を文書のロケールに合わせてローカライズします。英語では「*Figure*/*Fig.*」と「*Table*/*Tab.*」、スペイン語では「*Figura*/*Fig.*」と「*Tabla*/*Tabla*」になり、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語、中国語（簡体字と繁体字）、日本語、アラビア語にもそれぞれの名前があります（一覧は[文書の言語](/ja/docs/configuration-language#文書の言語)の表にあります）。`es-ES`のような地域付きのタグは言語の部分で照合され、翻訳のないロケールは英語にフォールバックします。どの言語でもカウンターは`h1`でリセットされ、10進数で数えます。テンプレートは`'{h1}.{n}'`ですが、中国語、日本語、アラビア語では章番号とカウンターをハイフンでつなぎます（`'{h1}-{n}'`、図1-1、图1-1）。呼び出すたびに新しいオブジェクトを返すので、結果は自由に変更できます。
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -39,7 +39,9 @@ type ResourceCounterFormat =
   | 'roman-lower'
   | 'roman-upper'
   | 'alpha-lower'
-  | 'alpha-upper';
+  | 'alpha-upper'
+  | EastAsianNumeralStyle  // 'simp-chinese-informal', 'circled-decimal', 'hiragana'…
+  | ArabicNumeralStyle;    // 'arabic-indic', 'persian', 'abjad'…
 
 type ResourceCounterReset = 'never' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -48,11 +50,15 @@ interface ResourcePlacement {
   span?: 'column' | 'page' | 'side';             // one column, the full content width, or the float-only side column
   rotate?: 'ccw' | 'cw';                         // a quarter turn: a landscape table on a page of its own
   width?: number;                                // fraction (0 < width < 1) of the column or page width; default: the whole width
-  align?: 'left' | 'center' | 'right';           // where a float narrower than its column sits; default 'left'
+  align?: 'left' | 'center' | 'right' | 'start' | 'end'; // where a float narrower than its column sits; default 'left'
   captionSide?: boolean;                         // caption beside the figure, in the side column of a oneAndHalf layout (column floats and resources set in the text)
   columns?: number;                              // 'column'フロートがまたがる隣り合う段の数（1.18以降）
   wrap?: 'none' | 'left' | 'right' | 'start' | 'end' | 'contour'; // リソースの横に本文を組み、リソースは段のその側（1.24以降）。'contour'は形に沿う
   wrapGap?: Dimension;                           // 回り込むリソースと本文との間隔（1.24以降）
+  shrink?: 'never' | 'page' | 'slot';            // フロートの画像を空き位置の大きさまで縮小
+  minScale?: number;                             // shrinkで縮小する最小の倍率。既定値0.7
+  captionMeasure?: 'slot' | 'body';              // キャプションと注を空き位置の幅にするか画像の幅にするか
+  citingPage?: boolean;                          // top・autoのフロートが参照されたページや段の先頭に置ける
 }
 
 interface ResourceType {
@@ -65,12 +71,13 @@ interface ResourceType {
   counterFormat: ResourceCounterFormat;// how {n} is formatted
   captionPrefix: string;               // prepended to the caption, e.g. "Figure"
   defaultPlacement?: ResourcePlacement;// fallback placement for this type's resources
+  captionStyle?: CaptionStyleConfig;   // この種類のリソースのキャプションスタイル（一部）
 }
 ```
 
 種類の項目は省略できます（postext 1.38以降）。省いた項目は同じidの組み込みの種類（`figure`・`table`・`video`の、文書の言語のもの）が補います。該当する種類がなければ、`name`はid、`shortLabel`と`captionPrefix`は`name`、`numberingTemplate`は`{'{h1}.{n}'}`（中国語・日本語・アラビア語では`{'{h1}-{n}'}`）、`resetOn`は`'h1'`、`counterFormat`は`'decimal'`になります。どの見出しレベルも指さない`resetOn`は`'h1'`として扱い、`unknownConfigValue`の警告を出します。
 
-`ResourcePlacement`は、リソースが自身の`placement`に設定するものと同じ形です。`position`はフロートが入れる空き位置の種類を選びます。`auto`（既定値）は最初の参照の後にある最初の空き位置を取り、`top`／`bottom`はその種類の帯に限定し、`here`はリソースをインラインで埋め込みます。`span`はフロートの範囲を、1段、版面の全幅、または1段半レイアウトのフロート専用サイド段から決めます。`rotate`はリソースを90度回転させ、独立したページに置くページ幅のフロートにします。`width`はフロートを段の幅（ページ幅のフロートではページの幅）の一部に狭めます。たとえば広い段に置く小さな表です。`align`は、そのように狭めたフロートを置く位置（既定は左、ほかに中央と右）と、空き位置より狭い画像をその中のどこに置くかを決めます。段より小さいビットマップや、`layout.fitFiguresToPage`が縮小した画像が対象です。キャプションと注は空き位置の行長を保ちます（postext 1.4までは、そうした画像は常に左そろえでした）。`captionSide`は、1段半レイアウト（`layout.sideColumnRole: 'floats'`）のフロート専用サイド段で、キャプションを図の横、図の上端（下側のフロートでは下端）の高さに置きます。段幅のフロートに適用され、postext 1.28以降は本文中に置いたリソース（`position: 'here'`、1段幅、回り込みなし）にも適用されます。その横でサイド段が空いていればキャプションと注を本体の上端の高さでサイド段に置き、空いていなければ本体の下に置きます（`layout.inlineCaptionSide`、既定でオン。`false`ではサイド段のキャプションは段幅のフロートだけになります）。そうした段のないページではキャプションは図の下のままです。リソースもその種類も配置を設定しない場合、組み込みの既定値は`auto`／`column`です。`shrink`（`'never'`、`'page'`、`'slot'`）と`minScale`（未設定なら0.7）は、フロートの図を次へ送らずに置き場所の空きまで縮小し、`captionMeasure: 'body'`は置き場所より幅の狭い図のキャプションと注を図の幅で組みます（[文書形式 › 配置](/ja/docs/document-format-resources#配置)を参照）。前の2つの文書全体の既定値は`layout.floatShrink`で決めます。`wrap`は本文中の埋め込みや1段幅のフロートを段の片側に置き、`wrapGap`だけ離して本文をその横に回り込ませます。既定値は`layout.wrap`にあります（[文書形式 › 回り込み](/ja/docs/document-format-resources#回り込み)を参照）。`wrap: 'contour'`は、リソースの`contour`（`points`、`alpha`、`threshold`、`margin`、ホストが作る`traced`）から読んだ画像の形に沿って本文を回り込ませます（[文書形式 › 輪郭に沿った回り込み](/ja/docs/document-format-resources#輪郭に沿った回り込み)を参照）。`citingPage`は、`top`または`auto`のフロートを、参照行の後の最初の空き位置ではなく、参照行のあるページまたは段の先頭に置きます。`layout.floatsAtCitingPage`が文書の既定値、`layout.maxTopFraction`がそのフロートの占めてよい段の割合です（[文書形式 › 配置](/ja/docs/document-format-resources#配置)を参照）。
+`ResourcePlacement`は、リソースが自身の`placement`に設定するものと同じ形です。`position`はフロートが入れる空き位置の種類を選びます。`auto`（既定値）は最初の参照の後にある最初の空き位置を取り、`top`／`bottom`はその種類の帯に限定し、`here`はリソースをインラインで埋め込みます。`span`はフロートの範囲を、1段、版面の全幅、または1段半レイアウトのフロート専用サイド段から決めます。`rotate`はリソースを90度回転させ、独立したページに置くページ幅のフロートにします。`width`はフロートを段の幅（ページ幅のフロートではページの幅）の一部に狭めます。たとえば広い段に置く小さな表です。`align`は、そのように狭めたフロートを置く位置（既定は左、ほかに中央と右）と、空き位置より狭い画像をその中のどこに置くかを決めます。段より小さいビットマップや、`layout.fitFiguresToPage`が縮小した画像が対象です。キャプションと注は空き位置の行長を保ちます（postext 1.4までは、そうした画像は常に左そろえでした）。`left`と`right`は本文の流れに対する左右で、右から左に書く文書のページでは入れ替わります。`start`と`end`は同じ側を指します。`captionSide`は、1段半レイアウト（`layout.sideColumnRole: 'floats'`）のフロート専用サイド段で、キャプションを図の横、図の上端（下側のフロートでは下端）の高さに置きます。段幅のフロートに適用され、postext 1.28以降は本文中に置いたリソース（`position: 'here'`、1段幅、回り込みなし）にも適用されます。その横でサイド段が空いていればキャプションと注を本体の上端の高さでサイド段に置き、空いていなければ本体の下に置きます（`layout.inlineCaptionSide`、既定でオン。`false`ではサイド段のキャプションは段幅のフロートだけになります）。そうした段のないページではキャプションは図の下のままです。リソースもその種類も配置を設定しない場合、組み込みの既定値は`auto`／`column`です。`shrink`（`'never'`、`'page'`、`'slot'`）と`minScale`（未設定なら0.7）は、フロートの図を次へ送らずに置き場所の空きまで縮小し、`captionMeasure: 'body'`は置き場所より幅の狭い図のキャプションと注を図の幅で組みます（[文書形式 › 配置](/ja/docs/document-format-resources#配置)を参照）。前の2つの文書全体の既定値は`layout.floatShrink`で決めます。`wrap`は本文中の埋め込みや1段幅のフロートを段の片側に置き、`wrapGap`だけ離して本文をその横に回り込ませます。既定値は`layout.wrap`にあります（[文書形式 › 回り込み](/ja/docs/document-format-resources#回り込み)を参照）。`wrap: 'contour'`は、リソースの`contour`（`points`、`alpha`、`threshold`、`margin`、ホストが作る`traced`）から読んだ画像の形に沿って本文を回り込ませます（[文書形式 › 輪郭に沿った回り込み](/ja/docs/document-format-resources#輪郭に沿った回り込み)を参照）。`citingPage`は、`top`または`auto`のフロートを、参照行の後の最初の空き位置ではなく、参照行のあるページまたは段の先頭に置きます。`layout.floatsAtCitingPage`が文書の既定値、`layout.maxTopFraction`がそのフロートの占めてよい段の割合です（[文書形式 › 配置](/ja/docs/document-format-resources#配置)を参照）。
 
 `columns`（postext 1.18以降）は、複数の段があるページで、`span: 'column'`のフロートを指定した数の隣り合う段にまたがって置きます。新聞の5段のうち2段にまたがる写真などです。幅はそれらの段とその間の段間を合わせたものです。上端のそろった空の段の並びの頭か、引用した段とその後の空の段の足に置かれます。ページの段数以上を指定すると、ページ幅のフロートになります。`'page'`と`'side'`のspan、回転したリソース（`rotate`）、インラインの埋め込み（`here`）では無視され、`captionSide`は1段幅のフロートにだけ効きます。
 
@@ -116,7 +123,7 @@ interface ResourceType {
     <tr>
       <td><code>counterFormat</code></td>
       <td><code>ResourceCounterFormat</code></td>
-      <td><code>{'{n}'}</code>カウンターの表示形式です。10進数（<code>1, 2, 3</code>）、小文字・大文字のローマ数字（<code>i, ii</code>／<code>I, II</code>）、小文字・大文字のアルファベット（<code>a, b</code>／<code>A, B</code>）から選びます。ノンブルやリストの表記も使えます（<code>'lower-roman'</code>、<code>'arabic'</code>など。<a href="/ja/docs/configuration-page-layout#番号書式の表記">番号書式の表記</a>を参照）。不明な値は10進数で数え、報告されます。見出しのトークン（<code>{'{h1}'}</code>など）は常に10進数で表示されます。</td>
+      <td><code>{'{n}'}</code>カウンターの表示形式です。10進数（<code>1, 2, 3</code>）、小文字・大文字のローマ数字（<code>i, ii</code>／<code>I, II</code>）、小文字・大文字のアルファベット（<code>a, b</code>／<code>A, B</code>）から選びます。ノンブルやリストの表記も使えます（<code>'lower-roman'</code>、<code>'arabic'</code>など。<a href="/ja/docs/configuration-page-layout#番号書式の表記">番号書式の表記</a>を参照）。東アジアやアラビアの数字のスタイルも使えます（<code>'simp-chinese-informal'</code>は一、二、三、<code>'arabic-indic'</code>は١、٢、٣と数えます）。不明な値は10進数で数え、報告されます。見出しのトークン（<code>{'{h1}'}</code>など）は常に10進数で表示されます。</td>
     </tr>
     <tr>
       <td><code>captionPrefix</code></td>
@@ -126,7 +133,7 @@ interface ResourceType {
     <tr>
       <td><code>defaultPlacement</code></td>
       <td><code>ResourcePlacement</code>（省略可）</td>
-      <td>自身の<code>placement</code>を設定しない、この種類のリソースが使う配置です。<code>position</code>、<code>span</code>、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>captionSide</code>、<code>columns</code>はそれぞれ個別に決まります。リソースも種類もあるフィールドを設定しない場合は、組み込みの既定値が適用されます。<code>auto</code>／<code>column</code>、回転なし、全幅、左そろえ、キャプションは図の下です。決まる順序は下の<a href="#番号付けと参照">番号付けと参照</a>を、回転したリソースを含む各値の動作は<a href="/ja/docs/document-format-resources#リソース">文書形式 › リソース</a>を参照してください。</td>
+      <td>自身の<code>placement</code>を設定しない、この種類のリソースが使う配置です。<code>ResourcePlacement</code>のすべてのフィールド（<code>position</code>、<code>span</code>、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>captionSide</code>、<code>columns</code>、<code>shrink</code>、<code>minScale</code>、<code>captionMeasure</code>、<code>wrap</code>、<code>wrapGap</code>、<code>citingPage</code>）がそれぞれ個別に決まります。リソースも種類もあるフィールドを設定しない場合は、組み込みの既定値が適用されます。<code>auto</code>／<code>column</code>、回転なし、全幅、左そろえ、キャプションは図の下です。決まる順序は下の<a href="#番号付けと参照">番号付けと参照</a>を、回転したリソースを含む各値の動作は<a href="/ja/docs/document-format-resources#リソース">文書形式 › リソース</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
@@ -442,7 +449,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>そのマーカーの文字列で、部分の下に注記の書体で右そろえに組みます（<a href="#キャプションスタイル">キャプションスタイル</a>を参照）。既定値は文書の言語に従います（8つの言語については<a href="/ja/docs/configuration-language#文書の言語">文書の言語</a>を参照）。</td>
+      <td>そのマーカーの文字列で、部分の下に注記の書体で右そろえに組みます（<a href="#キャプションスタイル">キャプションスタイル</a>を参照）。既定値は文書の言語に従います（各言語の既定値は<a href="/ja/docs/configuration-language#文書の言語">文書の言語</a>を参照）。</td>
     </tr>
   </tbody>
 </table>
@@ -534,7 +541,7 @@ const resource: Resource = {
 
 **本文中に置いた表**。`here`に置いた表（`::resource`で埋め込んだもの）も、postext 1.25以降は同じ規則に従います（`splitInline`、既定でオン）。段に残った余地に収まらないときは、行の間で切ります。最初の部分は上のフロートのアキを保ち、少なくとも見出し行と本体の2行を含みます（それに満たなければ、これまでどおり表全体が次の段から始まります）。続く各部分は、上にアキを取らずに次の段の頭から始まり、その段の幅で組まれます（1段半レイアウトで部分が狭い段に入れば、その幅で組みます）。`::resource`の行の後のテキストは、最後の部分の後に続きます。見出し行の繰り返し、接尾辞を付けたキャプション、続きの印、最後の部分の注記、3行以上の末尾、結合セルや見出しとなる行を避ける分割位置は、フロートの表と同じです。本体が5行未満の表は切りません。`'clip'`は段より高いインラインの表の先頭の収まる行を残し、段の頭に組みます。`'hide'`はそうした表を省きます。それより低い表は、どちらのモードでも丸ごと次の段に移ります。インラインの表が始めるページでは、そのページが受け取るフロートから空けておくのは最初の部分の余地だけなので、待っている全幅の図がそのページの頭に来て、表はその下に続きます。縦組みのページのインラインの表と、囲みの中の表は切りません。`splitInline: false`にすると、postext 1.24までと同じく、インラインの表を丸ごと次の段に移します。
 
-続きの文字列の既定値は文書の言語（`locale`、なければハイフネーションのロケール）によって決まります。英語は`(cont.)` / `Continued`、スペイン語は`(cont.)` / `Continúa`で、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語にも同様の既定値があります（[文書の言語](/ja/docs/configuration-language#文書の言語)に一覧があります）。
+続きの文字列の既定値は文書の言語（`locale`、なければハイフネーションのロケール）によって決まります。英語は`(cont.)` / `Continued`、スペイン語は`(cont.)` / `Continúa`で、フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語、中国語、日本語、アラビア語にも同様の既定値があります（[文書の言語](/ja/docs/configuration-language#文書の言語)に一覧があります）。
 
 セルの内容はインラインのMarkdownで、セル内の改行（改行文字、またはキャプションや注記と同じく`\\`）は新しい段落を始めます。行頭記号かダッシュ（`•`、`-`、`*`、`–`）または番号（`1.`、`1)`）の後にスペースが続く段落は、リストの項目として組まれます。記号は書かれたとおりに描かれ、テキストは文書の`unorderedLists.gap`だけ離れてぶら下がり、折り返した行はテキストにそろい、先頭のスペース2つで1段階入れ子になります。そのため、`• Ofrece elección\n• Acomoda a personas diestras y zurdas`と書いたセルは2項目のリストになります。通常のスペースだけの行は何も加えません。ノーブレークスペース（U+00A0）を含む行は、CommonMarkと同じくセルの1行になるため、`1\n`の後にノーブレークスペースを続けると、その行は2行分の高さになります。セルのテキスト末尾のノーブレークスペースは幅を保ちます。`760`とノーブレークスペースを`(231)`の上に右そろえで置くと、端からスペース1つ分手前で終わり、0が1に近づきます。数字が正確にそろうのは、スペースが括弧と同じ幅の場合だけで、たいていの書体ではスペースのほうが狭くなります（postext 1.4までは、どちらも取り除かれていました）。
 
@@ -827,7 +834,7 @@ import {
 import type { DiagramStyleConfig, ResolvedDiagramStyleConfig } from 'postext';
 
 const resolved = resolveDiagramStyleConfig(config.diagramStyle);
-// => { singleInk: false, inkColor: { hex: '#295AA3', model: 'hex', paletteId: 'main-color' } }
+// => { singleInk: false, inkColor: { hex: '#295AA3', model: 'hex', paletteId: 'main-color' }, inlineFonts: true }
 
 const minimal  = stripDiagramStyleDefaults(config.diagramStyle);
 // => undefined when everything matches the defaults
@@ -894,7 +901,7 @@ const canvas = renderPage(doc.pages[0], doc);
 - **EPUB**：`postext-epub`は、SVGを書き出す前に、本の`fonts`から、次に`svgFonts.provider`からフェイスを埋め込みます（[EPUBの本](/ja/docs/configuration-html-folio-epub#epubの本postext-epub)を参照）。
 - **PDF**：SVGの文字は、埋め込んだフォントで実際のテキストとして組まれます。`@font-face`規則だけを含む`<style>`（作者が埋め込んだフェイス）があっても、図はもうラスターに切り替わりません。図がラスターになる場合（フィルターやグラデーション）は、PDFの`fontProvider`から得たフェイスを埋め込んでからラスターを作ります。
 
-下位の関数も公開されています。`svgFontRequests(svgText)`は各テキストのファミリー、ウェイト、スタイル、文字を列挙します。`inlineSvgFonts(svgText, provider, options)`と`inlineSvgFontsSync(svgText, syncProvider, options)`はマークアップを返し、`inlineSvgFontsDetailed`はそれに各フェイスの結果（`inlined`、`declared`、`unavailable`、`withheld`、`tooLarge`）を加えて返します。
+下位の関数も公開されています。`svgFontRequests(svgText)`は各テキストのファミリー、ウェイト、スタイル、文字を列挙します。`inlineSvgFonts(svgText, provider, options)`と`inlineSvgFontsSync(svgText, syncProvider, options)`はマークアップを返し、`inlineSvgFontsDetailed`はそれに各フェイスの結果（`inlined`、`declared`、`unavailable`、`withheld`、`tooLarge`）を加えて返します。代わりのファミリーから埋め込んだフェイスは、そのファミリーを`standIn`に示します。
 
 <table>
   <thead>

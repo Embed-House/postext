@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Konfiguration: Stile und Teile',
   sidebarTitle: 'Stile und Teile',
-  description: 'Benannte Stile für Absätze, Chips, Code-Listings und Überschriften sowie die Seiten, die jeden Teil eröffnen',
+  description: 'Benannte Stile für Absätze, Chips, Hervorhebungen, Code-Listings und Überschriften sowie die Seiten, die jeden Teil eröffnen',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "Diese Seite behandelt die benannten Stile, die Sie einmal festlegen und vielfach verwenden. Ein Absatzformat legt eine Textart fest, etwa ein Literaturverzeichnis oder ein Glossar. Ein Chip-Stil zeichnet ein kleines Etikett in eine Zeile. Code-Listings haben ihre eigene Schrift, ihren eigenen Kasten und ihre eigenen Farben. Außerdem behandelt die Seite die Seiten, die jeden Teil eines Buchs eröffnen, und die Stile für besondere Überschriften. Kästen haben eine eigene Seite.",
+  plainSummary: "Diese Seite behandelt die benannten Stile, die Sie einmal festlegen und vielfach verwenden. Ein Absatzformat legt eine Textart fest, etwa ein Literaturverzeichnis oder ein Glossar. Ein Chip-Stil zeichnet ein kleines Etikett in eine Zeile, ein Hervorhebungsstil ein Farbband hinter eine Wortgruppe. Code-Listings haben ihre eigene Schrift, ihren eigenen Kasten und ihre eigenen Farben. Außerdem behandelt die Seite die Seiten, die jeden Teil eines Buchs eröffnen, und die Stile für besondere Überschriften. Kästen haben eine eigene Seite.",
 };
 
 # Konfiguration: Stile und Teile
@@ -292,7 +292,7 @@ Die Punkte jeder Zeile enden ein halbes Geviert vor dem Preis (`leaderGap`). Ein
 
 ### Der Container `:::paragraphs`
 
-Eine Zeile `:::paragraphs{style="<id>"}` öffnet den Container, eine bloße Zeile `:::` schließt ihn; jeder Absatz dazwischen erhält den benannten Stil, während Überschriften, Listen und andere Blöcke darin ihre übliche Gestaltung behalten. Container dürfen in anderen Containern verschachtelt werden. Eine unbekannte `style`-ID ist kein Fehler: Die Absätze erscheinen als schlichter Fließtext.
+Eine Zeile `:::paragraphs{style="<id>"}` öffnet den Container, eine bloße Zeile `:::` schließt ihn; jeder Absatz dazwischen erhält den benannten Stil, während Überschriften, Listen und andere Blöcke darin ihre übliche Gestaltung behalten. Container dürfen in anderen Containern verschachtelt werden. Eine unbekannte `style`-ID ist kein Fehler: Die Absätze erscheinen als schlichter Fließtext, und die Sandbox meldet die ID.
 
 Die öffnende Zeile nimmt außerdem `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` und `endIndent` (bloße Zahlen sind Geviert) an, mit oder ohne Stil: Mit Stil überschreiben sie ihn; ohne gelten sie über dem Stil des umschließenden Containers oder über dem Textstil an der Stelle des Blocks (der Fließtext, ein Teil, ein gestalteter Abschnitt oder ein Kasten). `:::paragraphs{align=end}` setzt einen Block bündig an das Zeilenende (地付き) und `:::paragraphs{align=end endIndent=1}` ein Zeichen davor. Seit postext 1.16.
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Chip-Stile
 
-Die Eigenschaft `chipStyles` deklariert die benannten Stile des Inline-Elements `:chip[text]{style="…"}` – die abgerundeten, getönten Kästchen eines Wortspeichers, einer Tastaturtaste, eines Schlagworts (Syntax und Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `chip`, ist standardmäßig dabei (eine blassblaue Fläche mit einer Haarlinie in der Hauptfarbe, leicht abgerundet, der Text wie die umgebenden Wörter), sodass `:chip[…]` ohne jede Konfiguration funktioniert; wer `chipStyles` deklariert, ersetzt diese Standardliste. Ein Chip ohne `style` oder mit einer ID, die kein Stil deklariert, erhält den ersten Stil.
+Die Eigenschaft `chipStyles` deklariert die benannten Stile des Inline-Elements `:chip[text]{style="…"}` – die abgerundeten, getönten Kästchen eines Wortspeichers, einer Tastaturtaste, eines Schlagworts (Syntax und Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `chip`, ist standardmäßig dabei (eine blassblaue Fläche mit einer Haarlinie in der Hauptfarbe, leicht abgerundet, der Text wie die umgebenden Wörter), sodass `:chip[…]` ohne jede Konfiguration funktioniert; wer `chipStyles` deklariert, ersetzt diese Standardliste. Ein Chip ohne `style` oder mit einer ID, die kein Stil deklariert, erhält den ersten Stil (die Sandbox meldet die unbekannte ID).
 
 ```ts
 const config: PostextConfig = {
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Hervorhebungsstile
 
-Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit leicht abgerundeten Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil.
+Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit leicht abgerundeten Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil (die Sandbox meldet die unbekannte ID).
 
 ```ts
 const config: PostextConfig = {
@@ -1127,7 +1127,7 @@ const config: PostextConfig = {
       <td>Ebenenfelder</td>
       <td>wie in <code>headings.levels[]</code></td>
       <td>die Werte der Ebene</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: Jedes gesetzte Feld ersetzt für Überschriften dieses Stils den Wert der Überschriftenebene (<code>dropCap: false</code> entfernt die Initiale der Ebene). <code>breakBefore</code> wird Feld für Feld mit dem der Ebene zusammengeführt: Ein Stil, der nur <code>parity</code> setzt, behält das <code>enabled</code> der Ebene, und einer, der nur <code>enabled: true</code> setzt, behält ihre Parität (bis postext 1.4 kam das fehlende Feld stattdessen aus dem Standard ohne Umbruch).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>numberSeparator</code>, <code>numberPosition</code>, <code>breakBefore</code>, <code>span</code>, <code>spanBreak</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: Jedes gesetzte Feld ersetzt für Überschriften dieses Stils den Wert der Überschriftenebene (<code>dropCap: false</code> entfernt die Initiale der Ebene). <code>breakBefore</code> wird Feld für Feld mit dem der Ebene zusammengeführt: Ein Stil, der nur <code>parity</code> setzt, behält das <code>enabled</code> der Ebene, und einer, der nur <code>enabled: true</code> setzt, behält ihre Parität (bis postext 1.4 kam das fehlende Feld stattdessen aus dem Standard ohne Umbruch).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1210,6 +1210,7 @@ Babble, badger… (runs on to the next page)
 ```
 
 Beide Buchstaben beginnen auf Seite 1, also übernimmt Seite 1 die Kolumnentitel des Abschnitts `B`: Ein im Kopf des Stils gesetztes Daumenregister zeigt dort „B“, und keine Seite trägt das Register für „A“. Geben Sie jedem Abschnitt eine eigene Seite (`breakBefore`), wenn jeder sein Daumenregister braucht.
+
 Mit Buchstaben gezählte Anhänge nach nummerierten Kapiteln und eine Widmungsseite, die Inhaltsverzeichnis und PDF-Lesezeichen aufführen, die Seite selbst aber nicht betitelt:
 
 ```ts

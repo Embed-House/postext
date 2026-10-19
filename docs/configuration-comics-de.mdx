@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Comic-Einstellungen',
   description: 'Die Comic-Einstellungen: Rahmen und Zwischenräume von Comicseiten, Panelstile, Lettering, Sprechblasenstile und die Figurenliste',
   lang: 'de',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ Jeder Eintrag von `comics.balloonStyles` wird über den eingebauten Stil mit der
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Drehung in Grad, im Uhrzeigersinn. Das Attribut <code>rotate</code> einer Zeile hat Vorrang.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Neigung der Buchstaben in Grad, vor <code>rotate</code> angewandt: positiv nach vorn wie kursiv, negativ nach hinten. Schrift auf einem perspektivisch gesehenen Gegenstand (ein Schild, ein Buchumschlag) folgt mit <code>rotate</code> seiner Oberkante und mit <code>skew</code> seinen Seiten. Das Attribut <code>skew</code> einer Zeile hat Vorrang.</td>
     </tr>
   </tbody>
 </table>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Paràmetres de pàgines compostes',
   description: "Les plantilles de les pàgines compostes (marcs, grups, decoració, herència i variants per a pàgina senar i parella), els estils dels rètols que es posen sobre les àncores d'una imatge i els avisos que pot donar una plantilla",
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ Una plantilla que només fixa l'`id` i un marc és una pàgina sencera en què a
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>cap</td>
-      <td>Un estil de paràgraf per al text de la pàgina, com el que tenen els estils d'encapçalament.</td>
+      <td>Un estil de paràgraf per al text de la pàgina, com el que tenen els estils d'encapçalament. La maquetació encara no l'aplica.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ Un marc es col·loca segons la cel·la de `grid` quan la plantilla té retícula
       <td><code>columns</code>, <code>columnGap</code></td>
       <td><code>number</code>, <code>Dimension</code></td>
       <td><code>1</code>, el de l'estil</td>
-      <td>Columnes dins del marc.</td>
+      <td>Columnes dins del marc. Un encapçalament mai no en tanca cap: passa a la columna següent amb el text que encapçala (amb <code>headings.keepWithNext</code>, des de postext 1.46).</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Es llegeixen i es comproven, però encara no s'apliquen: el `bodyStyle` i la `palette` de la plantilla. El `writingMode` i la `direction` d'un marc s'apliquen des de postext 1.39. Una amplada `'auto'` es llegeix com a `'fill'`.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Des de postext 1.42 aplica també la `palette` de la plantilla, el `look` d'un marc i l'amplada `'auto'` (la de la línia més llarga del marc). El `writingMode` i la `direction` d'un marc s'apliquen des de postext 1.39. Es llegeix i es comprova, però encara no s'aplica: el `bodyStyle` de la plantilla.
 
 ### Dobles pàgines
 
@@ -588,7 +588,7 @@ En un llibre vertical (`vertical-rl`), la doble pàgina es compon en el sistema 
 
 ## Estils de rètol
 
-La propietat `labelStyles` defineix, amb un nom, l'aspecte dels rètols que es posen sobre una imatge: els mars i les ciutats d'un mapa, les parts d'un esquema. Un rètol se situa en una àncora de la imatge (un punt amb nom desat amb el recurs, com els dels personatges d'un còmic) i pren l'estil que indica l'àncora o el rètol. Al Sandbox s'editen a **Disseny › Figures i taules › Estils de rètol** (des de postext 1.42).
+La propietat `labelStyles` defineix, amb un nom, l'aspecte dels rètols que es posen sobre una imatge: els mars i les ciutats d'un mapa, les parts d'un esquema. Un rètol se situa en una àncora de la imatge (un punt amb nom desat amb el recurs, com els dels personatges d'un còmic) i pren l'estil que indica l'àncora o el rètol. Al Sandbox s'editen a **Disseny › Figures i taules › Estils de rètol** (des de postext 1.42). En canviar-hi el nom d'un estil es reescriuen les àncores i les línies `::label` que l'esmenten (des de postext 1.43).
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>Fins a quina mida es pot reduir un rètol quan no cap a l'amplada que té.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>Escriptura vertical per als rètols d'aquest estil: caràcters drets en cel·les una sota l'altra, columnes de dreta a esquerra, com es retola un mapa xinès o japonès. El <code>writingMode</code> propi d'una àncora hi té prioritat.</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code> indica que el rètol posat en aquesta àncora pot tocar els veïns, tal com surt a l'original: no es dona l'avís <code>labelOverlap</code> per a cap parella de rètols de què formi part. Preval sobre l'<code>overlap</code> de l'estil. Des de postext 1.42.</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>En una figura que travessa el llom d'una doble pàgina, <code>'keep'</code> aparta el rètol de l'espai del llom, cap al costat on hi ha el punt; <code>'cross'</code> el deixa on el posa el punt, com demana un títol a l'ample de les dues pàgines. Des de postext 1.43.</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ Les àncores d'una imatge (`Resource.anchors`, els punts que fan servir els còm
       <td>cap</td>
       <td>Un id de <code>labelStyles</code>. Si un rètol indica un estil propi, aquest el substitueix.</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code> compon el rètol en vertical, com es retola un mapa xinès o japonès o un llom. Aleshores, el <code>width</code> és una fracció de l'alçada de la imatge, <code>align</code> va al llarg de la columna (<code>start</code> és l'extrem superior) i <code>verticalAlign</code> a través de les columnes (<code>top</code> és la primera, la de la dreta).</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> indica que el rètol posat en aquesta àncora pot tocar els veïns, tal com surt a l'original: no es dona l'avís <code>labelOverlap</code> per a cap parella de rètols de què formi part. Preval sobre l'<code>overlap</code> de l'estil. Des de postext 1.42.</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>En una figura que travessa el llom d'una doble pàgina, <code>'keep'</code> aparta el rètol de l'espai del llom, cap al costat on hi ha el punt; <code>'cross'</code> el deixa on el posa el punt, com demana un títol a l'ample de les dues pàgines. Des de postext 1.43.</td>
     </tr>
   </tbody>
 </table>

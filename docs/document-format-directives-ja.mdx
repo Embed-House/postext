@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'ディレクティブ',
   description: ':::で始まるディレクティブの一覧。コンテナー、段組み、用紙、改ページ、番号付け、アキ、詩、目次と索引、段落内の改行、そして漫画のページの記法',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '34分',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## ディレクティブ
 
-ディレクティブは、単独の行に`:::name`または`:::name{attrs}`と書く1行の制御タグです。目に見える出力はなく、配置と番号付けの処理を動かします。
+ディレクティブは、単独の行に`:::name`または`:::name{attrs}`と書く1行の制御タグです。多くは目に見える出力を持たず、配置と番号付けの処理を動かします。`:::toc`、`:::index`、`:::bibliography`は、置いた位置に目次、索引、参考文献を印字します。
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ export const metadata = {
       <td>ここに索引を出力します。本の中で<code>:index</code>で印を付けたすべての語を、並べ替えて頭文字ごとにまとめ、出現するページとともに<code>index</code>の設定に従って組みます。<code>:::index&#123;index="names"&#125;</code>は名前付きの索引を出力します。<a href="/ja/docs/document-format-notes-references#索引">索引</a>を参照してください。</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>ここに引用した文献の一覧を、引用スタイルに従って出力します。<code>title</code>は見出しを、<code>scope</code>は載せる範囲を変えます。<a href="/ja/docs/document-format-notes-references#参考文献の一覧">参考文献の一覧</a>を参照してください。</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>漫画のページです。<code>::panel</code>の行とその台本の行を、独立したページの上にコマと写植した吹き出しとして組みます。<a href="#漫画">漫画</a>を参照してください。</td>
     </tr>
@@ -84,7 +88,7 @@ export const metadata = {
 
 属性の値は、二重引用符（<code>"…"</code>）や一重引用符（<code>'…'</code>）で囲むか、囲まずに（<code>startAt=17</code>）書きます。`=`のないキーだけを書くと、値が空のフラグとして扱われます。
 
-現在、1行のディレクティブとして認識するのは`pagebreak`、`numbering`、`columnbreak`、`space`、`toc`、`index`だけです（フェンスで囲むブロックとしては`references`、`verse`、`page`、`strip`）。それ以外の`:::name`行で、コンテナー（後述）でもないものは段落として解析され、Sandboxに**不明なディレクティブ**の警告が表示されます。エンジンもそれを、文書の`contentWarnings`の`unknownDirective`項目として記録します（[設定 › 文書の中の警告](/ja/docs/configuration-programmatic-usage#文書の中の警告)を参照）。
+現在、1行のディレクティブとして認識するのは`pagebreak`、`numbering`、`columnbreak`、`space`、`toc`、`index`、`bibliography`だけです（フェンスで囲むブロックとしては`references`、`verse`、`page`、`strip`、`figure`）。それ以外の`:::name`行で、コンテナー（後述）でもないものは段落として解析され、Sandboxに**不明なディレクティブ**の警告が表示されます。エンジンもそれを、文書の`contentWarnings`の`unknownDirective`項目として記録します（[設定 › 文書の中の警告](/ja/docs/configuration-programmatic-usage#文書の中の警告)を参照）。
 
 ### 属性の値
 
@@ -96,6 +100,7 @@ export const metadata = {
 - **波括弧は使えません**。`{`と`}`は値に入りません。最初の`}`でブロックが終わります。値に`}`を含むフェンスはもうディレクティブではなく段落になり、インラインでは値の残りが本文にはみ出します。見出しでは、値に波括弧があるとブロック全体がタイトルに残ります。`# Title {note="a {b"}`は書いたとおりに組まれます（postext 1.8までは、スペースのあとの`{`でブロックが始め直され、`b`がフラグとして読まれていました）。
 - **ドル記号は普通のテキストです**。属性はインラインの数式より先に読み取られるので、`lead="from $5 to $6"`はただのテキストです。
 - **1行に収めます**。属性ブロックが複数行にまたがることはありません。
+- **識別子**。Pandocの省略形`#key-idea`は`id="key-idea"`と同じです。見出しなら`{#sec-method}`、フェンスなら`:::callout{#box-safety}`と書きます。[相互参照](/ja/docs/document-format-notes-references#相互参照とアンカー)のためにブロックに名前を付けます。
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ export const metadata = {
 :::
 ```
 
-`::resource{id="…"}`はもっと厳格で、idは二重引用符で囲み、ほかの属性は付けられません（[リソース](/ja/docs/document-format-resources#リソース)を参照）。
+`::resource{id="…"}`はもっと厳格で、idは二重引用符で囲み、ほかの属性は付けられません（[リソース](/ja/docs/document-format-resources#リソース)を参照）。テンプレートページでは`slot="…"`も付けられます（[テンプレートページ](#テンプレートページ)を参照）。
 
 ### コンテナー
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-本文の流れの中で認識するコンテナー名は5つです。それぞれが何を描くかは、設定のそれぞれの節で決めます。
+本文の流れの中で認識するコンテナー名は5つです。6つ目の`:::frame`は、[テンプレートページ](#テンプレートページ)の枠の内容を入れます。それぞれが何を描くかは、設定のそれぞれの節で決めます。
 
 <table>
   <thead>
@@ -291,7 +296,7 @@ postext 1.25以降、与えられた余地に収まらないグループは、�
 :::
 ```
 
-`:::callout`のフェンスは`label="…"`も受け付けます。`label`タブのあるスタイルが、囲みの上の角に出力するテキストです（`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`）。
+`:::callout`のフェンスは`label="…"`も受け付けます。`label`タブのあるスタイルが、囲みの上の角に出力するテキストです（`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`）。フェンスのほかの属性は、スタイルにデザインがあればそのデザインが読みます。`:::callout{type="card" kicker="注意"}`ならデザインのテキストで`{attr.kicker}`が使え、`{boxText}`は囲み自身の内容を出力します（[設定 › 囲みのデザイン](/ja/docs/configuration-callouts#囲みのデザイン)を参照）。
 
 ほかの囲みの中にある`:::callout`は、それ自体が1つの囲みになります。たとえば解答欄を含む演習カードです。独自のスタイル（背景、枠線、角の丸み、内側余白、タイトル、アイコン）で描かれ、外側の囲みの内側の幅いっぱいに置かれ、ほかのブロックとともに積み重なります。入れ子の囲みは常に親の中を流れるので、`span`と`placement`は無視します。各フェンスは、まだ開いているいちばん内側の囲みを閉じます。
 
@@ -700,7 +705,7 @@ maya：この行は
 
 - **キー**は話者のID（英字、数字、`_`、`.`、`-`）で、どの言語の版でも同じです。`caption`、`sfx`、`note`は予約されています。コロンは全角の`：`でもかまいません。
 - 波括弧の中に語だけを書くと**吹き出しのスタイル**になります（`thought`、`whisper`、`shout`、`radio`、`inner`、または`comics.balloonStyles`のどれか）。`style=`でも同じことを指定できます。
-- `at`は吹き出しの位置を固定します。コマの絵に対するパーセントで表した点（`at="62% 40%"`）か、角か辺（`top-start`、`top-end`、`bottom-start`、`bottom-end`、`top`、`bottom`）です。`to`はしっぽを絵の点に向け、`tail=none`はしっぽをなくし、`tail=top|bottom|start|end|left|right`はしっぽをコマの外へ向けます。`join`と`join=false`は、吹き出しを同じ話者の直前の吹き出しにつなげるか、離しておくかを決めます。`break`は枠線を越えることを許し、その越境ははみ出しとして報告されません。`rotate`（度）、`size`（倍率。描き文字用）、`color`、`font`は文字を変えます。
+- `at`は吹き出しの位置を固定します。コマの絵に対するパーセントで表した点（`at="62% 40%"`）か、角か辺（`top-start`、`top-end`、`bottom-start`、`bottom-end`、`top`、`bottom`）です。`to`はしっぽを絵の点に向け、`tail=none`はしっぽをなくし、`tail=top|bottom|start|end|left|right`はしっぽをコマの外へ向けます。`join`と`join=false`は、吹き出しを同じ話者の直前の吹き出しにつなげるか、離しておくかを決めます。`break`は枠線を越えることを許し、その越境ははみ出しとして報告されません。`rotate`（度）、`skew`（傾きの角度。遠近法で描かれた物の上の文字用）、`size`（倍率。描き文字用）、`color`、`font`は文字を変えます。
 - `vertical`と`horizontal`（または`mode=vertical`、`mode=horizontal`）は、本全体より優先して、その行の組み方向を決めます。翻訳しない`ドン`を横組みの版で縦に、横書きの看板を縦組みの版で横に組む、といった使い方です。ほかの言語の本で縦に組んだ行は、その行自身の文字の規則に従います（かながあれば日本語の規則）。縦組みの本でも、中国語や日本語の文字を含まない行は横に組まれます。
 - スペース2つかタブで字下げした行は、上の吹き出しの続きになります。行末のバックスラッシュは、テキストをそこで改行します。空行は無視されます。
 - テキストはインラインのMarkdownです。強調（太字のイタリックで写植します）、`:tcy`、`:ruby`（読みを親文字の上に組みます。右から左に読む親文字は除きます）、`:ltr`、`:rtl`（文字列を本来の向きのまま保ちます）が使えます。脚注と`:ref`の印は読まれません。
@@ -730,4 +735,4 @@ otto: いい朝かね？
 - `::::page{template="…"}` … `::::`がページです。コロンは4つ以上で、同じ数のコロンだけのフェンスで閉じます。中のコロン3つのフェンス（`:::frame`、`:::callout`、`:::figure`…）はほかの場所と同じように働き、単独の`:::`がページを閉じることはありません。コロン3つの`:::page`は漫画のページのままです。
 - `:::frame{slot="…" label="…"}` … `:::`には、その名前の枠の中身を入れます。どんなMarkdownでもかまいません。
 - 見出し（`## Retos {slot="retos-titulo"}`）、`::resource{id="…" slot="…"}`、コードフェンス、`:::`コンテナーに付けた`slot="…"`は、そのブロックだけを送ります。スロットのない内容は、テンプレートの流し込み枠に入ります。
-- `:::figure{resource="…" slot="…"}` … `:::`は、1つのリソースを`::label[テキスト]{at="…" style="…"}`の行とともに置きます。`at`は画像のアンカーか、`"x% y%"`の点です。図は本文の流れの中でも使えます。
+- `:::figure{resource="…" slot="…"}` … `:::`は、1つのリソースを`::label[テキスト]{at="…" style="…"}`の行とともに置きます。`at`は画像のアンカーか、`"x% y%"`の点です。図は本文の流れの中でも使えます。フェンスの属性`alt`、`caption`、`note`、または`::alt[…]`、`::caption[…]`、`::note[…]`の行は、その章でリソース自身の文言に代わります（[テンプレートページ › 図に固有の文言](/ja/docs/composed-pages#図に固有の文言)を参照）。

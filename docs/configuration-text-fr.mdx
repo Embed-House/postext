@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Texte courant',
   description: 'La typographie du texte courant : police, corps et interlignage, couleurs, retraits, citations, vers, taquets de tabulation et lettrines',
   lang: 'fr',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 7,
   parent: 'configuration',
@@ -106,9 +106,9 @@ La propriété `bodyText` règle la typographie de tout le texte des paragraphes
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Alignement du texte. <code>'left'</code> (ou <code>'start'</code>) désigne le côté où commence une ligne : la droite pour un paragraphe de droite à gauche (voir <a href="/fr/docs/configuration-language#sens-du-texte">Sens du texte</a>). Le texte justifié répartit l’espace sur chaque ligne pour obtenir des bords réguliers. Les dernières lignes des paragraphes justifiés sont composées en drapeau à leur largeur naturelle, sauf lorsque Knuth-Plass a accepté une dernière ligne trop pleine en comptant sur le rétrécissement des espaces : les espaces entre les mots se resserrent alors pour que la ligne remplisse exactement la largeur de ligne (sémantique de réglage des espaces de TeX, appliquée de la même façon par les moteurs de rendu canvas, HTML et PDF).</td>
+      <td>Alignement du texte. <code>'left'</code> (ou <code>'start'</code>) désigne le côté où commence une ligne : la droite pour un paragraphe de droite à gauche (voir <a href="/fr/docs/configuration-language#sens-du-texte">Sens du texte</a>). <code>'right'</code> (ou <code>'end'</code>) désigne le côté où elle se termine, et <code>'center'</code> centre chaque ligne. Le texte justifié répartit l’espace sur chaque ligne pour obtenir des bords réguliers. Les dernières lignes des paragraphes justifiés sont composées en drapeau à leur largeur naturelle, sauf lorsque Knuth-Plass a accepté une dernière ligne trop pleine en comptant sur le rétrécissement des espaces : les espaces entre les mots se resserrent alors pour que la ligne remplisse exactement la largeur de ligne (sémantique de réglage des espaces de TeX, appliquée de la même façon par les moteurs de rendu canvas, HTML et PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -253,6 +253,12 @@ La propriété `bodyText` règle la typographie de tout le texte des paragraphes
       <td><code>BlockquoteConfig</code></td>
       <td>voir plus bas</td>
       <td>Comment les citations Markdown (<code>&gt; …</code>) sont composées : couleur, italique et retraits. Voir <a href="#citations">Citations</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>voir plus bas</td>
+      <td>Comment sont composés les poèmes <code>:::verse</code> disposés vers par vers : retraits, vers trop longs reportés, espace entre strophes et strophes gardées entières. Voir <a href="#vers">Vers</a>.</td>
     </tr>
   </tbody>
 </table>

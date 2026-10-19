@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '漫画の設定',
   description: 'comicsの設定：漫画のページの枠と間白、コマのスタイル、写植、吹き出しのスタイル、登場人物',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '8分',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>時計回りの回転角（度）です。行の<code>rotate</code>属性が優先されます。</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>文字の傾き（度）で、<code>rotate</code>より先にかかります。正の値はイタリックのように前へ、負の値は後ろへ傾けます。遠近のついた物（看板、本の表紙）に書かれた文字は、<code>rotate</code>でその上辺に、<code>skew</code>で左右の辺に沿わせます。行の<code>skew</code>属性が優先されます。</td>
     </tr>
   </tbody>
 </table>

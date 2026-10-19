@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '标题',
   description: '标题的默认值、各级覆盖、标题前分页、通栏的章首页，以及以文字书写的编号',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '22分钟',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ export const metadata = {
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>为<code>true</code>时，标题绝不会成为一栏或一页的最后一个元素。如果标题之后的空间放不下后续块的至少<code>bodyText.widowMinLines</code>行（<code>bodyText.avoidWidows</code>为<code>false</code>时为一行），标题就被推到后面，与正文保持在一起。它与<code>bodyText.keepColonWithList</code>相互配合：如果那条规则必须把以冒号结尾的段落整段推走，栏末的标题会随它一起移动，不会被孤零零地留下。</td>
+      <td>为<code>true</code>时，标题绝不会成为一栏或一页的最后一个元素。如果标题之后的空间放不下后续块的至少<code>bodyText.widowMinLines</code>行（<code>bodyText.avoidWidows</code>为<code>false</code>时为一行），标题就被推到后面，与正文保持在一起。它与<code>bodyText.keepColonWithList</code>相互配合：如果那条规则必须把以冒号结尾的段落整段推走，栏末的标题会随它一起移动，不会被孤零零地留下。在分栏排的组里（带<code>columns</code>的模板页框、<code>:::columns</code>组），栏同样不会在标题之后结束：标题随其后的条目一起移走。</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ export const metadata = {
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>启用</td>
-      <td>纵向的各栏齐底：在标题上方加空，使各栏底端与页面底部平齐。见下文。</td>
+      <td>启用（竖排和字格下关闭）</td>
+      <td>纵向的各栏齐底：在标题上方加空，使各栏底端与页面底部平齐。见<a href="/zh/docs/configuration-page-flow#各栏齐底">各栏齐底</a>。</td>
     </tr>
   </tbody>
 </table>

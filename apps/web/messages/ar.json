@@ -3664,7 +3664,7 @@
     "calloutStyleLabelIconWidth": "عرض أيقونة اللسان",
     "calloutStyleLabelIconGap": "المسافة إلى اللسان",
     "calloutStyleLabelIconPlacement": "موضع الصورة",
-    "calloutStyleLabelIconPlacementTooltip": "بجانب اللسان بعد حافته، أو داخله في بدايته قبل الكلمات (فيتسع اللسان بمقدار الصورة والمسافة). داخل اللسان تحتفظ الصورة بألوانها: استعمل صورة للحلقة البيضاء وأخرى للحلقة الملوّنة.",
+    "calloutStyleLabelIconPlacementTooltip": "بجانب اللسان بعد حافته، أو داخله في بدايته قبل الكلمات (فيتسع اللسان بمقدار الصورة والمسافة). داخل اللسان تحتفظ الصورة بألوانها ما لم يُفعَّل «الصورة بلون النص»، فتكفي عندئذ حلقة واحدة لكل ألوان الكتاب.",
     "calloutStyleLabelIconBeside": "بجانب اللسان",
     "calloutStyleLabelIconInside": "داخل اللسان",
     "calloutStyleLabelIconTint": "الصورة بلون النص",

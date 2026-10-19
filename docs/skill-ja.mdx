@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'スキル',
   description: 'Claude Code、Codexなどのエージェントにpostext-portスキルを入れ、PDF、Word、PowerPoint、EPUB、InDesign、HTMLの原稿を、元のレイアウトに沿ったPostextプロジェクトに変換させる方法',
   lang: 'ja',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '10分',
   order: 44,
   plainSummary: "このページは、PDF、Word、InDesignなど別の形式の本や文書をすでに持っていて、それをPostextに移したい人のためのものです。エージェントと呼ばれるAIアシスタントに、スキルという小さな追加機能を渡せば、作業の大部分を任せられます。スキルは、元の文章を移し、元のデザインを作り直す方法をエージェントに教えます。このページでは、スキルの入れ方、頼み方、結果の確かめ方を説明します。約5分の動画で、すべての手順を見られます。",
@@ -67,6 +67,7 @@ YouTubeでも見られます。[YouTubeで見る](https://www.youtube.com/watch?
   - 欧米のコミック、日本の漫画、新聞漫画：ページをコマに分ける分割式、話者のアンカーとセーフエリアを付けたコマの絵、
     エンジンが写植する言語ごとの台本（吹き出し、ナレーション、描き文字）、右から左に読む漫画とアラビア語版、
     文字のない原画と翻訳から、写植済みのスキャンから、台本と生成した絵から移植する方法（[漫画](/ja/docs/comics)を参照）。
+  - テンプレートページ：教科書、ワークブック、雑誌の固定レイアウトのページを、Markdownから枠を埋めるページテンプレートとして移植する方法、インストール済みのPostextが対応する移植のラウンド、各版が通るべき検査（[テンプレートページ](/ja/docs/composed-pages)を参照）。
   - 物としての本：原本の用紙、綴じ、表紙、背を読み取り、[Folioビューアー](/ja/docs/sandbox-previews#folioタブ)が表示する
     `folio`設定として指定する方法。リンターで検査されます。
 - **スクリプト**（PythonとNode）。次の節で説明します。
@@ -97,6 +98,8 @@ YouTubeでも見られます。[YouTubeで見る](https://www.youtube.com/watch?
     <tr><td><code>lint_project.py</code></td><td>パーサーとローダーがエラーを出さずに誤って処理してしまうものを、すべて検出します。中国語、日本語、韓国語のテキストでは、同梱フォントで組めない文字。日本語のテキストでは、中国語ロケールの下のかな、中国語の書体や設定、章に残った青空文庫の注記、読みのない漢字の索引項目。アラビア語のテキストでは、アラビア語ロケールの欠落、ラテン文字専用または連結しない書体、字間、強制的なハイフネーション、イタリックによる強調。漫画では、解析できない<code>split</code>の式、分割のセルと合わないコマ、見つからない画像や吹き出し・コマのスタイル、不正な話者のアンカー、同梱されていない写植用フォント、版ごとに異なるページ</td></tr>
     <tr><td><code>render.mjs</code></td><td>プロジェクト（フォルダーまたは<code>.postext</code>ファイル）を、本物のエンジンでヘッドレスにレイアウトします。設定はSandboxと同じように読み込み、警告を出力します。<code>--jpeg</code>を付けると、指定したページ（<code>--pages 12-15</code>）をエンジン自身のcanvasレンダラーでJPEGファイルに描画します。1、2秒で済むので、エージェントはPDFを作らずに自分のページを見られます。<code>--out</code>はPDFを書き出します。印刷用に設定した本ではPREFLIGHT行（解像度不足の画像、細すぎる罫、複数インキの小さな文字、上限を超えるインキ量、仕上がり線に近い文字）を出力し、PDFはICC出力プロファイルで分版します。</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>原本のページとPostextのページを並べて表示します。描画結果のPDFからでも、JPEGのフォルダーからでも使えます</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>テンプレートページ：<code>round</code>はインストール済みエンジンのバージョンを読み、どの移植ラウンドに対応し、どのテンプレートページ機能が欠けているかを示します。<code>check</code>は各版で<code>postext check</code>と<code>postext html</code>を実行し、枠のあふれ、未知のテンプレートやスロット、アンカーに収まらないラベル、設定に書かれたテキスト、Markdownが埋める順序とは異なる順序でHTMLが読む枠があれば失敗します</td></tr>
+    <tr><td><code>postext_md.py</code></td><td>ほかのスクリプトが読み込む補助モジュールで、PostextのMarkdownの方言でテキストを書き出します。インラインの記号は平たい区間に分け、意味を持つ文字はエスケープし、リスト、見出し、ブロックとして読まれてしまう段落はテキストのまま保ちます</td></tr>
   </tbody>
 </table>
 
@@ -148,7 +151,7 @@ claude plugin install postext@postext
 ### スクリプトが使うツール
 
 ```bash
-python3 -m pip install pymupdf pillow fonttools brotli
+python3 -m pip install pymupdf pillow fonttools brotli numpy
 ```
 
 ```bash
@@ -159,7 +162,13 @@ brew install pandoc poppler
 mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && npm i postext postext-pdf postext-citeproc react @pdf-lib/fontkit @napi-rs/canvas
 ```
 
-Pandocは、Word、PowerPoint、EPUB、HTMLの原稿に必要です。popplerは原稿のページ画像に使います。Nodeのパッケージはヘッドレスレンダラーを動かします（Node 22.15以降）。`@napi-rs/canvas`はビルド済みのcanvasで、これがあれば本のページを直接JPEGに描画できます。任意で使うツールは、スキャン原稿用の`ocrmypdf`、ImageMagick、PDF/UAの検査用のveraPDFです。
+Pandocは、Word、PowerPoint、EPUB、HTMLの原稿に必要です。popplerは原稿のページ画像に、numpyは`comic_panels.py`に使います。Nodeのパッケージはヘッドレスレンダラーを動かします（Node 22.15以降）。`@napi-rs/canvas`はビルド済みのcanvasで、これがあれば本のページを直接JPEGに描画できます。任意で使うツールは、スキャン原稿用の`ocrmypdf`、ImageMagick、PDF/UAの検査用のveraPDFです。
+
+```bash
+mkdir -p ~/.local/bin && curl -fL -o ~/.local/bin/postext https://github.com/drnachio/postext/releases/latest/download/postext-macos-arm64 && chmod +x ~/.local/bin/postext
+```
+
+お使いのシステムのファイルを選んでください（`postext-macos-arm64`, `postext-macos-x64`, `postext-linux-x64`, `postext-linux-arm64`, `postext-linux-x64-musl`, `postext-windows-x64.exe`）。Nodeがあれば`npx postext-cli`でも動きます。
 
 作業のループは[コマンドライン](/ja/docs/command-line)で回します。インストール不要の単体の実行ファイルです。エージェントはプロジェクトを展開したまま、作業中のページを対象に`postext build --watch`を動かし続けるので、変更は長い本でもおよそ1秒後にJPEGとして現れます。Nodeのパッケージは任意で、Sandboxの追加の検査を行う`render.mjs`を動かします。どちらも、設定の内容にかかわらず`bodyText.shapingLanguage: 'host'`で本をレイアウトするので、行の切れる位置がSandboxと違うことがあります（[Sandboxとの違い](/ja/docs/command-line#sandboxとの違い)を参照）。
 

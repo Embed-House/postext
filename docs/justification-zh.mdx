@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '断词与两端对齐',
   description: 'Postext怎样用Knuth-Plass算法断行、把文字排成两端对齐并控制词间距',
   lang: 'zh',
-  lastUpdated: '2026-09-29',
+  lastUpdated: '2026-10-19',
   readingTime: '29分钟',
   order: 24,
   plainSummary: "本页说明Postext怎样把词语分布在每一行上。段落两边都对齐时，词与词之间的空隙可能拉得太大，很难看。Postext先看完整个段落，再决定每一行在哪里结束，所以空隙能保持均匀。它还能在正确的位置用连字符拆开长单词。你可以设定空隙最多能拉多大，并把仍然显得松散的行标出来。本页还介绍Postext怎样让各栏在同一高度结束。",
@@ -119,7 +119,7 @@ Postext在标准代价模型之上加了三项书刊排版上的惩罚值，引�
 
 用这种办法排短的块会注明这一点：`VDTBlock.runtFix`的值为`{ tracking }`，即所用的负字距，单位是千分之一em；只靠词间空格就排下时为0。渲染器不读它；它是给调整文稿长度的人用的：字距收到上限的段落，在相邻段落旁边显得紧，删去几个词本来就能不收字距排下。
 
-孤字惩罚值在断行算法内部加到候选节点的缺陷值上，所以求解器可以用稍松的一行去换一个更长的末行，但只限于`maxWordSpacing`之内：拉伸超过这个上限的行会带上一份比任何孤字或连字符惩罚值都大的额外劣度，因此断行算法宁可接受较短的末行或断开的末词，也不让词间距越过上限。段首孤行和段末孤行惩罚值进入另一项优化，它在段落跨越栏边界时运行：对每个候选拆分打分（空余量、段首孤行和段末孤行缺陷值相加），代价最低的拆分胜出，因此只要可能，引擎自然会选择两种孤行都避开的拆分。调整`orphanPenalty`、`widowPenalty`或`runtPenalty`可以改变其间的取舍；把其中任何一个设为`0`即可完全关闭该规则。列表项通过`avoidOrphansInLists`、`avoidWidowsInLists`和`avoidRuntsInLists`启用这些规则（默认都为`true`）。这些规则让同一列表项的各行保持在一起；`shortListSplit`则让短列表的各项保持在一起（默认关闭，见[正文](/zh/docs/configuration-text#正文)）。
+孤字惩罚值在断行算法内部加到候选节点的缺陷值上，所以求解器可以用稍松的一行去换一个更长的末行，但只限于`maxWordSpacing`之内：拉伸超过这个上限的行会带上一份比任何孤字或连字符惩罚值都大的额外劣度，因此断行算法宁可接受较短的末行或断开的末词，也不让词间距越过上限。段首孤行和段末孤行惩罚值进入另一项优化，它在段落跨越栏边界时运行：对每个候选拆分打分（空余量、段首孤行和段末孤行缺陷值相加），代价最低的拆分胜出，因此只要可能，引擎自然会选择两种孤行都避开的拆分。调整`orphanPenalty`、`widowPenalty`或`runtPenalty`可以改变其间的取舍；把其中任何一个设为`0`即可完全关闭该规则，也可以用`avoidOrphans`、`avoidWidows`或`avoidRunts`（默认都为`true`）整条关闭。列表项通过`avoidOrphansInLists`、`avoidWidowsInLists`和`avoidRuntsInLists`启用这些规则（默认都为`true`）。这些规则让同一列表项的各行保持在一起；`shortListSplit`则让短列表的各项保持在一起（默认关闭，见[正文](/zh/docs/configuration-text#正文)）。
 
 ### 为什么重要
 
@@ -133,6 +133,8 @@ Postext在核心包的`knuthPlass/`模块中完整实现了Knuth-Plass算法：�
 
 - **纯文本路径**：用`@chenglou/pretext`做不依赖DOM的文本测量。Pretext提供片段宽度和软连字符宽度，Postext把它们转换成KP元素。
 - **富文本路径**：用基于Canvas的测量处理粗体和斜体片段。每个带样式的记号变成一个或多个盒子，断词位置作为惩罚值插入。
+
+动态规划核心有两份实现，两者选出的断点完全相同：一份是TypeScript，另一份自postext 1.33起用Rust编写并编译为WebAssembly，默认由它作答，速度更快。模块编译完成之前，以及WebAssembly不可用的地方，由TypeScript断行器作答，所以段落由哪一份排出永远不会改变版面（见[断行器（WebAssembly）](/zh/docs/configuration-programmatic-usage#断行器webassembly)）。
 
 两条路径都会为每一行计算`justifiedSpaceRatio`：该行每个空格绘制的宽度除以正体的空格宽度。一行里的空格都绘制得一样宽，不管它来自正体、斜体还是粗体。上下限约束的却是一个略有不同的量：每个空格相对于自身宽度的变化，以正体空格为单位计算；而斜体或粗体的空格比正体的窄一些或宽一些。所以含有这种空格的行，虽然断行时守住了上下限，绘制出来却略低于`minWordSpacing`或略高于`maxWordSpacing`；这样的行还带有`justifiedSpaceLimitRatio`，即上下限所约束的那个数：1加上该行的空余量除以它的各个空格（各按自身宽度计）。`lineWordSpacing(line)`返回这个数；如果一行的空格全是正体，两者是同一个数，它就返回`justifiedSpaceRatio`。这个值供下文介绍的松散行调试功能使用；排版本身（改排齐左、孤字修正、放松段落这一手段）仍然读取绘制的比值。这些比值只对非末行计算；末行怎样排见[末行](#末行)。
 
@@ -183,7 +185,7 @@ Postext用**Hypher**（`hypher` v0.2.5）断词，背后是**TeX/Liang断词模�
 - 断点两侧至少各留两个字母（`ter-ra`、`cai-xa`、`plu-ja`）。
 - 双写的*ela geminada*在两个*l*之间断开，连字符取代中间的间隔点：*il·lusió*断为`il-` | `lusió`。该行按去掉间隔点后的宽度测量，两端对齐和Knuth–Plass算法看到的是实际宽度。
 - 构成元音分立（hiatus）的两个元音不拆开（`cièn-cia`、`ca-mions`）。夹在元音之间的*i*或*u*视为辅音，归入下一个音节（`fe-ia`、`ve-ient`）。
-- 撇号之后不立即断开（`s'ha-via`，而不是`s'-havia`）。
+- 撇号之后不立即断开（`s'ha-via`，而不是`s'-havia`）。英语、法语和意大利语的撇号另有规则（见[断词](/zh/docs/configuration-language#断词)）。
 - 常见的带前缀词在前缀处断开（`vos-altres`、`cel-obert`、`ben-estar`）。
 - IEC建议，带后附代词的词只在自身的连字符处断开（`portar-` | `lo`）；如要照此处理，把[`hyphenation.compounds`](/zh/docs/configuration-language#断词)设为`false`。
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'ページとレイアウト',
   description: 'ページサイズ、余白、ベースライングリッド、ノンブル、段組みと段間',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '32分',
   order: 5,
   parent: 'configuration',
@@ -50,7 +50,7 @@ export const metadata = {
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td>四辺とも<code>2 cm</code></td>
+      <td>天地<code>2 cm</code>、左右<code>1.5 cm</code></td>
       <td>ページの端と版面のあいだの余白。各辺（上、下、左、右）は個別に設定します。<code>mirror: true</code>のとき、余白は<em>見開き</em>の余白になります。<code>left</code>はのど（背の側）の余白、<code>right</code>は小口側の余白です。奇数ページ（1ページ目は奇数）は書いたとおりに使い、偶数ページは左右を入れ替えます。そのため版面が、そしてそれとともに段、フロートの帯、ヘッダーとフッターのコンテナー、章扉の帯も、見開きの中で左右に移ります。既定値は<code>false</code>。後述します。</td>
     </tr>
     <tr>
@@ -76,6 +76,12 @@ export const metadata = {
       <td><code>BaselineGridConfig</code></td>
       <td>無効</td>
       <td>ページの上にベースライングリッドを描き、縦のリズムを確認できるようにします。描くかどうかにかかわらず、レイアウトはグリッドに合わせられます。後述します。</td>
+    </tr>
+    <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>ノンブルの表記と、数え始める番号。<a href="#ノンブル">ノンブル</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>binding</code></td>
@@ -327,7 +333,7 @@ PDF（`postext-pdf`）では、各ページのMediaBoxは用紙全体です。�
 
 アラビア語の書式は、CSSに名前があるものはその名前を使います（`arabic-indic`、`persian`。W3Cの『Ready-made Counter Styles』にある`urdu`と`maghrebi-abjad`は、それぞれ`persian`と`arabic-abjad-maghrebi`として読みます）。`arabic`は従来どおりの意味、つまりヨーロッパ式の数字です。`arabic-abjad`は、古典アラビア語や写本の丁付けに使われる加算式のアブジャド数字を、大きい値から順に書きます。11はيا、1446はغتموで、千の位の数はغの前に置きます（2000 بغ, 1002 غب）。999 999を超えると算用数字で出力されます。W3Cのノートはこの名前を、11がكになる28文字の系列に使っています。Postextではその系列を`abjad`と呼び、アブジャド順でリスト項目に文字を振るときに使います（أ، ب، ج، د، هـ）。アルファベット順は`hijai`です（أ، ب، ت، ث）。どちらも最初の文字をハムザ付きのأで書き、単独で立つことになるハーはタトウィールを付けてهـと書くため、数字の١や٥と読まれることはありません。28を超えると、`lower-alpha`と同じように2文字になります（أأ, أب）。マグリブ式の数価は覚え歌صعفض قرست ثخذ ظغشに従います（ص 60, ض 90）。W3Cのリストではصとضが入れ替わっています。أ1字では2つの文字の系列を区別できないため、それぞれのトークンは最初の4文字にしています（`{1:أبجد}`、`{1:أبتث}`）。文書自体の数字は[`numerals`](/ja/docs/configuration-language#文書の数字)で設定します。
 
-ほかの表記は、型チェックを受けない設定、つまりJSONのプリセットと素のJavaScriptのためのものです。TypeScriptの型には、各設定に固有の表記、つまりSandboxが書き込み`resolveAllConfig`が返す表記（東アジアの名前を含む）しか挙げていません。そのため型付きの`PostextConfig`ではその表記を使い、別の表記を使うにはキャストが必要です。
+ほかの表記は、型チェックを受けない設定、つまりJSONのプリセットと素のJavaScriptのためのものです。TypeScriptの型には、各設定に固有の表記、つまりSandboxが書き込み、解決済みの設定（`doc.config`）が持つ表記（東アジアの名前を含む）しか挙げていません。そのため型付きの`PostextConfig`ではその表記を使い、別の表記を使うにはキャストが必要です。
 
 ```js
 // JavaScript or a JSON preset (in TypeScript, each setting's own spelling)
@@ -336,7 +342,7 @@ page: { pageNumbering: { format: 'roman-lower' } }, // same as 'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 'roman-upper'
 ```
 
-`resolveAllConfig`は、リストとページの書式をそれぞれの設定に固有の表記に変換します。`orderedLists`では`'decimal'`が`'arabic'`に、`page.pageNumbering`では`'roman-lower'`が`'lower-roman'`に変換されます。`stripConfigDefaults`は、既定値を別の表記で書いたものも取り除きます。Sandboxのパネルは、設定がどの表記を使っていても、3つの設定をそれぞれ固有の表記で表示します。それ以外の値（`roman`、`01`、タイプミスなど）は、`undefined`と出力される代わりに10進数で番号付けされ、[設定の警告](/ja/docs/configuration-fonts-colors-viewers#設定の警告)として報告されます。見出しの番号テンプレートもコロンのあとに同じ名前を取り（`{1:roman-upper}`は`{1:I}`と同じ）、独自のゼロ埋め`{1:01}`も使えます。
+設定の解決（`doc.config`）では、リストとページの書式をそれぞれの設定に固有の表記に変換します。`orderedLists`では`'decimal'`が`'arabic'`に、`page.pageNumbering`では`'roman-lower'`が`'lower-roman'`に変換されます。`stripConfigDefaults`は、既定値を別の表記で書いたものも取り除きます。Sandboxのパネルは、設定がどの表記を使っていても、3つの設定をそれぞれ固有の表記で表示します。それ以外の値（`roman`、`01`、タイプミスなど）は、`undefined`と出力される代わりに10進数で番号付けされ、[設定の警告](/ja/docs/configuration-fonts-colors-viewers#設定の警告)として報告されます。見出しの番号テンプレートもコロンのあとに同じ名前を取り（`{1:roman-upper}`は`{1:I}`と同じ）、独自のゼロ埋め`{1:01}`も使えます。
 
 
 ## レイアウト

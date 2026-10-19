@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: "Línia d'ordres",
   description: "Un sol executable autònom, per a macOS, Linux i Windows, que converteix un llibre .postext, una carpeta de llibre o fitxers Markdown solts en PDF, HTML, EPUB, imatges de pàgina i Word. També crea paquets i revisa llibres, i pot respondre en JSON per a scripts i agents",
   lang: 'ca',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 45,
   plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir tots els fitxers del llibre en un de sol. També el poden fer servir altres programes i els assistents d'intel·ligència artificial, perquè pot respondre en un format que llegeixen sense dificultat.",
@@ -159,7 +159,7 @@ es llegeix en la llengua principal, tret que `--locale` en demani una altra (`--
 </table>
 
 Cada ordre escriu a la carpeta des d'on l'executes, amb el nom de l'entrada,
-tret que indiquis una altra ruta amb `-o`. `-o -` escriu una única sortida a la sortida
+tret que indiquis una altra ruta amb `-o` (`images` escriu dins de `pages/`). `-o -` escriu una única sortida a la sortida
 estàndard.
 
 ### pdf
@@ -242,7 +242,8 @@ s'ha compost, sense passar per un PDF.
   `{chapter}`; per defecte, `page-{n:03}`.
 - `--print-preview`: la pàgina tal com la reproduirà la impremta, convertida
   amb el perfil de sortida i amb el tall i la sang dibuixats.
-- `--jobs N`: quantes imatges es codifiquen alhora.
+- `--jobs N`: quantes imatges es codifiquen alhora (per defecte, tantes com
+  processadors té l'ordinador).
 
 ### docx i import-docx
 
@@ -283,7 +284,10 @@ postext unpack my-book.postext -o my-book/
 
 `pack` comprimeix en zip una carpeta de llibre tal com està, o construeix un
 paquet a partir de Markdown solt. La mateixa entrada dona sempre els mateixos
-bytes, de manera que es poden comparar paquets o calcular-ne el hash.
+bytes, de manera que es poden comparar paquets o calcular-ne el hash. Per al
+Markdown solt, `--id`, `--description` i `--thumbnail FILE` (una imatge de
+coberta) fixen l'id, la descripció i la miniatura del paquet; per defecte l'id
+és un slug del nom. Una carpeta conserva el que diu el seu `preset.json`.
 `unpack` es nega a escriure en una carpeta que no sigui buida, tret que hi
 afegeixis `--force`.
 
@@ -354,7 +358,7 @@ les sortides. Si en desar el llibre queda trencat, imprimeix l'error i conserva 
 </table>
 
 I per a qualsevol ordre: `--json`, `--quiet` (`-q`, només errors), `--verbose`
-(el progrés i tots els avisos), `--no-color`, `--help`.
+(el progrés i tots els avisos), `--no-color`, `--help` (`-h`), `--version` (`-v`).
 
 ## Fonts
 

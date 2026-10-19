@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '本文',
   description: '本文の文字組み：フォント、サイズと行送り、色、インデント、引用ブロック、詩、タブ位置、ドロップキャップ',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26分',
   order: 7,
   parent: 'configuration',
@@ -107,9 +107,9 @@ export const metadata = {
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>行そろえ。<code>'left'</code>（または<code>'start'</code>）は行が始まる側を指し、右から左に組む段落では右になります（<a href="/ja/docs/configuration-language#テキストの方向">テキストの方向</a>を参照）。両端そろえでは、各行の間隔を配分して両端をそろえます。両端そろえの段落の最終行は自然な幅のまま行末不ぞろいで描画します。ただし、Knuth-Plassがグルーの縮みを前提に詰まりすぎの最終行を採用した場合は例外で、語間を詰めて行長にちょうど収めます（TeXのグルー設定の意味論で、Canvas、HTML、PDFの各バックエンドで同じように適用します）。</td>
+      <td>行そろえ。<code>'left'</code>（または<code>'start'</code>）は行が始まる側を指し、右から左に組む段落では右になります（<a href="/ja/docs/configuration-language#テキストの方向">テキストの方向</a>を参照）。<code>'right'</code>（または<code>'end'</code>）は行が終わる側で、<code>'center'</code>は各行を中央にそろえます。両端そろえでは、各行の間隔を配分して両端をそろえます。両端そろえの段落の最終行は自然な幅のまま行末不ぞろいで描画します。ただし、Knuth-Plassがグルーの縮みを前提に詰まりすぎの最終行を採用した場合は例外で、語間を詰めて行長にちょうど収めます（TeXのグルー設定の意味論で、Canvas、HTML、PDFの各バックエンドで同じように適用します）。</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -254,6 +254,12 @@ export const metadata = {
       <td><code>BlockquoteConfig</code></td>
       <td>後述</td>
       <td>Markdownの引用ブロック（<code>&gt; …</code>）の組み方。色、イタリック、インデントを指定します。<a href="#引用ブロック">引用ブロック</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>後述</td>
+      <td>1行ずつ組む<code>:::verse</code>の詩の組み方。字下げ、収まらない行の送り、連の間隔、分けずに保つ連を指定します。<a href="#詩">詩</a>を参照してください。</td>
     </tr>
   </tbody>
 </table>

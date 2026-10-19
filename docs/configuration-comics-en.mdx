@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Comics settings',
   description: 'The comics settings: the frame and gutters of comic pages, panel styles, lettering, balloon styles and the cast',
   lang: 'en',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 17,
   parent: 'configuration',
@@ -477,6 +477,12 @@ Each entry of `comics.balloonStyles` is laid over the built-in style of the same
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>Rotation in degrees, clockwise. A line's <code>rotate</code> attribute wins.</td>
+    </tr>
+    <tr>
+      <td><code>skew</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Lean of the letters in degrees, applied before <code>rotate</code>: positive forward like italic, negative back. Text written on an object seen in perspective (a sign, a book cover) follows its top edge with <code>rotate</code> and its sides with <code>skew</code>. A line's <code>skew</code> attribute wins.</td>
     </tr>
   </tbody>
 </table>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Introduction',
   description: 'What Postext is, why it exists, and the problem it solves',
   lang: 'en',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 1,
   plainSummary: "Postext is free software that lays out the pages of books, magazines and reports on the web. Printed books have followed careful layout rules for centuries, such as keeping columns even and pictures close to the text that mentions them. Web pages never had these rules, and Postext adds them. You write the text, and Postext places every line, picture and note on the page for you. This page tells why the project exists and how it began.",
@@ -24,10 +24,10 @@ sit half-empty. Footnotes vanish to the bottom of the page instead of staying ne
 reference them. The web gave us responsive layout — but it never gave us *editorial* layout.
 
 Postext closes that gap. It is a layout engine that takes your content — markdown prose plus
-declared resources (bitmap images, SVG diagrams, and tables) incorporated by reference — and
+declared resources (bitmap images, SVG diagrams, tables and videos) incorporated by reference — and
 applies the same rules a professional typesetter would: orphan and widow prevention, column
 balancing, text flowing around obstacles, deliberate spacing. The output is publication-grade
-layout geometry for both HTML and PDF.
+layout geometry, rendered to canvas, HTML, PDF, EPUB or a 3D book.
 
 It is built on [`@chenglou/pretext`](https://github.com/chenglou/pretext), which measures text
 without the DOM at speeds that make all of this possible.
@@ -152,7 +152,7 @@ Pretext gives you the measurements. Postext gives you the layout.
 The process has three stages:
 
 1. **You provide the content.** Markdown prose plus declared resources — bitmap images, SVG
-   diagrams, and tables. An inline `:ref{id="..."}` both numbers a resource and floats it to a top
+   diagrams, tables and videos. An inline `:ref{id="..."}` both numbers a resource and floats it to a top
    or bottom band near its first reference, the way a print typesetter places figures. The content
    stays purely semantic: it describes *what* to present, not *how*; layout decisions are never
    hardcoded into the source. The Resources section of the
@@ -170,9 +170,10 @@ The process has three stages:
 3. **You get a complete layout.** Precise coordinates and dimensions for every element on every
    page. Renderers translate this geometry to the target format — **canvas** for a pixel-accurate
    bitmap preview (`renderToCanvas`, `renderPage`), **HTML** for selectable, resize-aware typography
-   on the web (`renderToHtml`, `renderToHtmlIndexed`), and **PDF** for print-ready output with
-   embedded fonts (`renderToPdf`, from the `postext-pdf` package). The same content, the same
-   rules, three interchangeable outputs.
+   on the web (`renderToHtml`, `renderToHtmlIndexed`), **PDF** for print-ready output with
+   embedded fonts (`renderToPdf`, from the `postext-pdf` package), **EPUB 3** for e-book readers
+   (`renderToEpub`, from `postext-epub`), and a **3D book** whose leaves turn in the browser
+   (`createFolioFromDocument`, from `postext-folio`). Every output is drawn from the same layout.
 
 <Illustration name="LayoutProcess" data='{"title": "Three-stage layout process", "desc": "Enriched markdown and its configuration go into the engine, which measures the text with Pretext, lays it out over several passes and outputs HTML or PDF.", "caption": "Content in, geometry out — then rendered to the target format.", "inputTitle": "Enriched Markdown", "inputSubtitle": "+ config", "parse": "parse", "engineTitle": "Postext engine", "engineSub1": "Pretext measurement inside", "engineSub2": "multi-pass layout", "render": "render", "outputTitle": "HTML / PDF", "outputSubtitle": "rendered output"}' />
 
@@ -181,7 +182,7 @@ and the convergence loop — see the [Architecture](/en/docs/architecture) docum
 reference of every configuration option — from page geometry to table, caption, and diagram
 styling — see the [Configuration](/en/docs/configuration) page. And to try everything live — a
 chapter text editor, a Resources panel with a table editor and image/SVG upload, a Design panel
-that browses every setting in editorial terms, and live canvas, HTML, and PDF previews — open
+that browses every setting in editorial terms, and live canvas, PDF, Folio (3D), HTML and EPUB previews — open
 the [Sandbox](/en/docs/sandbox).
 
 

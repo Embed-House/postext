@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Sillabazione e lingua',
   description: 'I pattern e le eccezioni della sillabazione; il testo in bandiera; la lingua del documento, da cui dipendono le cifre e la direzione del testo; le scritture che Postext sa comporre',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '22 min',
   order: 8,
   parent: 'configuration',
@@ -86,7 +86,7 @@ matchHyphenationLocale('en-GB'); // 'en-us'
 matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a console warning
 ```
 
-Le parole di meno di 5 caratteri non vengono mai sillabate. Il motore richiede almeno 2 caratteri prima e 3 caratteri dopo un punto di divisione.
+Le parole di meno di 5 lettere non vengono mai sillabate, tranne in catalano, dove ne bastano 4 (`ca-sa`). Una divisione lascia almeno 2 lettere prima e, dopo, 3 in inglese e in francese (`read-ing`), 4 in portoghese (`ca-misa`) e 2 nelle altre lingue (`pa-red`, `Ta-fel`). In inglese, francese e italiano l’apostrofo non conta come lettera in questi minimi (niente `is-n't`), e in francese e in italiano le consonanti prima di un’elisione restano con la loro parola: `dell’ac-qua`, mai `del-l’acqua`.
 
 ### Parole tenute intere
 
@@ -170,7 +170,7 @@ Il cinese accetta `zh`, `zh-Hans`, `zh-Hant`, `zh-CN`, `zh-SG`, `zh-TW`, `zh-HK`
   </tbody>
 </table>
 
-Il prefisso della didascalia è il nome del tipo (*Figure 1.1.*). I tipi cinesi numerano all’interno del capitolo con un trattino, `{h1}-{n}` (图 1-1); con le impostazioni della didascalia `labelNumberGap: ''` e `labelSeparator: '　'` la didascalia diventa 图1-1　标题 (vedi [Stile delle didascalie](/it/docs/configuration-resources#stile-delle-didascalie)). Anche l’indice analitico segue la lingua: 见 e 另见 prima di un rimando, 符号 e 数字 sopra i simboli e i numeri in cinese semplificato; 見, 另見, 符號 e 數字 in cinese tradizionale. Il giapponese numera i suoi tipi allo stesso modo e compone le didascalie 図1-1　題 senza le due impostazioni, scrive i rimandi come 第3章, 2.3節 e 12ページ, intitola la bibliografia 参考文献, e il suo indice analitico stampa 記号 e 数字 sopra simboli e numeri e scrive i rimandi con una freccia, `→夏目漱石` per *vedi* e `→夏目漱石、森鷗外も見よ` dopo le pagine per *vedi anche*, con le etichette in tondo. L’arabo numera i suoi tipi allo stesso modo, `{h1}-{n}` (شكل 2-3), scrive i rimandi come الفصل 3, القسم 2-1 e ص 12, intitola la bibliografia المراجع, e il suo indice analitico stampa انظر / انظر أيضًا, رموز e أرقام, con la virgola e il punto e virgola arabi (، ؛).
+Il prefisso della didascalia è il nome del tipo (*Figura 1.1.*). Il terzo tipo predefinito, `video`, si chiama *Video* in inglese, tedesco, italiano e olandese, *Vídeo* in spagnolo, portoghese e catalano, *Vidéo* in francese, 视频 in cinese semplificato e 影片 in cinese tradizionale, 動画 in giapponese e فيديو in arabo. I tipi cinesi numerano all’interno del capitolo con un trattino, `{h1}-{n}` (图 1-1); con le impostazioni della didascalia `labelNumberGap: ''` e `labelSeparator: '　'` la didascalia diventa 图1-1　标题 (vedi [Stile delle didascalie](/it/docs/configuration-resources#stile-delle-didascalie)). Anche l’indice analitico segue la lingua: 见 e 另见 prima di un rimando, 符号 e 数字 sopra i simboli e i numeri in cinese semplificato; 見, 另見, 符號 e 數字 in cinese tradizionale. Il giapponese numera i suoi tipi allo stesso modo e compone le didascalie 図1-1　題 senza le due impostazioni, scrive i rimandi come 第3章, 2.3節 e 12ページ, intitola la bibliografia 参考文献, e il suo indice analitico stampa 記号 e 数字 sopra simboli e numeri e scrive i rimandi con una freccia, `→夏目漱石` per *vedi* e `→夏目漱石、森鷗外も見よ` dopo le pagine per *vedi anche*, con le etichette in tondo. L’arabo numera i suoi tipi allo stesso modo, `{h1}-{n}` (شكل 2-3), scrive i rimandi come الفصل 3, القسم 2-1 e ص 12, intitola la bibliografia المراجع, e il suo indice analitico stampa انظر / انظر أيضًا, رموز e أرقام, con la virgola e il punto e virgola arabi (، ؛).
 
 Un documento cinese, giapponese o coreano dichiara la sua lingua nell’output HTML (`lang` sulla radice `.pt-doc`, `zh-Hant-TW` conservato intero) e sul canvas che disegna (`ctx.lang`, in Chrome 136 e successivi), così il browser disegna le forme dei glifi della regione: Unicode unifica i caratteri han, e uno stesso punto di codice ha un aspetto diverso in un font taiwanese e in uno giapponese. Da postext 1.30 lo fa anche ogni altro documento, nella lingua in cui viene eseguito lo shaping del suo testo ([`bodyText.shapingLanguage: 'document'`](/it/docs/configuration-text#testo-corrente), il valore predefinito); con `'host'` gli altri documenti non hanno `lang`, e ogni canvas disegna nella lingua della pagina che lo ospita. Il PDF dichiara `/Lang` a partire da `locale` per ogni documento, con o senza tag, includendo scrittura e regione. Anche un documento in una lingua scritta da destra a sinistra (arabo, persiano, urdu, ebraico…) dichiara la sua lingua: le forme specifiche della lingua del font (`locl`) e il font di ripiego la seguono.
 

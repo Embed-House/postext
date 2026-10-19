@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Texto base',
   description: 'Cómo se configura la tipografía del texto corrido: la fuente, el cuerpo y el interlineado, los colores, las sangrías, las citas, la poesía, las tabulaciones y las letras capitulares',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 7,
   parent: 'configuration',
@@ -37,7 +37,7 @@ La propiedad `bodyText` controla la tipografía de todo el texto de los párrafo
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td><code>'EB Garamond'</code></td>
-      <td>Familia tipográfica del texto base. Cualquier fuente de Google Fonts, del sistema o declarada como [fuente personalizada](/es/docs/configuration-fonts-colors-viewers#fuentes-personalizadas). Una sola familia, no una lista de fuentes de CSS (véase más abajo).</td>
+      <td>Familia tipográfica del texto base. Cualquier fuente de Google Fonts, del sistema o declarada en [`customFonts`](/es/docs/configuration-fonts-colors-viewers#fuentes-personalizadas). Una sola familia, no una lista de fuentes de CSS (véase más abajo).</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
@@ -107,9 +107,9 @@ La propiedad `bodyText` controla la tipografía de todo el texto de los párrafo
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Alineación del texto. <code>'left'</code> (o <code>'start'</code>) es el lado por el que empieza la línea: la derecha de un párrafo de derecha a izquierda (véase <a href="/es/docs/configuration-language#dirección-del-texto">Dirección del texto</a>). El texto justificado reparte el espacio a lo largo de cada línea para que los bordes queden rectos. Las últimas líneas de los párrafos justificados se componen en bandera, a su ancho natural, salvo cuando Knuth-Plass aceptó una última línea demasiado llena contando con la compresión del pegamento (glue): en ese caso, los espacios entre palabras se comprimen para que la línea encaje exactamente en la medida (semántica de glue-setting de TeX, aplicada de forma idéntica en los backends canvas, HTML y PDF).</td>
+      <td>Alineación del texto. <code>'left'</code> (o <code>'start'</code>) es el lado por el que empieza la línea: la derecha de un párrafo de derecha a izquierda (véase <a href="/es/docs/configuration-language#dirección-del-texto">Dirección del texto</a>). <code>'right'</code> (o <code>'end'</code>) es el lado por el que termina, y <code>'center'</code> centra cada línea. El texto justificado reparte el espacio a lo largo de cada línea para que los bordes queden rectos. Las últimas líneas de los párrafos justificados se componen en bandera, a su ancho natural, salvo cuando Knuth-Plass aceptó una última línea demasiado llena contando con la compresión del pegamento (glue): en ese caso, los espacios entre palabras se comprimen para que la línea encaje exactamente en la medida (semántica de glue-setting de TeX, aplicada de forma idéntica en los backends canvas, HTML y PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -254,6 +254,12 @@ La propiedad `bodyText` controla la tipografía de todo el texto de los párrafo
       <td><code>BlockquoteConfig</code></td>
       <td>véase más abajo</td>
       <td>Cómo se componen las citas de Markdown (<code>&gt; …</code>): color, cursiva y sangrías. Véase <a href="#citas">Citas</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>véase más abajo</td>
+      <td>Cómo se componen los poemas <code>:::verse</code> que se disponen verso a verso: sangrías, versos que no caben, espacio entre estrofas y estrofas que no se parten. Véase <a href="#verso">Verso</a>.</td>
     </tr>
   </tbody>
 </table>

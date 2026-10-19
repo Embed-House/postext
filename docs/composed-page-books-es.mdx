@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Libros de páginas compuestas',
   description: 'Recorrido por el Sandbox con un libro de texto escolar hecho de páginas compuestas: cómo crear una plantilla de página, rellenarla desde el Markdown, rotular un mapa, traducir la página, arreglar el texto que no cabe y seleccionar tanto en la página como en el texto.',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "Esta página enseña, paso a paso, a hacer en el Sandbox una página de libro de texto escolar, con una banda de título, un texto y cajas de colores. Partes de un libro de ejemplo ya terminado y le añades una página. Primero dibujas la página como plantilla, después viertes en ella el texto desde el Markdown, y luego pones nombre a los lugares de un mapa y traduces la página a otro idioma. Al final ves qué hacer cuando un texto es demasiado largo para su caja y cómo saltar entre la página y su texto.",
@@ -102,7 +102,7 @@ Las palabras *Puente de piedra* son Markdown; el punto forma parte de la imagen.
 
 ## 5. Traduce la página
 
-Una traducción es la misma plantilla con otras palabras. El Sandbox la guarda como otra edición del mismo libro: la barra que hay sobre el canvas permite pasar de una edición a otra, y el panel Revisión las revisa todas (véase [Ediciones de un libro](/es/docs/sandbox-previews#ediciones-de-un-libro)). Para crearla:
+Una traducción es la misma plantilla con otras palabras. El Sandbox la guarda como otra edición del mismo libro: una barra de herramientas en el borde izquierdo del canvas permite pasar de una edición a otra, y el panel Revisión las revisa todas (véase [Ediciones de un libro](/es/docs/sandbox-previews#ediciones-de-un-libro)). Esa barra aparece cuando el puntero llega al borde, y su botón de fijar la deja abierta. Para crearla:
 
 1. Abre **Libros**, pulsa **⋯** en tu libro y elige **Añadir un idioma…**. Elige el idioma y pulsa **Añadir y abrir**. El Sandbox copia la edición que hay en pantalla en una nueva, pone su **Idioma del documento** en el idioma elegido y la abre. La separación silábica, las comillas y las palabras que escribe el propio motor (como *Continued* en el corte de una caja) siguen ese idioma. El texto sigue siendo el del original.
 2. En el panel **Texto**, traduce las palabras y deja lo demás.
@@ -160,7 +160,7 @@ Ahora la página muestra el marco con un contorno rojo y, bajo su pie, una banda
 - *haz que siga en la página siguiente (overflow.continueIn)* envía lo que no cabe a una página que se añade detrás de esta. Es lo indicado para un texto más largo.
 - *recorta unos 303 caracteres* no cambia nada: selecciona el texto del marco y te dice cuánto debes quitar.
 
-Un botón que cambia la plantilla (y, con ella, todas las páginas que la usan) pide confirmación antes e indica qué ajuste va a cambiar. Pulsa **Cambiar**. La página se vuelve a maquetar, la caja termina con la palabra que marca el corte (*Continued*) y el resto continúa al principio de una página añadida. **Cmd/Ctrl+Z** deshace el cambio. **Reajuste**, en la barra que hay sobre el canvas, abre *Qué se ha movido y por qué*: los marcos cuyo tamaño o posición ha cambiado la maquetación para que quepa su contenido, con el motivo explicado en palabras.
+Un botón que cambia la plantilla (y, con ella, todas las páginas que la usan) pide confirmación antes e indica qué ajuste va a cambiar. Pulsa **Cambiar**. La página se vuelve a maquetar, la caja termina con la palabra que marca el corte (*Continued*) y el resto continúa al principio de una página añadida. **Cmd/Ctrl+Z** deshace el cambio. **Reajuste**, en esa misma barra del borde del canvas, abre *Qué se ha movido y por qué*: los marcos cuyo tamaño o posición ha cambiado la maquetación para que quepa su contenido, con el motivo explicado en palabras.
 
 <Screenshot src="/docs-shots/es/checks.webp" alt="El panel Revisión con el aviso El texto no cabe en su marco y tres botones con soluciones, y la página con su primera caja marcada con un contorno rojo y una banda que dice faltan 14,9 mm." caption="Un marco en el que no cabe el texto, y las soluciones que ha calculado la maquetación." />
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'القوائم والصيغ الرياضية',
   description: 'القوائم المرقّمة وغير المرقّمة، وعلاماتها وإزاحاتها وتداخلها، وقوائم المهام، وحجم الصيغ الرياضية ولونها والمسافات حولها',
   lang: 'ar',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18 دقيقة',
   order: 11,
   parent: 'configuration',
@@ -148,7 +148,7 @@ export const metadata = {
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>طريقة تنضيد الحرفين الافتراضيين. <code>'drawn'</code>: المحرّك يرسم المربع. <code>'character'</code>: يُنضَّد <code>☐</code> و<code>☑</code> نصًّا بخط القائمة، كما كان حتى postext 1.28؛ فإذا خلا الخط منهما اختار المتصفح خطًّا من خطوط النظام، وبدأ نص البند بعد العرض الذي يعطيه ذلك الخط. والإعداد المحفوظ قبل الإصدار 13 يُقرأ بقيمة <code>'character'</code>، فتبقى سطوره في مواضعها.</td>
+      <td>طريقة تنضيد الحرفين الافتراضيين. <code>'drawn'</code>: المحرّك يرسم المربع. <code>'character'</code>: يُنضَّد <code>☐</code> و<code>☑</code> نصًّا بخط القائمة، كما كان حتى postext 1.28؛ فإذا خلا الخط منهما اختار المتصفح خطًّا من خطوط النظام، وبدأ نص البند بعد العرض الذي يعطيه ذلك الخط. والإعداد المحفوظ قبل <code>configVersion</code> 13 يُقرأ بقيمة <code>'character'</code> (<code>pinLegacyTaskBox</code>)، فتبقى سطوره في مواضعها.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -248,7 +248,7 @@ unorderedLists: {
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>نمط الترقيم: <code>'arabic'</code>، <code>'lower-alpha'</code>، <code>'upper-alpha'</code>، <code>'lower-roman'</code>، <code>'upper-roman'</code>. تعمل كذلك الكتابات المستخدمة في الإعدادات الأخرى (<code>'decimal'</code>، <code>'roman-lower'</code>، <code>'i'</code>…؛ انظر <a href="/ar/docs/configuration-page-layout#صيغ-كتابة-أنماط-الترقيم">صيغ كتابة أنماط الترقيم</a>)؛ والقيمة غير المعروفة تُرقّم بالأرقام العربية (0–9)، ويُصدر Postext تحذيرًا بشأنها.</td>
+      <td>نمط الترقيم: <code>'arabic'</code>، <code>'lower-alpha'</code>، <code>'upper-alpha'</code>، <code>'lower-roman'</code>، <code>'upper-roman'</code>، وأنماط شرق آسيا والخط العربي (<code>'simp-chinese-informal'</code>، <code>'circled-decimal'</code>، <code>'arabic-indic'</code>، <code>'abjad'</code>…). تعمل كذلك الكتابات المستخدمة في الإعدادات الأخرى (<code>'decimal'</code>، <code>'roman-lower'</code>، <code>'i'</code>…؛ انظر <a href="/ar/docs/configuration-page-layout#صيغ-كتابة-أنماط-الترقيم">صيغ كتابة أنماط الترقيم</a>)؛ والقيمة غير المعروفة تُرقّم بالأرقام العربية (0–9)، ويُصدر Postext تحذيرًا بشأنها.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>

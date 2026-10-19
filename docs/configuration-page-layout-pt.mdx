@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Página e diagramação',
   description: 'O tamanho da página, as margens e a grade de linhas de base, a numeração das páginas, e as colunas e as medianizes entre elas',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '35 min',
   order: 5,
   parent: 'configuration',
@@ -50,7 +50,7 @@ A propriedade `page` controla as dimensões físicas e a aparência da página.
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
-      <td><code>2 cm</code> em todos os lados</td>
+      <td><code>2 cm</code> em cima e embaixo, <code>1.5 cm</code> à esquerda e à direita</td>
       <td>Espaço entre a borda da página e a área de conteúdo. Cada lado (superior, inferior, esquerdo, direito) é definido de forma independente. Com <code>mirror: true</code> as margens passam a ser de <em>páginas espelhadas</em>: <code>left</code> é a margem interna (do lado da lombada) e <code>right</code> a externa; as páginas ímpares (a página 1 é ímpar) as mantêm como foram escritas e as pares as trocam, de modo que a área de conteúdo (e com ela as colunas, as faixas de flutuantes, os contêineres de cabeçalho e rodapé e as faixas de abertura) muda de lado na página dupla. Padrão <code>false</code>. Veja abaixo.</td>
     </tr>
     <tr>
@@ -76,6 +76,12 @@ A propriedade `page` controla as dimensões físicas e a aparência da página.
       <td><code>BaselineGridConfig</code></td>
       <td>desativado</td>
       <td>Desenha a grade de linhas de base sobre as páginas, para conferir o ritmo vertical. A diagramação se ajusta à grade quer ela seja desenhada, quer não. Veja abaixo.</td>
+    </tr>
+    <tr>
+      <td><code>pageNumbering</code></td>
+      <td><code>PageNumberingConfig</code></td>
+      <td><code>format: 'decimal'</code>, <code>startAt: 1</code></td>
+      <td>Como os rótulos das páginas são escritos e o número em que a contagem começa. Veja <a href="#numeração">Numeração</a>.</td>
     </tr>
     <tr>
       <td><code>binding</code></td>
@@ -327,7 +333,7 @@ Os estilos japoneses (desde o postext 1.16) também seguem as CSS Counter Styles
 
 Os estilos árabes mantêm o nome do CSS quando o CSS tem um (`arabic-indic`, `persian`; `urdu` e `maghrebi-abjad`, das *Ready-made Counter Styles* do W3C, são lidos como `persian` e `arabic-abjad-maghrebi`). `arabic` mantém o sentido antigo, os algarismos europeus. `arabic-abjad` escreve os numerais abjad aditivos do árabe clássico e da foliação de manuscritos, do valor mais alto para o mais baixo: 11 é يا, 1.446 é غتمو, e a contagem dos milhares vem antes de غ (2.000 بغ, 1.002 غب); acima de 999.999, o número sai em algarismos. A nota do W3C usa esse nome para uma série de 28 letras em que 11 é ك; o Postext chama essa série de `abjad`, a numeração por letras dos itens de lista na ordem abjad (أ، ب، ج، د، هـ), e de `hijai` a ordem alfabética (أ، ب، ت، ث). As duas escrevem a primeira letra com sua hamza (أ), e um heh que ficaria isolado como هـ, com um tatweel, para que nenhuma seja lida como os algarismos ١ e ٥; depois de 28, elas dobram, como faz `lower-alpha` (أأ, أب). Os valores magrebinos seguem o mnemônico صعفض قرست ثخذ ظغش (ص 60, ض 90); a lista do W3C troca ص e ض. Um único أ não distingue as duas séries de letras; por isso, os tokens delas são as quatro primeiras letras de cada uma: `{1:أبجد}`, `{1:أبتث}`. Os algarismos do próprio documento são definidos com [`numerals`](/pt/docs/configuration-language#algarismos-do-documento).
 
-As outras grafias servem para configurações que ninguém verifica por tipo: predefinições em JSON e JavaScript puro. Os tipos do TypeScript continuam nomeando só a grafia própria de cada ajuste (a que o Sandbox escreve e `resolveAllConfig` devolve, incluindo os nomes do Leste Asiático); por isso, um `PostextConfig` tipado se atém a ela, e outra grafia exige um cast.
+As outras grafias servem para configurações que ninguém verifica por tipo: predefinições em JSON e JavaScript puro. Os tipos do TypeScript continuam nomeando só a grafia própria de cada ajuste (a que o Sandbox escreve e a configuração resolvida (`doc.config`) guarda, incluindo os nomes do Leste Asiático); por isso, um `PostextConfig` tipado se atém a ela, e outra grafia exige um cast.
 
 ```js
 // JavaScript ou uma predefinição JSON (em TypeScript, a grafia própria de cada ajuste)
@@ -336,7 +342,7 @@ page: { pageNumbering: { format: 'roman-lower' } }, // igual a 'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // igual a 'roman-upper'
 ```
 
-`resolveAllConfig` converte os formatos de lista e de página para a grafia do próprio ajuste (`'decimal'` vira `'arabic'` em `orderedLists`, `'roman-lower'` vira `'lower-roman'` em `page.pageNumbering`), e `stripConfigDefaults` descarta uma grafia do valor padrão. Os painéis do Sandbox mostram cada um dos três ajustes na própria grafia, qualquer que seja a usada na configuração. Qualquer outro valor (`roman`, `01`, um erro de digitação) numera em decimal em vez de imprimir `undefined`, e é informado como um [aviso de configuração](/pt/docs/configuration-fonts-colors-viewers#avisos-de-configuração). Os modelos de numeração de títulos aceitam os mesmos nomes depois dos dois-pontos (`{1:roman-upper}` é `{1:I}`), ao lado do `{1:01}` próprio deles, com zeros à esquerda.
+A resolução da configuração (`doc.config`) converte os formatos de lista e de página para a grafia do próprio ajuste (`'decimal'` vira `'arabic'` em `orderedLists`, `'roman-lower'` vira `'lower-roman'` em `page.pageNumbering`), e `stripConfigDefaults` descarta uma grafia do valor padrão. Os painéis do Sandbox mostram cada um dos três ajustes na própria grafia, qualquer que seja a usada na configuração. Qualquer outro valor (`roman`, `01`, um erro de digitação) numera em decimal em vez de imprimir `undefined`, e é informado como um [aviso de configuração](/pt/docs/configuration-fonts-colors-viewers#avisos-de-configuração). Os modelos de numeração de títulos aceitam os mesmos nomes depois dos dois-pontos (`{1:roman-upper}` é `{1:I}`), ao lado do `{1:01}` próprio deles, com zeros à esquerda.
 
 
 ## Diagramação

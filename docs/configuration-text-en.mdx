@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Body text',
   description: 'The typography of the running text: font, size and leading, colours, indents, blockquotes, verse, tab stops and drop caps',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24 min',
   order: 7,
   parent: 'configuration',
@@ -107,9 +107,9 @@ The `bodyText` property controls the typography of all paragraph text.
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Text alignment. <code>'left'</code> (or <code>'start'</code>) is the side a line starts on: the right of a right-to-left paragraph (see <a href="/en/docs/configuration-language#text-direction">Text direction</a>). Justified text distributes spacing across each line for even edges. Last lines of justified paragraphs render ragged at their natural width — except when Knuth-Plass accepted an overfull final line relying on glue shrink, in which case the inter-word spaces compress so the line fits the measure exactly (TeX glue-setting semantics, applied identically in the canvas, HTML, and PDF backends).</td>
+      <td>Text alignment. <code>'left'</code> (or <code>'start'</code>) is the side a line starts on: the right of a right-to-left paragraph (see <a href="/en/docs/configuration-language#text-direction">Text direction</a>). <code>'right'</code> (or <code>'end'</code>) is the side it ends on, and <code>'center'</code> centres each line. Justified text distributes spacing across each line for even edges. Last lines of justified paragraphs render ragged at their natural width — except when Knuth-Plass accepted an overfull final line relying on glue shrink, in which case the inter-word spaces compress so the line fits the measure exactly (TeX glue-setting semantics, applied identically in the canvas, HTML, and PDF backends).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -254,6 +254,12 @@ The `bodyText` property controls the typography of all paragraph text.
       <td><code>BlockquoteConfig</code></td>
       <td>see below</td>
       <td>How Markdown blockquotes (<code>&gt; …</code>) are set: colour, italics and indents. See <a href="#blockquotes">Blockquotes</a>.</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>see below</td>
+      <td>How <code>:::verse</code> poems set line by line are laid out: indents, turnovers, stanza space and stanzas kept whole. See <a href="#verse">Verse</a>.</td>
     </tr>
   </tbody>
 </table>

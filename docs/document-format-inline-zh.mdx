@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '行内格式与数学公式',
   description: '写在一行之内的标记：强调、链接、行内标签、小型大写字母、制表符、竖排文字、中日文专用标记、文字方向，以及LaTeX公式',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分钟',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ export const metadata = {
       <td>在行内用一半字号分两行排的注文（双行夹注），可以跨行、跨页断开。</td>
     </tr>
     <tr>
+      <td>日文标记</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>字旁的傍线和汉文训读标记（訓点：返点、送假名）。文字保持原样；见<a href="#中文标记注音和双行夹注">中文标记、注音和双行夹注</a>。</td>
+    </tr>
+    <tr>
+      <td>文本方向</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>把一段文字按其自身方向隔离：阿拉伯语句子中的英文名，英语句子中的阿拉伯文名。见<a href="#标记中的文本方向">标记中的文本方向</a>。</td>
+    </tr>
+    <tr>
       <td>行内代码</td>
       <td><code>`code`</code></td>
       <td>去掉反引号，片段按原样以纯文本渲染：其中的<code>{':ref{…}'}</code>、行内标签、公式、链接或强调符号都照字面印出，正文要展示语法时就这样写。它用正文字体排，设了<code>codeStyle.inline</code>时则用代码字体，作为一个整体排出（见<a href="/zh/docs/configuration-styles#代码清单">配置 › 代码清单</a>）。代码清单写在<a href="/zh/docs/document-format#代码块">代码块</a>中。</td>
     </tr>
     <tr>
       <td>转义</td>
-      <td><code>{'\\*'}</code>、<code>{'\\_'}</code>、<code>{'\\^'}</code>、<code>{'\\~'}</code>、<code>{'\\`'}</code>、<code>{'\\$'}</code></td>
-      <td>反斜杠让标记字符按字面印出，而不是开始一段格式：表注的星号（<code>{'\\* pOH = −log [OH^−^]'}</code>）、字面的脱字符、不开启公式的美元符号。在正文、行内标签、题注、表格单元格和注释中都有效。（postext 1.4及以前，题注、单元格、注释和行内标签会把<code>{'\\$'}</code>中的反斜杠也印出来。）</td>
+      <td><code>{'\\*'}</code>、<code>{'\\_'}</code>、<code>{'\\^'}</code>、<code>{'\\~'}</code>、<code>{'\\`'}</code>、<code>{'\\$'}</code>、<code>{'\\@'}</code></td>
+      <td>反斜杠让标记字符按字面印出，而不是开始一段格式：表注的星号（<code>{'\\* pOH = −log [OH^−^]'}</code>）、字面的脱字符、不开启公式的美元符号、不构成引用的@。在正文、行内标签、题注、表格单元格和注释中都有效。（postext 1.4及以前，题注、单元格、注释和行内标签会把<code>{'\\$'}</code>中的反斜杠也印出来。）</td>
     </tr>
     <tr>
       <td>不换行空格</td>
@@ -116,6 +126,11 @@ export const metadata = {
       <td>带框的一段文字，作为一个整体换行：词库、按键、标签。样式由<code>chipStyles</code>设定；见<a href="#行内标签">行内标签</a>。</td>
     </tr>
     <tr>
+      <td>高亮</td>
+      <td><code>:mark[text]</code></td>
+      <td>文字背后的一条色带，文字仍是普通文本：照常断行、断词、两端对齐。样式由<code>markStyles</code>设定；见<a href="#高亮标记">高亮标记</a>。</td>
+    </tr>
+    <tr>
       <td>制表符</td>
       <td><code>:tab</code>、<code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>把它后面的文字推到下一个制表位：段落样式的某个制表位，或由它的属性设定的制表位。在文字中输入的制表符字符只在样式设了制表位的地方才是制表符。见<a href="#制表符与制表位">制表符与制表位</a>。</td>
@@ -127,6 +142,8 @@ export const metadata = {
     </tr>
   </tbody>
 </table>
+
+指向别处的标记与其目标一起说明：脚注标记`[^id]`见[脚注](/zh/docs/document-format-notes-references#脚注)；`:ref{…}`、`:anchor{#id}`、`[text]{#id}`和pandoc-crossref的`@sec:…`见[交叉引用与锚点](/zh/docs/document-format-notes-references#交叉引用与锚点)；文献引用`[@key]`和`@key`见[引用](/zh/docs/document-format-notes-references#引用)；索引标记`:index[…]`见[索引标记](/zh/docs/document-format-notes-references#索引标记)。色块`:swatch{color="…"}`与表格底色一起在[资源](/zh/docs/document-format-resources#资源)中说明，段落内的换行见[段落内的换行](/zh/docs/document-format-directives#段落内的换行)。
 
 ### 链接
 
@@ -164,7 +181,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **一个整体**。行内标签内部从不断开或断词；行在标签之间、在其两侧的词间空格处断开。比整行还宽的标签会超出该行，而不会被拆开。
 - **宽度**。其步进宽度为文本加上两侧的水平内边距和轮廓线。两端对齐只拉伸词间空格，从不拉伸标签内部。样式的`gap`是框与隔着空格的相邻词或标签之间至少保留的距离，空格不够宽时会补足（行首行尾不补，紧贴的标点如`:chip[a],`也不补）。
 - **高度**。框是围绕基线的一条带，以标签字号计，基线以上0.8 em、以下0.25 em，再加上垂直内边距和轮廓线。垂直内边距画在行框之外，从不改变行距，因此基线网格保持不变；比行距还高的框可能碰到上一行或下一行的标签，沙盒会标出不同行上相互重叠的两个标签（“行内标签碰到相邻行”），以便减小内边距、轮廓线或字号。
-- **文本**。标签文本可带自身的行内标记（`:chip[**bold** word]`、`:chip[x^2^]`），也可处于外围的强调中（`**:chip[a]**`）；样式可以设定字体族、字号、颜色、粗体和斜体。内部的字面方括号写作`\]`。标签内的引用、色块和公式保持字面，`\$`印出美元符号（postext 1.4及以前会连反斜杠一起印出）。
+- **文本**。标签文本可带自身的行内标记（`:chip[**bold** word]`、`:chip[x^2^]`），也可处于外围的强调中（`**:chip[a]**`）；样式可以设定字体族、字号、颜色、粗体和斜体。内部的字面方括号写作`\]`。标签内的引用、色块和公式保持字面，`\$`印出美元符号（postext 1.4及以前会连反斜杠一起印出）。带`dotted`的样式把字母画成一排排圆点，供儿童描写；没有底色、轮廓和内边距的样式则让标签成为行中一个点线字：`:chip[cat]{style="dots"}`（见[行内标签样式](/zh/docs/configuration-styles#行内标签样式)）。
 - **空标签**。只含空格（包括不换行空格）的标签（`:chip[ ]`）是一个空框，可用作答题空白或结束符：宽度为样式的水平内边距加轮廓线，高度与有文字的标签相同。用样式的`paddingX`设定空白的宽度（`:chip[ ]{style="blank"}`）。方括号之间什么都没有时，`:chip[]`保持为字面文本。
 - **适用位置**。段落、列表项、引用块、标注框、表格单元格、题注和注释。标题中的`:chip[…]`保持为字面文本。
 - **输出**。Canvas、HTML和PDF都绘制框，并把文字作为真正的文本排出：在HTML中可以选中，在PDF中可以提取，且符合阅读顺序（在带标签的PDF中，框是版面工件，文字属于所在段落）。

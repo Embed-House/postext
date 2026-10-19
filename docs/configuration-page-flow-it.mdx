@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vedove, orfane e bilanciamento',
   description: 'Le regole che tengono unite righe e blocchi a cavallo di un’interruzione di colonna, e le leve che fanno finire ogni colonna alla stessa altezza',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -185,6 +185,8 @@ Gli editori si aspettano che ogni colonna cominci in cima alla pagina e finisca 
 Su una griglia dei caratteri (`cjk.grid`, vedi [Impaginazione cinese › La griglia dei caratteri](/it/docs/chinese-layout#la-griglia-dei-caratteri)) ogni carattere sta in una cella larga un em e ogni riga sul passo di riga della griglia, che è anche la griglia della linea di base. Lì il bilanciamento è disattivato per impostazione predefinita, come nel testo verticale: una pagina composta riga per riga su una griglia, come quella della GB/T 9704, che conta 22 righe di 28 caratteri, lascia corta una colonna corta. Una configurazione che imposta `enabled: true` ottiene leve che rispettano la griglia: titoli, fine degli elenchi, formule in evidenza e figure prendono righe intere della griglia, così il testo sotto di essi si sposta di righe intere, e `gridLines: 'off'` le esclude per uno standard che non ha righe vuote da cedere. Un paragrafo cinese o giapponese si allunga di una riga solo quando nessuno spazio tra due dei suoi caratteri si allarga oltre `maxTracking`, e non prende tracking sulle lettere: una riga a cui manca un carattere distribuisce un em sui suoi spazi, molto oltre il valore predefinito di 0,01 em, quindi su una griglia di celle intere la leva dei paragrafi allargati di solito non trova nulla. Il riquadro che chiude una colonna e le immagini con una zona sicura sono per costruzione fuori griglia e funzionano come ovunque.
 
 L’ultima colonna di una pagina viene bilanciata solo quando la pagina prosegue naturalmente nella successiva: la pagina di chiusura di un capitolo può legittimamente finire corta. Una pagina del genere, e una fascia di chiusura livellata da `trailing`, mantiene anche le teste di colonna allineate: non si aggiunge alcuna riga sotto una figura o una tabella in testa a una delle sue colonne (la leva dopo gli elementi flottanti), e un titolo o un riquadro che apre una colonna sotto una figura del genere resta in testa, qualunque sia il valore di `stretchAfterFloats`. Lo stesso vale per il titolo composto subito sotto un’apertura `span: 'page'`, nella colonna dell’apertura. Così una colonna non comincia mai più in basso di quella accanto solo per allineare i piedi.
+
+Queste impostazioni stanno in `headings.balancing`.
 
 <table>
   <thead>

@@ -35,7 +35,7 @@ Built on top of [`@chenglou/pretext`](https://github.com/chenglou/pretext) for D
 
 2. **Engine.** postext parses the content structure, calls pretext for pixel-perfect text measurement without touching the DOM, then runs the layout algorithm: column balancing, resource placement, typographic quality rules, reference systems. All driven by configuration files.
 
-3. **Output.** Format-agnostic layout geometry — precise coordinates and dimensions for every element. Renderers translate this geometry to the target format: HTML/CSS for the web, PDF for print, EPUB 3 for e-book readers.
+3. **Output.** Format-agnostic layout geometry — precise coordinates and dimensions for every element. Renderers translate this geometry to the target format: canvas for page images, HTML/CSS for the web, PDF for print, EPUB 3 for e-book readers, and a 3D book in the browser (Folio).
 
 ---
 
@@ -109,7 +109,7 @@ pretext gives you the measurements. postext gives you the layout.
 
 ## Features
 
-Everything below ships today in `postext` 1.16 and its companion packages (`postext-pdf`, `postext-epub`, `postext-folio`, `postext-citeproc`). A fuller list, with a link to the page that explains each part, is on the wiki's [Features](https://github.com/drnachio/postext/wiki/Features) page.
+Everything below ships today in `postext` and its companion packages (`postext-pdf`, `postext-epub`, `postext-folio`, `postext-citeproc`) and in the `postext` command line. A fuller list, with a link to the page that explains each part, is on the wiki's [Features](https://github.com/drnachio/postext/wiki/Features) page.
 
 ### Column-based layouts
 
@@ -127,7 +127,7 @@ Everything below ships today in `postext` 1.16 and its companion packages (`post
 
 ### Optimal justification
 
-- Knuth-Plass optimal line breaking — whole paragraphs are broken globally, not greedily line by line.
+- Knuth-Plass optimal line breaking — whole paragraphs are broken globally, not greedily line by line. A Rust build of the breaker, compiled to WebAssembly, answers where WebAssembly is available, with the same breaks as the TypeScript one.
 - TeX-pattern hyphenation in 8 locales (English, Spanish, French, German, Italian, Portuguese, Catalan with the IEC rule for *l·l*, Dutch); overlong words are divided by syllable, then by character.
 - Orphan, widow, and runt control, plus keep-together rules (a heading with its first lines, a colon with the list it introduces).
 
@@ -149,6 +149,18 @@ Everything below ships today in `postext` 1.16 and its companion packages (`post
 - Named `paragraphStyles` applied with `:::paragraphs{style="…"}` for bibliographies, glossaries, notes and hanging-indent entries; tables and figures carry their own notes and source lines.
 - `:::verse` blocks for poetry, including Arabic verse set as two hemistichs.
 - Inline chips, `:chip[text]{style="…"}`: boxed words (word banks, keys, tags) that wrap as one unit, painted as real text in every backend.
+
+### Composed pages
+
+- Fixed pages (a textbook spread, a workbook page, a magazine feature) set from page templates (`pageTemplates`): named frames, groups that share their space, a decoration and spreads, defined once in the configuration.
+- In the Markdown a `::::page{template="…"}` fence sends each piece of content to a frame by name; positions and sizes never appear in the text, so a page is edited and translated as Markdown. A longer translation grows its box and pushes the boxes under it.
+- A frame that overflows tries, in order, its free space, its group, smaller pictures and smaller text, then continues on another page; what still does not fit is reported with proposals. Words on a map or a diagram are labels written in the Markdown and placed at anchor points of the picture.
+- The Sandbox edits templates and frame styles, checks every edition, and moves text typed into an older configuration back into the Markdown (`moveTextToMarkdown`).
+
+### Comics
+
+- `:::page` cuts a page into panels with a split expression (slanted gutters, bleeds, spreads); each panel takes a picture without lettering and its lines of script.
+- The engine letters the balloons, thoughts, captions and sound effects from that script in the book's language, so one set of pictures serves every edition. Strips (`:::strip`) for newspapers, right-to-left manga and Arabic editions, and Kindle Panel View in the fixed-layout EPUB.
 
 ### Notes, citations and indexes
 
@@ -194,6 +206,8 @@ Everything below ships today in `postext` 1.16 and its companion packages (`post
 - **HTML renderer.** Precise absolutely-positioned markup; `renderToHtmlIndexed` returns a per-block index so viewers can patch only the DOM nodes that changed between builds.
 - **PDF renderer** (`postext-pdf`). Print-ready output with document outlines, clickable cross-reference links, embedded custom fonts (woff2/woff/ttf/otf) with GPOS kerning, HarfBuzz shaping for Arabic, page labels, vector SVG figures (with optional PDF print masters), RGB, CMYK, or grayscale color spaces, and **tagged, accessible PDF/UA-1** output validated with veraPDF. `postext-pdf/worker` writes long books off the main thread.
 - **EPUB 3 writer** (`postext-epub`). The whole book as an EPUB 3.3 file, written in the browser or in Node: a **fixed layout** (`pre-paginated`) that keeps every printed page with real, selectable text, or a **reflowable** book in semantic XHTML (paragraphs rebuilt from the lines, notes, figures and tables in reading order, print page markers) styled from the same configuration. Fonts embedded, with navigation, print page numbers, right-to-left books and accessibility metadata; validated with W3C EPUBCheck.
+- **Print production.** PDF/X-1a and PDF/X-4 files (`print.standard`) with an ICC output profile (FOGRA, GRACoL, SWOP and IFRA profiles are bundled, or your own), every colour and RGB picture separated through it, black overprint and rich black, an ink limit, and a preflight that reports low-resolution pictures, thin rules, small text in several inks and text near the trim before the file is written. The Sandbox shows a print preview of the separated pages.
+- **Word files** (`postext/word`). A `.docx` is read into chapters of Markdown, with its styles mapped to Postext styles and a quality report (`readDocx`, `analyzeDocx`, `wordToPostext`), and a book is written back as `.docx` with an embedded template (`postextToDocx`). The Sandbox and the command line both import and export Word.
 - **3D book viewer** (`postext-folio`). Spreads whose leaves curl in three.js, with real shadows, turned by hand or by key; a right-bound book lies mirrored. Pages are painted on demand, at the size they are shown, around the open spread only.
 - **Web Worker.** `postext/worker` runs the pipeline off the main thread with last-wins cancellation, also loaded straight from esm.sh.
 - **React.** `postext/react` shows a document's pages in a component; the main entry never loads React.
@@ -201,16 +215,16 @@ Everything below ships today in `postext` 1.16 and its companion packages (`post
 
 ### Sandbox
 
-- A hosted editor at [postext.dev](https://postext.dev/en/sandbox): books of chapters, a Design panel that browses every setting in editorial terms (accessible, keyboard-first), a Resources panel, live Canvas / PDF / Folio (3D) / HTML previews with source ↔ preview sync, an EPUB 3 tab that writes, shows and downloads the book as an e-book, a Checks panel, permalinks to any page, and a phone layout.
+- A hosted editor at [postext.dev](https://postext.dev/en/sandbox): books of chapters, a Design panel that browses every setting in editorial terms (accessible, keyboard-first), a Resources panel, live Canvas / PDF / Folio (3D) / HTML previews with source ↔ preview sync, an EPUB 3 tab that writes, shows and downloads the book as an e-book, Word import and export, editors for page templates and comic pages, a Checks panel, permalinks to any page, and a phone layout.
 - Books travel as `.postext` bundles that carry their pagination, so an imported book opens already paginated.
 - The same `.postext` files are created and opened from code with the `postext` package (`createBundle`, `openBundle`, `buildBundle`), so a book moves between the Sandbox, the agent skill and your own program.
-- Showcase bundles — a magazine, literary editions (*Don Quijote*, an annotated *Paradise Lost*), an atlas, an exhibition catalogue, a physics textbook, a column-and-a-half biochemistry manual, the classic Chinese novel *Dream of the Red Chamber* (红楼梦), Natsume Sōseki's *Kokoro* (こころ) set vertically and *One Thousand and One Nights* in Arabic — plus a built-in guide to Postext, itself set as a book in English, Spanish, Catalan, Chinese (vertical), Japanese (vertical) and Arabic (right to left).
+- Showcase bundles — a magazine, literary editions (*Don Quijote*, an annotated *Paradise Lost*), an atlas, an exhibition catalogue, a physics textbook, a column-and-a-half biochemistry manual, the classic Chinese novel *Dream of the Red Chamber* (红楼梦), Natsume Sōseki's *Kokoro* (こころ) set vertically and *One Thousand and One Nights* in Arabic — plus a built-in guide to Postext, itself set as a book in every language of the site: Chinese and Japanese vertical, Arabic right to left.
 
 ### Cookbook
 
 - More than a hundred complete, copy-ready examples at [postext.dev/en/cookbook](https://postext.dev/en/cookbook) (*Recetario* in Spanish): each recipe is a real publication set with Postext — an opener, a book page with running heads, a data table, a print-ready PDF — grouped in chapters and searchable by feature, genre, level and output.
 - Every recipe page shows the captured pages and the whole pen, with Copy, Open in CodePen, an `.html` download and, where it applies, the PDF; a write-up explains the method step by step, with excerpts of the real code, and the pitfalls. The same content is available as Markdown for agents (`/en/cookbook/<slug>.md`, and in `llms.txt`).
-- Recipes live in [`cookbook/`](cookbook/README.md), one folder each (metadata, bilingual write-ups, the pen and its sample text); `pnpm cookbook new | dev | lint | capture` scaffolds, previews, checks and captures them against the released engine.
+- Recipes live in [`cookbook/`](cookbook/README.md), one folder each (metadata, bilingual write-ups, the pen and its sample text); `pnpm cookbook new | dev | lint | capture` scaffolds, previews, checks and captures them against the released engine, and `pnpm cookbook sandbox` and `pnpm cookbook bench` check the captured books in the Sandbox's own layout and the composed pages under longer text.
 
 ### Website
 
@@ -249,9 +263,10 @@ postext/
 │   ├── postext-cli/              # Command line: self-contained executables (Bun)
 │   ├── postext-sandbox/          # Interactive sandbox UI (controls + viewports)
 │   └── typescript-config/        # Shared TypeScript configurations
-├── docs/                         # MDX documentation, <topic>-<locale>.mdx in en, es, ca, zh, ar
+├── docs/                         # MDX documentation, <topic>-<locale>.mdx in ten locales
 ├── cookbook/                     # Cookbook recipes (one folder each), registries and pen kit
 ├── plugins/postext/              # Agent skill `postext-port` (Claude Code plugin + skills.sh)
+├── rust/                         # Knuth-Plass line breaker in Rust, compiled to WebAssembly
 ├── .claude-plugin/               # Claude Code plugin marketplace manifest
 ├── turbo.json                    # Turborepo task pipeline
 ├── pnpm-workspace.yaml           # pnpm workspace definition
@@ -264,15 +279,15 @@ postext/
 | `packages/postext-pdf` | The PDF backend: renders the layout geometry to print-ready, tagged PDF (outlines, links, font embedding, color spaces). Published to npm as `postext-pdf`. |
 | `packages/postext-folio` | The 3D book viewer: a laid-out document (or any page images) as spreads whose leaves turn in three.js. Published to npm as `postext-folio`. |
 | `packages/postext-epub` | The EPUB 3 writer: a laid-out book as a fixed-layout or reflowable EPUB, plus `readEpub` for viewers. Published to npm as `postext-epub`. |
-| `packages/postext-citeproc` | The citation engine: formats Pandoc-syntax citations with citeproc-js and builds the bibliography, with 19 bundled CSL styles and 12 CSL locales. Published to npm as `postext-citeproc`. |
+| `packages/postext-citeproc` | The citation engine: formats Pandoc-syntax citations with citeproc-js and builds the bibliography, with 20 bundled CSL styles and 14 CSL locales. Published to npm as `postext-citeproc`. |
 | `packages/postext-cli` | The command line: `postext pdf`, `html`, `epub`, `image(s)`, `docx`, `import-docx`, `pack`, `unpack`, `info`, `check` and `build --watch`, compiled with Bun into a self-contained executable for each system (`pnpm --filter postext-cli build:bin` writes them to `bin/`). Released as GitHub Release assets and on npm as `postext-cli`. |
 | `packages/postext-sandbox` | The interactive sandbox UI — configuration controls and live Canvas/PDF/Folio/HTML/EPUB viewports — embedded by the web app. |
-| `apps/web` | Next.js 16 + Tailwind CSS 4 application: the documentation site, landing page, hosted sandbox and cookbook at [postext.dev](https://postext.dev), in seven languages. |
+| `apps/web` | Next.js 16 + Tailwind CSS 4 application: the documentation site, landing page, hosted sandbox and cookbook at [postext.dev](https://postext.dev), in ten languages. |
 | `packages/typescript-config` | Shared strict TypeScript configuration across all packages. |
 
-Documentation lives in the top-level `docs/` folder as one MDX file per topic and locale (`<topic>-<locale>.mdx`, in `en`, `es`, `ca`, `zh` and `ar`), rendered by `apps/web`. The doc pages of the [GitHub wiki](https://github.com/drnachio/postext/wiki) are generated from the English files.
+Documentation lives in the top-level `docs/` folder as one MDX file per topic and locale (`<topic>-<locale>.mdx`, in `en`, `es`, `ca`, `fr`, `de`, `it`, `pt`, `zh`, `ja` and `ar`), rendered by `apps/web`. The doc pages of the [GitHub wiki](https://github.com/drnachio/postext/wiki) are generated from the English files (`pnpm wiki` in `apps/web`).
 
-**Tech stack:** pnpm workspaces, Turborepo 2.9, TypeScript 5.9, ESM-only, Node.js 20+, Next.js 16, Tailwind CSS 4.
+**Tech stack:** pnpm workspaces, Turborepo 2, TypeScript 6, ESM-only, Node.js 20+, Next.js 16, Tailwind CSS 4, Bun for the command line, Rust for the WebAssembly line breaker.
 
 ---
 
@@ -281,7 +296,7 @@ Documentation lives in the top-level `docs/` folder as one MDX file per topic an
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 20
-- [pnpm](https://pnpm.io/) >= 10
+- [pnpm](https://pnpm.io/) 12 (the version in `packageManager`; `corepack enable` installs it)
 
 ### Installation
 
@@ -305,6 +320,9 @@ pnpm lint
 
 # Type-check all packages
 pnpm check-types
+
+# Run every package's tests
+pnpm turbo run test
 ```
 
 Turborepo handles the dependency graph: `packages/postext` builds first, then `apps/web` picks up the changes. In dev mode, the library recompiles on save and the Next.js app hot-reloads.
@@ -452,9 +470,15 @@ Every milestone of the original roadmap is closed. Postext now typesets full boo
 - [x] Arabic typesetting, Modern Standard and Classical
 - [x] Japanese typesetting, vertical and horizontal ([#440](https://github.com/drnachio/postext/issues/440))
 - [x] Pictures with a safe area ([#442](https://github.com/drnachio/postext/issues/442)) and video resources: poster, play mark and QR code in print, players in HTML and EPUB ([#460](https://github.com/drnachio/postext/issues/460))
-- [x] The Cookbook, the showcase books and the built-in guide in five languages
+- [x] The Cookbook, the showcase books and the built-in guide in every language of the site
 - [x] The `postext-port` agent skill
-- [x] The website in seven languages, at WCAG 2.2 AAA
+- [x] The website in ten languages, at WCAG 2.2 AAA
+- [x] Composed pages: page templates with frames filled from the Markdown ([#846](https://github.com/drnachio/postext/issues/846))
+- [x] Comics, manga and newspaper strips lettered by the engine ([#553](https://github.com/drnachio/postext/issues/553))
+- [x] Print production: ICC profiles, PDF/X and preflight ([#609](https://github.com/drnachio/postext/issues/609))
+- [x] Word import and export ([#599](https://github.com/drnachio/postext/issues/599))
+- [x] The `postext` command line ([#617](https://github.com/drnachio/postext/issues/617)) and WebMCP tools for agents in the browser
+- [x] The Rust line breaker in WebAssembly and a faster whole-book layout ([#779](https://github.com/drnachio/postext/issues/779))
 
 What comes next is driven by the community: open an issue that describes the publication you are trying to set and where Postext falls short.
 

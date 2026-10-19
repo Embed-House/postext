@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuration: callout boxes',
   sidebarTitle: 'Callout boxes',
-  description: 'Named styles for :::callout boxes: frame, fill, stripe, title, icon and marker; numbered statements; typography inside the box; and boxes split across pages',
+  description: 'Named styles for :::callout boxes: frame, fill, stripe, title, icon, marker and label tab; numbered statements; typography inside the box; boxes split across pages; and designs drawn in a box',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '25 min',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>, headings font, <code>400</code>, <code>1.5em</code>, main colour, <code>'top'</code>, <code>'inline'</code>, <code>'right'</code></td>
-      <td>A text glyph (<code>kind: 'glyph'</code>) or a bitmap / SVG resource (<code>kind: 'resource'</code> + <code>resourceId</code>) beside the content. With a side stripe the icon is centred over the stripe; otherwise it reserves its own column (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> centres it vertically on the content. A resource image is fitted inside the square keeping its aspect ratio — or inside a <code>width</code> × <code>size</code> box when <code>width</code> is set (a wide strip of icons); an icon taller than the content grows the box to fit it (and, with <code>align: 'center'</code>, centres the content on it). <code>position: 'corner'</code> hangs the icon on a top corner as a badge, half of it past the border, taking no room from the content; a wide icon (<code>width</code>) is centred on the corner by the width it is drawn at, and on the left corner the title starts past its inner half (up to postext 1.4 it was placed by its height, so a wide strip hung past the box and over the title); <code>cornerSide</code> picks the corner — <code>'right'</code> / <code>'left'</code>, or <code>'outer'</code> / <code>'inner'</code>, which follow the page parity of mirrored margins (outer = right on a recto, left on a verso).</td>
+      <td>A text glyph (<code>kind: 'glyph'</code>) or a bitmap / SVG resource (<code>kind: 'resource'</code> + <code>resourceId</code>) beside the content. With a side stripe the icon is centred over the stripe; otherwise it reserves its own column (<code>size</code> + <code>titleStyle.gap</code>). <code>align: 'center'</code> centres it vertically on the content. A resource image is fitted inside the square keeping its aspect ratio — or inside a <code>width</code> × <code>size</code> box when <code>width</code> is set (a wide strip of icons); an icon taller than the content grows the box to fit it (and, with <code>align: 'center'</code>, centres the content on it). <code>position: 'corner'</code> hangs the icon on a top corner as a badge, half of it past the border, taking no room from the content; a wide icon (<code>width</code>) is centred on the corner by the width it is drawn at, and on the left corner the title starts past its inner half (up to postext 1.4 it was placed by its height, so a wide strip hung past the box and over the title); <code>cornerSide</code> picks the corner — <code>'right'</code> / <code>'left'</code>; <code>'outer'</code> / <code>'inner'</code>, which follow the page parity of mirrored margins (outer = right on a recto, left on a verso); or <code>'start'</code> / <code>'end'</code>, which follow the box's own direction, as a stripe's do.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>unset (no tab)</td>
-      <td>A tab on the box's top edge that prints the fence's <code>label</code> attribute — the number of a numbered box ("BOX 1-1"). It hugs the <code>position</code> corner (<code>'top-right'</code> / <code>'top-left'</code>), inset by <code>inset</code>, rises <code>offset</code> above the box top (that room is part of the block, on top of <code>marginTop</code>, so the tab keeps it at a column head too), is <code>height</code> tall with <code>paddingX</code> on each side of the text, and may carry an <code>icon</code> resource beside it (<code>&#123; resourceId, width, gap &#125;</code>, on the side away from the corner) and a <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) along the top edge from the far corner up to it. Defaults: headings font, body size, <code>700</code>, white on the main colour, <code>1.4em</code> tall, <code>0.6em</code> padding. The tab is its own shape standing on the frame, so it keeps square corners whatever the box's <code>borderRadius</code>. Since postext 1.42, <code>icon.placement: 'inside'</code> sets the picture in the tab, at its start before the words (the right end in a box set right to left), <code>gap</code> away from them: the tab is as wide as the picture, the gap, the words and the padding, and the picture, fitted to <code>icon.width</code> and the tab's height, is centred on it. The picture keeps its own colours, so a white ring on a coloured tab and a coloured ring on a white one are two resources, one in each style. <code>'beside'</code>, the default, sets the picture outside the tab's edge. Since postext 1.43, <code>icon.tint: true</code> paints the picture in the tab's <code>color</code> instead of its own colours: only its shape is painted, in the colour of the words, so one ring serves every tint of a book. A picture with no transparency becomes a plain rectangle. In the PDF an SVG keeps its edges and a bitmap is cut where it is half transparent; a print master (<code>svg.pdfFileId</code>) is not used, since a PDF page cannot be recoloured.</td>
+      <td>A tab on the box's top edge that prints the fence's <code>label</code> attribute — the number of a numbered box ("BOX 1-1"). It hugs the <code>position</code> corner (<code>'top-right'</code> / <code>'top-left'</code>, or <code>'top-start'</code> / <code>'top-end'</code> in the box's own direction, as a stripe's <code>'start'</code> / <code>'end'</code>), inset by <code>inset</code>, rises <code>offset</code> above the box top (that room is part of the block, on top of <code>marginTop</code>, so the tab keeps it at a column head too), is <code>height</code> tall with <code>paddingX</code> on each side of the text, and may carry an <code>icon</code> resource beside it (<code>&#123; resourceId, width, gap &#125;</code>, on the side away from the corner) and a <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) along the top edge from the far corner up to it. Defaults: headings font, body size, <code>700</code>, white on the main colour, <code>1.4em</code> tall, <code>0.6em</code> padding, no offset or inset, a picture <code>1em</code> wide and <code>0.3em</code> away. The tab is its own shape standing on the frame, so it keeps square corners whatever the box's <code>borderRadius</code>. Since postext 1.42, <code>icon.placement: 'inside'</code> sets the picture in the tab, at its start before the words (the right end in a box set right to left), <code>gap</code> away from them: the tab is as wide as the picture, the gap, the words and the padding, and the picture, fitted to <code>icon.width</code> and the tab's height, is centred on it. The picture keeps its own colours, so a white ring on a coloured tab and a coloured ring on a white one are two resources, one in each style. <code>'beside'</code>, the default, sets the picture outside the tab's edge. Since postext 1.43, <code>icon.tint: true</code> paints the picture in the tab's <code>color</code> instead of its own colours: only its shape is painted, in the colour of the words, so one ring serves every tint of a book. A picture with no transparency becomes a plain rectangle. In the PDF an SVG keeps its edges and a bitmap is cut where it is half transparent; a print master (<code>svg.pdfFileId</code>) is not used, since a PDF page cannot be recoloured.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>Text of that marker (a screenplay's "(MORE)"), in the box's body face and size, per document language.</td>
+      <td><code>'Continued'</code></td>
+      <td>Text of that marker (a screenplay's "(MORE)"), in the box's body face and size. The default is in the document language, like a split table's: <code>'Continúa'</code> in Spanish, <code>'À suivre'</code> in French.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ The texts of the design read these placeholders:
 
 A picture's `resourceId` takes the same placeholders, so each box can draw a resource of its own. Only a box design reads `{boxText}`; a heading design prints nothing for it.
 
-With `setsContent: true` one style serves every box of the same shape, each with its own words. In a handwriting workbook each practice row is a box whose content is the word to copy: the design prints the word in a school face and draws the dotted resource named after it.
+With `setsContent: true` one style serves every box of the same shape, each with its own words. In a handwriting workbook each practice row is a box whose content is the word to copy: the design prints the word in a school face, then sets it again in dots to trace (`dotted`), as many times as the row holds (`repeat`; see [Inline marks and outlines](/en/docs/configuration-headers-footers#inline-marks-and-outlines)).
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Playwrite GB S', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Playwrite GB S', fontWeight: 100, fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ sun
 :::
 ```
 
-The first row prints *cat* and draws the resource `trace-cat`, the second prints *sun* and draws `trace-sun`, and neither word is set again under its band. With `setsContent` left `false` the design reads `{boxText}` all the same, and the content is set under the band.
+The first row prints *cat* followed by a row of dotted copies of *cat*, the second the same with *sun*, and neither word is set again under its band. Changing the word in the Markdown changes the model and every copy. With `setsContent` left `false` the design reads `{boxText}` all the same, and the content is set under the band.
 
 In the VDT the band's elements are design blocks on the frame's `designOverlay`, beside the title.

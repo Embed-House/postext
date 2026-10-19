@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'プログラムからの利用',
   description: 'コードからPostextを呼び出す方法。buildDocumentとその警告、既定値、フォント、キャッシュ、そしてWeb Worker',
   lang: 'ja',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '32分',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## プログラムからの利用
 
-> **推奨する方法：Web Workerを使う**。ブラウザーでの統合は、ほぼすべての場合、メインスレッドで`buildDocument`を直接呼ぶの**ではなく**、`postext/worker`の`createLayoutWorker()`を通して組版パイプラインを動かすべきです。ワーカーを使えば、ビルド中もUIが応答し続け、差分の再ビルドをまたいでテキストの計測結果がキャッシュされ、「最後の要求が勝つ」キャンセル（last-wins）が組み込まれるので、新しいキー入力が実行中の古いビルドを中止します。標準の手順は[Web Workerでレイアウトを実行する](#web-workerでレイアウトを実行する)にまとめてあります。この節の残りの内容（`buildDocument`の直接呼び出し、リゾルバー、既定値の除去関数、キャッシュ）も役に立ちます。ワーカーはまったく同じ入力と出力を公開しているからです。ただし、UIのコードではワーカーのラッパーから始めるのが正解です。メインスレッドで`buildDocument`を呼ぶのは、1回きりの書き出し、サーバーサイドでの描画（Node）、テストに限ってください。
+> **推奨する方法：Web Workerを使う**。ブラウザでは、メインスレッドで `buildDocument` を呼ぶのではなく、`postext/worker` の `createLayoutWorker()` を通してレイアウトします。ワーカーはレイアウト中もページの応答を保ち、再レイアウトの間も文字の計測をキャッシュし、新しいレイアウトが始まると実行中のものを取り消すので、キー入力が古いテキストのレイアウトを待つことはありません。手順は[Web Workerでレイアウトを実行する](#web-workerでレイアウトを実行する)にあります。この節の残り（`buildDocument` の直接呼び出し、リゾルバー、ストリッパー、キャッシュ）もそのまま使えます。ワーカーは同じ入力を受け取り、同じ出力を返します。メインスレッドで `buildDocument` を呼ぶのは、一回限りの書き出し、サーバー側のレンダリング（Node）、テストの場合だけにしてください。
 
 ### 文書のビルド
 
@@ -292,6 +292,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
+表には、どの文書でも出うる種類を挙げています。1つの機能に属する種類は、その機能と一緒に説明しています。漫画（`comicPanelCount`、`comicBalloonOverflow`…）は[漫画](/ja/docs/comics)のページ、動画（`videoWithoutUrl`、`videoUrlInvalid`、`videoWithoutPoster`）は[リソース](/ja/docs/document-format-resources)、引用と索引（`unknownCitationKey`、`referencesUnreadable`、`indexMark`…）は[注と参照](/ja/docs/document-format-notes-references)、中国語・日本語・アラビア語のテキスト（`cjkLooseLine`、`rubyExceedsLeading`、`arabicMarksExceedLeading`…）はそれぞれの文字のページ、改行器の種類（`raggedLine`、`unbreakableWordOverflow`）は[ハイフネーションと両端そろえ](/ja/docs/justification)にあります。
+
 リソースに関する警告（表スタイル、グリッド、キャプションや注、セルの中の参照）は、本文の中でそのリソースが最初に埋め込まれた位置か参照された位置を指し、リソースごとに1回だけ挙がります。検査するのは文書が使うリソースだけです。本の1章は、本に含まれるすべての表ではなく、その章が参照する表について報告します。
 
 ```ts
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **ページが宣言しているフェイス**（`@font-face`規則、追加済みの`FontFace`）は、フォントセットを通して読み込みます（`document.fonts.load`、ワーカーでは`self.fonts`）。**宣言していないフェイス**は`resolve(family, weight, style, { text, codePoints })`に問い合わせます。リゾルバーは、ファイル1つ（バイト列またはURL）、複数のファイル（1つのフェイスのスライス）、スライスや可変の範囲を表す`{ source, unicodeRange, weight, style }`、または`null`を返します。エンジンはすべての読み込みが終わってから、設定の順と各回答の順（リゾルバーがそう返せば、latin、latin-ext、greekの順）にそれらを`FontFace`として追加します。そのため、ファイルがどんな順で届いてもフォントセットは同じになります。さらに、[SVGの画像](/ja/docs/configuration-resources#svgの文字のフォント)とレイアウトのワーカーが読むフォントレジストリにも登録します。リゾルバーが自分でフェイスを宣言し（スタイルシートを追加して）、`null`を返してもかまいません。
-- **レポート**には、読み込んだフェイス（またはインストール済みのファミリー）で賄えるフェイス、まだ`missing`のフェイス、ブラウザーが別のウェイトや傾きから`synthesize`するフェイスが並びます。待ち時間の上限は`timeoutMs`（既定は10 000）で、その時点でまだ読み込み中のフェイスは欠落として数えます。フォントセットがない環境（Node）では、`prepareFonts`は何もせず、すべてのフェイスを読み込み済みとして報告します。
+- **レポート**は、読み込んだフェイス（またはインストール済みのファミリー）で賄えるフェイスを`loaded`に、まだ欠けているフェイスを`missing`に、ブラウザーが別のウェイトや傾きから描くフェイスを`synthesized`に挙げます。`added`は、リゾルバーのファイルから追加した`FontFace`の数です。待ち時間の上限は`timeoutMs`（既定は10 000）で、その時点でまだ読み込み中のフェイスは欠落として数えます。フォントセットがない環境（Node）では、`prepareFonts`は何もせず、すべてのフェイスを読み込み済みとして報告します。
 - **`buildDocumentWithFonts(content, config, options)`**：フォントを準備し、`buildDocumentAsync`でビルドし、ページが実際にテキストを組んだフェイスを読み取り、フォントセットが用意できなかったものを読み込んで（ページを組んで初めてわかるウェイトは、ファミリーの別のウェイトで代用できる場合でも`resolve`に求めます）、もう一度ビルドします（追加のビルドは最大2回）。`withLoadedFonts(build, options)`は、任意のビルド関数のまわりで同じことを行います。章ごとにビルドする本や、複数の文書を返すバンドル（`buildBundle`）に使えます。`options.onFonts`は最終的なレポートを受け取ります。
 - **ビルドの後**、テキストを組んだフェイスのうちフォントセットが用意できなかったものは、すべて`doc.contentWarnings`に`fontFallback`として挙がります（[文書の中の警告](#文書の中の警告)を参照）。
 
@@ -555,6 +557,29 @@ Postextの状態の一部は、モジュールレベルの変数にあります�
 
 最も簡単な分離は、文書ごとにレルムを分けることです。ライブサンプルごとにiframeを使う（CodePenの埋め込みがこれにあたります）か、計測とハイフネーションのために文書ごとに[レイアウトのワーカー](#web-workerでレイアウトを実行する)を使います（画像は引き続きページに登録されます）。
 
+### Word文書（`postext/word`）
+
+`postext/word`サブパスは、DOMを使わずにWord文書（`.docx`）を読み書きします。SandboxのWordの読み込みと書き出し、コマンドラインの`import-docx`と`docx`は、これを土台にしています（[コマンドライン › docxとimport-docx](/ja/docs/command-line#docxとimport-docx)を参照）。
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // Uint8ArrayかArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict、report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`**：ファイルを読んでWordのモデルにします。モデルには、スタイル、段落、注、画像、文書の`title`、Postextが書き出したファイルなら読み込み用のテンプレート（`embeddedTemplate`）が入ります。Word文書でないファイルでは`DocxReadError`を投げます。
+- **`wordToPostext(word, settings)`**：モデルを章（`{ title, markdown }`）、画像、表に変換します。テンプレートは、Wordの各スタイルを、設定の見出し、段落スタイル、囲み、引用、キャプションのどれかに対応づけます。`chapters: 'split'`はレベル1の見出しごとに章を始め、`'single'`は1つの章にまとめます。画像（`id`、`media.bytes`、`caption`、`alt`）と表（`id`、`model`、`caption`）は、ホストがリソースとして保存します。`skippedPictures`には、取り込まなかったEMF、WMF、TIFFの画像が並びます。
+- **`analyzeDocx(word, template, config)`**：Sandboxが読み込みの前に表示する品質レポートです。使われているスタイル、スタイルの付いた段落の数、`directFormatting`、`manualHeadings`、`typedNumbering`などの指摘を、それぞれ件数と例を添えて返します。
+- **`postextToDocx(chapters, settings)`**：章を`.docx`（`Uint8Array`）として書き出し、見出し、段落、囲み、引用、リスト、注にWordのスタイルを付けます。Wordで表せないものは*Postext Markup*のスタイルにそのまま残し、テンプレートをファイルの中に入れるので、この文書は元どおりに読み込み直せます。`book: true`は各章を`Postext Chapter`の段落で始め、読み込みではそこから章を組み立て直します。
+- <strong>`wordStyleTracking(word, template, config)`</strong>と<strong>`applyStyleTracking(config, tracking)`</strong>：Wordのスタイルの文字間隔を、文字間隔を指定していない設定のスタイルに引き継ぎます。
+
 
 ## Web Workerでレイアウトを実行する
 
@@ -589,7 +614,10 @@ Postextには専用のWeb Workerのエントリーポイント`postext/worker`�
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**：専用のワーカーを起動し（`opts.worker`で渡したワーカーを包むか、`opts.url`のワーカーエントリーを起動することもできます）、型付きのハンドルを返します。[CDNからワーカーを読み込む](#cdnからワーカーを読み込む)を参照してください。
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**：フォントのバイト列をワーカーに送ります。バッファーは転送されるので、後で送り直す必要があるなら、メインスレッドに新しいコピーを残しておいてください。
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**：パイプラインを実行します。シグナルを中止すると、実行中のビルドがキャンセルされます。
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`**：それらのファミリーについてワーカーが持っているフェイスを捨てます。これで、次にそのファミリーを`registerFonts`したとき、すでに持っているフェイスと照合されずに、送ったフェイスが使われます。
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`**：パイプラインを実行します。`options`は`{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`です。`signal`を中止すると、実行中のビルドがキャンセルされます。`onProgress({ pass, blocks, totalBlocks, pages })`は配置が進むたびに呼ばれ、`onStats({ passes, totalMs, cached?, missingFonts? })`は終わったビルドのパスごとの所要時間を受け取ります。`resourcesKey`は`content.resources`のフィンガープリントです。同じキーのビルドが続くとリストは1回だけ送られ、ワーカーがそれを保持します。`cacheKey`はビルド全体のフィンガープリントです。ワーカーは直近のいくつかの文書をこのキーで保持し、手元にあるキーのビルドにはそのキャッシュから答えます。
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`**：文書を送り返さずに、ワーカーの文書キャッシュへビルドしておきます。読者が次に開きそうな章に使います。その`cacheKey`での次の`build`には、キャッシュから答えます。
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`**：ページで`prepareFonts`を実行し、見つかったフェイスをワーカーに送ります。[CDNからワーカーを読み込む](#cdnからワーカーを読み込む)を参照してください。
 - **`LayoutWorkerHandle.dispose(): void`**：ワーカーを終了し、保留中のビルドを`AbortError`で拒否します。
 - **`FontPayload`**：`{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`。`weight`はCSSのウェイトの文字列（`'700'`、`'bold'`）です。`registerFonts`は数値（`700`）も受け付けます。`buffer`は、`registerFonts`を呼んだときにワーカーへ転送されます。
 - **`BuildCancelledError`**（`postext`からも再公開）：`options.shouldCancel`が`true`を返したときに`buildDocument`が内部で投げるものです。メインスレッドでは通常目にしません。ワーカーのプロトコルが、コードに届く前に`AbortError`に変換するからです。

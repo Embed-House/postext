@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Headings',
   description: 'Heading defaults, the overrides for each level, page breaks before a heading, page-wide chapter openers and numbers spelled out in words',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '31 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ The `headings` property controls typography for all heading levels (H1–H6). Yo
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>When <code>true</code>, a heading is never placed as the last element of a column or page. If the following block would not have at least <code>bodyText.widowMinLines</code> lines of room after the heading (or one line when <code>bodyText.avoidWidows</code> is <code>false</code>), the heading is pushed forward so it stays joined to its text. Interacts with <code>bodyText.keepColonWithList</code>: if that rule has to push a paragraph ending in a colon whole, any trailing heading(s) in the column travel with it rather than being left stranded.</td>
+      <td>When <code>true</code>, a heading is never placed as the last element of a column or page. If the following block would not have at least <code>bodyText.widowMinLines</code> lines of room after the heading (or one line when <code>bodyText.avoidWidows</code> is <code>false</code>), the heading is pushed forward so it stays joined to its text. Interacts with <code>bodyText.keepColonWithList</code>: if that rule has to push a paragraph ending in a colon whole, any trailing heading(s) in the column travel with it rather than being left stranded. In a group set in columns (a composed page's frame with <code>columns</code>, a <code>:::columns</code> group) a column never ends right after a heading either: the heading goes on with the item after it.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ The `headings` property controls typography for all heading levels (H1–H6). Yo
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>enabled</td>
-      <td>Vertical column balancing — extra space above headings so columns end flush with the page bottom. See below.</td>
+      <td>enabled (off in vertical text and on a character grid)</td>
+      <td>Vertical column balancing — extra space above headings so columns end flush with the page bottom. See <a href="/en/docs/configuration-page-flow#column-balancing">Column balancing</a>.</td>
     </tr>
   </tbody>
 </table>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Dokumentformat',
   description: 'Der Ausschnitt aus Markdown, den Postext einliest – Frontmatter, Überschriften, Listen und Codeblöcke –, was Postext übergeht und welche Regeln beim Schreiben von Quelldokumenten gelten',
   lang: 'de',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 25,
   plainSummary: "Diese Seite erklärt, wie Sie einen Text schreiben, den Postext setzen kann. Sie schreiben in Markdown, einer einfachen Schreibweise, in der ein paar Zeichen Überschriften, Listen, fette Wörter und Links kennzeichnen. Diese Seite behandelt die Zeilen am Anfang einer Datei, Überschriften, Listen, Code und die Zeichen, die Postext übergeht. Vier weitere Seiten behandeln Blöcke wie Kästen und Spalten, Zeichen innerhalb einer Zeile, Anmerkungen und Verweise sowie Bilder und Tabellen. Am Ende stehen Ratschläge für Texte, die sich leicht lesen lassen.",
@@ -53,7 +53,7 @@ Setzen Sie einen Wert in Anführungszeichen, damit er genau so ausgegeben wird, 
 
 ## Blockelemente
 
-Postext erkennt sieben Arten von Textblöcken und Code-Listings, dazu die Direktiven und eingebetteten Ressourcen, die weiter unten auf dieser Seite behandelt werden. Blöcke enden immer an einer Leerzeile oder am Beginn eines anderen Blocks.
+Postext erkennt sieben Arten von Textblöcken und Code-Listings, dazu die [Direktiven](/de/docs/document-format-directives) und [eingebetteten Ressourcen](/de/docs/document-format-resources), die eigene Seiten beschreiben. Blöcke enden immer an einer Leerzeile oder am Beginn eines anderen Blocks.
 
 <Illustration name="BlockTypesGallery" data='{"title": "Textblöcke auf einen Blick", "desc": "Die sieben Arten von Textblöcken, die Postext erkennt: Überschrift, Absatz, Zitat, ungeordnete Liste, geordnete Liste, Aufgabenliste und abgesetzte Formel, jeweils mit ihrer Markdown-Syntax. Direktiven und eingebettete Ressourcen werden gesondert behandelt.", "caption": "Jede Art von Textblock und ihre Markdown-Schreibweise.", "blocks": [{"name": "Überschrift", "syntax": "# Title", "color": "blue"}, {"name": "Absatz", "syntax": "Einfache Textzeilen", "color": "orange"}, {"name": "Zitat", "syntax": "> quoted text", "color": "green"}, {"name": "Ungeordnete Liste", "syntax": "- item", "color": "purple"}, {"name": "Geordnete Liste", "syntax": "1. item", "color": "pink"}, {"name": "Aufgabenliste", "syntax": "- [x] done", "color": "teal"}, {"name": "Abgesetzte Formel", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ Postext erkennt sieben Arten von Textblöcken und Code-Listings, dazu die Direkt
     <tr>
       <td>Geordnete Liste</td>
       <td><code>1. item</code>, <code>2) item</code></td>
-      <td>Ziffern, gefolgt von <code>.</code> oder <code>)</code>. Die Startnummer bleibt erhalten (eine Liste kann also bei 5 oder bei 0 beginnen). Das in der Ausgabe gesetzte Trennzeichen stammt aus <code>orderedLists.separator</code>, nicht aus der Quelle.</td>
+      <td>Ziffern, gefolgt von <code>.</code> oder <code>)</code>: europäische Ziffern oder die arabisch-indischen (<code>١.</code>) und persischen (<code>۱.</code>), die eine arabische oder persische Tastatur tippt. Die Startnummer bleibt erhalten (eine Liste kann also bei 5 oder bei 0 beginnen). Das in der Ausgabe gesetzte Trennzeichen stammt aus <code>orderedLists.separator</code>, nicht aus der Quelle.</td>
     </tr>
     <tr>
       <td>Aufgabenliste (GFM)</td>
@@ -210,6 +210,10 @@ Die Info-Zeichenkette hinter den öffnenden Backticks gibt die Sprache an (ihr e
       <td><code>span=page</code></td>
       <td>Auf einer mehrspaltigen Seite erstreckt sich das Listing über alle Spalten.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>Lässt das Listing wie einen schwebenden <code>:::callout</code> in das erste freie Band am Kopf oder Fuß einer Spalte gleiten.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

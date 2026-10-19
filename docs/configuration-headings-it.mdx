@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Titoli',
   description: 'I valori predefiniti dei titoli, le personalizzazioni per livello, le interruzioni di pagina prima di un titolo, le aperture di capitolo a tutta pagina e i numeri scritti in lettere',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '34 min',
   order: 9,
   parent: 'configuration',
@@ -77,7 +77,7 @@ La proprietà `headings` controlla la tipografia di tutti i livelli di titolo (H
       <td><code>keepWithNext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Con <code>true</code>, un titolo non viene mai collocato come ultimo elemento di una colonna o di una pagina. Se il blocco successivo non avesse spazio per almeno <code>bodyText.widowMinLines</code> righe dopo il titolo (o per una riga quando <code>bodyText.avoidWidows</code> è <code>false</code>), il titolo viene spinto avanti così da restare unito al suo testo. Interagisce con <code>bodyText.keepColonWithList</code>: se quella regola deve spostare per intero un paragrafo che termina con i due punti, gli eventuali titoli che lo precedono nella colonna si spostano con esso invece di restare isolati.</td>
+      <td>Con <code>true</code>, un titolo non viene mai collocato come ultimo elemento di una colonna o di una pagina. Se il blocco successivo non avesse spazio per almeno <code>bodyText.widowMinLines</code> righe dopo il titolo (o per una riga quando <code>bodyText.avoidWidows</code> è <code>false</code>), il titolo viene spinto avanti così da restare unito al suo testo. Interagisce con <code>bodyText.keepColonWithList</code>: se quella regola deve spostare per intero un paragrafo che termina con i due punti, gli eventuali titoli che lo precedono nella colonna si spostano con esso invece di restare isolati. In un gruppo composto in colonne (una cornice di pagina composta con <code>columns</code>, un gruppo <code>:::columns</code>) una colonna non finisce mai neppure subito dopo un titolo: il titolo passa con l’elemento che lo segue.</td>
     </tr>
     <tr>
       <td><code>keepWithNextSpread</code></td>
@@ -112,8 +112,8 @@ La proprietà `headings` controlla la tipografia di tutti i livelli di titolo (H
     <tr>
       <td><code>balancing</code></td>
       <td><code>ColumnBalancingConfig</code></td>
-      <td>attivo</td>
-      <td>Bilanciamento verticale delle colonne: spazio extra sopra i titoli perché le colonne finiscano a filo con il fondo della pagina. Vedi sotto.</td>
+      <td>attivo (disattivato nel testo verticale e su una griglia di caratteri)</td>
+      <td>Bilanciamento verticale delle colonne: spazio extra sopra i titoli perché le colonne finiscano a filo con il fondo della pagina. Vedi <a href="/it/docs/configuration-page-flow#bilanciamento-delle-colonne">Bilanciamento delle colonne</a>.</td>
     </tr>
   </tbody>
 </table>

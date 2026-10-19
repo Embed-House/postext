@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '正文',
   description: '正文的字体排印：字体、字号与行距、颜色、缩进、引用块、诗歌、制表位和首字下沉',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分钟',
   order: 7,
   parent: 'configuration',
@@ -107,9 +107,9 @@ export const metadata = {
     </tr>
     <tr>
       <td><code>textAlign</code></td>
-      <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
+      <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>文字对齐方式。<code>'left'</code>（或<code>'start'</code>）是一行开始的一侧：从右到左的段落即右侧（见<a href="/zh/docs/configuration-language#文本方向">文本方向</a>）。两端对齐会把间距分配到每一行，使左右边缘整齐。两端对齐段落的末行按自然宽度齐左排出；例外是Knuth-Plass接受了一个依靠粘连收缩才排得下的超长末行，这时词间距会压缩，使这一行正好填满行长（这是TeX设定粘连的语义，Canvas、HTML和PDF三种后端的处理完全一致）。</td>
+      <td>文字对齐方式。<code>'left'</code>（或<code>'start'</code>）是一行开始的一侧：从右到左的段落即右侧（见<a href="/zh/docs/configuration-language#文本方向">文本方向</a>）。<code>'right'</code>（或<code>'end'</code>）是一行结束的一侧，<code>'center'</code>使每行居中。两端对齐会把间距分配到每一行，使左右边缘整齐。两端对齐段落的末行按自然宽度齐左排出；例外是Knuth-Plass接受了一个依靠粘连收缩才排得下的超长末行，这时词间距会压缩，使这一行正好填满行长（这是TeX设定粘连的语义，Canvas、HTML和PDF三种后端的处理完全一致）。</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -254,6 +254,12 @@ export const metadata = {
       <td><code>BlockquoteConfig</code></td>
       <td>见下文</td>
       <td>Markdown引用块（<code>&gt; …</code>）的排法：颜色、斜体和缩进。见<a href="#引用块">引用块</a>。</td>
+    </tr>
+    <tr>
+      <td><code>verse</code></td>
+      <td><code>VerseConfig</code></td>
+      <td>见下文</td>
+      <td>逐行排的<code>:::verse</code>诗歌如何排：缩进、超长诗行的转行、诗节间距以及不拆开的诗节。见<a href="#诗歌">诗歌</a>。</td>
     </tr>
   </tbody>
 </table>

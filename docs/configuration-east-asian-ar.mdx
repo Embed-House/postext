@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'تنضيد نصوص شرق آسيا',
   description: 'إعدادات cjk للنصوص الصينية واليابانية والكورية: مواضع كسر الأسطر، وعرض علامات الترقيم، والمسافات، وشبكة الحروف، وقراءات الروبي، والعلامات الخاصة بهذه النصوص',
   lang: 'ar',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '35 دقيقة',
   order: 13,
   parent: 'configuration',
@@ -161,7 +161,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>grid</code></td>
-      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show? &#125;</code></td>
+      <td><code>&#123; enabled?, charsPerLine?, linesPerPage?, show?, fullLines? &#125;</code></td>
       <td>معطّلة</td>
       <td>منطقة النص محسوبة بعدد الحروف في السطر وعدد الأسطر في الصفحة (انظر <a href="#شبكة-الحروف">شبكة الحروف</a>).</td>
     </tr>
@@ -193,7 +193,7 @@ interface CjkConfig {
       <td><code>annotationColor</code></td>
       <td><code>ColorValue</code></td>
       <td>لون النص</td>
-      <td>لون نقاط التوكيد وخطوط أسماء الأعلام وعناوين الكتب؛ وهو القيمة الافتراضية للونَي الروبي والواريتشو.</td>
+      <td>لون نقاط التوكيد وخطوط أسماء الأعلام وعناوين الكتب والخطوط الجانبية (<code>:sideline[…]</code>)؛ وهو القيمة الافتراضية لألوان الروبي والواريتشو وعلامات الكانبون.</td>
     </tr>
     <tr>
       <td><code>ruby</code></td>
@@ -203,7 +203,7 @@ interface CjkConfig {
     </tr>
     <tr>
       <td><code>warichu</code></td>
-      <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
+      <td><code>&#123; fontSize?, color?, open?, close?, minChars? &#125;</code></td>
       <td>نصف الحجم؛ وأقواس （） في اليابان، وبلا أقواس في غيرها</td>
       <td>الحواشي ذات الصفّين في <code>:warichu[…]</code>: حجم الحاشية (افتراضيًا نصف em، فيملأ الصفّان em السطر)، ولونها، والقوسان المنضّدان بحجم النص قبل صفّها الأول وبعد صفّها الأخير (ويغلب <code>open</code> / <code>close</code> الخاصّان بالحاشية). وفي اليابان تجعل القيمة الفارغة لـ<code>open</code> أو <code>close</code> (<code>''</code>) الحاشيةَ دون ذلك القوس. و<code>minChars</code> (الافتراضي <code>2</code>) هو أقل عدد من حروف الحاشية يتركه كسر السطر على كل جانب منه: الحاشية التي لا تزيد على ثلاثة حروف لا تُكسر أبدًا، والسطر الذي لا كسر آخر فيه يعود إلى المواضع التي يسمح بها <code>lineBreak</code>، والقيمة <code>1</code> تكسر حيث تسمح هذه المواضع، كما كان حتى postext 1.27. والإعدادات المحفوظة قبل postext 1.28 التي في نصها حاشية تُقرأ بالقيمة <code>1</code>. منذ postext 1.28.</td>
     </tr>
@@ -364,14 +364,15 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 في VDT يكون للمقطع المُعلَّم `cjkMarks`، ويضع التخطيط النقاط والخطوط على أسطره في `VDTLine.marks` (نقاط، ودوائر، ونقاط سمسمية، وخطوط مستقيمة ومزدوجة ومنقّطة ومتموّجة، في إطار تدفّق السطر)، وترسمها Canvas وHTML وPDF كما هي (PDF: `Artifact /Layout`؛ HTML: صناديق `aria-hidden`، والنص المنقّط في `<em>`). ولمقطع أساس الروبي `ruby` (القراءة وسلاسلها؛ وللقراءة اليابانية أيضًا `id` الذي يتشاركه شرحها مع بقية حروف كلمة الجوكوغو، و`jukugo`) ويرسم أساسه عند `inkOffset`، مع `tracking`، حين توزّعه القراءة؛ وللحرف ذي علامات الكانبون `kunten` (سلاسلها والتاتيسن)؛ وجزء حاشية الواريتشو في السطر مقطع واحد `text` فيه صفّه العلوي ثم السفلي، و`warichu` فيه الصفّان اللذان ترسمهما المُخرِجات بدلًا منه. ويضع PDF الموسوم القراءة في `RT` ضمن `Ruby` أساسها والحاشية في `Warichu`، ويقرأ `/ActualText` للسطر النص الأساسي والحاشية مرة واحدة. وتُرسم العلامات والقراءات والحواشي في نص المتن والعناوين والقوائم والإطارات، وفي تعليقات الموارد وخلايا جداولها وحواشيها، ولأسطرها `marks` و`ruby` كأسطر المتن؛ أما نص التصميم فيحتفظ بالنص دونها.
 
-دالة الحل (resolver) ودالة التجريد (stripper) على نمط الأقسام الأخرى. ولا تظهر `spaceAfterQuestion` و`paragraphStartBracket` و`wordBreak`، و`overhang` و`align` و`smallKana` في الروبي، في الإعدادات المحلولة إلا حين تغيّر شيئًا (في اليابان، أو حين تُضبط). وتضبط `setCjkLineBreak` و`setCjkComposition` المستوى والتركيب (عروض علامات الترقيم، والتدلّي، ومسافة الهان واللاتيني؛ `cjkCompositionOf(resolved.cjk, dpi)`) للقياسات التي تُجرى خارج `buildDocument`، الذي يضبطهما من الإعدادات. وخارج البناء، تحتفظ العلامات بتقدّمها الكامل ولا توضع مسافة بين الهان واللاتيني:
+دالة الحل (resolver) ودالة التجريد (stripper) على نمط الأقسام الأخرى. ولا تظهر `spaceAfterQuestion` و`paragraphStartBracket` و`wordBreak`، و`overhang` و`align` و`smallKana` في الروبي، في الإعدادات المحلولة إلا حين تغيّر شيئًا (في اليابان، أو حين تُضبط). ولا تظهر `circledNumbers` إلا بالقيمة `'western'`، ولا `composeDesignText` إلا بالقيمة `false`. وتضبط `setCjkLineBreak` و`setCjkComposition` المستوى والتركيب (عروض علامات الترقيم، والتدلّي، ومسافة الهان واللاتيني؛ `cjkCompositionOf(resolved.cjk, dpi, locale)`، و`locale` لغة المستند) للقياسات التي تُجرى خارج `buildDocument`، الذي يضبطهما من الإعدادات. وخارج البناء، تحتفظ العلامات بتقدّمها الكامل ولا توضع مسافة بين الهان واللاتيني:
 
 ```ts
 import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, setCjkLineBreak, setCjkComposition, cjkCompositionOf } from 'postext';
 
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
+//   trimLineStart: true, hangingPunctuation: 'none', titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' },
+//   latinSpacingEdge: 'letters', uprightDigits: 2,
 //   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
@@ -380,7 +381,8 @@ resolveCjkConfig(undefined, 'zh-HK');
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
-//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half', …,
+//   trimLineStart: true, hangingPunctuation: 'allow', spaceAfterQuestion: true, paragraphStartBracket: 'half',
+//   titleMinChars: 2, latinSpacing: { value: 0.25, unit: 'em' }, latinSpacingEdge: 'western', …,
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },

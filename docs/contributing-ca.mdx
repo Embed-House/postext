@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Contribuir',
   description: 'Com unir-se a la comunitat Postext i contribuir al projecte',
   lang: 'ca',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '6 min',
   order: 35,
   plainSummary: "Postext el construeix una comunitat de voluntaris, i qualsevol persona hi pot ajudar. No cal saber programar. També pots ajudar fent proves, escrivint documentació, traduint o compartint el que saps de disseny i d'impremta. Aquesta pàgina explica com treballa l'equip, on fa més falta ajuda i com fer la teva primera aportació. Acaba amb els objectius del projecte a llarg termini.",
@@ -81,19 +81,21 @@ són especialment valuoses:
   tractament dels bytes dels recursos per a figures a una tinta.
 - **Renderitzat de text**: renderitzat sobre canvas, sortida SVG, recoloració de SVG a una tinta
   (`diagramStyle.singleInk`) i mètriques de font.
-- **Optimització del rendiment**: la memòria cau de mesures, i mantenir el motor prou ràpid per
+- **Optimització del rendiment**: la memòria cau de mesures, l'algorisme de talls de línia
+  Knuth-Plass escrit en Rust i compilat a WebAssembly (`rust/`), i mantenir el motor prou ràpid per
   funcionar en temps real cada vegada que es redimensiona la finestra.
 
 ### Sandbox i interfície
 El [Sandbox](/ca/docs/sandbox) ja és, per si mateix, una aplicació React considerable: un tauler
-Recursos amb un editor interactiu de taules i pujada d'imatges i SVG, un tauler Fonts i un tauler
-Disseny amb dotze grups que arriben a tots els racons del motor. Els controls es construeixen sobre
-primitives de Base UI (`packages/postext-sandbox/src/ui/`) i es revisen amb axe-core segons WCAG
-2.1 AA. Per això, els controls nous les han de reutilitzar, i cada camp ha de tenir el nom que li
-dona l'etiqueta i la descripció que li dona el text d'ajuda. Totes les cadenes de la interfície
-segueixen una convenció d'i18n estricta: cada etiqueta passa per cinc fitxers, entre el paquet del
-Sandbox i els catàlegs d'idiomes de l'aplicació web. Si contribueixes al frontend o a la UX, aquest
-és el teu terreny.
+Recursos amb un editor interactiu de taules i pujada d'imatges i SVG, un tauler Fonts, editors de
+plantilles de pàgina i de pàgines de còmic, i un tauler Disseny amb grups que arriben a totes les
+parts del motor. Els controls es construeixen sobre primitives de Base UI
+(`packages/postext-sandbox/src/ui/`) i es revisen amb axe-core i amb comprovacions pròpies segons
+WCAG 2.2 al nivell AAA. Per això, els controls nous les han de reutilitzar, i cada camp ha de tenir
+el nom que li dona l'etiqueta i la descripció que li dona el text d'ajuda. Totes les cadenes de la
+interfície segueixen una convenció d'i18n estricta: cada etiqueta passa pel paquet del Sandbox, pel
+pont d'etiquetes de l'aplicació web i pel catàleg de cadascuna de les deu llengües. Si contribueixes
+al frontend o a la UX, aquest és el teu terreny.
 
 ### Disseny i tipografia
 - **Experiència en disseny editorial**: si has maquetat revistes, diaris o llibres, saps què fa
@@ -104,8 +106,9 @@ Sandbox i els catàlegs d'idiomes de l'aplicació web. Si contribueixes al front
 ### Documentació i comunitat
 - **Documentació**: millorar-la, ampliar-la i mantenir-la. Una documentació clara és el que
   separa un projecte que la gent pot adoptar d'un que acaba abandonant.
-- **Traduccions**: ara mateix la documentació és bilingüe (anglès i castellà). Hi són benvingudes
-  més llengües.
+- **Traduccions**: la documentació i el lloc web són en deu llengües: anglès, castellà, català,
+  francès, alemany, italià, portuguès del Brasil, xinès simplificat, japonès i àrab. Hi són
+  benvingudes més llengües, i també les revisions de les que ja hi ha.
 - **Proves**: provar en diferents navegadors i sistemes operatius, i buscar casos límit. Trobar les
   maquetacions que es trenquen és tan valuós com construir les que funcionen.
 
@@ -114,9 +117,8 @@ El format ja no parteix de zero: els blocs `::resource`, les referències en lí
 seccions de configuració `tableStyle`, `captionStyle` i `diagramStyle` ja estan publicats. Ara la
 feina és fer evolucionar un format establert sense trencar-lo:
 
-- **Gramàtica del document**: les notes al marge i les referències creuades que no apuntin a
-  recursos continuen sent preguntes obertes, i cadascuna és tant un problema de disseny com un
-  problema tècnic.
+- **Gramàtica del document**: les notes al marge continuen sent una pregunta oberta, tant de
+  disseny com tècnica.
 - **Esquema de configuració**: a mesura que creix, el sistema ha de continuar sent prou potent per
   als professionals i prou senzill per als nouvinguts.
 
@@ -138,8 +140,8 @@ Un cop ho tinguis tot a punt, hi ha tres accions concretes, de menys a més comp
 2. **Agafa un issue etiquetat [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**:
    estan triats perquè siguin un punt d'entrada realista, sense necessitat de conèixer cap context
    històric amagat.
-3. **Tradueix la documentació a una llengua nova**: avui la documentació és en anglès i castellà.
-   Qualsevol tercera llengua és un regal per als lectors que ara en queden fora.
+3. **Tradueix la documentació a una llengua nova, o revisa'n una**: avui la documentació és en deu
+   llengües. Cada llengua nova arriba a lectors que no poden llegir les altres.
 
 Si penses escriure codi, obre primer un issue per discutir l'enfocament: així s'evita la feina
 duplicada, i una conversa breu al principi estalvia temps a tothom.

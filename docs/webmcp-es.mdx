@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Qué puede hacer un agente de IA en el navegador con el Sandbox gracias a sus 41 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar las comprobaciones, exportar) y cómo se invoca cada una, con argumentos y respuestas reales',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 46,
   plainSummary: "Esta página es para quien quiere que un asistente de inteligencia artificial trabaje por él en un libro del Sandbox. Mientras el Sandbox está abierto, le da al asistente un juego de herramientas para mirar cualquier página, cambiar el diseño, editar el texto, añadir imágenes y tablas, encontrar problemas y guardar archivos. Tú se lo pides con tus palabras, por ejemplo «sube un poco la letra y comprueba que el libro sigue cabiendo en 40 páginas», y el asistente usa las herramientas y te enseña las páginas. Todo se queda en tu navegador. La página explica cómo conectar un asistente, qué puede hacer y cómo se invoca cada herramienta.",
@@ -492,13 +492,14 @@ Lo que cambia el agente, lo ves tú. Para señalarte algo:
 ```
 
 `sandbox_set_view` elige además el visor (`canvas`, `pdf`, `folio`, `html`,
-`epub`), el panel lateral, si se muestra un capítulo o el libro entero, el
+`epub`), el modo Contenido o Diseño (`mode`), el panel lateral, si se muestra un capítulo o el libro entero, el
 zoom, el tamaño de letra del lector, la vista previa de impresión y el grupo del panel Diseño.
 `sandbox_go_to_page` pasa páginas por `step`, `page`, `position`, un pasaje
 `text`, un `anchor` o una entrada `contents` de un EPUB. `sandbox_run_viewer`
 pulsa un botón de la barra de herramientas: `regenerate` vuelve a escribir el
 PDF o el EPUB y espera a que termine, `print` abre el diálogo de impresión
-para que lo confirmes tú y `play_video` reproduce un vídeo de una página.
+para que lo confirmes tú, `download` guarda el PDF o el EPUB, y
+`play_video` y `stop_video` reproducen y detienen un vídeo de una página.
 
 ### Páginas de cómic
 
@@ -524,6 +525,10 @@ viñeta. El formato se explica en [Cómics](/es/docs/comics).
   proyectos; `sandbox_open_book` abre uno (`{ "kind": "sample", "id": "postext-guide", "language": "es" }`);
   `sandbox_save_book` con `action: "copy_current"` guarda el libro en
   pantalla como proyecto tuyo, y `new_blank` empieza uno vacío.
+  En un proyecto, `add_language` con `language` (`"fr"`, `"zh-Hant"`) copia
+  el idioma en pantalla en una edición nueva en ese idioma y la abre;
+  `rename` con `thisLanguageOnly: true` pone nombre solo al idioma en pantalla,
+  y `set_cover` y `remove_cover` le ponen o le quitan una portada.
 - **Exportar.** `sandbox_export` escribe `pdf`, `epub`, `postext`, `docx`,
   `markdown` o `config`. Por defecto el navegador descarga el archivo; con
   `deliver: "data"`, un PDF o un EPUB vuelve al agente codificado en base64:
@@ -616,8 +621,8 @@ evitar que ese texto se tome por instrucciones.
 - **Deshacer**: `sandbox_undo` deshace el último cambio, del texto o del diseño, en el orden en que se hicieron, como Cmd/Ctrl+Z en el Sandbox: lo escrito en el panel Texto, las ediciones de las herramientas y las hechas sobre las vistas, los ajustes cambiados con `sandbox_set_config` o en el panel Diseño, los marcos arrastrados. `redo: true` lo rehace. `sandbox_undo_text` solo deshace una edición del texto, y lo dice cuando el último cambio fue del diseño. Los capítulos añadidos, eliminados o movidos, los recursos y las fuentes no están en el historial; abrir otro libro lo vacía, y recargar la página también. `sandbox_get_state` dice qué deshará cada una (`history`).
 - **El libro en pantalla.** Las herramientas trabajan sobre el libro abierto.
   Solo `sandbox_export` de un archivo `.postext`, `sandbox_save_book` con
-  `duplicate` y `sandbox_reset_to_original` con `sample` llegan a otro libro
-  sin abrirlo.
+  `duplicate`, `rename` o una portada, `sandbox_delete_book` y
+  `sandbox_reset_to_original` con `sample` llegan a otro libro sin abrirlo.
 
 ## Las herramientas del sitio
 

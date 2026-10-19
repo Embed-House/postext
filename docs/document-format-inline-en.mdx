@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Inline formatting and formulas',
   description: 'Marks inside a line: emphasis, links, chips, small capitals, tabs, vertical text, Chinese and Japanese marks, text direction, and LaTeX formulas',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '25 min',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ Inline markup is recognised inside any text block (headings, paragraphs, blockqu
       <td>A note set in two half-size rows inside the line (双行夹注), broken across lines and pages.</td>
     </tr>
     <tr>
+      <td>Japanese marks</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>A side line (傍線) and the kanbun marks (訓点: return marks, okurigana) beside the characters. The text stays as written; see <a href="#chinese-marks-ruby-and-warichu">Chinese marks, ruby and warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Text direction</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>Isolates a run in its own direction: an English name in an Arabic sentence, an Arabic one in an English sentence. See <a href="#text-direction-in-the-markup">Text direction in the markup</a>.</td>
+    </tr>
+    <tr>
       <td>Inline code</td>
       <td><code>`code`</code></td>
       <td>Backticks are stripped; the span is rendered as plain text, exactly as written: a <code>{':ref{…}'}</code>, a chip, maths, a link or an emphasis marker inside it prints literally, which is how a text shows the syntax. It is set in the text's face, or, with <code>codeStyle.inline</code>, in the code face as one unit (see <a href="/en/docs/configuration-styles#code-listings">Configuration › Code listings</a>). A listing goes in a <a href="/en/docs/document-format#code-blocks">code block</a>.</td>
     </tr>
     <tr>
       <td>Escape</td>
-      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
-      <td>A backslash sets the marker character itself — the asterisk of a table footnote (<code>{'\\* pOH = −log [OH^−^]'}</code>), a literal caret, a dollar sign that opens no formula — instead of opening a span. Works in the body, in chips and in captions, cells and notes. (Up to postext 1.4 captions, cells, notes and chips printed the backslash of <code>{'\\$'}</code>.)</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code>, <code>{'\\@'}</code></td>
+      <td>A backslash sets the marker character itself — the asterisk of a table footnote (<code>{'\\* pOH = −log [OH^−^]'}</code>), a literal caret, a dollar sign that opens no formula, an at sign that cites nothing — instead of opening a span. Works in the body, in chips and in captions, cells and notes. (Up to postext 1.4 captions, cells, notes and chips printed the backslash of <code>{'\\$'}</code>.)</td>
     </tr>
     <tr>
       <td>No-break space</td>
@@ -116,6 +126,11 @@ Inline markup is recognised inside any text block (headings, paragraphs, blockqu
       <td>A boxed run of text that wraps as one unit — a word bank, a key, a tag. Styled by <code>chipStyles</code>; see <a href="#inline-chips">Inline chips</a>.</td>
     </tr>
     <tr>
+      <td>Highlight</td>
+      <td><code>:mark[text]</code></td>
+      <td>A coloured band behind words that stay ordinary text: they break, hyphenate and justify as usual. Styled by <code>markStyles</code>; see <a href="#highlight-marks">Highlight marks</a>.</td>
+    </tr>
+    <tr>
       <td>Tab</td>
       <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>Sends the words after it to the next tab stop: one of the stops of the paragraph's style, or the one its attributes set. A tab character typed in the text is a tab only where the style sets stops. See <a href="#tabs-and-tab-stops">Tabs and tab stops</a>.</td>
@@ -127,6 +142,8 @@ Inline markup is recognised inside any text block (headings, paragraphs, blockqu
     </tr>
   </tbody>
 </table>
+
+Marks that point elsewhere are described with what they point to: footnote markers `[^id]` in [Footnotes](/en/docs/document-format-notes-references#footnotes); `:ref{…}`, `:anchor{#id}`, `[text]{#id}` and pandoc-crossref's `@sec:…` in [Cross-references and anchors](/en/docs/document-format-notes-references#cross-references-and-anchors); citations `[@key]` and `@key` in [Citing](/en/docs/document-format-notes-references#citing); index marks `:index[…]` in [Index marks](/en/docs/document-format-notes-references#index-marks). The colour swatch `:swatch{color="…"}` is described with table fills in [Resources](/en/docs/document-format-resources#resources), and a line break inside a paragraph in [Line breaks](/en/docs/document-format-directives#line-breaks).
 
 ### Links
 
@@ -164,7 +181,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **One unit.** A chip is never broken or hyphenated inside; the line breaks between chips, at the word spaces around them. A chip wider than the whole line overflows it rather than splitting.
 - **Width.** Its advance is the text plus the horizontal padding and the outline on both sides. Justification stretches the word spaces only, never the inside of a chip. The style's `gap` is the least room kept between the box and a neighbouring word or chip across a space — a narrower space is topped up (not at a line edge, and not against glued punctuation such as `:chip[a],`).
 - **Height.** The box is a band around the baseline, 0.8 em above and 0.25 em below at the chip's size, grown by the vertical padding and the outline. The vertical padding paints outside the line box and never changes the line height, so the baseline grid holds; a box taller than the line pitch can run into a chip on the line above or below, and the sandbox flags two chips on different lines that overlap ("Chips touch the next line") so the padding, outline or size can be reduced.
-- **Text.** The chip text takes its own inline marks (`:chip[**bold** word]`, `:chip[x^2^]`) and the emphasis around it (`**:chip[a]**`); the style may set its family, size, colour, bold and italic. Write `\]` for a literal bracket inside. References, swatches and math inside a chip stay literal, and `\$` prints a dollar sign (up to postext 1.4 it printed the backslash too).
+- **Text.** The chip text takes its own inline marks (`:chip[**bold** word]`, `:chip[x^2^]`) and the emphasis around it (`**:chip[a]**`); the style may set its family, size, colour, bold and italic. Write `\]` for a literal bracket inside. References, swatches and math inside a chip stay literal, and `\$` prints a dollar sign (up to postext 1.4 it printed the backslash too). A style with `dotted` paints the letters as rows of dots for a child to trace, and one with no fill, outline or padding makes the chip a dotted word in the line: `:chip[cat]{style="dots"}` (see [Chip styles](/en/docs/configuration-styles#chip-styles)).
 - **Empty.** A chip of spaces alone (`:chip[ ]`, no-break spaces included) is an empty box — an answer blank, an end mark: as wide as its style's horizontal padding and outline, as tall as a chip with words. Size the blank with a style's `paddingX` (`:chip[ ]{style="blank"}`). With nothing at all between the brackets, `:chip[]` stays literal text.
 - **Where.** Paragraphs, list items, blockquotes, callouts, table cells, captions and notes. Headings keep `:chip[…]` as literal text.
 - **Output.** Canvas, HTML and PDF paint the box and set the words as real text: selectable in the HTML, extractable and in reading order in the PDF (in a tagged PDF the box is a layout artifact and the words belong to the paragraph).

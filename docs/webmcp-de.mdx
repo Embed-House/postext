@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Was ein KI-Agent im Browser mit den 41 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 46,
   plainSummary: "Diese Seite ist für alle, die einen KI-Helfer für sich an einem Buch in der Sandbox arbeiten lassen möchten. Solange die Sandbox geöffnet ist, gibt sie dem Helfer eine Reihe von Werkzeugen: um jede Seite anzusehen, die Gestaltung zu ändern, den Text zu bearbeiten, Bilder und Tabellen hinzuzufügen, Probleme zu finden und Dateien zu speichern. Sie bitten mit Ihren eigenen Worten, zum Beispiel „mach die Schrift etwas größer und prüf, ob das Buch noch auf 40 Seiten passt“, und der Helfer setzt die Werkzeuge ein und zeigt Ihnen die Seiten. Alles bleibt in Ihrem Browser. Die Seite erklärt, wie Sie einen Helfer verbinden, was er tun kann und wie jedes Werkzeug aufgerufen wird.",
@@ -506,15 +506,17 @@ Was der Agent ändert, sehen Sie. Um Sie auf etwas hinzuweisen:
 ```
 
 `sandbox_set_view` wählt außerdem den Betrachter (`canvas`, `pdf`, `folio`,
-`html`, `epub`), das seitliche Bedienfeld, Kapitel oder ganzes Buch, den Zoom,
+`html`, `epub`), den Modus Inhalt oder Gestaltung (`mode`), das seitliche
+Bedienfeld, Kapitel oder ganzes Buch, den Zoom,
 die Schriftgröße für den Leser, die Druckvorschau und die Gruppe des Bedienfelds
 Gestaltung. `sandbox_go_to_page` blättert über `step`, `page`, `position`, eine
 Textpassage `text`, einen `anchor` oder einen Eintrag im Inhaltsverzeichnis
 eines EPUB (`contents`).
 `sandbox_run_viewer` betätigt eine Schaltfläche der Werkzeugleiste:
 `regenerate` erzeugt das PDF oder EPUB neu und wartet darauf, `print` öffnet
-den Druckdialog, den Sie bestätigen, `play_video` spielt ein Video auf einer
-Seite ab.
+den Druckdialog, den Sie bestätigen, `download` speichert das PDF oder das
+EPUB, und `play_video` und `stop_video` starten und stoppen ein Video auf
+einer Seite.
 
 ### Comicseiten
 
@@ -539,7 +541,11 @@ ihrem Panel herausragt. Das Format beschreibt [Comics](/de/docs/comics).
   Ihre Projekte auf; `sandbox_open_book` öffnet eines (`{ "kind": "sample", "id": "postext-guide",
   "language": "es" }`); `sandbox_save_book` mit `action: "copy_current"` speichert
   das Buch auf dem Bildschirm als Ihr eigenes Projekt, `new_blank` beginnt ein
-  leeres.
+  leeres. Bei einem Projekt kopiert `add_language` mit `language` (`"fr"`,
+  `"zh-Hant"`) die Sprache auf dem Bildschirm in eine neue Ausgabe in dieser
+  Sprache und öffnet sie, und `rename` mit `thisLanguageOnly: true` benennt nur
+  die Sprache auf dem Bildschirm um; `set_cover` und `remove_cover` geben ihm
+  ein Titelbild oder nehmen es weg.
 - **Exportieren.** `sandbox_export` schreibt `pdf`, `epub`, `postext`, `docx`,
   `markdown` oder `config`. Standardmäßig lädt der Browser die Datei herunter;
   mit `deliver: "data"` kommt ein PDF oder EPUB base64-kodiert an den Agenten
@@ -634,8 +640,9 @@ verhindern kann, dass dieser Text für Anweisungen gehalten wird.
 - **Rückgängig**: `sandbox_undo` nimmt die letzte Änderung zurück, am Text oder an der Gestaltung, in der Reihenfolge, in der die Änderungen gemacht wurden, wie Cmd/Strg+Z in der Sandbox: im Bedienfeld Text getippter Text, die Bearbeitungen der Werkzeuge und die in den Vorschauen, mit `sandbox_set_config` oder im Bedienfeld Gestaltung geänderte Einstellungen, verschobene Rahmen. `redo: true` stellt eine Änderung wieder her. `sandbox_undo_text` nimmt nur eine Textbearbeitung zurück und sagt es, wenn die letzte Änderung die Gestaltung betraf. Hinzugefügte, entfernte oder verschobene Kapitel, Ressourcen und Schriften stehen nicht im Verlauf; ein anderes Buch zu öffnen leert ihn, ebenso das Neuladen der Seite. `sandbox_get_state` sagt, was beide zurücknehmen würden (`history`).
 - **Das Buch auf dem Bildschirm.** Die Werkzeuge arbeiten mit dem geöffneten
   Buch. Nur `sandbox_export` einer `.postext`-Datei, `sandbox_save_book` mit
-  `duplicate` und `sandbox_reset_to_original` mit `sample` erreichen ein
-  anderes Buch, ohne es zu öffnen.
+  `duplicate`, `rename` oder einem Titelbild, `sandbox_delete_book` und
+  `sandbox_reset_to_original` mit `sample` erreichen ein anderes Buch, ohne es
+  zu öffnen.
 
 ## Die Werkzeuge der Website
 

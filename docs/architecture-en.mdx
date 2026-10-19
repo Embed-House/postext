@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Architecture',
   description: 'Technical architecture of the Postext layout engine: its concepts, the document tree, rhythm, backends and performance',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26 min',
   order: 2,
   plainSummary: "This page explains how Postext works inside, and it is written for programmers. First, Postext measures every word without drawing anything on screen, which makes it very fast. Then it works out where every line, picture and column goes, and keeps that plan in memory. Last, it draws the finished pages as a web page, a canvas image or a PDF file. When you change a word, it lays the pages out again and reuses the measurements of the paragraphs that did not change. The next page explains, step by step, how the lines and pictures are placed.",
@@ -95,7 +95,7 @@ has gone fuzzy.
     </tr>
     <tr>
       <td><strong>Backend</strong></td>
-      <td>A rendering target that consumes the finished VDT. Four are shipping today: <strong>canvas</strong> (bitmap preview), <strong>HTML</strong> (DOM-based screen reading), <strong>PDF</strong> (print-ready output via <code>postext-pdf</code>) and <strong>EPUB</strong> (<code>postext-epub</code>, the book as an e-book). All four render from the same measurement (the measure module over Pretext).</td>
+      <td>A rendering target that consumes the finished VDT. Four are shipping today: <strong>canvas</strong> (bitmap preview), <strong>HTML</strong> (DOM-based screen reading), <strong>PDF</strong> (print-ready output via <code>postext-pdf</code>) and <strong>EPUB</strong> (<code>postext-epub</code>, the book as an e-book). All four render from the same measurement (the measure module over Pretext). The 3D viewer <code>postext-folio</code> paints its leaves with the canvas backend.</td>
     </tr>
     <tr>
       <td><strong>Placement Pass</strong></td>
@@ -138,6 +138,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
   notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+  continuation?: LayoutContinuation; // counters and page numbers carried from earlier chapters
+  outline?: OutlineEntry[];    // the book's headings with their page labels, for :::toc / :::index
+  citations?: CitationContext; // this chapter's share of the book's citations
+  laterPageIds?: Record<string, number>; // page fences of later chapters a story may continue on
 }
 
 interface Resource {
@@ -491,6 +495,12 @@ Because binary resource payloads live out-of-band, each backend resolves `fileId
       <td><strong>Shipping</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong> (3D viewer)</td>
+      <td>Consumes the VDT already measured with Pretext</td>
+      <td>Each page painted by the canvas backend (<code>renderPageToCanvas</code>) and shown as the texture of a three.js leaf, only around the open spread (<code>createFolioFromDocument</code> in <code>postext-folio</code>)</td>
+      <td><strong>Shipping</strong></td>
+    </tr>
+    <tr>
       <td><strong>Command line</strong></td>
       <td>Pretext over Skia (<code>@napi-rs/canvas</code>), in place of the browser's canvas</td>
       <td>The PDF, HTML and EPUB writers, page images and Word, run from a terminal with no browser (<code>postext-cli</code>)</td>
@@ -499,7 +509,7 @@ Because binary resource payloads live out-of-band, each backend resolves `fileId
   </tbody>
 </table>
 
-All four shipping backends consume the same `VDTDocument`. The split between `postext` (which exports the canvas and HTML backends) and `postext-pdf` (which exports the PDF backend) is purely about dependencies: the PDF path pulls in `pdf-lib` and `@pdf-lib/fontkit`, and most web integrations do not need them. Install `postext-pdf` only when you actually want to emit PDF bytes. `postext-epub` is a package of its own for the same reason, and is needed only for e-books. The command line is not a fifth backend: `postext-cli` runs these same writers where there is no browser.
+The four backends and the Folio viewer consume the same `VDTDocument`. The split between `postext` (which exports the canvas and HTML backends) and `postext-pdf` (which exports the PDF backend) is purely about dependencies: the PDF path pulls in `pdf-lib` and `@pdf-lib/fontkit`, and most web integrations do not need them. Install `postext-pdf` only when you actually want to emit PDF bytes. `postext-epub` is a package of its own for the same reason, and is needed only for e-books. The command line is not a fifth backend: `postext-cli` runs these same writers where there is no browser. Word files are not one either: `postextToDocx` (from `postext/word`) writes the Markdown chapters and their styles to a `.docx`, with no layout, and `readDocx` with `wordToPostext` reads one back into Markdown.
 
 **Where layout runs:** The engine measures text on a canvas, so it runs wherever it is given one. In a browser the pipeline runs either on the main thread (`buildDocument`) or inside a dedicated Web Worker (`createLayoutWorker` from `postext/worker`) — the worker path is the recommended integration for UI-driven apps because it keeps measurement and the placement passes off the main thread, supports last-wins cancellation via `AbortSignal`, and owns its own measurement cache and math raster cache so successive rebuilds stay cheap. See [Configuration → Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) for the full integration pattern. Outside a browser, the [command line](/en/docs/command-line) runs the same pipeline with Skia standing in for the browser's canvas, so a book breaks into the same pages in a terminal, a script or a build server.
 
@@ -541,7 +551,12 @@ Consider what the engine is up against: thousands of text blocks across hundreds
 6. **Hot-path line breaking.** The Knuth-Plass active-node handling was rewritten for speed:
    the active set is compacted in place as nodes retire, and candidates are deduplicated
    per (line, fitness class) so only the lowest-demerit node per key survives. The algorithmic
-   results are identical — same break sets, just computed faster.
+   results are identical — same break sets, just computed faster. The same breaker is also written
+   in Rust (`rust/crates/linebreak`) and compiled to WebAssembly, embedded in the package: it does
+   the same arithmetic in the same order, two to three times faster, and answers wherever the module
+   has compiled. On a page's main thread it compiles in the background, and until then, or where
+   WebAssembly is missing or refused, the TypeScript breaker answers. `initLineBreaker()` starts the
+   compilation early; `useWasmLineBreaker(false)` keeps every paragraph on the TypeScript breaker.
 
 7. **Off-main-thread builds.** The `postext/worker` entry point runs the entire pipeline
    inside a dedicated Web Worker. The main thread posts `{ content, config }` and an
@@ -564,13 +579,17 @@ Consider what the engine is up against: thousands of text blocks across hundreds
 
 There is no incremental entry point: no call takes a finished VDT and updates it. When the content or the configuration changes (a keystroke, another page size), the host calls `buildDocument` again and gets a new document.
 
-What carries over from one build to the next is the measuring. Create a `MeasurementCache` once with `createMeasurementCache()` and pass it as the third argument of every `buildDocument` call. A paragraph whose text, fonts, width and breaking options did not change is read from it, so an editor that lays the document out on every keystroke measures only the paragraph being typed in. A change of page size or of column count changes the widths, and those paragraphs are measured again; Pretext's `prepare()` results still hold, since they depend on the font and the text and not on the width, so only the cheap `layout()` arithmetic runs. The parse is memoized too.
+What carries over from one build to the next is the measuring. Create a `MeasurementCache` once with `createMeasurementCache()` and pass it as the third argument of every `buildDocument` call. A paragraph whose text, fonts, width and breaking options did not change is read from it, so an editor that lays the document out on every keystroke measures only the paragraph being typed in. A change of page size or of column count changes the widths, and those paragraphs are measured again; Pretext's `prepare()` results still hold, since they depend on the font and the text and not on the width, so only the cheap `layout()` arithmetic runs. The parse is memoized too. Composed pages carry over as well: a composed page whose template,
+Markdown, styles and fonts did not change is reused from the build before (`composed/pageMemo.ts`),
+so an edit on one page of a chapter of composed pages sets that page alone. A page that holds a
+footnote, a cross-reference, a citation, a contents or index listing or a comic strip is always set
+again.
 
 For a live editor, `createLayoutWorker` (from `postext/worker`) does all of this off the main thread: the worker owns a measurement cache that lives as long as it does, and a newer `build()` cancels the one in flight. See [Configuration → Measurement cache](/en/docs/configuration-programmatic-usage#measurement-cache) and [Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker).
 
 ### Benchmarks
 
-Two benchmarks live in `packages/postext/src/__bench__/`. `pnpm test` skips them; `pnpm bench`, run in `packages/postext`, runs them. `chapter.bench.test.ts` lays out one textbook-sized chapter (forty sections of headings, paragraphs and lists) five times against an empty measurement cache and five times against a warm one, and reports both medians and the number of passes. `cjkChapter.bench.test.ts` lays out chapter 1 of 红楼梦 and counts the characters sent to `measureText`, to hold the CJK composer to a cost linear in the length of the paragraph.
+Three benchmarks live in `packages/postext/src/__bench__/`. `pnpm test` skips them; `pnpm bench`, run in `packages/postext`, runs them. `chapter.bench.test.ts` lays out one textbook-sized chapter (forty sections of headings, paragraphs and lists) five times against an empty measurement cache and five times against a warm one, and reports both medians and the number of passes. `cjkChapter.bench.test.ts` lays out chapter 1 of 红楼梦 and counts the characters sent to `measureText`, to hold the CJK composer to a cost linear in the length of the paragraph. `composedPage.bench.test.ts` times a chapter of twenty composed pages: a cold build, a rebuild with nothing changed, a change of one page's attribute and an edit inside one of its frames, each with the composed-page memo and without it.
 
 ```typescript
 // From packages/postext/src/__bench__/chapter.bench.test.ts
@@ -587,7 +606,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-A caveat for honesty: there is no canvas in Node, so both benchmarks stub text measurement and their absolute times are not the browser's. The ratio of cold to warm and the number of passes are, and a regression in either shows here before it shows in the Sandbox. The chapter benchmark reports numbers and does not break the build; the Chinese one asserts that the characters measured stay under three times the length of the longest paragraph. Neither runs in CI: regressions are caught by comparing the numbers across runs when a hot path changes (as was done for the Knuth-Plass active-node rewrite). Performance is a feature, not a hope — but the enforcement today is measurement and review, not a failing pipeline.
+A caveat for honesty: there is no canvas in Node, so the benchmarks stub text measurement and their absolute times are not the browser's. The ratio of cold to warm and the number of passes are, and a regression in either shows here before it shows in the Sandbox. The chapter and composed-page benchmarks report numbers and do not break the build; the Chinese one asserts that the characters measured stay under three times the length of the longest paragraph. None runs in CI: regressions are caught by comparing the numbers across runs when a hot path changes (as was done for the Knuth-Plass active-node rewrite). No build fails on a slower time yet: a slowdown is found by measuring and in review.
 
 
 ## Data Flow

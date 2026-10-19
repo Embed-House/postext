@@ -23,7 +23,8 @@ Bug reports and feature requests are also welcome as issues.
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 20
-- [pnpm](https://pnpm.io/) >= 10
+- [pnpm](https://pnpm.io/) 12 (the version in `packageManager`; `corepack enable` installs it)
+- [Rust](https://rustup.rs/) only to rebuild the WebAssembly line breaker in `rust/` (see `rust/README.md`); the built module is checked in
 
 ### Getting Started
 
@@ -43,7 +44,7 @@ pnpm dev
 pnpm build
 
 # Run tests
-pnpm test
+pnpm turbo run test
 
 # Type-check all packages
 pnpm check-types
@@ -52,13 +53,20 @@ pnpm check-types
 pnpm lint
 ```
 
-The repository is a pnpm + Turborepo monorepo with four packages plus the web app:
+The repository is a pnpm + Turborepo monorepo with seven packages, the web app and a Rust workspace:
 
-- `packages/postext` — the core layout engine (parse, measurement, Knuth-Plass line breaking, pipeline, HTML/canvas backends).
+- `packages/postext` — the core layout engine (parse, measurement, Knuth-Plass line breaking, pipeline, HTML/canvas backends, bundles, Word import and export).
 - `packages/postext-pdf` — the PDF rendering backend.
+- `packages/postext-epub` — the EPUB 3 writer (fixed layout and reflowable).
+- `packages/postext-folio` — the 3D book viewer (three.js).
+- `packages/postext-citeproc` — CSL citations and bibliographies (citeproc-js).
+- `packages/postext-cli` — the `postext` command line, compiled with Bun into self-contained executables.
 - `packages/postext-sandbox` — the interactive sandbox UI (configuration controls and live viewports).
 - `packages/typescript-config` — shared strict TypeScript configuration.
-- `apps/web` — the Next.js documentation site, landing page, and hosted sandbox.
+- `apps/web` — the Next.js documentation site, landing page, hosted sandbox and Cookbook.
+- `rust/` — the Knuth-Plass line breaker in Rust, compiled to WebAssembly for `packages/postext`.
+- `cookbook/` — the Cookbook recipes, checked and captured with `pnpm cookbook` (see `cookbook/README.md`).
+- `plugins/postext/` — the `postext-port` agent skill.
 
 Turborepo handles the dependency graph: the packages build first, then `apps/web` picks up the changes.
 
@@ -69,7 +77,7 @@ Turborepo handles the dependency graph: the packages build first, then `apps/web
 3. Add or update tests for any new or changed behavior.
 4. Make sure all checks pass:
    ```bash
-   pnpm build && pnpm test && pnpm check-types && pnpm lint
+   pnpm build && pnpm turbo run test && pnpm check-types && pnpm lint
    ```
 5. Submit a pull request targeting the `develop` branch.
 
@@ -81,31 +89,30 @@ Turborepo handles the dependency graph: the packages build first, then `apps/web
 
 ### Documentation Convention
 
-The documentation lives in the top-level `docs/` folder as bilingual MDX pairs: `<topic>-en.mdx` and `<topic>-es.mdx` (e.g. `configuration-en.mdx` / `configuration-es.mdx`). The two languages must be updated in lockstep — never change one without the other. Each file starts with an exported metadata object:
+The documentation lives in the top-level `docs/` folder as one MDX file per topic and locale, `<topic>-<locale>.mdx`, in ten locales: `en`, `es`, `ca`, `fr`, `de`, `it`, `pt` (Brazilian Portuguese), `zh` (Simplified Chinese), `ja` and `ar` (e.g. `configuration-en.mdx`, `configuration-es.mdx`…). English is the reference, and every locale says the same thing: never change one without the others. Each file starts with an exported metadata object:
 
 ```ts
 export const metadata = {
   title: '…',
   sidebarTitle: '…',
   description: '…',
-  lang: 'en', // or 'es'
+  lang: 'en', // the file's locale
   lastUpdated: '2026-06-10',
   readingTime: '8 min',
   order: 3,
 };
 ```
 
-When you edit a doc, recalculate `readingTime` (roughly 200 words per minute) and keep the Spanish version in natural, orthographically correct Spanish.
+When you edit a doc, recalculate `readingTime` (roughly 200 words per minute) and write each locale natively, not as a word-for-word translation, keeping identifiers and code exactly as in English. The doc pages of the GitHub wiki are generated from the English files (`pnpm wiki` in `apps/web`).
 
 ### Sandbox i18n Convention
 
-Every new user-facing string in the sandbox UI must be wired in **five places**:
+Every new user-facing string in the sandbox UI must be wired in **thirteen places**:
 
 1. `packages/postext-sandbox/src/types/labels.ts` — the labels type.
 2. `packages/postext-sandbox/src/types/defaultLabels.ts` — the English fallback values.
 3. The web app's labels bridge (`apps/web/src/components/sandbox/SandboxPage/labels.ts`) — maps translated messages into the sandbox labels object.
-4. `apps/web/messages/en.json` — the English translation.
-5. `apps/web/messages/es.json` — the Spanish translation.
+4. `apps/web/messages/<locale>.json` for each of the ten locales (`en`, `es`, `ca`, `fr`, `de`, `it`, `pt`, `zh`, `ja`, `ar`) — the translations.
 
 Dynamic strings use `__token__` placeholders (e.g. `"Page __current__ of __total__"`) rather than ICU message syntax.
 
@@ -140,7 +147,7 @@ The project especially welcomes contributors with experience in:
 - **PDF generation** (low-level PDF construction, font embedding)
 - **Editorial design** (magazine/newspaper layout, book typesetting — you do not need to write code to contribute design knowledge)
 - **Text rendering** (canvas, SVG, font metrics)
-- **Documentation and translations** (the docs are bilingual EN/ES; more languages welcome)
+- **Documentation and translations** (the docs are in ten languages; more are welcome)
 - **Testing** (cross-browser, cross-platform, and edge case testing)
 
 ## License

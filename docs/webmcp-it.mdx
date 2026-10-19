@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Che cosa può fare con la Sandbox un agente di IA nel browser tramite i suoi 41 strumenti WebMCP (guardare le pagine, cambiare qualunque impostazione, modificare il testo, aggiungere immagini, tabelle e font, eseguire le verifiche, esportare) e come si invoca ciascuno, con argomenti e risposte reali',
   lang: 'it',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 46,
   plainSummary: "Questa pagina è per chi vuole che un assistente di intelligenza artificiale lavori al posto suo su un libro nella Sandbox. Mentre la Sandbox è aperta, dà all’assistente una serie di strumenti: per guardare qualunque pagina, cambiare la grafica, modificare il testo, aggiungere immagini e tabelle, trovare problemi e salvare file. Chiedi con parole tue, per esempio «ingrandisci un po’ il testo e controlla che il libro stia ancora in 40 pagine», e l’assistente usa gli strumenti e ti mostra le pagine. Tutto resta nel tuo browser. La pagina spiega come collegare un assistente, che cosa può fare e come si usa ogni strumento.",
@@ -484,12 +484,13 @@ Ciò che l’agente cambia, tu lo vedi. Per indicarti qualcosa:
 ```
 
 `sandbox_set_view` sceglie anche il visualizzatore (`canvas`, `pdf`, `folio`, `html`,
-`epub`), il pannello laterale, capitolo o libro intero, lo zoom, il corpo del testo
+`epub`), la modalità Contenuto o Grafica (`mode`), il pannello laterale, capitolo o libro intero, lo zoom, il corpo del testo
 per il lettore, l’anteprima di stampa e il gruppo del pannello Grafica. `sandbox_go_to_page` sfoglia
 le pagine per `step`, `page`, `position`, un passo di `text`, un `anchor` o una
 voce dei `contents` di un EPUB. `sandbox_run_viewer` preme un pulsante della barra degli strumenti:
 `regenerate` scrive di nuovo il PDF o l’EPUB e lo aspetta, `print` apre la
-finestra di stampa perché tu la confermi, `play_video` riproduce un video su una pagina.
+finestra di stampa perché tu la confermi, `download` salva il PDF o l’EPUB, e
+`play_video` e `stop_video` avviano e fermano un video su una pagina.
 
 ### Tavole a fumetti
 
@@ -514,6 +515,10 @@ La risposta avvisa quando una nuvoletta finisce su un volto o esce dalla sua vig
   progetti; `sandbox_open_book` ne apre uno (`{ "kind": "sample", "id": "postext-guide",
   "language": "es" }`); `sandbox_save_book` con `action: "copy_current"` conserva
   il libro sullo schermo come tuo progetto, `new_blank` ne comincia uno vuoto.
+  Su un progetto, `add_language` con `language` (`"fr"`, `"zh-Hant"`) copia
+  la lingua sullo schermo in una nuova edizione in quella lingua e la apre, e
+  `rename` con `thisLanguageOnly: true` dà il nome soltanto alla lingua sullo schermo;
+  `set_cover` e `remove_cover` gli danno una copertina o gliela tolgono.
 - **Esportare.** `sandbox_export` scrive `pdf`, `epub`, `postext`, `docx`,
   `markdown` o `config`. Per impostazione predefinita il browser scarica il file; con
   `deliver: "data"` un PDF o un EPUB torna all’agente codificato in base64:
@@ -602,7 +607,8 @@ istruzioni.
 - **Annulla**: `sandbox_undo` annulla l’ultima modifica, al testo o alla grafica, nell’ordine in cui sono state fatte, come Cmd/Ctrl+Z nella Sandbox: quanto scritto nel pannello Testo, le modifiche degli strumenti e quelle fatte sulle anteprime, le impostazioni cambiate con `sandbox_set_config` o nel pannello Grafica, le cornici trascinate. `redo: true` la ripristina. `sandbox_undo_text` annulla solo una modifica al testo, e lo dice quando l’ultima riguardava la grafica. I capitoli aggiunti, eliminati o spostati, le risorse e i font non sono nella cronologia; la cronologia si svuota quando apri un altro libro o ricarichi la pagina. `sandbox_get_state` dice che cosa annullerebbe ciascuno (`history`).
 - **Il libro sullo schermo.** Gli strumenti lavorano sul libro aperto. Solo
   `sandbox_export` di un file `.postext`, `sandbox_save_book` con
-  `duplicate` e `sandbox_reset_to_original` con `sample` raggiungono un altro libro
+  `duplicate`, `rename` o una copertina, `sandbox_delete_book` e
+  `sandbox_reset_to_original` con `sample` raggiungono un altro libro
   senza aprirlo.
 
 ## Gli strumenti del sito

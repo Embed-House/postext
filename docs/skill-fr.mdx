@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Skill',
   description: 'Installez le skill postext-port dans Claude Code, Codex ou tout autre agent, et laissez-le transformer une source PDF, Word, PowerPoint, EPUB, InDesign ou HTML en un projet Postext qui suit la mise en page de l’original',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '11 min',
   order: 44,
   plainSummary: "Cette page s’adresse aux personnes qui ont déjà un livre ou un document dans un autre format, comme PDF, Word ou InDesign, et qui veulent le passer dans Postext. Un assistant d’intelligence artificielle, appelé agent, peut faire l’essentiel du travail si vous lui donnez un petit module appelé skill. Le skill apprend à l’agent à reprendre le texte et à reconstruire la maquette de l’original. La page explique comment l’installer, quoi demander et comment vérifier le résultat. Une vidéo d’environ cinq minutes montre chaque étape.",
@@ -95,6 +95,10 @@ le résultat dans le Sandbox.
     les mangas et les éditions arabes de droite à gauche, et comment porter à partir d’images sans
     texte accompagnées de traductions, de numérisations déjà lettrées ou d’un script
     avec des images générées (voir [Bande dessinée](/fr/docs/comics)) ;
+  - les pages composées : les pages fixes de manuels, de cahiers et de magazines
+    portées en gabarits de page dont les blocs se remplissent depuis le Markdown,
+    la passe de portage que gère le Postext installé et les vérifications que
+    chaque édition doit passer (voir [Pages composées](/fr/docs/composed-pages)) ;
   - l’objet imprimé : comment relever le papier, la reliure, les couvertures et le dos de
     la source et les traduire en réglages `folio` qu’affiche la [visionneuse Folio](/fr/docs/sandbox-previews#onglet-folio),
     vérifiés par le linter.
@@ -126,6 +130,8 @@ le résultat dans le Sandbox.
     <tr><td><code>lint_project.py</code></td><td>Détecte tout ce que l’analyseur et le chargeur interprètent mal sans rien dire et, pour le texte chinois, japonais et coréen, les caractères que les polices fournies ne savent pas composer ; pour le texte japonais, les kana sous une langue chinoise, les fontes ou réglages chinois, la notation Aozora restée dans les chapitres et les entrées d’index en kanji sans lecture ; pour le texte arabe, une langue arabe manquante, des fontes uniquement latines ou sans liaisons, l’interlettrage, la césure forcée et l’emphase en italique ; en bande dessinée, les expressions de découpage invalides, les cases qui ne correspondent pas aux cellules, les images et les styles de bulle ou de case inconnus, les ancres de locuteur mal formées, les fontes de lettrage que le projet ne fournit pas, et les éditions dont les pages diffèrent</td></tr>
     <tr><td><code>render.mjs</code></td><td>Met le projet (un dossier ou un fichier <code>.postext</code>) en page sans interface avec le vrai moteur, en lisant sa configuration comme le fait le Sandbox, et imprime les avertissements. Avec <code>--jpeg</code>, il dessine les pages demandées (<code>--pages 12-15</code>) en fichiers JPEG avec le moteur de rendu canvas de Postext lui-même, en une seconde ou deux : l’agent voit ainsi ses pages sans construire de PDF ; <code>--out</code> écrit le PDF. Un livre préparé pour l’impression reçoit des lignes PREFLIGHT (images en basse résolution, filets fins, petit texte en plusieurs encres, encrage au-delà de la limite, texte trop près de la coupe), et son PDF est séparé via le profil de sortie ICC.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Place côte à côte les pages de la source et celles de Postext, à partir du PDF du rendu ou de son dossier de JPEG</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>Pages composées : <code>round</code> lit la version du moteur installé et indique quelle passe de portage il gère et quelles fonctions des pages composées lui manquent ; <code>check</code> lance <code>postext check</code> et <code>postext html</code> sur chaque édition et échoue sur les blocs qui débordent, les gabarits ou emplacements inconnus, les étiquettes qui ne tiennent pas sur leur ancre, le texte saisi dans la configuration et les blocs que le HTML lit dans un autre ordre que celui où le Markdown les remplit</td></tr>
+    <tr><td><code>postext_md.py</code></td><td>Le module d’appoint que les autres scripts importent pour écrire du texte dans le dialecte Markdown de Postext : marques en ligne en segments plats, caractères actifs échappés, et paragraphes qui se liraient comme une liste, un titre ou un délimiteur gardés comme texte</td></tr>
   </tbody>
 </table>
 
@@ -183,7 +189,7 @@ page et la commande d’installation.
 ### Outils utilisés par les scripts
 
 ```bash
-python3 -m pip install pymupdf pillow fonttools brotli
+python3 -m pip install pymupdf pillow fonttools brotli numpy
 ```
 
 ```bash
@@ -194,11 +200,17 @@ brew install pandoc poppler
 mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && npm i postext postext-pdf postext-citeproc react @pdf-lib/fontkit @napi-rs/canvas
 ```
 
-Pandoc est nécessaire pour les sources Word, PowerPoint, EPUB et HTML, et poppler pour
-les images des pages de la source. Les paquets npm font tourner le moteur de rendu sans interface (Node 22.15 ou
+Pandoc est nécessaire pour les sources Word, PowerPoint, EPUB et HTML, poppler pour
+les images des pages de la source, et numpy pour `comic_panels.py`. Les paquets npm font tourner le moteur de rendu sans interface (Node 22.15 ou
 plus récent) ; `@napi-rs/canvas` est un canvas précompilé qui lui permet de dessiner les
 pages du livre directement en JPEG. Outils facultatifs : `ocrmypdf` pour les numérisations, ImageMagick, et veraPDF pour
 les vérifications PDF/UA.
+
+```bash
+mkdir -p ~/.local/bin && curl -fL -o ~/.local/bin/postext https://github.com/drnachio/postext/releases/latest/download/postext-macos-arm64 && chmod +x ~/.local/bin/postext
+```
+
+Choisissez le fichier de votre système (`postext-macos-arm64`, `postext-macos-x64`, `postext-linux-x64`, `postext-linux-arm64`, `postext-linux-x64-musl`, `postext-windows-x64.exe`) ; avec Node, `npx postext-cli` fonctionne aussi.
 
 La boucle de travail s’exécute en [ligne de commande](/fr/docs/command-line), avec un seul exécutable autonome, sans rien à installer : l’agent garde le projet décompressé et laisse `postext build --watch` tourner sur les pages sur lesquelles il travaille : chaque modification apparaît ainsi en JPEG environ une seconde plus tard, même dans un long livre. Les paquets npm sont facultatifs : ils font tourner `render.mjs`, qui ajoute les vérifications supplémentaires du Sandbox. Les deux mettent le livre en page avec `bodyText.shapingLanguage: 'host'`, quelle que soit sa configuration ; une ligne peut donc se couper à un autre mot que dans le Sandbox (voir [Différences avec le Sandbox](/fr/docs/command-line#différences-avec-le-sandbox)).
 

@@ -3664,7 +3664,7 @@
     "calloutStyleLabelIconWidth": "タブのアイコンの幅",
     "calloutStyleLabelIconGap": "タブとのアキ",
     "calloutStyleLabelIconPlacement": "画像の位置",
-    "calloutStyleLabelIconPlacementTooltip": "タブの外側（縁の先）か、タブの内側の先頭（文字の前）に置きます。内側にするとタブは画像とアキの分だけ広がります。内側の画像は元の色のままなので、白い輪と色付きの輪は別々の画像を使ってください。",
+    "calloutStyleLabelIconPlacementTooltip": "タブの外側（縁の先）か、タブの内側の先頭（文字の前）に置きます。内側にするとタブは画像とアキの分だけ広がります。内側の画像は元の色のままです。「画像を文字色で描く」をオンにすると、一つの輪を本のどの色にも使えます。",
     "calloutStyleLabelIconBeside": "タブの外側",
     "calloutStyleLabelIconInside": "タブの内側",
     "calloutStyleLabelIconTint": "画像を文字色で描く",

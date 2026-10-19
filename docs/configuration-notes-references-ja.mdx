@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '注と参照',
   description: '脚注、行番号、相互参照と引用、目次、巻末の索引',
   lang: 'ja',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '27分',
   order: 12,
   parent: 'configuration',
@@ -27,6 +27,8 @@ interface FootnotesConfig {
   symbols?: string[];         // numberFormat: 'symbols' で使う参照記号。
   markerPosition?: 'auto' | 'superscript' | 'inline' | 'side' | 'right'; // Raised, on the baseline, beside the word, or right of a vertical line.
   markerSize?: Dimension;     // Inline, side or right marker size; em is the text around it.
+  markerTemplate?: string;    // How the number is written: '({n})' gives «(١)».
+  noteNumberPosition?: 'auto' | 'superscript' | 'inline'; // The note's own number, raised or on the line.
   numberGap?: 'en' | 'em';    // Space after the note's own number.
   chapterEndAlign?: 'foot' | 'text';   // chapterEnd: notes at the column foot, or under the text.
   fontSize?: Dimension;       // Note size; em is the body size.
@@ -399,7 +401,7 @@ resolveLineNumbersConfig(config.lineNumbers, resolvedBodyText); // 未設定の�
 
 ## 相互参照
 
-`crossRefs`プロパティは、[相互参照](/ja/docs/document-format-notes-references#相互参照とアンカー)が番号やページの前後に印字する語と、スタイルを指定しない`:ref`に使うスタイルを設定します。各テンプレートには、番号が入る位置に`{n}`を書きます。これを含まないテンプレートでは、ノーブレークスペースの後に番号が入ります（`"§"`は「*§ 3.2*」と印字されます）。未設定のテンプレートは文書の言語に従い、英語では*chapter / section / p.*、スペイン語では*capítulo / sección / pág.*、中国語では`第{n}章` / `第{n}节` / `第{n}页`となります。フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語も同様です。
+`crossRefs`プロパティは、[相互参照](/ja/docs/document-format-notes-references#相互参照とアンカー)が番号やページの前後に印字する語と、スタイルを指定しない`:ref`に使うスタイルを設定します。各テンプレートには、番号が入る位置に`{n}`を書きます。これを含まないテンプレートでは、ノーブレークスペースの後に番号が入ります（`"§"`は「*§ 3.2*」と印字されます）。未設定のテンプレートは文書の言語に従い、英語では*chapter / section / p.*、スペイン語では*capítulo / sección / pág.*、中国語では`第{n}章` / `第{n}节` / `第{n}页`、日本語では`第{n}章` / `{n}節` / `{n}ページ`、アラビア語では`الفصل {n}` / `القسم {n}` / `ص {n}`となります。フランス語、ドイツ語、イタリア語、ポルトガル語、カタルーニャ語、オランダ語も同様です。
 
 ```ts
 interface CrossRefsConfig {
@@ -821,7 +823,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>see</code></td>
       <td><code>{'{ label?, alsoLabel?, italic?, separator? }'}</code></td>
-      <td>言語による。イタリック（アラビア文字では正体）</td>
+      <td>言語による。イタリック（アラビア文字と日本語では正体）</td>
       <td>相互参照の前に置く語です。未設定のときは文書の言語に従います。<em>See</em> / <em>See also</em>、<em>Véase</em> / <em>Véase también</em>、<em>Voir</em> / <em>Voir aussi</em>、见 / 另见（繁体字中国語では見 / 另見）…。中国語の索引では、参照を句点のあとに空白なしで置きます：<code>贾琏 12。见贾政</code>。</td>
     </tr>
     <tr>

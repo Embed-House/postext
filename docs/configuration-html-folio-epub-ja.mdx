@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'HTML、Folio、EPUB',
   description: '組み上がった本をWebページに入れる方法、postext-folioで3Dの本にする方法、postext-epubで固定レイアウトまたはリフロー型のEPUB 3にする方法',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '18分',
   order: 22,
   parent: 'configuration',
@@ -430,11 +430,12 @@ const bytes = await renderToEpub(docs, {
 
 単独の文書は、1章だけの本として渡します（`renderToEpub([doc], options)`）。
 
-- **`renderToEpub(docs, options): Promise<Uint8Array>`**：ファイルを書き出します。`options`は`{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal? }`です。
+- **`renderToEpub(docs, options): Promise<Uint8Array>`**：ファイルを書き出します。`options`は`{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal?, kindlePanelView? }`です。
 - **`metadata`**：`title`と`language`（BCP 47タグ）は必須で、`subtitle`、`creators`、`identifier`、`date`、`publisher`、`rights`、`description`、`modified`は省略できます。ISBNだけを書くと`urn:isbn:…`になります。`identifier`がなければ、本にはタイトル、著者、言語から導いた`urn:uuid:`が付くので、同じ本の新しい版も読者のライブラリーで同じ位置を保ちます。バイト単位で同一の出力を得るには、`modified`も渡してください。
 - **`fonts`**：埋め込むフェイス。`{ family, weight, style, bytes, format, unicodeRange? }`の形で、`format`は`woff2`、`woff`、`ttf`、`otf`のいずれかです。各フェイスは1つのファイルと1つの`@font-face`規則になり、`unicodeRange`を指定した複数のファイルで1つのフェイスを構成することもできます（Google Fontsのスライス）。ページが使うファミリー、ウェイト、スタイルに埋め込みフェイスがない場合は`missingFont`として報告され、リーディングシステムが独自のフォントで代替します。ライセンスが許すフォントだけを埋め込んでください。`redistributable: false`のフェイスがファイルに書き込まれることはありません（本をそのフェイスで組むことはできますが、ファイル自体は入らず、SVGの画像にも入りません）。ホストは代わりに、ライセンス付きのフォントの名前でオープンフォントのフェイスを渡すこともできます（通常のフェイスです）。Sandboxと`postext`は、`fallback`を指定したフォントに対してそうしています（postext 1.43以降）。
 - **`resourceBytes(fileId)`**：ページが配置する画像を、同期または非同期で`{ bytes, mediaType }`として返します。`mediaType`が空ならバイト列から判別します。ビットマップは格納されたまま、SVGはソースのまま渡し、PDFの印刷用マスター（`svg.pdfFileId`）は渡さないでください。各画像は1回だけ格納されます。単色インクの本（`diagramStyle.singleInk`）では、ファイル内のSVGが色替えされます。リーディングシステムはSVGを本のフォントが見えない画像として表示するので、SVGには文字が指定するフェイスが埋め込まれます（[SVGの文字のフォント](/ja/docs/configuration-resources#svgの文字のフォント)を参照）。まず`fonts`から（その文字を収めるスライス）、本文で使われていないファミリーは次に<strong>`svgFonts.provider`</strong>から取ります。`redistributable: false`と指定されたフェイスのファミリーと、`svgFonts.withhold(family)`が指定するファミリーは入れず、それぞれ1回ずつ`fontWithheld`として報告します。フェイスのないファミリーは`svgFontUnavailable`、`svgFonts.maxBytes`（2 MiB）を超えるフェイスは`svgFontsTooLarge`として報告されます。`svgFonts.inline: false`、`diagramStyle.inlineFonts: false`、リソースの`svg.inlineFonts: false`のいずれかを指定すると、バイト列は渡されたままになります。バイト列のない画像は`missingImage`として報告され、空の枠として残ります。`svgFonts.standIn(family)`（postext 1.43以降）は、除外したフォントにオープンフォントを割り当てます。そのオープンフォントの同じウェイト・傾きのフェイスを`svgFonts.provider`に求め、返ったフェイスが、除外したフォントの名前で画像に入ります。得られなければそのフォントは含まれず、報告されます。
-- **`cover`**：`{ bytes, mediaType, alt? }`。JPEG、PNG、WebP、SVGの画像です。指定すると、本はそれを収めた表紙の文書から始まり、その画像がパッケージの`cover-image`（ライブラリーのサムネイル）になります。指定しなければ、固定レイアウトでは最初のページが表紙として指定され、リフロー型の本には表紙画像がありません。
+- **`cover`**：`{ bytes, mediaType, alt?, showsFirstPage? }`。JPEG、PNG、WebP、SVGの画像です。指定すると、本はそれを収めた表紙の文書から始まり、その画像がパッケージの`cover-image`（ライブラリーのサムネイル）になります。指定しなければ、固定レイアウトでは最初のページが表紙として指定され、リフロー型の本には表紙画像がありません。`showsFirstPage: true`は、その画像が印刷版の最初のページを写したものであることを示します。このとき固定レイアウトでは、画像を`cover-image`としてだけ使い、本はそのページから始まります。そうしなければ同じページが2回表示されます。リフロー型の本はこれまでどおり表紙の文書から始まります。
+- **`kindlePanelView`**：漫画のページを含む固定レイアウトに、Kindleのパネルビューを加えます。コマごとに、タップするとそのコマを拡大表示する領域を置き、Kindleが求めるメタデータも入れます。各タップ領域はそのページの漫画の複製を持つので、どのページもコマ1つにつき複製1つ分大きくなります。Kindle向けの本だけに使ってください。既定値は`false`です。どのリーディングシステムでも使える領域ベースのナビゲーションは、指定にかかわらず書き込まれます（[漫画の出力](/ja/docs/comics#漫画の出力)を参照）。
 - **`onProgress({ phase, done, total })`**：`resources`（フォントと画像）、`documents`（固定レイアウトではページ、リフロー型では章）、`package`の順に進みます。**`signal`**：ステップの合間で中止します。
 - **`readEpub(bytes)`**：ビューアーのためにファイルを読み戻します。`DOMParser`は使いません。レイアウト、メタデータ、読む方向、パスごとのすべてのファイル、マニフェスト、スパイン、目次、ページリスト、固定レイアウトのビューポート、表紙を返します。Sandboxのリーダーはこれをもとに作られています。
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'What an AI agent in the browser can do with the Sandbox through its 41 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 46,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
@@ -211,7 +211,7 @@ what it is with the same fractions it used for the crop:
 The answer gives the block, the line and column of the Markdown source there
 (and the word), a link and the page it leads to, the table cell or caption of
 a resource. With `select: true` it also does what a click does: the
-Manuscript panel opens with the caret at that place (`word: true` selects the
+Text panel opens with the caret at that place (`word: true` selects the
 word, `to` selects up to a second point).
 
 The answer also lists `elements`: what lies at the point, innermost first, in the order in which a click on the page picks them and each further click or Esc moves up through them (a glyph, its paragraph, the box round it, the frame of a composed page, its group, the page and its template; or a design element and its slot). Each comes with its stable id, its source (a Markdown range, a config path, an attribute, a resource) and its name in the path the Sandbox shows (`path`). With `select: true`, `level` (`block`, `frame`, `template`, `design`…) picks one of them as a person would: Content mode selects its Markdown, Design mode opens its frame, style or template. `sandbox_get_state` reports the element picked as `pageSelection`.
@@ -354,7 +354,7 @@ for `sandbox_undo_text`, which takes it back (`redo: true` puts it back).
 `sandbox_write_text` replaces a whole chapter, from `markdown` or from a `.md`
 file.
 
-To show you a place in the text, `sandbox_select_text` opens the Manuscript
+To show you a place in the text, `sandbox_select_text` opens the Text
 panel with that passage selected (by `text`, `line` or `offset`), as a click on
 a finding of the Checks panel does.
 
@@ -484,12 +484,13 @@ What the agent changes, you see. To point you at something:
 ```
 
 `sandbox_set_view` also chooses the viewer (`canvas`, `pdf`, `folio`, `html`,
-`epub`), the side panel, chapter or whole book, zoom, the reader's type size,
+`epub`), the Content or Design mode (`mode`), the side panel, chapter or whole book, zoom, the reader's type size,
 the print preview and the Design panel's group. `sandbox_go_to_page` turns
 pages by `step`, `page`, `position`, a `text` passage, an `anchor` or an
 EPUB's `contents` entry. `sandbox_run_viewer` presses a toolbar button:
 `regenerate` writes the PDF or EPUB again and waits for it, `print` opens the
-print dialog for you to confirm, `play_video` plays a video on a page.
+print dialog for you to confirm, `download` saves the PDF or the EPUB, and
+`play_video` and `stop_video` play and stop a video on a page.
 
 ### Comic pages
 
@@ -514,6 +515,10 @@ The answer warns when a balloon lands on a face or runs out of its panel. See
   projects; `sandbox_open_book` opens one (`{ "kind": "sample", "id": "postext-guide",
   "language": "es" }`); `sandbox_save_book` with `action: "copy_current"` keeps
   the book on screen as your own project, `new_blank` starts an empty one.
+  On a project, `add_language` with `language` (`"fr"`, `"zh-Hant"`) copies
+  the language on screen into a new edition in that language and opens it, and
+  `rename` with `thisLanguageOnly: true` names the language on screen alone;
+  `set_cover` and `remove_cover` give it a cover or take it away.
 - **Export.** `sandbox_export` writes `pdf`, `epub`, `postext`, `docx`,
   `markdown` or `config`. By default the browser downloads the file; with
   `deliver: "data"` a PDF or an EPUB comes back base64-encoded to the agent:
@@ -601,8 +606,9 @@ instructions.
 - **Undo**: `sandbox_undo` takes back the last change, to the text or to the design, in the order the changes were made, as Cmd/Ctrl+Z does in the Sandbox: text typed in the Text panel, the edits of the tools and those made on the previews, settings changed by `sandbox_set_config` or in the Design panel, frames dragged. `redo: true` puts a change back. `sandbox_undo_text` takes back only a text edit, and says so when the last change was to the design. Chapters added, removed or moved, resources and fonts are not in the history; opening another book empties it, and so does a reload. `sandbox_get_state` says what each would take back (`history`).
 - **The book on screen.** The tools work on the open book. Only
   `sandbox_export` of a `.postext` file, `sandbox_save_book` with
-  `duplicate` and `sandbox_reset_to_original` with `sample` reach another book
-  without opening it.
+  `duplicate`, `rename` or a cover, `sandbox_delete_book` and
+  `sandbox_reset_to_original` with `sample` reach another book without
+  opening it.
 
 ## The tools of the site
 

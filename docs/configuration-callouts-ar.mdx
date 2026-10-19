@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'الإعدادات: الإطارات',
   sidebarTitle: 'الإطارات',
-  description: 'أنماط مسمّاة لإطارات :::callout: الحدّ والخلفية والشريط والعنوان والأيقونة والعلامة الخارجية؛ والعبارات المرقّمة كالمبرهنات؛ والتنسيق الطباعي داخل الإطار؛ والإطارات التي تنقسم بين الصفحات',
+  description: 'أنماط مسمّاة لإطارات :::callout: الحدّ والخلفية والشريط والعنوان والأيقونة والعلامة الخارجية ولسان التسمية؛ والعبارات المرقّمة كالمبرهنات؛ والتنسيق الطباعي داخل الإطار؛ والإطارات التي تنقسم بين الصفحات؛ والتصاميم المرسومة داخل الإطار',
   lang: 'ar',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '26 دقيقة',
   order: 16,
   parent: 'configuration',
@@ -168,7 +168,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>icon</code></td>
       <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
       <td><code>'none'</code>، خط العناوين، <code>400</code>، <code>1.5em</code>، اللون الرئيسي، <code>'top'</code>، <code>'inline'</code>، <code>'right'</code></td>
-      <td>رمز نصي (<code>kind: 'glyph'</code>) أو مورد نقطي / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) بجانب المحتوى. ومع شريط على أحد جانبي الإطار تتوسّط الأيقونة الشريط؛ وإلا فإنها تحجز عمودًا خاصًا بها (<code>size</code> + <code>titleStyle.gap</code>). و<code>align: 'center'</code> يوسّطها عموديًا على المحتوى. وتُوضع صورة المورد داخل المربع مع الحفاظ على نسبة أبعادها، أو داخل مستطيل <code>width</code> × <code>size</code> عند تعيين <code>width</code> (شريط عريض من الأيقونات)؛ والأيقونة الأطول من المحتوى تُطيل الإطار ليتسع لها (ومع <code>align: 'center'</code> يُوسَّط المحتوى عليها). و<code>position: 'corner'</code> يعلّق الأيقونة على زاوية علوية كشارة، نصفها خارج الحدّ، دون أن تأخذ من مساحة المحتوى؛ والأيقونة العريضة (<code>width</code>) تُوسَّط على الزاوية بحسب العرض الذي تُرسم به، وعلى الزاوية اليسرى يبدأ العنوان بعد نصفها الداخلي (حتى postext 1.4 كانت توضع بحسب ارتفاعها، فيتدلّى الشريط العريض خارج الإطار وفوق العنوان)؛ و<code>cornerSide</code> يختار الزاوية: <code>'right'</code> / <code>'left'</code>، أو <code>'outer'</code> / <code>'inner'</code> اللتان تتبعان زوجية الصفحة في الهوامش المعكوسة (الخارجية = اليمنى في الصفحة الفردية، واليسرى في الصفحة الزوجية).</td>
+      <td>رمز نصي (<code>kind: 'glyph'</code>) أو مورد نقطي / SVG (<code>kind: 'resource'</code> + <code>resourceId</code>) بجانب المحتوى. ومع شريط على أحد جانبي الإطار تتوسّط الأيقونة الشريط؛ وإلا فإنها تحجز عمودًا خاصًا بها (<code>size</code> + <code>titleStyle.gap</code>). و<code>align: 'center'</code> يوسّطها عموديًا على المحتوى. وتُوضع صورة المورد داخل المربع مع الحفاظ على نسبة أبعادها، أو داخل مستطيل <code>width</code> × <code>size</code> عند تعيين <code>width</code> (شريط عريض من الأيقونات)؛ والأيقونة الأطول من المحتوى تُطيل الإطار ليتسع لها (ومع <code>align: 'center'</code> يُوسَّط المحتوى عليها). و<code>position: 'corner'</code> يعلّق الأيقونة على زاوية علوية كشارة، نصفها خارج الحدّ، دون أن تأخذ من مساحة المحتوى؛ والأيقونة العريضة (<code>width</code>) تُوسَّط على الزاوية بحسب العرض الذي تُرسم به، وعلى الزاوية اليسرى يبدأ العنوان بعد نصفها الداخلي (حتى postext 1.4 كانت توضع بحسب ارتفاعها، فيتدلّى الشريط العريض خارج الإطار وفوق العنوان)؛ و<code>cornerSide</code> يختار الزاوية: <code>'right'</code> / <code>'left'</code>؛ أو <code>'outer'</code> / <code>'inner'</code> اللتان تتبعان زوجية الصفحة في الهوامش المعكوسة (الخارجية = اليمنى في الصفحة الفردية، واليسرى في الصفحة الزوجية)؛ أو <code>'start'</code> / <code>'end'</code> اللتان تتبعان اتجاه الإطار نفسه، كما في الشريط.</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>غير محدَّد (بلا لسان)</td>
-      <td>لسان على الحافة العليا للإطار يطبع السمة <code>label</code> المكتوبة في سطر الفتح: رقم الإطار المرقّم («BOX 1-1»). يلتصق بالزاوية <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>)، بإزاحة داخلية قدرها <code>inset</code>، ويرتفع <code>offset</code> فوق أعلى الإطار (وهذه المساحة جزء من الكتلة، فوق <code>marginTop</code>، فيحتفظ بها اللسان في رأس العمود أيضًا)، ويبلغ ارتفاعه <code>height</code> مع <code>paddingX</code> على جانبي النص، ويمكن أن يكون بجانبه مورد أيقونة <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>، في الجهة البعيدة عن الزاوية) وخطًا <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) على طول الحافة العليا من الزاوية البعيدة حتى اللسان. القيم الافتراضية: خط العناوين، حجم النص، <code>700</code>، أبيض على اللون الرئيسي، ارتفاع <code>1.4em</code>، حشوة <code>0.6em</code>. واللسان شكل قائم بذاته فوق الإطار، فيحتفظ بزواياه القائمة أيًّا كان <code>borderRadius</code> الإطار. منذ postext 1.42 يضع <code>icon.placement: 'inside'</code> الصورة داخل اللسان في بدايته قبل الكلمات (عند الطرف الأيمن في إطار مُنضَّد من اليمين إلى اليسار) وعلى بُعد <code>gap</code> منها: يتسع اللسان بمقدار الصورة والمسافة والكلمات والحشو، وتُلائَم الصورة مع <code>icon.width</code> وارتفاع اللسان وتتوسّطه. تحتفظ الصورة بألوانها، فالحلقة البيضاء على لسان ملوّن والحلقة الملوّنة على لسان أبيض موردان اثنان، واحد في كل نمط. أما <code>'beside'</code>، وهو الافتراضي، فيضع الصورة بعد حافة اللسان. منذ postext 1.43 يرسم <code>icon.tint: true</code> الصورة بلون <code>color</code> اللسان بدل ألوانها: فلا يُرسم إلا شكلها، بلون الكلمات، فتكفي حلقة واحدة لكل ألوان الكتاب. والصورة التي لا شفافية فيها تصير مستطيلًا مصمتًا. في PDF يحتفظ SVG بحوافه، وتُقصّ الصورة النقطية عند نصف الشفافية؛ ولا تُستعمل النسخة المخصّصة للطباعة (<code>svg.pdfFileId</code>) لأن صفحة PDF لا يمكن إعادة تلوينها.</td>
+      <td>لسان على الحافة العليا للإطار يطبع السمة <code>label</code> المكتوبة في سطر الفتح: رقم الإطار المرقّم («BOX 1-1»). يلتصق بالزاوية <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>، أو <code>'top-start'</code> / <code>'top-end'</code> بحسب اتجاه الإطار نفسه، كما في <code>'start'</code> / <code>'end'</code> للشريط)، بإزاحة داخلية قدرها <code>inset</code>، ويرتفع <code>offset</code> فوق أعلى الإطار (وهذه المساحة جزء من الكتلة، فوق <code>marginTop</code>، فيحتفظ بها اللسان في رأس العمود أيضًا)، ويبلغ ارتفاعه <code>height</code> مع <code>paddingX</code> على جانبي النص، ويمكن أن يكون بجانبه مورد أيقونة <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>، في الجهة البعيدة عن الزاوية) وخطًا <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) على طول الحافة العليا من الزاوية البعيدة حتى اللسان. القيم الافتراضية: خط العناوين، حجم النص، <code>700</code>، أبيض على اللون الرئيسي، ارتفاع <code>1.4em</code>، حشوة <code>0.6em</code>، بلا ارتفاع فوق الإطار ولا إزاحة داخلية، وصورة عرضها <code>1em</code> على بعد <code>0.3em</code> من الكلمات. واللسان شكل قائم بذاته فوق الإطار، فيحتفظ بزواياه القائمة أيًّا كان <code>borderRadius</code> الإطار. منذ postext 1.42 يضع <code>icon.placement: 'inside'</code> الصورة داخل اللسان في بدايته قبل الكلمات (عند الطرف الأيمن في إطار مُنضَّد من اليمين إلى اليسار) وعلى بُعد <code>gap</code> منها: يتسع اللسان بمقدار الصورة والمسافة والكلمات والحشو، وتُلائَم الصورة مع <code>icon.width</code> وارتفاع اللسان وتتوسّطه. تحتفظ الصورة بألوانها، فالحلقة البيضاء على لسان ملوّن والحلقة الملوّنة على لسان أبيض موردان اثنان، واحد في كل نمط. أما <code>'beside'</code>، وهو الافتراضي، فيضع الصورة بعد حافة اللسان. منذ postext 1.43 يرسم <code>icon.tint: true</code> الصورة بلون <code>color</code> اللسان بدل ألوانها: فلا يُرسم إلا شكلها، بلون الكلمات، فتكفي حلقة واحدة لكل ألوان الكتاب. والصورة التي لا شفافية فيها تصير مستطيلًا مصمتًا. في PDF يحتفظ SVG بحوافه، وتُقصّ الصورة النقطية عند نصف الشفافية؛ ولا تُستعمل النسخة المخصّصة للطباعة (<code>svg.pdfFileId</code>) لأن صفحة PDF لا يمكن إعادة تلوينها.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -251,8 +251,8 @@ The glass stays hot for an hour after the flame is out.
     <tr>
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
-      <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>نص تلك العلامة («(MORE)» في السيناريو)، بخط نص الإطار وحجمه، بحسب لغة المستند.</td>
+      <td><code>'Continued'</code></td>
+      <td>نص تلك العلامة («(MORE)» في السيناريو)، بخط نص الإطار وحجمه. والقيمة الافتراضية بلغة المستند، كما في الجدول المقسوم: <code>'يتبع'</code> بالعربية، و<code>'Continúa'</code> بالإسبانية.</td>
     </tr>
     <tr>
       <td><code>continuesMarkerAlign</code></td>
@@ -494,7 +494,7 @@ A speech long enough to run over the foot of the page…
 
 ويقبل `resourceId` في الصورة العناصر النائبة نفسها، فيرسم كل إطار موردًا خاصًا به. ولا يقرأ `{boxText}` إلا تصميم الإطار؛ أما تصميم العنوان فلا يطبع مكانه شيئًا.
 
-مع `setsContent: true` يخدم نمط واحد كل الإطارات ذات الشكل الواحد، ولكل منها كلماته. في كرّاسة الخط يكون كل سطر تمرين إطارًا محتواه الكلمة المطلوب نسخها: يطبع التصميم الكلمة بخط مدرسي ويرسم المورد المنقّط الذي يحمل اسمها.
+مع `setsContent: true` يخدم نمط واحد كل الإطارات ذات الشكل الواحد، ولكل منها كلماته. في كرّاسة الخط يكون كل سطر تمرين إطارًا محتواه الكلمة المطلوب نسخها: يطبع التصميم الكلمة بخط مدرسي، ثم يعيدها بنقاط للتتبّع (`dotted`) بقدر ما يتّسع له السطر (`repeat`؛ انظر [العلامات داخل السطر والخطوط المحيطية](/ar/docs/configuration-headers-footers#العلامات-داخل-السطر-والخطوط-المحيطية)).
 
 ```ts
 calloutStyles: [{
@@ -507,9 +507,9 @@ calloutStyles: [{
     slot: { elements: [
       { kind: 'text', id: 'model', content: '{boxText}', fontFamily: 'Aref Ruqaa', fontSize: { value: 26, unit: 'pt' },
         placement: { anchor: { to: 'container', edge: 'top-left' } } },
-      { kind: 'image', id: 'trace', resourceId: 'trace-{boxText}',
-        placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: { value: 40, unit: 'mm' }, y: { value: 0, unit: 'mm' } },
-          size: { width: 'auto', height: { value: 16, unit: 'mm' } } } },
+      { kind: 'text', id: 'copies', content: '{boxText}', fontFamily: 'Aref Ruqaa', fontSize: { value: 26, unit: 'pt' },
+        dotted: {}, repeat: { gap: { value: 8, unit: 'mm' } },
+        placement: { anchor: { to: '#model', edge: 'right-of' }, offset: { x: { value: 8, unit: 'mm' } } } },
     ] },
   },
 }],
@@ -525,6 +525,6 @@ calloutStyles: [{
 :::
 ```
 
-يطبع السطر الأول *قط* ويرسم المورد `trace-قط`، ويطبع الثاني *شمس* ويرسم `trace-شمس`، ولا تُنضَّد أي من الكلمتين مرة أخرى تحت نطاقها. وإذا بقي `setsContent` على `false` قرأ التصميم `{boxText}` كذلك، ونُضِّد المحتوى تحت النطاق.
+يطبع السطر الأول *قط* وتليها نسخ منقّطة منها، ويفعل الثاني الشيء نفسه مع *شمس*، ولا تُنضَّد أي من الكلمتين مرة أخرى تحت نطاقها. وإذا تغيّرت الكلمة في Markdown تغيّر النموذج وكل النسخ. وإذا بقي `setsContent` على `false` قرأ التصميم `{boxText}` كذلك، ونُضِّد المحتوى تحت النطاق.
 
 في VDT تكون عناصر النطاق كتل تصميم على `designOverlay` الخاص بالإطار، بجانب العنوان.

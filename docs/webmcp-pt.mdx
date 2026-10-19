@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'O que um agente de IA no navegador pode fazer no Sandbox com as 41 ferramentas WebMCP que ele oferece (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '13 min',
   order: 46,
   plainSummary: "Esta página é para quem quer que um assistente de inteligência artificial trabalhe por você em um livro no Sandbox. Enquanto o Sandbox está aberto, ele entrega ao assistente um conjunto de ferramentas para olhar qualquer página, mudar o design, editar o texto, adicionar imagens e tabelas, encontrar problemas e salvar arquivos. Você pede com suas próprias palavras, por exemplo “aumente um pouco a letra e confira se o livro continua cabendo em 40 páginas”, e o assistente usa as ferramentas e mostra as páginas para você. Tudo fica no seu navegador. A página explica como conectar um assistente, o que ele pode fazer e como cada ferramenta é chamada.",
@@ -493,13 +493,14 @@ O que o agente muda, você vê. Para chamar a sua atenção para algo:
 ```
 
 `sandbox_set_view` também escolhe o visualizador (`canvas`, `pdf`, `folio`,
-`html`, `epub`), o painel lateral, capítulo ou livro inteiro, o zoom, o
+`html`, `epub`), o modo Conteúdo ou Design (`mode`), o painel lateral, capítulo ou livro inteiro, o zoom, o
 tamanho da letra do leitor, a simulação de impressão e o grupo do painel Design.
 `sandbox_go_to_page` vira as páginas por `step`, `page`, `position`, um trecho
 em `text`, uma `anchor` ou uma entrada `contents` de um EPUB.
 `sandbox_run_viewer` aperta um botão da barra de ferramentas: `regenerate`
 gera de novo o PDF ou o EPUB e espera por ele, `print` abre a janela de
-impressão para você confirmar, `play_video` reproduz um vídeo de uma página.
+impressão para você confirmar, `download` salva o PDF ou o EPUB, e
+`play_video` e `stop_video` reproduzem e param um vídeo de uma página.
 
 ### Páginas de quadrinhos
 
@@ -525,6 +526,10 @@ A resposta avisa quando um balão cai sobre um rosto ou sai do quadro. Veja
   "postext-guide", "language": "es" }`); `sandbox_save_book` com
   `action: "copy_current"` salva o livro da tela como projeto seu, e
   `new_blank` começa um vazio.
+  Num projeto, `add_language` com `language` (`"fr"`, `"zh-Hant"`) copia o
+  idioma na tela para uma nova edição nesse idioma e a abre, e `rename` com
+  `thisLanguageOnly: true` dá o nome só ao idioma na tela; `set_cover` e
+  `remove_cover` dão uma capa a ele ou a tiram.
 - **Exportar.** `sandbox_export` gera `pdf`, `epub`, `postext`, `docx`,
   `markdown` ou `config`. Por padrão o navegador baixa o arquivo; com
   `deliver: "data"`, um PDF ou um EPUB volta para o agente codificado em
@@ -618,8 +623,8 @@ evite que esse texto seja tomado por instruções.
 - **Desfazer**: `sandbox_undo` desfaz a última mudança, no texto ou no design, na ordem em que foram feitas, como Cmd/Ctrl+Z no Sandbox: o que foi digitado no painel Texto, as edições das ferramentas e as feitas nas visualizações, os ajustes alterados com `sandbox_set_config` ou no painel Design, os blocos arrastados. `redo: true` refaz uma mudança. `sandbox_undo_text` só desfaz uma edição do texto, e avisa quando a última mudança foi no design. Capítulos adicionados, removidos ou movidos, recursos e fontes não entram no histórico; abrir outro livro o esvazia, e recarregar a página também. `sandbox_get_state` diz o que cada uma desfaria (`history`).
 - **O livro na tela.** As ferramentas trabalham sobre o livro aberto. Só
   `sandbox_export` de um arquivo `.postext`, `sandbox_save_book` com
-  `duplicate` e `sandbox_reset_to_original` com `sample` alcançam outro livro
-  sem abri-lo.
+  `duplicate`, `rename` ou uma capa, `sandbox_delete_book` e
+  `sandbox_reset_to_original` com `sample` alcançam outro livro sem abri-lo.
 
 ## As ferramentas do site
 

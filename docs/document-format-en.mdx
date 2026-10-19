@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Document Format',
   description: 'The Markdown subset Postext parses: frontmatter, headings, lists and code blocks, what it ignores, and the rules for authoring source documents',
   lang: 'en',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '14 min',
   order: 25,
   plainSummary: "This page explains how to write a text that Postext can lay out. You write in Markdown, a simple way of writing where a few symbols mark headings, lists, bold words and links. This page covers the lines at the top of a file, headings, lists, code and the marks Postext ignores. Four more pages cover blocks such as boxes and columns, marks inside a line, notes and references, and pictures and tables. The page ends with advice on writing text that is easy to read.",
@@ -53,7 +53,7 @@ Quote a value to print it exactly as written — a number that must keep its dig
 
 ## Block constructs
 
-Postext recognises seven prose block types and code listings, plus the directives and resource embeds covered later on this page. Blocks are always terminated by a blank line or by the start of another block.
+Postext recognises seven prose block types and code listings, plus the [directives](/en/docs/document-format-directives) and [resource embeds](/en/docs/document-format-resources) described on pages of their own. Blocks are always terminated by a blank line or by the start of another block.
 
 <Illustration name="BlockTypesGallery" data='{"title": "Prose block types at a glance", "desc": "The seven prose block types Postext recognises: heading, paragraph, blockquote, unordered list, ordered list, task list, and display math, each with its markdown syntax. Directives and resource embeds are covered separately.", "caption": "Every prose block type and its markdown syntax.", "blocks": [{"name": "Heading", "syntax": "# Title", "color": "blue"}, {"name": "Paragraph", "syntax": "Plain text lines", "color": "orange"}, {"name": "Blockquote", "syntax": "> quoted text", "color": "green"}, {"name": "Unordered list", "syntax": "- item", "color": "purple"}, {"name": "Ordered list", "syntax": "1. item", "color": "pink"}, {"name": "Task list", "syntax": "- [x] done", "color": "teal"}, {"name": "Display math", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ Postext recognises seven prose block types and code listings, plus the directive
     <tr>
       <td>Ordered list</td>
       <td><code>1. item</code>, <code>2) item</code></td>
-      <td>Digits followed by <code>.</code> or <code>)</code>. The start number is preserved (so a list can begin at 5, or at 0). The separator rendered in the output comes from <code>orderedLists.separator</code>, not from the source.</td>
+      <td>Digits followed by <code>.</code> or <code>)</code>: European digits, or the Arabic-Indic (<code>١.</code>) and Persian (<code>۱.</code>) ones an Arabic or Persian keyboard types. The start number is preserved (so a list can begin at 5, or at 0). The separator rendered in the output comes from <code>orderedLists.separator</code>, not from the source.</td>
     </tr>
     <tr>
       <td>Task list (GFM)</td>
@@ -210,6 +210,10 @@ The info string after the opening fence names the language (its first word: `js`
       <td><code>span=page</code></td>
       <td>On a page of several columns, the listing spans them all.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>Floats the listing to the first free band at the head or foot of a column, as a floated <code>:::callout</code> does.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

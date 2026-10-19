@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Direttive',
   description: 'Le direttive aperte da ::: (contenitori, colonne, cambi di carta, interruzioni di pagina, numerazione, spazio, versi, indice e indice analitico, a capo) e il markup delle tavole a fumetti',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '36 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Direttive
 
-Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:::name{attrs}` su una riga a sé. Non producono output visibile: guidano la pipeline di posizionamento e numerazione.
+Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:::name{attrs}` su una riga a sé. La maggior parte non produce nulla di visibile e guida il posizionamento e la numerazione; `:::toc`, `:::index` e `:::bibliography` stampano l’indice, l’indice analitico e la bibliografia nel punto in cui si trovano.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:
       <td>Stampa qui l’indice analitico: ogni termine marcato con <code>:index</code> nel libro, ordinato e raggruppato per lettera, con le pagine in cui compare, composto secondo la configurazione <code>index</code>. <code>:::index&#123;index="names"&#125;</code> stampa un indice con nome. Vedi <a href="/it/docs/document-format-notes-references#indice-analitico">Indice analitico</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Stampa qui l’elenco delle opere citate, nello stile di citazione. <code>title</code> ne cambia il titolo e <code>scope</code> ciò che elenca. Vedi <a href="/it/docs/document-format-notes-references#la-bibliografia">La bibliografia</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Una tavola di fumetto: le sue righe <code>::panel</code> e le relative righe di sceneggiatura, impaginate come vignette e nuvolette letterate su una pagina a sé. Vedi <a href="#fumetti">Fumetti</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Le direttive sono tag di controllo su una sola riga, scritti come `:::name` o `:
 
 I valori degli attributi possono essere tra virgolette doppie (<code>"…"</code>), tra virgolette singole (<code>'…'</code>) o senza virgolette (<code>startAt=17</code>). Una chiave senza `=` viene trattata come un flag presente ma vuoto.
 
-Oggi solo `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` e `index` sono riconosciute come direttive su una sola riga (e `references`, `verse`, `page` e `strip` come blocchi delimitati): qualsiasi altra riga `:::name` che non sia un contenitore (vedi sotto) viene letta come paragrafo e fa comparire nella Sandbox un avviso **Direttiva sconosciuta**. Anche il motore la registra, come voce `unknownDirective` nei `contentWarnings` del documento (vedi [Configurazione › Avvisi nel documento](/it/docs/configuration-programmatic-usage#avvisi-nel-documento)).
+Oggi solo `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` e `bibliography` sono riconosciute come direttive su una sola riga (e `references`, `verse`, `page`, `strip` e `figure` come blocchi delimitati): qualsiasi altra riga `:::name` che non sia un contenitore (vedi sotto) viene letta come paragrafo e fa comparire nella Sandbox un avviso **Direttiva sconosciuta**. Anche il motore la registra, come voce `unknownDirective` nei `contentWarnings` del documento (vedi [Configurazione › Avvisi nel documento](/it/docs/configuration-programmatic-usage#avvisi-nel-documento)).
 
 ### Valori degli attributi
 
@@ -96,6 +100,7 @@ La stessa sintassi `key="value"` viene letta dagli attributi dei titoli, dai del
 - **Niente graffe.** `{` e `}` non vanno mai in un valore. La prima `}` chiude il blocco: un delimitatore il cui valore ne contiene una non è più una direttiva ma un paragrafo, e in linea il resto del valore si riversa nel testo. In un titolo, una graffa in un valore lascia l’intero blocco nel titolo: `# Title {note="a {b"}` viene composto così come è scritto. (Fino a postext 1.8 una `{` dopo uno spazio faceva ripartire il blocco e `b` veniva letto come flag.)
 - **Il simbolo del dollaro è testo semplice.** Gli attributi vengono letti prima della matematica in linea, quindi `lead="from $5 to $6"` è solo testo.
 - **Una sola riga.** Un blocco di attributi non occupa mai più righe.
+- **Identificatori.** `#key-idea`, l’abbreviazione di Pandoc, equivale a `id="key-idea"`: `{#sec-method}` su un titolo, `:::callout{#box-safety}` su un delimitatore. Dà un nome al blocco per i [rimandi](/it/docs/document-format-notes-references#rimandi-e-ancore).
 
 ```markdown
 # The Long Road {lead='A "road novel", they said' price="$18"}
@@ -105,7 +110,7 @@ La stessa sintassi `key="value"` viene letta dagli attributi dei titoli, dai del
 :::
 ```
 
-`::resource{id="…"}` è più rigido: l’id tra virgolette doppie e nessun altro attributo (vedi [Risorse](/it/docs/document-format-resources#risorse)).
+`::resource{id="…"}` è più rigido: l’id tra virgolette doppie e nessun altro attributo (vedi [Risorse](/it/docs/document-format-resources#risorse)). In una pagina composta accetta anche `slot="…"` (vedi [Pagine composte](#pagine-composte)).
 
 ### Contenitori
 
@@ -120,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Nel flusso del testo sono riconosciuti cinque nomi di contenitore. Ciò che ciascuno disegna si imposta nella relativa sezione della configurazione:
+Nel flusso del testo sono riconosciuti cinque nomi di contenitore; un sesto, `:::frame`, raccoglie il contenuto di una cornice in una [pagina composta](#pagine-composte). Ciò che ciascuno disegna si imposta nella relativa sezione della configurazione:
 
 <table>
   <thead>
@@ -291,7 +296,7 @@ Un riquadro annidato in un gruppo resta intero e passa alla parte successiva, e 
 :::
 ```
 
-Un delimitatore `:::callout` accetta anche `label="…"`: il testo che uno stile con una linguetta `label` stampa nell’angolo superiore del riquadro (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`).
+Un delimitatore `:::callout` accetta anche `label="…"`: il testo che uno stile con una linguetta `label` stampa nell’angolo superiore del riquadro (`:::callout{type="box" label="BOX 1-1" title="The octet rule"}`). Ogni altro attributo del delimitatore lo legge il progetto grafico dello stile, se ne ha uno: `:::callout{type="card" kicker="Nota"}` dà ai suoi testi `{attr.kicker}`, e `{boxText}` stampa il contenuto del riquadro stesso (vedi [Configurazione › Progetti grafici nei riquadri](/it/docs/configuration-callouts#progetti-grafici-nei-riquadri)).
 
 Un `:::callout` dentro un altro è un riquadro a sé: per esempio una scheda di esercizi che contiene riquadri per le risposte. Prende il proprio stile (sfondo, bordo, raggio, spaziatura interna, titolo, icona) alla piena larghezza interna del riquadro esterno e si impila tra gli altri blocchi; i suoi `span` e `placement` vengono ignorati, perché un riquadro annidato scorre sempre dentro il suo genitore. Ogni delimitatore chiude il riquadro più interno ancora aperto:
 
@@ -700,7 +705,7 @@ maya: This line goes on
 
 - La **chiave** è un id di personaggio (lettere, cifre, `_`, `.`, `-`), uguale in ogni traduzione; `caption`, `sfx` e `note` sono riservate. I due punti possono essere quelli a larghezza piena `：`.
 - Una parola isolata tra le graffe è uno **stile di nuvoletta** (`thought`, `whisper`, `shout`, `radio`, `inner` o uno di `comics.balloonStyles`); `style=` indica la stessa cosa.
-- `at` fissa la posizione della nuvoletta: un punto in percentuali dell’immagine della vignetta (`at="62% 40%"`), oppure un angolo o un lato (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` punta la coda verso un punto dell’immagine; `tail=none` la elimina e `tail=top|bottom|start|end|left|right` la punta fuori dalla vignetta. `join` e `join=false` uniscono la nuvoletta alla precedente dello stesso personaggio o la tengono separata; `break` le permette di oltrepassare il bordo, e l’attraversamento non viene segnalato come sbordo. `rotate` (gradi), `size` (un fattore di scala, per gli effetti sonori), `color` e `font` ne modificano il lettering.
+- `at` fissa la posizione della nuvoletta: un punto in percentuali dell’immagine della vignetta (`at="62% 40%"`), oppure un angolo o un lato (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` punta la coda verso un punto dell’immagine; `tail=none` la elimina e `tail=top|bottom|start|end|left|right` la punta fuori dalla vignetta. `join` e `join=false` uniscono la nuvoletta alla precedente dello stesso personaggio o la tengono separata; `break` le permette di oltrepassare il bordo, e l’attraversamento non viene segnalato come sbordo. `rotate` (gradi), `skew` (un’inclinazione in gradi, per un testo su un oggetto visto in prospettiva), `size` (un fattore di scala, per gli effetti sonori), `color` e `font` ne modificano il lettering.
 - `vertical` e `horizontal` (oppure `mode=vertical`, `mode=horizontal`) impostano la direzione di scrittura della riga al posto di quella del libro: un `ドン` non tradotto composto in colonna in un’edizione orizzontale, un’insegna scritta in orizzontale composta in riga in un’edizione verticale. Una colonna in un libro di un’altra lingua segue le regole del proprio testo (con i kana, quelle del giapponese). In un libro verticale, una riga senza caratteri cinesi o giapponesi viene comunque composta in orizzontale.
 - Una riga rientrata di due spazi o di una tabulazione continua la nuvoletta precedente; una barra rovesciata a fine riga spezza il testo in quel punto. Le righe vuote vengono ignorate.
 - Il testo è Markdown in linea: enfasi (letterata in grassetto corsivo), `:tcy`, `:ruby` (la lettura composta sopra la base, tranne che sopra una base da destra a sinistra), `:ltr` e `:rtl` (un tratto mantenuto nella propria direzione). Note a piè di pagina e marcatori `:ref` non vengono letti.
@@ -730,4 +735,4 @@ Una pagina composta si impagina a partire da un modello di pagina della configur
 - `::::page{template="…"}` … `::::` è la pagina: quattro o più segni di due punti, chiusi da una riga che contiene soltanto lo stesso numero di segni. I blocchi aperti da tre segni di due punti al suo interno (`:::frame`, `:::callout`, `:::figure`…) funzionano come ovunque, e un `:::` da solo non chiude mai la pagina. Un `:::page` con tre segni di due punti resta una tavola di fumetto.
 - `:::frame{slot="…" label="…"}` … `:::` contiene il contenuto della cornice con quel nome: qualsiasi Markdown.
 - `slot="…"` su un titolo (`## Retos {slot="retos-titulo"}`), su `::resource{id="…" slot="…"}`, su un blocco di codice o su un contenitore `:::` manda in quella cornice solo quel blocco. Il contenuto senza slot va nella cornice di flusso del modello.
-- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente.
+- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente. I suoi `alt`, `caption` e `note`, come attributi del delimitatore o come righe `::alt[…]`, `::caption[…]` e `::note[…]`, sostituiscono i testi della risorsa in quel capitolo (vedi [Pagine composte › Le parole proprie di una figura](/it/docs/composed-pages#le-parole-proprie-di-una-figura)).

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '模板页',
   description: '在页面上直接编辑页面模板和框；用样式库整理框样式；在书的每个版本中检查模板页；把书中的文字移进Markdown；一键修正框',
   lang: 'zh',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '9分钟',
   order: 38,
   parent: 'sandbox',
@@ -33,6 +33,8 @@ export const metadata = {
 
 **跳到另一章的文章。** 在每篇文章各占一个章节文件的书里，如果框把文章送到`page:<id>`，文章就接着排在含有那一页的章节里（自postext 1.41起；见[模板页 › 跳转到后面的页面](/zh/docs/composed-pages#跳转到后面的页面)）。画布、书页以及PDF和EPUB标签页把文章的其余部分排在那一章的那一页上，标记里用全书的页码。章节的排版记录会保存它送出的文章，所以文章改动时，含有那一页的章节会重新排版；中间某一章改动时则不会。点击带过去的文字，光标会落在文章的Markdown里；光标位于带过去的文字中时，预览下方的路径会写出后面那一页。单独预览一章时，只显示它自己的页面上的内容：其余部分随含有那一页的章节一起出现。
 
+**图自己的文字。** 单击图自己写的题注或附注，光标会移到它的`::caption[…]`或`::note[…]`行（或开始行的属性）中所点的那个字处（见[模板页 › 图自己的文字](/zh/docs/composed-pages#图自己的文字)）。
+
 
 ## 框样式库
 
@@ -59,7 +61,7 @@ export const metadata = {
 - *追加页之后文字仍放不下*（`frameContinuationLimit`）：框的内容已经接续到模板页最多可追加的页数，仍然放不下；
 - *文章转到的页面不在其后*（`continueTargetMissing`）：后面没有哪个页面块的id是框的`continueIn`所指的id；
 - *标注指向不存在的锚点*和*锚点缺少标注*（`labelAnchorUnknown`、`anchorUnlabelled`），归在排这幅图的框下；
-- *标注超出设定宽度*和*标注相互重叠*（`labelOverflow`、`labelOverlap`），也归在这个框下：每个版本的标注用该版本自己的文字测量，所以词更长的语言可能放不下，换一种语言却放得下；
+- *标注超出设定宽度*和*标注相互重叠*（`labelOverflow`、`labelOverlap`），也归在这个框下：每个版本的标注用该版本自己的文字测量，所以词更长的语言可能放不下，换一种语言却放得下。标注压到图片的`avoid`区域（在图片标记的**避让区**模式下画出）时，也列在这里；对于SVG，该模式中的**图中的符号**会在图中每个id以指定前缀开头或带有指定class的元素上添加一个区域（自postext 1.43起）；
 - *槽位没有对应的框*、*空框*、*未知的页面模板*、*模板页只写了三个冒号*和*跨页标记与模板不符*（`slotUnknown`、`slotEmpty`、`templateUnknown`、`pageFenceLength`、`spreadMismatch`）；
 - *目录分组跨栏拆分*（`tocGroupSplit`）；
 - 页面模板本身的警告（框样式或锚点不存在、尺寸相互矛盾、串接链首尾相连形成循环），以及包含书中内容的设计文字（`contentInConfig`）。

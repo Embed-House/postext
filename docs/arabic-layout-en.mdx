@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Arabic layout',
   description: 'How Postext sets Arabic: text direction and the bidirectional algorithm, right-bound books, joined words that are never cut or spaced, kashida justification, vowel marks, emphasis, digits and numeral styles, ordinal words, footnotes, classical verse, contents, index, citations and fonts',
   lang: 'en',
-  lastUpdated: '2026-10-04',
+  lastUpdated: '2026-10-19',
   readingTime: '29 min',
   order: 31,
   plainSummary: "This page explains how Postext lays out Arabic. Arabic is read from right to left, so the lines, the columns and the pages of the book run that way, while numbers and English words inside the text still read from left to right. The letters of a word join each other, so Postext never splits a word, never spreads its letters apart and stretches a line by lengthening some joins instead. The page also covers the vowel signs above and below the letters, the digits used in each region, notes and poems. It ends with two complete examples and the limits that remain.",
@@ -312,7 +312,7 @@ Write the poem in a `:::verse` block, one bayt a line, its hemistichs separated 
 
 The plain text keeps the poem as written, one bayt per line, and leaves out the kashidas and the ornament. See [`:::verse`](/en/docs/document-format-directives#verse) in the document format.
 
-**Free verse and Latin poems.** A poem whose lines carry no `||` — modern free verse, or a Latin poem quoted in an Arabic book (`:::verse{dir=ltr lang=en}`) — is set line by line instead: each source line a line of verse, blank lines between stanzas, leading spaces an indent measured from the poem's own start side, overlong lines turned over with a hanging indent. See [`:::verse` › Line by line](/en/docs/document-format-directives#line-by-line).
+**Free verse and Latin poems.** A poem whose lines carry no `||` — modern free verse, or a Latin poem quoted in an Arabic book (`:::verse{dir=ltr lang=en}`) — is set line by line instead: each source line a line of verse, blank lines between stanzas, leading spaces an indent measured from the poem's own start side, a line a little too wide tightened onto one line (`bodyText.verse.tighten`), a longer one turned over with a hanging indent. `bodyText.verse.layout: 'bayt'` sets such a poem as centred single hemistichs instead, as up to postext 1.22. See [`:::verse` › Line by line](/en/docs/document-format-directives#line-by-line).
 
 ## Contents and index
 
@@ -330,7 +330,7 @@ A contents row is set right to left: the number and title on the right, the lead
 
 **Index.** A back-of-book index of an Arabic book sorts its entries in alphabetical (hijāʾī) order and groups them under their first letter. It ignores the definite article: البصرة files under ب, between بدر and بغداد, and prints as written (`index.ignoreArticle`, on by default when the index language is Arabic; الله keeps its article). It also ignores the vowel marks and the tatweel, files أ إ آ ٱ under ا, and sorts ة with ه and ى with ي. The page numbers are joined with the Arabic comma (، ) and a cross-reference reads انظر or انظر أيضًا. An entry with its own `sort` key keeps that key's article. See [Back-of-book index](/en/docs/configuration-notes-references#back-of-book-index).
 
-**Citations.** A bibliography in an Arabic book takes the Arabic terms of the citation style language (CSL `ar` locale: ص for a page, مج for a volume, و between two authors, وآخرون for et al.) and the document's digits in numbered markers: `[٢، ص ١٢]`. The bibliography's title is المراجع. Commas and semicolons written into a CSL style stay as the style has them. A work in another script keeps its own order: a Latin reference in an Arabic note or bibliography is set as an isolate of its direction, so its URL, its quotation marks and its full stop stay with it, and the note stays a right-to-left paragraph. See [Citations](/en/docs/configuration-notes-references#citations).
+**Citations.** A bibliography in an Arabic book takes the Arabic terms of the citation style language (CSL `ar` locale: ص for a page, مج for a volume, و between two authors, وآخرون for et al.). A numbered marker that the configuration sets (`citations.marker: 'brackets'` or `'parentheses'`) separates with the Arabic comma, `[2، ص 12]`, and keeps its numbers in European digits. The bibliography's title is المراجع. Commas and semicolons written into a CSL style stay as the style has them. A work in another script keeps its own order: a Latin reference in an Arabic note or bibliography is set as an isolate of its direction, so its URL, its quotation marks and its full stop stay with it, and the note stays a right-to-left paragraph. See [Citations](/en/docs/configuration-notes-references#citations).
 
 ## Fonts
 
@@ -362,7 +362,7 @@ Markazi Text and Noto Kufi Arabic serve modern books (text and headings), and El
 
 ## In the Sandbox
 
-Under **Design › Writing system**, the Document language select offers العربية, العربية (مصر) and العربية (المغرب), and **Text direction** and **Digits** show what *Auto* resolves to. **Arabic defaults › Review…** lists what setting the book up for Arabic changes before applying it, with a choice of faces (*Classical*, Amiri; *Modern*, Noto Naskh Arabic with Noto Kufi Arabic headings): the direction and the binding back to *Auto*, running heads and folios in a face with Arabic letters, a leading of 1.75 em, justified text, the region's digits, شكل and جدول numbered by chapter, captions set شكل ١-١: العنوان, chapters numbered الفصل الأول, lists numbered ١- أ- (١) and notes numbered on every page. Every font picker lists the Arabic families first.
+Under **Design › Writing system**, the Document language select offers العربية, العربية (مصر) and العربية (المغرب), and **Text direction** and **Digits** show what *Auto* resolves to. **Arabic defaults › Review…** lists what setting the book up for Arabic changes before applying it, with a choice of faces (*Classical*, Amiri; *Modern*, Noto Naskh Arabic with Noto Kufi Arabic headings): the direction and the binding back to *Auto*, running heads and folios in a face with Arabic letters, a leading of 1.75 em, justified text, the region's digits, شكل and جدول numbered by chapter, captions set شكل ١-١: العنوان, chapters numbered الفصل الأول, lists numbered ١- أ- (١) and notes numbered on every page. Every font picker lists the Arabic families first. An Arabic edition added to a book with **Add a language…** gets the same changes, except the settings the book had already set itself (see [Sandbox: books, Word files and saving](/en/docs/sandbox-books-saving)).
 
 The editor gives each line the direction of its first letter: a line of Arabic runs from the right, and the caret and the arrow keys follow the visual order, while the markup inside it (`{…}` attributes, `[^id]`, a `:ref[…]`, maths, link targets) stays left to right. See [Sandbox](/en/docs/sandbox-design-checks#design-panel).
 
@@ -470,7 +470,7 @@ The chapters start with `:::numbering{format="abjad" startAt=1}` before the intr
 - **Index**: ة is filed under ه, and names are not sorted past ابن or أبو; there are no rhyme or root indexes.
 - **Verse**: no run-in verse inside prose, no strophic forms with a centred refrain beyond single centred lines; a hemistich wider than the measure wraps from the start side, without a hanging indent.
 - **Kashida**: the text copied from the HTML output still holds the inserted tatweels, and kashidas on neighbouring lines are not kept from stacking up one above the other.
-- **Code listings** read left to right in a right-to-left book: each line is set from the box's far side, as an English quotation is, its line numbers in the gutter on its left, its copied text in logical order. See [Code listings](/en/docs/configuration-styles#code-listings).
+- **Code listings** read left to right in a right-to-left book: each line is set from the box's far side, as an English quotation is, its line numbers in the gutter on its left, its copied text in logical order. Inline code reads left to right too, whatever letter it opens with, and sets its Arabic letters in the face of the text around it (`codeStyle.inline.otherScripts: 'text'`, the default), since few code faces have them. See [Code listings](/en/docs/configuration-styles#code-listings).
 - **Words with no letter** take the script of their context in the running text, headings, lists, captions, notes and cells. A list marker, the label of a cross-reference, a note marker, design text (a folio, a running head of numbers), comic lettering and a paragraph set by the CJK composer are shaped alone, as each browser shapes them.
 
 ## Sources

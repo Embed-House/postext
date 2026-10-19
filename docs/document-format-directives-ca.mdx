@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'Les directives que comencen amb ::: (contenidors, columnes, paper, salts de pàgina, numeració, espai, vers, índex general i índex analític, salts de línia) i el marcatge de les pàgines de còmic',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '37 min',
   order: 26,
   parent: 'document-format',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Directives
 
-Les directives són ordres de control d'una sola línia, escrites com a `:::nombre` o `:::nombre{atributos}` en una línia pròpia. No produeixen res de visible: controlen la col·locació i la numeració.
+Les directives són ordres de control d'una sola línia, escrites com a `:::nom` o `:::nom{atributs}` en una línia pròpia. La majoria no produeix res de visible i controla la col·locació i la numeració; `:::toc`, `:::index` i `:::bibliography` imprimeixen el sumari, l'índex analític i la bibliografia allà on són.
 
 <table>
   <thead>
@@ -68,6 +68,10 @@ Les directives són ordres de control d'una sola línia, escrites com a `:::nomb
       <td>Imprimeix aquí l'índex analític: tots els termes marcats amb <code>:index</code> al llibre, ordenats i agrupats per inicial, amb les pàgines on cauen, compostos segons la configuració <code>index</code>. <code>:::index&#123;index="nombres"&#125;</code> imprimeix un índex amb nom. Vegeu <a href="/ca/docs/document-format-notes-references#índex-analític">Índex analític</a>.</td>
     </tr>
     <tr>
+      <td><code>:::bibliography</code></td>
+      <td>Imprimeix aquí la llista d'obres citades, en l'estil de citació. <code>title</code> en canvia el títol i <code>scope</code>, el que hi entra. Vegeu <a href="/ca/docs/document-format-notes-references#la-bibliografia">La bibliografia</a>.</td>
+    </tr>
+    <tr>
       <td><code>:::page&#123;…&#125;</code> … <code>:::</code></td>
       <td>Una pàgina de còmic: les línies <code>::panel</code> i les línies de guió que les segueixen, compostes com a vinyetes i bafarades retolades en una pàgina pròpia. Vegeu <a href="#còmics">Còmics</a>.</td>
     </tr>
@@ -84,7 +88,7 @@ Les directives són ordres de control d'una sola línia, escrites com a `:::nomb
 
 Els valors dels atributs poden anar entre cometes dobles (<code>"…"</code>), cometes simples (<code>'…'</code>) o sense cometes (<code>startAt=17</code>). Una clau sense `=` es tracta com un indicador present amb valor buit.
 
-Avui només es reconeixen `pagebreak`, `numbering`, `columnbreak`, `space`, `toc` i `index` com a directives d'una sola línia (i `references`, `verse`, `page` i `strip` com a blocs delimitats); qualsevol altra línia `:::nombre` que no sigui un contenidor (més avall) s'analitza com a paràgraf i genera un avís **Directiva desconeguda** al Sandbox. El motor també ho registra, com una entrada `unknownDirective` als `contentWarnings` del document (vegeu [Configuració › Avisos del document](/ca/docs/configuration-programmatic-usage#avisos-del-document)).
+Avui només es reconeixen `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index` i `bibliography` com a directives d'una sola línia (i `references`, `verse`, `page`, `strip` i `figure` com a blocs delimitats); qualsevol altra línia `:::nombre` que no sigui un contenidor (més avall) s'analitza com a paràgraf i genera un avís **Directiva desconeguda** al Sandbox. El motor també ho registra, com una entrada `unknownDirective` als `contentWarnings` del document (vegeu [Configuració › Avisos del document](/ca/docs/configuration-programmatic-usage#avisos-del-document)).
 
 ### Valors dels atributs
 
@@ -96,6 +100,7 @@ La mateixa sintaxi `clave="valor"` la fan servir els atributs d'encapçalament, 
 - **Sense claus.** `{` i `}` no van mai en un valor. La primera `}` tanca el bloc: una línia d'obertura amb un valor que en contingui una deixa de ser una directiva i passa a ser un paràgraf, i, en línia, la resta del valor passa al text. En un encapçalament, una clau dins d'un valor deixa tot el bloc al títol: `# Título {nota="a {b"}` es compon tal com està escrit. (Fins a postext 1.8, una `{` després d'un espai tornava a començar el bloc i `b` es llegia com a indicador.)
 - **El signe `$` és text.** Els atributs es llegeixen abans que les fórmules en línia, així que `lead="de 5 $ a 6 $"` és només text.
 - **Una línia.** Un bloc d'atributs no ocupa mai més d'una línia.
+- **Identificadors.** `#idea-clau`, l'abreviatura de Pandoc, equival a `id="idea-clau"`: `{#sec-metode}` en un encapçalament, `:::callout{#caixa-seguretat}` en una línia d'obertura. Dona nom al bloc per a les [referències creuades](/ca/docs/document-format-notes-references#referències-creuades-i-àncores).
 
 ```markdown
 # El llarg camí {lead='Una "novel·la de carretera", van dir' precio="18 $"}
@@ -105,7 +110,7 @@ La mateixa sintaxi `clave="valor"` la fan servir els atributs d'encapçalament, 
 :::
 ```
 
-`::resource{id="…"}` és més estricte: l'id entre cometes dobles i cap altre atribut (consulta [Recursos](/ca/docs/document-format-resources#recursos)).
+`::resource{id="…"}` és més estricte: l'id entre cometes dobles i cap altre atribut (consulta [Recursos](/ca/docs/document-format-resources#recursos)). En una pàgina composta admet a més `slot="…"` (vegeu [Pàgines compostes](#pàgines-compostes)).
 
 ### Contenidors
 
@@ -120,7 +125,7 @@ Mantén la llanterna encesa **totes** les nits.
 :::
 ```
 
-Al flux del text es reconeixen cinc noms de contenidor. El que renderitza cadascun es defineix a la seva secció de la configuració:
+Al flux del text es reconeixen cinc noms de contenidor; un sisè, `:::frame`, conté el contingut d'un marc en una [pàgina composta](#pàgines-compostes). El que renderitza cadascun es defineix a la seva secció de la configuració:
 
 <table>
   <thead>
@@ -291,7 +296,7 @@ Una caixa niada dins d'un grup queda sencera i passa a la part següent, i un gr
 :::
 ```
 
-Una línia d'obertura `:::callout` també admet `label="…"`: el text que un estil amb pestanya `label` imprimeix a la cantonada superior de la caixa (`:::callout{type="recuadro" label="RECUADRO 1-1" title="La regla del octeto"}`).
+Una línia d'obertura `:::callout` també admet `label="…"`: el text que un estil amb pestanya `label` imprimeix a la cantonada superior de la caixa (`:::callout{type="recuadro" label="RECUADRO 1-1" title="La regla del octeto"}`). Qualsevol altre atribut de la línia d'obertura el llegeix el disseny de l'estil, si en té: `:::callout{type="targeta" kicker="Nota"}` dona als seus textos `{attr.kicker}`, i `{boxText}` imprimeix el contingut del mateix requadre (vegeu [Configuració › Dissenys de requadre](/ca/docs/configuration-callouts#dissenys-de-requadre)).
 
 Un `:::callout` dins d'un altre és una caixa independent (una fitxa d'exercici amb requadres de resposta, per exemple). Té el seu estil (fons, vora, radi, farciment, títol, icona), ocupa tota l'amplada interior de la caixa exterior i s'apila entre els altres blocs; el `span` i el `placement` s'ignoren, perquè una caixa niada sempre va dins de la caixa que la conté. Cada línia de tancament tanca la caixa oberta més interna:
 
@@ -700,7 +705,7 @@ maya: Aquesta línia continua
 
 - La **clau** és un id de personatge (lletres, xifres, `_`, `.`, `-`), el mateix en totes les traduccions; `caption`, `sfx` i `note` són reservades. Els dos punts poden ser els `：` d'amplada completa.
 - Una paraula sola entre claus és un **estil de bafarada** (`thought`, `whisper`, `shout`, `radio`, `inner` o un de `comics.balloonStyles`); `style=` diu el mateix.
-- `at` fixa la bafarada: un punt en percentatges del dibuix de la vinyeta (`at="62% 40%"`), o una cantonada o una vora (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` apunta la cua a un punt del dibuix; `tail=none` la treu i `tail=top|bottom|start|end|left|right` l'apunta fora de la vinyeta. `join` i `join=false` uneixen la bafarada a l'anterior del mateix personatge o la mantenen separada; `break` li permet travessar la vora, i aquest encreuament no genera cap avís de desbordament. `rotate` (graus), `size` (una escala, per a les onomatopeies), `color` i `font` en modifiquen la retolació.
+- `at` fixa la bafarada: un punt en percentatges del dibuix de la vinyeta (`at="62% 40%"`), o una cantonada o una vora (`top-start`, `top-end`, `bottom-start`, `bottom-end`, `top`, `bottom`). `to` apunta la cua a un punt del dibuix; `tail=none` la treu i `tail=top|bottom|start|end|left|right` l'apunta fora de la vinyeta. `join` i `join=false` uneixen la bafarada a l'anterior del mateix personatge o la mantenen separada; `break` li permet travessar la vora, i aquest encreuament no genera cap avís de desbordament. `rotate` (graus), `skew` (una inclinació en graus, per a un text sobre un objecte vist en perspectiva), `size` (una escala, per a les onomatopeies), `color` i `font` en modifiquen la retolació.
 - `vertical` i `horizontal` (o `mode=vertical`, `mode=horizontal`) fixen la direcció d'escriptura de la línia per damunt de la del llibre: un `ドン` sense traduir, compost en columna en una edició horitzontal; un rètol escrit de través, en filera en una de vertical. Una columna en un llibre d'una altra llengua segueix les regles del seu propi text (amb kana, les del japonès). En un llibre vertical, una línia sense caràcters xinesos ni japonesos es compon en filera igualment.
 - Una línia sagnada amb dos espais o un tabulador continua la bafarada de sobre; una barra inversa al final d'una línia hi parteix el text. Les línies en blanc s'ignoren.
 - El text és Markdown en línia: èmfasi (retolat en negreta cursiva), `:tcy`, `:ruby` (la lectura sobre la base, tret que la base vagi de dreta a esquerra), `:ltr` i `:rtl` (un fragment que conserva el seu propi sentit). Les notes a peu de pàgina i les marques `:ref` no es llegeixen.
@@ -730,4 +735,4 @@ Una pàgina composta es maqueta a partir d'una plantilla de pàgina de la config
 - `::::page{template="…"}` … `::::` és el bloc de pàgina: quatre signes de dos punts o més, i es tanca amb una línia que només conté el mateix nombre de signes. Les línies de tres signes de dos punts que hi ha a dins (`:::frame`, `:::callout`, `:::figure`…) funcionen com a tot arreu, i un `:::` sol mai no tanca la pàgina. Un `:::page` de tres signes de dos punts continua sent una pàgina de còmic.
 - `:::frame{slot="…" label="…"}` … `:::` conté el contingut del marc amb aquest nom: qualsevol Markdown.
 - `slot="…"` en un encapçalament (`## Retos {slot="retos-titulo"}`), a `::resource{id="…" slot="…"}`, en la línia d'obertura d'un bloc de codi o en un contenidor `:::` envia només aquell bloc. El contingut sense ranura va al marc de flux de la plantilla.
-- `:::figure{resource="…" slot="…"}` … `:::` col·loca un recurs amb les seves línies `::label[TEXT]{at="…" style="…"}`, on `at` és una àncora de la imatge o un punt `"x% y%"`. Una figura també funciona al text corregut.
+- `:::figure{resource="…" slot="…"}` … `:::` col·loca un recurs amb les seves línies `::label[TEXT]{at="…" style="…"}`, on `at` és una àncora de la imatge o un punt `"x% y%"`. Una figura també funciona al text corregut. Els seus `alt`, `caption` i `note`, com a atributs de la línia d'obertura o com a línies `::alt[…]`, `::caption[…]` i `::note[…]`, substitueixen els textos del recurs en aquell capítol (vegeu [Pàgines compostes › Les paraules pròpies d'una figura](/ca/docs/composed-pages#les-paraules-pròpies-duna-figura)).

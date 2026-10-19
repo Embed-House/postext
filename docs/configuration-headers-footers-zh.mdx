@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '页眉与页脚',
   description: '页眉和页脚里印什么、放在哪里：带占位符的文字、线条、方框和图像，可以按奇偶页分别设置，每个元素的位置也可以单独指定',
   lang: 'zh',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '21分钟',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ export const metadata = {
 
 槽位使用统一的**设计槽位**模型：每个元素都有`placement`，其中有`anchor`（锚定到容器，或用`#id`锚定到另一个元素），还可以有`offset`和`size`。旧版的平铺字段`align`、`marginFromBody`、`marginFromEdge`和`width: 'full'`在输入时仍然可用，会自动转换成新结构；与之等价的新结构写法见下文。
 
-每个槽位包含一组**文本**、**线条**和**方框**元素。数组顺序就是绘制顺序（第一个元素最先绘制，最后一个元素画在最上层）。无论锚点怎么写，这一点都成立：元素可以锚定到排在它后面的元素（`anchor.to: '#ttl'`），所以背景方框可以排在最前面，同时仍以压在它上面的那段文本为基准定位。
+每个槽位包含一组**文本**、**线条**、**方框**和**图像**元素。数组顺序就是绘制顺序（第一个元素最先绘制，最后一个元素画在最上层）。无论锚点怎么写，这一点都成立：元素可以锚定到排在它后面的元素（`anchor.to: '#ttl'`），所以背景方框可以排在最前面，同时仍以压在它上面的那段文本为基准定位。
 
 **内置默认值。** 当`header`或`footer`为`undefined`时，postext会使用一套合理的内置默认设置，而不是留一个空槽位：
 
@@ -46,7 +46,7 @@ export const metadata = {
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>为<code>undefined</code>时使用内置默认值；<code>[]</code>表示禁用</td>
-      <td>文本元素和线条元素的有序列表。</td>
+      <td>文本、线条、方框和图像元素的有序列表。</td>
     </tr>
   </tbody>
 </table>
@@ -105,9 +105,9 @@ export const metadata = {
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
-      <td>元素出现在哪类页面（页面<em>角色</em>）上，与<code>parity</code>组合使用。排版完成后，每一页都归入以下一类：<code>'blank'</code>（为奇偶补的页、分隔用的空白页，或没有内容的页）、<code>'part'</code>（篇名页）、<code>'opener'</code>（第一个块是标题，且这一级标题通栏排或在前面强制分页，也就是一章的第一页）或<code>'body'</code>（其余所有页）。<code>pages: 'body'</code>在章首页上隐藏书眉；<code>pages: 'opener'</code>只在章首页显示页码。</td>
+      <td>元素出现在哪类页面（页面<em>角色</em>）上，与<code>parity</code>组合使用。排版完成后，每一页都归入以下一类：<code>'blank'</code>（为奇偶补的页、分隔用的空白页，或没有内容的页）、<code>'part'</code>（篇名页）、<code>'opener'</code>（第一个块是标题，且这一级标题通栏排或在前面强制分页，也就是一章的第一页）、<code>'comic'</code>（漫画页，<code>:::page</code>）、<code>'composed'</code>（模板页，或其模板<code>role</code>指定的角色）或<code>'body'</code>（其余所有页）。<code>pages: 'body'</code>在章首页上隐藏书眉；<code>pages: 'opener'</code>只在章首页显示页码。</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -142,8 +142,8 @@ export const metadata = {
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td>标题设计和篇的设计中为<code>'wrap'</code>，其余为<code>'ellipsis-end'</code></td>
-      <td>文本超出元素可用宽度时引擎如何处理。<code>'wrap'</code>把一行折成多行；几种省略号模式让每行保持为一行，并在开头、中间或末尾用<code>…</code>截断；<code>'clip'</code>在元素的外框处硬性裁掉，不插入任何字符。内容中的换行在所有模式下都有效：省略号模式和裁切模式各自截断或裁切每一行。不写<code>overflow</code>的元素取所在槽位的默认值：在标题设计（<code>advancedDesign.slot</code>）或篇名页（<code>parts.design</code>、<code>parts.versoDesign</code>）中折行，在书眉、页码或目录的篇行（<code>toc.parts.design</code>，行高固定）中以<code>…</code>结尾。可能排成多行的书眉（如地址）要设为<code>'wrap'</code>，章首页上必须保持一行的引题则设一种省略号模式。被省略号截断的行，或被裁切且有笔画超出方框的行，会报告为<code>designTextTruncated</code>内容警告，每个元素每页报告一次（书眉和页码每个元素每章一次）。postext 1.24之前保存的配置（<code>configVersion</code>为9或更早）读取时，标题和篇名页中未设置此项的文字一律按<code>'ellipsis-end'</code>处理，因此页面不会变动。带<code>dropCap</code>的文本无论这里怎么设都会折行；设为<code>'clip'</code>时，它的行仍会在固定高度方框的边缘被裁掉。<code>'ellipsis-end'</code>和<code>'ellipsis-start'</code>在词的边界处截断，得到<em>The history of…</em>，而不是<em>The history of th…</em>；省略号旁边不会紧挨空格或连接性标点（逗号、冒号、破折号、斜杠、左括号）。只有当在词边界截断（去掉这些标点后）保留的内容不到可容纳内容的一半时，才会在词中间截断：一个很长的词，或一个URL（<em>http://exampl…</em>，而不是<em>http…</em>）。不换行空格或不换行连字符（U+2011，如<em>MS‑DOS</em>）不算词边界；<code>'ellipsis-middle'</code>可以在任意位置截断，但会去掉两侧的空格。postext 1.4及更早版本中，所有模式都在最后一个放得下的字符处截断，空格也算在内。</td>
+      <td>标题设计、篇的设计和框的设计中为<code>'wrap'</code>，其余为<code>'ellipsis-end'</code></td>
+      <td>文本超出元素可用宽度时引擎如何处理。<code>'wrap'</code>把一行折成多行；几种省略号模式让每行保持为一行，并在开头、中间或末尾用<code>…</code>截断；<code>'clip'</code>在元素的外框处硬性裁掉，不插入任何字符。内容中的换行在所有模式下都有效：省略号模式和裁切模式各自截断或裁切每一行。不写<code>overflow</code>的元素取所在槽位的默认值：在标题设计（<code>advancedDesign.slot</code>）、篇名页（<code>parts.design</code>、<code>parts.versoDesign</code>）或<a href="/zh/docs/configuration-callouts#框的设计">框的设计</a>（<code>calloutStyles[].design</code>）中折行，在书眉、页码或目录的篇行（<code>toc.parts.design</code>，行高固定）中以<code>…</code>结尾。可能排成多行的书眉（如地址）要设为<code>'wrap'</code>，章首页上必须保持一行的引题则设一种省略号模式。被省略号截断的行，或被裁切且有笔画超出方框的行，会报告为<code>designTextTruncated</code>内容警告，每个元素每页报告一次（书眉和页码每个元素每章一次）。postext 1.24之前保存的配置（<code>configVersion</code>为9或更早）读取时，标题和篇名页中未设置此项的文字一律按<code>'ellipsis-end'</code>处理，因此页面不会变动。带<code>dropCap</code>的文本无论这里怎么设都会折行；设为<code>'clip'</code>时，它的行仍会在固定高度方框的边缘被裁掉。<code>'ellipsis-end'</code>和<code>'ellipsis-start'</code>在词的边界处截断，得到<em>The history of…</em>，而不是<em>The history of th…</em>；省略号旁边不会紧挨空格或连接性标点（逗号、冒号、破折号、斜杠、左括号）。只有当在词边界截断（去掉这些标点后）保留的内容不到可容纳内容的一半时，才会在词中间截断：一个很长的词，或一个URL（<em>http://exampl…</em>，而不是<em>http…</em>）。不换行空格或不换行连字符（U+2011，如<em>MS‑DOS</em>）不算词边界；<code>'ellipsis-middle'</code>可以在任意位置截断，但会去掉两侧的空格。postext 1.4及更早版本中，所有模式都在最后一个放得下的字符处截断，空格也算在内。</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -227,7 +227,7 @@ export const metadata = {
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>仅用于标题设计：该元素是否计入标题在文字流中预留的高度。可以压在文本下面的装饰（页面底部的印章、边框、侧边色带）应设为<code>false</code>。见<a href="/zh/docs/configuration-headings#保留高度">保留高度</a>。页眉、页脚和篇的设计忽略此项。</td>
+      <td>仅用于标题设计和框的设计：该元素是否计入标题在文字流中预留的高度，或框的设计（<code>calloutStyles[].design</code>）中带的高度。可以压在文本下面的装饰（页面底部的印章、边框、侧边色带）应设为<code>false</code>。见<a href="/zh/docs/configuration-headings#保留高度">保留高度</a>。页眉、页脚和篇的设计忽略此项。</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -257,6 +257,7 @@ export const metadata = {
 - `{bookTotalPages}`：整本书的总页数，计入所有章，包括空白页。对单独排版的文档，它等于`{totalPages}`。见下文[全书页数](#全书页数)。
 - `{title}`、`{subtitle}`、`{author}`、`{publishDate}`：从`content.metadata`读取的值。未知或为空的元数据输出为空字符串（并在沙盒中发出警告）。
 - `{chapterTitle}`：当前页或此前最近一个H1的文本。[标题样式](/zh/docs/configuration-styles#标题样式)设了`runningChapter: false`的H1（插图页、地图）会被跳过。
+- `{chapterNumber}`：该章的编号。该级或其标题样式设了`numberingTemplate`时为H1的编号，否则为章的序数（`1`、`2`…）；不编号的章为空。
 - `{chapterTitleAtTop}`、`{chapterNumberAtTop}`：页面顶部所属那一章的标题和编号；如果新章在页面中间、接在其他文字之后开始，它们就与`{chapterTitle}`和`{chapterNumber}`不同。见下文[页面顶部所属的章](#页面顶部所属的章)。
 - `{partTitle}`、`{partNumber}`：当前篇的标题和编号（当前页或此前最近的`:::part`页；紧挨在篇名页之前、为奇偶补的空白页已经算作该篇）。第一篇之前为空。
 - `{firstMark.<key>}`、`{lastMark.<key>}`：页面的第一个和最后一个检索词：某一级标题（`h1`–`h6`），或某个段落样式的词条。见下文[检索词：首标记与尾标记](#检索词首标记与尾标记)。
@@ -388,7 +389,7 @@ header: {
 
 你自己写的文本元素以下面这些值为起点，有些可能出乎你的意料：
 
-- **`overflow`取决于所在槽位。** 在标题设计或篇名页中，长标题会折成多行；在书眉、页码或目录的篇行中，对所在空间来说太宽的文本会被截成一行并加上`…`。可能较长的书眉（地址、署名）要设`overflow: 'wrap'`，并查看被截断文字的`designTextTruncated`警告。内容中的换行（换行符，或模板、属性值中的`\n`）在所有模式下都会另起一行；省略号模式各自截断每一行。
+- **`overflow`取决于所在槽位。** 在标题设计、篇名页或框的设计中，长标题会折成多行；在书眉、页码或目录的篇行中，对所在空间来说太宽的文本会被截成一行并加上`…`。可能较长的书眉（地址、署名）要设`overflow: 'wrap'`，并查看被截断文字的`designTextTruncated`警告。内容中的换行（换行符，或模板、属性值中的`\n`）在所有模式下都会另起一行；省略号模式各自截断每一行。
 - **`align`为`'center'`，`verticalAlign`为`'middle'`。** 自动宽度的元素收缩到最长的一行，所以各行彼此居中；要排成齐左的一块，设`align: 'left'`（锚定到另一个元素的自动宽度元素会自行向锚点一侧对齐各行，见上文）。
 - **字体为EB Garamond 8 pt、黑色、`lineHeight` 1.2**，与正文用什么字体无关。与配置中的其他行距不同，设计文本的`lineHeight`通常写成一个简单的倍数（`1.2`）；`Dimension`也可以（见上文）。
 
@@ -520,7 +521,7 @@ header: {
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>线条出现在哪些页面角色上（见文本元素的<code>pages</code>字段）。</td>
     </tr>
@@ -603,7 +604,7 @@ header: {
     </tr>
     <tr>
       <td><code>pages</code></td>
-      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
+      <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>方框出现在哪些页面角色上（见文本元素的<code>pages</code>字段）。</td>
     </tr>
@@ -696,7 +697,7 @@ PDF后端像嵌入图一样嵌入该资源（带印刷母版的SVG会使用母�
 
 ### 元素定位
 
-`ElementPlacement`是统一的定位模型，任何设计槽位（页眉、页脚或标题级的高级设计槽位）中的每种元素类型（文本、线条、方框）都使用它。定位由三部分组成：
+`ElementPlacement`是统一的定位模型，任何设计槽位（页眉、页脚或标题级的高级设计槽位）中的每种元素类型（文本、线条、方框、图像）都使用它。定位由三部分组成：
 
 ```ts
 interface ElementPlacement {
@@ -717,7 +718,7 @@ interface ElementPlacement {
 
 `AnchorEdge`接受：
 
-- **容器边**（`anchor.to`为`'container'`、`'page'`或`'bleed'`时）：`top`、`top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right`、`left`、`right`。
+- **容器边**（`anchor.to`为`'container'`、`'page'`、`'bleed'`或`'outer'`时）：`top`、`top-left`、`top-right`、`bottom`、`bottom-left`、`bottom-right`、`left`、`right`，以及框的中心`center`。
 - **相对元素的边**（`anchor.to === '#someId'`时）：`right-of`、`left-of`、`below`、`above`、`align-top`、`align-bottom`、`align-left`、`align-right`。
 
 每种相对元素的边都把本元素的一个角放在所锚定元素的一个角上，再由`offset`从那里移动：

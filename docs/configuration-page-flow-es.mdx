@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Viudas, huérfanas y equilibrado',
   description: 'Las reglas que mantienen juntas las líneas y los bloques cuando cambian de columna, y los recursos con los que el motor consigue que todas las columnas terminen a la misma altura.',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -185,6 +185,8 @@ Las editoriales esperan que todas las columnas empiecen en la parte superior de 
 En una retícula de caracteres (`cjk.grid`; véase [Composición china › La retícula de caracteres](/es/docs/chinese-layout#la-retícula-de-caracteres)), cada carácter ocupa una casilla de un cuadratín de ancho, y cada línea, un paso de la retícula, que también es la rejilla base. Allí el equilibrado está desactivado por defecto, igual que en el texto vertical: una página compuesta línea a línea sobre una retícula, como la que pide la GB/T 9704 (22 líneas de 28 caracteres), deja corta la columna que sale corta. Si la configuración fija `enabled: true`, las palancas respetan la retícula: los encabezados, los finales de lista, las fórmulas en bloque y las figuras toman líneas enteras de la retícula, de modo que el texto de debajo se desplaza por filas enteras, y `gridLines: 'off'` deja fuera esas palancas para las normas que no tienen ninguna fila vacía que ceder. Un párrafo chino o japonés solo gana una línea si ningún hueco entre dos de sus caracteres se ensancha más de `maxTracking`, y sus letras no reciben espaciado adicional: una línea a la que le falta un carácter tiene que repartir un cuadratín entre sus huecos, mucho más que los 0,01 em por defecto, así que, en una retícula de casillas enteras, la palanca de los párrafos aflojados casi nunca encuentra nada. El recuadro que cierra una columna y las imágenes con zona segura quedan, por diseño, fuera de la retícula y funcionan como en cualquier otra página.
 
 La última columna de una página solo se equilibra si la página continúa de forma natural en la siguiente: es normal que la última página de un capítulo termine corta. En una página así, y en una banda de cierre cortada a la misma altura por `trailing`, las cabezas de las columnas también se mantienen a la misma altura: no se añade ninguna línea bajo una figura o una tabla que encabece una de sus columnas (la palanca de los flotantes), y un encabezado o un recuadro que abre una columna bajo esa figura se queda en su cabeza, diga lo que diga `stretchAfterFloats`. Lo mismo ocurre con el encabezado que va justo debajo de una apertura `span: 'page'`, en la columna de esa apertura. Así, ninguna columna empieza más abajo que la de al lado solo para igualar los pies.
+
+Estos ajustes van en `headings.balancing`.
 
 <table>
   <thead>

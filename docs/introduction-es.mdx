@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Introducción',
   description: 'Qué es Postext, por qué existe y el problema que resuelve',
   lang: 'es',
-  lastUpdated: '2026-09-24',
+  lastUpdated: '2026-10-19',
   readingTime: '7 min',
   order: 1,
   plainSummary: "Postext es un programa libre y gratuito que compone las páginas de libros, revistas e informes en la web. Los libros impresos siguen desde hace siglos reglas de maquetación muy cuidadas, como igualar las columnas o poner cada imagen cerca del texto que la menciona. Las páginas web nunca han tenido esas reglas, y Postext las añade. Tú escribes el texto y Postext coloca en la página cada línea, imagen y nota. Esta página cuenta por qué existe el proyecto y cómo empezó.",
@@ -25,10 +25,11 @@ en lugar de quedarse cerca de las palabras que las llaman. La web nos dio la maq
 pero nunca nos dio maquetación *editorial*.
 
 Postext cierra esa brecha. Es un motor de maquetación que recibe tu contenido (texto en Markdown y
-recursos declarados, como imágenes de mapa de bits, diagramas SVG y tablas, que se incorporan por
+recursos declarados, como imágenes de mapa de bits, diagramas SVG, tablas y vídeos, que se incorporan por
 referencia) y le aplica las mismas reglas que aplicaría un tipógrafo profesional: evitar huérfanas y
 viudas, equilibrar las columnas, hacer que el texto rodee los obstáculos y espaciar con intención.
-El resultado es una geometría de página con calidad editorial, tanto para HTML como para PDF.
+El resultado es una geometría de página con calidad editorial, que se dibuja en canvas, HTML, PDF,
+EPUB o como libro en 3D.
 
 Se apoya en [`@chenglou/pretext`](https://github.com/chenglou/pretext), que mide el texto sin el DOM
 a una velocidad que hace posible todo esto.
@@ -158,7 +159,7 @@ Pretext te da las medidas. Postext te da la maquetación.
 El proceso tiene tres etapas:
 
 1. **Tú aportas el contenido.** Texto en Markdown y recursos declarados: imágenes de mapa de bits,
-   diagramas SVG y tablas. Una referencia en línea `:ref{id="..."}` numera el recurso y, a la vez,
+   diagramas SVG, tablas y vídeos. Una referencia en línea `:ref{id="..."}` numera el recurso y, a la vez,
    lo coloca como flotante en una banda superior o inferior cerca de su primera mención, igual que
    un tipógrafo coloca las figuras en un libro impreso. El contenido sigue siendo puramente
    semántico: describe *qué* se presenta, no *cómo*; las decisiones de maquetación nunca quedan
@@ -179,9 +180,11 @@ El proceso tiene tres etapas:
    cada página. Los renderizadores trasladan esa geometría al formato de destino: **canvas** para
    una vista previa en mapa de bits exacta al píxel (`renderToCanvas`, `renderPage`), **HTML** para
    una tipografía seleccionable en la web que responde a los cambios de tamaño (`renderToHtml`,
-   `renderToHtmlIndexed`) y **PDF** para una salida lista para imprenta, con las fuentes incrustadas
-   (`renderToPdf`, del paquete `postext-pdf`). El mismo contenido y las mismas reglas, con tres
-   salidas intercambiables.
+   `renderToHtmlIndexed`), **PDF** para una salida lista para imprenta, con las fuentes incrustadas
+   (`renderToPdf`, del paquete `postext-pdf`), **EPUB 3** para los lectores de libros electrónicos
+   (`renderToEpub`, de `postext-epub`) y un **libro en 3D** cuyas hojas se pasan en el navegador
+   (`createFolioFromDocument`, de `postext-folio`). Todas las salidas se dibujan a partir de la misma
+   maquetación.
 
 <Illustration name="LayoutProcess" data='{"title": "Maquetación en tres etapas", "desc": "El Markdown enriquecido y la configuración entran en el motor, que maqueta en varias pasadas, con la medición de Pretext dentro, y genera el HTML o el PDF.", "caption": "Entra contenido y sale geometría, que después se convierte al formato de destino.", "inputTitle": "Markdown enriquecido", "inputSubtitle": "+ configuración", "parse": "analizar", "engineTitle": "Motor Postext", "engineSub1": "medición con Pretext", "engineSub2": "maquetación en varias pasadas", "render": "generar", "outputTitle": "HTML / PDF", "outputSubtitle": "salida generada"}' />
 
@@ -192,7 +195,7 @@ configuración, desde la geometría de la página hasta el estilo de tablas, pie
 diagramas, está en [Configuración](/es/docs/configuration). Y para probarlo todo en directo (un
 editor para el texto de cada capítulo, un panel **Recursos** con editor de tablas y subida de
 imágenes y SVG, un panel **Diseño** que recorre todos los ajustes en términos editoriales y vistas
-previas en vivo en canvas, HTML y PDF), abre el [Sandbox](/es/docs/sandbox).
+previas en vivo en canvas, PDF, Folio (3D), HTML y EPUB), abre el [Sandbox](/es/docs/sandbox).
 
 
 ## Reconocimientos

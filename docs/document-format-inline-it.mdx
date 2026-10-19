@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Formattazione in linea e formule',
   description: 'La formattazione all’interno di una riga: enfasi, link, chip, maiuscoletto, tabulazioni, testo verticale, segni cinesi e giapponesi, direzione del testo e formule LaTeX',
   lang: 'it',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '27 min',
   order: 27,
   parent: 'document-format',
@@ -81,14 +81,24 @@ Il markup in linea viene riconosciuto dentro qualsiasi blocco di testo (titoli, 
       <td>Una nota composta in due righe a metà grandezza dentro la riga (双行夹注), divisa tra righe e pagine.</td>
     </tr>
     <tr>
+      <td>Segni giapponesi</td>
+      <td><code>:sideline[見事]</code>, <code>:kunten[學]&#123;okuri="ビテ"&#125;</code></td>
+      <td>Una linea laterale (傍線) e i segni del kanbun (訓点: segni di ritorno, okurigana) accanto ai caratteri. Il testo resta com’è scritto; vedi <a href="#segni-cinesi-ruby-e-warichu">Segni cinesi, ruby e warichu</a>.</td>
+    </tr>
+    <tr>
+      <td>Direzione del testo</td>
+      <td><code>:ltr[…]</code>, <code>:rtl[…]</code></td>
+      <td>Isola un tratto nella sua direzione: un nome inglese in una frase araba, uno arabo in una frase inglese. Vedi <a href="#la-direzione-del-testo-nel-markup">La direzione del testo nel markup</a>.</td>
+    </tr>
+    <tr>
       <td>Codice in linea</td>
       <td><code>`code`</code></td>
       <td>Gli apici inversi vengono eliminati; la sequenza si disegna come testo semplice, esattamente come è scritta: un <code>{':ref{…}'}</code>, un chip, una formula, un link o un marcatore di enfasi al suo interno si stampa letteralmente, ed è così che un testo mostra la sintassi. Si compone nel carattere del testo, oppure, con <code>codeStyle.inline</code>, nel carattere del codice come un’unità (vedi <a href="/it/docs/configuration-styles#listati-di-codice">Configurazione › Listati di codice</a>). Un listato va in un <a href="/it/docs/document-format#blocchi-di-codice">blocco di codice</a>.</td>
     </tr>
     <tr>
       <td>Escape</td>
-      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code></td>
-      <td>Una barra rovesciata compone il carattere marcatore stesso invece di aprire una sequenza: l’asterisco di una nota di tabella (<code>{'\\* pOH = −log [OH^−^]'}</code>), un accento circonflesso letterale, un simbolo del dollaro che non apre una formula. Funziona nel testo, nei chip e in didascalie, celle e note. (Fino a postext 1.4 didascalie, celle, note e chip stampavano la barra rovesciata di <code>{'\\$'}</code>.)</td>
+      <td><code>{'\\*'}</code>, <code>{'\\_'}</code>, <code>{'\\^'}</code>, <code>{'\\~'}</code>, <code>{'\\`'}</code>, <code>{'\\$'}</code>, <code>{'\\@'}</code></td>
+      <td>Una barra rovesciata compone il carattere marcatore stesso invece di aprire una sequenza: l’asterisco di una nota di tabella (<code>{'\\* pOH = −log [OH^−^]'}</code>), un accento circonflesso letterale, un simbolo del dollaro che non apre una formula, una chiocciola che non cita nulla. Funziona nel testo, nei chip e in didascalie, celle e note. (Fino a postext 1.4 didascalie, celle, note e chip stampavano la barra rovesciata di <code>{'\\$'}</code>.)</td>
     </tr>
     <tr>
       <td>Spazio non separabile</td>
@@ -116,6 +126,11 @@ Il markup in linea viene riconosciuto dentro qualsiasi blocco di testo (titoli, 
       <td>Una sequenza di testo in un riquadro che va a capo come un’unità: una banca di parole, un tasto, un’etichetta. Lo stile viene da <code>chipStyles</code>; vedi <a href="#chip-in-linea">Chip in linea</a>.</td>
     </tr>
     <tr>
+      <td>Evidenziazione</td>
+      <td><code>:mark[testo]</code></td>
+      <td>Una fascia colorata dietro parole che restano testo normale: vanno a capo, si dividono e si giustificano come sempre. Lo stile viene da <code>markStyles</code>; vedi <a href="#evidenziazioni">Evidenziazioni</a>.</td>
+    </tr>
+    <tr>
       <td>Tabulazione</td>
       <td><code>:tab</code>, <code>:tab&#123;at=120mm align=end leader="."&#125;</code></td>
       <td>Manda le parole che la seguono al tabulatore successivo: uno dei tabulatori dello stile del paragrafo, o quello impostato dai suoi attributi. Un carattere di tabulazione digitato nel testo è una tabulazione solo dove lo stile imposta dei tabulatori. Vedi <a href="#tabulazioni-e-tabulatori">Tabulazioni e tabulatori</a>.</td>
@@ -127,6 +142,8 @@ Il markup in linea viene riconosciuto dentro qualsiasi blocco di testo (titoli, 
     </tr>
   </tbody>
 </table>
+
+I segni che rimandano altrove sono descritti insieme a ciò a cui rimandano: i richiami di nota `[^id]` in [Note a piè di pagina](/it/docs/document-format-notes-references#note-a-piè-di-pagina); `:ref{…}`, `:anchor{#id}`, `[testo]{#id}` e l’`@sec:…` di pandoc-crossref in [Rimandi e ancore](/it/docs/document-format-notes-references#rimandi-e-ancore); le citazioni `[@key]` e `@key` in [Citare](/it/docs/document-format-notes-references#citare); i segni dell’indice `:index[…]` in [Segni dell’indice](/it/docs/document-format-notes-references#segni-dellindice). Il campione di colore `:swatch{color="…"}` è descritto con i riempimenti delle celle in [Risorse](/it/docs/document-format-resources#risorse), e l’a capo dentro un paragrafo in [A capo](/it/docs/document-format-directives#a-capo).
 
 ### Link
 
@@ -164,7 +181,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"} to copy.
 - **Un’unità.** Un chip non viene mai diviso né sillabato al suo interno; la riga va a capo tra i chip, negli spazi tra parole che li circondano. Un chip più largo dell’intera riga esce dalla riga invece di dividersi.
 - **Larghezza.** Il suo avanzamento è il testo più il padding orizzontale e il contorno su entrambi i lati. La giustificazione allarga solo gli spazi tra parole, mai l’interno di un chip. Il `gap` dello stile è lo spazio minimo mantenuto tra il riquadro e una parola o un chip vicino attraverso uno spazio: uno spazio più stretto viene allargato fino a quel minimo (non a un bordo della riga, e non contro una punteggiatura attaccata come `:chip[a],`).
 - **Altezza.** Il riquadro è una fascia intorno alla linea di base, 0,8 em sopra e 0,25 em sotto al corpo del chip, allargata dal padding verticale e dal contorno. Il padding verticale si disegna fuori dal riquadro di riga e non cambia mai l’interlinea, così la griglia della linea di base resta intatta; un riquadro più alto del passo di riga può invadere un chip della riga sopra o sotto, e la Sandbox segnala due chip su righe diverse che si sovrappongono («Chip che toccano la riga successiva») così che padding, contorno o corpo si possano ridurre.
-- **Testo.** Il testo del chip accetta i propri segni in linea (`:chip[**bold** word]`, `:chip[x^2^]`) e l’enfasi intorno (`**:chip[a]**`); lo stile può impostarne famiglia, corpo, colore, grassetto e corsivo. Scrivi `\]` per una parentesi quadra letterale al suo interno. Rimandi, campioni di colore e formule dentro un chip restano letterali, e `\$` stampa un simbolo del dollaro (fino a postext 1.4 stampava anche la barra rovesciata).
+- **Testo.** Il testo del chip accetta i propri segni in linea (`:chip[**bold** word]`, `:chip[x^2^]`) e l’enfasi intorno (`**:chip[a]**`); lo stile può impostarne famiglia, corpo, colore, grassetto e corsivo. Scrivi `\]` per una parentesi quadra letterale al suo interno. Rimandi, campioni di colore e formule dentro un chip restano letterali, e `\$` stampa un simbolo del dollaro (fino a postext 1.4 stampava anche la barra rovesciata). Uno stile con `dotted` disegna le lettere come file di punti da ripassare, e uno senza riempimento, contorno né spaziatura interna fa del chip una parola punteggiata nella riga: `:chip[gatto]{style="dots"}` (vedi [Stili dei chip](/it/docs/configuration-styles#stili-dei-chip)).
 - **Vuoto.** Un chip fatto solo di spazi (`:chip[ ]`, spazi non separabili compresi) è un riquadro vuoto (uno spazio per la risposta, un segno di fine): largo quanto il padding orizzontale e il contorno del suo stile, alto quanto un chip con parole. Dimensiona lo spazio con il `paddingX` di uno stile (`:chip[ ]{style="blank"}`). Senza nulla tra le parentesi, `:chip[]` resta testo letterale.
 - **Dove.** Paragrafi, voci di elenco, citazioni, riquadri, celle di tabella, didascalie e note. I titoli conservano `:chip[…]` come testo letterale.
 - **Output.** Canvas, HTML e PDF disegnano il riquadro e compongono le parole come testo vero: selezionabile nell’HTML, estraibile e nell’ordine di lettura nel PDF (in un PDF con tag il riquadro è un artefatto di impaginazione e le parole appartengono al paragrafo).

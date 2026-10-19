@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Livres de pages composées',
   description: 'Visite guidée du Sandbox avec un manuel scolaire en pages composées : créer un gabarit de page, le remplir depuis le Markdown, étiqueter une carte, traduire la page, corriger le texte qui ne tient pas, puis sélectionner sur la page et dans le texte',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '12 min',
   order: 42,
   plainSummary: "Cette page montre pas à pas comment créer une page de manuel scolaire dans le Sandbox : un bandeau de titre, un peu de texte et des boîtes de couleur. Vous partez d’un livre d’exemple déjà terminé et vous lui ajoutez une page. Vous dessinez d’abord la page sous forme de gabarit, puis vous y versez le texte depuis le Markdown ; ensuite, vous écrivez les noms des lieux d’une carte et vous traduisez la page dans une autre langue. Pour finir, vous voyez quoi faire quand un texte est trop long pour sa boîte, et comment passer de la page à son texte.",
@@ -102,7 +102,7 @@ Le mot *Stone bridge* est du Markdown ; le point fait partie de l’image. Qua
 
 ## 5. Traduire la page
 
-Une traduction, c’est le même gabarit avec d’autres mots. Le Sandbox la conserve comme une autre édition du même livre : la barre au-dessus de l’aperçu permet de passer d’une édition à l’autre, et le panneau Vérifications les examine toutes (voir [Éditions d’un livre](/fr/docs/sandbox-previews#éditions-dun-livre)). Pour en créer une :
+Une traduction, c’est le même gabarit avec d’autres mots. Le Sandbox la conserve comme une autre édition du même livre : une barre d’outils sur le bord gauche de l’aperçu permet de passer d’une édition à l’autre, et le panneau Vérifications les examine toutes (voir [Éditions d’un livre](/fr/docs/sandbox-previews#éditions-dun-livre)). Cette barre apparaît quand le pointeur atteint ce bord, et son bouton d’épingle la garde ouverte. Pour en créer une :
 
 1. Ouvrez **Livres**, appuyez sur **⋯** à côté de votre livre et choisissez **Ajouter une langue…**. Choisissez la langue et appuyez sur **Ajouter et ouvrir**. Le Sandbox copie l’édition affichée dans une nouvelle édition, règle sa **Langue du document** sur la langue choisie et l’ouvre. La césure, les guillemets et les mots que le moteur écrit lui-même (comme *Continued* à l’endroit où une boîte est coupée) suivent cette langue. Le texte, lui, est encore celui de l’original.
 2. Dans le panneau **Texte**, traduisez les mots et laissez le reste.
@@ -160,7 +160,7 @@ La page montre alors le bloc entouré de rouge, avec sous son bord inférieur un
 - *faites-le continuer sur la page suivante (overflow.continueIn)* envoie ce qui ne tient pas sur une page ajoutée après celle-ci. C’est la solution pour un texte plus long.
 - *coupez environ 495 caractères* ne change rien : il sélectionne le texte du bloc et vous dit combien de caractères retirer.
 
-Un bouton qui modifie le gabarit (et donc toutes les pages composées avec lui) demande d’abord confirmation et précise le réglage concerné. Appuyez sur **Modifier**. La page est recomposée : la boîte se termine par le mot qui signale la coupure (*Continúa*) et la suite reprend en haut d’une page ajoutée. **Cmd/Ctrl+Z** annule la modification. Le bouton **Recomposition**, dans la barre au-dessus de l’aperçu, ouvre *Ce qui a bougé, et pourquoi* : la liste des blocs dont la mise en page a changé la taille ou la position pour y faire tenir leur contenu, avec la raison expliquée en clair.
+Un bouton qui modifie le gabarit (et donc toutes les pages composées avec lui) demande d’abord confirmation et précise le réglage concerné. Appuyez sur **Modifier**. La page est recomposée : la boîte se termine par le mot qui signale la coupure (*Continúa*) et la suite reprend en haut d’une page ajoutée. **Cmd/Ctrl+Z** annule la modification. Le bouton **Recomposition**, dans la même barre d’outils au bord de l’aperçu, ouvre *Ce qui a bougé, et pourquoi* : la liste des blocs dont la mise en page a changé la taille ou la position pour y faire tenir leur contenu, avec la raison expliquée en clair.
 
 <Screenshot src="/docs-shots/fr/checks.webp" alt="Le panneau Vérifications avec l’entrée Le texte déborde de son bloc et trois boutons de solution, et la page dont la première boîte est entourée de rouge avec une bande qui indique 26 mm de trop." caption="Un bloc qui ne tient pas, et les corrections que la mise en page a calculées pour lui." />
 

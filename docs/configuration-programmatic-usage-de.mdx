@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Programmatische Nutzung',
   description: 'Postext aus Code aufrufen: buildDocument und seine Warnungen, Standardwerte, Schriften, Caches und der Web Worker',
   lang: 'de',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '28 min',
   order: 20,
   parent: 'configuration',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Programmatische Nutzung
 
-> **Empfohlener Weg: Nutzen Sie den Web Worker.** Im Browser sollte die weit überwiegende Zahl der Integrationen die Layout-Pipeline über `createLayoutWorker()` aus `postext/worker` steuern und `buildDocument` **nicht** direkt im Haupt-Thread aufrufen. Der Worker hält die Oberfläche während der Builds reaktionsfähig, speichert Textmessungen über inkrementelle Neuaufbauten hinweg im Cache und bringt einen Abbruch nach dem Prinzip „der letzte gewinnt“ mit, sodass ein neuer Tastendruck jeden veralteten Build abbricht, der noch läuft. Das maßgebliche Rezept finden Sie direkt unter [Layout in einem Web Worker ausführen](#layout-in-einem-web-worker-ausführen). Alles Weitere in diesem Abschnitt (direktes `buildDocument`, Resolver, Stripper, Caches) bleibt nützlich – der Worker bietet genau dieselben Ein- und Ausgaben –, doch für UI-Code ist die Worker-Hülle der richtige Ausgangspunkt. Rufen Sie `buildDocument` nur für einmalige Exporte, serverseitiges Rendern (Node) oder Tests im Haupt-Thread auf.
+> **Empfohlener Weg: Nutzen Sie den Web Worker.** Im Browser läuft das Layout über `createLayoutWorker()` aus `postext/worker`, nicht über einen Aufruf von `buildDocument` im Hauptthread. Der Worker hält die Seite während des Layouts bedienbar, behält die Textmessungen zwischen zwei Layouts im Cache und bricht ein laufendes Layout ab, sobald ein neueres beginnt, sodass ein Tastendruck nie auf das Layout eines älteren Textes wartet. Das Rezept steht unter [Layout in einem Web Worker ausführen](#layout-in-einem-web-worker-ausführen). Der Rest dieses Abschnitts (`buildDocument` direkt, Resolver, Strip-Funktionen, Caches) gilt weiter: Der Worker nimmt dieselben Eingaben und liefert dieselben Ergebnisse. Rufen Sie `buildDocument` im Hauptthread nur für einmalige Exporte, serverseitiges Rendern (Node) oder Tests auf.
 
 ### Ein Dokument erzeugen
 
@@ -292,6 +292,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
+Die Tabelle führt die Arten auf, die jedes Dokument auslösen kann. Die Arten einer einzelnen Funktion sind bei ihr beschrieben: die der Comics (`comicPanelCount`, `comicBalloonOverflow` …) auf der Seite [Comics](/de/docs/comics), die der Videos (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) unter [Bilder, Tabellen und Videos](/de/docs/document-format-resources), die der Literaturangaben und des Registers (`unknownCitationKey`, `referencesUnreadable`, `indexMark` …) unter [Anmerkungen und Verweise](/de/docs/document-format-notes-references), die von chinesischem, japanischem und arabischem Text (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading` …) auf den Seiten dieser Schriften und die des Zeilenumbruchs (`raggedLine`, `unbreakableWordOverflow`) unter [Silbentrennung und Blocksatz](/de/docs/justification).
+
 Die Warnungen zu einer Ressource – ihr Tabellenstil, ihr Raster, ein Verweis in ihrer Legende, Anmerkung oder ihren Zellen – verweisen auf die erste Einbettung oder den ersten Verweis der Ressource im Text, und jede wird pro Ressource einmal aufgeführt. Geprüft werden nur die Ressourcen, die das Dokument verwendet: Ein Kapitel eines Buches meldet die Tabellen, die es zitiert, nicht jede Tabelle, die das Buch enthält.
 
 ```ts
@@ -485,7 +487,7 @@ const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
 - **Schnitte, die die Seite deklariert** (eine Regel `@font-face`, ein bereits hinzugefügtes `FontFace`), werden über das Font-Set geladen (`document.fonts.load` oder in einem Worker `self.fonts`). **Schnitte, die sie nicht deklariert**, werden bei `resolve(family, weight, style, { text, codePoints })` angefragt; die Funktion antwortet mit einer Datei (Bytes oder eine URL), mehreren Dateien (den Teilen eines Schnitts), `{ source, unicodeRange, weight, style }` für einen Teil oder einen variablen Bereich oder mit `null`. Die Engine fügt sie als Objekte `FontFace` hinzu, sobald alle geladen sind, in der Reihenfolge der Konfiguration und jeder Antwort (latin, dann latin-ext, dann greek, wenn der Resolver so antwortet), sodass das Font-Set dasselbe ist, in welcher Reihenfolge die Dateien auch eintreffen. Sie registriert sie außerdem in der Schriftregistrierung, die [SVG-Bilder](/de/docs/configuration-resources#schriften-in-svg-text) und Layout-Worker lesen. Ein Resolver kann den Schnitt auch selbst deklarieren (ein Stylesheet hinzufügen) und `null` antworten.
-- **Der Bericht** listet die Schnitte, für die ein geladener Schnitt einsteht (oder eine installierte Familie), diejenigen, die noch `missing` sind, und diejenigen, die der Browser aus einer anderen Stärke oder Neigung synthetisieren würde (`synthesize`). `timeoutMs` (standardmäßig 10.000) begrenzt das Warten; ein Schnitt, der dann noch lädt, gilt als fehlend. Wo es kein Font-Set gibt (Node), tut `prepareFonts` nichts und meldet jeden Schnitt als geladen.
+- **Der Bericht** führt in `loaded` die Schnitte auf, für die ein geladener Schnitt (oder eine installierte Familie) einsteht, in `missing` diejenigen, die noch fehlen, und in `synthesized` diejenigen, die der Browser aus einer anderen Stärke oder Neigung zeichnen würde; `added` zählt die Objekte `FontFace`, die aus den Dateien des Resolvers hinzugefügt wurden. `timeoutMs` (standardmäßig 10.000) begrenzt das Warten; ein Schnitt, der dann noch lädt, gilt als fehlend. Wo es kein Font-Set gibt (Node), tut `prepareFonts` nichts und meldet jeden Schnitt als geladen.
 - **`buildDocumentWithFonts(content, config, options)`** bereitet vor, setzt mit `buildDocumentAsync`, liest die Schnitte, in denen die Seiten tatsächlich Text setzen, lädt alle, die das Font-Set nicht liefern konnte (eine Stärke, die sich erst an den Seiten zeigt, wird bei `resolve` angefragt, auch wenn eine andere Stärke der Familie für sie einstehen würde), und setzt erneut (höchstens zwei zusätzliche Builds). `withLoadedFonts(build, options)` tut dasselbe rund um eine beliebige Build-Funktion, für ein Buch, das Kapitel für Kapitel gesetzt wird, oder ein Paket (`buildBundle`), das mehrere Dokumente zurückgibt. `options.onFonts` erhält den abschließenden Bericht.
 - **Nach dem Build** wird jeder Schnitt, in dem Text gesetzt wurde und den das Font-Set nicht liefern konnte, in `doc.contentWarnings` als `fontFallback` aufgeführt (siehe [Warnungen im Dokument](#warnungen-im-dokument)).
 
@@ -555,6 +557,29 @@ Ein Teil des Zustands von Postext liegt in Variablen auf Modulebene. Alles, was 
 
 Die einfachste Isolation ist ein Realm pro Dokument: ein iframe pro Live-Beispiel (eine CodePen-Einbettung ist eines) oder ein [Layout-Worker](#layout-in-einem-web-worker-ausführen) pro Dokument für die Messungen und die Silbentrennung (Bilder werden weiterhin auf der Seite registriert).
 
+### Word-Dokumente (`postext/word`)
+
+Der Unterpfad `postext/word` liest und schreibt Word-Dokumente (`.docx`) ohne DOM. Der Word-Import und -Export der Sandbox und die Befehle `import-docx` und `docx` der Kommandozeile beruhen darauf (siehe [Kommandozeile › docx und import-docx](/de/docs/command-line#docx-und-import-docx)).
+
+```ts
+import { readDocx, parseTemplate, emptyTemplate, analyzeDocx, wordToPostext, postextToDocx } from 'postext/word';
+
+const word = readDocx(bytes);                                    // a Uint8Array or an ArrayBuffer
+const template = parseTemplate(word.embeddedTemplate) ?? emptyTemplate();
+const report = analyzeDocx(word, template, config);              // report.verdict, report.findings
+const { chapters, pictures, tables } = wordToPostext(word, {
+  template, config, chapters: 'split', existingIds: new Set(), untitledChapter: 'Untitled',
+});
+
+const docx = postextToDocx(chapters, { template, config, book: chapters.length > 1, title: 'Field notes' });
+```
+
+- **`readDocx(bytes)`** liest die Datei in ein Word-Modell ein: ihre Formatvorlagen, Absätze, Anmerkungen und Bilder, den `title` des Dokuments und die Importvorlage, die ein Export aus Postext mitführt (`embeddedTemplate`). Eine Datei, die kein Word-Dokument ist, löst einen `DocxReadError` aus.
+- **`wordToPostext(word, settings)`** macht aus dem Modell Kapitel (`{ title, markdown }`), Bilder und Tabellen. Die Vorlage ordnet jede Word-Formatvorlage einer Überschrift, einem Absatzformat, einem Kasten, einem Zitat oder einer Legende der Konfiguration zu. `chapters: 'split'` eröffnet an jeder Überschrift der Ebene 1 ein Kapitel, `'single'` behält eines. Die Bilder (`id`, `media.bytes`, `caption`, `alt`) und Tabellen (`id`, `model`, `caption`) speichert der Host als Ressourcen; `skippedPictures` nennt die ausgelassenen EMF-, WMF- und TIFF-Bilder.
+- **`analyzeDocx(word, template, config)`** ist der Qualitätsbericht, den die Sandbox vor einem Import zeigt: die verwendeten Formatvorlagen, wie viele Absätze eine Formatvorlage haben und Befunde wie `directFormatting`, `manualHeadings` und `typedNumbering`, jeweils mit einer Anzahl und Beispielen.
+- **`postextToDocx(chapters, settings)`** schreibt Kapitel als `.docx` (ein `Uint8Array`) mit Word-Formatvorlagen für Überschriften, Absätze, Kästen, Zitate, Listen und Anmerkungen. Was Word nicht ausdrücken kann, bleibt wörtlich in den Formatvorlagen *Postext Markup* erhalten, und die Vorlage wird in der Datei mitgespeichert, sodass sich das Dokument unverändert wieder importieren lässt. `book: true` eröffnet jedes Kapitel mit einem Absatz `Postext Chapter`, aus dem der Import die Kapitel wiederherstellt.
+- **`wordStyleTracking(word, template, config)`** und **`applyStyleTracking(config, tracking)`** übertragen den Zeichenabstand der Word-Formatvorlagen auf die Formate der Konfiguration, die keinen festlegen.
+
 
 ## Layout in einem Web Worker ausführen
 
@@ -589,7 +614,10 @@ Der Worker-Client liegt im Unterpfad `postext/worker` und besteht aus einer Hand
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`** – startet einen eigenen Worker (oder umhüllt einen, den Sie über `opts.worker` übergeben, oder startet den Worker-Einstieg unter `opts.url`) und gibt ein typisiertes Handle zurück. Siehe [Den Worker von einem CDN laden](#den-worker-von-einem-cdn-laden).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`** – schickt Schriftbytes in den Worker. Die Puffer werden übertragen; behalten Sie also eine frische Kopie im Haupt-Thread, wenn Sie sie später erneut senden müssen.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`** – führt die Pipeline aus. Ein Abbruch des Signals bricht den laufenden Build ab.
+- **`LayoutWorkerHandle.unregisterFonts(families: string[]): Promise<void>`** – verwirft die Schnitte dieser Familien im Worker, sodass das nächste `registerFonts` für eine Familie wirkt, statt mit dem Schnitt abgeglichen zu werden, den der Worker schon hat.
+- **`LayoutWorkerHandle.build(content, config?, options?): Promise<VDTDocument>`** – führt die Pipeline aus. `options` ist `{ signal?, onProgress?, onStats?, resourcesKey?, cacheKey? }`. Ein Abbruch von `signal` bricht den laufenden Build ab. `onProgress({ pass, blocks, totalBlocks, pages })` wird aufgerufen, während die Platzierung fortschreitet; `onStats({ passes, totalMs, cached?, missingFonts? })` erhält die Zeiten der Durchläufe des fertigen Builds. `resourcesKey` ist ein Fingerabdruck von `content.resources`: Aufeinanderfolgende Builds mit demselben Schlüssel senden die Liste einmal, und der Worker behält sie. `cacheKey` ist ein Fingerabdruck des ganzen Builds: Der Worker behält seine letzten Dokumente unter diesem Schlüssel und beantwortet einen Build, dessen Schlüssel er hat, aus diesem Cache.
+- **`LayoutWorkerHandle.warm(content, config, { cacheKey, … }): Promise<void>`** – setzt in den Dokument-Cache des Workers, ohne das Dokument zurückzuschicken, für ein Kapitel, das der Leser als Nächstes öffnen könnte; das nächste `build` mit diesem `cacheKey` wird aus dem Cache beantwortet.
+- **`LayoutWorkerHandle.prepareFonts(content, config?, options?)`** – `prepareFonts` auf der Seite, danach werden die gefundenen Schnitte an den Worker gesendet; siehe [Den Worker von einem CDN laden](#den-worker-von-einem-cdn-laden).
 - **`LayoutWorkerHandle.dispose(): void`** – beendet den Worker und weist alle ausstehenden Builds mit `AbortError` zurück.
 - **`FontPayload`** – `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` ist ein CSS-Stärkewert als String (`'700'`, `'bold'`); `registerFonts` akzeptiert ihn auch als Zahl (`700`). Der `buffer` wird an den Worker übertragen, wenn Sie `registerFonts` aufrufen.
 - **`BuildCancelledError`** (aus `postext` re-exportiert) – was `buildDocument` intern wirft, wenn `options.shouldCancel` `true` zurückgibt. Im Haupt-Thread sehen Sie ihn normalerweise nicht: Das Worker-Protokoll wandelt ihn in einen `AbortError` um, bevor er Ihren Code erreicht.

@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuració: estils i parts',
   sidebarTitle: 'Estils i parts',
-  description: 'Com es defineixen estils amb nom per a paràgrafs, xips, llistats de codi i encapçalaments, i com es dissenyen les pàgines que obren cada part del llibre',
+  description: 'Com es defineixen estils amb nom per a paràgrafs, xips, ressaltats, llistats de codi i encapçalaments, i com es dissenyen les pàgines que obren cada part del llibre',
   lang: 'ca',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '37 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "Aquesta pàgina reuneix els estils amb nom, que defineixes una vegada i fas servir tantes vegades com vulguis. Un estil de paràgraf dona aspecte a una classe de text, com ara una bibliografia o un glossari. Un estil de xip dibuixa una etiqueta petita dins de la línia. Els llistats de codi tenen una lletra, una caixa i uns colors propis. La pàgina també explica les pàgines que obren cada part del llibre i els estils dels títols especials. Els requadres tenen una pàgina pròpia.",
+  plainSummary: "Aquesta pàgina reuneix els estils amb nom, que defineixes una vegada i fas servir tantes vegades com vulguis. Un estil de paràgraf dona aspecte a una classe de text, com ara una bibliografia o un glossari. Un estil de xip dibuixa una etiqueta petita dins de la línia, i un estil de ressaltat, una banda de color darrere d'una frase. Els llistats de codi tenen una lletra, una caixa i uns colors propis. La pàgina també explica les pàgines que obren cada part del llibre i els estils dels títols especials. Els requadres tenen una pàgina pròpia.",
 };
 
 # Configuració: estils i parts
@@ -292,7 +292,7 @@ Els punts de cada línia acaben mig quadratí abans del preu (`leaderGap`). Un p
 
 ### El contenidor `:::paragraphs`
 
-Una línia `:::paragraphs{style="<id>"}` obre el contenidor, i una línia amb només `:::` el tanca; tots els paràgrafs que hi ha entremig agafen l'estil indicat, mentre que els encapçalaments, les llistes i els altres blocs de dins conserven l'estil habitual. Els contenidors es poden niar dins d'altres contenidors. Un `style` desconegut no és un error: els paràgrafs es componen com a text de cos normal.
+Una línia `:::paragraphs{style="<id>"}` obre el contenidor, i una línia amb només `:::` el tanca; tots els paràgrafs que hi ha entremig agafen l'estil indicat, mentre que els encapçalaments, les llistes i els altres blocs de dins conserven l'estil habitual. Els contenidors es poden niar dins d'altres contenidors. Un `style` desconegut no és un error: els paràgrafs es componen com a text de cos normal, i el Sandbox assenyala l'id.
 
 La línia d'obertura també admet `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` i `endIndent` (els nombres sense unitat són em), amb estil o sense: si hi ha estil, tenen prioritat sobre el que fixa l'estil; si no n'hi ha, s'apliquen sobre l'estil del contenidor que l'envolta o sobre l'estil de text del lloc on és el bloc (el text de cos, una part, una secció amb estil o un requadre). `:::paragraphs{align=end}` compon un bloc arran del final de la línia (地付き) i `:::paragraphs{align=end endIndent=1}`, a un caràcter d'aquest. Des de postext 1.16.
 
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Estils de xip
 
-La propietat `chipStyles` declara els estils amb nom de l'element en línia `:chip[texto]{style="…"}`: les caixes arrodonides i acolorides d'un banc de paraules, una tecla, una etiqueta (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `chip` (farciment blau pàl·lid amb un filet del color principal, cantonades una mica arrodonides i el text igual que les paraules del voltant), així que `:chip[…]` funciona sense configurar res; si declares `chipStyles`, substitueixes aquesta llista. Un xip sense `style`, o amb un id que cap estil no declara, agafa el primer estil.
+La propietat `chipStyles` declara els estils amb nom de l'element en línia `:chip[texto]{style="…"}`: les caixes arrodonides i acolorides d'un banc de paraules, una tecla, una etiqueta (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `chip` (farciment blau pàl·lid amb un filet del color principal, cantonades una mica arrodonides i el text igual que les paraules del voltant), així que `:chip[…]` funciona sense configurar res; si declares `chipStyles`, substitueixes aquesta llista. Un xip sense `style`, o amb un id que cap estil no declara, agafa el primer estil (el Sandbox assenyala l'id desconegut).
 
 ```ts
 const config: PostextConfig = {
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Estils de ressaltat
 
-La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil.
+La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil (el Sandbox assenyala l'id desconegut).
 
 ```ts
 const config: PostextConfig = {
@@ -1126,7 +1126,7 @@ const config: PostextConfig = {
       <td>camps de nivell</td>
       <td>com a <code>headings.levels[]</code></td>
       <td>els valors del nivell</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: cada camp que es fixa substitueix el valor del nivell per als encapçalaments d'aquest estil (<code>dropCap: false</code> treu la caplletra del nivell). <code>breakBefore</code> es combina camp per camp amb el del nivell: un estil que només fixa <code>parity</code> conserva l'<code>enabled</code> del nivell, i un que només fixa <code>enabled: true</code> conserva la paritat del nivell (fins a postext 1.4, en canvi, el camp que faltava s'omplia amb el valor sense salt).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>numberSeparator</code>, <code>numberPosition</code>, <code>breakBefore</code>, <code>span</code>, <code>spanBreak</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: cada camp que es fixa substitueix el valor del nivell per als encapçalaments d'aquest estil (<code>dropCap: false</code> treu la caplletra del nivell). <code>breakBefore</code> es combina camp per camp amb el del nivell: un estil que només fixa <code>parity</code> conserva l'<code>enabled</code> del nivell, i un que només fixa <code>enabled: true</code> conserva la paritat del nivell (fins a postext 1.4, en canvi, el camp que faltava s'omplia amb el valor sense salt).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
@@ -1209,6 +1209,7 @@ Babel, bavall… (continua a la pàgina següent)
 ```
 
 Les dues lletres comencen a la pàgina 1, així que la pàgina 1 agafa les capçaleres de la secció `B`: una pestanya d'osca posada a la capçalera de l'estil hi diu «B», i cap pàgina no porta la pestanya de l'«A». Dona a cada secció una pàgina pròpia (`breakBefore`) quan totes necessiten la seva pestanya.
+
 Apèndixs amb lletra després de capítols numerats, i una pàgina de dedicatòria que surt a l'índex general i als marcadors del PDF, però sense títol a la pàgina:
 
 ```ts

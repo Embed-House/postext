@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'テンプレートページの設定',
   description: 'テンプレートページのためのページテンプレート：枠、グループ、装飾、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '6分',
   order: 18,
   parent: 'configuration',
@@ -140,7 +140,7 @@ const config: PostextConfig = {
       <td><code>bodyStyle</code></td>
       <td><code>string</code></td>
       <td>なし</td>
-      <td>ページの本文の段落スタイルで、見出しスタイルにあるものと同じです。</td>
+      <td>ページの本文の段落スタイルで、見出しスタイルにあるものと同じです。割り付けにはまだ反映されません。</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
@@ -237,7 +237,7 @@ const config: PostextConfig = {
       <td><code>columns</code>、<code>columnGap</code></td>
       <td><code>number</code>、<code>Dimension</code></td>
       <td><code>1</code>、スタイルの値</td>
-      <td>枠の中の段組みです。</td>
+      <td>枠の中の段組みです。見出しが段の末尾に残ることはなく、続く本文と一緒に次の段へ送られます（<code>headings.keepWithNext</code>のとき。postext 1.46以降）。</td>
     </tr>
     <tr>
       <td><code>exclude</code></td>
@@ -555,7 +555,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各枠の配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、枠の`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。テンプレートの`bodyStyle`と`palette`は読み込まれて検査されますが、まだ割り付けには反映されません。枠の`writingMode`と`direction`は、postext 1.39以降は反映されます。幅の`'auto'`は`'fill'`として扱います。
+割り付けに反映されるのは、各枠の配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、枠の`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。postext 1.42以降は、テンプレートの`palette`、枠の`look`、幅の`'auto'`（枠のいちばん長い行に合わせた幅）も反映されます。枠の`writingMode`と`direction`は、postext 1.39以降は反映されます。テンプレートの`bodyStyle`は読み込まれて検査されますが、まだ割り付けには反映されません。
 
 ### 見開き
 
@@ -588,7 +588,7 @@ pageTemplates: [{
 
 ## ラベルスタイル
 
-`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話者と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。Sandboxでは、**デザイン › 図と表 › ラベルスタイル**で編集します（postext 1.42以降）。
+`labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話者と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。Sandboxでは、**デザイン › 図と表 › ラベルスタイル**で編集します（postext 1.42以降）。そこでスタイルの名前を変えると、そのスタイルを指定しているアンカーと`::label`行も書き換えられます（postext 1.43以降）。
 
 ```ts
 labelStyles: [
@@ -674,23 +674,11 @@ labelStyles: [
       <td><code>0.85</code></td>
       <td>ラベルが幅に収まらないとき、どこまで小さく組んでよいかです。</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td>このスタイルのラベルを縦組みにします。文字は正立のまま1文字ずつ上から下へ、列は右から左へ並びます。中国語や日本語の地図の注記と同じ組み方です。アンカー自身の<code>writingMode</code>が優先されます。</td>
-    </tr>
-    <tr>
-      <td><code>overlap</code></td>
-      <td><code>'check' | 'allow'</code></td>
-      <td><code>'check'</code></td>
-      <td><code>'allow'</code>は、このアンカーに置いたラベルが、原稿の印刷どおりに隣のラベルへ接してよいことを表します。それを含む組には<code>labelOverlap</code>が出ません。スタイルの<code>overlap</code>より優先されます（postext 1.42以降）。</td>
-    </tr>
-    <tr>
-      <td><code>gutter</code></td>
-      <td><code>'keep' | 'cross'</code></td>
-      <td><code>'keep'</code></td>
-      <td>見開きののどをまたぐ図で、<code>'keep'</code>はラベルをのどの帯から外し、点のある側へ寄せます。<code>'cross'</code>は点が決めた位置に置いたままにします。両ページにまたがる見出しに必要です（postext 1.43以降）。</td>
     </tr>
     <tr>
       <td><code>overlap</code></td>
@@ -747,11 +735,23 @@ labelStyles: [
       <td>なし</td>
       <td><code>labelStyles</code>のidです。ラベルが自分のスタイルを指定していれば、そちらが優先されます。</td>
     </tr>
-      <tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>
       <td><code>'vertical-rl'</code>でラベルを縦組みにします。中国語や日本語の地図、本の背の文字と同じ組み方です。このとき<code>width</code>は絵の高さに対する割合になり、<code>align</code>は列に沿った向き（<code>start</code>が上端）、<code>verticalAlign</code>は列をまたぐ向き（<code>top</code>が最初の列、つまり右端の列）です。</td>
+    </tr>
+    <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>は、このアンカーに置いたラベルが、原稿の印刷どおりに隣のラベルへ接してよいことを表します。それを含む組には<code>labelOverlap</code>が出ません。スタイルの<code>overlap</code>より優先されます（postext 1.42以降）。</td>
+    </tr>
+    <tr>
+      <td><code>gutter</code></td>
+      <td><code>'keep' | 'cross'</code></td>
+      <td><code>'keep'</code></td>
+      <td>見開きののどをまたぐ図で、<code>'keep'</code>はラベルをのどの帯から外し、点のある側へ寄せます。<code>'cross'</code>は点が決めた位置に置いたままにします。両ページにまたがる見出しに必要です（postext 1.43以降）。</td>
     </tr>
   </tbody>
 </table>

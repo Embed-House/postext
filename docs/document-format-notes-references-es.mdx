@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Notas y referencias',
   description: 'Cómo se escriben las notas al pie, las referencias cruzadas y sus anclas, las citas y la bibliografía, y las marcas del índice analítico',
   lang: 'es',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '15 min',
   order: 28,
   parent: 'document-format',
@@ -28,7 +28,7 @@ así que aprendió a contar los escalones a oscuras.
 
 - **Llamada.** `[^id]` imprime el número de la nota en volado, pegado a la palabra anterior (escríbela tras la puntuación, como arriba). El id admite letras, cifras, `-`, `_`, `.` y `:`. La llamada funciona en párrafos, elementos de lista, citas y recuadros; en encabezados, pies de figura y celdas de tabla se imprime tal cual.
 - **Definición.** Un párrafo que empieza por `[^id]:`; su texto llega hasta la siguiente línea en blanco y admite las marcas en línea habituales (negrita, cursiva, enlaces, `:ref`, fórmulas, chips). Las definiciones salen del flujo estén donde estén, así que pueden ir bajo el párrafo que las cita o todas juntas al final del capítulo. Si un id se define dos veces, vale la primera definición.
-- **Números.** Las notas se numeran en el orden en que se citan por primera vez, y la numeración vuelve a empezar en cada capítulo (un encabezado de nivel 1, y cada documento de un libro); una nota citada dos veces conserva su primer número y se compone una sola vez. `footnotes.numbering: 'document'` mantiene una numeración continua en todo el libro, y `'page'` la reinicia en cada página, como en los libros chinos; `footnotes.numberFormat: 'circled-decimal'` escribe ① ② ③ sobre la línea de base. `footnotes.numberFormat: 'symbols'` las marca con `*`, `†`, `‡`, `§`, `‖`, `¶` y después con esos mismos signos duplicados, y vuelve a empezar en cada página, como en las revistas científicas.
+- **Números.** Las notas se numeran en el orden en que se citan por primera vez, y la numeración vuelve a empezar en cada capítulo (un encabezado de nivel 1, y cada documento de un libro); una nota citada dos veces conserva su primer número y se compone una sola vez. `footnotes.numbering: 'document'` mantiene una numeración continua en todo el libro, y `'page'` la reinicia en cada página, como en los libros chinos, `'column'` en cada columna y `'spread'` en cada doble página (las notas laterales de un libro japonés); `footnotes.numberFormat: 'circled-decimal'` escribe ① ② ③ sobre la línea de base. `footnotes.numberFormat: 'symbols'` las marca con `*`, `†`, `‡`, `§`, `‖`, `¶` y después con esos mismos signos duplicados, y vuelve a empezar en cada página, como en las revistas científicas.
 - **Texto japonés.** La llamada se escribe delante de un 。 que cierra la oración (`先生[^1]。`): se queda con el carácter anterior, y 。 nunca abre una línea. Un libro japonés vertical compone por defecto sus llamadas （1） a la derecha de la línea y sus notas tras el capítulo; `footnotes.markerPosition: 'side'` pone una llamada pequeña junto a la palabra, sin ocupar sitio en la línea, y `footnotes.placement: 'spread'` compone las notas junto al texto de cada doble página (véase [Configuración › Notas al pie](/es/docs/configuration-notes-references#notas-al-pie)).
 - **Dónde va la nota.** Por defecto, al pie de la columna que contiene la línea que la cita, bajo un filete corto: la línea y su nota comparten siempre columna, y una línea cuya nota no cabe pasa con ella a la columna siguiente. Con una sola columna, es el pie de la página. `footnotes.placement: 'chapterEnd'`, en cambio, compone todas las notas de un capítulo tras su último bloque, por defecto al pie de la columna que cierran. Los cuerpos, el filete y los espacios se explican en [Notas al pie](/es/docs/configuration-notes-references#notas-al-pie), en la referencia de configuración.
 - **Comprobaciones.** Una llamada sin definición (`undefinedFootnote`) imprime su número sobre una nota vacía; una definición que ninguna llamada cita (`unusedFootnote`) no se compone. El Sandbox muestra ambas en el panel Revisión.
@@ -74,7 +74,7 @@ Los resultados de :ref{id="sec-metodo"} se cumplen en :ref{id="sec-metodo" style
 
 **Las referencias de página** solo se conocen cuando el libro está compuesto. El motor vuelve a componer el documento con las páginas de la pasada anterior hasta que dejan de cambiar, como hace con el índice; hasta entonces, la página se imprime como *?*.
 
-**pandoc-crossref.** Un texto escrito para pandoc-crossref se lee igual: `@sec:metodo`, `[@fig:mapa]`, y `[-@tbl:datos]` para el número solo. El prefijo (`sec`, `fig`, `tbl`, `eq`, `lst`) puede formar parte del identificador (`{#sec:metodo}`) o quedar fuera (`{#metodo}`). Una `@` pegada a una palabra, como en una dirección de correo, sigue siendo texto.
+**pandoc-crossref.** Un texto escrito para pandoc-crossref se lee igual: `@sec:metodo`, `[@fig:mapa]`, y `[-@tbl:datos]` para el número solo. Un prefijo con mayúscula (`@Sec:metodo`) pone en mayúscula la inicial de la etiqueta, como `case=capitalize`. El prefijo (`sec`, `fig`, `tbl`, `eq`, `lst`) puede formar parte del identificador (`{#sec:metodo}`) o quedar fuera (`{#metodo}`). Una `@` pegada a una palabra, como en una dirección de correo, sigue siendo texto.
 
 Una referencia a un id que no está definido imprime *?* y aparece en el panel Revisión (`unknownResourceId`). En el editor del Sandbox, `@` ofrece las figuras, las tablas, los encabezados con id y las anclas del libro.
 
@@ -176,7 +176,7 @@ Con un **estilo de notas**, cada cita se convierte en una nota al pie, que se co
 import 'postext-citeproc/register';
 ```
 
-El panel Revisión avisa de una clave que ninguna referencia define (`unknownCitationKey`) y de un bloque de referencias que no se puede leer (`referencesUnreadable`).
+El panel Revisión avisa de una clave que ninguna referencia define (`unknownCitationKey`) y de un bloque de referencias que no se puede leer (`referencesUnreadable`). Un texto que cita obras sin ningún motor de citas registrado recibe un aviso `citationsUnavailable`, y sus citas se imprimen tal como están escritas.
 
 
 ## Índice analítico

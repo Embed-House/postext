@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Passer aux pages composées',
   description: 'Comment convertir un livre qui range le texte de ses pages dans des styles de titre en gabarits de page et en Markdown, avec l’assistant Déplacer le texte dans le Markdown du Sandbox ou à la main, et ce qu’il faut vérifier ensuite',
   lang: 'fr',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 43,
   plainSummary: "Certains livres faits avec Postext avant les pages composées gardent les mots de chaque page dans les réglages de maquette, et non dans le texte. Ils sont alors difficiles à corriger et impossibles à traduire. Cette page montre comment faire passer ces mots dans le Markdown, où chaque page devient un bloc avec son propre gabarit. Le Sandbox fait presque tout le travail avec un seul bouton, et vous vérifiez le résultat page par page. Elle explique aussi comment faire la même chose à la main, page par page.",
@@ -59,7 +59,7 @@ Passez le résultat en revue dans cet ordre.
 
 - **Les pages qui paraissent différentes.** La liste de la fenêtre a donné les raisons qu’elle connaissait : la boîte, le contour ou la lettrine propres d’un texte, une page dont le côté était inconnu, du texte courant désormais composé dans le bloc de flux du gabarit. Comparez ces pages dans l’onglet Canvas.
 - **Les gabarits.** **Maquette › Page et colonnes › Gabarits de page** liste un gabarit par mise en page, et `page-base` pour les blocs que les pages ont en commun. Une page qui n’ajoute rien utilise la base telle quelle ; les autres l’étendent. Les noms sont dérivés des anciens : donnez à chaque gabarit un nom parlant (toutes les pages qui l’utilisent reprennent le nouveau nom).
-- **Les styles de paragraphe.** La police, le corps, la graisse, la couleur, l’alignement et l’interlignage de chaque texte sont devenus un style de paragraphe : un style existant du livre quand l’un d’eux correspondait exactement, sinon un nouveau style nommé d’après la police et le corps (`nunito-11`). Regardez **Maquette › Texte** et renommez ou fusionnez les nouveaux.
+- **Les styles de paragraphe.** La police, le corps, la graisse, la couleur, l’alignement et l’interlignage de chaque texte sont devenus un style de paragraphe : un style existant du livre quand l’un d’eux correspondait exactement, sinon un nouveau style nommé d’après la police et le corps (`nunito-11`). Regardez **Maquette › Typographie › Styles de paragraphe** et renommez ou fusionnez les nouveaux.
 - **Les titres.** Les styles de titre devenus identiques ont été fusionnés et les titres renommés ; les titres masqués qui servaient seulement à changer de titre courant ont disparu. Vérifiez la table des matières si le livre en a une.
 - **Ce qui reste dans la configuration.** La liste *Reste dans la configuration* de la fenêtre énumère les textes qui y restent : un texte qui mêle des mots et des variables (`Page {pageNumber}`), un texte rattaché à un autre élément et le texte d’une maquette de titre. Ces textes ne font pas partie du contenu d’une page, et ce sont eux que visent les avertissements *Texte rangé dans la configuration* restants.
 - **Les étiquettes.** Si vous avez activé *Les mots sur les images deviennent leurs étiquettes*, regardez chaque carte ou schéma : les étiquettes sont recomposées avec les polices du livre : leur taille et leur position peuvent donc différer de celles des anciennes pages.

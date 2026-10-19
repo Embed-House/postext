@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'アーキテクチャー',
   description: 'Postext組版エンジンの技術的なアーキテクチャー：基本概念、文書ツリー、垂直リズム、バックエンド、パフォーマンス',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '30分',
   order: 2,
   plainSummary: "このページでは、Postextが内部でどう動いているかを、プログラマー向けに説明します。Postextはまず、画面に何も描かずにすべての単語の幅を測るので、とても速く動きます。次に、すべての行、図、段をどこに置くかを決め、その計画をメモリーに保存します。最後に、できあがったページをWebページ、canvasの画像、PDFファイルとして描きます。単語を1つ変えると、ページを組み直し、変わっていない段落の計測結果を再利用します。行と図を置いていく手順は、次のページで順を追って説明します。",
@@ -94,7 +94,7 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
     </tr>
     <tr>
       <td><strong>バックエンド</strong></td>
-      <td>完成したVDTを受け取る描画先です。現在は4つあります。<strong>canvas</strong>（ビットマップのプレビュー）、<strong>HTML</strong>（DOMによる画面での閲覧）、<strong>PDF</strong>（<code>postext-pdf</code>による入稿用の出力）、<strong>EPUB</strong>（<code>postext-epub</code>、電子書籍としての本）です。4つとも同じ計測（Pretextの上に載るmeasureモジュール）をもとに描画します。</td>
+      <td>完成したVDTを受け取る描画先です。現在は4つあります。<strong>canvas</strong>（ビットマップのプレビュー）、<strong>HTML</strong>（DOMによる画面での閲覧）、<strong>PDF</strong>（<code>postext-pdf</code>による入稿用の出力）、<strong>EPUB</strong>（<code>postext-epub</code>、電子書籍としての本）です。4つとも同じ計測（Pretextの上に載るmeasureモジュール）をもとに描画します。3Dビューアーの<code>postext-folio</code>は、canvasバックエンドで紙面を描きます。</td>
     </tr>
     <tr>
       <td><strong>配置のパス</strong></td>
@@ -137,6 +137,10 @@ interface PostextContent {
   metadata?: DocumentMetadata; // title, subtitle, author, publishDate, …
   resources?: Resource[];      // bitmaps, SVGs, tables, videos — referenced by id
   notes?: PostextNote[];       // not read: footnotes are written as [^id] in the markdown
+  continuation?: LayoutContinuation; // counters and page numbers carried from earlier chapters
+  outline?: OutlineEntry[];    // the book's headings with their page labels, for :::toc / :::index
+  citations?: CitationContext; // this chapter's share of the book's citations
+  laterPageIds?: Record<string, number>; // page fences of later chapters a story may continue on
 }
 
 interface Resource {
@@ -490,6 +494,12 @@ renderToEpub(docs, options): Promise<Uint8Array>;
       <td><strong>提供中</strong></td>
     </tr>
     <tr>
+      <td><strong>Folio</strong>（3Dビューアー）</td>
+      <td>Pretextで計測済みのVDTを受け取る</td>
+      <td>各ページをcanvasバックエンドで描き（<code>renderPageToCanvas</code>）、three.jsの紙葉のテクスチャーとして表示する。描くのは開いている見開きの周辺だけ（<code>postext-folio</code>の<code>createFolioFromDocument</code>）</td>
+      <td><strong>提供中</strong></td>
+    </tr>
+    <tr>
       <td><strong>コマンドライン</strong></td>
       <td>Skia（<code>@napi-rs/canvas</code>）上のPretext。Skiaがブラウザーのcanvasの代わりを務める</td>
       <td>PDF、HTML、EPUBの書き出し、ページ画像、Wordを、ブラウザーなしでターミナルから実行する（<code>postext-cli</code>）</td>
@@ -498,7 +508,7 @@ renderToEpub(docs, options): Promise<Uint8Array>;
   </tbody>
 </table>
 
-提供中の4つのバックエンドは、すべて同じ`VDTDocument`を受け取ります。canvasとHTMLのバックエンドを公開する`postext`と、PDFバックエンドを公開する`postext-pdf`に分かれているのは、純粋に依存関係の都合です。PDFの経路は`pdf-lib`と`@pdf-lib/fontkit`を取り込みますが、Webへの組み込みの多くではこれらは必要ありません。`postext-pdf`は、実際にPDFのバイト列を出力したいときだけインストールしてください。`postext-epub`も同じ理由で独立したパッケージになっており、必要になるのは電子書籍を作るときだけです。コマンドラインは5つ目のバックエンドではありません。`postext-cli`は、ブラウザーのない環境でこれらと同じ書き出しを実行します。
+4つのバックエンドとFolioビューアーは、すべて同じ`VDTDocument`を受け取ります。canvasとHTMLのバックエンドを公開する`postext`と、PDFバックエンドを公開する`postext-pdf`に分かれているのは、純粋に依存関係の都合です。PDFの経路は`pdf-lib`と`@pdf-lib/fontkit`を取り込みますが、Webへの組み込みの多くではこれらは必要ありません。`postext-pdf`は、実際にPDFのバイト列を出力したいときだけインストールしてください。`postext-epub`も同じ理由で独立したパッケージになっており、必要になるのは電子書籍を作るときだけです。コマンドラインは5つ目のバックエンドではありません。`postext-cli`は、ブラウザーのない環境でこれらと同じ書き出しを実行します。Wordファイルもバックエンドではありません。`postext/word`の`postextToDocx`は、Markdownの章とそのスタイルをレイアウトせずに`.docx`へ書き出し、`readDocx`と`wordToPostext`はそれをMarkdownとして読み戻します。
 
 **レイアウトを実行する場所**：エンジンはテキストをcanvasで計測するので、canvasが与えられる環境ならどこでも動きます。ブラウザーでは、パイプラインはメインスレッド上（`buildDocument`）でも、専用のWeb Worker内（`postext/worker`の`createLayoutWorker`）でも実行できます。UIを持つアプリにはワーカーでの実行を推奨します。計測と配置のパスをメインスレッドから外せること、`AbortSignal`による後勝ちのキャンセルに対応していること、独自の計測キャッシュと数式ラスターキャッシュを持つため再ビルドが続いても軽いままであることが理由です。組み込み方の全体は[設定 → Web Workerでレイアウトを実行する](/ja/docs/configuration-programmatic-usage#web-workerでレイアウトを実行する)を参照してください。ブラウザーの外では、[コマンドライン](/ja/docs/command-line)が、ブラウザーのcanvasの代わりにSkiaを使って同じパイプラインを実行します。そのため、ターミナルでも、スクリプトでも、ビルドサーバーでも、本は同じページに分かれます。
 
@@ -521,7 +531,7 @@ renderToEpub(docs, options): Promise<Uint8Array>;
 
 5. **多層の計測キャッシュ**。measureモジュール（`packages/postext/src/measure/`）は、テキスト、フォント、幅、そしてレイアウトに影響するすべてのオプションをキーとする計測キャッシュを明示的に持ちます。これはPretext自身の`prepare()`キャッシュと、テキスト幅の生のキャッシュの上に重なっています。変更のない段落の再計測は、マップを1回引くだけで済みます。あるファミリーのフェイスが変わると、エンジンはそのファミリーの幅とPretextのキャッシュを捨て、計測キャッシュは次の参照のときにそのファミリーで組んだブロックを捨てます（自分が埋められた世代を持っているためです）。そのため、ホストが何も呼ばなくても、フォントの読み込みが終わったあとのグリフ幅は正しく保たれます。`clearMeasurementCache()`はすべてのファミリーを捨てます。
 
-6. **ホットパスでの改行処理**。Knuth-Plassのアクティブノードの扱いは、速度のために書き直されました。ノードが外れるたびにアクティブ集合をその場で詰め、候補は（行、適合クラス）ごとに重複を除いて、キーごとにデメリットが最小のノードだけを残します。アルゴリズムの結果は変わりません。改行位置の集合は同じで、計算が速くなっただけです。
+6. **ホットパスでの改行処理**。Knuth-Plassのアクティブノードの扱いは、速度のために書き直されました。ノードが外れるたびにアクティブ集合をその場で詰め、候補は（行、適合クラス）ごとに重複を除いて、キーごとにデメリットが最小のノードだけを残します。アルゴリズムの結果は変わりません。改行位置の集合は同じで、計算が速くなっただけです。同じ行分割はRustでも書かれ（`rust/crates/linebreak`）、WebAssemblyにコンパイルしてパッケージに埋め込まれています。同じ演算を同じ順序で行い、2〜3倍速く、モジュールのコンパイルが済んだ環境ではこちらが答えます。ページのメインスレッドではバックグラウンドでコンパイルされ、それまでの間や、WebAssemblyがない、または拒否される環境では、TypeScript版が答えます。`initLineBreaker()`はコンパイルを前倒しで始め、`useWasmLineBreaker(false)`はすべての段落をTypeScript版で分割します。
 
 7. **メインスレッド外でのビルド**。`postext/worker`エントリーポイントは、パイプライン全体を専用のWeb Worker内で実行します。メインスレッドは`{ content, config }`と`AbortSignal`を送ります。ワーカーはフォントを登録し（`ArrayBuffer`として転送されます）、配置のパスを実行して、完成した`VDTDocument`を送り返します。新しい`build()`呼び出しは、前の呼び出しを協調的にキャンセルします。ワーカーは`buildDocumentAsync`を実行し、これがブロックごとに1回とパスの間でキャンセル用のフックを確認して、`BuildCancelledError`を投げます。そのため、エディターで入力しているユーザーが、もう不要になったレイアウトを待たされることはありません。ワーカーは永続的な計測キャッシュと、内容をキーとする数式ラスターキャッシュも独自に保持します。これにより、構造化複製された`MathRender`オブジェクトが再ビルドをまたいで生き残り、ラスター化し直さずに済みます。
 
@@ -531,13 +541,13 @@ renderToEpub(docs, options): Promise<Uint8Array>;
 
 差分で更新するエントリーポイントはありません。完成したVDTを受け取って更新する呼び出しは存在しません。内容や設定が変わると（キー入力、別のページサイズ）、ホストは`buildDocument`をもう一度呼び、新しい文書を受け取ります。
 
-ビルドからビルドへ引き継がれるのは計測です。`createMeasurementCache()`で`MeasurementCache`を1つ作り、すべての`buildDocument`呼び出しの3番目の引数に渡してください。テキスト、フォント、幅、改行のオプションが変わっていない段落はそこから読まれるので、キー入力のたびに文書をレイアウトするエディターでも、計測するのは入力中の段落だけです。ページサイズや段数を変えると幅が変わり、その段落は計測し直されます。それでもPretextの`prepare()`の結果は有効なままです。フォントとテキストに依存し、幅には依存しないからです。実行されるのは軽い`layout()`の算術だけです。解析もメモ化されています。
+ビルドからビルドへ引き継がれるのは計測です。`createMeasurementCache()`で`MeasurementCache`を1つ作り、すべての`buildDocument`呼び出しの3番目の引数に渡してください。テキスト、フォント、幅、改行のオプションが変わっていない段落はそこから読まれるので、キー入力のたびに文書をレイアウトするエディターでも、計測するのは入力中の段落だけです。ページサイズや段数を変えると幅が変わり、その段落は計測し直されます。それでもPretextの`prepare()`の結果は有効なままです。フォントとテキストに依存し、幅には依存しないからです。実行されるのは軽い`layout()`の算術だけです。解析もメモ化されています。テンプレートページも引き継がれます。テンプレート、Markdown、スタイル、フォントが変わっていないテンプレートページは前回のビルドの結果を再利用するので（`composed/pageMemo.ts`）、テンプレートページでできた章の1ページを編集しても、組み直すのはそのページだけです。脚注、相互参照、引用、目次や索引の一覧、漫画のストリップを含むページは、毎回組み直されます。
 
 ライブエディターでは、`createLayoutWorker`（`postext/worker`）が、これらすべてをメインスレッドの外で行います。ワーカーは自分と同じ寿命の計測キャッシュを持ち、新しい`build()`は実行中のビルドをキャンセルします。[設定 → 計測キャッシュ](/ja/docs/configuration-programmatic-usage#計測キャッシュ)と[Web Workerでレイアウトを実行する](/ja/docs/configuration-programmatic-usage#web-workerでレイアウトを実行する)を参照してください。
 
 ### ベンチマーク
 
-`packages/postext/src/__bench__/`に2つのベンチマークがあります。`pnpm test`では実行されず、`packages/postext`で`pnpm bench`を実行すると動きます。`chapter.bench.test.ts`は、教科書の1章ほどの大きさの章（見出し、段落、リストからなる40のセクション）を、空の計測キャッシュで5回、温まったキャッシュで5回レイアウトし、それぞれの中央値とパスの数を報告します。`cjkChapter.bench.test.ts`は紅樓夢の第1回をレイアウトし、`measureText`に送られた文字数を数えて、CJKコンポーザーの負荷が段落の長さに比例する範囲にとどまることを確かめます。
+`packages/postext/src/__bench__/`に3つのベンチマークがあります。`pnpm test`では実行されず、`packages/postext`で`pnpm bench`を実行すると動きます。`chapter.bench.test.ts`は、教科書の1章ほどの大きさの章（見出し、段落、リストからなる40のセクション）を、空の計測キャッシュで5回、温まったキャッシュで5回レイアウトし、それぞれの中央値とパスの数を報告します。`cjkChapter.bench.test.ts`は紅樓夢の第1回をレイアウトし、`measureText`に送られた文字数を数えて、CJKコンポーザーの負荷が段落の長さに比例する範囲にとどまることを確かめます。`composedPage.bench.test.ts`は、20のテンプレートページからなる章について、コールドビルド、変更なしの再ビルド、1ページの属性の変更、そのページの枠の中の編集を、それぞれテンプレートページのメモ化ありとなしで計測します。
 
 ```typescript
 // From packages/postext/src/__bench__/chapter.bench.test.ts
@@ -554,7 +564,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 // [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-正直に補足しておくと、Nodeにはcanvasがないので、どちらのベンチマークもテキストの計測をスタブに置き換えており、絶対的な時間はブラウザーのものとは違います。キャッシュが空のときと温まったときの比と、パスの数は実際のものです。どちらかが悪化すれば、Sandboxで表面化する前にここに現れます。章のベンチマークは数値を報告するだけで、ビルドを失敗させることはありません。中国語のベンチマークは、計測した文字数が、最も長い段落の長さの3倍未満に収まることを検査します。どちらもCIでは実行しません。性能の劣化は、ホットパスを変更したときに実行ごとの数値を比べることで見つけます（Knuth-Plassのアクティブノードを書き直したときもそうしました）。性能は願望ではなく機能です。ただし現時点でそれを担保しているのは、計測とレビューであって、失敗するパイプラインではありません。
+正直に補足しておくと、Nodeにはcanvasがないので、どのベンチマークもテキストの計測をスタブに置き換えており、絶対的な時間はブラウザーのものとは違います。キャッシュが空のときと温まったときの比と、パスの数は実際のものです。どちらかが悪化すれば、Sandboxで表面化する前にここに現れます。章とテンプレートページのベンチマークは数値を報告するだけで、ビルドを失敗させることはありません。中国語のベンチマークは、計測した文字数が、最も長い段落の長さの3倍未満に収まることを検査します。どれもCIでは実行しません。性能の劣化は、ホットパスを変更したときに実行ごとの数値を比べることで見つけます（Knuth-Plassのアクティブノードを書き直したときもそうしました）。今のところ、時間が延びたことでビルドが失敗することはありません。遅くなったことは、計測とレビューで見つけます。
 
 
 ## データフロー

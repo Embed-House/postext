@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Formato do documento',
   description: 'O subconjunto de Markdown que o Postext lê: o front matter, os títulos, as listas e os blocos de código; o que ele ignora; e as regras para escrever os documentos de origem',
   lang: 'pt',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 25,
   plainSummary: "Esta página explica como escrever um texto que o Postext consiga diagramar. Você escreve em Markdown, um jeito simples de escrever em que alguns símbolos marcam títulos, listas, palavras em negrito e links. Esta página trata das linhas do início do arquivo, dos títulos, das listas, do código e das marcas que o Postext ignora. Outras quatro páginas tratam dos blocos, como boxes e colunas, das marcas dentro da linha, das notas e referências, e das imagens e tabelas. No final, traz conselhos para escrever um texto fácil de ler.",
@@ -53,7 +53,7 @@ Coloque um valor entre aspas para imprimi-lo exatamente como está escrito, seja
 
 ## Elementos de bloco
 
-O Postext reconhece sete tipos de bloco de texto e as listagens de código, além das diretivas e das inserções de recursos descritas mais adiante nesta página. Um bloco sempre termina com uma linha em branco ou com o início de outro bloco.
+O Postext reconhece sete tipos de bloco de texto e as listagens de código, além das [diretivas](/pt/docs/document-format-directives) e das [inserções de recursos](/pt/docs/document-format-resources), descritas em páginas próprias. Um bloco sempre termina com uma linha em branco ou com o início de outro bloco.
 
 <Illustration name="BlockTypesGallery" data='{"title": "Os tipos de bloco de texto, de relance", "desc": "Os sete tipos de bloco de texto que o Postext reconhece: título, parágrafo, citação, lista não ordenada, lista ordenada, lista de tarefas e fórmula em destaque, cada um com a sintaxe em Markdown. As diretivas e as inserções de recursos são tratadas à parte.", "caption": "Cada tipo de bloco de texto e como escrevê-lo em Markdown.", "blocks": [{"name": "Título", "syntax": "# Title", "color": "blue"}, {"name": "Parágrafo", "syntax": "Linhas de texto simples", "color": "orange"}, {"name": "Citação", "syntax": "> quoted text", "color": "green"}, {"name": "Lista não ordenada", "syntax": "- item", "color": "purple"}, {"name": "Lista ordenada", "syntax": "1. item", "color": "pink"}, {"name": "Lista de tarefas", "syntax": "- [x] done", "color": "teal"}, {"name": "Fórmula em destaque", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
@@ -89,7 +89,7 @@ O Postext reconhece sete tipos de bloco de texto e as listagens de código, alé
     <tr>
       <td>Lista ordenada</td>
       <td><code>1. item</code>, <code>2) item</code></td>
-      <td>Algarismos seguidos de <code>.</code> ou <code>)</code>. O número inicial é preservado (uma lista pode começar em 5, ou em 0). O separador que aparece na saída vem de <code>orderedLists.separator</code>, não do texto de origem.</td>
+      <td>Algarismos seguidos de <code>.</code> ou <code>)</code>: algarismos europeus, ou os indo-arábicos (<code>١.</code>) e persas (<code>۱.</code>) que um teclado árabe ou persa digita. O número inicial é preservado (uma lista pode começar em 5, ou em 0). O separador que aparece na saída vem de <code>orderedLists.separator</code>, não do texto de origem.</td>
     </tr>
     <tr>
       <td>Lista de tarefas (GFM)</td>
@@ -210,6 +210,10 @@ A info string depois do delimitador de abertura indica a linguagem (na primeira 
       <td><code>span=page</code></td>
       <td>Numa página de várias colunas, a listagem ocupa todas elas.</td>
     </tr>
+    <tr>
+      <td><code>placement=top</code>, <code>placement=bottom</code></td>
+      <td>Faz a listagem flutuar até a primeira faixa livre no topo ou no pé de uma coluna, como um <code>:::callout</code> flutuante.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -274,8 +278,8 @@ Three properties matter most:
 
 1. Line measure — 40 to 75 characters per line.
 2. Leading — 1.3 to 1.5 times the font size.
-   a. Tighter at short measures.
-   b. Looser at long measures.
+   1. Tighter at short measures.
+   2. Looser at long measures.
 3. Contrast between body and headings.
 
 Common failure modes include:

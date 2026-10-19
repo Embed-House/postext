@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Visualizações',
   description: 'As abas Canvas, PDF, Folio, HTML e EPUB 3 da área de visualização principal: o que cada uma mostra e o que permite fazer',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '16 min',
   order: 39,
   parent: 'sandbox',
@@ -50,14 +50,15 @@ Numa página composta (`::::page{template="…"}`), o canvas liga cada bloco ao 
 
 #### Edições de um livro
 
-Num livro em vários idiomas, uma barra sobre o canvas mostra as edições dele (*ES · EN · CA*) e **Lado a lado**.
+Um trilho na borda inicial do canvas reúne as edições de um livro em vários idiomas (*ES · EN · CA*) com **Lado a lado**, e **Rearranjo** quando o capítulo tem páginas compostas (desde o postext 1.44). Como a barra de ferramentas da outra borda, ele fica oculto até o ponteiro chegar a essa borda e some quando o ponteiro sai; o alfinete dele o mantém aberto, e ele começa solto. Ele continua sobre a vista lado a lado, que abre e fecha. No celular, é uma fileira no alto da visualização.
 
 - Um clique numa edição abre essa edição na mesma página composta. A página é encontrada pelo contêiner `::::page` dela no capítulo, que é a mesma em todos os idiomas; assim você continua nela mesmo que na outra edição o número seja outro, e o bloco selecionado continua selecionado. Em qualquer outra página o número da página se mantém.
-- **Lado a lado** mostra o capítulo na tela ao lado do mesmo capítulo de outra edição (**ao lado de** escolhe qual quando o livro tem mais de duas). As duas colunas mostram a mesma página e rolam juntas; **Rolar junto** desliga isso. Entre páginas compostas, as colunas contam a partir da última página composta que compartilham. Os blocos que não cabem, ou cujo texto foi reduzido, ficam marcados nas duas colunas. A outra edição aqui é só leitura: um clique numa das páginas dela abre essa edição nessa página.
+- **Lado a lado** mostra o capítulo na tela ao lado do mesmo capítulo de outra edição (**ao lado de** escolhe qual quando o livro tem mais de duas). Com o canvas em **Livro inteiro**, as duas colunas contêm o livro inteiro e abrem na página que o canvas mostra. As duas colunas mostram o mesmo lugar e rolam juntas; **Rolar junto** desliga isso. Elas se encontram pelo texto, não pelos números de página: uma página composta encontra o mesmo contêiner, e qualquer outra página encontra a página da outra edição que compõe o mesmo parágrafo do capítulo, mais ou menos à mesma altura dele; uma página sem texto (um verso em branco, uma imagem de página inteira) é contada a partir da página mais próxima que tem algum. Os blocos que não cabem, ou cujo texto foi reduzido, ficam marcados nas duas colunas. A outra edição aqui é só leitura: um clique numa das páginas dela abre essa edição nessa página. Quando a outra edição não tem capítulo nesse lugar, a coluna dela avisa.
+- Um livro aberto pelo link de um hospedeiro (uma receita das Receitas, `#recipe=…&lang=…`) lista os idiomas em que o hospedeiro o publica. Um clique em um deles abre o mesmo link nesse idioma: a sua cópia, tal como está, quando você tem uma; senão, o livro publicado, importado de novo.
 
 #### O que se moveu e por quê
 
-Numa página composta, a diagramação pode mudar o que o modelo desenha para o conteúdo caber: um bloco cresce com o texto, os que vêm depois dele no grupo descem, um bloco cede altura a outro, as imagens ou o texto ficam menores, o que sobra continua numa página acrescentada. **Rearranjo**, na barra sobre o canvas (aparece quando o capítulo tem páginas compostas), abre o painel **O que se moveu e por quê** e marca essas mudanças nas páginas.
+Numa página composta, a diagramação pode mudar o que o modelo desenha para o conteúdo caber: um bloco cresce com o texto, os que vêm depois dele no grupo descem, um bloco cede altura a outro, as imagens ou o texto ficam menores, o que sobra continua numa página acrescentada. **Rearranjo**, no trilho da borda inicial do canvas (aparece quando o capítulo tem páginas compostas), abre o painel **O que se moveu e por quê** e marca essas mudanças nas páginas.
 
 - O painel percorre cada página composta em que algo mudou e, sob um número, cada bloco que mudou, com as mudanças descritas por extenso: *dinero cresceu 13,9 mm para o conteúdo caber*, *gasto desceu 13,9 mm para dar lugar a dinero*, *ahorro-fotos: suas imagens estão a 82,5 %*, *dinero continua na página 9*. Quando há uma causa, a mudança a indica: o bloco que, ao crescer, moveu este, ou a lombada de uma página dupla.
 - Na página, cada um desses blocos leva um selo com o mesmo número e as mudanças resumidas (*+13,9 mm*, *↓ 13,9 mm*, *82,5 %*). A caixa que o modelo declara é desenhada tracejada, e setas vão dela até a caixa diagramada: uma da borda de cima, quando ele se moveu, outra no pé ou na borda final, quando mudou de tamanho.

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '設定',
   description: 'Postextの設定のしくみと、19ページに分かれたリファレンスのどこで各設定を説明しているかの案内',
   lang: 'ja',
-  lastUpdated: '2026-10-16',
+  lastUpdated: '2026-10-19',
   readingTime: '5分',
   order: 4,
   plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは19のページに分かれています。このページの一覧にはすべての節へのリンクがあるので、必要なところへ直接移動してください。",
@@ -37,16 +37,16 @@ const document = buildDocument(content, {
 
 **[ページとレイアウト](/ja/docs/configuration-page-layout)**
 
-- [ページ](/ja/docs/configuration-page-layout#ページ)：サイズ、余白、ベースライングリッド、トンボ、[綴じ](/ja/docs/configuration-page-layout#綴じ)。
+- [ページ](/ja/docs/configuration-page-layout#ページ)：サイズ、余白、ベースライングリッド、トンボ、[ノンブル](/ja/docs/configuration-page-layout#ノンブル)、[綴じ](/ja/docs/configuration-page-layout#綴じ)。
 - [レイアウト](/ja/docs/configuration-page-layout#レイアウト)：段数、段間、段間罫、[縦組み](/ja/docs/configuration-page-layout#縦組み)。
 
 **[柱とノンブル](/ja/docs/configuration-headers-footers)**
 
-- [柱とノンブル](/ja/docs/configuration-headers-footers#柱とノンブル)：ページごとに置くテキスト要素と罫線要素。プレースホルダー、奇偶、そろえ位置を指定できます。
+- [柱とノンブル](/ja/docs/configuration-headers-footers#柱とノンブル)：ページごとに置くテキスト、罫線、ボックス、画像の要素。プレースホルダー、奇偶、ページの役割、配置を指定できます。
 
 **[本文](/ja/docs/configuration-text)**
 
-- [本文](/ja/docs/configuration-text#本文)：文字組み、ハイフネーション、タブ位置、オーファンとウィドウ。
+- [本文](/ja/docs/configuration-text#本文)：文字組み、行そろえと改行、[引用ブロック](/ja/docs/configuration-text#引用ブロック)、[詩](/ja/docs/configuration-text#詩)、[タブ位置](/ja/docs/configuration-text#タブ位置)、[ドロップキャップ](/ja/docs/configuration-text#ドロップキャップ)。
 
 **[ハイフネーションと言語](/ja/docs/configuration-language)**
 

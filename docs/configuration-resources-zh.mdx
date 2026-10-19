@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '资源与表格',
   description: '资源类型及其编号，表格样式与题注样式，单色图示和印在纸上的视频',
   lang: 'zh',
-  lastUpdated: '2026-10-10',
+  lastUpdated: '2026-10-19',
   readingTime: '30分钟',
   order: 14,
   parent: 'configuration',
@@ -19,9 +19,9 @@ export const metadata = {
 
 **资源类型**是可由用户定义的类别，如*图*、*表*、*示意图*、*代码清单*……它决定这类资源怎样编号、怎样加题注、怎样引用。类型列表存放在`config.resourceTypes`中；在沙盒里，它在**版面设计 › 图与表 › 编号与位置**中编辑。
 
-未设置`config.resourceTypes`时，Postext提供三个内置默认类型：**图**、**表**和**视频**，各自独立按`{h1}.{n}`编号（每遇到一级标题重新计数），计数器为十进制。列表中没有`video`类型时（例如在有视频之前保存的书），类型为`video`的视频资源照样编号：引擎为它们补上内置的视频类型（`effectiveResourceTypes(config, resources)`），`defaultVideoResourceType(locale)`则单独返回这个类型。它们的名称采用文档语言：先取`config.locale`，没有则取`bodyText.hyphenation.locale`，再没有则用英语（见[文档语言](/zh/docs/configuration-language#文档语言)）。
+未设置`config.resourceTypes`时，Postext提供三个内置默认类型：**图**、**表**和**视频**，各自独立按`{h1}.{n}`编号（中文、日语和阿拉伯语为`{h1}-{n}`），每遇到一级标题重新计数，计数器为十进制。列表中没有`video`类型时（例如在有视频之前保存的书），类型为`video`的视频资源照样编号：引擎为它们补上内置的视频类型（`effectiveResourceTypes(config, resources)`），`defaultVideoResourceType(locale)`则单独返回这个类型。它们的名称采用文档语言：先取`config.locale`，没有则取`bodyText.hyphenation.locale`，再没有则用英语（见[文档语言](/zh/docs/configuration-language#文档语言)）。
 
-内置默认类型随文档语言而变。导出的`defaultResourceTypes(locale = 'en')`把类型名称、简写标签和题注前缀译成文档的语言：英语得到*Figure*/*Fig.*和*Table*/*Tab.*；西班牙语得到*Figura*/*Fig.*和*Tabla*/*Tabla*；法语、德语、意大利语、葡萄牙语、加泰罗尼亚语和荷兰语也各有对应名称（列在[文档语言](/zh/docs/configuration-language#文档语言)的表中）。`es-ES`这类带地区的标签按语言解析，没有译名的语言改用英语。编号行为（`numberingTemplate: '{h1}.{n}'`、`resetOn: 'h1'`、十进制计数器）与语言无关。每次调用都返回新对象，因此可以随意修改结果：
+内置默认类型随文档语言而变。导出的`defaultResourceTypes(locale = 'en')`把类型名称、简写标签和题注前缀译成文档的语言：英语得到*Figure*/*Fig.*和*Table*/*Tab.*；西班牙语得到*Figura*/*Fig.*和*Tabla*/*Tabla*；法语、德语、意大利语、葡萄牙语、加泰罗尼亚语、荷兰语、中文（简体和繁体）、日语和阿拉伯语也各有对应名称（列在[文档语言](/zh/docs/configuration-language#文档语言)的表中）。`es-ES`这类带地区的标签按语言解析，没有译名的语言改用英语。所有语言都在`h1`处重新计数，计数器都是十进制。模板为`'{h1}.{n}'`，只有中文、日语和阿拉伯语用连字符连接章号和计数：`'{h1}-{n}'`（图1-1、図1-1）。每次调用都返回新对象，因此可以随意修改结果：
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -39,7 +39,9 @@ type ResourceCounterFormat =
   | 'roman-lower'
   | 'roman-upper'
   | 'alpha-lower'
-  | 'alpha-upper';
+  | 'alpha-upper'
+  | EastAsianNumeralStyle  // 'simp-chinese-informal', 'circled-decimal', 'hiragana'…
+  | ArabicNumeralStyle;    // 'arabic-indic', 'persian', 'abjad'…
 
 type ResourceCounterReset = 'never' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -48,11 +50,15 @@ interface ResourcePlacement {
   span?: 'column' | 'page' | 'side';             // 一栏、整个内容宽度，或只放浮动体的侧栏
   rotate?: 'ccw' | 'cw';                         // 旋转四分之一圈：横排的表单独占一页
   width?: number;                                // 栏宽或页宽的比例（0 < width < 1）；默认占满整个宽度
-  align?: 'left' | 'center' | 'right';           // 比所在栏窄的浮动体放在哪里；默认'left'
+  align?: 'left' | 'center' | 'right' | 'start' | 'end'; // 比所在栏窄的浮动体放在哪里；默认'left'
   captionSide?: boolean;                         // 题注放在图旁，位于oneAndHalf版式的侧栏中（栏内浮动体和随文放置的资源）
   columns?: number;                              // 'column'浮动体横跨的相邻栏数（1.18起）
   wrap?: 'none' | 'left' | 'right' | 'start' | 'end' | 'contour'; // 正文排在资源旁边，资源在栏的这一侧（1.24起）；'contour'沿它的形状排
   wrapGap?: Dimension;                           // 绕排资源与正文之间的距离（1.24起）
+  shrink?: 'never' | 'page' | 'slot';            // 把浮动图片缩小到空位的大小
+  minScale?: number;                             // shrink缩放的最小比例；默认0.7
+  captionMeasure?: 'slot' | 'body';              // 题注和注释与空位同宽或与图片同宽
+  citingPage?: boolean;                          // top或auto浮动体可置于引用所在页或栏的顶部
 }
 
 interface ResourceType {
@@ -65,12 +71,13 @@ interface ResourceType {
   counterFormat: ResourceCounterFormat;// {n}的格式
   captionPrefix: string;               // 加在题注前面，例如"Figure"
   defaultPlacement?: ResourcePlacement;// 该类型资源的后备位置
+  captionStyle?: CaptionStyleConfig;   // 该类型资源的部分题注样式
 }
 ```
 
 类型可以省略字段（自postext 1.38起）：由同id的内置类型补齐（`figure`、`table`、`video`，采用文档语言）；没有同id的内置类型时，`name`取id，`shortLabel`和`captionPrefix`取`name`，`numberingTemplate`取`{'{h1}.{n}'}`（中文、日文和阿拉伯文为`{'{h1}-{n}'}`），`resetOn`取`'h1'`，`counterFormat`取`'decimal'`。`resetOn`写的不是任何级别时按`'h1'`处理，并给出`unknownConfigValue`警告。
 
-`ResourcePlacement`与资源自身的`placement`结构相同。`position`决定浮动体可以占用哪种空位：`auto`（默认）取第一次引用之后的第一个空位，`top` / `bottom`只取相应的版带，`here`把资源嵌在正文里。`span`设定浮动体的宽度：一栏、整个版心宽度，或一栏半版面中只放浮动体的侧栏。`rotate`把资源转四分之一圈，使它成为单独占一页的通栏浮动体。`width`把浮动体收窄到所在栏宽的某个比例（通栏浮动体则是页宽的比例），例如宽栏里的一张小表。`align`决定这种较窄的浮动体放在哪里（默认靠左，也可居中或靠右），也决定比空位窄的图片在空位中的位置，例如比栏窄的位图，或被`layout.fitFiguresToPage`缩小的图像。题注和注释仍按空位的行长排。（postext 1.4及以前，这类图片总是齐左排放。）`captionSide`把题注放在图旁，即一栏半版面中只放浮动体的侧栏（`layout.sideColumnRole: 'floats'`），与图的顶边平齐（底部浮动体则与底边平齐）。它作用于栏内浮动体；自postext 1.28起，也作用于随文放置的资源（`position: 'here'`，宽一栏，旁边没有绕排的文字）：侧栏在它旁边空着时，题注和注释排在侧栏，与主体顶边平齐，否则仍排在主体下方（`layout.inlineCaptionSide`，默认开启；设为`false`时，只有栏内浮动体把题注放到侧栏）。没有这种侧栏的页面，题注仍在图下。资源和它的类型都没有设定位置时，内置默认值为`auto` / `column`。`shrink`（`'never'`、`'page'`、`'slot'`）和`minScale`（未设时为0.7）让浮动图片缩小到空位放得下的尺寸，而不是往后移；`captionMeasure: 'body'`让比空位窄的图片的题注和注释与图片同宽（见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）；`layout.floatShrink`给出前两项的文档默认值。`wrap`把行内嵌入或一栏宽的浮动体放在栏的一侧，正文排在它旁边，两者相隔`wrapGap`；默认值放在`layout.wrap`里（见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。`wrap: 'contour'`让正文沿图片的形状绕排，形状取自资源的`contour`（`points`、`alpha`、`threshold`、`margin`，以及宿主生成的`traced`；见[文档格式 › 沿轮廓绕排](/zh/docs/document-format-resources#沿轮廓绕排)）。`citingPage`让`top`或`auto`浮动体排在引用行所在页或栏的顶部，而不是引用行之后的第一个空位；`layout.floatsAtCitingPage`给出文档默认值，`layout.maxTopFraction`给出它最多可占的栏高比例（参见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）。
+`ResourcePlacement`与资源自身的`placement`结构相同。`position`决定浮动体可以占用哪种空位：`auto`（默认）取第一次引用之后的第一个空位，`top` / `bottom`只取相应的版带，`here`把资源嵌在正文里。`span`设定浮动体的宽度：一栏、整个版心宽度，或一栏半版面中只放浮动体的侧栏。`rotate`把资源转四分之一圈，使它成为单独占一页的通栏浮动体。`width`把浮动体收窄到所在栏宽的某个比例（通栏浮动体则是页宽的比例），例如宽栏里的一张小表。`align`决定这种较窄的浮动体放在哪里（默认靠左，也可居中或靠右），也决定比空位窄的图片在空位中的位置，例如比栏窄的位图，或被`layout.fitFiguresToPage`缩小的图像。题注和注释仍按空位的行长排。（postext 1.4及以前，这类图片总是齐左排放。）`left`和`right`指正文流向的两侧，在从右向左排版的文档页面上左右互换；`start`和`end`指同样的两侧。`captionSide`把题注放在图旁，即一栏半版面中只放浮动体的侧栏（`layout.sideColumnRole: 'floats'`），与图的顶边平齐（底部浮动体则与底边平齐）。它作用于栏内浮动体；自postext 1.28起，也作用于随文放置的资源（`position: 'here'`，宽一栏，旁边没有绕排的文字）：侧栏在它旁边空着时，题注和注释排在侧栏，与主体顶边平齐，否则仍排在主体下方（`layout.inlineCaptionSide`，默认开启；设为`false`时，只有栏内浮动体把题注放到侧栏）。没有这种侧栏的页面，题注仍在图下。资源和它的类型都没有设定位置时，内置默认值为`auto` / `column`。`shrink`（`'never'`、`'page'`、`'slot'`）和`minScale`（未设时为0.7）让浮动图片缩小到空位放得下的尺寸，而不是往后移；`captionMeasure: 'body'`让比空位窄的图片的题注和注释与图片同宽（见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）；`layout.floatShrink`给出前两项的文档默认值。`wrap`把行内嵌入或一栏宽的浮动体放在栏的一侧，正文排在它旁边，两者相隔`wrapGap`；默认值放在`layout.wrap`里（见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。`wrap: 'contour'`让正文沿图片的形状绕排，形状取自资源的`contour`（`points`、`alpha`、`threshold`、`margin`，以及宿主生成的`traced`；见[文档格式 › 沿轮廓绕排](/zh/docs/document-format-resources#沿轮廓绕排)）。`citingPage`让`top`或`auto`浮动体排在引用行所在页或栏的顶部，而不是引用行之后的第一个空位；`layout.floatsAtCitingPage`给出文档默认值，`layout.maxTopFraction`给出它最多可占的栏高比例（参见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）。
 
 `columns`（postext 1.18起）让`span: 'column'`浮动体在多栏页面上横跨这么多相邻的栏，例如报纸五栏中横跨两栏的照片。它的宽度是这些栏加上其间的栏间距。它占用一组顶端平齐的空栏的栏首，或者引用它的那一栏及其后空栏的栏脚；栏数等于或大于页面的栏数时，它就是通栏浮动体。`'page'`和`'side'`跨度、旋转的资源（`rotate`）以及行内嵌入（`here`）忽略此项；`captionSide`只对一栏宽的浮动体有效。
 
@@ -116,7 +123,7 @@ interface ResourceType {
     <tr>
       <td><code>counterFormat</code></td>
       <td><code>ResourceCounterFormat</code></td>
-      <td><code>{'{n}'}</code>计数器的显示方式：十进制（<code>1, 2, 3</code>）、小写/大写罗马数字（<code>i, ii</code> / <code>I, II</code>）或小写/大写字母（<code>a, b</code> / <code>A, B</code>）。页码和列表使用的写法也可以（<code>'lower-roman'</code>、<code>'arabic'</code>……；见<a href="/zh/docs/configuration-page-layout#编号格式的写法">编号格式的写法</a>）；未知值按十进制计数并报告出来。标题标记（<code>{'{h1}'}</code>……）总是显示为十进制。</td>
+      <td><code>{'{n}'}</code>计数器的显示方式：十进制（<code>1, 2, 3</code>）、小写/大写罗马数字（<code>i, ii</code> / <code>I, II</code>）或小写/大写字母（<code>a, b</code> / <code>A, B</code>）。页码和列表使用的写法也可以（<code>'lower-roman'</code>、<code>'arabic'</code>……；见<a href="/zh/docs/configuration-page-layout#编号格式的写法">编号格式的写法</a>），东亚和阿拉伯的数字样式也可以（<code>'simp-chinese-informal'</code>计作一、二、三，<code>'arabic-indic'</code>计作١、٢、٣）；未知值按十进制计数并报告出来。标题标记（<code>{'{h1}'}</code>……）总是显示为十进制。</td>
     </tr>
     <tr>
       <td><code>captionPrefix</code></td>
@@ -126,7 +133,7 @@ interface ResourceType {
     <tr>
       <td><code>defaultPlacement</code></td>
       <td><code>ResourcePlacement</code>（可选）</td>
-      <td>该类型中未设定自身<code>placement</code>的资源所用的位置：<code>position</code>、<code>span</code>、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>captionSide</code>和<code>columns</code>，各字段分别解析。资源和类型都没有设定某个字段时，采用内置默认值：<code>auto</code> / <code>column</code>、不旋转、占满整个宽度、左对齐、题注在图下。解析顺序见下文<a href="#编号与引用">编号与引用</a>，各取值的作用（包括旋转的资源）见<a href="/zh/docs/document-format-resources#资源">文档格式 › 资源</a>。</td>
+      <td>该类型中未设定自身<code>placement</code>的资源所用的位置：<code>ResourcePlacement</code>的所有字段（<code>position</code>、<code>span</code>、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>captionSide</code>、<code>columns</code>、<code>shrink</code>、<code>minScale</code>、<code>captionMeasure</code>、<code>wrap</code>、<code>wrapGap</code>、<code>citingPage</code>），各字段分别解析。资源和类型都没有设定某个字段时，采用内置默认值：<code>auto</code> / <code>column</code>、不旋转、占满整个宽度、左对齐、题注在图下。解析顺序见下文<a href="#编号与引用">编号与引用</a>，各取值的作用（包括旋转的资源）见<a href="/zh/docs/document-format-resources#资源">文档格式 › 资源</a>。</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
@@ -442,7 +449,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>该标记的文字，以注释字体（见<a href="#题注样式">题注样式</a>）右对齐排在该部分下方。默认值随文档语言而定（八种语言见<a href="/zh/docs/configuration-language#文档语言">文档语言</a>）。</td>
+      <td>该标记的文字，以注释字体（见<a href="#题注样式">题注样式</a>）右对齐排在该部分下方。默认值随文档语言而定（各语言的默认值见<a href="/zh/docs/configuration-language#文档语言">文档语言</a>）。</td>
     </tr>
   </tbody>
 </table>
@@ -534,7 +541,7 @@ const resource: Resource = {
 
 **排在正文中的表**。自postext 1.25起，排在`here`（用`::resource`嵌入）的表也遵循同样的规则（`splitInline`，默认开启）。它放不进本栏剩余空间时，就在行与行之间切开：第一部分保留上方的浮动体间距，至少带表头行和两行表体（若不够，整张表照旧从下一栏开始）；之后每一部分都在下一栏顶部开头，上方不留间距，按该栏的宽度排（一栏半版式把某一部分排进窄栏时，按窄栏的宽度排）；`::resource`那一行之后的文字接在最后一部分后面。重复表头、带后缀的题注、接续标记、最后一部分下的注释、至少三行的尾部，以及避开合并单元格和分组标题行的切分，都与浮动表相同。表体不足五行的表从不切开。`'clip'`保留比一栏还高的行内表放得下的开头几行，排在某一栏的顶部；`'hide'`不排这样的表；较矮的表在这两种模式下都整体移到下一栏。行内表开启的页面，只为表的第一部分保留不被该页浮动体占用的空间，因此等待中的通栏图仍排在该页顶部，表接在图下继续。竖排页面上的行内表以及框内的表不切开。`splitInline: false`把行内表整体移到下一栏，与postext 1.24及以前相同。
 
-续表文字的默认值随文档语言而定（`locale`，没有则取断词语言）：英语为`(cont.)` / `Continued`，西班牙语为`(cont.)` / `Continúa`，法语、德语、意大利语、葡萄牙语、加泰罗尼亚语和荷兰语也同样有对应文字（列在[文档语言](/zh/docs/configuration-language#文档语言)中）。
+续表文字的默认值随文档语言而定（`locale`，没有则取断词语言）：英语为`(cont.)` / `Continued`，西班牙语为`(cont.)` / `Continúa`，法语、德语、意大利语、葡萄牙语、加泰罗尼亚语、荷兰语、中文、日语和阿拉伯语也同样有对应文字（列在[文档语言](/zh/docs/configuration-language#文档语言)中）。
 
 单元格内容是行内Markdown，单元格中的换行（换行符，或者像题注和注释中那样用`\\`）开始一个新段落。以项目符号或短横（`•`、`-`、`*`、`–`）或者数字（`1.`、`1)`）加空格开头的段落排成列表项：标记按原样绘制，文字以文档的`unorderedLists.gap`为距悬挂在标记之后，折行与文字对齐，开头两个空格表示嵌套一级。所以写成`• Ofrece elección\n• Acomoda a personas diestras y zurdas`的单元格会排成两项的列表。只有普通空格的一行不产生任何内容；含不间断空格（U+00A0）的一行则算作单元格的一行，与CommonMark一致，所以`1\n`后面跟一个不间断空格会使这一表格行占两行高。单元格文字末尾的不间断空格保留其宽度：`760`加一个不间断空格，右对齐在`(231)`上方时，会在离边缘一个空格处结束，使0靠近1。只有空格与括号等宽时数字才完全对齐，而大多数字体里空格更窄。（postext 1.4及以前两者都会被丢掉。）
 
@@ -827,7 +834,7 @@ import {
 import type { DiagramStyleConfig, ResolvedDiagramStyleConfig } from 'postext';
 
 const resolved = resolveDiagramStyleConfig(config.diagramStyle);
-// => { singleInk: false, inkColor: { hex: '#295AA3', model: 'hex', paletteId: 'main-color' } }
+// => { singleInk: false, inkColor: { hex: '#295AA3', model: 'hex', paletteId: 'main-color' }, inlineFonts: true }
 
 const minimal  = stripDiagramStyleDefaults(config.diagramStyle);
 // => 全部与默认值相同时为undefined
@@ -894,7 +901,7 @@ const canvas = renderPage(doc.pages[0], doc);
 - **EPUB**。`postext-epub`在写出SVG之前，先从书的`fonts`、再从`svgFonts.provider`取字体嵌入（见[EPUB电子书](/zh/docs/configuration-html-folio-epub#epub电子书postext-epub)）。
 - **PDF**。SVG文字作为真正的文字，用嵌入的字体排出。只含`@font-face`规则的`<style>`（作者嵌入的字体）不再使图退回栅格。图确实退回栅格时（滤镜、渐变），其栅格图用从PDF的`fontProvider`取来的字体嵌入后生成。
 
-较底层的函数也已导出：`svgFontRequests(svgText)`列出每段文字的字体族、字重、样式和字符；`inlineSvgFonts(svgText, provider, options)`和`inlineSvgFontsSync(svgText, syncProvider, options)`返回标记；`inlineSvgFontsDetailed`另外报告每种字体的结果（`inlined`、`declared`、`unavailable`、`withheld`、`tooLarge`）。
+较底层的函数也已导出：`svgFontRequests(svgText)`列出每段文字的字体族、字重、样式和字符；`inlineSvgFonts(svgText, provider, options)`和`inlineSvgFontsSync(svgText, syncProvider, options)`返回标记；`inlineSvgFontsDetailed`另外报告每种字体的结果（`inlined`、`declared`、`unavailable`、`withheld`、`tooLarge`）；由替身字体族嵌入的字体在`standIn`中给出该字体族。
 
 <table>
   <thead>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pasar a páginas compuestas',
   description: 'Cómo pasar a plantillas de página y Markdown un libro que guarda el texto de sus páginas en estilos de encabezado, con el asistente Pasar el texto al Markdown del Sandbox o a mano, y qué comprobar después',
   lang: 'es',
-  lastUpdated: '2026-10-17',
+  lastUpdated: '2026-10-19',
   readingTime: '8 min',
   order: 43,
   plainSummary: "Algunos libros hechos con Postext antes de que existieran las páginas compuestas guardan las palabras de cada página en los ajustes de diseño, y no en el texto. Por eso son difíciles de editar e imposibles de traducir. Esta página muestra cómo pasar esas palabras al Markdown, donde cada página se convierte en un bloque con su propia plantilla. El Sandbox hace casi todo el trabajo con un botón, y tú revisas el resultado página por página. También explica cómo hacer lo mismo a mano con una sola página.",
@@ -59,7 +59,7 @@ Repasa el resultado en este orden.
 
 - **Las páginas que se ven distintas.** La lista del cuadro indicaba los motivos que conocía: la caja, el contorno o la capitular propios de un texto; una página de la que no se sabía en qué lado iba; el texto corrido que ahora se compone en el marco de flujo de la plantilla. Compara esas páginas en el canvas.
 - **Las plantillas.** **Diseño › Página y columnas › Plantillas de página** muestra una plantilla por cada diseño de página, y `page-base` para los marcos que comparten las páginas. Una página que no añade nada usa la base tal cual; las demás la extienden. Los nombres se forman a partir de los antiguos: cambia el de cada plantilla por otro que reconozcas (todas las páginas que la usan adoptan el nombre nuevo).
-- **Los estilos de párrafo.** La fuente, el cuerpo, el peso, el color, la alineación y el interlineado de cada texto se han convertido en un estilo de párrafo: uno de los que ya tenía el libro, si coincidía exactamente, o uno nuevo con el nombre de la fuente y el cuerpo (`nunito-11`). Revisa **Diseño › Texto** y cambia el nombre de los nuevos o fusiónalos.
+- **Los estilos de párrafo.** La fuente, el cuerpo, el peso, el color, la alineación y el interlineado de cada texto se han convertido en un estilo de párrafo: uno de los que ya tenía el libro, si coincidía exactamente, o uno nuevo con el nombre de la fuente y el cuerpo (`nunito-11`). Revisa **Diseño › Tipografía › Estilos de párrafo** y cambia el nombre de los nuevos o fusiónalos.
 - **Los encabezados.** Los estilos de encabezado que han quedado iguales se han fusionado, y los encabezados se han renombrado; los encabezados ocultos que solo servían para cambiar la cabecera han desaparecido. Si el libro tiene índice, revísalo.
 - **Lo que queda en la configuración.** La lista *Queda en la configuración* del cuadro enumera los textos que siguen allí: un texto que mezcla palabras con marcadores de posición (`Page {pageNumber}`), un texto colgado de otro elemento y el texto del diseño de un encabezado. No forman parte del contenido de ninguna página, y los avisos *Texto guardado en la configuración* que quedan se refieren a ellos.
 - **Los rótulos.** Si activaste *Las palabras sobre las imágenes se convierten en sus rótulos*, revisa cada mapa o diagrama: los rótulos se vuelven a componer con las fuentes del libro, así que su tamaño y su posición pueden no coincidir con los de las páginas antiguas.
