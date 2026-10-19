@@ -40,7 +40,7 @@ preferenze estetiche: sono principi conquistati con fatica e affinati da generaz
 giornali e riviste:
 
 - Niente orfane (una sola riga di un paragrafo rimasta isolata in cima a una colonna).
-- Niente vedove (una sola riga di un paragrafo lasciata indietro in fondo).
+- Niente vedove (una sola riga di un paragrafo rimasta isolata in fondo).
 - Colonne bilanciate (altezza più o meno uguale per tutte le colonne di una doppia pagina).
 - Testo che scorre attorno a figure, citazioni in evidenza e immagini inserite.
 - Note collocate correttamente in fondo alla colonna in cui sono richiamate.
@@ -62,7 +62,7 @@ Oltre a queste regole, due grandezze concrete e misurabili mostrano quanto il we
   non offre alcun modo automatico per farlo.
 
 E qui il CSS si ferma: hai `column-count` e poco altro. Nessun controllo sulla collocazione delle
-risorse, nessuna consapevolezza del trabocco, nessuna prevenzione di orfane o vedove tra una colonna e l’altra, nessun modo nativo
+risorse, nessuna gestione del testo che eccede, nessuna prevenzione di orfane o vedove tra una colonna e l’altra, nessun modo nativo
 per far scorrere il testo attorno a un ostacolo qualsiasi. Sul web le impaginazioni editoriali a più colonne restano
 fatte a mano: progetti statici che si rompono appena cambia la dimensione dello schermo.
 
@@ -71,7 +71,7 @@ schermo. Quello che non ha mai avuto è un’impaginazione *editoriale* responsi
 in modo intelligente nelle colonne, attorno alle immagini, oltre le note, rispettando le regole che rendono il testo
 *piacevole da leggere*.
 
-<Illustration name="CssGapVsEditorial" data='{"title": "La distanza tra il multicolonna CSS e l’impaginazione editoriale", "desc": "Il CSS offre column-count e poco altro; l’impaginazione editoriale richiede il controllo di orfane e vedove, lo scorrimento attorno agli ostacoli, il bilanciamento delle colonne, la collocazione delle note e un affinamento per convergenza.", "caption": "Che cosa ti dà il CSS e che cosa richiede davvero l’impaginazione editoriale.", "cssTitle": "Che cosa ti dà il CSS", "cssLead": "column-count", "cssMore": "...e più o meno basta.", "cssCons": ["Nessun controllo di orfane e vedove", "Nessuno scorrimento attorno agli ostacoli", "Nessun bilanciamento delle colonne", "Nessuna collocazione delle note", "Nessuna convergenza né affinamento"], "gap": "la distanza", "editorialTitle": "Che cosa serve all’impaginazione editoriale", "editorialPros": ["Prevenzione di orfane e vedove", "Testo che scorre attorno alle risorse", "Colonne bilanciate", "Collocazione delle note", "Controllo della sillabazione", "Affinamento per convergenza"], "equals": "= Postext"}' />
+<Illustration name="CssGapVsEditorial" data='{"title": "La distanza tra il multicolonna CSS e l’impaginazione editoriale", "desc": "Il CSS offre column-count e poco altro; l’impaginazione editoriale richiede il controllo di orfane e vedove, lo scontorno degli ostacoli, il bilanciamento delle colonne, la collocazione delle note e un affinamento per convergenza.", "caption": "Che cosa ti dà il CSS e che cosa richiede davvero l’impaginazione editoriale.", "cssTitle": "Che cosa ti dà il CSS", "cssLead": "column-count", "cssMore": "…e tutto qui.", "cssCons": ["Nessun controllo di orfane e vedove", "Nessuno scontorno degli ostacoli", "Nessun bilanciamento delle colonne", "Nessuna collocazione delle note", "Nessuna convergenza né affinamento"], "gap": "la distanza", "editorialTitle": "Che cosa serve all’impaginazione editoriale", "editorialPros": ["Prevenzione di orfane e vedove", "Testo che scorre attorno alle risorse", "Colonne bilanciate", "Collocazione delle note", "Controllo della sillabazione", "Affinamento per convergenza"], "equals": "= Postext"}' />
 
 
 ## Dieci anni alla ricerca del pezzo mancante
@@ -142,9 +142,9 @@ const pdfBytes = await renderToPdf(vdt, { fontProvider });  // print-ready PDF
 
 Pretext ti dà le misure. Postext ti dà l’impaginazione.
 
-<Illustration name="PretextPostextPipeline" data='{"title": "Pretext misura, Postext decide", "desc": "Pretext misura il testo senza DOM, a partire dal canvas. Postext usa quelle dimensioni esatte per decidere la colonna, la posizione, lo scorrimento attorno alle risorse e le regole su orfane, vedove e bilanciamento.", "caption": "Le due metà della stessa operazione: Pretext prima, Postext dopo.", "pretextTitle": "Pretext", "pretextSubtitle": "misura", "pretextBullets": ["Senza DOM, basato sul canvas", "300-600 volte più veloce del reflow", "a capo precisi al pixel"], "bridge": ["dimensioni", "esatte"], "postextTitle": "Postext", "postextSubtitle": "decide", "postextBullets": ["Quale colonna, quale posizione", "Scorrimento attorno alle risorse", "Orfane, vedove, bilanciamento"]}' />
+<Illustration name="PretextPostextPipeline" data='{"title": "Pretext misura, Postext decide", "desc": "Pretext misura il testo su un canvas, senza DOM. Postext usa quelle dimensioni esatte per decidere la colonna e la posizione di ogni blocco, il testo attorno alle risorse e le regole su orfane, vedove e bilanciamento.", "caption": "Le due metà della stessa operazione: Pretext prima, Postext dopo.", "pretextTitle": "Pretext", "pretextSubtitle": "misura", "pretextBullets": ["Senza DOM, basato sul canvas", "300-600 volte più veloce del reflow", "a capo precisi al pixel"], "bridge": ["dimensioni", "esatte"], "postextTitle": "Postext", "postextSubtitle": "decide", "postextBullets": ["Quale colonna, quale posizione", "Testo attorno alle risorse", "Orfane, vedove, bilanciamento"]}' />
 
-*Pretext è stato creato da [Cheng Lou](https://github.com/chenglou). Postext è costruito sopra di esso.*
+*Pretext è stato creato da [Cheng Lou](https://github.com/chenglou). Postext si basa su di esso.*
 
 
 ## Come funziona
@@ -156,10 +156,10 @@ Il processo ha tre fasi:
    in alto o in basso vicino al suo primo rimando, come fa un compositore tipografico con le figure. Il contenuto
    resta puramente semantico: descrive *che cosa* presentare, non *come*; le decisioni di impaginazione non sono mai
    scritte nel sorgente. La sezione Risorse della pagina
-   [Formato del documento](/it/docs/document-format) copre tutta la sintassi.
+   [Formato del documento](/it/docs/document-format) descrive tutta la sintassi.
 
 2. **Il motore prende le decisioni.** Postext analizza il contenuto, chiama Pretext per misurare il testo
-   al pixel senza toccare il DOM e poi esegue una pipeline di impaginazione in più passaggi: bilancia
+   al pixel senza toccare il DOM e poi esegue una pipeline di impaginazione in più passate: bilancia
    le colonne, numera e fa flottare le risorse, evita vedove e orfane, allinea le linee di base,
    affina le spaziature. Ogni decisione dipende dalla configurazione: geometria della pagina e dell’impaginazione, testo
    corrente e titoli, più `tableStyle` per la tipografia delle celle delle tabelle, `captionStyle` per le didascalie
@@ -174,14 +174,14 @@ Il processo ha tre fasi:
    incorporati (`renderToPdf`, dal pacchetto `postext-pdf`). Lo stesso contenuto, le stesse
    regole, tre output intercambiabili.
 
-<Illustration name="LayoutProcess" data='{"title": "Impaginazione in tre fasi", "desc": "Il Markdown arricchito e la configurazione entrano nel motore, che esegue una pipeline di impaginazione in più passaggi con la misurazione di Pretext al suo interno e produce un output HTML o PDF.", "caption": "Contenuto in ingresso, geometria in uscita, poi il rendering nel formato di destinazione.", "inputTitle": "Markdown arricchito", "inputSubtitle": "+ configurazione", "parse": "analisi", "engineTitle": "Motore Postext", "engineSub1": "misurazione Pretext all’interno", "engineSub2": "impaginazione in più passaggi", "render": "rendering", "outputTitle": "HTML / PDF", "outputSubtitle": "output finale"}' />
+<Illustration name="LayoutProcess" data='{"title": "Impaginazione in tre fasi", "desc": "Il Markdown arricchito e la configurazione entrano nel motore, che misura il testo con Pretext, lo impagina in più passate e produce HTML o PDF.", "caption": "Contenuto in ingresso, geometria in uscita, poi il rendering nel formato di destinazione.", "inputTitle": "Markdown arricchito", "inputSubtitle": "+ configurazione", "parse": "analisi", "engineTitle": "Motore Postext", "engineSub1": "misurazione Pretext all’interno", "engineSub2": "impaginazione in più passate", "render": "rendering", "outputTitle": "HTML / PDF", "outputSubtitle": "output finale"}' />
 
-Per uno sguardo dettagliato all’interno del motore (l’albero virtuale del documento, la pipeline in più passaggi
+Per uno sguardo dettagliato all’interno del motore (l’albero virtuale del documento, la pipeline in più passate
 e il ciclo di convergenza) leggi il documento [Architettura](/it/docs/architecture). Per un riferimento
 completo di ogni opzione di configurazione, dalla geometria della pagina allo stile di tabelle, didascalie e
 diagrammi, vedi la pagina [Configurazione](/it/docs/configuration). E per provare tutto dal vivo (un
 editor di testo per capitolo, un pannello Risorse con un editor di tabelle e il caricamento di immagini e SVG, un pannello Grafica
-che presenta ogni impostazione in termini editoriali, e anteprime live in canvas, HTML e PDF) apri
+che presenta ogni impostazione in termini editoriali, e le anteprime in tempo reale in canvas, HTML e PDF) apri
 la [Sandbox](/it/docs/sandbox).
 
 

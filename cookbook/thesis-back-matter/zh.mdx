@@ -34,7 +34,7 @@ pageNotes: { "1": "第171页是第6章Conclusion的开篇，位于一条62 mm高
 
 <Excerpt region="running-heads" />
 
-四个文本元素锚定在页面上，并用`parity`筛选，让页码在两页上都位于外侧；每个元素按顶边定位，放在距裁切线17.5 mm的基线的`above()`处，所以9.5 pt的页码和7.5 pt的大写字母立在同一行上。左页印论文标题（`{title}`，来自frontmatter），右页印该节标题（`{chapterTitle}`），例如<PageRef page={7}>第177页</PageRef>上的INDEX。`pages: 'body'`让它们不出现在章首页上；章首页只有页脚的页码，在版心下居中。本章的右页会印*Chapter 6. Conclusion*，附录的右页会印*Appendix A. Interview guide*，不过在这个示例中只有索引延续到了右页。
+四个文本元素锚定在页面上，并用`parity`筛选，让页码在两页上都位于外侧；每个元素按顶边定位，放在距裁切线17.5 mm的基线的`above()`处，所以9.5 pt的页码和7.5 pt的大写字母立在同一行上。左页印论文标题（`{title}`，来自前置元数据），右页印该节标题（`{chapterTitle}`），例如<PageRef page={7}>第177页</PageRef>上的INDEX。`pages: 'body'`让它们不出现在章首页上；章首页只有页脚的页码，在版心下居中。本章的右页会印*Chapter 6. Conclusion*，附录的右页会印*Appendix A. Interview guide*，不过在这个示例中只有索引延续到了右页。
 
 ### 5 · 在正文讨论术语的地方做标记
 

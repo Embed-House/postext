@@ -1,8 +1,8 @@
 ---
 title: "Ein Handbuch, dessen Verweise auf Seiten zeigen"
 summary: "Eine Fahrradanleitung, deren Querverweise „see section 3.2 on page 3“ sagen, vorwärts und rückwärts, jede Nummer und Seite aus dem Layout genommen."
-plain: "Eine kurze Bedienungsanleitung für ein Reiserad. Schickt der Text Sie zu einem anderen Abschnitt, nennt er dessen Nummer und die Seite, auf der er steht, und beides sind Links."
-description: "Ein Produkthandbuch in Postext: nummerierte Abschnitte, Anker an Absätzen und Schritten, Querverweise nach Nummer, Titel und Seite, aktuell und verlinkt."
+plain: "Eine kurze Bedienungsanleitung für ein Reiserad. Verweist der Text auf einen anderen Abschnitt, nennt er dessen Nummer und die Seite, auf der er steht, und beides sind Links."
+description: "Ein Produkthandbuch in Postext: nummerierte Abschnitte, Verweisziele an Absätzen und Schritten, Querverweise nach Nummer, Titel und Seite, aktuell und verlinkt."
 question: "Wie verweise ich auf einen Abschnitt und seine Seite, sodass beides stimmt, wenn sich das Buch ändert?"
 aliases: ["Querverweis", "siehe Seite", "Seitenverweis", "pageref", "Anker", "Label", "siehe Abschnitt", "Handbuch", "Bedienungsanleitung", "interne Links", "pandoc-crossref"]
 pageNotes: { "1": "Seite 1: ein marineblaues Band über der oberen Hälfte mit „OWNER’S MANUAL“, dem Modellnamen „Ardena T3“ in großer weißer schmaler Schrift, einem Untertitel und der Ausgabezeile, dann ein orangefarbener Streifen; darunter eine Einleitung und ein Inhaltsverzeichnis, dessen Abschnittsnummern, Titel und Seitenzahlen alle orangefarbene Querverweise sind.", "2": "Seite 2: Abschnitt 1 mit Verweisen wie „section 3.2 on page 3“ und der Wendung „close the lever so that it points backwards“, die auf einen Schritt in Abschnitt 2.2 verlinkt; nummerierte Schritte zur Sattelhöhe; Abschnitt 2.1 zum Reifendruck.", "3": "Seite 3: Aus- und Einbau des Vorderrads, Abschnitt 3 über die Bremsen mit einem Kasten „Wet weather“ mit orangefarbenem Seitenstreifen und der Beginn von 3.2.", "4": "Seite 4: Einstellen des Zugs, Abschnitt 4 über die Kette mit einem Rückverweis auf „Wet weather“ auf Seite 3 und der Wartungsplan, eine Liste von Intervallen, jedes mit Verweis auf einen Abschnitt und eine Seite." }
@@ -10,21 +10,21 @@ pageNotes: { "1": "Seite 1: ein marineblaues Band über der oberen Hälfte mit �
 
 ## Was Sie setzen
 
-Die Bedienungsanleitung eines erfundenen Reiserads, des Ardena T3: vier A5-Seiten in Archivo, mit dem Modellnamen in einem marineblauen Band über der ersten Seite. Ein Handbuch wird nicht der Reihe nach gelesen; deshalb sagt jede Anweisung, die von einer anderen abhängt, wo diese steht: „see section 3.2 on page 3“. Der Autor benennt eine Überschrift, einen Absatz oder eine Wendung in einem Schritt mit einem Bezeichner und schreibt `:ref` überall dort, wo der Text darauf verweist; Postext druckt die Nummer, den Titel oder die Seite und macht daraus einen Link. Das Inhaltsverzeichnis auf dem Umschlag ist genauso geschrieben, sodass weder das Verschieben eines Abschnitts noch eine Übersetzung mit neuem Umbruch eine veraltete Nummer hinterlässt.
+Die Bedienungsanleitung eines erfundenen Reiserads, des Ardena T3: vier A5-Seiten in Archivo, mit dem Modellnamen in einem marineblauen Band über der ersten Seite. Ein Handbuch wird nicht der Reihe nach gelesen; deshalb sagt jede Anweisung, die von einer anderen abhängt, wo diese steht: „see section 3.2 on page 3“. Der Autor benennt eine Überschrift, einen Absatz oder eine Wendung in einem Schritt mit einem Bezeichner und schreibt `:ref` überall dort, wo der Text darauf verweist; Postext setzt die Nummer, den Titel oder die Seite ein und macht daraus einen Link. Das Inhaltsverzeichnis auf dem Umschlag ist genauso geschrieben, sodass weder das Verschieben eines Abschnitts noch eine Übersetzung mit neuem Umbruch eine veraltete Nummer hinterlässt.
 
 ## Zubereitung
 
 ### 1 · Benennen, worauf der Text zeigt
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Überschriften erhalten einen Pandoc-Bezeichner, `### Checking pad wear {#sec-pad-wear}`; die Warnung zum Reifendruck beginnt mit `:anchor{#warn-pressure}`, einer unsichtbaren Marke; der letzte Schritt beim Einbau eines Rads ist `[close the lever so that it points backwards]{#step-close-lever}`, das seine Wörter behält und ihnen einen Namen gibt; und der Kasten beginnt mit `:::callout{#box-wet type="note" title="Wet weather"}`. Ein Verweis auf den Schritt druckt dessen Wörter, ein Verweis auf den Kasten seinen Titel.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Überschriften erhalten einen Pandoc-Bezeichner, `### Checking pad wear {#sec-pad-wear}`; die Warnung zum Reifendruck beginnt mit `:anchor{#warn-pressure}`, einem unsichtbaren Verweisziel; der letzte Schritt beim Einbau eines Rads ist `[close the lever so that it points backwards]{#step-close-lever}`, das seine Wörter behält und ihnen einen Namen gibt; und der Kasten beginnt mit `:::callout{#box-wet type="note" title="Wet weather"}`. Ein Verweis auf den Schritt gibt dessen Wörter aus, ein Verweis auf den Kasten seinen Titel.
 
 ### 2 · Ein Ziel, vier Arten, es zu nennen
 
-`:ref{id="sec-pad-wear"}` druckt „section 3.2“ mit dem Wort aus `crossRefs.section`; `style=page` druckt „page 3“ mit dem Wort aus `crossRefs.page`; `style=title` druckt „Checking pad wear“; `style=pageNumber` druckt nur die „3“. Das Inhaltsverzeichnis auf dem Umschlag kombiniert die bloße Nummer, den Titel und die bloße Seite und liest sich daher wie ein Inhaltsverzeichnis. Auf Spanisch drucken dieselben Verweise *apartado 3.2* und *página 3*, weil die Vorlagen der Sprache der Ausgabe folgen.
+`:ref{id="sec-pad-wear"}` ergibt „section 3.2“ mit dem Wort aus `crossRefs.section`; `style=page` ergibt „page 3“ mit dem Wort aus `crossRefs.page`; `style=title` ergibt „Checking pad wear“; `style=pageNumber` nur die „3“. Das Inhaltsverzeichnis auf dem Umschlag kombiniert die bloße Nummer, den Titel und die bloße Seite und liest sich daher wie ein Inhaltsverzeichnis. Auf Spanisch lauten dieselben Verweise *apartado 3.2* und *página 3*, weil die Vorlagen der Sprache der Ausgabe folgen.
 
 ### 3 · Die Seiten stellen sich von selbst ein
 
-Eine Seitenzahl steht erst fest, wenn das Handbuch gesetzt ist. Die Engine setzt es, liest die Seite, auf der jedes Ziel gelandet ist, und setzt es erneut, bis sich kein Verweis mehr ändert, in derselben Schleife, die ein Inhaltsverzeichnis füllt. Text, der in der Übersetzung wächst, oder ein nach vorn verschobener Abschnitt ändert die Seiten, und die Verweise folgen ihnen, vorwärts wie rückwärts.
+Eine Seitenzahl steht erst fest, wenn das Handbuch gesetzt ist. Die Engine setzt es, ermittelt die Seite, auf der jedes Ziel steht, und setzt es erneut, bis sich kein Verweis mehr ändert, in derselben Schleife, die ein Inhaltsverzeichnis füllt. Text, der in der Übersetzung wächst, oder ein nach vorn verschobener Abschnitt ändert die Seiten, und die Verweise folgen ihnen, vorwärts wie rückwärts.
 
 ### 4 · Die Nummern kommen vom Zähler der Ebene 2
 
@@ -62,5 +62,5 @@ Besteht der größte Teil der Seite aus Verweisen, lassen Sie sie in der Textfar
 
 ## Häufige Fehler
 
-- Ein Verweis auf einen `:anchor` ohne Stil druckt die Seite, weil ein unsichtbarer Anker keine eigenen Wörter hat. Verwenden Sie `[words]{#id}`, wenn der Verweis den Text zitieren soll.
+- Ein Verweis auf einen `:anchor` ohne Stil gibt die Seite aus, weil ein unsichtbares Verweisziel keine eigenen Wörter hat. Verwenden Sie `[words]{#id}`, wenn der Verweis den Text wiedergeben soll.
 - Ein Bezeichner muss im Buch eindeutig sein. Verweise erreichen das erste `{#sec-brakes}`, und das Bedienfeld Prüfungen der Sandbox führt ein zweites als `duplicateAnchor` auf.

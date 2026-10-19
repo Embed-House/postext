@@ -9,7 +9,7 @@ export const metadata = {
   readingTime: '24分钟',
   order: 13,
   parent: 'configuration',
-  plainSummary: "本页讲中文、日文和韩文文字的设置。这些设置决定一行可以在哪里断开，标点符号占多宽。它们设定这些文字与拉丁字母或数字之间的间距。它们还控制印在字旁的小注音，以及画在人名和书名旁边的标记。中文排版和日文排版两篇指南展示了这些设置的实际用法。",
+  plainSummary: "本页讲中文、日文和韩文的排版设置。这些设置决定一行可以在哪里断开、标点符号占多宽，以及这些文字与拉丁字母或数字之间留多少空。它们还控制印在字旁的小字注音，以及画在人名和书名旁边的标记。“中文排版”和“日文排版”两篇指南展示了这些设置的实际用法。",
 };
 
 # 配置：东亚排版
@@ -139,7 +139,7 @@ interface CjkConfig {
       <td><code>composeDesignText</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>中文或日文的设计文字（标题设计与篇章页、书眉与页码、页面设计、部分页）是否按正文的规则排版：<code>lineBreak</code>的避头尾规则、<code>punctuationWidth</code>和<code>compressAdjacent</code>的标点宽度、<code>latinSpacing</code>、<code>hangingPunctuation</code>以及<code>titleMinChars</code>。文字中的一行（两个<code>\n</code>之间的部分）若CJK字符多于词间空格，就像段落一样按这些规则排版；其余各行仍在空格处折行，与以前相同。显式换行、<code>paragraphIndent</code>、首字下沉和行内标记照常有效；各行不齐（不在字间分配空白），注音、割注和着重号印成普通文字。设为<code>false</code>时，这类文字在空格处折行，每个标点保持字体本身的宽度。postext 1.25之前保存的配置，若其文字含有CJK，则按<code>false</code>读取。自postext 1.25起。</td>
+      <td>中文或日文的设计文字（标题设计与章首页、书眉与页码、页面设计、篇名页）是否按正文的规则排版：<code>lineBreak</code>的避头尾规则、<code>punctuationWidth</code>和<code>compressAdjacent</code>的标点宽度、<code>latinSpacing</code>、<code>hangingPunctuation</code>以及<code>titleMinChars</code>。文字中的一行（两个<code>\n</code>之间的部分）若CJK字符多于词间空格，就像段落一样按这些规则排版；其余各行仍在空格处折行，与以前相同。显式换行、<code>paragraphIndent</code>、首字下沉和行内标记照常有效；各行不齐（不在字间分配空白），注音、夹注和着重号印成普通文字。设为<code>false</code>时，这类文字在空格处折行，每个标点保持字体本身的宽度。postext 1.25之前保存的配置，若其文字含有CJK，则按<code>false</code>读取。自postext 1.25起。</td>
     </tr>
     <tr>
       <td><code>latinSpacing</code></td>
@@ -199,7 +199,7 @@ interface CjkConfig {
       <td><code>ruby</code></td>
       <td><code>&#123; fontFamily?, fontSize?, color?, position?, overhang?, align?, smallKana? &#125;</code></td>
       <td>正文的一半大小，<code>'auto'</code></td>
-      <td><code>:ruby[…]</code>和<code>&#123;紅樓|hóng|lóu&#125;</code>的注音：字体（默认与正文相同）、字号（默认为正文的<code>&#123; value: 0.5, unit: 'em' &#125;</code>；注音符号为其60 %）、颜色，以及注音本身未指定时的位置（<code>'auto'</code>：注音符号在每个字的右侧；拼音和假名在横排时位于文字上方，竖排时位于右侧）。<code>overhang</code>：比基字长的读音最多能伸到相邻字上多少：<code>'kana'</code>伸到假名、ー和标点的空白一侧上一个注音字，伸到开括号上半个，汉字上不伸（JLReq §3.3.8）；<code>'any'</code>伸到任何没有读音的相邻字上半个注音字；<code>'none'</code>不伸；auto在日本为<code>'kana'</code>，其他地区与过去一样，伸到没有读音的相邻字上，最多为注音字号的四分之一。<code>align</code>：比基字短的读音怎样排开：<code>'jis'</code>按1:2:1（两端各半份，中间各一份），<code>'center'</code>密排居中，<code>'start'</code>从基字起点开始；auto在日本为<code>'jis'</code>，其他地区为<code>'center'</code>。<code>smallKana: 'full'</code>把读音中的小假名排成全尺寸（<code>'keep'</code>为默认值，按原样）。注音自己的<code>mode</code>和<code>align</code>优先。</td>
+      <td><code>:ruby[…]</code>和<code>&#123;紅樓|hóng|lóu&#125;</code>的注音：字体（默认与正文相同）、字号（默认为正文的<code>&#123; value: 0.5, unit: 'em' &#125;</code>；注音符号为其60%）、颜色，以及注音本身未指定时的位置（<code>'auto'</code>：注音符号在每个字的右侧；拼音和假名在横排时位于文字上方，竖排时位于右侧）。<code>overhang</code>：比基字长的读音最多能伸到相邻字上多少：<code>'kana'</code>伸到假名、ー和标点的空白一侧上一个注音字，伸到开括号上半个，汉字上不伸（JLReq §3.3.8）；<code>'any'</code>伸到任何没有读音的相邻字上半个注音字；<code>'none'</code>不伸；auto在日本为<code>'kana'</code>，其他地区与过去一样，伸到没有读音的相邻字上，最多为注音字号的四分之一。<code>align</code>：比基字短的读音怎样排开：<code>'jis'</code>按1:2:1（两端各半份，中间各一份），<code>'center'</code>密排居中，<code>'start'</code>从基字起点开始；auto在日本为<code>'jis'</code>，其他地区为<code>'center'</code>。<code>smallKana: 'full'</code>把读音中的小假名排成全尺寸（<code>'keep'</code>为默认值，按原样）。注音自己的<code>mode</code>和<code>align</code>优先。</td>
     </tr>
     <tr>
       <td><code>warichu</code></td>
@@ -336,7 +336,7 @@ interface CjkConfig {
 cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 ```
 
-`enabled`时，配置在被读取之前就会改写：每栏宽为`charsPerLine`个`bodyText.fontSize`的em，版心高为`linesPerPage`行`bodyText.lineHeight`；`layoutType: 'double'`时，栏间距为`layout.gutterWidth`取整到整数个em，至少一个。`page.margins`中的页边距作为最小值：版心放在它们留出区域的正中，每个页边距在其方向上增加剩余空间的一半（镜像页边距的书保留内外页边距的差别，二者增加相同的量）。未设置时，`charsPerLine`和`linesPerPage`取能排下的最大值。超出能排下的数值会减小到能排下的值，并报告一条`cjkGridClamped`配置警告。字号和行距保持原值。在`oneAndHalf`版式中，`charsPerLine`指主栏；侧栏取最接近`sideColumnPercent`在所配置页边距内给出宽度的整数个em（至少一个），栏间距按双栏的方式取整，并改写`sideColumnPercent`，使两栏都按整数个em切分。竖排时（`layout.writingMode: 'vertical-rl'`），一行的字符沿页面向下排，各行横向排列，因此`charsPerLine`量的是页面高度，`double`版式得到上下叠放的两栏，叠加显示的字格立在字符居中的轴线上。
+`enabled`时，配置在被读取之前就会改写：每栏宽为`charsPerLine`个`bodyText.fontSize`的em，版心高为`linesPerPage`行`bodyText.lineHeight`；`layoutType: 'double'`时，栏间距为`layout.gutterWidth`取整到整数个em，至少一个。`page.margins`中的页边距作为最小值：版心放在它们留出区域的正中，每个页边距在其方向上增加剩余空间的一半（使用对称页边距的书保留内外页边距的差别，二者增加相同的量）。未设置时，`charsPerLine`和`linesPerPage`取能排下的最大值。超出能排下的数值会减小到能排下的值，并报告一条`cjkGridClamped`配置警告。字号和行距保持原值。在`oneAndHalf`版式中，`charsPerLine`指主栏；侧栏取最接近`sideColumnPercent`在所配置页边距内给出宽度的整数个em（至少一个），栏间距按双栏的方式取整，并改写`sideColumnPercent`，使两栏都按整数个em切分。竖排时（`layout.writingMode: 'vertical-rl'`），一行的字符沿页面向下排，各行横向排列，因此`charsPerLine`量的是页面高度，`double`版式得到上下叠放的两栏，叠加显示的字格立在字符居中的轴线上。
 
 网格上的页面要排满网格所数的行数，所以会让一栏少排一行的两条规则也随网格而定。`bodyText.avoidWidows`在栏底只容得下段落的一行时把整段移到下一栏，在网格上默认关闭。`bodyText.avoidOrphans`从上一栏让出一行，免得段落只剩一行落在下一栏的栏首；中文文档保留这条规则（孤行，clreq §7.1.2），`japan`地区则默认关闭：JLReq §3.5.4计的是段落末行的字数，而不是换页处的行数。配置里写明的值照旧生效；postext 1.28之前保存的文档两条规则都保持开启（`configVersion` 12）。
 

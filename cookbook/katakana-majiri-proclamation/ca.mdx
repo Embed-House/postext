@@ -16,7 +16,7 @@ Una reimpressió de vuit pàgines de la Constitució Meiji tal com la va publica
 
 ### 1 · Deixa que un comptador de llista escrigui 第十八條
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada article és un element d'una llista ordenada de Markdown, i `orderedLists` dona al seu número la forma del Butlletí: `numberFormat: 'japanese-informal'` escriu 十八, no 一十八; `prefix: '第'` i `separator: '條'` l'envolten, i `gap: em(1)` deixa l'espai d'amplada completa de l'original. `numberWidth: 'item'` comença el text de cada article un espai després de la seva pròpia etiqueta, de manera que a 第九條 i a 第十一條 els segueix un sol espai d'amplada completa, com al Butlletí Oficial, i els seus textos comencen amb un caràcter de diferència. Amb `hangingIndent: false` les línies següents tornen al capdamunt de la línia en lloc de penjar sota el text, com al Butlletí. El capítol segon comença la llista a `18.`, de manera que el comptador continua d'un capítol a l'altre, i els capítols es numeren 第一章 i 第二章 amb la plantilla de títol `第{2:一}章`, en el mateix estil ([llistes ordenades](/ca/docs/configuration-lists-math#llistes-ordenades)).
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada article és un element d'una llista ordenada de Markdown, i `orderedLists` dona al seu número la forma del Butlletí: `numberFormat: 'japanese-informal'` escriu 十八, no 一十八; `prefix: '第'` i `separator: '條'` l'envolten, i `gap: em(1)` deixa l'espai d'amplada completa de l'original. `numberWidth: 'item'` comença el text de cada article un espai després de la seva pròpia etiqueta, de manera que a 第九條 i a 第十一條 els segueix un sol espai d'amplada completa, com al Butlletí Oficial, i els seus textos comencen amb un caràcter de diferència. Amb `hangingIndent: false` les línies següents tornen al capdamunt de la línia en lloc de penjar sota el text, com al Butlletí. El capítol segon comença la llista a `18.`, de manera que el comptador continua d'un capítol a l'altre, i els capítols es numeren 第一章 i 第二章 amb la plantilla de títol `第{2:一}章`, en el mateix estil ([llistes numerades](/ca/docs/configuration-lists-math#llistes-numerades)).
 
 <PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Pàgina 5: 第一章　天皇 dos caràcters més avall, els articles 第一條 a 第八條 en negreta i la segona clàusula de l'article 8 un caràcter més avall." />
 
@@ -28,7 +28,7 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada article 
 
 <Excerpt region="frame" />
 
-La ranura de la capçalera dibuixa en mil·límetres del full, no en el flux vertical, així que el marc són dues caixes col·locades amb els mateixos números que col·loquen la caixa de text: `HEAD` des de dalt i `SIDE` des de cada vora. Els marges es calculen a partir de la retícula en lloc de deixar-los-hi, i la caixa de text queda just 6 mm dins del filet prim. El foli, en kanji gràcies a `pageNumbering.format: 'japanese-informal'`, va sota el marc.
+La zona de la capçalera dibuixa en mil·límetres del full, no en el flux vertical, així que el marc són dues caixes col·locades amb els mateixos números que col·loquen la caixa de text: `HEAD` des de dalt i `SIDE` des de cada vora. Els marges es calculen a partir de la retícula en lloc de deixar-los-hi, i la caixa de text queda just 6 mm dins del filet prim. El foli, en kanji gràcies a `pageNumbering.format: 'japanese-informal'`, va sota el marc.
 
 ### 4 · Compon la portada sobre l'eix
 

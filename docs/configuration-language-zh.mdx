@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：断词与语言',
   sidebarTitle: '断词与语言',
-  description: '断词模式与例外、不齐行文字、文档语言及其数字和方向，以及Postext能排的文字',
+  description: '断词模式与例外词、非两端对齐文字的断词、文档语言及其数字和文字方向，以及Postext能排哪些文字',
   lang: 'zh',
   lastUpdated: '2026-10-16',
   readingTime: '15分钟',
   order: 8,
   parent: 'configuration',
-  plainSummary: "本页讲行末怎样拆开单词，以及Postext怎样知道一本书的语言。你可以打开或关闭断词，并列出绝不能拆开的词。你也可以让行尾参差不齐，而不是排成一条直线。文档语言决定断词规则、图和表的名称、数字和文字方向。最后几节说明Postext能排哪些文字，以及阿拉伯文怎样处理。",
+  plainSummary: "本页讲单词在行尾怎样拆开，以及Postext怎样知道一本书用的是什么语言。你可以打开或关闭断词，也可以列出绝不能拆开的词。你还可以让文字的右边参差不齐，不必排成一条直线。文档语言决定断词规则、图和表的名称、数字的写法和文字方向。最后几节说明Postext能排哪些文字，以及怎样处理阿拉伯文。",
 };
 
 # 配置：断词与语言
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 断词
 
-文字对齐设为`'justify'`时，断词在音节边界处拆分长词，避免词间距过大。引擎使用TeX/Liang断词模式在音节边界找到自然的断点。详细说明见[断词与两端对齐](/zh/docs/justification)。不齐行文字只有在你要求时才断词：见下文[不齐行文字](#不齐行文字)。
+文字对齐设为`'justify'`时，引擎在音节边界处拆开长词，以免词间距过大。它用TeX/Liang断词模式找出音节之间自然的断点。详细说明见[断词与两端对齐](/zh/docs/justification)。非两端对齐的文字只有在你要求时才断词，见下文[非两端对齐的文字](#非两端对齐的文字)。
 
 <table>
   <thead>
@@ -39,25 +39,25 @@ export const metadata = {
       <td><code>locale</code></td>
       <td><code>LocaleTag</code></td>
       <td>顶层<code>locale</code>，否则为<code>'en-us'</code></td>
-      <td>划分音节边界所依据的语言规则：下面列出的受支持语言之一，或任意BCP 47标签（<code>'es-ES'</code>、<code>'pt-BR'</code>）。</td>
+      <td>按哪种语言的规则划分音节：可以是下面列出的受支持语言，也可以是任意BCP 47标签（<code>'es-ES'</code>、<code>'pt-BR'</code>）。</td>
     </tr>
     <tr>
       <td><code>ragged</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>在<code>zone</code>范围内，也对不齐行文字（左对齐、右对齐或居中）断词。见<a href="#不齐行文字">不齐行文字</a>。</td>
+      <td>对非两端对齐的文字（齐左、齐右或居中）也断词，受<code>zone</code>限制。见<a href="#非两端对齐的文字">非两端对齐的文字</a>。</td>
     </tr>
     <tr>
       <td><code>zone</code></td>
       <td><code>Dimension</code></td>
       <td><code>3em</code></td>
-      <td>不齐行文字的断词区：一个放不下的词，只有在整词移到下一行会留下比这更宽的空白时才拆分。<code>em</code>相对于该文字自身的字号。两端对齐文字忽略此项。</td>
+      <td>非两端对齐文字的断词区：放不下的词，只有整词移到下一行会留下比这更宽的空白时才拆分。<code>em</code>以该文字自身的字号为准。两端对齐的文字不使用此项。</td>
     </tr>
     <tr>
       <td><code>compounds</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>允许词典拆分复合词（两个字母之间带连字符的词，如<code>af-ter-dinner</code>）中的各个词。设为<code>false</code>时，这样的词除了自带的连字符外保持完整，行仍然可以在那个连字符处结束（<code>after-</code> · <code>dinner</code>），与TeX的做法相同。词中手动输入的软连字符照样断开，比整行还宽的复合词也照样拆分。它作用于连续正文、标题、列表、引用块和框；题注、注释、表格单元格和目录继续拆分复合词。见<a href="/zh/docs/justification#复合词">复合词</a>。</td>
+      <td>允许词典拆分复合词（两个字母之间带连字符的词，如<code>af-ter-dinner</code>）里的各个词。设为<code>false</code>时，这样的词只在自带的连字符处断开，行仍可在那里结束（<code>after-</code> · <code>dinner</code>），与TeX的做法相同。词中手动输入的软连字符处照样可以断开，比整行还宽的复合词也照样拆分。此项作用于正文、标题、列表、引用块和标注框；题注、注释、表格单元格和目录仍然拆分复合词。见<a href="/zh/docs/justification#复合词">复合词</a>。</td>
     </tr>
     <tr>
       <td><code>exceptions</code></td>
@@ -76,7 +76,7 @@ export const metadata = {
 
 **受支持的语言：**`'en-us'`（英语）、`'es'`（西班牙语）、`'fr'`（法语）、`'de'`（德语）、`'it'`（意大利语）、`'pt'`（葡萄牙语）、`'ca'`（加泰罗尼亚语）、`'nl'`（荷兰语）。
 
-选择断词模式时，地区、文字和变体子标签都被忽略，大小写和`_`分隔符也一样：`'es-ES'`、`'es-MX'`和`'es_419'`都用`'es'`断词，`'pt-BR'`用`'pt'`，所有英语标签（`'en'`、`'en-GB'`）都用`'en-us'`。`'en-us'`是唯一内置的英语模式，所以英式英语文字得到的是美式断点。没有内置模式的语言（`'sv'`、`'pl'`、`'fi'`……）用`'en-us'`模式断词，结果是错误的断点，而不是不断词；引擎对每个标签用`console.warn`报告一次，沙盒则在“检查”面板中列出。这样的文档请设置`enabled: false`，警告也随之消失。中文、日文和韩文（`zh`、`ja`、`ko`，不论地区或文字）不需要断词模式，也不打印警告：用这些语言写的文档不断词。如果要拆分其中引用的拉丁文词语，设置`enabled: true`，并在`locale`中写明它们的语言（英语写`'en-us'`）。设置`enabled: true`但没有`locale`，或`locale`是中文、日文或韩文时，断词保持关闭，并在控制台提示一次。`matchHyphenationLocale(tag)`返回一个标签对应的内置语言（没有时返回`undefined`），`HYPHENATION_LOCALES`列出所有内置语言。解析后的配置（`doc.config.bodyText.hyphenation`）在`locale`中写明实际使用的模式，如果你给的标签与之不同，则保留在`tag`中。PDF后端根据顶层`locale`声明文档语言，只有在`locale`未设置时才采用这个标签（见[文档语言](#文档语言)）。
+选择断词模式时，引擎不看地区、文字和变体子标签，也不区分大小写和`_`分隔符：`'es-ES'`、`'es-MX'`和`'es_419'`都用`'es'`断词，`'pt-BR'`用`'pt'`，所有英语标签（`'en'`、`'en-GB'`）都用`'en-us'`。`'en-us'`是唯一内置的英语模式，所以英式英语也按美式断词。没有内置模式的语言（`'sv'`、`'pl'`、`'fi'`……）用`'en-us'`模式断词，断出的位置是错的，而不是干脆不断；引擎对每个标签用`console.warn`报告一次，沙盒则在“检查”面板中列出。这样的文档请设置`enabled: false`，警告也随之消失。中文、日文和韩文（`zh`、`ja`、`ko`，不论地区或文字）不需要断词模式，也不打印警告：用这些语言写的文档不断词。如果要拆分其中引用的拉丁文词语，设置`enabled: true`，并在`locale`中写明它们的语言（英语写`'en-us'`）。设置`enabled: true`但没有`locale`，或`locale`是中文、日文或韩文时，断词保持关闭，并在控制台提示一次。`matchHyphenationLocale(tag)`返回一个标签对应的内置语言（没有时返回`undefined`），`HYPHENATION_LOCALES`列出所有内置语言。解析后的配置（`doc.config.bodyText.hyphenation`）在`locale`中写明实际使用的模式；如果你给的标签与之不同，原标签保存在`tag`中。PDF后端根据顶层`locale`声明文档语言，只有在`locale`未设置时才采用这个标签（见[文档语言](#文档语言)）。
 
 ```ts
 import { matchHyphenationLocale } from 'postext';
@@ -90,11 +90,11 @@ matchHyphenationLocale('sv');    // undefined：用'en-us'断词，并在控制�
 
 ### 不拆分的词
 
-词典拆分专名，与拆分其他词没有两样：`Al-ice`、`Áms-ter-dam`、`You-Tu-be`。有三项设置可以让词保持完整，三者的默认值都是照词典的做法处理。
+词典拆分专名，与拆分其他词没有两样：`Al-ice`、`Áms-ter-dam`、`You-Tu-be`。有三项设置可以让词保持完整，默认都按词典处理。
 
 `hyphenation.exceptions`是一个词表，相当于TeX的`\hyphenation{…}`。不带连字符写出的条目绝不拆分；带连字符写出的条目只在连字符处拆分，所以`'You-Tube'`得到`You-` · `Tube`，没有别的断点。条目匹配一串连续的字母，不管前后是什么：`'Alice'`涵盖`(Alice,`和`Alice’s`，复合词则逐个部分匹配（`Blender-based`匹配`'Blender'`）。词形变化后的形式是另一个词，需要单独的条目。小写的条目匹配这个词的任何大小写写法（`'blender'`涵盖`Blender`和`BLENDER`）；首字母大写的条目只匹配以大写字母开头的出现，所以`'Rose'`让这个名字保持完整，而`rose`仍交给词典。条目只能包含字母和连字符，其余字符一律丢弃。
 
-`hyphenation.capitalized: false`让所有以大写字母开头的词保持完整：专名、首字母缩略词，还有每句的第一个词。这相当于关闭InDesign的“Hyphenate Capitalized Words”开关，也相当于TeX的`\uchyph=0`。`exceptions`中带连字符的条目仍在连字符处拆分它的词。德语的名词都以大写字母开头，这个开关会让德语文本几乎无词可拆：这时请在`exceptions`中列出要保留的词，或使用`citations.hyphenateNames`。
+`hyphenation.capitalized: false`让所有以大写字母开头的词保持完整：专名、首字母缩略词，还有每句的第一个词。这相当于关闭InDesign的“Hyphenate Capitalized Words”开关，也相当于TeX的`\uchyph=0`。`exceptions`中带连字符的条目仍会在所标的连字符处拆分这个词。德语的名词都以大写字母开头，这个开关会让德语文本几乎无词可拆：这时请在`exceptions`中列出要保留的词，或使用`citations.hyphenateNames`。
 
 `citations.hyphenateNames: false`让文档所引作者的姓氏保持完整，无论出现在哪里：引用中、正文中，还是参考文献表中。见[引用](/zh/docs/configuration-notes-references#引用)。
 
@@ -107,15 +107,15 @@ const config: PostextConfig = {
 };
 ```
 
-这三项设置对词典拆分的所有文字都有效：正文、标题、列表、标注框、题注、表格单元格、注释、书眉和其他设计文字。范围比`compounds`更广，后者不作用于题注、注释、单元格和目录。有两点保持不变。在某个词的某一处手动输入的软连字符仍然决定这一处的断法，输入在首字母之前的软连字符不用词表就能让这一处保持完整（见[行从不断开的地方](/zh/docs/justification#行从不断开的地方)）。比整个行长还宽的词也照样拆分：条目标了断点就在那些断点处拆分，否则在词典的音节处拆分。拆分的词少了，两端对齐的窄栏填满各行的办法也就少了，所以在三栏页面上关闭`capitalized`之后，要看一看词间距。流式EPUB把断词交给阅读系统，而阅读系统并不知道这些规则。
+这三项设置对词典拆分的所有文字都有效：正文、标题、列表、标注框、题注、表格单元格、注释、书眉和其他设计文字。范围比`compounds`更广，后者不作用于题注、注释、单元格和目录。有两点不变。在某处出现的词中手动输入软连字符，这一处的断法仍由它决定；软连字符输入在首字母之前，不用词表也能让这一处保持完整（见[行从不断开的地方](/zh/docs/justification#行从不断开的地方)）。比整个行长还宽的词也照样拆分：条目标了断点就在那些断点处拆分，否则在词典的音节处拆分。拆分的词少了，两端对齐的窄栏填满各行的办法也就少了，所以在三栏页面上关闭`capitalized`之后，要看一看词间距。流式EPUB把断词交给阅读系统，而阅读系统并不知道这些规则。
 
-### 不齐行文字
+### 非两端对齐的文字
 
-默认只对两端对齐的文字断词：设置`textAlign: 'left'`时，以及在左对齐、居中或右对齐的段落样式中，无论边缘多么参差，每个词都保持完整，只有文中手动输入的软连字符（U+00AD）处例外。设置`hyphenation.ragged: true`即可对不齐行文字也断词。
+默认只对两端对齐的文字断词：设置`textAlign: 'left'`时，以及在齐左、居中或齐右的段落样式中，无论行尾多么参差，每个词都保持完整，只有文中手动输入的软连字符（U+00AD）处例外。设置`hyphenation.ragged: true`，非两端对齐的文字也会断词。
 
-不齐行的行从不拉伸，所以如果把每个放不下的词都拆开，边缘会挂满连字符。**断词区**对此加以限制，做法与桌面出版软件的单行排版器相同。一个词在行尾放不下时，引擎看的是把它整个移到下一行会留下多大的空白。如果空白比`zone`宽，就在能放下的最后一个音节处拆分；否则整词移到下一行。以`em`表示的断词区相对于该文字自身的字号。默认值`3em`只拆分那些会留下明显短行的词。断词区越宽，连字符越少，边缘越参差；设为`0`则拆分每个放不下的词。逐行排时，连续以音节结尾的行不超过两行。硬连字符（`enseñanza-aprendizaje`）、URL的连接处、文中手动输入的软连字符，以及比整行还宽的词，都照常断开：断词区和两行限制只管词典给出的音节。
+非两端对齐的行从不拉伸，所以如果把每个放不下的词都拆开，行尾会挂满连字符。**断词区**对此加以限制，做法与桌面出版软件的单行排版器相同。一个词在行尾放不下时，引擎看的是把它整个移到下一行会留下多大的空白。如果空白比`zone`宽，就在能放下的最后一个音节处拆分；否则整词移到下一行。以`em`表示的断词区以该文字自身的字号为准。默认值`3em`只拆分那些会留下明显短行的词。断词区越宽，连字符越少，行尾越参差；设为`0`则拆分每个放不下的词。逐行排版时，以拆开的音节结尾的行最多连续两行。硬连字符（`enseñanza-aprendizaje`）、URL的连接处、文中手动输入的软连字符，以及比整行还宽的词，都照常断开：断词区和两行限制只管词典给出的音节。
 
-这项设置作用于整篇文档。正文和引用块不齐行时适用；每个不齐行的段落样式和标注框正文，只要它自己的`hyphenation`是开启的（默认取正文的`hyphenation.enabled`），也都适用，所以设置`hyphenation: false`可以让某个样式的词保持完整。标题、题注、注释、表格单元格和目录不断词；在这些地方，和其他地方一样，只有比整个行长还宽的词才会拆分。设计文字（书眉、章首页、篇页）遵循各个文字元素自己的`hyphenate`标志，内置的整页章首页和篇页都设置了它，同样使用文档的词典。两端对齐文字忽略`ragged`和`zone`。
+这项设置作用于整篇文档。正文和引用块不两端对齐时适用；非两端对齐的段落样式和标注框正文，只要自身的`hyphenation`开启（默认取正文的`hyphenation.enabled`），也都适用，所以设置`hyphenation: false`可以让某个样式的词保持完整。标题、题注、注释、表格单元格和目录不断词；在这些地方，和其他地方一样，只有比整个行长还宽的词才会拆分。设计文字（书眉、章首页、篇名页）遵循各个文字元素自己的`hyphenate`标志（内置的整页章首页和篇名页都设置了这个标志），同样使用文档的词典。两端对齐文字忽略`ragged`和`zone`。
 
 ```ts
 const config: PostextConfig = {
@@ -128,22 +128,22 @@ const config: PostextConfig = {
 };
 ```
 
-开启`optimalRagged`（默认）时，不齐行的连续正文用Knuth-Plass断行，断词区的含义不变：只有当一个词放不进本行余下的空间，而且整词移下去会留下超过断词区的空白时，才拆分它。连续两行以音节结尾并不被禁止，但代价与两端对齐文字中连续两个连字符相同，所以很少会连续出现第三行。设置`optimalRagged: false`或`optimalLineBreaking: false`时，先填满一行再排下一行，与postext 1.4及更早版本相同。
+开启`optimalRagged`（默认）时，非两端对齐的正文用Knuth-Plass断行，断词区的含义不变：只有当一个词放不进本行余下的空间，而且整词移下去会留下超过断词区的空白时，才拆分它。连续两行以拆开的音节结尾并不禁止，但代价等同于两端对齐文字中连续两行以连字符结尾，所以很少出现连续第三行。设置`optimalRagged: false`或`optimalLineBreaking: false`时，先填满一行再排下一行，与postext 1.4及更早版本相同。
 
-不齐行断词用的是带行内格式（粗体、斜体、链接、数学公式）的段落一直使用的那个断行器，所以开启它可能会让连字符以外的少数断点也发生变化。在不齐行的行上，除了空格和词典给出的音节，这个断行器还会在两个词之间的硬连字符或破折号之后断行（`largas—separadas`；开启`breakAfterDashes`时，任何在词间紧排的破折号都算，`riddles.—I`和`riddles—*and*`也包括在内），在URL的连接处和表意文字之间断行，并把分成几个片段排的一个词保持在一起（`**Nota**:`、`(*véase*`）。不开启不齐行断词时，没有格式的不齐行段落在`optimalRagged`开启（默认）时由Knuth-Plass断行：在词间空格处、在两个字母之间的硬连字符之后（`meta-` · `analyses`），这一点与另一个断行器相同；开启`breakAfterDashes`时，还在紧排的破折号之后。逐行排时，它交给pretext的断行器处理，区别有三点：它还可能在结束插入语的破折号之前或开启插入语的破折号之后断行（`él` · `— y`），断词时可能在斜杠之后断行（`km/` · `h`），而对于比整行还宽的词，它会在任意字符处截断且不加连字符，另一个断行器则先尝试在音节处拆分。
+非两端对齐文字断词时，段落改用带行内格式（粗体、斜体、链接、数学公式）的段落一直在用的那个断行器，所以开启后，连字符以外的个别断点也可能变化。在非两端对齐的行上，除了空格和词典给出的音节，这个断行器还会在两个词之间的硬连字符或破折号之后断行（`largas—separadas`；开启`breakAfterDashes`时，任何在词间紧排的破折号都算，`riddles.—I`和`riddles—*and*`也包括在内），在URL的连接处和表意文字之间断行，并把分成几个片段排的一个词保持在一起（`**Nota**:`、`(*véase*`）。不开启这项断词时，没有格式的非两端对齐段落在`optimalRagged`开启（默认）时由Knuth-Plass断行：在词间空格处、在两个字母之间的硬连字符之后（`meta-` · `analyses`），这一点与另一个断行器相同；开启`breakAfterDashes`时，还在紧排的破折号之后。逐行排时，它交给pretext的断行器处理，区别有三点：它还可能在结束插入语的破折号之前或开启插入语的破折号之后断行（`él` · `— y`），断词时可能在斜杠之后断行（`km/` · `h`），而对于比整行还宽的词，它会在任意字符处截断且不加连字符，另一个断行器则先尝试在音节处拆分。
 
-在沙盒中，这个开关是**不齐行文字断词**，位于“正文”部分的段落对齐方式下面，断词区在它下方。正文两端对齐时，同一个开关与两端对齐设置放在一起，供不齐行的段落样式和框使用。
+在沙盒中，这个开关是**非两端对齐时也断词**，位于“正文”部分的段落对齐方式下面，断词区在它下方。正文两端对齐时，同一个开关与两端对齐设置放在一起，供非两端对齐的段落样式和标注框使用。
 
 
 ## 文档语言
 
-顶层`locale`是整篇文档的语言。它的取值与`hyphenation.locale`相同，并在后者未设置时作为回退值，所以一本西班牙语书只需写`locale: 'es'`就能按西班牙语断词。它还决定表格和拆分标注框内置续接文字的语言（`(cont.)` / *Continued*与*Continúa*，见[高于页面的表格](/zh/docs/configuration-resources#比页面还高的表)和[拆分框上的标记](/zh/docs/configuration-callouts#拆分框的标记)），决定用文字拼写的标题编号的语言（*Chapter One*与*Capítulo uno*，见[用文字拼写的编号](/zh/docs/configuration-headings#以文字书写的编号)），也是写入无障碍PDF的语言。未设置时，引擎假定为`'en-us'`；沙盒则回退到界面语言，并在**设计 › 书写系统**下设置此字段。
+顶层`locale`是整篇文档的语言。它的取值与`hyphenation.locale`相同，并在后者未设置时作为回退值，所以一本西班牙语书只需写`locale: 'es'`就能按西班牙语断词。它还决定表格和拆分的标注框所用内置接续文字的语言（`(cont.)` / *Continued*与*Continúa*，见[比页面还高的表](/zh/docs/configuration-resources#比页面还高的表)和[拆分框的标记](/zh/docs/configuration-callouts#拆分框的标记)），以及用文字写出的标题编号的语言（*Chapter One*与*Capítulo uno*，见[以文字书写的编号](/zh/docs/configuration-headings#以文字书写的编号)），也是写入无障碍PDF的语言。未设置时，引擎假定为`'en-us'`；沙盒则回退到界面语言，并在**版面设计 › 书写系统**下设置此字段。
 
-它也决定内置的资源类型。未设置`resourceTypes`时，`buildDocument`用`defaultResourceTypes(locale)`编号和生成题注，所以只写`locale: 'de'`就会得到*Abbildung 1.1*和*Tabelle 1.1*。未设置`locale`时，由断词语言代替它，资源类型和表格文字都是如此。显式给出的`resourceTypes`列表始终优先。早先的版本中，除非你自己传入`defaultResourceTypes(locale)`，否则无论`locale`是什么都使用英文类型；设置了`locale`又想保留英文标签的文档，可以传入`resourceTypes: defaultResourceTypes('en')`。沙盒中的书和文件包自带类型列表，所以不受影响。
+它也决定内置的资源类型。未设置`resourceTypes`时，`buildDocument`用`defaultResourceTypes(locale)`编号和生成题注，所以只写`locale: 'de'`就会得到*Abbildung 1.1*和*Tabelle 1.1*。未设置`locale`时，资源类型和表格文字都改按断词语言。显式给出的`resourceTypes`列表始终优先。早先的版本中，除非你自己传入`defaultResourceTypes(locale)`，否则无论`locale`是什么都使用英文类型；设置了`locale`又想保留英文标签的文档，可以传入`resourceTypes: defaultResourceTypes('en')`。沙盒中的书和文件包自带类型列表，所以不受影响。
 
-这里与`hyphenation.locale`一样接受任意BCP 47标签：`'de-AT'`得到德文文字。内置文字提供断词所支持的八种语言、中文（简体和繁体）、日文和阿拉伯文；其他语言一律使用英文文字。
+这里与`hyphenation.locale`一样接受任意BCP 47标签：`'de-AT'`得到德文的内置字符串。内置字符串有断词所支持的八种语言、中文（简体和繁体）、日文和阿拉伯文；其他语言一律使用英文的。
 
-中文接受`zh`、`zh-Hans`、`zh-Hant`、`zh-CN`、`zh-SG`、`zh-TW`、`zh-HK`、`zh-MO`以及长形式（`zh-Hant-TW`），不区分大小写，分隔符用`-`或`_`均可。文字按书写系统选择，由`Intl.Locale(tag).maximize()`判断：`zh`、`zh-CN`和`zh-SG`是简体，`zh-TW`、`zh-HK`和`zh-MO`是繁体。依语言而定的排版默认值则按地区选择，这是[clreq §1.2](https://www.w3.org/TR/clreq/#x1-2-basic-features-of-chinese-script)的建议：CN、SG和MY算作中国大陆，TW算作台湾，HK和MO算作香港；没有地区的标签按书写系统判断（`zh-Hant`为台湾，`zh`和`zh-Hans`为中国大陆）。日文接受`ja`、`ja-JP`、`ja-Jpan`以及其他任何`ja`标签（`isJapaneseLanguage(tag)`）；从postext 1.16起，它有自己的内置文字和自己的地区`japan`，其排版默认值遵循JLReq（见[日文排版](/zh/docs/japanese-layout)）。字符串表中没有日文条目时，给出的是英文，而不是中文。`localeScript(tag)`、`cjkRegionOf(tag)`、`stringsKeyOf(tag)`和`sameContentLocale(a, b)`给出这些判断结果，`DOCUMENT_LANGUAGES`列出带内置文字的语言，每种语言都用它自己的语言命名（日本語排在各个中文条目和العربية之间），与沙盒“文档语言”下拉框中的显示一致。
+中文接受`zh`、`zh-Hans`、`zh-Hant`、`zh-CN`、`zh-SG`、`zh-TW`、`zh-HK`、`zh-MO`以及长形式（`zh-Hant-TW`），不区分大小写，分隔符用`-`或`_`均可。内置字符串按书写系统选择，由`Intl.Locale(tag).maximize()`判断：`zh`、`zh-CN`和`zh-SG`是简体，`zh-TW`、`zh-HK`和`zh-MO`是繁体。依语言而定的排版默认值则按地区选择，这是[clreq §1.2](https://www.w3.org/TR/clreq/#x1-2-basic-features-of-chinese-script)的建议：CN、SG和MY算作中国大陆，TW算作台湾，HK和MO算作香港；没有地区的标签按书写系统判断（`zh-Hant`为台湾，`zh`和`zh-Hans`为中国大陆）。日文接受`ja`、`ja-JP`、`ja-Jpan`以及其他任何`ja`标签（`isJapaneseLanguage(tag)`）；从postext 1.16起，它有自己的内置字符串和自己的地区`japan`，其排版默认值遵循JLReq（见[日文排版](/zh/docs/japanese-layout)）。字符串表中没有日文条目时，给出的是英文，而不是中文。`localeScript(tag)`、`cjkRegionOf(tag)`、`stringsKeyOf(tag)`和`sameContentLocale(a, b)`给出这些判断结果，`DOCUMENT_LANGUAGES`列出带内置字符串的语言，每种语言都用它自己的语言命名（日本語排在各个中文条目和العربية之间），与沙盒“文档语言”下拉框中的显示一致。
 
 <table>
   <thead>
@@ -151,7 +151,7 @@ const config: PostextConfig = {
       <th>语言</th>
       <th>图：名称、复数、简称</th>
       <th>表：名称、复数、简称</th>
-      <th>表格续接：<code>continuedSuffix</code>、<code>continuesMarker</code></th>
+      <th>表格接续：<code>continuedSuffix</code>、<code>continuesMarker</code></th>
     </tr>
   </thead>
   <tbody>
@@ -170,9 +170,9 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-题注前缀是类型的名称（*Figure 1.1.*）。中文类型在章内编号，用连字符连接，即`{h1}-{n}`（图 1-1）；配合题注设置`labelNumberGap: ''`和`labelSeparator: '　'`，题注显示为“图1-1　标题”（见[题注样式](/zh/docs/configuration-resources#题注样式)）。索引同样跟随语言：简体中，交叉引用前用“见”和“另见”，符号和数字条目上方的标题为“符号”和“数字”；繁体中则为“見”“另見”“符號”和“數字”。日文类型同样这样编号，不必设置这两项，题注就排成図1-1　題，交叉引用写作第3章、2.3節和12ページ，参考文献标题为参考文献；索引在符号和数字条目上方用“記号”和“数字”作标题，交叉引用用箭头写出：*见*写作`→夏目漱石`，*另见*在页码之后写作`→夏目漱石、森鷗外も見よ`，竖排时这些标签直立。阿拉伯文类型同样按`{h1}-{n}`编号（شكل 2-3），交叉引用写作الفصل 3、القسم 2-1和ص 12，参考文献标题为المراجع，索引使用انظر / انظر أيضًا、رموز和أرقام，并用阿拉伯文逗号和分号（، ؛）。
+题注前缀是类型的名称（*Figure 1.1.*）。中文类型在章内编号，用连字符连接，即`{h1}-{n}`（图 1-1）；配合题注设置`labelNumberGap: ''`和`labelSeparator: '　'`，题注显示为“图1-1　标题”（见[题注样式](/zh/docs/configuration-resources#题注样式)）。书后索引同样跟随语言：简体中文的交叉引用前用“见”和“另见”，符号和数字条目上方的标题为“符号”和“数字”；繁体中文则为“見”“另見”“符號”和“數字”。日文类型同样这样编号，不必设置这两项，题注就排成図1-1　題，交叉引用写作第3章、2.3節和12ページ，参考文献标题为参考文献；索引在符号和数字条目上方用“記号”和“数字”作标题，交叉引用用箭头写出：*见*写作`→夏目漱石`，*另见*在页码之后写作`→夏目漱石、森鷗外も見よ`，竖排时这些标签直立。阿拉伯文类型同样按`{h1}-{n}`编号（شكل 2-3），交叉引用写作الفصل 3、القسم 2-1和ص 12，参考文献标题为المراجع，索引使用انظر / انظر أيضًا、رموز和أرقام，并用阿拉伯文逗号和分号（، ؛）。
 
-中文、日文或韩文文档会在HTML输出中（`.pt-doc`根元素上的`lang`，`zh-Hant-TW`完整保留）以及它绘制的Canvas上（`ctx.lang`，Chrome 136及以上版本）声明语言，使浏览器绘制该地区的字形：Unicode统一了汉字编码，同一个码位在台湾字体和日文字体中的样子并不相同。postext 1.30起，其他文档也这样声明，用的是文字成形所用的语言（[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，默认值）；设为`'host'`时，其他文档不带`lang`，每个Canvas都按宿主页面的语言绘制。PDF则对每个文档（无论是否带标签）根据`locale`声明`/Lang`，包括其书写系统和地区。从右向左书写的语言（阿拉伯文、波斯文、乌尔都文、希伯来文等）的文档同样声明语言：字体的语言字形（`locl`）和后备字体随之选择。
+中文、日文或韩文文档会在HTML输出中（`.pt-doc`根元素上的`lang`，`zh-Hant-TW`完整保留）以及它绘制的Canvas上（`ctx.lang`，Chrome 136及以上版本）声明语言，使浏览器绘制该地区的字形：Unicode统一了汉字编码，同一个码位在台湾字体和日文字体中的样子并不相同。postext 1.30起，其他文档也这样声明，用的是文字成形所用的语言（[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，默认值）；设为`'host'`时，其他文档不带`lang`，每个Canvas都按宿主页面的语言绘制。PDF则对每个文档（无论是否为带标签的PDF）根据`locale`声明`/Lang`，包括其书写系统和地区。从右向左书写的语言（阿拉伯文、波斯文、乌尔都文、希伯来文等）的文档同样声明语言：字体的语言字形（`locl`）和后备字体随之选择。
 
 ```ts
 const config: PostextConfig = {
@@ -183,7 +183,7 @@ const config: PostextConfig = {
 
 ### 文档数字
 
-顶层的`numerals`决定引擎输出的所有数字所用的数字系统：页码，以及目录、索引和页码引用中的页码标签；有序列表和脚注的编号；标题和章的计数，`{chapterNumber}`；图号及其引用中的`{h1}`与`{n}`；`{totalPages}`、`{bookTotalPages}`和`{numberDecimal}`。`'latn'`输出0–9，`'arab'`输出阿拉伯-印度数字٠–٩，`'arabext'`输出波斯数字۰–۹。只有十进制格式受影响——`decimal`、列表的`arabic`或保持默认的设置——作者指定的格式照原样输出：`lower-roman`仍是i、ii、iii，拉丁文文档中的`arabic-indic`仍输出١、٢、٣。文档正文从不改写。
+顶层的`numerals`决定引擎输出的所有数字所用的数字系统：页码，以及目录、索引和页码引用中的页码标签；有序列表和脚注的编号；标题和章的计数，`{chapterNumber}`；图号及其引用中的`{h1}`与`{n}`；`{totalPages}`、`{bookTotalPages}`和`{numberDecimal}`。`'latn'`输出0–9，`'arab'`输出阿拉伯-印度数字٠–٩，`'arabext'`输出波斯数字۰–۹。只有十进制格式会改变（`decimal`、列表的`arabic`，或保持默认的设置），作者明确指定的格式照原样输出：`lower-roman`仍是i、ii、iii，拉丁文文档中的`arabic-indic`仍输出١、٢、٣。文档正文从不改写。
 
 默认值`'auto'`取`locale`的数字（`defaultNumeralsFor(tag)`）：不带地区或地区不在马格里布的阿拉伯语（`ar`、`ar-EG`、`ar-SA`、`ar-AE`……）为`'arab'`；`ar-MA`、`ar-DZ`、`ar-TN`、`ar-LY`、`ar-MR`和`ar-EH`为`'latn'`；波斯语（`fa`）、普什图语（`ps`）和印度乌尔都语（`ur-IN`）为`'arabext'`；其他语言，包括巴基斯坦乌尔都语，均为`'latn'`。CLDR对不带地区的`ar`和`ar-AE`给出`latn`；马什里克和海湾地区的阿拉伯文图书印的是٠–٩，Postext以图书为准。标签中注明数字系统的（`ar-MA-u-nu-arab`）照其所注。以文档数字编号的页面把`arabic-indic`或`persian`记为`pageNumberFormat`，PDF页码标签因此显示相同的数字。未知的值按语言处理，并报告为`unknownNumerals`。
 
@@ -197,7 +197,7 @@ const forced: PostextConfig = { locale: 'ar', numerals: 'latn' };   // 1, 2, 3
 
 ### 文本方向
 
-顶层的`direction`设定文档的基本方向：`'ltr'`、`'rtl'`或`'auto'`（默认值）。`'auto'`在`locale`的文字从右到左书写时（阿拉伯文、波斯文、乌尔都文、希伯来文、叙利亚文、塔纳文、恩科文、阿德拉姆文等，由`directionOf(tag)`判断）为`'rtl'`，否则为`'ltr'`。从右到左的文档在镜像的版框中排版：各行从右边开始，第一栏在右边，缩进、列表标记、浮动体、脚注和框都位于右侧，[`page.binding: 'auto'`](/zh/docs/configuration-page-layout#装订)让它在右侧装订。只有这样的文档，解析后的配置才带有`direction: 'rtl'`，所以从左到右的文档解析结果与以前相同。未知的值按`'auto'`读取，并报告为`unknownConfigValue`。Unicode双向算法（UAX #9）在两种方向中都安排每行各段的顺序：英文书中的阿拉伯文引文在原位从右到左读。
+顶层的`direction`设定文档的基本方向：`'ltr'`、`'rtl'`或`'auto'`（默认值）。`'auto'`在`locale`的文字从右到左书写时（阿拉伯文、波斯文、乌尔都文、希伯来文、叙利亚文、塔纳文、恩科文、阿德拉姆文等，由`directionOf(tag)`判断）为`'rtl'`，否则为`'ltr'`。从右到左的文档在镜像的版框中排版：各行从右边开始，第一栏在右边，缩进、列表标记、浮动体、脚注和标注框都位于右侧，[`page.binding: 'auto'`](/zh/docs/configuration-page-layout#装订)让它在右侧装订。只有这样的文档，解析后的配置才带有`direction: 'rtl'`，所以从左到右的文档解析结果与以前相同。未知的值按`'auto'`读取，并报告为`unknownConfigValue`。Unicode双向算法（UAX #9）在两种方向中都安排每行各段的顺序：英文书中的阿拉伯文引文在原位从右到左读。
 
 在文档内部，标题或`:::`容器可以带`{dir=ltr}`或`{dir=rtl}`，行内的`:ltr[…]`和`:rtl[…]`把一段文字隔离开（见[标记中的文本方向](/zh/docs/document-format-inline#标记中的文本方向)）；表格资源可以设`table.direction`。与文档方向相反的块保留自己的起始侧：它的缩进、列表标记和末行的齐边都移到其文字开始的一侧。
 
@@ -212,10 +212,10 @@ const forced: PostextConfig = { locale: 'ar', numerals: 'latn' };   // 1, 2, 3
     </tr>
   </thead>
   <tbody>
-    <tr><td>正文、标题、段落样式、部分、脚注和标注框正文的<code>textAlign</code>；题注及题注注释的<code>align</code></td><td>文字的两侧：<code>'left'</code>是一行开始的一侧，阿拉伯文段落即右侧，两端对齐段落的末行也排向这一侧。</td><td><code>'left'</code>和<code>'right'</code>的同义词。解析后的配置只带<code>'left'</code> / <code>'right'</code>；保存的配置保留原来写的值。</td></tr>
+    <tr><td>正文、标题、段落样式、篇名页、脚注和标注框正文的<code>textAlign</code>；题注及题注注释的<code>align</code></td><td>文字的两侧：<code>'left'</code>是一行开始的一侧，阿拉伯文段落即右侧，两端对齐段落的末行也排向这一侧。</td><td><code>'left'</code>和<code>'right'</code>的同义词。解析后的配置只带<code>'left'</code> / <code>'right'</code>；保存的配置保留原来写的值。</td></tr>
     <tr><td>表格单元格的<code>align</code></td><td>单元格文字的两侧，按表格的方向（<code>table.direction</code>）读取。</td><td>同义词，按表格的方向读取。</td></tr>
     <tr><td><code>placement.align</code>（浮动体、窄图）</td><td>文字流的两侧：在从右到左的书中<code>'left'</code>是纸面的右侧。</td><td>同义词。</td></tr>
-    <tr><td>标注框的<code>stripe.side</code>、<code>icon.cornerSide</code>、<code>labelTab.position</code>（<code>'top-start'</code>、<code>'top-end'</code>）</td><td>文字流的两侧，对页面上所有框都相同。</td><td>框自身的方向（阿拉伯文书中的<code>:::callout&#123;dir=ltr&#125;</code>从纸面左侧开始）。</td></tr>
+    <tr><td>标注框的<code>stripe.side</code>、<code>icon.cornerSide</code>、<code>labelTab.position</code>（<code>'top-start'</code>、<code>'top-end'</code>）</td><td>文字流的两侧，对同一页上的所有标注框都相同。</td><td>标注框自身的方向（阿拉伯文书中的<code>:::callout&#123;dir=ltr&#125;</code>从纸面左侧开始）。</td></tr>
     <tr><td>页眉和页脚的槽位；锚定在纸面上的设计元素</td><td>纸面的两侧。</td><td>仅限文本元素：元素自身<code>direction</code>的起始和结束。</td></tr>
   </tbody>
 </table>
@@ -232,22 +232,22 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // 强制
 
 Postext能排从左到右书写的拼音文字，以及横排和竖排的中文和日文。[中文排版](/zh/docs/chinese-layout)和[日文排版](/zh/docs/japanese-layout)介绍它们的排法和相关设置；对应的配置键位于[东亚排版](/zh/docs/configuration-east-asian#东亚排版)、[竖排](/zh/docs/configuration-page-layout#竖排)和[装订](/zh/docs/configuration-page-layout#装订)。各种文字的支持情况如下：
 
-- **中文**：段落中的CJK字符多于词间空格时，由CJK排版器处理：行在字符之间断开，遵守`cjk.lineBreak`的避头尾规则（行首不出现。、」或ー，行尾不出现「或（），——和……不拆开，数字连同其符号、拉丁文单词都保持完整；两端对齐的行在字符之间均匀分配空白以填满行长。标点宽度、标点悬挂、汉字与拉丁文之间的间距、字符网格、着重号、专名号和书名号、注音以及割注，都按`locale`的地区处理，横排（沿行）和竖排（`layout.writingMode: 'vertical-rl'`）都一样。只引用少量CJK词语的拉丁文段落保持最优断行，并可以在这些词语旁边断行；拉丁文中引用的CJK括号、间隔号或全角符号（〈h〉、％）不影响任何处理。
-- **日文**：使用同一个排版器，从postext 1.16起有自己的规则，即W3C《日文排版需求》（JLReq）和JIS X 4051的规则：`ja`语言区域得到`japan`地区，其auto值设定JLReq的禁则级别（小假名和ー从不出现在行首）、带相邻标点挤压的全角标点、？！之后的一个字宽、占缩进后半个字宽的段首括号、文字上方的芝麻点、『』书名号、按1:2:1排开的振假名、日文编号、注释以及按读音排序的索引。更早的版本按中国大陆中文的默认值排日文。
+- **中文**：段落中的CJK字符多于词间空格时，由CJK排版器处理：行在字符之间断开，遵守`cjk.lineBreak`的避头尾规则（行首不出现。、」或ー，行尾不出现「或（），——和……不拆开，数字连同其符号、拉丁文单词都保持完整；两端对齐的行在字符之间均匀分配空白以填满行长。标点宽度、标点悬挂、汉字与拉丁文之间的间距、字符网格、着重号、专名号和书名号、注音以及双行夹注，都按`locale`的地区处理，横排和竖排（`layout.writingMode: 'vertical-rl'`）都一样。只引用少量CJK词语的拉丁文段落保持最优断行，并可以在这些词语旁边断行；拉丁文中引用的CJK括号、间隔号或全角符号（〈h〉、％）不会改变任何处理。
+- **日文**：使用同一个排版器，从postext 1.16起有自己的规则，即W3C《日文排版需求》（JLReq）和JIS X 4051的规则：`ja`语言标签对应`japan`地区，该地区的auto值设定JLReq的禁则级别（小假名和ー从不出现在行首）、带相邻标点挤压的全角标点、？！之后空一个字宽、段首开括号排在缩进的后半个字宽中、文字上方的芝麻点着重号、『』书名号、按1:2:1排开的振假名、日文编号、注释以及按读音排序的索引。更早的版本按中国大陆中文的默认值排日文。
 - **韩文**：使用同一个排版器，不断词，但采用中国大陆中文的默认值：它自己的规范（KLREQ）尚未实现。韩文除了在空格处断行，也在音节之间断行。
-- **阿拉伯文及其他从右到左的文字**（波斯文、乌尔都文、希伯来文等）从右到左排，具体做法见[阿拉伯文排版](/zh/docs/arabic-layout)。文档的[`direction`](#文本方向)由`locale`的文字决定，Unicode双向算法安排每行中拉丁词和数字的顺序，书在右侧装订、第一栏在右边，引擎生成的每个数字都采用该地区的[数字](#文档数字)。含阿拉伯字母的词从不断词、加字距或切开，两端对齐的阿拉伯文行在空格处和用卡希达（kashida）拉伸。元音符号、强调、脚注和阿拉伯文的内置文字见[阿拉伯文](#阿拉伯文)。波斯文、乌尔都文和希伯来文有方向、数字和整词规则，但没有自己的内置文字。
+- **阿拉伯文及其他从右到左的文字**（波斯文、乌尔都文、希伯来文等）从右到左排，具体做法见[阿拉伯文排版](/zh/docs/arabic-layout)。文档的[`direction`](#文本方向)由`locale`的文字决定，Unicode双向算法安排每行中拉丁词和数字的顺序，书在右侧装订、第一栏在右边，引擎生成的每个数字都采用该地区的[数字](#文档数字)。含阿拉伯字母的词从不断词、加字距或切开；两端对齐的阿拉伯文行在空格处拉伸，也用卡希达（kashida）拉伸。元音符号、强调、脚注和阿拉伯文的内置字符串见[阿拉伯文](#阿拉伯文)。波斯文、乌尔都文和希伯来文有方向、数字和整词规则，但没有自己的内置字符串。
 
-断词模式内置八种语言（`en-us`、`es`、`fr`、`de`、`it`、`pt`、`ca`、`nl`）；内置的资源类型和续接文字提供这八种语言以及中文、日文和阿拉伯文。中文、日文、韩文和从右到左书写的语言不断词。其他语言用美式英语模式断词并在控制台警告，使用英文文字。这类文档请设置`hyphenation.enabled: false`，并用该语言传入`resourceTypes`和`tableStyle`的续接文字。
+断词模式内置八种语言（`en-us`、`es`、`fr`、`de`、`it`、`pt`、`ca`、`nl`）；内置的资源类型和接续文字有这八种语言以及中文、日文和阿拉伯文。中文、日文、韩文和从右到左书写的语言不断词。其他语言用美式英语模式断词并在控制台警告，内置字符串用英文。这类文档请设置`hyphenation.enabled: false`，并传入用该语言写的`resourceTypes`和`tableStyle`接续文字。
 
 
 ## 阿拉伯文
 
 以下设置服务于阿拉伯字母文本；对用其他文字书写的文档，它们都不起作用。[阿拉伯文排版](/zh/docs/arabic-layout)把它们与阿拉伯文书籍的其余部分（方向、装订、数字、诗体、目录和索引）放在一起说明。
 
-- **元音符号与行距。** 标注元音的文本中，元音符号（fatḥa、kasra、shadda、tanwīn、短竖alif、《古兰经》符号）叠在字母上下，位于行距之中，而行距不会为它们增高。每个带元音符号的行都会记下笔画伸到多远（`VDTLine.markInk`），渲染器的栏裁剪会把每栏首行和末行的符号包含在内。某个词上方的符号碰到上一行正上方那个词下垂的字母或符号时，构建会报告该段落（`arabicMarksExceedLeading`，显示在沙盒的检查面板中）。只比较上下相叠的词。部分标注元音的文本宜用约1.7–1.85 em的`lineHeight`，全部标注元音的诗句宜用1.9–2.1 em。
-- **强调。** 阿拉伯文字体没有斜体，所以在`locale`用阿拉伯字母书写的文档中，`*…*`默认排成粗体（`bodyText.emphasis: 'auto'`）。`'color'`把它排成正体并用`italicColor`，`'overline'`在词上加一条线，即阿拉伯文书籍中的khaṭṭ fawqī。该设置作用于所有用正文字体排的文本：段落、列表、引用块、段落样式、提示框正文、注释和标题。图注、表格单元格、目录和索引保留各自的斜体设置。无论选哪种，引擎都不会把阿拉伯字母排斜：斜体片段中的阿拉伯文词排成正体，其中的拉丁文词保持斜体。在这类文档中，引用块默认为正体。
+- **元音符号与行距。** 标注元音的文本中，元音符号（fatḥa、kasra、shadda、tanwīn、短竖alif、《古兰经》符号）叠在字母上方和下方，占用行距，行距不会因此加大。每个带元音符号的行都会记下笔画伸到多远（`VDTLine.markInk`），渲染器的栏裁剪会把每栏首行和末行的符号包含在内。某个词上方的符号碰到上一行正上方那个词下垂的字母或符号时，构建会报告该段落（`arabicMarksExceedLeading`，显示在沙盒的“检查”面板中）。只比较上下相叠的词。部分标注元音的文本宜用约1.7–1.85 em的`lineHeight`，全部标注元音的诗句宜用1.9–2.1 em。
+- **强调。** 阿拉伯文字体没有斜体，所以在`locale`用阿拉伯字母书写的文档中，`*…*`默认排成粗体（`bodyText.emphasis: 'auto'`）。`'color'`把它排成正体并用`italicColor`，`'overline'`在词上加一条线，即阿拉伯文书籍中的khaṭṭ fawqī。该设置作用于所有用正文字体排的文本：段落、列表、引用块、段落样式、标注框正文、注释和标题。题注、表格单元格、目录和索引保留各自的斜体设置。无论选哪种，引擎都不会把阿拉伯字母排斜：斜体片段中的阿拉伯文词排成正体，其中的拉丁文词保持斜体。在这类文档中，引用块默认为正体。
 - **Tashkīl。** `bodyText.tashkil: 'strip'`从排版文本中去掉元音符号和《古兰经》符号，用于由标注元音的底本制作不标元音的版本：fatḥa、ḍamma、kasra及其tanwīn、sukūn、shadda、短竖alif（هٰذا变成هذا），以及U+0656–U+065F和U+06D6–U+06ED的符号。`'strip-vowels'`保留shadda，大多数现代书籍就是这样印的。hamza和madda保留（أ إ آ是字母，用组合符号输入时也一样）。源文本保留其符号；行、标题和目录不带符号排出，每个排出的字符仍对应它在源文本中的位置。
-- **脚注。** `footnotes.markerTemplate: '({n})'`用文档数字写出注码「(١)」，`numbering: 'page'`让编号每页重新开始，`noteNumberPosition: 'inline'`把注文自己的编号排在行内。分隔线和注文编号位于栏的起始一侧，在从右到左的书中即右侧。
-- **整词。** 含阿拉伯字母的词从不断词、切开或加字距，无论是在阿拉伯文书中还是被其他语言的书引用。为阿拉伯文文本设置`letterSpacing`的样式会被报告（`joiningScriptLetterSpacing`），比所在行还宽的词会溢出该行并被报告（`unbreakableWordOverflow`）。见[阿拉伯文排版](/zh/docs/arabic-layout#连写成形与整词)。
+- **脚注。** `footnotes.markerTemplate: '({n})'`用文档数字写出注码“(١)”，`numbering: 'page'`让编号每页重新开始，`noteNumberPosition: 'inline'`把注文自己的编号排在行内。分隔线和注文编号位于栏的起始一侧，在从右到左的书中即右侧。
+- **整词。** 含阿拉伯字母的词从不断词、切开或加字距，无论是在阿拉伯文书中还是被其他语言的书引用。为阿拉伯文文本设置`letterSpacing`的样式会被报告（`joiningScriptLetterSpacing`），比所在行还宽的词会超出该行，同样会被报告（`unbreakableWordOverflow`）。见[阿拉伯文排版](/zh/docs/arabic-layout#连写成形与整词)。
 - **卡希达与诗体。** 两端对齐的阿拉伯文行除了在空格处，还用卡希达拉伸（`bodyText.kashida`，见[阿拉伯文的卡希达](/zh/docs/justification#阿拉伯文的卡希达)）；古典诗用`:::verse`排成每行一联、两个等宽的半行（见[`:::verse`](/zh/docs/document-format-directives#verse)）。
 - **索引。** 阿拉伯文索引按字母顺序排序，并忽略冠词ال（`index.ignoreArticle`）、元音符号和hamza的承载字母；见[索引](/zh/docs/configuration-notes-references#索引)。

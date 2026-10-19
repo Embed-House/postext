@@ -4,19 +4,19 @@ summary: "Ogni poesia è un blocco :::verse scritto come stampato: i rientri del
 plain: "Un piccolo libro di quattro poesie sulla natura di Gerard Manley Hopkins. Mostra come tenere ogni verso a sé, con i rientri originali del poeta e una riga vuota tra le strofe."
 description: "Quattro poesie di Hopkins in Postext: blocchi :::verse con i rientri del 1918, versi a capo a sporgere, una riga tra le strofe e un indice con puntini di guida."
 question: "Come compongo poesie verso per verso, con rientri, stacchi di strofa, versi a capo e senza sillabazione?"
-aliases: ["poesia", "poesie", "versi", ":::verse", "strofa", "stacco di strofa", "verso", "verso rientrato", "rientro", "verso a capo", "riporto", "versi lunghi", "rientro a sporgere", "a capo", "plaquette", "puntini di guida", "dedica", "riga della data", "ornamento", "fleuron", "finalino", "tavola di antiporta", "occhiello", "Gerard Manley Hopkins"]
-pageNotes: { "2": "La tavola di antiporta: un fotogramma di una fronda di felce e di un rametto di sorbo con le bacche, lasciati bianchi su un fondo verde salvia pennellato, con la didascalia sotto in corsivo.", "4": "L’indice: quattro titoli in corsivo dopo i loro numeri romani, puntini di guida spaziati fino ai numeri di pagina, poi una breve nota sul testo e il colophon.", "6": "«The Windhover»: la sua dedica sta sopra il primo verso, i versi che rimano in -iding e -illion cominciano 2 em più dentro, e quattro versi lunghi vanno a capo, sporgendo di 4 em.", "7": "«Pied Beauty»: i versi rientrano di 1 o 2 em secondo la rima, e il mezzo verso finale, «Praise him.», sta a 8 em dal margine." }
+aliases: ["poesia", "poesie", "versi", ":::verse", "strofa", "stacco di strofa", "verso", "verso rientrato", "rientro", "verso a capo", "riporto", "versi lunghi", "rientro sporgente", "a capo", "plaquette", "puntini di guida", "dedica", "riga della data", "ornamento", "fleuron", "finalino", "tavola di antiporta", "occhiello", "Gerard Manley Hopkins"]
+pageNotes: { "2": "La tavola di antiporta: un fotogramma di una fronda di felce e di un rametto di sorbo con le bacche, lasciati bianchi su un fondo verde salvia pennellato, con la didascalia sotto in corsivo.", "4": "L’indice: quattro titoli in corsivo dopo i loro numeri romani, puntini di guida spaziati fino ai numeri di pagina, poi una breve nota sul testo e il colophon.", "6": "«The Windhover»: la dedica sta sopra il primo verso, i versi che rimano in -iding e -illion cominciano 2 em più dentro, e quattro versi lunghi vanno a capo, sporgendo di 4 em.", "7": "«Pied Beauty»: i versi rientrano di 1 o 2 em secondo la rima, e il mezzo verso finale, «Praise him.», sta a 8 em dal margine." }
 ---
 
 ## Che cosa comporrai
 
-Una plaquette di quattro poesie sulla natura di Gerard Manley Hopkins, 140 × 216 mm, nel testo della prima edizione del 1918. Dopo l’occhiello, un fotogramma di felce e sorbo come tavola di antiporta sta di fronte a un frontespizio composto in Italiana. L’indice elenca ogni poesia con il numero romano e il titolo in corsivo, con puntini spaziati fino al numero di pagina. Ogni poesia apre una pagina sotto un numero romano verde salvia e il suo titolo in corsivo. Ogni poesia è un blocco `:::verse`, rientrato come nel 1918: i versi di *Pied Beauty* rientrano secondo la rima, e i versi lunghi di *The Windhover* vanno a capo e sporgono di 4 em, il doppio dei suoi rientri. Le strofe sono separate da una riga, e nessuna parola si spezza tranne dove l’ha spezzata Hopkins. La data va sotto ogni poesia, allineata a destra, e un rametto di sorbo segue l’ultima. Le pagine delle poesie portano un folio centrato al piede.
+Una plaquette di quattro poesie sulla natura di Gerard Manley Hopkins, 140 × 216 mm, nel testo della prima edizione del 1918. Dopo l’occhiello, un fotogramma di felce e sorbo come tavola di antiporta sta di fronte a un frontespizio composto in Italiana. L’indice elenca ogni poesia con il numero romano e il titolo in corsivo, con puntini spaziati fino al numero di pagina. Ogni poesia apre una pagina sotto un numero romano verde salvia e il suo titolo in corsivo. Ogni poesia è un blocco `:::verse`, rientrato come nel 1918: i versi di *Pied Beauty* rientrano secondo la rima, e i versi lunghi di *The Windhover* vanno a capo e sporgono di 4 em, il doppio dei suoi rientri. Le strofe sono separate da una riga, e nessuna parola si spezza tranne dove l’ha spezzata Hopkins. La data va sotto ogni poesia, allineata a destra, e un rametto di sorbo segue l’ultima. Le pagine delle poesie hanno il numero di pagina centrato al piede.
 
 ## Preparazione
 
 ### 1 · Una poesia è un blocco :::verse
 
-Un blocco `:::verse` mantiene ogni riga del Markdown come un verso, quindi la poesia si scrive come si stampa ([`:::verse`](/it/docs/document-format-directives#verse)). I suoi spazi iniziali sono i suoi rientri, due per em, così i versi che rimano fra loro cominciano alla stessa distanza dal margine, come nel 1918. Una riga vuota tra le strofe lascia una riga della griglia, e cade in testa alla pagina. Un verso troppo lungo per la giustezza va a capo su uno spazio tra parole e sporge del `hangingIndent` dello stile dei versi, contato dall’inizio del verso stesso: 2 em oltre un verso non rientrato, 4 em sotto un verso rientrato di 2 em, così un verso a capo non si legge mai come un verso a sé. `align=start` allinea ogni poesia al margine; senza, una poesia si centra sul suo verso più lungo. I versi non si sillabano, e un verso non si separa mai dalla sua continuazione a un’interruzione di pagina.
+Un blocco `:::verse` mantiene ogni riga del Markdown come un verso, quindi la poesia si scrive come si stampa ([`:::verse`](/it/docs/document-format-directives#verse)). Gli spazi iniziali sono i rientri, due per em, così i versi che rimano fra loro cominciano alla stessa distanza dal margine, come nel 1918. Una riga vuota tra le strofe lascia una riga della griglia, e cade in testa alla pagina. Un verso troppo lungo per la giustezza va a capo su uno spazio tra parole e sporge del `hangingIndent` dello stile dei versi, contato dall’inizio del verso stesso: 2 em oltre un verso non rientrato, 4 em sotto un verso rientrato di 2 em, così un verso a capo non si legge mai come un verso a sé. `align=start` allinea ogni poesia al margine; senza, una poesia si centra sul suo verso più lungo. I versi non si sillabano, e un verso non si separa mai dal suo seguito a un’interruzione di pagina.
 
 <PageShot page={6} crop="0.08,0.22,0.86,0.48" caption="«The Windhover», pagina 6: i versi che rimano in -iding cominciano 2 em più dentro, e i quattro versi troppo lunghi per la pagina vanno a capo e sporgono di 4 em." />
 
@@ -24,19 +24,19 @@ Un blocco `:::verse` mantiene ogni riga del Markdown come un verso, quindi la po
 
 <Excerpt region="lines" />
 
-La dedica sopra *The Windhover* e il luogo e la data sotto ogni poesia non sono versi, quindi ciascuno è un contenitore `:::paragraphs` di un solo paragrafo, in uno stile suo. Nessuno dei due stili imposta un’interlinea, e i loro margini sono di una riga (15 pt), così i versi restano sulla griglia del testo. La data si compone una riga sotto la poesia, allineata a destra, in Marcellus SC da 8 pt, il carattere dei folio.
+La dedica sopra *The Windhover* e il luogo e la data sotto ogni poesia non sono versi, quindi ciascuno è un contenitore `:::paragraphs` di un solo paragrafo, in uno stile suo. Nessuno dei due stili imposta un’interlinea, e i loro margini sono di una riga (15 pt), così i versi restano sulla griglia del testo. La data si compone una riga sotto la poesia, allineata a destra, in Marcellus SC da 8 pt, il carattere dei numeri di pagina.
 
 ### 3 · Ogni poesia apre una pagina sotto il suo numero
 
 <Excerpt region="poem-head" />
 
-Invece del suo testo, il titolo stampa un progetto grafico nella colonna. In quel progetto, `{number}` è il conteggio come lo formatta `numberingTemplate: '{1:I}'`, da I a IV, e `{titleText}` è il titolo ([progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)). Il livello non ha margine inferiore, e `minHeight` rende ogni titolo alto sei righe di griglia (31,75 mm). Il numero romano e un titolo di una riga ne riempiono quattro, e un titolo che va a capo ne riempie cinque, così ogni poesia comincia sulla stessa riga della sua pagina. A <PageRef page={6}>pagina 6</PageRef> quella riga accoglie la dedica. La parità `'any'` passa alla pagina successiva, recto o verso, quindi non ci sono pagine bianche tra le poesie.
+Invece del suo testo, il titolo stampa una grafica nella colonna. In quella grafica, `{number}` è il conteggio come lo formatta `numberingTemplate: '{1:I}'`, da I a IV, e `{titleText}` è il titolo ([estensione e grafica avanzata](/it/docs/configuration-headings#estensione-e-grafica-avanzata)). Il livello non ha margine inferiore, e `minHeight` rende ogni titolo alto sei righe di griglia (31,75 mm). Il numero romano e un titolo di una riga ne riempiono quattro, e un titolo che va a capo ne riempie cinque, così ogni poesia comincia sulla stessa riga della sua pagina. A <PageRef page={6}>pagina 6</PageRef> quella riga accoglie la dedica. La parità `'any'` passa alla pagina successiva, recto o verso, quindi non ci sono pagine bianche tra le poesie.
 
 ### 4 · Le pagine preliminari sono fatte di titoli
 
 <Excerpt region="front" />
 
-Uno stile di titolo può passare a una nuova pagina e disegnarvi un progetto grafico, quindi l’occhiello, la tavola di antiporta e il frontespizio sono un titolo ciascuno, con uno stile suo. `numbered: false` li tiene fuori dal conteggio, e la prima poesia è ancora I. `toc: false` li tiene fuori dall’indice, e un piè di pagina vuoto lascia le loro pagine senza folio ([stili di titolo](/it/docs/configuration-styles#stili-dei-titoli)). Gli stili occupano tutta la pagina perché il piede della gabbia taglia un progetto grafico tenuto nella colonna, che lì ritaglierebbe la tavola al vivo e ne perderebbe la didascalia. La didascalia viene dall’attributo `caption` del titolo; autore, titolo e sottotitolo del frontespizio vengono dal frontmatter.
+Uno stile di titolo può passare a una nuova pagina e disegnarvi una grafica, quindi l’occhiello, la tavola di antiporta e il frontespizio sono un titolo ciascuno, con uno stile suo. `numbered: false` li tiene fuori dal conteggio, e la prima poesia è ancora I. `toc: false` li tiene fuori dall’indice, e un piè di pagina vuoto lascia le loro pagine senza numero di pagina ([stili di titolo](/it/docs/configuration-styles#stili-dei-titoli)). Gli stili occupano tutta la pagina perché il piede della gabbia taglia una grafica tenuta nella colonna, che lì ritaglierebbe la tavola al vivo e ne perderebbe la didascalia. La didascalia viene dall’attributo `caption` del titolo; autore, titolo e sottotitolo del frontespizio vengono dal front matter.
 
 ### 5 · L’indice si compila da solo
 
@@ -54,7 +54,7 @@ Un’immagine nel testo è una risorsa, e ogni risorsa ha un tipo. Il tipo ornam
 
 ### Fai sporgere di più i versi a capo
 
-Un rientro a sporgere più profondo allontana dal margine il resto di un verso a capo, per poesie i cui versi vanno spesso a capo.
+Un rientro sporgente più profondo allontana dal margine il resto di un verso a capo, per poesie i cui versi vanno spesso a capo.
 
 ```diff
 -  hangingIndent: em(2), // a turnover hangs 2 em past its line's start: 4 em under a 2 em indent
@@ -73,7 +73,7 @@ Con `turnover: 'right'` in `bodyText.verse`, il resto di un verso troppo lungo p
 
 ### Apri ogni poesia su una pagina di destra
 
-Con la parità `'odd'` ogni poesia si apre sul recto successivo. Il libro passa da otto a undici pagine, e le tre pagine di sinistra bianche non stampano folio, perché i folio sono filtrati per ruolo della pagina.
+Con la parità `'odd'` ogni poesia si apre sul recto successivo. Il libro passa da otto a undici pagine, e le tre pagine di sinistra bianche non stampano il numero di pagina, perché i numeri di pagina sono filtrati per ruolo della pagina.
 
 ```diff
  const poems = { level: 1, numberingTemplate: '{1:I}', advancedDesign: poemHead,
@@ -92,8 +92,8 @@ Lo stile del contatore del modello cambia insieme il numero sulla pagina della p
 
 ## Errori frequenti
 
-- Tieni uniti i versi di una strofa: una riga vuota dentro un blocco `:::verse` comincia una nuova strofa, per quante siano le righe vuote.
+- Tieni uniti i versi di una strofa: una riga vuota in un blocco `:::verse` comincia una nuova strofa, per quante siano le righe vuote.
 - Una riga che comincia con un segno più e uno spazio è un verso a gradino, composto dove è finito il verso sopra; scrivi `\+` per stampare il segno più.
 - Senza `align=start` ogni poesia si centra sul suo verso più lungo, e ogni poesia si trova allora a una distanza diversa dal margine.
 - Per mandare a capo due parole insieme, legale con uno spazio non divisibile (U+00A0), come lo sono *the soil* e *bright wings.* a pagina 5.
-- Un elemento del piè di pagina con `pages` lasciato su `'all'` si stampa anche sulle pagine bianche. Qui il folio è fatto di due elementi, uno per le aperture e uno per le pagine di testo, così un verso bianco resta bianco.
+- Un elemento del piè di pagina con `pages` lasciato su `'all'` si stampa anche sulle pagine bianche. Qui il numero di pagina è fatto di due elementi, uno per le aperture e uno per le pagine di testo, così un verso bianco resta bianco.

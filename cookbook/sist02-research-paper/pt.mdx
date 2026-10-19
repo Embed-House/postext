@@ -5,12 +5,12 @@ plain: "Um artigo curto de uma revista científica japonesa. O autor escreve um 
 description: "Um artigo de revista japonesa no Postext citado pela SIST 02 com o locale ja-JP: citações numeradas, lista 参考文献 com nomes japoneses, notas de rodapé, 表1 e 図1."
 question: "Como faço para citar obras num artigo japonês pela SIST 02 e imprimir a lista 参考文献?"
 aliases: ["SIST 02", "SIST02", "参照文献の書き方", "参考文献", "referências em japonês", "bibliografia japonesa", "ja-JP", "CSL", "citeproc", "研究ノート", "artigo de revista japonesa", "artigo científico japonês", "学会誌", "japonês em duas colunas", "号数活字", "notas de rodapé em japonês", "と ほか"]
-pageNotes: { "1": "A página 23, a primeira de uma nota de pesquisa numa revista fictícia, 活字と組版の研究: uma faixa verde-escura no quarto superior traz o nome da revista, o volume e o número, o rótulo 研究ノート, o título em duas linhas em mincho branca e a sua tradução para o inglês. Sob a faixa, a autora 森川 啓 e a sua filiação, um resumo nas duas colunas sob uma tarja verde com os rótulos 要　旨 e キーワード, e depois duas colunas de texto: as seções 1 a 3 com citações como (1), (2, 3) e (4, 5), uma tabela dos nove corpos com a linha de cabeçalho verde e uma nota de rodapé ao pé da coluna da esquerda.", "2": "A página 24: na coluna da esquerda, três fileiras de quadrados desenhados em escala, de 42 a 5,25 pt, 27,5 e 13,75 pt, de 16 a 4 pt, com a legenda 図1, e a seção 4. Na coluna da direita, a seção 5, o título 参考文献 e as entradas (1) a (9), livros japoneses e dois artigos do 日本印刷学会誌, e um colofão em tipo latino." }
+pageNotes: { "1": "A página 23, a primeira de uma nota de pesquisa numa revista fictícia, 活字と組版の研究: uma faixa verde-escura no quarto superior traz o nome da revista, o volume e o número, o rótulo 研究ノート, o título em duas linhas em mincho branca e a tradução para o inglês. Sob a faixa, a autora 森川 啓 e a filiação, um resumo nas duas colunas sob uma tarja verde com os rótulos 要　旨 e キーワード, e depois duas colunas de texto: as seções 1 a 3 com citações como (1), (2, 3) e (4, 5), uma tabela dos nove corpos com a linha de cabeçalho verde e uma nota de rodapé ao pé da coluna da esquerda.", "2": "A página 24: na coluna da esquerda, três fileiras de quadrados desenhados em escala, de 42 a 5,25 pt, 27,5 e 13,75 pt, de 16 a 4 pt, com a legenda 図1, e a seção 4. Na coluna da direita, a seção 5, o título 参考文献 e as entradas (1) a (9), livros japoneses e dois artigos do 日本印刷学会誌, e um colofão em tipo latino." }
 ---
 
 ## O que você vai compor
 
-Duas páginas de uma nota de pesquisa, 号数活字の三つの系列 (“As três séries de corpos gōsū”), de uma revista inventada sobre tipos e composição, composta como as sociedades acadêmicas japonesas compõem as suas revistas: A4, duas colunas de 25 caracteres por 45 linhas de Noto Serif JP em 9 pt, e o título em Shippori Mincho B1 sobre a faixa verde da revista. As citações seguem a SIST 02, o guia de referências que as revistas japonesas de ciência e tecnologia usam: cada obra é numerada na ordem em que é citada pela primeira vez, (1), (2, 3), e a lista sob 参考文献 dá os nomes japoneses com o sobrenome primeiro, o local antes da editora e o ano no fim. Uma tabela dos nove corpos, uma figura que os desenha em escala e duas notas de rodapé vêm com rótulos japoneses. <RecipeLink slug="gbt7714-chinese-paper">O artigo chinês citado pela GB/T 7714</RecipeLink> é o equivalente chinês.
+Duas páginas de uma nota de pesquisa, 号数活字の三つの系列 (“As três séries de corpos gōsū”), de uma revista inventada sobre tipos e composição, composta como as sociedades acadêmicas japonesas compõem as revistas: A4, duas colunas de 25 caracteres por 45 linhas de Noto Serif JP em 9 pt, e o título em Shippori Mincho B1 sobre a faixa verde da revista. As citações seguem a SIST 02, o guia de referências que as revistas japonesas de ciência e tecnologia usam: cada obra é numerada na ordem em que é citada pela primeira vez, (1), (2, 3), e a lista sob 参考文献 dá os nomes japoneses com o sobrenome primeiro, o local antes da editora e o ano no fim. Uma tabela dos nove corpos, uma figura que os desenha em escala e duas notas de rodapé vêm com rótulos japoneses. <RecipeLink slug="gbt7714-chinese-paper">O artigo chinês citado pela GB/T 7714</RecipeLink> é o equivalente chinês.
 
 ## Preparo
 
@@ -28,19 +28,19 @@ As obras são listadas no fim do Markdown em `:::references{format=csl-yaml}`, o
 
 <Excerpt region="masthead" />
 
-O bloco do título é o design do H1, um estilo de título que atravessa as duas colunas. A faixa é uma caixa ancorada no refile; o rótulo, o título e a sua tradução para o inglês ficam sobre ela, cada um posicionado embaixo do anterior, de modo que um título de três linhas empurra a linha em inglês para baixo. A autora e a sua filiação vêm de atributos do título e ficam sob a faixa.
+O bloco do título é o design do H1, um estilo de título que atravessa as duas colunas. A faixa é uma caixa ancorada no refile; o rótulo, o título e a tradução para o inglês ficam sobre ela, cada um posicionado embaixo do anterior, de modo que um título de três linhas empurra a linha em inglês para baixo. A autora e a filiação vêm de atributos do título e ficam sob a faixa.
 
 ### 4 · O resumo e os seus rótulos
 
 <Excerpt region="abstract" />
 
-O resumo é um boxe na largura da página sob uma tarja verde no alto, e os seus rótulos são chips em gótica negrito na cor da revista. Um espaço ideográfico depois de cada rótulo, digitado no Markdown, separa 要　旨 do texto.
+O resumo é um boxe na largura da página sob uma tarja verde no alto, e os rótulos são chips em gótica negrito na cor da revista. Um espaço ideográfico depois de cada rótulo, digitado no Markdown, separa 要　旨 do texto.
 
 ### 5 · 表1 e 図1 onde são citados
 
 <Excerpt region="resources" />
 
-`defaultResourceTypes('ja')` dá 図 e 表; o artigo os numera em sequência, 表1 e 図1, e não por capítulo, então o modelo é `'{n}'`. Os dois são posicionados `'here'`, sob o parágrafo que os cita, dentro da coluna. Os quadrados da figura são desenhados no tamanho do tipo que representam, de 42 pt no 初号 a 4 pt no 八号, para que a redução pela metade se veja na página.
+`defaultResourceTypes('ja')` dá 図 e 表; o artigo os numera em sequência, 表1 e 図1, e não por capítulo, por isso o modelo é `'{n}'`. Os dois são posicionados `'here'`, sob o parágrafo que os cita, dentro da coluna. Os quadrados da figura são desenhados no tamanho do tipo que representam, de 42 pt no 初号 a 4 pt no 八号, para que a redução pela metade se veja na página.
 
 ## Variações
 

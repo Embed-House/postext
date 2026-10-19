@@ -16,7 +16,7 @@ Vier vertikale Seiten eines Nachbarschaftsblatts, 東若葉台だより, Ausgabe
 
 ### 1 · Die Schreibweise danach wählen, wo die Zahl steht
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `formatNumeral` ist der Zähler, mit dem die Engine Seiten, Listen und Überschriften nummeriert, und der Pen ruft ihn für die Zahlen auf, die er selbst bildet: `japanese-informal` zählt (120 → 百二十, ohne 一 vor 十 百 千), `cjk-decimal` schreibt Ziffer für Ziffer (2026 → 二〇二六), und `japanese-formal` gibt die Daiji einer Summe (12000 → 壱萬弐阡). Ein `{{daiji:12000}}` im Text wird zum Betrag der Quittung, die Zahl wird also einmal getippt, in Ziffern. Dieselben Stile benennen die Zähler: Die Abschnitte sind `{2:一}、`, und `orderedLists.levels` setzt （一）, dann `katakana-iroha` (イ ロ ハ), dann `hiragana` mit 、 (あ、い、う). `cjk.uprightDigits: 2` stellt 8月22日 und 23日 ohne Auszeichnung aufrecht, und das `!?` in 「雨が降ったら中止!?」 teilt sich eine Zelle, ein japanischer Standard ([Zahlen im vertikalen Text](/de/docs/configuration-east-asian#zahlen-im-vertikalen-text)).
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `formatNumeral` ist der Zähler, mit dem die Engine Seiten, Listen und Überschriften nummeriert, und der Pen ruft ihn für die Zahlen auf, die er selbst bildet: `japanese-informal` zählt (120 → 百二十, ohne 一 vor 十 百 千), `cjk-decimal` schreibt Ziffer für Ziffer (2026 → 二〇二六), und `japanese-formal` gibt die Daiji einer Summe (12000 → 壱萬弐阡). Ein `{{daiji:12000}}` im Text wird zum Betrag der Quittung, die Zahl wird also einmal getippt, in Ziffern. Mit denselben Stilnamen werden die Zähler festgelegt: Die Abschnitte sind `{2:一}、`, und `orderedLists.levels` setzt （一）, dann `katakana-iroha` (イ ロ ハ), dann `hiragana` mit 、 (あ、い、う). `cjk.uprightDigits: 2` stellt 8月22日 und 23日 ohne Auszeichnung aufrecht, und das `!?` in 「雨が降ったら中止!?」 teilt sich eine Zelle, ein japanischer Standard ([Zahlen im vertikalen Text](/de/docs/configuration-east-asian#zahlen-im-vertikalen-text)).
 
 <PageShot page={2} crop="0.3,0.06,0.7,0.6" caption="Seite 2: イ ロ ハ unter （三）, あ、い、う unter ハ, 23日 und 4時 aufrecht, !? in einer Zelle gesetzt." />
 
@@ -30,7 +30,7 @@ Auf einer vertikalen Seite ist der Anfang des Flusses der rechte Rand des Blatte
 
 <Excerpt region="calendar" />
 
-Eine Tabelle steht auf einer vertikalen Seite aufrecht und liest sich quer, so wie japanische Bücher ihre Tabellen drucken; sie nimmt jede Zeile der Seite ein, auf der sie steht. Der Kalender wird nach dem letzten Absatz zitiert, als seitenbreites Gleitobjekt, sodass er zur Rückseite wird und der Text davor seine Seiten füllt. `resourceTypes` nummeriert ihn mit dem Token `一` (表一), und ein Dokument mit `ja` setzt die Beschriftung 表一　 von selbst: Beschriftung und Nummer ohne Zwischenraum, danach ein ideografisches Leerzeichen.
+Eine Tabelle steht auf einer vertikalen Seite aufrecht und liest sich quer, so wie japanische Bücher ihre Tabellen drucken; sie nimmt jede Zeile der Seite ein, auf der sie steht. Der Kalender wird nach dem letzten Absatz zitiert, als seitenbreites Gleitobjekt, sodass er zur Rückseite wird und der Text davor seine Seiten füllt. `resourceTypes` nummeriert ihn mit dem Token `一` (表一), und ein Dokument mit `ja` setzt die Bezeichnung 表一　 von selbst: Bezeichnung und Nummer ohne Zwischenraum, danach ein ideografisches Leerzeichen.
 
 ### 4 · Jede Stimme mit dem Text laden, den sie setzt
 

@@ -10,7 +10,7 @@ pageNotes: {"1": "A abertura da unidade: uma pintura de um vale com seu rio, das
 
 ## O que você vai compor
 
-Nove páginas de *Nosso rio*, unidade 4 de um livro inventado de Ciências Sociais do 3.º ano, numa página de 210 × 280 mm, em espanhol, catalão e inglês. Um vale pintado abre a unidade, uma página de sumário lista duas partes e seguem três temas em página dupla, cada um sobre o seu fundo: azul-água, verde-campo, areia-sol. Cada tema tem uma aba com o número e o título, texto em duas colunas e caixas com aba que crescem com o texto. O segundo tema é um único mapa pintado em página dupla, com o rio, as aldeias e os três cursos nomeados a partir do Markdown. Os três textos diferem em um quinto ou mais e cabem nos mesmos modelos: uma caixa toma a altura que as suas palavras pedem e empurra a seguinte, e o mapa é reduzido um pouco antes de qualquer texto.
+Nove páginas de *Nosso rio*, unidade 4 de um livro inventado de Ciências Sociais do 3.º ano, numa página de 210 × 280 mm, em espanhol, catalão e inglês. Um vale pintado abre a unidade, uma página de sumário lista duas partes e seguem três temas em página dupla, cada um sobre o fundo: azul-água, verde-campo, areia-sol. Cada tema tem uma aba com o número e o título, texto em duas colunas e caixas com aba que crescem com o texto. O segundo tema é um único mapa pintado em página dupla, com o rio, as aldeias e os três cursos nomeados a partir do Markdown. Os três textos diferem em um quinto ou mais e cabem nos mesmos modelos: uma caixa toma a altura que as palavras pedem e empurra a seguinte, e o mapa é reduzido um pouco antes de qualquer texto.
 
 ## Preparo
 
@@ -24,29 +24,29 @@ Um estilo de caixa se faz em três passos. `caja` guarda a forma, a tipografia e
 
 <Excerpt region="answer" />
 
-A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), fixa sua `palette` (as três entradas `tema` tomam as cores da família, e o fundo, a aba, o número e todas as caixas mudam juntos) e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede. O número é `{headingNumber}`, o contador do título que o bloco tomou, pintado sobre o preenchimento esquerdo do bloco: nenhuma cerca de página o repete, e um clique nele chega ao número, não ao bloco.
+A base é uma página dupla: um fundo até a sangria, uma aba de título com o número e um texto em duas colunas. Um tema a estende (`extends: 'tema'`), fixa sua `palette` (as três entradas `tema` tomam as cores da família, e o fundo, a aba, o número e todas as caixas mudam juntos) e acrescenta seus blocos. A aba e o número são decoração ancorada ao bloco do título: a aba é tão alta quanto o título que o idioma pede. O número é `{headingNumber}`, o contador do título que o bloco tomou, pintado sobre o preenchimento esquerdo do bloco: nenhum contêiner de página o repete, e um clique nele chega ao número, não ao bloco.
 
 ### 3 · Deixe os grupos dividirem o espaço
 
-Cada tema tem dois grupos. A página esquerda é uma pilha: título, texto e depois a tira de imagens ou o mapa. A direita é outra pilha de caixas, ou uma fileira de três caixas que dividem a largura. Um bloco é tão alto quanto as suas palavras e nunca menos que o seu `minHeight`: o texto em espanhol empurra tudo o que tem embaixo e nenhuma posição do modelo muda. Quando falta espaço a uma página, a [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço, reduz o mapa e as imagens e deixa o texto por último, até 90 %. O `pnpm cookbook bench` recompõe as três edições com o texto 30 % mais longo.
+Cada tema tem dois grupos. A página esquerda é uma pilha: título, texto e depois a tira de imagens ou o mapa. A direita é outra pilha de caixas, ou uma fileira de três caixas que dividem a largura. Um bloco é tão alto quanto as palavras e nunca menos que o `minHeight`: o texto em espanhol empurra tudo o que tem embaixo e nenhuma posição do modelo muda. Quando falta espaço a uma página, a [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) recupera espaço, reduz o mapa e as imagens e deixa o texto por último, até 90 %. O `pnpm cookbook bench` recompõe as três edições com o texto 30 % mais longo.
 
 ### 4 · Ponha os nomes do mapa a partir do texto
 
 <Excerpt region="art-labels" />
 
-O mapa é uma pintura sem uma letra. Cada lugar é uma âncora da imagem, um ponto em frações da largura e da altura com um estilo de rótulo, e cada edição escreve as suas próprias linhas `::label` nessas âncoras. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* ficam no mesmo lugar, e um nome mais longo se quebra dentro do `width` da âncora.
+O mapa é uma pintura sem uma letra. Cada lugar é uma âncora da imagem, um ponto em frações da largura e da altura com um estilo de rótulo, e cada edição escreve as próprias linhas `::label` nessas âncoras. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* ficam no mesmo lugar, e um nome mais longo se quebra dentro do `width` da âncora.
 
 ### 5 · Mantenha cada parte do sumário unida
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` lista os temas e as suas seções e mantém cada linha de parte com as suas entradas. Uma cerca `:::part` com `parts.page: false` é só uma linha do sumário e uma seção para os cabeçalhos: não acrescenta página de abertura. O sumário é uma página composta: o seu modelo tem um bloco com `takes: "toc"` que recebe o `:::toc` e o compõe pelas regras do sumário, de modo que as linhas de parte, o pontilhado e o `keep` funcionam como no texto corrido, e o fundo claro é a decoração do modelo.
+`:::toc{keep="part" levels="1-2"}` lista os temas e as seções e mantém cada linha de parte com as entradas. Uma linha `:::part` com `parts.page: false` é só uma linha do sumário e uma seção para os cabeçalhos: não acrescenta página de abertura. O sumário é uma página composta: o modelo tem um bloco com `takes: "toc"` que recebe o `:::toc` e o compõe pelas regras do sumário, de modo que as linhas de parte, o pontilhado e o `keep` funcionam como no texto corrido, e o fundo claro é a decoração do modelo.
 
 ## Variações
 
 ### Acrescente uma quarta família
 
-Um tema sobre o mar é uma quarta entrada de `FAMILIES` e um modelo feito com `topic('tema-mar', 'mar', { frames })`. `swap('mar')` escreve a sua paleta, e as caixas e o fundo a seguem.
+Um tema sobre o mar é uma quarta entrada de `FAMILIES` e um modelo feito com `topic('tema-mar', 'mar', { frames })`. `swap('mar')` escreve a paleta, e as caixas e o fundo a seguem.
 
 ```diff
 -  sol: { main: '#9a5209', tint: '#fcefd2', ground: '#f8e6b8' },

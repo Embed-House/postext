@@ -16,7 +16,7 @@ La memòria del 2025 d'una fundació de traducció imaginària, Dar al-Dad, en u
 
 ### 1 · La segona llengua, en blocs marcats
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. El document és àrab, així que tots els blocs van de dreta a esquerra mentre el Markdown no digui una altra cosa: `{dir=ltr}` en una tanca `:::paragraphs` o en un títol gira aquell bloc, i `textAlign: 'start'` porta cada bloc al costat pel qual comença, la dreta en àrab i l'esquerra en castellà ([Direcció del document, del bloc i del text en línia](/ca/docs/arabic-layout#direcció-del-document-del-bloc-i-del-text-en-línia)). Un nom llatí dins d'una línia àrab, :ltr[Harbour Modern Classics], és un aïllament: l'algorisme bidireccional el tracta com una sola peça neutra, i les paraules àrabs i la coma que l'envolten no es mouen ([Aïllaments](/ca/docs/arabic-layout#aïllaments)). `emphasis: 'italic'` deixa *Middlemarch* en cursiva al text castellà; el motor no inclina mai una lletra àrab, sigui quin sigui l'ajust.
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. El document és àrab, així que tots els blocs van de dreta a esquerra mentre el Markdown no digui una altra cosa: `{dir=ltr}` a la línia d'obertura d'un `:::paragraphs` o en un títol gira aquell bloc, i `textAlign: 'start'` porta cada bloc al costat pel qual comença, la dreta en àrab i l'esquerra en castellà ([Direcció del document, del bloc i del text en línia](/ca/docs/arabic-layout#direcció-del-document-del-bloc-i-del-text-en-línia)). Un nom llatí dins d'una línia àrab, :ltr[Harbour Modern Classics], és un aïllament: l'algorisme bidireccional el tracta com una sola peça neutra, i les paraules àrabs i la coma que l'envolten no es mouen ([Aïllaments](/ca/docs/arabic-layout#aïllaments)). `emphasis: 'italic'` deixa *Middlemarch* en cursiva al text castellà; el motor no inclina mai una lletra àrab, sigui quin sigui el paràmetre.
 
 ### 2 · Una taula per a cada direcció
 
@@ -28,7 +28,7 @@ La taula àrab va amb el document: la primera columna, el programa, queda a la d
 
 <Excerpt region="cover" />
 
-La portada és el disseny del títol de primer nivell. El disseny d'un títol es compon dins el flux i es reflecteix amb la pàgina, així que les seves àncores anomenen els costats del text: `top-left` és la dreta del full, on comencen el nom i el títol àrabs, i `top-right` l'esquerra, on comença el títol en castellà. El text de disseny pren la direcció del document, així que les línies àrabs no necessiten res més; el títol en castellà declara `direction: 'ltr'`. La franja és una caixa ancorada al sang, de 86 mm, i el `minHeight` de l'obertura deixa la carta de la directora just a sota.
+La portada és el disseny del títol de primer nivell. El disseny d'un títol es compon dins el flux i s'emmiralla amb la pàgina, així que els seus ancoratges designen els costats del text: `top-left` és la dreta del full, on comencen el nom i el títol àrabs, i `top-right` l'esquerra, on comença el títol en castellà. El text de disseny pren la direcció del document, així que les línies àrabs no necessiten res més; el títol en castellà declara `direction: 'ltr'`. La franja és una caixa ancorada al sang, de 86 mm, i el `minHeight` de l'obertura deixa la carta de la directora just a sota.
 
 ## Variants
 

@@ -1,11 +1,11 @@
 ---
 title: "Eine Leseliste aus einem BibTeX-Export von Zotero"
 summary: "Eine Seminar-Leseliste, deren Literatur ein unveränderter BibTeX-Export aus Zotero ist, zitiert im Chicago-Autor-Jahr-Stil, mit nocite für nie zitierte Werke."
-plain: "Die Leseliste eines Universitätsseminars. Die Lehrkraft fügt die Datei ein, die Zotero exportiert; Postext druckt die Zitate und eine Liste, die auch Bücher enthält, die der Text nicht erwähnt."
-description: "Eine Leseliste in Postext: der BibTeX-Export von Zotero unbearbeitet eingefügt, Zitate im Chicago-Autor-Jahr-Stil und nocite für Hintergrundwerke ohne Zitat."
+plain: "Die Leseliste eines Universitätsseminars. Die Lehrkraft fügt die Datei ein, die Zotero exportiert; Postext setzt die Zitationen und eine Liste, die auch Bücher enthält, die der Text nicht erwähnt."
+description: "Eine Leseliste in Postext: der BibTeX-Export von Zotero unbearbeitet eingefügt, Zitationen im Chicago-Autor-Jahr-Stil, nocite für nie zitierte Hintergrundwerke."
 question: "Wie verwende ich einen BibTeX-Export aus Zotero und liste Werke auf, die der Text nie zitiert?"
 aliases: ["Zotero", "BibTeX", "nocite", "nicht zitierte Werke", "Leseliste", "Seminarplan", "weiterführende Literatur", "Chicago Autor-Jahr", "Literaturverzeichnis", "Bibliografie", "reading list"]
-pageNotes: { "1": "Seite 1: ein tiefgrünes Band über die obere Hälfte mit der Dachzeile „HPS 214 · Seminar reading list · Autumn term 2026“, dem Titel „Science as a Social Practice“ in großer leichter Serifenschrift und einem kursiven Vorspann; darunter zwei Spalten mit der Einführung und den Wochen 1 bis 3, mit Zitaten wie „Kuhn (1970)“ und „(Shapin 1984)“.", "2": "Seite 2: die Wochen 4 bis 6 und der Abschnitt „Further reading“, dann das Literaturverzeichnis im Chicago-Autor-Jahr-Stil über beide Spalten: dreizehn Werke, fünf davon im Text nie zitiert, darunter Fleck, Merton und López Piñero." }
+pageNotes: { "1": "Seite 1: ein tiefgrünes Band über die obere Hälfte mit der Dachzeile „HPS 214 · Seminar reading list · Autumn term 2026“, dem Titel „Science as a Social Practice“ in großer leichter Serifenschrift und einem kursiven Vorspann; darunter zwei Spalten mit der Einführung und den Wochen 1 bis 3, mit Zitationen wie „Kuhn (1970)“ und „(Shapin 1984)“.", "2": "Seite 2: die Wochen 4 bis 6 und der Abschnitt „Further reading“, dann das Literaturverzeichnis im Chicago-Autor-Jahr-Stil über beide Spalten: dreizehn Werke, fünf davon im Text nie zitiert, darunter Fleck, Merton und López Piñero." }
 ---
 
 ## Was Sie setzen
@@ -16,7 +16,7 @@ Die Leseliste eines sechswöchigen Seminars zur Geschichte und Soziologie der Wi
 
 ### 1 · Den Stil einmal benennen
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Zitier-Engine wird vor dem ersten Build registriert, und der Stil ist eine einzige Einstellung: Chicago Autor-Jahr schreibt „(Shapin 1984)“ für `[@shapin_pump_1984]` und „Shapin and Schaffer (1985)“ für `@shapin_leviathan_1985` in einem Satz. Die Schlüssel sind die, die Zotero aus dem ersten Autor, dem ersten bedeutungstragenden Wort des Titels und dem Jahr gebildet hat, deshalb behält `gieryn_boundary-work_1983` seinen Bindestrich; Postext liest einen Bindestrich oder Unterstrich innerhalb eines Schlüssels als Teil davon.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Zitier-Engine wird vor dem ersten Build registriert, und der Stil ist eine einzige Einstellung: Chicago Autor-Jahr schreibt „(Shapin 1984)“ für `[@shapin_pump_1984]` und „Shapin and Schaffer (1985)“ für `@shapin_leviathan_1985` in einem Satz. Die Schlüssel sind die, die Zotero aus dem ersten Autor, dem ersten bedeutungstragenden Wort des Titels und dem Jahr gebildet hat, deshalb behält `gieryn_boundary-work_1983` seinen Bindestrich; Postext wertet einen Bindestrich oder Unterstrich innerhalb eines Schlüssels als Teil davon.
 
 ### 2 · Den Export so einfügen, wie Zotero ihn schreibt
 
@@ -38,7 +38,7 @@ Der letzte Block des Dokuments enthält den Export, einen Eintrag je Werk, mit T
 }
 ```
 
-Der Leser entfernt die Klammern, die Großbuchstaben schützen, setzt `{\"o}` und `{\'e}` zu ö und é zusammen, macht aus `--` einen Halbgeviertstrich und liest `month = dec` als bloßen Monatsnamen. `urldate` wird zum Zugriffsdatum und `language` zur Sprache des Eintrags; `file`, `keywords`, `abstract` und `shorttitle` werden überlesen, sodass nichts von Ihrer Festplatte auf die Seite gelangt.
+Der BibTeX-Parser entfernt die Klammern, die Großbuchstaben schützen, setzt `{\"o}` und `{\'e}` zu ö und é zusammen, macht aus `--` einen Halbgeviertstrich und deutet `month = dec` als bloßen Monatsnamen. `urldate` wird zum Zugriffsdatum und `language` zur Sprache des Eintrags; `file`, `keywords`, `abstract` und `shorttitle` werden überlesen, sodass nichts von Ihrer Festplatte auf die Seite gelangt.
 
 ### 3 · Die Werke aufnehmen, die der Text nicht zitiert
 
@@ -51,13 +51,13 @@ nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, @rhe
 ---
 ```
 
-Die Liste enthält jedes zitierte Werk plus diese fünf, gemeinsam nach Autor sortiert, wie Chicago es verlangt; nichts kennzeichnet einen Eintrag als nicht zitiert. `nocite: "@*"` listet den ganzen Export auf, und `bibliography.includeUncited: true` tut dasselbe aus der Konfiguration heraus, für eine Gestaltung, die immer die ganze Bibliothek druckt.
+Die Liste enthält jedes zitierte Werk plus diese fünf, gemeinsam nach Autor sortiert, wie Chicago es verlangt; nichts kennzeichnet einen Eintrag als nicht zitiert. `nocite: "@*"` listet den ganzen Export auf, und `bibliography.includeUncited: true` tut dasselbe aus der Konfiguration heraus, für eine Gestaltung, die immer die ganze Bibliothek ausgibt.
 
 ### 4 · Ein grünes Feld für die Karte
 
 <Excerpt region="opener" />
 
-Das Band ist ein am Endformat verankerter Kasten von 132 mm Tiefe, und die beiden Spalten beginnen 9 mm darunter. Titel, Linie und Vorspann sind mit Ankern `below` verkettet, sodass ein längerer Kurstitel den Vorspann nach unten schiebt, statt mit ihm zusammenzustoßen.
+Das Band ist ein am Endformat verankertes Kastenelement von 132 mm Tiefe, und die beiden Spalten beginnen 9 mm darunter. Titel, Linie und Vorspann sind mit Ankern `below` verkettet, sodass ein längerer Kurstitel den Vorspann nach unten schiebt, statt mit ihm zusammenzustoßen.
 
 <Excerpt region="palette" />
 
@@ -65,7 +65,7 @@ Das Band ist ein am Endformat verankerter Kasten von 132 mm Tiefe, und die beide
 
 ### Die ganze Zotero-Sammlung auflisten
 
-Wenn der Export die Liste ist, lassen Sie die Schlüssel weg: Jeder Eintrag im Block wird gedruckt, zitiert oder nicht.
+Wenn der Export die Liste ist, lassen Sie die Schlüssel weg: Jeder Eintrag im Block erscheint in der Liste, zitiert oder nicht.
 
 ```diff
 -nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, …"
@@ -84,6 +84,6 @@ Dieselben Schlüssel ergeben ohne weitere Änderung eine Harvard-Liste (Cite The
 ## Häufige Fehler
 
 - Ein Schlüssel in `nocite`, der zu keinem Eintrag passt, entfällt ohne Warnung. Kopieren Sie die Schlüssel aus dem Export, statt sie abzutippen, und zählen Sie die Einträge auf der Seite.
-- Zotero bildet die Schlüssel aus den Daten: Korrigieren Sie in Zotero den Namen eines Autors oder einen Titel, kann der nächste Export den Schlüssel ändern, was jedes Zitat dieses Werks zerstört. Legen Sie die Schlüssel fest, bevor der Text geschrieben wird: Zotero liest eine Zeile `Citation Key: …` im Feld „Extra“ eines Eintrags.
-- Zotero exportiert standardmäßig UTF-8, mit den Akzenten, wie sie sind. Der Block hier wurde mit der Kodierungsoption „Westlich“ exportiert, die `{\"o}` schreibt; Postext liest beides.
-- Die 18. Auflage von Chicago lässt den Verlagsort weg, deshalb druckt das Feld `address` nicht, und ein Artikel mit DOI druckt die DOI und nicht die `url` von JSTOR.
+- Zotero bildet die Schlüssel aus den Daten: Korrigieren Sie in Zotero den Namen eines Autors oder einen Titel, kann der nächste Export den Schlüssel ändern, was jede Zitation dieses Werks ungültig macht. Legen Sie die Schlüssel fest, bevor der Text geschrieben wird: Zotero übernimmt eine Zeile `Citation Key: …` im Feld „Extra“ eines Eintrags.
+- Zotero exportiert standardmäßig UTF-8, mit den Akzenten, wie sie sind. Der Block hier wurde mit der Kodierungsoption „Westlich“ exportiert, die `{\"o}` schreibt; Postext versteht beides.
+- Die 18. Auflage von Chicago lässt den Verlagsort weg, deshalb erscheint das Feld `address` nicht, und bei einem Artikel mit DOI steht die DOI und nicht die `url` von JSTOR.

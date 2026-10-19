@@ -156,7 +156,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>firstLineIndent</code></td>
       <td><code>Dimension</code></td>
       <td>body first-line indent</td>
-      <td>Indent of the first line, from <code>indent</code>. With a non-zero <code>hangingIndent</code> it applies only when the style sets it itself: the first line starts at <code>indent + firstLineIndent</code> and the turnovers at <code>indent + hangingIndent</code>, so a line of verse can start 1 em in and hang its turnover 3 em. Inherited from the body, it gives way to the hanging indent and the first line starts at <code>indent</code>, as up to postext 1.22 (a configuration stored before has an explicit one dropped from such a style).</td>
+      <td>Indent of the first line, from <code>indent</code>. With a non-zero <code>hangingIndent</code> it applies only when the style sets it itself: the first line starts at <code>indent + firstLineIndent</code> and the turnovers at <code>indent + hangingIndent</code>, so a line of verse can start 1 em in and hang its turnover 3 em. When it is inherited from the body, it gives way to the hanging indent and the first line starts at <code>indent</code>, as up to postext 1.22 (a configuration stored before that version has an explicit one dropped from such a style).</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -186,7 +186,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Snap the flow back onto the baseline grid under the container, the space below being a minimum. <code>false</code> keeps the exact space: the text after the container stays off the grid until the next block that snaps (a heading, the end of a list, display maths), for a document that runs off the grid or a group whose leading is its own. Inside a callout, which has no grid, it changes nothing.</td>
+      <td>Snap the flow back onto the baseline grid under the container, treating the space below as a minimum. <code>false</code> keeps the exact space: the text after the container stays off the grid until the next block that snaps (a heading, the end of a list, display maths), for a document that runs off the grid or a group whose leading is its own. Inside a callout, which has no grid, it changes nothing.</td>
     </tr>
     <tr>
       <td><code>containerSpacing</code></td>
@@ -198,7 +198,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>Letter case of the paragraphs: <code>'uppercase'</code> sets them in capitals (a cast list, a line of stage business), the words of a chip and the label of a <code>:ref</code> included. Length for length, so the editor's source map stays one to one: a letter whose capital is longer (<code>ß</code>) is left as written. Maths is left alone, and a running head that reads the paragraph as a mark (<code>&#123;firstMark.<em>style</em>&#125;</code>) takes the text as written; a design text's own <code>textTransform</code> sets it in capitals.</td>
+      <td>Letter case of the paragraphs: <code>'uppercase'</code> sets them in capitals (a cast list, a line of stage business), the words of a chip and the label of a <code>:ref</code> included. Each letter is replaced by one capital, so the editor's source map stays one to one: a letter whose capital is longer (<code>ß</code>) is left as written. Maths is left alone, and a running head that reads the paragraph as a mark (<code>&#123;firstMark.<em>style</em>&#125;</code>) takes the text as written; a design text's own <code>textTransform</code> sets it in capitals.</td>
     </tr>
     <tr>
       <td><code>letterSpacing</code></td>
@@ -298,9 +298,9 @@ The fence also takes `align` (`start`, `end`, `left`, `right`, `center`, `justif
 
 Inside the container the flow leaves the baseline grid — a 7pt entry with 1.2em leading cannot sit on an 8pt/1.5em grid — and the last paragraph snaps the flow back onto it (the grid wins; the space below is a minimum, the same convention headings follow). Entries split across columns and pages like body paragraphs, with the same orphan and widow protection; a heading immediately before the container keeps with its first paragraph.
 
-The space under the container is the larger of the style's `spaceBetween` and `marginBottom` and the paragraph spacing of the text around it (a line when `bodyText.paragraphSpacing` is on), and it merges with the space the next block keeps above itself, as the space between two body paragraphs does: a heading after a bibliography sits its own `marginTop` below the last entry (or the style's space, when that is larger), and a paragraph after a group of tighter entries keeps the text's paragraph spacing. The flow snaps back to the grid under the text first, and what the snap did not cover is carried on in whole grid lines, so the text after the container lands on the grid. Up to postext 1.4 the style's space was set under the last line before the snap and the next block's space above was added under it, and the paragraph spacing was left out; `bodyText.paragraphContainerSpacing: 'add'` keeps that rule, and configurations stored before it read with it. A style with `snapToGrid: false` does not snap: the text after the container sits the exact space below it, off the grid until the next block that snaps. A container that closes on a list is set as in 1.4 under either rule: the list keeps its own space below it, and `marginBottom` follows that space, merging with the next block's.
+The space under the container is the larger of the style's `spaceBetween` and `marginBottom` and the paragraph spacing of the text around it (a line when `bodyText.paragraphSpacing` is on), and it merges with the space the next block keeps above itself, as the space between two body paragraphs does: a heading after a bibliography sits its own `marginTop` below the last entry (or the style's space, when that is larger), and a paragraph after a group of tighter entries keeps the text's paragraph spacing. The flow snaps back to the grid under the text first, and what the snap did not cover is carried on in whole grid lines, so the text after the container lands on the grid. Up to postext 1.4 the style's space was set under the last line before the snap and the next block's space above was added under it, and the paragraph spacing was left out; `bodyText.paragraphContainerSpacing: 'add'` keeps that rule, and configurations stored before then are read with it. A style with `snapToGrid: false` does not snap: the text after the container sits the exact space below it, off the grid until the next block that snaps. A container that closes on a list is set as in 1.4 under either rule: the list keeps its own space below it, and `marginBottom` follows that space, merging with the next block's.
 
-A style can set the rule for its own containers with `containerSpacing`: `'add'` on the style of a large figure or of a list of references ends its groups on the style's own space, in the text and inside a box, while every other container of the document keeps `'collapse'`; `'collapse'` on a style does the reverse in a document that reads with `'add'`. A container that names no style follows the document.
+A style can set the rule for its own containers with `containerSpacing`: `'add'` on the style of a big statistic (a number set large) or of a list of references ends its groups on the style's own space, in the text and inside a box, while every other container of the document keeps `'collapse'`; `'collapse'` on a style does the reverse in a document that uses `'add'`. A container that names no style follows the document.
 
 Inside a `:::callout` the container takes its style's margins the same way: `marginTop` and `marginBottom` collapse with the spacing of the blocks around it (a negative one pulls them closer), and a container that opens the box takes no top margin, as at the top of a column. A box has no baseline grid to snap back to, so the space below the last paragraph is the larger of `marginBottom`, `spaceBetween` and the box's own paragraph spacing (its `body.paragraphSpacing`, a line of its text; left out with `paragraphContainerSpacing: 'add'`), or the next block's own top margin, when that is larger still; a negative `marginBottom` pulls the next block up instead. (Up to postext 1.4 a container inside a callout ignored both margins.)
 
@@ -607,7 +607,7 @@ const config: PostextConfig = {
       <td><code>blocks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Read fences as code blocks. <code>false</code> reads a fence and its lines as Markdown, as postext 1.22 did; a configuration stored before 1.23 whose text has a fence gets it (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
+      <td>Read fences as code blocks. <code>false</code> reads a fence and its lines as Markdown, as postext 1.22 did; a configuration stored before 1.23 whose text has a fence is read with <code>false</code> (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
     </tr>
     <tr>
       <td><code>indentedCode</code></td>
@@ -649,7 +649,7 @@ const config: PostextConfig = {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>the body colour</td>
-      <td>The code's colour, which tokens without a colour of their own keep.</td>
+      <td>The code's colour, kept by tokens without a colour of their own.</td>
     </tr>
     <tr>
       <td><code>backgroundEnabled</code> / <code>background</code></td>
@@ -715,7 +715,7 @@ const config: PostextConfig = {
       <td><code>minFontScale</code></td>
       <td><code>number</code></td>
       <td><code>0.8</code></td>
-      <td>With <code>'shrink'</code>, the smallest share of <code>fontSize</code> a listing is set at.</td>
+      <td>With <code>'shrink'</code>, the smallest fraction of <code>fontSize</code> at which a listing is set.</td>
     </tr>
     <tr>
       <td><code>lineNumbers</code></td>
@@ -745,7 +745,7 @@ const config: PostextConfig = {
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>As a callout style's: <code>false</code> splits a listing taller than the room left between lines; <code>true</code> moves it whole, and splits it only when it is taller than a column.</td>
+      <td>As a callout style's: <code>false</code> splits, between lines, a listing taller than the room left; <code>true</code> moves it whole, and splits it only when it is taller than a column.</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -1038,7 +1038,7 @@ Two palette entries may share a base value and still take different values in a 
 - each heading level, and each heading style that sets a colour;
 - a contents row's text, its number, and its page number and subtitle;
 - in each callout style, the fills (background, stripe, label tab), the border, the rules (marker and label) and the text (title, icon, marker glyph, label);
-- each colour of each table, chip and caption style. A named table style is apart from `tableStyle`, and a resource type's caption style from `captionStyle`. A cell's own fill follows its own link.
+- each colour of each table, chip and caption style. A named table style is told apart from `tableStyle`, and a resource type's caption style from `captionStyle`. A cell's own fill follows its own link.
 
 One case is still decided by value: settings in different places that set the same colour of a block. `bodyText.color`, `bodyText.blockquote.color`, a paragraph style's `color` and a callout style's `body.color` all set a block's text colour, for example. When two of them link to entries that share a base value and the part sets them apart, the colour takes the override (the last one written, when both are overridden). Give such entries base values of their own.
 

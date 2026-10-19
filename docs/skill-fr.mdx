@@ -17,7 +17,7 @@ export const metadata = {
 
 Beaucoup de gens arrivent à Postext avec un livre qui existe déjà : un manuel
 en PDF d’impression, un rapport sous Word, un cours sous PowerPoint, un
-catalogue sous InDesign, un EPUB. Le porter suppose deux tâches :
+catalogue sous InDesign, un EPUB. Le porter dans Postext demande deux tâches :
 
 - **Le contenu** : le Markdown enrichi de chaque chapitre, avec ses directives et
   ses microformats.
@@ -45,7 +45,7 @@ le résultat dans le Sandbox.
 
 <TutorialVideo />
 
-Aussi sur YouTube : [la regarder là-bas](https://www.youtube.com/watch?v=Jtga343I-bQ&list=PLQtapzaWVIRw) ou dans la
+Également sur YouTube : [regardez-la directement](https://www.youtube.com/watch?v=Jtga343I-bQ&list=PLQtapzaWVIRw) ou dans la
 [playlist Postext](https://www.youtube.com/playlist?list=PLQtapzaWVIRw).
 
 ## Ce que contient le skill
@@ -62,40 +62,40 @@ Aussi sur YouTube : [la regarder là-bas](https://www.youtube.com/watch?v=Jtga3
   9. empaqueter le tout.
 - **Des références** :
   - le format du document et le manifeste de configuration, tous deux vérifiés
-    sur le moteur ;
+    par rapport au moteur ;
   - le format du projet (paquet) ;
   - un guide pratique par format de source ;
   - une méthode d’analyse de la maquette ;
   - un catalogue de cas de mise en page résolus : parties avec leurs propres couleurs,
     ouvertures de chapitre, vers, gloses marginales, notes de bas de page, index, encadrés flottants, coupés ou
-    imbriqués, masters vectoriels pour l’impression, figures en texte réel, images dans
+    imbriqués, originaux vectoriels pour l’impression, figures en texte réel, images dans
     des cellules de tableau, tableaux à l’italienne, éditions bilingues, et d’autres encore ;
   - les livres chinois, composés horizontalement ou verticalement et reliés à droite :
     quoi demander dans le cahier des charges (écriture, région, sens, reliure), comment
-    mesurer une grille de caractères, comment lire des PDF verticaux, le ruby
+    mesurer une grille de caractères, comment extraire le texte de PDF verticaux, le ruby
     et le warichu d’InDesign, la mise en page est-asiatique de Word et les EPUB de droite à
     gauche, et comment réduire les polices CJK aux caractères du livre (voir [Mise en page chinoise](/fr/docs/chinese-layout)) ;
   - les livres japonais, romans bunko et tankōbon verticaux reliés à droite ou
     livres techniques horizontaux : la langue qui active les règles japonaises
     (`ja`, jamais une balise chinoise), quoi demander (sens, grille,
-    furigana, notes, orthographe de l’édition), comment mesurer le bloc de
-    texte en caractères et en lignes, le balisage des furigana et des bōten, les textes
+    furigana, notes, orthographe de l’édition), comment mesurer la zone de
+    contenu en caractères et en lignes, le balisage des furigana et des bōten, les textes
     d’Aozora Bunko convertis avec `aozora.py`, les numérisations d’éditions du domaine public de
     la Bibliothèque nationale de la Diète, et des polices japonaises réduites avec leurs kana et leurs
     formes verticales (voir [Mise en page japonaise](/fr/docs/japanese-layout)) ;
   - les livres arabes, modernes ou classiques et vocalisés, composés de droite à gauche et
-    reliés à droite : la langue qui retourne le livre, quoi demander (région
+    reliés à droite : la langue qui fait passer tout le livre de droite à gauche, quoi demander (région
     et chiffres, vocalisation, vers, table des matières à la fin), comment mesurer une
-    page en miroir, comment lire l’arabe depuis des PDF, Word et Wikisource, les poèmes
+    page en miroir, comment extraire l’arabe de PDF, de Word et de Wikisource, les poèmes
     en `:::verse`, les notes « (١) » par page, et des polices arabes réduites avec leurs
     tables de liaison (voir [Mise en page arabe](/fr/docs/arabic-layout)) ;
-  - la bande dessinée, les mangas et les strips de presse : la division qui découpe une page en
-    cases, les images des cases avec leurs points d’ancrage de locuteurs et leurs zones de sécurité, un
-    script par langue que le moteur lettre (bulles, récitatifs, onomatopées),
+  - la bande dessinée, les mangas et les strips de presse : l’expression de découpage qui divise une planche en
+    cases, les images des cases avec leurs ancres de locuteur et leurs zones de sécurité, un
+    script par langue, que le moteur lettre (bulles, récitatifs, onomatopées),
     les mangas et les éditions arabes de droite à gauche, et comment porter à partir d’images sans
     texte accompagnées de traductions, de numérisations déjà lettrées ou d’un script
     avec des images générées (voir [Bande dessinée](/fr/docs/comics)) ;
-  - l’objet imprimé : comment lire le papier, la reliure, les couvertures et le dos de
+  - l’objet imprimé : comment relever le papier, la reliure, les couvertures et le dos de
     la source et les traduire en réglages `folio` qu’affiche la [visionneuse Folio](/fr/docs/sandbox-previews#onglet-folio),
     vérifiés par le linter.
 - **Des scripts** (Python et Node), décrits dans la section suivante.
@@ -114,17 +114,17 @@ Aussi sur YouTube : [la regarder là-bas](https://www.youtube.com/watch?v=Jtga3
     <tr><td><code>measure_layout.py</code></td><td>Marges, colonnes, gouttière et interlignage (la grille de ligne de base) d’un PDF</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → brouillons de chapitres par <em>rôle typographique</em> (police/taille/couleur) : ordre de lecture, paragraphes, suppression des césures, gras/italique, exposants et indices, listes, légendes</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>Découpe les figures d’un PDF : photos en résolution native, aperçus SVG, masters PDF vectoriels pour l’impression</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Pages fixes d’un PDF (manuels, cahiers, magazines) en pages composées : gabarits de page avec des cadres en mm, styles d’encadré, d’onglet et de surlignage, un fond de page sans texte, les images découpées sans leur texte et un Markdown avec une clôture par page et un emplacement par encadré dans l’ordre de lecture ; le texte caché sous une autre peinture est écarté. <code>template_dedupe.py</code> réunit en une seule bibliothèque les gabarits et les styles des pages d’un même type et nomme les cadres d’après leur rôle (<code>box-light-blue</code>, <code>caption-of-picture</code>) plutôt que d’après leur genre et leur rang, les clôtures de page suivant, <code>anchors.py</code> transforme les noms d’une carte en ancres de la ressource et en lignes <code>::label</code> pour chaque édition Une passe d’une seule page, où il n’y a rien à fusionner, est nommée par rôle par <code>pdf_regions.py extract</code> lui-même (<code>--name-frames</code>, depuis postext 1.43).</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Transforme les pages fixes d’un PDF (manuels, cahiers d’exercices, magazines) en pages composées : gabarits de page avec des blocs en mm ; styles d’encadré, d’onglet et de surlignage ; un fond de page sans texte ; les images découpées sans leur texte ; et un Markdown avec un délimiteur de page (la section <code>::::page</code>) par page et un emplacement par encadré, dans l’ordre de lecture. Le texte masqué par un autre élément peint est écarté. <code>template_dedupe.py</code> réunit en une seule bibliothèque les gabarits et les styles des pages d’un même type, nomme les blocs d’après leur rôle (<code>box-light-blue</code>, <code>caption-of-picture</code>) plutôt que d’après leur genre et leur rang, et met à jour les délimiteurs de page en conséquence. <code>anchors.py</code> transforme les noms d’une carte en ancres de la ressource et en lignes <code>::label</code> pour chaque édition. Quand une passe ne compte qu’une page, et qu’il n’y a donc rien à fusionner, <code>pdf_regions.py extract</code> nomme lui-même les blocs d’après leur rôle (<code>--name-frames</code>, depuis postext 1.43).</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>Tableaux PDF → <code>TableModel</code> Postext</td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX, PPTX, ODT, EPUB, HTML, LaTeX, Markdown, JATS, DocBook → brouillons de chapitres, avec les styles Word associés à des encadrés et à des styles de paragraphe</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>IDML d’InDesign → brouillons de chapitres par style de paragraphe, tableaux et images ancrées ; le ruby, le tate-chu-yoko, les signes d’emphase et le warichu deviennent <code>:ruby</code>, <code>:tcy</code>, <code>:dots</code> et <code>:warichu</code>, et les blocs de texte verticaux et une reliure de droite à gauche sont signalés</td></tr>
     <tr><td><code>aozora.py</code></td><td>Texte d’Aozora Bunko (un zip CP932 ou un <code>.txt</code>) → Markdown Postext : furigana, bōten et traits latéraux, titres avec leurs retraits, blocs 字下げ et 地付き en styles de paragraphe, sauts de page, 外字 résolus via JIS X 0213, signes de kanbun ; il renvoie le bloc de crédits et un rapport de ce qu’il n’a pas pu exprimer</td></tr>
     <tr><td><code>index_marks.py</code></td><td>Reconstruit un index imprimé sous forme de marques <code>:index</code> : lit les pages d’index du PDF, retrouve chaque terme sur sa page et marque les mêmes mots dans les chapitres</td></tr>
-    <tr><td><code>comic_panels.py</code></td><td>Mesure les pages de bande dessinée : trouve les cases grâce au papier qui les sépare, écrit l’expression <code>split</code> (de gauche à droite ou de droite à gauche, gouttières obliques comprises), les gouttières et le cadre, découpe une image par case et imprime les squelettes <code>:::page</code> ; pose une grille sur les images pour relever les points d’ancrage des locuteurs et les zones de sécurité, et les redessine pour les vérifier</td></tr>
+    <tr><td><code>comic_panels.py</code></td><td>Mesure les pages de bande dessinée : trouve les cases grâce au papier qui les sépare, écrit l’expression <code>split</code> (de gauche à droite ou de droite à gauche, gouttières obliques comprises), les gouttières et le cadre, découpe une image par case et imprime les squelettes <code>:::page</code> ; pose une grille sur les images pour relever les ancres de locuteur et les zones de sécurité, et les redessine pour les vérifier</td></tr>
     <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Instancier, réduire, mettre à l’échelle et scinder des polices (une fonte chinoise ou japonaise réduite aux caractères du livre garde ses formes et ses métriques verticales, une fonte arabe ses formes liées et le tatweel) ; convertir les images en sRGB, les rogner et les assembler ; transformer des illustrations <code>.ai</code>/<code>.pdf</code> en SVG</td></tr>
-    <tr><td><code>preset_kit.py</code></td><td>Crée la structure du projet et son script générateur, construit <code>preset.json</code>, empaquette le fichier <code>.postext</code> et contrôle la configuration : le texte du livre saisi dans des éléments de mise en page, alors que la configuration ne doit contenir que la maquette, et une configuration trop lourde pour le Sandbox</td></tr>
-    <tr><td><code>lint_project.py</code></td><td>Détecte tout ce que l’analyseur et le chargeur interprètent mal sans rien dire et, pour le texte chinois, japonais et coréen, les caractères que les polices fournies ne savent pas composer ; pour le texte japonais, les kana sous une langue chinoise, les fontes ou réglages chinois, la notation Aozora restée dans les chapitres et les entrées d’index en kanji sans lecture ; pour le texte arabe, une langue arabe manquante, des fontes uniquement latines ou sans liaisons, l’interlettrage, la césure forcée et l’emphase en italique ; en bande dessinée, les expressions de division qui ne s’analysent pas, les cases qui ne correspondent pas aux cellules, les images et les styles de bulle ou de case inconnus, les points d’ancrage de locuteurs mal formés, les fontes de lettrage que le projet ne fournit pas, et les éditions dont les pages diffèrent</td></tr>
-    <tr><td><code>render.mjs</code></td><td>Met le projet (un dossier ou un fichier <code>.postext</code>) en page sans interface avec le vrai moteur, en lisant sa configuration comme le fait le Sandbox, et imprime les avertissements. Avec <code>--jpeg</code>, il peint les pages demandées (<code>--pages 12-15</code>) en fichiers JPEG avec le propre moteur de rendu canvas du moteur, en une seconde ou deux, si bien que l’agent regarde ses pages sans construire de PDF ; <code>--out</code> écrit le PDF. Un livre préparé pour l’impression reçoit des lignes PREFLIGHT (images en basse résolution, filets fins, petit texte en plusieurs encres, encrage au-delà de la limite, texte proche du massicotage), et son PDF est séparé via le profil de sortie ICC.</td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Crée la structure du projet et son script générateur, construit <code>preset.json</code>, empaquette le fichier <code>.postext</code> et vérifie la configuration : il signale le texte du livre saisi dans des éléments de maquette (la configuration ne doit contenir que la maquette) et une configuration trop lourde pour le Sandbox</td></tr>
+    <tr><td><code>lint_project.py</code></td><td>Détecte tout ce que l’analyseur et le chargeur interprètent mal sans rien dire et, pour le texte chinois, japonais et coréen, les caractères que les polices fournies ne savent pas composer ; pour le texte japonais, les kana sous une langue chinoise, les fontes ou réglages chinois, la notation Aozora restée dans les chapitres et les entrées d’index en kanji sans lecture ; pour le texte arabe, une langue arabe manquante, des fontes uniquement latines ou sans liaisons, l’interlettrage, la césure forcée et l’emphase en italique ; en bande dessinée, les expressions de découpage invalides, les cases qui ne correspondent pas aux cellules, les images et les styles de bulle ou de case inconnus, les ancres de locuteur mal formées, les fontes de lettrage que le projet ne fournit pas, et les éditions dont les pages diffèrent</td></tr>
+    <tr><td><code>render.mjs</code></td><td>Met le projet (un dossier ou un fichier <code>.postext</code>) en page sans interface avec le vrai moteur, en lisant sa configuration comme le fait le Sandbox, et imprime les avertissements. Avec <code>--jpeg</code>, il dessine les pages demandées (<code>--pages 12-15</code>) en fichiers JPEG avec le moteur de rendu canvas de Postext lui-même, en une seconde ou deux : l’agent voit ainsi ses pages sans construire de PDF ; <code>--out</code> écrit le PDF. Un livre préparé pour l’impression reçoit des lignes PREFLIGHT (images en basse résolution, filets fins, petit texte en plusieurs encres, encrage au-delà de la limite, texte trop près de la coupe), et son PDF est séparé via le profil de sortie ICC.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Place côte à côte les pages de la source et celles de Postext, à partir du PDF du rendu ou de son dossier de JPEG</td></tr>
   </tbody>
 </table>
@@ -195,12 +195,12 @@ mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && n
 ```
 
 Pandoc est nécessaire pour les sources Word, PowerPoint, EPUB et HTML, et poppler pour
-les images des pages de la source. Les packages Node font tourner le moteur de rendu sans interface (Node 22.15 ou
-plus récent) ; `@napi-rs/canvas` est un canvas précompilé qui lui permet de peindre les
+les images des pages de la source. Les paquets npm font tourner le moteur de rendu sans interface (Node 22.15 ou
+plus récent) ; `@napi-rs/canvas` est un canvas précompilé qui lui permet de dessiner les
 pages du livre directement en JPEG. Outils facultatifs : `ocrmypdf` pour les numérisations, ImageMagick, et veraPDF pour
 les vérifications PDF/UA.
 
-La boucle de travail s’exécute en [ligne de commande](/fr/docs/command-line), avec un seul exécutable autonome, sans rien à installer : l’agent garde le projet décompressé et laisse `postext build --watch` tourner sur les pages sur lesquelles il travaille, si bien que chaque modification apparaît en JPEG environ une seconde plus tard, même dans un long livre. Les packages Node sont facultatifs : ils font tourner `render.mjs`, qui ajoute les vérifications supplémentaires du Sandbox. Les deux mettent le livre en page avec `bodyText.shapingLanguage: 'host'`, quoi que dise sa configuration, si bien qu’une ligne peut se couper à un autre mot que dans le Sandbox (voir [Différences avec le Sandbox](/fr/docs/command-line#différences-avec-le-sandbox)).
+La boucle de travail s’exécute en [ligne de commande](/fr/docs/command-line), avec un seul exécutable autonome, sans rien à installer : l’agent garde le projet décompressé et laisse `postext build --watch` tourner sur les pages sur lesquelles il travaille : chaque modification apparaît ainsi en JPEG environ une seconde plus tard, même dans un long livre. Les paquets npm sont facultatifs : ils font tourner `render.mjs`, qui ajoute les vérifications supplémentaires du Sandbox. Les deux mettent le livre en page avec `bodyText.shapingLanguage: 'host'`, quelle que soit sa configuration ; une ligne peut donc se couper à un autre mot que dans le Sandbox (voir [Différences avec le Sandbox](/fr/docs/command-line#différences-avec-le-sandbox)).
 
 ## L’utiliser
 
@@ -224,10 +224,10 @@ L’agent suit la méthode de travail :
    de faits mesurés : format, marges, colonnes, interlignage, rôles
    typographiques, palette, ouvertures, titres courants, familles d’encadrés
    et habitudes de placement. Il classe chaque page en texte courant ou en
-   page composée (encadrés, étiquettes et cartes à des places fixes) ; avec
+   page composée (encadrés, étiquettes et cartes à des places fixes) ; avec
    Postext 1.35 ou plus récent, il regroupe les pages composées par type de
-   page et monte chaque type à partir d’un gabarit, si bien que la mise en
-   page identique garde un texte que vous pouvez corriger et traduire ; avec
+   page et monte chaque type à partir d’un gabarit : la mise en page reste
+   identique et le texte peut quand même être corrigé et traduit ; avec
    une version plus ancienne, si plus d’un tiers des pages sont composées, il
    vous demande si vous voulez une mise en page identique ou un texte que vous
    pourrez corriger et traduire.
@@ -239,7 +239,7 @@ L’agent suit la méthode de travail :
    de figure.
 5. **Vérification.** Il passe le projet au linter et laisse `postext build --watch`
    tourner sur le projet décompressé : il modifie un chapitre ou un réglage, regarde
-   le JPEG de la page, repeint environ une seconde plus tard, et recommence
+   le JPEG de la page, redessiné environ une seconde plus tard, et recommence
    jusqu’à ce que les sauts de page, les figures et les encadrés correspondent à la source page par page. À
    chaque étape importante, il lance toutes les vérifications (`postext check` et le linter).
    Le PDF est construit pour les vérifications d’impression, pas à chaque coup d’œil.
@@ -247,24 +247,24 @@ L’agent suit la méthode de travail :
    Folio et empaquette `my-book.postext`.
 
 Ouvrez le résultat dans le [Sandbox](/fr/sandbox) : **Livres → Nouveau → Ouvrir un fichier .postext…**.
-L’import prend les chapitres et la formulation dans la langue du Sandbox. Pour travailler
+À l’import, le Sandbox prend les chapitres et les textes de sa propre langue. Pour travailler
 sur un dossier de projets dans une copie locale de Postext, définissez
 `POSTEXT_PRIVATE_PRESETS_DIR` (voir [Sandbox](/fr/docs/sandbox)).
 
 ### Charger le résultat depuis du code
 
-Le fichier livré n’est pas lié au Sandbox. Le package `postext` l’ouvre avec `openBundle`, met le livre en page avec `buildBundle` et le rend en canvas, en HTML ou en PDF (voir [Paquets](/fr/docs/configuration-bundles#paquets-fichiers-postext)). Un portage peut donc alimenter directement un programme. Quand la sortie de ce programme demande des retouches, exportez-la de nouveau en fichier `.postext` avec `createBundle`, affinez-la dans le Sandbox et rechargez le fichier corrigé. Le `render.mjs` sans interface du skill accepte lui aussi un fichier `.postext` empaqueté en plus d’un dossier de projet.
+Le fichier livré n’est pas lié au Sandbox. Le paquet npm `postext` l’ouvre avec `openBundle`, met le livre en page avec `buildBundle` et le rend en canvas, en HTML ou en PDF (voir [Paquets](/fr/docs/configuration-bundles#paquets-fichiers-postext)). Un portage peut donc alimenter directement un programme. Quand la sortie de ce programme demande des retouches, exportez-la de nouveau en fichier `.postext` avec `createBundle`, affinez-la dans le Sandbox et rechargez le fichier corrigé. Le `render.mjs` sans interface du skill accepte lui aussi un fichier `.postext` empaqueté en plus d’un dossier de projet.
 
 ## À quoi s’attendre
 
 - **Les extracteurs produisent des brouillons ; l’agent les met au propre.** Comptez une passe
   de relecture par chapitre, comparée aux pages de l’original. C’est de cette relecture
   que vient la qualité.
-- **Le texte reste dans le Markdown.** La configuration porte la maquette et
-  chaque mot du livre se trouve dans les chapitres : une correction ou une
+- **Le texte reste dans le Markdown.** La configuration contient la maquette et
+  chaque mot du livre se trouve dans les chapitres : une correction ou une
   traduction se fait donc dans le Markdown. Avec Postext 1.35 ou plus récent,
   les pages composées sont des gabarits de page dans la configuration, dont
-  les blocs se remplissent avec le Markdown de chaque chapitre : un encadré
+  les blocs se remplissent avec le Markdown de chaque chapitre : un encadré
   s’allonge avec une traduction plus longue et repousse ceux du dessous, et
   depuis la 1.37 les noms d’une carte sont des étiquettes écrites dans le
   Markdown. Avec une version plus ancienne, elles sont montées avec des
@@ -280,7 +280,7 @@ Le fichier livré n’est pas lié au Sandbox. Le package `postext` l’ouvre av
   étiquettes de figures, vérifié avec `postext check` dans chaque langue.
 - **Les droits relèvent de votre décision.** L’agent demande avant de reproduire des images ou des polices
   dont les licences ne sont pas claires. Les polices sous licence sont marquées
-  `redistributable: false`, si bien que les projets exportés les laissent de côté.
+  `redistributable: false` : les projets exportés ne les incluent donc pas.
 - **La fidélité là où elle compte.** L’objectif est d’obtenir la même grille, les mêmes caractères, les mêmes ouvertures,
   les mêmes encadrés, le même placement des figures et les mêmes sauts de page sur la plupart des pages (à une page près par
   chapitre), pas des coupures de lignes identiques.
@@ -291,4 +291,4 @@ Le skill se trouve dans le dépôt, à l’emplacement
 [`plugins/postext/skills/postext-port`](https://github.com/drnachio/postext/tree/main/plugins/postext/skills/postext-port).
 Il couvre tous les cas rencontrés en construisant les préréglages du Sandbox, publics et
 privés. Quand un portage tombe sur un cas qu’il ne couvre pas encore, ouvrez une issue
-ou une pull request qui améliore le skill, pour que le portage suivant en profite gratuitement.
+ou une pull request qui améliore le skill, pour que le portage suivant en profite d’office.

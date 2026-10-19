@@ -22,7 +22,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. El Recetario 
 
 <Excerpt region="tables" />
 
-Desde postext 1.19, una celda compone `$…$` como el texto, así que una celda que en el TSV dice `$c(1-\beta)R/(R+1)$` es una fórmula: trazados de MathJax al cuerpo de 8 pt de las celdas, sobre la línea de base de la línea de la celda, de modo que *Sí*, *No* y las fórmulas quedan en una misma línea, y contornos vectoriales en el PDF. Los archivos latin de Fontsource no traen letras griegas, y las fórmulas no las necesitan. Los pies y las notas también admiten matemáticas: el pie de la tabla 4 nombra la potencia como 1 − β y su nota supone α = 0,05, como en el artículo de 2005. `setAlignment` alinea a la derecha los números de la tabla 4, y `mergeCells` une *Resultado de la investigación* sobre las dos filas de cabecera y *Relación verdadera* sobre tres columnas, y escribe las celdas ocultas que necesita una celda combinada.
+Desde postext 1.19, una celda compone `$…$` como el texto, así que una celda que en el TSV dice `$c(1-\beta)R/(R+1)$` es una fórmula: trazados de MathJax al cuerpo de 8 pt de las celdas, sobre la línea de base de la línea de la celda, de modo que *Sí*, *No* y las fórmulas quedan en una misma línea, y contornos vectoriales en el PDF. Los archivos latin de Fontsource no traen letras griegas, y las fórmulas no las necesitan. Los pies y las notas también admiten matemáticas: el pie de la tabla 4 escribe la potencia como 1 − β y su nota supone α = 0,05, como en el artículo de 2005. `setAlignment` alinea a la derecha los números de la tabla 4, y `mergeCells` une *Resultado de la investigación* sobre las dos filas de cabecera y *Relación verdadera* sobre tres columnas, y escribe las celdas ocultas que necesita una celda combinada.
 
 ### 3 · Pies y tablas desde la ranura, números desde la fórmula
 
@@ -34,13 +34,13 @@ Las tablas, los pies, las notas y los textos alternativos están en `content.res
 
 <Excerpt region="art" />
 
-Cada panel recorre *R* de 0 a 1 con la misma `ppv()` que rellena la tabla 4. Dibujar las curvas con la fórmula revela algo que la figura de 2005 esconde: sus curvas corresponden a *u* = 0; 0,05; 0,20 y 0,80, mientras que su leyenda dice 0,05; 0,20; 0,50 y 0,80. Esta versión dibuja los valores de la leyenda, añade en trazo discontinuo la curva sin sesgo y lo explica en la nota del pie. Los rótulos son texto que nombra la letra de los rótulos: `loadSvg` pasa el dibujo por `inlineSvgFonts`, que incrusta esa fuente para el lienzo, y el PDF los compone con la fuente que entrega el proveedor.
+Cada panel recorre *R* de 0 a 1 con la misma `ppv()` que rellena la tabla 4. Dibujar las curvas con la fórmula revela algo que la figura de 2005 esconde: sus curvas corresponden a *u* = 0; 0,05; 0,20 y 0,80, mientras que su leyenda dice 0,05; 0,20; 0,50 y 0,80. Esta versión dibuja los valores de la leyenda, añade en trazo discontinuo la curva sin sesgo y lo explica en la nota del pie. Los rótulos son texto que indica su propia letra: `loadSvg` pasa el dibujo por `inlineSvgFonts`, que incrusta esa fuente para el canvas, y el PDF los compone con la fuente que entrega el proveedor.
 
 ### 5 · Una primera página y un recuadro para un ensayo
 
 <Excerpt region="title" />
 
-El título es el único de nivel 1; su estilo `essay` ocupa toda la página y dibuja la banda, el antetítulo, el autor, las filiaciones y la línea de la fuente a partir de los atributos del título, así que la edición española solo cambia palabras. El resumen es un recuadro a toda la página sobre un tinte. El recuadro 1, el ejemplo resuelto, flota al pie de una página a lo ancho de las dos columnas y compone su texto a dos columnas dentro del recuadro. Los corolarios conservan la forma del artículo, con el enunciado en negrita al comienzo del párrafo: `:chip[Corolario 1]{style="corollary"}` pone delante un rótulo pequeño en bermellón.
+El título es el único de nivel 1; su estilo `essay` ocupa toda la página y dibuja la banda, el antetítulo, el autor, las filiaciones y la línea de la fuente a partir de los atributos del encabezado, así que la edición española solo cambia palabras. El resumen es un recuadro a toda la página sobre un tinte. El recuadro 1, el ejemplo resuelto, flota al pie de una página a lo ancho de las dos columnas y compone su texto a dos columnas dentro del recuadro. Los corolarios conservan la forma del artículo, con el enunciado en negrita al comienzo del párrafo: `:chip[Corolario 1]{style="corollary"}` pone delante un rótulo pequeño en bermellón.
 
 <Excerpt region="boxes" />
 

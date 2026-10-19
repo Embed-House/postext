@@ -34,7 +34,7 @@ La imagen de una celda remite a un recurso por su id, así que cada sobre es un 
 
 <Excerpt region="forms" />
 
-Las dos tablas de la hoja de pedido usan el estilo con nombre `form`, con filetes en cuadrícula, 2,5 mm de radio en las esquinas del marco exterior y un fondo crema sobre el que escribir. La lista de precios conserva el `tableStyle` del documento ([estilos de tabla con nombre](/es/docs/configuration-resources#estilos-de-tabla-con-nombre)). Una celda vacía no necesita ningún texto, porque su fila ocupa igualmente una línea, aquí de 7,3 mm. Cada total combina cuatro columnas en un solo rótulo alineado a la derecha. El estilo de título de la hoja de pedido pasa la página 4 a una sola columna, así que las dos tablas ocupan toda la medida, 157 mm.
+Las dos tablas de la hoja de pedido usan el estilo con nombre `form`, con filetes en cuadrícula, 2,5 mm de radio en las esquinas del marco exterior y un fondo crema sobre el que escribir. La lista de precios conserva el `tableStyle` del documento ([estilos de tabla con nombre](/es/docs/configuration-resources#estilos-de-tabla-con-nombre)). Una celda vacía no necesita ningún texto, porque su fila ocupa igualmente una línea, aquí de 7,3 mm. Cada total combina cuatro columnas en un solo rótulo alineado a la derecha. El estilo de encabezado de la hoja de pedido pasa la página 4 a una sola columna, así que las dos tablas ocupan toda la medida, 157 mm.
 
 ### 5 · Mantén la carta debajo de la pintura
 
@@ -65,4 +65,4 @@ Al 40 %, las filas bajan a 29 mm, pero las dos judías comparten una celda combi
 ## Errores frecuentes
 
 - Un recurso que nadie cita no se coloca nunca. Si quitas el `:ref` de la carta, el catálogo se queda sin lista de precios.
-- En columnas de 75 mm, Knuth–Plass puede dejar una línea justificada con los espacios más abiertos de lo que permite `maxWordSpacing`; `bodyText.maxJustifyTracking` deja que una línea así tome un poco de interletraje en su lugar. Aquí la carta y las notas del campo de ensayo se reescribieron hasta que la línea más abierta estiró sus espacios 1,33 veces su ancho normal.
+- En columnas de 75 mm, Knuth–Plass puede dejar una línea justificada con los espacios más abiertos de lo que permite `maxWordSpacing`; `bodyText.maxJustifyTracking` deja que una línea así tome un poco de espaciado entre letras en su lugar. Aquí la carta y las notas del campo de ensayo se reescribieron hasta que la línea más abierta estiró sus espacios 1,33 veces su ancho normal.

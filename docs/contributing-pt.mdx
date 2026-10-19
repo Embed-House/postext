@@ -8,7 +8,7 @@ export const metadata = {
   lastUpdated: '2026-09-24',
   readingTime: '6 min',
   order: 35,
-  plainSummary: "O Postext é feito por uma comunidade de voluntários, e qualquer pessoa pode ajudar. Você não precisa saber programar. Também dá para ajudar testando, escrevendo documentação, traduzindo ou compartilhando o que você sabe de design e de impressão. Esta página explica como a equipe trabalha, onde a ajuda faz mais falta e como fazer a sua primeira contribuição. No final, ela conta os objetivos do projeto a longo prazo.",
+  plainSummary: "O Postext é feito por uma comunidade de voluntários, e qualquer pessoa pode ajudar. Você não precisa saber programar. Também dá para ajudar testando, escrevendo documentação, traduzindo ou compartilhando o que você sabe de design e de impressão. Esta página explica como a equipe trabalha, onde a ajuda faz mais falta e como fazer sua primeira contribuição. No final, apresenta os objetivos do projeto a longo prazo.",
 };
 
 # Como contribuir com o Postext
@@ -33,7 +33,7 @@ você aqui.
 ## Por que contribuir
 
 Toda empresa de desenvolvimento editorial do mundo enfrenta o mesmo problema: o CSS não foi feito
-para diagramação editorial. Não há suporte nativo para balanceamento de colunas, prevenção de órfãs
+para diagramação editorial. Não há suporte nativo para equilíbrio de colunas, prevenção de órfãs
 e viúvas, texto que contorna obstáculos ou posicionamento de notas de rodapé. Cada equipe resolve
 esses problemas do zero, com soluções frágeis e sob medida, caras de manter e impossíveis de
 compartilhar.
@@ -74,8 +74,8 @@ O projeto precisa de muitos tipos diferentes de conhecimento. Estas são algumas
 contribuições são especialmente valiosas:
 
 ### Código e algoritmos
-- **Algoritmos de composição tipográfica**: o motor de justificação Knuth-Plass, o balanceamento de
-  colunas, a quebra ótima de parágrafos, a numeração tipada de recursos e o posicionamento de
+- **Algoritmos de composição tipográfica**: o motor de justificação Knuth-Plass, o equilíbrio de
+  colunas, a quebra ótima de parágrafos, a numeração de recursos por tipo e o posicionamento de
   flutuantes.
 - **Geração de PDF**: construção de PDF em baixo nível, incorporação de fontes, gerenciamento de
   cores e tratamento dos bytes dos recursos para figuras de tinta única.
@@ -85,17 +85,17 @@ contribuições são especialmente valiosas:
   bastante para uso em tempo real a cada redimensionamento.
 
 ### Sandbox e interface
-O [Sandbox](/pt/docs/sandbox) virou uma superfície React considerável por si só: um painel Recursos
+O [Sandbox](/pt/docs/sandbox) virou, por si só, uma interface React de peso: um painel Recursos
 com um editor interativo de tabelas e envio de imagens e SVG, um painel Fontes e um painel Design
-cujos doze grupos cobrem todos os cantos do motor. Os controles são construídos sobre os
+cujos doze grupos cobrem todos os aspectos do motor. Os controles são construídos sobre os
 componentes primitivos do Base UI (`packages/postext-sandbox/src/ui/`) e verificados com o axe-core
-para WCAG 2.1 AA, então os controles novos devem reaproveitá-los e manter cada campo nomeado pelo
-seu rótulo e descrito pelo seu texto de ajuda. Cada texto da interface segue uma convenção rígida de
-i18n, ligada por rótulos em cinco arquivos que vão do pacote do Sandbox aos catálogos de idiomas do
-app web. Se você contribui com frontend ou UX, é aqui que o seu trabalho entra.
+para WCAG 2.1 AA; por isso, os controles novos devem reaproveitá-los e manter cada campo nomeado
+pelo rótulo e descrito pelo texto de ajuda. Todo texto da interface segue uma convenção rígida de
+i18n: cada rótulo passa por cinco arquivos, no pacote do Sandbox e nos catálogos de idiomas do app
+web. Se você contribui com frontend ou UX, é aqui que seu trabalho entra.
 
 ### Design e tipografia
-- **Experiência em design editorial**: se você já diagramou revistas, jornais ou livros, o seu
+- **Experiência em design editorial**: se você já diagramou revistas, jornais ou livros, seu
   conhecimento sobre o que faz um layout funcionar (ou falhar) é valiosíssimo, e não exige código.
 - **Tradições tipográficas**: o projeto deve respeitar as convenções tipográficas de línguas e
   sistemas de escrita diferentes, não só das escritas latinas.
@@ -131,7 +131,7 @@ Com tudo pronto, há três ações concretas, do compromisso mais leve ao mais p
 1. **Apresente-se em [Discussions](https://github.com/drnachio/postext/discussions)**: conte com o
    que você trabalha e o que trouxe você até aqui. Nenhuma pergunta é básica demais, e esse é o
    jeito mais rápido de a comunidade saber que você chegou.
-2. **Pegue uma [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**:
+2. **Escolha uma [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**:
    elas são escolhidas para ser uma porta de entrada realista, sem exigir nenhum contexto histórico
    escondido.
 3. **Traduza a documentação para um novo idioma**: hoje a documentação está em inglês e espanhol.
@@ -168,7 +168,7 @@ O projeto valoriza:
   avaliadas pelo mérito, não por quem as propôs.
 
 Todas as pessoas que contribuem recebem crédito. Este projeto existe porque há gente que escolhe
-dedicar o seu tempo a melhorá-lo.
+dedicar seu tempo a melhorá-lo.
 
 
 ## Visão
@@ -178,4 +178,4 @@ que editoras, revistas, jornais e plataformas de livros recorrem quando precisam
 profissional.
 
 Se você trabalha com desenvolvimento editorial e vem resolvendo esses problemas de diagramação
-sozinho, este é o seu convite para resolvê-los uma vez, do jeito certo, junto com outras pessoas.
+sozinho, este é seu convite para resolvê-los uma vez, do jeito certo, junto com outras pessoas.

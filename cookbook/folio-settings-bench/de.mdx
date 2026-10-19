@@ -24,11 +24,11 @@ Jedes Feld des Formulars heißt nach seinem Pfad in `config.folio` (`paper.gramm
 
 <Excerpt region="covers" />
 
-Mit `binding.cover: 'pages'` ist die erste Seite der vordere Deckel und die letzte der hintere, sofern sie auf eine linke Seite fällt. Das Überschriftenformat des hinteren Umschlags bricht auf eine gerade Seite um, sodass das Buch immer auf einer linken Seite endet und sich beide Deckel umschlagen lassen. Stellen Sie das Formular auf „A case round the pages“, und dieselben beiden Seiten blättern als gewöhnliche Blätter in einer Leinendecke.
+Mit `binding.cover: 'pages'` ist die erste Seite der vordere Deckel und die letzte der hintere, sofern sie auf eine linke Seite fällt. Der Überschriftenstil des hinteren Umschlags bricht auf eine gerade Seite um, sodass das Buch immer auf einer linken Seite endet und sich beide Deckel umschlagen lassen. Stellen Sie das Formular auf „A case round the pages“, und dieselben beiden Seiten blättern als gewöhnliche Blätter in einer Leinendecke.
 
 ### 3 · Das Buch an Ort und Stelle umgestalten
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `setAppearance({ folio })` ersetzt die Einstellungen des Dokuments und zeichnet die Szene neu: Dicke und Steifigkeit des Papiers, die Decke, die Texturen des Tischs und das Licht. Die Seiten behalten ihre Bilder, sodass eine Änderung im nächsten Frame erscheint. Eine Papiersorte bringt ihre eigene Grammatur mit, deshalb verschiebt ihre Wahl den Grammaturregler; `resetView()` holt die Kamera zurück, nachdem der Leser das Buch mit gedrückter rechter Maustaste gedreht hat.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `setAppearance({ folio })` ersetzt die Einstellungen des Dokuments und zeichnet die Szene neu: Dicke und Steifigkeit des Papiers, die Decke, die Texturen des Tischs und das Licht. Die Seiten behalten ihre Bilder, sodass eine Änderung im nächsten Bild erscheint. Eine Papiersorte bringt ihre eigene Grammatur mit, deshalb verschiebt ihre Wahl den Grammaturregler; `resetView()` holt die Kamera zurück, nachdem der Leser das Buch mit gedrückter rechter Maustaste gedreht hat.
 
 ## Varianten
 

@@ -10,31 +10,31 @@ pageNotes: { "1": "Die Titelseite: oben ein petrolfarbenes Band mit dem Namen de
 
 ## Was Sie setzen
 
-Den Jahresbericht 2025 einer erfundenen Übersetzungsstiftung, Dar al-Dad, auf einer Seite von 210 × 280 mm in A4-Breite, gesetzt in IBM Plex Sans Arabic und IBM Plex Sans, den beiden Hälften einer Schriftfamilie. Der Bericht ist arabisch: Er läuft von rechts nach links und nummeriert seine Seiten mit ٢, ٣. Auf jeden arabischen Absatz folgt seine englische Fassung, kleiner und in Schiefergrau, von links nach rechts gesetzt und rechts im Flattersatz; jede arabische Überschrift trägt am anderen Rand eine englische Beschriftung. Lateinische Namen in arabischen Sätzen behalten ihre eigene Reihenfolge, und die Zahlen des Jahres erscheinen zweimal, in einer arabischen Tabelle, die von rechts gelesen wird, und in einer englischen, die von links gelesen wird. In der spanischen Ausgabe ist die zweite Sprache Spanisch.
+Den Jahresbericht 2025 einer erfundenen Übersetzungsstiftung, Dar al-Dad, auf einer Seite von 210 × 280 mm in A4-Breite, gesetzt in IBM Plex Sans Arabic und IBM Plex Sans, den beiden Hälften einer Schriftfamilie. Der Bericht ist arabisch: Er läuft von rechts nach links und nummeriert seine Seiten mit ٢, ٣. Auf jeden arabischen Absatz folgt seine englische Fassung, kleiner und in Schiefergrau, von links nach rechts gesetzt und rechts im Flattersatz; jede arabische Überschrift hat am anderen Rand eine englische Beschriftung. Lateinische Namen in arabischen Sätzen behalten ihre eigene Reihenfolge, und die Zahlen des Jahres erscheinen zweimal, in einer arabischen Tabelle, die von rechts gelesen wird, und in einer englischen, die von links gelesen wird. In der spanischen Ausgabe ist die zweite Sprache Spanisch.
 
 ## Zubereitung
 
 ### 1 · Die zweite Sprache als markierte Blöcke
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Das Dokument ist arabisch, also läuft jeder Block von rechts nach links, bis das Markdown etwas anderes sagt: `{dir=ltr}` an einem Direktivenblock `:::paragraphs` oder an einer Überschrift dreht diesen Block um, und `textAlign: 'start'` schickt jeden Block an die Seite, an der er beginnt, rechts für Arabisch und links für Englisch ([Richtung von Dokument, Block und Zeile](/de/docs/arabic-layout#richtung-von-dokument-block-und-textlauf)). Ein lateinischer Name in einer arabischen Zeile, :ltr[Harbour Modern Classics], ist ein Isolat: Der Bidi-Algorithmus behandelt ihn als ein neutrales Stück, sodass die arabischen Wörter und das Komma um ihn herum an ihrem Platz bleiben ([Isolate](/de/docs/arabic-layout#isolate)). `emphasis: 'italic'` hält *Middlemarch* im englischen Text kursiv; einen arabischen Buchstaben neigt die Engine bei keiner Einstellung.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Das Dokument ist arabisch, also läuft jeder Block von rechts nach links, bis das Markdown etwas anderes sagt: `{dir=ltr}` an einem Container `:::paragraphs` oder an einer Überschrift dreht diesen Block um, und `textAlign: 'start'` richtet jeden Block an der Seite aus, an der er beginnt: rechts für Arabisch und links für Englisch ([Richtung von Dokument, Block und Zeile](/de/docs/arabic-layout#richtung-von-dokument-block-und-textlauf)). Ein lateinischer Name in einer arabischen Zeile, :ltr[Harbour Modern Classics], ist ein Isolat: Der Bidi-Algorithmus behandelt ihn als eine neutrale Einheit, sodass die arabischen Wörter und das Komma um ihn herum an ihrem Platz bleiben ([Isolate](/de/docs/arabic-layout#isolate)). `emphasis: 'italic'` hält *Middlemarch* im englischen Text kursiv; einen arabischen Buchstaben neigt die Engine bei keiner Einstellung.
 
 ### 2 · Eine Tabelle für jede Richtung
 
 <Excerpt region="tables" />
 
-Die arabische Tabelle läuft mit dem Dokument: Ihre erste Spalte, das Programm, steht rechts, und `align: 'end'` stellt die Zahlen an den linken Rand ihrer Zellen. Die englische Tabelle setzt `direction: 'ltr'`, ihre erste Spalte steht also links, und `'end'` meint den rechten Rand ([Was links, rechts, Anfang und Ende bedeuten](/de/docs/arabic-layout#was-links-rechts-anfang-und-ende-bedeuten)). Die arabischen Zahlen sind mit ٠–٩ getippt, die englischen mit 0–9: Die Ziffern des Dokuments gelten nur für Zahlen, die die Engine selbst schreibt, etwa die Tabellennummer in ihrer Legende, جدول ١-١. Deshalb hat die englische Tabelle auch einen eigenen Typ ohne Zähler, denn eine Nummer würde dort als ٢ gedruckt.
+Die arabische Tabelle läuft mit dem Dokument: Ihre erste Spalte, das Programm, steht rechts, und `align: 'end'` stellt die Zahlen an den linken Rand ihrer Zellen. Die englische Tabelle setzt `direction: 'ltr'`, ihre erste Spalte steht also links, und `'end'` meint den rechten Rand ([Was links, rechts, Anfang und Ende bedeuten](/de/docs/arabic-layout#was-links-rechts-anfang-und-ende-bedeuten)). Die arabischen Zahlen sind mit ٠–٩ getippt, die englischen mit 0–9: Die Ziffern des Dokuments gelten nur für Zahlen, die die Engine selbst schreibt, etwa die Tabellennummer in ihrer Legende, جدول ١-١. Deshalb hat die englische Tabelle auch einen eigenen Typ ohne Zähler, denn eine Nummer würde dort als ٢ erscheinen.
 
 ### 3 · Zwei Titel auf einem Band
 
 <Excerpt region="cover" />
 
-Die Titelseite ist die Gestaltung der Überschrift erster Ebene. Die Gestaltung einer Überschrift steht im Fluss und wird mit der Seite gespiegelt, ihre Anker benennen also die Seiten des Textes: `top-left` ist die rechte Seite des Blattes, wo arabischer Name und Titel beginnen, und `top-right` die linke, wo der englische Titel beginnt. Gestaltungstext übernimmt die Richtung des Dokuments, die arabischen Zeilen brauchen also nichts weiter; der englische Titel setzt `direction: 'ltr'`. Das Band ist ein am Anschnitt verankerter Kasten von 86 mm Höhe, und `minHeight` des Kapitelauftakts bringt das Vorwort der Direktorin darunter.
+Die Titelseite ist die Gestaltung der Überschrift erster Ebene. Die Gestaltung einer Überschrift steht im Fluss und wird mit der Seite gespiegelt, ihre Bezugspunkte bezeichnen also die Seiten des Textes: `top-left` ist die rechte Seite des Blattes, wo arabischer Name und Titel beginnen, und `top-right` die linke, wo der englische Titel beginnt. Gestaltungstext übernimmt die Richtung des Dokuments, die arabischen Zeilen brauchen also nichts weiter; der englische Titel setzt `direction: 'ltr'`. Das Band ist ein am Anschnitt verankerter Kasten von 86 mm Höhe, und `minHeight` des Kapitelauftakts bringt das Vorwort der Direktorin darunter.
 
 ## Varianten
 
 ### Das Englische voranstellen
 
-Ein Bericht für einen Vorstand, der kein Arabisch liest, tauscht die Rollen: ein englisches Dokument mit unmarkierten Blöcken, und die arabischen Blöcke tragen `{dir=rtl}`.
+Ein Bericht für einen Vorstand, der kein Arabisch liest, tauscht die Rollen: ein englisches Dokument mit unmarkierten Blöcken, und die arabischen Blöcke erhalten `{dir=rtl}`.
 
 ```diff
 -  locale: 'ar', // written out, never LANG (gotcha: arabic-locale-tag)

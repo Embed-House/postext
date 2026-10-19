@@ -10,13 +10,13 @@ pageNotes: { "1": "La première page : une bande violette avec la référence d
 
 ## Ce que vous allez composer
 
-Voici la fiche technique de quatre pages du PX-7021, un capteur de température d’un fabricant imaginaire, Pyxis Microdevices. Elle est faite surtout de tableaux, avec des en-têtes pleins de cellules fusionnées et une carte de registres plus longue qu’une colonne. La première page s’ouvre sur une bande violette avec la référence du composant et trois chiffres clés. En page 2, un tableau occupe toute la largeur de la page. Son en-tête sur deux rangs place Value au-dessus de Min, Typ et Max ; les groupes de paramètres sont fusionnés dans la première colonne, et un paramètre sur deux est teinté de gris. La carte de registres se coupe au pied de la page 3 et continue en page 4 avec son en-tête répété, à côté des références de commande et au-dessus du dessin du boîtier. Les tableaux sont des données de tableur collées en TSV, car Postext ne lit pas les tableaux Markdown.
+Voici la fiche technique de quatre pages du PX-7021, un capteur de température d’un fabricant imaginaire, Pyxis Microdevices. Elle est faite surtout de tableaux, avec des en-têtes pleins de cellules fusionnées et une carte de registres plus longue qu’une colonne. La première page s’ouvre sur une bande violette avec la référence du composant et trois chiffres clés. En page 2, un tableau occupe toute la largeur de la page. Son en-tête sur deux rangs place Value au-dessus de Min, Typ et Max ; les groupes de paramètres sont fusionnés dans la première colonne, et un paramètre sur deux est teinté de gris. La carte de registres se coupe au pied de la page 3 et continue en page 4 avec son en-tête répété, à côté des références de commande et au-dessus du dessin du boîtier. Les tableaux sont des données de tableur collées en TSV, car Postext ne reconnaît pas les tableaux Markdown.
 
 ## Préparation
 
 ### 1 · Coller les données, puis façonner le tableau
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `parseTSV(tsv, { headerRows: 2 })` marque les deux rangs d’en-tête ; si le tableau se coupait, les deux se répéteraient sur chaque partie. Les poids de `columnWidths` totalisent 180, la largeur du bloc de texte en millimètres : chaque poids est donc la largeur de sa colonne sur la page. `mergeCells` garde chaque cellule couverte à sa place et la marque `hiddenBy` : aucune colonne ne se décale. `setAlignment` agit cellule par cellule et efface l’alignement vertical quand vous l’omettez : la plupart des appels repassent donc `'middle'`. Le gris alterne d’un paramètre au suivant, ce qui garde les deux rangs d’Accuracy sur le même fond ; alterner par rang, comme le fait le `bodyAlternateBackground` du style de tableau, laisserait le second en blanc.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `parseTSV(tsv, { headerRows: 2 })` marque les deux rangs d’en-tête ; si le tableau se coupait, les deux se répéteraient sur chaque partie. Les poids de `columnWidths` totalisent 180, la largeur de la zone de contenu en millimètres : chaque poids est donc la largeur de sa colonne sur la page. `mergeCells` garde chaque cellule couverte à sa place et la marque `hiddenBy` : aucune colonne ne se décale. `setAlignment` agit cellule par cellule et efface l’alignement vertical quand vous l’omettez : la plupart des appels repassent donc `'middle'`. Le gris alterne d’un paramètre au suivant, ce qui garde les deux rangs d’Accuracy sur le même fond ; alterner par rang, comme le fait le `bodyAlternateBackground` du style de tableau, laisserait le second en blanc.
 
 ### 2 · Chaque modèle devient une ressource
 
@@ -40,13 +40,13 @@ Le tableau des broches et la carte de registres sortent tous deux de `groupedTab
 
 <Excerpt region="drawing" />
 
-Les étiquettes du brochage, du schéma et du dessin du boîtier sont des éléments `<text>` qui demandent Fira Mono, le caractère des étiquettes du document. Un SVG arrive sur le canvas comme une image : le `loadSvg` du kit fait donc d’abord passer le balisage par `inlineSvgFonts`, qui incorpore dans le SVG les caractères que nomme son texte ; le canvas dessine alors les étiquettes en Fira Mono. Le PDF compose chaque `<text>` comme du texte sélectionnable dans les caractères qu’il incorpore.
+Les étiquettes du brochage, du schéma et du dessin du boîtier sont des éléments `<text>` qui demandent Fira Mono, le caractère des étiquettes du document. Un SVG arrive sur le canvas comme une image : le `loadSvg` du kit fait donc d’abord passer le balisage par `inlineSvgFonts`, qui incorpore dans le SVG les caractères qu’utilise son texte ; le canvas dessine alors les étiquettes en Fira Mono. Le PDF compose chaque `<text>` comme du texte sélectionnable dans les caractères qu’il incorpore.
 
 ### 6 · Ouverture, titre courant et pied de page
 
 <Excerpt region="furniture" />
 
-La référence du composant est le titre de niveau 1, et son emplacement de maquette dessine l’ouverture : une boîte violette jusqu’au fond perdu, le logo, ainsi qu’un surtitre, un chapeau et trois chiffres clés lus dans les attributs du titre. Les éléments image fonctionnent dans les emplacements courants comme dans les ouvertures : le pied de page commence donc par l’un d’eux, qui nomme la ressource du logo. Les éléments du titre courant portent `pages: 'body'` : aucun ne s’imprime sur la première page.
+La référence du composant est le titre de niveau 1, et sa zone de maquette dessine l’ouverture : une boîte violette jusqu’au fond perdu, le logo, ainsi qu’un surtitre, un chapeau et trois chiffres clés lus dans les attributs du titre. Les éléments image fonctionnent dans les en-têtes et pieds de page comme dans les ouvertures : le pied de page commence donc par l’un d’eux, qui désigne la ressource du logo. Les éléments du titre courant ont `pages: 'body'` : aucun ne s’imprime sur la première page.
 
 ## Variantes
 

@@ -65,5 +65,5 @@ Rafailov、Sharma、Mitchell、Ermon、Manning和Finn的论文*Direct Preference
 ## 常见问题
 
 - 只有数学引擎运行时，`endMark`才用TeX绘制方块（□ ∎ ■）。没有`initMathEngine()`的文档里，结束符用框内正文的字体排，而Spectral和Fontsource所有latin文件一样没有□：这时请选一个字体能排的结束符。
-- 栏平衡会在标题上方加基线网格行，把被高公式留短的页面填满。`balancing: { maxLinesPerHeading: 1 }`让论文的标题基本保持原有间距，这样的页面可能会提前几行结束。
-- `\underbrace`的说明文字比括号还宽时（如第4节的梯度公式），需要用`aligned`拆成两行；比版心宽的公式会向右溢出。
+- 各栏齐底会在标题上方加基线网格行，把被高公式留短的页面填满。`balancing: { maxLinesPerHeading: 1 }`让论文的标题基本保持原有间距，这样的页面可能会提前几行结束。
+- `\underbrace`的说明文字比括号还宽时（如第4节的梯度公式），需要用`aligned`拆成两行；比版心宽的公式会向右超出版心。

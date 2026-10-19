@@ -32,7 +32,7 @@ La norma compon 一、 en 黑体, （一） en 楷体, i 1. i （1） en la llet
 
 <Excerpt region="letterhead" />
 
-El membret és el disseny de l'H1, els atributs del qual porten el número d'exemplar, l'emissor i el número del document: la configuració guarda el paper timbrat i el Markdown, el document. `lineTop(n)` dona la vora superior de la línia *n* de la retícula, així que cada element queda on el compta la norma: el número, dues línies en blanc per sota del nom de l'emissor; el títol, dues línies en blanc per sota del filet vermell. A 46 pt, la tinta del nom va des de 35 mm per sota de la vora superior de la caixa fins al peu de la línia 5, de manera que les línies 6 i 7 queden en blanc i el número cau a la 8; a 48 pt entraria a la línia 6 i baixaria una línia tota la resta. El `\\` del títol el parteix després de 关于举办, una línia curta sobre una de llarga: un trapezi, una de les dues formes que admet la norma (l'altra és el rombe). `minHeight` reserva 13 línies i `marginBottom` una més, de manera que el destinatari comença a la línia 15 ([Span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)).
+El membret és el disseny de l'H1, i els atributs de l'H1 porten el número d'exemplar, l'emissor i el número del document: la configuració guarda el paper timbrat i el Markdown, el document. `lineTop(n)` dona la vora superior de la línia *n* de la retícula, així que cada element queda on el compta la norma: el número, dues línies en blanc per sota del nom de l'emissor; el títol, dues línies en blanc per sota del filet vermell. A 46 pt, la tinta del nom va des de 35 mm per sota de la vora superior de la caixa fins al peu de la línia 5, de manera que les línies 6 i 7 queden en blanc i el número cau a la 8; a 48 pt entraria a la línia 6 i baixaria una línia tota la resta. El `\\` del títol el parteix després de 关于举办, una línia curta sobre una de llarga: un trapezi, una de les dues formes que admet la norma (l'altra és el rombe). `minHeight` reserva 13 línies i `marginBottom` una més, de manera que el destinatari comença a la línia 15 ([Extensió i disseny avançat](/ca/docs/configuration-headings#extensió-i-disseny-avançat)).
 
 ### 4 · Folis sota la caixa
 
@@ -65,7 +65,7 @@ Parelles com ），i 》（ ocupen casella i mitja en lloc de dues, com a la maj
 
 ### Mostra la retícula mentre compons
 
-El llenç dibuixa un quadrat gris per cada casella de la retícula de 28 × 22, i el PDF no l'inclou llevat que `renderToPdf` rebi `characterGrid: true`.
+El canvas dibuixa un quadrat gris per cada casella de la retícula de 28 × 22, i el PDF no l'inclou llevat que `renderToPdf` rebi `characterGrid: true`.
 
 ```diff
 -  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },

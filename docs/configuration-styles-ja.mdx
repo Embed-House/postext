@@ -60,7 +60,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>必須</td>
-      <td><code>:::paragraphs&#123;style="…"&#125;</code>から参照する識別子。</td>
+      <td><code>:::paragraphs&#123;style="…"&#125;</code>から参照する識別子です。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -72,37 +72,37 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td>本文のフォント</td>
-      <td>フォントファミリー。ウェイトは下の<code>fontWeight</code> / <code>boldFontWeight</code>で指定します（未設定のときは本文の値）。</td>
+      <td>フォントファミリーです。ウェイトは下の<code>fontWeight</code> / <code>boldFontWeight</code>で指定します（未設定のときは本文の値）。</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td>本文のサイズ</td>
-      <td>フォントサイズ。</td>
+      <td>フォントサイズです。</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
       <td><code>Dimension</code></td>
       <td>本文の行の高さ</td>
-      <td>行送り。<code>em</code>/<code>rem</code>はスタイル自身のフォントサイズに対する値なので、継承した<code>1.5em</code>はサイズが小さくなるとそれに合わせて詰まります。</td>
+      <td>行送りです。<code>em</code>/<code>rem</code>はスタイル自身のフォントサイズに対する値なので、継承した<code>1.5em</code>はサイズが小さくなるとそれに合わせて詰まります。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>本文の色</td>
-      <td>文字色。太字とイタリックの範囲は、<code>boldColor</code> / <code>italicColor</code>でスタイル独自の色を設定しない限り、本文の強調の色を保ちます。</td>
+      <td>文字色です。太字とイタリックの範囲は、<code>boldColor</code> / <code>italicColor</code>でスタイル独自の色を設定しない限り、本文の強調の色を保ちます。</td>
     </tr>
     <tr>
       <td><code>textAlign</code></td>
       <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td>本文のそろえ</td>
-      <td>水平方向のそろえ。<code>'center'</code>と<code>'right'</code>は、すべての行を反対側から不ぞろいに組みます（献辞、署名欄）。右から左の段落では、<code>'left'</code>はその開始側、つまり右になります。</td>
+      <td>水平方向のそろえです。<code>'center'</code>と<code>'right'</code>は、すべての行を反対側から不ぞろいに組みます（献辞、署名欄）。右から左の段落では、<code>'left'</code>はその開始側、つまり右になります。</td>
     </tr>
     <tr>
       <td><code>boldColor</code></td>
       <td><code>ColorValue</code></td>
       <td><code>bodyText.boldColor</code></td>
-      <td>太字の範囲の色（著者の一覧で名前をハウスカラーにするなど）。</td>
+      <td>太字の範囲の色です（著者の一覧で名前をハウスカラーにするなど）。</td>
     </tr>
     <tr>
       <td><code>italicColor</code></td>
@@ -114,13 +114,13 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>fontWeight</code></td>
       <td><code>number</code></td>
       <td><code>bodyText.fontWeight</code></td>
-      <td>通常のテキストのウェイト（100–900）。ワークシートのセミボールドの設問、ライトの題辞などに使います。</td>
+      <td>通常のテキストのウェイト（100–900）です。ワークシートのセミボールドの設問、ライトの題辞などに使います。</td>
     </tr>
     <tr>
       <td><code>boldFontWeight</code></td>
       <td><code>number</code></td>
       <td><code>bodyText.boldFontWeight</code></td>
-      <td>太字（<code>**…**</code>）の範囲のウェイト。</td>
+      <td>太字（<code>**…**</code>）の範囲のウェイトです。</td>
     </tr>
     <tr>
       <td><code>italic</code></td>
@@ -168,25 +168,25 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>spaceBetween</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>コンテナー内で続く段落の間の垂直方向のアキ。<code>0</code>では項目が接します。</td>
+      <td>コンテナー内で続く段落の間の垂直方向のアキです。<code>0</code>では項目が接します。</td>
     </tr>
     <tr>
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>コンテナーの最初の段落の上のアキ。ほかのマージンと同じく、保留中のアキと相殺され、段の頭では消えます。</td>
+      <td>コンテナーの最初の段落の上のアキです。ほかのアキと同じく、保留中のアキと相殺され、段の頭では消えます。</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>コンテナーの最後の段落の下の最小のアキ。コンテナーの次のブロックのアキとの関係は<code>bodyText.paragraphContainerSpacing</code>で決まります。</td>
+      <td>コンテナーの最後の段落の下の最小のアキです。コンテナーの次のブロックのアキとの関係は<code>bodyText.paragraphContainerSpacing</code>で決まります。</td>
     </tr>
     <tr>
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>コンテナーの下で流れをベースライングリッドに戻します。下のアキは最小値になります。<code>false</code>では正確なアキを保ち、コンテナーの後のテキストは、次にグリッドに合わせるブロック（見出し、リストの終わり、別行立ての数式）までグリッドから外れたままになります。グリッドに沿わない文書や、独自の行送りを持つまとまりに使います。グリッドのない囲みの中では何も変わりません。</td>
+      <td>コンテナーの下で流れをベースライングリッドに戻します。下のアキは最小値になります。<code>false</code>では正確なアキを保ち、コンテナーの後のテキストは、次にグリッドに合わせるブロック（見出し、リストの終わり、別行立ての数式）までグリッドから外れたままになります。グリッドに沿わない文書や、独自の行送りで組むまとまりに使います。グリッドのない囲みの中では何も変わりません。</td>
     </tr>
     <tr>
       <td><code>containerSpacing</code></td>
@@ -204,7 +204,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>段落の各文字の後に加える字間で、CSS の <code>letter-spacing</code> と同じです。正の値は文字を広げ（大文字のページタイトルなら <code>&#123; value: 0.015, unit: 'em' &#125;</code> で +15/1000 em）、負の値は大きなサイズを詰めます。<code>em</code> の値はスタイル自身の <code>fontSize</code> を基準にします。行の幅の計算に含まれるので、字間を空けた段落は広がった語の位置で改行します。両端揃えの行はその上で語間を配分し、組版が短い最終行をなくすために詰める行（<code>bodyText.maxRuntTracking</code>）もこの値から詰めます。canvas、HTML、PDF、EPUB で同じように描かれ、Word に書き出すとスタイルの文字間隔になります。連結する文字（アラビア文字、シリア文字、ンコ文字）の語には字間を加えず、<code>joiningScriptLetterSpacing</code> の警告を出します。postext 1.37 から。</td>
+      <td>段落の各文字の後に加える字間で、CSSの<code>letter-spacing</code>と同じです。正の値は文字を広げ（大文字のページタイトルなら<code>&#123; value: 0.015, unit: 'em' &#125;</code>で+15/1000 em）、負の値は大きなサイズを詰めます。<code>em</code>の値はスタイル自身の<code>fontSize</code>を基準にします。行の幅の計算に含まれるので、字間を空けた段落は広がった語の位置で改行します。両端そろえの行はその上で語間を配分し、組版が短い最終行をなくすために詰める行（<code>bodyText.maxRuntTracking</code>）もこの値から詰めます。canvas、HTML、PDF、EPUBで同じように描かれ、Wordに書き出すとスタイルの字間になります。連結する文字（アラビア文字、シリア文字、ンコ文字）の語には字間を加えず、<code>joiningScriptLetterSpacing</code>の警告を出します。postext 1.37以降。</td>
     </tr>
     <tr>
       <td><code>wordBreak</code></td>
@@ -234,7 +234,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>dropCap</code></td>
       <td><code>ParagraphDropCap</code></td>
       <td>なし</td>
-      <td>このスタイルの各<code>:::paragraphs</code>グループの最初の段落を、<code>each: true</code>ならすべての段落を始めるドロップキャップです（<a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>を参照）。グループのフェンスに<code>&#123;dropcap=false&#125;</code>と書くと解除し、<code>&#123;dropcap=2&#125;</code>と書くと行数を指定します。postext 1.23から使えます。</td>
+      <td>このスタイルの各<code>:::paragraphs</code>グループの最初の段落を、<code>each: true</code>ならすべての段落を始めるドロップキャップです（<a href="/ja/docs/configuration-text#ドロップキャップ">ドロップキャップ</a>を参照）。グループの開始行に<code>&#123;dropcap=false&#125;</code>と書くと解除し、<code>&#123;dropcap=2&#125;</code>と書くと行数を指定します。postext 1.23から使えます。</td>
     </tr>
   </tbody>
 </table>
@@ -292,9 +292,9 @@ paragraphStyles: [
 
 ### `:::paragraphs`コンテナー
 
-`:::paragraphs{style="<id>"}`の行でコンテナーを開き、`:::`だけの行で閉じます。間にあるすべての段落は名前付きのスタイルを取り、中にある見出し、リスト、その他のブロックは通常のスタイルを保ちます。コンテナーはほかのフェンス付きコンテナーの中に入れ子にできます。不明な`style`のidはエラーにならず、段落は通常の本文として描画されます。
+`:::paragraphs{style="<id>"}`の行でコンテナーを開き、`:::`だけの行で閉じます。間にあるすべての段落は名前付きのスタイルを取り、中にある見出し、リスト、その他のブロックは通常のスタイルを保ちます。コンテナーは、ほかのコロンで囲んだコンテナーの中に入れ子にできます。不明な`style`のidはエラーにならず、段落は通常の本文として描画されます。
 
-フェンスは、スタイルの有無にかかわらず`align`（`start`、`end`、`left`、`right`、`center`、`justify`）、`indent`、`endIndent`（単位のない数値はem）も取ります。スタイルがあればそれを上書きし、なければ外側のコンテナーのスタイル、またはフェンスのある場所のテキストのスタイル（本文、部、スタイル付きの節、ボックス）の上に適用されます。`:::paragraphs{align=end}`はブロックを行末にそろえて組み（地付き）、`:::paragraphs{align=end endIndent=1}`はそこから1字上げて組みます。postext 1.16から使えます。
+開始行には、スタイルの有無にかかわらず`align`（`start`、`end`、`left`、`right`、`center`、`justify`）、`indent`、`endIndent`（単位のない数値はem）も書けます。スタイルがあればそれを上書きし、なければ外側のコンテナーのスタイル、またはブロックを置いた場所のテキストのスタイル（本文、部、スタイル付きの節、囲み）の上に適用されます。`:::paragraphs{align=end}`はブロックを行末にそろえて組み（地付き）、`:::paragraphs{align=end endIndent=1}`はそこから1字上げて組みます。postext 1.16から使えます。
 
 コンテナーの中では流れがベースライングリッドから外れます（7ptで行送り1.2emの項目は、8pt/1.5emのグリッドには乗りません）。最後の段落で流れはグリッドに戻ります（グリッドが優先され、下のアキは最小値になります。見出しと同じ規則です）。項目は本文の段落と同じく段やページをまたいで分割され、オーファンとウィドウの保護も同じです。コンテナーの直前の見出しは、その最初の段落と離れないように保たれます。
 
@@ -302,7 +302,7 @@ paragraphStyles: [
 
 スタイルは`containerSpacing`で自分のコンテナーの規則を決められます。大きな数字や参考文献リストのスタイルに`'add'`を指定すると、そのグループは本文でも囲みの中でもスタイル自身のアキで終わり、文書のほかのコンテナーは`'collapse'`のままです。`'add'`で読まれる文書では、スタイルに`'collapse'`を指定すると逆になります。スタイルを指定しないコンテナーは文書に従います。
 
-`:::callout`の中でも、コンテナーはスタイルのマージンを同じように取ります。`marginTop`と`marginBottom`は前後のブロックのアキと相殺され（負の値は前後を近づけます）、ボックスの先頭にあるコンテナーは、段の頭と同じく上のマージンを取りません。ボックスには戻る先のベースライングリッドがないため、最後の段落の下のアキは、`marginBottom`、`spaceBetween`、ボックス自身の段落間のアキ（その`body.paragraphSpacing`、つまりボックスのテキスト1行分。`paragraphContainerSpacing: 'add'`では含まれません）のうち最も大きいもの、または次のブロック自身の上のマージンのほうがさらに大きければそれになります。負の`marginBottom`は、代わりに次のブロックを引き上げます（postext 1.4までは、囲みの中のコンテナーはどちらのマージンも無視していました）。
+`:::callout`の中でも、コンテナーはスタイルの上下のアキを同じように取ります。`marginTop`と`marginBottom`は前後のブロックのアキと相殺され（負の値は前後を近づけます）、囲みの先頭にあるコンテナーは、段の頭と同じく上のアキを取りません。囲みには戻る先のベースライングリッドがないため、最後の段落の下のアキは、`marginBottom`、`spaceBetween`、囲み自身の段落間のアキ（その`body.paragraphSpacing`、つまり囲みのテキスト1行分。`paragraphContainerSpacing: 'add'`では含まれません）のうち最も大きいもの、または次のブロック自身の上のアキのほうがさらに大きければそれになります。負の`marginBottom`は、代わりに次のブロックを引き上げます（postext 1.4までは、囲みの中のコンテナーはどちらのアキも無視していました）。
 
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## チップスタイル
 
-`chipStyles`プロパティは、インラインの`:chip[text]{style="…"}`の名前付きスタイルを宣言します。単語リストや、キーボードのキー、タグに使う、角を丸めた色付きのボックスです（構文と改行の規則は文書形式のリファレンスにあります）。既定では`chip`というスタイルが1つ用意されています（淡い青の塗りに、メインカラーのヘアラインの枠、わずかな角丸、テキストは周囲の語と同じ）。そのため`:chip[…]`は設定なしで使えます。`chipStyles`を宣言すると、この既定のリストが置き換えられます。`style`のないチップや、どのスタイルも宣言していないidを持つチップは、最初のスタイルになります。
+`chipStyles`プロパティは、インラインの`:chip[text]{style="…"}`の名前付きスタイルを宣言します。単語リストや、キーボードのキー、タグに使う、角を丸めた色付きのボックスです（構文と改行の規則は文書形式のリファレンスにあります）。既定では`chip`というスタイルが1つ用意されています（淡い青の塗りに、メインカラーのヘアラインの枠、わずかな角丸、テキストは周囲の語と同じ）。そのため`:chip[…]`は設定なしで使えます。`chipStyles`を宣言すると、この既定のリストが置き換えられます。`style`のないチップや、どのスタイルも宣言していないidを指定したチップは、最初のスタイルになります。
 
 ```ts
 const config: PostextConfig = {
@@ -353,7 +353,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>必須</td>
-      <td><code>:chip[…]&#123;style="…"&#125;</code>から参照する識別子。</td>
+      <td><code>:chip[…]&#123;style="…"&#125;</code>から参照する識別子です。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -365,67 +365,67 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>backgroundEnabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>ボックスを塗ります。</td>
+      <td>チップの枠を塗ります。</td>
     </tr>
     <tr>
       <td><code>background</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#e8eef7</code></td>
-      <td>ボックスの塗り（パレットに連動できます）。</td>
+      <td>枠の塗りです（パレットに連動できます）。</td>
     </tr>
     <tr>
       <td><code>borderColor</code></td>
       <td><code>ColorValue</code></td>
       <td>パレットのメインカラー</td>
-      <td>枠線の色。</td>
+      <td>枠線の色です。</td>
     </tr>
     <tr>
       <td><code>borderWidth</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.5pt</code></td>
-      <td>枠線の太さ。<code>0</code>では枠線を描きません。枠線はボックスの縁の内側に引かれます。</td>
+      <td>枠線の太さです。<code>0</code>では枠線を描きません。枠線は枠の縁の内側に引かれます。</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.3em</code></td>
-      <td>角の半径。ボックスの高さの半分までに制限されます（大きな値にすると錠剤形になります）。</td>
+      <td>角の半径です。枠の高さの半分までに制限されます（大きな値にすると錠剤形になります）。</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.3em</code></td>
-      <td>枠線とテキストの間の左右の余白。チップの送り幅に含まれます。</td>
+      <td>枠線とテキストの間の左右の内側余白です。チップの送り幅に含まれます。</td>
     </tr>
     <tr>
       <td><code>paddingY</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.1em</code></td>
-      <td>テキストの帯の上下の余白。行のボックスの外側に描かれ、行の高さは変わりません。</td>
+      <td>テキストの帯の上下の内側余白です。行のボックスの外側に描かれ、行の高さは変わりません。</td>
     </tr>
     <tr>
       <td><code>paddingTop</code>、<code>paddingBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
-      <td>テキストの帯の上または下の余白で、それぞれ<code>paddingY</code>の代わりに使われます。帯はベースラインの0.8 em上から0.25 em下までなので、その中央はベースラインの0.275 em上にあり、大文字の中央（たいていの書体で約0.35 em）より低くなります。そのため、丸いチップ（<code>borderRadius: 1em</code>）の中の大文字や数字は高く見えます。上の余白を下の余白より、その差の2倍だけ大きくすると中央にそろいます。大文字の高さが0.7 emの書体なら、<code>paddingTop: 0.2em</code>と<code>paddingBottom: 0.05em</code>です。</td>
+      <td>テキストの帯の上または下の内側余白で、それぞれ<code>paddingY</code>の代わりに使われます。帯はベースラインの0.8 em上から0.25 em下までなので、その中央はベースラインの0.275 em上にあり、大文字の中央（たいていの書体で約0.35 em）より低くなります。そのため、丸いチップ（<code>borderRadius: 1em</code>）の中の大文字や数字は高く見えます。上の内側余白を下の内側余白より、その差の2倍だけ大きくすると中央にそろいます。大文字の高さが0.7 emの書体なら、<code>paddingTop: 0.2em</code>と<code>paddingBottom: 0.05em</code>です。</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td>周囲のテキスト</td>
-      <td>チップのテキストのフォントファミリー。ウェイトは周囲のテキストに従います。</td>
+      <td>チップのテキストのフォントファミリーです。ウェイトは周囲のテキストに従います。</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td>周囲のテキスト</td>
-      <td>チップのテキストのサイズ。<code>em</code>は周囲のテキストに対する値です。</td>
+      <td>チップのテキストのサイズです。<code>em</code>は周囲のテキストに対する値です。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>周囲のテキスト</td>
-      <td>チップのテキストの色。未設定のときは、太字とイタリックの範囲は強調の色を保ちます。</td>
+      <td>チップのテキストの色です。未設定のときは、太字とイタリックの範囲は強調の色を保ちます。</td>
     </tr>
     <tr>
       <td><code>bold</code></td>
@@ -443,7 +443,7 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.25em</code></td>
-      <td>語間のスペースを挟んで隣り合う語やチップとボックスとの間に確保する最小の間隔です。それより狭いスペースはチップの送り幅の内側で補われるため、両端そろえで削られることはありません。行の端や、詰めて組む約物に接する側には何も加えません。</td>
+      <td>語間のスペースを挟んで隣り合う語やチップと枠との間に確保する最小の間隔です。それより狭いスペースはチップの送り幅の内側で補われるため、両端そろえで削られることはありません。行の端や、詰めて組む約物に接する側には何も加えません。</td>
     </tr>
     <tr>
       <td><code>dotted</code></td>
@@ -454,9 +454,9 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
   </tbody>
 </table>
 
-ボックスのemの長さ（`paddingX`、`paddingY`、`borderRadius`、`borderWidth`、`gap`）は、チップ自身のフォントサイズに対する値です。ボックスはベースラインの0.8 em上から0.25 em下までの帯で、`paddingY`と枠線の分だけ大きくなります。行のボックスの外側に描かれ、行送りを変えることはないため、ベースライングリッドは保たれます。ボックスが行送りより高くなると、チップが上下の行のチップに重なることがあります。異なる行の2つのチップが重なると、Sandboxは重なりをポイントで示した**チップが隣の行に接触**の警告を表示するため、`paddingY`、枠線、`fontSize`を小さくして対処できます。上下にチップのない背の高いチップは報告されません。
+枠のemの長さ（`paddingX`、`paddingY`、`borderRadius`、`borderWidth`、`gap`）は、チップ自身のフォントサイズに対する値です。枠はベースラインの0.8 em上から0.25 em下までの帯で、`paddingY`と枠線の分だけ大きくなります。行のボックスの外側に描かれ、行送りを変えることはないため、ベースライングリッドは保たれます。枠が行送りより高くなると、チップが上下の行のチップに重なることがあります。異なる行の2つのチップが重なると、Sandboxは重なりをポイントで示した**チップが隣の行に接触**の警告を表示します。`paddingY`、枠線、`fontSize`を小さくして対処してください。上下にチップのない背の高いチップは報告されません。
 
-VDTでは、チップは`kind: 'chip'`の行のセグメントで、その`chip`フィールドがテキストのラン（それぞれフォント文字列と幅を持つ）、ボックスのジオメトリー（`boxWidth`、`ascent`、`descent`、`paddingX`、`borderWidth`、`borderRadius`、間隔のマージン）、色を持ちます。セグメントの`text`は1文字のプレースホルダーなので、プレーンテキストのオフセットとソースマップではチップは1文字として数えられます。
+VDTでは、チップは`kind: 'chip'`の行のセグメントで、その`chip`フィールドには、テキストのラン（それぞれにフォント文字列と幅が付きます）、枠のジオメトリー（`boxWidth`、`ascent`、`descent`、`paddingX`、`borderWidth`、`borderRadius`、間隔のアキ）、色が入ります。セグメントの`text`は1文字のプレースホルダーなので、プレーンテキストのオフセットとソースマップではチップは1文字として数えられます。
 
 ```ts
 const resolved = resolveChipStylesConfig(config.chipStyles);
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## ハイライトのスタイル
 
-`markStyles` プロパティは、インラインの `:mark[テキスト]{style="…"}` の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書フォーマットのリファレンスにあります）。既定でスタイルが一つ、`mark` があります（語句から少しはみ出す淡い黄色の帯で、両端はわずかに丸く、文字は自分の色のまま）。そのため設定なしで `:mark[…]` が使えます。`markStyles` を宣言すると、この既定のリストを置き換えます。`style` のないマーク、またはどのスタイルにも宣言されていない id のマークは、最初のスタイルになります。
+`markStyles`プロパティは、インラインの`:mark[テキスト]{style="…"}`の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書形式のリファレンスにあります）。既定では`mark`というスタイルが1つあります（語句から少しはみ出す淡い黄色の帯で、両端はわずかに丸く、文字は自分の色のまま）。そのため設定なしで`:mark[…]`が使えます。`markStyles`を宣言すると、この既定のリストを置き換えます。`style`のないマーク、またはどのスタイルにも宣言されていないidのマークは、最初のスタイルになります。
 
 ```ts
 const config: PostextConfig = {
@@ -508,54 +508,54 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>必須</td>
-      <td><code>:mark[…]&#123;style="…"&#125;</code> から参照する識別子。</td>
+      <td><code>:mark[…]&#123;style="…"&#125;</code>から参照する識別子です。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>読みやすい名前。エディターの UI だけで使います。</td>
+      <td>人が読むための名前です（エディターのUIでのみ使います）。</td>
     </tr>
     <tr>
       <td><code>background</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#fff0a0</code></td>
-      <td>帯の色（パレットにリンクできます）。</td>
+      <td>帯の色です（パレットにリンクできます）。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>本文の色</td>
-      <td>マークした語の色。</td>
+      <td>マークした語の色です。</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.2em</code></td>
-      <td>帯の両端の角の半径。帯の高さの半分までに制限されます。</td>
+      <td>帯の両端の角の半径です。帯の高さの半分までに制限されます。</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.15em</code></td>
-      <td>語句の最初と最後の文字から帯がはみ出して、隣の空白にかかる長さ。</td>
+      <td>語句の最初と最後の文字から帯がはみ出して、隣の空白にかかる長さです。</td>
     </tr>
     <tr>
       <td><code>paddingY</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.05em</code></td>
-      <td>文字の帯の上下の余白。</td>
+      <td>文字の帯の上下の内側余白です。</td>
     </tr>
     <tr>
       <td><code>paddingTop</code>, <code>paddingBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
-      <td>上と下の余白。それぞれ <code>paddingY</code> の代わりになります。</td>
+      <td>上と下の内側余白です。それぞれ<code>paddingY</code>の代わりになります。</td>
     </tr>
   </tbody>
 </table>
 
-em 単位の長さ（`paddingX`、`paddingY`、`paddingTop`、`paddingBottom`、`borderRadius`）は、マークしたテキストの文字サイズが基準です。帯は場所を取りません。テキストはマークがないときと同じに組まれ、帯はその下に描かれ、余白は語間と行間にかかります。VDT では、マークした語のセグメントが `mark`（`{ style, id, start?, end?, from?, to? }`）を持ち、各行は帯を `highlights`（`{ x, y, width, height, color, radiusLeft, radiusRight }`。行の `bbox.x` とベースラインからの相対値）に持ちます。キャンバス、PDF、HTML のバックエンドは、行の文字より先にそれを描きます。
+em単位の長さ（`paddingX`、`paddingY`、`paddingTop`、`paddingBottom`、`borderRadius`）は、マークしたテキストの文字サイズが基準です。帯は場所を取りません。テキストはマークがないときと同じに組まれ、帯はその下に描かれ、内側余白は語間と行間にかかります。VDTでは、マークした語のセグメントには`mark`（`{ style, id, start?, end?, from?, to? }`）が付き、各行は帯を`highlights`（`{ x, y, width, height, color, radiusLeft, radiusRight }`。行の`bbox.x`とベースラインからの相対値）に保持します。キャンバス、PDF、HTMLのバックエンドは、行の文字より先にそれを描きます。
 
 ```ts
 const resolved = resolveMarkStylesConfig(config.markStyles);
@@ -649,7 +649,7 @@ const config: PostextConfig = {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>本文の色</td>
-      <td>コードの色です。独自の色を持たない字句はこの色になります。</td>
+      <td>コードの色です。独自の色が指定されていない字句はこの色になります。</td>
     </tr>
     <tr>
       <td><code>backgroundEnabled</code> / <code>background</code></td>
@@ -685,7 +685,7 @@ const config: PostextConfig = {
       <td><code>span</code></td>
       <td><code>'column' | 'page'</code></td>
       <td><code>'column'</code></td>
-      <td>ページ幅のコードリストは、<code>span: 'page'</code>の囲みと同じく、多段組のページのすべての段にまたがります。フェンスごとに<code>span=page</code>で指定できます。</td>
+      <td>ページ幅のコードリストは、<code>span: 'page'</code>の囲みと同じく、段組みのページのすべての段にまたがります。フェンスごとに<code>span=page</code>で指定できます。</td>
     </tr>
     <tr>
       <td><code>tabSize</code></td>
@@ -781,7 +781,7 @@ const config: PostextConfig = {
       <td><code>highlight</code></td>
       <td><code>'builtin' | 'none'</code></td>
       <td><code>'builtin'</code></td>
-      <td>組み込みの字句解析器（と登録したハイライタ）で字句に色を付けます。<code>'none'</code>なら、どのコードリストも<code>color</code>で組みます。</td>
+      <td>組み込みの字句解析器（と登録したハイライター）で字句に色を付けます。<code>'none'</code>なら、どのコードリストも<code>color</code>で組みます。</td>
     </tr>
     <tr>
       <td><code>tokens</code></td>
@@ -826,7 +826,7 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-ホストは`registerCodeHighlighter`で独自のハイライタ（Shiki、Prism、highlight.js）を組み込めます。設定はシリアライズできるデータなので、関数は`codeStyle`に書かず、エンジンに登録します。
+ホストは`registerCodeHighlighter`で独自のハイライター（Shiki、Prism、highlight.js）を組み込めます。設定はシリアライズできるデータなので、関数は`codeStyle`に書かず、エンジンに登録します。
 
 ```ts
 import { registerCodeHighlighter } from 'postext';
@@ -838,11 +838,11 @@ registerCodeHighlighter('rust', (code) => code.split('\n').map((line) => [
 registerCodeHighlighter('*', null); // remove the one registered for every language
 ```
 
-ある言語に登録したハイライタは`'*'`に登録したものより優先され、`'*'`に登録したものは組み込みの字句解析器より優先されます。ランは`token`の種類（`tokens`で色が付きます）か、独自の`color`（CSSの16進数）を指定します。`undefined`を返すハイライタ、例外を投げるハイライタ、つなげてもコードリスト自身の行にならない行を返すハイライタは使われません。レイアウトはコードリストを組むときに登録簿を読みます。ビルドの前に登録し、Web Workerの中で組むとき（Sandboxはそうしています）はWorkerの中で登録してください。
+ある言語に登録したハイライターは`'*'`に登録したものより優先され、`'*'`に登録したものは組み込みの字句解析器より優先されます。ランは`token`の種類（`tokens`で色が付きます）か、独自の`color`（CSSの16進数）を指定します。`undefined`を返すハイライター、例外を投げるハイライター、つなげてもコードリスト自身の行にならない行を返すハイライターは使われません。レイアウトはコードリストを組むときに登録簿を読みます。ビルドの前に登録し、Web Workerの中で組むとき（Sandboxはそうしています）はWorkerの中で登録してください。
 
 ### インラインコード
 
-`codeStyle.inline`は、バッククォートで囲んだテキストをコードの書体で、チップと同じ枠に入れて組みます。行はコードの中のスペースか、文字または数字と文字のあいだのハイフンの後ろで分かれることがあり、そのとき枠は二つに切れて、何も足されません。コードの中のスペースはコードの書体の幅を保ち、行の両端揃えでも広がりません。未設定なら、インラインコードは本文の書体のままです。
+`codeStyle.inline`は、バッククォートで囲んだテキストをコードの書体で、チップと同じ枠に入れて組みます。行はコードの中のスペースか、文字または数字と文字のあいだのハイフンの後ろで分かれることがあり、そのとき枠は2つに切れて、何も足されません。コードの中のスペースはコードの書体の幅を保ち、行の両端そろえでも広がりません。未設定なら、インラインコードは本文の書体のままです。
 
 <table>
   <thead>
@@ -862,7 +862,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>なし / <code>0.5pt</code></td><td>枠線です。</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code>は範囲のサイズです。</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td>塗りか枠線があれば<code>0.2em</code>、なければ<code>0</code> / <code>0.1em</code></td><td>塗りの内側のアキです。上下のアキは行のボックスの外側に描かれます。</td></tr>
-    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>コードの中のアラビア文字、ヘブライ文字、CJKの文字の書体です。本文の書体（<code>'text'</code>）で組むか（それらを持つコードの書体は多くありません）、それらを持つコードの書体（<code>'code'</code>）で組みます。</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>コードの中のアラビア文字、ヘブライ文字、CJKの文字の書体です。本文の書体（<code>'text'</code>）で組むか（それらの文字を収めたコードの書体は多くありません）、コードの書体（<code>'code'</code>）で組みます。</td></tr>
   </tbody>
 </table>
 
@@ -875,7 +875,7 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
 
 ## 部
 
-`parts`プロパティは、文書が`:::part{number="…" title="…"}`コンテナーで開く部扉のページを設定します。章のまとまりを束ねる「Part I — Foundations」のページです。部は常に独立したページを占めます。コンテナーは設定した奇偶の新しいページへ改ページし、そのページを`parts.margins`で本文領域を決める1段のページに変え、部扉のデザインをページ全体に重ね、閉じるフェンスの後でもう一度改ページします。こうして次の章（自身の`breakBefore.parity`を持ちます）はきれいに始まります。H1の既定の設定では、奇数ページの部扉、白の偶数ページ、次の奇数ページに章、という古典的な構成になります。
+`parts`プロパティは、文書が`:::part{number="…" title="…"}`コンテナーで開く部扉のページを設定します。章のまとまりを束ねる「Part I — Foundations」のページです。部は常に独立したページを占めます。コンテナーは設定した奇偶の新しいページへ改ページし、そのページを`parts.margins`で本文領域を決める1段のページに変え、部扉のデザインをページ全体に重ね、終了行の後でもう一度改ページします。こうして次の章（自身の`breakBefore.parity`に従います）はきれいに始まります。H1の既定の設定では、奇数ページの部扉、白の偶数ページ、次の奇数ページに章、という古典的な構成になります。
 
 ```ts
 const config: PostextConfig = {
@@ -926,7 +926,7 @@ const config: PostextConfig = {
       <td><code>page</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>:::part</code>が部扉のページを開くかどうかです。<code>false</code>ではページを開かず、フェンスの本体も組みません。部の番号、タイトル、パレットは、それ自体の改ページなしに、次の内容から効力を持ちます。典型的な使い方は<code>htmlViewer.overrides.parts.page: false</code>で、部扉のない画面用の版にします。</td>
+      <td><code>:::part</code>が部扉のページを開くかどうかです。<code>false</code>ではページを開かず、ブロックの中身も組みません。部の番号、タイトル、パレットは、それ自体の改ページなしに、次の内容から効力を持ちます。典型的な使い方は<code>htmlViewer.overrides.parts.page: false</code>で、部扉のない画面用の版にします。</td>
     </tr>
     <tr>
       <td><code>breakBefore.parity</code></td>
@@ -938,7 +938,7 @@ const config: PostextConfig = {
       <td><code>breakAfter.enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>閉じるフェンスの後の内容を新しいページに送ります。<code>false</code>のときは、部扉のページの1段の中で続きます。</td>
+      <td>終了行の後の内容を新しいページに送ります。<code>false</code>のときは、部扉のページの1段の中で続きます。</td>
     </tr>
     <tr>
       <td><code>breakAfter.parity</code></td>
@@ -950,7 +950,7 @@ const config: PostextConfig = {
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>ページの余白</td>
-      <td>部扉のページの本文領域で、フェンスの中のブロックが流れる1段です。各辺は、未設定ならページの余白を継承します。<code>mirror</code>は、ページの余白とまったく同じように偶数ページでのどと小口を入れ替えます。</td>
+      <td>部扉のページの本文領域で、<code>:::part</code>の中のブロックが流れる1段です。各辺は、未設定ならページの余白を継承します。<code>mirror</code>は、ページの余白とまったく同じように偶数ページでのどと小口を入れ替えます。</td>
     </tr>
     <tr>
       <td><code>design</code></td>
@@ -968,7 +968,7 @@ const config: PostextConfig = {
       <td><code>bodyStyle.fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>color</code>, <code>textAlign</code></td>
       <td><code>bodyText</code>と同じ</td>
       <td><code>bodyText</code>を継承</td>
-      <td>フェンスの中の段落、引用、リスト項目の文字組みです。ウェイト、強調の色、ハイフネーションは本文テキストから取ります。</td>
+      <td><code>:::part</code>の中の段落、引用、リスト項目の文字組みです。ウェイト、強調の色、ハイフネーションは本文テキストから取ります。</td>
     </tr>
     <tr>
       <td><code>bodyStyle.bulletColor</code></td>
@@ -992,23 +992,23 @@ const config: PostextConfig = {
       <td><code>bodyStyle.orderedLists</code></td>
       <td><code>OrderedListsConfig</code></td>
       <td>—</td>
-      <td>部の中で、<code>numberColor</code>と太字のウェイトの後に文書の<code>orderedLists</code>に重ねて適用する部分的な上書きです。たとえば部扉の章のリストに、独自の<code>separatorFontFamily</code>と<code>separatorColor</code>を持つ<code>'•'</code>の<code>separator</code>を使えます。</td>
+      <td>部の中で、<code>numberColor</code>と太字のウェイトの後に文書の<code>orderedLists</code>に重ねて適用する部分的な上書きです。たとえば部扉の章のリストに、独自の<code>separatorFontFamily</code>と<code>separatorColor</code>を指定した<code>'•'</code>の<code>separator</code>を使えます。</td>
     </tr>
   </tbody>
 </table>
 
 ### 部扉デザインのプレースホルダー
 
-デザインスロットは、見出しのプレースホルダーを部自身の値で解決します。`{titleText}`はフェンスの`title`、`{number}`は書いたとおりの`number`です。`{numberDecimal}`、`{numberRoman}`、`{numberRomanLower}`、`{numberAlpha}`、`{numberAlphaLower}`はそれを書式化し直します。番号は10進数、ローマ数字、漢数字として、それを囲む語の有無にかかわらず解析され（`"IV"`、`"iv"`、`"4"`、`"４"`、`"四"`、`"卷四"`、`"第四卷"`はどれも`{numberDecimal}`＝`4`になります）、それ以外は`''`になります。`{partTitle}`/`{partNumber}`、`{chapterTitle}`/`{chapterNumber}`（部の前の章）、`{pageNumber}`、`{totalPages}`、`{bookTotalPages}`、メタデータのプレースホルダーも使えます。`{attr.<key>}`は現在の章のH1の属性を読みます。
+デザインスロットでは、見出しのプレースホルダーが部自身の値になります。`{titleText}`は`:::part`の`title`、`{number}`は書いたとおりの`number`です。`{numberDecimal}`、`{numberRoman}`、`{numberRomanLower}`、`{numberAlpha}`、`{numberAlphaLower}`はそれを書式化し直します。番号は10進数、ローマ数字、漢数字として、それを囲む語の有無にかかわらず解析され（`"IV"`、`"iv"`、`"4"`、`"４"`、`"四"`、`"卷四"`、`"第四卷"`はどれも`{numberDecimal}`＝`4`になります）、それ以外は`''`になります。`{partTitle}`/`{partNumber}`、`{chapterTitle}`/`{chapterNumber}`（部の前の章）、`{pageNumber}`、`{totalPages}`、`{bookTotalPages}`、メタデータのプレースホルダーも使えます。`{attr.<key>}`は現在の章のH1の属性を読みます。
 
 ### 部扉裏のデザイン
 
-`versoDesign`は、部扉の直後のページに内容がないとき、そのページ、つまり部扉の丁の裏を飾ります。部そのものがそのページを白のまま残すことはありません。`breakAfter.parity`の既定は`'any'`なので、何かが奇偶を求めない限り、フェンスの後の内容はすぐ次のページから始まります。
+`versoDesign`は、部扉の直後のページに内容がないとき、そのページ、つまり部扉の丁の裏を飾ります。部そのものがそのページを白のまま残すことはありません。`breakAfter.parity`の既定は`'any'`なので、何かが奇偶を求めない限り、`:::part`の後の内容はすぐ次のページから始まります。
 
 - **次の章の見出し**。H1の既定の`breakBefore`は`'always-odd'`で、奇数ページの部扉の後では`'odd'`も同じ結果になります。章は次の奇数ページに移り、偶数ページは白のまま残ります。部扉裏のデザインが描画されます。
 - **`parts.breakAfter: { enabled: true, parity: 'odd' }`**。次の見出しの設定にかかわらず、部自身が次の奇数ページを求めます。章が左右どちらのページからでも始まるとき（`breakBefore.parity: 'any'`、または`breakBefore.enabled: false`）に使います。
 
-どちらもなければ、章は偶数ページから始まり、部扉裏のデザインは描画されません。`breakAfter.enabled: false`のときは、内容は部扉のページそのものに続きます。部扉裏は部のパレットに従うので、フェンスの`palette="band=#…"`は部扉裏の色も変えます。
+どちらもなければ、章は偶数ページから始まり、部扉裏のデザインは描画されません。`breakAfter.enabled: false`のときは、内容は部扉のページそのものに続きます。部扉裏は部のパレットに従うので、`:::part`の`palette="band=#…"`は部扉裏の色も変えます。
 
 ```ts
 parts: {
@@ -1024,13 +1024,13 @@ parts: {
 }
 ```
 
-**章を締めくくる部**。章ごとにレイアウトする本（Sandbox、`buildBundle`）では、`:::part`のフェンスはそれだけで1つの章にも、章の終わりにもなります。このとき部扉のページは章の最後のページになり、部がまだ果たしていないことを次の章が引き継ぎます。最初のブロックの前に`breakAfter`を適用し、最初のページが白のまま残るときはそこに`versoDesign`を描画します。ページは、本全体を1つの文書で組んだときと同じになります。フェンスの後に置けるのは、何も配置しないディレクティブ（`:::numbering`、`:::space`）だけです。それ以外は章の内容となり、その場合は章自身が改ページします。部の直後の空の章は独立した1ページになり、そのページが部扉裏になります。章を自分でレイアウトするホストは、これを`continuationAfter()`から得られます。部で終わる章に対して`afterPartPage: true`を返すので、それを次の章の`continuation`に渡してください。
+**章を締めくくる部**。章ごとにレイアウトする本（Sandbox、`buildBundle`）では、`:::part`のブロックはそれだけで1つの章にも、章の終わりにもなります。このとき部扉のページは章の最後のページになり、部がまだ果たしていないことを次の章が引き継ぎます。最初のブロックの前に`breakAfter`を適用し、最初のページが白のまま残るときはそこに`versoDesign`を描画します。ページは、本全体を1つの文書で組んだときと同じになります。ブロックの後に置けるのは、何も配置しないディレクティブ（`:::numbering`、`:::space`）だけです。それ以外は章の内容となり、その場合は章自身が改ページします。部の直後の空の章は独立した1ページになり、そのページが部扉裏になります。章を自分でレイアウトするホストは、これを`continuationAfter()`から得られます。部で終わる章に対して`afterPartPage: true`を返すので、それを次の章の`continuation`に渡してください。
 
 ### `:::part`コンテナー
 
-`:::part{number="…" title="…"}`の行で部を開き、`:::`だけの行で閉じます。どちらの属性も省略できます（既定は`''`）。間のブロック（典型的には章のリスト）は、部扉のページの1段の中を`bodyStyle`で、`margins.top`から流れます。ページに収まらない本体は通常のページに続きます。このページは`role: 'part'`に分類され（`VDTPage.partInfo`が番号とタイトルを持ちます）、ヘッダーとフッターの要素は`pages: 'part'`/`pages: 'body'`でこのページを対象にしたり除外したりできます。PDFバックエンドは、しおりの中で部をその章の上に加えます。本体が空のもの（`:::part{…}`の直後に`:::`）がよくある形で、これでもページは作られます。続けて書いた部が1ページを共有することはありません。部の中に入れ子にした`:::part`は外側の部にまとめられます。
+`:::part{number="…" title="…"}`の行で部を開き、`:::`だけの行で閉じます。どちらの属性も省略できます（既定は`''`）。間のブロック（典型的には章のリスト）は、部扉のページの1段の中を`bodyStyle`で、`margins.top`から流れます。ページに収まらない本体は通常のページに続きます。このページは`role: 'part'`に分類され（`VDTPage.partInfo`に番号とタイトルが入ります）、ヘッダーとフッターの要素は`pages: 'part'`/`pages: 'body'`でこのページを対象にしたり除外したりできます。PDFバックエンドは、しおりの中で部をその章の上に加えます。本体が空のもの（`:::part{…}`の直後に`:::`）がよくある形で、これでもページは作られます。続けて書いた部が1ページを共有することはありません。部の中に入れ子にした`:::part`は外側の部にまとめられます。
 
-3つ目の属性`palette="<id>=<hex>[, <id>=<hex>…]"`は、部に独自の色を与えます。部扉のページと、その後の次の部までのすべてのページで、これらのパレットidのいずれかにリンクしたデザインの色（ヘッダー、フッター、章扉の帯、部扉と部扉裏のデザイン）は、文書のパレットの値の代わりに部の値を取ります。こうして、本の各部が2つ目のデザインなしに、角のタブ、柱の点、章扉の帯の色を変えられます。例：`:::part{number="II" title="…" palette="band=#f6c297"}`。テキストの流れも従います。同じページで、上書きしたパレットの要素の基本値と等しい流れの色はすべて部の値を取ります。対象は、見出し、太字、イタリック、参照の色、行頭記号とリストの番号、キャプションのラベルとキャプションのバー、表のテキスト、罫線、塗り（ヘッダー、本体、縞模様の行、セル自身の塗り）、囲み（背景、枠線、帯、タイトル）、チップ（塗り、輪郭、テキスト）です。そのため`band`にリンクした`headings.levels[1].color`は、各部の見出しをその部の色で組みます。インラインのスウォッチは書かれた色のままです。組は、カンマ、セミコロン、スペースで区切り、`=`または`:`でidと色をつなぎます。`#`は省略できます。部はフェンスが閉じた後も効力を持ち続けます。`{partTitle}`、`{partNumber}`、パレットは流れに沿ってその後の章へ引き継がれ、さらに`continuationAfter()`が返す`continuation.part`を通じて、個別にレイアウトする章にも引き継がれます。そのため、ある部の2つ目の章も、1つ目の章とまったく同じように柱にその部を表示します。
+3つ目の属性`palette="<id>=<hex>[, <id>=<hex>…]"`は、部に独自の色を与えます。部扉のページと、その後の次の部までのすべてのページで、これらのパレットidのいずれかにリンクしたデザインの色（ヘッダー、フッター、章扉の帯、部扉と部扉裏のデザイン）は、文書のパレットの値の代わりに部の値を取ります。こうして、本の各部が2つ目のデザインなしに、角のタブ、柱の点、章扉の帯の色を変えられます。例：`:::part{number="II" title="…" palette="band=#f6c297"}`。テキストの流れも従います。同じページで、上書きしたパレットの要素の基本値と等しい流れの色はすべて部の値を取ります。対象は、見出し、太字、イタリック、参照の色、行頭記号とリストの番号、キャプションのラベルとキャプションのバー、表のテキスト、罫線、塗り（ヘッダー、本体、縞模様の行、セル自身の塗り）、囲み（背景、枠線、帯、タイトル）、チップ（塗り、輪郭、テキスト）です。そのため`band`にリンクした`headings.levels[1].color`は、各部の見出しをその部の色で組みます。インラインのスウォッチは書かれた色のままです。組は、カンマ、セミコロン、スペースで区切り、`=`または`:`でidと色をつなぎます。`#`は省略できます。部はブロックが閉じた後も効力を持ち続けます。`{partTitle}`、`{partNumber}`、パレットは流れに沿ってその後の章へ引き継がれ、さらに`continuationAfter()`が返す`continuation.part`を通じて、個別にレイアウトする章にも引き継がれます。そのため、ある部の2つ目の章も、1つ目の章とまったく同じように柱にその部を表示します。
 
 2つのパレットの要素が同じ基本値を持っていても、部が一方だけを上書きしたり、異なる色を与えたりすれば、部の中では異なる値を取ることがあります。値だけでは流れの色がどの要素から来たのかわからないので、流れの各色は、それが由来しうる設定と照合され、それらの設定がリンクする値を取ります。次のものは区別されます。
 
@@ -1053,7 +1053,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## 見出しスタイル
 
-`headingStyles`プロパティは、文書が`# Title {style="<id>"}`で見出しに適用する名前付きスタイルを宣言します。スタイルは2つのことをします。1つは、見出しのレベルの文字組み、デザイン、番号付けを上書きすることです。レベルの要素の`level`以外のすべてのフィールド（フォント、サイズ、色、`breakBefore`、`span`、`advancedDesign`、`textTransform`、`hidden`、`numberingTemplate`…）が対象です。もう1つは、見出しが開く**節**を制御することです。節のページ（同じかそれより上のレベルの次の見出しまで。`sectionEnd: 'heading'`ならレベルを問わず次の見出しまで）は、スタイルの柱、ページのジオメトリー、本文の文字組み、パレットを取ります。こうして、2つ目の設定なしに、10進数で番号を振った2段組みのマニュアルの中に、本の前付け（ローマ数字のノンブルと青い帯を持つ、1段の広い段で組んだ序文）を収められます。
+`headingStyles`プロパティは、文書が`# Title {style="<id>"}`で見出しに適用する名前付きスタイルを宣言します。スタイルは2つのことをします。1つは、見出しのレベルの文字組み、デザイン、番号付けを上書きすることです。レベルの要素の`level`以外のすべてのフィールド（フォント、サイズ、色、`breakBefore`、`span`、`advancedDesign`、`textTransform`、`hidden`、`numberingTemplate`…）が対象です。もう1つは、見出しが開く**節**を制御することです。節のページ（同じかそれより上のレベルの次の見出しまで。`sectionEnd: 'heading'`ならレベルを問わず次の見出しまで）は、スタイルの柱、ページのジオメトリー、本文の文字組み、パレットを取ります。こうして、2つ目の設定なしに、10進数で番号を振った2段組みのマニュアルの中に、本の前付け（ローマ数字のノンブルと青い帯の付いた、1段の広い段で組んだ序文）を収められます。
 
 ```ts
 const config: PostextConfig = {
@@ -1198,7 +1198,7 @@ headingStyles: [
 
 左右を選ばずに独立したページを保つには、代わりに`breakBefore: { parity: 'any' }`を設定し、`:::pagebreak`は省きます。
 
-**ページがどの節に属するか**。柱とパレットは、見出しごとではなくページごとに選ばれます。ページは、そのページ上の最後の節の切り替わりの後に有効な節を取ります。同じページで1つの節が終わって別の節が始まるとき（たとえば辞書の短い2つの文字の項）、ページは2つ目の節の柱とパレットを持ちます。スタイル付きの節がページの途中でスタイルなしの見出しによって終わるときは、ページは文書の値に戻ります。`{chapterTitle}`も同じ規則に従い、2つの章が出会うページは後の章のタイトルを表示します。白ページは[章のタイトル](/ja/docs/configuration-headings#白ページの帰属)の規則に従います。奇偶を合わせる白ページ（`blankForParity`）はその後に開く節に属し、`'always-odd'`/`'always-even'`の改ページが加える区切り（`blankForForce`）はその前の節に属します。部扉は開いている節を閉じます。
+**ページがどの節に属するか**。柱とパレットは、見出しごとではなくページごとに選ばれます。ページは、そのページ上の最後の節の切り替わりの後に有効な節を取ります。同じページで1つの節が終わって別の節が始まるとき（たとえば辞書の短い2つの文字の項）、ページは2つ目の節の柱とパレットを使います。スタイル付きの節がページの途中でスタイルなしの見出しによって終わるときは、ページは文書の値に戻ります。`{chapterTitle}`も同じ規則に従い、2つの章が出会うページは後の章のタイトルを表示します。白ページは[章のタイトル](/ja/docs/configuration-headings#白ページの帰属)の規則に従います。奇偶を合わせる白ページ（`blankForParity`）はその後に開く節に属し、`'always-odd'`/`'always-even'`の改ページが加える区切り（`blankForForce`）はその前の節に属します。部扉は開いている節を閉じます。
 
 ```md
 # A {style="letter"}
@@ -1210,7 +1210,7 @@ Aardvark, abacus.
 Babble, badger… (runs on to the next page)
 ```
 
-どちらの文字もページ1から始まるので、ページ1は`B`の節の柱を取ります。スタイルのヘッダーに置いた爪見出しはそこで「B」になり、「A」の爪見出しを持つページはありません。どの節にも爪見出しが必要なら、各節に独立したページ（`breakBefore`）を与えてください。番号付きの章の後のアルファベット付きの付録と、目次とPDFのしおりには載るがページ上にはタイトルを出さない献辞のページの例です。
+どちらの文字もページ1から始まるので、ページ1は`B`の節の柱を取ります。スタイルのヘッダーに置いた爪見出しはそこで「B」になり、「A」の爪見出しが付くページはありません。どの節にも爪見出しが必要なら、各節に独立したページ（`breakBefore`）を与えてください。番号付きの章の後のアルファベット付きの付録と、目次とPDFのしおりには載るがページ上にはタイトルを出さない献辞のページの例です。
 
 ```ts
 headingStyles: [

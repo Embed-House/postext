@@ -9,7 +9,7 @@ export const metadata = {
   readingTime: '8分',
   order: 17,
   parent: 'configuration',
-  plainSummary: "このページでは、漫画のページの設定を説明します。ページの枠と、コマとコマのあいだの空きを決めます。せりふの文字のフォントと大きさを選びます。吹き出し、ナレーション、描き文字の描き方を決めます。登場人物を並べておくと、人物ごとに決まったスタイルで話させることもできます。ページそのものの書き方は、漫画のガイドで説明しています。",
+  plainSummary: "このページでは、漫画のページの設定を説明します。ページの枠と、コマとコマのあいだの空きを決めます。セリフの文字のフォントと大きさを選びます。吹き出し、ナレーション、描き文字の描き方を決めます。登場人物を並べておくと、人物ごとに決まったスタイルで話させることもできます。ページそのものの書き方は、漫画のガイドで説明しています。",
 };
 
 # 設定：漫画
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 漫画
 
-`comics`プロパティは、漫画のページ（`:::page`）、帯漫画（`:::strip`）、見開きを設定します。コマを割り出す枠と間白、コマのスタイル、写植、吹き出しのスタイル、登場人物です。読むのは漫画のある文書だけです。漫画のない文書はこれまでとまったく同じに組まれ、漫画があって`comics`の節がない文書は、その言語の既定値を使います。マークアップとページの写植のしかたは[漫画](/ja/docs/comics)で説明しています。
+`comics`プロパティは、漫画のページ（`:::page`）、帯漫画（`:::strip`）、見開きを設定します。コマを割り出す枠と間白、コマのスタイル、写植、吹き出しのスタイル、登場人物です。この設定が使われるのは漫画を含む文書だけです。漫画のない文書はこれまでとまったく同じに組まれ、漫画があって`comics`の節がない文書は、その言語の既定値を使います。マークアップとページの写植のしかたは[漫画](/ja/docs/comics)で説明しています。
 
 ```ts
 const config: PostextConfig = {
@@ -47,13 +47,13 @@ const config: PostextConfig = {
       <td><code>readingDirection</code></td>
       <td><code>'auto' | 'ltr' | 'rtl'</code></td>
       <td><code>'auto'</code></td>
-      <td>段の中のコマの順序です。<code>'auto'</code>は、右から左に書く文書、縦組みの文書、日本語と繁体字中国語の文書では右から左へ、それ以外では（簡体字中国語と韓国語を含め）<code>artDirection</code>の方向へ読みます。ページの<code>direction</code>属性が優先されます。<code>page.binding: 'auto'</code>のとき、コミックを右から左に読む本は右綴じになります。</td>
+      <td>段の中のコマの順序です。<code>'auto'</code>は、右から左に書く文書、縦組みの文書、日本語と繁体字中国語の文書では右から左へ、それ以外では（簡体字中国語と韓国語を含め）<code>artDirection</code>の方向へ読みます。ページの<code>direction</code>属性が優先されます。<code>page.binding: 'auto'</code>のとき、漫画を右から左に読む本は右綴じになります。</td>
     </tr>
     <tr>
       <td><code>artDirection</code></td>
       <td><code>'ltr' | 'rtl'</code></td>
       <td><code>'ltr'</code></td>
-      <td>絵が前提とする読む方向です。マンガなら<code>'rtl'</code>です。</td>
+      <td>絵が前提とする読む方向です。日本の漫画なら<code>'rtl'</code>です。</td>
     </tr>
     <tr>
       <td><code>mirrorArt</code></td>
@@ -65,7 +65,7 @@ const config: PostextConfig = {
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>ページの余白</td>
-      <td>漫画のページ独自の余白です（<code>top</code>、<code>bottom</code>、<code>left</code>、<code>right</code>、<code>mirror</code>）。コマはその内側の箱から割り出します。未設定なら、ページの版面から割り出します。</td>
+      <td>漫画のページ独自の余白です（<code>top</code>、<code>bottom</code>、<code>left</code>、<code>right</code>、<code>mirror</code>）。コマは、この余白の内側に残る矩形から割り出します。未設定なら、ページの版面から割り出します。</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
@@ -89,7 +89,7 @@ const config: PostextConfig = {
       <td><code>panelStyles</code></td>
       <td><code>NamedPanelStyleConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>名前付きのコマのスタイルで、<code>:::page&#123;style=…&#125;</code>か<code>::panel&#123;style=…&#125;</code>で選びます。それぞれ<code>id</code>、任意の<code>name</code>（エディターの画面でだけ使います）、コマのスタイルの項目を持ち、設定していない項目は<code>panel</code>に従います。</td>
+      <td>名前付きのコマのスタイルで、<code>:::page&#123;style=…&#125;</code>か<code>::panel&#123;style=…&#125;</code>で選びます。各項目には<code>id</code>、任意の<code>name</code>（エディターの画面でだけ使います）、コマのスタイルの項目があり、設定していない項目は<code>panel</code>に従います。</td>
     </tr>
     <tr>
       <td><code>lettering</code></td>
@@ -101,7 +101,7 @@ const config: PostextConfig = {
       <td><code>balloonStyles</code></td>
       <td><code>BalloonStyleConfig[]</code></td>
       <td>組み込みの9つのスタイル</td>
-      <td>種類ごとの吹き出しのスタイルです。組み込みのスタイルは常にあり、そのIDを持つ項目はそのスタイルを変更し、新しいIDの項目は<code>speech</code>に重ねたスタイルを加えます。</td>
+      <td>種類ごとの吹き出しのスタイルです。組み込みのスタイルは常にあります。同じIDの項目はそのスタイルを変更し、新しいIDの項目は<code>speech</code>に重ねた新しいスタイルを加えます。</td>
     </tr>
     <tr>
       <td><code>cast</code></td>
@@ -126,7 +126,7 @@ const config: PostextConfig = {
 
 ### コマのスタイル
 
-`comics.panel`と、`comics.panelStyles`の各項目は次の項目を持ちます。
+`comics.panel`と、`comics.panelStyles`の各項目には、次の項目があります。
 
 <table>
   <thead>
@@ -178,7 +178,7 @@ const config: PostextConfig = {
       <td><code>bleed</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>このスタイルのコマを断ち切りにします。枠に接するすべての辺を、枠の外の仕上がり線と裁ち落としまで伸ばします。</td>
+      <td>このスタイルのコマを裁ち落としにします。枠に接するすべての辺で、コマを枠の外へ、仕上がり線を越えて塗り足しまで伸ばします。</td>
     </tr>
   </tbody>
 </table>
@@ -213,7 +213,7 @@ const config: PostextConfig = {
       <td><code>lineHeight</code></td>
       <td><code>number</code></td>
       <td><code>1.15</code></td>
-      <td>行と行の間隔で、サイズの倍数です。既定のままにすると、縦書きの吹き出しと中国語・日本語の吹き出しは1.5、アラビア語の吹き出しは1.45になります。</td>
+      <td>行と行の間隔で、サイズの倍数です。既定のままにすると、縦組みの吹き出しと中国語・日本語の吹き出しは1.5、アラビア語の吹き出しは1.45になります。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -225,7 +225,7 @@ const config: PostextConfig = {
       <td><code>bold</code>, <code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>すべての写植をボールドかイタリックにします。中国語、日本語、アラビア語の写植は斜体にしません。</td>
+      <td>すべての写植を太字かイタリックにします。中国語、日本語、アラビア語の写植はイタリックにしません。</td>
     </tr>
     <tr>
       <td><code>letterSpacing</code></td>
@@ -237,7 +237,7 @@ const config: PostextConfig = {
       <td><code>writingMode</code></td>
       <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
       <td><code>'auto'</code></td>
-      <td><code>'auto'</code>は、日本語と繁体字中国語、そして縦組みの文書を縦書きで写植し、それ以外は横書きで写植します。台本の行に<code>vertical</code>か<code>horizontal</code>を付けると、その行だけ組み方向を変えられます（<a href="/ja/docs/comics#写植">漫画 › 写植</a>を参照）。</td>
+      <td><code>'auto'</code>は、日本語と繁体字中国語、そして縦組みの文書では縦組みで写植し、それ以外では横組みで写植します。台本の行に<code>vertical</code>か<code>horizontal</code>を付けると、その行だけ組み方向を変えられます（<a href="/ja/docs/comics#写植">漫画 › 写植</a>を参照）。</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
@@ -249,7 +249,7 @@ const config: PostextConfig = {
       <td><code>dropFinalStop</code></td>
       <td><code>'auto' | boolean</code></td>
       <td><code>'auto'</code></td>
-      <td>吹き出しを終える句点を省きます（マンガの<code>。</code>）。<code>'auto'</code>：日本語と中国語でだけ省きます。</td>
+      <td>吹き出しの最後の句点を省きます（日本の漫画の<code>。</code>）。<code>'auto'</code>：日本語と中国語でだけ省きます。</td>
     </tr>
     <tr>
       <td><code>doubleDash</code></td>
@@ -267,19 +267,19 @@ const config: PostextConfig = {
       <td><code>joinSameSpeaker</code></td>
       <td><code>'butt' | 'connector' | 'none'</code></td>
       <td><code>'butt'</code></td>
-      <td>同じ話し手の吹き出しが2つ続くとき、本体を1つの輪郭にまとめるか、細い首でつなぐか、離しておくかです。台本の行ごとに<code>join</code>か<code>join=false</code>で指定することもできます。</td>
+      <td>同じ話者の吹き出しが2つ続くとき、本体を1つの輪郭にまとめるか、細い首でつなぐか、離しておくかです。台本の行ごとに<code>join</code>か<code>join=false</code>で指定することもできます。</td>
     </tr>
     <tr>
       <td><code>maxColumnChars</code></td>
       <td><code>number</code></td>
       <td><code>8</code></td>
-      <td>縦書きの写植で、吹き出しの1行に入れる最大の字数です。描き文字は5字で改行します。</td>
+      <td>縦組みの写植で、吹き出しの1行に入れる最大の字数です。描き文字は5字で改行します。</td>
     </tr>
     <tr>
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>コマに収めるために形を変えた吹き出しが、そのために中国語の単語を分けることはありません。新しい行分けが単語を一つ切るごとに（望ましい形では切れていない単語です）、読む順序が乱れた吹き出しより高いコストがかかるので、先に吹き出しを動かすか順序を変えます。文節で改行する日本語の写植には影響しません。<code>false</code>にするとpostext 1.27と同じ写植になります。1.28より前に保存された、マンガを含む文書はこの値で読み込まれます。</td>
+      <td>コマに収めるために吹き出しの形を変えても、そのために中国語の単語を分けることはありません。本来の形では切れていない単語を新しい行分けが1つ切るたびに、読む順序が乱れた吹き出しよりも高いコストがかかります。そのため配置の処理は、まず吹き出しを動かすか、順序を変えます。文節で改行する日本語の写植には影響しません。<code>false</code>にするとpostext 1.27と同じ写植になります。1.28より前に保存された、漫画を含む文書は<code>false</code>で読み込まれます。</td>
     </tr>
   </tbody>
 </table>
@@ -356,7 +356,7 @@ const config: PostextConfig = {
       <td><code>roundness</code></td>
       <td><code>number</code></td>
       <td><code>2.2</code></td>
-      <td>楕円の超楕円の指数です。2で楕円になり、値を大きくするほど四角に近づきます。</td>
+      <td>楕円形の吹き出しに使う超楕円の指数です。2で楕円になり、値を大きくするほど四角に近づきます。</td>
     </tr>
     <tr>
       <td><code>burstPoints</code></td>
@@ -380,7 +380,7 @@ const config: PostextConfig = {
       <td><code>aspect</code></td>
       <td><code>number</code></td>
       <td><code>1.6</code></td>
-      <td>改行で文字の塊に目指させる幅と高さの比です（横書きの写植）。</td>
+      <td>改行の位置を決めるときに、文字のまとまりが目指す幅と高さの比です（横組みの写植）。</td>
     </tr>
     <tr>
       <td><code>tail</code></td>
@@ -398,7 +398,7 @@ const config: PostextConfig = {
       <td><code>tailReach</code></td>
       <td><code>number</code></td>
       <td><code>0.55</code></td>
-      <td>しっぽが話し手に向かってどこまで伸びるかで、輪郭から口までの隔たりに対する割合です。</td>
+      <td>しっぽが話者に向かってどこまで伸びるかで、輪郭から口までの隔たりに対する割合です。</td>
     </tr>
     <tr>
       <td><code>target</code></td>
@@ -434,7 +434,7 @@ const config: PostextConfig = {
       <td><code>bold</code>, <code>italic</code></td>
       <td><code>boolean</code></td>
       <td>写植の値</td>
-      <td>ボールドまたはイタリックの文字です。</td>
+      <td>太字またはイタリックの文字です。</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -464,13 +464,13 @@ const config: PostextConfig = {
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>なし</td>
-      <td>文字の周りに描く縁（袋文字）の太さで、絵の上でも文字が読めるようにします（描き文字）。</td>
+      <td>文字の周りに描く縁取り（袋文字）の太さで、絵の上でも文字が読めるようにします（描き文字）。</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
       <td><code>ColorValue</code></td>
       <td>白</td>
-      <td>縁の色です。</td>
+      <td>縁取りの色です。</td>
     </tr>
     <tr>
       <td><code>rotate</code></td>
@@ -499,7 +499,7 @@ const config: PostextConfig = {
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>必須</td>
-      <td>台本と絵のアンカーで使う話し手のキーです。</td>
+      <td>台本と絵のアンカーで話者を表すキーです。</td>
     </tr>
     <tr>
       <td><code>name</code></td>

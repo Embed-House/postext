@@ -2,7 +2,7 @@
 title: "Une fiche de TP aux vidéos lues à l’écran et dans l’EPUB"
 summary: "Deux ressources vidéo avec leurs fichiers MP4 : l’imprimé montre la première image et un QR code, renderToHtml et postext-epub lisent les fichiers."
 plain: "Une fiche de travaux pratiques de physique avec deux courts films d’un pendule. Sur papier, chaque film est une image fixe avec un code à scanner ; à l’écran et dans le livre numérique, les films se lisent sur la page."
-description: "Une fiche de TP de physique avec deux clips MP4, imprimés en vignettes avec QR code, lus par les lecteurs vidéo de l’édition HTML et inclus dans un EPUB fixe."
+description: "Une fiche de TP de physique avec deux clips MP4, imprimés en affiches avec QR code, lus par les lecteurs vidéo de l’édition HTML et inclus dans un EPUB fixe."
 question: "Comment l’édition écran et l’EPUB lisent-ils les vidéos, et comment masquer le bouton de téléchargement ?"
 aliases: ["vidéo", "MP4", "vidéo HTML5", "lecteur vidéo", "bouton de téléchargement", "nodownload", "controlslist", "QR code", "vidéo EPUB", "fiche de TP", "fiche d’exercices", "resourceVideoUrl", "videoStyle"]
 pageNotes: { "1": "L’ouverture de la fiche de TP 4.2 : un bandeau rouille avec le titre « The period of a pendulum » et trois champs blancs pour le nom, le groupe et la date, puis l’objectif, les deux vidéos et le rappel théorique sur deux colonnes. En pied, les premières images de « Video 1 » et « Video 2 », chacune avec un symbole de lecture sombre et un QR code.", "2": "Le protocole dans un encadré crème, un tableau de mesures vide, un tableau des périodes exactes de 5° à 90°, et quatre questions avec des cases blanches pour les réponses." }
@@ -10,13 +10,13 @@ pageNotes: { "1": "L’ouverture de la fiche de TP 4.2 : un bandeau rouille ave
 
 ## Ce que vous allez composer
 
-La fiche de TP 4.2 de *Bench Physics*, un cahier A4 pour les élèves de 16 à 18 ans, sur la période d’un pendule. Un bandeau rouille porte le titre et les champs du nom, du groupe et de la date. Au pied de la première page, deux vidéos du même pendule, lâché à 10° et à 80°, sont côte à côte. Sur papier, chaque vidéo est sa première image, avec un symbole de lecture et un QR code qui ouvre le MP4. Dans l’édition écran à côté des pages, et dans l’EPUB qu’écrit le pen, les deux mêmes ressources se lisent dans le lecteur vidéo de chacun. La deuxième page contient le protocole, un tableau à remplir, les périodes exactes calculées par le code et quatre questions avec des cases pour les réponses.
+La fiche de TP 4.2 de *Bench Physics*, un cahier A4 pour les élèves de 16 à 18 ans, sur la période d’un pendule. Un bandeau rouille contient le titre et les champs du nom, du groupe et de la date. Au pied de la première page, deux vidéos du même pendule, lâché à 10° et à 80°, sont côte à côte. Sur papier, chaque vidéo est sa première image, avec un symbole de lecture et un QR code qui ouvre le MP4. Dans l’édition écran à côté des pages, et dans l’EPUB qu’écrit le pen, les deux mêmes ressources se lisent dans le lecteur vidéo de chacun. La deuxième page contient le protocole, un tableau à remplir, les périodes exactes calculées par le code et quatre questions avec des cases pour les réponses.
 
 ## Préparation
 
 ### 1 · Donner à chaque vidéo une adresse de production et un fichier
 
-Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Une vidéo à vous a deux adresses. `video.url` est l’endroit où le livre publié la trouvera : le QR code l’imprime et le PDF y relie la vignette, c’est donc ici l’adresse jsDelivr de la vidéo, celle qu’un téléphone peut ouvrir dès aujourd’hui. `video.fileId` désigne le fichier lui-même, tenu à part comme une image matricielle, pour les sorties qui peuvent l’embarquer ou le lire depuis un autre endroit (voir [Format du document › Vidéos](/fr/docs/document-format-resources#vidéos)). Les options du lecteur dans `videoStyle.player` s’appliquent à chaque vidéo : elles tournent en boucle, démarrent sans le son, se chargent en entier (27 et 61 Ko) et n’offrent ni téléchargement, ni image dans l’image, ni diffusion vers un autre écran : les vidéos restent sur la fiche.
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Une vidéo à vous a deux adresses. `video.url` est l’endroit où le livre publié la trouvera : le QR code l’imprime et le PDF y relie l’affiche, c’est donc ici l’adresse jsDelivr de la vidéo, celle qu’un téléphone peut ouvrir dès aujourd’hui. `video.fileId` désigne le fichier lui-même, tenu à part comme une image matricielle, pour les sorties qui peuvent l’embarquer ou le lire depuis un autre endroit (voir [Format du document › Vidéos](/fr/docs/document-format-resources#vidéos)). Les options du lecteur dans `videoStyle.player` s’appliquent à chaque vidéo : elles tournent en boucle, démarrent sans le son, se chargent en entier (27 et 61 Ko) et n’offrent ni téléchargement, ni image dans l’image, ni diffusion vers un autre écran : les vidéos restent sur la fiche.
 
 ### 2 · Mettre en page l’édition écran à partir de la même source
 
@@ -28,13 +28,13 @@ L’édition écran vit dans la configuration sous `htmlViewer.overrides`, que l
 
 <Excerpt region="pane" />
 
-`renderToHtml` compose chaque ressource vidéo en `<video>` HTML5 avec les options du lecteur comme attributs : `controls`, `muted`, `loop`, `playsinline`, `preload="auto"`, `disablepictureinpicture`, `disableremoteplayback` et `controlslist="nodownload"`. Ce dernier ne fait que masquer le bouton. Quiconque a l’adresse peut toujours enregistrer le fichier : voyez-y une question de propreté, pas une protection. `resourceVideoUrl` fournit au moteur de rendu une adresse lisible pour chaque `fileId`, comme `resourceImageUrl` le fait pour les vignettes. C’est ici le fichier publié ; un site qui garde ses téléversements ailleurs renvoie sa propre URL, ou une URL blob des octets. Sans elle, le lecteur se rabat sur `video.url`, et sans aucune des deux, le panneau affiche la vignette.
+`renderToHtml` compose chaque ressource vidéo en `<video>` HTML5 avec les options du lecteur comme attributs : `controls`, `muted`, `loop`, `playsinline`, `preload="auto"`, `disablepictureinpicture`, `disableremoteplayback` et `controlslist="nodownload"`. Ce dernier ne fait que masquer le bouton. Quiconque a l’adresse peut toujours enregistrer le fichier : voyez-y une question de propreté, pas une protection. `resourceVideoUrl` fournit au moteur de rendu une adresse lisible pour chaque `fileId`, comme `resourceImageUrl` le fait pour les affiches. C’est ici le fichier publié ; un site qui garde ses téléversements ailleurs renvoie sa propre URL, ou une URL blob des octets. Sans elle, le lecteur se rabat sur `video.url`, et sans aucune des deux, le panneau montre l’affiche.
 
 ### 4 · Embarquer les vidéos dans un EPUB à mise en page fixe
 
 <Excerpt region="epub" />
 
-La fiche est construite autour de deux vidéos côte à côte et de cases vides où écrire : la mise en page fixe la conserve, chaque page telle qu’imprimée, avec un lecteur à la place de la vignette. Un EPUB recomposable lirait aussi les vidéos, l’une sous l’autre à la largeur du texte. `resourceBytes` répond `video/mp4` pour chaque vidéo et un JPEG pour chaque vignette, et le générateur les range sous `media/` et `images/`. L’EPUB ne garde que les attributs que connaît son schéma (`controls`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`) : le bouton de téléchargement et le reste sont laissés au système de lecture. Le fichier passe EPUBCheck sans erreur ni avertissement.
+La fiche est construite autour de deux vidéos côte à côte et de cases vides où écrire : la mise en page fixe la conserve, chaque page telle qu’imprimée, avec un lecteur à la place de l’affiche. Un EPUB recomposable lirait aussi les vidéos, l’une sous l’autre à la largeur du texte. `resourceBytes` répond `video/mp4` pour chaque vidéo et un JPEG pour chaque affiche, et le générateur les range sous `media/` et `images/`. L’EPUB ne garde que les attributs que connaît son schéma (`controls`, `autoplay`, `muted`, `loop`, `playsinline`, `preload`) : le bouton de téléchargement et le reste sont laissés au système de lecture. Le fichier passe EPUBCheck sans erreur ni avertissement.
 
 ### 5 · Composer θ et π dans le canvas, le PDF et l’EPUB
 
@@ -59,7 +59,7 @@ Le `player` propre à une vidéo se superpose à `videoStyle.player`. La lecture
 
 ### Afficher à l’écran la vignette imprimée
 
-Avec `html: 'poster'`, l’édition HTML compose la vignette avec son symbole de lecture et son QR code, reliée à l’adresse de production, à la place du lecteur.
+Avec `html: 'poster'`, l’édition HTML compose l’affiche avec son symbole de lecture et son QR code, reliée à l’adresse de production, à la place du lecteur.
 
 ```diff
  const videoStyle = {
@@ -68,7 +68,7 @@ Avec `html: 'poster'`, l’édition HTML compose la vignette avec son symbole de
 
 ### Utiliser une vidéo YouTube ou Vimeo
 
-`source: 'youtube'` avec l’adresse de la vidéo intègre le lecteur de YouTube depuis `youtube-nocookie.com` (`privacy` est activé par défaut). Ce lecteur respecte moins d’options : commandes, plein écran, lecture automatique, son coupé et boucle ; celui de Vimeo ajoute le menu de vitesse et l’image dans l’image ; aucun des deux n’offre de téléchargement. Un EPUB ne peut pas intégrer le lecteur d’une page web : la vidéo y est donc sa vignette, reliée à la vidéo. Les options et leur portée sont listées dans [Configuration › Style des vidéos](/fr/docs/configuration-resources#style-des-vidéos).
+`source: 'youtube'` avec l’adresse de la vidéo intègre le lecteur de YouTube depuis `youtube-nocookie.com` (`privacy` est activé par défaut). Ce lecteur respecte moins d’options : commandes, plein écran, lecture automatique, son coupé et boucle ; celui de Vimeo ajoute le menu de vitesse et l’image dans l’image ; aucun des deux n’offre de téléchargement. Un EPUB ne peut pas insérer le lecteur d’une page web : la vidéo y est donc son affiche, reliée à la vidéo. Les options et leur portée sont listées dans [Configuration › Style des vidéos](/fr/docs/configuration-resources#style-des-vidéos).
 
 ## Erreurs fréquentes
 

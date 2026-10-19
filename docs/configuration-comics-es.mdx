@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuración: cómics',
   sidebarTitle: 'Ajustes de cómics',
-  description: 'Los ajustes de comics: el marco y las calles de las páginas de cómic, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto',
+  description: 'Los ajustes de los cómics: el marco y las calles de las páginas de cómic, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto',
   lang: 'es',
   lastUpdated: '2026-10-10',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
-  plainSummary: "Esta página reúne los ajustes de las páginas de cómic. Fijas el marco de la página y el espacio entre viñetas. Eliges la tipografía y el tamaño de la rotulación. Defines cómo se dibujan los bocadillos, las cartelas y las onomatopeyas. También puedes dar la lista de personajes, para que cada uno hable con su propio estilo. La guía de cómics explica cómo escribir las páginas.",
+  plainSummary: "Esta página reúne los ajustes de las páginas de cómic. Puedes fijar el marco de la página y el espacio entre viñetas. Eliges la letra y el tamaño de la rotulación. Defines cómo se dibujan los bocadillos, las cartelas y las onomatopeyas. También puedes hacer una lista de personajes para que cada uno hable con su propio estilo. La guía de cómics explica cómo se escriben las páginas.",
 };
 
 # Configuración: cómics
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Cómics
 
-La propiedad `comics` configura las páginas de cómic (`:::page`), las tiras (`:::strip`) y las dobles páginas: el marco y las calles de los que se cortan las viñetas, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto. Solo la leen los documentos que tienen cómics; un documento sin ellos se compone exactamente igual que antes, y un documento con cómics y sin sección `comics` toma los valores por defecto de su idioma. El marcado y la manera de rotular las páginas se explican en [Cómics](/es/docs/comics).
+La propiedad `comics` configura las páginas de cómic (`:::page`), las tiras (`:::strip`) y las dobles páginas: el marco y las calles con los que se cortan las viñetas, los estilos de viñeta, la rotulación, los estilos de bocadillo y el reparto. Solo la leen los documentos que tienen cómics; un documento sin cómics se maqueta exactamente igual que antes, y un documento con cómics pero sin sección `comics` usa los valores predeterminados de su idioma. El marcado y la forma de rotular las páginas se explican en [Cómics](/es/docs/comics).
 
 ```ts
 const config: PostextConfig = {
@@ -47,61 +47,61 @@ const config: PostextConfig = {
       <td><code>readingDirection</code></td>
       <td><code>'auto' | 'ltr' | 'rtl'</code></td>
       <td><code>'auto'</code></td>
-      <td>El orden de las viñetas en una tira. <code>'auto'</code> lee de derecha a izquierda en un documento de derecha a izquierda, en uno vertical y en japonés y chino tradicional y, si no, en el sentido de <code>artDirection</code> (también en chino simplificado y coreano). El atributo <code>direction</code> de una página lo sustituye. Con <code>page.binding: 'auto'</code>, un libro cuyos cómics se leen de derecha a izquierda se encuaderna por la derecha.</td>
+      <td>El orden de las viñetas en una tira. <code>'auto'</code> lee de derecha a izquierda en un documento de derecha a izquierda, en uno vertical y en japonés y chino tradicional, y en los demás casos sigue el sentido de <code>artDirection</code> (también en chino simplificado y en coreano). El atributo <code>direction</code> de una página prevalece sobre este valor. Con <code>page.binding: 'auto'</code>, un libro cuyos cómics se leen de derecha a izquierda se encuaderna por la derecha.</td>
     </tr>
     <tr>
       <td><code>artDirection</code></td>
       <td><code>'ltr' | 'rtl'</code></td>
       <td><code>'ltr'</code></td>
-      <td>El sentido de lectura para el que se dibujó el arte: <code>'rtl'</code> para el manga.</td>
+      <td>El sentido de lectura para el que se dibujaron las ilustraciones: <code>'rtl'</code> para el manga.</td>
     </tr>
     <tr>
       <td><code>mirrorArt</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Voltea los dibujos de una página que se lee en el sentido contrario a <code>artDirection</code>. Una viñeta conserva su dibujo tal como se hizo con <code>mirror=false</code>.</td>
+      <td>Invierte en espejo los dibujos de una página que se lee en el sentido contrario a <code>artDirection</code>. Con <code>mirror=false</code>, una viñeta conserva su dibujo tal como se hizo.</td>
     </tr>
     <tr>
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>los márgenes de la página</td>
-      <td>Márgenes propios para las páginas de cómic (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Las viñetas se cortan de la caja que dejan; sin ellos, de la caja de texto de la página.</td>
+      <td>Márgenes propios para las páginas de cómic (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Las viñetas se cortan de la caja que dejan esos márgenes; si no se fijan, de la caja de texto de la página.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
       <td><code>Dimension</code></td>
       <td><code>4mm</code></td>
-      <td>El espacio entre tiras. El atributo <code>gutter</code> de una página lo sustituye.</td>
+      <td>El espacio entre tiras. El atributo <code>gutter</code> de una página prevalece sobre este valor.</td>
     </tr>
     <tr>
       <td><code>gutter.vertical</code></td>
       <td><code>Dimension</code></td>
       <td><code>2mm</code></td>
-      <td>El espacio entre viñetas contiguas de una tira.</td>
+      <td>El espacio entre las viñetas contiguas de una tira.</td>
     </tr>
     <tr>
       <td><code>panel</code></td>
       <td><code>PanelStyleConfig</code></td>
       <td>véase más abajo</td>
-      <td>El estilo de viñeta por defecto.</td>
+      <td>El estilo de viñeta predeterminado.</td>
     </tr>
     <tr>
       <td><code>panelStyles</code></td>
       <td><code>NamedPanelStyleConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Estilos de viñeta con nombre, que se eligen con <code>:::page&#123;style=…&#125;</code> o <code>::panel&#123;style=…&#125;</code>. Cada uno tiene un <code>id</code>, un <code>name</code> opcional (solo para las interfaces de edición) y los campos de un estilo de viñeta; los campos sin fijar siguen a <code>panel</code>.</td>
+      <td>Estilos de viñeta con nombre, que se eligen con <code>:::page&#123;style=…&#125;</code> o <code>::panel&#123;style=…&#125;</code>. Cada uno tiene un <code>id</code>, un <code>name</code> opcional (solo para las interfaces de edición) y los campos de un estilo de viñeta; los campos que no se fijan toman el valor de <code>panel</code>.</td>
     </tr>
     <tr>
       <td><code>lettering</code></td>
       <td><code>LetteringConfig</code></td>
       <td>véase más abajo</td>
-      <td>La letra, el tamaño y las normas de la casa de todos los bocadillos del libro.</td>
+      <td>La letra, el tamaño y las normas de estilo de todos los bocadillos del libro.</td>
     </tr>
     <tr>
       <td><code>balloonStyles</code></td>
       <td><code>BalloonStyleConfig[]</code></td>
       <td>los nueve estilos integrados</td>
-      <td>Estilos de bocadillo por clase. Los integrados están siempre; una entrada con uno de sus ids lo modifica, y una entrada con un id nuevo añade un estilo superpuesto a <code>speech</code>.</td>
+      <td>Estilos de bocadillo por tipo. Los integrados existen siempre; una entrada con uno de sus ids lo modifica, y una entrada con un id nuevo añade un estilo que se aplica sobre <code>speech</code>.</td>
     </tr>
     <tr>
       <td><code>cast</code></td>
@@ -113,13 +113,13 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Imprime las cornisas y los folios en las páginas de cómic. Desactivado, una página de cómic es toda viñetas y su número sigue contando.</td>
+      <td>Imprime los titulillos y los folios en las páginas de cómic. Si está desactivado, una página de cómic solo contiene viñetas, aunque su número sigue contando.</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>sin fijar</td>
-      <td>Para los anfitriones cuyas páginas no son hojas: compone las páginas de cómic sobre una hoja impresa (<code>width</code>, <code>height</code>, <code>margins</code>) escalada a <code>fitWidth</code> px (y de <code>fitHeight</code> px de alto como mucho) en lo alto de la página. Lo fija el visor HTML del Sandbox; nunca se guarda con un documento.</td>
+      <td>Para las aplicaciones anfitrionas cuyas páginas no son hojas: maqueta las páginas de cómic sobre una hoja impresa (<code>width</code>, <code>height</code>, <code>margins</code>) escalada a <code>fitWidth</code> px (y de <code>fitHeight</code> px de alto como máximo) en la parte superior de la página. Lo fija el visor HTML del Sandbox; nunca se guarda con un documento.</td>
     </tr>
   </tbody>
 </table>
@@ -160,7 +160,7 @@ const config: PostextConfig = {
       <td><code>borderStyle</code></td>
       <td><code>'solid' | 'rough' | 'none'</code></td>
       <td><code>'solid'</code></td>
-      <td>Una línea limpia, una línea hecha a mano que tiembla un poco (con una semilla tomada de la viñeta, así que es igual en cada composición) o ninguna.</td>
+      <td>Una línea limpia, una línea a mano alzada que tiembla un poco (con una semilla tomada de la viñeta, así que es igual en cada compilación) o ninguna.</td>
     </tr>
     <tr>
       <td><code>background</code></td>
@@ -172,7 +172,7 @@ const config: PostextConfig = {
       <td><code>fit</code></td>
       <td><code>'cover' | 'contain'</code></td>
       <td><code>'cover'</code></td>
-      <td><code>cover</code> recorta el dibujo para llenar la viñeta, nunca dentro de su zona segura; <code>contain</code> lo muestra entero.</td>
+      <td><code>cover</code> recorta el dibujo para llenar la viñeta, pero nunca dentro de su zona segura; <code>contain</code> lo muestra entero.</td>
     </tr>
     <tr>
       <td><code>bleed</code></td>
@@ -185,7 +185,7 @@ const config: PostextConfig = {
 
 ### Rotulación
 
-`comics.lettering` rige todos los bocadillos del libro. Hay un solo tamaño: un estilo de bocadillo puede escalarlo (`fontScale`), y el texto nunca se reduce para caber en un bocadillo.
+`comics.lettering` define todos los bocadillos del libro. Hay un único tamaño de letra: un estilo de bocadillo puede escalarlo (`fontScale`), y el texto nunca se reduce para caber en un bocadillo.
 
 <table>
   <thead>
@@ -213,7 +213,7 @@ const config: PostextConfig = {
       <td><code>lineHeight</code></td>
       <td><code>number</code></td>
       <td><code>1.15</code></td>
-      <td>Distancia entre líneas, como múltiplo del tamaño. Con el valor por defecto, los bocadillos verticales, chinos y japoneses toman 1,5 y los árabes 1,45.</td>
+      <td>Distancia entre líneas, como múltiplo del tamaño. Con el valor predeterminado, los bocadillos verticales, chinos y japoneses usan 1,5, y los árabes, 1,45.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -231,19 +231,19 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espacio extra entre letras; <code>em</code> es relativo al tamaño del texto. Nunca se aplica al árabe. No cambia los glifos: las ligaduras se conservan.</td>
+      <td>Espacio adicional entre letras; <code>em</code> es relativo al tamaño del texto. Nunca se aplica al árabe. No cambia los glifos: las ligaduras se conservan.</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
       <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
       <td><code>'auto'</code></td>
-      <td><code>'auto'</code> rotula en columnas verticales el japonés y el chino tradicional, y cualquier documento compuesto en escritura vertical, y todo lo demás en horizontal. Las marcas <code>vertical</code> u <code>horizontal</code> de una línea de guion componen esa línea de otro modo (véase <a href="/es/docs/comics#rotulación">Cómics › Rotulación</a>).</td>
+      <td><code>'auto'</code> rotula en columnas verticales el japonés, el chino tradicional y cualquier documento compuesto en escritura vertical, y todo lo demás en horizontal. Las marcas <code>vertical</code> u <code>horizontal</code> de una línea de guion componen esa línea de la otra manera (véase <a href="/es/docs/comics#rotulación">Cómics › Rotulación</a>).</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>Todo en mayúsculas, el aspecto clásico de la rotulación estadounidense y europea. Las escrituras sin mayúsculas quedan como están.</td>
+      <td>Todo en mayúsculas, el aspecto clásico de la rotulación estadounidense y europea. Las escrituras que no distinguen mayúsculas quedan como están.</td>
     </tr>
     <tr>
       <td><code>dropFinalStop</code></td>
@@ -261,32 +261,32 @@ const config: PostextConfig = {
       <td><code>inset</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5mm</code></td>
-      <td>Espacio que se deja entre un bocadillo y el borde de su viñeta. Una cartela pegada al borde no lo respeta.</td>
+      <td>Espacio que se deja entre un bocadillo y el borde de su viñeta. Una cartela pegada al borde lo ignora.</td>
     </tr>
     <tr>
       <td><code>joinSameSpeaker</code></td>
       <td><code>'butt' | 'connector' | 'none'</code></td>
       <td><code>'butt'</code></td>
-      <td>Dos bocadillos seguidos del mismo personaje: cuerpos fundidos en un solo contorno, enlazados por un cuello estrecho, o separados. Una línea de guion pide lo suyo con <code>join</code> o <code>join=false</code>.</td>
+      <td>Dos bocadillos seguidos del mismo personaje: con los cuerpos fundidos en un solo contorno, unidos por un cuello estrecho o separados. Una línea de guion pide su propia opción con <code>join</code> o <code>join=false</code>.</td>
     </tr>
     <tr>
       <td><code>maxColumnChars</code></td>
       <td><code>number</code></td>
       <td><code>8</code></td>
-      <td>Rotulación vertical: el máximo de caracteres en una columna de un bocadillo. Las onomatopeyas se cortan tras cinco.</td>
+      <td>Rotulación vertical: el número máximo de caracteres en una columna de un bocadillo. Las onomatopeyas se cortan a partir de cinco.</td>
     </tr>
     <tr>
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Un bocadillo que cambia de forma para caber en su viñeta no parte una palabra china para lograrlo: cada palabra que cortan sus nuevas líneas, y que su forma preferida deja entera, cuesta más que un bocadillo leído fuera de orden, así que antes se mueve el bocadillo o cambia el orden. La rotulación japonesa, que se parte por frases, no cambia. Con <code>false</code> se rotula como en postext 1.27; un documento guardado antes de la 1.28 que contenga un cómic se lee así.</td>
+      <td>Un bocadillo que cambia de forma para caber en su viñeta no parte una palabra china para conseguirlo: cada palabra que su forma preferida deja entera y que sus nuevas líneas cortarían cuesta más que un bocadillo leído fuera de orden, así que la colocación prueba antes a mover el bocadillo o a cambiar el orden. La rotulación japonesa, que se corta por frases, no cambia. Con <code>false</code> se rotula como en postext 1.27; un documento guardado antes de la 1.28 que contenga un cómic se lee con <code>false</code>.</td>
     </tr>
   </tbody>
 </table>
 
 ### Estilos de bocadillo
 
-Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mismo id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), o a `speech` si el id es nuevo. Los valores por defecto de abajo son los de `speech`; la [página de Cómics](/es/docs/comics#estilos-de-bocadillo) enumera lo que cambia cada estilo integrado. Las longitudes en `em` son relativas al tamaño del texto del bocadillo.
+Cada entrada de `comics.balloonStyles` se aplica sobre el estilo integrado del mismo id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), o sobre `speech` si el id es nuevo. Los valores predeterminados que siguen son los de `speech`; la [página de cómics](/es/docs/comics#estilos-de-bocadillo) enumera lo que cambia cada estilo integrado. Las longitudes en `em` son relativas al tamaño del texto del bocadillo.
 
 <table>
   <thead>
@@ -302,7 +302,7 @@ Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mism
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obligatorio</td>
-      <td>La palabra con la que una línea de guion nombra el estilo: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
+      <td>La palabra con la que una línea de guion elige el estilo: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -350,7 +350,7 @@ Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mism
       <td><code>wobble</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Temblor de mano del contorno, de 0 a 1, con una semilla tomada del bocadillo para que nunca cambie de una composición a otra.</td>
+      <td>Temblor de trazo a mano del contorno, de 0 a 1, con una semilla tomada del bocadillo para que nunca cambie de una compilación a otra.</td>
     </tr>
     <tr>
       <td><code>roundness</code></td>
@@ -380,7 +380,7 @@ Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mism
       <td><code>aspect</code></td>
       <td><code>number</code></td>
       <td><code>1.6</code></td>
-      <td>La anchura dividida por la altura a la que el corte de líneas lleva el bloque de texto (rotulación horizontal).</td>
+      <td>La proporción entre anchura y altura que busca el corte de líneas para el bloque de texto (rotulación horizontal).</td>
     </tr>
     <tr>
       <td><code>tail</code></td>
@@ -410,7 +410,7 @@ Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mism
       <td><code>position</code></td>
       <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
       <td><code>'auto'</code></td>
-      <td>Dónde va el bocadillo cuando la línea no lo fija: donde lo coloque la rotulación, o en una esquina o un borde de la viñeta.</td>
+      <td>Dónde va el bocadillo cuando su línea no fija una posición: donde lo coloque la rotulación, o en una esquina o un borde de la viñeta.</td>
     </tr>
     <tr>
       <td><code>butt</code></td>
@@ -464,7 +464,7 @@ Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mism
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>ninguno</td>
-      <td>Un contorno alrededor de las letras, de ese grosor, para que el texto se lea sobre el dibujo (onomatopeyas).</td>
+      <td>El grosor de un contorno que se dibuja alrededor de las letras para que el texto se lea sobre el dibujo (onomatopeyas).</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -476,7 +476,7 @@ Cada entrada de `comics.balloonStyles` se superpone al estilo integrado del mism
       <td><code>rotate</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Giro en grados, en el sentido de las agujas del reloj. Manda el atributo <code>rotate</code> de la línea.</td>
+      <td>Giro en grados, en el sentido de las agujas del reloj. El atributo <code>rotate</code> de la línea tiene prioridad.</td>
     </tr>
   </tbody>
 </table>
@@ -505,13 +505,13 @@ Cada entrada de `comics.cast` describe un personaje:
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>El nombre que la salida HTML y el EPUB adaptable imprimen delante de las líneas del personaje, y que muestran los editores.</td>
+      <td>El nombre que la salida HTML y el EPUB de maquetación fluida imprimen delante de las líneas del personaje, y que muestran los editores.</td>
     </tr>
     <tr>
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>El estilo de las líneas del personaje que no nombran ninguno.</td>
+      <td>El estilo de las líneas del personaje que no indican ninguno.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -534,7 +534,7 @@ Cada entrada de `comics.cast` describe un personaje:
   </tbody>
 </table>
 
-El `color` y el `font` propios de una línea mandan sobre el reparto, y el reparto sobre el estilo de bocadillo. Cualquier color de los cómics puede ser una entrada de la paleta, que sigue a la paleta como cualquier color enlazado.
+El `color` y el `font` propios de una línea prevalecen sobre el reparto, y el reparto, sobre el estilo de bocadillo. Cualquier color de los cómics puede ser una entrada de la paleta, y entonces cambia con la paleta, como cualquier color vinculado.
 
 ```ts
 const resolved = resolveComicsConfig(config.comics, 'ja');

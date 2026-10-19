@@ -9,7 +9,7 @@ aliases: ["atlante", "atlante scolastico", "etichette della carta", "toponimi", 
 
 ## Che cosa comporrai
 
-Tre tavole di un atlante scolastico di Varenia, un paese inventato per questa ricetta. La tavola 1 lo colloca nel suo continente. La tavola 2 stende la carta fisica sulle due pagine, dal mare di Lira al confine con Brunavia, in tinte altimetriche, con tre fiumi e la traccia di una sezione. La tavola 3 disegna quella sezione attraverso la catena dell’Albar. Ogni tavola si apre con una fascia blu e si chiude con una legenda o un glossario e alcune attività per la classe. Le tre carte sono dipinti fatti con un modello d’immagine e non portano nessuna lettera; i confini, le città, la traccia della sezione, la scala e la freccia del nord sono simboli vettoriali sopra di essi. I 43 nomi, quote e cifre della scala sono righe `::label` del Markdown, poste su ancore che ogni carta conserva con sé. Per questo le edizioni spagnola, inglese e araba condividono gli stessi tre dipinti, e quella araba si legge e si rilega da destra.
+Tre tavole di un atlante scolastico di Varenia, un paese inventato per questa ricetta. La tavola 1 lo colloca nel suo continente. La tavola 2 stende la carta fisica sulle due pagine, dal mare di Lira al confine con Brunavia, in tinte altimetriche, con tre fiumi e la traccia di una sezione. La tavola 3 disegna quella sezione attraverso la catena dell’Albar. Ogni tavola si apre con una fascia blu e si chiude con una legenda o un glossario e alcune attività per la classe. Le tre carte sono dipinti fatti con un modello d’immagine e non contengono nessuna lettera; i confini, le città, la traccia della sezione, la scala e la freccia del nord sono simboli vettoriali sopra di essi. I 43 nomi, quote e cifre della scala sono righe `::label` del Markdown, poste su ancore che ogni carta conserva con sé. Per questo le edizioni spagnola, inglese e araba condividono gli stessi tre dipinti, e quella araba si legge e si rilega da destra.
 
 ## Preparazione
 
@@ -25,13 +25,13 @@ I dipinti sono stati fatti in ordine. Prima la tavola del rilievo, dipinta da un
 
 <Excerpt region="resources" />
 
-La risorsa ha una sola immagine (un SVG che porta il dipinto e, sopra, i simboli vettoriali) e un solo elenco di ancore per tutte le edizioni. Ogni edizione scrive una riga `::label[…]{at="…"}` per ancora dentro `:::figure{resource="relief" slot="map"}`, così `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` cadono nello stesso punto, spezzati su due righe dal `width` dell’ancora quando serve. Cambia con l’edizione anche il testo alternativo: ogni `:::figure` porta il suo in una riga `::alt[…]`, e una didascalia o una nota andrebbero allo stesso modo con `::caption[…]` e `::note[…]`. Un’ancora con uno stile che un’edizione lascia senza etichetta dà l’avviso `anchorUnlabelled`, e un’etichetta il cui `at` non nomina nessuna ancora non viene disegnata e dà `labelAnchorUnknown`.
+La risorsa ha una sola immagine (un SVG che contiene il dipinto e, sopra, i simboli vettoriali) e un solo elenco di ancore per tutte le edizioni. Ogni edizione scrive una riga `::label[…]{at="…"}` per ancora in `:::figure{resource="relief" slot="map"}`, così `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` cadono nello stesso punto, spezzati su due righe dal `width` dell’ancora quando serve. Cambia con l’edizione anche il testo alternativo: ogni `:::figure` ha il suo in una riga `::alt[…]`, e una didascalia o una nota andrebbero allo stesso modo con `::caption[…]` e `::note[…]`. Un’ancora con uno stile che un’edizione lascia senza etichetta dà l’avviso `anchorUnlabelled`, e un’etichetta il cui `at` non indica nessuna ancora non viene disegnata e dà `labelAnchorUnknown`.
 
 ### 3 · Una tavola e una tavola doppia
 
 <Excerpt region="templates" />
 
-I due modelli hanno le stesse cinque cornici, quindi il Markdown di una tavola ha la stessa forma su una pagina o su due: il titolo, il testo che non nomina alcuno slot, la carta, la legenda e le attività. Nella tavola doppia `spread: true` impagina le due pagine come un solo foglio di 390 mm, e solo la cornice della carta imposta `crossGutter`: attraversa il dorso mentre il testo e i riquadri restano nella loro pagina. Testo, carta e legenda formano un gruppo `stack`; nella prova di carico del banco, con tutti i testi più lunghi del 30 %, l’edizione araba porta la carta di localizzazione all’87,5 % e i riquadri sotto risalgono, senza alcun avviso.
+I due modelli hanno le stesse cinque cornici, quindi il Markdown di una tavola ha la stessa forma su una pagina o su due: il titolo, il testo che non indica alcuno slot, la carta, la legenda e le attività. Nella tavola doppia `spread: true` impagina le due pagine come un solo foglio di 390 mm, e solo la cornice della carta imposta `crossGutter`: attraversa il dorso mentre il testo e i riquadri restano nella loro pagina. Testo, carta e legenda formano un gruppo `stack`; nella prova di carico del banco, con tutti i testi più lunghi del 30 %, l’edizione araba porta la carta di localizzazione all’87,5 % e i riquadri sotto risalgono, senza alcun avviso.
 
 ### 4 · Una tavolozza per la pagina, le tinte e la legenda
 
@@ -61,7 +61,7 @@ Dai al tipo di carta un contatore e un prefisso, e a ogni risorsa una didascalia
 
 ## Errori frequenti
 
-- Il testo alternativo di ogni carta sta nel Markdown, in una riga `::alt[…]` dentro la sua `:::figure`, una per edizione. Una figura che non lo dà conserva l’`altText` della risorsa; `script.js` non contiene nemmeno una parola della pagina.
+- Il testo alternativo di ogni carta sta nel Markdown, in una riga `::alt[…]` nella sua `:::figure`, una per edizione. Una figura che non lo dà conserva l’`altText` della risorsa; `script.js` non contiene nemmeno una parola della pagina.
 - Le ancore e i simboli vettoriali (confini, città, vette, traccia della sezione) stanno a chilometri letti sul dipinto. Se si dipinge di nuovo una carta, le sue coste, i fiumi e le creste si spostano: posa la griglia sull’immagine nuova e rileggili, o un nome finirà in mare.
 - In una pagina da destra a sinistra le cornici seguono l’area del contenuto rispecchiata, ma la decorazione del modello no: colloca l’occhiello secondo l’edizione, come fa `kicker`.
 - Una cornice a due colonne può tagliare un paragrafo una riga prima della fine e lasciare quella riga in cima alla seconda colonna. Controlla le colonne di ogni edizione e sposta una frase da un paragrafo al successivo quando succede.

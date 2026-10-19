@@ -40,13 +40,13 @@ En un bunko vertical la cabecera (柱, hashira) es pequeña y va en el margen ex
 
 <Excerpt region="title-page" />
 
-La portada es un título de primer nivel con estilo propio, `# 夢十夜 {style="title" …}`, cuyo diseño ocupa la página. Sus elementos se anclan a la página y no a la caja, porque la caja de una página con márgenes simétricos queda 1,5 mm descentrada: `x` baja por la página e `y` la cruza desde el borde derecho, así que `AXIS` es la mitad del ancho de la página, esté el lomo del lado que esté. El colofón del pie va en Noto Sans JP: Shippori Mincho B1 no tiene ō ni ū, y el PDF dibujaría cajas vacías en «Sōseki».
+La portada es un encabezado de primer nivel con estilo propio, `# 夢十夜 {style="title" …}`, cuyo diseño ocupa la página. Sus elementos se anclan a la página y no a la caja, porque la caja de una página con márgenes simétricos queda 1,5 mm descentrada: `x` baja por la página e `y` la cruza desde el borde derecho, así que `AXIS` es la mitad del ancho de la página, esté el lomo del lado que esté. El colofón del pie va en Noto Sans JP: Shippori Mincho B1 no tiene ō ni ū, y el PDF dibujaría cajas vacías en «Sōseki».
 
 ### 6 · Carga cada peso con los caracteres que compone
 
 <Excerpt region="voices" />
 
-Fontsource sirve cada peso de una fuente japonesa en unos 120 archivos, cada uno con un tramo de caracteres, y `loadCjkFonts` descarga los que toca el texto que recibe. El peso del texto recibe toda la muestra con `vertical: true`, que además carga las formas verticales de la fuente para el lienzo: 、。「」 y ー, y los kana pequeños, que en vertical van en la esquina superior derecha de su casilla. `renderToPdf` recibe `cjkPdfProvider`, que incrusta esos mismos archivos como subconjuntos.
+Fontsource sirve cada peso de una fuente japonesa en unos 120 archivos, cada uno con un tramo de caracteres, y `loadCjkFonts` descarga los que toca el texto que recibe. El peso del texto recibe toda la muestra con `vertical: true`, que además carga las formas verticales de la fuente para el canvas: 、。「」 y ー, y los kana pequeños, que en vertical van en la esquina superior derecha de su casilla. `renderToPdf` recibe `cjkPdfProvider`, que incrusta esos mismos archivos como subconjuntos.
 
 ## Variantes
 

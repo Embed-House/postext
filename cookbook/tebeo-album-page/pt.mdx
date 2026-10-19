@@ -1,6 +1,6 @@
 ---
 title: "Uma página de álbum em linha clara, com recordatórios"
-summary: "Uma página de álbum franco-belga em quatro faixas: quadros de canto vivo, recordatórios amarelos nos cantos e balões em caixa mista, tudo pela config comics."
+summary: "Uma página de álbum franco-belga em quatro faixas: quadros de canto vivo, recordatórios amarelos nos cantos e balões em caixa mista, tudo pela seção `comics`."
 plain: "Uma página de um álbum de quadrinhos europeu, com a voz do narrador em caixas amarelas e os diálogos em balões, escrita em texto simples e letreirada pelo Postext em dez línguas."
 description: "Uma página de tebeo espanhol no Postext: quatro faixas de quadros, recordatórios amarelos, um grito, um pensamento e uma onomatopeia, em dez línguas."
 question: "Como faço para compor uma página de álbum europeu com recordatórios de narração?"
@@ -17,7 +17,7 @@ A primeira história de um álbum de quadrinhos espanhol, *Las naranjas de Carme
 
 O código é a [resposta curta](#a-resposta-curta) acima. `comics.panel` define todos os quadros (um fio de tinta de 0,75 pt, cantos vivos) e `panelStyles` acrescenta um estilo nomeado sem contorno, que o último quadro usa com `style=open`: um epílogo num banco de praça, fora da feira. Os estilos de balão de fábrica são redefinidos pelo id: `caption` vira uma caixa amarelo-clara com contorno fino, `shout` uma explosão de dezesseis pontas, `sfx` o laranja das laranjas com contorno de tinta. O letreiramento mantém `textTransform: 'none'`; uma página americana usaria `'uppercase'`.
 
-A página em si é uma única diretiva no conteúdo, uma árvore de divisões e sete quadros, cada um com o seu roteiro:
+A página em si é uma única diretiva no conteúdo, uma árvore de divisões e sete quadros, cada um com o roteiro:
 
 ```md
 :::page{split="25 [60 | *] / 25 [55 | *] / 24 / * [50 | *]"}
@@ -35,13 +35,13 @@ paco{shout}: ¡Lola, esa no!
 
 <Excerpt region="art" />
 
-Cada desenho declara o que todo recorte precisa manter (`safeArea`), onde ficam a boca, a cabeça e o rosto de cada personagem (`anchors`) e o que nenhum balão pode cobrir (`avoid`), tudo em frações do desenho. O quadro do desmoronamento ocupa a terceira faixa, 200 mm por 63 mm, então a zona segura dele é a faixa dos rostos e das laranjas voando; os quadros quadrados perdem o chão. Nada disso depende da língua, por isso as dez edições compartilham tudo.
+Cada desenho declara o que todo recorte precisa manter (`safeArea`), onde ficam a boca, a cabeça e o rosto de cada personagem (`anchors`) e o que nenhum balão pode cobrir (`avoid`), tudo em frações do desenho. O quadro do desmoronamento ocupa a terceira faixa, 200 mm por 63 mm, de modo que a área segura dele é a faixa dos rostos e das laranjas voando; os quadros quadrados perdem o chão. Nada disso depende da língua, por isso as dez edições compartilham tudo.
 
 ### 3 · Uma folha de rosto diante da história
 
 <Excerpt region="title-page" />
 
-A folha de rosto é um estilo de título: a linha da série na letra do letreiramento, o título na letra das onomatopeias (Bangers, ou Dela Gothic One, ZCOOL KuaiLe e Lalezar nas outras escritas) e uma vinheta da banca de Carmen na sua proporção de 3 : 2. A montagem passa `continuation: { pageIndexOffset: 1 }`, de modo que a folha de rosto cai numa página par e a história abre na ímpar em frente, a página 3.
+A folha de rosto é um estilo de título: a linha da série na letra do letreiramento, o título na letra das onomatopeias (Bangers, ou Dela Gothic One, ZCOOL KuaiLe e Lalezar nas outras escritas) e uma vinheta da banca de Carmen na proporção de 3 : 2. A montagem passa `continuation: { pageIndexOffset: 1 }`, de modo que a folha de rosto cai numa página par e a história abre na ímpar em frente, a página 3.
 
 ## Variações
 

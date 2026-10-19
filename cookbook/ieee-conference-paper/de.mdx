@@ -1,16 +1,16 @@
 ---
 title: "Ein zweispaltiger Konferenzbeitrag im IEEE-Stil"
-summary: "Ein Workshopbeitrag in zwei Spalten: Titelblock über die Seite, IEEE-Zitate mit Bereichen [2]–[4], Verweise auf Section II und eine kompakte nummerierte Liste."
-plain: "Ein kurzer Forschungsbeitrag für eine Konferenz, zweispaltig. Der Autor gibt jeder Quelle ein Kürzel; Postext nummeriert die Zitate in Klammern, verweist auf Abschnitte mit Nummer und Seite und druckt am Ende die nummerierte Literaturliste."
-description: "Ein IEEE-Konferenzbeitrag in Postext: zwei Spalten auf US Letter, nummerierte Zitate mit citeproc-js, zusammengefasste Bereiche, Abschnitts- und Seitenverweise."
-question: "Wie setze ich einen Konferenzbeitrag mit nummerierten IEEE-Zitaten und einer Literaturliste?"
-aliases: ["IEEE", "IEEEtran", "Konferenzbeitrag", "Tagungsband", "nummerierte Zitate", "zwei Spalten", "Index Terms", "Schlagwörter", "Abstract", "BibTeX", "citeproc", "conference paper"]
-pageNotes: { "1": "Seite 1: Ein hellblaues Band am Kopf enthält die Workshopzeile in kleinen blauen Versalien, den zweizeiligen Titel „Optimal Line Breaking in the Browser: What It Costs and When It Pays“, zentriert, und drei Autorenblöcke nebeneinander. Unter dem Band stehen Abstract und Index Terms fett über die ganze Seitenbreite, dann zwei Spalten Blocksatz unter den zentrierten Überschriften „I. INTRODUCTION“ und „II. RELATED WORK“, mit den Zitaten [1] und [2]–[4] und den Verweisen „Section II“, „Section III“, „Section IV, on p. 2“.", "2": "Seite 2: die Abschnitte III bis VI, die Danksagung und die Überschrift „REFERENCES“ über sieben nummerierten Einträgen in 8 pt, jedes [n] in einer eigenen Spalte; die beiden Spalten enden auf gleicher Höhe." }
+summary: "Ein Workshopbeitrag in zwei Spalten: Titelblock über die Seite, IEEE-Zitationen mit Bereichen [2]–[4], Verweise auf Section II und eine nummerierte Liste."
+plain: "Ein kurzer Forschungsbeitrag für eine Konferenz, zweispaltig. Jede Quelle bekommt ein Kürzel; Postext nummeriert die Zitationen in Klammern, verweist auf Abschnitte mit Nummer und Seite und setzt am Ende die nummerierte Literaturliste."
+description: "Ein IEEE-Beitrag in Postext: zwei Spalten auf US Letter, nummerierte Zitationen mit citeproc-js, zusammengefasste Bereiche, Abschnitts- und Seitenverweise."
+question: "Wie setze ich einen Konferenzbeitrag mit nummerierten IEEE-Zitationen und einer Literaturliste?"
+aliases: ["IEEE", "IEEEtran", "Konferenzbeitrag", "Tagungsband", "nummerierte Zitationen", "zwei Spalten", "Index Terms", "Schlagwörter", "Abstract", "BibTeX", "citeproc", "conference paper"]
+pageNotes: { "1": "Seite 1: Ein hellblaues Band am Kopf enthält die Workshopzeile in kleinen blauen Versalien, den zweizeiligen Titel „Optimal Line Breaking in the Browser: What It Costs and When It Pays“, zentriert, und drei Autorenblöcke nebeneinander. Unter dem Band stehen Abstract und Index Terms fett über die ganze Seitenbreite, dann zwei Spalten Blocksatz unter den zentrierten Überschriften „I. INTRODUCTION“ und „II. RELATED WORK“, mit den Zitationen [1] und [2]–[4] und den Verweisen „Section II“, „Section III“, „Section IV, on p. 2“.", "2": "Seite 2: die Abschnitte III bis VI, die Danksagung und die Überschrift „REFERENCES“ über sieben nummerierten Einträgen in 8 pt, jedes [n] in einer eigenen Spalte; die beiden Spalten enden auf gleicher Höhe." }
 ---
 
 ## Was Sie setzen
 
-Ein zweiseitiger Beitrag für einen kleinen Workshop über Document Engineering, gesetzt, wie IEEE-Tagungsbände ihre Beiträge setzen: US Letter, zwei Spalten von dreieinhalb Zoll, eine Times-ähnliche Schrift in 10 pt, Abschnitte mit I, II, III in zentrierten Versalien nummeriert. Titel, die drei Autorenblöcke, Abstract und Index Terms laufen über beide Spalten unter einem hellen Band im Blau des Workshops, der einzigen Farbe auf den Seiten. Die Autoren zitieren mit BibTeX-Schlüsseln; Postext druckt [1] in der Reihenfolge der ersten Zitierung, fasst drei aufeinanderfolgende Werke als [2]–[4] zusammen, schreibt „Knuth and Plass [1]“, wenn die Namen Teil des Satzes sind, und baut am Ende die nummerierte Liste in 8 pt auf. Verweise auf Abschnitte drucken „Section IV, on p. 2“ und bleiben richtig, wenn sich der Text verschiebt.
+Ein zweiseitiger Beitrag für einen kleinen Workshop über Document Engineering, gesetzt, wie IEEE-Tagungsbände ihre Beiträge setzen: US Letter, zwei Spalten von dreieinhalb Zoll, eine Times-ähnliche Schrift in 10 pt, Abschnitte mit I, II, III in zentrierten Versalien nummeriert. Titel, die drei Autorenblöcke, Abstract und Index Terms laufen über beide Spalten unter einem hellen Band im Blau des Workshops, der einzigen Farbe auf den Seiten. Die Autoren zitieren mit BibTeX-Schlüsseln; Postext setzt [1] in der Reihenfolge der ersten Zitierung, fasst drei aufeinanderfolgende Werke als [2]–[4] zusammen, schreibt „Knuth and Plass [1]“, wenn die Namen Teil des Satzes sind, und baut am Ende die nummerierte Liste in 8 pt auf. Verweise auf Abschnitte ergeben „Section IV, on p. 2“ und bleiben richtig, wenn sich der Text verschiebt.
 
 ## Zubereitung
 
@@ -22,19 +22,19 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Einmal registri
 
 <Excerpt region="title" />
 
-Der Titel ist die einzige Überschrift der Ebene 1 im Dokument, mit dem Format `paper`. Das Format läuft über die ganze Seitenbreite und zeichnet die Überschrift aus seiner Gestaltung: die Zeile mit der Veranstaltung, den Titel und drei Autorenblöcke von je einem Drittel der Satzbreite, jeder aus einem Attribut der Überschrift gelesen, dessen `\n` die Zeilen umbricht. Das Band ist ein am Seitenrand verankerter Kasten und reicht deshalb bis an die Oberkante des Papiers.
+Der Titel ist die einzige Überschrift der Ebene 1 im Dokument, mit dem Stil `paper`. Der Stil läuft über die ganze Seitenbreite und zeichnet die Überschrift aus seiner Gestaltung: die Zeile mit der Veranstaltung, den Titel und drei Autorenblöcke von je einem Drittel der Satzbreite, jeder aus einem Attribut der Überschrift übernommen, dessen `\n` die Zeilen umbricht. Das Band ist ein am Endformat verankerter Kasten und reicht deshalb bis an die Oberkante des Papiers.
 
 ### 3 · Abstract und Index Terms fett
 
 <Excerpt region="abstract" />
 
-Ein Kasten über die ganze Seitenbreite trägt Abstract und Index Terms. Sein Text steht fett in 9 pt, wie IEEE es setzt, und `***Abstract*—**` im Text ergibt die kursive Bezeichnung mit ihrem Geviertstrich. Die Haarlinie darüber ist der Streifen des Kastens, und der Innenabstand verengt die Satzbreite auf etwa hundert Zeichen.
+Ein Kasten über die ganze Seitenbreite enthält Abstract und Index Terms. Sein Text steht fett in 9 pt, wie IEEE es setzt, und `***Abstract*—**` im Text ergibt die kursive Bezeichnung mit ihrem Geviertstrich. Die Haarlinie darüber ist der Streifen des Kastens, und der Innenabstand verengt die Satzbreite auf etwa hundert Zeichen.
 
 ### 4 · Nummerierte Abschnitte und Verweise darauf
 
 <Excerpt region="sections" />
 
-`{2:I}.` nummeriert die Abschnitte I., II., III. Ein Verweis druckt die Nummer ohne ihren Punkt, sodass `:ref{id="sec:results"}` aus der Vorlage `crossRefs` „Section IV“ ergibt und `:ref{id="sec:results" style=page}` „p. 2“. Beide werden aus den gesetzten Seiten berechnet und folgen deshalb dem Text, wenn ein Absatz hinzukommt oder ein Abschnitt wandert. Die Überschriften „Acknowledgment“ und „References“ nehmen das Format `back` an und bleiben ohne Nummer.
+`{2:I}.` nummeriert die Abschnitte I., II., III. Ein Verweis gibt die Nummer ohne ihren Punkt aus, sodass `:ref{id="sec:results"}` aus der Vorlage `crossRefs` „Section IV“ ergibt und `:ref{id="sec:results" style=page}` „p. 2“. Beide werden aus den gesetzten Seiten berechnet und folgen deshalb dem Text, wenn ein Absatz hinzukommt oder ein Abschnitt wandert. Die Überschriften „Acknowledgment“ und „References“ nehmen den Stil `back` an und bleiben ohne Nummer.
 
 <Excerpt region="palette" />
 
@@ -51,7 +51,7 @@ Ohne die Änderung erscheinen drei aufeinanderfolgende Werke einzeln, was manche
 
 ### Die Bereiche in ein Klammerpaar schreiben
 
-Manche nummerierten Stile drucken stattdessen [2–4]. Der Marker `brackets` schreibt die Nummern selbst und fasst aufeinanderfolgende zusammen.
+Manche nummerierten Stile setzen stattdessen [2–4]. Der Marker `brackets` schreibt die Nummern selbst und fasst aufeinanderfolgende zusammen.
 
 ```diff
 -  style: 'custom', customStyle: ieee, // or style: 'ieee' for the file as it ships

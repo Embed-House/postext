@@ -26,19 +26,19 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `locale: 'ca'` 
 
 <Excerpt region="page" />
 
-Der Fußsteg ergibt sich aus Endformat, Kopfsteg und `LINES`, sodass der Satzspiegel 29 Zeilen zu 14 pt fasst und jede volle Seite auf derselben Grundlinie endet. Die Satzbreite von 89 mm fasst etwa 63 Zeichen der Gentium Book Plus. `mirror: true` hält den 16-mm-Steg auf beiden Seiten einer Doppelseite am Bund ([gespiegelte Ränder](/de/docs/configuration-page-layout#gespiegelte-ränder)).
+Der Fußsteg ergibt sich aus Endformat, Kopfsteg und `LINES`, sodass der Satzspiegel 29 Zeilen zu 14 pt fasst und jede volle Seite auf derselben Grundlinie endet. Die Satzbreite von 89 mm fasst etwa 63 Zeichen der Gentium Book Plus. `mirror: true` hält den Bundsteg von 16 mm auf beiden Seiten einer Doppelseite am Bund ([gespiegelte Ränder](/de/docs/configuration-page-layout#gespiegelte-ränder)).
 
 ### 3 · Ein Auftakt für vier Kapitel
 
 <Excerpt region="opener" />
 
-`resourceId: '{attr.art}'` zeichnet das Bild, das die Überschrift nennt, sodass `# II {style="capitol" art="cap2"}` Kapitel II unter seinem eigenen Stich eröffnet, mit demselben Format wie die anderen ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)). `minHeight` hält sechzehn Zeilen frei, zwölf für das Bild und vier für die Zahl und ihre Linie, sodass der Text auf der siebzehnten Zeile der Seite beginnt, in jedem Kapitel gleich.
+`resourceId: '{attr.art}'` zeichnet das Bild, auf das die Überschrift verweist, sodass `# II {style="capitol" art="cap2"}` Kapitel II unter seinem eigenen Stich eröffnet, mit demselben Stil wie die anderen ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)). `minHeight` hält sechzehn Zeilen frei, zwölf für das Bild und vier für die Zahl und ihre Linie, sodass der Text auf der siebzehnten Zeile der Seite beginnt, in jedem Kapitel gleich.
 
 ### 4 · Vier Seiten vor Kapitel I
 
 <Excerpt region="front" />
 
-Jedes Stück der Titelei ist eine Überschrift der Ebene 1 mit eigenem Format: `# El transplantat {style="portada"}` druckt Autor und Untertitel aus dem Frontmatter und die Überschrift als Titel. Jedes Format wiederholt seinen Seitenumbruch, da ein Format den seiner Ebene erbt, und leert Kopf- und Fußzeile, sodass diese Seiten weder Kolumnentitel noch Pagina tragen. Das Frontispiz fällt auf Seite 2, eine linke Seite, und steht so der Titelseite über die Doppelseite gegenüber.
+Jedes Stück der Titelei ist eine Überschrift der Ebene 1 mit eigenem Stil: `# El transplantat {style="portada"}` setzt Autor und Untertitel aus dem Frontmatter und die Überschrift als Titel. Jeder Stil wiederholt seinen Seitenumbruch, da ein Stil den seiner Ebene erbt, und leert Kopf- und Fußzeile, sodass diese Seiten weder Kolumnentitel noch Pagina haben. Das Frontispiz fällt auf Seite 2, eine linke Seite, und steht so der Titelseite über die Doppelseite gegenüber.
 
 ### 5 · Der Autor links, der Titel rechts
 
@@ -76,4 +76,4 @@ Mit dem Standardwert `compounds: true` trennt *d’inaugurar-se* innerhalb des V
 
 - Prüfen Sie *l·l* in einer Textschrift, bevor Sie sich für sie entscheiden. Ab postext 1.30 ist die `locale` des Dokuments auch die Sprache, in der sein Text geformt wird (bis 1.29 war das die Sprache der Seite, die das Buch anzeigte), und jede Schrift antwortet auf Katalanisch auf ihre eigene Weise. Gentium Book Plus hat für alle Sprachen einen Mittelpunkt, 0,17 em zwischen den beiden *l*. Crimson Pro, in der dieses Buch bis 1.29 gesetzt war, verbreitert den Punkt im Katalanischen auf 0,59 em und reißt in *intel·ligent* eine Lücke. Alegreya und Literata zeichnen einen engeren Punkt nur dort, wo beide *l* sie in einem Stück erreichen, sodass *il·lustrats* in einem Absatz mit Kursiven anders ausfällt als in einem ohne.
 - Kopieren Sie den Text aus Viquitexts mit seinen Kursiven: Oller kennzeichnet *tentu*, *Ensanxe* und *palacio* als umgangssprachlich oder spanisch, und ein Export als reiner Text verliert sie. Prüfen Sie zweifelhafte Wörter am Scan des Bandes von 1928: Sechsmal hat die Transkription *tom-*, wo das Verb *tornar* lautet (*tomà*, *tomaré*, *tomar*), und einmal *jom* für *jorn*.
-- Mit 6.800 Wörtern machen die fünf Inhaltsdateien und das Kit das zusammengesetzte Skript etwa 69 KB groß. Ein ganzes Buch ist das größte Beispiel, das ein Pen tragen kann; ein längeres Werk gehört in ein Paket im Format `.postext`.
+- Mit 6.800 Wörtern machen die fünf Inhaltsdateien und das Kit das zusammengesetzte Skript etwa 69 KB groß. Ein ganzes Buch ist das größte Beispiel, das ein Pen fassen kann; ein längeres Werk gehört in ein Paket im Format `.postext`.

@@ -10,7 +10,7 @@ pageNotes: { "1": "L’ouverture du chapitre : un ruban bleu pend du haut avec 
 
 ## Ce que vous allez composer
 
-Le chapitre 2 de *Mountain Landforms*, un manuel de géomorphologie au format 200 × 250 mm. Un ruban bleu portant le numéro du chapitre pend du haut de l’ouverture, à côté de la dalle bleu glacier du titre ; deux colonnes justifiées en Faustina suivent. Les sept figures, des peintures générées par des modèles de diffusion et légendées en code, sont numérotées par ordre de première mention. Six flottent jusqu’à la première place libre que permet leur position, en comptant à partir du paragraphe qui les cite pour la première fois. La figure 2.1, en `auto`, se pose au pied de l’ouverture ; la 2.3 ouvre la colonne de droite de la page 28 et la 2.2 remplit le pied de cette page ; la 2.4 et la 2.5 ouvrent les deux colonnes de la page 29. La figure 2.6 est placée là où le texte l’insère. La figure 2.7, un flottant `top` cité page 30, attendrait la page 31, mais un flottant ne peut pas quitter son chapitre : elle va donc au pied de la page 30.
+Le chapitre 2 de *Mountain Landforms*, un manuel de géomorphologie au format 200 × 250 mm. Un ruban bleu portant le numéro du chapitre pend du haut de l’ouverture, à côté de la dalle bleu glacier du titre ; deux colonnes justifiées en Faustina suivent. Les sept figures, des peintures générées par des modèles de diffusion et légendées en code, sont numérotées par ordre de première mention. Six flottent jusqu’au premier emplacement libre que permet leur position, en comptant à partir du paragraphe qui les cite pour la première fois. La figure 2.1, en `auto`, se pose au pied de l’ouverture ; la 2.3 ouvre la colonne de droite de la page 28 et la 2.2 remplit le pied de cette page ; la 2.4 et la 2.5 ouvrent les deux colonnes de la page 29. La figure 2.6 est placée là où le texte l’insère. La figure 2.7, un flottant `top` cité page 30, attendrait la page 31, mais un flottant ne peut pas quitter son chapitre : elle va donc au pied de la page 30.
 
 ## Préparation
 
@@ -24,7 +24,7 @@ Chaque couleur de la configuration renvoie à l’une de ces entrées, et les pe
 
 <Excerpt region="captions" />
 
-`locale` nomme les types intégrés dans la langue du document : les légendes indiquent *Figure 2.3* ici et *Figura 2.3* dans l’édition espagnole, où le même `'es'` choisit les motifs de césure espagnols. Chaque renvoi prend ensuite la forme dont sa phrase a besoin : `case="lower"` pour *(fig. 2.1)* et, avec `style="full"`, pour *(figure 2.2)* ; `style="number"` après un pluriel (*figures 2.4 and 2.5*) ; et `text="…"` pour une expression comme *the chapter’s first figure*, qui n’imprime aucun numéro. Cette expression renvoie à une figure déjà placée ; en première mention, elle la numéroterait et la placerait quand même.
+`locale` donne aux types intégrés les noms de la langue du document : les légendes indiquent *Figure 2.3* ici et *Figura 2.3* dans l’édition espagnole, où le même `'es'` choisit les motifs de césure espagnols. Chaque renvoi prend ensuite la forme dont sa phrase a besoin : `case="lower"` pour *(fig. 2.1)* et, avec `style="full"`, pour *(figure 2.2)* ; `style="number"` après un pluriel (*figures 2.4 and 2.5*) ; et `text="…"` pour une expression comme *the chapter’s first figure*, qui n’imprime aucun numéro. Cette expression renvoie à une figure déjà placée ; en première mention, elle la numéroterait et la placerait quand même.
 
 ### 3 · Un ruban et une dalle de glace pour l’ouverture
 
@@ -36,7 +36,7 @@ L’ouverture se compose de deux boîtes et de quatre textes : un ruban qui pen
 
 <Excerpt region="check" />
 
-Un `:ref` ou un `::resource` vers un id qu’aucune ressource ne porte imprime « ? » et ne place rien ; la construction note chacun dans `doc.contentWarnings` comme `unknownResourceId`, avec l’id et sa place dans la source. Une figure que personne ne mentionne n’est jamais placée et ne lève aucun avertissement : la vérification lit donc le Markdown avec `parseMarkdown`, l’analyseur du moteur lui-même, et compare les mentions aux figures. Un id inconnu, une figure non citée ou une figure `here` sans ligne `::resource` devient une erreur avant l’affichage des pages.
+Un `:ref` ou un `::resource` vers un identifiant qu’aucune ressource ne possède imprime « ? » et ne place rien ; la construction note chacun dans `doc.contentWarnings` comme `unknownResourceId`, avec l’identifiant et sa position dans la source. Une figure que personne ne mentionne n’est jamais placée et ne déclenche aucun avertissement : la vérification analyse donc le Markdown avec `parseMarkdown`, l’analyseur du moteur lui-même, et compare les mentions aux figures. Un identifiant inconnu, une figure non citée ou une figure `here` sans ligne `::resource` devient une erreur avant l’affichage des pages.
 
 ### 5 · Commencer le compte là où en est le livre
 

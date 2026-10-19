@@ -1,6 +1,6 @@
 ---
 title: "Una secció d'economia en paper salmó"
-summary: "Un diari berlinès de vuit pàgines les pàgines d'economia del qual prenen un estil de títol: paper salmó, sis columnes, accent petroli i un bloc :::paper."
+summary: "Un diari berlinès de vuit pàgines amb les pàgines d'economia en un estil d'encapçalament propi: paper salmó, sis columnes, accent petroli i un bloc :::paper."
 plain: "Vuit pàgines d'un diari inventat. Les quatre primeres són de notícies, en paper blanc grisenc; les d'economia que segueixen van en paper salmó, amb columnes més estretes i colors propis."
 description: "Un diari berlinès en Postext amb el codi: notícies a cinc columnes i una secció d'economia en salmó a sis, amb mercats, gràfics i el paper de Folio."
 question: "Com imprimeixo les pàgines d'economia d'un diari en paper salmó, amb la seva retícula, també en 3D?"
@@ -20,7 +20,7 @@ Vuit pàgines de *The Marrowick Ledger*, un diari inventat, en el plec berlinès
 
 Tots els colors de la configuració van enllaçats a una de les vuit entrades de la paleta. Les pàgines de notícies fan servir `paper` (#f6f4ef) per a la pàgina i `accent` (#b3261e) per a pestanyes, avanttítols i marques dels gràfics. Les d'economia conserven aquests enllaços i en canvien els valors: la paleta de la secció posa `paper` en salmó, `accent` en petroli (#0f4c5c) i `tint` en un salmó més fosc. `salmon` té a més la seva pròpia entrada, per a l'orella i la franja de crides de la portada, que segueixen en salmó sobre les pàgines blanques.
 
-### 2 · Un estil de títol converteix la pàgina en pàgina d'economia
+### 2 · Un estil d'encapçalament converteix la pàgina en pàgina d'economia
 
 El codi és [la resposta curta](#la-resposta-curta) de dalt. `# Markets {style="business"}` obre una secció, i les seves pàgines prenen la `palette`, el `layout` i el `bodyStyle` de l'estil: sis columnes amb 4 mm d'espai entre columnes (45,2 mm cadascuna, davant de 54,6 mm a notícies) i el text a 8,8 pt sobre el mateix interlineat d'11,4 pt. El color de la pàgina també segueix la paleta. `page.backgroundColor` va enllaçat a `paper`, i quan la paleta d'una secció dona a `paper` un altre valor, totes les pàgines de la secció es pinten amb aquest valor: la que obre el seu títol i qualsevol pàgina a la qual passi el seu text. Així les pàgines d'economia queden en salmó de vora a vora, i el filet de columna, que el `layout` de l'estil deixa tal com el fixa el document, corre entre les sis columnes igual que entre les cinc.
 
@@ -34,7 +34,7 @@ L'H1 és una obertura a tota l'amplada amb `breakBefore` de paritat `'any'`, de 
 
 <Excerpt region="floats" />
 
-`top(3)` és `placement: { position: 'top', columns: 3 }`: la foto de la drassana ocupa tres de les cinc columnes de notícies, el ferri quatre, la fleca tres de les sis d'economia i el gràfic del port dues. Un flotant citat des d'un paràgraf de la columna 1 pren el cap de les columnes següents que encara són buides, així que aquestes fotos comencen a la columna 2 i la notícia baixa al seu costat. Una foto així es queda amb la seva notícia només si no es compon cap altra notícia a sota en aquella pàgina: una notícia a tota l'amplada col·locada després pot endur-se la foto a la seva pròpia franja o a la pàgina següent. Per això les pàgines 2 i 3 tanquen amb un anunci flotat al peu i no amb una altra notícia. Les fotos que travessen tota la pàgina van en línia (`here`) dins del requadre del titular. Les taules també van en el flux, dins de requadres a tota l'amplada al peu.
+`top(3)` és `placement: { position: 'top', columns: 3 }`: la foto de la drassana ocupa tres de les cinc columnes de notícies, el ferri quatre, la fleca tres de les sis d'economia i el gràfic del port dues. Un flotant citat des d'un paràgraf de la columna 1 ocupa el cap de les columnes següents que encara són buides, així que aquestes fotos comencen a la columna 2 i la notícia baixa al seu costat. Una foto així es queda amb la seva notícia només si no es compon cap altra notícia a sota en aquella pàgina: una notícia a tota l'amplada col·locada després pot endur-se la foto a la seva pròpia franja o a la pàgina següent. Per això les pàgines 2 i 3 tanquen amb un anunci flotat al peu i no amb una altra notícia. Les fotos que travessen tota la pàgina van en línia (`here`) dins del requadre del titular. Les taules també van en el flux, dins de requadres a tota l'amplada al peu.
 
 ### 5 · Titulars, requadres, dades i anuncis són requadres
 
@@ -61,7 +61,7 @@ Cada pàgina del bloc porta `page.paper` amb aquest to, i Folio la imprimeix en 
 
 ### Canvia el paper sense canviar la retícula
 
-Un estil de títol amb `palette` i sense `layout` conserva les cinc columnes amb filets del document i pinta igualment totes les pàgines de la seva secció: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` posa un suplement de cap de setmana en paper premsa crema. Posa també les seves pàgines en un bloc `:::paper`, amb el to portat un 60 % cap al blanc, perquè Folio les imprimeixi en un paper a joc.
+Un estil d'encapçalament amb `palette` i sense `layout` conserva les cinc columnes amb filets del document i pinta igualment totes les pàgines de la seva secció: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` posa un suplement de cap de setmana en paper premsa crema. Posa també les seves pàgines en un bloc `:::paper`, amb el to portat un 60 % cap al blanc, perquè Folio les imprimeixi en un paper a joc.
 
 ### Fes de la secció d'economia un quadernet
 

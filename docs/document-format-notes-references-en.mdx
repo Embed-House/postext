@@ -45,7 +45,7 @@ A cross-reference names a place in the book and prints its number, its title or 
 - **A display formula** with a `\label{eq:x}` (see [Mathematical formulas](/en/docs/document-format-inline#mathematical-formulas)): a reference prints its number as the formula does, *(3)*.
 - **A point in the text**: `:anchor{#key-idea}` sets an invisible anchor; `[the key idea]{#key-idea}` keeps its words and names them.
 
-An identifier takes letters, digits, `-`, `_`, `.` and `:`. It must be unique in the book: the Checks panel lists one set twice (`duplicateAnchor`), and references reach its first setting.
+An identifier takes letters, digits, `-`, `_`, `.` and `:`. It must be unique in the book: the Checks panel lists an identifier set twice (`duplicateAnchor`), and references go to the first place it is set.
 
 **References.** `:ref{id="…"}` names an anchor the way it names a figure or a table:
 
@@ -68,15 +68,15 @@ The results of :ref{id="sec-method"} hold on :ref{id="sec-method" style=page}.
 
 LaTeX's `\eqref{x}` and `\ref{x}` work in the text too: `\eqref` as a reference with no style, `\ref` as `style=number`, so `\ref{thm:main}` prints *2* and `\ref{fig:map}` a figure's number. A `~` right before one is a no-break space (`Theorem~\ref{thm:main}`). Inside `$…$` they belong to the formula.
 
-`text="…"` prints your own words and still links; `case=capitalize` starts the label with a capital (*Section 3.2* at the start of a sentence). The words follow the document language (*sección 3.2*, *第3.2节*, *S. 112*) and can be changed in [Cross-references](/en/docs/configuration-notes-references#cross-references) in the configuration; a heading number its template already spells out (*Chapter 4*, *第四章*) prints as it is.
+`text="…"` prints your own words and still links; `case=capitalize` starts the label with a capital (*Section 3.2* at the start of a sentence). The words follow the document language (*sección 3.2*, *第3.2节*, *S. 112*) and can be changed in [Cross-references](/en/docs/configuration-notes-references#cross-references) in the configuration; a heading number whose template already spells out the word (*Chapter 4*, *第四章*) prints as it is.
 
-**Line breaks.** A reference that prints words breaks at its spaces like the text around it: the text of an anchor (`[close the lever so that it points backwards]{#step}`), a title, your own `text="…"`. Its spaces are spaces of the line, so on a justified line they stretch with the others, and the reference stays one link, in two pieces when it runs over two lines. Its words are never hyphenated. Inside such a label a number, a Roman numeral or a single letter keeps to the word before it, so `text="Fig. 1a"` or `text="plate IV"` is never parted. A label that carries a number or a page (*section 3.2*, *p. 112*, *Fig. 1.7*, *Theorem 2*) never breaks, whatever space its template holds, and a no-break space inside a label glues as anywhere. `crossRefs.breakLabels: false` keeps every label whole, as up to postext 1.27, when a label was one word that could not come up to the line before it; see [Cross-references](/en/docs/configuration-notes-references#cross-references).
+**Line breaks.** A reference that prints words breaks at its spaces like the text around it: the text of an anchor (`[close the lever so that it points backwards]{#step}`), a title, your own `text="…"`. Its spaces are spaces of the line, so on a justified line they stretch with the others, and the reference stays one link, in two pieces when it runs over two lines. Its words are never hyphenated. Inside such a label a number, a Roman numeral or a single letter keeps to the word before it, so `text="Fig. 1a"` or `text="plate IV"` is never parted. A label that carries a number or a page (*section 3.2*, *p. 112*, *Fig. 1.7*, *Theorem 2*) never breaks, whatever space its template holds, and a no-break space inside a label holds its words together, as it does anywhere. `crossRefs.breakLabels: false` keeps every label whole, as postext did up to 1.27, when a label was one word that could not come up to the line before it; see [Cross-references](/en/docs/configuration-notes-references#cross-references).
 
-**Page references** are known only once the book is laid out. The engine lays the document out again with the pages of the previous pass until they hold, as it does for the contents; until then a page prints *?*.
+**Page references** are known only once the book is laid out. The engine lays the document out again, with the pages found in the previous pass, until they stop changing, as it does for the contents; until then a page prints *?*.
 
 **pandoc-crossref.** Text written for pandoc-crossref reads the same: `@sec:method`, `[@fig:map]`, and `[-@tbl:data]` for the number alone. The prefix (`sec`, `fig`, `tbl`, `eq`, `lst`) may be part of the identifier (`{#sec:method}`) or left off it (`{#method}`). An `@` glued to a word, as in an e-mail address, stays text.
 
-A reference to an id nothing sets prints *?* and the Checks panel lists it (`unknownResourceId`). In the Sandbox editor, `@` offers the book's figures, tables, headings with an id and anchors.
+A reference to an id that nothing sets prints *?* and the Checks panel lists it (`unknownResourceId`). In the Sandbox editor, `@` offers the book's figures, tables, headings with an id and anchors.
 
 
 ## Citations and bibliography
@@ -96,7 +96,7 @@ As [@garcia2020, p. 33] shows, reading on paper is faster [see @lopez2019, chap.
 - **`[-@key]`** leaves the author out, for a sentence that names the author already.
 - **`@key`** cites in the sentence (*García (2020)*); `@key [p. 4]` adds a locator.
 - **In captions:** the caption of a figure or a table, and its note, cite as the text does (`Prior best from [@cobbe2021].`). Their works go into the bibliography with no `nocite`, and a numbered style numbers them where the resource is placed: after the citations of the paragraph that first refers to it (its `::resource` block or first `:ref`). A citation in a table cell stays text.
-- An `@` glued to a letter or a digit (an e-mail address), an `@` in inline code and `\@` are text. A citation the book has no reference for prints as written, so a document without references reads as before. In a citation of several works, a key no reference defines is printed in bold after the others (`(Glen, 1955) **@nye1953**`), so the missing work shows on the page as well as among the warnings. A colon after a citation is text: `[@french2018]: the land…`.
+- An `@` glued to a letter or a digit (an e-mail address), an `@` in inline code and `\@` are text. A citation the book has no reference for prints as written, so a document without references reads as before. In a citation of several works, a key that no reference defines is printed in bold after the others (`(Glen, 1955) **@nye1953**`), so the missing work shows on the page as well as among the warnings. A colon after a citation is text: `[@french2018]: the land…`.
 - In Chinese, Japanese and Korean text a citation follows the last character with no space (`周明远@zhou2019认为`), and an author-date citation takes the full-width marks of the text around it: `（施雅风等，1988；刘时银等，2015）`.
 
 ### References
@@ -131,9 +131,9 @@ In a BibTeX name list, `and others` stands for the names left out (`author = {Ta
 
 ### The bibliography
 
-`:::bibliography` sets the list of works cited where it stands; without one, the list follows the last chapter, titled in the document language (*References*, *Referencias*, *参考文献*). `:::bibliography{title="Works cited"}` changes the title and `title=""` leaves it out; `scope=chapter` lists the works the chapter cites (an edited volume). Each entry is an anchor (`ref-<key>`), so a Markdown link to `#ref-garcia2020` reaches it, and the PDF tags it as a `BibEntry`.
+`:::bibliography` sets the list of works cited where it stands; without one, the list follows the last chapter, titled in the document language (*References*, *Referencias*, *参考文献*). `:::bibliography{title="Works cited"}` changes the title and `title=""` leaves it out; `scope=chapter` lists the works the chapter cites (for an edited volume). Each entry is an anchor (`ref-<key>`), so a Markdown link to `#ref-garcia2020` reaches it, and the PDF tags it as a `BibEntry`.
 
-`scope=new` lists the works cited so far in the document that no list before it printed, in the style's order and with its numbers: a `:::bibliography{scope=new}` after the main text and another after the Methods give the two lists of a Nature paper, the second numbered on from the first. A numbered style counts its citations through the book; with `citations.numbering: 'chapter'` each chapter (each document, and each level-1 heading after a citation) numbers its own from 1, and its chapter list takes those numbers, as the reports of a bulletin or the papers of proceedings do.
+`scope=new` lists the works cited so far in the document that no earlier list has printed, in the style's order and with its numbers: a `:::bibliography{scope=new}` after the main text and another after the Methods give the two lists of a Nature paper, the second numbered on from the first. A numbered style counts its citations through the book; with `citations.numbering: 'chapter'` each chapter (each document, and each level-1 heading after a citation) numbers its own from 1, and its chapter list takes those numbers, as the reports of a bulletin or the papers of proceedings do.
 
 ### Styles
 
@@ -176,7 +176,7 @@ With a **note style** each citation becomes a footnote, placed and numbered as t
 import 'postext-citeproc/register';
 ```
 
-The Checks panel lists a key no reference defines (`unknownCitationKey`) and a references block that cannot be read (`referencesUnreadable`).
+The Checks panel lists a key that no reference defines (`unknownCitationKey`) and a references block that cannot be read (`referencesUnreadable`).
 
 
 ## Back-of-book index
@@ -216,7 +216,7 @@ The pulse is taken at the wrist.:index{term="Pulse!radial" main}
     </tr>
     <tr>
       <td><code>sort</code></td>
-      <td>The sort key of the last level when it should sort by other letters: <code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>, <code>term="20th century" sort="twentieth century"</code>. A Chinese index sorts and groups by the reading the collator gives a character. For a polyphonic one read the other way, write the key in characters that have only the reading you want: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> files 重阳 under C, between 程 and 崔, not under Z. A pinyin key (<code>sort="chong yang"</code>) reaches C too, but sorts after all of its Chinese entries, because the collator sets Latin letters after Chinese characters (see <a href="/en/docs/configuration-notes-references#back-of-book-index">Configuration › Back-of-book index</a>, <code>groupBy</code>).</td>
+      <td>The sort key of the last level when it should sort by other letters: <code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>, <code>term="20th century" sort="twentieth century"</code>. A Chinese index sorts and groups by the reading the collator gives a character. For a polyphonic character (one with several readings) that should be read the other way, write the key in characters that have only the reading you want: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> files 重阳 under C, between 程 and 崔, not under Z. A pinyin key (<code>sort="chong yang"</code>) reaches C too, but sorts after all of its Chinese entries, because the collator sets Latin letters after Chinese characters (see <a href="/en/docs/configuration-notes-references#back-of-book-index">Configuration › Back-of-book index</a>, <code>groupBy</code>).</td>
     </tr>
     <tr>
       <td><code>yomi</code>, <code>reading</code></td>
@@ -232,7 +232,7 @@ The pulse is taken at the wrist.:index{term="Pulse!radial" main}
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td>A cross-reference instead of a page number: <code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code> prints <em>Cardiac insufficiency. See Heart failure</em>. Levels of the target are separated by <code>!</code> and print with a colon (<em>See Heart: valves</em>). A target that is no entry of the index raises <code>indexSeeUnknown</code>.</td>
+      <td>A cross-reference instead of a page number: <code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code> prints <em>Cardiac insufficiency. See Heart failure</em>. Levels of the target are separated by <code>!</code> and print with a colon (<em>See Heart: valves</em>). A target that is not an entry of the index raises <code>indexSeeUnknown</code>.</td>
     </tr>
     <tr>
       <td><code>seealso</code></td>

@@ -1,8 +1,8 @@
 ---
 title: "Endnoten auf einer eigenen Seite, in zwei Spalten"
-summary: "Ein kurzer Präprozessor nummeriert die Noten [^1] und sammelt sie unter einer Überschrift „Notes“, deren Format sie auf eine eigene, zweispaltige Seite setzt."
+summary: "Ein kurzer Präprozessor nummeriert die Noten [^1] und sammelt sie unter einer Überschrift „Notes“, deren Stil sie auf eine eigene, zweispaltige Seite setzt."
 plain: "Eine kleine Ausgabe eines berühmten naturwissenschaftlichen Vortrags über eine Kerze. Sie zeigt, wie die Anmerkungen am Ende gesammelt werden, auf einer eigenen Seite in zwei Spalten statt am Fuß jeder Seite."
-description: "Faradays erster Kerzenvortrag mit sechs Endnoten. Jede Marke [^1] erscheint als hochgestellte Ziffer, die Noten folgen auf einer eigenen Seite in zwei Spalten."
+description: "Faradays erster Kerzenvortrag mit sechs Endnoten. Jedes Zeichen [^1] erscheint als hochgestellte Ziffer, die Noten folgen auf eigener Seite in zwei Spalten."
 question: "Wie setze ich Noten [^1] als Endnoten, auf einer eigenen Seite unter einer Überschrift?"
 aliases: ["Fußnoten", "Endnoten", "Anmerkungsteil", "Notenzeichen", "hochgestellte Ziffern", "[^1]", "GFM-Fußnoten", "hängender Einzug", "kritische Ausgabe", "Anmerkungen des Herausgebers", "Leseausgabe", "endnotes"]
 pageNotes: { "1": "Der Auftakt von Vortrag I: ein Rußfeld über der oberen Hälfte der Seite mit dem Foto einer brennenden Kerze auf seiner Unterkante, der Dachzeile „LECTURE I“ in Orange und dem Titel „A Candle“ in Creme. Der Text beginnt darunter, sein erstes Notenzeichen eine kleine hochgestellte 1 in dunklem Orange.", "4": "Ein dunkles Feld steht am Kopf der Seite: zwei Kerzenflammen, eine unter einem Glassturz und eine im Schnitt mit Pfeilen aufsteigender Luft, beschriftet „Figure 1“. Darunter läuft der Vortrag bis zu seinem Ende, mit der hochgestellten 6 im ersten Absatz.", "5": "Die Anmerkungen: ein Rußband mit dem Foto einer ausgeblasenen Kerze, die Rauch nachzieht, dann sechs Noten in zwei Spalten kleinerer Schrift, jede Nummer fett in dunklem Orange im Einzug hängend, und ein Impressum; beide Spalten enden auf derselben Zeile." }
@@ -10,13 +10,13 @@ pageNotes: { "1": "Der Auftakt von Vortrag I: ein Rußfeld über der oberen Häl
 
 ## Was Sie setzen
 
-Vortrag I aus Michael Faradays *The Chemical History of a Candle*, gesetzt als kleine Leseausgabe auf einem Format von 156 × 234 mm. Der Vortrag beginnt auf einem Rußfeld mit einer brennenden Kerze auf seiner Unterkante, einem mit Diffusionsmodellen erzeugten Foto, dessen Schwarz zum Ruß passt, und der Text läuft in einer Spalte Libre Bodoni im Blocksatz. Wo ein Buch Fußnoten setzen würde, schicken kleine hochgestellte Ziffern in dunklem Orange den Leser ans Ende des Vortrags. Die Noten folgen auf einer eigenen Seite, unter einem Rußband mit der gelöschten Kerze, in zwei Flattersatzspalten aus Schrift in 8,2 pt, jede fette Nummer im Einzug hängend. Drei der sechs stammen von William Crookes, aus dem Nachdruck von 1908 seiner Ausgabe von 1861; die anderen drei sind neu und mit *Ed.* gezeichnet. Beide Spalten enden auf derselben Zeile, und das Impressum schließt die zweite.
+Vortrag I aus Michael Faradays *The Chemical History of a Candle*, gesetzt als kleine Leseausgabe auf einem Format von 156 × 234 mm. Der Vortrag beginnt auf einem Rußfeld mit einer brennenden Kerze auf seiner Unterkante, einem mit Diffusionsmodellen erzeugten Foto, dessen Schwarz zum Ruß passt, und der Text läuft in einer Spalte Libre Bodoni im Blocksatz. Wo ein Buch Fußnoten setzen würde, verweisen kleine hochgestellte Ziffern in dunklem Orange den Leser ans Ende des Vortrags. Die Noten folgen auf einer eigenen Seite, unter einem Rußband mit der gelöschten Kerze, in zwei Flattersatzspalten aus Schrift in 8,2 pt, jede fette Nummer im Einzug hängend. Drei der sechs stammen von William Crookes, aus dem Nachdruck von 1908 seiner Ausgabe von 1861; die anderen drei sind neu und mit *Ed.* gezeichnet. Beide Spalten enden auf derselben Zeile, und das Impressum schließt die zweite.
 
 ## Zubereitung
 
 ### 1 · Fußnoten vor dem Build in Endnoten verwandeln
 
-Der Präprozessor steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext setzt Noten `[^1]` selbst ([Fußnoten](/de/docs/document-format-notes-references#fußnoten)), am Fuß der zitierenden Spalte oder, mit `placement: 'chapterEnd'`, nach dem letzten Block des Kapitels. In beiden Fällen bleiben sie in der Spalte des Kapitels, in der Textschrift, unter einem kurzen Strich. Diese Ausgabe gibt den Noten eine Überschrift, ein Band und eine zweispaltige Seite, und das leistet ein Überschriftenformat nur für eine Überschrift, die im Markdown steht. Der Pen schreibt das Markdown daher um, bevor er `buildDocument` aufruft, und die Engine sieht nie ein `[^1]`. Er nummeriert die Zeichen in der Reihenfolge, in der der Text sie zuerst zitiert, und setzt alle Definitionen in dieser Reihenfolge dorthin, wo die erste von ihnen steht, unter `## Notes`. Jede Note beginnt mit `**1**`, denn `1. ` würde eine nummerierte Liste eröffnen. Ein Wortverbinder (U+2060) eröffnet jedes Zeichen; ohne ihn träfe das `**` des Zeichens nach `*Royal George*` als `***` auf den schließenden Stern der Kursive, und die Sterne würden gedruckt.
+Der Präprozessor steht oben in [der kurzen Antwort](#die-kurze-antwort). Postext setzt Noten `[^1]` selbst ([Fußnoten](/de/docs/document-format-notes-references#fußnoten)), am Fuß der Spalte mit dem Verweis oder, mit `placement: 'chapterEnd'`, nach dem letzten Block des Kapitels. In beiden Fällen bleiben sie in der Spalte des Kapitels, in der Textschrift, unter einem kurzen Strich. Diese Ausgabe gibt den Noten eine Überschrift, ein Band und eine zweispaltige Seite, und das leistet ein Überschriftenstil nur für eine Überschrift, die im Markdown steht. Der Pen schreibt das Markdown daher um, bevor er `buildDocument` aufruft, und die Engine sieht nie ein `[^1]`. Er nummeriert die Zeichen in der Reihenfolge, in der sie im Text zuerst vorkommen, und setzt alle Definitionen in dieser Reihenfolge dorthin, wo die erste von ihnen steht, unter `## Notes`. Jede Note beginnt mit `**1**`, denn `1. ` würde eine nummerierte Liste eröffnen. Ein Wortverbinder (U+2060) eröffnet jedes Zeichen; ohne ihn träfe das `**` des Zeichens nach `*Royal George*` als `***` auf den schließenden Stern der Kursive, und die Sterne erschienen im Text.
 
 ### 2 · Fett für die Notenzeichen reservieren
 
@@ -34,7 +34,7 @@ Die Noten stehen in 8,2 auf 10,7 pt, etwa vier Fünftel der Textgröße. Der Pen
 
 <Excerpt region="section" />
 
-Die Überschrift `## Notes {style="notes" …}` eröffnet einen Abschnitt, dessen Seiten Layout und Gestaltung des Formats übernehmen. `parity: 'any'` beginnt ihn auf der nächsten Seite, ob gerade oder ungerade, und `span: 'page'` führt das Band über beide Spalten, sodass es bis zur Beschnittkante reicht und die zweite Spalte darunter beginnt ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Das Band bestimmt die Reserve, aber die erste freie Rasterlinie darunter liegt nur 3 mm unter dem Ruß; `BAND_GAP` fügt `minHeight` daher 5 mm hinzu, und die Noten beginnen eine Zeile tiefer. Die Haarlinie zwischen den Spalten ist die `columnRule` des eigenen `layout` des Formats, sodass nur die Seiten der Noten sie zeichnen. Der Spaltenausgleich ist standardmäßig aktiv und schneidet die Schlussseite so, dass beide Spalten auf derselben Zeile enden ([Spaltenausgleich](/de/docs/configuration-page-flow#spaltenausgleich)).
+Die Überschrift `## Notes {style="notes" …}` eröffnet einen Abschnitt, dessen Seiten Layout und Gestaltung des Stils übernehmen. `parity: 'any'` beginnt ihn auf der nächsten Seite, ob gerade oder ungerade, und `span: 'page'` führt das Band über beide Spalten, sodass es bis zur Beschnittkante reicht und die zweite Spalte darunter beginnt ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Das Band bestimmt die Reserve, aber die erste freie Rasterlinie darunter liegt nur 3 mm unter dem Ruß; `BAND_GAP` fügt `minHeight` daher 5 mm hinzu, und die Noten beginnen eine Zeile tiefer. Die Haarlinie zwischen den Spalten ist die `columnRule` des eigenen `layout` des Stils, sodass nur die Seiten der Noten sie zeichnen. Der Spaltenausgleich ist standardmäßig aktiv und teilt die Schlussseite so auf, dass beide Spalten auf derselben Zeile enden ([Spaltenausgleich](/de/docs/configuration-page-flow#spaltenausgleich)).
 
 ### 5 · Den Vortrag auf einem Rußfeld eröffnen
 
@@ -46,7 +46,7 @@ Das Feld ist ein an der Seite verankerter Kasten, und die Kerze, ein Bildelement
 
 <Excerpt region="palette" />
 
-Das Flammenorange hat auf Ruß einen Kontrast von 6:1, auf dem Papier aber nur 2,6:1. Es färbt die Dachzeilen auf den dunklen Bändern und Abbildung 1; alles Kleine, was in Orange auf dem Papier steht (Notenzeichen, Notennummern, die Bezeichnung der Abbildung), nimmt die dunklere Glut mit 5,1:1. `main-color` zeigt auf die Glut, sodass ein Standardwert, den die Konfiguration nicht neu angibt, der Gestaltung folgt, statt blau zu drucken.
+Das Flammenorange hat auf Ruß einen Kontrast von 6:1, auf dem Papier aber nur 2,6:1. Es färbt die Dachzeilen auf den dunklen Bändern und Abbildung 1; alles Kleine, was in Orange auf dem Papier steht (Notenzeichen, Notennummern, die Bezeichnung der Abbildung), nimmt die dunklere Glut mit 5,1:1. `main-color` zeigt auf die Glut, sodass ein Standardwert, den die Konfiguration nicht neu angibt, der Gestaltung folgt, statt blau zu erscheinen.
 
 <Note>Eine kurze Nebenbemerkung kann im Text zwischen Klammern bleiben. Erläuterungen, die der Leser neben der Zeile braucht, können in eine Seitenspalte, wie in <RecipeLink slug="textbook-margin-column">Lehrbuch mit Randspalte</RecipeLink>.</Note>
 
@@ -54,11 +54,11 @@ Das Flammenorange hat auf Ruß einen Kontrast von 6:1, auf dem Papier aber nur 2
 
 ### Postext die Noten setzen lassen
 
-Entfernen Sie `endnotes()` und die Überschrift `## Notes`, setzen Sie eine Leerzeile zwischen die Definitionen (die Engine liest eine Definition bis zur nächsten Leerzeile) und fügen Sie der Konfiguration `footnotes: { placement: 'chapterEnd' }` hinzu. Die Engine nummeriert die Zeichen und setzt die Noten ans Ende des Vortrags, nach dem Impressum, in seiner einen Spalte; <RecipeLink slug="novel-footnotes-column-foot">Fußnoten am Fuß der Spalte, die sie zitiert</RecipeLink> gestaltet Noten, die die Engine setzt.
+Entfernen Sie `endnotes()` und die Überschrift `## Notes`, setzen Sie eine Leerzeile zwischen die Definitionen (für die Engine reicht eine Definition bis zur nächsten Leerzeile) und fügen Sie der Konfiguration `footnotes: { placement: 'chapterEnd' }` hinzu. Die Engine nummeriert die Zeichen und setzt die Noten ans Ende des Vortrags, nach dem Impressum, in seiner einen Spalte; <RecipeLink slug="novel-footnotes-column-foot">Fußnoten am Fuß der Spalte, die sie zitiert</RecipeLink> gestaltet Noten, die die Engine setzt.
 
 ### Die Notenzeichen in Textfarbe drucken
 
-Wenn der Text Fett für eigene Hervorhebungen nutzt, drucken Sie die Zeichen in der Textfarbe, denn `boldColor` färbt die Zeichen und jedes fette Wort gleichermaßen.
+Wenn der Text Fett für eigene Hervorhebungen nutzt, setzen Sie die Zeichen in der Textfarbe, denn `boldColor` färbt die Zeichen und jedes fette Wort gleichermaßen.
 
 ```diff
 -const markers = { boldColor: col('ember'), // **^n^**: a superscript at 58 % of the text size

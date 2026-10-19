@@ -13,7 +13,7 @@ export const metadata = {
 
 # Architektur von Postext
 
-Wenn Sie schon einmal mit React gearbeitet haben, kennen Sie den Kerngedanken bereits. React baut ein virtuelles DOM im Speicher auf, vergleicht es und fasst erst dann das echte DOM des Browsers an. Postext macht dasselbe – nur baut es statt UI-Komponenten einen Baum aus **Seiten, Spalten, Textblöcken und Begrenzungsrahmen**. Die gesamte Geometrie eines mehrseitigen, mehrspaltigen Dokuments, berechnet, bevor ein einziges Pixel gezeichnet wird. Jeder Absatz, jede Überschrift, jedes Bild, jede Fußnote und jedes herausgestellte Zitat steht an genauen Koordinaten und folgt jahrhundertealten typografischen Regeln, die CSS schlicht nicht ausdrücken kann.
+Wenn Sie schon einmal mit React gearbeitet haben, kennen Sie den Kerngedanken bereits. React baut ein virtuelles DOM im Speicher auf, vergleicht es und fasst erst dann das echte DOM des Browsers an. Postext macht dasselbe – nur baut es statt UI-Komponenten einen Baum aus **Seiten, Spalten, Textblöcken und umschließenden Rechtecken**. Die gesamte Geometrie eines mehrseitigen, mehrspaltigen Dokuments wird berechnet, bevor ein einziges Pixel gezeichnet wird. Jeder Absatz, jede Überschrift, jedes Bild, jede Fußnote und jedes herausgestellte Zitat steht an genauen Koordinaten und folgt jahrhundertealten typografischen Regeln, die CSS schlicht nicht ausdrücken kann.
 
 Möglich ist all das dank [`@chenglou/pretext`](https://github.com/chenglou/pretext), einer Bibliothek zur Textmessung ohne DOM, die 300- bis 600-mal schneller ist als ein Reflow im Browser. Die Geschichte hinter dem Projekt (ein Jahrzehnt gescheiterter Versuche, der Engpass, an dem sie alle hängen blieben, und die Bibliothek, die ihn endlich beseitigte) erzählt die [Einführung](/de/docs/introduction).
 
@@ -23,7 +23,7 @@ Denken Sie an ein zweispaltiges Dokument mit 74 Seiten. Einen Geschäftsbericht 
 
 Und darum ist das so wichtig.
 
-Typografische Regeln hängen tief und zum Verzweifeln voneinander ab. Sie beheben eine Witwe auf Seite 5 – eine einsame letzte Zeile, die unten in einer Spalte gestrandet ist –, indem Sie sie in die vorige Spalte zurückholen. Gut. Aber diese Änderung verkürzt die Spalte auf Seite 5, das schiebt Inhalt nach vorn, und das erzeugt womöglich auf Seite 6 eine Waise: eine einzelne erste Zeile, in eine neue Spalte geschoben und von ihrem Absatz getrennt. Um überhaupt *zu erkennen*, dass Sie ein neues Problem geschaffen haben, muss das gesamte Layout des Dokuments zur Prüfung vorliegen. Und um es *zu beheben*, ohne woanders noch ein Problem zu erzeugen, müssen Sie das Ganze anpassen, neu messen und neu prüfen können.
+Typografische Regeln hängen tief und zum Verzweifeln voneinander ab. Sie beheben eine Witwe auf Seite 5 – eine einsame letzte Zeile, die allein am Fuß einer Spalte steht –, indem Sie sie in die vorige Spalte zurückholen. Gut. Aber diese Änderung verkürzt die Spalte auf Seite 5, das schiebt Inhalt nach vorn, und das erzeugt womöglich auf Seite 6 eine Waise: eine einzelne erste Zeile, in eine neue Spalte geschoben und von ihrem Absatz getrennt. Um überhaupt *zu erkennen*, dass Sie ein neues Problem geschaffen haben, muss das gesamte Layout des Dokuments zur Prüfung vorliegen. Und um es *zu beheben*, ohne woanders noch ein Problem zu erzeugen, müssen Sie das Ganze anpassen, neu messen und neu prüfen können.
 
 Das ist die Philosophie „erst alles berechnen, dann rendern“. Sie ist kein Leistungstrick. Sie ist der einzige Weg, die Dutzenden miteinander verflochtenen typografischen Regeln anzuwenden, nach denen professionelle Setzer seit Jahrhunderten arbeiten.
 
@@ -43,7 +43,7 @@ unscharf geworden ist.
   <tbody>
     <tr>
       <td><strong>VDT</strong></td>
-      <td>Virtual Document Tree, der virtuelle Dokumentbaum. Die veränderliche, an Ort und Stelle bearbeitete Datenstruktur, die das gesamte Dokument darstellt: Seiten, Spalten, Blöcke, Inline-Segmente und Begrenzungsrahmen. Vergleichbar mit einem virtuellen DOM, aber für die Geometrie des Dokumentlayouts.</td>
+      <td>Virtual Document Tree, der virtuelle Dokumentbaum. Die veränderliche, an Ort und Stelle bearbeitete Datenstruktur, die das gesamte Dokument darstellt: Seiten, Spalten, Blöcke, Inline-Segmente und umschließende Rechtecke. Vergleichbar mit einem virtuellen DOM, aber für die Geometrie des Dokumentlayouts.</td>
     </tr>
     <tr>
       <td><strong>Seite</strong></td>
@@ -59,23 +59,23 @@ unscharf geworden ist.
     </tr>
     <tr>
       <td><strong>Zeile</strong></td>
-      <td>Eine gemessene Textzeile innerhalb eines Blocks, erzeugt von Pretext. Jede Zeile hat einen Begrenzungsrahmen und eine Grundlinienposition.</td>
+      <td>Eine gemessene Textzeile innerhalb eines Blocks, erzeugt von Pretext. Jede Zeile hat ein umschließendes Rechteck und eine Grundlinienposition.</td>
     </tr>
     <tr>
-      <td><strong>Begrenzungsrahmen</strong></td>
-      <td>{'{'}  <code>x, y, width, height</code>  {'}'} in Pixeln, relativ zum Ursprung der Seite. Jeder Knoten im VDT trägt einen.</td>
+      <td><strong>Umschließendes Rechteck</strong></td>
+      <td>{'{'}  <code>x, y, width, height</code>  {'}'} in Pixeln, relativ zum Ursprung der Seite. Jeder Knoten im VDT hat eines.</td>
     </tr>
     <tr>
       <td><strong>Ressource</strong></td>
-      <td>Ein Element, das kein Text ist und über eine ID mit dem Fließtext verbunden ist: eine Bitmap, ein SVG, eine Tabelle oder ein Video (<code>Resource</code>, mit <code>kind: 'bitmap' | 'svg' | 'table' | 'video'</code>). Ressourcen werden beim ersten Verweis je Typ nummeriert (Abbildung 1, Tabelle 2.1 …) und in ein Band oben oder unten auf einer Seite in der Nähe dieses Verweises gleiten gelassen.</td>
+      <td>Ein Element, das kein Text ist und über eine ID mit dem Fließtext verbunden ist: eine Bitmap, ein SVG, eine Tabelle oder ein Video (<code>Resource</code>, mit <code>kind: 'bitmap' | 'svg' | 'table' | 'video'</code>). Ressourcen werden beim ersten Verweis je Typ nummeriert (Abbildung 1, Tabelle 2.1 …) und als Gleitobjekt an den Kopf oder Fuß einer Seite nahe diesem Verweis gesetzt.</td>
     </tr>
     <tr>
       <td><strong>Anmerkung</strong></td>
-      <td>Eine Fußnote oder eine Anmerkung am Kapitelende, im Markdown als Marke <code>[^id]</code> und Definition <code>[^id]:</code> geschrieben (siehe <a href="/de/docs/document-format-notes-references#fußnoten">Fußnoten</a>). Marginalien und die Liste <code>PostextNote</code>, die das Inhaltsmodell annimmt, sind nicht implementiert: Die Engine liest <code>notes</code> nicht.</td>
+      <td>Eine Fußnote oder eine Anmerkung am Kapitelende, im Markdown als Anmerkungszeichen <code>[^id]</code> und Definition <code>[^id]:</code> geschrieben (siehe <a href="/de/docs/document-format-notes-references#fußnoten">Fußnoten</a>). Randnoten und die Liste <code>PostextNote</code>, die das Inhaltsmodell annimmt, sind nicht implementiert: Die Engine liest <code>notes</code> nicht.</td>
     </tr>
     <tr>
       <td><strong>Grundlinienraster</strong></td>
-      <td>Das senkrechte Raster, abgeleitet aus dem Zeilenabstand des Fließtextes (z. B. 24 px bei 16 px/1,5). Jede Grundlinie des Fließtextes soll auf einem Vielfachen davon landen, damit die Zeilen über Spalten und gegenüberliegende Seiten hinweg fluchten.</td>
+      <td>Das senkrechte Raster, abgeleitet aus dem Zeilenabstand des Fließtextes (z. B. 24 px bei 16 px/1,5). Jede Grundlinie des Fließtextes soll auf einem Vielfachen davon stehen, damit die Zeilen über Spalten und gegenüberliegende Seiten hinweg fluchten.</td>
     </tr>
     <tr>
       <td><strong>Badness</strong></td>
@@ -99,11 +99,11 @@ unscharf geworden ist.
     </tr>
     <tr>
       <td><strong>Platzierungsdurchlauf</strong></td>
-      <td>Ein Durchgang durch den Inhalt, vom ersten bis zum letzten Block, der einen ganzen VDT aufbaut: Er parst, misst über den Cache, platziert Text, Gleitobjekte und Kästen und wendet die Umbruch- und Zusammenhalteregeln an.</td>
+      <td>Ein Durchgang durch den Inhalt, vom ersten bis zum letzten Block, der einen ganzen VDT aufbaut: Er liest den Inhalt ein, misst über den Cache, platziert Text, Gleitobjekte und Kästen und wendet die Umbruch- und Zusammenhalteregeln an.</td>
     </tr>
     <tr>
       <td><strong>Runde</strong></td>
-      <td>Eine Wiederholung des Platzierungsdurchlaufs mit Hinweisen aus dem vorigen: eine Bandgrenze, Hebel für den Spaltenausgleich, feststehende Seitenbezeichnungen oder Anmerkungsnummern. Jede Art von Runde hat ihre eigene Grenze (siehe <a href="/de/docs/architecture-layout-pipeline#der-durchlaufsteuerer">Der Durchlaufsteuerer</a>).</td>
+      <td>Eine Wiederholung des Platzierungsdurchlaufs mit Hinweisen aus dem vorigen: eine Höhengrenze für einen Spaltenbereich, Hebel für den Spaltenausgleich, feststehende Seitenbezeichnungen oder Anmerkungsnummern. Jede Art von Runde hat ihre eigene Grenze (siehe <a href="/de/docs/architecture-layout-pipeline#der-durchlaufsteuerer">Der Durchlaufsteuerer</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -111,14 +111,14 @@ unscharf geworden ist.
 
 ## Systemarchitektur
 
-<Illustration name="SystemArchitecture" data='{"title": "Systemarchitektur von Postext", "desc": "Angereichertes Markdown und PostextConfig gehen in den Parser. Der Platzierungsdurchlauf misst Text über Pretext und füllt den virtuellen Dokumentbaum; buildDocument wiederholt den Durchlauf mit Hinweisen, bis das Layout feststeht. Ein Backend rendert den fertigen VDT als HTML oder PDF.", "caption": "Parser → Platzierungsdurchlauf ↔ Pretext → VDT → Backend → Ausgabe.", "markdown": "Angereichertes Markdown", "configTitle": "PostextConfig", "configSubtitle": "(Spalten, Regeln, Abstände)", "engine": "Layout-Engine", "parser": "Parser", "pass1": "Markdown → Blöcke", "vdtLine1": "Virtueller Dokument-", "vdtLine2": "baum (VDT)", "vdtAttr1": "von einem Durchlauf gefüllt", "vdtAttr2": "Seiten > Spalten > Blöcke", "vdtAttr3": "jeder Knoten hat eine bbox", "vdtAttr4": "ein neuer Baum pro Durchlauf", "pretext": "Pretext", "pretextSubtitle": "Textmessung", "passesTitle": "Platzierungsdurchlauf (ein Gang durch den Inhalt)", "passes": [{"num": "Messen", "name": "Zeilen, über den Cache"}, {"num": "Platzieren", "name": "Blöcke in Spalten und Seiten"}, {"num": "Gleiten", "name": "Ressourcen in Seitenbänder"}, {"num": "Umbrechen", "name": "Absätze am Spaltenende"}, {"num": "Halten", "name": "Überschriften und Listen beim Text"}, {"num": "Einrasten", "name": "den Fluss zurück aufs Raster"}], "convergence": "mit Hinweisen wiederholen", "backend": "Backend", "backendSubtitle": "(einheitliche Schnittstelle)", "backendItems": ["Canvas / Browser", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "gerenderte Ausgabe"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Systemarchitektur von Postext", "desc": "Angereichertes Markdown und PostextConfig gehen in den Parser. Der Platzierungsdurchlauf misst Text über Pretext und füllt den virtuellen Dokumentbaum; buildDocument wiederholt den Durchlauf mit Hinweisen, bis das Layout feststeht. Ein Backend rendert den fertigen VDT als HTML oder PDF.", "caption": "Parser → Platzierungsdurchlauf ↔ Pretext → VDT → Backend → Ausgabe.", "markdown": "Angereichertes Markdown", "configTitle": "PostextConfig", "configSubtitle": "(Spalten, Regeln, Abstände)", "engine": "Layout-Engine", "parser": "Parser", "pass1": "Markdown → Blöcke", "vdtLine1": "Virtueller Dokument-", "vdtLine2": "baum (VDT)", "vdtAttr1": "von einem Durchlauf gefüllt", "vdtAttr2": "Seiten > Spalten > Blöcke", "vdtAttr3": "jeder Knoten hat eine bbox", "vdtAttr4": "ein neuer Baum pro Durchlauf", "pretext": "Pretext", "pretextSubtitle": "Textmessung", "passesTitle": "Platzierungsdurchlauf (ein Gang durch den Inhalt)", "passes": [{"num": "Messen", "name": "Zeilen, über den Cache"}, {"num": "Platzieren", "name": "Blöcke in Spalten und Seiten"}, {"num": "Gleiten", "name": "Ressourcen an Kopf oder Fuß"}, {"num": "Umbrechen", "name": "Absätze am Spaltenende"}, {"num": "Halten", "name": "Überschriften und Listen beim Text"}, {"num": "Einrasten", "name": "den Fluss zurück aufs Raster"}], "convergence": "mit Hinweisen wiederholen", "backend": "Backend", "backendSubtitle": "(einheitliche Schnittstelle)", "backendItems": ["Canvas / Browser", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "gerenderte Ausgabe"}' />
 
 **So durchläuft Ihr Inhalt die Engine:**
 
 1. Der **Parser** liest Ihr angereichertes Markdown und macht daraus eine flache Liste typisierter Inhaltsblöcke: Inhalt und Struktur, noch ohne Positionen
 2. Ein **Platzierungsdurchlauf** geht diese Liste einmal durch und baut den VDT auf. Er misst jeden Block über Pretext in der Breite der Spalte, in die der Block gleich kommt, platziert Text, Gleitobjekte und Kästen in Seiten und Spalten und wendet dabei die Umbruch- und Zusammenhalteregeln an
-3. Der **Steuerer** (`buildDocument`) wiederholt den Durchlauf, wenn eine Entscheidung das Ergebnis eines ganzen Layouts braucht: ein Inhaltsverzeichnis mit Seitenzahlen, ein Kasten über die ganze Seitenbreite, der die Spalten über sich auf gleiche Höhe bringen muss, eine Spalte, die zu kurz endete. Jede Wiederholung erhält Hinweise aus dem Durchlauf davor, und jede Art von Wiederholung hat ihre eigene Grenze
-4. Der **fertige VDT** ist die vollständige Layoutgeometrie: Jedes Element kennt seine Seitenzahl, seine Spalte, seine Position und seinen Begrenzungsrahmen. Das Dokument ist vollständig „gesetzt“, bevor irgendetwas gerendert wird
+3. Der **Steuerer** (`buildDocument`) wiederholt den Durchlauf, wenn eine Entscheidung das Ergebnis eines ganzen Layouts braucht: ein Inhaltsverzeichnis mit Seitenzahlen, ein seitenbreiter Kasten, über dem die Spalten auf gleicher Höhe enden müssen, eine Spalte, die zu kurz endete. Jede Wiederholung erhält Hinweise aus dem Durchlauf davor, und jede Art von Wiederholung hat ihre eigene Grenze
+4. Der **fertige VDT** ist die vollständige Layoutgeometrie: Jedes Element kennt seine Seitenzahl, seine Spalte, seine Position und sein umschließendes Rechteck. Das Dokument ist vollständig „gesetzt“, bevor irgendetwas gerendert wird
 5. Ein **Backend** geht den fertigen VDT durch und rendert ihn im Zielformat: eine gerasterte Canvas-Bitmap, ein DOM-Baum aus positionierten HTML-Elementen, ein PDF-Dokument mit eingebetteten Schriften oder ein EPUB. Derselbe VDT speist alle vier; die Wahl eines Backends ist allein eine Frage der Ausgabe
 
 
@@ -128,7 +128,7 @@ unscharf geworden ist.
 
 Das Inhaltsmodell ist ebenso eine Philosophie wie eine Datenstruktur. Sie beschreiben, *was* gesagt werden soll, nicht, *wie* es gesetzt wird. Die Layoutentscheidungen trifft die Engine.
 
-<Illustration name="ContentModel" data='{"title": "Inhaltsmodell: Markdown, Ressourcen, Anmerkungen", "desc": "Die Eingabe für Postext trennt das Markdown (Lesereihenfolge und semantische Struktur) von den Ressourcen (Bitmaps, SVGs, Tabellen) und den Anmerkungen. Die Engine löst Inline-Verweise :ref und Einbettungen ::resource über die ID auf und erzeugt den VDT.", "caption": "Das Markdown bestimmt die Lesereihenfolge, die Ressourcen tragen die visuellen Daten.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "Lesereihenfolge + :ref / ::resource per ID", "resources": "resources[]", "resourcesSub": "Bitmaps, SVGs, Tabellen", "notes": "metadata", "notesSub": "Titel, Autor, Daten", "resolveMarker": "per ID aufgelöst: :ref{id=…}, ::resource{id=…}", "engineLabel": "Engine", "vdtLabel": "VDT"}' />
+<Illustration name="ContentModel" data='{"title": "Inhaltsmodell: Markdown, Ressourcen, Anmerkungen", "desc": "Die Eingabe für Postext trennt das Markdown (Lesereihenfolge und semantische Struktur) von den Ressourcen (Bitmaps, SVGs, Tabellen) und den Anmerkungen. Die Engine löst Inline-Verweise :ref und Einbettungen ::resource über die ID auf und erzeugt den VDT.", "caption": "Das Markdown bestimmt die Lesereihenfolge, die Ressourcen liefern die visuellen Daten.", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "Lesereihenfolge + :ref / ::resource per ID", "resources": "resources[]", "resourcesSub": "Bitmaps, SVGs, Tabellen", "notes": "metadata", "notesSub": "Titel, Autor, Daten", "resolveMarker": "per ID aufgelöst: :ref{id=…}, ::resource{id=…}", "engineLabel": "Engine", "vdtLabel": "VDT"}' />
 
 ```typescript
 // packages/postext/src/types.ts
@@ -158,10 +158,10 @@ interface Resource {
 }
 ```
 
-**Ressourcen** tragen die visuellen Daten: Legenden, Alternativtext und eine Nutzlast, die von ihrer Art abhängt. Binäre Nutzlasten (Bitmaps, SVGs) liegen *außerhalb* – die Ressource speichert nur eine `fileId`, und der Renderer löst sie beim Zeichnen auf (die Sandbox hält die Bytes in IndexedDB). Tabellenressourcen sind die Ausnahme: Ihr `TableModel` (ein Raster aus Zellen mit Spannen und Ausrichtung) reist mit, weil es strukturierte Daten sind und keine Bytes.
-**Anmerkungen** werden im Markdown geschrieben: eine Marke `[^id]` dort, wo die Anmerkung zitiert wird, und eine Definition `[^id]:`, ein eigener Absatz an beliebiger Stelle im Kapitel. Die Engine nummeriert die Anmerkungen in der Reihenfolge, in der sie zuerst zitiert werden, und setzt jede an den Fuß der Spalte, die die zitierende Zeile enthält, unter einer kurzen Linie, oder mit `footnotes.placement: 'chapterEnd'` hinter den letzten Block des Kapitels (siehe [Fußnoten](/de/docs/document-format-notes-references#fußnoten) und [Konfiguration → Fußnoten](/de/docs/configuration-notes-references#fußnoten)). Das Inhaltsmodell nimmt weiterhin ein Array `notes` an, aber keine Stufe der Pipeline liest es.
+**Ressourcen** enthalten die visuellen Daten: Legenden, Alternativtext und eine Nutzlast, die von ihrer Art abhängt. Binäre Nutzlasten (Bitmaps, SVGs) liegen *außerhalb* der Ressource – sie speichert nur eine `fileId`, und der Renderer löst sie beim Zeichnen auf (die Sandbox hält die Bytes in IndexedDB). Tabellenressourcen sind die Ausnahme: Ihr `TableModel` (ein Raster aus Zellen mit Spannen und Ausrichtung) steht direkt in der Ressource, weil es strukturierte Daten sind und keine Bytes.
+**Anmerkungen** werden im Markdown geschrieben: ein Anmerkungszeichen `[^id]` dort, wo die Anmerkung zitiert wird, und eine Definition `[^id]:`, ein eigener Absatz an beliebiger Stelle im Kapitel. Die Engine nummeriert die Anmerkungen in der Reihenfolge, in der sie zuerst zitiert werden, und setzt jede an den Fuß der Spalte, die die zitierende Zeile enthält, unter einer kurzen Linie, oder mit `footnotes.placement: 'chapterEnd'` hinter den letzten Block des Kapitels (siehe [Fußnoten](/de/docs/document-format-notes-references#fußnoten) und [Konfiguration → Fußnoten](/de/docs/configuration-notes-references#fußnoten)). Das Inhaltsmodell nimmt weiterhin ein Array `notes` an, aber keine Stufe der Pipeline liest es.
 
-Diese Trennung ist eine bewusste Gestaltungsentscheidung, und sie wiegt schwerer, als es aussieht. Das Markdown bestimmt die *Lesereihenfolge* und die *semantische Struktur* – was zuerst kommt, was eine Überschrift ist, wo eine Fußnote zitiert wird und was sie sagt. Das Ressourcen-Array trägt die *visuellen Daten* – Bildmaße, Text der Legende, Tabellenzellen. Weil beides getrennt bleibt, lässt sich dasselbe Markdown allein durch eine andere Konfiguration völlig unterschiedlich setzen. Ein zweispaltiges wissenschaftliches Layout und ein einspaltiger Blogbeitrag können denselben Quellinhalt teilen. Und die Engine kann Platzierungsentscheidungen treffen – etwa ein Bild in die nächste Spalte zu verschieben, weil es hier nicht passt –, ohne je Ihren Quellinhalt anzurühren.
+Diese Trennung ist eine bewusste Gestaltungsentscheidung, und sie wiegt schwerer, als es aussieht. Das Markdown bestimmt die *Lesereihenfolge* und die *semantische Struktur* – was zuerst kommt, was eine Überschrift ist, wo eine Fußnote zitiert wird und was sie sagt. Das Ressourcen-Array enthält die *visuellen Daten* – Bildmaße, Text der Legende, Tabellenzellen. Weil beides getrennt bleibt, lässt sich dasselbe Markdown allein durch eine andere Konfiguration völlig unterschiedlich setzen. Ein zweispaltiges wissenschaftliches Layout und ein einspaltiger Blogbeitrag können denselben Quellinhalt teilen. Und die Engine kann Platzierungsentscheidungen treffen – etwa ein Bild in die nächste Spalte zu verschieben, weil es hier nicht passt –, ohne je Ihren Quellinhalt anzurühren.
 
 ```typescript
 // Example: a simple article with a referenced figure
@@ -191,9 +191,9 @@ Italy by 1465 and France by 1470.
 };
 ```
 
-Ressourcen sind über eine ID mit dem Fließtext verbunden, und **ein Verweis genügt, um eine Ressource aufzunehmen**. Das Inline-`:ref{id="printing-press"}` erledigt zwei Aufgaben auf einmal: Es setzt die berechnete Nummer der Ressource in den Fließtext („Abb. 1“), und – beim ersten Verweis in Lesereihenfolge – lässt es die Ressource auf die Seite *gleiten*, indem es oben oder unten in der Nähe dieses Verweises ein Band reserviert, genau wie ein Setzer im Druck es täte. Sie platzieren die Abbildung nie ein zweites Mal. Für die gelegentliche Ressource, die an einer genauen Stelle im Fluss stehen muss, ist `::resource{id="…"}` auf einer eigenen Zeile eine optionale Blockeinbettung: Sie wird nur dann an Ort und Stelle gerendert, wenn die aufgelöste `placement.position` der Ressource `'here'` ist (was sie vom Gleiten ausnimmt); bei einer gleitenden Ressource gilt sie einfach als weiterer Verweis. Die Autorin oder der Autor muss nie über die Platzierung nachdenken. Das übernimmt die Engine.
+Ressourcen sind über eine ID mit dem Fließtext verbunden, und **ein Verweis genügt, um eine Ressource aufzunehmen**. Das Inline-`:ref{id="printing-press"}` erledigt zwei Aufgaben auf einmal: Es setzt die berechnete Nummer der Ressource in den Fließtext („Abb. 1“), und – beim ersten Verweis in Lesereihenfolge – setzt es die Ressource als *Gleitobjekt* auf die Seite: Es reserviert dafür am Kopf oder Fuß nahe diesem Verweis Platz, genau wie ein Setzer im Druck es täte. Sie platzieren die Abbildung nie ein zweites Mal. Für die gelegentliche Ressource, die an einer genauen Stelle im Fluss stehen muss, ist `::resource{id="…"}` auf einer eigenen Zeile eine optionale Blockeinbettung: Sie wird nur dann an Ort und Stelle gerendert, wenn die aufgelöste `placement.position` der Ressource `'here'` ist (was sie vom Gleiten ausnimmt); bei einer gleitenden Ressource gilt sie einfach als weiterer Verweis. Die Autorin oder der Autor muss nie über die Platzierung nachdenken. Das übernimmt die Engine.
 
-<Illustration name="ReferenceResolution" data='{"title": "Auflösung von Verweisen", "desc": "Eine Markdown-Quelle verweist inline mit :ref{id=printing-press} auf eine Abbildung. Das Ressourcen-Array liefert den eigentlichen Inhalt per ID. Die Engine löst den Verweis auf, setzt die berechnete Nummer in den Text und lässt die Abbildung in ein Band oben auf der Seite gleiten.", "caption": "Verweise im Markdown sind nur Namen. Die Engine löst sie gegen die Ressourcen auf, nummeriert sie und lässt die Abbildung in die Nähe des Verweises gleiten.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "optionale Einbettung für Platzierung &#39;here&#39;", "resolveLabel": "auflösen", "outputTitle": "gesetzte Seite", "outputFigure": "[ Abbildung 1 – in ein Band geglitten ]", "outputFootnote": "…gezeigt in Abb. 1…"}' />
+<Illustration name="ReferenceResolution" data='{"title": "Auflösung von Verweisen", "desc": "Eine Markdown-Quelle verweist inline mit :ref{id=printing-press} auf eine Abbildung. Das Ressourcen-Array liefert den eigentlichen Inhalt per ID. Die Engine löst den Verweis auf, fügt die berechnete Nummer in den Text ein und setzt die Abbildung als Gleitobjekt an den Kopf der Seite.", "caption": "Verweise im Markdown sind nur Namen. Die Engine ordnet sie den Ressourcen zu, nummeriert sie und setzt die Abbildung als Gleitobjekt in die Nähe des Verweises.", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "optionale Einbettung für die Platzierung &#39;here&#39;", "resolveLabel": "auflösen", "outputTitle": "gesetzte Seite", "outputFigure": "[ Abbildung 1 – gleitet in den Kopfbereich ]", "outputFootnote": "…gezeigt in Abb. 1…"}' />
 
 ### Konfiguration
 
@@ -215,12 +215,12 @@ Jeder Aspekt der Layout-Pipeline wird über `PostextConfig` gesteuert. Der volls
     </tr>
     <tr>
       <td><code>tableStyle</code></td>
-      <td>Zelltypografie, Rahmenlinien, Eckenradius, Füllungen für Kopf und Rumpf von Ressourcen mit <code>kind: 'table'</code>, dazu die benannten Varianten aus <code>tableStyles</code>, die eine Tabelle mit <code>table.styleId</code> wählt – siehe <a href="/de/docs/configuration-resources#tabellenstil">Konfiguration → Tabellenstil</a></td>
+      <td>Zelltypografie, Randlinien, Eckenradius, Füllungen für Kopf und Rumpf von Ressourcen mit <code>kind: 'table'</code>, dazu die benannten Varianten aus <code>tableStyles</code>, die eine Tabelle mit <code>table.styleId</code> wählt – siehe <a href="/de/docs/configuration-resources#tabellenstil">Konfiguration → Tabellenstil</a></td>
       <td>Platzierung von Ressourcen</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
-      <td>Typografie der Legenden von Ressourcen: die nummerierte Kennung und der Beschreibungstext – siehe <a href="/de/docs/configuration-resources#legendenstil">Konfiguration → Legendenstil</a></td>
+      <td>Typografie der Legenden von Ressourcen: die nummerierte Bezeichnung und der Beschreibungstext – siehe <a href="/de/docs/configuration-resources#legendenstil">Konfiguration → Legendenstil</a></td>
       <td>Platzierung von Ressourcen</td>
     </tr>
     <tr>
@@ -236,9 +236,9 @@ Jeder Aspekt der Layout-Pipeline wird über `PostextConfig` gesteuert. Der volls
   </tbody>
 </table>
 
-### Parsing-Strategie
+### Strategie beim Einlesen
 
-Das Parsen ist mit Absicht der einfachste Schritt der Pipeline. Markdown geht hinein und kommt als flache Liste typisierter Inhaltsblöcke heraus (`ContentBlock`, in `packages/postext/src/parse/`): eine Überschrift, ein Absatz mit seinen Inline-Spannen, ein Listenpunkt, eine Direktive. Das Ergebnis wird memoisiert (`parseMarkdownMemo`), sodass die Durchläufe eines Builds nur einmal parsen und ein späterer Build desselben Textes ebenso. Ressourcenverweise werden zu Beginn jedes Platzierungsdurchlaufs über die ID gegen das Array `resources[]` aufgelöst. Fußnotendefinitionen (Absätze, die mit `[^id]:` beginnen) verlassen dort ebenfalls den Fluss und werden nach ID für die Marken aufbewahrt, die sie zitieren; das Array `notes[]` wird nicht gelesen.
+Das Einlesen ist mit Absicht der einfachste Schritt der Pipeline. Markdown geht hinein und kommt als flache Liste typisierter Inhaltsblöcke heraus (`ContentBlock`, in `packages/postext/src/parse/`): eine Überschrift, ein Absatz mit seinen Inline-Spannen, ein Listenpunkt, eine Direktive. Das Ergebnis wird memoisiert (`parseMarkdownMemo`), sodass die Durchläufe eines Builds den Text nur einmal einlesen, und ein späterer Build desselben Textes ebenso. Ressourcenverweise werden zu Beginn jedes Platzierungsdurchlaufs über die ID gegen das Array `resources[]` aufgelöst. Fußnotendefinitionen (Absätze, die mit `[^id]:` beginnen) verlassen dort ebenfalls den Fluss und werden nach ID für die Marken aufbewahrt, die sie zitieren; das Array `notes[]` wird nicht gelesen.
 
 Stellen Sie es sich als Manifest vor: „Da ist eine Überschrift, dann ein Absatz mit 200 Wörtern, dann ein Abbildungsverweis, dann ein weiterer Absatz.“ Keine Messungen. Keine Positionierung. Überhaupt keine Layoutentscheidungen. Ein `VDTBlock` existiert erst, wenn der Platzierungsdurchlauf einen Block gemessen und ihm einen Platz gegeben hat.
 
@@ -247,23 +247,23 @@ Stellen Sie es sich als Manifest vor: „Da ist eine Überschrift, dann ein Absa
 
 Angenommen, Sie bitten einen professionellen Setzer, ein ganzes Buch zu setzen, und statt gedruckter Seiten gibt er Ihnen eine Tabelle zurück. Jede Zeile ist ein Element. Jede Zelle ist ein genaues Maß: „Die Überschrift steht bei (40, 30), der erste Absatz beginnt bei (40, 78) und ist 144 px hoch, das Bild kommt oben in Spalte 2 auf Seite 3 …“ Diese Tabelle ist der VDT.
 
-Der virtuelle Dokumentbaum ist die zentrale Datenstruktur von Postext – ein veränderlicher, an Ort und Stelle bearbeiteter Baum, der jede Seite, jede Spalte, jeden Block und jede Zeile darstellt, jeweils mit einem genauen Begrenzungsrahmen. Sobald `buildDocument` zurückkehrt, *ist* der VDT die Antwort. Sie können fragen „Was steht auf Seite 72 in Spalte 2?“, ohne ein einziges Pixel zu rendern.
+Der virtuelle Dokumentbaum ist die zentrale Datenstruktur von Postext – ein veränderlicher, an Ort und Stelle bearbeiteter Baum, der jede Seite, jede Spalte, jeden Block und jede Zeile darstellt, jeweils mit einem genauen umschließenden Rechteck. Sobald `buildDocument` zurückkehrt, *ist* der VDT die Antwort. Sie können fragen „Was steht auf Seite 72 in Spalte 2?“, ohne ein einziges Pixel zu rendern.
 
 ### Warum veränderlich
 
 Das ist derselbe Ansatz wie in den Render-Pipelines von Spiele-Engines, wo ein gemeinsamer, veränderlicher Weltzustand in einer engen Schleife von aufeinanderfolgenden Systemen aktualisiert wird. Und zwar aus demselben Grund.
 
-Ein Platzierungsdurchlauf füllt den Baum an Ort und Stelle. Er öffnet eine Seite, hängt ihr Spalten an, zieht die Höhe eines Blocks von der `availableHeight` der Spalte ab, in der der Block landet, und schließt die Spalten eines Bandes, wo ein Kasten über die ganze Seitenbreite es abschneidet. Ein Buch hat Tausende von Blöcken, und ein unveränderlicher Baum (wie das virtuelle DOM von React) würde für jeden dieser Schritte ein neues Objekt anlegen. Deshalb sind die Knoten einfache Objekte, und der Durchlauf schreibt in sie hinein.
+Ein Platzierungsdurchlauf füllt den Baum an Ort und Stelle. Er öffnet eine Seite, hängt ihr Spalten an, zieht die Höhe eines Blocks von der `availableHeight` der Spalte ab, in die der Block kommt, und schließt die Spalten eines Spaltenbereichs dort, wo ein seitenbreiter Kasten ihn abschneidet. Ein Buch hat Tausende von Blöcken, und ein unveränderlicher Baum (wie das virtuelle DOM von React) würde für jeden dieser Schritte ein neues Objekt anlegen. Deshalb sind die Knoten einfache Objekte, und der Durchlauf schreibt in sie hinein.
 
-Ein abgeschlossener Durchlauf wird nicht nachgebessert. Braucht `buildDocument` einen weiteren Versuch (eine Bandgrenze, einen Ausgleichshebel), wiederholt es den Durchlauf vom Inhalt aus und erhält einen neuen Baum. Der Baum des vorigen Durchlaufs bleibt, wie er war, sodass der Steuerer beide vergleichen, den besseren behalten oder von jedem einige Seiten nehmen kann. Der Messcache macht die Wiederholung bezahlbar: Ein Absatz, dessen Text, Schriften und Breite sich nicht geändert haben, wird aus dem Cache gelesen, statt neu gemessen zu werden.
+Ein abgeschlossener Durchlauf wird nicht nachgebessert. Braucht `buildDocument` einen weiteren Versuch (eine Höhengrenze für einen Spaltenbereich, einen Hebel des Spaltenausgleichs), wiederholt es den Durchlauf vom Inhalt aus und erhält einen neuen Baum. Der Baum des vorigen Durchlaufs bleibt, wie er war, sodass der Steuerer beide vergleichen, den besseren behalten oder von jedem einige Seiten nehmen kann. Der Messcache macht die Wiederholung bezahlbar: Ein Absatz, dessen Text, Schriften und Breite sich nicht geändert haben, wird aus dem Cache gelesen, statt neu gemessen zu werden.
 
 ### Struktur
 
-<Illustration name="VdtStructure" data='{"title": "Struktur des virtuellen Dokumentbaums", "desc": "Hierarchischer VDT: Das Dokument enthält Seiten, jede Seite enthält Spalten, jede Spalte enthält Blöcke (Überschrift, Absatz, Ressource), jeder Textblock enthält gemessene Zeilen. Jeder Block trägt einen Begrenzungsrahmen, seinen Typ und seine Seiten- und Spaltenindizes.", "caption": "Jeder Block trägt seine bbox, seinen Typ und seine Seiten- und Spaltenindizes.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["Überschrift", "Absatz", "Ressource"], "lineLabels": ["Zeile 0", "Zeile 1"], "legendHeader": "Jeder Block trägt:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Zeilen tragen außerdem:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "Struktur des virtuellen Dokumentbaums", "desc": "Hierarchischer VDT: Das Dokument enthält Seiten, jede Seite enthält Spalten, jede Spalte enthält Blöcke (Überschrift, Absatz, Ressource), jeder Textblock enthält gemessene Zeilen. Jeder Block hat ein umschließendes Rechteck, seinen Typ und seine Seiten- und Spaltenindizes.", "caption": "Jeder Block hat seine bbox, seinen Typ und seine Seiten- und Spaltenindizes.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["Überschrift", "Absatz", "Ressource"], "lineLabels": ["Zeile 0", "Zeile 1"], "legendHeader": "Jeder Block hat:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Zeilen haben außerdem:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### Typdefinitionen
 
-Die folgenden Formen sind **zur Erklärung vereinfacht** – die echten Definitionen in `packages/postext/src/vdt.ts` enthalten viele weitere Felder für das Rendern (Schriftangaben, Farben, Aufzählungszeichen, gerenderte Formeln, Gestaltungsplätze). Hier kommt es auf die Struktur an:
+Die folgenden Formen sind **zur Erklärung vereinfacht** – die echten Definitionen in `packages/postext/src/vdt.ts` enthalten viele weitere Felder für das Rendern (Schriftangaben, Farben, Aufzählungszeichen, gerenderte Formeln, Gestaltungsfelder). Hier kommt es auf die Struktur an:
 
 ```typescript
 // Simplified — see packages/postext/src/vdt.ts for the full definitions
@@ -366,8 +366,8 @@ interface BoundingBox {
 Einige dieser Felder verdienen eine Anmerkung:
 
 - **`isLastLine`** steuert das Rendern im Blocksatz: Letzte Zeilen werden im Flattersatz gezeichnet, auch wenn der Absatz im Blocksatz steht – außer *überfüllten* letzten Zeilen, deren Wortzwischenräume sich zusammenziehen, damit sie in die Satzbreite passen (die Semantik des Glue-Setting in TeX).
-- **`sourceStart`/`sourceEnd` und `plainStart`/`plainEnd`** sind Source-Maps von jeder Zeile zurück zum ursprünglichen Markdown und zum reinen Text des Blocks – darauf beruht die Synchronisierung von Cursor und Auswahl in Editor-Integrationen.
-- **`VDTResourceTableLayout`** (mit seinen Einträgen `VDTResourceTableCell`) trägt die vollständige gesetzte Geometrie einer Tabellenressource: x-Kanten der Spalten, y-Kanten der Zeilen und Rechtecke je Zelle mit ihren gemessenen Inhaltszeilen, sodass jedes Backend dieselbe Tabelle zeichnet.
+- **`sourceStart`/`sourceEnd` und `plainStart`/`plainEnd`** sind Quellenzuordnungen von jeder Zeile zurück zum ursprünglichen Markdown und zum reinen Text des Blocks – darauf beruht die Synchronisierung von Cursor und Auswahl in Editor-Integrationen.
+- **`VDTResourceTableLayout`** (mit seinen Einträgen `VDTResourceTableCell`) enthält die vollständige gesetzte Geometrie einer Tabellenressource: x-Kanten der Spalten, y-Kanten der Zeilen und Rechtecke je Zelle mit ihren gemessenen Inhaltszeilen, sodass jedes Backend dieselbe Tabelle zeichnet.
 - **`dirty` und `snappedToGrid`** werden beim Platzieren eines Blocks geschrieben und von keiner Stufe und keinem Backend gelesen. `dirty` beginnt bei einem neuen Block mit `true` und wird beim Platzieren des Blocks auf `false` gesetzt; die Engine verfolgt keine Änderungen am Baum, sie wiederholt den Platzierungsdurchlauf (siehe [Der Durchlaufsteuerer](/de/docs/architecture-layout-pipeline#der-durchlaufsteuerer)). `snappedToGrid` ist `true` beim ersten Teil eines Textblocks, nach dem der Fluss auf das Raster zurückkehrt (siehe [System des vertikalen Rhythmus](#system-des-vertikalen-rhythmus)).
 - **`balancing`** gibt an, welche Hebel des Spaltenausgleichs den Block verschoben oder gedehnt haben; ein Block, den der Ausgleich nicht angerührt hat, hat keinen (siehe [Spaltenausgleich](/de/docs/architecture-layout-pipeline#spaltenausgleich)).
 - **`computePageTextExtent(page)`** ist eine kleine öffentliche Hilfsfunktion, die die senkrechte Ausdehnung zurückgibt, die auf einer Seite tatsächlich von Text bedeckt ist (einschließlich der Legenden von Gleitobjekten). Debug-Overlays nutzen sie, damit die Linien des Grundlinienrasters nur echten Text überspannen und nicht den leeren Seitenfuß.
@@ -384,7 +384,7 @@ Das Ziel ist, sie zurückzugewinnen: Die Grundlinien des Fließtextes in benachb
 
 Alles hängt an einer einzigen Zahl. Das Dokument legt einen Wert `baselineGrid` fest, abgeleitet vom Zeilenabstand des Fließtextes – zum Beispiel ergibt Fließtext in `16px` mit einer `line-height` von `1.5` ein Grundlinienraster von `24px`. Jede Grundlinie des Fließtextes soll auf ein Vielfaches dieses Wertes fallen. Das ist die Abmachung.
 
-### Rasterbrechende Elemente
+### Elemente, die das Raster brechen
 
 Manche Elemente brechen das Raster zwangsläufig, weil ihre Höhe kein Vielfaches von `baselineGrid` ist:
 
@@ -396,7 +396,7 @@ Manche Elemente brechen das Raster zwangsläufig, weil ihre Höhe kein Vielfache
 
 ### Wie der Fluss zum Raster zurückkehrt
 
-<Illustration name="VerticalRhythm" data='{"title": "Ausrichtung im vertikalen Rhythmus", "desc": "Spalte 1 enthält eine Überschrift, die das Grundlinienraster um 12 Pixel bricht. Beim Platzieren der Überschrift rundet die Engine die in der Spalte belegte Höhe auf die nächste Rasterzeile auf, was 12 Pixel unter der Überschrift hinzufügt, sodass die nächste Fließtextzeile wieder auf dem Raster steht. Spalte 2 bleibt durchgehend ausgerichtet.", "caption": "Der Raum unter einem rasterbrechenden Element wird beim Platzieren des Elements auf das Raster aufgerundet, sodass die Grundlinien über die Spalten hinweg im Takt bleiben.", "column1": "Spalte 1", "column2": "Spalte 2", "bodyLine": "Fließtextzeile", "bodyBaseline": "Fließtextzeile (Grundlinie: 24 px)", "heading": "Überschrift (36 px hoch)", "adjustment": "+12 px Abstandsausgleich", "backOnGrid": "Fließtext (wieder auf dem Raster)", "aligned": "ausgerichtet", "legendTitle": "Einrasten beim Platzieren", "legendSteps": ["1. Den Block setzen: seine Zeilen, dann seinen Abstand darunter (marginBottom)", "2. Die in der Spalte belegte Höhe auf die nächste Rasterzeile aufrunden", "3. Der nächste Block beginnt dort, der Abstand darunter ist also ein Minimum", "4. snapToGrid: false behält den genauen Abstand bis zum nächsten einrastenden Block"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "Ausrichtung im vertikalen Rhythmus", "desc": "Spalte 1 enthält eine Überschrift, die um 12 Pixel vom Grundlinienraster abweicht. Beim Platzieren der Überschrift rundet die Engine die in der Spalte belegte Höhe auf die nächste Rasterzeile auf und fügt so 12 Pixel unter der Überschrift hinzu, sodass die nächste Fließtextzeile wieder auf dem Raster steht. Spalte 2 bleibt durchgehend ausgerichtet.", "caption": "Der Abstand unter einem Element, das vom Raster abweicht, wird beim Platzieren auf das Raster aufgerundet, sodass die Grundlinien aller Spalten auf einer Höhe bleiben.", "column1": "Spalte 1", "column2": "Spalte 2", "bodyLine": "Fließtextzeile", "bodyBaseline": "Fließtextzeile (Grundlinie: 24 px)", "heading": "Überschrift (36 px hoch)", "adjustment": "+12 px Abstandsausgleich", "backOnGrid": "Fließtext (wieder auf dem Raster)", "aligned": "ausgerichtet", "legendTitle": "Einrasten beim Platzieren", "legendSteps": ["1. Den Block setzen: seine Zeilen, dann seinen Abstand darunter (marginBottom)", "2. Die in der Spalte belegte Höhe auf die nächste Rasterzeile aufrunden", "3. Der nächste Block beginnt dort, der Abstand darunter ist also ein Minimum", "4. snapToGrid: false behält den genauen Abstand bis zum nächsten einrastenden Block"]}' />
 
 Das Raster wird beim Platzieren gehalten, Block für Block. Kein späterer Durchlauf geht die Spalten auf der Suche nach Abweichungen durch. Fließtextzeilen sind eine Rasterzeile hoch, also bleibt eine Folge von Fließtext, die auf dem Raster beginnt, darauf. Hat der Platzierungsdurchlauf einen Block gesetzt, der das Raster verlassen kann, rundet er die in der Spalte belegte Höhe auf die nächste Rasterzeile auf, bevor der nächste Block beginnt. Die Blöcke, die auf diese Weise einrasten, sind:
 
@@ -408,11 +408,11 @@ Das Raster wird beim Platzieren gehalten, Block für Block. Kein späterer Durch
 
 Der Abstand unter dem Block (`marginBottom`) wird vor dem Runden gezählt, der Rand ist also ein Minimum, und das Raster entscheidet über den Rest. In der Abbildung enthält Spalte 1 eine 36 px hohe Überschrift auf einem 24-px-Raster, ohne Rand darunter. Ihr Fuß liegt 12 px hinter einer Rasterzeile, das Einrasten fügt 12 px hinzu, und die nächste Fließtextzeile beginnt auf dem Raster, auf gleicher Höhe mit der Zeile daneben in Spalte 2. Mit einem `marginBottom` von 16 px läge der Fuß bei 52 px, und das Einrasten würde auf 72 px aufrunden.
 
-Gleitbänder halten das Raster auf ihre eigene Weise, beschrieben unter [Stufe 4](/de/docs/architecture-layout-pipeline#stufe-4-platzierung-von-ressourcen): Ein oberes Band wird auf ganze Rasterzeilen aufgerundet, und ein unteres Gleitobjekt wird so verankert, dass die letzte Grundlinie seiner Legende auf dem Raster steht. Der Spaltenausgleich fügt seinen Abstand in ganzen Rasterzeilen hinzu und hält das Raster damit ebenfalls.
+Gleitobjekte am Kopf und Fuß halten das Raster auf ihre eigene Weise, beschrieben unter [Stufe 4](/de/docs/architecture-layout-pipeline#stufe-4-platzierung-von-ressourcen): Der Bereich am Kopf wird auf ganze Rasterzeilen aufgerundet, und ein Gleitobjekt am Fuß wird so verankert, dass die letzte Grundlinie seiner Legende auf dem Raster steht. Der Spaltenausgleich fügt seinen Abstand in ganzen Rasterzeilen hinzu und hält das Raster damit ebenfalls.
 
 Nichts vergleicht eine Spalte mit einer anderen. Jede Spalte beginnt auf dem Raster, und jedes Einrasten kehrt zu ihm zurück, sodass sich die Zeilen benachbarter Spalten und gegenüberliegender Seiten ohne zweiten Durchlauf treffen.
 
-**Abwählen.** `snapToGrid: false` behält stattdessen den genauen Abstand unter einem Block. Es lässt sich an `headings` setzen (für jede Ebene, für eine Ebene oder für ein Überschriftenformat), an einem Absatzformat, an einem Kastenformat und an `codeStyle`. Der Text nach einem solchen Block kann neben dem Raster liegen, bis zum nächsten Block, der einrastet. Der Text in einem Kasten folgt dem eigenen Zeilenabstand des Kastens und hat kein Raster.
+**Abwählen.** `snapToGrid: false` behält stattdessen den genauen Abstand unter einem Block. Es lässt sich an `headings` setzen (für jede Ebene, für eine Ebene oder für einen Überschriftenstil), an einem Absatzformat, an einem Kastenstil und an `codeStyle`. Der Text nach einem solchen Block kann neben dem Raster liegen, bis zum nächsten Block, der einrastet. Der Text in einem Kasten folgt dem eigenen Zeilenabstand des Kastens und hat kein Raster.
 
 
 ## Backend-Schnittstelle
@@ -449,9 +449,9 @@ renderToPdf(doc, options): Promise<Uint8Array>;
 renderToEpub(docs, options): Promise<Uint8Array>;
 ```
 
-Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `fileId`s auf seine eigene Weise auf. Das Canvas-Backend führt ein Register dekodierter `CanvasImageSource`s – die Host-Anwendung registriert jede Bitmap und jedes SVG einmal mit `registerResourceImage(fileId, image)`, und der Renderer schlägt sie beim Zeichnen nach. Das HTML-Backend nimmt in seinen Optionen einen Auflöser `resourceImageUrl(fileId)` an und gibt `<img>`-Tags aus, die auf die URLs zeigen, die der Host zurückgibt (Object-URLs, Data-URIs, CDN-Pfade). Das PDF-Backend erhält einen Anbieter `resourceBytes` und bettet die tatsächlichen Bytes ein; der EPUB-Schreiber nimmt ebenfalls einen an und speichert jedes Bild einmal als Datei des Buches. Eine Videoressource wird als ihr Vorschaubild gezeichnet, eine Bitmap wie jede andere; das HTML-Backend nimmt zusätzlich einen Auflöser `resourceVideoUrl(fileId)` für die Videodateien an, die es abspielt, und der EPUB-Schreiber legt diese Dateien unter `media/` ab. Das PDF-Backend zeichnet das Abspielsymbol und den QR-Code als Vektorpfade über das Vorschaubild und legt, wenn `video.linkPoster` aktiv ist, eine URI-Link-Annotation darüber, die `video.link` öffnet; in einem getaggten PDF schließt sich der Link der `Figure` des Vorschaubilds an, deren Alternativtext mit dem Namen des Typs beginnt (*Video: …*). Tabellenressourcen brauchen nichts davon – ihr Modell reist mit, und jedes Backend zeichnet die Zellen aus der Tabellengeometrie des VDT.
+Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `fileId`s auf seine eigene Weise auf. Das Canvas-Backend führt ein Verzeichnis dekodierter `CanvasImageSource`s – die Host-Anwendung registriert jede Bitmap und jedes SVG einmal mit `registerResourceImage(fileId, image)`, und der Renderer schlägt sie beim Zeichnen nach. Das HTML-Backend nimmt in seinen Optionen einen Auflöser `resourceImageUrl(fileId)` an und gibt `<img>`-Tags aus, die auf die URLs zeigen, die der Host zurückgibt (Object-URLs, Data-URIs, CDN-Pfade). Das PDF-Backend erhält einen Anbieter `resourceBytes` und bettet die tatsächlichen Bytes ein; der EPUB-Schreiber nimmt ebenfalls einen an und speichert jedes Bild einmal als Datei des Buches. Eine Videoressource wird als ihr Vorschaubild gezeichnet, eine Bitmap wie jede andere; das HTML-Backend nimmt zusätzlich einen Auflöser `resourceVideoUrl(fileId)` für die Videodateien an, die es abspielt, und der EPUB-Schreiber legt diese Dateien unter `media/` ab. Das PDF-Backend zeichnet das Abspielsymbol und den QR-Code als Vektorpfade über das Vorschaubild und legt, wenn `video.linkPoster` aktiv ist, eine URI-Link-Annotation darüber, die `video.link` öffnet; in einem getaggten PDF schließt sich der Link der `Figure` des Vorschaubilds an, deren Alternativtext mit dem Namen des Typs beginnt (*Video: …*). Tabellenressourcen brauchen nichts davon – ihr Modell steht direkt in der Ressource, und jedes Backend zeichnet die Zellen aus der Tabellengeometrie des VDT.
 
-`renderToHtmlIndexed` verdient eine Anmerkung: Neben dem vollständigen HTML-String liefert es eine Aufschlüsselung je Seite und je Block (`HtmlRenderIndex`), sodass Aufrufer gegen ein früheres Rendering vergleichen und nur die DOM-Teilbäume aktualisieren können, deren HTML sich tatsächlich geändert hat – der Weg der Live-Vorschau in der Sandbox.
+`renderToHtmlIndexed` verdient eine Anmerkung: Neben dem vollständigen HTML-String liefert es eine Aufschlüsselung je Seite und je Block (`HtmlRenderIndex`), sodass Aufrufer gegen ein früheres Rendering vergleichen und nur die DOM-Teilbäume aktualisieren können, deren HTML sich tatsächlich geändert hat. So arbeitet die Live-Vorschau der Sandbox.
 
 ### Backends
 
@@ -474,7 +474,7 @@ Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `f
     <tr>
       <td><strong>HTML</strong></td>
       <td>Pretext (dieselben Metriken wie Canvas)</td>
-      <td>Absolut positionierte DOM-Knoten mit redaktionellem CSS (<code>renderToHtml</code>, <code>renderToHtmlIndexed</code>)</td>
+      <td>Absolut positionierte DOM-Knoten mit CSS für den verlegerischen Satz (<code>renderToHtml</code>, <code>renderToHtmlIndexed</code>)</td>
       <td><strong>Verfügbar</strong></td>
     </tr>
     <tr>
@@ -491,7 +491,7 @@ Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `f
     </tr>
     <tr>
       <td><strong>Kommandozeile</strong></td>
-      <td>Pretext über Skia (<code>@napi-rs/canvas</code>) statt der Canvas des Browsers</td>
+      <td>Pretext über Skia (<code>@napi-rs/canvas</code>) statt des Canvas im Browser</td>
       <td>Die Schreiber für PDF, HTML und EPUB, Seitenbilder und Word, ausgeführt in einem Terminal ohne Browser (<code>postext-cli</code>)</td>
       <td><strong>Verfügbar</strong></td>
     </tr>
@@ -500,7 +500,7 @@ Weil binäre Nutzlasten der Ressourcen außerhalb liegen, löst jedes Backend `f
 
 Alle vier verfügbaren Backends verarbeiten dasselbe `VDTDocument`. Die Aufteilung zwischen `postext` (das die Canvas- und HTML-Backends exportiert) und `postext-pdf` (das das PDF-Backend exportiert) hat allein mit Abhängigkeiten zu tun: Der PDF-Weg zieht `pdf-lib` und `@pdf-lib/fontkit` nach sich, und die meisten Web-Integrationen brauchen sie nicht. Installieren Sie `postext-pdf` nur, wenn Sie tatsächlich PDF-Bytes erzeugen wollen. `postext-epub` ist aus demselben Grund ein eigenes Paket und wird nur für E-Books gebraucht. Die Kommandozeile ist kein fünftes Backend: `postext-cli` führt dieselben Schreiber dort aus, wo es keinen Browser gibt.
 
-**Wo das Layout läuft:** Die Engine misst Text auf einer Canvas, läuft also überall, wo sie eine bekommt. Im Browser läuft die Pipeline entweder im Hauptthread (`buildDocument`) oder in einem eigenen Web Worker (`createLayoutWorker` aus `postext/worker`) – der Worker-Weg ist die empfohlene Integration für Anwendungen mit Benutzeroberfläche, weil er Messung und Platzierungsdurchläufe vom Hauptthread fernhält, Abbruch nach dem Prinzip „der letzte gewinnt“ über `AbortSignal` unterstützt und seinen eigenen Messcache und Raster-Cache für Formeln besitzt, sodass aufeinanderfolgende Neuaufbauten günstig bleiben. Das vollständige Integrationsmuster beschreibt [Konfiguration → Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen). Außerhalb des Browsers führt die [Kommandozeile](/de/docs/command-line) dieselbe Pipeline aus, wobei Skia die Canvas des Browsers vertritt, sodass ein Buch in einem Terminal, einem Skript oder auf einem Build-Server in dieselben Seiten umbricht.
+**Wo das Layout läuft:** Die Engine misst Text auf einem Canvas, läuft also überall, wo sie eines bekommt. Im Browser läuft die Pipeline entweder im Hauptthread (`buildDocument`) oder in einem eigenen Web Worker (`createLayoutWorker` aus `postext/worker`) – der Worker-Weg ist die empfohlene Integration für Anwendungen mit Benutzeroberfläche, weil er Messung und Platzierungsdurchläufe vom Hauptthread fernhält, Abbruch nach dem Prinzip „der letzte gewinnt“ über `AbortSignal` unterstützt und seinen eigenen Messcache und Raster-Cache für Formeln besitzt, sodass aufeinanderfolgende Neuaufbauten günstig bleiben. Das vollständige Integrationsmuster beschreibt [Konfiguration → Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen). Außerhalb des Browsers führt die [Kommandozeile](/de/docs/command-line) dieselbe Pipeline aus, wobei Skia das Canvas des Browsers ersetzt, sodass ein Buch in einem Terminal, einem Skript oder auf einem Build-Server in dieselben Seiten umbricht.
 
 ## Leistungsstrategie
 
@@ -533,7 +533,7 @@ Bedenken Sie, womit es die Engine zu tun hat: Tausende von Textblöcken auf Hund
    zusätzlich zum eigenen Cache von `prepare()` in Pretext und einem rohen Cache für Textbreiten. Das erneute Messen eines
    unveränderten Absatzes kostet eine Map-Abfrage. Ändern sich die Schnitte einer Familie, verwirft die Engine die Breiten
    dieser Familie und den Cache von Pretext, und ein Messcache verwirft bei seiner nächsten Abfrage die in ihr gesetzten Blöcke
-   (er trägt die Generation, unter der er gefüllt wurde), sodass die Glyphenbreiten nach dem
+   (er merkt sich die Generation, unter der er gefüllt wurde), sodass die Glyphenbreiten nach dem
    Laden der Schriften korrekt sind, ohne dass der Host etwas aufrufen muss; `clearMeasurementCache()` verwirft jede Familie.
 
 6. **Zeilenumbruch auf dem heißen Pfad.** Die Behandlung der aktiven Knoten in Knuth-Plass wurde für Geschwindigkeit neu geschrieben:
@@ -554,7 +554,7 @@ Bedenken Sie, womit es die Engine zu tun hat: Tausende von Textblöcken auf Hund
 8. **VDT mit doppeltem Zugriff.** Der Baum (`pages > columns > blocks`) bietet hierarchischen Zugriff für
    Arbeit, die Seite für Seite oder Spalte für Spalte vorgeht (der Spaltenausgleich misst die Lücke am
    Fuß jeder Spalte). Ein paralleles flaches Array `blocks[]` bietet direkten Zugriff auf jeden Block,
-   wo auch immer er steht (die Anmerkungsnummern-Runde liest daraus die Marke, die jede Anmerkung gedruckt hat). Beide
+   wo auch immer er steht (die Runde für die Anmerkungsnummern liest daraus das Zeichen, das jede Anmerkung ausgegeben hat). Beide
    Sichten verweisen auf dieselben Blockobjekte (es gibt keine Verdopplung, nur zwei Wege, dieselben
    Daten zu durchlaufen).
 
@@ -562,7 +562,7 @@ Bedenken Sie, womit es die Engine zu tun hat: Tausende von Textblöcken auf Hund
 
 Es gibt keinen inkrementellen Einstiegspunkt: Kein Aufruf nimmt einen fertigen VDT und aktualisiert ihn. Ändern sich Inhalt oder Konfiguration (ein Tastendruck, ein anderes Seitenformat), ruft der Host `buildDocument` erneut auf und erhält ein neues Dokument.
 
-Was von einem Build zum nächsten erhalten bleibt, ist das Messen. Legen Sie einmal mit `createMeasurementCache()` einen `MeasurementCache` an und übergeben Sie ihn als drittes Argument bei jedem Aufruf von `buildDocument`. Ein Absatz, dessen Text, Schriften, Breite und Umbruchoptionen sich nicht geändert haben, wird daraus gelesen, sodass ein Editor, der das Dokument bei jedem Tastendruck setzt, nur den Absatz misst, in dem getippt wird. Eine Änderung des Seitenformats oder der Spaltenzahl ändert die Breiten, und diese Absätze werden neu gemessen; die Ergebnisse von `prepare()` in Pretext gelten weiterhin, da sie von Schrift und Text abhängen und nicht von der Breite, sodass nur die günstige Arithmetik von `layout()` läuft. Auch das Parsen wird memoisiert.
+Was von einem Build zum nächsten erhalten bleibt, ist das Messen. Legen Sie einmal mit `createMeasurementCache()` einen `MeasurementCache` an und übergeben Sie ihn als drittes Argument bei jedem Aufruf von `buildDocument`. Ein Absatz, dessen Text, Schriften, Breite und Umbruchoptionen sich nicht geändert haben, wird daraus gelesen, sodass ein Editor, der das Dokument bei jedem Tastendruck setzt, nur den Absatz misst, in dem getippt wird. Eine Änderung des Seitenformats oder der Spaltenzahl ändert die Breiten, und diese Absätze werden neu gemessen; die Ergebnisse von `prepare()` in Pretext gelten weiterhin, da sie von Schrift und Text abhängen und nicht von der Breite, sodass nur die günstige Arithmetik von `layout()` läuft. Auch das Einlesen wird memoisiert.
 
 Für einen Live-Editor erledigt `createLayoutWorker` (aus `postext/worker`) all das außerhalb des Hauptthreads: Der Worker besitzt einen Messcache, der so lange lebt wie er selbst, und ein neuerer Aufruf von `build()` bricht den laufenden ab. Siehe [Konfiguration → Mess-Cache](/de/docs/configuration-programmatic-usage#mess-cache) und [Layout in einem Web Worker ausführen](/de/docs/configuration-programmatic-usage#layout-in-einem-web-worker-ausführen).
 
@@ -590,7 +590,7 @@ Der Ehrlichkeit halber eine Einschränkung: In Node gibt es keine Canvas, deshal
 
 ## Datenfluss
 
-<Illustration name="DataFlow" data='{"title": "Datenfluss durch die Engine", "desc": "Inhalt und Konfiguration gehen in den Platzierungsdurchlauf, der jeden Block strukturiert, misst und platziert, die Ressourcen gleiten lässt und die Umbruch- und Zusammenhalteregeln anwendet. buildDocument wiederholt den Durchlauf mit Hinweisen, bis jede Runde feststeht. Der fertige VDT geht an das Backend, das HTML oder PDF rendert.", "caption": "Datenfluss von Anfang bis Ende: ein Platzierungsdurchlauf, mit Hinweisen wiederholt, dann gerendert.", "input": ["Inhalt +", "Konfiguration"], "loopBadge": "Platzierungsdurchlauf", "passesInLoop": [{"num": "1", "name": "Struktur"}, {"num": "2", "name": "Messung"}, {"num": "3", "name": "Platzierung"}, {"num": "4", "name": "Gleitobjekte"}, {"num": "5", "name": "Zusammenhalt"}], "loopCondition": "mit Hinweisen wiederholen, jede Runde bis zu ihrer Grenze", "convergedLabel": "VDT (fertig)", "backend": "Backend: Rendern", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "Datenfluss durch die Engine", "desc": "Inhalt und Konfiguration gehen in den Platzierungsdurchlauf, der jeden Block strukturiert, misst und platziert, die Ressourcen als Gleitobjekte setzt und die Umbruch- und Zusammenhalteregeln anwendet. buildDocument wiederholt den Durchlauf mit Hinweisen, bis jede Runde abgeschlossen ist. Der fertige VDT geht an das Backend, das HTML oder PDF rendert.", "caption": "Datenfluss von Anfang bis Ende: ein Platzierungsdurchlauf, mit Hinweisen wiederholt, dann gerendert.", "input": ["Inhalt +", "Konfiguration"], "loopBadge": "Platzierungsdurchlauf", "passesInLoop": [{"num": "1", "name": "Struktur"}, {"num": "2", "name": "Messung"}, {"num": "3", "name": "Platzierung"}, {"num": "4", "name": "Gleitobjekte"}, {"num": "5", "name": "Zusammenhalt"}], "loopCondition": "mit Hinweisen wiederholen, jede Runde bis zu ihrer Grenze", "convergedLabel": "VDT (fertig)", "backend": "Backend: Rendern", "output": "HTML / PDF"}' />
 
 
 ## Nicht-Ziele
@@ -627,7 +627,7 @@ So bilden sich die wichtigsten in `packages/postext/src/types.ts` definierten Ty
     </tr>
     <tr>
       <td><code>Resource</code></td>
-      <td>Eine typisierte Ressource aus Bitmap, SVG, Tabelle oder Video. Wird bei der Messung zu einem <code>ResolvedResourceBlock</code> und dann entweder zu einem Inline-<code>VDTBlock</code> vom Typ <code>'resource'</code> (Platzierung <code>'here'</code>) oder zu einem Gleitobjekt in einem Seitenband (Platzierung von Ressourcen)</td>
+      <td>Eine typisierte Ressource aus Bitmap, SVG, Tabelle oder Video. Wird bei der Messung zu einem <code>ResolvedResourceBlock</code> und dann entweder zu einem Inline-<code>VDTBlock</code> vom Typ <code>'resource'</code> (Platzierung <code>'here'</code>) oder zu einem Gleitobjekt am Kopf oder Fuß der Seite (Platzierung von Ressourcen)</td>
     </tr>
     <tr>
       <td><code>ResourceType</code></td>
@@ -639,7 +639,7 @@ So bilden sich die wichtigsten in `packages/postext/src/types.ts` definierten Ty
     </tr>
     <tr>
       <td><code>PostextNote</code></td>
-      <td>Wird von der Engine nicht gelesen. Fußnoten werden im Markdown geschrieben (<code>[^id]</code>) und am Fuß der zitierenden Spalte oder nach dem Kapitel gesetzt; Marginalien sind nicht implementiert</td>
+      <td>Wird von der Engine nicht gelesen. Fußnoten werden im Markdown geschrieben (<code>[^id]</code>) und am Fuß der zitierenden Spalte oder nach dem Kapitel gesetzt; Randnoten sind nicht implementiert</td>
     </tr>
     <tr>
       <td><code>PostextResource</code></td>

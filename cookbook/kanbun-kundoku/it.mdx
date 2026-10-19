@@ -1,7 +1,7 @@
 ---
 title: "Kanbun con i segni di lettura e la lettura giapponese"
 summary: "Tre detti dei Dialoghi e una quartina Tang composti alla giapponese: segni di ritorno e okurigana in vermiglione, e la lettura in kana sotto ogni passo."
-plain: "Il cinese classico come lo imparano i lettori giapponesi: piccoli segni rossi accanto ai caratteri dicono in che ordine leggerli e quali desinenze giapponesi aggiungere, e la lettura giapponese completa segue ogni passo."
+plain: "Il cinese classico come lo imparano i lettori giapponesi: piccoli segni rossi accanto ai caratteri indicano in che ordine leggerli e quali desinenze giapponesi aggiungere, e la lettura giapponese completa segue ogni passo."
 description: "Kanbun kundoku in Postext: 返り点 e 送り仮名 con :kunten accanto ai Dialoghi e a Spring Dawn, in verticale, con lo yomikudashi in furigana sotto ogni passo."
 question: "Come stampo il kanbun con i segni di ritorno e gli okurigana, seguito dalla lettura giapponese?"
 aliases: ["kanbun", "漢文", "kundoku", "訓読", "kunten", "訓点", "segni di ritorno", "返り点", "kaeriten", "レ点", "一二点", "okurigana", "送り仮名", "yomikudashi", "書き下し文", "kakikudashi", "cinese classico in giapponese", "Dialoghi", "Analetti", "論語", "Confucio", "春暁", "Spring Dawn", "Meng Haoran", "孟浩然"]
@@ -10,7 +10,7 @@ pageNotes: { "1": "«論語» apre la prima pagina, con «学而・為政より�
 
 ## Che cosa comporrai
 
-Tre pagine di un’antologia scolastica giapponese di 漢文 (kanbun), il cinese classico letto come giapponese, su una pagina A5 rilegata a destra: tre detti dei *Dialoghi* di Confucio e la quartina *Spring Dawn* di Meng Haoran. Ogni passo è composto in Zen Old Mincho a 15 pt nell’ordine cinese, con i suoi 訓点 (kunten) accanto ai caratteri in vermiglione, a metà del loro corpo: i segni di ritorno (返り点) in basso a sinistra di un carattere dicono al lettore di proseguire e tornarci dopo, e gli okurigana (送り仮名) alla sua destra aggiungono le desinenze giapponesi. Sotto ogni passo il suo 書き下し文 (yomikudashi), lo stesso testo riscritto in giapponese, scorre in Klee One, una grafia da libro di scuola, con i furigana dove una lettura è difficile. I classici cinesi con i loro ausili di lettura sono nella <RecipeLink slug="zhuyin-vertical-reader">Nº 080</RecipeLink>.
+Tre pagine di un’antologia scolastica giapponese di 漢文 (kanbun), il cinese classico letto come giapponese, su una pagina A5 rilegata a destra: tre detti dei *Dialoghi* di Confucio e la quartina *Spring Dawn* di Meng Haoran. Ogni passo è composto in Zen Old Mincho a 15 pt nell’ordine cinese, con i suoi 訓点 (kunten) accanto ai caratteri in vermiglione, a metà del loro corpo: i segni di ritorno (返り点) in basso a sinistra di un carattere indicano al lettore di proseguire e tornarci dopo, e gli okurigana (送り仮名) alla sua destra aggiungono le desinenze giapponesi. Sotto ogni passo il suo 書き下し文 (yomikudashi), lo stesso testo riscritto in giapponese, scorre in Klee One, una grafia da libro di scuola, con i furigana dove una lettura è difficile. I classici cinesi con i loro ausili di lettura sono nella <RecipeLink slug="zhuyin-vertical-reader">Nº 080</RecipeLink>.
 
 ## Preparazione
 
@@ -30,13 +30,13 @@ Un okurigana più lungo del suo carattere non scorre accanto al successivo: in �
 
 <Excerpt region="headings" />
 
-Ogni libro dell’antologia apre una pagina con il suo titolo, 論語 o 唐詩, il primo con una piccola nota vermiglione su ciò che contiene; ogni passo riceve un’etichetta in gotico larga due righe di testo (2行取り), 学而第一 o 春暁　孟浩然, così i passi sotto di essa restano sulla griglia. La lettura è un blocco `:::paragraphs{style="kudashi"}` abbassato di due caratteri, nel carattere e nel corpo del testo, con furigana jukugo: `{君子|くん|し}` dà a ogni carattere la sua lettura, così una riga potrebbe andare a capo tra di loro.
+Ogni libro dell’antologia apre una pagina con il suo titolo, 論語 o 唐詩, il primo con una piccola nota vermiglione su ciò che contiene; ogni passo riceve un’etichetta in gotico larga due righe di testo (2行取り), 学而第一 o 春暁　孟浩然, così i passi sotto di essa restano sulla griglia. La lettura è un blocco `:::paragraphs{style="kudashi"}` abbassato di due caratteri, nel carattere e nel corpo del testo corrente, con furigana jukugo: `{君子|くん|し}` dà a ogni carattere la sua lettura, così una riga potrebbe andare a capo tra di loro.
 
 ### 5 · Carica ogni voce con i suoi caratteri
 
 <Excerpt region="voices" />
 
-Il testo classico e la lettura sono composti in caratteri diversi, quindi ognuno carica i file per i propri glifi: Zen Old Mincho per i passi e i loro segni, i cui kana stanno dentro gli attributi di `:kunten`, Klee One per le letture e i loro furigana, Noto Sans JP per le etichette. La quartina è composta con due versi per riga e uno spazio ideografico tra loro, un modo comune di stamparla, così la poesia e la sua lettura stanno nella pagina sotto il titolo.
+Il testo classico e la lettura sono composti in caratteri diversi, quindi ognuno carica i file per i propri glifi: Zen Old Mincho per i passi e i loro segni, i cui kana stanno negli attributi di `:kunten`, Klee One per le letture e i loro furigana, Noto Sans JP per le etichette. La quartina è composta con due versi per riga e uno spazio ideografico tra loro, un modo comune di stamparla, così la poesia e la sua lettura stanno nella pagina sotto il titolo.
 
 ## Varianti
 

@@ -22,13 +22,13 @@ El codi és [la resposta curta](#la-resposta-curta) de dalt. Un recurs de vídeo
 
 <Excerpt region="clips" />
 
-La maquetació és `layoutType: 'multiple'` amb `columnCount: 4`. El `columns` d'un flotant fixa quantes n'ocupa: els clips de l'alcaldessa i del porter, tres; els de l'aviadora, la torre del rellotge, el pescador i l'actriu, dues. Un flotant a diverses columnes pren el capdamunt d'una sèrie de columnes buides que comencen a la mateixa altura, o el peu de la columna on es cita i de les buides que la segueixen, així que el lloc de la línia `::resource` decideix el buit. L'alcaldessa es cita després del primer paràgraf, cosa que deixa la columna 1 al text i posa la foto sobre les columnes 2 a 4.
+La maquetació és `layoutType: 'multiple'` amb `columnCount: 4`. El `columns` d'un flotant fixa quantes n'ocupa: els clips de l'alcaldessa i del porter, tres; els de l'aviadora, la torre del rellotge, el pescador i l'actriu, dues. Un flotant a diverses columnes ocupa el capdamunt d'una sèrie de columnes buides que comencen a la mateixa altura, o el peu de la columna on es cita i de les buides que la segueixen, així que el lloc de la línia `::resource` decideix el buit. L'alcaldessa es cita després del primer paràgraf, cosa que deixa la columna 1 al text i posa la foto sobre les columnes 2 a 4.
 
 ### 3 · Compon la capçalera i les pàgines de secció
 
 <Excerpt region="nameplate" />
 
-El títol de nivell 1 de la portada és el nom del diari, compost en una ranura d'elements: dues orelles a sobre, el nom en majúscules d'Oswald i una línia de data entre un filet fi i un de gruixut. Les pàgines interiors obren amb un rètol vermell de secció sobre una barra de 3 pt (la regió `pages`), i totes les pàgines menys la primera porten una línia de foli al capdamunt.
+El títol de nivell 1 de la portada és el nom del diari, compost en una zona de disseny: dues orelles a sobre, el nom en majúscules d'Oswald i una línia de data entre un filet fi i un de gruixut. Les pàgines interiors obren amb un rètol vermell de secció sobre una barra de 3 pt (la regió `pages`), i totes les pàgines menys la primera porten una línia de foli al capdamunt.
 
 ### 4 · Obre el diari a Folio
 
@@ -40,7 +40,7 @@ El títol de nivell 1 de la portada és el nom del diari, compost en una ranura 
 
 ### Deixa que el lector engegui cada clip
 
-Sense `autoplay`, les fotos es queden quietes fins que el lector en clica una; un cop engegats, els bucles es reprodueixen junts igualment.
+Sense `autoplay`, les fotos es queden quietes fins que el lector fa clic en una; un cop engegats, els bucles es reprodueixen junts igualment.
 
 ```diff
 -  player: { autoplay: true, loop: true, muted: true, exclusive: false, controls: false },

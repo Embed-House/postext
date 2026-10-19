@@ -1,6 +1,6 @@
 ---
 title: "Anthologie avec signatures d’auteur"
-summary: "Trois essais sur la marche dont les titres portent auteur, année et revue : l’ouverture imprime les trois ; les titres courants du verso et la table, l’auteur."
+summary: "Trois essais sur la marche dont les titres donnent auteur, année et revue : l’ouverture imprime les trois ; les titres courants du verso et la table, l’auteur."
 plain: "Un petit livre de trois essais sur la marche. L’auteur et l’année de chaque essai sont saisis une fois, puis apparaissent partout où le livre en a besoin, comme dans la table des matières."
 description: "Une anthologie de poche de Hazlitt, Thoreau et Stevenson dans Postext : les attributs de titre remplissent signatures, titres courants du verso et table."
 question: "Comment faire une table des matières qui se remplit seule, avec pages, points de conduite et auteurs ?"
@@ -10,7 +10,7 @@ pageNotes: { "2": "La table des matières : chiffres romains couleur rouille, t
 
 ## Ce que vous allez composer
 
-Neuf pages d’*Afoot*, une anthologie de poche de trois essais sur la marche, de Hazlitt (1822), Thoreau (1862) et Stevenson (1876). Une peinture de lande au crépuscule remplit la couverture, un JPEG généré par des modèles de diffusion. La table des matières donne à chaque essai un numéro couleur rouille, un titre en Gloock, des points de conduite espacés jusqu’à sa page et le nom de l’auteur en italique couleur bruyère dessous. Chaque essai s’ouvre sur son numéro et son titre, une signature en capitales espacées et une ligne de date avec la revue et l’année de sa première publication. Les versos portent le nom de l’auteur, les rectos le titre de l’essai. Le titre de chaque essai porte son auteur, son année et sa source sous forme d’attributs, et l’ouverture, les titres courants et la table des matières les impriment à partir de là : un quatrième essai ne demande aucun changement de configuration.
+Neuf pages d’*Afoot*, une anthologie de poche de trois essais sur la marche, de Hazlitt (1822), Thoreau (1862) et Stevenson (1876). Une peinture de lande au crépuscule remplit la couverture, un JPEG généré par des modèles de diffusion. La table des matières donne à chaque essai un numéro couleur rouille, un titre en Gloock, des points de conduite espacés jusqu’à sa page et le nom de l’auteur en italique couleur bruyère dessous. Chaque essai s’ouvre sur son numéro et son titre, une signature en capitales espacées et une ligne de date avec la revue et l’année de sa première publication. Les versos affichent le nom de l’auteur, les rectos le titre de l’essai. Le titre de chaque essai contient son auteur, son année et sa source sous forme d’attributs, et l’ouverture, les titres courants et la table des matières les impriment à partir de là : un quatrième essai ne demande aucun changement de configuration.
 
 ## Préparation
 
@@ -30,19 +30,19 @@ Le `numberingTemplate: '{1:I}'` du niveau numérote les essais I, II et III, et 
 
 <Excerpt region="running-heads" />
 
-Chaque titre courant est ancré à la page, à 11 mm du bord supérieur, et `parity` choisit le côté : le folio s’aligne sur le bord extérieur du texte et le nom ou le titre se place 7 mm plus à l’intérieur. Le `pages: 'body'` de `head()` tient les titres courants à l’écart des ouvertures, où la signature nomme déjà l’auteur, et le `pages: 'opener'` du pied de page y imprime à la place un folio en pied ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)). `{chapterTitle}` imprime le titre de l’essai sans son numéro.
+Chaque titre courant est ancré à la page, à 11 mm du bord supérieur, et `parity` choisit le côté : le folio s’aligne sur le bord extérieur du texte et le nom ou le titre se place 7 mm plus à l’intérieur. Le `pages: 'body'` de `head()` tient les titres courants à l’écart des ouvertures, où la signature indique déjà l’auteur, et le `pages: 'opener'` du pied de page y imprime à la place un folio en pied ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)). `{chapterTitle}` imprime le titre de l’essai sans son numéro.
 
 ### 4 · Tenez la couverture et la table des matières hors du décompte
 
 <Excerpt region="front" />
 
-Avec `numbered: false`, la couverture et la table des matières ne font pas avancer le compteur, si bien que Hazlitt est I, et `toc: false` les tient hors de la liste ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Les deux styles héritent du `breakBefore` du niveau, de parité `'any'` : c’est pourquoi la table des matières suit la couverture en page 2 sans `:::pagebreak`. Le style de couverture s’étend sur toute la largeur de la page dans un livre à une colonne, car une maquette gardée dans sa colonne est coupée au pied de la colonne, ce qui laisserait 22 mm de papier sous le paysage.
+Avec `numbered: false`, la couverture et la table des matières ne font pas avancer le compteur : Hazlitt est donc I, et `toc: false` les tient hors de la liste ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Les deux styles héritent du `breakBefore` du niveau, de parité `'any'` : c’est pourquoi la table des matières suit la couverture en page 2 sans `:::pagebreak`. Le style de couverture s’étend sur toute la largeur de la page dans un livre à une colonne, car une maquette gardée dans sa colonne est coupée au pied de la colonne, ce qui laisserait 22 mm de papier sous le paysage.
 
 ### 5 · Écrivez chaque couleur avec son lien de palette
 
 <Excerpt region="palette" />
 
-`col()` écrit le code hexadécimal de chaque couleur à côté de son `paletteId`, et le moteur suit ce lien : les signatures, les titres courants et la couverture prennent ce que `colorPalette` contient sous cet id, si bien qu’une deuxième palette avec les mêmes ids recolore tout le livre. Faire pointer `main-color` sur l’encre couvre toutes les valeurs par défaut que la configuration ne redéfinit pas, qui sinon s’imprimeraient dans le bleu du moteur, `#295AA3`.
+`col()` écrit le code hexadécimal de chaque couleur à côté de son `paletteId`, et le moteur suit ce lien : les signatures, les titres courants et la couverture prennent ce que `colorPalette` contient sous cet identifiant : une deuxième palette avec les mêmes identifiants recolore donc tout le livre. Faire pointer `main-color` sur l’encre couvre toutes les valeurs par défaut que la configuration ne redéfinit pas, qui sinon s’imprimeraient dans le bleu du moteur, `#295AA3`.
 
 ## Variantes
 
@@ -57,7 +57,7 @@ Avec `numbered: false`, la couverture et la table des matières ne font pas avan
 
 ### Mettez le titre du livre au verso
 
-Beaucoup de livres placent leur propre titre au verso et celui du chapitre au recto ; `{title}` le lit dans le frontmatter du Markdown et imprime AFOOT.
+Beaucoup de livres placent leur propre titre au verso et celui du chapitre au recto ; `{title}` le prend dans l’en-tête YAML du Markdown et imprime AFOOT.
 
 ```diff
 -const versoAuthor = head('verso-author', '{attr.author}', 'even',

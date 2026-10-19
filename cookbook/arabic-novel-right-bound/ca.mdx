@@ -16,7 +16,7 @@ El començament de *حروف من رصاص* (Lletres de plom), una novel·la sob
 
 ### 1 · Un idioma, tres decisions
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. La configuració només diu `locale: 'ar'`, i el motor en treu tres coses: el text va de dreta a esquerra (`direction: 'auto'`), el llibre s'enquaderna per la dreta (`page.binding: 'auto'`) i tots els números que escriu el motor, folis inclosos, fan servir les xifres arabicoíndiques (`numerals: 'auto'`) ([Començar un llibre en àrab](/ca/docs/arabic-layout#començar-un-llibre-en-àrab)). Marges i alineacions continuen dient `left` i `right`, però en un llibre de dreta a esquerra anomenen els costats del flux: `margins.left` és el costat del llom i el sagnat queda a la dreta. Les línies justificades obren primer els espais i després allarguen les lletres enllaçades amb el tatweel, la caixida dels llibres àrabs; el text no es divideix mai amb guionets ([Justificació i caixida](/ca/docs/arabic-layout#justificació-i-caixida)).
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. La configuració només diu `locale: 'ar'`, i el motor en treu tres coses: el text va de dreta a esquerra (`direction: 'auto'`), el llibre s'enquaderna per la dreta (`page.binding: 'auto'`) i tots els números que escriu el motor, folis inclosos, fan servir les xifres arabicoíndiques (`numerals: 'auto'`) ([Començar un llibre en àrab](/ca/docs/arabic-layout#començar-un-llibre-en-àrab)). Marges i alineacions continuen dient `left` i `right`, però en un llibre de dreta a esquerra designen els costats del flux: `margins.left` és el costat del llom i el sagnat queda a la dreta. Les línies justificades obren primer els espais i després allarguen les lletres enllaçades amb el tatweel, la caixida dels llibres àrabs; el text no es parteix mai amb guionets ([Justificació i caixida](/ca/docs/arabic-layout#justificació-i-caixida)).
 
 <PageShot page={3} crop="0.1,0.12,0.8,0.3" caption="Pàgina 12: línies justificades amb caixida, el sagnat a la dreta i el foli ١٢ a la vora exterior." />
 
@@ -30,13 +30,13 @@ El `numberingTemplate` del nivell escriu الفصل i el número com a ordinal m
 
 <Excerpt region="heads" />
 
-El text segueix el flux, però les capçaleres i els folis conserven els costats físics. La pàgina 12 és parella i, en aquest llibre, pàgina dreta: el seu foli va a dalt a la dreta i el títol del llibre al costat; la 13 queda a l'esquerra i porta el capítol. Si llegeixes el plec des de la dreta, com un lector àrab, el títol del llibre arriba primer. `showBook` col·loca les pàgines en mirall, l'11 a l'esquerra de la 10, i la pantalla mostra els plecs tal com s'obre el llibre.
+El text segueix el flux, però les capçaleres i els folis conserven els costats físics. La pàgina 12 és parella i, en aquest llibre, pàgina dreta: el seu foli va a dalt a la dreta i el títol del llibre al costat; la 13 queda a l'esquerra i porta el capítol. Si llegeixes la doble pàgina des de la dreta, com un lector àrab, el títol del llibre arriba primer. `showBook` col·loca les pàgines en mirall, l'11 a l'esquerra de la 10, i la pantalla mostra les dobles pàgines tal com s'obre el llibre.
 
 ### 4 · Una portadella dibuixada amb codi
 
 <Excerpt region="plate" />
 
-La portadella és un títol de primer nivell, `# الدرب {style="plate" …}`, l'estil del qual pinta tot el full i li treu capçalera i foli. La gelosia és un SVG generat al mateix script amb dos quadrats girats 45°, l'estrella *khatam* de l'ornamentació geomètrica islàmica, en el blau i el llautó de la paleta, i el PDF la conserva com a traçats vectorials. `numbered: false` deixa la portadella fora del compte de capítols, i l'obertura que segueix és الفصل الأول.
+La portadella és un títol de primer nivell, `# الدرب {style="plate" …}`, amb un estil que pinta tot el full i li treu capçalera i foli. La gelosia és un SVG generat al mateix script amb dos quadrats girats 45°, l'estrella *khatam* de l'ornamentació geomètrica islàmica, en el blau i el llautó de la paleta, i el PDF la conserva com a traçats vectorials. `numbered: false` deixa la portadella fora del compte de capítols, i l'obertura que segueix és الفصل الأول.
 
 ## Variants
 

@@ -16,25 +16,25 @@ Uma página de uma antologia de yonkoma, ねこ喫茶まどろみ (*Café Soneca
 
 ### 1 · Dividir a página em duas colunas de quatro
 
-O código é [a resposta curta](#a-resposta-curta) acima. A página inteira é um `:::page` com `split="* [* / * / * / *] | * [* / * / * / *]"`: duas colunas iguais, cada uma cortada em quatro faixas iguais. As oito linhas `::panel` preenchem as células na ordem de leitura, então as quatro primeiras pertencem à primeira tira, e com a leitura da direita para a esquerda a primeira coluna fica à direita (<Feature id="comic-panel-split">divisão da página</Feature>). A sarjeta entre as tiras tem 9 mm, e a sarjeta entre os quadros, 3 mm, para que o olho desça por uma tira antes de passar para a outra.
+O código é [a resposta curta](#a-resposta-curta) acima. A página inteira é um `:::page` com `split="* [* / * / * / *] | * [* / * / * / *]"`: duas colunas iguais, cada uma cortada em quatro faixas iguais. As oito linhas `::panel` preenchem as células na ordem de leitura, por isso as quatro primeiras pertencem à primeira tira, e com a leitura da direita para a esquerda a primeira coluna fica à direita (<Feature id="comic-panel-split">divisão da página</Feature>). A sarjeta entre as tiras tem 9 mm, e a sarjeta entre os quadros, 3 mm, para que o olho desça por uma tira antes de passar para a outra.
 
 ### 2 · Pôr o título de cada tira no primeiro quadro
 
 <Excerpt region="balloons" />
 
-Um yonkoma tem título, e as antologias o imprimem num boxe na cabeça da tira. Aqui o título é uma linha do roteiro, `caption{title}: 朝ごはん`, e `title` é um estilo de balão próprio: branco sobre preto, encostado na borda do quadro, no canto superior do lado inicial, que neste livro é o direito. Ele é letreirado em cada edição como qualquer outra fala, então a página brasileira traz *Café da manhã* e *Terapia* nos mesmos boxes.
+Um yonkoma tem título, e as antologias o imprimem num boxe na cabeça da tira. Aqui o título é uma linha do roteiro, `caption{title}: 朝ごはん`, e `title` é um estilo de balão próprio: branco sobre preto, encostado na borda do quadro, no canto superior do lado inicial, que neste livro é o direito. Ele é letreirado em cada edição como qualquer outra fala, por isso a página brasileira traz *Café da manhã* e *Terapia* nos mesmos boxes.
 
 ### 3 · Marcar os gatos também como personagens que falam
 
 <Excerpt region="art" />
 
-Os gatos falam, `kuro: にゃ`, então cada imagem marca a boca e a cara deles como marca as de Mugi. Duas pequenas funções auxiliares encurtam a lista: `cat()` para um gato virado para o leitor e `nose()` para um com a cara enfiada na tigela ou na almofada. No terceiro quadro, Mugi está fora da imagem, e a fala dela, `mugi{tail=top}`, ganha um rabicho até a borda de cima.
+Os gatos falam, `kuro: にゃ`, de modo que cada imagem marca a boca e a cara deles como marca as de Mugi. Duas pequenas funções auxiliares encurtam a lista: `cat()` para um gato virado para o leitor e `nose()` para um com a cara enfiada na tigela ou na almofada. No terceiro quadro, Mugi está fora da imagem, e a fala dela, `mugi{tail=top}`, ganha um rabicho até a borda de cima.
 
 ### 4 · Carregar as fontes de cada edição com as suas palavras
 
 <Excerpt region="fonts" />
 
-Cada fonte recebe as palavras que compõe: a Zen Antique, os balões; a Dela Gothic One, as onomatopeias (ガツガツ, じーっ, すやぁ, ずしっ). Um quadro de yonkoma é mais largo que alto, então as colunas japonesas param em seis caracteres (`maxColumnChars: 6`), e o letreiramento é meio ponto menor que numa página de história.
+Cada fonte recebe as palavras que compõe: a Zen Antique, os balões; a Dela Gothic One, as onomatopeias (ガツガツ, じーっ, すやぁ, ずしっ). Um quadro de yonkoma é mais largo que alto, por isso as colunas japonesas param em seis caracteres (`maxColumnChars: 6`), e o letreiramento é meio ponto menor que numa página de história.
 
 ### 5 · Pôr o original ao lado de cada edição
 
@@ -44,5 +44,5 @@ Cada idioma do site letreira as tiras num arquivo próprio, de frente para o ori
 
 ## Erros comuns
 
-- Num quadro pequeno, um balão vertical fica sem altura antes de ficar sem largura: o motor o compõe em mais colunas, mais curtas, quebrando entre palavras. O último grito do funcionário continua alto demais para o quadro de baixo em japonês, então ele é marcado com `break` (`kyaku{shout break}`): estoura a moldura para o quadro de cima em vez de cobrir os gatos, sem sair para a margem da página.
-- Uma onomatopeia grande fica longe dos rostos, como um balão, e o seu ponto fixo fica dentro da área segura do quadro, para que todo recorte o mantenha: POF! fica em `70% 80%`, sobre as patas dos gatos. O japonês ずしっ é composto na vertical e é mais alto; nesse ponto cobria a cara da gata tricolor e a composição avisava `comicBalloonOverflow`, então ali ele fica em `86% 84%`, ao lado dela.
+- Num quadro pequeno, um balão vertical fica sem altura antes de ficar sem largura: o motor o compõe em mais colunas, mais curtas, quebrando entre palavras. O último grito do funcionário continua alto demais para o quadro de baixo em japonês, por isso ele é marcado com `break` (`kyaku{shout break}`): estoura a borda do quadro e invade o quadro de cima em vez de cobrir os gatos, sem sair para a margem da página.
+- Uma onomatopeia grande fica longe dos rostos, como um balão, e o ponto fixo fica dentro da área segura do quadro, para que todo recorte o mantenha: POF! fica em `70% 80%`, sobre as patas dos gatos. O japonês ずしっ é composto na vertical e é mais alto; nesse ponto cobria a cara da gata tricolor e a composição avisava `comicBalloonOverflow`, de modo que ali ele fica em `86% 84%`, ao lado dela.

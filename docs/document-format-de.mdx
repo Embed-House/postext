@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'Dokumentformat',
   sidebarTitle: 'Dokumentformat',
-  description: 'Die Markdown-Teilmenge, die Postext einliest: Frontmatter, Überschriften, Listen und Codeblöcke, was es übergeht, und die Regeln für das Verfassen von Quelldokumenten',
+  description: 'Der Ausschnitt aus Markdown, den Postext einliest – Frontmatter, Überschriften, Listen und Codeblöcke –, was Postext übergeht und welche Regeln beim Schreiben von Quelldokumenten gelten',
   lang: 'de',
   lastUpdated: '2026-10-16',
   readingTime: '14 min',
@@ -15,14 +15,14 @@ export const metadata = {
 
 **Postext liest einen bewusst kleinen Markdown-Dialekt.**
 
-Der Parser ist ein von Hand geschriebener Tokenizer – keine vollständige CommonMark-Implementierung –, daher ist das Quellformat eng gefasst und vorhersehbar. Das Ziel ist ein doppeltes: Die Engine soll klein und schnell bleiben, und Dokumente sollen sich ohne Aufwand zwischen Postext und jedem anderen CommonMark-Leser (Obsidian, Pandoc, VS Code …) austauschen lassen. Alles, was auf dieser Seite nicht aufgeführt ist, wird entweder als einfacher Text behandelt oder aus dem Inline-Strom entfernt.
+Der Parser ist ein von Hand geschriebener Tokenizer – keine vollständige CommonMark-Implementierung –, daher ist das Quellformat eng gefasst und vorhersehbar. Das Ziel ist ein doppeltes: Die Engine soll klein und schnell bleiben, und Dokumente sollen sich ohne Aufwand zwischen Postext und jedem anderen CommonMark-Leser (Obsidian, Pandoc, VS Code …) austauschen lassen. Alles, was auf dieser Seite nicht aufgeführt ist, wird entweder als einfacher Text behandelt oder aus dem Inline-Text entfernt.
 
-Wenn Sie ein Dokument programmatisch aufbauen, liefert Ihnen die Funktion `parseMarkdown` (siehe [Konfiguration › Parsen](/de/docs/configuration-programmatic-usage#parsen)) genau die Blockstruktur, die die Layout-Engine verarbeitet.
+Wenn Sie ein Dokument programmatisch aufbauen, liefert Ihnen die Funktion `parseMarkdown` (siehe [Konfiguration › Einlesen](/de/docs/configuration-programmatic-usage#einlesen)) genau die Blockstruktur, die die Layout-Engine verarbeitet.
 
 
 ## Frontmatter
 
-Ein Dokument kann mit einem optionalen YAML-Frontmatter-Block beginnen, der von `---`-Markierungen eingefasst ist:
+Ein Dokument kann mit einem optionalen YAML-Frontmatter-Block beginnen, der zwischen zwei Zeilen `---` steht:
 
 ```md
 ---
@@ -40,15 +40,15 @@ Rufen Sie `extractFrontmatter(source)` auf, um das Frontmatter vom Hauptteil zu 
 
 Das Frontmatter wird mit [`gray-matter`](https://github.com/jonschlinkert/gray-matter) eingelesen, daher wird YAML jeder Form angenommen. Postext selbst beachtet nur `title`, `subtitle`, `author` und `publishDate`; weitere Schlüssel bleiben in `PostextContent.metadata` erhalten und stehen Ihnen zur freien Verwendung.
 
-Ein Block, der kein gültiges YAML ist – ein nicht geschlossenes Anführungszeichen, Text nach einem Wert in Anführungszeichen –, hält den Satz nicht an: `extractFrontmatter` gibt keine Metadaten zurück, den Text nach dem schließenden `---` als Hauptteil und die Begründung des Parsers in `error`. Das Dokument wird ohne seine Metadaten gesetzt, und der Build führt einen Eintrag `invalidFrontmatter` in `contentWarnings` (die Sandbox zeigt ihn als **Ungültiges Frontmatter** an).
+Ein Block, der kein gültiges YAML ist – ein nicht geschlossenes Anführungszeichen, Text nach einem Wert in Anführungszeichen –, hält den Satz nicht an: `extractFrontmatter` gibt keine Metadaten zurück, den Text nach dem schließenden `---` als Hauptteil und in `error` die Fehlermeldung des Parsers. Das Dokument wird ohne seine Metadaten gesetzt, und der Build führt einen Eintrag `invalidFrontmatter` in `contentWarnings` (die Sandbox zeigt ihn als **Ungültiges Frontmatter** an).
 
-YAML gibt seinen Werten Typen: `1984` ist eine Zahl, `2026-04-15` ein Datum, `[Ana Gil, Luis Paz]` eine Liste. Postext druckt jedes dieser vier Felder als Text, gleich welchen Typs es ist:
+YAML gibt seinen Werten Typen: `1984` ist eine Zahl, `2026-04-15` ein Datum, `[Ana Gil, Luis Paz]` eine Liste. Postext gibt jedes dieser vier Felder als Text aus, gleich welchen Typ der Wert hat:
 
-- eine Zahl in ihrer einfachen Dezimalform und einen Wahrheitswert als `true` oder `false` (`title: 1984` druckt *1984*). YAML liest eine Zahl als Wert, nicht Ziffer für Ziffer: `1.50` druckt *1.5*, `017` (oktal) *15*, `1:30` (Basis 60) *90*;
-- ein Datum als seinen Kalendertag, ausgeschrieben in der Sprache des Dokuments – der Einstellung `locale`, andernfalls dem Gebietsschema der Silbentrennung: `publishDate: 2026-04-15` druckt auf Englisch *April 15, 2026*, auf Spanisch *15 de abril de 2026*, auf Deutsch *15. April 2026*. Arabische Daten verwenden den gregorianischen Kalender, sofern das Tag keinen anderen nennt (`ar-u-ca-islamic` druckt das Hidschra-Datum), mit den Ziffern, die das Tag vorgibt (`ar-EG`: ١٥ أبريل ٢٠٢٦; `ar-u-nu-latn`: 15 أبريل 2026). Ein Datum mit Uhrzeit druckt den Tag seiner UTC-Zeit und lässt die Uhrzeit weg: `2026-09-24T23:30:00-05:00` ist 04:30 UTC am 25. und druckt *September 25, 2026*;
-- eine Liste als ihre durch Kommas verbundenen Einträge (`author: [Ana Gil, Luis Paz]` druckt *Ana Gil, Luis Paz*).
+- eine Zahl in einfacher Dezimalschreibweise, einen Wahrheitswert als `true` oder `false` (aus `title: 1984` wird *1984*). YAML liest eine Zahl als Wert, nicht Ziffer für Ziffer: Aus `1.50` wird *1.5*, aus `017` (oktal) *15*, aus `1:30` (Basis 60) *90*;
+- ein Datum als Kalendertag, ausgeschrieben in der Sprache des Dokuments – der Einstellung `locale` oder, falls sie fehlt, der Sprache der Silbentrennung: Aus `publishDate: 2026-04-15` wird auf Englisch *April 15, 2026*, auf Spanisch *15 de abril de 2026*, auf Deutsch *15. April 2026*. Arabische Daten folgen dem gregorianischen Kalender, sofern die Sprachkennung keinen anderen angibt (`ar-u-ca-islamic` ergibt das Hidschra-Datum), und verwenden die Ziffern, die die Sprachkennung vorgibt (`ar-EG`: ١٥ أبريل ٢٠٢٦; `ar-u-nu-latn`: 15 أبريل 2026). Bei einem Datum mit Uhrzeit wird der Tag nach UTC ausgegeben und die Uhrzeit weggelassen: `2026-09-24T23:30:00-05:00` ist der 25. um 04:30 UTC und ergibt *September 25, 2026*;
+- eine Liste als ihre durch Kommas verbundenen Einträge (aus `author: [Ana Gil, Luis Paz]` wird *Ana Gil, Luis Paz*).
 
-Setzen Sie einen Wert in Anführungszeichen, damit er genau so gedruckt wird, wie er geschrieben ist – eine Zahl, die ihre Ziffern behalten muss, ein Datum, das seinen Tag behalten muss: `publishDate: "15/04/2026"`, `title: "1984"`. Der Text gelangt in `doc.metadata`, in die Platzhalter (`{title}`, `{publishDate}` …) und in Titel und Autor des PDFs. Eines der vier Felder ohne Textform – eine verschachtelte Map, ein leeres `title:` – fehlt in `doc.metadata`. `extractFrontmatter` gibt die Werte weiterhin so zurück, wie YAML sie typisiert hat; `metadataText(value, locale)` liefert den Text, den Postext für einen davon druckt.
+Setzen Sie einen Wert in Anführungszeichen, damit er genau so ausgegeben wird, wie er geschrieben ist – etwa eine Zahl, deren Ziffern erhalten bleiben müssen, oder ein Datum, dessen Tag sich nicht verschieben darf: `publishDate: "15/04/2026"`, `title: "1984"`. Dieser Text gelangt in `doc.metadata`, in die Platzhalter (`{title}`, `{publishDate}` …) und in Titel und Autor des PDFs. Hat eines der vier Felder keine Textform – eine verschachtelte Map, ein leeres `title:` –, fehlt es in `doc.metadata`. `extractFrontmatter` gibt die Werte weiterhin mit den Typen zurück, die YAML ihnen gegeben hat; `metadataText(value, locale)` liefert den Text, den Postext für einen solchen Wert ausgibt.
 
 
 ## Blockelemente
@@ -74,7 +74,7 @@ Postext erkennt sieben Arten von Textblöcken und Code-Listings, dazu die Direkt
     <tr>
       <td>Absatz</td>
       <td>Einfacher Text über eine oder mehrere Zeilen</td>
-      <td>Aufeinanderfolgende nicht leere Zeilen ohne besondere Bedeutung werden mit einem einzelnen Leerzeichen verbunden und als ein Absatz ausgegeben. Zwischen zwei chinesischen oder japanischen Zeichen (Ideogramme, Kana, Satzzeichen voller Breite sowie typografische Anführungszeichen, Striche oder Auslassungspunkte daneben) entfällt das Zeilenende stattdessen, wie in CSS, sodass ein chinesischer Absatz in der Quelle an beliebiger Stelle umbrochen werden darf. Zwischen zwei solchen Zeichen (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) entscheiden die Zeichen dahinter: Das Zeilenende entfällt, wenn eines davon chinesisch oder japanisch ist, und <code>“hello”⏎“bye”</code> behält sein Leerzeichen. Koreanisch behält sein Leerzeichen. Ein in der Quelle getippter Zeilenumbruch bleibt nicht erhalten, es sei denn, die Zeile endet mit einem Backslash (ein erzwungener Zeilenumbruch, siehe <a href="/de/docs/document-format-directives#zeilenumbrüche">Zeilenumbrüche</a>); eine Leerzeile beginnt einen neuen Absatz. Ein im Text getippter Tabulator ist ebenfalls ein Wortzwischenraum, sofern das Format des Absatzes keine Tabstopps setzt; <code>:tab</code> ist immer ein Tabulator (siehe <a href="/de/docs/document-format-inline#tabulatoren-und-tabstopps">Tabulatoren und Tabstopps</a>). Ein Gedicht, dessen Zeilen so bleiben müssen, wie sie geschrieben sind, gehört in einen Block <a href="/de/docs/document-format-directives#verse"><code>:::verse</code></a>.</td>
+      <td>Aufeinanderfolgende nicht leere Zeilen ohne besondere Bedeutung werden mit einem einzelnen Leerzeichen verbunden und als ein Absatz ausgegeben. Zwischen zwei chinesischen oder japanischen Zeichen (Ideogramme, Kana, Satzzeichen voller Breite sowie typografische Anführungszeichen, Striche oder Auslassungspunkte daneben) entfällt das Zeilenende stattdessen, wie in CSS, sodass ein chinesischer Absatz in der Quelle an beliebiger Stelle umbrochen werden darf. Steht das Zeilenende zwischen zwei solchen Satzzeichen (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>), entscheiden die Zeichen außen daneben: Das Zeilenende entfällt, wenn eines davon chinesisch oder japanisch ist, und <code>“hello”⏎“bye”</code> behält sein Leerzeichen. Koreanisch behält sein Leerzeichen. Ein in der Quelle getippter Zeilenumbruch bleibt nicht erhalten, es sei denn, die Zeile endet mit einem Backslash (ein erzwungener Zeilenumbruch, siehe <a href="/de/docs/document-format-directives#zeilenumbrüche">Zeilenumbrüche</a>); eine Leerzeile beginnt einen neuen Absatz. Ein im Text getippter Tabulator ist ebenfalls ein Wortzwischenraum, sofern das Absatzformat keine Tabstopps setzt; <code>:tab</code> ist immer ein Tabulator (siehe <a href="/de/docs/document-format-inline#tabulatoren-und-tabstopps">Tabulatoren und Tabstopps</a>). Ein Gedicht, dessen Zeilen so bleiben müssen, wie sie geschrieben sind, gehört in einen Block <a href="/de/docs/document-format-directives#verse"><code>:::verse</code></a>.</td>
     </tr>
     <tr>
       <td>Zitat</td>
@@ -99,12 +99,12 @@ Postext erkennt sieben Arten von Textblöcken und Code-Listings, dazu die Direkt
     <tr>
       <td>Abgesetzte Formel</td>
       <td><code>$$ … $$</code></td>
-      <td>Eine LaTeX-Formel, als eigener Block gesetzt. Sie wird auf der Spalte zentriert, wie eine Überschrift am Grundlinienraster ausgerichtet und in der PDF-Ausgabe als Vektorgrafik beibehalten. Die einzeilige Form und die eingezäunte mehrzeilige Form sind unter <a href="/de/docs/document-format-inline#mathematische-formeln">Mathematische Formeln</a> beschrieben.</td>
+      <td>Eine LaTeX-Formel, als eigener Block gesetzt. Sie wird auf der Spalte zentriert, wie eine Überschrift am Grundlinienraster ausgerichtet und in der PDF-Ausgabe als Vektorgrafik beibehalten. Die einzeilige Form und die mehrzeilige Blockform sind unter <a href="/de/docs/document-format-inline#mathematische-formeln">Mathematische Formeln</a> beschrieben.</td>
     </tr>
     <tr>
       <td>Codeblock</td>
       <td><code>```js</code> … <code>```</code>, <code>~~~</code> … <code>~~~</code></td>
-      <td>Ein Listing, so belassen, wie es geschrieben ist: jedes Leerzeichen, jeder Tabulator und jeder Zeilenumbruch, nichts wird als Markdown gelesen. Zeile für Zeile in der Code-Schrift in einem Kasten gesetzt. Siehe <a href="#codeblöcke">Codeblöcke</a>.</td>
+      <td>Ein Listing, so belassen, wie es geschrieben ist: jedes Leerzeichen, jeder Tabulator und jeder Zeilenumbruch, nichts wird als Markdown gelesen. Wird Zeile für Zeile in der Codeschrift in einem Kasten gesetzt. Siehe <a href="#codeblöcke">Codeblöcke</a>.</td>
     </tr>
   </tbody>
 </table>
@@ -113,7 +113,7 @@ Eine einzelne Leerzeile zwischen zwei Listeneinträgen wird toleriert – die Li
 
 Listen verschiedener Art auf derselben Tiefe werden angenommen (Sie können mitten in einer Folge von ungeordnet zu geordnet wechseln), doch die Engine behandelt die Folgen für die Nummerierung als getrennt. In der Praxis bleiben Sie besser bei einer Art je Tiefe, sofern Sie keinen Grund zum Mischen haben.
 
-<Illustration name="ListNesting" data='{"title": "Verschachtelungstiefe von Listen", "desc": "Ein Listeneintrag wird unter dem Eintrag darüber verschachtelt, wenn er über dessen Marke hinaus eingerückt ist: zwei Leerzeichen unter einem Aufzählungszeichen, bis zu einer maximalen Tiefe von fünf. Jede Ebene ist weiter eingerückt und kann ein anderes Aufzählungszeichen verwenden.", "caption": "Zwei Leerzeichen je Ebene unter einem Aufzählungszeichen. Maximale Tiefe: fünf.", "level1": "Ebene 1", "level2": "Ebene 2 – zwei Leerzeichen eingerückt", "level3": "Ebene 3 – vier Leerzeichen eingerückt", "indentNote": "Zwei Leerzeichen Einzug unter einem Aufzählungszeichen, drei unter 1. Maximale Tiefe: 5."}' />
+<Illustration name="ListNesting" data='{"title": "Verschachtelungstiefe von Listen", "desc": "Ein Listeneintrag wird unter dem Eintrag darüber verschachtelt, wenn er über dessen Marke hinaus eingerückt ist: zwei Leerzeichen unter einem Aufzählungszeichen, bis zu einer maximalen Tiefe von fünf. Jede Ebene ist weiter eingerückt und kann ein anderes Aufzählungszeichen verwenden.", "caption": "Zwei Leerzeichen je Ebene unter einem Aufzählungszeichen. Maximale Tiefe: fünf.", "level1": "Ebene 1", "level2": "Ebene 2 – zwei Leerzeichen eingerückt", "level3": "Ebene 3 – vier Leerzeichen eingerückt", "indentNote": "Zwei Leerzeichen Einzug unter einem Aufzählungszeichen, drei unter „1.“. Maximale Tiefe: 5."}' />
 
 ### Attribute von Überschriften
 
@@ -123,11 +123,11 @@ Eine Überschriftenzeile kann mit einem Attributblock in geschweiften Klammern e
 # The Long Road {author="I. Zango Martín" year=1998}
 ```
 
-Die Klammern und ihr Inhalt werden aus dem Text der Überschrift entfernt (der Titel oben erscheint als *The Long Road*) und an der Überschrift als `attrs` gespeichert. Gestaltungsfelder erhalten sie als Platzhalter `{attr.<key>}`: im erweiterten Gestaltungsfeld der Überschrift selbst sowie in Kopf- und Fußzeilen, wo sie aus der H1 des aktuellen Kapitels aufgelöst werden. Erkannt wird nur ein ausgewogener Block ohne innere Klammern ganz am Zeilenende, nach einem Leerzeichen oder, da chinesische Titel ohne Leerzeichen geschrieben werden, direkt nach einem chinesischen oder japanischen Zeichen (`# 回目{style="x"}`). Der Block wird nur übernommen, wenn die unten beschriebene Attributsyntax ihn vollständig liest: `{x, y}`, `{紅樓|hóng lóu}` und ein einzelnes `{}` bleiben im Titel, ebenso einzelne Schalter, die direkt am Titel kleben (`# 第一回{draft}`). Attribute werden durch Leerzeichen getrennt, daher bleiben auch ein Block mit Kommas (`{a="1", b="2"}`) und Pandocs `{.class}` im Titel. Pandocs Bezeichner `{#id}` wird gelesen: Er entspricht `id="…"` und benennt die Überschrift für [Querverweise](/de/docs/document-format-notes-references#querverweise-und-anker). Ein in einer anderen Schrift geschriebener Schlüssel wird gelesen und mit einer Warnung verworfen (siehe unten), sodass `# 回目{style="x" 作者=曹雪芹}` dennoch `style` übernimmt. Siehe **Konfiguration → Kopf- und Fußzeilen**.
+Die Klammern und ihr Inhalt werden aus dem Text der Überschrift entfernt (der Titel oben erscheint als *The Long Road*) und an der Überschrift als `attrs` gespeichert. Gestaltungsfelder erhalten sie als Platzhalter `{attr.<key>}`: im erweiterten Gestaltungsfeld der Überschrift selbst sowie in Kopf- und Fußzeilen, wo sie aus der H1 des aktuellen Kapitels aufgelöst werden. Erkannt wird nur ein vollständig geschlossener Block ohne innere Klammern ganz am Zeilenende, nach einem Leerzeichen oder, da chinesische Titel ohne Leerzeichen geschrieben werden, direkt nach einem chinesischen oder japanischen Zeichen (`# 回目{style="x"}`). Der Block wird nur übernommen, wenn die unten beschriebene Attributsyntax ihn vollständig liest: `{x, y}`, `{紅樓|hóng lóu}` und ein einzelnes `{}` bleiben im Titel, ebenso ein einzelnes Attribut ohne Wert, das direkt am Titel klebt (`# 第一回{draft}`). Attribute werden durch Leerzeichen getrennt, daher bleiben auch ein Block mit Kommas (`{a="1", b="2"}`) und Pandocs `{.class}` im Titel. Pandocs Bezeichner `{#id}` wird gelesen: Er entspricht `id="…"` und macht die Überschrift zum Ziel von [Querverweisen](/de/docs/document-format-notes-references#querverweise-und-verweisziele). Ein in einer anderen Schrift geschriebener Schlüssel wird gelesen und mit einer Warnung verworfen (siehe unten), sodass `# 回目{style="x" 作者=曹雪芹}` dennoch `style` übernimmt. Siehe **Konfiguration → Kopf- und Fußzeilen**.
 
-Ein Wert, den ein Gestaltungstext druckt, kann sich über mehrere Zeilen erstrecken: Die beiden Zeichen `\n` beginnen dort eine neue Zeile, unabhängig vom `overflow` des Elements (`to="Firma X\nStrasse 1\n10115 Berlin"` druckt eine dreizeilige Anschrift). Mit `inlineMarks` am Element gelten auch Inline-Auszeichnungen im Wert: `authors="Ana Ruiz^1^, Luis Gil^2^"` setzt die Nummern der Affiliationen hochgestellt. Diese Escape-Sequenz gehört zu Attributwerten (und zu den eigenen Vorlagen der Gestaltung): Die Zeichen `\n` im Text einer Überschrift, etwa in einem Code-Span, werden so gedruckt, wie sie geschrieben sind.
+Ein Wert, den ein Gestaltungstext ausgibt, kann sich über mehrere Zeilen erstrecken: Die beiden Zeichen `\n` beginnen dort eine neue Zeile, unabhängig vom `overflow` des Elements (`to="Firma X\nStrasse 1\n10115 Berlin"` ergibt eine dreizeilige Anschrift). Mit `inlineMarks` am Element gelten auch Inline-Auszeichnungen im Wert: `authors="Ana Ruiz^1^, Luis Gil^2^"` setzt die Nummern der Affiliationen hochgestellt. Diese Escape-Sequenz gehört zu Attributwerten (und zu den eigenen Vorlagen der Gestaltung): Die Zeichen `\n` im Text einer Überschrift, etwa in Inline-Code, werden so ausgegeben, wie sie geschrieben sind.
 
-Zwei Attribute haben eine eigene Bedeutung. `style="<id>"` wendet ein benanntes [Überschriftenstil](/de/docs/configuration-styles#überschriftenstile) auf die Überschrift an – ein Vorwort oder eine Autorenliste mit eigener Auftaktgestaltung, eigenen Kolumnentiteln, eigener Seitengeometrie und eigener Typografie des Fließtexts und ohne Kapitelnummer, wenn das Format `numbered: false` angibt. `toc="false"` (oder `"true"`) legt abweichend fest, ob `:::toc` die Überschrift aufführt:
+Zwei Attribute haben eine eigene Bedeutung. `style="<id>"` wendet einen benannten [Überschriftenstil](/de/docs/configuration-styles#überschriftenstile) auf die Überschrift an – etwa für ein Vorwort oder eine Autorenliste mit eigener Auftaktgestaltung, eigenen Kolumnentiteln, eigener Seitengeometrie und eigener Typografie des Grundtexts, ohne Kapitelnummer, wenn der Stil `numbered: false` angibt. `toc="false"` (oder `"true"`) legt abweichend fest, ob `:::toc` die Überschrift aufführt:
 
 ```markdown
 # Preface {style="front-matter"}
@@ -135,7 +135,7 @@ Zwei Attribute haben eine eigene Bedeutung. `style="<id>"` wendet ein benanntes 
 # Contents {style="front-matter" toc="false"}
 ```
 
-Zwei weitere ändern, was eine Überschrift druckt und wie sie zählt. `hidden="true"` (oder `"false"`) überschreibt das `hidden` der Ebene oder des Formats der Überschrift: Eine verborgene Überschrift druckt nichts und nimmt keinen Platz ein – im Fluss wie in einem Kasten `:::callout` –, öffnet aber weiterhin ihre Seite, zählt mit und erscheint im Inhaltsverzeichnis, in den Kolumnentiteln `{chapterTitle}` und in den PDF-Lesezeichen. `jidori=N` verteilt eine einzeilige Überschrift gleichmäßig auf `N` ihrer eigenen Zeichen (字取り: `# 序章 {jidori=3}` druckt 序　章), und `jidori=0` schaltet die gleichmäßige Verteilung ab, die ihre Ebene oder ihr Format setzt (siehe [Konfiguration › Überschreibungen pro Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)). `indent=N` rückt eine einzelne Überschrift um `N` Zeichen des Fließtexts vom Zeilenanfang ein (字下げ: `## 一 {indent=5}`), vorrangig vor dem `indent` ihrer Ebene oder ihres Formats; eine bloße Zahl zählt Gevierte des Fließtexts, `0` setzt die Überschrift an den Zeilenanfang, und es wirkt in senkrechtem und waagerechtem Text gleich. `firstLineIndent=N` rückt nur die erste Zeile einer einzelnen Überschrift ein, vorrangig vor dem `firstLineIndent` ihrer Ebene oder ihres Formats, während ihre übrigen Zeilen dort beginnen, wo `indent` sie hinsetzt (die Überschriften nach GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`); es liest Längen wie `indent`, und `0` hebt den Einzug der Ebene auf. `startAt=N`, eine positive ganze Zahl, setzt den Ebenenzähler der Überschrift auf `N`, statt ihn weiterzuzählen; die folgenden Überschriften zählen von dort aus weiter, auch in späteren Kapiteln, und die Ebenen darunter beginnen wie üblich unter ihr neu. Mit einem Überschriftenformat, das Anhänge mit Buchstaben zählt (`numberingTemplate: 'Appendix {1:A}'`), beginnt der erste Anhang die Zählung neu, sodass er *Appendix A* lautet, statt an die Kapitel anzuschließen:
+Zwei weitere ändern, was eine Überschrift ausgibt und wie sie gezählt wird. `hidden="true"` (oder `"false"`) überschreibt das `hidden` der Ebene oder des Stils der Überschrift: Eine verborgene Überschrift gibt nichts aus und nimmt keinen Platz ein – im Fluss wie in einem `:::callout`-Kasten –, beginnt aber weiterhin ihre Seite, wird mitgezählt und erscheint im Inhaltsverzeichnis, in den Kolumnentiteln `{chapterTitle}` und in den PDF-Lesezeichen. `jidori=N` verteilt eine einzeilige Überschrift gleichmäßig auf die Breite von `N` ihrer eigenen Zeichen (字取り: `# 序章 {jidori=3}` ergibt 序　章), und `jidori=0` schaltet die gleichmäßige Verteilung ab, die ihre Ebene oder ihr Stil vorsieht (siehe [Konfiguration › Überschreibungen pro Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)). `indent=N` rückt eine einzelne Überschrift um `N` Zeichen des Grundtexts vom Zeilenanfang ein (字下げ: `## 一 {indent=5}`) und hat Vorrang vor dem `indent` ihrer Ebene oder ihres Stils; eine bloße Zahl zählt Gevierte des Grundtexts, `0` setzt die Überschrift an den Zeilenanfang, und das Attribut wirkt in senkrechtem und waagerechtem Text gleich. `firstLineIndent=N` rückt nur die erste Zeile einer einzelnen Überschrift ein und hat Vorrang vor dem `firstLineIndent` ihrer Ebene oder ihres Stils; ihre übrigen Zeilen beginnen dort, wo `indent` sie hinsetzt (die Überschriften nach GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`). Längen werden wie bei `indent` gelesen, und `0` hebt den Einzug der Ebene auf. `startAt=N`, eine positive ganze Zahl, setzt den Ebenenzähler der Überschrift auf `N`, statt ihn weiterzuzählen; die folgenden Überschriften zählen von dort aus weiter, auch in späteren Kapiteln, und die Ebenen darunter beginnen wie üblich unter ihr neu. Mit einem Überschriftenstil, der Anhänge mit Buchstaben zählt (`numberingTemplate: 'Appendix {1:A}'`), beginnt der erste Anhang die Zählung neu, sodass er *Appendix A* lautet, statt an die Kapitel anzuschließen:
 
 ```markdown
 # To my mother {hidden="true" toc="false"}
@@ -147,7 +147,7 @@ Zwei weitere ändern, was eine Überschrift druckt und wie sie zählt. `hidden="
 
 ### Initialen
 
-Ein Absatz beginnt mit einer Initiale, wenn die Ebene oder das Format seiner Überschrift oder das Absatzformat seiner Gruppe `:::paragraphs` eine vorsieht (siehe [Konfiguration › Initialen](/de/docs/configuration-text#initialen)): Der erste Buchstabe wird groß neben die ersten Zeilen gesetzt, die um ihn herum verkürzt werden. Im Absatz selbst steht keine Auszeichnung; der Text wird wie gewohnt geschrieben, und der Buchstabe bleibt beim Kopieren, bei der Suche und in der Source-Map Teil seines Worts. Ein Attribut `dropcap` schaltet sie für ein Kapitel oder eine Gruppe um:
+Ein Absatz beginnt mit einer Initiale, wenn die Ebene oder der Stil seiner Überschrift oder das Absatzformat seiner Gruppe `:::paragraphs` eine vorsieht (siehe [Konfiguration › Initialen](/de/docs/configuration-text#initialen)): Der erste Buchstabe wird groß neben die ersten Zeilen gesetzt, die um ihn herum verkürzt werden. Im Absatz selbst steht keine Auszeichnung; der Text wird wie gewohnt geschrieben, und der Buchstabe bleibt beim Kopieren, bei der Suche und in der Quellenzuordnung Teil seines Worts. Ein Attribut `dropcap` schaltet sie für ein Kapitel oder eine Gruppe um:
 
 ```markdown
 # Lost {dropcap=false}
@@ -159,13 +159,13 @@ The lamp of the first entry opens with an initial.
 :::
 ```
 
-In einer Überschriftenzeile lässt `dropcap=false` den Absatz nach dieser Überschrift ohne die Initiale, die ihre Ebene oder ihr Format vorsieht, `dropcap=N` setzt sie über `N` Zeilen, und ein bloßes `dropcap` gibt diesem Absatz eine Initiale (drei Zeilen, in der Schrift des Absatzes), wo die Ebene keine setzt. An einem Direktivenblock `:::paragraphs` bewirkt das Attribut dasselbe für den ersten Absatz der Gruppe oder für jeden Absatz, wenn das Format `each: true` angibt. Der Absatz nach einer Überschrift wird über Direktiven- und Codeblöcke, Direktiven, aus dem Fluss gelöste Kästen und gleitende Abbildungen hinweg gefunden; ein Absatz in einem Kasten, einem Listeneintrag, einem Zitat oder einem Gedicht erhält nie eine Initiale. Seit postext 1.23.
+In einer Überschriftenzeile lässt `dropcap=false` den Absatz nach dieser Überschrift ohne die Initiale, die ihre Ebene oder ihr Stil vorsieht, `dropcap=N` setzt sie über `N` Zeilen, und ein bloßes `dropcap` gibt diesem Absatz eine Initiale (über drei Zeilen, in der Schrift des Absatzes), wo die Ebene keine vorsieht. In der öffnenden Zeile `:::paragraphs` bewirkt das Attribut dasselbe für den ersten Absatz der Gruppe oder für jeden Absatz, wenn das Absatzformat `each: true` angibt. Bei der Suche nach dem Absatz nach einer Überschrift werden Blöcke, Direktiven, aus dem Fluss gelöste Kästen und gleitende Abbildungen übersprungen; ein Absatz in einem Kasten, einem Listeneintrag, einem Zitat oder einem Gedicht erhält nie eine Initiale. Seit postext 1.23.
 
 Auf einer zusammengesetzten Seite sind die Rahmen fortlaufender Text: `:::paragraphs{style="auftakt" dropcap}` in einem Rahmen eröffnet dessen ersten Absatz mit der Initiale. In einem `:::callout`-Kasten bekommen die Absätze keine, und wer dort eine verlangt, erhält eine `dropCap`-Warnung.
 
 ### Codeblöcke
 
-Ein Listing steht in einem Codeblock zwischen zwei Zeilen aus drei oder mehr Backticks (oder drei oder mehr Tilden), jede für sich allein, um höchstens drei Leerzeichen eingerückt. Alles dazwischen bleibt so, wie es geschrieben ist: führende Leerzeichen und Folgen von Leerzeichen, Tabulatoren, Leerzeilen und Zeilen, die mit `#`, `-`, `1.`, `>`, `$` oder `:::` beginnen. Nichts darin wird als Markdown gelesen: keine Hervorhebung, kein `:ref`, keine Formeln, keine Chips, keine Direktiven, keine Überschriften. Die schließende Zeile verwendet das Zeichen der öffnenden und ist mindestens ebenso lang; ein Listing, das einen Codeblock zeigt, steht daher in einem längeren oder in Tilden:
+Ein Listing steht in einem Codeblock zwischen zwei Zeilen aus drei oder mehr Backticks (oder drei oder mehr Tilden), jede für sich allein, um höchstens drei Leerzeichen eingerückt. Alles dazwischen bleibt so, wie es geschrieben ist: führende Leerzeichen und Folgen von Leerzeichen, Tabulatoren, Leerzeilen und Zeilen, die mit `#`, `-`, `1.`, `>`, `$` oder `:::` beginnen. Nichts darin wird als Markdown gelesen: keine Hervorhebung, kein `:ref`, keine Formeln, keine Chips, keine Direktiven, keine Überschriften. Die schließende Zeile verwendet das Zeichen der öffnenden und ist mindestens ebenso lang; ein Listing, das selbst einen Codeblock zeigt, steht daher zwischen längeren Zeilen oder zwischen Tilden:
 
 ~~~markdown
 ```bash {title="backup.sh" lineNumbers start=12 highlight="3,5-7"}
@@ -176,7 +176,7 @@ echo "done: $(date)"
 ```
 ~~~
 
-Die Info-Zeichenkette nach der öffnenden Zeile des Codeblocks nennt die Sprache (ihr erstes Wort: `js`, `ts`, `python`, `bash`, `console`, `json` …), und der Rest wird in der [Attributsyntax](/de/docs/document-format-directives#attributwerte) als Attribute gelesen, in geschweiften Klammern oder ohne (`title="app.js" lineNumbers`). Alles andere nach der Sprache ist der Titel: ```` ```console Terminal ```` und ```` ```python normalize.py ```` drucken *Terminal* und *normalize.py* über dem Listing.
+Die Info-Zeichenkette hinter den öffnenden Backticks gibt die Sprache an (ihr erstes Wort: `js`, `ts`, `python`, `bash`, `console`, `json` …), und der Rest wird in der [Attributsyntax](/de/docs/document-format-directives#attributwerte) als Attribute gelesen, in geschweiften Klammern oder ohne (`title="app.js" lineNumbers`). Alles andere nach der Sprache ist der Titel: ```` ```console Terminal ```` und ```` ```python normalize.py ```` setzen *Terminal* und *normalize.py* als Titel über das Listing.
 
 <table>
   <thead>
@@ -204,7 +204,7 @@ Die Info-Zeichenkette nach der öffnenden Zeile des Codeblocks nennt die Sprache
     </tr>
     <tr>
       <td><code>highlight="3,5-7"</code></td>
-      <td>Tönt die genannten Zeilen (gezählt ab der ersten Zeile des Listings, beginnend bei 1): einzelne Zeilen und Bereiche, durch Kommas getrennt.</td>
+      <td>Hinterlegt die angegebenen Zeilen farbig (gezählt ab der ersten Zeile des Listings, beginnend bei 1): einzelne Zeilen und Bereiche, durch Kommas getrennt.</td>
     </tr>
     <tr>
       <td><code>span=page</code></td>
@@ -213,9 +213,9 @@ Die Info-Zeichenkette nach der öffnenden Zeile des Codeblocks nennt die Sprache
   </tbody>
 </table>
 
-Ein Codeblock beendet den Absatz darüber, ob mit oder ohne Leerzeile, und der Text nach seiner schließenden Zeile beginnt einen neuen Absatz. Ein offen gelassener Codeblock reicht bis zum Ende des Texts und wird gemeldet (`unclosedCodeBlock`). Ein Codeblock in einem `:::callout` ist ein darin verschachtelter Kasten; in `:::paragraphs` behält das Listing das Code-Format, nicht das Absatzformat. Postext kennt keine Fortsetzung von Listeneinträgen, daher schließt ein Codeblock nach einem Listeneintrag die Liste. Registermarken und Anker, die in einem Listing stehen, bleiben so, wie sie geschrieben sind.
+Ein Codeblock beendet den Absatz darüber, ob mit oder ohne Leerzeile, und der Text nach seiner schließenden Zeile beginnt einen neuen Absatz. Ein offen gelassener Codeblock reicht bis zum Ende des Texts und wird gemeldet (`unclosedCodeBlock`). Ein Codeblock in einem `:::callout` ist ein darin verschachtelter Kasten; in `:::paragraphs` behält das Listing das Code-Format, nicht das Absatzformat. Postext kennt keine Fortsetzung von Listeneinträgen, daher schließt ein Codeblock nach einem Listeneintrag die Liste. Registermarken und Verweisziele in einem Listing bleiben so, wie sie geschrieben sind.
 
-Eingerückter Code (vier Leerzeichen oder ein Tabulator nach einer Leerzeile) wird nur dann als Listing gelesen, wenn `codeStyle.indentedCode` eingeschaltet ist: Postext-Texte rücken oft mit Leerzeichen ein, und verschachtelte Listeneinträge lesen führende Leerzeichen.
+Eingerückter Code (vier Leerzeichen oder ein Tabulator nach einer Leerzeile) wird nur dann als Listing gelesen, wenn `codeStyle.indentedCode` eingeschaltet ist: Postext-Texte rücken oft mit Leerzeichen ein, und an führenden Leerzeichen erkennt Postext verschachtelte Listeneinträge.
 
 Wie ein Listing aussieht (seine Schrift, sein Kasten, die Tabulatorbreite, was mit einer Zeile geschieht, die breiter ist als der Kasten, Zeilennummern, die Farben seiner Token), legt `codeStyle` fest; siehe [Konfiguration › Code-Listings](/de/docs/configuration-styles#code-listings). Inline-Code (`` `x` ``) bleibt in der Schrift des Texts, sofern `codeStyle.inline` ihm keine eigene gibt. Ein vor postext 1.23 gespeichertes Buch mit Codeblöcken im Text liest diese wie damals als Markdown (`codeStyle.blocks: false`). Seit postext 1.23.
 
@@ -231,7 +231,7 @@ Postext erkennt die folgenden CommonMark-Merkmale nicht. Sie werden entweder als
 - **Autolinks** – `<https://example.com>`.
 - **Harte Zeilenumbrüche mit zwei Leerzeichen am Zeilenende** – die Leerzeichen werden entfernt. Beenden Sie die Zeile stattdessen mit einem Backslash (siehe [Zeilenumbrüche](/de/docs/document-format-directives#zeilenumbrüche)).
 - **Durchgestrichener Text** – `~~text~~`. Der Renderer für Durchstreichung ist derzeit erledigten Aufgabenpunkten vorbehalten.
-- **Marginalien** – nicht umgesetzt, und `PostextContent.notes`, das die Typen akzeptieren, wird von der Engine ignoriert. Fußnoten und Kapitelendnoten werden mit `[^id]` geschrieben (siehe [Fußnoten](/de/docs/document-format-notes-references#fußnoten)); bis postext 1.5 mussten sie als Text gesetzt werden.
+- **Randnoten** – nicht umgesetzt, und `PostextContent.notes`, das die Typen akzeptieren, wird von der Engine ignoriert. Fußnoten und Kapitelendnoten werden mit `[^id]` geschrieben (siehe [Fußnoten](/de/docs/document-format-notes-references#fußnoten)); bis postext 1.5 mussten sie als Text gesetzt werden.
 
 Diese Liste wird mit der Zeit kürzer. Bis dahin ist alles, was oben nicht ausdrücklich als unterstützt aufgeführt ist, als wörtlicher Text anzunehmen.
 
@@ -240,20 +240,20 @@ Diese Liste wird mit der Zeit kürzer. Bis dahin ist alles, was oben nicht ausdr
 
 ## Konventionen beim Schreiben
 
-Einige Konventionen machen den Unterschied zwischen einem Dokument, das sauber gelesen wird, und einem, das Sie überrascht:
+Einige Konventionen machen den Unterschied zwischen einem Dokument, das sich sauber einlesen lässt, und einem, das Sie überrascht:
 
 - **Lassen Sie zwischen Blöcken eine Leerzeile.** Zwei durch eine Leerzeile getrennte Absätze sind zwei Absätze. Zwei Absätze in aufeinanderfolgenden Zeilen werden zu einem – jede Zeile geht im vorigen Absatz auf.
 - **Zusätzliche Leerzeilen fügen keinen Abstand hinzu.** Drei Leerzeilen trennen zwei Blöcke genauso wie eine. Wenn Sie mehr Raum zwischen ihnen möchten, schreiben Sie eine [`:::space`](/de/docs/document-format-directives#space)-Zeile.
-- **Rücken Sie einen verschachtelten Punkt bis zum Text des Punktes darüber ein.** Zwei Leerzeichen unter einem Aufzählungszeichen (`- `), drei unter `1. `, vier unter `10. `, so wie CommonMark Listen verschachtelt; zwei Leerzeichen unter `1.` verschachteln ebenfalls. Ein Punkt wird unter den nächsten offenen Punkt verschachtelt, dessen Markierung mindestens zwei Spalten links von ihm steht, sodass ein einzelnes Leerzeichen nichts verschachtelt und nie eine Ebene übersprungen wird, wie groß der Schritt auch ist (bis postext 1.15 war die Tiefe `floor(spaces / 2) + 1`, und ein `      1.` unter `   1.` landete auf Ebene 4). Ein Tab reicht bis zum nächsten Vielfachen von vier Spalten. Die Tiefe ist auf 5 begrenzt.
-- **Rücken Sie den ersten Listenpunkt nicht ein.** Punkte der Ebene 1 beginnen in Spalte 0. Der erste Punkt einer Liste eröffnet Ebene 1, wie weit er auch eingerückt ist (bis postext 1.15 erhöhten seine führenden Leerzeichen die Tiefe), sodass Verschachtelung einen Punkt darüber braucht, unter den verschachtelt werden kann.
+- **Rücken Sie einen verschachtelten Punkt bis zum Text des Punktes darüber ein.** Zwei Leerzeichen unter einem Aufzählungszeichen (`- `), drei unter `1. `, vier unter `10. `, so wie CommonMark Listen verschachtelt; zwei Leerzeichen unter `1.` verschachteln ebenfalls. Ein Punkt wird unter den nächsten offenen Punkt verschachtelt, dessen Markierung mindestens zwei Spalten links von ihm steht, sodass ein einzelnes Leerzeichen nichts verschachtelt und nie eine Ebene übersprungen wird, wie groß der Schritt auch ist (bis postext 1.15 war die Tiefe `floor(spaces / 2) + 1`, und ein `      1.` unter `   1.` kam auf Ebene 4). Ein Tab reicht bis zum nächsten Vielfachen von vier Spalten. Die Tiefe ist auf 5 begrenzt.
+- **Rücken Sie den ersten Listenpunkt nicht ein.** Punkte der Ebene 1 beginnen in Spalte 0. Der erste Punkt einer Liste eröffnet Ebene 1, wie weit er auch eingerückt ist (bis postext 1.15 erhöhten seine führenden Leerzeichen die Tiefe), Verschachteln setzt also einen Punkt darüber voraus.
 - **Aufgabenmarkierungen müssen in eckigen Klammern mit genau einem Leerzeichen stehen.** `[ ]`, `[x]`, `[X]` – keine Varianten. `[*]` oder `[-]` sind keine Aufgabenmarkierungen; sie werden als wörtlicher Text ausgegeben.
 - **Zitate innerhalb von Listen werden nicht unterstützt.** Beginnen Sie das Zitat in Spalte 0, außerhalb der Liste.
 - **Bilder und Tabellen gehören in `resources`.** Ein `![alt](src)` im Text wird gerade deshalb entfernt, weil Bilder im Text die spaltenbewusste Platzierung stören. Legen Sie jedes Bild als Ressource an und verweisen Sie über seine ID darauf – die Engine entscheidet dann, ob es gleitet, die Spalte unterbricht oder an den Kopf der nächsten Seite wandert.
 - **Maskieren Sie Dollarzeichen mit `\$`, wenn Sie keine Formel meinen.** Postext liest `$…$` als LaTeX im Text, daher beginnt ein bloßes `$` im Fließtext eine Formel. Preise, Shell-Prompts und alles andere mit einem einzelnen Dollarzeichen sollten als `\$` geschrieben werden.
-- **Tippen Sie das Markup in ASCII, auch in chinesischem und japanischem Text.** Eine chinesische oder japanische Eingabemethode liefert vollbreite Formen: `：：：` für einen Direktivenblock, `＃` für eine Überschrift, `［＾1］` für eine Fußnotenmarkierung, `｛…｝` für Attribute, `＊＊` für fett. Sie werden als Text gedruckt, und der Build meldet die Zeile als Warnung `fullwidthMarkup`, die die zu tippende ASCII-Form nennt. Attributwerte dürfen in jeder Schrift stehen und mit `“…”` oder `「…」` in Anführungszeichen gesetzt werden; Schlüssel bleiben ASCII.
+- **Tippen Sie das Markup in ASCII, auch in chinesischem und japanischem Text.** Eine chinesische oder japanische Eingabemethode liefert vollbreite Formen: `：：：` für einen Block, `＃` für eine Überschrift, `［＾1］` für eine Fußnotenmarkierung, `｛…｝` für Attribute, `＊＊` für fett. Sie werden als Text ausgegeben, und der Build meldet die Zeile als Warnung `fullwidthMarkup`, die angibt, welche ASCII-Form zu tippen ist. Attributwerte dürfen in jeder Schrift stehen und mit `“…”` oder `「…」` in Anführungszeichen gesetzt werden; Schlüssel bleiben ASCII.
 
 
-## Durchgearbeitetes Beispiel
+## Ausführliches Beispiel
 
 Ein kurzes Dokument, das jedes unterstützte Konstrukt verwendet:
 

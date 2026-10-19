@@ -30,13 +30,13 @@ Die Überschrift der Ebene 1 wird von ihrer Gestaltung gezeichnet: ein getönter
 
 <Excerpt region="heads" />
 
-Der Grundtext läuft von rechts nach links, und sein Links und Rechts bedeuten Anfang und Ende. Kolumnentitel bleiben physisch. In einem rechts gebundenen Buch liegt die Verso-Seite, eine gerade Seite, rechts in der Doppelseite, also steht ihre Pagina oben rechts und die der Recto-Seite oben links: Beide sitzen am Außenrand ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Das Tag `locale: 'ar'` allein legt Richtung, Bindung und arabisch-indische Ziffern fest.
+Der Grundtext läuft von rechts nach links, und sein Links und Rechts bedeuten Anfang und Ende. Kolumnentitel bleiben physisch. In einem rechts gebundenen Buch liegt die gerade Seite rechts in der Doppelseite, also steht ihre Pagina oben rechts und die der ungeraden Seite oben links: Beide sitzen am Außenrand ([Seitenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Die Sprachkennung `locale: 'ar'` allein legt Richtung, Bindung und arabisch-indische Ziffern fest.
 
 ### 4 · Ein Schmutztitel ohne Inhalt im Textfluss
 
 <Excerpt region="title" />
 
-Der Schmutztitel ist ein Überschriftenformat mit `span: 'page'` und eigener leerer Kopf- und Fußzeile. Der Text seiner Überschrift ist der Name des Dichters, daher ist das Wort ديوان Gestaltungstext, in 64 pt darüber gesetzt, und die lateinische Zeile unter der Linie kommt aus dem Attribut `latin`, das jede Ausgabe in ihrer Sprache schreibt.
+Der Schmutztitel ist ein Überschriftenstil mit `span: 'page'` und eigener leerer Kopf- und Fußzeile. Der Text seiner Überschrift ist der Name des Dichters, daher ist das Wort ديوان Gestaltungstext, in 64 pt darüber gesetzt, und die lateinische Zeile unter der Linie kommt aus dem Attribut `latin`, das jede Ausgabe in ihrer Sprache schreibt.
 
 ## Varianten
 
@@ -51,7 +51,7 @@ Manche Diwane drucken einen kleinen Stern zwischen die Halbverse. `ornament` set
 
 ### Jedem Halbvers dieselbe Breite geben
 
-Eine feste `width` setzt beide Spalten auf jeder Seite des Diwans auf ein Maß, gleich wie breit die breiteste Hälfte eines Gedichts ist.
+Eine feste `width` setzt beide Spalten auf jeder Seite des Diwans auf eine einheitliche Breite, gleich wie breit die breiteste Hälfte eines Gedichts ist.
 
 ```diff
 -:::verse{style="bayt"}

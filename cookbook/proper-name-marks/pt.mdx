@@ -15,7 +15,7 @@ Três páginas de amostra para uma antologia dos *Registros do Grande Historiado
 
 ### 1 · A marcação põe as marcas; a direção da escrita escolhe o lado
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. `:name[項梁]` e `:book[史記]` mantêm seus caracteres no texto, então a busca, o texto copiado e o PDF leem 項梁 e 史記, e acrescentam as marcas ao lado ([Marcas chinesas, rubi e warichu](/pt/docs/document-format-inline#marcas-chinesas-rubi-e-warichu)). Só a direção da escrita decide o lado: `layout.writingMode: 'vertical-rl'` põe as linhas à esquerda dos caracteres, e o estilo de título `across`, cuja disposição é `'horizontal-tb'`, as põe embaixo. `bookTitleMark: 'wavy'` é o que um documento `zh-Hant` recebe por padrão; fica escrito porque, numa troca para `zh-Hans`, os títulos sairiam entre 《》. Quando duas marcas do mesmo tipo se encostam, como em 東漢班固 ou 史記項羽本紀, cada uma cede um oitavo de eme na ponta em que se encontram, e as linhas se leem como dois nomes.
+O código é [a resposta curta](#a-resposta-curta) logo acima. `:name[項梁]` e `:book[史記]` mantêm seus caracteres no texto, por isso a busca, o texto copiado e o PDF leem 項梁 e 史記, e acrescentam as marcas ao lado ([Marcas chinesas, rubi e warichu](/pt/docs/document-format-inline#marcas-chinesas-rubi-e-warichu)). Só a direção da escrita decide o lado: `layout.writingMode: 'vertical-rl'` põe as linhas à esquerda dos caracteres, e o estilo de título `across`, cuja disposição é `'horizontal-tb'`, as põe embaixo. `bookTitleMark: 'wavy'` é o que um documento `zh-Hant` recebe por padrão; fica escrito porque, numa troca para `zh-Hans`, os títulos sairiam entre 《》. Quando duas marcas do mesmo tipo se encostam, como em 東漢班固 ou 史記項羽本紀, cada uma cede um oitavo de eme na ponta em que se encontram, e as linhas se leem como dois nomes.
 
 ### 2 · Uma entrelinha com espaço para as marcas
 
@@ -27,7 +27,7 @@ As marcas ficam no vão entre as linhas e nunca mudam o passo da linha ([Marcas,
 
 <Excerpt region="opener" />
 
-O design de um título é diagramado no fluxo da sua página, então um mesmo conjunto de elementos serve às duas direções ([Escrita vertical](/pt/docs/configuration-page-layout#escrita-vertical)). Ancorada ao canto superior esquerdo da sangria, a faixa atravessa o alto da página horizontal e desce pela borda direita das verticais, onde a leitura começa. O antetítulo, o título e o autor também se empilham no fluxo: um embaixo do outro na horizontal, um à esquerda do outro na vertical. O comprimento da faixa é medido ao longo do fluxo: 181,3 mm a fazem parar no pé do texto vertical, longe do fólio, e na página horizontal passam do refile.
+O design de um título é diagramado no fluxo da página, de modo que um mesmo conjunto de elementos serve às duas direções ([Escrita vertical](/pt/docs/configuration-page-layout#escrita-vertical)). Ancorada ao canto superior esquerdo da sangria, a faixa atravessa o alto da página horizontal e desce pela borda direita das verticais, onde a leitura começa. O antetítulo, o título e o autor também se empilham no fluxo: um embaixo do outro na horizontal, um à esquerda do outro na vertical. O comprimento da faixa é medido ao longo do fluxo: 181,3 mm a fazem parar no pé do texto vertical, longe do fólio, e na página horizontal passam do refile.
 
 ### 4 · Fólios para um livro encadernado pela direita
 
@@ -62,5 +62,5 @@ Sem `annotationColor`, cada marca assume a cor do bloco que marca.
 
 ## Erros comuns
 
-- Um título desenhado por um design imprime o seu texto através do design, e o texto de design perde as marcas: `# :book[項羽本紀]` não mostraria nenhuma linha ondulada na faixa. Cabeços, legendas e células de tabela também imprimem o texto sem marcas.
+- Um título desenhado por um design imprime o texto através do design, e o texto de design perde as marcas: `# :book[項羽本紀]` não mostraria nenhuma linha ondulada na faixa. Cabeços, legendas e células de tabela também imprimem o texto sem marcas.
 - O Postext não para por causa de `cjkMarksExceedLeading`: a composição o registra em `doc.contentWarnings` e o painel Verificações do Sandbox o mostra, mas as páginas são impressas assim mesmo, com as marcas espremidas contra a linha vizinha. Quando mudar a entrelinha, leia essa lista; com 15 pt ela reúne todos os parágrafos marcados destas páginas.

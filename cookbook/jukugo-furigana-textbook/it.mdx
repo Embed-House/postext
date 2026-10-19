@@ -22,19 +22,19 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Nel Markdown, `{
 
 ### 2 · 1:2:1, e letture che si appoggiano solo sui kana
 
-Le due impostazioni sotto `cjk.ruby` sono quelle che `'ja'` sceglie da solo. `align: 'jis'` compone una lettura più corta della sua base secondo JIS X 4051: mezza unità di spazio a ciascuna estremità e una intera tra i kana, così も e ず stanno sopra le giunture di 百舌鳥 a <PageRef page={2}>pagina 25</PageRef> invece di ammassarsi al centro. `overhang: 'kana'` lascia che una lettura più lunga della sua base sporga fino a un carattere ruby su un kana o sul bianco di un segno vicino, mai su un kanji: ぎつね sopra il 狐 di 「ごん狐」 si appoggia su ん e sulla parentesi che segue, e il じゅう di 兵十だな su だ. Dove non c’è un kana su cui appoggiarsi, i kanji vengono distanziati fino alla larghezza della lettura. Al bordo di una riga la lettura resta dentro la giustezza.
+Le due impostazioni sotto `cjk.ruby` sono quelle che `'ja'` sceglie da solo. `align: 'jis'` compone una lettura più corta della sua base secondo JIS X 4051: mezza unità di spazio a ciascuna estremità e una intera tra i kana, così も e ず stanno sopra le giunture di 百舌鳥 a <PageRef page={2}>pagina 25</PageRef> invece di ammassarsi al centro. `overhang: 'kana'` lascia che una lettura più lunga della sua base sporga fino a un carattere ruby su un kana o sul bianco di un segno vicino, mai su un kanji: ぎつね sopra il 狐 di 「ごん狐」 si appoggia su ん e sulla parentesi che segue, e il じゅう di 兵十だな su だ. Dove non c’è un kana su cui appoggiarsi, i kanji vengono distanziati fino alla larghezza della lettura. Al bordo di una riga la lettura resta entro la giustezza.
 
 <PageShot page={1} crop="0.08,0.63,0.84,0.09" caption="Pagina 24: ぎつね sopra 狐 sporge su ん e 」, e こぎつね sopra 小狐 resta con i suoi due kanji." />
 
 ### 3 · Uno spazio tra le righe che accoglie le letture
 
-Le letture sono a 7 pt, metà del testo a 14 pt, e l’interlinea è di 28 pt, quindi i 14 pt tra due righe le contengono con margine e ogni riga della griglia resta al suo posto. Se imposti un passo più stretto del testo più le sue letture, la build avvisa con `rubyExceedsLeading`.
+Le letture sono a 7 pt, metà del testo a 14 pt, e l’interlinea è di 28 pt, quindi i 14 pt tra due righe le contengono con margine e ogni riga della griglia resta al suo posto. Se imposti un passo più stretto del testo più le sue letture, la costruzione lo segnala con `rubyExceedsLeading`.
 
 ### 4 · L’apertura non stampa letture
 
 <Excerpt region="opener" />
 
-Il titolo e il nome dell’autore sono testo di design, che non compone ruby, quindi la lettura di 新美南吉 è una riga a sé sopra il nome, in kana, come la stampano i libri di lettura. Il titolo stesso è in kana, ごんぎつね, come lo scrivono i libri di lettura, anche se il testo di Aozora lo intitola ごん狐.
+Il titolo e il nome dell’autore sono testo grafico, che non compone ruby, quindi la lettura di 新美南吉 è una riga a sé sopra il nome, in kana, come la stampano i libri di lettura. Il titolo stesso è in kana, ごんぎつね, come lo scrivono i libri di lettura, anche se il testo di Aozora lo intitola ごん狐.
 
 ### 5 · Un solo colore d’accento e letture un tono più chiare
 

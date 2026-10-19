@@ -3,40 +3,40 @@
 export const metadata = {
   title: 'Passar un llibre a pàgines compostes',
   sidebarTitle: 'Passar a pàgines compostes',
-  description: "Com passar un llibre amb el text de les pàgines als estils de títol a plantilles de pàgina i Markdown: amb l'assistent del Sandbox Passar el text al Markdown o a mà, i què comprovar després",
+  description: "Com passar a plantilles de pàgina i a Markdown un llibre que té el text de les pàgines dins dels estils de títol, amb l'assistent «Passar el text al Markdown» del Sandbox o a mà, i què cal comprovar després",
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '8 min',
   order: 43,
-  plainSummary: "Alguns llibres fets amb Postext abans de les pàgines compostes guarden les paraules de cada pàgina dins la configuració del disseny, i no al text. Això fa que costi d'editar-los i que no es puguin traduir. Aquesta pàgina mostra com passar aquestes paraules al Markdown, on cada pàgina és un bloc amb la seva plantilla. El Sandbox fa la major part de la feina amb un sol botó, i tu en comproves el resultat pàgina per pàgina. També explica com fer el mateix a mà amb una sola pàgina.",
+  plainSummary: "Alguns llibres fets amb Postext abans de les pàgines compostes tenen les paraules de cada pàgina dins dels paràmetres del disseny, i no al text. Això fa que costi editar-los i que no es puguin traduir. Aquesta pàgina mostra com passar aquestes paraules al Markdown, on cada pàgina passa a ser un bloc amb una plantilla pròpia. El Sandbox fa la major part de la feina amb un sol botó, i tu en comproves el resultat pàgina per pàgina. També explica com fer el mateix a mà amb una sola pàgina.",
 };
 
 # Passar un llibre a pàgines compostes
 
-**Un llibre que té el text de les seves pàgines als estils es pot passar al Markdown, on s'edita i es tradueix.**
+**Si un llibre té el text de les pàgines dins dels estils, el pots passar al Markdown, on es pot editar i traduir.**
 
-Abans de les pàgines compostes, un llibre de text portat a Postext sovint tenia cada pàgina com un títol ocult, amb una capçalera que posava el text, les caixes i les imatges de la pàgina allà on les tenia la pàgina impresa. Les pàgines quedaven bé, però les paraules vivien a la configuració: per corregir una errada calia obrir un estil, i per traduir calia copiar l'estil. Una pàgina composta fa la mateixa feina amb la forma en una **plantilla de pàgina** i les paraules al Markdown, com mostra [Llibres de pàgines compostes](/ca/docs/composed-page-books). Aquesta pàgina passa un llibre antic a aquesta forma.
+Abans de les pàgines compostes, un llibre de text portat a Postext sovint guardava cada pàgina en un títol ocult: la capçalera d'aquest títol col·locava el text, les caixes i les imatges de la pàgina allà on eren a la pàgina impresa. Les pàgines quedaven bé, però les paraules vivien a la configuració: per corregir una errada calia obrir un estil, i per traduir calia copiar l'estil. Una pàgina composta fa la mateixa feina, però la forma és en una **plantilla de pàgina** i les paraules són al Markdown, com mostra [Llibres de pàgines compostes](/ca/docs/composed-page-books). Aquesta pàgina explica com passar-hi un llibre antic.
 
-Saps que un llibre és de la forma antiga quan el tauler **Revisió** llista *Text desat a la configuració* (`contentInConfig`), una entrada per cada estil de títol que guarda frases, i ofereix **Passar el text al Markdown** al capdamunt de la llista.
+Un llibre té la forma antiga quan el tauler **Revisió** mostra l'avís *Text desat a la configuració* (`contentInConfig`), amb una entrada per cada estil de títol que conté frases, i ofereix el botó **Passar el text al Markdown** al capdamunt de la llista.
 
 ## El llibre per seguir-ho
 
-Els passos de sota fan servir un llibre petit fet per a aquesta pàgina, *Our World, before composed pages*: tres pàgines d'un llibre de text de 3r de primària, cadascuna un estil de títol amb una capçalera que col·loca una imatge, una fitxa, un títol i tres blocs de text, amb una banda groga sota una paraula. Les paraules i les imatges són inventades. [Descarrega el llibre](/docs-examples/our-world-before.postext) i, al Sandbox, obre **Llibres**, prem **Nou** i tria **Obrir un fitxer .postext…**.
+Els passos de sota fan servir un llibre petit fet per a aquesta pàgina, *Our World, before composed pages*: tres pàgines d'un llibre de text de 3r de primària. Cada pàgina és un estil de títol amb una capçalera que col·loca una imatge, una fitxa, un títol i tres blocs de text, i una paraula té una franja groga a sota. Les paraules i les imatges són inventades. [Descarrega el llibre](/docs-examples/our-world-before.postext) i, al Sandbox, obre **Llibres**, prem **Nou** i tria **Obrir un fitxer .postext…**.
 
 ## Amb l'assistent
 
-Quan s'importa un llibre amb text als estils, s'obre pel seu compte el quadre **Passar el text al Markdown**. Si l'has tancat, o el llibre ja era a la teva llista, obre **Revisió** i prem el botó del capdamunt de la llista. No canvia res fins que prems **Passar el text**.
+Quan importes un llibre amb text als estils, s'obre automàticament el quadre **Passar el text al Markdown**. Si l'has tancat, o el llibre ja era a la teva llista, obre **Revisió** i prem el botó del capdamunt de la llista. No canvia res fins que no prems **Passar el text**.
 
 1. Llegeix **Què canvia**. Per al llibre d'exemple diu que es mouran 16 textos (567 lletres), que s'escriuran 3 pàgines compostes, que els 3 estils de títol passen a ser 1, que 3 caixes de ressaltat es converteixen en xips i que els avisos *Text desat a la configuració* baixen de 3 a 0.
-2. Mira les opcions. **Les pàgines amb marcs als mateixos llocs comparteixen plantilla** dona una plantilla base a les pàgines que es maqueten igual, i les altres l'estenen. **Una caixa de ressaltat sota paraules en negreta es converteix en xip** canvia per un xip de l'estil de xips del llibre una caixa de color dibuixada sota paraules en negreta. **Les paraules sobre les imatges es converteixen en els seus rètols** s'ofereix quan el disseny antic posava paraules curtes sobre una imatge, com els noms d'un mapa: es converteixen en línies `::label` a les àncores de la imatge. Ve apagada fins que l'actives, perquè aquestes pàgines són les que més canvien.
-3. A **Abans i després** el Sandbox maqueta cada capítol dues vegades i dibuixa cada pàgina que canvia, la vella al costat de la nova. La llista diu quines pàgines es veuen diferents i per què, quan ho sap. **Marcar en vermell el que canvia** pinta els píxels que difereixen. Al llibre d'exemple les tres pàgines porten l'etiqueta *Es veu igual*.
+2. Mira les opcions. **Les pàgines amb marcs als mateixos llocs comparteixen plantilla** dona una sola plantilla base a les pàgines que tenen la mateixa maquetació, i les altres l'estenen. **Una caixa de ressaltat sota paraules en negreta es converteix en xip** converteix la caixa de color dibuixada sota unes paraules en negreta en un xip amb l'estil de xip del llibre. **Les paraules sobre les imatges es converteixen en els seus rètols** s'ofereix quan el disseny antic posava paraules curtes sobre una imatge, com els noms d'un mapa: es converteixen en línies `::label` a les àncores de la imatge. Està desactivada fins que l'actives, perquè aquestes pàgines són les que canvien més.
+3. A **Abans i després** el Sandbox maqueta cada capítol dues vegades i dibuixa cada pàgina que canvia, la vella al costat de la nova. La llista diu quines pàgines es veuen diferents i per què, quan ho sap. **Marcar en vermell el que canvia** pinta els píxels que difereixen. Al llibre d'exemple, les tres pàgines queden marcades com a *Es veu igual*.
 4. Prem **Passar el text**.
 
-<Screenshot src="/docs-shots/ca/move.webp" alt="El quadre Passar el text al Markdown amb la llista del que canvia i les tres opcions." caption="El quadre llista el que farà abans de fer res." />
+<Screenshot src="/docs-shots/ca/move.webp" alt="El quadre Passar el text al Markdown amb la llista del que canvia i les tres opcions." caption="El quadre enumera el que farà abans de canviar res." />
 
 <Screenshot src="/docs-shots/ca/move-before-after.webp" alt="El final del quadre: la llista de pàgines marcades Es veu igual i, una al costat de l'altra, una pàgina abans i després del canvi." caption="Cada pàgina es maqueta amb el disseny antic i amb el nou, l'una al costat de l'altra." />
 
-El canvi és un pas de l'historial del llibre: un pas per cada capítol reescrit i un altre per al disseny. **Desfer**, al quadre, ho desfà tot mentre no s'hagi canviat res més, i **Cmd/Ctrl+Z** ho desfà pas a pas. El llibre tal com era també es queda desat fins que prems **Quedar-me amb el canvi** al tauler Revisió; mentre no ho facis, **Deixar el llibre com estava** hi torna a escriure el disseny i el text antics.
+El canvi queda registrat a l'historial del llibre: un pas per cada capítol reescrit i un altre per al disseny. **Desfer**, al quadre, ho desfà tot mentre no s'hagi canviat res més, i **Cmd/Ctrl+Z** ho desfà pas a pas. A més, el llibre tal com era es conserva fins que prems **Quedar-me amb el canvi** al tauler Revisió; mentre no ho facis, **Deixar el llibre com estava** hi torna a escriure el disseny i el text antics.
 
 ## Què comprovar després
 
@@ -57,13 +57,13 @@ Rivers and seas
 
 Repassa el resultat en aquest ordre.
 
-- **Les pàgines que es veuen diferents.** La llista del quadre donava els motius que sabia: la caixa, el contorn o la caplletra pròpies d'un text, una pàgina de la qual no es coneixia el costat, o el text corregut que ara es compon al marc de flux de la plantilla. Compara aquestes pàgines al llenç.
-- **Les plantilles.** **Disseny › Pàgina i columnes › Plantilles de pàgina** llista una plantilla per cada disseny de pàgina, i `page-base` per als marcs que les pàgines comparteixen. Una pàgina que no hi afegeix res fa servir la base tal com és; les altres l'estenen. Els noms es fan a partir dels antics: canvia el nom d'una plantilla per un que reconeguis (en canviar-lo, es canvia a totes les pàgines que la nomenen).
-- **Els estils de paràgraf.** El tipus de lletra, la mida, el gruix, el color, l'alineació i l'interlineat de cada text han passat a ser un estil de paràgraf: un dels del mateix llibre quan coincidia exactament, i si no un de nou amb el nom del tipus de lletra i la mida (`nunito-11`). Mira **Disseny › Text** i canvia el nom dels nous o fusiona'ls.
-- **Els títols.** Els estils de títol que han sortit iguals s'han fusionat i els títols han canviat de nom; els títols ocults que només servien per canviar la capçalera ja no hi són. Comprova l'índex si el llibre en té.
-- **El que queda a la configuració.** La llista *Queda a la configuració* del quadre anomena un text que barreja paraules amb marcadors de posició (`Page {pageNumber}`), un text penjat d'un altre element i el text del disseny d'un títol. No són contingut d'una pàgina, i els avisos *Text desat a la configuració* que queden són sobre aquests textos.
+- **Les pàgines que es veuen diferents.** La llista del quadre donava els motius que coneixia: la caixa, el contorn o la caplletra propis d'un text, una pàgina que no se sabia a quin costat anava, o el text corregut, que ara es compon al marc de flux de la plantilla. Compara aquestes pàgines al canvas.
+- **Les plantilles.** **Disseny › Pàgina i columnes › Plantilles de pàgina** llista una plantilla per cada disseny de pàgina, i `page-base` per als marcs que les pàgines comparteixen. Una pàgina que no hi afegeix res fa servir la base tal com és; les altres l'estenen. Els noms es formen a partir dels antics: posa a cada plantilla un nom que reconeguis (totes les pàgines que la fan servir agafen el nom nou).
+- **Els estils de paràgraf.** El tipus de lletra, la mida, el gruix, el color, l'alineació i l'interlineat de cada text han passat a ser un estil de paràgraf: un dels que ja tenia el llibre, si n'hi havia un d'idèntic, i si no un de nou que porta el nom del tipus de lletra i la mida (`nunito-11`). Mira **Disseny › Text** i canvia el nom dels nous o fusiona'ls.
+- **Els títols.** Els estils de títol que han sortit iguals s'han fusionat i els títols han canviat de nom; els títols ocults que només servien per canviar la capçalera han desaparegut. Comprova l'índex general, si el llibre en té.
+- **El que queda a la configuració.** La llista *Queda a la configuració* del quadre enumera els textos que hi queden: un text que barreja paraules amb marcadors (`Page {pageNumber}`), un text penjat d'un altre element i el text del disseny d'un títol. No formen part del contingut de cap pàgina, i els avisos *Text desat a la configuració* que queden es refereixen a aquests textos.
 - **Els rètols.** Si has activat *Les paraules sobre les imatges es converteixen en els seus rètols*, mira cada mapa o diagrama: els rètols es componen de nou amb les fonts del llibre, i per això la mida i el lloc poden ser diferents dels de les pàgines antigues.
-- **El tauler Revisió.** Els marcs on ja no hi cap el text apareixen com a *El text no cap al seu marc*, amb els arranjaments que descriu [Llibres de pàgines compostes](/ca/docs/composed-page-books#6-revisa-el-que-no-hi-cap). Un llibre fet a partir d'una pàgina impresa va just, i les primeres paraules que s'allarguen una mica necessiten un arranjament.
+- **El tauler Revisió.** Els marcs on ja no hi cap el text apareixen amb l'avís *El text no cap al seu marc*, amb les solucions que descriu [Llibres de pàgines compostes](/ca/docs/composed-page-books#6-revisa-el-que-no-hi-cap). Un llibre copiat de pàgines impreses té l'espai molt just, de manera que el primer text que s'allargui una mica s'haurà de retocar.
 
 Quan estiguis conforme, prem **Quedar-me amb el canvi**. Ara el llibre es pot traduir com qualsevol llibre de pàgines compostes.
 
@@ -71,9 +71,9 @@ Quan estiguis conforme, prem **Quedar-me amb el canvi**. Ara el llibre es pot tr
 
 Un llibre de poques pàgines es pot passar sense l'assistent, pàgina per pàgina.
 
-1. En mode **Disseny** fes la plantilla de pàgina. Dibuixa un marc per a cada text d'una pàgina composta del llibre, o segueix els passos de [Llibres de pàgines compostes](/ca/docs/composed-page-books#2-fes-una-plantilla-de-pàgina). Dona a cada marc l'estil de caixa que dibuixa el seu aspecte, i com a **Alçada mínima** l'alçada que tenia el text antic.
+1. En mode **Disseny** fes la plantilla de pàgina. Dibuixa un marc per a cada text d'una pàgina composta del llibre, o segueix els passos de [Llibres de pàgines compostes](/ca/docs/composed-page-books#2-fes-una-plantilla-de-pàgina). Assigna a cada marc l'estil de caixa que li dona l'aspecte, i posa com a **Alçada mínima** l'alçada que tenia el text antic.
 2. En mode **Contingut** escriu la pàgina com un bloc `::::page{template="…"}` i passa cada text de l'antiga capçalera a un `:::frame{slot="…"}` del bloc nou. Conserva la negreta i la cursiva, i conserva els salts de línia del text antic amb una barra invertida al final de la línia.
-3. Esborra els elements de text de l'estil de títol, o l'estil de títol sencer quan no el necessita res més. L'avís *Text desat a la configuració* d'aquell estil desapareix.
+3. Suprimeix els elements de text de l'estil de títol, o l'estil de títol sencer quan no el necessita res més. L'avís *Text desat a la configuració* d'aquell estil desapareix.
 4. Compara la pàgina amb l'antiga i obre **Revisió**.
 
-La mateixa migració es pot fer des del codi amb `moveTextToMarkdown`, que torna la configuració nova, els capítols i l'informe que mostra el quadre; vegeu [Pàgines compostes › Migrar un llibre amb el text als estils](/ca/docs/composed-pages#migrar-un-llibre-amb-el-text-als-estils). Tot el que fa el quadre és descrit a [Sandbox: les pàgines compostes › Passar el text al Markdown](/ca/docs/sandbox-composed-pages#passar-el-text-al-markdown).
+La mateixa migració es pot fer des del codi amb `moveTextToMarkdown`, que retorna la configuració nova, els capítols i l'informe que mostra el quadre; vegeu [Pàgines compostes › Migrar un llibre amb el text als estils](/ca/docs/composed-pages#migrar-un-llibre-amb-el-text-als-estils). Tot el que fa el quadre es descriu a [Sandbox: les pàgines compostes › Passar el text al Markdown](/ca/docs/sandbox-composed-pages#passar-el-text-al-markdown).

@@ -5,7 +5,7 @@ plain: "Un folleto de cuatro páginas que muestra tres tipos de letra. Enseña p
 description: "Declara un FontFace por archivo y deja que buildDocumentWithFonts cargue las fuentes que piden la configuración y el texto antes de medir la primera línea."
 question: "¿Por qué cambian mis cortes de línea o se solapan las palabras del PDF, y cómo cargo bien mis fuentes?"
 aliases: ["fuentes web", "fuentes alojadas", "FontFace", "document.fonts", "fuente de reserva", "unicode-range", "latin-ext", "prepareFonts", "buildDocumentWithFonts", "fontFallback", "muestrario tipográfico", "auditoría de fuentes"]
-pageNotes: { "1": "La cubierta de House Specimen Nº 3: un campo azul ultramar ocupa la mitad superior de la página con una Ag blanca en Noto Serif Display cursiva de 240 pt y dos líneas en monoespaciada que la nombran a ella y a las fuentes de texto y de etiquetas; debajo, el título Three faces, proofed, una entradilla en cursiva y el primer párrafo.", "2": "Una cascada de Ysabeau Office de 7 a 14 pt, una línea por cuerpo, rotulada al lado en monoespaciada azul, y después pangramas en español, polaco y checo a 13 pt.", "3": "La auditoría: una tabla en IBM Plex Mono, con la fila de cabecera en azul ultramar, que enumera las diez fuentes que declara el cuadernillo, con cada familia nombrada una sola vez, si las páginas componen algo con cada una y los archivos descargados para ella, y una línea de estado leída de la composición, entre párrafos que la explican.", "4": "El primer párrafo de la página 1, dos veces. Arriba, marcado «early», tal como lo dejó la composición temprana: sus líneas se cortan en otros sitios y algunas rebasan un filete fino en el borde de la medida y entran en una veladura azul ultramar. Abajo, marcado «last», tal como lo dejó la última, con todas las líneas antes del filete. Un pie cuenta las líneas que la composición temprana cortó en otro sitio y las fuentes que compuso con una de reserva; siguen el párrafo final y el colofón." }
+pageNotes: { "1": "La cubierta de House Specimen Nº 3: un campo azul ultramar ocupa la mitad superior de la página con una Ag blanca en Noto Serif Display cursiva de 240 pt y dos líneas en monoespaciada que dan su nombre y el de las fuentes de texto y de etiquetas; debajo, el título Three faces, proofed, una entradilla en cursiva y el primer párrafo.", "2": "Una cascada de Ysabeau Office de 7 a 14 pt, una línea por cuerpo, rotulada al lado en monoespaciada azul, y después pangramas en español, polaco y checo a 13 pt.", "3": "La auditoría: una tabla en IBM Plex Mono, con la fila de cabecera en azul ultramar, que enumera las diez fuentes que declara el cuadernillo, con cada familia citada una sola vez, si las páginas componen algo con cada una y los archivos descargados para ella, y una línea de estado leída de la composición, entre párrafos que la explican.", "4": "El primer párrafo de la página 1, dos veces. Arriba, marcado «early», tal como lo dejó la composición temprana: sus líneas se cortan en otros sitios y algunas rebasan un filete fino en el borde de la medida y entran en una veladura azul ultramar. Abajo, marcado «last», tal como lo dejó la última, con todas las líneas antes del filete. Un pie cuenta las líneas que la composición temprana cortó en otro sitio y las fuentes que compuso con una de reserva; siguen el párrafo final y el colofón." }
 ---
 
 ## Lo que vas a componer
@@ -28,7 +28,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. `buildDocumen
 
 <Excerpt region="audit" />
 
-La tabla parte de las fuentes que declara `FONTS` y añade lo que el informe dice de cada una: si las páginas componen algo con ella, si el navegador la imitó o si salió en una fuente de reserva. La última columna enumera los archivos cuyo `FontFace` llegó a `loaded`. Se descargaron dieciséis de los veinte: Postext carga las cuatro variantes de la familia del texto, porque `**` y `*` pueden pedirlas en cualquier párrafo, y las dos cursivas de la monoespaciada, que ningún ajuste nombra, no llegaron a descargarse. La nota lee tres cosas más del documento terminado: `contentWarnings`, donde una fuente medida con una de reserva aparece como `fontFallback`; `converged`, que vale `true` cuando las pasadas de la composición se estabilizaron, y `warnings`. Comprueba las tres antes de mostrar o exportar una página.
+La tabla parte de las fuentes que declara `FONTS` y añade lo que el informe dice de cada una: si las páginas componen algo con ella, si el navegador la imitó o si salió en una fuente de reserva. La última columna enumera los archivos cuyo `FontFace` llegó a `loaded`. Se descargaron dieciséis de los veinte: Postext carga las cuatro variantes de la familia del texto, porque `**` y `*` pueden pedirlas en cualquier párrafo, y las dos cursivas de la monoespaciada, que ningún ajuste pide, no llegaron a descargarse. La nota lee tres cosas más del documento terminado: `contentWarnings`, donde una fuente medida con una de reserva aparece como `fontFallback`; `converged`, que vale `true` cuando las pasadas de la composición se estabilizaron, y `warnings`. Comprueba las tres antes de mostrar o exportar una página.
 
 ### 4 · Guarda una composición temprana como prueba
 
@@ -40,13 +40,13 @@ El pen llama una vez a `buildDocument` antes de declarar ninguna fuente, así qu
 
 <Excerpt region="type" />
 
-Ysabeau Office compone el texto en cuerpo 11 sobre 15,5 pt, con una línea en blanco entre párrafos en lugar de sangría, y en bandera, para que cada espacio entre palabras conserve su ancho natural. La negrita, la cursiva y las referencias van en el color del texto; por omisión tomarían el color principal. Cada cuerpo de la cascada y cada pangrama es un estilo de párrafo de dos interlíneas (31 pt), así que la página conserva el ritmo de 15,5 pt del texto. Los cuerpos se rotulan con chips en monoespaciada, y los de una sola cifra llevan media letra de relleno a cada lado para que todas las muestras empiecen en el mismo borde.
+Ysabeau Office compone el texto en cuerpo 11 sobre 15,5 pt, con una línea en blanco entre párrafos en lugar de sangría, y en bandera, para que cada espacio entre palabras conserve su ancho natural. La negrita, la cursiva y las referencias van en el color del texto; por omisión tomarían el color principal. Cada cuerpo de la cascada y cada pangrama es un estilo de párrafo de dos interlineados (31 pt), así que la página conserva el ritmo de 15,5 pt del texto. Los cuerpos se rotulan con chips en monoespaciada, y los de una sola cifra llevan media letra de relleno a cada lado para que todas las muestras empiecen en el mismo borde.
 
 ### 6 · Tres fuentes en una cubierta
 
 <Excerpt region="opener" />
 
-La cubierta es el diseño del nivel H1: las letras del atributo `glyphs` del título, en la fuente de titulares a 240 pt, y debajo dos líneas en monoespaciada que nombran esa fuente y las de texto y etiquetas, como en el muestrario de una fundición tipográfica. `span: 'page'` extiende el título a toda la página, y el campo cuelga de la esquina superior izquierda del sangrado, así que sale por el borde superior. `minHeight` se cuenta desde el margen superior y reserva el espacio hasta `Y.end`, 42 mm por debajo del campo; sin él, el texto empieza una línea más arriba, pegado a la entradilla.
+La cubierta es el diseño del nivel H1: las letras del atributo `glyphs` del título, en la fuente de titulares a 240 pt, y debajo dos líneas en monoespaciada que dan el nombre de esa fuente y de las de texto y etiquetas, como en el muestrario de una fundición tipográfica. `span: 'page'` extiende el título a toda la página, y el campo cuelga de la esquina superior izquierda del sangrado, así que sale por el borde superior. `minHeight` se cuenta desde el margen superior y reserva el espacio hasta `Y.end`, 42 mm por debajo del campo; sin él, el texto empieza una línea más arriba, pegado a la entradilla.
 
 ## Variantes
 
@@ -56,7 +56,7 @@ La cubierta es el diseño del nivel H1: las letras del atributo `glyphs` del tí
 
 ### Olvida una fuente
 
-Quita la negrita de IBM Plex Mono, que compone el antetítulo, la fila de cabecera de la tabla y las etiquetas de los pies: el navegador engrosa la redonda, la tabla marca la fuente con «faked» y la nota cuenta un aviso `fontFallback`, que nombra IBM Plex Mono 700 como `synthesized`.
+Quita la negrita de IBM Plex Mono, que compone el antetítulo, la fila de cabecera de la tabla y las etiquetas de los pies: el navegador engrosa la redonda, la tabla marca la fuente con «faked» y la nota cuenta un aviso `fontFallback`, que cita IBM Plex Mono 700 como `synthesized`.
 
 ```diff
 -  'IBM Plex Mono': ['400', '400i', '700', '700i'], // labels, chips, the table, captions
@@ -70,4 +70,4 @@ Quita la negrita de IBM Plex Mono, que compone el antetítulo, la fila de cabece
 ## Errores frecuentes
 
 - Si cargas una fuente por tu cuenta, `document.fonts.load(font)` sin texto de muestra solo carga el archivo que cubre el espacio, el latin, y la ż y la ř salen en una fuente del sistema. `prepareFonts` pasa los caracteres del propio documento.
-- `renderPageToCanvas` y `postext-pdf` recortan cada columna 2 pt más allá de su borde, así que una línea medida con una fuente de reserva más estrecha pierde sus últimas letras. La composición que la midió nombra la fuente en `doc.contentWarnings` como `fontFallback`: lee esa lista antes de mostrar o exportar una página.
+- `renderPageToCanvas` y `postext-pdf` recortan cada columna 2 pt más allá de su borde, así que una línea medida con una fuente de reserva más estrecha pierde sus últimas letras. La composición que la midió registra la fuente en `doc.contentWarnings` como `fontFallback`: lee esa lista antes de mostrar o exportar una página.

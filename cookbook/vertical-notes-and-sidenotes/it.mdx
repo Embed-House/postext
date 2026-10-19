@@ -5,7 +5,7 @@ plain: "Un racconto classico giapponese con brevi spiegazioni dei suoi antichi t
 description: "Takekurabe di Ichiyō in Postext con note sulla doppia pagina: richiami （1） a destra della riga, note sul margine esterno a sinistra, punti sesamo, 後注."
 question: "Come compongo le note di un libro giapponese verticale accanto al testo, sulla doppia pagina?"
 aliases: ["傍注", "bōchū", "note a margine", "note laterali", "後注", "kōchū", "note di chiusura", "note giapponesi", "注", "（1）", "割注", "richiami di nota", "note sulla doppia pagina", "note sul margine esterno", "傍点", "bōten", "sesamo", "たけくらべ", "Takekurabe", "Child's Play", "Higuchi Ichiyō", "樋口一葉", "Yoshiwara", "sidenotes"]
-pageNotes: { "1": "La pagina del titolo, da sola a sinistra: たけくらべ in Mincho grassetto lungo il centro della pagina con un corto filetto color prugna accanto, 樋口一葉 più in basso, e il colophon lungo il piede.", "2": "Il primo capitolo si apre su una pagina destra: 一 sta sette caratteri più in basso in una fascia di tre righe, e il testo porta i piccoli richiami da （1） a （6） a destra della riga, i primi quattro nella lunga prima frase, dopo 見返り柳, お齒ぐろ溝, 三階 e 大音寺前.", "3": "La pagina sinistra: otto righe di testo con il richiamo （7）, poi, sul margine esterno, un corto filetto color prugna e le sette note della doppia pagina in corpo minore, ciascuna aperta dal suo numero e da uno spazio pieno.", "4": "L’ultima pagina del capitolo, con ぎつちよんちよん segnato da punti sesamo a destra dei caratteri." }
+pageNotes: { "1": "La pagina del titolo, da sola a sinistra: たけくらべ in Mincho grassetto lungo il centro della pagina con un corto filetto color prugna accanto, 樋口一葉 più in basso, e il colophon lungo il piede.", "2": "Il primo capitolo si apre su una pagina destra: 一 sta sette caratteri più in basso in uno spazio di tre righe, e il testo ha i piccoli richiami da （1） a （6） a destra della riga, i primi quattro nella lunga prima frase, dopo 見返り柳, お齒ぐろ溝, 三階 e 大音寺前.", "3": "La pagina sinistra: otto righe di testo con il richiamo （7）, poi, sul margine esterno, un corto filetto color prugna e le sette note della doppia pagina in corpo minore, ciascuna aperta dal suo numero e da uno spazio pieno.", "4": "L’ultima pagina del capitolo, con ぎつちよんちよん segnato da punti sesamo a destra dei caratteri." }
 ---
 
 ## Che cosa comporrai
@@ -16,7 +16,7 @@ Quattro pagine di un’edizione 四六判 di *Takekurabe* di Higuchi Ichiyō (�
 
 ### 1 · Raccogli le note della doppia pagina sul margine esterno della pagina sinistra
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `footnotes.placement: 'spread'` compone le note citate alle pagine 2 e 3 alla fine del testo di pagina 3, che in un libro rilegato a destra è il suo margine esterno, e `numbering: 'spread'` fa ripartire da （1） le note di ogni doppia pagina ([Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina)). Una nota citata sulla pagina destra aspetta quella sinistra; se le note lasciano alla pagina sinistra meno di una riga di testo, le altre restano al piede della pagina destra, come consente JLReq. Un documento con tag `ja` compone già i richiami di un libro verticale come `（{n}）` a destra della riga, a 0,7 em, con le cifre dritte: lo mostrano le due righe scritte per esteso. `numberGap: 'em'` mette un carattere di nota pieno dopo il numero e `hangingIndent: em(2)` allinea oltre di esso le righe che vanno a capo.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `footnotes.placement: 'spread'` compone le note citate alle pagine 2 e 3 alla fine del testo di pagina 3, che in un libro rilegato a destra è il suo margine esterno, e `numbering: 'spread'` fa ripartire da （1） le note di ogni doppia pagina ([Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina)). Una nota citata sulla pagina destra aspetta quella sinistra; se le note lasciano alla pagina sinistra meno di una riga di testo, le altre restano al piede della pagina destra, come consente JLReq. Un documento con tag `ja` compone già i richiami di un libro verticale come `（{n}）` a destra della riga, a 0,7 em, con le cifre non ruotate: lo mostrano le due righe scritte per esteso. `numberGap: 'em'` mette dopo il numero uno spazio largo un carattere di nota e `hangingIndent: em(2)` allinea oltre di esso le righe che vanno a capo.
 
 ### 2 · Scrivi i richiami dove li mette il giapponese
 
@@ -36,7 +36,7 @@ La prima frase del capitolo cita quattro note nelle sue prime tre righe. Compost
 
 <Excerpt region="furniture" />
 
-Il titolo scende lungo il margine esterno delle pagine sinistre, fuori dalle note, e i folio in kanji stanno al piede di ogni pagina tranne quella del titolo.
+Il titolo scende lungo il margine esterno delle pagine sinistre, fuori dalle note, e i numeri di pagina in kanji stanno al piede di ogni pagina tranne quella del titolo.
 
 ## Varianti
 

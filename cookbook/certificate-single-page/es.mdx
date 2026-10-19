@@ -1,6 +1,6 @@
 ---
 title: "Diploma con orla de guilloché"
-summary: "Diplomas de fin de curso dibujados por un estilo de título: la orla de guilloché en su cabecera, el sello y las firmas en su pie y el nombre en su apertura."
+summary: "Diplomas de fin de curso dibujados por un estilo de encabezado: la orla de guilloché en su cabecera, el sello y las firmas en su pie y el nombre en su apertura."
 plain: "Diplomas de fin de curso de un taller de imprenta, una página por alumno, con una orla decorada y un sello. Basta escribir el nombre de cada alumno para obtener su diploma completo."
 description: "Diplomas de fin de curso en Postext: orla de guilloché y sello dibujados en código, el nombre caligráfico tomado de cada título y toda la clase en un PDF."
 question: "¿Cómo pongo una orla de guilloché, un sello y líneas de firma en todas las páginas de un diploma?"
@@ -10,37 +10,37 @@ pageNotes: { "1": "Un diploma A4 sobre papel crema, enmarcado por una banda verd
 
 ## Lo que vas a componer
 
-Diplomas de fin de curso para La Cuña, un taller de tipografía ficticio de Zaragoza: un A4 por alumno. La edición inglesa los compone en tamaño carta para el Quoin Room, un taller de Providence. Una banda verde azulado llena de lentes de guilloché color crema enmarca la hoja, con una roseta crema en cada esquina; banda y rosetas se dibujan en código con senoides e hipotrocoides. Bajo un título en versales espaciadas, el nombre del alumno va en Pinyon Script de 48 pt sobre un filete dorado, y el texto del diploma, centrado, en Rosarivo. Entre las dos líneas de firma hay un sello rojo con dos cintas, y debajo, un pie de imprenta de una línea. Como la página entera la dibuja un estilo de título, cada alumno es un título de Markdown, y el PDF recoge la clase completa con un marcador por nombre.
+Diplomas de fin de curso para La Cuña, un taller de tipografía ficticio de Zaragoza: un A4 por alumno. La edición inglesa los compone en tamaño carta para el Quoin Room, un taller de Providence. Una banda verde azulado llena de lentes de guilloché color crema enmarca la hoja, con una roseta crema en cada esquina; banda y rosetas se dibujan en código con senoides e hipotrocoides. Bajo un título en versales espaciadas, el nombre del alumno va en Pinyon Script de 48 pt sobre un filete dorado, y el texto del diploma, centrado, en Rosarivo. Entre las dos líneas de firma hay un sello rojo con dos cintas, y debajo, un pie de imprenta de una línea. Como la página entera la dibuja un estilo de encabezado, cada alumno es un encabezado de Markdown, y el PDF recoge la clase completa con un marcador por nombre.
 
 ## Elaboración
 
 ### 1 · Deja que un estilo de título dibuje la página
 
-El estilo completo está en [la respuesta corta](#la-respuesta-corta) de arriba. Un estilo de título («estilo de encabezado» en la [documentación](/es/docs/configuration-styles#estilos-de-encabezado)) gobierna las páginas de su sección: su `header` y su `footer` sustituyen a los del documento, que aquí están vacíos, sus `margins` fijan la caja de texto y su `advancedDesign` dibuja la apertura. La altura de una apertura se redondea hacia arriba a líneas enteras de la rejilla base de 17 pt. En A4, `y(106)` da un `minHeight` de 112,7 mm, que se convierte en 19 líneas, así que el texto empieza a 146 mm del borde superior (a 140 mm en la edición en tamaño carta); si solo contara el bloque del título, empezaría a 134 mm. Sin `marginBottom: 0`, el medio cuadratín que se deja por defecto bajo un título llevaría esa misma altura a 20 líneas.
+El estilo completo está en [la respuesta corta](#la-respuesta-corta) de arriba. Un estilo de encabezado (véase la [documentación](/es/docs/configuration-styles#estilos-de-encabezado)) gobierna las páginas de su sección: su `header` y su `footer` sustituyen a los del documento, que aquí están vacíos, sus `margins` fijan la caja de texto y su `advancedDesign` dibuja la apertura. La altura de una apertura se redondea hacia arriba a líneas enteras de la rejilla base de 17 pt. En A4, `y(106)` da un `minHeight` de 112,7 mm, que se convierte en 19 líneas, así que el texto empieza a 146 mm del borde superior (a 140 mm en la edición en tamaño carta); si solo contara el bloque del título, empezaría a 134 mm. Sin `marginBottom: 0`, el medio cuadratín que se deja por defecto bajo un título llevaría esa misma altura a 20 líneas.
 
 ### 2 · Cuelga la orla de la página, en la cabecera
 
 <Excerpt region="frame" />
 
-Un elemento de imagen dibuja un recurso al tamaño que le da su colocación ([elementos de imagen](/es/docs/configuration-headers-footers#elementos-de-imagen)): anclado a la esquina superior izquierda de la página y con los dos lados en `'fill'`, el guilloché cubre la caja de corte, y el SVG, declarado con las proporciones de la página, la llena sin deformarse. La cabecera lo pinta sobre `page.backgroundColor` en cada diploma sin quitarle sitio al texto, así que son los márgenes los que mantienen el texto a 32 mm del corte como mínimo, dentro del filete interior, que está a 26 mm. Una marca de agua puesta en la cabecera quedaría encima de las palabras, porque la cabecera se pinta después del texto. En una cabecera, `{attr.serial}` lee el atributo del título a cuya sección pertenece la página, y así cada diploma lleva su número.
+Un elemento de imagen dibuja un recurso al tamaño que le da su colocación ([elementos de imagen](/es/docs/configuration-headers-footers#elementos-de-imagen)): anclado a la esquina superior izquierda de la página y con los dos lados en `'fill'`, el guilloché cubre la caja de corte, y el SVG, declarado con las proporciones de la página, la llena sin deformarse. La cabecera lo pinta sobre `page.backgroundColor` en cada diploma sin quitarle sitio al texto, así que son los márgenes los que mantienen el texto a 32 mm del corte como mínimo, dentro del filete interior, que está a 26 mm. Una marca de agua puesta en la cabecera quedaría encima de las palabras, porque la cabecera se pinta después del texto. En una cabecera, `{attr.serial}` lee el atributo del encabezado a cuya sección pertenece la página, y así cada diploma lleva su número.
 
 ### 3 · Deja en la apertura solo el bloque del título
 
 <Excerpt region="title" />
 
-Cada línea se ancla al borde `'top'` de la página, que la centra, con una `y` medida desde el corte, de modo que el bloque no se mueve aunque cambien los márgenes; `y()` estira esas posiciones del tamaño carta al A4. El nombre es el propio texto del título, que entra con `{titleText}`, así que aparece en los marcadores y en las etiquetas del PDF. Un nombre largo pasa a una segunda línea, porque un diseño de título parte su texto (`overflow: 'wrap'`). Las líneas espaciadas no piden corrección: el espaciado que sigue a la última letra queda fuera de la medida, así que lo que se centra son las letras.
+Cada línea se ancla al borde `'top'` de la página, que la centra, con una `y` medida desde el corte, de modo que el bloque no se mueve aunque cambien los márgenes; `y()` estira esas posiciones del tamaño carta al A4. El nombre es el propio texto del título, que entra con `{titleText}`, así que aparece en los marcadores y en las etiquetas del PDF. Un nombre largo pasa a una segunda línea, porque un diseño de encabezado parte su texto (`overflow: 'wrap'`). Las líneas espaciadas no piden corrección: el espaciado que sigue a la última letra queda fuera de la medida, así que lo que se centra son las letras.
 
 ### 4 · Cuelga el sello y las firmas de un mismo borde
 
 <Excerpt region="signatures" />
 
-Todo lo que va en el pie se mide desde `SIGN`, el borde superior del sello, y el margen inferior del estilo cierra la caja de texto en ese mismo borde, así que un texto demasiado largo para la página pasa a la siguiente en vez de meterse bajo el sello. Si estuvieran en la apertura, las líneas y los nombres contarían para su altura ([span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)), y como llegan por debajo de la caja de texto, la apertura se quedaría con la página entera y mandaría el texto a la siguiente. `LINE` toma el ancho que queda entre los márgenes de la página, le resta el disco del sello (34 mm), lo reparte entre las dos firmas y quita 3 mm a cada mitad, así que cada línea se detiene a 3 mm del sello en los dos formatos (53 mm de largo en A4 y 56 mm en tamaño carta). Cada nombre y cada cargo es un texto tan ancho como su línea, y así queda centrado bajo ella.
+Todo lo que va en el pie se mide desde `SIGN`, el borde superior del sello, y el margen inferior del estilo cierra la caja de texto en ese mismo borde, así que un texto demasiado largo para la página pasa a la siguiente en vez de meterse bajo el sello. Si estuvieran en la apertura, las líneas y los nombres contarían para su altura ([apertura a toda página y diseño avanzado](/es/docs/configuration-headings#apertura-a-toda-página-y-diseño-avanzado)), y como llegan por debajo de la caja de texto, la apertura se quedaría con la página entera y mandaría el texto a la siguiente. `LINE` toma el ancho que queda entre los márgenes de la página, le resta el disco del sello (34 mm), lo reparte entre las dos firmas y quita 3 mm a cada mitad, así que cada línea se detiene a 3 mm del sello en los dos formatos (53 mm de largo en A4 y 56 mm en tamaño carta). Cada nombre y cada cargo es un texto tan ancho como su línea, y así queda centrado bajo ella.
 
 ### 5 · Convierte la lista de clase en títulos
 
 <Excerpt region="merge" />
 
-Cada fila se convierte en un título `#` que nombra el estilo y lleva el número de serie como atributo ([atributos de encabezado](/es/docs/document-format#atributos-de-encabezado)), seguido del texto de `content.es.md`, así que tres filas dan tres páginas. El `breakBefore` del nivel 1, con paridad `'any'`, empieza cada título en una página nueva sin páginas en blanco entre diplomas; el estilo lo hereda.
+Cada fila se convierte en un encabezado `#` que indica el estilo y lleva el número de serie como atributo ([atributos de encabezado](/es/docs/document-format#atributos-de-encabezado)), seguido del texto de `content.es.md`, así que tres filas dan tres páginas. El `breakBefore` del nivel 1, con paridad `'any'`, empieza cada título en una página nueva sin páginas en blanco entre diplomas; el estilo lo hereda.
 
 ### 6 · Genera un solo PDF para toda la clase
 

@@ -50,7 +50,7 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
     </tr>
     <tr>
       <td><strong>段</strong></td>
-      <td>ページを縦に分割した区画です。段は決まった幅と最大の高さを持ちます。テキストはある段から次の段へ、さらに次のページへと流れます。</td>
+      <td>ページを縦に分割した区画です。段には決まった幅と最大の高さがあります。テキストはある段から次の段へ、さらに次のページへと流れます。</td>
     </tr>
     <tr>
       <td><strong>ブロック</strong></td>
@@ -58,7 +58,7 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
     </tr>
     <tr>
       <td><strong>行</strong></td>
-      <td>ブロック内の計測済みのテキストの1行で、Pretextが生成します。各行はバウンディングボックスとベースラインの位置を持ちます。</td>
+      <td>ブロック内の計測済みのテキストの1行で、Pretextが生成します。各行には、バウンディングボックスとベースラインの位置があります。</td>
     </tr>
     <tr>
       <td><strong>バウンディングボックス</strong></td>
@@ -82,7 +82,7 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
     </tr>
     <tr>
       <td><strong>デメリット</strong></td>
-      <td>Knuth-Plassで、改行位置の候補にかかる総コストです。バッドネスにペナルティー（ハイフネーション、最終行のラント、適合クラスの不一致）を加えたものです。アルゴリズムはデメリットの合計が最も小さい改行位置の組を選びます。段落を2つの段に分ける位置も同じ方法で選び、ウィドウ、オーファン、スラックのコストの合計が最も小さいものを採ります。</td>
+      <td>Knuth-Plassで、改行位置の候補にかかる総コストです。バッドネスにペナルティ（ハイフネーション、最終行のラント、適合クラスの不一致）を加えたものです。アルゴリズムはデメリットの合計が最も小さい改行位置の組を選びます。段落を2つの段に分ける位置も同じ方法で選び、ウィドウ、オーファン、スラックのコストの合計が最も小さいものを採ります。</td>
     </tr>
     <tr>
       <td><strong>適合クラス</strong></td>
@@ -90,7 +90,7 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
     </tr>
     <tr>
       <td><strong>スラック</strong></td>
-      <td>段落をそこで分割するか、まるごと次へ送ったときに、段の下端に空いたまま残る行です。エンジンが分割位置を選ぶときは、スラックの2乗のコスト（<code>slackWeight</code>で重み付け）を、ウィドウとオーファンのペナルティーと比べます。</td>
+      <td>段落をそこで分割するか、まるごと次へ送ったときに、段の下端に空いたまま残る行です。エンジンが分割位置を選ぶときは、スラックの2乗のコスト（<code>slackWeight</code>で重み付け）を、ウィドウとオーファンのペナルティと比べます。</td>
     </tr>
     <tr>
       <td><strong>バックエンド</strong></td>
@@ -110,15 +110,15 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
 
 ## システム構成
 
-<Illustration name="SystemArchitecture" data='{"title": "Postextのシステム構成", "desc": "拡張MarkdownとPostextConfigがパーサーに入る。配置のパスがPretextを通してテキストを計測し、仮想文書ツリーを埋めていく。buildDocumentは、レイアウトが落ち着くまで、ヒントを付けてパスを再実行する。バックエンドが完成したVDTをHTMLまたはPDFに描画する。", "caption": "パーサー → 配置のパス ↔ Pretext → VDT → バックエンド → 出力。", "markdown": "拡張Markdown", "configTitle": "PostextConfig", "configSubtitle": "（段、規則、間隔）", "engine": "組版エンジン", "parser": "パーサー", "pass1": "Markdown → ブロック", "vdtLine1": "仮想文書ツリー", "vdtLine2": "（VDT）", "vdtAttr1": "パスがその場で埋める", "vdtAttr2": "ページ > 段 > ブロック", "vdtAttr3": "全ノードがbboxを持つ", "vdtAttr4": "パスごとに新しいツリー", "pretext": "Pretext", "pretextSubtitle": "テキストの計測", "passesTitle": "配置のパス（内容を1回たどる）", "passes": [{"num": "計測", "name": "キャッシュを通して行を測る"}, {"num": "配置", "name": "ブロックを段とページに置く"}, {"num": "フロート", "name": "リソースをページの帯に置く"}, {"num": "分割", "name": "段の終わりで段落を分ける"}, {"num": "分割禁止", "name": "見出しやリストを本文と一緒に保つ"}, {"num": "グリッド", "name": "流れをグリッドに戻す"}], "convergence": "ヒント付きで 再実行", "backend": "バックエンド", "backendSubtitle": "（共通のインターフェイス）", "backendItems": ["Canvas / ブラウザー", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "描画結果"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Postextのシステム構成", "desc": "拡張MarkdownとPostextConfigがパーサーに入ります。配置のパスはPretextを通してテキストを計測し、仮想文書ツリーを埋めていきます。buildDocumentは、レイアウトが落ち着くまでヒントを付けてパスを再実行します。バックエンドは完成したVDTをHTMLまたはPDFに描画します。", "caption": "パーサー → 配置のパス ↔ Pretext → VDT → バックエンド → 出力。", "markdown": "拡張Markdown", "configTitle": "PostextConfig", "configSubtitle": "（段、組版規則、間隔）", "engine": "組版エンジン", "parser": "パーサー", "pass1": "Markdown → ブロック", "vdtLine1": "仮想文書ツリー", "vdtLine2": "（VDT）", "vdtAttr1": "パスがその場で埋める", "vdtAttr2": "ページ > 段 > ブロック", "vdtAttr3": "各ノードにbboxがある", "vdtAttr4": "パスごとに新しいツリー", "pretext": "Pretext", "pretextSubtitle": "テキストの計測", "passesTitle": "配置のパス（内容を1回たどる）", "passes": [{"num": "計測", "name": "キャッシュを通して行を測る"}, {"num": "配置", "name": "ブロックを段とページに置く"}, {"num": "フロート", "name": "リソースをページの帯に置く"}, {"num": "分割", "name": "段の終わりで段落を分ける"}, {"num": "分割禁止", "name": "見出しやリストを本文から離さない"}, {"num": "そろえ", "name": "流れをグリッドに戻す"}], "convergence": "ヒント付きで 再実行", "backend": "バックエンド", "backendSubtitle": "（共通のインターフェース）", "backendItems": ["Canvas / ブラウザー", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "描画結果"}' />
 
 **コンテンツがエンジンの中でたどる道筋は次のとおりです。**
 
-1. **パーサー**が拡張Markdownを読み、型付きのコンテンツブロックの平らなリストに変えます。あるのは内容と構造だけで、位置はまだありません
-2. **配置のパス**がそのリストを1回たどり、VDTを組み立てます。各ブロックを、これから入る段の幅でPretextを通して計測し、テキスト、フロート、囲みをページと段に配置し、進みながら改行・改段と分割禁止の規則を適用します
-3. **ドライバー**（`buildDocument`）は、レイアウト全体の結果がなければ決められない判断があるときに、パスを再実行します。ページ番号を出力する目次、上にある段を同じ高さで切らなければならないページ幅の囲み、短く終わった段などです。再実行のたびに前のパスからヒントを受け取り、再実行の種類ごとに上限があります
-4. **最終的なVDT**は、レイアウトの完全なジオメトリーです。どの要素も、自分のページ番号、割り当てられた段、位置、バウンディングボックスを知っています。描画の前に、文書は完全に「組み上がって」います
-5. **バックエンド**が完成したVDTをたどり、目的の形式に描画します。ラスタライズしたcanvasのビットマップ、位置を指定したHTML要素のDOMツリー、フォントを埋め込んだPDF文書、EPUBのいずれかです。4つとも同じVDTから作られます。どのバックエンドを選ぶかは、純粋に出力の選択です
+1. **パーサー**が拡張Markdownを読み、型付きのコンテンツブロックの平らなリストに変えます。あるのは内容と構造だけで、位置はまだありません。
+2. **配置のパス**がそのリストを1回たどり、VDTを組み立てます。各ブロックを、これから入る段の幅でPretextを通して計測し、テキスト、フロート、囲みをページと段に配置し、進みながら改行・改段と分割禁止の規則を適用します。
+3. **ドライバー**（`buildDocument`）は、レイアウト全体の結果がなければ決められない判断があるときに、パスを再実行します。ページ番号を出力する目次、上にある段を同じ高さで切らなければならないページ幅の囲み、短く終わった段などです。再実行のたびに前のパスからヒントを受け取り、再実行の種類ごとに上限があります。
+4. **最終的なVDT**は、レイアウトの完全なジオメトリーです。どの要素も、自分のページ番号、割り当てられた段、位置、バウンディングボックスを知っています。描画の前に、文書は完全に「組み上がって」います。
+5. **バックエンド**が完成したVDTをたどり、目的の形式に描画します。ラスタライズしたcanvasのビットマップ、位置を指定したHTML要素のDOMツリー、フォントを埋め込んだPDF文書、EPUBのいずれかです。4つとも同じVDTから作られます。どのバックエンドを選ぶかは、純粋に出力の選択です。
 
 
 ## 入力層
@@ -127,7 +127,7 @@ Reactを使ったことがあれば、中心となる仕掛けはすでにご存
 
 コンテンツモデルはデータ構造であると同時に、ひとつの考え方でもあります。書き手は*何を*言うかを記述し、*どう*レイアウトするかは記述しません。レイアウトの判断はエンジンが行います。
 
-<Illustration name="ContentModel" data='{"title": "コンテンツモデル：Markdown、リソース、注", "desc": "Postextの入力では、Markdown（読む順序と意味の構造）を、リソース（ビットマップ、SVG、表）および注から切り離している。エンジンはインラインの:ref参照と::resourceの埋め込みをIDで解決し、VDTを生成する。", "caption": "読む順序はMarkdownが、視覚的なデータはリソースが受け持つ。", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "読む順序 + idによる:ref / ::resource", "resources": "resources[]", "resourcesSub": "ビットマップ、SVG、表", "notes": "metadata", "notesSub": "タイトル、著者、日付", "resolveMarker": "idで解決：:ref{id=…}、::resource{id=…}", "engineLabel": "エンジン", "vdtLabel": "VDT"}' />
+<Illustration name="ContentModel" data='{"title": "コンテンツモデル：Markdown、リソース、注", "desc": "Postextの入力では、Markdown（読む順序と意味の構造）を、リソース（ビットマップ、SVG、表）や注と分けて扱います。エンジンはインラインの:ref参照と::resourceの埋め込みをidで解決し、VDTを生成します。", "caption": "読む順序はMarkdownが、視覚的なデータはリソースが受け持ちます。", "contentTitle": "PostextContent", "markdown": "markdown", "markdownSub": "読む順序 + idによる:ref / ::resource", "resources": "resources[]", "resourcesSub": "ビットマップ、SVG、表", "notes": "metadata", "notesSub": "タイトル、著者、日付", "resolveMarker": "idで解決：:ref{id=…}、::resource{id=…}", "engineLabel": "エンジン", "vdtLabel": "VDT"}' />
 
 ```typescript
 // packages/postext/src/types.ts
@@ -157,10 +157,10 @@ interface Resource {
 }
 ```
 
-**リソース**は視覚的なデータを運びます。キャプション、代替テキスト、そして種類ごとのペイロードです。バイナリーのペイロード（ビットマップ、SVG）は帯域外に置かれます。リソースが保存するのは`fileId`だけで、レンダラーが描画時にそれを解決します（Sandboxはバイト列をIndexedDBに保存します）。表のリソースは例外で、その`TableModel`（結合とそろえを持つセルの格子）はインラインで運ばれます。バイト列ではなく、構造化されたデータだからです。
+**リソース**は視覚的なデータを運びます。キャプション、代替テキスト、そして種類ごとのペイロードです。バイナリーのペイロード（ビットマップ、SVG）は帯域外に置かれます。リソースが保存するのは`fileId`だけで、レンダラーが描画時にそれを解決します（Sandboxはバイト列をIndexedDBに保存します）。表のリソースは例外で、その`TableModel`（結合とそろえの情報を含むセルの格子）はインラインで運ばれます。バイト列ではなく、構造化されたデータだからです。
 **注**はMarkdownの中に書きます。注を引用する箇所に`[^id]`のマーカーを置き、定義の`[^id]:`は独立した段落として章のどこにでも書けます。エンジンは最初に引用された順に注へ番号を付け、それぞれの注を、引用する行を含む段の下端に短い罫線をはさんで組みます。`footnotes.placement: 'chapterEnd'`を指定すると、章の最後のブロックのあとに組みます（[脚注](/ja/docs/document-format-notes-references#脚注)と[設定 → 脚注](/ja/docs/configuration-notes-references#脚注)を参照）。コンテンツモデルは今も`notes`配列を受け付けますが、パイプラインのどの段階もそれを読みません。
 
-この分離は意図を持った設計上の選択で、見た目以上に大きな意味があります。Markdownが受け持つのは「読む順序」と「意味の構造」です。何が先に来るか、何が見出しか、脚注がどこで引用され、何が書かれているか。リソースの配列が受け持つのは「視覚的なデータ」です。画像の寸法、キャプションの文章、表のセル。両者を分けておくことで、設定を変えるだけで同じMarkdownをまったく異なる方法でレイアウトできます。2段組みの学術論文のレイアウトと1段組みのブログ記事が、同じ原稿を共有できます。そしてエンジンは、原稿に一切手を触れずに配置を決められます。たとえば、ここに入らない画像を次の段へ送るといった判断です。
+この分離は意図を持った設計上の選択で、見た目以上に大きな意味があります。Markdownが受け持つのは「読む順序」と「意味の構造」です。何が先に来るか、何が見出しか、脚注がどこで引用され、何が書かれているか。リソースの配列が受け持つのは「視覚的なデータ」です。画像の寸法、キャプションの文章、表のセル。両者を分けておくことで、設定を変えるだけで同じMarkdownをまったく異なる方法でレイアウトできます。2段組みの学術論文のレイアウトと1段組みのブログ記事が、同じソースを共有できます。そしてエンジンは、ソースに一切手を触れずに配置を決められます。たとえば、ここに入らない画像を次の段へ送るといった判断です。
 
 ```typescript
 // Example: a simple article with a referenced figure
@@ -192,7 +192,7 @@ Italy by 1465 and France by 1470.
 
 リソースはidで本文と結び付けられ、**参照するだけで文書に取り込まれます**。インラインの`:ref{id="printing-press"}`は2つの役割を同時に果たします。本文中にリソースの計算された番号（「図1」）を描画し、さらに読む順序で最初の参照の時点で、そのリソースをページにフロートとして配置します。参照の近くのページの天か地に帯を確保するもので、印刷の組版者がするのとまったく同じです。図をもう一度配置する必要はありません。流れの中の決まった位置に置かなければならない例外的なリソースのために、単独の行に書く`::resource{id="…"}`という任意のブロック埋め込みがあります。これがインラインで描画されるのは、リソースの解決済みの`placement.position`が`'here'`（フロートしない指定）のときだけです。フロートするリソースの場合は、ただの参照のひとつとして扱われます。書き手は配置について考える必要がありません。それはエンジンの仕事です。
 
-<Illustration name="ReferenceResolution" data='{"title": "参照の解決", "desc": "Markdownの原稿が:ref{id=printing-press}でインラインに図を参照している。resources配列がIDによって実際の内容を提供する。エンジンは参照を解決し、計算した番号を本文に描画し、図をページの天の帯にフロートとして配置する。", "caption": "Markdown内の参照はただの名前にすぎない。エンジンがそれをリソースと照合して解決し、番号を付け、図を参照の近くにフロートとして配置する。", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "placementが&#39;here&#39;のときの任意の埋め込み", "resolveLabel": "解決", "outputTitle": "組み上がったページ", "outputFigure": "[ 図1：帯にフロート ]", "outputFootnote": "…shown in Fig. 1…"}' />
+<Illustration name="ReferenceResolution" data='{"title": "参照の解決", "desc": "Markdownのソースが、:ref{id=printing-press}で図をインラインに参照しています。実際の内容は、resources配列がidごとに提供します。エンジンは参照を解決し、計算した番号を本文に描画して、図をページの天の帯にフロートとして配置します。", "caption": "Markdownの中の参照は名前にすぎません。エンジンがそれをリソースと照合して解決し、番号を付け、図を参照の近くにフロートとして配置します。", "markdownTitle": "markdown", "markdownLine1": "# The Art of Typography", "markdownLine2": "movable type, shown in", "markdownLine3": ":ref{id=printing-press} …", "resourcesTitle": "resources[]", "resourceLine": "{ id: &#39;printing-press&#39;, kind: &#39;bitmap&#39;, … }", "notesTitle": "::resource{id=…}", "noteLine": "placementが&#39;here&#39;のときの任意の埋め込み", "resolveLabel": "解決", "outputTitle": "組み上がったページ", "outputFigure": "[ 図1：帯にフロート ]", "outputFootnote": "…shown in Fig. 1…"}' />
 
 ### 設定
 
@@ -209,7 +209,7 @@ Italy by 1465 and France by 1470.
   <tbody>
     <tr>
       <td><code>bodyText</code> / <code>headings</code></td>
-      <td>フィールドごとのウィドウ・オーファン・ラントのペナルティー、分割禁止の規則、両端そろえの限度、ハイフネーション。<a href="/ja/docs/configuration-text#本文">設定 → 本文</a>を参照</td>
+      <td>フィールドごとのウィドウ・オーファン・ラントのペナルティ、分割禁止の規則、両端そろえの限度、ハイフネーション。<a href="/ja/docs/configuration-text#本文">設定 → 本文</a>を参照</td>
       <td>計測、改行・改段と分割禁止の規則、段末そろえ</td>
     </tr>
     <tr>
@@ -237,7 +237,7 @@ Italy by 1465 and France by 1470.
 
 ### 解析の方針
 
-解析は、パイプラインの中で意図的に最も単純にしてある段階です。Markdownが入力され、型付きのコンテンツブロック（`packages/postext/src/parse/`の`ContentBlock`）の平らなリストとして出てきます。見出し、インラインのスパンを持つ段落、リストの項目、ディレクティブといったものです。結果はメモ化されるので（`parseMarkdownMemo`）、1回のビルドの中のパスは1度しか解析せず、同じテキストをあとでビルドするときも解析し直しません。リソースの参照は、配置のパスが始まるたびに、IDによって`resources[]`配列と照合して解決されます。脚注の定義（`[^id]:`で始まる段落）もそこで流れから外され、それを引用するマーカーのためにidごとに保持されます。`notes[]`配列は読みません。
+解析は、パイプラインの中で意図的に最も単純にしてある段階です。Markdownが入力され、型付きのコンテンツブロック（`packages/postext/src/parse/`の`ContentBlock`）の平らなリストとして出てきます。見出し、インラインのスパンを含む段落、リストの項目、ディレクティブといったものです。結果はメモ化されるので（`parseMarkdownMemo`）、1回のビルドの中のパスは1度しか解析せず、同じテキストをあとでビルドするときも解析し直しません。リソースの参照は、配置のパスが始まるたびに、IDによって`resources[]`配列と照合して解決されます。脚注の定義（`[^id]:`で始まる段落）もそこで流れから外され、それを引用するマーカーのためにidごとに保持されます。`notes[]`配列は読みません。
 
 目録のようなものだと考えてください。「見出しがあり、次に200語の段落、次に図の参照、次にまた段落がある」。計測はありません。位置決めもありません。レイアウトの判断は一切ありません。`VDTBlock`ができるのは、配置のパスがブロックを計測して場所を与えたあとです。
 
@@ -258,7 +258,7 @@ Italy by 1465 and France by 1470.
 
 ### 構造
 
-<Illustration name="VdtStructure" data='{"title": "仮想文書ツリーの構造", "desc": "階層構造のVDT。文書はページを含み、各ページは段を含み、各段はブロック（見出し、段落、リソース）を含み、各テキストブロックは計測済みの行を含む。すべてのブロックがバウンディングボックス、種類、ページと段のインデックスを持つ。", "caption": "すべてのブロックがbbox、種類、ページと段のインデックスを持つ。", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["見出し", "段落", "リソース"], "lineLabels": ["0行目", "1行目"], "legendHeader": "すべてのブロックが持つもの：", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "行がさらに持つもの：", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "仮想文書ツリーの構造", "desc": "VDTは階層構造です。文書がページを含み、ページが段を、段がブロック（見出し、段落、リソース）を、テキストのブロックが計測済みの行を含みます。どのブロックにも、バウンディングボックス、種類、ページと段のインデックスがあります。", "caption": "どのブロックにも、bbox、種類、ページと段のインデックスがあります。", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["見出し", "段落", "リソース"], "lineLabels": ["0行目", "1行目"], "legendHeader": "どのブロックにもある値：", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "行にはさらに次の値：", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### 型定義
 
@@ -376,7 +376,7 @@ interface BoundingBox {
 
 よく組まれた本を光にかざしてみてください。左ページの行は右ページの行とそろっています。1段目の5行目のベースラインは、2段目の5行目のベースラインとまったく同じ高さにあります。これが垂直リズムで、訓練を積んだ目が組版の品質を評価するときに最初に確かめることの1つです。そしてPostextを特徴づける点の1つでもあります。
 
-両方の段に同じ大きさの本文しかなければ、そろえるのは簡単です。どの行も同じ高さなので、ベースラインは自然にそろいます。難しくなるのは、一方の段に大きな文字サイズの見出し、任意のピクセル数の高さを持つ画像、引用ブロックの周りの追加の間隔が入った瞬間です。こうした要素はグリッドを「崩し」ます。その下の内容がベースラインの増分の倍数ではない量だけずれ、急にその段のベースラインが隣の段とそろわなくなります。視覚的な調和が失われます。
+両方の段に同じ大きさの本文しかなければ、そろえるのは簡単です。どの行も同じ高さなので、ベースラインは自然にそろいます。難しくなるのは、一方の段に大きな文字サイズの見出し、任意のピクセル数の高さの画像、引用ブロックの周りの追加の間隔が入った瞬間です。こうした要素はグリッドを「崩し」ます。その下の内容がベースラインの増分の倍数ではない量だけずれ、急にその段のベースラインが隣の段とそろわなくなります。視覚的な調和が失われます。
 
 目標はそれを取り戻すことです。見出しや画像など、標準と異なる高さの要素が一方の段にだけ現れても、隣り合う段の本文のベースラインは水平にそろわなければなりません。
 
@@ -391,12 +391,12 @@ interface BoundingBox {
 - **見出し**（大きな文字サイズ、異なる行の高さ）
 - **画像**（任意のピクセル数の高さ）
 - **表**（高さが変わる）
-- **引用ブロック**（異なる文字サイズやパディングを使うことがある）
+- **引用ブロック**（異なる文字サイズや内側余白を使うことがある）
 - **脚注領域**（段の下端の注とその罫。段のテキスト領域はその上で終わる）
 
 ### 流れがグリッドに戻る仕組み
 
-<Illustration name="VerticalRhythm" data='{"title": "垂直リズムのそろえ", "desc": "1段目にある見出しが、ベースライングリッドを12ピクセル崩している。エンジンは見出しを配置するときに、段で使った高さを次のグリッド線まで切り上げる。これで見出しの下に12ピクセルが加わり、次の本文の行がグリッドに戻る。2段目は最初から最後までそろったままである。", "caption": "グリッドを崩す要素の下の空きを、その要素を配置するときにグリッドまで切り上げ、段をまたいでベースラインをそろえる。", "column1": "1段目", "column2": "2段目", "bodyLine": "本文の行", "bodyBaseline": "本文の行（ベースライン：24px）", "heading": "見出し（高さ36px）", "adjustment": "+12pxの間隔調整", "backOnGrid": "本文（グリッドに復帰）", "aligned": "そろっている", "legendTitle": "配置のときのグリッドへのそろえ", "legendSteps": ["1. ブロックを組む：まず行、次に下の空き（marginBottom）", "2. 段で使った高さを、次のグリッド線まで切り上げる", "3. 次のブロックはそこから始まるので、下の空きは最小値になる", "4. snapToGrid: falseは、次にそろえるブロックまで正確な空きを保つ"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "垂直リズムのそろえ", "desc": "1段目の見出しが、ベースライングリッドを12ピクセル崩しています。エンジンは見出しを配置するときに、段で使った高さを次のグリッド線まで切り上げます。これで見出しの下に12ピクセルが加わり、次の本文の行がグリッドに戻ります。2段目は最初から最後までそろったままです。", "caption": "グリッドを崩す要素の下のアキは、その要素を配置するときにグリッドまで切り上げるので、段をまたいでベースラインがそろいます。", "column1": "1段目", "column2": "2段目", "bodyLine": "本文の行", "bodyBaseline": "本文の行（ベースライン：24px）", "heading": "見出し（高さ36px）", "adjustment": "+12pxの間隔調整", "backOnGrid": "本文（グリッドに復帰）", "aligned": "そろっている", "legendTitle": "配置時のグリッドへのそろえ", "legendSteps": ["1. ブロックを組む：まず行、次に下のアキ（marginBottom）", "2. 段で使った高さを、次のグリッド線まで切り上げる", "3. 次のブロックはそこから始まるので、下のアキは最小値として働く", "4. snapToGrid: falseなら、次にそろえるブロックまで正確なアキを保つ"]}' />
 
 グリッドは、配置のときにブロックごとに保たれます。あとから段をたどってずれを探すパスはありません。本文の行はグリッド1行分の高さなので、グリッドの上から始まった本文の連なりは、グリッドに乗ったままです。グリッドから外れうるブロックを組むと、配置のパスは次のブロックが始まる前に、段で使った高さを次のグリッド線まで切り上げます。こうしてそろえるブロックは次のとおりです。
 
@@ -406,13 +406,13 @@ interface BoundingBox {
 - 囲み、コードリスト、インラインで埋め込んだ図や表
 - `:::paragraphs`コンテナーの最後の段落と、`:::verse`の詩（どちらも行送りが独自のものです）
 
-ブロックの下の空き（`marginBottom`）は切り上げの前に数えるので、マージンは最小値で、残りはグリッドが決めます。図では、1段目に、24pxのグリッドの上に高さ36pxの見出しがあり、その下にマージンはありません。見出しの下端はグリッド線を12px過ぎた位置に来るので、そろえが12pxを足し、次の本文の行はグリッドの上から、2段目の隣の行と同じ高さで始まります。`marginBottom`が16pxなら下端は52pxになり、そろえはそれを72pxに切り上げます。
+ブロックの下のアキ（`marginBottom`）は切り上げの前に数えるので、`marginBottom`は最小値で、残りはグリッドが決めます。図では、1段目に、24pxのグリッドの上に高さ36pxの見出しがあり、その下のアキはありません。見出しの下端はグリッド線を12px過ぎた位置に来るので、そろえが12pxを足し、次の本文の行はグリッドの上から、2段目の隣の行と同じ高さで始まります。`marginBottom`が16pxなら下端は52pxになり、そろえはそれを72pxに切り上げます。
 
-フロートの帯は、[ステージ4](/ja/docs/architecture-layout-pipeline#ステージ4リソースの配置)で説明した独自の方法でグリッドを保ちます。天の帯はグリッドの行の倍数に切り上げられ、地のフロートは、キャプションの最後のベースラインがグリッドに乗るように固定されます。段末そろえはグリッドの行単位で空きを足すので、これもグリッドを保ちます。
+フロートの帯は、[ステージ4](/ja/docs/architecture-layout-pipeline#ステージ4リソースの配置)で説明した独自の方法でグリッドを保ちます。天の帯はグリッドの行の倍数に切り上げられ、地のフロートは、キャプションの最後のベースラインがグリッドに乗るように固定されます。段末そろえはグリッドの行単位でアキを足すので、これもグリッドを保ちます。
 
 段と段を比べる処理はありません。どの段もグリッドの上から始まり、どのそろえもグリッドに戻るので、隣り合う段の行も、向かい合うページの行も、2回目のパスなしで一致します。
 
-**そろえを行わない指定**。`snapToGrid: false`を指定すると、代わりに、ブロックの下の空きが正確に保たれます。`headings`（すべてのレベル、1つのレベル、または1つの見出しスタイル）、段落スタイル、囲みスタイル、`codeStyle`に設定できます。そのようなブロックのあとのテキストは、次にそろえるブロックまで、グリッドから外れることがあります。囲みの中のテキストは囲み自身の行送りに従い、グリッドはありません。
+**そろえを行わない指定**。`snapToGrid: false`を指定すると、代わりに、ブロックの下のアキが正確に保たれます。`headings`（すべてのレベル、1つのレベル、または1つの見出しスタイル）、段落スタイル、囲みスタイル、`codeStyle`に設定できます。そのようなブロックのあとのテキストは、次にそろえるブロックまで、グリッドから外れることがあります。囲みの中のテキストは囲み自身の行送りに従い、グリッドはありません。
 
 
 ## バックエンドインターフェース
@@ -559,7 +559,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
 
 ## データフロー
 
-<Illustration name="DataFlow" data='{"title": "エンジン内のデータフロー", "desc": "コンテンツと設定は配置のパスに入ります。パスはすべてのブロックを構造化し、計測し、配置し、リソースをフロートとして置き、改行・改段と分割禁止の規則を適用します。buildDocumentは、すべてのラウンドが落ち着くまで、ヒントを付けてパスを再実行します。完成したVDTはバックエンドに渡され、HTMLまたはPDFとして描画されます。", "caption": "端から端までのデータフロー：1回の配置のパス、ヒントを付けた再実行、そして描画。", "input": ["コンテンツ +", "設定"], "loopBadge": "配置のパス", "passesInLoop": [{"num": "1", "name": "構造化"}, {"num": "2", "name": "計測"}, {"num": "3", "name": "配置"}, {"num": "4", "name": "フロート"}, {"num": "5", "name": "分割禁止"}], "loopCondition": "ヒントを付けて再実行、各ラウンドは上限まで", "convergedLabel": "VDT（完成）", "backend": "バックエンド：描画", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "エンジン内のデータフロー", "desc": "コンテンツと設定は配置のパスに入ります。パスはすべてのブロックを構造化し、計測し、配置し、リソースをフロートとして置き、改行・改段と分割禁止の規則を適用します。buildDocumentは、すべてのラウンドが落ち着くまで、ヒントを付けてパスを再実行します。完成したVDTはバックエンドに渡され、HTMLまたはPDFとして描画されます。", "caption": "入力から出力までのデータの流れ：1回の配置のパス、ヒントを付けた再実行、そして描画。", "input": ["コンテンツ +", "設定"], "loopBadge": "配置のパス", "passesInLoop": [{"num": "1", "name": "構造化"}, {"num": "2", "name": "計測"}, {"num": "3", "name": "配置"}, {"num": "4", "name": "フロート"}, {"num": "5", "name": "分割禁止"}], "loopCondition": "ヒントを付けて再実行、各ラウンドは上限まで", "convergedLabel": "VDT（完成）", "backend": "バックエンド：描画", "output": "HTML / PDF"}' />
 
 
 ## 対象外とするもの
@@ -595,7 +595,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
     </tr>
     <tr>
       <td><code>Resource</code></td>
-      <td>種類を持つビットマップ／SVG／表／動画のリソース。計測の段階で<code>ResolvedResourceBlock</code>になり、種類が<code>'resource'</code>のインラインの<code>VDTBlock</code>（配置が<code>'here'</code>の場合）か、ページの帯に置かれるフロートのどちらかになる（リソースの配置）</td>
+      <td>種類ごとのリソース（ビットマップ、SVG、表、動画）。計測の段階で<code>ResolvedResourceBlock</code>になり、種類が<code>'resource'</code>のインラインの<code>VDTBlock</code>（配置が<code>'here'</code>の場合）か、ページの帯に置かれるフロートのどちらかになる（リソースの配置）</td>
     </tr>
     <tr>
       <td><code>ResourceType</code></td>
@@ -603,7 +603,7 @@ const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPa
     </tr>
     <tr>
       <td><code>ResourcePlacement</code></td>
-      <td>リソースごとのフロート配置の上書き。<code>position</code>（<code>'auto'</code> / <code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>）と<code>span</code>（<code>'column'</code> / <code>'page'</code> / <code>'side'</code>）に加えて、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>columns</code>、<code>captionSide</code>、<code>shrink</code>、<code>minScale</code>、<code>captionMeasure</code>、<code>wrap</code>、<code>wrapGap</code>、<code>citingPage</code>がある。各フィールドは種類の<code>defaultPlacement</code>にフォールバックし、リソースの配置で解決される</td>
+      <td>リソースごとのフロート配置の上書き。<code>position</code>（<code>'auto'</code> / <code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>）と<code>span</code>（<code>'column'</code> / <code>'page'</code> / <code>'side'</code>）に加えて、<code>rotate</code>、<code>width</code>、<code>align</code>、<code>columns</code>、<code>captionSide</code>、<code>shrink</code>、<code>minScale</code>、<code>captionMeasure</code>、<code>wrap</code>、<code>wrapGap</code>、<code>citingPage</code>がある。各フィールドは種類の<code>defaultPlacement</code>にフォールバックし、リソースの配置の段階で値が決まる</td>
     </tr>
     <tr>
       <td><code>PostextNote</code></td>

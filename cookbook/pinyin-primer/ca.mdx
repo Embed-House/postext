@@ -10,9 +10,9 @@ pageNotes: { "1": "Lliçó primera, 人之初: una banda verd pàl·lid amb l'et
 
 ## Què compondràs
 
-Dos plecs de 《蒙學誦讀》, una cartilla inventada de Hong Kong, on els infants llegeixen en veu alta el *Clàssic dels tres caràcters* en mandarí (putonghua). Cada pàgina és una lliçó de quatre parelles de versos en kai de 一号 (26 pt), i cada caràcter va sota la seva síl·laba de pinyin. Les síl·labes van en Andika perquè dibuixa la a i la g d'un sol pis que imprimeixen els llibres escolars xinesos. Una banda verd pàl·lid porta l'etiqueta vermella de la lliçó, una petita aquarel·la i el títol en 初号 (42 pt) amb la seva pròpia lectura. Sota el text, sis quadrícules d'escriptura (田字格) guarden els caràcters per copiar, i una nota explica a la família què diuen els versos. La seva parella en castellà és <RecipeLink slug="reading-primer-syllables">la cartilla de síl·labes en xips</RecipeLink>, on cada síl·laba és un xip de color en lloc d'una lectura sobre un caràcter.
+Dues dobles pàgines de 《蒙學誦讀》, una cartilla inventada de Hong Kong, on els infants llegeixen en veu alta el *Clàssic dels tres caràcters* en mandarí (putonghua). Cada pàgina és una lliçó de quatre parelles de versos en kai de 一号 (26 pt), i cada caràcter va sota la seva síl·laba de pinyin. Les síl·labes van en Andika perquè dibuixa la a i la g d'un sol pis que imprimeixen els llibres escolars xinesos. Una banda verd pàl·lid porta l'etiqueta vermella de la lliçó, una petita aquarel·la i el títol en 初号 (42 pt) amb la seva pròpia lectura. Sota el text, sis quadrícules d'escriptura (田字格) guarden els caràcters per copiar, i una nota explica a la família què diuen els versos. La seva parella en castellà és <RecipeLink slug="reading-primer-syllables">la cartilla de síl·labes en xips</RecipeLink>, on cada síl·laba és un xip de color en lloc d'una lectura sobre un caràcter.
 
-Una cartilla s'aparta expressament de les normes del llibre xinès. Un infant llegeix pocs caràcters i grans, així que la línia en porta dotze de 26 pt on un llibre en posa entre 25 i 40 de 10,5 pt, i la interlínia passa una mica del doble del cos perquè hi càpiguen les lectures. Cada parella de versos va centrada a la seva pròpia línia, sense justificar ni sagnar. El text va en kai, la lletra que segueix el pinzell, perquè ensenya els traços que l'infant aprèn a escriure; un llibre el compondria en song.
+Una cartilla s'aparta expressament de les normes del llibre xinès. Un infant llegeix pocs caràcters i grans, així que la línia en porta dotze de 26 pt on un llibre en posa entre 25 i 40 de 10,5 pt, i l'interlineat passa una mica del doble del cos perquè hi càpiguen les lectures. Cada parella de versos va centrada a la seva pròpia línia, sense justificar ni sagnar. El text va en kai, la lletra que segueix el pinzell, perquè ensenya els traços que l'infant aprèn a escriure; un llibre el compondria en song.
 
 ## Elaboració
 
@@ -26,7 +26,7 @@ El codi és [la resposta curta](#la-resposta-curta) de més amunt. `{人之初|r
 
 El text d'un disseny no imprimeix lectures, així que el títol no pot sortir del disseny de l'obertura. El títol de primer nivell, 第一課, dibuixa la banda, la vinyeta i l'etiqueta vermella; el de la lliçó és el títol de segon nivell que va a sota, sense disseny propi, en 初号, i el compositor de text el compon amb el seu pinyin. `reserve: false` deixa la banda i la vinyeta fora de l'alçada del títol, i `span: 'page'` les pinta sota el text.
 
-Un disseny de títol no té en compte `parity`, així que la vinyeta té un element a cada costat de la pàgina: `{attr.left}` a 14 mm de la vora esquerra i `{attr.right}` a 14 mm de la dreta. Les lliçons de pàgina parella escriuen `# 第一課 {left="sprout"}`, i les de senar, `{right="shuttle"}`, de manera que cada vinyeta queda al costat exterior del plec; l'element al qual falta l'atribut no dibuixa res.
+Un disseny de títol no té en compte `parity`, així que la vinyeta té un element a cada costat de la pàgina: `{attr.left}` a 14 mm de la vora esquerra i `{attr.right}` a 14 mm de la dreta. Les lliçons de pàgina parella escriuen `# 第一課 {left="sprout"}`, i les de senar, `{right="shuttle"}`, de manera que cada vinyeta queda al costat exterior de la doble pàgina; l'element al qual falta l'atribut no dibuixa res.
 
 ### 3 · Sis quadrícules amb un sol atribut
 
@@ -63,6 +63,6 @@ Les lectures en bopomofo es col·loquen en una columna a la dreta de cada caràc
 
 ## Errors freqüents
 
-- Aquesta recepta no ofereix PDF. El `fontsourceProvider` del kit incrusta només el fitxer latin d'una font, i les lletres amb to ā ǎ ǐ ǒ ǔ són a latin-ext, així que el PDF les perdria i postext-pdf avisaria de cadascuna amb `missingGlyph`. Si el necessites, compon les lectures amb una font xinesa, els fitxers de la qual tria `cjkPdfProvider` caràcter a caràcter.
+- Aquesta recepta no ofereix PDF. El `fontsourceProvider` del kit incrusta només el fitxer latin d'una font, i les lletres amb to ā ǎ ǐ ǒ ǔ són a latin-ext, així que el PDF les perdria i postext-pdf avisaria de cadascuna amb `missingGlyph`. Si el necessites, compon les lectures amb una font xinesa: `cjkPdfProvider` en tria els fitxers caràcter a caràcter.
 
 - Comprova cada caràcter de les quadrícules amb les formes normalitzades de la regió. LXGW WenKai TC dibuixa 為 amb la part de dalt de 爲 (爫), una forma antiga que passa al text corrent, com a 老何為 i 為人子, però no en una quadrícula que copia un infant de Hong Kong. Per això la lliçó tercera practica 幼.

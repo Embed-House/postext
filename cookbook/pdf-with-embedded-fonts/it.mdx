@@ -40,7 +40,7 @@ Nel PDF, il pannello dei segnalibri mostra il titolo della copertina, *Programme
 
 <Excerpt region="cover" />
 
-La copertina stampa due valori del frontmatter tramite `{author}` e `{subtitle}`, e le proprietà del documento PDF prendono il titolo *Home from Sea* e l’autore *The Harbour Consort* dallo stesso blocco. La data e il luogo sono attributi del titolo della copertina. Il disegno dietro di loro è un unico SVG largo quanto la pagina, e il PDF lo conserva come tracciati vettoriali.
+La copertina stampa due valori del front matter tramite `{author}` e `{subtitle}`, e le proprietà del documento PDF prendono il titolo *Home from Sea* e l’autore *The Harbour Consort* dallo stesso blocco. La data e il luogo sono attributi del titolo della copertina. Il disegno dietro di loro è un unico SVG largo quanto la pagina, e il PDF lo conserva come tracciati vettoriali.
 
 ## Varianti
 
@@ -69,4 +69,4 @@ Punta la fetch alle tue copie degli stessi file WOFF2 statici, uno per peso e st
 
 Elenca in `FONTS` ogni carattere che le tue pagine usano, compresi il grassetto e il corsivo del testo. Se ne manca uno, lo schermo sembra comunque corretto, perché il kit carica il carattere senza avvisi, ma il PDF stampa il carattere più vicino del provider, e solo i sostituti nella riga di stato rivelano lo scambio.
 
-Usa file statici, uno per peso e stile. Da un WOFF2 variabile il PDF incorpora solo l’istanza predefinita, quindi un tratto in grassetto si stamperebbe in tondo ([Perché un provider di font?](/it/docs/configuration-pdf-output#perché-un-provider-di-font)).
+Usa file statici, uno per peso e stile. Da un WOFF2 variabile il PDF incorpora solo l’istanza predefinita, quindi una parte in grassetto si stamperebbe in tondo ([Perché un provider di font?](/it/docs/configuration-pdf-output#perché-un-provider-di-font)).

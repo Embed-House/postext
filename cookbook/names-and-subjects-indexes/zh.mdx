@@ -10,7 +10,7 @@ pageNotes: { "6": "人名索引：姓氏在前的人名排在Bodoni字母标题�
 
 ## 成品一览
 
-学术专著《Letters of Metal》的第四章，论述印刷字体，开本155 × 235 mm：正文单栏Crimson Pro，标题用Bodoni斜体，强调色为砖红。文章从古腾堡的textura哥特体讲起，经过Jenson、Aldus和Griffo、Garamond和Plantin、Caslon和Baskerville、Fournier的点制，以及Pradell和Gil刻制、Ibarra印刷的西班牙字体，一直到Bodoni的现代体。它像这类书一样以两个对页上的索引结束：左页是印刷商、刻字匠和赞助人，右页是字体、工具和书籍。两个索引都来自同一份带标记的文本，其中每个页码都是标记实际所在的页。
+学术专著《Letters of Metal》的第四章，论述印刷字体，开本155 × 235 mm：正文单栏Crimson Pro，标题用Bodoni斜体，强调色为砖红。文章从古腾堡的textura哥特体讲起，经过Jenson、Aldus和Griffo、Garamond和Plantin、Caslon和Baskerville、Fournier的点制，以及Pradell和Gil刻制、Ibarra印刷的西班牙字体，一直到Bodoni的现代体。它像这类书一样以左右相对两页上的索引结束：左页是印刷商、刻字匠和赞助人，右页是字体、工具和书籍。两个索引都来自同一份带标记的文本，其中每个页码都是标记实际所在的页。
 
 ## 做法
 
@@ -20,7 +20,7 @@ pageNotes: { "6": "人名索引：姓氏在前的人名排在Bodoni字母标题�
 
 ### 2 · 人名倒装，并按读者会去查的字母排序
 
-人名按姓氏在前登记：`term="Garamond, Claude"`、`term="Dall’Aglio, Margherita"`。逗号是条目的一部分，所以排序器会像索引编制者那样把*Didot, Firmin*排在*Didot, François-Ambroise*之前。印出的形式会被归到错误字母下时，用`sort`指定排序键：英文版标记为`term="42-line Bible" sort="Forty-two-line Bible"`，这样这部圣经排在F下，而不是另开一个0–9组。子条目（`term="Foundries!Plantin-Moretus"`）、粗体的主要页码（`main`）、Bodoni一节首尾的`range="start"`和`range="end"`，以及互见（`see="Italic"`、`seealso="Matrices"`）完成其余工作；带层级的`see`目标印出时用冒号连接，如*Humanist type. See Roman type: Venetian*。
+人名按姓氏在前登记：`term="Garamond, Claude"`、`term="Dall’Aglio, Margherita"`。逗号是条目的一部分，所以排序器会像索引编制者那样把*Didot, Firmin*排在*Didot, François-Ambroise*之前。印出的形式会被归到错误字母下时，用`sort`指定排序键：英文版标记为`term="42-line Bible" sort="Forty-two-line Bible"`，这样这部圣经排在F下，而不是另开一个0–9组。子条目（`term="Foundries!Plantin-Moretus"`）、粗体的主要页码（`main`）、Bodoni一节首尾的`range="start"`和`range="end"`，以及互见（`see="Italic"`、`seealso="Matrices"`）完成其余工作；多级的`see`目标印出时用冒号连接，如*Humanist type. See Roman type: Venetian*。
 
 ### 3 · 构建一次，文档自己确定页码
 

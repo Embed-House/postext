@@ -51,7 +51,7 @@ The reference is split into nineteen pages. Each group below is one page, follow
 **[Hyphenation and language](/en/docs/configuration-language)**
 
 - [Hyphenation](/en/docs/configuration-language#hyphenation) — hyphenation patterns, words kept whole, ragged text.
-- [Document language](/en/docs/configuration-language#document-language) — the top-level `locale`: hyphenation fallback, built-in resource types and the continuation strings of tables and split callouts, the language tagged into an accessible PDF; the [digits](/en/docs/configuration-language#document-digits) (`numerals`) and the [text direction](/en/docs/configuration-language#text-direction) (`direction`) it implies; and the [languages and scripts](/en/docs/configuration-language#languages-and-scripts) Postext sets. The guide to right-to-left books is [Arabic layout](/en/docs/arabic-layout).
+- [Document language](/en/docs/configuration-language#document-language) — the top-level `locale`, which sets the hyphenation fallback, the built-in resource types, the continuation strings of tables and split callouts, and the language tagged in an accessible PDF; the [digits](/en/docs/configuration-language#document-digits) (`numerals`) and the [text direction](/en/docs/configuration-language#text-direction) (`direction`) it implies; and the [languages and scripts](/en/docs/configuration-language#languages-and-scripts) Postext sets. The guide to right-to-left books is [Arabic layout](/en/docs/arabic-layout).
 - [Languages and scripts](/en/docs/configuration-language#languages-and-scripts) — the writing systems Postext sets, and the pages that explain each.
 - [Arabic text](/en/docs/configuration-language#arabic-text) — shaping, kashida, vowel marks and digits of Arabic text.
 
@@ -72,7 +72,7 @@ The reference is split into nineteen pages. Each group below is one page, follow
 **[Notes and references](/en/docs/configuration-notes-references)**
 
 - [Footnotes](/en/docs/configuration-notes-references#footnotes) — `footnotes`: where the notes cited with `[^id]` go, how they are numbered and how they look.
-- [Line numbers](/en/docs/configuration-notes-references#line-numbers) — `lineNumbers`: the number of every fifth line of verse, or of the text, in the margin; what is counted, where the count starts again, which side the numbers stand on.
+- [Line numbers](/en/docs/configuration-notes-references#line-numbers) — `lineNumbers`: a number in the margin on every fifth line of verse, or of the text: what is counted, where the count starts again, and which side the numbers go on.
 - [Cross-references](/en/docs/configuration-notes-references#cross-references) — `crossRefs`: the words printed around the number or the page of a `:ref`, and its default style.
 - [Citations](/en/docs/configuration-notes-references#citations) — `citations`: the citation style, and the look of citations and of the bibliography.
 - [Table of contents](/en/docs/configuration-notes-references#table-of-contents) — what `:::toc` prints: entry typography, leaders, page numbers, author lines, part rows.
@@ -86,7 +86,7 @@ The reference is split into nineteen pages. Each group below is one page, follow
 
 - [Resource types](/en/docs/configuration-resources#resource-types) — typed numbering for figures, tables, and custom kinds.
 - [Table style](/en/docs/configuration-resources#table-style) (with [named table styles](/en/docs/configuration-resources#named-table-styles)) and [Caption style](/en/docs/configuration-resources#caption-style) — typography and decoration for table resources and their captions.
-- [Diagram style](/en/docs/configuration-resources#diagram-style) — single-ink recolouring of embedded SVG diagrams for spot-colour printing.
+- [Diagram style](/en/docs/configuration-resources#diagram-style) — recolouring embedded SVG diagrams in a single ink for spot-colour printing.
 - [Video style](/en/docs/configuration-resources#video-style) — `videoStyle`: the play mark and the QR code printed over a video's poster, and what its players offer in the HTML viewer and in EPUB.
 
 **[Styles and parts](/en/docs/configuration-styles)**
@@ -119,7 +119,7 @@ The reference is split into nineteen pages. Each group below is one page, follow
 - [PDF generation (config)](/en/docs/configuration-fonts-colors-viewers#pdf-generation-config) — outlines, accessible (tagged) output, forced colour space for the PDF backend.
 - [Print production (config)](/en/docs/configuration-fonts-colors-viewers#print-production-config) — `print`: PDF/X-1a and PDF/X-4, the ICC output profiles, black (K-only greys, overprint, rich black), colours authored in CMYK, the preflight and the print preview.
 - [Contrast check (config)](/en/docs/configuration-fonts-colors-viewers#contrast-check-config) — `contrast`: text against its ground at WCAG AA or AAA, on screen and on the paper of the output profile, and reversed text too fine for the press.
-- [Content check (config)](/en/docs/configuration-fonts-colors-viewers#content-check-config) — `checks.contentInConfig`: design texts that hold the book's text instead of placeholders, with an allow list for the title and the publisher.
+- [Content check (config)](/en/docs/configuration-fonts-colors-viewers#content-check-config) — `checks.contentInConfig`: flags texts in the design that hold the book's own text instead of placeholders, with an allow list for the title and the publisher.
 - [Folio viewer (config)](/en/docs/configuration-fonts-colors-viewers#folio-viewer-config) — paper stock, binding, surface and light of the 3D book viewer.
 - [Debug](/en/docs/configuration-fonts-colors-viewers#debug) — visual overlays and authoring warnings for the editor.
 

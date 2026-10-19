@@ -1,7 +1,7 @@
 ---
 title: "Un cahier économie sur papier saumon"
 summary: "Un quotidien berlinois de huit pages dont le cahier Business tient en un style de titre : papier saumon, six colonnes, accent pétrole, bloc :::paper pour Folio."
-plain: "Huit pages d’un quotidien inventé. Les quatre premières portent l’actualité sur un papier blanc grisé ; les pages économie qui suivent sont imprimées sur papier saumon, avec des colonnes plus étroites et leurs propres couleurs."
+plain: "Huit pages d’un quotidien inventé. Les quatre premières donnent l’actualité sur un papier blanc grisé ; les pages économie qui suivent sont imprimées sur papier saumon, avec des colonnes plus étroites et leurs propres couleurs."
 description: "Un quotidien berlinois avec Postext, code compris : l’actualité sur cinq colonnes, puis un cahier Business saumon sur six, marchés, graphiques, papier Folio."
 question: "Comment imprimer les pages économie d’un journal sur papier saumon, avec leur grille, jusque dans la vue 3D ?"
 aliases: ["pages saumon", "papier rose", "cahier économie", "pages financières", "cahier de journal", "berlinois", "Berliner", "cours de la Bourse", "données de marché", "journal plié", "couleur de rubrique", "salmon pages", "papel salmón"]
@@ -10,7 +10,7 @@ pageNotes: { "1": "La une de « The Marrowick Ledger » : le titre du journal
 
 ## Ce que vous allez composer
 
-Huit pages de *The Marrowick Ledger*, un quotidien inventé, sur la feuille berlinoise de 315 × 470 mm. Les pages 1 à 4 portent l’actualité sur un papier journal blanc grisé, en cinq colonnes filetées, avec un bandeau de rubrique rouge sur chaque page. À partir de la page 5, le journal change. Le cahier « Business » est imprimé sur papier saumon, comme les pages financières le sont depuis bien plus d’un siècle : la page passe à #f2d3c0, la grille se resserre à six colonnes, l’accent passe du rouge au pétrole, et une bande des clôtures de marché du jour se place sous le titre du cahier. On y trouve une page marchés avec une année de l’indice de la ville, un graphique par secteur et quatre tableaux de données, des nouvelles des entreprises et une page de cours. Dans la vue 3D de Folio, les feuilles se plient l’une dans l’autre et les quatre dernières pages sortent sur un papier saumon.
+Huit pages de *The Marrowick Ledger*, un quotidien inventé, sur la feuille berlinoise de 315 × 470 mm. Les pages 1 à 4 donnent l’actualité sur un papier journal blanc grisé, en cinq colonnes filetées, avec un bandeau de rubrique rouge sur chaque page. À partir de la page 5, le journal change. Le cahier « Business » est imprimé sur papier saumon, comme les pages financières le sont depuis bien plus d’un siècle : la page passe à #f2d3c0, la grille se resserre à six colonnes, l’accent passe du rouge au pétrole, et une bande des clôtures de marché du jour se place sous le titre du cahier. On y trouve une page marchés avec une année de l’indice de la ville, un graphique par secteur et quatre tableaux de données, des nouvelles des entreprises et une page de cours. Dans la vue 3D de Folio, les feuilles se plient l’une dans l’autre et les quatre dernières pages sortent sur un papier saumon.
 
 ## Préparation
 
@@ -40,7 +40,7 @@ Le H1 est une ouverture sur toute la largeur de la page avec la parité `'any'` 
 
 <Excerpt region="boxes" />
 
-Un titre sur toute la largeur est un encadré sans cadre, sur toute la largeur de la page, qui contient un H2 dans l’une de trois tailles, et un filet de 1 pt au-dessus signale l’article suivant. À la page 5, le panneau *The terminal in numbers* flotte sur deux des six colonnes (`columns="2"` sur sa clôture), et la citation en exergue de la page 4 fait de même par `columns: 2` dans son style. Les encadrés de données contiennent deux à quatre tableaux côte à côte dans un groupe `:::columns`, et les publicités sont des encadrés sur toute la largeur de la page flottés en pied, encadrés d’un filet de 0,75 pt.
+Un titre sur toute la largeur est un encadré sans bordure, sur toute la largeur de la page, qui contient un H2 dans l’une de trois tailles, et un filet de 1 pt au-dessus signale l’article suivant. À la page 5, le panneau *The terminal in numbers* flotte sur deux des six colonnes (`columns="2"` sur son délimiteur), et la citation en exergue de la page 4 fait de même par `columns: 2` dans son style. Les encadrés de données contiennent deux à quatre tableaux côte à côte dans un groupe `:::columns`, et les publicités sont des encadrés sur toute la largeur de la page flottés en pied, encadrés d’un filet de 0,75 pt.
 
 ### 6 · Le papier sur lequel imprime Folio
 
@@ -55,7 +55,7 @@ Les pages d’actualité n’ont besoin de rien : `folio.paper` est un papier j
 :::
 ```
 
-Chaque page du bloc porte `page.paper` avec cette nuance, et Folio l’imprime sur ce papier. La nuance est la couleur de la page rapprochée du blanc à 60 % (README §4) : la page à plat peint déjà #f2d3c0, et un papier entièrement saumon dessous la teinterait deux fois. Le canvas, le HTML et le PDF ignorent `:::paper` et peignent la couleur de la page : c’est pourquoi la palette de la section règle aussi `paper`.
+Chaque page du bloc reçoit `page.paper` avec cette nuance, et Folio l’imprime sur ce papier. La nuance est la couleur de la page rapprochée du blanc à 60 % (README §4) : la page à plat peint déjà #f2d3c0, et un papier entièrement saumon dessous la teinterait deux fois. Le canvas, le HTML et le PDF ignorent `:::paper` et peignent la couleur de la page : c’est pourquoi la palette de la section règle aussi `paper`.
 
 ## Variantes
 

@@ -28,9 +28,9 @@ interface Dimension {
 }
 ```
 
-**Unités absolues** (`cm`, `mm`, `in`, `pt`, `px`) : elles sont converties en pixels selon la résolution (DPI) configurée. À 300 DPI, `1 cm` vaut environ 118 px.
+**Unités absolues** (`cm`, `mm`, `in`, `pt`, `px`) : elles sont converties en pixels selon la résolution (DPI) configurée. À 300 DPI, `1 cm` vaut environ 118 px.
 
-**Unités relatives** (`em`, `rem`) : elles suivent la taille de police courante. Un `em` est relatif à la taille de police de l’élément lui-même ; un `rem` est relatif à la taille de police du texte courant.
+**Unités relatives** (`em`, `rem`) : elles suivent le corps courant. Un `em` est relatif au corps de l’élément lui-même ; un `rem` est relatif au corps du texte courant.
 
 ### Couleurs
 
@@ -120,11 +120,11 @@ Ouvrez le panneau **Polices** depuis la barre d’activité de gauche (entre Res
 3. **Les variantes en double sont permises.** Si deux fichiers occupent le même emplacement (graisse, style), les deux sont conservés et un avertissement **Variante de police en double** apparaît pour que vous corrigiez les réglages des fichiers en trop.
 4. **Supprimer la variante** ou **Supprimer la famille** : retire l’entrée de la configuration *et* les octets stockés dans IndexedDB.
 
-Une fois une famille déclarée, chaque sélecteur de police la range sous **Personnalisées**, au-dessus de la liste Google Fonts. La choisir branche la famille sur chaque champ de famille de police auquel vous l’appliquez.
+Une fois une famille déclarée, chaque sélecteur de police la range sous **Personnalisées**, au-dessus de la liste Google Fonts. La choisir l’applique à chaque champ de famille de police où vous la sélectionnez.
 
 ### Une famille de remplacement pour une famille sous licence
 
-Un livre peut être composé dans un caractère que son propriétaire n’a pas le droit de transmettre. Marquez la famille `redistributable: false` et un fichier `.postext` laisse ses fichiers de côté. Nommez dans `fallback` une famille libre de chasse proche : le fichier qui s’ouvre sans eux coupe ses lignes près de l’endroit où les coupe le vrai caractère, au lieu de déborder de ses blocs dans une police de secours plus large. Les faces dont la famille n’a aucun fichier sont composées dans les coupes du `fallback` de même graisse et de même inclinaison, sous le nom de la famille sous licence, dans les aperçus, le worker de mise en page, le PDF et la ligne de commande. Une famille qui a des fichiers les garde ; elle ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier, un italique par exemple, et les graisses intermédiaires entre ses propres fichiers sont choisies comme pour toute famille. Dans le panneau Polices, **Famille de remplacement** (dans la famille, au-dessus de ses fichiers) reçoit le nom ; vide, la famille reste comme avant. Le PDF d’un livre composé ainsi embarque la face libre : le PDF final se fait donc avec les fichiers sous licence. Depuis postext 1.42. Depuis postext 1.43, la famille libre va aussi là où la famille sous licence ne peut pas aller : un EPUB ou un export HTML, depuis le Sandbox ou depuis `postext`, embarque les fontes de la famille de remplacement sous le nom de la famille sous licence, tout comme les images SVG dont le texte est composé dans cette famille ; le système de lecture compose ainsi le livre dans une fonte de la chasse pour laquelle ses lignes ont été coupées. Les fichiers propres de la famille ne quittent jamais le livre. Une famille sans `fallback`, ou dont le remplacement n'a pas de fichier, est nommée sans fichiers comme avant ; l'onglet EPUB du Sandbox liste les familles composées dans une famille de remplacement.
+Un livre peut être composé dans un caractère que son propriétaire n’a pas le droit de transmettre. Marquez la famille `redistributable: false` et un fichier `.postext` laisse ses fichiers de côté. Indiquez dans `fallback` une famille libre de chasse proche : le fichier qui s’ouvre sans eux coupe ses lignes près de l’endroit où les coupe le vrai caractère, au lieu de déborder de ses blocs dans une police de secours plus large. Les faces dont la famille n’a aucun fichier sont composées dans les styles du `fallback` de même graisse et de même inclinaison, sous le nom de la famille sous licence, dans les aperçus, le worker de mise en page, le PDF et la ligne de commande. Une famille qui a des fichiers les garde ; elle ne prend au `fallback` que l’inclinaison dont elle n’a aucun fichier, un italique par exemple, et les graisses intermédiaires entre ses propres fichiers sont choisies comme pour toute famille. Dans le panneau Polices, **Famille de remplacement** (dans la famille, au-dessus de ses fichiers) reçoit le nom ; vide, la famille reste comme avant. Le PDF d’un livre composé ainsi embarque la face libre : le PDF final se fait donc avec les fichiers sous licence. Depuis postext 1.42. Depuis postext 1.43, la famille libre va aussi là où la famille sous licence ne peut pas aller : un EPUB ou un export HTML, depuis le Sandbox ou depuis `postext`, embarque les fontes de la famille de remplacement sous le nom de la famille sous licence, tout comme les images SVG dont le texte est composé dans cette famille ; le système de lecture compose ainsi le livre dans une fonte de la chasse pour laquelle ses lignes ont été coupées. Les fichiers propres de la famille ne quittent jamais le livre. Une famille sans `fallback`, ou dont le remplacement n’a pas de fichier, est déclarée sans fichiers, comme avant ; l’onglet EPUB du Sandbox liste les familles composées dans une famille de remplacement.
 
 ### Comportement au rendu
 
@@ -198,7 +198,7 @@ const config: PostextConfig = {
 
 ### Faire référence à une entrée de la palette
 
-Toute `ColorValue` de la configuration peut porter un champ facultatif `paletteId` qui pointe vers une entrée de `colorPalette` : fond de page, couleurs du texte courant (y compris la couleur de `:ref`), couleurs des titres, filets de colonne, couleurs des listes, couleurs des tableaux, des légendes, des pastilles et des encadrés (boîte, bande, icône, marqueur, étiquette, titre, corps), couleurs des traits de coupe et de la grille de ligne de base, indicateurs de débogage, et chaque couleur d’une maquette : titres courants, ouvertures de titre et maquettes en colonne, maquettes et titres courants des styles de titre, pages de partie et lignes de partie de la table des matières (texte, filet, fond et bordure de boîte, contour, lettrine). Quand il est présent, le `hex` / `model` de l’entrée de palette l’emporte sur le `hex` / `model` de repli stocké à côté. Ce repli en ligne ne sert que si la palette est absente, vide ou ne contient pas cet identifiant : pratique pour livrer une configuration qui sera lue par un outil ignorant les palettes.
+Toute `ColorValue` de la configuration peut avoir un champ facultatif `paletteId` qui pointe vers une entrée de `colorPalette` : fond de page, couleurs du texte courant (y compris la couleur de `:ref`), couleurs des titres, filets de colonne, couleurs des listes, couleurs des tableaux, des légendes, des pastilles et des encadrés (boîte, bande, icône, marqueur, étiquette, titre, corps), couleurs des traits de coupe et de la grille de ligne de base, indicateurs de débogage, et chaque couleur d’une maquette : titres courants, ouvertures de titre et maquettes en colonne, maquettes et titres courants des styles de titre, pages de partie et lignes de partie de la table des matières (texte, filet, fond et bordure de boîte, contour, lettrine). Quand il est présent, le `hex` / `model` de l’entrée de palette l’emporte sur le `hex` / `model` de repli stocké à côté. Ce repli en ligne ne sert que si la palette est absente, vide ou ne contient pas cet identifiant : pratique pour livrer une configuration qui sera lue par un outil ignorant les palettes.
 
 **Modifié dans postext 1.5.** Jusqu’à postext 1.4, la palette n’atteignait qu’une liste fixe de réglages : les couleurs des maquettes (titres courants, ouvertures, styles de titre, parties, lignes de la table des matières), `bodyText.referenceColor`, les couleurs des étiquettes d’encadré et les couleurs du gras et de l’italique dans le corps des encadrés gardaient le `hex` stocké à côté de leur `paletteId`. Un document dont la valeur stockée diffère de l’entrée de palette (tout document modifié dans le Sandbox après le changement de l’entrée, et chaque `:ref` quand la Main Color n’est pas `#295AA3`) imprime désormais la couleur de la palette, comme le lien l’indique. Pour garder une couleur telle qu’elle était, retirez son `paletteId`.
 
@@ -206,10 +206,10 @@ Toute `ColorValue` de la configuration peut porter un champ facultatif `paletteI
 
 `buildDocument` applique la palette à deux endroits, pour que les couleurs référencées fonctionnent aussi bien pour les remplacements que vous avez écrits que pour les valeurs par défaut renseignées plus tard :
 
-1. `applyPaletteToConfig(config)` : résout chaque `ColorValue` de la configuration utilisateur brute qui porte un `paletteId`. Utile pour examiner ce que le moteur verra réellement.
+1. `applyPaletteToConfig(config)` : résout chaque `ColorValue` de la configuration utilisateur brute qui a un `paletteId`. Utile pour examiner ce que le moteur verra réellement.
 2. `applyPaletteToResolvedConfig(resolved, palette)` : s’exécute *après* la résolution des valeurs par défaut et réécrit les valeurs par défaut liées à la palette (couleur des titres, couleur du gras et de l’italique du texte courant, couleur de `:ref`, couleurs des listes, couleurs des maquettes par défaut) pour qu’elles correspondent à la palette active.
 
-Les deux parcourent toute la configuration, si bien qu’aucune couleur liée à la palette n’est oubliée. La plupart des couleurs du flux de texte (texte courant, titres, listes, tableaux, légendes, pastilles, boîte, titre et corps de l’encadré) en sortent comme de simples valeurs. Toutes les autres (couleurs des maquettes, couleur de `:ref`, étiquettes d’encadré) prennent le `hex` / `model` de la palette et **gardent leur `paletteId`**. C’est ce lien que l’attribut `palette` d’une partie et le `palette` d’un style de titre remplacent sur leurs pages (voir [Parties](/fr/docs/configuration-styles#parties)) ; il doit donc subsister. `htmlViewer.overrides` reste tel qu’il est écrit : la visionneuse HTML le fusionne en premier, et une palette qu’il contient s’applique alors à tout, maquettes comprises.
+Les deux parcourent toute la configuration : aucune couleur liée à la palette n’est donc oubliée. La plupart des couleurs du flux de texte (texte courant, titres, listes, tableaux, légendes, pastilles, boîte, titre et corps de l’encadré) en sortent comme de simples valeurs. Toutes les autres (couleurs des maquettes, couleur de `:ref`, étiquettes d’encadré) prennent le `hex` / `model` de la palette et **gardent leur `paletteId`**. C’est ce lien que l’attribut `palette` d’une partie et le `palette` d’un style de titre remplacent sur leurs pages (voir [Parties](/fr/docs/configuration-styles#parties)) ; il doit donc subsister. `htmlViewer.overrides` reste tel qu’il est écrit : la visionneuse HTML le fusionne en premier, et une palette qu’il contient s’applique alors à tout, maquettes comprises.
 
 Vous aurez rarement besoin d’appeler ces fonctions vous-même, mais elles sont toutes deux exportées pour que vous puissiez les examiner ou les réutiliser :
 
@@ -282,7 +282,7 @@ type HtmlViewerOverrides = Omit<PostextConfig, 'htmlViewer'>;
       <td><code>overrides</code></td>
       <td><code>HtmlViewerOverrides</code></td>
       <td>—</td>
-      <td>Une configuration partielle du document qui ne s’applique qu’à l’écran. La visionneuse HTML la fusionne par-dessus la configuration du document avant la mise en page (<code>applyHtmlViewerOverrides</code>) ; canvas et PDF l’ignorent. Les objets fusionnent récursivement ; un tableau <code>levels</code> (titres, listes, table des matières) fusionne entrée par entrée sur <code>level</code> ; tout autre tableau (les <code>elements</code> d’un emplacement de maquette, <code>calloutStyles</code>, <code>colorPalette</code>…) remplace en bloc le tableau de base. Usage typique : une ouverture de chapitre sans les bandeaux de l’imprimé, ou une page de partie dont le titre se replie contre le numéro au lieu d’une largeur fixe de format. Le Sandbox la modifie en JSON.</td>
+      <td>Une configuration partielle du document qui ne s’applique qu’à l’écran. La visionneuse HTML la fusionne par-dessus la configuration du document avant la mise en page (<code>applyHtmlViewerOverrides</code>) ; canvas et PDF l’ignorent. Les objets fusionnent récursivement ; un tableau <code>levels</code> (titres, listes, table des matières) fusionne entrée par entrée sur <code>level</code> ; tout autre tableau (les <code>elements</code> d’une zone de maquette, <code>calloutStyles</code>, <code>colorPalette</code>…) remplace en bloc le tableau de base. Usage typique : une ouverture de chapitre sans les bandeaux de l’imprimé, ou une page de partie dont le titre se replie contre le numéro au lieu d’une largeur fixe de format. Le Sandbox la modifie en JSON.</td>
     </tr>
   </tbody>
 </table>
@@ -319,7 +319,7 @@ Voir [Intégrer la visionneuse HTML](/fr/docs/configuration-html-folio-epub#int�
 
 ## Visionneuse Canvas
 
-La propriété `canvasViewer` règle l’espace entre les pages dans l’onglet Canvas du Sandbox (depuis postext 1.43). Elle appartient à la visionneuse, pas au livre : les valeurs sont des pixels d’écran à tout zoom, et les changer déplace les pages à l’écran sans recomposer le livre ; la pagination, les compositions enregistrées et le PDF restent ce qu’ils étaient. Le PDF, la visionneuse HTML et les autres sorties l’ignorent. Un livre dont les images courent sur la double page fixe `pageGap: 0`.
+La propriété `canvasViewer` règle l’espace entre les pages dans l’onglet Canvas du Sandbox (depuis postext 1.43). Elle appartient à la visionneuse, pas au livre : les valeurs sont des pixels d’écran à tout zoom, et les changer déplace les pages à l’écran sans recomposer le livre ; la pagination, les compositions enregistrées et le PDF restent ce qu’ils étaient. Le PDF, la visionneuse HTML et les autres sorties l’ignorent. Un livre dont les images courent sur la double page fixe `pageGap: 0`.
 
 ```ts
 interface CanvasViewerConfig {
@@ -342,7 +342,7 @@ interface CanvasViewerConfig {
       <td><code>pageGap</code></td>
       <td><code>number</code></td>
       <td><code>24</code></td>
-      <td>Espace, en pixels d’écran, entre la page de gauche et la page de droite d’une paire en vue double page. Un entier de 0 à 200. À <code>0</code>, les deux pages se touchent et le Canvas ne dessine ni ombre ni coins arrondis à la jonction : une image ou une composition sur la double page se lit d’un seul tenant. La vue page seule n’a pas de paires.</td>
+      <td>Espace, en pixels d’écran, entre la page de gauche et la page de droite d’une paire en vue double page. Un entier de 0 à 200. À <code>0</code>, les deux pages se touchent et le Canvas ne dessine ni ombre ni coins arrondis à la jonction : une image ou une composition sur la double page se lit d’un seul tenant. La vue page seule n’a pas de paires.</td>
     </tr>
     <tr>
       <td><code>rowGap</code></td>
@@ -426,13 +426,13 @@ interface PdfGenerationConfig {
       <td><code>colorSpace</code></td>
       <td><code>'rgb' | 'cmyk' | 'grayscale'</code></td>
       <td><code>'cmyk'</code></td>
-      <td>Espace colorimétrique cible utilisé quand `forceColorSpace` est activé. Utilisez `'cmyk'` pour l’impression offset, `'rgb'` pour les PDF destinés uniquement à l’écran et `'grayscale'` pour les épreuves en noir et blanc. Sans effet quand `forceColorSpace` vaut false. Le CMJN est séparé avec le profil de sortie de [`print`](#production-pour-limpression-configuration) (FOGRA39 par défaut) et son traitement du noir, et les images RVB sont converties elles aussi ; une norme PDF/X définie là-bas écrit du CMJN quoi que dise ce réglage.</td>
+      <td>Espace colorimétrique cible utilisé quand `forceColorSpace` est activé. Utilisez `'cmyk'` pour l’impression offset, `'rgb'` pour les PDF destinés uniquement à l’écran et `'grayscale'` pour les épreuves en noir et blanc. Sans effet quand `forceColorSpace` vaut false. Le CMJN est séparé avec le profil de sortie de [`print`](#production-pour-limpression-configuration) (FOGRA39 par défaut) et son traitement du noir, et les images RVB sont converties elles aussi ; une norme PDF/X définie là-bas écrit du CMJN quelle que soit la valeur de ce réglage.</td>
     </tr>
     <tr>
       <td><code>accessible</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Produit un PDF accessible et balisé, orienté PDF/UA-1 : un arbre de structure logique dans l’ordre de lecture (titres qui ne sautent jamais de niveau, paragraphes, listes, citations, encadrés, tableaux avec cellules d’en-tête, figures avec leur texte alternatif et leur légende, formules, renvois cliquables sous forme de liens, le contenu d’un `:::toc` comme un `TOC` avec un `TOCI` par ligne : le numéro de la ligne en `Lbl`, son titre et sa page dans une `Reference` qui contient le lien), le titre et la langue du document (le `locale` de premier niveau), l’identification PDF/UA dans les métadonnées XMP, et chaque marque décorative (fond de page, filets, grille de ligne de base, en-têtes et pieds de page courants, traits de coupe, en-têtes de tableau répétés, titre répété et marque de suite d’un encadré coupé) signalée comme artefact pour que les lecteurs d’écran l’ignorent. Une figure sans `altText` se rabat sur sa légende, puis sur son étiquette. Une figure ou un tableau flottant est lu juste après le texte qui le cite en premier, ou le texte qui précède sa ligne `::resource`, et une boîte flottante après le texte qui précède sa clôture, même quand le flottant est placé sur une page ultérieure ; une liste ou une table des matières qui se poursuit au-delà d’un flottant reste un seul élément, et une liste placée dans une boîte flottante ou ancrée à la page (`placement: 'fixed'`) forme une seule liste. Ne le désactivez que pour des fichiers maîtres d’impression où la structure supplémentaire n’est pas souhaitée.</td>
+      <td>Produit un PDF accessible et balisé, orienté PDF/UA-1 : un arbre de structure logique dans l’ordre de lecture (titres qui ne sautent jamais de niveau, paragraphes, listes, citations, encadrés, tableaux avec cellules d’en-tête, figures avec leur texte de remplacement et leur légende, formules, renvois cliquables sous forme de liens, le contenu d’un `:::toc` comme un `TOC` avec un `TOCI` par ligne : le numéro de la ligne en `Lbl`, son titre et sa page dans une `Reference` qui contient le lien), le titre et la langue du document (le `locale` de premier niveau), l’identification PDF/UA dans les métadonnées XMP, et chaque marque décorative (fond de page, filets, grille de ligne de base, en-têtes et pieds de page courants, traits de coupe, en-têtes de tableau répétés, titre répété et marque de suite d’un encadré coupé) signalée comme artefact pour que les lecteurs d’écran l’ignorent. Une figure sans `altText` se rabat sur sa légende, puis sur son étiquette. Une figure ou un tableau flottant est lu juste après le texte qui le cite en premier, ou le texte qui précède sa ligne `::resource`, et une boîte flottante après le texte qui précède son délimiteur, même quand le flottant est placé sur une page ultérieure ; une liste ou une table des matières qui se poursuit au-delà d’un flottant reste un seul élément, et une liste placée dans une boîte flottante ou ancrée à la page (`placement: 'fixed'`) forme une seule liste. Ne le désactivez que pour des fichiers maîtres d’impression où la structure supplémentaire n’est pas souhaitée.</td>
     </tr>
   </tbody>
 </table>
@@ -506,7 +506,7 @@ interface CustomOutputProfile {
       <td><code>standard</code></td>
       <td><code>'none' | 'pdfx1a' | 'pdfx4'</code></td>
       <td><code>'none'</code></td>
-      <td>La variante PDF/X du fichier. `'pdfx1a'` écrit du PDF/X-1a:2003 : CMJN et gris uniquement, sans transparence, accepté par tous les imprimeurs. `'pdfx4'` écrit du PDF/X-4 : transparence et gestion des couleurs conservées, pour les flux actuels. L’une comme l’autre sépare chaque couleur avec le profil de sortie, quoi que dise `pdfGeneration.colorSpace`.</td>
+      <td>La variante PDF/X du fichier. `'pdfx1a'` écrit du PDF/X-1a:2003 : CMJN et gris uniquement, sans transparence, accepté par tous les imprimeurs. `'pdfx4'` écrit du PDF/X-4 : transparence et gestion des couleurs conservées, pour les flux actuels. L’une comme l’autre sépare chaque couleur avec le profil de sortie, quelle que soit la valeur de `pdfGeneration.colorSpace`.</td>
     </tr>
     <tr>
       <td><code>outputProfile</code></td>
@@ -542,7 +542,7 @@ interface CustomOutputProfile {
       <td><code>inkLimit</code></td>
       <td><code>number</code></td>
       <td>celle du profil</td>
-      <td>Le total maximal de C+M+J+N, en pourcentage, accepté par le contrôle en amont. Par défaut, la limite selon laquelle le profil sépare (300 % pour la plupart des conditions offset, 230 % pour le papier journal IFRA26).</td>
+      <td>Le total maximal de C+M+J+N, en pourcentage, accepté par le contrôle en amont. Par défaut, la limite selon laquelle le profil sépare (300 % pour la plupart des conditions offset, 230 % pour le papier journal IFRA26).</td>
     </tr>
     <tr>
       <td><code>black</code></td>
@@ -582,21 +582,21 @@ print: {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>fogra39</code></td><td>Offset, papier couché (condition ISO Coated v2)</td><td>FOGRA39</td><td>300 %</td></tr>
-    <tr><td><code>fogra51</code></td><td>Offset, couché premium (condition PSO Coated v3)</td><td>FOGRA51</td><td>300 %</td></tr>
-    <tr><td><code>fogra52</code></td><td>Offset, non couché sans bois (condition PSO Uncoated v3)</td><td>FOGRA52</td><td>300 %</td></tr>
-    <tr><td><code>fogra47</code></td><td>Offset, non couché blanc (PSO Uncoated ISO 12647)</td><td>FOGRA47</td><td>300 %</td></tr>
-    <tr><td><code>fogra29</code></td><td>Offset, non couché blanc</td><td>FOGRA29</td><td>300 %</td></tr>
-    <tr><td><code>fogra30</code></td><td>Offset, non couché jaunâtre</td><td>FOGRA30</td><td>340 %</td></tr>
-    <tr><td><code>fogra27</code></td><td>Offset, couché (ISO 12647-2:1996)</td><td>FOGRA27</td><td>300 %</td></tr>
-    <tr><td><code>fogra28</code></td><td>Rotative offset heatset, LWC brillant</td><td>FOGRA28</td><td>300 %</td></tr>
-    <tr><td><code>fogra45</code></td><td>Rotative offset heatset, LWC amélioré</td><td>FOGRA45</td><td>300 %</td></tr>
-    <tr><td><code>fogra40</code></td><td>Rotative offset heatset, papier SC</td><td>FOGRA40</td><td>340 %</td></tr>
-    <tr><td><code>gracol2006</code></td><td>GRACoL 2006, couché grade 1</td><td>CGATS TR 006</td><td>300 %</td></tr>
-    <tr><td><code>swop3</code></td><td>SWOP 2006, couché grade 3</td><td>CGATS TR 003</td><td>300 %</td></tr>
-    <tr><td><code>swop5</code></td><td>SWOP 2006, couché grade 5</td><td>CGATS TR 005</td><td>300 %</td></tr>
-    <tr><td><code>ifra26</code></td><td>Papier journal coldset (ISO 12647-3)</td><td>IFRA26</td><td>230 %</td></tr>
-    <tr><td><code>snap2007</code></td><td>Papier journal SNAP 2007</td><td>CGATS TR 002</td><td>320 %</td></tr>
+    <tr><td><code>fogra39</code></td><td>Offset, papier couché (condition ISO Coated v2)</td><td>FOGRA39</td><td>300 %</td></tr>
+    <tr><td><code>fogra51</code></td><td>Offset, couché premium (condition PSO Coated v3)</td><td>FOGRA51</td><td>300 %</td></tr>
+    <tr><td><code>fogra52</code></td><td>Offset, non couché sans bois (condition PSO Uncoated v3)</td><td>FOGRA52</td><td>300 %</td></tr>
+    <tr><td><code>fogra47</code></td><td>Offset, non couché blanc (PSO Uncoated ISO 12647)</td><td>FOGRA47</td><td>300 %</td></tr>
+    <tr><td><code>fogra29</code></td><td>Offset, non couché blanc</td><td>FOGRA29</td><td>300 %</td></tr>
+    <tr><td><code>fogra30</code></td><td>Offset, non couché jaunâtre</td><td>FOGRA30</td><td>340 %</td></tr>
+    <tr><td><code>fogra27</code></td><td>Offset, couché (ISO 12647-2:1996)</td><td>FOGRA27</td><td>300 %</td></tr>
+    <tr><td><code>fogra28</code></td><td>Rotative offset heatset, LWC brillant</td><td>FOGRA28</td><td>300 %</td></tr>
+    <tr><td><code>fogra45</code></td><td>Rotative offset heatset, LWC amélioré</td><td>FOGRA45</td><td>300 %</td></tr>
+    <tr><td><code>fogra40</code></td><td>Rotative offset heatset, papier SC</td><td>FOGRA40</td><td>340 %</td></tr>
+    <tr><td><code>gracol2006</code></td><td>GRACoL 2006, couché grade 1</td><td>CGATS TR 006</td><td>300 %</td></tr>
+    <tr><td><code>swop3</code></td><td>SWOP 2006, couché grade 3</td><td>CGATS TR 003</td><td>300 %</td></tr>
+    <tr><td><code>swop5</code></td><td>SWOP 2006, couché grade 5</td><td>CGATS TR 005</td><td>300 %</td></tr>
+    <tr><td><code>ifra26</code></td><td>Papier journal coldset (ISO 12647-3)</td><td>IFRA26</td><td>230 %</td></tr>
+    <tr><td><code>snap2007</code></td><td>Papier journal SNAP 2007</td><td>CGATS TR 002</td><td>320 %</td></tr>
   </tbody>
 </table>
 
@@ -617,12 +617,12 @@ const pdf = await renderToPdf(doc, {
 
 Les deux normes écrivent :
 
-- l’output intent (`GTS_PDFX`) qui nomme la condition d’impression et intègre le profil de destination ;
+- l’output intent (`GTS_PDFX`) qui indique la condition d’impression et intègre le profil de destination ;
 - l’identification dans le dictionnaire Info (`GTS_PDFXVersion`, `/Trapped /False`, le titre et les dates) et dans les métadonnées XMP (`pdfxid:GTSPDFXVersion`, les identifiants du document et de la version), fusionnée avec l’identification PDF/UA quand le fichier est balisé ;
 - une TrimBox et une BleedBox sur chaque page (la page entière quand il n’y a pas de traits de coupe) ;
 - l’`/ID` du trailer ;
 - chaque couleur en DeviceCMYK (ou en gris) via le profil, et les traits de coupe en couleur de repérage ;
-- aucune annotation de lien : un fichier destiné à la presse n’en porte aucune dans sa zone de fond perdu, donc les liens du PDF écran sont omis (les signets restent).
+- aucune annotation de lien : un fichier destiné à la presse n’en contient aucune dans sa zone de fond perdu : les liens du PDF écran sont donc omis (les signets restent).
 
 Le PDF/X-1a:2003 est du PDF 1.4 sans flux d’objets et sans transparence : une couleur translucide est appliquée telle qu’elle s’imprimerait sur le papier, l’alpha d’une image est aplati sur du blanc, et le négatif de page de débogage est omis (avec un avertissement `pageNegativeIgnored`). Le PDF/X-4 est du PDF 1.6 : la transparence reste, chaque page reçoit un groupe de transparence qui mélange en CMJN, et les images RVB conservées par `convertImages: false` sont étiquetées sRGB via `/DefaultRGB`.
 
@@ -660,7 +660,7 @@ interface PrintBlackConfig {
       <td><code>overprint</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Tout ce qui est peint en 100 % K seul (texte noir, filets, contours, petites formes noires) est en surimpression (`op`/`OP` avec `OPM 1`), pour qu’un décalage de plaque sur la presse n’ouvre jamais de liseré blanc autour. Tout le reste est en défonce ; les images et les dégradés ne sont jamais en surimpression.</td>
+      <td>Tout ce qui est peint en 100 % K seul (texte noir, filets, contours, petites formes noires) est en surimpression (`op`/`OP` avec `OPM 1`), pour qu’un décalage de plaque sur la presse n’ouvre jamais de liseré blanc autour. Tout le reste est en défonce ; les images et les dégradés ne sont jamais en surimpression.</td>
     </tr>
     <tr>
       <td><code>richBlack</code></td>
@@ -719,7 +719,7 @@ interface PrintPreflightConfig {
   </thead>
   <tbody>
     <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Exécute les contrôles.</td></tr>
-    <tr><td><code>minImageResolution</code></td><td><code>number</code></td><td><code>300</code></td><td>Une image matricielle placée qui n’atteint pas ce nombre de pixels par pouce à sa taille imprimée, recadrage compris, reçoit un avertissement : figures, images de cellule de tableau, images de maquette, cases de bande dessinée. Une image sans résolution propre s’imprime à `page.dpi` à sa taille naturelle, si bien qu’une page mise en page à 150 dpi imprime chacune de ces images à 150 ppi ; une image qui a une résolution (`bitmap.resolution`, `layout.bitmapResolution`) s’imprime à cette résolution à sa taille naturelle.</td></tr>
+    <tr><td><code>minImageResolution</code></td><td><code>number</code></td><td><code>300</code></td><td>Une image matricielle placée qui n’atteint pas ce nombre de pixels par pouce à sa taille imprimée, recadrage compris, reçoit un avertissement : figures, images de cellule de tableau, images de maquette, cases de bande dessinée. Une image sans résolution propre s’imprime à `page.dpi` à sa taille naturelle : une page mise en page à 150 dpi imprime donc chacune de ces images à 150 ppi ; une image qui a une résolution (`bitmap.resolution`, `layout.bitmapResolution`) s’imprime à cette résolution à sa taille naturelle.</td></tr>
     <tr><td><code>criticalImageResolution</code></td><td><code>number</code></td><td><code>150</code></td><td>En dessous, l’avertissement devient critique. Jamais au-dessus de `minImageResolution`.</td></tr>
     <tr><td><code>minRuleWidth</code></td><td><code>Dimension</code></td><td><code>0.25pt</code></td><td>Filets, bordures, filets de colonne, filets de tableau et bordures de case de bande dessinée plus fins que cette valeur.</td></tr>
     <tr><td><code>smallTextSize</code></td><td><code>Dimension</code></td><td><code>9pt</code></td><td>Texte de taille inférieure composé avec plus d’une encre (une couleur quadri, un noir enrichi) : il devient flou quand les plaques se décalent. Le texte noir, en K seul, n’est jamais compté.</td></tr>
@@ -729,7 +729,7 @@ interface PrintPreflightConfig {
   </tbody>
 </table>
 
-`preflightDocument(doc, options)` exécute les contrôles sur un document mis en page et renvoie une liste de problèmes, chacun avec un `kind`, une `severity` (`'critical'`, `'warning'` ou `'info'`), l’index de page `pageIndex` absolu dans le livre, le `rect` fautif (en px de page) et, quand l’élément en a une, sa plage source. Les types sont `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` et `nearTrim`. Sans `transform`, un neutre compte pour une encre et toute autre couleur pour trois, et l’encrage n’est pas vérifié ; avec une transformation, les décomptes et l’encrage sont exacts. La résolution d’une image est calculée à partir des pixels que déclare sa ressource, ou de ceux du fichier lui-même quand `imageSize(fileId)` les fournit (`bitmapInfo` sur les octets, ou l’image décodée) : une déclaration qui s’écarte de plus d’un pixel du fichier est signalée une fois comme `declaredPixelsMismatch`, un avertissement quand elle annonce plus de pixels que le fichier n’en a. `placedImageResolutions(doc, { resources, imageSize })` liste chaque image matricielle placée avec sa résolution effective en ppi, que le contrôle en amont soit activé ou non. Les étiquettes d’une figure comptent comme du texte pour `smallProcessText`, `inkLimit` et `safeZone`.
+`preflightDocument(doc, options)` exécute les contrôles sur un document mis en page et renvoie une liste de problèmes, chacun avec un `kind`, une `severity` (`'critical'`, `'warning'` ou `'info'`), l’index de page `pageIndex` absolu dans le livre, le `rect` fautif (en px de page) et, quand l’élément en a une, sa position dans la source. Les types sont `lowImageResolution`, `declaredPixelsMismatch`, `rgbImage`, `thinRule`, `smallProcessText`, `inkLimit`, `safeZone` et `nearTrim`. Sans `transform`, un neutre compte pour une encre et toute autre couleur pour trois, et l’encrage n’est pas vérifié ; avec une transformation, les décomptes et l’encrage sont exacts. La résolution d’une image est calculée à partir des pixels que déclare sa ressource, ou de ceux du fichier lui-même quand `imageSize(fileId)` les fournit (`bitmapInfo` sur les octets, ou l’image décodée) : une déclaration qui s’écarte de plus d’un pixel du fichier est signalée une fois comme `declaredPixelsMismatch`, un avertissement quand elle annonce plus de pixels que le fichier n’en a. `placedImageResolutions(doc, { resources, imageSize })` liste chaque image matricielle placée avec sa résolution effective en ppi, que le contrôle en amont soit activé ou non. Les étiquettes d’une figure comptent comme du texte pour `smallProcessText`, `inkLimit` et `safeZone`.
 
 ```ts
 import { bitmapInfo, outputTransform, parseIccProfile, preflightDocument, resolvePrintConfig } from 'postext';
@@ -772,7 +772,7 @@ La gestion des couleurs qu’utilise postext est exportée pour vos propres outi
 - `cmykToLab`, `labToCmyk`, `srgbToLab`, `labToSrgb`, `deltaE` et `totalAreaCoverage` sont les conversions unitaires ; `buildRgbLut` / `sampleRgbLut` créent et lisent des tables de correspondance denses pour le travail au pixel.
 - `OUTPUT_PROFILES`, `outputProfileInfo(id)` et `loadOutputProfile(id, baseUrl?)` donnent le catalogue ; `srgbProfileBytes()` écrit le profil sRGB avec lequel le PDF/X-4 étiquette le RVB ; `authoredCmykColors(config)` liste les couleurs qu’une configuration a définies en CMJN.
 
-Le résolveur et la fonction de nettoyage correspondent à ceux des autres sections : `resolvePrintConfig`, `stripPrintDefaults` et `profileInkLimit(config)` (la limite du profil que nomme une configuration, avant tout remplacement par `inkLimit`), avec `DEFAULT_PRINT_CONFIG`, `DEFAULT_PRINT_BLACK_CONFIG`, `DEFAULT_PRINT_PREFLIGHT_CONFIG` et `DEFAULT_RICH_BLACK`.
+Le résolveur et la fonction de nettoyage correspondent à ceux des autres sections : `resolvePrintConfig`, `stripPrintDefaults` et `profileInkLimit(config)` (la limite du profil que désigne une configuration, avant tout remplacement par `inkLimit`), avec `DEFAULT_PRINT_CONFIG`, `DEFAULT_PRINT_BLACK_CONFIG`, `DEFAULT_PRINT_PREFLIGHT_CONFIG` et `DEFAULT_RICH_BLACK`.
 
 
 ## Contrôle du contraste (configuration)
@@ -833,7 +833,7 @@ Le rapport qu’un texte doit atteindre dépend de sa taille et de sa graisse, c
   </tbody>
 </table>
 
-Le grand texte mesure 18 pt ou plus, ou 14 pt ou plus avec une graisse de 700 ou davantage. Les tailles sont les tailles imprimées, en points. Un exposant ou un indice est jugé à la taille du texte auquel il appartient.
+Le grand texte mesure 18 pt ou plus, ou 14 pt ou plus avec une graisse de 700 ou davantage. Les tailles sont les tailles imprimées, en points. Un exposant ou un indice est jugé à la taille du texte auquel il appartient.
 
 ### Écran et impression
 
@@ -850,18 +850,18 @@ Un texte clair réservé dans un fond encré se bouche à l’impression quand i
 
 ### Ce qui est examiné
 
-Le contrôle lit les lignes de chaque bloc avec leurs couleurs en ligne (gras, italique, renvois, pastilles), les marqueurs de liste, les lettrines, les légendes, les notes et les cellules de tableau, ainsi que le texte des emplacements de maquette : titres courants, ouvertures, maquettes de titre, titres de boîte. Le fond est le remplissage le plus haut sous le texte : une boîte de maquette, un encadré, une barre de légende, une cellule de tableau, une pastille, ou à défaut la couleur de la page (`page.backgroundColor`, ou le papier que la palette d’une partie donne à ses pages). Une couleur translucide est mélangée avec ce qui se trouve dessous. Le texte posé sur une image est ignoré, puisque son fond n’est pas d’une seule couleur, de même que le lettrage de bande dessinée, les lectures ruby et les formules. Les mots des étiquettes d’une figure sont lus sur leur plaque, à défaut dans leur halo ; les étiquettes nues sur l’image sont ignorées, comme tout texte sur une image.
+Le contrôle lit les lignes de chaque bloc avec leurs couleurs en ligne (gras, italique, renvois, pastilles), les marqueurs de liste, les lettrines, les légendes, les notes et les cellules de tableau, ainsi que le texte des zones de maquette : titres courants, ouvertures, maquettes de titre, titres de boîte. Le fond est le remplissage le plus haut sous le texte : une boîte de maquette, un encadré, une barre de légende, une cellule de tableau, une pastille, ou à défaut la couleur de la page (`page.backgroundColor`, ou le papier que la palette d’une partie donne à ses pages). Une couleur translucide est mélangée avec ce qui se trouve dessous. Le texte posé sur une image est ignoré, puisque son fond n’est pas d’une seule couleur, de même que le lettrage de bande dessinée, les lectures ruby et les formules. Les mots des étiquettes d’une figure sont lus sur leur fond, à défaut dans leur halo ; les étiquettes nues sur l’image sont ignorées, comme tout texte sur une image.
 
-Sur une page composée, le contrôle suit l'ordre dans lequel la page est peinte : les blocs par calque, la `decoration` du gabarit au calque 0. Le texte d'un bloc se lit sur la boîte du bloc lui-même quand son style en peint une ; sinon sur la boîte du décor placée dessous (une image du décor l'écarte, comme toute image) ; sinon sur la couleur de la page. Des lettres blanches posées sur un onglet coloré du décor sont donc mesurées contre cet onglet. Un bloc tourné ou mis à l'échelle est ramené sur la feuille avant que son fond soit lu, et le texte du décor est contrôlé de la même façon. Depuis postext 1.37.
+Sur une page composée, le contrôle suit l’ordre dans lequel la page est peinte : les blocs par calque, la `decoration` du gabarit au calque 0. Le texte d’un bloc se lit sur la boîte du bloc lui-même quand son style en peint une ; sinon sur la boîte du décor placée dessous (une image du décor l’écarte, comme toute image) ; sinon sur la couleur de la page. Des lettres blanches posées sur un onglet coloré du décor sont donc mesurées contre cet onglet. Un bloc tourné ou mis à l’échelle est ramené sur la feuille avant que son fond soit lu, et le texte du décor est contrôlé de la même façon. Depuis postext 1.37.
 
 ### Lancer le contrôle
 
-`contrastDocument(doc, options)` renvoie les résultats d’un document mis en page, du rapport le plus faible au plus élevé. Chacun comporte l’index de page `pageIndex` absolu dans le livre, le `rect` sur la feuille (en px de page) et la plage source de sa première occurrence, les deux couleurs telles que peintes (`color`, `background`), la plus petite taille `sizePt` à laquelle il est composé avec son `weight` et son `italic`, un `role` (`'body'`, `'heading'`, `'caption'`, `'table'`, `'runningHead'`, `'design'`, `'chip'` ou `'marker'`), le `text` du premier segment et le nombre `count` de segments composés ainsi. Une paire est signalée une fois par seuil, quel que soit le nombre de lignes qui l’utilisent.
+`contrastDocument(doc, options)` renvoie les résultats d’un document mis en page, du rapport le plus faible au plus élevé. Chacun comporte l’index de page `pageIndex` absolu dans le livre, le `rect` sur la feuille (en px de page) et la position dans la source de sa première occurrence, les deux couleurs telles que peintes (`color`, `background`), la plus petite taille `sizePt` à laquelle il est composé avec son `weight` et son `italic`, un `role` (`'body'`, `'heading'`, `'caption'`, `'table'`, `'runningHead'`, `'design'`, `'chip'` ou `'marker'`), le `text` du premier segment et le nombre `count` de segments composés ainsi. Une paire est signalée une fois par seuil, quel que soit le nombre de lignes qui l’utilisent.
 
 - `lowContrast` ajoute `level`, `large`, `required`, le rapport dans chaque rendu contrôlé (`screen`, `print`) et `failing`, les rendus sous `required`.
 - `reversedText` ajoute `reasons` (`'small'`, `'italic'`, `'light'`), `minimumPt` et `inks`.
 
-Les options sont `contrast` (les réglages résolus, quand ce ne sont pas ceux du document), `media` (les rendus, quoi que dise `mode`) et `transform`.
+Les options sont `contrast` (les réglages résolus, quand ce ne sont pas ceux du document), `media` (les rendus, quelle que soit la valeur de `mode`) et `transform`.
 
 ```ts
 import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
@@ -874,7 +874,7 @@ for (const issue of contrastDocument(doc, { transform })) {
 }
 ```
 
-`contrastPairs(doc, options)` renvoie chaque paire texte et fond que compose le document, conforme ou non, avec son rapport `screen`, son rapport `print` quand la transformation est fournie, le rapport `required` et les couleurs telles que la configuration les écrit (`textColor`, `groundColor`) : ce qu’un outil de conception affiche à côté d’un champ de couleur. Il s’exécute quoi que dise `enabled`.
+`contrastPairs(doc, options)` renvoie chaque paire texte et fond que compose le document, conforme ou non, avec son rapport `screen`, son rapport `print` quand la transformation est fournie, le rapport `required` et les couleurs telles que la configuration les écrit (`textColor`, `groundColor`) : ce qu’un outil de conception affiche à côté d’un champ de couleur. Il s’exécute quelle que soit la valeur d’`enabled`.
 
 Les mesures sont exportées pour vos propres outils :
 
@@ -889,7 +889,7 @@ Le résolveur et la fonction de nettoyage correspondent à ceux des autres secti
 
 ## Contrôle du contenu (configuration)
 
-La propriété `checks` regroupe les contrôles qui lisent la configuration elle-même. Elle en compte un aujourd’hui, `contentInConfig`, qui avertit quand une maquette garde le texte du livre. Un titre courant, la maquette d’un titre, une page de partie et la ligne d’une partie dans la table des matières relèvent de la forme : ils contiennent des variables (`{chapterTitle}`, `{titleText}`, `{number}`) et au plus un ou deux mots à eux, comme *Chapitre* devant `{chapterNumber}`. Le texte qui fait partie du livre va dans le Markdown, où la table des matières, la recherche, les traductions, le PDF balisé et l’EPUB le voient. La mise en page ne le lit pas : le modifier ne déplace jamais une ligne.
+La propriété `checks` regroupe les contrôles qui lisent la configuration elle-même. Elle en compte un aujourd’hui, `contentInConfig`, qui avertit quand une maquette garde le texte du livre. Un titre courant, la maquette d’un titre, une page de partie et la ligne d’une partie dans la table des matières relèvent de la forme : ils contiennent des variables (`{chapterTitle}`, `{titleText}`, `{number}`) et au plus un ou deux mots à eux, comme *Chapitre* devant `{chapterNumber}`. Le texte qui fait partie du livre va dans le Markdown, où la table des matières, la recherche, les traductions, le PDF balisé et l’EPUB le voient. La mise en page ne le lit pas : le modifier ne déplace jamais une ligne.
 
 ```ts
 interface ChecksConfig {
@@ -913,9 +913,9 @@ interface ChecksConfig {
   </thead>
   <tbody>
     <tr><td><code>contentInConfig.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Lance le contrôle.</td></tr>
-    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Expressions qu’une maquette peut répéter quelle que soit leur longueur : le titre du livre, le nom de l’éditeur. Elles sont comparées sans tenir compte de la casse, des espaces ni de la ponctuation autour des mots, et une expression trouvée dans un texte plus long en est retirée avant de compter le reste.</td></tr>
+    <tr><td><code>contentInConfig.allow</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Expressions qu’une maquette peut répéter quelle que soit leur longueur : le titre du livre, le nom de l’éditeur. Elles sont comparées sans tenir compte de la casse, des espaces ni de la ponctuation autour des mots, et une expression trouvée dans un texte plus long en est retirée avant de compter le reste.</td></tr>
     <tr><td><code>contentInConfig.maxWords</code></td><td><code>number</code></td><td><code>2</code></td><td>Nombre de mots qu’un texte de maquette peut contenir en plus de ses variables.</td></tr>
-    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Nombre de lettres et de chiffres qu’un texte de maquette peut contenir en plus de ses variables. Un caractère chinois, japonais, coréen ou thaï compte pour trois : il en passe environ huit.</td></tr>
+    <tr><td><code>contentInConfig.maxChars</code></td><td><code>number</code></td><td><code>24</code></td><td>Nombre de lettres et de chiffres qu’un texte de maquette peut contenir en plus de ses variables. Un caractère chinois, japonais, coréen ou thaï compte pour trois : il en passe environ huit.</td></tr>
   </tbody>
 </table>
 
@@ -923,15 +923,15 @@ interface ChecksConfig {
 
 - Son texte littéral est son `content` sans aucune variable (`{name}`, `{attr.key}`, `{firstMark.key}`), les échappements `{{` et `}}` lus comme des accolades et `\n` comme un retour à la ligne.
 - Un texte sans lettre ni chiffre (une ligne de points de conduite, un ornement, un `·`) n’est jamais du contenu.
-- Un mot est ce qui se trouve entre deux espaces et contient une lettre ou un chiffre : un `·` ou un `|` isolé n’est pas un mot, et une adresse comme `postext.dev` en est un.
-- Les expressions de `allow` sont retirées d’abord, ainsi que le `title`, le `subtitle`, l’`author` et le `publisher` des métadonnées du document (son front matter), qu’un titre courant reprend souvent.
+- Un mot est ce qui se trouve entre deux espaces et contient une lettre ou un chiffre : un `·` ou un `|` isolé n’est pas un mot, et une adresse comme `postext.dev` en est un.
+- Les expressions de `allow` sont retirées d’abord, ainsi que le `title`, le `subtitle`, l’`author` et le `publisher` des métadonnées du document (son en-tête YAML), qu’un titre courant reprend souvent.
 - Ce qui reste est du contenu s’il compte plus de `maxWords` mots ou plus de `maxChars` lettres et chiffres.
 
-Tous les emplacements de maquette sont lus : `header`, `footer`, l’`advancedDesign.slot` de chaque niveau de titre, l’`advancedDesign.slot`, le `header` et le `footer` de chaque style de titre, `parts.design`, `parts.versoDesign`, `toc.parts.design`, et les mêmes dans `htmlViewer.overrides`. `configDesignSlots(config)` les énumère avec leurs chemins, et `designTextLiteral(content)` renvoie le texte littéral d’un modèle.
+Toutes les zones de maquette sont lues : `header`, `footer`, l’`advancedDesign.slot` de chaque niveau de titre, l’`advancedDesign.slot`, le `header` et le `footer` de chaque style de titre, `parts.design`, `parts.versoDesign`, `toc.parts.design`, et les mêmes dans `htmlViewer.overrides`. `configDesignSlots(config)` les énumère avec leurs chemins, et `designTextLiteral(content)` renvoie le texte littéral d’un modèle.
 
 ### L’avertissement
 
-`collectConfigWarnings` (et `VDTDocument.configWarnings`) donne un avertissement `contentInConfig` par réglage qui contient du contenu : un style de titre (son `id` dans `ownerId`), un niveau de titre, l’en-tête, la maquette des parties. `path` nomme le réglage, `count` les textes de maquette en cause, `chars` leurs lettres et chiffres, `elements` le chemin de chacun (les 20 premiers) et `value` le début du premier (40 caractères au plus). Passez les métadonnées du document en second argument pour admettre son titre et son auteur ; une mise en page le fait d’elle-même.
+`collectConfigWarnings` (et `VDTDocument.configWarnings`) donne un avertissement `contentInConfig` par réglage qui contient du contenu : un style de titre (son `id` dans `ownerId`), un niveau de titre, l’en-tête, la maquette des parties. `path` indique le réglage, `count` les textes de maquette en cause, `chars` leurs lettres et chiffres, `elements` le chemin de chacun (les 20 premiers) et `value` le début du premier (40 caractères au plus). Passez les métadonnées du document en second argument pour admettre son titre et son auteur ; une mise en page le fait d’elle-même.
 
 ```js
 import { collectConfigWarnings } from 'postext';
@@ -942,14 +942,14 @@ collectConfigWarnings(config, { metadata: { title: 'A Year of Weather' } });
 //    count: 30, chars: 1017, elements: ['headingStyles[3].header.elements[2]', …] }]
 ```
 
-**Correction :** déplacez le texte dans le Markdown, sous forme de titre, d’encadré ou de paragraphe du chapitre auquel il appartient, et ne laissez que des variables dans la maquette. Une valeur qui change à chaque chapitre peut voyager sur la ligne du titre et se lire avec `{attr.key}` : `# Cartes {kicker="Leçon 4"}` et `{attr.kicker}` dans la maquette. Une expression qui relève de la forme, comme le nom de l’éditeur dans un titre courant, va dans `allow`.
+**Correction :** déplacez le texte dans le Markdown, sous forme de titre, d’encadré ou de paragraphe du chapitre auquel il appartient, et ne laissez que des variables dans la maquette. Une valeur qui change à chaque chapitre peut voyager sur la ligne du titre et se lire avec `{attr.key}` : `# Cartes {kicker="Leçon 4"}` et `{attr.kicker}` dans la maquette. Une expression qui relève de la forme, comme le nom de l’éditeur dans un titre courant, va dans `allow`.
 
-Le Sandbox affiche l’avertissement dans le panneau **Vérifications** et propose le contrôle dans **Maquette → Avancé → Contenu dans la configuration** ; `postext check` l’imprime.
+Le Sandbox affiche l’avertissement dans le panneau **Vérifications** et propose le contrôle dans **Maquette → Avancé → Contenu dans la configuration** ; `postext check` l’imprime.
 
 
 ## Visionneuse Folio (configuration)
 
-La propriété `folio` règle la façon dont la visionneuse Folio (`postext-folio`) présente le livre imprimé en 3D : l’angle de vue, le papier, la reliure, la surface sur laquelle repose le livre et la lumière. La mise en page l’ignore, tout comme les sorties canvas, HTML et PDF. `buildDocument` transporte les réglages résolus dans le VDT sous `doc.config.folio` quand la configuration en définit, si bien qu’un document qui n’en a pas garde son empreinte de mise en page.
+La propriété `folio` règle la façon dont la visionneuse Folio (`postext-folio`) présente le livre imprimé en 3D : l’angle de vue, le papier, la reliure, la surface sur laquelle repose le livre et la lumière. La mise en page l’ignore, tout comme les sorties canvas, HTML et PDF. `buildDocument` transporte les réglages résolus dans le VDT sous `doc.config.folio` quand la configuration en définit : un document qui n’en a pas garde donc son empreinte de mise en page.
 
 ```ts
 interface FolioConfig {
@@ -1156,7 +1156,7 @@ folio: {
 }
 ```
 
-Une page au format de journal (`page.sizePreset` `'broadsheet'`, `'berliner'`, `'tabloid'` ou `'compact'`) est présentée comme un journal quand la configuration ne nomme ni papier ni reliure : papier `newsprint` et reliure `folded` (depuis postext 1.18). Un papier ou une reliure que nomme la configuration est conservé, si bien que `paper: { type: 'uncoated' }` imprime un tabloïd sur papier offset. Les champs de papier définis sans sorte de papier (un `grammage`, un `shade`) s’appliquent au papier journal. Le résolveur et la fonction de nettoyage prennent le format en second argument, et `folioForTrim(folio, sizePreset)` écrit les deux valeurs par défaut dans la configuration :
+Une page au format de journal (`page.sizePreset` `'broadsheet'`, `'berliner'`, `'tabloid'` ou `'compact'`) est présentée comme un journal quand la configuration ne fixe ni papier ni reliure : papier `newsprint` et reliure `folded` (depuis postext 1.18). Un papier ou une reliure que fixe la configuration est conservé : `paper: { type: 'uncoated' }` imprime ainsi un tabloïd sur papier offset. Les champs de papier définis sans sorte de papier (un `grammage`, un `shade`) s’appliquent au papier journal. Le résolveur et la fonction de nettoyage prennent le format en second argument, et `folioForTrim(folio, sizePreset)` écrit les deux valeurs par défaut dans la configuration :
 
 ```ts
 resolveFolioConfig({ tilt: 30 }, 'tabloid');
@@ -1315,7 +1315,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`** renvoie, dans l’ordre de lecture, chaque ligne justifiée dont l’espacement des mots dépasse `threshold` : `{ block, line, ratio, x, y, width, height }`. `ratio` vaut `lineWordSpacing(line)` : l’espacement tel que `minWordSpacing` et `maxWordSpacing` le bornent (`justifiedSpaceLimitRatio` quand la ligne contient des espaces d’un autre caractère, sinon `justifiedSpaceRatio`), si bien qu’une ligne composée à la limite et contenant une espace en gras n’est pas signalée avec un seuil égal à `maxWordSpacing`. Le rectangle, en pixels de page, est la bande que couvre le surlignage : toute la largeur du bloc à hauteur de la ligne. Ce sont les lignes que le Sandbox surligne et signale comme `looseLine` dans son panneau Vérifications.
+- **`findLooseLines(doc, { threshold?, pageIndex? })`** renvoie, dans l’ordre de lecture, chaque ligne justifiée dont l’espacement des mots dépasse `threshold` : `{ block, line, ratio, x, y, width, height }`. `ratio` vaut `lineWordSpacing(line)` : l’espacement tel que `minWordSpacing` et `maxWordSpacing` le bornent (`justifiedSpaceLimitRatio` quand la ligne contient des espaces d’un autre caractère, sinon `justifiedSpaceRatio`) : une ligne composée à la limite et contenant une espace en gras n’est donc pas signalée avec un seuil égal à `maxWordSpacing`. Le rectangle, en pixels de page, est la bande que couvre le surlignage : toute la largeur du bloc à hauteur de la ligne. Ce sont les lignes que le Sandbox surligne et signale comme `looseLine` dans son panneau Vérifications.
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`** remplit ces bandes pour une page et renvoie les lignes peintes. Elle dessine en pixels de page sous la transformation courante du contexte ; appelez-la donc juste après `renderPage` ou `renderPageToCanvas` sur le même canvas : les deux laissent le contexte mis à l’échelle de la page. `color` accepte n’importe quel style de remplissage canvas.
 - **Valeurs par défaut.** Les deux fonctions utilisent le seuil (3) et la couleur (`#ff000040`) par défaut, et non le `debug.looseLineHighlight` du document : ce réglage appartient au Sandbox. Pour suivre une configuration, passez `resolveDebugConfig(config.debug).looseLineHighlight.threshold` et `.color.hex`.
 
@@ -1323,7 +1323,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 
 `debug.warnings` détermine quels problèmes de rédaction apparaissent dans le panneau **Vérifications** du Sandbox (réglé dans **Maquette → Avancé → Avertissements**). Chaque clé est un interrupteur booléen indépendant ; mettez-en une à `false` pour faire taire cet avertissement précis sans désactiver les autres.
 
-Ces interrupteurs ne filtrent que le panneau du Sandbox. Les avertissements que le moteur enregistre lui-même (boîtes qui débordent de leur colonne dans `doc.warnings` ; identifiants de ressource, directives, intégrations et identifiants de style inconnus, et grilles de tableau irrégulières dans `doc.contentWarnings`) y figurent quoi que disent les interrupteurs, et les moteurs de rendu signalent les images qu’ils peignent comme espaces réservés ; voir [Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document).
+Ces interrupteurs ne filtrent que le panneau du Sandbox. Les avertissements que le moteur enregistre lui-même (boîtes qui débordent de leur colonne dans `doc.warnings` ; identifiants de ressource, directives, intégrations et identifiants de style inconnus, et grilles de tableau irrégulières dans `doc.contentWarnings`) y figurent quel que soit l’état des interrupteurs, et les moteurs de rendu signalent les images qu’ils peignent comme espaces réservés ; voir [Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document).
 
 ```ts
 interface WarningsToggleConfig {
@@ -1380,7 +1380,7 @@ interface WarningsToggleConfig {
       <td><code>designIssues</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Signale les problèmes d’intégrité dans les emplacements de maquette : en-têtes et pieds de page, ouverture de partie et verso blanc qui la suit, lignes de partie de la table des matières, emplacements de maquette avancée des titres, et maquette et titres courants de section de chaque style de titre. Couvre les chaînes d’ancrage circulaires et les références d’ancrage orphelines (un élément ancré à un <code>#id</code> qui n’existe plus), un titre sur toute la largeur de la page dont le <code>breakBefore</code> est désactivé, et une maquette avancée activée dont les éléments n’affichent jamais <code>{'{titleText}'}</code>.</td>
+      <td>Signale les problèmes d’intégrité dans les zones de maquette : en-têtes et pieds de page, ouverture de partie et verso blanc qui la suit, lignes de partie de la table des matières, maquettes avancées des titres, et maquette et titres courants de section de chaque style de titre. Couvre les chaînes d’ancrage circulaires et les références d’ancrage orphelines (un élément ancré à un <code>#id</code> qui n’existe plus), un titre sur toute la largeur de la page dont le <code>breakBefore</code> est désactivé, et une maquette avancée activée dont les éléments n’affichent jamais <code>{'{titleText}'}</code>.</td>
     </tr>
   </tbody>
 </table>
@@ -1402,20 +1402,20 @@ En plus de ceux-ci, le panneau liste toujours les avertissements que soulève la
 
 ### Avertissements de configuration
 
-Ces erreurs de la configuration elle-même ne passent jamais sous silence, et aucun interrupteur ne les masque, sauf celui que nomme le dernier point. Le moteur n’échoue sur aucune d’elles ; il substitue une valeur, ou ignore le réglage, et le signale :
+Ces erreurs de la configuration elle-même ne passent jamais sous silence, et aucun interrupteur ne les masque, sauf celui que mentionne le dernier point. Le moteur n’échoue sur aucune d’elles ; il substitue une valeur, ou ignore le réglage, et le signale :
 
 - **Format de numérotation inconnu** : un `numberFormat` de liste numérotée, un `page.pageNumbering.format` ou le `counterFormat` d’un type de ressource qui ne correspond à aucune des [graphies de format de numérotation](/fr/docs/configuration-page-layout#graphies-des-formats-de-numérotation). La numérotation se fait en décimal.
 - **Pile de polices dans une famille** : un `fontFamily` (ou n’importe quel `…FontFamily`) qui contient une pile de polices CSS. Le texte est composé dans la première famille de la pile (voir [Une seule famille par `fontFamily`](/fr/docs/configuration-text#une-seule-famille-par-fontfamily)).
-- **Colonne latérale sans place** : un `sideColumnPercent` de mise en page `'oneAndHalf'` (celui du document, ou la `layout` propre d’un style de titre) qui laisserait l’une des colonnes sous 1 % de la largeur du contenu, ou qui n’est pas un nombre. Les colonnes sont découpées selon la valeur la plus proche que les deux acceptent, et `used` la nomme (`sideColumnPercentClamped` ; voir la [mise en page `'oneAndHalf'`](/fr/docs/configuration-page-layout#types-de-mise-en-page)).
-- **Nombre de colonnes hors limites** : un `columnCount` de mise en page `'multiple'` (celui du document, ou la `layout` propre d’un style de titre) qui n’est pas un nombre entier de 3 à 8. La page est découpée selon le nombre valide le plus proche (3 pour une valeur qui n’est pas un nombre), et `used` le nomme (`columnCountClamped` ; voir la [mise en page `'multiple'`](/fr/docs/configuration-page-layout#types-de-mise-en-page)).
-- **Grille de caractères trop grande** : un `cjk.grid` avec plus de caractères par ligne ou de lignes par page que les marges ne le permettent. La grille est réglée sur le maximum qui tient, et `used` nomme ce nombre (`cjkGridClamped` ; voir [Grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)).
-- **Réglage de titre inconnu** : une clé que n’ont pas `headings`, `headings.balancing`, un niveau de titre, un style de titre ou un style de paragraphe : un `letterSpacng` mal orthographié, un `tracking` emprunté à un autre outil, un `level` sur un style de titre, un `fontStyle: 'italic'` sur un style de paragraphe (qui attend `italic: true`). Une tabulation est vérifiée de la même façon (un `leaders` au lieu de `leader`). Le moteur l’ignore (jusqu’à postext 1.4, il le faisait sans rien dire). `value` est la clé, `used` est vide, et `suggestion` nomme le réglage le plus proche, quand il n’en diffère que d’une ou deux lettres ou seulement par la casse (`unknownConfigKey`).
-- **Valeur de réglage inconnue** : un réglage qui accepte un mot parmi quelques-uns et qui en contient un autre, comme `direction: 'right'` (il accepte `auto`, `ltr` ou `rtl`). Le moteur lit la valeur par défaut à la place, et `used` nomme ce qu’elle donne : pour `direction`, le sens de la langue du document (`unknownConfigValue`). Un `align` de tabulation qui n’est aucun de ses quatre mots est lu comme `'start'`, et une `position` qui n’est ni une longueur, ni `'end'`, ni un pourcentage fait ignorer la tabulation (`used` vaut `'none'`). Les mots des réglages de bande dessinée sont vérifiés aussi ([Bande dessinée › Avertissements de bande dessinée](/fr/docs/comics#avertissements-de-bande-dessinée)) : `used` est la valeur à laquelle le réglage s’est résolu (la valeur par défaut propre d’un style de bulle, pour un style intégré), et `suggestion` nomme le mot le plus proche de la valeur, quand il y en a un. Le `level` et le `mode` du contrôle du contraste sont vérifiés de la même façon : `used` vaut `'AA'` ou `'auto'`. `canvasViewer.pageGap` et `canvasViewer.rowGap` sont vérifiés de la même façon : `used` est l’entier de 0 à 200 en lequel la valeur a été lue (depuis postext 1.43).
+- **Colonne latérale sans place** : un `sideColumnPercent` de mise en page `'oneAndHalf'` (celui du document, ou la `layout` propre d’un style de titre) qui laisserait l’une des colonnes sous 1 % de la largeur du contenu, ou qui n’est pas un nombre. Les colonnes sont découpées selon la valeur la plus proche que les deux acceptent, et `used` l’indique (`sideColumnPercentClamped` ; voir la [mise en page `'oneAndHalf'`](/fr/docs/configuration-page-layout#types-de-mise-en-page)).
+- **Nombre de colonnes hors limites** : un `columnCount` de mise en page `'multiple'` (celui du document, ou la `layout` propre d’un style de titre) qui n’est pas un nombre entier de 3 à 8. La page est découpée selon le nombre valide le plus proche (3 pour une valeur qui n’est pas un nombre), et `used` l’indique (`columnCountClamped` ; voir la [mise en page `'multiple'`](/fr/docs/configuration-page-layout#types-de-mise-en-page)).
+- **Grille de caractères trop grande** : un `cjk.grid` avec plus de caractères par ligne ou de lignes par page que les marges ne le permettent. La grille est réglée sur le maximum qui tient, et `used` indique ce nombre (`cjkGridClamped` ; voir [Grille de caractères](/fr/docs/configuration-east-asian#grille-de-caractères)).
+- **Réglage de titre inconnu** : une clé que n’ont pas `headings`, `headings.balancing`, un niveau de titre, un style de titre ou un style de paragraphe : un `letterSpacng` mal orthographié, un `tracking` emprunté à un autre outil, un `level` sur un style de titre, un `fontStyle: 'italic'` sur un style de paragraphe (qui attend `italic: true`). Une tabulation est vérifiée de la même façon (un `leaders` au lieu de `leader`). Le moteur l’ignore (jusqu’à postext 1.4, il le faisait sans rien dire). `value` est la clé, `used` est vide, et `suggestion` propose le réglage le plus proche, quand il n’en diffère que d’une ou deux lettres ou seulement par la casse (`unknownConfigKey`).
+- **Valeur de réglage inconnue** : un réglage qui accepte un mot parmi quelques-uns et qui en contient un autre, comme `direction: 'right'` (il accepte `auto`, `ltr` ou `rtl`). Le moteur lit la valeur par défaut à la place, et `used` indique ce qu’elle donne : pour `direction`, le sens de la langue du document (`unknownConfigValue`). Un `align` de tabulation qui n’est aucun de ses quatre mots est lu comme `'start'`, et une `position` qui n’est ni une longueur, ni `'end'`, ni un pourcentage fait ignorer la tabulation (`used` vaut `'none'`). Les mots des réglages de bande dessinée sont vérifiés aussi ([Bande dessinée › Avertissements de bande dessinée](/fr/docs/comics#avertissements-de-bande-dessinée)) : `used` est la valeur à laquelle le réglage s’est résolu (la valeur par défaut propre d’un style de bulle, pour un style intégré), et `suggestion` propose le mot le plus proche de la valeur, quand il y en a un. Le `level` et le `mode` du contrôle du contraste sont vérifiés de la même façon : `used` vaut `'AA'` ou `'auto'`. `canvasViewer.pageGap` et `canvasViewer.rowGap` sont vérifiés de la même façon : `used` est l’entier de 0 à 200 en lequel la valeur a été lue (depuis postext 1.43).
 - **Numéros de ligne en texte vertical** : `lineNumbers.enabled: true` dans un document composé verticalement (`layout.writingMode: 'vertical-rl'`). Les pages verticales n’ont pas de numéros de ligne, et `used` vaut `false` (`lineNumbersUnsupported` ; voir [Numéros de ligne](/fr/docs/configuration-notes-references#numéros-de-ligne)).
-- **Habillage en texte vertical** : le `defaultPlacement.wrap` d’un type de ressource dans un document composé verticalement. Les pages verticales ne composent pas de texte à côté d’une figure, et `used` vaut `none` (`wrapUnsupported` ; voir [Format du document › Habillage](/fr/docs/document-format-resources#habillage-du-texte)). Un `wrap` qui ne nomme aucun côté est une valeur de réglage inconnue.
-- **Style d’encadré basé sur un autre** : un style d’encadré dont l’`extends` ne nomme aucun style de `calloutStyles` (`calloutStyleExtendsUnknown`, avec l’identifiant le plus proche dans `suggestion`), ou dont la chaîne d’`extends` revient à lui (`calloutStyleExtendsCycle`, `value` la boucle `a → b → a`). Le style reste seul, avec les valeurs par défaut pour ce qu’il laisse vide (voir [Styles basés sur un autre](/fr/docs/configuration-callouts#styles-basés-sur-un-autre)).
-- **Gabarits de page et styles d’étiquette** : un problème dans `pageTemplates` ou `labelStyles` : un identifiant ou un nom en double, des `extends`, des ancrages ou des blocs chaînés qui bouclent, un style, un bloc ou un gabarit qui n’existe pas, un minimum supérieur à son maximum, un style d’étiquette d’ancrage absent de `labelStyles` (vérifié quand les ressources sont fournies : `collectConfigWarnings(config, { resources })`). Leur `path` est un pointeur JSON (`/pageTemplates/3/frames/2/style`) ; chaque type est décrit avec sa cause et sa correction dans [Avertissements des gabarits de page](/fr/docs/configuration-composed-pages#avertissements-des-gabarits-de-page).
-- **Contenu dans une maquette** : un élément de texte de maquette dont le texte, en plus de ses variables, dépasse une étiquette courte, c’est-à-dire le texte du livre gardé dans la configuration. Un avertissement par réglage (un style de titre, l’en-tête, la maquette des parties), avec le chemin de chaque texte (`contentInConfig` ; voir [Contrôle du contenu](#contrôle-du-contenu-configuration)). Contrairement aux autres, il peut être désactivé : `checks.contentInConfig.enabled: false`.
+- **Habillage en texte vertical** : le `defaultPlacement.wrap` d’un type de ressource dans un document composé verticalement. Les pages verticales ne composent pas de texte à côté d’une figure, et `used` vaut `none` (`wrapUnsupported` ; voir [Format du document › Habillage du texte](/fr/docs/document-format-resources#habillage-du-texte)). Un `wrap` qui n’indique aucun côté est une valeur de réglage inconnue.
+- **Style d’encadré basé sur un autre** : un style d’encadré dont l’`extends` ne désigne aucun style de `calloutStyles` (`calloutStyleExtendsUnknown`, avec l’identifiant le plus proche dans `suggestion`), ou dont la chaîne d’`extends` revient à lui (`calloutStyleExtendsCycle`, `value` la boucle `a → b → a`). Le style reste seul, avec les valeurs par défaut pour ce qu’il laisse vide (voir [Styles basés sur un autre](/fr/docs/configuration-callouts#styles-basés-sur-un-autre)).
+- **Gabarits de page et styles d’étiquette** : un problème dans `pageTemplates` ou `labelStyles` : un identifiant ou un nom en double, des `extends`, des ancrages ou des blocs chaînés qui bouclent, un style, un bloc ou un gabarit qui n’existe pas, un minimum supérieur à son maximum, un style d’étiquette d’ancrage absent de `labelStyles` (vérifié quand les ressources sont fournies : `collectConfigWarnings(config, { resources })`). Leur `path` est un pointeur JSON (`/pageTemplates/3/frames/2/style`) ; chaque type est décrit avec sa cause et sa correction dans [Avertissements des gabarits de page](/fr/docs/configuration-composed-pages#avertissements-des-gabarits-de-page).
+- **Contenu dans une maquette** : un élément de texte de maquette dont le texte, en plus de ses variables, dépasse un libellé court, c’est-à-dire le texte du livre gardé dans la configuration. Un avertissement par réglage (un style de titre, l’en-tête, la maquette des parties), avec le chemin de chaque texte (`contentInConfig` ; voir [Contrôle du contenu](#contrôle-du-contenu-configuration)). Contrairement aux autres, il peut être désactivé : `checks.contentInConfig.enabled: false`.
 
 Le Sandbox les liste dans le panneau **Vérifications** avec le chemin du réglage. Dans le code, `buildDocument` les place sur le document sous `configWarnings` (absent quand la configuration est propre), et `collectConfigWarnings(config)` les renvoie sans rien mettre en page :
 
@@ -1433,4 +1433,4 @@ collectConfigWarnings(config); // the same list
 
 Chaque configuration partielle imbriquée est aussi vérifiée : styles de titre, listes à l’intérieur des parties, `htmlViewer.overrides`, éléments de maquette.
 
-`formatWarning` (voir [Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)) les décrit aussi, avec le chemin du réglage en tête (`bodyText.fontFamily: font stack "EB Garamond, serif" — set in "EB Garamond"`, `headingStyles[0].letterSpacng: unknown setting "letterSpacng" — ignored (did you mean "letterSpacing"?)`), si bien qu’un hôte peut journaliser en une seule boucle les trois listes que renvoie une composition.
+`formatWarning` (voir [Avertissements dans le document](/fr/docs/configuration-programmatic-usage#avertissements-dans-le-document)) les décrit aussi, avec le chemin du réglage en tête (`bodyText.fontFamily: font stack "EB Garamond, serif" — set in "EB Garamond"`, `headingStyles[0].letterSpacng: unknown setting "letterSpacng" — ignored (did you mean "letterSpacing"?)`) : un hôte peut donc journaliser en une seule boucle les trois listes que renvoie une composition.

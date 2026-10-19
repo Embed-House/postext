@@ -5,7 +5,7 @@ plain: "Un court article de recherche pour une conférence, sur deux colonnes. L
 description: "Un article de conférence IEEE dans Postext : deux colonnes en US Letter, citations numérotées par citeproc-js, plages regroupées, renvois de section et de page."
 question: "Comment composer un article de conférence avec des citations IEEE numérotées et une liste de références ?"
 aliases: ["IEEE", "IEEEtran", "article de conférence", "actes de colloque", "citations numérotées", "deux colonnes", "mots-clés", "résumé", "BibTeX", "citeproc"]
-pageNotes: { "1": "Page 1 : une bande bleu pâle en haut porte la ligne de l’atelier en petites capitales bleues, le titre sur deux lignes « Optimal Line Breaking in the Browser: What It Costs and When It Pays », centré, et trois blocs d’auteurs côte à côte. Sous la bande, le résumé et les mots-clés en gras sur toute la largeur, puis deux colonnes justifiées sous les titres centrés « I. INTRODUCTION » et « II. RELATED WORK », avec les citations [1] et [2]–[4] et les renvois « Section II », « Section III », « Section IV, on p. 2 ».", "2": "Page 2 : les sections III à VI, les remerciements et le titre « REFERENCES » au-dessus de sept entrées numérotées en 8 pt, chaque [n] dans sa propre colonne ; les deux colonnes finissent à la même hauteur." }
+pageNotes: { "1": "Page 1 : une bande bleu pâle en haut contient la ligne de l’atelier en petites capitales bleues, le titre sur deux lignes « Optimal Line Breaking in the Browser: What It Costs and When It Pays », centré, et trois blocs d’auteurs côte à côte. Sous la bande, le résumé et les mots-clés en gras sur toute la largeur, puis deux colonnes justifiées sous les titres centrés « I. INTRODUCTION » et « II. RELATED WORK », avec les citations [1] et [2]–[4] et les renvois « Section II », « Section III », « Section IV, on p. 2 ».", "2": "Page 2 : les sections III à VI, les remerciements et le titre « REFERENCES » au-dessus de sept entrées numérotées en 8 pt, chaque [n] dans sa propre colonne ; les deux colonnes finissent à la même hauteur." }
 ---
 
 ## Ce que vous allez composer
@@ -22,13 +22,13 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Enregistr�
 
 <Excerpt region="title" />
 
-Le titre est l’unique titre de niveau 1 du document, avec le style `paper`. Ce style s’étend sur toute la page et dessine le titre à partir de sa maquette : la ligne de la manifestation, le titre et trois blocs d’auteurs larges d’un tiers de la justification, chacun lu dans un attribut du titre où `\n` force les retours à la ligne. La bande est une boîte ancrée à la coupe, si bien qu’elle atteint le bord supérieur du papier.
+Le titre est l’unique titre de niveau 1 du document, avec le style `paper`. Ce style s’étend sur toute la page et dessine le titre à partir de sa maquette : la ligne de la manifestation, le titre et trois blocs d’auteurs larges d’un tiers de la justification, chacun lu dans un attribut du titre où `\n` force les sauts de ligne. La bande est une boîte ancrée à la coupe : elle atteint donc le bord supérieur du papier.
 
 ### 3 · Résumé et mots-clés en gras
 
 <Excerpt region="abstract" />
 
-Un encadré sur toute la largeur de la page porte le résumé et les mots-clés. Son corps est en 9 pt gras, comme chez l’IEEE, et `***Abstract*—**` dans le texte donne l’étiquette en italique avec son tiret cadratin. Le filet fin du haut est le liseré de l’encadré, et le remplissage réduit la justification à une centaine de caractères.
+Un encadré sur toute la largeur de la page contient le résumé et les mots-clés. Son texte est en 9 pt gras, comme chez l’IEEE, et `***Abstract*—**` dans le texte donne l’étiquette en italique avec son tiret cadratin. Le filet fin du haut est le liseré de l’encadré, et le remplissage réduit la justification à une centaine de caractères.
 
 ### 4 · Sections numérotées et renvois
 

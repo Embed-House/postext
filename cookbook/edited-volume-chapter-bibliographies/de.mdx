@@ -1,7 +1,7 @@
 ---
 title: "Ein Sammelband mit Literaturliste pro Kapitel"
 summary: "Drei Aufsätze von drei Beiträgern, jeder ein eigenes Dokument in buildBundle, jeder mit einer Liste nach Chicago-Autor-Jahr nur der Werke, die er zitiert."
-plain: "Ein Band mit Aufsätzen verschiedener Autoren. Jeder Aufsatz nennt seinen Autor unter dem Titel und endet mit einer eigenen Literaturliste, wie es Sammelbände tun."
+plain: "Ein Band mit Aufsätzen verschiedener Autoren. Unter jedem Titel steht der Name seines Autors, und jeder Aufsatz endet mit einer eigenen Literaturliste, wie es in Sammelbänden üblich ist."
 description: "Ein Sammelband in Postext: Kapitel in buildBundle, Autorenzeilen aus Überschriftenattributen und eine Literaturliste pro Kapitel nach Chicago-Autor-Jahr."
 question: "Wie gebe ich jedem Kapitel eines Sammelbands eine eigene Autorenzeile und eine eigene Literaturliste?"
 aliases: ["Sammelband", "Aufsatzsammlung", "Tagungsband", "Beiträge", "Literatur pro Kapitel", "Kapitelbibliografie", "Chicago-Autor-Jahr", "Autorenzeile", "edited volume", "byline"]
@@ -18,13 +18,13 @@ pageNotes: { "1": "Seite 1: das Titelblatt, ein Feld in Druckerrot über die obe
 
 <Excerpt region="chapters" />
 
-Der Geltungsbereich in [der kurzen Antwort](#die-kurze-antwort) ist der eines Dokuments. `buildBundle` setzt die vier Dokumente als ein Buch, sodass Seitenzahlen, Kapitelnummern und Inhaltsverzeichnis durchlaufen, während jede `:::bibliography` die Zitate ihrer eigenen Datei sammelt. Die Literaturangaben bleiben, wo der Beiträger sie geschrieben hat: Ein in irgendeinem Kapitel definierter Schlüssel gilt für das ganze Buch, ein gemeinsamer Eintrag hätte also genügt, doch in sich geschlossene Kapitel lassen sich austauschen oder umstellen, ohne die Liste eines anderen Aufsatzes zu zerstören.
+Der Geltungsbereich in [der kurzen Antwort](#die-kurze-antwort) ist der eines Dokuments. `buildBundle` setzt die vier Dokumente als ein Buch, sodass Seitenzahlen, Kapitelnummern und Inhaltsverzeichnis durchlaufen, während jede `:::bibliography` die Zitationen ihrer eigenen Datei sammelt. Die Literaturangaben bleiben, wo der Beiträger sie geschrieben hat: Ein in irgendeinem Kapitel definierter Schlüssel gilt für das ganze Buch, ein gemeinsamer Eintrag hätte also genügt, doch in sich geschlossene Kapitel lassen sich austauschen oder umstellen, ohne die Liste eines anderen Aufsatzes zu zerstören.
 
 ### 2 · Die Autorenzeile ist ein Überschriftenattribut
 
 <Excerpt region="byline" />
 
-Der Titel jedes Aufsatzes trägt `author="…"` und einen Kurztitel `short="…"` für den Kolumnentitel. Der Auftakt druckt den Autor unter dem Titel, der Kolumnentitel der linken Seite nennt den Autor des Aufsatzes, zu dem die Seite gehört, und das Inhaltsverzeichnis druckt den Namen als Zeile unter jedem Eintrag. Nirgends in der Titelei werden die Beiträger zweimal aufgeführt.
+Der Titel jedes Aufsatzes hat ein Attribut `author="…"` und einen Kurztitel `short="…"` für den Kolumnentitel. Der Auftakt setzt den Autor unter den Titel, der Kolumnentitel der linken Seite zeigt den Autor des Aufsatzes, zu dem die Seite gehört, und das Inhaltsverzeichnis setzt den Namen als Zeile unter jeden Eintrag. Nirgends in der Titelei werden die Beiträger zweimal aufgeführt.
 
 ### 3 · Der Auftakt
 
@@ -36,13 +36,13 @@ Dachzeile, Titel und Autorenzeile stapeln sich vom Kopf des Satzspiegels an, jed
 
 <Excerpt region="running-heads" />
 
-Ein Sammelband nennt den Beiträger auf der linken und das Kapitel auf der rechten Seite, wo eine Monografie den Buchtitel und das Kapitel drucken würde. Die Kolumnentitel sind auf `pages: 'body'` gefiltert, sodass die Auftakte nur eine Pagina am Fuß tragen.
+Ein Sammelband zeigt den Beiträger auf der linken und das Kapitel auf der rechten Seite, wo eine Monografie den Buchtitel und das Kapitel setzen würde. Die Kolumnentitel sind auf `pages: 'body'` gefiltert, sodass die Auftakte nur eine Pagina am Fuß haben.
 
 ### 5 · Die Titelei
 
 <Excerpt region="front" />
 
-Titelblatt und Inhaltsverzeichnis sind zwei nicht nummerierte Überschriften im ersten Dokument, ohne Kolumnentitel und ohne Eintrag im Inhaltsverzeichnis. Ihre Gestaltungen lesen `{title}` und `{subtitle}` aus dem Frontmatter und die Herausgeber und Beiträger aus den Attributen der Überschrift selbst.
+Titelblatt und Inhaltsverzeichnis sind zwei nicht nummerierte Überschriften im ersten Dokument, ohne Kolumnentitel und ohne Eintrag im Inhaltsverzeichnis. Ihre Gestaltungen übernehmen `{title}` und `{subtitle}` aus dem Frontmatter und die Herausgeber und Beiträger aus den Attributen der Überschrift selbst.
 
 ## Varianten
 

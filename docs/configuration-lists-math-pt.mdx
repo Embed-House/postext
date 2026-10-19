@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'Configuração: listas e matemática',
   sidebarTitle: 'Listas e matemática',
-  description: 'Listas com marcadores e numeradas, seus marcadores, recuos e aninhamento, listas de tarefas, e o tamanho, a cor e o espaçamento das fórmulas matemáticas',
+  description: 'Listas com marcadores e listas numeradas (marcadores, recuos e aninhamento), listas de tarefas, e o tamanho, a cor e o espaçamento das fórmulas matemáticas',
   lang: 'pt',
   lastUpdated: '2026-10-16',
   readingTime: '19 min',
@@ -47,7 +47,7 @@ A propriedade `unorderedLists` controla como são renderizadas as listas com mar
       <td><code>fontWeight</code></td>
       <td><code>number</code></td>
       <td><code>700</code></td>
-      <td>Peso do texto dos itens (100–900). Os marcadores herdam esse peso, a menos que seja substituído por nível.</td>
+      <td>Peso do texto dos itens (100–900). Os marcadores herdam esse peso, a menos que um nível defina um valor próprio.</td>
     </tr>
     <tr>
       <td><code>italic</code></td>
@@ -77,7 +77,7 @@ A propriedade `unorderedLists` controla como são renderizadas as listas com mar
       <td><code>indent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0 em</code></td>
-      <td>Recuo base do nível 1. Os níveis mais profundos partem do início do texto do nível pai, a menos que sejam substituídos (veja abaixo).</td>
+      <td>Recuo base do nível 1. Os níveis mais profundos partem do início do texto do nível pai, a menos que tenham um valor próprio (veja abaixo).</td>
     </tr>
     <tr>
       <td><code>bulletVerticalOffset</code></td>
@@ -101,7 +101,7 @@ A propriedade `unorderedLists` controla como são renderizadas as listas com mar
       <td><code>snapTopToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Arredonda para cima o espaço acima da lista para que o primeiro marcador fique na grade de linhas de base, como o texto sob um título; <code>marginTop</code> passa então a ser um mínimo. O fim de uma lista devolve o fluxo à grade de qualquer forma, então, com <code>itemSpacing</code> em 0, todos os itens se alinham com o texto da coluna ao lado. Desligado por padrão, como até o postext 1.4: uma <code>marginTop</code> que não é um número inteiro de linhas deixa os itens fora da grade até a lista terminar. As listas dentro de boxes, cujo interior fica fora da grade, não são afetadas.</td>
+      <td>Arredonda para cima o espaço acima da lista para que o primeiro marcador fique na grade de linhas de base, como o texto sob um título; <code>marginTop</code> passa então a ser um mínimo. O fim de uma lista devolve o fluxo à grade de qualquer forma; por isso, com <code>itemSpacing</code> em 0, todos os itens se alinham com o texto da coluna ao lado. Desligado por padrão, como até o postext 1.4: uma <code>marginTop</code> que não é um número inteiro de linhas deixa os itens fora da grade até a lista terminar. As listas dentro de boxes, cujo interior fica fora da grade, não são afetadas.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -113,14 +113,14 @@ A propriedade `unorderedLists` controla como são renderizadas as listas com mar
       <td><code>levels</code></td>
       <td><code>UnorderedListLevelConfig[]</code></td>
       <td>—</td>
-      <td>Substituições por profundidade para os níveis 1–5. Veja abaixo.</td>
+      <td>Valores próprios de cada profundidade, para os níveis 1–5. Veja abaixo.</td>
     </tr>
   </tbody>
 </table>
 
 ### Extensões para listas de tarefas
 
-Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como itens com marcador, com uma caixa de seleção no lugar do marcador. O próprio motor desenha a caixa, um quadrado em contorno com uma marca quando a tarefa está concluída: nenhuma fonte é consultada, então ela é igual em todas as máquinas, no canvas, no PDF, no HTML e no EPUB, e as tecnologias assistivas leem `☐` ou `☑`. O lado mede 0,6 em do tamanho do marcador (`bulletFontSize`, ou o `fontSize` do nível), e esse é o espaço que ela ocupa antes do `gap`; no tamanho do texto, ela se apoia na linha de base da primeira linha do item. O traço segue o `fontWeight` do marcador, e a cor, o `color` do marcador. Os campos a seguir se aplicam só aos itens de tarefa:
+Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como itens com marcador, com uma caixa de seleção no lugar do marcador. O próprio motor desenha a caixa, um quadrado em contorno com uma marca quando a tarefa está concluída: nenhuma fonte é usada para ela, de modo que é igual em todas as máquinas, no canvas, no PDF, no HTML e no EPUB, e as tecnologias assistivas leem `☐` ou `☑`. O lado mede 0,6 em no tamanho do marcador (`bulletFontSize`, ou o `fontSize` do nível), e esse é o espaço que ela ocupa antes do `gap`; no tamanho do texto, ela se apoia na linha de base da primeira linha do item. O traço segue o `fontWeight` do marcador, e a cor, o `color` do marcador. Os campos a seguir se aplicam só aos itens de tarefa:
 
 <table>
   <thead>
@@ -148,7 +148,7 @@ Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como iten
       <td><code>taskBox</code></td>
       <td><code>'drawn' | 'character'</code></td>
       <td><code>'drawn'</code></td>
-      <td>Como os dois caracteres padrão são compostos. <code>'drawn'</code>: o motor desenha a caixa. <code>'character'</code>: <code>☐</code> e <code>☑</code> são texto na fonte da lista, como até o postext 1.28; numa fonte que não os tem, o navegador escolhe uma fonte do sistema, e o texto do item começa depois da largura que essa fonte dá. Uma configuração gravada antes da versão 13 é lida com <code>'character'</code>, então as linhas dela ficam onde estavam.</td>
+      <td>Como os dois caracteres padrão são compostos. <code>'drawn'</code>: o motor desenha a caixa. <code>'character'</code>: <code>☐</code> e <code>☑</code> são texto na fonte da lista, como até o postext 1.28; numa fonte que não os tem, o navegador escolhe uma fonte do sistema, e o texto do item começa depois da largura que essa fonte dá. Uma configuração gravada antes da versão 13 é lida com <code>'character'</code>, de modo que as linhas dela ficam onde estavam.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
@@ -167,7 +167,7 @@ Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como iten
 
 ### Substituições por nível (listas com marcadores)
 
-Cada entrada de `levels` se refere a uma profundidade (1–5) e pode substituir qualquer um dos seguintes:
+Cada entrada de `levels` se refere a uma profundidade (1–5) e pode definir um valor próprio para qualquer um destes campos:
 
 <table>
   <thead>
@@ -248,7 +248,7 @@ A propriedade `orderedLists` controla as listas numeradas (`1.`, `2)` etc.). Sã
       <td><code>numberFormat</code></td>
       <td><code>OrderedListNumberFormat</code></td>
       <td><code>'arabic'</code></td>
-      <td>Estilo do número: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. As grafias das outras configurações também funcionam (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; veja <a href="/pt/docs/configuration-page-layout#grafias-dos-formatos-de-numeração">Grafias dos formatos de numeração</a>); um valor desconhecido numera em algarismos arábicos e é relatado.</td>
+      <td>Estilo do número: <code>'arabic'</code>, <code>'lower-alpha'</code>, <code>'upper-alpha'</code>, <code>'lower-roman'</code>, <code>'upper-roman'</code>. As grafias das outras configurações também funcionam (<code>'decimal'</code>, <code>'roman-lower'</code>, <code>'i'</code>…; veja <a href="/pt/docs/configuration-page-layout#grafias-dos-formatos-de-numeração">Grafias dos formatos de numeração</a>); um valor desconhecido numera em algarismos arábicos e gera um aviso.</td>
     </tr>
     <tr>
       <td><code>prefix</code></td>
@@ -260,7 +260,7 @@ A propriedade `orderedLists` controla as listas numeradas (`1.`, `2)` etc.). Sã
       <td><code>separator</code></td>
       <td><code>string</code></td>
       <td><code>'.'</code></td>
-      <td>Caractere posto entre o número e o texto, normalmente <code>'.'</code> ou <code>')'</code>.</td>
+      <td>Caractere colocado entre o número e o texto, normalmente <code>'.'</code> ou <code>')'</code>.</td>
     </tr>
     <tr>
       <td><code>separatorFontFamily</code></td>
@@ -308,7 +308,7 @@ A propriedade `orderedLists` controla as listas numeradas (`1.`, `2)` etc.). Sã
       <td><code>indent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0 em</code></td>
-      <td>Recuo base do nível 1; os níveis mais profundos partem do início do texto do nível pai, a menos que sejam substituídos.</td>
+      <td>Recuo base do nível 1; os níveis mais profundos partem do início do texto do nível pai, a menos que tenham um valor próprio.</td>
     </tr>
     <tr>
       <td><code>numberVerticalOffset</code></td>
@@ -332,19 +332,19 @@ A propriedade `orderedLists` controla as listas numeradas (`1.`, `2)` etc.). Sã
       <td><code>snapTopToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Arredonda para cima o espaço acima da lista para que o primeiro número fique na grade de linhas de base, como o texto sob um título; <code>marginTop</code> passa então a ser um mínimo. O fim de uma lista devolve o fluxo à grade de qualquer forma, então, com <code>itemSpacing</code> em 0, todos os itens se alinham com o texto da coluna ao lado. Desligado por padrão, como até o postext 1.4: uma <code>marginTop</code> que não é um número inteiro de linhas deixa os itens fora da grade até a lista terminar. As listas dentro de boxes, cujo interior fica fora da grade, não são afetadas.</td>
+      <td>Arredonda para cima o espaço acima da lista para que o primeiro número fique na grade de linhas de base, como o texto sob um título; <code>marginTop</code> passa então a ser um mínimo. O fim de uma lista devolve o fluxo à grade de qualquer forma; por isso, com <code>itemSpacing</code> em 0, todos os itens se alinham com o texto da coluna ao lado. Desligado por padrão, como até o postext 1.4: uma <code>marginTop</code> que não é um número inteiro de linhas deixa os itens fora da grade até a lista terminar. As listas dentro de boxes, cujo interior fica fora da grade, não são afetadas.</td>
     </tr>
     <tr>
       <td><code>numberWidth</code></td>
       <td><code>'run' | 'level' | 'item'</code></td>
       <td><code>'run'</code></td>
-      <td>A largura da coluna de números de um item, que define onde o seu texto começa; os números ficam alinhados à direita nela. <code>'run'</code>: o número mais largo da própria sequência do item, isto é, os itens de uma mesma profundidade sem nada além de itens mais profundos entre eles. Uma figura, um parágrafo ou um boxe entre dois itens inicia uma nova sequência, então <code>ii)</code> depois de uma tabela pode começar o texto um pouco mais à direita que <code>i)</code> antes dela, e uma lista de nove itens compõe o texto mais à esquerda que uma lista de doze. <code>'level'</code>: o número mais largo na profundidade do item em todo o documento (o capítulo, num livro), de modo que todas as listas, e todas as partes de uma lista interrompida, começam o texto no mesmo lugar, como já fazem os recuos dos níveis mais profundos. <code>'item'</code>: o número do próprio item, de modo que o texto de cada item começa um <code>gap</code> depois do seu próprio rótulo: <span lang="ja" className="font-body">第九條</span> e <span lang="ja" className="font-body">第十一條</span> são seguidos pelo mesmo espaço e os seus textos começam em lugares diferentes, como o Diário Oficial japonês imprime os artigos de uma lei. As linhas seguintes obedecem a <code>hangingIndent</code>: com <code>false</code> voltam ao recuo da lista, com <code>true</code> ficam penduradas sob o texto do próprio item. O recuo de um nível mais profundo continua sendo um só valor por nível. Desde o postext 1.28.</td>
+      <td>A largura da coluna de números de um item, que define onde o texto dele começa; os números ficam alinhados à direita nela. <code>'run'</code>: o número mais largo da própria sequência do item, isto é, os itens de uma mesma profundidade sem nada além de itens mais profundos entre eles. Uma figura, um parágrafo ou um boxe entre dois itens inicia uma nova sequência; por isso, <code>ii)</code> depois de uma tabela pode começar o texto um pouco mais à direita que <code>i)</code> antes dela, e uma lista de nove itens compõe o texto mais à esquerda que uma lista de doze. <code>'level'</code>: o número mais largo na profundidade do item em todo o documento (o capítulo, num livro), de modo que todas as listas, e todas as partes de uma lista interrompida, começam o texto no mesmo lugar, como já fazem os recuos dos níveis mais profundos. <code>'item'</code>: o número do próprio item, de modo que o texto de cada item começa um <code>gap</code> depois do próprio rótulo: <span lang="ja" className="font-body">第九條</span> e <span lang="ja" className="font-body">第十一條</span> são seguidos pelo mesmo espaço, e os textos deles começam em lugares diferentes, como o Diário Oficial japonês imprime os artigos de uma lei. As linhas seguintes obedecem a <code>hangingIndent</code>: com <code>false</code> voltam ao recuo da lista, com <code>true</code> ficam alinhadas sob o texto do próprio item. O recuo de um nível mais profundo continua sendo um só valor por nível. Desde o postext 1.28.</td>
     </tr>
     <tr>
       <td><code>numberAlign</code></td>
       <td><code>'end' | 'start'</code></td>
       <td><code>'end'</code></td>
-      <td>Como um número fica na sua coluna. <code>'end'</code>: junto ao texto, de modo que os números de uma sequência terminam na mesma posição e <code>9.</code> e <code>10.</code> alinham os pontos. <code>'start'</code>: no início da coluna (a esquerda numa página da esquerda para a direita, a direita numa da direita para a esquerda, o alto da linha em texto vertical), de modo que rótulos de comprimentos diferentes começam na mesma posição, como os artigos de uma lei (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). A coluna mantém a largura que <code>numberWidth</code> lhe dá, então o texto dos itens começa no mesmo lugar nos dois casos; com um separador de estilo próprio, o separador segue o seu número. Desde o postext 1.26. Com <code>numberWidth: 'item'</code> a coluna é o próprio número, então os dois valores compõem a mesma lista.</td>
+      <td>Como um número fica na coluna. <code>'end'</code>: junto ao texto, de modo que os números de uma sequência terminam na mesma posição e <code>9.</code> e <code>10.</code> ficam alinhados pelo ponto. <code>'start'</code>: no início da coluna (a esquerda numa página da esquerda para a direita, a direita numa da direita para a esquerda, o alto da linha em texto vertical), de modo que rótulos de comprimentos diferentes começam na mesma posição, como os artigos de uma lei (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). A coluna mantém a largura que <code>numberWidth</code> lhe dá; por isso, o texto dos itens começa no mesmo lugar nos dois casos. Com um separador de estilo próprio, o separador segue o número. Desde o postext 1.26. Com <code>numberWidth: 'item'</code>, a coluna é o próprio número, e os dois valores compõem a mesma lista.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -356,14 +356,14 @@ A propriedade `orderedLists` controla as listas numeradas (`1.`, `2)` etc.). Sã
       <td><code>levels</code></td>
       <td><code>OrderedListLevelConfig[]</code></td>
       <td>—</td>
-      <td>Substituições por profundidade para os níveis 1–5.</td>
+      <td>Valores próprios de cada profundidade, para os níveis 1–5.</td>
     </tr>
   </tbody>
 </table>
 
 ### Substituições por nível (listas numeradas)
 
-Cada entrada de `levels` pode substituir `numberFormat`, `prefix`, `separator`, `fontFamily`, `fontSize`, `color`, `fontWeight`, `italic`, `indent`, `verticalOffset` e o estilo do separador (`separatorFontFamily`, `separatorFontWeight`, `separatorItalic`, `separatorColor`, `separatorGap`); vale a mesma cascata de recuos das listas com marcadores. O estilo do separador de um nível herda o estilo do número desse mesmo nível, a menos que a configuração do separador para a lista inteira seja informada.
+Cada entrada de `levels` pode substituir `numberFormat`, `prefix`, `separator`, `fontFamily`, `fontSize`, `color`, `fontWeight`, `italic`, `indent`, `verticalOffset` e o estilo do separador (`separatorFontFamily`, `separatorFontWeight`, `separatorItalic`, `separatorColor`, `separatorGap`); vale a mesma cascata de recuos das listas com marcadores. O estilo do separador de um nível herda o estilo do número desse mesmo nível, a menos que o ajuste do separador para a lista inteira esteja definido.
 
 **Alinhamento à direita.** O pipeline mede o número formatado mais largo de uma sequência e recua todos os itens dessa sequência para que os números se alinhem pela borda direita. Numa lista de dez itens renderizada como `1.` – `10.`, os números de um dígito recebem preenchimento à esquerda para que o separador fique na mesma coluna.
 
@@ -440,7 +440,7 @@ interface MathConfig {
       <td><code>enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Com false, os trechos `$...$` e `$$...$$` continuam sendo analisados (então os avisos de delimitador não fechado continuam aparecendo), mas são renderizados como o seu código TeX literal. Útil quando o conteúdo contém cifrões de propósito ou quando você quer desativar por completo a renderização de fórmulas.</td>
+      <td>Com false, os trechos `$...$` e `$$...$$` continuam sendo analisados (por isso os avisos de delimitador não fechado continuam aparecendo), mas são renderizados como o código TeX literal. Útil quando o conteúdo contém cifrões de propósito ou quando você quer desativar por completo a renderização de fórmulas.</td>
     </tr>
     <tr>
       <td><code>fontSizeScale</code></td>
@@ -476,13 +476,13 @@ interface MathConfig {
       <td><code>keepWithLeadIn</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Mantém uma fórmula em destaque na coluna da linha que a introduz: a penalidade predisplay do TeX. Quando a fórmula não cabe abaixo da última linha do parágrafo anterior, essa linha vai para a coluna ou página seguinte junto com a fórmula; quando as linhas deixadas para trás seriam menos que <code>bodyText.widowMinLines</code> (menos que uma quando <code>bodyText.avoidWidows</code> está desligado), um parágrafo que começa nessa coluna passa inteiro adiante (com os títulos que fecham a coluna acima dele, conforme <code>headings.keepWithNext</code>). A linha levada fica sozinha no alto da coluna seguinte, seja o que for que a regra de órfãs peça. Com <code>false</code> só a fórmula passa adiante, e a linha que a introduz pode fechar a coluna acima ou ficar sobre uma figura que encabeça a seguinte.</td>
+      <td>Mantém uma fórmula em destaque na coluna da linha que a introduz: a penalidade predisplay do TeX. Quando a fórmula não cabe abaixo da última linha do parágrafo anterior, essa linha vai para a coluna ou página seguinte junto com a fórmula; quando as linhas deixadas para trás seriam menos que <code>bodyText.widowMinLines</code> (menos que uma quando <code>bodyText.avoidWidows</code> está desligado), um parágrafo que começa nessa coluna passa inteiro adiante (com os títulos que fecham a coluna acima dele, conforme <code>headings.keepWithNext</code>). A linha levada fica sozinha no alto da coluna seguinte, independentemente do que a regra de órfãs peça. Com <code>false</code> só a fórmula passa adiante, e a linha que a introduz pode fechar a coluna acima ou ficar sobre uma figura que encabeça a seguinte.</td>
     </tr>
     <tr>
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>, <code>'&#123;n&#125;'</code>, <code>'never'</code>, <code>'decimal'</code>, <code>'(&#123;n&#125;)'</code></td>
-      <td>Como são numeradas as fórmulas em destaque que levam um <code>\label</code> (veja <em>Equações numeradas</em> abaixo). <code>numberingTemplate</code>, <code>resetOn</code> e <code>counterFormat</code> funcionam como os de um tipo de recurso: <code>'&#123;h1&#125;.&#123;n&#125;'</code> com <code>resetOn: 'h1'</code> numera (2.1), (2.2)… por capítulo, e <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> com <code>'h2'</code>, por seção. <code>format</code> é o número tal como a fórmula e <code>\eqref</code> o imprimem, com <code>&#123;n&#125;</code> no lugar do número: <code>'[&#123;n&#125;]'</code> compõe [3]. <code>enabled: false</code> não numera nada: um <code>\label</code> é descartado, e uma referência a ele imprime a sua página. Um token também aceita um estilo depois de dois-pontos (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) num apêndice com letra).</td>
+      <td>Como são numeradas as fórmulas em destaque que levam um <code>\label</code> (veja <em>Equações numeradas</em> abaixo). <code>numberingTemplate</code>, <code>resetOn</code> e <code>counterFormat</code> funcionam como os de um tipo de recurso: <code>'&#123;h1&#125;.&#123;n&#125;'</code> com <code>resetOn: 'h1'</code> numera (2.1), (2.2)… por capítulo, e <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> com <code>'h2'</code>, por seção. <code>format</code> é o número tal como a fórmula e <code>\eqref</code> o imprimem, com <code>&#123;n&#125;</code> no lugar do número: <code>'[&#123;n&#125;]'</code> compõe [3]. <code>enabled: false</code> não numera nada: um <code>\label</code> é descartado, e uma referência a ele imprime a página. Um token também aceita um estilo depois de dois-pontos (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) num apêndice com letra).</td>
     </tr>
   </tbody>
 </table>
@@ -497,7 +497,7 @@ math: {
 }
 ```
 
-**Tamanho das fórmulas, alterado no postext 1.5.** O MathJax dá a caixa de uma fórmula em `ex`, e um `ex` da sua fonte TeX equivale a 0,442 em. Até o postext 1.4 o motor o tomava como meio em, de modo que toda fórmula era composta cerca de 13% maior que `bodyText.fontSize × fontSizeScale`. Agora as fórmulas saem no tamanho documentado, e as linhas e páginas com fórmulas são recompostas. Uma configuração escrita em código para a 1.4 mantém o tamanho de fórmula da 1.4 se passar por `pinLegacyMathSize`, de `postext/bundle`, uma única vez, tal como foi escrita:
+**Tamanho das fórmulas, alterado no postext 1.5.** O MathJax dá a caixa de uma fórmula em `ex`, e um `ex` da fonte TeX dele equivale a 0,442 em. Até o postext 1.4 o motor o tomava como meio em, de modo que toda fórmula era composta cerca de 13% maior que `bodyText.fontSize × fontSizeScale`. Agora as fórmulas saem no tamanho documentado, e as linhas e páginas com fórmulas são diagramadas de novo. Uma configuração escrita em código para a 1.4 mantém o tamanho de fórmula da 1.4 se passar por `pinLegacyMathSize`, de `postext/bundle`, uma única vez, tal como foi escrita:
 
 ```ts
 import { pinLegacyMathSize } from 'postext/bundle';
@@ -505,7 +505,7 @@ import { pinLegacyMathSize } from 'postext/bundle';
 config = pinLegacyMathSize(config); // as fórmulas, e o espaço em volta das fórmulas em destaque, como a 1.4 as compunha
 ```
 
-Outras mudanças de regras na 1.5 também podem mexer nas suas páginas: as quebras dos títulos, o espaço em volta de uma figura em linha (no texto corrido e nos boxes), as marcas em linha dos seus títulos, o tamanho das suas capitulares, o espaço reservado sob uma linha terminada em dois-pontos para a lista que ela introduz, as linhas que o corte de um boxe deixa de um parágrafo ou de um item de lista, as quebras de linha depois de um travessão, a quebra do texto em bandeira, a divisão de um parágrafo sob um título, as quebras de linha depois do hífen de uma palavra composta e o espaço sob um contêiner `:::paragraphs`. `migrateConfig`, executado uma vez com o markdown que a configuração diagrama, fixa as que esse texto precisa, o tamanho das fórmulas incluído (veja [Pacotes escritos pelo postext 1.4 ou anterior](/pt/docs/configuration-bundles#pacotes-gravados-pelo-postext-14-ou-anterior)):
+Outras mudanças de regras na 1.5 também podem mexer nas páginas dela: as quebras dos títulos, o espaço em volta de uma figura em linha (no texto corrido e nos boxes), as marcas em linha dos títulos, o tamanho das capitulares, o espaço reservado sob uma linha terminada em dois-pontos para a lista que ela introduz, as linhas que o corte de um boxe deixa de um parágrafo ou de um item de lista, as quebras de linha depois de um travessão, a quebra do texto em bandeira, a divisão de um parágrafo sob um título, as quebras de linha depois do hífen de uma palavra composta e o espaço sob um contêiner `:::paragraphs`. `migrateConfig`, executado uma vez com o markdown que a configuração diagrama, fixa as que esse texto precisa, o tamanho das fórmulas incluído (veja [Pacotes escritos pelo postext 1.4 ou anterior](/pt/docs/configuration-bundles#pacotes-gravados-pelo-postext-14-ou-anterior)):
 
 ```ts
 import { migrateConfig } from 'postext/bundle';
@@ -513,9 +513,9 @@ import { migrateConfig } from 'postext/bundle';
 config = migrateConfig(config, undefined, { content: markdown }); // quebras de títulos, fórmulas, espaços em linha, marcas de títulos, capitulares, linhas com dois-pontos, cortes de boxes, quebras após travessão, quebras de compostos, texto em bandeira, divisões sob um título e espaço dos contêineres como a 1.4 os compunha
 ```
 
-Isso segura o que essas mudanças de regras moveriam, mas não preserva todas as páginas da 1.4. A versão 1.5 também corrige bugs de layout, e uma correção não tem fixação: uma configuração antiga a recebe como uma nova, então uma página afetada por ela ainda pode mudar. Entre elas: um título na largura da página sem design próprio é medido na largura da página e composto na entrelinha do seu nível; nada é reservado sob a linha de base de uma capitular num design de título; uma capitular toma a cor de paleta da seção e é composta mesmo num texto de design cujo `overflow` não é `'wrap'`, que então quebra linhas; um parágrafo num boxe pinta o tracking com que foi medido; um boxe dividido mantém a coluna do ícone em todos os fragmentos; uma linha de boxe que esticaria os espaços além de 3× é composta em bandeira, como no texto corrido; o recurso de parágrafo frouxo nunca compõe uma linha justificada mais larga do que `maxWordSpacing` permite; um boxe flutuante mantém uma `marginBottom` (numa faixa superior) ou uma `marginTop` (numa faixa inferior) maior que o espaço entre flutuantes; um texto de design centralizado ou alinhado à direita com tracking (um cabeço, o título de uma abertura) é posicionado pelas suas letras, sem o tracking depois da última; sob uma abertura na largura da página, o texto que abre a segunda coluna começa onde começaria o texto logo abaixo da abertura, também quando um título segue a abertura; os pontos do sumário param antes do número de página numa fonte cujo kerning afasta uma sequência de pontos; um cabeço lê um título tal como foi escrito, sem espaço onde uma das suas linhas termina depois de um hífen ou de um travessão ou dentro de uma palavra cortada por largura (`MEDIOAMBIENTALES`, não `MEDIOAMBIENTALE S`), e o `{titleText}` de um design de título o lê do mesmo jeito (`thousand-colour`, não `thousand- colour`); um texto ancorado no pé ou no meio da faixa de um design de título mantém a faixa alta o bastante para contê-lo, de modo que ele não sobe mais sobre o texto acima do título; uma palavra mais larga que a sua linha, cortada junto a um hífen que ela própria tem, é cortada depois desse hífen e não recebe um segundo; o item depois de uma lista aninhada noutra recebe o `itemSpacing` da sua própria lista, não o da lista aninhada; e o resto de uma palavra cortada por ser mais larga que a sua linha mantém os seus próprios pontos de quebra, de modo que um endereço web continua quebrando nas suas junções, e uma palavra composta nos seus hifens, em vez de nas sílabas do dicionário.
+Isso evita o que essas mudanças de regras moveriam, mas não preserva todas as páginas da 1.4. A versão 1.5 também corrige bugs de diagramação, e não há como fixar uma correção: uma configuração antiga a recebe como uma nova, e por isso uma página afetada por ela ainda pode mudar. Entre elas: um título na largura da página sem design próprio é medido na largura da página e composto na entrelinha do nível dele; nada é reservado sob a linha de base de uma capitular num design de título; uma capitular toma a cor de paleta da seção e é composta mesmo num texto de design cujo `overflow` não é `'wrap'`, que então quebra linhas; um parágrafo num boxe pinta o tracking com que foi medido; um boxe dividido mantém a coluna do ícone em todos os fragmentos; uma linha de boxe que esticaria os espaços além de 3× é composta em bandeira, como no texto corrido; o mecanismo de parágrafo frouxo nunca compõe uma linha justificada mais larga do que `maxWordSpacing` permite; um boxe flutuante mantém uma `marginBottom` (numa faixa superior) ou uma `marginTop` (numa faixa inferior) maior que o espaço entre flutuantes; um texto de design centralizado ou alinhado à direita com tracking (um cabeço, o título de uma abertura) é posicionado pelas letras, sem o tracking depois da última; sob uma abertura na largura da página, o texto que abre a segunda coluna começa onde começaria o texto logo abaixo da abertura, também quando um título segue a abertura; os pontos do sumário param antes do número de página numa fonte cujo kerning afasta uma sequência de pontos; um cabeço lê um título tal como foi escrito, sem espaço onde uma das linhas dele termina depois de um hífen ou de um travessão ou dentro de uma palavra cortada por largura (`MEDIOAMBIENTALES`, não `MEDIOAMBIENTALE S`), e o `{titleText}` de um design de título o lê do mesmo jeito (`thousand-colour`, não `thousand- colour`); um texto ancorado no pé ou no meio da faixa de um design de título mantém a faixa alta o bastante para contê-lo, de modo que ele não sobe mais sobre o texto acima do título; uma palavra mais larga que a própria linha, cortada junto a um hífen que ela mesma tem, é cortada depois desse hífen e não recebe um segundo; o item depois de uma lista aninhada noutra recebe o `itemSpacing` da própria lista, não o da lista aninhada; e o resto de uma palavra cortada por ser mais larga que a própria linha mantém os próprios pontos de quebra, de modo que um endereço web continua quebrando nas junções, e uma palavra composta, nos hifens, em vez de nas sílabas do dicionário.
 
-`pinLegacyMathSize` multiplica a escala por 1,1312 (0,5 ÷ 0,442) e divide pelo mesmo fator as margens das fórmulas em destaque em `em`. Só a escala não basta para um livro com fórmulas em destaque: as margens delas são medidas do tamanho da própria fórmula, então cresceriam os mesmos 13% e empurrariam para baixo o texto abaixo delas. Escritos por extenso para as margens padrão, os três valores são:
+`pinLegacyMathSize` multiplica a escala por 1,1312 (0,5 ÷ 0,442) e divide pelo mesmo fator as margens das fórmulas em destaque em `em`. Só a escala não basta para um livro com fórmulas em destaque: as margens delas são medidas relativas ao tamanho da própria fórmula; por isso, cresceriam os mesmos 13% e empurrariam para baixo o texto abaixo delas. Escritos por extenso para as margens padrão, os três valores são:
 
 ```ts
 math: {
@@ -525,15 +525,15 @@ math: {
 } // fórmulas do tamanho que a 1.4 compunha, com o espaço que a 1.4 deixava em volta
 ```
 
-Quando se sabe onde a configuração estava guardada, o motor faz isso por você: `openBundle` / `readBundle` num pacote `.postext` escrito antes da 1.5 (veja [Pacotes escritos pelo postext 1.4 ou anterior](/pt/docs/configuration-bundles#pacotes-gravados-pelo-postext-14-ou-anterior)), e o Sandbox nos livros, na cópia de trabalho e nos arquivos `postext-config.json` salvos naquela época (veja **Sandbox → Persistência**). Eles são lidos por meio de `migrateConfig`, que fixa o tamanho (`pinLegacyMathSize`): `fontSizeScale` passa a ser a escala guardada (1 quando não definida) × 1,1312, e uma margem de fórmula em destaque em `em` ou `rem` (uma medida do tamanho da própria fórmula) é dividida pelo mesmo fator, de modo que o espaço em volta de uma fórmula em destaque fica como a 1.4 o deixava (os 0,8 em padrão passam a 0,7072 em). Uma margem numa unidade de página (`pt`, `mm`…) fica como está, assim como uma configuração com `enabled: false` ou uma cujo livro não tem nenhum `$`. O livro antigo é então diagramado como a 1.4 o diagramava, e a sua seção `math` mostra o tamanho em que é composto. Para compor esse livro no tamanho atual, redefina esses valores: **Fórmulas → Escala de tamanho**, *Margem acima (destaque)* e *Margem abaixo (destaque)* no Sandbox, ou em código:
+Quando a configuração vem de um armazenamento, o motor reconhece que ela é antiga e faz isso por você: `openBundle` / `readBundle` num pacote `.postext` escrito antes da 1.5 (veja [Pacotes escritos pelo postext 1.4 ou anterior](/pt/docs/configuration-bundles#pacotes-gravados-pelo-postext-14-ou-anterior)), e o Sandbox nos livros, na cópia de trabalho e nos arquivos `postext-config.json` salvos naquela época (veja **Sandbox → Persistência**). Eles são lidos por meio de `migrateConfig`, que fixa o tamanho (`pinLegacyMathSize`): `fontSizeScale` passa a ser a escala guardada (1 quando não definida) × 1,1312, e uma margem de fórmula em destaque em `em` ou `rem` (uma medida do tamanho da própria fórmula) é dividida pelo mesmo fator, de modo que o espaço em volta de uma fórmula em destaque fica como a 1.4 o deixava (os 0,8 em padrão passam a 0,7072 em). Uma margem numa unidade de página (`pt`, `mm`…) fica como está, assim como uma configuração com `enabled: false` ou uma cujo livro não tem nenhum `$`. O livro antigo é então diagramado como a 1.4 o diagramava, e a seção `math` dele mostra o tamanho em que ele é composto. Para compor esse livro no tamanho atual, redefina esses valores: **Fórmulas → Escala de tamanho**, *Margem acima (destaque)* e *Margem abaixo (destaque)* no Sandbox, ou em código:
 
 ```ts
 math: { ...config.math, fontSizeScale: 1, marginTop: undefined, marginBottom: undefined } // tamanho e margens atuais
 ```
 
-**Equações numeradas.** Uma fórmula em destaque com número ocupa a sua medida (a coluna, ou a largura interna do boxe em que está): a equação fica centralizada e o seu número, alinhado à direita na linha da equação, em cada linha numerada de um `align`. O número vem de um `\label{eq:x}` (desde o postext 1.19): as fórmulas rotuladas, e as linhas rotuladas de um `align`, `gather`, `alignat`, `flalign` ou `eqnarray`, são numeradas em ordem de leitura com `equationNumbering`, a menos que uma linha diga `\nonumber` ou `\notag`. Ambientes como `equation` não são numerados por si sós: uma fórmula sem rótulo não tem número. `\tag{…}` imprime o rótulo que você der, entre parênteses, e `\tag*{…}`, tal como foi escrito; nenhum dos dois é contado, e um `\label` ao lado de um deles lhe dá um nome. Uma equação numerada mais larga que a sua medida transborda para a direita, como qualquer fórmula em destaque. (Até o postext 1.4 uma fórmula com `\tag` não era desenhada; até a 1.18 só `\tag` numerava uma fórmula.)
+**Equações numeradas.** Uma fórmula em destaque com número ocupa toda a medida (a coluna, ou a largura interna do boxe em que está): a equação fica centralizada e o número, alinhado à direita na linha da equação, em cada linha numerada de um `align`. O número vem de um `\label{eq:x}` (desde o postext 1.19): as fórmulas rotuladas, e as linhas rotuladas de um `align`, `gather`, `alignat`, `flalign` ou `eqnarray`, são numeradas em ordem de leitura com `equationNumbering`, a menos que uma linha diga `\nonumber` ou `\notag`. Ambientes como `equation` não são numerados por si sós: uma fórmula sem rótulo não tem número. `\tag{…}` imprime o rótulo que você der, entre parênteses, e `\tag*{…}`, tal como foi escrito; nenhum dos dois é contado, e um `\label` ao lado de um deles lhe dá um nome que as referências podem usar. Uma equação numerada mais larga que a medida transborda para a direita, como qualquer fórmula em destaque. (Até o postext 1.4 uma fórmula com `\tag` não era desenhada; até a 1.18 só `\tag` numerava uma fórmula.)
 
-`\eqref{eq:x}` no texto imprime o número no seu `format`, (3), e `\ref{eq:x}`, o número sozinho; o mesmo fazem `:ref{id="eq:x"}` e `@eq:x` (veja [Referências cruzadas](/pt/docs/document-format-notes-references#referências-cruzadas-e-âncoras)), e dentro de uma fórmula `\eqref` o imprime como texto. Num livro diagramado capítulo por capítulo, o contador continua a partir do capítulo anterior: `continuationAfter` o leva em `LayoutContinuation.statementCounters` (`equation`), e o esboço do livro dá a cada rótulo o seu número (`OutlineEntry.numberLabel`), de modo que uma referência a uma equação de outro capítulo a imprime.
+`\eqref{eq:x}` no texto imprime o número no `format` definido, (3), e `\ref{eq:x}`, o número sozinho; o mesmo fazem `:ref{id="eq:x"}` e `@eq:x` (veja [Referências cruzadas](/pt/docs/document-format-notes-references#referências-cruzadas-e-âncoras)), e dentro de uma fórmula `\eqref` o imprime como texto. Num livro diagramado capítulo por capítulo, o contador continua a partir do capítulo anterior: `continuationAfter` o leva em `LayoutContinuation.statementCounters` (`equation`), e o esboço do livro dá a cada rótulo o número dele (`OutlineEntry.numberLabel`), de modo que uma referência a uma equação de outro capítulo a imprime.
 
 ```ts
 math: {
@@ -570,7 +570,7 @@ document.body.append(renderPage(doc.pages[0], doc));
 - **O worker de layout o inicializa por você.** Uma construção em `postext/worker` chama `initMathEngine()` por conta própria quando o markdown contém um `$`.
 - **Diagramar agora e de novo quando estiver pronto.** `isMathReady()` diz se o motor está rodando. `onMathReady(fn)` chama `fn` assim que ele estiver (na hora, se já estiver) e devolve uma função que cancela a chamada. Um editor pode mostrar os marcadores de posição de imediato e diagramar de novo quando o MathJax chegar; nenhum aviso é impresso enquanto `initMathEngine()` está em andamento.
 - **Falha.** `initMathEngine()` rejeita quando o MathJax não pode ser carregado, e uma chamada posterior tenta de novo.
-- **Qualquer bundler, Node ou uma CDN.** O MathJax vem dentro do pacote como um único módulo pré-empacotado (cerca de 1,8 MB antes da compressão, baixado só por `initMathEngine`). O simples `import { initMathEngine } from 'https://esm.sh/postext'` funciona; não é preciso `?bundle`. O pacote `mathjax-full` só é necessário para compilar o postext, então instalar o postext não o instala. O MathJax e o analisador mhchem que ele inclui têm licença Apache-2.0: os avisos deles e o texto da licença acompanham o módulo, em `dist/math/THIRD_PARTY_LICENSES.txt`.
-- **Um motor por página.** O motor e o seu cache de fórmulas renderizadas são compartilhados por tudo o que importa `postext` no mesmo realm JavaScript (veja [Estado global compartilhado numa página](/pt/docs/configuration-programmatic-usage#estado-global-compartilhado-em-uma-página)).
+- **Qualquer bundler, Node ou uma CDN.** O MathJax vem dentro do pacote como um único módulo pré-empacotado (cerca de 1,8 MB antes da compressão, baixado só por `initMathEngine`). O simples `import { initMathEngine } from 'https://esm.sh/postext'` funciona; não é preciso `?bundle`. O pacote `mathjax-full` só é necessário para compilar o postext; por isso, instalar o postext não o instala. O MathJax e o analisador mhchem que ele inclui têm licença Apache-2.0: os avisos deles e o texto da licença acompanham o módulo, em `dist/math/THIRD_PARTY_LICENSES.txt`.
+- **Um motor por página.** O motor e o cache de fórmulas renderizadas são compartilhados por tudo o que importa `postext` no mesmo realm JavaScript (veja [Estado global compartilhado numa página](/pt/docs/configuration-programmatic-usage#estado-global-compartilhado-em-uma-página)).
 
 Para a gramática do lado do documento (`$...$`, `$$...$$`, como escapar um cifrão literal), veja [Formato do documento](/pt/docs/document-format-inline#fórmulas-matemáticas).

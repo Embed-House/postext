@@ -10,7 +10,7 @@ pageNotes: { "9": "L’indice si apre a pagina 305 sotto la stessa fascia rossa 
 
 ## Che cosa comporrai
 
-La parte IV di *Principles of Human Physiology*, un manuale su una pagina di 210 × 277 mm: il capitolo 14, *The heart as a pump*, e il capitolo 15, *Vessels and blood pressure*, si aprono su recto sotto una fascia rossa e compongono le note cliniche e le didascalie in un canale esterno. La parte si chiude con un indice di circa novanta voci e trenta sottovoci su due colonne, come lo compone un manuale di medicina: voci in minuscolo, lettere di gruppo nel colore d’accento, sottovoci rientrate di un quadratone, la pagina che definisce il termine in grassetto, *see* e *see also* in corsivo. Nessun numero di pagina è stato scritto a mano. Ogni termine è marcato nel capitolo, dove il testo lo spiega, e l’indice legge le pagine su cui quelle marche sono cadute, folio da 297 a 304.
+La parte IV di *Principles of Human Physiology*, un manuale su una pagina di 210 × 277 mm: il capitolo 14, *The heart as a pump*, e il capitolo 15, *Vessels and blood pressure*, si aprono su recto sotto una fascia rossa e compongono le note cliniche e le didascalie in un canale esterno. La parte si chiude con un indice di circa novanta voci e trenta sottovoci su due colonne, come lo compone un manuale di medicina: voci in minuscolo, lettere di gruppo nel colore d’accento, sottovoci rientrate di un quadratone, la pagina che definisce il termine in grassetto, *see* e *see also* in corsivo. Nessun numero di pagina è stato scritto a mano. Ogni termine è marcato nel capitolo, dove il testo lo spiega, e l’indice legge le pagine su cui quelle marche sono cadute, pagine da 297 a 304.
 
 ## Preparazione
 
@@ -24,7 +24,7 @@ Chi compila un indice marca i punti in cui un termine viene spiegato, non ogni p
 
 <Excerpt region="answer" />
 
-`main` mette in grassetto la pagina che definisce un termine, così uno studente che cerca *preload* va prima a pagina 299. `range="start"` e `range="end"`, con lo stesso termine, delimitano una trattazione che scavalca un’interruzione di pagina: *stroke volume, regulation, 299–300*, *baroreceptor reflex, 303–4*. Un `main` sull’inizio rende grassetto tutto l’intervallo. Una pagina marcata di nuovo dentro il proprio intervallo vi si fonde, e un `main` in quel punto rende grassetto l’intervallo. `see` prende il posto dei numeri di pagina (*inotropy. See contractility*), e `seealso` li segue (*heart failure, 300. See also ejection fraction*). Un bersaglio con più livelli si scrive con `!` e si stampa con i due punti: *See blood pressure: mean arterial*.
+`main` mette in grassetto la pagina che definisce un termine, così uno studente che cerca *preload* va prima a pagina 299. `range="start"` e `range="end"`, con lo stesso termine, delimitano una trattazione che scavalca un’interruzione di pagina: *stroke volume, regulation, 299–300*, *baroreceptor reflex, 303–4*. Un `main` sull’inizio rende grassetto tutto l’intervallo. Una pagina marcata di nuovo nel proprio intervallo vi si fonde, e un `main` in quel punto rende grassetto l’intervallo. `see` prende il posto dei numeri di pagina (*inotropy. See contractility*), e `seealso` li segue (*heart failure, 300. See also ejection fraction*). Un bersaglio con più livelli si scrive con `!` e si stampa con i due punti: *See blood pressure: mean arterial*.
 
 ### 3 · Un capitolo indice su due colonne
 
@@ -36,7 +36,7 @@ L’indice è l’ultimo documento Markdown del libro, `# Index {style="index"}`
 
 <Excerpt region="build" />
 
-`buildBundle` impagina i capitoli in ordine e scopre che il terzo contiene `:::index`. Dopo il primo passaggio raccoglie ogni marca di ogni capitolo con la pagina su cui è caduta, e passa quell’elenco al capitolo indice come sua struttura. Poi impagina di nuovo il libro, fino a tre passaggi, finché nessun numero di pagina si sposta. Riscrivi un paragrafo del capitolo 14, cambia il formato o il corpo del testo, e l’indice si ristampa con le pagine nuove. Nel PDF ogni numero di pagina è un collegamento alla sua pagina.
+`buildBundle` impagina i capitoli in ordine e scopre che il terzo contiene `:::index`. Dopo la prima passata raccoglie ogni marca di ogni capitolo con la pagina su cui è caduta, e passa quell’elenco al capitolo indice come sua struttura. Poi impagina di nuovo il libro, fino a tre passate, finché nessun numero di pagina si sposta. Riscrivi un paragrafo del capitolo 14, cambia il formato o il corpo del testo, e l’indice si ristampa con le pagine nuove. Nel PDF ogni numero di pagina è un collegamento alla sua pagina.
 
 ### 5 · Aperture e testatine
 

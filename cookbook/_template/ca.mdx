@@ -2,7 +2,7 @@
 # Tots els valors van entre cometes. Límits: title ≤ 60 caràcters (un resultat, no una llista
 # de funcions); summary 60–160 (la resposta en una frase, amb el mecanisme); description 120–160.
 title: "Una pàgina de llibre amb capçaleres"
-summary: "Marges simètrics, una obertura de capítol enfonsada i capçaleres que saben a quin costat del plec són, a la pàgina d'un llibre en rústica."
+summary: "Marges simètrics, una obertura de capítol enfonsada i capçaleres que saben a quin costat de la doble pàgina són, a la pàgina d'un llibre en rústica."
 description: "Una pàgina de llibre amb Postext: marges simètrics, obertura enfonsada 52 mm, capçaleres segons la paritat i foli al peu a les obertures, amb tot el codi."
 # plain: "…"           40–240 caràcters: el resum en paraules corrents, sense argot (es mostra com a «En poques paraules»)
 # question: "…"        opcional, ≤ 110 caràcters: reformula answers[0] per a aquesta pàgina
@@ -19,7 +19,7 @@ aliases: ["pàgina de llibre", "capçaleres", "obertura de capítol"]
   La pàgina afegeix sola, sota aquesta secció, la llista «Aquesta recepta respon» (d'answers).
 */}
 
-Les primeres pàgines d'una novel·la en rústica: un capítol que comença en pàgina senar, a un terç de l'alçada, sota un avanttítol petit en versaletes espaiades i un filet curt de l'únic color d'accent del llibre; després, pàgina rere pàgina de text justificat, amb el títol del llibre a l'esquerra i el del capítol a la dreta. Res a la pàgina no alça la veu. L'ofici és a la geometria: marges que es reflecteixen en el plec, capçaleres que saben a quin costat són i un foli que baixa al peu a l'obertura, on una capçalera destorbaria el títol.
+Les primeres pàgines d'una novel·la en rústica: un capítol que comença en pàgina senar, a un terç de l'alçada, sota un avanttítol petit en versaletes espaiades i un filet curt de l'únic color d'accent del llibre; després, pàgina rere pàgina de text justificat, amb el títol del llibre a l'esquerra i el del capítol a la dreta. Res a la pàgina no alça la veu. L'ofici és a la geometria: marges que s'emmirallen a la doble pàgina, capçaleres que saben a quin costat són i un foli que baixa al peu a l'obertura, on una capçalera destorbaria el títol.
 
 ## Elaboració
 
@@ -34,7 +34,7 @@ Les primeres pàgines d'una novel·la en rústica: un capítol que comença en p
 
 ### 1 · L'obertura és un disseny, no un títol
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. El títol de primer nivell conserva el seu lloc al text i a l'índex, però es dibuixa des d'una ranura d'elements: l'avanttítol surt d'un atribut del títol, el títol es parteix amb una mida fixa i el filet s'ancora sota l'alçada que ocupi el títol. `minHeight` enfonsa el text fins a la mateixa línia a totes les obertures, sigui quina sigui la llargada del títol.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. El títol de primer nivell conserva el seu lloc al text i a l'índex, però es dibuixa des d'una zona de disseny: l'avanttítol surt d'un atribut del títol, el títol es parteix amb una mida fixa i el filet s'ancora sota l'alçada que ocupi el títol. `minHeight` enfonsa el text fins a la mateixa línia a totes les obertures, sigui quina sigui la llargada del títol.
 
 ### 2 · Les capçaleres saben en quina pàgina són
 
@@ -46,7 +46,7 @@ Cada element s'ancora a la pàgina física i es filtra per paritat, de manera qu
 
 <Excerpt region="palette" />
 
-Cada color de la configuració anomena la seva entrada de la paleta, de manera que qui canviï una mostra canvia el to de tot el llibre, i una part o un estil de títol poden tornar a acolorir una secció pel seu id. Fer apuntar `main-color` a l'accent atrapa tots els valors per defecte que la configuració no redefineix.
+Cada color de la configuració fa referència a la seva entrada de la paleta, de manera que qui canviï una mostra canvia el to de tot el llibre, i una part o un estil d'encapçalament poden tornar a acolorir una secció pel seu id. Fer apuntar `main-color` a l'accent atrapa tots els valors per defecte que la configuració no redefineix.
 
 ## Variants
 

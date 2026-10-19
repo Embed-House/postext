@@ -18,7 +18,7 @@ pageNotes: { "1": "A capa: um campo cor de vinho até todas as bordas, um antet�
 
 <Excerpt region="paper-runs" />
 
-Um bloco `:::paper` começa numa página nova e o texto que vem depois dele também, então aqui cada trecho preenche uma folha: a ficha no anverso, um `:::pagebreak` e a amostra no verso. Uma folha tem um só papel para os dois lados, o do seu anverso: um trecho que começasse num verso imprimiria essa página no papel da folha a que ela pertence (veja Erros comuns).
+Um bloco `:::paper` começa numa página nova e o texto que vem depois dele também, de modo que aqui cada trecho preenche uma folha: a ficha no anverso, um `:::pagebreak` e a amostra no verso. Uma folha tem um só papel para os dois lados, o do anverso: um trecho que começasse num verso imprimiria essa página no papel da folha a que ela pertence (veja Erros comuns).
 
 ### 2 · O papel do livro e as capas
 
@@ -30,17 +30,17 @@ Um bloco `:::paper` começa numa página nova e o texto que vem depois dele tamb
 
 <Excerpt region="covers" />
 
-Cada capa é um estilo de título cujo design traz um campo de cor do tamanho do refile. O estilo zera as margens enquanto dura a sua seção, que é só a página da capa, então o campo chega a todas as bordas e as páginas seguintes mantêm as margens.
+Cada capa é um estilo de título cujo design traz um campo de cor do tamanho do refile. O estilo zera as margens enquanto dura a seção, que é só a página da capa, por isso o campo chega a todas as bordas e as páginas seguintes mantêm as margens.
 
 ### 4 · A ficha do papel
 
 <Excerpt region="stock-card" />
 
-Cada folha abre com um título de nível 1 desenhado a partir de um slot: o antetítulo, que vem dos atributos do título, o nome do papel e um fio fino. As linhas de especificações são um estilo de parágrafo na letra condensada dos rótulos, com os rótulos em negrito na cor de destaque.
+Cada folha abre com um título de nível 1 desenhado a partir de um espaço de design: o antetítulo, que vem dos atributos do título, o nome do papel e um fio fino. As linhas de especificações são um estilo de parágrafo na letra condensada dos rótulos, com os rótulos em negrito na cor de destaque.
 
 ### 5 · Leia o papel de volta na diagramação
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. Toda página diagramada dentro de um bloco carrega os atributos do bloco em `page.paper`, tal como foram escritos: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` os repassa ao visualizador, que desenha cada folha com o seu papel; o pen também os lê para a linha de status e para o texto alternativo de cada página.
+O código é [a resposta curta](#a-resposta-curta) logo acima. Toda página diagramada dentro de um bloco carrega os atributos do bloco em `page.paper`, tal como foram escritos: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` os repassa ao visualizador, que desenha cada folha com o papel; o pen também os lê para a linha de status e para o texto alternativo de cada página.
 
 ## Variações
 

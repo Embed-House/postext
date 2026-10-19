@@ -5,7 +5,7 @@ plain: "Un libro di saggi di autori diversi. Ogni saggio mostra il suo autore so
 description: "Un volume collettaneo in Postext: capitoli buildBundle con l’autore preso dagli attributi del titolo e una bibliografia per capitolo in Chicago autore-data."
 question: "Come do a ogni capitolo di un volume collettaneo il proprio autore e il proprio elenco di riferimenti?"
 aliases: ["volume collettaneo", "raccolta di saggi", "atti di convegno", "capitoli di più autori", "riferimenti per capitolo", "bibliografia di capitolo", "Chicago autore-data", "nome dell’autore", "edited volume"]
-pageNotes: { "1": "Pagina 1: il frontespizio, un campo rosso tipografico sui due terzi superiori con «The Working Page» in grande Caslon bianco e il sottotitolo in corsivo; sotto, i curatori in maiuscole rosse e i tre autori in corsivo.", "2": "Pagina 2: il sommario, tre saggi numerati con puntini di guida e numeri di pagina, ciascuno con il nome del suo autore in corsivo grigio sotto il titolo.", "5": "Pagina 5: la fine del capitolo 1 e il suo elenco «References» di quattro opere, tra cui Eisenstein 1979 e Gaskell 1972.", "8": "Pagina 8: la fine del capitolo 2 e il suo elenco «References», che ripete Eisenstein 1979 perché anche questo capitolo lo cita." }
+pageNotes: { "1": "Pagina 1: il frontespizio, un campo rosso tipografico sui due terzi superiori con «The Working Page» in grande Caslon bianco e il sottotitolo in corsivo; sotto, i curatori in maiuscole rosse e i tre autori in corsivo.", "2": "Pagina 2: l’indice, tre saggi numerati con puntini di guida e numeri di pagina, ciascuno con il nome del suo autore in corsivo grigio sotto il titolo.", "5": "Pagina 5: la fine del capitolo 1 e il suo elenco «References» di quattro opere, tra cui Eisenstein 1979 e Gaskell 1972.", "8": "Pagina 8: la fine del capitolo 2 e il suo elenco «References», che ripete Eisenstein 1979 perché anche questo capitolo lo cita." }
 ---
 
 ## Che cosa comporrai
@@ -18,13 +18,13 @@ pageNotes: { "1": "Pagina 1: il frontespizio, un campo rosso tipografico sui due
 
 <Excerpt region="chapters" />
 
-L’ambito nella [risposta breve](#la-risposta-breve) è l’ambito di un documento. `buildBundle` impagina i quattro documenti come un unico libro, quindi i numeri di pagina, i numeri di capitolo e il sommario proseguono senza interruzioni, mentre ogni `:::bibliography` raccoglie le citazioni del proprio file. I riferimenti restano dove l’autore li ha scritti: una chiave definita in qualsiasi capitolo vale per tutto il libro, quindi sarebbe bastata una sola voce condivisa, ma capitoli autosufficienti si possono scambiare o riordinare senza rompere l’elenco di un altro saggio.
+L’ambito nella [risposta breve](#la-risposta-breve) è l’ambito di un documento. `buildBundle` impagina i quattro documenti come un unico libro, quindi i numeri di pagina, i numeri di capitolo e l’indice proseguono senza interruzioni, mentre ogni `:::bibliography` raccoglie le citazioni del proprio file. I riferimenti restano dove l’autore li ha scritti: una chiave definita in qualsiasi capitolo vale per tutto il libro, quindi sarebbe bastata una sola voce condivisa, ma capitoli autosufficienti si possono scambiare o riordinare senza rompere l’elenco di un altro saggio.
 
 ### 2 · Il nome dell’autore è un attributo del titolo
 
 <Excerpt region="byline" />
 
-Il titolo di ogni saggio porta `author="…"` e un titolo `short="…"` per la testatina. L’apertura stampa l’autore sotto il titolo, la testatina della pagina verso nomina l’autore del saggio a cui appartiene la pagina, e il sommario stampa il nome come una riga sotto ogni voce. Nulla nelle pagine preliminari del libro elenca gli autori due volte.
+Il titolo di ogni saggio ha `author="…"` e un titolo `short="…"` per la testatina. L’apertura stampa l’autore sotto il titolo, la testatina della pagina verso riporta l’autore del saggio a cui appartiene la pagina, e l’indice stampa il nome come una riga sotto ogni voce. Nulla nelle pagine preliminari del libro elenca gli autori due volte.
 
 ### 3 · L’apertura
 
@@ -36,13 +36,13 @@ Occhiello, titolo e nome dell’autore si impilano dalla sommità dell’area de
 
 <Excerpt region="running-heads" />
 
-Un volume collettaneo nomina l’autore sulla pagina verso e il capitolo sul recto, dove una monografia stamperebbe il titolo del libro e il capitolo. Le testatine sono filtrate su `pages: 'body'`, quindi le aperture portano solo un folio al piede.
+Un volume collettaneo riporta l’autore sulla pagina verso e il capitolo sul recto, dove una monografia stamperebbe il titolo del libro e il capitolo. Le testatine sono filtrate su `pages: 'body'`, quindi le aperture hanno solo un numero di pagina al piede.
 
 ### 5 · Le pagine preliminari
 
 <Excerpt region="front" />
 
-Il frontespizio e il sommario sono due titoli non numerati nel primo documento, senza testatine e senza voce nel sommario. I loro progetti grafici leggono `{title}` e `{subtitle}` dal frontmatter, e i curatori e gli autori dagli attributi del titolo stesso.
+Il frontespizio e l’indice sono due titoli non numerati nel primo documento, senza testatine e senza voce nell’indice. Le loro grafiche leggono `{title}` e `{subtitle}` dal front matter, e i curatori e gli autori dagli attributi del titolo stesso.
 
 ## Varianti
 

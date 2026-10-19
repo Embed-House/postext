@@ -22,7 +22,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. De los estilo
 
 <Excerpt region="title" />
 
-El título del artículo es el único título de nivel 1, con el estilo `article`, que ocupa toda la página y lo dibuja con su diseño. El tipo de artículo, los autores, las filiaciones y la nota salen de atributos del título. `inlineMarks` convierte el `^1^` del atributo en un número de filiación volado, y el `\n` de las filiaciones abre una línea para cada centro. La banda está anclada al corte, así que llega hasta el borde superior del papel.
+El título del artículo es el único encabezado de nivel 1, con el estilo `article`, que ocupa toda la página y lo dibuja con su diseño. El tipo de artículo, los autores, las filiaciones y la nota salen de atributos del encabezado. `inlineMarks` convierte el `^1^` del atributo en un número de filiación volado, y el `\n` de las filiaciones abre una línea para cada centro. La banda está anclada al corte, así que llega hasta el borde superior del papel.
 
 ### 3 · Un resumen estructurado y un recuadro de puntos clave
 
@@ -70,4 +70,4 @@ Algunas revistas Vancouver escriben los números en la línea, entre corchetes.
 
 ## Errores frecuentes
 
-- La `header` de un estilo de título rige toda la sección que ese título abre, así que `header: { elements: [] }` en el título del artículo quitaría las cabeceras de todas las páginas hasta el siguiente título con estilo. Para dejar libre la primera página basta con `pages: 'body'` en las cabeceras.
+- La `header` de un estilo de encabezado rige toda la sección que ese título abre, así que `header: { elements: [] }` en el título del artículo quitaría las cabeceras de todas las páginas hasta el siguiente título con estilo. Para dejar libre la primera página basta con `pages: 'body'` en las cabeceras.

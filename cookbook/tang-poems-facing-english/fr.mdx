@@ -10,7 +10,7 @@ pageNotes: { "1": "La page de titre : les caractères 唐詩 en noir sur une lu
 
 ## Ce que vous allez composer
 
-Un petit recueil bilingue de poèmes Tang, composé comme les éditions en texte en regard composent un classique : le chinois sur la page de droite, sur un feuillet teinté comme un vieux papier, et l’anglais rimé de Herbert A. Giles, de 1901, sur la page de gauche en face. Quatre poèmes de Li Bai, Du Fu et Wang Wei occupent chacun une double page, titrés dans chaque langue et signés du nom du poète. Le chinois est composé en LXGW WenKai, un caractère Kai dessiné d’après le pinceau, deux vers par rangée, si bien que chaque rangée est au niveau des deux lignes anglaises qui la traduisent. Des gloses dans la langue du lecteur se trouvent au pied de la page chinoise. <RecipeLink slug="bilingual-facing-verse">Traduction en regard, strophe par strophe</RecipeLink> compose un poème espagnol à côté de son anglais sur une seule page ; ici, chaque langue a sa propre page.
+Un petit recueil bilingue de poèmes Tang, composé comme les éditions en texte en regard composent un classique : le chinois sur la page de droite, sur un feuillet teinté comme un vieux papier, et l’anglais rimé de Herbert A. Giles, de 1901, sur la page de gauche en face. Quatre poèmes de Li Bai, Du Fu et Wang Wei occupent chacun une double page, titrés dans chaque langue et signés du nom du poète. Le chinois est composé en LXGW WenKai, un caractère Kai dessiné d’après le pinceau, deux vers par rangée : chaque rangée est donc au niveau des deux lignes anglaises qui la traduisent. Des gloses dans la langue du lecteur se trouvent au pied de la page chinoise. <RecipeLink slug="bilingual-facing-verse">Traduction en regard, strophe par strophe</RecipeLink> compose un poème espagnol à côté de son anglais sur une seule page ; ici, chaque langue a sa propre page.
 
 ## Préparation
 
@@ -30,19 +30,19 @@ Les rangées chinoises ont un interlignage double de celui des lignes anglaises,
 
 <Excerpt region="notes" />
 
-Les gloses sont des notes de bas de page, une par rangée : `疑是地上霜。[^bed]` ferme la première rangée du poème et `[^bed]: …` la suit, en nommant en gras chaque mot qu’elle explique, puisque le numéro n’est plus à côté d’eux. Elles sont numérotées comme un livre chinois numérote ses notes (页下注) : des chiffres cerclés posés sur la ligne de base, qui repartent de ① à chaque page (`numberFormat: 'circled-decimal'`, `numbering: 'page'`). Dans le poème, l’appel est composé à six dixièmes du corps du poème, `markerSize: em(0.6)`, proche du corps des notes ; au pied de la page, chaque note s’ouvre sur son ① au corps du texte des notes ([notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page)). Les notes sont composées dans le caractère du texte courant, et celui de ce livre est Noto Serif TC, car une glose mêle caractères et pinyin ; les lettres latines de Noto Serif TC viennent de Source Serif, c’est pourquoi les pages anglaises sont composées en Source Serif 4. Les notes sont écrites dans la langue de l’édition : avec le titre courant du verso et la note sur le texte, ce sont elles que change l’édition espagnole.
+Les gloses sont des notes de bas de page, une par rangée : `疑是地上霜。[^bed]` ferme la première rangée du poème et `[^bed]: …` la suit, en citant en gras chaque mot qu’elle explique, puisque le numéro n’est plus à côté d’eux. Elles sont numérotées comme un livre chinois numérote ses notes (页下注) : des chiffres cerclés posés sur la ligne de base, qui repartent de ① à chaque page (`numberFormat: 'circled-decimal'`, `numbering: 'page'`). Dans le poème, l’appel est composé à six dixièmes du corps du poème, `markerSize: em(0.6)`, proche du corps des notes ; au pied de la page, chaque note s’ouvre sur son ① au corps des notes ([notes de bas de page](/fr/docs/configuration-notes-references#notes-de-bas-de-page)). Les notes sont composées dans le caractère du texte courant, et celui de ce livre est Noto Serif TC, car une glose mêle caractères et pinyin ; les lettres latines de Noto Serif TC viennent de Source Serif, c’est pourquoi les pages anglaises sont composées en Source Serif 4. Les notes sont écrites dans la langue de l’édition : avec le titre courant du verso et la note sur le texte, ce sont elles que change l’édition espagnole.
 
 ### 4 · Des titres courants dans la langue de chaque page
 
 <Excerpt region="heads" />
 
-Chaque page de ce livre s’ouvre sur un titre : chaque page est donc une ouverture, et les titres courants utilisent `pages: 'opener'`. Une page blanche ajoutée par un saut resterait nue, et la page de titre les efface par un en-tête vide qui lui est propre. Le verso prend le titre du livre dans le `subtitle` du frontmatter, que chaque édition écrit dans sa langue ; le recto prend le nom du poète dans l’attribut `name` du titre chinois ([en-têtes et pieds de page](/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page)).
+Chaque page de ce livre s’ouvre sur un titre : chaque page est donc une ouverture, et les titres courants utilisent `pages: 'opener'`. Une page blanche ajoutée par un saut resterait nue, et la page de titre les efface par un en-tête vide qui lui est propre. Le verso prend le titre du livre dans le `subtitle` de l’en-tête YAML, que chaque édition écrit dans sa langue ; le recto prend le nom du poète dans l’attribut `name` du titre chinois ([en-têtes et pieds de page](/fr/docs/configuration-headers-footers#en-têtes-et-pieds-de-page)).
 
 ### 5 · Une page de titre sur une lune
 
 <Excerpt region="title" />
 
-La page de titre est elle aussi un style de titre, avec `runningChapter: false` pour qu’elle ne nomme aucun chapitre. La lune est une boîte de maquette dont le rayon d’angle vaut la moitié du côté, et 唐詩 y est centré par le calcul : le milieu de la lune, moins la moitié de la hauteur du titre. Le sceau compose 明月 avec `writingMode: 'vertical-rl'`, un caractère au-dessus de l’autre, comme on grave les sceaux.
+La page de titre est elle aussi un style de titre, avec `runningChapter: false` pour qu’elle n’indique aucun chapitre. La lune est une boîte de maquette dont le rayon d’angle vaut la moitié du côté, et 唐詩 y est centré par le calcul : le milieu de la lune, moins la moitié de la hauteur du titre. Le sceau compose 明月 avec `writingMode: 'vertical-rl'`, un caractère au-dessus de l’autre, comme on grave les sceaux.
 
 ### 6 · Chaque caractère chinois charge ce qu’il compose
 
@@ -54,7 +54,7 @@ Fontsource découpe chaque caractère chinois en une centaine de fichiers par pl
 
 ### Mettre l’original au verso
 
-Les éditions Loeb et beaucoup de lectures chinois–anglais placent l’original à gauche : inversez les parités des deux styles de titre et des deux titres courants qui nomment le livre et le poète, et écrivez dans le Markdown chaque titre et poème chinois avant son anglais.
+Les éditions Loeb et beaucoup de lectures chinois–anglais placent l’original à gauche : inversez les parités des deux styles de titre et des deux titres courants qui indiquent le livre et le poète, et écrivez dans le Markdown chaque titre et poème chinois avant son anglais.
 
 ```diff
 -const english = { id: 'en', breakBefore: { enabled: true, parity: 'even' }, // a verso

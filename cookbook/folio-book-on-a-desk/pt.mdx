@@ -10,7 +10,7 @@ pageNotes: { "1": "A abertura do capítulo: um chapéu verde pequeno, o título 
 
 ## O que você vai compor
 
-O primeiro capítulo de *The Ferryman’s Ledger*, um romance curto em página de 129 × 198 mm, aberto como um livro sobre uma mesa de nogueira. A capa é dura, revestida de tecido verde-garrafa, as páginas são de um papel creme encorpado de romance, e o leitor pega a página da direita pela borda e a vira: a folha se curva e projeta a sombra sobre a página de baixo. O texto é composto uma vez com `buildDocument`; uma chamada ao pacote `postext-folio` transforma essa diagramação no livro. Tudo aquilo de que o livro é feito (papel, encadernação, mesa, luz, o ângulo da vista) faz parte da configuração, então o mesmo documento leva sua aparência para a aba Folio do Sandbox.
+O primeiro capítulo de *The Ferryman’s Ledger*, um romance curto em página de 129 × 198 mm, aberto como um livro sobre uma mesa de nogueira. A capa é dura, revestida de tecido verde-garrafa, as páginas são de um papel creme encorpado de romance, e o leitor pega a página da direita pela borda e a vira: a folha se curva e projeta a sombra sobre a página de baixo. O texto é composto uma vez com `buildDocument`; uma chamada ao pacote `postext-folio` transforma essa diagramação no livro. Tudo aquilo de que o livro é feito (papel, encadernação, mesa, luz, o ângulo da vista) faz parte da configuração, por isso o mesmo documento leva sua aparência para a aba Folio do Sandbox.
 
 ## Preparo
 
@@ -18,7 +18,7 @@ O primeiro capítulo de *The Ferryman’s Ledger*, um romance curto em página d
 
 <Excerpt region="folio" />
 
-`config.folio` é lido pelo visualizador 3D e por mais nada: a diagramação, o canvas, o PDF e a saída HTML o ignoram, então trocar o papel não move uma linha. `bookWove` é um papel de romance encorpado, e 70 g/m² com esse volume dá uma folha de uns 112 µm de espessura; o visualizador multiplica isso pelo número de páginas para obter a espessura do miolo. A cor do tecido está ligada à cor de destaque da paleta, o mesmo verde do chapéu e dos fólios.
+`config.folio` é lido pelo visualizador 3D e por mais nada: a diagramação, o canvas, o PDF e a saída HTML o ignoram, de modo que trocar o papel não move uma linha. `bookWove` é um papel de romance encorpado, e 70 g/m² com esse volume dá uma folha de uns 112 µm de espessura; o visualizador multiplica isso pelo número de páginas para obter a espessura do miolo. A cor do tecido está ligada à cor de destaque da paleta, o mesmo verde do chapéu e dos fólios.
 
 ### 2 · Uma abertura discreta e os cabeços
 
@@ -51,4 +51,4 @@ Mude três ajustes e o mesmo capítulo vira um livro de capa mole sobre uma mesa
 
 ### Cada folha num papel diferente
 
-<RecipeLink slug="paper-swatch-book">Um mostruário de papéis</RecipeLink> imprime cada folha no seu próprio papel com `:::paper`, e <RecipeLink slug="folio-settings-bench">a bancada de ajustes</RecipeLink> muda todos os ajustes ao vivo com `setAppearance`.
+<RecipeLink slug="paper-swatch-book">Um mostruário de papéis</RecipeLink> imprime cada folha no próprio papel com `:::paper`, e <RecipeLink slug="folio-settings-bench">a bancada de ajustes</RecipeLink> muda todos os ajustes ao vivo com `setAppearance`.

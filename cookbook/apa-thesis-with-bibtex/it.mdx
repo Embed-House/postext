@@ -10,23 +10,23 @@ pageNotes: { "1": "Pagina 1: una fascia azzurro pallido in testa con l’etichet
 
 ## Che cosa comporrai
 
-Il secondo capitolo di una tesi di dottorato in scienze dell’educazione, la rassegna della letteratura: che cosa dicono vent’anni di studi sulla lettura su carta e su schermo. Il capitolo è composto su una pagina A4 rilegata a sinistra, in Literata con interlinea di 16 pt, sotto una fascia chiara nel blu dell’università. L’autore tiene le fonti in Zotero e incolla l’esportazione in BibTeX; nel testo ogni fonte è una chiave. Postext formatta ogni citazione in APA 7, con l’autore, l’anno e la pagina quando è indicata, scrive “Delgado et al. (2018)” quando il nome fa parte della frase e costruisce la bibliografia nell’ordine e nella forma che lo stile richiede. Quando il relatore chiede Chicago, lo stile è l’unica riga che cambia.
+Il secondo capitolo di una tesi di dottorato in scienze dell’educazione, la rassegna della letteratura: che cosa dicono vent’anni di studi sulla lettura su carta e su schermo. Il capitolo è composto su una pagina A4 rilegata a sinistra, in Literata con interlinea di 16 pt, sotto una fascia chiara nel blu dell’università. L’autore tiene le fonti in Zotero e incolla l’esportazione in BibTeX; nel testo ogni fonte è una chiave. Postext formatta ogni citazione in APA 7, con l’autore, l’anno e la pagina quando è indicata, scrive «Delgado et al. (2018)» quando il nome fa parte della frase e costruisce la bibliografia nell’ordine e nella forma che lo stile richiede. Quando il relatore chiede Chicago, lo stile è l’unica riga che cambia.
 
 ## Preparazione
 
 ### 1 · Un motore, uno stile
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Postext legge le citazioni e lascia la loro forma a un motore di citazione, registrato una volta prima della prima composizione; `postext-citeproc` incapsula citeproc-js, il motore che usano Zotero e Mendeley, con sedici stili CSL e i loro file di localizzazione. `[@mangen2013]` dà “(Mangen et al., 2013)”, `@delgado2018` senza parentesi quadre mette gli autori nella frase e `[@ibanez2023, pp. 12–15]` porta l’intervallo di pagine dentro le parentesi. Con il documento in spagnolo, le stesse chiavi prendono congiunzioni e abbreviazioni dal file di localizzazione spagnolo, perché il motore segue la lingua del documento.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Postext legge le citazioni e lascia la loro forma a un motore di citazione, registrato una volta prima della prima composizione; `postext-citeproc` incapsula citeproc-js, il motore che usano Zotero e Mendeley, con sedici stili CSL e i loro file di localizzazione. `[@mangen2013]` dà «(Mangen et al., 2013)», `@delgado2018` senza parentesi quadre mette gli autori nella frase e `[@ibanez2023, pp. 12–15]` mette l’intervallo di pagine tra le parentesi. Con il documento in spagnolo, le stesse chiavi prendono congiunzioni e abbreviazioni dal file di localizzazione spagnolo, perché il motore segue la lingua del documento.
 
 ### 2 · La bibliografia viene da un blocco BibTeX
 
-L’ultimo blocco del capitolo è `:::references{format=bibtex}` con dentro l’esportazione di Zotero incollata, con gli accenti scritti come `{\'a}`. `:::bibliography`, più sopra, colloca l’elenco sotto il titolo References; senza, Postext aggiunge l’elenco alla fine. Compaiono solo le opere citate, ordinate come le ordina APA, e ogni citazione nel testo rimanda alla sua voce.
+L’ultimo blocco del capitolo è `:::references{format=bibtex}`, che contiene l’esportazione di Zotero incollata, con gli accenti scritti come `{\'a}`. `:::bibliography`, più sopra, colloca l’elenco sotto il titolo References; senza, Postext aggiunge l’elenco alla fine. Compaiono solo le opere citate, ordinate come le ordina APA, e ogni citazione nel testo rimanda alla sua voce.
 
 ### 3 · Un titolo senza numero, rimandi in parole
 
 <Excerpt region="refs" />
 
-Il titolo della bibliografia prende lo stile `references`, che lo tiene nell’indice ma fuori dalla numerazione, così l’elenco non diventa la sezione 2.4. `:ref{id="sec-speed"}` stampa “Section 2.2” dall’etichetta di `crossRefs` e rimanda al titolo; i numeri vengono da `startAt=2` sul titolo del capitolo, lo stesso contatore che usano i titoli.
+Il titolo della bibliografia prende lo stile `references`, che lo tiene nell’indice ma fuori dalla numerazione, così l’elenco non diventa la sezione 2.4. `:ref{id="sec-speed"}` stampa «Section 2.2» dall’etichetta di `crossRefs` e rimanda al titolo; i numeri vengono da `startAt=2` sul titolo del capitolo, lo stesso contatore che usano i titoli.
 
 ### 4 · L’apertura sta in una fascia
 

@@ -24,7 +24,7 @@ El equilibrado de Postext acabaría los dos pisos de la última página de un cu
 
 <Excerpt region="opener" />
 
-Un nivel de título con `span: 'page'` se compone a toda la altura de la página, los dos pisos y el medianil, al principio del flujo, a la derecha de una página vertical; los pisos empiezan tras las siete líneas que reserva su diseño. Un título así siempre abre página, y `breakBefore.parity: 'odd'` hace que sea la izquierda: *El hilo de la araña* acaba en la página 214, que es par, de modo que *La fe de Bisei* abre en la 215 sin página en blanco entre ambos ([Span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)). En el diseño, `x` baja por la página e `y` la cruza desde el borde derecho de la caja; el nombre del autor se coloca desde el pie del piso de abajo, tres caracteres más arriba.
+Un nivel de título con `span: 'page'` se compone a toda la altura de la página, los dos pisos y el medianil, al principio del flujo, a la derecha de una página vertical; los pisos empiezan tras las siete líneas que reserva su diseño. Un título así siempre abre página, y `breakBefore.parity: 'odd'` hace que sea la izquierda: *El hilo de la araña* acaba en la página 214, que es par, de modo que *La fe de Bisei* abre en la 215 sin página en blanco entre ambos ([Apertura a toda página y diseño avanzado](/es/docs/configuration-headings#apertura-a-toda-página-y-diseño-avanzado)). En el diseño, `x` baja por la página e `y` la cruza desde el borde derecho de la caja; el nombre del autor se coloca desde el pie del piso de abajo, tres caracteres más arriba.
 
 ### 3 · Numera las secciones en tres líneas de su piso
 
@@ -34,7 +34,7 @@ El segundo nivel, `lineSpan: 3` con `indent: em(8)`, compone 一 二 三 ocho ca
 
 <Excerpt region="furniture" />
 
-`anchor.to: 'outer'` coloca el hashira en el margen del corte delantero, el nombre del tomo, 芥川龍之介集, en las páginas derechas y el título de la obra en las izquierdas, y `pages: 'body'` los aparta de las páginas donde abre una obra ([Elementos de texto verticales](/es/docs/configuration-headers-footers#elementos-de-texto-verticales)). El folio va de través en el margen, en cifras arábigas, como lo imprimen muchas obras completas: bajando por el corte, tres cifras quedarían tumbadas. `pageNumbering.startAt: 211` numera las páginas como el tomo. El estilo del título de la primera obra lleva el colofón con `pages: 'opener'`, porque el pie de un estilo sirve a todas las páginas de su sección.
+`anchor.to: 'outer'` coloca el hashira en el margen del corte delantero, el nombre del tomo, 芥川龍之介集, en las páginas derechas y el título de la obra en las izquierdas, y `pages: 'body'` los aparta de las páginas donde abre una obra ([Elementos de texto verticales](/es/docs/configuration-headers-footers#elementos-de-texto-verticales)). El folio va de través en el margen, en cifras arábigas, como lo imprimen muchas obras completas: bajando por el corte, tres cifras quedarían tumbadas. `pageNumbering.startAt: 211` numera las páginas como el tomo. El estilo del encabezado de la primera obra lleva el colofón con `pages: 'opener'`, porque el pie de un estilo sirve a todas las páginas de su sección.
 
 ## Variantes
 

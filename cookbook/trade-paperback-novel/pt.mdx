@@ -16,7 +16,7 @@ Oito páginas de uma brochura de 140 × 216 mm trazem os três primeiros capítu
 
 ### 1 · A abertura sai do título e do seu atributo
 
-O código é a [resposta curta](#a-resposta-curta) acima. Os capítulos de Machado não têm título, então cada título só traz o numeral (`# I`), que `{titleText}` imprime. `{attr.lead}` imprime o atributo `lead` do título, que guarda a primeira frase do capítulo; o parágrafo Markdown sob o título começa com a frase seguinte ([atributos de título](/pt/docs/document-format#atributos-de-título)). A primeira frase fica centralizada, e o `\n` a quebra pelo sentido, depois de *enseada,* e depois de *há*; a primeira frase do capítulo III, *Um criado trouxe o café.*, cabe numa linha e não leva `\n`. A caixa da primeira frase começa nove linhas da grade abaixo do topo da mancha, e um `minHeight` de 12 linhas deixa uma linha em branco embaixo dela; sem `minHeight`, o texto começa logo abaixo da frase ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). `marginBottom: pt(0)` substitui a margem padrão de meio eme do nível, que empurraria o texto uma linha para baixo.
+O código é a [resposta curta](#a-resposta-curta) acima. Os capítulos de Machado não têm título, por isso cada título só traz o numeral (`# I`), que `{titleText}` imprime. `{attr.lead}` imprime o atributo `lead` do título, que guarda a primeira frase do capítulo; o parágrafo Markdown sob o título começa com a frase seguinte ([atributos de título](/pt/docs/document-format#atributos-de-título)). A primeira frase fica centralizada, e o `\n` a quebra pelo sentido, depois de *enseada,* e depois de *há*; a primeira frase do capítulo III, *Um criado trouxe o café.*, cabe numa linha e não leva `\n`. A caixa da primeira frase começa nove linhas da grade abaixo do topo da mancha, e um `minHeight` de 12 linhas deixa uma linha em branco embaixo dela; sem `minHeight`, o texto começa logo abaixo da frase ([span e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)). `marginBottom: pt(0)` substitui a margem padrão de meio eme do nível, que empurraria o texto uma linha para baixo.
 
 `breakBefore` com paridade `'odd'` manda cada capítulo para uma página ímpar, com uma par em branco só depois de um capítulo que termina numa ímpar ([quebrar antes](/pt/docs/configuration-headings#quebra-antes)). Para forçar uma página ímpar onde não há título, escreva `:::pagebreak{parity="odd"}` no Markdown; numa diagramação de duas colunas ou mais, `:::columnbreak` passa o texto para a coluna seguinte ([`:::pagebreak`](/pt/docs/document-format-directives#pagebreak)).
 
@@ -24,7 +24,7 @@ O código é a [resposta curta](#a-resposta-curta) acima. Os capítulos de Macha
 
 <Excerpt region="page" />
 
-A margem inferior é o que sobra dos 216 mm do refile depois da margem superior e de 35 linhas de 14 pt, então toda página cheia termina na mesma linha, a última da mancha, onde também termina o colofão da página 2. Com `mirror: true`, a margem interna de 20 mm cai do lado da lombada tanto nas ímpares quanto nas pares ([margens espelhadas](/pt/docs/configuration-page-layout#margens-espelhadas)). A medida de 104,5 mm comporta uns 69 caracteres de Crimson Pro de 10,5 pt. O texto corrido mantém os espaços entre palavras entre 0,7 e 1,9 do normal; com o mínimo padrão de 0,6, uma linha destas páginas se fecha até 0,62.
+A margem inferior é o que sobra dos 216 mm do refile depois da margem superior e de 35 linhas de 14 pt, de modo que toda página cheia termina na mesma linha, a última da mancha, onde também termina o colofão da página 2. Com `mirror: true`, a margem interna de 20 mm cai do lado da lombada tanto nas ímpares quanto nas pares ([margens espelhadas](/pt/docs/configuration-page-layout#margens-espelhadas)). A medida de 104,5 mm comporta uns 69 caracteres de Crimson Pro de 10,5 pt. O texto corrido mantém os espaços entre palavras entre 0,7 e 1,9 do normal; com o mínimo padrão de 0,6, uma linha destas páginas se fecha até 0,62.
 
 ### 3 · Cabeços que pulam aberturas e páginas em branco
 
@@ -36,7 +36,7 @@ A margem inferior é o que sobra dos 216 mm do refile depois da margem superior 
 
 <Excerpt region="cover" />
 
-A capa é um título, `# Quincas Borba {style="cover"}`. O estilo dele põe a pintura nos 134 mm de cima, o título do frontmatter em 50 pt e o autor em versaletes. O estilo também vale para a seção que o título abre, as páginas 1 e 2, até o capítulo I. O `header` e o `footer` vazios tiram o fólio no pé da capa e os cabeços do colofão. A margem superior dele põe o colofão nas seis últimas linhas da grade da mancha, então a última linha do colofão fica na última linha da mancha, a 35ª da grade ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)). A coluna da seção começa a 165 mm, e o design, ancorado na página e na sangria, é pintado acima dela do mesmo jeito: só o pé da coluna corta um design preso a ela.
+A capa é um título, `# Quincas Borba {style="cover"}`. O estilo dele põe a pintura nos 134 mm de cima, o título do front matter em 50 pt e o autor em versaletes. O estilo também vale para a seção que o título abre, as páginas 1 e 2, até o capítulo I. O `header` e o `footer` vazios tiram o fólio no pé da capa e os cabeços do colofão. A margem superior dele põe o colofão nas seis últimas linhas da grade da mancha, por isso a última linha do colofão fica na última linha da mancha, a 35ª da grade ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)). A coluna da seção começa a 165 mm, e o design, ancorado na página e na sangria, é pintado acima dela do mesmo jeito: só o pé da coluna corta um design preso a ela.
 
 <PageShot page={2} crop="0,0.7,1,0.24" caption="Página 2: o colofão no pé do verso da capa, sem cabeço nem fólio." />
 
@@ -44,13 +44,13 @@ A capa é um título, `# Quincas Borba {style="cover"}`. O estilo dele põe a pi
 
 <Excerpt region="tailpiece" />
 
-O tipo ornamento não tem prefixo de legenda, então a flor de camomila sai sem rótulo, com 17% da medida de largura, onde está `::resource{id="tailpiece-1"}` ([tipos de recurso](/pt/docs/configuration-resources#tipos-de-recurso)). Um elemento incorporado no texto mantém uma linha da grade acima dele, e o `:::space` que vem antes acrescenta uma segunda entre a última linha do capítulo e a flor ([`:::space`](/pt/docs/document-format-directives#space)). As três vinhetas desenham o mesmo arquivo, `fleuron.svg`, sob três ids, porque um recurso só é posicionado uma vez.
+O tipo ornamento não tem prefixo de legenda, por isso a flor de camomila sai sem rótulo, com 17% da medida de largura, onde está `::resource{id="tailpiece-1"}` ([tipos de recurso](/pt/docs/configuration-resources#tipos-de-recurso)). Um elemento inserido no texto mantém uma linha da grade acima dele, e o `:::space` que vem antes acrescenta uma segunda entre a última linha do capítulo e a flor ([`:::space`](/pt/docs/document-format-directives#space)). As três vinhetas desenham o mesmo arquivo, `fleuron.svg`, sob três ids, porque um recurso só é posicionado uma vez.
 
 ## Variações
 
 ### Deixar o capítulo II seguir na página seguinte
 
-Com paridade `'any'`, o capítulo II abre na página 4, uma página par, o III na página 5, e o livro termina na página 6; o fólio no pé é centralizado na mancha, não na página, então nessa página par ele continua sob o meio do texto.
+Com paridade `'any'`, o capítulo II abre na página 4, uma página par, o III na página 5, e o livro termina na página 6; o fólio no pé é centralizado na mancha, não na página, de modo que nessa página par ele continua sob o meio do texto.
 
 ```diff
 -const chapter = { level: 1, breakBefore: { enabled: true, parity: 'odd' },
@@ -59,7 +59,7 @@ Com paridade `'any'`, o capítulo II abre na página 4, uma página par, o III n
 
 ### Marcar uma quebra de cena dentro de um capítulo
 
-Entre duas linhas `:::space`, a mesma flor marca uma quebra de cena, e o parágrafo seguinte começa sem recuo porque `indentAfterHeading` está desligado. Na edição em inglês, posta depois de *seemed long to him.*, a flor cai no pé da página 4; o segundo espaço já não cabe ali e é descartado. A quebra acrescenta quatro linhas, que empurram a vinheta do capítulo I sozinha para a página 6, sob um cabeço, então ajuste o texto do capítulo de novo depois de acrescentar uma.
+Entre duas linhas `:::space`, a mesma flor marca uma quebra de cena, e o parágrafo seguinte começa sem recuo porque `indentAfterHeading` está desativado. Na edição em inglês, posta depois de *seemed long to him.*, a flor cai no pé da página 4; o segundo espaço já não cabe ali e é descartado. A quebra acrescenta quatro linhas, que empurram a vinheta do capítulo I sozinha para a página 6, sob um cabeço, por isso ajuste o texto do capítulo de novo depois de acrescentar uma.
 
 ```diff
  const resources = [
@@ -80,6 +80,6 @@ That was why the morning seemed long to him.
 
 ## Erros comuns
 
-- Com `'always-odd'`, uma página separadora em branco vem depois de cada seção, antes de qualquer preenchimento de paridade, então, na edição em inglês, o capítulo I passaria para a página 5, depois de duas páginas em branco, e o livro chegaria a dez páginas.
+- Com `'always-odd'`, uma página separadora em branco vem depois de cada seção, antes de qualquer preenchimento de paridade, por isso, na edição em inglês, o capítulo I passaria para a página 5, depois de duas páginas em branco, e o livro chegaria a dez páginas.
 - As páginas da edição em inglês foram ajustadas linha a linha. Com uma margem externa de 16 mm em vez de 15,5, a página 7 parte *after-din-ner* num segundo hífen e termina uma linha antes, a página 8 fecha um parágrafo com o fragmento *spondent.*, e a segunda vinheta cai numa nona página. Confira o pé de todas as páginas depois de mudar a medida, o corpo ou o rebaixamento.
 - Na edição em inglês, *Mr.* e *Mrs.* ficam presos ao nome por um espaço não separável (U+00A0). O parágrafo que termina em *seemed long to him.* fica com um espaço comum, porque prender o nome ali abre a primeira linha dele até 2,2 vezes o espaço normal entre palavras.

@@ -5,12 +5,12 @@ plain: "大学研讨课的阅读书目。老师把Zotero导出的文件贴进稿
 description: "用Postext排课程阅读书目：Zotero导出的BibTeX不加改动，Chicago著者-出版年制引文，nocite列出正文未引用的背景文献。"
 question: "怎样使用Zotero导出的BibTeX，并列出正文未引用的文献？"
 aliases: ["Zotero", "BibTeX", "nocite", "未引用文献", "阅读书目", "课程大纲", "延伸阅读", "Chicago著者-出版年制", "参考文献"]
-pageNotes: { "1": "第1页：上半页是一块深绿色色带，上有眉题HPS 214 · Seminar reading list · Autumn term 2026、细笔画大号衬线体标题Science as a Social Practice和一段斜体导语；下方两栏是引言和第1至3周，有Kuhn (1970)、(Shapin 1984)这样的引文。", "2": "第2页：第4至6周和Further reading一节，随后是两栏的Chicago著者-出版年制书目：十三种文献，其中五种正文从未引用，包括Fleck、Merton和López Piñero。" }
+pageNotes: { "1": "第1页：上半页是一块深绿色色带，上有眉题HPS 214 · Seminar reading list · Autumn term 2026、细笔画大号衬线体标题Science as a Social Practice和一段斜体导语；下方两栏是引言和第1至3周，有Kuhn (1970)、(Shapin 1984)这样的引文。", "2": "第2页：第4至6周和Further reading一节，随后是两栏的Chicago著者-出版年制参考文献表：十三种文献，其中五种正文从未引用，包括Fleck、Merton和López Piñero。" }
 ---
 
 ## 成品一览
 
-一门为期六周的科学史与科学社会学研讨课的阅读书目，开本210 × 280 mm，分两栏排。第一页上半部是一块深绿色色带，课程名用50 pt的Spectral Light；下面是任课教师逐周的阅读说明。参考文献是这门课的Zotero文献集，导出为BibTeX后一行不改贴进文档：Zotero生成的引用键、保护大写字母的花括号、`{\"o}`式的重音、`month = dec`，以及`file`、`keywords`、`urldate`字段。正文引用了其中八种，另外五种是研讨课不讨论的背景读物，通过`nocite`进入书目。
+一门为期六周的科学史与科学社会学研讨课的阅读书目，开本210 × 280 mm，分两栏排。第一页上半部是一块深绿色色带，课程名用50 pt的Spectral Light；下面是任课教师逐周的阅读说明。参考文献是这门课的Zotero文献集，导出为BibTeX后一行不改贴进文档：Zotero生成的引用键、保护大写字母的花括号、`{\"o}`式的重音、`month = dec`，以及`file`、`keywords`、`urldate`字段。正文引用了其中八种，另外五种是研讨课不讨论的背景读物，通过`nocite`进入参考文献表。
 
 ## 做法
 
@@ -51,7 +51,7 @@ nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, @rhe
 ---
 ```
 
-书目收入全部被引文献和这五种，按Chicago的要求一起按作者排序，未引用的条目没有任何标记。`nocite: "@*"`列出整个导出内容；配置里的`bibliography.includeUncited: true`效果相同，适合总要印出整个文献库的设计。
+参考文献表收入全部被引文献和这五种，按Chicago的要求一起按作者排序，未引用的条目没有任何标记。`nocite: "@*"`列出整个导出内容；配置里的`bibliography.includeUncited: true`效果相同，适合总要印出整个文献库的设计。
 
 ### 4 · 卡片上的一块绿色
 
@@ -65,7 +65,7 @@ nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, @rhe
 
 ### 列出整个Zotero文献集
 
-导出内容本身就是书目时，不必写键：块里的每一条都会印出，无论是否被引用。
+导出内容本身就是参考文献表时，不必写键：块里的每一条都会印出，无论是否被引用。
 
 ```diff
 -nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, …"
@@ -74,7 +74,7 @@ nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, @rhe
 
 ### 换一种样式
 
-同样的键不做其他改动，就能得到Harvard（Cite Them Right）书目。
+同样的键不做其他改动，就能得到Harvard（Cite Them Right）格式的参考文献表。
 
 ```diff
 -  style: 'chicago-author-date', // '(Gieryn 1983)', 'Shapin and Schaffer (1985)'

@@ -16,13 +16,13 @@ Cinc pàgines de *Mon sort est changé*, una edició de 14 × 21 cm amb tres car
 
 ### 1 · La data surt del títol
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada carta és un títol de nivell 1 els atributs del qual guarden el lloc i la data, i l'encapçalament els imprimeix com a `{attr.place}, le {attr.date}.` ([atributs d'encapçalament](/ca/docs/document-format#atributs-dencapçalament)). La caixa de la data arriba fins al límit dret de la columna (`width: 'fill'`) i `align: 'right'` alinea el text amb aquest límit; sense aquest ajust, el text d'un disseny surt centrat. La salutació, la signatura i la postdata són [estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf) que s'apliquen amb `:::paragraphs{style="…"}`. La signatura fa servir IM Fell DW Pica SC, una família les minúscules de la qual estan dibuixades com a versaletes. Amb `inlineMarks: true`, la data llegeix les marques del seu atribut, així que `date="1^er^ avril 1778"` apuja la terminació de l'ordinal.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Cada carta és un títol de nivell 1 amb atributs que guarden el lloc i la data, i l'encapçalament els imprimeix com a `{attr.place}, le {attr.date}.` ([atributs d'encapçalament](/ca/docs/document-format#atributs-dencapçalament)). La caixa de la data arriba fins al límit dret de la columna (`width: 'fill'`) i `align: 'right'` alinea el text amb aquest límit; sense aquest paràmetre, el text d'un disseny surt centrat. La salutació, la signatura i la postdata són [estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf) que s'apliquen amb `:::paragraphs{style="…"}`. La signatura fa servir IM Fell DW Pica SC, una família amb les minúscules dibuixades com a versaletes. Amb `inlineMarks: true`, la data llegeix les marques del seu atribut, així que `date="1^er^ avril 1778"` apuja la terminació de l'ordinal.
 
 ### 2 · Cartes seguides
 
 <Excerpt region="letters" />
 
-Amb `breakBefore` desactivat, cada carta comença dues línies de la retícula (`marginTop`) per sota d'aquella en què acaba l'anterior. A la <PageRef page={4}>pàgina 4</PageRef>, la postdata, amb 12,6 pt d'interlineat, acaba entre dues línies de la retícula, i sobre la carta III queden unes tres línies en blanc. A la pàgina 2, la carta I arriba fins al peu i la II obre la pàgina 3. Amb el valor per defecte del nivell 1, cada carta començaria en pàgina senar ([saltar abans](/ca/docs/configuration-headings#saltar-abans)). `numberingTemplate: '{1:I}'` numera les cartes de la I a la III, i l'encapçalament imprimeix el numeral amb `{number}`.
+Amb `breakBefore` desactivat, cada carta comença dues línies de la retícula (`marginTop`) per sota d'aquella en què acaba l'anterior. A la <PageRef page={4}>pàgina 4</PageRef>, la postdata, amb 12,6 pt d'interlineat, acaba entre dues línies de la retícula, i sobre la carta III queden unes tres línies en blanc. A la pàgina 2, la carta I arriba fins al peu i la II obre la pàgina 3. Amb el valor per defecte del nivell 1, cada carta començaria en pàgina senar ([salt de pàgina previ](/ca/docs/configuration-headings#salt-de-pàgina-previ)). `numberingTemplate: '{1:I}'` numera les cartes de la I a la III, i l'encapçalament imprimeix el numeral amb `{number}`.
 
 ### 3 · La data de la carta a la capçalera senar
 
@@ -34,7 +34,7 @@ En una capçalera, `{attr.date}` pren l'atribut de l'últim títol de nivell 1 q
 
 <Excerpt region="cover" />
 
-La coberta és el primer títol, amb l'[estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) `cover`: un element d'imatge ancorat al sagnat porta l'enquadernació dibuixada, un altre col·loca la fotografia a 72 mm del límit superior, i el títol, els noms i el subtítol surten del mateix títol i del frontmatter. `numbered: false` la deixa fora del compte, de manera que la primera carta de Frederic és la I. La imatge de l'enquadernació omple la pàgina, i una obertura reserva lloc fins al seu element més baix, així que la coberta ocupa tota la pàgina 1 i la nota inicial comença a la 2 sense cap `:::pagebreak`.
+La coberta és el primer títol, amb l'[estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) `cover`: un element d'imatge ancorat a la sang porta l'enquadernació dibuixada, un altre col·loca la fotografia a 72 mm del límit superior, i el títol, els noms i el subtítol surten del mateix títol i del frontmatter. `numbered: false` la deixa fora del compte, de manera que la primera carta de Frederic és la I. La imatge de l'enquadernació omple la pàgina, i una obertura reserva lloc fins al seu element més baix, així que la coberta ocupa tota la pàgina 1 i la nota inicial comença a la 2 sense cap `:::pagebreak`.
 
 ### 5 · Partició de mots en francès sense estrènyer els espais
 
@@ -65,4 +65,4 @@ Amb els mateixos atributs, la capçalera senar pot portar el lloc i la data, *À
 - La pàgina senar pren la data de l'última carta que *comença* en ella o abans. Una pàgina que acaba una carta i obre la següent porta la data de la nova, igual que la capçalera d'un diccionari dona l'última entrada de la pàgina.
 - Si a un títol li falta un atribut, no s'imprimeix res i no hi ha avís: una carta sense `place="…"` té una data que comença per una coma. Revisa el títol de cada carta.
 - Les cartes conserven els ; : ? i ! de la transcripció, sense espai al davant. La tipografia francesa hi posa un espai fi irrompible (U+202F); si l'escrius, el signe es queda a la línia de la seva paraula.
-- Crimson Pro no porta les lletres modificadores ᵉ (U+1D49) i ʳ (U+02B3), així que 1ᵉʳ escrit en Unicode sortiria en una altra font. Escriu `1^er^`: la nota inicial, que és text de paràgraf, el compon en superíndex, i també la data i la capçalera senar, els elements de text de les quals porten `inlineMarks: true`.
+- Crimson Pro no porta les lletres modificadores ᵉ (U+1D49) i ʳ (U+02B3), així que 1ᵉʳ escrit en Unicode sortiria en una altra font. Escriu `1^er^`: la nota inicial, que és text de paràgraf, el compon en superíndex, i també la data i la capçalera senar, perquè els seus elements de text porten `inlineMarks: true`.

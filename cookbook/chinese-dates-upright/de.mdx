@@ -36,19 +36,19 @@ Eine Überschriftengestaltung kennt keine Parität, das Band läuft also immer a
 
 <Excerpt region="heads" />
 
-`anchor.to: 'outer'` ist der Rand abseits des Bundes; in einem rechts gebundenen Buch laufen die Kolumnentitel also an der linken Kante einer rechten Seite und an der rechten Kante einer linken Seite hinab. Der Titel steht vier Zeichen unter dem Kopf des Satzspiegels, und die Pagina endet fünf Zeichen über seinem Fuß, beide vertikal in 80 % der Grundschriftgröße gesetzt ([vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente)). `pageNumbering.format: 'trad-chinese-informal'` druckt die Paginas 三, 四, 六 und 七, und `pages: 'body'` hält sie von den beiden Auftakten fern.
+`anchor.to: 'outer'` ist der Rand abseits des Bundes; in einem rechts gebundenen Buch laufen die Kolumnentitel also an der linken Kante einer rechten Seite und an der rechten Kante einer linken Seite hinab. Der Titel steht vier Zeichen unter dem Kopf des Satzspiegels, und die Pagina endet fünf Zeichen über seinem Fuß, beide vertikal in 80 % der Grundschriftgröße gesetzt ([vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente)). `pageNumbering.format: 'trad-chinese-informal'` ergibt die Paginas 三, 四, 六 und 七, und `pages: 'body'` hält sie von den beiden Auftakten fern.
 
 ### 4 · Den Umschlag aus einer seitenbreiten Gestaltung randabfallend setzen
 
 <Excerpt region="cover" />
 
-Eine Überschriftengestaltung in einer Spalte wird am Fuß der Spalte abgeschnitten, und auf einer vertikalen Seite ist dieser Fuß der linke Rand: Ein am Anschnitt verankertes Feld endete 21,6 mm vor der linken Beschnittkante. Mit `span: 'page'` wird die Überschrift als Seitenband gesetzt, das nicht abgeschnitten wird, und das Feld reicht an beide Kanten. Die beiden Rahmen zeichnen die Doppellinie aus dicker und dünner Linie chinesischer Druckbücher, 1,6 pt und 0,5 pt, 2 mm voneinander entfernt.
+Eine Überschriftengestaltung in einer Spalte wird am Fuß der Spalte abgeschnitten, und auf einer vertikalen Seite ist dieser Fuß der linke Rand: Ein am Anschnitt verankertes Feld endete 21,6 mm vor der linken Beschnittkante. Mit `span: 'page'` wird die Überschrift als seitenbreiter Bereich gesetzt, der nicht abgeschnitten wird, und das Feld reicht an beide Kanten. Die beiden Konturen bilden die Doppellinie aus dicker und dünner Linie chinesischer Druckbücher, 1,6 pt und 0,5 pt, 2 mm voneinander entfernt.
 
 ### 5 · Jede Stimme mit dem Text laden, den sie setzt
 
 <Excerpt region="voices" />
 
-Fontsource liefert jede Schriftstärke dieser Schriften als etwa hundert Dateien, die je einen Zeichenbereich abdecken, und `loadCjkFonts` lädt die Dateien, die ein Text berührt. Erhält jede Schriftstärke von Noto Sans TC nur Überschriften, Siegelvermerke, Impressum, Umschlagzeilen und Paginas, lädt sie 10 Dateien; mit dem ganzen Beispiel wären es 35, und es gibt drei Schriftstärken. LXGW WenKai TC erhält die Vorbemerkungen und Anmerkungen und lädt 16. Eine Schrift, die zu wenig Text erhält, lässt die Aufnahme scheitern (C12) und nennt die Zeichen, die sie aus einer Ersatzschrift leihen musste.
+Fontsource liefert jede Schriftstärke dieser Schriften als etwa hundert Dateien, die je einen Zeichenbereich abdecken, und `loadCjkFonts` lädt die Dateien, die ein Text berührt. Erhält jede Schriftstärke von Noto Sans TC nur Überschriften, Siegelvermerke, Impressum, Umschlagzeilen und Paginas, lädt sie 10 Dateien; mit dem ganzen Beispiel wären es 35, und es gibt drei Schriftstärken. LXGW WenKai TC erhält die Vorbemerkungen und Anmerkungen und lädt 16. Eine Schrift, die zu wenig Text erhält, lässt die Aufnahme scheitern (C12), und der Fehler führt die Zeichen auf, die sie aus einer Ersatzschrift leihen musste.
 
 ## Varianten
 
@@ -72,6 +72,6 @@ Mit 0 steht keine Zahl von selbst aufrecht: 10月10日 dreht sich wie 1912, und 
 
 ## Häufige Fehler
 
-- Noto Serif TC hat, so wie Fontsource sie ausliefert, kein 爲 und kein 敎: Ihr Stylesheet führt beide, aber keine Datei enthält eine Glyphe dafür. Der Druck der Verfassung von 1912 schreibt 為 und 教 in diesen Formen. Der Canvas zeichnete 敎 in einer Systemschrift, und das PDF hatte keine Glyphe dafür, was die Aufnahme meldete (C25). Der Lesetext setzt 為 und 教, bringt mit ihnen 靑 und 决 zu 青 und 決, und seine Vorbemerkung sagt das.
+- Noto Serif TC hat, so wie Fontsource sie ausliefert, kein 爲 und kein 敎: Ihr Stylesheet führt beide, aber keine Datei enthält eine Glyphe dafür. Der Druck der Verfassung von 1912 schreibt 為 und 教 in diesen Formen. Das Canvas zeichnete 敎 in einer Systemschrift, und das PDF hatte keine Glyphe dafür, was die Aufnahme meldete (C25). Der Lesetext setzt 為 und 教, bringt mit ihnen 靑 und 决 zu 青 und 決, und seine Vorbemerkung sagt das.
 - LXGW WenKai TC zeichnet, so wie Fontsource sie ausliefert, 即, 為, 青 und 教 in den älteren Formen 卽, 爲, 靑 und 敎, die neben denselben Zeichen im Song-Text seltsam wirken. Die Anmerkungen sind ohne diese vier formuliert; nur die Vorbemerkung, die die alten Formen der Verfassung aufzählt, braucht sie. Lesen Sie den Kai-Text Ihrer eigenen Anmerkungen in voller Größe.
-- Eine seitwärts gesetzte Zahl erhält zum Chinesischen daneben Abstand wie ein lateinisches Wort, ein Viertelgeviert auf jeder Seite (`cjk.latinSpacing`), sodass die Vorbemerkungen `1912 年` lesen; eine Zahl in einer Zelle erhält keinen Abstand, wie ein chinesisches Zeichen.
+- Eine seitwärts gesetzte Zahl erhält zum Chinesischen daneben Abstand wie ein lateinisches Wort, ein Viertelgeviert auf jeder Seite (`cjk.latinSpacing`), sodass in den Vorbemerkungen `1912 年` steht; eine Zahl in einer Zelle erhält keinen Abstand, wie ein chinesisches Zeichen.

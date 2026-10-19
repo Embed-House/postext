@@ -43,7 +43,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
 
 ### Avvisi nel documento
 
-`buildDocument` non si ferma davanti a un rimando sbagliato o a uno stile sconosciuto: imposta un ripiego e registra ciò che ha fatto in `doc.contentWarnings`. I riquadri che l’impaginazione ha dovuto forzare sono in `doc.warnings`, che mantiene la forma che aveva in postext 1.4: ogni voce lì è un `calloutOverflow` con i suoi `pageIndex`, `columnIndex` e `overflowPx`. Ogni campo è assente quando non c’è nulla da segnalare. Ogni voce ha un `kind`. I tipi di contenuto portano l’intervallo di sorgente del costrutto (`sourceStart` / `sourceEnd`, offset nel Markdown che hai passato, frontmatter compreso) e, quando il costrutto è finito su una pagina, il suo `pageIndex`.
+`buildDocument` non si ferma davanti a un rimando sbagliato o a uno stile sconosciuto: imposta un ripiego e registra ciò che ha fatto in `doc.contentWarnings`. I riquadri che l’impaginazione ha dovuto forzare sono in `doc.warnings`, che mantiene la forma che aveva in postext 1.4: ogni voce lì è un `calloutOverflow` con i suoi `pageIndex`, `columnIndex` e `overflowPx`. Ogni campo è assente quando non c’è nulla da segnalare. Ogni voce ha un `kind`. I tipi di contenuto portano l’intervallo di sorgente del costrutto (`sourceStart` / `sourceEnd`, offset nel Markdown che hai passato, front matter compreso) e, quando il costrutto è finito su una pagina, il suo `pageIndex`.
 
 <table>
   <thead>
@@ -61,13 +61,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>invalidFrontmatter</code></td>
-      <td>Il frontmatter non è YAML valido (una virgoletta non chiusa, del testo dopo un valore tra virgolette). <code>message</code> è il motivo indicato dal parser, con riga e colonna.</td>
+      <td>Il front matter non è YAML valido (una virgoletta non chiusa, del testo dopo un valore tra virgolette). <code>message</code> è il motivo indicato dal parser, con riga e colonna.</td>
       <td>Il documento viene composto senza i suoi metadati; il corpo dopo il <code>---</code> di chiusura viene impaginato come al solito.</td>
     </tr>
     <tr>
       <td><code>unknownResourceId</code></td>
-      <td>Un’incorporazione <code>::resource</code> (<code>usage: 'embed'</code>), un <code>:ref</code> in linea (<code>'ref'</code>) o l’immagine di una cella di tabella (<code>'cellImage'</code>) indica un id che nessuna risorsa ha.</td>
-      <td>L’incorporazione viene omessa, il rimando stampa <code>?</code> (o la sua etichetta <code>text=</code>) senza numero né link, la cella resta solo testo. <code>inResource</code> indica la risorsa la cui didascalia, nota o cella contiene il rimando.</td>
+      <td>Un inserimento <code>::resource</code> (<code>usage: 'embed'</code>), un <code>:ref</code> in linea (<code>'ref'</code>) o l’immagine di una cella di tabella (<code>'cellImage'</code>) indica un id che nessuna risorsa ha.</td>
+      <td>L’inserimento viene omesso, il rimando stampa <code>?</code> (o la sua etichetta <code>text=</code>) senza numero né link, la cella resta solo testo. <code>inResource</code> indica la risorsa la cui didascalia, nota o cella contiene il rimando.</td>
     </tr>
     <tr>
       <td><code>unknownDirective</code></td>
@@ -76,12 +76,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>malformedEmbed</code></td>
-      <td>Una riga <code>::name</code> che non è un’incorporazione ben formata e isolata: <code>::resource</code> con un id senza virgolette o tra virgolette semplici o con un altro attributo, oppure una riga attaccata sotto un paragrafo senza una riga vuota.</td>
+      <td>Una riga <code>::name</code> che non è un inserimento ben formato e isolato: <code>::resource</code> con un id senza virgolette o tra virgolette semplici o con un altro attributo, oppure una riga attaccata sotto un paragrafo senza una riga vuota.</td>
       <td>La riga viene composta come testo.</td>
     </tr>
     <tr>
       <td><code>fullwidthMarkup</code></td>
-      <td>Una riga contiene marcatura digitata con un metodo di input cinese o giapponese: una recinzione <code>：：：</code>, un titolo <code>＃</code>, un richiamo di nota <code>［＾…］</code>, attributi <code>｛…｝</code> dopo una recinzione o un titolo, oppure un grassetto <code>＊＊…＊＊</code>. <code>typed</code> è la marcatura così come è scritta, <code>ascii</code> la forma da digitare. Uno per riga.</td>
+      <td>Una riga contiene marcatura digitata con un metodo di input cinese o giapponese: un delimitatore <code>：：：</code>, un titolo <code>＃</code>, un richiamo di nota <code>［＾…］</code>, attributi <code>｛…｝</code> dopo un delimitatore o un titolo, oppure un grassetto <code>＊＊…＊＊</code>. <code>typed</code> è la marcatura così come è scritta, <code>ascii</code> la forma da digitare. Uno per riga.</td>
       <td>La riga viene composta come testo; non viene convertito nulla.</td>
     </tr>
     <tr>
@@ -121,8 +121,8 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pageFenceLength</code></td>
-      <td>Un <code>:::page</code> a tre due punti porta <code>template=</code>.</td>
-      <td>Viene letto come pagina di fumetto; una pagina composta richiede quattro due punti.</td>
+      <td>Un <code>:::page</code> con tre segni di due punti ha <code>template=</code>.</td>
+      <td>Viene letto come tavola di fumetto; una pagina composta richiede quattro segni di due punti.</td>
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
@@ -136,7 +136,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>continueTargetMissing</code></td>
-      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> di una cornice non indica nessun recinto di pagina dopo quello in cui si trova il suo articolo (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quando quel recinto viene prima, <code>configPath</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina che invia.</td>
+      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> di una cornice non indica nessun blocco di pagina dopo quello in cui si trova il suo articolo (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quando quel blocco viene prima, <code>configPath</code>). Lo emette l’impaginazione, con il <code>pageIndex</code> della pagina che invia.</td>
       <td>Il resto prosegue in una pagina aggiunta dopo la pagina che invia, come con <code>'next-page'</code>.</td>
     </tr>
     <tr>
@@ -147,7 +147,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     <tr>
       <td><code>labelAnchorUnknown</code></td>
       <td>Una <code>::label</code> di una <code>:::figure</code> indica con <code>at</code> un’ancora che la risorsa della sua figura non ha (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, le ancore della risorsa; <code>locale</code>).</td>
-      <td>L’etichetta non viene disegnata; l’EPUB adattabile continua a elencarla.</td>
+      <td>L’etichetta non viene disegnata; l’EPUB a layout fluido continua a riportarla.</td>
     </tr>
     <tr>
       <td><code>anchorUnlabelled</code></td>
@@ -176,7 +176,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownMarkStyle</code></td>
-      <td><code>:mark[…]{'{'}style{'}'}</code> non nomina alcuno stile di evidenziazione.</td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> non indica alcuno stile di evidenziazione.</td>
       <td>Il segno prende il primo stile di evidenziazione.</td>
     </tr>
     <tr>
@@ -231,7 +231,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>codeOverflow</code></td>
-      <td>Un <a href="/it/docs/configuration-styles#listati-di-codice">listato di codice</a> ha righe più larghe del suo riquadro. <code>mode</code> è ciò che ha fatto <code>codeStyle.overflow</code> (<code>'wrap'</code>, <code>'shrink'</code>, <code>'clip'</code>), <code>lines</code> quante righe di sorgente erano troppo larghe, <code>scale</code> il corpo con cui è stato composto un listato ridotto (una frazione di <code>fontSize</code>), <code>lang</code> il linguaggio della recinzione. Punta al listato.</td>
+      <td>Un <a href="/it/docs/configuration-styles#listati-di-codice">listato di codice</a> ha righe più larghe del suo riquadro. <code>mode</code> è ciò che ha fatto <code>codeStyle.overflow</code> (<code>'wrap'</code>, <code>'shrink'</code>, <code>'clip'</code>), <code>lines</code> quante righe di sorgente erano troppo larghe, <code>scale</code> il corpo con cui è stato composto un listato ridotto (una frazione di <code>fontSize</code>), <code>lang</code> il linguaggio indicato sulla riga di apertura. Punta al listato.</td>
       <td>Le righe vanno a capo, vengono rimpicciolite o tagliate, come dice <code>mode</code>.</td>
     </tr>
     <tr>
@@ -241,23 +241,23 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>Una bitmap con dimensione di stampa (il suo <code>bitmap.resolution</code> o un numero in <code>layout.bitmapResolution</code>; non una risoluzione letta dal file) composta in una colonna che la tiene sotto la metà di quella dimensione, su una pagina con la gabbia di testo più larga della colonna. <code>resourceId</code> la nomina, <code>scale</code> è la parte della sua larghezza di stampa che conserva, <code>printWidthPx</code>, <code>widthPx</code> e <code>pageWidthPx</code> le larghezze di stampa, di colonna e di gabbia. Non si segnala un'immagine ristretta con <code>placement.width</code>, ridotta al suo spazio, ruotata o messa nella cornice di una pagina composta. Indica il paragrafo che la cita per primo. Da postext 1.37.</td>
+      <td>Una bitmap con dimensione di stampa (il suo <code>bitmap.resolution</code> o un numero in <code>layout.bitmapResolution</code>; non una risoluzione letta dal file) composta in una colonna che la tiene sotto la metà di quella dimensione, su una pagina con la gabbia di testo più larga della colonna. <code>resourceId</code> la indica, <code>scale</code> è la parte della sua larghezza di stampa che conserva, <code>printWidthPx</code>, <code>widthPx</code> e <code>pageWidthPx</code> le larghezze di stampa, di colonna e di gabbia. Non si segnala un'immagine ristretta con <code>placement.width</code>, ridotta al suo spazio, ruotata o messa nella cornice di una pagina composta. Indica il paragrafo che la cita per primo. Da postext 1.37.</td>
       <td>L'immagine si stampa alla larghezza della sua colonna. Un'immagine nel flusso non è mai più larga della sua colonna e la pagina predefinita ne ha due (<code>layout.layoutType: 'double'</code>): componi la pagina su una colonna, fai flottare l'immagine su tutta la pagina (<code>placement.span: 'page'</code>) o alzane la risoluzione se quella è la dimensione voluta.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Una risorsa o un riquadro impostato per far scorrere il testo attorno (<code>placement.wrap</code>, il <code>wrap</code> di un riquadro) che non lo fa come richiesto. <code>reason</code>: <code>'tooNarrow'</code> (il testo accanto sarebbe più stretto di <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (è più corto di <code>layout.wrap.minLinesBeside</code> righe), <code>'moved'</code> (uno nel testo troppo alto per lo spazio rimasto nella sua colonna è passato alla successiva, insieme alla sua ancora), <code>'verticalText'</code> o <code>'noContour'</code> (uno scorrimento lungo il contorno di un’immagine di cui non si conosce la forma: un SVG senza <code>contour.points</code>, una bitmap senza trasparenza o un canale alfa che l’host non ha tracciato). <code>resourceId</code> indica una risorsa, <code>box</code> lo stile di un riquadro. Punta all’incorporazione o al riquadro.</td>
+      <td>Una risorsa o un riquadro impostato per far scorrere il testo attorno (<code>placement.wrap</code>, il <code>wrap</code> di un riquadro) che non lo fa come richiesto. <code>reason</code>: <code>'tooNarrow'</code> (il testo accanto sarebbe più stretto di <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (è più corto di <code>layout.wrap.minLinesBeside</code> righe), <code>'moved'</code> (uno nel testo troppo alto per lo spazio rimasto nella sua colonna è passato alla successiva, insieme alla sua ancora), <code>'verticalText'</code> o <code>'noContour'</code> (uno scorrimento lungo il contorno di un’immagine di cui non si conosce la forma: un SVG senza <code>contour.points</code>, una bitmap senza trasparenza o un canale alfa che l’host non ha tracciato). <code>resourceId</code> indica una risorsa, <code>box</code> lo stile di un riquadro. Punta all’inserimento o al riquadro.</td>
       <td>L’elemento occupa la sua fascia per intero, o si colloca nella colonna successiva, come dice il motivo; con <code>'noContour'</code> il testo gira attorno al riquadro dell’immagine. Dai all’immagine un poligono, usa un PNG con trasparenza, oppure leggila con <code>readBundle</code> o nella Sandbox, che la tracciano.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
-      <td>Le sottocolonne di un gruppo <code>:::columns</code> sono più strette di sei em del loro testo: <code>columns</code> sottocolonne, <code>widthPx</code> ciascuna. Punta alla recinzione del gruppo.</td>
+      <td>Le sottocolonne di un gruppo <code>:::columns</code> sono più strette di sei em del loro testo: <code>columns</code> sottocolonne, <code>widthPx</code> ciascuna. Punta alla riga di apertura del gruppo.</td>
       <td>Il gruppo viene composto come richiesto, con poche parole per riga.</td>
     </tr>
     <tr>
       <td><code>afterText</code></td>
       <td>Un riquadro <code>span: 'side'</code>, o una figura o tabella della colonna laterale (<code>resourceId</code>), composto su una pagina che non contiene testo: il testo del suo capitolo, o del documento, è finito mentre aspettava ancora spazio nella colonna laterale. Uno per riquadro o elemento flottante; punta al riquadro (al blocco che cita l’elemento flottante), con la sua pagina. Da postext 1.25.</td>
-      <td>Si colloca nella colonna laterale di una pagina aperta dopo il testo, con i riquadri nell’ordine delle loro recinzioni.</td>
+      <td>Si colloca nella colonna laterale di una pagina aperta dopo il testo, con i riquadri nell’ordine in cui compaiono nel testo.</td>
     </tr>
     <tr>
       <td><code>unplaced</code></td>
@@ -292,7 +292,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
-Gli avvisi su una risorsa (il suo stile di tabella, la sua griglia, un rimando dentro la sua didascalia, nota o celle) puntano alla prima incorporazione o al primo rimando della risorsa nel testo, e ciascuno viene elencato una volta per risorsa. Si controllano solo le risorse che il documento usa: un capitolo di un libro segnala le tabelle che cita, non tutte le tabelle del libro.
+Gli avvisi su una risorsa (il suo stile di tabella, la sua griglia, un rimando dentro la sua didascalia, nota o celle) puntano al primo inserimento o al primo rimando della risorsa nel testo, e ciascuno viene elencato una volta per risorsa. Si controllano solo le risorse che il documento usa: un capitolo di un libro segnala le tabelle che cita, non tutte le tabelle del libro.
 
 ```ts
 import { buildDocument, formatWarning } from 'postext';
@@ -306,9 +306,9 @@ for (const w of [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(do
 const missing = (doc.contentWarnings ?? []).flatMap((w) => (w.kind === 'unknownResourceId' ? [w.resourceId] : []));
 ```
 
-`formatWarning(w)` restituisce una descrizione di una riga in inglese. Un host che localizza i propri messaggi fa invece uno switch su `kind`, e tiene un ramo predefinito, perché le versioni minori possono aggiungere tipi. `collectContentWarnings(markdown, config, resources)` restituisce gli avvisi di contenuto senza impaginare nulla (l’elenco che aggiunge la generazione, senza `pageIndex`), per un editor che controlla il testo mentre viene digitato. `collectHeadingDesignCuts(doc)` controlla un’impaginazione finita alla ricerca di progetti grafici di titoli il cui testo sborda oltre il piede della loro pagina o colonna (`kind: 'headingDesignCut'`; vedi [Altezza riservata](/it/docs/configuration-headings#altezza-riservata)), che l’impaginazione stessa non segnala, e `formatWarning` descrive anche i suoi risultati. Il pannello **Verifiche** della Sandbox li elenca tutti.
+`formatWarning(w)` restituisce una descrizione di una riga in inglese. Un host che localizza i propri messaggi fa invece uno switch su `kind`, e tiene un ramo predefinito, perché le versioni minori possono aggiungere tipi. `collectContentWarnings(markdown, config, resources)` restituisce gli avvisi di contenuto senza impaginare nulla (l’elenco che aggiunge la generazione, senza `pageIndex`), per un editor che controlla il testo mentre viene digitato. `collectHeadingDesignCuts(doc)` controlla un’impaginazione finita alla ricerca di titoli la cui grafica ha testo che sborda oltre il piede della pagina o della colonna (`kind: 'headingDesignCut'`; vedi [Altezza riservata](/it/docs/configuration-headings#altezza-riservata)), che l’impaginazione stessa non segnala, e `formatWarning` descrive anche i suoi risultati. Il pannello **Verifiche** della Sandbox li elenca tutti.
 
-I renderer segnalano ciò che non riescono a disegnare come richiesto tramite un’opzione `onWarning`: `renderPageToCanvas`, `renderPage` e `renderToCanvas` (`RenderPageOptions`), `renderToHtml` e `renderToHtmlIndexed` (`RenderHtmlOptions`), e `renderToPdf` (`RenderToPdfOptions`, anche tramite il worker PDF). Il tipo principale di avviso di rendering è `missingImage`: un’immagine (una figura, l’immagine di una cella di tabella, l’icona di un riquadro, un’immagine di design) senza nulla da disegnare viene resa come segnaposto neutro e segnalata, una volta per `fileId` e chiamata di rendering, con il suo `pageIndex`, il `resourceId` quando il renderer lo conosce (figure e immagini delle celle) e, nel PDF, il `documentIndex` di un rendering di più documenti. Nulla da disegnare significa nessun `registerResourceImage` per il `fileId` sul canvas, nessun URL da `resourceImageUrl` in HTML, e nessun byte da `resourceBytes` (o byte che non si decodificano) nel PDF. Una risorsa bitmap o SVG che non indica alcun `fileId` non ha nulla da chiedere: viene disegnata come segnaposto senza segnalazione. Altri due tipi vengono dagli host che incorporano i font nelle immagini SVG (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` con `inlineSvgFonts`, postext-epub; vedi [Font nel testo SVG](/it/docs/configuration-resources#font-nel-testo-svg)), con il `fileId` e il `resourceId` dell’immagine: `svgFontUnavailable` (`family`, `weight`, `style`), una famiglia nominata dal suo testo senza un carattere da incorporare, per cui l’immagine compone quel testo con un carattere di ripiego; e `svgFontsTooLarge` (`bytes`, `maxBytes`), caratteri oltre il limite di dimensione, nessuno incorporato. Gli avvisi di rendering non vengono memorizzati nel VDT: ciò che un host può fornire cambia dopo l’impaginazione.
+I renderer segnalano ciò che non riescono a disegnare come richiesto tramite un’opzione `onWarning`: `renderPageToCanvas`, `renderPage` e `renderToCanvas` (`RenderPageOptions`), `renderToHtml` e `renderToHtmlIndexed` (`RenderHtmlOptions`), e `renderToPdf` (`RenderToPdfOptions`, anche tramite il worker PDF). Il tipo principale di avviso di rendering è `missingImage`: un’immagine (una figura, l’immagine di una cella di tabella, l’icona di un riquadro, un’immagine della grafica) senza nulla da disegnare viene resa come segnaposto neutro e segnalata, una volta per `fileId` e chiamata di rendering, con il suo `pageIndex`, il `resourceId` quando il renderer lo conosce (figure e immagini delle celle) e, nel PDF, il `documentIndex` di un rendering di più documenti. Nulla da disegnare significa nessun `registerResourceImage` per il `fileId` sul canvas, nessun URL da `resourceImageUrl` in HTML, e nessun byte da `resourceBytes` (o byte che non si decodificano) nel PDF. Una risorsa bitmap o SVG che non indica alcun `fileId` non ha nulla da chiedere: viene disegnata come segnaposto senza segnalazione. Altri due tipi vengono dagli host che incorporano i font nelle immagini SVG (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` con `inlineSvgFonts`, postext-epub; vedi [Font nel testo SVG](/it/docs/configuration-resources#font-nel-testo-svg)), con il `fileId` e il `resourceId` dell’immagine: `svgFontUnavailable` (`family`, `weight`, `style`), una famiglia indicata dal suo testo senza un carattere da incorporare, per cui l’immagine compone quel testo con un carattere di ripiego; e `svgFontsTooLarge` (`bytes`, `maxBytes`), caratteri oltre il limite di dimensione, nessuno incorporato. Gli avvisi di rendering non vengono memorizzati nel VDT: ciò che un host può fornire cambia dopo l’impaginazione.
 
 ```ts
 import { buildDocument, renderPage, type RenderWarning, type Resource } from 'postext';
@@ -325,7 +325,7 @@ const canvas = renderPage(doc.pages[0], doc, { onWarning: (w) => warnings.push(w
 // [{ kind: 'missingImage', fileId: 'map-file', resourceId: 'fig-map', pageIndex: 0 }]
 ```
 
-### Rendere una pagina come bitmap
+### Rasterizzare una pagina
 
 Ogni pagina può essere rasterizzata in modo indipendente. Usa `renderPage(page, doc)` per ottenere un `HTMLCanvasElement` per un dato numero di pagina: il canvas è una bitmap dimensionata esattamente sulle misure della pagina in pixel (ai DPI configurati), quindi puoi mostrarla, esportarla o passarla a qualsiasi pipeline di immagini:
 
@@ -370,7 +370,7 @@ const bitmaps = vdt.pages.map((page) => renderPage(page, vdt));
 
 Tutto quanto sopra, in esecuzione nel browser. Il pen importa l’ultima versione di `postext` da una CDN, aspetta i web font, impagina un breve documento a due colonne, disegna la sua prima pagina in un canvas e offre quella bitmap come PNG. Premi *Esegui su CodePen* per caricare l’editor e modificare il Markdown o la configurazione; la pagina si ridisegna a ogni modifica.
 
-<CodePenExample name="render-page" title="Postext · rendere una pagina come immagine" description="Impagina un documento Markdown con postext e rasterizza la sua prima pagina in un canvas / PNG." height={600} />
+<CodePenExample name="render-page" title="Postext · trasformare una pagina in immagine" description="Impagina un documento Markdown con postext e rasterizzane la prima pagina in un canvas / PNG." height={600} />
 
 ### React
 
@@ -409,7 +409,7 @@ const fullBody = resolveBodyTextConfig({ fontFamily: 'Inter' });
 // => { fontFamily: 'Inter', fontSize: { value: 8, unit: 'pt' }, lineHeight: { value: 1.5, unit: 'em' }, ... }
 ```
 
-Funzioni di risoluzione disponibili, una per sezione di primo livello: `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig`, più `resolveDesignSlot` per un singolo slot di design. Le tavolozze di colori si applicano a parte tramite `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` e `resolveColorValue(value, palette, fallback)`: vedi [Tavolozza dei colori](/it/docs/configuration-fonts-colors-viewers#tavolozza-dei-colori).
+Funzioni di risoluzione disponibili, una per sezione di primo livello: `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig`, più `resolveDesignSlot` per un singolo spazio della grafica. Le tavolozze di colori si applicano a parte tramite `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` e `resolveColorValue(value, palette, fallback)`: vedi [Tavolozza dei colori](/it/docs/configuration-fonts-colors-viewers#tavolozza-dei-colori).
 
 Le funzioni di risoluzione i cui valori predefiniti derivano a cascata da un’altra sezione ricevono quella sezione, già risolta, come argomento aggiuntivo. `resolveUnorderedListsConfig` e `resolveOrderedListsConfig` ricevono il testo corrente risolto, perché i valori predefiniti degli elenchi per `fontFamily` e `color` derivano da esso; `resolveCalloutStylesConfig` riceve il testo corrente, i titoli e gli elenchi puntati risolti (vedi l’esempio in [Stili dei riquadri](/it/docs/configuration-callouts#stili-dei-riquadri)), e `resolveHeadingStylesConfig` la pagina, il testo corrente ed entrambe le sezioni degli elenchi risolti. Controlla le dichiarazioni di tipo del pacchetto per la firma esatta di ciascuna:
 
@@ -438,11 +438,11 @@ Sono disponibili anche le singole funzioni di pulizia, una per funzione di risol
 
 Alcuni valori predefiniti dipendono dal resto della configurazione: il bilanciamento delle colonne è disattivato su una griglia di caratteri e nel testo verticale, `bodyText.avoidWidows` è disattivato su una griglia di caratteri (e anche `bodyText.avoidOrphans` nella regione `japan`), e le note a piè di pagina, le didascalie e l’indice analitico seguono la lingua del documento. `stripConfigDefaults` confronta ogni valore con il predefinito della configurazione che riceve, così `headings.balancing.enabled: true` resta dove il bilanciamento è disattivato per impostazione predefinita, e lì `false` viene eliminato. Allo stesso modo `bodyText.avoidWidows: true` resta su una griglia di caratteri. Una funzione di pulizia chiamata da sola riceve quel contesto come argomenti: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`, `stripIndexDefaults(index, locale)`, `stripCaptionStyleDefaults(captionStyle, locale)`, `stripFootnotesDefaults(footnotes, locale, writingMode)`, `stripBodyTextDefaults(bodyText, locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config))`.
 
-Un valore che dice «niente» viene mantenuto ovunque il niente non sia il predefinito. Uno stile di titolo prende l’intestazione e il piè di pagina del documento quando non ne imposta, così uno stile che li svuota (`footer: { elements: [] }` su una copertina) mantiene lo slot vuoto, e i suoi `margins`, `layout` e `bodyStyle` vengono mantenuti anche quando sono vuoti. Un livello di titolo riportato al suo valore predefinito sotto valori comuni a tutti i titoli che sono diversi mantiene il valore. `calloutStyles: []` e `chipStyles: []` restano elenchi vuoti: se venissero omessi, tornerebbe lo stile integrato. In ogni caso `resolveAllConfig(stripConfigDefaults(config))` si risolve come `resolveAllConfig(config)`.
+Un valore che significa «niente» viene mantenuto ovunque il niente non sia il predefinito. Uno stile di titolo prende l’intestazione e il piè di pagina del documento quando non ne imposta, così uno stile che li svuota (`footer: { elements: [] }` su una copertina) mantiene vuoto lo spazio, e i suoi `margins`, `layout` e `bodyStyle` vengono mantenuti anche quando sono vuoti. Un livello di titolo riportato al suo valore predefinito sotto valori comuni a tutti i titoli che sono diversi mantiene il valore. `calloutStyles: []` e `chipStyles: []` restano elenchi vuoti: se venissero omessi, tornerebbe lo stile integrato. In ogni caso `resolveAllConfig(stripConfigDefaults(config))` si risolve come `resolveAllConfig(config)`.
 
 ### Parsing
 
-Il motore espone il proprio tokenizzatore Markdown e il lettore del frontmatter. Usali per ispezionare un documento prima di generarlo, o per alimentare altri strumenti con la stessa struttura a blocchi che vede Postext:
+Il motore mette a disposizione il proprio tokenizzatore Markdown e il lettore del front matter. Usali per ispezionare un documento prima di generarlo, o per alimentare altri strumenti con la stessa struttura a blocchi che vede Postext:
 
 ```ts
 import { parseMarkdown, extractFrontmatter } from 'postext';
@@ -461,11 +461,11 @@ Vedi la pagina [Formato del documento](/it/docs/document-format) per l’elenco 
 
 ### Mappa delle origini di un documento impaginato
 
-`sourceAt(doc, pageIndex, x, y, options?)` restituisce ciò che mostra un punto di una pagina, dall’interno verso l’esterno, ogni elemento con il suo `id` stabile, la sua `source` (un tratto del Markdown, un puntatore JSON della configurazione, un attributo del recinto della pagina o una risorsa) e il suo `rect`. `elementsForSource(doc, start, end, options?)` restituisce ciò che è diventato un tratto del Markdown, pagina per pagina, e `findElement(doc, id)` ritrova un elemento dopo una nuova impaginazione. Leggono ciò che l’impaginazione ha annotato nel VDT e non impaginano nulla. `composedPagePaintKey(page)` dice se una pagina composta disegna ciò che ha disegnato prima. I tipi di origine, gli identificatori e il modo in cui una pagina composta si reimpagina solo dove è cambiata sono in [Pagine composte › Mappa delle origini](/it/docs/composed-pages#mappa-delle-origini).
+`sourceAt(doc, pageIndex, x, y, options?)` restituisce ciò che mostra un punto di una pagina, dall’interno verso l’esterno, ogni elemento con il suo `id` stabile, la sua `source` (un tratto del Markdown, un puntatore JSON della configurazione, un attributo della riga di apertura della pagina o una risorsa) e il suo `rect`. `elementsForSource(doc, start, end, options?)` restituisce ciò che è diventato un tratto del Markdown, pagina per pagina, e `findElement(doc, id)` ritrova un elemento dopo una nuova impaginazione. Leggono ciò che l’impaginazione ha annotato nel VDT e non impaginano nulla. `composedPagePaintKey(page)` dice se una pagina composta disegna ciò che ha disegnato prima. I tipi di origine, gli identificatori e il modo in cui una pagina composta si reimpagina solo dove è cambiata sono in [Pagine composte › Mappa delle origini](/it/docs/composed-pages#mappa-delle-origini).
 
 ### Caricare i font prima dell’impaginazione
 
-L’impaginazione misura il testo con i caratteri che l’insieme dei font ha nel momento in cui viene eseguita. `prepareFonts` carica prima della prima generazione ogni carattere richiesto da una configurazione e dal suo testo: testo corrente, titoli, elenchi, titoli e corpi dei riquadri, tabelle, testi di design, testatine, indice, codice e lettering dei fumetti, in ogni peso e inclinazione che la configurazione imposta (i quattro della famiglia del testo corrente, perché `**` e `*` vi compongono grassetto e corsivo). Ogni carattere viene caricato per i caratteri che il documento compone, così una famiglia servita a fette `unicode-range` (Latin Extended, greco, arabo, le fette CJK di Google Fonts e Fontsource) porta i file di cui il testo ha bisogno.
+L’impaginazione misura il testo con i caratteri che l’insieme dei font ha nel momento in cui viene eseguita. `prepareFonts` carica prima della prima generazione ogni carattere richiesto da una configurazione e dal suo testo: testo corrente, titoli, elenchi, titoli e corpi dei riquadri, tabelle, testi grafici, testatine, indice, codice e lettering dei fumetti, in ogni peso e inclinazione che la configurazione imposta (i quattro della famiglia del testo corrente, perché `**` e `*` vi compongono grassetto e corsivo). Ogni carattere viene caricato per i caratteri che il documento compone, così una famiglia servita a fette `unicode-range` (Latin Extended, greco, arabo, le fette CJK di Google Fonts e Fontsource) porta i file di cui il testo ha bisogno.
 
 ```ts
 import { prepareFonts, buildDocument, buildDocumentWithFonts } from 'postext';
@@ -560,7 +560,7 @@ L’isolamento più semplice è un realm per documento: un iframe per esempio da
 
 **È il modo consigliato di usare Postext nel browser.** Se stai costruendo qualcosa di interattivo (un’anteprima dal vivo, un editor, un visualizzatore che reagisce al ridimensionamento o un ambiente di prova come la Sandbox), guida la pipeline tramite `createLayoutWorker()` da `postext/worker`. Non chiamare `buildDocument` direttamente sul thread principale nel codice dell’interfaccia.
 
-Chiamare `buildDocument` sul thread principale esegue l’intera pipeline (parsing, misurazione, collocazione e ogni nuova esecuzione del passaggio di collocazione di cui l’impaginazione ha bisogno) sul thread che l’ha invocata. Per un’esportazione una tantum va bene. Per un’interfaccia interattiva è il thread sbagliato: un’impaginazione di 150 ms blocca gli eventi di input, i tasti premuti si accodano e lo scorrimento scatta. Il worker sposta ognuno di quei millisecondi su un thread in background.
+Se chiami `buildDocument` sul thread principale, l’intera pipeline (parsing, misurazione, collocazione e ogni nuova esecuzione del passaggio di collocazione di cui l’impaginazione ha bisogno) gira sul thread che l’ha invocata. Per un’esportazione una tantum va bene. Per un’interfaccia interattiva è il thread sbagliato: un’impaginazione di 150 ms blocca gli eventi di input, i tasti premuti si accodano e lo scorrimento scatta. Il worker sposta ognuno di quei millisecondi su un thread in background.
 
 Postext fornisce un punto d’ingresso Web Worker dedicato, `postext/worker`, che toglie la pipeline dal thread principale. È il percorso che ci aspettiamo usi la maggior parte delle integrazioni: le viste Canvas, HTML e PDF della Sandbox condividono tutte lo stesso handle `createLayoutWorker()` tramite un unico hook `useLayoutWorker` (`packages/postext-sandbox/src/worker/useLayoutWorker.ts`) e lo guidano con l’annullamento in cui vince l’ultima richiesta: un nuovo tasto premuto interrompe la generazione in corso prima ancora che finisca.
 
@@ -577,7 +577,7 @@ Lo stesso `VDTDocument` restituito da `build(...)` alimenta tutti i renderer a v
 ### Che cosa ti dà il worker
 
 - **Il thread principale resta libero.** Parsing, misurazione e ogni passaggio di collocazione vengono eseguiti dentro il worker. Il thread principale viene toccato solo quando il `VDTDocument` finito viene rispedito indietro.
-- **Annullamento in cui vince l’ultima richiesta.** `build(content, config, { signal })` porta un `AbortSignal` dentro il worker. Annullare prima del completamento solleva un `AbortError` lato principale; dentro il worker la pipeline lancia un `BuildCancelledError` al successivo punto di controllo dell’annullamento, che c’è a ogni blocco, e si ferma subito.
+- **Annullamento in cui vince l’ultima richiesta.** `build(content, config, { signal })` porta un `AbortSignal` dentro il worker. Se annulli prima del completamento, sul thread principale si ottiene un `AbortError`; dentro il worker la pipeline lancia un `BuildCancelledError` al successivo punto di controllo dell’annullamento, che c’è a ogni blocco, e si ferma subito.
 - **Cache delle misure per worker.** Il worker mantiene una sola `MeasurementCache` per tutta la sua vita. Le generazioni successive che condividono font, testo e larghezza riusano le misure delle righe in cache: digitare un solo carattere in un documento lungo rimisura solo i blocchi il cui input è davvero cambiato.
 - **Metriche identiche al thread principale.** I font vengono spediti nel worker come `ArrayBuffer` trasferibili e registrati tramite `new FontFace(...)` nel `FontFaceSet` del worker stesso. Il worker misura con le stesse metriche dei font su canvas che userebbe il thread principale, quindi gli a capo e le altezze delle colonne sono identici byte per byte.
 - **La cache dei raster matematici sopravvive alle generazioni nel worker.** Il renderer matematico affianca alla cache con chiave d’identità una cache dei raster con chiave di contenuto: altrimenti la clonazione strutturata di un `MathRender` attraverso il confine del worker mancherebbe la cache d’identità a ogni rigenerazione.
@@ -589,7 +589,7 @@ Il client del worker si trova nel sottopercorso `postext/worker` ed è composto 
 
 - **`createLayoutWorker(opts?): LayoutWorkerHandle`**: avvia un worker dedicato (o avvolge quello che passi tramite `opts.worker`, o avvia il punto d’ingresso del worker in `opts.url`) e restituisce un handle tipizzato. Vedi [Caricare il worker da una CDN](#caricare-il-worker-da-una-cdn).
 - **`LayoutWorkerHandle.registerFonts(faces: FontPayload[]): Promise<void>`**: spedisce i byte dei font nel worker. I buffer vengono trasferiti, quindi tieni una copia nuova sul thread principale se devi rinviarli più tardi.
-- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**: esegue la pipeline. Annullare il segnale interrompe la generazione in corso.
+- **`LayoutWorkerHandle.build(content, config?, { signal? }): Promise<VDTDocument>`**: esegue la pipeline. Se annulli il segnale, la generazione in corso si interrompe.
 - **`LayoutWorkerHandle.dispose(): void`**: termina il worker e rifiuta tutte le generazioni in sospeso con `AbortError`.
 - **`FontPayload`**: `{ family, weight, style, unicodeRange?, buffer: ArrayBuffer }`. `weight` è una stringa di peso CSS (`'700'`, `'bold'`); `registerFonts` lo accetta anche come numero (`700`). Il `buffer` viene trasferito al worker quando chiami `registerFonts`.
 - **`BuildCancelledError`** (riesportato da `postext`): ciò che `buildDocument` lancia internamente quando `options.shouldCancel` restituisce `true`. Di solito non lo vedi sul thread principale: il protocollo del worker lo converte in un `AbortError` prima che raggiunga il tuo codice.
@@ -724,7 +724,7 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 `handle.prepareFonts(content, config, options)` esegue [`prepareFonts`](#caricare-i-font-prima-dellimpaginazione) sulla pagina e poi invia al worker i file di ogni carattere trovato che il registro dei font contiene (i file del resolver, i caratteri di un pacchetto, le regole `@font-face` leggibili della pagina), solo le fette che contengono i caratteri del documento. Quando i caratteri raggiungono il worker, questo scarta solo le misure di quelle famiglie e la sua cache di documenti finiti.
 
-I caratteri possono raggiungere il worker anche dopo una generazione: un peso di cui le pagine si rivelano avere bisogno, un’altra fetta `unicode-range` di un taglio, un file caricato di nuovo con lo stesso nome di famiglia. La generazione successiva misura con essi. Il canvas di un worker non lo farebbe da solo: in Chrome risolve un font la prima volta che viene impostata una scorciatoia font e non guarda più l’insieme dei font per quella scorciatoia, così il testo manterrebbe le larghezze del carattere che ha risposto per primo. Il worker quindi nomina una famiglia ancora una volta nelle scorciatoie che imposta quando un carattere di quella famiglia è arrivato in ritardo (`Geist, Geist`): un altro elenco di famiglie per il canvas, lo stesso font e le stesse larghezze. I documenti che restituisce mantengono le stringhe di font come le scrive il motore, e un worker che ha i suoi caratteri prima della prima generazione imposta ogni scorciatoia così come è scritta.
+I caratteri possono raggiungere il worker anche dopo una generazione: un peso di cui le pagine si rivelano avere bisogno, un’altra fetta `unicode-range` di un taglio, un file caricato di nuovo con lo stesso nome di famiglia. La generazione successiva misura con essi. Il canvas di un worker non lo farebbe da solo: in Chrome risolve un font la prima volta che riceve una data stringa di font abbreviata e, per quella stringa, non consulta più l’insieme dei font, così il testo manterrebbe le larghezze del carattere che ha risposto per primo. Il worker quindi ripete il nome della famiglia nelle stringhe che imposta quando un carattere di quella famiglia è arrivato in ritardo (`Geist, Geist`): per il canvas è un altro elenco di famiglie, ma il font e le larghezze sono gli stessi. I documenti che restituisce mantengono le stringhe di font come le scrive il motore, e un worker che ha i suoi caratteri prima della prima generazione imposta ogni stringa così come è scritta.
 
 ### Raccolta dei payload dei font (Fontsource / Google Fonts)
 
@@ -737,11 +737,11 @@ Il `collectFontPayloadsForFamilies` della Sandbox (`packages/postext-sandbox/src
 3. Scarica tutti i file del tondo, del grassetto e dei rispettivi corsivi di ogni famiglia (`files/{family-id}-{subset}-{weight}-{style}.woff2`); `collectFontPayloadsForConfig(config, markdown)` prende invece i pesi e gli stili richiesti da una configurazione. Sono file statici, quelli che il PDF incorpora, così il worker misura con ciò che il PDF disegna. Un file variabile dà avanzamenti diversi tra due dei suoi master, e una riga a una frazione di pixel dalla sua giustezza si divide altrove.
 4. Restituisce un `FontPayload[]` in cui `buffer` è un `ArrayBuffer` nuovo a ogni chiamata; è importante, perché `registerFonts` trasferisce il buffer e lascia staccata la copia del mittente.
 
-I file di un taglio vanno nell’ordine in cui li dichiara un pen, prima `latin` e per ultimi i file propri della scrittura (`arabic`, le fette numerate di una famiglia cinese o giapponese), perché il file aggiunto per ultimo risponde per un carattere contenuto in due file. Una famiglia per cui Fontsource non ha file viene letta invece dal foglio di stile CSS2 di Google, che restituisce WOFF2 solo a stringhe User-Agent simili a quelle di un browser.
+I file di un taglio vanno nell’ordine in cui li dichiara un pen del Ricettario (un esempio su CodePen), prima `latin` e per ultimi i file propri della scrittura (`arabic`, le fette numerate di una famiglia cinese o giapponese), perché il file aggiunto per ultimo risponde per un carattere contenuto in due file. Una famiglia per cui Fontsource non ha file viene letta invece dal foglio di stile CSS2 di Google, che restituisce WOFF2 solo a stringhe User-Agent simili a quelle di un browser.
 
 Abbinala a `getConfigFontFamilies(config)` per ottenere l’elenco delle famiglie che una data `PostextConfig` comporrà davvero (testo corrente, titoli, punti elenco, numeri degli elenchi numerati).
 
-### Annullamento cooperativo dentro il motore
+### Annullamento cooperativo nel motore
 
 Se guidi tu stesso `buildDocument` (per esempio dentro un worker personalizzato), la pipeline espone un hook `shouldCancel` che puoi usare direttamente:
 
@@ -792,7 +792,7 @@ export async function exportPdf(
 
 Se mantieni già un handle del worker per l’anteprima dal vivo, riusalo per l’esportazione invece di avviare un secondo worker: la cache delle misure dentro il worker rende praticamente gratuita un’esportazione PDF che segue un’anteprima a schermo.
 
-Per un libro lungo, anche scrivere il PDF richiede secondi; `postext-pdf/worker` esegue quel passaggio in un worker tutto suo (vedi [Rendere il PDF in un worker](/it/docs/configuration-pdf-output#rendere-il-pdf-in-un-worker)).
+Per un libro lungo, anche scrivere il PDF richiede secondi; `postext-pdf/worker` esegue quel passaggio in un worker tutto suo (vedi [Generare il PDF in un worker](/it/docs/configuration-pdf-output#generare-il-pdf-in-un-worker)).
 
 ### Quando usare il worker e quando no
 

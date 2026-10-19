@@ -17,11 +17,11 @@ export const metadata = {
 
 ## 资源类型
 
-**资源类型**是可由用户定义的类别，如*图*、*表*、*示意图*、*代码清单*……它决定该类资源如何编号、如何加题注、如何被引用。类型列表存放在`config.resourceTypes`中；沙盒在**设计 → 图与表 → 编号与位置**中编辑它。
+**资源类型**是可由用户定义的类别，如*图*、*表*、*示意图*、*代码清单*……它决定这类资源怎样编号、怎样加题注、怎样引用。类型列表存放在`config.resourceTypes`中；在沙盒里，它在**版面设计 › 图与表 › 编号与位置**中编辑。
 
 未设置`config.resourceTypes`时，Postext提供三个内置默认类型：**图**、**表**和**视频**，各自独立按`{h1}.{n}`编号（每遇到一级标题重新计数），计数器为十进制。列表中没有`video`类型时（例如在有视频之前保存的书），类型为`video`的视频资源照样编号：引擎为它们补上内置的视频类型（`effectiveResourceTypes(config, resources)`），`defaultVideoResourceType(locale)`则单独返回这个类型。它们的名称采用文档语言：先取`config.locale`，没有则取`bodyText.hyphenation.locale`，再没有则用英语（见[文档语言](/zh/docs/configuration-language#文档语言)）。
 
-内置默认类型会随语言区域变化。导出的`defaultResourceTypes(locale = 'en')`把类型名称、简写标签和题注前缀本地化为文档的语言区域：英语得到*Figure*/*Fig.*和*Table*/*Tab.*；西班牙语得到*Figura*/*Fig.*和*Tabla*/*Tabla*；法语、德语、意大利语、葡萄牙语、加泰罗尼亚语和荷兰语也各有对应名称（列在[文档语言](/zh/docs/configuration-language#文档语言)的表中）。`es-ES`这类带地区的标签按语言解析，没有译名的语言区域回退到英语。编号行为（`numberingTemplate: '{h1}.{n}'`、`resetOn: 'h1'`、十进制计数器）与语言无关。每次调用都返回新对象，因此可以随意修改结果：
+内置默认类型随文档语言而变。导出的`defaultResourceTypes(locale = 'en')`把类型名称、简写标签和题注前缀译成文档的语言：英语得到*Figure*/*Fig.*和*Table*/*Tab.*；西班牙语得到*Figura*/*Fig.*和*Tabla*/*Tabla*；法语、德语、意大利语、葡萄牙语、加泰罗尼亚语和荷兰语也各有对应名称（列在[文档语言](/zh/docs/configuration-language#文档语言)的表中）。`es-ES`这类带地区的标签按语言解析，没有译名的语言改用英语。编号行为（`numberingTemplate: '{h1}.{n}'`、`resetOn: 'h1'`、十进制计数器）与语言无关。每次调用都返回新对象，因此可以随意修改结果：
 
 ```ts
 import { defaultResourceTypes } from 'postext';
@@ -68,9 +68,9 @@ interface ResourceType {
 }
 ```
 
-类型可以省略字段（自 postext 1.38 起）：由同 id 的内置类型补齐（`figure`、`table`、`video`，采用文档语言）；没有同 id 的内置类型时，`name` 取 id，`shortLabel` 和 `captionPrefix` 取 `name`，`numberingTemplate` 取 `{'{h1}.{n}'}`（中文、日文和阿拉伯文为 `{'{h1}-{n}'}`），`resetOn` 取 `'h1'`，`counterFormat` 取 `'decimal'`。`resetOn` 写的不是任何级别时按 `'h1'` 处理，并给出 `unknownConfigValue` 警告。
+类型可以省略字段（自postext 1.38起）：由同id的内置类型补齐（`figure`、`table`、`video`，采用文档语言）；没有同id的内置类型时，`name`取id，`shortLabel`和`captionPrefix`取`name`，`numberingTemplate`取`{'{h1}.{n}'}`（中文、日文和阿拉伯文为`{'{h1}-{n}'}`），`resetOn`取`'h1'`，`counterFormat`取`'decimal'`。`resetOn`写的不是任何级别时按`'h1'`处理，并给出`unknownConfigValue`警告。
 
-`ResourcePlacement`与资源自身的`placement`形状相同。`position`选择浮动体可占用的空位种类：`auto`（默认）取第一次引用之后的第一个空位，`top` / `bottom`把范围限定在该种版带，`here`把资源行内嵌入。`span`设定浮动体的宽度范围：一栏、整个内容宽度，或一栏半版式中只放浮动体的侧栏。`rotate`把资源旋转四分之一圈，并使它成为单独占一页的通栏浮动体。`width`把浮动体收窄为所在栏宽的一个比例（通栏浮动体则为页宽的比例），比如宽栏里的一张小表。`align`说明这种较窄的浮动体放在哪里（默认靠左，也可居中或靠右），也说明比空位窄的图片在空位中的位置：比栏窄的位图，或被`layout.fitFiguresToPage`缩小的图像。题注和注释保持空位的行长。（postext 1.4及以前，这类图片总是左对齐排放。）`captionSide`把题注放在图旁，位于一栏半版式中只放浮动体的侧栏（`layout.sideColumnRole: 'floats'`），与图的顶边平齐（底部浮动体则与底边平齐）；它作用于栏内浮动体，自postext 1.28起也作用于随文放置的资源（`position: 'here'`，占一栏，文字不绕排）：侧栏在其旁边空着时，题注和附注排在侧栏，与主体顶边平齐，否则仍在主体下方（`layout.inlineCaptionSide`，默认开启；设为`false`时只有栏内浮动体把题注放到侧栏）；没有这种侧栏的页面仍把题注放在图下。资源和它的类型都没有设定位置时，内置默认值为`auto` / `column`。`shrink`（`'never'`、`'page'`、`'slot'`）和`minScale`（未设时为0.7）把浮动图片缩小到所在位置的空间，而不是移到后面；`captionMeasure: 'body'`让比所在位置窄的图片的题注和说明与图片同宽（见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）；`layout.floatShrink`给出前两项的文档级默认值。`wrap`把行内嵌入或宽一栏的浮动体放在栏的一侧，正文排在旁边，相隔`wrapGap`；`layout.wrap`存放默认值（见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。`wrap: 'contour'`让正文沿图片的形状绕排，形状取自资源的`contour`（`points`、`alpha`、`threshold`、`margin`，以及宿主生成的`traced`；见[文档格式 › 沿轮廓绕排](/zh/docs/document-format-resources#沿轮廓绕排)）。`citingPage`让`top`或`auto`浮动体置于其引用行所在页或栏的顶部，而不是引用行之后的第一个空位；`layout.floatsAtCitingPage`给出文档默认值，`layout.maxTopFraction`给出它可以占用的栏高比例（参见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）。
+`ResourcePlacement`与资源自身的`placement`结构相同。`position`决定浮动体可以占用哪种空位：`auto`（默认）取第一次引用之后的第一个空位，`top` / `bottom`只取相应的版带，`here`把资源嵌在正文里。`span`设定浮动体的宽度：一栏、整个版心宽度，或一栏半版面中只放浮动体的侧栏。`rotate`把资源转四分之一圈，使它成为单独占一页的通栏浮动体。`width`把浮动体收窄到所在栏宽的某个比例（通栏浮动体则是页宽的比例），例如宽栏里的一张小表。`align`决定这种较窄的浮动体放在哪里（默认靠左，也可居中或靠右），也决定比空位窄的图片在空位中的位置，例如比栏窄的位图，或被`layout.fitFiguresToPage`缩小的图像。题注和注释仍按空位的行长排。（postext 1.4及以前，这类图片总是齐左排放。）`captionSide`把题注放在图旁，即一栏半版面中只放浮动体的侧栏（`layout.sideColumnRole: 'floats'`），与图的顶边平齐（底部浮动体则与底边平齐）。它作用于栏内浮动体；自postext 1.28起，也作用于随文放置的资源（`position: 'here'`，宽一栏，旁边没有绕排的文字）：侧栏在它旁边空着时，题注和注释排在侧栏，与主体顶边平齐，否则仍排在主体下方（`layout.inlineCaptionSide`，默认开启；设为`false`时，只有栏内浮动体把题注放到侧栏）。没有这种侧栏的页面，题注仍在图下。资源和它的类型都没有设定位置时，内置默认值为`auto` / `column`。`shrink`（`'never'`、`'page'`、`'slot'`）和`minScale`（未设时为0.7）让浮动图片缩小到空位放得下的尺寸，而不是往后移；`captionMeasure: 'body'`让比空位窄的图片的题注和注释与图片同宽（见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）；`layout.floatShrink`给出前两项的文档默认值。`wrap`把行内嵌入或一栏宽的浮动体放在栏的一侧，正文排在它旁边，两者相隔`wrapGap`；默认值放在`layout.wrap`里（见[文档格式 › 文字绕排](/zh/docs/document-format-resources#文字绕排)）。`wrap: 'contour'`让正文沿图片的形状绕排，形状取自资源的`contour`（`points`、`alpha`、`threshold`、`margin`，以及宿主生成的`traced`；见[文档格式 › 沿轮廓绕排](/zh/docs/document-format-resources#沿轮廓绕排)）。`citingPage`让`top`或`auto`浮动体排在引用行所在页或栏的顶部，而不是引用行之后的第一个空位；`layout.floatsAtCitingPage`给出文档默认值，`layout.maxTopFraction`给出它最多可占的栏高比例（参见[文档格式 › 位置](/zh/docs/document-format-resources#位置)）。
 
 `columns`（postext 1.18起）让`span: 'column'`浮动体在多栏页面上横跨这么多相邻的栏，例如报纸五栏中横跨两栏的照片。它的宽度是这些栏加上其间的栏间距。它占用一组顶端平齐的空栏的栏首，或者引用它的那一栏及其后空栏的栏脚；栏数等于或大于页面的栏数时，它就是通栏浮动体。`'page'`和`'side'`跨度、旋转的资源（`rotate`）以及行内嵌入（`here`）忽略此项；`captionSide`只对一栏宽的浮动体有效。
 
@@ -184,13 +184,13 @@ interface ResourceType {
 
 ### 编号与引用
 
-资源类型生成的编号就是`:ref`输出的内容，也是题注前缀后面跟的编号。`:ref{id}`是主要写法：按阅读顺序的第一次引用会**纳入**该资源，资源浮动到这次引用之后的第一个空位：引用所在栏的底部、下一个空栏的顶部或底部，或下一页的某个版带（依其解析后的位置而定：`position: 'auto' | 'top' | 'bottom' | 'here'`和`span: 'column' | 'page' | 'side'`，外加`rotate`、`width`、`align`和`captionSide`，先按资源自身解析，再取类型的`defaultPlacement`，最后取内置的`auto` / `column`；`'top'` / `'bottom'`把搜索限定在该种空位）。`::resource{id}`块级嵌入是可选的，只在`placement.position: 'here'`时需要，即在文字流中某个确切位置行内嵌入、不浮动。文档一侧的完整语法（两种写法，以及`:ref`的`style`和`text`选项）见[文档格式 › 资源](/zh/docs/document-format-resources#资源)，其中也说明了第一次引用的顺序如何决定计数。
+资源类型生成的编号就是`:ref`输出的内容，也是题注前缀后面跟的编号。`:ref{id}`是主要写法：按阅读顺序，第一次引用会**纳入**该资源，资源随即浮动到这次引用之后的第一个空位：引用所在栏的底部、下一个空栏的顶部或底部，或下一页的某个版带（依其解析后的位置而定：`position: 'auto' | 'top' | 'bottom' | 'here'`和`span: 'column' | 'page' | 'side'`，外加`rotate`、`width`、`align`和`captionSide`，先按资源自身解析，再取类型的`defaultPlacement`，最后取内置的`auto` / `column`；`'top'` / `'bottom'`把搜索限定在该种空位）。`::resource{id}`块级嵌入是可选的，只在`placement.position: 'here'`时需要，这时资源不浮动，而是嵌在正文中的确切位置。文档一侧的完整语法（两种写法，以及`:ref`的`style`和`text`选项）见[文档格式 › 资源](/zh/docs/document-format-resources#资源)，其中也说明了第一次引用的顺序如何决定计数。
 
 这与标题编号相对应：标题级别带有`numberingTemplate`，资源类型也带有一个；不同的是资源计数器（`{n}`）按第一次引用递增，而不是按标题递增，`resetOn`再把它与标题层级联系起来。
 
 ### 哪些资源会编号
 
-正文引用了的资源才编号，无论是用`:ref`还是`::resource`嵌入，编号顺序就是这些第一次引用的顺序，与位置无关：浮动的、行内（`here`）的、在侧栏的或旋转的都一样。只由版面设计绘制的资源（章首页、书眉或篇首页的`image`元素），或者没有任何引用的资源，不编号，也不推进其类型的计数器。因此在一篇摄影随笔中，如果满版出血的图版都是章首页图像，只有一张较小的图版是被引用的浮动体，那么这张浮动体就是图版**I**，不管前面的章首页已经展示了多少图版；章首页的图版应在其版面设计中编号（用`{attr.plate}`这样的属性），计数器留给正文引用的图版。
+正文引用了的资源才编号，无论是用`:ref`还是`::resource`嵌入，编号顺序就是这些第一次引用的顺序，与位置无关：浮动的、行内（`here`）的、在侧栏的或旋转的都一样。只由版面设计绘制的资源（章首页、书眉或篇名页的`image`元素），或者没有任何引用的资源，不编号，也不推进其类型的计数器。因此在一篇摄影随笔中，如果满版出血的图版都是章首页图像，只有一张较小的图版是被引用的浮动体，那么这张浮动体就是图版**I**，不管前面的章首页已经展示了多少图版；章首页的图版应在其版面设计中编号（用`{attr.plate}`这样的属性），计数器留给正文引用的图版。
 
 逐章排版的书（沙盒、`buildBundle`，或用`continuationAfter()`传递计数器的`buildDocument`）中，以全书的第一次引用为准：资源保留它在首次引用它的那一章得到的编号，也只由那一章放置它。后面章节的`:ref`输出这个编号，但不放置任何东西；在那里对浮动资源的`::resource`嵌入也只是又一次引用（行内的`here`嵌入仍排在写它的位置）。当图与引用在同一份输出中时，引用会链接到图：整本书的PDF会把它链接到前面章节的那一页。单独渲染的一章，无论HTML还是PDF，都把它排成链接颜色的普通文字，因为它的图不在该文档里。宿主若把各章的HTML拼在同一页上，可以把各章锚定的资源作为`refTargets`传给`renderToHtml`，这样的引用就又会链接到前面章节的图：
 
@@ -217,7 +217,7 @@ resourceTypes: defaultResourceTypes('en').map((t) => ({ ...t, numberingTemplate:
 
 ## 表格样式
 
-`tableStyle`属性控制表格资源的字体排印和装饰，作用于每张表，除非该表选用了某个[命名表格样式](#命名表格样式)。正文单元格和表头单元格分别设定样式。字体、字号和颜色未设置时继承解析后的正文，因此没有`tableStyle`的文档会用正文的字体排印来渲染表格。
+`tableStyle`属性控制表格资源的字体排印和装饰，作用于每张表，除非该表选用了某个[命名表格样式](#命名表格样式)。正文单元格和表头单元格分别设定样式。字体、字号和颜色未设置时继承解析后的正文，因此没有`tableStyle`的文档，表格按正文的字体排印排出。
 
 ```ts
 const config: PostextConfig = {
@@ -442,7 +442,7 @@ const config: PostextConfig = {
       <td><code>continuesMarker</code></td>
       <td><code>string</code></td>
       <td><code>'Continued'</code> / <code>'Continúa'</code></td>
-      <td>该标记的文字，以注释字体（见<a href="#题注样式">题注样式</a>）右对齐排在该部分下方。默认值随文档语言区域而定（八种语言见<a href="/zh/docs/configuration-language#文档语言">文档语言</a>）。</td>
+      <td>该标记的文字，以注释字体（见<a href="#题注样式">题注样式</a>）右对齐排在该部分下方。默认值随文档语言而定（八种语言见<a href="/zh/docs/configuration-language#文档语言">文档语言</a>）。</td>
     </tr>
   </tbody>
 </table>
@@ -470,7 +470,7 @@ const config: PostextConfig = {
 
 ### 三线表
 
-期刊和教材里的表格通常只用三条线，不画竖线：表格上方一条粗线，表头下一条细线，末行下一条粗线；表头中跨几列的分组标题下另有短线（LaTeX 的`booktabs`宏包：`\toprule`、`\midrule`、`\cmidrule`、`\bottomrule`）。`rules: 'booktabs'`画的就是这种样式：
+期刊和教材里的表格通常只用三条线，不画竖线：表格上方一条粗线，表头下一条细线，末行下一条粗线；表头中跨几列的分组标题下另有短线（LaTeX的`booktabs`宏包：`\toprule`、`\midrule`、`\cmidrule`、`\bottomrule`）。`rules: 'booktabs'`画的就是这种样式：
 
 ```ts
 const config: PostextConfig = {
@@ -489,7 +489,7 @@ const config: PostextConfig = {
 - 线的颜色取`borderColor`（关联调色板的颜色随调色板和`:::part palette`变化），`borders: false`关闭所有线。`borderWidth`不起作用，`borderRadius`也不起作用：线保持直线，单元格填充色仍按圆角外框裁切。表头填充、斑马纹和单元格自己的`background`与其他线型一样有效，画在线的下面。
 - 跨页拆分的表格每部分都重复表头行，所以每部分都以粗线和表头线开头。末行下的粗线只收尾最后一部分；延续到下一页的部分以`continuedFootRule`收尾：细线（`'light'`，默认）、粗线（`'bottom'`）或不画（`'none'`）。
 
-排版只计算一次这些线。VDT 中的表格以`strokes`（`{ x1, y1, x2, y2, widthPx }`，相对于表体左上角）携带它们，画布、HTML 查看器、PDF 和固定版式 EPUB 照此绘制；在带标签的 PDF 中它们是版面工件。流式 EPUB 把它们写成表格和表头的 CSS 边框，两端缩短的线用背景线绘制。在 Sandbox 中，于*线条*下拉框选择**三线表**（booktabs）会显示这些字段，并隐藏*边框宽度*和*圆角半径*。
+排版只计算一次这些线。VDT中的表格以`strokes`（`{ x1, y1, x2, y2, widthPx }`，相对于表体左上角）携带它们，画布、HTML阅读器、PDF和固定版式EPUB照此绘制；在带标签的PDF中它们是版面工件。流式EPUB把它们写成表格和表头的CSS边框，两端缩短的线用背景线绘制。在沙盒中，在*线条*下拉框里选择**三线表**（booktabs）会显示这些字段，并隐藏*边框宽度*和*圆角半径*。
 
 ### 命名表格样式
 
@@ -522,19 +522,19 @@ const resource: Resource = {
 };
 ```
 
-每个条目接受`tableStyle`的所有字段，外加`id`（供`table.styleId`引用）和可选的`name`（供编辑器显示，默认为id）。样式能设定的一切都按表生效：字体排印、填充色、边框、线型、圆角半径、内边距，以及溢出行为和它的续表文字。`resolveTableStylesConfig(styles, tableStyle, resolvedBodyText, locale?)`返回解析后的列表，`pickTableStyle(resolved, styleId)`返回某张表所用的样式，`stripTableStylesDefaults`去掉未设定的字段（等于内置默认值的字段会保留，因为它仍会覆盖`tableStyle`中不同的值）。在流式 EPUB 中，命名样式是表格上的一个类（`pt-table-<id>`），由书的样式表设置样式。
+每个条目接受`tableStyle`的所有字段，外加`id`（供`table.styleId`引用）和可选的`name`（供编辑器显示，默认为id）。样式能设定的一切都按表生效：字体排印、填充色、边框、线型、圆角半径、内边距，以及溢出行为和它的续表文字。`resolveTableStylesConfig(styles, tableStyle, resolvedBodyText, locale?)`返回解析后的列表，`pickTableStyle(resolved, styleId)`返回某张表所用的样式，`stripTableStylesDefaults`去掉未设定的字段（等于内置默认值的字段会保留，因为它仍会覆盖`tableStyle`中不同的值）。在流式EPUB中，命名样式是表格上的一个类（`pt-table-<id>`），由书的样式表设置样式。
 
 ### 比页面还高的表
 
-浮动表如果放不进为它提供的新页面，既不会被压缩，也不会溢出：在`overflow: 'split'`（默认）下，引擎在放得下的最后一条行边界处把它按行切开，在后续页面上接续，需要几页就接几页。每个续表部分都重复表头行（`TableModel.headerRowCount`，未设置时为由表头单元格组成的开头几行），并再次带上题注，在描述之后加上`continuedSuffix`，如“Table 6-4. Title *(cont.)*”。每个还要接续的部分下方都有右对齐、用注释字体排的`continuesMarker`；表的注释留到最后一部分。切分点从不穿过合并单元格（跨行单元格整体移到下一部分）；统领下面各行的一行（横跨整张表的单个单元格）会被带到下一部分，而不是孤零零地留在页面底部。三线表的每个延续部分以`continuedFootRule`收尾（见[三线表](#三线表)）。
+浮动表如果在为它准备的新页面上也放不下，既不会被压缩，也不会超出版面：在`overflow: 'split'`（默认）下，引擎在放得下的最后一条行边界处把它按行切开，在后续页面上接续，需要几页就接几页。每个续表部分都重复表头行（`TableModel.headerRowCount`，未设置时为由表头单元格组成的开头几行），并再次带上题注，在描述之后加上`continuedSuffix`，如“Table 6-4. Title *(cont.)*”。每个还要接续的部分下方都有右对齐、用注释字体排的`continuesMarker`；表的注释留到最后一部分。切分点从不穿过合并单元格（跨行单元格整体移到下一部分）；统领下面各行的一行（横跨整张表的单个单元格）会被带到下一部分，而不是孤零零地留在页面底部。三线表的每个延续部分以`continuedFootRule`收尾（见[三线表](#三线表)）。
 
 **第一部分在哪里结束**。如果在引用之后为表提供的是某个空栏的顶部，表就取那里放得下的行，余下的接到下一个空位。当它独占该栏时，会一直排到栏底：若某部分下方只剩不到三行正文的空间，它就把这些空间也占上，而不留下一小截文字。当该栏已有另一条浮动版带时（比如页顶横跨整页的通栏图），这一部分会在栏底之前至少留出三行正文的位置就停下，这是浮动体与其他浮动体共用一栏时都要留给文字的空间，于是该栏在表下仍有一些文字，而不是只有浮动体。要让长表一直排到栏底，应在起始页没有其他浮动体的地方引用它（例如在通栏图那一页之后），或者调整它的行使其适合栏高。
 
 `'clip'`保留放得下的开头几行，不声不响地丢掉其余部分（注释仍在该部分末尾）；`'hide'`则整张表都不排。二者只在表比一页还高时起作用：放得下的表在任何模式下都整体放置。
 
-**排在正文中的表**。自postext 1.25起，排在`here`（用`::resource`嵌入）的表也遵循同样的规则（`splitInline`，默认开启）。它放不进本栏剩余空间时，就在行与行之间切开：第一部分保留上方的浮动体间距，至少带表头行和两行表体（若不够，整张表照旧从下一栏开始）；之后每一部分都在下一栏顶部开头，上方不留间距，按该栏的宽度排（一栏半版式把某一部分排进窄栏时，按窄栏的宽度排）；`::resource`那一行之后的文字接在最后一部分后面。重复表头、带后缀的题注、续接标记、最后一部分下的注释、至少三行的尾部，以及避开合并单元格和分组标题行的切分，都与浮动表相同。表体不足五行的表从不切开。`'clip'`保留比一栏还高的行内表放得下的开头几行，排在某一栏的顶部；`'hide'`不排这样的表；较矮的表在这两种模式下都整体移到下一栏。行内表开启的页面，只为表的第一部分保留不被该页浮动体占用的空间，因此等待中的通栏图仍排在该页顶部，表接在图下继续。竖排页面上的行内表以及框内的表不切开。`splitInline: false`把行内表整体移到下一栏，与postext 1.24及以前相同。
+**排在正文中的表**。自postext 1.25起，排在`here`（用`::resource`嵌入）的表也遵循同样的规则（`splitInline`，默认开启）。它放不进本栏剩余空间时，就在行与行之间切开：第一部分保留上方的浮动体间距，至少带表头行和两行表体（若不够，整张表照旧从下一栏开始）；之后每一部分都在下一栏顶部开头，上方不留间距，按该栏的宽度排（一栏半版式把某一部分排进窄栏时，按窄栏的宽度排）；`::resource`那一行之后的文字接在最后一部分后面。重复表头、带后缀的题注、接续标记、最后一部分下的注释、至少三行的尾部，以及避开合并单元格和分组标题行的切分，都与浮动表相同。表体不足五行的表从不切开。`'clip'`保留比一栏还高的行内表放得下的开头几行，排在某一栏的顶部；`'hide'`不排这样的表；较矮的表在这两种模式下都整体移到下一栏。行内表开启的页面，只为表的第一部分保留不被该页浮动体占用的空间，因此等待中的通栏图仍排在该页顶部，表接在图下继续。竖排页面上的行内表以及框内的表不切开。`splitInline: false`把行内表整体移到下一栏，与postext 1.24及以前相同。
 
-续表文字的默认值随文档语言而定（`locale`，否则取断词语言区域）：英语为`(cont.)` / `Continued`，西班牙语为`(cont.)` / `Continúa`，法语、德语、意大利语、葡萄牙语、加泰罗尼亚语和荷兰语也同样有对应文字（列在[文档语言](/zh/docs/configuration-language#文档语言)中）。
+续表文字的默认值随文档语言而定（`locale`，没有则取断词语言）：英语为`(cont.)` / `Continued`，西班牙语为`(cont.)` / `Continúa`，法语、德语、意大利语、葡萄牙语、加泰罗尼亚语和荷兰语也同样有对应文字（列在[文档语言](/zh/docs/configuration-language#文档语言)中）。
 
 单元格内容是行内Markdown，单元格中的换行（换行符，或者像题注和注释中那样用`\\`）开始一个新段落。以项目符号或短横（`•`、`-`、`*`、`–`）或者数字（`1.`、`1)`）加空格开头的段落排成列表项：标记按原样绘制，文字以文档的`unorderedLists.gap`为距悬挂在标记之后，折行与文字对齐，开头两个空格表示嵌套一级。所以写成`• Ofrece elección\n• Acomoda a personas diestras y zurdas`的单元格会排成两项的列表。只有普通空格的一行不产生任何内容；含不间断空格（U+00A0）的一行则算作单元格的一行，与CommonMark一致，所以`1\n`后面跟一个不间断空格会使这一表格行占两行高。单元格文字末尾的不间断空格保留其宽度：`760`加一个不间断空格，右对齐在`(231)`上方时，会在离边缘一个空格处结束，使0靠近1。只有空格与括号等宽时数字才完全对齐，而大多数字体里空格更窄。（postext 1.4及以前两者都会被丢掉。）
 
@@ -575,7 +575,7 @@ tableGridIssues({
 
 ## 题注样式
 
-`captionStyle`属性控制资源题注（图像、SVG和表格下方或上方的`Figure 1 — …`那一行）。带编号的标签和描述共用同一字体和字号，这是引擎的限制，但标签可以有自己的字重、斜体和颜色。字体、字号和颜色未设置时继承正文。题注可以放在资源**上方**（表格的通常做法），也可以排在横跨整个块宽的彩色**色条**上；可选的较小**注释**（来源、出处，即`Resource.note`）通过`note`子对象设定样式。资源类型可以通过`ResourceType.captionStyle`为本类型的资源覆盖其中任何字段（见[资源类型](#资源类型)）。
+`captionStyle`属性控制资源题注（图像、SVG和表格下方或上方的`Figure 1 — …`那一行）。带编号的标签和描述共用同一字体和字号，这是引擎的限制，但标签可以有自己的字重、斜体和颜色。字体、字号和颜色未设置时继承正文。题注可以放在资源**上方**（表格的通常做法），也可以排在横跨整个块宽的彩色**色条**上；可选的较小**附注**（来源、出处，即`Resource.note`）通过`note`子对象设定样式。资源类型可以通过`ResourceType.captionStyle`为本类型的资源覆盖其中任何字段（见[资源类型](#资源类型)）。
 
 ```ts
 const config: PostextConfig = {
@@ -684,7 +684,7 @@ const config: PostextConfig = {
       <td><code>note</code></td>
       <td><code>object</code></td>
       <td>—</td>
-      <td>资源注释的样式，见下面的子表。</td>
+      <td>资源附注的样式，见下面的子表。</td>
     </tr>
     <tr>
       <td><code>labelNumberGap</code></td>
@@ -887,7 +887,7 @@ await registerSvgImage('chart.svg', svgText);   // 重新着色、嵌入字体�
 const canvas = renderPage(doc.pages[0], doc);
 ```
 
-在哪里进行：
+各输出在哪里完成这一步：
 
 - **Canvas**。`registerSvgImage(fileId, svgText, options)`对图片重新着色（`inkHex`）、嵌入字体（`fonts`，一个提供函数；`inlineFonts: false`跳过这一步）、解码，并把它注册为矢量源，返回的Promise给出每种字体的处理结果。`registerBundleImages(bundle)`对文件包中的SVG做同样的事，优先使用文件包自己的字体。`prepareSvgMarkup(svgText, options)`返回处理好的标记，供自行解码的宿主使用。
 - **HTML**。`bundleImageUrl(bundle)`提供已嵌入文件包字体的SVG标记。`renderToHtml(doc, { inlineSvgFonts: true })`把注册表在内存中持有的字体嵌入`resourceImageUrl`返回的SVG `data:` URI（也可写成`inlineSvgFonts: { fonts, maxBytes, withhold, standIn }`）。对象URL无法同步读取，所以提供blob URL的宿主要在生成URL之前嵌入。
@@ -928,7 +928,7 @@ const canvas = renderPage(doc.pages[0], doc);
       <td><code>standIn</code></td>
       <td><code>(family) =&gt; string | undefined</code></td>
       <td>无</td>
-      <td>字面以被 <code>withhold</code> 指定的字体的名称嵌入的开放字体（自 postext 1.43 起）：向提供者索取的是替代字体，图片保留其引用和字宽。没有替代字体，或提供者缺少 SVG 所需的某个字面的，整个字体都留在外面。</td>
+      <td>字面以被<code>withhold</code>指定的字体的名称嵌入的开放字体（自postext 1.43起）：向提供者索取的是替代字体，图片保留其引用和字宽。没有替代字体，或提供者缺少SVG所需的某个字面的，整个字体都留在外面。</td>
     </tr>
     <tr>
       <td><code>onWarning</code></td>
@@ -941,12 +941,12 @@ const canvas = renderPage(doc.pages[0], doc);
 
 **退出**。`diagramStyle.inlineFonts: false`让每个SVG保持存储时的样子；资源上的`svg.inlineFonts: false`让这一个SVG逐字节保持原样，适用于自带字体或不得改动的SVG。文件包把资源的退出写在`preset.json`中，即`"inlineFonts": false`。
 
-**许可证**。嵌入会把字体文件放进可能离开应用的图片中（HTML导出、EPUB）。它只在图片显示或导出时进行，从不写入存储的资源字节；`withhold`则把许可证不允许转交的字体族挡在外面：EPUB写出器扣下标记为`redistributable: false`的字体，沙盒扣下标记为不可再分发的自定义字体族。自 postext 1.43 起，被 `withhold` 指定的字体可以有替代字体（`standIn`）：开放字体的字面以它的名称嵌入，图片中的文字保持排版时的宽度。
+**许可证**。嵌入会把字体文件放进可能离开应用的图片中（HTML导出、EPUB）。嵌入只在图片显示或导出时发生，从不写入存储的资源字节；`withhold`则把许可证不允许转交的字体族挡在外面：EPUB写出器扣下标记为`redistributable: false`的字体，沙盒扣下标记为不可再分发的自定义字体族。自postext 1.43起，被`withhold`指定的字体可以有替代字体（`standIn`）：开放字体的字面以它的名称嵌入，图片中的文字保持排版时的宽度。
 
 
 ## 视频样式
 
-`videoStyle`属性设定[视频资源](/zh/docs/document-format-resources#视频)如何印出：封面上的播放标记和二维码，以及封面是否链接到视频；还设定它们的播放器在HTML查看器和EPUB中提供哪些功能。
+`videoStyle`属性设定[视频资源](/zh/docs/document-format-resources#视频)如何印出：封面上的播放标记和二维码，以及封面是否链接到视频；还设定它们的播放器在HTML阅读器和EPUB中提供哪些功能。
 
 ```ts
 const config: PostextConfig = {
@@ -1048,7 +1048,7 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-二维码由引擎自己编码（`encodeQr(text, level)`：字节模式、UTF-8、版本1到40，选罚分最低的掩码），并以矢量绘制：Canvas填充一条由模块段组成的路径，PDF用一次`drawSvgPath`，HTML用一个带`shape-rendering="crispEdges"`的`<path>`，所以无论印多大都保持清晰。
+二维码由引擎自己编码（`encodeQr(text, level)`：字节模式、UTF-8、版本1到40，选惩罚值最低的掩码），并以矢量绘制：Canvas填充一条由模块段组成的路径，PDF用一次`drawSvgPath`，HTML用一个带`shape-rendering="crispEdges"`的`<path>`，所以无论印多大都保持清晰。
 
 ### 播放器选项
 
@@ -1073,7 +1073,7 @@ const config: PostextConfig = {
     <tr><td><code>autoplay</code></td><td><code>false</code></td><td>YouTube、Vimeo、文件</td><td>自动开始播放，按浏览器的要求始终静音。</td></tr>
     <tr><td><code>muted</code></td><td><code>false</code></td><td>YouTube、Vimeo、文件</td><td>开始时关闭声音。</td></tr>
     <tr><td><code>loop</code></td><td><code>false</code></td><td>YouTube、Vimeo、文件</td><td>播完后从头再播。</td></tr>
-    <tr><td><code>exclusive</code></td><td><code>true</code></td><td>Folio、HTML查看器、EPUB（运行脚本时）；文件</td><td>开始播放这段视频会暂停正在显示的其他视频，一次只播放一段。<code>false</code>让它与其他视频同时播放：一页上无声循环的短片，几段一起播放。postext 1.18起。</td></tr>
+    <tr><td><code>exclusive</code></td><td><code>true</code></td><td>Folio、HTML阅读器、EPUB（运行脚本时）；文件</td><td>开始播放这段视频会暂停正在显示的其他视频，一次只播放一段。<code>false</code>让它与其他视频同时播放：一页上无声循环的短片，几段一起播放。postext 1.18起。</td></tr>
     <tr><td><code>preload</code></td><td><code>'metadata'</code></td><td>文件</td><td>播放前浏览器预先加载多少：<code>'none'</code>、<code>'metadata'</code>或<code>'auto'</code>。</td></tr>
     <tr><td><code>privacy</code></td><td><code>true</code></td><td>YouTube、Vimeo</td><td>增强隐私的嵌入：YouTube从<code>youtube-nocookie.com</code>加载，Vimeo带<code>dnt=1</code>。</td></tr>
   </tbody>
@@ -1081,7 +1081,7 @@ const config: PostextConfig = {
 
 EPUB只保留其规范认识的属性：文件播放时带<code>controls</code>、<code>autoplay</code>、<code>muted</code>、<code>loop</code>、<code>playsinline</code>和<code>preload</code>，另加<code>data-pt-alongside</code>标记，其余由阅读系统决定。
 
-不独占的视频在HTML输出中带有`data-pt-alongside`。`coordinateVideoPlayback(root)`让`root`（容纳`renderToHtml`输出的元素）下的播放器遵守这一规则：开始播放独占的视频会暂停其他所有正在播放的视频，开始播放同时播放的视频只暂停独占的视频。它返回一个停止监听的函数。`playsAlongside(el)`和`videosToPause(started, videos, alongside)`为自带播放器的宿主提供同样的规则。在[Folio](/zh/docs/document-format-resources#folio视图中的视频)中，自动播放且与其他视频同时播放的视频（`autoplay`加`exclusive: false`）每次翻到它所在的页面时都静音开始，翻走时停止，几段可以同时播放；`loop`让它播完后从头再播。EPUB中，有视频需要协调的页面或章节（两段或以上，其中至少一段独占）以一个小脚本`scripts/videos.js`（即导出的`VIDEO_PLAYBACK_SCRIPT`）引入同一规则，包文件把该文档声明为`scripted`。运行脚本的阅读系统让该文档中的视频遵守这一规则，但对面的页面是另一个文档，不受影响；不运行脚本的阅读系统按自己的规则播放每段视频，YouTube和Vimeo播放器也始终如此。
+不独占的视频在HTML输出中带有`data-pt-alongside`。`coordinateVideoPlayback(root)`让`root`（容纳`renderToHtml`输出的元素）下的播放器遵守这一规则：开始播放独占的视频会暂停其他所有正在播放的视频，开始播放同时播放的视频只暂停独占的视频。它返回一个停止监听的函数。`playsAlongside(el)`和`videosToPause(started, videos, alongside)`为自带播放器的宿主提供同样的规则。在[Folio](/zh/docs/document-format-resources#folio视图中的视频)中，自动播放且与其他视频同时播放的视频（`autoplay`加`exclusive: false`）每次翻到它所在的页面时都静音开始，翻走时停止，几段可以同时播放；`loop`让它播完后从头再播。EPUB中，有视频需要协调的页面或章节（两段或以上，其中至少一段独占）以一个小脚本`scripts/videos.js`（即导出的`VIDEO_PLAYBACK_SCRIPT`）引入同一规则，EPUB包文档把该文档声明为`scripted`。运行脚本的阅读系统让该文档中的视频遵守这一规则，但对面的页面是另一个文档，不受影响；不运行脚本的阅读系统按自己的规则播放每段视频，YouTube和Vimeo播放器也始终如此。
 
 解析函数和精简函数与其他各节一致，另有`VideoStyleConfig` / `ResolvedVideoStyleConfig`类型：
 

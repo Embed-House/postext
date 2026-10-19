@@ -16,7 +16,7 @@ La memoria de 2025 de una fundación de traducción imaginaria, Dar al-Dad, en u
 
 ### 1 · La segunda lengua, en bloques marcados
 
-El código está en [la respuesta corta](#la-respuesta-corta), más arriba. El documento es árabe, así que todos los bloques van de derecha a izquierda mientras el Markdown no diga otra cosa: `{dir=ltr}` en una valla `:::paragraphs` o en un título da la vuelta a ese bloque, y `textAlign: 'start'` lleva cada bloque al lado por el que empieza, la derecha en árabe y la izquierda en español ([Dirección del documento, del bloque y del texto en línea](/es/docs/arabic-layout#dirección-del-documento-del-bloque-y-del-texto-en-línea)). Un nombre latino dentro de una línea árabe, :ltr[Harbour Modern Classics], es un aislamiento: el algoritmo bidireccional lo trata como una sola pieza neutra, y las palabras árabes y la coma que lo rodean no se mueven ([Aislamientos](/es/docs/arabic-layout#aislamientos)). `emphasis: 'italic'` deja *Middlemarch* en cursiva en el texto español; el motor nunca inclina una letra árabe, sea cual sea el ajuste.
+El código está en [la respuesta corta](#la-respuesta-corta), más arriba. El documento es árabe, así que todos los bloques van de derecha a izquierda mientras el Markdown no diga otra cosa: `{dir=ltr}` en un bloque `:::paragraphs` o en un título da la vuelta a ese bloque, y `textAlign: 'start'` lleva cada bloque al lado por el que empieza, la derecha en árabe y la izquierda en español ([Dirección del documento, del bloque y del texto en línea](/es/docs/arabic-layout#dirección-del-documento-del-bloque-y-del-texto-en-línea)). Un nombre latino dentro de una línea árabe, :ltr[Harbour Modern Classics], es un aislamiento: el algoritmo bidireccional lo trata como una sola pieza neutra, y las palabras árabes y la coma que lo rodean no se mueven ([Aislamientos](/es/docs/arabic-layout#aislamientos)). `emphasis: 'italic'` deja *Middlemarch* en cursiva en el texto español; el motor nunca inclina una letra árabe, sea cual sea el ajuste.
 
 ### 2 · Una tabla para cada dirección
 
@@ -28,7 +28,7 @@ La tabla árabe va con el documento: su primera columna, el programa, queda a la
 
 <Excerpt region="cover" />
 
-La portada es el diseño del título de primer nivel. El diseño de un título se compone en el flujo y se refleja con la página, así que sus anclas nombran los lados del texto: `top-left` es la derecha de la hoja, donde empiezan el nombre y el título árabes, y `top-right` su izquierda, donde empieza el título en español. El texto de diseño toma la dirección del documento, así que las líneas árabes no necesitan nada más; el título en español declara `direction: 'ltr'`. La franja es una caja anclada al sangrado, de 86 mm, y el `minHeight` de la apertura deja la carta de la directora justo debajo.
+La portada es el diseño del encabezado de primer nivel. El diseño de un título se compone en el flujo y se refleja con la página, así que sus anclas se refieren a los lados del texto: `top-left` es la derecha de la hoja, donde empiezan el nombre y el título árabes, y `top-right` su izquierda, donde empieza el título en español. El texto de diseño toma la dirección del documento, así que las líneas árabes no necesitan nada más; el título en español declara `direction: 'ltr'`. La franja es una caja anclada al sangrado, de 86 mm, y el `minHeight` de la apertura deja la carta de la directora justo debajo.
 
 ## Variantes
 

@@ -10,13 +10,13 @@ pageNotes: { "2": "La primera página de la maqāma: el título المقامة �
 
 ## Lo que vas a componer
 
-Cuatro páginas de un libro árabe clásico en el que cada letra lleva su vocal: la *Maqāma del manicomio* de al-Hamadhānī, en la que un loco del manicomio de Basora deja sin respuesta a un teólogo y luego dice su nombre en verso. El texto con todas sus vocales apila fatḥa y šadda encima de las letras y kasra debajo, y esos signos viven en el espacio entre líneas. Por eso la página se compone en Amiri a 14 pt sobre 28 pt, el doble del cuerpo, y nada más: el interlineado es el diseño. El texto va justificado con cachidas, con una sangría de 1,5 em a la derecha, y sus tres citas del Corán van entre los paréntesis ornamentales ﴿ ﴾ del muṣḥaf impreso. Solo la línea latina del título y la nota sobre el texto cambian con la edición.
+Cuatro páginas de un libro árabe clásico en el que cada letra lleva su vocal: la *Maqāma del manicomio* de al-Hamadhānī, en la que un loco del manicomio de Basora deja sin respuesta a un teólogo y luego dice su nombre en verso. El texto con todas sus vocales apila fatḥa y šadda encima de las letras y kasra debajo, y esos signos están en el espacio entre líneas. Por eso la página se compone en Amiri a 14 pt sobre 28 pt, el doble del cuerpo, y nada más: el interlineado es el diseño. El texto va justificado con cachidas, con una sangría de 1,5 em a la derecha, y sus tres citas del Corán van entre los paréntesis ornamentales ﴿ ﴾ del muṣḥaf impreso. Solo la línea latina del título y la nota sobre el texto cambian con la edición.
 
 ## Elaboración
 
 ### 1 · Un interlineado del doble del cuerpo
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. El interlineado nunca crece para hacer sitio a los signos: la kasra de una línea y la šadda de la siguiente comparten el mismo hueco, así que el hueco se elige para la línea más vocalizada del libro ([Signos vocálicos](/es/docs/arabic-layout#signos-vocálicos)). Con este texto, un interlineado de 1,6 veces el cuerpo deja seis párrafos con signos que chocan, y 1,9 aún deja uno; con 2 no queda ninguno. La composición lo avisa: cuando dos líneas chocan, señala el párrafo con `arabicMarksExceedLeading` y el interlineado que necesitaría ([Texto árabe](/es/docs/configuration-language#texto-árabe)).
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. El interlineado nunca crece para hacer sitio a los signos: la kasra de una línea y la šadda de la siguiente comparten el mismo hueco, así que el hueco se elige para la línea más vocalizada del libro ([Signos vocálicos](/es/docs/arabic-layout#signos-vocálicos)). Con este texto, un interlineado de 1,6 veces el cuerpo deja seis párrafos con signos que chocan, y 1,9 aún deja uno; con 2 no queda ninguno. La composición lo avisa: cuando dos líneas chocan, marca el párrafo con un aviso `arabicMarksExceedLeading` y el interlineado que necesitaría ([Texto árabe](/es/docs/configuration-language#texto-árabe)).
 
 <PageShot page={2} crop="0,0.3,1,0.45" caption="Página 2: una vocal en cada letra y 28 pt entre líneas base, de modo que las kasras de una línea libran las šaddas de la siguiente." />
 
@@ -45,7 +45,7 @@ Los títulos no llevan diseño: el título en ruqʿa ocupa una caja de línea de
 
 ### Mira el aviso
 
-Con un interlineado de 1,6 veces el cuerpo, la composición señala seis párrafos con `arabicMarksExceedLeading`, cada uno con el interlineado que necesita, hasta 1,89 em en este texto.
+Con un interlineado de 1,6 veces el cuerpo, la composición marca seis párrafos con un aviso `arabicMarksExceedLeading`, cada uno con el interlineado que necesita, hasta 1,89 em en este texto.
 
 ```diff
 -const LEAD = 2 * SIZE; // pt: 28

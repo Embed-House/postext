@@ -18,7 +18,7 @@ pageNotes: { "1": "Die Titelseite: der Autor in kleinen blauen Versalien, der Ti
 
 <Excerpt region="openers" />
 
-`buildBundle` setzt jedes Kapitel als eigenes Dokument und trägt Seitenzahlen und Parität von einem zum nächsten; `docs` ist also das Array, das `renderToPdf` drucken würde. Der EPUB-Schreiber liest dasselbe Array: Jedes Kapitel wird zu einem Navigationseintrag, und die umfließende Datei schreibt ein XHTML-Dokument pro Kapitel. Titelseite und Impressum sind das erste Kapitel, und dessen Frontmatter enthält Titel, Untertitel und Autor des Buches.
+`buildBundle` setzt jedes Kapitel als eigenes Dokument und führt Seitenzahlen und Parität von einem zum nächsten fort; `docs` ist also das Array, das `renderToPdf` ausgeben würde. Der EPUB-Schreiber verarbeitet dasselbe Array: Jedes Kapitel wird zu einem Navigationseintrag, und die umfließende Datei schreibt ein XHTML-Dokument pro Kapitel. Titelseite und Impressum sind das erste Kapitel, und dessen Frontmatter enthält Titel, Untertitel und Autor des Buches.
 
 ### 2 · Dem Schreiber die Schriftdateien übergeben
 
@@ -34,13 +34,13 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `layout: 'fixed
 
 <Excerpt region="shelf" />
 
-`readEpub` öffnet die Datei wie ein Lesesystem: den Spine in Lesereihenfolge, das Inhaltsverzeichnis, die Seitenliste und das Layout. Die feste Datei hat einen Spine-Eintrag pro Seite, die umfließende vier, einen pro Kapitel. Beide tragen eine Seitenliste der gedruckten Paginas, sodass ein Leser in beiden einem Zitat auf Seite 9 folgen kann. Der Link `<a download>` gibt den Bytes einen Dateinamen; nichts läuft über einen Server.
+`readEpub` öffnet die Datei wie ein Lesesystem: den Spine in Lesereihenfolge, das Inhaltsverzeichnis, die Seitenliste und das Layout. Die feste Datei hat einen Spine-Eintrag pro Seite, die umfließende vier, einen pro Kapitel. Beide enthalten eine Seitenliste der gedruckten Paginas, sodass ein Leser in beiden einem Verweis auf Seite 9 folgen kann. Der Link `<a download>` gibt den Bytes einen Dateinamen; nichts läuft über einen Server.
 
 ## Varianten
 
 ### Dem festen Layout ein Umschlagbild geben
 
-Zeichnen Sie die Titelseite in einen Canvas und übergeben Sie sie als Umschlag; `showsFirstPage` sagt dem Schreiber, sie nicht als eigene Seite hinzuzufügen.
+Zeichnen Sie die Titelseite in ein Canvas und übergeben Sie sie als Umschlag; `showsFirstPage` sagt dem Schreiber, sie nicht als eigene Seite hinzuzufügen.
 
 ```diff
 +const canvas = document.createElement('canvas');

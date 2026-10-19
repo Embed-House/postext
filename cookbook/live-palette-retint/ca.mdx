@@ -2,15 +2,15 @@
 title: "Canviar els colors d'un document amb una sola paleta"
 summary: "Cada color de la configuració porta un id de paleta, i una sola funció compon el programa d'un festival en vermell, verd blavós, violeta o sorra."
 plain: "Un fulletó quadrat per a un festival de música, en quatre combinacions de color. Ensenya a canviar tots els colors del document de cop triant una altra gamma."
-description: "El programa d'un festival en dues pàgines: títols, negretes, vinyetes, xips, mostres de color, cel·les, capçalera i foli prenen el color d'una paleta."
-question: "Com canvio el blau per defecte de títols, negretes i vinyetes pels colors de la meva paleta?"
+description: "El programa d'un festival en dues pàgines: títols, negretes, pics, xips, mostres de color, cel·les, capçalera i foli prenen el color d'una paleta."
+question: "Com canvio el blau per defecte de títols, negretes i pics pels colors de la meva paleta?"
 aliases: ["paleta de colors", "recolorir", "canviar els colors", "combinació de colors", "colors de marca", "main-color", "paletteId", "blau per defecte", "previsualització en directe", "memòria cau de configuració", "colorPalette"]
-pageNotes: { "1": "La portada del programa: una banda vermella ocupa la meitat superior, amb l'avanttítol Almarén · 12–18 de junio de 2027, el títol Música en la Ribera en blanc i una ona de barres arrodonides de color clar; a sota, dues columnes en bandera comencen amb una introducció i continuen del dissabte al dilluns, cada acte amb l'hora en negreta vermella i un xip: Gratis, amb vora vermella, o el preu en blanc sobre vermell.", "2": "El dors: el peu de taula en una barra vermella sobre una quadrícula de sis escenaris per set dies, amb els noms alineats a la dreta al costat de les caselles, vermelles per als concerts amb entrada i rosa pàl·lid per als actes gratuïts, i una llegenda amb mostres de color; després, del dimarts al divendres a dues columnes, el requadre d'Entradas sota una franja vermella, el colofó i el foli 2 en una píndola vermella." }
+pageNotes: { "1": "La portada del programa: una banda vermella ocupa la meitat superior, amb l'avanttítol Almarén · 12–18 de junio de 2027, el títol Música en la Ribera en blanc i una ona de barres arrodonides de color clar; a sota, dues columnes en bandera comencen amb una introducció i continuen del dissabte al dilluns, cada acte amb l'hora en negreta vermella i un xip: Gratis, amb vora vermella, o el preu en blanc sobre vermell.", "2": "El dors: el peu de taula en una barra vermella sobre una graella de sis escenaris per set dies, amb els noms alineats a la dreta al costat de les caselles, vermelles per als concerts amb entrada i rosa pàl·lid per als actes gratuïts, i una llegenda amb mostres de color; després, del dimarts al divendres a dues columnes, el requadre d'Entradas sota una franja vermella, el colofó i el foli 2 en una píndola vermella." }
 ---
 
 ## Què compondràs
 
-El programa de *Música en la Ribera*, un festival inventat, imprès en un full quadrat de 200 mm. La portada porta a la meitat superior una banda de color amb el títol en Syne 800 a 46 pt i una ona de barres arrodonides clares; a sota, dues columnes en bandera recorren la setmana dia a dia, cada acte amb l'hora en negreta i un xip amb el preu. El dors resumeix la setmana en una quadrícula de caselles de color sota la barra del peu i continua de dimarts a divendres, amb un requadre d'entrades sota una franja i el colofó. Sobre les pàgines hi ha quatre proves, en vermell, verd blavós, violeta i sorra. Els seus colors surten de set entrades de paleta anomenades per la seva funció, més `main-color`, que pren el de la banda. En prémer-ne una, tot el document es torna a compondre amb la seva paleta.
+El programa de *Música en la Ribera*, un festival inventat, imprès en un full quadrat de 200 mm. La portada porta a la meitat superior una banda de color amb el títol en Syne 800 a 46 pt i una ona de barres arrodonides clares; a sota, dues columnes en bandera recorren la setmana dia a dia, cada acte amb l'hora en negreta i un xip amb el preu. El dors resumeix la setmana en una graella de caselles de color sota la barra del peu i continua de dimarts a divendres, amb un requadre d'entrades sota una franja i el colofó. Sobre les pàgines hi ha quatre proves, en vermell, verd blavós, violeta i sorra. Els seus colors surten de set entrades de paleta anomenades per la seva funció, més `main-color`, que pren el de la banda. En prémer-ne una, tot el document es torna a compondre amb la seva paleta.
 
 ## Elaboració
 
@@ -24,7 +24,7 @@ El programa de *Música en la Ribera*, un festival inventat, imprès en un full 
 
 <Excerpt region="links" />
 
-El blau del motor és una entrada de la paleta, `main-color` (#295AA3), i [per defecte](/ca/docs/configuration-fonts-colors-viewers#la-paleta-per-defecte) els títols, la negreta, la cursiva, les remissions, les vinyetes i la capçalera en prenen el color. Aquí cadascun porta un id de paleta: hores i termes clau en negreta `deep`, cursiva en tinta, vinyetes en `band` i, a la pàgina 2, la capçalera en `deep` i el foli en `onBand` sobre una píndola `band`. `retint()` dona a més a `main-color` el color de la banda; com que aquesta configuració fixa tots els colors, en aquestes pàgines no canvia res, però un estil que s'afegeixi després sense color prendrà la banda en lloc del blau. El requadre d'entrades no fixa un color propi per a la negreta, així que hereta `bodyText.boldColor` amb el seu id de paleta, i la seva negreta canvia amb cada combinació.
+El blau del motor és una entrada de la paleta, `main-color` (#295AA3), i [per defecte](/ca/docs/configuration-fonts-colors-viewers#la-paleta-per-defecte) els títols, la negreta, la cursiva, les remissions, els pics i la capçalera en prenen el color. Aquí cadascun porta un id de paleta: hores i termes clau en negreta `deep`, cursiva en tinta, pics en `band` i, a la pàgina 2, la capçalera en `deep` i el foli en `onBand` sobre una píndola `band`. `retint()` dona a més a `main-color` el color de la banda; com que aquesta configuració fixa tots els colors, en aquestes pàgines no canvia res, però un estil que s'afegeixi després sense color prendrà la banda en lloc del blau. El requadre d'entrades no fixa un color propi per a la negreta, així que hereta `bodyText.boldColor` amb el seu id de paleta, i la seva negreta canvia amb cada combinació.
 
 ### 3 · Dibuixa la il·lustració amb caixes de disseny
 
@@ -36,7 +36,7 @@ L'obertura és una [ranura de disseny](/ca/docs/configuration-headers-footers#el
 
 <Excerpt region="grid" />
 
-La quadrícula és un recurs de taula i queda fora de la configuració. Tot i això, els seus [emplenaments de cel·la](/ca/docs/document-format-resources#inserció-en-bloc-opcional-collocació-en-línia-explícita) porten ids de paleta, i el motor els resol amb la paleta del document en compondre la taula; els `:swatch{color="band"}` i `:swatch{color="tint"}` de la llegenda, a la nota de la taula, es resolen igual. Els xips de la programació fan servir els mateixos dos ids, així que la casella plena, el xip al costat de cada hora i la mostra de la llegenda coincideixen en totes les combinacions.
+La graella és un recurs de taula i queda fora de la configuració. Tot i això, els seus [emplenaments de cel·la](/ca/docs/document-format-resources#inserció-en-bloc-opcional-collocació-en-línia-explícita) porten ids de paleta, i el motor els resol amb la paleta del document en compondre la taula; els `:swatch{color="band"}` i `:swatch{color="tint"}` de la llegenda, a la nota de la taula, es resolen igual. Els xips de la programació fan servir els mateixos dos ids, així que la casella plena, el xip al costat de cada hora i la mostra de la llegenda coincideixen en totes les combinacions.
 
 ### 5 · Canvia la paleta i torna a compondre
 
@@ -48,7 +48,7 @@ Cada botó crida `retint()`, que assigna les entrades de la combinació a `color
 
 ### Deixa la negreta en tinta
 
-Reserva l'accent per als títols, les vinyetes i els xips, i posa les hores i els termes clau en el color del text.
+Reserva l'accent per als títols, els pics i els xips, i posa les hores i els termes clau en el color del text.
 
 ```diff
 -  boldColor: col('deep'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };

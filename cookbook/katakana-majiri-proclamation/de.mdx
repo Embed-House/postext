@@ -16,7 +16,7 @@ Ein achtseitiger Nachdruck der Meiji-Verfassung, so wie das Amtsblatt (官報) s
 
 ### 1 · Einen Listenzähler 第十八條 schreiben lassen
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Artikel ist ein Punkt einer nummerierten Markdown-Liste, und `orderedLists` bringt seine Nummer in die Form des Amtsblatts: `numberFormat: 'japanese-informal'` schreibt 十八, nicht 一十八, `prefix: '第'` und `separator: '條'` umschließen sie, und `gap: em(1)` lässt den vollbreiten Leerraum des Originals. `numberWidth: 'item'` beginnt den Text jedes Artikels einen Abstand nach seinem eigenen Label, sodass auf 第九條 und auf 第十一條 je ein vollbreiter Leerraum folgt, wie im Amtsblatt, und ihre Texte ein Zeichen versetzt beginnen. Mit `hangingIndent: false` kehren die Folgezeilen an den Zeilenanfang zurück, statt unter dem Text zu hängen, wie im Amtsblatt. Kapitel zwei beginnt seine Liste mit `18.`, sodass der Zähler über die Kapitel weiterläuft, und die Kapitel selbst nummeriert die Überschriftenvorlage `第{2:一}章` als 第一章 und 第二章, im selben Zählerstil ([nummerierte Listen](/de/docs/configuration-lists-math#nummerierte-listen)).
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Artikel ist ein Punkt einer nummerierten Markdown-Liste, und `orderedLists` bringt seine Nummer in die Form des Amtsblatts: `numberFormat: 'japanese-informal'` schreibt 十八, nicht 一十八, `prefix: '第'` und `separator: '條'` umschließen sie, und `gap: em(1)` lässt den vollbreiten Leerraum des Originals. `numberWidth: 'item'` beginnt den Text jedes Artikels einen Abstand nach seiner eigenen Nummer, sodass auf 第九條 und auf 第十一條 je ein vollbreiter Leerraum folgt, wie im Amtsblatt, und ihre Texte ein Zeichen versetzt beginnen. Mit `hangingIndent: false` kehren die Folgezeilen an den Zeilenanfang zurück, statt unter dem Text zu hängen, wie im Amtsblatt. Kapitel zwei beginnt seine Liste mit `18.`, sodass der Zähler über die Kapitel weiterläuft, und die Kapitel selbst nummeriert die Vorlage `第{2:一}章` der Überschriften als 第一章 und 第二章, im selben Zählerstil ([nummerierte Listen](/de/docs/configuration-lists-math#nummerierte-listen)).
 
 <PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Seite 5: 第一章　天皇 um zwei Zeichen eingerückt, die Artikel 第一條 bis 第八條 in Fett, der zweite Absatz von Artikel 8 um ein Zeichen eingerückt." />
 
@@ -28,7 +28,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jeder Artikel i
 
 <Excerpt region="frame" />
 
-Der Platz der Kopfzeile zeichnet in einfachen Seitenmillimetern, nicht im senkrechten Fluss; der Rahmen besteht daher aus zwei Kästen, die mit denselben Zahlen platziert werden wie der Satzspiegel: `HEAD` von oben, `SIDE` von jeder Kante. Die Ränder werden aus dem Raster berechnet, nicht ihm überlassen, sodass der Satzspiegel genau 6 mm innerhalb der dünnen Linie liegt. Die Pagina, in Kanji aus `pageNumbering.format: 'japanese-informal'`, steht unter dem Rahmen.
+Das Gestaltungsfeld der Kopfzeile zeichnet in einfachen Seitenmillimetern, nicht im senkrechten Fluss; der Rahmen besteht daher aus zwei Kästen, die mit denselben Zahlen platziert werden wie der Satzspiegel: `HEAD` von oben, `SIDE` von jeder Kante. Die Ränder werden aus dem Raster berechnet, nicht ihm überlassen, sodass der Satzspiegel genau 6 mm innerhalb der dünnen Linie liegt. Die Pagina, in Kanji aus `pageNumbering.format: 'japanese-informal'`, steht unter dem Rahmen.
 
 ### 4 · Die Titelseite entlang der Achse setzen
 

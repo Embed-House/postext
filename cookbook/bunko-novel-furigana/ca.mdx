@@ -40,13 +40,13 @@ En un bunko vertical la capçalera (柱, hashira) és petita i va al marge exter
 
 <Excerpt region="title-page" />
 
-La portada és un títol de primer nivell amb estil propi, `# 夢十夜 {style="title" …}`, el disseny del qual ocupa la pàgina. Els seus elements s'ancoren a la pàgina i no a la caixa de text, perquè la caixa d'una pàgina amb marges simètrics queda descentrada 1,5 mm: `x` baixa per la pàgina i `y` la travessa des de la vora dreta, així que `AXIS` és la meitat de l'amplada de la pàgina, sigui quin sigui el costat del llom. El colofó del peu va en Noto Sans JP: Shippori Mincho B1 no té ō ni ū, i el PDF dibuixaria caixes buides a «Sōseki».
+La portada és un títol de primer nivell amb estil propi, `# 夢十夜 {style="title" …}`, amb un disseny que ocupa la pàgina. Els seus elements s'ancoren a la pàgina i no a la caixa de text, perquè la caixa d'una pàgina amb marges simètrics queda descentrada 1,5 mm: `x` baixa per la pàgina i `y` la travessa des de la vora dreta, així que `AXIS` és la meitat de l'amplada de la pàgina, sigui quin sigui el costat del llom. El colofó del peu va en Noto Sans JP: Shippori Mincho B1 no té ō ni ū, i el PDF dibuixaria caixes buides a «Sōseki».
 
 ### 6 · Carrega cada pes amb els caràcters que compon
 
 <Excerpt region="voices" />
 
-Fontsource serveix cada pes d'una font japonesa en uns 120 fitxers, cadascun amb un tram de caràcters, i `loadCjkFonts` baixa els que toca el text que rep. El pes del text rep tota la mostra amb `vertical: true`, que a més carrega les formes verticals de la font per al llenç: 、。「」 i ー, i els kana petits, que en vertical van a la cantonada superior dreta de la seva casella. `renderToPdf` rep `cjkPdfProvider`, que incrusta aquests mateixos fitxers com a subconjunts.
+Fontsource serveix cada gruix d'una font japonesa en uns 120 fitxers, cadascun amb un tram de caràcters, i `loadCjkFonts` baixa els que toca el text que rep. El gruix del text rep tota la mostra amb `vertical: true`, que a més carrega les formes verticals de la font per al canvas: 、。「」 i ー, i els kana petits, que en vertical van a la cantonada superior dreta de la seva casella. `renderToPdf` rep `cjkPdfProvider`, que incrusta aquests mateixos fitxers com a subconjunts.
 
 ## Variants
 

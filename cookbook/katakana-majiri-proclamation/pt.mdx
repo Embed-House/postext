@@ -5,7 +5,7 @@ plain: "A constituição japonesa de 1889, escrita em kanji e katakana e impress
 description: "Um documento Meiji no Postext: texto em kanji e katakana na vertical numa grade de 40 caracteres, artigos 第一條 de um contador de lista, moldura dupla e selo."
 question: "Como faço para compor um texto Meiji em kanji e katakana e numerar os artigos 第一條, 第二條?"
 aliases: ["katakana", "kanji katakana majiri", "漢字カタカナ交じり文", "Constituição Meiji", "大日本帝國憲法", "官報", "diário oficial", "artigos numerados em kanji", "第一條", "texto jurídico vertical", "formas antigas de kanji"]
-pageNotes: { "1": "A folha de rosto: 大日本帝國憲法 em Mincho pesado descendo pelo meio de um fio grosso e um fino, a data em vermelhão à direita, 官報號外 à esquerda e a linha em inglês deitada no pé.", "2": "As notas do editor, quatro itens abertos cada um pelo caractere 一, depois o título 上諭 e as primeiras linhas do édito, tudo em kanji e katakana.", "4": "御名　御璽 em vermelhão, a data e dez referendas compostas no pé das suas linhas.", "5": "O capítulo um: 第一章　天皇 dois caracteres abaixo, depois os artigos 第一條 a 第八條 em negrito e a segunda cláusula do artigo 8 um caractere abaixo." }
+pageNotes: { "1": "A folha de rosto: 大日本帝國憲法 em Mincho pesado descendo pelo meio de um fio grosso e um fino, a data em vermelhão à direita, 官報號外 à esquerda e a linha em inglês deitada no pé.", "2": "As notas do editor, quatro itens abertos cada um pelo caractere 一, depois o título 上諭 e as primeiras linhas do édito, tudo em kanji e katakana.", "4": "御名　御璽 em vermelhão, a data e dez referendas compostas no pé das linhas.", "5": "O capítulo um: 第一章　天皇 dois caracteres abaixo, depois os artigos 第一條 a 第八條 em negrito e a segunda cláusula do artigo 8 um caractere abaixo." }
 ---
 
 ## O que você vai compor
@@ -16,25 +16,25 @@ Uma reimpressão de oito páginas da Constituição Meiji como o Diário Oficial
 
 ### 1 · Deixe um contador de lista escrever 第十八條
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. Cada artigo é um item de uma lista numerada do Markdown, e `orderedLists` dá ao número a forma do Diário: `numberFormat: 'japanese-informal'` escreve 十八, e não 一十八, `prefix: '第'` e `separator: '條'` o envolvem, e `gap: em(1)` deixa o espaço de largura inteira do original. `numberWidth: 'item'` começa o texto de cada artigo um espaço depois do seu próprio rótulo, de modo que 第九條 e 第十一條 são seguidos por um só espaço de largura inteira, como no Diário Oficial, e os seus textos começam com um caractere de diferença. Com `hangingIndent: false`, as linhas seguintes voltam ao início da linha em vez de ficarem penduradas sob o texto, como no Diário. O capítulo dois começa a sua lista em `18.`, então o contador continua de um capítulo para o outro, e os próprios capítulos são numerados 第一章 e 第二章 pelo modelo de título `第{2:一}章`, no mesmo estilo de contador ([listas numeradas](/pt/docs/configuration-lists-math#listas-numeradas)).
+O código é [a resposta curta](#a-resposta-curta) logo acima. Cada artigo é um item de uma lista numerada do Markdown, e `orderedLists` dá ao número a forma do Diário: `numberFormat: 'japanese-informal'` escreve 十八, e não 一十八, `prefix: '第'` e `separator: '條'` o envolvem, e `gap: em(1)` deixa o espaço de largura inteira do original. `numberWidth: 'item'` começa o texto de cada artigo um espaço depois do próprio rótulo, de modo que 第九條 e 第十一條 são seguidos por um só espaço de largura inteira, como no Diário Oficial, e os textos começam com um caractere de diferença. Com `hangingIndent: false`, as linhas seguintes voltam ao início da linha em vez de ficarem penduradas sob o texto, como no Diário. O capítulo dois começa a lista em `18.`, por isso o contador continua de um capítulo para o outro, e os próprios capítulos são numerados 第一章 e 第二章 pelo modelo de título `第{2:一}章`, no mesmo estilo de contador ([listas numeradas](/pt/docs/configuration-lists-math#listas-numeradas)).
 
 <PageShot page={5} crop="0.1,0.12,0.8,0.76" caption="Página 5: 第一章　天皇 dois caracteres abaixo, os artigos 第一條 a 第八條 em negrito e a segunda cláusula do artigo 8 um caractere abaixo." />
 
 ### 2 · Deixe os katakana como o Diário os escreveu
 
-`locale: 'ja'` aplica as regras japonesas, e nenhuma delas reescreve o texto. 侵スヘカラス fica sem as marcas de sonorização (lê-se *okasu bekarazu*), 行フ mantém o seu kana histórico e 奪ハルヽ a sua marca de repetição em katakana. Sem kana pequeno nem pontuação no texto, as quebras de linha caem entre dois caracteres quaisquer; as regras de kinsoku continuam impedindo que ヽ e 々 abram uma linha. As notas do editor, em japonês moderno com hiragana, ficam ao lado do édito na página 2, e assim os dois jeitos de escrever japonês podem ser comparados numa mesma página.
+`locale: 'ja'` aplica as regras japonesas, e nenhuma delas reescreve o texto. 侵スヘカラス fica sem as marcas de sonorização (lê-se *okasu bekarazu*), 行フ mantém o kana histórico e 奪ハルヽ a marca de repetição em katakana. Sem kana pequeno nem pontuação no texto, as quebras de linha caem entre dois caracteres quaisquer; as regras de kinsoku continuam impedindo que ヽ e 々 abram uma linha. As notas do editor, em japonês moderno com hiragana, ficam ao lado do édito na página 2, e assim os dois jeitos de escrever japonês podem ser comparados numa mesma página.
 
 ### 3 · Desenhe a moldura em todas as páginas
 
 <Excerpt region="frame" />
 
-O encaixe do cabeçalho desenha em milímetros da página, e não no fluxo vertical, então a moldura são duas caixas postas com os mesmos números que posicionam a mancha: `HEAD` a partir do alto, `SIDE` a partir de cada borda. As margens são calculadas a partir da grade em vez de deixadas por conta dela, e a mancha fica exatamente 6 mm para dentro do fio fino. O fólio, em kanji por `pageNumbering.format: 'japanese-informal'`, fica sob a moldura.
+O espaço de design do cabeçalho desenha em milímetros da página, e não no fluxo vertical, por isso a moldura são duas caixas postas com os mesmos números que posicionam a mancha: `HEAD` a partir do alto, `SIDE` a partir de cada borda. As margens são calculadas a partir da grade em vez de deixadas por conta dela, e a mancha fica exatamente 6 mm para dentro do fio fino. O fólio, em kanji por `pageNumbering.format: 'japanese-informal'`, fica sob a moldura.
 
 ### 4 · Componha a folha de rosto sobre o eixo
 
 <Excerpt region="cover" />
 
-Num fluxo vertical, `x` desce pela folha e `y` avança para a esquerda, então a coluna do título é posicionada pela distância até a borda direita da mancha. A data, na cor de destaque, e o nome do Diário ficam dos dois lados do título, a 18 mm do eixo.
+Num fluxo vertical, `x` desce pela folha e `y` avança para a esquerda, de modo que a coluna do título é posicionada pela distância até a borda direita da mancha. A data, na cor de destaque, e o nome do Diário ficam dos dois lados do título, a 18 mm do eixo.
 
 ### 5 · Carregue cada fonte com o texto que ela compõe
 
@@ -46,7 +46,7 @@ A Shippori Mincho B1, uma Mincho com as formas antigas 國, 條 e 權, carrega o
 
 ### Pendure as linhas seguintes sob o texto
 
-Os livros de leis de hoje alinham a segunda linha de um artigo com o seu primeiro caractere de texto, e não com 第.
+Os livros de leis de hoje alinham a segunda linha de um artigo com o primeiro caractere de texto, e não com 第.
 
 ```diff
 -  indent: em(0), hangingIndent: false, fontFamily: MINCHO, fontWeight: 800,
@@ -64,5 +64,5 @@ Alguns textos jurídicos e financeiros escrevem 壱, 弐, 参: o token 壱 ou o 
 
 ## Erros comuns
 
-- O Diário compõe os katakana das terminações menores que os kanji e espaça os cargos dos ministros por igual até uma mesma largura (字取り). O Postext compõe todos os caracteres no corpo do texto, e o seu espaçamento uniforme, `jidori`, vale só para títulos, por isso as referendas aqui só estão alinhadas no pé da linha.
-- Japonês e chinês divergem neste contador: num documento `ja`, o token `一` e `{2:一}` significam `japanese-informal` (百一, 十八); num chinês, significam o estilo chinês (一百零一, 十八). O livro chinês <RecipeLink slug="chinese-dates-upright">Datas e siglas em pé no texto vertical</RecipeLink> digita os seus 第一條 à mão.
+- O Diário compõe os katakana das terminações menores que os kanji e espaça os cargos dos ministros por igual até uma mesma largura (字取り). O Postext compõe todos os caracteres no corpo do texto corrido, e o espaçamento uniforme, `jidori`, vale só para títulos, por isso as referendas aqui só estão alinhadas no pé da linha.
+- Japonês e chinês divergem neste contador: num documento `ja`, o token `一` e `{2:一}` significam `japanese-informal` (百一, 十八); num chinês, significam o estilo chinês (一百零一, 十八). O livro chinês <RecipeLink slug="chinese-dates-upright">Datas e siglas em pé no texto vertical</RecipeLink> digita os 第一條 à mão.

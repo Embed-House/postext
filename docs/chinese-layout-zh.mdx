@@ -3,7 +3,7 @@
 export const metadata = {
   title: '中文排版',
   sidebarTitle: '中文排版',
-  description: 'Postext如何排中文横排与竖排：地区、断行、标点宽度、字间两端对齐、字符网格、右翻书、直排数字、标记、注音、双行夹注、中文数字与字体',
+  description: 'Postext怎样排横排和竖排的中文：地区、断行、标点宽度、字间两端对齐、字符网格、右翻书、纵中横、着重号等标记、注音、双行夹注、中文数字和字体',
   lang: 'zh',
   lastUpdated: '2026-09-29',
   readingTime: '23分钟',
@@ -36,7 +36,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排中文，�
 
 请写出完整的标签：`zh-Hans`或`zh-Hant`，知道地区时再加上地区（`zh-Hans-CN`、`zh-Hant-TW`、`zh-Hant-HK`）。同一个标签会声明在HTML（文档的`lang`）和PDF（`/Lang`）中，浏览器和PDF阅读器据此选用该地区的字形：Unicode只给“骨”一个码位，大陆字体和台湾字体的写法却不同。中文文档默认关闭断词，除非你为其中的拉丁单词打开它。
 
-这个语言也是文字整形所用的语言。中文字体在不同语言下给出不同的字形：Noto Serif SC的数字在中文下宽0.47 em，在它没有专门字形的语言下宽0.55 em。排版在每个上下文上都按文档的语言测量，所以一本中文书在中文页面上、在显示它的英文页面上和在排版工作线程里断行都相同；Canvas按它绘制，HTML和EPUB声明它，PDF用它对应的OpenType语言系统整形（`zh-Hans`、`zh-CN`和`zh-SG`对应`ZHS`，`zh-Hant`和`zh-TW`对应`ZHT`，`zh-HK`对应`ZHH`）；其他语言的一段文字要写明语言（`:ltr[…]`加`lang=en`），并按那种语言测量。这是[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，postext 1.30起的默认值。设为`'host'`时（1.30之前保存的书保持这个值），排版按宿主页面的语言测量，一本中文书在中文页面上是一种断行，在显示它的英文页面上或在排版工作线程里可能是另一种。
+这个语言也是文字成形所用的语言。中文字体在不同语言下给出不同的字形：Noto Serif SC的数字在中文下宽0.47 em，在它没有专门字形的语言下宽0.55 em。排版在每个上下文上都按文档的语言测量，所以一本中文书在中文页面上、在显示它的英文页面上和在排版工作线程里断行都相同；Canvas按它绘制，HTML和EPUB声明它，PDF用它对应的OpenType语言系统成形（`zh-Hans`、`zh-CN`和`zh-SG`对应`ZHS`，`zh-Hant`和`zh-TW`对应`ZHT`，`zh-HK`对应`ZHH`）；其他语言的一段文字要写明语言（`:ltr[…]`加`lang=en`），并按那种语言测量。这是[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，postext 1.30起的默认值。设为`'host'`时（1.30之前保存的书保持这个值），排版按宿主页面的语言测量，一本中文书在中文页面上是一种断行，在显示它的英文页面上或在排版工作线程里可能是另一种。
 
 <table>
   <thead>
@@ -73,7 +73,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排中文，�
 
 - **可以在任意位置换行。** 两个汉字之间的换行会被去掉，和CSS的处理一样，所以按80列自动换行的编辑器不会在正文里加进空格。两个标点之间的换行（`”⏎“`）由标点两侧之外的字符决定。在行内输入的空格会保留。
 - **用配置来缩进。** 首行缩进两字写作`bodyText.firstLineIndent: { value: 2, unit: 'em' }`；解析器会去掉段首的全角空格（U+3000）。
-- **标题也用配置来缩进。** 像 GB/T 9704 那样空两字、回行顶格的标题写作`headings.levels[n].firstLineIndent: { value: 2, unit: 'em' }`（postext 1.24 起）。写进`numberingTemplate`的全角空格会成为标题编号的一部分，也会印进目录和 PDF 书签。
+- **标题也用配置来缩进。** 像GB/T 9704那样空两字、回行顶格的标题写作`headings.levels[n].firstLineIndent: { value: 2, unit: 'em' }`（postext 1.24起）。写进`numberingTemplate`的全角空格会成为标题编号的一部分，也会印进目录和PDF书签。
 - **标记用半角输入。** 中文输入法会打出`：：：`、`＃`、`［＾1］`、`｛…｝`和`＊＊`；它们会作为正文印出来，构建时每一行都会报`fullwidthMarkup`，并给出应输入的半角形式。属性值可以用“…”或「…」加引号，也可以用`＝`；标题属性可以紧跟标题、不加空格：`# 第一回{style="hui"}`。键名必须是ASCII；中文键名（`作者=曹雪芹`）会被丢弃，并给出`attributeKeyInvalid`警告。
 - **强调和范围。** `_`和`__`可以用在两个汉字之间（`中文_斜体_中文`）。两个数字或两个中文词之间的`~`表示范围，按原样保留（`3~5天`、`周一~周五`）。
 - **ID和文件名**保留汉字：标题为第一回的章存为`chapters/001-第一回.md`。
@@ -110,7 +110,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排中文，�
 
 带圈数字①到⑳（以及⑴、⒈、ⓐ、❶等同类符号）在中文里按汉字排：各占一格，前后不加中西文间距，也不置于行尾，因为它为其后的义项或条目编号（除`none`外的所有级别）。字典条目写作`**①**天也`，编号与正文之间不必加任何字符。`cjk.circledNumbers: 'western'`把它们按西文字母排，与postext 1.24及之前相同。
 
-当下一个字符放不下时，排版器会先看它。如果它可以出现在行首，就移到下一行，并把本行两端对齐撑开。如果它不可以（逗号、后括号、前括号后面的字），这一行先尝试放弃标点空白把它挤进来，即[clreq §6.2.2.3](https://www.w3.org/TR/clreq/#x6-2-2-3-procedures-for-inter-character-spacing-reduction)的“挤进”；只有这些空白不足以抵消溢出时，这一行才提前结束，把标点前面的字符和标点一起带到下一行。先挤进，是因为这样可以保持本行的字符不变；挤出是后备办法。
+当下一个字符放不下时，排版器会先看它。如果它可以出现在行首，就移到下一行，并把本行两端对齐撑开。如果它不可以（逗号、后括号、前括号后面的字），这一行先尝试放弃标点空白把它挤进来，即[clreq §6.2.2.3](https://www.w3.org/TR/clreq/#x6-2-2-3-procedures-for-inter-character-spacing-reduction)的“挤进”；只有挤掉这些空白仍放不下时，这一行才提前结束，把标点前面的字符和标点一起带到下一行。先挤进，是因为这样可以保持本行的字符不变；挤出是后备办法。
 
 ### 标点宽度
 
@@ -130,16 +130,16 @@ Postext用同一份Markdown源文件和同一套配置，既能横排中文，�
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>fullwidth</code> 全角式</td><td>所有标点占一个字宽。</td><td>一个字宽。</td><td>台湾和香港的书；大多数网页文字。</td></tr>
-    <tr><td><code>kaiming</code> 开明式</td><td>。．？！占一个字宽；，、；：、括号、引号和间隔号占半个字宽。</td><td>所有标点占半个字宽。</td><td>大多数大陆图书；方正书版的默认设置。</td></tr>
-    <tr><td><code>lineEndHalf</code> 行末半角</td><td>所有标点占一个字宽。</td><td>所有标点占半个字宽。</td><td>按字面理解的GB/T 15834—2011 §5.1.10。</td></tr>
-    <tr><td><code>halfwidth</code> 半角式</td><td>所有标点占半个字宽。</td><td>半个字宽。</td><td>词典。</td></tr>
+    <tr><td><code>fullwidth</code>全角式</td><td>所有标点占一个字宽。</td><td>一个字宽。</td><td>台湾和香港的书；大多数网页文字。</td></tr>
+    <tr><td><code>kaiming</code>开明式</td><td>。．？！占一个字宽；，、；：、括号、引号和间隔号占半个字宽。</td><td>所有标点占半个字宽。</td><td>大多数大陆图书；方正书版的默认设置。</td></tr>
+    <tr><td><code>lineEndHalf</code>行末半角</td><td>所有标点占一个字宽。</td><td>所有标点占半个字宽。</td><td>按字面理解的GB/T 15834—2011 §5.1.10。</td></tr>
+    <tr><td><code>halfwidth</code>半角式</td><td>所有标点占半个字宽。</td><td>半个字宽。</td><td>词典。</td></tr>
   </tbody>
 </table>
 
 另有两项设置对任何样式的标点都起作用。打开`compressAdjacent`后，相邻的两个标点放弃它们之间的空白，因此`。」`、`》（`或`，「`占一个半字宽，而不是两个字宽。台湾和香港那样居中的`。`或`，`在后括号前保留整个字宽，所以`。」`在那里仍然占两个字宽；`》（`、`」，`和`，「`照样挤紧。打开`trimLineStart`后，位于行首的前括号放弃前半个字宽的空白，使括号的笔画与文字边缘对齐；位于行尾的后括号放弃后半个字宽的空白。这两项在大陆和香港默认打开，在台湾默认关闭，台湾的书让每个标点都保留在自己的字格里。
 
-<Illustration name="PunctuationWidths" data='{"title": "全角式与开明式标点", "desc": "曹雪芹著《红楼梦》（又名《石头记》）。这一行排了两次。全角式中每个标点占一个字宽，整行长19个字宽，每个标点的空白一半用浅色标出。开明式中括号各占半个字宽，行末句号也占半个字宽，同一行长15.5个字宽。", "caption": "同一行用全角式（19个字宽）和开明式（15.5个字宽）排出。", "fullwidth": "全角式", "kaiming": "开明式", "blank": "放弃的空白", "sample": "曹雪芹著《红楼梦》（又名《石头记》）。", "ems": "字"}' />
+<Illustration name="PunctuationWidths" data='{"title": "全角式与开明式标点", "desc": "曹雪芹著《红楼梦》（又名《石头记》）。这一行排了两次。全角式中每个标点占一个字宽，整行长19个字宽，每个标点空着的那一半用浅色标出。开明式中括号各占半个字宽，行末句号也占半个字宽，同一行长15.5个字宽。", "caption": "同一行用全角式（19个字宽）和开明式（15.5个字宽）排出。", "fullwidth": "全角式", "kaiming": "开明式", "blank": "放弃的空白", "sample": "曹雪芹著《红楼梦》（又名《石头记》）。", "ems": "字宽"}' />
 
 引号、省略号、破折号和间隔号与拉丁文字共用，拉丁字体把它们画得很窄。在中文语境中（两侧最近的字符都是中文），无论字体的步进宽度是多少，它们都占中文标点的字框：“和”各占一个字宽（开明式下为半个），……占两个字宽并居中，·在大陆占半个字宽、其他地区占一个字宽。破折号（——）印成一条贯通两个字宽的线，升到字符的中线高度。在拉丁单词旁边，这些标点保留字体的宽度，因此`他说：He said “yes” and left.`中的英文引号按英文排。在其他书写系统的句子里被提到时，例如英文版权页中的`Cuts are marked …….`，连用的省略号和破折号在中文或日文书里仍是文档自己的标点：这一对保持汉字文本的字形，其后的句点按句子的字形排（[没有字母的词](/zh/docs/arabic-layout#没有字母的词)）。
 
@@ -177,7 +177,7 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 网格上的页面逐行排满，不做齐底：一栏如果短一截结束（比如某个标题要和正文一起转到下一页），就保持短栏，就像GB/T 9704的公文按22行计数那样。`headings.balancing.enabled: true`开启齐底，所用的手段都保持网格：在标题上方以及列表、行间公式和图下方增加的都是整数个网格行，`headings.balancing.gridLines: 'off'`可以把这些排除在外；段落只有在字间距不超过`headings.balancing.maxTracking`时才多排一行，而在默认值下，少一整个字的行从来做不到这一点。无论哪种情况，每个字都留在自己的格子里。见[配置 › 各栏齐底](/zh/docs/configuration-page-flow#各栏齐底)。
 
-`avoidWidows`和`avoidOrphans`两条规则也随网格而定。`bodyText.avoidWidows`在网格上默认关闭：段落可以只有一行排在页末，页面保持应有的行数。`bodyText.avoidOrphans`仍然开启：段落的最后一行不单独落在页首（孤行，clreq §7.1.2），上一页会让出一行与它同排。需要别的做法时，在配置里写明这两个键即可。
+`avoidWidows`和`avoidOrphans`两条规则也随网格而定。`bodyText.avoidWidows`在网格上默认关闭：段落可以只有一行排在页末，页面保持应有的行数。`bodyText.avoidOrphans`仍然开启：段落的最后一行不单独落在页首（段末孤行，clreq §7.1.2），上一页会让出一行与它同排。需要别的做法时，在配置里写明这两个键即可。
 
 常见的书，五号（10.5 pt）字，行间距6 pt，行高16.5 pt：
 
@@ -224,7 +224,7 @@ orderedLists: {
 footnotes: { numberFormat: 'circled-decimal', numbering: 'page' },
 ```
 
-使用`circled-decimal`时，注码默认排在行内（`markerPosition: 'auto'`）；`markerSize: { value: 0.75, unit: 'em' }`让它比正文小。超过50的编号没有带圈形式，写成阿拉伯数字。注的编号取决于它落在哪一页，所以按页编号的文档先按章编号排版，再按注文实际所在的位置重新编号并再排一次；带圈注码不论编号多少宽度都一样，第二次排版不会移动任何一行。`numbering: 'column'`每栏重新编号，适合逐栏排注的书。注码和上标一样随前一个字符，不会出现在行首；竖排时在自己的格子里直立。Sandbox的**中文默认设置**会在改动列表中列出这几项。参见[脚注](/zh/docs/configuration-notes-references#脚注)。
+使用`circled-decimal`时，注码默认排在行内（`markerPosition: 'auto'`）；`markerSize: { value: 0.75, unit: 'em' }`让它比正文小。超过50的编号没有带圈形式，写成阿拉伯数字。注的编号取决于它落在哪一页，所以按页编号的文档先按章编号排版，再按注文实际所在的位置重新编号并再排一次；带圈注码不论编号多少宽度都一样，第二次排版不会移动任何一行。`numbering: 'column'`每栏重新编号，适合逐栏排注的书。注码和上标一样随前一个字符，不会出现在行首；竖排时在自己的格子里直立。沙盒的**中文默认设置**会在改动列表中列出这几项。参见[脚注](/zh/docs/configuration-notes-references#脚注)。
 
 ## 竖排
 
@@ -236,14 +236,14 @@ footnotes: { numberFormat: 'circled-decimal', numbering: 'page' },
 
 - 版面中的一栏是一**栏**（tier）。`layoutType: 'double'`得到上下叠放的两栏，从右上开始填，栏线是两栏之间的一条横线。章末不对各栏齐底（[clreq §7.1.3.4](https://www.w3.org/TR/clreq/#x7-1-3-4-handling-of-spaces-just-before-the-new-recto-page-breaks-and-new-edges)）。
 - 文字流的顶端是纸面的**右**边缘：章首页是页面右侧的一条竖带，顶部浮动体位于右侧，底部浮动体位于左侧，脚注落在每栏的左端。
-- `page.margins`在纸面上沿用原来的名称。书眉、页码、裁切标记和背景也仍然以纸面为准。
+- `page.margins`在纸面上沿用原来的名称。书眉、页码、裁切线和背景也仍然以纸面为准。
 - 标题样式可以设置自己的书写方向，因此竖排书后面可以接横排的附录或索引。
 
 读取版面的宿主程序在竖排页面上能找到`VDTPage.flow`，以及在文字流和纸面之间换算的辅助函数（`flowToPage`、`pageToFlow`、`flowRectToPage`）。见配置参考中的[竖排](/zh/docs/configuration-page-layout#竖排)。
 
 ### 右侧装订
 
-`page.binding`默认为`'auto'`，竖排书的auto就是右边缘。第1页仍是奇数页，仍是右页（recto），所以奇偶设置、`:::pagebreak{parity="odd"}`和页数的含义不变；变的是recto所在的一侧，即跨页的左页（clreq §7.1.3.3）。使用对称页边距时，奇数页的内侧页边距在右边。沙盒把跨页显示为3 | 2，第1页单独位于书脊左侧，HTML查看器从右往左排列页面。PDF也请求阅读器这样显示（`/Direction /R2L`和`/PageLayout /TwoPageRight`）；Acrobat和Foxit会照办，Chrome内置的阅读器不会。横排书也可以在右侧装订。见[装订](/zh/docs/configuration-page-layout#装订)。
+`page.binding`默认为`'auto'`，竖排书的auto就是右边缘。第1页仍是奇数页（recto），所以奇偶设置、`:::pagebreak{parity="odd"}`和页数的含义不变；变的是recto所在的一侧，即跨页的左页（clreq §7.1.3.3）。使用对称页边距时，奇数页的内侧页边距在右边。沙盒把跨页显示为3 | 2，第1页单独位于书脊左侧，HTML阅读器从右往左排列页面。PDF也请求阅读器这样显示（`/Direction /R2L`和`/PageLayout /TwoPageRight`）；Acrobat和Foxit会照办，Chrome内置的阅读器不会。横排书也可以在右侧装订。见[装订](/zh/docs/configuration-page-layout#装订)。
 
 ### 每个字符的方向
 
@@ -276,14 +276,14 @@ footnotes: { numberFormat: 'circled-decimal', numbering: 'page' },
 
 书眉和页码以纸面为准，横排，这和大多数竖排书一样（clreq §7.2）。另有两种常见做法，可以把文字元素设为竖排（`writingMode: 'vertical-rl'`），并锚定在页面外侧页边距（`anchor.to: 'outer'`）来实现：
 
-- **切口书眉**：章名沿外侧页边距竖排，从版心顶端往下约四个字处开始；页码在距版心底端约五个字处结束，用中文数字，字号约为正文的80 %。沙盒可以一步加上（**页眉 › 切口书眉（竖排）**）。
+- **切口书眉**：章名沿外侧页边距竖排，从版心顶端往下约四个字处开始；页码在距版心底端约五个字处结束，用中文数字，字号约为正文的80%。沙盒可以一步加上（**页眉 › 切口书眉（竖排）**）。
 - **页码在外侧下角**，按台湾竖排书的规定：右翻书的页脚中放一个横排元素，奇数页在左下，偶数页在右下。
 
 模板见配置参考中的[竖排文字元素](/zh/docs/configuration-headers-footers#竖排文本元素)。
 
 ### 各输出中的竖排文字
 
-Canvas自行绘制竖排页面，每个直立字符绕其字格中心转回来。要使用字体自带的竖排标点字形，浏览器宿主程序会为每个字体族加载一个打开OpenType `vert`特性的副本（`loadVerticalAlternates`）；沙盒为竖排书的每个字体族都这样做，没有副本时，引擎自己旋转或移动标点。PDF通过第二个竖排模式（`Identity-V`）字体字典显示直立字符，它引用同一个嵌入文件并用`vert`整形，所以阅读器把一列作为一行来选择和复制，也不会重复嵌入；带标签的PDF声明`WritingMode /TbRl`。HTML把每一行设为带`writing-mode: vertical-rl`的盒子，数字用`text-combine-upright`排在一个字格中。三种输出中每个字符的位置与HarfBuzz竖排版面的差距都在百分之几个字宽之内。
+Canvas自行绘制竖排页面，每个直立字符绕其字格中心转回来。要使用字体自带的竖排标点字形，浏览器宿主程序会为每个字体族加载一个打开OpenType `vert`特性的副本（`loadVerticalAlternates`）；沙盒为竖排书的每个字体族都这样做，没有副本时，引擎自己旋转或移动标点。PDF通过第二个竖排模式（`Identity-V`）字体字典显示直立字符，它引用同一个嵌入文件并用`vert`成形，所以阅读器把一列作为一行来选择和复制，也不会重复嵌入；带标签的PDF声明`WritingMode /TbRl`。HTML把每一行设为带`writing-mode: vertical-rl`的盒子，数字用`text-combine-upright`排在一个字格中。三种输出中每个字符的位置与HarfBuzz竖排版面的差距都在百分之几个字宽之内。
 
 ## 标记与注释
 
@@ -321,19 +321,19 @@ Canvas自行绘制竖排页面，每个直立字符绕其字格中心转回来�
 
 Postext为每种样式只用一个字体族，缺字时不会退回到另一个字体族：Noto Serif TC不会向Noto Serif SC借字。字体必须覆盖书中印出的每个字符，包括标点。
 
-- **在浏览器和沙盒中**，中文字体族来自Fontsource，每个字重约一百个文件，每个文件包含一部分字符，并用`unicode-range`声明；浏览器只加载文字用到的文件。沙盒的PDF标签页也是这样：它的字体提供器读取字体族的样式表，把页面用到的切片交给`renderToPdf`，每个切片作为子集嵌入。Fontsource的命名子集并不完整（Noto Serif TC的`chinese-traditional`缺少全角的，！？），所以请使用编号切片。
+- **在浏览器和沙盒中**，中文字体族来自Fontsource，每个字重约一百个文件，每个文件包含一部分字符，并用`unicode-range`声明；浏览器只加载文字用到的文件。沙盒的PDF标签页也是这样：它的字体提供函数读取字体族的样式表，把页面用到的切片交给`renderToPdf`，每个切片作为子集嵌入。Fontsource的命名子集并不完整（Noto Serif TC的`chinese-traditional`缺少全角的，！？），所以请使用编号切片。
 - **在文件包中**，请提供按本书实际用字（包括标点和竖排字形）取子集的字体。从可变字体中为每个字重导出一个静态文件：pdf-lib嵌入的是可变字体的默认实例，所以粗体标题会以默认字重印出（`variableFontDefaultInstance`）。优先使用TrueType版本（Google Fonts、Fontsource），而不是CFF的`.otf`文件，postext-pdf会整个嵌入后者，每个字重最多25 MB（`cffEmbeddedWhole`）。取子集时保留排版特性（`vert`、`vrt2`）和竖排度量（`vhea`、`vmtx`）：竖排标点来自它们。
 - **缺字**印成字体的空框。`renderToPdf`按字体报告缺字（`missingGlyph`），沙盒在每次生成PDF后在检查面板中列出。
-- **地区字体。** Noto Serif SC、TC和HK用各自地区的字形画同一批码位，并把点号放在各自地区规定的位置。书的字体应与其语言区域一致。
+- **地区字体。** Noto Serif SC、TC和HK用各自地区的字形画同一批码位，并把点号放在各自地区规定的位置。书的字体应与书的语言标签所标的地区一致。
 - **没有斜体。** 中文字体没有斜体；浏览器和PDF会把字形倾斜。强调请用着重号、楷体（如LXGW WenKai）或粗体。
 
-中文书的传统字体分工对应到字体族：宋体（Noto Serif）用于正文，黑体（Noto Sans）用于标题和标签，楷体用于引文、诗歌和序言，仿宋用于公文。配置参考中的[中日韩字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)给出了字体提供器的代码。
+中文书的传统字体分工对应到字体族：宋体（Noto Serif）用于正文，黑体（Noto Sans）用于标题和标签，楷体用于引文、诗歌和序言，仿宋用于公文。配置参考中的[中日韩字体](/zh/docs/configuration-pdf-output#中文日文和韩文字体)给出了字体提供函数的代码。
 
 ## 两套完整配置
 
 ### 横排的大陆小说
 
-一本大32开的书，Noto Serif SC 10.5 pt，每页28 × 28字，章按第一章编号，脚注用①并每页重新编号，开明式标点和GB断行来自语言区域设置：
+一本大32开的书，Noto Serif SC 10.5 pt，每页28 × 28字，章按第一章编号，脚注用①并每页重新编号，开明式标点和GB断行来自语言标签：
 
 ```ts
 import type { PostextConfig } from 'postext';
@@ -412,18 +412,18 @@ const config: PostextConfig = {
 };
 ```
 
-`parity: 'odd'`让每章从右页（recto）开始，在这本书里就是左手边的页面。没有设置`linesPerPage`，所以页面按宽度能容纳多少列就排多少列。切口书眉在奇数页沿左侧页边距、在偶数页沿右侧页边距竖排，第103页的`{pageNumber}`印作一百零三。
+`parity: 'odd'`让每章从奇数页（recto）开始，在这本书里就是左手边的页面。没有设置`linesPerPage`，所以页面按宽度能容纳多少列就排多少列。切口书眉在奇数页沿左侧页边距、在偶数页沿右侧页边距竖排，第103页的`{pageNumber}`印作一百零三。
 
 ## 在沙盒和排版食谱中
 
-在沙盒中，**设计 › 书写系统**包含文档语言、书写方向、装订方式和所有`cjk`设置；<strong>中文默认值 › 检查…</strong>可以一步把书设为中文排版，并先列出每一项改动（见[沙盒](/zh/docs/sandbox-design-checks#版面设计面板)）。展示书架上有《紅樓夢》（1792年程乙本）的三个版本：[繁体竖排、右侧装订](/zh/sandbox#preset=hongloumeng&lang=zh-Hant)、[简体横排](/zh/sandbox#preset=hongloumeng&lang=zh-Hans)，以及H. Bencraft Joly英译本的前56回。[排版食谱](/zh/cookbook?col=chinese-layout)在“中文排版”合集中收录了中文食谱，每个食谱是一页或一组跨页，附有排出它的脚本。
+在沙盒中，**版面设计 › 书写系统**包含文档语言、书写方向、装订方式和所有`cjk`设置；<strong>中文默认设置 › 查看…</strong>可以一步把书设为中文排版，并先列出每一项改动（见[沙盒](/zh/docs/sandbox-design-checks#版面设计面板)）。展示书架上有《紅樓夢》（1792年程乙本）的三个版本：[繁体竖排、右侧装订](/zh/sandbox#preset=hongloumeng&lang=zh-Hant)、[简体横排](/zh/sandbox#preset=hongloumeng&lang=zh-Hans)，以及H. Bencraft Joly英译本的前56回。[排版食谱](/zh/cookbook?col=chinese-layout)在“中文排版”合集中收录了中文食谱，每个食谱是一页或一组跨页，附有排出它的脚本。
 
 ## 已知限制
 
 - **韩文**按大陆中文的默认值排版；它自己的规则（KLREQ）尚未实现。从postext 1.16起，日文遵循自己的规则（[日文排版](/zh/docs/japanese-layout)）。
-- **设计文字**（书眉、章首页、标注框标题、部分页）遵循正文的避头尾规则、标点宽度和中西文间距（`cjk.composeDesignText`，自postext 1.25起），但各行不齐：不在字间分配空白。
+- **设计文字**（书眉、章首页、标注框标题、篇名页）遵循正文的避头尾规则、标点宽度和中西文间距（`cjk.composeDesignText`，自postext 1.25起），但各行不齐：不在字间分配空白。
 - **每页只有一种书写方向。** 竖排页面中的横排标注框、表头行在右侧的原生竖排表格，以及直立图旁边的题注都不支持。行内公式、行内标签和色块随竖排行一起横躺。
-- **行号**：竖排文字不印行号；竖排的书打开`lineNumbers`也没有行号，并给出配置警告`lineNumbersUnsupported`。横排的书照常标注行号（[配置 › 行号](/zh/docs/configuration-notes-references#行号)）。
+- **行号**：竖排文字不印行号；竖排的书打开`lineNumbers`也没有行号，并给出配置警告`lineNumbersUnsupported`。横排的书照常加行号（[配置 › 行号](/zh/docs/configuration-notes-references#行号)）。
 - **文字绕排。** 横排中，图片或框可以放在栏的一侧，正文排在旁边（见[文字绕排](/zh/docs/document-format-resources#文字绕排)）；使用字格时，它占的宽度取整到整字，旁边的行仍在网格上。竖排不在图旁排正文：绕排的图片保持整条，并给出`textWrap`警告（资源类型的默认值则为`wrapUnsupported`）。
 - **制表符**：含有制表符（`:tab`，或设有制表位的样式下的制表符字符）的横排段落逐行排：按文档的断行规则在字与字之间断开，但不做标点挤压，也不在字与字之间分配空白来两端对齐。竖排文字没有制表位：制表符是一个词间空格，`:tab`会引发内容警告`tabInVerticalText`。带注音或双行夹注的段落也把其中的制表符排成词间空格。见[制表符与制表位](/zh/docs/document-format-inline#制表符与制表位)。
 - **首字下沉**：横排段落可以以一个字的首字下沉开头，由段落样式或标题级别设定（见[首字下沉](/zh/docs/configuration-text#首字下沉)）：它的字号按这个字本身的高度与正文的高度来定，缩短的行由排版器照常做标点挤压和两端对齐。竖排文字没有首字下沉：本应以首字下沉开头的段落不带首字排出，并引发内容警告`dropCap`。

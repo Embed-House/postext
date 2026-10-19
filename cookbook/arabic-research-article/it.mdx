@@ -24,13 +24,13 @@ Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Le impostazioni 
 
 <Excerpt region="masthead" />
 
-Il titolo dell’articolo è il titolo di livello 1, disegnato da un design: il nome della rivista e il fascicolo, un filetto sottile, il titolo su due righe centrate e l’autrice. La riga del fascicolo è scritta in cifre arabo-indiane, perché l’attributo di un design è testo dell’autore e il motore non lo riscrive. La numerazione delle pagine parte da 87 (`page.pageNumbering.startAt`), così i folio mostrano dove si trova l’articolo nel fascicolo.
+Il titolo dell’articolo è il titolo di livello 1, disegnato da una grafica: il nome della rivista e il fascicolo, un filetto sottile, il titolo su due righe centrate e l’autrice. La riga del fascicolo è scritta in cifre arabo-indiane, perché l’attributo di una grafica è testo dell’autore e il motore non lo riscrive. La numerazione delle pagine parte da 87 (`page.pageNumbering.startAt`), così i numeri di pagina mostrano dove si trova l’articolo nel fascicolo.
 
 ### 3 · Testatine dall’angolo esterno
 
 <Excerpt region="heads" />
 
-Le pagine di destra portano il nome della rivista e quelle di sinistra l’autrice e un titolo breve, ciascuna con il folio all’angolo esterno. Gli elementi dell’intestazione conservano i loro lati fisici, quindi la pagina pari, che in questa rilegatura sta a destra, si ancora a `top-right`.
+Le pagine di destra riportano il nome della rivista e quelle di sinistra l’autrice e un titolo breve, ciascuna con il numero di pagina all’angolo esterno. Gli elementi dell’intestazione conservano i loro lati fisici, quindi la pagina pari, che in questa rilegatura sta a destra, si ancora a `top-right`.
 
 ## Varianti
 
@@ -52,5 +52,5 @@ Le riviste arabe moderne spesso numerano le note per articolo invece che per pag
 
 ## Errori frequenti
 
-- La punteggiatura che scrive uno stile CSL è quella dello stile: virgole, punti e virgola e virgolette tra le parti di una nota sono latini, come in الهاشمي, الحرف العربي. Date e numeri vengono dai dati, quindi le opere arabe portano `issued: {literal: "٢٠١٩"}` e indicatori come `[@hashimi2019, ٧٧]`; le opere latine conservano le cifre 0–9.
+- La punteggiatura che scrive uno stile CSL è quella dello stile: virgole, punti e virgola e virgolette tra le parti di una nota sono latini, come in الهاشمي, الحرف العربي. Date e numeri vengono dai dati, quindi le opere arabe hanno `issued: {literal: "٢٠١٩"}` e indicatori come `[@hashimi2019, ٧٧]`; le opere latine conservano le cifre 0–9.
 - Una nota o un riferimento a un’opera latina resta un paragrafo della pagina araba, composto da destra, e al suo interno si legge da sinistra a destra: il motore compone il riferimento come un isolato, così l’URL, le virgolette e il punto finale restano dove il riferimento finisce.

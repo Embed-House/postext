@@ -10,7 +10,7 @@ pageNotes: { "1": "Die Titelseite von „The Corrington Despatch“: der Zeitung
 
 ## Was Sie setzen
 
-Vier Seiten von *The Corrington Despatch*, einer erfundenen Tageszeitung, im Nordischen Format von 375 × 597 mm. Der Text läuft in sechs Spalten von 55,2 mm mit 4 mm Spaltenabstand und einer Haarlinie in jedem: eine Zeilenlänge von etwa 38 Zeichen bei 9 pt, die Zeilenlänge einer echten großformatigen Zeitung. Die Titelseite trägt einen Zeitungskopf mit zwei Ohren, einen Streifen mit Anreißern, einen Aufmacher, dessen Überschrift und Foto vier Spalten einnehmen, einen zweiten Artikel mit einem zweispaltigen Foto, eine Spalte mit Kurzmeldungen, eine Finanzierungstabelle und einen Faktenkasten über je zwei Spalten und am Fuß eine Anzeige. Seite 2 beginnt mit einer Fortsetzung von der Titelseite, Seite 3 wechselt für die Leitartikel, einen Kommentar und die Leserbriefe auf fünf Spalten, und die letzte Seite bringt eine Theaterkritik und das Wetter.
+Vier Seiten von *The Corrington Despatch*, einer erfundenen Tageszeitung, im Nordischen Format von 375 × 597 mm. Der Text läuft in sechs Spalten von 55,2 mm mit 4 mm Spaltenabstand und einer Haarlinie in jedem: eine Zeilenlänge von etwa 38 Zeichen bei 9 pt, die Zeilenlänge einer echten großformatigen Zeitung. Die Titelseite zeigt einen Zeitungskopf mit zwei Ohren, einen Streifen mit Anreißern, einen Aufmacher, dessen Überschrift und Foto vier Spalten einnehmen, einen zweiten Artikel mit einem zweispaltigen Foto, eine Spalte mit Kurzmeldungen, eine Finanzierungstabelle und einen Faktenkasten über je zwei Spalten und am Fuß eine Anzeige. Seite 2 beginnt mit einer Fortsetzung von der Titelseite, Seite 3 wechselt für die Leitartikel, einen Kommentar und die Leserbriefe auf fünf Spalten, und die letzte Seite bringt eine Theaterkritik und das Wetter.
 
 ## Zubereitung
 
@@ -34,13 +34,13 @@ Ein `:::callout` mit `placement="top"` und `columns="4"` gleitet wie ein Foto ü
 
 <Excerpt region="nameplate" />
 
-`# The Corrington Despatch` nimmt das Überschriftenformat `front`: der Name in der Playfair Display Black zu 64 pt, zwei Ohren, gefüllt aus den Attributen der Überschrift, die Datumszeile zwischen einer dünnen und einer kräftigen Linie. Der Auftakt ist neun Rasterzeilen tief. Der getönte Streifen mit Anreißern darunter ist ein Kasten über die ganze Seitenbreite, ein eigenes Element der Titelseite: Er schließt das Band des Auftakts, und der Überschriftenkasten des Aufmachers nimmt die Spalten 1 bis 4 des Bandes, das er eröffnet. Ohne den Streifen nähme der Kasten dieselben vier Spalten direkt unter dem Zeitungskopf, denn der Kopf von Spalte 1 unter einem Auftakt ist ein Platz wie die Köpfe der anderen Spalten (bis postext 1.24 war er es nicht, und der Kasten begann in Spalte 2).
+`# The Corrington Despatch` erhält den Überschriftenstil `front`: der Name in der Playfair Display Black zu 64 pt, zwei Ohren, gefüllt aus den Attributen der Überschrift, die Datumszeile zwischen einer dünnen und einer kräftigen Linie. Der Auftakt ist neun Rasterzeilen tief. Der getönte Streifen mit Anreißern darunter ist ein Kasten über die ganze Seitenbreite, ein eigenes Element der Titelseite: Er schließt den Spaltenbereich des Auftakts ab, und der Überschriftenkasten des Aufmachers nimmt die Spalten 1 bis 4 des Spaltenbereichs, den er eröffnet. Ohne den Streifen nähme der Kasten dieselben vier Spalten direkt unter dem Zeitungskopf, denn der Kopf von Spalte 1 unter einem Auftakt ist ein Platz wie die Köpfe der anderen Spalten (bis postext 1.24 war er es nicht, und der Kasten begann in Spalte 2).
 
 ### 5 · Die Meinungsseite läuft in fünf Spalten
 
 <Excerpt region="sections" />
 
-`# Opinion {style="opinion"}` eröffnet einen Teil, dessen Überschriftenformat `layout: { layoutType: 'multiple', columnCount: 5 }` setzt. Der Teil behält den Spaltenabstand und die Spaltenlinie des Dokuments und ändert nur die Anzahl, sodass Leitartikel, Kommentar und Leserbriefe auf einer Zeilenlänge von 67 mm laufen, etwa 47 Zeichen. Der Überschriftenkasten des Kommentars ist `columns="3"` und steht im Manuskript erst, nachdem der Leitartikel in Spalte 1 begonnen hat; er landet also auf den Spalten 2 bis 4 mit seinem Foto darunter, und zwei Zeilen `:::columnbreak` schicken die Spalte in Spalte 2 und die Leserbriefe in Spalte 5.
+`# Opinion {style="opinion"}` eröffnet einen Teil, dessen Überschriftenstil `layout: { layoutType: 'multiple', columnCount: 5 }` setzt. Der Teil behält den Spaltenabstand und die Spaltenlinie des Dokuments und ändert nur die Anzahl, sodass Leitartikel, Kommentar und Leserbriefe auf einer Zeilenlänge von 67 mm laufen, etwa 47 Zeichen. Der Überschriftenkasten des Kommentars ist `columns="3"` und steht im Manuskript erst, nachdem der Leitartikel in Spalte 1 begonnen hat; er steht also in den Spalten 2 bis 4 mit seinem Foto darunter, und zwei Zeilen `:::columnbreak` setzen den Kommentar in Spalte 2 und die Leserbriefe in Spalte 5.
 
 ## Varianten
 

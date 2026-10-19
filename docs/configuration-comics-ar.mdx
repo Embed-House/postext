@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'الإعدادات: القصص المصورة',
   sidebarTitle: 'إعدادات القصص المصورة',
-  description: 'إعدادات comics: الإطار العام لصفحات القصص المصورة وفواصلها، وأنماط الإطارات، وكتابة الحوار، وأنماط الفقاعات، وقائمة الشخصيات',
+  description: 'إعدادات القصص المصورة: الإطار العام لصفحاتها والفواصل بين إطاراتها، وأنماط الإطارات، وكتابة الحوار، وأنماط الفقاعات، وقائمة الشخصيات',
   lang: 'ar',
   lastUpdated: '2026-10-10',
   readingTime: '8 دقائق',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## القصص المصورة
 
-تضبط الخاصية `comics` صفحات القصص المصورة (`:::page`) والشرائط المصورة (`:::strip`) والصفحات المزدوجة: الإطار العام والفواصل التي تُقطع منها الإطارات، وأنماط الإطارات، وكتابة الحوار، وأنماط الفقاعات، وقائمة الشخصيات. ولا يقرؤها إلا المستند الذي فيه قصص مصورة؛ فالمستند الذي ليس فيه شيء منها يُخرَج كما كان يُخرَج تمامًا، والمستند الذي فيه قصص مصورة وليس فيه قسم `comics` يأخذ القيم الافتراضية للغته. ويشرح دليل [القصص المصورة](/ar/docs/comics) الترميز وطريقة كتابة حوار الصفحات.
+تضبط الخاصية `comics` صفحات القصص المصورة (`:::page`) والشرائط المصورة (`:::strip`) والصفحات المتقابلة: الإطار العام والفواصل التي تُقطع منها الإطارات، وأنماط الإطارات، وكتابة الحوار، وأنماط الفقاعات، وقائمة الشخصيات. ولا يقرؤها إلا المستند الذي فيه قصص مصورة؛ فالمستند الذي ليس فيه شيء منها يُخرَج كما كان يُخرَج تمامًا، والمستند الذي فيه قصص مصورة وليس فيه قسم `comics` يأخذ القيم الافتراضية للغته. ويشرح دليل [القصص المصورة](/ar/docs/comics) الترميز وطريقة كتابة حوار الصفحات.
 
 ```ts
 const config: PostextConfig = {
@@ -65,7 +65,7 @@ const config: PostextConfig = {
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>هوامش الصفحة</td>
-      <td>هوامش خاصة بصفحات القصص المصورة (<code>top</code> و<code>bottom</code> و<code>left</code> و<code>right</code> و<code>mirror</code>). تُقطع الإطارات من الصندوق الذي تتركه؛ وإن لم تُحدَّد فمن منطقة النص في الصفحة.</td>
+      <td>هوامش خاصة بصفحات القصص المصورة (<code>top</code> و<code>bottom</code> و<code>left</code> و<code>right</code> و<code>mirror</code>). تُقطع الإطارات من المستطيل الذي تتركه هذه الهوامش؛ وإن لم تُحدَّد فمن منطقة النص في الصفحة.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
@@ -89,7 +89,7 @@ const config: PostextConfig = {
       <td><code>panelStyles</code></td>
       <td><code>NamedPanelStyleConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>أنماط إطارات مسمّاة، تُختار بـ <code>:::page&#123;style=…&#125;</code> أو <code>::panel&#123;style=…&#125;</code>. لكل منها <code>id</code>، و<code>name</code> اختياري (لواجهات التحرير وحدها)، وحقول نمط الإطار؛ والحقول غير المحددة تتبع <code>panel</code>.</td>
+      <td>أنماط إطارات مسمّاة، تُختار بـ<code>:::page&#123;style=…&#125;</code> أو <code>::panel&#123;style=…&#125;</code>. لكل منها <code>id</code>، و<code>name</code> اختياري (لواجهات التحرير وحدها)، وحقول نمط الإطار؛ والحقول غير المحددة تتبع <code>panel</code>.</td>
     </tr>
     <tr>
       <td><code>lettering</code></td>
@@ -101,7 +101,7 @@ const config: PostextConfig = {
       <td><code>balloonStyles</code></td>
       <td><code>BalloonStyleConfig[]</code></td>
       <td>الأنماط المدمجة التسعة</td>
-      <td>أنماط الفقاعات بحسب نوعها. الأنماط المدمجة موجودة دائمًا؛ والمدخل الذي يحمل معرّف أحدها يغيّره، والمدخل الذي يحمل معرّفًا جديدًا يضيف نمطًا يُطبَّق فوق <code>speech</code>.</td>
+      <td>أنماط الفقاعات بحسب نوعها. الأنماط المدمجة موجودة دائمًا؛ والمدخل الذي له معرّف أحدها يغيّره، والمدخل الذي له معرّف جديد يضيف نمطًا يُطبَّق فوق <code>speech</code>.</td>
     </tr>
     <tr>
       <td><code>cast</code></td>
@@ -119,7 +119,7 @@ const config: PostextConfig = {
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>غير محدد</td>
-      <td>للمضيفات التي ليست صفحاتها أوراقًا: يُخرج صفحات القصص المصورة على ورقة طباعة (<code>width</code> و<code>height</code> و<code>margins</code>) مصغّرة إلى <code>fitWidth</code> px (وبارتفاع لا يزيد على <code>fitHeight</code> px) في أعلى الصفحة. يضبطه عارض HTML في Sandbox، ولا يُحفظ أبدًا مع المستند.</td>
+      <td>للتطبيقات المضيفة التي لا تكون صفحاتها أوراقًا: يُخرج صفحات القصص المصورة على ورقة طباعة (<code>width</code> و<code>height</code> و<code>margins</code>) مصغّرة إلى <code>fitWidth</code> px (وبارتفاع لا يزيد على <code>fitHeight</code> px) في أعلى الصفحة. يضبطه عارض HTML في Sandbox، ولا يُحفظ أبدًا مع المستند.</td>
     </tr>
   </tbody>
 </table>
@@ -160,7 +160,7 @@ const config: PostextConfig = {
       <td><code>borderStyle</code></td>
       <td><code>'solid' | 'rough' | 'none'</code></td>
       <td><code>'solid'</code></td>
-      <td>خط نظيف، أو خط مرسوم باليد يهتز قليلًا (مشتق من الإطار، فيبقى هو نفسه في كل تنضيد)، أو بلا حدّ.</td>
+      <td>خط نظيف، أو خط مرسوم باليد يهتز قليلًا (يُشتق اهتزازه من الإطار نفسه، فيبقى كما هو في كل بناء)، أو بلا حدّ.</td>
     </tr>
     <tr>
       <td><code>background</code></td>
@@ -231,19 +231,19 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>مسافة إضافية بين الحروف؛ و<code>em</code> نسبةً إلى حجم النص. ولا تُطبَّق على العربية أبدًا. ولا تغيّر الرسوم الحرفية: تبقى الحروف المركّبة.</td>
+      <td>مسافة إضافية بين الحروف؛ و<code>em</code> نسبةً إلى حجم النص. ولا تُطبَّق على العربية أبدًا. ولا تغيّر أشكال الحروف: تبقى الحروف المركّبة (ligatures).</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
       <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
       <td><code>'auto'</code></td>
-      <td><code>'auto'</code> يكتب حوار اليابانية والصينية التقليدية، وحوار أي مستند منضَّد بالكتابة العمودية، في أعمدة عمودية، وكل ما سوى ذلك أفقيًا. وتنضّد علامة <code>vertical</code> أو <code>horizontal</code> في سطر الحوار ذلك السطر على خلاف ذلك (انظر <a href="/ar/docs/comics#كتابة-الحوار">القصص المصورة › كتابة الحوار</a>).</td>
+      <td><code>'auto'</code> يكتب حوار اليابانية والصينية التقليدية، وحوار أي مستند منضَّد بالكتابة العمودية، في أعمدة، وكل ما سوى ذلك أفقيًا. وتنضّد علامة <code>vertical</code> أو <code>horizontal</code> في سطر الحوار ذلك السطر على خلاف ذلك (انظر <a href="/ar/docs/comics#كتابة-الحوار">القصص المصورة › كتابة الحوار</a>).</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>الأحرف الكبيرة كلها، المظهر التقليدي لكتابة الحوار في القصص الأمريكية والأوروبية. والكتابات التي لا تعرف الأحرف الكبيرة تبقى كما هي.</td>
+      <td>الحروف الكبيرة كلها، وهو المظهر التقليدي لكتابة الحوار في القصص الأمريكية والأوروبية. وأنظمة الكتابة التي لا تميّز بين الحروف الكبيرة والصغيرة تبقى كما هي.</td>
     </tr>
     <tr>
       <td><code>dropFinalStop</code></td>
@@ -255,19 +255,19 @@ const config: PostextConfig = {
       <td><code>doubleDash</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>اكتب الشرطة الطويلة <code>--</code>، وهي عادة في كتابة حوار القصص الأمريكية.</td>
+      <td>اكتب الشرطة الطويلة على هيئة <code>--</code>، وهي عادة في كتابة حوار القصص الأمريكية.</td>
     </tr>
     <tr>
       <td><code>inset</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5mm</code></td>
-      <td>المسافة المتروكة بين الفقاعة وحدّ إطارها. والتعليق السردي الملاصق للحدّ لا يلتزم بها.</td>
+      <td>المسافة المتروكة بين الفقاعة وحدّ إطارها. ومربع السرد الملاصق للحدّ لا يلتزم بها.</td>
     </tr>
     <tr>
       <td><code>joinSameSpeaker</code></td>
       <td><code>'butt' | 'connector' | 'none'</code></td>
       <td><code>'butt'</code></td>
-      <td>فقاعتان متتاليتان للمتحدث نفسه: جسمان مدموجان في محيط واحد، أو موصولان بعنق ضيق، أو منفصلان. ويطلب سطر الحوار ما يريد بـ <code>join</code> أو <code>join=false</code>.</td>
+      <td>فقاعتان متتاليتان للشخصية نفسها: جسمان مدموجان في محيط واحد، أو موصولان بعنق ضيق، أو منفصلان. ويطلب سطر الحوار ما يريد بـ<code>join</code> أو <code>join=false</code>.</td>
     </tr>
     <tr>
       <td><code>maxColumnChars</code></td>
@@ -279,14 +279,14 @@ const config: PostextConfig = {
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>الفقاعة التي يتغيّر شكلها لتدخل في إطارها لا تقطع كلمة صينية لأجل ذلك: كل كلمة تقطعها سطورها الجديدة، ويتركها شكلها المفضَّل كاملة، تكلّف أكثر من فقاعة تُقرأ في غير ترتيبها، فتُحرَّك الفقاعة أو يتغيّر الترتيب أولًا. أما كتابة الحوار اليابانية، وهي تنكسر عند العبارات، فلا تتأثر. ومع <code>false</code> تُكتب الحوارات كما في postext 1.27؛ والمستند المحفوظ قبل 1.28 وفيه قصة مصورة يُقرأ بهذه القيمة.</td>
+      <td>الفقاعة التي يتغيّر شكلها لتدخل في إطارها لا تقطع كلمة صينية لأجل ذلك: كل كلمة تقطعها أسطرها الجديدة، ويتركها شكلها المفضَّل كاملة، تكلّف أكثر من فقاعة تُقرأ في غير ترتيبها، فتُحرَّك الفقاعة أو يتغيّر الترتيب أولًا. أما كتابة الحوار اليابانية، وهي تنكسر عند العبارات، فلا تتأثر. ومع <code>false</code> تُكتب الحوارات كما في postext 1.27؛ والمستند المحفوظ قبل 1.28 وفيه قصة مصورة يُقرأ بهذه القيمة.</td>
     </tr>
   </tbody>
 </table>
 
 ### أنماط الفقاعات
 
-كل مدخل في `comics.balloonStyles` يُطبَّق فوق النمط المدمج الذي يحمل المعرّف نفسه (`speech` و`thought` و`whisper` و`shout` و`radio` و`caption` و`inner` و`note` و`sfx`)، أو فوق `speech` إن كان معرّفه جديدًا. والقيم الافتراضية أدناه قيم `speech`؛ وتسرد [صفحة القصص المصورة](/ar/docs/comics#أنماط-الفقاعات) ما يغيّره كل نمط مدمج. والأطوال بوحدة `em` نسبةً إلى حجم نص الفقاعة.
+كل مدخل في `comics.balloonStyles` يُطبَّق فوق النمط المدمج الذي له المعرّف نفسه (`speech` و`thought` و`whisper` و`shout` و`radio` و`caption` و`inner` و`note` و`sfx`)، أو فوق `speech` إن كان معرّفه جديدًا. والقيم الافتراضية أدناه قيم `speech`؛ وتسرد [صفحة القصص المصورة](/ar/docs/comics#أنماط-الفقاعات) ما يغيّره كل نمط مدمج. والأطوال بوحدة `em` نسبةً إلى حجم نص الفقاعة.
 
 <table>
   <thead>
@@ -302,7 +302,7 @@ const config: PostextConfig = {
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>مطلوب</td>
-      <td>الكلمة التي يسمّي بها سطر الحوار النمط: <code>ben&#123;whisper&#125;: …</code> أو <code>style=whisper</code>.</td>
+      <td>الكلمة التي يُذكر بها النمط في سطر الحوار: <code>ben&#123;whisper&#125;: …</code> أو <code>style=whisper</code>.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -398,25 +398,25 @@ const config: PostextConfig = {
       <td><code>tailReach</code></td>
       <td><code>number</code></td>
       <td><code>0.55</code></td>
-      <td>مدى امتداد الذيل نحو متحدثه، كسرًا من المسافة بين المحيط والفم.</td>
+      <td>مدى امتداد الذيل نحو الشخصية المتكلمة، كسرًا من المسافة بين المحيط والفم.</td>
     </tr>
     <tr>
       <td><code>target</code></td>
       <td><code>'mouth' | 'head'</code></td>
       <td><code>'mouth'</code></td>
-      <td>ما يتجه إليه الذيل: فم نقطة الارتكاز، أو رأسها (فقاعات التفكير).</td>
+      <td>ما يتجه إليه الذيل: نقطة الفم في نقاط الارتكاز، أو نقطة الرأس (فقاعات التفكير).</td>
     </tr>
     <tr>
       <td><code>position</code></td>
       <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
       <td><code>'auto'</code></td>
-      <td>موضع الفقاعة حين لا يثبّتها السطر: تضعها كتابة الحوار، أو في زاوية من الإطار أو عند حافة منه.</td>
+      <td>موضع الفقاعة حين لا يحدّد سطرها موضعًا: تضعها كتابة الحوار، أو في زاوية من الإطار أو عند حافة منه.</td>
     </tr>
     <tr>
       <td><code>butt</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>ألصق فقاعة الزاوية أو الحافة بحدّ الإطار (التعليقات السردية).</td>
+      <td>ألصق فقاعة الزاوية أو الحافة بحدّ الإطار (مربعات السرد).</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -499,19 +499,19 @@ const config: PostextConfig = {
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>مطلوب</td>
-      <td>مفتاح المتحدث في السيناريو وفي نقاط الارتكاز على الرسوم.</td>
+      <td>مفتاح الشخصية في السيناريو وفي نقاط الارتكاز على الرسوم.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>الاسم الذي يطبعه مُخرَج HTML وكتاب EPUB المتدفق قبل أسطر الشخصية، وتعرضه واجهات التحرير.</td>
+      <td>الاسم الذي يُطبع في مخرجات HTML وكتاب EPUB القابل لإعادة التدفق قبل أسطر الشخصية، وتعرضه واجهات التحرير.</td>
     </tr>
     <tr>
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>نمط أسطر الشخصية التي لا تسمّي نمطًا.</td>
+      <td>نمط أسطر الشخصية التي لا تحدّد نمطًا.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

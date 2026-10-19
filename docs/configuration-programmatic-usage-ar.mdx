@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'الإعدادات: الاستخدام البرمجي',
   sidebarTitle: 'الاستخدام البرمجي',
-  description: 'استعمال Postext من الشيفرة: buildDocument وتحذيراته، والقيم الافتراضية، والخطوط، والذاكرات المؤقتة، و Web Worker',
+  description: 'استعمال Postext من الشيفرة: buildDocument وتحذيراته، والقيم الافتراضية، والخطوط، والذاكرات المؤقتة، وWeb Worker',
   lang: 'ar',
   lastUpdated: '2026-10-17',
   readingTime: '31 دقيقة',
@@ -43,7 +43,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
 
 ### التحذيرات في المستند
 
-لا تتوقف `buildDocument` عند مرجع خاطئ أو نمط مجهول: بل تضع قيمة بديلة وتسجّل ما فعلته في `doc.contentWarnings`. أما الصناديق التي اضطر الإخراج إلى فرضها فتجدها في `doc.warnings`، التي تحتفظ بالشكل الذي كان لها في postext 1.4: كل مدخل فيها من نوع `calloutOverflow` ومعه `pageIndex` و`columnIndex` و`overflowPx`. يغيب كل حقل حين لا يكون هناك ما يُبلَّغ عنه. لكل مدخل `kind`. وتحمل أنواع المحتوى نطاق المصدر للبنية المعنية، أي `sourceStart` / `sourceEnd`، وهما إزاحتان داخل نص markdown الذي مرّرته، بما في ذلك البيانات التمهيدية (frontmatter)، ومعهما `pageIndex` إن وقعت البنية في صفحة.
+لا تتوقف `buildDocument` عند مرجع خاطئ أو نمط مجهول: بل تضع قيمة بديلة وتسجّل ما فعلته في `doc.contentWarnings`. أما الإطارات التي اضطر الإخراج إلى وضعها رغم أنها لا تتسع فتجدها في `doc.warnings`، التي تحتفظ بالشكل الذي كان لها في postext 1.4: كل مدخل فيها من نوع `calloutOverflow` ومعه `pageIndex` و`columnIndex` و`overflowPx`. يغيب كل حقل حين لا يكون هناك ما يُسجَّل فيه. لكل مدخل `kind`. وتتضمّن تحذيرات المحتوى نطاق المصدر للبنية المعنية، أي `sourceStart` / `sourceEnd`، وهما إزاحتان داخل نص Markdown الذي مرّرته، بما في ذلك البيانات التمهيدية (frontmatter)، ومعهما `pageIndex` إن وقعت البنية في صفحة.
 
 <table>
   <thead>
@@ -56,17 +56,17 @@ console.log(`Document has ${vdt.pages.length} pages`);
   <tbody>
     <tr>
       <td><code>calloutOverflow</code></td>
-      <td>صندوق <code>:::callout</code> لا يتسع له أي عمود ولا يمكن لأي قطع أن يقسمه. وكذلك صندوق <code>span: 'side'</code> أطول من عمود جانبي فارغ (منذ postext 1.25).</td>
+      <td>إطار <code>:::callout</code> لا يتسع له أي عمود ولا يمكن لأي قطع أن يقسمه. وكذلك إطار <code>span: 'side'</code> أطول من عمود جانبي فارغ (منذ postext 1.25).</td>
       <td>يُوضع على أي حال، فيتجاوز عموده بمقدار <code>overflowPx</code> (في <code>pageIndex</code> / <code>columnIndex</code>). وهو النوع الوحيد المُدرج في <code>doc.warnings</code>؛ أما الأنواع التالية فتقع في <code>doc.contentWarnings</code>.</td>
     </tr>
     <tr>
       <td><code>invalidFrontmatter</code></td>
       <td>البيانات التمهيدية ليست YAML صالحة (علامة اقتباس لم تُغلق، نص بعد قيمة بين علامتي اقتباس). <code>message</code> هو سبب المحلّل مع السطر والعمود.</td>
-      <td>يُصفّ المستند دون بياناته الوصفية؛ ويُصفّ المتن الذي يلي سطر <code>---</code> الختامي كالمعتاد.</td>
+      <td>يُنضَّد المستند دون بياناته الوصفية؛ ويُنضَّد المتن الذي يلي سطر <code>---</code> الختامي كالمعتاد.</td>
     </tr>
     <tr>
       <td><code>unknownResourceId</code></td>
-      <td>تضمين <code>::resource</code> (<code>usage: 'embed'</code>) أو <code>:ref</code> سطري (<code>'ref'</code>) أو صورة في خلية جدول (<code>'cellImage'</code>) يذكر معرّفًا لا يحمله أي مورد.</td>
+      <td>تضمين <code>::resource</code> (<code>usage: 'embed'</code>) أو <code>:ref</code> داخل السطر (<code>'ref'</code>) أو صورة في خلية جدول (<code>'cellImage'</code>) يذكر معرّفًا ليس لأي مورد.</td>
       <td>يُحذف التضمين، ويطبع المرجع <code>?</code> (أو تسميته في <code>text=</code>) بلا رقم ولا رابط، وتبقى الخلية نصًا فقط. يذكر <code>inResource</code> المورد الذي يحوي تعليقُه أو ملاحظته أو خليته ذلك المرجع.</td>
     </tr>
     <tr>
@@ -81,7 +81,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>fullwidthMarkup</code></td>
-      <td>سطر يحوي ترميزًا كُتب بطريقة إدخال صينية أو يابانية: سياج <code>：：：</code>، أو عنوان <code>＃</code>، أو علامة حاشية <code>［＾…］</code>، أو سمات <code>｛…｝</code> بعد سياج أو عنوان، أو خط عريض <code>＊＊…＊＊</code>. يحمل <code>typed</code> الترميز كما كُتب، و<code>ascii</code> الشكل الذي ينبغي كتابته. تحذير واحد لكل سطر.</td>
+      <td>سطر يحوي ترميزًا كُتب بطريقة إدخال صينية أو يابانية: سطر حاوية <code>：：：</code>، أو عنوان <code>＃</code>، أو علامة حاشية <code>［＾…］</code>، أو سمات <code>｛…｝</code> بعد سطر حاوية أو عنوان، أو نص عريض <code>＊＊…＊＊</code>. في <code>typed</code> الترميز كما كُتب، وفي <code>ascii</code> الشكل الذي ينبغي كتابته. تحذير واحد لكل سطر.</td>
       <td>يُنضَّد السطر نصًا؛ ولا يُحوَّل شيء.</td>
     </tr>
     <tr>
@@ -92,26 +92,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
     <tr>
       <td><code>unknownParagraphStyle</code></td>
       <td><code>:::paragraphs{'{'}style{'}'}</code> يذكر نمط فقرة غير موجود.</td>
-      <td>تُنضَّد الفقرات نصًا أساسيًا.</td>
+      <td>تُنضَّد الفقرات بنمط نص المتن.</td>
     </tr>
     <tr>
       <td><code>unknownCalloutType</code></td>
       <td><code>:::callout{'{'}type{'}'}</code> لا يذكر أيًا من <code>calloutStyles</code>، ولا يُطلَق إلا بعد ضبط بعضها.</td>
-      <td>يأخذ الصندوق أول نمط إطار.</td>
+      <td>يأخذ الإطار أول نمط إطار.</td>
     </tr>
     <tr>
       <td><code>columnsFlowUnknown</code></td>
-      <td><code>:::columns{'{'}flow{'}'}</code> ليست <code>snake</code> ولا <code>parallel</code>؛ و<code>value</code> هي ما تقوله.</td>
+      <td><code>:::columns{'{'}flow{'}'}</code> ليست <code>snake</code> ولا <code>parallel</code>؛ و<code>value</code> هي القيمة المكتوبة.</td>
       <td>تأخذ المجموعة القيمة الافتراضية: <code>parallel</code> مع <code>breaks</code>، و<code>snake</code> من دونها.</td>
     </tr>
     <tr>
       <td><code>templateUnknown</code></td>
-      <td>صفحة مركّبة (<code>::::page&#123;template&#125;</code>) لا تسمّي أي مدخل من <code>pageTemplates</code>، أو لا تسمّي قالبًا أصلًا؛ و<code>template</code> هو المعرّف كما كُتب، و<code>fenceIndex</code> موضع الصفحة بين الصفحات المركّبة في الفصل.</td>
-      <td>لا تُفحص خاناتها. وإلى أن تُنضَّد القوالب، يُنضَّد محتواها في النص الجاري على صفحات خاصة به.</td>
+      <td>صفحة مركّبة (<code>::::page&#123;template&#125;</code>) لا تذكر أي مدخل من <code>pageTemplates</code>، أو لا تذكر قالبًا أصلًا؛ و<code>template</code> هو المعرّف كما كُتب، و<code>fenceIndex</code> موضع الصفحة بين الصفحات المركّبة في الفصل.</td>
+      <td>لا تُفحص خاناتها. وإلى أن تُضبط القوالب، يُنضَّد محتواها في النص الجاري على صفحات خاصة به.</td>
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>محتوى في صفحة مركّبة يسمّي <code>slot</code> ليست إطارًا من قالب الصفحة (<code>slot</code> و<code>template</code> و<code>fenceIndex</code>؛ و<code>frame</code> إطار التدفق الذي يأخذه).</td>
+      <td>محتوى في صفحة مركّبة يذكر خانة <code>slot</code> ليست إطارًا من قالب الصفحة (<code>slot</code> و<code>template</code> و<code>fenceIndex</code>؛ و<code>frame</code> إطار التدفق الذي يأخذه).</td>
       <td>يذهب المحتوى إلى إطار التدفق في القالب.</td>
     </tr>
     <tr>
@@ -121,47 +121,47 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pageFenceLength</code></td>
-      <td><code>:::page</code> بثلاث نقاط رأسية تحمل <code>template=</code>.</td>
-      <td>تُقرأ صفحة قصة مصوّرة؛ والصفحة المركّبة تحتاج إلى أربع نقاط رأسية.</td>
+      <td><code>:::page</code> بثلاث علامات <code>:</code> وفيها <code>template=</code>.</td>
+      <td>تُقرأ صفحة قصة مصوّرة؛ والصفحة المركّبة تحتاج إلى أربع علامات <code>:</code>.</td>
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
       <td>محتوى إطار في صفحة مركّبة لا يتّسع له الإطار بعد خطوات الملاءمة، ولم يبقَ للإطار <code>next</code> يُكمل فيه (<code>template</code> و<code>frame</code> و<code>fenceIndex</code> و<code>locale</code>؛ و<code>overflowMm</code> الارتفاع المقصوص؛ و<code>configPath</code> مؤشر JSON إلى إطار القالب، مثل <code>/pageTemplates/0/frames/2</code>؛ و<code>stepsTried</code>؛ و<code>scale</code> و<code>imageScale</code>، المقياس الذي انتهى إليه نصه وصوره؛ و<code>proposals</code>، وكل منها <code>{'{'} kind, path, value {'}'}</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> الصفحة.</td>
-      <td>تقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع عند أسفل الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
+      <td>تقصّ المخرجات المقسّمة إلى صفحات ما لا يتّسع عند أسفل الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB القابل لإعادة التدفق.</td>
     </tr>
     <tr>
       <td><code>frameContinuationLimit</code></td>
       <td>استمر محتوى إطار في صفحات تُضاف بعد صفحته المركّبة (<code>overflow.continueIn: 'next-page'</code> أو <code>'template:&lt;id&gt;'</code>) بقدر ما يجوز للصفحة المركّبة أن تضيف من الصفحات، أي 16، ولا يزال لا يتّسع (<code>template</code> و<code>frame</code> لآخر صفحة مضافة، و<code>fenceIndex</code> و<code>pages</code> و<code>overflowMm</code> و<code>configPath</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> آخر صفحة مضافة.</td>
-      <td>تقصّ المخرجات المقسّمة إلى صفحات الباقي عند أسفل ذلك الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB ذي التخطيط المتدفق.</td>
+      <td>تقصّ المخرجات المقسّمة إلى صفحات الباقي عند أسفل ذلك الإطار، لكنه يبقى في المستند وفي خريطة المصدر وفي EPUB القابل لإعادة التدفق.</td>
     </tr>
     <tr>
       <td><code>continueTargetMissing</code></td>
-      <td>قيمة <code>overflow.continueIn: 'page:&lt;id&gt;'</code> في إطار لا تسمّي سور صفحة يأتي بعد السور الذي فيه مقاله (<code>template</code> و<code>frame</code> و<code>fenceIndex</code> و<code>target</code>، و<code>before</code> حين يأتي ذلك السور قبله، و<code>configPath</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> الصفحة المُرسِلة.</td>
+      <td>قيمة <code>overflow.continueIn: 'page:&lt;id&gt;'</code> في إطار لا تشير إلى كتلة صفحة تأتي بعد الكتلة التي فيها مقاله (<code>template</code> و<code>frame</code> و<code>fenceIndex</code> و<code>target</code>، و<code>before</code> حين تأتي تلك الكتلة قبلها، و<code>configPath</code>). يصدر عن التنضيد، ومعه <code>pageIndex</code> الصفحة المُرسِلة.</td>
       <td>يستمر الباقي في صفحة تُضاف بعد الصفحة المُرسِلة، كما في <code>'next-page'</code>.</td>
     </tr>
     <tr>
       <td><code>spreadMismatch</code></td>
       <td>سطر فتح صفحة مركّبة وقالبها مختلفان في أمر الصفحتين المتقابلتين (<code>template</code> و<code>fenceIndex</code>؛ و<code>fence</code> هي <code>spread</code> في سطر الفتح؛ و<code>templateSpread</code> ما في القالب).</td>
-      <td>الحكم للقالب: قالب الصفحتين يُصَفّ على صفحتين متقابلتين، وغيره على صفحة واحدة.</td>
+      <td>الحكم للقالب: قالب الصفحتين يُنضَّد على صفحتين متقابلتين، وغيره على صفحة واحدة.</td>
     </tr>
     <tr>
       <td><code>labelAnchorUnknown</code></td>
-      <td>تسمّي <code>::label</code> في <code>:::figure</code> عبر <code>at</code> مرساةً لا يملكها مورد شكلها (<code>resourceId</code> و<code>anchor</code> و<code>known</code> أي مراسي المورد و<code>locale</code>).</td>
-      <td>لا تُرسم التسمية؛ ويظل EPUB المرن يدرجها.</td>
+      <td>تذكر <code>::label</code> في <code>:::figure</code> عبر <code>at</code> مرساةً لا يملكها مورد شكلها (<code>resourceId</code> و<code>anchor</code> و<code>known</code> أي مراسي المورد و<code>locale</code>).</td>
+      <td>لا تُرسم التسمية؛ ويظل EPUB القابل لإعادة التدفق يتضمّنها.</td>
     </tr>
     <tr>
       <td><code>anchorUnlabelled</code></td>
-      <td>مرساة في مورد الشكل تسمّي نمط تسمية، ولا توجد عندها أي <code>::label</code> للشكل في هذه اللغة (<code>resourceId</code> و<code>anchor</code> و<code>style</code> و<code>locale</code>). وهي ملاحظة.</td>
+      <td>مرساة في مورد الشكل تذكر نمط تسمية، ولا توجد عندها أي <code>::label</code> للشكل في هذه اللغة (<code>resourceId</code> و<code>anchor</code> و<code>style</code> و<code>locale</code>). وهي ملاحظة.</td>
       <td>لا يُرسم شيء عند المرساة.</td>
     </tr>
     <tr>
       <td><code>labelOverflow</code></td>
       <td>تسمية شكل ما زالت أعرض من <code>width</code> مرساتها حتى عند أصغر مقياس يسمح به نمط تسميتها (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>widthPct</code> و<code>scale</code> و<code>locale</code>).</td>
-      <td>تُرسم التسمية بذلك المقياس وتتجاوز قياسها.</td>
+      <td>تُرسم التسمية بذلك المقياس وتتجاوز عرضها المحدّد.</td>
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>يتلامس سطرا تسميتين في شكل واحد (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>with</code> و<code>withAnchor</code>, <code>withSymbol</code> و<code>count</code> و<code>locale</code>). ويحمل التحذير التسمية اللاحقة بترتيب الكتابة.</td>
+      <td>يتلامس سطرا تسميتين في شكل واحد (<code>resourceId</code> و<code>text</code> و<code>anchor</code> و<code>with</code> و<code>withAnchor</code> و<code>withSymbol</code> و<code>count</code> و<code>locale</code>). ويذكر التحذير التسمية اللاحقة بترتيب الكتابة.</td>
       <td>تُرسم التسميتان حيث هما.</td>
     </tr>
     <tr>
@@ -176,7 +176,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownMarkStyle</code></td>
-      <td>لا يسمّي <code>:mark[…]{'{'}style{'}'}</code> أي نمط تظليل.</td>
+      <td>لا يذكر <code>:mark[…]{'{'}style{'}'}</code> أي نمط تظليل.</td>
       <td>تأخذ العلامة نمط التظليل الأول.</td>
     </tr>
     <tr>
@@ -226,73 +226,73 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>فقرة يفتتحها <a href="/ar/docs/configuration-text#الحروف-الاستهلالية">حرف استهلالي</a> ولا تستطيع أخذه كما ضُبط. <code>reason</code>: <code>'shortParagraph'</code> (أسطرها أقل مما ينزله الحرف الاستهلالي؛ و<code>handling</code> هو ما فعله <code>shortParagraph</code>، و<code>lines</code> عدد الأسطر التي يمتد عليها الحرف المصغَّر)، أو <code>'split'</code> (تنكسر قبل آخر سطر يجاور الحرف الاستهلالي، وهي وحدها في عمود أقصر من أن يسعه)، أو <code>'joiningScript'</code> (حرفها الأول يتصل بما بعده)، أو <code>'verticalText'</code>، أو <code>'noLetter'</code> (تُفتتح بإحالة أو صيغة أو علامة حاشية). و<code>text</code> هو سطرها الأول. <code>'inBox'</code>: تطلب مجموعة <code>:::paragraphs</code> أو نمط فقرة حرفًا استهلاليًا داخل صندوق <code>:::callout</code>، حيث لا يُصفّ أي حرف استهلالي.</td>
+      <td>فقرة يفتتحها <a href="/ar/docs/configuration-text#الحروف-الاستهلالية">حرف استهلالي</a> ولا تستطيع أخذه كما ضُبط. <code>reason</code>: <code>'shortParagraph'</code> (أسطرها أقل مما ينزله الحرف الاستهلالي؛ و<code>handling</code> هو ما فعله <code>shortParagraph</code>، و<code>lines</code> عدد الأسطر التي يمتد عليها الحرف المصغَّر)، أو <code>'split'</code> (تنقطع قبل آخر سطر يجاور الحرف الاستهلالي، وهي وحدها في عمود أقصر من أن يسعه)، أو <code>'joiningScript'</code> (حرفها الأول يتصل بما بعده)، أو <code>'verticalText'</code>، أو <code>'noLetter'</code> (تُفتتح بإحالة أو صيغة أو علامة حاشية). و<code>text</code> هو سطرها الأول. <code>'inBox'</code>: تطلب مجموعة <code>:::paragraphs</code> أو نمط فقرة حرفًا استهلاليًا داخل إطار <code>:::callout</code>، ولا يُنضَّد فيه أي حرف استهلالي.</td>
       <td>يُحفظ المكان، أو يُصغَّر الحرف الاستهلالي، أو يُترك، كما يقول التحذير.</td>
     </tr>
     <tr>
       <td><code>codeOverflow</code></td>
-      <td>في <a href="/ar/docs/configuration-styles#قوائم-الشيفرة">قائمة شيفرة</a> أسطر أعرض من إطارها. <code>mode</code> هو ما فعله <code>codeStyle.overflow</code> (<code>'wrap'</code> أو <code>'shrink'</code> أو <code>'clip'</code>)، و<code>lines</code> عدد أسطر المصدر التي زاد عرضها، و<code>scale</code> الحجم الذي نُضّدت به القائمة المصغَّرة (نسبةً من <code>fontSize</code>)، و<code>lang</code> لغة السور. يشير إلى القائمة.</td>
-      <td>تُكسر الأسطر، أو تُنضَّد أصغر، أو تُقطع، كما يقول <code>mode</code>.</td>
+      <td>في <a href="/ar/docs/configuration-styles#قوائم-الشيفرة">قائمة شيفرة</a> أسطر أعرض من إطارها. <code>mode</code> هو ما فعله <code>codeStyle.overflow</code> (<code>'wrap'</code> أو <code>'shrink'</code> أو <code>'clip'</code>)، و<code>lines</code> عدد أسطر المصدر التي زاد عرضها، و<code>scale</code> الحجم الذي نُضّدت به القائمة المصغَّرة (نسبةً من <code>fontSize</code>)، و<code>lang</code> لغة كتلة الشيفرة. يشير إلى القائمة.</td>
+      <td>تُقسَّم الأسطر، أو تُنضَّد أصغر، أو تُقطع، كما يقول <code>mode</code>.</td>
     </tr>
     <tr>
       <td><code>floatShrunk</code></td>
-      <td>صُفّت صورة عائمة أصغر من حجمها لتتسع في حيّز موضعها (<code>placement.shrink</code>). <code>resourceId</code> يسمّيها، و<code>scale</code> نسبة عرضها التي تحتفظ بها، و<code>overflowPx</code>، إن وُجد، مقدار ما لا تزال تتجاوز به أسفل مساحة النص بأصغر مقياس لها (<code>placement.minScale</code>)، في صفحة جديدة لم يكن لها مكان آخر تذهب إليه. يشير إلى الفقرة التي تحيل إليها أولًا.</td>
+      <td>نُضِّدت صورة عائمة أصغر من حجمها لتتسع في حيّز موضعها (<code>placement.shrink</code>). <code>resourceId</code> يحدّدها، و<code>scale</code> نسبة عرضها التي تحتفظ بها، و<code>overflowPx</code>، إن وُجد، مقدار ما لا تزال تتجاوز به أسفل مساحة النص بأصغر مقياس لها (<code>placement.minScale</code>)، في صفحة جديدة لم يكن لها مكان آخر تذهب إليه. يشير إلى الفقرة التي تحيل إليها أولًا.</td>
       <td>تُطبع الصورة بذلك المقياس؛ وتتجاوز مساحة النص فقط حين يقول ذلك <code>overflowPx</code>.</td>
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>صورة نقطية لها مقاس طباعة (دقّتها <code>bitmap.resolution</code>، أو رقم في <code>layout.bitmapResolution</code>؛ لا دقّة مقروءة من الملف) منضّدة في عمود يُبقيها دون نصف ذلك المقاس، في صفحة كتلة نصها أعرض من العمود. يسمّيها <code>resourceId</code>، و<code>scale</code> هي النسبة التي تبقى من عرض طباعتها، و<code>printWidthPx</code> و<code>widthPx</code> و<code>pageWidthPx</code> عروض الطباعة والعمود وكتلة النص. لا يُبلَّغ عن صورة ضيّقها <code>placement.width</code> أو صُغّرت لتسع موضعها أو أُديرت أو وُضعت في خانة صفحة مركّبة. يشير إلى الفقرة التي تذكرها أولًا. منذ postext 1.37.</td>
+      <td>صورة نقطية لها مقاس طباعة (دقّتها <code>bitmap.resolution</code>، أو رقم في <code>layout.bitmapResolution</code>؛ لا دقّة مقروءة من الملف) منضّدة في عمود يُبقيها دون نصف ذلك المقاس، في صفحة كتلة نصها أعرض من العمود. يحدّدها <code>resourceId</code>، و<code>scale</code> هي النسبة التي تبقى من عرض طباعتها، و<code>printWidthPx</code> و<code>widthPx</code> و<code>pageWidthPx</code> عروض الطباعة والعمود وكتلة النص. لا يصدر هذا التحذير عن صورة ضيّقها <code>placement.width</code> أو صُغّرت لتسع موضعها أو أُديرت أو وُضعت في خانة صفحة مركّبة. يشير إلى الفقرة التي تذكرها أولًا. منذ postext 1.37.</td>
       <td>تُطبع الصورة بعرض عمودها. الصورة في المتن لا تكون أعرض من عمودها أبدًا، وللصفحة الافتراضية عمودان (<code>layout.layoutType: 'double'</code>): نضّد الصفحة في عمود واحد، أو اجعل الصورة تطفو على عرض الصفحة (<code>placement.span: 'page'</code>)، أو ارفع دقّتها إن كان هذا المقاس هو المراد.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>مورد أو صندوق ضُبط ليلتف النص حوله (<code>placement.wrap</code>، و<code>wrap</code> الصندوق) لم يُصفّ كما طُلب. <code>reason</code>: <code>'tooNarrow'</code> (سيكون النص المجاور أضيق من <code>layout.wrap.minTextWidth</code>)، أو <code>'fewLines'</code> (أقصر من <code>layout.wrap.minLinesBeside</code> سطرًا)، أو <code>'moved'</code> (عنصر داخل النص أطول من المساحة المتبقية في عموده انتقل إلى العمود التالي مع مرساته)، أو <code>'verticalText'</code>، أو <code>'noContour'</code> (التفاف حول محيط صورة لا يُعرف شكلها: SVG بلا <code>contour.points</code>، أو صورة نقطية بلا شفافية، أو قناة ألفا لم يتتبّعها المضيف). <code>resourceId</code> يسمّي المورد، و<code>box</code> نمط الصندوق. يشير إلى الإدراج أو الصندوق.</td>
+      <td>مورد أو إطار ضُبط ليلتف النص حوله (<code>placement.wrap</code>، و<code>wrap</code> في الإطار) لم يُنضَّد كما طُلب. <code>reason</code>: <code>'tooNarrow'</code> (سيكون النص المجاور أضيق من <code>layout.wrap.minTextWidth</code>)، أو <code>'fewLines'</code> (أقصر من <code>layout.wrap.minLinesBeside</code> سطرًا)، أو <code>'moved'</code> (عنصر داخل النص أطول من المساحة المتبقية في عموده انتقل إلى العمود التالي مع مرساته)، أو <code>'verticalText'</code>، أو <code>'noContour'</code> (التفاف حول محيط صورة لا يُعرف شكلها: SVG بلا <code>contour.points</code>، أو صورة نقطية بلا شفافية، أو قناة ألفا لم يتتبّعها المضيف). <code>resourceId</code> يحدّد المورد، و<code>box</code> نمط الصندوق. يشير إلى موضع المورد أو الإطار.</td>
       <td>يأخذ العنصر الشريط كله، أو يوضع في العمود التالي، كما يقول السبب؛ ومع <code>'noContour'</code> يلتف النص حول إطار الصورة. أعطِ الصورة مضلّعًا، أو استعمل PNG فيه شفافية، أو اقرأها عبر <code>readBundle</code> أو Sandbox، فكلاهما يتتبّع شكلها.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
-      <td>الأعمدة الفرعية لمجموعة <code>:::columns</code> أضيق من ستة em من نصها: عددها <code>columns</code>، وعرض كل منها <code>widthPx</code>. يشير إلى سياج المجموعة.</td>
+      <td>الأعمدة الفرعية لمجموعة <code>:::columns</code> أضيق من ست وحدات em من نصها: عددها <code>columns</code>، وعرض كل منها <code>widthPx</code>. يشير إلى سطر فتح المجموعة.</td>
       <td>تُنضَّد المجموعة كما طُلب، بكلمات قليلة في السطر.</td>
     </tr>
     <tr>
       <td><code>afterText</code></td>
-      <td>صندوق <code>span: 'side'</code>، أو شكل أو جدول في العمود الجانبي (<code>resourceId</code>)، وُضع في صفحة لا نص فيها: انتهى نص فصله، أو نص المستند، وهو ما زال ينتظر مكانًا في العمود الجانبي. تنبيه لكل صندوق أو عنصر عائم؛ يشير إلى الصندوق (أو إلى الكتلة التي تحيل إلى العنصر العائم)، مع صفحته. منذ postext 1.25.</td>
-      <td>يقف في العمود الجانبي لصفحة فُتحت بعد النص، والصناديق بترتيب أسيجتها.</td>
+      <td>إطار <code>span: 'side'</code>، أو شكل أو جدول في العمود الجانبي (<code>resourceId</code>)، وُضع في صفحة لا نص فيها: انتهى نص فصله، أو نص المستند، وهو ما زال ينتظر مكانًا في العمود الجانبي. تحذير لكل إطار أو عنصر عائم؛ يشير إلى الإطار (أو إلى الكتلة التي تحيل إلى العنصر العائم)، مع صفحته. منذ postext 1.25.</td>
+      <td>يقف في العمود الجانبي لصفحة فُتحت بعد النص، والإطارات بترتيب ورودها في النص.</td>
     </tr>
     <tr>
       <td><code>unplaced</code></td>
-      <td>صندوق أو مورد عائم (<code>resourceId</code>) كان ما زال ينتظر موضعًا حين انتهى التنضيد: الصفحات التي فُتحت له لم تتسع له (صندوق جانبي وتلك الصفحات بلا عمود جانبي مثلًا). يشير إلى الصندوق أو إلى الكتلة التي تحيل إلى المورد؛ بلا صفحة. منذ postext 1.25.</td>
-      <td>ليس في أي صفحة. حتى postext 1.24 كان يسقط بلا تنبيه.</td>
+      <td>إطار أو مورد عائم (<code>resourceId</code>) كان ما زال ينتظر موضعًا حين انتهى التنضيد: الصفحات التي فُتحت له لم تتسع له (إطار جانبي وتلك الصفحات بلا عمود جانبي مثلًا). يشير إلى الإطار أو إلى الكتلة التي تحيل إلى المورد؛ بلا صفحة. منذ postext 1.25.</td>
+      <td>ليس في أي صفحة. حتى postext 1.24 كان يسقط بلا تحذير.</td>
     </tr>
     <tr>
       <td><code>shortListSplit</code></td>
-      <td>قائمة عدد بنودها <code>items</code>، قصيرة بحسب <code>bodyText.shortListMaxItems</code>، مقسومة بين عمودين أو صفحتين. مع <code>bodyText.shortListSplit: 'warn'</code> يُبلَّغ عن كل قائمة كهذه؛ ومع <code>'avoid'</code>، عن القائمة التي لم يتسع لها أي عمود كاملةً فقط. تنبيه لكل قائمة؛ يشير إلى القائمة، مع صفحة بندها الأول. منذ postext 1.28.</td>
+      <td>قائمة عدد بنودها <code>items</code>، قصيرة بحسب <code>bodyText.shortListMaxItems</code>، مقسومة بين عمودين أو صفحتين. مع <code>bodyText.shortListSplit: 'warn'</code> يصدر تحذير عن كل قائمة كهذه؛ ومع <code>'avoid'</code>، عن القائمة التي لم يتسع لها أي عمود كاملةً فقط. تحذير لكل قائمة؛ يشير إلى القائمة، مع صفحة بندها الأول. منذ postext 1.28.</td>
       <td>تُقسم القائمة حيث ينتهي العمود.</td>
     </tr>
     <tr>
       <td><code>tocGroupSplit</code></td>
-      <td>مجموعة من المحتويات يُطلب إبقاؤها معًا (<code>toc.groups.keepTogether</code>، <code>:::toc{'{keep="…"}'}</code>)، يتصدّرها <code>title</code>، ومنضّدة في <code>columns</code> من الأعمدة: إما أنها أطول من عمود كامل، وإما أن العمود الذي تبدأ فيه قصير (تحت إطار يمتد بعرض الصفحة، أو بجوار عنصر عائم). تنبيه لكل مجموعة؛ يشير إلى التوجيه <code>:::toc</code>، مع الصفحة التي تبدأ فيها المجموعة. ولإزالته، أدرِج مستويات أقل (<code>levels="1"</code>)، أو اجعل رأس المجموعات مستوى أدنى (<code>toc.groups.head: 2</code>)، أو صغّر المداخل أو ضيّق تباعدها. منذ postext 1.34.</td>
+      <td>مجموعة من المحتويات يُطلب إبقاؤها معًا (<code>toc.groups.keepTogether</code>، <code>:::toc{'{keep="…"}'}</code>)، يتصدّرها <code>title</code>، ومنضّدة في <code>columns</code> من الأعمدة: إما أنها أطول من عمود كامل، وإما أن العمود الذي تبدأ فيه قصير (تحت إطار يمتد بعرض الصفحة، أو بجوار عنصر عائم). تحذير لكل مجموعة؛ يشير إلى التوجيه <code>:::toc</code>، مع الصفحة التي تبدأ فيها المجموعة. ولإزالته، أدرِج مستويات أقل (<code>levels="1"</code>)، أو اجعل رأس المجموعات مستوى أدنى (<code>toc.groups.head: 2</code>)، أو صغّر المداخل أو ضيّق تباعدها. منذ postext 1.34.</td>
       <td>تُقسم المجموعة؛ ومع <code>toc.groups.continuation</code> يُفتتح كل عمود تستمر فيه بصف رأسها وعلامة الاستمرار.</td>
     </tr>
     <tr>
       <td><code>openerFloat</code></td>
-      <td>عنصر عائم وُضع في صفحة افتتاح مع <code>layout.openerFloats: 'warn'</code>: شكل أو جدول أو شريط قصص مصورة (<code>resourceId</code>)، أو صندوق عائم. تنبيه لكل عنصر عائم؛ يشير إلى الكتلة التي تحيل إليه (أو إلى الصندوق)، مع صفحته. منذ postext 1.28.</td>
+      <td>عنصر عائم وُضع في صفحة افتتاح مع <code>layout.openerFloats: 'warn'</code>: شكل أو جدول أو شريط قصص مصورة (<code>resourceId</code>)، أو إطار عائم. تحذير لكل عنصر عائم؛ يشير إلى الكتلة التي تحيل إليه (أو إلى الإطار)، مع صفحته. منذ postext 1.28.</td>
       <td>يقف العنصر العائم في صفحة الافتتاح؛ و<code>'avoid'</code> تنقله إلى أول موضع بعدها.</td>
     </tr>
     <tr>
       <td><code>headingClaimsColumn</code></td>
-      <td>عنوان داخل العمود (<code>span: 'column'</code>) يحجز تصميمه العمود كله، فيبدأ النص الذي يليه في العمود التالي أو الصفحة التالية (<code>level</code> و<code>element</code>: عنصر التصميم الأبعد نزولًا، ويغيب حين يحدد <code>minHeight</code> الارتفاع). تنبيه واحد لكل عنوان، يشير إلى العنوان مع صفحته. لا يُنبَّه إلى افتتاحية الصفحة الكاملة ولا إلى عنوان في صفحة ذات عمود واحد ولا إلى عنوان يتبعه فاصل صريح. منذ postext 1.43.</td>
+      <td>عنوان داخل العمود (<code>span: 'column'</code>) يحجز تصميمه العمود كله، فيبدأ النص الذي يليه في العمود التالي أو الصفحة التالية (<code>level</code> و<code>element</code>: عنصر التصميم الأبعد نزولًا، ويغيب حين يحدد <code>minHeight</code> الارتفاع). تحذير واحد لكل عنوان، يشير إلى العنوان مع صفحته. لا يصدر عن افتتاحية الصفحة الكاملة ولا عن عنوان في صفحة ذات عمود واحد ولا عن عنوان يتبعه فاصل صريح. منذ postext 1.43.</td>
       <td>يبدأ النص بعد العنوان في العمود التالي أو الصفحة التالية. يزيله ضبط <code>reserve: false</code> على العنصر أو خفض <code>minHeight</code> أو <code>span: 'page'</code>.</td>
     </tr>
     <tr>
       <td><code>fontFallback</code></td>
-      <td>وجهٌ نُضّد به النص (<code>family</code>، <code>weight</code>، <code>style</code>) ولم تستطع مجموعة الخطوط توفيره حين جرى البناء: <code>reason: 'missing'</code>، لم يكن أي وجه من العائلة محمَّلًا ولا مثبّتًا، أو لم يكن الوجه الموافق لهذا الوزن والميل قد اكتمل تحميله؛ و<code>'synthesized'</code>، ليس في العائلة وجه بهذا الوزن أو الميل فيأخذه المتصفح من وجه آخر فيها، كما هو أو مغلَّظًا أو مُمالًا (وزن 600 يُنضَّد بوجه 700، أو وزن 700 مائل يُطلب من عائلة ليس فيها إلا 400 عادي). يُفحص حيث توجد مجموعة خطوط (<code>document.fonts</code>، أو <code>self.fonts</code> في عامل، أو <code>BuildDocumentOptions.fontSet</code>)، ويخضع لـ<code>debug.warnings.missingFont</code>. بلا صفحة ولا نطاق في المصدر.</td>
-      <td>يُقاس النص ويُرسم بالخط البديل، أو بوجه آخر من العائلة، كما هو أو مغلَّظًا أو مُمالًا؛ وتتغيّر مواضع تقسيم أسطره حين يصل الوجه. انظر <a href="#تحميل-الخطوط-قبل-الإخراج">تحميل الخطوط قبل الإخراج</a>.</td>
+      <td>شكل خط نُضّد به النص (<code>family</code>، <code>weight</code>، <code>style</code>) ولم تستطع مجموعة الخطوط توفيره حين جرى البناء: <code>reason: 'missing'</code>، لم يكن أي شكل من العائلة محمَّلًا ولا مثبّتًا، أو لم يكن الشكل الموافق لهذا الوزن والميل قد اكتمل تحميله؛ و<code>'synthesized'</code>، ليس في العائلة شكل بهذا الوزن أو الميل فيأخذه المتصفح من شكل آخر فيها، كما هو أو مغلَّظًا أو مُمالًا (وزن 600 يُنضَّد بشكل 700، أو وزن 700 مائل يُطلب من عائلة ليس فيها إلا 400 عادي). يُفحص حيث توجد مجموعة خطوط (<code>document.fonts</code>، أو <code>self.fonts</code> في عامل، أو <code>BuildDocumentOptions.fontSet</code>)، ويخضع لـ<code>debug.warnings.missingFont</code>. بلا صفحة ولا نطاق في المصدر.</td>
+      <td>يُقاس النص ويُرسم بالخط البديل، أو بشكل آخر من العائلة، كما هو أو مغلَّظًا أو مُمالًا؛ وتتغيّر مواضع تقسيم أسطره حين يصل الشكل. انظر <a href="#تحميل-الخطوط-قبل-الإخراج">تحميل الخطوط قبل الإخراج</a>.</td>
     </tr>
   </tbody>
 </table>
 
-التحذيرات المتعلقة بمورد ما، سواء نمط جدوله أو شبكته أو مرجع داخل تعليقه أو ملاحظته أو خلاياه، تشير إلى أول تضمين لذلك المورد أو أول مرجع إليه في النص، ويُدرج كل منها مرة واحدة لكل مورد. ولا تُفحص إلا الموارد التي يستخدمها المستند: ففصل من كتاب يُبلّغ عن الجداول التي يستشهد بها، لا عن كل جدول في الكتاب.
+التحذيرات المتعلقة بمورد ما، سواء نمط جدوله أو شبكته أو مرجع داخل تعليقه أو ملاحظته أو خلاياه، تشير إلى أول تضمين لذلك المورد أو أول مرجع إليه في النص، ويُسجَّل كل منها مرة واحدة لكل مورد. ولا تُفحص إلا الموارد التي يستخدمها المستند: ففصل من كتاب يُصدر تحذيرات عن الجداول التي يستشهد بها، لا عن كل جدول في الكتاب.
 
 ```ts
 import { buildDocument, formatWarning } from 'postext';
@@ -306,9 +306,9 @@ for (const w of [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(do
 const missing = (doc.contentWarnings ?? []).flatMap((w) => (w.kind === 'unknownResourceId' ? [w.resourceId] : []));
 ```
 
-تُعيد `formatWarning(w)` وصفًا بالإنجليزية في سطر واحد. أما المضيف الذي يترجم رسائله فيتفرّع بحسب `kind` بدلًا من ذلك، ويحتفظ بفرع افتراضي، لأن الإصدارات الفرعية قد تضيف أنواعًا. وتُعيد `collectContentWarnings(markdown, config, resources)` تحذيرات المحتوى دون إخراج أي شيء (القائمة التي يضيفها البناء، دون `pageIndex`)، لمحرّر يفحص النص أثناء الكتابة. وتفحص `collectHeadingDesignCuts(doc)` إخراجًا مكتملًا بحثًا عن تصاميم عناوين يتجاوز نصها أسفل صفحتها أو عمودها (`kind: 'headingDesignCut'`؛ انظر [الارتفاع المحجوز](/ar/docs/configuration-headings#الارتفاع-المحجوز))، وهو ما لا يُبلّغ عنه الإخراج نفسه، وتصف `formatWarning` نتائجها كذلك. وتعرضها لوحة **الفحوص** في Sandbox جميعًا.
+تُعيد `formatWarning(w)` وصفًا بالإنجليزية في سطر واحد. أما المضيف الذي يترجم رسائله فيتفرّع بحسب `kind` بدلًا من ذلك، ويحتفظ بفرع افتراضي، لأن الإصدارات الفرعية قد تضيف أنواعًا. وتُعيد `collectContentWarnings(markdown, config, resources)` تحذيرات المحتوى دون إخراج أي شيء (القائمة التي يضيفها البناء، دون `pageIndex`)، لمحرّر يفحص النص أثناء الكتابة. وتفحص `collectHeadingDesignCuts(doc)` إخراجًا مكتملًا بحثًا عن تصاميم عناوين يتجاوز نصها أسفل صفحتها أو عمودها (`kind: 'headingDesignCut'`؛ انظر [الارتفاع المحجوز](/ar/docs/configuration-headings#الارتفاع-المحجوز))، وهو ما لا يُصدر عنه الإخراج نفسه تحذيرًا، وتصف `formatWarning` نتائجها كذلك. وتعرضها لوحة **الفحوص** في Sandbox جميعًا.
 
-تُبلّغ المُخرِجات (renderers) عمّا لا تستطيع رسمه كما طُلب منها عبر خيار `onWarning`: `renderPageToCanvas` و`renderPage` و`renderToCanvas` (`RenderPageOptions`)، و`renderToHtml` و`renderToHtmlIndexed` (`RenderHtmlOptions`)، و`renderToPdf` (`RenderToPdfOptions`، وعبر عامل PDF أيضًا). النوع الرئيسي من تحذيرات العرض هو `missingImage`: الصورة التي لا يوجد ما يُرسم لها، سواء أكانت شكلًا أم صورة في خلية جدول أم أيقونة إطار أم صورة تصميم، تُرسم عنصرًا نائبًا محايدًا ويُبلَّغ عنها مرة واحدة لكل `fileId` ولكل استدعاء عرض، ومعها `pageIndex`، و`resourceId` حين يعرفه الراسم (للأشكال وصور الخلايا)، و`documentIndex` في PDF عند عرض عدة مستندات. ويعني «لا يوجد ما يُرسم» غياب `registerResourceImage` للمعرّف `fileId` في Canvas، وغياب عنوان URL من `resourceImageUrl` في HTML، وغياب البايتات من `resourceBytes` في PDF، أو وجود بايتات يتعذّر فكّ ترميزها. أما المورد النقطي أو SVG الذي لا يذكر أي `fileId` فليس لديه ما يطلبه: فيُرسم عنصرًا نائبًا دون تبليغ. ويأتي نوعان آخران من المضيفات التي تضمّن الخطوط في صور SVG (`registerSvgImage` و`registerBundleImages` و`bundleImageUrl` و`renderToHtml` مع `inlineSvgFonts` وpostext-epub؛ انظر [الخطوط في نصوص SVG](/ar/docs/configuration-resources#الخطوط-في-نصوص-svg))، ومعهما `fileId` الصورة و`resourceId`: النوع `svgFontUnavailable` (`family` و`weight` و`style`)، عائلة يسمّيها نصها ولا وجه لها يُضمَّن، فتنضّد الصورة ذلك النص بخط بديل؛ والنوع `svgFontsTooLarge` (`bytes` و`maxBytes`)، أوجه تتجاوز حد الحجم، فلا يُضمَّن منها شيء. ولا تُخزَّن تحذيرات العرض في VDT، لأن ما يستطيع المضيف توفيره يتغيّر بعد الإخراج.
+تُصدر المُخرِجات (renderers) تحذيرات عمّا لا تستطيع رسمه كما طُلب منها عبر خيار `onWarning`: `renderPageToCanvas` و`renderPage` و`renderToCanvas` (`RenderPageOptions`)، و`renderToHtml` و`renderToHtmlIndexed` (`RenderHtmlOptions`)، و`renderToPdf` (`RenderToPdfOptions`، وعبر عامل PDF أيضًا). النوع الرئيسي من تحذيرات العرض هو `missingImage`: الصورة التي لا يوجد ما يُرسم لها، سواء أكانت شكلًا أم صورة في خلية جدول أم أيقونة إطار أم صورة تصميم، تُرسم عنصرًا نائبًا محايدًا ويصدر عنها تحذير مرة واحدة لكل `fileId` ولكل استدعاء عرض، ومعها `pageIndex`، و`resourceId` حين يعرفه المُخرِج (للأشكال وصور الخلايا)، و`documentIndex` في PDF عند عرض عدة مستندات. ويعني «لا يوجد ما يُرسم» غياب `registerResourceImage` للمعرّف `fileId` في Canvas، وغياب عنوان URL من `resourceImageUrl` في HTML، وغياب البايتات من `resourceBytes` في PDF، أو وجود بايتات يتعذّر فكّ ترميزها. أما المورد النقطي أو SVG الذي لا يذكر أي `fileId` فليس لديه ما يطلبه: فيُرسم عنصرًا نائبًا دون تحذير. ويأتي نوعان آخران من المضيفات التي تضمّن الخطوط في صور SVG (`registerSvgImage` و`registerBundleImages` و`bundleImageUrl` و`renderToHtml` مع `inlineSvgFonts` وpostext-epub؛ انظر [الخطوط في نصوص SVG](/ar/docs/configuration-resources#الخطوط-في-نصوص-svg))، ومعهما `fileId` الصورة و`resourceId`: النوع `svgFontUnavailable` (`family` و`weight` و`style`)، عائلة يذكرها نصها ولا شكل لها يمكن تضمينه، فتنضّد الصورة ذلك النص بخط بديل؛ والنوع `svgFontsTooLarge` (`bytes` و`maxBytes`)، أشكال خطوط تتجاوز حد الحجم، فلا يُضمَّن منها شيء. ولا تُخزَّن تحذيرات العرض في VDT، لأن ما يستطيع المضيف توفيره يتغيّر بعد الإخراج.
 
 ```ts
 import { buildDocument, renderPage, type RenderWarning, type Resource } from 'postext';
@@ -358,7 +358,7 @@ const ctx = canvas.getContext('2d')!;
 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 ```
 
-إذا كنت تفضّل الرسم في لوحة تملكها مسبقًا (مثلًا لوحة مُلحقة بـ DOM ضمن تخطيط معيّن)، فاستخدم `renderPageToCanvas(page, doc, canvas)`، فهي تغيّر مقاس اللوحة التي تمرّرها وترسم فيها، بدلًا من إنشاء لوحة جديدة.
+إذا كنت تفضّل الرسم في Canvas تملكه مسبقًا (مثلًا عنصر Canvas مُلحق بـDOM ضمن تخطيط معيّن)، فاستخدم `renderPageToCanvas(page, doc, canvas)`، فهي تغيّر مقاس Canvas الذي تمرّره وترسم فيه، بدلًا من إنشاء Canvas جديد.
 
 لرسم كل الصفحات، كرّر على `vdt.pages`:
 
@@ -368,9 +368,9 @@ const bitmaps = vdt.pages.map((page) => renderPage(page, vdt));
 
 #### مثال حيّ: صفحة في صورة
 
-كل ما سبق يعمل في المتصفح. يستورد المثال على CodePen أحدث إصدار من `postext` من شبكة توصيل المحتوى (CDN)، وينتظر خطوط الويب، ويُخرج مستندًا قصيرًا من عمودين، ويرسم صفحته الأولى في لوحة، ويتيح تلك الصورة النقطية بصيغة PNG. اضغط *شغّل على CodePen* لتحميل المحرّر وتغيير نص markdown أو الإعدادات؛ وتُعاد الصفحة رسمها مع كل تعديل.
+كل ما سبق يعمل في المتصفح. يستورد المثال على CodePen أحدث إصدار من `postext` من شبكة توصيل المحتوى (CDN)، وينتظر خطوط الويب، ويُخرج مستندًا قصيرًا من عمودين، ويرسم صفحته الأولى في Canvas، ويتيح تلك الصورة النقطية بصيغة PNG. اضغط *شغّل على CodePen* لتحميل المحرّر وتغيير نص Markdown أو الإعدادات؛ وتُعاد الصفحة رسمها مع كل تعديل.
 
-<CodePenExample name="render-page" title="Postext · رسم صفحة في صورة" description="أخرِج مستند markdown باستخدام postext وحوّل صفحته الأولى إلى صورة نقطية في لوحة Canvas أو ملف PNG." height={600} />
+<CodePenExample name="render-page" title="Postext · تحويل صفحة إلى صورة" description="أخرِج مستند Markdown باستخدام postext وحوّل صفحته الأولى إلى صورة نقطية على عنصر canvas أو في ملف PNG." height={600} />
 
 ### React
 
@@ -390,7 +390,7 @@ export function ArticlePage() {
 ```
 
 - **على الخيط الرئيسي، مرة واحدة.** تُرسم الصفحات بدقة المستند وتُحجَّم إلى عرض الحاوية. يُثبَّت `content` و`config` عند استدعاء `createLayout`؛ فأنشئ مكوّنًا آخر لعرض شيء مختلف. وللمعاينة الحيّة، ابنِ في [Web Worker](#تشغيل-الإخراج-في-web-worker) وارسم باستخدام `renderPageToCanvas`، كما في مثال React هناك.
-- **الخطوط والصور أولًا.** حمّل خطوط الويب الخاصة بالمستند قبل تركيب المكوّن، وسجّل صوره باستخدام `registerResourceImage`. وحين يحوي نص markdown الرمز `$`، يشغّل المكوّن [محرّك الرياضيات](/ar/docs/configuration-lists-math#تشغيل-محرّك-الرياضيات) بنفسه.
+- **الخطوط والصور أولًا.** حمّل خطوط الويب الخاصة بالمستند قبل تركيب المكوّن، وسجّل صوره باستخدام `registerResourceImage`. وحين يحوي نص Markdown الرمز `$`، يشغّل المكوّن [محرّك الرياضيات](/ar/docs/configuration-lists-math#تشغيل-محرّك-الرياضيات) بنفسه.
 - **يبقى React خارج نقطة الدخول الرئيسية.** لا يستورد `postext` مكتبة React أبدًا؛ وحده `postext/react` يفعل. ولا تزال `createLayout` مُصدَّرة من `postext` كي تستمر الشيفرة الحالية في العمل، لكنها مُهمَلة (deprecated): فهي تحمّل `postext/react` عند استدعائها، ويُعلَّق المكوّن (suspend) حتى يصل (ثم يعيد React عرضه من تلقاء نفسه). استوردها من `postext/react`.
 - **المكوّن المُهمَل يُعلَّق.** إلى أن يصل `postext/react`، تحتاج `createLayout` المستوردة من `postext` إلى جذر متزامن (`createRoot`) أو حدّ `<Suspense>` فوقها. وفي جذر `ReactDOM.render` القديم، أو في `renderToString`، دون حدّ، يُبلّغ React عن خطأ بدلًا من ذلك. ويبقى `react` تبعية نظيرة (peer dependency) إلزامية، كي تستطيع أدوات التجميع حلّ ذلك الاستيراد الكسول.
 
@@ -411,7 +411,7 @@ const fullBody = resolveBodyTextConfig({ fontFamily: 'Inter' });
 
 دوال الاستكمال المتاحة، واحدة لكل قسم من المستوى الأعلى: `resolvePageConfig`، `resolveLayoutConfig`، `resolveBodyTextConfig`، `resolveHeadingsConfig`، `resolveHeadingStylesConfig`، `resolveTocConfig`، `resolvePartsConfig`، `resolveUnorderedListsConfig`، `resolveOrderedListsConfig`، `resolveMathConfig`، `resolveTableStyleConfig`، `resolveCaptionStyleConfig`، `resolveDiagramStyleConfig`، `resolveParagraphStylesConfig`، `resolveCalloutStylesConfig`، `resolveHeaderFooterConfig`، `resolveDebugConfig`، `resolveHtmlViewerConfig`، `resolvePdfGenerationConfig`، إضافة إلى `resolveDesignSlot` لخانة تصميم واحدة. أما لوحات الألوان فتُطبَّق على حدة عبر `applyPaletteToConfig(config)` و`applyPaletteToResolvedConfig(resolved, palette)` و`resolveColorValue(value, palette, fallback)`؛ انظر [لوحة الألوان](/ar/docs/configuration-fonts-colors-viewers#لوحة-الألوان).
 
-دوال الاستكمال التي تتسلسل قيمها الافتراضية من قسم آخر تأخذ ذلك القسم، مستكمَلًا، معاملًا إضافيًا. فتأخذ `resolveUnorderedListsConfig` و`resolveOrderedListsConfig` النص الأساسي المستكمَل، لأن القيم الافتراضية للقوائم في `fontFamily` و`color` تتسلسل منه؛ وتأخذ `resolveCalloutStylesConfig` النص الأساسي والعناوين والقوائم غير المرقّمة مستكمَلة (انظر المثال في [أنماط الإطارات](/ar/docs/configuration-callouts#أنماط-الإطارات))، وتأخذ `resolveHeadingStylesConfig` الصفحة والنص الأساسي وقسمَي القوائم مستكمَلة. راجع تصريحات الأنواع في الحزمة لمعرفة التوقيع الدقيق لكل منها:
+دوال الاستكمال التي تتسلسل قيمها الافتراضية من قسم آخر تأخذ ذلك القسم، مستكمَلًا، معاملًا إضافيًا. فتأخذ `resolveUnorderedListsConfig` و`resolveOrderedListsConfig` نص المتن المستكمَل، لأن القيم الافتراضية للقوائم في `fontFamily` و`color` تتسلسل منه؛ وتأخذ `resolveCalloutStylesConfig` نص المتن والعناوين والقوائم غير المرقّمة مستكمَلة (انظر المثال في [أنماط الإطارات](/ar/docs/configuration-callouts#أنماط-الإطارات))، وتأخذ `resolveHeadingStylesConfig` الصفحة ونص المتن وقسمَي القوائم مستكمَلة. راجع تصريحات الأنواع في الحزمة لمعرفة التوقيع الدقيق لكل منها:
 
 ```ts
 import { resolveBodyTextConfig, resolveUnorderedListsConfig } from 'postext';
@@ -436,13 +436,13 @@ const minimal = stripConfigDefaults(fullConfig);
 
 تتوفر أيضًا دوال حذف (strippers) منفردة، واحدة لكل دالة استكمال: `stripPageDefaults`، `stripLayoutDefaults`، `stripBodyTextDefaults`، `stripHeadingsDefaults`، `stripHeadingStylesDefaults`، `stripTocDefaults`، `stripPartsDefaults`، `stripUnorderedListsDefaults`، `stripOrderedListsDefaults`، `stripMathDefaults`، `stripTableStyleDefaults`، `stripCaptionStyleDefaults`، `stripDiagramStyleDefaults`، `stripParagraphStylesDefaults`، `stripCalloutStylesDefaults`، `stripHeaderFooterDefaults`، `stripDesignSlotDefaults`، `stripDebugDefaults`، `stripHtmlViewerDefaults`، `stripPdfGenerationDefaults`.
 
-بعض القيم الافتراضية تتوقف على بقية الإعدادات: موازنة الأعمدة معطّلة في شبكة المحارف وفي النص العمودي، و`bodyText.avoidWidows` معطّلة في شبكة المحارف (وكذلك `bodyText.avoidOrphans` في المنطقة `japan`)، والحواشي السفلية والتعليقات والفهرس الأبجدي تتبع لغة المستند. تقارن `stripConfigDefaults` كل قيمة بالقيمة الافتراضية للإعدادات التي تتلقاها، فتبقى `headings.balancing.enabled: true` حيث الموازنة معطّلة افتراضيًا، وتُحذف `false` هناك. وتبقى `bodyText.avoidWidows: true` على النحو نفسه في شبكة المحارف. ودالة الحذف المنفردة تأخذ هذا السياق في وسائطها: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`، `stripIndexDefaults(index, locale)`، `stripCaptionStyleDefaults(captionStyle, locale)`، `stripFootnotesDefaults(footnotes, locale, writingMode)`، `stripBodyTextDefaults(bodyText, locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config))`.
+بعض القيم الافتراضية تتوقف على بقية الإعدادات: موازنة الأعمدة معطّلة في شبكة المحارف وفي النص العمودي، و`bodyText.avoidWidows` معطّلة في شبكة المحارف (وكذلك `bodyText.avoidOrphans` في المنطقة `japan`)، والحواشي السفلية والتعليقات والفهرس الأبجدي تتبع لغة المستند. تقارن `stripConfigDefaults` كل قيمة بالقيمة الافتراضية للإعدادات التي تتلقاها، فتبقى `headings.balancing.enabled: true` حين تكون الموازنة معطّلة افتراضيًا، وتُحذف `false` هناك. وتبقى `bodyText.avoidWidows: true` على النحو نفسه في شبكة المحارف. ودالة الحذف المنفردة تأخذ هذا السياق في وسائطها: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`، `stripIndexDefaults(index, locale)`، `stripCaptionStyleDefaults(captionStyle, locale)`، `stripFootnotesDefaults(footnotes, locale, writingMode)`، `stripBodyTextDefaults(bodyText, locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config))`.
 
-القيمة التي تعني «لا شيء» تبقى حيثما لا يكون «لا شيء» هو القيمة الافتراضية. نمط العنوان يأخذ ترويسة المستند وتذييله حين لا يحدّد ما يخصّه، فالنمط الذي يفرغهما (`footer: { elements: [] }` في غلاف) يحتفظ بالموضع الفارغ، وتبقى `margins` و`layout` و`bodyStyle` فيه ولو كانت فارغة. ومستوى العنوان المُعاد إلى قيمته الافتراضية تحت قيم عامة للعناوين تخالفها يحتفظ بقيمته. وتبقى `calloutStyles: []` و`chipStyles: []` قائمتين فارغتين: لو حُذفتا لعاد النمط المضمَّن. وفي كل الأحوال تُستكمل `resolveAllConfig(stripConfigDefaults(config))` كما تُستكمل `resolveAllConfig(config)`.
+القيمة التي تعني «لا شيء» تبقى حيثما لا يكون «لا شيء» هو القيمة الافتراضية. نمط العنوان يأخذ ترويسة المستند وتذييله حين لا يحدّد ما يخصّه، فالنمط الذي يفرغهما (`footer: { elements: [] }` في غلاف) يحتفظ بالموضع الفارغ، وتبقى `margins` و`layout` و`bodyStyle` فيه ولو كانت فارغة. ومستوى العنوان المُعاد إلى قيمته الافتراضية تحت قيم عامة للعناوين تخالفها يحتفظ بقيمته. وتبقى `calloutStyles: []` و`chipStyles: []` قائمتين فارغتين: لو حُذفتا لعاد النمط المدمج. وفي كل الأحوال تُستكمل `resolveAllConfig(stripConfigDefaults(config))` كما تُستكمل `resolveAllConfig(config)`.
 
 ### التحليل
 
-يتيح المحرّك مُقطِّع markdown الخاص به وقارئ البيانات التمهيدية. استخدمهما لفحص مستند قبل بنائه، أو لتغذية أدوات أخرى ببنية الكتل نفسها التي يراها Postext:
+يتيح المحرّك مُقطِّع Markdown الخاص به وقارئ البيانات التمهيدية. استخدمهما لفحص مستند قبل بنائه، أو لتغذية أدوات أخرى ببنية الكتل نفسها التي يراها Postext:
 
 ```ts
 import { parseMarkdown, extractFrontmatter } from 'postext';
@@ -457,15 +457,15 @@ const blocks = parseMarkdown(content);
 //      { type: 'paragraph', text: 'The story begins here.', … } ]
 ```
 
-راجع صفحة [صيغة المستند](/ar/docs/document-format) للاطلاع على القائمة الكاملة لبنى markdown التي يتعرّف عليها Postext.
+راجع صفحة [صيغة المستند](/ar/docs/document-format) للاطلاع على القائمة الكاملة لبنى Markdown التي يتعرّف عليها Postext.
 
 ### خريطة المصدر لمستند منضد
 
-تُرجع `sourceAt(doc, pageIndex, x, y, options?)` ما تعرضه نقطة من صفحة، من الداخل إلى الخارج، وكل عنصر معه `id` الثابت و`source` (مقطع من Markdown، أو مؤشر JSON في الإعدادات، أو سمة من سور الصفحة، أو مورد) و`rect`. وتُرجع `elementsForSource(doc, start, end, options?)` ما صار إليه مقطع من Markdown، صفحةً صفحة، وتعيد `findElement(doc, id)` العثور على عنصر بعد إعادة التنضيد. وهي تقرأ ما وسمه التنضيد على VDT ولا تنضّد شيئًا. وتخبر `composedPagePaintKey(page)` هل ترسم الصفحة المركّبة ما رسمته من قبل. وأنواع المصادر والمعرّفات وكيف يُعاد تنضيد الصفحة المركّبة حيث تغيّرت فقط مشروحة في [الصفحات المركّبة › خريطة المصدر](/ar/docs/composed-pages#خريطة-المصدر).
+تُرجع `sourceAt(doc, pageIndex, x, y, options?)` ما تعرضه نقطة من صفحة، من الداخل إلى الخارج، وكل عنصر معه `id` الثابت و`source` (مقطع من Markdown، أو مؤشر JSON في الإعدادات، أو سمة من سطر فتح كتلة الصفحة، أو مورد) و`rect`. وتُرجع `elementsForSource(doc, start, end, options?)` ما صار إليه مقطع من Markdown، لكل صفحة على حدة، وتعيد `findElement(doc, id)` العثور على عنصر بعد إعادة التنضيد. وهي تقرأ ما وسمه التنضيد على VDT ولا تنضّد شيئًا. وتخبر `composedPagePaintKey(page)` هل ترسم الصفحة المركّبة ما رسمته من قبل. وأنواع المصادر والمعرّفات وكيف يُعاد تنضيد الصفحة المركّبة حيث تغيّرت فقط مشروحة في [الصفحات المركّبة › خريطة المصدر](/ar/docs/composed-pages#خريطة-المصدر).
 
 ### تحميل الخطوط قبل الإخراج
 
-يقيس الإخراج النص بالأوجه الموجودة في مجموعة الخطوط لحظة تشغيله. وتحمّل `prepareFonts` قبل البناء الأول كل وجه تطلبه الإعدادات ونصها: النص الأساسي، والعناوين، والقوائم، وعناوين الصناديق ومتونها، والجداول، ونصوص التصميم، والترويسات الجارية، والفهرس، والشيفرة، وحروف القصص المصوّرة، بكل وزن وميل تضبطه الإعدادات (والأربعة كلها لعائلة النص الأساسي، لأن `**` و`*` ينضّدان الغامق والمائل بها). ويُحمَّل كل وجه للمحارف التي ينضّدها المستند، فالعائلة المقدَّمة شرائحَ `unicode-range` (اللاتينية الموسّعة، واليونانية، والعربية، وشرائح الصينية واليابانية والكورية في Google Fonts وFontsource) تجلب الملفات التي يحتاجها النص.
+يقيس الإخراج النص بأشكال الخطوط الموجودة في مجموعة الخطوط لحظة تشغيله. وتحمّل `prepareFonts` قبل البناء الأول كل شكل خط تطلبه الإعدادات ونصها: نص المتن، والعناوين، والقوائم، وعناوين الإطارات ونصوصها، والجداول، ونصوص التصميم، والترويسات الجارية، والفهرس، والشيفرة، وحروف القصص المصوّرة، بكل وزن وميل تضبطه الإعدادات (والأربعة كلها لعائلة نص المتن، لأن `**` و`*` ينضّدان العريض والمائل بها). ويُحمَّل كل شكل للمحارف التي ينضّدها المستند، فالعائلة المقدَّمة شرائحَ `unicode-range` (اللاتينية الموسّعة، واليونانية، والعربية، وشرائح الصينية واليابانية والكورية في Google Fonts وFontsource) تجلب الملفات التي يحتاج إليها النص.
 
 ```ts
 import { prepareFonts, buildDocument, buildDocumentWithFonts } from 'postext';
@@ -484,12 +484,12 @@ const doc = buildDocument(content, config);
 const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
-- **الأوجه التي تصرّح بها الصفحة** (قاعدة `@font-face`، أو `FontFace` أُضيف من قبل) تُحمَّل عبر مجموعة الخطوط (`document.fonts.load`، أو `self.fonts` داخل عامل). **أما الأوجه التي لا تصرّح بها** فتُطلب من `resolve(family, weight, style, { text, codePoints })`، التي تجيب بملف (بايتات أو عنوان URL)، أو بعدة ملفات (شرائح وجه واحد)، أو بـ`{ source, unicodeRange, weight, style }` لشريحة أو لمدى متغيّر، أو بـ`null`. ويضيفها المحرّك كائناتِ `FontFace` بعد أن يكتمل تحميلها جميعًا، بترتيب الإعدادات وترتيب كل إجابة (latin، ثم latin-ext، ثم greek إن أجاب المحلِّل بذلك)، فتبقى مجموعة الخطوط هي نفسها أيًّا كان الترتيب الذي تصل به الملفات. ويسجّلها أيضًا في سجل الخطوط الذي تقرؤه [صور SVG](/ar/docs/configuration-resources#الخطوط-في-نصوص-svg) وعمّال الإخراج. ويجوز للمحلِّل أن يصرّح بالوجه بنفسه (بإضافة ورقة أنماط) ثم يجيب بـ`null`.
-- **التقرير** يُدرج الأوجه التي يغطيها وجه محمَّل (أو عائلة مثبّتة)، والأوجه التي لا تزال مفقودة (`missing`)، والأوجه التي سيركّبها المتصفح من وزن أو ميل آخر (`synthesized`). ويحدّ `timeoutMs` (10 000 افتراضيًا) من مدة الانتظار؛ فالوجه الذي لم يكتمل تحميله عندئذ يُعدّ مفقودًا. وحيث لا توجد مجموعة خطوط (Node) لا تفعل `prepareFonts` شيئًا، وتُبلغ عن كل الأوجه بأنها محمَّلة.
-- **`buildDocumentWithFonts(content, config, options)`** تحضّر، ثم تبني بـ`buildDocumentAsync`، ثم تقرأ الأوجه التي نُضّد بها النص فعلًا في الصفحات، فتحمّل ما لم تستطع مجموعة الخطوط توفيره منها (الوزن الذي لا تكشفه إلا الصفحات يُطلب من `resolve` ولو كان في العائلة وزن آخر ينوب عنه)، وتبني من جديد (بنائين إضافيين على الأكثر). وتفعل `withLoadedFonts(build, options)` الشيء نفسه حول أي دالة بناء، لكتاب يُبنى فصلًا فصلًا أو لحزمة (`buildBundle`) تُعيد عدة مستندات. ويتلقى `options.onFonts` التقرير النهائي.
-- **بعد البناء**، يُدرَج في `doc.contentWarnings` كل وجه نُضّد به النص ولم تستطع مجموعة الخطوط توفيره، بوصفه `fontFallback` (انظر [التحذيرات في المستند](#التحذيرات-في-المستند)).
+- **أشكال الخطوط التي تصرّح بها الصفحة** (قاعدة `@font-face`، أو `FontFace` أُضيف من قبل) تُحمَّل عبر مجموعة الخطوط (`document.fonts.load`، أو `self.fonts` داخل عامل). **أما أشكال الخطوط التي لا تصرّح بها** فتُطلب من `resolve(family, weight, style, { text, codePoints })`، التي تجيب بملف (بايتات أو عنوان URL)، أو بعدة ملفات (شرائح شكل واحد)، أو بـ`{ source, unicodeRange, weight, style }` لشريحة أو لمدى متغيّر، أو بـ`null`. ويضيفها المحرّك كائناتِ `FontFace` بعد أن يكتمل تحميلها جميعًا، بترتيب الإعدادات وترتيب كل إجابة (latin، ثم latin-ext، ثم greek إن أجاب المحلِّل بذلك)، فتبقى مجموعة الخطوط هي نفسها أيًّا كان الترتيب الذي تصل به الملفات. ويسجّلها أيضًا في سجل الخطوط الذي تقرؤه [صور SVG](/ar/docs/configuration-resources#الخطوط-في-نصوص-svg) وعمّال الإخراج. ويجوز للمحلِّل أن يصرّح بالشكل بنفسه (بإضافة ورقة أنماط) ثم يجيب بـ`null`.
+- **التقرير** يسرد أشكال الخطوط التي يغطيها شكل محمَّل (أو عائلة مثبّتة)، وأشكال الخطوط التي لا تزال مفقودة (`missing`)، وأشكال الخطوط التي سيركّبها المتصفح من وزن أو ميل آخر (`synthesized`). ويحدّ `timeoutMs` (10 000 افتراضيًا) من مدة الانتظار؛ فالشكل الذي لم يكتمل تحميله عندئذ يُعدّ مفقودًا. وحيث لا توجد مجموعة خطوط (Node) لا تفعل `prepareFonts` شيئًا، وتعدّ كل أشكال الخطوط محمَّلة.
+- **`buildDocumentWithFonts(content, config, options)`** تحضّر، ثم تبني بـ`buildDocumentAsync`، ثم تقرأ أشكال الخطوط التي نُضّد بها النص فعلًا في الصفحات، فتحمّل ما لم تستطع مجموعة الخطوط توفيره منها (الوزن الذي لا تكشفه إلا الصفحات يُطلب من `resolve` ولو كان في العائلة وزن آخر ينوب عنه)، وتبني من جديد (بنائين إضافيين على الأكثر). وتفعل `withLoadedFonts(build, options)` الشيء نفسه حول أي دالة بناء، لكتاب يُبنى فصلًا فصلًا أو لحزمة (`buildBundle`) تُعيد عدة مستندات. ويتلقى `options.onFonts` التقرير النهائي.
+- **بعد البناء**، يُضاف إلى `doc.contentWarnings` كل شكل خط نُضّد به النص ولم تستطع مجموعة الخطوط توفيره، بوصفه `fontFallback` (انظر [التحذيرات في المستند](#التحذيرات-في-المستند)).
 
-والأوجه التي تصل لاحقًا يلتقطها المحرّك من تلقاء نفسه. فهو يحتفظ، لكل مجموعة خطوط، بأوجه كل عائلة التي كانت محمَّلة آخر مرة نظر فيها؛ ويعيد البناء النظر عند بدايته (فقط إن كبرت المجموعة أو صغرت، أو كانت تحمّل، أو اكتمل فيها تحميل وجه) ويطرح ما قيس بالعائلات التي تغيّرت أوجهها. وتفعل `watchFonts(fontSet)` الشيء نفسه أثناء تحميل الأوجه، مرة واحدة على الأكثر في كل إطار رسوم متحركة مهما كثرت الشرائح التي تأتي بها دفعة واحدة، وتُعلم `onFontsChanged(listener)` المضيفَ بالعائلات التي تغيّرت، ليعيد إخراج الصفحات:
+وأشكال الخطوط التي تصل لاحقًا يلتقطها المحرّك من تلقاء نفسه. فهو يحتفظ، لكل مجموعة خطوط، بأشكال كل عائلة التي كانت محمَّلة آخر مرة نظر فيها؛ ويعيد البناء النظر عند بدايته (فقط إن كبرت المجموعة أو صغرت، أو كانت تحمّل، أو اكتمل فيها تحميل شكل) ويطرح ما قيس بالعائلات التي تغيّرت أشكالها. وتفعل `watchFonts(fontSet)` الشيء نفسه أثناء تحميل أشكال الخطوط، مرة واحدة على الأكثر في كل إطار رسوم متحركة مهما كثرت الشرائح التي تأتي بها دفعة واحدة، وتُعلم `onFontsChanged(listener)` المضيفَ بالعائلات التي تغيّرت، ليعيد إخراج الصفحات:
 
 ```ts
 import { watchFonts, onFontsChanged } from 'postext';
@@ -504,8 +504,8 @@ const off = onFontsChanged((families) => relayout());
 
 قياس النص هو الخطوة المكلفة في الإخراج. يحافظ نوعان من الذاكرة المؤقتة على انخفاض كلفتها:
 
-- **ذاكرة كتل تملكها أنت.** تُعيد `createMeasurementCache()` كائن `MeasurementCache` يتذكّر كل فقرة قيست، مفهرسةً بنصها وخطوطها وعرضها وخيارات تقسيم الأسطر وقاموس تقسيم الكلمات بالواصلة النشط. مرّره معاملًا ثالثًا إلى `buildDocument` (أو `buildDocumentAsync`) لإعادة استخدام القياسات عبر تمريرات التوزيع في عملية البناء الواحدة وعبر عمليات البناء: فالمحرّر الذي يُخرج المستند مع كل ضغطة مفتاح لا يقيس حينئذ إلا الفقرات التي تغيّرت. ومن دونها، تقيس كل جولة كل كتلة من جديد. والفقرة المقروءة من الذاكرة المؤقتة مطابقة لفقرة قيست من جديد، فالبناء الذي يستخدم ذاكرة مؤقتة ينضّد كل سطر كما ينضّده بناء من دونها؛ وفي postext 1.4.1 كانت الفقرة المخزّنة تفقد علامة السطر الأخير ذي الكلمة المعزولة، فكان تضييق الكلمة المعزولة وموازنة الأعمدة قد يقسمانها تقسيمًا مختلفًا. وتحمل الذاكرة جيل القياس الذي مُلئت فيه: فحين تصل أوجه عائلة أو تزول، يطرح أول بحث تالٍ فيها الكتل المنضّدة بتلك العائلة، فلا تقدّم ذاكرةٌ محفوظة عبر تحميل الخطوط أسطرًا مقيسة بالخط البديل أبدًا.
-- **ذاكرات العرض العامة.** تُخزَّن عروض الكلمات لكل سلسلة خط في حالة على مستوى الوحدة (module) تشترك فيها كل عمليات البناء في الصفحة، وللمكتبة pretext ذاكرتها المؤقتة الخاصة. ويطرح المحرّك عروض عائلة حين تتغيّر أوجهها (في بداية البناء، ومن `watchFonts`، ومن `prepareFonts` و`loadBundleFonts`)؛ أما ذاكرة pretext فلا فهرس فيها للعائلات، فتُمسح كلها.
+- **ذاكرة كتل تملكها أنت.** تُعيد `createMeasurementCache()` كائن `MeasurementCache` يتذكّر كل فقرة قيست، مفهرسةً بنصها وخطوطها وعرضها وخيارات تقسيم الأسطر وقاموس تقسيم الكلمات بالواصلة النشط. مرّره معاملًا ثالثًا إلى `buildDocument` (أو `buildDocumentAsync`) لإعادة استخدام القياسات عبر تمريرات التوزيع في عملية البناء الواحدة وعبر عمليات البناء: فالمحرّر الذي يُخرج المستند مع كل ضغطة مفتاح لا يقيس حينئذ إلا الفقرات التي تغيّرت. ومن دونها، تقيس كل تمريرة كل كتلة من جديد. والفقرة المقروءة من الذاكرة المؤقتة مطابقة لفقرة قيست من جديد، فالبناء الذي يستخدم ذاكرة مؤقتة ينضّد كل سطر كما ينضّده بناء من دونها؛ وفي postext 1.4.1 كانت الفقرة المخزّنة تفقد علامة السطر الأخير ذي الكلمة المعزولة، فكان تضييق الكلمة المعزولة وموازنة الأعمدة قد يقسمانها تقسيمًا مختلفًا. وتسجّل الذاكرة جيل القياس الذي مُلئت فيه: فحين تصل أشكال عائلة أو تزول، يطرح أول بحث تالٍ فيها الكتل المنضّدة بتلك العائلة، فلا تقدّم ذاكرةٌ محفوظة عبر تحميل الخطوط أسطرًا مقيسة بالخط البديل أبدًا.
+- **ذاكرات العرض العامة.** تُخزَّن عروض الكلمات لكل سلسلة خط في حالة على مستوى الوحدة (module) تشترك فيها كل عمليات البناء في الصفحة، وللمكتبة pretext ذاكرتها المؤقتة الخاصة. ويطرح المحرّك عروض عائلة حين تتغيّر أشكالها (في بداية البناء، ومن `watchFonts`، ومن `prepareFonts` و`loadBundleFonts`)؛ أما ذاكرة pretext فلا فهرس فيها للعائلات، فتُمسح كلها.
 
 ```ts
 import { buildDocument, createMeasurementCache, evictFontFamilies, clearMeasurementCache } from 'postext';
@@ -524,15 +524,15 @@ clearMeasurementCache();              // كل العائلات
 
 وللتطبيقات التي تقيس النص قطعة قطعة، تأخذ `cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)` و`cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)` معاملات `measureBlock` و`measureRichBlock` إضافة إلى الذاكرة المؤقتة في آخرها.
 
-### قاطع الأسطر (WebAssembly)
+### مقسِّم الأسطر (WebAssembly)
 
-تُقسَّم الفقرات إلى أسطر بخوارزمية Knuth–Plass. منذ postext 1.33 ينفّذها المحرّك في قاطع أسطر مكتوب بلغة Rust ومترجَم إلى WebAssembly (30 كيلوبايت، داخل الحزمة). يختار نقاط القطع نفسها التي يختارها القاطع المكتوب بـ TypeScript، بالحساب نفسه وبالترتيب نفسه، ويُصفّ الكتاب كاملًا أسرع بنحو 15 %. لا يلزم أي إعداد:
+تُقسَّم الفقرات إلى أسطر بخوارزمية Knuth–Plass. منذ postext 1.33 ينفّذها المحرّك في قاطع أسطر مكتوب بلغة Rust ومترجَم إلى WebAssembly (30 كيلوبايت، داخل الحزمة). يختار مواضع القطع نفسها التي يختارها القاطع المكتوب بـTypeScript، بالحساب نفسه وبالترتيب نفسه، ويُنضَّد الكتاب كاملًا أسرع بنحو 15 %. لا يلزم أي إعداد:
 
 - في worker وفي Node وفي Bun، تُترجَم الوحدة عند أول فقرة.
-- في الخيط الرئيسي للصفحة، حيث لا يترجم المتصفح وحدة بهذا الحجم إلا بشكل غير متزامن، تُترجَم في الخلفية ويجيب القاطع المكتوب بـ TypeScript حتى ذلك الحين. استدعاء `await initLineBreaker()` قبل أول صفّ يجعله يعمل من أول فقرة، ويُرجع `false` حيث لا يتوفر WebAssembly.
-- حيث لا يتوفر WebAssembly، أو ترفضه سياسة أمان المحتوى (`script-src` من دون `'wasm-unsafe-eval'`)، يجيب القاطع المكتوب بـ TypeScript عن كل الفقرات.
+- في الخيط الرئيسي للصفحة، حيث لا يترجم المتصفح وحدة بهذا الحجم إلا بشكل غير متزامن، تُترجَم في الخلفية ويجيب القاطع المكتوب بـTypeScript حتى ذلك الحين. استدعاء `await initLineBreaker()` قبل أول تنضيد يجعله يعمل من أول فقرة، ويُرجع `false` حيث لا يتوفر WebAssembly.
+- حيث لا يتوفر WebAssembly، أو ترفضه سياسة أمان المحتوى (`script-src` من دون `'wasm-unsafe-eval'`)، يجيب القاطع المكتوب بـTypeScript عن كل الفقرات.
 
-يختار الاثنان نقاط القطع نفسها، فلا يغيّر أيّهما أجاب الصفّ أبدًا. ‏`useWasmLineBreaker(false)` يُبقي القاطع المكتوب بـ TypeScript، للمقارنة بينهما.
+يختار الاثنان مواضع القطع نفسها، فلا يتغيّر التنضيد أبدًا أيًّا كان الذي أجاب. ‏`useWasmLineBreaker(false)` يُبقي القاطع المكتوب بـTypeScript، للمقارنة بينهما.
 
 ```ts
 import { initLineBreaker, buildDocument } from 'postext';
@@ -546,9 +546,9 @@ const doc = buildDocument({ markdown }, config);
 
 يعيش جزء من حالة Postext في متغيّرات على مستوى الوحدة. ويشترك فيها كل ما يستورد `postext` ضمن نطاق JavaScript نفسه (realm): فالصفحة ونصوصها البرمجية تتشارك نسخة واحدة، بينما لكل إطار iframe ولكل عامل نسخته الخاصة. ولا يلاحظ ذلك من يضع مستندًا واحدًا في الصفحة. أما من يضع عدة مستندات في صفحة واحدة، كمعاينتين حيّتين أو معرض أمثلة، فيلاحظه:
 
-- **صور الموارد.** تملأ `registerResourceImage(fileId, image)` سجلًا واحدًا مفهرسًا بـ`fileId`، تقرؤه `renderPage` و`renderPageToCanvas`. فإذا سجّل مستندان كلاهما `figure.svg` تشاركا ذلك المدخل: ويفوز آخر تسجيل، لكليهما. أعطِ معرّفات الملفات بادئة خاصة بكل مستند، واستدعِ `unregisterResourceImage(fileId)` أو `clearResourceImages()` حين يزول مستند. والصور النقطية التي يخزّنها مُخرِج Canvas مفهرسة بالطريقة نفسها وتُحذف مع الصورة.
-- **قياسات النص.** تُخزَّن العروض المقيسة لكل سلسلة خط ونص على مستوى النطاق كله. وحين تصل أوجه عائلة أو تزول، يطرح المحرّك عروض تلك العائلة في كل المستندات (انظر [تحميل الخطوط قبل الإخراج](#تحميل-الخطوط-قبل-الإخراج))؛ وتطرحها `clearMeasurementCache()` كلها.
-- **الإعدادات المستكمَلة.** يُستكمل كل كائن إعدادات مرة واحدة وتُخزَّن النتيجة مقرونة بذلك الكائن. ويقارن كل بناء أولًا الكائنَ بالنص الذي كان عليه حين استُكمل (استدعاء `JSON.stringify` واحد، نحو 0.1 ms لإعدادات كتاب حجمها 55 KB و1.5 ms لإعدادات حجمها 240 KB)، فالإعدادات التي تُعدَّل في مكانها، على أي عمق (`config.bodyText.fontSize = …`، أو لون في اللوحة)، تُستكمل من جديد. وتطرح `invalidateConfig(config)` الاستكمال يدويًا. وتعطي `stableStringify` و`hashString` مفتاح محتوى لا يتوقف على ترتيب المفاتيح، للمضيفين الذين يخزّنون الإخراجات مؤقتًا بحسب الإعدادات.
+- **صور الموارد.** تملأ `registerResourceImage(fileId, image)` سجلًا واحدًا مفهرسًا بـ`fileId`، تقرؤه `renderPage` و`renderPageToCanvas`. فإذا سجّل مستندان كلاهما `figure.svg` تشاركا ذلك المدخل: ويسري آخر تسجيل على كليهما. أعطِ معرّفات الملفات بادئة خاصة بكل مستند، واستدعِ `unregisterResourceImage(fileId)` أو `clearResourceImages()` حين يزول مستند. والصور النقطية التي يخزّنها مُخرِج Canvas مفهرسة بالطريقة نفسها وتُحذف مع الصورة.
+- **قياسات النص.** تُخزَّن العروض المقيسة لكل سلسلة خط ونص على مستوى النطاق كله. وحين تصل أشكال عائلة أو تزول، يطرح المحرّك عروض تلك العائلة في كل المستندات (انظر [تحميل الخطوط قبل الإخراج](#تحميل-الخطوط-قبل-الإخراج))؛ وتطرحها `clearMeasurementCache()` كلها.
+- **الإعدادات المستكمَلة.** يُستكمل كل كائن إعدادات مرة واحدة وتُخزَّن النتيجة مقرونة بذلك الكائن. ويقارن كل بناء أولًا الكائنَ بالنص الذي كان عليه حين استُكمل (استدعاء `JSON.stringify` واحد، نحو 0.1 ms لإعدادات كتاب حجمها 55 KB و1.5 ms لإعدادات حجمها 240 KB)، فالإعدادات التي تُعدَّل في مكانها، على أي عمق (`config.bodyText.fontSize = …`، أو لون في لوحة الألوان)، تُستكمل من جديد. وتطرح `invalidateConfig(config)` الاستكمال يدويًا. وتعطي `stableStringify` و`hashString` مفتاح محتوى لا يتوقف على ترتيب المفاتيح، للمضيفين الذين يخزّنون الإخراجات مؤقتًا بحسب الإعدادات.
 - **لغة تقسيم الكلمات.** يضبط كل بناء لغة تقسيم الكلمات بالواصلة على مستوى العملية كلها لتكون `bodyText.hyphenation.locale` الخاصة بمستنده. وتستخدم `hyphenateText(text)` المُصدَّرة و`layoutDesignSlot` لغة آخر بناء ما لم تمرّر لغة: استدعِ `hyphenateText(text, 'es')`.
 - **محرّك الرياضيات.** هناك محرّك MathJax واحد وذاكرة مؤقتة واحدة للصيغ المرسومة في النطاق كله؛ وتشغّله `initMathEngine()` للجميع.
 - **قاطع الأسطر.** هناك قاطع أسطر WebAssembly واحد في النطاق، يُترجَم مرة واحدة؛ ‏`useWasmLineBreaker(false)` يعطّله للجميع.
@@ -572,7 +572,7 @@ const doc = buildDocument({ markdown }, config);
 4. **استبدل** أي بناء سابق بإلغاء إشارته *قبل* بدء البناء التالي؛ وهذا هو نمط «الأحدث يفوز».
 5. **تخلّص** من العامل حين يُفكّ تركيب المكوّن الذي يملكه.
 
-ويغذّي كائن `VDTDocument` نفسه العائد من `build(...)` كل المُخرِجات اللاحقة: `renderPage`/`renderPageToCanvas` لـCanvas، و`renderToHtmlIndexed` لـ HTML، و`renderToPdf` (من `postext-pdf`) لـ PDF. فتبني مرة واحدة في العامل وتحوّل إلى صور نقطية بقدر ما تحتاج الواجهة على الخيط الرئيسي.
+ويغذّي كائن `VDTDocument` نفسه العائد من `build(...)` كل المُخرِجات اللاحقة: `renderPage`/`renderPageToCanvas` لـCanvas، و`renderToHtmlIndexed` لـHTML، و`renderToPdf` (من `postext-pdf`) لـPDF. فتبني مرة واحدة في العامل وتحوّل إلى صور نقطية بقدر ما تحتاج الواجهة على الخيط الرئيسي.
 
 ### ما يقدّمه لك العامل
 
@@ -580,8 +580,8 @@ const doc = buildDocument({ markdown }, config);
 - **إلغاء «الأحدث يفوز».** يمرّر `build(content, config, { signal })` إشارة `AbortSignal` إلى العامل. والإلغاء قبل الاكتمال يُطلق `AbortError` في الجانب الرئيسي؛ وداخل العامل يرمي خطّ المعالجة `BuildCancelledError` عند نقطة فحص الإلغاء التالية الخاصة بكل كتلة ويتوقف فورًا.
 - **ذاكرة قياس مؤقتة لكل عامل.** يحتفظ العامل بكائن `MeasurementCache` واحد طوال عمره. وعمليات البناء اللاحقة التي تتشارك الخط والنص والعرض تعيد استخدام قياسات الأسطر المخزّنة، فكتابة حرف واحد في مستند طويل لا تعيد قياس إلا الكتل التي تغيّرت مدخلاتها فعلًا.
 - **مقاييس مطابقة لمقاييس الخيط الرئيسي.** تُرسَل الخطوط إلى العامل على هيئة كائنات `ArrayBuffer` قابلة للنقل وتُسجَّل عبر `new FontFace(...)` في `FontFaceSet` الخاص بالعامل. ويقيس العامل بمقاييس خطوط Canvas نفسها التي كان الخيط الرئيسي سيستخدمها، فتتطابق مواضع تقسيم الأسطر وارتفاعات الأعمدة بايتًا ببايت.
-- **تبقى ذاكرة الصور النقطية للرياضيات قائمة عبر عمليات البناء في العامل.** يأتي مُخرِج الرياضيات بذاكرة صور نقطية مفهرسة بالمحتوى إلى جانب الذاكرة المفهرسة بالهوية، إذ إن الاستنساخ البنيوي لكائن `MathRender` عبر حدود العامل كان سيُفوّت ذاكرة الهوية في كل إعادة بناء.
-- **الأسطر نفسها التي في الصفحة.** لوحة Canvas المنشأة في عامل ليس لها صفحة تأخذ منها لغة، والخط يُجيب برسوم أخرى بحسب اللغة. يضبط المحرّك لغة المستند (`locale`) على كل سياق يقيس به، في العامل كما في الصفحة، فيعيد `build()` الأسطر التي يعطيها `buildDocument` في صفحة بأي لغة ([`bodyText.shapingLanguage: 'document'`](/ar/docs/configuration-text#نص-المتن)، وهي القيمة الافتراضية منذ postext 1.30). ومع `'host'`، وهي القيمة التي يحتفظ بها الإعداد المحفوظ قبل 1.30، يقيس العامل بلا لغة والصفحة بلغتها، كما كان حتى postext 1.28.
+- **تبقى ذاكرة الصور النقطية للرياضيات قائمة عبر عمليات البناء في العامل.** يأتي راسم الصيغ الرياضية بذاكرة صور نقطية مفهرسة بالمحتوى إلى جانب الذاكرة المفهرسة بالهوية، إذ إن الاستنساخ البنيوي لكائن `MathRender` عبر حدود العامل كان سيُفوّت ذاكرة الهوية في كل إعادة بناء.
+- **الأسطر نفسها التي في الصفحة.** عنصر Canvas المُنشأ في عامل ليس له صفحة يأخذ منها لغة، والخط يُجيب برسوم أخرى بحسب اللغة. يضبط المحرّك لغة المستند (`locale`) على كل سياق يقيس به، في العامل كما في الصفحة، فيعيد `build()` الأسطر التي يعطيها `buildDocument` في صفحة بأي لغة ([`bodyText.shapingLanguage: 'document'`](/ar/docs/configuration-text#نص-المتن)، وهي القيمة الافتراضية منذ postext 1.30). ومع `'host'`، وهي القيمة التي يحتفظ بها الإعداد المحفوظ قبل 1.30، يقيس العامل بلا لغة والصفحة بلغتها، كما كان حتى postext 1.28.
 
 ### الواجهة البرمجية العامة
 
@@ -720,11 +720,11 @@ await layout.registerFonts(await Promise.all([face(400, 'normal'), face(700, 'no
 const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garamond' } });
 ```
 
-**لا يرى العامل خطوط الصفحة.** فله مجموعة خطوط خاصة به لا تحوي إلا الأوجه المرسلة عبر `registerFonts` والخطوط المثبّتة على النظام. وحين يُنضّد بناءٌ نصًا بعائلة لا يجدها العامل، يُقاس ذلك النص بخط بديل، فلا تتطابق مواضع تقسيم أسطره مع الصفحة. ويطبع العميل حينئذ تحذيرًا واحدًا في وحدة التحكم لكل عائلة (`"EB Garamond" is not available inside the layout worker…`)، ويُدرج العائلات في `BuildStats.missingFonts`، التي يتلقاها رد النداء `onStats` الخاص بـ`build`. ويحمل المستند نفسه الأوجه ذاتها في تحذيرات محتوى من نوع `fontFallback`.
+**لا يرى العامل خطوط الصفحة.** فله مجموعة خطوط خاصة به لا تحوي إلا أشكال الخطوط المرسلة عبر `registerFonts` والخطوط المثبّتة على النظام. وحين يُنضّد بناءٌ نصًا بعائلة لا يجدها العامل، يُقاس ذلك النص بخط بديل، فلا تتطابق مواضع تقسيم أسطره مع الصفحة. ويطبع العميل حينئذ تحذيرًا واحدًا في وحدة التحكم لكل عائلة (`"EB Garamond" is not available inside the layout worker…`)، ويسرد العائلات في `BuildStats.missingFonts`، التي يتلقاها رد النداء `onStats` الخاص بـ`build`. ويذكر المستند نفسه أشكال الخطوط ذاتها في تحذيرات محتوى من نوع `fontFallback`.
 
-تشغّل `handle.prepareFonts(content, config, options)` الدالة [`prepareFonts`](#تحميل-الخطوط-قبل-الإخراج) في الصفحة، ثم ترسل إلى العامل ملفات كل وجه وجدته يحفظه سجل الخطوط (ملفات المحلِّل، وأوجه الحزمة، وقواعد `@font-face` المقروءة في الصفحة)، ولا ترسل من الشرائح إلا ما يحوي محارف المستند. وحين تصل الأوجه إلى العامل، يطرح قياسات تلك العائلات وحدها وذاكرته المؤقتة للمستندات المنجزة.
+تشغّل `handle.prepareFonts(content, config, options)` الدالة [`prepareFonts`](#تحميل-الخطوط-قبل-الإخراج) في الصفحة، ثم ترسل إلى العامل ملفات كل شكل خط يحفظه سجل الخطوط (ملفات المحلِّل، وأشكال الحزمة، وقواعد `@font-face` المقروءة في الصفحة)، ولا ترسل من الشرائح إلا ما يحوي محارف المستند. وحين تصل أشكال الخطوط إلى العامل، يطرح قياسات تلك العائلات وحدها وذاكرته المؤقتة للمستندات المنجزة.
 
-وقد تصل الأوجه إلى العامل بعد إخراج أيضًا: وزن تبيّن أن الصفحات تحتاج إليه، أو شريحة `unicode-range` أخرى من الوزن نفسه، أو ملف رُفع من جديد باسم العائلة نفسه. والإخراج التالي يقيس بها. ولا يفعل canvas العامل ذلك من تلقاء نفسه: ففي Chrome يحلّ الخط أول مرة تُسند إليه صيغة الخط المختصرة، ولا يعود إلى مجموعة الخطوط من أجل تلك الصيغة، فيبقى النص بعروض الوجه الذي أجاب أولًا. لذلك يكتب العامل اسم العائلة مرة أخرى في الصيغ التي يسندها بعد أن يصل وجه من تلك العائلة متأخرًا (`Geist, Geist`): قائمة عائلات أخرى في نظر canvas، والخط نفسه والعروض نفسها. والمستندات التي يعيدها تحتفظ بسلاسل الخطوط كما يكتبها المحرّك، والعامل الذي تصله أوجهه قبل أول إخراج يسند كل صيغة كما هي.
+وقد تصل أشكال الخطوط إلى العامل بعد إخراج أيضًا: وزن تبيّن أن الصفحات تحتاج إليه، أو شريحة `unicode-range` أخرى من الوزن نفسه، أو ملف رُفع من جديد باسم العائلة نفسه. والإخراج التالي يقيس بها. ولا يفعل canvas العامل ذلك من تلقاء نفسه: ففي Chrome يحلّ الخط أول مرة تُسند إليه صيغة الخط المختصرة، ولا يعود إلى مجموعة الخطوط من أجل تلك الصيغة، فيبقى النص بعروض شكل الخط الذي أجاب أولًا. لذلك يكتب العامل اسم العائلة مرة أخرى في الصيغ التي يسندها بعد أن يصل شكل من تلك العائلة متأخرًا (`Geist, Geist`): قائمة عائلات أخرى في نظر canvas، والخط نفسه والعروض نفسها. والمستندات التي يعيدها تحتفظ بسلاسل الخطوط كما يكتبها المحرّك، والعامل الذي تصله أشكال خطوطه قبل أول إخراج يسند كل صيغة كما هي.
 
 ### جمع بيانات الخطوط (Fontsource / Google Fonts)
 
@@ -734,12 +734,12 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 1. تستعلم `https://api.fontsource.org/v1/fonts/{family-id}` لمعرفة الأوزان والأنماط التي تملكها العائلة.
 2. تقرأ المجموعات الفرعية للعائلة ونطاق `unicode-range` لكل منها من حزمتها على jsDelivr (`@fontsource/{family-id}@5/400.css`)، مرة لكل عائلة. ثم تُطلب الملفات من الإصدار المحدد الذي أُجيب منه عن ورقة الأنماط تلك (`x-jsd-version` من jsDelivr)، فلا تصل العائلة أبدًا من إصدارين من حزمتها.
-3. تنزّل كل ملفات الوجه العادي والعريض ومائليهما لكل عائلة (`files/{family-id}-{subset}-{weight}-{style}.woff2`)؛ أما `collectFontPayloadsForConfig(config, markdown)` فتأخذ الأوزان والأنماط التي تطلبها الإعدادات. وهي ملفات ثابتة، هي التي يضمّنها ملف PDF، فيقيس العامل بما يرسم به PDF. والملف المتغيّر يعطي عروض تقدّم أخرى بين اثنين من أصوله (masters)، فينقطع في موضع آخر السطرُ الذي لا يفصله عن طول السطر إلا جزء من البكسل.
+3. تنزّل كل ملفات الشكل العادي والعريض ومائليهما لكل عائلة (`files/{family-id}-{subset}-{weight}-{style}.woff2`)؛ أما `collectFontPayloadsForConfig(config, markdown)` فتأخذ الأوزان والأنماط التي تطلبها الإعدادات. وهي ملفات ثابتة، هي التي يضمّنها ملف PDF، فيقيس العامل بما يرسم به PDF. والملف المتغيّر يعطي عروض تقدّم أخرى بين اثنين من أصوله (masters)، فينقسم في موضع آخر السطرُ الذي لا يفصله عن طول السطر إلا جزء من البكسل.
 4. تُعيد `FontPayload[]` يكون فيها `buffer` كائن `ArrayBuffer` جديدًا في كل استدعاء، وهذا مهم لأن `registerFonts` تنقل المخزن وتترك النسخة في جانب المُرسِل منفصلة (detached).
 
-تُرتَّب ملفات الوزن والنمط الواحد كما يعلنها مثال CodePen: `latin` أولًا وملفات الكتابة نفسها آخرًا (`arabic`، والشرائح المرقّمة لعائلة صينية أو يابانية)، لأن الملف المضاف أخيرًا هو الذي يجيب عن محرف يحمله ملفان. والعائلة التي لا ملفات لها في Fontsource تُقرأ من ورقة أنماط Google CSS2، وهي لا تُعيد WOFF2 إلا لسلاسل User-Agent الشبيهة بالمتصفحات.
+تُرتَّب ملفات الوزن والنمط الواحد كما يعلنها مثال CodePen من دليل الوصفات: `latin` أولًا وملفات الكتابة نفسها آخرًا (`arabic`، والشرائح المرقّمة لعائلة صينية أو يابانية)، لأن الملف المضاف أخيرًا هو الذي يجيب عن محرف موجود في ملفين. والعائلة التي لا ملفات لها في Fontsource تُقرأ من ورقة أنماط Google CSS2، وهي لا تُعيد WOFF2 إلا لسلاسل User-Agent الشبيهة بالمتصفحات.
 
-واقرنها بـ`getConfigFontFamilies(config)` للحصول على قائمة العائلات التي سيرسمها إعداد `PostextConfig` معيّن فعلًا (النص الأساسي، والعناوين، ورموز القوائم النقطية، وأرقام القوائم المرقّمة).
+واقرنها بـ`getConfigFontFamilies(config)` للحصول على قائمة العائلات التي سيرسمها إعداد `PostextConfig` معيّن فعلًا (نص المتن، والعناوين، ورموز القوائم النقطية، وأرقام القوائم المرقّمة).
 
 ### الإلغاء التعاوني داخل المحرّك
 

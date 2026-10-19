@@ -36,13 +36,13 @@ Mit eingeschaltetem Raster sind die Ränder Mindestwerte: Das Raster setzt den S
 
 <Excerpt region="heads" />
 
-Romane in Festlandchina tragen den Buchtitel über den linken und den Titel der Erzählung über den rechten Seiten, zentriert, mit der Pagina am Außenrand und einer Haarlinie unter beiden. `pages: 'body'` hält sie vom Auftakt und von der Tafel fern, und der Auftakt erhält seine Pagina stattdessen am Fuß. Die Kolumnentitel stehen in Noto Sans SC, der Hei-Schrift, zu 8 pt: klein, aber eine andere Stimme als die Song des Textes.
+In Romanen aus Festlandchina steht der Buchtitel über den linken und der Titel der Erzählung über den rechten Seiten, zentriert, mit der Pagina am Außenrand und einer Haarlinie unter beiden. `pages: 'body'` hält sie vom Auftakt und von der Tafel fern, und der Auftakt erhält seine Pagina stattdessen am Fuß. Die Kolumnentitel stehen in Noto Sans SC, der Hei-Schrift, zu 8 pt: klein, aber eine andere Stimme als die Song des Textes.
 
 ### 5 · Eine Tafel über den ganzen Bogen
 
 <Excerpt region="plate" />
 
-Das Bild gehört zu einer eigenen Überschrift, `# 月下的瓜地 {style="plate" …}`, deren Stil die Seite zeichnet und Kolumnentitel und Pagina entfernt. Die Tafel braucht `span: 'page'`, denn das Design einer Überschrift, das in der Spalte bleibt, wird am Fuß der Spalte abgeschnitten, 18 mm vor dem Endformat. `runningChapter: false` mit `toc: false` hält sie aus den PDF-Lesezeichen heraus, die mit 故乡 beginnen. Die drei Zeilen des Zitats sind drei Attribute und drei Textelemente, denn Design-Text hat einen eigenen Zeilenumbruch, der keine chinesischen Satzzeichenbreiten setzt; von Hand umbrochen, verlieren die Zeilen auch ihre Kommas, wie es chinesische Displayzeilen meist tun.
+Das Bild gehört zu einer eigenen Überschrift, `# 月下的瓜地 {style="plate" …}`, deren Stil die Seite zeichnet und Kolumnentitel und Pagina entfernt. Die Tafel braucht `span: 'page'`, denn die Gestaltung einer Überschrift, die in der Spalte bleibt, wird am Fuß der Spalte abgeschnitten, 18 mm vor dem Endformat. `runningChapter: false` mit `toc: false` hält sie aus den PDF-Lesezeichen heraus, die mit 故乡 beginnen. Die drei Zeilen des Zitats sind drei Attribute und drei Textelemente, denn Text in einer Gestaltung hat einen eigenen Zeilenumbruch, der keine chinesischen Satzzeichenbreiten setzt; von Hand umbrochen, verlieren die Zeilen auch ihre Kommas, wie es chinesische Displayzeilen meist tun.
 
 ### 6 · Lateinische Buchstaben und Ziffern im chinesischen Text
 
@@ -65,7 +65,7 @@ Kommas, Aufzählungskommas und Anführungszeichen nehmen ein ganzes Zeichen ein,
 
 ### Das Raster beim Setzen der Seite zeigen
 
-Der Canvas zeichnet für jede Zeichenposition jeder Zeile ein hellgraues Quadrat (稿纸); das PDF lässt es weg, sofern `renderToPdf` nicht `characterGrid: true` erhält.
+Das Canvas zeichnet für jede Zeichenposition jeder Zeile ein hellgraues Quadrat (稿纸); das PDF lässt es weg, sofern `renderToPdf` nicht `characterGrid: true` erhält.
 
 ```diff
 -  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
@@ -75,4 +75,4 @@ Der Canvas zeichnet für jede Zeichenposition jeder Zeile ein hellgraues Quadrat
 ## Häufige Fehler
 
 - Die Tafel ist eine Überschrift, und eine Überschrift erhält ein PDF-Lesezeichen: Ohne `runningChapter: false` und `toc: false` im Stil der Tafel begänne die Gliederung mit 月下的瓜地, einem Lesezeichen erster Ebene vor 故乡. Jede der beiden Einstellungen allein hält es heraus. Das getaggte PDF behält den Titel der Tafel trotzdem als H1.
-- Die eigene Schrift der Überschriften muss eine sein, die `FONTS` lädt, selbst wenn ein Design jeden Titel zeichnet: Mit der vorgegebenen Schriftstärke 700 fand das Kit Noto Serif SC 700 im Layout und lud ihre lateinische Datei mit einer Warnung. `headings.fontWeight: 400` hält die Überschriftenblöcke in der Textschrift.
+- Die eigene Schrift der Überschriften muss eine sein, die `FONTS` lädt, selbst wenn eine Gestaltung jeden Titel zeichnet: Mit der vorgegebenen Schriftstärke 700 fand das Kit Noto Serif SC 700 im Layout und lud ihre lateinische Datei mit einer Warnung. `headings.fontWeight: 400` hält die Überschriftenblöcke in der Textschrift.

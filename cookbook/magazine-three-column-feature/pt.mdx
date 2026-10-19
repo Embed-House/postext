@@ -5,7 +5,7 @@ plain: "Uma reportagem de viagem de seis páginas de uma revista mensal, compost
 description: "Uma reportagem de viagem no Postext em três colunas: página dupla de abertura com foto, fotos em uma, duas ou três colunas, citação flutuante e boxe lateral."
 question: "O Postext compõe uma página de revista em três colunas, com fotos ocupando duas delas?"
 aliases: ["revista em três colunas", "três colunas", "grid de revista", "grade de revista", "foto em duas colunas", "citação em duas colunas", "citação em destaque", "boxe lateral", "reportagem de viagem", "página dupla de abertura", "foto em página dupla", "capitular", "olho", "assinatura", "sinal final", "mapa de localização"]
-pageNotes: { "1": "A página par da abertura: salinas ao nascer do sol enchem a página, com o chapéu Islands · The Atlantic e o título The Salt Rakers of Marisal em branco sobre a água escura do pé.", "2": "A página ímpar: a mesma foto continua no alto, um salineiro com o seu rodo de madeira diante de uma fileira de montes de sal branco; abaixo, o primeiro parágrafo com uma capitular azul de quatro linhas na primeira coluna, o olho em itálico e a assinatura nas outras duas, e depois três colunas de texto.", "3": "Três colunas justificadas com intertítulos azuis; a foto de um rodo empurrando um monte de sal molhado encabeça a segunda e a terceira colunas.", "4": "Uma foto das salinas cor-de-rosa vistas de cima atravessa a página; abaixo, uma citação em destaque sob um fio azul ocupa a segunda e a terceira colunas.", "5": "A foto de uma peneira que recolhe cristais de sal encabeça a segunda e a terceira colunas; o retrato de uma salineira idosa com um cesto fica no pé da primeira.", "6": "A página de fecho: um boxe com fundo de cor, Visiting Marisal, com um pequeno mapa da ilha, ocupa o alto da primeira coluna; uma foto alta de um porto ao anoitecer ocupa as outras duas; a matéria termina nivelada nas três colunas com um pequeno quadrado azul." }
+pageNotes: { "1": "A página par da abertura: salinas ao nascer do sol enchem a página, com o chapéu Islands · The Atlantic e o título The Salt Rakers of Marisal em branco sobre a água escura do pé.", "2": "A página ímpar: a mesma foto continua no alto, um salineiro com o rodo de madeira diante de uma fileira de montes de sal branco; abaixo, o primeiro parágrafo com uma capitular azul de quatro linhas na primeira coluna, o olho em itálico e a assinatura nas outras duas, e depois três colunas de texto.", "3": "Três colunas justificadas com intertítulos azuis; a foto de um rodo empurrando um monte de sal molhado encabeça a segunda e a terceira colunas.", "4": "Uma foto das salinas cor-de-rosa vistas de cima atravessa a página; abaixo, uma citação em destaque sob um fio azul ocupa a segunda e a terceira colunas.", "5": "A foto de uma peneira que recolhe cristais de sal encabeça a segunda e a terceira colunas; o retrato de uma salineira idosa com um cesto fica no pé da primeira.", "6": "A página de fecho: um boxe com fundo de cor, Visiting Marisal, com um pequeno mapa da ilha, ocupa o alto da primeira coluna; uma foto alta de um porto ao anoitecer ocupa as outras duas; a matéria termina nivelada nas três colunas com um pequeno quadrado azul." }
 ---
 
 ## O que você vai compor
@@ -22,31 +22,31 @@ O código é [a resposta curta](#a-resposta-curta) acima. `layoutType: 'multiple
 
 <Excerpt region="spread" />
 
-Cada metade da foto pertence a um estilo de título com `span: 'page'`, e um título na largura da página sempre abre uma página nova, então a página do título e a do olho vêm uma depois da outra. A metade esquerda enche a página par e não reserva nada (`reserve: false`), e assim o título pode ficar sobre a água do pé. A direita é cortada em 165 mm, e o primeiro parágrafo, o olho e a assinatura pendem do contêiner sob ela. Esse parágrafo é um texto de design com uma capitular (`dropCap`) de quatro linhas, na largura de uma coluna; o preenchimento inferior vazio dele conta na altura da abertura, e as colunas começam 6 mm abaixo. `continuation.pageIndexOffset: 83` faz da página 84 uma página par, e as duas metades ficam frente a frente.
+Cada metade da foto pertence a um estilo de título com `span: 'page'`, e um título na largura da página sempre abre uma página nova, de modo que a página do título e a do olho vêm uma depois da outra. A metade esquerda enche a página par e não reserva nada (`reserve: false`), e assim o título pode ficar sobre a água do pé. A direita é cortada em 165 mm, e o primeiro parágrafo, o olho e a assinatura pendem do contêiner sob ela. Esse parágrafo é um texto de design com uma capitular (`dropCap`) de quatro linhas, na largura de uma coluna; o preenchimento inferior vazio dele conta na altura da abertura, e as colunas começam 6 mm abaixo. `continuation.pageIndexOffset: 83` faz da página 84 uma página par, e as duas metades ficam frente a frente.
 
 ### 3 · Declarar as fotos e citar cada uma onde ela deve cair
 
 <Excerpt region="resources" />
 
-Um flutuante vai para o primeiro alto (ou pé) livre das suas colunas depois da linha que o cita, então são as linhas `::resource` que decidem as páginas. A foto da peneira é citada no alto da primeira coluna da quinta página, quando a segunda e a terceira ainda estão vazias, e as encabeça na mesma página. A do porto é citada no fim dessa página e encabeça duas colunas da seguinte. Fotos do mesmo tipo nunca passam umas à frente das outras, então as citações seguem a ordem da matéria. Os bitmaps são medidos a 150 dpi, o valor da página: 1500 px dão 254 mm e são reduzidos aos 128,3 mm de duas colunas.
+Um flutuante vai para o primeiro alto (ou pé) livre das colunas depois da linha que o cita, por isso são as linhas `::resource` que decidem as páginas. A foto da peneira é citada no alto da primeira coluna da quinta página, quando a segunda e a terceira ainda estão vazias, e as encabeça na mesma página. A do porto é citada no fim dessa página e encabeça duas colunas da seguinte. Fotos do mesmo tipo nunca passam umas à frente das outras, por isso as citações seguem a ordem da matéria. Os bitmaps são medidos a 150 dpi, o valor da página: 1500 px dão 254 mm e são reduzidos aos 128,3 mm de duas colunas.
 
 ### 4 · Cabeços e fólios fora da página dupla de abertura
 
 <Excerpt region="heads" />
 
-Os elementos de cabeçalho são pintados sobre a página e não reservam espaço, então o fólio e o rótulo são ancorados à página, na margem superior. `pages: 'body'` os tira das duas páginas da abertura, que são páginas de abertura porque cada uma começa com um título na largura da página. A página ímpar da abertura recebe o fólio no pé, por meio de `pages: 'opener'` e `parity: 'odd'`; a par, toda ocupada pela foto, não leva nenhum.
+Os elementos de cabeçalho são pintados sobre a página e não reservam espaço, de modo que o fólio e o rótulo são ancorados à página, na margem superior. `pages: 'body'` os tira das duas páginas da abertura, que são páginas de abertura porque cada uma começa com um título na largura da página. A página ímpar da abertura recebe o fólio no pé, por meio de `pages: 'opener'` e `parity: 'odd'`; a par, toda ocupada pela foto, não leva nenhum.
 
 ### 5 · Desenhar em código o mapa do boxe
 
 <Excerpt region="art" />
 
-O mapa é um recurso SVG com `placement: 'here'`, citado dentro da cerca do boxe, e por isso fica sob o título do boxe, na medida dele. Não tem letreiros: o texto dentro de um SVG não pode usar as fontes web da página, então a legenda nomeia as formas. A ponta de seta da rota da balsa é um traçado, porque um `<marker>` não sobreviveria à exportação para PDF.
+O mapa é um recurso SVG com `placement: 'here'`, citado dentro do contêiner do boxe, e por isso fica sob o título do boxe, na medida dele. Não tem letreiros: o texto dentro de um SVG não pode usar as fontes web da página, de modo que a legenda nomeia as formas. A ponta de seta da rota da balsa é um traçado, porque um `<marker>` não sobreviveria à exportação para PDF.
 
 ## Variações
 
 ### Pôr a citação sobre as três colunas
 
-Um boxe flutuante dá preferência ao atributo `columns` da cerca sobre o do estilo, então uma citação pode ocupar a largura toda.
+Um boxe flutuante dá preferência ao atributo `columns` da linha de abertura sobre o do estilo, por isso uma citação pode ocupar a largura toda.
 
 ```diff
 - :::callout{type="pull"}

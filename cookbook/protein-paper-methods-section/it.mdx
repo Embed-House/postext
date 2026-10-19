@@ -28,13 +28,13 @@ L’elenco degli autori è un solo attributo del titolo, `authors="John Jumper^1
 
 <Excerpt region="resources" />
 
-Il riassunto è un riquadro con `span: 'page'` e senza cornice, con il testo in Noto Sans semibold. La Fig. 1 lo segue come `::resource{id="fig1"}`, e la sua collocazione, `{ position: 'here', span: 'page' }`, la mette sulle due colonne in quel punto; le due colonne di testo cominciano sotto la sua didascalia. La didascalia comincia con una frase in grassetto, come le legende di Nature; il `captionPrefix` del tipo e il `labelSeparator` dello stile della didascalia fanno leggere l’etichetta *Fig. 1 |*. La Table 1 è inserita dove si trova nei Methods con `position: 'here'` e resta nella sua colonna.
+Il riassunto è un riquadro con `span: 'page'` e senza bordo, con il testo in Noto Sans semibold. La Fig. 1 lo segue come `::resource{id="fig1"}`, e la sua collocazione, `{ position: 'here', span: 'page' }`, la mette sulle due colonne in quel punto; le due colonne di testo cominciano sotto la sua didascalia. La didascalia comincia con una frase in grassetto, come le legende di Nature; il `captionPrefix` del tipo e il `labelSeparator` dello stile della didascalia fanno leggere l’etichetta *Fig. 1 |*. La Table 1 è inserita dove si trova nei Methods con `position: 'here'` e resta nella sua colonna.
 
 ### 4 · Lo scheletro di una proteina disegnato da coordinate aperte
 
 <Excerpt region="art" />
 
-Le coordinate sono state lette una sola volta, quando è stata scritta la ricetta, dalla voce PDB 6Y4F (CC0) e dal modello dell’AlphaFold Database della stessa proteina (CC BY 4.0), sovrapposte sui loro atomi Cα e ruotate sugli assi principali dell’esperimento. Il pen le conserva come tre brevi array. Ogni traccia è una catena di segmenti di Bézier attraverso le posizioni dei Cα, dipinta dalla più lontana alla più vicina con un alone color carta, che dà profondità senza ombreggiature. I colori del modello sono le fasce di pLDDT usate dall’AlphaFold Database, lette dalla colonna del fattore B del suo file.
+Le coordinate sono state lette una sola volta, quando è stata scritta la ricetta, dalla voce PDB 6Y4F (CC0) e dal modello dell’AlphaFold Database della stessa proteina (CC BY 4.0), sovrapposte sui loro atomi Cα e ruotate sugli assi principali dell’esperimento. Il pen le conserva come tre brevi array. Ogni traccia è una catena di segmenti di Bézier attraverso le posizioni dei Cα, disegnata dalla più lontana alla più vicina con un alone color carta, che dà profondità senza ombreggiature. I colori del modello sono le fasce di pLDDT usate dall’AlphaFold Database, lette dalla colonna del fattore B del suo file.
 
 ### 5 · Lettere greche e accenti nel PDF
 
@@ -44,7 +44,7 @@ Fontsource divide ogni carattere per sistema di scrittura. `kitFonts(FONTS)` leg
 
 ### Tieni i Methods al corpo del testo
 
-Alcune riviste compongono i Methods nello stesso corpo del testo; togli lo stile del corpo della sezione e mantieni il titolo.
+Alcune riviste compongono i Methods nello stesso corpo del testo corrente; togli lo stile del testo della sezione e mantieni il titolo.
 
 ```diff
 -  bodyStyle: { fontSize: pt(8.2), lineHeight: pt(SMALL) } };

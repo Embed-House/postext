@@ -4,7 +4,7 @@ summary: "Mapes pintats sense cap lletra i retolats amb línies ::label a les à
 plain: "Tres pàgines d’un atles escolar d’un país inventat. Els mapes són pintures sense text; tots els noms s’escriuen al text, de manera que una traducció canvia les paraules i deixa els mapes com són."
 description: "Un atles escolar compost amb Postext: mapes retolats des del Markdown a les àncores del recurs, un mapa a doble pàgina i una edició àrab."
 question: "Com poso els noms d’un mapa des del text, perquè cada traducció faci servir el mateix dibuix?"
-aliases: ["atles", "atles escolar", "rètols de mapa", "topònims", "àncores", "estils de rètol", "mapa a doble pàgina", "plec", "de dreta a esquerra", "rètols girats", "map labels"]
+aliases: ["atles", "atles escolar", "rètols de mapa", "topònims", "àncores", "estils de rètol", "mapa a doble pàgina", "de dreta a esquerra", "rètols girats", "map labels"]
 ---
 
 ## Què compondràs
@@ -25,13 +25,13 @@ Les pintures es van fer per ordre. Primer la làmina del relleu, pintada per un 
 
 <Excerpt region="resources" />
 
-El recurs té una sola imatge (un SVG que porta la pintura i, al damunt, els símbols vectorials) i una sola llista d’àncores per a totes les edicions. Cada edició escriu una línia `::label[…]{at="…"}` per àncora dins de `:::figure{resource="relief" slot="map"}`, de manera que `::label[Llanura de Calvera]{at="plain"}` i `::label[Calvera Plain]{at="plain"}` cauen al mateix lloc, partits en dues línies pel `width` de l’àncora quan cal. El text alternatiu també canvia amb l’edició: cada `:::figure` porta el seu en una línia `::alt[…]`, i un peu o una nota anirien igual amb `::caption[…]` i `::note[…]`. Una àncora amb estil que una edició deixa sense rètol dona l’avís `anchorUnlabelled`, i un rètol el `at` del qual no anomena cap àncora no es dibuixa i dona `labelAnchorUnknown`.
+El recurs té una sola imatge (un SVG que porta la pintura i, al damunt, els símbols vectorials) i una sola llista d’àncores per a totes les edicions. Cada edició escriu una línia `::label[…]{at="…"}` per àncora dins de `:::figure{resource="relief" slot="map"}`, de manera que `::label[Llanura de Calvera]{at="plain"}` i `::label[Calvera Plain]{at="plain"}` cauen al mateix lloc, partits en dues línies pel `width` de l’àncora quan cal. El text alternatiu també canvia amb l’edició: cada `:::figure` porta el seu en una línia `::alt[…]`, i un peu o una nota anirien igual amb `::caption[…]` i `::note[…]`. Una àncora amb estil que una edició deixa sense rètol dona l’avís `anchorUnlabelled`, i un rètol amb un `at` que no indica cap àncora no es dibuixa i dona `labelAnchorUnknown`.
 
 ### 3 · Una làmina i una làmina doble
 
 <Excerpt region="templates" />
 
-Les dues plantilles tenen els mateixos cinc marcs, així que el Markdown d’una làmina té la mateixa forma en una pàgina o en dues: el títol, el text que no anomena cap ranura, el mapa, la llegenda i les activitats. A la làmina doble, `spread: true` maqueta les dues pàgines com un sol full de 390 mm, i només el marc del mapa porta `crossGutter`: travessa el llom mentre el text i els requadres es queden a la seva pàgina. El text, el mapa i la llegenda formen un grup `stack`; a la prova d’estrès del banc, amb tots els textos un 30 % més llargs, l’edició àrab posa el mapa de situació al 87,5 % i els requadres de sota pugen, sense cap avís.
+Les dues plantilles tenen els mateixos cinc marcs, així que el Markdown d’una làmina té la mateixa forma en una pàgina o en dues: el títol, el text que no indica cap ranura, el mapa, la llegenda i les activitats. A la làmina doble, `spread: true` maqueta les dues pàgines com un sol full de 390 mm, i només el marc del mapa porta `crossGutter`: travessa el llom mentre el text i els requadres es queden a la seva pàgina. El text, el mapa i la llegenda formen un grup `stack`; a la prova d’estrès del banc, amb tots els textos un 30 % més llargs, l’edició àrab posa el mapa de situació al 87,5 % i els requadres de sota pugen, sense cap avís.
 
 ### 4 · Una paleta per a la pàgina, les tintes i la llegenda
 
@@ -41,7 +41,7 @@ Les cinc tintes d’altitud són entrades de la paleta (`palette.low` a `palette
 
 ### 5 · L’edició àrab
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. `locale: 'ar'` posa el text de dreta a esquerra i enquaderna el llibre per la dreta, així que el plec s’obre a la pàgina de la dreta i els marcs segueixen l’àrea de contingut reflectida: el títol i el text queden a la dreta i la llegenda, a la dreta de les activitats. Els mapes no es reflecteixen, i cada nom àrab es col·loca on hi ha dibuixat el seu lloc. En àrab els estils de rètol perden la cursiva i l’espaiat entre lletres i creixen un 15 %, perquè el cúfic compon petit. La decoració i els folis continuen sobre el full, així que l’avanttítol passa a dalt a la dreta i els folis canvien de costat.
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. `locale: 'ar'` posa el text de dreta a esquerra i enquaderna el llibre per la dreta, així que la doble pàgina s’obre a la pàgina de la dreta i els marcs segueixen l’àrea de contingut emmirallada: el títol i el text queden a la dreta i la llegenda, a la dreta de les activitats. Els mapes no s'emmirallen, i cada nom àrab es col·loca on hi ha dibuixat el seu lloc. En àrab els estils de rètol perden la cursiva i l’espaiat entre lletres i creixen un 15 %, perquè el cúfic compon petit. La decoració i els folis continuen sobre el full, així que l’avanttítol passa a dalt a la dreta i els folis canvien de costat.
 
 ## Variants
 
@@ -63,5 +63,5 @@ Dona al tipus de mapa un comptador i un prefix, i a cada recurs un peu: mira <Re
 
 - El text alternatiu de cada mapa és al Markdown, en una línia `::alt[…]` dins de la seva `:::figure`, una per edició. Una figura que no el dona conserva l’`altText` del recurs mateix; `script.js` no guarda ni una paraula de la pàgina.
 - Les àncores i els símbols vectorials (fronteres, ciutats, cims, la línia del tall) són en quilòmetres llegits sobre la pintura. Si es torna a pintar un mapa, les seves costes, rius i carenes es mouen: posa la quadrícula sobre la imatge nova i llegeix-los un altre cop, o un nom caurà al mar.
-- En una pàgina de dreta a esquerra els marcs es reflecteixen amb l’àrea de contingut, però la decoració de la plantilla no: col·loca l’avanttítol segons l’edició, com fa `kicker`.
+- En una pàgina de dreta a esquerra els marcs s'emmirallen amb l’àrea de contingut, però la decoració de la plantilla no: col·loca l’avanttítol segons l’edició, com fa `kicker`.
 - Un marc a dues columnes pot tallar un paràgraf una línia abans del final i deixar aquesta línia al capdamunt de la segona columna. Revisa les columnes de cada edició i passa una frase d’un paràgraf al següent quan passi.

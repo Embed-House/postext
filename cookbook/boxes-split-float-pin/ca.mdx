@@ -22,13 +22,13 @@ Tots els estils parteixen de `box()`: el títol en monoespaiada, un cos de 8,8 p
 
 ### 2 · Sencer, partit, flotant i fix
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. El procediment fa 192 mm i en una columna n'hi caben 211, així que, si es mantingués sencer, saltaria al cap de la columna dreta i deixaria 43 mm buits al peu de l'esquerra. Amb `keepTogether: false` comença on cau i continua a la columna següent, o a la pàgina següent, com mostra la segona variant ([el contenidor `:::callout`](/ca/docs/configuration-callouts#el-contenidor-callout)). La continuació perd el títol i la icona. Una icona en línia prendria als passos una columna pròpia a totes dues parts; per això el compàs va a la cantonada exterior del requadre, on no resta amplada. La tanca del full de dades porta `placement="top"`, així que el requadre surt del flux a la <PageRef page={2}>pàgina 42</PageRef> i encapçala la següent. La insígnia és `fixed`, i un `offset.x` negatiu porta la mà i el seu filet al marge exterior perquè la vora de la insígnia quedi alineada amb el text.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. El procediment fa 192 mm i en una columna n'hi caben 211, així que, si es mantingués sencer, saltaria al cap de la columna dreta i deixaria 43 mm buits al peu de l'esquerra. Amb `keepTogether: false` comença on cau i continua a la columna següent, o a la pàgina següent, com mostra la segona variant ([el contenidor `:::callout`](/ca/docs/configuration-callouts#el-contenidor-callout)). La continuació perd el títol i la icona. Una icona en línia prendria als passos una columna pròpia a totes dues parts; per això el compàs va a la cantonada exterior del requadre, on no resta amplada. La línia d'obertura del full de dades porta `placement="top"`, així que el requadre surt del flux a la <PageRef page={2}>pàgina 42</PageRef> i encapçala la següent. La insígnia és `fixed`, i un `offset.x` negatiu porta la mà i el seu filet al marge exterior perquè la vora de la insígnia quedi alineada amb el text.
 
 ### 3 · Creua la pàgina amb un tauler de tres columnes
 
 <Excerpt region="panel" />
 
-Amb `span: 'page'`, el requadre de materials ocupa les dues columnes. La introducció queda tallada a la mateixa altura per sobre i el text continua a dues columnes per sota (<PageRef page={1}>pàgina 41</PageRef>). Dins de la tanca, `:::columns{count=3 breaks="5,9"}` fixa on comença cada columna en lloc d'equilibrar-les: `breaks` compta blocs fills, i cada element de llista n'és un, així que la segona i la tercera columna comencen al cinquè i al novè, les etiquetes en negreta. `columnGap` fa servir l'espai entre columnes de 7 mm de la pàgina, i les columnes del tauler queden tan separades com les del text.
+Amb `span: 'page'`, el requadre de materials ocupa les dues columnes. La introducció queda tallada a la mateixa altura per sobre i el text continua a dues columnes per sota (<PageRef page={1}>pàgina 41</PageRef>). Dins del requadre, `:::columns{count=3 breaks="5,9"}` fixa on comença cada columna en lloc d'equilibrar-les: `breaks` compta blocs fills, i cada element de llista n'és un, així que la segona i la tercera columna comencen al cinquè i al novè, les etiquetes en negreta. `columnGap` fa servir l'espai entre columnes de 7 mm de la pàgina, i les columnes del tauler queden tan separades com les del text.
 
 ```markdown
 :::callout{type="material" title="Necessitaràs"}
@@ -49,7 +49,7 @@ Amb `span: 'page'`, el requadre de materials ocupa les dues columnes. La introdu
 
 <Excerpt region="palette" />
 
-El groc sol es reserva per als fons grans, la banda i el tauler; sobre ell, l'antracita i la tinta donen un contrast de 7,4:1 i 8,6:1. Com a color de lletra sobre blanc es quedaria en 1,8:1, així que no es fa servir mai per a text. El procediment porta `light`, un groc més clar: sobre ell la tinta arriba a 11:1, i el tall es continua veient a la miniatura de la galeria. El full de dades porta `tint`, un crema gairebé blanc, perquè no es confongui amb el procediment, l'altre requadre amb fons del plec. `main-color` apunta a l'antracita, de manera que els valors per defecte que la configuració no canvia surten en antracita i no en el blau del motor.
+El groc sol es reserva per als fons grans, la banda i el tauler; sobre ell, l'antracita i la tinta donen un contrast de 7,4:1 i 8,6:1. Com a color de lletra sobre blanc es quedaria en 1,8:1, així que no es fa servir mai per a text. El procediment porta `light`, un groc més clar: sobre ell la tinta arriba a 11:1, i el tall es continua veient a la miniatura de la galeria. El full de dades porta `tint`, un crema gairebé blanc, perquè no es confongui amb el procediment, l'altre requadre amb fons de la doble pàgina. `main-color` apunta a l'antracita, de manera que els valors per defecte que la configuració no canvia surten en antracita i no en el blau del motor.
 
 ### 5 · Obre la pràctica amb una banda groga
 
@@ -61,7 +61,7 @@ La banda és un element de caixa ancorat a la pàgina; el dibuix, un element d'i
 
 ### Mantén sencer el procediment
 
-Sense aquest ajust, el procediment, que cap en una columna, passa sencer al cap de la columna dreta i deixa 43 mm buits al peu de l'esquerra.
+Sense aquest paràmetre, el procediment, que cap en una columna, passa sencer al cap de la columna dreta i deixa 43 mm buits al peu de l'esquerra.
 
 ```diff
 -  box('pasos', { keepTogether: false, background: col('light'),
@@ -79,7 +79,7 @@ Amb `placement="bottom"` a `content.es.md`, el full de dades ocupa el peu de la 
 
 ## Errors freqüents
 
-- Un requadre més alt que una columna sencera es parteix digui el que digui `keepTogether`. L'ajust només decideix en els requadres que caben en una columna, com aquest procediment de 192 mm en una columna de 211.
+- Un requadre més alt que una columna sencera es parteix digui el que digui `keepTogether`. El paràmetre només decideix en els requadres que caben en una columna, com aquest procediment de 192 mm en una columna de 211.
 - `splitMinLines` (2 per defecte) és el mínim de línies que un tall deixa a cada costat, comptades en el pas que talla, així que cap pas no deixa una línia sola. El text anterior al procediment està ajustat perquè el tall caigui entre els passos 4 i 5. Un canvi en el text que precedeix un requadre partit pot moure el tall, així que torna a mirar on cau després de cada retoc.
 - Una icona en línia ocupa una columna pròpia, i la continuació la conserva, buida: els passos perden l'amplada de la icona a totes dues parts. Una icona a la cantonada, o una franja lateral on assentar-la, els deixa la mesura sencera.
-- Un requadre amb `placement="top"` encapçala la pàgina següent a aquella en què cau la seva tanca, així que la tanca va a la pàgina anterior a la que ha d'encapçalar. Aquí és just abans del procediment, a la 42.
+- Un requadre amb `placement="top"` encapçala la pàgina següent a aquella on s'obre, així que la línia d'obertura va a la pàgina anterior a la que ha d'encapçalar. Aquí és just abans del procediment, a la 42.

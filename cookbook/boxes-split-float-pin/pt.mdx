@@ -22,13 +22,13 @@ Todo estilo parte de `box()`: o título em monoespaçada, letra de 8,8 pt contra
 
 ### 2 · Inteiro, dividido, flutuante e fixo
 
-O código está [na resposta curta](#a-resposta-curta), mais acima. O procedimento mede 192 mm e numa coluna cabem 211, então um boxe mantido inteiro pularia para o alto da coluna da direita e deixaria 43 mm vazios no pé da esquerda. `keepTogether: false` deixa o boxe começar onde ele cai e continuar na coluna seguinte, ou na página seguinte, como mostra a segunda variação ([o contêiner `:::callout`](/pt/docs/configuration-callouts#o-contêiner-callout)). A continuação perde o título e o ícone. Um ícone na linha tiraria dos passos uma coluna própria nas duas partes; por isso o compasso fica no canto externo do boxe, onde não ocupa largura. A cerca da folha de dados tem `placement="top"`, então o boxe sai do fluxo na <PageRef page={2}>página 42</PageRef> e encabeça a página seguinte. O selo é `fixed`, e um `offset.x` negativo leva a mão e o fio dela para a margem externa, para que a borda esquerda do selo fique alinhada com o texto.
+O código está [na resposta curta](#a-resposta-curta), mais acima. O procedimento mede 192 mm e numa coluna cabem 211, por isso um boxe mantido inteiro pularia para o alto da coluna da direita e deixaria 43 mm vazios no pé da esquerda. `keepTogether: false` deixa o boxe começar onde ele cai e continuar na coluna seguinte, ou na página seguinte, como mostra a segunda variação ([o contêiner `:::callout`](/pt/docs/configuration-callouts#o-contêiner-callout)). A continuação perde o título e o ícone. Um ícone na linha tiraria dos passos uma coluna própria nas duas partes; por isso o compasso fica no canto externo do boxe, onde não ocupa largura. A linha de abertura da folha de dados tem `placement="top"`, de modo que o boxe sai do fluxo na <PageRef page={2}>página 42</PageRef> e encabeça a página seguinte. O selo é `fixed`, e um `offset.x` negativo leva a mão e o fio dela para a margem externa, para que a borda esquerda do selo fique alinhada com o texto.
 
 ### 3 · Atravessar a página com um painel de três colunas
 
 <Excerpt region="panel" />
 
-Com `span: 'page'`, o boxe de materiais atravessa as duas colunas. A introdução acima dele é cortada na mesma altura, e o texto continua em duas colunas embaixo dele (<PageRef page={1}>página 41</PageRef>). Dentro da cerca, `:::columns{count=3 breaks="5,9"}` define onde começa cada coluna em vez de balanceá-las. `breaks` conta blocos filhos, e cada item de lista é um bloco, então a segunda e a terceira colunas abrem no quinto e no nono blocos, os rótulos em negrito. `columnGap` é a medianiz de 7 mm da página, e as colunas do painel ficam tão afastadas quanto as colunas de texto.
+Com `span: 'page'`, o boxe de materiais atravessa as duas colunas. A introdução acima dele é cortada na mesma altura, e o texto continua em duas colunas embaixo dele (<PageRef page={1}>página 41</PageRef>). Dentro do contêiner, `:::columns{count=3 breaks="5,9"}` define onde começa cada coluna em vez de balanceá-las. `breaks` conta blocos filhos, e cada item de lista é um bloco, por isso a segunda e a terceira colunas abrem no quinto e no nono blocos, os rótulos em negrito. `columnGap` é a medianiz de 7 mm da página, e as colunas do painel ficam tão afastadas quanto as colunas de texto.
 
 ```markdown
 :::callout{type="material" title="Necesitarás"}
@@ -70,7 +70,7 @@ Sem essa configuração, o procedimento, que cabe numa coluna, vai inteiro para 
 
 ### Fazer a folha de dados flutuar para o pé
 
-Com `placement="bottom"` em `content.es.md`, a folha de dados ocupa o pé da página 42, onde cai a cerca dela. O procedimento que ela desloca começa no alto da coluna da direita e se divide na virada da página, terminando no alto da página 43.
+Com `placement="bottom"` em `content.es.md`, a folha de dados ocupa o pé da página 42, onde cai o delimitador dela. O procedimento que ela desloca começa no alto da coluna da direita e se divide na virada da página, terminando no alto da página 43.
 
 ```diff
 -:::callout{type="datos" placement="top" title="Hoja de datos · Madrid, 40,4° N · 3,7° O"}
@@ -80,6 +80,6 @@ Com `placement="bottom"` em `content.es.md`, a folha de dados ocupa o pé da pá
 ## Erros comuns
 
 - Um boxe mais alto que uma coluna inteira se divide, diga o que disser `keepTogether`. A configuração só decide nos boxes que cabem numa coluna, como este procedimento de 192 mm numa coluna de 211 mm.
-- `splitMinLines` (2 por padrão) é o mínimo de linhas que um corte deixa de cada lado, contadas no passo que ele corta, então nenhum passo deixa uma linha sozinha. O texto antes do procedimento foi ajustado para que o corte caia entre os passos 4 e 5. Qualquer mudança no texto acima de um boxe dividido pode mover o corte, então confira onde ele cai depois de cada uma.
+- `splitMinLines` (2 por padrão) é o mínimo de linhas que um corte deixa de cada lado, contadas no passo que ele corta, por isso nenhum passo deixa uma linha sozinha. O texto antes do procedimento foi ajustado para que o corte caia entre os passos 4 e 5. Qualquer mudança no texto acima de um boxe dividido pode mover o corte, por isso confira onde ele cai depois de cada uma.
 - Um ícone na linha ocupa uma coluna própria, e a continuação a mantém, vazia: os passos perdem a largura do ícone nas duas partes. Um ícone no canto, ou uma faixa lateral onde o ícone se apoie, deixa a eles a medida inteira.
-- Um boxe flutuante com `placement="top"` encabeça a página seguinte àquela em que cai a cerca dele, então a cerca vai na página anterior à que o boxe deve encabeçar. Aqui ela fica logo antes do procedimento, na página 42.
+- Um boxe flutuante com `placement="top"` encabeça a página seguinte àquela em que cai o delimitador dele; por isso, o delimitador vai na página anterior à que o boxe deve encabeçar. Aqui ela fica logo antes do procedimento, na página 42.

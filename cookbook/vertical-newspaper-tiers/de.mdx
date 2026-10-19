@@ -1,7 +1,7 @@
 ---
 title: "Eine vertikale Zeitungsseite in Stufen"
 summary: "Zwei Blätter einer chinesischen Zeitung von 1912, vertikal gesetzt: Text in zwei Stufen mit Linie dazwischen, Telegramme in drei, Schlagzeile durch beide."
-plain: "Zwei Seiten einer chinesischen Zeitung von 1912, gedruckt in Spalten, die von oben nach unten gelesen werden. Die Seite ist in übereinanderliegende Bänder mit einer Linie dazwischen geteilt, wie es alte Zeitungen taten."
+plain: "Zwei Seiten einer chinesischen Zeitung von 1912, gedruckt in Spalten, die von oben nach unten gelesen werden. Die Seite ist in übereinanderliegende Bereiche mit einer Linie dazwischen geteilt, wie es alte Zeitungen taten."
 description: "Vertikale chinesische Zeitung in Postext: zwei Stufen (欄) zu 25 Zeichen mit Linie dazwischen, Kopf und Schlagzeile in einer Gestaltung, Telegramme dreistufig."
 question: "Wie setze ich eine chinesische Zeitungsseite vertikal, in Stufen mit Linien dazwischen?"
 aliases: ["欄", "栏", "Stufen", "vertikale Zeitung", "chinesische Zeitung", "Shenbao", "申報", "Zeitungskopf", "Schlagzeile", "Ortszeile", "Telegramme", "1912"]
@@ -26,7 +26,7 @@ Der Text bleibt in zwei Stufen, und nur die Telegramme brauchen drei, darum komm
 
 <Excerpt region="front" />
 
-Die Schlagzeile des Aufmachers musste unter dem Zeitungskopf beide Stufen überqueren. Eine Überschrift mit `span: 'page'` wird als Auftakt am Kopf einer Seite gesetzt, eine zweite nach dem Zeitungskopf hätte also eine eigene Seite begonnen. Die H1 der Seite ist darum der Aufmacher, und ihr Überschriftenformat zeichnet den Zeitungskopf über der Schlagzeile: einen zinnoberroten Block von 6,5 Zeilen Tiefe mit dem Namen der Zeitung negativ und darunter die Ausgabezeile: das Jahr der Republik und des Zyklus und 今日出紙兩張, „heute zwei Blätter“; dann die Schlagzeile in Noto Serif TC 900 zu 44 pt. Im Fluss ist die Breite der Gestaltung die Höhe des Satzspiegels auf dem Blatt, also zentriert `size: { width: 'fill' }` mit `align: 'center'` die Schlagzeile über beide Stufen. Die Gestaltung ist 13 Zeilen tief, eine ganze Zahl von Rasterzeilen, sodass der Text danach auf einer Rasterzeile beginnt.
+Die Schlagzeile des Aufmachers musste unter dem Zeitungskopf beide Stufen überqueren. Eine Überschrift mit `span: 'page'` wird als Auftakt am Kopf einer Seite gesetzt, eine zweite nach dem Zeitungskopf hätte also eine eigene Seite begonnen. Die H1 der Seite ist darum der Aufmacher, und ihr Überschriftenstil zeichnet den Zeitungskopf über der Schlagzeile: einen zinnoberroten Block von 6,5 Zeilen Tiefe mit dem Namen der Zeitung negativ und darunter die Ausgabezeile: das Jahr der Republik und des Zyklus und 今日出紙兩張, „heute zwei Blätter“; dann die Schlagzeile in Noto Serif TC 900 zu 44 pt. Im Fluss ist die Breite der Gestaltung die Höhe des Satzspiegels auf dem Blatt, also zentriert `size: { width: 'fill' }` mit `align: 'center'` die Schlagzeile über beide Stufen. Die Gestaltung ist 13 Zeilen tief, eine ganze Zahl von Rasterzeilen, sodass der Text danach auf einer Rasterzeile beginnt.
 
 <PageShot page={1} crop="0.54,0.1,0.44,0.82" caption="Seite 1: der Zeitungskopf, die Schlagzeile zentriert durch beide Stufen, die Unterzeile daneben und die Ortszeile am Kopf ihrer Zeile." />
 
@@ -34,13 +34,13 @@ Die Schlagzeile des Aufmachers musste unter dem Zeitungskopf beide Stufen überq
 
 <Excerpt region="heads" />
 
-Eine Überschriftengestaltung in der Spalte lebt innerhalb ihrer Stufe. Ihre Linie ist im Fluss `direction: 'horizontal'` und läuft darum auf dem Blatt die Stufe hinunter, eine Haarlinie zwischen zwei Meldungen. Die Schlagzeile beginnt am Kopf der Stufe, die Unterzeile zwei Zeichen tiefer, und die Ortszeile nennt Ort, Zeitung und Tag, an dem der Bericht erschien. `minHeight` hält jeden Kopf vier Zeilen tief, sodass der Text unter jedem Kopf auf dem Raster beginnt.
+Eine Überschriftengestaltung in der Spalte bleibt innerhalb ihrer Stufe. Ihre Linie ist im Fluss `direction: 'horizontal'` und läuft darum auf dem Blatt die Stufe hinunter, eine Haarlinie zwischen zwei Meldungen. Die Schlagzeile beginnt am Kopf der Stufe, die Unterzeile zwei Zeichen tiefer, und die Ortszeile nennt Ort, Zeitung und Tag, an dem der Bericht erschien. `minHeight` hält jeden Kopf vier Zeilen tief, sodass der Text unter jedem Kopf auf dem Raster beginnt.
 
 ### 4 · Das zweite Blatt mit einem Kopf versehen und am Fuß zeichnen
 
 <Excerpt region="pagehead" />
 
-Kolumnentitel bleiben auf einer vertikalen Seite horizontal, wie es clreq beschreibt. Der Rahmen der Kopfzeile ist der Rand über den Stufen; das Raster vergrößert diesen Rand, und `HEAD` wiederholt die Summe des Rasters, sodass die Linie 6 mm über dem ersten Zeichen sitzt. `pages: 'body'` überlässt Seite 1 dem Zeitungskopf. Das Impressum ist ein Attribut der H1, sodass die englische und die spanische Ausgabe unter denselben chinesischen Seiten jeweils ihre eigene Zeile drucken.
+Kolumnentitel bleiben auf einer vertikalen Seite horizontal, wie es clreq beschreibt. Der Bereich der Kopfzeile ist der Rand über den Stufen; das Raster vergrößert diesen Rand, und `HEAD` wiederholt die Summe des Rasters, sodass die Linie 6 mm über dem ersten Zeichen sitzt. `pages: 'body'` überlässt Seite 1 dem Zeitungskopf. Das Impressum ist ein Attribut der H1, sodass die englische und die spanische Ausgabe unter denselben chinesischen Seiten jeweils ihre eigene Zeile zeigen.
 
 ### 5 · Jede Stimme mit dem Text laden, den sie setzt
 
@@ -74,7 +74,7 @@ Mit `charsPerLine: 2 * CHARS + 2` im Raster.
 
 ## Häufige Fehler
 
-- Die Noto Serif TC von Fontsource deklariert 爲, die Form, die die *Shenbao* druckte, im Bereich einer ihrer Dateien, aber diese Datei hat kein Glyph dafür: Der Canvas zeichnete es in einer Systemschrift, und das PDF hatte keines (C25). Die Berichte setzen 為.
+- Die Noto Serif TC von Fontsource deklariert 爲, die Form, die die *Shenbao* druckte, im Bereich einer ihrer Dateien, aber diese Datei hat kein Glyph dafür: Das Canvas zeichnete es in einer Systemschrift, und das PDF hatte keines (C25). Die Berichte setzen 為.
 - Die Transkriptionen in Wikisource haben Fehler, die die Seite korrigiert: 己紀 für 已紀 und zweimal 倍侍 für 陪侍 im Bankettbericht; im Gedenkbericht 勸勵一番現在將土, mit 土 für 士 und dem Objekt nach 一番, hier gesetzt als 勸勵現在將士一番, „ermutigte die anwesenden Offiziere und Soldaten“. Die Seite setzt außerdem die Standardform von vier Varianten: 寧 für 寗, 總 für 縂 (dreimal) und 決 für 决 (zweimal) in den Telegrammen, 刊 für 刋 in der Inschrift.
 - LXGW WenKai TC zeichnet, so wie Fontsource sie ausliefert, 為 als 爲, sodass die Inschrift in Kai die ältere Form zeigt, die dem Song-Text fehlt.
 - Die drei Stufen des Kastens sind Drittel des Satzspiegels und fluchten nicht mit den zwei Stufen des Textes. Eine Zeitung setzt einen solchen Teil auf ein eigenes Raster; die Linie am rechten Rand des Kastens hält die beiden Raster auseinander.

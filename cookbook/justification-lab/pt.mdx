@@ -16,7 +16,7 @@ O número 12 de *Galley*, a revista de um laboratório de tipografia, composta e
 
 ### 1 · Aperte os limites e mantenha as proteções
 
-O código deste passo é [a resposta curta](#a-resposta-curta) logo acima. O [Knuth–Plass](/pt/docs/justification#knuth-plass-o-parágrafo-inteiro-de-uma-vez), a hifenização, as penalidades de viúvas, órfãs e linhas curtas e os títulos presos ao texto seguinte vêm ligados por padrão, então a edição publicada só estreita os [limites do espaçamento entre palavras](/pt/docs/justification#limites-do-espaçamento-entre-palavras) para 0,8 e 1,6 vez um espaço normal (os padrões são 0,6 e 2). Uma linha acima do limite superior custa mais que qualquer hífen ou linha curta, então o algoritmo tenta outras quebras antes; tire os dois limites e este ensaio compõe duas linhas acima de 1,6. A hifenização segue `locale`: `'es'`, `'fr'` e `'de'` têm os seus próprios padrões do TeX, uma etiqueta regional como `'es-ES'` usa os do seu idioma, e um idioma sem padrões é hifenizado como inglês americano, com um aviso no console.
+O código deste passo é [a resposta curta](#a-resposta-curta) logo acima. O [Knuth–Plass](/pt/docs/justification#knuth-plass-o-parágrafo-inteiro-de-uma-vez), a hifenização, as penalidades de viúvas, órfãs e linhas curtas e os títulos presos ao texto seguinte vêm ativados por padrão, de modo que a edição publicada só estreita os [limites do espaçamento entre palavras](/pt/docs/justification#limites-do-espaçamento-entre-palavras) para 0,8 e 1,6 vez um espaço normal (os padrões são 0,6 e 2). Uma linha acima do limite superior custa mais que qualquer hífen ou linha curta, por isso o algoritmo tenta outras quebras antes; tire os dois limites e este ensaio compõe duas linhas acima de 1,6. A hifenização segue `locale`: `'es'`, `'fr'` e `'de'` têm os próprios padrões do TeX, uma etiqueta regional como `'es-ES'` usa os do idioma, e um idioma sem padrões é hifenizado como inglês americano, com um aviso no console.
 
 ### 2 · Marque as linhas frouxas a partir da árvore de layout
 
@@ -28,25 +28,25 @@ O código deste passo é [a resposta curta](#a-resposta-curta) logo acima. O [Kn
 
 <Excerpt region="compare" />
 
-As duas edições usam o mesmo design, então qualquer diferença entre as duas páginas 2 vem do algoritmo de quebra e das suas proteções. Em inglês, o controle guloso deixa 47 das suas 110 linhas justificadas acima de 1,6 e 30 acima de 2, três delas acima de 3× e alinhadas à esquerda pelo motor, enquanto a edição Knuth–Plass mantém todas as 105 entre 0,80 e 1,60. Na página 2, o controle também leva a última linha de um parágrafo, sozinha, para o alto de uma coluna, o que `avoidOrphans: false` permite, e termina outro parágrafo numa linha curta.
+As duas edições usam o mesmo design, por isso qualquer diferença entre as duas páginas 2 vem do algoritmo de quebra e das proteções. Em inglês, o controle guloso deixa 47 das 110 linhas justificadas acima de 1,6 e 30 acima de 2, três delas acima de 3× e alinhadas à esquerda pelo motor, enquanto a edição Knuth–Plass mantém todas as 105 entre 0,80 e 1,60. Na página 2, o controle também leva a última linha de um parágrafo, sozinha, para o alto de uma coluna, o que `avoidOrphans: false` permite, e termina outro parágrafo numa linha curta.
 
 ### 4 · Dê a cada ajuste um boxe próprio
 
 <Excerpt region="bench" />
 
-Um boxe compõe todas as colunas de um grupo [`:::columns`](/pt/docs/document-format-directives#columns) com um só estilo de texto, então cada ficha é um boxe aninhado com o seu próprio `body`, e `breaks="3"` empilha na primeira coluna a ficha alinhada à esquerda e a ficha sem hifenização. A ficha alinhada à esquerda dispensa `hyphenation: false`: texto alinhado à esquerda só é hifenizado quando `bodyText.hyphenation.ragged` está ligado. A bancada flutua para o pé da página 3 com `placement: 'bottom'`, e o seu espaçamento interno inferior repete a moldura de 4 mm porque o `marginBottom` da última ficha é descartado no fim do boxe.
+Um boxe compõe todas as colunas de um grupo [`:::columns`](/pt/docs/document-format-directives#columns) com um só estilo de texto, de modo que cada ficha é um boxe aninhado com o próprio `body`, e `breaks="3"` empilha na primeira coluna a ficha alinhada à esquerda e a ficha sem hifenização. A ficha alinhada à esquerda dispensa `hyphenation: false`: texto alinhado à esquerda só é hifenizado quando `bodyText.hyphenation.ragged` está ativado. A bancada flutua para o pé da página 3 com `placement: 'bottom'`, e o espaçamento interno inferior repete a moldura de 4 mm porque o `marginBottom` da última ficha é descartado no fim do boxe.
 
 ### 5 · Desenhe o modelo na abertura
 
 <Excerpt region="opener" />
 
-O diagrama é um [elemento de imagem](/pt/docs/configuration-headers-footers#elementos-de-imagem) do design do H1. Como figura, seria um flutuante `top` na largura da página, e um flutuante `top` citado na página 1 abre a página 2. A faixa desce além do diagrama, e uma abertura reserva altura até o seu elemento mais baixo, então o texto começa sob a faixa sem `minHeight`, uma linha mais abaixo por causa do `marginBottom` padrão do H1. Os rótulos são texto de design posto sobre as coordenadas do próprio desenho, composto e espacejado como os outros rótulos da abertura.
+O diagrama é um [elemento de imagem](/pt/docs/configuration-headers-footers#elementos-de-imagem) do design do H1. Como figura, seria um flutuante `top` na largura da página, e um flutuante `top` citado na página 1 abre a página 2. A faixa desce além do diagrama, e uma abertura reserva altura até o elemento mais baixo, por isso o texto começa sob a faixa sem `minHeight`, uma linha mais abaixo por causa do `marginBottom` padrão do H1. Os rótulos são texto de design posto sobre as coordenadas do próprio desenho, composto e espacejado como os outros rótulos da abertura.
 
 ## Variações
 
 ### Hifenize um texto em alemão
 
-O `locale` escolhe os padrões, então um texto em alemão leva `'de'`, ou uma etiqueta regional como `'de-AT'`.
+O `locale` escolhe os padrões, por isso um texto em alemão leva `'de'`, ou uma etiqueta regional como `'de-AT'`.
 
 ```diff
 -const locale = t({ en: 'en-us', es: 'es' }); // config().locale: each edition's patterns
@@ -64,5 +64,5 @@ Suba o limiar de 1,6 para 2 e o marca-texto pinta só as linhas cujos espaços p
 
 ## Erros comuns
 
-- Um boxe que fica no fim de uma coluna desce para o pé dela quando as colunas são balanceadas, longe do parágrafo a que pertence. Ajuste o texto para que a coluna fique cheia, como foi preciso com o boxe de ajustes sob “Fences for the glue”, ou defina `headings.balancing.closingBox` como `'off'`, que nunca move o boxe.
+- Um boxe que fica no fim de uma coluna desce para o pé dela quando as colunas são equilibradas, longe do parágrafo a que pertence. Ajuste o texto para que a coluna fique cheia, como foi preciso com o boxe de ajustes sob “Fences for the glue”, ou defina `headings.balancing.closingBox` como `'off'`, que nunca move o boxe.
 - A ficha sem hifenização não mostra os espaços mais largos de que precisaria. Uma linha justificada cujos espaços passariam de três vezes um espaço normal é composta alinhada à esquerda, com o espaçamento natural, num boxe tal como no texto corrido, e por isso as duas primeiras linhas da ficha terminam antes da medida. As linhas abaixo desse teto continuam justificadas, e são delas os espaços largos que a ficha mostra.

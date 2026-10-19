@@ -28,7 +28,7 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Avec `diag
 
 <Excerpt region="cover" />
 
-Un risographe imprime un tambour après l’autre, et la feuille ne retombe jamais deux fois exactement au même endroit. `twice()` renvoie deux copies d’un élément de texte, la rose d’abord, 0,8 mm à droite et 0,5 mm plus haut. L’ordre du tableau est l’ordre de peinture : la copie bleue couvre donc la rose, sauf un mince liseré le long des bords supérieur et droit de chaque lettre. Le canvas et le PDF peignent des couleurs opaques, si bien que le chevauchement reste bleu là où un riso imprimerait du violet. La maquette occupe toute la page parce que le poteau descend sous le pied du bloc de texte, où une maquette tenue dans sa colonne serait coupée.
+Un risographe imprime un tambour après l’autre, et la feuille ne retombe jamais deux fois exactement au même endroit. `twice()` renvoie deux copies d’un élément de texte, la rose d’abord, 0,8 mm à droite et 0,5 mm plus haut. L’ordre du tableau est l’ordre de peinture : la copie bleue couvre donc la rose, sauf un mince liseré le long des bords supérieur et droit de chaque lettre. Le canvas et le PDF peignent des couleurs opaques : le chevauchement reste donc bleu là où un riso imprimerait du violet. La maquette occupe toute la page parce que le poteau descend sous le pied de la zone de contenu, où une maquette tenue dans sa colonne serait coupée.
 
 ### 4 · Garder les petits corps dans l’encre sombre
 
@@ -40,7 +40,7 @@ Sur le papier crème, le bleu atteint un contraste de 6,4:1 et le rose fluo de 2
 
 <Excerpt region="drawn" />
 
-Sur une seule colonne, un flottant prend toute la largeur de sa bande : une petite image flottée là laisserait le reste de la bande vide. Le médaillon est donc une maquette de titre : `### As drawn {style="drawn" note="…"}` imprime l’image et, à sa droite, le titre comme étiquette avec la note dessous. L’image compte dans la hauteur que réserve la maquette, si bien que le bloc suivant commence sous elle même quand la note est plus courte. `registerSnapshot()` dessine la même carte `network()` dans un PNG, et comme l’encre unique ne recolore que le SVG, le médaillon garde ses six couleurs à l’écran et dans le PDF.
+Sur une seule colonne, un flottant prend toute la largeur de sa bande : une petite image flottée là laisserait le reste de la bande vide. Le médaillon est donc une maquette de titre : `### As drawn {style="drawn" note="…"}` imprime l’image et, à sa droite, le titre comme étiquette avec la note dessous. L’image compte dans la hauteur que réserve la maquette : le bloc suivant commence donc sous elle même quand la note est plus courte. `registerSnapshot()` dessine la même carte `network()` dans un PNG, et comme l’encre unique ne recolore que le SVG, le médaillon garde ses six couleurs à l’écran et dans le PDF.
 
 ## Variantes
 
@@ -55,7 +55,7 @@ La lune, la carte, la girouette, les pastilles, le bandeau et les copies décal�
 
 ### Imprimer un manuel en deux couleurs
 
-Avec un texte noir et un ton direct bleu sur papier blanc, les mêmes dessins s’impriment en teintes de bleu, comme les schémas d’un manuel scolaire en deux couleurs ; la légende, la note et le colophon nomment toujours le tambour rose tant que vous ne les modifiez pas.
+Avec un texte noir et un ton direct bleu sur papier blanc, les mêmes dessins s’impriment en teintes de bleu, comme les schémas d’un manuel scolaire en deux couleurs ; la légende, la note et le colophon mentionnent toujours le tambour rose tant que vous ne les modifiez pas.
 
 ```diff
 -const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
@@ -66,7 +66,7 @@ Avec un texte noir et un ton direct bleu sur papier blanc, les mêmes dessins s�
 
 ## Erreurs fréquentes
 
-- Dans le PDF, la recoloration réécrit le balisage : couleurs hexadécimales, `rgb()`, `rgba()`, `hsl()` et `hsla()`, et les mots-clés `white` et `black`. Une forme qui nomme `red` ou laisse son remplissage au noir par défaut garde cette couleur dans le PDF, ce qui demanderait un troisième tambour. Donnez une valeur hexadécimale à chaque remplissage et à chaque contour.
+- Dans le PDF, la recoloration réécrit le balisage : couleurs hexadécimales, `rgb()`, `rgba()`, `hsl()` et `hsla()`, et les mots-clés `white` et `black`. Une forme qui utilise `red` ou laisse son remplissage au noir par défaut garde cette couleur dans le PDF, ce qui demanderait un troisième tambour. Donnez une valeur hexadécimale à chaque remplissage et à chaque contour.
 - `colorSpace: 'grayscale'` passe en gris ce que postext peint et incorpore les images bitmap telles quelles : le médaillon PNG reste donc en couleurs dans l’épreuve en gris. Seul le second bouton du pen produit l’épreuve ; les pages ci-dessus viennent du canvas, et le PDF proposé sur cette page est celui en couleurs.
 - L’équilibrage des colonnes peut laisser une ligne de blanc sous un flottant en haut de page, avant la suite d’un paragraphe venu de la page précédente ; `headings.balancing.stretchAfterFloats: false` garde le texte juste sous le flottant. Le texte de cet exemple ne le déclenche pas. Après avoir modifié le texte, vérifiez la première ligne sous la carte : une ligne de plus peut repousser le médaillon sur une cinquième page.
-- Dans le pen, les deux boutons portent « Build the PDF ». Le premier produit le PDF en couleurs et le second l’épreuve en gris ; une fois un fichier produit, son bouton laisse la place à un lien « Open the PDF ↗ » et à un lien de téléchargement portant le nom du fichier.
+- Dans le pen, les deux boutons affichent « Build the PDF ». Le premier produit le PDF en couleurs et le second l’épreuve en gris ; une fois un fichier produit, son bouton laisse la place à un lien « Open the PDF ↗ » et à un lien de téléchargement portant le nom du fichier.

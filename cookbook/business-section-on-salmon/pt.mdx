@@ -28,19 +28,19 @@ O código está [na resposta curta](#a-resposta-curta), mais acima. `# Markets {
 
 <Excerpt region="flags" />
 
-O H1 é uma abertura na largura da página com paridade `'any'` em `breakBefore`, então cada título abre a página seguinte, seja de que lado for. O design dele é uma etiqueta sobre uma barra de 3 pt, com três linhas da grade de altura. A linha do fólio é um cabeçalho ancorado a 9 mm da borda superior: número da página, nome do jornal e data do lado de fora, `{chapterTitle}` do lado de dentro na cor de destaque, que a paleta deixa petróleo nas páginas salmão.
+O H1 é uma abertura na largura da página com paridade `'any'` em `breakBefore`, por isso cada título abre a página seguinte, seja de que lado for. O design dele é uma etiqueta sobre uma barra de 3 pt, com três linhas da grade de altura. A linha do fólio é um cabeçalho ancorado a 9 mm da borda superior: número da página, nome do jornal e data do lado de fora, `{chapterTitle}` do lado de dentro na cor de destaque, que a paleta deixa petróleo nas páginas salmão.
 
 ### 4 · Fotos e gráficos em k colunas
 
 <Excerpt region="floats" />
 
-`top(3)` é `placement: { position: 'top', columns: 3 }`: a foto do estaleiro ocupa três das cinco colunas de notícias, a balsa quatro, a padaria três das seis colunas de economia e o gráfico do porto duas. Um flutuante citado num parágrafo da coluna 1 ocupa o alto das colunas seguintes que ainda estão vazias, então essas fotos começam na coluna 2 e a matéria desce ao lado delas. Uma foto assim só fica com a sua matéria enquanto nenhuma outra matéria for composta embaixo dela naquela página: uma matéria na largura da página colocada depois pode levar a foto para a faixa dela ou para a página seguinte. Por isso as páginas 2 e 3 fecham com um anúncio flutuando no pé, e não com mais uma matéria. As fotos que ocupam a página toda ficam na linha (`here`), dentro do boxe da manchete, sob o título. As tabelas também ficam no fluxo, dentro de boxes na largura da página, no pé.
+`top(3)` é `placement: { position: 'top', columns: 3 }`: a foto do estaleiro ocupa três das cinco colunas de notícias, a balsa quatro, a padaria três das seis colunas de economia e o gráfico do porto duas. Um flutuante citado num parágrafo da coluna 1 ocupa o alto das colunas seguintes que ainda estão vazias, por isso essas fotos começam na coluna 2 e a matéria desce ao lado delas. Uma foto assim só fica com a matéria enquanto nenhuma outra matéria for composta embaixo dela naquela página: uma matéria na largura da página colocada depois pode levar a foto para a faixa dela ou para a página seguinte. Por isso as páginas 2 e 3 fecham com um anúncio flutuando no pé, e não com mais uma matéria. As fotos que ocupam a página toda ficam na linha (`here`), dentro do boxe da manchete, sob o título. As tabelas também ficam no fluxo, dentro de boxes na largura da página, no pé.
 
 ### 5 · Manchetes, painéis, dados e anúncios são boxes
 
 <Excerpt region="boxes" />
 
-Uma manchete na largura da página é um boxe sem moldura com um H2 num de três tamanhos, e um fio de 1 pt acima dele marca a matéria seguinte. Na página 5, o painel *The terminal in numbers* flutua sobre duas das seis colunas (`columns="2"` na cerca), e o olho destacado da página 4 faz o mesmo com `columns: 2` no estilo. Os boxes de dados trazem de duas a quatro tabelas lado a lado num grupo `:::columns`, e os anúncios são boxes na largura da página flutuando no pé, com uma moldura de fio de 0,75 pt.
+Uma manchete na largura da página é um boxe sem moldura com um H2 num de três tamanhos, e um fio de 1 pt acima dele marca a matéria seguinte. Na página 5, o painel *The terminal in numbers* flutua sobre duas das seis colunas (`columns="2"` na linha de abertura), e o olho destacado da página 4 faz o mesmo com `columns: 2` no estilo. Os boxes de dados trazem de duas a quatro tabelas lado a lado num grupo `:::columns`, e os anúncios são boxes na largura da página flutuando no pé, com uma moldura de fio de 0,75 pt.
 
 ### 6 · O papel em que o Folio imprime
 
@@ -61,8 +61,8 @@ Cada página do bloco leva `page.paper` com esse tom, e o Folio a imprime nesse 
 
 ### Trocar o papel e manter a grade
 
-Um estilo de título com `palette` e sem `layout` mantém as cinco colunas com fios do documento e ainda assim pinta todas as páginas da sua seção: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` põe um suplemento de fim de semana em papel-jornal creme. Ponha as páginas dele também num bloco `:::paper`, com o tom levado 60 % do caminho até o branco, para que o Folio as imprima num papel combinando.
+Um estilo de título com `palette` e sem `layout` mantém as cinco colunas com fios do documento e ainda assim pinta todas as páginas da seção: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` põe um suplemento de fim de semana em papel-jornal creme. Ponha as páginas dele também num bloco `:::paper`, com o tom levado 60 % do caminho até o branco, para que o Folio as imprima num papel combinando.
 
 ### Fazer do caderno de economia um encarte destacável
 
-As oito páginas se dobram em duas folhas, uma dentro da outra: as páginas 1–2 e 7–8 na folha externa, 3–6 na interna. O Folio dá a cada folha o papel da sua página ímpar, então as páginas 7–8 saem salmão, embora uma rotativa as imprimisse na mesma folha que a primeira página. Mova as páginas de economia para 3–6 e elas formam a folha interna, que a rotativa pode rodar em papel salmão e o leitor pode tirar inteira.
+As oito páginas se dobram em duas folhas, uma dentro da outra: as páginas 1–2 e 7–8 na folha externa, 3–6 na interna. O Folio dá a cada folha o papel da página ímpar, de modo que as páginas 7–8 saem salmão, embora uma rotativa as imprimisse na mesma folha que a primeira página. Mova as páginas de economia para 3–6 e elas formam a folha interna, que a rotativa pode rodar em papel salmão e o leitor pode tirar inteira.

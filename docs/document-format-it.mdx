@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'Formato del documento',
   sidebarTitle: 'Formato del documento',
-  description: 'Il sottoinsieme di markdown che Postext analizza: frontmatter, titoli, elenchi e blocchi di codice, ciò che ignora, e le regole per scrivere i documenti sorgente',
+  description: 'Il sottoinsieme di Markdown che Postext legge: il front matter, i titoli, gli elenchi e i blocchi di codice; ciò che ignora; le regole per scrivere i documenti sorgente',
   lang: 'it',
   lastUpdated: '2026-10-16',
   readingTime: '15 min',
@@ -13,16 +13,16 @@ export const metadata = {
 
 # Formato del documento
 
-**Postext legge di proposito un dialetto di markdown ridotto.**
+**Postext legge un dialetto di Markdown volutamente ridotto.**
 
-Il parser è un tokenizzatore scritto a mano, non un’implementazione completa di CommonMark, quindi il formato sorgente è ristretto e prevedibile. Lo scopo è duplice: mantenere il motore piccolo e veloce, e rendere i documenti facilmente trasferibili tra Postext e qualsiasi altro lettore CommonMark (Obsidian, Pandoc, VS Code…). Tutto ciò che non è elencato in questa pagina viene trattato come testo semplice oppure rimosso dal flusso in linea.
+Il parser è un tokenizzatore scritto a mano, non un’implementazione completa di CommonMark, quindi il formato sorgente è ristretto e prevedibile. Lo scopo è duplice: mantenere il motore piccolo e veloce, e rendere i documenti facilmente trasferibili tra Postext e qualsiasi altro lettore CommonMark (Obsidian, Pandoc, VS Code…). Tutto ciò che non è elencato in questa pagina viene trattato come testo semplice oppure eliminato dal testo in linea.
 
-Se costruisci un documento da codice, la funzione `parseMarkdown` (vedi [Configurazione › Parsing](/it/docs/configuration-programmatic-usage#parsing)) ti restituisce l’esatta struttura a blocchi che il motore di impaginazione consuma.
+Se costruisci un documento da codice, la funzione `parseMarkdown` (vedi [Configurazione › Parsing](/it/docs/configuration-programmatic-usage#parsing)) ti restituisce l’esatta struttura a blocchi su cui lavora il motore di impaginazione.
 
 
-## Frontmatter
+## Front matter
 
-Un documento può iniziare con un blocco frontmatter YAML facoltativo, racchiuso tra marcatori `---`:
+Un documento può iniziare con un blocco facoltativo di front matter YAML, delimitato da due righe `---`:
 
 ```md
 ---
@@ -36,26 +36,26 @@ publishDate: 2026-04-15
 The story begins here…
 ```
 
-Chiama `extractFrontmatter(source)` per separare il frontmatter dal corpo. L’oggetto dei metadati analizzati viene restituito insieme al markdown rimanente e alla posizione (in caratteri) in cui inizia il corpo: utile se devi ricondurre errori o posizioni del cursore al sorgente originale.
+Chiama `extractFrontmatter(source)` per separare il front matter dal corpo. L’oggetto con i metadati letti viene restituito insieme al Markdown rimanente e alla posizione (in caratteri) in cui inizia il corpo: utile se devi ricondurre errori o posizioni del cursore al sorgente originale.
 
-Il frontmatter viene analizzato con [`gray-matter`](https://github.com/jonschlinkert/gray-matter), quindi è accettata qualsiasi forma di YAML. Postext guarda solo `title`, `subtitle`, `author` e `publishDate`; le altre chiavi restano in `PostextContent.metadata` e puoi usarle come vuoi.
+Il front matter viene analizzato con [`gray-matter`](https://github.com/jonschlinkert/gray-matter), quindi è accettata qualsiasi forma di YAML. Postext guarda solo `title`, `subtitle`, `author` e `publishDate`; le altre chiavi restano in `PostextContent.metadata` e puoi usarle come vuoi.
 
-Un blocco che non è YAML valido (una virgoletta non chiusa, testo dopo un valore tra virgolette) non ferma l’impaginazione: `extractFrontmatter` non restituisce metadati, restituisce come corpo il testo dopo il `---` di chiusura e mette in `error` il motivo indicato dal parser. Il documento viene composto senza i suoi metadati, e la costruzione elenca una voce `invalidFrontmatter` in `contentWarnings` (la Sandbox la mostra come **Front matter non valido**).
+Un blocco che non è YAML valido (una virgoletta non chiusa, testo dopo un valore tra virgolette) non ferma l’impaginazione: `extractFrontmatter` non restituisce metadati, restituisce come corpo il testo dopo il `---` di chiusura e mette in `error` il motivo indicato dal parser. Il documento viene composto senza i suoi metadati, e la build elenca una voce `invalidFrontmatter` in `contentWarnings` (la Sandbox la mostra come **Front matter non valido**).
 
 YAML assegna un tipo ai suoi valori: `1984` è un numero, `2026-04-15` una data, `[Ana Gil, Luis Paz]` un elenco. Postext stampa ciascuno di questi quattro campi come testo, qualunque sia il suo tipo:
 
 - un numero nella sua forma decimale semplice, e un booleano come `true` o `false` (`title: 1984` stampa *1984*). YAML legge un numero come valore, non cifra per cifra: `1.50` stampa *1.5*, `017` (ottale) *15*, `1:30` (base 60) *90*;
-- una data come giorno del calendario, scritta per esteso nella lingua del documento (l’impostazione `locale`, altrimenti la lingua di sillabazione): `publishDate: 2026-04-15` stampa *April 15, 2026* in inglese, *15 de abril de 2026* in spagnolo, *15. April 2026* in tedesco. Le date in arabo usano il calendario gregoriano a meno che il tag non ne indichi un altro (`ar-u-ca-islamic` stampa la data dell’Egira), con le cifre che il tag implica (`ar-EG`: ١٥ أبريل ٢٠٢٦; `ar-u-nu-latn`: 15 أبريل 2026). Una data con un orario stampa il giorno della sua ora UTC e scarta l’orario: `2026-09-24T23:30:00-05:00` corrisponde alle 04:30 UTC del 25 e stampa *September 25, 2026*;
-- un elenco come le sue voci separate da virgole (`author: [Ana Gil, Luis Paz]` stampa *Ana Gil, Luis Paz*).
+- una data come giorno del calendario, scritta per esteso nella lingua del documento (l’impostazione `locale`, altrimenti la lingua di sillabazione): `publishDate: 2026-04-15` stampa *April 15, 2026* in inglese, *15 de abril de 2026* in spagnolo, *15. April 2026* in tedesco. Le date in arabo usano il calendario gregoriano a meno che il tag non ne indichi un altro (`ar-u-ca-islamic` stampa la data dell’Egira), con le cifre che il tag implica (`ar-EG`: ١٥ أبريل ٢٠٢٦; `ar-u-nu-latn`: 15 أبريل 2026). Di una data con orario si stampa il giorno corrispondente in UTC, senza l’orario: `2026-09-24T23:30:00-05:00` corrisponde alle 04:30 UTC del 25 e stampa *September 25, 2026*;
+- un elenco come sequenza delle sue voci separate da virgole (`author: [Ana Gil, Luis Paz]` stampa *Ana Gil, Luis Paz*).
 
-Metti un valore tra virgolette per stamparlo esattamente come è scritto (un numero che deve conservare le sue cifre, una data che deve conservare il suo giorno): `publishDate: "15/04/2026"`, `title: "1984"`. Il testo arriva a `doc.metadata`, ai segnaposto (`{title}`, `{publishDate}`…) e al titolo e all’autore del PDF. Uno dei quattro campi che non ha una forma testuale (una mappa annidata, un `title:` vuoto) viene lasciato fuori da `doc.metadata`. `extractFrontmatter` restituisce comunque i valori con il tipo che YAML ha dato loro; `metadataText(value, locale)` fornisce il testo che Postext stampa per uno di essi.
+Metti un valore tra virgolette per stamparlo esattamente come è scritto (un numero che deve conservare le sue cifre, una data che deve conservare il suo giorno): `publishDate: "15/04/2026"`, `title: "1984"`. Il testo arriva a `doc.metadata`, ai segnaposto (`{title}`, `{publishDate}`…) e al titolo e all’autore del PDF. Se uno dei quattro campi non ha una forma testuale (una mappa annidata, un `title:` vuoto), resta fuori da `doc.metadata`. `extractFrontmatter` restituisce comunque i valori con il tipo che YAML ha dato loro; `metadataText(value, locale)` fornisce il testo che Postext stampa per uno di essi.
 
 
 ## Costrutti di blocco
 
 Postext riconosce sette tipi di blocco di prosa e i listati di codice, più le direttive e gli inserimenti di risorse trattati più avanti in questa pagina. I blocchi terminano sempre con una riga vuota o con l’inizio di un altro blocco.
 
-<Illustration name="BlockTypesGallery" data='{"title": "I costrutti di blocco di prosa in sintesi", "desc": "I sette tipi di blocco di prosa che Postext riconosce: titolo, paragrafo, citazione, elenco puntato, elenco numerato, elenco di attività e formula in evidenza, ciascuno con la sua sintassi markdown. Direttive e inserimenti di risorse sono trattati a parte.", "caption": "Ogni tipo di blocco di prosa e il suo punto di ingresso in markdown.", "blocks": [{"name": "Titolo", "syntax": "# Title", "color": "blue"}, {"name": "Paragrafo", "syntax": "Righe di testo semplice", "color": "orange"}, {"name": "Citazione", "syntax": "> testo citato", "color": "green"}, {"name": "Elenco puntato", "syntax": "- voce", "color": "purple"}, {"name": "Elenco numerato", "syntax": "1. voce", "color": "pink"}, {"name": "Elenco di attività", "syntax": "- [x] fatto", "color": "teal"}, {"name": "Formula in evidenza", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
+<Illustration name="BlockTypesGallery" data='{"title": "I tipi di blocco di prosa a colpo d’occhio", "desc": "I sette tipi di blocco di prosa che Postext riconosce: titolo, paragrafo, citazione, elenco puntato, elenco numerato, elenco di attività e formula in evidenza, ciascuno con la sua sintassi Markdown. Direttive e inserimenti di risorse sono trattati a parte.", "caption": "Ogni tipo di blocco di prosa e la sua sintassi Markdown.", "blocks": [{"name": "Titolo", "syntax": "# Title", "color": "blue"}, {"name": "Paragrafo", "syntax": "Righe di testo semplice", "color": "orange"}, {"name": "Citazione", "syntax": "> testo citato", "color": "green"}, {"name": "Elenco puntato", "syntax": "- voce", "color": "purple"}, {"name": "Elenco numerato", "syntax": "1. voce", "color": "pink"}, {"name": "Elenco di attività", "syntax": "- [x] fatto", "color": "teal"}, {"name": "Formula in evidenza", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
 <table>
   <thead>
@@ -74,12 +74,12 @@ Postext riconosce sette tipi di blocco di prosa e i listati di codice, più le d
     <tr>
       <td>Paragrafo</td>
       <td>Testo semplice su una o più righe</td>
-      <td>Le righe consecutive non vuote e non speciali vengono unite con un solo spazio ed emesse come un unico paragrafo. Tra due caratteri cinesi o giapponesi (ideogrammi, kana, punteggiatura a larghezza piena, e virgolette curve, trattini o puntini di sospensione accanto a essi) il fine riga viene invece eliminato, come fa il CSS, così un paragrafo cinese può andare a capo in qualsiasi punto del sorgente. Tra due di questi segni (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) decidono i caratteri che li seguono e li precedono: il fine riga sparisce quando uno di essi è cinese o giapponese, e <code>“hello”⏎“bye”</code> conserva il suo spazio. Il coreano conserva lo spazio. Un a capo digitato nel sorgente non viene mantenuto, a meno che la riga non termini con una barra rovesciata (un a capo forzato, vedi <a href="/it/docs/document-format-directives#a-capo">A capo</a>); una riga vuota inizia un nuovo paragrafo. Anche una tabulazione digitata nel testo vale come spazio tra parole, a meno che lo stile del paragrafo non imposti dei punti di tabulazione; <code>:tab</code> è sempre una tabulazione (vedi <a href="/it/docs/document-format-inline#tabulazioni-e-tabulatori">Tabulazioni e punti di tabulazione</a>). Una poesia, le cui righe devono restare come sono scritte, va in un blocco <a href="/it/docs/document-format-directives#verse"><code>:::verse</code></a>.</td>
+      <td>Le righe consecutive non vuote e non speciali vengono unite con un solo spazio e formano un unico paragrafo. Tra due caratteri cinesi o giapponesi (ideogrammi, kana, punteggiatura a larghezza piena, e virgolette curve, trattini o puntini di sospensione accanto a essi) il fine riga viene invece eliminato, come fa il CSS, così un paragrafo cinese può andare a capo in qualsiasi punto del sorgente. Tra due di questi segni (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) decidono i caratteri che li seguono e li precedono: il fine riga sparisce quando uno di essi è cinese o giapponese, e <code>“hello”⏎“bye”</code> conserva il suo spazio. Il coreano conserva lo spazio. Un a capo digitato nel sorgente non viene mantenuto, a meno che la riga non termini con una barra rovesciata (un a capo forzato, vedi <a href="/it/docs/document-format-directives#a-capo">A capo</a>); una riga vuota inizia un nuovo paragrafo. Anche una tabulazione digitata nel testo vale come spazio tra parole, a meno che lo stile del paragrafo non imposti dei tabulatori; <code>:tab</code> è sempre una tabulazione (vedi <a href="/it/docs/document-format-inline#tabulazioni-e-tabulatori">Tabulazioni e tabulatori</a>). Una poesia, le cui righe devono restare come sono scritte, va in un blocco <a href="/it/docs/document-format-directives#verse"><code>:::verse</code></a>.</td>
     </tr>
     <tr>
       <td>Citazione</td>
       <td><code>&gt; quoted text</code></td>
-      <td>Ogni riga della citazione deve iniziare con <code>&gt;</code> (seguito da uno spazio facoltativo). Le righe di citazione consecutive si fondono in un unico blocco di citazione, unite come le righe di un paragrafo. Viene composta come indica <code>bodyText.blockquote</code>: corsivo grigio con il rientro di prima riga del testo corrente, se non li cambi (vedi <a href="/it/docs/configuration-text#citazioni-in-blocco">Configurazione › Citazioni</a>).</td>
+      <td>Ogni riga della citazione deve iniziare con <code>&gt;</code> (seguito da uno spazio facoltativo). Le righe di citazione consecutive si fondono in un unico blocco di citazione, unite come le righe di un paragrafo. Viene composta come indica <code>bodyText.blockquote</code>: corsivo grigio con il rientro di prima riga del testo corrente, se non li cambi (vedi <a href="/it/docs/configuration-text#citazioni-in-blocco">Configurazione › Citazioni in blocco</a>).</td>
     </tr>
     <tr>
       <td>Elenco puntato</td>
@@ -99,12 +99,12 @@ Postext riconosce sette tipi di blocco di prosa e i listati di codice, più le d
     <tr>
       <td>Formula in evidenza</td>
       <td><code>$$ … $$</code></td>
-      <td>Una formula LaTeX composta come blocco a sé. Viene disegnata centrata nella colonna, agganciata alla griglia della linea di base come un titolo, e resta vettoriale nell’output PDF. Le forme su una riga e quella su più righe tra recinzioni sono descritte in <a href="/it/docs/document-format-inline#formule-matematiche">Formule matematiche</a>.</td>
+      <td>Una formula LaTeX composta come blocco a sé. Viene disegnata centrata nella colonna, agganciata alla griglia della linea di base come un titolo, e resta vettoriale nell’output PDF. La forma su una riga e quella delimitata su più righe sono descritte in <a href="/it/docs/document-format-inline#formule-matematiche">Formule matematiche</a>.</td>
     </tr>
     <tr>
       <td>Blocco di codice</td>
       <td><code>```js</code> … <code>```</code>, <code>~~~</code> … <code>~~~</code></td>
-      <td>Un listato, conservato come è scritto: ogni spazio, tabulazione e a capo, niente letto come Markdown. Composto riga per riga nel carattere del codice, in un riquadro. Vedi <a href="#blocchi-di-codice">Blocchi di codice</a>.</td>
+      <td>Un listato, conservato com’è scritto: ogni spazio, tabulazione e a capo resta, e nulla viene interpretato come Markdown. Composto riga per riga nel carattere del codice, in un riquadro. Vedi <a href="#blocchi-di-codice">Blocchi di codice</a>.</td>
     </tr>
   </tbody>
 </table>
@@ -113,7 +113,7 @@ Una sola riga vuota tra due voci di elenco è tollerata: l’elenco resta unito.
 
 Gli elenchi di tipo misto alla stessa profondità sono accettati (puoi passare da puntato a numerato a metà sequenza), ma il motore tratta le sequenze come separate ai fini della numerazione. In pratica, tieni un solo tipo per profondità, a meno che tu non abbia un motivo per mescolarli.
 
-<Illustration name="ListNesting" data='{"title": "Profondità di annidamento degli elenchi", "desc": "Una voce di elenco si annida sotto la voce precedente quando è rientrata oltre il marcatore di quella voce: due spazi sotto un punto elenco, fino a una profondità massima di cinque. Ogni livello rientra di più e può usare uno stile di punto elenco diverso.", "caption": "Due spazi per livello sotto un punto elenco. Profondità massima: cinque.", "level1": "Livello 1", "level2": "Livello 2 — rientro di due spazi", "level3": "Livello 3 — rientro di quattro spazi", "indentNote": "Due spazi di rientro sotto un punto elenco, tre sotto 1. Profondità massima: 5."}' />
+<Illustration name="ListNesting" data='{"title": "Profondità di annidamento degli elenchi", "desc": "Una voce di elenco si annida sotto la voce precedente quando è rientrata oltre il marcatore di quella voce: due spazi sotto un punto elenco, fino a una profondità massima di cinque. Ogni livello rientra di più e può usare uno stile di punto elenco diverso.", "caption": "Due spazi per livello sotto un punto elenco. Profondità massima: cinque.", "level1": "Livello 1", "level2": "Livello 2 — rientro di due spazi", "level3": "Livello 3 — rientro di quattro spazi", "indentNote": "Due spazi di rientro sotto un punto elenco, tre sotto «1.». Profondità massima: 5."}' />
 
 ### Attributi dei titoli
 
@@ -123,11 +123,11 @@ Una riga di titolo può terminare con un blocco di attributi tra parentesi graff
 # The Long Road {author="I. Zango Martín" year=1998}
 ```
 
-Le graffe e il loro contenuto vengono tolti dal testo del titolo (il titolo qui sopra viene mostrato come *The Long Road*) e conservati sul titolo come `attrs`. Sono esposti agli slot di design come segnaposto `{attr.<key>}`: nello slot di design avanzato del titolo stesso, e nelle intestazioni e nei piè di pagina, dove si risolvono a partire dall’H1 del capitolo corrente. Viene riconosciuto solo un blocco bilanciato, senza graffe interne, proprio alla fine della riga, dopo uno spazio oppure, dato che i titoli cinesi si scrivono senza, subito dopo un carattere cinese o giapponese (`# 回目{style="x"}`). Il blocco viene preso solo quando la sintassi degli attributi descritta qui sotto lo legge per intero: `{x, y}`, `{紅樓|hóng lóu}` e un `{}` isolato restano nel titolo, e così anche gli indicatori da soli attaccati al titolo (`# 第一回{draft}`). Gli attributi sono separati da spazi, quindi anche un blocco con virgole (`{a="1", b="2"}`) e il `{.class}` di Pandoc restano nel titolo. L’identificatore `{#id}` di Pandoc invece viene letto: equivale a `id="…"` e dà un nome al titolo per i [rimandi](/it/docs/document-format-notes-references#rimandi-e-ancore). Una chiave scritta in un’altra scrittura viene letta e scartata con un avviso (vedi sotto), quindi `# 回目{style="x" 作者=曹雪芹}` prende comunque `style`. Vedi **Configurazione → Intestazioni e piè di pagina**.
+Le graffe e il loro contenuto vengono tolti dal testo del titolo (il titolo qui sopra viene mostrato come *The Long Road*) e conservati sul titolo come `attrs`. Gli slot della grafica li ricevono come segnaposto `{attr.<key>}`: lo slot della **Grafica avanzata** del titolo stesso, e nelle intestazioni e nei piè di pagina, dove si risolvono a partire dall’H1 del capitolo corrente. Viene riconosciuto solo un blocco bilanciato, senza graffe interne, proprio alla fine della riga, dopo uno spazio oppure, dato che i titoli cinesi si scrivono senza, subito dopo un carattere cinese o giapponese (`# 回目{style="x"}`). Il blocco viene preso solo quando la sintassi degli attributi descritta qui sotto lo legge per intero: `{x, y}`, `{紅樓|hóng lóu}` e un `{}` isolato restano nel titolo, e così anche i flag isolati attaccati al titolo (`# 第一回{draft}`). Gli attributi sono separati da spazi, quindi anche un blocco con virgole (`{a="1", b="2"}`) e il `{.class}` di Pandoc restano nel titolo. L’identificatore `{#id}` di Pandoc invece viene letto: equivale a `id="…"` e dà un nome al titolo per i [rimandi](/it/docs/document-format-notes-references#rimandi-e-ancore). Una chiave scritta in un’altra scrittura viene letta e scartata con un avviso (vedi sotto), quindi `# 回目{style="x" 作者=曹雪芹}` prende comunque `style`. Vedi **Configurazione → Intestazioni e piè di pagina**.
 
-Un valore stampato da un testo di design può occupare più righe: i due caratteri `\n` iniziano lì una nuova riga, qualunque sia l’`overflow` dell’elemento (`to="Firma X\nStrasse 1\n10115 Berlin"` stampa un indirizzo su tre righe). Con `inlineMarks` sull’elemento valgono anche i segni in linea del valore: `authors="Ana Ruiz^1^, Luis Gil^2^"` compone in apice i numeri di affiliazione. Questo escape riguarda i valori degli attributi (e i modelli del design stesso): i caratteri `\n` nel testo di un titolo, per esempio in un segmento di codice, vengono stampati così come sono.
+Un valore stampato da un testo grafico può occupare più righe: i due caratteri `\n` iniziano lì una nuova riga, qualunque sia l’`overflow` dell’elemento (`to="Firma X\nStrasse 1\n10115 Berlin"` stampa un indirizzo su tre righe). Con `inlineMarks` sull’elemento valgono anche i segni in linea del valore: `authors="Ana Ruiz^1^, Luis Gil^2^"` compone in apice i numeri di affiliazione. Questo escape vale solo per i valori degli attributi (e per i modelli della grafica): i caratteri `\n` nel testo di un titolo, per esempio in un frammento di codice, vengono stampati così come sono.
 
-Due attributi hanno un significato proprio. `style="<id>"` applica al titolo uno [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli) con nome: una prefazione o un elenco di autori con il proprio design di apertura, testatine, geometria della pagina e tipografia del testo, e senza numero di capitolo quando lo stile indica `numbered: false`. `toc="false"` (o `"true"`) stabilisce se il titolo compare in `:::toc`:
+Due attributi hanno un significato proprio. `style="<id>"` applica al titolo uno [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli) con nome: una prefazione o un elenco di autori con la propria grafica di apertura, testatine, geometria della pagina e tipografia del testo, e senza numero di capitolo quando lo stile indica `numbered: false`. `toc="false"` (o `"true"`) stabilisce se il titolo compare in `:::toc`:
 
 ```markdown
 # Preface {style="front-matter"}
@@ -135,7 +135,7 @@ Due attributi hanno un significato proprio. `style="<id>"` applica al titolo uno
 # Contents {style="front-matter" toc="false"}
 ```
 
-Altri due cambiano ciò che un titolo stampa e come viene contato. `hidden="true"` (o `"false"`) prevale sull’`hidden` del livello o dello stile del titolo: un titolo nascosto non stampa nulla e non occupa spazio (nel flusso come dentro un riquadro `:::callout`), ma apre comunque la sua pagina, conta e compare nell’indice, nelle testatine `{chapterTitle}` e nei segnalibri del PDF. `jidori=N` distribuisce un titolo di una riga in modo uniforme sulla larghezza di `N` dei suoi caratteri (字取り: `# 序章 {jidori=3}` stampa 序　章), e `jidori=0` disattiva la spaziatura uniforme impostata dal suo livello o stile (vedi [Configurazione › Sostituzioni per livello](/it/docs/configuration-headings#sovrascritture-per-livello)). `indent=N` abbassa un singolo titolo di `N` caratteri del testo corrente rispetto all’inizio della riga (字下げ: `## 一 {indent=5}`), prevalendo sull’`indent` del suo livello o stile; un numero semplice conta in em del testo corrente, `0` compone il titolo a inizio riga, e funziona allo stesso modo nel testo verticale e in quello orizzontale. `firstLineIndent=N` fa rientrare solo la prima riga di un singolo titolo, prevalendo sul `firstLineIndent` del suo livello o stile, mentre le altre righe iniziano dove le colloca `indent` (i titoli della GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`); legge le lunghezze come `indent`, e `0` annulla quello del livello. `startAt=N`, un intero positivo, imposta il contatore del livello del titolo a `N` invece di farlo avanzare; i titoli successivi continuano a contare da lì, anche nei capitoli seguenti, e i livelli inferiori ripartono sotto di esso come al solito. Con uno stile di titolo che indica le appendici con lettere (`numberingTemplate: 'Appendix {1:A}'`), la prima appendice fa ripartire il conteggio così da leggersi *Appendix A* invece di proseguire dai capitoli:
+Altri due cambiano ciò che un titolo stampa e come viene contato. `hidden="true"` (o `"false"`) prevale sull’`hidden` del livello o dello stile del titolo: un titolo nascosto non stampa nulla e non occupa spazio (nel flusso come dentro un riquadro `:::callout`), ma apre comunque la sua pagina, viene contato e compare nell’indice, nelle testatine `{chapterTitle}` e nei segnalibri del PDF. `jidori=N` distribuisce un titolo di una riga in modo uniforme sulla larghezza di `N` dei suoi caratteri (字取り: `# 序章 {jidori=3}` stampa 序　章), e `jidori=0` disattiva la spaziatura uniforme impostata dal suo livello o stile (vedi [Configurazione › Personalizzazioni per livello](/it/docs/configuration-headings#personalizzazioni-per-livello)). `indent=N` abbassa un singolo titolo di `N` caratteri del testo corrente rispetto all’inizio della riga (字下げ: `## 一 {indent=5}`), prevalendo sull’`indent` del suo livello o stile; un numero semplice conta in em del testo corrente, `0` compone il titolo a inizio riga, e funziona allo stesso modo nel testo verticale e in quello orizzontale. `firstLineIndent=N` fa rientrare solo la prima riga di un singolo titolo, prevalendo sul `firstLineIndent` del suo livello o stile, mentre le altre righe iniziano dove le colloca `indent` (i titoli della GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`); legge le lunghezze come `indent`, e `0` annulla quello del livello. `startAt=N`, un intero positivo, imposta il contatore del livello del titolo a `N` invece di farlo avanzare; i titoli successivi continuano a contare da lì, anche nei capitoli seguenti, e i livelli inferiori ripartono sotto di esso come al solito. Con uno stile di titolo che indica le appendici con lettere (`numberingTemplate: 'Appendix {1:A}'`), la prima appendice fa ripartire il conteggio, così risulta *Appendix A* invece di proseguire la numerazione dei capitoli:
 
 ```markdown
 # To my mother {hidden="true" toc="false"}
@@ -159,13 +159,13 @@ The lamp of the first entry opens with an initial.
 :::
 ```
 
-Su una riga di titolo, `dropcap=false` lascia il paragrafo che segue quel titolo senza il capolettera impostato dal suo livello o stile, `dropcap=N` lo compone su `N` righe, e un `dropcap` semplice dà un capolettera a quel paragrafo (tre righe, nel carattere del paragrafo) dove il livello non ne imposta nessuno. Sulla recinzione di `:::paragraphs` l’attributo fa lo stesso per il primo paragrafo del gruppo, o per ogni paragrafo quando lo stile indica `each: true`. Il paragrafo che segue un titolo viene cercato oltre recinzioni, direttive, riquadri usciti dal flusso e figure flottanti; un paragrafo dentro un riquadro, una voce di elenco, una citazione o una poesia non prende mai un capolettera. Da postext 1.23.
+Su una riga di titolo, `dropcap=false` lascia il paragrafo che segue quel titolo senza il capolettera impostato dal suo livello o stile, `dropcap=N` lo compone su `N` righe, e un `dropcap` semplice dà un capolettera a quel paragrafo (tre righe, nel carattere del paragrafo) dove il livello non ne imposta nessuno. Sulla riga di apertura di `:::paragraphs` l’attributo fa lo stesso per il primo paragrafo del gruppo, o per ogni paragrafo quando lo stile indica `each: true`. Il paragrafo che segue un titolo viene cercato saltando delimitatori, direttive, riquadri usciti dal flusso e figure flottanti; un paragrafo dentro un riquadro, una voce di elenco, una citazione o una poesia non prende mai un capolettera. Da postext 1.23.
 
-In una pagina composta le cornici sono testo corrente: `:::paragraphs{style="apertura" dropcap}` in una cornice apre il suo primo paragrafo con il capolettera. Dentro un riquadro `:::callout` i paragrafi non ne prendono, e chiederlo lì dà un avviso `dropCap`.
+In una pagina composta le cornici sono testo corrente: `:::paragraphs{style="apertura" dropcap}` in una cornice apre il suo primo paragrafo con il capolettera. Dentro un riquadro `:::callout` i paragrafi non hanno capolettera, e se lo chiedi lì ottieni un avviso `dropCap`.
 
 ### Blocchi di codice
 
-Un listato va tra due recinzioni di tre o più apici inversi (o tre o più tilde), ciascuna su una riga a sé, con al massimo tre spazi di rientro. Tutto ciò che sta tra le due viene conservato come è scritto: spazi iniziali e sequenze di spazi, tabulazioni, righe vuote e righe che iniziano con `#`, `-`, `1.`, `>`, `$` o `:::`. Nulla al suo interno viene letto come Markdown: niente enfasi, niente `:ref`, niente formule, niente chip, niente direttive, niente titoli. La recinzione di chiusura usa il carattere di quella di apertura ed è lunga almeno quanto lei, quindi un listato che mostra una recinzione va dentro una più lunga o tra tilde:
+Un listato va tra due delimitatori di tre o più apici inversi (o tre o più tilde), ciascuna su una riga a sé, con al massimo tre spazi di rientro. Tutto ciò che sta tra le due viene conservato come è scritto: spazi iniziali e sequenze di spazi, tabulazioni, righe vuote e righe che iniziano con `#`, `-`, `1.`, `>`, `$` o `:::`. Nulla al suo interno viene letto come Markdown: niente enfasi, niente `:ref`, niente formule, niente chip, niente direttive, niente titoli. Il delimitatore di chiusura usa lo stesso carattere di quello di apertura ed è lungo almeno quanto lui, quindi un listato che mostra un delimitatore va racchiuso in uno più lungo o tra tilde:
 
 ~~~markdown
 ```bash {title="backup.sh" lineNumbers start=12 highlight="3,5-7"}
@@ -176,7 +176,7 @@ echo "done: $(date)"
 ```
 ~~~
 
-La stringa informativa dopo la recinzione di apertura indica il linguaggio (la sua prima parola: `js`, `ts`, `python`, `bash`, `console`, `json`…), e il resto viene letto come attributi nella [sintassi degli attributi](/it/docs/document-format-directives#valori-degli-attributi), tra graffe o senza (`title="app.js" lineNumbers`). Qualsiasi altra cosa dopo il linguaggio è il titolo: ```` ```console Terminal ```` e ```` ```python normalize.py ```` stampano *Terminal* e *normalize.py* sopra il listato.
+La stringa informativa dopo il delimitatore di apertura indica il linguaggio (la sua prima parola: `js`, `ts`, `python`, `bash`, `console`, `json`…), e il resto viene letto come attributi nella [sintassi degli attributi](/it/docs/document-format-directives#valori-degli-attributi), tra graffe o senza (`title="app.js" lineNumbers`). Qualsiasi altra cosa dopo il linguaggio è il titolo: ```` ```console Terminal ```` e ```` ```python normalize.py ```` stampano *Terminal* e *normalize.py* sopra il listato.
 
 <table>
   <thead>
@@ -188,7 +188,7 @@ La stringa informativa dopo la recinzione di apertura indica il linguaggio (la s
   <tbody>
     <tr>
       <td><code>title="…"</code></td>
-      <td>Un titolo sopra il listato, in una riga del titolo (o in una linguetta sul bordo del riquadro quando <code>codeStyle.label</code> è impostato).</td>
+      <td>Un titolo sopra il listato, in una riga di titolo (o in una linguetta sul bordo del riquadro quando <code>codeStyle.label</code> è impostato).</td>
     </tr>
     <tr>
       <td><code>label="…"</code></td>
@@ -196,7 +196,7 @@ La stringa informativa dopo la recinzione di apertura indica il linguaggio (la s
     </tr>
     <tr>
       <td><code>lineNumbers</code>, <code>lineNumbers=false</code></td>
-      <td>Numera le righe di questo listato (o no), qualunque cosa dica <code>codeStyle.lineNumbers</code>. I numeri stanno in una colonna prima del codice e non vengono copiati con esso.</td>
+      <td>Numera le righe di questo listato (o no), qualunque sia il valore di <code>codeStyle.lineNumbers</code>. I numeri stanno in una colonna prima del codice e non vengono copiati con esso.</td>
     </tr>
     <tr>
       <td><code>start=N</code></td>
@@ -213,24 +213,24 @@ La stringa informativa dopo la recinzione di apertura indica il linguaggio (la s
   </tbody>
 </table>
 
-Una recinzione chiude il paragrafo che la precede, con o senza riga vuota, e il testo dopo la recinzione di chiusura inizia un nuovo paragrafo. Una recinzione lasciata aperta prosegue fino alla fine del testo e viene segnalata (`unclosedCodeBlock`). Una recinzione dentro un `:::callout` è un riquadro annidato in esso; dentro `:::paragraphs` il listato mantiene lo stile del codice, non lo stile di paragrafo. Postext non prevede la continuazione delle voci di elenco, quindi una recinzione dopo una voce di elenco chiude l’elenco. I segni d’indice e le ancore scritti dentro un listato restano come sono scritti.
+Un delimitatore di codice chiude il paragrafo che lo precede, con o senza riga vuota, e il testo dopo il delimitatore di chiusura inizia un nuovo paragrafo. Un blocco di codice lasciato aperto prosegue fino alla fine del testo e viene segnalato (`unclosedCodeBlock`). Un blocco di codice in un `:::callout` diventa un riquadro annidato nel riquadro; dentro `:::paragraphs` il listato mantiene lo stile del codice, non lo stile di paragrafo. Postext non prevede la continuazione delle voci di elenco, quindi un blocco di codice dopo una voce di elenco chiude l’elenco. I segni d’indice e le ancore scritti dentro un listato restano come sono scritti.
 
-Il codice rientrato (quattro spazi o una tabulazione, dopo una riga vuota) viene letto come listato solo quando `codeStyle.indentedCode` è attivo: i testi di Postext spesso rientrano con spazi, e le voci di elenco annidate leggono gli spazi iniziali.
+Il codice rientrato (quattro spazi o una tabulazione, dopo una riga vuota) viene letto come listato solo quando `codeStyle.indentedCode` è attivo: i testi di Postext spesso rientrano con spazi, ed è proprio con gli spazi iniziali che si annidano le voci di elenco.
 
-L’aspetto di un listato (il carattere, il riquadro, la larghezza della tabulazione, che cosa succede a una riga più larga del riquadro, i numeri di riga, i colori dei suoi token) si imposta con `codeStyle`; vedi [Configurazione › Listati di codice](/it/docs/configuration-styles#listati-di-codice). Il codice in linea (`` `x` ``) resta nel carattere del testo, a meno che `codeStyle.inline` non gliene assegni uno. Un libro salvato prima di postext 1.23 con recinzioni nel testo le legge come allora, come Markdown (`codeStyle.blocks: false`). Da postext 1.23.
+L’aspetto di un listato (il carattere, il riquadro, la larghezza della tabulazione, che cosa succede a una riga più larga del riquadro, i numeri di riga, i colori dei suoi token) si imposta con `codeStyle`; vedi [Configurazione › Listati di codice](/it/docs/configuration-styles#listati-di-codice). Il codice in linea (`` `x` ``) resta nel carattere del testo, a meno che `codeStyle.inline` non gliene assegni uno. Un libro salvato prima di postext 1.23 con blocchi di codice nel testo li legge come allora, come Markdown (`codeStyle.blocks: false`). Da postext 1.23.
 
 ## Che cosa NON è supportato
 
 Postext non riconosce le seguenti funzionalità di CommonMark. Vengono trattate come testo semplice (e quindi compaiono alla lettera nell’output) oppure scartate senza avviso:
 
 - **Titoli in stile Setext**: la forma con sottolineatura `===` / `---`. Usa i titoli ATX (`#`).
-- **HTML passthrough**: i `<tags>` grezzi non vengono interpretati. Nemmeno i tag in stile MDX sono supportati; il sorgente Postext è Markdown puro.
+- **HTML diretto**: i `<tags>` grezzi non vengono interpretati. Nemmeno i tag in stile MDX sono supportati; il sorgente Postext è Markdown puro.
 - **Linee orizzontali**: `---`, `***`, `___`.
 - **Tabelle**: le tabelle con barre verticali non vengono analizzate. Le tabelle sono modellate come risorse strutturate in `PostextContent.resources`.
-- **Link con riferimento**: `[text][id]` più un blocco di definizione.
+- **Link per riferimento**: `[text][id]` più un blocco di definizione.
 - **Autolink**: `<https://example.com>`.
 - **A capo forzati con due spazi finali**: gli spazi vengono eliminati. Termina invece la riga con una barra rovesciata (vedi [A capo](/it/docs/document-format-directives#a-capo)).
-- **Barrato**: `~~text~~`. Il renderer del barrato è al momento riservato alle voci di attività completate.
+- **Barrato**: `~~text~~`. Il barrato, per ora, è riservato alle voci di attività completate.
 - **Note a margine**: non implementate, e `PostextContent.notes`, che i tipi accettano, viene ignorato dal motore. Le note a piè di pagina e le note di fine capitolo si scrivono con `[^id]` (vedi [Note a piè di pagina](/it/docs/document-format-notes-references#note-a-piè-di-pagina)); fino a postext 1.5 dovevano essere composte come testo.
 
 Questo elenco si accorcerà nel tempo. Fino ad allora, tutto ciò che non è elencato esplicitamente nella sezione delle funzionalità supportate va considerato testo letterale.
@@ -245,11 +245,11 @@ Alcune convenzioni fanno la differenza tra un documento che viene analizzato sen
 - **Lascia una riga vuota tra i blocchi.** Due paragrafi separati da una riga vuota sono due paragrafi. Due paragrafi su righe consecutive diventano uno solo: ogni riga confluisce nel paragrafo precedente.
 - **Le righe vuote in più non aggiungono spazio.** Tre righe vuote separano due blocchi esattamente come una. Quando vuoi più spazio tra di essi, scrivi una riga [`:::space`](/it/docs/document-format-directives#space).
 - **Rientra una voce annidata fino al testo della voce precedente.** Due spazi sotto un punto elenco (`- `), tre sotto `1. `, quattro sotto `10. `, come CommonMark annida gli elenchi; anche due spazi sotto `1.` annidano. Una voce si annida sotto la voce aperta più vicina il cui marcatore si trova almeno due colonne più a sinistra, quindi uno spazio non annida nulla e non si salta mai un livello, qualunque sia il passo (fino a postext 1.15 la profondità era `floor(spaces / 2) + 1`, e un `      1.` sotto `   1.` finiva al livello 4). Una tabulazione arriva al multiplo di quattro colonne successivo. La profondità massima è 5.
-- **Non rientrare la prima voce di un elenco.** Le voci di livello 1 cominciano alla colonna 0. La prima voce di un elenco apre il livello 1 per quanto sia rientrata (fino a postext 1.15 i suoi spazi iniziali aumentavano la profondità), quindi per annidare serve una voce sopra sotto cui annidarsi.
+- **Non rientrare la prima voce di un elenco.** Le voci di livello 1 cominciano alla colonna 0. La prima voce di un elenco apre il livello 1 per quanto sia rientrata (fino a postext 1.15 i suoi spazi iniziali aumentavano la profondità), quindi, per annidare una voce, serve sopra di essa una voce sotto cui collocarla.
 - **I marcatori di attività vanno tra parentesi quadre con un solo spazio.** `[ ]`, `[x]`, `[X]`, senza varianti. `[*]` o `[-]` non sono marcatori di attività; vengono resi come testo letterale.
 - **Le citazioni dentro gli elenchi non sono supportate.** Comincia la citazione alla colonna 0, fuori dall’elenco.
-- **Immagini e tabelle stanno in `resources`.** L’`![alt](src)` in linea viene eliminato proprio perché le immagini in linea compromettono il posizionamento consapevole delle colonne. Dichiara ogni immagine come risorsa e richiamala per id: sarà il motore a decidere se farla flottare, interrompere la colonna o spostarla in cima alla pagina successiva.
-- **Scrivi i simboli del dollaro come `\$` quando non intendi una formula.** Postext interpreta `$…$` come LaTeX in linea, quindi un `$` grezzo nel testo apre una formula. Prezzi, prompt della shell e qualunque altra cosa con un simbolo del dollaro isolato vanno scritti come `\$`.
+- **Immagini e tabelle stanno in `resources`.** L’`![alt](src)` in linea viene eliminato proprio perché le immagini in linea impedirebbero di collocarle tenendo conto delle colonne. Dichiara ogni immagine come risorsa e richiamala per id: sarà il motore a decidere se renderla flottante, interrompere la colonna o spostarla in cima alla pagina successiva.
+- **Scrivi il simbolo del dollaro come `\$` quando non intendi una formula.** Postext interpreta `$…$` come LaTeX in linea, quindi un `$` grezzo nel testo apre una formula. Prezzi, prompt della shell e qualunque altra cosa con un simbolo del dollaro isolato vanno scritti come `\$`.
 - **Digita il markup in ASCII, anche nel testo cinese e giapponese.** Un metodo di input cinese o giapponese produce le forme a larghezza piena: `：：：` per un delimitatore, `＃` per un titolo, `［＾1］` per un marcatore di nota, `｛…｝` per gli attributi, `＊＊` per il grassetto. Vengono stampate come testo, e la build segnala la riga con un avviso `fullwidthMarkup` che indica la forma ASCII da digitare. I valori degli attributi possono essere in qualunque scrittura e tra virgolette `“…”` o `「…」`; le chiavi restano in ASCII.
 
 

@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'Moving a book to composed pages',
   sidebarTitle: 'Moving to composed pages',
-  description: 'How to move a book whose pages keep their text in heading styles into page templates and Markdown: with the Sandbox assistant Move the text to the Markdown or by hand, and what to check afterwards',
+  description: 'How to move a book that keeps the text of its pages in heading styles to page templates and Markdown, either with the Sandbox assistant Move the text to the Markdown or by hand, and what to check afterwards',
   lang: 'en',
   lastUpdated: '2026-10-17',
   readingTime: '8 min',
@@ -15,28 +15,28 @@ export const metadata = {
 
 **A book that keeps the text of its pages in its styles can have it moved into the Markdown, where it can be edited and translated.**
 
-Before composed pages, a textbook ported to Postext often kept every page as a hidden heading whose running head placed the page's text, boxes and pictures where the printed page had them. The pages looked right, but the words lived in the configuration, so a typo meant opening a style and a translation meant copying the style. A composed page does the same job with the form in a **page template** and the words in the Markdown, as [Composed-page books](/en/docs/composed-page-books) shows. This page moves an old book to that form.
+Before composed pages, a textbook ported to Postext often kept each page as a hidden heading: the heading's running head placed the page's text, boxes and pictures where the printed page had them. The pages looked right, but the words lived in the configuration, so a typo meant opening a style and a translation meant copying the style. A composed page does the same job with the form in a **page template** and the words in the Markdown, as [Composed-page books](/en/docs/composed-page-books) shows. This page moves an old book to that form.
 
 You know a book is in the old form when the **Checks** panel lists *Text held in the configuration* (`contentInConfig`), one entry for each heading style that holds sentences, and offers **Move the text to the Markdown** at the head of the list.
 
 ## The book to follow
 
-The steps below use a small book made for this page, *Our World, before composed pages*: three pages of a Year 3 textbook, each a heading style with a running head that places a picture, a card, a title and three blocks of text, with a yellow band under one word. The words and the pictures are invented. [Download the book](/docs-examples/our-world-before.postext) and, in the Sandbox, open **Books**, press **New** and choose **Open a .postext file…**.
+The steps below use a small book made for this page, *Our World, before composed pages*: three pages of a Year 3 textbook. Each page is a heading style whose running head places a picture, a card, a title and three blocks of text, and one word has a yellow band under it. The words and the pictures are invented. [Download the book](/docs-examples/our-world-before.postext) and, in the Sandbox, open **Books**, press **New** and choose **Open a .postext file…**.
 
 ## With the assistant
 
 Importing a book with text in its styles opens the dialog **Move the text to the Markdown** by itself. If you closed it, or the book was already in your list, open **Checks** and press the button at the head of the list. Nothing changes until you press **Move the text**.
 
 1. Read **What changes**. For the sample book it says that 16 texts (567 letters) will move, that 3 composed pages will be written, that the 3 heading styles become 1, that 3 highlight boxes become chips and that the *Text held in the configuration* warnings go from 3 to 0.
-2. Look at the options. **Pages with frames in the same places share a template** gives pages that are laid out alike one base template, which the others extend. **A highlight box under bold words becomes a chip** turns a coloured box drawn under bold words into a chip of the book's chip style. **Words on pictures become their labels** is offered when the old design set short words on a picture, such as the names on a map: they become `::label` lines at anchors of the picture. It is off until you turn it on, because those pages change the most.
+2. Look at the options. **Pages with frames in the same places share a template** gives pages that are laid out alike a single base template, which the others extend. **A highlight box under bold words becomes a chip** turns a coloured box drawn under bold words into a chip of the book's chip style. **Words on pictures become their labels** is offered when the old design set short words on a picture, such as the names on a map: they become `::label` lines at anchors of the picture. It is off until you turn it on, because those pages change the most.
 3. Under **Before and after** the Sandbox lays each chapter out twice and draws every page that changes, the old one beside the new one. The list says which pages look different and why, when it knows. **Mark in red what changed** paints the pixels that differ. In the sample book all three pages are marked *Looks the same*.
 4. Press **Move the text**.
 
-<Screenshot src="/docs-shots/en/move.webp" alt="The dialog Move the text to the Markdown with the list of what changes and the three options." caption="The dialog lists what it will do before it does anything." />
+<Screenshot src="/docs-shots/en/move.webp" alt="The Move the text to the Markdown dialog, with the list of what changes and the three options." caption="The dialog lists what it will do before it does anything." />
 
 <Screenshot src="/docs-shots/en/move-before-after.webp" alt="The end of the dialog: the list of pages marked Looks the same and, side by side, a page before and after the move." caption="Each page is laid out with the old design and with the new one, side by side." />
 
-The move is one step of the history of the book: a step for each chapter rewritten and one for the design. **Undo** in the dialog takes it all back while nothing else has changed, and **Cmd/Ctrl+Z** takes it back a step at a time. The book as it was also stays stored until you press **Keep the move** in the Checks panel; until then **Put the book back as it was** writes the old design and text back.
+The move is recorded in the book's history as a step for each chapter rewritten and one for the design. **Undo** in the dialog takes it all back while nothing else has changed, and **Cmd/Ctrl+Z** takes it back a step at a time. The book as it was also stays stored until you press **Keep the move** in the Checks panel; until then **Put the book back as it was** writes the old design and text back.
 
 ## What to check afterwards
 
@@ -58,12 +58,12 @@ Rivers and seas
 Go through the result in this order.
 
 - **The pages that look different.** The list in the dialog gave the reasons it knew: a text's own box, outline or drop cap, a page whose side was not known, running text now set in the template's flow frame. Compare those pages in the canvas.
-- **The templates.** **Design › Page & columns › Page templates** lists one template per page design, and `page-base` for the frames that pages share. A page that adds nothing uses the base as it is; the others extend it. The names are built from the old ones: rename a template to something you will recognise (renaming it renames it in every page that names it).
+- **The templates.** **Design › Page & columns › Page templates** lists one template per page design, and `page-base` for the frames that pages share. A page that adds nothing uses the base as it is; the others extend it. The names are built from the old ones: rename a template to something you will recognise (every page that uses it picks up the new name).
 - **The paragraph styles.** The face, size, weight, colour, alignment and leading of each text became a paragraph style: one of the book's own when one matched exactly, otherwise a new one named after the face and the size (`nunito-11`). Look at **Design › Text** and rename or merge the new ones.
 - **The headings.** Heading styles that came out the same were merged and the headings were renamed; the hidden headings that only switched the running head are gone. Check the contents page if the book has one.
-- **What stays in the configuration.** The *Left in the configuration* list in the dialog names a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from another element and the text of a heading design. They are not content of a page, and the *Text held in the configuration* warnings that remain are about them.
+- **What stays in the configuration.** The *Left in the configuration* list in the dialog lists the texts that stay there: a text that mixes words with placeholders (`Page {pageNumber}`), a text hung from another element and the text of a heading design. They are not content of a page, and the *Text held in the configuration* warnings that remain are about them.
 - **The labels.** If you turned on *Words on pictures become their labels*, look at each map or diagram: the labels are set again in the book's fonts, so their size and place may differ from the old pages.
-- **The Checks panel.** Frames whose text no longer fits show as *Text does not fit its frame*, with the fixes described in [Composed-page books](/en/docs/composed-page-books#6-review-what-does-not-fit). A book made from a printed page is tight, and the first words that run a little longer need a fix.
+- **The Checks panel.** Frames whose text no longer fits show as *Text does not fit its frame*, with the fixes described in [Composed-page books](/en/docs/composed-page-books#6-review-what-does-not-fit). A book copied from printed pages fits tightly, so the first text that runs a little longer needs a fix.
 
 When you are satisfied, press **Keep the move**. The book can now be translated like any composed-page book.
 

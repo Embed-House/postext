@@ -6,7 +6,7 @@ summary: "Des marges en miroir, une ouverture de chapitre abaissée et des titre
 description: "Une page de roman dans Postext : marges en miroir, ouverture abaissée de 52 mm, titres courants selon la parité, folio en pied aux ouvertures, code complet."
 # plain: "…"           40–240 caractères : le résumé en mots de tous les jours, sans jargon (affiché sous « En bref »)
 # question: "…"        facultatif, ≤ 110 caractères : reformule answers[0] pour cette page
-# pageNotes: { "3": "…" }  facultatif : texte alternatif supplémentaire pour une page capturée
+# pageNotes: { "3": "…" }  facultatif : texte de remplacement supplémentaire pour une page capturée
 aliases: ["page de livre", "titres courants", "titre courant", "ouverture de chapitre", "running heads"]
 ---
 
@@ -35,19 +35,19 @@ Les premières pages d’un roman broché : un chapitre qui commence sur un rec
 
 ### 1 · L’ouverture est une maquette, pas un titre
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le titre de niveau 1 garde sa place dans le texte et dans la table des matières, mais il se dessine à partir d’un emplacement d’éléments : le surtitre vient d’un attribut du titre, le titre passe à la ligne sur une justification fixe et le filet s’ancre sous la hauteur que prend le titre, quelle qu’elle soit. `minHeight` abaisse le texte courant jusqu’à la même ligne sur chaque ouverture, quelle que soit la longueur du titre.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le titre de niveau 1 garde sa place dans le texte et dans la table des matières, mais il se dessine à partir d’une zone de maquette : le surtitre vient d’un attribut du titre, le titre passe à la ligne sur une justification fixe et le filet s’ancre sous la hauteur que prend le titre, quelle qu’elle soit. `minHeight` abaisse le texte courant jusqu’à la même ligne sur chaque ouverture, quelle que soit la longueur du titre.
 
 ### 2 · Les titres courants savent sur quelle page ils sont
 
 <Excerpt region="running-heads" />
 
-Chaque élément est ancré à la page physique et filtré selon la parité, si bien que le folio reste toujours sur le bord extérieur et le titre du livre sur le verso. `pages: 'body'` les tient à l’écart de l’ouverture, qui reçoit à la place un folio centré en pied, venu du pied de page.
+Chaque élément est ancré à la page physique et filtré selon la parité : le folio reste donc toujours sur le bord extérieur et le titre du livre sur le verso. `pages: 'body'` les tient à l’écart de l’ouverture, qui reçoit à la place un folio centré en pied, venu du pied de page.
 
 ### 3 · Un seul accent, lié partout
 
 <Excerpt region="palette" />
 
-Chaque couleur de la configuration nomme son entrée de palette : un lecteur qui change une pastille de couleur reteinte tout le livre, et une partie ou un style de titre peut recolorer une section par son id. Faire pointer `main-color` sur l’accent rattrape toutes les valeurs par défaut que la configuration ne redéfinit pas.
+Chaque couleur de la configuration renvoie à son entrée de palette : un lecteur qui change une pastille de couleur reteinte tout le livre, et une partie ou un style de titre peut recolorer une section par son identifiant. Faire pointer `main-color` sur l’accent rattrape toutes les valeurs par défaut que la configuration ne redéfinit pas.
 
 ## Variantes
 

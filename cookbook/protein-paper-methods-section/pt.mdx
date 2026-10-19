@@ -16,7 +16,7 @@ Cinco páginas de um artigo de revista de ciências da vida em A4: *Highly accur
 
 ### 1 · Duas listas de referências, uma só numeração
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. As citações são numeradas pela ordem da primeira citação, então você não precisa fazer nada para continuar a contagem: o jackhmmer, citado pela primeira vez nos Métodos, recebe o 36, enquanto o campo de força Amber, citado antes no texto principal, mantém o seu 30. As listas saem de `:::bibliography{scope=new}`, que imprime só as obras que nenhuma lista anterior imprimiu. O pen põe o mesmo bloco depois da Discussão e depois dos Métodos: o primeiro compõe de 1 a 35, o segundo de 36 a 55, e o Amber não é impresso de novo. O título dos Métodos é um título de nível 1 com estilo próprio; seu `bodyStyle` compõe a seção em 8,2 pt sobre 10,8 pt, `breakBefore: { enabled: false }` o mantém na coluna e `runningChapter: false` deixa nos cabeços o título do artigo. Para o seu próprio artigo, cole a exportação do seu `.bib` num bloco `:::references{format=bibtex}`, cite com `[@key]` colado à palavra e troque `nature` pelo estilo da sua revista.
+O código é [a resposta curta](#a-resposta-curta) logo acima. As citações são numeradas pela ordem da primeira citação, por isso você não precisa fazer nada para continuar a contagem: o jackhmmer, citado pela primeira vez nos Métodos, recebe o 36, enquanto o campo de força Amber, citado antes no texto principal, mantém o 30. As listas saem de `:::bibliography{scope=new}`, que imprime só as obras que nenhuma lista anterior imprimiu. O pen põe o mesmo bloco depois da Discussão e depois dos Métodos: o primeiro compõe de 1 a 35, o segundo de 36 a 55, e o Amber não é impresso de novo. O título dos Métodos é um título de nível 1 com estilo próprio; seu `bodyStyle` compõe a seção em 8,2 pt sobre 10,8 pt, `breakBefore: { enabled: false }` o mantém na coluna e `runningChapter: false` deixa nos cabeços o título do artigo. Para seu próprio artigo, cole a exportação de seu `.bib` num bloco `:::references{format=bibtex}`, cite com `[@key]` colado à palavra e troque `nature` pelo estilo de sua revista.
 
 ### 2 · Um bloco de título para 34 autores
 
@@ -28,7 +28,7 @@ A lista de autores é um único atributo do título, `authors="John Jumper^1,4^,
 
 <Excerpt region="resources" />
 
-O resumo é um box com `span: 'page'` e sem moldura, com o texto em Noto Sans seminegrito. A figura 1 vem depois dele como `::resource{id="fig1"}`, e o seu posicionamento, `{ position: 'here', span: 'page' }`, a compõe sobre as duas colunas nesse ponto; as duas colunas de texto começam abaixo da legenda. A legenda abre com uma frase em negrito, como as da Nature; o `captionPrefix` do tipo e o `labelSeparator` do estilo de legenda fazem o rótulo dizer *Fig. 1 |*. A tabela 1 entra onde está, nos Métodos, com `position: 'here'`, e fica na sua coluna.
+O resumo é um box com `span: 'page'` e sem moldura, com o texto em Noto Sans seminegrito. A figura 1 vem depois dele como `::resource{id="fig1"}`, e o posicionamento, `{ position: 'here', span: 'page' }`, a compõe sobre as duas colunas nesse ponto; as duas colunas de texto começam abaixo da legenda. A legenda abre com uma frase em negrito, como as da Nature; o `captionPrefix` do tipo e o `labelSeparator` do estilo de legenda fazem o rótulo dizer *Fig. 1 |*. A tabela 1 entra onde está, nos Métodos, com `position: 'here'`, e fica na coluna.
 
 ### 4 · O esqueleto de uma proteína desenhado a partir de coordenadas abertas
 

@@ -2,7 +2,7 @@
 title: "Einseitiger Lebenslauf mit Seitenleiste"
 summary: "Ein einseitiger Lebenslauf in A4, dessen pflaumenfarbene Seitenleiste ein Kasten in einer linken Spalte nur für Gleitobjekte ist, mit rechtsbündigen Daten."
 plain: "Ein einseitiger Lebenslauf für eine Buchgestalterin, mit einem farbigen Streifen am linken Rand für Kontaktdaten und Fähigkeiten. Die Daten jeder Stelle stehen rechtsbündig."
-description: "Ein einseitiger Lebenslauf mit anderthalb Spalten: Ein pflaumenfarbener Kasten füllt die Seitenspalte, Kästen der Kopfzeile tragen die Farbe bis zum Blattrand."
+description: "Ein einseitiger Lebenslauf mit anderthalb Spalten: Ein pflaumenfarbener Kasten füllt die Seitenspalte, Kästen der Kopfzeile führen die Farbe bis zum Blattrand."
 question: "Wie gestalte ich einen einseitigen Lebenslauf mit farbiger Seitenleiste und rechtsbündigen Daten?"
 aliases: ["Lebenslauf", "CV", "résumé", "Curriculum Vitae", "zweispaltiger Lebenslauf", "Seitenleiste", "farbige Seitenleiste", "Daten rechtsbündig", "Fähigkeiten als Tags", "currículum"]
 pageNotes: { "1": "Ein Lebenslauf in A4. Ein pflaumenfarbenes Band läuft am linken Blattrand von oben bis unten; an seinem Kopf steht ein Stapel aus fünf leinengebundenen Büchern in Aprikose, Weiß, Beere und Flieder auf der Höhe der Grundlinie des Namens. Darunter eröffnen aprikosenfarbene Versalien die Abschnitte, deren Text weiß ist: „Contact“; „Skills“ und „Tools“, als abgerundete Pillen gesetzt; „Languages“, „Education“, „Teaching“ und „Outside work“. Rechts auf der weißen Seite „Irene Salcedo“ in einer großen Serifenschrift, „BOOK DESIGNER AND ART DIRECTOR“ in kleinen beerenfarbenen Versalien, ein fünfzeiliges Profil, dann „Experience“, eine beerenfarbene Serifenüberschrift mit einer Haarlinie bis zum Rand, drei Stellen, deren Titel links stehen, die Daten rechtsbündig auf derselben Zeile und der Arbeitgeber kursiv darunter, eine Liste „Selected books“ und ein einzeiliges Impressum." }
@@ -18,13 +18,13 @@ Den Lebenslauf von Irene Salcedo, einer erfundenen Buchgestalterin in Madrid, au
 
 <Excerpt region="sections" />
 
-Innerhalb der Spalte ist das Band der Kasten aus [der kurzen Antwort](#die-kurze-antwort). Sein Direktivenblock steht vor dem Namen, deshalb setzt `span="side"` ihn an den Kopf der Spalte nur für Gleitobjekte. Die Abschnitte sind darin verschachtelte Kästen ohne eigene Füllung, sodass die Pflaumenfarbe ohne Unterbrechung von „Contact“ bis „Outside work“ läuft. Als getrennte Seitenkästen stünden sie 4,7 bis 9,1 mm auseinander, selbst mit `marginBottom` auf 0. Die Pillen sind etwa 3,9 mm hoch. „Skills“ und „Tools“ verwenden ein eigenes Abschnittsformat, `chips`, dessen Zeilenabstand von 16 pt 1,8 mm zwischen den Reihen lässt; die 12,4 pt der anderen Abschnitte ließen einen halben Millimeter ([Chip-Formate](/de/docs/configuration-styles#chip-stile)).
+Innerhalb der Spalte ist das Band der Kasten aus [der kurzen Antwort](#die-kurze-antwort). Sein Block steht vor dem Namen, deshalb setzt `span="side"` ihn an den Kopf der Spalte nur für Gleitobjekte. Die Abschnitte sind darin verschachtelte Kästen ohne eigene Füllung, sodass die Pflaumenfarbe ohne Unterbrechung von „Contact“ bis „Outside work“ läuft. Als getrennte Seitenkästen stünden sie 4,7 bis 9,1 mm auseinander, selbst mit `marginBottom` auf 0. Die Pillen sind etwa 3,9 mm hoch. „Skills“ und „Tools“ verwenden einen eigenen Kastenstil, `chips`, dessen Zeilenabstand von 16 pt 1,8 mm zwischen den Reihen lässt; die 12,4 pt der anderen Abschnitte ließen einen halben Millimeter ([Chip-Formate](/de/docs/configuration-styles#chip-stile)).
 
 ### 2 · Die Ränder um die Spalte bemalen
 
 <Excerpt region="margins" />
 
-Die Seitenspalte liegt innerhalb der Seitenränder, deshalb endet der Kasten der Seitenleiste 9 mm vor der linken Kante und 18 mm vor der Oberkante. Drei Kästen in der Kopfzeile füllen den oberen Rand über der Spalte, den linken Rand von oben bis unten und den unteren Rand unter der Spalte. Elemente der Kopfzeile werden nach dem Text und über ihm gemalt, deshalb hält das Rezept sie in den Rändern, wo kein Text läuft. Sie wiederholen sich außerdem auf jeder Seite, und eine zweite Seite trüge das Band ebenfalls ([Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen)). Der obere und der linke Kasten überlappen den Kasten der Seitenleiste um 0,5 mm, und der Fußkasten reicht 1 mm über den Fuß der Spalte hinauf, über das Ende des Seitenleistenkastens, sodass an den Stößen keine Haarlinie Papier durchscheint. Das `:::space`, das den Kasten der Seitenleiste schließt, führt ihn bis 278,0 mm hinunter, 0,8 mm über dem Fuß der Spalte, mit 2,76 Zeilen auf Englisch und 1,76 auf Spanisch.
+Die Seitenspalte liegt innerhalb der Seitenränder, deshalb endet der Kasten der Seitenleiste 9 mm vor der linken Kante und 18 mm vor der Oberkante. Drei Kästen in der Kopfzeile füllen den oberen Rand über der Spalte, den linken Rand von oben bis unten und den unteren Rand unter der Spalte. Elemente der Kopfzeile werden nach dem Text und über ihm gemalt, deshalb hält das Rezept sie in den Rändern, wo kein Text läuft. Sie wiederholen sich außerdem auf jeder Seite, und auch eine zweite Seite bekäme das Band ([Kopf- und Fußzeilen](/de/docs/configuration-headers-footers#kopf--und-fußzeilen)). Der obere und der linke Kasten überlappen den Kasten der Seitenleiste um 0,5 mm, und der Fußkasten reicht 1 mm über den Fuß der Spalte hinauf, über das Ende des Seitenleistenkastens, sodass an den Stößen keine Haarlinie Papier durchscheint. Das `:::space`, das den Kasten der Seitenleiste schließt, führt ihn bis 278,0 mm hinunter, 0,8 mm über dem Fuß der Spalte, mit 2,76 Zeilen auf Englisch und 1,76 auf Spanisch.
 
 ### 3 · Den Namen an den Kopf der Textspalte setzen
 
@@ -36,7 +36,7 @@ Die H1 behält den Standardwert `span: 'column'`. Mit `'page'` wird sie zu einem
 
 <Excerpt region="jobs" />
 
-Jede Stelle ist eine H3, deren Attribute Arbeitgeber und Daten tragen: `### Art director {org="Ediciones del Albardín, Madrid" dates="2021 – present"}` ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)). Titel und Daten sind am Kopf desselben Containers verankert, je an einer Ecke, in gleicher Größe und mit gleichem Zeilenabstand, sodass sie auf einer Grundlinie stehen. Der Titel ist auf 84 mm begrenzt und bricht um: Ein langer Titel geht auf eine zweite Zeile über, bevor er die Daten erreicht, und der Arbeitgeber rückt darunter. Mit dem Abstand darüber füllt jede Abschnittsüberschrift genau drei Rasterzeilen, was jeden Stellenkopf 9 pt unter eine Rasterzeile setzt, ob er einer Abschnittsüberschrift oder einer Liste folgt.
+Jede Stelle ist eine H3, deren Attribute Arbeitgeber und Daten enthalten: `### Art director {org="Ediciones del Albardín, Madrid" dates="2021 – present"}` ([Überschriftenattribute](/de/docs/document-format#attribute-von-überschriften)). Titel und Daten sind am Kopf desselben Containers verankert, je an einer Ecke, in gleicher Größe und mit gleichem Zeilenabstand, sodass sie auf einer Grundlinie stehen. Der Titel ist auf 84 mm begrenzt und bricht um: Ein langer Titel geht auf eine zweite Zeile über, bevor er die Daten erreicht, und der Arbeitgeber rückt darunter. Mit dem Abstand darüber füllt jede Abschnittsüberschrift genau drei Rasterzeilen, was jeden Stellenkopf 9 pt unter eine Rasterzeile setzt, ob er einer Abschnittsüberschrift oder einer Liste folgt.
 
 ## Varianten
 
@@ -55,7 +55,7 @@ Jede Farbe ist einmal in `palette` notiert, und die Kästen des Bandes, der Kast
 
 ### Abbildungen in dieselbe Spalte gleiten lassen
 
-Das <RecipeLink slug="textbook-margin-column">Lehrbuch mit Randspalte</RecipeLink> setzt Abbildungen, seitliche Bildunterschriften und Glossen in eine Spalte nur für Gleitobjekte am Außenrand jeder Seite.
+Das <RecipeLink slug="textbook-margin-column">Lehrbuch mit Randspalte</RecipeLink> setzt Abbildungen, seitliche Legenden und Glossen in eine Spalte nur für Gleitobjekte am Außenrand jeder Seite.
 
 ## Häufige Fehler
 

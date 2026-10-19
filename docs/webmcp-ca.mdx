@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'WebMCP: un agent treballant al Sandbox',
   sidebarTitle: 'WebMCP',
-  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 41 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  description: "Què pot fer un agent d'IA al navegador amb les 41 eines WebMCP del Sandbox (mirar les pàgines, canviar qualsevol paràmetre, editar el text, afegir imatges, taules i fonts, fer les revisions, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 46,
-  plainSummary: "Aquesta pàgina és per a qui vol que un assistent d'intel·ligència artificial treballi per ell en un llibre del Sandbox. Mentre el Sandbox és obert, dona a l'assistent un joc d'eines per mirar qualsevol pàgina, canviar el disseny, editar el text, afegir imatges i taules, trobar problemes i desar fitxers. Li demanes les coses amb les teves paraules, per exemple «fes la lletra una mica més grossa i comprova que el llibre encara cap en 40 pàgines», i l'assistent fa servir les eines i et mostra les pàgines. Tot es queda al teu navegador. La pàgina explica com connectar-hi un assistent, què pot fer i com es crida cada eina.",
+  plainSummary: "Aquesta pàgina és per a qui vol que un assistent d'intel·ligència artificial li faci la feina en un llibre del Sandbox. Mentre el Sandbox és obert, dona a l'assistent un joc d'eines per mirar qualsevol pàgina, canviar el disseny, editar el text, afegir imatges i taules, trobar problemes i desar fitxers. Li demanes les coses amb les teves paraules, per exemple «fes la lletra una mica més grossa i comprova que el llibre encara cap en 40 pàgines», i l'assistent fa servir les eines i et mostra les pàgines. Tot es queda al teu navegador. La pàgina explica com connectar-hi un assistent, què pot fer i com es crida cada eina.",
 };
 
 # WebMCP
@@ -23,7 +23,7 @@ el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 p
 veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
 Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
 
-Hi ha 41 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
+Hi ha 41 eines amb un nom que comença per `sandbox_`, registrades mentre el Sandbox
 és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
 postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
 dona la crida de cadascuna.
@@ -33,8 +33,8 @@ dona la crida de cadascuna.
 ### En un navegador amb WebMCP
 
 Les eines es registren a `document.modelContext` quan es munta el Sandbox i es
-retiren quan en surts. Un agent a qui el navegador ofereix les eines de la
-pàgina les troba allà. A Postext no cal instal·lar ni configurar res.
+retiren quan en surts. Qualsevol agent al qual el navegador doni les eines de la
+pàgina les hi troba. A Postext no cal instal·lar ni configurar res.
 
 WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
 de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
@@ -80,7 +80,7 @@ fs.writeFileSync('page-1.png', Buffer.from(picture.data, 'base64'));
 await browser.close();
 ```
 
-Un perfil de navegador nou té el seu propi emmagatzematge, així que comença
+Un perfil de navegador nou té un emmagatzematge propi, així que comença
 amb els exemples i no amb els teus projectes. Per treballar en els teus
 llibres, fes servir el navegador on els has fet.
 
@@ -106,11 +106,11 @@ per pàgina, codificada en base64.
 ## El cicle de treball
 
 Totes les eines que canvien el llibre esperen que la maquetació s'actualitzi
-abans de respondre, i diuen quantes pàgines ocupa cada capítol. Així, la mirada
-següent sempre és sobre les pàgines noves, i l'agent pot treballar com ho fa un
+abans de respondre, i diuen quantes pàgines ocupa cada capítol. Així, el que l'agent
+mira a continuació són sempre les pàgines noves, i l'agent pot treballar com ho fa un
 dissenyador:
 
-1. **Veure com està tot**: `sandbox_get_state` dona el llibre, els seus
+1. **Veure com està tot**: `sandbox_get_state` dona el llibre, els
    capítols amb les pàgines, el capítol i la pàgina que hi ha a la pantalla i
    el tauler obert.
 2. **Mirar**: `sandbox_render_page` pinta una pàgina, `sandbox_inspect_pages`
@@ -118,7 +118,7 @@ dissenyador:
    revisió.
 3. **Canviar**: `sandbox_set_config`, `sandbox_edit_text`,
    `sandbox_save_resource`…
-4. **Tornar a mirar**, i quedar-se el canvi o desfer-lo.
+4. **Tornar a mirar**, i mantenir el canvi o desfer-lo.
 
 La pàgina es maqueta i es pinta per a l'eina sigui quin sigui el visor a la
 pantalla, de manera que l'agent pot mirar el capítol 7 mentre tu llegeixes el
@@ -153,8 +153,8 @@ capítol 2.
 es carrega). `question` i `notice` apareixen quan el Sandbox espera alguna cosa
 de tu; vegeu [Preguntes i avisos](#preguntes-i-avisos).
 
-Totes les eines que prenen un `chapter` n'accepten la posició al llibre
-(començant per 1), el títol o l'id. Si no s'indica, és el capítol que hi ha a la
+Totes les eines que admeten `chapter` hi accepten la posició del capítol al
+llibre (començant per 1), el títol o l'id. Si no s'indica, és el capítol que hi ha a la
 pantalla.
 
 ### Mirar una pàgina
@@ -202,7 +202,7 @@ fluixes?», «la segona columna és plena?»:
 
 Amb `page` o `position` llista tots els blocs de la pàgina: el tipus, la
 columna, el text, el nombre de línies, les línies que acaben en guionet i les
-línies justificades fluixes amb l'amplada dels seus espais, la caixa que ocupa
+línies justificades fluixes amb l'amplada dels espais, la caixa que ocupa
 a la pàgina i, a més, com s'omple cada columna (`fill: 0.99`).
 
 **Què hi ha en un punt.** Quan l'agent veu alguna cosa en una imatge, pregunta
@@ -219,12 +219,12 @@ o el peu d'un recurs. Amb `select: true` també fa el que fa un clic: s'obre el
 tauler Text amb el cursor en aquell lloc (`word: true` selecciona la paraula,
 `to` selecciona fins a un segon punt).
 
-La resposta també porta `elements`: el que hi ha en aquell punt, de dins cap a fora, en l'ordre en què un clic a la pàgina el tria i cada clic més o Esc puja (un caràcter, el seu paràgraf, el requadre que l'envolta, el marc d'una pàgina composta, el seu grup, la pàgina i la seva plantilla; o un element de disseny i el seu slot). Cadascun duu el seu id estable, el seu origen (un tram del Markdown, una ruta de la configuració, un atribut, un recurs) i el seu nom a la ruta que mostra el Sandbox (`path`). Amb `select: true`, `level` (`block`, `frame`, `template`, `design`…) en tria un com ho faria una persona: en mode Contingut en selecciona el Markdown i en mode Disseny n'obre el marc, l'estil o la plantilla. `sandbox_get_state` informa de l'element triat a `pageSelection`.
+La resposta també inclou `elements`: el que hi ha en aquell punt, de dins cap a fora, en l'ordre en què els tria un clic a la pàgina i en què cada clic més, o Esc, va pujant d'un a l'altre (un caràcter, el paràgraf, el requadre que l'envolta, el marc d'una pàgina composta, el grup, la pàgina i la plantilla; o un element de disseny i la zona de disseny que ocupa). Cadascun inclou l'id estable, l'origen (un tram del Markdown, una ruta de la configuració, un atribut, un recurs) i el nom que té a la ruta que mostra el Sandbox (`path`). Amb `select: true`, `level` (`block`, `frame`, `template`, `design`…) en tria un com ho faria una persona: en mode Contingut en selecciona el Markdown i en mode Disseny n'obre el marc, l'estil o la plantilla. `sandbox_get_state` informa de l'element triat a `pageSelection`.
 
 ### Canviar el disseny
 
-Qualsevol ajust de la [configuració](/ca/docs/configuration) es pot canviar per
-la seva ruta. Un agent poques vegades sap la ruta d'entrada, així que la busca:
+Qualsevol paràmetre de la [configuració](/ca/docs/configuration) es pot canviar
+indicant-ne la ruta. D'entrada, un agent poques vegades en sap la ruta, així que la busca:
 
 ```jsonc
 // sandbox_find_setting
@@ -242,19 +242,19 @@ la seva ruta. Un agent poques vegades sap la ruta d'entrada, així que la busca:
 }
 ```
 
-`sandbox_get_config` llegeix un ajust o una secció sencera: `set` és el que
+`sandbox_get_config` llegeix un paràmetre o una secció sencera: `set` és el que
 desa el llibre, i `effective`, el valor que en resulta un cop afegits els
-valors per defecte, que també mostra tots els ajustos de la secció.
+valors per defecte, que també mostra tots els paràmetres de la secció.
 
 ```jsonc
 // sandbox_get_config
 { "path": "headings.levels[level=2]" }
 ```
 
-Les rutes identifiquen un element d'una llista pel que el distingeix:
+Les rutes identifiquen un element d'una llista pel camp que el distingeix:
 `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`,
 `calloutStyles[id=note].title`. Després, `sandbox_set_config` canvia tants
-ajustos com vulguis en una sola crida:
+paràmetres com vulguis en una sola crida:
 
 ```jsonc
 // sandbox_set_config
@@ -269,8 +269,8 @@ ajustos com vulguis en una sola crida:
 ```
 
 Una longitud s'escriu `"2.5cm"`, `{ "value": 2.5, "unit": "cm" }` o com un
-nombre en la unitat de l'ajust; un color, `"#1f3a5f"`. Un valor `null` elimina
-l'ajust, i torna el valor del disseny. La resposta dona el que cal per jutjar
+nombre en la unitat del paràmetre; un color, `"#1f3a5f"`. Un valor `null` elimina
+el paràmetre, i torna a valer el que indica el disseny. La resposta dona el que cal per jutjar
 el canvi i per desfer-lo:
 
 ```json
@@ -296,9 +296,9 @@ el canvi i per desfer-lo:
 
 `from` és el valor desat abans del canvi (aquí `null`: el llibre no el fixava),
 de manera que la mateixa crida amb `from` com a valor el desfà. `followed`
-llista els ajustos que depenen d'aquest i s'hi han mogut. Apareix una `note`
-quan el motor ha resolt una cosa diferent de la demanada (un límit, un ajust
-que en depèn d'un altre), i un valor amb una forma equivocada, o una
+llista els paràmetres que depenen d'aquest i han canviat amb ell. Apareix una `note`
+quan el motor ha resolt una cosa diferent de la demanada (un límit, un paràmetre
+que depèn d'un altre), i un valor amb una forma equivocada, o una
 configuració que el motor no pot resoldre, es rebutja sense canviar res.
 
 Cada crida és un pas de l'historial del Sandbox: `sandbox_undo` la desfà, com Cmd/Ctrl+Z desfà un canvi fet al tauler Disseny.
@@ -309,28 +309,28 @@ objectes es fusionen, `null` elimina i les llistes se substitueixen senceres) i
 `postext-config.json` exportat. `sandbox_reset_to_original` amb `part: "config"`
 restaura el disseny amb què va començar el llibre.
 
-Les fonts també són ajustos: `sandbox_list_fonts` amb `search: "Garamond"`
-troba famílies al catàleg obert, i escriure el nom en un ajust `fontFamily` la
-carrega.
+Les fonts també són paràmetres: `sandbox_list_fonts` amb `search: "Garamond"`
+troba famílies al catàleg obert, i n'hi ha prou d'escriure'n el nom en un
+paràmetre `fontFamily` perquè es carregui.
 
 Els estils de requadre tenen una biblioteca pròpia: `sandbox_frame_styles`
-dona cada estil amb on el fa servir el llibre (marcs de plantilla, pàgines
-compostes, requadres `:::callout` per capítol) i les fusions d'estils gairebé
-iguals que proposa, com Disseny › Requadres › Estils de marc.
-`sandbox_merge_styles` rep `groups` (`{ keep, merge }`) o `all: true` i
-reescriu cada marc i cada bloc que anomenava un estil fusionat; amb
-`lookOnly: true` compara també estils els requadres dels quals són en llocs
-diferents. Aquest estil es queda aleshores només amb el seu lloc, basat en
-l'estil que es queda (`extends`), de manera que els seus requadres no es mouen i
-la resposta el llista a `keptForTheirPlace`; amb `keepPlaces: false` es fusiona
-del tot i els seus requadres es mouen.
+llista tots els estils de requadre, amb els llocs on els fa servir el llibre
+(marcs de plantilla, pàgines compostes, requadres `:::callout` de cada capítol),
+i les fusions d'estils gairebé iguals que proposa, igual que Disseny ›
+Requadres › Estils de marc. `sandbox_merge_styles` rep `groups`
+(`{ keep, merge }`) o `all: true` i reescriu cada marc i cada bloc que feia
+servir un estil fusionat. Amb `lookOnly: true` també compara estils amb
+requadres situats en llocs diferents. En aquest cas, l'estil conserva només la
+posició i estén l'estil que es manté (`extends`), de manera que els requadres
+no es mouen; la resposta el llista a `keptForTheirPlace`. Amb
+`keepPlaces: false` es fusiona del tot i els requadres es mouen.
 La resposta dona `undoSteps`: un pas per capítol reescrit i un altre per als estils, que `sandbox_undo` reverteix començant pels estils.
 
 ### Editar el text
 
 El text de cada capítol és Markdown amb les extensions de Postext (vegeu
 [Format del document](/ca/docs/document-format)). L'agent el llegeix amb
-números de línia, troba un passatge i en substitueix passatges exactes:
+números de línia, troba un passatge i substitueix passatges concrets, escrits exactament:
 
 ```jsonc
 // sandbox_read_text: les línies 40 a 80 del capítol 2
@@ -380,7 +380,7 @@ capítols:
 { "action": "split_at_headings", "chapter": 1 }
 ```
 
-`sandbox_remove_chapter` n'esborra un, i això no es pot desfer.
+`sandbox_remove_chapter` en suprimeix un, i això no es pot desfer.
 
 ### Afegir imatges, taules, vídeos i fonts
 
@@ -419,10 +419,10 @@ La resposta dona el registre desat i la línia que el col·loca,
 que indica: un peu, les cel·les d'una taula, la col·locació, la zona segura
 d'una imatge. `newId` reanomena un recurs i, per defecte, totes les referències
 que en fa el llibre. `sandbox_list_resources` els llista i, amb un `id`, en
-dona un de complet (les cel·les d'una taula amb el seu format, el codi font
+dona un de complet (les cel·les d'una taula amb el format, el codi font
 d'un SVG).
 
-Les `marks` d'una imatge porten també les àncores. En un mapa o un esquema són els punts on es col·loquen les seves línies `::label`: un `id`, `x` i `y` (fraccions de la imatge sencera) i els camps de rètol que pren un rètol col·locat allà (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La resposta avisa d'un estil de rètol que el disseny no té, i les marques noves d'un recurs són un pas de l'historial (`sandbox_undo` respon `kind: "resource"`). En un SVG, `marks.svgSymbols` (`idPrefix`, `className`) afegeix una zona lliure sobre cada element del dibuix que anomena, a les zones que dona la crida o que ja té la imatge (des de postext 1.43).
+Les `marks` d'una imatge també contenen les àncores. En un mapa o un esquema, són els punts on es col·loquen les línies `::label`: un `id`, `x` i `y` (fraccions de la imatge sencera) i els camps que rep el rètol que s'hi col·loca (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La resposta avisa d'un estil de rètol que el disseny no té, i les marques noves d'un recurs són un pas de l'historial (`sandbox_undo` respon `kind: "resource"`). En un SVG, `marks.svgSymbols` (`idPrefix`, `className`) afegeix una zona lliure (on no hi pot anar cap bafarada) sobre cada element del dibuix que indica, a més de les zones que dona la crida o que ja té la imatge (des de postext 1.43).
 
 ```jsonc
 // dues àncores d'un mapa, amb els seus estils de rètol
@@ -450,8 +450,8 @@ llibre sencer, sigui quin sigui el que hi ha a la pantalla: fonts i imatges que
 falten, marcatge que el motor no ha pogut llegir, elements de disseny que no hi
 caben, text massa pàl·lid per al fons, línies fluixes, vídues, caixes que
 desborden i la verificació d'impressió (preflight). Cada avís porta la
-categoria, el capítol, la línia i les posicions, la pàgina i l'ajust o el
-recurs que esmenta:
+categoria, el capítol, la línia i les posicions, la pàgina i el paràmetre o el
+recurs a què es refereix:
 
 ```json
 {
@@ -470,12 +470,12 @@ recurs que esmenta:
 }
 ```
 
-A partir d'un avís, l'agent pot anar al seu lloc (`sandbox_select_text` amb
+A partir d'un avís, l'agent pot anar al lloc corresponent (`sandbox_select_text` amb
 `offset` i `toOffset`, o `sandbox_go_to_page`), mirar la pàgina i canviar el
-text o l'ajust. `category` restringeix la llista; en un llibre llarg,
+text o el paràmetre. `category` restringeix la llista; en un llibre llarg,
 `scope: "book"` maqueta tots els capítols i triga una estona.
 
-Un llibre amb diverses edicions (el paquet d'un exemple o un projecte importat d'un) té també les seves comprovacions de pàgines compostes en tots els idiomes: `sandbox_get_composed_checks` maqueta cada edició i les llista per idioma, capítol, pàgina i marc, com fa el tauler a *Pàgines compostes*, amb `language` per quedar-se'n una (des de postext 1.40). `sandbox_get_warnings` continua comprovant un capítol de l'idioma en pantalla.
+Un llibre amb diverses edicions (el paquet d'un exemple o un projecte importat d'un paquet) també té revisions de pàgines compostes en tots els idiomes: `sandbox_get_composed_checks` maqueta cada edició i llista les revisions per idioma, capítol, pàgina i marc, com fa el tauler Revisió a *Pàgines compostes*, i amb `language` en pots triar només un (des de postext 1.40). `sandbox_get_warnings` continua revisant un sol capítol de l'idioma que hi ha a la pantalla.
 
 ### Mostrar-te les pàgines
 
@@ -504,7 +504,7 @@ pàgina.
 ### Pàgines de còmic
 
 `sandbox_inspect_comic` dona les vinyetes, les línies de divisió i les bafarades
-d'una pàgina de còmic amb les seves posicions; `sandbox_edit_comic` fa les
+d'una pàgina de còmic amb les posicions; `sandbox_edit_comic` fa les
 edicions que una persona fa amb el punter, i les escriu al text font:
 
 ```jsonc
@@ -515,7 +515,7 @@ edicions que una persona fa amb el punter, i les escriu al text font:
 { "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
 ```
 
-La resposta avisa quan una bafarada cau sobre una cara o surt de la seva
+La resposta avisa quan una bafarada queda sobre una cara o surt de la
 vinyeta. El format és a [Còmics](/ca/docs/comics).
 
 ### Llibres, fitxers i Word
@@ -548,18 +548,18 @@ vinyeta. El format és a [Còmics](/ca/docs/comics).
   }
   ```
 
-  Amb `characterSpacing` (activat per defecte quan hi ha alguna cosa a prendre;
-  des de postext 1.40) l'espaiat entre lletres dels estils de Word en ús passa,
-  en em, als estils de paràgraf, els estils de títol, els nivells de títol i els
-  títols de requadre del llibre als quals s'assignen, on el llibre no en fixa
-  cap. La simulació ho llista a `characterSpacing`.
+  Amb `characterSpacing` (des de postext 1.40; activat per defecte quan els
+  estils de Word tenen un espaiat entre lletres que es pugui traslladar),
+  l'espaiat entre lletres dels estils de Word en ús es copia, en em, als estils
+  de paràgraf, els estils de títol, els nivells de títol i els títols de
+  requadre del llibre que hi corresponen, sempre que el llibre no n'hi fixi cap. La simulació ho llista a `characterSpacing`.
 
-  `sandbox_word_templates` llista, llegeix, desa i esborra les assignacions
+  `sandbox_word_templates` llista, llegeix, desa i suprimeix les assignacions
   desades, que també fa servir l'exportació a Word.
 
 ### Preguntes i avisos
 
-Quan un enllaç obre un llibre del qual ja tens una versió pròpia, el Sandbox et
+Quan un enllaç obre un llibre que ja tens en una versió pròpia, el Sandbox et
 pregunta si vols substituir la teva còpia, i `sandbox_get_state` ho indica com a
 `question` amb `ready: false`. `sandbox_answer` hi respon: `replaceCopy: false`
 conserva la teva, i `true` la substitueix pel llibre publicat i esborra la teva
@@ -576,10 +576,10 @@ malament, `sandbox_set_config` un altre cop amb els valors `from` de la primera
 resposta.
 
 **«Corregeix el que ha trobat la revisió al capítol 4.»** `sandbox_get_warnings`
-amb `chapter: 4` → per a cada avís, `sandbox_read_text` al voltant de la seva
-`line` i `sandbox_render_page` de la seva `page` → `sandbox_edit_text` o
+amb `chapter: 4` → per a cada avís, `sandbox_read_text` al voltant de la
+`line` i `sandbox_render_page` de la `page` → `sandbox_edit_text` o
 `sandbox_set_config` → `sandbox_get_warnings` un altre cop fins que torni buit.
-Un marc d'una pàgina composta que no hi cap porta les seves solucions (`proposals`): `sandbox_apply_proposal` amb el seu `frame` i el número d'una d'elles l'aplica, torna a maquetar el capítol i respon `fits`.
+Quan el text no cap en un marc d'una pàgina composta, l'avís inclou possibles solucions (`proposals`): `sandbox_apply_proposal`, amb el `frame` i el número d'una solució, l'aplica, torna a maquetar el capítol i respon `fits`.
 
 **«Fes un llibre amb aquest fitxer de Word i dona'm el PDF.»**
 `sandbox_save_book` amb `action: "new_blank"` → `sandbox_import_word` amb
@@ -589,11 +589,11 @@ Un marc d'una pàgina composta que no hi cap porta les seves solucions (`proposa
 
 ## El que necessita el teu consentiment
 
-Sis eines fan coses que no es poden desfer i van marcades com a conseqüents
+Sis eines fan coses que no es poden desfer i van marcades com a irreversibles
 (`consequentialHint`), perquè el navegador et pugui preguntar abans
 d'executar-les: `sandbox_remove_chapter`, `sandbox_delete_resource`,
 `sandbox_delete_book`, `sandbox_reset_to_original`, `sandbox_import_word` (pot
-substituir el llibre sencer) i `sandbox_answer` (pot esborrar la teva còpia
+substituir el llibre sencer) i `sandbox_answer` (pot suprimir la teva còpia
 d'un llibre). Si tens dubtes, demana a l'agent que abans n'exporti una còpia
 `.postext`.
 
@@ -604,15 +604,15 @@ navegador pugui evitar que aquest text es prengui per instruccions.
 
 ## Límits
 
-- **Tot es queda al teu navegador.** Les eines no arriben a res a què el
-  Sandbox mateix no arribi: els teus llibres són a l'emmagatzematge d'aquest
+- **Tot es queda al teu navegador.** Les eines no poden accedir a res a què el
+  Sandbox mateix no accedeixi: els teus llibres són a l'emmagatzematge d'aquest
   navegador, i un fitxer indicat per `url` l'obté la pàgina, de manera que el
-  seu servidor ho ha de permetre (CORS). Una URL `data:` o `base64` sempre
+  servidor ho ha de permetre (CORS). Una URL `data:` o `base64` sempre
   funcionen.
 - **La feina llarga triga.** Una eina espera la maquetació abans de respondre;
   `wait: false` respon de seguida. Un PDF o un EPUB d'un llibre llarg triga
   minuts.
-- **Desfer**: `sandbox_undo` desfà l'últim canvi, del text o del disseny, en l'ordre en què es van fer, com Cmd/Ctrl+Z al Sandbox: el que s'ha escrit al tauler Text, les edicions de les eines i les fetes damunt de les vistes, els ajustos canviats amb `sandbox_set_config` o al tauler Disseny, els marcs arrossegats. `redo: true` el refà. `sandbox_undo_text` només desfà una edició del text, i ho diu quan l'últim canvi va ser del disseny. Els capítols afegits, eliminats o moguts, els recursos i les fonts no són a l'historial; obrir un altre llibre el buida, i tornar a carregar la pàgina també. `sandbox_get_state` diu què desfaria cadascuna (`history`).
+- **Desfer**: `sandbox_undo` desfà l'últim canvi, del text o del disseny, en l'ordre en què es van fer, com Cmd/Ctrl+Z al Sandbox: el que s'ha escrit al tauler Text, les edicions de les eines i les fetes damunt de les previsualitzacions, els paràmetres canviats amb `sandbox_set_config` o al tauler Disseny, els marcs arrossegats. `redo: true` el refà. `sandbox_undo_text` només desfà una edició del text, i ho diu quan l'últim canvi va ser del disseny. Els capítols afegits, suprimits o moguts, els recursos i les fonts no són a l'historial; obrir un altre llibre el buida, i tornar a carregar la pàgina també. `sandbox_get_state` diu què desfaria cadascuna (`history`).
 - **El llibre de la pantalla.** Les eines treballen sobre el llibre obert.
   Només `sandbox_export` d'un fitxer `.postext`, `sandbox_save_book` amb
   `duplicate` i `sandbox_reset_to_original` amb `sample` arriben a un altre
@@ -622,10 +622,10 @@ navegador pugui evitar que aquest text es prengui per instruccions.
 
 A totes les pàgines de postext.dev, el Sandbox inclòs:
 
-- `site_get_context`: la pàgina de la pantalla, el seu idioma i el tema, les
+- `site_get_context`: la pàgina de la pantalla, l'idioma i el tema, les
   seccions i totes les pàgines de la documentació.
 - `site_search`: la documentació i el Receptari, per paraules, per noms
-  d'ajustos (`bodyText.avoidOrphans`) o per directives (`::resource`).
+  de paràmetres (`bodyText.avoidOrphans`) o per directives (`::resource`).
 - `site_read_page`: una pàgina del lloc com a Markdown, sense sortir de la
   pàgina de la pantalla.
 - `site_open_page`: mostrar una pàgina, amb `#títol` per anar a parar a una

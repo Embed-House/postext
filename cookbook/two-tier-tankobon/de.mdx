@@ -1,7 +1,7 @@
 ---
 title: "Eine japanische Erzählung in zwei Stufen, Titel über beide"
 summary: "Zwei Erzählungen Akutagawas in Gesammelten Werken: zwei Stufen zu 25 Zeichen auf A5, jeder Titel über beide auf ungerader Seite, letzte Seiten wie sie fallen."
-plain: "Zwei Erzählungen, wie japanische Gesammelte Werke sie drucken: Der Text läuft in zwei übereinanderliegenden Bändern hinunter, jede Erzählung beginnt links mit einem Titel über die ganze Höhe, die letzte Seite bleibt unausgeglichen."
+plain: "Zwei Erzählungen, wie japanische Gesammelte Werke sie drucken: Der Text läuft in zwei übereinanderliegenden Streifen hinunter, jede Erzählung beginnt links mit einem Titel über die ganze Höhe, die letzte Seite bleibt unausgeglichen."
 description: "Akutagawa in zwei vertikalen Stufen mit Postext: Titel über beide Stufen, Werke auf ungeraden Seiten, dreizeilige Abschnittsnummern, offene Schlussseiten."
 question: "Wie setze ich eine japanische Erzählung in zwei Stufen, mit Titel über beide, beginnend auf der linken Seite?"
 aliases: ["二段組", "nidangumi", "zwei Stufen", "zweistufig vertikal", "段", "dan", "Stufen", "zenshū", "全集", "Gesammelte Werke", "tankōbon", "単行本", "成り行き", "nariyuki", "unausgeglichene letzte Seite", "Titel über Stufen", "Akutagawa", "芥川龍之介", "蜘蛛の糸", "Der Faden der Spinne", "尾生の信"]
@@ -16,7 +16,7 @@ Sieben Seiten aus einem Band Gesammelter Werke (全集) auf einer rechts gebunde
 
 ### 1 · Zwei um eine Vierteldrehung gedrehte Spalten sind zwei Stufen
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Auf einer Seite mit `writingMode: 'vertical-rl'` stapelt `layoutType: 'double'` die beiden Spalten: Die erste füllt die obere Stufe von rechts, dann die untere, und der Spaltenabstand ist das Band zwischen ihnen ([Vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) zählt Zeichen eine Stufe hinunter, sodass jede Stufe 25 Zeichen zu 9 pt fasst und der Spaltenabstand auf ganze zwei Zeichen gerundet wird; die 21 Zeilen zu 15,75 pt quer passen in 116,7 mm der 148 mm breiten Seite. Die Linie zwischen den Stufen läuft quer über die Seite, 0,4 pt in einem warmen Grau.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Auf einer Seite mit `writingMode: 'vertical-rl'` stapelt `layoutType: 'double'` die beiden Spalten: Die erste füllt die obere Stufe von rechts, dann die untere, und der Spaltenabstand ist der Raum zwischen ihnen ([Vertikale Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) zählt Zeichen eine Stufe hinunter, sodass jede Stufe 25 Zeichen zu 9 pt fasst und der Spaltenabstand auf ganze zwei Zeichen gerundet wird; die 21 Zeilen zu 15,75 pt quer passen in 116,7 mm der 148 mm breiten Seite. Die Linie zwischen den Stufen läuft quer über die Seite, 0,4 pt in einem warmen Grau.
 
 Der Spaltenausgleich von Postext würde beide Stufen auf der letzten Seite einer Erzählung auf derselben Zeile enden lassen, so wie chinesische Zeitungen und die meisten europäischen zweispaltigen Bücher ein Kapitel schließen. Ein japanisches Buch in Stufen lässt den Text fallen: Die obere Stufe läuft über die ganze Seite, bevor die untere beginnt. `balancing.trailing: false` ist diese Entscheidung, und vertikale Stufen werden überhaupt nicht ausgeglichen, es sei denn, `enabled: true` schaltet den Ausgleich ein ([Spaltenausgleich](/de/docs/configuration-page-flow#spaltenausgleich)).
 
@@ -28,13 +28,13 @@ Eine Überschriftenebene mit `span: 'page'` wird über die ganze Höhe der Seite
 
 ### 3 · Die Abschnitte in drei Zeilen ihrer Stufe nummerieren
 
-Die zweite Ebene, `lineSpan: 3` mit `indent: em(8)`, setzt 一 二 三 acht Zeichen tief in eine Stufe, in einem Band von drei Zeilen, wie der Aozora-Text sie markiert (八字下げ, 中見出し), sodass der Text nach einer Abschnittsnummer auf den Zeilen der Stufe daneben bleibt ([Überschreibungen je Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)). Die Daten, die die Erzählungen schließen, （大正七年四月十六日）, sind ein Zeichen vom Fuß ihrer Stufe abgesetzt (地から一字上げ), mit `:::paragraphs{align=end endIndent=1}`; der Aozora-Konverter schreibt sie als Format `aozora-end1`, das sie bündig an den Fuß setzt, und die Attribute des Direktivenblocks fügen den Abstand von einem Zeichen hinzu.
+Die zweite Ebene, `lineSpan: 3` mit `indent: em(8)`, setzt 一 二 三 acht Zeichen tief in eine Stufe, in einem Bereich von drei Zeilen, wie der Aozora-Text sie markiert (八字下げ, 中見出し), sodass der Text nach einer Abschnittsnummer auf den Zeilen der Stufe daneben bleibt ([Überschreibungen je Ebene](/de/docs/configuration-headings#überschreibungen-pro-ebene)). Die Daten, die die Erzählungen schließen, （大正七年四月十六日）, sind ein Zeichen vom Fuß ihrer Stufe abgesetzt (地から一字上げ), mit `:::paragraphs{align=end endIndent=1}`; der Aozora-Konverter schreibt sie als Format `aozora-end1`, das sie bündig an den Fuß setzt, und die Attribute des Containers fügen den Abstand von einem Zeichen hinzu.
 
 ### 4 · Band und Werk an den Außensteg stellen
 
 <Excerpt region="furniture" />
 
-`anchor.to: 'outer'` setzt die Hashira in den Außensteg, den Namen des Bandes 芥川龍之介集 auf die rechten Seiten und den Titel des Werks auf die linken, und `pages: 'body'` hält beide von den Seiten fern, auf denen ein Werk beginnt ([Vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente)). Die Pagina steht quer über den Rand in arabischen Ziffern, wie viele Gesammelte Werke sie drucken: Am Außensteg hinunter lägen drei Ziffern auf der Seite. `pageNumbering.startAt: 211` nummeriert die Seiten wie der Band. Das Überschriftenformat des ersten Werks trägt das Impressum mit `pages: 'opener'`, denn die Fußzeile eines Formats dient jeder Seite seines Abschnitts.
+`anchor.to: 'outer'` setzt die Hashira in den Außensteg, den Namen des Bandes 芥川龍之介集 auf die rechten Seiten und den Titel des Werks auf die linken, und `pages: 'body'` hält beide von den Seiten fern, auf denen ein Werk beginnt ([Vertikale Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente)). Die Pagina steht quer über den Rand in arabischen Ziffern, wie viele Gesammelte Werke sie drucken: Am Außensteg hinunter lägen drei Ziffern auf der Seite. `pageNumbering.startAt: 211` nummeriert die Seiten wie der Band. Der Überschriftenstil des ersten Werks enthält das Impressum mit `pages: 'opener'`, denn die Fußzeile eines Stils gilt für jede Seite seines Abschnitts.
 
 ## Varianten
 

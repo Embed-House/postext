@@ -15,118 +15,115 @@ export const metadata = {
 
 **Un compositor tipográfico programable para la web.**
 
-Abre cualquier libro bien maquetado. Fíjate en cómo el texto descansa sobre la página: columnas
-perfectamente equilibradas, imágenes integradas en el flujo, sin huecos torpes, sin líneas
-huérfanas perdidas al inicio de una columna. Siglos de oficio están detrás de que eso parezca
-natural.
+Abre cualquier libro bien compuesto. Fíjate en cómo se asienta el texto en la página: columnas
+perfectamente equilibradas, imágenes integradas en el texto, sin huecos torpes ni líneas sueltas
+abandonadas en lo alto de una columna. Detrás de esa aparente naturalidad hay siglos de oficio.
 
-Ahora abre una página web. Incluso las mejores se sienten distintas. El texto choca contra las
-imágenes. Las columnas se desbordan o quedan a medio llenar. Las notas al pie desaparecen al fondo
-de la página en vez de quedarse cerca de las palabras que las referencian. La web nos dio
-maquetación responsiva, sí — pero nunca nos dio maquetación *editorial*.
+Ahora abre una página web. Hasta las mejores dan otra impresión. El texto choca con las imágenes.
+Las columnas se desbordan o se quedan a medio llenar. Las notas al pie se van al final de la página
+en lugar de quedarse cerca de las palabras que las llaman. La web nos dio la maquetación adaptable,
+pero nunca nos dio maquetación *editorial*.
 
-Postext cierra esa brecha. Es un motor de composición que recibe tu contenido — prosa en markdown
-más recursos declarados (imágenes de mapa de bits, diagramas SVG y tablas) que se incorporan por
-referencia — y aplica las mismas reglas que aplicaría un tipógrafo profesional: prevención de
-huérfanas y viudas, equilibrado de columnas, flujo de texto alrededor de obstáculos, espaciado
-deliberado. El resultado es geometría de composición con calidad editorial, tanto para HTML como
-para PDF.
+Postext cierra esa brecha. Es un motor de maquetación que recibe tu contenido (texto en Markdown y
+recursos declarados, como imágenes de mapa de bits, diagramas SVG y tablas, que se incorporan por
+referencia) y le aplica las mismas reglas que aplicaría un tipógrafo profesional: evitar huérfanas y
+viudas, equilibrar las columnas, hacer que el texto rodee los obstáculos y espaciar con intención.
+El resultado es una geometría de página con calidad editorial, tanto para HTML como para PDF.
 
-Construido sobre [`@chenglou/pretext`](https://github.com/chenglou/pretext) para medición de texto
-sin DOM, a velocidades que hacen todo esto posible.
+Se apoya en [`@chenglou/pretext`](https://github.com/chenglou/pretext), que mide el texto sin el DOM
+a una velocidad que hace posible todo esto.
 
 
 ## La brecha entre la imprenta y la web
 
-Durante siglos, los tipógrafos han seguido reglas que hacen el texto agradable de leer. No son
-preferencias estéticas — son principios curtidos a lo largo de generaciones de libros impresos,
-periódicos y revistas:
+Durante siglos, los tipógrafos han seguido reglas que hacen que el texto sea agradable de leer. No
+son preferencias estéticas, sino principios aprendidos a base de esfuerzo y depurados durante
+generaciones de libros, periódicos y revistas:
 
-- Sin huérfanas (una sola línea de un párrafo varada al inicio de una columna).
-- Sin viudas (una sola línea de un párrafo abandonada al final de una columna).
-- Columnas equilibradas (altura aproximadamente igual entre columnas en una doble página).
-- Texto que fluye alrededor de figuras, citas destacadas e imágenes insertadas.
-- Notas al pie colocadas correctamente al final de la columna donde se referencian.
+- Nada de huérfanas (una sola línea de un párrafo aislada en lo alto de una columna).
+- Nada de viudas (una sola línea de un párrafo abandonada al pie de la columna).
+- Columnas equilibradas (de altura parecida en toda la doble página).
+- Texto que rodea las figuras, los destacados y las imágenes insertadas.
+- Notas al pie colocadas al final de la columna en la que se llaman.
 - Notas al margen alineadas con el párrafo que las cita.
-- Espaciado consistente y deliberado alrededor de encabezados, citas y figuras.
-- Separación silábica que evita ríos de espacio en blanco y bordes irregulares.
+- Espaciado coherente e intencionado alrededor de encabezados, citas y figuras.
+- Separación silábica que evita los ríos y los bordes demasiado irregulares.
 
-Más allá de estas reglas, dos dimensiones concretas y medibles muestran cuánto se aleja la web de
-la imprenta:
+Más allá de estas reglas, hay dos magnitudes concretas y medibles que muestran cuánto se aleja la
+web de la imprenta:
 
-- **Ancho de carro.** Bringhurst sitúa el rango cómodo entre **45 y 75 caracteres** para una
-  columna (y entre **40 y 50** en multicolumna); la guía de accesibilidad
-  [WCAG 1.4.8](https://www.w3.org/WAI/WCAG21/Understanding/visual-presentation.html) fija el
-  tope en 80. La mayoría de webs dejan que la línea se estire a 100, 120 o más — muy por encima
-  del punto donde el ojo puede seguirla sin descarrilar.
-- **Interlineado.** La tradición recomienda **1,3–1,5 veces el tamaño de fuente**, y
-  [WCAG 1.4.12](https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html) exige que el
-  contenido siga funcionando con al menos 1,5. Pero el ajuste depende del ancho de carro: un
-  interlineado que se lee bien a 50 caracteres se queda corto a 90. Los tipógrafos ajustan uno
-  en función del otro; CSS no ofrece ninguna forma automática de hacerlo.
+- **Medida (ancho de línea).** Bringhurst sitúa el intervalo cómodo entre **45 y 75 caracteres** por
+  línea en una sola columna (y entre **40 y 50** cuando hay varias); la pauta de accesibilidad [WCAG
+  1.4.8](https://www.w3.org/WAI/WCAG21/Understanding/visual-presentation.html) la limita a 80. La
+  mayoría de las webs dejan que las líneas lleguen a 100, 120 o más, muy por encima del punto en el
+  que el ojo puede seguir una línea sin perderse.
+- **Interlineado.** La tradición recomienda **entre 1,3 y 1,5 veces el cuerpo de la letra**, y [WCAG
+  1.4.12](https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html) exige que el contenido siga
+  funcionando con 1,5 o más. Pero el valor adecuado depende de la medida: un interlineado que se lee
+  bien con 50 caracteres resulta apretado con 90. Los tipógrafos ajustan uno en función del otro;
+  CSS no ofrece ninguna forma automática de hacerlo.
 
-Y aquí se acaba lo que CSS aporta: `column-count` y poco más. Sin control sobre la colocación de
-recursos, sin consciencia del desbordamiento, sin prevención de huérfanas o viudas entre columnas,
-sin forma nativa de fluir texto alrededor de un obstáculo arbitrario. Las maquetaciones
-editoriales multicolumna siguen siendo artesanales — diseños estáticos que se rompen en cuanto
-cambia el tamaño de la pantalla.
+Y aquí CSS se queda corto: tienes `column-count` y poco más. No hay control sobre la colocación de
+los recursos, ni detección del desbordamiento, ni forma de evitar huérfanas y viudas de una columna
+a otra, ni una manera nativa de hacer que el texto rodee un obstáculo cualquiera. En la web, las
+maquetaciones editoriales a varias columnas siguen haciéndose a mano: diseños estáticos que se
+rompen en cuanto cambia el tamaño de la pantalla.
 
-La web lleva más de una década con maquetación responsiva — flexbox, grid, contenedores que se
-adaptan a cualquier pantalla. Lo que nunca ha tenido es maquetación *editorial* responsiva: el tipo
-en el que el contenido refluye inteligentemente a través de columnas, alrededor de imágenes, más
-allá de notas al pie, obedeciendo las reglas que hacen que el texto sea *agradable de leer*.
+La web tiene maquetación adaptable desde hace más de una década: flexbox, grid, contenedores que se
+ajustan a cualquier pantalla. Lo que nunca ha tenido es maquetación *editorial* adaptable, aquella
+en la que el contenido se recoloca con inteligencia por las columnas, alrededor de las imágenes y
+entre las notas al pie, respetando las reglas que hacen que el texto sea *agradable de leer*.
 
-<Illustration name="CssGapVsEditorial" data='{"title": "La brecha entre CSS multicolumna y la maquetación editorial", "desc": "CSS ofrece column-count y poco más; la maquetación editorial necesita control de huérfanas y viudas, flujo alrededor de obstáculos, equilibrado de columnas, colocación de notas al pie y refinamiento por convergencia.", "caption": "Lo que CSS ofrece frente a lo que la maquetación editorial realmente necesita.", "cssTitle": "Lo que CSS ofrece", "cssLead": "column-count", "cssMore": "...y poco más.", "cssCons": ["Sin control de huérfanas/viudas", "Sin flujo alrededor de obstáculos", "Sin equilibrado de columnas", "Sin colocación de notas al pie", "Sin convergencia/refinamiento"], "gap": "la brecha", "editorialTitle": "Lo que necesita la maquetación editorial", "editorialPros": ["Prevención de huérfanas y viudas", "Flujo de texto alrededor de recursos", "Columnas equilibradas", "Colocación de notas al pie", "Control de separación silábica", "Refinamiento por convergencia"], "equals": "= Postext"}' />
+<Illustration name="CssGapVsEditorial" data='{"title": "La brecha entre CSS multicolumna y la maquetación editorial", "desc": "CSS ofrece column-count y poco más; la maquetación editorial necesita control de huérfanas y viudas, flujo alrededor de obstáculos, equilibrado de columnas, colocación de notas al pie y refinamiento por convergencia.", "caption": "Lo que CSS ofrece frente a lo que la maquetación editorial realmente necesita.", "cssTitle": "Lo que CSS ofrece", "cssLead": "column-count", "cssMore": "…y poco más.", "cssCons": ["Sin control de huérfanas/viudas", "Sin flujo alrededor de obstáculos", "Sin equilibrado de columnas", "Sin colocación de notas al pie", "Sin convergencia/refinamiento"], "gap": "la brecha", "editorialTitle": "Lo que necesita la maquetación editorial", "editorialPros": ["Prevención de huérfanas y viudas", "Flujo de texto alrededor de recursos", "Columnas equilibradas", "Colocación de notas al pie", "Control de separación silábica", "Refinamiento por convergencia"], "equals": "= Postext"}' />
 
 
 ## Una década buscando la pieza que faltaba
 
-El proyecto
-[Content First](https://medium.com/binpar/el-arte-de-maquetar-para-ser-le%C3%ADdo-933be57cb293)
-arrancó en 2014 como un intento temprano de llevar la calidad de la composición editorial a la
-web. Maquetaciones en columnas, experimentos de flujo de texto, prototipos sucesivos — y siempre el
-mismo muro: **no puedes tomar buenas decisiones de composición sin saber exactamente cuánto
+El proyecto [Content
+First](https://medium.com/binpar/el-arte-de-maquetar-para-ser-le%C3%ADdo-933be57cb293) nació en 2014
+como uno de los primeros intentos de llevar a la web la calidad de la maquetación editorial.
+Maquetaciones en columnas, experimentos con el flujo del texto, prototipos sucesivos… y siempre el
+mismo muro: **no se pueden tomar buenas decisiones de maquetación sin saber exactamente cuánto
 espacio va a ocupar el texto.**
 
-Suena sencillo, pero ahí está todo el problema. Cada vez que le preguntas al navegador "¿cuánto
-mide este párrafo a este ancho?", provocas un reflow completo del layout. Hazlo unos cientos de
-veces en un documento multicolumna complejo y la página se congela. El navegador no fue diseñado
-para este tipo de medición especulativa — probar diez anchos de columna diferentes para encontrar
-el mejor, comprobar dónde romper un párrafo, verificar si una imagen cabe aquí o necesita moverse
-a la siguiente columna.
+Parece sencillo, pero ahí está todo el problema. Cada vez que preguntas al navegador «¿qué altura
+tiene este párrafo con este ancho?», provocas un recálculo completo de la maquetación (un *reflow*).
+Hazlo unos cientos de veces en un documento complejo a varias columnas y la página se congela. El
+navegador nunca se diseñó para este tipo de medición especulativa: probar diez anchos de columna
+distintos para quedarse con el mejor, ensayar dónde cortar un párrafo o comprobar si una imagen cabe
+aquí o tiene que pasar a la columna siguiente.
 
-Faltaba una forma de medir texto lo bastante rápida para experimentar libremente, sin bloquear
-el hilo principal. Durante una década, esa herramienta no existió.
+Faltaba una forma de medir el texto lo bastante rápida como para experimentar con libertad, sin
+bloquear el hilo principal. Durante una década, esa herramienta no existió.
 
 
 ## La pieza que faltaba
 
-En 2025, Cheng Lou publicó [`Pretext`](https://github.com/chenglou/pretext): una librería de
-medición de texto sin DOM, entre 300 y 600 veces más rápida que el reflow del navegador y
-pixel-perfect en Chrome, Safari y Firefox. Usa las métricas de fuente del canvas y pura
-aritmética para calcular la altura del texto y los saltos de línea sin tocar jamás el DOM.
+En 2025, Cheng Lou publicó [`Pretext`](https://github.com/chenglou/pretext): una biblioteca que mide
+texto sin el DOM, entre 300 y 600 veces más rápida que el *reflow* del navegador y exacta al píxel
+en Chrome, Safari y Firefox. Calcula la altura del texto y dónde se corta cada línea con las
+métricas de fuente del canvas y simple aritmética, sin tocar nunca el DOM.
 
-Con Pretext, el cuello de botella que bloqueó este trabajo durante diez años desaparece. Se
-pueden medir miles de bloques de texto en milisegundos, probar diez configuraciones de columna
-diferentes y quedarse con la mejor, ejecutar el algoritmo completo de composición en cada
-redimensionado de ventana sin bloquear el hilo principal.
+Con Pretext desaparece el cuello de botella que bloqueó este trabajo durante diez años. Puedes medir
+miles de bloques de texto en milisegundos, probar diez configuraciones de columnas distintas y
+quedarte con la mejor, o ejecutar el algoritmo de maquetación completo cada vez que cambia el tamaño
+de la ventana, sin bloquear el hilo principal.
 
 Postext es lo que viene después.
 
 
 ## Pretext + Postext
 
-La nomenclatura es intencionada: dos mitades de la misma operación. Separarlas importa porque
-son responsabilidades distintas — una mide, la otra decide — y aislar la medición permite
-consumirla desde cualquier backend sin acoplarse a las reglas editoriales.
+El nombre no es casual: son dos mitades de la misma operación. Separarlas importa porque son
+responsabilidades distintas (una mide y la otra decide), y aislar la medición permite que cualquier
+backend la use sin atarse a las reglas editoriales.
 
-**Pretext** es lo que ocurre *antes* de colocar el texto: medir cuánto espacio va a necesitar.
-Sin DOM, basado en canvas, operando con números puros.
+**Pretext** es lo que ocurre *antes* de colocar el texto: medir cuánto espacio va a necesitar. Sin
+DOM, basado en canvas, solo con números.
 
-**Postext** es lo que ocurre *después* de la medición: las decisiones editoriales. Dadas las
-dimensiones exactas de cada bloque de texto a cualquier ancho, el motor decide dónde va cada
-elemento — en qué columna, en qué posición, fluyendo alrededor de qué recursos, obedeciendo
-qué reglas tipográficas.
+**Postext** es lo que ocurre *después* de medir: las decisiones editoriales. Con las dimensiones
+exactas de cada bloque de texto a cualquier ancho, el motor decide dónde va cada elemento: en qué
+columna, en qué posición, alrededor de qué recursos fluye y qué reglas tipográficas respeta.
 
 ```ts
 import { prepare, layout } from '@chenglou/pretext';
@@ -149,68 +146,68 @@ const html = renderToHtml(vdt);                             // DOM seleccionable
 const pdfBytes = await renderToPdf(vdt, { fontProvider });  // PDF listo para imprimir
 ```
 
-Pretext proporciona las medidas. Postext proporciona la composición.
+Pretext te da las medidas. Postext te da la maquetación.
 
-<Illustration name="PretextPostextPipeline" data='{"title": "Pretext mide, Postext decide", "desc": "Pretext ofrece medición de texto sin DOM basada en canvas. Postext consume esas dimensiones exactas para decidir columna, posición, flujo alrededor de recursos y reglas de huérfanas, viudas y equilibrado.", "caption": "Dos mitades de la misma operación: Pretext antes, Postext después.", "pretextTitle": "Pretext", "pretextSubtitle": "medir", "pretextBullets": ["Sin DOM, basado en canvas", "300-600x más rápido que reflow", "Saltos de línea pixel-perfect"], "bridge": ["dimensiones", "exactas"], "postextTitle": "Postext", "postextSubtitle": "decidir", "postextBullets": ["Qué columna, qué posición", "Flujo alrededor de recursos", "Huérfanas, viudas, equilibrado"]}' />
+<Illustration name="PretextPostextPipeline" data='{"title": "Pretext mide, Postext decide", "desc": "Pretext mide el texto con canvas, sin DOM. Postext usa esas medidas exactas para decidir la columna y la posición, el flujo alrededor de los recursos y las reglas de huérfanas, viudas y equilibrado.", "caption": "Dos mitades de la misma operación: Pretext antes, Postext después.", "pretextTitle": "Pretext", "pretextSubtitle": "medir", "pretextBullets": ["Sin DOM, basado en canvas", "300-600x más rápido que un reflow", "Cortes de línea exactos al píxel"], "bridge": ["dimensiones", "exactas"], "postextTitle": "Postext", "postextSubtitle": "decidir", "postextBullets": ["Qué columna, qué posición", "Flujo alrededor de recursos", "Huérfanas, viudas, equilibrado"]}' />
 
-*Pretext fue creado por [Cheng Lou](https://github.com/chenglou). Postext se construye sobre él.*
+*Pretext es obra de [Cheng Lou](https://github.com/chenglou). Postext se construye sobre él.*
 
 
 ## Cómo funciona
 
 El proceso tiene tres etapas:
 
-1. **Tú proporcionas el contenido.** Prosa en markdown más recursos declarados — imágenes de mapa
-   de bits, diagramas SVG y tablas. Una referencia en línea `:ref{id="..."}` numera el recurso y, a
-   la vez, lo hace flotar a una banda superior o inferior cerca de su primera referencia, igual que
-   un tipógrafo de imprenta coloca las figuras. El contenido sigue siendo puramente semántico:
-   describe *qué* presentar, no *cómo*; las decisiones de composición nunca quedan grabadas a fuego
-   en el documento de origen. La sección de Recursos del
-   [formato de documento](/es/docs/document-format) recoge la sintaxis completa.
+1. **Tú aportas el contenido.** Texto en Markdown y recursos declarados: imágenes de mapa de bits,
+   diagramas SVG y tablas. Una referencia en línea `:ref{id="..."}` numera el recurso y, a la vez,
+   lo coloca como flotante en una banda superior o inferior cerca de su primera mención, igual que
+   un tipógrafo coloca las figuras en un libro impreso. El contenido sigue siendo puramente
+   semántico: describe *qué* se presenta, no *cómo*; las decisiones de maquetación nunca quedan
+   fijadas en el texto de origen. La sección sobre recursos de
+   [Formato del documento](/es/docs/document-format) recoge la sintaxis completa.
 
-2. **El motor toma las decisiones.** Postext analiza el contenido, llama a Pretext para la
-   medición de texto pixel-perfect sin tocar el DOM, y después ejecuta un pipeline de composición
-   multipasada: equilibrado de columnas, numeración y flotado de recursos, prevención de viudas y
-   huérfanas, alineación de líneas base, refinamiento del espaciado. Cada decisión la controla la
-   configuración — geometría de página y maquetación, cuerpo de texto y encabezados, más
-   `tableStyle` para la tipografía de las celdas de tabla, `captionStyle` para los pies de figura
-   y `diagramStyle` con `singleInk`, que recolorea los diagramas SVG a matices de una sola tinta
-   mapeados por luminancia, pensado para impresión con un único color directo. Tú defines las
-   reglas, el motor las aplica.
+2. **El motor toma las decisiones.** Postext analiza el contenido, pide a Pretext medidas exactas al
+   píxel sin tocar el DOM y después ejecuta un proceso de maquetación en varias pasadas: equilibra
+   las columnas, numera los recursos y los coloca como flotantes, evita viudas y huérfanas, alinea
+   las líneas base y afina el espaciado. Cada decisión depende de la configuración: la geometría de
+   la página y de la maquetación, el texto base y los encabezados, además de `tableStyle` para la
+   tipografía de las celdas de tabla, `captionStyle` para los pies de figura y `diagramStyle` con
+   `singleInk`, que vuelve a colorear los diagramas SVG con matices de una sola tinta según su
+   luminancia, para imprimir con una única tinta directa. Tú defines las reglas y el motor las
+   aplica.
 
-3. **Obtienes una composición completa.** Coordenadas y dimensiones precisas para cada elemento en
-   cada página. Los renderizadores traducen esta geometría al formato de destino — **canvas** para
-   una previsualización bitmap pixel-perfect (`renderToCanvas`, `renderPage`), **HTML** para
-   tipografía seleccionable y sensible al redimensionado en la web (`renderToHtml`,
-   `renderToHtmlIndexed`), y **PDF** para salida lista para imprimir con fuentes incrustadas
-   (`renderToPdf`, desde el paquete `postext-pdf`). El mismo contenido, las mismas reglas, tres
+3. **Obtienes una maquetación completa.** Coordenadas y dimensiones precisas de cada elemento en
+   cada página. Los renderizadores trasladan esa geometría al formato de destino: **canvas** para
+   una vista previa en mapa de bits exacta al píxel (`renderToCanvas`, `renderPage`), **HTML** para
+   una tipografía seleccionable en la web que responde a los cambios de tamaño (`renderToHtml`,
+   `renderToHtmlIndexed`) y **PDF** para una salida lista para imprenta, con las fuentes incrustadas
+   (`renderToPdf`, del paquete `postext-pdf`). El mismo contenido y las mismas reglas, con tres
    salidas intercambiables.
 
-<Illustration name="LayoutProcess" data='{"title": "Proceso de composición en tres etapas", "desc": "Markdown enriquecido más configuración entra en el motor, que ejecuta un pipeline de composición multipasada con medición de Pretext dentro, y genera HTML o PDF renderizado.", "caption": "Contenido dentro, geometría fuera — después renderizada al formato de destino.", "inputTitle": "Markdown enriquecido", "inputSubtitle": "+ configuración", "parse": "parsear", "engineTitle": "motor Postext", "engineSub1": "medición vía Pretext", "engineSub2": "composición multipasada", "render": "renderizar", "outputTitle": "HTML / PDF", "outputSubtitle": "salida renderizada"}' />
+<Illustration name="LayoutProcess" data='{"title": "Maquetación en tres etapas", "desc": "El Markdown enriquecido y la configuración entran en el motor, que maqueta en varias pasadas, con la medición de Pretext dentro, y genera el HTML o el PDF.", "caption": "Entra contenido y sale geometría, que después se convierte al formato de destino.", "inputTitle": "Markdown enriquecido", "inputSubtitle": "+ configuración", "parse": "analizar", "engineTitle": "Motor Postext", "engineSub1": "medición con Pretext", "engineSub2": "maquetación en varias pasadas", "render": "generar", "outputTitle": "HTML / PDF", "outputSubtitle": "salida generada"}' />
 
-Para una mirada detallada a los mecanismos internos del motor — el Árbol Virtual del Documento,
-el pipeline multipasada y el bucle de convergencia — consulta el documento de
-[Arquitectura](/es/docs/architecture). Para una referencia completa de todas las opciones de
-configuración — desde la geometría de página hasta los estilos de tabla, pie de figura y
-diagrama — consulta la página de [Configuración](/es/docs/configuration). Y para probarlo todo
-en vivo — editor del texto de cada capítulo, panel de recursos con editor de tablas y subida de
-imágenes y SVG, un panel de Diseño que recorre cada ajuste en términos editoriales y
-previsualizaciones en vivo en canvas, HTML y PDF — abre el [Sandbox](/es/docs/sandbox).
+Si quieres ver en detalle cómo funciona el motor por dentro (el Árbol Virtual del Documento, el
+proceso en varias pasadas y el bucle de convergencia), consulta
+[Arquitectura](/es/docs/architecture). La referencia completa de todas las opciones de
+configuración, desde la geometría de la página hasta el estilo de tablas, pies de figura y
+diagramas, está en [Configuración](/es/docs/configuration). Y para probarlo todo en directo (un
+editor para el texto de cada capítulo, un panel **Recursos** con editor de tablas y subida de
+imágenes y SVG, un panel **Diseño** que recorre todos los ajustes en términos editoriales y vistas
+previas en vivo en canvas, HTML y PDF), abre el [Sandbox](/es/docs/sandbox).
 
 
 ## Reconocimientos
 
-**[Pretext](https://github.com/chenglou/pretext)** de Cheng Lou — la librería fundacional de
-medición de texto que hace posible Postext. Sin medición pixel-perfect, sin DOM y a velocidad de
-submilisegundo, nada de esto sería práctico.
+**[Pretext](https://github.com/chenglou/pretext)**, de Cheng Lou: la biblioteca de medición de texto
+en la que se basa Postext. Sin una medición fuera del DOM, exacta al píxel y en menos de un
+milisegundo, nada de esto sería viable.
 
-**Content First** (~2014) — la exploración original de la composición editorial de alta calidad en
-la web. Una década chocando contra muros, aprendiendo qué no funciona, y construyendo la convicción
-de que este problema merece una solución de verdad.
+**Content First** (~2014): la primera exploración de la maquetación editorial de calidad en la web.
+Una década de toparse con muros, de aprender qué no funciona y de convencerse de que este problema
+merece una solución de verdad.
 
-Postext se apoya en siglos de tradición tipográfica. Las reglas que implementa no son inventadas —
-son heredadas del trabajo de tipógrafos, diseñadores y compositores que refinaron el arte de hacer
-el texto legible mucho antes de que existieran las pantallas. Desde los tipos móviles de Gutenberg
-hasta la tipografía asimétrica de Tschichold, pasando por los *Elementos del estilo tipográfico*
-de Bringhurst, el oficio de disponer texto sobre una página lleva más de quinientos años
-evolucionando. Postext trae esa sabiduría acumulada a la web, donde ha brillado por su ausencia.
+Postext se apoya en siglos de tradición tipográfica. Las reglas que aplica no son inventadas: las ha
+heredado del trabajo de cajistas, tipógrafos y diseñadores que perfeccionaron el arte de hacer
+legible el texto mucho antes de que existieran las pantallas. De los tipos móviles de Gutenberg a la
+tipografía asimétrica de Tschichold y los *Elementos del estilo tipográfico* de Bringhurst, el
+oficio de disponer el texto en la página lleva más de quinientos años evolucionando. Postext lleva a
+la web esa sabiduría acumulada, que hasta ahora brillaba por su ausencia.

@@ -16,19 +16,19 @@ Sete páginas de um preprint de aprendizado de máquina em formato carta america
 
 ### 1 · A figura 1 são três estilos de boxe
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. A figura é um boxe na largura da página, sem moldura própria; dentro dele, `:::columns{count=2 breaks="4"}` abre a coluna da direita no quarto bloco, e cada boxe aninhado conta como um bloco. Os boxes de prompt e de resposta saem da mesma função, então só mudam o preenchimento, a cor da aba e o selo no canto: um `icon` de boxe com `position: 'corner'` aceita um recurso SVG, e é assim que o ✓ e o ✗ chegam à página num documento cujas fontes não têm esses glifos. No seu artigo, escreva cada exemplo como parágrafos comuns dentro de um boxe e marque o raciocínio com `**…**`; o `boldColor` do estilo do boxe transforma isso no destaque.
+O código é [a resposta curta](#a-resposta-curta) logo acima. A figura é um boxe na largura da página, sem moldura própria; dentro dele, `:::columns{count=2 breaks="4"}` abre a coluna da direita no quarto bloco, e cada boxe aninhado conta como um bloco. Os boxes de prompt e de resposta saem da mesma função, por isso só mudam o preenchimento, a cor da aba e o selo no canto: um `icon` de boxe com `position: 'corner'` aceita um recurso SVG, e é assim que o ✓ e o ✗ chegam à página num documento cujas fontes não têm esses glifos. Em seu artigo, escreva cada exemplo como parágrafos comuns dentro de um boxe e marque o raciocínio com `**…**`; o `boldColor` do estilo do boxe transforma isso no destaque.
 
 ### 2 · Citações autor-data, no estilo natbib
 
 <Excerpt region="citations" />
 
-Os congressos de aprendizado de máquina usam o formato autor-data do natbib: uma vírgula entre os nomes e o ano, e *et al.* a partir de três autores. O estilo incluído mais próximo é o Chicago autor-data, então a receita altera um grupo do CSL dele, o que junta autor e ano, trocando um espaço por uma vírgula. Traga o seu arquivo `.bib` como está: cole-o num bloco `:::references{format=bibtex}` e cite com `[@key]` para *(Brown et al., 2020)* e com `@key` para *Brown et al. (2020)*. Um sufixo mantém a vírgula escrita antes dele e a ênfase, então `[@brown2020language, *inter alia*]` imprime (Brown et al., 2020, *inter alia*), como faz o artigo. As legendas citam do mesmo jeito: a da figura 4 escreve `@jie2022learning` e `@lan2021mwptoolkit`, e as duas obras entram na lista de referências sem `nocite`.
+Os congressos de aprendizado de máquina usam o formato autor-data do natbib: uma vírgula entre os nomes e o ano, e *et al.* a partir de três autores. O estilo incluído mais próximo é o Chicago autor-data, de modo que a receita altera um grupo do CSL dele, o que junta autor e ano, trocando um espaço por uma vírgula. Traga seu arquivo `.bib` como está: cole-o num bloco `:::references{format=bibtex}` e cite com `[@key]` para *(Brown et al., 2020)* e com `@key` para *Brown et al. (2020)*. Um sufixo mantém a vírgula escrita antes dele e a ênfase, por isso `[@brown2020language, *inter alia*]` imprime (Brown et al., 2020, *inter alia*), como faz o artigo. As legendas citam do mesmo jeito: a da figura 4 escreve `@jie2022learning` e `@lan2021mwptoolkit`, e as duas obras entram na lista de referências sem `nocite`.
 
 ### 3 · O bloco do título
 
 <Excerpt region="title" />
 
-O título é o único título de nível 1 do documento, com um estilo que ocupa as duas colunas e desenha um bloco projetado: a linha do congresso, o título, os autores em duas fileiras, a afiliação e uma nota sobre a versão resumida. Os autores e a nota são atributos do título, e um `\n` dentro de um atributo começa uma nova fileira, como `\\` faz num `\author` do LaTeX. Para o seu artigo, mude os atributos; o design continua o mesmo.
+O título é o único título de nível 1 do documento, com um estilo que ocupa as duas colunas e desenha um bloco projetado: a linha do congresso, o título, os autores em duas fileiras, a afiliação e uma nota sobre a versão resumida. Os autores e a nota são atributos do título, e um `\n` dentro de um atributo começa uma nova fileira, como `\\` faz num `\author` do LaTeX. Para seu artigo, mude os atributos; o design continua o mesmo.
 
 ### 4 · Números de figura iguais aos do original
 
@@ -40,7 +40,7 @@ O motor numera as figuras na ordem em que são citadas pela primeira vez, mas aq
 
 <Excerpt region="table" />
 
-Os resultados são digitados uma só vez, como estão no fonte LaTeX, e alimentam tanto a tabela 2 quanto a figura 4, então o gráfico não tem como se afastar da tabela. Cada nome de benchmark ocupa duas colunas; uma célula mesclada precisa de uma célula de preenchimento marcada com `hiddenBy` onde ela se estende. O negrito marca as células em que o prompt com cadeia de pensamento supera o prompt padrão, como as células verdes do original.
+Os resultados são digitados uma só vez, como estão no código LaTeX de origem, e alimentam tanto a tabela 2 quanto a figura 4, por isso o gráfico não tem como se afastar da tabela. Cada nome de benchmark ocupa duas colunas; uma célula mesclada precisa de uma célula de preenchimento marcada com `hiddenBy` onde ela se estende. O negrito marca as células em que o prompt com cadeia de pensamento supera o prompt padrão, como as células verdes do original.
 
 ## Variações
 

@@ -18,19 +18,19 @@ Le numéro 3 de *Low Tide*, un zine gratuit sur un estuaire : huit pages de 140
 
 <Excerpt region="cover-sheet" />
 
-Un livret piqué à cheval est une pile de feuilles pliées : la feuille de couverture porte donc les deux premières et les deux dernières pages. Un bloc contient les pages 1–2, un autre les pages 7–8, et les pages entre les deux restent hors de l’un et de l’autre, sur le papier propre du livre. Chaque bloc commence et se termine sur une nouvelle page, ce dont la couverture et le mot d’accueil ont besoin de toute façon ici.
+Un livret piqué à cheval est une pile de feuilles pliées : la feuille de couverture contient donc les deux premières et les deux dernières pages. Un bloc contient les pages 1–2, un autre les pages 7–8, et les pages entre les deux restent hors de l’un et de l’autre, sur le papier propre du livre. Chaque bloc commence et se termine sur une nouvelle page, ce dont la couverture et le mot d’accueil ont besoin de toute façon ici.
 
 ### 2 · Papier journal, agrafes, couvertures prises dans les pages
 
 <Excerpt region="folio" />
 
-`folio.paper` est le papier journal de chaque page hors d’un bloc. `saddleStitch` plie les feuilles autour des agrafes, sans dos plat, et `cover: 'pages'` fait tourner la page 1 et la page 8 comme couvertures. Dans une piqûre à cheval, la couverture tourne comme les autres feuilles, seulement plus raide, et un feuillet de couverture qui nomme son propre support (la carte) est dessiné sur ce support.
+`folio.paper` est le papier journal de chaque page hors d’un bloc. `saddleStitch` plie les feuilles autour des agrafes, sans dos plat, et `cover: 'pages'` fait tourner la page 1 et la page 8 comme couvertures. Dans une piqûre à cheval, la couverture tourne comme les autres feuilles, seulement plus raide, et un feuillet de couverture qui indique son propre support (la carte) est dessiné sur ce support.
 
 ### 3 · Une couverture en une seule encre
 
 <Excerpt region="covers" />
 
-La couverture est un style de titre aux marges nulles avec une maquette pleine page : la ligne du numéro, le titre en Bricolage Grotesque de 70 pt, le sous-titre en Newsreader italique et onze lignes de marée dont les longueurs viennent d’un générateur à graine fixe, si bien que chaque exécution dessine les mêmes. Rien ne peint le fond de la page : c’est la carte qui le donne.
+La couverture est un style de titre aux marges nulles avec une maquette pleine page : la ligne du numéro, le titre en Bricolage Grotesque de 70 pt, le sous-titre en Newsreader italique et onze lignes de marée dont les longueurs viennent d’un générateur à graine fixe : chaque exécution dessine donc les mêmes. Rien ne peint le fond de la page : c’est la carte qui le donne.
 
 ### 4 · Une seule ouverture pour chaque article
 
@@ -40,7 +40,7 @@ Chaque article est un titre de niveau 1 dans le style `feature` : une nouvelle 
 
 ### 5 · L’ouvrir agrafé
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `createFolioFromDocument` lit la reliure et les couvertures dans `doc.config.folio`, et le papier de chaque feuillet dans `page.paper`. Le pen avertit quand le nombre de pages est impair, car la page 8 ne peut être la quatrième de couverture que si elle tombe sur un verso.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `createFolioFromDocument` prend la reliure et les couvertures dans `doc.config.folio`, et le papier de chaque feuillet dans `page.paper`. Le pen avertit quand le nombre de pages est impair, car la page 8 ne peut être la quatrième de couverture que si elle tombe sur un verso.
 
 ## Variantes
 

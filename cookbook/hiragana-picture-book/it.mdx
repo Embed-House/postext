@@ -16,35 +16,35 @@ Un albo illustrato di dieci pagine, かみの ふね (*La barchetta di carta*), 
 
 ### 1 · Tieni intera ogni frase
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Il testo giapponese può andare a capo tra due kana qualsiasi, quindi uno spazio tra le frasi aggiunge solo spazio; da solo non impedisce a una riga di finire dentro あか|い. `cjk.wordBreak: 'keep-all'` mantiene solo le interruzioni a uno spazio e accanto alla punteggiatura, dopo 、。」 o prima di 「, come fa `word-break: keep-all` in CSS, e le regole kinsoku restano valide ([East Asian typography](/it/docs/configuration-east-asian#tipografia-dellasia-orientale)). Lo spazio è un normale U+0020, 0,35 em in Klee One, e una riga lo elimina alla sua fine. Anche un U+3000 è un’interruzione di frase, ma è un carattere fisso largo un em, che resta alla fine della riga.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Il testo giapponese può andare a capo tra due kana qualsiasi, quindi uno spazio tra le frasi aggiunge solo spazio; da solo non impedisce a una riga di finire in mezzo a あか|い. `cjk.wordBreak: 'keep-all'` mantiene solo le interruzioni a uno spazio e accanto alla punteggiatura, dopo 、。」 o prima di 「, come fa `word-break: keep-all` in CSS, e le regole kinsoku restano valide ([East Asian typography](/it/docs/configuration-east-asian#tipografia-dellasia-orientale)). Lo spazio è un normale U+0020, 0,35 em in Klee One, e una riga lo elimina alla sua fine. Anche un U+3000 è un’interruzione di frase, ma è un carattere fisso largo un em, che resta alla fine della riga.
 
 <PageShot page={3} crop="0.45,0.52,0.55,0.48" caption="Pagina 3: otto righe, ognuna che finisce a uno spazio o dopo 」 e 、: 「いって / らっしゃい。」 / みいちゃんが / そっと てを…" />
 
-Il testo è composto a bandiera. Giustificata, una riga corta allargherebbe i suoi spazi e gli intervalli tra i kana per raggiungere il piede della fascia; un albo illustrato chiude ogni riga dove finisce la sua ultima frase.
+Il testo è composto in bandiera. Giustificata, una riga corta allargherebbe i suoi spazi e gli intervalli tra i kana per raggiungere il piede della fascia; un albo illustrato chiude ogni riga dove finisce la sua ultima frase.
 
 ### 2 · Metti le immagini in una fascia sopra il testo
 
 <Excerpt region="layout" />
 
-Nel testo verticale `'left'` è la testa della pagina, quindi un layout a colonna e mezza con la colonna laterale a sinistra diventa due fasce: le immagini flottano nella fascia superiore (profonda 14 caratteri) e il testo scorre in quella inferiore (8 caratteri). Ogni pagina cita la sua immagine con `::resource{id="…"}` e finisce con `:::pagebreak`. Il tipo immagine non ha prefisso di didascalia, e le immagini sono 2,186 volte più larghe che alte, la forma della fascia, così ognuna la riempie ([vertical writing](/it/docs/configuration-page-layout#scrittura-verticale)).
+Nel testo verticale `'left'` è la testa della pagina, quindi un’impaginazione a colonna e mezza con la colonna laterale a sinistra diventa due fasce: le immagini flottano nella fascia superiore (profonda 14 caratteri) e il testo scorre in quella inferiore (8 caratteri). Ogni pagina cita la sua immagine con `::resource{id="…"}` e finisce con `:::pagebreak`. Il tipo immagine non ha prefisso di didascalia, e le immagini sono 2,186 volte più larghe che alte, la forma della fascia, così ognuna la riempie ([vertical writing](/it/docs/configuration-page-layout#scrittura-verticale)).
 
 ### 3 · Fai della copertina un’immagine a tutta pagina
 
 <Excerpt region="cover" />
 
-La copertina è un design di titolo a tutta pagina: l’immagine è ancorata all’abbondanza con le dimensioni della pagina (nel flusso verticale la sua `width` scorre lungo il foglio), e il titolo è composto lungo il cielo a destra in Zen Maru Gothic, 60 pt.
+La copertina è una grafica di titolo a tutta pagina: l’immagine è ancorata all’abbondanza con le dimensioni della pagina (nel flusso verticale la sua `width` scorre lungo il foglio), e il titolo è composto lungo il cielo a destra in Zen Maru Gothic, 60 pt.
 
 ### 4 · Carica i dipinti come bitmap
 
 <Excerpt region="pictures" />
 
-Le dieci immagini sono dipinti, file JPEG in `assets/` della ricetta. Le nove scene sono tagliate sulla forma della fascia, 612 : 280, e la copertina su quella della pagina, 260 : 200, così ognuna riempie la sua cornice e nulla viene ritagliato. Ognuna è una risorsa `bitmap` dichiarata alla sua dimensione in pixel, con il testo alternativo nella lingua del libro, e il suo file si carica sotto il `fileId` della risorsa prima della composizione. Le scene larghe 1.400 px si stampano a circa 165 dpi sulla fascia ([resource types](/it/docs/configuration-resources#tipi-di-risorsa)).
+Le dieci immagini sono dipinti, file JPEG in `assets/` della ricetta. Le nove scene sono tagliate sulla forma della fascia, 612 : 280, e la copertina su quella della pagina, 260 : 200, così ognuna riempie la sua area e nulla viene ritagliato. Ognuna è una risorsa `bitmap` dichiarata alla sua dimensione in pixel, con il testo alternativo nella lingua del libro, e il suo file si carica sotto il `fileId` della risorsa prima della composizione. Le scene larghe 1.400 px si stampano a circa 165 dpi sulla fascia ([resource types](/it/docs/configuration-resources#tipi-di-risorsa)).
 
 ## Varianti
 
 ### Giustifica le righe
 
-Giustificata, ogni riga raggiunge il piede della fascia: prima si allargano gli spazi tra le frasi, fino a mezzo em, poi gli intervalli tra i kana (JLReq §3.8). Una riga corta di kana da 20 pt mostra allora intervalli larghi, ed è per questo che la ricetta lascia le righe a bandiera.
+Giustificata, ogni riga raggiunge il piede della fascia: prima si allargano gli spazi tra le frasi, fino a mezzo em, poi gli intervalli tra i kana (JLReq §3.8). Una riga corta di kana da 20 pt mostra allora intervalli larghi, ed è per questo che la ricetta lascia le righe in bandiera.
 
 ```diff
 -  textAlign: 'left', firstLineIndent: em(0),

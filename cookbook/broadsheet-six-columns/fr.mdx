@@ -10,7 +10,7 @@ pageNotes: { "1": "La une de « The Corrington Despatch » : le titre du jour
 
 ## Ce que vous allez composer
 
-Quatre pages de *The Corrington Despatch*, un quotidien inventé, en grand format de 375 × 597 mm. Le texte court sur six colonnes de 55,2 mm, avec des gouttières de 4 mm et un filet fin dans chacune : une justification d’environ 38 caractères en 9 pt, celle d’un vrai grand format. La une porte un titre de journal flanqué de deux oreilles, une bande d’appels, un article principal dont le titre et la photo prennent quatre colonnes, un second article avec une photo sur deux colonnes, une colonne de brèves, un tableau de financement et un encadré d’infos sur deux colonnes, et une publicité en pied. La page 2 s’ouvre sur une suite de la une, la page 3 passe à cinq colonnes pour les éditoriaux, une tribune et le courrier des lecteurs, et la dernière page porte une critique de théâtre et la météo.
+Quatre pages de *The Corrington Despatch*, un quotidien inventé, en grand format de 375 × 597 mm. Le texte court sur six colonnes de 55,2 mm, avec des gouttières de 4 mm et un filet fin dans chacune : une justification d’environ 38 caractères en 9 pt, celle d’un vrai grand format. La une présente un titre de journal flanqué de deux oreilles, une bande d’appels, un article principal dont le titre et la photo prennent quatre colonnes, un second article avec une photo sur deux colonnes, une colonne de brèves, un tableau de financement et un encadré d’infos sur deux colonnes, et une publicité en pied. La page 2 s’ouvre sur une suite de la une, la page 3 passe à cinq colonnes pour les éditoriaux, une tribune et le courrier des lecteurs, et la dernière page contient une critique de théâtre et la météo.
 
 ## Préparation
 
@@ -22,13 +22,13 @@ Le code de cette étape est [la réponse courte](#la-réponse-courte) plus haut.
 
 <Excerpt region="pictures" highlight="1-6" />
 
-`placement.columns` donne à une photo ou à un tableau sa largeur en colonnes, gouttières comprises : quatre colonnes de la une font 232,7 mm. Le moteur cherche son emplacement à partir de la colonne où se trouve le texte, de gauche à droite. Un flottant `top` prend la tête de la première suite de k colonnes qui ne contiennent pas encore de texte et commencent au même niveau ; un flottant `bottom` prend le pied de la colonne où se trouve le texte et des colonnes vides qui la suivent. Ainsi, le tableau de financement, cité dans un paragraphe de la colonne 3, se place au pied des colonnes 3 et 4, et à la <PageRef page={2}>page 2</PageRef>, l’encadré d’infos, clôturé en premier, prend les colonnes 1 et 2, ce qui laisse les colonnes 3 à 6 comme première suite de même niveau pour la photo sur quatre colonnes clôturée après lui. Dans l’ordre inverse, l’encadré s’empilerait sous la photo. Un k égal au nombre de colonnes de la page (ou plus grand) vaut toute la largeur, comme `span: 'page'`.
+`placement.columns` donne à une photo ou à un tableau sa largeur en colonnes, gouttières comprises : quatre colonnes de la une font 232,7 mm. Le moteur cherche son emplacement à partir de la colonne où se trouve le texte, de gauche à droite. Un flottant `top` prend la tête de la première suite de k colonnes qui ne contiennent pas encore de texte et commencent au même niveau ; un flottant `bottom` prend le pied de la colonne où se trouve le texte et des colonnes vides qui la suivent. Ainsi, le tableau de financement, cité dans un paragraphe de la colonne 3, se place au pied des colonnes 3 et 4, et à la <PageRef page={2}>page 2</PageRef>, l’encadré d’infos, écrit en premier, prend les colonnes 1 et 2, ce qui laisse les colonnes 3 à 6 comme première suite de même niveau pour la photo sur quatre colonnes, citée après lui. Dans l’ordre inverse, l’encadré s’empilerait sous la photo. Un k égal au nombre de colonnes de la page (ou plus grand) vaut toute la largeur, comme `span: 'page'`.
 
 ### 3 · Encadrés de titre, encadrés d’infos et publicités
 
 <Excerpt region="boxes" />
 
-Un `:::callout` avec `placement="top"` et `columns="4"` flotte sur quatre colonnes comme une photo. Le titre et le sous-titre de l’article principal forment un tel encadré, clôturé avant le texte de l’article : il prend les colonnes 1 à 4, et la photo s’empile dessous. L’encadré de titre du second article vient après l’article principal dans le texte, derrière un `:::columnbreak` : le texte est alors en colonne 5, et les colonnes 5 et 6 forment la première paire vide. Chaque publicité est un encadré avec `columns="6"`, sur toute la largeur, clôturé en premier sur sa page pour que son pied soit réservé avant l’arrivée du texte, et les titres de suite des pages 2 et 4 sont des encadrés sur toute la largeur de la page, comme dans Nº 027. `balancing.trailing: false` laisse chaque page remplir ses colonnes jusqu’au pied, puisque chaque page ferme ici une section.
+Un `:::callout` avec `placement="top"` et `columns="4"` flotte sur quatre colonnes comme une photo. Le titre et le sous-titre de l’article principal forment un tel encadré, écrit avant le texte de l’article : il prend les colonnes 1 à 4, et la photo s’empile dessous. L’encadré de titre du second article vient après l’article principal dans le texte, derrière un `:::columnbreak` : le texte est alors en colonne 5, et les colonnes 5 et 6 forment la première paire vide. Chaque publicité est un encadré avec `columns="6"`, sur toute la largeur, écrit en premier sur sa page pour que son pied soit réservé avant l’arrivée du texte, et les titres de suite des pages 2 et 4 sont des encadrés sur toute la largeur de la page, comme dans Nº 027. `balancing.trailing: false` laisse chaque page remplir ses colonnes jusqu’au pied, puisque chaque page ferme ici une section.
 
 ### 4 · Le titre du journal est le H1 de la une
 
@@ -40,7 +40,7 @@ Un `:::callout` avec `placement="top"` et `columns="4"` flotte sur quatre colonn
 
 <Excerpt region="sections" />
 
-`# Opinion {style="opinion"}` ouvre une section dont le style de titre règle `layout: { layoutType: 'multiple', columnCount: 5 }`. La section garde la gouttière et le filet de colonne du document et ne change que le nombre : les éditoriaux, la tribune et le courrier des lecteurs courent sur une justification de 67 mm, environ 47 caractères. L’encadré de titre de la tribune est `columns="3"`, clôturé une fois l’éditorial commencé en colonne 1 : il se place donc sur les colonnes 2 à 4 avec sa photo dessous, et deux lignes `:::columnbreak` envoient la tribune en colonne 2 et le courrier en colonne 5.
+`# Opinion {style="opinion"}` ouvre une section dont le style de titre règle `layout: { layoutType: 'multiple', columnCount: 5 }`. La section garde la gouttière et le filet de colonne du document et ne change que le nombre : les éditoriaux, la tribune et le courrier des lecteurs courent sur une justification de 67 mm, environ 47 caractères. L’encadré de titre de la tribune est `columns="3"`, écrit une fois l’éditorial commencé en colonne 1 : il se place donc sur les colonnes 2 à 4 avec sa photo dessous, et deux lignes `:::columnbreak` envoient la tribune en colonne 2 et le courrier en colonne 5.
 
 ## Variantes
 
@@ -59,5 +59,5 @@ Le même journal en format berlinois de 315 × 470 mm : cinq colonnes de 55 mm,
 
 ## Erreurs fréquentes
 
-- Un flottant clôturé après que le texte a dépassé ses colonnes ne trouve aucun emplacement sur la page et ouvre la suivante. Sur la une, l’article principal doit se terminer en colonne 4 : un paragraphe de plus, et l’encadré de titre et la photo du second article passent en page 2.
+- Un flottant dont le délimiteur vient après que le texte a dépassé ses colonnes ne trouve aucun emplacement sur la page et ouvre la suivante. Sur la une, l’article principal doit se terminer en colonne 4 : un paragraphe de plus, et l’encadré de titre et la photo du second article passent en page 2.
 - Chaque page est ici calibrée à la main, comme un secrétaire de rédaction calibre un journal : les lignes `:::space` des publicités et la longueur de chaque article déterminent où finissent les colonnes. Modifiez un article, et recalibrez sa page.

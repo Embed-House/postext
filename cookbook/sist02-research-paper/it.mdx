@@ -5,7 +5,7 @@ plain: "Un breve articolo di ricerca di una rivista giapponese. L’autrice scri
 description: "Un articolo di rivista giapponese in Postext citato secondo SIST 02 con il locale ja-JP: citazioni numerate, elenco 参考文献 con nomi giapponesi, note, 表1 e 図1."
 question: "Come cito le opere in un articolo giapponese secondo SIST 02 e stampo un elenco 参考文献?"
 aliases: ["SIST 02", "SIST02", "参照文献の書き方", "参考文献", "bibliografia giapponese", "riferimenti giapponesi", "ja-JP", "CSL", "citeproc", "研究ノート", "articolo di rivista giapponese", "学会誌", "giapponese a due colonne", "号数活字", "note a piè di pagina giapponesi", "と ほか", "Japanese references"]
-pageNotes: { "1": "Pagina 23, la prima pagina di una nota di ricerca in una rivista fittizia, 活字と組版の研究: una fascia verde scuro sul quarto superiore porta il nome della rivista, il volume e il numero, l’etichetta 研究ノート, il titolo su due righe in mincho bianco e la sua traduzione inglese. Sotto la fascia l’autrice 森川 啓 e la sua affiliazione, un riassunto su entrambe le colonne sotto una banda verde con le etichette 要　旨 e キーワード, poi due colonne di testo: le sezioni da 1 a 3 con citazioni come (1), (2, 3) e (4, 5), una tabella dei nove corpi con una riga d’intestazione verde, e una nota al piede della colonna sinistra.", "2": "Pagina 24: nella colonna sinistra, tre file di quadrati disegnati in scala, da 42 a 5,25 pt, 27,5 e 13,75 pt, da 16 a 4 pt, con la didascalia 図1, e la sezione 4. Nella colonna destra, la sezione 5, il titolo 参考文献 e le voci da (1) a (9), libri giapponesi e due articoli di 日本印刷学会誌, e un colophon in caratteri latini." }
+pageNotes: { "1": "Pagina 23, la prima pagina di una nota di ricerca in una rivista fittizia, 活字と組版の研究: una fascia verde scuro sul quarto superiore contiene il nome della rivista, il volume e il numero, l’etichetta 研究ノート, il titolo su due righe in mincho bianco e la sua traduzione inglese. Sotto la fascia l’autrice 森川 啓 e la sua affiliazione, un riassunto su entrambe le colonne sotto una banda verde con le etichette 要　旨 e キーワード, poi due colonne di testo: le sezioni da 1 a 3 con citazioni come (1), (2, 3) e (4, 5), una tabella dei nove corpi con una riga d’intestazione verde, e una nota al piede della colonna sinistra.", "2": "Pagina 24: nella colonna sinistra, tre file di quadrati disegnati in scala, da 42 a 5,25 pt, 27,5 e 13,75 pt, da 16 a 4 pt, con la didascalia 図1, e la sezione 4. Nella colonna destra, la sezione 5, il titolo 参考文献 e le voci da (1) a (9), libri giapponesi e due articoli di 日本印刷学会誌, e un colophon in caratteri latini." }
 ---
 
 ## Che cosa comporrai
@@ -40,7 +40,7 @@ Il riassunto è un riquadro a tutta larghezza sotto una banda superiore verde, c
 
 <Excerpt region="resources" />
 
-`defaultResourceTypes('ja')` dà 図 e 表; l’articolo li numera in modo continuo, 表1 e 図1, non per capitolo, quindi il modello è `'{n}'`. Entrambi sono collocati `'here'`, sotto il paragrafo che li cita, dentro la colonna. I quadrati della figura sono disegnati alla misura del corpo che rappresentano, 42 pt per il 初号 fino a 4 pt per l’八号, così il dimezzamento si vede sulla pagina.
+`defaultResourceTypes('ja')` dà 図 e 表; l’articolo li numera in modo continuo, 表1 e 図1, non per capitolo, quindi il modello è `'{n}'`. Entrambi sono collocati `'here'`, sotto il paragrafo che li cita, nella colonna. I quadrati della figura sono disegnati alla misura del corpo che rappresentano, 42 pt per il 初号 fino a 4 pt per l’八号, così il dimezzamento si vede sulla pagina.
 
 ## Varianti
 
@@ -65,5 +65,5 @@ Un articolo di poche pagine può contare le note da 1 fino alla fine invece che 
 
 ## Errori frequenti
 
-- Scrivi un nome giapponese come `family` e `given`, o come un unico `literal` senza spazi. Un nome scritto come una sola stringa con uno spazio tra cognome e nome, come spesso lo porta BibTeX (`author = {夏目 漱石}`), viene letto con il cognome prima, ma uno romanizzato, `Natsume Soseki`, viene letto come nome e poi cognome, come i nomi inglesi.
+- Scrivi un nome giapponese come `family` e `given`, o come un unico `literal` senza spazi. Un nome scritto come una sola stringa con uno spazio tra cognome e nome, come spesso lo riporta BibTeX (`author = {夏目 漱石}`), viene letto con il cognome prima, ma uno romanizzato, `Natsume Soseki`, viene letto come nome e poi cognome, come i nomi inglesi.
 - Il SIST 02 incluso non stampa il DOI; un articolo il cui DOI conta deve riportarlo nel testo o in una nota.

@@ -18,7 +18,7 @@ pageNotes: { "2": "目录：铁锈色罗马数字，用Gloock排的随笔标题�
 
 <Excerpt region="opener" />
 
-该层级的`numberingTemplate: '{1:I}'`把随笔编为I、II、III，`{number}`把编号印在标题上方（[通栏与高级设计](/zh/docs/configuration-headings#通栏与高级设计)）。`minHeight`预留12行14 pt，细线止于其上7 mm处，所以标题只有一行时，每个章首页的正文都从距上边缘79 mm处开始。26 pt的标题多一行会增加9.9 mm，把正文推下一条网格线；设`SINK = 14`后，一行和两行标题的正文从同一行开始。`marginBottom: pt(0)`防止标题默认的外边距叠加到预留高度上。
+该级别的`numberingTemplate: '{1:I}'`把随笔编为I、II、III，`{number}`把编号印在标题上方（[通栏与高级设计](/zh/docs/configuration-headings#通栏与高级设计)）。`minHeight`预留12行14 pt，细线止于其上7 mm处，所以标题只有一行时，每个章首页的正文都从距上边缘79 mm处开始。26 pt的标题多一行会增加9.9 mm，把正文推下一条网格线；设`SINK = 14`后，一行和两行标题的正文从同一行开始。`marginBottom: pt(0)`防止标题默认的外边距叠加到预留高度上。
 
 ### 2 · 让目录自己填好
 
@@ -36,7 +36,7 @@ Markdown中的`:::toc`为每个列入的标题印一条目录项：编号、标�
 
 <Excerpt region="front" />
 
-设了`numbered: false`，封面和目录不会推进计数器，所以Hazlitt是I；`toc: false`让它们不进入目录（[标题样式](/zh/docs/configuration-styles#标题样式)）。两种样式都继承该层级的`breakBefore`，奇偶性为`'any'`，所以目录不用`:::pagebreak`就紧接封面排在第2页。在单栏书中，封面样式跨越整页，因为留在栏内的设计会在栏的下边缘被裁掉，风景下方会空出22 mm白纸。
+设了`numbered: false`，封面和目录不会推进计数器，所以Hazlitt是I；`toc: false`让它们不进入目录（[标题样式](/zh/docs/configuration-styles#标题样式)）。两种样式都继承该级别的`breakBefore`，奇偶性为`'any'`，所以目录不用`:::pagebreak`就紧接封面排在第2页。在单栏书中，封面样式跨越整页，因为留在栏内的设计会在栏的下边缘被裁掉，风景下方会空出22 mm白纸。
 
 ### 5 · 每个颜色都连同调色板关联一起写出
 

@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configurazione: intestazioni e piè di pagina',
   sidebarTitle: 'Intestazioni e piè di pagina',
-  description: 'Che cosa si stampa in cima e in fondo a ogni pagina: testo con segnaposto, filetti, riquadri e immagini, secondo la parità della pagina, e dove si colloca ogni elemento',
+  description: 'Che cosa si stampa in cima e in fondo a ogni pagina: testi con segnaposto, filetti, riquadri e immagini, diversi per le pagine pari e dispari; e dove si colloca ogni elemento',
   lang: 'it',
   lastUpdated: '2026-10-16',
   readingTime: '32 min',
   order: 6,
   parent: 'configuration',
-  plainSummary: "Questa pagina riguarda ciò che viene stampato in alto e in basso in ogni pagina. Un’intestazione o un piè di pagina può contenere il numero di pagina, il titolo del libro o del capitolo, una linea, un riquadro o una piccola immagine. Le pagine di sinistra e di destra possono mostrare cose diverse. Ogni elemento può stare a sinistra, al centro o a destra, oppure nel margine accanto al testo. Intestazione e piè di pagina stanno dentro i margini, quindi non rimpiccioliscono mai l’area del testo.",
+  plainSummary: "Questa pagina riguarda ciò che viene stampato in alto e in basso su ogni pagina. Un’intestazione o un piè di pagina può contenere il numero di pagina, il titolo del libro o del capitolo, una linea, un riquadro o una piccola immagine. Le pagine di sinistra e di destra possono mostrare cose diverse. Ogni elemento può stare a sinistra, al centro o a destra, oppure nel margine accanto al testo. Intestazione e piè di pagina stanno dentro i margini, quindi non rimpiccioliscono mai l’area del testo.",
 };
 
 # Configurazione: intestazioni e piè di pagina
@@ -19,16 +19,16 @@ export const metadata = {
 
 Le proprietà `header` e `footer` controllano gli spazi di intestazione e piè di pagina di ogni pagina. Intestazioni e piè di pagina si disegnano **dentro i margini esistenti della pagina**: non riservano spazio aggiuntivo e non riducono l’area del contenuto.
 
-**Cornice del contenitore.** Un elemento ancorato a `'container'` si colloca nella fascia di margine tra il testo e il bordo di rifilo, per tutta la larghezza dell’area del contenuto. Il contenitore dell’intestazione va dal **bordo superiore di rifilo** fino alla sommità del testo; quello del piè di pagina dalla base del testo fino al **bordo inferiore di rifilo**. Quindi le ancore `top-*` dell’intestazione e `bottom-*` del piè di pagina misurano dal bordo di rifilo, mentre le ancore `bottom-*` dell’intestazione e `top-*` del piè di pagina misurano dal bordo del testo. Il contenitore non comprende mai l’abbondanza né la fascia dei segni di taglio, quindi un’intestazione o un piè di pagina cade nella stessa posizione sulla pagina rifilata sia con `page.cutLines` attivo sia disattivato. Ancora a `'page'` (il formato rifilato) o a `'bleed'` per andare oltre la larghezza dell’area del contenuto o dentro l’abbondanza.
+**Area del contenitore.** Un elemento ancorato a `'container'` si colloca nella fascia di margine tra il testo e il bordo di rifilo, per tutta la larghezza dell’area del contenuto. Il contenitore dell’intestazione va dal **bordo superiore di rifilo** fino alla sommità del testo; quello del piè di pagina dalla base del testo fino al **bordo inferiore di rifilo**. Quindi le ancore `top-*` dell’intestazione e `bottom-*` del piè di pagina misurano dal bordo di rifilo, mentre le ancore `bottom-*` dell’intestazione e `top-*` del piè di pagina misurano dal bordo del testo. Il contenitore non comprende mai l’abbondanza né la fascia dei segni di taglio, quindi un’intestazione o un piè di pagina cade nella stessa posizione sulla pagina rifilata sia con `page.cutLines` attivo sia disattivato. Per andare oltre la larghezza dell’area del contenuto, o nell’abbondanza, ancora l’elemento a `'page'` (il formato rifilato) o a `'bleed'`.
 
-Gli spazi usano il modello unificato degli **spazi di progetto**: ogni elemento ha un `placement` con un `anchor` (al contenitore o a un altro elemento tramite `#id`), un `offset` facoltativo e una `size` facoltativa. I vecchi campi piatti `align`, `marginFromBody`, `marginFromEdge` e `width: 'full'` sono ancora accettati in ingresso e vengono convertiti automaticamente nella nuova forma; la descrizione equivalente nella nuova forma è documentata più sotto.
+Gli spazi usano il modello unificato degli **spazi della grafica**: ogni elemento ha un `placement` con un `anchor` (al contenitore o a un altro elemento tramite `#id`), un `offset` facoltativo e una `size` facoltativa. I vecchi campi piatti `align`, `marginFromBody`, `marginFromEdge` e `width: 'full'` sono ancora accettati in ingresso e vengono convertiti automaticamente nella nuova forma; la descrizione equivalente nella nuova forma è documentata più sotto.
 
-Ogni spazio contiene un elenco di elementi **text**, **rule** e **box**. L’ordine dell’array è l’ordine di disegno (il primo elemento si disegna per primo, l’ultimo sopra tutti). Vale qualunque cosa dicano le ancore: un elemento può ancorarsi a uno elencato dopo di lui (`anchor.to: '#ttl'`), così un riquadro di sfondo può venire per primo ed essere comunque posizionato rispetto al testo che sta dietro.
+Ogni spazio contiene un elenco di elementi **text**, **rule** e **box**. L’ordine dell’array è l’ordine di disegno (il primo elemento si disegna per primo, l’ultimo sopra tutti). Questo vale indipendentemente dagli ancoraggi: un elemento può ancorarsi a uno elencato dopo di lui (`anchor.to: '#ttl'`), così un riquadro di sfondo può venire per primo ed essere comunque posizionato rispetto al testo che gli sta davanti.
 
 **Valori predefiniti incorporati.** Quando `header` o `footer` è `undefined`, postext applica un valore predefinito incorporato ragionevole invece di uno spazio vuoto:
 
-- **Intestazione predefinita:** `{title}` allineato a destra sulle pagine dispari, `{chapterTitle}` allineato a sinistra sulle pagine pari e un filetto a tutta larghezza, tutto nel colore principale della palette, Open Sans 8pt/600, `marginFromBody` `16pt` (testo) / `13pt` (filetto).
-- **Piè di pagina predefinito:** `{pageNumber}` centrato su ogni pagina nel colore principale della palette, Open Sans 8pt/600, `marginFromBody` `16pt`.
+- **Intestazione predefinita:** `{title}` allineato a destra sulle pagine dispari, `{chapterTitle}` allineato a sinistra sulle pagine pari e un filetto a tutta larghezza, tutto nel colore principale della tavolozza, Open Sans 8pt/600, `marginFromBody` `16pt` (testo) / `13pt` (filetto).
+- **Piè di pagina predefinito:** `{pageNumber}` centrato su ogni pagina nel colore principale della tavolozza, Open Sans 8pt/600, `marginFromBody` `16pt`.
 
 Per rinunciare ai valori predefiniti incorporati, imposta `header: { elements: [] }` (o `footer: { elements: [] }`). Un array `elements` vuoto ed esplicito viene conservato come «nessun elemento»: solo `undefined` attiva i valori predefiniti.
 
@@ -55,7 +55,7 @@ Per rinunciare ai valori predefiniti incorporati, imposta `header: { elements: [
 
 Gli elementi di testo disegnano una stringa modello sostituendo i segnaposto. I segnaposto usano la sintassi `{name}`; `{{` e `}}` producono parentesi graffe letterali.
 
-I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo che aggiungi tu. L’intestazione e il piè di pagina incorporati descritti più sopra in **Valori predefiniti incorporati** sono elementi già pronti con valori propri (Open Sans 8pt/600 nel colore principale della palette), non i valori predefiniti dell’elemento.
+I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo che aggiungi tu. L’intestazione e il piè di pagina incorporati descritti più sopra in **Valori predefiniti incorporati** sono elementi già pronti con valori propri (Open Sans 8pt/600 nel colore principale della tavolozza), non i valori predefiniti dell’elemento.
 
 <table>
   <thead>
@@ -83,13 +83,13 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>content</code></td>
       <td><code>string</code></td>
       <td><code>''</code></td>
-      <td>Stringa modello. Supporta i segnaposto elencati più sotto, più <code>{'{attr.<key>}'}</code>, un attributo scritto sulla riga del titolo H1 del capitolo corrente (<code># Title {'{author="I. Zango"}'}</code>). Un attributo mancante si risolve in una stringa vuota senza avviso. Un a capo, o i due caratteri <code>\n</code> scritti nel modello o nel valore di un attributo, inizia sempre una nuova riga, qualunque sia l’<code>overflow</code>. Il testo che un segnaposto copia dal documento (un titolo, un campo del frontmatter) si stampa come è scritto: lì solo un vero a capo, come un’interruzione nel titolo, inizia una nuova riga.</td>
+      <td>Stringa modello. Supporta i segnaposto elencati più sotto, più <code>{'{attr.<key>}'}</code>, un attributo scritto sulla riga del titolo H1 del capitolo corrente (<code># Title {'{author="I. Zango"}'}</code>). Un attributo mancante si risolve in una stringa vuota senza avviso. Un a capo, o i due caratteri <code>\n</code> scritti nel modello o nel valore di un attributo, inizia sempre una nuova riga, qualunque sia l’<code>overflow</code>. Il testo che un segnaposto copia dal documento (un titolo, un campo del front matter) si stampa come è scritto: lì solo un vero a capo, come un’interruzione nel titolo, inizia una nuova riga.</td>
     </tr>
     <tr>
       <td><code>align</code></td>
       <td><code>'left' | 'center' | 'right' | 'justify' | 'start' | 'end'</code></td>
       <td><code>'center'</code></td>
-      <td>Allineamento orizzontale delle righe dentro il riquadro dell’elemento. <code>'justify'</code> allarga gli spazi tra parole di ogni riga spezzata tranne l’ultima di ciascun paragrafo, così la riga riempie il riquadro; le righe accanto a un capolettera riempiono lo spazio accanto a esso. Con <code>hyphenate</code>, anche una parola che non entra nel resto di una riga giustificata viene divisa in sillabe per riempirla. L’ultima riga di un paragrafo, una riga senza spazi da allargare e un testo che non va a capo si compongono allineati a sinistra. Il testo giustificato si impagina paragrafo per paragrafo, quindi le righe vuote tra i paragrafi contano come una. Il canvas e il PDF collocano ogni parola dove l’ha messa l’impaginazione; l’HTML allarga gli spazi con <code>word-spacing</code>. <code>'start'</code> e <code>'end'</code> seguono la <code>direction</code> del testo: la destra e la sinistra di un testo da destra a sinistra. <code>'left'</code> e <code>'right'</code> sono i lati del riquadro stesso; in un progetto impaginato nel flusso di una pagina da destra a sinistra (una fascia di apertura, il progetto di un titolo) il flusso è speculare, quindi sono il suo inizio e la sua fine, come nel testo.</td>
+      <td>Allineamento orizzontale delle righe dentro il riquadro dell’elemento. <code>'justify'</code> allarga gli spazi tra parole di ogni riga spezzata tranne l’ultima di ciascun paragrafo, così la riga riempie il riquadro; le righe accanto a un capolettera riempiono lo spazio accanto a esso. Con <code>hyphenate</code>, anche una parola che non entra nel resto di una riga giustificata viene divisa in sillabe per riempirla. L’ultima riga di un paragrafo, una riga senza spazi da allargare e un testo che non va a capo si compongono allineati a sinistra. Il testo giustificato si impagina paragrafo per paragrafo, quindi le righe vuote tra i paragrafi contano come una. Il canvas e il PDF collocano ogni parola dove l’ha messa l’impaginazione; l’HTML allarga gli spazi con <code>word-spacing</code>. <code>'start'</code> e <code>'end'</code> seguono la <code>direction</code> del testo: la destra e la sinistra di un testo da destra a sinistra. <code>'left'</code> e <code>'right'</code> sono i lati del riquadro stesso; in una grafica impaginata nel flusso di una pagina da destra a sinistra (una fascia di apertura, la grafica di un titolo) il flusso è speculare, quindi sono il suo inizio e la sua fine, come nel testo.</td>
     </tr>
     <tr>
       <td><code>direction</code></td>
@@ -107,7 +107,7 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>pages</code></td>
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank'</code></td>
       <td><code>'all'</code></td>
-      <td>Su quali <em>ruoli</em> di pagina compare l’elemento, in combinazione con <code>parity</code>. Dopo la collocazione ogni pagina viene classificata come <code>'blank'</code> (riempimento di parità o di separazione, o nessun contenuto), <code>'part'</code> (una pagina di parte), <code>'opener'</code> (il suo primo blocco è un titolo il cui livello occupa tutta la pagina o forza un’interruzione di pagina prima di sé: la prima pagina di un capitolo) o <code>'body'</code> (tutto il resto). <code>pages: 'body'</code> nasconde una testatina sulle aperture di capitolo; <code>pages: 'opener'</code> mostra un folio solo lì.</td>
+      <td>Su quali <em>ruoli</em> di pagina compare l’elemento, in combinazione con <code>parity</code>. Dopo la collocazione ogni pagina viene classificata come <code>'blank'</code> (riempimento di parità o di separazione, o nessun contenuto), <code>'part'</code> (una pagina di parte), <code>'opener'</code> (il suo primo blocco è un titolo il cui livello occupa tutta la pagina o forza un’interruzione di pagina prima di sé: la prima pagina di un capitolo) o <code>'body'</code> (tutto il resto). <code>pages: 'body'</code> nasconde una testatina sulle aperture di capitolo; <code>pages: 'opener'</code> mostra un numero di pagina solo lì.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -131,7 +131,7 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Se disegnare in corsivo.</td>
+      <td>Disegna il testo in corsivo.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -142,8 +142,8 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'ellipsis-start' | 'ellipsis-middle' | 'ellipsis-end' | 'clip'</code></td>
-      <td><code>'wrap'</code> nei progetti dei titoli e delle parti, altrimenti <code>'ellipsis-end'</code></td>
-      <td>Come il motore tratta il testo che supera la larghezza disponibile dell’elemento. <code>'wrap'</code> divide la riga in più righe; le varianti con puntini di sospensione tengono ogni riga su una sola riga e la troncano con <code>…</code> all’inizio, al centro o alla fine; <code>'clip'</code> taglia di netto sul riquadro di delimitazione dell’elemento senza inserire alcun carattere. Gli a capo del contenuto valgono in ogni modalità: le modalità con puntini e con taglio troncano o tagliano ogni riga per conto suo. Un elemento che omette <code>overflow</code> prende il valore predefinito del suo spazio: nel progetto di un titolo (<code>advancedDesign.slot</code>) o in una pagina di parte (<code>parts.design</code>, <code>parts.versoDesign</code>) va a capo, in una testatina, in un folio o in una riga di parte del sommario (<code>toc.parts.design</code>, una riga di altezza fissa) termina con <code>…</code>. Imposta <code>'wrap'</code> su una testatina che può occupare più righe (un indirizzo), o i puntini su un occhiello che deve restare su una riga in un’apertura. Una riga troncata dai puntini, o tagliata con inchiostro oltre il riquadro, viene segnalata come avviso di contenuto <code>designTextTruncated</code>, una volta per elemento e pagina (una testatina o un folio una volta per elemento e capitolo). Una configurazione salvata prima di postext 1.24 (<code>configVersion</code> 9 o precedente) viene letta con <code>'ellipsis-end'</code> su ogni testo di titolo e di parte che non ne imposta uno, così le sue pagine non si spostano. Un testo con un <code>dropCap</code> va a capo qualunque cosa dica questo campo; con <code>'clip'</code> le sue righe vengono comunque tagliate al bordo di un riquadro di altezza fissa. <code>'ellipsis-end'</code> e <code>'ellipsis-start'</code> tagliano al confine di una parola (<em>The history of…</em>, non <em>The history of th…</em>) e nessuno spazio o punteggiatura di collegamento (virgola, due punti, trattino, barra, parentesi di apertura) tocca i puntini. Una parola viene tagliata dove serve solo quando il confine, tolta quella punteggiatura, conserverebbe meno della metà di ciò che entra: una sola parola lunga, o un URL (<em>http://exampl…</em>, non <em>http…</em>). Uno spazio non separabile o un trattino non separabile (U+2011, come in <em>MS‑DOS</em>) non è un confine di parola; <code>'ellipsis-middle'</code> taglia ovunque ma elimina gli spazi accanto ai puntini. Fino a postext 1.4 ogni modalità tagliava all’ultimo carattere che entrava, spazi compresi.</td>
+      <td><code>'wrap'</code> nella grafica dei titoli e delle parti, altrimenti <code>'ellipsis-end'</code></td>
+      <td>Come il motore tratta il testo che supera la larghezza disponibile dell’elemento. <code>'wrap'</code> divide la riga in più righe; le varianti con puntini di sospensione tengono ogni riga su una sola riga e la troncano con <code>…</code> all’inizio, al centro o alla fine; <code>'clip'</code> taglia di netto sul riquadro di delimitazione dell’elemento senza inserire alcun carattere. Gli a capo del contenuto valgono in ogni modalità: le modalità con puntini e con taglio troncano o tagliano ogni riga per conto suo. Un elemento che omette <code>overflow</code> prende il valore predefinito del suo spazio: nella grafica di un titolo (<code>advancedDesign.slot</code>) o in una pagina di parte (<code>parts.design</code>, <code>parts.versoDesign</code>) va a capo; in una testatina, in un numero di pagina o in una riga di parte dell’indice (<code>toc.parts.design</code>, una riga di altezza fissa) termina con <code>…</code>. Imposta <code>'wrap'</code> su una testatina che può occupare più righe (un indirizzo), o i puntini su un occhiello che deve restare su una riga in un’apertura. Una riga troncata dai puntini, o tagliata con inchiostro oltre il riquadro, viene segnalata come avviso di contenuto <code>designTextTruncated</code>, una volta per elemento e pagina (una testatina o un numero di pagina, una volta per elemento e capitolo). Una configurazione salvata prima di postext 1.24 (<code>configVersion</code> 9 o precedente) viene letta con <code>'ellipsis-end'</code> su ogni testo di titolo e di parte che non ne imposta uno, così le sue pagine non si spostano. Un testo con un <code>dropCap</code> va a capo qualunque sia il valore di questo campo; con <code>'clip'</code> le sue righe vengono comunque tagliate al bordo di un riquadro di altezza fissa. <code>'ellipsis-end'</code> e <code>'ellipsis-start'</code> tagliano al confine di una parola (<em>The history of…</em>, non <em>The history of th…</em>) e nessuno spazio o punteggiatura di collegamento (virgola, due punti, trattino, barra, parentesi di apertura) tocca i puntini. Una parola viene tagliata dove serve solo quando il confine, tolta quella punteggiatura, conserverebbe meno della metà di ciò che entra: una sola parola lunga, o un URL (<em>http://exampl…</em>, non <em>http…</em>). Uno spazio non separabile o un trattino non separabile (U+2011, come in <em>MS‑DOS</em>) non è un confine di parola; <code>'ellipsis-middle'</code> taglia ovunque ma elimina gli spazi accanto ai puntini. Fino a postext 1.4 ogni modalità tagliava all’ultimo carattere che entrava, spazi compresi.</td>
     </tr>
     <tr>
       <td><code>verticalAlign</code></td>
@@ -155,19 +155,19 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>lineHeight</code></td>
       <td><code>number | Dimension</code></td>
       <td><code>1.2</code></td>
-      <td>Interlinea delle righe dell’elemento. Un numero è un multiplo di <code>fontSize</code>. È accettata anche una <code>Dimension</code>, come si scrive ogni altra interlinea della configurazione: <code>em</code> / <code>rem</code> è lo stesso multiplo, e una lunghezza assoluta (<code>pt</code>, <code>mm</code>, <code>px</code>…) è la distanza tra le linee di base: <code>{"{ value: 15.5, unit: 'pt' }"}</code> imposta un’interlinea di 15,5 pt qualunque sia il corpo. Qualsiasi altro valore (zero, un numero negativo, una dimensione malformata) prende il valore predefinito. Fino a postext 1.4 una <code>Dimension</code> qui rendeva impossibile misurare l’altezza del progetto: un’apertura allora non riservava alcuno spazio, nemmeno il suo <code>minHeight</code>, e il testo scorreva sotto il titolo.</td>
+      <td>Interlinea delle righe dell’elemento. Un numero è un multiplo di <code>fontSize</code>. È accettata anche una <code>Dimension</code>, come si scrive ogni altra interlinea della configurazione: <code>em</code> / <code>rem</code> è lo stesso multiplo, e una lunghezza assoluta (<code>pt</code>, <code>mm</code>, <code>px</code>…) è la distanza tra le linee di base: <code>{"{ value: 15.5, unit: 'pt' }"}</code> imposta un’interlinea di 15,5 pt qualunque sia il corpo. Qualsiasi altro valore (zero, un numero negativo, una dimensione malformata) prende il valore predefinito. Fino a postext 1.4 una <code>Dimension</code> qui rendeva impossibile misurare l’altezza della grafica: un’apertura allora non riservava alcuno spazio, nemmeno il suo <code>minHeight</code>, e il testo scorreva sotto il titolo.</td>
     </tr>
     <tr>
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Spaziatura tra lettere (tracking): spazio aggiuntivo avanzato dopo ogni carattere, spazi compresi, esattamente come fa il <code>letter-spacing</code> dei CSS. Le larghezze misurate crescono di conseguenza, così un riquadro a larghezza automatica resta aderente. Non cambia mai i glifi: le legature del carattere restano nel canvas, nell’HTML, nell’EPUB e nel PDF (fino a postext 1.27 canvas e HTML le eliminavano dal testo di progetto spaziato, che risultava più largo di quanto misurato). Una sequenza ebraica riceve la spaziatura come il testo latino; solo un testo con lettere arabe no. La spaziatura dopo l’ultimo carattere di una riga è esclusa dal suo allineamento e da un riquadro a larghezza automatica, così un titolo spaziato e centrato è centrato sulle sue lettere, uno allineato a destra termina sul bordo e l’ultima lettera di una riga giustificata raggiunge il bordo (fino a postext 1.4 stavano mezza unità di spaziatura, o una intera, più a sinistra, e un elemento ancorato alla destra di uno spaziato stava un’unità di spaziatura più lontano). Un valore negativo stringe le lettere (un titolo da display a 36 pt prende spesso <code>&#123; value: -0.3, unit: 'pt' &#125;</code>) e le larghezze si riducono allo stesso modo; canvas, HTML e PDF lo disegnano allo stesso modo (fino a postext 1.4 un valore negativo veniva impostato a <code>0</code>, senza avviso).</td>
+      <td>Spaziatura tra le lettere (tracking): spazio aggiuntivo avanzato dopo ogni carattere, spazi compresi, esattamente come fa il <code>letter-spacing</code> dei CSS. Le larghezze misurate crescono di conseguenza, così un riquadro a larghezza automatica resta aderente. Non cambia mai i glifi: le legature del carattere restano nel canvas, nell’HTML, nell’EPUB e nel PDF (fino a postext 1.27 canvas e HTML le eliminavano dal testo grafico spaziato, che risultava più largo di quanto misurato). Una sequenza ebraica riceve la spaziatura come il testo latino; solo un testo con lettere arabe no. La spaziatura dopo l’ultimo carattere di una riga è esclusa dal suo allineamento e da un riquadro a larghezza automatica, così un titolo spaziato e centrato è centrato sulle sue lettere, uno allineato a destra termina sul bordo e l’ultima lettera di una riga giustificata raggiunge il bordo (fino a postext 1.4 stavano mezza unità di spaziatura, o una intera, più a sinistra, e un elemento ancorato alla destra di uno spaziato stava un’unità di spaziatura più lontano). Un valore negativo stringe le lettere (un titolo da display a 36 pt prende spesso <code>&#123; value: -0.3, unit: 'pt' &#125;</code>) e le larghezze si riducono allo stesso modo; canvas, HTML e PDF lo disegnano allo stesso modo (fino a postext 1.4 un valore negativo veniva impostato a <code>0</code>, senza avviso).</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>Trasformazione di maiuscole e minuscole applicata al testo risolto, segnaposto compresi: il titolo di una parte composto in maiuscole nel sommario.</td>
+      <td>Trasformazione di maiuscole e minuscole applicata al testo risolto, segnaposto compresi: il titolo di una parte composto in maiuscole nell’indice.</td>
     </tr>
     <tr>
       <td><code>box</code></td>
@@ -179,7 +179,7 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>dropCap</code></td>
       <td><code>&#123; lines, fontFamily, fontWeight, fontSize, color, gap &#125;</code></td>
       <td>—</td>
-      <td>Capolettera: la prima lettera composta in grande accanto alle prime <code>lines</code> righe (2 per impostazione predefinita), con carattere, peso e colore propri, a <code>gap</code> dal testo. La lettera poggia sulla linea di base dell’ultima riga che occupa, e <code>fontSize</code> vale per impostazione predefinita il corpo che porta la sua sommità al livello delle maiuscole della prima riga: il corpo del testo più <code>lines</code> − 1 interlinee, considerando le maiuscole pari a 0,72 del corpo di una lettera (un carattere le cui maiuscole sono molto più alte o più basse richiede un <code>fontSize</code> proprio). Un testo con capolettera va a capo qualunque sia il suo <code>overflow</code>; con <code>'clip'</code> le sue righe vengono comunque tagliate al bordo di un riquadro di altezza fissa. Un <code>color</code> collegato alla palette segue le palette delle parti e delle sezioni come il resto del progetto. Nel progetto di un titolo la lettera non riserva spazio sotto il testo: la parte del suo riquadro di riga sotto la linea di base non spinge in basso il testo. Una lettera che scende sotto la linea di base (una Q o una J in molti caratteri) può allora arrivare nello spazio sotto il progetto: dai al titolo un <code>marginBottom</code> per questo. Fino a postext 1.4 il corpo predefinito rendeva la lettera alta quanto tutti i riquadri di riga che occupa, quindi la sua sommità stava sopra la prima riga; un <code>overflow</code> diverso da <code>'wrap'</code> eliminava la lettera senza avviso; la palette di una sezione o di una parte lasciava il suo colore invariato; e una lettera profonda quanto il testo accanto poteva spingere il testo una riga di griglia più in basso. Le configurazioni salvate in precedenza mantengono il corpo della 1.4, scritto come <code>fontSize</code> (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>). Un capolettera nel testo corrente si imposta invece dagli stili di paragrafo e di titolo (vedi <a href="/it/docs/configuration-text#capilettera">Capilettera</a>), con le altezze delle maiuscole misurate dai caratteri.</td>
+      <td>Capolettera: la prima lettera composta in grande accanto alle prime <code>lines</code> righe (2 per impostazione predefinita), con carattere, peso e colore propri, a <code>gap</code> dal testo. La lettera poggia sulla linea di base dell’ultima riga che occupa, e <code>fontSize</code> vale per impostazione predefinita il corpo che porta la sua sommità al livello delle maiuscole della prima riga: il corpo del testo più <code>lines</code> − 1 interlinee, considerando le maiuscole pari a 0,72 del corpo di una lettera (un carattere le cui maiuscole sono molto più alte o più basse richiede un <code>fontSize</code> proprio). Un testo con capolettera va a capo qualunque sia il suo <code>overflow</code>; con <code>'clip'</code> le sue righe vengono comunque tagliate al bordo di un riquadro di altezza fissa. Un <code>color</code> collegato alla tavolozza segue le tavolozze delle parti e delle sezioni come il resto della grafica. Nella grafica di un titolo la lettera non riserva spazio sotto il testo: la parte del suo riquadro di riga sotto la linea di base non spinge in basso il testo. Una lettera che scende sotto la linea di base (una Q o una J in molti caratteri) può allora arrivare nello spazio sotto la grafica: dai al titolo un <code>marginBottom</code> per questo. Fino a postext 1.4 il corpo predefinito rendeva la lettera alta quanto tutti i riquadri di riga che occupa, quindi la sua sommità stava sopra la prima riga; un <code>overflow</code> diverso da <code>'wrap'</code> eliminava la lettera senza avviso; la tavolozza di una sezione o di una parte lasciava il suo colore invariato; e una lettera profonda quanto il testo accanto poteva spingere il testo una riga di griglia più in basso. Le configurazioni salvate in precedenza mantengono il corpo della 1.4, scritto come <code>fontSize</code> (vedi <a href="/it/docs/configuration-bundles#pacchetti-scritti-da-postext-14-o-precedenti">Pacchetti scritti da postext 1.4 o precedenti</a>). Un capolettera nel testo corrente si imposta invece dagli stili di paragrafo e di titolo (vedi <a href="/it/docs/configuration-text#capilettera">Capilettera</a>), con le altezze delle maiuscole misurate dai caratteri.</td>
     </tr>
     <tr>
       <td><code>paragraphIndent</code></td>
@@ -197,7 +197,7 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>inlineMarks</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Legge il testo risolto, valori dei segnaposto compresi, come Markdown in linea: <code>**bold**</code>, <code>*italic*</code>, <code>^superscript^</code>, <code>~subscript~</code>. Se disattivato, i marcatori si stampano come sono scritti. Nel progetto di un titolo, <code>{'{titleText}'}</code> mantiene allora le sequenze in grassetto, corsivo, apice e pedice del titolo stesso (<code>*Pneumocystis*</code>, <code>CO~2~</code>), con gli altri caratteri protetti in modo che si stampino come sono scritti (da postext 1.19). Vedi <a href="#segni-in-linea-e-contorni">Segni in linea e contorni</a>.</td>
+      <td>Legge il testo risolto, valori dei segnaposto compresi, come Markdown in linea: <code>**bold**</code>, <code>*italic*</code>, <code>^superscript^</code>, <code>~subscript~</code>. Se disattivato, i marcatori si stampano come sono scritti. Nella grafica di un titolo, <code>{'{titleText}'}</code> mantiene allora le sequenze in grassetto, corsivo, apice e pedice del titolo stesso (<code>*Pneumocystis*</code>, <code>CO~2~</code>), con gli altri caratteri protetti in modo che si stampino come sono scritti (da postext 1.19). Vedi <a href="#segni-in-linea-e-contorni">Segni in linea e contorni</a>.</td>
     </tr>
     <tr>
       <td><code>stroke</code></td>
@@ -227,7 +227,7 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Solo progetti dei titoli: se l’elemento conta nell’altezza che il titolo riserva nel flusso del testo. <code>false</code> per le decorazioni che possono stare sotto il testo (un sigillo al piede della pagina, una cornice, una fascia laterale). Vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>. I progetti di intestazione, piè di pagina e parte lo ignorano.</td>
+      <td>Solo per la grafica dei titoli: se l’elemento conta nell’altezza che il titolo riserva nel flusso del testo. <code>false</code> per le decorazioni che possono stare sotto il testo (un sigillo al piede della pagina, una cornice, una fascia laterale). Vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>. La grafica di intestazioni, piè di pagina e parti lo ignora.</td>
     </tr>
     <tr>
       <td><code>marginFromBody</code></td>
@@ -309,15 +309,15 @@ header: {
 }
 ```
 
-Le parole guida sono testatine: si risolvono negli spazi di intestazione e piè di pagina (compresi `header` e `footer` di uno stile di titolo) e non stampano nulla nei progetti dei titoli, delle parti e del sommario; nei progetti dei titoli e delle parti il pannello Verifiche le segnala come segnaposto sconosciuti. Per mostrare il primo lemma sui verso e l’ultimo sui recto, crea due elementi con `parity: 'even'` e `parity: 'odd'`. Un H1 il cui stile di titolo imposta `runningChapter: false` non imposta alcun segno `h1`.
+Le parole guida sono testatine: si risolvono negli spazi di intestazione e piè di pagina (compresi `header` e `footer` di uno stile di titolo) e non stampano nulla nella grafica dei titoli, delle parti e dell’indice; nella grafica dei titoli e delle parti il pannello **Verifiche** le segnala come segnaposto sconosciuti. Per mostrare il primo lemma sui verso e l’ultimo sui recto, crea due elementi con `parity: 'even'` e `parity: 'odd'`. Un H1 il cui stile di titolo imposta `runningChapter: false` non imposta alcun segno `h1`.
 
 #### Il capitolo in cima alla pagina
 
-`{chapterTitle}` e `{chapterNumber}` indicano l’ultimo capitolo iniziato sulla pagina o prima di essa. In un libro i cui capitoli si susseguono senza interruzione di pagina, una pagina che chiude un capitolo e inizia il successivo vicino al piede porta allora il titolo del nuovo capitolo sopra un testo che appartiene ancora al vecchio. `{chapterTitleAtTop}` e `{chapterNumberAtTop}` indicano invece il capitolo in vigore in cima alla pagina, come fanno i romanzi con capitoli consecutivi e molte opere di consultazione:
+`{chapterTitle}` e `{chapterNumber}` indicano l’ultimo capitolo iniziato sulla pagina o prima di essa. In un libro i cui capitoli si susseguono senza interruzione di pagina, una pagina che chiude un capitolo e inizia il successivo vicino al piede mostra allora il titolo del nuovo capitolo sopra un testo che appartiene ancora al vecchio. `{chapterTitleAtTop}` e `{chapterNumberAtTop}` indicano invece il capitolo in vigore in cima alla pagina, come fanno i romanzi con capitoli consecutivi e molte opere di consultazione:
 
 - una pagina il cui primo blocco è l’H1 di un capitolo indica quel capitolo;
 - qualsiasi altra pagina indica il capitolo da cui prosegue, anche quando un nuovo capitolo inizia più in basso;
-- una pagina bianca aggiunta per la parità va con la pagina che la segue, e il separatore delle modalità `always-*` con la pagina che lo precede (vedi [Appartenenza delle pagine bianche](/it/docs/configuration-headings#a-chi-appartengono-le-pagine-bianche)); quando la pagina dopo una bianca di parità si apre con la fine di un capitolo e non con il suo H1, anche la bianca resta a quel capitolo;
+- una pagina bianca aggiunta per la parità va con la pagina che la segue, e il separatore delle modalità `always-*` con la pagina che lo precede (vedi [A chi appartengono le pagine bianche](/it/docs/configuration-headings#a-chi-appartengono-le-pagine-bianche)); quando la pagina dopo una bianca di parità si apre con la fine di un capitolo e non con il suo H1, anche la bianca resta a quel capitolo;
 - un H1 con `runningChapter: false` viene saltato.
 
 ```ts
@@ -330,7 +330,7 @@ header: {
 }
 ```
 
-Come le parole guida, entrambi sono testatine: si risolvono negli spazi di intestazione e piè di pagina e non stampano nulla nei progetti dei titoli, delle parti e del sommario. `{attr.<key>}` legge sempre l’ultimo capitolo iniziato.
+Come le parole guida, entrambi sono testatine: si risolvono negli spazi di intestazione e piè di pagina e non stampano nulla nella grafica dei titoli, delle parti e dell’indice. `{attr.<key>}` legge sempre l’ultimo capitolo iniziato.
 
 #### Allineamento implicito dal bordo
 
@@ -339,7 +339,7 @@ Quando il `placement.anchor.to` di un elemento di testo fa riferimento a un altr
 - `right-of` e `align-left` implicano un testo `align: 'left'`: le righe spezzate scorrono verso destra a partire dall’ancora.
 - `left-of` e `align-right` implicano `align: 'right'`: le righe spezzate aderiscono al lato più vicino all’elemento di riferimento.
 
-L’editor dei titoli della Sandbox applica automaticamente questi allineamenti impliciti quando cambi il bordo o l’elemento di ancoraggio. Mantengono il testo su più righe visivamente ancorato all’elemento a cui si riferisce (così, per esempio, la «P» di un «Postext» spezzato si allinea verticalmente sotto la «I» di «Introduction»).
+L’editor dei titoli della Sandbox applica automaticamente questi allineamenti impliciti quando cambi il bordo o l’elemento di ancoraggio. Così il testo su più righe resta visivamente ancorato all’elemento a cui si riferisce (così, per esempio, la «P» di un «Postext» spezzato si allinea verticalmente sotto la «I» di «Introduction»).
 
 #### Segni in linea e contorni
 
@@ -388,9 +388,9 @@ Nel PDF le sequenze in grassetto e in corsivo incorporano i caratteri corrispond
 
 Un elemento di testo che scrivi tu parte da questi valori, alcuni dei quali sorprendono:
 
-- **`overflow` segue lo spazio.** Nel progetto di un titolo o in una pagina di parte un titolo lungo va a capo su più righe; in una testatina, in un folio o in una riga di parte del sommario un testo troppo largo per il suo spazio viene tagliato a una riga con `…`. Imposta `overflow: 'wrap'` su una testatina che può allungarsi (un indirizzo, una firma) e controlla gli avvisi `designTextTruncated` per i testi tagliati. Un a capo nel contenuto (un fine riga, o `\n` nel modello o nel valore di un attributo) inizia una nuova riga in ogni modalità; le modalità con puntini tagliano ogni riga per conto suo.
+- **`overflow` dipende dallo spazio.** Nella grafica di un titolo o in una pagina di parte un titolo lungo va a capo su più righe; in una testatina, in un numero di pagina o in una riga di parte dell’indice un testo troppo largo per il suo spazio viene tagliato a una riga con `…`. Imposta `overflow: 'wrap'` su una testatina che può allungarsi (un indirizzo, una firma) e controlla gli avvisi `designTextTruncated` per i testi tagliati. Un a capo nel contenuto (un fine riga, o `\n` nel modello o nel valore di un attributo) inizia una nuova riga in ogni modalità; le modalità con puntini tagliano ogni riga per conto suo.
 - **`align` è `'center'` e `verticalAlign` è `'middle'`.** Un elemento a larghezza automatica si adatta alla sua riga più lunga, quindi le sue righe sono centrate l’una rispetto all’altra; imposta `align: 'left'` per un blocco allineato a sinistra (un elemento a larghezza automatica ancorato a un altro elemento allinea da sé le righe sul lato della sua ancora, vedi sopra).
-- **Il carattere è EB Garamond 8 pt, nero, `lineHeight` 1.2**, qualunque cosa usi il testo. A differenza delle altre interlinee della configurazione, il `lineHeight` di un testo di progetto è di solito un semplice multiplo (`1.2`); funziona anche una `Dimension` (vedi sopra).
+- **Il carattere è EB Garamond 8 pt, nero, `lineHeight` 1.2**, qualunque carattere usi il testo corrente. A differenza delle altre interlinee della configurazione, il `lineHeight` di un testo grafico è di solito un semplice multiplo (`1.2`); funziona anche una `Dimension` (vedi sopra).
 
 Un elemento senza `placement.size.width` (o con `'auto'`) si dimensiona sul suo testo, ma solo entro lo spazio tra il suo punto di ancoraggio e il bordo del contenitore verso cui cresce: per un’ancora `top` o `bottom`, il doppio della distanza dal bordo più vicino. Il suo `offset` conta. Uno scostamento in direzione opposta a quel bordo non costa nulla: una testatina ancorata `top-left` con una `x` negativa (che sporge nel margine sinistro) non perde spazio, perché cresce verso destra. Uno scostamento verso quel bordo riduce lo spazio della stessa misura (il doppio per un’ancora `top` o `bottom`), e uno che spinge l’ancora oltre il bordo non ne lascia: un’ancora `top-right` la cui `x` è inferiore a meno la larghezza del contenitore, o un’ancora `top` spostata di lato di più di metà di quella larghezza. Senza spazio, una modalità con puntini non stampa nulla e `'wrap'` impila un carattere per riga. Tre vie d’uscita:
 
@@ -398,11 +398,11 @@ Un elemento senza `placement.size.width` (o con `'auto'`) si dimensiona sul suo 
 - ancoralo a `'page'` o a `'bleed'`, così lo spazio è delimitato dalla pagina (o dall’abbondanza);
 - ancoralo al bordo opposto del contenitore.
 
-Il contenitore di un’intestazione va dal bordo superiore di rifilo fino al testo, e quello di un piè di pagina dal testo fino al bordo inferiore di rifilo: in un’intestazione le ancore `top-*` misurano dal bordo di rifilo e le ancore `bottom-*` dal testo, e viceversa in un piè di pagina (vedi **Cornice del contenitore** più sopra). Un’intestazione o un piè di pagina non sposta mai il testo e si dipinge sopra di esso, quindi un elemento spinto nell’area del testo copre il testo. Una fascia di apertura, invece, si dipinge sotto il testo; quanto spazio occupa nel flusso è descritto in [Altezza riservata](/it/docs/configuration-headings#altezza-riservata).
+Il contenitore di un’intestazione va dal bordo superiore di rifilo fino al testo, e quello di un piè di pagina dal testo fino al bordo inferiore di rifilo: in un’intestazione le ancore `top-*` misurano dal bordo di rifilo e le ancore `bottom-*` dal testo, e viceversa in un piè di pagina (vedi **Area del contenitore** più sopra). Un’intestazione o un piè di pagina non sposta mai il testo e si dipinge sopra di esso, quindi un elemento spinto nell’area del testo copre il testo. Una fascia di apertura, invece, si dipinge sotto il testo; quanto spazio occupa nel flusso è descritto in [Altezza riservata](/it/docs/configuration-headings#altezza-riservata).
 
 ### Elementi di testo verticale
 
-Un elemento di testo con `writingMode: 'vertical-rl'` si compone in verticale in uno spazio il cui testo è orizzontale: le testatine e i folio di qualsiasi libro, che restano sul foglio, e ogni progetto di una pagina orizzontale. Si impagina come un testo orizzontale nella propria cornice ruotata di un quarto di giro in senso orario, e poi riportata sulla pagina:
+Un elemento di testo con `writingMode: 'vertical-rl'` si compone in verticale in uno spazio il cui testo è orizzontale: le testatine e i numeri di pagina di qualsiasi libro, che restano sul foglio, e tutta la grafica di una pagina orizzontale. Si impagina come un testo orizzontale in un proprio sistema di riferimento ruotato di un quarto di giro in senso orario, che poi viene riportato sulla pagina:
 
 - Il suo riquadro resta dove lo mette la collocazione. La sua altezza è la lunghezza di una riga: la imposta `size.height` (o `'auto'`, la lunghezza del testo; `'fill'`, fino al bordo del contenitore), `size.width` imposta quante righe entrano in larghezza, e `size.maxWidth` limita la lunghezza di una riga.
 - `align` colloca le righe lungo il riquadro (`'left'` in alto), `verticalAlign` attraverso di esso (`'top'` a destra, dove sta la prima riga), e il padding di un riquadro resta sul lato per cui è scritto.
@@ -411,7 +411,7 @@ Un elemento di testo con `writingMode: 'vertical-rl'` si compone in verticale in
 - Un capolettera non si compone su un elemento verticale.
 - Nel flusso di una pagina verticale (un’apertura, una pagina di parte, il titolo di un riquadro) il testo scorre già verso il basso, e lì `writingMode` non cambia nulla.
 
-I libri cinesi verticali mettono testatine e folio in uno di tre posti ([clreq §7.2](https://www.w3.org/TR/clreq/#x7-2-page-headers-footers-etc); [JLREQ §2.6](https://www.w3.org/TR/jlreq/#running_heads_and_page_numbers) per il giapponese):
+I libri cinesi verticali mettono testatine e numeri di pagina in uno di tre posti ([clreq §7.2](https://www.w3.org/TR/clreq/#x7-2-page-headers-footers-etc); [JLREQ §2.6](https://www.w3.org/TR/jlreq/#running_heads_and_page_numbers) per il giapponese):
 
 <table>
   <thead>
@@ -419,8 +419,8 @@ I libri cinesi verticali mettono testatine e folio in uno di tre posti ([clreq �
   </thead>
   <tbody>
     <tr><td>Testa e piede orizzontali</td><td>Sopra e sotto la gabbia del testo, come nei libri orizzontali; la più comune.</td><td>L’intestazione e il piè di pagina così come sono.</td></tr>
-    <tr><td>Margine esterno (stile 中缝, a Taiwan 邊峰)</td><td>Lungo il margine esterno: il titolo del capitolo o del libro a partire da circa quattro caratteri sotto la testa della gabbia del testo, il folio che termina circa cinque caratteri sopra il suo piede, in numerali cinesi, a circa l’80% del corpo del testo.</td><td>Due elementi verticali ancorati a <code>'outer'</code>, più sotto.</td></tr>
-    <tr><td>Angolo esterno al piede</td><td>Il folio al piede della pagina, nell’angolo esterno (le regole di Taiwan per i libri 中式).</td><td>Un elemento orizzontale nel piè di pagina in <code>'bottom-left'</code> con <code>parity: 'odd'</code> e uno in <code>'bottom-right'</code> con <code>parity: 'even'</code> in un libro rilegato a destra (al contrario in uno rilegato a sinistra).</td></tr>
+    <tr><td>Margine esterno (stile 中缝, a Taiwan 邊峰)</td><td>Lungo il margine esterno: il titolo del capitolo o del libro a partire da circa quattro caratteri sotto la testa della gabbia del testo, il numero di pagina che termina circa cinque caratteri sopra il suo piede, in numerali cinesi, a circa l’80% del corpo del testo.</td><td>Due elementi verticali ancorati a <code>'outer'</code>, più sotto.</td></tr>
+    <tr><td>Angolo esterno al piede</td><td>Il numero di pagina al piede della pagina, nell’angolo esterno (le regole di Taiwan per i libri 中式).</td><td>Un elemento orizzontale nel piè di pagina in <code>'bottom-left'</code> con <code>parity: 'odd'</code> e uno in <code>'bottom-right'</code> con <code>parity: 'even'</code> in un libro rilegato a destra (al contrario in uno rilegato a sinistra).</td></tr>
   </tbody>
 </table>
 
@@ -440,9 +440,9 @@ Le testatine sul margine esterno, come le aggiunge la Sandbox (**Intestazione �
 }
 ```
 
-`anchor.to: 'outer'` (vedi [Collocazione degli elementi](#collocazione-degli-elementi)) è il margine esterno di ogni pagina, quindi in un libro rilegato a destra (`page.binding`) i due elementi scendono lungo il bordo sinistro di un recto e il bordo destro di un verso. `{pageNumber}` si stampa nel formato di numerazione delle pagine: `trad-chinese-informal` dà 一百零三 a pagina 103, `cjk-decimal` 一〇三. Le regole di ciascuno spazio valgono ancora: `pages: 'body'` tiene una testatina lontana dalle aperture di capitolo. Un piccolo ornamento tra testatina e folio (una coda di pesce ︻, un filetto) è un elemento ordinario ancorato alla stessa cornice.
+`anchor.to: 'outer'` (vedi [Collocazione degli elementi](#collocazione-degli-elementi)) è il margine esterno di ogni pagina, quindi in un libro rilegato a destra (`page.binding`) i due elementi scendono lungo il bordo sinistro di un recto e il bordo destro di un verso. `{pageNumber}` si stampa nel formato di numerazione delle pagine: `trad-chinese-informal` dà 一百零三 a pagina 103, `cjk-decimal` 一〇三. Le regole di ciascuno spazio valgono ancora: `pages: 'body'` tiene una testatina lontana dalle aperture di capitolo. Un piccolo ornamento tra testatina e numero di pagina (una coda di pesce ︻, un filetto) è un elemento ordinario ancorato allo stesso margine.
 
-Nel VDT un blocco verticale porta `vertical` (`VDTDesignTextBlock.vertical`: la regione, le cifre diritte e l’asse centrale di ogni famiglia); le sue righe sono nella cornice ruotata del blocco stesso, `xOffset` verso il basso a partire dalla sommità del riquadro, `baselineY` verso sinistra a partire dal suo bordo destro. Una sequenza di una riga marcata porta `tcy` o `orientation`, come un segmento del testo.
+Nel VDT un blocco verticale ha `vertical` (`VDTDesignTextBlock.vertical`: la regione, le cifre diritte e l’asse centrale di ogni famiglia); le sue righe sono nel sistema di riferimento ruotato del blocco stesso, `xOffset` verso il basso a partire dalla sommità del riquadro, `baselineY` verso sinistra a partire dal suo bordo destro. Una sequenza di una riga marcata ha `tcy` o `orientation`, come un segmento del testo corrente.
 
 ### Elementi filetto
 
@@ -474,7 +474,7 @@ Gli elementi filetto disegnano una linea: orizzontale attraverso lo spazio, o ve
       <td><code>direction</code></td>
       <td><code>'horizontal' | 'vertical'</code></td>
       <td><code>'horizontal'</code></td>
-      <td>Un filetto orizzontale corre lungo <code>placement.size.width</code> (<code>'fill'</code> = fino al bordo del contenitore) ed è alto <code>thickness</code>. Un filetto verticale scende lungo <code>placement.size.height</code> (<code>'fill'</code> o non impostato = fino al bordo del contenitore) ed è largo <code>thickness</code>: un divisorio tra una testatina e un folio.</td>
+      <td>Un filetto orizzontale corre lungo <code>placement.size.width</code> (<code>'fill'</code> = fino al bordo del contenitore) ed è alto <code>thickness</code>. Un filetto verticale scende lungo <code>placement.size.height</code> (<code>'fill'</code> o non impostato = fino al bordo del contenitore) ed è largo <code>thickness</code>: un divisorio tra una testatina e un numero di pagina.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -528,7 +528,7 @@ Gli elementi filetto disegnano una linea: orizzontale attraverso lo spazio, o ve
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Solo progetti dei titoli: se il filetto conta nell’altezza che il titolo riserva nel flusso del testo (vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>).</td>
+      <td>Solo per la grafica dei titoli: se il filetto conta nell’altezza che il titolo riserva nel flusso del testo (vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -611,7 +611,7 @@ Gli elementi riquadro dipingono un rettangolo arrotondato dentro lo spazio: util
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Solo progetti dei titoli: se il riquadro conta nell’altezza che il titolo riserva nel flusso del testo (vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>).</td>
+      <td>Solo per la grafica dei titoli: se il riquadro conta nell’altezza che il titolo riserva nel flusso del testo (vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -627,7 +627,7 @@ Un elemento `image` disegna una risorsa bitmap o SVG del documento: il logo di u
 }
 ```
 
-`resourceId` accetta i segnaposto che accetta il `content` di un elemento di testo, così un unico progetto può disegnare un’immagine diversa per ogni titolo. Con `resourceId: '{attr.vignette}'` in uno stile di titolo, `# Chapter I {style="opener" vignette="log"}` disegna la risorsa `log` e `# Chapter II {style="opener" vignette="wig"}` disegna `wig`: i capitoli condividono lo stile invece di avere un clone per ogni immagine. Un’intestazione o un piè di pagina legge gli attributi del capitolo della pagina, come fa `{attr.<key>}` in una testatina, e funzionano anche gli altri segnaposto (`'map-{chapterNumber}'`). Un id che risulta vuoto, come un titolo senza l’attributo, non disegna nulla. Da postext 1.8.
+`resourceId` accetta i segnaposto che accetta il `content` di un elemento di testo, così un’unica grafica può disegnare un’immagine diversa per ogni titolo. Con `resourceId: '{attr.vignette}'` in uno stile di titolo, `# Chapter I {style="opener" vignette="log"}` disegna la risorsa `log` e `# Chapter II {style="opener" vignette="wig"}` disegna `wig`: i capitoli condividono lo stile invece di avere un clone per ogni immagine. Un’intestazione o un piè di pagina legge gli attributi del capitolo della pagina, come fa `{attr.<key>}` in una testatina, e funzionano anche gli altri segnaposto (`'map-{chapterNumber}'`). Un id che risulta vuoto, come un titolo senza l’attributo, non disegna nulla. Da postext 1.8.
 
 <table>
   <thead>
@@ -667,7 +667,7 @@ Un elemento `image` disegna una risorsa bitmap o SVG del documento: il logo di u
       <td><code>focus</code></td>
       <td><code>&#123; x: number; y: number &#125;</code></td>
       <td>—</td>
-      <td>Il punto dell’immagine che il ritaglio <code>'cover'</code> centra, in frazioni dell’immagine: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per un volto nel terzo superiore. Il ritaglio lascia comunque in vista la zona sicura. Senza di esso i margini intorno alla zona sicura si ritagliano in proporzione alla loro misura, oppure l’immagine si centra. Nel Sandbox il <strong>Punto focale</strong> dell’editor dell’immagine mostra l’immagine con la parte che il ritaglio conserva riquadrata; un clic sull’immagine, o le frecce, fissano il punto (da postext 1.39).</td>
+      <td>Il punto dell’immagine che il ritaglio <code>'cover'</code> centra, in frazioni dell’immagine: <code>&#123; x: 0.5, y: 0.3 &#125;</code> per un volto nel terzo superiore. Il ritaglio lascia comunque in vista la zona sicura. Senza di esso i margini intorno alla zona sicura si ritagliano in proporzione alla loro misura, oppure l’immagine si centra. Nella Sandbox il <strong>Punto focale</strong> dell’editor dell’immagine mostra l’immagine con la parte che il ritaglio conserva riquadrata; un clic sull’immagine, o le frecce, fissano il punto (da postext 1.39).</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -685,18 +685,18 @@ Un elemento `image` disegna una risorsa bitmap o SVG del documento: il logo di u
       <td><code>reserve</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Solo progetti dei titoli: se l’immagine conta nell’altezza che il titolo riserva nel flusso del testo (vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>).</td>
+      <td>Solo per la grafica dei titoli: se l’immagine conta nell’altezza che il titolo riserva nel flusso del testo (vedi <a href="/it/docs/configuration-headings#altezza-riservata">Altezza riservata</a>).</td>
     </tr>
   </tbody>
 </table>
 
 Il backend PDF incorpora la risorsa come una figura (un SVG con un master di stampa usa quello); il visualizzatore HTML la risolve tramite <code>resourceImageUrl</code>.
 
-Un’immagine disegnata da un progetto è contenuto quando la sua risorsa la descrive: l’`altText` della risorsa, altrimenti la sua didascalia come testo semplice (un chip letto attraverso la sua etichetta, un `:ref` attraverso il suo `text` quando ne ha uno), entra nel VDT (`VDTDesignImageBlock.altText`), diventa l’`alt` del suo `<img>` nell’HTML e una `Figure` con `/Alt` in un PDF con tag, letta subito dopo il testo del suo progetto (la tavola di un capitolo dopo il titolo del capitolo). Un’immagine la cui risorsa non ha né l’uno né l’altra, e una marcata `decorative`, è decorazione: `alt=""` con `role="presentation"`, e un artefatto nel PDF. L’immagine di una testatina o di un piè di pagina si ripete su ogni pagina, quindi è un elemento d’arredo qualunque cosa dica la sua risorsa: nessun `altText` nel VDT, `alt=""` con `role="presentation"` nell’HTML, un artefatto della pagina nel PDF.
+Un’immagine disegnata dalla grafica conta come contenuto quando la sua risorsa la descrive: l’`altText` della risorsa, altrimenti la sua didascalia come testo semplice (un chip letto attraverso la sua etichetta, un `:ref` attraverso il suo `text` quando ne ha uno), entra nel VDT (`VDTDesignImageBlock.altText`), diventa l’`alt` del suo `<img>` nell’HTML e una `Figure` con `/Alt` in un PDF con tag, letta subito dopo il testo della sua grafica (la tavola di un capitolo dopo il titolo del capitolo). Un’immagine la cui risorsa non ha né l’uno né l’altra, e una marcata `decorative`, è decorazione: `alt=""` con `role="presentation"`, e un artefatto nel PDF. L’immagine di una testatina o di un piè di pagina si ripete su ogni pagina, quindi è un elemento d’arredo, qualunque cosa indichi la sua risorsa: nessun `altText` nel VDT, `alt=""` con `role="presentation"` nell’HTML, un artefatto della pagina nel PDF.
 
 ### Collocazione degli elementi
 
-`ElementPlacement` è il modello di posizionamento unificato usato da ogni tipo di elemento (testo, filetto, riquadro) dentro qualsiasi spazio di progetto: intestazione della pagina, piè di pagina, o spazio del progetto avanzato di un livello di titolo. Tre informazioni descrivono una collocazione:
+`ElementPlacement` è il modello di posizionamento unificato usato da ogni tipo di elemento (testo, filetto, riquadro) dentro qualsiasi spazio della grafica: intestazione della pagina, piè di pagina, o spazio della **Grafica avanzata** di un livello di titolo. Tre informazioni descrivono una collocazione:
 
 ```ts
 interface ElementPlacement {
@@ -731,15 +731,15 @@ Ogni bordo relativo a un elemento mette un angolo dell’elemento su un angolo d
 
 Un bordo relativo a un elemento usato con `'container'`, `'page'` o `'bleed'`, e un bordo del contenitore usato con `'#id'`, vengono letti come l’angolo in alto a sinistra.
 
-**Bordi d’inizio e di fine.** `top-start`, `start`, `bottom-start`, `top-end`, `end` e `bottom-end` (con `'container'`, `'page'`, `'bleed'` o `'outer'`), e `align-start` e `align-end` (con `'#id'`), indicano il lato da cui partono le righe della pagina invece di un lato fisso. In una pagina da sinistra a destra `top-start` è `top-left`; in una pagina da destra a sinistra, e in una pagina verticale, le cui righe si susseguono da destra, è `top-right`. Con questi bordi la `x` dello spostamento va dal lato d’inizio al lato di fine: in una pagina da destra a sinistra una `x` positiva sposta l’elemento verso sinistra, e l’elemento è lo specchio di quello da sinistra a destra. La decorazione di un modello e le testatine stanno sul foglio, quindi un occhiello scritto `top-start` resta sopra la cornice del titolo in un’edizione araba come in una italiana. Una cornice sta nel flusso della pagina, già specchiato o ruotato, dove `start` è sempre la sua sinistra, come `left`. Nel disegno di un titolo, anch’esso nel flusso, `start` è `left`. Nel Sandbox l’elenco **Allineamento** dell’editor dello slot ha **Inizio** e **Fine**, e gli elenchi dei bordi hanno i lati d’inizio e di fine. Da postext 1.39; fino alla 1.38 queste parole valevano `top-left`.
+**Bordi d’inizio e di fine.** `top-start`, `start`, `bottom-start`, `top-end`, `end` e `bottom-end` (con `'container'`, `'page'`, `'bleed'` o `'outer'`), e `align-start` e `align-end` (con `'#id'`), indicano il lato da cui partono le righe della pagina invece di un lato fisso. In una pagina da sinistra a destra `top-start` è `top-left`; in una pagina da destra a sinistra, e in una pagina verticale, le cui righe si susseguono da destra, è `top-right`. Con questi bordi la `x` dello spostamento va dal lato d’inizio al lato di fine: in una pagina da destra a sinistra una `x` positiva sposta l’elemento verso sinistra, e l’elemento è lo specchio di quello da sinistra a destra. La decorazione di un modello e le testatine stanno sul foglio, quindi un occhiello scritto `top-start` resta sopra la cornice del titolo in un’edizione araba come in una italiana. Una cornice sta nel flusso della pagina, già specchiato o ruotato, dove `start` è sempre la sua sinistra, come `left`. Nel disegno di un titolo, anch’esso nel flusso, `start` è `left`. Nella Sandbox l’elenco **Allineamento** dell’editor dello slot ha **Inizio** e **Fine**, e gli elenchi dei bordi hanno i lati d’inizio e di fine. Da postext 1.39; fino alla 1.38 queste parole valevano `top-left`.
 
-`anchor.to: 'page'` ancora l’elemento al **formato rifilato** (la pagina fisica dopo il taglio) e `'bleed'` al formato rifilato allargato di `cutLines.bleed` su ogni lato (identico al formato rifilato finché i segni di taglio sono disattivati). Entrambe le cornici diventano anche il riferimento per `size: 'fill'` e per il limite automatico della larghezza, così una fascia colorata può andare da bordo a bordo indipendentemente dai margini della pagina:
+`anchor.to: 'page'` ancora l’elemento al **formato rifilato** (la pagina fisica dopo il taglio) e `'bleed'` al formato rifilato allargato di `cutLines.bleed` su ogni lato (identico al formato rifilato finché i segni di taglio sono disattivati). Entrambi i riquadri diventano anche il riferimento per `size: 'fill'` e per il limite automatico della larghezza, così una fascia colorata può andare da bordo a bordo indipendentemente dai margini della pagina:
 
 ```json
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Una dimensione può anche arrivare fino a un bordo di un altro riquadro: `{ to, edge }`, dove `to` nomina il riquadro come fa un ancoraggio (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` di un altro elemento e, nella decorazione di una pagina composta, di una cornice o di un gruppo) e `edge` quale dei suoi bordi, `'top'` o `'bottom'` per un’altezza, `'left'` o `'right'` per una larghezza. La lunghezza va dal punto di ancoraggio dell’elemento fino a quel bordo, nel verso in cui l’elemento cresce; un bordo dietro il punto di ancoraggio dà 0, e un bordo dell’altro asse, o un riquadro che non c’è, si legge come `'fill'`. Un fondo che va dal piede di una banda fino al margine di rifilo resta nel modello e segue la banda quando questa si sposta. Da postext 1.38:
+Una dimensione può anche arrivare fino a un bordo di un altro riquadro: `{ to, edge }`, dove `to` nomina il riquadro come fa un ancoraggio (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` di un altro elemento e, nella decorazione di una pagina composta, di una cornice o di un gruppo) e `edge` quale dei suoi bordi, `'top'` o `'bottom'` per un’altezza, `'left'` o `'right'` per una larghezza. La lunghezza va dal punto di ancoraggio dell’elemento fino a quel bordo, nel verso in cui l’elemento cresce; un bordo dietro il punto di ancoraggio dà 0, e un bordo dell’altro asse, o un riquadro che non c’è, si legge come `'fill'`. Uno sfondo che va dal piede di una fascia fino all’abbondanza resta nel modello e segue la fascia quando questa si sposta. Da postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }
@@ -749,7 +749,7 @@ Con i segni di taglio attivi, tutto ciò che un elemento dipinge oltre il riquad
 
 `anchor.to: 'outer'` (spazi di intestazione e piè di pagina) ancora l’elemento al **margine esterno** della pagina: dal bordo della gabbia del testo al bordo di rifilo sul lato opposto al dorso, e dalla testa della gabbia del testo al suo piede. Sta a destra di un recto e a sinistra di un verso in un libro rilegato a sinistra, e al contrario in uno rilegato a destra (`page.binding`), così un solo elemento serve entrambe le pagine di una doppia pagina: una testatina lungo il margine esterno (vedi [Elementi di testo verticale](#elementi-di-testo-verticale)). In qualsiasi altro spazio vale come `'container'`. L’`offset` di un elemento di testo si può scrivere in `em`, em del suo stesso `fontSize`: quattro caratteri sotto la testa della gabbia del testo è `{ "y": { "value": 4, "unit": "em" } }`.
 
-Dentro lo spazio del progetto avanzato di un titolo, gli elementi ancorati alla pagina e all’abbondanza non aumentano l’altezza riservata al titolo a meno che non si estendano sotto il bordo superiore del titolo (una fascia in cima alla pagina sta dietro l’apertura; una fascia che arriva sotto il titolo spinge in basso il testo). Usa `advancedDesign.minHeight` per riservare comunque un’altezza fissa all’apertura, e `reserve: false` su un elemento che non deve spingere affatto il testo. Le regole complete sono in [Altezza riservata](/it/docs/configuration-headings#altezza-riservata).
+Nello spazio della **Grafica avanzata** di un titolo, gli elementi ancorati alla pagina e all’abbondanza non aumentano l’altezza riservata al titolo a meno che non si estendano sotto il bordo superiore del titolo (una fascia in cima alla pagina sta dietro l’apertura; una fascia che arriva sotto il titolo spinge in basso il testo). Usa `advancedDesign.minHeight` per riservare comunque un’altezza fissa all’apertura, e `reserve: false` su un elemento che non deve spingere affatto il testo. Le regole complete sono in [Altezza riservata](/it/docs/configuration-headings#altezza-riservata).
 
 Ogni elemento ha un `id` stabile (assegnato automaticamente dalla Sandbox; puoi anche impostarlo a mano). Gli elementi ancorati ad altri elementi formano un piccolo grafo di dipendenze che il motore risolve prima di misurare, così un elemento può concatenarsi a un altro senza coordinate manuali.
 

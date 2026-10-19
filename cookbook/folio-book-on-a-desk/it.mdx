@@ -5,12 +5,12 @@ plain: "Il primo capitolo di un breve romanzo, mostrato come un vero libro apert
 description: "Il capitolo di un romanzo impaginato con postext e aperto in 3D con postext-folio: carta, legatura, scrivania e luce in config.folio, in un CodePen minimo."
 question: "Come mostro il mio documento impaginato come un libro 3D che il lettore sfoglia a mano?"
 aliases: ["Folio", "postext-folio", "sfogliabile", "flipbook", "girare pagina", "page flip", "libro 3D", "anteprima del libro", "sfogliare le pagine"]
-pageNotes: { "1": "L’apertura del capitolo: un piccolo occhiello verde, il titolo «The Last Crossing» e un breve filetto, poi la prima pagina di testo giustificato.", "2": "Una pagina verso con il nome dell’autore e il folio nella testatina e un sottotitolo verde in corsivo." }
+pageNotes: { "1": "L’apertura del capitolo: un piccolo occhiello verde, il titolo «The Last Crossing» e un breve filetto, poi la prima pagina di testo giustificato.", "2": "Una pagina verso con il nome dell’autore e il numero di pagina nella testatina e un sottotitolo verde in corsivo." }
 ---
 
 ## Che cosa comporrai
 
-Il primo capitolo di *The Ferryman’s Ledger*, un breve romanzo su una pagina di 129 × 198 mm, aperto come un libro su una scrivania di noce. La copertina è in tela verde bottiglia, le pagine sono di una carta da romanzo color crema ad alto spessore, e il lettore prende la pagina di destra per il bordo e la gira, con il foglio che si incurva e proietta la sua ombra sulla pagina sotto. Il testo viene composto una volta con `buildDocument`; una sola chiamata al pacchetto `postext-folio` trasforma quell’impaginazione nel libro. Tutto ciò di cui è fatto il libro (carta, legatura, scrivania, luce, l’angolo della vista) fa parte della configurazione, quindi lo stesso documento porta con sé il suo aspetto nella scheda Folio della Sandbox.
+Il primo capitolo di *The Ferryman’s Ledger*, un breve romanzo su una pagina di 129 × 198 mm, aperto come un libro su una scrivania di noce. La copertina è in tela verde bottiglia, le pagine sono di una carta da romanzo color crema ad alto spessore, e il lettore prende la pagina di destra per il bordo e la gira, con il foglio che si incurva e proietta la sua ombra sulla pagina sotto. Il testo si compone una volta con `buildDocument`; una sola chiamata al pacchetto `postext-folio` trasforma quell’impaginazione nel libro. Tutto ciò di cui è fatto il libro (carta, legatura, scrivania, luce, l’angolo della vista) fa parte della configurazione, quindi lo stesso documento conserva il suo aspetto nella scheda Folio della Sandbox.
 
 ## Preparazione
 
@@ -18,7 +18,7 @@ Il primo capitolo di *The Ferryman’s Ledger*, un breve romanzo su una pagina d
 
 <Excerpt region="folio" />
 
-`config.folio` viene letto dal visualizzatore 3D e da nient’altro: l’impaginazione, il canvas, il PDF e l’output HTML lo ignorano, quindi cambiare la carta non sposta mai una riga. `bookWove` è una carta da romanzo ad alto spessore, e 70 g/m² con il suo spessore danno un foglio di circa 112 µm; il visualizzatore lo moltiplica per il numero di pagine per ottenere lo spessore del blocco. Il colore della tela è collegato all’accento della tavolozza, lo stesso verde dell’occhiello e dei folio.
+`config.folio` viene letto dal visualizzatore 3D e da nient’altro: l’impaginazione, il canvas, il PDF e l’output HTML lo ignorano, quindi cambiare la carta non sposta mai una riga. `bookWove` è una carta da romanzo ad alto spessore, e 70 g/m² con il suo spessore danno un foglio di circa 112 µm; il visualizzatore lo moltiplica per il numero di pagine per ottenere lo spessore del blocco. Il colore della tela è collegato all’accento della tavolozza, lo stesso verde dell’occhiello e dei numeri di pagina.
 
 ### 2 · Un’apertura sobria e le testatine
 

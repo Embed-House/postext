@@ -5,12 +5,12 @@ plain: "Cinq pages d’un petit recueil d’essais. On y voit comment imprimer l
 description: "Un Montaigne de poche composé avec Postext : titres courants choisis selon la parité et le rôle de la page, onglets de folio en marge et points de suspension."
 question: "Comment mettre le titre du livre sur les pages de gauche, le chapitre à droite et le folio à l’extérieur ?"
 aliases: ["titre courant", "titres courants au verso et au recto", "pages paires et impaires", "numéro de page à l’extérieur", "onglet de folio", "titre de chapitre long", "abréger un titre avec des points de suspension", "masquer l’en-tête à l’ouverture de chapitre", "couleur de la page blanche", "en-tête bleu par défaut", "running heads"]
-pageNotes: { "3": "Le titre courant du recto coupe le titre de l’essai, long de 81 caractères, par des points de suspension avant un filet sépia de 0,5 pt et l’onglet du folio dans la marge extérieure.", "4": "La page 32, un verso, porte le titre du livre ; l’essai se termine au premier tiers de la page." }
+pageNotes: { "3": "Le titre courant du recto coupe le titre de l’essai, long de 81 caractères, par des points de suspension avant un filet sépia de 0,5 pt et l’onglet du folio dans la marge extérieure.", "4": "La page 32, un verso, affiche le titre du livre ; l’essai se termine au premier tiers de la page." }
 ---
 
 ## Ce que vous allez composer
 
-Les pages 29 à 33 d’une édition de poche des *Essais* de Montaigne dans l’anglais de Charles Cotton : tout le chapitre IV et le début du chapitre V. Les versos portent le titre du livre en capitales espacées. Les rectos portent le titre de l’essai en italique, abrégé par des points de suspension, car le titre du chapitre IV compte 81 caractères. Chaque folio se loge dans un onglet sépia de la marge extérieure, à 3 mm d’un filet de 0,5 pt posé sur le bord du bloc de texte. Une ouverture n’a pas de titre courant, seulement un folio en pied. Le texte est en Baskervville sur une page blanc cassé chaud, les titres en Libre Caslon Display, les folios et le titre du livre en Alegreya SC. Chaque titre courant est défini dans la configuration : le titre courant intégré du moteur, en Open Sans bleu de 8 pt, ne s’imprime jamais.
+Les pages 29 à 33 d’une édition de poche des *Essais* de Montaigne dans l’anglais de Charles Cotton : tout le chapitre IV et le début du chapitre V. Les versos affichent le titre du livre en capitales espacées. Les rectos affichent le titre de l’essai en italique, abrégé par des points de suspension, car le titre du chapitre IV compte 81 caractères. Chaque folio se loge dans un onglet sépia de la marge extérieure, à 3 mm d’un filet de 0,5 pt posé sur le bord de la zone de contenu. Une ouverture n’a pas de titre courant, seulement un folio en pied. Le texte est en Baskervville sur une page blanc cassé chaud, les titres en Libre Caslon Display, les folios et le titre du livre en Alegreya SC. Chaque titre courant est défini dans la configuration : le titre courant intégré du moteur, en Open Sans bleu de 8 pt, ne s’imprime jamais.
 
 ## Préparation
 
@@ -34,13 +34,13 @@ La réponse courte ancre l’onglet de chaque titre courant à `'page'` : ses d
 
 <Excerpt region="page" />
 
-Avec `mirror: true`, la marge `right` est la marge extérieure sur un recto et passe à gauche sur un verso : `OUTER` est donc toujours la marge extérieure, côté tranche, où pendent les onglets. La marge du bas se déduit du format, de la marge du haut et de `LINES`, ce qui maintient le bloc de texte à exactement `LINES` lignes de `LEAD` (31 × 14 pt ici), quels que soient le format ou la marge du haut. Chaque page pleine se termine sur la 31e ligne, si bien que des pages en vis-à-vis comme <PageRef page={2}>30 et 31</PageRef> finissent au même niveau.
+Avec `mirror: true`, la marge `right` est la marge extérieure sur un recto et passe à gauche sur un verso : `OUTER` est donc toujours la marge extérieure, côté tranche, où pendent les onglets. La marge du bas se déduit du format, de la marge du haut et de `LINES`, ce qui maintient la zone de contenu à exactement `LINES` lignes de `LEAD` (31 × 14 pt ici), quels que soient le format ou la marge du haut. Chaque page pleine se termine sur la 31e ligne : des pages en vis-à-vis comme <PageRef page={2}>30 et 31</PageRef> finissent donc au même niveau.
 
 ### 4 · Laisser l’ouverture montrer le titre entier
 
 <Excerpt region="opener" />
 
-L’ouverture compose le titre en entier avec `overflow: 'wrap'` et le coupe à chaque `\\` de la ligne de titre. Seule une ouverture sur toute la largeur de la page respecte ces coupures : le niveau porte donc `span: 'page'` ([sauts de ligne dans les titres](/fr/docs/document-format-directives#sauts-de-ligne-dans-les-titres)). Dans le titre courant, `{chapterTitle}` donne toujours le titre sur une seule ligne, et ce sont les points de suspension qui coupent cette ligne. Le chiffre romain vient de l’attribut `{num="IV"}` du titre, et les petites capitales à côté de la plaque viennent du `subtitle` du frontmatter.
+L’ouverture compose le titre en entier avec `overflow: 'wrap'` et le coupe à chaque `\\` de la ligne de titre. Seule une ouverture sur toute la largeur de la page respecte ces coupures : le niveau a donc `span: 'page'` ([sauts de ligne dans les titres](/fr/docs/document-format-directives#sauts-de-ligne-dans-les-titres)). Dans le titre courant, `{chapterTitle}` donne toujours le titre sur une seule ligne, et ce sont les points de suspension qui coupent cette ligne. Le chiffre romain vient de l’attribut `{num="IV"}` du titre, et les petites capitales à côté de la plaque viennent du `subtitle` de l’en-tête YAML.
 
 ### 5 · Ouvrir chaque essai sur un recto
 
@@ -67,7 +67,7 @@ Avec `'odd'`, un essai qui se termine sur un recto est suivi d’un verso blanc.
 
 ### Ouvrir les essais d’un côté ou de l’autre
 
-Avec `'any'`, un essai commence à la page suivante, recto ou verso, et aucune page blanche n’est jamais ajoutée. La plaque est accrochée au coin supérieur gauche du bloc de texte et le folio en pied est centré dessous : les deux se placent donc de la même façon sur un verso que sur un recto.
+Avec `'any'`, un essai commence à la page suivante, recto ou verso, et aucune page blanche n’est jamais ajoutée. La plaque est accrochée au coin supérieur gauche de la zone de contenu et le folio en pied est centré dessous : les deux se placent donc de la même façon sur un verso que sur un recto.
 
 ```diff
 -      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },

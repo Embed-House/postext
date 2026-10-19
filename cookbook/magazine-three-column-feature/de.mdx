@@ -34,19 +34,19 @@ Ein Gleitobjekt geht an den ersten freien Kopf (oder Fuß) seiner Spalten nach d
 
 <Excerpt region="heads" />
 
-Kopfzeilenelemente werden über die Seite gezeichnet und reservieren keinen Platz, deshalb sind Seitenzahl und Beschriftung im oberen Rand an der Seite verankert. `pages: 'body'` hält sie von beiden Seiten der Doppelseite fern, die Auftaktseiten sind, weil jede mit einer Überschrift über die ganze Seitenbreite beginnt. Die rechte Seite der Doppelseite bekommt ihre Seitenzahl stattdessen am Fuß, über `pages: 'opener'` und `parity: 'odd'`; die linke, ganz Foto, trägt keine.
+Kopfzeilenelemente werden über die Seite gezeichnet und reservieren keinen Platz, deshalb sind Seitenzahl und Beschriftung im oberen Rand an der Seite verankert. `pages: 'body'` hält sie von beiden Seiten der Doppelseite fern, die Auftaktseiten sind, weil jede mit einer Überschrift über die ganze Seitenbreite beginnt. Die rechte Seite der Doppelseite bekommt ihre Seitenzahl stattdessen am Fuß, über `pages: 'opener'` und `parity: 'odd'`; die linke, ganz Foto, hat keine.
 
 ### 5 · Die Karte des Infokastens in Code zeichnen
 
 <Excerpt region="art" />
 
-Die Karte ist eine SVG-Ressource mit `placement: 'here'`, zitiert innerhalb des Direktivenblocks des Infokastens, sodass sie unter dem Kastentitel in der Satzbreite des Kastens steht. Sie hat keine Beschriftung: Text in einem SVG kann die Webschriften der Seite nicht verwenden, deshalb benennt die Bildunterschrift die Formen. Die Pfeilspitze auf der Fährroute ist ein Pfad, weil ein `<marker>` einen PDF-Export nicht überstehen würde.
+Die Karte ist eine SVG-Ressource mit `placement: 'here'`, innerhalb des Infokastens zitiert, sodass sie unter dem Kastentitel in der Satzbreite des Kastens steht. Sie hat keine Beschriftung: Text in einem SVG kann die Webschriften der Seite nicht verwenden, deshalb erklärt die Legende die Formen. Die Pfeilspitze auf der Fährroute ist ein Pfad, weil ein `<marker>` einen PDF-Export nicht überstehen würde.
 
 ## Varianten
 
 ### Das Zitat über alle drei Spalten setzen
 
-Ein gleitender Kasten zieht das Attribut `columns` des Direktivenblocks dem seines Stils vor, sodass ein einzelnes Zitat über die volle Breite laufen kann.
+Ein gleitender Kasten zieht das Attribut `columns` in seiner öffnenden Zeile dem seines Stils vor, sodass ein einzelnes Zitat über die volle Breite laufen kann.
 
 ```diff
 - :::callout{type="pull"}

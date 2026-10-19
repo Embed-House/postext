@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuració: còmics',
   sidebarTitle: 'Paràmetres de còmics',
-  description: 'Els paràmetres de comics: el marc i els carrers de les pàgines de còmic, els estils de vinyeta, la retolació, els estils de bafarada i el repartiment',
+  description: 'Com es configuren els còmics: el marc i els carrers de les pàgines, els estils de vinyeta i de bafarada, la retolació i el repartiment de personatges',
   lang: 'ca',
   lastUpdated: '2026-10-10',
   readingTime: '8 min',
   order: 17,
   parent: 'configuration',
-  plainSummary: "Aquesta pàgina reuneix els paràmetres de les pàgines de còmic. Fixes el marc de la pàgina i l'espai entre vinyetes. Tries la tipografia i la mida de la retolació. Defineixes com es dibuixen les bafarades, les cartel·les i les onomatopeies. També pots donar la llista de personatges, perquè cadascun parli amb el seu propi estil. La guia de còmics explica com escriure les pàgines.",
+  plainSummary: "Aquesta pàgina reuneix els paràmetres de les pàgines de còmic. Fixes el marc de la pàgina i l'espai entre vinyetes. Tries la lletra i la mida de la retolació. Defineixes com es dibuixen les bafarades, les cartel·les i les onomatopeies. També pots donar la llista de personatges, perquè cadascun parli amb el seu propi estil. La guia de còmics explica com escriure les pàgines.",
 };
 
 # Configuració: còmics
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Còmics
 
-La propietat `comics` configura les pàgines de còmic (`:::page`), les tires (`:::strip`) i les dobles pàgines: el marc i els carrers de què es tallen les vinyetes, els estils de vinyeta, la retolació, els estils de bafarada i el repartiment. Només la llegeixen els documents amb còmics; un document sense còmics es compon exactament igual que abans, i un document amb còmics i sense secció `comics` pren els valors per defecte de la seva llengua. El marcatge i la manera com es retolen les pàgines s'expliquen a [Còmics](/ca/docs/comics).
+La propietat `comics` configura les pàgines de còmic (`:::page`), les tires (`:::strip`) i les dobles pàgines: el marc i els carrers a partir dels quals es retallen les vinyetes, els estils de vinyeta, la retolació, els estils de bafarada i el repartiment. Només la tenen en compte els documents amb còmics: un document sense còmics es compon exactament igual que abans, i un document amb còmics però sense secció `comics` fa servir els valors per defecte de la seva llengua. El marcatge i la manera com es retolen les pàgines s'expliquen a [Còmics](/ca/docs/comics).
 
 ```ts
 const config: PostextConfig = {
@@ -47,7 +47,7 @@ const config: PostextConfig = {
       <td><code>readingDirection</code></td>
       <td><code>'auto' | 'ltr' | 'rtl'</code></td>
       <td><code>'auto'</code></td>
-      <td>L'ordre de les vinyetes dins d'una filera. <code>'auto'</code> llegeix de dreta a esquerra en un document de dreta a esquerra, en un de vertical i en japonès i xinès tradicional i, si no, en el sentit d'<code>artDirection</code> (també en xinès simplificat i coreà). L'atribut <code>direction</code> d'una pàgina el substitueix. Amb <code>page.binding: 'auto'</code>, un llibre els còmics del qual es llegeixen de dreta a esquerra s'enquaderna per la dreta.</td>
+      <td>L'ordre de les vinyetes dins d'una filera. <code>'auto'</code> llegeix de dreta a esquerra en un document de dreta a esquerra, en un document vertical i en japonès i xinès tradicional; en els altres casos (xinès simplificat i coreà inclosos), segueix el sentit d'<code>artDirection</code>. L'atribut <code>direction</code> d'una pàgina té prioritat. Amb <code>page.binding: 'auto'</code>, un llibre amb còmics que es llegeixen de dreta a esquerra s'enquaderna per la dreta.</td>
     </tr>
     <tr>
       <td><code>artDirection</code></td>
@@ -59,19 +59,19 @@ const config: PostextConfig = {
       <td><code>mirrorArt</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Reflecteix els dibuixos d'una pàgina que es llegeix en el sentit contrari a <code>artDirection</code>. Una vinyeta conserva el dibuix tal com és amb <code>mirror=false</code>.</td>
+      <td>Reflecteix els dibuixos d'una pàgina que es llegeix en el sentit contrari a <code>artDirection</code>. Amb <code>mirror=false</code>, una vinyeta conserva el dibuix tal com es va dibuixar.</td>
     </tr>
     <tr>
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>els marges de la pàgina</td>
-      <td>Marges propis per a les pàgines de còmic (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Les vinyetes es tallen de la caixa que deixen; sense definir, de la caixa de text de la pàgina.</td>
+      <td>Marges propis per a les pàgines de còmic (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Les vinyetes es retallen de la caixa que deixen aquests marges; si no es defineixen, de la caixa de text de la pàgina.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
       <td><code>Dimension</code></td>
       <td><code>4mm</code></td>
-      <td>L'espai entre fileres. L'atribut <code>gutter</code> d'una pàgina el substitueix.</td>
+      <td>L'espai entre fileres. L'atribut <code>gutter</code> d'una pàgina té prioritat.</td>
     </tr>
     <tr>
       <td><code>gutter.vertical</code></td>
@@ -89,7 +89,7 @@ const config: PostextConfig = {
       <td><code>panelStyles</code></td>
       <td><code>NamedPanelStyleConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Estils de vinyeta amb nom, que es trien amb <code>:::page&#123;style=…&#125;</code> o <code>::panel&#123;style=…&#125;</code>. Cadascun té un <code>id</code>, un <code>name</code> opcional (només per a les interfícies d'edició) i els camps d'un estil de vinyeta; els camps sense definir segueixen <code>panel</code>.</td>
+      <td>Estils de vinyeta amb nom, que es trien amb <code>:::page&#123;style=…&#125;</code> o <code>::panel&#123;style=…&#125;</code>. Cadascun té un <code>id</code>, un <code>name</code> opcional (només per a les interfícies d'edició) i els camps d'un estil de vinyeta; els camps que no es defineixen prenen el valor de <code>panel</code>.</td>
     </tr>
     <tr>
       <td><code>lettering</code></td>
@@ -101,7 +101,7 @@ const config: PostextConfig = {
       <td><code>balloonStyles</code></td>
       <td><code>BalloonStyleConfig[]</code></td>
       <td>els nou estils integrats</td>
-      <td>Estils de bafarada per tipus. Els integrats hi són sempre; una entrada amb l'id d'un d'ells el modifica, i una entrada amb un id nou afegeix un estil que es posa per sobre de <code>speech</code>.</td>
+      <td>Estils de bafarada per tipus. Els integrats hi són sempre; una entrada amb l'id d'un d'ells el modifica, i una entrada amb un id nou afegeix un estil que parteix de <code>speech</code>.</td>
     </tr>
     <tr>
       <td><code>cast</code></td>
@@ -113,13 +113,13 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Imprimeix les capçaleres i els folis a les pàgines de còmic. Desactivat, una pàgina de còmic és tota vinyetes i el seu número continua comptant.</td>
+      <td>Imprimeix les capçaleres i els folis a les pàgines de còmic. Si està desactivat, la pàgina de còmic només té vinyetes, però continua comptant en la numeració.</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>sense definir</td>
-      <td>Per als amfitrions les pàgines dels quals no són fulls: compon les pàgines de còmic en un full imprès (<code>width</code>, <code>height</code>, <code>margins</code>) escalat a <code>fitWidth</code> px (i com a màxim a <code>fitHeight</code> px d'alçada) a dalt de la pàgina. El visor HTML del Sandbox el fixa; no es desa mai amb un document.</td>
+      <td>Per a les aplicacions amfitriones amb pàgines que no són fulls: compon les pàgines de còmic sobre un full imprès (<code>width</code>, <code>height</code>, <code>margins</code>) escalat a <code>fitWidth</code> px (i amb un màxim de <code>fitHeight</code> px d'alçada) a dalt de la pàgina. El fixa el visor HTML del Sandbox, i no es desa mai amb el document.</td>
     </tr>
   </tbody>
 </table>
@@ -160,7 +160,7 @@ const config: PostextConfig = {
       <td><code>borderStyle</code></td>
       <td><code>'solid' | 'rough' | 'none'</code></td>
       <td><code>'solid'</code></td>
-      <td>Una línia neta, una línia feta a mà que tremola una mica (amb una llavor presa de la vinyeta, així que és igual a cada composició) o cap vora.</td>
+      <td>Una línia neta, una línia feta a mà que tremola una mica (amb una llavor que surt de la mateixa vinyeta, de manera que és igual a cada composició) o cap vora.</td>
     </tr>
     <tr>
       <td><code>background</code></td>
@@ -172,7 +172,7 @@ const config: PostextConfig = {
       <td><code>fit</code></td>
       <td><code>'cover' | 'contain'</code></td>
       <td><code>'cover'</code></td>
-      <td><code>cover</code> retalla el dibuix per omplir la vinyeta, mai dins de la seva zona segura; <code>contain</code> el mostra sencer.</td>
+      <td><code>cover</code> retalla el dibuix per omplir la vinyeta, sense entrar mai a la zona segura; <code>contain</code> el mostra sencer.</td>
     </tr>
     <tr>
       <td><code>bleed</code></td>
@@ -261,13 +261,13 @@ const config: PostextConfig = {
       <td><code>inset</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5mm</code></td>
-      <td>Espai que es deixa entre una bafarada i la vora de la seva vinyeta. Una cartel·la enganxada a la vora no el respecta.</td>
+      <td>Espai que es deixa entre una bafarada i la vora de la vinyeta. Una cartel·la enganxada a la vora no el respecta.</td>
     </tr>
     <tr>
       <td><code>joinSameSpeaker</code></td>
       <td><code>'butt' | 'connector' | 'none'</code></td>
       <td><code>'butt'</code></td>
-      <td>Dues bafarades seguides del mateix personatge: cossos fusionats en un sol contorn, units per un coll estret o separades. Una línia del guió pot demanar el seu comportament amb <code>join</code> o <code>join=false</code>.</td>
+      <td>Dues bafarades seguides del mateix personatge: els cossos es fusionen en un sol contorn, s'uneixen amb un coll estret o queden separats. Una línia del guió pot triar-ne un altre amb <code>join</code> o <code>join=false</code>.</td>
     </tr>
     <tr>
       <td><code>maxColumnChars</code></td>
@@ -279,7 +279,7 @@ const config: PostextConfig = {
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Una bafarada que canvia de forma per cabre a la vinyeta no parteix una paraula xinesa per aconseguir-ho: cada paraula que tallen les seves línies noves, i que la forma preferida deixa sencera, costa més que una bafarada llegida fora d'ordre, de manera que abans es mou la bafarada o canvia l'ordre. La retolació japonesa, que es parteix per frases, no canvia. Amb <code>false</code> es retola com a postext 1.27; un document desat abans de la 1.28 que contingui un còmic es llegeix així.</td>
+      <td>Quan una bafarada canvia de forma per cabre a la vinyeta, no parteix cap paraula xinesa per aconseguir-ho: cada paraula que la forma preferida deixava sencera i que les línies noves tallarien penalitza més que llegir una bafarada fora d'ordre, de manera que primer es mou la bafarada o se'n canvia l'ordre. La retolació japonesa, que es parteix per frases, no canvia. Amb <code>false</code> es retola com a postext 1.27; un document desat abans de la 1.28 que contingui un còmic es llegeix amb <code>false</code>.</td>
     </tr>
   </tbody>
 </table>
@@ -302,7 +302,7 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obligatori</td>
-      <td>La paraula amb què una línia del guió anomena l'estil: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
+      <td>La paraula amb què una línia del guió indica l'estil: <code>ben&#123;whisper&#125;: …</code> o <code>style=whisper</code>.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -320,7 +320,7 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>fill</code></td>
       <td><code>ColorValue</code></td>
       <td>blanc</td>
-      <td>Farciment de la bafarada.</td>
+      <td>Fons de la bafarada.</td>
     </tr>
     <tr>
       <td><code>stroke</code></td>
@@ -350,7 +350,7 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>wobble</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Tremolor de mà del contorn, de 0 a 1, amb una llavor presa de la bafarada, de manera que no canvia mai d'una composició a una altra.</td>
+      <td>Tremolor de mà del contorn, de 0 a 1, amb una llavor que surt de la mateixa bafarada, de manera que no canvia mai d'una composició a una altra.</td>
     </tr>
     <tr>
       <td><code>roundness</code></td>
@@ -380,7 +380,7 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>aspect</code></td>
       <td><code>number</code></td>
       <td><code>1.6</code></td>
-      <td>L'amplada dividida per l'alçada que busca el tall de línies per al bloc de text (retolació horitzontal).</td>
+      <td>La proporció entre l'amplada i l'alçada que el tall de línies busca per al bloc de text (retolació horitzontal).</td>
     </tr>
     <tr>
       <td><code>tail</code></td>
@@ -398,19 +398,19 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>tailReach</code></td>
       <td><code>number</code></td>
       <td><code>0.55</code></td>
-      <td>Fins on arriba la cua cap al seu personatge, com a fracció de la distància del contorn a la boca.</td>
+      <td>Fins on arriba la cua cap al personatge, com a fracció de la distància entre el contorn i la boca.</td>
     </tr>
     <tr>
       <td><code>target</code></td>
       <td><code>'mouth' | 'head'</code></td>
       <td><code>'mouth'</code></td>
-      <td>On apunta la cua: a la boca de l'àncora o al seu cap (bafarades de pensament).</td>
+      <td>On apunta la cua: a la boca de l'àncora o al cap (bafarades de pensament).</td>
     </tr>
     <tr>
       <td><code>position</code></td>
       <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
       <td><code>'auto'</code></td>
-      <td>On va la bafarada quan la línia no en fixa cap posició: la col·loca la retolació, o va a una cantonada o una vora de la vinyeta.</td>
+      <td>On va la bafarada quan la línia no n'indica la posició: la col·loca la retolació, o bé va a una cantonada o a una vora de la vinyeta.</td>
     </tr>
     <tr>
       <td><code>butt</code></td>
@@ -422,7 +422,7 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td>la lletra de la retolació</td>
-      <td>La lletra d'aquest estil. <code>sfx</code> pren per defecte la lletra d'onomatopeies de la llengua: <code>Bangers</code>, <code>Dela Gothic One</code> en japonès, <code>ZCOOL KuaiLe</code> en xinès simplificat, <code>LXGW WenKai TC</code> en xinès tradicional, <code>Lalezar</code> en àrab (<code>defaultComicSfxFont(locale)</code>).</td>
+      <td>La lletra d'aquest estil. <code>sfx</code> fa servir per defecte la lletra d'onomatopeies de la llengua: <code>Bangers</code>, <code>Dela Gothic One</code> en japonès, <code>ZCOOL KuaiLe</code> en xinès simplificat, <code>LXGW WenKai TC</code> en xinès tradicional, <code>Lalezar</code> en àrab (<code>defaultComicSfxFont(locale)</code>).</td>
     </tr>
     <tr>
       <td><code>fontScale</code></td>
@@ -464,7 +464,7 @@ Cada entrada de `comics.balloonStyles` es posa per sobre de l'estil integrat del
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>cap</td>
-      <td>Un contorn al voltant de les lletres, i el seu gruix, perquè el text es llegeixi sobre el dibuix (onomatopeies).</td>
+      <td>El gruix d'un contorn que es dibuixa al voltant de les lletres perquè el text es llegeixi sobre el dibuix (onomatopeies).</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -511,7 +511,7 @@ Cada entrada de `comics.cast` descriu un personatge:
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>L'estil de les línies del personatge que no n'anomenen cap.</td>
+      <td>L'estil de les línies del personatge que no n'indiquen cap.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -534,7 +534,7 @@ Cada entrada de `comics.cast` descriu un personatge:
   </tbody>
 </table>
 
-El `color` i el `font` propis d'una línia tenen prioritat sobre el repartiment, i el repartiment sobre l'estil de bafarada. Qualsevol color d'un còmic pot ser una entrada de la paleta, que segueix la paleta com qualsevol color vinculat.
+El `color` i el `font` propis d'una línia tenen prioritat sobre el repartiment, i el repartiment sobre l'estil de bafarada. Qualsevol color d'un còmic pot ser una entrada de la paleta i, com qualsevol color vinculat, canvia quan canvia la paleta.
 
 ```ts
 const resolved = resolveComicsConfig(config.comics, 'ja');

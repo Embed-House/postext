@@ -30,13 +30,13 @@ Les obres van en un bloc `:::references{format=csl-yaml}` al final del Markdown,
 
 <Excerpt region="masthead" />
 
-El bloc de títol és el disseny de l'H1, amb un estil de títol que ocupa les dues columnes. La banda és una caixa ancorada al tall, i el nom de la revista hi va a sobre en blanc. El títol, els autors i les filiacions surten del títol i els seus atributs, cadascun col·locat sota l'anterior (`#title`, `below`), de manera que un títol de tres línies empeny la resta cap avall ([Span i disseny avançat](/ca/docs/configuration-headings#span-i-disseny-avançat)).
+El bloc de títol és el disseny de l'H1, amb un estil d'encapçalament que ocupa les dues columnes. La banda és una caixa ancorada al tall, i el nom de la revista hi va a sobre en blanc. El títol, els autors i les filiacions surten del títol i els seus atributs, cadascun col·locat sota l'anterior (`#title`, `below`), de manera que un títol de tres línies empeny la resta cap avall ([Extensió i disseny avançat](/ca/docs/configuration-headings#extensió-i-disseny-avançat)).
 
 ### 4 · El resum i les seves etiquetes
 
 <Excerpt region="abstract" />
 
-El resum és un requadre a tota l'amplada, sagnat dos caràcters per cada costat. Les etiquetes són chips: `:chip[摘　要：]{style="label"}` compon la paraula en Hei negreta, en l'anyil de la revista, sense caixa ([Estils de chip](/ca/docs/configuration-styles#estils-de-xip)). Les revistes xineses solen compondre el resum en 楷体; aquesta el deixa en Song, pel motiu que s'explica a Errors freqüents.
+El resum és un requadre a tota l'amplada, sagnat dos caràcters per cada costat. Les etiquetes són xips: `:chip[摘　要：]{style="label"}` compon la paraula en Hei negreta, en l'anyil de la revista, sense caixa ([Estils de chip](/ca/docs/configuration-styles#estils-de-xip)). Les revistes xineses solen compondre el resum en 楷体; aquesta el deixa en Song, pel motiu que s'explica a Errors freqüents.
 
 <Excerpt region="palette" />
 
@@ -68,4 +68,4 @@ Les bibliografies mixtes s'ordenen a vegades amb les obres xineses davant de les
 - Una citació narrativa, `@zhou2019` sense claudàtors, anomena els autors i afegeix el número, però la clau continua pels caràcters xinesos que vinguin darrere, així que `@zhou2019认为` es llegeix com una clau que no existeix. Escriu el nom al text i la citació darrere, `周明远[@zhou2019]认为`, com fan de tota manera els articles xinesos.
 - L'estil numèric inclòs no imprimeix localitzadors: `[@zhou2019, 页 45]` dona [5] sense la pàgina. La GB/T 7714 posa la pàgina després del claudàtor, dins del volat, [5]45; mentre l'estil no ho faci, escriu la pàgina a la frase.
 - LXGW WenKai TC, l'única Kai de Fontsource, és una font de Taiwan: dibuixa ，i 。 al centre de la casella, i amb `zh-Hans` el motor retalla la meitat dreta de la casella, cosa que talla el signe. El resum va en Noto Serif SC, i la Kai es queda per als noms dels autors, que no porten puntuació.
-- En una retícula de caràcters l'equilibrat de columnes està desactivat per defecte: cada línia es queda a la retícula i la columna que no admet el títol següent acaba abans. Sense ell, la segona columna de la pàgina 1 acabaria tres línies abans (el títol 2 结果 necessita les seves dues línies i dues de text a sota, així que obre la pàgina 2) i l'última pàgina ompliria la primera columna i deixaria la segona a mitges. La recepta posa `headings.balancing.enabled: true`: la columna curta rep línies senceres de la retícula sobre els seus títols, sense treure mai cap caràcter de la seva casella, i les dues columnes de l'última pàgina acaben a la mateixa alçada.
+- En una retícula de caràcters l'equilibratge de columnes està desactivat per defecte: cada línia es queda a la retícula i la columna que no admet el títol següent acaba abans. Sense ell, la segona columna de la pàgina 1 acabaria tres línies abans (el títol 2 结果 necessita les seves dues línies i dues de text a sota, així que obre la pàgina 2) i l'última pàgina ompliria la primera columna i deixaria la segona a mitges. La recepta posa `headings.balancing.enabled: true`: la columna curta rep línies senceres de la retícula sobre els seus títols, sense treure mai cap caràcter de la seva casella, i les dues columnes de l'última pàgina acaben a la mateixa alçada.

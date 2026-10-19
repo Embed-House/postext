@@ -10,7 +10,7 @@ pageNotes: { "9": "索引从第305页开始，页首是与各章相同的红色�
 
 ## 成品一览
 
-这是*Principles of Human Physiology*的第四篇，一本210 × 277 mm开本的教科书：第14章*The heart as a pump*和第15章*Vessels and blood pressure*都从右页开始，页首有红色横带，临床提示和题注排在外侧的边栏里。这一篇以一份索引结束，约九十个条目、三十个子条目，按医学教科书的惯例分两栏排：条目用小写，字母标题用强调色，子条目缩进一个em，给出定义的页码用粗体，*see*和*see also*用斜体。索引里没有一个页码是手工输入的。每个术语都在正文讲解它的那一章里做了标记，索引读取这些标记落在的页码，即第297页到第304页。
+这是*Principles of Human Physiology*的第四篇，一本210 × 277 mm开本的教科书：第14章*The heart as a pump*和第15章*Vessels and blood pressure*都从右页开始，页首有红色横带，临床提示和题注排在外侧的侧栏里。这一篇以一份索引结束，约九十个条目、三十个子条目，按医学教科书的惯例分两栏排：条目用小写，字母标题用强调色，子条目缩进一个em，给出定义的页码用粗体，*see*和*see also*用斜体。索引里没有一个页码是手工输入的。每个术语都在正文讲解它的那一章里做了标记，索引读取这些标记落在的页码，即第297页到第304页。
 
 ## 做法
 
@@ -18,13 +18,13 @@ pageNotes: { "9": "索引从第305页开始，页首是与各章相同的红色�
 
 <Excerpt region="answer" />
 
-编索引的人标记的是讲解术语的地方，而不是这个词出现的每一处。两章里*stroke volume*用了十二次，索引只把读者引向两处：给出定义的第298页，以及讲解其调节机制的299–300页。可见标记`:index[cardiac output]{main}`会印出它的文字并收入索引。不可见标记`mitral:index{term="heart!valves!mitral"}`什么也不印，只取它前面那个词所在的页码；讲四个瓣膜的那段文字就是这样把*mitral*、*tricuspid*、*aortic*和*pulmonary*归到*heart*之下，而不必改写句子。`!`用来分隔层级，所以*heart*下有三级：valves，再到各个瓣膜。标记也可以放在标题里（14.1和15.6的页码范围就从标题开始），或者放在标注框里（*heart failure*在第300页的旁注中定义）。
+编索引的人标记的是讲解术语的地方，而不是这个词出现的每一处。两章里*stroke volume*用了十二次，索引只把读者引向两处：给出定义的第298页，以及讲解其调节机制的299–300页。可见标记`:index[cardiac output]{main}`会印出它的文字并收入索引。不可见标记`mitral:index{term="heart!valves!mitral"}`什么也不印，只取它前面那个词所在的页码；讲四个瓣膜的那段文字就是这样把*mitral*、*tricuspid*、*aortic*和*pulmonary*归到*heart*之下，而不必改写句子。`!`用来分隔各级，所以*heart*下有三级：valves，再到各个瓣膜。标记也可以放在标题里（14.1和15.6的页码范围就从标题开始），或者放在标注框里（*heart failure*在第300页的旁注中定义）。
 
 ### 2 · 主要页码、页码范围和交叉引用
 
 <Excerpt region="answer" />
 
-`main`让定义术语的那一页用粗体印出，学生查*preload*时会先翻到第299页。对同一术语使用`range="start"`和`range="end"`，可以框住一段跨过分页的论述：*stroke volume, regulation, 299–300*、*baroreceptor reflex, 303–4*。起点上加`main`，整个范围都用粗体。在范围内部再次标记的页码会并入这个范围，如果那里带`main`，范围也用粗体。`see`取代页码（*inotropy. See contractility*），`seealso`跟在页码之后（*heart failure, 300. See also ejection fraction*）。有层级的目标用`!`书写，印出时用冒号：*See blood pressure: mean arterial*。
+`main`让定义术语的那一页用粗体印出，学生查*preload*时会先翻到第299页。对同一术语使用`range="start"`和`range="end"`，可以框住一段跨过分页的论述：*stroke volume, regulation, 299–300*、*baroreceptor reflex, 303–4*。起点上加`main`，整个范围都用粗体。在范围内部再次标记的页码会并入这个范围，如果那里带`main`，范围也用粗体。`see`取代页码（*inotropy. See contractility*），`seealso`跟在页码之后（*heart failure, 300. See also ejection fraction*）。多级的目标用`!`书写，印出时用冒号：*See blood pressure: mean arterial*。
 
 ### 3 · 分两栏的索引章
 

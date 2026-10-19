@@ -24,25 +24,25 @@ La portée de [la réponse courte](#la-réponse-courte) est celle d’un documen
 
 <Excerpt region="byline" />
 
-Le titre de chaque essai porte `author="…"` et un titre `short="…"` pour le titre courant. L’ouverture imprime l’auteur sous le titre, le titre courant du verso nomme l’auteur de l’essai auquel appartient la page, et la table des matières imprime le nom sur une ligne sous chaque entrée. Rien dans les pages liminaires du livre ne liste les contributeurs deux fois.
+Le titre de chaque essai contient `author="…"` et un titre `short="…"` pour le titre courant. L’ouverture imprime l’auteur sous le titre, le titre courant du verso indique l’auteur de l’essai auquel appartient la page, et la table des matières imprime le nom sur une ligne sous chaque entrée. Rien dans les pages liminaires du livre ne liste les contributeurs deux fois.
 
 ### 3 · L’ouverture
 
 <Excerpt region="opener" />
 
-Surtitre, titre et signature s’empilent depuis le haut de la zone de texte, chacun ancré sous le précédent : un titre de deux lignes, comme celui du chapitre 3, fait descendre avec lui la signature et le filet. La réserve fait descendre le texte de 48 mm, dix lignes, sous un titre d’une ligne ; un titre de deux lignes prend une ligne de plus, si bien que le filet reste à l’écart du texte et que le chapitre 3 commence une ligne plus bas que les deux autres.
+Surtitre, titre et signature s’empilent depuis le haut de la zone de contenu, chacun ancré sous le précédent : un titre de deux lignes, comme celui du chapitre 3, fait descendre avec lui la signature et le filet. La réserve fait descendre le texte de 48 mm, dix lignes, sous un titre d’une ligne ; un titre de deux lignes prend une ligne de plus : le filet reste donc à l’écart du texte, et le chapitre 3 commence une ligne plus bas que les deux autres.
 
 ### 4 · Des titres courants pour un livre à plusieurs auteurs
 
 <Excerpt region="running-heads" />
 
-Un ouvrage collectif nomme le contributeur au verso et le chapitre au recto, là où une monographie imprimerait le titre du livre et le chapitre. Les titres courants sont filtrés sur `pages: 'body'` : les pages d’ouverture ne portent donc qu’un folio en pied.
+Un ouvrage collectif indique le contributeur au verso et le chapitre au recto, là où une monographie imprimerait le titre du livre et le chapitre. Les titres courants sont filtrés sur `pages: 'body'` : les pages d’ouverture n’ont donc qu’un folio en pied.
 
 ### 5 · Les pages liminaires
 
 <Excerpt region="front" />
 
-La page de titre et la table des matières sont deux titres non numérotés du premier document, sans titres courants ni entrée dans la table des matières. Leurs maquettes lisent `{title}` et `{subtitle}` dans le frontmatter, et les directeurs et contributeurs dans les attributs du titre lui-même.
+La page de titre et la table des matières sont deux titres non numérotés du premier document, sans titres courants ni entrée dans la table des matières. Leurs maquettes prennent `{title}` et `{subtitle}` dans l’en-tête YAML, et les directeurs et contributeurs dans les attributs du titre lui-même.
 
 ## Variantes
 

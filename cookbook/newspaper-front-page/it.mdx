@@ -24,13 +24,13 @@ La pagina è carta da giornale (#f8f5ee) e il testo è inchiostro quasi nero (#1
 
 <Excerpt region="nameplate" />
 
-`# The Elverdale Courier` prende lo stile di titolo `front`, che riempie la testata con il testo del titolo e sette dei suoi attributi (`issue`, `area`, `outlook`, `temps`, `since`, `day` e `price`); la data viene da `publishDate` nel frontmatter. Un riquadro vuoto profondo sette righe di griglia (31,1 mm) stabilisce l’altezza dell’apertura. I filetti, la riga della data e il nome sono appesi al suo piede, quindi l’apertura finisce su una riga di griglia.
+`# The Elverdale Courier` prende lo stile di titolo `front`, che riempie la testata con il testo del titolo e sette dei suoi attributi (`issue`, `area`, `outlook`, `temps`, `since`, `day` e `price`); la data viene da `publishDate` nel front matter. Un riquadro vuoto profondo sette righe di griglia (31,1 mm) stabilisce l’altezza dell’apertura. I filetti, la riga della data e il nome sono appesi al suo piede, quindi l’apertura finisce su una riga di griglia.
 
 ### 3 · Un titolo su entrambe le colonne è un riquadro
 
 <Excerpt region="banner" />
 
-Un titolo occupa entrambe le colonne solo come apertura, e un’apertura comincia una nuova pagina. Metti `span: 'page'` sull’H2 dell’articolo sui quartieri invece che sul suo riquadro, e quell’articolo passa a una terza pagina. Un riquadro senza cornice con `span="page"` può cominciare a metà pagina. A <PageRef page={2}>pagina 2</PageRef> le colonne vengono tagliate alla pari sopra di esso e riprendono sotto. Il riquadro contiene l’H2 in uno di tre stili di titolo (56, 30 o 22 pt), il sommario in corsivo e, in prima pagina, la fotografia. Il suo `marginBottom` di mezza riga fa cominciare le colonne alla riga di griglia successiva, 3,4 mm sotto il sommario a pagina 2. Con il margine predefinito lo spazio è di 7,8 mm e le lettere finiscono su una terza pagina.
+Un titolo occupa entrambe le colonne solo come apertura, e un’apertura comincia una nuova pagina. Metti `span: 'page'` sull’H2 dell’articolo sui quartieri invece che sul suo riquadro, e quell’articolo passa a una terza pagina. Un riquadro senza bordo con `span="page"` può cominciare a metà pagina. A <PageRef page={2}>pagina 2</PageRef> le colonne vengono tagliate alla pari sopra di esso e riprendono sotto. Il riquadro contiene l’H2 in uno di tre stili di titolo (56, 30 o 22 pt), il sommario in corsivo e, in prima pagina, la fotografia. Il suo `marginBottom` di mezza riga fa cominciare le colonne alla riga di griglia successiva, 3,4 mm sotto il sommario a pagina 2. Con il margine predefinito lo spazio è di 7,8 mm e le lettere finiscono su una terza pagina.
 
 ### 4 · La striscia a quattro colonne è un riquadro con colonne
 
@@ -47,7 +47,7 @@ Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. 
 :::
 ```
 
-`placement="bottom"` fa flottare il riquadro al piede di <PageRef page={1}>pagina 1</PageRef>, dove occupa 36,9 mm, e l’articolo riempie gli 83 mm di colonne sopra di esso. La foto d’apertura resta una fascia su entrambe le colonne dentro il riquadro del titolo: il testo scorre accanto a un’immagine più stretta della sua colonna, da un lato, mai attorno a un’immagine che occupa due colonne. Il disegno del ponte a pagina 2 ha il testo accanto (passo 5).
+`placement="bottom"` fa flottare il riquadro al piede di <PageRef page={1}>pagina 1</PageRef>, dove occupa 36,9 mm, e l’articolo riempie gli 83 mm di colonne sopra di esso. La foto d’apertura resta una fascia su entrambe le colonne nel riquadro del titolo: il testo scorre accanto a un’immagine più stretta della sua colonna, da un lato, mai attorno a un’immagine che occupa due colonne. Il disegno del ponte a pagina 2 ha il testo accanto (passo 5).
 
 ### 5 · Immagini in linea, tabelle flottanti
 
@@ -59,13 +59,13 @@ La fotografia sta in linea nel riquadro del titolo perché un elemento flottante
 
 <Excerpt region="inside" />
 
-`# Town & Valley` è un H1 il cui `breakBefore` ha parità `'any'`, quindi la sezione apre la pagina 2 senza una pagina bianca prima. Il suo progetto grafico è una bandella rossa su una barra da 3 pt, appesa a un riquadro vuoto profondo due righe di griglia. La riga del folio è un’intestazione ancorata 6 mm sotto il bordo superiore della pagina, con una versione per le pagine pari e una per le dispari. Lo stile della prima pagina svuota l’intestazione, quindi sopra la testata non si stampa alcuna riga del folio.
+`# Town & Valley` è un H1 il cui `breakBefore` ha parità `'any'`, quindi la sezione apre la pagina 2 senza una pagina bianca prima. La sua grafica è una bandella rossa su una barra da 3 pt, appesa a un riquadro vuoto profondo due righe di griglia. La riga con numero di pagina, titolo e data è un’intestazione ancorata 6 mm sotto il bordo superiore della pagina, con una versione per le pagine pari e una per le dispari. Lo stile della prima pagina svuota l’intestazione, quindi sopra la testata quella riga non si stampa.
 
 ## Varianti
 
 ### Tieni le brevi sotto la fotografia
 
-Senza `placement="bottom"` in `content.en.md`, la striscia resta dove si trova la sua recinzione, subito sotto la fotografia, e l’articolo d’apertura scorre sotto di essa fino al piede della pagina.
+Senza `placement="bottom"` in `content.en.md`, la striscia resta dove si trova il suo blocco, subito sotto la fotografia, e l’articolo d’apertura scorre sotto di essa fino al piede della pagina.
 
 ```diff
 -:::callout{type="briefs" span="page" placement="bottom" title="In brief"}

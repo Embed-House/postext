@@ -8,14 +8,14 @@ export const metadata = {
   lastUpdated: '2026-09-24',
   readingTime: '7 min',
   order: 1,
-  plainSummary: "O Postext é um software livre que monta as páginas de livros, revistas e relatórios na web. Há séculos os livros impressos seguem regras cuidadosas de diagramação, como manter as colunas da mesma altura e as imagens perto do texto que fala delas. As páginas da web nunca tiveram essas regras, e o Postext as traz. Você escreve o texto, e o Postext coloca cada linha, imagem e nota na página para você. Esta página conta por que o projeto existe e como ele começou.",
+  plainSummary: "O Postext é um software livre que diagrama as páginas de livros, revistas e relatórios na web. Há séculos os livros impressos seguem regras cuidadosas de diagramação, como manter as colunas da mesma altura e as imagens perto do texto que fala delas. As páginas da web nunca tiveram essas regras, e o Postext as traz. Você escreve o texto, e o Postext coloca cada linha, imagem e nota na página para você. Esta página conta por que o projeto existe e como ele começou.",
 };
 
 # Introdução ao Postext
 
 **Um compositor tipográfico programável para a web.**
 
-Abra qualquer livro bem composto. Repare em como o texto se assenta na página: colunas equilibradas,
+Abra qualquer livro bem composto. Repare como o texto se assenta na página: colunas equilibradas,
 imagens encaixadas no fluxo, nenhum vão estranho, nenhuma linha solitária perdida no alto de uma coluna.
 Séculos de ofício foram necessários para que isso pareça natural.
 
@@ -23,14 +23,14 @@ Agora abra uma página da web. Mesmo as melhores parecem diferentes. O texto esb
 transbordam ou ficam pela metade. As notas de rodapé vão parar no fim da página em vez de ficar perto das
 palavras que as citam. A web nos deu o layout responsivo, mas nunca nos deu a diagramação *editorial*.
 
-O Postext fecha essa lacuna. É um motor de layout que recebe o seu conteúdo (texto em markdown mais
+O Postext fecha essa lacuna. É um motor de layout que recebe o conteúdo (texto em Markdown mais
 recursos declarados, como imagens bitmap, diagramas SVG e tabelas, incorporados por referência) e
 aplica as mesmas regras que um compositor profissional aplicaria: prevenção de órfãs e viúvas,
 equilíbrio de colunas, texto que contorna obstáculos, espaçamento deliberado. O resultado é uma
 geometria de página com qualidade de publicação, tanto para HTML quanto para PDF.
 
-Construído sobre o [`@chenglou/pretext`](https://github.com/chenglou/pretext), que mede texto sem DOM
-a uma velocidade que torna tudo isso possível.
+Ele é construído sobre o [`@chenglou/pretext`](https://github.com/chenglou/pretext), que mede texto
+sem DOM a uma velocidade que torna tudo isso possível.
 
 
 ## A distância entre o impresso e a web
@@ -55,7 +55,7 @@ Além dessas regras, duas dimensões concretas e mensuráveis mostram o quanto a
   [WCAG 1.4.8](https://www.w3.org/WAI/WCAG21/Understanding/visual-presentation.html) fixa o limite em 80.
   A maioria dos sites deixa as linhas se estenderem a 100, 120 ou mais, bem além do ponto em que o
   olho consegue acompanhar uma linha sem se perder.
-- **Entrelinha.** A tradição recomenda **1,3 a 1,5 vez o corpo da fonte**, e a
+- **Entrelinha.** A tradição recomenda **1,3 a 1,5 vez o corpo**, e a
   [WCAG 1.4.12](https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html) exige que o conteúdo
   continue funcional com 1,5× ou mais. Mas o valor certo depende da medida: uma entrelinha que funciona
   bem com 50 caracteres fica apertada com 90. Os compositores ajustam uma em função da outra; o CSS
@@ -64,14 +64,14 @@ Além dessas regras, duas dimensões concretas e mensuráveis mostram o quanto a
 E aqui o CSS se esgota: você tem `column-count` e pouco mais. Nenhum controle sobre a posição dos
 recursos, nenhuma noção de transbordamento, nenhuma prevenção de órfãs ou viúvas entre colunas, nenhuma
 forma nativa de fazer o texto contornar um obstáculo arbitrário. Os layouts editoriais de várias colunas
-na web continuam sendo feitos à mão: desenhos estáticos que quebram assim que o tamanho da tela muda.
+na web continuam sendo feitos à mão: composições estáticas que quebram assim que o tamanho da tela muda.
 
 A web tem layout responsivo há mais de uma década: flexbox, grid, contêineres que se adaptam a qualquer
 tela. O que ela nunca teve foi diagramação *editorial* responsiva, aquela em que o conteúdo se redistribui
 com inteligência pelas colunas, em torno das imagens, passando pelas notas de rodapé, obedecendo às regras
 que tornam o texto *agradável de ler*.
 
-<Illustration name="CssGapVsEditorial" data='{"title": "A distância entre as colunas do CSS e a diagramação editorial", "desc": "O CSS oferece column-count e pouco mais; a diagramação editorial precisa de controle de órfãs e viúvas, fluxo em torno de obstáculos, equilíbrio de colunas, posicionamento de notas de rodapé e refinamento por convergência.", "caption": "O que o CSS oferece e o que a diagramação editorial de fato exige.", "cssTitle": "O que o CSS oferece", "cssLead": "column-count", "cssMore": "...e mais nada.", "cssCons": ["Sem controle de órfãs e viúvas", "Sem fluxo em torno de obstáculos", "Sem equilíbrio de colunas", "Sem posicionamento de notas de rodapé", "Sem convergência nem refinamento"], "gap": "a lacuna", "editorialTitle": "O que a diagramação editorial exige", "editorialPros": ["Prevenção de órfãs e viúvas", "Texto que contorna os recursos", "Colunas equilibradas", "Posicionamento de notas de rodapé", "Controle da hifenização", "Refinamento por convergência"], "equals": "= Postext"}' />
+<Illustration name="CssGapVsEditorial" data='{"title": "A lacuna entre as colunas do CSS e a diagramação editorial", "desc": "O CSS oferece column-count e pouco mais; a diagramação editorial precisa de controle de órfãs e viúvas, fluxo em torno de obstáculos, equilíbrio de colunas, posicionamento de notas de rodapé e refinamento por convergência.", "caption": "O que o CSS oferece e o que a diagramação editorial de fato exige.", "cssTitle": "O que o CSS oferece", "cssLead": "column-count", "cssMore": "...e mais nada.", "cssCons": ["Sem controle de órfãs e viúvas", "Sem fluxo em torno de obstáculos", "Sem equilíbrio de colunas", "Sem posicionamento de notas de rodapé", "Sem convergência nem refinamento"], "gap": "a lacuna", "editorialTitle": "O que a diagramação editorial exige", "editorialPros": ["Prevenção de órfãs e viúvas", "Texto que contorna os recursos", "Colunas equilibradas", "Posicionamento de notas de rodapé", "Controle da hifenização", "Refinamento por convergência"], "equals": "= Postext"}' />
 
 
 ## Uma década procurando a peça que faltava
@@ -151,18 +151,18 @@ O Pretext fornece as medidas. O Postext fornece a diagramação.
 
 O processo tem três etapas:
 
-1. **Você fornece o conteúdo.** Texto em markdown mais recursos declarados: imagens bitmap, diagramas
-   SVG e tabelas. Um `:ref{id="..."}` no meio do texto numera o recurso e o faz flutuar para uma faixa
-   superior ou inferior perto da sua primeira referência, como um compositor de impressos posiciona as
-   figuras. O conteúdo continua puramente semântico: descreve *o que* apresentar, não *como*; as decisões
-   de diagramação nunca ficam fixadas no código-fonte. A seção Recursos do documento
+1. **Você fornece o conteúdo.** Texto em Markdown mais recursos declarados: imagens bitmap, diagramas
+   SVG e tabelas. Um `:ref{id="..."}` no meio do texto numera o recurso e o leva, como flutuante, a uma
+   faixa superior ou inferior perto da primeira referência, do mesmo modo que um compositor de
+   impressos posiciona as figuras. O conteúdo continua puramente semântico: descreve *o que* apresentar, não *como*; as decisões
+   de diagramação nunca ficam fixadas no texto de origem. A seção Recursos do documento
    [Formato do documento](/pt/docs/document-format) cobre a sintaxe completa.
 
 2. **O motor toma as decisões.** O Postext analisa o conteúdo, chama o Pretext para medir o texto com
    exatidão de pixel sem tocar no DOM e então executa um pipeline de layout em várias passadas:
    equilibra colunas, numera e posiciona os recursos flutuantes, evita viúvas e órfãs, alinha linhas de
    base, refina o espaçamento. Cada decisão é guiada pela configuração: a geometria da página e do layout,
-   o texto corrido e os títulos, além de `tableStyle` para a tipografia das células de tabela,
+   o texto do corpo e os títulos, além de `tableStyle` para a tipografia das células de tabela,
    `captionStyle` para as legendas das figuras e `diagramStyle` com `singleInk`, que recolore os diagramas
    SVG em tons de uma única tinta mapeados pela luminância, para impressão com uma só cor especial. Você
    controla as regras, o motor as aplica.
@@ -174,7 +174,7 @@ O processo tem três etapas:
    para uma saída pronta para impressão com fontes incorporadas (`renderToPdf`, do pacote `postext-pdf`).
    O mesmo conteúdo, as mesmas regras, três saídas intercambiáveis.
 
-<Illustration name="LayoutProcess" data='{"title": "Processo de layout em três etapas", "desc": "O markdown enriquecido mais a configuração entram no motor, que executa um pipeline de layout em várias passadas com a medição do Pretext dentro dele e produz HTML ou PDF renderizado.", "caption": "Entra conteúdo, sai geometria, que depois é renderizada no formato de destino.", "inputTitle": "Markdown enriquecido", "inputSubtitle": "+ configuração", "parse": "análise", "engineTitle": "Motor do Postext", "engineSub1": "medição do Pretext dentro", "engineSub2": "layout em várias passadas", "render": "renderização", "outputTitle": "HTML / PDF", "outputSubtitle": "saída renderizada"}' />
+<Illustration name="LayoutProcess" data='{"title": "Diagramação em três etapas", "desc": "O Markdown enriquecido e a configuração entram no motor, que diagrama em várias passadas, com a medição do Pretext embutida, e produz HTML ou PDF renderizado.", "caption": "Entra conteúdo, sai geometria, que depois é renderizada no formato de destino.", "inputTitle": "Markdown enriquecido", "inputSubtitle": "+ configuração", "parse": "análise", "engineTitle": "Motor do Postext", "engineSub1": "com a medição do Pretext", "engineSub2": "diagramação em várias passadas", "render": "renderização", "outputTitle": "HTML / PDF", "outputSubtitle": "saída renderizada"}' />
 
 Para ver em detalhe o funcionamento interno do motor (a Virtual Document Tree, o pipeline de várias
 passadas e o laço de convergência), consulte o documento [Arquitetura](/pt/docs/architecture). Para uma

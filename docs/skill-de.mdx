@@ -66,7 +66,7 @@ Auch auf YouTube: [dort ansehen](https://www.youtube.com/watch?v=SofXfR-rEjM&lis
   - ein Leitfaden je Quellformat;
   - eine Methode zur Gestaltungsanalyse;
   - ein Katalog gelöster Layoutfälle: Teile mit eigenen Farben,
-    Kapitelauftakte, Verse, Marginalglossen, Fußnoten, Register, gleitende,
+    Kapitelauftakte, Verse, Randglossen, Fußnoten, Register, gleitende,
     geteilte und verschachtelte Kästen, Vektor-Druckvorlagen, Abbildungen mit
     Live-Text, Bilder in Tabellenzellen, Tabellen im Querformat, zweisprachige
     Ausgaben und mehr;
@@ -77,8 +77,9 @@ Auch auf YouTube: [dort ansehen](https://www.youtube.com/watch?v=SofXfR-rEjM&lis
     links, und wie man CJK-Schriften auf das Buch zuschneidet (siehe
     [Chinesischer Satz](/de/docs/chinese-layout));
   - japanische Bücher, senkrecht gesetzte Bunko- und Tankōbon-Romane mit
-    Bindung rechts oder waagerecht gesetzte Fachbücher: das Gebietsschema, das
-    die japanischen Regeln einschaltet (`ja`, nie ein chinesisches Tag), was zu
+    Bindung rechts oder waagerecht gesetzte Fachbücher: die Sprache (`locale`),
+    die die japanischen Regeln einschaltet (`ja`, nie eine chinesische
+    Sprachkennung), was zu
     klären ist (Richtung, Raster, Furigana, Anmerkungen, die Orthografie der
     Ausgabe), wie man den Satzspiegel in Zeichen und Zeilen vermisst, die
     Auszeichnung von Furigana und Bōten, mit `aozora.py` umgewandelte Texte aus
@@ -86,22 +87,23 @@ Auch auf YouTube: [dort ansehen](https://www.youtube.com/watch?v=SofXfR-rEjM&lis
     japanische Schriften, zugeschnitten mit ihren Kana und senkrechten Formen
     (siehe [Japanischer Satz](/de/docs/japanese-layout));
   - arabische Bücher, modern oder klassisch und vokalisiert, von rechts nach
-    links gesetzt und rechts gebunden: das Gebietsschema, das das Buch wendet,
+    links gesetzt und rechts gebunden: die Sprache (`locale`), die das ganze
+    Buch auf rechts nach links umstellt,
     was zu klären ist (Region und Ziffern, Vokalisierung, Verse, Inhaltsverzeichnis
     am Ende), wie man eine gespiegelte Seite vermisst, wie man Arabisch aus PDFs,
     Word und Wikisource liest, Gedichte als `:::verse`, Anmerkungen «(١)» je
     Seite und arabische Schriften, zugeschnitten mit ihren Verbindungstabellen
     (siehe [Arabischer Satz](/de/docs/arabic-layout));
   - Comics, Manga und Zeitungsstrips: die Aufteilung, die eine Seite in Panels
-    schneidet, die Panelbilder mit ihren Sprecherankern und Sicherheitsbereichen, ein
-    Skript je Sprache, das die Engine letterst (Sprechblasen, Textkästen,
+    schneidet, die Panelbilder mit ihren Sprecherpunkten und Sicherheitsbereichen, ein
+    Skript je Sprache, das die Engine lettert (Sprechblasen, Textkästen,
     Geräuschwörter), Manga und arabische Ausgaben von rechts nach links, und wie
     man aus textfreien Zeichnungen samt Übersetzungen, aus geletterten Scans oder
     aus einem Skript mit generierten Bildern überträgt (siehe
     [Comics](/de/docs/comics));
   - das gedruckte Objekt: wie man Papier, Bindung, Umschläge und Buchrücken
-    der Quelle abliest und als die Einstellungen `folio` festlegt, die der
-    [Betrachter Folio](/de/docs/sandbox-previews#tab-folio) zeigt, geprüft vom Linter.
+    der Quelle abliest und in den Einstellungen `folio` festlegt, die der
+    [Folio-Betrachter](/de/docs/sandbox-previews#tab-folio) zeigt; der Linter prüft sie.
 - **Skripte** (Python und Node), im nächsten Abschnitt beschrieben.
 
 ## Skripte
@@ -118,17 +120,17 @@ Auch auf YouTube: [dort ansehen](https://www.youtube.com/watch?v=SofXfR-rEjM&lis
     <tr><td><code>measure_layout.py</code></td><td>Ränder, Spalten, Spaltenabstand und Zeilenabstand (das Grundlinienraster) eines PDFs</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → Kapitelentwürfe nach <em>typografischer Rolle</em> (Schrift/Größe/Farbe): Lesereihenfolge, Absätze, Auflösen von Trennungen, fett/kursiv, hoch-/tiefgestellt, Listen, Legenden</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>Schneidet Abbildungen aus einem PDF: Fotos in nativer Auflösung, SVG-Vorschauen, Vektor-PDF-Druckvorlagen</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Feste Seiten eines PDF (Schulbücher, Arbeitshefte, Zeitschriften) als komponierte Seiten: Seitenvorlagen mit Rahmen in mm, Stile für Kästen, Reiter und Markierungen, ein Seitengrund ohne Text, die Bilder ohne ihre Beschriftung ausgeschnitten und Markdown mit einem Seitenzaun pro Seite und einem Slot pro Kasten in Lesereihenfolge; Text, der unter anderer Farbe verborgen liegt, wird verworfen. <code>template_dedupe.py</code> fasst Vorlagen und Stile gleichartiger Seiten zu einer Bibliothek zusammen und benennt die Rahmen nach ihrer Rolle (<code>box-light-blue</code>, <code>caption-of-picture</code>) statt nach Art und Reihenfolge, die Seitenzäune ziehen mit, <code>anchors.py</code> macht aus den Beschriftungen einer Karte Anker der Ressource und <code>::label</code>-Zeilen für jede Ausgabe Einen Durchlauf mit nur einer Seite, in dem es nichts zusammenzuführen gibt, benennt <code>pdf_regions.py extract</code> selbst nach Rolle (<code>--name-frames</code>, seit postext 1.43).</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>Macht aus den festen Seiten eines PDFs (Schulbücher, Arbeitshefte, Zeitschriften) zusammengesetzte Seiten: Seitenvorlagen mit Rahmen in mm; Stile für Kästen, Etiketten und Markierungen; ein Seitengrund ohne Text; die Bilder, ohne ihren Text ausgeschnitten; und Markdown mit einem Seitenblock (dem Block <code>::::page</code>) pro Seite und einem Slot pro Kasten, in Lesereihenfolge. Text, der unter anderer Farbe verborgen liegt, wird weggelassen. <code>template_dedupe.py</code> fasst Vorlagen und Stile gleichartiger Seiten zu einer Bibliothek zusammen, benennt die Rahmen nach ihrer Rolle (<code>box-light-blue</code>, <code>caption-of-picture</code>) statt nach Art und Reihenfolge und passt die Seitenblöcke entsprechend an. <code>anchors.py</code> macht aus den Wörtern einer Karte Anker der Ressource und <code>::label</code>-Zeilen für jede Ausgabe. Hat ein Durchlauf nur eine Seite, sodass es nichts zusammenzuführen gibt, benennt <code>pdf_regions.py extract</code> die Rahmen selbst nach ihrer Rolle (<code>--name-frames</code>, seit postext 1.43).</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>PDF-Tabellen → Postext-<code>TableModel</code></td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX, PPTX, ODT, EPUB, HTML, LaTeX, Markdown, JATS, DocBook → Kapitelentwürfe, wobei Word-Formatvorlagen auf Kästen und Absatzformate abgebildet werden</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>InDesign-IDML → Kapitelentwürfe nach Absatzformat, Tabellen und verankerte Bilder; Ruby, Tate-chū-yoko, Betonungszeichen und Warichu werden zu <code>:ruby</code>, <code>:tcy</code>, <code>:dots</code> und <code>:warichu</code>, und senkrechte Textabschnitte sowie eine Bindung von rechts nach links werden gemeldet</td></tr>
-    <tr><td><code>aozora.py</code></td><td>Text aus Aozora Bunko (ein CP932-Zip oder eine <code>.txt</code>) → Postext-Markdown: Furigana, Bōten und Seitenlinien, Überschriften mit ihren Einzügen, 字下げ- und 地付き-Blöcke als Absatzformate, Seitenumbrüche, über JIS X 0213 aufgelöste 外字, Kanbun-Zeichen; es gibt den Block mit den Nachweisen und einen Bericht über das zurück, was es nicht ausdrücken konnte</td></tr>
-    <tr><td><code>index_marks.py</code></td><td>Baut ein gedrucktes Register als Marken <code>:index</code> nach: liest die Registerseiten des PDFs, findet jeden Begriff auf seiner Seite und markiert dieselben Wörter in den Kapiteln</td></tr>
+    <tr><td><code>aozora.py</code></td><td>Text aus Aozora Bunko (ein CP932-Zip oder eine <code>.txt</code>) → Postext-Markdown: Furigana, Bōten und Seitenstriche, Überschriften mit ihren Einzügen, 字下げ- und 地付き-Blöcke als Absatzformate, Seitenumbrüche, über JIS X 0213 aufgelöste 外字, Kanbun-Zeichen; es gibt den Block mit den Nachweisen und einen Bericht über das zurück, was es nicht ausdrücken konnte</td></tr>
+    <tr><td><code>index_marks.py</code></td><td>Baut ein gedrucktes Register als <code>:index</code>-Marken nach: liest die Registerseiten des PDFs, findet jeden Begriff auf seiner Seite und markiert dieselben Wörter in den Kapiteln</td></tr>
     <tr><td><code>comic_panels.py</code></td><td>Vermisst Comicseiten: findet die Panels am Papier zwischen ihnen, schreibt den Ausdruck <code>split</code> (von links nach rechts oder von rechts nach links, schräge Zwischenräume eingeschlossen), die Zwischenräume und den Rahmen, schneidet ein Bild je Panel aus und gibt die Gerüste <code>:::page</code> aus; legt ein Raster über die Bilder, um Sprecheranker und Sicherheitsbereiche abzulesen, und zeichnet sie zur Kontrolle wieder ein</td></tr>
     <tr><td><code>fonts.py</code>, <code>images.py</code>, <code>convert_assets.py</code></td><td>Instanziieren, reduzieren, skalieren und teilen Schriften (eine chinesische oder japanische Schrift, auf die Zeichen des Buchs zugeschnitten, behält ihre senkrechten Formen und Metriken, eine arabische ihre Verbindungsformen und das Tatweel); wandeln Bilder nach sRGB um, beschneiden und verbinden sie; machen aus <code>.ai</code>-/<code>.pdf</code>-Grafiken SVG</td></tr>
-    <tr><td><code>preset_kit.py</code></td><td>Legt das Projektgerüst und sein Generatorskript an, erstellt <code>preset.json</code> und packt die <code>.postext</code>-Datei und prüft die Konfiguration: Text des Buchs, der in Gestaltungselementen steht, obwohl die Konfiguration nur die Gestaltung enthalten soll, und eine Konfiguration, die für die Sandbox zu groß ist</td></tr>
-    <tr><td><code>lint_project.py</code></td><td>Findet alles, was Parser und Loader stillschweigend falsch machen, und bei chinesischem, japanischem und koreanischem Text die Zeichen, die die mitgelieferten Schriften nicht setzen können; bei japanischem Text Kana unter einem chinesischen Gebietsschema, chinesische Schriften oder Einstellungen, in den Kapiteln verbliebene Aozora-Notation und Kanji-Registereinträge ohne Lesung; bei arabischem Text ein fehlendes arabisches Gebietsschema, rein lateinische oder nicht verbindende Schriften, Sperrung, erzwungene Silbentrennung und kursive Hervorhebung; bei Comics Aufteilungsausdrücke, die sich nicht einlesen lassen, Panels, die nicht zu den Zellen passen, unbekannte Bilder sowie Sprechblasen- oder Panelformate, fehlerhafte Sprecheranker, Lettering-Schriften, die das Projekt nicht mitliefert, und Ausgaben mit abweichenden Seiten</td></tr>
-    <tr><td><code>render.mjs</code></td><td>Setzt das Projekt (einen Ordner oder eine <code>.postext</code>-Datei) ohne Oberfläche mit der echten Engine, liest seine Konfiguration wie die Sandbox und gibt Warnungen aus. Mit <code>--jpeg</code> malt es die gewünschten Seiten (<code>--pages 12-15</code>) mit dem Canvas-Renderer der Engine in ein bis zwei Sekunden als JPEG-Dateien, sodass der Agent seine Seiten ansieht, ohne ein PDF zu erzeugen; <code>--out</code> schreibt das PDF. Ein für den Druck eingerichtetes Buch erhält PREFLIGHT-Zeilen (Bilder mit niedriger Auflösung, dünne Linien, kleiner Text in mehreren Farben, Farbauftrag über dem Grenzwert, Text nahe am Beschnitt), und sein PDF wird über das ICC-Ausgabeprofil separiert.</td></tr>
+    <tr><td><code>preset_kit.py</code></td><td>Legt das Projektgerüst und sein Generatorskript an, erstellt <code>preset.json</code>, packt die <code>.postext</code>-Datei und prüft die Konfiguration; dabei meldet es Text des Buchs, der in Gestaltungselementen steht (die Konfiguration soll nur die Gestaltung enthalten), und eine Konfiguration, die für die Sandbox zu groß ist</td></tr>
+    <tr><td><code>lint_project.py</code></td><td>Findet alles, was Parser und Loader stillschweigend falsch machen, und bei chinesischem, japanischem und koreanischem Text die Zeichen, die die mitgelieferten Schriften nicht setzen können; bei japanischem Text Kana unter einer chinesischen Sprachkennung, chinesische Schriften oder Einstellungen, in den Kapiteln verbliebene Aozora-Notation und Kanji-Registereinträge ohne Lesung; bei arabischem Text eine fehlende arabische Sprachkennung, rein lateinische oder nicht verbindende Schriften, Sperrung, erzwungene Silbentrennung und kursive Hervorhebung; bei Comics Aufteilungsausdrücke, die sich nicht einlesen lassen, Panels, die nicht zu den Zellen passen, unbekannte Bilder sowie Sprechblasen- oder Panelstile, fehlerhafte Sprecherpunkte, Lettering-Schriften, die das Projekt nicht mitliefert, und Ausgaben mit abweichenden Seiten</td></tr>
+    <tr><td><code>render.mjs</code></td><td>Setzt das Projekt (einen Ordner oder eine <code>.postext</code>-Datei) ohne Oberfläche mit der echten Engine, liest seine Konfiguration wie die Sandbox und gibt Warnungen aus. Mit <code>--jpeg</code> zeichnet es die gewünschten Seiten (<code>--pages 12-15</code>) mit dem Canvas-Renderer der Engine in ein bis zwei Sekunden als JPEG-Dateien, sodass der Agent seine Seiten ansieht, ohne ein PDF zu erzeugen; <code>--out</code> schreibt das PDF. Ein für den Druck eingerichtetes Buch erhält PREFLIGHT-Zeilen (Bilder mit niedriger Auflösung, dünne Linien, kleiner Text in mehreren Farben, Farbauftrag über dem Grenzwert, Text zu nah an der Schnittkante), und sein PDF wird über das ICC-Ausgabeprofil separiert.</td></tr>
     <tr><td><code>compare_pages.py</code></td><td>Stellt Quell- und Postext-Seiten nebeneinander, aus dem PDF des Renderlaufs oder aus seinem Ordner mit JPEGs</td></tr>
   </tbody>
 </table>
@@ -151,7 +153,7 @@ Projekt) mit `-g`:
 npx skills add drnachio/postext --skill postext-port -a codex -a claude-code -g
 ```
 
-Derselbe Skill wird auch von der Website veröffentlicht, daher funktioniert ebenso:
+Derselbe Skill wird auch über die Website veröffentlicht, daher funktioniert auch:
 
 ```bash
 npx skills add https://postext.dev
@@ -201,7 +203,7 @@ mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && n
 Pandoc wird für Quellen aus Word, PowerPoint, EPUB und HTML gebraucht, poppler
 für die Seitenbilder der Quelle. Die Node-Pakete treiben den Renderer ohne
 Oberfläche an (Node 22.15 oder neuer); `@napi-rs/canvas` ist ein vorkompiliertes
-Canvas, mit dem er die Seiten des Buchs direkt als JPEG malen kann. Optionale
+Canvas, mit dem er die Seiten des Buchs direkt als JPEG zeichnen kann. Optionale
 Werkzeuge: `ocrmypdf` für Scans, ImageMagick und veraPDF für PDF/UA-Prüfungen.
 
 Die Arbeitsschleife läuft über die [Kommandozeile](/de/docs/command-line), eine eigenständige ausführbare Datei, für die nichts installiert werden muss: Der Agent hält das Projekt entpackt und lässt `postext build --watch` auf den Seiten laufen, an denen er arbeitet, sodass jede Änderung etwa eine Sekunde später als JPEG erscheint, auch in einem langen Buch. Die Node-Pakete sind optional: Sie führen `render.mjs` aus, das die zusätzlichen Prüfungen der Sandbox ergänzt. Beide setzen das Buch mit `bodyText.shapingLanguage: 'host'`, gleich was seine Konfiguration angibt, sodass eine Zeile an einem anderen Wort umbrechen kann als in der Sandbox (siehe [Unterschiede zur Sandbox](/de/docs/command-line#unterschiede-zur-sandbox)).
@@ -227,14 +229,14 @@ Der Agent folgt dem Arbeitsablauf:
 2. **Inventar und Vermessung.** Er liest die Quelle und schreibt ein
    Datenblatt mit gemessenen Fakten: Endformat, Ränder, Spalten,
    Zeilenabstand, typografische Rollen, Farbpalette, Kapitelauftakte,
-   Kolumnentitel, Kastenfamilien und Gewohnheiten der Platzierung. Er ordnet
-   jede Seite als Fließtextseite oder als frei gestaltete Seite ein (Kästen,
-   Beschriftungen und Karten an festen Stellen); ab Postext 1.35 fasst er die
-   frei gestalteten Seiten nach Seitentyp zusammen und setzt jeden Typ aus
-   einer Seitenvorlage, sodass das identische Layout Text behält, den Sie
-   bearbeiten und übersetzen können; mit einer älteren Version fragt er, wenn
-   mehr als ein Drittel frei gestaltet ist, ob Sie das identische Layout
-   wollen oder Text, den Sie bearbeiten und übersetzen können.
+   Kolumnentitel, Kastenfamilien und übliche Platzierungen. Er ordnet jede
+   Seite als Fließtextseite oder als zusammengesetzte Seite ein (Kästen,
+   Beschriftungen und Karten an festen Stellen). Ab Postext 1.35 fasst er die
+   zusammengesetzten Seiten nach ihrer Art zusammen und setzt jede Art aus
+   einer Seitenvorlage: Das Layout bleibt identisch, und der Text bleibt
+   bearbeitbar und übersetzbar. Mit einer älteren Version fragt er, wenn mehr
+   als ein Drittel der Seiten zusammengesetzt ist, ob Sie das identische
+   Layout wollen oder Text, den Sie bearbeiten und übersetzen können.
 3. **Projekt.** Er legt das Gerüst `my-book/` mit einem Generator
    `build_preset.py` an, der das Datenblatt als Konstanten enthält und
    `preset.json` erzeugt.
@@ -245,11 +247,11 @@ Der Agent folgt dem Arbeitsablauf:
 5. **Prüfung.** Er prüft das Projekt mit dem Linter und lässt
    `postext build --watch` auf dem entpackten Projekt laufen: Er ändert ein
    Kapitel oder eine Einstellung, sieht sich das JPEG der Seite an, das etwa eine
-   Sekunde später neu gemalt ist, und ändert erneut, bis Seitenumbrüche,
+   Sekunde später neu gezeichnet ist, und ändert erneut, bis Seitenumbrüche,
    Abbildungen und Kästen Seite für Seite mit der Quelle übereinstimmen. An
    jedem Meilenstein führt er die vollständigen Prüfungen aus (`postext check`
-   und den Linter). Das PDF wird für die Druckprüfungen erzeugt, nicht für jeden
-   Blick.
+   und den Linter). Das PDF wird nur für die Druckprüfungen erzeugt, nicht bei
+   jedem Blick auf eine Seite.
 6. **Übergabe.** Er legt Papier, Bindung und Umschläge des Buchs für den
    Betrachter Folio fest und packt `my-book.postext`.
 
@@ -266,14 +268,14 @@ Die gelieferte Datei ist nicht an die Sandbox gebunden. Das Paket `postext` öff
 
 - **Die Extraktoren liefern Entwürfe; der Agent bereitet sie auf.** Rechnen Sie
   mit einem Durchgang je Kapitel, bei dem mit den Originalseiten verglichen wird.
-  Aus dieser Durchsicht kommt die Qualität.
+  Erst diese Durchsicht sorgt für die Qualität.
 - **Der Text bleibt im Markdown.** Die Konfiguration enthält die Gestaltung,
   jedes Wort des Buchs steht in den Kapiteln; eine Korrektur oder eine
-  Übersetzung ist also eine Änderung am Markdown. Ab Postext 1.35 sind frei
-  gestaltete Seiten Seitenvorlagen in der Konfiguration, deren Rahmen aus dem
-  Markdown jedes Kapitels gefüllt werden: Ein Kasten wächst mit einer längeren
-  Übersetzung und schiebt die Kästen darunter weiter, und ab 1.37 sind die
-  Namen auf einer Karte Beschriftungen im Markdown. Mit einer älteren Version
+  Übersetzung ist also eine Änderung am Markdown. Ab Postext 1.35 sind
+  zusammengesetzte Seiten Seitenvorlagen in der Konfiguration, deren Rahmen aus
+  dem Markdown jedes Kapitels gefüllt werden: Ein Kasten wächst mit einer
+  längeren Übersetzung und verdrängt die Kästen darunter, und ab 1.37 sind die
+  Wörter auf einer Karte Beschriftungen, die im Markdown stehen. Mit einer älteren Version
   entstehen sie aus Kästen, die an ihrem Platz fixiert sind, Seitenbildern
   ohne Text und SVG-Abbildungen, deren Beschriftungen echter Text bleiben. Der
   Bericht nennt den gewählten Weg und die Version. Wenn
@@ -282,8 +284,8 @@ Die gelieferte Datei ist nicht an die Sandbox gebunden. Das Paket `postext` öff
   ein Issue und fragt Sie. Der Skill ändert nie die Engine, um ein einzelnes
   Buch passend zu machen.
 - **Eine Datei für alle Sprachen.** Eine Übersetzung ist ein Satz Kapitel in
-  derselben `.postext`-Datei, mit eigenen Bildunterschriften und
-  Beschriftungen, und wird in jeder Sprache mit `postext check` geprüft.
+  derselben `.postext`-Datei, mit eigenen Legenden und
+  Abbildungsbeschriftungen, und wird in jeder Sprache mit `postext check` geprüft.
 - **Über Rechte entscheiden Sie.** Der Agent fragt nach, bevor er Bilder oder
   Schriften mit unklarer Lizenz übernimmt. Lizenzierte Schriften werden als
   `redistributable: false` gekennzeichnet, sodass exportierte Projekte sie
@@ -300,4 +302,4 @@ Der Skill liegt im Repository unter
 Er deckt jeden Fall ab, der beim Bau der öffentlichen und privaten Vorlagen in
 der Sandbox aufgetreten ist. Wenn eine Übertragung auf einen Fall stößt, den er
 noch nicht abdeckt, eröffnen Sie bitte ein Issue oder einen Pull-Request, der den
-Skill verbessert, damit die nächste Übertragung ihn gleich mitbekommt.
+Skill verbessert, damit die nächste Übertragung gleich davon profitiert.

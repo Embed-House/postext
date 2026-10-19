@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：漫画',
   sidebarTitle: '漫画设置',
-  description: 'comics设置：漫画页的画框和格间距、分格样式、嵌字、对白框样式和角色表',
+  description: 'comics属性的各项设置：漫画页的画框和格间距、分格样式、嵌字、对白框样式和角色表',
   lang: 'zh',
   lastUpdated: '2026-10-10',
   readingTime: '6分钟',
   order: 17,
   parent: 'configuration',
-  plainSummary: "本页讲漫画页面的设置。你可以设定页面的画框和分格之间的间距。你可以选择嵌字的字体和字号。你可以定义对白框、旁白框和拟声词怎样画。你还可以列出角色，让每个角色用自己的样式说话。漫画指南讲解怎样写这些页面。",
+  plainSummary: "本页讲漫画页的设置。你可以设定页面的画框，以及分格之间留多宽的间隔。嵌字用什么字体、多大字号，也在这里选。对白框、旁白框和拟声词画成什么样子，同样在这里规定。你还可以列出角色，让每个角色用自己的样式说话。至于漫画页本身怎样写，请看漫画指南。",
 };
 
 # 配置：漫画
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 漫画
 
-`comics`属性配置漫画页（`:::page`）、漫画条（`:::strip`）和跨页：分格从中切出的画框和格间距、分格样式、嵌字、对白框样式以及角色表。只有含漫画的文档才读取它；没有漫画的文档，排版结果与以前完全相同；含漫画却没有`comics`一节的文档，采用其语言的默认值。标记和嵌字的方式见[漫画](/zh/docs/comics)。
+`comics`属性配置漫画页（`:::page`）、漫画条（`:::strip`）和跨页，包括画框和格间距（分格就从画框中切出）、分格样式、嵌字、对白框样式以及角色表。只有含漫画的文档才读取它：没有漫画的文档，排版结果与以前完全相同；有漫画但没有`comics`一节的文档，采用该语言的默认值。漫画的标记写法和嵌字方式见[漫画](/zh/docs/comics)。
 
 ```ts
 const config: PostextConfig = {
@@ -47,7 +47,7 @@ const config: PostextConfig = {
       <td><code>readingDirection</code></td>
       <td><code>'auto' | 'ltr' | 'rtl'</code></td>
       <td><code>'auto'</code></td>
-      <td>一行中各分格的顺序。<code>'auto'</code>在从右到左的文档、竖排文档以及日文和繁体中文中从右往左读，否则按<code>artDirection</code>的方向读（简体中文和韩文也是如此）。页面的<code>direction</code>属性可以覆盖它。<code>page.binding: 'auto'</code>时，漫画从右往左读的书在右侧装订。</td>
+      <td>一行中各分格的顺序。<code>'auto'</code>在从右到左的文档、竖排文档以及日文和繁体中文中从右往左读，否则按<code>artDirection</code>的方向读（简体中文和韩文也是如此）。页面的<code>direction</code>属性可以覆盖它。<code>page.binding: 'auto'</code>时，漫画从右往左读的书采用右翻（右侧装订）。</td>
     </tr>
     <tr>
       <td><code>artDirection</code></td>
@@ -64,8 +64,8 @@ const config: PostextConfig = {
     <tr>
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
-      <td>页面边距</td>
-      <td>漫画页自己的边距（<code>top</code>、<code>bottom</code>、<code>left</code>、<code>right</code>、<code>mirror</code>）。分格从这些边距以内的区域切出；未设置时，从页面的版心切出。</td>
+      <td>页面的页边距</td>
+      <td>漫画页自己的页边距（<code>top</code>、<code>bottom</code>、<code>left</code>、<code>right</code>、<code>mirror</code>）。分格从这些页边距以内的区域切出；未设置时，从页面的版心切出。</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
@@ -95,7 +95,7 @@ const config: PostextConfig = {
       <td><code>lettering</code></td>
       <td><code>LetteringConfig</code></td>
       <td>见下文</td>
-      <td>全书每个对白框的字体、字号和排印规则。</td>
+      <td>全书所有对白框的字体、字号和嵌字规范。</td>
     </tr>
     <tr>
       <td><code>balloonStyles</code></td>
@@ -113,13 +113,13 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>在漫画页上印书眉和页码。关闭时，漫画页只有分格，但它的页码照样计数。</td>
+      <td>在漫画页上印书眉和页码。关闭时，漫画页上只有分格，但页码照样计数。</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>未设置</td>
-      <td>用于页面不是纸页的宿主：把漫画页排在一张印刷纸页上（<code>width</code>、<code>height</code>、<code>margins</code>），缩放到<code>fitWidth</code> px宽（高度最多<code>fitHeight</code> px），放在页面顶部。沙盒的HTML查看器设置它；它从不随文档保存。</td>
+      <td>用于页面不是纸页的宿主：把漫画页排在一张印刷纸页上（<code>width</code>、<code>height</code>、<code>margins</code>），缩放到<code>fitWidth</code> px宽（高度最多<code>fitHeight</code> px），放在页面顶部。沙盒的HTML阅读器会设置它；它从不随文档保存。</td>
     </tr>
   </tbody>
 </table>
@@ -166,7 +166,7 @@ const config: PostextConfig = {
       <td><code>background</code></td>
       <td><code>ColorValue</code></td>
       <td>白色</td>
-      <td>画面下面的底色：空分格的颜色，以及完整显示画面时四周色带的颜色。</td>
+      <td>画面底下的底色，也就是空分格的颜色，以及画面完整显示时四周空出的色带的颜色。</td>
     </tr>
     <tr>
       <td><code>fit</code></td>
@@ -185,7 +185,7 @@ const config: PostextConfig = {
 
 ### 嵌字
 
-`comics.lettering`设定全书的每个对白框。字号只有一个：对白框样式可以按比例缩放它（`fontScale`），文字从不为了塞进对白框而缩小。
+`comics.lettering`设定全书所有对白框的嵌字。全书只有一个字号：对白框样式可以按比例缩放它（`fontScale`），但文字从不为了放进对白框而缩小。
 
 <table>
   <thead>
@@ -237,7 +237,7 @@ const config: PostextConfig = {
       <td><code>writingMode</code></td>
       <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
       <td><code>'auto'</code></td>
-      <td><code>'auto'</code>让日文和繁体中文以及任何竖排的文档竖排成列嵌字，其他一律横排。台词行的<code>vertical</code>或<code>horizontal</code>标记可以让那一行另行排列（见<a href="/zh/docs/comics#嵌字">漫画 › 嵌字</a>）。</td>
+      <td><code>'auto'</code>让日文、繁体中文以及所有竖排的文档竖排嵌字，其他一律横排。台词行加上<code>vertical</code>或<code>horizontal</code>标记，可以让这一行单独改用另一种排法（见<a href="/zh/docs/comics#嵌字">漫画 › 嵌字</a>）。</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
@@ -255,7 +255,7 @@ const config: PostextConfig = {
       <td><code>doubleDash</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>把破折号写成<code>--</code>，这是美式嵌字的习惯。</td>
+      <td>把破折号嵌成<code>--</code>，这是美式嵌字的习惯。</td>
     </tr>
     <tr>
       <td><code>inset</code></td>
@@ -279,14 +279,14 @@ const config: PostextConfig = {
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>为了放进格子而改变形状的对白框，不会为此拆开中文词语：新的分行每拆开一个词（而首选形状保持完整的词），代价都高于一个读序错乱的对白框，所以排版会先移动对白框或调整顺序。日文嵌字按文节断行，不受影响。设为<code>false</code>时按 postext 1.27 的方式嵌字；1.28 之前保存、含有漫画的文档按这种方式读取。</td>
+      <td>对白框为了放进分格而改变形状时，不会因此拆开中文词语：首选形状里完整的词，新的分行每拆开一个，代价都高于一个读序错乱的对白框，所以排版会先移动对白框或调整顺序。日文嵌字按文节断行，不受影响。设为<code>false</code>时按postext 1.27的方式嵌字；1.28之前保存、含有漫画的文档按<code>false</code>读取。</td>
     </tr>
   </tbody>
 </table>
 
 ### 对白框样式
 
-`comics.balloonStyles`的每个条目叠加在id相同的内置样式（`speech`、`thought`、`whisper`、`shout`、`radio`、`caption`、`inner`、`note`、`sfx`）之上；id是新的时，叠加在`speech`之上。下表的默认值是`speech`的；每种内置样式改变了哪些值，见[漫画一页](/zh/docs/comics#对话框样式)。以`em`为单位的长度相对于对白框文字的字号。
+`comics.balloonStyles`的每个条目叠加在id相同的内置样式（`speech`、`thought`、`whisper`、`shout`、`radio`、`caption`、`inner`、`note`、`sfx`）之上；id是新的时，叠加在`speech`之上。下表的默认值是`speech`的；每种内置样式改变了哪些值，见[漫画](/zh/docs/comics#对白框样式)页。以`em`为单位的长度相对于对白框文字的字号。
 
 <table>
   <thead>
@@ -350,13 +350,13 @@ const config: PostextConfig = {
       <td><code>wobble</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>轮廓像手绘线一样抖动的程度，0到1，以对白框为种子生成，所以每次排版都不变。</td>
+      <td>轮廓像手绘线那样抖动的程度，取0到1；抖动以对白框为种子生成，所以每次排版都一样。</td>
     </tr>
     <tr>
       <td><code>roundness</code></td>
       <td><code>number</code></td>
       <td><code>2.2</code></td>
-      <td>椭圆所用超椭圆的指数：2是椭圆，数值越大越方。</td>
+      <td><code>'oval'</code>所用超椭圆的指数：2是标准椭圆，数值越大越接近方形。</td>
     </tr>
     <tr>
       <td><code>burstPoints</code></td>
@@ -380,7 +380,7 @@ const config: PostextConfig = {
       <td><code>aspect</code></td>
       <td><code>number</code></td>
       <td><code>1.6</code></td>
-      <td>断行时为文字块追求的宽高比（横排嵌字）。</td>
+      <td>断行时文字块力求达到的宽高比（横排嵌字）。</td>
     </tr>
     <tr>
       <td><code>tail</code></td>
@@ -404,7 +404,7 @@ const config: PostextConfig = {
       <td><code>target</code></td>
       <td><code>'mouth' | 'head'</code></td>
       <td><code>'mouth'</code></td>
-      <td>尾巴指向什么：锚点的嘴，或者它的头（心声）。</td>
+      <td>尾巴指向哪里：锚点的嘴，或者它的头（心声对白框）。</td>
     </tr>
     <tr>
       <td><code>position</code></td>
@@ -464,7 +464,7 @@ const config: PostextConfig = {
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>无</td>
-      <td>围绕字形画出的描边及其宽度，让文字压在画面上也能看清（拟声词）。</td>
+      <td>围绕字形画出的描边的宽度，让文字压在画面上也能看清（拟声词）。</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -505,7 +505,7 @@ const config: PostextConfig = {
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>HTML输出和流式EPUB在该角色的台词前印出的名字，编辑器也显示它。</td>
+      <td>HTML输出和流式EPUB在该角色的台词前印出的名字，编辑器里也显示它。</td>
     </tr>
     <tr>
       <td><code>balloonStyle</code></td>
@@ -534,7 +534,7 @@ const config: PostextConfig = {
   </tbody>
 </table>
 
-台词行自己的`color`和`font`优先于角色表，角色表又优先于对白框样式。每个漫画颜色都可以是调色板条目，像其他链接的颜色一样跟随调色板变化。
+台词行自己的`color`和`font`优先于角色表，角色表又优先于对白框样式。漫画中的每种颜色都可以取自调色板条目，像其他链接到调色板的颜色一样随调色板变化。
 
 ```ts
 const resolved = resolveComicsConfig(config.comics, 'ja');

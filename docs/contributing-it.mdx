@@ -24,8 +24,8 @@ formato dei documenti e il sistema di configurazione sono già stati rilasciati.
 molte decisioni di progettazione, e chi si unisce adesso ha un’influenza reale sulla direzione del
 progetto. Se aspettavi il momento giusto per entrare, è questo.
 
-Non serve essere programmatori per contribuire. Che tu scriva codice, progetti impaginati
-editoriali, conosca la tipografia, faccia test su più browser, scriva documentazione, traduca
+Non serve essere programmatori per contribuire. Che tu scriva codice, impagini
+pubblicazioni, conosca la tipografia, faccia test su più browser, scriva documentazione, traduca
 contenuti o abbia semplicemente idee su come dovrebbero funzionare i contenuti editoriali sul web,
 qui c’è posto per te.
 
@@ -45,7 +45,7 @@ di libri e gruppi di sviluppo di tutto il mondo possano adottare ed estendere.
 Uno standard del genere non può costruirlo una sola persona o una sola azienda. Servono lo sguardo
 di tipografi di tradizioni diverse, specialisti del PDF, esperti di accessibilità, sviluppatori che
 lavorano con scritture da destra a sinistra, grafici che impaginano riviste e ingegneri che
-ottimizzano le prestazioni di rendering. La varietà del mondo editoriale chiede una comunità
+ottimizzano le prestazioni di rendering. Un mondo editoriale così vario ha bisogno di una comunità
 altrettanto varia dietro lo strumento che lo serve.
 
 
@@ -65,7 +65,7 @@ decisioni prese a porte chiuse. Tutto è pubblico, ricercabile e aperto alla par
 È una scelta voluta: quando tutto sta in un solo posto, chiunque può ritrovare il contesto di ogni
 decisione, e chi arriva può leggerne la storia.
 
-<Illustration name="ContributionWorkflow" data='{"title": "Un tipico percorso di contributo", "desc": "Un’idea nasce come Issue o Discussion, viene discussa, diventa una Pull Request che viene revisionata e alla fine viene unita. Le issue con l’etichetta good first issue sono il punto d’ingresso per chi è nuovo.", "caption": "Dall’idea al merge: quattro fasi, tutte pubbliche su GitHub.", "steps": [{"name": "Issue", "sub": "problema o idea"}, {"name": "Discussion", "sub": "approccio e progetto"}, {"name": "Pull Request", "sub": "revisione del codice"}, {"name": "Merge", "sub": "in develop"}], "branchLabel": "good first issue", "branchSub": "miglior punto d’ingresso"}' />
+<Illustration name="ContributionWorkflow" data='{"title": "Un tipico percorso di contributo", "desc": "Un’idea nasce come Issue o Discussion, se ne discute, diventa una Pull Request, passa la revisione e alla fine si fa il merge. Le issue con l’etichetta good first issue sono il punto d’ingresso per chi comincia.", "caption": "Dall’idea al merge: quattro fasi, tutte pubbliche su GitHub.", "steps": [{"name": "Issue", "sub": "problema o idea"}, {"name": "Discussion", "sub": "approccio e progetto"}, {"name": "Pull Request", "sub": "revisione del codice"}, {"name": "Merge", "sub": "in develop"}], "branchLabel": "good first issue", "branchSub": "il punto d’ingresso ideale"}' />
 
 
 ## Dove puoi aiutare
@@ -85,15 +85,15 @@ particolarmente preziosi:
   impaginazione abbastanza veloce da lavorare in tempo reale a ogni ridimensionamento.
 
 ### Sandbox e interfaccia
-La [Sandbox](/it/docs/sandbox) è diventata una superficie React consistente a tutti gli effetti: un
-pannello Risorse con un editor di tabelle interattivo e il caricamento di immagini e SVG, un pannello
-dei font e un pannello Grafica i cui dodici gruppi coprono ogni angolo del motore. I suoi controlli
+La [Sandbox](/it/docs/sandbox) è diventata un’applicazione React di tutto rispetto: un
+pannello **Risorse** con un editor di tabelle interattivo e il caricamento di immagini e SVG, un pannello
+**Font** e un pannello **Grafica** i cui dodici gruppi coprono ogni angolo del motore. I suoi controlli
 si basano sulle primitive di Base UI (`packages/postext-sandbox/src/ui/`) e sono verificati con
-axe-core per WCAG 2.1 AA, quindi i nuovi controlli dovrebbero riusarle e fare in modo che ogni campo
-sia nominato dalla sua etichetta e descritto dal suo testo di aiuto. Ogni stringa dell’interfaccia
-segue una rigida convenzione di i18n, collegata tramite etichette in cinque file tra il pacchetto
-della Sandbox e i cataloghi delle lingue dell’app web. Se contribuisci al frontend o alla UX, il tuo
-lavoro arriva qui.
+axe-core per WCAG 2.1 AA, quindi i nuovi controlli dovrebbero riusarle, e ogni campo deve
+prendere il nome dalla propria etichetta e la descrizione dal testo di aiuto. Ogni stringa
+dell’interfaccia segue una rigida convenzione di i18n: ogni etichetta passa per cinque file, nel
+pacchetto della Sandbox e nei cataloghi delle lingue dell’app web. Se contribuisci al frontend o
+alla UX, è qui che lavorerai.
 
 ### Grafica e tipografia
 - **Competenza in progettazione editoriale**: se hai esperienza nell’impaginare riviste, quotidiani
@@ -104,10 +104,10 @@ lavoro arriva qui.
 
 ### Documentazione e comunità
 - **Documentazione**: migliorare, ampliare e mantenere la documentazione. Una documentazione chiara
-  è ciò che separa un progetto che la gente adotta da uno che abbandona.
+  è ciò che separa un progetto che la gente adotta da uno che finisce per abbandonare.
 - **Traduzioni**: la documentazione oggi è bilingue (inglese e spagnolo). Altre lingue sono
   benvenute.
-- **Test**: test su browser, sistemi operativi e casi limite. Trovare gli impaginati che si rompono
+- **Test**: provare il motore su browser e sistemi operativi diversi e nei casi limite. Trovare gli impaginati che si rompono
   vale quanto costruire quelli che funzionano.
 
 ### Progettazione del formato e dello schema
@@ -115,12 +115,12 @@ Il formato non è più un foglio bianco: i blocchi `::resource`, i rimandi in li
 sezioni di configurazione `tableStyle`, `captionStyle` e `diagramStyle` sono già stati rilasciati.
 Ora il lavoro consiste nel far evolvere un formato consolidato senza romperlo:
 
-- **Grammatica del documento**: le note a margine e i rimandi oltre le risorse sono ancora questioni
-  aperte, ognuna tanto un problema di progettazione quanto un problema tecnico.
+- **Grammatica del documento**: le note a margine e i rimandi ad altro che non siano risorse sono
+  ancora questioni aperte, e ognuna è un problema di progettazione quanto un problema tecnico.
 - **Schema di configurazione**: mantenere il sistema abbastanza potente per i professionisti e
   abbastanza semplice per chi comincia, man mano che cresce.
 
-<Illustration name="ContributionAreas" data='{"title": "Dove puoi aiutare, a colpo d’occhio", "desc": "Quattro quadranti con esempi concreti in ciascuno: il codice e l’interfaccia della Sandbox, la grafica e la tipografia, la documentazione e la comunità, il formato e lo schema.", "caption": "Non serve toccare il codice: un contributo fa una vera differenza su molti fronti.", "areas": [{"name": "Codice e interfaccia della Sandbox", "items": ["Knuth-Plass ed elementi flottanti", "PDF e rendering", "Cache delle misure", "Interfaccia della Sandbox e i18n"]}, {"name": "Grafica e tipografia", "items": ["Progettazione editoriale", "Tradizioni tipografiche", "Riviste e quotidiani", "Scritture non latine"]}, {"name": "Documentazione e comunità", "items": ["Migliorare la documentazione", "Traduzioni", "Test su più browser", "Accogliere chi arriva"]}, {"name": "Formato e schema", "items": ["Direttive ::resource e :ref", "Schema di configurazione", "Note a piè di pagina e a margine", "Rimandi"]}]}' />
+<Illustration name="ContributionAreas" data='{"title": "Dove puoi aiutare, a colpo d’occhio", "desc": "Quattro quadranti con esempi concreti in ciascuno: il codice e l’interfaccia della Sandbox, la grafica e la tipografia, la documentazione e la comunità, il formato e lo schema.", "caption": "Non serve toccare il codice: si può dare un aiuto concreto su molti fronti.", "areas": [{"name": "Codice e interfaccia della Sandbox", "items": ["Knuth-Plass ed elementi flottanti", "PDF e rendering", "Cache delle misure", "Interfaccia della Sandbox e i18n"]}, {"name": "Grafica e tipografia", "items": ["Progetto grafico editoriale", "Tradizioni tipografiche", "Riviste e quotidiani", "Scritture non latine"]}, {"name": "Documentazione e comunità", "items": ["Migliorare la documentazione", "Traduzioni", "Test su più browser", "Accogliere chi arriva"]}, {"name": "Formato e schema", "items": ["Direttive ::resource e :ref", "Schema di configurazione", "Note a piè di pagina e a margine", "Rimandi"]}]}' />
 
 
 ## Per cominciare
@@ -129,15 +129,16 @@ La preparazione pratica (clonare il repository, installare le dipendenze, esegui
 documentata in [CONTRIBUTING.md](https://github.com/drnachio/postext/blob/develop/CONTRIBUTING.md).
 Parti da lì per i passaggi meccanici.
 
-Una volta pronto, tre azioni concrete, dall’impegno più leggero al più impegnativo:
+Una volta pronto, ecco tre azioni concrete, in ordine di impegno crescente:
 
 1. **Presentati nelle [Discussions](https://github.com/drnachio/postext/discussions)**:
    racconta di cosa ti occupi e cosa ti ha portato qui. Nessuna domanda è troppo semplice, ed è il
    modo più rapido per far sapere alla comunità che sei arrivato.
 2. **Prendi una [good first issue](https://github.com/drnachio/postext/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**:
-   scelte apposta per essere un punto d’ingresso realistico, senza bisogno di contesto storico nascosto.
+   sono scelte apposta come punto d’ingresso realistico e non richiedono di conoscere la storia del
+   progetto.
 3. **Traduci la documentazione in una nuova lingua**: oggi la documentazione è in inglese e in
-   spagnolo. Ogni terza lingua è un regalo per i lettori che ora ne restano esclusi.
+   spagnolo. Qualsiasi altra lingua è un regalo per i lettori che oggi restano esclusi.
 
 Se pensi di scrivere codice, apri prima una issue per discutere l’approccio: eviti lavoro doppio, e
 una breve conversazione all’inizio fa risparmiare tempo a tutti.
@@ -147,9 +148,9 @@ una breve conversazione all’inizio fa risparmiare tempo a tutti.
 Per orientarti prima di entrare nel vivo:
 
 - **[Architettura](/it/docs/architecture)**: come è strutturata la pipeline di impaginazione e dove
-  vive ogni sottosistema.
-- **[Formato del documento](/it/docs/document-format)**: la grammatica Markdown arricchita che chi
-  contribuisce estende.
+  si trova ogni sottosistema.
+- **[Formato del documento](/it/docs/document-format)**: la grammatica del Markdown arricchito, che chi
+  contribuisce va ad ampliare.
 - **[Sandbox](/it/docs/sandbox)**: l’ambiente di prova dove la maggior parte delle modifiche è più
   facile da vedere e da verificare.
 

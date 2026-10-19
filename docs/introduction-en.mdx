@@ -29,8 +29,8 @@ applies the same rules a professional typesetter would: orphan and widow prevent
 balancing, text flowing around obstacles, deliberate spacing. The output is publication-grade
 layout geometry for both HTML and PDF.
 
-Built on [`@chenglou/pretext`](https://github.com/chenglou/pretext) for DOM-free text measurement
-at speeds that make all of this possible.
+It is built on [`@chenglou/pretext`](https://github.com/chenglou/pretext), which measures text
+without the DOM at speeds that make all of this possible.
 
 
 ## The Gap Between Print and Web
@@ -142,7 +142,7 @@ const pdfBytes = await renderToPdf(vdt, { fontProvider });  // print-ready PDF
 
 Pretext gives you the measurements. Postext gives you the layout.
 
-<Illustration name="PretextPostextPipeline" data='{"title": "Pretext measures, Postext decides", "desc": "Pretext provides DOM-free canvas-based text measurement. Postext consumes those exact dimensions to decide column, position, flow around resources, and orphan, widow, and balancing rules.", "caption": "Two halves of the same operation: Pretext before, Postext after.", "pretextTitle": "Pretext", "pretextSubtitle": "measure", "pretextBullets": ["DOM-free, canvas-based", "300-600x faster than reflow", "pixel-perfect line breaks"], "bridge": ["exact", "dimensions"], "postextTitle": "Postext", "postextSubtitle": "decide", "postextBullets": ["Which column, what position", "Flow around resources", "Orphans, widows, balancing"]}' />
+<Illustration name="PretextPostextPipeline" data='{"title": "Pretext measures, Postext decides", "desc": "Pretext measures text on a canvas, without the DOM. Postext uses those exact dimensions to decide each block’s column and position, the flow around resources, and the orphan, widow and balancing rules.", "caption": "Two halves of the same operation: Pretext before, Postext after.", "pretextTitle": "Pretext", "pretextSubtitle": "measure", "pretextBullets": ["DOM-free, canvas-based", "300-600x faster than reflow", "pixel-perfect line breaks"], "bridge": ["exact", "dimensions"], "postextTitle": "Postext", "postextSubtitle": "decide", "postextBullets": ["Which column, what position", "Flow around resources", "Orphans, widows, balancing"]}' />
 
 *Pretext was created by [Cheng Lou](https://github.com/chenglou). Postext builds on top of it.*
 
@@ -174,7 +174,7 @@ The process has three stages:
    embedded fonts (`renderToPdf`, from the `postext-pdf` package). The same content, the same
    rules, three interchangeable outputs.
 
-<Illustration name="LayoutProcess" data='{"title": "Three-stage layout process", "desc": "Enriched markdown plus config enters the engine, which runs a multi-pass layout pipeline with Pretext measurement inside, and outputs rendered HTML or PDF.", "caption": "Content in, geometry out — then rendered to the target format.", "inputTitle": "Enriched Markdown", "inputSubtitle": "+ config", "parse": "parse", "engineTitle": "Postext engine", "engineSub1": "Pretext measurement inside", "engineSub2": "multi-pass layout", "render": "render", "outputTitle": "HTML / PDF", "outputSubtitle": "rendered output"}' />
+<Illustration name="LayoutProcess" data='{"title": "Three-stage layout process", "desc": "Enriched markdown and its configuration go into the engine, which measures the text with Pretext, lays it out over several passes and outputs HTML or PDF.", "caption": "Content in, geometry out — then rendered to the target format.", "inputTitle": "Enriched Markdown", "inputSubtitle": "+ config", "parse": "parse", "engineTitle": "Postext engine", "engineSub1": "Pretext measurement inside", "engineSub2": "multi-pass layout", "render": "render", "outputTitle": "HTML / PDF", "outputSubtitle": "rendered output"}' />
 
 For a detailed look at the engine internals — the Virtual Document Tree, the multi-pass pipeline,
 and the convergence loop — see the [Architecture](/en/docs/architecture) document. For a complete

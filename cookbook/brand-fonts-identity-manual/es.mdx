@@ -24,7 +24,7 @@ La composición mide cada palabra con las fuentes de `document.fonts`, así que 
 
 <Excerpt region="colours" />
 
-Como la paleta y la tabla 1.1 se construyen con las mismas nueve filas, la tabla no puede dar un valor que las páginas no usen. `setCellBackground` rellena la primera celda de cada fila, que va vacía, con el color de esa fila enlazado a la paleta. En el texto, `:swatch{color="line-2"}` recibe el identificador de una entrada de la paleta y dibuja un cuadrado perfilado con el color del texto. `main-color` toma el hex de Ink, de modo que los títulos, las negritas y las cursivas, enlazados a él por defecto, salen en Ink y no en el azul del motor. `bodyText.referenceColor: col('ink')` nombra Ink también para las remisiones ([Paleta de colores](/es/docs/configuration-fonts-colors-viewers#paleta-de-colores)).
+Como la paleta y la tabla 1.1 se construyen con las mismas nueve filas, la tabla no puede dar un valor que las páginas no usen. `setCellBackground` rellena la primera celda de cada fila, que va vacía, con el color de esa fila enlazado a la paleta. En el texto, `:swatch{color="line-2"}` recibe el identificador de una entrada de la paleta y dibuja un cuadrado perfilado con el color del texto. `main-color` toma el hex de Ink, de modo que los títulos, las negritas y las cursivas, enlazados a él por defecto, salen en Ink y no en el azul del motor. `bodyText.referenceColor: col('ink')` usa Ink también para las remisiones ([Paleta de colores](/es/docs/configuration-fonts-colors-viewers#paleta-de-colores)).
 
 ### 3 · Una apertura, tres colores de línea
 
@@ -42,7 +42,7 @@ Un tipo de recurso admite un `captionStyle` parcial, y estos dos solo cambian el
 
 <Excerpt region="bundle" />
 
-`createBundle` lee `config.customFonts`, busca en `files` los bytes de cada variante por su `fileId` y los guarda en `fonts/`, con una entrada `fonts` en el manifiesto. La familia de rótulos lleva `redistributable: false`, que aquí simula una licencia que no deja repartir los archivos (la de Big Shoulders Display, la OFL, sí lo permite). Su archivo se queda fuera y `warnings` nombra la familia. El archivo de 81 KB contiene el capítulo, la configuración, los tres dibujos y cinco archivos de fuente. La composición nunca lee `customFonts`, y sin él las páginas salen iguales ([Crear un paquete](/es/docs/configuration-bundles#crear-un-paquete)).
+`createBundle` lee `config.customFonts`, busca en `files` los bytes de cada variante por su `fileId` y los guarda en `fonts/`, con una entrada `fonts` en el manifiesto. La familia de rótulos lleva `redistributable: false`, que aquí simula una licencia que no deja repartir los archivos (la de Big Shoulders Display, la OFL, sí lo permite). Su archivo se queda fuera y `warnings` indica la familia. El archivo de 81 KB contiene el capítulo, la configuración, los tres dibujos y cinco archivos de fuente. La composición nunca lee `customFonts`, y sin él las páginas salen iguales ([Crear un paquete](/es/docs/configuration-bundles#crear-un-paquete)).
 
 ## Variantes
 

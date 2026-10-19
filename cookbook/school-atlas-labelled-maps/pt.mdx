@@ -1,7 +1,7 @@
 ---
 title: "Um atlas escolar rotulado a partir do Markdown"
 summary: "Mapas pintados sem uma letra e nomeados por linhas ::label nas âncoras de cada recurso, em páginas compostas e numa página dupla, em três idiomas."
-plain: "Três páginas de um atlas escolar de um país inventado. Os mapas são pinturas sem texto; todos os nomes são escritos no texto, então uma tradução troca as palavras e deixa os mapas como estão."
+plain: "Três páginas de um atlas escolar de um país inventado. Os mapas são pinturas sem texto; todos os nomes são escritos no texto, de modo que uma tradução troca as palavras e deixa os mapas como estão."
 description: "Um atlas escolar composto com o Postext: mapas rotulados a partir do Markdown nas âncoras do recurso, um mapa em página dupla e uma edição em árabe."
 question: "Como coloco os nomes de um mapa a partir do texto, para que cada tradução use o mesmo desenho?"
 aliases: ["atlas", "atlas escolar", "rótulos de mapa", "topônimos", "âncoras", "estilos de rótulo", "mapa em página dupla", "página dupla", "da direita para a esquerda", "rótulos girados", "map labels"]
@@ -17,7 +17,7 @@ Três pranchas de um atlas escolar de Varenia, um país inventado para esta rece
 
 <Excerpt region="anchors" />
 
-Uma âncora é um ponto em frações da largura e da altura da imagem, então vale em qualquer tamanho em que o bloco coloque o mapa, e quando a escada de ajuste reduz um mapa os nomes vão junto. `km()` converte nessas frações os quilômetros lidos numa grade posta sobre a pintura: o ponto de uma cidade e o nome dela saem ambos de `TOWNS` e não podem se separar. A âncora guarda o que é do lugar e não do idioma: o estilo, o giro do nome de um rio ou de uma serra ao longo do curso e o lado do rótulo que se apoia no ponto. Os nomes das cidades ficam centralizados acima do ponto, porque `align: 'start'` seria a esquerda de um nome em inglês e a direita de um em árabe.
+Uma âncora é um ponto em frações da largura e da altura da imagem, por isso vale em qualquer tamanho em que o bloco coloque o mapa, e quando a escada de ajuste reduz um mapa os nomes vão junto. `km()` converte nessas frações os quilômetros lidos numa grade posta sobre a pintura: o ponto de uma cidade e o nome dela saem ambos de `TOWNS` e não podem se separar. A âncora guarda o que é do lugar e não do idioma: o estilo, o giro do nome de um rio ou de uma serra ao longo do curso e o lado do rótulo que se apoia no ponto. Os nomes das cidades ficam centralizados acima do ponto, porque `align: 'start'` seria a esquerda de um nome em inglês e a direita de um em árabe.
 
 As pinturas foram feitas em ordem. Primeiro a prancha do relevo, pintada por um modelo de imagem a partir de um mapa de altitudes do país com relevo sombreado; o mapa de localização foi pintado a partir da prancha do relevo e o perfil com as mesmas altitudes, de modo que costas e altitudes coincidem nos três. Uma grade traçada sobre cada imagem deu os quilômetros de cada âncora, e as fronteiras foram cortadas onde chegam à costa pintada.
 
@@ -25,13 +25,13 @@ As pinturas foram feitas em ordem. Primeiro a prancha do relevo, pintada por um 
 
 <Excerpt region="resources" />
 
-O recurso tem uma só imagem (um SVG que leva a pintura e, por cima, os símbolos vetoriais) e uma só lista de âncoras para todas as edições. Cada edição escreve uma linha `::label[…]{at="…"}` por âncora dentro de `:::figure{resource="relief" slot="map"}`, de modo que `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` caem no mesmo lugar, quebrados em duas linhas pelo `width` da âncora quando precisam. O texto alternativo também muda com a edição: cada `:::figure` leva o seu numa linha `::alt[…]`, e uma legenda ou uma nota iriam do mesmo modo com `::caption[…]` e `::note[…]`. Uma âncora com estilo que uma edição deixa sem rótulo gera o aviso `anchorUnlabelled`, e um rótulo cujo `at` não nomeia nenhuma âncora não é desenhado e gera `labelAnchorUnknown`.
+O recurso tem uma só imagem (um SVG que leva a pintura e, por cima, os símbolos vetoriais) e uma só lista de âncoras para todas as edições. Cada edição escreve uma linha `::label[…]{at="…"}` por âncora dentro de `:::figure{resource="relief" slot="map"}`, de modo que `::label[Calvera Plain]{at="plain"}` e `::label[Llanura de Calvera]{at="plain"}` caem no mesmo lugar, quebrados em duas linhas pelo `width` da âncora quando precisam. O texto alternativo também muda com a edição: cada `:::figure` leva o seu numa linha `::alt[…]`, e uma legenda ou uma nota iriam do mesmo modo com `::caption[…]` e `::note[…]`. Uma âncora com estilo que uma edição deixa sem rótulo gera o aviso `anchorUnlabelled`, e um rótulo cujo `at` não indica nenhuma âncora não é desenhado e gera `labelAnchorUnknown`.
 
 ### 3 · Uma prancha e uma prancha dupla
 
 <Excerpt region="templates" />
 
-Os dois modelos têm os mesmos cinco blocos, então o Markdown de uma prancha tem a mesma forma em uma página ou em duas: o título, o texto que não nomeia nenhum slot, o mapa, a legenda e as atividades. Na prancha dupla, `spread: true` diagrama as duas páginas como uma só folha de 390 mm, e só o bloco do mapa usa `crossGutter`: ele atravessa a lombada enquanto o texto e os boxes ficam na própria página. Texto, mapa e legenda formam um grupo `stack`; no teste de estresse da bancada, com todos os textos 30 % mais longos, a edição árabe põe o mapa de localização a 87,5 % e os boxes de baixo sobem, sem nenhum aviso.
+Os dois modelos têm os mesmos cinco blocos, por isso o Markdown de uma prancha tem a mesma forma em uma página ou em duas: o título, o texto que não indica nenhum slot, o mapa, a legenda e as atividades. Na prancha dupla, `spread: true` diagrama as duas páginas como uma só folha de 390 mm, e só o bloco do mapa usa `crossGutter`: ele atravessa a lombada enquanto o texto e os boxes ficam na própria página. Texto, mapa e legenda formam um grupo `stack`; no teste de estresse da bancada, com todos os textos 30 % mais longos, a edição árabe põe o mapa de localização a 87,5 % e os boxes de baixo sobem, sem nenhum aviso.
 
 ### 4 · Uma paleta para a página, as cores e a legenda
 
@@ -41,7 +41,7 @@ As cinco cores de altitude são entradas da paleta (`palette.low` a `palette.pea
 
 ### 5 · A edição em árabe
 
-O código está na [resposta curta](#a-resposta-curta) acima. `locale: 'ar'` compõe o texto da direita para a esquerda e encaderna o livro pela direita, então a página dupla abre na página da direita e os blocos seguem a área de conteúdo espelhada: o título e o texto ficam à direita, a legenda à direita das atividades. Os mapas não são espelhados, e cada nome em árabe fica onde o lugar está desenhado. Em árabe, os estilos de rótulo perdem o itálico e o espaçamento entre letras e crescem 15 %, porque o cúfico compõe pequeno. A decoração e os números de página continuam na folha, então o antetítulo passa para o alto à direita e os números trocam de lado.
+O código está na [resposta curta](#a-resposta-curta) acima. `locale: 'ar'` compõe o texto da direita para a esquerda e encaderna o livro pela direita, de modo que a página dupla abre na página da direita e os blocos seguem a área de conteúdo espelhada: o título e o texto ficam à direita, a legenda à direita das atividades. Os mapas não são espelhados, e cada nome em árabe fica onde o lugar está desenhado. Em árabe, os estilos de rótulo perdem o itálico e o espaçamento entre letras e crescem 15 %, porque o cúfico compõe pequeno. A decoração e os números de página continuam na folha, por isso o antetítulo passa para o alto à direita e os números trocam de lado.
 
 ## Variações
 
@@ -61,7 +61,7 @@ Dê ao tipo de mapa um contador e um prefixo, e a cada recurso uma legenda: veja
 
 ## Erros comuns
 
-- O texto alternativo de cada mapa fica no Markdown, numa linha `::alt[…]` dentro do seu `:::figure`, uma por edição. Uma figura que não o dá mantém o `altText` do próprio recurso; `script.js` não guarda nenhuma palavra da página.
+- O texto alternativo de cada mapa fica no Markdown, numa linha `::alt[…]` dentro do `:::figure`, uma por edição. Uma figura que não o dá mantém o `altText` do próprio recurso; `script.js` não guarda nenhuma palavra da página.
 - As âncoras e os símbolos vetoriais (fronteiras, cidades, picos, a linha do perfil) ficam em quilômetros lidos sobre a pintura. Se um mapa é pintado de novo, suas costas, rios e cristas se mexem: ponha a grade sobre a imagem nova e leia de novo, ou um nome vai cair no mar.
 - Numa página da direita para a esquerda os blocos seguem a área de conteúdo espelhada, mas a decoração do modelo não: posicione o antetítulo conforme a edição, como faz `kicker`.
 - Um bloco em duas colunas pode cortar um parágrafo uma linha antes do fim e deixar essa linha no alto da segunda coluna. Confira as colunas de cada edição e passe uma frase de um parágrafo para o seguinte quando isso acontecer.

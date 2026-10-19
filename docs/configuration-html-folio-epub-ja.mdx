@@ -32,7 +32,7 @@ HTMLビューアーは、Postextの画面向けのレンダラーです。ペー
 
 下のReactでの統合に入る前に、素のJavaScriptで一連の流れを示します。文書をビルドし、`VDTDocument`を`renderToHtml`に渡し、得られた文字列をコンテナーに入れます。`mode: 'single'`はページを縦に積み重ねます。ページは既定では透明なので、`background`で色を付けます。このCodePenのサンプルは生成したマークアップも表示するので、レンダラーが出力する絶対配置の行を確認できます。ブラウザーはそれを描画しますが、リフローはしません。
 
-<CodePenExample name="render-html" title="Postext · 文書をHTMLに描画する" description="postextでMarkdown文書をレイアウトし、HTML文字列に描画します。" height={600} />
+<CodePenExample name="render-html" title="Postext · 文書をHTMLに描画する" description="postextでMarkdown文書を組み、HTML文字列に描画します。" height={600} />
 
 ### 最小限の統合
 
@@ -174,7 +174,7 @@ export function PostextHtmlViewer({
 この例で行っていることを補足します。
 
 - **段幅は概算せずに計測する**。`maxCharsPerLine`は文字数で表した*目標*なので、実際のピクセル幅は本文のフォントによって変わります。`measureGlyphWidth`は選んだフォントで実際に計測するので、フォントを差し替えても行の長さが一定に保たれます。
-- **ページの書き換え**。HTMLビューアーは、VDTの各「ページ」を画面上の1つの段として扱います。この例では`page.width`を計測した段幅で上書きし、余白をゼロにして（パディングはページの外側、包んでいる`.pt-doc`のdivにあります）、`HTML_DPI = 144`を使うことで`8pt`の本文が`16px`になるようにしています。
+- **ページの書き換え**。HTMLビューアーは、VDTの各「ページ」を画面上の1つの段として扱います。この例では`page.width`を計測した段幅で上書きし、余白をゼロにして（内側余白はページの外側、包んでいる`.pt-doc`のdivにあります）、`HTML_DPI = 144`を使うことで`8pt`の本文が`16px`になるようにしています。
 - **フォントの読み込みへの対応**。`watchFonts`は`document.fonts`を監視し、フェイスが届いたファミリーで計測した結果を、1フレームに1回捨てます。続いて`onFontsChanged`が段をレイアウトし直します。再レイアウトしなければ、最初の描画は代替フォントの計量値を使い、本来のフォントが届いたときに表示が跳ねます。
 - **計測キャッシュの再利用**。コンポーネントごとに1回だけキャッシュを作ることで、サイズ変更やフォントの拡大縮小のときに、すべての段落を計測し直さず、前回の描画の計測結果を再利用できます。
 
@@ -183,10 +183,10 @@ export function PostextHtmlViewer({
 上の例は意図的に単純にしてあります。実運用の統合では、たいてい次のものを加えます。
 
 - **Shadow DOMによる分離**：`host.attachShadow({ mode: 'open' })`に描画すれば、外側のページのCSSがビューアーに漏れ込みません。
-- **差分の部分更新**：`renderToHtmlIndexed`は`pages[i].blocks`を返し、各ブロックは安定した`id`とブロックの外側のHTMLを持ちます。2回の描画の間で変わったブロックが少なければ、`innerHTML`を作り直さずに、そのブロックのラッパーだけをその場で置き換えられます。
+- **差分の部分更新**：`renderToHtmlIndexed`は`pages[i].blocks`を返し、各ブロックには安定した`id`と、ブロックの外側のHTMLがあります。2回の描画の間で変わったブロックが少なければ、`innerHTML`を作り直さずに、そのブロックのラッパーだけをその場で置き換えられます。
 - **オーバーレイ**：各`.pt-page`の上に絶対配置のSVGを重ね、カーソル、選択範囲、ベースライングリッドを表示します。
 - **リンク**：Markdownのリンクの語は`<a href="…" rel="noopener noreferrer">`で包まれ、テキストの色を受け継ぎ、下線は付きません。[文書形式 › リンク](/ja/docs/document-format-inline#リンク)を参照してください。エディターのようなビューアーでは、`#`で始まらない`a[href]`のクリックを横取りし、新しいタブで開いてください（`:ref`のアンカーは文書内にリンクします）。
-- **単色の図**：`diagramStyle.singleInk`を有効にすると、SVGの`<img>`にCSSフィルターが掛かります。すでに色を変えてあるURLには`singleInk: false`を渡してください。[キャンバスとHTMLでの単色刷り](/ja/docs/configuration-resources#キャンバスとhtmlでの単色刷り)を参照してください。
+- **単色の図**：`diagramStyle.singleInk`を有効にすると、SVGの`<img>`にCSSフィルターが掛かります。すでに色を変えてあるURLには`singleInk: false`を渡してください。[CanvasとHTMLでの単色刷り](/ja/docs/configuration-resources#canvasとhtmlでの単色刷り)を参照してください。
 
 Sandboxの`HtmlPreview`コンポーネント（`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`）は、ここで示したのと同じAPIの上にこれらすべてを実装しており、参考にできます。また、すべてのビルドを共有のレイアウトワーカーに通しているので（[Web Workerでレイアウトを実行する](/ja/docs/configuration-programmatic-usage#web-workerでレイアウトを実行する)を参照）、ライブ編集やサイズ変更がメインスレッドをふさぐことはありません。レイアウトをメインスレッドから外す準備ができたら、上のコードの`buildDocument(...)`の直接呼び出しを`layoutWorker.build(...)`に置き換えてください。
 
@@ -280,7 +280,7 @@ Sandboxの`HtmlPreview`コンポーネント（`packages/postext-sandbox/src/vie
 
 ## 3Dの本（`postext-folio`）
 
-`postext-folio`は、レイアウト済みのドキュメントを、机の上に開いて置かれた印刷された本として画面に表示します。見開きは奇数ページの規則に従って組まれ、読者は‹ ›ボタン、矢印キー、スワイプ、ページのクリック、またはページの端をつかんで向こう側へドラッグすることで丁をめくります。各丁は紙に応じてthree.jsで湾曲し、下にあるページに本物の影を落とします。WebGLのキャンバスは静止した本もめくられる本も同じように描くので、ページが着地したときに見た目が変わることはありません。レシピ集のレシピと、Sandboxの**Folio**タブで使われているビューアーです。
+`postext-folio`は、レイアウト済みの文書を、机の上に開いて置かれた印刷された本として画面に表示します。見開きは奇数ページの規則に従って組まれ、読者は‹ ›ボタン、矢印キー、スワイプ、ページのクリック、またはページの端をつかんで向こう側へドラッグすることで丁をめくります。各丁は紙に応じてthree.jsで湾曲し、下にあるページに本物の影を落とします。WebGLのキャンバスは静止した本もめくられる本も同じように描くので、ページが着地したときに見た目が変わることはありません。レシピ集のレシピと、Sandboxの**Folio**タブで使われているビューアーです。
 
 ```bash
 npm install postext postext-folio three
@@ -299,21 +299,21 @@ const book = createFolioFromDocument(document.getElementById('book')!, doc, {
 book.setDocument(buildDocument({ markdown: edited }, config));
 ```
 
-- **ページは必要になったときに描かれます**。`createFolioFromDocument`は各ページを、ページ枠のデバイスピクセルちょうどの大きさで`renderPageToCanvas`により描きます（WebGLはそれをテクセル対ピクセルで表示するので、Canvasのプレビューと同じくらい鮮明です）。描くのは、開いている見開きの周りの見開きだけです（`window`、既定では前後に3つずつ）。その範囲から外れたページは解放されるので、1000ページの本でも数ページ分のメモリーしか使いません。遠いページに移動するときは、その見開きを最初に描きます。10ページ先まではページが1枚ずつめくられ、それより遠いと、間にあるページのかたまりが、それらのページを合わせた厚さ（紙厚の合計）を持つ1枚の板として持ち上がり、反対側に着地します。`setDocument`は、新しいレイアウトでも内容が同じページの描画を保持します（`{ repaint: true }`を指定すると、画像が届いた後などに、すべてを描き直します）。
-- **ドキュメントが本を決めます**。最初のページが奇数ページ（`pageIndexOffset`が偶数）なら、右側に単独で開きます。右綴じの本（`page.binding: 'right'`、または縦組みのドキュメント）は左右反転して置かれ、左向きにめくられます。空白ページはページの背景色になり、ページの仕上がり幅（`pageWidthMm`）に応じて紙厚と表紙の板の縮尺が決まります。`continuation`付きでレイアウトした章は、本のほかのページ（前は`pageIndexOffset`、後は`bookPageCount`まで）を、描かずに2つのページブロックの厚さに数えます（`extraPages`）。
-- **ドキュメントが見た目を決めます**。紙、綴じ、机、光は、ドキュメントの[`folio`設定](/ja/docs/configuration-fonts-colors-viewers#folioビューアー設定)（`doc.config.folio`）で決まります。`:::paper`の範囲内で組まれたページは独自の用紙（`VDTPage.paper`）を持ち、その丁は、その紙の色、表面、厚さ、こしで描かれます。`binding.cover: 'pages'`では、最初のページが表表紙の板になり、最後のページが偶数ページなら裏表紙の板になります（`covers`）。新聞の判型（`'broadsheet'`、`'berliner'`、`'tabloid'`、`'compact'`）で、設定が用紙も綴じも指定していなければ、折った新聞用紙として置かれます。ホストが独自の`folio`を渡した場合も同じです。
+- **ページは必要になったときに描かれます**。`createFolioFromDocument`は各ページを、ページ枠のデバイスピクセルちょうどの大きさで`renderPageToCanvas`により描きます（WebGLはそれをテクセル対ピクセルで表示するので、Canvasのプレビューと同じくらい鮮明です）。描くのは、開いている見開きの周りの見開きだけです（`window`、既定では前後に3つずつ）。その範囲から外れたページは解放されるので、1000ページの本でも数ページ分のメモリーしか使いません。遠いページに移動するときは、その見開きを最初に描きます。10ページ先まではページが1枚ずつめくられ、それより遠いと、間にあるページのかたまりが、それらのページを合わせた厚さ（紙厚の合計）の1枚の板として持ち上がり、反対側に着地します。`setDocument`は、新しいレイアウトでも内容が同じページの描画を保持します（`{ repaint: true }`を指定すると、画像が届いた後などに、すべてを描き直します）。
+- **文書が本を決めます**。最初のページが奇数ページ（`pageIndexOffset`が偶数）なら、右側に単独で開きます。右綴じの本（`page.binding: 'right'`、または縦組みの文書）は左右反転して置かれ、左向きにめくられます。白ページはページの背景色になり、ページの仕上がり幅（`pageWidthMm`）に応じて紙厚と表紙の板の縮尺が決まります。`continuation`付きでレイアウトした章は、本のほかのページ（前は`pageIndexOffset`、後は`bookPageCount`まで）を、描かずに左右2つのページの束の厚さに数えます（`extraPages`）。
+- **文書が見た目を決めます**。紙、綴じ、机、光は、文書の[`folio`設定](/ja/docs/configuration-fonts-colors-viewers#folioビューアー設定)（`doc.config.folio`）で決まります。`:::paper`の範囲内で組まれたページは独自の用紙（`VDTPage.paper`）が設定され、その丁は、その紙の色、表面、厚さ、こしで描かれます。`binding.cover: 'pages'`では、最初のページが表表紙の板になり、最後のページが偶数ページなら裏表紙の板になります（`covers`）。新聞の判型（`'broadsheet'`、`'berliner'`、`'tabloid'`、`'compact'`）で、設定が用紙も綴じも指定していなければ、折った新聞用紙として置かれます。ホストが独自の`folio`を渡した場合も同じです。
 - **コンテナーが大きさを決めます**。本はコンテナーいっぱいに広がり、ボタンとページ数は余白に置かれるので、コンテナーには高さを指定してください。リサイズすると、新しい大きさでページを描き直します。幅が560 px未満では1ページずつ表示します（`mode: 'auto'`。`'single'`と`'double'`はどちらかに固定します）。背はページの内側の端に沿い、丁はその上でめくられます。背の方向へのドラッグで先へめくり、背から離れる方向へのスワイプで前に戻り、タップでめくります。
 - **ポインターの動作**。`interaction`（後からは`setInteraction`）は、左ボタン、1本指、ペンが本に対して何をするかを決めます。`'hand'`（既定）はページをつかんでめくり、`'orbit'`は右ドラッグと同じように視点を回し（トラックパッドやタブレット向け）、`'select'`はポインターをホストに任せます（テキストの選択などのため）。`pageAt(event)`は、傾けたり回したりした見た目のままの本の上で、ポインターの下にあるページとその位置（`{ page, x, y }`。ページの左上隅からの割合）を返します。`pointOnScreen(point)`はその逆で、ページ上にキャレットや選択範囲を描くためのものです。`refreshPage(src)`は、ホストがその場で描き直したページのキャンバスを再表示します。Sandboxはこれらをすべて使って、3Dのページ上でテキストを選択し、エディターのキャレットを追います。
-- **小さな文字を読むルーペ**。`interaction: 'magnify'` は、ポインターのある位置で、黒い縁の丸いレンズを本の上にかざします（指で触れているあいだは、指の上にかざします）。読者の目に見えるとおりの本を、光と紙の反りもそのままに映し、中心をいちばん大きく、縁へ向かって湾曲させて見せます。ホイール、`+`、`−` で倍率を変え（`setMagnification(zoom)`、1.5〜10。既定ではページが 1 ミリあたり約 5.5 CSS px）、Esc でしまいます。`magnifier: { zoom, diameter }` で最初から両方を指定できます。`createFolioFromDocument` はレンズの下のページを中心に必要な精細さで描き直すので、新聞の本文も読めます。`createFolio` はその描画を `detail: { paint(index, deviceWidth), release() }` から受け取ります。Sandbox では**ルーペ**ボタン（M）です。ルーペでは文字の選択もできます。ページの上ではカーソルがテキストカーソルになり、`pageAt` はレンズ中心の下にある点（タッチ画面では指の上）を返します。Sandbox ではそこでクリックするとキャレットが置かれ、ドラッグすると選択されます。
+- **小さな文字を読むルーペ**。`interaction: 'magnify'`は、ポインターのある位置で、黒い縁の丸いレンズを本の上にかざします（指で触れているあいだは、指の上にかざします）。読者の目に見えるとおりの本を、光と紙の反りもそのままに映し、中心をいちばん大きく、縁へ向かって湾曲させて見せます。ホイール、`+`、`−`で倍率を変え（`setMagnification(zoom)`、1.5〜10。既定ではページ1ミリあたり約5.5 CSS px）、Escでしまいます。`magnifier: { zoom, diameter }`で最初から両方を指定できます。`createFolioFromDocument`はレンズの下のページを中心に必要な精細さで描き直すので、新聞の本文も読めます。`createFolio`はその描画を`detail: { paint(index, deviceWidth), release() }`から受け取ります。Sandboxでは**ルーペ**ボタン（M）です。ルーペでは文字の選択もできます。ページの上ではカーソルがテキストカーソルになり、`pageAt`はレンズ中心の下にある点（タッチ画面では指の上）を返します。Sandboxではそこでクリックするとキャレットが置かれ、ドラッグすると選択されます。
 - **読者は本の周りを見回せます**。右ドラッグで本の周りを視点が回り（真上から70°まで）、丁がめくられている間も回せます。`resetView()`は設定の`tilt`と`yaw`へ滑らかに戻し、`getView()`は現在見えている視点（`{ tilt, yaw }`、度単位）を返すので、それを設定として保存できます。Sandboxはこれらを2つのボタン、**視点をリセット**と**既定の視点として保存**に割り当てています。
 - **動画はページの上で再生されます**。動画のポスター画像をクリックすると、`interaction`がどのモードでもページの上で再生が始まり、その丁をめくっている間も止まりません。もう一度クリックすると一時停止し、その動画が見えない見開きで本が静止すると停止します。`player.autoplay`を指定した動画は、その見開きが初めて表示されたときにひとりでに再生を始めます。ほかの動画と同時に再生する設定（`player.exclusive: false`）なら、表示されるたびに無音で始まり、めくられると止まり、何本でも同時に再生されます。オプションは`videos`、`videoUrl`、`onVideo`、ビューアーのメソッドは`stopVideo()`です。[文書形式 › Folioのページで再生する動画](/ja/docs/document-format-resources#folioのページで再生する動画)を参照してください。
-- **フォントと画像を先に**。`renderPage`と同じく、ページを描く前に、ドキュメントが使うフェイスを`document.fonts`に読み込み、リソースの画像を`registerResourceImage`で登録しておく必要があります。
+- **フォントと画像を先に**。`renderPage`と同じく、ページを描く前に、文書が使うフェイスを`document.fonts`に読み込み、リソースの画像を`registerResourceImage`で登録しておく必要があります。
 - **アクセシブル**。ビューアーはフォーカス可能なグループで、←/→（右綴じの本では反転）、Page Up/Down、Home、Endを受け付けます。ボタンとページ数にはラベルが付き（`labels`で翻訳できます）、各ページのキャンバスには`alt`テキストが付きます（`alt: (index) => …`）。
 - **WebGL2がない場合**、または読者が動きを減らす設定にしている場合は、見開きが単に切り替わります。WebGLの本はスマートフォンには重いため（ページの面ごとにテクスチャーを1枚使います）、SandboxはWebGL2が使え、画面の短辺が600 px以上の場合にだけFolioタブを表示します。`canFlip()`は、その環境で丁が3Dでめくられるかどうか（WebGL2があり、動きを減らす設定でないこと）を返します。
 
 ### 外観
 
-`appearance`オプション（後からは`setAppearance`）は、ドキュメントの指定を上書きします。省略したものは、ドキュメントの指定のままです。
+`appearance`オプション（後からは`setAppearance`）は、文書の指定を上書きします。省略したものは、文書の指定のままです。
 
 ```ts
 const book = createFolioFromDocument(container, doc, {
@@ -347,33 +347,33 @@ book.resetView();
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>folio</code></td><td><a href="/ja/docs/configuration-fonts-colors-viewers#folioビューアー設定"><code>folio</code>設定</a>：傾き、紙、綴じ、表面、照明。指定すると、ドキュメントの設定を置き換えます。</td></tr>
-    <tr><td><code>pageWidthMm</code></td><td>ページの仕上がり幅（mm）。紙厚と表紙の板は、これを基準に縮尺されます。ドキュメントからは、そのdpiでの仕上がりページの幅。<code>createFolio</code>では既定値150。</td></tr>
-    <tr><td><code>extraPages</code></td><td><code>{'{ before, after }'}</code>：渡したページ以外の本のページ。ページブロックの厚さに数えますが、描画はしません。</td></tr>
-    <tr><td><code>covers</code></td><td><code>{'{ front, back }'}</code>：渡した最初のページが表表紙、最後のページが（偶数ページに当たる場合）裏表紙になります。どちらも板としてめくられ、別の表紙（ケース）は描かれません。ドキュメントからは、最初のページで始まり最後のページで終わる本で<code>binding.cover: 'pages'</code>を指定した場合。</td></tr>
+    <tr><td><code>folio</code></td><td><a href="/ja/docs/configuration-fonts-colors-viewers#folioビューアー設定"><code>folio</code>設定</a>：傾き、紙、綴じ、表面、照明。指定すると、文書の設定を置き換えます。</td></tr>
+    <tr><td><code>pageWidthMm</code></td><td>ページの仕上がり幅（mm）。紙厚と表紙の板は、これを基準に縮尺されます。文書から作る場合は、そのdpiでの仕上がりページの幅。<code>createFolio</code>では既定値150。</td></tr>
+    <tr><td><code>extraPages</code></td><td><code>{'{ before, after }'}</code>：渡したページ以外の本のページ。ページの束の厚さに数えますが、描画はしません。</td></tr>
+    <tr><td><code>covers</code></td><td><code>{'{ front, back }'}</code>：渡した最初のページが表表紙、最後のページが（偶数ページに当たる場合）裏表紙になります。どちらも板としてめくられ、別の表紙（ケース）は描かれません。文書から作る場合は、最初のページで始まり最後のページで終わる本で<code>binding.cover: 'pages'</code>を指定した場合。</td></tr>
     <tr><td><code>spineImage</code></td><td>背に印刷される画像。URL、キャンバス、画像のいずれか。<code>createFolioFromDocument</code>はリソースを参照しないので、<code>folio.binding.spineImage</code>が指定するリソースの画像を渡してください。中綴じでは無視されます。</td></tr>
     <tr><td><code>textureBaseUrl</code></td><td>写真から作った机のテクスチャーの配信場所。読み込まれるまでの間、または指定しない場合、机はプロシージャルなマップで描かれます。</td></tr>
   </tbody>
 </table>
 
-`createFolio(container, { pages })`は、任意のページを対象にした同じビューアーです。ページには画像のURL、`<img>`または`<canvas>`要素、空白ページを表す`""`を使えます。ページは`{ src, alt, paper }`にすることもでき、`paper`はその丁の`:::paper`形式の用紙です。`PageFlipper`はthree.jsのエンジン単体で、見開きのDOMを自分で組むホスト向けです。`FlatPageFlipper`は3Dの本より前からある平面のページめくりで、レシピ集のライトテーブルのために残されています。オプションの一覧は[パッケージのREADME](https://www.npmjs.com/package/postext-folio)にあります。
+`createFolio(container, { pages })`は、任意のページを対象にした同じビューアーです。ページには画像のURL、`<img>`または`<canvas>`要素、白ページを表す`""`を使えます。ページは`{ src, alt, paper }`にすることもでき、`paper`はその丁の`:::paper`形式の用紙です。`PageFlipper`はthree.jsのエンジン単体で、見開きのDOMを自分で組むホスト向けです。`FlatPageFlipper`は3Dの本より前からある平面のページめくりで、レシピ集のライトテーブルのために残されています。オプションの一覧は[パッケージのREADME](https://www.npmjs.com/package/postext-folio)にあります。
 
 ### ライブサンプル：3Dの本
 
-このCodePenのサンプルは、`postext`と`postext-folio`をCDNからインポートし、短いドキュメントをレイアウトして本として開きます。右ページの端をつかんで、向こう側へドラッグしてみてください。
+このCodePenのサンプルは、`postext`と`postext-folio`をCDNからインポートし、短い文書をレイアウトして本として開きます。右ページの端をつかんで、向こう側へドラッグしてみてください。
 
-<CodePenExample name="render-folio" title="Postext · ドキュメントを3Dの本に" description="postextでMarkdownのドキュメントをレイアウトし、postext-folioで3Dのページをめくります。" height={640} />
+<CodePenExample name="render-folio" title="Postext · 文書を3Dの本に" description="postextでMarkdown文書を組み、postext-folioで3Dのページをめくります。" height={640} />
 
 ### ライブサンプル：ページの画像
 
-キャンバスに描いたページ、空白の最終ページ、紙の色を使った`createFolio`の例です。
+キャンバスに描いたページ、最後の白ページ、紙の色を使った`createFolio`の例です。
 
 <CodePenExample name="folio-images" title="Postext · 画像の3Dの本" description="postext-folioで任意のページを3Dでめくります。画像のURL、img要素、canvas要素を使えます。" height={600} />
 
 
 ## EPUBの本（`postext-epub`）
 
-`postext-epub`は、レイアウトした本をEPUB 3.3ファイルとして、ブラウザーでもNodeでもサーバーなしで書き出します。本の場合に`renderToPdf`が受け取るのと同じ章のドキュメントを読むので、ページ番号、注、引用、相互参照、目次、索引が解決済みの状態で届きます。ファイルはバイト列として返されます。Sandboxの**EPUB 3**タブで使われている書き出し機能です。
+`postext-epub`は、レイアウトした本をEPUB 3.3ファイルとして、ブラウザーでもNodeでもサーバーなしで書き出します。本を書き出すときに`renderToPdf`が受け取るのと同じ章ごとの文書を読み込むので、ページ番号、注、引用、相互参照、目次、索引が解決済みの状態で届きます。ファイルはバイト列として返されます。Sandboxの**EPUB 3**タブで使われている書き出し機能です。
 
 ```bash
 npm install postext postext-epub
@@ -403,9 +403,9 @@ EPUB 3は2つのレンディションを定義しており、パッケージの`
   </tbody>
 </table>
 
-テンプレートページ（`::::page{template="…"}`）は、固定レイアウトではテンプレートを保ちます。リフロー型の本では、枠をMarkdownの順に並べたセクションになり、各枠は囲みスタイルを持つブロックになります。飾りは入らず、図のラベルは絵の後に並びます。[印刷以外](/ja/docs/composed-pages#印刷以外htmlepubタグ付きpdf)を参照してください。
+テンプレートページ（`::::page{template="…"}`）は、固定レイアウトではテンプレートを保ちます。リフロー型の本では、枠をMarkdownの順に並べたセクションになり、各枠は囲みスタイルの付いたブロックになります。装飾は入らず、図のラベルは画像の後に並びます。[印刷以外](/ja/docs/composed-pages#印刷以外htmlepubタグ付きpdf)を参照してください。
 
-どちらのレンディションも同じナビゲーションを持ちます。見出しと部扉から作る目次、印刷ページのラベルによるページリスト、ランドマーク（表紙、印刷された目次、本文の開始）、古いリーディングシステム向けのNCXです。
+どちらのレンディションにも同じナビゲーションが入ります。見出しと部扉から作る目次、印刷ページのラベルによるページリスト、ランドマーク（表紙、印刷された目次、本文の開始）、古いリーディングシステム向けのNCXです。
 
 ### 本を書き出す
 
@@ -428,17 +428,17 @@ const bytes = await renderToEpub(docs, {
 });
 ```
 
-単独のドキュメントは、1章だけの本として渡します（`renderToEpub([doc], options)`）。
+単独の文書は、1章だけの本として渡します（`renderToEpub([doc], options)`）。
 
 - **`renderToEpub(docs, options): Promise<Uint8Array>`**：ファイルを書き出します。`options`は`{ layout, metadata, fonts?, svgFonts?, resourceBytes?, cover?, onProgress?, onWarning?, signal? }`です。
 - **`metadata`**：`title`と`language`（BCP 47タグ）は必須で、`subtitle`、`creators`、`identifier`、`date`、`publisher`、`rights`、`description`、`modified`は省略できます。ISBNだけを書くと`urn:isbn:…`になります。`identifier`がなければ、本にはタイトル、著者、言語から導いた`urn:uuid:`が付くので、同じ本の新しい版も読者のライブラリーで同じ位置を保ちます。バイト単位で同一の出力を得るには、`modified`も渡してください。
-- **`fonts`**：埋め込むフェイス。`{ family, weight, style, bytes, format, unicodeRange? }`の形で、`format`は`woff2`、`woff`、`ttf`、`otf`のいずれかです。各フェイスは1つのファイルと1つの`@font-face`規則になり、`unicodeRange`を持つ複数のファイルで1つのフェイスを構成することもできます（Google Fontsのスライス）。ページが使うファミリー、ウェイト、スタイルに埋め込みフェイスがない場合は`missingFont`として報告され、リーディングシステムが独自のフォントで代替します。ライセンスが許すフォントだけを埋め込んでください。`redistributable: false`のフェイスがファイルに書き込まれることはありません（本をそのフェイスで組むことはできますが、ファイル自体は入らず、SVGの画像にも入りません）。ホストは代わりに、ライセンス付きのフォントの名前でオープンフォントのフェイスを渡すこともできます（通常のフェイスです）。Sandboxと`postext`は、`fallback`を指定したフォントに対してそうしています（postext 1.43 から）。
-- **`resourceBytes(fileId)`**：ページが配置する画像を、同期または非同期で`{ bytes, mediaType }`として返します。`mediaType`が空ならバイト列から判別します。ビットマップは格納されたまま、SVGはソースのまま渡し、PDFの印刷用マスター（`svg.pdfFileId`）は渡さないでください。各画像は1回だけ格納されます。単色インクの本（`diagramStyle.singleInk`）では、ファイル内のSVGが色替えされます。リーディングシステムはSVGを本のフォントが見えない画像として表示するので、SVGには文字が指定するフェイスが埋め込まれます（[SVGの文字のフォント](/ja/docs/configuration-resources#svgの文字のフォント)を参照）。まず`fonts`から（その文字を収めるスライス）、本文で使われていないファミリーは次に<strong>`svgFonts.provider`</strong>から取ります。`redistributable: false`と指定されたフェイスのファミリーと、`svgFonts.withhold(family)`が指定するファミリーは入れず、それぞれ1回ずつ`fontWithheld`として報告します。フェイスのないファミリーは`svgFontUnavailable`、`svgFonts.maxBytes`（2 MiB）を超えるフェイスは`svgFontsTooLarge`として報告されます。`svgFonts.inline: false`、`diagramStyle.inlineFonts: false`、リソースの`svg.inlineFonts: false`のいずれかを指定すると、バイト列は渡されたままになります。バイト列のない画像は`missingImage`として報告され、空の枠として残ります。`svgFonts.standIn(family)`（postext 1.43 から）はそのうちのフォントにオープンフォントを割り当てます。`svgFonts.provider`にはそのフォントの同じウェイト・傾きのフェイスを尋ね、返ったフェイスが、除外されたフォントの名前で画像に入ります。得られなければそのフォントは外に残り、報告されます。
+- **`fonts`**：埋め込むフェイス。`{ family, weight, style, bytes, format, unicodeRange? }`の形で、`format`は`woff2`、`woff`、`ttf`、`otf`のいずれかです。各フェイスは1つのファイルと1つの`@font-face`規則になり、`unicodeRange`を指定した複数のファイルで1つのフェイスを構成することもできます（Google Fontsのスライス）。ページが使うファミリー、ウェイト、スタイルに埋め込みフェイスがない場合は`missingFont`として報告され、リーディングシステムが独自のフォントで代替します。ライセンスが許すフォントだけを埋め込んでください。`redistributable: false`のフェイスがファイルに書き込まれることはありません（本をそのフェイスで組むことはできますが、ファイル自体は入らず、SVGの画像にも入りません）。ホストは代わりに、ライセンス付きのフォントの名前でオープンフォントのフェイスを渡すこともできます（通常のフェイスです）。Sandboxと`postext`は、`fallback`を指定したフォントに対してそうしています（postext 1.43以降）。
+- **`resourceBytes(fileId)`**：ページが配置する画像を、同期または非同期で`{ bytes, mediaType }`として返します。`mediaType`が空ならバイト列から判別します。ビットマップは格納されたまま、SVGはソースのまま渡し、PDFの印刷用マスター（`svg.pdfFileId`）は渡さないでください。各画像は1回だけ格納されます。単色インクの本（`diagramStyle.singleInk`）では、ファイル内のSVGが色替えされます。リーディングシステムはSVGを本のフォントが見えない画像として表示するので、SVGには文字が指定するフェイスが埋め込まれます（[SVGの文字のフォント](/ja/docs/configuration-resources#svgの文字のフォント)を参照）。まず`fonts`から（その文字を収めるスライス）、本文で使われていないファミリーは次に<strong>`svgFonts.provider`</strong>から取ります。`redistributable: false`と指定されたフェイスのファミリーと、`svgFonts.withhold(family)`が指定するファミリーは入れず、それぞれ1回ずつ`fontWithheld`として報告します。フェイスのないファミリーは`svgFontUnavailable`、`svgFonts.maxBytes`（2 MiB）を超えるフェイスは`svgFontsTooLarge`として報告されます。`svgFonts.inline: false`、`diagramStyle.inlineFonts: false`、リソースの`svg.inlineFonts: false`のいずれかを指定すると、バイト列は渡されたままになります。バイト列のない画像は`missingImage`として報告され、空の枠として残ります。`svgFonts.standIn(family)`（postext 1.43以降）は、除外したフォントにオープンフォントを割り当てます。そのオープンフォントの同じウェイト・傾きのフェイスを`svgFonts.provider`に求め、返ったフェイスが、除外したフォントの名前で画像に入ります。得られなければそのフォントは含まれず、報告されます。
 - **`cover`**：`{ bytes, mediaType, alt? }`。JPEG、PNG、WebP、SVGの画像です。指定すると、本はそれを収めた表紙の文書から始まり、その画像がパッケージの`cover-image`（ライブラリーのサムネイル）になります。指定しなければ、固定レイアウトでは最初のページが表紙として指定され、リフロー型の本には表紙画像がありません。
 - **`onProgress({ phase, done, total })`**：`resources`（フォントと画像）、`documents`（固定レイアウトではページ、リフロー型では章）、`package`の順に進みます。**`signal`**：ステップの合間で中止します。
 - **`readEpub(bytes)`**：ビューアーのためにファイルを読み戻します。`DOMParser`は使いません。レイアウト、メタデータ、読む方向、パスごとのすべてのファイル、マニフェスト、スパイン、目次、ページリスト、固定レイアウトのビューポート、表紙を返します。Sandboxのリーダーはこれをもとに作られています。
 
-どちらのレンディションも、EPUB Accessibility 1.1のメタデータ（アクセスモード、目次や印刷ページ番号などの機能、ハザード、概要）を持ち、既定ではWCAGへの準拠を主張しません。オプションの一覧と制限事項は[パッケージのREADME](https://www.npmjs.com/package/postext-epub)にあります。
+どちらのレンディションも、EPUB Accessibility 1.1のメタデータ（アクセスモード、目次や印刷ページ番号などの機能、ハザード、概要）を含み、既定ではWCAGへの準拠を主張しません。オプションの一覧と制限事項は[パッケージのREADME](https://www.npmjs.com/package/postext-epub)にあります。
 
 ### EPUBCheckでファイルを検査する
 

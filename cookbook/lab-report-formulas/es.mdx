@@ -22,13 +22,13 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. [`~…~` y `^
 
 <Excerpt region="hanging" />
 
-El diseño de cada nivel de título es una ranura con dos elementos: el título, en el borde del texto, y el `{number}`, anclado a su izquierda (`left-of`) a 4 mm, en una caja de 33 mm alineada a la derecha. La caja necesita un ancho fijo. El ancho automático se limita al espacio que la columna deja a su izquierda, y como no deja ninguno, la caja se queda en 0 mm y los títulos crecen de una a tres líneas. El cuerpo y la interlínea del nivel solo cuentan para el flujo, donde cada título ocupa una línea de 15 pt. La letra la pone el diseño: los apartados, numerados `{2}`, en rosa a 13 pt, y los subapartados, `{2}.{3}`, en gris y al cuerpo del texto.
+El diseño de cada nivel de título es una zona de diseño con dos elementos: el título, en el borde del texto, y el `{number}`, anclado a su izquierda (`left-of`) a 4 mm, en una caja de 33 mm alineada a la derecha. La caja necesita un ancho fijo. El ancho automático se limita al espacio que la columna deja a su izquierda, y como no deja ninguno, la caja se queda en 0 mm y los títulos crecen de una a tres líneas. El cuerpo y el interlineado del nivel solo cuentan para el flujo, donde cada título ocupa una línea de 15 pt. La letra la pone el diseño: los apartados, numerados `{2}`, en rosa a 13 pt, y los subapartados, `{2}.{3}`, en gris y al cuerpo del texto.
 
 ### 3 · La apertura del informe sale del H1
 
 <Excerpt region="head" />
 
-El único H1 del informe lleva el [estilo de título](/es/docs/configuration-headings#span-y-diseño-avanzado) `report`, que lo sustituye por una apertura dibujada: una banda rosa en lo alto de la página, la bureta, la línea del curso, el título con el número de la práctica colgado como un número de sección y los datos de autoría. Estos datos salen de los [atributos del título](/es/docs/document-format#atributos-de-encabezado) y del `publishDate` del frontmatter. La banda es una caja, y las cajas cuentan para la altura que reserva el título, así que el texto empezaría bajo su pie, a 104 mm del borde superior de la página, aun sin `minHeight`. `minHeight` fija una altura mínima que llega 8 mm por debajo de la banda; con el margen inferior del H1 y la rejilla de 15 pt quedan 15 mm de blanco sobre el resumen, en lugar de 4,7 mm.
+El único H1 del informe lleva el [estilo de encabezado](/es/docs/configuration-headings#apertura-a-toda-página-y-diseño-avanzado) `report`, que lo sustituye por una apertura dibujada: una banda rosa en lo alto de la página, la bureta, la línea del curso, el título con el número de la práctica colgado como un número de sección y los datos de autoría. Estos datos salen de los [atributos del título](/es/docs/document-format#atributos-de-encabezado) y del `publishDate` del frontmatter. La banda es una caja, y las cajas cuentan para la altura que reserva el título, así que el texto empezaría bajo su pie, a 104 mm del borde superior de la página, aun sin `minHeight`. `minHeight` fija una altura mínima que llega 8 mm por debajo de la banda; con el margen inferior del H1 y la rejilla de 15 pt quedan 15 mm de blanco sobre el resumen, en lugar de 4,7 mm.
 
 ### 4 · Tabla y Figura en el idioma del informe
 
@@ -52,7 +52,7 @@ Un contenedor `:::paragraphs{style="references"}` aplica el [estilo de párrafo]
 
 ### Tiñe la nota de seguridad en vez de enmarcarla
 
-Un fondo con el rosa del viraje sustituye al marco, y el recuadro sigue con un solo recurso gráfico.
+Un fondo con el rosa del viraje sustituye al borde, y el recuadro sigue con un solo recurso gráfico.
 
 ```diff
    box('safety', t({ es: 'Seguridad', en: 'Safety' }), {

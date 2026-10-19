@@ -22,7 +22,7 @@ Brindlewood Seed Co.（一家虚构的种子农场）的春季价目表，排成
 
 <Excerpt region="split" />
 
-第1页的信用`:ref{id="vegetables" text="the price list"}`引用价目表，`text`用这几个词代替编号印出来。被引用的表会浮动到引用之后的第一个空位，这里是第2页顶部。表在那里放不下，所以引擎在Jimmy Nardello之后的行间把它断开，绝不在合并的类别中间断开。第3页重复表头行和带后缀的题注色带；标记放在第一部分下面，注释放在最后一部分下面（[超过页面高度的表](/zh/docs/configuration-resources#比页面还高的表)）。`parseTSV(tsv, { headerRows: 1 })`把第一行设为表头行，按表头绘制，并在第3页重复。后缀和标记都是斜体，沿用题注的字体，所以色带保持Gelasio；Cabin Condensed没有斜体。
+第1页的信用`:ref{id="vegetables" text="the price list"}`引用价目表，`text`用这几个词代替编号印出来。被引用的表会浮动到引用之后的第一个空位，这里是第2页顶部。表在那里放不下，所以引擎在Jimmy Nardello之后的行间把它断开，绝不在合并的类别中间断开。第3页重复表头行和带后缀的题注色带；标记放在第一部分下面，附注放在最后一部分下面（[超过页面高度的表](/zh/docs/configuration-resources#比页面还高的表)）。`parseTSV(tsv, { headerRows: 1 })`把第一行设为表头行，按表头绘制，并在第3页重复。后缀和标记都是斜体，沿用题注的字体，所以色带保持Gelasio；Cabin Condensed没有斜体。
 
 ### 3 · 每个种子袋一个资源
 
@@ -46,7 +46,7 @@ Brindlewood Seed Co.（一家虚构的种子农场）的春季价目表，排成
 
 ### 只保留放得下的部分
 
-用`overflow: 'clip'`时，价目表在第2页放得下的五个品种之后结束，注释排在它们下面，第3页只有试验园笔记，排在第一栏。
+用`overflow: 'clip'`时，价目表在第2页放得下的五个品种之后结束，附注排在它们下面，第3页只有试验园笔记，排在第一栏。
 
 ```diff
 -  overflow: 'split', continuedSuffix: '(continued)',

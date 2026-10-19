@@ -10,7 +10,7 @@ pageNotes: { "1": "La copertina: «Metro de Alba» in maiuscole e minuscole nere
 
 ## Che cosa comporrai
 
-Quattro pagine del manuale d’identità di Metro de Alba, una metropolitana immaginaria di cinque linee. In copertina le cinque linee partono dal basso a sinistra su un binario comune e si diramano verso destra dopo aver attraversato un fiume grigio, sotto il nome in Big Shoulders Display. Ogni sezione si apre sotto una fascia color inchiostro, con un grande numero di due cifre nel colore di una linea. In *01 Colour* la prima colonna della tabella è il colore stesso; *02 Type* ha righe di campione e un cartello di banchina, e *03 Usage* chiude con due disegni di mappa incorniciati, uno fatto secondo le regole (Do) e uno contro (Don't). Tutto il testo è composto con sei file di font che lo script scarica prima della prima impaginazione. Il PDF è disegnato con gli stessi sei file, e il file `.postext` ne porta cinque, perché il carattere da titolo è marcato come non ridistribuibile.
+Quattro pagine del manuale d’identità di Metro de Alba, una metropolitana immaginaria di cinque linee. In copertina le cinque linee partono dal basso a sinistra su un binario comune e si diramano verso destra dopo aver attraversato un fiume grigio, sotto il nome in Big Shoulders Display. Ogni sezione si apre sotto una fascia color inchiostro, con un grande numero di due cifre nel colore di una linea. In *01 Colour* la prima colonna della tabella è il colore stesso; *02 Type* ha righe di campione e un cartello di banchina, e *03 Usage* chiude con due disegni di mappa incorniciati, uno fatto secondo le regole (Do) e uno contro (Don't). Tutto il testo è composto con sei file di font che lo script scarica prima della prima impaginazione. Il PDF è disegnato con gli stessi sei file, e il file `.postext` ne contiene cinque, perché il carattere da titolo è marcato come non ridistribuibile.
 
 ## Preparazione
 
@@ -24,13 +24,13 @@ L’impaginazione misura ogni parola con i caratteri in `document.fonts`, quindi
 
 <Excerpt region="colours" />
 
-Poiché la palette e la tabella 1.1 si costruiscono dalle stesse nove righe, la tabella non può elencare un valore che le pagine non usano. `setCellBackground` riempie la prima cella vuota di ogni riga con il colore di quella riga, collegato alla palette. Nel testo, `:swatch{color="line-2"}` prende un id della palette e disegna un quadrato bordato nel colore del testo. `main-color` ha l’esadecimale di Ink, quindi titoli e tratti in grassetto e corsivo, collegati a esso per impostazione predefinita, si stampano in Ink invece che nel blu del motore. `bodyText.referenceColor: col('ink')` assegna Ink anche ai rimandi ([Color Palette](/it/docs/configuration-fonts-colors-viewers#tavolozza-dei-colori)).
+Poiché la tavolozza e la tabella 1.1 si costruiscono dalle stesse nove righe, la tabella non può elencare un valore che le pagine non usano. `setCellBackground` riempie la prima cella vuota di ogni riga con il colore di quella riga, collegato alla tavolozza. Nel testo, `:swatch{color="line-2"}` prende un id della tavolozza e disegna un quadrato bordato nel colore del testo. `main-color` ha l’esadecimale di Ink, quindi titoli e parti in grassetto e corsivo, collegati a esso per impostazione predefinita, si stampano in Ink invece che nel blu del motore. `bodyText.referenceColor: col('ink')` assegna Ink anche ai rimandi ([Color Palette](/it/docs/configuration-fonts-colors-viewers#tavolozza-dei-colori)).
 
 ### 3 · Un’apertura, tre colori di linea
 
 <Excerpt region="sections" />
 
-`numberingTemplate: '{1:01}'` scrive il contatore con due cifre, e `{number}` stampa 01, 02 e 03 nell’apertura; il titolo di copertina è `numbered: false` e non riceve numero. I tre stili di sezione differiscono solo nella voce di palette `section`, che ognuno imposta al colore della sua linea. Il numero e il quadrato nella fascia sono collegati a `section`, così un solo design di apertura serve tutte e tre le sezioni. `minHeight` riserva all’apertura dieci righe della griglia da 14 pt, e il testo di ogni sezione comincia sulla stessa riga della griglia della sua pagina.
+`numberingTemplate: '{1:01}'` scrive il contatore con due cifre, e `{number}` stampa 01, 02 e 03 nell’apertura; il titolo di copertina è `numbered: false` e non riceve numero. I tre stili di sezione differiscono solo nella voce della tavolozza `section`, che ognuno imposta al colore della sua linea. Il numero e il quadrato nella fascia sono collegati a `section`, così una sola grafica di apertura serve tutte e tre le sezioni. `minHeight` riserva all’apertura dieci righe della griglia da 14 pt, e il testo di ogni sezione comincia sulla stessa riga della griglia della sua pagina.
 
 ### 4 · Do e Don't sono tipi di figura
 
@@ -42,13 +42,13 @@ Un tipo di risorsa può avere un `captionStyle` parziale, e questi due impostano
 
 <Excerpt region="bundle" />
 
-`createBundle` legge `config.customFonts`, cerca i byte di ogni variante in `files` tramite il suo `fileId` e li scrive sotto `fonts/`, con una voce `fonts` nel manifest. La famiglia da titolo porta `redistributable: false`, al posto di una licenza che vieti di cedere i file (Big Shoulders Display in realtà è sotto OFL). Il suo file resta fuori, e `warnings` nomina la famiglia. Il file da 81 KB contiene il capitolo, la configurazione, i tre disegni e cinque file di font. L’impaginazione non legge mai `customFonts`; le pagine escono identiche senza ([Creating a bundle](/it/docs/configuration-bundles#creare-un-pacchetto)).
+`createBundle` legge `config.customFonts`, cerca i byte di ogni variante in `files` tramite il suo `fileId` e li scrive sotto `fonts/`, con una voce `fonts` nel manifest. La famiglia da titolo ha `redistributable: false`, al posto di una licenza che vieti di cedere i file (Big Shoulders Display in realtà è sotto OFL). Il suo file resta fuori, e `warnings` indica la famiglia. Il file da 81 KB contiene il capitolo, la configurazione, i tre disegni e cinque file di font. L’impaginazione non legge mai `customFonts`; le pagine escono identiche senza ([Creating a bundle](/it/docs/configuration-bundles#creare-un-pacchetto)).
 
 ## Varianti
 
 ### Includi anche il carattere da titolo
 
-Se la licenza ti permette di cedere i file, togli il flag, e il pacchetto porta tutte e tre le famiglie in 96 KB.
+Se la licenza ti permette di cedere i file, togli il flag, e il pacchetto contiene tutte e tre le famiglie in 96 KB.
 
 ```diff
 -  name, redistributable: name !== DISPLAY, // the display face reaches suppliers another way
@@ -57,7 +57,7 @@ Se la licenza ti permette di cedere i file, togli il flag, e il pacchetto porta 
 
 ### Usa un vero Bold
 
-`boldFontWeight: 600` compone i tratti in grassetto, le intestazioni delle tabelle e le etichette delle didascalie nel SemiBold, perché il marchio non ha un Bold; se la tua famiglia ce l’ha, aggiungi i suoi file a `FONTS`, elimina l’impostazione e riscrivi la riga di campione dell’esempio e il suo “There is no Bold”, che non sarebbe più vero.
+`boldFontWeight: 600` compone le parti in grassetto, le intestazioni delle tabelle e le etichette delle didascalie nel SemiBold, perché il marchio non ha un Bold; se la tua famiglia ce l’ha, aggiungi i suoi file a `FONTS`, elimina l’impostazione e riscrivi la riga di campione dell’esempio e il suo «There is no Bold», che non sarebbe più vero.
 
 ```diff
 -    boldFontWeight: 600, // the brand has no Bold: its SemiBold sets **emphasis**
@@ -67,4 +67,4 @@ Se la licenza ti permette di cedere i file, togli il flag, e il pacchetto porta 
 
 ## Errori frequenti
 
-Passa a `createBundle` i byte di ogni font sotto il `fileId` che gli assegna `customFonts`. Una variante senza byte viene esclusa con un avviso “missing file, skipped”, e una famiglia che perde tutte le varianti sparisce dal manifest.
+Passa a `createBundle` i byte di ogni font sotto il `fileId` che gli assegna `customFonts`. Una variante senza byte viene esclusa con un avviso «missing file, skipped», e una famiglia che perde tutte le varianti sparisce dal manifest.

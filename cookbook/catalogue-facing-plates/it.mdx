@@ -1,6 +1,6 @@
 ---
 title: "Schede di catalogo di fronte alle loro tavole"
-summary: "Ogni scheda apre un verso e cita la sua tavola nella prima frase del commento; la tavola flotta sul recto di fronte, scalata fino a riempire la gabbia."
+summary: "Ogni scheda apre un verso e cita la sua tavola nella prima frase del commento; la tavola flottante va sul recto di fronte, scalata fino a riempire la gabbia."
 plain: "Un piccolo catalogo di mostra con tre antiche illustrazioni del Don Chisciotte. Ogni descrizione sta su una pagina sinistra, con la sua immagine che riempie la pagina destra di fronte."
 description: "Il catalogo di un gabinetto di stampe con tre incisioni di Doré, composto in Postext: ogni scheda su un verso di fronte alla tavola e un elenco delle opere."
 question: "Come compongo ogni scheda di catalogo su una pagina sinistra con la sua tavola di fronte, a destra?"
@@ -22,7 +22,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni scheda v
 
 <Excerpt region="opener" />
 
-Ogni titolo `#` porta il suo capitolo e la scheda tecnica come attributi, e lo slot grafico dell’apertura li disegna. Il numero grande è il `{number}` del titolo stesso, da `numberingTemplate: '{1}'`; con una tavola per scheda procede 1, 2, 3 al passo del contatore `Cat.` delle tavole. L’attacco è il primo paragrafo della scheda, in un gruppo `:::paragraphs{style="lead"}` a 13,5 pt, e il `dropCap` del livello lo apre con un’iniziale seppia su tre righe la cui sommità tocca le maiuscole della prima riga e il cui piede poggia sulla terza linea di base, con entrambe le altezze delle maiuscole misurate dai caratteri ([capilettera](/it/docs/configuration-text#capilettera)). L’attacco è composto in bandiera: giustificato a questo corpo, le sue poche parole per riga si aprirebbero oltre l’1,5× del commento. `minHeight` chiude l’apertura una riga sopra `LEAD_Y`, la riga di griglia dove comincia l’attacco; la scheda tecnica sta di fronte alla prima riga dell’attacco senza occupare spazio proprio (`reserve: false`), e un `:::space` sotto l’attacco fa partire il commento a filo una riga più in basso. `TITLE_Y` compone il titolo 1,2 mm più in basso del numerale, il che allinea le sue maiuscole alle cifre del numerale: in Libre Bodoni le cifre sono alte 0,716 em e le maiuscole 0,754 em.
+Ogni titolo `#` riporta capitolo e scheda tecnica come attributi, e lo spazio grafico dell’apertura li disegna. Il numero grande è il `{number}` del titolo stesso, da `numberingTemplate: '{1}'`; con una tavola per scheda procede 1, 2, 3 al passo del contatore `Cat.` delle tavole. L’attacco è il primo paragrafo della scheda, in un gruppo `:::paragraphs{style="lead"}` a 13,5 pt, e il `dropCap` del livello lo apre con un’iniziale seppia su tre righe la cui sommità tocca le maiuscole della prima riga e il cui piede poggia sulla terza linea di base, con entrambe le altezze delle maiuscole misurate dai caratteri ([capilettera](/it/docs/configuration-text#capilettera)). L’attacco è composto in bandiera: giustificato a questo corpo, le sue poche parole per riga si aprirebbero oltre l’1,5× del commento. `minHeight` chiude l’apertura una riga sopra `LEAD_Y`, la riga di griglia dove comincia l’attacco; la scheda tecnica sta di fronte alla prima riga dell’attacco senza occupare spazio proprio (`reserve: false`), e un `:::space` sotto l’attacco fa partire il commento a filo una riga più in basso. `TITLE_Y` compone il titolo 1,2 mm più in basso del numerale, il che allinea le sue maiuscole alle cifre del numerale: in Libre Bodoni le cifre sono alte 0,716 em e le maiuscole 0,754 em.
 
 ### 3 · Dichiara il master, disegna una copia più piccola
 
@@ -34,7 +34,7 @@ Postext dimensiona una bitmap dai pixel che dichiara, ai dpi del documento, e no
 
 <Excerpt region="cover" />
 
-La copertina è il primo titolo, `# Doré {style="cover" …}`, disegnato da uno stile senza folio. Il suo elemento immagine disegna `windmills-detail-540.jpg`, registrato come risorsa che nessun paragrafo cita, quindi non riceve né numero né didascalia. Il file è un quadrato di 1.100 px ritagliato dalla scansione dei mulini e ridotto a 540 px, la sua larghezza su una pagina di 1.000 px. Il nome ha una spaziatura tra lettere di 8 pt, e la spaziatura dopo l’ultima lettera resta fuori dalla centratura, così le quattro maiuscole stanno sull’asse centrale della pagina senza scarto.
+La copertina è il primo titolo, `# Doré {style="cover" …}`, disegnato da uno stile senza numero di pagina. Il suo elemento immagine disegna `windmills-detail-540.jpg`, registrato come risorsa che nessun paragrafo cita, quindi non riceve né numero né didascalia. Il file è un quadrato di 1.100 px ritagliato dalla scansione dei mulini e ridotto a 540 px, la sua larghezza su una pagina di 1.000 px. Il nome ha una spaziatura tra le lettere di 8 pt, e la spaziatura dopo l’ultima lettera resta fuori dalla centratura, così le quattro maiuscole stanno sull’asse centrale della pagina senza scarto.
 
 ### 5 · Miniature nelle celle dell’elenco
 

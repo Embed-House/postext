@@ -1,6 +1,6 @@
 ---
 title: "Une page de journal arabe sur deux colonnes"
-summary: "Un quotidien arabe en locale 'ar' : la première colonne est à droite, les titres couvrent les deux, les brèves vont sur trois colonnes de droite à gauche."
+summary: "Un quotidien arabe en langue 'ar' : la première colonne est à droite, les titres couvrent les deux, les brèves vont sur trois colonnes de droite à gauche."
 plain: "La une et une page intérieure d’un journal arabe. L’article commence dans la colonne de droite et se poursuit dans celle de gauche, comme un lecteur arabe lit une page."
 description: "Un journal arabe dans Postext : deux colonnes ordonnées de droite à gauche, titres sur toute la largeur, brèves sur trois colonnes, horaires des prières."
 question: "Quelle colonne vient en premier sur une page arabe, et comment composer un journal sur deux colonnes ?"
@@ -10,13 +10,13 @@ pageNotes: { "1": "La une : le nom الساحل en grandes lettres ruqʿa bleue
 
 ## Ce que vous allez composer
 
-Deux pages d’*الساحل*, un quotidien imaginaire d’une ville portuaire imaginaire, au format compact de 246 × 328 mm. La une porte le nom du journal en Aref Ruqaa de 84 pt, l’article principal sur le nouveau tramway de la ville sous un titre sur toute la largeur et une carte dessinée en code, et un bandeau de trois brèves au pied. La page 2 ouvre la rubrique locale sous une bannière bleue, avec quatre articles et les horaires des prières du jour. Tout se lit à partir de la droite : la première colonne de texte, les brèves, les colonnes du tableau, les oreilles du titre du journal. <RecipeLink slug="newspaper-front-page">La une anglaise</RecipeLink> compose les mêmes éléments de gauche à droite.
+Deux pages d’*الساحل*, un quotidien imaginaire d’une ville portuaire imaginaire, au format compact de 246 × 328 mm. La une présente le nom du journal en Aref Ruqaa de 84 pt, l’article principal sur le nouveau tramway de la ville sous un titre sur toute la largeur et une carte dessinée en code, et un bandeau de trois brèves au pied. La page 2 ouvre la rubrique locale sous une bannière bleue, avec quatre articles et les horaires des prières du jour. Tout se lit à partir de la droite : la première colonne de texte, les brèves, les colonnes du tableau, les oreilles du titre du journal. <RecipeLink slug="newspaper-front-page">La une anglaise</RecipeLink> compose les mêmes éléments de gauche à droite.
 
 ## Préparation
 
 ### 1 · Deux colonnes, la première à droite
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layoutType: 'double'` et le filet de colonne sont les mêmes réglages que dans un journal anglais ; `locale: 'ar'` retourne la page, si bien que l’article remplit d’abord la colonne de droite et se poursuit en tête de celle de gauche ([ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)). Un titre sur les deux colonnes est un encadré sur toute la largeur de la page, sans cadre, et les colonnes qui le suivent partent au même niveau. Le bandeau des brèves est un encadré sur toute la largeur, flottant au pied, avec `:::columns{count=3}` à l’intérieur, et ses colonnes vont elles aussi de droite à gauche, comme le tableau des horaires des prières en page 2 : un tableau composé dans le sens du document place sa première colonne à droite.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `layoutType: 'double'` et le filet de colonne sont les mêmes réglages que dans un journal anglais ; `locale: 'ar'` retourne la page : l’article remplit donc d’abord la colonne de droite et se poursuit en tête de celle de gauche ([ordre des pages et reliure à droite](/fr/docs/arabic-layout#ordre-des-pages-et-reliure-à-droite)). Un titre sur les deux colonnes est un encadré sur toute la largeur de la page, sans bordure, et les colonnes qui le suivent partent au même niveau. Le bandeau des brèves est un encadré sur toute la largeur, flottant au pied, avec `:::columns{count=3}` à l’intérieur, et ses colonnes vont elles aussi de droite à gauche, comme le tableau des horaires des prières en page 2 : un tableau composé dans le sens du document place sa première colonne à droite.
 
 ### 2 · Un titre de journal entre deux oreilles
 
@@ -56,4 +56,4 @@ Le bandeau est un encadré qui a ses propres colonnes : il peut en avoir plus q
 
 ## Erreurs fréquentes
 
-- Les horaires des prières sont saisis en chiffres arabes orientaux dans les cellules du tableau : `locale` ne change que les nombres qu’écrit le moteur, si bien qu’une édition maghrébine doit les ressaisir.
+- Les horaires des prières sont saisis en chiffres arabes orientaux dans les cellules du tableau : `locale` ne change que les nombres qu’écrit le moteur : une édition maghrébine doit donc les ressaisir.

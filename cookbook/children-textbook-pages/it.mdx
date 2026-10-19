@@ -1,16 +1,16 @@
 ---
 title: "Un'unità di libro di testo per bambini in tre lingue"
 summary: "Nove pagine di un’unità di terza elementare in spagnolo, catalano e inglese: doppie pagine su fondi colorati, riquadri con linguetta che crescono, mappa."
-plain: "Un'unità di libro di testo su un fiume, di nove pagine. Ogni argomento è una doppia pagina su fondo colorato, con linguetta del titolo, testo, immagini e riquadri. La mappa non ha parole dipinte: i nomi vengono dal testo."
+plain: "Un’unità di libro di testo su un fiume, di nove pagine. Ogni argomento è una doppia pagina su fondo colorato, con linguetta del titolo, testo, immagini e riquadri. La mappa non ha parole dipinte: i nomi vengono dal testo."
 description: "Un’unità di libro di testo per bambini in Postext: modelli che estendono una base, stili di riquadro a catena e una mappa dipinta etichettata dal Markdown."
-question: "Come compongo un'unità di libro di testo in tre lingue con gli stessi modelli di pagina?"
+question: "Come compongo un’unità di libro di testo in tre lingue con gli stessi modelli di pagina?"
 aliases: ["libro di testo", "libro scolastico", "scuola primaria", "unità didattica", "doppia pagina", "pagina di argomento", "fondo di pagina", "linguetta del titolo", "mappa etichettata", "indice per parti", "ereditarietà dei modelli", "spagnolo catalano inglese", "textbook"]
-pageNotes: {"1": "L'apertura dell'unità: un dipinto di una valle con il suo fiume, dai monti innevati al mare, occupa la parte alta, con due bambini seduti sull'erba in un angolo. Sotto, una linguetta blu con il titolo Il nostro fiume, un paragrafo e un riquadro azzurro, Imparerai.", "2": "L'indice: su fondo azzurro, una linguetta blu del titolo, due righe di parte (A e B) con i loro argomenti e paragrafi, puntini di guida e numeri di pagina, e la mappa come piccola immagine in fondo.", "4": "Argomento 1, Dove nasce un fiume, su fondo azzurro: linguetta del titolo numerata, due colonne di testo, una striscia di tre dipinti con didascalia, un riquadro Prova a farlo; nella pagina destra tre riquadri con linguetta.", "6": "Argomento 2, Dalla montagna al mare, su fondo verde chiaro: un'unica mappa dipinta su due pagine con i nomi sopra e tre riquadri dei corsi sotto la pagina destra.", "8": "Argomento 3, Le persone e il fiume, su fondo sabbia: testo e due riquadri nella pagina sinistra, tre riquadri con un dipinto ciascuno nella destra."}
+pageNotes: {"1": "L’apertura dell’unità: un dipinto di una valle con il suo fiume, dai monti innevati al mare, occupa la parte alta, con due bambini seduti sull’erba in un angolo. Sotto, una linguetta blu con il titolo Il nostro fiume, un paragrafo e un riquadro azzurro, Imparerai.", "2": "L’indice: su fondo azzurro, una linguetta blu del titolo, due righe di parte (A e B) con i loro argomenti e paragrafi, puntini di guida e numeri di pagina, e la mappa come piccola immagine in fondo.", "4": "Argomento 1, Dove nasce un fiume, su fondo azzurro: linguetta del titolo numerata, due colonne di testo, una striscia di tre dipinti con didascalia, un riquadro Prova a farlo; nella pagina destra tre riquadri con linguetta.", "6": "Argomento 2, Dalla montagna al mare, su fondo verde chiaro: un’unica mappa dipinta su due pagine con i nomi sopra e tre riquadri dei corsi sotto la pagina destra.", "8": "Argomento 3, Le persone e il fiume, su fondo sabbia: testo e due riquadri nella pagina sinistra, tre riquadri con un dipinto ciascuno nella destra."}
 ---
 
 ## Che cosa comporrai
 
-Nove pagine di *Il nostro fiume*, unità 4 di un libro inventato di scienze sociali per la terza elementare, su una pagina di 210 × 280 mm, in spagnolo, catalano e inglese. Una valle dipinta apre l'unità, una pagina d'indice elenca due parti e seguono tre argomenti a doppia pagina, ciascuno sul suo fondo: azzurro acqua, verde campo, sabbia sole. Ogni argomento ha una linguetta con numero e titolo, testo su due colonne e riquadri con linguetta che crescono con il loro testo. Il secondo argomento è un'unica mappa dipinta su due pagine, con il fiume, i paesi e i tre corsi nominati dal Markdown. I tre testi differiscono di un quinto o più ed entrano negli stessi modelli: un riquadro prende l'altezza che chiedono le sue parole e spinge giù il successivo, e la mappa si riduce un poco prima di qualsiasi testo.
+Nove pagine di *Il nostro fiume*, unità 4 di un libro inventato di scienze sociali per la terza elementare, su una pagina di 210 × 280 mm, in spagnolo, catalano e inglese. Una valle dipinta apre l’unità, una pagina d’indice elenca due parti e seguono tre argomenti a doppia pagina, ciascuno sul suo fondo: azzurro acqua, verde campo, sabbia sole. Ogni argomento ha una linguetta con numero e titolo, testo su due colonne e riquadri con linguetta che crescono con il loro testo. Il secondo argomento è un’unica mappa dipinta su due pagine, con il fiume, i paesi e i tre corsi, i cui nomi vengono dal Markdown. I tre testi differiscono di un quinto o più ed entrano negli stessi modelli: un riquadro prende l’altezza che chiedono le sue parole e spinge giù il successivo, e la mappa si riduce un poco prima di qualsiasi testo.
 
 ## Preparazione
 
@@ -18,29 +18,29 @@ Nove pagine di *Il nostro fiume*, unità 4 di un libro inventato di scienze soci
 
 <Excerpt region="boxes" />
 
-Uno stile di riquadro si fa in tre passi. `caja` tiene la forma, il carattere e la geometria della linguetta; `caja-tema` mette il colore dell'argomento su linguetta ed elenchi; `dato`, `palabras` e `actividad` fissano il genere: riquadro con fondo, con bordo o con filetto. I loro colori sono voci della tavolozza (`tema`, `tema-tint`): ogni stile si scrive una volta e il modello di un argomento lo tinge.
+Uno stile di riquadro si fa in tre passi. `caja` tiene la forma, il carattere e la geometria della linguetta; `caja-tema` mette il colore dell’argomento su linguetta ed elenchi; `dato`, `palabras` e `actividad` fissano il genere: riquadro con fondo, con bordo o con filetto. I loro colori sono voci della tavolozza (`tema`, `tema-tint`): ogni stile si scrive una volta e il modello di un argomento lo tinge.
 
 ### 2 · Fai ereditare a ogni argomento un modello di base
 
 <Excerpt region="answer" />
 
-La base è una doppia pagina: un fondo fino all'abbondanza, una linguetta del titolo con il numero e un testo su due colonne. Un argomento la estende (`extends: 'tema'`), fissa la sua `palette` (le tre voci `tema` prendono i colori della famiglia, e fondo, linguetta, numero e tutti i riquadri cambiano insieme) e aggiunge le sue cornici. Linguetta e numero sono decorazione ancorata alla cornice del titolo: la linguetta è alta quanto il titolo che la lingua richiede. Il numero è `{headingNumber}`, il contatore del titolo che la cornice ha preso, dipinto sul margine interno sinistro della cornice: nessuna recinzione di pagina lo ripete, e un clic su di esso raggiunge il numero, non la cornice.
+La base è una doppia pagina: un fondo fino all’abbondanza, una linguetta del titolo con il numero e un testo su due colonne. Un argomento la estende (`extends: 'tema'`), fissa la sua `palette` (le tre voci `tema` prendono i colori della famiglia, e fondo, linguetta, numero e tutti i riquadri cambiano insieme) e aggiunge le sue cornici. Linguetta e numero sono decorazione ancorata alla cornice del titolo: la linguetta è alta quanto il titolo che la lingua richiede. Il numero è `{headingNumber}`, il contatore del titolo che la cornice ha preso, dipinto sul margine interno sinistro della cornice: nessun blocco di pagina lo ripete, e un clic su di esso raggiunge il numero, non la cornice.
 
 ### 3 · Lascia che i gruppi si dividano lo spazio
 
-Ogni argomento ha due gruppi. La pagina sinistra è una pila: titolo, testo, poi la striscia di immagini o la mappa. La destra è un'altra pila di riquadri, o una fila di tre riquadri che si dividono la larghezza. Una cornice è alta quanto le sue parole e mai meno del suo `minHeight`: il testo spagnolo spinge giù tutto ciò che ha sotto e nessuna posizione del modello cambia. Quando una pagina è stretta, la [scala di adattamento](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) recupera spazio, riduce mappa e immagini e lascia il testo per ultimo, fino al 90 %. `pnpm cookbook bench` ricompone le tre edizioni con il testo più lungo del 30 %.
+Ogni argomento ha due gruppi. La pagina sinistra è una pila: titolo, testo, poi la striscia di immagini o la mappa. La destra è un’altra pila di riquadri, o una fila di tre riquadri che si dividono la larghezza. Una cornice è alta quanto le sue parole e mai meno del suo `minHeight`: il testo spagnolo spinge giù tutto ciò che ha sotto e nessuna posizione del modello cambia. Quando una pagina è stretta, la [scala di adattamento](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) recupera spazio, riduce mappa e immagini e lascia il testo per ultimo, fino al 90 %. `pnpm cookbook bench` ricompone le tre edizioni con il testo più lungo del 30 %.
 
 ### 4 · Metti i nomi della mappa dal testo
 
 <Excerpt region="art-labels" />
 
-La mappa è un dipinto senza una lettera. Ogni luogo è un'àncora dell'immagine, un punto in frazioni di larghezza e altezza con uno stile di etichetta, e ogni edizione scrive le proprie righe `::label` a quelle àncore. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* stanno nello stesso punto, e un nome più lungo va a capo dentro il `width` dell'àncora.
+La mappa è un dipinto senza una lettera. Ogni luogo è un’ancora dell’immagine, un punto in frazioni di larghezza e altezza con uno stile di etichetta, e ogni edizione scrive le proprie righe `::label` per quelle ancore. *Penalta Reservoir*, *Pantà de Penyalta* e *Embalse de Peñalta* stanno nello stesso punto, e un nome più lungo va a capo entro il `width` dell’ancora.
 
 ### 5 · Tieni unita ogni parte dell'indice
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` elenca gli argomenti e i loro paragrafi e tiene ogni riga di parte con le sue voci. Un recinto `:::part` con `parts.page: false` è solo una riga dell'indice e una sezione per le testatine: non aggiunge una pagina di titolo. L'indice è una pagina composta: il suo modello ha una cornice con `takes: "toc"` che riceve il `:::toc` e lo compone con le regole dell'indice, così le righe di parte, i puntini di guida e `keep` funzionano come nel testo corrente, e lo sfondo chiaro è la decorazione del modello.
+`:::toc{keep="part" levels="1-2"}` elenca gli argomenti e i loro paragrafi e tiene ogni riga di parte con le sue voci. Un blocco `:::part` con `parts.page: false` è solo una riga dell’indice e una sezione per le testatine: non aggiunge una pagina di titolo. L’indice è una pagina composta: il suo modello ha una cornice con `takes: "toc"` che riceve il `:::toc` e lo compone con le regole dell’indice, così le righe di parte, i puntini di guida e `keep` funzionano come nel testo corrente, e lo sfondo chiaro è la decorazione del modello.
 
 ## Varianti
 
@@ -67,6 +67,6 @@ Una cornice che non deve ridurre il testo prende `fit: { shrinkText: false }`. U
 
 ## Errori frequenti
 
-- Un nome dipinto dentro un'immagine non potrebbe cambiare con la lingua: la mappa non porta parole e ogni nome è un'etichetta.
-La tavolozza di un argomento cambia solo le voci `tema`. I numeri di pagina e l'indice usano `agua`, che ha lo stesso azzurro: restano azzurri sulle pagine verdi e sabbia; collegali a `tema` e seguiranno l'argomento.
-- Due figure che impostano la stessa risorsa prendono le parole della prima: la piccola mappa dell'indice è lo stesso file sotto un'altra risorsa, `rio`, senza àncore.
+- Un nome dipinto in un’immagine non potrebbe cambiare con la lingua: la mappa non contiene parole e ogni nome è un’etichetta.
+La tavolozza di un argomento cambia solo le voci `tema`. I numeri di pagina e l’indice usano `agua`, che ha lo stesso azzurro: restano azzurri sulle pagine verdi e sabbia; collegali a `tema` e seguiranno l’argomento.
+- Due figure che impostano la stessa risorsa prendono le parole della prima: la piccola mappa dell’indice è lo stesso file sotto un’altra risorsa, `rio`, senza ancore.

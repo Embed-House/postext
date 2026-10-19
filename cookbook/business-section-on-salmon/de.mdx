@@ -1,6 +1,6 @@
 ---
 title: "Ein Wirtschaftsteil auf lachsfarbenem Zeitungspapier"
-summary: "Achtseitige Zeitung im Berliner Format, deren Business-Seiten ein einziges Überschriftenformat nehmen: Lachspapier, sechs Spalten, Petrol, :::paper für Folio."
+summary: "Achtseitige Zeitung im Berliner Format, deren Wirtschaftsseiten ein einziger Überschriftenstil prägt: Lachspapier, sechs Spalten, Petrol, :::paper für Folio."
 plain: "Acht Seiten einer erfundenen Tageszeitung. Die ersten vier sind Nachrichten auf grauweißem Papier; die folgenden Wirtschaftsseiten sind auf lachsfarbenes Papier gedruckt, mit schmaleren Spalten und eigenen Farben."
 description: "Berliner Tageszeitung in Postext mit Code: Nachrichten in fünf Spalten, dann ein Wirtschaftsteil auf Lachs in sechs, mit Börsendaten, Grafiken und Folio-Papier."
 question: "Wie drucke ich die Wirtschaftsseiten einer Zeitung auf Lachspapier, mit eigenem Raster, auch im 3D-Betrachter?"
@@ -22,25 +22,25 @@ Jede Farbe der Konfiguration ist mit einem von acht Paletteneinträgen verknüpf
 
 ### 2 · Ein Überschriftenformat macht eine Seite zur Wirtschaftsseite
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `# Markets {style="business"}` öffnet einen Abschnitt, und seine Seiten übernehmen `palette`, `layout` und `bodyStyle` des Formats: sechs Spalten mit 4 mm Spaltenabstand (je 45,2 mm, gegenüber 54,6 mm bei den Nachrichten), Grundtext in 8,8 pt auf demselben Zeilenabstand von 11,4 pt. Auch die Seitenfarbe folgt der Palette. `page.backgroundColor` ist mit `paper` verknüpft, und wenn die Palette eines Abschnitts `paper` einen anderen Wert gibt, wird jede Seite des Abschnitts darin gefärbt: die Seite, die seine Überschrift öffnet, und jede Seite, auf die sein Text weiterläuft. So werden die Wirtschaftsseiten von Rand zu Rand lachsfarben, und die Spaltenlinie, die das `layout` des Formats so lässt, wie das Dokument sie festlegt, läuft zwischen den sechs Spalten wie zwischen den fünf.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `# Markets {style="business"}` öffnet einen Abschnitt, und seine Seiten übernehmen `palette`, `layout` und `bodyStyle` des Stils: sechs Spalten mit 4 mm Spaltenabstand (je 45,2 mm, gegenüber 54,6 mm bei den Nachrichten), Grundtext in 8,8 pt auf demselben Zeilenabstand von 11,4 pt. Auch die Seitenfarbe folgt der Palette. `page.backgroundColor` ist mit `paper` verknüpft, und wenn die Palette eines Abschnitts `paper` einen anderen Wert gibt, wird jede Seite des Abschnitts darin gefärbt: die Seite, die seine Überschrift öffnet, und jede Seite, auf die sein Text weiterläuft. So werden die Wirtschaftsseiten von Rand zu Rand lachsfarben, und die Spaltenlinie, die das `layout` des Stils so lässt, wie das Dokument sie festlegt, läuft zwischen den sechs Spalten wie zwischen den fünf.
 
 ### 3 · Jede Seite beginnt mit einer Ressortkennung
 
 <Excerpt region="flags" />
 
-Die H1 ist ein Auftakt über die ganze Seitenbreite mit der Parität `'any'` für `breakBefore`, sodass jede Überschrift die nächste Seite öffnet, gleich auf welcher Seite des Bogens. Ihre Gestaltung ist eine Ressortkennung auf einem Balken von 3 pt, drei Rasterzeilen hoch. Die Paginierungszeile ist eine Kopfzeile, 9 mm von der Oberkante verankert: Seitenzahl, Zeitungsname und Datum außen, `{chapterTitle}` innen in der Akzentfarbe, die die Palette auf den Lachsseiten zu Petrol macht.
+Die H1 ist ein Auftakt über die ganze Seitenbreite mit der Parität `'any'` für `breakBefore`, sodass jede Überschrift die nächste Seite öffnet, gleich ob rechts oder links. Ihre Gestaltung ist eine Ressortkennung auf einem Balken von 3 pt, drei Rasterzeilen hoch. Die Paginierungszeile ist eine Kopfzeile, 9 mm von der Oberkante verankert: Seitenzahl, Zeitungsname und Datum außen, `{chapterTitle}` innen in der Akzentfarbe, die die Palette auf den Lachsseiten zu Petrol macht.
 
 ### 4 · Bilder und Diagramme über k Spalten
 
 <Excerpt region="floats" />
 
-`top(3)` steht für `placement: { position: 'top', columns: 3 }`: Das Werftfoto nimmt drei der fünf Nachrichtenspalten, die Fähre vier, die Bäckerei drei der sechs Wirtschaftsspalten und das Hafendiagramm zwei. Ein Gleitobjekt, das aus einem Absatz in Spalte 1 zitiert wird, nimmt den Kopf der nächsten noch leeren Spalten ein, deshalb beginnen diese Bilder in Spalte 2, und der Artikel läuft neben ihnen hinab. Ein solches Bild bleibt nur so lange bei seinem Artikel, wie auf dieser Seite kein anderer Artikel darunter gesetzt wird: Ein seitenbreiter Artikel, der danach platziert wird, kann das Bild in sein eigenes Band oder auf die nächste Seite mitnehmen. Deshalb schließen die Seiten 2 und 3 mit einer an den Fuß gleitenden Anzeige statt mit einem weiteren Artikel. Die Fotos über die ganze Seitenbreite stehen im Textfluss (`here`) im Schlagzeilenkasten unter ihrer Überschrift. Auch die Tabellen stehen im Textfluss, in seitenbreiten Kästen am Fuß.
+`top(3)` steht für `placement: { position: 'top', columns: 3 }`: Das Werftfoto nimmt drei der fünf Nachrichtenspalten, die Fähre vier, die Bäckerei drei der sechs Wirtschaftsspalten und das Hafendiagramm zwei. Ein Gleitobjekt, auf das ein Absatz in Spalte 1 verweist, nimmt den Kopf der nächsten noch leeren Spalten ein, deshalb beginnen diese Bilder in Spalte 2, und der Artikel läuft neben ihnen hinab. Ein solches Bild bleibt nur so lange bei seinem Artikel, wie auf dieser Seite kein anderer Artikel darunter gesetzt wird: Ein seitenbreiter Artikel, der danach platziert wird, kann das Bild in seinen eigenen Spaltenbereich oder auf die nächste Seite mitnehmen. Deshalb schließen die Seiten 2 und 3 mit einer an den Fuß gleitenden Anzeige statt mit einem weiteren Artikel. Die Fotos über die ganze Seitenbreite stehen im Textfluss (`here`) im Schlagzeilenkasten unter ihrer Überschrift. Auch die Tabellen stehen im Textfluss, in seitenbreiten Kästen am Fuß.
 
 ### 5 · Schlagzeilen, Infokästen, Daten und Anzeigen sind Kästen
 
 <Excerpt region="boxes" />
 
-Eine Schlagzeile über die Seite ist ein rahmenloser seitenbreiter Kasten mit einer H2 in einer von drei Größen, und eine Linie von 1 pt darüber kennzeichnet den nächsten Artikel. Auf Seite 5 gleitet der Infokasten *The terminal in numbers* über zwei der sechs Spalten (`columns="2"` an seinem Direktivenblock), und das herausgestellte Zitat auf Seite 4 tut dasselbe über `columns: 2` in seinem Format. Die Datenkästen enthalten zwei bis vier Tabellen nebeneinander in einer Gruppe `:::columns`, und die Anzeigen sind seitenbreite Kästen, die an den Fuß gleiten, gerahmt von einer Linie von 0,75 pt.
+Eine Schlagzeile über die Seite ist ein rahmenloser seitenbreiter Kasten mit einer H2 in einer von drei Größen, und eine Linie von 1 pt darüber kennzeichnet den nächsten Artikel. Auf Seite 5 gleitet der Kasten *The terminal in numbers* über zwei der sechs Spalten (`columns="2"` in seiner öffnenden Zeile), und das herausgestellte Zitat auf Seite 4 tut dasselbe über `columns: 2` in seinem Stil. Die Datenkästen enthalten zwei bis vier Tabellen nebeneinander in einer Gruppe `:::columns`, und die Anzeigen sind seitenbreite Kästen, die an den Fuß gleiten, gerahmt von einer Linie von 0,75 pt.
 
 ### 6 · Das Papier, auf das Folio druckt
 
@@ -55,14 +55,14 @@ Die Nachrichtenseiten brauchen nichts: `folio.paper` ist Zeitungspapier mit 45 g
 :::
 ```
 
-Jede Seite des Laufs trägt `page.paper` mit diesem Farbton, und Folio druckt sie auf dieses Papier. Der Farbton ist die Seitenfarbe, zu 60 % in Richtung Weiß verschoben (README §4): Die flache Seite malt bereits #f2d3c0, und ein voll lachsfarbenes Papier darunter würde sie doppelt tönen. Canvas, HTML und PDF ignorieren `:::paper` und malen die Seitenfarbe, deshalb setzt die Palette des Abschnitts auch `paper`.
+Jede Seite des Laufs erhält `page.paper` mit diesem Farbton, und Folio zeigt sie auf diesem Papier. Der Farbton ist die Seitenfarbe, zu 60 % in Richtung Weiß verschoben (README §4): Die flache Seite malt bereits #f2d3c0, und ein voll lachsfarbenes Papier darunter würde sie doppelt tönen. Canvas, HTML und PDF ignorieren `:::paper` und malen die Seitenfarbe, deshalb setzt die Palette des Abschnitts auch `paper`.
 
 ## Varianten
 
 ### Das Papier wechseln und das Raster behalten
 
-Ein Überschriftenformat mit `palette` und ohne `layout` behält die fünf durch Linien getrennten Spalten des Dokuments und färbt trotzdem jede Seite seines Abschnitts: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` setzt eine Wochenendbeilage auf cremefarbenes Zeitungspapier. Fassen Sie ihre Seiten ebenfalls in einen Lauf `:::paper`, mit dem Farbton zu 60 % in Richtung Weiß verschoben, damit Folio sie auf passendes Papier druckt.
+Ein Überschriftenstil mit `palette` und ohne `layout` behält die fünf durch Linien getrennten Spalten des Dokuments und färbt trotzdem jede Seite seines Abschnitts: `{ id: 'weekend', palette: { paper: '#efe6cf' } }` setzt eine Wochenendbeilage auf cremefarbenes Zeitungspapier. Fassen Sie ihre Seiten ebenfalls in einen Lauf `:::paper`, mit dem Farbton zu 60 % in Richtung Weiß verschoben, damit Folio sie auf passendem Papier zeigt.
 
 ### Den Wirtschaftsteil herausnehmbar machen
 
-Die acht Seiten falten sich als zwei Bogen, einer im anderen: die Seiten 1–2 und 7–8 auf dem äußeren Bogen, 3–6 auf dem inneren. Folio gibt jedem Blatt das Papier seiner Vorderseite (recto), deshalb erscheinen die Seiten 7–8 lachsfarben, obwohl eine Druckmaschine sie auf denselben Bogen wie die Titelseite drucken würde. Legen Sie die Wirtschaftsseiten auf 3–6, dann bilden sie den inneren Bogen, den eine Druckerei auf Lachspapier drucken und ein Leser ganz herausnehmen kann.
+Die acht Seiten falten sich als zwei Bogen, einer im anderen: die Seiten 1–2 und 7–8 auf dem äußeren Bogen, 3–6 auf dem inneren. Folio gibt jedem Blatt das Papier seiner Vorderseite, deshalb erscheinen die Seiten 7–8 lachsfarben, obwohl eine Druckmaschine sie auf denselben Bogen wie die Titelseite drucken würde. Legen Sie die Wirtschaftsseiten auf 3–6, dann bilden sie den inneren Bogen, den eine Druckerei auf Lachspapier drucken und ein Leser ganz herausnehmen kann.

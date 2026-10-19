@@ -70,7 +70,7 @@ A block set against the document's direction keeps its own start side: its first
 
 ### Isolates
 
-`:ltr[…]` and `:rtl[…]` are bidi isolates (the LRI…PDI and RLI…PDI of UAX #9): their text is ordered inside them and the paragraph sees each one as a single neutral character. Use one when a Latin title ends in a neutral character (a full stop, a closing bracket, a question mark) that would otherwise be read with the Arabic around it, or when a run opens with a digit or a Latin letter that would turn the guess of a first-strong algorithm. A footnote, a `:ref` or a formula inside an isolate is part of it. The Unicode control characters themselves (U+2066–2069, U+202A–202E, U+200E and U+200F, the Arabic letter mark U+061C) are honoured when the source holds them, but the directives are easier to read and to edit.
+`:ltr[…]` and `:rtl[…]` are bidi isolates (the LRI…PDI and RLI…PDI of UAX #9): their text is ordered inside them and the paragraph sees each one as a single neutral character. Use one when a Latin title ends in a neutral character (a full stop, a closing bracket, a question mark) that would otherwise be read with the Arabic around it, or when a run opens with a digit or a Latin letter that would mislead a first-strong algorithm (one that guesses the direction from the first strong letter). A footnote, a `:ref` or a formula inside an isolate is part of it. The Unicode control characters themselves (U+2066–2069, U+202A–202E, U+200E and U+200F, the Arabic letter mark U+061C) are honoured when the source holds them, but the directives are easier to read and to edit.
 
 ### Numbers
 
@@ -84,7 +84,7 @@ The ornate parentheses of Qurʾān quotations, ﴿ (U+FD3F) and ﴾ (U+FD3E), ar
 
 ### Words with no letter
 
-A word made only of digits, punctuation or symbols (`46.`, `1367)`, `».`) has no script of its own, and a face may draw its marks by script. Amiri sets a Latin full stop, brackets and guillemets in Latin text and Arabic ones otherwise: its stop is 0.20 em wide against 0.32, a bracket 0.26 against 0.46. Handed such a word alone, each shaper picks a script by a rule of its own: one version of Chrome takes the font's default forms, a later one the Latin ones, the PDF the default. The same note then broke its lines otherwise from one browser to the next, and its PDF set marks of another width in the measured places.
+A word made only of digits, punctuation or symbols (`46.`, `1367)`, `».`) has no script of its own, and a face may draw its marks by script. Amiri sets a Latin full stop, brackets and guillemets in Latin text and Arabic ones otherwise: its stop is 0.20 em wide against 0.32, a bracket 0.26 against 0.46. Handed such a word alone, each shaper picks a script by a rule of its own: one version of Chrome takes the font's default forms, a later one the Latin ones, the PDF the default. The same note then broke its lines differently from one browser to the next, and its PDF set marks of another width in the measured places.
 
 Postext decides instead (`bodyText.scriptContext`, on by default). Such a word takes the script of the text around it:
 
@@ -94,7 +94,7 @@ Postext decides instead (`bodyText.scriptContext`, on by default). Such a word t
 
 The layout measures the word in that script, and the canvas, the HTML, the fixed-layout EPUB and the PDF paint those forms at that width, the same in every browser. A Latin note, a citation or a bibliography entry in an Arabic book needs no no-break space to keep `46.` or `(d. 1367)` in their Latin forms: write them with ordinary spaces. A word shaped in the Arabic script takes no letter-spacing, like the Arabic words around it.
 
-A word that has a letter is one script run, and so are the pieces it is painted in. A DOI or a web address may end a line at each of its joints, and a word wider than its line is cut where the line ends; a piece left with no letter (`10.1006/` and `.2001` of `10.1006/ijhc.2001.0458`) takes the script it has inside its word: of the letter before it there, else of the word's first letter. It is measured and painted in that script, so the address sets solid in a face whose digits change with the script (Noto Serif SC draws them 0.55 em wide in Latin text and 0.47 em otherwise).
+A word that has a letter is one script run, and so are the pieces it is painted in. A DOI or a web address may end a line at each of its joints, and a word wider than its line is cut where the line ends; a piece left with no letter (`10.1006/` and `.2001` of `10.1006/ijhc.2001.0458`) takes the script it has inside its word: that of the letter before it in the word, else that of the word's first letter. It is measured and painted in that script, so the address sets solid in a face whose digits change with the script (Noto Serif SC draws them 0.55 em wide in Latin text and 0.47 em otherwise).
 
 In a Chinese or Japanese document (`locale` `zh` or `ja`) a doubled ellipsis or dash (`……`, `——`, `――`) is the document's own mark wherever it is cited. A word with no letter that holds one, as `…….` at the end of an English sentence of the colophon, sets the pair in the forms of Han text (six centred dots, a dash two ems long) and what stands with it, the full stop or a quote, in the script of the sentence. It needs no `:ltr[…]` and no span of another style.
 
@@ -138,7 +138,7 @@ Design elements laid out in the flow, such as a chapter opener band or a heading
 
 The letters of an Arabic word join, and each takes the form its neighbours ask for: initial, medial, final or isolated, with ligatures such as lām-alif. Postext measures and paints a word as one shaped string, never letter by letter. The canvas and the HTML leave the shaping to the browser; the PDF shapes with HarfBuzz, loaded only when a document holds Arabic or another script that needs it, and maps each glyph back to its characters, so the text copied from the PDF and read by a screen reader is the text that was typed. When HarfBuzz cannot be loaded the PDF is still written, its marks misplaced, and `renderToPdf` reports a `complexShapingUnavailable` warning; its `harfbuzzWasm` option points at the file when a host serves it from somewhere of its own.
 
-Three rules follow from the joins, and hold for every word that holds an Arabic-script letter, in an Arabic book or quoted in an English one:
+Three rules follow from the joins, and apply to every word that contains an Arabic-script letter, in an Arabic book or quoted in an English one:
 
 - **No hyphenation.** Arabic is not divided at line ends, and hyphenation is off in an Arabic-script document. Turning it on with a Latin pattern language (`hyphenation: { enabled: true, locale: 'en-us' }`) hyphenates the Latin words of the book and leaves the Arabic ones whole.
 - **No letter-spacing.** Spacing joined letters apart breaks the joins. A style's `letterSpacing` and the tracking of justification skip Arabic words; the build reports a body or heading style that sets letter-spacing on Arabic text (`joiningScriptLetterSpacing`).
@@ -150,7 +150,7 @@ A style change inside a word, such as a coloured letter or a bold vowel mark (`�
 
 Arabic books are justified. A line is not stretched by spacing its letters; it is stretched at its word spaces and by kashida, the elongated joins a calligrapher draws between two connected letters (كتاب → كتـاب). Postext inserts kashidas as whole tatweels (U+0640, ـ), which the font draws as one stroke; Amiri turns a run of them into a curved join.
 
-`bodyText.kashida` is `'auto'` in an Arabic-script document and `'none'` in any other. Each justified line but a paragraph's last first opens its word spaces up to a quarter of their width, then takes the rest of its slack in kashidas, one tatweel at a time at the best joins first; what is left, less than a tatweel, goes back to the spaces. Knuth–Plass counts each word's possible elongation as stretch, so it chooses the breaks knowing that a line of Arabic words can widen there. Latin words, digits, headings, ragged lines and a paragraph's last line never take a kashida.
+`bodyText.kashida` is `'auto'` in an Arabic-script document and `'none'` in any other. Every justified line except the last of a paragraph first widens its word spaces by up to a quarter of their width, then takes the rest of its slack in kashidas, one tatweel at a time, at the best joins first; what is left, less than a tatweel, goes back to the spaces. Knuth–Plass counts each word's possible elongation as stretch, so it chooses the breaks knowing that a line of Arabic words can widen there. Latin words, digits, headings, ragged lines and a paragraph's last line never take a kashida.
 
 Where a kashida may go follows the rules of [raqim-kashida](https://github.com/aliftype/raqim-kashida): only between two letters that join, never after a letter that does not join onward (ا د ذ ر ز و ة), never at the end of a word, never inside lām-alif. `kashidaPatterns` picks the rule set: `'naskh'` for the classical Naskh rules, `'simple'` for the priorities of simple modern faces, `'nastaliq'` for Nastaʿlīq, and `'auto'` reads the body face (no kashida at all in a Ruqʿa face such as Aref Ruqaa, whose style forbids it). `kashidaPerWord` (1 by default) and `kashidaMaxLength` (0.6 em) limit how much one word stretches; a word that holds a tatweel the author typed is lengthened there. The inserted tatweels are painted but left out of the plain text, the source map and the text copied from the PDF. [Kashida in Arabic text](/en/docs/justification#kashida-in-arabic-text) has the details of the rule sets.
 
@@ -303,7 +303,7 @@ Write the poem in a `:::verse` block, one bayt a line, its hemistichs separated 
 :::
 ```
 
-- **The common width** is that of the widest hemistich, at most half the measure less the gap; `width` fixes it. Each hemistich reaches it with kashidas first, which verse takes more freely than prose, then with its word spaces.
+- **The common width** is that of the widest hemistich, at most half of the measure minus the gap; `width` fixes it. Each hemistich reaches it with kashidas first, which verse takes more freely than prose, then with its word spaces.
 - **The gap** is 2 em by default (`gap`); `ornament` prints a mark in its middle, such as ٭.
 - **An overlong hemistich** first tightens its spaces; if it still does not fit, its bayt is set staggered: the ṣadr flush right on its own line, the ʿajuz flush left on the next.
 - **Keeping together.** A bayt is never split between columns or pages, a poem follows the paragraphs' orphan and widow rules, and the line that introduces it («فأنشد يقول:») stays with its first bayts.
@@ -463,9 +463,9 @@ The chapters start with `:::numbering{format="abjad" startAt=1}` before the intr
 - **Persian, Urdu and Hebrew** get the direction, the digits, the whole-word rules and the right binding, but no built-in words of their own (figures, tables and the index print in English) and no Nastaʿlīq composition: a Nastaʿlīq face is set on a flat baseline.
 - **Block direction** is set on headings and containers; a plain paragraph needs a `:::paragraphs{dir=…}` around it, and there is no `{dir=auto}`.
 - **Opposite-direction islands.** In a block set against the book's direction, captions, contents and index lines follow the document's direction, and a box's icon, marker column and title stay on the flow's start side.
-- **Design text** (running heads, openers, box titles) resolves the bidirectional order line by line, and a text that holds an Arabic letter loses its letter-spacing whole, its Latin words included.
+- **Design text** (running heads, openers, box titles) resolves the bidirectional order line by line, and a text that holds an Arabic letter loses all its letter-spacing, its Latin words included.
 - **Italic design text.** A running head or an opener text set in italics still slants Arabic letters.
-- **Vowel marks** may reach past the edge of a box or a table cell, whose clip does not grow for them; `tashkil` leaves the marks of captions, table cells and design text.
+- **Vowel marks** may reach past the edge of a box or a table cell, whose clip does not grow for them; `tashkil` does not remove the marks of captions, table cells and design text.
 - **Numbers.** Citation numbers print in European digits; ordinal words are written in the nominative, definite form that headings use.
 - **Index**: ة is filed under ه, and names are not sorted past ابن or أبو; there are no rhyme or root indexes.
 - **Verse**: no run-in verse inside prose, no strophic forms with a centred refrain beyond single centred lines; a hemistich wider than the measure wraps from the start side, without a hanging indent.

@@ -18,7 +18,7 @@ El començament de *La importància de dir-se Ernest*, d'Oscar Wilde, en una edi
 
 <Excerpt region="acts" />
 
-L'acte s'obre amb un títol de primer nivell en Abril Fatface de 24 pt, sense ranura de disseny. `textTransform` el passa a versals, i les tres línies de 13,6 pt de la retícula que ocupa deixen aquestes versals 5,5 mm per sota de la vora superior de la caixa ([encapçalaments](/ca/docs/configuration-headings#encapçalaments)). `textAlign: 'center'` no admet un valor per nivell, així que també centra els títols del repartiment i el rètol *Escena*. `breakBefore` amb paritat `'odd'` porta l'acte a una pàgina senar, davant del repartiment. El valor per defecte, `'always-odd'`, deixaria dues pàgines en blanc entre tots dos ([saltar abans](/ca/docs/configuration-headings#saltar-abans)).
+L'acte s'obre amb un títol de primer nivell en Abril Fatface de 24 pt, sense zona de disseny. `textTransform` el passa a versals, i les tres línies de 13,6 pt de la retícula que ocupa deixen aquestes versals 5,5 mm per sota de la vora superior de la caixa ([encapçalaments](/ca/docs/configuration-headings#encapçalaments)). `textAlign: 'center'` no admet un valor per nivell, així que també centra els títols del repartiment i el rètol *Escena*. `breakBefore` amb paritat `'odd'` porta l'acte a una pàgina senar, davant del repartiment. El valor per defecte, `'always-odd'`, deixaria dues pàgines en blanc entre tots dos ([salt de pàgina previ](/ca/docs/configuration-headings#salt-de-pàgina-previ)).
 
 ### 2 · El repartiment és una filera de punts fins a cada actor
 
@@ -32,7 +32,7 @@ Cada personatge és un paràgraf de l'estil `person`, amb l'actor després de `:
 
 Un tipus de recurs amb `captionPrefix` i `shortLabel` buits imprimeix les il·lustracions soles, sense peu ([tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs)). El seu `defaultPlacement` col·loca el clavell on hi ha `::resource{id="fleuron"}`, centrat i amb una amplada de 0,24 de la mesura de 107 mm, uns 26 mm.
 
-### 4 · La portada és un estil de títol
+### 4 · La portada és un estil d'encapçalament
 
 <Excerpt region="playbill" />
 
@@ -76,5 +76,5 @@ En bandera i amb un sagnat de primera línia de 5 mm, una acotació d'una línia
 
 - Tota cursiva del diàleg pren `italicColor`, també la d'èmfasi, i l'*es* que subratlla Lane surt en el gris de les acotacions. El gris va a `bodyText` perquè la majoria de les acotacions són dins d'un parlament, al mateix paràgraf que l'èmfasi; només en rodona quedaria aquest *es* en tinta.
 - A l'edició anglesa, tres parlaments de Wilde acaben en una paraula sola: *information.*, *you.* i *that?* El tercer pot pujar a la línia anterior, però només amb l'1 % d'interlletratge negatiu que `bodyText.maxRuntTracking` admet per defecte, i el parlament queda més fosc que els del voltant. `maxRuntTracking: 5` deixa aquest límit a la meitat: *that?* baixa a una línia pròpia i la de sobre s'obre fins a 1,78 vegades l'espai normal, dins del límit d'1,8. Les tres línies curtes s'hi queden, per no tocar el text de Wilde. La traducció espanyola es va reescriure allà on una línia acabava en una paraula d'una lletra o on una síl·laba quedava sola.
-- Els noms es divideixen com qualsevol altra paraula: a la pàgina 5 de l'edició anglesa, *Au-gusta* i *Gwen-dolen* es parteixen entre dues línies. Un caràcter d'unió de paraules (U+2060) dins d'*Augusta* manté el nom sencer, però estira la línia anterior fins a 1,71 vegades l'espai normal, així que el text anglès conserva els guionets.
-- Al llenç, Playfair Display SC dibuixa *fi* com una lligadura en minúscula, així que *first* sortiria amb una *fi* minúscula entre versaletes. Per això la capçalera del repartiment anglès diu *The original cast*.
+- Els noms es parteixen com qualsevol altra paraula: a la pàgina 5 de l'edició anglesa, *Au-gusta* i *Gwen-dolen* es parteixen entre dues línies. Un caràcter d'unió de paraules (U+2060) dins d'*Augusta* manté el nom sencer, però estira la línia anterior fins a 1,71 vegades l'espai normal, així que el text anglès conserva els guionets.
+- Al canvas, Playfair Display SC dibuixa *fi* com una lligadura en minúscula, així que *first* sortiria amb una *fi* minúscula entre versaletes. Per això la capçalera del repartiment anglès diu *The original cast*.

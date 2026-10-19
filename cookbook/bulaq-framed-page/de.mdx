@@ -16,7 +16,7 @@ Sechs Seiten, gesetzt wie die Druckerei von Bulaq und ihre Kairoer Nachfolger im
 
 ### 1 · Die Ḥāschiya in einer eigenen Seitenspalte
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Layout mit anderthalb Spalten, dessen Seitenspalte nur Gleitobjekte aufnimmt, hält den Kommentar aus dem Textfluss heraus: Jede Glosse ist ein `:::callout{type="hashiya" span="side"}`, geschrieben vor der Stelle, die sie erklärt, und sie beginnt auf der Höhe der ersten Zeile dieser Stelle; `sideAtColumnEnd: 'after'` hält sie neben der Stelle, wenn diese auf der nächsten Seite weiterläuft ([Layout](/de/docs/configuration-page-layout#layout)). Der Kasten hat weder Hintergrund noch Rahmen noch Innenabstand, er liest sich also wie Text am Rand, sein Lemma fett, das `boldColor` rot färbt. `sideColumnSide: 'outer'` legt die Spalte auf beiden Seiten an den Außenrand: rechts auf der geraden Seite, die in einem rechts gebundenen Buch rechts liegt.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Layout mit anderthalb Spalten, dessen Seitenspalte nur Gleitobjekte aufnimmt, hält den Kommentar aus dem Textfluss heraus: Jede Glosse ist ein `:::callout{type="hashiya" span="side"}`, geschrieben vor der Stelle, die sie erklärt, und sie beginnt auf der Höhe der ersten Zeile dieser Stelle; `sideAtColumnEnd: 'after'` hält sie neben der Stelle, wenn diese auf der nächsten Seite weiterläuft ([Layout](/de/docs/configuration-page-layout#layout)). Der Kasten hat weder Hintergrund noch Kontur noch Innenabstand, er liest sich also wie Text am Rand, sein Lemma fett, das `boldColor` rot färbt. `sideColumnSide: 'outer'` legt die Spalte auf beiden Seiten an den Außenrand: rechts auf der geraden Seite, die in einem rechts gebundenen Buch rechts liegt.
 
 <PageShot page={2} crop="0,0.58,1,0.34" caption="Seite 2: Die Glosse zu «كديز» beginnt auf der Höhe des Absatzes, der das Wort verwendet, am Außenrand hinter der Spaltenlinie." />
 
@@ -24,7 +24,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Layout mit 
 
 <Excerpt region="frame" />
 
-Der Rahmen besteht aus drei Gestaltungselementen der Seite in der Kopfzeile: zwei Kästen mit Rahmen und ohne Füllung im Abstand von 1,3 mm und einer Linie unter dem Band mit dem Kolumnentitel. Seitenelemente sind physisch, deshalb wird der Rahmen zweimal gebaut, einmal je Parität, aus den Rändern dieser Seite ([Seitenreihenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Die Pagina steht auf jeder Seite am äußeren Ende des Bandes, auch auf Auftaktseiten; der Kapiteltitel ist zentriert und fehlt auf der Auftaktseite, wo der Titel selbst darunter steht.
+Der Rahmen besteht aus drei Gestaltungselementen der Seite in der Kopfzeile: zwei Rechtecke mit Kontur und ohne Füllung im Abstand von 1,3 mm und einer Linie unter dem Band mit dem Kolumnentitel. Seitenelemente sind physisch, deshalb wird der Rahmen zweimal gebaut, einmal je Parität, aus den Rändern dieser Seite ([Seitenreihenfolge und Bindung rechts](/de/docs/arabic-layout#seitenfolge-und-bindung-rechts)). Die Pagina steht auf jeder Seite am äußeren Ende des Bandes, auch auf Auftaktseiten; der Kapiteltitel ist zentriert und fehlt auf der Auftaktseite, wo der Titel selbst darunter steht.
 
 ### 3 · Eine Titelseite im selben Rahmen
 
@@ -45,7 +45,7 @@ Manche Druckereien setzen die Ḥāschiya an den Bund, damit der Text den breite
 
 ### Jede Glosse einrahmen
 
-Eine dünne Linie um jede Glosse, wie sie manche späteren Kairoer Drucke zeigen, ist der eigene Rahmen des Kastens.
+Eine dünne Linie um jede Glosse, wie sie manche späteren Kairoer Drucke zeigen, ist die eigene Kontur des Kastens.
 
 ```diff
 -  stripe: { enabled: false }, border: { enabled: false },

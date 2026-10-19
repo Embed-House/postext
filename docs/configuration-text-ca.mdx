@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuració: text de cos',
   sidebarTitle: 'Text de cos',
-  description: "La tipografia del text corregut: la font, el cos i l'interlineat, els colors, els sagnats, les cites, el vers, les tabulacions i les caplletres",
+  description: "La tipografia del text corregut: la font, la mida i l'interlineat, els colors, els sagnats, les cites, el vers, les tabulacions i les caplletres",
   lang: 'ca',
   lastUpdated: '2026-10-16',
   readingTime: '27 min',
   order: 7,
   parent: 'configuration',
-  plainSummary: "Aquesta pàgina reuneix els paràmetres del text principal d'un llibre. Tries la tipografia, el cos i l'espai entre les línies, i el color de les paraules en negreta i en cursiva. Fixes el sagnat de la primera línia i l'espai entre paràgrafs. La pàgina també explica les cites separades del text, els poemes, les tabulacions per al text en columnes i la lletra gran amb què comencen alguns capítols. La partició de mots, els encapçalaments i les llistes tenen pàgines pròpies.",
+  plainSummary: "Aquesta pàgina reuneix els paràmetres del text principal d'un llibre. Hi tries la font, la mida i l'espai entre les línies, i el color de les paraules en negreta i en cursiva. També hi fixes el sagnat de la primera línia i l'espai entre paràgrafs. La pàgina també explica les cites separades del text, els poemes, les tabulacions per al text en columnes i la lletra gran amb què comencen alguns capítols. La partició de mots, els encapçalaments i les llistes tenen pàgines pròpies.",
 };
 
 # Configuració: text de cos
@@ -19,9 +19,9 @@ export const metadata = {
 
 La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
 
-<Illustration name="TypographyScale" data='{"title": "Escala tipogràfica", "desc": "Jerarquia tipogràfica des d’H1 fins a text petit, que mostra les mides relatives d’encapçalaments, text de cos i peus.", "caption": "Una escala coherent manté la jerarquia llegible d’un cop d’ull.", "rows": [{"role": "H1", "sample": "Encapçalament 1", "size": "32px"}, {"role": "H2", "sample": "Encapçalament 2", "size": "24px"}, {"role": "H3", "sample": "Encapçalament 3", "size": "20px"}, {"role": "Cos", "sample": "Text de cos", "size": "16px"}, {"role": "Petit", "sample": "Peu / nota", "size": "13px"}]}' />
+<Illustration name="TypographyScale" data='{"title": "Escala tipogràfica", "desc": "La jerarquia tipogràfica, de l’H1 fins al text petit, amb les mides relatives dels encapçalaments, el text de cos i els peus.", "caption": "Amb una escala coherent, la jerarquia es llegeix d’un cop d’ull.", "rows": [{"role": "H1", "sample": "Encapçalament 1", "size": "32px"}, {"role": "H2", "sample": "Encapçalament 2", "size": "24px"}, {"role": "H3", "sample": "Encapçalament 3", "size": "20px"}, {"role": "Cos", "sample": "Text de cos", "size": "16px"}, {"role": "Petit", "sample": "Peu / nota", "size": "13px"}]}' />
 
-<Illustration name="SpacingScale" data='{"title": "Escala d’espaiat", "desc": "Una escala d’espaiat per passos amb valors creixents que es fan servir en marges, farciments i buits.", "caption": "Els passos d’espaiat construeixen un ritme previsible en la maquetació.", "steps": [{"name": "xs", "value": "4 px", "px": 4}, {"name": "sm", "value": "8 px", "px": 8}, {"name": "md", "value": "16 px", "px": 16}, {"name": "lg", "value": "24 px", "px": 24}, {"name": "xl", "value": "40 px", "px": 40}, {"name": "2xl", "value": "64 px", "px": 64}]}' />
+<Illustration name="SpacingScale" data='{"title": "Escala d’espaiat", "desc": "Una escala d’espaiat en passos, amb els valors creixents que es fan servir als marges, als farciments i als espais.", "caption": "Els passos d’espaiat donen a la maquetació un ritme previsible.", "steps": [{"name": "xs", "value": "4 px", "px": 4}, {"name": "sm", "value": "8 px", "px": 8}, {"name": "md", "value": "16 px", "px": 16}, {"name": "lg", "value": "24 px", "px": 24}, {"name": "xl", "value": "40 px", "px": 40}, {"name": "2xl", "value": "64 px", "px": 64}]}' />
 
 <table>
   <thead>
@@ -37,13 +37,13 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td><code>'EB Garamond'</code></td>
-      <td>Família tipogràfica per al cos de text. Qualsevol font de Google Fonts, del sistema, o declarada com a [font personalitzada](/ca/docs/configuration-fonts-colors-viewers#fonts-personalitzades). Una sola família, no una llista de fonts CSS (vegeu més avall).</td>
+      <td>Família de fonts del text de cos. Qualsevol font de Google Fonts, del sistema, o declarada com a [font personalitzada](/ca/docs/configuration-fonts-colors-viewers#fonts-personalitzades). Una sola família, no una llista de fonts CSS (vegeu més avall).</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td><code>8 pt</code></td>
-      <td>Mida de font base per al cos de text.</td>
+      <td>Mida base de la lletra del text de cos.</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
@@ -67,37 +67,37 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>boldColor</code></td>
       <td><code>ColorValue</code></td>
       <td>Color principal (<code>#295AA3</code>)</td>
-      <td>Color aplicat als fragments en negreta. Es resol contra l'entrada <code>main-color</code> de la paleta per defecte, de manera que canviar aquest color retinta tots els fragments en negreta del document.</td>
+      <td>Color aplicat als fragments en negreta. Està lligat a l'entrada <code>main-color</code> de la paleta per defecte, de manera que, si canvies aquest color, canvia el de tots els fragments en negreta del document.</td>
     </tr>
     <tr>
       <td><code>italicColor</code></td>
       <td><code>ColorValue</code></td>
       <td>Color principal (<code>#295AA3</code>)</td>
-      <td>Color aplicat als fragments en cursiva. Mateix enllaç a la paleta que <code>boldColor</code>.</td>
+      <td>Color aplicat als fragments en cursiva. Lligat a la paleta igual que <code>boldColor</code>.</td>
     </tr>
     <tr>
       <td><code>referenceColor</code></td>
       <td><code>ColorValue</code></td>
       <td>Color principal (<code>#295AA3</code>)</td>
-      <td>Color aplicat a les etiquetes de <code>:ref</code> en línia (referències a recursos). Mateix enllaç a la paleta que <code>boldColor</code>. Segueix la paleta des de postext 1.5; fins a la 1.4 es quedava en <code>#295AA3</code> fos quin fos el color principal.</td>
+      <td>Color aplicat a les etiquetes de <code>:ref</code> en línia (referències a recursos). Lligat a la paleta igual que <code>boldColor</code>. Segueix la paleta des de postext 1.5; fins a la 1.4 es quedava en <code>#295AA3</code> fos quin fos el color principal.</td>
     </tr>
     <tr>
       <td><code>referenceBold</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Renderitzar les etiquetes de <code>:ref</code> en línia amb la font en negreta. Una referència conserva l'èmfasi del text que l'envolta (dins de <code>***…***</code> continua en negreta cursiva amb qualsevol valor); aquesta opció només hi afegeix la negreta.</td>
+      <td>Renderitza les etiquetes de <code>:ref</code> en línia amb la font en negreta. Una referència conserva l'èmfasi del text que l'envolta (dins de <code>***…***</code> continua en negreta cursiva amb qualsevol valor); aquesta opció només hi afegeix la negreta.</td>
     </tr>
     <tr>
       <td><code>referenceItalic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Renderitzar les etiquetes de <code>:ref</code> en línia en cursiva. Una referència dins de text en cursiva continua en cursiva amb qualsevol valor.</td>
+      <td>Renderitza les etiquetes de <code>:ref</code> en línia en cursiva. Una referència dins de text en cursiva continua en cursiva amb qualsevol valor.</td>
     </tr>
     <tr>
       <td><code>emphasis</code></td>
       <td><code>'auto' | 'italic' | 'bold' | 'color' | 'overline'</code></td>
       <td><code>'auto'</code></td>
-      <td>Com es compon <code>*…*</code>: en cursiva, en la negreta i <code>boldColor</code>, en rodona amb <code>italicColor</code>, o en rodona amb una ratlla damunt de les paraules. <code>'auto'</code> és <code>'bold'</code> en un document escrit en alfabet àrab i <code>'italic'</code> en qualsevol altre. Vegeu <a href="/ca/docs/configuration-language#text-àrab">Text àrab</a>.</td>
+      <td>Com es compon <code>*…*</code>: en cursiva, en negreta amb <code>boldColor</code>, en rodona amb <code>italicColor</code>, o en rodona amb una ratlla damunt de les paraules. <code>'auto'</code> és <code>'bold'</code> en un document escrit en alfabet àrab i <code>'italic'</code> en qualsevol altre. Vegeu <a href="/ca/docs/configuration-language#text-àrab">Text àrab</a>.</td>
     </tr>
     <tr>
       <td><code>tashkil</code></td>
@@ -109,7 +109,7 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>textAlign</code></td>
       <td><code>'left' | 'justify' | 'start' | 'end'</code></td>
       <td><code>'justify'</code></td>
-      <td>Alineació del text. <code>'left'</code> (o <code>'start'</code>) és el costat per on comença la línia: la dreta d'un paràgraf de dreta a esquerra (vegeu <a href="/ca/docs/configuration-language#direcció-del-text">Direcció del text</a>). El text justificat distribueix l'espaiat al llarg de cada línia per obtenir vores uniformes. Les últimes línies dels paràgrafs justificats es componen en bandera, a la seva amplada natural — llevat de quan Knuth-Plass ha acceptat una línia final sobreomplerta confiant en la compressió de la cola (glue): en aquest cas els espais entre paraules es comprimeixen perquè la línia encaixi exactament en la mesura (semàntica de glue-setting de TeX, aplicada de manera idèntica als backends canvas, HTML i PDF).</td>
+      <td>Alineació del text. <code>'left'</code> (o <code>'start'</code>) és el costat per on comença la línia: la dreta d'un paràgraf de dreta a esquerra (vegeu <a href="/ca/docs/configuration-language#direcció-del-text">Direcció del text</a>). El text justificat distribueix l'espaiat al llarg de cada línia per obtenir vores uniformes. Les últimes línies dels paràgrafs justificats es componen en bandera, a la seva amplada natural. L'excepció és quan Knuth-Plass ha acceptat una línia final sobreomplerta comptant que la cola (*glue*) es pot comprimir: en aquest cas, els espais entre paraules es comprimeixen perquè la línia encaixi exactament en la mesura (la semàntica de *glue-setting* de TeX, aplicada igual a les sortides canvas, HTML i PDF).</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
@@ -121,7 +121,7 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>boldFontWeight</code></td>
       <td><code>number</code></td>
       <td><code>700</code></td>
-      <td>Pes per al text en negreta/strong (100–900).</td>
+      <td>Pes per al text en negreta (strong) (100–900).</td>
     </tr>
     <tr>
       <td><code>hyphenation</code></td>
@@ -145,13 +145,13 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>indentAfterHeading</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Quan val <code>false</code>, el primer paràgraf immediatament posterior a un encapçalament es compon sense sagnat de primera línia — convenció tipogràfica habitual en publicacions científiques i en molts estils editorials. El mateix val per a un paràgraf just després d'una línia <a href="/ca/docs/document-format-directives#space"><code>:::space</code></a>. Un requadre que surt del text entre tots dos —a la columna lateral (<code>span: 'side'</code>), flotat al cap o al peu d'una pàgina, o fix— i una figura flotant no compten: a la seva columna, el paràgraf segueix l'encapçalament i es compon sense sagnat. Un requadre compost en el text (<code>placement: 'here'</code>) sí que compta, i el paràgraf que el segueix porta sagnat. No té efecte quan <code>hangingIndent</code> està activat.</td>
+      <td>Quan val <code>false</code>, el primer paràgraf immediatament posterior a un encapçalament es compon sense sagnat de primera línia, una convenció tipogràfica habitual en publicacions científiques i en molts estils editorials. El mateix val per a un paràgraf just després d'una línia <a href="/ca/docs/document-format-directives#space"><code>:::space</code></a>. Un requadre que surt del text entre tots dos —a la columna lateral (<code>span: 'side'</code>), flotat al cap o al peu d'una pàgina, o fix— i una figura flotant no compten: a la seva columna, el paràgraf segueix l'encapçalament i es compon sense sagnat. Un requadre compost en el text (<code>placement: 'here'</code>) sí que compta, i el paràgraf que el segueix porta sagnat. No té efecte quan <code>hangingIndent</code> està activat.</td>
     </tr>
     <tr>
       <td><code>maxWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>Límit superior de l'espaiat entre paraules en text justificat, expressat com a multiplicador de l'amplada de l'espai normal. Knuth-Plass hi manté totes les línies que el paràgraf permet, i abans parteix una paraula o reparteix l'excés d'espai entre les línies veïnes; una línia que cap conjunt de talls no deixa dins del límit el supera, i la que passa de 3 vegades l'espai normal es compon en bandera. Les línies que superen aquesta proporció es consideren "fluixes": vegeu <a href="/ca/docs/justification#línies-que-lalgorisme-no-pot-omplir">Línies que l'algorisme no pot omplir</a>, i <code>maxJustifyTracking</code> perquè prenguin una mica de tracking en lloc seu.</td>
+      <td>Límit superior de l'espaiat entre paraules en text justificat, expressat com a multiplicador de l'amplada de l'espai normal. Knuth-Plass hi manté totes les línies que el paràgraf permet, i abans parteix una paraula o reparteix l'excés d'espai entre les línies veïnes; si cap combinació de talls no deixa una línia dins del límit, la línia el supera, i la que passa de 3 vegades l'espai normal es compon en bandera. Les línies que superen aquesta proporció es consideren "fluixes": vegeu <a href="/ca/docs/justification#línies-que-lalgorisme-no-pot-omplir">Línies que l'algorisme no pot omplir</a>, i <code>maxJustifyTracking</code> perquè prenguin una mica de tracking en lloc seu.</td>
     </tr>
     <tr>
       <td><code>minWordSpacing</code></td>
@@ -163,7 +163,7 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>maxJustifyTracking</code></td>
       <td><code>number</code></td>
       <td><code>0</code></td>
-      <td>Tracking màxim que pot prendre una línia justificada, en mil·lèsimes d'em en un sentit o en l'altre (la unitat d'InDesign: 10 = 0,01 em per caràcter), quan només amb els seus espais entre paraules s'estiraria més enllà de <code>maxWordSpacing</code> o es comprimiria per sota de <code>minWordSpacing</code>. La part de l'ajust que passa del límit va a les lletres, així que els espais d'una línia fluixa tornen a <code>maxWordSpacing</code> i una línia atapeïda hi cap amb <code>minWordSpacing</code>. Knuth-Plass el té en compte en triar els talls, i només a les línies que l'espaiat entre paraules duria més enllà dels límits: les altres, l'última línia d'un paràgraf (llevat que es desbordi), una línia d'una sola paraula i una línia amb un chip no el fan servir. La línia el desa com a <code>letterSpacing</code>, i canvas, HTML i PDF el pinten. Requereix <code>optimalLineBreaking</code>. Amb <code>0</code> queda desactivat. Vegeu <a href="/ca/docs/justification#tracking-com-a-últim-recurs">Tracking com a últim recurs</a>.</td>
+      <td>Tracking màxim que pot prendre una línia justificada, en mil·lèsimes d'em en un sentit o en l'altre (la unitat d'InDesign: 10 = 0,01 em per caràcter), quan només amb els seus espais entre paraules s'estiraria més enllà de <code>maxWordSpacing</code> o es comprimiria per sota de <code>minWordSpacing</code>. La part de l'estirament o de la compressió que passa del límit va a les lletres, així que els espais d'una línia fluixa tornen a <code>maxWordSpacing</code> i una línia atapeïda hi cap amb <code>minWordSpacing</code>. Knuth-Plass el té en compte en triar els talls, i només a les línies que l'espaiat entre paraules duria més enllà dels límits: les altres, l'última línia d'un paràgraf (llevat que es desbordi), una línia d'una sola paraula i una línia amb un xip no el fan servir. La línia el desa com a <code>letterSpacing</code>, i canvas, HTML i PDF el pinten. Requereix <code>optimalLineBreaking</code>. Amb <code>0</code> queda desactivat. Vegeu <a href="/ca/docs/justification#tracking-com-a-últim-recurs">Tracking com a últim recurs</a>.</td>
     </tr>
     <tr>
       <td><code>kashida</code></td>
@@ -187,13 +187,13 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>kashidaMaxLength</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Allargament màxim en un enllaç, en em; en pren tants tatweels sencers com hi càpiguen.</td>
+      <td>Allargament màxim en un enllaç, en em; s'hi posen tants tatweels sencers com hi càpiguen.</td>
     </tr>
     <tr>
       <td><code>optimalLineBreaking</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Fer servir el tall òptim de línies Knuth-Plass en lloc del voraç de primer ajust. Produeix un espaiat entre paraules més uniforme en tot el paràgraf. Un paràgraf en xinès, japonès o coreà (vegeu <a href="/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental">Tipografia de l'Àsia oriental</a>), o amb una paraula més ampla que la columna, es compon igualment línia a línia; un paràgraf llatí que cita unes poques paraules CJK el conserva. El text en bandera també el fa servir amb <code>optimalRagged</code>. Vegeu <a href="/ca/docs/justification">Partició de mots i justificació</a>.</td>
+      <td>Fa servir el tall òptim de línies de Knuth-Plass en lloc del tall voraç, línia a línia. Produeix un espaiat entre paraules més uniforme en tot el paràgraf. Un paràgraf en xinès, japonès o coreà (vegeu <a href="/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental">Tipografia de l'Àsia oriental</a>), o amb una paraula més ampla que la columna, es compon igualment línia a línia; un paràgraf llatí que cita unes poques paraules CJK el conserva. El text en bandera també el fa servir amb <code>optimalRagged</code>. Vegeu <a href="/ca/docs/justification">Partició de mots i justificació</a>.</td>
     </tr>
     <tr>
       <td><code>optimalRagged</code></td>
@@ -205,49 +205,49 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>breakAfterDashes</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permet que una línia acabi després d'un guió o d'un guió curt posat entre dues paraules sense espais: <code>Madrid–Barcelona</code>, <code>I.—Que trata</code> (un títol de capítol a l'antiga) o, en un text en anglès, <code>say—that’s</code>, també quan la paraula que segueix el guió va en un altre estil (<code>calidad–*precio*</code>). Knuth-Plass el pren com un espai entre paraules, i la línia acaba al guió sense afegir-hi res. Mai després del guió que obre un incís o un diàleg (<code>—dijo</code>, <code>dijo "—Hola</code>, <code>sagte »—Ich</code>: amb un espai, o un espai i unes cometes, davant del guió; després d'unes cometes que tanquen una paraula, com a <code>«no»—y</code>, l'alemany <code>„nein“—und</code> o el francès <code>« non »—et</code>, la línia sí que pot acabar), davant d'un signe de puntuació (<code>él—,</code>), davant d'unes cometes o un parèntesi (<code>pensaba—» y</code>, <code>dijo—«no»</code>, <code>dijo—(no)</code>: després d'un guió, unes cometes solen tancar la cita que el guió interromp), dins d'una sèrie de guions ni dins d'un interval de números amb guió curt (<code>1914–1918</code>). <code>false</code> manté els talls de la 1.4: Knuth-Plass mai no talla després d'un guió, i el divisor línia a línia del text amb format o del text en bandera amb partició de mots només entre dues lletres; així es llegeixen les configuracions desades abans el text de les quals té algun d'aquests guions (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). S'aplica al text corregut, els títols, les llistes, les cites i els requadres. Els peus, les notes, les cel·les de taula i l'índex de continguts conserven els talls de la 1.4, i un paràgraf en bandera sense format compost línia a línia segueix en tots dos casos les regles pròpies de pretext.</td>
+      <td>Permet que una línia acabi després d'un guió o d'un guió curt posat entre dues paraules sense espais: <code>Madrid–Barcelona</code>, <code>I.—Que trata</code> (un títol de capítol a l'antiga) o, en un text en anglès, <code>say—that’s</code>, també quan la paraula que segueix el guió va en un altre estil (<code>calidad–*precio*</code>). Knuth-Plass el pren com un espai entre paraules, i la línia acaba al guió sense afegir-hi res. Mai després del guió que obre un incís o un diàleg (<code>—dijo</code>, <code>dijo "—Hola</code>, <code>sagte »—Ich</code>: amb un espai, o un espai i unes cometes, davant del guió; després d'unes cometes que tanquen una paraula, com a <code>«no»—y</code>, l'alemany <code>„nein“—und</code> o el francès <code>« non »—et</code>, la línia sí que pot acabar), davant d'un signe de puntuació (<code>él—,</code>), davant d'unes cometes o un parèntesi (<code>pensaba—» y</code>, <code>dijo—«no»</code>, <code>dijo—(no)</code>: després d'un guió, unes cometes solen tancar la cita que el guió interromp), dins d'una sèrie de guions ni dins d'un interval de números amb guió curt (<code>1914–1918</code>). <code>false</code> manté els talls de la 1.4: Knuth-Plass mai no talla després d'un guió, i el divisor línia a línia del text amb format o del text en bandera amb partició de mots només entre dues lletres; així es llegeixen les configuracions desades abans amb un text que tingui algun d'aquests guions (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). S'aplica al text corregut, els títols, les llistes, les cites i els requadres. Els peus, les notes, les cel·les de taula i l'índex de continguts conserven els talls de la 1.4, i un paràgraf en bandera sense format compost línia a línia segueix en tots dos casos les regles pròpies de pretext.</td>
     </tr>
     <tr>
       <td><code>breakAfterHyphens</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permet que una línia acabi després del guionet d'un compost, un guionet entre dues lletres (<code>físico-</code> · <code>química</code>, <code>vencer-</code> · <code>se</code>), en qualsevol paràgraf que talla Knuth-Plass. La línia acaba al guionet i no s'hi afegeix res; el tall costa el mateix que una síl·laba. Mai després d'un guionet al costat d'una xifra o un signe (<code>COVID-19</code>, <code>-5 °C</code>). Un paràgraf justificat sense format en línia només hi talla amb dues lletres a cada costat del guionet, perquè cap línia no acabi en la <code>e-</code> d'<code>e-mail</code>. <code>false</code> manté els talls de la 1.4: un paràgraf justificat sense format en línia mai no hi talla, mentre que el mateix paràgraf amb una paraula en cursiva en qualsevol lloc, un paràgraf en bandera i un de compost línia a línia sí que ho fan; així es llegeixen les configuracions desades abans el text de les quals té algun compost (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). S'aplica al text corregut, els títols, les llistes, les cites i els requadres. Vegeu <a href="/ca/docs/justification#paraules-compostes">Paraules compostes</a>.</td>
+      <td>Permet que una línia acabi després del guionet d'un compost, un guionet entre dues lletres (<code>físico-</code> · <code>química</code>, <code>vencer-</code> · <code>se</code>), en qualsevol paràgraf que talla Knuth-Plass. La línia acaba al guionet i no s'hi afegeix res; el tall costa el mateix que una síl·laba. Mai després d'un guionet al costat d'una xifra o un signe (<code>COVID-19</code>, <code>-5 °C</code>). Un paràgraf justificat sense format en línia només hi talla amb dues lletres a cada costat del guionet, perquè cap línia no acabi en la <code>e-</code> d'<code>e-mail</code>. <code>false</code> manté els talls de la 1.4: un paràgraf justificat sense format en línia mai no hi talla, mentre que el mateix paràgraf amb una paraula en cursiva en qualsevol lloc, un paràgraf en bandera i un de compost línia a línia sí que ho fan; així es llegeixen les configuracions desades abans amb un text que tingui algun compost (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). S'aplica al text corregut, els títols, les llistes, les cites i els requadres. Vegeu <a href="/ca/docs/justification#paraules-compostes">Paraules compostes</a>.</td>
     </tr>
     <tr>
       <td><code>repeatHyphen</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Comença també amb un guionet la línia que segueix un tall al guionet d'un compost: <code>léxico-</code> · <code>-semántico</code>, com demanen les normes de la Real Academia Española des del 2010, i <code>vencer-</code> · <code>-se</code>, com demana l'ortografia portuguesa. El guionet repetit es mesura i es pinta amb la seva línia, que l'anota com a <code>repeatedHyphen</code>; el seu <code>plainStart</code> i el seu <code>sourceStart</code> apunten darrere seu, de manera que els enllaços, els titolets i el Sandbox llegeixen la paraula tal com està escrita. El PDF el pinta sota un <code>/ActualText</code> que l'omet, així que el text que es copia o s'extreu del PDF llegeix la paraula una sola vegada. Una adreça web mai no el porta. S'aplica al text corregut, els títols, les llistes, les cites i els requadres; un paràgraf sense format que conté un compost es talla llavors amb el divisor del text amb format.</td>
+      <td>Comença també amb un guionet la línia que segueix un tall al guionet d'un compost: <code>léxico-</code> · <code>-semántico</code>, com demanen les normes de la Real Academia Española des del 2010, i <code>vencer-</code> · <code>-se</code>, com demana l'ortografia portuguesa. El guionet repetit es mesura i es pinta amb la línia, que l'anota com a <code>repeatedHyphen</code>; el <code>plainStart</code> i el <code>sourceStart</code> de la línia apunten darrere del guionet, de manera que els enllaços, les capçaleres i el Sandbox llegeixen la paraula tal com està escrita. El PDF el pinta sota un <code>/ActualText</code> que l'omet, així que el text que es copia o s'extreu del PDF llegeix la paraula una sola vegada. Una adreça web mai no el porta. S'aplica al text corregut, els títols, les llistes, les cites i els requadres; un paràgraf sense format que conté un compost es talla llavors amb el divisor del text amb format.</td>
     </tr>
     <tr>
       <td><code>hardLineBreaks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Llegeix una barra inversa al final d'una línia del text, i <code>{'\\\\'}</code> davant d'un espai, com un salt de línia forçat dins d'un paràgraf, una cita o un element de llista (el salt forçat de CommonMark): les paraules següents comencen una línia nova del mateix paràgraf, i la línia anterior es compon amb la seva amplada natural, com una última línia. Una barra inversa al final del paràgraf s'imprimeix, i dos espais al final d'una línia no són un salt (vegeu <a href="/ca/docs/document-format-directives#salts-de-línia">Format del document › Salts de línia</a>). <code>false</code> conserva la lectura de la 1.22: les barres s'imprimeixen i les línies s'uneixen amb un espai; les configuracions desades abans el text de les quals té una barra així es llegeixen amb aquest valor (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Els títols, els peus, les notes i les cel·les de taula es parteixen a <code>{'\\\\'}</code> en tots dos casos.</td>
+      <td>Llegeix una barra inversa al final d'una línia del text, i <code>{'\\\\'}</code> davant d'un espai, com un salt de línia forçat dins d'un paràgraf, una cita o un element de llista (el salt forçat de CommonMark): les paraules següents comencen una línia nova del mateix paràgraf, i la línia anterior es compon amb la seva amplada natural, com una última línia. Una barra inversa al final del paràgraf s'imprimeix, i dos espais al final d'una línia no són un salt (vegeu <a href="/ca/docs/document-format-directives#salts-de-línia">Format del document › Salts de línia</a>). <code>false</code> conserva la lectura de la 1.22: les barres s'imprimeixen i les línies s'uneixen amb un espai; les configuracions desades abans amb una barra així al text es llegeixen amb aquest valor (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Els títols, els peus, les notes i les cel·les de taula es parteixen a <code>{'\\\\'}</code> en tots dos casos.</td>
     </tr>
     <tr>
       <td><code>scriptContext</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Compon una paraula sense lletres (<code>46.</code>, <code>1367)</code>, <code>».</code>: xifres, signes de puntuació o símbols sols) en l'escriptura del text que l'envolta. Una font pot dibuixar aquests signes segons l'escriptura (Amiri compon el punt i els parèntesis llatins en text llatí i els àrabs a la resta, amb altres amplades), i un motor que rep la paraula aïllada tria una escriptura amb la seva pròpia regla, diferent entre versions de navegador i el PDF. Amb això activat, la paraula agafa l'escriptura de la lletra més propera abans d'ella dins del seu aïllat (i si no, després), la de la lletra de dreta a esquerra més propera quan es pinta de dreta a esquerra, i la de la llengua del document si no hi ha lletres a prop; la maquetació la mesura en aquesta escriptura, i el canvas, l'HTML, l'EPUB de maquetació fixa i el PDF pinten aquestes formes amb aquesta amplada. Actua en contextos llatí, grec, ciríl·lic, àrab i hebreu, i només en una font la puntuació o les xifres de la qual canvien amb l'escriptura; una paraula composta en l'escriptura àrab no porta espaiat entre lletres. Un tros sense lletres d'una paraula que sí que en té (<code>10.1006/</code> i <code>.2001</code> d'un DOI que acaba la línia a les seves juntures) agafa l'escriptura que té dins de la paraula. En un document xinès o japonès, els punts suspensius dobles i el guió llarg doble (<code>……</code>, <code>——</code>) citats en una frase d'una altra escriptura conserven les formes del text han. No afecta els marcadors de llista, els rètols de les referències creuades, el text de disseny, la retolació de còmic ni els paràgrafs del compositor CJK. <code>false</code> compon la paraula aïllada, com fins a postext 1.27; una configuració desada abans de <code>configVersion</code> 12 es llegeix així (<code>pinLegacyScriptContext</code>). Vegeu <a href="/ca/docs/arabic-layout#paraules-sense-lletres">Paraules sense lletres</a>.</td>
+      <td>Compon una paraula sense lletres (<code>46.</code>, <code>1367)</code>, <code>».</code>: xifres, signes de puntuació o símbols sols) en l'escriptura del text que l'envolta. Una font pot dibuixar aquests signes segons l'escriptura (Amiri compon el punt i els parèntesis llatins en text llatí i els àrabs a la resta, amb altres amplades), i un motor que rep la paraula aïllada tria una escriptura amb una regla pròpia, diferent entre versions de navegador i el PDF. Amb això activat, la paraula agafa l'escriptura de la lletra més propera abans d'ella dins del seu aïllat (i si no, després), la de la lletra de dreta a esquerra més propera quan es pinta de dreta a esquerra, i la de la llengua del document si no hi ha lletres a prop; la maquetació la mesura en aquesta escriptura, i el canvas, l'HTML, l'EPUB de maquetació fixa i el PDF pinten aquestes formes amb aquesta amplada. Actua en contextos llatí, grec, ciríl·lic, àrab i hebreu, i només en una font en què la puntuació o les xifres canvien segons l'escriptura; una paraula composta en l'escriptura àrab no porta espaiat entre lletres. Un tros sense lletres d'una paraula que sí que en té (<code>10.1006/</code> i <code>.2001</code> d'un DOI que es talla a final de línia per les juntures) agafa l'escriptura que té dins de la paraula. En un document xinès o japonès, els punts suspensius dobles i el guió llarg doble (<code>……</code>, <code>——</code>) citats en una frase d'una altra escriptura conserven les formes del text han. No afecta els marcadors de llista, les etiquetes de les referències creuades, el text de disseny, la retolació de còmic ni els paràgrafs del compositor CJK. <code>false</code> compon la paraula aïllada, com fins a postext 1.27; una configuració desada abans de <code>configVersion</code> 12 es llegeix així (<code>pinLegacyScriptContext</code>). Vegeu <a href="/ca/docs/arabic-layout#paraules-sense-lletres">Paraules sense lletres</a>.</td>
     </tr>
     <tr>
       <td><code>shapingLanguage</code></td>
       <td><code>'document' | 'host'</code></td>
       <td><code>'document'</code></td>
-      <td>La llengua en què es compon el text: en què es mesura, es pinta i s'incrusta. Una font respon amb altres glifs segons la llengua (<code>locl</code> d'OpenType): Noto Serif SC compon les xifres d'una altra manera en xinès, una font amb una forma catalana dibuixa <code>l·l</code> d'una altra manera, una amb la regla turca deixa <code>fi</code> sense lligar. <code>'document'</code> (el valor per defecte des de postext 1.30): la del mateix document (<code>locale</code> i, si no, la llengua de la partició de mots; un document que no n'anomena cap és anglès, <code>en-US</code>, i un que té un <code>locale</code> que no és cap etiqueta de llengua es compon sense llengua), i la d'un tram quan aquest anomena la seva (<code>:ltr[…]&#123;lang=en&#125;</code>). La maquetació la fixa a cada context amb què mesura, de manera que un document parteix les línies igual en una pàgina en qualsevol llengua i en un worker de layout; el canvas pinta en aquesta llengua, el visor HTML i l'EPUB la declaren al document i a cada pàgina, i el PDF compon amb el sistema d'idioma OpenType d'aquesta llengua. Des de postext 1.30, amb aquest valor el text es mesura tal com es pinta. Una cadena té una sola amplada, s'hagi mesurat el que s'hagi mesurat abans: Chrome desa les paraules que ja ha compost, i Noto Serif SC compon <code>2026</code> amb 2,20 quadratins d'amplada en una cadena sense cap caràcter per sobre d'U+00FF i amb 2,23 en una que en té algun, de manera que les dues menes de cadena es mesuren en contextos diferents. Una paraula de dreta a esquerra es mesura de dreta a esquerra amb qualsevol font. Una paraula que el tall de línies pot partir (per una síl·laba o per un guionet) es mesura sencera i es compon sencera quan queda en una sola línia, al canvas, al visor HTML i al PDF, en qualsevol paràgraf (des de postext 1.31: fins a la 1.30.1 un paràgraf sense format mesurava per separat cada tros d'una paraula així, de manera que el que una font dibuixa a través d'un punt de partició, la <code>ff</code> d'<code>of·fice</code> a EB Garamond o el punt català ample de Crimson Pro a <code>l·l</code>, apareixia en una paraula d'un paràgraf amb una cursiva i no en la mateixa paraula d'un paràgraf sense format). Amb <code>'host'</code> un paràgraf sense format continua mesurant per separat cada tros d'una paraula així. D'una paraula partida a final de línia, cada part es mesura com el text que es pinta: la que obre la línia següent com un text propi, i la primera part de <code>col·lecció</code> com <code>col-</code>. Un text de disseny (un titolet, una obertura, el disseny d'un encapçalament) es mesura tram a tram, cada tram en la direcció en què es pinta. El PDF compon paraula a paraula com el canvas del navegador (una paraula s'acaba en un espai, una tabulació, U+3000 o U+200B, i abans d'un caràcter han), compon d'un en un els caràcters xinesos i japonesos que la maquetació ha mesurat així, i pren cada caràcter del fitxer de font d'on el va prendre el navegador quan el proveïdor de fonts diu quin és (vegeu <a href="/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes">Fonts xineses, japoneses i coreanes</a>). <code>'host'</code>: com fins a postext 1.28, la maquetació mesura en la llengua de la pàgina que l'allotja (en cap dins d'un worker) i el canvas pinta en aquesta mateixa llengua; el visor HTML declara la llengua d'un document xinès, japonès, coreà o de dreta a esquerra. Un document amb <code>'host'</code> conserva les amplades i el PDF que tenia; en un paràgraf amb format, el seu canvas i el seu visor HTML també componen sencera la paraula que queda en una sola línia (fins a postext 1.29.2 la pintaven tros a tros). Amb aquest valor, la part d'una paraula partida que obre la línia següent es mesura com la paraula sencera menys la primera part, de manera que una font la forma de la qual per a la llengua necessita les lletres de tots dos costats del tall (la <code>l·l</code> catalana de Crimson Pro, un punt ample que només es posa entre dues <code>l</code>) deixa un buit darrere de la resta de la paraula, d'un terç de quadratí en aquesta font, en una pàgina en aquesta llengua. El valor per defecte va ser <code>'document'</code> només a postext 1.29.0, on el canvas i el PDF no seguien la mesura, <code>'host'</code> a la 1.29.1 i la 1.29.2, i torna a ser <code>'document'</code> des de la 1.30.0. A una configuració desada abans de <code>configVersion</code> 14 que no anomena l'ajust se li escriu <code>'host'</code> (<code>pinLegacyShapingLanguage</code>), de manera que un document desat conserva les línies; la que anomena un valor el conserva. Un navegador el canvas del qual no té <code>lang</code> (Chrome anterior a la 136, i Firefox i Safari on falta) no rep cap llengua i conserva les formes que sempre ha mesurat, i la línia d'ordres maqueta sempre amb <code>'host'</code> (vegeu <a href="/ca/docs/command-line#diferències-amb-el-sandbox">Diferències amb el Sandbox</a>).</td>
+      <td>La llengua en què es compon el text: en què es mesura, es pinta i s'incrusta. Una font respon amb altres glifs segons la llengua (<code>locl</code> d'OpenType): Noto Serif SC compon les xifres d'una altra manera en xinès, una font amb una forma catalana dibuixa <code>l·l</code> d'una altra manera, una amb la regla turca deixa <code>fi</code> sense lligar. <code>'document'</code> (el valor per defecte des de postext 1.30): la del mateix document (<code>locale</code> i, si no, la llengua de la partició de mots; un document que no n'indica cap és anglès, <code>en-US</code>, i un que té un <code>locale</code> que no és cap etiqueta de llengua es compon sense llengua), i la d'un tram quan n'indica una de pròpia (<code>:ltr[…]&#123;lang=en&#125;</code>). La maquetació la fixa a cada context amb què mesura, de manera que un document parteix les línies igual en una pàgina en qualsevol llengua i en un worker de composició; el canvas pinta en aquesta llengua, el visor HTML i l'EPUB la declaren al document i a cada pàgina, i el PDF compon amb el sistema d'idioma OpenType d'aquesta llengua. Des de postext 1.30, amb aquest valor el text es mesura tal com es pinta. Una cadena té una sola amplada, s'hagi mesurat el que s'hagi mesurat abans: Chrome desa les paraules que ja ha compost, i Noto Serif SC compon <code>2026</code> amb 2,20 quadratins d'amplada en una cadena sense cap caràcter per sobre d'U+00FF i amb 2,23 en una que en té algun, de manera que les dues menes de cadena es mesuren en contextos diferents. Una paraula de dreta a esquerra es mesura de dreta a esquerra amb qualsevol font. Una paraula que el tall de línies pot partir (per una síl·laba o per un guionet) es mesura sencera i es compon sencera quan queda en una sola línia, al canvas, al visor HTML i al PDF, en qualsevol paràgraf (des de postext 1.31: fins a la 1.30.1 un paràgraf sense format mesurava per separat cada tros d'una paraula així, de manera que el que una font dibuixa a través d'un punt de partició, la <code>ff</code> d'<code>of·fice</code> a EB Garamond o el punt català ample de Crimson Pro a <code>l·l</code>, apareixia en una paraula d'un paràgraf amb una cursiva i no en la mateixa paraula d'un paràgraf sense format). Amb <code>'host'</code> un paràgraf sense format continua mesurant per separat cada tros d'una paraula així. D'una paraula partida a final de línia, cada part es mesura com el text que es pinta: la que obre la línia següent com un text propi, i la primera part de <code>col·lecció</code> com <code>col-</code>. Un text de disseny (una capçalera, una obertura, el disseny d'un encapçalament) es mesura tram a tram, cada tram en la direcció en què es pinta. El PDF compon paraula a paraula com el canvas del navegador (una paraula s'acaba en un espai, una tabulació, U+3000 o U+200B, i abans d'un caràcter han), compon d'un en un els caràcters xinesos i japonesos que la maquetació ha mesurat així, i pren cada caràcter del fitxer de font d'on el va prendre el navegador quan el proveïdor de fonts diu quin és (vegeu <a href="/ca/docs/configuration-pdf-output#fonts-xineses-japoneses-i-coreanes">Fonts xineses, japoneses i coreanes</a>). <code>'host'</code>: com fins a postext 1.28, la maquetació mesura en la llengua de la pàgina que l'allotja (en cap dins d'un worker) i el canvas pinta en aquesta mateixa llengua; el visor HTML declara la llengua d'un document xinès, japonès, coreà o de dreta a esquerra. Un document amb <code>'host'</code> conserva les amplades i el PDF que tenia; en un paràgraf amb format, el canvas i el visor HTML també hi componen sencera la paraula que queda en una sola línia (fins a postext 1.29.2 la pintaven tros a tros). Amb aquest valor, la part d'una paraula partida que obre la línia següent es mesura com la paraula sencera menys la primera part, de manera que una font que, per a aquesta llengua, necessita les lletres dels dos costats del tall per formar un caràcter (la <code>l·l</code> catalana de Crimson Pro, un punt ample que només es posa entre dues <code>l</code>) deixa un buit darrere de la resta de la paraula, d'un terç de quadratí en aquesta font, en una pàgina en aquesta llengua. El valor per defecte va ser <code>'document'</code> només a postext 1.29.0, on el canvas i el PDF no seguien la mesura, <code>'host'</code> a la 1.29.1 i la 1.29.2, i torna a ser <code>'document'</code> des de la 1.30.0. Si una configuració desada abans de <code>configVersion</code> 14 no indica aquest paràmetre, se li escriu <code>'host'</code> (<code>pinLegacyShapingLanguage</code>), de manera que un document desat conserva les línies; si n'indica un valor, el conserva. Un navegador amb un canvas sense <code>lang</code> (Chrome anterior a la 136, i Firefox i Safari on falta) no rep cap llengua i conserva les formes que sempre ha mesurat, i la línia d'ordres maqueta sempre amb <code>'host'</code> (vegeu <a href="/ca/docs/command-line#diferències-amb-el-sandbox">Diferències amb el Sandbox</a>).</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td>sense fixar</td>
-      <td>Tabulacions de tots els paràgrafs, elements de llista i cites: on porta un tabulador (<code>:tab</code>, o un caràcter de tabulació al text) les paraules que el segueixen. Un estil de paràgraf o el cos d'un requadre que fixa les seves les substitueix. Sense fixar, un caràcter de tabulació és un espai entre paraules, com fins ara, i un <code>:tab</code> sense cap tabulació on anar també ho és. Vegeu <a href="#tabulacions">Tabulacions</a>. Des de postext 1.23.</td>
+      <td>Tabulacions de tots els paràgrafs, elements de llista i cites: on porta un tabulador (<code>:tab</code>, o un caràcter de tabulació al text) les paraules que el segueixen. Si un estil de paràgraf o el cos d'un requadre en fixen de pròpies, substitueixen aquestes. Sense fixar, un caràcter de tabulació és un espai entre paraules, com fins ara, i un <code>:tab</code> sense cap tabulació on anar també ho és. Vegeu <a href="#tabulacions">Tabulacions</a>. Des de postext 1.23.</td>
     </tr>
     <tr>
       <td><code>tabInterval</code></td>
       <td><code>Dimension</code></td>
       <td>sense fixar</td>
-      <td>Tabulacions predeterminades a cada interval des de l'inici de la mesura, passada l'última de <code>tabStops</code>. Sense fixar, un tabulador més enllà de l'última tabulació és un espai entre paraules. Des de postext 1.23.</td>
+      <td>Tabulacions per defecte a intervals regulars des de l'inici de la mesura, passada l'última de <code>tabStops</code>. Sense fixar, un tabulador més enllà de l'última tabulació és un espai entre paraules. Des de postext 1.23.</td>
     </tr>
     <tr>
       <td><code>blockquote</code></td>
@@ -306,11 +306,11 @@ bodyText: {
 }
 ```
 
-Al Sandbox són el grup **Cites** de la secció **Text base**.
+Al Sandbox són el grup **Cites** de la secció **Text de cos**.
 
 ### Vers
 
-Un poema `:::verse` les línies del qual no porten separador d'hemistiquis es compon línia a línia (vegeu [Format del document › `:::verse`](/ca/docs/document-format-directives#verse)). `bodyText.verse` dona els valors per defecte d'aquests poemes; un atribut del mateix nom a l'obertura d'un poema el fixa per a aquell poema.
+Un poema `:::verse` sense separador d'hemistiquis a les línies es compon línia a línia (vegeu [Format del document › `:::verse`](/ca/docs/document-format-directives#verse)). `bodyText.verse` dona els valors per defecte d'aquests poemes; un atribut del mateix nom a la línia d'obertura d'un poema el fixa per a aquell poema.
 
 <table>
   <thead>
@@ -326,7 +326,7 @@ Un poema `:::verse` les línies del qual no porten separador d'hemistiquis es co
       <td><code>layout</code></td>
       <td><code>'auto' | 'bayt'</code></td>
       <td><code>'auto'</code></td>
-      <td>Com es compon un poema l'obertura del qual no anomena composició. <code>'auto'</code>: en baits quan una línia porta separador (<code>||</code>), línia a línia si no. <code>'bayt'</code>: sempre en baits, i un poema sense separador com a hemistiquis solts centrats, com fins a postext 1.22.</td>
+      <td>Com es compon un poema que no indica cap composició a la línia d'obertura. <code>'auto'</code>: en baits quan una línia porta separador (<code>||</code>), línia a línia si no. <code>'bayt'</code>: sempre en baits, i un poema sense separador com a hemistiquis solts centrats, com fins a postext 1.22.</td>
     </tr>
     <tr>
       <td><code>indentStep</code></td>
@@ -368,7 +368,7 @@ Un poema `:::verse` les línies del qual no porten separador d'hemistiquis es co
       <td><code>tighten</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Estrènyer els espais entre paraules d'un vers una mica més ample que la caixa, fins a <code>bodyText.minWordSpacing</code> de la seva amplada natural, i mantenir-lo en una línia; només es parteix el que continua sense cabre. Les lletres mai no s'espaien per a això. <code>false</code> parteix tot vers més ample que la caixa, com feia postext 1.23. L'EPUB adaptable, les línies del qual talla el sistema de lectura, no estreny.</td>
+      <td>Estrènyer els espais entre paraules d'un vers una mica més ample que la caixa, fins a <code>bodyText.minWordSpacing</code> de la seva amplada natural, i mantenir-lo en una línia; només es parteix el que continua sense cabre. Les lletres mai no s'espaien per a això. <code>false</code> parteix tot vers més ample que la caixa, com feia postext 1.23. L'EPUB adaptable no estreny els espais, perquè les línies les talla el sistema de lectura.</td>
     </tr>
   </tbody>
 </table>
@@ -380,9 +380,9 @@ bodyText: {
 }
 ```
 
-Una configuració desada abans d'aquests ajustos (`configVersion` 8 o anterior) que compon un poema sense separador es llegeix amb `layout: 'bayt'`, de manera que el poema conserva les línies centrades que li donava postext 1.22. Una desada amb postext 1.23 (`configVersion` 9) que compon un poema vers a vers es llegeix amb `tighten: false`, de manera que els seus versos es parteixen on els partia la 1.23.
+Una configuració desada abans d'aquests paràmetres (`configVersion` 8 o anterior) que compon un poema sense separador es llegeix amb `layout: 'bayt'`, de manera que el poema conserva les línies centrades que li donava postext 1.22. Una desada amb postext 1.23 (`configVersion` 9) que compon un poema vers a vers es llegeix amb `tighten: false`, de manera que els seus versos es parteixen on els partia la 1.23.
 
-Al Sandbox són el grup **Vers** de la secció **Text base**.
+Al Sandbox són el grup **Vers** de la secció **Text de cos**.
 
 
 ### Tabulacions
@@ -431,7 +431,7 @@ bodyText: {
       <td><code>leaderGap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.5em</code></td>
-      <td>L'espai que es deixa entre el farciment i el text a cada costat, com el <code>leader.gap</code> de l'índex general. No n'hi ha abans del farciment quan el tabulador obre la seva línia, ni després quan no el segueix res.</td>
+      <td>L'espai que es deixa entre el farciment i el text a cada costat, com el <code>leader.gap</code> de l'índex general. No n'hi ha abans del farciment quan el tabulador obre la línia, ni després quan no el segueix res.</td>
     </tr>
     <tr>
       <td><code>decimalChar</code></td>
@@ -442,17 +442,17 @@ bodyText: {
   </tbody>
 </table>
 
-`tabInterval` afegeix tabulacions a cada interval des de l'inici de la mesura, passada l'última tabulació de la llista; sense aquest valor, un tabulador més enllà de l'última tabulació és un espai entre paraules. Un caràcter de tabulació escrit al text només és un tabulador en un paràgraf l'estil del qual té tabulacions o un interval, propis o del text de cos; a tot arreu més continua sent l'espai entre paraules que sempre ha estat, de manera que un document desat es compon com abans i no cal fixar-lo a cap versió.
+`tabInterval` afegeix tabulacions a cada interval des de l'inici de la mesura, passada l'última tabulació de la llista; sense aquest valor, un tabulador més enllà de l'última tabulació és un espai entre paraules. Un caràcter de tabulació escrit al text només fa de tabulador en un paràgraf amb un estil que tingui tabulacions o un interval, propis o heretats del text de cos; a la resta de llocs continua sent l'espai entre paraules que sempre ha estat, de manera que un document desat es compon com abans i no cal fixar-lo a cap versió.
 
 Les tabulacions es comproven amb la resta de la configuració (vegeu [Avisos de configuració](/ca/docs/configuration-fonts-colors-viewers#avisos-de-configuració)): una clau desconeguda en una tabulació (`leaders`) es notifica com a `unknownConfigKey` amb la clau a què més s'assembla; un `align` que no és cap dels quatre, com a `unknownConfigValue`, i la tabulació es compon com a `'start'`; una `position` que no és una longitud, `'end'` ni un percentatge, com a `unknownConfigValue` amb `used: 'none'`, i la tabulació es deixa fora.
 
-El color i la lletra del farciment són els del paràgraf; encara no tenen cap ajust propi.
+El color i la lletra del farciment són els del paràgraf; encara no tenen cap paràmetre propi.
 
 ### Caplletres
 
 Un paràgraf de cos pot començar amb una caplletra: la primera lletra, gran, al costat de les primeres línies, que s'escurcen en l'amplada de la lletra més un espai i es componen com qualsevol altra línia (tallades amb Knuth–Plass, justificades, partides per síl·labes). Un estil de paràgraf en dona una al primer paràgraf de cada grup `:::paragraphs` de l'estil (a tots els paràgrafs amb `each: true`, per a un catàleg d'entrades); un nivell d'encapçalament o un estil d'encapçalament en dona una al primer paràgraf de cos després de l'encapçalament (vegeu el camp `dropCap` de [Configuració per nivell](/ca/docs/configuration-headings#configuració-per-nivell), [Estils de paràgraf](/ca/docs/configuration-styles#estils-de-paràgraf) i [Estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). El paràgraf que segueix l'encapçalament es busca més enllà de les línies d'obertura i tancament dels contenidors, les directives, les caixes que han sortit del flux i les figures flotants, igual que el troba `indentAfterHeading`; un paràgraf dins d'una caixa, un element de llista, una cita, un poema o una nota no en porta mai. Al text, `{dropcap}`, `{dropcap=false}` i `{dropcap=N}` en una línia d'encapçalament o en la línia d'obertura d'un `:::paragraphs` l'activen, la desactiven o en fixen les línies per a aquell capítol o grup (vegeu [Format del document › Caplletres](/ca/docs/document-format#caplletres)). Des de postext 1.23.
 
-Un marc d'una pàgina composta no és un requadre: és text corregut, i els seus paràgrafs porten capital com els del flux, per un grup `:::paragraphs`, per un estil de paràgraf o pel nivell d'un encapçalament que és al mateix marc (un encapçalament que la plantilla envia a un marc propi, `takes: 'h1'`, dona la capital del seu nivell al paràgraf que el segueix al Markdown quan aquest paràgraf obre el text del marc de flux, des de postext 1.39). Un grup que demana capital dins d'un requadre `:::callout` es compon sense i dona un avís `dropCap` (`inBox`). Des de postext 1.38. Un paràgraf que obre una capital mai no es talla abans de l'última línia de la inicial, ni en una cadena de marcs (`next`) ni en un marc que continua en una altra pàgina, igual que al flux: passa sencer, i només es talla allà quan obre un marc massa baix per a aquestes línies, amb un avís `dropCap` (`split`). Des de postext 1.39.
+Un marc d'una pàgina composta no és un requadre: és text corregut, i els seus paràgrafs porten caplletra com els del flux, per un grup `:::paragraphs`, per un estil de paràgraf o pel nivell d'un encapçalament que és al mateix marc (un encapçalament que la plantilla envia a un marc propi, `takes: 'h1'`, dona la caplletra del seu nivell al paràgraf que el segueix al Markdown quan aquest paràgraf obre el text del marc de flux, des de postext 1.39). Un grup que demana caplletra dins d'un requadre `:::callout` es compon sense caplletra i dona un avís `dropCap` (`inBox`). Des de postext 1.38. Un paràgraf que comença amb caplletra no es talla mai abans de l'última línia de la inicial, ni en una cadena de marcs (`next`) ni en un marc que continua en una altra pàgina, igual que al flux: passa sencer, i només es talla allà quan obre un marc massa baix per a aquestes línies, amb un avís `dropCap` (`split`). Des de postext 1.39.
 
 ```ts
 headings: {
@@ -476,7 +476,7 @@ headings: {
       <td><code>lines</code></td>
       <td><code>number</code></td>
       <td><code>3</code></td>
-      <td>Línies que abasta la inicial, des de la part alta de les seves majúscules fins a la seva línia de base. <code>1</code> amb un <code>fontSize</code> més gran és una inicial alçada, assentada a la primera línia de base.</td>
+      <td>Línies que abasta la inicial, des de la part alta de les majúscules fins a la línia de base. <code>1</code> amb un <code>fontSize</code> més gran és una inicial alçada, assentada a la primera línia de base.</td>
     </tr>
     <tr>
       <td><code>sink</code></td>
@@ -500,7 +500,7 @@ headings: {
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
       <td>vegeu a sota</td>
-      <td>Mida de la inicial. Sense fixar: la mida que enrasa la part alta de les seves majúscules amb les majúscules de la primera línia mentre s'assenta <code>lines</code> línies més avall.</td>
+      <td>Mida de la inicial. Sense fixar: la mida que enrasa la part alta de les majúscules de la inicial amb les de la primera línia mentre s'assenta <code>lines</code> línies més avall.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -518,7 +518,7 @@ headings: {
       <td><code>punctuation</code></td>
       <td><code>'with-cap' | 'hang' | 'text'</code></td>
       <td><code>'with-cap'</code></td>
-      <td>Unes cometes d'obertura, un <code>¿</code>, un <code>¡</code> o un parèntesi davant de la lletra: compost gran com a part de la inicial, penjat al cos del text fora de la mesura, davant seu, o compost al cos del text a l'inici de la primera línia, després de la inicial.</td>
+      <td>Unes cometes d'obertura, un <code>¿</code>, un <code>¡</code> o un parèntesi davant de la lletra: compost gran com a part de la inicial, penjat a la mida del text fora de la mesura, davant de la inicial, o compost a la mida del text a l'inici de la primera línia, després de la inicial.</td>
     </tr>
     <tr>
       <td><code>leadIn</code></td>
@@ -543,18 +543,18 @@ headings: {
 
 Com es compon la lletra:
 
-- **Mida.** Les dues alçades de majúscula, la del text i la de la inicial, es mesuren a les seves fonts (la tinta d'una `H`; la de la inicial mateixa en text xinès o japonès), i una font que no dona mètriques de tinta compta les seves majúscules com a 0,72 del seu cos. La mida per defecte serveix per a qualsevol parell de fonts, així que no cal cap correcció per font. El `dropCap` d'un text de disseny conserva el seu 0,72 fix (vegeu [Elements de text](/ca/docs/configuration-headers-footers#elements-de-text)).
-- **La lletra i la seva paraula.** La inicial pren grups de grafemes sencers. La resta de la primera paraula continua darrere seu sense espai; una paraula d'una sola lletra (*A*, *I*) conserva el seu espai entre paraules a l'inici de la primera línia. Es descarta el sagnat de primera línia propi del paràgraf. La còpia, la cerca, el mapa d'origen i el cursor del Sandbox llegeixen el paràgraf tal com està escrit: el text pla del bloc inclou la lletra, el `plainStart` de la primera línia compta a partir d'ella, i `VDTBlock.dropCap` en desa el rang i la geometria al fragment que porta la primera línia.
+- **Mida.** Les dues alçades de majúscula, la del text i la de la inicial, es mesuren a les seves fonts (la tinta d'una `H`; la de la inicial mateixa en text xinès o japonès), i amb una font que no dona mètriques de tinta es considera que les majúscules fan 0,72 de la mida. La mida per defecte serveix per a qualsevol parell de fonts, així que no cal cap correcció per font. El `dropCap` d'un text de disseny conserva el seu 0,72 fix (vegeu [Elements de text](/ca/docs/configuration-headers-footers#elements-de-text)).
+- **La lletra i la paraula.** La inicial pren grups de grafemes sencers. La resta de la primera paraula continua darrere seu sense espai; una paraula d'una sola lletra (*A*, *I*) conserva l'espai entre paraules a l'inici de la primera línia. Es descarta el sagnat de primera línia propi del paràgraf. La còpia, la cerca, el mapa d'origen i el cursor del Sandbox llegeixen el paràgraf tal com està escrit: el text pla del bloc inclou la lletra, el `plainStart` de la primera línia compta a partir d'ella, i `VDTBlock.dropCap` en desa el rang i la geometria al fragment que porta la primera línia.
 - **Una inicial alçada** (`lines: 1` amb un `fontSize` més gran, o un `sink` inferior a `lines`) s'alça per damunt de la primera línia, i el paràgraf manté aquesta alçada lliure al damunt, en línies senceres de la retícula, perquè no se sobreimprimeixi al text anterior.
-- **Talls.** El paràgraf no es talla mai abans de la línia `sink`: passa sencer a la columna o la pàgina següent, tret que estigui sol en una columna buida que no pot encabir aquestes línies; llavors es talla igualment i genera un avís `dropCap`. Un encapçalament lligat al seu text manté aquestes línies a sota. La part que continua a la columna següent no porta inicial i té les línies a amplada completa; si es torna a tallar per a una columna d'una altra amplada, les primeres línies conserven el seu sagnat. L'equilibratge de columnes pot compondre el paràgraf fluix o estret com qualsevol altre, i no afegeix mai espai entre les línies escurçades.
+- **Talls.** El paràgraf no es talla mai abans de la línia `sink`: passa sencer a la columna o la pàgina següent, tret que estigui sol en una columna buida que no pot encabir aquestes línies; llavors es talla igualment i genera un avís `dropCap`. Un encapçalament lligat al seu text manté aquestes línies a sota. La part que continua a la columna següent no porta inicial i té les línies a amplada completa; si es torna a tallar per a una columna d'una altra amplada, les primeres línies conserven el sagnat. L'equilibratge de columnes pot compondre el paràgraf fluix o estret com qualsevol altre, i no afegeix mai espai entre les línies escurçades.
 - **Escriptures.** Les línies s'escurcen pel costat d'inici: l'esquerra en text llatí, la dreta en àrab i hebreu. Una lletra que s'enllaça amb la següent (àrab, siríac, n'ko) no se separa, i el paràgraf genera un avís `dropCap`; el xinès i el japonès horitzontals prenen una inicial d'un caràcter (首字下沉). El text vertical no en porta (avís). Un paràgraf que no comença amb cap lletra ni xifra (una referència, una fórmula, una marca de nota) tampoc no en porta (avís).
-- **Sortides.** El canvas, el visor HTML i l'EPUB de maquetació fixa pinten la inicial al costat de les línies; l'HTML l'escriu just abans del text de la primera línia, sense res entremig, de manera que un lector de pantalla llegeix la paraula sencera. En un PDF etiquetat la inicial forma part del `P` del paràgraf, i amb la resta de la seva paraula, d'un `Span` l'`/ActualText` del qual és la paraula: l'extracció de text llegeix *Molt abans*, mai *M olt abans*. Un EPUB de maquetació fluida la compon com un `initial-letter` de CSS (línies, enfonsament), flotant on el sistema de lectura no l'admet.
+- **Sortides.** El canvas, el visor HTML i l'EPUB de maquetació fixa pinten la inicial al costat de les línies; l'HTML l'escriu just abans del text de la primera línia, sense res entremig, de manera que un lector de pantalla llegeix la paraula sencera. En un PDF etiquetat la inicial forma part del `P` del paràgraf, i, juntament amb la resta de la paraula, d'un `Span` que té la paraula com a `/ActualText`: l'extracció de text llegeix *Molt abans*, mai *M olt abans*. Un EPUB de maquetació fluida la compon com un `initial-letter` de CSS (línies, enfonsament), flotant on el sistema de lectura no l'admet.
 
-Els ajustos es comproven amb la resta de la configuració (vegeu [Avisos de configuració](/ca/docs/configuration-fonts-colors-viewers#avisos-de-configuració)): una clau desconeguda en una caplletra o en les seves paraules inicials es notifica com a `unknownConfigKey`; un `punctuation` o un `shortParagraph` que no és cap dels seus valors, o un `lines`, un `sink` o un `characters` que no és un nombre enter a partir d'1, com a `unknownConfigValue`, i es fa servir el valor per defecte. Les caplletres estan desactivades per defecte, de manera que cap document desat no canvia.
+Aquests paràmetres es comproven amb la resta de la configuració (vegeu [Avisos de configuració](/ca/docs/configuration-fonts-colors-viewers#avisos-de-configuració)): una clau desconeguda en una caplletra o en les paraules inicials es notifica com a `unknownConfigKey`; un `punctuation` o un `shortParagraph` amb un valor que no és cap dels admesos, o un `lines`, un `sink` o un `characters` que no és un nombre enter a partir d'1, com a `unknownConfigValue`, i es fa servir el valor per defecte. Les caplletres estan desactivades per defecte, de manera que cap document desat no canvia.
 
 ### Una sola família per `fontFamily`
 
-`fontFamily` —aquí i en qualsevol altre camp de família tipogràfica (`headings.fontFamily`, `tableStyle.bodyFontFamily`, `separatorFontFamily`, el `fontFamily` d'un estil de xip o d'un element de disseny…)— anomena **una** família. El canvas, la sortida HTML i el PDF han de compondre amb la mateixa font, i el PDF incrusta una font per família, sense cadena de reserva, de manera que una llista de fonts CSS no té a què recórrer. Una llista es compon en la seva primera família i es notifica com a [avís de configuració](/ca/docs/configuration-fonts-colors-viewers#avisos-de-configuració):
+`fontFamily` (aquí i en qualsevol altre camp de família de fonts (`headings.fontFamily`, `tableStyle.bodyFontFamily`, `separatorFontFamily`, el `fontFamily` d'un estil de xip o d'un element de disseny…) indica **una** família. El canvas, la sortida HTML i el PDF han de compondre amb la mateixa font, i el PDF incrusta una font per família, sense cadena de reserva, de manera que una llista de fonts CSS no té a què recórrer. Si hi poses una llista, es compon amb la primera família i Postext en dona un [avís de configuració](/ca/docs/configuration-fonts-colors-viewers#avisos-de-configuració):
 
 ```ts
 bodyText: { fontFamily: "'EB Garamond', Georgia, serif" } // es compon en EB Garamond

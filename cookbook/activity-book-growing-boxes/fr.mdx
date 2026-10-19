@@ -26,7 +26,7 @@ Léa habite à Lyon. L’eau de son robinet est pompée dans la nappe qui longe 
 
 ### 2 · Laisser la pile déplacer les lignes avec les encadrés
 
-Chaque encadré a un `minHeight` de 22 mm, la hauteur à laquelle il est dessiné, et au-delà une hauteur `auto`. Le groupe pose ses cinq blocs l’un sous l’autre, à 4,5 mm d’écart, à partir de l’endroit où `act-1` est placé sous le texte : un encadré plus haut fait descendre tout ce qui le suit. Les lignes appartiennent au bloc vide : son `rules` trace une ligne au pied de chaque tranche de 8 mm de sa hauteur, sous le texte, si bien que les lignes suivent le bloc et qu’un espace de réponse plus long est un bloc plus haut. Donnez aux blocs de réponse un `minHeight` égal à leur hauteur : quand un groupe manque de place, l’[échelle de recomposition](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) reprend de l’espace aux blocs du groupe jusqu’à leur minimum, et le minimum d’un bloc vide est nul ; les lignes finiraient alors sur l’encadré suivant. Le dernier encadré de la fiche, `act-3`, continue sur la page suivante (`overflow.continueIn: 'next-page'`) quand son texte dépasse la page, et les lignes de réponse placées dessous l’accompagnent.
+Chaque encadré a un `minHeight` de 22 mm, la hauteur à laquelle il est dessiné, et au-delà une hauteur `auto`. Le groupe pose ses cinq blocs l’un sous l’autre, à 4,5 mm d’écart, à partir de l’endroit où `act-1` est placé sous le texte : un encadré plus haut fait descendre tout ce qui le suit. Les lignes appartiennent au bloc vide : son `rules` trace une ligne au pied de chaque tranche de 8 mm de sa hauteur, sous le texte : les lignes suivent donc le bloc, et un espace de réponse plus long est un bloc plus haut. Donnez aux blocs de réponse un `minHeight` égal à leur hauteur : quand un groupe manque de place, l’[échelle de recomposition](/fr/docs/composed-pages#quand-le-contenu-ne-tient-toujours-pas) reprend de l’espace aux blocs du groupe jusqu’à leur minimum, et le minimum d’un bloc vide est nul ; les lignes finiraient alors sur l’encadré suivant. Le dernier encadré de la fiche, `act-3`, continue sur la page suivante (`overflow.continueIn: 'next-page'`) quand son texte dépasse la page, et les lignes de réponse placées dessous l’accompagnent.
 
 ### 3 · Faire passer le projet à la page suivante
 
@@ -53,7 +53,7 @@ Le nombre de lignes, c’est la hauteur du bloc de réponse : son `rules` trace 
 
 ### Laisser les étapes rapetisser avant de continuer
 
-Un bloc qui peut continuer sur une autre page continue avant que son texte soit composé plus petit. Avec `fit.preferContinue: false`, l’échelle compose d’abord les étapes plus petit, jusqu’à `fit.minScale` (90 %), et ne les envoie sur une autre page que si cela ne suffit pas. Dans un livre pour enfants, le corps du texte compte plus qu’une page économisée ; la recette garde donc la valeur par défaut.
+Un bloc qui peut continuer sur une autre page continue avant que son texte soit composé plus petit. Avec `fit.preferContinue: false`, l’échelle compose d’abord les étapes plus petit, jusqu’à `fit.minScale` (90 %), et ne les envoie sur une autre page que si cela ne suffit pas. Dans un livre pour enfants, le corps du texte courant compte plus qu’une page économisée ; la recette garde donc la valeur par défaut.
 
 ```diff
 -      overflow: { continueIn: 'next-page' } },

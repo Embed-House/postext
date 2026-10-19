@@ -20,7 +20,7 @@ pageNotes: { "6": "人名索引。姓を先にした人名がBodoniの見出し�
 
 ### 2 · 名前を倒置し、読者が引く文字で並べる
 
-名前は姓を先にして登録します（`term="Garamond, Claude"`、`term="Dall’Aglio, Margherita"`）。コンマも見出し語の一部なので、照合順序は索引編集者と同じく「Didot, Firmin」を「Didot, François-Ambroise」の前に並べます。刷られる形のままでは違う文字の下に入ってしまうときは、`sort`で並べ替えのキーを与えます。英語版では`term="42-line Bible" sort="Forty-two-line Bible"`とマークしているので、この聖書は0–9のグループを新たに作らず、Fの下に入ります。下位項目（`term="Foundries!Plantin-Moretus"`）、太字の主要ページ（`main`）、ボドニの節を挟む`range="start"`と`range="end"`、参照（`see="Italic"`、`seealso="Matrices"`）が残りを受け持ちます。階層を持つ`see`の参照先はコロンで区切って刷られ、「Humanist type. See Roman type: Venetian」のようになります。
+名前は姓を先にして登録します（`term="Garamond, Claude"`、`term="Dall’Aglio, Margherita"`）。コンマも見出し語の一部なので、照合順序は索引編集者と同じく「Didot, Firmin」を「Didot, François-Ambroise」の前に並べます。刷られる形のままでは違う文字の下に入ってしまうときは、`sort`で並べ替えのキーを与えます。英語版では`term="42-line Bible" sort="Forty-two-line Bible"`とマークしているので、この聖書は0–9のグループを新たに作らず、Fの下に入ります。下位項目（`term="Foundries!Plantin-Moretus"`）、太字の主要ページ（`main`）、ボドニの節を挟む`range="start"`と`range="end"`、参照（`see="Italic"`、`seealso="Matrices"`）が残りを受け持ちます。階層のある`see`の参照先はコロンで区切って刷られ、「Humanist type. See Roman type: Venetian」のようになります。
 
 ### 3 · ビルドは1回、ページ番号は文書が自分で確定する
 
@@ -32,7 +32,7 @@ pageNotes: { "6": "人名索引。姓を先にした人名がBodoniの見出し�
 
 <Excerpt region="opener" />
 
-手短な答えの見出しスタイルは、`# Index of Names {style="index"}`に対して3つのことをします。ページを改め（`parity: 'any'`なので、2つの索引は白ページを挟まずに続きます）、そのあとの節を段間7mmの2段組みにし、`numbered: false`で章の番号には手を付けません。このスタイルは章扉を流用し、6行分の下げと20ptの題を持ちます。見出し文字はそのBodoniをアクセントの色で繰り返し、索引の1行分の高さに収めるので、段の行送りは崩れません。
+手短な答えの見出しスタイルは、`# Index of Names {style="index"}`に対して3つのことをします。ページを改め（`parity: 'any'`なので、2つの索引は白ページを挟まずに続きます）、そのあとの節を段間7mmの2段組みにし、`numbered: false`で章の番号には手を付けません。このスタイルは章扉を流用し、6行分の下げと20ptの題を組みます。見出し文字はそのBodoniをアクセントの色で繰り返し、索引の1行分の高さに収めるので、段の行送りは崩れません。
 
 ### 5 · 奇数ページの柱に索引名を入れる
 
@@ -53,7 +53,7 @@ pageNotes: { "6": "人名索引。姓を先にした人名がBodoniの見出し�
 
 ### 見出し文字をなくす
 
-この程度の短い人名索引なら、見出し文字がなくても読めます。`groups.enabled: false`は見出し文字を外し、文字の区切りに1行の空きを残します。この設定は両方の索引に効きます。
+この程度の短い人名索引なら、見出し文字がなくても読めます。`groups.enabled: false`は見出し文字を外し、文字の区切りに1行のアキを残します。この設定は両方の索引に効きます。
 
 ```diff
 -  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick') },

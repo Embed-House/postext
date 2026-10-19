@@ -9,7 +9,7 @@ export const metadata = {
   readingTime: '32分',
   order: 5,
   parent: 'configuration',
-  plainSummary: "このページでは、紙面そのものの設定を説明します。ページの大きさ、余白、本をとじる側、文字の行をそろえるグリッドを選びます。ページ番号の数え方と書き方を決めます。1ページを何段に分けるか、段と段のあいだをどれだけ空けるか、文字を横に組むか縦に組むかを決めます。各ページの上と下に印刷するものは、別のページで説明します。",
+  plainSummary: "このページでは、紙面そのものの設定を説明します。ページの大きさ、余白、本を綴じる側、文字の行をそろえるグリッドを選びます。ページ番号の数え方と書き方を決めます。1ページを何段に分けるか、段と段のあいだをどれだけ空けるか、文字を横に組むか縦に組むかを決めます。各ページの上と下に印刷するものは、別のページで説明します。",
 };
 
 # 設定：ページとレイアウト
@@ -51,7 +51,7 @@ export const metadata = {
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>四辺とも<code>2 cm</code></td>
-      <td>ページの端と版面の間の空き。各辺（上、下、左、右）は個別に設定します。<code>mirror: true</code>のとき、余白は<em>見開き</em>の余白になります。<code>left</code>はのど（背の側）の余白、<code>right</code>は小口側の余白です。奇数ページ（1ページ目は奇数）は書いたとおりに使い、偶数ページは左右を入れ替えます。そのため版面が、そしてそれとともに段、フロートの帯、ヘッダーとフッターのコンテナー、章扉の帯も、見開きの中で左右に移ります。既定値は<code>false</code>。後述します。</td>
+      <td>ページの端と版面のあいだの余白。各辺（上、下、左、右）は個別に設定します。<code>mirror: true</code>のとき、余白は<em>見開き</em>の余白になります。<code>left</code>はのど（背の側）の余白、<code>right</code>は小口側の余白です。奇数ページ（1ページ目は奇数）は書いたとおりに使い、偶数ページは左右を入れ替えます。そのため版面が、そしてそれとともに段、フロートの帯、ヘッダーとフッターのコンテナー、章扉の帯も、見開きの中で左右に移ります。既定値は<code>false</code>。後述します。</td>
     </tr>
     <tr>
       <td><code>backgroundColor</code></td>
@@ -63,13 +63,13 @@ export const metadata = {
       <td><code>dpi</code></td>
       <td><code>number</code></td>
       <td><code>300</code></td>
-      <td>レイアウトが扱う1インチあたりのピクセル数です。物理単位（cm、mm、in、pt）をレイアウトのピクセルに換算するときに使われます。自身の解像度を持たないビットマップは、画像の1ピクセルがレイアウトの1ピクセルになるため、この値のppiで印刷されます。印刷用には300のままにするか、画像に解像度を指定してください（<code>Resource.bitmap.resolution</code>、<code>layout.bitmapResolution</code>。[ドキュメント形式 › ビットマップのサイズ](/ja/docs/document-format-resources#ビットマップのサイズ)を参照）。各画像の実効解像度は[プリフライト](/ja/docs/configuration-fonts-colors-viewers#プリフライト)で確認します。</td>
+      <td>レイアウトが扱う1インチあたりのピクセル数です。物理単位（cm、mm、in、pt）をレイアウトのピクセルに換算するときに使われます。解像度の指定がないビットマップは、画像の1ピクセルがレイアウトの1ピクセルになるため、この値のppiで印刷されます。印刷用には300のままにするか、画像に解像度を指定してください（<code>Resource.bitmap.resolution</code>、<code>layout.bitmapResolution</code>。[文書形式 › ビットマップのサイズ](/ja/docs/document-format-resources#ビットマップのサイズ)を参照）。各画像の実効解像度は[プリフライト](/ja/docs/configuration-fonts-colors-viewers#プリフライト)で確認します。</td>
     </tr>
     <tr>
       <td><code>cutLines</code></td>
       <td><code>CutLinesConfig</code></td>
       <td>無効</td>
-      <td>断裁用のトンボをページの四隅に表示します。有効にすると、キャンバスが裁ち落とし領域とトンボを含む大きさに広がります。後述します。</td>
+      <td>断裁用のトンボをページの四隅に表示します。有効にすると、キャンバスが塗り足し領域とトンボを含む大きさに広がります。後述します。</td>
     </tr>
     <tr>
       <td><code>baselineGrid</code></td>
@@ -81,7 +81,7 @@ export const metadata = {
       <td><code>binding</code></td>
       <td><code>'auto' | 'left' | 'right'</code></td>
       <td><code>'auto'</code></td>
-      <td>本を綴じる側の辺。<code>'auto'</code>は、<code>layout.writingMode</code>が<code>'vertical-rl'</code>のとき、文書が右から左に流れるとき（<a href="/ja/docs/configuration-language#テキストの方向"><code>direction</code></a>）、または<a href="/ja/docs/configuration-comics#漫画"><code>comics</code></a>セクションが右から左に読むとき（マンガ、欧米のコミックの日本語版や繁体字中国語版）は<code>'right'</code>、それ以外は<code>'left'</code>になります。右綴じの本は左ページから始まり、余白の左右の入れ替えも逆になります。本全体に対する設定で、見出しスタイル自身の<code>layout</code>で変わることはありません。<a href="#綴じ">綴じ</a>を参照してください。</td>
+      <td>本を綴じる側の辺。<code>'auto'</code>は、<code>layout.writingMode</code>が<code>'vertical-rl'</code>のとき、文書が右から左に流れるとき（<a href="/ja/docs/configuration-language#テキストの方向"><code>direction</code></a>）、または<a href="/ja/docs/configuration-comics#漫画"><code>comics</code></a>セクションが右から左に読むとき（日本の漫画、欧米のコミックの日本語版や繁体字中国語版）は<code>'right'</code>、それ以外は<code>'left'</code>になります。右綴じの本は左ページから始まり、余白の左右の入れ替えも逆になります。本全体に対する設定で、見出しスタイル自身の<code>layout</code>で変わることはありません。<a href="#綴じ">綴じ</a>を参照してください。</td>
     </tr>
   </tbody>
 </table>
@@ -104,22 +104,22 @@ export const metadata = {
 }
 ```
 
-この設定では、どの奇数ページも左（背の側）の余白が2.2 cm、右（小口）が1.4 cmになり、どの偶数ページも左（小口）が1.4 cm、右（背の側）が2.2 cmになります。組まれた各ページは`VDTPage`に自分の`contentArea`を持つため、そこから導かれるもの、つまり段、全幅のフロートの帯、ヘッダーとフッターのコンテナー、`span: 'page'`の章扉の帯は、左右を入れ替えたジオメトリーに自動的に従います。`'page'`または`'bleed'`に固定したデザイン要素が使うページ枠と裁ち落とし枠は影響を受けません。これらは余白ではなく、物理的な用紙を表すものです。
+この設定では、どの奇数ページも左（背の側）の余白が2.2 cm、右（小口）が1.4 cmになり、どの偶数ページも左（小口）が1.4 cm、右（背の側）が2.2 cmになります。組まれた各ページには`VDTPage`に自分の`contentArea`があるため、そこから導かれるもの、つまり段、全幅のフロートの帯、ヘッダーとフッターのコンテナー、`span: 'page'`の章扉の帯は、左右を入れ替えたジオメトリーに自動的に従います。`'page'`または`'bleed'`にアンカーしたデザイン要素が使うページの枠と塗り足しの枠は影響を受けません。これらは余白ではなく、物理的な用紙を表すものです。
 
 ### 綴じ
 
 「縦組みの中国語文書は右側で綴じ、横組みの文書は左側で綴じる」（[clreq §7.1.1.1](https://www.w3.org/TR/clreq/#x7-1-1-1-basic-elements-of-page-formatting)）。`page.binding: 'right'`は、本を右綴じとして組みます。
 
-- 1ページ目はこれまでどおり奇数ページ（recto）です。そのため`breakBefore.parity`、`:::pagebreak{parity}`、`parity`を持つデザイン要素、あらゆるページ数の意味は変わりません。変わるのは奇数ページが置かれる側で、見開きの左ページになります。新しい奇数ページから始まる章は、左ページから始まります（[clreq §7.1.3.3](https://www.w3.org/TR/clreq/#x7-1-3-3-how-to-handle-headings-with-new-recto-and-page-break)）。
+- 1ページ目はこれまでどおり奇数ページ（recto）です。そのため`breakBefore.parity`、`:::pagebreak{parity}`、`parity`を指定したデザイン要素、あらゆるページ数の意味は変わりません。変わるのは奇数ページが置かれる側で、見開きの左ページになります。新しい奇数ページから始まる章は、左ページから始まります（[clreq §7.1.3.3](https://www.w3.org/TR/clreq/#x7-1-3-3-how-to-handle-headings-with-new-recto-and-page-break)）。
 - `margins.mirror`を使う場合も`left`はのどの余白ですが、左右を入れ替えるのは奇数ページのほうになります。1ページ目はのどの余白が右に、2ページ目は左に来ます。`'outer'`／`'inner'`に置いた`oneAndHalf`のサイド段、背に接する回転したフロート、部扉の余白、`'outer'`／`'inner'`に置いた囲みの角のアイコンも同じ規則に従います。
 - 文書自体がそれを示すため（`VDTDocument.binding: 'right'`）、ホストが設定を読む必要はありません。Sandbox（ブラウザーで動く編集環境）は見開きを`[3 | 2]`のように表示し、1ページ目は背の左側に単独で置かれます。SandboxのHTMLビューアーはページを右から左へ並べ、右端から開き、左矢印で次のページに進みます。`renderToHtml`のmultiモードは、ページの列を右から左に並べます。
 - PDFには、タグ付きかどうかにかかわらず`/ViewerPreferences << /Direction /R2L >>`と`/PageLayout /TwoPageRight`（1ページ目は単独、以降は2ページずつ）が入ります。AcrobatとFoxitはこれに従いますが、Chromeの組み込みビューアーはどちらも無視します。
 
-ノンブルと柱はひとりでには移動しません。ページ番号を外側の角に置くテンプレートでは、奇数ページ用と偶数ページ用の要素を右綴じに合わせて設定する必要があります（要素は`parity`を取ります）。
+ノンブルと柱は自動では移動しません。ページ番号を外側の角に置くテンプレートでは、奇数ページ用と偶数ページ用の要素を右綴じに合わせて設定する必要があります（要素は`parity`を取ります）。
 
-右から左に書く本（アラビア語、ペルシア語、ヘブライ語など）も右綴じです。文書の[`direction`](/ja/docs/configuration-language#テキストの方向)が`'rtl'`に解決されると、`'auto'`は右綴じになります。こうした本は流れ全体も反転するため、最初の段は右側になり、字下げ、リストの行頭記号、フロート、注は右に置かれます。ヘッダーとフッターのスロットは物理的な位置のままです。[アラビア語の組版](/ja/docs/arabic-layout#ページの順序と右綴じ)を参照してください。
+右から左に書く本（アラビア語、ペルシア語、ヘブライ語など）も右綴じです。文書の[`direction`](/ja/docs/configuration-language#テキストの方向)が最終的に`'rtl'`になると、`'auto'`は右綴じになります。こうした本は流れ全体も反転するため、最初の段は右側になり、字下げ、リストの行頭記号、フロート、注は右に置かれます。ヘッダーとフッターのスロットは物理的な位置のままです。[アラビア語の組版](/ja/docs/arabic-layout#ページの順序と右綴じ)を参照してください。
 
-右から左に読むコミックの本も右綴じです。設定に`comics`セクションがあり、その読む向きが`'rtl'`に解決されると、`'auto'`は右綴じになります。マンガ（`comics.artDirection: 'rtl'`）と、欧米のコミックの日本語版や繁体字中国語版がこれに当たります。決めるのはこのセクションで、本全体に効きます。ある章の`:::page`ブロックで決まるのではありません。[漫画](/ja/docs/comics#読む方向)を参照してください。
+右から左に読む漫画の本も右綴じです。設定に`comics`セクションがあり、その読む向きが最終的に`'rtl'`になると、`'auto'`は右綴じになります。日本の漫画（`comics.artDirection: 'rtl'`）と、欧米のコミックの日本語版や繁体字中国語版がこれに当たります。決めるのはこのセクションで、本全体に効きます。ある章の`:::page`ブロックで決まるのではありません。[漫画](/ja/docs/comics#読む方向)を参照してください。
 
 ### ページサイズのプリセット
 
@@ -144,7 +144,7 @@ export const metadata = {
   </tbody>
 </table>
 
-<Illustration name="PageSizes" data='{"title": "ページサイズのプリセット", "desc": "組み込みの4つのページサイズのプリセットを同じ縮尺で描いた図。ポケット判11x17、ペーパーバック12x19、技術書17x24、A4に近い21x28 cm。", "caption": "同じ縮尺で描いたプリセット。", "sizes": [{"name": "11×17", "dims": "ポケット判", "wmm": 110, "hmm": 170}, {"name": "12×19", "dims": "ペーパーバック", "wmm": 120, "hmm": 190}, {"name": "17×24", "dims": "教科書", "wmm": 170, "hmm": 240}, {"name": "21×28", "dims": "A4相当", "wmm": 210, "hmm": 280}]}' />
+<Illustration name="PageSizes" data='{"title": "ページサイズのプリセット", "desc": "組み込みの4つのページサイズのプリセットを同じ縮尺で描いた図です。ポケット判（11×17）、ペーパーバック（12×19）、教科書（17×24）、A4に近い判（21×28 cm）。", "caption": "同じ縮尺で描いたプリセット。", "sizes": [{"name": "11×17", "dims": "ポケット判", "wmm": 110, "hmm": 170}, {"name": "12×19", "dims": "ペーパーバック", "wmm": 120, "hmm": 190}, {"name": "17×24", "dims": "教科書", "wmm": 170, "hmm": 240}, {"name": "21×28", "dims": "A4相当", "wmm": 210, "hmm": 280}]}' />
 
 4つの新聞の判型はpostext 1.18で加わったもので、図には含めていません。ブランケット判の1ページは21 × 28のページのほぼ4倍の面積です。通常は[`'multiple'`レイアウト](#レイアウトの種類)で組み、ブランケット判では6段、タブロイド判では5段がよく使われます。
 
@@ -191,7 +191,7 @@ page: {
 
 ### トンボ
 
-有効にすると、キャンバスが裁ち落とし領域を含む大きさに広がり、エンジンは印刷工程用のトンボを四隅に描きます。PDFでは各ページにTrimBoxとBleedBoxが設定されます。[PDF/X](/ja/docs/configuration-fonts-colors-viewers#pdfx-1aとpdfx-4)のファイルは、トンボがなくてもこの2つを持ちます。Sandboxでは**書き出し › 印刷の準備**で設定します。
+有効にすると、キャンバスが塗り足し領域を含む大きさに広がり、エンジンは印刷工程用のトンボを四隅に描きます。PDFでは各ページにTrimBoxとBleedBoxが設定されます。[PDF/X](/ja/docs/configuration-fonts-colors-viewers#pdfx-1aとpdfx-4)のファイルには、トンボがなくてもこの2つが設定されます。Sandboxでは**書き出し › 印刷の準備**で設定します。
 
 <table>
   <thead>
@@ -207,13 +207,13 @@ page: {
       <td><code>enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>裁ち落としの分だけキャンバスを広げ、トンボを描くかどうか。</td>
+      <td>塗り足しの分だけキャンバスを広げ、トンボを描くかどうか。</td>
     </tr>
     <tr>
       <td><code>bleed</code></td>
       <td><code>Dimension</code></td>
       <td><code>3 mm</code></td>
-      <td>印刷の裁ち落とし（塗り足し）に使う、ページの周囲の追加領域。</td>
+      <td>印刷の塗り足しに使う、ページの周囲の追加領域。</td>
     </tr>
     <tr>
       <td><code>markLength</code></td>
@@ -225,7 +225,7 @@ page: {
       <td><code>markOffset</code></td>
       <td><code>Dimension</code></td>
       <td><code>3 mm</code></td>
-      <td>仕上がり線からトンボの始点までの間隔。トンボが裁ち落とし領域の内側から始まることはありません。<code>bleed</code>のほうが広いときは、裁ち落としの端から始まります。</td>
+      <td>仕上がり線からトンボの始点までの間隔。トンボが塗り足し領域の内側から始まることはありません。<code>bleed</code>のほうが広いときは、塗り足しの端から始まります。</td>
     </tr>
     <tr>
       <td><code>markWidth</code></td>
@@ -242,11 +242,11 @@ page: {
   </tbody>
 </table>
 
-用紙は四辺それぞれ`bleed + markOffset + markLength`だけ大きくなり、仕上がりのページはその中央に置かれます。仕上がりの各角には長さ`markLength`のトンボが2本付き、それぞれそこで交わる辺の一方の延長線上に置かれます。トンボは仕上がりから`markOffset`だけ外側で始まり、`bleed`のほうが広い場合は裁ち落としの端から始まるため、裁ち落としまで伸びた絵柄にトンボが重なることはありません。既定値（裁ち落とし3 mm、間隔3 mm）では、トンボは仕上がりの外側3 mmから8 mmの範囲に引かれ、その外側を幅3 mmの空白の帯が用紙を一周します。`cropMarkSegments(page, doc.config.page, doc.trimOffset)`は、1ページ分の8本のトンボ、つまりCanvasとPDFのバックエンドが描くものを、ページのピクセル単位で返します。第3引数は用紙の中で仕上がりが置かれる位置で、PDFの`TrimBox`を書き出すもとになる値です。省略すると、`cutLines`から同じ方法で算出されます。
+用紙は四辺それぞれ`bleed + markOffset + markLength`だけ大きくなり、仕上がりのページはその中央に置かれます。仕上がりの各角には長さ`markLength`のトンボが2本付き、それぞれそこで交わる辺の一方の延長線上に置かれます。トンボは仕上がりから`markOffset`だけ外側で始まり、`bleed`のほうが広い場合は塗り足しの端から始まるため、塗り足しまで伸びた絵柄にトンボが重なることはありません。既定値（塗り足し3 mm、間隔3 mm）では、トンボは仕上がりの外側3 mmから8 mmの範囲に引かれ、その外側を幅3 mmの空白の帯が用紙を一周します。`cropMarkSegments(page, doc.config.page, doc.trimOffset)`は、1ページ分の8本のトンボ、つまりCanvasとPDFのバックエンドが描くものを、ページのピクセル単位で返します。第3引数は用紙の中で仕上がりが置かれる位置で、PDFの`TrimBox`を書き出すもとになる値です。省略すると、`cutLines`から同じ方法で算出されます。
 
-裁ち落としの外側には、トンボ以外何も印刷されません。ページが描くものはすべて、`'page'`や`'bleed'`に固定したデザイン要素も含めて、Canvas、PDF、HTML出力のいずれでも、DTPソフトの書き出しと同じように裁ち落としの枠で切り取られます。意図して裁ち落としの外まで置いた帯や画像は裁ち落としの端で切られますが、そこは断裁でいずれ失われる部分です。postext 1.4までは、そうした要素はトンボの上を越えて用紙の端まで描かれていました。
+塗り足しの外側には、トンボ以外何も印刷されません。ページが描くものはすべて、`'page'`や`'bleed'`にアンカーしたデザイン要素も含めて、Canvas、PDF、HTML出力のいずれでも、DTPソフトの書き出しと同じように塗り足しの枠で切り取られます。意図して塗り足しの外まで置いた帯や画像は塗り足しの端で切られますが、そこは断裁でいずれ失われる部分です。postext 1.4までは、そうした要素はトンボの上を越えて用紙の端まで描かれていました。
 
-PDF（`postext-pdf`）では、各ページのMediaBoxは用紙全体です。ページにはさらに、仕上がりのページを表すTrimBoxと、仕上がりに裁ち落としを加えたBleedBoxも入り、面付けやプリフライトのツールがこれを読みます。トンボはレジストレーションカラー、つまり`/All`の分版で描かれるため、すべての版に印刷されます。これはPDFを書き出す色空間（RGB、グレースケール、CMYK）にかかわらず同じです。ただの黒では、リッチブラックとして、あるいは墨版だけとして印刷所に届いてしまいます。`color`はキャンバスにだけ適用されます。
+PDF（`postext-pdf`）では、各ページのMediaBoxは用紙全体です。ページにはさらに、仕上がりのページを表すTrimBoxと、仕上がりに塗り足しを加えたBleedBoxも入り、面付けやプリフライトのツールがこれを読みます。トンボはレジストレーションカラー、つまり`/All`の分版で描かれるため、すべての版に印刷されます。これはPDFを書き出す色空間（RGB、グレースケール、CMYK）にかかわらず同じです。ただの黒では、リッチブラックとして、あるいは墨版だけとして印刷所に届いてしまいます。`color`はキャンバスにだけ適用されます。
 
 ### ノンブル
 
@@ -277,11 +277,11 @@ PDF（`postext-pdf`）では、各ページのMediaBoxは用紙全体です。�
   </tbody>
 </table>
 
-計算されたラベルはすべての`VDTPage`に`pageLabel`として格納され、ヘッダー・フッターのプレースホルダー<code>\{pageNumber\}</code>はこの値に解決されます。PDFには<code>/PageLabels</code>の数値ツリーが出力されるため、プレビューやAcrobatのページ表示と「ページへ移動」が、印刷されたラベルとぴったり一致します。PDFにコードのない書式（漢数字、丸数字、全角数字）はページごとに書き出されるため、ビューアーにも一, 二, 三と表示されます。
+計算されたラベルはすべての`VDTPage`に`pageLabel`として格納され、ヘッダー・フッターのプレースホルダー<code>\{pageNumber\}</code>はこの値になります。PDFには<code>/PageLabels</code>の数値ツリーが出力されるため、プレビューやAcrobatのページ表示と「ページへ移動」が、印刷されたラベルとぴったり一致します。PDFにコードのない書式（漢数字、丸数字、全角数字）はページごとに書き出されるため、ビューアーにも一, 二, 三と表示されます。
 
 #### 番号書式の表記
 
-番号書式を選ぶ設定は3つあり、それぞれが独自の表記を持つようになりました。ページラベル（`page.pageNumbering.format`と`:::numbering{format=…}`）は`lower-roman`、番号付きリスト（`orderedLists.numberFormat`）は10進数を`arabic`、リソースタイプ（`counterFormat`）は`roman-lower`と書きます。どの設定も下の表記をすべて受け付けるため、ある設定からコピーした書式はほかの設定でも使えます。名前の大文字と小文字は区別しませんが、1文字の形式は区別します（`i`と`I`は別のものです）。
+番号書式を選ぶ設定は3つあり、それぞれ独自の表記が使われてきました。ページラベル（`page.pageNumbering.format`と`:::numbering{format=…}`）は`lower-roman`、番号付きリスト（`orderedLists.numberFormat`）は10進数を`arabic`、リソースタイプ（`counterFormat`）は`roman-lower`と書きます。どの設定も下の表記をすべて受け付けるため、ある設定からコピーした書式はほかの設定でも使えます。名前の大文字と小文字は区別しませんが、1文字の形式は区別します（`i`と`I`は別のものです）。
 
 <table>
   <thead>
@@ -336,14 +336,14 @@ page: { pageNumbering: { format: 'roman-lower' } }, // same as 'lower-roman'
 resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 'roman-upper'
 ```
 
-`resolveAllConfig`は、リストとページの書式をそれぞれの設定に固有の表記に変換します。`orderedLists`では`'decimal'`が`'arabic'`に、`page.pageNumbering`では`'roman-lower'`が`'lower-roman'`に解決されます。`stripConfigDefaults`は、既定値を別の表記で書いたものも取り除きます。Sandboxのパネルは、設定がどの表記を使っていても、3つの設定をそれぞれ固有の表記で表示します。それ以外の値（`roman`、`01`、タイプミスなど）は、`undefined`と出力される代わりに10進数で番号付けされ、[設定の警告](/ja/docs/configuration-fonts-colors-viewers#設定の警告)として報告されます。見出しの番号テンプレートもコロンのあとに同じ名前を取り（`{1:roman-upper}`は`{1:I}`と同じ）、独自のゼロ埋め`{1:01}`も使えます。
+`resolveAllConfig`は、リストとページの書式をそれぞれの設定に固有の表記に変換します。`orderedLists`では`'decimal'`が`'arabic'`に、`page.pageNumbering`では`'roman-lower'`が`'lower-roman'`に変換されます。`stripConfigDefaults`は、既定値を別の表記で書いたものも取り除きます。Sandboxのパネルは、設定がどの表記を使っていても、3つの設定をそれぞれ固有の表記で表示します。それ以外の値（`roman`、`01`、タイプミスなど）は、`undefined`と出力される代わりに10進数で番号付けされ、[設定の警告](/ja/docs/configuration-fonts-colors-viewers#設定の警告)として報告されます。見出しの番号テンプレートもコロンのあとに同じ名前を取り（`{1:roman-upper}`は`{1:I}`と同じ）、独自のゼロ埋め`{1:01}`も使えます。
 
 
 ## レイアウト
 
 `layout`プロパティは、版面の中での段の配置を制御します。
 
-<Illustration name="ColumnGutter" data='{"title": "段、段間、余白", "desc": "3段に分けたページ。各段はテキストを入れる領域、段間は段と段の間の縦のすき間、余白はページの境界と最初の段の間にある空白の縁です。", "caption": "段がテキストを収め、段間が段を隔て、余白が内容を囲みます。", "pageLabel": "ページ", "gutterLabel": "段間", "columnLabel": "段", "marginLabel": "余白"}' />
+<Illustration name="ColumnGutter" data='{"title": "段、段間、余白", "desc": "3段に分けたページです。各段はテキストを入れる領域、段間は段と段の間の縦のすき間、余白はページの端と最初の段の間にある空白の縁です。", "caption": "段がテキストを収め、段間が段を隔て、余白が内容を囲みます。", "pageLabel": "ページ", "gutterLabel": "段間", "columnLabel": "段", "marginLabel": "余白"}' />
 
 <Illustration name="MarginSystem" data='{"title": "余白の仕組み", "desc": "版面を囲む上・右・下・左の余白をそれぞれ個別に設定したページ。", "caption": "ページの各辺に、それぞれ別の余白を設定できます。", "page": "ページ", "content": "版面", "top": "上", "right": "右", "bottom": "下", "left": "左"}' />
 
@@ -373,7 +373,7 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td><code>gutterWidth</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.75 cm</code></td>
-      <td>段と段の間の水平方向の空き。複数段のレイアウトにだけ適用されます。</td>
+      <td>段と段の間の水平方向の間隔。複数段のレイアウトにだけ適用されます。</td>
     </tr>
     <tr>
       <td><code>sideColumnPercent</code></td>
@@ -403,37 +403,37 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td><code>fitFiguresToPage</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>画像、キャプション、注を合わせた高さが版面より高くなる図（ビットマップまたはSVG）を、収まるまで縮小します（セーフエリア<code>Resource.safeArea</code>を持つ画像は、まず全幅のままセーフエリアの範囲内でトリミングされ、それでも収まらないときだけ縮小されます）。また、段に残った空きに対して少しだけ高すぎるインラインの図を小さく組み（幅の半分まで。キャプションは段の幅のまま）、本文から離れないようにします。縮小された画像は<code>placement.align</code>に従って枠の中に置かれます。HTMLビューアーはページの高さが画面の高さまでしかないため、この設定を有効にします。印刷用のページは図に合わせた大きさになっています。</td>
+      <td>画像、キャプション、注を合わせた高さが版面より高くなる図（ビットマップまたはSVG）を、収まるまで縮小します（セーフエリア<code>Resource.safeArea</code>のある画像は、まず全幅のままセーフエリアの範囲内でトリミングされ、それでも収まらないときだけ縮小されます）。また、段に残った空きに対して少しだけ高すぎるインラインの図を小さく組み（幅の半分まで。キャプションは段の幅のまま）、本文から離れないようにします。縮小された画像は<code>placement.align</code>に従って枠の中に置かれます。HTMLビューアーはページの高さが画面の高さまでしかないため、この設定を有効にします。印刷用のページは図に合わせた大きさになっています。</td>
     </tr>
     <tr>
       <td><code>bitmapResolution</code></td>
       <td><code>'document' | 'file' | number</code></td>
       <td><code>'document'</code></td>
-      <td>自身の<code>bitmap.resolution</code>を持たないビットマップが、原寸の印刷サイズをどう決めるかを指定します。<code>'document'</code>はピクセルを<code>page.dpi</code>で読みます。数値はそうしたビットマップすべてのppiになります（<code>300</code>なら、2400 pxの画像はページのdpiにかかわらず幅203.2 mm）。<code>'file'</code>はファイルに記載された解像度（<code>bitmap.fileResolution</code>）を使い、記載がなければ<code>page.dpi</code>になります。72と96は記載なしとして扱います。画像は段の幅を上限とするのは変わらず、それより小さい画像が拡大されることはありません。<a href="/ja/docs/document-format-resources#ビットマップのサイズ">ドキュメント形式 › ビットマップのサイズ</a>を参照。postext 1.24から。</td>
+      <td><code>bitmap.resolution</code>の指定がないビットマップが、原寸の印刷サイズをどう決めるかを指定します。<code>'document'</code>はピクセルを<code>page.dpi</code>で読みます。数値はそうしたビットマップすべてのppiになります（<code>300</code>なら、2400 pxの画像はページのdpiにかかわらず幅203.2 mm）。<code>'file'</code>はファイルに記載された解像度（<code>bitmap.fileResolution</code>）を使い、記載がなければ<code>page.dpi</code>になります。72と96は記載なしとして扱います。画像は段の幅を上限とするのは変わらず、それより小さい画像が拡大されることはありません。<a href="/ja/docs/document-format-resources#ビットマップのサイズ">文書形式 › ビットマップのサイズ</a>を参照。postext 1.24以降。</td>
     </tr>
     <tr>
       <td><code>floatShrink</code></td>
       <td><code>FloatShrinkConfig</code></td>
       <td><code>mode: 'never'</code></td>
-      <td>フロートの図版の<code>placement.shrink</code>（<code>mode</code>：<code>'never'</code>、<code>'page'</code>、<code>'slot'</code>）と<code>placement.minScale</code>（<code>minScale</code>、未設定なら0.7）のドキュメント既定値です。図版を次へ送らずに、縦横比を保って置き場所の空きまで縮小します（<a href="/ja/docs/document-format-resources#配置">ドキュメント形式 › 配置</a>を参照）。リソース自身の配置、次にその種類の<code>defaultPlacement</code>がこれより優先します。<code>fitFiguresToPage</code>はすべての図を版面に収める上限です。<code>floatShrink</code>は、扉の下、ほかのフロートの横、脚注の上など、フロートが実際に使う帯を見ます。postext 1.24から。</td>
+      <td>フロートの図版の<code>placement.shrink</code>（<code>mode</code>：<code>'never'</code>、<code>'page'</code>、<code>'slot'</code>）と<code>placement.minScale</code>（<code>minScale</code>、未設定なら0.7）の文書全体の既定値です。図版を次へ送らずに、縦横比を保って置き場所の空きまで縮小します（<a href="/ja/docs/document-format-resources#配置">文書形式 › 配置</a>を参照）。リソース自身の配置、次にその種類の<code>defaultPlacement</code>がこれより優先します。<code>fitFiguresToPage</code>はすべての図を版面に収める上限です。<code>floatShrink</code>は、扉の下、ほかのフロートの横、脚注の上など、フロートが実際に使う帯を見ます。postext 1.24以降。</td>
     </tr>
     <tr>
       <td><code>wrap</code></td>
       <td><code>TextWrapConfig</code></td>
       <td><code>minTextWidth: 12em</code>, <code>minLinesBeside: 2</code>, <code>defaultWidth: 0.45</code></td>
-      <td>段より狭い図版やボックスの横に組む本文（<code>placement.wrap</code>、ボックスの<code>wrap</code>）：<code>gap</code>は対象と本文との間隔（未設定なら本文 1 行分）、<code>minTextWidth</code>は横の本文の最小行長で、長さまたは段幅の割合（これより狭いと対象は全幅を占め、<code>textWrap</code>警告が出ます）、<code>minLinesBeside</code>は横に組む意味のある最少行数、<code>defaultWidth</code>は<code>width</code>のない回り込む対象が占める段幅の割合。<a href="/ja/docs/document-format-resources#回り込み">文書の書式 › 回り込み</a>を参照。postext 1.24以降。</td>
+      <td>段より狭い図版や囲みの横に組む本文（<code>placement.wrap</code>、囲みの<code>wrap</code>）：<code>gap</code>は対象と本文との間隔（未設定なら本文1行分）、<code>minTextWidth</code>は横の本文の最小行長で、長さまたは段幅の割合（これより狭いと対象は全幅を占め、<code>textWrap</code>警告が出ます）、<code>minLinesBeside</code>は横に組む意味のある最少行数、<code>defaultWidth</code>は<code>width</code>のない回り込む対象が占める段幅の割合。<a href="/ja/docs/document-format-resources#回り込み">文書形式 › 回り込み</a>を参照。postext 1.24以降。</td>
     </tr>
     <tr>
       <td><code>floatsAtCitingPage</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td><code>placement.citingPage</code>の文書全体の既定値です。<code>'top'</code>または<code>'auto'</code>のフロートを、最初に参照する行のあるページ（ページ幅のフロート）または段（段幅のフロート）の先頭に置けるようにします。その行の後の最初の空き位置ではありません。参照より前の本文はその下に送られます（<a href="/ja/docs/document-format-resources#配置">ドキュメント形式 › 配置</a>を参照）。リソースの配置、次にその種類の<code>defaultPlacement</code>がこれより優先されます。postext 1.25 から。</td>
+      <td><code>placement.citingPage</code>の文書全体の既定値です。<code>'top'</code>または<code>'auto'</code>のフロートを、最初に参照する行のあるページ（ページ幅のフロート）または段（段幅のフロート）の先頭に置けるようにします。その行の後の最初の空き位置ではありません。参照より前の本文はその下に送られます（<a href="/ja/docs/document-format-resources#配置">文書形式 › 配置</a>を参照）。リソースの配置、次にその種類の<code>defaultPlacement</code>がこれより優先されます。postext 1.25以降。</td>
     </tr>
     <tr>
       <td><code>maxTopFraction</code></td>
       <td><code>number</code></td>
       <td><code>0.7</code></td>
-      <td>参照するページまたは段の先頭に置くフロートが、すでにそこにあるフロートと合わせて段の高さに占めてよい最大の割合（0〜1）です。ページに本文の余地を残します（LaTeX の<code>\topfraction</code>）。これを超えるフロートは通常の位置に置かれます。postext 1.25 から。</td>
+      <td>参照するページまたは段の先頭に置くフロートが、すでにそこにあるフロートと合わせて段の高さに占めてよい最大の割合（0〜1）です。ページに本文の余地を残します（LaTeXの<code>\topfraction</code>）。これを超えるフロートは通常の位置に置かれます。postext 1.25以降。</td>
     </tr>
     <tr>
       <td><code>hugClosingFloats</code></td>
@@ -445,13 +445,13 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td><code>inlineResourceGap</code></td>
       <td><code>'around' | 'above'</code></td>
       <td><code>'around'</code></td>
-      <td>インラインのリソース（<code>placement.position: 'here'</code>、<code>::resource</code>で埋め込んだもの）が、フロートの間隔（1行分）をどこに取るか。<code>'around'</code>ではリソースの上と下に取り、リソースのあとのテキストはその間隔の下でベースライングリッドに戻ります。直後に見出し、リスト、囲み、別のインラインのリソースが来る場合は、下の間隔をそれ自身の上の空きと共有し、大きいほうが適用されます。<code>'above'</code>では上にだけ取り、リソースのあとのテキストは、どれほど近くても（0から1行分のどこか）次のグリッド線から再開します。postext 1.4までと同じ動作です。以前のバージョンで保存された設定のうち、章にリソースを埋め込んでいるものは<code>'above'</code>として読み込まれるため、ページは動きません（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出されたバンドル</a>を参照）。1.4向けにコードで書いた設定で以前の間隔を保つには、自分で<code>'above'</code>を設定するか、<code>postext/bundle</code>の<code>pinLegacyInlineGap</code>を使います。</td>
+      <td>インラインのリソース（<code>placement.position: 'here'</code>、<code>::resource</code>で埋め込んだもの）が、フロートの間隔（1行分）をどこに取るか。<code>'around'</code>ではリソースの上と下に取り、リソースのあとのテキストはその間隔の下でベースライングリッドに戻ります。直後に見出し、リスト、囲み、別のインラインのリソースが来る場合は、下の間隔をそれ自身の上のアキと共有し、大きいほうが適用されます。<code>'above'</code>では上にだけ取り、リソースのあとのテキストは、どれほど近くても（0から1行分のどこか）次のグリッド線から再開します。postext 1.4までと同じ動作です。以前のバージョンで保存された設定のうち、章にリソースを埋め込んでいるものは<code>'above'</code>として読み込まれるため、ページは動きません（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。1.4向けにコードで書いた設定で以前の間隔を保つには、自分で<code>'above'</code>を設定するか、<code>postext/bundle</code>の<code>pinLegacyInlineGap</code>を使います。</td>
     </tr>
     <tr>
       <td><code>inlineResourceGapInBoxes</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>囲み（<code>:::callout</code>）の中のインラインのリソースが、<code>inlineResourceGap</code>で決まる間隔（囲み自身のテキストの1行分）を取るかどうか。リソースの上に取り、<code>'around'</code>なら下にも取って、その間隔と次のブロック自身の空きの大きいほうが適用されます。囲みの上端や下端、あるいは分割された囲みの断片の上端や下端では、パディングがリソースを隔てるため間隔は加えません。<code>false</code>にすると、postext 1.4までと同じく、リソースを前のテキストの直下に、あとのテキストをリソースの直下に置きます。以前のバージョンで保存された設定のうち、章で囲みの中にリソースを埋め込んでいるものは<code>false</code>として読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出されたバンドル</a>を参照）。コードでは、<code>postext/bundle</code>の<code>pinLegacyBoxResourceGap</code>で同じことができます。</td>
+      <td>囲み（<code>:::callout</code>）の中のインラインのリソースが、<code>inlineResourceGap</code>で決まる間隔（囲み自身のテキストの1行分）を取るかどうか。リソースの上に取り、<code>'around'</code>なら下にも取って、その間隔と次のブロック自身のアキの大きいほうが適用されます。囲みの上端や下端、あるいは分割された囲みの断片の上端や下端では、内側余白がリソースを隔てるため間隔は加えません。<code>false</code>にすると、postext 1.4までと同じく、リソースを前のテキストの直下に、あとのテキストをリソースの直下に置きます。以前のバージョンで保存された設定のうち、章で囲みの中にリソースを埋め込んでいるものは<code>false</code>として読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。コードでは、<code>postext/bundle</code>の<code>pinLegacyBoxResourceGap</code>で同じことができます。</td>
     </tr>
     <tr>
       <td><code>inlineCaptionSide</code></td>
@@ -463,25 +463,25 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
-      <td>囲みが分割されるとき、段落やリスト項目の内側での分割がその両側に残す最小の行数（<a href="/ja/docs/configuration-callouts#囲みスタイル">囲みのスタイル</a>の<code>splitMinLines</code>は、これまでどおり分割位置の両側で囲みのすべての行を数えます）。1以上の整数。既定値では、段落や項目の1行だけが段の下端や次の段の頭に取り残されることはありません。囲みスタイルの<code>splitMinLines</code>がこれより小さい場合は、そちらが上限になります。<code>1</code>にすると、postext 1.4までと同じく、段落や項目の1行だけを片側に残す分割を許します。以前のバージョンで保存された設定のうち、章に<code>:::callout</code>を含むものは<code>1</code>として読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出されたバンドル</a>を参照）。コードでは、<code>postext/bundle</code>の<code>pinLegacyBoxChildCut</code>で同じことができます。</td>
+      <td>囲みが分割されるとき、段落やリスト項目の内側での分割がその両側に残す最小の行数（<a href="/ja/docs/configuration-callouts#囲みスタイル">囲みスタイル</a>の<code>splitMinLines</code>は、これまでどおり分割位置の両側で囲みのすべての行を数えます）。1以上の整数。既定値では、段落や項目の1行だけが段の下端や次の段の頭に取り残されることはありません。囲みスタイルの<code>splitMinLines</code>がこれより小さい場合は、そちらが上限になります。<code>1</code>にすると、postext 1.4までと同じく、段落や項目の1行だけを片側に残す分割を許します。以前のバージョンで保存された設定のうち、章に<code>:::callout</code>を含むものは<code>1</code>として読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。コードでは、<code>postext/bundle</code>の<code>pinLegacyBoxChildCut</code>で同じことができます。</td>
     </tr>
     <tr>
       <td><code>flowColumns</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>囲みの外の<code>:::columns</code>フェンスは、そのブロックを本文の段の中の小段に組みます（<code>span="page"</code>ならページ幅いっぱいに）。また、グループは囲みの中でも本文中でも、収まらなければ小段の間で切られ、次の段やページに続きます（<a href="/ja/docs/document-format-directives#columns">ドキュメント形式 › <code>:::columns</code></a>を参照）。<code>false</code>にすると、postext 1.24までと同じく、囲みの外のフェンスを無視し、グループの中では決して切りません。以前のバージョンで保存された設定のうち、章に<code>:::columns</code>フェンスを含むものは<code>false</code>として読み込まれます。コードでは、<code>postext/bundle</code>の<code>pinLegacyFlowColumns</code>で同じことができます。スタイル付きセクションはドキュメントの値を引き継ぎます。postext 1.25から。</td>
+      <td>囲みの外の<code>:::columns</code>フェンスは、そのブロックを本文の段の中の小段に組みます（<code>span="page"</code>ならページ幅いっぱいに）。また、グループは囲みの中でも本文中でも、収まらなければ小段の間で切られ、次の段やページに続きます（<a href="/ja/docs/document-format-directives#columns">文書形式 › <code>:::columns</code></a>を参照）。<code>false</code>にすると、postext 1.24までと同じく、囲みの外のフェンスを無視し、グループの中では決して切りません。以前のバージョンで保存された設定のうち、章に<code>:::columns</code>フェンスを含むものは<code>false</code>として読み込まれます。コードでは、<code>postext/bundle</code>の<code>pinLegacyFlowColumns</code>で同じことができます。スタイル付きのセクションは文書の値を引き継ぎます。postext 1.25以降。</td>
     </tr>
     <tr>
       <td><code>floatsUnderOpener</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>2段以上の本文の上に組んだページ幅の章扉（<code>span: 'page'</code>の見出しレベルまたは見出しスタイル）の下では、章扉のある段の先頭、つまり章扉の帯のすぐ下が、<code>'top'</code>または<code>'auto'</code>のフロートの空き位置になり、ほかの段の先頭とそろいます。章扉の直後に置いたフロートの囲みや、そこに埋め込んだリソースは、第1段の章扉の下に入り（<code>columns</code>があれば第1段から数段にまたがり）、その段の本文はその下から始まります。本文中で参照されるフロートは、これまでどおり参照する行の後に置かれます。<code>false</code>にするとこの位置は使われず、postext 1.24までと同じくフロートは第2段から置かれます。以前のバージョンで保存された設定のうち、ページ幅の見出しを設定しているものは<code>false</code>として読み込まれます。コードでは、<code>postext/bundle</code>の<code>pinLegacyOpenerHeadFloats</code>で同じことができます。スタイル付きセクションはドキュメントの値を引き継ぎます。postext 1.25から。</td>
+      <td>2段以上の本文の上に組んだページ幅の章扉（<code>span: 'page'</code>の見出しレベルまたは見出しスタイル）の下では、章扉のある段の先頭、つまり章扉の帯のすぐ下が、<code>'top'</code>または<code>'auto'</code>のフロートの空き位置になり、ほかの段の先頭とそろいます。章扉の直後に置いたフロートの囲みや、そこに埋め込んだリソースは、第1段の章扉の下に入り（<code>columns</code>があれば第1段から数段にまたがり）、その段の本文はその下から始まります。本文中で参照されるフロートは、これまでどおり参照する行の後に置かれます。<code>false</code>にするとこの位置は使われず、postext 1.24までと同じくフロートは第2段から置かれます。以前のバージョンで保存された設定のうち、ページ幅の見出しを設定しているものは<code>false</code>として読み込まれます。コードでは、<code>postext/bundle</code>の<code>pinLegacyOpenerHeadFloats</code>で同じことができます。スタイル付きのセクションは文書の値を引き継ぎます。postext 1.25以降。</td>
     </tr>
     <tr>
       <td><code>openerFloats</code></td>
       <td><code>'allow' | 'warn' | 'avoid'</code></td>
       <td><code>'allow'</code></td>
-      <td>開始ページに置かれるフロートの扱いです。開始ページとは、部が開くページ、見出しが自身の改ページで開くページ（<code>breakBefore</code>、またはページを開く<code>span: 'page'</code>の見出し）、見出しで始まるドキュメントの最初のページです。フロートとは、フロートとして配置した図、表、帯漫画と、ページの上または下にフロートさせた<code>:::callout</code>で、段の幅、ページ幅、サイド段のどれに入るものも対象です。インラインで埋め込んだリソース（<code>'here'</code>）、<code>'fixed'</code>の囲み、<code>span: 'side'</code>の囲みはフロートに数えません。<code>'allow'</code>は、ほかのページと同じようにフロートを置きます。<code>'warn'</code>は組版を変えずに、そのページのフロートを1件ずつ報告します（<code>openerFloat</code>の警告。<a href="/ja/docs/configuration-programmatic-usage#文書の中の警告">文書の中の警告</a>を参照）。<code>'avoid'</code>は開始ページにフロートを置きません。そこに入るはずのフロートはそのページより後の最初の空き位置に入り、開始ページには章扉や部扉と本文だけが残ります。スタイル付きセクションはドキュメントの値を引き継ぎます。postext 1.28から。</td>
+      <td>開始ページに置かれるフロートの扱いです。開始ページとは、部が開くページ、見出しが自身の改ページで開くページ（<code>breakBefore</code>、またはページを開く<code>span: 'page'</code>の見出し）、見出しで始まる文書の最初のページです。フロートとは、フロートとして配置した図、表、帯漫画と、ページの上または下にフロートさせた<code>:::callout</code>で、段の幅、ページ幅、サイド段のどれに入るものも対象です。インラインで埋め込んだリソース（<code>'here'</code>）、<code>'fixed'</code>の囲み、<code>span: 'side'</code>の囲みはフロートに数えません。<code>'allow'</code>は、ほかのページと同じようにフロートを置きます。<code>'warn'</code>は組版を変えずに、そのページのフロートを1件ずつ報告します（<code>openerFloat</code>の警告。<a href="/ja/docs/configuration-programmatic-usage#文書の中の警告">文書の中の警告</a>を参照）。<code>'avoid'</code>は開始ページにフロートを置きません。そこに入るはずのフロートはそのページより後の最初の空き位置に入り、開始ページには章扉や部扉と本文だけが残ります。スタイル付きのセクションは文書の値を引き継ぎます。postext 1.28以降。</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
@@ -496,7 +496,7 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
 
 `writingMode: 'vertical-rl'`では、ページは横組みのページを時計回りに90度回したものとして組まれます。流れは用紙の高さと同じ幅の枠の中で組まれ、その行が縦組みテキストの列になって、右から読まれます。行に関してエンジンが行う処理（行分割、両端そろえ、フロート、脚注、分割禁止の規則）はすべてこの枠の中で働きます。そのため用紙の上では次のようになります。
 
-- レイアウトの段は、縦組みでは上下に重なる**段**（tier、栏）になります。`layoutType: 'double'`では上下に積まれた2つの段ができ、右上から埋まります。`gutterWidth`は段と段の間の空き、段間罫は段の間に引く水平の罫線になります。章の終わりで段の長さはそろえません（[clreq §7.1.3.4](https://www.w3.org/TR/clreq/#x7-1-3-4-handling-of-spaces-just-before-the-new-recto-page-breaks-and-new-edges)）。縦組みの文書では、`headings.balancing.enabled`を設定しない限り段末そろえはオフです。
+- レイアウトの段は、縦組みでは上下に重なる**段**（tier、栏）になります。`layoutType: 'double'`では上下に積まれた2つの段ができ、右上から埋まります。`gutterWidth`は段と段の間の間隔、段間罫は段の間に引く水平の罫線になります。章の終わりで段の長さはそろえません（[clreq §7.1.3.4](https://www.w3.org/TR/clreq/#x7-1-3-4-handling-of-spaces-just-before-the-new-recto-page-breaks-and-new-edges)）。縦組みの文書では、`headings.balancing.enabled`を設定しない限り段末そろえはオフです。
 - 流れで「上」と呼ぶのは、読み始める側である用紙の**右**端です。上のフロートはページの右に、下のフロートは左に置かれ、ページ幅の章扉は右端に沿った帯になり、脚注は各段の左端に入ります。ページの上に固定したデザイン要素（見出しのデザイン、固定の囲み）は右端に固定されます。`sideColumnSide`の`'left'`は上の段、`'right'`は下の段で、`'outer'`と`'inner'`はそれぞれ`'right'`と`'left'`として読みます。
 - 流れの余白は、用紙の余白を回したものです。右の余白が流れの上、上の余白が流れの左になります。`page.margins`は用紙上での名前のままです。
 - 柱、ノンブル、トンボ、ページの背景は、clreqが縦組みの本について述べているとおり、用紙の上に横組みで置かれます。
@@ -504,10 +504,10 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
 - デザインの画像（章扉のイラストや部扉のイラスト）も正立します。流れの中でのその枠は画像の幅と高さを入れ替えた大きさになるため、`size.width`は画像が段に沿って下へ伸びる長さを表し、用紙上での幅は縦横比から決まります。
 - 文字：漢字、仮名、全角文字は正立し、それぞれ1em分を占めます。ラテン文字の単語と数字は横倒しになり、横組みでの幅を使います。約物はフォントの縦組み用字形を使います。句読点は回転させません。中国大陸のフォントは、、。，．をセルの右上隅に、！？：；をセルの右半分に置き、台湾や香港のフォントはこれらを中央に置きます（`cjk.region`）。括弧は縦組み用の字形を使い、大陸のテキストの“ ” ‘ ’は『』「」として読みます。ダッシュ、三点リーダー、波ダッシュは、フォントに縦組み用の字形があればそれを使い（Noto CJKでは—の縦組み字形が`fwid`とともに`vert`に割り当てられていて、セルの中央を縦に通る罫になります）、なければ横倒しにして、インクを段の軸の中央に合わせます。中国語のテキストの破折号（——）は、段を縦に通る1本の罫です。縦組み用の字形では各セルの両端に空きが残るため、各ダッシュを行とともに回転させ、横組みと同じように引き伸ばします（[約物の幅](/ja/docs/configuration-east-asian#約物の幅)を参照）。2桁までの数は1つの正立したセルに収めますが、ラテン文字の文の中にある場合はその単語に従います（[縦組みの数字](/ja/docs/configuration-east-asian#縦組みの数字)を参照）。中黒（·）は大陸のテキストでは半セル、台湾と香港のテキストでは1セルを占めます。Unicodeが正立とする記号（× © ± § ℃ ①など）は、数の中にあっても独立したセルに正立します。`3×4`は、横倒しの3と4の間に×が正立して入ります。ラテン文字の単語の2文字の間にあるアポストロフィーや中黒（`don’t`、`l·l`）は単語の中に残り、横倒しになります。縦組みの流れの中にあるラテン文字の段落も同じ規則に従います。インラインの数式、チップ、色見本は行とともに横倒しになります。
 - すべての文字は描かれるとおりに計測されます。正立のセルは行に沿ってセル1つ分進み、横倒しの文字列は横組みでの幅だけ進みます。用紙上で横組みのままのテキスト（柱、ノンブル、キャプション、表のセル）は横方向に計測されます。
-- [約物の幅](/ja/docs/configuration-east-asian#約物の幅)、[ぶら下げ](/ja/docs/configuration-east-asian#ぶら下げ)、[和欧間のアキ](/ja/docs/configuration-east-asian#和欧間のアキ)は、横組みで行に沿って適用されるのと同じように、縦組みでも行に沿って適用されます。字形の前の空きはその上に、後の空きはその下に来ます。開明式（Kaiming）の、は半セルを取り、`」「`は1.5セルに詰められ、行頭で詰めた始め括弧は半セル上から始まり、ぶら下げた。は行の下端の下に置かれ、漢字とラテン文字の間のスペースは横倒しの単語の上下にその段の4分の1 em分入ります。`：；？！`は縦組みではどの地域でも1セル全体を取ります。
+- [約物の幅](/ja/docs/configuration-east-asian#約物の幅)、[ぶら下げ](/ja/docs/configuration-east-asian#ぶら下げ)、[和欧間のアキ](/ja/docs/configuration-east-asian#和欧間のアキ)は、横組みで行に沿って適用されるのと同じように、縦組みでも行に沿って適用されます。字形の前のアキはその上に、後のアキはその下に来ます。開明式（Kaiming）の、は半セルを取り、`」「`は1.5セルに詰められ、行頭で詰めた始め括弧は半セル上から始まり、ぶら下げた。は行の下端の下に置かれ、漢字とラテン文字の間のスペースは横倒しの単語の上下にその段の4分の1 em分入ります。`：；？！`は縦組みではどの地域でも1セル全体を取ります。
 - [文字グリッド](/ja/docs/configuration-east-asian#文字グリッド)は、行に沿って文字を数え、ページを横切って行を数えます。`charsPerLine`は段の長さを、`linesPerPage`はページに入る行数を決め、`layoutType: 'double'`では文字数が整数の2つの段と、整数のemからなる段間ができます。
 
-レイアウトを読むホスト向けの情報です。縦組みのページは`VDTPage.flow`を持ちます。その`contentArea`、段、ブロック、行、フロート、脚注領域、章扉の帯、ブロックのデザインのオーバーレイは流れの座標系で表され、`width`、`height`、`header`、`footer`は用紙上の値です。`flowToPage`、`pageToFlow`、`flowRectToPage`、`pageRectToFlow`は両者の間を変換し、`verticalOrientation(char, region)`は文字の向きを返します。`flow.centralBaselines`は、フォントファミリーごとに、レイアウトが正立した文字を中央合わせした軸を返します。これは中のインクの中心です。中の長い画はemボックスの高さいっぱいに伸びており（Noto SerifとNoto Sansでは、SCでもTCでもベースラインの0.38 em上）、中国語・日本語・韓国語のどの書体にもこの字があります。各行はこの軸で中央合わせされます。縦組みの行のベースラインは、行ボックスの上端から、行の高さの半分にファミリーの中央ベースラインを足した分だけ下にあります（横組みの行では行の高さの0.8倍下）。そのため文字の列は行送りの中央に立ち、行送りの整数倍の位置で2つの列の間に引いた罫は、両者のちょうど中間に来ます。縦組みのデザインテキストも、それ自身の行の中で同じように組まれます。縦組みのページはキャンバスが自分で描きます。約物をフォント自身の縦組み字形で描くために、ブラウザーのホストはファミリーごとに1回、その機能を有効にした双子のフェースを`loadVerticalAlternates(family, faces)`で読み込みます。`faces`はファミリーのソース（URLまたはバイト列）とディスクリプターです。双子が残されるのは、ブラウザーがその機能をキャンバスのテキストに適用する場合（Chrome 140以降）だけです。与えたフェースのウェイトとスタイルで「（《を、双子と、機能なしで読み込んだ同じフェースのコピーとで描き、インクが異なれば双子を残します。双子を使用中のファミリーについて、別のフェース（標準のあとの太字など）で後から呼び出すと、そのフェースが双子に追加されます。Sandboxは縦組みの文書のすべてのファミリーでこれを行います。双子がない場合、括弧はemボックスを中心に回転させ、大陸の句読点はフォントの縦組み字形が置く位置にセルの中で移動させます。、。，．は右上隅へ（Noto Serif SCの縦組み字形との差は0.07 em以内）、！？：；は右へ半em、少し上へ移します（差は0.02 em以内）。PDFとHTMLも同じページを組みます。[PDFの縦組み](/ja/docs/configuration-pdf-output#pdfの縦組み)と、[HTML出力とcanvas、PDFとの違い](/ja/docs/configuration-html-folio-epub#html出力とcanvaspdfとの違い)の表を参照してください。Noto Serif TCとSCで、HarfBuzz（`vert`を使った縦組みレイアウト）とセルごとに照合すると、「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’……のどの文字も、CanvasとPDFでは0.02 em以内、HTMLでは0.05 em以内に収まります（Chromeは回転した字形をフォントのアセントとディセントの中央に合わせますが、Notoではそれがemボックスの中心より0.05 em上にあります）。`flow.dashAdvances`は、ファミリーごとに、ページがセルを埋めるために引き伸ばす各ダッシュ（— – ― ⸺ ⸻ －）の横方向の送り幅をem単位で返します。これはフォントメトリクスを自前で持たないレンダラーのためのもので、HTMLはこの値でダッシュを引き伸ばし、CanvasとPDFは自前の値で同じことをします。柱とノンブルも縦に組めます。[縦組みのテキスト要素](/ja/docs/configuration-headers-footers#縦組みのテキスト要素)を参照してください。
+レイアウトを読むホスト向けの情報です。縦組みのページには`VDTPage.flow`があります。その`contentArea`、段、ブロック、行、フロート、脚注領域、章扉の帯、ブロックのデザインのオーバーレイは流れの座標系で表され、`width`、`height`、`header`、`footer`は用紙上の値です。`flowToPage`、`pageToFlow`、`flowRectToPage`、`pageRectToFlow`は両者の間を変換し、`verticalOrientation(char, region)`は文字の向きを返します。`flow.centralBaselines`は、フォントファミリーごとに、レイアウトが正立した文字を中央合わせした軸を返します。これは中のインクの中心です。中の長い画はemボックスの高さいっぱいに伸びており（Noto SerifとNoto Sansでは、SCでもTCでもベースラインの0.38 em上）、中国語・日本語・韓国語のどの書体にもこの字があります。各行はこの軸で中央合わせされます。縦組みの行のベースラインは、行ボックスの上端から、行の高さの半分にファミリーの中央ベースラインを足した分だけ下にあります（横組みの行では行の高さの0.8倍下）。そのため文字の列は行送りの中央に立ち、行送りの整数倍の位置で2つの列の間に引いた罫は、両者のちょうど中間に来ます。縦組みのデザインテキストも、それ自身の行の中で同じように組まれます。縦組みのページはキャンバスが自分で描きます。約物をフォント自身の縦組み字形で描くために、ブラウザーのホストはファミリーごとに1回、その機能を有効にした双子のフェイスを`loadVerticalAlternates(family, faces)`で読み込みます。`faces`はファミリーのソース（URLまたはバイト列）とディスクリプターです。双子が残されるのは、ブラウザーがその機能をキャンバスのテキストに適用する場合（Chrome 140以降）だけです。与えたフェイスのウェイトとスタイルで「（《を、双子と、機能なしで読み込んだ同じフェイスのコピーとで描き、インクが異なれば双子を残します。双子を使用中のファミリーについて、別のフェイス（標準のあとの太字など）で後から呼び出すと、そのフェイスが双子に追加されます。Sandboxは縦組みの文書のすべてのファミリーでこれを行います。双子がない場合、括弧はemボックスを中心に回転させ、大陸の句読点はフォントの縦組み字形が置く位置にセルの中で移動させます。、。，．は右上隅へ（Noto Serif SCの縦組み字形との差は0.07 em以内）、！？：；は右へ半em、少し上へ移します（差は0.02 em以内）。PDFとHTMLも同じページを組みます。[PDFの縦組み](/ja/docs/configuration-pdf-output#pdfの縦組み)と、[HTML出力とcanvas、PDFとの違い](/ja/docs/configuration-html-folio-epub#html出力とcanvaspdfとの違い)の表を参照してください。Noto Serif TCとSCで、HarfBuzz（`vert`を使った縦組みレイアウト）とセルごとに照合すると、「賈雨村」云云，宜乎？故曰！；：、。“引”‘單’……のどの文字も、CanvasとPDFでは0.02 em以内、HTMLでは0.05 em以内に収まります（Chromeは回転した字形をフォントのアセントとディセントの中央に合わせますが、Notoではそれがemボックスの中心より0.05 em上にあります）。`flow.dashAdvances`は、ファミリーごとに、ページがセルを埋めるために引き伸ばす各ダッシュ（— – ― ⸺ ⸻ －）の横方向の送り幅をem単位で返します。これはフォントメトリクスを自前で持たないレンダラーのためのもので、HTMLはこの値でダッシュを引き伸ばし、CanvasとPDFは自前の値で同じことをします。柱とノンブルも縦に組めます。[縦組みのテキスト要素](/ja/docs/configuration-headers-footers#縦組みのテキスト要素)を参照してください。
 
 ### 段間罫
 
@@ -554,8 +554,8 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
 
 - **`'double'`**：同じ幅の2段。古典的な編集レイアウトで、1行の長さを読みやすい40〜50文字の範囲に保ちます。
 
-- **`'oneAndHalf'`**：メインの段と、それより狭いサイド段からなる非対称のレイアウト。サイド段（`sideColumnPercent`で制御）は、傍注、小さな図、補足的な内容に適しています。25〜40%の値が使いやすく、行番号や欄外の記号のための細い欄なら10〜15%程度です。サイド段は版面の幅の`sideColumnPercent`%で、メインの段は段間を引いた残りです。そのため50%では、サイド段のほうがメインの段より段間1つ分広くなります。両方の段が版面の幅の1%以上を保つ限り、どの値も書いたとおりにレイアウトされます。どちらかがそれより狭くなる値（0以下、あるいはメインの段が段間に隠れて消えるほど大きな値）は、両方を保てる最も近い値に制限され、数値でない値は既定値の33になります。そのとき文書の`configWarnings`には`{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }`が入ります。見出しスタイル自身の`layout`の場合、パスは`headingStyles[2].layout.sideColumnPercent`のようにそのスタイルを指し、値はそのスタイルの余白で計測されます。Sandboxはこれを**検査**パネルに表示し、`collectConfigWarnings(config)`は何もレイアウトせずに同じリストを返します。`'oneAndHalf'`以外のレイアウトはこの値を読まず、報告もしません。`sideColumnRole: 'floats'`では本文がサイド段に入ることはなく、サイド段は`span: 'side'`で配置した図、表、囲みのための欄になります。サイドの図や表は、最初に参照されたページで欄の先頭から積まれます。教科書の欄外の図は、本文での参照がページの下のほうであっても、ページの上端に置かれます。欄の残りに収まらないものは次のページの欄に回ります。サイドの囲みは、中断したテキストの横に積まれます。欄の残りに収まらない場合は、収まる範囲で最も低い位置（囲みの下端が欄の下端に接する位置）まで上にずれるか、次のページに回ります。囲みのフェンスのあとのテキストが次のページに続く場合（段がいっぱいのときや、分割の規則がそのテキストを送るとき）、囲みはフェンスの位置、つまりその前のテキストの横に残ります。`sideAtColumnEnd: 'after'`を指定したスタイルでは、代わりにフェンスのあとのテキストの最初の行と同じ高さ、つまり次のページの欄に置かれます。行の前に書く行番号や欄外見出しには、この動作が必要です。欄の中に立つ見出しデザインの要素（外側の余白に固定した章番号など）も、積み重ねと重ならないように避けられます（[確保する高さ](/ja/docs/configuration-headings#確保する高さ)を参照）。`span: 'page'`のフロートと囲みは引き続き両方の段にまたがり、`placement.captionSide`を指定した段のフロートは、キャプションを欄の中、図と同じ高さに置きます。見開きの余白と`sideColumnSide: 'outer'`を組み合わせると、欄はすべてのページの外側の辺に置かれます。教科書の欄外段の形です。postext 1.28からは、本文中に置いた（`position: 'here'`）`captionSide`付きの図や表も、キャプションを欄に組みます（`inlineCaptionSide`）。
+- **`'oneAndHalf'`**：メインの段と、それより狭いサイド段からなる非対称のレイアウト。サイド段（`sideColumnPercent`で制御）は、傍注、小さな図、補足的な内容に適しています。25〜40%の値が使いやすく、行番号や欄外の記号のための細い欄なら10〜15%程度です。サイド段は版面の幅の`sideColumnPercent`%で、メインの段は段間を引いた残りです。そのため50%では、サイド段のほうがメインの段より段間1つ分広くなります。両方の段が版面の幅の1%以上を保つ限り、どの値も書いたとおりにレイアウトされます。どちらかがそれより狭くなる値（0以下、あるいはメインの段が段間に隠れて消えるほど大きな値）は、両方を保てる最も近い値に制限され、数値でない値は既定値の33になります。そのとき文書の`configWarnings`には`{ kind: 'sideColumnPercentClamped', path: 'layout.sideColumnPercent', value, used }`が入ります。見出しスタイル自身の`layout`の場合、パスは`headingStyles[2].layout.sideColumnPercent`のようにそのスタイルを指し、値はそのスタイルの余白で計測されます。Sandboxはこれを**検査**パネルに表示し、`collectConfigWarnings(config)`は何もレイアウトせずに同じリストを返します。`'oneAndHalf'`以外のレイアウトはこの値を読まず、報告もしません。`sideColumnRole: 'floats'`では本文がサイド段に入ることはなく、サイド段は`span: 'side'`で配置した図、表、囲みのための欄になります。サイドの図や表は、最初に参照されたページで欄の先頭から積まれます。教科書の欄外の図は、本文での参照がページの下のほうであっても、ページの上端に置かれます。欄の残りに収まらないものは次のページの欄に回ります。サイドの囲みは、割り込んだテキストの横に積まれます。欄の残りに収まらない場合は、収まる範囲で最も低い位置（囲みの下端が欄の下端に接する位置）まで上にずれるか、次のページに回ります。囲みのフェンスのあとのテキストが次のページに続く場合（段がいっぱいのときや、分割の規則がそのテキストを送るとき）、囲みはフェンスの位置、つまりその前のテキストの横に残ります。`sideAtColumnEnd: 'after'`を指定したスタイルでは、代わりにフェンスのあとのテキストの最初の行と同じ高さ、つまり次のページの欄に置かれます。行の前に書く行番号や欄外見出しには、この動作が必要です。欄の中に立つ見出しデザインの要素（外側の余白に固定した章番号など）も、積み重ねと重ならないように避けられます（[確保する高さ](/ja/docs/configuration-headings#確保する高さ)を参照）。`span: 'page'`のフロートと囲みは引き続き両方の段にまたがり、`placement.captionSide`を指定した段のフロートは、キャプションを欄の中、図と同じ高さに置きます。見開きの余白と`sideColumnSide: 'outer'`を組み合わせると、欄はすべてのページの外側の辺に置かれます。教科書の欄外段の形です。postext 1.28以降は、本文中に置いた（`position: 'here'`）`captionSide`付きの図や表も、キャプションを欄に組みます（`inlineCaptionSide`）。
 
-- **`'multiple'`**：3〜8段の同じ幅の段組みで、段数は`columnCount`で指定します（既定は3）。新聞や多くの雑誌のグリッドです（postext 1.18以降）。各段の幅は`(内容の幅 − (n − 1) × gutterWidth) / n`です。本文は2段組みと同じように段から段へ流れます。段間罫はすべての段間に引かれ、段のそろえは章の最終ページとページ幅の囲みの前ですべての段の高さをそろえ、脚注はどの段でも使え、ページ幅の図、囲み、見出しはページ全体にまたがります。図やフロートする囲みは一部の段だけを使うこともできます。`placement.columns`（[リソースの種類](/ja/docs/configuration-resources#リソースの種類)を参照）と囲みスタイルの`columns`です。`columnCount`が3〜8の範囲外か整数でない場合は、丸めたうえでいちばん近い有効な段数に収め（数値でない値は3）、文書の`configWarnings`に`{ kind: 'columnCountClamped', path: 'layout.columnCount', value, used }`が入ります（見出しスタイル自身の`layout`の場合、パスは`headingStyles[1].layout.columnCount`のようにスタイルを示します）。ほかの種類のレイアウトはこの値を読みません。`layout`が`'multiple'`の見出しスタイルは、独自に設定しない限り文書の`columnCount`を使うので、5段組みの新聞でオピニオン面だけを4段にすることもできます。
+- **`'multiple'`**：3〜8段の同じ幅の段組みで、段数は`columnCount`で指定します（既定は3）。新聞や多くの雑誌のグリッドです（postext 1.18以降）。各段の幅は`(内容の幅 − (n − 1) × gutterWidth) / n`です。本文は2段組みと同じように段から段へ流れます。段間罫はすべての段間に引かれ、段末そろえは章の最終ページとページ幅の囲みの前ですべての段の高さをそろえ、脚注はどの段でも使え、ページ幅の図、囲み、見出しはページ全体にまたがります。図やフロートする囲みは一部の段だけを使うこともできます。`placement.columns`（[リソースの種類](/ja/docs/configuration-resources#リソースの種類)を参照）と囲みスタイルの`columns`です。`columnCount`が3〜8の範囲外か整数でない場合は、丸めたうえでいちばん近い有効な段数に収め（数値でない値は3）、文書の`configWarnings`に`{ kind: 'columnCountClamped', path: 'layout.columnCount', value, used }`が入ります（見出しスタイル自身の`layout`の場合、パスは`headingStyles[1].layout.columnCount`のようにスタイルを示します）。ほかの種類のレイアウトはこの値を読みません。`layout`が`'multiple'`の見出しスタイルは、独自に設定しない限り文書の`columnCount`を使うので、5段組みの新聞でオピニオン面だけを4段にすることもできます。
 
 

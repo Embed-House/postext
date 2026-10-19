@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'Configuration de Postext',
   sidebarTitle: 'Configuration',
-  description: 'Ce qu’est une configuration Postext, et dans laquelle des dix-neuf pages de la référence chaque groupe de réglages est expliqué',
+  description: 'Ce qu’est une configuration Postext, et la page de la référence (sur dix-neuf) où chaque groupe de réglages est expliqué',
   lang: 'fr',
   lastUpdated: '2026-10-16',
   readingTime: '5 min',
@@ -51,7 +51,7 @@ La référence est répartie sur dix-neuf pages. Chaque groupe ci-dessous corres
 **[Césure et langue](/fr/docs/configuration-language)**
 
 - [Césure](/fr/docs/configuration-language#césure) — motifs de césure, mots gardés entiers, texte en drapeau.
-- [Langue du document](/fr/docs/configuration-language#langue-du-document) — la clé de premier niveau `locale` : césure de repli, types de ressources intégrés et textes de continuation des tableaux et des encadrés coupés, langue déclarée dans un PDF accessible ; les [chiffres](/fr/docs/configuration-language#chiffres-du-document) (`numerals`) et le [sens d’écriture](/fr/docs/configuration-language#sens-du-texte) (`direction`) qui en découlent ; et les [langues et écritures](/fr/docs/configuration-language#langues-et-écritures) que Postext compose. Le guide des livres de droite à gauche est [Mise en page arabe](/fr/docs/arabic-layout).
+- [Langue du document](/fr/docs/configuration-language#langue-du-document) — la clé de premier niveau `locale`, qui fixe la césure de repli, les types de ressources intégrés, les mentions de suite des tableaux et des encadrés coupés, et la langue déclarée dans un PDF accessible ; les [chiffres](/fr/docs/configuration-language#chiffres-du-document) (`numerals`) et le [sens d’écriture](/fr/docs/configuration-language#sens-du-texte) (`direction`) qui en découlent ; et les [langues et écritures](/fr/docs/configuration-language#langues-et-écritures) que Postext compose. Le guide des livres de droite à gauche est [Mise en page arabe](/fr/docs/arabic-layout).
 - [Langues et écritures](/fr/docs/configuration-language#langues-et-écritures) — les écritures que compose Postext, et les pages qui expliquent chacune.
 - [Texte arabe](/fr/docs/configuration-language#texte-arabe) — mise en forme, kashida, signes vocaliques et chiffres du texte arabe.
 
@@ -80,22 +80,22 @@ La référence est répartie sur dix-neuf pages. Chaque groupe ci-dessous corres
 
 **[Typographie d’Asie de l’Est](/fr/docs/configuration-east-asian)**
 
-- [Typographie d’Asie de l’Est](/fr/docs/configuration-east-asian#typographie-dasie-de-lest) — `cjk` : les conventions régionales et la coupure des lignes du chinois, du japonais et du coréen, la façon dont leurs lignes justifiées sont espacées, la chasse et le débord de la ponctuation, l’espace entre caractères han et latins, la grille de caractères, les nombres debout en texte vertical, ainsi que les signes, le ruby, les notes warichu et les signes kanbun. Les guides de tout cela sont [Mise en page chinoise](/fr/docs/chinese-layout) et [Mise en page japonaise](/fr/docs/japanese-layout).
+- [Typographie d’Asie de l’Est](/fr/docs/configuration-east-asian#typographie-dasie-de-lest) — `cjk` : les conventions régionales et la coupure des lignes du chinois, du japonais et du coréen, la façon dont leurs lignes justifiées sont espacées, la chasse et le débord de la ponctuation, l’espace entre caractères han et latins, la grille de caractères, les nombres debout en texte vertical, ainsi que les signes, le ruby, les notes warichu et les signes kanbun. Tout cela est expliqué en détail dans [Mise en page chinoise](/fr/docs/chinese-layout) et [Mise en page japonaise](/fr/docs/japanese-layout).
 
 **[Ressources et tableaux](/fr/docs/configuration-resources)**
 
 - [Types de ressources](/fr/docs/configuration-resources#types-de-ressources) — numérotation par type des figures, des tableaux et des types personnalisés.
 - [Style de tableau](/fr/docs/configuration-resources#style-de-tableau) (avec les [styles de tableau nommés](/fr/docs/configuration-resources#styles-de-tableau-nommés)) et [Style de légende](/fr/docs/configuration-resources#style-de-légende) — typographie et décor des ressources de type tableau et de leurs légendes.
-- [Style des diagrammes](/fr/docs/configuration-resources#style-des-diagrammes) — recoloration en une seule encre des diagrammes SVG intégrés, pour l’impression en ton direct.
+- [Style des diagrammes](/fr/docs/configuration-resources#style-des-diagrammes) — recoloration en une seule encre des diagrammes SVG insérés, pour l’impression en ton direct.
 - [Style des vidéos](/fr/docs/configuration-resources#style-des-vidéos) — `videoStyle` : le signe de lecture et le code QR imprimés sur l’image d’aperçu d’une vidéo, et ce que proposent ses lecteurs dans la visionneuse HTML et en EPUB.
 
 **[Styles et parties](/fr/docs/configuration-styles)**
 
 - [Styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe) — styles nommés pour les conteneurs `:::paragraphs` : bibliographies, glossaires, notes.
-- [Styles de pastille](/fr/docs/configuration-styles#styles-de-pastille) — `chipStyles` : styles nommés pour la pastille en ligne `:chip[…]` : le cadre d’une banque de mots, une touche de clavier, une étiquette.
-- [Styles de surlignage](/fr/docs/configuration-styles#styles-de-surlignage) — `markStyles` : styles nommés pour le surlignage en ligne `:mark[…]` : la bande derrière une phrase surlignée qui passe à la ligne.
-- [Listings de code](/fr/docs/configuration-styles#listings-de-code) — `codeStyle` : la police, le cadre, la largeur de tabulation, les lignes longues, les numéros de ligne et les couleurs des jetons des listings ```` ``` ````, la coloration syntaxique et son crochet de surligneur, et le code en ligne dans une police de code.
-- [Parties](/fr/docs/configuration-styles#parties) — pages de partie pour les conteneurs `:::part` : parité, zone de texte, maquette d’ouverture, typographie du texte.
+- [Styles de pastille](/fr/docs/configuration-styles#styles-de-pastille) — `chipStyles` : styles nommés pour la pastille en ligne `:chip[…]` : la boîte d’une banque de mots, une touche de clavier, une étiquette.
+- [Styles de surlignage](/fr/docs/configuration-styles#styles-de-surlignage) — `markStyles` : styles nommés pour le surlignage en ligne `:mark[…]` : la bande derrière une phrase surlignée qui passe à la ligne.
+- [Listings de code](/fr/docs/configuration-styles#listings-de-code) — `codeStyle` : la police, la boîte, la largeur de tabulation, les lignes longues, les numéros de ligne et les couleurs des jetons des listings ```` ``` ````, la coloration syntaxique et son point d’extension pour un surligneur, et le code en ligne composé dans une police de code.
+- [Parties](/fr/docs/configuration-styles#parties) — pages de partie pour les conteneurs `:::part` : parité, zone de contenu, maquette d’ouverture, typographie du texte courant.
 - [Styles de titre](/fr/docs/configuration-styles#styles-de-titre) — styles nommés pour les titres `{style="…"}` : chapitres non numérotés, pages liminaires avec leurs propres titres courants, géométrie et palette.
 
 **[Encadrés](/fr/docs/configuration-callouts)**
@@ -108,25 +108,25 @@ La référence est répartie sur dix-neuf pages. Chaque groupe ci-dessous corres
 
 **[Réglages des pages composées](/fr/docs/configuration-composed-pages)**
 
-- [Gabarits de page](/fr/docs/configuration-composed-pages#gabarits-de-page) — `pageTemplates` : les blocs, groupes et décors d’une page composée, l’héritage entre gabarits et les variantes de belle page et de fausse page. [Styles d’étiquette](/fr/docs/configuration-composed-pages#styles-détiquette) — `labelStyles` : l’aspect des étiquettes posées sur les ancrages d’une image. Tous les problèmes qu’un gabarit peut poser sont listés dans [Avertissements des gabarits de page](/fr/docs/configuration-composed-pages#avertissements-des-gabarits-de-page).
+- [Gabarits de page](/fr/docs/configuration-composed-pages#gabarits-de-page) — `pageTemplates` : les blocs, groupes et décors d’une page composée, l’héritage entre gabarits et les variantes de belle page et de fausse page. [Styles d’étiquette](/fr/docs/configuration-composed-pages#styles-détiquette) — `labelStyles` : l’aspect des étiquettes placées sur les ancres d’une image. Tous les problèmes qu’un gabarit peut poser sont listés dans [Avertissements des gabarits de page](/fr/docs/configuration-composed-pages#avertissements-des-gabarits-de-page).
 
 **[Polices, couleurs et sortie](/fr/docs/configuration-fonts-colors-viewers)**
 
 - [Unités et couleurs](/fr/docs/configuration-fonts-colors-viewers#unités-et-couleurs) + [Palette de couleurs](/fr/docs/configuration-fonts-colors-viewers#palette-de-couleurs) — `Dimension`, `ColorValue`, couleurs nommées.
 - [Polices personnalisées](/fr/docs/configuration-fonts-colors-viewers#polices-personnalisées) — déclarer des familles de polices téléversées par l’utilisateur à côté de Google Fonts.
 - [Visionneuse HTML](/fr/docs/configuration-fonts-colors-viewers#visionneuse-html) — largeur de colonne visée et coupure des lignes pour le moteur de rendu HTML.
-- [Visionneuse Canvas](/fr/docs/configuration-fonts-colors-viewers#visionneuse-canvas) — `canvasViewer` : l’écart entre les deux pages d’une paire et entre une rangée et la suivante dans le Canvas du Sandbox.
+- [Visionneuse Canvas](/fr/docs/configuration-fonts-colors-viewers#visionneuse-canvas) — `canvasViewer` : l’écart entre les deux pages d’une paire et entre une rangée et la suivante dans le Canvas du Sandbox.
 - [Génération de PDF (configuration)](/fr/docs/configuration-fonts-colors-viewers#génération-pdf-configuration) — signets, sortie accessible (balisée), espace colorimétrique imposé pour le moteur de rendu PDF.
 - [Production pour l’impression (configuration)](/fr/docs/configuration-fonts-colors-viewers#production-pour-limpression-configuration) — `print` : PDF/X-1a et PDF/X-4, les profils ICC de sortie, le noir (gris en noir seul, surimpression, noir enrichi), les couleurs définies en CMJN, le contrôle en amont et l’aperçu d’impression.
 - [Contrôle du contraste (configuration)](/fr/docs/configuration-fonts-colors-viewers#contrôle-du-contraste-configuration) — `contrast` : le texte face à son fond, au niveau WCAG AA ou AAA, à l’écran et sur le papier du profil de sortie, et le texte en réserve trop fin pour la presse.
-- [Contrôle du contenu (configuration)](/fr/docs/configuration-fonts-colors-viewers#contrôle-du-contenu-configuration) — `checks.contentInConfig` : les textes de maquette qui gardent le texte du livre au lieu de variables, avec une liste d’expressions admises pour le titre et l’éditeur.
+- [Contrôle du contenu (configuration)](/fr/docs/configuration-fonts-colors-viewers#contrôle-du-contenu-configuration) — `checks.contentInConfig` : signale les textes de maquette qui contiennent le texte même du livre au lieu de variables, avec une liste d’exceptions pour le titre et l’éditeur.
 - [Visionneuse Folio (configuration)](/fr/docs/configuration-fonts-colors-viewers#visionneuse-folio-configuration) — papier, reliure, surface et lumière de la visionneuse de livre en 3D.
 - [Débogage](/fr/docs/configuration-fonts-colors-viewers#débogage) — superpositions visuelles et avertissements de rédaction pour l’éditeur.
 
 **[Utilisation programmatique](/fr/docs/configuration-programmatic-usage)**
 
 - [Utilisation par programme](/fr/docs/configuration-programmatic-usage#utilisation-programmatique) — `buildDocument`, les avertissements qu’il signale, les résolveurs, les caches.
-- [Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker) — constructions hors du fil principal, avec annulation.
+- [Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker) — mise en page calculée hors du fil principal, avec annulation.
 
 **[Fichiers PDF](/fr/docs/configuration-pdf-output)**
 

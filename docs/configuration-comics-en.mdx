@@ -59,13 +59,13 @@ const config: PostextConfig = {
       <td><code>mirrorArt</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Flip the pictures of a page read in the other direction than <code>artDirection</code>. A panel keeps its picture as drawn with <code>mirror=false</code>.</td>
+      <td>Flip the pictures of a page that reads in the opposite direction to <code>artDirection</code>. A panel keeps its picture as drawn with <code>mirror=false</code>.</td>
     </tr>
     <tr>
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>the page margins</td>
-      <td>Margins of their own for comic pages (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). The panels are cut from the box they leave; unset, from the page's text area.</td>
+      <td>Margins of their own for comic pages (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). The panels are cut from the box these margins leave; when unset, from the page's text area.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
@@ -113,7 +113,7 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Print the running heads and folios on comic pages. Off, a comic page is all panels and its number still counts.</td>
+      <td>Print the running heads and folios on comic pages. When off, a comic page holds only panels, and its number still counts.</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
@@ -279,7 +279,7 @@ const config: PostextConfig = {
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>A balloon reshaped to fit its panel does not part a Chinese word to do so: each word its new lines cut, which its preferred shape leaves whole, costs more than a balloon read out of order, so the placement moves the balloon or changes the order first. Japanese lettering, broken by phrases, is not touched. <code>false</code> letters as postext 1.27 did; a document stored before 1.28 that holds a comic is read with it.</td>
+      <td>A balloon reshaped to fit its panel does not split a Chinese word to do so: each word that its preferred shape keeps whole and its new lines would cut costs more than a balloon read out of order, so the placement first moves the balloon or changes the order. Japanese lettering, broken by phrases, is not touched. <code>false</code> letters as postext 1.27 did; a document saved before 1.28 that holds a comic is read with <code>false</code>.</td>
     </tr>
   </tbody>
 </table>
@@ -380,7 +380,7 @@ Each entry of `comics.balloonStyles` is laid over the built-in style of the same
       <td><code>aspect</code></td>
       <td><code>number</code></td>
       <td><code>1.6</code></td>
-      <td>The width over height the line breaking aims the text block at (horizontal lettering).</td>
+      <td>The ratio of width to height that line breaking aims for in the text block (horizontal lettering).</td>
     </tr>
     <tr>
       <td><code>tail</code></td>
@@ -410,7 +410,7 @@ Each entry of `comics.balloonStyles` is laid over the built-in style of the same
       <td><code>position</code></td>
       <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
       <td><code>'auto'</code></td>
-      <td>Where the balloon goes when the line pins none: placed by the lettering, or at a corner or edge of the panel.</td>
+      <td>Where the balloon goes when its line does not pin a position: placed by the lettering, or at a corner or edge of the panel.</td>
     </tr>
     <tr>
       <td><code>butt</code></td>
@@ -464,7 +464,7 @@ Each entry of `comics.balloonStyles` is laid over the built-in style of the same
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>none</td>
-      <td>An outline drawn around the letters, its width, so text reads over the picture (sound effects).</td>
+      <td>The width of an outline drawn around the letters, so the text reads over the picture (sound effects).</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -505,13 +505,13 @@ Each entry of `comics.cast` describes a character:
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>The name the HTML output and the reflowable EPUB print before the character's lines, and editors show.</td>
+      <td>The name printed before the character's lines in the HTML output and the reflowable EPUB, and shown in editors.</td>
     </tr>
     <tr>
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>The style of the character's lines that name none.</td>
+      <td>The style of the character's lines that do not name one.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

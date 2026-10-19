@@ -16,7 +16,7 @@ Dues pàgines d'una nota de recerca, 号数活字の三つの系列 («Les tres 
 
 ### 1 · L'estil, la locale i les notes
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. `postext-citeproc` porta la SIST 02 com a `'sist02'` i la locale CSL `ja-JP`, que escriu en japonès els termes de la llista i, en una citació narrativa, uneix dos autors japonesos amb と i més de dos amb ほか ([Cites](/ca/docs/configuration-text#cites)). Al text, `[@kawada1949; @suzuki2015]` imprimeix (2, 3), i `高橋[@takahashi2012]が` posa el número després del nom, 高橋(8)が, que la pàgina compon amb un quart de quadratí a cada costat del parèntesi, com al voltant de qualsevol paraula occidental en un text japonès. L'estil es distingeix de la GB/T 7714 xinesa per la crida: la SIST 02 posa el número entre parèntesis a la línia, i la GB/T 7714, entre claudàtors i volat. Les notes no necessiten res: `locale: 'ja'` dona a un document horitzontal notes al peu de la columna, numerades des d'1 a cada pàgina, amb la crida volada i un filet d'un terç de la columna.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. `postext-citeproc` porta la SIST 02 com a `'sist02'` i la locale CSL `ja-JP`, que escriu en japonès els termes de la llista i, en una citació narrativa, uneix dos autors japonesos amb と i més de dos amb ほか ([Cites](/ca/docs/configuration-text#cites)). Al text, `[@kawada1949; @suzuki2015]` imprimeix (2, 3), i `高橋[@takahashi2012]が` posa el número després del nom, 高橋(8)が, que la pàgina compon amb un quart de quadratí a cada costat del parèntesi, com al voltant de qualsevol paraula occidental en un text japonès. L'estil es distingeix de la GB/T 7714 xinesa per la crida: la SIST 02 posa el número entre parèntesis a la línia, i la GB/T 7714, entre claudàtors i volat. Les notes no necessiten res: `locale: 'ja'` dona a un document horitzontal notes a peu de columna, numerades des d'1 a cada pàgina, amb la crida volada i un filet d'un terç de la columna.
 
 ### 2 · Les referències en un bloc CSL-YAML
 
@@ -28,13 +28,13 @@ Les obres van al final del Markdown dins `:::references{format=csl-yaml}`, el fo
 
 <Excerpt region="masthead" />
 
-El bloc de títol és el disseny de l'H1, un estil de títol que travessa les dues columnes. La banda és una caixa ancorada al tall. L'etiqueta, el títol i la traducció anglesa hi van a sobre, cadascun sota l'anterior, de manera que un títol de tres línies empeny cap avall la línia anglesa. L'autora i la seva filiació surten d'atributs del títol i van sota la banda.
+El bloc de títol és el disseny de l'H1, un estil d'encapçalament que travessa les dues columnes. La banda és una caixa ancorada al tall. L'etiqueta, el títol i la traducció anglesa hi van a sobre, cadascun sota l'anterior, de manera que un títol de tres línies empeny cap avall la línia anglesa. L'autora i la seva filiació surten d'atributs del títol i van sota la banda.
 
 ### 4 · El resum i les seves etiquetes
 
 <Excerpt region="abstract" />
 
-El resum és un recuadre a tota l'amplada sota una franja superior verda, i les etiquetes són xips en gòtica negreta del color de la revista. Un espai ideogràfic després de cada etiqueta, escrit al Markdown, separa 要　旨 del text.
+El resum és un requadre a tota l'amplada sota una franja superior verda, i les etiquetes són xips en gòtica negreta del color de la revista. Un espai ideogràfic després de cada etiqueta, escrit al Markdown, separa 要　旨 del text.
 
 ### 5 · 表1 i 図1 on se citen
 

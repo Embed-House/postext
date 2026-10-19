@@ -2,21 +2,21 @@
 title: "Un rapporto bilingue arabo–inglese"
 summary: "Un rapporto annuale in arabo con l’inglese accanto: {dir=ltr} su ogni blocco inglese, :ltr[…] per i nomi latini, una tabella da sinistra a destra."
 plain: "Il rapporto annuale di una fondazione scritto in arabo, con ogni paragrafo seguito dalla sua versione inglese. La pagina mescola le due direzioni di scrittura senza che parole, numeri o tabelle finiscano fuori posto."
-description: "Rapporto bilingue arabo–inglese in Postext: blocchi marcati {dir=ltr}, isolati :ltr[…] in linea, testo a bandiera dall’inizio, una tabella araba e una inglese."
+description: "Rapporto bilingue arabo–inglese in Postext: blocchi marcati {dir=ltr}, isolati :ltr[…] in linea, testo in bandiera dall’inizio, una tabella araba e una inglese."
 question: "Come mescolo sulla stessa pagina paragrafi, numeri e tabelle in arabo e in inglese?"
 aliases: ["rapporto bilingue", "arabo e inglese", "direzione mista", "bidi", "testo bidirezionale", "dir=ltr", "isolato", "blocco LTR in testo RTL", "direzione della tabella", "rapporto annuale", "IBM Plex Sans Arabic", "تقرير سنوي"]
-pageNotes: { "1": "La copertina: una fascia verde petrolio in alto porta a destra il nome della fondazione e il titolo التقرير السنوي ٢٠٢٥ in arabo bianco, e sotto il titolo inglese allineato a sinistra. Più in basso, la nota del direttore: un titolo arabo a destra, la sua etichetta inglese a sinistra, e paragrafi arabi allineati a destra, ciascuno seguito da un paragrafo inglese più piccolo, grigio, allineato a sinistra." }
+pageNotes: { "1": "La copertina: una fascia verde petrolio in alto riporta a destra il nome della fondazione e il titolo التقرير السنوي ٢٠٢٥ in arabo bianco, e sotto il titolo inglese allineato a sinistra. Più in basso, la nota del direttore: un titolo arabo a destra, la sua etichetta inglese a sinistra, e paragrafi arabi allineati a destra, ciascuno seguito da un paragrafo inglese più piccolo, grigio, allineato a sinistra." }
 ---
 
 ## Che cosa comporrai
 
-Il rapporto annuale 2025 di una fondazione di traduzione immaginaria, Dar al-Dad, su una pagina larga come un A4, 210 × 280 mm, in IBM Plex Sans Arabic e IBM Plex Sans, le due metà di un’unica famiglia di caratteri. Il rapporto è in arabo: va da destra a sinistra e numera le pagine ٢, ٣. Ogni paragrafo arabo è seguito dalla sua versione inglese, più piccola e in grigio ardesia, composta da sinistra a destra e a bandiera sulla destra; ogni titolo arabo porta un’etichetta inglese sul margine opposto. I nomi latini dentro le frasi arabe mantengono il loro ordine, e le cifre dell’anno compaiono due volte, in una tabella araba che si legge da destra e in una inglese che si legge da sinistra. Nell’edizione spagnola la seconda lingua è lo spagnolo.
+Il rapporto annuale 2025 di una fondazione di traduzione immaginaria, Dar al-Dad, su una pagina larga come un A4, 210 × 280 mm, in IBM Plex Sans Arabic e IBM Plex Sans, le due metà di un’unica famiglia di caratteri. Il rapporto è in arabo: va da destra a sinistra e numera le pagine ٢, ٣. Ogni paragrafo arabo è seguito dalla sua versione inglese, più piccola e in grigio ardesia, composta da sinistra a destra e in bandiera sulla destra; ogni titolo arabo ha un’etichetta inglese sul margine opposto. I nomi latini nelle frasi arabe mantengono il loro ordine, e le cifre dell’anno compaiono due volte, in una tabella araba che si legge da destra e in una inglese che si legge da sinistra. Nell’edizione spagnola la seconda lingua è lo spagnolo.
 
 ## Preparazione
 
 ### 1 · La seconda lingua come blocchi marcati
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il documento è in arabo, quindi ogni blocco va da destra a sinistra finché il Markdown non dice altro: `{dir=ltr}` su un recinto `:::paragraphs` o su un titolo gira quel blocco, e `textAlign: 'start'` manda ogni blocco verso il lato da cui comincia, a destra per l’arabo e a sinistra per l’inglese ([Direzione del documento, dei blocchi e del testo in linea](/it/docs/arabic-layout#direzione-del-documento-del-blocco-e-in-linea)). Un nome latino dentro una riga araba, :ltr[Harbour Modern Classics], è un isolato: l’algoritmo bidi lo tratta come un unico pezzo neutro, così le parole arabe e la virgola che lo circondano restano al loro posto ([Isolati](/it/docs/arabic-layout#isolati)). `emphasis: 'italic'` mantiene *Middlemarch* in corsivo nel testo inglese; il motore non inclina mai una lettera araba, qualunque sia l’impostazione.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il documento è in arabo, quindi ogni blocco va da destra a sinistra finché il Markdown non indica altro: `{dir=ltr}` su un blocco `:::paragraphs` o su un titolo gira quel blocco, e `textAlign: 'start'` manda ogni blocco verso il lato da cui comincia, a destra per l’arabo e a sinistra per l’inglese ([Direzione del documento, dei blocchi e del testo in linea](/it/docs/arabic-layout#direzione-del-documento-del-blocco-e-in-linea)). Un nome latino in una riga araba, :ltr[Harbour Modern Classics], è un isolato: l’algoritmo bidi lo tratta come un unico pezzo neutro, così le parole arabe e la virgola che lo circondano restano al loro posto ([Isolati](/it/docs/arabic-layout#isolati)). `emphasis: 'italic'` mantiene *Middlemarch* in corsivo nel testo inglese; il motore non inclina mai una lettera araba, qualunque sia l’impostazione.
 
 ### 2 · Una tabella per ogni direzione
 
@@ -28,7 +28,7 @@ La tabella araba segue il documento: la sua prima colonna, il programma, sta a d
 
 <Excerpt region="cover" />
 
-La copertina è il progetto grafico del titolo di livello 1. Il progetto di un titolo si compone nel flusso e si specchia con la pagina, quindi i suoi ancoraggi nominano i lati del testo: `top-left` è la destra del foglio, dove cominciano il nome e il titolo arabi, e `top-right` la sua sinistra, dove comincia il titolo inglese. Il testo del progetto grafico prende la direzione del documento, quindi le righe arabe non hanno bisogno d’altro; il titolo inglese imposta `direction: 'ltr'`. La fascia è un riquadro ancorato all’abbondanza, alto 86 mm, e il `minHeight` dell’apertura porta la nota del direttore sotto di essa.
+La copertina è la grafica del titolo di livello 1. La grafica di un titolo si compone nel flusso e si specchia con la pagina, quindi i suoi ancoraggi indicano i lati del testo: `top-left` è la destra del foglio, dove cominciano il nome e il titolo arabi, e `top-right` la sua sinistra, dove comincia il titolo inglese. Il testo della grafica prende la direzione del documento, quindi le righe arabe non hanno bisogno d’altro; il titolo inglese imposta `direction: 'ltr'`. La fascia è un riquadro ancorato all’abbondanza, alto 86 mm, e il `minHeight` dell’apertura porta la nota del direttore sotto di essa.
 
 ## Varianti
 
@@ -43,4 +43,4 @@ Un rapporto per un consiglio che non legge l’arabo scambia i ruoli: un documen
 
 ## Errori frequenti
 
-- Un numero che il motore scrive dentro un blocco inglese, il numero di un elenco o l’etichetta di una didascalia, prende comunque le cifre del documento (٢ in un rapporto arabo). Dai a queste tabelle un tipo di risorsa senza contatore, oppure scrivi i numeri tu.
+- Un numero che il motore scrive in un blocco inglese, il numero di un elenco o l’etichetta di una didascalia, prende comunque le cifre del documento (٢ in un rapporto arabo). Dai a queste tabelle un tipo di risorsa senza contatore, oppure scrivi i numeri tu.

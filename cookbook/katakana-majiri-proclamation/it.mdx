@@ -10,7 +10,7 @@ pageNotes: { "1": "Il frontespizio: 大日本帝國憲法 in Mincho nero al cent
 
 ## Che cosa comporrai
 
-Una ristampa di otto pagine della Costituzione Meiji come la stampò la Gazzetta ufficiale (官報) l’11 febbraio 1889: l’editto imperiale, le controfirme dei ministri e i primi due capitoli, trentadue articoli. Il testo è 漢字カタカナ交じり文 (kanji-katakana majiri-bun), la lingua scritta del diritto Meiji: i kanji portano le parole, i katakana le desinenze, e non ci sono segni di sonorizzazione, kana piccoli né punteggiatura di alcun tipo. Le pagine sono A5, verticali e rilegate a destra, con una griglia di 40 × 15 caratteri dentro un filetto spesso e uno sottile. Gli articoli sono numerati da un contatore di elenco in kanji, da 第一條 a 第三十二條, e il sigillo e le controfirme stanno dove li mise la Gazzetta.
+Una ristampa di otto pagine della Costituzione Meiji come la stampò la Gazzetta ufficiale (官報) l’11 febbraio 1889: l’editto imperiale, le controfirme dei ministri e i primi due capitoli, trentadue articoli. Il testo è 漢字カタカナ交じり文 (kanji-katakana majiri-bun), la lingua scritta del diritto Meiji: i kanji esprimono le parole, i katakana le desinenze, e non ci sono segni di sonorizzazione, kana piccoli né punteggiatura di alcun tipo. Le pagine sono A5, verticali e rilegate a destra, con una griglia di 40 × 15 caratteri racchiusa da un filetto spesso e uno sottile. Gli articoli sono numerati da un contatore di elenco in kanji, da 第一條 a 第三十二條, e il sigillo e le controfirme stanno dove li mise la Gazzetta.
 
 ## Preparazione
 
@@ -28,7 +28,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni articolo
 
 <Excerpt region="frame" />
 
-Lo slot dell’intestazione disegna in semplici millimetri della pagina, non nel flusso verticale, quindi la cornice è fatta di due riquadri collocati dagli stessi numeri che collocano la gabbia: `HEAD` dall’alto, `SIDE` da ciascun bordo. I margini sono calcolati dalla griglia, non lasciati a essa, così la gabbia sta esattamente 6 mm dentro il filetto sottile. Il folio, in kanji grazie a `pageNumbering.format: 'japanese-informal'`, sta sotto la cornice.
+Lo spazio grafico dell’intestazione disegna in semplici millimetri della pagina, non nel flusso verticale, quindi la cornice è fatta di due riquadri collocati dagli stessi numeri che collocano la gabbia: `HEAD` dall’alto, `SIDE` da ciascun bordo. I margini sono calcolati dalla griglia, non lasciati a essa, così la gabbia sta esattamente 6 mm all’interno del filetto sottile. Il numero di pagina, in kanji grazie a `pageNumbering.format: 'japanese-informal'`, sta sotto la cornice.
 
 ### 4 · Componi il frontespizio lungo l’asse
 
@@ -40,7 +40,7 @@ In un flusso verticale `x` scende lungo il foglio e `y` va verso sinistra, quind
 
 <Excerpt region="voices" />
 
-Shippori Mincho B1, un Mincho con le forme antiche 國, 條 e 權, carica i file per il testo e i titoli; Noto Sans JP carica solo le note del curatore, i folii e la riga inglese. Un carattere che riceve meno di ciò che compone fa fallire la cattura (C12).
+Shippori Mincho B1, un Mincho con le forme antiche 國, 條 e 權, carica i file per il testo e i titoli; Noto Sans JP carica solo le note del curatore, i numeri di pagina e la riga inglese. Un carattere che riceve meno di ciò che compone fa fallire la cattura (C12).
 
 ## Varianti
 
@@ -64,5 +64,5 @@ Alcuni testi giuridici e finanziari scrivono 壱, 弐, 参: il token 壱 o lo st
 
 ## Errori frequenti
 
-- La Gazzetta compone i katakana delle desinenze più piccoli dei kanji, e spazia uniformemente i titoli dei ministri su un’unica larghezza (字取り). Postext compone ogni carattere nel corpo del testo, e la sua spaziatura uniforme, `jidori`, si applica solo ai titoli, quindi qui le controfirme sono solo allineate al piede della riga.
+- La Gazzetta compone i katakana delle desinenze più piccoli dei kanji, e spazia uniformemente i titoli dei ministri su un’unica larghezza (字取り). Postext compone ogni carattere nel corpo del testo corrente, e la sua spaziatura uniforme, `jidori`, si applica solo ai titoli, quindi qui le controfirme sono solo allineate al piede della riga.
 - Giapponese e cinese non concordano su questo contatore: in un documento `ja` il token `一` e `{2:一}` significano `japanese-informal` (百一, 十八), in uno cinese significano lo stile cinese (一百零一, 十八). La raccolta cinese <RecipeLink slug="chinese-dates-upright">Date e sigle diritte nel testo verticale</RecipeLink> scrive a mano i suoi 第一條.

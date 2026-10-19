@@ -24,7 +24,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein `:::page` f
 
 <Excerpt region="art" />
 
-Jedes Bild wird einmal gezeichnet und so beschnitten, dass es die Zelle füllt, in der es landet. Der Sicherheitsbereich ist der Teil, den jeder Beschnitt vollständig behält ([Panels und Zeichnungen](/de/docs/comics#panels-und-bilder)). Der Sicherheitsbereich des Funkgerätbildes ist allein der Wärter, 24 % seiner Breite, deshalb zeigt die 26 mm breite Zelle von Plan C ihn von der Mütze bis zu den Stiefeln und lässt das Funkgerät weg; die breiten Zellen der Pläne A und B zeigen beides. Eine Zelle, deren Form einen Sicherheitsbereich nicht fassen kann, setzt das Bild mit Balken ein (Letterbox), und der Build warnt (`comicPanelLetterbox`). Die Anker markieren Mund und Gesicht jedes Sprechers in denselben Bruchteilen, sodass die Dorne der Sprechblasen die Sprecher in jedem Ausschnitt finden.
+Jedes Bild wird einmal gezeichnet und so beschnitten, dass es die Zelle füllt, in der es steht. Der Sicherheitsbereich ist der Teil, den jeder Ausschnitt vollständig behält ([Panels und Zeichnungen](/de/docs/comics#panels-und-bilder)). Der Sicherheitsbereich des Funkgerätbildes ist allein der Wärter, 24 % seiner Breite, deshalb zeigt die 26 mm breite Zelle von Plan C ihn von der Mütze bis zu den Stiefeln und lässt das Funkgerät weg; die breiten Zellen der Pläne A und B zeigen beides. Eine Zelle, deren Form einen Sicherheitsbereich nicht fassen kann, setzt das Bild mit Balken ein (Letterbox), und der Build warnt (`comicPanelLetterbox`). Die Anker markieren Mund und Gesicht jedes Sprechers in denselben Bruchteilen, sodass die Dorne der Sprechblasen die Sprecher in jedem Ausschnitt finden.
 
 ### 3 · Ein Panel über ein anderes legen
 
@@ -59,5 +59,5 @@ Bilder behalten standardmäßig ihre Seitenrichtung. Ein Comic, der ohne Schrift
 
 ## Häufige Fehler
 
-- Eine Zelle von einem Fünftel der Seitenbreite fasst bei 8 pt etwa vier Wörter pro Zeile, und in Plan C liegt das Gesicht des Wärters mitten in seiner: Seine beiden Sprechblasen über den Sturm sind höher als der Raum darüber oder darunter. Dort trägt die erste der beiden Zeilen `break` (`tomas{break}:`), sodass das Paar über den Zwischenraum in Mayas Panel reichen darf; die Engine hält die zweite Sprechblase hinter der ersten und lässt sie nie in den Seitenrand laufen. Ohne `break` warnt der Build `comicBalloonOverflow`.
+- Eine Zelle von einem Fünftel der Seitenbreite fasst bei 8 pt etwa vier Wörter pro Zeile, und in Plan C liegt das Gesicht des Wärters mitten in seiner: Seine beiden Sprechblasen über den Sturm sind höher als der Raum darüber oder darunter. Dort hat die erste der beiden Zeilen das Attribut `break` (`tomas{break}:`), sodass das Paar über den Zwischenraum in Mayas Panel reichen darf; die Engine hält die zweite Sprechblase hinter der ersten und lässt sie nie in den Seitenrand laufen. Ohne `break` warnt der Build `comicBalloonOverflow`.
 - Ein engerer Sicherheitsbereich gibt mehr Zellen einen sauberen Ausschnitt, doch was außerhalb liegt, kann abgeschnitten werden: die Stiefel in der ersten Reihe von Plan A, das Funkgerät in Plan C.

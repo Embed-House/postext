@@ -22,13 +22,13 @@ Le préprocesseur est dans [la réponse courte](#la-réponse-courte) plus haut. 
 
 <Excerpt region="markers" />
 
-Le préprocesseur écrit chaque appel sous la forme `**^n^**`. Les accents circonflexes placent le chiffre à 58 % du corps du texte, surélevé d’un tiers de celui-ci ([mise en forme en ligne](/fr/docs/document-format-inline#mise-en-forme-en-ligne)), et le gras lui donne `bodyText.boldColor`, qui est libre puisque Faraday n’emploie jamais le gras. Un chiffre de 5,8 pt demande un contraste de 4,5:1 sur le papier, et l’orange flamme n’atteint que 2,6:1 : les appels prennent donc la couleur braise, plus sombre. Le renvoi `[Fig. 1]` en <PageRef page={3}>page 17</PageRef> s’imprime dans la même couleur, en romain, parce que `referenceColor` reprend par défaut la couleur du gras et que `referenceBold: false` retire le gras.
+Le préprocesseur écrit chaque appel sous la forme `**^n^**`. Les accents circonflexes placent le chiffre à 58 % du corps du texte courant, surélevé d’un tiers de celui-ci ([mise en forme en ligne](/fr/docs/document-format-inline#mise-en-forme-en-ligne)), et le gras lui donne `bodyText.boldColor`, qui est libre puisque Faraday n’emploie jamais le gras. Un chiffre de 5,8 pt demande un contraste de 4,5:1 sur le papier, et l’orange flamme n’atteint que 2,6:1 : les appels prennent donc la couleur braise, plus sombre. Le renvoi `[Fig. 1]` en <PageRef page={3}>page 17</PageRef> s’imprime dans la même couleur, en romain, parce que `referenceColor` reprend par défaut la couleur du gras et que `referenceBold: false` retire le gras.
 
 ### 3 · Composer les notes plus petit, le numéro en retrait suspendu
 
 <Excerpt region="notes" />
 
-Les notes sont en 8,2 pt sur 10,7 pt, environ les quatre cinquièmes du corps du texte. Le pen mesure le `hangingIndent` du style en Libre Bodoni une fois les polices chargées : un 5 gras et une espace demi-cadratin font 1,12 em, si bien que le premier mot de chaque note s’aligne sur ses lignes suivantes ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)). Avec le numéro dans le retrait, les notes n’ont besoin d’aucun espace entre elles. Elles sont composées en drapeau parce que la justification étirerait cette espace demi-cadratin, et qu’une colonne justifiée de 55 mm en 8,2 pt devient lâche. Les tildes composent les indices comme les accents circonflexes composent les exposants, comme `C~25~H~52~` dans la note 4 et `H~2~O` dans la note 5.
+Les notes sont en 8,2 pt sur 10,7 pt, environ les quatre cinquièmes du corps du texte courant. Le pen mesure le `hangingIndent` du style en Libre Bodoni une fois les polices chargées : un 5 gras et une espace demi-cadratin font 1,12 em : le premier mot de chaque note s’aligne donc sur ses lignes suivantes ([styles de paragraphe](/fr/docs/configuration-styles#styles-de-paragraphe)). Avec le numéro dans le retrait, les notes n’ont besoin d’aucun espace entre elles. Elles sont composées en drapeau parce que la justification étirerait cette espace demi-cadratin, et qu’une colonne justifiée de 55 mm en 8,2 pt devient lâche. Les tildes composent les indices comme les accents circonflexes composent les exposants, comme `C~25~H~52~` dans la note 4 et `H~2~O` dans la note 5.
 
 ### 4 · Donner aux notes une page en deux colonnes
 
@@ -54,7 +54,7 @@ L’orange flamme a un contraste de 6:1 sur la suie mais seulement de 2,6:1 sur 
 
 ### Laisser Postext composer les notes
 
-Supprimez `endnotes()` et le titre `## Notes`, mettez une ligne blanche entre les définitions (le moteur lit une définition jusqu’à la ligne blanche suivante) et ajoutez `footnotes: { placement: 'chapterEnd' }` à la configuration. Le moteur numérote les appels et compose les notes à la fin de la conférence, après le colophon, dans son unique colonne ; <RecipeLink slug="novel-footnotes-column-foot">Des notes au pied de la colonne qui les appelle</RecipeLink> met en forme les notes que compose le moteur.
+Supprimez `endnotes()` et le titre `## Notes`, mettez une ligne blanche entre les définitions (pour le moteur, une définition va jusqu’à la ligne blanche suivante) et ajoutez `footnotes: { placement: 'chapterEnd' }` à la configuration. Le moteur numérote les appels et compose les notes à la fin de la conférence, après le colophon, dans son unique colonne ; <RecipeLink slug="novel-footnotes-column-foot">Des notes au pied de la colonne qui les appelle</RecipeLink> met en forme les notes que compose le moteur.
 
 ### Imprimer les appels en noir
 

@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'WebMCP: un agente trabajando en el Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Lo que un agente de IA en el navegador puede hacer con el Sandbox mediante sus 41 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar la revisión, exportar) y cómo se llama cada una, con argumentos y respuestas reales',
+  description: 'Qué puede hacer un agente de IA en el navegador con el Sandbox gracias a sus 41 herramientas WebMCP (mirar las páginas, cambiar cualquier ajuste, editar el texto, añadir imágenes, tablas y fuentes, pasar las comprobaciones, exportar) y cómo se invoca cada una, con argumentos y respuestas reales',
   lang: 'es',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 46,
-  plainSummary: "Esta página es para quien quiere que un asistente de inteligencia artificial trabaje por él en un libro del Sandbox. Mientras el Sandbox está abierto, le da al asistente un juego de herramientas: mirar cualquier página, cambiar el diseño, editar el texto, añadir imágenes y tablas, encontrar problemas y guardar archivos. Tú se lo pides con tus palabras, por ejemplo «sube un poco la letra y comprueba que el libro sigue cabiendo en 40 páginas», y el asistente usa las herramientas y te enseña las páginas. Todo se queda en tu navegador. La página explica cómo conectar un asistente, qué puede hacer y cómo se llama cada herramienta.",
+  plainSummary: "Esta página es para quien quiere que un asistente de inteligencia artificial trabaje por él en un libro del Sandbox. Mientras el Sandbox está abierto, le da al asistente un juego de herramientas para mirar cualquier página, cambiar el diseño, editar el texto, añadir imágenes y tablas, encontrar problemas y guardar archivos. Tú se lo pides con tus palabras, por ejemplo «sube un poco la letra y comprueba que el libro sigue cabiendo en 40 páginas», y el asistente usa las herramientas y te enseña las páginas. Todo se queda en tu navegador. La página explica cómo conectar un asistente, qué puede hacer y cómo se invoca cada herramienta.",
 };
 
 # WebMCP
@@ -18,7 +18,7 @@ export const metadata = {
 El [Sandbox](/es/docs/sandbox) da a un agente sus propias herramientas mediante
 [WebMCP](https://webmachinelearning.github.io/webmcp/), un borrador de estándar
 web que permite a una página ofrecer herramientas al modelo de IA con el que
-habla el navegador. Con ellas el agente no va pulsando por la interfaz: lee el
+habla el navegador. Con ellas, el agente no tiene que ir haciendo clic por la interfaz: lee el
 libro, pide una imagen de la página 12, pone `bodyText.fontSize` a 10,5 pt, ve
 que el capítulo ha pasado de 18 a 19 páginas y lo deja como estaba. Hace lo
 mismo que tú haces a ojo, con tu libro y en tu navegador.
@@ -26,19 +26,19 @@ mismo que tú haces a ojo, con tu libro y en tu navegador.
 Hay 41 herramientas cuyo nombre empieza por `sandbox_`, registradas mientras el
 Sandbox está en pantalla, y 8 herramientas del sitio, `site_*`, en todas las
 páginas de postext.dev. Esta página las ordena según lo que le pedirías a un
-agente y da la llamada de cada una.
+agente y muestra cómo se invoca cada una.
 
 ## Conectar un agente
 
 ### En un navegador con WebMCP
 
 Las herramientas se registran en `document.modelContext` al montarse el Sandbox
-y se retiran al salir de él. Un agente al que el navegador entrega las
-herramientas de la página las encuentra ahí. En Postext no hay nada que
-instalar ni configurar.
+y se retiran al salir de él. Cualquier agente al que el navegador dé acceso a
+las herramientas de la página las encuentra ahí. Por parte de Postext, no hay
+nada que instalar ni configurar.
 
-WebMCP sigue siendo un borrador. Chrome lo ofrece como prueba de origen y tras
-la opción `chrome://flags/#enable-webmcp-testing`. Las herramientas dependen de
+WebMCP sigue siendo un borrador. Chrome lo ofrece como prueba de origen (origin
+trial) y tras la marca experimental `chrome://flags/#enable-webmcp-testing`. Las herramientas dependen de
 la página: en la portada o en la documentación el agente tiene las herramientas
 `site_*`; cuando el Sandbox está en pantalla aparecen además las 41
 herramientas `sandbox_*`.
@@ -154,11 +154,12 @@ está cargando). `question` y `notice` aparecen cuando el Sandbox está esperand
 algo de ti; consulta [Preguntas y avisos](#preguntas-y-avisos).
 
 Toda herramienta que recibe un `chapter` acepta su posición en el libro
-(empezando por 1), su título o su id. Si se omite, es el capítulo en pantalla.
+(empezando por 1), su título o su id. Si se omite, se usa el capítulo que está
+en pantalla.
 
 ### Mirar una página
 
-**Una imagen.** «Enséñame el arranque del capítulo 3», «¿cómo queda la doble
+**Una imagen.** «Enséñame el principio del capítulo 3», «¿cómo queda la doble
 página 24-25?»:
 
 ```jsonc
@@ -168,7 +169,7 @@ página 24-25?»:
 
 `page` es el número impreso en la página; `position` es el lugar de la página
 entre las del capítulo (empezando por 1), para las páginas sin número. Sin
-ninguno de los dos, es la página en pantalla. `crop` amplía una parte de la
+ninguno de los dos, se usa la página en pantalla. `crop` amplía una parte de la
 página, en fracciones de su ancho y su alto desde la esquina superior
 izquierda, para juzgar de cerca la letra y los espacios:
 
@@ -178,7 +179,7 @@ izquierda, para juzgar de cerca la letra y los espacios:
 ```
 
 `printPreview: true` pinta la prueba en pantalla del perfil de impresión con
-las guías de corte, sangre y zona de seguridad; `trimmed: true` deja fuera el
+las guías de corte, sangrado y zona segura; `trimmed: true` deja fuera el
 margen con las marcas de corte.
 
 **La misma página como datos.** «¿Qué líneas de esta página quedan flojas?»,
@@ -212,18 +213,18 @@ es con las mismas fracciones que usó para el recorte:
 { "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
 ```
 
-La respuesta da el bloque, la línea y la columna del Markdown fuente en ese
+La respuesta da el bloque, la línea y la columna del Markdown de origen en ese
 punto (y la palabra), un enlace y la página a la que lleva, o la celda de
 tabla o el pie de un recurso. Con `select: true` hace además lo que hace un
 clic: se abre el panel Texto con el cursor en ese lugar (`word: true`
 selecciona la palabra y `to` selecciona hasta un segundo punto).
 
-La respuesta también trae `elements`: lo que hay en ese punto, de dentro hacia fuera, en el orden en que un clic en la página lo elige y cada clic más o Esc sube (un carácter, su párrafo, el recuadro que lo rodea, el marco de una página compuesta, su grupo, la página y su plantilla; o un elemento de diseño y su slot). Cada uno lleva su id estable, su origen (un tramo del Markdown, una ruta de la configuración, un atributo, un recurso) y su nombre en la ruta que muestra el Sandbox (`path`). Con `select: true`, `level` (`block`, `frame`, `template`, `design`…) elige uno de ellos como lo haría una persona: en modo Contenido selecciona su Markdown y en modo Diseño abre su marco, su estilo o su plantilla. `sandbox_get_state` informa del elemento elegido en `pageSelection`.
+La respuesta también trae `elements`: lo que hay en ese punto, de dentro hacia fuera, en el orden en que los va eligiendo un clic en la página y por el que se sube con cada clic más o con Esc (un carácter, su párrafo, el recuadro que lo rodea, el marco de una página compuesta, su grupo, la página y su plantilla; o un elemento de diseño y su ranura). Cada uno trae su id estable, su origen (un tramo del Markdown, una ruta de la configuración, un atributo, un recurso) y su nombre en la ruta que muestra el Sandbox (`path`). Con `select: true`, `level` (`block`, `frame`, `template`, `design`…) elige uno de ellos como lo haría una persona: en el modo Contenido selecciona su Markdown y en el modo Diseño abre su marco, su estilo o su plantilla. `sandbox_get_state` informa del elemento elegido en `pageSelection`.
 
 ### Cambiar el diseño
 
 Cualquier ajuste de la [configuración](/es/docs/configuration) se puede
-cambiar por su ruta. Un agente casi nunca conoce la ruta de entrada, así que
+cambiar por su ruta. Un agente casi nunca conoce la ruta de antemano, así que
 la busca:
 
 ```jsonc
@@ -243,15 +244,15 @@ la busca:
 ```
 
 `sandbox_get_config` lee un ajuste o una sección entera: `set` es lo que guarda
-el libro y `effective` lo que resulta al completar con los valores por
-defecto, que muestra también todos los ajustes que tiene la sección.
+el libro, y `effective`, lo que resulta al completarlo con los valores por
+defecto, que además muestra todos los ajustes que tiene la sección.
 
 ```jsonc
 // sandbox_get_config
 { "path": "headings.levels[level=2]" }
 ```
 
-Las rutas nombran un elemento de una lista por lo que lo distingue:
+En una ruta, un elemento de una lista se elige por el campo que lo distingue:
 `headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`,
 `calloutStyles[id=note].title`. Después, `sandbox_set_config` cambia tantos
 ajustes como quieras en una sola llamada:
@@ -269,9 +270,9 @@ ajustes como quieras en una sola llamada:
 ```
 
 Una longitud es `"2.5cm"`, `{ "value": 2.5, "unit": "cm" }` o un número en la
-unidad del ajuste; un color es `"#1f3a5f"`. Un valor `null` quita el ajuste y
-vuelve el valor del diseño. La respuesta sirve para juzgar el cambio y para
-deshacerlo:
+unidad del ajuste; un color es `"#1f3a5f"`. Un valor `null` quita el ajuste, y
+se recupera el valor del diseño. La respuesta le indica al agente cómo juzgar
+el cambio y cómo deshacerlo:
 
 ```json
 {
@@ -314,17 +315,17 @@ busca familias en el catálogo abierto, y escribir el nombre en un ajuste
 `fontFamily` la carga.
 
 Los estilos de recuadro tienen su propia biblioteca: `sandbox_frame_styles`
-da cada estilo con dónde lo usa el libro (marcos de plantilla, páginas
-compuestas, recuadros `:::callout` por capítulo) y las fusiones de estilos casi
-iguales que propone, como Diseño › Recuadros › Estilos de marco.
-`sandbox_merge_styles` recibe `groups` (`{ keep, merge }`) o `all: true` y
-reescribe cada marco y cada bloque que nombraba un estilo fusionado; con
-`lookOnly: true` compara también estilos cuyos recuadros están en sitios
-distintos. Ese estilo se queda entonces solo con su sitio, basado en el estilo
-que se queda (`extends`), así que sus recuadros no se mueven y la respuesta lo
-lista en `keptForTheirPlace`; con `keepPlaces: false` se fusiona del todo y sus
-recuadros se mueven.
-La respuesta da `undoSteps`: un paso por capítulo reescrito y otro para los estilos, que `sandbox_undo` revierte empezando por los estilos.
+enumera todos los estilos con los lugares donde los usa el libro (marcos de
+plantilla, páginas compuestas, recuadros `:::callout` por capítulo) y las
+fusiones que propone entre estilos casi iguales, igual que Diseño › Recuadros ›
+Estilos de marco. `sandbox_merge_styles` recibe `groups` (`{ keep, merge }`) o
+`all: true` y reescribe cada marco y cada bloque que usaba un estilo fusionado.
+Con `lookOnly: true` compara también estilos cuyos recuadros están en sitios
+distintos; un estilo así conserva entonces solo su posición y extiende el
+estilo que se mantiene (`extends`), de modo que sus recuadros no se mueven, y la
+respuesta lo incluye en `keptForTheirPlace`. Con `keepPlaces: false` se fusiona
+del todo y sus recuadros se mueven.
+La respuesta da `undoSteps`: un paso por cada capítulo reescrito y otro para los estilos, que `sandbox_undo` revierte empezando por los estilos.
 
 ### Editar el texto
 
@@ -353,7 +354,7 @@ números de línea, localiza un pasaje y sustituye pasajes exactos:
 }
 ```
 
-Cada `find` tiene que coincidir exactamente con el texto fuente y aparecer una
+Cada `find` tiene que coincidir exactamente con el texto de origen y aparecer una
 sola vez, salvo que se indique `all`. O se aplican todas las ediciones o
 ninguna: un pasaje que no está se rechaza con el consejo de volver a leer el
 capítulo. La llamada entera es un solo paso para `sandbox_undo_text`, que la
@@ -362,7 +363,7 @@ entero, a partir de `markdown` o de un archivo `.md`.
 
 Para enseñarte un lugar del texto, `sandbox_select_text` abre el panel Texto
 con ese pasaje seleccionado (por `text`, `line` u `offset`), igual que un clic
-en un hallazgo del panel Revisión.
+en un aviso del panel Revisión.
 
 ### Organizar los capítulos
 
@@ -384,7 +385,7 @@ capítulos:
 
 ### Añadir imágenes, tablas, vídeos y fuentes
 
-`sandbox_save_resource` añade un recurso o cambia uno, como el panel Recursos.
+`sandbox_save_resource` añade un recurso o cambia uno, igual que el panel Recursos.
 Un archivo llega por `url` (una dirección `https:` que la página pueda
 descargar, o una URL `data:`) o en `base64`:
 
@@ -421,7 +422,7 @@ imagen. `newId` renombra un recurso y, por defecto, todas sus referencias en
 el libro. `sandbox_list_resources` los enumera y, con un `id`, da uno completo
 (las celdas de una tabla con su formato, el código de un SVG).
 
-Las `marks` de una imagen llevan también sus anclas. En un mapa o un esquema son los puntos en los que se colocan sus líneas `::label`: un `id`, `x` e `y` (fracciones de la imagen entera) y los campos de rótulo que toma un rótulo colocado allí (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La respuesta avisa de un estilo de rótulo que el diseño no tiene, y las marcas nuevas de un recurso son un paso del historial (`sandbox_undo` responde `kind: "resource"`). En un SVG, `marks.svgSymbols` (`idPrefix`, `className`) añade una zona libre sobre cada elemento del dibujo que nombra, a las zonas que da la llamada o que ya tiene la imagen (desde postext 1.43).
+Las `marks` de una imagen incluyen también sus anclas. En un mapa o un esquema son los puntos en los que se colocan sus líneas `::label`: un `id`, `x` e `y` (fracciones de la imagen entera) y los campos de rótulo que toma un rótulo colocado allí (`style`, `align`, `verticalAlign`, `rotate`, `width`, `writingMode`). La respuesta avisa de un estilo de rótulo que el diseño no tiene, y las marcas nuevas de un recurso son un paso del historial (`sandbox_undo` responde `kind: "resource"`). En un SVG, `marks.svgSymbols` (`idPrefix`, `className`) añade una zona libre sobre cada elemento del dibujo que esos campos indican, además de las zonas que da la llamada o que ya tiene la imagen (desde postext 1.43).
 
 ```jsonc
 // dos anclas de un mapa, con sus estilos de rótulo
@@ -447,10 +448,10 @@ Las fuentes que se suben al libro pasan por `sandbox_save_font`:
 La respuesta es lo que dice el panel Revisión, para cualquier capítulo o para
 el libro entero, esté lo que esté en pantalla: fuentes e imágenes que faltan,
 marcado que el motor no ha podido leer, elementos de diseño que no caben,
-texto demasiado pálido para su fondo, líneas flojas, viudas, cajas que
-desbordan y el preflight de impresión. Cada aviso trae su categoría, su
-capítulo, su línea y sus desplazamientos, su página y el ajuste o el recurso
-que nombra:
+texto demasiado pálido para su fondo, líneas flojas, viudas, recuadros que se
+desbordan y la verificación previa a la impresión (preflight). Cada aviso trae
+su categoría, su capítulo, su línea y sus desplazamientos, su página y el
+ajuste o el recurso al que se refiere:
 
 ```json
 {
@@ -474,7 +475,7 @@ Desde un aviso el agente puede ir a su lugar (`sandbox_select_text` con
 texto o el ajuste. `category` acota la lista; en un libro largo,
 `scope: "book"` maqueta todos los capítulos y tarda un rato.
 
-Un libro con varias ediciones (el paquete de un ejemplo o un proyecto importado de uno) tiene también sus comprobaciones de páginas compuestas en todos los idiomas: `sandbox_get_composed_checks` maqueta cada edición y las enumera por idioma, capítulo, página y marco, como hace el panel en *Páginas compuestas*, con `language` para quedarse con una (desde postext 1.40). `sandbox_get_warnings` sigue comprobando un capítulo del idioma en pantalla.
+Un libro con varias ediciones (el paquete de un ejemplo o un proyecto importado de uno) tiene también sus comprobaciones de páginas compuestas en todos los idiomas: `sandbox_get_composed_checks` maqueta cada edición y las enumera por idioma, capítulo, página y marco, como hace el panel Revisión en *Páginas compuestas*, con `language` para quedarse con una (desde postext 1.40). `sandbox_get_warnings` sigue comprobando un capítulo del idioma en pantalla.
 
 ### Mostrar al lector
 
@@ -491,8 +492,8 @@ Lo que cambia el agente, lo ves tú. Para señalarte algo:
 ```
 
 `sandbox_set_view` elige además el visor (`canvas`, `pdf`, `folio`, `html`,
-`epub`), el panel lateral, capítulo o libro entero, el zoom, el tamaño de
-letra del lector, la vista previa de impresión y el grupo del panel Diseño.
+`epub`), el panel lateral, si se muestra un capítulo o el libro entero, el
+zoom, el tamaño de letra del lector, la vista previa de impresión y el grupo del panel Diseño.
 `sandbox_go_to_page` pasa páginas por `step`, `page`, `position`, un pasaje
 `text`, un `anchor` o una entrada `contents` de un EPUB. `sandbox_run_viewer`
 pulsa un botón de la barra de herramientas: `regenerate` vuelve a escribir el
@@ -503,8 +504,8 @@ para que lo confirmes tú y `play_video` reproduce un vídeo de una página.
 
 `sandbox_inspect_comic` da las viñetas, las líneas de división y los bocadillos
 de una página de cómic con sus posiciones; `sandbox_edit_comic` hace las
-ediciones que una persona hace con el puntero y las escribe en el texto
-fuente:
+ediciones que una persona hace con el puntero y las escribe en el texto de
+origen:
 
 ```jsonc
 // mover el centro de un bocadillo a un punto de la imagen de su viñeta, en porcentaje
@@ -515,7 +516,7 @@ fuente:
 ```
 
 La respuesta avisa cuando un bocadillo cae sobre una cara o se sale de su
-viñeta. El formato está en [Cómics](/es/docs/comics).
+viñeta. El formato se explica en [Cómics](/es/docs/comics).
 
 ### Libros, archivos y Word
 
@@ -547,11 +548,12 @@ viñeta. El formato está en [Cómics](/es/docs/comics).
   }
   ```
 
-  Con `characterSpacing` (activado por defecto cuando hay algo que tomar; desde
-  postext 1.40) el espaciado entre letras de los estilos de Word en uso pasa, en
-  em, a los estilos de párrafo, los estilos de título, los niveles de título y
-  los títulos de recuadro del libro a los que se asignan, donde el libro no fija
-  ninguno. La simulación lo enumera en `characterSpacing`.
+  Con `characterSpacing` (desde postext 1.40; activado por defecto cuando los
+  estilos de Word tienen espaciado entre letras que trasladar), el espaciado
+  entre letras de los estilos de Word en uso se copia, en em, a los estilos de
+  párrafo, los estilos de encabezado, los niveles de encabezado y los títulos de
+  recuadro del libro a los que se asignan, siempre que el libro no fije ninguno.
+  La simulación lo enumera en `characterSpacing`.
 
   `sandbox_word_templates` enumera, lee, guarda y borra las asignaciones
   guardadas, que también usa la exportación a Word.
@@ -578,7 +580,7 @@ página densa para juzgarla → `sandbox_get_warnings` con
 alrededor de su `line` y `sandbox_render_page` de su `page` →
 `sandbox_edit_text` o `sandbox_set_config` → `sandbox_get_warnings` de nuevo,
 hasta que vuelva vacío.
-Un marco de una página compuesta que no cabe trae sus soluciones (`proposals`): `sandbox_apply_proposal` con su `frame` y el número de una de ellas la aplica, vuelve a maquetar el capítulo y responde `fits`.
+Un marco de una página compuesta que no cabe trae sus propuestas (`proposals`): `sandbox_apply_proposal`, con su `frame` y el número de una de ellas, la aplica, vuelve a maquetar el capítulo y responde con `fits`.
 
 **«Haz un libro con este archivo de Word y dame el PDF.»** `sandbox_save_book`
 con `action: "new_blank"` → `sandbox_import_word` con `dryRun: true` →
@@ -588,9 +590,9 @@ con `action: "new_blank"` → `sandbox_import_word` con `dryRun: true` →
 
 ## Qué pide tu consentimiento
 
-Seis herramientas hacen cosas que no se pueden deshacer y van marcadas como
-consecuentes (`consequentialHint`), para que el navegador pueda preguntarte
-antes de ejecutarlas: `sandbox_remove_chapter`, `sandbox_delete_resource`,
+Seis herramientas hacen cosas que no se pueden deshacer y llevan la marca
+`consequentialHint` (acciones con consecuencias), para que el navegador pueda
+preguntarte antes de ejecutarlas: `sandbox_remove_chapter`, `sandbox_delete_resource`,
 `sandbox_delete_book`, `sandbox_reset_to_original`, `sandbox_import_word`
 (puede sustituir el libro entero) y `sandbox_answer` (puede borrar tu copia de
 un libro). Si tienes dudas, pide antes al agente que exporte una copia
@@ -603,8 +605,8 @@ evitar que ese texto se tome por instrucciones.
 
 ## Límites
 
-- **Todo se queda en tu navegador.** Las herramientas no alcanzan nada que no
-  alcance el propio Sandbox: tus libros están en el almacenamiento de este
+- **Todo se queda en tu navegador.** Las herramientas no llegan a nada a lo que
+  no llegue el propio Sandbox: tus libros están en el almacenamiento de este
   navegador, y un archivo indicado por `url` lo descarga la página, así que su
   servidor tiene que permitirlo (CORS). Una URL `data:` o `base64` funciona
   siempre.

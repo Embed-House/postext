@@ -3,13 +3,13 @@
 export const metadata = {
   title: '配置：样式与篇',
   sidebarTitle: '样式与篇',
-  description: '段落、行内标签、代码清单和标题的命名样式，以及每一篇的篇首页',
+  description: '段落、行内标签、代码清单和标题的命名样式，以及每一篇开头的篇名页',
   lang: 'zh',
   lastUpdated: '2026-10-16',
   readingTime: '24分钟',
   order: 15,
   parent: 'configuration',
-  plainSummary: "本页讲命名样式，定义一次就可以反复使用。段落样式设定一类文字，比如参考文献或术语表。行内标签样式在行内画出一个小标签。代码清单有自己的字体、边框和颜色。本页还讲书中每一篇开头的那一页，以及特殊标题的样式。标注框另有一页说明。",
+  plainSummary: "本页讲命名样式：定义一次，就可以反复使用。段落样式规定某一类文字的样子，比如参考文献或术语表。行内标签样式在一行文字中间画出一个小标签。代码清单有自己的字体、边框和颜色。本页还讲书中每一篇开头的那一页，以及特殊标题的样式。标注框另有一页说明。",
 };
 
 # 配置：样式与篇
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## 段落样式
 
-`paragraphStyles`属性声明具名样式，文档用`:::paragraphs{style="…"}`容器把它们应用到一组段落上：参考文献、术语表、注释，以及任何需要自己的字体、字重、倾斜、字号、行距、大写、小型大写字母或悬挂缩进的条目块。每个排版字段都是可选的，未设置时继承正文，所以一个样式只需写出与正文不同的地方。
+`paragraphStyles`属性声明命名样式，文档用`:::paragraphs{style="…"}`容器把样式套用到一组段落上。参考文献、术语表、注释都可以这样排，凡是需要自己的字体、字重、倾斜、字号、行距、大写、小型大写字母或悬挂缩进的一组条目都可以。每个排版字段都可以不设，不设时沿用正文，所以样式里只需写出与正文不同的地方。
 
 ```ts
 const config: PostextConfig = {
@@ -96,7 +96,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>textAlign</code></td>
       <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
       <td>正文对齐方式</td>
-      <td>水平对齐。<code>'center'</code>和<code>'right'</code>让每一行从另一侧参差排列，适合献辞、署名块。在从右到左的段落中，<code>'left'</code>是它的起始侧，即右侧。</td>
+      <td>水平对齐。<code>'center'</code>和<code>'right'</code>让各行在另一侧参差不齐，适合献辞、署名块。在从右到左的段落中，<code>'left'</code>是它的起始侧，即右侧。</td>
     </tr>
     <tr>
       <td><code>boldColor</code></td>
@@ -126,7 +126,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>把段落排成斜体，例如舞台说明、题词。其中的斜体<code>*…*</code>文字会转为正体，与引文块中的做法相同。</td>
+      <td>把段落排成斜体，例如舞台说明、题词。其中的斜体<code>*…*</code>文字会转为正体，与引用块中的做法相同。</td>
     </tr>
     <tr>
       <td><code>smallCaps</code></td>
@@ -138,7 +138,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>hyphenation</code></td>
       <td><code>boolean</code></td>
       <td>正文断词设置</td>
-      <td>两端对齐时断词（使用文档的语言区域）。</td>
+      <td>两端对齐时断词（按文档的语言）。</td>
     </tr>
     <tr>
       <td><code>indent</code></td>
@@ -150,19 +150,19 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>endIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>每一行相对行尾一侧（横排行的右边、竖排行的下端）的缩进；<code>em</code>取样式自身的字号。配合<code>textAlign: 'end'</code>，可以把一行排在离行尾几个字的位置，即日文书信日期或署名的地からN字上げ。从postext 1.16起提供。</td>
+      <td>每一行相对行尾一侧（横排行的右边、竖排行的下端）的缩进；<code>em</code>取样式自身的字号。配合<code>textAlign: 'end'</code>，可以把一行排在离行尾几个字的位置，即日文书信日期或署名的地からN字上げ。自postext 1.16起。</td>
     </tr>
     <tr>
       <td><code>firstLineIndent</code></td>
       <td><code>Dimension</code></td>
       <td>正文首行缩进</td>
-      <td>首行的缩进，从<code>indent</code>算起。<code>hangingIndent</code>不为零时，仅在样式自己设置了它时生效：首行从<code>indent + firstLineIndent</code>开始，其余行从<code>indent + hangingIndent</code>开始，因此一行诗可以缩进1 em、转行悬挂3 em。若继承自正文，则让位于悬挂缩进，首行从<code>indent</code>开始，与postext 1.22及以前相同（之前保存的配置中，这类样式里显式设置的值会被去掉）。</td>
+      <td>首行的缩进，从<code>indent</code>算起。<code>hangingIndent</code>不为零时，仅在样式自己设置了它时生效：首行从<code>indent + firstLineIndent</code>开始，其余行从<code>indent + hangingIndent</code>开始，因此一行诗可以缩进1 em、转行悬挂3 em。如果是从正文继承来的，就让位于悬挂缩进：首行从<code>indent</code>开始，与postext 1.22及以前相同（在那以前保存的配置，会去掉这类样式里显式设置的值）。</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>除首行外所有行的缩进，从<code>indent</code>算起，即参考文献或术语表的经典样式，也是诗行的转行。首行从<code>indent</code>开始；样式自己设置了<code>firstLineIndent</code>时，从该值开始。</td>
+      <td>除首行外各行的缩进，从<code>indent</code>算起。参考文献和术语表的经典排法就是这样，诗行的转行也用它。首行从<code>indent</code>开始；样式自己设置了<code>firstLineIndent</code>时，从该值开始。</td>
     </tr>
     <tr>
       <td><code>spaceBetween</code></td>
@@ -174,55 +174,55 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>容器第一段上方的空白。与已有的待定间距合并，在栏顶消失，与其他外边距相同。</td>
+      <td>容器第一段上方的空白。与其他外边距一样，它与已经待定的间距合并，在栏顶不出现。</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>容器最后一段下方的最小空白。它与容器之后那个块的间距如何结合，由<code>bodyText.paragraphContainerSpacing</code>决定。</td>
+      <td>容器最后一段下方的最小空白。它与容器后面那个块的间距怎样合并，由<code>bodyText.paragraphContainerSpacing</code>决定。</td>
     </tr>
     <tr>
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>在容器下方让文字流重新对齐基线网格，下方空白作为最小值。<code>false</code>保留精确的空白：容器之后的文字偏离网格，直到下一个会对齐网格的块（标题、列表结尾、行间公式），适用于不按网格排的文档，或自有行距的一组段落。在没有网格的标注框内，它不起作用。</td>
+      <td>容器结束后让文字重新对齐基线网格，下方空白只作为最小值。设为<code>false</code>则保留精确的空白：容器之后的文字离开网格，直到下一个会对齐网格的块（标题、列表结尾、行间公式）。不按网格排的文档，或有自己行距的一组段落，适合这样设。标注框里没有网格，这个选项在那里不起作用。</td>
     </tr>
     <tr>
       <td><code>containerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td>未设置</td>
-      <td>本样式的容器下方间距所用的规则，正文和框内都适用：取<code>bodyText.paragraphContainerSpacing</code>的两个值之一，只管用到本样式的容器。未设置时跟随文档。设为<code>'add'</code>时，本样式的段落组以样式自身的间距收尾，不再加一行段间距，文档其余部分仍用<code>'collapse'</code>。自postext 1.28起提供。</td>
+      <td>使用本样式的容器下方的间距规则，正文和框内都适用。取值是<code>bodyText.paragraphContainerSpacing</code>的两个值之一，但只对指定了本样式的容器生效。未设置时跟随文档。设为<code>'add'</code>时，本样式的段落组以样式自身的间距收尾，不再加一行段落间距，文档其余部分仍用<code>'collapse'</code>。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>段落的大小写：<code>'uppercase'</code>把段落排成大写（演员表、一行舞台动作说明），行内标签中的文字和<code>:ref</code>的标签也包括在内。转换逐字等长，使编辑器的源映射保持一一对应：大写形式更长的字母（<code>ß</code>）保持原样。数学公式不受影响；把段落当作标记读取的书眉（<code>&#123;firstMark.<em>style</em>&#125;</code>）取原文；设计文本用自己的<code>textTransform</code>排成大写。</td>
+      <td>段落的大小写：<code>'uppercase'</code>把段落排成大写（演员表、一行舞台动作说明），行内标签中的文字和<code>:ref</code>印出的文字也包括在内。每个字母只换成一个大写字母，编辑器的源映射因此保持一一对应；大写形式不止一个字母的（<code>ß</code>）保持原样。数学公式不变；书眉如果把段落当作标记读取（<code>&#123;firstMark.<em>style</em>&#125;</code>），取的是原文；设计中的文字要排成大写，用它自己的<code>textTransform</code>。</td>
     </tr>
     <tr>
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>段落每个字母之后的字距，与 CSS 的 <code>letter-spacing</code> 相同：正值把字母拉开（大写的页面标题，<code>&#123; value: 0.015, unit: 'em' &#125;</code> 即 +15/1000 em），负值收紧大字号。<code>em</code> 按本样式自己的 <code>fontSize</code> 计算。字距计入行宽，加了字距的段落按变宽后的词换行；两端对齐的行在此基础上再分配词间距，排版为消除短末行而收紧的行（<code>bodyText.maxRuntTracking</code>）也从这个值出发。canvas、HTML、PDF 和 EPUB 画法一致，导出 Word 时写成该样式的字符间距。连写文字（阿拉伯文、叙利亚文、N'Ko）的词不加字距，并给出 <code>joiningScriptLetterSpacing</code> 警告。自 postext 1.37 起。</td>
+      <td>段落中每个字母之后的字距，与CSS的<code>letter-spacing</code>相同：正值把字母拉开（用大写排的页面标题，<code>&#123; value: 0.015, unit: 'em' &#125;</code>即+15/1000 em），负值让大字号排得更紧。<code>em</code>按本样式自己的<code>fontSize</code>计算。字距计入行长，所以加了字距的段落按变宽后的词断行；两端对齐的行在此基础上再拉开词间距；排版为避免孤字而收紧某一行时（<code>bodyText.maxRuntTracking</code>），也从这个值出发调整字距。画布、HTML、PDF和EPUB的画法一致，导出Word时写成该样式的字符间距。连写文字（阿拉伯文、叙利亚文、N'Ko）的词不加字距，并给出<code>joiningScriptLetterSpacing</code>警告。自postext 1.37起。</td>
     </tr>
     <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>
-      <td>这些段落的行在中日韩文字符之间的断开方式（见<code>cjk.wordBreak</code>）：普通散文书里引用的一段词组间加空格的假名课文用<code>'keep-all'</code>，反过来用<code>'normal'</code>。它对中日韩文的段落起作用，对拉丁文字段落里引用的这类字符也起作用。自postext 1.16起。</td>
+      <td>这些段落在中日韩文字之间从哪里断行（见<code>cjk.wordBreak</code>）。普通散文书里引用一段按词组加空格的假名读本时，用<code>'keep-all'</code>；反过来的情况用<code>'normal'</code>。它既作用于中日韩文段落，也作用于拉丁文段落里引用的这类文字。自postext 1.16起。</td>
     </tr>
     <tr>
       <td><code>lineNumbers</code></td>
       <td><code>boolean</code></td>
       <td>未设置</td>
-      <td><a href="/zh/docs/configuration-notes-references#行号">行号</a>是否计入这些段落的行。未设置：<code>lineNumbers.count</code>为<code>'all'</code>时计入，以本样式排的诗在计数诗行时计入。<code>true</code>：<code>'verse'</code>时也计入，在标注框中也计入（框中文字本来从不计数）。<code>false</code>：从不计入。自postext 1.23起。</td>
+      <td><a href="/zh/docs/configuration-notes-references#行号">行号</a>是否给这些段落的行计数。未设置：<code>lineNumbers.count</code>为<code>'all'</code>时计数；只计诗行时，用本样式排的诗也计数。<code>true</code>：设为<code>'verse'</code>时也计数，在标注框里也计数（框中文字原本从不计数）。<code>false</code>：从不计数。自postext 1.23起。</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td><code>bodyText.tabStops</code></td>
-      <td>这些段落的制表位（见<a href="/zh/docs/configuration-text#制表位">制表位</a>），从样式的<code>indent</code>处量起。样式（它自己的或正文的）设了制表位或间隔时，段落文字中的制表符字符才是制表符。未设置：取正文的；空列表表示不设制表位。自postext 1.23起。</td>
+      <td>这些段落的制表位（见<a href="/zh/docs/configuration-text#制表位">制表位</a>），从样式的<code>indent</code>处量起。只有样式设了制表位或制表间隔（它自己的或正文的）时，文字中的制表符才按制表符处理。未设置：取正文的；空列表表示不设制表位。自postext 1.23起。</td>
     </tr>
     <tr>
       <td><code>tabInterval</code></td>
@@ -234,7 +234,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>dropCap</code></td>
       <td><code>ParagraphDropCap</code></td>
       <td>无</td>
-      <td>样式中每个<code>:::paragraphs</code>组第一段开头的首字下沉，设<code>each: true</code>时每一段开头都有（见<a href="/zh/docs/configuration-text#首字下沉">首字下沉</a>）。组围栏上的<code>&#123;dropcap=false&#125;</code>关闭它，<code>&#123;dropcap=2&#125;</code>设定它的行数。自postext 1.23起。</td>
+      <td>使用本样式的每个<code>:::paragraphs</code>组，第一段开头排首字下沉；设<code>each: true</code>时每一段都排（见<a href="/zh/docs/configuration-text#首字下沉">首字下沉</a>）。在组的开始行上写<code>&#123;dropcap=false&#125;</code>可以关掉它，写<code>&#123;dropcap=2&#125;</code>设定下沉的行数。自postext 1.23起。</td>
     </tr>
   </tbody>
 </table>
@@ -256,7 +256,7 @@ Elsinore. A platform before the castle. *Francisco* at his post.
 
 舞台说明印成斜体，其中的人名印成正体；样式的字重、`italic`和`smallCaps`在标注框内同样适用。
 
-诗集会缩进某些诗行，并让超出行长的诗行的转行比诗行本身缩得更深。`indent`把段落的每一行向内移，悬挂缩进从那里量起：
+诗集里有些诗行要缩进；一行诗超出行长时，转行还要比这一行本身缩得更深。`indent`把段落的每一行向内移，悬挂缩进从那里量起：
 
 ```ts
 paragraphStyles: [
@@ -265,9 +265,9 @@ paragraphStyles: [
 ],
 ```
 
-`verse-indented`中的诗行从1.5 em处开始，转行从4 em处开始，与`verse`中各行的转行对齐。没有`indent`时，一个样式只能缩进首行或悬挂其余各行，不能两者兼得：一旦设置了`hangingIndent`，`firstLineIndent`就被忽略。
+`verse-indented`中的诗行从1.5 em处开始，转行从4 em处开始，与`verse`中各行的转行对齐。没有`indent`时，一个样式只能缩进首行或悬挂其余各行，不能两者兼得：一旦设置了`hangingIndent`，`firstLineIndent`就不起作用。
 
-菜单把每个价格排在一行点之后，与版心末端对齐：
+菜单用一串前导点引出价格，价格与行尾对齐：
 
 ```ts
 paragraphStyles: [
@@ -288,21 +288,21 @@ paragraphStyles: [
 :::
 ```
 
-每一行的点都在价格前0.5 em处结束（`leaderGap`）。菜名太长、一行排不下时换行，最后一行保留前导符和价格；价格在最后一个词旁边放不下时，这个词随价格一起移到下一行。
+每一行的前导点都在价格前0.5 em处结束（`leaderGap`）。菜名一行排不下时会转行，最后一行保留前导点和价格；最后一个词旁边放不下价格时，这个词随价格一起移到下一行。
 
 ### `:::paragraphs`容器
 
-`:::paragraphs{style="<id>"}`一行打开容器，单独的`:::`一行关闭容器；其间的每个段落都采用指定样式，而其中的标题、列表和其他块保持各自的常规样式。容器可以嵌套在其他围栏容器中。未知的`style` id不算错误：这些段落按普通正文渲染。
+以`:::paragraphs{style="<id>"}`一行开始容器，以单独一行`:::`结束；其间的每个段落都用指定的样式，其中的标题、列表等其他块保持各自平常的样式。容器可以嵌在其他容器指令里。`style`写了未知的id不算错误：这些段落按普通正文排。
 
-围栏还接受`align`（`start`、`end`、`left`、`right`、`center`、`justify`）、`indent`和`endIndent`（纯数字按em计），有没有样式都可以：有样式时，它们覆盖样式的设置；没有样式时，它们作用于外层容器的样式之上，或作用于围栏所在位置的文字样式之上（正文、篇、带样式的章节或标注框）。`:::paragraphs{align=end}`把一块文字排得与行尾对齐（地付き），`:::paragraphs{align=end endIndent=1}`则离行尾一个字。从postext 1.16起提供。
+开始行还可以写`align`（`start`、`end`、`left`、`right`、`center`、`justify`）、`indent`和`endIndent`（不带单位的数字按em计），有没有样式都行：有样式时，它们覆盖样式的设置；没有样式时，它们叠加在外层容器的样式上，或者叠加在容器所在位置的文字样式上（正文、篇、带样式的区段或标注框）。`:::paragraphs{align=end}`把一块文字排得与行尾对齐（地付き），`:::paragraphs{align=end endIndent=1}`则离行尾一个字。自postext 1.16起。
 
-在容器内，文字流离开基线网格（7pt、行距1.2em的条目无法落在8pt/1.5em的网格上），最后一段让文字流重新对齐网格（以网格为准；下方空白是最小值，与标题遵循的约定相同）。条目像正文段落一样跨栏、跨页拆分，并有同样的段首孤行和段末孤行保护；紧接在容器之前的标题与容器的第一段保持在一起。
+在容器内，文字离开基线网格（字号7 pt、行距1.2 em的条目不可能落在8 pt/1.5 em的网格上），到最后一段再重新对齐网格（以网格为准，下方空白只是最小值，与标题的约定相同）。条目像正文段落一样可以跨栏、跨页拆开，同样有段首孤行和段末孤行保护；紧挨在容器前面的标题与容器第一段排在一起，不拆开。
 
-容器下方的空白取样式的`spaceBetween`和`marginBottom`与周围文字段落间距（开启`bodyText.paragraphSpacing`时为一行）中的较大者，并与下一个块在自身上方保留的空白合并，就像两个正文段落之间的空白那样：参考文献之后的标题位于最后一个条目下方自身`marginTop`处（若样式的空白更大，则取样式的空白）；一组较紧的条目之后的段落保留正文的段落间距。文字流先在文字下方重新对齐网格，对齐未覆盖的部分以整行网格顺延，因此容器之后的文字落在网格上。在postext 1.4及以前，样式的空白设在对齐之前的最后一行下方，下一个块上方的空白再加在其下，且不计段落间距；`bodyText.paragraphContainerSpacing: 'add'`保留这一规则，在它出现之前保存的配置也按它读取。设置了`snapToGrid: false`的样式不对齐网格：容器之后的文字恰好位于其下方指定空白处，偏离网格，直到下一个会对齐网格的块。以列表结尾的容器，在两种规则下都按1.4的方式排：列表保留自身下方的空白，`marginBottom`跟在这段空白之后，与下一个块的空白合并。
+容器下方的空白取三者中的最大值：样式的`spaceBetween`、`marginBottom`，以及周围文字的段落间距（开启`bodyText.paragraphSpacing`时为一行）。这段空白再与下一个块在自身上方保留的空白合并，就像两个正文段落之间那样：参考文献后面的标题，与最后一个条目相距它自己的`marginTop`（样式的空白更大时取样式的空白）；一组排得较紧的条目后面的段落，保持正文的段落间距。文字先在容器下方重新对齐网格，对齐没有补足的部分按整行网格顺延，所以容器之后的文字落在网格上。在postext 1.4及以前，样式的空白加在对齐前的最后一行下方，下一个块上方的空白再加在它下面，而且不计段落间距；`bodyText.paragraphContainerSpacing: 'add'`保留这一规则，在它出现之前保存的配置也按它读取。设了`snapToGrid: false`的样式不对齐网格：容器之后的文字恰好排在容器下方指定的距离处，离开网格，直到下一个会对齐网格的块。以列表结束的容器，在两种规则下都按1.4的方式排：列表保留自身下方的空白，`marginBottom`接在这段空白之后，再与下一个块的空白合并。
 
-样式可以用`containerSpacing`为自己的容器定规则：给大号数字或参考文献表的样式设`'add'`，它的段落组在正文和框内都以样式自身的间距收尾，文档里其他容器仍用`'collapse'`；在按`'add'`读取的文档里，给样式设`'collapse'`则相反。没有指定样式的容器跟随文档。
+样式可以用`containerSpacing`给自己的容器定规则：给大号数字或参考文献表的样式设`'add'`，它的段落组无论在正文里还是在框内，都以样式自身的间距收尾，文档里其他容器仍用`'collapse'`；文档用`'add'`时，给样式设`'collapse'`效果正好相反。没有指定样式的容器跟随文档。
 
-在`:::callout`内，容器以同样的方式采用其样式的外边距：`marginTop`和`marginBottom`与周围块的间距合并（负值会让它们靠得更近），位于框开头的容器不取上外边距，与栏顶相同。框内没有可重新对齐的基线网格，所以最后一段下方的空白取`marginBottom`、`spaceBetween`和框自身段落间距（其`body.paragraphSpacing`，即框内文字的一行；使用`paragraphContainerSpacing: 'add'`时不计）中的较大者，若下一个块自身的上外边距更大，则取后者；负的`marginBottom`则把下一个块往上拉。（在postext 1.4及以前，标注框内的容器忽略这两个外边距。）
+在`:::callout`内，容器以同样的方式采用样式的外边距：`marginTop`和`marginBottom`与周围块的间距合并（负值会让它们靠得更近）；位于框开头的容器不取上外边距，与栏顶一样。框内没有可以重新对齐的基线网格，所以最后一段下方的空白取`marginBottom`、`spaceBetween`和框自身段落间距（即框的`body.paragraphSpacing`，框内文字的一行；使用`paragraphContainerSpacing: 'add'`时不计）中的最大值；如果下一个块自身的上外边距更大，就取后者。负的`marginBottom`则把下一个块往上拉。（在postext 1.4及以前，标注框内的容器忽略这两个外边距。）
 
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## 行内标签样式
 
-`chipStyles`属性声明行内`:chip[text]{style="…"}`的具名样式，即词库、键盘按键、标签所用的圆角着色小框（语法及其断行规则见文档格式参考）。默认提供一个样式`chip`（浅蓝色填充，主色细线描边，略带圆角，文字与周围词语相同），因此`:chip[…]`无需任何配置即可使用；声明`chipStyles`会替换这一默认列表。没有`style`的行内标签，或所用id未被任何样式声明的行内标签，采用第一个样式。
+`chipStyles`属性为行内的`:chip[text]{style="…"}`声明命名样式。行内标签是带底色的圆角小框，用于词库、键盘按键、标签等（语法和断行规则见文档格式参考）。默认自带一个样式`chip`（浅蓝色底，主色细线轮廓，略带圆角，文字与周围文字相同），所以`:chip[…]`不做任何配置也能用；声明`chipStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的行内标签，套用第一个样式。
 
 ```ts
 const config: PostextConfig = {
@@ -365,13 +365,13 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>backgroundEnabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>绘制框的填充。</td>
+      <td>是否给框填底色。</td>
     </tr>
     <tr>
       <td><code>background</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#e8eef7</code></td>
-      <td>框的填充色（可与调色板关联）。</td>
+      <td>框的底色（可链接调色板）。</td>
     </tr>
     <tr>
       <td><code>borderColor</code></td>
@@ -401,13 +401,13 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>paddingY</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.1em</code></td>
-      <td>文字带上下方的间距。绘制在行框之外：从不改变行高。</td>
+      <td>文字带上方和下方的间距。它画在行框之外，从不改变行高。</td>
     </tr>
     <tr>
       <td><code>paddingTop</code>、<code>paddingBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
-      <td>文字带上方或下方的间距，分别取代<code>paddingY</code>。文字带从基线上方0.8 em延伸到基线下方0.25 em，所以它的中线位于基线上方0.275 em，低于大写字母的中线（多数字体约为0.35 em）：圆形行内标签（<code>borderRadius: 1em</code>）中的大写字母或数字看起来偏高。让上内边距比下内边距大出这一差值的两倍，即可居中：对大写字母高0.7 em的字体，用<code>paddingTop: 0.2em</code>配合<code>paddingBottom: 0.05em</code>。</td>
+      <td>文字带上方或下方的间距，分别取代<code>paddingY</code>。文字带从基线上方0.8 em延伸到基线下方0.25 em，所以它的中线在基线上方0.275 em处，低于大写字母的中线（多数字体约为0.35 em）：圆形行内标签（<code>borderRadius: 1em</code>）里的大写字母或数字看起来偏上。让上内边距比下内边距多出这个差值的两倍，就能居中：对大写字母高0.7 em的字体，用<code>paddingTop: 0.2em</code>配合<code>paddingBottom: 0.05em</code>。</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -431,19 +431,19 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>bold</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>把行内标签文字排成粗体，叠加在其自身标记之上。</td>
+      <td>把行内标签的文字排成粗体，叠加在文字本身的标记之上。</td>
     </tr>
     <tr>
       <td><code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>把行内标签文字排成斜体，叠加在其自身标记之上。</td>
+      <td>把行内标签的文字排成斜体，叠加在文字本身的标记之上。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.25em</code></td>
-      <td>隔着词间空格时，框与相邻词语或行内标签之间保留的最小间距；较窄的空格在行内标签的前进宽度内补足，因此两端对齐永远不会把它吃掉。在行首行尾或紧贴标点处不额外添加。</td>
+      <td>框与隔着词间空格的相邻词语或行内标签之间至少保留的距离；空格比它窄时，差额在行内标签的前进宽度内补足，所以两端对齐压缩空格时不会吃掉它。在行首、行尾或紧贴的标点旁不额外添加。</td>
     </tr>
     <tr>
       <td><code>dotted</code></td>
@@ -454,9 +454,9 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
   </tbody>
 </table>
 
-框的em长度（`paddingX`、`paddingY`、`borderRadius`、`borderWidth`、`gap`）相对于行内标签自身的字号。框是基线上方0.8 em、下方0.25 em的一条带，再加上`paddingY`和轮廓；它绘制在行框之外，从不改变行距，因此基线网格保持不变。框最终高于行距时，行内标签可能与上一行或下一行的行内标签相碰：当不同行上的两个行内标签重叠时，沙盒会列出“行内标签碰到相邻行”警告，并给出以点为单位的重叠量，以便减小`paddingY`、轮廓或`fontSize`。上下都没有行内标签的高行内标签不会被标出。
+框的以em为单位的长度（`paddingX`、`paddingY`、`borderRadius`、`borderWidth`、`gap`）相对于行内标签自身的字号。框是从基线上方0.8 em到基线下方0.25 em的一条带，再向外加上`paddingY`和轮廓；它画在行框之外，从不改变行距，所以基线网格保持不变。框比行距还高时，可能碰到上一行或下一行的行内标签：不同行上的两个行内标签重叠时，沙盒会列出“行内标签碰到相邻行”警告，并以pt为单位给出重叠量，你可以据此减小`paddingY`、轮廓或`fontSize`。行内标签再高，只要上下行没有行内标签，就不会被标出。
 
-在VDT中，行内标签是`kind: 'chip'`的行片段，其`chip`字段携带文字串（各带字体字符串和宽度）、框的几何数据（`boxWidth`、`ascent`、`descent`、`paddingX`、`borderWidth`、`borderRadius`、间隙外边距）及其颜色；片段的`text`是一个单字符占位符，所以纯文本偏移量和源映射把一个行内标签计为一个字符。
+在VDT中，行内标签是`kind: 'chip'`的行片段，其`chip`字段包含各段文字（每段带字体字符串和宽度）、框的几何数据（`boxWidth`、`ascent`、`descent`、`paddingX`、`borderWidth`、`borderRadius`、`gap`留出的外边距）和颜色；片段的`text`是一个单字符占位符，所以纯文本偏移量和源映射把一个行内标签算作一个字符。
 
 ```ts
 const resolved = resolveChipStylesConfig(config.chipStyles);
@@ -471,7 +471,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## 高亮样式
 
-`markStyles` 属性声明行内 `:mark[文字]{style="…"}` 的具名样式：铺在短语后面的色带，就像课本给关键词划重点（语法和换行规则见文档格式参考）。默认附带一个样式 `mark`（浅黄色色带，略超出短语，两端稍圆，文字保持自身颜色），因此不做任何配置 `:mark[…]` 也能用；声明 `markStyles` 会替换这份默认列表。没有 `style`，或 id 没有任何样式声明的标记，套用第一个样式。
+`markStyles`属性为行内的`:mark[文字]{style="…"}`声明命名样式。高亮是铺在短语底下的色带，就像课本给关键词划重点（语法和断行规则见文档格式参考）。默认自带一个样式`mark`（浅黄色色带，略超出短语，两端稍圆，文字保持自身颜色），所以`:mark[…]`不做任何配置也能用；声明`markStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的高亮，套用第一个样式。
 
 ```ts
 const config: PostextConfig = {
@@ -507,13 +507,13 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>必填</td>
-      <td><code>:mark[…]&#123;style="…"&#125;</code> 引用的标识符。</td>
+      <td>供<code>:mark[…]&#123;style="…"&#125;</code>引用的标识符。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>便于阅读的名称，只用于编辑器界面。</td>
+      <td>便于阅读的名称，仅用于编辑器界面。</td>
     </tr>
     <tr>
       <td><code>background</code></td>
@@ -546,15 +546,15 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td>文字色带上下的留白。</td>
     </tr>
     <tr>
-      <td><code>paddingTop</code>, <code>paddingBottom</code></td>
+      <td><code>paddingTop</code>、<code>paddingBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
-      <td>上方和下方的留白，各自代替 <code>paddingY</code>。</td>
+      <td>上方或下方的留白，分别取代<code>paddingY</code>。</td>
     </tr>
   </tbody>
 </table>
 
-以 em 为单位的长度（`paddingX`、`paddingY`、`paddingTop`、`paddingBottom`、`borderRadius`）相对于被标记文字的字号。色带不占位置：文字的排法与没有标记时相同，色带画在文字下面，留白伸进词间空白和行间。在 VDT 中，被标记词语的片段带有 `mark`（`{ style, id, start?, end?, from?, to? }`），每一行把它的色带存在 `highlights` 中（`{ x, y, width, height, color, radiusLeft, radiusRight }`，相对于该行的 `bbox.x` 和基线），画布、PDF 和 HTML 后端在画该行文字之前先画出它们。
+以em为单位的长度（`paddingX`、`paddingY`、`paddingTop`、`paddingBottom`、`borderRadius`）相对于被标记文字的字号。色带不占位置：文字的排法与没有高亮时相同，色带画在文字底下，留白伸进词间空白和行间。在VDT中，被标记词语的片段带有`mark`（`{ style, id, start?, end?, from?, to? }`），每一行把自己的色带存在`highlights`中（`{ x, y, width, height, color, radiusLeft, radiusRight }`，相对于该行的`bbox.x`和基线），画布、PDF和HTML后端先画色带，再画这一行的文字。
 
 ```ts
 const resolved = resolveMarkStylesConfig(config.markStyles);
@@ -570,7 +570,7 @@ const style = pickMarkStyle(resolved, 'key');
 
 ## 代码清单
 
-`codeStyle`属性设定代码清单的外观：正文中的```` ``` ````和`~~~`围栏（见[文档格式 › 代码块](/zh/docs/document-format#代码块)），以及要求用代码字体时的行内代码。清单按原样逐行排，用等宽字体，排在一个框中：任何一行都不断词、不两端对齐，每个空格保持自己的宽度，制表符前进到下一个制表位。这个框与`:::callout`出自同一套机制，所以清单可以在行与行之间断开，跨栏跨页，每部分各有一个框；标注框中的围栏是嵌套在其中的框。所有属性都是可选的。自postext 1.23起。
+`codeStyle`属性设定代码清单的外观，包括正文中的```` ``` ````和`~~~`代码围栏（见[文档格式 › 代码块](/zh/docs/document-format#代码块)），以及设为用代码字体排的行内代码。清单用等宽字体照原样逐行排在一个框里：任何一行都不断词、不两端对齐，每个空格保持自己的宽度，制表符前进到下一个制表位。这个框与`:::callout`用的是同一套机制，所以清单可以在两行之间断开，跨栏、跨页，每一部分各自成框；标注框里的代码围栏就是嵌在标注框里的框。所有属性都可以不设。自postext 1.23起。
 
 ```ts
 const config: PostextConfig = {
@@ -606,13 +606,13 @@ const config: PostextConfig = {
       <td><code>blocks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>把围栏读作代码块。<code>false</code>时，围栏及其中的行按Markdown读取，与postext 1.22相同；1.23之前存储、正文含围栏的配置会得到这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
+      <td>把代码围栏读作代码块。设为<code>false</code>时，围栏及其中各行按普通Markdown读取，与postext 1.22相同；1.23之前保存、正文里有围栏的配置按<code>false</code>读取（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
     </tr>
     <tr>
       <td><code>indentedCode</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>空行之后缩进四列（四个空格或一个制表符）的连续多行也读作清单；每行去掉四列。默认关闭：Postext的正文常用空格缩进，嵌套列表项也要读行首空格。</td>
+      <td>空行之后、缩进四列（四个空格或一个制表符）的连续几行也读作清单，每行去掉开头四列。默认关闭，因为Postext的正文常用空格缩进，嵌套的列表项也靠行首空格识别。</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -635,7 +635,7 @@ const config: PostextConfig = {
     <tr>
       <td><code>lineHeight</code></td>
       <td><code>Dimension</code></td>
-      <td>正文的网格行</td>
+      <td>正文网格的一行</td>
       <td>代码行的行距；<code>em</code>指代码字号。未设置时，各行落在基线网格上。</td>
     </tr>
     <tr>
@@ -684,19 +684,19 @@ const config: PostextConfig = {
       <td><code>span</code></td>
       <td><code>'column' | 'page'</code></td>
       <td><code>'column'</code></td>
-      <td>跨页面的清单横跨多栏页面的所有栏，与<code>span: 'page'</code>的框相同。单个围栏可用<code>span=page</code>自行设定。</td>
+      <td>通栏清单横跨多栏页面的所有栏，与<code>span: 'page'</code>的框相同。单个围栏可用<code>span=page</code>自行设定。</td>
     </tr>
     <tr>
       <td><code>tabSize</code></td>
       <td><code>number</code></td>
       <td><code>4</code></td>
-      <td>制表符前进到这个字符格数的下一个整数倍位置（全角字符算两格）。它仍是制表符：复制出的文字保留它。</td>
+      <td>制表符前进到这个格数的下一个整数倍处（全角字符算两格）。它仍然是制表符，复制出的文字里保留它。</td>
     </tr>
     <tr>
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'shrink' | 'clip'</code></td>
       <td><code>'wrap'</code></td>
-      <td>比框更宽的行。<code>'wrap'</code>：在放得下的最后一个空格或标点之后断开（都没有时在两个字符之间断开），余下部分接在下一行，缩进<code>wrapIndent</code>格，前面带<code>wrapMarker</code>；只要有别的切口可用，拆分清单的任何一部分都不会以这样的余下部分开头。<code>'shrink'</code>：整段清单缩小，直到最宽的一行放得下，最多缩到<code>minFontScale</code>，仍放不下的部分折行。<code>'clip'</code>：行在框的内边缘止住，超出的字符不印出。每种情况都会引发<code>codeOverflow</code>警告。</td>
+      <td>行比框宽时怎样处理。<code>'wrap'</code>：在放得下的最后一个空格或标点之后断开（都没有时在两个字符之间断开），余下部分接到下一行，缩进<code>wrapIndent</code>格，前面加<code>wrapMarker</code>；只要还有别的断开位置可用，拆分后的清单就不会有哪一部分以这样的余下部分开头。<code>'shrink'</code>：整段清单缩小，直到最宽的一行放得下，最多缩到<code>minFontScale</code>，仍放不下的部分折行。<code>'clip'</code>：行在框的内边缘止住，超出的字符不印出。每种方式都会给出<code>codeOverflow</code>警告。</td>
     </tr>
     <tr>
       <td><code>wrapIndent</code></td>
@@ -720,13 +720,13 @@ const config: PostextConfig = {
       <td><code>lineNumbers</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>在代码前的边栏中为每段清单的行编号。单个围栏可用<code>lineNumbers</code>、<code>lineNumbers=false</code>和<code>start=N</code>自行设定。折行的余下部分不编号。行号排在文字旁边，不属于文字：HTML查看器不让选区和辅助技术读到它们，带标签的PDF把它们画成artifact。</td>
+      <td>在代码前面的行号栏里给每段清单的各行编号。单个围栏可用<code>lineNumbers</code>、<code>lineNumbers=false</code>和<code>start=N</code>自行设定。折行的余下部分不编号。行号排在文字旁边，不属于文字：HTML阅读器不让选区和辅助技术读到它们，带标签的PDF把它们画成artifact。</td>
     </tr>
     <tr>
       <td><code>lineNumberColor</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#8a8a8a</code></td>
-      <td>行号（以及续行标记）的颜色。</td>
+      <td>行号（以及折行标记）的颜色。</td>
     </tr>
     <tr>
       <td><code>lineNumberGap</code></td>
@@ -744,7 +744,7 @@ const config: PostextConfig = {
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>与标注框样式的相同：<code>false</code>时，比剩余空间高的清单在行与行之间拆分；<code>true</code>时整段移走，只有比一栏还高时才拆分。</td>
+      <td>与标注框样式的同名选项相同：<code>false</code>时，比剩余空间高的清单在两行之间拆分；<code>true</code>时整段挪到后面，只有比一栏还高时才拆分。</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -762,19 +762,19 @@ const config: PostextConfig = {
       <td><code>continuesMarkerEnabled</code> / <code>continuesMarker</code></td>
       <td><code>boolean</code> / <code>string</code></td>
       <td><code>false</code> / “续”</td>
-      <td>在还要接续的那一部分的最后一行下方加一个标记。</td>
+      <td>后面还有接续的部分，在最后一行下方加一个标记。</td>
     </tr>
     <tr>
       <td><code>titleStyle</code></td>
       <td><code>CalloutTitleStyleConfig</code></td>
-      <td>代码字体，粗体，其字号的0.9</td>
-      <td>围栏的<code>title</code>所印出的标题行（各字段见<a href="/zh/docs/configuration-callouts#标注框样式">标注框样式</a>）。</td>
+      <td>代码字体、粗体、代码字号的0.9倍</td>
+      <td>围栏的<code>title</code>印出的标题行（各字段见<a href="/zh/docs/configuration-callouts#标注框样式">标注框样式</a>）。</td>
     </tr>
     <tr>
       <td><code>label</code></td>
       <td><code>CalloutLabelConfig</code></td>
       <td>无</td>
-      <td>设置后，标题改为印在框顶边的标签中（除非标签指定了自己的字体和字号，否则用代码字体和代码字号）。</td>
+      <td>设置后，标题改印在框顶边的页签里（除非页签指定了自己的字体和字号，否则用代码字体和代码字号）。</td>
     </tr>
     <tr>
       <td><code>highlight</code></td>
@@ -837,11 +837,11 @@ registerCodeHighlighter('rust', (code) => code.split('\n').map((line) => [
 registerCodeHighlighter('*', null); // remove the one registered for every language
 ```
 
-为某种语言注册的高亮器优先于为`'*'`注册的高亮器，后者又优先于内置分词器。每个片段要么指明一个`token`类别（由`tokens`着色），要么带有自己的`color`（CSS十六进制值）。高亮器返回`undefined`、抛出异常，或返回的各行拼不回清单本身的各行时，就跳过它。排版在排清单时读取注册表：要在构建之前注册；在web worker中排版时（沙盒就在worker中排版），要在worker内注册。
+为某种语言注册的高亮器优先于为`'*'`注册的高亮器，后者又优先于内置分词器。每个片段要么指明一个`token`类别（由`tokens`着色），要么带有自己的`color`（CSS十六进制值）。高亮器返回`undefined`、抛出异常，或返回的各行拼不回清单本身的各行时，就跳过它。引擎在排清单时才读取注册表，所以要在构建之前注册；在web worker中排版时（沙盒就在worker中排版），要在worker内注册。
 
 ### 行内代码
 
-`codeStyle.inline`让反引号之间的文字用代码字体排在一个与行内标签相同的框里。行可以在代码中的空格处断开，也可以在字母或数字与字母之间的连字符后断开：框在那里分成两个，不添加任何字符。代码中的空格保持代码字体的宽度，行两端对齐时也不会被拉宽。未设置时，行内代码保持正文字体。
+`codeStyle.inline`让反引号之间的文字用代码字体排，并像行内标签那样排在一个框里。行可以在代码中的空格处断开，也可以在连字符后断开（连字符前是字母或数字、后是字母）：框在断开处一分为二，不添加任何字符。代码中的空格保持代码字体的宽度，行两端对齐时也不会被拉宽。未设置时，行内代码保持正文字体。
 
 <table>
   <thead>
@@ -861,20 +861,20 @@ registerCodeHighlighter('*', null); // remove the one registered for every langu
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>无 / <code>0.5pt</code></td><td>轮廓。</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code>指片段的字号。</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td>有底色或轮廓时为<code>0.2em</code>，否则为<code>0</code> / <code>0.1em</code></td><td>底色内的空白；垂直内边距画在行框之外。</td></tr>
-    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>代码中阿拉伯文、希伯来文和中日韩文字的字体：正文的字体（<code>'text'</code>），因为很少有代码字体包含这些字符；或者包含它们的代码字体（<code>'code'</code>）。</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>代码中阿拉伯文、希伯来文和中日韩文字用什么字体：用正文的字体（<code>'text'</code>），因为很少有代码字体包含这些字符；或者代码字体本身包含它们时，用代码字体（<code>'code'</code>）。</td></tr>
   </tbody>
 </table>
 
 ### 清单如何排版
 
-- **一行源文对应一行。** 各行按代码字体自身的前进宽度构建，不经过段落断行器：空格保持宽度，连续的空格都保留，行首空格形成缩进。在从右向左的书中，清单从左向右读，各行从框的另一侧排起，与从左向右的引文相同，行号在它们左侧的边栏中。在竖排的书中，清单随竖排方向排（其中的拉丁文按竖排的惯例横躺），不带行号。
-- **拆分。** 比剩余空间高的清单在行与行之间断开，跨栏跨页，每部分各自成框，每侧至少留下`splitMinLines`行；只要有别的切口可用，折行的余下部分就与它所属的行留在一起。
-- **输出。** 画布、HTML查看器和PDF按排版结果画出各行和框。HTML查看器保留空格（`white-space: pre`），所以选区复制出的清单带有缩进，每行源文之后有一个换行，不带行号和续行标记。带标签的PDF把每段清单设为一个包含`Code`元素的段落，空格是真正的空格字形，行号和续行标记是artifact。可重排的EPUB写出`<pre><code class="language-…">`，带有记号的颜色和一份由`codeStyle`生成的样式表；固定版式的EPUB与印刷版相同。
-- **字体。** 正文含有围栏（或配置中有`codeStyle`分区）时，沙盒和`configFontFamilies`会加载代码字体的常规和粗体字重，直体和斜体都有；PDF嵌入各行所用的字体。
+- **一行源文对应一行。** 各行按代码字体自身的前进宽度构建，不经过段落断行器：空格保持宽度，连续的空格都保留，行首空格形成缩进。在从右向左的书中，清单从左向右读，各行从框的另一侧排起，与从左向右的引文一样，行号在左侧的行号栏里。在竖排的书中，清单随竖排方向排（其中的拉丁文按竖排的惯例横躺），不带行号。
+- **拆分。** 比剩余空间高的清单在行与行之间断开，跨栏跨页，每部分各自成框，每侧至少留下`splitMinLines`行；只要还有别的断开位置可用，折行的余下部分就与它所属的行留在一起。
+- **输出。** 画布、HTML阅读器和PDF按排版结果画出各行和框。HTML阅读器保留空格（`white-space: pre`），所以选区复制出的清单带有缩进，每行源文之后有一个换行，不带行号和折行标记。带标签的PDF把每段清单设为一个包含`Code`元素的段落，空格是真正的空格字形，行号和折行标记是artifact。流式EPUB写出`<pre><code class="language-…">`，带有记号的颜色和一份由`codeStyle`生成的样式表；固定版式的EPUB与印刷版相同。
+- **字体。** 正文含有围栏（或配置中有`codeStyle`分区）时，沙盒和`configFontFamilies`会加载代码字体的常规和粗体字重，正体和斜体都有；PDF嵌入各行所用的字体。
 
 ## 篇
 
-`parts`属性配置篇章隔页。文档用`:::part{number="…" title="…"}`容器开启一篇，也就是把一组章节归在一起的“第一篇 基础”那种页面。篇隔页总是独占一页：容器先按配置的奇偶另起新页，把这一页改成单栏页面，正文区域取自`parts.margins`，再把篇首设计铺满整页；容器的结束标记之后再断一次页，让下一章（按它自己的`breakBefore.parity`）干净地开始。使用默认的一级标题设置时，得到的就是经典的排法：篇隔页在右页，左页空白，章从下一个右页开始。
+`parts`属性配置篇名页。文档用`:::part{number="…" title="…"}`容器开始一篇；篇名页就是“第一篇 基础”那样、把一组章归到一起的页面。篇名页总是独占一页：容器先按设定的奇偶另起一页，把这一页改成单栏，版心取自`parts.margins`，再把篇名页的设计铺满整页；容器的结束行之后再分一次页，让下一章（按它自己的`breakBefore.parity`）从新的一页开始。用一级标题的默认设置时，得到的就是经典排法：篇名页在右页（奇数页），背面的左页（偶数页）空白，章从下一个右页开始。
 
 ```ts
 const config: PostextConfig = {
@@ -925,49 +925,49 @@ const config: PostextConfig = {
       <td><code>page</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td><code>:::part</code>是否开启一张隔页。设为<code>false</code>时不开新页，容器内的正文也不排出：篇的编号、标题和调色板从后面的下一段内容起生效，本身不断页。典型用法是<code>htmlViewer.overrides.parts.page: false</code>，即不要篇隔页的屏幕版本。</td>
+      <td><code>:::part</code>是否单独开一个篇名页。设为<code>false</code>时不另开页，容器内的正文也不排出：篇的编号、标题和调色板直接从后面的内容起生效，本身不分页。典型用法是<code>htmlViewer.overrides.parts.page: false</code>，让屏幕版不带篇名页。</td>
     </tr>
     <tr>
       <td><code>breakBefore.parity</code></td>
       <td><code>HeadingBreakParity</code></td>
       <td><code>'odd'</code></td>
-      <td>篇从哪种奇偶的页面开始。取值和空白页归属规则都与标题的<a href="/zh/docs/configuration-headings#前置分页">breakBefore</a>相同：为凑奇偶插入的空白页属于这一篇（页上的<code>{'{partTitle}'}</code>已经解析为新的篇）；<code>'always-*'</code>强制插入的分隔空白页属于前面的内容。</td>
+      <td>篇从奇数页还是偶数页开始。取值和空白页的归属规则都与标题的<a href="/zh/docs/configuration-headings#前置分页">breakBefore</a>相同：为凑奇偶插入的空白页属于这一篇（页上的<code>{'{partTitle}'}</code>已经解析为新的篇）；<code>'always-*'</code>强制插入的分隔空白页属于前面的内容。</td>
     </tr>
     <tr>
       <td><code>breakAfter.enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>把结束标记之后的内容移到新的一页。设为<code>false</code>时，内容接着排在篇隔页的单栏里。</td>
+      <td>结束行之后的内容另起一页。设为<code>false</code>时，内容接着排在篇名页的单栏里。</td>
     </tr>
     <tr>
       <td><code>breakAfter.parity</code></td>
       <td><code>HeadingBreakParity</code></td>
       <td><code>'any'</code></td>
-      <td>这一新页的奇偶。保持<code>'any'</code>，让下一章自己的<code>breakBefore.parity</code>决定后面是否留一个空白左页。断页在排下一个块时才执行，所以文档以篇结尾时，末尾不会多出空页。</td>
+      <td>这一新页的奇偶。保持<code>'any'</code>，让下一章自己的<code>breakBefore.parity</code>决定后面是否留一个空白左页。分页要到排下一个块时才执行，所以文档以篇结尾时，末尾不会多出空页。</td>
     </tr>
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>页面的页边距</td>
-      <td>篇隔页的正文区域，即容器内各块排入的那一栏。未设置的一边沿用页面的页边距；<code>mirror</code>与页面页边距完全一样，在偶数页上交换内外两侧。</td>
+      <td>篇名页的版心，即容器内各块排入的那一栏。未设置的一边沿用页面的页边距；<code>mirror</code>的作用与页面页边距完全相同，在偶数页上交换内外两侧。</td>
     </tr>
     <tr>
       <td><code>design</code></td>
       <td><code>DesignSlot</code></td>
       <td>空</td>
-      <td>篇首设计。它的容器是页面的<strong>成品框</strong>，所以相对容器的锚点与<code>'page'</code>锚点重合，开启裁切线时<code>'bleed'</code>延伸到出血位。它只起装饰作用，从不占用正文空间：要让正文避开它，就加大<code>margins.top</code>。为空时，会在正文区域左上角按一级标题的字体样式生成默认文字<code>{'{number} {titleText}'}</code>，编号和标题之间用一级标题的<code>numberSeparator</code>。</td>
+      <td>篇名页的设计。它的容器是页面的<strong>成品框</strong>，所以相对容器的锚点与<code>'page'</code>锚点重合，开启裁切线时<code>'bleed'</code>延伸到出血位。它只起装饰作用，从不占用正文空间：要让正文避开它，就加大<code>margins.top</code>。为空时，引擎在版心左上角按一级标题的字体样式生成默认文字<code>{'{number} {titleText}'}</code>，编号和标题之间用一级标题的<code>numberSeparator</code>。</td>
     </tr>
     <tr>
       <td><code>versoDesign</code></td>
       <td><code>DesignSlot</code></td>
       <td>空</td>
-      <td>篇隔页之后那张空白左页（隔页纸的背面）的设计，容器和占位符都与<code>design</code>相同。留空则是一张素白的左页。只有篇隔页的下一页空着时它才会绘制，而这需要一次带奇偶要求的断页，参见下文<a href="#左页设计">左页设计</a>。</td>
+      <td>篇名页之后那张空白左页（篇名页的背面）的设计，容器和占位符都与<code>design</code>相同。留空就是一张素白的左页。只有篇名页的下一页空着时它才会画出，而这需要一次带奇偶要求的分页，见下文<a href="#左页设计">左页设计</a>。</td>
     </tr>
     <tr>
       <td><code>bodyStyle.fontFamily</code>、<code>fontSize</code>、<code>lineHeight</code>、<code>color</code>、<code>textAlign</code></td>
       <td>同<code>bodyText</code></td>
       <td>继承<code>bodyText</code></td>
-      <td>容器内段落、引文和列表项的字体样式。字重、强调颜色和断词取自正文。</td>
+      <td>容器内段落、引用块和列表项的字体样式。字重、强调颜色和断词取自正文。</td>
     </tr>
     <tr>
       <td><code>bodyStyle.bulletColor</code></td>
@@ -991,23 +991,23 @@ const config: PostextConfig = {
       <td><code>bodyStyle.orderedLists</code></td>
       <td><code>OrderedListsConfig</code></td>
       <td>—</td>
-      <td>在篇内叠加到文档<code>orderedLists</code>之上的部分覆盖，在<code>numberColor</code>和粗体字重之后应用。例如篇首页的章节列表可以用<code>'•'</code>作<code>separator</code>，并配上它自己的<code>separatorFontFamily</code>和<code>separatorColor</code>。</td>
+      <td>在篇内叠加到文档<code>orderedLists</code>之上的部分覆盖，在<code>numberColor</code>和粗体字重之后应用。例如篇名页的章节列表可以用<code>'•'</code>作<code>separator</code>，并配上它自己的<code>separatorFontFamily</code>和<code>separatorColor</code>。</td>
     </tr>
   </tbody>
 </table>
 
 ### 篇设计的占位符
 
-设计中的标题占位符集合按篇自身的值解析：`{titleText}`是容器的`title`；`{number}`是原样写出的`number`；`{numberDecimal}`、`{numberRoman}`、`{numberRomanLower}`、`{numberAlpha}`、`{numberAlphaLower}`把它换成别的格式。编号可以按十进制数、罗马数字或中文数字解析，带不带外围的字都行（`"IV"`、`"iv"`、`"4"`、`"４"`、`"四"`、`"卷四"`和`"第四卷"`得到的`{numberDecimal}`都是`4`），其他写法一律解析为`''`。`{partTitle}` / `{partNumber}`、`{chapterTitle}` / `{chapterNumber}`（篇之前的那一章）、`{pageNumber}`、`{totalPages}`、`{bookTotalPages}`以及元数据占位符也都可用。`{attr.<key>}`读取当前章一级标题的属性。
+设计中可用的标题占位符取篇自己的值：`{titleText}`是容器的`title`；`{number}`是原样写出的`number`；`{numberDecimal}`、`{numberRoman}`、`{numberRomanLower}`、`{numberAlpha}`、`{numberAlphaLower}`把它换成别的格式。编号可以按十进制数、罗马数字或中文数字解析，前后带不带其他字都行（`"IV"`、`"iv"`、`"4"`、`"４"`、`"四"`、`"卷四"`和`"第四卷"`得到的`{numberDecimal}`都是`4`），其他写法一律解析为`''`。`{partTitle}` / `{partNumber}`、`{chapterTitle}` / `{chapterNumber}`（篇之前的那一章）、`{pageNumber}`、`{totalPages}`、`{bookTotalPages}`以及元数据占位符也都可用。`{attr.<key>}`读取当前章一级标题的属性。
 
 ### 左页设计
 
-`versoDesign`装饰篇隔页之后的那一页，条件是那一页没有内容，也就是隔页纸的背面。篇本身从不让这一页空着。`breakAfter.parity`默认为`'any'`，所以除非有别的东西提出奇偶要求，结束标记之后的内容就从紧接着的下一页开始：
+`versoDesign`装饰篇名页之后的那一页，前提是那一页没有内容，也就是篇名页的背面。篇本身从不让这一页空着：`breakAfter.parity`默认为`'any'`，所以除非另有奇偶要求，结束行之后的内容就从紧接着的下一页开始。奇偶要求可能来自：
 
-- **下一章的标题**。一级标题默认的`breakBefore`是`'always-odd'`；在右页的篇隔页之后，`'odd'`的效果相同：章移到下一个右页，左页留空，左页设计会绘制出来。
+- **下一章的标题**。一级标题默认的`breakBefore`是`'always-odd'`；篇名页在右页时，`'odd'`的效果也一样：章移到下一个右页，左页留空，左页设计就会画出来。
 - <strong>`parts.breakAfter: { enabled: true, parity: 'odd' }`。</strong>不管下一个标题怎么设置，篇自己要求下一个右页。章可能从任意一侧开始时（`breakBefore.parity: 'any'`或`breakBefore.enabled: false`）用这种写法。
 
-两者都没有时，章从左页开始，不绘制左页设计。`breakAfter.enabled: false`时，内容就接着排在篇隔页上。左页采用篇的调色板，所以容器上的`palette="band=#…"`也会给它换色。
+两者都没有时，章从左页开始，不画左页设计。`breakAfter.enabled: false`时，内容就接着排在篇名页上。左页采用篇的调色板，所以容器上的`palette="band=#…"`也会给它换色。
 
 ```ts
 parts: {
@@ -1023,21 +1023,21 @@ parts: {
 }
 ```
 
-**结束一章的篇**。在逐章排版的书中（沙盒、`buildBundle`），一个`:::part`容器可以单独成为一章，也可以是某一章的结尾。这时篇隔页就是该章的最后一页，篇还欠着的事由下一章接手：它在第一个块之前执行`breakAfter`，并在自己的第一页空着时在上面绘制`versoDesign`。排出的页面与整本书放在一个文档里时完全一样。结束标记之后只能跟不放置任何东西的指令（`:::numbering`、`:::space`）；其他任何东西都算这一章的内容，于是由这一章自己断页。紧跟在篇后面的空章自成一页，那一页就是左页。自行逐章排版的宿主程序可以从`continuationAfter()`得到这一信息：以篇结尾的章会报告`afterPartPage: true`，把它传进下一章的`continuation`即可。
+**结束一章的篇**。在逐章排版的书中（沙盒、`buildBundle`），一个`:::part`容器可以单独成为一章，也可以是某一章的结尾。这时篇名页就是该章的最后一页，篇还没做完的事由下一章接手：下一章在第一个块之前执行`breakAfter`，如果自己的第一页空着，就在上面画出`versoDesign`。排出的页面与整本书放在一个文档里时完全一样。结束行之后只能跟不放置任何内容的指令（`:::numbering`、`:::space`）；其他任何东西都算这一章的内容，分页就由这一章自己完成。紧跟在篇后面的空章自成一页，那一页就是左页。自行逐章排版的宿主程序可以从`continuationAfter()`得到这一信息：以篇结尾的章会报告`afterPartPage: true`，把它传进下一章的`continuation`即可。
 
 ### `:::part`容器
 
-`:::part{number="…" title="…"}`一行开启一篇，单独的`:::`结束它；两个属性都可省略（默认为`''`）。中间的各块（通常是章节列表）以`bodyStyle`排在篇隔页的单栏里，从`margins.top`开始；正文超出一页时，在普通页面上接排。这一页被归为`role: 'part'`（`VDTPage.partInfo`带有编号和标题），所以页眉页脚元素可以用`pages: 'part'` / `pages: 'body'`专门针对它或跳过它；PDF后端会把篇加到书签大纲中，位于它的各章之上。正文为空（`:::part{…}`后面直接是`:::`）是常见情况，照样生成这一页，相邻的两篇从不共用一页。嵌套在另一篇中的`:::part`会并入外层的篇。
+`:::part{number="…" title="…"}`一行开启一篇，单独的`:::`结束它；两个属性都可省略（默认为`''`）。中间的各块（通常是章节列表）以`bodyStyle`排在篇名页的单栏里，从`margins.top`开始；正文超出一页时，在普通页面上接着排。这一页标为`role: 'part'`（`VDTPage.partInfo`带有编号和标题），所以页眉页脚元素可以用`pages: 'part'` / `pages: 'body'`专门作用于这一页或跳过它；PDF后端把篇加进书签大纲，排在它的各章上一级。正文为空（`:::part{…}`后面直接是`:::`）是常见情况，照样生成这一页；相邻的两篇从不共用一页。嵌套在另一篇中的`:::part`会并入外层的篇。
 
-第三个属性`palette="<id>=<hex>[, <id>=<hex>…]"`给篇指定自己的颜色：在篇隔页以及其后直到下一篇的每一页上，凡是链接到这些调色板id的设计颜色（页眉、页脚、章首色带、篇设计和左页设计），都改用篇给出的值，而不用文档调色板的值。书中各部分就是这样在不另做设计的情况下，给角标、书眉圆点和章首色带换色的：`:::part{number="II" title="…" palette="band=#f6c297"}`。正文流也随之变化：在这些页面上，凡是等于某个被覆盖条目基准值的流颜色，包括标题，粗体、斜体和引用的颜色，项目符号和列表编号，题注标签和题注色条，表格的文字、线条和填充（表头、表体、斑马纹行以及单元格自己的填充），标注框（背景、边框、色条、标题）和行内标签（填充、轮廓和文字），都改用篇的值；因此把`headings.levels[1].color`链接到`band`，每个部分的标题就会用各自的颜色排出。行内色块保留其中写明的颜色。各组之间用逗号、分号或空格分隔，id和颜色之间用`=`或`:`连接，`#`可以省略。篇在结束标记之后继续生效：`{partTitle}`、`{partNumber}`和调色板随正文流进入其后的各章，并通过`continuationAfter()`报告的`continuation.part`进入单独排版的章，所以一个部分的第二章在书眉中显示该部分的方式与第一章完全相同。
+第三个属性`palette="<id>=<hex>[, <id>=<hex>…]"`给篇指定自己的颜色：在篇名页以及其后直到下一篇的每一页上，凡是链接到这些调色板id的设计颜色（页眉、页脚、章首色带、篇名页设计和左页设计），都改用篇给出的值，不再用文档调色板的值。这样，书的各部分不必另做设计，就能给角标、书眉圆点和章首色带换上各自的颜色：`:::part{number="II" title="…" palette="band=#f6c297"}`。正文流的颜色也随之变化。在这些页面上，凡是等于某个被覆盖条目基准值的颜色都改用篇的值，包括：标题，粗体、斜体和引用的颜色，项目符号和列表编号，题注标签和题注色条，表格的文字、线条和填充（表头、表体、斑马纹行以及单元格自己的填充），标注框的背景、边框、色条和标题，以及行内标签的填充、轮廓和文字；因此把`headings.levels[1].color`链接到`band`，每个部分的标题就会用各自的颜色排出。行内色块保留其中写明的颜色。各组之间用逗号、分号或空格分隔，id和颜色之间用`=`或`:`连接，`#`可以省略。篇在结束行之后继续生效：`{partTitle}`、`{partNumber}`和调色板随正文流进入其后的各章，并通过`continuationAfter()`报告的`continuation.part`进入单独排版的章，所以一个部分的第二章在书眉中显示该部分的方式与第一章完全相同。
 
-两个调色板条目可以有相同的基准值，而在篇中取不同的值：篇只覆盖其中一个，或给两者不同的颜色。单看数值无法判断某个流颜色来自哪个条目，所以流中的每个颜色都会与可能产生它的设置逐一对应，并取这些设置所链接的值。下面这些是区分开的：
+两个调色板条目可以有相同的基准值，而在篇中取不同的值：篇只覆盖其中一个，或给两者不同的颜色。单看数值，无法判断正文流中的某个颜色来自哪个条目，所以引擎把流中的每个颜色与可能产生它的设置对应起来，取这些设置所链接的值。以下各项分别处理：
 
 - 一个块的文字颜色：文字颜色，粗体、斜体和引用的颜色，列表标记（项目符号或编号）以及编号后的分隔符。假设`bodyText.color`链接到`ink`、`bodyText.boldColor`链接到`accent`，两者都是`#1a1a1a`，那么带`palette="accent=#b8413d"`的篇会给粗体片段换色而保留正文颜色；如果链接到`accent`的是`unorderedLists.color`，它就给项目符号换色而保留列表项的文字；
 - 每一级标题，以及每个设了颜色的标题样式；
 - 目录行的文字、编号，以及它的页码和副标题；
-- 每个标注框样式中的填充（背景、色条、标签页签）、边框、线条（标记和标签的线条）和文字（标题、图标、标记字形、标签）；
-- 每个表格样式、行内标签样式和题注样式的每一种颜色。具名表格样式与`tableStyle`分开，资源类型的题注样式与`captionStyle`分开。单元格自己的填充按它自己的链接处理。
+- 每个标注框样式中的填充（背景、色条、页签）、边框、线条（标记和页签的线条）和文字（标题、图标、标记字形、页签）；
+- 每个表格样式、行内标签样式和题注样式的每一种颜色。命名表格样式与`tableStyle`分开，资源类型的题注样式与`captionStyle`分开。单元格自己的填充按它自己的链接处理。
 
 仍有一种情况按数值判断：不同位置的设置给一个块设定同一种颜色。例如`bodyText.color`、`bodyText.blockquote.color`、段落样式的`color`和标注框样式的`body.color`都设定块的文字颜色。当其中两个链接到基准值相同的条目，而篇把它们区分开时，颜色取覆盖值（两个都被覆盖时取最后写的那个）。遇到这种情况，请给这些条目各自不同的基准值。
 
@@ -1052,7 +1052,7 @@ const minimal = stripPartsDefaults(config.parts);
 
 ## 标题样式
 
-`headingStyles`属性声明具名样式，文档用`# Title {style="<id>"}`把它应用到标题上。样式做两件事。一是覆盖标题所在级别的字体样式、设计和编号，即级别条目中除`level`之外的所有字段（字体、字号、颜色、`breakBefore`、`span`、`advancedDesign`、`textTransform`、`hidden`、`numberingTemplate`…）；二是管理标题开启的**区段**：从这个标题到下一个同级或更高级标题（设了`sectionEnd: 'heading'`时为下一个任意级别的标题）之间的页面，采用该样式的书眉、页面几何、正文字体样式和调色板。一本书的前置部分（序言排成一个宽栏，罗马数字页码，蓝色色带）就是这样放进一本双栏、十进制编号的手册里，而无须第二套配置。
+`headingStyles`属性声明命名样式，文档用`# Title {style="<id>"}`把它套用到标题上。样式做两件事。一是覆盖标题所在级别的字体样式、设计和编号，即级别条目中除`level`之外的所有字段（字体、字号、颜色、`breakBefore`、`span`、`advancedDesign`、`textTransform`、`hidden`、`numberingTemplate`…）；二是管理标题开启的**区段**：从这个标题到下一个同级或更高级标题（设了`sectionEnd: 'heading'`时为下一个任意级别的标题）之间的页面，采用该样式的书眉、页面几何、正文字体样式和调色板。这样，一本双栏、用阿拉伯数字编号的手册，不需要第二套配置，就能放进风格不同的前辅文：序言排成一个宽栏，用罗马数字页码，配蓝色色带。
 
 ```ts
 const config: PostextConfig = {
@@ -1091,7 +1091,7 @@ const config: PostextConfig = {
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td>标题行上<code>{'{style="…"}'}</code>引用的标识符。未知的id不改变标题。</td>
+      <td>供标题行上的<code>{'{style="…"}'}</code>引用的标识符。id未知时标题不受影响。</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -1115,7 +1115,7 @@ const config: PostextConfig = {
       <td><code>runningChapter</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>这种样式的一级标题是否成为当前章，即在它所在页及之后各页上，<code>{'{chapterTitle}'}</code>、<code>{'{chapterNumber}'}</code>、<code>{'{attr.<key>}'}</code>及其<code>…AtTop</code>形式所指的那一章。章内以一级标题排的图版、地图或封面设为<code>false</code>：书眉会越过它，连它自己那一页也是，继续显示被它打断的那一章；它也不设置<code>h1</code>检索词。<code>numbered</code>时它仍然计数（它自己的设计读取它自己的<code>{'{chapterNumber}'}</code>），<code>toc</code>时仍然列入<code>:::toc</code>。若同时设了<code>toc: false</code>，它不生成PDF书签：章首页前一页的图版把书签留给各章。其他级别的标题忽略此项。保持默认时，图版之后各页印的是图版的标题。<code>numbered: false</code>的序言或引子仍然自成一章，保持默认即可。这个选项只改变占位符所指的章：样式照样像所有标题样式那样开启自己的区段，所以直到下一个一级标题为止，各页采用图版样式的书眉槽位、页边距、栏、正文样式和调色板（样式未设置的项取文档的），而不是被打断的那一章所开启的样式区段的设置。在逐章排版的书中，书眉不会从一个章文件带到下一个，所以开启某个文件的图版，在该文件第一个章标题之前显示的章占位符都是空的。</td>
+      <td>这种样式的一级标题是否成为当前章，即在它所在页及之后各页上，<code>{'{chapterTitle}'}</code>、<code>{'{chapterNumber}'}</code>、<code>{'{attr.<key>}'}</code>及其<code>…AtTop</code>形式所指的那一章。章内以一级标题排的图版、地图或封面设为<code>false</code>：书眉跳过它（它自己那一页也一样），继续显示被它打断的那一章；它也不设置<code>h1</code>检索词。<code>numbered</code>时它仍然计数（它自己的设计读取它自己的<code>{'{chapterNumber}'}</code>），<code>toc</code>时仍然列入<code>:::toc</code>。如果同时设了<code>toc: false</code>，它就不生成PDF书签：放在章首页前一页的图版不占书签，书签只留给各章。其他级别的标题忽略此项。保持默认时，图版之后各页印的是图版的标题。<code>numbered: false</code>的序言或引子仍然自成一章，保持默认即可。这个选项只改变占位符所指的章：样式照样像所有标题样式那样开启自己的区段，所以直到下一个一级标题为止，各页采用图版样式的书眉槽位、页边距、栏、正文样式和调色板（样式未设置的项取文档的），而不是被打断的那一章所开启的样式区段的设置。在逐章排版的书中，书眉不会从一个章文件带到下一个，所以位于文件开头的图版，在该文件第一个章标题出现之前，章占位符都是空的。</td>
     </tr>
     <tr>
       <td><code>sectionEnd</code></td>
@@ -1145,7 +1145,7 @@ const config: PostextConfig = {
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>页面的页边距</td>
-      <td>区段各页的正文区域；未设置的一边沿用页面的页边距，<code>mirror</code>也一样。它在区段开启的页面上生效，所以要与<code>breakBefore</code>配合使用。</td>
+      <td>区段各页的版心；未设置的一边沿用页面的页边距，<code>mirror</code>也一样。它在区段开启的页面上生效，所以要与<code>breakBefore</code>配合使用。</td>
     </tr>
     <tr>
       <td><code>layout</code></td>
@@ -1157,13 +1157,13 @@ const config: PostextConfig = {
       <td><code>bodyStyle</code></td>
       <td><code>PartsBodyStyleConfig</code></td>
       <td>继承<code>bodyText</code></td>
-      <td>区段中段落、引文和列表的字体样式，字段与<a href="#篇">parts.bodyStyle</a>相同。</td>
+      <td>区段中段落、引用块和列表的字体样式，字段与<a href="#篇">parts.bodyStyle</a>相同。</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
       <td><code>Record&lt;string, string&gt;</code></td>
       <td><code>{'{}'}</code></td>
-      <td>区段各页的调色板覆盖（id → 十六进制色值），叠加在当前篇的覆盖之上。机制与篇的<code>palette</code>属性相同，作用范围也相同：不仅是排在这些页上的设计槽位（书眉、章首色带，即所有链接到被覆盖id的颜色），也按数值作用于正文流：凡是等于某个被覆盖条目基准值的流颜色，包括标题，粗体、斜体和引用的颜色，项目符号和列表编号，题注标签和题注色条，表格的文字、线条和填充，标注框（背景、边框、色条、标题）和行内标签（填充、轮廓和文字），都改用区段的值，与篇之下的规则一样，包括两个条目共用基准值时的规则（参见<a href="#part容器"><code>:::part</code>容器</a>）。行内色块保留其中写明的颜色。页面底色也随之改变：<code>page.backgroundColor</code>链接到被覆盖的条目（或未链接但取其基础值）时，区段各页以区段的值铺底，报纸的财经版因此印成鲑粉色，其余各页仍为白色。自postext 1.18起。</td>
+      <td>区段各页的调色板覆盖（id → 十六进制色值），叠加在当前篇的覆盖之上。机制与篇的<code>palette</code>属性相同，作用范围也相同：不仅作用于排在这些页上的设计槽位（书眉、章首色带，即所有链接到被覆盖id的颜色），也按数值作用于正文流。凡是等于某个被覆盖条目基准值的流颜色都改用区段的值，包括：标题，粗体、斜体和引用的颜色，项目符号和列表编号，题注标签和题注色条，表格的文字、线条和填充，标注框的背景、边框、色条和标题，以及行内标签的填充、轮廓和文字。这与篇的规则一样，两个条目共用基准值时也按同样的规则处理（见<a href="#part容器"><code>:::part</code>容器</a>）。行内色块保留其中写明的颜色。页面底色也随之改变：<code>page.backgroundColor</code>链接到被覆盖的条目（或者没有链接、但取值等于该条目的基准值）时，区段各页以区段的值铺底，报纸的财经版因此印成鲑粉色，其余各页仍为白色。自postext 1.18起。</td>
     </tr>
   </tbody>
 </table>
@@ -1186,7 +1186,7 @@ headingStyles: [
 
 封面页不印书眉，从“灯室”起，各页重新采用文档的页眉和页脚。若取默认值`'level'`，封面的区段会延续到下一个一级标题，而这本书没有下一个一级标题，于是全书没有一页带书眉。
 
-**分页符不能代替标题自身的断页**。样式继承所在级别的`breakBefore`（一级的默认值是`{ enabled: true, parity: 'always-odd' }`），标题无论出现在哪里都会执行它，紧跟在`:::pagebreak`之后也一样。分页符开启新页，标题随后仍然要求落在跨页中它那一侧。使用`parity: 'odd'`时，如果分页落在左页，后面会跟一张空白页，标题从下一个右页开始。使用`'always-odd'`时还会多出分隔空白页，而分页符不起任何作用，因为标题本来就会开启那一页。如果一个样式要从手动分页开启的那一页开始，比如扉页之后的目录页，就关掉它自己的断页：
+**分页符不能代替标题自身的分页**。样式继承所在级别的`breakBefore`（一级的默认值是`{ enabled: true, parity: 'always-odd' }`），标题无论出现在哪里都会执行它，紧跟在`:::pagebreak`之后也一样。分页符开启新页，标题随后仍然要求落在跨页中它那一侧。使用`parity: 'odd'`时，如果分页符开启的是左页，后面会再跟一张空白页，标题从下一个右页开始。使用`'always-odd'`时还会多出分隔空白页，而分页符不起任何作用，因为标题本来就会开启那一页。如果一个样式要从手动分页开启的那一页开始，比如扉页之后的目录页，就关掉它自己的分页：
 
 ```ts
 headingStyles: [
@@ -1197,7 +1197,7 @@ headingStyles: [
 
 如果想独占一页又不指定左右，改用`breakBefore: { parity: 'any' }`，并去掉`:::pagebreak`。
 
-**页面属于哪个区段**。书眉和调色板按页选择，而不是按标题选择。一页采用该页上最后一次区段切换之后生效的区段：一个区段结束、另一个区段在同一页开始时（比如词典中两个很短的字母部分），这一页使用第二个区段的书眉和调色板；带样式的区段在页中遇到不带样式的标题而结束时，这一页回到文档的设置。`{chapterTitle}`遵循同样的规则：两章交汇的页面显示后一章的标题。空白页遵循[章标题](/zh/docs/configuration-headings#空白页的归属)的规则：为凑奇偶留的空白页（`blankForParity`）属于其后开启的区段，`'always-odd'` / `'always-even'`断页添加的分隔页（`blankForForce`）属于其前的区段。篇隔页会结束当前打开的区段。
+**页面属于哪个区段**。书眉和调色板按页选择，而不是按标题选择。一页采用该页上最后一次区段切换之后生效的区段：一个区段结束、另一个区段在同一页开始时（比如词典中两个很短的字母部分），这一页使用第二个区段的书眉和调色板；带样式的区段在页中遇到不带样式的标题而结束时，这一页回到文档的设置。`{chapterTitle}`遵循同样的规则：两章交汇的页面显示后一章的标题。空白页遵循[章标题](/zh/docs/configuration-headings#空白页的归属)的规则：为凑奇偶留的空白页（`blankForParity`）属于其后开启的区段，`'always-odd'` / `'always-even'`断页添加的分隔页（`blankForForce`）属于其前的区段。篇名页会结束当前的区段。
 
 ```md
 # A {style="letter"}

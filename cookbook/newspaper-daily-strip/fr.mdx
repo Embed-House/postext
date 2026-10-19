@@ -10,13 +10,13 @@ pageNotes: { "1": "La une du supplément BD : le bandeau rouge « Bandes dessi
 
 ## Ce que vous allez composer
 
-Le supplément BD d’un journal du week-end, *La Dépêche de Corrington*, plié au format 230 × 310 mm. La une porte la demi-page du dimanche de *Pip et Otto*, un manchot et un morse qui tiennent une boulangerie sur une banquise, avec le sommaire en dessous. À l’intérieur, une interview du dessinateur de la série court sur quatre colonnes, avec le courrier des lecteurs et une publicité, et le strip quotidien de la semaine, quatre cases carrées, traverse la page en dessous. Les deux bandes dessinées sont des blocs `:::strip` dans le texte du journal, et le supplément existe en dix langues.
+Le supplément BD d’un journal du week-end, *La Dépêche de Corrington*, plié au format 230 × 310 mm. La une présente la demi-page du dimanche de *Pip et Otto*, un manchot et un morse qui tiennent une boulangerie sur une banquise, avec le sommaire en dessous. À l’intérieur, une interview du dessinateur de la série court sur quatre colonnes, avec le courrier des lecteurs et une publicité, et le strip quotidien de la semaine, quatre cases carrées, traverse la page en dessous. Les deux bandes dessinées sont des blocs `:::strip` dans le texte du journal, et le supplément existe en dix langues.
 
 ## Préparation
 
 ### 1 · Écrire le strip là où le journal le veut
 
-Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Un `:::strip` a le corps d’une planche de bande dessinée (son `split`, ses lignes `::panel` et leur script), mais c’est un bloc du texte ([strips](/fr/docs/comics#strips)). Sur la une à une colonne, le strip du dimanche est composé là où il est écrit, sur 210 mm de haut, et le sommaire le suit. Son découpage, `55 / * [40 | *]`, donne à la grande scène de pêche une bande à elle et aux deux gags une rangée en dessous. Un strip ne se coupe jamais : s’il ne tient pas, il passe entier à la page suivante.
+Le code se trouve dans [la réponse courte](#la-réponse-courte) plus haut. Un `:::strip` a le contenu d’une planche de bande dessinée (son `split`, ses lignes `::panel` et leur script), mais c’est un bloc du texte ([strips](/fr/docs/comics#strips)). Sur la une à une colonne, le strip du dimanche est composé là où il est écrit, sur 210 mm de haut, et le sommaire le suit. Son découpage, `55 / * [40 | *]`, donne à la grande scène de pêche une bande à elle et aux deux gags une autre bande en dessous. Un strip ne se coupe jamais : s’il ne tient pas, il passe entier à la page suivante.
 
 <PageShot page={1} crop="0,0,1,0.8" caption="La une : la demi-page du dimanche composée dans le texte, le sommaire en dessous." />
 
@@ -28,13 +28,13 @@ La page intérieure s’ouvre sur un H1 dont le style de titre fait passer la se
 
 <Excerpt region="art" />
 
-Les images ont été dessinées carrées ou larges, et les cases du découpage du dimanche ne le sont pas : le gag de la botte occupe une case de 112 × 88 mm. Chaque zone sûre est découpée selon ce dont la blague a besoin, Pip, Otto et la botte : le recadrage n’ajoute ainsi jamais de bandes autour de l’image ([cases et dessin](/fr/docs/comics#cases-et-dessins)).
+Les images ont été dessinées carrées ou larges, et les cases du découpage du dimanche ne le sont pas : le gag de la botte occupe une case de 112 × 88 mm. Chaque zone de sécurité est découpée selon ce dont la blague a besoin, Pip, Otto et la botte : le recadrage n’ajoute ainsi jamais de bandes autour de l’image ([cases et dessin](/fr/docs/comics#cases-et-dessins)).
 
 ### 4 · Imprimer la même page dans dix journaux
 
 <Excerpt region="editions" />
 
-Chaque édition compose le journal dans des caractères adaptés à son écriture et lettre les strips dans ses propres caractères de bande dessinée. Les bulles japonaises vont à la verticale. Les éditions japonaise et arabe lisent les strips de droite à gauche : les cases de chaque rangée changent donc de place ; l’édition arabe, composée de droite à gauche, inverse aussi les colonnes de la page. Les images et le découpage restent les mêmes ; seul `content.<lang>.md` change ([sens de lecture](/fr/docs/comics#sens-de-lecture)).
+Chaque édition compose le journal dans des caractères adaptés à son écriture et lettre les strips dans ses propres caractères de bande dessinée. Les bulles japonaises vont à la verticale. Les éditions japonaise et arabe lisent les strips de droite à gauche : les cases de chaque bande changent donc de place ; l’édition arabe, composée de droite à gauche, inverse aussi les colonnes de la page. Les images et le découpage restent les mêmes ; seul `content.<lang>.md` change ([sens de lecture](/fr/docs/comics#sens-de-lecture)).
 
 ## Variantes
 
@@ -57,4 +57,4 @@ Sans `span=page`, un strip a la largeur de sa colonne et se compose là où il e
 ## Erreurs fréquentes
 
 - Le bandeau de rubrique est dessiné par l’en-tête, et non par une ouverture de H1 : rien d’autre que la ligne de folio ne se trouve au-dessus du strip de la une.
-- Une zone sûre plus large que la forme de sa case encadre l’image de bandes de la couleur de fond de la case, et la construction avertit `comicPanelLetterbox`.
+- Une zone de sécurité plus large que la forme de sa case encadre l’image de bandes de la couleur de fond de la case, et la construction avertit `comicPanelLetterbox`.

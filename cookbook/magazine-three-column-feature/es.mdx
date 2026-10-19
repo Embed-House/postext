@@ -22,7 +22,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. `layoutType: 
 
 <Excerpt region="spread" />
 
-Cada mitad de la foto pertenece a un estilo de título con `span: 'page'`, y un título a toda la página siempre abre página nueva, así que la página del titular y la de la entradilla van seguidas. La mitad izquierda llena la página par y no reserva altura (`reserve: false`), de modo que el titular puede ir sobre el agua del pie. La derecha se corta a 165 mm, y el primer párrafo, la entradilla y la firma cuelgan del contenedor por debajo. Ese párrafo es un texto de diseño con una capitular (`dropCap`) de cuatro líneas, del ancho de una columna; su relleno inferior vacío cuenta en la altura de la apertura, así que las columnas arrancan 6 mm más abajo. `continuation.pageIndexOffset: 83` hace de la 84 una página par, y las dos mitades quedan enfrentadas.
+Cada mitad de la foto pertenece a un estilo de encabezado con `span: 'page'`, y un título a toda la página siempre abre página nueva, así que la página del titular y la de la entradilla van seguidas. La mitad izquierda llena la página par y no reserva altura (`reserve: false`), de modo que el titular puede ir sobre el agua del pie. La derecha se corta a 165 mm, y el primer párrafo, la entradilla y la firma cuelgan del contenedor por debajo. Ese párrafo es un texto de diseño con una capitular (`dropCap`) de cuatro líneas, del ancho de una columna; su relleno inferior vacío cuenta en la altura de la apertura, así que las columnas arrancan 6 mm más abajo. `continuation.pageIndexOffset: 83` hace de la 84 una página par, y las dos mitades quedan enfrentadas.
 
 ### 3 · Declara las fotos y cita cada una donde debe caer
 
@@ -40,13 +40,13 @@ Los elementos de cabecera se pintan sobre la página y no reservan sitio, así q
 
 <Excerpt region="art" />
 
-El mapa es un recurso SVG con `placement: 'here'`, citado dentro de la valla del recuadro, así que queda bajo el título del recuadro, a su medida. No lleva rótulos: el texto de un SVG no puede usar las fuentes web de la página, y el pie nombra las formas en su lugar. La punta de flecha de la ruta del ferri es un trazado, porque un `<marker>` no sobreviviría a la exportación a PDF.
+El mapa es un recurso SVG con `placement: 'here'`, citado dentro del bloque del recuadro, así que queda bajo el título del recuadro, a su medida. No lleva rótulos: el texto de un SVG no puede usar las fuentes web de la página, y el pie dice qué es cada forma. La punta de flecha de la ruta del ferri es un trazado, porque un `<marker>` no sobreviviría a la exportación a PDF.
 
 ## Variantes
 
 ### Pon la cita sobre las tres columnas
 
-Un recuadro flotante toma el atributo `columns` de la valla antes que el de su estilo, así que una cita puede ocupar todo el ancho.
+Un recuadro flotante toma el atributo `columns` de su línea de apertura antes que el de su estilo, así que una cita puede ocupar todo el ancho.
 
 ```diff
 - :::callout{type="pull"}

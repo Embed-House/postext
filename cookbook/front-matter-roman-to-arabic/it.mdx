@@ -5,12 +5,12 @@ plain: "Le prime pagine di un’edizione tascabile di Frankenstein. Mostra come 
 description: "Copertina e preliminari di Frankenstein contati da i a x, e la Letter I, su un recto, è pagina 1. L’indice e le etichette del PDF danno gli stessi numeri."
 question: "Come numero le pagine preliminari i, ii, iii e riparto da 1 sul recto dove comincia il romanzo?"
 aliases: ["numeri di pagina romani", "numeri romani", "pagine preliminari", "preliminari", "copertina", "occhiello", "frontespizio", "colophon", "pagina del copyright", "dedica", "epigrafe", "tavola di antiporta", "verso bianco", "firma della lettera", "ricominciare la numerazione", "etichette di pagina PDF"]
-pageNotes: { "3": "L’occhiello, pagina iii. Il suo stile va a una pagina di destra, quindi il retro della copertina, pagina ii, è bianco e non stampa il folio.", "4": "La tavola di antiporta, pagina iv, sta di fronte al frontespizio, v; nessuna delle due stampa il folio.", "10": "L’ultima pagina della «Preface»: il suo folio, x, è composto in maiuscoletto centrato al piede.", "11": "La «Letter I» si apre su una pagina di destra sotto l’aurora boreale su San Pietroburgo; il suo folio, 1, sta nello stesso punto della x sulla pagina a fronte.", "13": "Pagina 3: su una pagina di destra la testatina mette il titolo della lettera accanto al folio, entrambi verso il margine esterno.", "14": "Pagina 4, la fine della «Letter I»: la testatina mette il titolo del libro accanto al folio, e la firma di Walton è allineata a destra." }
+pageNotes: { "3": "L’occhiello, pagina iii. Il suo stile va a una pagina di destra, quindi il retro della copertina, pagina ii, è bianco e non stampa il numero di pagina.", "4": "La tavola di antiporta, pagina iv, sta di fronte al frontespizio, v; nessuna delle due stampa il numero di pagina.", "10": "L’ultima pagina della «Preface»: il suo numero di pagina, x, è composto in maiuscoletto centrato al piede.", "11": "La «Letter I» si apre su una pagina di destra sotto l’aurora boreale su San Pietroburgo; il suo numero di pagina, 1, sta nello stesso punto della x sulla pagina a fronte.", "13": "Pagina 3: su una pagina di destra la testatina mette il titolo della lettera accanto al numero di pagina, entrambi verso il margine esterno.", "14": "Pagina 4, la fine della «Letter I»: la testatina mette il titolo del libro accanto al numero di pagina, e la firma di Walton è allineata a destra." }
 ---
 
 ## Che cosa comporrai
 
-Le prime carte di *Frankenstein* come classico tascabile, 129 × 198 mm: una copertina con un fulmine sul Monte Bianco, il suo retro lasciato bianco, un occhiello, una tavola di antiporta con la nave di Walton stretta dai ghiacci di fronte al frontespizio, il colophon in basso sul suo verso, la dedica a Godwin sopra l’epigrafe di Milton, una pagina di indice e la «Preface» del 1818. Queste dieci pagine sono numerate da i a x, ma solo l’indice e la prefazione stampano il loro numero. La «Letter I» apre il romanzo su una pagina di destra, sotto l’aurora boreale, e il suo folio dice 1 nello stesso punto della x sulla pagina a fronte. La lettera prosegue fino alla firma di Walton. Il ix accanto alla prefazione nell’indice e l’1 accanto alla lettera vengono dalle pagine finite, e un visualizzatore PDF etichetta le pagine allo stesso modo. La copertina, la tavola di antiporta e l’aurora boreale sono dipinti generati con modelli di diffusione, caricati come bitmap JPEG; il marchio dell’editore e il cristallo di ghiaccio sono disegnati nel codice.
+Le prime carte di *Frankenstein* come classico tascabile, 129 × 198 mm: una copertina con un fulmine sul Monte Bianco, il suo retro lasciato bianco, un occhiello, una tavola di antiporta con la nave di Walton stretta dai ghiacci di fronte al frontespizio, il colophon in basso sul suo verso, la dedica a Godwin sopra l’epigrafe di Milton, una pagina di indice e la «Preface» del 1818. Queste dieci pagine sono numerate da i a x, ma solo l’indice e la prefazione stampano il loro numero. La «Letter I» apre il romanzo su una pagina di destra, sotto l’aurora boreale, e il suo numero di pagina è 1, nello stesso punto della x sulla pagina a fronte. La lettera prosegue fino alla firma di Walton. Il ix accanto alla prefazione nell’indice e l’1 accanto alla lettera vengono dalle pagine finite, e un visualizzatore PDF etichetta le pagine allo stesso modo. La copertina, la tavola di antiporta e l’aurora boreale sono dipinti generati con modelli di diffusione, caricati come bitmap JPEG; il marchio dell’editore e il cristallo di ghiaccio sono disegnati nel codice.
 
 ## Preparazione
 
@@ -18,25 +18,25 @@ Le prime carte di *Frankenstein* come classico tascabile, 129 × 198 mm: una cop
 
 <Excerpt region="leaves" />
 
-Un titolo apre una pagina tutta sua e diventa un segnalibro del PDF; il progetto grafico nel suo stile colloca il testo e le immagini della carta. Con `numbered: false` e `toc: false` le carte restano fuori dal conteggio dei capitoli e dall’indice. Un’intestazione e un piè di pagina vuoti danno loro quello che i tipografi chiamano folio cieco: il frontespizio non stampa il numero ma resta pagina v, ed è per questo che la prefazione può essere ix. Solo l’occhiello mantiene un’interruzione su pagina dispari, e questo lascia bianco il retro della copertina. Il colophon, la dedica, l’epigrafe e la chiusa di Walton sono blocchi `:::paragraphs` composti negli stili alla fine dell’estratto.
+Un titolo apre una pagina tutta sua e diventa un segnalibro del PDF; il progetto grafico nel suo stile colloca il testo e le immagini della carta. Con `numbered: false` e `toc: false` le carte restano fuori dal conteggio dei capitoli e dall’indice. Un’intestazione e un piè di pagina vuoti danno loro quella che i tipografi chiamano numerazione cieca: il frontespizio non stampa il numero ma resta pagina v, ed è per questo che la prefazione può essere ix. Solo l’occhiello mantiene un’interruzione su pagina dispari, e questo lascia bianco il retro della copertina. Il colophon, la dedica, l’epigrafe e la chiusa di Walton sono blocchi `:::paragraphs` composti negli stili alla fine dell’estratto.
 
 ### 2 · L’indice prende i numeri dall’impaginazione
 
 <Excerpt region="contents" />
 
-`:::toc` elenca ogni titolo che il suo stile lascia entrare, con l’etichetta della pagina su cui cade ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)). L’indice e la prefazione condividono lo stile `front`, che imposta `toc: false`, e la prefazione lo scavalca con `{toc="true"}`. Né la prefazione né la «Letter I» sono numerate, quindi le loro voci non stampano un numero di capitolo. La seconda riga della voce della lettera è il suo attributo `to="…"`. I numeri di pagina sono composti nel carattere del folio. Le voci cominciano sulla stessa linea di base della prima riga della prefazione, così le due pagine affiancate si allineano.
+`:::toc` elenca ogni titolo che il suo stile lascia entrare, con l’etichetta della pagina su cui cade ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)). L’indice e la prefazione condividono lo stile `front`, che imposta `toc: false`, e la prefazione lo scavalca con `{toc="true"}`. Né la prefazione né la «Letter I» sono numerate, quindi le loro voci non stampano un numero di capitolo. La seconda riga della voce della lettera è il suo attributo `to="…"`. I numeri di pagina dell’indice usano lo stesso carattere dei numeri stampati sulle pagine. Le voci cominciano sulla stessa linea di base della prima riga della prefazione, così le due pagine affiancate si allineano.
 
 ### 3 · Il romanzo si apre su un recto, sotto l’aurora boreale
 
 <Excerpt region="letter" />
 
-Il dipinto va al vivo in testa alla pagina e sfuma nella carta al piede, dove comincia la lettera. L’apertura riserva la pagina fino al piede del dipinto, a 104 mm dal margine superiore della pagina, e `minHeight` fissa un minimo 2 mm più in basso, che fa partire la lettera una riga di griglia più giù, fuori dalla sfumatura ([progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-headings#estensione-e-progetto-grafico-avanzato)). L’occhiello e la riga della data vengono dagli attributi `to` e `dateline` del titolo. La «Letter I» porta anche `{style="letter"}`, uno stile la cui unica impostazione è `numbered: false`, perché le lettere di Walton vengono prima del «Chapter I» e non hanno numero di capitolo.
+Il dipinto va al vivo in testa alla pagina e sfuma nella carta al piede, dove comincia la lettera. L’apertura riserva la pagina fino al piede del dipinto, a 104 mm dal margine superiore della pagina, e `minHeight` fissa un minimo 2 mm più in basso, che fa partire la lettera una riga di griglia più giù, fuori dalla sfumatura ([estensione e grafica avanzata](/it/docs/configuration-headings#estensione-e-grafica-avanzata)). L’occhiello e la riga della data vengono dagli attributi `to` e `dateline` del titolo. La «Letter I» usa anche `{style="letter"}`, uno stile la cui unica impostazione è `numbered: false`, perché le lettere di Walton vengono prima del «Chapter I» e non hanno numero di capitolo.
 
 ### 4 · Le testatine tornano con il romanzo
 
 <Excerpt region="heads" />
 
-Una sezione mantiene l’intestazione e il piè di pagina del documento a meno che il suo stile non li sostituisca. Le pagine preliminari li sostituiscono entrambi e lo stile della lettera no, quindi da pagina 1 il romanzo stampa queste testatine sulle pagine di testo e, nell’apertura, il folio al piede definito nella risposta breve. `{pageNumber}` stampa l’etichetta della pagina su cui si trova, così l’helper `folio()` mette x da un lato del dorso e 1 dall’altro con lo stesso progetto grafico.
+Una sezione mantiene l’intestazione e il piè di pagina del documento a meno che il suo stile non li sostituisca. Le pagine preliminari li sostituiscono entrambi e lo stile della lettera no, quindi da pagina 1 il romanzo stampa queste testatine sulle pagine di testo e, nell’apertura, il numero di pagina al piede definito nella risposta breve. `{pageNumber}` stampa l’etichetta della pagina su cui si trova, così l’helper `folio()` mette x da un lato del dorso e 1 dall’altro con lo stesso progetto grafico.
 
 ### 5 · Il PDF porta gli stessi numeri di pagina
 
@@ -48,7 +48,7 @@ Una sezione mantiene l’intestazione e il piè di pagina del documento a meno c
 
 ### Conta i preliminari in maiuscolo
 
-I numeri maiuscoli si stampano come maiuscole piene nel carattere del folio, più alte del maiuscoletto che danno i numeri minuscoli.
+I numeri maiuscoli si stampano come maiuscole piene nel carattere dei numeri di pagina, più alte del maiuscoletto che danno i numeri minuscoli.
 
 ```diff
 -const pageNumbering = { format: 'lower-roman', startAt: 1 }; // startAt spelled out: cover = i
@@ -76,7 +76,7 @@ Cancella il titolo `# Frontispiece` e manda il frontespizio su un recto: pagina 
 
 ### Aggiungi abbondanza e segni di taglio per la stampa
 
-Con `cutLines` la copertina e l’apertura, entrambe ancorate all’abbondanza, vanno 3 mm oltre il rifilo; i folio e il numero di pagine non cambiano ([segni di taglio](/it/docs/configuration-page-layout#segni-di-taglio)).
+Con `cutLines` la copertina e l’apertura, entrambe ancorate all’abbondanza, vanno 3 mm oltre il rifilo; i numeri di pagina e il numero delle pagine non cambiano ([segni di taglio](/it/docs/configuration-page-layout#segni-di-taglio)).
 
 ```diff
      backgroundColor: col('paper'), pageNumbering,

@@ -16,17 +16,17 @@ O segundo capítulo de uma tese de doutorado em educação, a revisão de litera
 
 ### 1 · Um motor, um estilo
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. O Postext lê as citações e deixa a redação delas a um motor de citações, registrado uma vez antes da primeira composição; `postext-citeproc` empacota o citeproc-js, o motor que o Zotero e o Mendeley usam, com dezesseis estilos CSL e os seus arquivos de idioma. `[@mangen2013]` dá “(Mangen et al., 2013)”, `@delgado2018` sem colchetes põe os autores dentro da frase e `[@ibanez2023, pp. 12–15]` leva o intervalo de páginas para dentro dos parênteses. Com o documento em espanhol, as mesmas chaves tiram os conectivos e as abreviaturas do arquivo de idioma espanhol, porque o motor segue o idioma do documento.
+O código é [a resposta curta](#a-resposta-curta) logo acima. O Postext lê as citações e deixa a redação delas a um motor de citações, registrado uma vez antes da primeira composição; `postext-citeproc` empacota o citeproc-js, o motor que o Zotero e o Mendeley usam, com dezesseis estilos CSL e os arquivos de idioma. `[@mangen2013]` dá “(Mangen et al., 2013)”, `@delgado2018` sem colchetes põe os autores dentro da frase e `[@ibanez2023, pp. 12–15]` leva o intervalo de páginas para dentro dos parênteses. Com o documento em espanhol, as mesmas chaves tiram os conectivos e as abreviaturas do arquivo de idioma espanhol, porque o motor segue o idioma do documento.
 
 ### 2 · As referências vêm de um bloco BibTeX
 
-O último bloco do capítulo é `:::references{format=bibtex}`, com a exportação do Zotero colada dentro e os acentos escritos como `{\'a}`. `:::bibliography`, acima dele, coloca a lista sob o título References; sem ele, o Postext acrescenta a lista no fim. Só aparecem as obras citadas, ordenadas como a APA ordena, e cada citação no texto leva à sua entrada.
+O último bloco do capítulo é `:::references{format=bibtex}`, com a exportação do Zotero colada dentro e os acentos escritos como `{\'a}`. `:::bibliography`, acima dele, coloca a lista sob o título References; sem ele, o Postext acrescenta a lista no fim. Só aparecem as obras citadas, ordenadas como a APA ordena, e cada citação no texto leva à entrada.
 
 ### 3 · Um título sem número, referências por extenso
 
 <Excerpt region="refs" />
 
-O título das referências usa o estilo `references`, que o mantém no sumário mas fora da numeração, então a lista não vira a seção 2.4. `:ref{id="sec-speed"}` imprime “Section 2.2” com o rótulo de `crossRefs` e leva ao título; os números vêm de `startAt=2` no título do capítulo, o mesmo contador que os títulos usam.
+O título das referências usa o estilo `references`, que o mantém no sumário mas fora da numeração, por isso a lista não vira a seção 2.4. `:ref{id="sec-speed"}` imprime “Section 2.2” com o rótulo de `crossRefs` e leva ao título; os números vêm de `startAt=2` no título do capítulo, o mesmo contador que os títulos usam.
 
 ### 4 · A abertura fica numa faixa
 
@@ -58,4 +58,4 @@ Muitas universidades aceitam a lista de referências um corpo abaixo e em espaç
 
 ## Erros comuns
 
-- A APA escreve os títulos de artigos e livros só com a inicial maiúscula, e o citeproc-js imprime os títulos como os dados os trazem. O Zotero guarda a maioria dos títulos com maiúscula em cada palavra, então corrija-os no Zotero ou no BibTeX antes que cheguem à página.
+- A APA escreve os títulos de artigos e livros só com a inicial maiúscula, e o citeproc-js imprime os títulos como os dados os trazem. O Zotero guarda a maioria dos títulos com maiúscula em cada palavra, por isso corrija-os no Zotero ou no BibTeX antes que cheguem à página.

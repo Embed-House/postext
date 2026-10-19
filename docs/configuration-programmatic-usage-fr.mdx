@@ -43,13 +43,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
 
 ### Avertissements dans le document
 
-`buildDocument` ne s’arrête pas sur une référence erronée ou sur un style inconnu : il applique une solution de repli et consigne ce qu’il a fait dans `doc.contentWarnings`. Les encadrés que la mise en page a dû forcer se trouvent dans `doc.warnings`, qui garde la forme qu’il avait dans postext 1.4 : chaque entrée y est un `calloutOverflow` avec ses `pageIndex`, `columnIndex` et `overflowPx`. Chaque champ est absent lorsqu’il n’y a rien à signaler. Chaque entrée a un `kind`. Les types de contenu portent la plage source de l’élément de syntaxe concerné (`sourceStart` / `sourceEnd`, des positions dans le markdown que vous avez passé, frontmatter compris) et, lorsque cet élément est tombé sur une page, son `pageIndex`.
+`buildDocument` ne s’arrête pas sur une référence erronée ou sur un style inconnu : il applique une solution de repli et consigne ce qu’il a fait dans `doc.contentWarnings`. Les encadrés que la mise en page a dû forcer se trouvent dans `doc.warnings`, qui garde la forme qu’il avait dans postext 1.4 : chaque entrée y est un `calloutOverflow` avec ses `pageIndex`, `columnIndex` et `overflowPx`. Chaque champ est absent lorsqu’il n’y a rien à signaler. Chaque entrée a un `kind`. Les avertissements de contenu indiquent la position dans la source de l’élément de syntaxe concerné (`sourceStart` / `sourceEnd`, des positions dans le Markdown que vous avez passé, en-tête YAML compris) et, lorsque cet élément est tombé sur une page, son `pageIndex`.
 
 <table>
   <thead>
     <tr>
       <th>Type</th>
-      <th>Levé quand</th>
+      <th>Déclenché quand</th>
       <th>Ce que fait la sortie</th>
     </tr>
   </thead>
@@ -61,13 +61,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>invalidFrontmatter</code></td>
-      <td>Le frontmatter n’est pas du YAML valide (un guillemet non fermé, du texte après une valeur entre guillemets). <code>message</code> donne la raison fournie par l’analyseur, avec sa ligne et sa colonne.</td>
+      <td>L’en-tête YAML n’est pas du YAML valide (un guillemet non fermé, du texte après une valeur entre guillemets). <code>message</code> donne la raison fournie par l’analyseur, avec sa ligne et sa colonne.</td>
       <td>Le document est composé sans ses métadonnées ; le corps qui suit le <code>---</code> fermant est mis en page normalement.</td>
     </tr>
     <tr>
       <td><code>unknownResourceId</code></td>
-      <td>Une insertion <code>::resource</code> (<code>usage: 'embed'</code>), un <code>:ref</code> en ligne (<code>'ref'</code>) ou l’image d’une cellule de tableau (<code>'cellImage'</code>) nomme un identifiant qu’aucune ressource ne porte.</td>
-      <td>L’insertion est omise, le renvoi imprime <code>?</code> (ou son libellé <code>text=</code>) sans numéro ni lien, la cellule reste en texte seul. <code>inResource</code> nomme la ressource dont la légende, la note ou la cellule contient la référence.</td>
+      <td>Une insertion <code>::resource</code> (<code>usage: 'embed'</code>), un <code>:ref</code> en ligne (<code>'ref'</code>) ou l’image d’une cellule de tableau (<code>'cellImage'</code>) cite un identifiant qu’aucune ressource ne possède.</td>
+      <td>L’insertion est omise, le renvoi imprime <code>?</code> (ou son libellé <code>text=</code>) sans numéro ni lien, la cellule reste en texte seul. <code>inResource</code> désigne la ressource dont la légende, la note ou la cellule contient la référence.</td>
     </tr>
     <tr>
       <td><code>unknownDirective</code></td>
@@ -81,7 +81,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>fullwidthMarkup</code></td>
-      <td>Une ligne contient un balisage saisi avec une méthode de saisie chinoise ou japonaise : une clôture <code>：：：</code>, un titre <code>＃</code>, un appel de note <code>［＾…］</code>, des attributs <code>｛…｝</code> après une clôture ou un titre, ou du gras <code>＊＊…＊＊</code>. <code>typed</code> est le balisage tel qu’il a été saisi, <code>ascii</code> la forme à saisir. Un par ligne.</td>
+      <td>Une ligne contient un balisage saisi avec une méthode de saisie chinoise ou japonaise : un délimiteur <code>：：：</code>, un titre <code>＃</code>, un appel de note <code>［＾…］</code>, des attributs <code>｛…｝</code> après un délimiteur ou un titre, ou du gras <code>＊＊…＊＊</code>. <code>typed</code> est le balisage tel qu’il a été saisi, <code>ascii</code> la forme à saisir. Un par ligne.</td>
       <td>La ligne est composée comme du texte ; rien n’est converti.</td>
     </tr>
     <tr>
@@ -91,12 +91,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownParagraphStyle</code></td>
-      <td><code>:::paragraphs{'{'}style{'}'}</code> ne nomme aucun style de paragraphe.</td>
+      <td><code>:::paragraphs{'{'}style{'}'}</code> ne désigne aucun style de paragraphe existant.</td>
       <td>Les paragraphes sont composés comme du texte courant.</td>
     </tr>
     <tr>
       <td><code>unknownCalloutType</code></td>
-      <td><code>:::callout{'{'}type{'}'}</code> ne nomme aucun des <code>calloutStyles</code> ; levé seulement une fois que certains sont configurés.</td>
+      <td><code>:::callout{'{'}type{'}'}</code> ne désigne aucun des <code>calloutStyles</code> ; déclenché seulement une fois que certains sont configurés.</td>
       <td>L’encadré prend le premier style d’encadré.</td>
     </tr>
     <tr>
@@ -106,28 +106,28 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>templateUnknown</code></td>
-      <td>Une page composée (<code>::::page&#123;template&#125;</code>) ne nomme aucune entrée de <code>pageTemplates</code>, ou aucun modèle ; <code>template</code> est l’id tel qu’il est écrit et <code>fenceIndex</code> la place de la page parmi les pages composées du chapitre.</td>
-      <td>Ses slots ne sont pas vérifiés. Tant que les modèles ne sont pas mis en page, son contenu est placé dans le texte courant, sur des pages à part.</td>
+      <td>Une page composée (<code>::::page&#123;template&#125;</code>) ne désigne aucune entrée de <code>pageTemplates</code>, ou aucun gabarit ; <code>template</code> est l’id tel qu’il est écrit et <code>fenceIndex</code> la place de la page parmi les pages composées du chapitre.</td>
+      <td>Ses emplacements ne sont pas vérifiés. Tant que les gabarits ne sont pas mis en page, son contenu est placé dans le texte courant, sur des pages à part.</td>
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Le contenu d’une page composée nomme un <code>slot</code> qui ne correspond à aucun bloc du modèle de la page (<code>slot</code>, <code>template</code>, <code>fenceIndex</code> ; <code>frame</code>, le bloc de flux qui le reçoit).</td>
-      <td>Le contenu va dans le bloc de flux du modèle.</td>
+      <td>Le contenu d’une page composée indique un <code>slot</code> qui ne correspond à aucun bloc du gabarit de la page (<code>slot</code>, <code>template</code>, <code>fenceIndex</code> ; <code>frame</code>, le bloc de flux qui le reçoit).</td>
+      <td>Le contenu va dans le bloc de flux du gabarit.</td>
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>Un bloc du modèle ne reçoit rien sur la page (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). Il n’est pas levé pour un bloc <code>optional</code>, ni pour un bloc qui ne reçoit que la suite d’un autre bloc.</td>
+      <td>Un bloc du gabarit ne reçoit rien sur la page (<code>frame</code>, <code>template</code>, <code>fenceIndex</code>). Il n’est pas déclenché pour un bloc <code>optional</code>, ni pour un bloc qui ne reçoit que la suite d’un autre bloc.</td>
       <td>Le bloc reste vide. <code>postext check</code> le liste comme une note.</td>
     </tr>
     <tr>
       <td><code>pageFenceLength</code></td>
-      <td>Un <code>:::page</code> à trois deux-points porte <code>template=</code>.</td>
-      <td>Il est lu comme une page de bande dessinée ; une page composée demande quatre deux-points.</td>
+      <td>Un <code>:::page</code> à trois deux-points contient <code>template=</code>.</td>
+      <td>Il est lu comme une planche de bande dessinée ; une page composée demande quatre deux-points.</td>
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Le contenu d’un bloc d’une page composée ne tient pas dans le bloc après la cascade de recomposition, et le bloc n’a plus de <code>next</code> où continuer (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code> ; <code>overflowMm</code>, la hauteur coupée ; <code>configPath</code>, le pointeur JSON du bloc du modèle, par exemple <code>/pageTemplates/0/frames/2</code> ; <code>stepsTried</code> ; <code>scale</code> et <code>imageScale</code>, les échelles où sont restés son texte et ses images ; <code>proposals</code>, chacune <code>{'{'} kind, path, value {'}'}</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page.</td>
-      <td>La sortie paginée coupe ce qui ne tient pas au pied du bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
+      <td>Le contenu d’un bloc d’une page composée ne tient pas dans le bloc après les étapes d’ajustement, et le bloc n’a plus de <code>next</code> où continuer (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code> ; <code>overflowMm</code>, la hauteur coupée ; <code>configPath</code>, le pointeur JSON du bloc du gabarit, par exemple <code>/pageTemplates/0/frames/2</code> ; <code>stepsTried</code> ; <code>scale</code> et <code>imageScale</code>, les échelles où sont restés son texte et ses images ; <code>proposals</code>, chacune <code>{'{'} kind, path, value {'}'}</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page.</td>
+      <td>La sortie paginée coupe ce qui ne tient pas au pied du bloc ; le texte reste dans le document, dans la table de correspondance avec la source et dans l’EPUB recomposable.</td>
     </tr>
     <tr>
       <td><code>frameContinuationLimit</code></td>
@@ -136,18 +136,18 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>continueTargetMissing</code></td>
-      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> d’un bloc ne nomme aucun délimiteur de page placé après celui où se trouve son article (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quand ce délimiteur vient avant, <code>configPath</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page qui envoie.</td>
+      <td>L’<code>overflow.continueIn: 'page:&lt;id&gt;'</code> d’un bloc ne désigne aucun délimiteur de page placé après celui où se trouve son article (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code> quand ce délimiteur vient avant, <code>configPath</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page qui envoie.</td>
       <td>Le reste se poursuit sur une page ajoutée après la page qui envoie, comme avec <code>'next-page'</code>.</td>
     </tr>
     <tr>
       <td><code>spreadMismatch</code></td>
-      <td>L’ouverture d’une page composée et son modèle ne s’accordent pas sur la double page (<code>template</code>, <code>fenceIndex</code> ; <code>fence</code>, le <code>spread</code> de l’ouverture ; <code>templateSpread</code>, celui du modèle).</td>
-      <td>Le modèle décide : un modèle de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
+      <td>Le délimiteur d’ouverture d’une page composée et son gabarit ne s’accordent pas sur la double page (<code>template</code>, <code>fenceIndex</code> ; <code>fence</code>, le <code>spread</code> du délimiteur ; <code>templateSpread</code>, celui du gabarit).</td>
+      <td>Le gabarit décide : un gabarit de double page est composé sur deux pages en regard, tout autre sur une seule.</td>
     </tr>
     <tr>
       <td><code>labelAnchorUnknown</code></td>
-      <td>Une <code>::label</code> d’une <code>:::figure</code> désigne avec <code>at</code> une ancre que la ressource de sa figure n’a pas (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, les ancres de la ressource ; <code>locale</code>).</td>
-      <td>L’étiquette n’est pas dessinée ; l’EPUB recomposable la liste toujours.</td>
+      <td>Une <code>::label</code> d’une <code>:::figure</code> désigne avec <code>at</code> une ancre que la ressource de sa figure n’a pas (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, les ancres de la ressource ; <code>locale</code>).</td>
+      <td>L’étiquette n’est pas dessinée ; l’EPUB recomposable la liste toujours.</td>
     </tr>
     <tr>
       <td><code>anchorUnlabelled</code></td>
@@ -157,26 +157,26 @@ console.log(`Document has ${vdt.pages.length} pages`);
     <tr>
       <td><code>labelOverflow</code></td>
       <td>Une étiquette de figure est encore plus large que le <code>width</code> de son ancre à la plus petite échelle que permet son style d’étiquette (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>widthPct</code>, <code>scale</code>, <code>locale</code>).</td>
-      <td>L’étiquette est dessinée à cette échelle et dépasse sa mesure.</td>
+      <td>L’étiquette est dessinée à cette échelle et dépasse sa largeur.</td>
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>Les lignes de deux étiquettes d’une même figure se touchent (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). L’avertissement revient à l’étiquette postérieure, dans l’ordre d’écriture.</td>
+      <td>Les lignes de deux étiquettes d’une même figure se touchent (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). L’avertissement porte sur la seconde étiquette, dans l’ordre d’écriture.</td>
       <td>Les deux étiquettes sont dessinées là où elles sont.</td>
     </tr>
     <tr>
       <td><code>figureWordsShared</code></td>
-      <td>Une <code>:::figure</code> donne des mots (<code>alt</code>, <code>caption</code>, <code>note</code>) à une ressource à laquelle une figure antérieure du chapitre a déjà donné les siens, et ils diffèrent (<code>resourceId</code>, <code>words</code>).</td>
-      <td>Les pages affichent les mots de la première figure ; ceux de la figure postérieure sont omis.</td>
+      <td>Une <code>:::figure</code> donne des textes (<code>alt</code>, <code>caption</code>, <code>note</code>) à une ressource à laquelle une figure précédente du chapitre a déjà donné les siens, et ils diffèrent (<code>resourceId</code>, <code>words</code>).</td>
+      <td>Les pages affichent les textes de la première figure ; ceux de la figure suivante sont omis.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>
-      <td><code>:chip[…]{'{'}style{'}'}</code> ne nomme aucun style de pastille.</td>
+      <td><code>:chip[…]{'{'}style{'}'}</code> ne désigne aucun style de pastille existant.</td>
       <td>La pastille prend le premier style de pastille.</td>
     </tr>
     <tr>
       <td><code>unknownMarkStyle</code></td>
-      <td><code>:mark[…]{'{'}style{'}'}</code> ne nomme aucun style de surlignage.</td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> ne désigne aucun style de surlignage existant.</td>
       <td>La marque prend le premier style de surlignage.</td>
     </tr>
     <tr>
@@ -201,17 +201,17 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>indexRangeUnclosed</code></td>
-      <td>Une marque <code>range="start"</code> sans <code>range="end"</code> correspondant, ou l’inverse (<code>missing</code> indique quelle extrémité manque ; <code>term</code> nomme l’entrée). Pointe sur la ligne <code>:::index</code>.</td>
+      <td>Une marque <code>range="start"</code> sans <code>range="end"</code> correspondant, ou l’inverse (<code>missing</code> indique quelle extrémité manque ; <code>term</code> désigne l’entrée). Pointe sur la ligne <code>:::index</code>.</td>
       <td>La plage n’imprime que sa page.</td>
     </tr>
     <tr>
       <td><code>unknownHeadingStyle</code></td>
-      <td>Le <code>{'{'}style="…"{'}'}</code> d’un titre ne nomme aucun style de titre (<code>level</code> est celui du titre).</td>
+      <td>Le <code>{'{'}style="…"{'}'}</code> d’un titre ne désigne aucun style de titre existant (<code>level</code> est celui du titre).</td>
       <td>Le titre et sa section gardent les réglages propres à leur niveau.</td>
     </tr>
     <tr>
       <td><code>unknownTableStyle</code></td>
-      <td>Le <code>table.styleId</code> d’une ressource tableau ne nomme aucune entrée de <code>tableStyles</code>.</td>
+      <td>Le <code>table.styleId</code> d’une ressource tableau ne désigne aucune entrée de <code>tableStyles</code>.</td>
       <td>Le tableau est composé dans <code>tableStyle</code>.</td>
     </tr>
     <tr>
@@ -226,7 +226,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Un paragraphe ouvert par une <a href="/fr/docs/configuration-text#lettrines">lettrine</a> qui ne peut pas la recevoir telle qu’elle est configurée. <code>reason</code> : <code>'shortParagraph'</code> (moins de lignes que la lettrine n’en occupe ; <code>handling</code> indique ce qu’a fait <code>shortParagraph</code>, <code>lines</code> les lignes que couvre une lettrine réduite), <code>'split'</code> (il se coupe avant la dernière ligne de la lettrine, seul dans une colonne trop courte), <code>'joiningScript'</code> (sa première lettre se lie à la suivante), <code>'verticalText'</code> ou <code>'noLetter'</code> (il s’ouvre sur une référence, une formule ou un appel de note). <code>text</code> est sa première ligne. <code>'inBox'</code> : un groupe <code>:::paragraphs</code> ou un style de paragraphe en demande une dans un encadré <code>:::callout</code>, où aucune n’est posée.</td>
+      <td>Un paragraphe ouvert par une <a href="/fr/docs/configuration-text#lettrines">lettrine</a> qui ne peut pas la recevoir telle qu’elle est configurée. <code>reason</code> : <code>'shortParagraph'</code> (moins de lignes que la lettrine n’en occupe ; <code>handling</code> indique ce qu’a fait <code>shortParagraph</code>, <code>lines</code> les lignes que couvre une lettrine réduite), <code>'split'</code> (il se coupe avant la dernière ligne de la lettrine, seul dans une colonne trop courte), <code>'joiningScript'</code> (sa première lettre se lie à la suivante), <code>'verticalText'</code> ou <code>'noLetter'</code> (il s’ouvre sur une référence, une formule ou un appel de note). <code>text</code> est sa première ligne. <code>'inBox'</code> : un groupe <code>:::paragraphs</code> ou un style de paragraphe en demande une dans un encadré <code>:::callout</code>, où aucune n’est posée.</td>
       <td>La place est gardée, la lettrine est réduite ou omise, comme l’indique l’avertissement.</td>
     </tr>
     <tr>
@@ -236,28 +236,28 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>floatShrunk</code></td>
-      <td>Une image flottante a été composée plus petite que sa taille pour tenir dans la place de son emplacement (<code>placement.shrink</code>). <code>resourceId</code> la nomme, <code>scale</code> est la part de sa largeur qu’elle garde, et <code>overflowPx</code>, s’il est présent, la distance dont elle dépasse encore le pied du bloc de texte à son échelle minimale (<code>placement.minScale</code>), sur une nouvelle page où elle n’avait nulle part ailleurs où aller. Pointe sur le paragraphe qui la cite en premier.</td>
+      <td>Une image flottante a été composée plus petite que sa taille pour tenir dans la place de son emplacement (<code>placement.shrink</code>). <code>resourceId</code> l’identifie, <code>scale</code> est la part de sa largeur qu’elle garde, et <code>overflowPx</code>, s’il est présent, la distance dont elle dépasse encore le pied du bloc de texte à son échelle minimale (<code>placement.minScale</code>), sur une nouvelle page où elle n’avait nulle part ailleurs où aller. Pointe sur le paragraphe qui la cite en premier.</td>
       <td>L’image est imprimée à cette échelle ; au-delà du bloc de texte seulement lorsque <code>overflowPx</code> l’indique.</td>
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>Un bitmap doté d'une taille d'impression (son propre <code>bitmap.resolution</code>, ou un nombre dans <code>layout.bitmapResolution</code> ; pas une résolution lue dans le fichier) composé dans une colonne qui le tient sous la moitié de cette taille, sur une page au bloc de texte plus large que la colonne. <code>resourceId</code> le nomme, <code>scale</code> est la part de sa largeur d'impression qu'il garde, <code>printWidthPx</code>, <code>widthPx</code> et <code>pageWidthPx</code> les largeurs d'impression, de colonne et de bloc. Une image rétrécie par <code>placement.width</code>, réduite à son emplacement, tournée ou placée dans un bloc de page composée n'est pas signalée. Désigne le paragraphe qui la cite en premier. Depuis postext 1.37.</td>
-      <td>L'image s'imprime à la largeur de sa colonne. Une image dans le flux n'est jamais plus large que sa colonne, et la page par défaut en a deux (<code>layout.layoutType: 'double'</code>) : composez la page sur une colonne, faites flotter l'image sur toute la page (<code>placement.span: 'page'</code>), ou relevez sa résolution si cette taille est voulue.</td>
+      <td>Un bitmap doté d’une taille d’impression (son propre <code>bitmap.resolution</code>, ou un nombre dans <code>layout.bitmapResolution</code> ; pas une résolution lue dans le fichier) composé dans une colonne qui le tient sous la moitié de cette taille, sur une page au bloc de texte plus large que la colonne. <code>resourceId</code> l’identifie, <code>scale</code> est la part de sa largeur d’impression qu’il garde, <code>printWidthPx</code>, <code>widthPx</code> et <code>pageWidthPx</code> les largeurs d’impression, de colonne et de bloc. Une image rétrécie par <code>placement.width</code>, réduite à son emplacement, tournée ou placée dans un bloc de page composée n’est pas signalée. Désigne le paragraphe qui la cite en premier. Depuis postext 1.37.</td>
+      <td>L’image s’imprime à la largeur de sa colonne. Une image dans le flux n’est jamais plus large que sa colonne, et la page par défaut en a deux (<code>layout.layoutType: 'double'</code>) : composez la page sur une colonne, faites flotter l’image sur toute la page (<code>placement.span: 'page'</code>), ou relevez sa résolution si cette taille est voulue.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Une ressource ou un encadré réglé pour que le texte l’habille (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) et qui ne le fait pas comme demandé. <code>reason</code> : <code>'tooNarrow'</code> (le texte à côté serait plus étroit que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (il fait moins de <code>layout.wrap.minLinesBeside</code> lignes), <code>'moved'</code> (un élément en ligne trop haut pour la place restante dans sa colonne est passé à la suivante, avec son ancre), <code>'verticalText'</code> ou <code>'noContour'</code> (un habillage au contour autour d’une image dont la forme n’est pas connue : un SVG sans <code>contour.points</code>, un bitmap sans transparence, ou un canal alpha que l’hôte n’a pas tracé). <code>resourceId</code> nomme une ressource, <code>box</code> le style d’un encadré. Pointe sur l’insertion ou sur l’encadré.</td>
+      <td>Une ressource ou un encadré réglé pour que le texte l’habille (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) et qui ne le fait pas comme demandé. <code>reason</code> : <code>'tooNarrow'</code> (le texte à côté serait plus étroit que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (il fait moins de <code>layout.wrap.minLinesBeside</code> lignes), <code>'moved'</code> (un élément en ligne trop haut pour la place restante dans sa colonne est passé à la suivante, avec son ancre), <code>'verticalText'</code> ou <code>'noContour'</code> (un habillage au contour autour d’une image dont la forme n’est pas connue : un SVG sans <code>contour.points</code>, un bitmap sans transparence, ou un canal alpha que l’hôte n’a pas tracé). <code>resourceId</code> identifie une ressource, <code>box</code> le style d’un encadré. Pointe sur l’insertion ou sur l’encadré.</td>
       <td>L’élément occupe toute sa bande, ou se place dans la colonne suivante, selon la raison ; avec <code>'noContour'</code>, le texte habille le cadre de l’image. Donnez à l’image un polygone, prenez un PNG avec transparence, ou lisez-la avec <code>readBundle</code> ou dans le Sandbox, qui la tracent.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
-      <td>Les sous-colonnes d’un groupe <code>:::columns</code> sont plus étroites que six cadratins de leur texte : <code>columns</code> sous-colonnes, de <code>widthPx</code> chacune. Pointe sur la clôture du groupe.</td>
+      <td>Les sous-colonnes d’un groupe <code>:::columns</code> sont plus étroites que six cadratins de leur texte : <code>columns</code> sous-colonnes, de <code>widthPx</code> chacune. Pointe sur le délimiteur du groupe.</td>
       <td>Le groupe est composé comme demandé, avec peu de mots par ligne.</td>
     </tr>
     <tr>
       <td><code>afterText</code></td>
       <td>Un encadré <code>span: 'side'</code>, ou une figure ou un tableau de la colonne latérale (<code>resourceId</code>), placé sur une page qui ne contient pas de texte : le texte de son chapitre, ou du document, s’est terminé alors qu’il attendait encore de la place dans la colonne latérale. Un par encadré ou par flottant ; pointe sur l’encadré (sur le bloc qui cite le flottant), avec sa page. Depuis postext 1.25.</td>
-      <td>Il se place dans la colonne latérale d’une page ouverte après le texte, les encadrés dans l’ordre de leurs clôtures.</td>
+      <td>Il se place dans la colonne latérale d’une page ouverte après le texte, les encadrés dans l’ordre de leurs délimiteurs.</td>
     </tr>
     <tr>
       <td><code>unplaced</code></td>
@@ -281,12 +281,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>headingClaimsColumn</code></td>
-      <td>Un titre de colonne (<code>span: 'column'</code>) dont la maquette réserve toute sa colonne, si bien que le texte qui suit commence dans la colonne ou la page suivante (<code>level</code>, <code>element</code> : l’élément de la maquette qui descend le plus bas, absent quand <code>minHeight</code> fixe la hauteur). Un par titre ; il pointe le titre, avec sa page. Une ouverture pleine page, un titre sur une page d’une seule colonne et un titre suivi d’une coupure explicite ne sont pas signalés. Depuis postext 1.43.</td>
+      <td>Un titre de colonne (<code>span: 'column'</code>) dont la maquette réserve toute sa colonne : le texte qui suit commence donc dans la colonne ou la page suivante (<code>level</code>, <code>element</code> : l’élément de la maquette qui descend le plus bas, absent quand <code>minHeight</code> fixe la hauteur). Un par titre ; il pointe sur le titre, avec sa page. Une ouverture pleine page, un titre sur une page d’une seule colonne et un titre suivi d’une coupure explicite ne sont pas signalés. Depuis postext 1.43.</td>
       <td>Le texte après le titre commence dans la colonne ou la page suivante. <code>reserve: false</code> sur l’élément, un <code>minHeight</code> plus petit ou <code>span: 'page'</code> règlent le cas.</td>
     </tr>
     <tr>
       <td><code>fontFallback</code></td>
-      <td>Une police dans laquelle le texte a été composé (<code>family</code>, <code>weight</code>, <code>style</code>) et que le jeu de polices ne pouvait pas fournir au moment de la construction : <code>reason: 'missing'</code>, aucune police de la famille n’était chargée ni installée, ou celle qui répond pour cette graisse et cette inclinaison n’était pas encore chargée ; <code>'synthesized'</code>, la famille n’a pas de police de cette graisse ou de cette inclinaison et le navigateur la tire d’une autre, telle quelle ou dessinée plus grasse ou penchée (un 600 tiré du 700, un 700 italique demandé à une famille qui n’a qu’un 400 romain). Vérifié là où il existe un jeu de polices (<code>document.fonts</code>, le <code>self.fonts</code> d’un worker, ou <code>BuildDocumentOptions.fontSet</code>), derrière <code>debug.warnings.missingFont</code>. Ni page ni plage source.</td>
+      <td>Une police dans laquelle le texte a été composé (<code>family</code>, <code>weight</code>, <code>style</code>) et que le jeu de polices ne pouvait pas fournir au moment de la construction : <code>reason: 'missing'</code>, aucune police de la famille n’était chargée ni installée, ou celle qui répond pour cette graisse et cette inclinaison n’était pas encore chargée ; <code>'synthesized'</code>, la famille n’a pas de police de cette graisse ou de cette inclinaison et le navigateur la tire d’une autre, telle quelle ou dessinée plus grasse ou penchée (un 600 tiré du 700, un 700 italique demandé à une famille qui n’a qu’un 400 romain). Vérifié là où il existe un jeu de polices (<code>document.fonts</code>, le <code>self.fonts</code> d’un worker, ou <code>BuildDocumentOptions.fontSet</code>), derrière <code>debug.warnings.missingFont</code>. Ni page ni position dans la source.</td>
       <td>Le texte est mesuré et dessiné avec la police de repli, ou avec une autre police de la famille, telle quelle ou rendue plus grasse ou penchée ; ses coupures de ligne changent quand la police arrive. Voir <a href="#charger-les-polices-avant-la-mise-en-page">Charger les polices avant la mise en page</a>.</td>
     </tr>
   </tbody>
@@ -306,9 +306,9 @@ for (const w of [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(do
 const missing = (doc.contentWarnings ?? []).flatMap((w) => (w.kind === 'unknownResourceId' ? [w.resourceId] : []));
 ```
 
-`formatWarning(w)` renvoie une description d’une ligne en anglais. Un hôte qui localise ses messages s’appuie plutôt sur `kind`, en gardant une branche par défaut, car des versions mineures peuvent ajouter des types. `collectContentWarnings(markdown, config, resources)` renvoie les avertissements de contenu sans rien mettre en page (la liste qu’ajoute la construction, sans `pageIndex`), pour un éditeur qui vérifie le texte pendant la saisie. `collectHeadingDesignCuts(doc)` cherche dans une mise en page terminée les designs de titre dont le texte dépasse le pied de leur page ou de leur colonne (`kind: 'headingDesignCut'` ; voir [Hauteur réservée](/fr/docs/configuration-headings#hauteur-réservée)), ce que la mise en page elle-même ne signale pas, et `formatWarning` décrit aussi ses résultats. Le panneau **Vérifications** du Sandbox les liste tous.
+`formatWarning(w)` renvoie une description d’une ligne en anglais. Un hôte qui localise ses messages s’appuie plutôt sur `kind`, en gardant une branche par défaut, car des versions mineures peuvent ajouter des types. `collectContentWarnings(markdown, config, resources)` renvoie les avertissements de contenu sans rien mettre en page (la liste qu’ajoute la construction, sans `pageIndex`), pour un éditeur qui vérifie le texte pendant la saisie. `collectHeadingDesignCuts(doc)` cherche dans une mise en page terminée les maquettes de titre dont le texte dépasse le pied de leur page ou de leur colonne (`kind: 'headingDesignCut'` ; voir [Hauteur réservée](/fr/docs/configuration-headings#hauteur-réservée)), ce que la mise en page elle-même ne signale pas, et `formatWarning` décrit aussi ses résultats. Le panneau **Vérifications** du Sandbox les liste tous.
 
-Les moteurs de rendu signalent ce qu’ils ne peuvent pas peindre comme demandé par une option `onWarning` : `renderPageToCanvas`, `renderPage` et `renderToCanvas` (`RenderPageOptions`), `renderToHtml` et `renderToHtmlIndexed` (`RenderHtmlOptions`), et `renderToPdf` (`RenderToPdfOptions`, aussi par le worker PDF). Le principal type d’avertissement de rendu est `missingImage` : une image (une figure, l’image d’une cellule de tableau, une icône d’encadré, une image de design) qui n’a rien à dessiner est peinte comme un espace réservé neutre et signalée, une fois par `fileId` et par appel de rendu, avec son `pageIndex`, le `resourceId` quand le code de peinture le connaît (figures et images de cellule) et, dans le PDF, le `documentIndex` d’un rendu de plusieurs documents. « Rien à dessiner » signifie : aucun `registerResourceImage` pour le `fileId` dans le canvas, aucune URL renvoyée par `resourceImageUrl` en HTML, et aucun octet fourni par `resourceBytes` (ou des octets qui ne se décodent pas) dans le PDF. Une ressource bitmap ou SVG qui ne nomme aucun `fileId` n’a rien à demander : elle est dessinée comme un espace réservé, sans signalement. Deux autres types viennent des hôtes qui incorporent des polices dans des images SVG (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` avec `inlineSvgFonts`, postext-epub ; voir [Polices dans le texte SVG](/fr/docs/configuration-resources#polices-du-texte-svg)), avec le `fileId` et le `resourceId` de l’image : `svgFontUnavailable` (`family`, `weight`, `style`), une famille que nomme son texte sans police à incorporer, si bien que l’image compose ce texte dans une police de repli ; et `svgFontsTooLarge` (`bytes`, `maxBytes`), des polices au-delà du plafond de taille, dont aucune n’est incorporée. Les avertissements de rendu ne sont pas stockés dans le VDT : ce qu’un hôte peut fournir change après la mise en page.
+Les moteurs de rendu signalent ce qu’ils ne peuvent pas peindre comme demandé par une option `onWarning` : `renderPageToCanvas`, `renderPage` et `renderToCanvas` (`RenderPageOptions`), `renderToHtml` et `renderToHtmlIndexed` (`RenderHtmlOptions`), et `renderToPdf` (`RenderToPdfOptions`, aussi par le worker PDF). Le principal type d’avertissement de rendu est `missingImage` : une image (une figure, l’image d’une cellule de tableau, une icône d’encadré, une image de maquette) qui n’a rien à dessiner est peinte comme un espace réservé neutre et signalée, une fois par `fileId` et par appel de rendu, avec son `pageIndex`, le `resourceId` quand le code de peinture le connaît (figures et images de cellule) et, dans le PDF, le `documentIndex` d’un rendu de plusieurs documents. « Rien à dessiner » signifie : aucun `registerResourceImage` pour le `fileId` dans le canvas, aucune URL renvoyée par `resourceImageUrl` en HTML, et aucun octet fourni par `resourceBytes` (ou des octets qui ne se décodent pas) dans le PDF. Une ressource bitmap ou SVG qui n’indique aucun `fileId` n’a rien à demander : elle est dessinée comme un espace réservé, sans signalement. Deux autres types viennent des hôtes qui incorporent des polices dans des images SVG (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` avec `inlineSvgFonts`, postext-epub ; voir [Polices du texte SVG](/fr/docs/configuration-resources#polices-du-texte-svg)), avec le `fileId` et le `resourceId` de l’image : `svgFontUnavailable` (`family`, `weight`, `style`), une famille qu’utilise son texte mais qu’aucune police disponible ne permet d’incorporer, l’image composant alors ce texte dans une police de repli ; et `svgFontsTooLarge` (`bytes`, `maxBytes`), des polices au-delà du plafond de taille, dont aucune n’est incorporée. Les avertissements de rendu ne sont pas stockés dans le VDT : ce qu’un hôte peut fournir change après la mise en page.
 
 ```ts
 import { buildDocument, renderPage, type RenderWarning, type Resource } from 'postext';
@@ -368,9 +368,9 @@ const bitmaps = vdt.pages.map((page) => renderPage(page, vdt));
 
 #### Exemple en direct : une page en image
 
-Tout ce qui précède, exécuté dans le navigateur. Le pen importe la dernière version de `postext` depuis un CDN, attend les polices web, met en page un court document sur deux colonnes, peint sa première page dans un canvas et propose ce bitmap en PNG. Appuyez sur *Run on CodePen* pour charger l’éditeur et modifier le markdown ou la configuration ; la page est repeinte à chaque modification.
+Tout ce qui précède, exécuté dans le navigateur. L’exemple CodePen importe la dernière version de `postext` depuis un CDN, attend les polices web, met en page un court document sur deux colonnes, peint sa première page dans un canvas et propose ce bitmap en PNG. Appuyez sur *Run on CodePen* pour charger l’éditeur et modifier le Markdown ou la configuration ; la page est repeinte à chaque modification.
 
-<CodePenExample name="render-page" title="Postext · render a page to an image" description="Lay out a markdown document with postext and rasterise its first page to a canvas / PNG." height={600} />
+<CodePenExample name="render-page" title="Postext · rendre une page en image" description="Mettre en page un document Markdown avec postext et rastériser sa première page dans un canvas / PNG." height={600} />
 
 ### React
 
@@ -390,7 +390,7 @@ export function ArticlePage() {
 ```
 
 - **Sur le thread principal, une seule fois.** Les pages sont peintes à la résolution du document et mises à l’échelle à la largeur du conteneur. `content` et `config` sont fixés au moment où vous appelez `createLayout` ; créez un autre composant pour afficher autre chose. Pour un aperçu en direct, construisez dans le [Web Worker](#mise-en-page-dans-un-web-worker) et peignez avec `renderPageToCanvas`, comme dans l’exemple React de cette section.
-- **Les polices et les images d’abord.** Chargez les polices web du document avant le montage du composant, et enregistrez ses images avec `registerResourceImage`. Lorsque le markdown contient un `$`, le composant démarre lui-même le [moteur mathématique](/fr/docs/configuration-lists-math#démarrer-le-moteur-mathématique).
+- **Les polices et les images d’abord.** Chargez les polices web du document avant le montage du composant, et enregistrez ses images avec `registerResourceImage`. Lorsque le Markdown contient un `$`, le composant démarre lui-même le [moteur mathématique](/fr/docs/configuration-lists-math#démarrer-le-moteur-mathématique).
 - **React reste hors du point d’entrée principal.** `postext` n’importe jamais React ; seul `postext/react` le fait. `createLayout` est toujours exporté depuis `postext` pour que le code existant continue de fonctionner, mais il est déprécié : il charge `postext/react` quand vous l’appelez, et le composant se suspend jusqu’à son arrivée (React le rend de nouveau de lui-même). Importez-le depuis `postext/react`.
 - **Le composant déprécié se suspend.** Tant que `postext/react` n’est pas arrivé, le `createLayout` de `postext` a besoin d’une racine concurrente (`createRoot`) ou d’une frontière `<Suspense>` au-dessus de lui. Dans une racine `ReactDOM.render` historique, ou dans `renderToString`, sans frontière, React signale une erreur à la place. `react` reste une dépendance pair obligatoire, afin que les bundlers puissent résoudre cet import différé.
 
@@ -409,7 +409,7 @@ const fullBody = resolveBodyTextConfig({ fontFamily: 'Inter' });
 // => { fontFamily: 'Inter', fontSize: { value: 8, unit: 'pt' }, lineHeight: { value: 1.5, unit: 'em' }, ... }
 ```
 
-Résolveurs disponibles, un par section de premier niveau : `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig`, plus `resolveDesignSlot` pour un seul emplacement de design. Les palettes de couleurs s’appliquent séparément par `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` et `resolveColorValue(value, palette, fallback)` : voir [Palette de couleurs](/fr/docs/configuration-fonts-colors-viewers#palette-de-couleurs).
+Résolveurs disponibles, un par section de premier niveau : `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig`, plus `resolveDesignSlot` pour une seule zone de maquette. Les palettes de couleurs s’appliquent séparément par `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` et `resolveColorValue(value, palette, fallback)` : voir [Palette de couleurs](/fr/docs/configuration-fonts-colors-viewers#palette-de-couleurs).
 
 Les résolveurs dont les valeurs par défaut découlent d’une autre section prennent cette section, déjà résolue, comme argument supplémentaire. `resolveUnorderedListsConfig` et `resolveOrderedListsConfig` prennent le texte courant résolu, car les valeurs par défaut des listes pour `fontFamily` et `color` en découlent ; `resolveCalloutStylesConfig` prend le texte courant, les titres et les listes à puces résolus (voir l’exemple dans [Styles d’encadré](/fr/docs/configuration-callouts#styles-dencadré)), et `resolveHeadingStylesConfig` la page, le texte courant et les deux sections de listes résolus. Consultez les déclarations de types du paquet npm pour la signature exacte de chacun :
 
@@ -438,11 +438,11 @@ Des fonctions d’élagage individuelles existent aussi, une par résolveur : `
 
 Certaines valeurs par défaut dépendent du reste de la configuration : l’équilibrage des colonnes est désactivé sur une grille de caractères et en texte vertical, `bodyText.avoidWidows` est désactivé sur une grille de caractères (et `bodyText.avoidOrphans` aussi dans la région `japan`), et les notes de bas de page, les légendes et l’index suivent la langue du document. `stripConfigDefaults` compare chaque valeur à la valeur par défaut de la configuration qu’on lui donne : `headings.balancing.enabled: true` est donc conservé là où l’équilibrage est désactivé par défaut, et `false` y est supprimé. `bodyText.avoidWidows: true` est conservé de la même façon sur une grille de caractères. Une fonction d’élagage appelée seule reçoit ce contexte en arguments : `stripHeadingsDefaults(headings, balancingOnByDefault(config))`, `stripIndexDefaults(index, locale)`, `stripCaptionStyleDefaults(captionStyle, locale)`, `stripFootnotesDefaults(footnotes, locale, writingMode)`, `stripBodyTextDefaults(bodyText, locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config))`.
 
-Une valeur qui signifie « rien » est conservée partout où « rien » n’est pas la valeur par défaut. Un style de titre reprend l’en-tête et le pied de page du document lorsqu’il n’en définit pas : un style qui les vide (`footer: { elements: [] }` sur une couverture) garde donc l’emplacement vide, et ses `margins`, `layout` et `bodyStyle` sont conservés même vides. Un niveau de titre ramené à sa valeur par défaut alors que les valeurs communes à tous les titres diffèrent garde sa valeur. `calloutStyles: []` et `chipStyles: []` restent des listes vides : omis, le style intégré reviendrait. Dans tous les cas, `resolveAllConfig(stripConfigDefaults(config))` donne la même résolution que `resolveAllConfig(config)`.
+Une valeur qui signifie « rien » est conservée partout où « rien » n’est pas la valeur par défaut. Un style de titre reprend l’en-tête et le pied de page du document lorsqu’il n’en définit pas : un style qui les vide (`footer: { elements: [] }` sur une couverture) garde donc la zone vide, et ses `margins`, `layout` et `bodyStyle` sont conservés même vides. Un niveau de titre ramené à sa valeur par défaut alors que les valeurs communes à tous les titres diffèrent garde sa valeur. `calloutStyles: []` et `chipStyles: []` restent des listes vides : omis, le style intégré reviendrait. Dans tous les cas, `resolveAllConfig(stripConfigDefaults(config))` donne la même résolution que `resolveAllConfig(config)`.
 
 ### Analyse
 
-Le moteur expose son analyseur de markdown et son lecteur de frontmatter. Utilisez-les pour inspecter un document avant de le construire, ou pour alimenter d’autres outils avec la même structure de blocs que celle que voit Postext :
+Le moteur expose son analyseur Markdown et son lecteur d’en-tête YAML. Utilisez-les pour inspecter un document avant de le construire, ou pour alimenter d’autres outils avec la même structure de blocs que celle que voit Postext :
 
 ```ts
 import { parseMarkdown, extractFrontmatter } from 'postext';
@@ -457,7 +457,7 @@ const blocks = parseMarkdown(content);
 //      { type: 'paragraph', text: 'The story begins here.', … } ]
 ```
 
-Voir la page [Format du document](/fr/docs/document-format) pour la liste complète des éléments de syntaxe markdown que Postext reconnaît.
+Voir la page [Format du document](/fr/docs/document-format) pour la liste complète des éléments de syntaxe Markdown que Postext reconnaît.
 
 ### Carte des sources d’un document mis en page
 
@@ -465,7 +465,7 @@ Voir la page [Format du document](/fr/docs/document-format) pour la liste compl�
 
 ### Charger les polices avant la mise en page
 
-La mise en page mesure le texte avec les polices dont dispose le jeu de polices au moment où elle s’exécute. `prepareFonts` charge, avant la première construction, toutes les polices que demandent une configuration et son texte : le texte courant, les titres, les listes, les titres et le corps des encadrés, les tableaux, les textes de design, les titres courants, la table des matières, le code et le lettrage de bande dessinée, dans chaque graisse et chaque inclinaison que définit la configuration (les quatre de la famille du texte courant, puisque `**` et `*` y composent le gras et l’italique). Chaque police est chargée pour les caractères que le document compose, si bien qu’une famille servie en tranches `unicode-range` (latin étendu, grec, arabe, les tranches CJK de Google Fonts et de Fontsource) apporte les fichiers dont le texte a besoin.
+La mise en page mesure le texte avec les polices dont dispose le jeu de polices au moment où elle s’exécute. `prepareFonts` charge, avant la première construction, toutes les polices que demandent une configuration et son texte : le texte courant, les titres, les listes, les titres et le corps des encadrés, les tableaux, les textes de maquette, les titres courants, la table des matières, le code et le lettrage de bande dessinée, dans chaque graisse et chaque inclinaison que définit la configuration (les quatre de la famille du texte courant, puisque `**` et `*` y composent le gras et l’italique). Chaque police est chargée pour les caractères que le document compose : une famille servie en tranches `unicode-range` (latin étendu, grec, arabe, les tranches CJK de Google Fonts et de Fontsource) apporte donc les fichiers dont le texte a besoin.
 
 ```ts
 import { prepareFonts, buildDocument, buildDocumentWithFonts } from 'postext';
@@ -484,7 +484,7 @@ const doc = buildDocument(content, config);
 const same = await buildDocumentWithFonts(content, config, { resolve });
 ```
 
-- **Les polices que la page déclare** (une règle `@font-face`, une `FontFace` déjà ajoutée) sont chargées par le jeu de polices (`document.fonts.load`, ou `self.fonts` dans un worker). **Celles qu’elle ne déclare pas** sont demandées à `resolve(family, weight, style, { text, codePoints })`, qui répond par un fichier (des octets, ou une URL), par plusieurs fichiers (les tranches d’une police), par `{ source, unicodeRange, weight, style }` pour une tranche ou une plage variable, ou par `null`. Le moteur les ajoute comme `FontFace` une fois que toutes sont chargées, dans l’ordre de la configuration et de chaque réponse (latin, puis latin-ext, puis greek quand le résolveur répond ainsi), si bien que le jeu de polices est le même quel que soit l’ordre d’arrivée des fichiers. Il les enregistre aussi dans le registre de polices que lisent les [images SVG](/fr/docs/configuration-resources#polices-du-texte-svg) et les workers de mise en page. Un résolveur peut déclarer la police lui-même (en ajoutant une feuille de style) et répondre `null`.
+- **Les polices que la page déclare** (une règle `@font-face`, une `FontFace` déjà ajoutée) sont chargées par le jeu de polices (`document.fonts.load`, ou `self.fonts` dans un worker). **Celles qu’elle ne déclare pas** sont demandées à `resolve(family, weight, style, { text, codePoints })`, qui répond par un fichier (des octets, ou une URL), par plusieurs fichiers (les tranches d’une police), par `{ source, unicodeRange, weight, style }` pour une tranche ou une plage variable, ou par `null`. Le moteur les ajoute comme `FontFace` une fois que toutes sont chargées, dans l’ordre de la configuration et de chaque réponse (latin, puis latin-ext, puis greek quand le résolveur répond ainsi) : le jeu de polices est donc le même quel que soit l’ordre d’arrivée des fichiers. Il les enregistre aussi dans le registre de polices que lisent les [images SVG](/fr/docs/configuration-resources#polices-du-texte-svg) et les workers de mise en page. Un résolveur peut déclarer la police lui-même (en ajoutant une feuille de style) et répondre `null`.
 - **Le rapport** liste les polices couvertes par une police chargée (ou par une famille installée), celles qui restent `missing`, et celles que le navigateur devrait `synthesize` à partir d’une autre graisse ou inclinaison. `timeoutMs` (10 000 par défaut) borne l’attente ; une police encore en cours de chargement compte alors comme manquante. Là où il n’y a pas de jeu de polices (Node), `prepareFonts` ne fait rien et signale toutes les polices comme chargées.
 - **`buildDocumentWithFonts(content, config, options)`** prépare, construit avec `buildDocumentAsync`, lit les polices dans lesquelles les pages composent réellement du texte, charge celles que le jeu de polices n’a pas pu fournir (une graisse que seules les pages révèlent est demandée à `resolve` même si une autre graisse de la famille pourrait la remplacer), puis reconstruit (deux constructions supplémentaires au plus). `withLoadedFonts(build, options)` fait de même autour de n’importe quelle fonction de construction, pour un livre construit chapitre par chapitre ou pour un paquet (`buildBundle`) qui renvoie plusieurs documents. `options.onFonts` reçoit le rapport final.
 - **Après la construction**, chaque police dans laquelle le texte a été composé et que le jeu de polices n’a pas pu fournir figure dans `doc.contentWarnings` sous la forme `fontFallback` (voir [Avertissements dans le document](#avertissements-dans-le-document)).
@@ -504,7 +504,7 @@ const off = onFontsChanged((families) => relayout());
 
 La mesure du texte est l’étape coûteuse de la mise en page. Deux sortes de cache la gardent bon marché :
 
-- **Un cache de blocs qui vous appartient.** `createMeasurementCache()` renvoie un `MeasurementCache` qui mémorise chaque paragraphe mesuré, indexé par son texte, ses polices, sa largeur, ses options de coupure des lignes et le dictionnaire de césure actif. Passez-le comme troisième argument de `buildDocument` (ou de `buildDocumentAsync`) pour réutiliser les mesures entre les passes de placement d’une construction et d’une construction à l’autre : un éditeur qui met le document en page à chaque frappe ne mesure alors que les paragraphes qui ont changé. Sans lui, chaque passe mesure de nouveau chaque bloc. Un paragraphe lu dans le cache est identique à un paragraphe mesuré à neuf : une construction avec cache compose donc chaque ligne comme une construction sans cache ; dans postext 1.4.1, un paragraphe en cache perdait la marque d’une dernière ligne trop courte, et le resserrement des fins de paragraphe trop courtes ainsi que l’équilibrage des colonnes pouvaient alors le couper autrement. Le cache porte la génération de mesure sous laquelle il a été rempli : lorsque des polices d’une famille arrivent ou disparaissent, sa consultation suivante abandonne les blocs composés dans cette famille, si bien qu’un cache conservé pendant des chargements de polices ne sert jamais de lignes mesurées avec une police de repli.
+- **Un cache de blocs qui vous appartient.** `createMeasurementCache()` renvoie un `MeasurementCache` qui mémorise chaque paragraphe mesuré, indexé par son texte, ses polices, sa largeur, ses options de coupure des lignes et le dictionnaire de césure actif. Passez-le comme troisième argument de `buildDocument` (ou de `buildDocumentAsync`) pour réutiliser les mesures entre les passes de placement d’une construction et d’une construction à l’autre : un éditeur qui met le document en page à chaque frappe ne mesure alors que les paragraphes qui ont changé. Sans lui, chaque passe mesure de nouveau chaque bloc. Un paragraphe lu dans le cache est identique à un paragraphe mesuré à neuf : une construction avec cache compose donc chaque ligne comme une construction sans cache ; dans postext 1.4.1, un paragraphe en cache perdait la marque de sa ligne creuse, et le resserrement des lignes creuses ainsi que l’équilibrage des colonnes pouvaient alors le couper autrement. Le cache garde la génération de mesure sous laquelle il a été rempli : lorsque des polices d’une famille arrivent ou disparaissent, sa consultation suivante abandonne les blocs composés dans cette famille. Un cache conservé pendant des chargements de polices ne sert donc jamais de lignes mesurées avec une police de repli.
 - **Les caches globaux de largeurs.** Les largeurs de mots sont mises en cache par chaîne de police dans un état de module que partagent toutes les constructions de la page, et pretext tient son propre cache. Le moteur abandonne les largeurs d’une famille lorsque ses polices changent (au début d’une construction, depuis `watchFonts`, depuis `prepareFonts` et `loadBundleFonts`) ; le cache de pretext n’a pas d’index par famille et il est vidé en entier.
 
 ```ts
@@ -526,7 +526,7 @@ Pour les applications qui mesurent le texte morceau par morceau, `cachedMeasureB
 
 ### Le module de coupure des lignes (WebAssembly)
 
-Les paragraphes sont coupés en lignes par Knuth–Plass. Depuis postext 1.33, le moteur l’exécute dans un module de coupure des lignes écrit en Rust et compilé en WebAssembly (30 Ko, inclus dans le paquet npm). Il choisit les mêmes coupures que le module TypeScript, avec la même arithmétique dans le même ordre, et un livre entier se met en page environ 15 % plus vite. Rien n’est à configurer :
+Les paragraphes sont coupés en lignes par Knuth–Plass. Depuis postext 1.33, le moteur l’exécute dans un module de coupure des lignes écrit en Rust et compilé en WebAssembly (30 Ko, inclus dans le paquet npm). Il choisit les mêmes coupures que le module TypeScript, avec la même arithmétique dans le même ordre, et un livre entier se met en page environ 15 % plus vite. Rien n’est à configurer :
 
 - Dans un worker, dans Node et dans Bun, le module est compilé au premier paragraphe.
 - Sur le thread principal d’une page, où un navigateur ne compile un module de cette taille que de façon asynchrone, il se compile en arrière-plan et le module TypeScript répond en attendant. `await initLineBreaker()` avant la première mise en page le met au travail dès le premier paragraphe ; la promesse se résout à `false` là où WebAssembly n’est pas disponible.
@@ -548,19 +548,19 @@ Une partie de l’état de Postext vit dans des variables de niveau module. Tout
 
 - **Images de ressources.** `registerResourceImage(fileId, image)` remplit un registre unique indexé par `fileId`, que lisent `renderPage` et `renderPageToCanvas`. Deux documents qui enregistrent tous deux `figure.svg` partagent cette entrée : le dernier enregistrement l’emporte, pour les deux. Donnez aux identifiants de fichier un préfixe propre à chaque document, et appelez `unregisterResourceImage(fileId)` ou `clearResourceImages()` quand un document disparaît. Les rastérisations que le moteur de rendu canvas met en cache sont indexées de la même façon et abandonnées avec l’image.
 - **Mesures de texte.** Les largeurs mesurées sont mises en cache par chaîne de police et par texte pour tout le domaine d’exécution. Lorsque des polices d’une famille arrivent ou disparaissent, le moteur abandonne les largeurs de cette famille pour tous les documents (voir [Charger les polices avant la mise en page](#charger-les-polices-avant-la-mise-en-page)) ; `clearMeasurementCache()` les abandonne toutes.
-- **Configurations résolues.** Chaque objet de configuration est résolu une fois et le résultat est mis en cache pour cet objet. Chaque construction compare d’abord l’objet au texte qu’il avait lors de sa résolution (un `JSON.stringify`, environ 0,1 ms pour une configuration de livre de 55 Ko et 1,5 ms pour une configuration de 240 Ko), si bien qu’une configuration modifiée sur place, à n’importe quelle profondeur (`config.bodyText.fontSize = …`, une couleur de palette), est résolue de nouveau. `invalidateConfig(config)` abandonne la résolution à la main. `stableStringify` et `hashString` donnent une clé de contenu indépendante de l’ordre des clés, pour les hôtes qui mettent en cache des mises en page par configuration.
+- **Configurations résolues.** Chaque objet de configuration est résolu une fois et le résultat est mis en cache pour cet objet. Chaque construction compare d’abord l’objet au texte qu’il avait lors de sa résolution (un `JSON.stringify`, environ 0,1 ms pour une configuration de livre de 55 Ko et 1,5 ms pour une configuration de 240 Ko) : une configuration modifiée sur place, à n’importe quelle profondeur (`config.bodyText.fontSize = …`, une couleur de palette), est donc résolue de nouveau. `invalidateConfig(config)` abandonne la résolution à la main. `stableStringify` et `hashString` donnent une clé de contenu indépendante de l’ordre des clés, pour les hôtes qui mettent en cache des mises en page par configuration.
 - **Langue de césure.** Chaque construction règle la langue de césure globale du processus sur le `bodyText.hyphenation.locale` de son document. Les fonctions exportées `hyphenateText(text)` et `layoutDesignSlot` utilisent la langue de la dernière construction, sauf si vous en passez une : appelez `hyphenateText(text, 'es')`.
 - **Moteur mathématique.** Il y a un seul moteur MathJax et un seul cache de formules rendues pour le domaine d’exécution ; `initMathEngine()` le démarre pour tout le monde.
 - **Module de coupure des lignes.** Il y a un seul module WebAssembly de coupure des lignes pour le domaine d’exécution, compilé une fois ; `useWasmLineBreaker(false)` le désactive pour tout le monde.
 
-L’isolation la plus simple consiste à donner un domaine d’exécution à chaque document : une iframe pour chaque exemple en direct (un embed CodePen en est une), ou un [worker de mise en page](#mise-en-page-dans-un-web-worker) par document pour les mesures et la césure (les images restent enregistrées sur la page).
+L’isolation la plus simple consiste à donner un domaine d’exécution à chaque document : une iframe pour chaque exemple en direct (une intégration CodePen en est une), ou un [worker de mise en page](#mise-en-page-dans-un-web-worker) par document pour les mesures et la césure (les images restent enregistrées sur la page).
 
 
 ## Mise en page dans un Web Worker
 
-**C’est la façon recommandée d’utiliser Postext dans le navigateur.** Si vous construisez quoi que ce soit d’interactif (un aperçu en direct, un éditeur, une visionneuse qui suit le redimensionnement, un bac à sable dans le style du Sandbox), pilotez la chaîne par `createLayoutWorker()` de `postext/worker`. N’appelez pas `buildDocument` directement sur le thread principal pour du code d’interface.
+**C’est la façon recommandée d’utiliser Postext dans le navigateur.** Si vous construisez quoi que ce soit d’interactif (un aperçu en direct, un éditeur, une visionneuse qui suit le redimensionnement, un espace d’essai comme le Sandbox), pilotez la chaîne par `createLayoutWorker()` de `postext/worker`. N’appelez pas `buildDocument` directement sur le thread principal pour du code d’interface.
 
-Appeler `buildDocument` sur le thread principal exécute toute la chaîne (analyse, mesure, placement et chaque nouvelle exécution de la passe de placement dont la mise en page a besoin) sur le thread qui l’a appelée. Pour un export ponctuel, cela convient. Pour une interface interactive, c’est le mauvais thread : une mise en page de 150 ms bloque les événements d’entrée, les frappes s’accumulent et le défilement saccade. Le worker déplace chacune de ces millisecondes vers un thread d’arrière-plan.
+Appeler `buildDocument` sur le thread principal exécute toute la chaîne (analyse, mesure, placement et chaque nouvelle exécution de la passe de placement dont la mise en page a besoin) sur le thread qui l’a appelée. Pour un export ponctuel, cela convient. Pour une interface interactive, c’est le mauvais thread : une mise en page de 150 ms bloque les événements d’entrée, les frappes s’accumulent et le défilement saccade. Le worker déplace chacune de ces millisecondes vers un thread d’arrière-plan.
 
 Postext fournit un point d’entrée Web Worker dédié, `postext/worker`, qui sort la chaîne du thread principal. C’est la voie que nous attendons de la majorité des intégrations : les vues Canvas, HTML et PDF du Sandbox partagent toutes le même handle `createLayoutWorker()` par un unique hook `useLayoutWorker` (`packages/postext-sandbox/src/worker/useLayoutWorker.ts`) et le pilotent avec une annulation où la dernière demande l’emporte : une nouvelle frappe interrompt la construction en cours avant même qu’elle se termine.
 
@@ -581,7 +581,7 @@ Le même `VDTDocument` que renvoie `build(...)` alimente tous les moteurs de ren
 - **Cache de mesures par worker.** Le worker garde un seul `MeasurementCache` pendant toute sa durée de vie. Les constructions suivantes qui partagent police, texte et largeur réutilisent les mesures de lignes en cache : taper un seul caractère dans un long document ne remesure que les blocs dont l’entrée a réellement changé.
 - **Des métriques identiques à celles du thread principal.** Les polices sont envoyées dans le worker sous forme d’`ArrayBuffer` transférables et enregistrées par `new FontFace(...)` dans le propre `FontFaceSet` du worker. Le worker mesure avec les mêmes métriques de police canvas que celles qu’utiliserait le thread principal : les coupures de ligne et les hauteurs de colonne sont donc identiques à l’octet près.
 - **Le cache de rastérisation des formules survit aux constructions du worker.** Le moteur de rendu mathématique fournit un cache de rastérisation indexé par contenu à côté de celui indexé par identité : sans lui, le clonage structuré d’un `MathRender` à travers la frontière du worker manquerait le cache par identité à chaque reconstruction.
-- **Les mêmes lignes que sur la page.** Un canvas créé dans un worker n’a pas de page dont tirer une langue, et une police répond avec d’autres glyphes selon la langue. Le moteur fixe la langue du document (`locale`) sur chaque contexte avec lequel il mesure, dans le worker comme sur la page, si bien que `build()` renvoie les lignes que `buildDocument` donne sur une page, dans n’importe quelle langue ([`bodyText.shapingLanguage: 'document'`](/fr/docs/configuration-text#texte-courant), la valeur par défaut depuis postext 1.30). Avec `'host'`, que garde une configuration enregistrée avant 1.30, un worker mesure sans langue et une page avec la sienne, comme jusqu’à postext 1.28.
+- **Les mêmes lignes que sur la page.** Un canvas créé dans un worker n’a pas de page dont tirer une langue, et une police répond avec d’autres glyphes selon la langue. Le moteur fixe la langue du document (`locale`) sur chaque contexte avec lequel il mesure, dans le worker comme sur la page : `build()` renvoie donc les lignes que `buildDocument` donne sur une page, dans n’importe quelle langue ([`bodyText.shapingLanguage: 'document'`](/fr/docs/configuration-text#texte-courant), la valeur par défaut depuis postext 1.30). Avec `'host'`, que garde une configuration enregistrée avant 1.30, un worker mesure sans langue et une page avec la sienne, comme jusqu’à postext 1.28.
 
 ### API publique
 
@@ -720,11 +720,11 @@ await layout.registerFonts(await Promise.all([face(400, 'normal'), face(700, 'no
 const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garamond' } });
 ```
 
-**Un worker ne voit pas les polices de la page.** Il a son propre jeu de polices, qui ne contient que les polices envoyées par `registerFonts` et les polices installées sur le système. Lorsqu’une construction compose du texte dans une famille que le worker ne trouve pas, ce texte est mesuré avec une police de repli, et ses coupures de ligne ne correspondront pas à celles de la page. Le client affiche alors un avertissement dans la console par famille (`"EB Garamond" is not available inside the layout worker…`) et liste les familles dans `BuildStats.missingFonts`, que reçoit le callback `onStats` de `build`. Le document lui-même porte les mêmes polices sous forme d’avertissements de contenu `fontFallback`.
+**Un worker ne voit pas les polices de la page.** Il a son propre jeu de polices, qui ne contient que les polices envoyées par `registerFonts` et les polices installées sur le système. Lorsqu’une construction compose du texte dans une famille que le worker ne trouve pas, ce texte est mesuré avec une police de repli, et ses coupures de ligne ne correspondront pas à celles de la page. Le client affiche alors un avertissement dans la console par famille (`"EB Garamond" is not available inside the layout worker…`) et liste les familles dans `BuildStats.missingFonts`, que reçoit le callback `onStats` de `build`. Le document lui-même signale les mêmes polices sous forme d’avertissements de contenu `fontFallback`.
 
 `handle.prepareFonts(content, config, options)` exécute [`prepareFonts`](#charger-les-polices-avant-la-mise-en-page) sur la page, puis envoie au worker les fichiers de chaque police trouvée que contient le registre de polices (les fichiers du résolveur, les polices d’un paquet, les règles `@font-face` lisibles de la page), en se limitant aux tranches qui contiennent les caractères du document. Lorsque des polices arrivent dans le worker, il abandonne uniquement les mesures de ces familles, ainsi que son cache de documents terminés.
 
-Des polices peuvent aussi atteindre le worker après une construction : une graisse dont les pages se révèlent avoir besoin, une autre tranche `unicode-range` d’une police, un fichier téléversé de nouveau sous le même nom de famille. La construction suivante mesure avec elles. Le canvas d’un worker ne le ferait pas de lui-même : dans Chrome, il résout une police la première fois qu’une notation abrégée de police est définie et ne consulte plus le jeu de polices pour cette notation, si bien que le texte garderait les largeurs de la police qui a répondu en premier. Le worker nomme donc une famille une fois de plus dans les notations abrégées qu’il définit, dès qu’une police de cette famille est arrivée en retard (`Geist, Geist`) : une autre liste de familles pour le canvas, la même police et les mêmes largeurs. Les documents qu’il renvoie gardent les chaînes de police telles que le moteur les écrit, et un worker qui a reçu ses polices avant sa première construction définit chaque notation abrégée telle qu’elle est écrite.
+Des polices peuvent aussi atteindre le worker après une construction : une graisse dont les pages se révèlent avoir besoin, une autre tranche `unicode-range` d’une police, un fichier téléversé de nouveau sous le même nom de famille. La construction suivante mesure avec elles. Le canvas d’un worker ne le ferait pas de lui-même : dans Chrome, il résout une police la première fois qu’une notation abrégée de police est définie et ne consulte plus le jeu de polices pour cette notation : le texte garderait donc les largeurs de la police qui a répondu en premier. Le worker répète donc le nom d’une famille dans les notations abrégées qu’il définit, dès qu’une police de cette famille est arrivée en retard (`Geist, Geist`) : une autre liste de familles pour le canvas, la même police et les mêmes largeurs. Les documents qu’il renvoie gardent les chaînes de police telles que le moteur les écrit, et un worker qui a reçu ses polices avant sa première construction définit chaque notation abrégée telle qu’elle est écrite.
 
 ### Collecte des polices (Fontsource / Google Fonts)
 
@@ -733,11 +733,11 @@ Des polices peuvent aussi atteindre le worker après une construction : une gra
 Le `collectFontPayloadsForFamilies` du Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) sert d’implémentation de référence. Il :
 
 1. Interroge `https://api.fontsource.org/v1/fonts/{family-id}` pour connaître les graisses et les styles de la famille.
-2. Lit les sous-ensembles de la famille et leur `unicode-range` dans son paquet sur jsDelivr (`@fontsource/{family-id}@5/400.css`), une fois par famille. Les fichiers sont ensuite demandés à la version exacte depuis laquelle cette feuille de style a été servie (le `x-jsd-version` de jsDelivr), si bien qu’une famille n’arrive jamais de deux versions de son paquet.
-3. Télécharge chaque fichier du romain, du gras et de leurs italiques pour chaque famille (`files/{family-id}-{subset}-{weight}-{style}.woff2`) ; `collectFontPayloadsForConfig(config, markdown)` prend plutôt les graisses et les styles que demande une configuration. Ce sont des fichiers statiques, ceux que le PDF incorpore, si bien que le worker mesure avec ce que dessine le PDF. Un fichier variable donne d’autres chasses entre deux de ses masters, et une ligne à une fraction de pixel de sa justification se coupe ailleurs.
+2. Lit les sous-ensembles de la famille et leur `unicode-range` dans son paquet sur jsDelivr (`@fontsource/{family-id}@5/400.css`), une fois par famille. Les fichiers sont ensuite demandés à la version exacte depuis laquelle cette feuille de style a été servie (le `x-jsd-version` de jsDelivr) : une famille n’arrive donc jamais de deux versions de son paquet.
+3. Télécharge chaque fichier du romain, du gras et de leurs italiques pour chaque famille (`files/{family-id}-{subset}-{weight}-{style}.woff2`) ; `collectFontPayloadsForConfig(config, markdown)` prend plutôt les graisses et les styles que demande une configuration. Ce sont des fichiers statiques, ceux que le PDF incorpore : le worker mesure donc avec ce que dessine le PDF. Un fichier variable donne d’autres chasses entre deux de ses masters, et une ligne à une fraction de pixel de sa justification se coupe ailleurs.
 4. Renvoie un `FontPayload[]` dont le `buffer` est un `ArrayBuffer` neuf à chaque appel. C’est important, car `registerFonts` transfère le buffer et laisse la copie de l’expéditeur détachée.
 
-Les fichiers d’une police s’ajoutent dans l’ordre où un pen les déclare, `latin` en premier et les fichiers propres à l’écriture en dernier (`arabic`, les tranches numérotées d’une famille chinoise ou japonaise), car le fichier ajouté en dernier répond pour un caractère que deux fichiers contiennent. Une famille pour laquelle Fontsource n’a pas de fichiers est lue dans la feuille de style CSS2 de Google, qui ne renvoie du WOFF2 qu’aux chaînes User-Agent de type navigateur.
+Les fichiers d’une police s’ajoutent dans l’ordre où un pen du livre de recettes (un exemple CodePen) les déclare, `latin` en premier et les fichiers propres à l’écriture en dernier (`arabic`, les tranches numérotées d’une famille chinoise ou japonaise), car le fichier ajouté en dernier répond pour un caractère que deux fichiers contiennent. Une famille pour laquelle Fontsource n’a pas de fichiers est lue dans la feuille de style CSS2 de Google, qui ne renvoie du WOFF2 qu’aux chaînes User-Agent de type navigateur.
 
 Associez-le à `getConfigFontFamilies(config)` pour obtenir la liste des familles qu’une `PostextConfig` donnée rendra réellement (texte courant, titres, puces de liste, numéros de liste ordonnée).
 
@@ -798,7 +798,7 @@ Pour un long livre, l’écriture du PDF lui-même prend aussi quelques secondes
 
 Utilisez le worker pour :
 
-- **Les aperçus en direct, les éditeurs et les bacs à sable.** Tout ce qui reconstruit le document en réponse à une saisie de l’utilisateur.
+- **Les aperçus en direct, les éditeurs et les espaces d’essai.** Tout ce qui reconstruit le document en réponse à une saisie de l’utilisateur.
 - **Les visionneuses HTML qui suivent le redimensionnement** et relancent la mise en page à chaque tick de `ResizeObserver`.
 - **L’export PDF dans le navigateur** déclenché depuis une interface qui a déjà un aperçu en direct : réutilisez le handle de worker existant pour que l’export profite du cache de mesures.
 - **Plusieurs onglets de sortie** qui ont tous besoin du même VDT (les vues Canvas / HTML / PDF du Sandbox partagent un handle de worker par montage de vue).

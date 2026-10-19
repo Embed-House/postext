@@ -5,7 +5,7 @@ plain: "Una scheda prodotto di quattro pagine per un sensore elettronico di temp
 description: "Scheda tecnica di quattro pagine in Postext: intestazione unita su due righe, righe alternate, stili di tabella con nome, mappa dei registri su due pagine."
 question: "Come trasformo dati incollati in una tabella con intestazioni unite, larghezze di colonna e allineamenti?"
 aliases: ["scheda tecnica", "datasheet", "scheda prodotto", "caratteristiche elettriche", "mappa dei registri", "celle unite", "colspan", "rowspan", "righe alternate", "tabella a righe", "TSV", "tabella da un foglio di calcolo", "intestazione di tabella ripetuta"]
-pageNotes: { "1": "La prima pagina: una fascia viola con il codice del componente, un paragrafo d’apertura e tre cifre chiave; sotto, le caratteristiche e le applicazioni, il disegno della piedinatura, con il pad esposto tratteggiato perché sta sotto il package, e il circuito applicativo tipico.", "2": "La tabella delle caratteristiche elettriche occupa tutta la larghezza della pagina sotto una didascalia che indica le condizioni di prova: un’intestazione viola di due righe in cui «Value» copre «Min», «Typ» e «Max», gruppi di parametri uniti lungo una prima colonna lilla, un parametro su due con fondo grigio.", "3": "La tabella dei pin sta in testa alla prima colonna; la mappa dei registri, con indirizzi e valori di reset nel carattere monospaziato delle etichette, riempie la seconda e finisce con «Continued on the next page».", "4": "La mappa dei registri prosegue con l’intestazione ripetuta e «(continued)» nella didascalia, accanto ai codici d’ordine in una cornice arrotondata; il disegno del package attraversa il piede della pagina." }
+pageNotes: { "1": "La prima pagina: una fascia viola con il codice del componente, un paragrafo d’apertura e tre cifre chiave; sotto, le caratteristiche e le applicazioni, il disegno della piedinatura, con il pad esposto tratteggiato perché sta sotto il package, e il circuito applicativo tipico.", "2": "La tabella delle caratteristiche elettriche occupa tutta la larghezza della pagina sotto una didascalia che indica le condizioni di prova: un’intestazione viola di due righe in cui «Value» copre «Min», «Typ» e «Max», gruppi di parametri uniti lungo una prima colonna lilla, un parametro su due con fondo grigio.", "3": "La tabella dei pin sta in testa alla prima colonna; la mappa dei registri, con indirizzi e valori di reset nel carattere monospaziato delle etichette, riempie la seconda e finisce con «Continued on the next page».", "4": "La mappa dei registri prosegue con l’intestazione ripetuta e «(continued)» nella didascalia, accanto ai codici d’ordine in un bordo arrotondato; il disegno del package attraversa il piede della pagina." }
 ---
 
 ## Che cosa comporrai
@@ -34,19 +34,19 @@ La tabella dei pin e la mappa dei registri escono entrambe da `groupedTable`. Un
 
 <Excerpt region="styles" />
 
-`tableStyle` contiene ciò che tutte le tabelle condividono. Ogni voce di `tableStyles` imposta solo ciò che le sue tabelle cambiano, e una risorsa ne sceglie una con `table.styleId`. La tabella elettrica sostituisce i filetti sottili grigi con filetti bianchi di 1,4 pt, che separano i suoi riempimenti e mostrano dove finisce ogni unione. La tabella dei codici d’ordine riceve una cornice esterna arrotondata e Fira Sans Condensed, così le sue quattro colonne stanno in una colonna di testo.
+`tableStyle` contiene ciò che tutte le tabelle condividono. Ogni voce di `tableStyles` imposta solo ciò che le sue tabelle cambiano, e una risorsa ne sceglie una con `table.styleId`. La tabella elettrica sostituisce i filetti sottili grigi con filetti bianchi di 1,4 pt, che separano i suoi riempimenti e mostrano dove finisce ogni unione. La tabella dei codici d’ordine riceve un bordo esterno arrotondato e Fira Sans Condensed, così le sue quattro colonne stanno in una colonna di testo.
 
 ### 5 · Etichette che restano testo nel PDF
 
 <Excerpt region="drawing" />
 
-Le etichette della piedinatura, del circuito e del disegno del package sono elementi `<text>` che chiedono Fira Mono, il carattere delle etichette del documento. Un SVG arriva al canvas come immagine, quindi il `loadSvg` del kit passa prima il markup attraverso `inlineSvgFonts`, che incorpora nell’SVG i caratteri nominati dal suo testo; il canvas disegna poi le etichette in Fira Mono. Il PDF compone ogni `<text>` come testo selezionabile nei caratteri che incorpora.
+Le etichette della piedinatura, del circuito e del disegno del package sono elementi `<text>` che chiedono Fira Mono, il carattere delle etichette del documento. Un SVG arriva al canvas come immagine, quindi il `loadSvg` del kit passa prima il markup attraverso `inlineSvgFonts`, che incorpora nell’SVG i caratteri richiesti dal suo testo; il canvas disegna poi le etichette in Fira Mono. Il PDF compone ogni `<text>` come testo selezionabile nei caratteri che incorpora.
 
 ### 6 · Apertura, testatina e piè di pagina
 
 <Excerpt region="furniture" />
 
-Il codice del componente è il titolo di primo livello, e il suo spazio grafico disegna l’apertura: un riquadro viola fino all’abbondanza, il logo, e un occhiello, un paragrafo d’apertura e tre cifre chiave letti dagli attributi del titolo. Gli elementi immagine funzionano negli spazi delle testatine come nelle aperture, quindi il piè di pagina comincia con uno che nomina la risorsa del logo. Gli elementi della testatina portano `pages: 'body'`, quindi nessuno di essi si stampa sulla prima pagina.
+Il codice del componente è il titolo di primo livello, e il suo spazio grafico disegna l’apertura: un riquadro viola fino all’abbondanza, il logo, e un occhiello, un paragrafo d’apertura e tre cifre chiave letti dagli attributi del titolo. Gli elementi immagine funzionano negli spazi grafici delle testatine come nelle aperture, quindi il piè di pagina comincia con uno che indica la risorsa del logo. Gli elementi della testatina usano `pages: 'body'`, quindi nessuno di essi si stampa sulla prima pagina.
 
 ## Varianti
 
@@ -61,7 +61,7 @@ Filetti di mezzo punto nel colore grigio `rule` della tavolozza separano ogni ri
 
 ### Componi le didascalie delle tabelle su una barra
 
-Lo stile della didascalia del tipo tabella può dipingere una barra dietro la didascalia, qui in nero con l’etichetta nel giallo di pericolo.
+Lo stile della didascalia del tipo tabella può disegnare una barra dietro la didascalia, qui in nero con l’etichetta nel giallo di pericolo.
 
 ```diff
 -    ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),

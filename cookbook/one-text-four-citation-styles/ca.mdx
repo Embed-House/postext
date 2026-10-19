@@ -16,13 +16,13 @@ Un assaig de dos paràgrafs sobre per què la bona tipografia passa inadvertida,
 
 ### 1 · Una sola opció
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. Les citacions s'escriuen una vegada al contingut, amb la sintaxi de Pandoc, i les referències van en un bloc BibTeX al final. `citations.style` anomena un estil CSL, i citeproc-js l'utilitza per escriure cada citació i cada entrada: APA posa coma abans de l'any i ordena dues obres per autor, Chicago respecta l'ordre en què es van escriure, IEEE les converteix en números per ordre de primera citació, ISO 690 posa en majúscules els cognoms de la llista. En un llibre en curs, el canvi és aquest: un valor de la configuració, sense tocar el text.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. Les citacions s'escriuen una vegada al contingut, amb la sintaxi de Pandoc, i les referències van en un bloc BibTeX al final. `citations.style` indica un estil CSL, i citeproc-js l'utilitza per escriure cada citació i cada entrada: APA posa coma abans de l'any i ordena dues obres per autor, Chicago respecta l'ordre en què es van escriure, IEEE les converteix en números per ordre de primera citació, ISO 690 posa en majúscules els cognoms de la llista. En un llibre en curs, el canvi és aquest: un valor de la configuració, sense tocar el text.
 
 ### 2 · Quatre composicions, dos plecs
 
 <Excerpt region="build" />
 
-L'estil val per a tot el document, així que les quatre versions són quatre composicions del mateix Markdown. Cadascuna rep un `pageIndexOffset` una unitat més gran que l'anterior, que converteix la seva pàgina en la següent d'un llibre imaginari; la taula les aparella llavors en dos plecs, amb els dos estils autor-any que menys es diferencien l'un al costat de l'altre.
+L'estil val per a tot el document, així que les quatre versions són quatre composicions del mateix Markdown. Cadascuna rep un `pageIndexOffset` una unitat més gran que l'anterior, que converteix la seva pàgina en la següent d'un llibre imaginari; la taula les aparella llavors en dues dobles pàgines, amb els dos estils autor-any que menys es diferencien l'un al costat de l'altre.
 
 ### 3 · El nom de l'estil en una banda
 

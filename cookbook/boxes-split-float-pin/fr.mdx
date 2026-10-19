@@ -10,7 +10,7 @@ pageNotes: { "1": "L’ouverture de « Práctica 4 », « Construye un reloj 
 
 ## Ce que vous allez composer
 
-Quatre pages de *Taller de ciencias*, un cahier de travaux pratiques scolaire espagnol : « Práctica 4 », « Construye un reloj de sol » (Construire un cadran solaire). À la page 42, l’avertissement de sécurité reste d’un seul tenant, et le protocole en quatorze étapes, sur fond jaune avec un badge en forme de boussole à son coin, commence au pied de la colonne de gauche et se poursuit en tête de celle de droite, à la même largeur et sans son titre. La fiche de données de Madrid quitte le flux sur cette page et prend la tête de la page 43, au-dessus du texte. Un badge anthracite « Autoevaluación · 10 min » est épinglé au pied de la dernière page, avec une main qui pointe dans la marge à côté. Sur l’ouverture, un bandeau jaune soleil porte un graphique des ombres d’un bâton de midi à 17 h à la latitude de Madrid, et un panneau liste le matériel en trois colonnes sur toute la largeur de la page.
+Quatre pages de *Taller de ciencias*, un cahier de travaux pratiques scolaire espagnol : « Práctica 4 », « Construye un reloj de sol » (Construire un cadran solaire). À la page 42, l’avertissement de sécurité reste d’un seul tenant, et le protocole en quatorze étapes, sur fond jaune avec un badge en forme de boussole à son coin, commence au pied de la colonne de gauche et se poursuit en tête de celle de droite, à la même largeur et sans son titre. La fiche de données de Madrid quitte le flux sur cette page et prend la tête de la page 43, au-dessus du texte. Un badge anthracite « Autoevaluación · 10 min » est épinglé au pied de la dernière page, avec une main qui pointe dans la marge à côté. Sur l’ouverture, un bandeau jaune soleil présente un graphique des ombres d’un bâton de midi à 17 h à la latitude de Madrid, et un panneau liste le matériel en trois colonnes sur toute la largeur de la page.
 
 ## Préparation
 
@@ -22,13 +22,13 @@ Chaque style part de `box()` : le titre en chasse fixe, un corps de 8,8 pt cont
 
 ### 2 · Garder, diviser, faire flotter et épingler
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le protocole mesure 192 mm et une colonne en contient 211 : un encadré gardé entier sauterait en tête de la colonne de droite et laisserait 43 mm vides au pied de celle de gauche. `keepTogether: false` le laisse commencer là où il tombe et continuer dans la colonne suivante, ou sur la page suivante, comme le montre la deuxième variante ([le conteneur `:::callout`](/fr/docs/configuration-callouts#le-conteneur-callout)). Une suite perd le titre et l’icône. Une icône en ligne prendrait aux étapes une colonne à elle dans les deux parties : la boussole se place donc au coin extérieur de l’encadré, où elle ne prend aucune largeur. La clôture de la fiche de données porte `placement="top"` : l’encadré quitte le flux à la <PageRef page={2}>page 42</PageRef> et prend la tête de la page suivante. Le badge est `fixed`, et un `offset.x` négatif déplace la main et son filet dans la marge extérieure, pour que le bord gauche du badge s’aligne sur le texte.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le protocole mesure 192 mm et une colonne en contient 211 : un encadré gardé entier sauterait en tête de la colonne de droite et laisserait 43 mm vides au pied de celle de gauche. `keepTogether: false` le laisse commencer là où il tombe et continuer dans la colonne suivante, ou sur la page suivante, comme le montre la deuxième variante ([le conteneur `:::callout`](/fr/docs/configuration-callouts#le-conteneur-callout)). Une suite perd le titre et l’icône. Une icône en ligne prendrait aux étapes une colonne à elle dans les deux parties : la boussole se place donc au coin extérieur de l’encadré, où elle ne prend aucune largeur. Le délimiteur d’ouverture de la fiche de données contient `placement="top"` : l’encadré quitte le flux à la <PageRef page={2}>page 42</PageRef> et prend la tête de la page suivante. Le badge est `fixed`, et un `offset.x` négatif déplace la main et son filet dans la marge extérieure, pour que le bord gauche du badge s’aligne sur le texte.
 
 ### 3 · Traverser la page avec un panneau à trois colonnes
 
 <Excerpt region="panel" />
 
-Avec `span: 'page'`, l’encadré du matériel traverse les deux colonnes. L’introduction au-dessus est coupée à niveau, et le texte reprend sur deux colonnes dessous (<PageRef page={1}>page 41</PageRef>). Dans la clôture, `:::columns{count=3 breaks="5,9"}` fixe le début de chaque colonne au lieu de les équilibrer. `breaks` compte les blocs enfants, et chaque élément de liste en est un : la deuxième et la troisième colonne s’ouvrent donc au cinquième et au neuvième bloc, les intitulés en gras. `columnGap` reprend la gouttière de 7 mm de la page : les colonnes du panneau sont aussi espacées que les colonnes de texte.
+Avec `span: 'page'`, l’encadré du matériel traverse les deux colonnes. L’introduction au-dessus est coupée à niveau, et le texte reprend sur deux colonnes dessous (<PageRef page={1}>page 41</PageRef>). Dans le délimiteur d’ouverture, `:::columns{count=3 breaks="5,9"}` fixe le début de chaque colonne au lieu de les équilibrer. `breaks` compte les blocs enfants, et chaque élément de liste en est un : la deuxième et la troisième colonne s’ouvrent donc au cinquième et au neuvième bloc, les intitulés en gras. `columnGap` reprend la gouttière de 7 mm de la page : les colonnes du panneau sont aussi espacées que les colonnes de texte.
 
 ```markdown
 :::callout{type="material" title="Necesitarás"}
@@ -49,7 +49,7 @@ Avec `span: 'page'`, l’encadré du matériel traverse les deux colonnes. L’i
 
 <Excerpt region="palette" />
 
-Le jaune soleil est réservé aux aplats de couleur, le bandeau et le panneau, où l’anthracite et l’encre se lisent à 7,4:1 et 8,6:1. Comme couleur de texte sur blanc, il n’atteindrait que 1,8:1 : il ne porte donc jamais de texte. Le protocole prend `light`, un jaune plus pâle : l’encre s’y lit à 11:1, et la coupure reste visible dans la vignette de la galerie. La fiche de données prend `tint`, plus proche du papier, pour qu’on ne la confonde pas avec le protocole, l’autre encadré à fond de la double page. `main-color` pointe sur l’anthracite : les valeurs par défaut que la configuration ne redéfinit pas s’impriment en anthracite au lieu du bleu du moteur.
+Le jaune soleil est réservé aux aplats de couleur, le bandeau et le panneau, où l’anthracite et l’encre se lisent à 7,4:1 et 8,6:1. Comme couleur de texte sur blanc, il n’atteindrait que 1,8:1 : il ne sert donc jamais pour du texte. Le protocole prend `light`, un jaune plus pâle : l’encre s’y lit à 11:1, et la coupure reste visible dans la vignette de la galerie. La fiche de données prend `tint`, plus proche du papier, pour qu’on ne la confonde pas avec le protocole, l’autre encadré à fond de la double page. `main-color` pointe sur l’anthracite : les valeurs par défaut que la configuration ne redéfinit pas s’impriment en anthracite au lieu du bleu du moteur.
 
 ### 5 · Ouvrir sur un bandeau jaune
 
@@ -70,7 +70,7 @@ Sans ce réglage, le protocole, qui tient dans une colonne, passe entier en têt
 
 ### Faire flotter la fiche de données en pied
 
-Avec `placement="bottom"` dans `content.es.md`, la fiche de données prend le pied de la page 42, où tombe sa clôture. Le protocole qu’elle déplace commence en tête de la colonne de droite et se divise au changement de page, pour se terminer en tête de la page 43.
+Avec `placement="bottom"` dans `content.es.md`, la fiche de données prend le pied de la page 42, où tombe son délimiteur. Le protocole qu’elle déplace commence en tête de la colonne de droite et se divise au changement de page, pour se terminer en tête de la page 43.
 
 ```diff
 -:::callout{type="datos" placement="top" title="Hoja de datos · Madrid, 40,4° N · 3,7° O"}
@@ -82,4 +82,4 @@ Avec `placement="bottom"` dans `content.es.md`, la fiche de données prend le pi
 - Un encadré plus haut qu’une colonne entière se divise, quoi que dise `keepTogether`. Le réglage ne décide que pour les encadrés qui tiennent dans une colonne, comme ce protocole de 192 mm dans une colonne de 211 mm.
 - `splitMinLines` (2 par défaut) est le nombre minimal de lignes qu’une coupure laisse de chaque côté, comptées dans l’étape qu’elle coupe : aucune étape ne laisse ainsi une ligne seule. Le texte qui précède le protocole est calibré pour que la coupure tombe entre les étapes 4 et 5. Toute modification du texte au-dessus d’un encadré divisé peut déplacer la coupure : regardez où elle tombe après chacune.
 - Une icône en ligne prend une colonne à elle, et une suite garde cette colonne, vide : les étapes perdent la largeur de l’icône dans les deux parties. Une icône de coin, ou une bande latérale où loger l’icône, leur laisse toute la largeur.
-- Un encadré flotté avec `placement="top"` prend la tête de la page qui suit celle où tombe sa clôture : la clôture se place donc sur la page qui précède celle dont l’encadré doit prendre la tête. Ici, elle se trouve juste avant le protocole, à la page 42.
+- Un encadré flotté avec `placement="top"` prend la tête de la page qui suit celle où tombe son délimiteur : le délimiteur se place donc sur la page qui précède celle dont l’encadré doit prendre la tête. Ici, elle se trouve juste avant le protocole, à la page 42.

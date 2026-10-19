@@ -43,7 +43,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
 
 ### Warnungen im Dokument
 
-`buildDocument` bricht bei einem falschen Verweis oder einem unbekannten Format nicht ab: Es setzt einen Ersatzwert und hält in `doc.contentWarnings` fest, was es getan hat. Die Kästen, die das Layout erzwingen musste, stehen in `doc.warnings`, das die Form aus postext 1.4 beibehält: Jeder Eintrag dort ist ein `calloutOverflow` mit seinem `pageIndex`, `columnIndex` und `overflowPx`. Jedes Feld fehlt, wenn es nichts zu melden gibt. Jeder Eintrag hat ein `kind`. Die inhaltlichen Arten tragen den Quellbereich des Konstrukts – `sourceStart` / `sourceEnd`, Offsets im übergebenen Markdown einschließlich Frontmatter – und, wenn das Konstrukt auf einer Seite gelandet ist, dessen `pageIndex`.
+`buildDocument` bricht bei einem falschen Verweis oder einem unbekannten Format nicht ab: Es setzt einen Ersatzwert und hält in `doc.contentWarnings` fest, was es getan hat. Die Kästen, die das Layout erzwingen musste, stehen in `doc.warnings`, das die Form aus postext 1.4 beibehält: Jeder Eintrag dort ist ein `calloutOverflow` mit seinem `pageIndex`, `columnIndex` und `overflowPx`. Jedes Feld fehlt, wenn es nichts zu melden gibt. Jeder Eintrag hat ein `kind`. Die inhaltlichen Arten enthalten den Quellbereich des Konstrukts – `sourceStart` / `sourceEnd`, Offsets im übergebenen Markdown einschließlich Frontmatter – und, wenn das Konstrukt auf einer Seite steht, deren `pageIndex`.
 
 <table>
   <thead>
@@ -61,13 +61,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>invalidFrontmatter</code></td>
-      <td>Die Frontmatter ist kein gültiges YAML (ein nicht geschlossenes Anführungszeichen, Text nach einem Wert in Anführungszeichen). <code>message</code> ist die Begründung des Parsers mit Zeile und Spalte.</td>
-      <td>Das Dokument wird ohne seine Metadaten gesetzt; der Text nach dem schließenden <code>---</code> wird wie gewohnt umbrochen.</td>
+      <td>Das Frontmatter ist kein gültiges YAML (ein nicht geschlossenes Anführungszeichen, Text nach einem Wert in Anführungszeichen). <code>message</code> ist die Begründung des Parsers mit Zeile und Spalte.</td>
+      <td>Das Dokument wird ohne seine Metadaten gesetzt; der Text nach dem schließenden <code>---</code> wird wie gewohnt gesetzt.</td>
     </tr>
     <tr>
       <td><code>unknownResourceId</code></td>
-      <td>Eine Einbettung <code>::resource</code> (<code>usage: 'embed'</code>), ein Inline-<code>:ref</code> (<code>'ref'</code>) oder das Bild einer Tabellenzelle (<code>'cellImage'</code>) nennt eine ID, die keine Ressource hat.</td>
-      <td>Die Einbettung entfällt, der Verweis druckt <code>?</code> (oder seine Beschriftung <code>text=</code>) ohne Nummer und ohne Link, die Zelle bleibt reiner Text. <code>inResource</code> nennt die Ressource, deren Legende, Anmerkung oder Zelle den Verweis enthält.</td>
+      <td>Eine Einbettung <code>::resource</code> (<code>usage: 'embed'</code>), ein Inline-<code>:ref</code> (<code>'ref'</code>) oder das Bild einer Tabellenzelle (<code>'cellImage'</code>) verweist auf eine ID, zu der es keine Ressource gibt.</td>
+      <td>Die Einbettung entfällt, der Verweis gibt <code>?</code> (oder seinen Text aus <code>text=</code>) ohne Nummer und ohne Link aus, die Zelle bleibt reiner Text. <code>inResource</code> gibt die Ressource an, deren Legende, Anmerkung oder Zelle den Verweis enthält.</td>
     </tr>
     <tr>
       <td><code>unknownDirective</code></td>
@@ -81,7 +81,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>fullwidthMarkup</code></td>
-      <td>Eine Zeile enthält Auszeichnungen, die mit einer chinesischen oder japanischen Eingabemethode getippt wurden: einen Zaun <code>：：：</code>, eine Überschrift <code>＃</code>, ein Fußnotenzeichen <code>［＾…］</code>, Attribute <code>｛…｝</code> nach einem Zaun oder einer Überschrift oder Fettdruck <code>＊＊…＊＊</code>. <code>typed</code> ist die Auszeichnung wie geschrieben, <code>ascii</code> die Form, die zu tippen ist. Eine pro Zeile.</td>
+      <td>Eine Zeile enthält Auszeichnungen, die mit einer chinesischen oder japanischen Eingabemethode getippt wurden: einen Block <code>：：：</code>, eine Überschrift <code>＃</code>, ein Fußnotenzeichen <code>［＾…］</code>, Attribute <code>｛…｝</code> nach einer Blockzeile oder einer Überschrift oder Fettdruck <code>＊＊…＊＊</code>. <code>typed</code> ist die Auszeichnung wie geschrieben, <code>ascii</code> die Form, die zu tippen ist. Eine pro Zeile.</td>
       <td>Die Zeile wird als Text gesetzt; nichts wird umgewandelt.</td>
     </tr>
     <tr>
@@ -91,13 +91,13 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownParagraphStyle</code></td>
-      <td><code>:::paragraphs{'{'}style{'}'}</code> nennt kein Absatzformat.</td>
+      <td><code>:::paragraphs{'{'}style{'}'}</code> verweist auf kein vorhandenes Absatzformat.</td>
       <td>Die Absätze werden als Grundtext gesetzt.</td>
     </tr>
     <tr>
       <td><code>unknownCalloutType</code></td>
-      <td><code>:::callout{'{'}type{'}'}</code> nennt keinen der <code>calloutStyles</code> – wird nur ausgelöst, wenn welche konfiguriert sind.</td>
-      <td>Der Kasten erhält das erste Kastenformat.</td>
+      <td><code>:::callout{'{'}type{'}'}</code> verweist auf keinen der <code>calloutStyles</code> – wird nur ausgelöst, wenn welche konfiguriert sind.</td>
+      <td>Der Kasten erhält den ersten Kastenstil.</td>
     </tr>
     <tr>
       <td><code>columnsFlowUnknown</code></td>
@@ -106,12 +106,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>templateUnknown</code></td>
-      <td>Eine zusammengesetzte Seite (<code>::::page&#123;template&#125;</code>) nennt keinen Eintrag von <code>pageTemplates</code> oder gar keine Vorlage; <code>template</code> ist die ID, wie sie geschrieben ist, und <code>fenceIndex</code> die Stelle der Seite unter den zusammengesetzten Seiten des Kapitels.</td>
-      <td>Ihre Slots werden nicht geprüft. Solange Vorlagen nicht umbrochen werden, wird ihr Inhalt im Fließtext auf eigenen Seiten gesetzt.</td>
+      <td>Eine zusammengesetzte Seite (<code>::::page&#123;template&#125;</code>) verweist auf keinen Eintrag von <code>pageTemplates</code> oder gibt gar keine Vorlage an; <code>template</code> ist die ID, wie sie geschrieben ist, und <code>fenceIndex</code> die Stelle der Seite unter den zusammengesetzten Seiten des Kapitels.</td>
+      <td>Ihre Slots werden nicht geprüft. Ohne Vorlage wird ihr Inhalt im Fließtext auf eigenen Seiten gesetzt.</td>
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Inhalt einer zusammengesetzten Seite nennt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, der Flussrahmen, der ihn aufnimmt).</td>
+      <td>Inhalt einer zusammengesetzten Seite verlangt einen <code>slot</code>, der kein Rahmen der Vorlage der Seite ist (<code>slot</code>, <code>template</code>, <code>fenceIndex</code>; <code>frame</code>, der Flussrahmen, der ihn aufnimmt).</td>
       <td>Der Inhalt kommt in den Flussrahmen der Vorlage.</td>
     </tr>
     <tr>
@@ -121,37 +121,37 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>pageFenceLength</code></td>
-      <td>Ein <code>:::page</code> mit drei Doppelpunkten trägt <code>template=</code>.</td>
+      <td>Ein <code>:::page</code> mit drei Doppelpunkten hat ein <code>template=</code>.</td>
       <td>Es wird als Comicseite gelesen; eine zusammengesetzte Seite braucht vier Doppelpunkte.</td>
     </tr>
     <tr>
       <td><code>frameOverflow</code></td>
-      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt auch nach den Umbruchstufen nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> und <code>imageScale</code>, die Skalierung, bei der Text und Bilder geblieben sind; <code>proposals</code>, jeweils <code>{'{'} kind, path, value {'}'}</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
-      <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt es erhalten.</td>
+      <td>Der Inhalt eines Rahmens einer zusammengesetzten Seite passt auch nach den Einpassstufen nicht hinein, und der Rahmen hat kein <code>next</code> mehr (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>locale</code>; <code>overflowMm</code>, die abgeschnittene Höhe; <code>configPath</code>, der JSON-Zeiger des Vorlagenrahmens, etwa <code>/pageTemplates/0/frames/2</code>; <code>stepsTried</code>; <code>scale</code> und <code>imageScale</code>, die Skalierung, bei der Text und Bilder geblieben sind; <code>proposals</code>, jeweils <code>{'{'} kind, path, value {'}'}</code>). Vom Satz gemeldet, mit dem <code>pageIndex</code> der Seite.</td>
+      <td>Die paginierte Ausgabe schneidet am Fuß des Rahmens ab, was nicht passt; im Dokument, in der Quellenzuordnung und im umfließenden EPUB bleibt es erhalten.</td>
     </tr>
     <tr>
       <td><code>frameContinuationLimit</code></td>
-      <td>Der Inhalt eines Rahmens ist auf Seiten weitergelaufen, die nach seiner zusammengesetzten Seite hinzukommen (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>), so oft, wie eine zusammengesetzte Seite Seiten hinzufügen darf, 16-mal, und passt noch immer nicht (<code>template</code> und <code>frame</code> der letzten hinzugefügten Seite, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der letzten hinzugefügten Seite.</td>
-      <td>Die paginierte Ausgabe schneidet den Rest am Fuß dieses Rahmens ab; im Dokument, in der Quellzuordnung und im EPUB mit fließendem Layout bleibt er erhalten.</td>
+      <td>Der Inhalt eines Rahmens ist auf Seiten weitergelaufen, die nach seiner zusammengesetzten Seite hinzukommen (<code>overflow.continueIn: 'next-page'</code> oder <code>'template:&lt;id&gt;'</code>), so oft, wie eine zusammengesetzte Seite Seiten hinzufügen darf, 16-mal, und passt noch immer nicht (<code>template</code> und <code>frame</code> der letzten hinzugefügten Seite, <code>fenceIndex</code>, <code>pages</code>, <code>overflowMm</code>, <code>configPath</code>). Vom Satz gemeldet, mit dem <code>pageIndex</code> der letzten hinzugefügten Seite.</td>
+      <td>Die paginierte Ausgabe schneidet den Rest am Fuß dieses Rahmens ab; im Dokument, in der Quellenzuordnung und im umfließenden EPUB bleibt er erhalten.</td>
     </tr>
     <tr>
       <td><code>continueTargetMissing</code></td>
-      <td>Das <code>overflow.continueIn: 'page:&lt;id&gt;'</code> eines Rahmens nennt keine Seitenbegrenzung nach der, auf der sein Artikel steht (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code>, wenn diese Begrenzung früher steht, <code>configPath</code>). Vom Umbruch gemeldet, mit dem <code>pageIndex</code> der sendenden Seite.</td>
+      <td>Das <code>overflow.continueIn: 'page:&lt;id&gt;'</code> eines Rahmens verweist auf keinen Seitenblock nach dem, in dem sein Artikel steht (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>target</code>, <code>before</code>, wenn dieser Seitenblock früher steht, <code>configPath</code>). Vom Satz gemeldet, mit dem <code>pageIndex</code> der sendenden Seite.</td>
       <td>Der Rest läuft auf einer Seite weiter, die nach der sendenden Seite hinzukommt, wie bei <code>'next-page'</code>.</td>
     </tr>
     <tr>
       <td><code>spreadMismatch</code></td>
-      <td>Die Eröffnung einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der Eröffnung; <code>templateSpread</code>, das der Vorlage).</td>
+      <td>Die öffnende Zeile einer zusammengesetzten Seite und ihre Vorlage widersprechen sich bei der Doppelseite (<code>template</code>, <code>fenceIndex</code>; <code>fence</code>, das <code>spread</code> der öffnenden Zeile; <code>templateSpread</code>, das der Vorlage).</td>
       <td>Es entscheidet die Vorlage: Eine Doppelseitenvorlage wird über zwei gegenüberliegende Seiten gesetzt, jede andere auf eine Seite.</td>
     </tr>
     <tr>
       <td><code>labelAnchorUnknown</code></td>
-      <td>Ein <code>::label</code> einer <code>:::figure</code> nennt mit <code>at</code> einen Anker, den die Ressource seiner Abbildung nicht hat (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, die Anker der Ressource; <code>locale</code>).</td>
+      <td>Ein <code>::label</code> einer <code>:::figure</code> verweist mit <code>at</code> auf einen Anker, den die Ressource seiner Abbildung nicht hat (<code>resourceId</code>, <code>anchor</code>, <code>known</code>, die Anker der Ressource; <code>locale</code>).</td>
       <td>Die Beschriftung wird nicht gezeichnet; das umfließende EPUB führt sie weiter auf.</td>
     </tr>
     <tr>
       <td><code>anchorUnlabelled</code></td>
-      <td>Ein Anker der Ressource der Abbildung nennt einen Beschriftungsstil, und kein <code>::label</code> der Abbildung steht in dieser Sprache an ihm (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). Ein Hinweis.</td>
+      <td>Das Bild der Abbildung hat einen Anker mit Beschriftungsstil, und kein <code>::label</code> der Abbildung steht in dieser Sprache an ihm (<code>resourceId</code>, <code>anchor</code>, <code>style</code>, <code>locale</code>). Ein Hinweis.</td>
       <td>Am Anker wird nichts gezeichnet.</td>
     </tr>
     <tr>
@@ -161,7 +161,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>labelOverlap</code></td>
-      <td>Die Zeilen zweier Beschriftungen einer Abbildung berühren sich (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). Die Warnung trägt die spätere Beschriftung in der Reihenfolge des Schreibens.</td>
+      <td>Die Zeilen zweier Beschriftungen einer Abbildung berühren sich (<code>resourceId</code>, <code>text</code>, <code>anchor</code>, <code>with</code>, <code>withAnchor</code>, <code>withSymbol</code>, <code>count</code>, <code>locale</code>). Die Warnung gilt der Beschriftung, die im Text später steht.</td>
       <td>Beide Beschriftungen werden dort gezeichnet, wo sie stehen.</td>
     </tr>
     <tr>
@@ -171,18 +171,18 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>
-      <td><code>:chip[…]{'{'}style{'}'}</code> nennt kein Chip-Format.</td>
-      <td>Der Chip erhält das erste Chip-Format.</td>
+      <td><code>:chip[…]{'{'}style{'}'}</code> verweist auf keinen vorhandenen Chip-Stil.</td>
+      <td>Der Chip erhält den ersten Chip-Stil.</td>
     </tr>
     <tr>
       <td><code>unknownMarkStyle</code></td>
-      <td><code>:mark[…]{'{'}style{'}'}</code> nennt keinen Hervorhebungsstil.</td>
+      <td><code>:mark[…]{'{'}style{'}'}</code> verweist auf keinen vorhandenen Hervorhebungsstil.</td>
       <td>Die Markierung nimmt den ersten Hervorhebungsstil.</td>
     </tr>
     <tr>
       <td><code>undefinedFootnote</code></td>
       <td>Ein Fußnotenzeichen <code>[^id]</code>, das kein Absatz <code>[^id]:</code> definiert (<code>id</code> ist die der Fußnote).</td>
-      <td>Die Nummer wird gedruckt; die Fußnote bleibt leer.</td>
+      <td>Die Nummer wird ausgegeben; die Fußnote bleibt leer.</td>
     </tr>
     <tr>
       <td><code>unusedFootnote</code></td>
@@ -197,21 +197,21 @@ console.log(`Document has ${vdt.pages.length} pages`);
     <tr>
       <td><code>indexSeeUnknown</code></td>
       <td>Ein Ziel von <code>see</code> oder <code>seealso</code> (<code>target</code>), das kein Eintrag seines Registers ist (<code>index</code>, <code>''</code> für das Hauptregister). Verweist auf die Zeile <code>:::index</code>.</td>
-      <td>Der Querverweis wird trotzdem gedruckt.</td>
+      <td>Der Querverweis wird trotzdem ausgegeben.</td>
     </tr>
     <tr>
       <td><code>indexRangeUnclosed</code></td>
-      <td>Eine Marke <code>range="start"</code> ohne passendes <code>range="end"</code> oder umgekehrt (<code>missing</code> sagt, welches Ende fehlt; <code>term</code> nennt den Eintrag). Verweist auf die Zeile <code>:::index</code>.</td>
-      <td>Der Bereich druckt seine eine Seite.</td>
+      <td>Eine Marke <code>range="start"</code> ohne passendes <code>range="end"</code> oder umgekehrt (<code>missing</code> gibt an, welches Ende fehlt, <code>term</code> den Eintrag). Verweist auf die Zeile <code>:::index</code>.</td>
+      <td>Für den Bereich wird nur seine eine Seite ausgegeben.</td>
     </tr>
     <tr>
       <td><code>unknownHeadingStyle</code></td>
-      <td>Das <code>{'{'}style="…"{'}'}</code> einer Überschrift nennt kein Überschriftenformat (<code>level</code> ist die Ebene der Überschrift).</td>
+      <td>Das <code>{'{'}style="…"{'}'}</code> einer Überschrift verweist auf keinen vorhandenen Überschriftenstil (<code>level</code> ist die Ebene der Überschrift).</td>
       <td>Die Überschrift und ihr Abschnitt behalten die Einstellungen ihrer Ebene.</td>
     </tr>
     <tr>
       <td><code>unknownTableStyle</code></td>
-      <td>Das <code>table.styleId</code> einer Tabellenressource nennt keinen Eintrag von <code>tableStyles</code>.</td>
+      <td>Das <code>table.styleId</code> einer Tabellenressource verweist auf keinen Eintrag von <code>tableStyles</code>.</td>
       <td>Die Tabelle wird in <code>tableStyle</code> gesetzt.</td>
     </tr>
     <tr>
@@ -221,12 +221,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>lineNumberOverlap</code></td>
-      <td>Mit <code>lineNumbers.position: 'side'</code> überlappt eine Zeilennummer einen Seitenkasten, eine seitliche Legende oder eine Abbildung in der Seitenspalte. Verweist auf die nummerierte Zeile; <code>number</code> ist die Nummer, wie sie gedruckt wird.</td>
+      <td>Mit <code>lineNumbers.position: 'side'</code> überlappt eine Zeilennummer einen Seitenkasten, eine seitliche Legende oder eine Abbildung in der Seitenspalte. Verweist auf die nummerierte Zeile; <code>number</code> ist die Nummer, wie sie ausgegeben wird.</td>
       <td>Die Nummer wird trotzdem gezeichnet, und keines von beiden verschiebt sich.</td>
     </tr>
     <tr>
       <td><code>dropCap</code></td>
-      <td>Ein Absatz, den eine <a href="/de/docs/configuration-text#initialen">Initiale</a> eröffnet und der sie so, wie sie konfiguriert ist, nicht aufnehmen kann. <code>reason</code>: <code>'shortParagraph'</code> (weniger Zeilen, als die Initiale tief ist; <code>handling</code> ist, was <code>shortParagraph</code> getan hat, <code>lines</code> die Zeilen, die eine verkleinerte Initiale überspannt), <code>'split'</code> (er bricht vor der letzten Zeile der Initiale um, allein in einer zu kurzen Spalte), <code>'joiningScript'</code> (sein erster Buchstabe verbindet sich mit dem nächsten), <code>'verticalText'</code> oder <code>'noLetter'</code> (er beginnt mit einem Verweis, einer Formel oder einem Fußnotenzeichen). <code>text</code> ist seine erste Zeile. <code>'inBox'</code>: Eine <code>:::paragraphs</code>-Gruppe oder eine Absatzvorlage verlangt eine in einem <code>:::callout</code>-Kasten, wo keine gesetzt wird.</td>
+      <td>Ein Absatz, den eine <a href="/de/docs/configuration-text#initialen">Initiale</a> eröffnet und der sie so, wie sie konfiguriert ist, nicht aufnehmen kann. <code>reason</code>: <code>'shortParagraph'</code> (weniger Zeilen, als die Initiale tief ist; <code>handling</code> ist, was <code>shortParagraph</code> getan hat, <code>lines</code> die Zeilen, die eine verkleinerte Initiale überspannt), <code>'split'</code> (er bricht vor der letzten Zeile der Initiale um, allein in einer zu kurzen Spalte), <code>'joiningScript'</code> (sein erster Buchstabe verbindet sich mit dem nächsten), <code>'verticalText'</code> oder <code>'noLetter'</code> (er beginnt mit einem Verweis, einer Formel oder einem Fußnotenzeichen). <code>text</code> ist seine erste Zeile. <code>'inBox'</code>: Eine <code>:::paragraphs</code>-Gruppe oder ein Absatzformat verlangt eine Initiale in einem <code>:::callout</code>-Kasten, wo keine gesetzt wird.</td>
       <td>Der Raum bleibt frei, die Initiale wird verkleinert oder weggelassen, wie die Warnung sagt.</td>
     </tr>
     <tr>
@@ -236,28 +236,28 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>floatShrunk</code></td>
-      <td>Ein gleitendes Bild wurde kleiner als in seiner Größe gesetzt, damit es in den Raum seines Platzes passt (<code>placement.shrink</code>). <code>resourceId</code> nennt es, <code>scale</code> ist der Anteil seiner Breite, den es behält, und <code>overflowPx</code>, falls vorhanden, wie weit es bei seiner kleinsten Skalierung (<code>placement.minScale</code>) noch über den Fuß des Satzspiegels hinausragt, auf einer neuen Seite, auf der es keinen anderen Platz hatte. Verweist auf den Absatz, der es zuerst zitiert.</td>
-      <td>Das Bild wird in dieser Skalierung gedruckt; über den Satzspiegel hinaus nur, wenn <code>overflowPx</code> es sagt.</td>
+      <td>Ein gleitendes Bild wurde kleiner als in seiner Größe gesetzt, damit es in den Raum seines Platzes passt (<code>placement.shrink</code>). <code>resourceId</code> gibt es an, <code>scale</code> ist der Anteil seiner Breite, den es behält, und <code>overflowPx</code>, falls vorhanden, wie weit es bei seiner kleinsten Skalierung (<code>placement.minScale</code>) noch über den Fuß des Satzspiegels hinausragt, auf einer neuen Seite, auf der es keinen anderen Platz hatte. Verweist auf den Absatz, der es zuerst zitiert.</td>
+      <td>Das Bild wird in dieser Skalierung ausgegeben; über den Satzspiegel hinaus nur, wenn <code>overflowPx</code> gesetzt ist.</td>
     </tr>
     <tr>
       <td><code>pictureBelowPrintSize</code></td>
-      <td>Ein Bitmap mit Druckgröße (eigenes <code>bitmap.resolution</code> oder eine Zahl in <code>layout.bitmapResolution</code>; keine aus der Datei gelesene Auflösung), gesetzt in einer Spalte, die es unter der Hälfte dieser Größe hält, auf einer Seite, deren Satzspiegel breiter als die Spalte ist. <code>resourceId</code> nennt es, <code>scale</code> ist der Anteil seiner Druckbreite, den es behält, <code>printWidthPx</code>, <code>widthPx</code> und <code>pageWidthPx</code> sind die Breiten von Druck, Spalte und Satzspiegel. Ein Bild, das <code>placement.width</code> schmaler macht, das auf seinen Platz verkleinert, gedreht oder in den Rahmen einer zusammengesetzten Seite gesetzt ist, wird nicht gemeldet. Zeigt auf den Absatz, der es zuerst zitiert. Seit postext 1.37.</td>
-      <td>Das Bild wird in Spaltenbreite gedruckt. Ein Bild im Fluss ist nie breiter als seine Spalte, und die Standardseite hat zwei (<code>layout.layoutType: 'double'</code>): Setzen Sie die Seite einspaltig, lassen Sie das Bild über die ganze Seite floaten (<code>placement.span: 'page'</code>) oder erhöhen Sie seine Auflösung, wenn diese Größe gewollt ist.</td>
+      <td>Ein Bitmap mit Druckgröße (eigenes <code>bitmap.resolution</code> oder eine Zahl in <code>layout.bitmapResolution</code>; keine aus der Datei gelesene Auflösung), gesetzt in einer Spalte, die es unter der Hälfte dieser Größe hält, auf einer Seite, deren Satzspiegel breiter als die Spalte ist. <code>resourceId</code> gibt es an, <code>scale</code> ist der Anteil seiner Druckbreite, den es behält, <code>printWidthPx</code>, <code>widthPx</code> und <code>pageWidthPx</code> sind die Breiten von Druck, Spalte und Satzspiegel. Ein Bild, das <code>placement.width</code> schmaler macht, das auf seinen Platz verkleinert, gedreht oder in den Rahmen einer zusammengesetzten Seite gesetzt ist, wird nicht gemeldet. Zeigt auf den Absatz, der es zuerst zitiert. Seit postext 1.37.</td>
+      <td>Das Bild wird in Spaltenbreite ausgegeben. Ein Bild im Fluss ist nie breiter als seine Spalte, und die Standardseite hat zwei (<code>layout.layoutType: 'double'</code>): Setzen Sie die Seite einspaltig, lassen Sie das Bild als seitenbreites Gleitobjekt setzen (<code>placement.span: 'page'</code>) oder erhöhen Sie seine Auflösung, wenn diese Größe gewollt ist.</td>
     </tr>
     <tr>
       <td><code>textWrap</code></td>
-      <td>Eine Ressource oder ein Kasten, die bzw. der vom Text umflossen werden soll (<code>placement.wrap</code>, das <code>wrap</code> eines Kastens), es aber nicht wie gewünscht wird. <code>reason</code>: <code>'tooNarrow'</code> (der Text daneben wäre schmaler als <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (das Objekt ist kürzer als <code>layout.wrap.minLinesBeside</code> Zeilen), <code>'moved'</code> (ein Inline-Objekt, zu hoch für den restlichen Raum seiner Spalte, rückte mit seinem Anker in die nächste), <code>'verticalText'</code> oder <code>'noContour'</code> (ein Konturenumfluss um ein Bild, dessen Form nicht bekannt ist: ein SVG ohne <code>contour.points</code>, eine Bitmap ohne Transparenz oder ein Alphakanal, den der Host nicht abgetastet hat). <code>resourceId</code> nennt eine Ressource, <code>box</code> das Format eines Kastens. Verweist auf die Einbettung oder den Kasten.</td>
-      <td>Das Objekt nimmt sein Band ganz ein oder steht in der nächsten Spalte, wie der Grund sagt; bei <code>'noContour'</code> umfließt der Text den Kasten des Bildes. Geben Sie dem Bild ein Polygon, nehmen Sie ein PNG mit Transparenz, oder lesen Sie es mit <code>readBundle</code> oder in der Sandbox ein, die es abtasten.</td>
+      <td>Eine Ressource oder ein Kasten, die bzw. der vom Text umflossen werden soll (<code>placement.wrap</code>, das <code>wrap</code> eines Kastens), es aber nicht wie gewünscht wird. <code>reason</code>: <code>'tooNarrow'</code> (der Text daneben wäre schmaler als <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (das Objekt ist kürzer als <code>layout.wrap.minLinesBeside</code> Zeilen), <code>'moved'</code> (ein Inline-Objekt, zu hoch für den restlichen Raum seiner Spalte, rückte mit seinem Anker in die nächste), <code>'verticalText'</code> oder <code>'noContour'</code> (ein Konturenumfluss um ein Bild, dessen Form nicht bekannt ist: ein SVG ohne <code>contour.points</code>, eine Bitmap ohne Transparenz oder ein Alphakanal, den der Host nicht abgetastet hat). <code>resourceId</code> gibt eine Ressource an, <code>box</code> den Stil eines Kastens. Verweist auf die Einbettung oder den Kasten.</td>
+      <td>Das Objekt nimmt die ganze Spaltenbreite ein oder steht in der nächsten Spalte, je nach Grund; bei <code>'noContour'</code> umfließt der Text den Kasten des Bildes. Geben Sie dem Bild ein Polygon, nehmen Sie ein PNG mit Transparenz, oder lesen Sie es mit <code>readBundle</code> oder in der Sandbox ein, die es abtasten.</td>
     </tr>
     <tr>
       <td><code>columnsTooNarrow</code></td>
-      <td>Die Unterspalten einer Gruppe <code>:::columns</code> sind schmaler als sechs Geviert ihres Textes: <code>columns</code> Spalten mit je <code>widthPx</code>. Verweist auf den Zaun der Gruppe.</td>
+      <td>Die Unterspalten einer Gruppe <code>:::columns</code> sind schmaler als sechs Geviert ihres Textes: <code>columns</code> Spalten mit je <code>widthPx</code>. Verweist auf die öffnende Zeile der Gruppe.</td>
       <td>Die Gruppe wird wie gewünscht gesetzt, mit wenigen Wörtern pro Zeile.</td>
     </tr>
     <tr>
       <td><code>afterText</code></td>
       <td>Ein Kasten mit <code>span: 'side'</code> oder eine Abbildung oder Tabelle der Seitenspalte (<code>resourceId</code>), gesetzt auf einer Seite ohne Text: Der Text seines Kapitels oder des Dokuments endete, während das Objekt noch auf Raum in der Seitenspalte wartete. Eine pro Kasten oder Gleitobjekt; verweist auf den Kasten (auf den Block, der das Gleitobjekt zitiert), mit seiner Seite. Seit postext 1.25.</td>
-      <td>Es steht in der Seitenspalte einer Seite, die nach dem Text geöffnet wird, die Kästen in der Reihenfolge ihrer Zäune.</td>
+      <td>Es steht in der Seitenspalte einer Seite, die nach dem Text geöffnet wird, die Kästen in der Reihenfolge, in der sie im Text stehen.</td>
     </tr>
     <tr>
       <td><code>unplaced</code></td>
@@ -271,12 +271,12 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>tocGroupSplit</code></td>
-      <td>Ein zusammenzuhaltender Block des Inhaltsverzeichnisses (<code>toc.groups.keepTogether</code>, <code>:::toc{'{keep="…"}'}</code>), angeführt von <code>title</code>, gesetzt in <code>columns</code> Spalten: Er ist höher als eine ganze Spalte, oder die Spalte, in der er beginnt, ist kurz (unter einem Kasten über die ganze Seitenbreite, neben einem Gleitobjekt). Eine pro Block; verweist auf die Direktive <code>:::toc</code>, mit der Seite, auf der der Block beginnt. Um sie zu beheben, führen Sie weniger Ebenen auf (<code>levels="1"</code>), lassen Sie die Blöcke von einer tieferen Ebene anführen (<code>toc.groups.head: 2</code>) oder setzen Sie die Einträge kleiner oder enger. Seit postext 1.34.</td>
-      <td>Der Block wird geteilt; mit <code>toc.groups.continuation</code> beginnt jede Spalte, in der er weiterläuft, mit seiner Kopfzeile und der Fortsetzungsmarke.</td>
+      <td>Ein zusammenzuhaltender Block des Inhaltsverzeichnisses (<code>toc.groups.keepTogether</code>, <code>:::toc{'{keep="…"}'}</code>), angeführt von <code>title</code>, gesetzt in <code>columns</code> Spalten: Er ist höher als eine ganze Spalte, oder die Spalte, in der er beginnt, ist kurz (unter einem seitenbreiten Kasten, neben einem Gleitobjekt). Eine pro Block; verweist auf die Direktive <code>:::toc</code>, mit der Seite, auf der der Block beginnt. Um sie zu beheben, führen Sie weniger Ebenen auf (<code>levels="1"</code>), lassen Sie die Blöcke von einer tieferen Ebene anführen (<code>toc.groups.head: 2</code>) oder setzen Sie die Einträge kleiner oder enger. Seit postext 1.34.</td>
+      <td>Der Block wird geteilt; mit <code>toc.groups.continuation</code> beginnt jede Spalte, in der er weiterläuft, mit seiner Kopfzeile und dem Fortsetzungsvermerk.</td>
     </tr>
     <tr>
       <td><code>openerFloat</code></td>
-      <td>Ein Gleitobjekt, das unter <code>layout.openerFloats: 'warn'</code> auf einer Auftaktseite steht: eine Abbildung, eine Tabelle oder ein Streifen (<code>resourceId</code>) oder ein gleitender Kasten. Eine pro Gleitobjekt; verweist auf den Block, der es zitiert (auf den Kasten), mit seiner Seite. Seit postext 1.28.</td>
+      <td>Ein Gleitobjekt, das unter <code>layout.openerFloats: 'warn'</code> auf einer Auftaktseite steht: eine Abbildung, eine Tabelle oder ein Comicstreifen (<code>resourceId</code>) oder ein gleitender Kasten. Eine pro Gleitobjekt; verweist auf den Block, der es zitiert (auf den Kasten), mit seiner Seite. Seit postext 1.28.</td>
       <td>Das Gleitobjekt steht auf der Auftaktseite; <code>'avoid'</code> verschiebt es auf den ersten Platz danach.</td>
     </tr>
     <tr>
@@ -292,7 +292,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
-Die Warnungen zu einer Ressource – ihr Tabellenformat, ihr Raster, ein Verweis in ihrer Legende, Anmerkung oder ihren Zellen – verweisen auf die erste Einbettung oder den ersten Verweis der Ressource im Text, und jede wird pro Ressource einmal aufgeführt. Geprüft werden nur die Ressourcen, die das Dokument verwendet: Ein Kapitel eines Buches meldet die Tabellen, die es zitiert, nicht jede Tabelle, die das Buch enthält.
+Die Warnungen zu einer Ressource – ihr Tabellenstil, ihr Raster, ein Verweis in ihrer Legende, Anmerkung oder ihren Zellen – verweisen auf die erste Einbettung oder den ersten Verweis der Ressource im Text, und jede wird pro Ressource einmal aufgeführt. Geprüft werden nur die Ressourcen, die das Dokument verwendet: Ein Kapitel eines Buches meldet die Tabellen, die es zitiert, nicht jede Tabelle, die das Buch enthält.
 
 ```ts
 import { buildDocument, formatWarning } from 'postext';
@@ -308,7 +308,7 @@ const missing = (doc.contentWarnings ?? []).flatMap((w) => (w.kind === 'unknownR
 
 `formatWarning(w)` gibt eine einzeilige Beschreibung auf Englisch zurück. Ein Host, der seine Meldungen lokalisiert, unterscheidet stattdessen nach `kind` – und behält einen Standardzweig, da Nebenversionen neue Arten hinzufügen können. `collectContentWarnings(markdown, config, resources)` gibt die inhaltlichen Warnungen zurück, ohne etwas zu setzen (die Liste, die der Build hinzufügt, ohne `pageIndex`), für einen Editor, der den Text beim Tippen prüft. `collectHeadingDesignCuts(doc)` prüft ein fertiges Layout auf Überschriftengestaltungen, deren Text über den Fuß ihrer Seite oder Spalte hinausläuft (`kind: 'headingDesignCut'`; siehe [Reservierte Höhe](/de/docs/configuration-headings#reservierte-höhe)), was das Layout selbst nicht meldet, und `formatWarning` beschreibt auch diese Ergebnisse. Das Bedienfeld **Prüfungen** der Sandbox listet sie alle auf.
 
-Die Renderer melden über eine Option `onWarning`, was sie nicht wie gewünscht zeichnen können: `renderPageToCanvas`, `renderPage` und `renderToCanvas` (`RenderPageOptions`), `renderToHtml` und `renderToHtmlIndexed` (`RenderHtmlOptions`) sowie `renderToPdf` (`RenderToPdfOptions`, auch über den PDF-Worker). Die wichtigste Render-Art ist `missingImage`: Ein Bild – eine Abbildung, das Bild einer Tabellenzelle, ein Kastensymbol, ein Gestaltungsbild –, für das nichts zu zeichnen da ist, wird als neutraler Platzhalter gezeichnet und gemeldet, einmal pro `fileId` und Render-Aufruf, mit seinem `pageIndex`, der `resourceId`, wenn der Zeichner sie kennt (Abbildungen und Zellbilder), und im PDF dem `documentIndex` eines Renderings mehrerer Dokumente. Nichts zu zeichnen bedeutet: kein `registerResourceImage` für die `fileId` auf dem Canvas, keine URL aus `resourceImageUrl` im HTML und keine Bytes aus `resourceBytes` – oder Bytes, die sich nicht dekodieren lassen – im PDF. Eine Bitmap- oder SVG-Ressource, die überhaupt keine `fileId` nennt, hat nichts anzufordern: Sie wird ohne Meldung als Platzhalter gezeichnet. Zwei weitere Arten stammen von den Hosts, die Schriften in SVG-Bilder einbetten (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` mit `inlineSvgFonts`, postext-epub; siehe [Schriften in SVG-Text](/de/docs/configuration-resources#schriften-in-svg-text)), mit `fileId` und `resourceId` des Bildes: `svgFontUnavailable` (`family`, `weight`, `style`), eine Familie, die sein Text nennt, ohne einen Schnitt zum Einbetten, sodass das Bild diesen Text in einer Ersatzschrift setzt; und `svgFontsTooLarge` (`bytes`, `maxBytes`), Schnitte über der Größengrenze, von denen keiner eingebettet wird. Render-Warnungen werden nicht im VDT gespeichert: Was ein Host liefern kann, ändert sich nach dem Layout.
+Die Renderer melden über eine Option `onWarning`, was sie nicht wie gewünscht zeichnen können: `renderPageToCanvas`, `renderPage` und `renderToCanvas` (`RenderPageOptions`), `renderToHtml` und `renderToHtmlIndexed` (`RenderHtmlOptions`) sowie `renderToPdf` (`RenderToPdfOptions`, auch über den PDF-Worker). Die wichtigste Render-Art ist `missingImage`: Ein Bild – eine Abbildung, das Bild einer Tabellenzelle, ein Kastensymbol, ein Gestaltungsbild –, für das keine Bilddaten vorliegen, wird als neutraler Platzhalter gezeichnet und gemeldet, einmal pro `fileId` und Render-Aufruf, mit seinem `pageIndex`, der `resourceId`, wenn der Zeichner sie kennt (Abbildungen und Zellbilder), und im PDF dem `documentIndex` eines Renderings mehrerer Dokumente. Nichts zu zeichnen bedeutet: kein `registerResourceImage` für die `fileId` auf dem Canvas, keine URL aus `resourceImageUrl` im HTML und keine Bytes aus `resourceBytes` – oder Bytes, die sich nicht dekodieren lassen – im PDF. Eine Bitmap- oder SVG-Ressource, die überhaupt keine `fileId` angibt, hat nichts anzufordern: Sie wird ohne Meldung als Platzhalter gezeichnet. Zwei weitere Arten stammen von den Hosts, die Schriften in SVG-Bilder einbetten (`registerSvgImage`, `registerBundleImages`, `bundleImageUrl`, `renderToHtml` mit `inlineSvgFonts`, postext-epub; siehe [Schriften in SVG-Text](/de/docs/configuration-resources#schriften-in-svg-text)), mit `fileId` und `resourceId` des Bildes: `svgFontUnavailable` (`family`, `weight`, `style`), eine Familie, die sein Text verwendet, ohne einen Schnitt zum Einbetten, sodass das Bild diesen Text in einer Ersatzschrift setzt; und `svgFontsTooLarge` (`bytes`, `maxBytes`), Schnitte über der Größengrenze, von denen keiner eingebettet wird. Render-Warnungen werden nicht im VDT gespeichert: Was ein Host liefern kann, ändert sich nach dem Layout.
 
 ```ts
 import { buildDocument, renderPage, type RenderWarning, type Resource } from 'postext';
@@ -327,7 +327,7 @@ const canvas = renderPage(doc.pages[0], doc, { onWarning: (w) => warnings.push(w
 
 ### Eine Seite als Bitmap rendern
 
-Jede Seite lässt sich unabhängig rastern. Mit `renderPage(page, doc)` erhalten Sie ein `HTMLCanvasElement` für eine bestimmte Seitennummer – der Canvas ist eine Bitmap, die genau so groß ist wie die Seite in Pixeln (bei der konfigurierten DPI-Zahl), sodass Sie ihn anzeigen, exportieren oder in eine beliebige Bildverarbeitung geben können:
+Jede Seite lässt sich unabhängig rastern. Mit `renderPage(page, doc)` erhalten Sie ein `HTMLCanvasElement` für eine bestimmte Seitennummer – das Canvas ist eine Bitmap, die genau so groß ist wie die Seite in Pixeln (bei der konfigurierten DPI-Zahl), sodass Sie es anzeigen, exportieren oder in eine beliebige Bildverarbeitung geben können:
 
 ```ts
 import { buildDocument, renderPage } from 'postext';
@@ -358,7 +358,7 @@ const ctx = canvas.getContext('2d')!;
 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 ```
 
-Wenn Sie lieber in einen Canvas zeichnen, den Sie bereits besitzen (etwa einen, der mit einem bestimmten Layout im DOM hängt), verwenden Sie `renderPageToCanvas(page, doc, canvas)` – die Funktion passt die Größe des übergebenen Canvas an und zeichnet hinein, statt einen neuen zu erzeugen.
+Wenn Sie lieber in ein Canvas zeichnen, das Sie bereits haben (etwa eines, das mit einem bestimmten Layout im DOM hängt), verwenden Sie `renderPageToCanvas(page, doc, canvas)` – die Funktion passt die Größe des übergebenen Canvas an und zeichnet hinein, statt ein neues zu erzeugen.
 
 Um alle Seiten zu rendern, iterieren Sie über `vdt.pages`:
 
@@ -368,9 +368,9 @@ const bitmaps = vdt.pages.map((page) => renderPage(page, vdt));
 
 #### Live-Beispiel: eine Seite als Bild
 
-All das oben, im Browser ausgeführt. Der Pen importiert die neueste Version von `postext` von einem CDN, wartet auf die Webschriften, setzt ein kurzes zweispaltiges Dokument, zeichnet seine erste Seite auf einen Canvas und bietet diese Bitmap als PNG an. Klicken Sie auf *Run on CodePen*, um den Editor zu laden und das Markdown oder die Konfiguration zu ändern; die Seite wird bei jeder Änderung neu gezeichnet.
+All das oben, im Browser ausgeführt. Der Pen importiert die neueste Version von `postext` von einem CDN, wartet auf die Webschriften, setzt ein kurzes zweispaltiges Dokument, zeichnet seine erste Seite auf ein Canvas und bietet diese Bitmap als PNG an. Klicken Sie auf *Run on CodePen*, um den Editor zu laden und das Markdown oder die Konfiguration zu ändern; die Seite wird bei jeder Änderung neu gezeichnet.
 
-<CodePenExample name="render-page" title="Postext · eine Seite als Bild rendern" description="Ein Markdown-Dokument mit postext setzen und seine erste Seite auf einen Canvas bzw. als PNG rastern." height={600} />
+<CodePenExample name="render-page" title="Postext · eine Seite als Bild rendern" description="Ein Markdown-Dokument mit postext setzen und seine erste Seite auf ein Canvas bzw. als PNG rastern." height={600} />
 
 ### React
 
@@ -409,7 +409,7 @@ const fullBody = resolveBodyTextConfig({ fontFamily: 'Inter' });
 // => { fontFamily: 'Inter', fontSize: { value: 8, unit: 'pt' }, lineHeight: { value: 1.5, unit: 'em' }, ... }
 ```
 
-Verfügbare Resolver, einer pro Abschnitt der obersten Ebene: `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig` – dazu `resolveDesignSlot` für einen einzelnen Gestaltungsplatz. Farbpaletten werden getrennt angewendet, über `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` und `resolveColorValue(value, palette, fallback)` – siehe [Farbpalette](/de/docs/configuration-fonts-colors-viewers#farbpalette).
+Verfügbare Resolver, einer pro Abschnitt der obersten Ebene: `resolvePageConfig`, `resolveLayoutConfig`, `resolveBodyTextConfig`, `resolveHeadingsConfig`, `resolveHeadingStylesConfig`, `resolveTocConfig`, `resolvePartsConfig`, `resolveUnorderedListsConfig`, `resolveOrderedListsConfig`, `resolveMathConfig`, `resolveTableStyleConfig`, `resolveCaptionStyleConfig`, `resolveDiagramStyleConfig`, `resolveParagraphStylesConfig`, `resolveCalloutStylesConfig`, `resolveHeaderFooterConfig`, `resolveDebugConfig`, `resolveHtmlViewerConfig`, `resolvePdfGenerationConfig` – dazu `resolveDesignSlot` für ein einzelnes Gestaltungsfeld. Farbpaletten werden getrennt angewendet, über `applyPaletteToConfig(config)`, `applyPaletteToResolvedConfig(resolved, palette)` und `resolveColorValue(value, palette, fallback)` – siehe [Farbpalette](/de/docs/configuration-fonts-colors-viewers#farbpalette).
 
 Resolver, deren Standardwerte aus einem anderen Abschnitt übernommen werden, erhalten diesen Abschnitt bereits aufgelöst als weiteres Argument. `resolveUnorderedListsConfig` und `resolveOrderedListsConfig` erhalten den aufgelösten Grundtext, weil die Listen-Standardwerte für `fontFamily` und `color` aus ihm übernommen werden; `resolveCalloutStylesConfig` erhält den aufgelösten Grundtext, die Überschriften und die ungeordneten Listen (siehe das Beispiel unter [Kastenstile](/de/docs/configuration-callouts#kastenstile)), und `resolveHeadingStylesConfig` die aufgelöste Seite, den Grundtext und beide Listenabschnitte. Die genaue Signatur jedes Resolvers finden Sie in den Typdeklarationen des Pakets:
 
@@ -438,9 +438,9 @@ Es gibt auch einzelne Stripper, einen pro Resolver: `stripPageDefaults`, `stripL
 
 Manche Standardwerte hängen vom Rest der Konfiguration ab: Der Spaltenausgleich ist auf einem Zeichenraster und bei vertikalem Text ausgeschaltet, `bodyText.avoidWidows` ist auf einem Zeichenraster ausgeschaltet (und `bodyText.avoidOrphans` in der Region `japan` ebenfalls), und die Fußnoten, die Legenden und das Register folgen der Sprache des Dokuments. `stripConfigDefaults` vergleicht jeden Wert mit dem Standardwert der übergebenen Konfiguration, sodass `headings.balancing.enabled: true` dort erhalten bleibt, wo der Ausgleich standardmäßig ausgeschaltet ist, und `false` dort entfällt. Ebenso bleibt `bodyText.avoidWidows: true` auf einem Zeichenraster erhalten. Ein einzeln aufgerufener Stripper erhält diesen Kontext als Argumente: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`, `stripIndexDefaults(index, locale)`, `stripCaptionStyleDefaults(captionStyle, locale)`, `stripFootnotesDefaults(footnotes, locale, writingMode)`, `stripBodyTextDefaults(bodyText, locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config))`.
 
-Ein Wert, der „nichts“ besagt, bleibt überall erhalten, wo „nichts“ nicht der Standardwert ist. Ein Überschriftenformat übernimmt Kopf- und Fußzeile des Dokuments, wenn es keine eigenen festlegt; ein Format, das sie leert (`footer: { elements: [] }` auf einem Umschlag), behält deshalb den leeren Platz, und seine `margins`, `layout` und `bodyStyle` bleiben auch dann erhalten, wenn sie leer sind. Eine Überschriftenebene, die auf ihren Standardwert zurückgesetzt wurde, behält den Wert, wenn die für alle Überschriften geltenden Werte davon abweichen. `calloutStyles: []` und `chipStyles: []` bleiben leere Listen: Würden sie weggelassen, käme das eingebaute Format zurück. In jedem Fall wird `resolveAllConfig(stripConfigDefaults(config))` genauso aufgelöst wie `resolveAllConfig(config)`.
+Ein Wert, der „nichts“ besagt, bleibt überall erhalten, wo „nichts“ nicht der Standardwert ist. Ein Überschriftenstil übernimmt Kopf- und Fußzeile des Dokuments, wenn er keine eigenen festlegt; ein Stil, der sie leert (`footer: { elements: [] }` auf einem Umschlag), behält deshalb das leere Feld, und seine `margins`, `layout` und `bodyStyle` bleiben auch dann erhalten, wenn sie leer sind. Eine Überschriftenebene, die auf ihren Standardwert zurückgesetzt wurde, behält den Wert, wenn die für alle Überschriften geltenden Werte davon abweichen. `calloutStyles: []` und `chipStyles: []` bleiben leere Listen: Würden sie weggelassen, käme der eingebaute Stil zurück. In jedem Fall wird `resolveAllConfig(stripConfigDefaults(config))` genauso aufgelöst wie `resolveAllConfig(config)`.
 
-### Parsen
+### Einlesen
 
 Die Engine stellt ihren Markdown-Tokenizer und ihren Frontmatter-Leser bereit. Damit können Sie ein Dokument untersuchen, bevor Sie es setzen, oder andere Werkzeuge mit derselben Blockstruktur versorgen, die Postext sieht:
 
@@ -461,7 +461,7 @@ Die vollständige Liste der Markdown-Konstrukte, die Postext erkennt, finden Sie
 
 ### Quellenzuordnung eines gesetzten Dokuments
 
-`sourceAt(doc, pageIndex, x, y, options?)` gibt zurück, was ein Punkt einer Seite zeigt, von innen nach außen, jedes Element mit seiner stabilen `id`, seiner `source` (ein Stück Markdown, ein JSON-Pointer der Konfiguration, ein Attribut der Seitenbegrenzung oder eine Ressource) und seinem `rect`. `elementsForSource(doc, start, end, options?)` gibt zurück, was aus einem Stück Markdown geworden ist, Seite für Seite, und `findElement(doc, id)` findet ein Element nach einem Neusatz wieder. Sie lesen, was der Satz im VDT vermerkt hat, und setzen nichts. `composedPagePaintKey(page)` sagt, ob eine zusammengesetzte Seite zeichnet, was sie zuvor gezeichnet hat. Die Quellenarten, die IDs und wie eine zusammengesetzte Seite nur dort neu gesetzt wird, wo sie sich geändert hat, stehen unter [Zusammengesetzte Seiten › Quellenzuordnung](/de/docs/composed-pages#quellenzuordnung).
+`sourceAt(doc, pageIndex, x, y, options?)` gibt zurück, was ein Punkt einer Seite zeigt, von innen nach außen, jedes Element mit seiner stabilen `id`, seiner `source` (ein Stück Markdown, ein JSON-Pointer der Konfiguration, ein Attribut des Seitenblocks oder eine Ressource) und seinem `rect`. `elementsForSource(doc, start, end, options?)` gibt zurück, was aus einem Stück Markdown geworden ist, Seite für Seite, und `findElement(doc, id)` findet ein Element nach einem Neusatz wieder. Sie lesen, was der Satz im VDT vermerkt hat, und setzen nichts. `composedPagePaintKey(page)` zeigt an, ob eine zusammengesetzte Seite dasselbe zeichnet wie zuvor. Die Quellenarten, die IDs und wie eine zusammengesetzte Seite nur dort neu gesetzt wird, wo sie sich geändert hat, stehen unter [Zusammengesetzte Seiten › Quellenzuordnung](/de/docs/composed-pages#quellenzuordnung).
 
 ### Schriften vor dem Layout laden
 
@@ -504,7 +504,7 @@ const off = onFontsChanged((families) => relayout());
 
 Das Messen von Text ist der aufwendige Schritt im Layout. Zwei Arten von Cache halten ihn günstig:
 
-- **Ein Block-Cache, der Ihnen gehört.** `createMeasurementCache()` gibt einen `MeasurementCache` zurück, der sich jeden gemessenen Absatz merkt, mit seinem Text, seinen Schriften, seiner Breite, den Umbruchoptionen und dem aktiven Silbentrennungswörterbuch als Schlüssel. Übergeben Sie ihn als drittes Argument von `buildDocument` (oder `buildDocumentAsync`), um Messungen über die Platzierungsdurchläufe eines Builds und über Builds hinweg wiederzuverwenden: Ein Editor, der das Dokument bei jedem Tastendruck neu setzt, misst dann nur die Absätze, die sich geändert haben. Ohne Cache misst jeder Durchlauf jeden Block erneut. Ein Absatz aus dem Cache gleicht einem neu gemessenen, sodass ein Build mit Cache jede Zeile so setzt wie ein Build ohne; in postext 1.4.1 verlor ein Absatz aus dem Cache die Markierung einer zu kurzen Ausgangszeile, und das Nachspannen zu kurzer Ausgangszeilen sowie der Spaltenausgleich konnten ihn dann anders umbrechen. Der Cache trägt die Messgeneration, unter der er gefüllt wurde: Treffen Schnitte einer Familie ein oder entfallen, verwirft sein nächster Zugriff die in dieser Familie gesetzten Blöcke, sodass ein über Schriftladevorgänge hinweg behaltener Cache nie Zeilen liefert, die mit einer Ersatzschrift gemessen wurden.
+- **Ein Block-Cache, der Ihnen gehört.** `createMeasurementCache()` gibt einen `MeasurementCache` zurück, der sich jeden gemessenen Absatz merkt, mit seinem Text, seinen Schriften, seiner Breite, den Umbruchoptionen und dem aktiven Silbentrennungswörterbuch als Schlüssel. Übergeben Sie ihn als drittes Argument von `buildDocument` (oder `buildDocumentAsync`), um Messungen über die Platzierungsdurchläufe eines Builds und über Builds hinweg wiederzuverwenden: Ein Editor, der das Dokument bei jedem Tastendruck neu setzt, misst dann nur die Absätze, die sich geändert haben. Ohne Cache misst jeder Durchlauf jeden Block erneut. Ein Absatz aus dem Cache gleicht einem neu gemessenen, sodass ein Build mit Cache jede Zeile so setzt wie ein Build ohne; in postext 1.4.1 verlor ein Absatz aus dem Cache die Markierung einer zu kurzen Ausgangszeile, und das Nachziehen zu kurzer Ausgangszeilen sowie der Spaltenausgleich konnten ihn dann anders umbrechen. Der Cache speichert die Messgeneration, unter der er gefüllt wurde: Treffen Schnitte einer Familie ein oder entfallen, verwirft sein nächster Zugriff die in dieser Familie gesetzten Blöcke, sodass ein über Schriftladevorgänge hinweg behaltener Cache nie Zeilen liefert, die mit einer Ersatzschrift gemessen wurden.
 - **Globale Breiten-Caches.** Wortbreiten werden pro Font-String in Modulzustand gespeichert, den jeder Build der Seite teilt, und pretext hat einen eigenen Cache. Die Engine verwirft die Breiten einer Familie, wenn sich deren Schnitte ändern (zu Beginn eines Builds, durch `watchFonts`, durch `prepareFonts` und `loadBundleFonts`); der Cache von pretext hat keinen Familienindex und wird ganz geleert.
 
 ```ts
@@ -572,7 +572,7 @@ Kurz gefasst sieht die maßgebliche Integration so aus:
 4. **Ersetzen** Sie jeden vorherigen Build, indem Sie sein Signal abbrechen, *bevor* Sie den nächsten starten – das ist das Muster „der letzte gewinnt“.
 5. **Entsorgen** Sie den Worker, wenn die Komponente, der er gehört, ausgehängt wird.
 
-Dasselbe `VDTDocument`, das von `build(...)` zurückkommt, speist jeden nachgelagerten Renderer: `renderPage`/`renderPageToCanvas` für den Canvas, `renderToHtmlIndexed` für HTML und `renderToPdf` (aus `postext-pdf`) für PDF. Sie setzen einmal im Worker und rastern im Haupt-Thread so oft, wie die Oberfläche es braucht.
+Dasselbe `VDTDocument`, das von `build(...)` zurückkommt, speist jeden nachgelagerten Renderer: `renderPage`/`renderPageToCanvas` für das Canvas, `renderToHtmlIndexed` für HTML und `renderToPdf` (aus `postext-pdf`) für PDF. Sie setzen einmal im Worker und rastern im Haupt-Thread so oft, wie die Oberfläche es braucht.
 
 ### Was der Worker Ihnen bietet
 
@@ -581,7 +581,7 @@ Dasselbe `VDTDocument`, das von `build(...)` zurückkommt, speist jeden nachgela
 - **Mess-Cache pro Worker.** Der Worker hält für seine gesamte Lebensdauer einen einzigen `MeasurementCache`. Folgende Builds mit gleicher Schrift, gleichem Text und gleicher Breite verwenden die zwischengespeicherten Zeilenmessungen wieder – wer in einem langen Dokument ein einzelnes Zeichen tippt, lässt nur die Blöcke neu messen, deren Eingabe sich tatsächlich geändert hat.
 - **Dieselben Metriken wie im Haupt-Thread.** Schriften werden als übertragbare Objekte `ArrayBuffer` in den Worker geschickt und mit `new FontFace(...)` im eigenen `FontFaceSet` des Workers registriert. Der Worker misst mit denselben Canvas-Schriftmetriken, die der Haupt-Thread verwenden würde, sodass Zeilenumbrüche und Spaltenhöhen byte-genau übereinstimmen.
 - **Der Raster-Cache für Formeln überdauert Worker-Builds.** Der Mathe-Renderer bringt neben dem identitätsbasierten einen inhaltsbasierten Raster-Cache mit – ein per Structured Clone über die Worker-Grenze kopiertes `MathRender` würde den identitätsbasierten Cache sonst bei jedem Neuaufbau verfehlen.
-- **Dieselben Zeilen wie auf der Seite.** Ein in einem Worker erzeugter Canvas hat keine Seite, von der er eine Sprache übernehmen könnte, und eine Schrift antwortet unter einer Sprache mit anderen Glyphen. Die Engine setzt die Sprache des Dokuments (`locale`) auf jedem Kontext, mit dem sie misst, im Worker wie auf der Seite, sodass `build()` in jeder Sprache die Zeilen liefert, die `buildDocument` auf einer Seite ergibt ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard seit postext 1.30). Mit `'host'`, das eine vor 1.30 gespeicherte Konfiguration behält, misst ein Worker ohne Sprache und eine Seite mit ihrer eigenen, wie bis postext 1.28.
+- **Dieselben Zeilen wie auf der Seite.** Ein in einem Worker erzeugtes Canvas hat keine Seite, von der es eine Sprache übernehmen könnte, und eine Schrift antwortet unter einer Sprache mit anderen Glyphen. Die Engine setzt die Sprache des Dokuments (`locale`) auf jedem Kontext, mit dem sie misst, im Worker wie auf der Seite, sodass `build()` in jeder Sprache die Zeilen liefert, die `buildDocument` auf einer Seite ergibt ([`bodyText.shapingLanguage: 'document'`](/de/docs/configuration-text#fließtext), der Standard seit postext 1.30). Mit `'host'`, das eine vor 1.30 gespeicherte Konfiguration behält, misst ein Worker ohne Sprache und eine Seite mit ihrer eigenen, wie bis postext 1.28.
 
 ### Öffentliche API
 
@@ -720,11 +720,11 @@ await layout.registerFonts(await Promise.all([face(400, 'normal'), face(700, 'no
 const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garamond' } });
 ```
 
-**Ein Worker sieht die Schriften der Seite nicht.** Er hat ein eigenes Font-Set, das nur die mit `registerFonts` gesendeten Schnitte und die im System installierten Schriften enthält. Setzt ein Build Text in einer Familie, die der Worker nicht findet, wird dieser Text mit einer Ersatzschrift gemessen, sodass seine Zeilenumbrüche nicht zur Seite passen. Der Client gibt dann eine Konsolenwarnung pro Familie aus (`"EB Garamond" is not available inside the layout worker…`) und listet die Familien in `BuildStats.missingFonts` auf, das der Callback `onStats` von `build` erhält. Das Dokument selbst trägt dieselben Schnitte als inhaltliche Warnungen `fontFallback`.
+**Ein Worker sieht die Schriften der Seite nicht.** Er hat ein eigenes Font-Set, das nur die mit `registerFonts` gesendeten Schnitte und die im System installierten Schriften enthält. Setzt ein Build Text in einer Familie, die der Worker nicht findet, wird dieser Text mit einer Ersatzschrift gemessen, sodass seine Zeilenumbrüche nicht zur Seite passen. Der Client gibt dann eine Konsolenwarnung pro Familie aus (`"EB Garamond" is not available inside the layout worker…`) und listet die Familien in `BuildStats.missingFonts` auf, das der Callback `onStats` von `build` erhält. Das Dokument selbst führt dieselben Schnitte als inhaltliche Warnungen `fontFallback` auf.
 
 `handle.prepareFonts(content, config, options)` führt [`prepareFonts`](#schriften-vor-dem-layout-laden) auf der Seite aus und schickt dem Worker dann die Dateien jedes gefundenen Schnitts, den die Schriftregistrierung enthält (die Dateien des Resolvers, die Schnitte eines Pakets, die lesbaren Regeln `@font-face` der Seite), und zwar nur die Teile, die die Zeichen des Dokuments enthalten. Wenn Schnitte den Worker erreichen, verwirft er nur die Messungen dieser Familien und seinen Cache fertiger Dokumente.
 
-Schnitte können den Worker auch nach einem Build erreichen: eine Stärke, die die Seiten doch brauchen, ein weiterer Teil eines Schnitts nach `unicode-range`, eine Datei, die unter demselben Familiennamen erneut hochgeladen wurde. Der nächste Build misst mit ihnen. Der Canvas eines Workers würde das nicht von selbst tun: In Chrome löst er eine Schrift beim ersten Setzen einer Font-Kurzschreibweise auf und sieht für diese Kurzschreibweise nicht mehr in das Font-Set, sodass der Text die Breiten des Schnitts behielte, der zuerst geantwortet hat. Der Worker nennt deshalb eine Familie in den Kurzschreibweisen, die er setzt, ein weiteres Mal, sobald ein Schnitt dieser Familie verspätet eingetroffen ist (`Geist, Geist`): eine andere Familienliste für den Canvas, dieselbe Schrift und dieselben Breiten. Die Dokumente, die er zurückgibt, behalten die Font-Strings so, wie die Engine sie schreibt, und ein Worker, der seine Schnitte vor seinem ersten Build hat, setzt jede Kurzschreibweise wie geschrieben.
+Schnitte können den Worker auch nach einem Build erreichen: eine Stärke, die die Seiten doch brauchen, ein weiterer Teil eines Schnitts nach `unicode-range`, eine Datei, die unter demselben Familiennamen erneut hochgeladen wurde. Der nächste Build misst mit ihnen. Das Canvas eines Workers würde das nicht von selbst tun: In Chrome löst es eine Schrift beim ersten Setzen einer Font-Kurzschreibweise auf und sieht für diese Kurzschreibweise nicht mehr in das Font-Set, sodass der Text die Breiten des Schnitts behielte, der zuerst geantwortet hat. Der Worker führt deshalb eine Familie in den Kurzschreibweisen, die er setzt, ein weiteres Mal auf, sobald ein Schnitt dieser Familie verspätet eingetroffen ist (`Geist, Geist`): eine andere Familienliste für den Canvas, dieselbe Schrift und dieselben Breiten. Die Dokumente, die er zurückgibt, behalten die Font-Strings so, wie die Engine sie schreibt, und ein Worker, der seine Schnitte vor seinem ersten Build hat, setzt jede Kurzschreibweise wie geschrieben.
 
 ### Schriftdaten sammeln (Fontsource / Google Fonts)
 
@@ -737,7 +737,7 @@ Schnitte können den Worker auch nach einem Build erreichen: eine Stärke, die d
 3. lädt jede Datei des normalen und des fetten Schnitts und ihrer Kursiven jeder Familie herunter (`files/{family-id}-{subset}-{weight}-{style}.woff2`); `collectFontPayloadsForConfig(config, markdown)` nimmt stattdessen die Stärken und Stile, die eine Konfiguration verlangt. Es sind statische Dateien, dieselben, die das PDF einbettet, sodass der Worker mit dem misst, was das PDF zeichnet. Eine variable Datei liefert zwischen zwei ihrer Master andere Dickten, und eine Zeile, die einen Bruchteil eines Pixels von ihrer Satzbreite entfernt ist, bricht dann anders um.
 4. gibt ein `FontPayload[]` zurück, in dem `buffer` bei jedem Aufruf ein frischer `ArrayBuffer` ist – wichtig, weil `registerFonts` den Puffer überträgt und die Kopie auf der Senderseite abgekoppelt zurücklässt.
 
-Die Dateien eines Schnitts kommen in der Reihenfolge, in der ein Pen sie deklariert, `latin` zuerst und die eigenen Dateien der Schrift zuletzt (`arabic`, die nummerierten Teile einer chinesischen oder japanischen Familie), denn die zuletzt hinzugefügte Datei steht für ein Zeichen ein, das zwei Dateien enthalten. Eine Familie, für die Fontsource keine Dateien hat, wird stattdessen aus dem CSS2-Stylesheet von Google gelesen, das WOFF2 nur an browserähnliche User-Agent-Strings ausliefert.
+Die Dateien eines Schnitts kommen in der Reihenfolge, in der ein Pen aus den Rezepten (ein CodePen-Beispiel) sie deklariert, `latin` zuerst und die eigenen Dateien der Schrift zuletzt (`arabic`, die nummerierten Teile einer chinesischen oder japanischen Familie), denn die zuletzt hinzugefügte Datei steht für ein Zeichen ein, das zwei Dateien enthalten. Eine Familie, für die Fontsource keine Dateien hat, wird stattdessen aus dem CSS2-Stylesheet von Google gelesen, das WOFF2 nur an browserähnliche User-Agent-Strings ausliefert.
 
 Kombinieren Sie die Funktion mit `getConfigFontFamilies(config)`, um die Liste der Familien zu erhalten, die eine bestimmte `PostextConfig` tatsächlich rendert (Grundtext, Überschriften, Aufzählungszeichen, Nummern geordneter Listen).
 

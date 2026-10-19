@@ -28,13 +28,13 @@ Tageszahlen aus `Date.UTC` geben jedem Datum seinen Wochentag, und das Raster be
 
 <Excerpt region="matrix" />
 
-Die Paare sind als TSV getippt, ein Symbol pro Zelle. `parseTSV(tsv, { headerRows: 1 })` macht die Zeile mit den Namen der Kulturen zum Kopf. Die Gewichte von `columnWidths` sind Millimeter der Satzbreite von 176 mm: 26 für die Namen, 15 für jede Kultur. Jedes Symbol nennt einen Eintrag der Palette, den `setCellBackground` als Füllung der Zelle einsetzt; das `+` und das `−` werden zusätzlich gedruckt, in einem Chip mit 1,4 em, sodass die Matrix auch in einer Graustufenkopie lesbar bleibt. Die Diagonale paart eine Kultur mit sich selbst, und dort setzt `setCellImage` die Zeichnung der Kultur ein, mit 62 % der Innenbreite der Zelle.
+Die Paare sind als TSV getippt, ein Symbol pro Zelle. `parseTSV(tsv, { headerRows: 1 })` macht die Zeile mit den Namen der Kulturen zum Kopf. Die Gewichte von `columnWidths` sind Millimeter der Satzbreite von 176 mm: 26 für die Namen, 15 für jede Kultur. Jedes Symbol verweist auf einen Eintrag der Palette, den `setCellBackground` als Füllung der Zelle einsetzt; das `+` und das `−` werden zusätzlich gesetzt, in einem Chip mit 1,4 em, sodass die Matrix auch in einer Graustufenkopie lesbar bleibt. Die Diagonale paart eine Kultur mit sich selbst, und dort setzt `setCellImage` die Zeichnung der Kultur ein, mit 62 % der Innenbreite der Zelle.
 
 ### 4 · Die Farben mit Farbfeldern erklären
 
 <Excerpt region="resources" />
 
-`:swatch{color="leaf"}` setzt ein Quadrat von drei Vierteln der Schriftgröße, gefüllt mit einem Eintrag der Palette und in der Textfarbe umrandet; diese Seiten verwenden es im laufenden Text, in zwei Legenden und in einer Anmerkung. Die Zeichenerklärung des Plans steht in seiner Legende, weil jeder Teil einer geteilten Tabelle die Legende wiederholt, die Anmerkung aber nur unter dem letzten Teil steht. Der Kalender ist ein eigener Ressourcentyp mit leerem Legendenpräfix, und seine Legende beginnt mit der Zeichenerklärung statt mit einem Etikett `Tabella`. `position: 'bottom'` mit `span: 'page'` setzt Kalender und Matrix über beide Spalten an den Fuß ihrer Seiten. Seite 28 ist die letzte Textseite. Auf der Schlussseite eines Kapitels rückt ein Gleitobjekt über die ganze Seitenbreite bis eine Zeile unter den Text hinauf, deshalb endet die Matrix 10 mm über dem unteren Rand; `layout.hugClosingFloats: false` ließe sie am Fuß.
+`:swatch{color="leaf"}` setzt ein Quadrat von drei Vierteln der Schriftgröße, gefüllt mit einem Eintrag der Palette und in der Textfarbe umrandet; diese Seiten verwenden es im laufenden Text, in zwei Legenden und in einer Anmerkung. Die Zeichenerklärung des Plans steht in seiner Legende, weil jeder Teil einer geteilten Tabelle die Legende wiederholt, die Anmerkung aber nur unter dem letzten Teil steht. Der Kalender ist ein eigener Ressourcentyp mit leerem Legendenpräfix, und seine Legende beginnt mit der Zeichenerklärung statt mit einer Bezeichnung `Tabella`. `position: 'bottom'` mit `span: 'page'` setzt Kalender und Matrix über beide Spalten an den Fuß ihrer Seiten. Seite 28 ist die letzte Textseite. Auf der Schlussseite eines Kapitels rückt ein Gleitobjekt über die ganze Seitenbreite bis eine Zeile unter den Text hinauf, deshalb endet die Matrix 10 mm über dem unteren Rand; `layout.hugClosingFloats: false` ließe sie am Fuß.
 
 ### 5 · Ein Hausstil und eine Variante pro Tabelle
 
@@ -46,7 +46,7 @@ Die Paare sind als TSV getippt, ein Symbol pro Zelle. `parseTSV(tsv, { headerRow
 
 <Excerpt region="opener" />
 
-Die Überschrift der Ebene 1 wird aus einem Slot von Elementen gezeichnet. Das Aquarell ist ein Bildelement am Kopf der Seite, und Dachzeile, Spruch und seine Quelle kommen aus den Attributen der Überschrift. Der Auftakt reserviert bis zum Fuß des Bildes, und `minHeight` ist eine etwas tiefer gesetzte Untergrenze: 92 mm Bild plus 5 mm Luft, abzüglich des oberen Rands von 22 mm, ergeben 75 mm, aufgerundet auf 16 Zeilen zu 14 pt (79 mm). Die erste Textzeile steht 101 mm vom oberen Seitenrand, 9 mm unter der Erde. Der Titel rückt 1,5 mm nach links, die Vorbreite des M von Gilda Display bei 84 pt, und die Serife des M fluchtet mit der Dachzeile; der Spruch rückt um denselben Betrag zurück.
+Die Überschrift der Ebene 1 wird aus einem Gestaltungsfeld mit Elementen gezeichnet. Das Aquarell ist ein Bildelement am Kopf der Seite, und Dachzeile, Spruch und seine Quelle kommen aus den Attributen der Überschrift. Der Auftakt reserviert bis zum Fuß des Bildes, und `minHeight` ist eine etwas tiefer gesetzte Untergrenze: 92 mm Bild plus 5 mm Luft, abzüglich des oberen Rands von 22 mm, ergeben 75 mm, aufgerundet auf 16 Zeilen zu 14 pt (79 mm). Die erste Textzeile steht 101 mm vom oberen Seitenrand, 9 mm unter der Erde. Der Titel rückt 1,5 mm nach links, die Vorbreite des M von Gilda Display bei 84 pt, und die Serife des M fluchtet mit der Dachzeile; der Spruch rückt um denselben Betrag zurück.
 
 ## Varianten
 
@@ -61,5 +61,5 @@ Der Kopf zeigt dann zum rechten Seitenrand, und der Leser dreht das Buch in die 
 
 ## Häufige Fehler
 
-- Ein Bild in einer Tabellenzelle wird immer über dem Text der Zelle gezeichnet und wie dieser ausgerichtet. Um ein Icon neben eine Zahl zu setzen, geben Sie dem Icon eine eigene Spalte, wie es der Kalender mit dem Mond tut.
+- Ein Bild in einer Tabellenzelle wird immer über dem Text der Zelle gezeichnet und wie dieser ausgerichtet. Um ein Symbol neben eine Zahl zu setzen, geben Sie dem Symbol eine eigene Spalte, wie es der Kalender mit dem Mond tut.
 - Die Anmerkung unter einer geteilten Tabelle erscheint nur bei ihrem letzten Teil, daher gehört eine Zeichenerklärung, die jeder Teil braucht, in die Legende.

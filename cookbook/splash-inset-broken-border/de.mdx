@@ -20,7 +20,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `split="*"` mac
 
 ### 2 · Einen Einschub über den Splash legen
 
-`inset="56 64 38 30"` platziert Mayas Panel bei 56 %, 64 % des vorhergehenden Panels, 38 % breit und 30 % hoch. Ein Einschub belegt keine Zelle: Er wird über den Splash gelegt, behält seinen eigenen Rahmen und wird direkt danach gelesen. Sein Bild wird von seinem Sicherheitsbereich auf seinen eigenen Kasten zugeschnitten, hier Mayas Gesicht.
+`inset="56 64 38 30"` platziert Mayas Panel bei 56 %, 64 % des vorhergehenden Panels, 38 % breit und 30 % hoch. Ein Einschub belegt keine Zelle: Er wird über den Splash gelegt, behält seinen eigenen Rahmen und wird direkt danach gelesen. Sein Bild wird von seinem Sicherheitsbereich auf sein eigenes Rechteck zugeschnitten, hier Mayas Gesicht.
 
 <PageShot page={1} crop="0.35,0.55,0.65,0.45" caption="Der Einschub: Mayas Gesicht in seinem eigenen Rahmen über der unteren Ecke des Splashs, mit ihrer inneren Stimme." />
 
@@ -28,13 +28,13 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `split="*"` mac
 
 <Excerpt region="art" />
 
-`pop=sp-tomas-pop` nennt ein zweites Bild für das Panel des Wärters: ein transparentes PNG in der Größe seines Bildes, auf dem nur die Möwe zu sehen ist. Postext schneidet es genau wie die Grafik des Panels zu und platziert es ebenso, zeichnet es dann aber nach dem Rahmen und außerhalb des Beschnitts des Panels, sodass der Teil der Möwe, der jenseits der Zelle liegt, über Rahmen und Rand fliegt ([Panels und Grafik](/de/docs/comics#panels-und-bilder)). `focus="45% 50%"` schiebt den Ausschnitt innerhalb dessen, was der Sicherheitsbereich erlaubt, nach links, sodass die Möwe auf der linken Kante sitzt statt draußen im Rand.
+`pop=sp-tomas-pop` gibt ein zweites Bild für das Panel des Wärters an: ein transparentes PNG in der Größe seines Bildes, auf dem nur die Möwe zu sehen ist. Postext schneidet es genau wie die Grafik des Panels zu und platziert es ebenso, zeichnet es dann aber nach dem Rahmen und außerhalb des Zuschnitts des Panels, sodass der Teil der Möwe, der jenseits der Zelle liegt, über Rahmen und Rand fliegt ([Panels und Grafik](/de/docs/comics#panels-und-bilder)). `focus="45% 50%"` schiebt den Ausschnitt innerhalb dessen, was der Sicherheitsbereich erlaubt, nach links, sodass die Möwe auf der linken Kante sitzt statt draußen im Rand.
 
 ### 4 · Ein Panel ohne Bild lassen
 
 <Excerpt region="palette" />
 
-Ein `::panel` ohne `art` ist eine leere Zelle mit dem Rahmen des Panelformats; `bg=night` füllt sie mit einer Palettenfarbe. Ihre Textkästen, `at=top` und `at=bottom`, liegen an ihrer Ober- und Unterkante an, ein ruhiger Moment nach dem Sturm.
+Ein `::panel` ohne `art` ist eine leere Zelle mit dem Rahmen des Panelstils; `bg=night` füllt sie mit einer Palettenfarbe. Ihre Textkästen, `at=top` und `at=bottom`, liegen an ihrer Ober- und Unterkante an, ein ruhiger Moment nach dem Sturm.
 
 ## Varianten
 
@@ -47,7 +47,7 @@ Ein `::panel` ohne `art` ist eine leere Zelle mit dem Rahmen des Panelformats; `
 
 ### Dem Einschub einen weißen Rahmen geben
 
-Ein benanntes Panelformat ändert ein einzelnes Panel; `style=` am Panel wählt es aus.
+Ein benannter Panelstil ändert ein einzelnes Panel; `style=` am Panel wählt ihn aus.
 
 ```diff
    panel: { borderWidth: pt(1.2), borderColor: col('ink'), background: col('paper') },
@@ -56,6 +56,6 @@ Ein benanntes Panelformat ändert ein einzelnes Panel; `style=` am Panel wählt 
 
 ## Häufige Fehler
 
-- Die Pop-Ebene muss genau die Pixelgröße des Panelbildes haben: Postext schneidet sie mit demselben Fenster zu, ein kleinerer Ausschnitt landete also an der falschen Stelle.
+- Die Pop-Ebene muss genau die Pixelgröße des Panelbildes haben: Postext schneidet sie mit demselben Fenster zu, ein kleinerer Ausschnitt stünde also an der falschen Stelle.
 - Anschnitt braucht `page.bleed`; ohne diese Angabe endet ein randabfallendes Panel an der Beschnittkante.
 - Ein Soundeffekt neben einer randabfallenden Kante kann in den Anschnitt laufen, über die Beschnittkante hinaus, wo die Schneidemaschine ihn abschneidet. Das japanische ザッバーン ist eine Spalte von fünf Zeichen Höhe und daher tiefer angeheftet als die lateinischen Effekte, bei `60% 44%`.

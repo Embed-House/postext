@@ -18,7 +18,7 @@ pageNotes: { "1": "Il frontespizio: l’autore in piccole maiuscole blu, il tito
 
 <Excerpt region="openers" />
 
-`buildBundle` impagina ogni capitolo come documento a sé, portando i numeri di pagina e la parità dall’uno all’altro, quindi `docs` è l’array che stamperebbe `renderToPdf`. Il writer EPUB legge lo stesso array: ogni capitolo diventa una voce di navigazione, e il file fluido scrive un documento XHTML per capitolo. Il frontespizio e il suo colophon sono il primo capitolo, e il suo frontmatter contiene titolo, sottotitolo e autore del libro.
+`buildBundle` impagina ogni capitolo come documento a sé, portando i numeri di pagina e la parità dall’uno all’altro, quindi `docs` è l’array che stamperebbe `renderToPdf`. Il writer EPUB legge lo stesso array: ogni capitolo diventa una voce di navigazione, e il file fluido scrive un documento XHTML per capitolo. Il frontespizio e il suo colophon sono il primo capitolo, e il suo front matter contiene titolo, sottotitolo e autore del libro.
 
 ### 2 · Passa al writer i file dei font
 
@@ -28,19 +28,19 @@ I caratteri caricati dal browser non sono file che il writer possa leggere, quin
 
 ### 3 · Scrivi le due versioni
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `layout: 'fixed'` scrive un documento XHTML per pagina stampata, al formato rifilato, con testo vero e selezionabile; `layout: 'reflowable'` ricostruisce i paragrafi dalle righe impaginate, toglie i trattini aggiunti dagli a capo e ricava un foglio di stile dalla configurazione. Una data `modified` fissa fa sì che ogni esecuzione produca gli stessi byte. I metadati vengono dal frontmatter del primo capitolo, quindi il titolo e l’autore del file sono quelli stampati sul frontespizio.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `layout: 'fixed'` scrive un documento XHTML per pagina stampata, al formato rifilato, con testo vero e selezionabile; `layout: 'reflowable'` ricostruisce i paragrafi dalle righe impaginate, toglie i trattini aggiunti dagli a capo e ricava un foglio di stile dalla configurazione. Una data `modified` fissa fa sì che ogni esecuzione produca gli stessi byte. I metadati vengono dal front matter del primo capitolo, quindi il titolo e l’autore del file sono quelli stampati sul frontespizio.
 
 ### 4 · Rileggi ogni file
 
 <Excerpt region="shelf" />
 
-`readEpub` apre il file come fa un sistema di lettura: lo spine in ordine di lettura, il sommario, l’elenco delle pagine e il layout. Il file fisso ha una voce dello spine per pagina; quello fluido ne ha quattro, una per capitolo. Entrambi portano un elenco delle pagine con i folio stampati, così un lettore può seguire una citazione fino a pagina 9 in tutti e due. Il link `<a download>` dà un nome di file ai byte; nulla passa da un server.
+`readEpub` apre il file come fa un sistema di lettura: lo spine in ordine di lettura, l’indice, l’elenco delle pagine e il layout. Il file fisso ha una voce dello spine per pagina; quello fluido ne ha quattro, una per capitolo. Entrambi contengono un elenco delle pagine con i numeri di pagina stampati, così un lettore può seguire una citazione fino a pagina 9 in tutti e due. Il link `<a download>` dà un nome di file ai byte; nulla passa da un server.
 
 ## Varianti
 
 ### Dai al layout fisso un’immagine di copertina
 
-Dipingi il frontespizio su un canvas e passalo come copertina; `showsFirstPage` dice al writer di non aggiungerlo come pagina a sé.
+Dipingi il frontespizio su un canvas e passalo come copertina; `showsFirstPage` indica al writer di non aggiungerlo come pagina a sé.
 
 ```diff
 +const canvas = document.createElement('canvas');
@@ -58,4 +58,4 @@ Dipingi il frontespizio su un canvas e passalo come copertina; `showsFirstPage` 
 
 ## Errori frequenti
 
-Il file fluido conserva il testo di un titolo ma non il suo progetto grafico: l’occhiello di ogni apertura (*Book I*) è un elemento grafico, quindi non fa parte del testo. Metti le parole che il lettore deve vedere nel titolo stesso o nel testo.
+Il file fluido conserva il testo di un titolo ma non la sua grafica: l’occhiello di ogni apertura (*Book I*) è un elemento grafico, quindi non fa parte del testo. Metti le parole che il lettore deve vedere nel titolo stesso o nel testo.

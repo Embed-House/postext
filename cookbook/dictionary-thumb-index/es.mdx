@@ -1,6 +1,6 @@
 ---
 title: "Diccionario con índice de pestañas"
-summary: "Un bucle crea un estilo de título por letra, y la cabecera de cada uno pone la pestaña azul de su letra un paso más abajo en el corte, sobre un índice pálido."
+summary: "Un bucle crea un estilo de encabezado por letra, cuya cabecera pone la pestaña azul de su letra un paso más abajo en el corte, sobre un índice pálido."
 plain: "Cuatro páginas de un antiguo diccionario de marinos. Unas pestañas con letras bajan por el borde exterior, y la de la letra actual va en oscuro y más abajo a medida que avanza el alfabeto."
 description: "Cuatro páginas del Sailor’s Word-Book de Smyth a dos columnas, con los lemas en azul, iniciales de cuatro líneas y una pestaña que baja un paso con cada letra."
 question: "¿Cómo hago que la pestaña de un diccionario baje por el corte delantero de una letra a la siguiente?"
@@ -16,31 +16,31 @@ Cuatro páginas de una nueva edición del *Sailor’s Word-Book* del almirante S
 
 ### 1 · Un estilo de título por letra, cada uno con su pestaña
 
-El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `TABS` enumera 22 pestañas; las letras con pocas voces comparten una (QR, UV, XYZ). Cada pestaña mide dos líneas de texto (7,34 mm), así que entre todas cubren las 44 líneas de la caja. El bucle da a cada letra un estilo de título cuyo `header` suma a las cabeceras y al índice pálido la pestaña azul de esa letra, un paso más abajo que la anterior ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). Cada celda se escribe dos veces, una por `parity`, y se ancla al borde exterior de la página, no al contenedor propio de la cabecera. Ese contenedor es el margen de cabeza, del ancho de la caja y desde el borde superior de la página hasta el texto, y las pestañas tienen que llegar al corte delantero y bajar por las 44 líneas. Una página toma la cabecera de la última sección que empieza en ella, así que la <PageRef page={2}>página 2</PageRef> empieza en la A y lleva la pestaña de la B.
+El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `TABS` enumera 22 pestañas; las letras con pocas voces comparten una (QR, UV, XYZ). Cada pestaña mide dos líneas de texto (7,34 mm), así que entre todas cubren las 44 líneas de la caja. El bucle da a cada letra un estilo de encabezado cuyo `header` suma a las cabeceras y al índice pálido la pestaña azul de esa letra, un paso más abajo que la anterior ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). Cada celda se escribe dos veces, una por `parity`, y se ancla al borde exterior de la página, no al contenedor propio de la cabecera. Ese contenedor es el margen de cabeza, del ancho de la caja y desde el borde superior de la página hasta el texto, y las pestañas tienen que llegar al corte delantero y bajar por las 44 líneas. Una página toma la cabecera de la última sección que empieza en ella, así que la <PageRef page={2}>página 2</PageRef> empieza en la A y lleva la pestaña de la B.
 
 ### 2 · Las cabeceras, fuera de la primera página
 
 <Excerpt region="running-heads" />
 
-Las cabeceras son elementos de texto anclados a la página y filtrados por `parity` y por `pages: 'body'` ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). El título de la página 1 abarca las dos columnas, y eso la convierte en página de apertura. Las cabeceras no salen en ella, y su folio lo pone el pie, un elemento con `pages: 'opener'` que se imprime 6 mm por debajo de la caja. En las impares, `{chapterTitle}` imprime la letra del último título de nivel 1 que hay en la página o antes de ella, *Letra C*. `{firstMark.<clave>}` y `{lastMark.<clave>}` imprimen en su lugar el primer y el último lema de la página, las palabras guía que llevan casi todos los diccionarios; esta receta conserva la letra, que es lo que indexan sus pestañas.
+Las cabeceras son elementos de texto anclados a la página y filtrados por `parity` y por `pages: 'body'` ([elementos de texto](/es/docs/configuration-headers-footers#elementos-de-texto)). El título de la página 1 abarca las dos columnas, y eso la convierte en página de apertura. Las cabeceras no salen en ella, y su folio lo pone el pie, un elemento con `pages: 'opener'` que se imprime 6 mm por debajo de la caja. En las impares, `{chapterTitle}` imprime la letra del último encabezado de nivel 1 que hay en la página o antes de ella, *Letra C*. `{firstMark.<clave>}` y `{lastMark.<clave>}` imprimen en su lugar el primer y el último lema de la página, las palabras guía que llevan casi todos los diccionarios; esta receta conserva la letra, que es lo que indexan sus pestañas.
 
 ### 3 · Color para los lemas y nada más
 
 <Excerpt region="entries" />
 
-Cada entrada es un párrafo de un bloque `:::paragraphs{style="entry"}`, con sangría francesa de 1 em ([estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo)). El `boldColor` del cuerpo deja el **Nota.** de la página 1 en el color del texto, y el del estilo de entrada pone los lemas en azul marino. Un estilo de párrafo no tiene `italicColor`, así que las cursivas de las entradas conservan el color del cuerpo.
+Cada entrada es un párrafo de un bloque `:::paragraphs{style="entry"}`, con sangría francesa de 1 em ([estilos de párrafo](/es/docs/configuration-styles#estilos-de-párrafo)). El `boldColor` del texto base deja el **Nota.** de la página 1 en el color del texto, y el del estilo de entrada pone los lemas en azul marino. Un estilo de párrafo no tiene `italicColor`, así que las cursivas de las entradas conservan el color del texto base.
 
 ### 4 · Una inicial de cuatro líneas dentro de la columna
 
 <Excerpt region="letter-heads" />
 
-`LETTER`, 55,8 pt, es el cuerpo con el que una mayúscula de Alegreya SC 900 (0,652 em de alto) se apoya en la cuarta línea de base y llega a la altura de las mayúsculas de la primera línea de texto. La letra y el filete color latón acaban dentro de la quinta línea, y el bloque del título baja hasta la siguiente línea de la rejilla base, así que cada inicial ocupa cinco líneas y las entradas de debajo siguen en la rejilla. En la <PageRef page={3}>página 3</PageRef>, la C que encabeza la segunda columna mide lo mismo que las cuatro primeras líneas de la primera. El nivel 1 declara `breakBefore: { enabled: false }`, que desactiva el salto de página que un título de nivel 1 tiene por defecto, y los estilos de las letras lo heredan, así que la B y la C empiezan a media columna.
+`LETTER`, 55,8 pt, es el cuerpo con el que una mayúscula de Alegreya SC 900 (0,652 em de alto) se apoya en la cuarta línea de base y llega a la altura de las mayúsculas de la primera línea de texto. La letra y el filete color latón acaban dentro de la quinta línea, y el bloque del título baja hasta la siguiente línea de la rejilla base, así que cada inicial ocupa cinco líneas y las entradas de debajo siguen en la rejilla. En la <PageRef page={3}>página 3</PageRef>, la C que encabeza la segunda columna mide lo mismo que las cuatro primeras líneas de la primera. El nivel 1 declara `breakBefore: { enabled: false }`, que desactiva el salto de página que un encabezado de nivel 1 tiene por defecto, y los estilos de las letras lo heredan, así que la B y la C empiezan a media columna.
 
 ### 5 · El título a lo ancho de las dos columnas
 
 <Excerpt region="title" />
 
-El estilo del título abarca la página con una banda que reúne el ancla, el nombre, un subtítulo y una firma tomados de atributos del título, y un filete doble ([span y diseño avanzado](/es/docs/configuration-headings#span-y-diseño-avanzado)). El filete fino acaba 45,1 mm por debajo del borde superior de la caja, así que la banda se ajusta a 13 líneas de la rejilla, 47,7 mm. El filete de columna empieza debajo de la banda, en la línea donde empieza el texto de las dos columnas.
+El estilo del encabezado abarca la página con una banda que reúne el ancla, el nombre, un subtítulo y una firma tomados de atributos del encabezado, y un filete doble ([apertura a toda página y diseño avanzado](/es/docs/configuration-headings#apertura-a-toda-página-y-diseño-avanzado)). El filete fino acaba 45,1 mm por debajo del borde superior de la caja, así que la banda se ajusta a 13 líneas de la rejilla, 47,7 mm. El filete de columna empieza debajo de la banda, en la línea donde empieza el texto de las dos columnas.
 
 ## Variantes
 
@@ -55,4 +55,4 @@ Los índices de pestañas impresos suelen mostrar solo la de la letra en curso; 
 
 ## Errores frecuentes
 
-- Una columna de 60 mm admite unos 50 caracteres, y el inglés de Smyth no se puede reescribir. Compuestas solo con sus espacios, 18 de las 218 líneas justificadas inglesas (un 8 %) los estiraban más de 1,7 veces su ancho normal, frente a menos de un 2 % en la edición española, cuya traducción se ajustó a la columna, y la primera línea de *Cross-trees* no llegaba a llenarse. `maxJustifyTracking: 10` deja que una línea tome hasta un 1 % de interletraje antes de que sus espacios pasen ese límite: en la captura lo llevan 25 de las 217 líneas inglesas y 9 de las 223 españolas, y ninguna pasa de 1,7. El inglés llegaba al 17 % antes de cambiar por otras las cinco entradas que peor componían (*Aground*, *Aloft*, *Belay*, *Cockpit*, *Crow’s nest*). Elige entradas que compongan bien, o ensancha la columna.
+- Una columna de 60 mm admite unos 50 caracteres, y el inglés de Smyth no se puede reescribir. Compuestas solo con sus espacios, 18 de las 218 líneas justificadas inglesas (un 8 %) los estiraban más de 1,7 veces su ancho normal, frente a menos de un 2 % en la edición española, cuya traducción se ajustó a la columna, y la primera línea de *Cross-trees* no llegaba a llenarse. `maxJustifyTracking: 10` deja que una línea tome hasta un 1 % de espaciado entre letras antes de que sus espacios pasen ese límite: en la captura lo llevan 25 de las 217 líneas inglesas y 9 de las 223 españolas, y ninguna pasa de 1,7. El inglés llegaba al 17 % antes de cambiar por otras las cinco entradas que peor componían (*Aground*, *Aloft*, *Belay*, *Cockpit*, *Crow’s nest*). Elige entradas que compongan bien, o ensancha la columna.

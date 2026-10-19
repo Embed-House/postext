@@ -1,6 +1,6 @@
 ---
 title: "Un libro, dos EPUB 3: maquetación fija y fluida"
-summary: "renderToEpub, de postext-epub, escribe los capítulos de buildBundle como un EPUB de maquetación fija y otro fluido; readEpub muestra qué lleva cada uno."
+summary: "renderToEpub, de postext-epub, escribe los capítulos de buildBundle en dos EPUB, de maquetación fija y fluida; readEpub muestra qué lleva cada uno."
 plain: "Un cuento corto compuesto una vez para imprimir y guardado como dos libros electrónicos: uno que conserva cada página impresa y otro cuyo texto el móvil o el lector electrónico recompone a su tamaño."
 description: "Un libro de tres capítulos compuesto con buildBundle y escrito con postext-epub como EPUB 3 de maquetación fija y fluida, cada uno leído con readEpub."
 question: "¿Cómo exporto mi libro a EPUB, con páginas fijas o con un texto que se recompone?"
@@ -10,7 +10,7 @@ pageNotes: { "1": "La portada: el autor en versalitas azules, el título ¡Adió
 
 ## Lo que vas a componer
 
-*¡Adiós, Cordera!*, el cuento de Clarín, en tres capítulos sobre una página de 120 × 190 mm, con portada, página de créditos al dorso y una apertura hundida en cada capítulo; la edición inglesa compone dieciocho fábulas de Esopo con el mismo diseño. El libro se compone una vez, capítulo a capítulo, y esa composición da dos archivos EPUB 3. El de maquetación fija conserva cada página impresa: las aperturas, las cabeceras y los cortes de línea, en la Caslon incrustada. El fluido conserva el texto y su estructura, y el sistema de lectura lo vuelve a componer en un móvil o en una pantalla de tinta electrónica. Los dos se descargan desde la página y los dos pasan EPUBCheck, el validador del W3C.
+*¡Adiós, Cordera!*, el cuento de Clarín, en tres capítulos sobre una página de 120 × 190 mm, con portada, página de créditos al dorso y una apertura hundida en cada capítulo; la edición inglesa compone dieciocho fábulas de Esopo con el mismo diseño. El libro se compone una vez, capítulo a capítulo, y esa composición da dos archivos EPUB 3. El de maquetación fija conserva cada página impresa: las aperturas, las cabeceras y los cortes de línea, en la Caslon incrustada. El de maquetación fluida conserva el texto y su estructura, y el sistema de lectura lo vuelve a componer en un móvil o en una pantalla de tinta electrónica. Los dos se descargan desde la página y los dos pasan EPUBCheck, el validador del W3C.
 
 ## Elaboración
 
@@ -18,7 +18,7 @@ pageNotes: { "1": "La portada: el autor en versalitas azules, el título ¡Adió
 
 <Excerpt region="openers" />
 
-`buildBundle` compone cada capítulo como un documento propio y pasa de uno a otro el número de página y la paridad, así que `docs` es la misma lista que imprimiría `renderToPdf`. El escritor de EPUB lee esa lista: cada capítulo es una entrada del índice de navegación, y el archivo fluido escribe un documento XHTML por capítulo. La portada y su página de créditos forman el primer capítulo, y su frontmatter da el título, el subtítulo y el autor del libro.
+`buildBundle` compone cada capítulo como un documento propio y pasa de uno a otro el número de página y la paridad, así que `docs` es la misma lista que imprimiría `renderToPdf`. El escritor de EPUB lee esa lista: cada capítulo es una entrada del índice de navegación, y el archivo de maquetación fluida escribe un documento XHTML por capítulo. La portada y su página de créditos forman el primer capítulo, y su frontmatter da el título, el subtítulo y el autor del libro.
 
 ### 2 · Dale al escritor los archivos de las fuentes
 
@@ -34,7 +34,7 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. `layout: 'fix
 
 <Excerpt region="shelf" />
 
-`readEpub` abre el archivo como lo abre un sistema de lectura: el orden de lectura (*spine*), el índice, la lista de páginas y la maquetación. El archivo fijo tiene una entrada por página; el fluido, cuatro, una por capítulo. Los dos llevan la lista de los folios impresos, así que una cita de la página 9 se encuentra en cualquiera de ellos. El enlace `<a download>` da nombre a los bytes; nada pasa por un servidor.
+`readEpub` abre el archivo como lo abre un sistema de lectura: el orden de lectura (*spine*), el índice, la lista de páginas y la maquetación. El archivo fijo tiene una entrada por página; el de maquetación fluida, cuatro, una por capítulo. Los dos llevan la lista de los folios impresos, así que una cita de la página 9 se encuentra en cualquiera de ellos. El enlace `<a download>` da nombre a los bytes; nada pasa por un servidor.
 
 ## Variantes
 
@@ -58,4 +58,4 @@ Pinta la portada en un canvas y pásala como cubierta; `showsFirstPage` le dice 
 
 ## Errores frecuentes
 
-El archivo fluido conserva el texto de un título, pero no su diseño: el antetítulo de cada apertura es un elemento de diseño y no forma parte del texto. Lo que el lector tenga que ver va en el propio título o en el texto.
+El archivo de maquetación fluida conserva el texto de un título, pero no su diseño: el antetítulo de cada apertura es un elemento de diseño y no forma parte del texto. Lo que el lector tenga que ver va en el propio título o en el texto.

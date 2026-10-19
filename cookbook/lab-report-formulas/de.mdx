@@ -2,10 +2,10 @@
 title: "Laborbericht: Formeln, Indizes und eine Titrationskurve"
 summary: "Ein vierseitiger Chemiebericht auf A4, der Formeln und Einheiten im Text mit ~ und ^ auszeichnet und TeX für die Reaktion und die Gleichungen behält."
 plain: "Ein vierseitiger Chemiebericht aus der Schule über die Untersuchung von Essig. Er zeigt, wie man chemische Formeln und Einheiten mit kleinen hoch- und tiefgestellten Zahlen schreibt, dazu einige vollständige Gleichungen."
-description: "Ein Chemie-Laborbericht in Postext. Formeln tragen Indizes und Exponenten in der Textschrift, und Tabelle und Titrationskurve teilen sich die Messwerte."
+description: "Ein Chemie-Laborbericht in Postext. Formeln haben Indizes und Exponenten in der Textschrift, und Tabelle und Titrationskurve teilen sich die Messwerte."
 question: "Wie schreibe ich Formeln und Einheiten mit tief- und hochgestellten Zeichen und behalte TeX für Gleichungen?"
 aliases: ["Laborbericht", "Versuchsprotokoll", "Chemie", "chemische Formel", "tiefgestellt", "hochgestellt", "Index", "Exponent", "Einheiten", "mhchem", "Titrationskurve", "hängende Nummern", "lab report"]
-pageNotes: { "1": "Ein blassrosa Band trägt die Kurszeile, den Titel mit der in den linken Rand gehängten Versuchsnummer 4 und die Autorenzeile, deren Bezeichnungen ebenso hängen; rechts tropft eine gezeichnete Bürette in einen Kolben mit blassrosa Flüssigkeit, tiefrosa, wo der Tropfen auftrifft. Unter dem Band folgen die Zusammenfassung mit einem rosa Streifen links, die Abschnitte 1 und 2 mit hängenden Nummern, die Neutralisationsreaktion und die Gleichung für den pH-Wert am Äquivalenzpunkt.", "2": "Die Henderson-Hasselbalch-Gleichung, Abschnitt 3 mit der Geräteliste und einem Sicherheitshinweis in einem dünnen rosa Rahmen, und Abschnitt 4 mit den sechs nummerierten Schritten der Methode.", "3": "Abschnitt 5, „Results“: Tabelle 1 mit den Bürettenablesungen unter einem schiefergrauen Tabellenkopf, die Zahlen rechtsbündig in einer dicktengleichen Schrift und die Bezeichnungen für Mittelwert und Standardabweichung über drei Spalten, die Konzentration des Essigs als abgesetzte Gleichung berechnet, Unterabschnitt 5.2 zur pH-Kurve und der Beginn der Diskussion.", "4": "Abbildung 1, die Titrationskurve: rosa Punkte für die Messwerte des pH-Meters auf der Modellkurve, der Umschlagbereich des Indikators als rosa Band, der Äquivalenzpunkt eingekreist und der pKa-Wert beim halben Äquivalenzvolumen abgelesen; dann das Ende der Diskussion, Abschnitt 7 mit der Schlussfolgerung, drei Literaturangaben mit hängendem Einzug und das Impressum." }
+pageNotes: { "1": "Ein blassrosa Band enthält die Kurszeile, den Titel mit der in den linken Rand gehängten Versuchsnummer 4 und die Autorenzeile, deren Bezeichnungen ebenso hängen; rechts tropft eine gezeichnete Bürette in einen Kolben mit blassrosa Flüssigkeit, tiefrosa, wo der Tropfen auftrifft. Unter dem Band folgen die Zusammenfassung mit einem rosa Streifen links, die Abschnitte 1 und 2 mit hängenden Nummern, die Neutralisationsreaktion und die Gleichung für den pH-Wert am Äquivalenzpunkt.", "2": "Die Henderson-Hasselbalch-Gleichung, Abschnitt 3 mit der Geräteliste und einem Sicherheitshinweis mit dünner rosa Kontur, und Abschnitt 4 mit den sechs nummerierten Schritten der Methode.", "3": "Abschnitt 5, „Results“: Tabelle 1 mit den Bürettenablesungen unter einem schiefergrauen Tabellenkopf, die Zahlen rechtsbündig in einer dicktengleichen Schrift und die Bezeichnungen für Mittelwert und Standardabweichung über drei Spalten, die Konzentration des Essigs als abgesetzte Gleichung berechnet, Unterabschnitt 5.2 zur pH-Kurve und der Beginn der Diskussion.", "4": "Abbildung 1, die Titrationskurve: rosa Punkte für die Messwerte des pH-Meters auf der Modellkurve, der Umschlagbereich des Indikators als rosa Band, der Äquivalenzpunkt eingekreist und der pKa-Wert beim halben Äquivalenzvolumen abgelesen; dann das Ende der Diskussion, Abschnitt 7 mit der Schlussfolgerung, drei Literaturangaben mit hängendem Einzug und das Impressum." }
 ---
 
 ## Was Sie setzen
@@ -22,7 +22,7 @@ Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). [`~…~` und `^
 
 <Excerpt region="hanging" />
 
-Die Gestaltung jeder Überschriftenebene ist ein Slot mit zwei Elementen: dem Titel an der Textkante und der Nummer `{number}`, `left-of` ihm verankert, 4 mm entfernt, in einem rechtsbündig gesetzten Kasten von 33 mm. Der Kasten braucht eine feste Breite. Eine automatische Breite wird auf den Raum begrenzt, den die Spalte links von ihm lässt, und sie lässt keinen, sodass der Kasten auf 0 mm schrumpft und die Überschriften um eine bis drei Zeilen wachsen. `fontSize` und `lineHeight` der Ebene legen nur den Raum fest, den eine Überschrift im Fluss einnimmt, eine Zeile von 15 pt. Die Gestaltung bestimmt die Schrift: Abschnitte mit `{2}` in 13 pt Rosa, Unterabschnitte mit `{2}.{3}` in Grau in Textgröße.
+Die Gestaltung jeder Überschriftenebene ist ein Gestaltungsfeld mit zwei Elementen: dem Titel an der Textkante und der Nummer `{number}`, `left-of` ihm verankert, 4 mm entfernt, in einem rechtsbündig gesetzten Element von 33 mm Breite. Das Element braucht eine feste Breite. Eine automatische Breite wird auf den Raum begrenzt, den die Spalte links von ihm lässt, und sie lässt keinen, sodass das Element auf 0 mm schrumpft und die Überschriften um eine bis drei Zeilen wachsen. `fontSize` und `lineHeight` der Ebene legen nur den Raum fest, den eine Überschrift im Fluss einnimmt, eine Zeile von 15 pt. Die Gestaltung bestimmt die Schrift: Abschnitte mit `{2}` in 13 pt Rosa, Unterabschnitte mit `{2}.{3}` in Grau in Textgröße.
 
 ### 3 · Den Berichtskopf aus der H1 zeichnen
 
@@ -34,13 +34,13 @@ Die einzige H1 des Berichts nimmt das [Überschriftenformat](/de/docs/configurat
 
 <Excerpt region="labels" />
 
-Die eingebauten Typen folgen der `locale` des Dokuments, sodass die spanische Ausgabe ohne jede Einstellung „Tabla“ und „Figura“ schreibt. [`defaultResourceTypes(LANG)`](/de/docs/configuration-resources#ressourcentypen) reicht diese Typen weiter, damit das Rezept einen davon ändern kann. Ihre Vorlage `{h1}.{n}` druckt hier eine schlichte 1, weil die H1 des Berichts nicht nummeriert ist und ein leeres `{h1}` mitsamt seinem Punkt wegfällt. Die Legende der Tabelle steht über der Tabelle, wo Berichte sie setzen. Der Text zitiert Tabelle und Abbildung mit `:ref{id="lecturas" style="full"}`, in Farbe und Schriftstärke der umgebenden Wörter.
+Die eingebauten Typen folgen der `locale` des Dokuments, sodass die spanische Ausgabe ohne jede Einstellung „Tabla“ und „Figura“ schreibt. [`defaultResourceTypes(LANG)`](/de/docs/configuration-resources#ressourcentypen) reicht diese Typen weiter, damit das Rezept einen davon ändern kann. Ihre Vorlage `{h1}.{n}` ergibt hier eine schlichte 1, weil die H1 des Berichts nicht nummeriert ist und ein leeres `{h1}` mitsamt seinem Punkt wegfällt. Die Legende der Tabelle steht über der Tabelle, wo Berichte sie setzen. Der Text verweist mit `:ref{id="lecturas" style="full"}` auf Tabelle und Abbildung, in Farbe und Schriftstärke der umgebenden Wörter.
 
 ### 5 · Tabelle und Kurve aus denselben Messwerten berechnen
 
 <Excerpt region="data" />
 
-Die vier Paare von Bürettenablesungen ergeben jede Zelle von Tabelle 1, den Mittelwert und die Standardabweichung, und das mittlere Volumen legt den Äquivalenzpunkt des pH-Modells fest, das Abbildung 1 zeichnet. Die erste Zeile ist der Tabellenkopf (`headerRowCount: 1`), und `columnWidths` gibt der Bezeichnungsspalte 1,8 Anteile der Breite. Jede Zelle trägt ihr eigenes `align`, und [`mergeCells`](/de/docs/configuration-resources#tabellenmodelle-aufbauen) zieht die Bezeichnungen für Mittelwert und Abweichung über die ersten drei Spalten, rechtsbündig gegen ihre Werte. Die Zahlen stehen in der Sometype Mono, sodass ihre Dezimalpunkte untereinanderstehen. Die Spaltenköpfe sind Größen über Einheiten, etwa `V~b~ used / cm^3^`, ausgezeichnet wie der Text.
+Die vier Paare von Bürettenablesungen ergeben jede Zelle von Tabelle 1, den Mittelwert und die Standardabweichung, und das mittlere Volumen legt den Äquivalenzpunkt des pH-Modells fest, das Abbildung 1 zeichnet. Die erste Zeile ist der Tabellenkopf (`headerRowCount: 1`), und `columnWidths` gibt der Bezeichnungsspalte 1,8 Anteile der Breite. Jede Zelle hat ihr eigenes `align`, und [`mergeCells`](/de/docs/configuration-resources#tabellenmodelle-aufbauen) zieht die Bezeichnungen für Mittelwert und Abweichung über die ersten drei Spalten, rechtsbündig gegen ihre Werte. Die Zahlen stehen in der Sometype Mono, sodass ihre Dezimalpunkte untereinanderstehen. Die Spaltenköpfe sind Größen über Einheiten, etwa `V~b~ used / cm^3^`, ausgezeichnet wie der Text.
 
 ### 6 · Mit Literaturangaben mit hängendem Einzug schließen
 
@@ -52,7 +52,7 @@ Ein Block `:::paragraphs{style="references"}` wendet das [Absatzformat](/de/docs
 
 ### Den Sicherheitshinweis tönen statt rahmen
 
-Eine Fläche im Rosa des Endpunkts ersetzt den Rahmen, sodass der Kasten weiterhin nur ein einziges Gestaltungsmittel trägt.
+Eine Fläche im Rosa des Endpunkts ersetzt die Kontur, sodass der Kasten weiterhin nur ein einziges Gestaltungsmittel hat.
 
 ```diff
    box('safety', t({ es: 'Seguridad', en: 'Safety' }), {

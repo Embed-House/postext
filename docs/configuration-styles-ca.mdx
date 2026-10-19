@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Configuració: estils i parts',
   sidebarTitle: 'Estils i parts',
-  description: 'Els estils amb nom de paràgrafs, xips, llistats de codi i encapçalaments, i les pàgines que obren cada part',
+  description: 'Com es defineixen estils amb nom per a paràgrafs, xips, llistats de codi i encapçalaments, i com es dissenyen les pàgines que obren cada part del llibre',
   lang: 'ca',
   lastUpdated: '2026-10-16',
   readingTime: '37 min',
   order: 15,
   parent: 'configuration',
-  plainSummary: "Aquesta pàgina reuneix els estils amb nom, que defineixes un cop i fas servir molts. Un estil de paràgraf fixa una classe de text, com ara una bibliografia o un glossari. Un estil de xip dibuixa una etiqueta petita dins la línia. Els llistats de codi tenen la seva pròpia tipografia, la seva caixa i els seus colors. La pàgina també explica les pàgines que obren cada part del llibre i els estils dels títols especials. Els requadres d'avís tenen una pàgina pròpia.",
+  plainSummary: "Aquesta pàgina reuneix els estils amb nom, que defineixes una vegada i fas servir tantes vegades com vulguis. Un estil de paràgraf dona aspecte a una classe de text, com ara una bibliografia o un glossari. Un estil de xip dibuixa una etiqueta petita dins de la línia. Els llistats de codi tenen una lletra, una caixa i uns colors propis. La pàgina també explica les pàgines que obren cada part del llibre i els estils dels títols especials. Els requadres tenen una pàgina pròpia.",
 };
 
 # Configuració: estils i parts
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Estils de paràgraf
 
-La propietat `paragraphStyles` declara estils amb nom que el document aplica a una sèrie de paràgrafs mitjançant un contenidor `:::paragraphs{style="…"}` — bibliografies, glossaris, notes, qualsevol bloc d'entrades que vulgui la seva pròpia tipografia, pes, cursiva, mida, interlineat, majúscules, versaletes o un sagnat francès. Tots els camps tipogràfics són opcionals i hereten del text del cos quan no s'indiquen, de manera que un estil només descriu el que difereix del text corrent.
+La propietat `paragraphStyles` declara estils amb nom que el document aplica a una sèrie de paràgrafs amb un contenidor `:::paragraphs{style="…"}`: bibliografies, glossaris, notes, qualsevol bloc d'entrades que necessiti una lletra, un pes, una cursiva, una mida, un interlineat, unes majúscules, unes versaletes o un sagnat francès propis. Tots els camps tipogràfics són opcionals i, si no s'indiquen, hereten el valor del text de cos, de manera que un estil només descriu el que el diferencia del text corregut.
 
 ```ts
 const config: PostextConfig = {
@@ -71,32 +71,32 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
     <tr>
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
-      <td>font del cos</td>
-      <td>Família tipogràfica. Els seus pesos són <code>fontWeight</code> / <code>boldFontWeight</code>, més avall (els del text del cos si no s'indiquen).</td>
+      <td>font del text de cos</td>
+      <td>Família tipogràfica. Els pesos es fixen amb <code>fontWeight</code> / <code>boldFontWeight</code>, més avall (si no s'indiquen, són els del text de cos).</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
       <td><code>Dimension</code></td>
-      <td>mida del cos</td>
-      <td>Mida de font.</td>
+      <td>mida del text de cos</td>
+      <td>Mida de la font.</td>
     </tr>
     <tr>
       <td><code>lineHeight</code></td>
       <td><code>Dimension</code></td>
-      <td>interlineat del cos</td>
-      <td>Interlineat. <code>em</code>/<code>rem</code> són relatius a la mida del mateix estil, així que un <code>1.5em</code> heretat s'estreny juntament amb una mida menor.</td>
+      <td>interlineat del text de cos</td>
+      <td>Interlineat. <code>em</code>/<code>rem</code> són relatius a la mida del mateix estil, així que un <code>1.5em</code> heretat es redueix si la mida és més petita.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
-      <td>color del cos</td>
-      <td>Color del text. Les negretes i cursives conserven els colors d'èmfasi del cos, llevat que <code>boldColor</code> / <code>italicColor</code> fixin els de l'estil.</td>
+      <td>color del text de cos</td>
+      <td>Color del text. Les negretes i les cursives conserven els colors d'èmfasi del text de cos, llevat que <code>boldColor</code> / <code>italicColor</code> en fixin uns de propis per a l'estil.</td>
     </tr>
     <tr>
       <td><code>textAlign</code></td>
       <td><code>'left' | 'justify' | 'center' | 'right' | 'start' | 'end'</code></td>
-      <td>alineació del cos</td>
-      <td>Alineació horitzontal. <code>'center'</code> i <code>'right'</code> deixen cada línia en bandera per l'altre costat — una dedicatòria, una signatura. En un paràgraf de dreta a esquerra, <code>'left'</code> és el seu costat d'inici, la dreta.</td>
+      <td>alineació del text de cos</td>
+      <td>Alineació horitzontal. <code>'center'</code> i <code>'right'</code> deixen cada línia en bandera per l'altre costat: una dedicatòria, una signatura. En un paràgraf de dreta a esquerra, <code>'left'</code> és el costat d'inici, és a dir, la dreta.</td>
     </tr>
     <tr>
       <td><code>boldColor</code></td>
@@ -108,13 +108,13 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>italicColor</code></td>
       <td><code>ColorValue</code></td>
       <td><code>bodyText.italicColor</code></td>
-      <td>Color de les cursives (<code>*…*</code>); en un estil <code>italic</code>, dels trams que tornen a rodona. No segueix <code>color</code>: un estil de color les cursives del qual l'hagin de conservar fixa tots dos.</td>
+      <td>Color de les cursives (<code>*…*</code>); en un estil <code>italic</code>, el dels trams que tornen a rodona. No segueix <code>color</code>: si en un estil de color les cursives han de tenir el mateix color, cal fixar tots dos valors.</td>
     </tr>
     <tr>
       <td><code>fontWeight</code></td>
       <td><code>number</code></td>
       <td><code>bodyText.fontWeight</code></td>
-      <td>Pes del text normal (100–900): una pregunta en seminegreta en una fitxa, un epígraf lleuger.</td>
+      <td>Gruix del text normal (100–900): una pregunta en seminegreta en una fitxa, un epígraf lleuger.</td>
     </tr>
     <tr>
       <td><code>boldFontWeight</code></td>
@@ -126,7 +126,7 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Compon els paràgrafs en cursiva: acotacions, un epígraf. Un tram en cursiva <code>*…*</code> dins seu torna a rodona, com en una cita.</td>
+      <td>Compon els paràgrafs en cursiva: acotacions, un epígraf. Un tram en cursiva <code>*…*</code> dins d'aquests paràgrafs torna a rodona, com en una cita.</td>
     </tr>
     <tr>
       <td><code>smallCaps</code></td>
@@ -137,32 +137,32 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
     <tr>
       <td><code>hyphenation</code></td>
       <td><code>boolean</code></td>
-      <td>partició del cos</td>
-      <td>Partir mots en justificar (fa servir la llengua del document).</td>
+      <td>partició del text de cos</td>
+      <td>Partició de mots en justificar (segons la llengua del document).</td>
     </tr>
     <tr>
       <td><code>indent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Sagnat de totes les línies des de la vora esquerra de la columna (o del requadre en què hi ha els paràgrafs); <code>em</code> és el cos del mateix estil. El sagnat de primera línia i el francès es mesuren des d'aquest, així que un vers sagnat pot portar el que no li cap a la línia més endins que el seu propi començament: <code>indent: 1.5em</code> amb <code>hangingIndent: 2.5em</code> posa el vers a 1,5 em i la seva continuació a 4 em. Un valor negatiu compta com a <code>0</code>.</td>
+      <td>Sagnat de totes les línies des de la vora esquerra de la columna (o del requadre on són els paràgrafs); <code>em</code> és el cos del mateix estil. El sagnat de primera línia i el francès es mesuren a partir d'aquest, així que un vers sagnat pot posar la part que no li cap a la línia més endins que el seu començament: <code>indent: 1.5em</code> amb <code>hangingIndent: 2.5em</code> posa el vers a 1,5 em i la continuació a 4 em. Un valor negatiu compta com a <code>0</code>.</td>
     </tr>
     <tr>
       <td><code>endIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Sagnat de totes les línies des del costat del final (la dreta d'una línia horitzontal, el peu d'una de vertical); <code>em</code> és el cos del mateix estil. Amb <code>textAlign: 'end'</code> compon una línia uns quants caràcters per sobre del peu, el 地からN字上げ de la data o la signatura d'una carta japonesa. Des de postext 1.16.</td>
+      <td>Sagnat de totes les línies des del costat final (la dreta d'una línia horitzontal, el peu d'una línia vertical); <code>em</code> és el cos del mateix estil. Amb <code>textAlign: 'end'</code>, compon una línia uns quants caràcters per sobre del peu: el 地からN字上げ de la data o de la signatura d'una carta japonesa. Des de postext 1.16.</td>
     </tr>
     <tr>
       <td><code>firstLineIndent</code></td>
       <td><code>Dimension</code></td>
       <td>sagnat del cos</td>
-      <td>Sagnat de la primera línia, des de <code>indent</code>. Amb una <code>hangingIndent</code> diferent de zero només s'aplica quan l'estil el fixa per si mateix: la primera línia comença a <code>indent + firstLineIndent</code> i les següents a <code>indent + hangingIndent</code>, de manera que un vers pot entrar 1 em i penjar la seva resta 3 em. Heretat del cos, cedeix davant del sagnat francès i la primera línia comença a <code>indent</code>, com fins a postext 1.22 (a una configuració desada abans se li treu l'explícit d'un estil així).</td>
+      <td>Sagnat de la primera línia, a partir d'<code>indent</code>. Amb un <code>hangingIndent</code> diferent de zero, només s'aplica quan l'estil el fixa explícitament: la primera línia comença a <code>indent + firstLineIndent</code> i les següents a <code>indent + hangingIndent</code>, de manera que un vers pot entrar 1 em i la resta penjar a 3 em. Si s'hereta del text de cos, cedeix davant del sagnat francès i la primera línia comença a <code>indent</code>, com fins a postext 1.22 (en una configuració desada abans, se li treu el valor explícit en un estil d'aquesta mena).</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Sagnat aplicat a totes les línies excepte la primera, des de <code>indent</code> — la forma clàssica d'una bibliografia o d'un glossari, i la resta d'un vers partit. La primera línia comença a <code>indent</code>, o a la <code>firstLineIndent</code> pròpia de l'estil quan la fixa.</td>
+      <td>Sagnat aplicat a totes les línies excepte la primera, a partir d'<code>indent</code>: la forma clàssica d'una bibliografia o d'un glossari, i la resta d'un vers partit. La primera línia comença a <code>indent</code>, o al <code>firstLineIndent</code> propi de l'estil, si en té.</td>
     </tr>
     <tr>
       <td><code>spaceBetween</code></td>
@@ -174,61 +174,61 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espai sobre el primer paràgraf del contenidor. Col·lapsa amb l'espaiat ja pendent i desapareix a l'inici d'una columna, com qualsevol altre marge.</td>
+      <td>Espai sobre el primer paràgraf del contenidor. Es fusiona amb l'espaiat que ja hi hagi pendent i desapareix al principi d'una columna, com qualsevol altre marge.</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espai mínim sota l'últim paràgraf del contenidor. Com s'uneix amb l'espai del bloc que segueix el contenidor ho decideix <code>bodyText.paragraphContainerSpacing</code>.</td>
+      <td>Espai mínim sota l'últim paràgraf del contenidor. <code>bodyText.paragraphContainerSpacing</code> decideix com es combina amb l'espai del bloc que ve després del contenidor.</td>
     </tr>
     <tr>
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Torna el flux a la retícula de base sota el contenidor, i l'espai de sota és un mínim. Amb <code>false</code> es conserva l'espai exacte: el text que segueix el contenidor queda fora de la retícula fins al bloc següent que s'hi ajusta (un encapçalament, el final d'una llista, una fórmula en bloc), per a un document que va fora de la retícula o un grup amb un interlineat propi. Dins d'un requadre, que no té retícula, no canvia res.</td>
+      <td>Torna el flux a la retícula de base sota el contenidor, i l'espai de sota és un mínim. Amb <code>false</code>, es conserva l'espai exacte: el text que ve després del contenidor queda fora de la retícula fins al bloc següent que s'hi ajusta (un encapçalament, el final d'una llista, una fórmula en bloc); és útil en un document que no segueix la retícula o en un grup amb un interlineat propi. Dins d'un requadre, que no té retícula, no canvia res.</td>
     </tr>
     <tr>
       <td><code>containerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td>sense fixar</td>
-      <td>La regla de l'espai sota els contenidors d'aquest estil, al text corregut i dins d'un requadre: un dels dos valors de <code>bodyText.paragraphContainerSpacing</code>, per als contenidors que anomenen l'estil. Sense fixar: segueixen el document. Amb <code>'add'</code> els grups de l'estil acaben en el seu propi espai, sense afegir-hi una línia de separació entre paràgrafs, mentre la resta del document conserva <code>'collapse'</code>. Des de postext 1.28.</td>
+      <td>La regla de l'espai sota els contenidors d'aquest estil, al text corregut i dins d'un requadre: un dels dos valors de <code>bodyText.paragraphContainerSpacing</code>, per als contenidors que fan servir l'estil. Si no es fixa, segueixen la regla del document. Amb <code>'add'</code>, els grups de l'estil acaben amb el seu propi espai, sense afegir-hi la separació entre paràgrafs, mentre que la resta del document conserva <code>'collapse'</code>. Des de postext 1.28.</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
-      <td>Caixa dels paràgrafs: <code>'uppercase'</code> els compon en majúscules (un repartiment, una acotació), també les paraules d'un xip i l'etiqueta d'una <code>:ref</code>. Conserva la longitud lletra a lletra, perquè el mapa de posicions de l'editor continuï sent un a un: una lletra la majúscula de la qual és més llarga (<code>ß</code>) es queda tal qual. Les fórmules no canvien, i un titolet que llegeix el paràgraf com a marca (<code>&#123;firstMark.<em>estil</em>&#125;</code>) pren el text tal com està escrit; el <code>textTransform</code> propi d'un text de disseny el passa a majúscules.</td>
+      <td>Majúscules o minúscules dels paràgrafs: <code>'uppercase'</code> els compon en majúscules (un repartiment, una acotació), incloses les paraules d'un xip i l'etiqueta d'una <code>:ref</code>. Conserva la longitud lletra per lletra, perquè el mapa de posicions de l'editor continuï sent d'un a un: una lletra amb una majúscula més llarga (<code>ß</code>) queda com està. Les fórmules no canvien, i una capçalera que llegeix el paràgraf com a marca (<code>&#123;firstMark.<em>estil</em>&#125;</code>) agafa el text tal com està escrit; el <code>textTransform</code> propi d'un text de disseny el passa a majúscules.</td>
     </tr>
     <tr>
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espai després de cada lletra dels paràgrafs, com el <code>letter-spacing</code> de CSS: un valor positiu obre les lletres (un títol de pàgina en versals, <code>&#123; value: 0.015, unit: 'em' &#125;</code> per a +15/1000 em) i un de negatiu estreny un cos gran. Un valor en <code>em</code> compta el <code>fontSize</code> de l'estil mateix. Entra en la mesura de les línies, de manera que un paràgraf espaiat talla on cauen les seves paraules més amples; les línies justificades reparteixen els espais entre paraules a més d'ell, i una línia curta que la composició estreny (<code>bodyText.maxRuntTracking</code>) parteix d'aquest valor. Canvas, HTML, PDF i EPUB el pinten igual, i una exportació a Word l'escriu com l'espaiat de caràcters de l'estil. Les paraules d'una escriptura lligada (àrab, siríac, n'ko) queden sense espaiar i donen l'avís <code>joiningScriptLetterSpacing</code>. Des de postext 1.37.</td>
+      <td>Espai després de cada lletra dels paràgrafs, com el <code>letter-spacing</code> de CSS: un valor positiu obre les lletres (un títol de pàgina en versals, <code>&#123; value: 0.015, unit: 'em' &#125;</code> per a +15/1000 em) i un de negatiu estreny un cos gran. Un valor en <code>em</code> es compta sobre el <code>fontSize</code> del mateix estil. Es té en compte en mesurar les línies, de manera que un paràgraf espaiat talla allà on cauen les paraules, ara més amples; les línies justificades reparteixen els espais entre paraules a més d'aquest espaiat, i una línia curta final que la composició estreny (<code>bodyText.maxRuntTracking</code>) parteix d'aquest valor. Canvas, HTML, PDF i EPUB el pinten igual, i en exportar a Word s'escriu com l'espaiat de caràcters de l'estil. Les paraules d'una escriptura lligada (àrab, siríac, n'ko) queden sense espaiar, i Postext en dona l'avís <code>joiningScriptLetterSpacing</code>. Des de postext 1.37.</td>
     </tr>
     <tr>
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>cjk.wordBreak</code></td>
-      <td>On es tallen les línies dels paràgrafs entre caràcters xinesos, japonesos i coreans (vegeu <code>cjk.wordBreak</code>): <code>'keep-all'</code> per a una cartilla en kana amb espais entre frases citada en un llibre de prosa corrent, <code>'normal'</code> per al contrari. Val per a un paràgraf d'aquest text i per als caràcters que cita un paràgraf en escriptura llatina. Des de postext 1.16.</td>
+      <td>On es tallen les línies dels paràgrafs entre caràcters xinesos, japonesos i coreans (vegeu <code>cjk.wordBreak</code>): <code>'keep-all'</code> per a una cartilla en kana amb espais entre frases citada en un llibre de prosa normal, i <code>'normal'</code> per al cas contrari. S'aplica a un paràgraf escrit en aquest text i als caràcters que cita un paràgraf en escriptura llatina. Des de postext 1.16.</td>
     </tr>
     <tr>
       <td><code>lineNumbers</code></td>
       <td><code>boolean</code></td>
       <td>sense fixar</td>
-      <td>Si la <a href="/ca/docs/configuration-notes-references#numeració-de-línies">numeració de línies</a> compta les línies dels paràgrafs. Sense fixar: es compten quan <code>lineNumbers.count</code> és <code>'all'</code>, i en un poema compost amb l'estil quan es compten versos. <code>true</code>: es compten també amb <code>'verse'</code>, i dins d'un requadre, el text del qual no es compta mai altrament. <code>false</code>: no es compten mai. Des de postext 1.23.</td>
+      <td>Si la <a href="/ca/docs/configuration-notes-references#numeració-de-línies">numeració de línies</a> compta les línies dels paràgrafs. Sense fixar: es compten quan <code>lineNumbers.count</code> és <code>'all'</code> i, en un poema compost amb l'estil, quan es compten versos. <code>true</code>: es compten també amb <code>'verse'</code> i dins d'un requadre, on altrament el text no es compta mai. <code>false</code>: no es compten mai. Des de postext 1.23.</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td><code>bodyText.tabStops</code></td>
-      <td>Tabulacions dels paràgrafs de l'estil (vegeu <a href="/ca/docs/configuration-text#tabulacions">Tabulacions</a>), mesurades des de l'<code>indent</code> de l'estil. Un caràcter de tabulació en el seu text és un tabulador quan l'estil té tabulacions o un interval, propis o del text de cos. Sense fixar: les del text de cos; una llista buida no en fixa cap. Des de postext 1.23.</td>
+      <td>Tabulacions dels paràgrafs de l'estil (vegeu <a href="/ca/docs/configuration-text#tabulacions">Tabulacions</a>), mesurades des de l'<code>indent</code> de l'estil. Un caràcter de tabulació en el text funciona com a tabulador quan l'estil té tabulacions o un interval, propis o heretats del text de cos. Sense fixar: les del text de cos; una llista buida no en fixa cap. Des de postext 1.23.</td>
     </tr>
     <tr>
       <td><code>tabInterval</code></td>
       <td><code>Dimension</code></td>
       <td><code>bodyText.tabInterval</code></td>
-      <td>Tabulacions predeterminades passada l'última de <code>tabStops</code>. Sense fixar: el del text de cos. Des de postext 1.23.</td>
+      <td>Tabulacions per defecte després de l'última de <code>tabStops</code>. Sense fixar: el del text de cos. Des de postext 1.23.</td>
     </tr>
     <tr>
       <td><code>dropCap</code></td>
@@ -254,9 +254,9 @@ Elsinor. Una esplanada davant del castell. *Francisco* al seu lloc.
 :::
 ```
 
-L'acotació s'imprimeix en cursiva i el nom que conté, en rodona; els pesos, `italic` i `smallCaps` d'un estil també s'apliquen dins de les caixes d'avís.
+L'acotació s'imprimeix en cursiva, i el nom que conté, en rodona; els pesos, `italic` i `smallCaps` d'un estil també s'apliquen dins dels requadres.
 
-Un llibre de poemes sagna alguns versos i, quan un vers no cap a la mesura, porta el que sobra més endins que el mateix vers. `indent` desplaça cap endins totes les línies del paràgraf, i el sagnat francès es compta des d'aquí:
+Un llibre de poemes sagna alguns versos i, quan un vers no cap a l'amplada de línia, posa la part que sobra més endins que el mateix vers. `indent` desplaça cap endins totes les línies del paràgraf, i el sagnat francès es compta a partir d'aquí:
 
 ```ts
 paragraphStyles: [
@@ -265,9 +265,9 @@ paragraphStyles: [
 ],
 ```
 
-Un vers en `verso-sangrado` comença a 1,5 em i la seva continuació a 4 em, a l'altura de les continuacions dels versos en `verso`. Sense `indent`, un estil pot sagnar la primera línia o les altres, no totes dues: `firstLineIndent` s'ignora tan bon punt hi ha `hangingIndent`.
+Un vers en `verso-sangrado` comença a 1,5 em i la continuació a 4 em, a l'altura de les continuacions dels versos en `verso`. Sense `indent`, un estil pot sagnar la primera línia o les altres, no totes dues: `firstLineIndent` s'ignora tan bon punt hi ha `hangingIndent`.
 
-Un menú posa cada preu arran del final de la mesura, darrere d'una línia de punts:
+Un menú posa cada preu arran del final de la línia, després d'una línia de punts:
 
 ```ts
 paragraphStyles: [
@@ -288,21 +288,21 @@ Orada a la brasa amb fonoll i llimona :tab 21,00
 :::
 ```
 
-Els punts de cada línia acaben mig quadratí abans del preu (`leaderGap`). Un plat massa llarg per a la seva línia salta de línia, i la seva última línia conserva el farciment i el preu; quan el preu no cap al costat de l'última paraula, aquesta paraula baixa amb ell.
+Els punts de cada línia acaben mig quadratí abans del preu (`leaderGap`). Un plat que no cap en una línia continua a la línia següent, i l'última línia conserva el farciment i el preu; quan el preu no cap al costat de l'última paraula, aquesta paraula baixa amb el preu.
 
 ### El contenidor `:::paragraphs`
 
-Una línia `:::paragraphs{style="<id>"}` obre el contenidor i una línia `:::` tota sola el tanca; tots els paràgrafs del mig prenen l'estil indicat, mentre que els encapçalaments, les llistes i els altres blocs de l'interior conserven el seu estil habitual. Els contenidors es poden niar dins d'altres contenidors. Un `style` desconegut no és un error: els paràgrafs es componen com a text de cos normal.
+Una línia `:::paragraphs{style="<id>"}` obre el contenidor, i una línia amb només `:::` el tanca; tots els paràgrafs que hi ha entremig agafen l'estil indicat, mentre que els encapçalaments, les llistes i els altres blocs de dins conserven l'estil habitual. Els contenidors es poden niar dins d'altres contenidors. Un `style` desconegut no és un error: els paràgrafs es componen com a text de cos normal.
 
-La tanca admet també `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` i `endIndent` (els nombres sense unitat són em), amb estil o sense: amb estil, manen sobre el que fixa l'estil; sense estil, s'apliquen sobre l'estil del contenidor que l'envolta, o sobre l'estil de text del lloc on és la tanca (el cos, una part, una secció amb estil o un requadre). `:::paragraphs{align=end}` compon un bloc arran del final de la línia (地付き) i `:::paragraphs{align=end endIndent=1}`, a un caràcter d'aquest. Des de postext 1.16.
+La línia d'obertura també admet `align` (`start`, `end`, `left`, `right`, `center`, `justify`), `indent` i `endIndent` (els nombres sense unitat són em), amb estil o sense: si hi ha estil, tenen prioritat sobre el que fixa l'estil; si no n'hi ha, s'apliquen sobre l'estil del contenidor que l'envolta o sobre l'estil de text del lloc on és el bloc (el text de cos, una part, una secció amb estil o un requadre). `:::paragraphs{align=end}` compon un bloc arran del final de la línia (地付き) i `:::paragraphs{align=end endIndent=1}`, a un caràcter d'aquest. Des de postext 1.16.
 
-Dins del contenidor el flux abandona la retícula de base — una entrada de 7pt amb interlineat 1.2em no es pot assentar en una retícula de 8pt/1.5em — i l'últim paràgraf torna el flux a la retícula (la retícula mana; l'espai de sota és un mínim, la mateixa convenció que segueixen els encapçalaments). Les entrades es parteixen entre columnes i pàgines com els paràgrafs del cos, amb la mateixa protecció de vídues i òrfenes; un encapçalament immediatament anterior al contenidor es manté unit al seu primer paràgraf.
+Dins del contenidor, el flux surt de la retícula de base (una entrada de 7pt amb un interlineat d'1.2em no pot encaixar en una retícula de 8pt/1.5em), i l'últim paràgraf torna el flux a la retícula (la retícula té prioritat i l'espai de sota és un mínim, la mateixa convenció que segueixen els encapçalaments). Les entrades es parteixen entre columnes i pàgines com els paràgrafs del text de cos, amb la mateixa protecció contra vídues i òrfenes; un encapçalament just abans del contenidor es manté unit al primer paràgraf.
 
-L'espai sota el contenidor és el més gran entre el `spaceBetween` i el `marginBottom` de l'estil i la separació entre paràgrafs del text que l'envolta (una línia quan `bodyText.paragraphSpacing` està activat), i es fon amb l'espai que el bloc següent deixa a sobre seu, com l'espai entre dos paràgrafs del cos: un encapçalament després d'una bibliografia queda al seu propi `marginTop` de l'última entrada (o a l'espai de l'estil, si és més gran), i un paràgraf després d'un grup d'entrades més atapeïdes conserva la separació entre paràgrafs del text. El flux torna primer a la retícula sota el text, i el que l'ajust no ha cobert s'arrossega en línies senceres de la retícula, perquè el text que segueix el contenidor hi caigui. Fins a postext 1.4, l'espai de l'estil es posava sota l'última línia abans de l'ajust, l'espai del bloc següent s'hi sumava a sota i la separació entre paràgrafs no comptava; `bodyText.paragraphContainerSpacing: 'add'` manté aquella regla, i les configuracions desades abans es llegeixen amb ella. Un estil amb `snapToGrid: false` no s'ajusta: el text que segueix el contenidor en queda a l'espai exacte, fora de la retícula fins al bloc següent que s'ajusti. Un contenidor que es tanca amb una llista es compon com a la 1.4 amb qualsevol de les dues regles: la llista conserva el seu propi espai a sota, i el `marginBottom` va a continuació d'aquest espai i es fon amb el del bloc següent.
+L'espai sota el contenidor és el més gran entre el `spaceBetween` i el `marginBottom` de l'estil i la separació entre paràgrafs del text que l'envolta (una línia quan `bodyText.paragraphSpacing` està activat), i es fusiona amb l'espai que el bloc següent deixa al damunt, com l'espai entre dos paràgrafs del text de cos: un encapçalament després d'una bibliografia queda a la distància del seu `marginTop` respecte de l'última entrada (o a l'espai de l'estil, si és més gran), i un paràgraf després d'un grup d'entrades més atapeïdes conserva la separació entre paràgrafs del text. El flux torna primer a la retícula sota el text, i la part de l'espai que l'ajust no ha cobert s'afegeix en línies senceres de la retícula, perquè el text que ve després del contenidor hi caigui. Fins a postext 1.4, l'espai de l'estil es posava sota l'última línia abans de l'ajust, l'espai del bloc següent s'hi sumava per sota i la separació entre paràgrafs no comptava; `bodyText.paragraphContainerSpacing: 'add'` manté aquella regla, i les configuracions desades abans es llegeixen amb aquesta regla. Un estil amb `snapToGrid: false` no s'ajusta: el text que ve després del contenidor queda a l'espai exacte, fora de la retícula fins al bloc següent que s'hi ajusti. Un contenidor que acaba amb una llista es compon com a la 1.4 amb qualsevol de les dues regles: la llista conserva el seu espai a sota, i el `marginBottom` s'hi afegeix i es fusiona amb el del bloc següent.
 
-Un estil pot fixar la regla dels seus propis contenidors amb `containerSpacing`: `'add'` a l'estil d'una xifra gran o d'una llista de referències tanca els seus grups amb l'espai del mateix estil, al text i dins d'un requadre, mentre els altres contenidors del document conserven `'collapse'`; `'collapse'` en un estil fa el contrari en un document que es llegeix amb `'add'`. Un contenidor que no anomena cap estil segueix el document.
+Un estil pot fixar la regla dels seus contenidors amb `containerSpacing`: `'add'` a l'estil d'una xifra gran o d'una llista de referències tanca els grups amb l'espai del mateix estil, al text i dins d'un requadre, mentre que els altres contenidors del document conserven `'collapse'`; `'collapse'` en un estil fa el contrari en un document que es llegeix amb `'add'`. Un contenidor que no indica cap estil segueix el document.
 
-Dins d'un `:::callout` el contenidor aplica els marges del seu estil de la mateixa manera: `marginTop` i `marginBottom` es fonen amb l'espaiat dels blocs que l'envolten (un de negatiu els acosta), i un contenidor que obre el requadre no porta marge superior, igual que a dalt de tot d'una columna. El requadre no té retícula de base on tornar, així que l'espai sota l'últim paràgraf és el més gran de `marginBottom`, `spaceBetween` i la separació entre paràgrafs del mateix requadre (el seu `body.paragraphSpacing`, una línia del seu text; no compta amb `paragraphContainerSpacing: 'add'`), o el marge superior del bloc següent, si encara és més gran; un `marginBottom` negatiu, en canvi, acosta el bloc següent. (Fins a postext 1.4, un contenidor dins d'un requadre no aplicava cap dels dos marges.)
+Dins d'un `:::callout`, el contenidor aplica els marges del seu estil de la mateixa manera: `marginTop` i `marginBottom` es fusionen amb l'espaiat dels blocs del voltant (un valor negatiu els acosta), i un contenidor que obre el requadre no té marge superior, igual que al capdamunt d'una columna. El requadre no té retícula de base on tornar, així que l'espai sota l'últim paràgraf és el més gran entre `marginBottom`, `spaceBetween` i la separació entre paràgrafs del mateix requadre (el seu `body.paragraphSpacing`, una línia del text; no compta amb `paragraphContainerSpacing: 'add'`), o el marge superior del bloc següent, si és encara més gran; en canvi, un `marginBottom` negatiu acosta el bloc següent. (Fins a postext 1.4, un contenidor dins d'un requadre no aplicava cap dels dos marges.)
 
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
@@ -315,7 +315,7 @@ const minimal  = stripParagraphStylesDefaults(config.paragraphStyles);
 
 ## Estils de xip
 
-La propietat `chipStyles` declara els estils amb nom del `:chip[texto]{style="…"}` en línia: les caixes arrodonides i tintades d'un banc de paraules, una tecla, una etiqueta (la sintaxi i les seves regles de tall de línia són a la referència del format de document). Ve amb un estil per defecte, `chip` (emplenament blau pàl·lid amb un filet del color principal, cantonades una mica arrodonides i el text com les paraules que l'envolten), així que `:chip[…]` funciona sense configurar res; declarar `chipStyles` substitueix aquesta llista. Un xip sense `style`, o amb un id que cap estil no declara, pren el primer estil.
+La propietat `chipStyles` declara els estils amb nom de l'element en línia `:chip[texto]{style="…"}`: les caixes arrodonides i acolorides d'un banc de paraules, una tecla, una etiqueta (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `chip` (farciment blau pàl·lid amb un filet del color principal, cantonades una mica arrodonides i el text igual que les paraules del voltant), així que `:chip[…]` funciona sense configurar res; si declares `chipStyles`, substitueixes aquesta llista. Un xip sense `style`, o amb un id que cap estil no declara, agafa el primer estil.
 
 ```ts
 const config: PostextConfig = {
@@ -365,13 +365,13 @@ Prem :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>backgroundEnabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Pinta l'emplenament de la caixa.</td>
+      <td>Pinta el farciment de la caixa.</td>
     </tr>
     <tr>
       <td><code>background</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#e8eef7</code></td>
-      <td>Emplenament de la caixa (vinculable a la paleta).</td>
+      <td>Farciment de la caixa (es pot vincular a la paleta).</td>
     </tr>
     <tr>
       <td><code>borderColor</code></td>
@@ -395,7 +395,7 @@ Prem :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>paddingX</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.3em</code></td>
-      <td>Espai entre el contorn i el text, a esquerra i dreta. Forma part de l'avanç del xip.</td>
+      <td>Espai entre el contorn i el text, a l'esquerra i a la dreta. Forma part de l'avanç del xip.</td>
     </tr>
     <tr>
       <td><code>paddingY</code></td>
@@ -407,7 +407,7 @@ Prem :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>paddingTop</code>, <code>paddingBottom</code></td>
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
-      <td>Espai per sobre o per sota de la banda del text, cadascun en lloc de <code>paddingY</code>. La banda va 0,8 em per sobre de la línia de base i 0,25 em per sota, així que el seu centre queda 0,275 em per sobre de la línia de base, més avall que el centre d'una majúscula (uns 0,35 em en la majoria de les fonts): una majúscula o una xifra en un xip rodó (<code>borderRadius: 1em</code>) es veu alta. Un farciment superior més gran que l'inferior en el doble de la diferència la centra: <code>paddingTop: 0.2em</code> amb <code>paddingBottom: 0.05em</code> en una font les majúscules de la qual mesuren 0,7 em.</td>
+      <td>Espai per sobre o per sota de la banda del text, cadascun en lloc de <code>paddingY</code>. La banda va 0,8 em per sobre de la línia de base i 0,25 em per sota, així que el seu centre queda 0,275 em per sobre de la línia de base, més avall que el centre d'una majúscula (uns 0,35 em en la majoria de les fonts): una majúscula o una xifra en un xip rodó (<code>borderRadius: 1em</code>) es veu alta. Per centrar-la, el farciment superior ha de superar l'inferior en el doble de la diferència: <code>paddingTop: 0.2em</code> amb <code>paddingBottom: 0.05em</code> en una font amb majúscules de 0,7 em.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -425,25 +425,25 @@ Prem :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>text que l'envolta</td>
-      <td>Color del text del xip. Si no es fixa, les negretes i les cursives conserven els seus colors d'èmfasi.</td>
+      <td>Color del text del xip. Si no es fixa, les negretes i les cursives conserven els colors d'èmfasi.</td>
     </tr>
     <tr>
       <td><code>bold</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Compon el text del xip en negreta, a més de les seves pròpies marques.</td>
+      <td>Compon el text del xip en negreta, a més de les marques que ja tingui.</td>
     </tr>
     <tr>
       <td><code>italic</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Compon el text del xip en cursiva, a més de les seves pròpies marques.</td>
+      <td>Compon el text del xip en cursiva, a més de les marques que ja tingui.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.25em</code></td>
-      <td>Espai mínim entre la caixa i la paraula o el xip veí a través d'un espai; un espai més estret es completa dins de l'avanç del xip, així que la justificació mai no se'l menja. No s'hi afegeix res a la vora de la línia ni al costat de la puntuació enganxada.</td>
+      <td>Espai mínim entre la caixa i la paraula o el xip veí, separats per un espai; si l'espai és més estret, es completa dins de l'avanç del xip, de manera que la justificació no se'l menja mai. No s'hi afegeix res a la vora de la línia ni al costat de la puntuació enganxada.</td>
     </tr>
     <tr>
       <td><code>dotted</code></td>
@@ -454,9 +454,9 @@ Prem :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
   </tbody>
 </table>
 
-Les longituds en em de la caixa (`paddingX`, `paddingY`, `borderRadius`, `borderWidth`, `gap`) són relatives al cos del mateix xip. La caixa és una banda de 0,8 em per sobre i 0,25 em per sota de la línia de base, que creix amb `paddingY` i el contorn; es pinta fora de la caixa de línia i mai no canvia l'interlineat, així que la retícula es manté. Quan la caixa resulta més alta que l'interlineat, un xip pot envair un xip de la línia de sobre o de sota: el sandbox mostra l'avís «Els xips toquen la línia següent» quan dos xips de línies diferents se solapen, amb el solapament en punts, perquè redueixis `paddingY`, el contorn o `fontSize`. Un xip alt sense cap xip a sobre ni a sota no s'assenyala.
+Les longituds en em de la caixa (`paddingX`, `paddingY`, `borderRadius`, `borderWidth`, `gap`) són relatives al cos del mateix xip. La caixa és una banda de 0,8 em per sobre i 0,25 em per sota de la línia de base, que creix amb `paddingY` i amb el contorn; es pinta fora de la caixa de línia i no canvia mai l'interlineat, així que la retícula es manté. Quan la caixa és més alta que l'interlineat, un xip pot envair un xip de la línia de sobre o de sota: el Sandbox mostra l'avís «Els xips toquen la línia següent» quan dos xips de línies diferents se superposen, amb la superposició en punts, perquè redueixis `paddingY`, el contorn o `fontSize`. Un xip alt sense cap xip a sobre ni a sota no genera cap avís.
 
-Al VDT un xip és un segment de línia de `kind: 'chip'` el camp `chip` del qual porta els trams de text (cadascun amb la seva cadena de font i la seva amplada), la geometria de la caixa (`boxWidth`, `ascent`, `descent`, `paddingX`, `borderWidth`, `borderRadius`, els marges del `gap`) i els seus colors; el `text` del segment és un marcador d'un caràcter, de manera que els desplaçaments de text pla i els mapes de font compten un xip com un caràcter.
+Al VDT, un xip és un segment de línia de `kind: 'chip'`, amb un camp `chip` que conté els trams de text (cadascun amb la cadena de font i l'amplada), la geometria de la caixa (`boxWidth`, `ascent`, `descent`, `paddingX`, `borderWidth`, `borderRadius`, els marges del `gap`) i els colors; el `text` del segment és un marcador d'un caràcter, de manera que els desplaçaments de text pla i els mapes de font compten un xip com un caràcter.
 
 ```ts
 const resolved = resolveChipStylesConfig(config.chipStyles);
@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Estils de ressaltat
 
-La propietat `markStyles` declara els estils amb nom del `:mark[text]{style="…"}` en línia: la franja de color darrere d'una frase, com un llibre de text ressalta les seves paraules clau (la sintaxi i les seves regles de tall de línia són a la referència del format de document). Ve un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el seu color), de manera que `:mark[…]` funciona sense configurar res; declarar `markStyles` substitueix aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, pren el primer estil.
+La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil.
 
 ```ts
 const config: PostextConfig = {
@@ -532,7 +532,7 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
       <td><code>0.2em</code></td>
-      <td>Radi dels dos extrems de la franja, limitat a la meitat de la seva alçada.</td>
+      <td>Radi dels dos extrems de la franja, limitat a la meitat de l'alçada de la franja.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -555,7 +555,7 @@ The sun warms the sea and :mark[water rises into the air as vapour].
   </tbody>
 </table>
 
-Les longituds en em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) es mesuren amb la mida del text marcat. La franja no ocupa lloc: el text es compon com sense la marca, la franja es pinta a sota i el farciment entra als espais entre paraules i a l'interlineat. Al VDT, els segments de les paraules marcades porten un `mark` (`{ style, id, start?, end?, from?, to? }`) i cada línia desa les seves franges a `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relatives al `bbox.x` i a la línia de base de la línia), que els motors de llenç, PDF i HTML pinten abans del text de la línia.
+Les longituds en em (`paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `borderRadius`) es mesuren amb la mida del text marcat. La franja no ocupa lloc: el text es compon igual que sense la marca, la franja es pinta a sota i el farciment s'estén pels espais entre paraules i per l'interlineat. Al VDT, els segments de les paraules marcades porten un `mark` (`{ style, id, start?, end?, from?, to? }`) i cada línia desa les seves franges a `highlights` (`{ x, y, width, height, color, radiusLeft, radiusRight }`, relatives al `bbox.x` i a la línia de base de la línia), que els renderitzadors de canvas, PDF i HTML pinten abans del text de la línia.
 
 ```ts
 const resolved = resolveMarkStylesConfig(config.markStyles);
@@ -571,7 +571,7 @@ const style = pickMarkStyle(resolved, 'key');
 
 ## Llistats de codi
 
-La propietat `codeStyle` fixa l'aspecte dels llistats de codi: les tanques ```` ``` ```` i `~~~` del text (vegeu [Format del document › Blocs de codi](/ca/docs/document-format#blocs-de-codi)), i el codi en línia quan demana una lletra de codi. Un llistat es compon línia a línia tal com està escrit, en una lletra monoespaiada, dins d'una caixa: cap línia no es parteix amb guionet ni es justifica, cada espai conserva la seva amplada i un tabulador avança fins a la tabulació següent. La caixa surt del mateix mecanisme que la d'un `:::callout`, de manera que un llistat es divideix entre línies a través de columnes i pàgines, cada part en una caixa pròpia, i una tanca dins d'un avís és una caixa niada dins seu. Totes les propietats són opcionals. Des de postext 1.23.
+La propietat `codeStyle` fixa l'aspecte dels llistats de codi, és a dir, dels blocs ```` ``` ```` i `~~~` del text (vegeu [Format del document › Blocs de codi](/ca/docs/document-format#blocs-de-codi)), i també del codi en línia quan se li demana una lletra de codi. Un llistat es compon línia a línia tal com està escrit, amb una lletra monoespaiada, dins d'una caixa: cap línia no es parteix amb guionet ni es justifica, cada espai conserva l'amplada i un tabulador avança fins a la tabulació següent. La caixa es construeix amb el mateix mecanisme que la d'un `:::callout`, de manera que un llistat es pot dividir entre línies per diverses columnes i pàgines, cada part en una caixa pròpia, i un bloc de codi dins d'un requadre és una caixa niada. Totes les propietats són opcionals. Des de postext 1.23.
 
 ```ts
 const config: PostextConfig = {
@@ -607,19 +607,19 @@ const config: PostextConfig = {
       <td><code>blocks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Llegeix les tanques com a blocs de codi. Amb <code>false</code>, una tanca i les seves línies es llegeixen com a Markdown, com feia postext 1.22; una configuració desada abans de la 1.23 amb alguna tanca al text el rep (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
+      <td>Interpreta com a blocs de codi els blocs delimitats amb accents greus o amb titlles. Amb <code>false</code>, la línia d'obertura i les línies del bloc es llegeixen com a Markdown, com feia postext 1.22; una configuració desada abans de la 1.23 amb algun bloc d'aquests al text rep aquest valor (vegeu <a href="/ca/docs/configuration-bundles#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
     </tr>
     <tr>
       <td><code>indentedCode</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Llegeix també com a llistat una sèrie de línies sagnades quatre columnes (quatre espais o un tabulador) després d'una línia en blanc; a cada línia se li treuen quatre columnes. Desactivat per defecte: els textos de Postext sovint sagnen amb espais, i les llistes niades llegeixen els espais del principi.</td>
+      <td>També llegeix com a llistat una sèrie de línies sagnades quatre columnes (quatre espais o un tabulador) després d'una línia en blanc; a cada línia se li treuen aquestes quatre columnes. Desactivat per defecte: els textos de Postext sovint fan servir espais per sagnar, i les llistes niades tenen en compte els espais del principi.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
       <td><code>string</code></td>
       <td><code>'Source Code Pro'</code></td>
-      <td>La lletra del codi. Una lletra monoespaiada manté les columnes alineades; per a comentaris en xinès o japonès, una amb kanji (BIZ UDGothic), els caràcters d'amplada completa de la qual ocupen dues cel·les.</td>
+      <td>La lletra del codi. Una lletra monoespaiada manté les columnes alineades; per a comentaris en xinès o japonès, cal una lletra amb kanji (BIZ UDGothic), en què els caràcters d'amplada completa ocupen dues cel·les.</td>
     </tr>
     <tr>
       <td><code>fontSize</code></td>
@@ -643,13 +643,13 @@ const config: PostextConfig = {
       <td><code>snapToGrid</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>El text que segueix un llistat torna a la retícula de base; <code>false</code> conserva el <code>marginBottom</code> exacte, com el d'un avís.</td>
+      <td>El text que ve després d'un llistat torna a la retícula de base; <code>false</code> conserva el <code>marginBottom</code> exacte, com el d'un requadre.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>el color del text principal</td>
-      <td>El color del codi, que conserven els elements que no en tenen un de propi.</td>
+      <td>El color del codi, que conserven els elements sense color propi.</td>
     </tr>
     <tr>
       <td><code>backgroundEnabled</code> / <code>background</code></td>
@@ -685,7 +685,7 @@ const config: PostextConfig = {
       <td><code>span</code></td>
       <td><code>'column' | 'page'</code></td>
       <td><code>'column'</code></td>
-      <td>Un llistat a l'amplada de la pàgina travessa totes les columnes d'una pàgina a diverses columnes, com una caixa <code>span: 'page'</code>. Una tanca fixa el seu amb <code>span=page</code>.</td>
+      <td>Un llistat a l'amplada de la pàgina travessa totes les columnes d'una pàgina de diverses columnes, com una caixa <code>span: 'page'</code>. Un bloc de codi el fixa per a si mateix amb <code>span=page</code>.</td>
     </tr>
     <tr>
       <td><code>tabSize</code></td>
@@ -697,7 +697,7 @@ const config: PostextConfig = {
       <td><code>overflow</code></td>
       <td><code>'wrap' | 'shrink' | 'clip'</code></td>
       <td><code>'wrap'</code></td>
-      <td>Una línia més ampla que la caixa. <code>'wrap'</code>: es talla després de l'últim espai o signe de puntuació que hi cap (entre dos caràcters quan no n'hi cap cap), i la resta continua a sota, <code>wrapIndent</code> cel·les endins, darrere de <code>wrapMarker</code>; una part d'un llistat dividit no comença mai amb una d'aquestes restes si hi cap un altre tall. <code>'shrink'</code>: tot el llistat es compon més petit fins que hi cap la seva línia més ampla, com a molt fins a <code>minFontScale</code>, i el que tot i així no hi cap es parteix. <code>'clip'</code>: la línia s'atura a la vora interior de la caixa; els caràcters que la sobrepassen no s'imprimeixen. Cada cas genera un avís <code>codeOverflow</code>.</td>
+      <td>Què passa amb una línia més ampla que la caixa. <code>'wrap'</code>: es talla després de l'últim espai o signe de puntuació que hi cap (o entre dos caràcters si no n'hi ha cap), i la resta continua a sota, <code>wrapIndent</code> cel·les més endins, després de <code>wrapMarker</code>; si és possible un altre tall, una part d'un llistat dividit no comença mai amb una d'aquestes continuacions. <code>'shrink'</code>: tot el llistat es compon més petit fins que hi cap la línia més ampla, com a màxim fins a <code>minFontScale</code>, i el que tot i així no hi cap es parteix. <code>'clip'</code>: la línia s'atura a la vora interior de la caixa, i els caràcters que la sobrepassen no s'imprimeixen. Cada cas genera un avís <code>codeOverflow</code>.</td>
     </tr>
     <tr>
       <td><code>wrapIndent</code></td>
@@ -709,7 +709,7 @@ const config: PostextConfig = {
       <td><code>wrapMarker</code></td>
       <td><code>string</code></td>
       <td><code>'»'</code></td>
-      <td>Va en aquest sagnat, del color dels números de línia; no forma part del text (les còpies el deixen fora, i un PDF etiquetat el pinta com a artefacte). <code>''</code> no en posa cap. <code>↪</code> no és a la majoria de lletres de codi, on s'imprimeix com un quadre buit.</td>
+      <td>Va dins d'aquest sagnat, amb el color dels números de línia; no forma part del text (quan es copia, queda fora, i un PDF etiquetat el pinta com a artefacte). <code>''</code> no en posa cap. <code>↪</code> no és a la majoria de lletres de codi, i s'hi imprimeix com un quadre buit.</td>
     </tr>
     <tr>
       <td><code>minFontScale</code></td>
@@ -721,7 +721,7 @@ const config: PostextConfig = {
       <td><code>lineNumbers</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Numera les línies de tots els llistats, en un marge davant del codi. Una tanca fixa el seu amb <code>lineNumbers</code>, <code>lineNumbers=false</code> i <code>start=N</code>. La resta d'una línia partida no porta número. Els números es componen al costat del text, no dins seu: el visor HTML els amaga de la selecció i de les tecnologies d'assistència, i un PDF etiquetat els pinta com a artefactes.</td>
+      <td>Numera les línies de tots els llistats, en un marge davant del codi. Cada bloc de codi pot fixar el seu valor amb <code>lineNumbers</code>, <code>lineNumbers=false</code> i <code>start=N</code>. La continuació d'una línia partida no porta número. Els números es componen al costat del text, no a dins: el visor HTML els amaga de la selecció i de les tecnologies d'assistència, i un PDF etiquetat els pinta com a artefactes.</td>
     </tr>
     <tr>
       <td><code>lineNumberColor</code></td>
@@ -739,13 +739,13 @@ const config: PostextConfig = {
       <td><code>highlightBackground</code></td>
       <td><code>ColorValue</code></td>
       <td><code>#fff4c2</code></td>
-      <td>La banda, d'un costat a l'altre de la caixa, darrere de les línies que una tanca indica amb <code>highlight="3,5-7"</code>.</td>
+      <td>La banda, d'un costat a l'altre de la caixa, darrere de les línies que un bloc de codi indica amb <code>highlight="3,5-7"</code>.</td>
     </tr>
     <tr>
       <td><code>keepTogether</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Com el d'un estil d'avís: <code>false</code> divideix entre línies un llistat més alt que l'espai que queda; <code>true</code> el fa passar sencer, i només el divideix quan és més alt que una columna.</td>
+      <td>Com el d'un estil de requadre: <code>false</code> divideix entre línies un llistat més alt que l'espai que queda; <code>true</code> el fa passar sencer, i només el divideix quan és més alt que una columna.</td>
     </tr>
     <tr>
       <td><code>splitMinLines</code></td>
@@ -769,13 +769,13 @@ const config: PostextConfig = {
       <td><code>titleStyle</code></td>
       <td><code>CalloutTitleStyleConfig</code></td>
       <td>la lletra del codi, en negreta, a 0,9 del seu cos</td>
-      <td>La fila de títol que imprimeix el <code>title</code> d'una tanca (els camps són a <a href="/ca/docs/configuration-callouts#estils-davís">Estils d'avís</a>).</td>
+      <td>La fila de títol que imprimeix el <code>title</code> d'un bloc de codi (els camps són a <a href="/ca/docs/configuration-callouts#estils-de-requadre">Estils de requadre</a>).</td>
     </tr>
     <tr>
       <td><code>label</code></td>
       <td><code>CalloutLabelConfig</code></td>
       <td>cap</td>
-      <td>Si es fixa, el títol s'imprimeix en canvi en una pestanya d'etiqueta sobre la vora superior de la caixa (amb la lletra i el cos del codi, llevat que l'etiqueta en doni uns de propis).</td>
+      <td>Si es fixa, el títol s'imprimeix en una pestanya sobre la vora superior de la caixa (amb la lletra i el cos del codi, llevat que la pestanya en tingui uns de propis).</td>
     </tr>
     <tr>
       <td><code>highlight</code></td>
@@ -787,7 +787,7 @@ const config: PostextConfig = {
       <td><code>tokens</code></td>
       <td><code>Partial&lt;Record&lt;CodeTokenKind, &#123; color?, bold?, italic? &#125;&gt;&gt;</code></td>
       <td>una paleta discreta</td>
-      <td>L'aspecte de cada tipus d'element, combinat tipus per tipus amb els valors per defecte (vegeu més avall). Un color vinculat a la paleta segueix <code>colorPalette</code> i la paleta d'una part.</td>
+      <td>L'aspecte de cada tipus d'element, combinat tipus per tipus amb els valors per defecte (vegeu més avall). Un color vinculat a la paleta canvia amb <code>colorPalette</code> i amb la paleta d'una part.</td>
     </tr>
     <tr>
       <td><code>inline</code></td>
@@ -800,7 +800,7 @@ const config: PostextConfig = {
 
 ### Colors de sintaxi
 
-Un petit analitzador integrat al motor identifica els elements de `js` i `ts` (`javascript`, `jsx`, `typescript`, `tsx`), `json`, `python`, `bash` (`sh`, `zsh`, `shell`), `console` (una sessió de terminal), `css`, `html` i `xml` (`svg`), `markdown` i `sql`; un llistat en qualsevol altre llenguatge, o sense llenguatge, es compon en `color`. Llegeix tot el llistat, de manera que un comentari o una cadena que ocupa diverses línies continua sent un sol element. En un llistat `console`, una línia que comença amb un indicador d'ordres (`$ `, `% `, `# `, `> `, `>>> `, `PS …> `) és el que ha escrit l'usuari (`prompt`), i totes les altres són el que han imprès els programes (`output`).
+Un petit analitzador integrat al motor identifica els elements de `js` i `ts` (`javascript`, `jsx`, `typescript`, `tsx`), `json`, `python`, `bash` (`sh`, `zsh`, `shell`), `console` (una sessió de terminal), `css`, `html` i `xml` (`svg`), `markdown` i `sql`; un llistat en qualsevol altre llenguatge, o sense llenguatge, es compon en `color`. Llegeix el llistat sencer, de manera que un comentari o una cadena que ocupa diverses línies continua sent un sol element. En un llistat `console`, una línia que comença amb un indicador d'ordres (`$ `, `% `, `# `, `> `, `>>> `, `PS …> `) és el que ha escrit l'usuari (`prompt`), i totes les altres són el que han imprès els programes (`output`).
 
 <table>
   <thead>
@@ -838,11 +838,11 @@ registerCodeHighlighter('rust', (code) => code.split('\n').map((line) => [
 registerCodeHighlighter('*', null); // treu el registrat per a tots els llenguatges
 ```
 
-Un ressaltador registrat per a un llenguatge té preferència sobre un de registrat per a `'*'`, que té preferència sobre l'analitzador integrat. Un tram indica un tipus d'element `token` (acolorit per `tokens`) o un `color` propi (un hexadecimal CSS). Un ressaltador que retorna `undefined`, que llança una excepció o que retorna línies que, unides, no donen les del llistat es descarta. La composició consulta el registre quan compon un llistat: registra'l abans de compondre, i en un web worker (el Sandbox compon en un) registra'l dins del worker.
+Un ressaltador registrat per a un llenguatge té preferència sobre un de registrat per a `'*'`, i aquest, sobre l'analitzador integrat. Un tram indica un tipus d'element `token` (amb el color que fixa `tokens`) o un `color` propi (un hexadecimal CSS). Es descarta el ressaltador que retorna `undefined`, que llança una excepció o que retorna línies que, unides, no reprodueixen les del llistat. La composició consulta el registre en compondre cada llistat: registra el ressaltador abans de compondre i, si fas servir un web worker (el Sandbox compon en un), dins del worker.
 
 ### Codi en línia
 
-`codeStyle.inline` compon el text entre accents greus en una lletra de codi, dins d'una capsa com la d'un xip. Una línia pot partir el codi en un espai o després d'un guionet entre una lletra o una xifra i una lletra: la capsa es talla en dues i no s'hi afegeix res. Els espais del codi conserven l'amplada de la lletra de codi, i la justificació de la línia no els estira. Sense fixar, el codi en línia conserva la lletra del text.
+`codeStyle.inline` compon el text entre accents greus en una lletra de codi, dins d'una caixa com la d'un xip. Una línia pot tallar el codi en un espai o després d'un guionet situat entre una lletra o una xifra i una lletra: la caixa es talla en dues i no s'hi afegeix res. Els espais del codi conserven l'amplada de la lletra de codi, i la justificació de la línia no els estira. Sense fixar, el codi en línia conserva la lletra del text.
 
 <table>
   <thead>
@@ -857,25 +857,25 @@ Un ressaltador registrat per a un llenguatge té preferència sobre un de regist
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td><code>codeStyle.fontFamily</code></td><td>La lletra.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>0.9em</code></td><td><code>em</code> és el cos del text que l'envolta.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del text</td><td></td></tr>
-    <tr><td><code>bold</code> / <code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>S'afegeixen a les marques pròpies del text (el codi dins d'una negreta va en negreta).</td></tr>
+    <tr><td><code>bold</code> / <code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>S'afegeixen a les marques que ja té el text (el codi dins d'una negreta va en negreta).</td></tr>
     <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>cap</td><td>Un fons darrere del tram.</td></tr>
     <tr><td><code>borderColor</code> / <code>borderWidth</code></td><td><code>ColorValue</code> / <code>Dimension</code></td><td>cap / <code>0.5pt</code></td><td>Un contorn.</td></tr>
     <tr><td><code>borderRadius</code></td><td><code>Dimension</code></td><td><code>0.2em</code></td><td><code>em</code> és el cos del tram.</td></tr>
     <tr><td><code>paddingX</code> / <code>paddingY</code></td><td><code>Dimension</code></td><td><code>0.2em</code> amb fons o contorn, i si no <code>0</code> / <code>0.1em</code></td><td>L'espai dins del fons; el farciment vertical es pinta fora de la caixa de la línia.</td></tr>
-    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>La lletra dels caràcters àrabs, hebreus i CJK del codi: la del text (<code>'text'</code>), perquè poques lletres de codi els tenen, o la de codi (<code>'code'</code>), si els té.</td></tr>
+    <tr><td><code>otherScripts</code></td><td><code>'text' | 'code'</code></td><td><code>'text'</code></td><td>La lletra dels caràcters àrabs, hebreus i CJK del codi: la del text (<code>'text'</code>), perquè poques lletres de codi els tenen, o la de codi (<code>'code'</code>), si en té.</td></tr>
   </tbody>
 </table>
 
 ### Com es compon un llistat
 
-- **Una línia per línia de la font.** Les línies es construeixen amb els avanços propis de la lletra del codi, no amb el divisor de paràgrafs: els espais conserven la seva amplada, una sèrie d'espais es manté i els espais del principi sagnen. Un llistat en un llibre de dreta a esquerra es llegeix d'esquerra a dreta, amb les línies compostes des del costat més allunyat de la caixa com una cita d'esquerra a dreta, i els números al marge de la seva esquerra. En un llibre vertical, un llistat segueix el flux vertical (amb el text llatí ajagut, com el compon el text vertical) i no porta números de línia.
-- **Divisió.** Un llistat més alt que l'espai que queda es divideix entre línies a través de columnes i pàgines, cada part emmarcada en una caixa pròpia, sense deixar mai menys de `splitMinLines` línies a cap costat; la resta d'una línia partida es queda amb ella si hi cap un altre tall.
-- **Sortides.** El llenç, el visor HTML i el PDF pinten les línies i la caixa tal com s'han compost. El visor HTML conserva els espais (`white-space: pre`), de manera que una selecció copia el llistat amb el seu sagnat i un salt de línia després de cada línia de la font, sense números ni marques de continuació. Un PDF etiquetat compon cada llistat com un paràgraf que conté un element `Code`, amb glifs d'espai reals, i els números i les marques de continuació com a artefactes. L'EPUB adaptable escriu `<pre><code class="language-…">` amb els colors dels elements i un full d'estil a partir de `codeStyle`; l'EPUB de maquetació fixa és el de la impressió.
-- **Fonts.** El Sandbox i `configFontFamilies` carreguen la lletra del codi quan el text té una tanca (o la configuració té una secció `codeStyle`), en els pesos normal i negreta, rodona i cursiva; el PDF incrusta les lletres que fan servir les línies.
+- **Una línia per cada línia del codi font.** Les línies es construeixen amb els avanços propis de la lletra del codi, no amb el tall de paràgrafs: els espais conserven l'amplada, les sèries d'espais es mantenen i els espais del principi fan de sagnat. Un llistat en un llibre de dreta a esquerra es llegeix d'esquerra a dreta, amb les línies compostes des del costat oposat de la caixa, com una cita d'esquerra a dreta, i els números al marge esquerre. En un llibre vertical, un llistat segueix el flux vertical (amb el text llatí ajagut, com el compon el text vertical) i no porta números de línia.
+- **Divisió.** Un llistat més alt que l'espai que queda es divideix entre línies per diverses columnes i pàgines, cada part dins d'una caixa pròpia, sense deixar mai menys de `splitMinLines` línies a cap costat; la continuació d'una línia partida es queda amb la línia si és possible un altre tall.
+- **Sortides.** El canvas, el visor HTML i el PDF pinten les línies i la caixa tal com s'han compost. El visor HTML conserva els espais (`white-space: pre`), de manera que, en seleccionar-lo, es copia el llistat amb el sagnat i un salt de línia després de cada línia del codi font, sense números ni marques de continuació. Un PDF etiquetat compon cada llistat com un paràgraf que conté un element `Code`, amb glifs d'espai reals, i els números i les marques de continuació com a artefactes. L'EPUB adaptable escriu `<pre><code class="language-…">` amb els colors dels elements i un full d'estil a partir de `codeStyle`; l'EPUB de maquetació fixa és el de la impressió.
+- **Fonts.** El Sandbox i `configFontFamilies` carreguen la lletra del codi quan el text té algun bloc de codi (o la configuració té una secció `codeStyle`), en els pesos normal i negreta, en rodona i en cursiva; el PDF incrusta les fonts que fan servir les línies.
 
 ## Parts
 
-La propietat `parts` configura les pàgines separadores de part que un document obre amb un contenidor `:::part{number="…" title="…"}` — la pàgina «Part I — Fonaments» que agrupa una sèrie de capítols. Una part ocupa sempre una pàgina pròpia: el contenidor salta a una pàgina nova amb la paritat configurada, la converteix en una pàgina d'una sola columna l'àrea de cos de la qual surt de `parts.margins`, compon el disseny d'obertura sobre la pàgina sencera i torna a saltar després de la tanca final perquè el capítol següent (amb el seu propi `breakBefore.parity`) comenci net — amb els valors per defecte d'H1 això produeix la seqüència clàssica: pàgina de part en recto, verso en blanc, capítol al recto següent.
+La propietat `parts` configura les pàgines separadores de part que un document obre amb un contenidor `:::part{number="…" title="…"}`: la pàgina «Part I — Fonaments» que agrupa una sèrie de capítols. Una part ocupa sempre una pàgina pròpia: el contenidor salta a una pàgina nova amb la paritat configurada, la converteix en una pàgina d'una sola columna amb una àrea de text definida per `parts.margins`, compon el disseny d'obertura sobre tota la pàgina i torna a saltar després de la línia de tancament perquè el capítol següent (amb el seu propi `breakBefore.parity`) comenci en una pàgina neta. Amb els valors per defecte d'H1, això dona la seqüència clàssica: pàgina de part en una pàgina senar, pàgina parella en blanc i capítol a la pàgina senar següent.
 
 ```ts
 const config: PostextConfig = {
@@ -926,89 +926,89 @@ const config: PostextConfig = {
       <td><code>page</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si un <code>:::part</code> obre una portadella. Amb <code>false</code> no s'obre cap pàgina ni es compon el cos de la tanca: el número, el títol i la paleta de la part regeixen a partir del contingut següent, sense salt propi. Ús típic: <code>htmlViewer.overrides.parts.page: false</code>, una edició en pantalla sense portadelles.</td>
+      <td>Si un <code>:::part</code> obre una portadella. Amb <code>false</code>, no s'obre cap pàgina ni es compon el contingut del bloc: el número, el títol i la paleta de la part s'apliquen a partir del contingut següent, sense salt propi. Ús típic: <code>htmlViewer.overrides.parts.page: false</code>, una edició en pantalla sense portadelles.</td>
     </tr>
     <tr>
       <td><code>breakBefore.parity</code></td>
       <td><code>HeadingBreakParity</code></td>
       <td><code>'odd'</code></td>
-      <td>Paritat de la pàgina on s'obre la part. Mateixos valors i mateixes regles de pertinença de les pàgines en blanc que el <a href="/ca/docs/configuration-headings#saltar-abans">breakBefore</a> dels encapçalaments: un blanc inserit per assolir la paritat pertany a la part (el seu <code>{'{partTitle}'}</code> ja resol a la part nova); el separador obligatori de <code>'always-*'</code> pertany al contingut anterior.</td>
+      <td>Paritat de la pàgina on s'obre la part. Té els mateixos valors i les mateixes regles sobre a qui pertanyen les pàgines en blanc que el <a href="/ca/docs/configuration-headings#salt-de-pàgina-previ">breakBefore</a> dels encapçalaments: una pàgina en blanc inserida per obtenir la paritat pertany a la part (el seu <code>{'{partTitle}'}</code> ja correspon a la part nova); la pàgina separadora obligatòria de <code>'always-*'</code> pertany al contingut anterior.</td>
     </tr>
     <tr>
       <td><code>breakAfter.enabled</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Passa el contingut posterior a la tanca final a una pàgina nova. Amb <code>false</code> continua a la columna única de la pàgina de part.</td>
+      <td>Passa a una pàgina nova el contingut que ve després de la línia de tancament. Amb <code>false</code>, continua a la columna única de la pàgina de part.</td>
     </tr>
     <tr>
       <td><code>breakAfter.parity</code></td>
       <td><code>HeadingBreakParity</code></td>
       <td><code>'any'</code></td>
-      <td>Paritat d'aquesta pàgina nova. Deixa-ho en <code>'any'</code> i deixa que el mateix <code>breakBefore.parity</code> del capítol següent decideixi si segueix un verso en blanc. El salt s'aplica en col·locar el bloc següent, així que una part que tanca el document no deixa una pàgina buida al final.</td>
+      <td>Paritat d'aquesta pàgina nova. Deixa-la en <code>'any'</code> perquè el <code>breakBefore.parity</code> del capítol següent decideixi si cal una pàgina parella en blanc. El salt s'aplica en col·locar el bloc següent, així que una part que tanca el document no deixa una pàgina buida al final.</td>
     </tr>
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>marges de pàgina</td>
-      <td>Àrea de cos de la pàgina de part — la columna única on flueixen els blocs de dins la tanca. Cada costat hereta el marge de pàgina quan no es defineix; <code>mirror</code> intercanvia interior/exterior a les pàgines parelles exactament com els marges de pàgina.</td>
+      <td>Àrea de text de la pàgina de part: la columna única per on corren els blocs de dins del contenidor. Cada costat que no es defineix hereta el marge de pàgina; <code>mirror</code> intercanvia l'interior i l'exterior a les pàgines parelles exactament com els marges de pàgina.</td>
     </tr>
     <tr>
       <td><code>design</code></td>
       <td><code>DesignSlot</code></td>
       <td>buit</td>
-      <td>Disseny d'obertura. El seu contenidor és la <strong>caixa de tall</strong> de la pàgina, així que els ancoratges al contenidor i a <code>'page'</code> coincideixen, i <code>'bleed'</code> arriba fins a la sang quan les marques de tall són actives. Purament decoratiu: mai no reserva espai de cos — puja <code>margins.top</code> perquè el cos no el trepitgi. Quan és buit se sintetitza un text <code>{'{number} {titleText}'}</code> per defecte amb la tipografia de l'H1 a la cantonada superior esquerra de l'àrea de cos, amb el <code>numberSeparator</code> de l'H1 entre número i títol.</td>
+      <td>Disseny d'obertura. El seu contenidor és la <strong>caixa de tall</strong> de la pàgina, així que els ancoratges al contenidor i a <code>'page'</code> coincideixen, i <code>'bleed'</code> arriba fins a la sang quan les marques de tall estan activades. És purament decoratiu: no reserva mai espai per al text; augmenta <code>margins.top</code> perquè el text no se superposi al disseny. Si és buit, es genera un text per defecte, <code>{'{number} {titleText}'}</code>, amb la tipografia de l'H1 a la cantonada superior esquerra de l'àrea de text i el <code>numberSeparator</code> de l'H1 entre el número i el títol.</td>
     </tr>
     <tr>
       <td><code>versoDesign</code></td>
       <td><code>DesignSlot</code></td>
       <td>buit</td>
-      <td>Disseny del verso en blanc que segueix la pàgina de part (el revers del full separador): mateix contenidor i marcadors que <code>design</code>. Deixa'l buit per a un verso llis. Només es pinta quan la pàgina que segueix la de part queda en blanc, cosa que requereix un salt amb paritat: consulta <a href="#el-disseny-del-verso">El disseny del verso</a> més avall.</td>
+      <td>Disseny de la pàgina parella en blanc que segueix la pàgina de part (el revers del full separador): el mateix contenidor i els mateixos marcadors que <code>design</code>. Deixa'l buit per a una pàgina parella llisa. Només es pinta quan la pàgina que segueix la de part queda en blanc, cosa que requereix un salt amb paritat: consulta <a href="#el-disseny-del-verso">El disseny del verso</a> més avall.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>color</code>, <code>textAlign</code></td>
       <td>com a <code>bodyText</code></td>
       <td>hereten de <code>bodyText</code></td>
-      <td>Tipografia dels paràgrafs, cites i elements de llista de dins la tanca. Els gruixos, els colors d'èmfasi i la partició de mots vénen del text de cos.</td>
+      <td>Tipografia dels paràgrafs, les cites i els elements de llista de dins del contenidor. Els gruixos, els colors d'èmfasi i la partició de mots surten del text de cos.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.bulletColor</code></td>
       <td><code>ColorValue</code></td>
       <td><code>unorderedLists.color</code></td>
-      <td>Color de les vinyetes de les llistes no ordenades de dins la part.</td>
+      <td>Color dels pics de les llistes no ordenades de dins de la part.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.numberColor</code></td>
       <td><code>ColorValue</code></td>
       <td><code>orderedLists.color</code></td>
-      <td>Color dels números de les llistes ordenades de dins la part. Els números van sempre en el gruix de negreta del cos, perquè una llista de capítols es llegeixi com un índex.</td>
+      <td>Color dels números de les llistes ordenades de dins de la part. Els números van sempre amb el gruix de negreta del text de cos, perquè una llista de capítols es llegeixi com un índex.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.unorderedLists</code></td>
       <td><code>UnorderedListsConfig</code></td>
       <td>—</td>
-      <td>Sobreescriptures parcials aplicades sobre les <code>unorderedLists</code> del document dins la part, després de <code>bulletColor</code>. Els valors generals es propaguen als nivells que els heretaven; les entrades de <code>levels</code> s'apliquen només al seu nivell.</td>
+      <td>Substitucions parcials que s'apliquen sobre les <code>unorderedLists</code> del document dins de la part, després de <code>bulletColor</code>. Els valors generals passen als nivells que els heretaven; les entrades de <code>levels</code> només s'apliquen al seu nivell.</td>
     </tr>
     <tr>
       <td><code>bodyStyle.orderedLists</code></td>
       <td><code>OrderedListsConfig</code></td>
       <td>—</td>
-      <td>Sobreescriptures parcials aplicades sobre les <code>orderedLists</code> del document dins la part, després de <code>numberColor</code> i el gruix de negreta — p. ex. un <code>separator</code> <code>'•'</code> amb la seva pròpia <code>separatorFontFamily</code> i <code>separatorColor</code> per a la llista de capítols d'una obertura de part.</td>
+      <td>Substitucions parcials que s'apliquen sobre les <code>orderedLists</code> del document dins de la part, després de <code>numberColor</code> i del gruix de negreta: per exemple, un <code>separator</code> <code>'•'</code> amb una <code>separatorFontFamily</code> i un <code>separatorColor</code> propis per a la llista de capítols d'una obertura de part.</td>
     </tr>
   </tbody>
 </table>
 
 ### Marcadors del disseny de part
 
-El disseny resol el conjunt de marcadors d'encapçalament amb els valors propis de la part: `{titleText}` és el `title` de la tanca; `{number}` el `number` tal com s'ha escrit; `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}`, `{numberAlphaLower}` el reformaten — el número s'interpreta com a decimal, com a numeral romà o com a numerals xinesos, amb les paraules que els envolten o sense (`"IV"`, `"iv"`, `"4"`, `"４"`, `"四"`, `"卷四"` i `"第四卷"` donen `{numberDecimal}` = `4`) i resolen a `''` per a qualsevol altra cosa. També hi ha disponibles `{partTitle}` / `{partNumber}`, `{chapterTitle}` / `{chapterNumber}` (el capítol anterior a la part), `{pageNumber}`, `{totalPages}`, `{bookTotalPages}` i els marcadors de metadades. `{attr.<key>}` llegeix els atributs de l'H1 del capítol actual.
+El disseny resol el conjunt de marcadors d'encapçalament amb els valors de la part: `{titleText}` és el `title` de la línia d'obertura; `{number}`, el `number` tal com s'ha escrit; `{numberDecimal}`, `{numberRoman}`, `{numberRomanLower}`, `{numberAlpha}` i `{numberAlphaLower}` el tornen a formatar. El número s'interpreta com a decimal, com a numeral romà o com a numerals xinesos, amb les paraules del voltant o sense (`"IV"`, `"iv"`, `"4"`, `"４"`, `"四"`, `"卷四"` i `"第四卷"` donen `{numberDecimal}` = `4`), i en qualsevol altre cas aquests marcadors es resolen com a `''`. També hi ha disponibles `{partTitle}` / `{partNumber}`, `{chapterTitle}` / `{chapterNumber}` (el capítol anterior a la part), `{pageNumber}`, `{totalPages}`, `{bookTotalPages}` i els marcadors de metadades. `{attr.<key>}` llegeix els atributs de l'H1 del capítol actual.
 
 ### El disseny del verso
 
-`versoDesign` decora la pàgina que segueix la de part quan aquesta pàgina no té contingut: el revers del full separador. La part tota sola mai no deixa aquesta pàgina en blanc. `breakAfter.parity` val `'any'` per defecte, així que el contingut després de la tanca comença a la pàgina següent tret que alguna cosa demani una paritat:
+`versoDesign` decora la pàgina que segueix la de part quan aquesta pàgina no té contingut: el revers del full separador. La part per si sola no deixa mai aquesta pàgina en blanc. `breakAfter.parity` val `'any'` per defecte, així que el contingut de després del bloc comença a la pàgina següent, tret que alguna cosa demani una paritat:
 
-- **El títol del capítol següent.** El `breakBefore` per defecte de l'H1 és `'always-odd'`, i `'odd'` fa el mateix després d'una pàgina de part en recto: el capítol passa al recto següent i el verso queda en blanc. El disseny del verso es pinta.
-- **`parts.breakAfter: { enabled: true, parity: 'odd' }`.** La mateixa part demana el recto següent, faci el que faci el títol següent. Fes-lo servir quan els capítols puguin obrir en qualsevol cara (`breakBefore.parity: 'any'`, o `breakBefore.enabled: false`).
+- **El títol del capítol següent.** El `breakBefore` per defecte de l'H1 és `'always-odd'`, i `'odd'` fa el mateix després d'una pàgina de part senar: el capítol passa a la pàgina senar següent i la pàgina parella queda en blanc. El disseny de la pàgina parella es pinta.
+- **`parts.breakAfter: { enabled: true, parity: 'odd' }`.** La part mateixa demana la pàgina senar següent, faci el que faci el títol següent. Fes-lo servir quan els capítols puguin començar en qualsevol cara (`breakBefore.parity: 'any'`, o `breakBefore.enabled: false`).
 
-Sense cap dels dos, el capítol obre al verso i no es dibuixa disseny de verso. Amb `breakAfter.enabled: false` el contingut continua a la mateixa pàgina de part. El verso pren la paleta de la part, així que un `palette="band=#…"` a la tanca també el recoloreja.
+Sense cap dels dos, el capítol comença a la pàgina parella i no es dibuixa el disseny de pàgina parella. Amb `breakAfter.enabled: false`, el contingut continua a la mateixa pàgina de part. La pàgina parella agafa la paleta de la part, així que un `palette="band=#…"` a la línia d'obertura també en canvia els colors.
 
 ```ts
 parts: {
@@ -1024,23 +1024,23 @@ parts: {
 }
 ```
 
-**Una part que tanca el seu capítol.** En un llibre maquetat capítol a capítol (el Sandbox, `buildBundle`), una tanca `:::part` pot ser un capítol tota sola, o el final d'un. La seva pàgina de part és llavors l'última del capítol, i el capítol següent assumeix el que la part encara deu: aplica `breakAfter` abans del seu primer bloc i pinta `versoDesign` a la seva primera pàgina quan aquesta queda en blanc. Les pàgines surten com sortirien amb el llibre sencer en un sol document. Després de la tanca només hi poden venir directives que no col·loquen res (`:::numbering`, `:::space`); qualsevol altra cosa és contingut del capítol, que llavors fa el salt per si mateix. Un capítol buit just després de la part és una pàgina pròpia: aquesta pàgina és el verso. Un amfitrió que maqueta els capítols pel seu compte ho obté de `continuationAfter()`, que retorna `afterPartPage: true` per a un capítol que acaba amb una part; passa-ho a la `continuation` del capítol següent.
+**Una part que tanca el seu capítol.** En un llibre maquetat capítol a capítol (el Sandbox, `buildBundle`), un bloc `:::part` pot ser un capítol per si sol, o el final d'un capítol. En aquest cas, la pàgina de part és l'última del capítol, i el capítol següent s'encarrega del que la part ha deixat pendent: aplica `breakAfter` abans del primer bloc i pinta `versoDesign` a la primera pàgina, si queda en blanc. Les pàgines surten igual que si tot el llibre fos un sol document. Després de la línia de tancament només hi pot haver directives que no col·loquen res (`:::numbering`, `:::space`); qualsevol altra cosa és contingut del capítol, que llavors fa el salt pel seu compte. Un capítol buit just després de la part és una pàgina pròpia: aquesta pàgina és la pàgina parella. Una aplicació amfitriona que maqueta els capítols pel seu compte obté aquesta informació de `continuationAfter()`, que retorna `afterPartPage: true` per a un capítol que acaba amb una part; passa-la a la `continuation` del capítol següent.
 
 ### El contenidor `:::part`
 
-Una línia `:::part{number="…" title="…"}` obre la part i un `:::` tot sol la tanca; els dos atributs són opcionals (per defecte `''`). Els blocs intermedis — normalment la llista de capítols — flueixen a la columna única de la pàgina de part amb `bodyStyle`, començant a `margins.top`; un cos més llarg que la pàgina continua en pàgines normals. La pàgina es classifica com a `role: 'part'` (`VDTPage.partInfo` porta el número i el títol), de manera que els elements de capçalera i peu poden adreçar-s'hi o saltar-se-la amb `pages: 'part'` / `pages: 'body'`; el backend PDF afegeix la part a l'esquema per sobre dels seus capítols. Un cos buit (`:::part{…}` seguit directament de `:::`) és el cas habitual i també produeix la pàgina — dues parts consecutives mai no en comparteixen una. Un `:::part` niat dins d'una altra part s'aplana a l'exterior.
+Una línia `:::part{number="…" title="…"}` obre la part, i una línia amb només `:::` la tanca; els dos atributs són opcionals (per defecte, `''`). Els blocs que hi ha entremig (normalment, la llista de capítols) corren per la columna única de la pàgina de part amb `bodyStyle`, a partir de `margins.top`; si el contingut és més llarg que la pàgina, continua en pàgines normals. La pàgina es classifica com a `role: 'part'` (`VDTPage.partInfo` en conté el número i el títol), de manera que els elements de capçalera i de peu de pàgina s'hi poden adreçar o se la poden saltar amb `pages: 'part'` / `pages: 'body'`; el backend PDF afegeix la part a l'esquema, per sobre dels seus capítols. Un contingut buit (`:::part{…}` seguit directament de `:::`) és el cas habitual i també genera la pàgina: dues parts seguides no comparteixen mai pàgina. Un `:::part` niat dins d'una altra part es converteix en una part de primer nivell.
 
-Un tercer atribut, `palette="<id>=<hex>[, <id>=<hex>…]"`, dona a la part els seus propis colors: a la pàgina de part i a totes les que la segueixen — fins a la part següent — cada color de disseny (capçalera, peu, banda d'obertura, dissenys de part i del seu verso) vinculat a un d'aquests ids de paleta pren el valor de la part en lloc del de la paleta del document. Així recoloregen les seccions d'un llibre la pestanya de la cantonada, el punt de la capçalera i la banda d'obertura de capítol sense un segon disseny: `:::part{number="II" title="…" palette="band=#f6c297"}`. El flux de text també ho segueix: en aquestes mateixes pàgines, tot color del flux igual al valor base d'una entrada de paleta substituïda —títols, colors de negreta, cursiva i referències, vinyetes i números de llista, etiquetes i barres de peu, text, filets i farciments de taules (capçalera, cos, files alternes i el farciment propi d'una cel·la), requadres (fons, vora, franja i títol) i xips (farciment, contorn i text)— pren el valor de la part, de manera que un `headings.levels[1].color` vinculat a `band` compon els títols de cada secció en el seu propi color. Les mostres de color en línia conserven el color que s'hi ha escrit. Els parells se separen amb comes, punts i comes o espais, `=` o `:` uneix id i color, i la `#` és opcional. Una part continua vigent un cop acabada la seva tanca: `{partTitle}`, `{partNumber}` i la paleta acompanyen el flux fins als capítols posteriors i — mitjançant `continuation.part`, que retorna `continuationAfter()` — fins als capítols compostos per separat, de manera que el segon capítol d'una secció mostra la secció a les capçaleres exactament igual que el primer.
+Un tercer atribut, `palette="<id>=<hex>[, <id>=<hex>…]"`, dona a la part uns colors propis: a la pàgina de part i a totes les següents, fins a la part següent, cada color de disseny (capçalera, peu de pàgina, banda d'obertura, dissenys de la part i de la pàgina parella) vinculat a un d'aquests ids de paleta agafa el valor de la part en lloc del de la paleta del document. Així, les seccions d'un llibre canvien el color de la pestanya de la cantonada, del punt de la capçalera i de la banda d'obertura de capítol sense necessitat d'un segon disseny: `:::part{number="II" title="…" palette="band=#f6c297"}`. El flux de text també ho segueix: en aquestes mateixes pàgines, qualsevol color del flux igual al valor base d'una entrada de paleta substituïda (títols, colors de negreta, de cursiva i de referències, pics i números de llista, etiquetes i barres dels peus, text, filets i farciments de taules —capçalera, cos, files alternes i farciment propi d'una cel·la—, requadres —fons, vora, franja i títol— i xips —farciment, contorn i text—) agafa el valor de la part, de manera que un `headings.levels[1].color` vinculat a `band` compon els títols de cada secció amb el seu color. Les mostres de color en línia conserven el color que s'hi ha escrit. Els parells se separen amb comes, punts i comes o espais; `=` o `:` uneixen l'id i el color, i la `#` és opcional. Una part continua vigent després de la línia de tancament: `{partTitle}`, `{partNumber}` i la paleta segueixen el flux fins als capítols posteriors i, a través de `continuation.part`, que retorna `continuationAfter()`, fins als capítols compostos per separat, de manera que el segon capítol d'una secció mostra la secció a les capçaleres exactament igual que el primer.
 
-Dues entrades de la paleta poden compartir valor base i tot i així prendre valors diferents en una part, quan la part en substitueix una i no l'altra o els dona colors diferents. El valor tot sol no indica de quina entrada ve un color del flux, així que cada color del flux s'aparella amb els ajustos dels quals pot venir i pren el valor al qual enllacen aquests ajustos. Es distingeixen:
+Dues entrades de la paleta poden compartir el valor base i, tot i així, tenir valors diferents en una part, quan la part en substitueix una i l'altra no, o quan els dona colors diferents. El valor per si sol no indica de quina entrada ve un color del flux, així que cada color del flux s'associa amb els paràmetres de què pot venir i agafa el valor al qual remeten aquests paràmetres. Es distingeixen:
 
-- els colors del text d'un bloc: el color del text, els de negreta, cursiva i referències, la vinyeta o el número de llista i el separador que segueix el número. Amb `bodyText.color` vinculat a `ink` i `bodyText.boldColor` vinculat a `accent`, tots dos `#1a1a1a`, una part amb `palette="accent=#b8413d"` recoloreja les negretes i deixa el text; si el que es vincula a `accent` és `unorderedLists.color`, recoloreja les vinyetes i deixa el text dels elements;
+- els colors del text d'un bloc: el color del text, els de negreta, de cursiva i de referències, el pic o el número de llista i el separador que segueix el número. Amb `bodyText.color` vinculat a `ink` i `bodyText.boldColor` vinculat a `accent`, tots dos `#1a1a1a`, una part amb `palette="accent=#b8413d"` canvia el color de les negretes i deixa igual el text; si el que es vincula a `accent` és `unorderedLists.color`, canvia el color dels pics i deixa igual el text dels elements;
 - cada nivell d'encapçalament, i cada estil d'encapçalament que fixa un color;
-- el text d'una fila de l'índex, el seu número, i el seu número de pàgina i el seu subtítol;
-- en cada estil de requadre, els farciments (fons, franja, pestanya de l'etiqueta), la vora, els filets (del marcador i de l'etiqueta) i el text (títol, icona, glif del marcador, etiqueta);
-- cada color de cada estil de taula, de xip i de peu. Un estil de taula amb nom es distingeix de `tableStyle`, i l'estil de peu d'un tipus de recurs de `captionStyle`. El farciment propi d'una cel·la segueix el seu propi enllaç.
+- el text d'una fila de l'índex general, el número de la fila, el número de pàgina i el subtítol;
+- en cada estil de requadre, els farciments (fons, franja, pestanya), la vora, els filets (del marcador i de la pestanya) i el text (títol, icona, glif del marcador, text de la pestanya);
+- cada color de cada estil de taula, de xip i de peu. Un estil de taula amb nom es distingeix de `tableStyle`, i l'estil de peu d'un tipus de recurs, de `captionStyle`. El farciment propi d'una cel·la segueix el seu propi vincle.
 
-Queda un cas que es resol per valor: ajustos de llocs diferents que fixen el mateix color d'un bloc. Per exemple, `bodyText.color`, `bodyText.blockquote.color`, el `color` d'un estil de paràgraf i el `body.color` d'un estil de requadre fixen tots el color del text d'un bloc. Quan dos d'ells enllacen a entrades que comparteixen valor base i la part les separa, el color pren la substitució (l'última escrita, si se substitueixen totes dues). Dona a aquestes entrades valors base propis.
+Hi ha un cas que es resol per valor: paràmetres de llocs diferents que fixen el mateix color d'un bloc. Per exemple, `bodyText.color`, `bodyText.blockquote.color`, el `color` d'un estil de paràgraf i el `body.color` d'un estil de requadre fixen tots el color del text d'un bloc. Quan dos d'aquests paràmetres remeten a entrades que comparteixen el valor base i la part les separa, el color agafa la substitució (l'última escrita, si se substitueixen totes dues). Dona a aquestes entrades valors base propis.
 
 ```ts
 const resolved = resolvePartsConfig(config.parts, resolvedPage, resolvedBodyText, resolvedUnorderedLists, resolvedOrderedLists);
@@ -1051,7 +1051,7 @@ const minimal = stripPartsDefaults(config.parts);
 ```
 ## Estils d'encapçalament
 
-La propietat `headingStyles` declara estils amb nom que un document aplica a un encapçalament amb `# Título {style="<id>"}`. Un estil fa dues coses. Sobreescriu la tipografia, el disseny i la numeració del nivell de l'encapçalament — qualsevol camp d'una entrada de nivell excepte `level` (font, cos, color, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…) — i governa la **secció** que obre l'encapçalament: les seves pàgines, fins al següent encapçalament del mateix nivell o superior (de qualsevol nivell amb `sectionEnd: 'heading'`), prenen les capçaleres, la geometria de pàgina, la tipografia de cos i la paleta de l'estil. Així els preliminars d'un llibre (un pròleg a una sola columna ampla, amb folis en romans i bandes blaves) conviuen en un manual a dues columnes i numeració decimal sense una segona configuració.
+La propietat `headingStyles` declara estils amb nom que un document aplica a un encapçalament amb `# Título {style="<id>"}`. Un estil fa dues coses. D'una banda, substitueix la tipografia, el disseny i la numeració del nivell de l'encapçalament (qualsevol camp d'una entrada de nivell excepte `level`: font, cos, color, `breakBefore`, `span`, `advancedDesign`, `textTransform`, `hidden`, `numberingTemplate`…). De l'altra, determina la **secció** que obre l'encapçalament: les pàgines de la secció, fins al següent encapçalament del mateix nivell o superior (de qualsevol nivell amb `sectionEnd: 'heading'`), agafen les capçaleres, la geometria de pàgina, la tipografia del text de cos i la paleta de l'estil. Així, els preliminars d'un llibre (un pròleg en una sola columna ampla, amb folis en xifres romanes i bandes blaves) poden conviure amb un manual a dues columnes i numeració decimal sense una segona configuració.
 
 ```ts
 const config: PostextConfig = {
@@ -1090,7 +1090,7 @@ const config: PostextConfig = {
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>—</td>
-      <td>Identificador al qual fa referència <code>{'{style="…"}'}</code> en una línia d'encapçalament. Un id desconegut deixa l'encapçalament tal com és.</td>
+      <td>Identificador al qual fa referència <code>{'{style="…"}'}</code> en una línia d'encapçalament. Un id desconegut deixa l'encapçalament tal com està.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -1102,19 +1102,19 @@ const config: PostextConfig = {
       <td><code>numbered</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si l'encapçalament compta: fa avançar el comptador del seu nivell (els números de <code>numberingTemplate</code>, el <code>{'{h1}'}</code> de la numeració de recursos), l'ordinal de capítol que hi ha darrere de <code>{'{chapterNumber}'}</code> i el número que imprimeix l'índex. <code>false</code> per a un pròleg, una llista d'autors, un índex: el primer capítol numerat que els segueix continua sent el capítol 1, i <code>{'{chapterNumber}'}</code> queda buit a les seves pàgines.</td>
+      <td>Si l'encapçalament compta: fa avançar el comptador del seu nivell (els números de <code>numberingTemplate</code>, el <code>{'{h1}'}</code> de la numeració de recursos), l'ordinal de capítol que hi ha darrere de <code>{'{chapterNumber}'}</code> i el número que imprimeix l'índex general. <code>false</code> per a un pròleg, una llista d'autors o un índex: el primer capítol numerat que ve després continua sent el capítol 1, i <code>{'{chapterNumber}'}</code> queda buit a les pàgines d'aquests encapçalaments.</td>
     </tr>
     <tr>
       <td><code>toc</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si <code>:::toc</code> llista l'encapçalament. Un encapçalament ho sobreescriu amb <code>{'{toc="false"}'}</code> / <code>{'{toc="true"}'}</code>.</td>
+      <td>Si <code>:::toc</code> llista l'encapçalament. Cada encapçalament ho pot canviar amb <code>{'{toc="false"}'}</code> / <code>{'{toc="true"}'}</code>.</td>
     </tr>
     <tr>
       <td><code>runningChapter</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Si un encapçalament de nivell 1 amb aquest estil passa a ser el capítol en curs: el que anomenen <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> i les seves formes <code>…AtTop</code> a la seva pàgina i a les següents. <code>false</code> per a una làmina, un mapa o una portadella que es compon com a H1 dins d'un capítol: les capçaleres se'l salten, també a la seva pròpia pàgina, i continuen anomenant el capítol que interromp; tampoc no posa paraula guia <code>h1</code>. L'encapçalament continua comptant si és <code>numbered</code> (el seu propi disseny llegeix el seu propi <code>{'{chapterNumber}'}</code>) i <code>:::toc</code> el continua llistant si és <code>toc</code>. Si a més porta <code>toc: false</code>, no té marcador al PDF: la làmina d'un capítol, a la pàgina que precedeix la seva obertura, deixa els marcadors del PDF als capítols. Els encapçalaments d'altres nivells no el llegeixen. Amb el valor per defecte, les pàgines que segueixen una làmina imprimeixen el títol de la làmina. Un prefaci o un pròleg amb <code>numbered: false</code> continua sent un capítol per si mateix i conserva el valor per defecte. L'opció només canvia el capítol que anomenen els marcadors: l'estil continua obrint una secció pròpia, com qualsevol estil d'encapçalament, de manera que fins al següent encapçalament de nivell 1 les pàgines prenen les ranures de capçalera, els marges, les columnes, l'estil del cos i la paleta de l'estil de la làmina (els del document on l'estil no fixa res), no els d'una secció amb estil que hagués obert el capítol interromput. En un llibre compost capítol a capítol, les capçaleres no passen d'un fitxer de capítol al següent, així que una làmina que obre un fitxer deixa buits els marcadors de capítol fins al primer encapçalament de capítol del fitxer.</td>
+      <td>Si un encapçalament de nivell 1 amb aquest estil passa a ser el capítol en curs, és a dir, el que indiquen <code>{'{chapterTitle}'}</code>, <code>{'{chapterNumber}'}</code>, <code>{'{attr.<key>}'}</code> i les formes <code>…AtTop</code> a la seva pàgina i a les següents. <code>false</code> per a una làmina, un mapa o una portadella que es compon com a H1 dins d'un capítol: les capçaleres se'l salten, també a la seva pàgina, i continuen indicant el capítol que interromp; tampoc no posa la paraula guia <code>h1</code>. L'encapçalament continua comptant si és <code>numbered</code> (el seu disseny llegeix el seu propi <code>{'{chapterNumber}'}</code>), i <code>:::toc</code> el continua llistant si és <code>toc</code>. Si a més té <code>toc: false</code>, no té marcador al PDF: la làmina d'un capítol, a la pàgina anterior a l'obertura del capítol, deixa els marcadors del PDF als capítols. Els encapçalaments d'altres nivells no tenen en compte aquesta opció. Amb el valor per defecte, les pàgines que vénen després d'una làmina imprimeixen el títol de la làmina. Un prefaci o un pròleg amb <code>numbered: false</code> continua sent un capítol per si mateix i conserva el valor per defecte. L'opció només canvia el capítol que indiquen els marcadors: l'estil continua obrint una secció pròpia, com qualsevol estil d'encapçalament, de manera que, fins al següent encapçalament de nivell 1, les pàgines agafen les zones de disseny de capçalera, els marges, les columnes, l'estil del text de cos i la paleta de l'estil de la làmina (i, on l'estil no fixa res, els del document), no els d'una secció amb estil que hagués obert el capítol interromput. En un llibre compost capítol a capítol, les capçaleres no passen d'un fitxer de capítol al següent, així que una làmina que obre un fitxer deixa buits els marcadors de capítol fins al primer encapçalament de capítol del fitxer.</td>
     </tr>
     <tr>
       <td><code>sectionEnd</code></td>
@@ -1126,48 +1126,48 @@ const config: PostextConfig = {
       <td>camps de nivell</td>
       <td>com a <code>headings.levels[]</code></td>
       <td>els valors del nivell</td>
-      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: cadascun que es fixi substitueix el valor del nivell per als encapçalaments d'aquest estil (<code>dropCap: false</code> treu la caplletra del nivell). <code>breakBefore</code> es combina camp a camp amb el del nivell: un estil que només fixa <code>parity</code> conserva l'<code>enabled</code> del nivell, i un que només fixa <code>enabled: true</code> conserva la seva paritat (fins a postext 1.4, el camp que faltava sortia en canvi del valor sense salt).</td>
+      <td><code>fontFamily</code>, <code>fontSize</code>, <code>lineHeight</code>, <code>fontWeight</code>, <code>italic</code>, <code>color</code>, <code>marginTop</code>, <code>marginBottom</code>, <code>snapToGrid</code>, <code>breakBefore</code>, <code>span</code>, <code>advancedDesign</code>, <code>textTransform</code>, <code>letterSpacing</code>, <code>lineSpan</code>, <code>indent</code>, <code>firstLineIndent</code>, <code>jidori</code>, <code>dropCap</code>, <code>hidden</code>: cada camp que es fixa substitueix el valor del nivell per als encapçalaments d'aquest estil (<code>dropCap: false</code> treu la caplletra del nivell). <code>breakBefore</code> es combina camp per camp amb el del nivell: un estil que només fixa <code>parity</code> conserva l'<code>enabled</code> del nivell, i un que només fixa <code>enabled: true</code> conserva la paritat del nivell (fins a postext 1.4, en canvi, el camp que faltava s'omplia amb el valor sense salt).</td>
     </tr>
     <tr>
       <td><code>numberingTemplate</code></td>
       <td><code>string</code></td>
       <td>la del nivell</td>
-      <td>Plantilla amb què es numeren els encapçalaments de l'estil, en lloc de la del seu nivell (els mateixos tokens que <a href="/ca/docs/configuration-headings#configuració-per-nivell"><code>levels[].numberingTemplate</code></a>). El comptador continua sent el del nivell: un estil d'apèndix amb <code>'Apèndix {'{1:A}'}'</code> després de cinc capítols imprimiria <em>Apèndix F</em>, així que reinicia el compte amb <code>{'{startAt=1}'}</code> al primer apèndix. <code>''</code> no imprimeix número, tot i que l'encapçalament continua comptant: ni tan sols l'ordinal de capítol que l'índex i <code>{'{chapterNumber}'}</code> mostren per a un encapçalament de nivell 1 sense plantilla. El número apareix al flux, al <code>{'{number}'}</code> del disseny de l'estil, a l'índex i a <code>{'{chapterNumber}'}</code>.</td>
+      <td>Plantilla amb què es numeren els encapçalaments de l'estil, en lloc de la del seu nivell (els mateixos marcadors que <a href="/ca/docs/configuration-headings#configuració-per-nivell"><code>levels[].numberingTemplate</code></a>). El comptador continua sent el del nivell: un estil d'apèndix amb <code>'Apèndix {'{1:A}'}'</code> després de cinc capítols imprimiria <em>Apèndix F</em>, així que cal reiniciar el compte amb <code>{'{startAt=1}'}</code> al primer apèndix. <code>''</code> no imprimeix cap número, tot i que l'encapçalament continua comptant: ni tan sols l'ordinal de capítol que l'índex general i <code>{'{chapterNumber}'}</code> mostren per a un encapçalament de nivell 1 sense plantilla. El número apareix al flux, al <code>{'{number}'}</code> del disseny de l'estil, a l'índex general i a <code>{'{chapterNumber}'}</code>.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
       <td><code>DesignSlot</code></td>
       <td>els del document</td>
-      <td>Capçaleres i peus de les pàgines de la secció, en lloc de <code>header</code> / <code>footer</code> (els filtres <code>parity</code> i <code>pages</code> dels elements continuen aplicant-se). Una ranura buida els elimina.</td>
+      <td>Capçaleres i peus de pàgina de les pàgines de la secció, en lloc de <code>header</code> / <code>footer</code> (els filtres <code>parity</code> i <code>pages</code> dels elements continuen aplicant-se). Una zona de disseny buida els suprimeix.</td>
     </tr>
     <tr>
       <td><code>margins</code></td>
       <td><code>PageMargins</code></td>
       <td>marges de pàgina</td>
-      <td>Àrea de cos de les pàgines de la secció; cada costat hereta el marge de pàgina si no es fixa, <code>mirror</code> inclòs. Fa efecte a les pàgines que obre la secció — combina-ho amb <code>breakBefore</code>.</td>
+      <td>Àrea de text de les pàgines de la secció; cada costat que no es fixa hereta el marge de pàgina, <code>mirror</code> inclòs. S'aplica a les pàgines que obre la secció; combina-ho amb <code>breakBefore</code>.</td>
     </tr>
     <tr>
       <td><code>layout</code></td>
       <td><code>LayoutConfig</code></td>
       <td><code>layout</code></td>
-      <td>Disposició de columnes de les pàgines de la secció (<code>layoutType</code>, <code>gutterWidth</code>…): una sola columna ampla per a un pròleg en un llibre a dues columnes. El seu <code>columnRule</code> es dibuixa a les pàgines de la secció, i cada camp que deixa sense fixar pren el valor de <code>layout.columnRule</code> del document, de manera que una secció que només canvia les columnes conserva el filet del document (vegeu <a href="/ca/docs/configuration-page-layout#filet-de-columna">Filet de columna</a>).</td>
+      <td>Disposició de columnes de les pàgines de la secció (<code>layoutType</code>, <code>gutterWidth</code>…): una sola columna ampla per a un pròleg en un llibre a dues columnes. El seu <code>columnRule</code> es dibuixa a les pàgines de la secció, i cada camp que no fixa agafa el valor de <code>layout.columnRule</code> del document, de manera que una secció que només canvia les columnes conserva el filet del document (vegeu <a href="/ca/docs/configuration-page-layout#filet-de-columna">Filet de columna</a>).</td>
     </tr>
     <tr>
       <td><code>bodyStyle</code></td>
       <td><code>PartsBodyStyleConfig</code></td>
       <td>hereta <code>bodyText</code></td>
-      <td>Tipografia dels paràgrafs, cites i llistes de la secció — els mateixos camps que <a href="#parts">parts.bodyStyle</a>.</td>
+      <td>Tipografia dels paràgrafs, les cites i les llistes de la secció: els mateixos camps que <a href="#parts">parts.bodyStyle</a>.</td>
     </tr>
     <tr>
       <td><code>palette</code></td>
       <td><code>Record&lt;string, string&gt;</code></td>
       <td><code>{'{}'}</code></td>
-      <td>Substitucions de paleta (id → hex) per a les pàgines de la secció, sobre les de la part en curs — el mateix mecanisme que l'atribut <code>palette</code> d'una part, i amb el mateix abast: no només les ranures de disseny compostes en aquestes pàgines (capçaleres, la banda d'obertura: tot color enllaçat a un id substituït), sinó també el flux de text, per valor: tot color del flux igual al valor base d'una entrada substituïda — encapçalaments, colors de negreta, cursiva i referències, pics i números de llista, etiquetes i barres de peu, text, filets i emplenaments de taula, requadres (fons, vora, franja i títol) i xips (emplenament, contorn i text) — pren el valor de la secció, igual que sota una part, també quan dues entrades comparteixen valor base (vegeu <a href="#el-contenidor-part">El contenidor <code>:::part</code></a>). Les mostres de color en línia conserven el color que hi ha escrit. També el color de la pàgina: si <code>page.backgroundColor</code> està enllaçat a una entrada substituïda (o, sense enllaç, té el seu valor base), les pàgines de la secció es pinten amb el valor de la secció, de manera que les pàgines d'economia d'un diari surten en salmó i les altres en blanc. Des de postext 1.18.</td>
+      <td>Substitucions de paleta (id → hex) per a les pàgines de la secció, per sobre de les de la part en curs: el mateix mecanisme que l'atribut <code>palette</code> d'una part, i amb el mateix abast. No només afecta les zones de disseny compostes en aquestes pàgines (capçaleres, la banda d'obertura: qualsevol color vinculat a un id substituït), sinó també el flux de text, per valor: qualsevol color del flux igual al valor base d'una entrada substituïda (encapçalaments, colors de negreta, de cursiva i de referències, pics i números de llista, etiquetes i barres dels peus, text, filets i farciments de taula, requadres —fons, vora, franja i títol— i xips —farciment, contorn i text—) agafa el valor de la secció, igual que dins d'una part, també quan dues entrades comparteixen el valor base (vegeu <a href="#el-contenidor-part">El contenidor <code>:::part</code></a>). Les mostres de color en línia conserven el color que s'hi ha escrit. També canvia el color de la pàgina: si <code>page.backgroundColor</code> està vinculat a una entrada substituïda (o, sense vincle, té el seu valor base), les pàgines de la secció es pinten amb el valor de la secció, de manera que les pàgines d'economia d'un diari surten en color salmó i les altres en blanc. Des de postext 1.18.</td>
     </tr>
   </tbody>
 </table>
 
-Una secció es tanca al següent encapçalament del mateix nivell o superior: un `#` sense estil després d'un amb estil torna a les capçaleres i la geometria del document; un amb estil obre la seva pròpia secció. Les pàgines que la secció deixa en blanc per paritat li pertanyen, com passa amb els títols de capítol. Amb `sectionEnd: 'heading'` la secció es tanca al següent encapçalament de qualsevol nivell, que és el que necessita una portada composta com a únic encapçalament de nivell 1 del llibre:
+Una secció acaba al següent encapçalament del mateix nivell o superior: un `#` sense estil després d'un amb estil torna a les capçaleres i a la geometria del document; un `#` amb estil obre la seva pròpia secció. Les pàgines que la secció deixa en blanc per paritat hi pertanyen, com passa amb els títols de capítol. Amb `sectionEnd: 'heading'` la secció es tanca al següent encapçalament de qualsevol nivell, que és el que necessita una portada composta com a únic encapçalament de nivell 1 del llibre:
 
 ```ts
 headingStyles: [
@@ -1185,7 +1185,7 @@ headingStyles: [
 
 La pàgina de la portada no imprimeix capçaleres, i des de *La sala del llum* les pàgines tornen a prendre la capçalera i el peu del document. Amb el valor per defecte, `'level'`, la secció de la portada duraria fins al següent encapçalament de nivell 1, que aquest llibre no té, i cap de les seves pàgines no portaria capçalera.
 
-**Un salt de pàgina no substitueix el salt del mateix encapçalament.** Un estil hereta el `breakBefore` del seu nivell (el del nivell 1 és, per defecte, `{ enabled: true, parity: 'always-odd' }`), i l'encapçalament l'aplica sigui on sigui, també just després d'un `:::pagebreak`. El salt de pàgina obre una pàgina nova, i l'encapçalament demana després, igualment, el seu costat del plec. Amb `parity: 'odd'`, un salt que cau en una pàgina parella va seguit d'una pàgina en blanc, de manera que l'encapçalament obre a la següent senar. Amb `'always-odd'` s'hi afegeix a més la pàgina separadora, i el salt de pàgina no canvia res, perquè l'encapçalament hauria obert aquesta pàgina de totes maneres. Un estil que ha de començar a la pàgina que obre un salt manual, com un índex darrere de la portada, desactiva el seu propi salt:
+**Un salt de pàgina no substitueix el salt de l'encapçalament.** Un estil hereta el `breakBefore` del seu nivell (el del nivell 1 és, per defecte, `{ enabled: true, parity: 'always-odd' }`), i l'encapçalament l'aplica sigui on sigui, fins i tot just després d'un `:::pagebreak`. El salt de pàgina obre una pàgina nova, i després l'encapçalament demana igualment el costat de la doble pàgina que li correspon. Amb `parity: 'odd'`, un salt que cau en una pàgina parella va seguit d'una pàgina en blanc, de manera que l'encapçalament comença a la pàgina senar següent. Amb `'always-odd'` s'hi afegeix, a més, la pàgina separadora, i el salt de pàgina no canvia res, perquè l'encapçalament hauria obert aquesta pàgina de totes maneres. Un estil que ha de començar a la pàgina que obre un salt manual, com un índex general després de la portada, desactiva el seu propi salt:
 
 ```ts
 headingStyles: [
@@ -1196,7 +1196,7 @@ headingStyles: [
 
 Per conservar una pàgina pròpia sense triar costat, fes servir en lloc d'això `breakBefore: { parity: 'any' }` i prescindeix del `:::pagebreak`.
 
-**A quina secció pertany una pàgina.** Les capçaleres i la paleta es trien per pàgina, no per encapçalament. Una pàgina pren la secció vigent després de l'últim canvi de secció que hi ha: quan una secció acaba i una altra comença a la mateixa pàgina — dues lletres curtes d'un diccionari, per exemple —, la pàgina porta les capçaleres i la paleta de la segona; quan una secció amb estil acaba a mitja pàgina en un encapçalament sense estil, la pàgina torna a les del document. `{chapterTitle}` segueix la mateixa regla: una pàgina on es troben dos capítols mostra el títol del segon. Les pàgines en blanc segueixen la regla dels [títols de capítol](/ca/docs/configuration-headings#pertinença-de-les-pàgines-en-blanc): una pàgina en blanc de paritat (`blankForParity`) pertany a la secció que s'obre després, i la separadora que afegeix un salt `'always-odd'` / `'always-even'` (`blankForForce`), a la secció anterior. Una pàgina divisòria de part tanca la secció oberta.
+**A quina secció pertany una pàgina.** Les capçaleres i la paleta es trien per pàgina, no per encapçalament. Una pàgina agafa la secció vigent després de l'últim canvi de secció que s'hi produeix: quan una secció acaba i una altra comença a la mateixa pàgina (dues lletres curtes d'un diccionari, per exemple), la pàgina porta les capçaleres i la paleta de la segona; quan una secció amb estil acaba a mitja pàgina en un encapçalament sense estil, la pàgina torna a les del document. `{chapterTitle}` segueix la mateixa regla: una pàgina on es troben dos capítols mostra el títol del segon. Les pàgines en blanc segueixen la regla dels [títols de capítol](/ca/docs/configuration-headings#pertinença-de-les-pàgines-en-blanc): una pàgina en blanc de paritat (`blankForParity`) pertany a la secció que s'obre després, i la separadora que afegeix un salt `'always-odd'` / `'always-even'` (`blankForForce`), a la secció anterior. Una pàgina divisòria de part tanca la secció oberta.
 
 ```md
 # A {style="letra"}
@@ -1208,8 +1208,8 @@ Abac, abella.
 Babel, bavall… (continua a la pàgina següent)
 ```
 
-Les dues lletres comencen a la pàgina 1, així que la pàgina 1 pren les capçaleres de la secció `B`: una pestanya d'osca posada a la capçalera de l'estil hi diu «B», i cap pàgina no porta la pestanya de l'«A». Dona a cada secció una pàgina pròpia (`breakBefore`) quan totes necessiten la seva pestanya.
-Apèndixs amb lletra després de capítols numerats, i una pàgina de dedicatòria que l'índex i els marcadors del PDF inclouen però que la pàgina no titula:
+Les dues lletres comencen a la pàgina 1, així que la pàgina 1 agafa les capçaleres de la secció `B`: una pestanya d'osca posada a la capçalera de l'estil hi diu «B», i cap pàgina no porta la pestanya de l'«A». Dona a cada secció una pàgina pròpia (`breakBefore`) quan totes necessiten la seva pestanya.
+Apèndixs amb lletra després de capítols numerats, i una pàgina de dedicatòria que surt a l'índex general i als marcadors del PDF, però sense títol a la pàgina:
 
 ```ts
 headingStyles: [
@@ -1232,7 +1232,7 @@ Per a M., que va llegir tots els esborranys.
 # Dades en brut {style="apendice"}
 ```
 
-Amb `numberingTemplate: '{1}.'` al nivell 1, els capítols imprimeixen *1.*, *2.*…, i els apèndixs *Apèndix A* i *Apèndix B*. La dedicatòria obre la seva pàgina (el `breakBefore` del seu nivell), imprimeix només el seu paràgraf i continua apareixent com a *Dedicatòria* a `:::toc`, a les capçaleres amb `{chapterTitle}` i als marcadors del PDF; afegeix `toc: false` a l'estil per deixar-la fora de l'índex. Una làmina o un mapa que es compon com a H1 enmig d'un capítol demana el contrari que la dedicatòria: un estil amb `runningChapter: false` (normalment amb `numbered: false` i `toc: false`) manté les capçaleres en el capítol que interromp.
+Amb `numberingTemplate: '{1}.'` al nivell 1, els capítols imprimeixen *1.*, *2.*…, i els apèndixs *Apèndix A* i *Apèndix B*. La dedicatòria obre la seva pàgina (el `breakBefore` del seu nivell), només imprimeix el paràgraf i continua apareixent com a *Dedicatòria* a `:::toc`, a les capçaleres amb `{chapterTitle}` i als marcadors del PDF; afegeix `toc: false` a l'estil per deixar-la fora de l'índex general. Una làmina o un mapa que es compon com a H1 enmig d'un capítol demana el contrari que la dedicatòria: un estil amb `runningChapter: false` (normalment amb `numbered: false` i `toc: false`) fa que les capçaleres continuïn indicant el capítol que interromp.
 
 ```ts
 const resolved = resolveHeadingStylesConfig(config.headingStyles, resolvedPage, resolvedBodyText, resolvedUnorderedLists, resolvedOrderedLists);

@@ -1,16 +1,16 @@
 ---
 title: "Cartilha de alfabetização com sílabas em chips"
 summary: "Uma unidade de cartilha para a letra M: os sons de cada palavra em chips na cor da vogal e uma grade de palavras ilustradas, uma aquarela por célula."
-plain: "Três páginas de uma cartilha em inglês para crianças pequenas, dedicadas à letra M. Cada som de uma palavra fica numa etiqueta colorida, e cada palavra da grade tem o seu desenho."
+plain: "Três páginas de uma cartilha em inglês para crianças pequenas, dedicadas à letra M. Cada som de uma palavra fica numa etiqueta colorida, e cada palavra da grade tem o desenho."
 description: "Uma unidade de cartilha no Postext: um estilo de chip por vogal, palavras escritas com chips de som encostados, grade arredondada e linhas para cobrir."
 question: "Como componho sílabas como chips coloridos no texto, uma cor por vogal, numa cartilha de alfabetização?"
 aliases: ["cartilha", "alfabetização", "método silábico", "sílabas", "famílias silábicas", "caderno de atividades infantil", "letramento", "cartilla"]
-pageNotes: { "1": "Uma faixa creme com um Mm gigante, um macaco e uma lua; abaixo, seis palavras divididas nos seus sons, map, men, mop e Sam, dim, gum, cada som num chip da cor da vogal da palavra e o m preenchido; depois, quatro pares de palavras que rimam: mat e sat, man e pan, mug e tug, mop e top.", "2": "Seis palavras com desenho, map, mat, man, mug, mop e mud, numa grade arredondada de ladrilhos creme, cada aquarela sobre os seus sons; abaixo, linhas para cobrir m, M e as palavras man, mat e men.", "3": "Quatro frases em 24 pt com as palavras novas, Tom e Mum, em chips de som, um box creme de palavras contornadas para colorir, um recado para pais e responsáveis e o colofão." }
+pageNotes: { "1": "Uma faixa creme com um Mm gigante, um macaco e uma lua; abaixo, seis palavras divididas nos sons, map, men, mop e Sam, dim, gum, cada som num chip da cor da vogal da palavra e o m preenchido; depois, quatro pares de palavras que rimam: mat e sat, man e pan, mug e tug, mop e top.", "2": "Seis palavras com desenho, map, mat, man, mug, mop e mud, numa grade arredondada de ladrilhos creme, cada aquarela sobre os sons; abaixo, linhas para cobrir m, M e as palavras man, mat e men.", "3": "Quatro frases em 24 pt com as palavras novas, Tom e Mum, em chips de som, um box creme de palavras contornadas para colorir, um recado para pais e responsáveis e o colofão." }
 ---
 
 ## O que você vai compor
 
-A unidade 12 de *Letter by Letter*, uma cartilha inglesa inventada: três páginas sobre o som do m. A abertura põe um Mm em DynaPuff de 190 pt numa faixa creme, ao lado de duas coisas cujo nome em inglês começa com m, um macaco (*monkey*) e uma lua (*moon*). Cada palavra é dividida nos seus sons, e cada som é um chip na cor da vogal da palavra: a vermelho, e laranja, i verde-azulado, o azul, u roxo. O m é preenchido e os outros sons são só contornados, e assim a criança vê onde o som desta unidade cai em *map* e em *gum*. A página 38 traz seis palavras ilustradas numa grade arredondada, com uma aquarela em cada célula, e depois três linhas para cobrir. As aquarelas foram geradas com modelos de difusão; a faixa, os ícones e as linhas para cobrir são desenhados em código. A página 39 tem quatro frases em 24 pt, um box de palavras para colorir e um recado para pais e responsáveis.
+A unidade 12 de *Letter by Letter*, uma cartilha inglesa inventada: três páginas sobre o som do m. A abertura põe um Mm em DynaPuff de 190 pt numa faixa creme, ao lado de duas coisas cujo nome em inglês começa com m, um macaco (*monkey*) e uma lua (*moon*). Cada palavra é dividida nos sons, e cada som é um chip na cor da vogal da palavra: a vermelho, e laranja, i verde-azulado, o azul, u roxo. O m é preenchido e os outros sons são só contornados, e assim a criança vê onde o som desta unidade cai em *map* e em *gum*. A página 38 traz seis palavras ilustradas numa grade arredondada, com uma aquarela em cada célula, e depois três linhas para cobrir. As aquarelas foram geradas com modelos de difusão; a faixa, os ícones e as linhas para cobrir são desenhados em código. A página 39 tem quatro frases em 24 pt, um box de palavras para colorir e um recado para pais e responsáveis.
 
 A edição em espanhol é outra unidade, e não uma tradução: a unidade 7 de *Letra a letra*, sobre a mesma letra. O espanhol é ensinado por sílabas abertas (ma, me, mi, mo, mu), e por isso os chips dela guardam sílabas, `{mi·mo·sa}`. Essas sílabas não são palavras em inglês, e as cartilhas inglesas trabalham som por som; a unidade inglesa junta os sons de palavras curtas, `{m·a·p}`, e as agrupa em famílias que rimam (-at, -an, -ug, -op). As duas unidades saem do mesmo código: os mesmos estilos de chip, a mesma função `syllables()`, a mesma grade, as mesmas linhas para cobrir e os mesmos boxes.
 
@@ -18,25 +18,25 @@ A edição em espanhol é outra unidade, e não uma tradução: a unidade 7 de *
 
 ### 1 · Um estilo de chip por vogal e uma função que escreve os chips
 
-[A resposta curta](#a-resposta-curta) monta 21 estilos de chip espalhando um mesmo objeto, `syllable`. Há um estilo preenchido por vogal para o m, um contornado por vogal para os outros sons, um gêmeo `-frase` de cada um desses dez e `pinta`, o contorno em tinta que a criança pinta. `syllables()` transforma `{m·a·p}` em três `:chip[…]` sem nada entre eles, de modo que os sons de uma palavra se encostam e a borda branca desenha a emenda. Um chip leva a cor da sua vogal, e um pedaço sem vogal, aqui o m e o p, leva a da palavra, então *map* fica toda vermelha. Do outro lado de um espaço entre palavras, um chip mantém pelo menos o seu `gap`, e 0,5 em deixa as palavras de uma fileira de 24 pt a 4,2 mm uma da outra, onde o espaço sozinho deixaria 2,3 mm. Dentro de uma frase, esse vão quase dobraria o espaço antes da palavra nova, então uma palavra que vem depois de outra recebe os gêmeos `-frase`, cujo `gap` de 0 deixa o espaço de 2,3 mm como está. Na edição em espanhol os pedaços são sílabas, `{mi·mo·sa}`, e cada uma tem a sua vogal.
+[A resposta curta](#a-resposta-curta) monta 21 estilos de chip espalhando um mesmo objeto, `syllable`. Há um estilo preenchido por vogal para o m, um contornado por vogal para os outros sons, um gêmeo `-frase` de cada um desses dez e `pinta`, o contorno em tinta que a criança pinta. `syllables()` transforma `{m·a·p}` em três `:chip[…]` sem nada entre eles, de modo que os sons de uma palavra se encostam e a borda branca desenha a emenda. Um chip leva a cor da vogal, e um pedaço sem vogal, aqui o m e o p, leva a da palavra, por isso *map* fica toda vermelha. Do outro lado de um espaço entre palavras, um chip mantém pelo menos o `gap`, e 0,5 em deixa as palavras de uma fileira de 24 pt a 4,2 mm uma da outra, onde o espaço sozinho deixaria 2,3 mm. Dentro de uma frase, esse vão quase dobraria o espaço antes da palavra nova, por isso uma palavra que vem depois de outra recebe os gêmeos `-frase`, cujo `gap` de 0 deixa o espaço de 2,3 mm como está. Na edição em espanhol os pedaços são sílabas, `{mi·mo·sa}`, e cada uma tem a vogal.
 
 ### 2 · Uma entrelinha que dá espaço aos chips
 
 <Excerpt region="reading" />
 
-O enchimento vertical e a borda de um chip são pintados fora da sua linha e não somam entrelinha, então um chip mais alto que o passo da linha esbarra nos chips da linha de baixo. Um chip de 24 pt tem 10,4 mm de altura; com entrelinha de 30 pt (10,6 mm), os chips de duas frases ficariam a 0,1 mm um do outro. As linhas que a criança lê recebem 45 pt e as fileiras de 34 pt da primeira atividade 60 pt, três e quatro linhas da grade de 15 pt das instruções.
+O enchimento vertical e a borda de um chip são pintados fora da linha e não somam entrelinha, de modo que um chip mais alto que o passo da linha esbarra nos chips da linha de baixo. Um chip de 24 pt tem 10,4 mm de altura; com entrelinha de 30 pt (10,6 mm), os chips de duas frases ficariam a 0,1 mm um do outro. As linhas que a criança lê recebem 45 pt e as fileiras de 34 pt da primeira atividade 60 pt, três e quatro linhas da grade de 15 pt das instruções.
 
 ### 3 · Uma aquarela em cada célula
 
 <Excerpt region="pictures" />
 
-`setCellImage` põe uma imagem acima do texto de uma célula, com uma fração da largura interna da célula, aqui 0,72 (36,5 mm), e a linha cresce para acomodá-la. Cada aquarela é um JPEG pintado sobre branco e multiplicado pelo creme dos ladrilhos, então ela assenta no ladrilho sem caixa em volta. Abaixo de cada aquarela vem a palavra em chips de som. Uma célula de tabela aceita marcação de chip como qualquer parágrafo. O estilo de tabela `dibujos` arredonda a moldura e os fundos em 5 mm e separa os ladrilhos creme com fios brancos de 4 pt.
+`setCellImage` põe uma imagem acima do texto de uma célula, com uma fração da largura interna da célula, aqui 0,72 (36,5 mm), e a linha cresce para acomodá-la. Cada aquarela é um JPEG pintado sobre branco e multiplicado pelo creme dos ladrilhos, por isso ela assenta no ladrilho sem caixa em volta. Abaixo de cada aquarela vem a palavra em chips de som. Uma célula de tabela aceita marcação de chip como qualquer parágrafo. O estilo de tabela `dibujos` arredonda a moldura e os fundos em 5 mm e separa os ladrilhos creme com fios brancos de 4 pt.
 
 ### 4 · Uma linha de espaço antes do box
 
 <Excerpt region="boxes" />
 
-O Markdown põe `:::space{lines=1}` entre a última frase e o box para colorir, uma linha de 15 pt (5,3 mm). O `marginTop` do box é 0, então essa linha é todo o espaço; sem ela, o box começaria onde termina a linha da última frase. Um `:::space` que abre um box é descartado, então o box começa com o enunciado e os chips da legenda de cores, e o seu próprio `:::space` vem depois deles, entre a legenda e a tarefa de colorir.
+O Markdown põe `:::space{lines=1}` entre a última frase e o box para colorir, uma linha de 15 pt (5,3 mm). O `marginTop` do box é 0, por isso essa linha é todo o espaço; sem ela, o box começaria onde termina a linha da última frase. Um `:::space` que abre um box é descartado, de modo que o box começa com o enunciado e os chips da legenda de cores, e o próprio `:::space` vem depois deles, entre a legenda e a tarefa de colorir.
 
 ### 5 · A abertura da letra
 
@@ -48,13 +48,13 @@ O Mm é o texto do título (`{titleText}`); o número da unidade, a série e o n
 
 <Excerpt region="activities" />
 
-Cada título de atividade indica o seu estilo de título, como em `## Read the sentences {style="lee"}`, e o estilo desenha um ícone com o título centralizado ao lado. Os títulos continuam sendo de nível 2, então o nível `H2` define o espaçamento: duas linhas da grade de `lineHeight` para o título e mais duas de `marginTop` acima dele.
+Cada título de atividade indica o estilo de título, como em `## Read the sentences {style="lee"}`, e o estilo desenha um ícone com o título centralizado ao lado. Os títulos continuam sendo de nível 2, por isso o nível `H2` define o espaçamento: duas linhas da grade de `lineHeight` para o título e mais duas de `marginTop` acima dele.
 
 ## Variações
 
 ### Arredonde os chips em pílulas
 
-Um raio maior que metade da altura do chip é limitado a essa metade, então um valor grande desenha pontas redondas. Um chip de uma letra só sai quase um círculo, e as emendas dentro de uma palavra viram entalhes.
+Um raio maior que metade da altura do chip é limitado a essa metade, por isso um valor grande desenha pontas redondas. Um chip de uma letra só sai quase um círculo, e as emendas dentro de uma palavra viram entalhes.
 
 ```diff
 -  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5) };

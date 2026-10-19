@@ -16,37 +16,37 @@ Des certificats de fin de stage pour le Quoin Room, un atelier de typographie au
 
 ### 1 · Laisser un style de titre dessiner la page
 
-Le style lui-même est [la réponse courte](#la-réponse-courte) ci-dessus. Un style de titre gouverne les pages de sa section ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)) : son `header` et son `footer` remplacent ceux du document, vides ici, ses `margins` fixent la zone de texte et son `advancedDesign` dessine l’ouverture. La hauteur d’une ouverture s’arrondit au nombre supérieur de lignes entières de la grille de 17 pt du texte courant. Un `minHeight` de 106 mm devient 18 lignes, si bien que la mention commence à 140 mm du bord supérieur ; en A4, `y()` le porte à 112,7 mm, soit 19 lignes, et la mention commence à 146 mm. Le bloc de titre seul ferait commencer la mention à 128 mm (134 mm en A4). Sans `marginBottom: 0`, les 0,5 em par défaut sous un titre porteraient les mêmes 106 mm à 19 lignes.
+Le style lui-même est [la réponse courte](#la-réponse-courte) ci-dessus. Un style de titre gouverne les pages de sa section ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)) : son `header` et son `footer` remplacent ceux du document, vides ici, ses `margins` fixent la zone de contenu et son `advancedDesign` dessine l’ouverture. La hauteur d’une ouverture s’arrondit au nombre supérieur de lignes entières de la grille de 17 pt du texte courant. Un `minHeight` de 106 mm devient 18 lignes : la mention commence donc à 140 mm du bord supérieur ; en A4, `y()` le porte à 112,7 mm, soit 19 lignes, et la mention commence à 146 mm. Le bloc de titre seul ferait commencer la mention à 128 mm (134 mm en A4). Sans `marginBottom: 0`, les 0,5 em par défaut sous un titre porteraient les mêmes 106 mm à 19 lignes.
 
 ### 2 · Accrocher le cadre à la page dans l’en-tête
 
 <Excerpt region="frame" />
 
-Un élément image dessine une ressource à la taille de son placement ([éléments image](/fr/docs/configuration-headers-footers#éléments-image)) : ancré au coin supérieur gauche de la page avec ses deux côtés à `'fill'`, le guilloché couvre la zone de coupe, et le SVG, déclaré aux proportions de la page, la remplit sans se déformer. L’en-tête le peint par-dessus `page.backgroundColor` et ne réserve aucune place, si bien que les marges suffisent à tenir le texte à 32 mm au moins de la coupe, à l’intérieur du filet intérieur placé à 26 mm. Un filigrane placé dans l’en-tête s’imprimerait par-dessus les mots, car l’en-tête est peint après le texte. Dans un en-tête, `{attr.serial}` lit l’attribut du titre dont relève la section de la page, si bien que chaque certificat imprime son propre numéro.
+Un élément image dessine une ressource à la taille de son placement ([éléments image](/fr/docs/configuration-headers-footers#éléments-image)) : ancré au coin supérieur gauche de la page avec ses deux côtés à `'fill'`, le guilloché couvre la zone de coupe, et le SVG, déclaré aux proportions de la page, la remplit sans se déformer. L’en-tête le peint par-dessus `page.backgroundColor` et ne réserve aucune place : les marges suffisent donc à tenir le texte à 32 mm au moins de la coupe, à l’intérieur du filet intérieur placé à 26 mm. Un filigrane placé dans l’en-tête s’imprimerait par-dessus les mots, car l’en-tête est peint après le texte. Dans un en-tête, `{attr.serial}` reprend l’attribut du titre dont relève la section de la page : chaque certificat imprime ainsi son propre numéro.
 
 ### 3 · Ne garder que le bloc de titre dans l’ouverture
 
 <Excerpt region="title" />
 
-Chaque ligne est ancrée au bord `'top'` de la page, ce qui la centre, avec un `y` mesuré depuis la coupe, si bien que le bloc garde sa place quelles que soient les marges ; `y()` étire ces positions du format Letter vers l’A4. Le nom est le texte même du titre, lu par `{titleText}`, si bien que les signets et les balises du PDF le portent. Un nom long prend une deuxième ligne, puisqu’une maquette de titre renvoie son texte à la ligne (`overflow: 'wrap'`). Les lignes interlettrées n’ont besoin d’aucune correction : l’approche qui suit la dernière lettre n’entre pas dans la mesure, si bien que ce sont les lettres elles-mêmes qui sont centrées.
+Chaque ligne est ancrée au bord `'top'` de la page, ce qui la centre, avec un `y` mesuré depuis la coupe : le bloc garde ainsi sa place quelles que soient les marges ; `y()` étire ces positions du format Letter vers l’A4. Le nom est le texte même du titre, lu par `{titleText}` : les signets et les balises du PDF le reprennent donc. Un nom long prend une deuxième ligne, puisqu’une maquette de titre renvoie son texte à la ligne (`overflow: 'wrap'`). Les lignes interlettrées n’ont besoin d’aucune correction : l’approche qui suit la dernière lettre n’entre pas dans la largeur mesurée : ce sont donc les lettres elles-mêmes qui sont centrées.
 
 ### 4 · Accrocher le sceau et les signatures à un même bord
 
 <Excerpt region="signatures" />
 
-Tout ce que contient le pied de page se mesure depuis `SIGN`, le bord supérieur du sceau, et la marge inférieure du style termine la zone de texte sur ce même bord, si bien qu’une mention trop longue pour la page passe à la suivante au lieu de courir sous le sceau. Placés dans l’ouverture, les lignes et les noms compteraient dans sa hauteur ([largeur et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)) ; comme ils descendent sous la zone de texte, l’ouverture réclamerait toute la page et renverrait la mention à la suivante. `LINE` prend la largeur entre les marges de la page, en retire le disque de 34 mm du sceau, divise le reste par deux et ôte 3 mm, si bien que chaque ligne s’arrête à 3 mm du sceau dans les deux formats (56 mm de long en Letter, 53 mm en A4). Chaque nom et chaque fonction est un élément texte aussi large que sa ligne, ce qui le centre sous la ligne.
+Tout ce que contient le pied de page se mesure depuis `SIGN`, le bord supérieur du sceau, et la marge inférieure du style termine la zone de contenu sur ce même bord : une mention trop longue pour la page passe donc à la suivante au lieu de courir sous le sceau. Placés dans l’ouverture, les lignes et les noms compteraient dans sa hauteur ([largeur et maquette avancée](/fr/docs/configuration-headings#étendue-et-maquette-avancée)) ; comme ils descendent sous la zone de contenu, l’ouverture réclamerait toute la page et renverrait la mention à la suivante. `LINE` prend la largeur entre les marges de la page, en retire le disque de 34 mm du sceau, divise le reste par deux et ôte 3 mm : chaque ligne s’arrête ainsi à 3 mm du sceau dans les deux formats (56 mm de long en Letter, 53 mm en A4). Chaque nom et chaque fonction est un élément texte aussi large que sa ligne, ce qui le centre sous la ligne.
 
 ### 5 · Fusionner la liste de la classe en titres
 
 <Excerpt region="merge" />
 
-Chaque rangée devient un titre `#` qui nomme le style et porte le numéro de série en attribut ([attributs de titre](/fr/docs/document-format#attributs-de-titre)), suivi du texte de `content.en.md`, si bien que trois rangées donnent trois pages. Le `breakBefore` du niveau 1, avec la parité `'any'`, fait commencer chaque titre sur une nouvelle page, sans page blanche entre les certificats ; le style en hérite.
+Chaque rangée devient un titre `#` qui indique le style et contient le numéro de série en attribut ([attributs de titre](/fr/docs/document-format#attributs-de-titre)), suivi du texte de `content.en.md` : trois rangées donnent donc trois pages. Le `breakBefore` du niveau 1, avec la parité `'any'`, fait commencer chaque titre sur une nouvelle page, sans page blanche entre les certificats ; le style en hérite.
 
 ### 6 · Composer un seul PDF pour toute la classe
 
 <Excerpt region="pdf" />
 
-La classe forme un seul document, si bien que `renderToPdf` écrit un unique fichier de trois pages avec un signet par titre, chacun au nom d’un élève. `renderToPdf` accepte aussi un tableau de documents, comme les chapitres d’un livre, mais un document par élève signifie un appel à `buildDocument` pour chacun. Sous forme de titres, toute la classe est mise en page en une seule composition, et la visionneuse montre les trois certificats issus de cette composition. Le PDF incorpore les quatre polices qu’impriment les pages, que le fournisseur de polices du kit va chercher sur Fontsource ([pourquoi un fournisseur de polices ?](/fr/docs/configuration-pdf-output#pourquoi-un-fournisseur-de-polices)).
+La classe forme un seul document : `renderToPdf` écrit donc un unique fichier de trois pages avec un signet par titre, chacun au nom d’un élève. `renderToPdf` accepte aussi un tableau de documents, comme les chapitres d’un livre, mais un document par élève signifie un appel à `buildDocument` pour chacun. Sous forme de titres, toute la classe est mise en page en une seule composition, et la visionneuse montre les trois certificats issus de cette composition. Le PDF incorpore les quatre polices qu’impriment les pages, que le fournisseur de polices du kit va chercher sur Fontsource ([pourquoi un fournisseur de polices ?](/fr/docs/configuration-pdf-output#pourquoi-un-fournisseur-de-polices)).
 
 ## Variantes
 
@@ -70,7 +70,7 @@ Un bouton par élève compose ce certificat comme un document à part, avec `bui
 
 ### Imprimer le cadre et le titre en bleu marine
 
-Les dessins SVG et la configuration lisent le même objet `palette`, si bien que changer une entrée recolore la bande, les motifs des rosaces et les lignes du titre.
+Les dessins SVG et la configuration lisent le même objet `palette` : changer une entrée recolore donc la bande, les motifs des rosaces et les lignes du titre.
 
 ```diff
 -  teal: '#1f5f5b', // the frame, the title lines

@@ -1,10 +1,10 @@
 ---
 title: "Une frise chronologique illustrée sur une double page"
-summary: "Un modèle de page en double page pour la frise d’un manuel : un bandeau passe le dos et deux rangées de fiches se partagent la largeur quand un texte s’allonge."
+summary: "Un gabarit en double page pour la frise d’un manuel : un bandeau passe le dos et deux rangées de fiches se partagent la largeur quand un texte s’allonge."
 plain: "Deux pages en vis-à-vis d’un manuel d’histoire faites comme une seule : un bandeau de couleur traverse le milieu du livre, et six fiches illustrées se partagent la largeur, et l’histoire la plus longue reçoit la fiche la plus large."
-description: "Une frise chronologique en double page avec Postext : un modèle, un bandeau qui passe le dos, des fiches qui partagent leur largeur, des points qui les suivent."
+description: "Une frise chronologique en double page avec Postext : un gabarit, un bandeau qui passe le dos, des fiches à largeur partagée, des points qui les suivent."
 question: "Comment mettre en page une frise chronologique sur une double page, avec des fiches sur les deux pages ?"
-aliases: ["frise chronologique", "chronologie", "double page", "modèle de page", "rangée de blocs", "timeline", "cronología", "年表", "見開き", "crossGutter"]
+aliases: ["frise chronologique", "chronologie", "double page", "gabarit de page", "rangée de blocs", "timeline", "cronología", "年表", "見開き", "crossGutter"]
 ---
 
 ## Ce que vous allez composer
@@ -17,7 +17,7 @@ Les pages 48 et 49 d’un manuel d’histoire de collège : *La route du papier*
 
 <Excerpt region="answer" />
 
-`spread: true` fait du modèle une seule feuille large comme les deux pages, et la section de la page le dit aussi avec `spread`. Une double page commence sur une page paire : la composition reçoit donc `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`. La page 1 de cet extrait est la page 48 du livre, une page de gauche, et aucune page blanche ne la précède. La grille a une colonne par page, séparées par deux fois la marge intérieure, si bien que seul le bandeau approche du pli. Le second bandeau porte `crossGutter` et un retrait gauche de 36 mm : sa couleur part de la fin du premier et passe le dos, ses mots commencent sur la page de droite, là où la mise en page les lit.
+`spread: true` fait du gabarit une seule feuille large comme les deux pages, et le délimiteur de la page l’indique aussi avec `spread`. Une double page commence sur une page paire : la composition reçoit donc `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`. La page 1 de cet extrait est la page 48 du livre, une page de gauche, et aucune page blanche ne la précède. La grille a une colonne par page, séparées par deux fois la marge intérieure : seul le bandeau approche donc du pli. Le second bandeau a `crossGutter` et un retrait gauche de 36 mm : sa couleur part de la fin du premier et passe le dos, ses mots commencent sur la page de droite, là où la mise en page les place.
 
 ### 2 · Des fiches qui se partagent la largeur
 
@@ -29,7 +29,7 @@ Chaque rangée de trois fiches est un groupe `row`, et chaque fiche a un `minHei
 
 <Excerpt region="marks" />
 
-Les points et les traits sont le décor (`decoration`) du modèle, ancrés à `#c1` … `#c6` par leur bord supérieur (`top`) et remontés de la distance qui les sépare du bandeau. Le décor est placé après les blocs : quand une fiche se déplace ou s’élargit, son point reste au-dessus de son centre. Le fond crème est lui aussi du décor, une boîte ancrée au pied du fond perdu dont la hauteur monte jusqu’au pied de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`) : elle suit le bandeau.
+Les points et les traits sont le décor (`decoration`) du gabarit, ancrés à `#c1` … `#c6` par leur bord supérieur (`top`) et remontés de la distance qui les sépare du bandeau. Le décor est placé après les blocs : quand une fiche se déplace ou s’élargit, son point reste au-dessus de son centre. Le fond crème est lui aussi du décor, une boîte ancrée au pied du fond perdu dont la hauteur monte jusqu’au pied de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`) : elle suit le bandeau.
 
 ### 4 · Des dessins à leur taille d’impression
 

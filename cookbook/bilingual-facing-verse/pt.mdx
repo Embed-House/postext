@@ -5,7 +5,7 @@ plain: "Um livrinho de poemas com o espanhol de um lado e a tradução inglesa a
 description: "Plaquete bilíngue composta no Postext: cada poema em espanhol fica diante da versão inglesa num boxe de duas colunas, com quebra fixa e :::space entre estrofes."
 question: "Como faço para pôr um poema e a tradução lado a lado, começando na mesma linha, estrofe por estrofe?"
 aliases: ["tradução lado a lado", "texto paralelo", "en face", "edição bilíngue", "poesia bilíngue", "tradução ao lado do original", "colunas dentro de um boxe", "atributo breaks", "quebra de coluna num boxe", "alinhar estrofes", "espaço entre estrofes", "verso que não cabe", "recuo deslocado", "verso", "plaquete", "edición bilingüe", "traducción enfrentada"]
-pageNotes: { "3": "A aquarela das salinas desce até 84 mm da borda superior. Embaixo dela, o poema I abre com o seu numeral; LA SALINA AL ALBA encabeça a coluna espanhola e THE SALT PANS AT DAWN o itálico inglês. O quarto verso inglês não cabe e continua na linha de baixo, e a primeira estrofe espanhola termina com duas linhas em branco, de modo que as duas segundas estrofes começam na mesma linha.", "4": "Os poemas II e III, cada um com o numeral sobre duas colunas cujas estrofes se correspondem verso a verso." }
+pageNotes: { "3": "A aquarela das salinas desce até 84 mm da borda superior. Embaixo dela, o poema I abre com o numeral; LA SALINA AL ALBA encabeça a coluna espanhola e THE SALT PANS AT DAWN o itálico inglês. O quarto verso inglês não cabe e continua na linha de baixo, e a primeira estrofe espanhola termina com duas linhas em branco, de modo que as duas segundas estrofes começam na mesma linha.", "4": "Os poemas II e III, cada um com o numeral sobre duas colunas cujas estrofes se correspondem verso a verso." }
 ---
 
 ## O que você vai compor
@@ -16,13 +16,13 @@ Uma plaquete bilíngue de cinco poemas sobre uma salina no sul da Espanha, em 15
 
 ### 1 · Um poema é um boxe com uma quebra de coluna fixa
 
-O código está [na resposta curta](#a-resposta-curta), mais acima. Cada poema é um boxe com um grupo `:::columns` dentro; o estilo dele tira o fundo e o preenchimento e imprime o `title` da cerca, que é o numeral ([`:::columns`](/pt/docs/document-format-directives#columns)). Sem `breaks`, o grupo corta onde as duas colunas ficam niveladas. As duas metades destes poemas têm a mesma altura, então o corte cai no título inglês de qualquer maneira; mas alongue dois versos de *The Rake* até eles não caberem, e o corte desce um bloco e deixa THE RAKE no pé da coluna espanhola. `breaks="5"` indica o bloco que abre a segunda coluna, e o título inglês a encabeça seja qual for a altura das duas metades.
+O código está [na resposta curta](#a-resposta-curta), mais acima. Cada poema é um boxe com um grupo `:::columns` dentro; o estilo dele tira o fundo e o preenchimento e imprime o `title` da linha de abertura, que é o numeral ([`:::columns`](/pt/docs/document-format-directives#columns)). Sem `breaks`, o grupo corta onde as duas colunas ficam niveladas. As duas metades destes poemas têm a mesma altura, de modo que o corte cai no título inglês de qualquer maneira; mas alongue dois versos de *The Rake* até eles não caberem, e o corte desce um bloco e deixa THE RAKE no pé da coluna espanhola. `breaks="5"` indica o bloco que abre a segunda coluna, e o título inglês a encabeça seja qual for a altura das duas metades.
 
 ### 2 · Um bloco :::verse por coluna, uma linha em branco por quebra de estrofe
 
 <Excerpt region="verse" />
 
-Cada metade de um poema é um bloco `:::verse`: um verso por linha do Markdown, em bandeira e sem hifenização, e uma linha em branco entre estrofes, que deixa uma linha em branco na coluna ([`:::verse`](/pt/docs/document-format-directives#verse)). Cada estrofe é um bloco, então `breaks` conta estrofes, não versos. O verso inglês *each one standing on its own reflection.* é longo demais para a coluna de 55 mm e continua na linha de baixo com recuo de 2 em; a metade espanhola fecha o seu bloco depois da estrofe em frente e põe um `:::space{lines=2}` antes da seguinte, e as estrofes seguintes começam na mesma linha. Um `:::space` não é um bloco, e `breaks` não o conta ([`:::space`](/pt/docs/document-format-directives#space)).
+Cada metade de um poema é um bloco `:::verse`: um verso por linha do Markdown, em bandeira e sem hifenização, e uma linha em branco entre estrofes, que deixa uma linha em branco na coluna ([`:::verse`](/pt/docs/document-format-directives#verse)). Cada estrofe é um bloco, por isso `breaks` conta estrofes, não versos. O verso inglês *each one standing on its own reflection.* é longo demais para a coluna de 55 mm e continua na linha de baixo com recuo de 2 em; a metade espanhola fecha o bloco depois da estrofe em frente e põe um `:::space{lines=2}` antes da seguinte, e as estrofes seguintes começam na mesma linha. Um `:::space` não é um bloco, e `breaks` não o conta ([`:::space`](/pt/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="O poema I na página 3: reflection. passa para a linha de baixo no inglês, e a estrofe espanhola termina com duas linhas em branco em vez de uma." />
 
@@ -36,7 +36,7 @@ Cada metade de um poema é um bloco `:::verse`: um verso por linha do Markdown, 
 
 <Excerpt region="front" />
 
-Cada uma é um título de nível 1 com estilo próprio ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)): o design da folha de rosto pega `{author}` do frontmatter, e os dois designs pegam `{attr.other}` dos atributos do título. A aquarela está ancorada na borda superior da página, acima da mancha, e o título reserva até o pé dela, a 84 mm da borda. O estilo define `marginBottom: pt(0)`, então o espaço sob a aquarela é a margem superior do próprio poema, de duas linhas, e o poema I começa na primeira linha da grade que fica pelo menos duas linhas abaixo da imagem.
+Cada uma é um título de nível 1 com estilo próprio ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)): o design da folha de rosto pega `{author}` do front matter, e os dois designs pegam `{attr.other}` dos atributos do título. A aquarela está ancorada na borda superior da página, acima da mancha, e o título reserva até o pé dela, a 84 mm da borda. O estilo define `marginBottom: pt(0)`, por isso o espaço sob a aquarela é a margem superior do próprio poema, de duas linhas, e o poema I começa na primeira linha da grade que fica pelo menos duas linhas abaixo da imagem.
 
 ### 5 · Os cabeços nomeiam as duas línguas
 
@@ -48,7 +48,7 @@ A página par traz o título espanhol e a ímpar o inglês, na ordem das colunas
 
 ### Alargar a medianiz
 
-Com 12 mm, as colunas ficam com 53 mm, e *Los turistas paran y hacen fotos:* deixa de caber no poema III, então a segunda estrofe começa uma linha abaixo da inglesa; feche o bloco inglês depois dessa estrofe e ponha um `:::space{lines=2}` antes da seguinte para nivelá-las.
+Com 12 mm, as colunas ficam com 53 mm, e *Los turistas paran y hacen fotos:* deixa de caber no poema III, de modo que a segunda estrofe começa uma linha abaixo da inglesa; feche o bloco inglês depois dessa estrofe e ponha um `:::space{lines=2}` antes da seguinte para nivelá-las.
 
 ```diff
 -const GAP = 8; // mm between the original and the translation: each column is 55 mm wide
@@ -67,4 +67,4 @@ Com 3 em, *reflection.* na página 3 começa um em mais para dentro.
 ## Erros comuns
 
 - Um `:::space` posto antes do título inglês desaparece: a segunda coluna abre no bloco que `breaks` indica, e o espaço cai no corte. Ponha-o depois do título, como o `:::space{lines=0.5}` sob o título de cada coluna aqui.
-- Conte `breaks` a partir do título espanhol: com um título e três estrofes, o título inglês é o bloco 5. Cada estrofe é um bloco, então uma estrofe espanhola a mais leva o título inglês para o bloco 6, e `breaks` precisa subir junto; um verso a mais dentro de uma estrofe não muda nada.
+- Conte `breaks` a partir do título espanhol: com um título e três estrofes, o título inglês é o bloco 5. Cada estrofe é um bloco, por isso uma estrofe espanhola a mais leva o título inglês para o bloco 6, e `breaks` precisa subir junto; um verso a mais dentro de uma estrofe não muda nada.

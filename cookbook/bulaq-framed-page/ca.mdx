@@ -2,7 +2,7 @@
 title: "Una pàgina de Bulaq: el text emmarcat pel seu comentari"
 summary: "El comentari d'Ibn ʿAqīl a la columna principal i les glosses a la lateral exterior, al costat del que expliquen, dins d'un marc de filets dobles."
 plain: "Una pàgina feta com els llibres àrabs impresos al Caire al segle XIX: el text principal al centre, notes breus sobre ell en una columna estreta al costat de la vora i tota la pàgina tancada entre filets impresos."
-description: "Una pàgina a l'estil de Bulaq amb Postext: columna i mitja amb requadres laterals per a la ḥāshiya, filet de columna i un marc per a cada costat del plec."
+description: "Una pàgina a l'estil de Bulaq amb Postext: columna i mitja, requadres laterals per a la ḥāshiya, filet de columna i un marc a cada costat de la doble pàgina."
 question: "Com componc una pàgina de Bulaq, amb el comentari emmarcat al voltant del text?"
 aliases: ["Bulaq", "Būlāq", "ḥāshiya", "hamix", "comentari al marge", "sharḥ", "pàgina de comentari", "Ibn ʿAqīl", "Alfiyya", "Ibn Mālik", "gramàtica àrab", "marc de filets", "jadwal", "شرح ابن عقيل", "حاشية", "هامش"]
 pageNotes: { "2": "La primera pàgina de text dins d'un marc de filets dobles: un títol en ruqʿa vermell, els primers versos de l'Alfiyya en vermell, dos per línia, i el comentari d'Ibn ʿAqīl en negre; en una columna estreta al costat de la vora dreta, darrere d'un filet vertical, tres glosses amb les primeres paraules en vermell." }
@@ -16,7 +16,7 @@ Sis pàgines compostes com imprimien un comentari la impremta de Bulaq i les sev
 
 ### 1 · La ḥāshiya en una columna lateral pròpia
 
-El codi és [la resposta curta](#la-resposta-curta) de dalt. Un disseny en columna i mitja amb una columna lateral que només admet flotants deixa el comentari fora del flux del text: cada glossa és un `:::callout{type="hashiya" span="side"}` escrit abans del passatge que explica, i comença a l'altura de la seva primera línia; `sideAtColumnEnd: 'after'` el manté al costat del passatge quan aquest continua a la pàgina següent ([Disposició](/ca/docs/configuration-page-layout#disposició)). El requadre no té fons, vora ni farciment, així que es llegeix com a text compost al marge, amb el lema en negreta, que `boldColor` posa en vermell. `sideColumnSide: 'outer'` porta la columna al tall davanter de les dues pàgines: a la dreta de la pàgina parella, que en un llibre enquadernat per la dreta queda a la dreta del plec.
+El codi és [la resposta curta](#la-resposta-curta) de dalt. Un disseny en columna i mitja amb una columna lateral que només admet flotants deixa el comentari fora del flux del text: cada glossa és un `:::callout{type="hashiya" span="side"}` escrit abans del passatge que explica, i comença a l'altura de la seva primera línia; `sideAtColumnEnd: 'after'` el manté al costat del passatge quan aquest continua a la pàgina següent ([Disposició](/ca/docs/configuration-page-layout#disposició)). El requadre no té fons, vora ni farciment, així que es llegeix com a text compost al marge, amb el lema en negreta, que `boldColor` posa en vermell. `sideColumnSide: 'outer'` porta la columna al tall davanter de les dues pàgines: a la dreta de la pàgina parella, que en un llibre enquadernat per la dreta queda a la dreta de la doble pàgina.
 
 <PageShot page={2} crop="0,0.58,1,0.34" caption="Pàgina 2: la glossa sobre «كديز» comença a l'altura del paràgraf que fa servir la paraula, a la vora exterior, darrere del filet de columna." />
 
@@ -30,7 +30,7 @@ El marc són tres elements de disseny de pàgina a la capçalera: dues caixes am
 
 <Excerpt region="title" />
 
-La portada reutilitza el marc sense la banda. El disseny d'un títol es compon dins el flux i es reflecteix amb la pàgina, així que allà el marc es construeix amb els costats canviats (`inFlow`): la seva esquerra és la dreta del full. Les seves línies surten d'atributs del títol, `on` i `margin`, de manera que tota la portada és una línia de Markdown, i la línia llatina de sota canvia amb l'edició.
+La portada reutilitza el marc sense la banda. El disseny d'un títol es compon dins el flux i s'emmiralla amb la pàgina, així que allà el marc es construeix amb els costats canviats (`inFlow`): la seva esquerra és la dreta del full. Les seves línies surten d'atributs del títol, `on` i `margin`, de manera que tota la portada és una línia de Markdown, i la línia llatina de sota canvia amb l'edició.
 
 ## Variants
 

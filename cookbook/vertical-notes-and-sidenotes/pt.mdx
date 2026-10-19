@@ -1,7 +1,7 @@
 ---
 title: "Notas ao lado de um texto japonês vertical, na página dupla"
 summary: "O 1º capítulo de Brincadeiras de criança, de Ichiyō, com sete notas como 傍注: （1） à direita da linha e as notas da página dupla no corte da página esquerda."
-plain: "Um conto clássico japonês com explicações curtas dos seus nomes de lugares antigos. Os numerozinhos ficam ao lado do texto, e as explicações das duas páginas abertas se juntam na borda externa da página esquerda."
+plain: "Um conto clássico japonês com explicações curtas dos nomes de lugares antigos. Os numerozinhos ficam ao lado do texto, e as explicações das duas páginas abertas se juntam na borda externa da página esquerda."
 description: "Takekurabe, de Ichiyō, no Postext com notas na página dupla: chamadas （1） à direita da linha, notas no corte da página esquerda, gergelim e 後注."
 question: "Como faço para compor as notas de um livro japonês vertical ao lado do texto, na página dupla?"
 aliases: ["傍注", "bōchū", "notas laterais", "notas na margem", "notas marginais", "後注", "kōchū", "notas de fim", "notas japonesas", "注", "（1）", "割注", "chamadas de nota", "notas da página dupla", "notas no corte", "傍点", "bōten", "gergelim", "たけくらべ", "Takekurabe", "Brincadeiras de criança", "Higuchi Ichiyō", "樋口一葉", "Yoshiwara"]
@@ -16,7 +16,7 @@ Quatro páginas de uma edição 四六判 de *Brincadeiras de criança* (たけ�
 
 ### 1 · Juntar as notas da página dupla no corte da página esquerda
 
-O código é [a resposta curta](#a-resposta-curta) acima. `footnotes.placement: 'spread'` compõe as notas citadas nas páginas 2 e 3 no fim do texto da página 3, que num livro encadernado pela direita é o seu corte da frente, e `numbering: 'spread'` recomeça em （1） as notas de cada página dupla ([Notas de rodapé](/pt/docs/configuration-notes-references#notas-de-rodapé)). Uma nota citada na página direita espera pela esquerda; se as notas deixarem à página esquerda menos de uma linha de texto, as que sobram ficam no pé da página direita, como o JLReq permite. Um documento com a etiqueta `ja` já compõe as chamadas de um livro vertical como `（{n}）` à direita da linha, em 0,7 em, com os algarismos em pé: as duas linhas escritas aqui deixam isso à vista. `numberGap: 'em'` põe um caractere de nota inteiro depois do número, e `hangingIndent: em(2)` alinha as linhas seguintes depois dele.
+O código é [a resposta curta](#a-resposta-curta) acima. `footnotes.placement: 'spread'` compõe as notas citadas nas páginas 2 e 3 no fim do texto da página 3, que num livro encadernado pela direita é o corte da frente, e `numbering: 'spread'` recomeça em （1） as notas de cada página dupla ([Notas de rodapé](/pt/docs/configuration-notes-references#notas-de-rodapé)). Uma nota citada na página direita espera pela esquerda; se as notas deixarem à página esquerda menos de uma linha de texto, as que sobram ficam no pé da página direita, como o JLReq permite. Um documento com a etiqueta `ja` já compõe as chamadas de um livro vertical como `（{n}）` à direita da linha, em 0,7 em, com os algarismos em pé: as duas linhas escritas aqui deixam isso à vista. `numberGap: 'em'` põe um caractere de nota inteiro depois do número, e `hangingIndent: em(2)` alinha as linhas seguintes depois dele.
 
 ### 2 · Escrever as chamadas onde o japonês as põe
 
@@ -30,7 +30,7 @@ O Markdown escreve `見返り柳[^1]` depois da palavra que a nota explica, e as
 
 <Excerpt region="opener" />
 
-A primeira frase do capítulo cita quatro notas nas suas três primeiras linhas. Sob um título na página 1, elas deixariam espaço para três linhas de texto: a página esquerda leva só as próprias notas. Uma folha de rosto sozinha na página 1 leva o capítulo para a página 2, uma página direita, e a primeira página dupla reúne o texto e todas as suas notas. A folha de rosto é um título de nível 1 cujo desenho ocupa a página, ancorado ao refile para que o título fique no eixo da página.
+A primeira frase do capítulo cita quatro notas nas três primeiras linhas. Sob um título na página 1, elas deixariam espaço para três linhas de texto: a página esquerda leva só as próprias notas. Uma folha de rosto sozinha na página 1 leva o capítulo para a página 2, uma página direita, e a primeira página dupla reúne o texto e todas as notas. A folha de rosto é um título de nível 1 cujo desenho ocupa a página, ancorado ao refile para que o título fique no eixo da página.
 
 ### 5 · Pôr o hashira e os fólios no corte da frente
 

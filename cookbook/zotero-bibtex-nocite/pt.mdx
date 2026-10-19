@@ -16,7 +16,7 @@ A lista de leituras de um seminário de seis semanas sobre história e sociologi
 
 ### 1 · Dar nome ao estilo uma vez
 
-O código é [a resposta curta](#a-resposta-curta) acima. O motor de citações é registrado antes da primeira composição, e o estilo é uma única configuração: o Chicago autor-data escreve “(Shapin 1984)” para `[@shapin_pump_1984]` e “Shapin and Schaffer (1985)” para `@shapin_leviathan_1985` dentro da frase. As chaves são as que o Zotero montou com o primeiro autor, a primeira palavra significativa do título e o ano, então `gieryn_boundary-work_1983` mantém o hífen; o Postext lê um hífen ou um sublinhado dentro de uma chave como parte dela.
+O código é [a resposta curta](#a-resposta-curta) acima. O motor de citações é registrado antes da primeira composição, e o estilo é uma única configuração: o Chicago autor-data escreve “(Shapin 1984)” para `[@shapin_pump_1984]` e “Shapin and Schaffer (1985)” para `@shapin_leviathan_1985` dentro da frase. As chaves são as que o Zotero montou com o primeiro autor, a primeira palavra significativa do título e o ano, por isso `gieryn_boundary-work_1983` mantém o hífen; o Postext lê um hífen ou um sublinhado dentro de uma chave como parte dela.
 
 ### 2 · Colar a exportação como o Zotero a escreve
 
@@ -38,11 +38,11 @@ O último bloco do documento guarda a exportação, uma entrada por obra, recuad
 }
 ```
 
-O leitor tira as chaves que protegem as maiúsculas, compõe `{\"o}` e `{\'e}` em ö e é, transforma `--` em meia-risca e lê `month = dec` como um nome de mês sem chaves. `urldate` vira a data de acesso, e `language` a língua da obra; `file`, `keywords`, `abstract` e `shorttitle` são ignorados, então nada do seu disco chega à página.
+O leitor tira as chaves que protegem as maiúsculas, compõe `{\"o}` e `{\'e}` em ö e é, transforma `--` em meia-risca e lê `month = dec` como um nome de mês sem chaves. `urldate` vira a data de acesso, e `language` a língua da obra; `file`, `keywords`, `abstract` e `shorttitle` são ignorados, de modo que nada de seu disco chega à página.
 
 ### 3 · Trazer as obras que o texto não cita
 
-O frontmatter as lista pela chave:
+O front matter as lista pela chave:
 
 ```yaml
 ---
@@ -86,4 +86,4 @@ As mesmas chaves dão uma lista Harvard (Cite Them Right) sem nenhuma outra muda
 - Uma chave em `nocite` que não corresponde a nenhuma entrada é descartada sem aviso. Copie as chaves da exportação em vez de digitá-las, e conte as entradas na página.
 - O Zotero monta as chaves a partir dos dados: corrija o nome de um autor ou um título no Zotero, e a próxima exportação pode mudar a chave, o que quebra todas as citações dela. Fixe as chaves antes de escrever o texto: o Zotero lê uma linha `Citation Key: …` no campo Extra de um item.
 - O Zotero exporta em UTF-8 por padrão, com os acentos como são. O bloco aqui foi exportado com a opção de codificação Western, que escreve `{\"o}`; o Postext lê as duas.
-- A 18ª edição do Chicago omite o local de publicação, então o campo `address` não é impresso, e um artigo com DOI mostra o DOI, e não o `url` do JSTOR.
+- A 18ª edição do Chicago omite o local de publicação, por isso o campo `address` não é impresso, e um artigo com DOI mostra o DOI, e não o `url` do JSTOR.

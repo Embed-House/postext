@@ -1,31 +1,31 @@
 ---
 title: "Fußnoten am Fuß der Spalte, die sie zitiert"
-summary: "Markdown-Marken [^id] werden zu nummerierten Fußnoten am Fuß der zitierenden Spalte, mit Schaltern für eine Spalte, Kapitelendnoten und durchgehende Nummern."
+summary: "Fußnotenzeichen [^id] im Markdown werden zu nummerierten Fußnoten am Fuß ihrer Spalte, mit Schaltern für eine Spalte, Kapitelendnoten und durchgehende Nummern."
 plain: "Eine Schulausgabe eines klassischen spanischen Romans in zwei Spalten. Sie zeigt, wie jede Anmerkung unten in der Spalte steht, die sie erwähnt, sodass niemand umblättern muss, um sie zu finden."
-description: "Eine Schulausgabe des Lazarillo de Tormes in zwei Spalten: jede Fußnote am Fuß der zitierenden Spalte, unter einer kurzen Linie, mit dem ganzen Postext-Code."
-question: "Wie setze ich Fußnoten an den Fuß der Spalte, in der sie zitiert werden?"
+description: "Eine Schulausgabe des Lazarillo de Tormes in zwei Spalten: jede Fußnote am Fuß ihrer Spalte, unter einer kurzen Linie, mit dem ganzen Postext-Code."
+question: "Wie setze ich Fußnoten an den Fuß der Spalte, in der auf sie verwiesen wird?"
 aliases: ["Fußnoten", "Anmerkungen am Seitenfuß", "[^1]", "Fußnotenzeichen", "Endnoten", "kommentierte Ausgabe", "Schulausgabe", "footnotes"]
 ---
 
 ## Was Sie setzen
 
-Eine Schulausgabe des *Lazarillo de Tormes*, 210 × 280 mm in zwei Spalten aus der EB Garamond: der Prolog und der Anfang des ersten Traktats, in dem Lázaro in einer Mühle am Tormes geboren wird und mit einem Blinden in die Welt hinauszieht. Die Fußnoten erklären, was ein Leser von 1554 wusste und ein heutiger Leser nicht: das Dorf Tejares, den Feldzug zur Insel Los Gelves, den steinernen Stier auf der Brücke von Salamanca. Jede steht am Fuß der Spalte, die sie zitiert, kleiner gesetzt unter einer kurzen ochsenblutroten Linie, sodass das Auge von der Ziffer zur Fußnote und zurück springt, ohne eine Seite umzublättern. Die englische Ausgabe trägt Clements Markhams eigene Anmerkungen aus seiner Übersetzung von 1908.
+Eine Schulausgabe des *Lazarillo de Tormes*, 210 × 280 mm in zwei Spalten aus der EB Garamond: der Prolog und der Anfang des ersten Traktats, in dem Lázaro in einer Mühle am Tormes geboren wird und mit einem Blinden in die Welt hinauszieht. Die Fußnoten erklären, was ein Leser von 1554 wusste und ein heutiger Leser nicht: das Dorf Tejares, den Feldzug zur Insel Los Gelves, den steinernen Stier auf der Brücke von Salamanca. Jede steht am Fuß der Spalte, die auf sie verweist, kleiner gesetzt unter einer kurzen ochsenblutroten Linie, sodass das Auge von der Ziffer zur Fußnote und zurück springt, ohne eine Seite umzublättern. Die englische Ausgabe enthält Clements Markhams eigene Anmerkungen aus seiner Übersetzung von 1908.
 
 ## Zubereitung
 
 ### 1 · Die Fußnote dort zitieren, wo sie hingehört, und sie irgendwo definieren
 
-Die Konfiguration steht oben in [der kurzen Antwort](#die-kurze-antwort); der Rest ist Markdown. `natives of Tejares,[^9]` druckt eine hochgestellte Ziffer direkt am Komma, und ein Absatz, der mit `[^9]:` beginnt, enthält die Fußnote. Definitionen verlassen den Fluss, wo immer Sie sie schreiben, deshalb hält dieses Beispiel sie alle am Ende des Kapitels, so wie Markhams Anmerkungen in der Quelldatei standen. Die Nummern folgen der Reihenfolge der Zitate, sodass die Markdown-IDs Wörter sein können (`[^tejares]` in der spanischen Ausgabe) und das Neunummerieren eines Kapitels nie bedeutet, die Fußnoten zu bearbeiten.
+Die Konfiguration steht oben in [der kurzen Antwort](#die-kurze-antwort); der Rest ist Markdown. `natives of Tejares,[^9]` setzt eine hochgestellte Ziffer direkt am Komma, und ein Absatz, der mit `[^9]:` beginnt, enthält die Fußnote. Definitionen verlassen den Fluss, wo immer Sie sie schreiben, deshalb hält dieses Beispiel sie alle am Ende des Kapitels, so wie Markhams Anmerkungen in der Quelldatei standen. Die Nummern folgen der Reihenfolge der Verweise, sodass die Markdown-IDs Wörter sein können (`[^tejares]` in der spanischen Ausgabe) und das Neunummerieren eines Kapitels nie bedeutet, die Fußnoten zu bearbeiten.
 
 ### 2 · Der Spalte Raum für ihre Fußnoten lassen
 
-Bevor es eine Zeile setzt, rechnet das Layout die Höhe der Fußnoten hinzu, die diese Zeile zum ersten Mal zitiert, und die Linie, wenn es die erste Fußnote der Spalte ist. Eine Zeile, deren Fußnote nicht mehr darunter passt, geht mit ihrem Absatz in die nächste Spalte, unter den Regeln für Witwen und Waisen, sodass eine Ziffer nie auf eine Fußnote in einer anderen Spalte zeigt. Die Fußnoten stapeln sich vom Fuß aufwärts in ihrem eigenen Grad und Zeilenabstand, außerhalb des Grundlinienrasters, während der Text darüber auf dem Raster bleibt; der Spaltenausgleich zählt nur den Text.
+Bevor es eine Zeile setzt, rechnet das Layout die Höhe der Fußnoten hinzu, auf die diese Zeile zum ersten Mal verweist, und die Linie, wenn es die erste Fußnote der Spalte ist. Eine Zeile, deren Fußnote nicht mehr darunter passt, geht mit ihrem Absatz in die nächste Spalte, unter den Regeln für Witwen und Waisen, sodass eine Ziffer nie auf eine Fußnote in einer anderen Spalte zeigt. Die Fußnoten stapeln sich vom Fuß aufwärts in ihrem eigenen Grad und Zeilenabstand, außerhalb des Grundlinienrasters, während der Text darüber auf dem Raster bleibt; der Spaltenausgleich zählt nur den Text.
 
 ### 3 · Jeden Auftakt auf dieselbe Zeile absenken
 
 <Excerpt region="opener" />
 
-Der Auftakt läuft über beide Spalten und zeichnet die Dachzeile des Kapitels aus dem Attribut `kicker` der Überschrift. `minHeight` reserviert zehn Rasterzeilen, genug für einen zweizeiligen Titel in der Bodoni und seine Linie, sodass der Text jedes Kapitels auf derselben Zeile beginnt und die Linie nie auf der ersten Textzeile landet.
+Der Auftakt läuft über beide Spalten und zeichnet die Dachzeile des Kapitels aus dem Attribut `kicker` der Überschrift. `minHeight` reserviert zehn Rasterzeilen, genug für einen zweizeiligen Titel in der Bodoni und seine Linie, sodass der Text jedes Kapitels auf derselben Zeile beginnt und die Linie nie auf der ersten Textzeile steht.
 
 ### 4 · Das Buch auf die linke Seite, das Kapitel auf die rechte
 
@@ -61,5 +61,5 @@ Ohne die Linie halten die Fußnoten über `spaceAbove` und `spaceBelowRule` weit
 
 ## Häufige Fehler
 
-- Eine Marke in einer Legende, einer Tabellenzelle oder einer Überschrift wird gedruckt, wie sie geschrieben ist: Fußnoten werden in Absätzen, Listeneinträgen, Zitaten und Kästen gelesen.
+- Ein Fußnotenzeichen in einer Legende, einer Tabellenzelle oder einer Überschrift erscheint, wie es geschrieben ist: Fußnoten werden nur in Absätzen, Listeneinträgen, Zitaten und Kästen erkannt.
 - Eine Fußnote wird nie über Spalten geteilt: Eine, die höher ist als ihre Spalte, läuft über den Fuß hinaus. Halten Sie Fußnoten bei wenigen Zeilen, wie es Herausgeber tun.

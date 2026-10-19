@@ -3,23 +3,23 @@
 export const metadata = {
   title: 'Páginas compostas',
   sidebarTitle: 'Páginas compostas',
-  description: 'O Markdown das páginas compostas: a cerca de página de quatro dois-pontos que nomeia um modelo de página, os blocos e o atributo slot que levam o conteúdo aos blocos do modelo, as figuras com rótulos nas âncoras de uma imagem e os avisos que conferem o conteúdo com o modelo',
+  description: 'Como se escreve uma página composta em Markdown: o contêiner ::::page, aberto com quatro sinais de dois-pontos, que indica o modelo; os blocos e o atributo slot, que distribuem o conteúdo pelos blocos do modelo; as figuras com rótulos em pontos de uma imagem; e os avisos que aparecem quando o conteúdo não corresponde ao modelo',
   lang: 'pt',
   lastUpdated: '2026-10-17',
   readingTime: '9 min',
   order: 34,
-  plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: a cerca da página, os blocos, os nomes de slot e as imagens com rótulos, como os nomes de um mapa. Ela também lista os avisos que o Postext dá quando o texto e o modelo não batem.",
+  plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: o contêiner de página, os blocos, os nomes de slot e as imagens com rótulos, como os nomes de um mapa. Ela também lista os avisos que o Postext mostra quando o texto e o modelo não combinam.",
 };
 
 # Páginas compostas
 
 **O modelo guarda a forma da página; o Markdown guarda o conteúdo e diz para qual bloco vai cada trecho.**
 
-Uma página composta é diagramada a partir de um modelo: blocos com nome (uma faixa de título, um texto, uma caixa com a sua foto), grupos que se movem juntos e uma decoração, tudo definido na configuração, em `pageTemplates`. O Markdown da página é um contêiner cercado que nomeia o seu modelo e distribui o conteúdo pelos blocos, pelo nome de cada um. Nenhuma posição ou tamanho é escrito no Markdown, e nenhum texto do conteúdo é escrito na configuração, então uma tradução é o mesmo modelo com outras palavras.
+Uma página composta é diagramada a partir de um modelo: blocos com nome (uma faixa de título, um texto, uma caixa com a foto dela), grupos que se movem juntos e uma decoração, tudo definido na configuração, em `pageTemplates`. No Markdown, a página é um contêiner que indica o modelo e distribui o conteúdo pelos blocos, pelo nome de cada um. Nenhuma posição ou tamanho vai para o Markdown, e nenhum texto vai para a configuração; por isso, uma tradução usa o mesmo modelo, só com outras palavras.
 
-Esta página trata do Markdown e de como a página é composta a partir dele. O modelo em si (os seus blocos, tamanhos, estilos e decoração) está descrito em [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages). Um documento sem páginas compostas é diagramado exatamente como antes.
+Esta página trata do Markdown e de como a página é diagramada a partir dele. O modelo em si (os blocos, os tamanhos, os estilos e a decoração) está descrito em [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages). Um documento sem páginas compostas é diagramado exatamente como antes.
 
-## A cerca de página
+## O contêiner de página
 
 ```md
 ::::page{template="tema-cajas" fondo="banda-retos"}
@@ -29,7 +29,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
 ::::
 ```
 
-Uma página composta abre com uma linha de **quatro dois-pontos** seguida de `page` e dos seus atributos, e fecha com uma linha que só tem o **mesmo número de dois-pontos**. Dentro dela, os contêineres de três dois-pontos (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) abrem e fecham como sempre, então um `:::` sozinho fecha o mais interno deles e nunca a página. Uma página escrita com cinco dois-pontos (`:::::page`) fecha com cinco, e uma linha de quatro dois-pontos dentro dela passa a ser texto comum.
+Uma página composta se escreve como um *contêiner de página*: abre com uma linha de **quatro sinais de dois-pontos** seguida de `page` e dos atributos, e fecha com uma linha que só tem o **mesmo número de sinais**. Dentro dela, os contêineres de três sinais (`:::frame`, `:::callout`, `:::figure`, `:::columns`, `:::paper`) abrem e fecham como sempre; por isso, um `:::` sozinho fecha o mais interno deles e nunca a página. Uma página aberta com cinco sinais (`:::::page`) fecha com cinco, e uma linha de quatro sinais dentro dela passa a ser texto comum.
 
 <table>
   <thead>
@@ -41,22 +41,22 @@ Uma página composta abre com uma linha de **quatro dois-pontos** seguida de `pa
   <tbody>
     <tr><td><code>template="…"</code></td><td>Obrigatório. O id de uma entrada de <code>pageTemplates</code>.</td></tr>
     <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas lado a lado (veja <a href="#páginas-duplas">Páginas duplas</a>). Ela precisa concordar com o <code>spread</code> do modelo; caso contrário, vale o modelo e <code>spreadMismatch</code> avisa.</td></tr>
-    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime a página em que a página composta cai.</td></tr>
-    <tr><td><code>palette="…"</code></td><td>Cores das entradas da paleta desta página, como pares <code>entrada=#hex</code> separados por vírgulas: <code>palette="tom=#f6c3d0"</code> para uma página cujas caixas recebem a cor do tema. Toda cor dos seus blocos e da sua decoração ligada à paleta as recebe, por cima da <code>palette</code> do modelo. Desde o postext 1.42.</td></tr>
+    <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime o número da página composta.</td></tr>
+    <tr><td><code>palette="…"</code></td><td>Cores das entradas da paleta desta página, como pares <code>entrada=#hex</code> separados por vírgulas: <code>palette="tom=#f6c3d0"</code> para uma página cujas caixas recebem a cor do tema. Toda cor dos blocos e da decoração dela ligada à paleta recebe esses valores, por cima da <code>palette</code> do modelo. Desde o postext 1.42.</td></tr>
     <tr><td>qualquer outro</td><td>Um valor que o modelo lê como <code>&#123;attr.name&#125;</code>, por exemplo uma imagem de fundo escolhida página a página: <code>fondo="banda-retos"</code> com <code>resourceId: "&#123;attr.fondo&#125;"</code> na decoração.</td></tr>
   </tbody>
 </table>
 
-Uma página composta sempre começa uma página nova (ou uma página dupla), e o texto depois da sua cerca de fechamento começa na seguinte.
+Uma página composta sempre começa uma página nova (ou uma página dupla), e o texto depois da linha de fechamento começa na seguinte.
 
-O `:::page{split=…}` de três dois-pontos é uma página de quadrinhos (veja [Quadrinhos](/pt/docs/comics)) e mantém esse sentido. Um `:::page` de três dois-pontos que traz `template=` continua sendo lido como página de quadrinhos, e o aviso `pageFenceLength` diz que uma página composta precisa de quatro dois-pontos.
+O `:::page{split=…}`, com três sinais de dois-pontos, é uma página de quadrinhos (veja [Quadrinhos](/pt/docs/comics)) e mantém esse sentido. Um `:::page` com três sinais que traz `template=` continua sendo lido como página de quadrinhos, e o aviso `pageFenceLength` diz que uma página composta precisa de quatro.
 
-Quando falta uma cerca, o analisador se recupera sem perder texto:
+Quando falta uma linha de abertura ou de fechamento, o analisador se recupera sem perder texto:
 
-- uma página que fica aberta vai até o fim do capítulo e é assinalada como contêiner não fechado na sua linha de abertura;
-- uma linha `::::page` encontrada com uma página aberta fecha antes, ali mesmo, a página aberta (e é assinalada do mesmo jeito);
-- a cerca de fechamento fecha qualquer bloco ou boxe que ainda esteja aberto dentro da página, e assinala cada um;
-- uma cerca de fechamento com outro número de dois-pontos não é a da página: ela fica no texto, à vista.
+- uma página que fica aberta vai até o fim do capítulo, e o Postext a aponta como contêiner não fechado na linha de abertura;
+- uma linha `::::page` encontrada com uma página aberta fecha ali mesmo a página aberta (e o Postext aponta isso do mesmo jeito);
+- a linha de fechamento fecha qualquer bloco ou boxe que ainda esteja aberto dentro da página, e o Postext aponta cada um;
+- uma linha de fechamento com outro número de sinais não fecha a página: ela fica no texto, à vista.
 
 ## Blocos e slots
 
@@ -68,9 +68,9 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Um **slot** é o nome que um trecho de conteúdo pede, e corresponde ao nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O seu corpo é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele.
+Um **slot** indica o bloco para onde vai um trecho de conteúdo: é o nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O corpo dele é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele.
 
-Um elemento avulso também pode nomear o seu próprio slot:
+Um elemento avulso também pode indicar o próprio slot:
 
 <table>
   <thead>
@@ -92,9 +92,9 @@ Como o conteúdo é distribuído:
 
 - Vários trechos com o mesmo slot são juntados na ordem do Markdown.
 - O conteúdo sem slot vai para o **bloco de fluxo** do modelo (o que está marcado com `flow`).
-- Um título sem slot vai primeiro para o bloco que recebe o seu nível (`takes: "h1"`), se o modelo tiver um, então o título de um tema de livro didático é só um `# Título` no alto da página.
+- Um título sem slot vai primeiro para o bloco que recebe o nível dele (`takes: "h1"`), se o modelo tiver um; assim, o título de um tema de livro didático é só um `# Título` no alto da página.
 - Um `:::toc` sem slot vai para o bloco com `takes: "toc"`, se o modelo tiver um (veja *O sumário em um bloco*, mais abaixo).
-- O conteúdo que nomeia um slot que o modelo não tem vai para o bloco de fluxo e é assinalado (`slotUnknown`).
+- O conteúdo que indica um slot que o modelo não tem vai para o bloco de fluxo, e o Postext gera o aviso `slotUnknown`.
 
 Um `slot` fora de uma página composta é lido e não muda nada.
 
@@ -108,17 +108,17 @@ Um `slot` fora de uma página composta é lido e não muda nada.
 :::
 ```
 
-`:::figure{resource="…"}` coloca um recurso, com a sua legenda e o seu número, como faz `::resource`, e lista os rótulos que vão sobre a imagem: uma linha `::label[TEXTO]{…}` por rótulo, com linhas em branco permitidas entre elas.
+`:::figure{resource="…"}` coloca um recurso, com a legenda e o número dele, como faz `::resource`, e lista os rótulos que vão sobre a imagem: uma linha `::label[TEXTO]{…}` por rótulo, com linhas em branco permitidas entre elas.
 
-- `at` nomeia uma âncora do recurso (um ponto definido uma única vez sobre a imagem e compartilhado por todos os idiomas), ou dá um ponto em porcentagens da imagem, `at="x% y%"`, para um rótulo sem âncora.
-- `style` nomeia um estilo de rótulo e passa por cima do estilo da âncora.
+- `at` indica uma âncora do recurso (um ponto definido uma única vez sobre a imagem e compartilhado por todos os idiomas), ou dá um ponto em porcentagens da imagem, `at="x% y%"`, para um rótulo sem âncora.
+- `style` indica um estilo de rótulo e prevalece sobre o estilo da âncora.
 - O texto entre colchetes é Markdown em linha: negrito, itálico, chips.
 
-Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os seus rótulos são desenhados sobre a imagem como texto e vão aonde a figura for: uma coluna, um flutuante, um bloco girado ou com o conteúdo reduzido para caber, uma página dupla. Uma linha dentro de uma figura que não é um rótulo nem está em branco encerra uma figura que ficou sem o `:::` de fechamento, e é assinalada como contêiner não fechado.
+Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os rótulos dela são desenhados sobre a imagem como texto e vão aonde a figura for: uma coluna, um flutuante, um bloco girado ou reduzido pela escada de ajuste (os passos que fazem o conteúdo caber), uma página dupla. Quando falta o `:::` de fechamento de uma figura, a primeira linha que não é um rótulo nem está em branco encerra a figura, e o Postext a aponta como contêiner não fechado.
 
 ### As palavras próprias de uma figura
 
-O recurso guarda uma imagem, as suas âncoras e um único conjunto de palavras, mas cada edição de um livro diz as suas. Uma figura pode dar ela mesma o seu `alt`, a sua `caption` e a sua `note`, na cerca ou em linhas próprias, e eles substituem os do recurso nas páginas desse arquivo:
+Um recurso guarda uma imagem, as âncoras dela e um único conjunto de palavras, mas cada edição de um livro precisa das próprias palavras. Uma figura pode definir o próprio `alt`, a própria `caption` e a própria `note`, na linha de abertura ou em linhas próprias, e eles substituem os do recurso nas páginas desse arquivo:
 
 ```md
 :::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
@@ -128,48 +128,48 @@ O recurso guarda uma imagem, as suas âncoras e um único conjunto de palavras, 
 :::
 ```
 
-- Como atributos da cerca, `alt`, `caption` e `note` recebem um texto curto entre aspas. As linhas `::alt[…]`, `::caption[…]` e `::note[…]` recebem o texto entre colchetes, que pode conter Markdown em linha e `\\` para uma quebra de linha, como a legenda e a nota de um recurso. Uma linha prevalece sobre o atributo de mesmo nome; as linhas ficam entre os rótulos, com linhas em branco se quiser.
-- O que a figura não diz continua o do recurso. Um valor vazio não diz nada: `caption=""` tira a legenda, `alt=""` marca a imagem como decorativa.
-- As palavras substituem as do recurso no capítulo que as diz: a composição, o texto alternativo de todas as saídas e o PDF com tags as leem, e o próprio recurso não muda. Um recurso tem um só conjunto de palavras em um capítulo, o da primeira figura: uma figura posterior do mesmo recurso que diga outras palavras não as vê mostradas, e `figureWordsShared` avisa. Uma cópia reduzida que precise de legenda própria usa um segundo recurso que aponte para o mesmo arquivo de imagem. Ao contrário de um rótulo, a legenda não é associada caractere a caractere ao Markdown; `sourceAt` responde a um clique nela como faz com a legenda de um recurso.
+- Como atributos da linha de abertura, `alt`, `caption` e `note` recebem um texto curto entre aspas. As linhas `::alt[…]`, `::caption[…]` e `::note[…]` recebem o texto entre colchetes, que pode conter Markdown em linha e `\\` para uma quebra de linha, como a legenda e a nota de um recurso. Uma linha prevalece sobre o atributo de mesmo nome; as linhas ficam entre os rótulos, com linhas em branco se quiser.
+- O que a figura não define continua sendo o do recurso. Um valor vazio não diz nada: `caption=""` tira a legenda, `alt=""` marca a imagem como decorativa.
+- As palavras substituem as do recurso no capítulo em que estão escritas: a diagramação, o texto alternativo de todas as saídas e o PDF marcado as usam, e o próprio recurso não muda. Num capítulo, um recurso tem um só conjunto de palavras, o da primeira figura: se uma figura posterior do mesmo recurso trouxer outros textos, eles não aparecem, e o Postext gera o aviso `figureWordsShared`. Uma cópia reduzida que precise de legenda própria usa um segundo recurso que aponte para o mesmo arquivo de imagem. Ao contrário de um rótulo, a legenda não é associada caractere a caractere ao Markdown; `sourceAt` responde a um clique nela como faz com a legenda de um recurso.
 
 ### Como um rótulo é composto
 
-- **Onde.** Um rótulo fica no ponto da sua âncora, uma fração da imagem inteira; se a imagem for recortada na sua zona segura ou composta menor, o rótulo acompanha o desenho. O `align` da âncora diz qual lado do rótulo fica no ponto, e `verticalAlign`, qual borda fica na sua altura. `start` e `end` seguem a direção do próprio rótulo: em árabe, `start` é a borda direita. `rotate` gira o rótulo em torno do ponto, no sentido horário e em qualquer ângulo: um rio ao longo do seu curso, uma serra na diagonal.
-- **Aparência.** O `style` do rótulo, ou então o da sua âncora, nomeia um estilo de rótulo (veja Configuração › Páginas compostas); sem estilo, o rótulo usa a fonte do texto corrido. O halo traça o contorno das letras por baixo do preenchimento; a placa (`background`) preenche a caixa em volta do texto, alargada por `padding`.
-- **Ajuste.** Se a sua âncora tem `width`, o rótulo quebra entre palavras dentro dessa medida, nunca no meio de uma palavra. Quando uma palavra é mais larga que a medida, o rótulo inteiro é composto menor, até o `minScale` do seu estilo; um rótulo que ainda assim não cabe é desenhado com a palavra mais larga cortada. Sem `width`, o rótulo fica numa só linha, exceto onde quebra com `\\`, como numa legenda.
+- **Onde.** Um rótulo fica no ponto da âncora, dado como fração da imagem inteira; se a imagem for recortada na área segura ou composta menor, o rótulo acompanha o desenho. O `align` da âncora indica que lado do rótulo fica no ponto, e `verticalAlign`, que borda fica na altura dele. `start` e `end` seguem a direção do próprio rótulo: em árabe, `start` é a borda direita. `rotate` gira o rótulo em torno do ponto, no sentido horário e em qualquer ângulo: um rio ao longo do curso, uma serra na diagonal.
+- **Aparência.** O `style` do rótulo, ou então o da âncora, indica um estilo de rótulo (veja Configuração › Páginas compostas); sem estilo, o rótulo usa a fonte do texto do corpo. O halo traça o contorno das letras por baixo do preenchimento; a placa (`background`) preenche a caixa em volta do texto, alargada por `padding`.
+- **Ajuste.** Se a âncora tem `width`, o rótulo quebra entre palavras dentro dessa medida, nunca no meio de uma palavra. Quando uma palavra é mais larga que a medida, o rótulo inteiro é composto menor, até o `minScale` do estilo; um rótulo que ainda assim não cabe é desenhado com a palavra mais larga cortada. Sem `width`, o rótulo fica numa só linha, exceto onde quebra com `\\`, como numa legenda.
 - **Texto.** O texto entre colchetes é Markdown em linha, composto como uma legenda: negrito, itálico, chips, marcações de destaque, referências, fórmulas em linha. Um nome de várias palavras é um único rótulo, qualquer que seja a ordem das palavras em cada idioma: `::label[OCEANO ATLÂNTICO]` e `::label[ATLANTIC OCEAN]` ficam na mesma âncora. Rótulos da direita para a esquerda são compostos da direita para a esquerda; os chineses e japoneses quebram entre caracteres.
 - **Saídas.** O canvas, o PDF, o visualizador HTML, o EPUB de layout fixo e o Folio desenham os rótulos. Numa página da direita para a esquerda, o rótulo fica onde a imagem o mostra.
-- **Vertical.** Com `writingMode: 'vertical-rl'` na âncora (ou no seu estilo de rótulo), o rótulo é composto como uma página vertical: os caracteres em pé, em células uma sob a outra, as colunas da direita para a esquerda, as palavras latinas e os números longos virados de lado e os números curtos numa só célula. Então `width` é uma parte da altura da imagem, o comprimento de uma coluna, e um rótulo chinês ou japonês se reparte em mais colunas. `align` corre ao longo da coluna (`start` é a sua ponta de cima), `verticalAlign` através das colunas (`top` é a primeira, a da direita), e `rotate` continua a girar o rótulo. Na página espelhada de um livro da direita para a esquerda, lê-se do mesmo jeito, para baixo nas suas colunas e em pé, no mesmo ponto da imagem (desde o postext 1.40).
-- **Verificações.** Um rótulo que continua mais largo do que a sua medida no `minScale` do seu estilo gera `labelOverflow`; dois rótulos cujas linhas se tocam geram `labelOverlap` no posterior. As duas são verificadas em cada edição, então uma tradução de palavras mais longas mostra onde precisa de espaço. A paleta de uma parte (`:::part{palette="…"}`) recolore os rótulos das suas páginas como faz com as legendas. A verificação de contraste lê um rótulo sobre a sua placa ou, se não houver, dentro do seu halo; o rótulo nu sobre a imagem é ignorado, porque o seu fundo é a imagem. O preflight de impressão conta a letra pequena do rótulo em cores de processo, as suas tintas e a sua distância ao corte.
-- **Numa página dupla.** Uma figura que atravessa a lombada de uma página dupla (um bloco com `crossGutter: true`) pinta a sua metade em cada página; um rótulo cuja caixa entrasse na faixa da medianiz seria cortado pela dobra e não se leria em nenhuma das duas. O rótulo desliza pela folha até a borda da faixa, do lado em que fica o ponto da sua âncora, e mantém a altura; um ponto exatamente sobre a lombada fica na primeira página, como um bloco. Uma âncora com `gutter: 'cross'` mantém o seu lugar, para um título posto nas duas páginas. As bordas externas da folha não são tocadas: um rótulo que passa do corte é cortado como a imagem. Desde o postext 1.43.
+- **Vertical.** Com `writingMode: 'vertical-rl'` na âncora (ou no estilo de rótulo dela), o rótulo é composto como uma página vertical: os caracteres em pé, em células uma sob a outra, as colunas da direita para a esquerda, as palavras latinas e os números longos virados de lado e os números curtos numa só célula. Então `width` é uma parte da altura da imagem, o comprimento de uma coluna, e um rótulo chinês ou japonês se reparte em mais colunas. `align` corre ao longo da coluna (`start` é a ponta de cima), `verticalAlign` através das colunas (`top` é a primeira, a da direita), e `rotate` continua girando o rótulo. Na página espelhada de um livro da direita para a esquerda, o rótulo se lê do mesmo jeito, de cima para baixo nas colunas e em pé, no mesmo ponto da imagem (desde o postext 1.40).
+- **Verificações.** Um rótulo que continua mais largo do que a medida no `minScale` do estilo gera `labelOverflow`; dois rótulos cujas linhas se tocam geram `labelOverlap` no posterior. As duas coisas são verificadas em cada edição; assim, uma tradução com palavras mais longas mostra onde precisa de espaço. A paleta de uma parte (`:::part{palette="…"}`) recolore os rótulos das páginas dela como faz com as legendas. A verificação de contraste mede um rótulo sobre a placa ou, se não houver, sobre o halo; um rótulo posto diretamente sobre a imagem é ignorado, porque o fundo dele é a imagem. O preflight de impressão também verifica os rótulos: letra pequena em cores de processo, tintas e distância ao refile.
+- **Numa página dupla.** Uma figura que atravessa a lombada de uma página dupla (um bloco com `crossGutter: true`) pinta uma metade em cada página; um rótulo que entrasse na faixa da medianiz seria cortado pela dobra e não se leria em nenhuma das duas. Esse rótulo desliza na horizontal até a borda da faixa, do lado em que fica o ponto da âncora, e mantém a altura; um ponto exatamente sobre a lombada fica na primeira página, como um bloco. Uma âncora com `gutter: 'cross'` mantém o lugar, para um título posto nas duas páginas. As bordas externas da folha não são tocadas: um rótulo que passa do refile é cortado como a imagem. Desde o postext 1.43.
 
 ### labelAnchorUnknown
 
-Um `::label` nomeia com `at` uma âncora que o recurso da sua figura não tem. O rótulo não é desenhado; o EPUB fluido continua a listá-lo e o texto alternativo da imagem o menciona. O aviso traz o recurso, a âncora, as âncoras que o recurso tem (`known`), o idioma, a página e o intervalo do texto do rótulo no fonte. Corrija o id da âncora, adicione a âncora ao recurso ou posicione o rótulo com `at="x% y%"`.
+O `at` de um `::label` indica uma âncora que o recurso da figura não tem. O rótulo não é desenhado; o EPUB refluível continua listando-o, e o texto alternativo da imagem o menciona. O aviso traz o recurso, a âncora, as âncoras que o recurso tem (`known`), o idioma, a página e o intervalo de origem do texto do rótulo. Corrija o id da âncora, adicione a âncora ao recurso ou posicione o rótulo com `at="x% y%"`.
 
 No painel Verificações do Sandbox, o aviso leva ao rótulo no painel Texto, e o botão com o alfinete abre as âncoras da imagem com esse nome pronto para colocar: um clique na imagem adiciona a âncora.
 
 ### anchorUnlabelled
 
-Uma âncora do recurso da figura nomeia um estilo de rótulo e nenhum `::label` da figura fica nela neste idioma: o mapa tem espaço para uma palavra que esta edição deixa de fora. É uma nota; o `postext check` a lista como `info`. Âncoras sem estilo, como a de um personagem de quadrinhos, não são indicadas. O aviso traz o recurso, a âncora, o seu estilo, o idioma, a página e o intervalo da figura no fonte. Escreva o rótulo no Markdown deste idioma ou tire o estilo da âncora.
+Uma âncora do recurso da figura tem um estilo de rótulo, mas nenhum `::label` da figura fica nela neste idioma: o mapa tem espaço para uma palavra que esta edição deixa de fora. É uma nota; o `postext check` a lista como `info`. Âncoras sem estilo, como a de um personagem de quadrinhos, não são apontadas. O aviso traz o recurso, a âncora, o estilo dela, o idioma, a página e o intervalo de origem da figura. Escreva o rótulo no Markdown deste idioma ou tire o estilo da âncora.
 
-No painel Verificações leva à figura no painel Texto, e o botão com o alfinete abre as âncoras da imagem nessa âncora.
+No painel Verificações, o aviso leva à figura no painel Texto, e o botão com o alfinete abre as âncoras da imagem nessa âncora.
 
 ### labelOverflow
 
-Um rótulo continua mais largo do que a `width` da sua âncora na menor escala que o seu estilo de rótulo permite (`minScale`): é desenhado nessa escala e ultrapassa a sua medida. O aviso traz o recurso, o texto do rótulo, a sua âncora (nenhuma, se o rótulo foi posto com porcentagens), a largura que lhe foi dada, a escala atingida, o idioma, a página e o intervalo do texto do rótulo no fonte. É verificado em cada edição, então um idioma de palavras mais longas transborda onde outro não. Alargue a `width` da âncora, encurte a palavra no Markdown desta edição ou baixe o `minScale` do estilo de rótulo. Um rótulo chinês ou japonês quebra entre caracteres e não transborda assim. Desde o postext 1.39.
+Um rótulo continua mais largo do que a `width` da âncora na menor escala que o estilo de rótulo permite (`minScale`): é desenhado nessa escala e ultrapassa a medida. O aviso traz o recurso, o texto do rótulo, a âncora (nenhuma, se o rótulo foi posto com porcentagens), a largura que lhe foi dada, a escala atingida, o idioma, a página e o intervalo de origem do texto do rótulo. É verificado em cada edição; assim, um idioma de palavras mais longas transborda onde outro não. Alargue a `width` da âncora, encurte a palavra no Markdown desta edição ou baixe o `minScale` do estilo de rótulo. Um rótulo chinês ou japonês quebra entre caracteres e não transborda assim. Desde o postext 1.39.
 
 ### labelOverlap
 
-As linhas de dois rótulos da mesma figura se tocam; um rótulo com placa conta como a sua placa. O aviso fica no rótulo posterior, na ordem em que foram escritos, com o texto do primeiro rótulo anterior que ele toca e quantos rótulos anteriores toca no total. O teste usa a caixa própria de cada linha, girada com o rótulo, de modo que uma linha curta ao lado de uma longa deixa livre o seu lado, e deixa duas linhas se invadirem em até um oitavo da altura de uma linha. É verificado em cada edição. Mova uma das âncoras, estreite a `width` de um rótulo para que ele quebre ou encurte as palavras no Markdown desta edição. No painel de verificações do Sandbox, o botão do alfinete abre as âncoras da imagem na âncora do rótulo. Desde o postext 1.39. Com `overlap: 'allow'` numa âncora, ou no seu estilo de rótulo, um rótulo que o original imprime tocando os vizinhos (um mapa denso) sai da verificação, e nenhum par de que ele faça parte é reportado. Desde o postext 1.42. As zonas `avoid` de uma imagem contam como os símbolos de um mapa: retângulos desenhados sobre os seus pontos e ícones, no modo **Zonas a evitar** das marcas da imagem, em frações da imagem. Um rótulo que invade uma delas é reportado do mesmo modo, com `symbol 2` no lugar de outro rótulo (`withSymbol` nos dados), e `overlap: 'allow'` deixa um rótulo fora das duas verificações. Desde o postext 1.42.
+Dois rótulos da mesma figura se tocam; num rótulo com placa, conta a placa. O aviso fica no rótulo posterior, na ordem em que foram escritos, com o texto do primeiro rótulo anterior que ele toca e quantos rótulos anteriores toca no total. O teste usa a caixa própria de cada linha, girada com o rótulo, de modo que o espaço ao lado de uma linha curta fica livre, e deixa duas linhas se invadirem em até um oitavo da altura de uma linha. É verificado em cada edição. Mova uma das âncoras, estreite a `width` de um rótulo para que ele quebre ou encurte as palavras no Markdown desta edição. No painel Verificações do Sandbox, o botão do alfinete abre as âncoras da imagem na âncora do rótulo. Desde o postext 1.39. Com `overlap: 'allow'` numa âncora, ou no estilo de rótulo dela, um rótulo que o original imprime tocando os vizinhos (um mapa denso) sai da verificação, e nenhum par de que ele faça parte é reportado. Desde o postext 1.42. As zonas `avoid` de uma imagem contam como os símbolos de um mapa: retângulos desenhados sobre os pontos e os ícones do mapa, no modo **Zonas a evitar** das marcas da imagem, em frações da imagem. Um rótulo que invade uma delas é reportado do mesmo modo, com `symbol 2` no lugar de outro rótulo (`withSymbol` nos dados), e `overlap: 'allow'` deixa um rótulo fora das duas verificações. Desde o postext 1.42.
 
 ### figureWordsShared
 
-Uma `:::figure` dá palavras (`alt`, `caption` ou `note`) a um recurso a que uma figura anterior do mesmo capítulo já deu as suas, e elas diferem. As páginas mostram as palavras da primeira figura e omitem estas. O aviso traz o recurso, as palavras omitidas e o intervalo no fonte da primeira delas; uma figura posterior que não dá palavras próprias não é problema. Dê à figura um recurso próprio: um segundo recurso que aponte para o mesmo arquivo de imagem, com legenda, número e âncoras próprios. No painel de Verificações do Sandbox ele aparece em Figuras. Desde o postext 1.42.
+Uma `:::figure` define palavras (`alt`, `caption` ou `note`) para um recurso cujas palavras uma figura anterior do mesmo capítulo já definiu, e elas são diferentes. As páginas mostram as palavras da primeira figura e omitem estas. O aviso traz o recurso, as palavras omitidas e o intervalo de origem da primeira delas; uma figura posterior que não dá palavras próprias não é problema. Dê à figura um recurso próprio: um segundo recurso que aponte para o mesmo arquivo de imagem, com legenda, número e âncoras próprios. No painel Verificações do Sandbox, ele aparece em Figuras. Desde o postext 1.42.
 
 ## Exemplo
 
-A página de um livro didático, com uma faixa de título, um texto com a sua lista e três caixas coloridas, cada uma com a sua foto ao lado:
+A página de um livro didático, com uma faixa de título, um texto com uma lista e três caixas coloridas, cada uma com a foto ao lado:
 
 ```md
 ::::page{template="tema-cajas" fondo="banda-retos"}
@@ -203,27 +203,27 @@ Si necesitas o quieres comprar algo muy caro…
 ::::
 ```
 
-O título vai para o bloco que recebe `h1`; o subtítulo, o parágrafo e a lista, para o bloco de fluxo; cada caixa e cada foto, para o bloco do seu slot. A edição em catalão são as mesmas linhas com outras palavras: o modelo, os slots e as fotos não mudam.
+O título vai para o bloco que recebe `h1`; o subtítulo, o parágrafo e a lista, para o bloco de fluxo; cada caixa e cada foto, para o bloco do slot correspondente. A edição em catalão são as mesmas linhas com outras palavras: o modelo, os slots e as fotos não mudam.
 
-## Como a página é composta
+## Como a página é diagramada
 
-Uma página composta ocupa uma página só sua (papel `composed` para o filtro `pages` dos elementos de design). O modelo é escolhido conforme o lado em que a página cai, então vale o seu `variants.recto` ou o seu `variants.verso`. Depois cada bloco é posicionado e preenchido, um após o outro, com a tipografia do resto do livro: estilos de parágrafo e de título, listas, chips, chamadas de nota e o estilo de boxe do bloco.
+Uma página composta ocupa uma página só sua (papel `composed` para o filtro `pages` dos elementos de design). O modelo é escolhido conforme o lado em que a página cai; por isso, vale o `variants.recto` ou o `variants.verso` dele. Depois cada bloco é posicionado e preenchido, um após o outro, com a tipografia do resto do livro: estilos de parágrafo e de título, listas, chips, chamadas de nota e o estilo de boxe do bloco.
 
 ### Posicionar os blocos
 
-Um bloco fica na sua célula da grade, ou onde o seu `placement` o coloca (uma âncora, uma borda e um deslocamento, como num elemento de design), ou, sem nenhum dos dois, no canto superior esquerdo da área do modelo, com a largura da área inteira. Um bloco ancorado a outro (`"to": "#dinero"`) é posicionado depois dele e se move com ele: `below` o pendura embaixo do outro bloco, `right-of` o põe ao lado, e um canto como `top-right` o prende a esse canto da caixa do outro bloco.
+Um bloco fica na própria célula da grade, ou onde o `placement` dele o coloca (uma âncora, uma borda e um deslocamento, como num elemento de design), ou, sem nenhum dos dois, no canto superior esquerdo da área do modelo, com a largura da área inteira. Um bloco ancorado a outro (`"to": "#dinero"`) é posicionado depois dele e se move com ele: `below` o pendura embaixo do outro bloco, `right-of` o põe ao lado, e um canto como `top-right` o prende a esse canto da caixa do outro bloco.
 
-A sua altura é fixa (um comprimento ou uma porcentagem), `fill` (até a borda da área) ou `auto`, o padrão: a altura do conteúdo que ele recebe, entre `minHeight` e `maxHeight`, e nunca além do pé da área. Num bloco mais alto que o seu conteúdo, `verticalAlign` diz onde esse conteúdo fica (`top`, `middle`, `bottom`, ou `justify` para distribuir o espaço entre os seus elementos). O estilo de boxe do bloco desenha o fundo, a borda, os cantos arredondados, a faixa e o ícone no tamanho inteiro do bloco; o `label` da cerca `:::frame` sai impresso na aba do estilo.
+A altura dele é fixa (um comprimento ou uma porcentagem), `fill` (até a borda da área) ou `auto`, o padrão: a altura do conteúdo que ele recebe, entre `minHeight` e `maxHeight`, e nunca além do pé da área. Num bloco mais alto que o conteúdo, `verticalAlign` indica onde esse conteúdo fica (`top`, `middle`, `bottom`, ou `justify` para distribuir o espaço entre os elementos dele). O estilo de boxe do bloco desenha o fundo, a borda, os cantos arredondados, a faixa e o ícone no tamanho inteiro do bloco; o `label` do contêiner `:::frame` sai impresso na aba do estilo.
 
 ### O bloco de fluxo e os títulos
 
-O conteúdo que não nomeia nenhum slot vai para o bloco marcado com `flow`; o primeiro título de um nível vai para o bloco que o recebe com `takes`. Os blocos de uma página são lidos na ordem em que o seu conteúdo aparece pela primeira vez no Markdown, cada um inteiro: um leitor de tela, o PDF etiquetado e as saídas de layout fluido leem um boxe depois do texto que abre a página, e não no meio dele.
+O conteúdo que não indica nenhum slot vai para o bloco marcado com `flow`; o primeiro título de um nível vai para o bloco que o recebe com `takes`. Os blocos de uma página são lidos na ordem em que o conteúdo deles aparece pela primeira vez no Markdown, cada um inteiro: um leitor de tela, o PDF marcado e as saídas refluíveis leem um boxe depois do texto que abre a página, e não no meio dele.
 
-Um título posto num bloco mantém o design do seu nível ou do seu estilo de título (uma aba, uma faixa, `{titleText}` composto pelo design), composto na largura do bloco como numa coluna da página, e o bloco reserva o espaço que o design ocupa; um bloco com o texto reduzido reduz o design junto, um bloco girado o gira. Veja [Em caixas e blocos](/pt/docs/configuration-headings#em-caixas-e-blocos). Até o postext 1.36 esse título era composto sem design.
+Um título posto num bloco mantém o design do nível ou do estilo de título dele (uma aba, uma faixa, `{titleText}` composto pelo design), composto na largura do bloco como numa coluna da página, e o bloco reserva o espaço que o design ocupa; um bloco com o texto reduzido reduz o design junto, um bloco girado o gira. Veja [Em boxes e blocos](/pt/docs/configuration-headings#em-boxes-e-blocos). Até o postext 1.36 esse título era composto sem design.
 
 ### O sumário em um bloco
 
-Um bloco pode compor o sumário (desde o postext 1.42). Dê ao modelo um bloco com `takes: "toc"` e escreva `:::toc` na cerca de página, ou escreva-o dentro do `:::frame` que nomeia o slot:
+Um bloco pode compor o sumário (desde o postext 1.42). Dê ao modelo um bloco com `takes: "toc"` e escreva `:::toc` no contêiner de página, ou escreva-o dentro do `:::frame` que indica o slot:
 
 ```md
 ::::page{template="contents"}
@@ -233,13 +233,13 @@ Um bloco pode compor o sumário (desde o postext 1.42). Dê ao modelo um bloco c
 ::::
 ```
 
-O bloco compõe as linhas pelas regras do sumário, como o texto corrido. Uma parte tem a sua linha, desenhada a partir de `toc.parts.design`; uma entrada mantém o número, o pontilhado e o rótulo da sua página, e leva à página que lista; o bloco não acrescenta espaçamento de parágrafo entre as entradas. `keep` funciona no bloco: com `overflow.continueIn: "next-page"`, um conjunto do sumário que um bloco inteiro comporta passa inteiro para a página acrescentada, e um conjunto mais alto que o bloco é cortado depois da sua cabeça e de `toc.groups.minEntriesAfterHead` entradas, e a página acrescentada abre com a cabeça repetida (`toc.groups.continuation`). A marca do corte (`overflow.mark`) e as palavras no começo da página acrescentada (`overflow.fromMark`) são as de qualquer bloco.
+O bloco compõe as linhas pelas regras do sumário, como o texto corrido. Uma parte tem a própria linha, desenhada a partir de `toc.parts.design`; uma entrada mantém o número, a linha de pontos e o rótulo da página, e leva à página que lista; o bloco não acrescenta espaçamento de parágrafo entre as entradas. `keep` funciona no bloco: com `overflow.continueIn: "next-page"`, um grupo do sumário que um bloco inteiro comporta passa inteiro para a página acrescentada, e um grupo mais alto que o bloco é cortado depois da cabeça e de `toc.groups.minEntriesAfterHead` entradas, e a página acrescentada abre com a cabeça repetida (`toc.groups.continuation`). A marca do corte (`overflow.mark`) e as palavras no começo da página acrescentada (`overflow.fromMark`) são as de qualquer bloco.
 
 O título acima da lista é um título comum, e o sumário o lista, a menos que o estilo do título diga `toc: false` ou o título leve `{toc="false"}`, como no texto corrido. O fundo da página, uma cor ou uma imagem sob a folha inteira, é a decoração do modelo: é pintado sob os blocos e se repete em cada página que o sumário acrescenta. Uma quebra de página entre partes (`toc.parts.breakBefore`) vale num bloco que pode continuar (`overflow.continueIn: "next-page"`, ou um bloco com `next`): o bloco é cortado antes de cada parte menos a primeira, mesmo que tudo coubesse, e cada parte abre a página acrescentada ou o bloco seguinte. Um bloco que não pode continuar ignora a quebra. Desde o postext 1.43.
 
 ### Encadear blocos
 
-`next` manda o que um bloco não consegue conter para outro bloco da mesma página, e esse para outro, como as caixas de texto encadeadas dos programas de diagramação:
+`next` manda o que um bloco não comporta para outro bloco da mesma página, e esse para outro, como as caixas de texto encadeadas dos programas de diagramação:
 
 ```json
 { "name": "columna-1", "flow": true, "next": "columna-2", "height": { "value": 120, "unit": "mm" } },
@@ -248,13 +248,13 @@ O título acima da lista é um título comum, e o sumário o lista, a menos que 
 
 O texto é cortado entre duas linhas e continua no bloco seguinte, quebrado de novo na largura desse bloco, sem perder nem repetir nada. `overflow.continueIn: "#frame"` quer dizer o mesmo.
 
-Um bloco é cortado como o texto corrido. Um título nunca fecha um pedaço: segue com as linhas que ele introduz. Um corte entre os itens de uma lista deixa pelo menos dois itens de cada lado (um quando `bodyText.avoidOrphansInLists` ou `bodyText.avoidWidowsInLists` está desligado), e com `bodyText.shortListSplit: 'avoid'` uma lista de até `bodyText.shortListMaxItems` itens não é cortada entre os seus itens. Quando nenhum corte permite isso, o pedaço termina antes do título ou da lista, ou dentro de um dos itens da lista. Para continuar em uma página acrescentada depois desta, veja [Quando o texto continua](#quando-o-texto-continua).
+Um bloco é cortado como o texto corrido. Um título nunca fecha um trecho: segue com as linhas que introduz. Um corte entre os itens de uma lista deixa pelo menos dois itens de cada lado (um quando `bodyText.avoidOrphansInLists` ou `bodyText.avoidWidowsInLists` está desligado), e com `bodyText.shortListSplit: 'avoid'` uma lista de até `bodyText.shortListMaxItems` itens não é cortada entre os itens. Quando nenhum corte permite isso, o trecho termina antes do título ou da lista, ou dentro de um dos itens da lista. Para continuar em uma página acrescentada depois desta, veja [Quando o texto continua](#quando-o-texto-continua).
 
 ### Blocos que afastam o texto
 
-Um bloco com `exclude: "push"` mantém o texto dos outros blocos fora do seu retângulo: a linha de outro bloco que esbarra nele é composta mais curta do lado que o retângulo cobre, do mesmo jeito que o texto contorna uma imagem no texto corrido. Uma foto ancorada no canto de uma caixa e marcada com `push` faz o texto da caixa correr ao lado dela. Uma caixa que precisa deixar livre uma coluna fixa para as suas imagens pode usar `padding` no lugar disso.
+Um bloco com `exclude: "push"` mantém o texto dos outros blocos fora do retângulo dele: a linha de outro bloco que esbarra nele é composta mais curta do lado que o retângulo cobre, do mesmo jeito que o texto contorna uma imagem no texto corrido. Uma foto ancorada no canto de uma caixa e marcada com `push` faz o texto da caixa correr ao lado dela. Uma caixa que precisa deixar livre uma coluna fixa para as imagens pode usar `padding` em vez disso.
 
-Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens que contém em vez do retângulo: o canal alfa de uma ilustração recortada, ou o polígono no `contour` do recurso dela. Cada linha do outro bloco é encurtada o quanto a forma ocupa ao lado dela, e assim o texto de uma caixa acompanha a silhueta de um desenho posto por cima sem precisar definir regras por linha. Legendas e outros textos do bloco que afasta mantêm as suas caixas, um bloco girado afasta com a sua caixa, e uma imagem de forma desconhecida também afasta com a sua caixa, com um aviso `textWrap` (motivo `noContour`). Veja [Formato do documento › Contorno pela forma](/pt/docs/document-format-resources#contorno-pela-forma) para a forma, o limiar e a margem.
+Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens que contém em vez do retângulo: o canal alfa de uma ilustração recortada, ou o polígono no `contour` do recurso dela. Cada linha do outro bloco é encurtada o quanto a forma ocupa ao lado dela, e assim o texto de uma caixa acompanha a silhueta de um desenho posto por cima, sem quebras nem recuos escritos linha a linha. As legendas e outros textos do bloco que afasta mantêm as próprias caixas, um bloco girado afasta com a caixa dele, e uma imagem de forma desconhecida também afasta com a caixa, com um aviso `textWrap` (motivo `noContour`). Veja [Formato do documento › Contorno pela forma](/pt/docs/document-format-resources#contorno-pela-forma) para a forma, o limiar e a margem.
 
 ```json
 { "name": "drawing", "exclude": "push", "wrap": "contour", "layer": 2,
@@ -263,9 +263,9 @@ Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens 
 
 ### Decoração, cabeços e camadas
 
-A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a sua caixa definitiva, então um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os seus textos leem os atributos da própria página: `fondo="banda-retos"` na cerca de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção. Numa página da direita para a esquerda ou vertical, os blocos seguem o fluxo espelhado ou girado enquanto a decoração fica na folha: um elemento colocado numa borda de início ou de fim (`top-start`, veja [Posicionamento de elementos](/pt/docs/configuration-headers-footers#posicionamento-de-elementos)) fica junto do seu bloco em todas as edições.
+A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a caixa definitiva; por isso, um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os textos dela leem os atributos da própria página: `fondo="banda-retos"` no contêiner de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção. Numa página da direita para a esquerda ou vertical, os blocos seguem o fluxo espelhado ou girado enquanto a decoração fica na folha: um elemento colocado numa borda de início ou de fim (`top-start`, veja [Posicionamento de elementos](/pt/docs/configuration-headers-footers#posicionamento-de-elementos)) fica junto do bloco correspondente em todas as edições.
 
-Os blocos são pintados na ordem da sua `layer`: a decoração na camada 0, os blocos na 1 por padrão, uma camada mais alta por cima de uma mais baixa e uma camada negativa por baixo da decoração. `rotate` gira um bloco junto com o seu conteúdo, em qualquer ângulo e em torno do centro do bloco, no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo.
+Os blocos são pintados na ordem da `layer`: a decoração na camada 0, os blocos na 1 por padrão, uma camada mais alta por cima de uma mais baixa e uma camada negativa por baixo da decoração. `rotate` gira um bloco junto com o conteúdo, em qualquer ângulo e em torno do centro do bloco, no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo.
 
 ### Conteúdo que não cabe
 
@@ -273,18 +273,18 @@ Um bloco cujo conteúdo é mais alto que ele, sem um bloco seguinte onde continu
 
 ## Fora do papel: HTML, EPUB e PDF marcado
 
-Toda saída lê uma página composta na ordem do seu Markdown, e não na ordem em que o modelo lista os seus blocos nem na ordem em que pinta as suas camadas.
+Toda saída lê uma página composta na ordem do Markdown, e não na ordem em que o modelo lista os blocos nem na ordem em que pinta as camadas.
 
-- **EPUB reflowable.** A página vira uma seção (`<section class="pt-composed pt-composed-tema-cajas">`) que abre com a marca de quebra de página. Cada bloco do modelo é um bloco dessa seção (`<div class="pt-frame pt-frame-dinero">`), posto onde o seu conteúdo aparece pela primeira vez no Markdown; um bloco e os blocos em que a sua cadeia `next` continua formam um só, e o mesmo vale para um bloco cujo conteúdo continua em páginas acrescentadas: os pedaços se juntam, um parágrafo cortado entre duas páginas é um só parágrafo, e a marca de quebra da página acrescentada fica dentro dele, onde começa o texto dessa página. Um bloco desenhado com um estilo de boxe mantém a caixa desse estilo: fundo, borda, margens internas, texto e o seu `label` como título do boxe. Um bloco sem estilo é um bloco simples. A decoração (imagens de fundo, cartões, textos de design) pertence à página impressa e fica de fora.
-- **Rótulos das figuras.** O visualizador HTML e o EPUB de layout fixo escrevem cada rótulo desenhado como texto logo depois da sua imagem, na ordem em que foram escritos (`<div class="pt-figure-label">`, girado por uma matriz CSS): um leitor de tela lê o texto alternativo da imagem e depois as suas palavras. A imagem que vai no EPUB não os mostra. O livro fluido desenha os simples sobre a imagem, em um SVG sobreposto (`pt-label-layer`, nas coordenadas da própria imagem, de modo que as palavras mudam de escala com ela; desde o postext 1.40): palavras em negrito ou itálico, com o halo e a placa do seu estilo, giradas por `rotate`. Um rótulo vertical, e um com fórmula, chip ou marca, ficam fora do SVG. Os rótulos de um livro da direita para a esquerda são desenhados como ficam na folha (desde o postext 1.42): cada palavra no x que a impressão mediu, e uma palavra de uma escrita da direita para a esquerda como um texto próprio da direita para a esquerda ancorado na sua borda direita, de modo que o navegador une as suas letras. Todos são listados depois da imagem, dentro da figura: uma lista escondida da vista (`pt-figure-labels pt-hidden`) que um leitor de tela lê uma vez só. Um rótulo que não é desenhado (a sua âncora não existe) vem, em vez disso, depois do texto alternativo da imagem, `Mapa da Europa (Madri)`; rótulos em chinês e japonês levam `（…、…）`, e os árabes, a vírgula árabe.
-- **Visualizador HTML e EPUB de layout fixo.** Os dois mostram a página impressa com o modelo aplicado: cada bloco na sua caixa, girado conforme `rotate`, recortado quando o conteúdo transborda, pintado sobre os blocos de camadas inferiores, a decoração na camada 0. A marcação lista os blocos na ordem de leitura e os pinta na ordem das camadas com `z-index`, de modo que as tecnologias assistivas seguem o Markdown enquanto a página parece impressa. Imagens decorativas ficam escondidas das tecnologias assistivas (`alt=""`). As fontes da decoração estão entre as que o Sandbox embute num EPUB; um EPUB de layout fixo escrito sem alguma delas avisa com `missingFont`.
-- **PDF marcado.** A árvore de estrutura lê os blocos na mesma ordem. Cada bloco, ou cadeia de blocos, é um `Div` com os seus títulos, parágrafos e listas, e os pedaços de um bloco que continua em páginas acrescentadas formam esse mesmo `Div` (um parágrafo cortado entre páginas é um só `P`, e a marca de continuação, um artefato); cada uma das suas imagens é um `Figure` seguido de um `Div` com um `P` por rótulo desenhado, na ordem em que foram escritos. O halo e a placa de um rótulo são artefatos de layout, de modo que as suas palavras são lidas uma vez só; a decoração também é um artefato de layout.
+- **EPUB refluível.** A página vira uma seção (`<section class="pt-composed pt-composed-tema-cajas">`) que abre com a marca de quebra de página. Cada bloco do modelo é um bloco dessa seção (`<div class="pt-frame pt-frame-dinero">`), posto onde o conteúdo dele aparece pela primeira vez no Markdown; um bloco e os blocos em que a cadeia `next` dele continua formam um só, e o mesmo vale para um bloco cujo conteúdo continua em páginas acrescentadas: os trechos se juntam, um parágrafo cortado entre duas páginas é um só parágrafo, e a marca de quebra da página acrescentada fica dentro dele, onde começa o texto dessa página. Um bloco desenhado com um estilo de boxe mantém a caixa desse estilo: fundo, borda, margens internas, texto e o `label` dele como título do boxe. Um bloco sem estilo é um bloco simples. A decoração (imagens de fundo, cartões, textos de design) pertence à página impressa e fica de fora.
+- **Rótulos das figuras.** O visualizador HTML e o EPUB de layout fixo escrevem cada rótulo desenhado como texto logo depois da imagem, na ordem em que foram escritos (`<div class="pt-figure-label">`, girado por uma matriz CSS): um leitor de tela lê o texto alternativo da imagem e depois as palavras dela. A imagem que vai no EPUB não os mostra. O livro refluível desenha os simples sobre a imagem, em um SVG sobreposto (`pt-label-layer`, nas coordenadas da própria imagem, de modo que as palavras mudam de escala com ela; desde o postext 1.40): palavras em negrito ou itálico, com o halo e a placa do estilo deles, giradas por `rotate`. Um rótulo vertical, e um com fórmula, chip ou marca, ficam fora do SVG. Os rótulos de um livro da direita para a esquerda são desenhados como ficam na folha (desde o postext 1.42): cada palavra no x que a impressão mediu, e uma palavra de uma escrita da direita para a esquerda como um texto próprio da direita para a esquerda ancorado na borda direita, de modo que o navegador une as letras. Todos são listados depois da imagem, dentro da figura: uma lista escondida da vista (`pt-figure-labels pt-hidden`) que um leitor de tela lê uma vez só. Um rótulo que não é desenhado (a âncora dele não existe) vem, em vez disso, depois do texto alternativo da imagem, `Mapa da Europa (Madri)`; rótulos em chinês e japonês levam `（…、…）`, e os árabes, a vírgula árabe.
+- **Visualizador HTML e EPUB de layout fixo.** Os dois mostram a página impressa com o modelo aplicado: cada bloco na própria caixa, girado conforme `rotate`, recortado quando o conteúdo transborda, pintado sobre os blocos de camadas inferiores, a decoração na camada 0. A marcação lista os blocos na ordem de leitura e os pinta na ordem das camadas com `z-index`, de modo que as tecnologias assistivas seguem o Markdown enquanto a página parece impressa. Imagens decorativas ficam escondidas das tecnologias assistivas (`alt=""`). As fontes da decoração estão entre as que o Sandbox incorpora num EPUB; um EPUB de layout fixo escrito sem alguma delas avisa com `missingFont`.
+- **PDF marcado.** A árvore de estrutura lê os blocos na mesma ordem. Cada bloco, ou cadeia de blocos, é um `Div` com os títulos, parágrafos e listas dele, e os trechos de um bloco que continua em páginas acrescentadas formam esse mesmo `Div` (um parágrafo cortado entre páginas é um só `P`, e a marca de continuação, um artefato); cada uma das imagens dele é um `Figure` seguido de um `Div` com um `P` por rótulo desenhado, na ordem em que foram escritos. O halo e a placa de um rótulo são artefatos de layout, de modo que as palavras dele são lidas uma vez só; a decoração também é um artefato de layout.
 
-No código, os rótulos de uma figura ficam no seu bloco, em `resourceBlock.labels`: texto, âncora ou ponto, estilo e intervalo no fonte, mais `layout` (as linhas, a caixa, o giro e a aparência de um rótulo desenhado) e `rect` (onde é pintado, ao qual responde `sourceAt`). `composedReadingOrder(composedPaintOrder(page))` dá a decoração e os blocos de uma página na ordem de leitura.
+No código, os rótulos de uma figura ficam no bloco dela, em `resourceBlock.labels`: texto, âncora ou ponto, estilo e intervalo de origem, mais `layout` (as linhas, a caixa, o giro e a aparência de um rótulo desenhado) e `rect` (onde é pintado, ao qual responde `sourceAt`). `composedReadingOrder(composedPaintOrder(page))` dá a decoração e os blocos de uma página na ordem de leitura.
 
 ## Avisos
 
-As verificações leem o Markdown e a configuração antes de qualquer diagramação, então aparecem no painel Verificações enquanto você digita, no `postext check` e nos `contentWarnings` do documento, cada uma com o intervalo de origem daquilo que aponta (veja [Configuração › Avisos no documento](/pt/docs/configuration-programmatic-usage#avisos-no-documento)).
+As verificações leem o Markdown e a configuração antes de qualquer diagramação; por isso, aparecem no painel Verificações enquanto você digita, no `postext check` e nos `contentWarnings` do documento, cada uma com o intervalo de origem daquilo que aponta (veja [Configuração › Avisos no documento](/pt/docs/configuration-programmatic-usage#avisos-no-documento)).
 
 <table>
   <thead>
@@ -297,64 +297,64 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
   <tbody>
     <tr>
       <td><code>templateUnknown</code></td>
-      <td>A cerca da página nomeia um modelo que não está em <code>pageTemplates</code>, ou não nomeia nenhum. Os slots da página não são verificados.</td>
+      <td>O contêiner de página indica um modelo que não está em <code>pageTemplates</code>, ou não indica nenhum. Os slots da página não são verificados.</td>
       <td>Corrija o id ou acrescente o modelo à configuração.</td>
     </tr>
     <tr>
       <td><code>slotUnknown</code></td>
-      <td>Um <code>slot="…"</code> não nomeia nenhum bloco do modelo da página (contam os blocos herdados por <code>extends</code> e os de uma página de <code>variants</code>). O conteúdo vai para o bloco de fluxo, que o aviso nomeia (<code>frame</code>).</td>
+      <td>Um <code>slot="…"</code> não indica nenhum bloco do modelo da página (contam os blocos herdados por <code>extends</code> e os de uma página de <code>variants</code>). O conteúdo vai para o bloco de fluxo, que o aviso indica (<code>frame</code>).</td>
       <td>Corrija o nome do slot ou acrescente ao modelo um bloco com esse nome.</td>
     </tr>
     <tr>
       <td><code>slotEmpty</code></td>
-      <td>Um bloco do modelo não recebe nada nesta página: nenhum slot o nomeia, ele não recebe nenhum título e, se for o bloco de fluxo, não sobra conteúdo sem slot. Um bloco que só recebe o que outro bloco continua nele (<code>next</code>) não é assinalado. Nem o bloco para onde salta uma matéria de uma página anterior (<code>overflow.continueIn: 'page:&lt;id&gt;'</code>). O <code>postext check</code> o lista como nota.</td>
+      <td>Um bloco do modelo não recebe nada nesta página: nenhum slot o indica, ele não recebe nenhum título e, se for o bloco de fluxo, não sobra conteúdo sem slot. Um bloco que só recebe o que outro bloco continua nele (<code>next</code>) não é apontado. Nem o bloco para onde salta uma matéria de uma página anterior (<code>overflow.continueIn: 'page:&lt;id&gt;'</code>). O <code>postext check</code> o lista como nota.</td>
       <td>Escreva conteúdo para esse bloco com o slot dele, ou marque-o como <code>optional: true</code> no modelo.</td>
     </tr>
     <tr>
       <td><code>pageFenceLength</code></td>
-      <td>Um <code>:::page</code> de três dois-pontos traz <code>template=</code>. Ele é lido como página de quadrinhos, como antes.</td>
-      <td>Abra a página com quatro dois-pontos, <code>::::page&#123;template="…"&#125;</code>, e feche com <code>::::</code>.</td>
+      <td>Um <code>:::page</code> com três sinais de dois-pontos traz <code>template=</code>. Ele é lido como página de quadrinhos, como antes.</td>
+      <td>Abra a página com quatro sinais de dois-pontos, <code>::::page&#123;template="…"&#125;</code>, e feche com <code>::::</code>.</td>
     </tr>
     <tr>
       <td><code>spreadMismatch</code></td>
-      <td>O <code>spread</code> da abertura e o do modelo não concordam. A página é composta como o modelo diz (veja <a href="#spreadmismatch">spreadMismatch</a>).</td>
-      <td>Escreva <code>spread</code> na abertura de um modelo de página dupla, ou tire-o de um modelo de uma página.</td>
+      <td>O <code>spread</code> da linha de abertura e o do modelo não concordam. A página é diagramada conforme o modelo (veja <a href="#spreadmismatch">spreadMismatch</a>).</td>
+      <td>Escreva <code>spread</code> na linha de abertura de uma página com modelo de página dupla, ou tire-o de um modelo de uma página.</td>
     </tr>
     <tr>
       <td><code>unclosedContainer</code></td>
       <td>Uma página composta, um bloco ou uma figura fica sem fechamento (veja as regras de recuperação acima). O painel Verificações chama a página composta de <code>::::page</code>.</td>
-      <td>Acrescente a cerca de fechamento: tantos dois-pontos quanto a linha de abertura da página, ou <code>:::</code> para um bloco ou uma figura.</td>
+      <td>Acrescente a linha de fechamento: tantos sinais de dois-pontos quanto a linha de abertura da página, ou <code>:::</code> para um bloco ou uma figura.</td>
     </tr>
   </tbody>
 </table>
 
-Depois que o livro é diagramado, cada um desses avisos traz também a página a que se refere (`pageIndex`), então o painel Verificações e o `postext check` mostram o número da página ao lado do modelo, do bloco ou do slot e do intervalo de origem.
+Depois que o livro é diagramado, cada um desses avisos traz também a página a que se refere (`pageIndex`); por isso, o painel Verificações e o `postext check` mostram o número da página ao lado do modelo, do bloco ou do slot e do intervalo de origem.
 
 ### frameOverflow
 
-Este aviso vem da diagramação, não das verificações do código-fonte descritas acima: ele aparece quando a página já está composta, no painel Verificações, no `postext check` e nos `contentWarnings` do documento.
+Este aviso vem da diagramação, não das verificações do texto de origem descritas acima: ele aparece quando a página já está diagramada, no painel Verificações, no `postext check` e nos `contentWarnings` do documento.
 
-**Causa.** O conteúdo que entra em um bloco (pelo slot dele, ou o que vai para o bloco de fluxo) é mais alto que o bloco, o bloco não tem mais nenhum `next` onde continuar, e nenhum dos passos da [escada de ajuste](#quando-ainda-assim-não-cabe) fez o conteúdo caber. Quase sempre há mais texto do que o bloco comporta: uma tradução mais longa que o original, ou um bloco preso a um `height` ou `maxHeight` fixo. O que não cabe é cortado no pé do bloco na saída paginada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo, o bloco, a página, o `locale` do documento, a altura cortada (`overflowMm`), `configPath` (o ponteiro JSON do bloco na configuração, `/pageTemplates/0/frames/2`), os passos tentados (`stepsTried`), a escala em que o texto e as imagens ficaram (`scale`, `imageScale`) e `proposals`, as mudanças que fariam o conteúdo caber.
+**Causa.** O conteúdo que entra em um bloco (pelo slot dele, ou o que vai para o bloco de fluxo) é mais alto que o bloco, o bloco não tem mais nenhum `next` onde continuar, e nenhum dos passos da [escada de ajuste](#quando-ainda-assim-não-cabe) fez o conteúdo caber. Quase sempre há mais texto do que o bloco comporta: uma tradução mais longa que o original, ou um bloco preso a um `height` ou `maxHeight` fixo. O que não cabe é cortado no pé do bloco na saída paginada; continua no documento, no mapa de origem e no EPUB refluível. O aviso informa o modelo, o bloco, a página, o `locale` do documento, a altura cortada (`overflowMm`), `configPath` (o ponteiro JSON do bloco na configuração, `/pageTemplates/0/frames/2`), os passos tentados (`stepsTried`), a escala em que o texto e as imagens ficaram (`scale`, `imageScale`) e `proposals`, as mudanças que fariam o conteúdo caber.
 
-**Correção.** Aplique uma das propostas: cada uma vem com o seu valor, calculado na página (veja [O aviso e suas propostas](#o-aviso-e-suas-propostas)). Se não, dê mais espaço ao bloco, encadeie-o a outro bloco com `next`, encurte o texto ou componha a página com outro modelo.
+**Correção.** Aplique uma das propostas: cada uma vem com o valor, calculado na página (veja [O aviso e suas propostas](#o-aviso-e-suas-propostas)). Caso contrário, dê mais espaço ao bloco, encadeie-o a outro bloco com `next`, encurte o texto ou diagrame a página com outro modelo.
 
-Um bloco vazio também é avisado. Numa pilha cujos blocos já não têm nada a ceder, um bloco cortado abaixo do seu `minHeight` ou da sua altura fixa (um espaço de resposta, o lugar de uma imagem) transborda na altura cortada, mesmo sem conteúdo nenhum. As propostas baixam o seu próprio `minHeight`, ou o `minHeight` de um bloco do seu grupo que tem menos conteúdo que isso; nunca tiram o lugar de outro bloco vazio.
+Um bloco vazio também gera o aviso. Numa pilha cujos blocos já não têm nada a ceder, um bloco cortado abaixo do `minHeight` ou da altura fixa (um espaço de resposta, o lugar de uma imagem) transborda na altura cortada, mesmo sem conteúdo nenhum. As propostas baixam o próprio `minHeight` dele, ou o `minHeight` de um bloco do mesmo grupo que tem menos conteúdo que isso; nunca tiram o lugar de outro bloco vazio.
 
 ### frameContinuationLimit
 
-**Causa.** Um bloco com `overflow.continueIn` igual a `'next-page'` ou `'template:<id>'` mandou o que não cabia nele para uma página acrescentada, e o bloco dessa página mandou o resto adiante de novo, página após página, até a página composta acrescentar todas as páginas que pode: 16 (veja [Quando o texto continua](#quando-o-texto-continua)). O que sobra é cortado no pé do bloco na última página acrescentada; continua no documento, no mapa de origem e no EPUB de layout fluido. O aviso informa o modelo e o bloco dessa página, o número de páginas acrescentadas (`pages`), a altura cortada (`overflowMm`), o `configPath` do bloco e a página. Na maioria das vezes, o bloco que recebe o conteúdo na página acrescentada é muito menor que o texto.
+**Causa.** Um bloco com `overflow.continueIn` igual a `'next-page'` ou `'template:<id>'` mandou o que não cabia nele para uma página acrescentada, e o bloco dessa página mandou o resto adiante de novo, página após página, até a página composta acrescentar todas as páginas que pode: 16 (veja [Quando o texto continua](#quando-o-texto-continua)). O que sobra é cortado no pé do bloco na última página acrescentada; continua no documento, no mapa de origem e no EPUB refluível. O aviso informa o modelo e o bloco dessa página, o número de páginas acrescentadas (`pages`), a altura cortada (`overflowMm`), o `configPath` do bloco e a página. Na maioria das vezes, o bloco que recebe o conteúdo na página acrescentada é muito menor que o texto.
 
 **Correção.** Dê mais espaço a esse bloco (mais altura, ou um `overflowTemplate` com um bloco maior) ou encurte o texto. Um boxe que ocupa mais do que algumas páginas costuma ficar melhor no texto corrido.
 
 ### continueTargetMissing
 
-**Causa.** O `overflow.continueIn` de um bloco é `'page:<id>'` (veja [Saltar para uma página posterior](#saltar-para-uma-página-posterior)), e nenhuma cerca de página `::::page{id="<id>"}` vem depois da página em que a matéria está: o id está escrito errado, a cerca não o tem, falta o atributo da cerca que a regra lê (`'page:{attr.sigue}'`) ou a cerca vem antes (`before: true`). O resto continua em uma página acrescentada logo depois, como com `'next-page'`. O aviso informa o modelo, o bloco, `target` (o id procurado), o `configPath` do bloco e a página. O id pode ser também o de uma cerca de página de um capítulo posterior do livro; um capítulo composto sozinho com `buildDocument` e sem `laterPageIds` conhece só as suas próprias páginas.
+**Causa.** O `overflow.continueIn` de um bloco é `'page:<id>'` (veja [Saltar para uma página posterior](#saltar-para-uma-página-posterior)), e nenhum contêiner de página `::::page{id="<id>"}` vem depois da página em que a matéria está: o id está escrito errado, o contêiner não o tem, falta o atributo do contêiner que a regra lê (`'page:{attr.sigue}'`) ou o contêiner vem antes (`before: true`). O resto continua em uma página acrescentada logo depois, como com `'next-page'`. O aviso informa o modelo, o bloco, `target` (o id procurado), o `configPath` do bloco e a página. O id pode ser também o de um contêiner de página de um capítulo posterior do livro; um capítulo diagramado sozinho com `buildDocument` e sem `laterPageIds` conhece só as próprias páginas.
 
-**Correção.** Dê esse id à cerca da página posterior, ou corrija o nome em `continueIn` ou no atributo da cerca que ele lê. Uma página anterior à matéria não pode recebê-la: mova essa cerca para depois da matéria ou indique uma página posterior.
+**Correção.** Dê esse id ao contêiner da página posterior, ou corrija o nome em `continueIn` ou no atributo do contêiner que ele lê. Uma página anterior à matéria não pode recebê-la: mova esse contêiner para depois da matéria ou indique uma página posterior.
 
 ## Quando o texto cresce
 
-Uma página composta se reorganiza dentro dos limites que o seu modelo declara. Se você escrever um texto mais longo na primeira caixa de uma página cujas caixas formam um grupo em pilha, a caixa cresce para comportá-lo e as caixas de baixo descem, junto com as fotos e a decoração ancoradas nelas; nenhuma linha do modelo muda. Com um texto mais curto, a caixa volta à altura declarada. Um bloco ou um elemento de decoração marcado com `pin` fica onde o modelo o coloca, para uma caixa que precisa ficar sobre a arte. Como as pilhas e as fileiras dividem o espaço, e qual bloco cede primeiro, é definido no modelo: veja [Configuração › Como os grupos dividem o espaço](/pt/docs/configuration-composed-pages#como-os-grupos-dividem-o-espaço).
+Uma página composta se reorganiza dentro dos limites que o modelo declara. Se você escrever um texto mais longo na primeira caixa de uma página cujas caixas formam um grupo em pilha, a caixa cresce para comportá-lo e as caixas de baixo descem, junto com as fotos e a decoração ancoradas nelas; nenhuma linha do modelo muda. Com um texto mais curto, a caixa volta à altura declarada. Um bloco ou um elemento de decoração marcado com `pin` fica onde o modelo o coloca, para uma caixa que precisa ficar sobre o desenho. Como as pilhas e as fileiras dividem o espaço, e qual bloco cede primeiro, é definido no modelo: veja [Configuração › Como os grupos dividem o espaço](/pt/docs/configuration-composed-pages#como-os-grupos-dividem-o-espaço).
 
 Quando as caixas chegam ao pé da área e nenhum bloco do grupo pode ceder mais espaço, o bloco que não cabe percorre os passos da escada de ajuste descrita a seguir; os grupos não acrescentam nenhum aviso próprio.
 
@@ -372,7 +372,7 @@ Um bloco cujo conteúdo não cabe tenta, um depois do outro, os meios de abrir e
   <tbody>
     <tr>
       <td><code>free</code></td>
-      <td>O bloco ocupa espaço livre. Um bloco cuja altura acompanha o conteúdo já cresce até onde a sua área e o seu grupo deixam; um bloco com <code>height</code> fixo cresce até o seu <code>maxHeight</code>, quando tem um.</td>
+      <td>O bloco ocupa espaço livre. Um bloco cuja altura acompanha o conteúdo já cresce até onde a área e o grupo dele deixam; um bloco com <code>height</code> fixo cresce até o <code>maxHeight</code>, quando tem um.</td>
     </tr>
     <tr>
       <td><code>push</code></td>
@@ -384,26 +384,26 @@ Um bloco cujo conteúdo não cabe tenta, um depois do outro, os meios de abrir e
     </tr>
     <tr>
       <td><code>redistribute</code></td>
-      <td>Os outros blocos do grupo devolvem espaço, tenham <code>shrink</code> ou não: cada um desce até o seu <code>minHeight</code>, nunca abaixo do que o próprio conteúdo precisa. Numa fileira, eles cedem largura, cada um até a largura mais estreita em que o seu texto ainda cabe.</td>
+      <td>Os outros blocos do grupo devolvem espaço, tenham <code>shrink</code> ou não: cada um desce até o próprio <code>minHeight</code>, nunca abaixo do que o próprio conteúdo precisa. Numa fileira, eles cedem largura, cada um até a largura mais estreita em que o texto dele ainda cabe.</td>
     </tr>
     <tr>
       <td><code>shrinkText</code></td>
-      <td>O texto do bloco é diagramado menor, em passos de 2,5 %, até <code>fit.minScale</code> (90 % por padrão), na maior escala com que ele cabe. Corpo, entrelinha e espaçamento diminuem juntos, como se o bloco inteiro fosse composto num corpo menor. Um bloco encadeado com <code>next</code> diminui junto com os blocos da sua cadeia. Com <code>fit.shrinkText: false</code>, o texto mantém o tamanho.</td>
+      <td>O texto do bloco é diagramado menor, em passos de 2,5 %, até <code>fit.minScale</code> (90 % por padrão), na maior escala com que ele cabe. Corpo, entrelinha e espaçamento diminuem juntos, como se o bloco inteiro fosse composto num corpo menor. Um bloco encadeado com <code>next</code> diminui junto com os blocos da cadeia. Com <code>fit.shrinkText: false</code>, o texto mantém o tamanho.</td>
     </tr>
     <tr>
       <td><code>continue</code></td>
-      <td>O bloco continua em outra página (<code>overflow.continueIn: 'next-page'</code>, <code>'template:&lt;id&gt;'</code> ou <code>'page:&lt;id&gt;'</code>): é cortado no pé com a sua marca, e o resto continua em uma página acrescentada depois desta (veja <a href="#quando-o-texto-continua">Quando o texto continua</a>). O texto e as imagens voltam ao tamanho integral, já que o que não cabe continua de qualquer forma. Nenhum aviso é dado.</td>
+      <td>O bloco continua em outra página (<code>overflow.continueIn: 'next-page'</code>, <code>'template:&lt;id&gt;'</code> ou <code>'page:&lt;id&gt;'</code>): é cortado no pé com a marca de continuação, e o resto continua em uma página acrescentada depois desta (veja <a href="#quando-o-texto-continua">Quando o texto continua</a>). O texto e as imagens voltam ao tamanho integral, já que o que não cabe continua de qualquer forma. Nenhum aviso é gerado.</td>
     </tr>
   </tbody>
 </table>
 
-Um bloco que pode continuar em outra página dá esse passo mais cedo: depois de `redistribute` e antes de `scaleImages` e `shrinkText`. Uma matéria composta ao longo de várias páginas mantém um só corpo de letra, e a sua última página não sai menor que as anteriores. As imagens e o texto dela só diminuem quando ela já não pode continuar: na última página que a continuação pode acrescentar, ou quando o bloco que receberia o resto não recebe nada. `fit.preferContinue: false` mantém a ordem da tabela, para um boxe que deve perder alguns pontos em vez de acrescentar uma página.
+Um bloco que pode continuar em outra página dá esse passo mais cedo: depois de `redistribute` e antes de `scaleImages` e `shrinkText`. Uma matéria composta ao longo de várias páginas mantém um só corpo de letra, e a última página dela não sai menor que as anteriores. As imagens e o texto dela só diminuem quando ela já não pode continuar: na última página que a continuação pode acrescentar, ou quando o bloco que receberia o resto não recebe nada. `fit.preferContinue: false` mantém a ordem da tabela, para um boxe que deve perder alguns pontos em vez de acrescentar uma página.
 
-Quando nenhum passo faz o conteúdo caber, o bloco é cortado no pé, mantém as escalas a que a escada chegou, e a diagramação dá o aviso `frameOverflow`. Um bloco de uma página acrescentada que não recebe nada do conteúdo que lhe chega não o manda adiante de novo (acrescentaria páginas sem fim): ele também dá o aviso `frameOverflow`, com `continue` entre os passos tentados. Cada passo diagrama a página inteira de novo, então o resultado depende só dessa página: a mesma entrada dá a mesma página, os blocos que transbordam são tratados na ordem do modelo, e uma mudança numa página composta deixa todas as outras como estavam. As configurações ficam em [Configuração › Quando o conteúdo não cabe](/pt/docs/configuration-composed-pages#quando-o-conteúdo-não-cabe).
+Quando nenhum passo faz o conteúdo caber, o bloco é cortado no pé, mantém as escalas a que a escada chegou, e a diagramação gera o aviso `frameOverflow`. Um bloco de uma página acrescentada que não recebe nada do conteúdo que lhe chega não o manda adiante de novo (acrescentaria páginas sem fim): ele também gera o aviso `frameOverflow`, com `continue` entre os passos tentados. Cada passo diagrama a página inteira de novo; por isso, o resultado depende só dessa página: a mesma entrada dá a mesma página, os blocos que transbordam são tratados na ordem do modelo, e uma mudança numa página composta deixa todas as outras como estavam. As configurações ficam em [Configuração › Quando o conteúdo não cabe](/pt/docs/configuration-composed-pages#quando-o-conteúdo-não-cabe).
 
 ### O aviso e suas propostas
 
-O `frameOverflow` nomeia a página, o modelo, o bloco e o idioma do documento, de modo que uma página que cabe em espanhol e transborda em catalão diz isso, e lista os passos que tentou. Cada proposta é um dado, `{ kind, path, value }`: `path` é o ponteiro JSON da configuração a mudar e `value`, o valor a usar, calculado a partir do que falta.
+O `frameOverflow` indica a página, o modelo, o bloco e o idioma do documento, de modo que uma página que cabe em espanhol e transborda em catalão diz isso, e lista os passos que tentou. Cada proposta é um dado, `{ kind, path, value }`: `path` é o ponteiro JSON da configuração a mudar e `value`, o valor a usar, calculado a partir do que falta.
 
 <table>
   <thead>
@@ -431,7 +431,7 @@ O `frameOverflow` nomeia a página, o modelo, o bloco e o idioma do documento, d
     </tr>
     <tr>
       <td><code>useTemplate</code></td>
-      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. O teste compõe a página como a compilação faria com esse modelo: os slots para os quais ele não tem bloco vão para o seu bloco de fluxo, a sua própria escada é percorrida, e ele só é proposto se nenhum bloco transbordar e nada continuar em outra página (desde o postext 1.39). Uma página acrescentada por continuação não recebe essa proposta. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> da cerca da página.</td>
+      <td>Outro modelo do livro com um bloco de mesmo nome em que o conteúdo cabe como está, testado na página na ordem de <code>pageTemplates</code>. O teste diagrama a página como a compilação faria com esse modelo: os slots para os quais ele não tem bloco vão para o bloco de fluxo dele, a escada de ajuste dele é percorrida, e ele só é proposto se nenhum bloco transbordar e nada continuar em outra página (desde o postext 1.39). Uma página acrescentada por continuação não recebe essa proposta. É uma mudança no Markdown: <code>sourceStart</code> e <code>sourceEnd</code> dão o intervalo do valor <code>template</code> do contêiner de página.</td>
     </tr>
     <tr>
       <td><code>shortenText</code></td>
@@ -450,7 +450,7 @@ O painel Verificações mostra a mesma entrada no idioma da interface.
 
 ## Quando o texto continua
 
-Um bloco pode mandar o que não cabe nele para uma página acrescentada depois da sua página composta, ou para uma página posterior do livro. Quem decide é o `overflow.continueIn` do bloco:
+Um bloco pode mandar o que não cabe nele para uma página acrescentada depois da página composta, ou para uma página posterior do livro. Quem decide é o `overflow.continueIn` do bloco:
 
 <table>
   <thead>
@@ -466,7 +466,7 @@ Um bloco pode mandar o que não cabe nele para uma página acrescentada depois d
     </tr>
     <tr>
       <td><code>'next-page'</code></td>
-      <td>No mesmo bloco, em uma página acrescentada depois desta e montada com o <code>overflowTemplate</code> do modelo. Sem ele, a página é o mesmo modelo diagramado de novo só com esse bloco preenchido: os outros blocos não ocupam espaço (a altura deles acompanha o conteúdo vazio e eles saem dos seus grupos), então o bloco começa perto do alto da página, e a decoração e os cabeços são os do modelo.</td>
+      <td>No mesmo bloco, em uma página acrescentada depois desta e montada com o <code>overflowTemplate</code> do modelo. Sem ele, a página é o mesmo modelo diagramado de novo só com esse bloco preenchido: os outros blocos não ocupam espaço (a altura deles acompanha o conteúdo vazio e eles saem dos grupos); por isso, o bloco começa perto do alto da página, e a decoração e os cabeços são os do modelo.</td>
     </tr>
     <tr>
       <td><code>'template:&lt;id&gt;'</code></td>
@@ -474,7 +474,7 @@ Um bloco pode mandar o que não cabe nele para uma página acrescentada depois d
     </tr>
     <tr>
       <td><code>'page:&lt;id&gt;'</code></td>
-      <td>Em um bloco da cerca de página posterior <code>::::page&#123;id="&lt;id&gt;"&#125;</code>, pulando as páginas intermediárias (veja <a href="#saltar-para-uma-página-posterior">Saltar para uma página posterior</a>).</td>
+      <td>Em um bloco do contêiner de página posterior <code>::::page&#123;id="&lt;id&gt;"&#125;</code>, pulando as páginas intermediárias (veja <a href="#saltar-para-uma-página-posterior">Saltar para uma página posterior</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -488,19 +488,19 @@ Um bloco pode mandar o que não cabe nele para uma página acrescentada depois d
   "frames": [ { "name": "dinero", "style": "caja-azul" } ] }
 ```
 
-Continuar em outra página é um passo da [escada de ajuste](#quando-ainda-assim-não-cabe): o bloco primeiro cresce e abre espaço no seu grupo, e quando isso não basta é cortado no pé, antes que as imagens ou o texto diminuam (a não ser que o seu `fit.preferContinue` seja `false`). O texto e as imagens ficam no tamanho integral, o pedaço termina com a marca de continuação e o resto continua a partir da linha onde foi cortado, quebrado de novo na largura do bloco que o recebe. Nada se perde nem se repete, e nenhum aviso é dado.
+Continuar em outra página é um passo da [escada de ajuste](#quando-ainda-assim-não-cabe): o bloco primeiro cresce e abre espaço no grupo, e quando isso não basta é cortado no pé, antes que as imagens ou o texto diminuam (a não ser que o `fit.preferContinue` dele seja `false`). O texto e as imagens ficam no tamanho integral, o trecho termina com a marca de continuação e o resto continua a partir da linha onde foi cortado, quebrado de novo na largura do bloco que o recebe. Nada se perde nem se repete, e nenhum aviso é gerado.
 
-- **Qual bloco recebe.** Na página acrescentada, o conteúdo continua no bloco de mesmo nome; se o modelo não tem nenhum, no seu bloco de fluxo e, na falta dele, no primeiro bloco que ainda não esteja ocupado. Uma matéria que passa por blocos ligados com `next` continua onde a sua cadeia começa: o resto da terceira de três colunas encadeadas continua na primeira coluna da página acrescentada (o bloco com o nome do início da cadeia ou, na falta dele, o bloco de fluxo), de modo que um modelo de miolo que continua em si mesmo preenche todas as colunas de todas as páginas. Vários blocos de uma página que continuam no mesmo modelo dividem uma página acrescentada quando esse modelo tem um bloco para cada um; se não, o seguinte ganha uma página só para ele. Um bloco da página acrescentada que não recebe nada fica vazio.
-- **De novo e de novo.** Um pedaço que ainda não cabe continua outra vez, na próxima página acrescentada, com o `overflow.continueIn` que o bloco tiver ali ou, se não tiver, com a regra que o trouxe. Uma página composta acrescenta no máximo 16 páginas seguidas; o que ainda não cabe na última é cortado e gera o aviso [`frameContinuationLimit`](#framecontinuationlimit). Um bloco de uma página acrescentada pequeno demais para receber qualquer parte desse conteúdo dá o aviso `frameOverflow` em vez de acrescentar páginas.
-- **Onde o pedaço é cortado.** Como na página: um título fica com as suas primeiras linhas e uma lista mantém dois itens de cada lado (veja [Encadear blocos](#encadear-blocos)). Quando nada do boxe cabe na página, o boxe inteiro continua na outra, com aba e tudo: a página não fica com uma aba e uma marca sobre um pedaço vazio. Ele não ocupa espaço na página que deixa e, se o espaço de resposta logo abaixo não couber ali no seu tamanho, o boxe continua inteiro junto com ele.
-- **O que as páginas mantêm.** O bloco cortado é o primeiro a ceder o espaço do seu grupo, então os blocos depois dele mantêm o seu tamanho. Quando o resto continua no mesmo modelo diagramado de novo, os blocos vazios logo depois dele na sua pilha (o espaço para a resposta sob um boxe de atividade: blocos que não recebem conteúdo) vão junto. Na página eles não ocupam espaço; na página acrescentada mantêm o seu tamanho sob o resto do boxe, com a decoração ancorada neles. Os outros blocos dessa página acrescentada não ocupam espaço e a decoração deles não é desenhada, e uma pilha mantém o lugar que o seu primeiro bloco tem no modelo, então o resto do boxe começa onde a pilha começa, longe do antetítulo e do cabeço da página.
-- **Páginas comuns.** As páginas acrescentadas são páginas do livro: são numeradas, levam os cabeços do seu modelo (ou os da seção) e as `variants` do seu lado, e o `{attr.x}` da cerca de página continua chegando à decoração delas. Um modelo de transbordamento com `spread: true` começa na próxima página par, com um branco de paridade antes quando preciso, e ocupa também a ímpar seguinte; uma página dupla cujo `overflowTemplate` é de página simples continua em páginas simples. O texto depois da cerca de página começa na página seguinte à última acrescentada.
-- **Ids.** Um bloco da n-ésima página acrescentada é `cp0:<name>~<n>`; o bloco que recebe o conteúdo leva o nome do bloco da página da cerca que o mandou adiante primeiro (`cp0:dinero~1`, `cp0:dinero~2`), de modo que uma seleção mantém o seu elemento seja qual for o bloco que o recebe. Cada bloco registra de qual bloco vem e em qual continua (`continuedFrom`, `continuesTo`), o `VDTPage.composed.continuationOf` da página é o índice da página da cerca, e os blocos de conteúdo dos pedaços levam o id do boxe com `-cont-<n>`, como os boxes divididos.
+- **Qual bloco recebe.** Na página acrescentada, o conteúdo continua no bloco de mesmo nome; se o modelo não tem nenhum, no bloco de fluxo dele e, na falta deste, no primeiro bloco que ainda não esteja ocupado. Uma matéria que passa por blocos ligados com `next` continua onde a cadeia começa: o resto da terceira de três colunas encadeadas continua na primeira coluna da página acrescentada (o bloco com o nome do início da cadeia ou, na falta dele, o bloco de fluxo), de modo que um modelo de miolo que continua em si mesmo preenche todas as colunas de todas as páginas. Vários blocos de uma página que continuam no mesmo modelo dividem uma página acrescentada quando esse modelo tem um bloco para cada um; se não, o seguinte ganha uma página só para ele. Um bloco da página acrescentada que não recebe nada fica vazio.
+- **De novo e de novo.** Um trecho que ainda não cabe continua outra vez, na próxima página acrescentada, com o `overflow.continueIn` que o bloco tiver ali ou, se não tiver, com a regra que o trouxe. Uma página composta acrescenta no máximo 16 páginas seguidas; o que ainda não cabe na última é cortado e gera o aviso [`frameContinuationLimit`](#framecontinuationlimit). Um bloco de uma página acrescentada pequeno demais para receber qualquer parte desse conteúdo gera o aviso `frameOverflow` em vez de acrescentar páginas.
+- **Onde o trecho é cortado.** Como na página: um título fica com as primeiras linhas e uma lista mantém dois itens de cada lado (veja [Encadear blocos](#encadear-blocos)). Quando nada do boxe cabe na página, o boxe inteiro continua na outra, com aba e tudo: a página não fica com uma aba e uma marca sobre um trecho vazio. Ele não ocupa espaço na página que deixa e, se o espaço de resposta logo abaixo não couber ali no tamanho dele, o boxe continua inteiro junto com ele.
+- **O que as páginas mantêm.** O bloco cortado é o primeiro a ceder o espaço do grupo; assim, os blocos depois dele mantêm o tamanho. Quando o resto continua no mesmo modelo diagramado de novo, os blocos vazios logo depois dele na pilha (o espaço para a resposta sob um boxe de atividade: blocos que não recebem conteúdo) vão junto. Na página eles não ocupam espaço; na página acrescentada mantêm o tamanho sob o resto do boxe, com a decoração ancorada neles. Os outros blocos dessa página acrescentada não ocupam espaço e a decoração deles não é desenhada, e uma pilha mantém o lugar que o primeiro bloco dela tem no modelo; por isso, o resto do boxe começa onde a pilha começa, longe do antetítulo e do cabeço da página.
+- **Páginas comuns.** As páginas acrescentadas são páginas do livro: são numeradas, levam os cabeços do modelo delas (ou os da seção) e as `variants` do lado em que caem, e o `{attr.x}` do contêiner de página continua chegando à decoração delas. Um modelo de transbordamento com `spread: true` começa na próxima página par, com uma página em branco de paridade antes quando preciso, e ocupa também a ímpar seguinte; uma página dupla cujo `overflowTemplate` é de página simples continua em páginas simples. O texto depois do contêiner de página começa na página seguinte à última acrescentada.
+- **Ids.** Um bloco da n-ésima página acrescentada é `cp0:<name>~<n>`; o bloco que recebe o conteúdo leva o nome do bloco da página do contêiner que o mandou adiante primeiro (`cp0:dinero~1`, `cp0:dinero~2`), de modo que uma seleção mantém o elemento seja qual for o bloco que o recebe. Cada bloco registra de qual bloco vem e em qual continua (`continuedFrom`, `continuesTo`), o `VDTPage.composed.continuationOf` da página é o índice da página do contêiner, e os blocos de conteúdo dos trechos levam o id do boxe com `-cont-<n>`, como os boxes divididos.
 - **Rediagramação.** Uma página composta cujo conteúdo continua em outras páginas é diagramada de novo, com as páginas acrescentadas, a cada compilação: a memória de páginas só guarda as páginas cujo conteúdo fica nelas.
 
 ### Saltar para uma página posterior
 
-Uma matéria de revista que passa das suas páginas salta para uma página mais adiante, por cima de outras matérias: “continua na página 47”. `overflow.continueIn: 'page:<id>'` manda o resto para a cerca de página com esse `id`, onde quer que ela venha mais adiante no capítulo:
+Uma matéria de revista que excede as próprias páginas salta para uma página mais adiante, por cima de outras matérias: “continua na página 47”. `overflow.continueIn: 'page:<id>'` manda o resto para o contêiner de página com esse `id`, onde quer que ela venha mais adiante no capítulo:
 
 ```markdown
 ::::page{template="articulo" sigue="p47"}
@@ -522,16 +522,16 @@ Uma matéria de revista que passa das suas páginas salta para uma página mais 
     "mark": "Continua na página {page}", "fromMark": "Continuação da página {page}" } }
 ```
 
-- **Qual página.** `<id>` pode ser `{attr.name}`, lido da cerca de página em que a matéria está, de modo que um só modelo de artigo serve para todos os artigos e o Markdown diz para onde cada um salta.
-- **Qual bloco.** O que `'page:<id>#<frame>'` indica; sem indicação, o bloco com o nome do início da cadeia que envia ou, na falta dele, o primeiro bloco que o conteúdo da própria página deixa vazio. A página mantém o seu próprio conteúdo nos outros blocos.
+- **Qual página.** `<id>` pode ser `{attr.name}`, lido do contêiner de página em que a matéria está, de modo que um só modelo de artigo serve para todos os artigos e o Markdown diz para onde cada um salta.
+- **Qual bloco.** O que `'page:<id>#<frame>'` indica; sem indicação, o bloco com o nome do início da cadeia que envia ou, na falta dele, o primeiro bloco que o conteúdo da própria página deixa vazio. A página mantém o próprio conteúdo nos outros blocos.
 - **Depois do salto.** O que esse bloco não comporta continua em páginas acrescentadas depois da página de destino, como faz `'next-page'` a partir dali; uma matéria que não encontra nela nenhum bloco livre também continua nessas páginas.
-- **Ids e ligações.** Os blocos da página de destino mantêm os seus próprios ids (`cp2:resto`). O `continuesTo` do bloco que envia e o `continuedFrom` do que recebe ligam os pedaços, e o registro de reajustes da página que envia diz “cuerpo continued on page 47”. O EPUB de layout fluido e o PDF marcado leem a matéria inteira, como um só texto.
-- **Uma página que não vem depois.** Um id que nenhuma cerca de página posterior tem gera o aviso [`continueTargetMissing`](#continuetargetmissing), e o resto continua na página seguinte.
-- **Em um arquivo de capítulo posterior.** Uma revista guardada com um arquivo de capítulo por matéria salta da mesma maneira: a página com o `id` pode estar em um capítulo posterior do livro (desde o postext 1.41). O capítulo que envia entrega o resto, e o capítulo que tem a página o compõe no bloco que essa página deixa livre, como compõe um salto dentro de um só arquivo. As notas, os números dos títulos e das figuras e as referências do resto mantêm os números que o seu próprio capítulo lhes deu, e as marcas imprimem os números de página do livro: “Continua na página 47” indica a página tal como o capítulo que a tem a imprimiu, não importa quantas páginas os capítulos intermediários acrescentem. Um clique nas palavras que vieram de outro capítulo põe o cursor no Markdown do capítulo em que foram escritas. Várias matérias enviadas a uma mesma página ocupam os blocos livres dela na ordem dos capítulos. Editar a matéria recompõe o capítulo que tem a página; editar um capítulo intermediário não o recompõe. O PDF marcado lê o resto na sua página, depois do que a página contém por si mesma, e o EPUB de layout fluido no capítulo que tem a página. O resto é composto com a tipografia do texto do livro, não com a de uma seção com estilo do capítulo que tem a página, e uma marca de índice, uma âncora ou um título escritos nele constam (no índice, no sumário e nas referências, e como destino no PDF) na página em que o capítulo que tem a página compõe essas palavras, não na página em que a matéria começa (desde o postext 1.42). Na tela do Sandbox, a seleção e o cursor do editor do capítulo que envia são pintados sobre as palavras trazidas.
+- **Ids e ligações.** Os blocos da página de destino mantêm os próprios ids (`cp2:resto`). O `continuesTo` do bloco que envia e o `continuedFrom` do que recebe ligam os trechos, e o registro de reajustes da página que envia diz “cuerpo continued on page 47”. O EPUB refluível e o PDF marcado leem a matéria inteira, como um só texto.
+- **Uma página que não vem depois.** Um id que nenhum contêiner de página posterior tem gera o aviso [`continueTargetMissing`](#continuetargetmissing), e o resto continua na página seguinte.
+- **Em um arquivo de capítulo posterior.** Uma revista guardada com um arquivo de capítulo por matéria salta da mesma maneira: a página com o `id` pode estar em um capítulo posterior do livro (desde o postext 1.41). O capítulo que envia entrega o resto, e o capítulo que tem a página o compõe no bloco que essa página deixa livre, como compõe um salto dentro de um só arquivo. As notas, os números dos títulos e das figuras e as referências do resto mantêm os números que o próprio capítulo lhes deu, e as marcas imprimem os números de página do livro: “Continua na página 47” indica a página tal como o capítulo que a tem a imprimiu, não importa quantas páginas os capítulos intermediários acrescentem. Um clique nas palavras que vieram de outro capítulo põe o cursor no Markdown do capítulo em que foram escritas. Várias matérias enviadas a uma mesma página ocupam os blocos livres dela na ordem dos capítulos. Editar a matéria diagrama de novo o capítulo que tem a página; editar um capítulo intermediário, não. O PDF marcado lê o resto na página dele, depois do que a página contém por si mesma, e o EPUB refluível no capítulo que tem a página. O resto é composto com a tipografia do texto do livro, não com a de uma seção com estilo do capítulo que tem a página, e uma marca de índice, uma âncora ou um título escritos nele constam (no índice, no sumário e nas referências, e como destino no PDF) na página em que o capítulo que tem a página compõe essas palavras, não na página em que a matéria começa (desde o postext 1.42). No canvas do Sandbox, a seleção e o cursor do editor do capítulo que envia são pintados sobre as palavras trazidas.
 
 ### A marca de continuação
 
-`overflow.mark` define as palavras com que termina um pedaço cortado:
+`overflow.mark` define as palavras com que termina um trecho cortado:
 
 <table>
   <thead>
@@ -543,7 +543,7 @@ Uma matéria de revista que passa das suas páginas salta para uma página mais 
   <tbody>
     <tr>
       <td>não definido</td>
-      <td>As palavras de continuação do estilo do bloco (o <code>continuesMarker</code> do seu estilo de boxe), que seguem o idioma do documento: “Continued” em inglês, “Continúa” em espanhol, “Continua” em catalão, italiano e português, “À suivre” em francês, “Wird fortgesetzt” em alemão, “接下页” em chinês, “次ページへ続く” em japonês e “يتبع” em árabe. São as mesmas que as tabelas e os boxes divididos usam.</td>
+      <td>As palavras de continuação do estilo do bloco (o <code>continuesMarker</code> do estilo de boxe dele), que seguem o idioma do documento: “Continued” em inglês, “Continúa” em espanhol, “Continua” em catalão, italiano e português, “À suivre” em francês, “Wird fortgesetzt” em alemão, “接下页” em chinês, “次ページへ続く” em japonês e “يتبع” em árabe. São as mesmas que as tabelas e os boxes divididos usam.</td>
     </tr>
     <tr>
       <td>uma string</td>
@@ -551,16 +551,16 @@ Uma matéria de revista que passa das suas páginas salta para uma página mais 
     </tr>
     <tr>
       <td><code>false</code></td>
-      <td>Nenhuma marca; o pedaço comporta uma linha a mais.</td>
+      <td>Nenhuma marca; o trecho comporta uma linha a mais.</td>
     </tr>
   </tbody>
 </table>
 
-Uma marca pode conter `{page}`: o número impresso da página em que o resto continua, como uma revista escreve (`mark: "Continua na página {page}"`). Vale para uma página acrescentada (`'next-page'`, `'template:<id>'`) e para uma cerca de página posterior para a qual a matéria salta (`'page:<id>'`). Os números são preenchidos depois que as páginas são numeradas.
+Uma marca pode conter `{page}`: o número impresso da página em que o resto continua, como uma revista escreve (`mark: "Continua na página {page}"`). Vale para uma página acrescentada (`'next-page'`, `'template:<id>'`) e para um contêiner de página posterior para o qual a matéria salta (`'page:<id>'`). Os números são preenchidos depois que as páginas são numeradas.
 
-A marca é composta abaixo da última linha do pedaço, na fonte do texto do boxe, alinhada e inclinada conforme `continuesMarkerAlign` e `continuesMarkerItalic` do estilo (à direita e em itálico por padrão). É um elemento da paginação: o EPUB de layout fluido a deixa de fora e o PDF marcado a marca como artefato. Um bloco encadeado com `next` na mesma página não leva marca.
+A marca é composta abaixo da última linha do trecho, na fonte do texto do boxe, alinhada e inclinada conforme `continuesMarkerAlign` e `continuesMarkerItalic` do estilo (à direita e em itálico por padrão). É um elemento da paginação: o EPUB refluível a deixa de fora e o PDF marcado a marca como artefato. Um bloco encadeado com `next` na mesma página não leva marca.
 
-O pedaço da outra página abre sem a aba e o título do bloco, como as partes seguintes de um boxe dividido. `overflow.fromMark` define palavras no alto dele, sendo `{page}` o número da página de onde ele vem: `"Continuação da página {page}"`. O `fromMark` do próprio bloco que recebe vale mais que o do bloco que envia; se nenhum dos dois estiver definido, o pedaço abre sem palavras. Um estilo com `repeatTitle: true` repete ali o seu título seguido do seu `continuedSuffix` (“(cont.)”). As duas marcas são compostas na fonte do texto do boxe, alinhadas e inclinadas como a marca final, e são elementos da paginação.
+O trecho da outra página abre sem a aba e o título do bloco, como as partes seguintes de um boxe dividido. `overflow.fromMark` define palavras no alto dele, sendo `{page}` o número da página de onde ele vem: `"Continuação da página {page}"`. O `fromMark` do próprio bloco que recebe vale mais que o do bloco que envia; se nenhum dos dois estiver definido, o trecho abre sem palavras. Um estilo com `repeatTitle: true` repete ali o título seguido do `continuedSuffix` (“(cont.)”). As duas marcas são compostas na fonte do texto do boxe, alinhadas e inclinadas como a marca final, e são elementos da paginação.
 
 ## Registro de reajustes
 
@@ -609,7 +609,7 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
   </tbody>
 </table>
 
-Mudanças de menos de meio milímetro ficam de fora, e cada mudança é arredondada uma única vez para o décimo de milímetro, então blocos que se moveram juntos mostram o mesmo valor. A decoração que acompanha um bloco não entra na lista.
+Mudanças de menos de meio milímetro ficam de fora, e cada mudança é arredondada uma única vez para o décimo de milímetro; por isso, blocos que se moveram juntos mostram o mesmo valor. A decoração que acompanha um bloco não entra na lista.
 
 O `postext check` imprime uma linha `reflow` por página composta que tem eventos, depois dos avisos; com `--json`, o relatório traz uma lista `reflow` com uma entrada por página: `pageIndex`, `pageLabel`, `template`, `fenceIndex`, `chapter`, `events` e `lines` (os eventos por extenso).
 
@@ -617,7 +617,7 @@ No código, o registro é `VDTPage.composed.log`, e cada bloco guarda em `VDTFra
 
 ## Páginas duplas
 
-Um modelo com `spread: true` é uma só folha de duas páginas lado a lado: uma faixa que atravessa a lombada, uma tira de ilustrações de uma borda externa à outra, fichas dos dois lados. A abertura da página diz isso com `spread`:
+Um modelo com `spread: true` é uma só folha de duas páginas lado a lado: uma faixa que atravessa a lombada, uma tira de ilustrações de uma borda externa à outra, fichas dos dois lados. O contêiner de página indica isso com `spread`:
 
 ```md
 ::::page{template="linea-tiempo" spread}
@@ -633,39 +633,39 @@ Con relojes de máquina
 ::::
 ```
 
-- **Onde começa.** Uma página dupla começa em uma página par (a da esquerda em um livro que se lê da esquerda para a direita, a da direita em um que se lê da direita para a esquerda) e ocupa também a ímpar seguinte. Se o texto anterior termina em uma página par, a próxima fica em branco (um branco de paridade, como antes de uma página dupla de quadrinhos), para que as duas metades fiquem frente a frente. O texto depois do fechamento começa na página depois da ímpar.
-- **Uma só folha.** Os blocos são posicionados em uma folha tão larga quanto as duas páginas. A área `content` vai da margem externa de uma página à da outra, com as duas margens internas dentro; `trim` são as duas páginas refiladas lado a lado; `bleed` acrescenta a sangria na cabeça, no pé e nas duas bordas externas, nunca na lombada. Uma `grid` divide toda a largura: seis colunas põem três em cada página. Em um livro que se lê da direita para a esquerda a folha é espelhada como as suas páginas, e a primeira coluna fica na página da direita.
-- **A medianiz.** `gutter` é uma faixa dessa largura centrada na lombada. Um bloco sem `crossGutter: true` fica fora dela: um bloco que atravessa a faixa inteira é cortado na borda dela, do lado do seu centro, e um bloco cuja borda interna cai dentro da faixa sai dela inteiro. Uma altura `auto` é medida na largura menor, e o registro de reajustes da página anota a mudança (`resized` ou `moved`, com a causa `gutter`). Sem `gutter`, a faixa é a própria lombada, então só cruzam a dobra os blocos que pedem isso.
-- **Por cima da lombada.** Um bloco com `crossGutter: true` pode atravessá-la. O texto dele é lido uma vez só, na página que contém o centro do bloco; a página em frente pinta a sua metade do bloco, cortada na sua folha, de modo que uma faixa ou uma ilustração aparece inteira com o livro aberto. Um PDF com tags marca essa metade como artefato, o HTML a esconde das tecnologias assistivas, e a seleção ou a busca encontram o texto uma vez.
-- **A decoração** é composta uma vez sobre a folha inteira e cortada na lombada do mesmo jeito: um fundo, um cartão de uma página à outra, um título corrente na página da direita. Um elemento ancorado em `#bloco` acompanha esse bloco até a página em que ele cai. Uma página dupla não aceita `variants`, porque tem os dois lados; `header` e `footer` valem em cada uma das suas páginas como em qualquer página.
+- **Onde começa.** Uma página dupla começa em uma página par (a da esquerda em um livro que se lê da esquerda para a direita, a da direita em um que se lê da direita para a esquerda) e ocupa também a ímpar seguinte. Se o texto anterior termina em uma página par, a próxima fica em branco (uma página em branco de paridade, como antes de uma página dupla de quadrinhos), para que as duas metades fiquem frente a frente. O texto depois da linha de fechamento começa na página depois da ímpar.
+- **Uma só folha.** Os blocos são posicionados em uma folha tão larga quanto as duas páginas. A área `content` vai da margem externa de uma página à da outra, com as duas margens internas dentro; `trim` são as duas páginas refiladas lado a lado; `bleed` acrescenta a sangria na cabeça, no pé e nas duas bordas externas, nunca na lombada. Uma `grid` divide toda a largura: seis colunas põem três em cada página. Em um livro que se lê da direita para a esquerda a folha é espelhada como as páginas dele; por isso, a primeira coluna fica na página da direita.
+- **A medianiz.** `gutter` é uma faixa dessa largura centrada na lombada. Um bloco sem `crossGutter: true` fica fora dela: um bloco que atravessa a faixa inteira é cortado na borda dela, do lado em que fica o centro dele, e um bloco cuja borda interna cai dentro da faixa sai dela inteiro. Uma altura `auto` é medida na largura menor, e o registro de reajustes da página anota a mudança (`resized` ou `moved`, com a causa `gutter`). Sem `gutter`, a faixa é a própria lombada; por isso, só cruzam a dobra os blocos que pedem isso.
+- **Por cima da lombada.** Um bloco com `crossGutter: true` pode atravessá-la. O texto dele é lido uma vez só, na página que contém o centro do bloco; a página em frente pinta a metade do bloco que lhe cabe, cortada na própria folha, de modo que uma faixa ou uma ilustração aparece inteira com o livro aberto. Um PDF marcado marca essa metade como artefato, o HTML a esconde das tecnologias assistivas, e a seleção ou a busca encontram o texto uma vez.
+- **A decoração** é composta uma vez sobre a folha inteira e cortada na lombada do mesmo jeito: um fundo, um cartão de uma página à outra, um cabeço na página da direita. Um elemento ancorado em `#bloco` acompanha esse bloco até a página em que ele cai. Uma página dupla não aceita `variants`, porque tem os dois lados; `header` e `footer` valem em cada uma das páginas dela como em qualquer página.
 
-Na tela, na visualização de página dupla do Sandbox e no Folio, as duas páginas aparecem lado a lado. O PDF tem duas páginas, cada uma recortada na sua sangria. O EPUB de layout fixo dá a elas `page-spread-left` e `page-spread-right` com `rendition:spread-both`, para que o leitor as mostre juntas em qualquer orientação. O EPUB fluido lê os blocos como em qualquer página composta, na ordem do Markdown.
+No canvas, na visualização de página dupla do Sandbox e no Folio, as duas páginas aparecem lado a lado. O PDF tem duas páginas, cada uma recortada na própria sangria. O EPUB de layout fixo dá a elas `page-spread-left` e `page-spread-right` com `rendition:spread-both`, para que o leitor as mostre juntas em qualquer orientação. O EPUB refluível lê os blocos como em qualquer página composta, na ordem do Markdown.
 
 ### spreadMismatch
 
-**Causa.** A abertura da página e o seu modelo não concordam: a abertura tem `spread` e o modelo ocupa uma só página, ou o modelo é de página dupla (pelo seu próprio `spread: true` ou por `extends`) e falta a marca na abertura. Vale o modelo: um modelo de página dupla é composto em duas páginas lado a lado, e qualquer outro em uma. O aviso traz o modelo, a marca da abertura (`fence`) e a do modelo (`templateSpread`), e aponta o atributo `spread`, ou o nome do modelo quando a abertura não o tem.
+**Causa.** O contêiner de página e o modelo dele não concordam: o contêiner tem `spread` e o modelo ocupa uma só página, ou o modelo é de página dupla (pelo próprio `spread: true` ou por `extends`) e falta a marca no contêiner. Vale o modelo: um modelo de página dupla é diagramado em duas páginas lado a lado, e qualquer outro, em uma. O aviso traz o modelo, a marca do contêiner (`fence`) e a do modelo (`templateSpread`), e aponta o atributo `spread`, ou o nome do modelo quando o contêiner não tem o atributo.
 
-**Correção.** Faça a abertura dizer o que o modelo é: escreva `spread` na abertura de um modelo de página dupla, tire-o da abertura de um modelo de uma página, ou escolha outro modelo.
+**Correção.** Faça o contêiner corresponder ao modelo: escreva `spread` no contêiner de um modelo de página dupla, tire-o do contêiner de um modelo de uma página, ou escolha outro modelo.
 
 ## Migrar um livro com o texto nos estilos
 
-Um livro feito antes das páginas compostas pode guardar o texto das suas páginas em estilos de título: um título oculto em cada página cujo cabeçalho coloca cada texto onde a página impressa o tinha. A verificação *Texto guardado na configuração* aponta isso. No Sandbox, **Levar o texto para o Markdown** no painel Verificações transforma cada desenho de página num modelo de página com os blocos onde os textos estavam, e cada página numa cerca de página com o seu texto em slots `:::frame`; mostra cada página antes e depois, e pode ser desfeito. Veja [Levar o texto para o Markdown](/pt/docs/sandbox-composed-pages#levar-o-texto-para-o-markdown). No código, `moveTextToMarkdown({ config, chapters, metadata }, options)` faz o mesmo e devolve a nova configuração, os capítulos e um relatório.
+Um livro feito antes das páginas compostas pode guardar o texto das páginas em estilos de título: um título oculto em cada página, cujo cabeço posiciona cada texto onde a página impressa o tinha. A verificação *Texto guardado na configuração* aponta isso. No Sandbox, **Levar o texto para o Markdown** no painel Verificações transforma cada design de página num modelo de página com os blocos onde os textos estavam, e cada página num contêiner de página com o texto em slots `:::frame`; mostra cada página antes e depois, e pode ser desfeito. Veja [Levar o texto para o Markdown](/pt/docs/sandbox-composed-pages#levar-o-texto-para-o-markdown). No código, `moveTextToMarkdown({ config, chapters, metadata }, options)` faz o mesmo e devolve a nova configuração, os capítulos e um relatório.
 
-Com `labelsOnPictures: true` (desde o postext 1.38), as palavras que um design pôs sobre uma imagem passam a ser rótulos dessa imagem em vez de blocos: um texto de uma linha e no máximo quatro palavras, não maior que três quartos do texto principal (`labelsOnPictures: { maxFontSize }` define outro limite), cuja caixa fica dentro de uma imagem do mesmo design. A imagem sai da decoração e vai para um bloco na caixa em que era desenhada, com um `:::figure` e uma linha `::label` por texto, e cada texto vira uma âncora do recurso da imagem no ponto em que o design o colocava (a primeira linha de base, o lado que o alinhamento indica, a largura da caixa), com um estilo de rótulo para a sua aparência. Passe os `resources` do livro na entrada: o resultado os devolve com as âncoras (`result.resources`), e um bitmap menor que a caixa sobre a qual o design o esticava recebe a `resolution` que o põe nessa largura. Uma imagem que aparece em várias páginas compartilha as suas âncoras. O `labels` do relatório conta imagens, rótulos, âncoras e estilos de rótulo. O diálogo do Sandbox oferece a opção, desligada até ser pedida, quando o livro tem palavras para virar rótulos. Quando o design pintava decoração sobre a imagem (uma tarja cruzando o mapa) e nenhuma por baixo, o bloco da imagem vai para a camada `-1`, abaixo da decoração, e a tarja continua sobre o mapa (desde o postext 1.40). Com decoração também por baixo da imagem, ou sobre um dos seus rótulos, um único espaço não guarda as duas ordens: o bloco fica na camada 0 e a página é indicada como uma que pode ficar diferente (`overPicture`).
+Com `labelsOnPictures: true` (desde o postext 1.38), as palavras que um design pôs sobre uma imagem passam a ser rótulos dessa imagem em vez de blocos: um texto de uma linha e no máximo quatro palavras, não maior que três quartos do texto do corpo (`labelsOnPictures: { maxFontSize }` define outro limite), cuja caixa fica dentro de uma imagem do mesmo design. A imagem sai da decoração e vai para um bloco na caixa em que era desenhada, com um `:::figure` e uma linha `::label` por texto, e cada texto vira uma âncora do recurso da imagem no ponto em que o design o colocava (a primeira linha de base, o lado que o alinhamento indica, a largura da caixa), com um estilo de rótulo para a aparência. Passe os `resources` do livro na entrada: o resultado os devolve com as âncoras (`result.resources`), e um bitmap menor que a caixa sobre a qual o design o esticava recebe a `resolution` que o põe nessa largura. Uma imagem que aparece em várias páginas compartilha as âncoras. O `labels` do relatório conta imagens, rótulos, âncoras e estilos de rótulo. O diálogo do Sandbox oferece a opção, desligada até ser pedida, quando o livro tem palavras para virar rótulos. Quando o design pintava decoração sobre a imagem (uma tarja cruzando o mapa) e nenhuma por baixo, o bloco da imagem vai para a camada `-1`, abaixo da decoração, e a tarja continua sobre o mapa (desde o postext 1.40). Com decoração também por baixo da imagem, ou sobre um dos rótulos dela, uma única camada não comporta as duas ordens: o bloco fica na camada 0, e a página é apontada como uma que pode ficar diferente (`overPicture`).
 
 ## No código
 
-`composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por cerca de página, em ordem: o seu `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o seu `fenceIndex` (o ordinal da cerca no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que nomeia em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os seus atributos e rótulos, cada rótulo com o seu texto, os seus trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.
+`composedPages(blocks)` lê os blocos analisados de um capítulo (`parseMarkdownWithIssues(markdown).blocks`) e devolve um nó por contêiner de página, em ordem: o `template`, `spread`, `attrs` com o intervalo de origem de cada valor (`attrSources`), o `fenceIndex` (o ordinal do contêiner no capítulo, o mesmo em todos os idiomas), `slots` (os índices dos blocos de cada slot, na ordem do Markdown), `unassigned` (os blocos sem slot) e o intervalo de origem da página inteira. Um bloco traz o slot que indica em `ContentBlock.slot`, com o intervalo de origem do valor; uma figura é um `resourceBlock` cujo `figure` guarda os atributos e os rótulos dela, cada rótulo com o texto, os trechos em linha e um mapa de origem que leva de volta ao Markdown. `checkComposedSlots(pages, config)` devolve os três avisos de slot dessas páginas.
 
-Depois da diagramação, o `VDTPage.composed` de uma página composta registra o seu modelo, a variante aplicada, os atributos da cerca de página e, para cada bloco, o seu id (`cp0:dinero`: o ordinal da cerca de página e o nome do bloco, o mesmo em todos os idiomas), a sua caixa, a camada, o giro, a altura do conteúdo que não coube (`overflowPx`), o bloco de onde ele vem ou para onde continua, o seu caminho na configuração (`/pageTemplates/0/frames/2`) e os ids dos seus elementos. Esses elementos são boxes comuns em `page.floats` e `doc.blocks`, com os seus intervalos de origem, então um clique num bloco sem giro da prévia do Sandbox leva ao seu Markdown. `composedPaintOrder(page)` dá a ordem em que um renderizador pinta os blocos e a decoração, e `frameMatrix(frame)`, o giro de um bloco.
+Depois da diagramação, o `VDTPage.composed` de uma página composta registra o modelo, a variante aplicada, os atributos do contêiner de página e, para cada bloco, o id (`cp0:dinero`: o ordinal do contêiner de página e o nome do bloco, o mesmo em todos os idiomas), a caixa, a camada, o giro, a altura do conteúdo que não coube (`overflowPx`), o bloco de onde ele vem ou para onde continua, o caminho na configuração (`/pageTemplates/0/frames/2`) e os ids dos elementos dele. Esses elementos são boxes comuns em `page.floats` e `doc.blocks`, com os intervalos de origem; por isso, um clique num bloco sem giro da visualização do Sandbox leva ao Markdown dele. `composedPaintOrder(page)` dá a ordem em que um renderizador pinta os blocos e a decoração, e `frameMatrix(frame)`, o giro de um bloco.
 
 ## Mapa de origem
 
 Tudo o que uma página composta pinta sabe onde foi escrito: um editor pode ir de um ponto da página ao Markdown ou à configuração, e de um trecho do Markdown ao que ele virou na página.
 
-`sourceAt(doc, pageIndex, x, y)` recebe um ponto de uma página diagramada, em pixels de página a partir do canto superior esquerdo da folha, e devolve o que está ali, de dentro para fora: cada elemento seguido dos que o contêm. Um caractere de um box chega com a sua linha, o seu parágrafo, o seu bloco, os grupos do bloco e o modelo; uma palavra da decoração, com o seu elemento de design, a decoração e o modelo. Cada elemento tem um `level`, um `id` estável, uma `source` e, quase sempre, o seu `rect` na página (em pé, antes do `rotate` de um bloco girado).
+`sourceAt(doc, pageIndex, x, y)` recebe um ponto de uma página diagramada, em pixels de página a partir do canto superior esquerdo da folha, e devolve o que está ali, de dentro para fora: cada elemento seguido dos que o contêm. Um caractere de um boxe chega com a linha, o parágrafo, o bloco, os grupos do bloco e o modelo; uma palavra da decoração, com o elemento de design, a decoração e o modelo. Cada elemento tem um `level`, um `id` estável, uma `source` e, quase sempre, o `rect` na página (em pé, antes do `rotate` de um bloco girado).
 
-Numa página da direita para a esquerda ou vertical, os blocos ficam no referencial do fluxo da página, que a folha mostra espelhado ou girado um quarto de volta; a decoração e os cabeçalhos ficam na folha. `sourceAt` continua recebendo pontos da folha e os converte para os blocos. Um elemento cujo `rect` está no referencial do fluxo vem com `flow: true`, em `sourceAt`, `elementsForSource` e `findElement`; `flowRectToPage(page, rect)` dá sua caixa na folha e `flowToPage(page, x, y)`, um ponto dela. Até o postext 1.38, um ponto da folha sobre um bloco de uma página assim só encontrava o modelo.
+Numa página da direita para a esquerda ou vertical, os blocos ficam no referencial do fluxo da página, que a folha mostra espelhado ou girado um quarto de volta; a decoração e os cabeços ficam na folha. `sourceAt` continua recebendo pontos da folha e os converte para os blocos. Um elemento cujo `rect` está no referencial do fluxo vem com `flow: true`, em `sourceAt`, `elementsForSource` e `findElement`; `flowRectToPage(page, rect)` dá sua caixa na folha e `flowToPage(page, x, y)`, um ponto dela. Até o postext 1.38, um ponto da folha sobre um bloco de uma página assim só encontrava o modelo.
 
 <table>
   <thead>
@@ -679,27 +679,27 @@ Numa página da direita para a esquerda ou vertical, os blocos ficam no referenc
     <tr>
       <td><code>markdown</code></td>
       <td><code>start</code>, <code>end</code> (posições no arquivo do capítulo, contando o front matter), <code>file</code></td>
-      <td>um caractere (um chip, uma referência ou uma fórmula inteiros quando o caractere é um deles), uma linha, um parágrafo ou item de lista, o box em volta</td>
+      <td>um caractere (um chip, uma referência ou uma fórmula inteiros quando o caractere é um deles), uma linha, um parágrafo ou item de lista, o boxe em volta</td>
     </tr>
     <tr>
       <td><code>config</code></td>
       <td><code>path</code>, um ponteiro JSON</td>
-      <td>um bloco (<code>/pageTemplates/0/frames/2</code>), um grupo, o modelo, um elemento de design da decoração ou dos cabeçalhos e rodapés (<code>/footer/elements/0</code>) e o seu slot</td>
+      <td>um bloco (<code>/pageTemplates/0/frames/2</code>), um grupo, o modelo, um elemento de design da decoração ou dos cabeços (<code>/footer/elements/0</code>) e o slot dele</td>
     </tr>
     <tr>
       <td><code>attr</code></td>
       <td><code>name</code>, <code>start</code>, <code>end</code>, <code>file</code></td>
-      <td>o texto que um elemento mostra com <code>&#123;attr.x&#125;</code> (o valor na cerca da página), a aba e o título de um bloco (o <code>label</code> e o <code>title</code> da sua cerca <code>:::frame</code>), uma imagem escolhida com <code>&#123;attr.x&#125;</code></td>
+      <td>o texto que um elemento mostra com <code>&#123;attr.x&#125;</code> (o valor no contêiner de página), a aba e o título de um bloco (o <code>label</code> e o <code>title</code> do contêiner <code>:::frame</code> dele), uma imagem escolhida com <code>&#123;attr.x&#125;</code></td>
     </tr>
     <tr>
       <td><code>resource</code></td>
       <td><code>resourceId</code>, <code>anchor</code></td>
-      <td>uma imagem num bloco ou na decoração; um rótulo traz a sua âncora como <code>resourceId#anchorId</code></td>
+      <td>uma imagem num bloco ou na decoração; um rótulo traz a âncora como <code>resourceId#anchorId</code></td>
     </tr>
   </tbody>
 </table>
 
-Os níveis, de dentro para fora: `text`, `attr`, `label`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Um bloco e o modelo trazem também `content`, o trecho de Markdown que contêm: o conteúdo do slot do bloco, a cerca inteira da página. `file` é o nome que o host passa nas opções (`{ file: 'tema-1.md' }`, ou uma função do índice da página para um documento costurado a partir de vários capítulos).
+Os níveis, de dentro para fora: `text`, `attr`, `label`, `resource`, `line`, `block`, `box`, `frame`, `group`, `design`, `slot`, `template`. Um bloco e o modelo trazem também `content`, o trecho de Markdown que contêm: o conteúdo do slot do bloco, o contêiner de página inteiro. `file` é o nome que o aplicativo hospedeiro passa nas opções (`{ file: 'tema-1.md' }`, ou uma função do índice da página para um documento costurado a partir de vários capítulos).
 
 ```ts
 import { buildDocument, sourceAt, elementsForSource, findElement } from 'postext';
@@ -715,14 +715,14 @@ elementsForSource(doc, 677, 690); // linhas, blocos de texto, blocos do modelo, 
 findElement(doc, 'cp0:dinero');   // o mesmo bloco depois de uma nova diagramação, com o seu rect
 ```
 
-`elementsForSource(doc, start, end)` faz o caminho inverso e devolve `{ pageIndex, element }` para cada linha, bloco de texto, bloco do modelo, página composta e texto de design que o trecho toca. Uma linha que fica abaixo do pé do seu bloco chega com `clipped: true`: na página é cortada, no mapa de origem continua. Numa página dupla, a metade de um bloco que atravessa a lombada e é lida na página da frente responde com os identificadores dos blocos de texto que mostra e `facing: true`, em `sourceAt` e em `elementsForSource`. Ali, `elementsForSource` dá a cada página o bloco com a parte da sua caixa que essa página pinta como `rect`, então uma faixa que começa perto da lombada tem um ponto para clicar nas duas páginas. Um rótulo de figura responde no nível `label`, com o seu identificador e a sua âncora, onde quer que seja desenhado sobre a imagem.
+`elementsForSource(doc, start, end)` faz o caminho inverso e devolve `{ pageIndex, element }` para cada linha, bloco de texto, bloco do modelo, página composta e texto de design que o trecho toca. Uma linha que fica abaixo do pé do bloco chega com `clipped: true`: na página é cortada, no mapa de origem continua. Numa página dupla, a metade de um bloco que atravessa a lombada e é lida na página da frente responde com os identificadores dos blocos de texto que mostra e `facing: true`, em `sourceAt` e em `elementsForSource`. Ali, `elementsForSource` dá a cada página o bloco com a parte da caixa que essa página pinta como `rect`; por isso, uma faixa que começa perto da lombada tem um ponto para clicar nas duas páginas. Um rótulo de figura responde no nível `label`, com o identificador e a âncora dele, onde quer que seja desenhado sobre a imagem.
 
-**Identificadores estáveis.** Uma página composta é `cp<n>`, com `n` o ordinal da sua cerca no capítulo; um bloco é `cp<n>:<bloco>` (com `~<k>` para o k-ésimo pedaço do seu conteúdo que continua numa página seguinte), os seus blocos de texto `cp<n>:<bloco>-c0`, `-c1`…, um grupo `cp<n>:group:<nome>`, um elemento da decoração ou dos cabeçalhos e rodapés `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, e um rótulo de uma figura `cp<n>:<slot>:label:<âncora>`. Nenhum depende de posições nem das palavras, então um identificador é o mesmo depois de qualquer nova diagramação e em todos os idiomas do capítulo: uma seleção sobrevive a uma edição, e o mesmo bloco se encontra na tradução. `findElement(doc, id)` volta a encontrar o elemento.
+**Identificadores estáveis.** Uma página composta é `cp<n>`, com `n` o ordinal do contêiner dela no capítulo; um bloco é `cp<n>:<bloco>` (com `~<k>` para o k-ésimo trecho do conteúdo que continua numa página seguinte), os blocos de texto dele `cp<n>:<bloco>-c0`, `-c1`…, um grupo `cp<n>:group:<nome>`, um elemento da decoração ou dos cabeços `cp<n>:decoration:<id>`, `cp<n>:header:<id>`, `cp<n>:footer:<id>`, e um rótulo de uma figura `cp<n>:<slot>:label:<âncora>`. Nenhum depende de posições nem das palavras; por isso, um identificador é o mesmo depois de qualquer nova diagramação e em todos os idiomas do capítulo: uma seleção sobrevive a uma edição, e o mesmo bloco se encontra na tradução. `findElement(doc, id)` volta a encontrar o elemento.
 
-**Entradas do sumário.** Uma linha de `:::toc` traz em `tocEntry.headingSource` a posição do título que ela lista no corpo Markdown do seu capítulo (sem contar o front matter, como contam os esquemas); `sourceAt` a devolve como `heading` no bloco da linha.
+**Entradas do sumário.** Uma linha de `:::toc` traz em `tocEntry.headingSource` a posição do título que ela lista no corpo Markdown do capítulo (sem contar o front matter, como contam as estruturas do documento); `sourceAt` a devolve como `heading` no bloco da linha.
 
-**Diagramar de novo uma só página.** A diagramação de cada página composta é guardada pelo que ela lê: o modelo, o Markdown da página, os estilos e as fontes, o idioma, o lado da folha e a sua geometria. Uma diagramação posterior que encontra a mesma página (a passada seguinte, uma edição em outra parte do capítulo, o capítulo paginado de novo no mesmo worker) a reaproveita como estava. Uma edição dentro de uma página, ou num atributo da sua cerca, diagrama de novo só essa página; uma mudança no modelo diagrama de novo todas as páginas que o usam. Uma página com notas de rodapé, referências, citações ou um sumário é diagramada de novo todas as vezes, porque o que ela imprime depende do resto do livro. Uma página dupla também é diagramada de novo todas as vezes: as suas duas páginas são uma só folha. `VDTComposedPage.layoutKey` é a chave dos blocos de uma página; `composedPagePaintKey(page)` soma a ela o que fica em volta (cabeçalhos e rodapés, decoração, número da página), para que um host possa manter os pixels que pintou enquanto a chave não muda. A tela do Sandbox faz isso: uma edição numa página repinta essa página.
+**Diagramar de novo uma só página.** A diagramação de cada página composta é guardada pelo que ela lê: o modelo, o Markdown da página, os estilos e as fontes, o idioma, o lado da folha e a geometria. Uma diagramação posterior que encontra a mesma página (a passada seguinte, uma edição em outra parte do capítulo, o capítulo paginado de novo no mesmo worker) a reaproveita como estava. Uma edição dentro de uma página, ou num atributo do contêiner dela, diagrama de novo só essa página; uma mudança no modelo diagrama de novo todas as páginas que o usam. Uma página com notas de rodapé, referências, citações ou um sumário é diagramada de novo todas as vezes, porque o que ela imprime depende do resto do livro. Uma página dupla também é diagramada de novo todas as vezes: as duas páginas dela são uma só folha. `VDTComposedPage.layoutKey` é a chave dos blocos de uma página; `composedPagePaintKey(page)` soma a ela o que fica em volta (cabeços, decoração, número da página), para que um aplicativo hospedeiro possa manter os pixels que pintou enquanto a chave não muda. O canvas do Sandbox faz isso: uma edição numa página repinta essa página.
 
 ## Páginas de quadrinhos
 
-Uma página de quadrinhos (`:::page{split}`) é uma página composta cujos blocos a sua divisão gera: um por quadro, com identificadores estáveis `cm<n>:<nome>`, um polígono para uma célula inclinada, um estilo de destaque por `box` e Markdown despejado num quadro de texto. Veja [Quadrinhos › Páginas de quadrinhos e páginas compostas](/pt/docs/comics#páginas-de-quadrinhos-e-páginas-compostas).
+Uma página de quadrinhos (`:::page{split}`) é uma página composta cujos blocos a divisão dela gera: um por quadro, com identificadores estáveis `cm<n>:<nome>`, um polígono para uma célula inclinada, um estilo de boxe por `box` e Markdown despejado num quadro de texto. Veja [Quadrinhos › Páginas de quadrinhos e páginas compostas](/pt/docs/comics#páginas-de-quadrinhos-e-páginas-compostas).

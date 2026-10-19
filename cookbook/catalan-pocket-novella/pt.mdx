@@ -5,22 +5,22 @@ plain: "Uma novela inteira em catalão, composta como um livrinho de bolso. As p
 description: "El transplantat, de Oller (texto de 1928), em bolso de 12 × 18,5 cm: locale 'ca', hifenização do IEC, l·l quebrado como il- | lusió, aberturas com gravura."
 question: "Como faço para hifenizar o catalão direito, com l·l, apóstrofos e pronomes ligados por hífen?"
 aliases: ["catalão", "català", "hifenização catalã", "divisão silábica catalã", "ela geminada", "l·l", "punt volat", "ponto alto", "IEC", "Institut d’Estudis Catalans", "pronomes enclíticos", "Narcís Oller", "livro de bolso", "novela completa", "frontispício", "gravura"]
-pageNotes: { "2": "O frontispício: uma gravura de um padeiro robusto, de avental branco, à porta da padaria da sua aldeia, com o fogo do forno atrás; embaixo, EL FORNER DE LES MONGES em versaletes.", "3": "A folha de rosto: NARCÍS OLLER em versaletes, El transplantat em itálico vermelho grande, De «Croquis del natural» logo abaixo e um fio vermelho curto.", "27": "Uma página de texto do capítulo IV. No meio da página, uma linha termina em titil- e a seguinte começa com laven: o ponto alto de titil·laven cede lugar ao hífen." }
+pageNotes: { "2": "O frontispício: uma gravura de um padeiro robusto, de avental branco, à porta da padaria da aldeia, com o fogo do forno atrás; embaixo, EL FORNER DE LES MONGES em versaletes.", "3": "A folha de rosto: NARCÍS OLLER em versaletes, El transplantat em itálico vermelho grande, De «Croquis del natural» logo abaixo e um fio vermelho curto.", "27": "Uma página de texto do capítulo IV. No meio da página, uma linha termina em titil- e a seguinte começa com laven: o ponto alto de titil·laven cede lugar ao hífen." }
 ---
 
 ## O que você vai compor
 
-*El transplantat*, de Narcís Oller, completo, com o texto das suas *Obres completes* (Barcelona, 1928), num livro de bolso de 12 × 18,5 cm e 32 páginas. Antes dos quatro capítulos vêm uma falsa folha de rosto, um frontispício com o padeiro diante do forno, a folha de rosto em Cormorant Garamond itálico vermelho e uma nota sobre a edição. Cada capítulo abre sob uma gravura de doze linhas de altura, com o seu número romano em vermelho. O texto, em Gentium Book Plus de 9,85 pt, se divide pelas sílabas catalãs como pede o Institut d’Estudis Catalans: no mínimo duas letras de cada lado, nenhuma quebra entre vogais em hiato nem logo depois de um apóstrofo, e *titil·laven* quebra como *titil-* | *laven*, com o hífen no lugar do ponto alto. Os diálogos levam travessão, e as citações, «cometes baixes».
+*El transplantat*, de Narcís Oller, completo, com o texto das *Obres completes* (Barcelona, 1928), num livro de bolso de 12 × 18,5 cm e 32 páginas. Antes dos quatro capítulos vêm uma falsa folha de rosto, um frontispício com o padeiro diante do forno, a folha de rosto em Cormorant Garamond itálico vermelho e uma nota sobre a edição. Cada capítulo abre sob uma gravura de doze linhas de altura, com o número romano em vermelho. O texto, em Gentium Book Plus de 9,85 pt, se divide pelas sílabas catalãs como pede o Institut d’Estudis Catalans: no mínimo duas letras de cada lado, nenhuma quebra entre vogais em hiato nem logo depois de um apóstrofo, e *titil·laven* quebra como *titil-* | *laven*, com o hífen no lugar do ponto alto. Os diálogos levam travessão, e as citações, «cometes baixes».
 
 ## Preparo
 
 ### 1 · O catalão pelo seu código
 
-O código é [a resposta curta](#a-resposta-curta) lá em cima. `locale: 'ca'` escolhe os padrões catalães, que desde o postext 1.14 seguem o *Llibre d’estil* do IEC ([idiomas suportados](/pt/docs/justification#idiomas-compatíveis)). São os padrões que o TeX usa, com no mínimo duas letras de cada lado da quebra em vez das três que o pacote do npm traz, de modo que *ter-ra*, *cai-xa* e *plu-ja* podem quebrar. Vogais em hiato ficam juntas (*cièn-cia*, *ca-mions*), mas um *i* entre vogais abre a sua sílaba (*fe-ia*). A *ela geminada* quebra entre os seus dois *l*: a linha termina em *titil-* e a seguinte começa com *laven*, sem ponto alto em nenhuma das duas, e o Knuth–Plass mede a linha sem o ponto.
+O código é [a resposta curta](#a-resposta-curta) lá em cima. `locale: 'ca'` escolhe os padrões catalães, que desde o postext 1.14 seguem o *Llibre d’estil* do IEC ([idiomas suportados](/pt/docs/justification#idiomas-compatíveis)). São os padrões que o TeX usa, com no mínimo duas letras de cada lado da quebra em vez das três que o pacote do npm traz, de modo que *ter-ra*, *cai-xa* e *plu-ja* podem quebrar. Vogais em hiato ficam juntas (*cièn-cia*, *ca-mions*), mas um *i* entre vogais abre a sílaba (*fe-ia*). A *ela geminada* quebra entre os dois *l*: a linha termina em *titil-* e a seguinte começa com *laven*, sem ponto alto em nenhuma das duas, e o Knuth–Plass mede a linha sem o ponto.
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Página 27: titil·laven no fim da linha, composto titil- | laven. É o único l·l que cai no fim de uma linha nestas 32 páginas." />
 
-`compounds: false` mantém o verbo e o seu pronome inteiros, a não ser pelo hífen que já os une (*arrossegar-* | *se*), a quebra que o IEC prefere ([hifenização](/pt/docs/configuration-language#hifenização)). Custa uma linha frouxa: na página 7, a linha anterior a *d’inaugurar-se* abre os espaços até 1,88 vez, mesmo com `maxJustifyTracking: 10` absorvendo o excesso nas outras linhas.
+`compounds: false` mantém o verbo e o pronome inteiros, a não ser pelo hífen que já os une (*arrossegar-* | *se*), a quebra que o IEC prefere ([hifenização](/pt/docs/configuration-language#hifenização)). Custa uma linha frouxa: na página 7, a linha anterior a *d’inaugurar-se* abre os espaços até 1,88 vez, mesmo com `maxJustifyTracking: 10` absorvendo o excesso nas outras linhas.
 
 ### 2 · Uma página de bolso feita de linhas inteiras
 
@@ -32,13 +32,13 @@ A margem inferior sai do formato de refile, da margem superior e de `LINES`, de 
 
 <Excerpt region="opener" />
 
-`resourceId: '{attr.art}'` desenha a imagem que o título indica, de modo que `# II {style="capitol" art="cap2"}` abre o capítulo II sob a sua própria gravura, com o mesmo estilo dos outros ([atributos de título](/pt/docs/document-format#atributos-de-título)). `minHeight` guarda dezesseis linhas, doze para a gravura e quatro para o número e o seu fio, de modo que o texto começa na décima sétima linha da página, igual em todos os capítulos.
+`resourceId: '{attr.art}'` desenha a imagem que o título indica, de modo que `# II {style="capitol" art="cap2"}` abre o capítulo II sob a própria gravura, com o mesmo estilo dos outros ([atributos de título](/pt/docs/document-format#atributos-de-título)). `minHeight` guarda dezesseis linhas, doze para a gravura e quatro para o número e o fio, de modo que o texto começa na décima sétima linha da página, igual em todos os capítulos.
 
 ### 4 · Quatro páginas antes do capítulo I
 
 <Excerpt region="front" />
 
-Cada peça dos elementos pré-textuais é um título de nível 1 com estilo próprio: `# El transplantat {style="portada"}` imprime o autor e o subtítulo do frontmatter e o próprio título como título. Cada estilo repete a sua quebra de página, já que um estilo herda a do seu nível, e esvazia o cabeçalho e o rodapé, de modo que essas páginas não levam cabeços nem fólios. O frontispício cai na página 2, um verso, e fica de frente para a folha de rosto na página dupla.
+Cada peça dos elementos pré-textuais é um título de nível 1 com estilo próprio: `# El transplantat {style="portada"}` imprime o autor e o subtítulo do front matter e o próprio título como título. Cada estilo repete a quebra de página, já que um estilo herda a do nível, e esvazia o cabeçalho e o rodapé, de modo que essas páginas não levam cabeços nem fólios. O frontispício cai na página 2, um verso, e fica de frente para a folha de rosto na página dupla.
 
 ### 5 · O autor no verso, o título no recto
 
@@ -50,13 +50,13 @@ Cada peça dos elementos pré-textuais é um título de nível 1 com estilo pró
 
 <Excerpt region="pictures" />
 
-As imagens pertencem a um tipo de recurso com `captionPrefix` vazio, então nada as numera nem as rotula. Cada uma é declarada com o seu tamanho em pixels e carregada com o seu identificador de arquivo antes da composição. Antes de salvá-las, o branco foi levado ao creme da página e o preto à tinta do texto, e por isso elas se imprimem como parte da página, não como fotos coladas por cima.
+As imagens pertencem a um tipo de recurso com `captionPrefix` vazio, por isso nada as numera nem as rotula. Cada uma é declarada com o tamanho em pixels e carregada com o identificador de arquivo antes da composição. Antes de salvá-las, o branco foi levado ao creme da página e o preto à tinta do texto, e por isso elas se imprimem como parte da página, não como fotos coladas por cima.
 
 ## Variações
 
 ### Deixar que os pronomes também se dividam
 
-Com o padrão `compounds: true`, *d’inaugurar-se* quebra dentro do verbo, *d’i-* | *naugurar-se*, e a página 7 perde a sua linha frouxa: nenhuma linha do livro passa de 1,6 vez. A quebra `titil-` | `laven` continua na página 27. O preço é um *i* sozinho depois do apóstrofo no fim da linha.
+Com o padrão `compounds: true`, *d’inaugurar-se* quebra dentro do verbo, *d’i-* | *naugurar-se*, e a página 7 perde a linha frouxa: nenhuma linha do livro passa de 1,6 vez. A quebra `titil-` | `laven` continua na página 27. O preço é um *i* sozinho depois do apóstrofo no fim da linha.
 
 ```diff
 -  hyphenation: { compounds: false },
@@ -74,6 +74,6 @@ Com o padrão `compounds: true`, *d’inaugurar-se* quebra dentro do verbo, *d�
 
 ## Erros comuns
 
-- Veja como uma fonte de texto compõe *l·l* antes de ficar com ela. Desde o postext 1.30 o `locale` do documento é também o idioma em que o texto é composto (até a 1.29 era o da página que mostrava o livro), e cada fonte responde ao catalão do seu jeito. A Gentium Book Plus tem um único ponto alto para todos os idiomas, com 0,17 em entre os dois *l*. A Crimson Pro, que compôs este livro até a 1.29, alarga o ponto para 0,59 em em catalão e deixa um buraco em *intel·ligent*. A Alegreya e a Literata desenham um ponto mais fechado só onde os dois *l* chegam a elas numa mesma peça, então *il·lustrats* sai de um jeito num parágrafo com itálicos e de outro num parágrafo sem eles.
+- Veja como uma fonte de texto compõe *l·l* antes de ficar com ela. Desde o postext 1.30 o `locale` do documento é também o idioma em que o texto é composto (até a 1.29 era o da página que mostrava o livro), e cada fonte responde ao catalão do próprio jeito. A Gentium Book Plus tem um único ponto alto para todos os idiomas, com 0,17 em entre os dois *l*. A Crimson Pro, que compôs este livro até a 1.29, alarga o ponto para 0,59 em em catalão e deixa um buraco em *intel·ligent*. A Alegreya e a Literata desenham um ponto mais fechado só onde os dois *l* chegam a elas numa mesma peça, de modo que *il·lustrats* sai de um jeito num parágrafo com itálicos e de outro num parágrafo sem eles.
 - Copie o texto do Viquitexts com os itálicos: Oller marca *tentu*, *Ensanxe* e *palacio* como coloquiais ou castelhanas, e uma exportação em texto simples perde essas marcas. Confira as palavras duvidosas com o fac-símile do volume de 1928: seis vezes a transcrição traz *tom-* onde o verbo é *tornar* (*tomà*, *tomaré*, *tomar*), e uma vez *jom* em vez de *jorn*.
 - Com 6.800 palavras, os cinco arquivos de conteúdo e o kit deixam o script composto com cerca de 69 KB. Um livro inteiro é a maior amostra que um pen comporta; uma obra mais longa vai num pacote `.postext`.

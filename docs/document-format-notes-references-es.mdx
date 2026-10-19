@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Formato del documento: notas y referencias',
   sidebarTitle: 'Notas y referencias',
-  description: 'Las notas al pie, las referencias cruzadas y las anclas, las citas y la bibliografía, y las marcas del índice analítico',
+  description: 'Cómo se escriben las notas al pie, las referencias cruzadas y sus anclas, las citas y la bibliografía, y las marcas del índice analítico',
   lang: 'es',
   lastUpdated: '2026-10-16',
   readingTime: '15 min',
   order: 28,
   parent: 'document-format',
-  plainSummary: "Esta página explica las marcas que remiten a otro lugar del libro o de fuera de él. Una llamada de nota lleva al lector a una nota al pie de la página. Una referencia cruzada nombra una figura, una sección o una página por su número. Una cita nombra un libro o un artículo que mencionas, y la bibliografía los reúne todos. Las marcas de índice eligen las palabras que el índice del final del libro enumera con sus páginas.",
+  plainSummary: "Esta página explica las marcas que remiten a otro lugar del libro o de fuera de él. Una llamada de nota lleva al lector a una nota al pie de la página. Una referencia cruzada remite a una figura, una sección o una página por su número. Una cita indica un libro o un artículo que mencionas, y la bibliografía los reúne todos. Las marcas de índice eligen las palabras que el índice del final del libro recoge con sus páginas.",
 };
 
 # Formato del documento: notas y referencias
@@ -26,28 +26,28 @@ así que aprendió a contar los escalones a oscuras.
 [^peldanos]: La escalera de hierro colado tiene 112 peldaños; la torre se levantó en 1861.
 ```
 
-- **Llamada.** `[^id]` imprime el número de la nota en volado, pegado a la palabra anterior (escríbela tras la puntuación, como arriba). El id admite letras, cifras, `-`, `_`, `.` y `:`. La llamada funciona en párrafos, elementos de lista, citas y recuadros; en títulos, pies de figura y celdas de tabla se imprime tal cual.
-- **Definición.** Un párrafo que empieza por `[^id]:`; su texto llega hasta la siguiente línea en blanco y admite las marcas en línea habituales (negrita, cursiva, enlaces, `:ref`, fórmulas, chips). Las definiciones salen del flujo estén donde estén, así que pueden ir bajo el párrafo que las cita o todas juntas al final del capítulo. Si un id se define dos veces, vale la primera.
-- **Números.** Las notas se numeran en el orden en que se citan por primera vez, y la numeración vuelve a empezar en cada capítulo (un título de nivel 1, y cada documento de un libro); una nota citada dos veces conserva su primer número y se compone una sola vez. `footnotes.numbering: 'document'` sigue la numeración por todo el libro, y `'page'` la reinicia en cada página, como hacen los libros chinos; `footnotes.numberFormat: 'circled-decimal'` escribe ① ② ③ sobre la línea de base. `footnotes.numberFormat: 'symbols'` las marca con `*`, `†`, `‡`, `§`, `‖`, `¶`, luego dobles, y vuelve a empezar en cada página, como hacen las revistas.
-- **Texto japonés.** La llamada se escribe delante de un 。 que cierra la oración (`先生[^1]。`): se queda con el carácter anterior, y 。 nunca abre una línea. Un libro japonés vertical compone por defecto sus llamadas （1） a la derecha de la línea y sus notas tras el capítulo; `footnotes.markerPosition: 'side'` pone una llamada pequeña junto a la palabra, sin ocupar sitio en la línea, y `footnotes.placement: 'spread'` compone las notas junto al texto de cada pliego (ver [Configuración › Notas al pie](/es/docs/configuration-notes-references#notas-al-pie)).
-- **Dónde va la nota.** Por defecto, al pie de la columna que contiene la línea que la cita, bajo un filete corto: la línea y su nota comparten siempre columna, y una línea cuya nota no cabe pasa con ella a la siguiente. En una maqueta de una columna es el pie de la página. `footnotes.placement: 'chapterEnd'` compone en cambio todas las notas de un capítulo tras su último bloque, por defecto al pie de la columna que cierran. Los cuerpos, el filete y los espacios están en [Notas al pie](/es/docs/configuration-notes-references#notas-al-pie), en la referencia de configuración.
+- **Llamada.** `[^id]` imprime el número de la nota en volado, pegado a la palabra anterior (escríbela tras la puntuación, como arriba). El id admite letras, cifras, `-`, `_`, `.` y `:`. La llamada funciona en párrafos, elementos de lista, citas y recuadros; en encabezados, pies de figura y celdas de tabla se imprime tal cual.
+- **Definición.** Un párrafo que empieza por `[^id]:`; su texto llega hasta la siguiente línea en blanco y admite las marcas en línea habituales (negrita, cursiva, enlaces, `:ref`, fórmulas, chips). Las definiciones salen del flujo estén donde estén, así que pueden ir bajo el párrafo que las cita o todas juntas al final del capítulo. Si un id se define dos veces, vale la primera definición.
+- **Números.** Las notas se numeran en el orden en que se citan por primera vez, y la numeración vuelve a empezar en cada capítulo (un encabezado de nivel 1, y cada documento de un libro); una nota citada dos veces conserva su primer número y se compone una sola vez. `footnotes.numbering: 'document'` mantiene una numeración continua en todo el libro, y `'page'` la reinicia en cada página, como en los libros chinos; `footnotes.numberFormat: 'circled-decimal'` escribe ① ② ③ sobre la línea de base. `footnotes.numberFormat: 'symbols'` las marca con `*`, `†`, `‡`, `§`, `‖`, `¶` y después con esos mismos signos duplicados, y vuelve a empezar en cada página, como en las revistas científicas.
+- **Texto japonés.** La llamada se escribe delante de un 。 que cierra la oración (`先生[^1]。`): se queda con el carácter anterior, y 。 nunca abre una línea. Un libro japonés vertical compone por defecto sus llamadas （1） a la derecha de la línea y sus notas tras el capítulo; `footnotes.markerPosition: 'side'` pone una llamada pequeña junto a la palabra, sin ocupar sitio en la línea, y `footnotes.placement: 'spread'` compone las notas junto al texto de cada doble página (véase [Configuración › Notas al pie](/es/docs/configuration-notes-references#notas-al-pie)).
+- **Dónde va la nota.** Por defecto, al pie de la columna que contiene la línea que la cita, bajo un filete corto: la línea y su nota comparten siempre columna, y una línea cuya nota no cabe pasa con ella a la columna siguiente. Con una sola columna, es el pie de la página. `footnotes.placement: 'chapterEnd'`, en cambio, compone todas las notas de un capítulo tras su último bloque, por defecto al pie de la columna que cierran. Los cuerpos, el filete y los espacios se explican en [Notas al pie](/es/docs/configuration-notes-references#notas-al-pie), en la referencia de configuración.
 - **Comprobaciones.** Una llamada sin definición (`undefinedFootnote`) imprime su número sobre una nota vacía; una definición que ninguna llamada cita (`unusedFootnote`) no se compone. El Sandbox muestra ambas en el panel Revisión.
 
 
 ## Referencias cruzadas y anclas
 
-Una referencia cruzada nombra un lugar del libro e imprime su número, su título o su página: *véase la sección 3.2*, *como explica el capítulo 4*, *en la pág. 112*. Las palabras y los números siguen al texto: si una sección cambia de sitio, si los capítulos se renumeran o si el libro se recompone, todas las referencias se actualizan. En el PDF, en el HTML y en las vistas previas del Sandbox cada referencia es un enlace: un clic lleva al destino, también en otro capítulo.
+Una referencia cruzada remite a un lugar del libro e imprime su número, su título o su página: *véase la sección 3.2*, *como explica el capítulo 4*, *en la pág. 112*. Las palabras y los números siguen al texto: si una sección cambia de sitio, si los capítulos se renumeran o si el libro se recompone, todas las referencias se actualizan. En el PDF, en el HTML y en las vistas previas del Sandbox, cada referencia es un enlace: un clic lleva al destino, aunque esté en otro capítulo.
 
 **Anclas.** Una referencia necesita algo a lo que apuntar:
 
-- **Un título** con identificador: `## Método {#sec-metodo}` (la forma de Pandoc; `id="sec-metodo"` también vale).
-- **Una caja u otro contenedor** abierto con uno: `:::callout{#caja-seguridad title="Seguridad"}`. A una caja de un estilo numerado (un teorema) se la nombra con su rótulo y su número: *Teorema 2*.
-- **Una fórmula en bloque** con un `\label{eq:x}` (ver [Fórmulas matemáticas](/es/docs/document-format-inline#fórmulas-matemáticas)): la referencia imprime su número como lo imprime la fórmula, *(3)*.
+- **Un encabezado** con identificador: `## Método {#sec-metodo}` (la forma de Pandoc; `id="sec-metodo"` también vale).
+- **Un recuadro u otro contenedor** que se abre con un identificador: `:::callout{#caja-seguridad title="Seguridad"}`. Un recuadro de un estilo numerado (un teorema) se cita por su rótulo y su número: *Teorema 2*.
+- **Una fórmula en bloque** con un `\label{eq:x}` (véase [Fórmulas matemáticas](/es/docs/document-format-inline#fórmulas-matemáticas)): la referencia imprime su número como lo imprime la fórmula, *(3)*.
 - **Un punto del texto**: `:anchor{#idea-clave}` pone un ancla invisible; `[la idea clave]{#idea-clave}` conserva sus palabras y les da nombre.
 
-Un identificador admite letras, cifras, `-`, `_`, `.` y `:`. Debe ser único en el libro: el panel de Comprobaciones avisa del que se repite (`duplicateAnchor`), y las referencias llevan al primero.
+Un identificador admite letras, cifras, `-`, `_`, `.` y `:`. Debe ser único en el libro: el panel Revisión avisa de los que se repiten (`duplicateAnchor`), y las referencias llevan al primer lugar donde aparece.
 
-**Referencias.** `:ref{id="…"}` nombra un ancla igual que nombra una figura o una tabla:
+**Referencias.** `:ref{id="…"}` remite a un ancla igual que remite a una figura o a una tabla:
 
 ```md
 ## Método {#sec-metodo}
@@ -58,30 +58,30 @@ Los resultados de :ref{id="sec-metodo"} se cumplen en :ref{id="sec-metodo" style
 <table>
 <thead><tr><th><code>style</code></th><th>imprime</th></tr></thead>
 <tbody>
-<tr><td><em>(ninguno)</em></td><td>un título numerado con su palabra y su número (<em>sección 3.2</em>, <em>capítulo 4</em>), uno sin número con su título, un ancla con su texto, una ecuación con su número tal como se imprime (<em>(3)</em>), una caja numerada con su rótulo y su número (<em>Teorema 2</em>)</td></tr>
+<tr><td><em>(ninguno)</em></td><td>un encabezado numerado, por su palabra y su número (<em>sección 3.2</em>, <em>capítulo 4</em>); uno sin número, por su título; un ancla, por su texto; una ecuación, por su número tal como se imprime (<em>(3)</em>); un recuadro numerado, por su rótulo y su número (<em>Teorema 2</em>)</td></tr>
 <tr><td><code>number</code></td><td>solo el número (<em>3.2</em>, <em>3</em>, <em>2</em>)</td></tr>
-<tr><td><code>title</code></td><td>el título, el texto del ancla o el <code>title</code> de la caja</td></tr>
+<tr><td><code>title</code></td><td>el título del encabezado, el texto del ancla o el <code>title</code> del recuadro</td></tr>
 <tr><td><code>page</code></td><td>la página en la que quedó (<em>pág. 112</em>)</td></tr>
 <tr><td><code>pageNumber</code></td><td>solo el número de página (<em>112</em>)</td></tr>
 </tbody>
 </table>
 
-`\eqref{x}` y `\ref{x}` de LaTeX también funcionan en el texto: `\eqref` como una referencia sin estilo y `\ref` como `style=number`, así que `\ref{thm:main}` imprime *2* y `\ref{fig:mapa}`, el número de una figura. Una `~` justo delante es un espacio de no separación (`Teorema~\ref{thm:main}`). Dentro de `$…$` pertenecen a la fórmula.
+`\eqref{x}` y `\ref{x}` de LaTeX también funcionan en el texto: `\eqref`, como una referencia sin estilo, y `\ref`, como `style=number`; así, `\ref{thm:main}` imprime *2*, y `\ref{fig:mapa}`, el número de una figura. Una `~` justo delante es un espacio de no separación (`Teorema~\ref{thm:main}`). Dentro de `$…$` forman parte de la fórmula.
 
-`text="…"` imprime tus propias palabras y sigue enlazando; `case=capitalize` empieza el rótulo con mayúscula (*Sección 3.2* a principio de frase). Las palabras siguen al idioma del documento (*section 3.2*, *第3.2节*, *S. 112*) y se cambian en [Referencias cruzadas](/es/docs/configuration-notes-references#referencias-cruzadas) de la configuración; un número que su plantilla ya escribe con palabras (*Capítulo 4*, *第四章*) se imprime tal cual.
+`text="…"` imprime tus propias palabras y mantiene el enlace; `case=capitalize` pone en mayúscula la inicial del rótulo (*Sección 3.2* a principio de frase). Las palabras siguen el idioma del documento (*section 3.2*, *第3.2节*, *S. 112*) y se cambian en [Referencias cruzadas](/es/docs/configuration-notes-references#referencias-cruzadas), en la configuración; si la plantilla de numeración de un encabezado ya incluye la palabra (*Capítulo 4*, *第四章*), el número se imprime tal cual.
 
-**Cortes de línea.** Una referencia que imprime palabras se corta por sus espacios como el texto que la rodea: el texto de un ancla (`[cierra la palanca de modo que apunte hacia atrás]{#paso}`), un título, tu propio `text="…"`. Sus espacios son espacios de la línea, así que en una línea justificada se estiran con los demás, y la referencia sigue siendo un solo enlace, en dos trozos cuando ocupa dos líneas. Sus palabras nunca se dividen con guion. Dentro de un rótulo así, un número, un número romano o una letra sola no se separan de la palabra anterior, de modo que `text="Fig. 1a"` o `text="lámina IV"` nunca se parten. Un rótulo que lleva un número o una página (*sección 3.2*, *pág. 112*, *Fig. 1.7*, *Teorema 2*) no se corta nunca, sea cual sea el espacio de su plantilla, y un espacio de no separación dentro de un rótulo une como en cualquier otro sitio. `crossRefs.breakLabels: false` mantiene entero cada rótulo, como hasta postext 1.27, cuando un rótulo era una sola palabra que no podía subir a la línea anterior; ver [Referencias cruzadas](/es/docs/configuration-notes-references#referencias-cruzadas).
+**Cortes de línea.** Una referencia que imprime palabras se corta por sus espacios, como el texto que la rodea: el texto de un ancla (`[cierra la palanca de modo que apunte hacia atrás]{#paso}`), un título, tu propio `text="…"`. Sus espacios son espacios de la línea, así que en una línea justificada se estiran con los demás, y la referencia sigue siendo un solo enlace, en dos trozos cuando ocupa dos líneas. Sus palabras nunca se dividen con guion. Dentro de un rótulo así, un número, un número romano o una letra sola no se separan de la palabra anterior, de modo que `text="Fig. 1a"` o `text="lámina IV"` nunca se parten. Un rótulo que lleva un número o una página (*sección 3.2*, *pág. 112*, *Fig. 1.7*, *Teorema 2*) no se corta nunca, sea cual sea el espacio de su plantilla, y un espacio de no separación dentro de un rótulo mantiene juntas sus palabras, como en cualquier otro sitio. `crossRefs.breakLabels: false` mantiene entero cada rótulo, como hacía postext hasta la versión 1.27, cuando un rótulo era una sola palabra que no podía subir a la línea anterior (véase [Referencias cruzadas](/es/docs/configuration-notes-references#referencias-cruzadas)).
 
-**Las referencias de página** solo se conocen cuando el libro está compuesto. El motor vuelve a componer el documento con las páginas de la pasada anterior hasta que no cambian, como hace con el índice general; hasta entonces la página se imprime como *?*.
+**Las referencias de página** solo se conocen cuando el libro está compuesto. El motor vuelve a componer el documento con las páginas de la pasada anterior hasta que dejan de cambiar, como hace con el índice; hasta entonces, la página se imprime como *?*.
 
 **pandoc-crossref.** Un texto escrito para pandoc-crossref se lee igual: `@sec:metodo`, `[@fig:mapa]`, y `[-@tbl:datos]` para el número solo. El prefijo (`sec`, `fig`, `tbl`, `eq`, `lst`) puede formar parte del identificador (`{#sec:metodo}`) o quedar fuera (`{#metodo}`). Una `@` pegada a una palabra, como en una dirección de correo, sigue siendo texto.
 
-Una referencia a un id que nada define imprime *?* y aparece en el panel de Comprobaciones (`unknownResourceId`). En el editor del Sandbox, `@` ofrece las figuras, tablas, títulos con id y anclas del libro.
+Una referencia a un id que no está definido imprime *?* y aparece en el panel Revisión (`unknownResourceId`). En el editor del Sandbox, `@` ofrece las figuras, las tablas, los encabezados con id y las anclas del libro.
 
 
 ## Citas y bibliografía
 
-Escribe las citas como las lee Pandoc, guarda las referencias en el documento y elige el estilo de cita en los ajustes: pasar de APA a IEEE, o a las notas de Chicago, es cambiar el estilo en los ajustes, no el texto. Cada cita enlaza con su entrada en la bibliografía.
+Escribe las citas como las lee Pandoc, guarda las referencias en el documento y elige el estilo de cita en los ajustes: pasar de APA a IEEE, o a las notas de Chicago, solo cambia ese ajuste, no el texto. Cada cita enlaza con su entrada en la bibliografía.
 
 ### Citar
 
@@ -91,13 +91,13 @@ Como muestra [@garcia2020, pág. 33], se lee más rápido en papel [véase @lope
 ```
 
 - **`[@clave]`** cita entre paréntesis; varias obras van en un mismo par de corchetes, separadas por `;`.
-- **Localizador:** tras una coma, `p. 33`, `pp. 4–6`, `pág. 33`, `cap. 2`, `sec. IV`, `fig. 3`, `vol. 2`, `n. 12`, `§ 4.2`; un número solo es una página. También valen las palabras inglesas y chinas (`页`, `章`). Un intervalo se escribe con semirraya o con los dos guiones de TeX: `pp. 4--6` imprime *4–6*.
+- **Localizador:** tras una coma, `p. 33`, `pp. 4–6`, `pág. 33`, `cap. 2`, `sec. IV`, `fig. 3`, `vol. 2`, `n. 12`, `l. 4`, `§ 4.2`; un número solo es una página. También valen las palabras inglesas y chinas (`页`, `章`). Un intervalo se escribe con semirraya o con los dos guiones de TeX: `pp. 4--6` imprime *4–6*.
 - **Prefijo y sufijo:** texto antes de la `@` (`véase`) y tras la clave o el localizador (`, la cursiva es nuestra`). El sufijo conserva la coma escrita delante, haya localizador o no: `[@brown2020, entre otros]` imprime *(Brown et al., 2020, entre otros)*, como Pandoc; escrito sin coma (`[@brown2020 entre otros]`) no la lleva. El énfasis de un prefijo o un sufijo sale como énfasis en todos los estilos: `[*p. ej.*, @brown2020, *inter alia*]`.
-- **`[-@clave]`** omite el autor, para una frase que ya lo nombra.
+- **`[-@clave]`** omite el autor, para una frase que ya lo menciona.
 - **`@clave`** cita dentro de la frase (*García (2020)*); `@clave [pág. 4]` añade un localizador.
-- **En los pies:** el pie de una figura o de una tabla, y su nota, citan como el texto (`El mejor resultado previo [@cobbe2021].`). Sus obras entran en la bibliografía sin `nocite`, y un estilo numérico las numera donde se coloca el recurso: tras las citas del párrafo que lo menciona por primera vez (su bloque `::resource` o su primera `:ref`). Una cita en una celda de tabla queda como texto.
-- Una `@` pegada a una letra o a una cifra (una dirección de correo), una `@` en código y `\@` son texto. Una cita sin referencia en el libro se imprime tal como se escribió, así que un documento sin referencias se lee como antes. En una cita de varias obras, una clave que ninguna referencia define se imprime en negrita tras las demás (`(Glen, 1955) **@nye1953**`), de modo que la obra que falta se ve en la página además de en los avisos. Unos dos puntos tras una cita son texto: `[@french2018]: el terreno…`.
-- En texto chino, japonés y coreano la cita sigue al último carácter sin espacio (`周明远@zhou2019认为`), y una cita autor-fecha toma los signos de ancho completo del texto que la rodea: `（施雅风等，1988；刘时银等，2015）`.
+- **En los pies:** el pie de una figura o de una tabla, y su nota, citan igual que el texto (`El mejor resultado previo [@cobbe2021].`). Sus obras entran en la bibliografía sin necesidad de `nocite`, y un estilo numérico las numera en el lugar donde se coloca el recurso: tras las citas del párrafo que lo menciona por primera vez (con su bloque `::resource` o con su primera `:ref`). Una cita en una celda de tabla se queda como texto.
+- Una `@` pegada a una letra o a una cifra (una dirección de correo), una `@` en código y `\@` son texto. Una cita cuya referencia no está en el libro se imprime tal como se escribió, así que un documento sin referencias se lee como antes. En una cita de varias obras, una clave que ninguna referencia define se imprime en negrita tras las demás (`(Glen, 1955) **@nye1953**`), de modo que la obra que falta se ve en la página además de en los avisos. Unos dos puntos tras una cita son texto: `[@french2018]: el terreno…`.
+- En texto chino, japonés y coreano, la cita va pegada al último carácter, sin espacio (`周明远@zhou2019认为`), y una cita autor-fecha toma los signos de ancho completo del texto que la rodea: `（施雅风等，1988；刘时银等，2015）`.
 
 ### Referencias
 
@@ -125,19 +125,19 @@ o en un bloque `:::references`, en BibTeX (lo que exportan Zotero, JabRef o Goog
 :::
 ```
 
-El bloque no imprime nada. `nocite` lista obras sin citarlas (`@*`: todas). En un libro, las referencias escritas en cualquier capítulo valen para todo el libro.
+El bloque no imprime nada. `nocite` incluye obras sin citarlas (`@*`: todas). En un libro, las referencias escritas en cualquier capítulo valen para todo el libro.
 
 En una lista de nombres BibTeX, `and others` representa los nombres omitidos (`author = {Tan, Wei and others}`): todos los estilos imprimen *et al.* en su lugar. En YAML, escribe `others` como último nombre de la lista.
 
 ### La bibliografía
 
-`:::bibliography` pone la lista de obras citadas donde está; sin él, la lista va tras el último capítulo, con el título en el idioma del documento (*Referencias*, *References*, *参考文献*). `:::bibliography{title="Obras citadas"}` cambia el título y `title=""` lo quita; `scope=chapter` lista las obras que cita el capítulo (una obra colectiva). Cada entrada es un ancla (`ref-<clave>`), así que un enlace Markdown a `#ref-garcia2020` lleva a ella, y el PDF la etiqueta como `BibEntry`.
+`:::bibliography` coloca la lista de obras citadas en el lugar donde está; si no aparece, la lista va tras el último capítulo, con el título en el idioma del documento (*Referencias*, *References*, *参考文献*). `:::bibliography{title="Obras citadas"}` cambia el título y `title=""` lo quita; `scope=chapter` enumera las obras que cita el capítulo (para una obra colectiva). Cada entrada es un ancla (`ref-<clave>`), así que un enlace Markdown a `#ref-garcia2020` lleva a ella, y el PDF la etiqueta como `BibEntry`.
 
-`scope=new` lista las obras citadas hasta ese punto del documento que ninguna lista anterior imprimió, en el orden del estilo y con sus números: un `:::bibliography{scope=new}` tras el texto principal y otro tras los métodos dan las dos listas de un artículo de Nature, la segunda numerada a continuación de la primera. Un estilo numérico cuenta sus citas a lo largo del libro; con `citations.numbering: 'chapter'` cada capítulo (cada documento, y cada encabezado de nivel 1 tras una cita) numera las suyas desde 1, y su lista de capítulo toma esos números, como los informes de un boletín o las ponencias de unas actas.
+`scope=new` enumera las obras citadas hasta ese punto del documento que ninguna lista anterior ha impreso, en el orden del estilo y con sus números: un `:::bibliography{scope=new}` tras el texto principal y otro tras los métodos dan las dos listas de un artículo de Nature, la segunda numerada a continuación de la primera. Un estilo numérico cuenta sus citas a lo largo de todo el libro; con `citations.numbering: 'chapter'`, cada capítulo (cada documento, y cada encabezado de nivel 1 posterior a una cita) numera las suyas desde 1, y su lista de capítulo usa esos números, como los informes de un boletín o las ponencias de unas actas.
 
 ### Estilos
 
-El estilo decide lo que dicen una cita y una entrada. Los estilos incluidos están en la tabla; cualquier otro estilo CSL (el repositorio de estilos de Zotero tiene más de diez mil) se carga desde su archivo `.csl` en **Ajustes → Citas**.
+El estilo decide lo que dicen una cita y una entrada. Los estilos incluidos aparecen en la tabla; cualquier otro estilo CSL (el repositorio de estilos de Zotero tiene más de diez mil) se puede cargar desde su archivo `.csl` en **Ajustes → Citas**.
 
 <table>
   <thead>
@@ -166,22 +166,22 @@ El estilo decide lo que dicen una cita y una entrada. Los estilos incluidos est�
   </tbody>
 </table>
 
-Con un **estilo de notas**, cada cita se convierte en una nota al pie, colocada y numerada como dicen los ajustes de notas; las citas siguientes de la misma obra toman una forma breve. En texto chino, `citations.notes: 'warichu'` las compone como notas de dos líneas dentro del renglón (夹注); una nota seguida de un signo chino (`，`, `。`) pierde su punto final.
+Con un **estilo de notas**, cada cita se convierte en una nota al pie, que se coloca y se numera según los ajustes de las notas; las citas posteriores de la misma obra toman una forma abreviada. En texto chino, `citations.notes: 'warichu'` las compone como notas de dos líneas dentro del renglón (夹注); una nota seguida de un signo chino (`，`, `。`) pierde su punto final.
 
-**Chino.** Los estilos GB/T 7714-2015 escriben los códigos de tipo de documento (`[M]`, `[J]`, `[D]`, `[EB/OL]`), dejan enteros los nombres chinos y escriben `等` tras tres autores de una obra china y `et al.` tras los de una occidental, según el `language` de cada obra. En texto vertical, un número en superíndice queda a la derecha de su carácter; `citations.marker: 'corner'` escribe `〔1〕`, que se mantiene de pie.
+**Chino.** Los estilos GB/T 7714-2015 escriben los códigos de tipo de documento (`[M]`, `[J]`, `[D]`, `[EB/OL]`), dejan enteros los nombres chinos y escriben `等` tras tres autores de una obra china y `et al.` tras los de una occidental, según el `language` de cada obra. En texto vertical, un número volado queda a la derecha de su carácter; `citations.marker: 'corner'` escribe `〔1〕`, que se mantiene de pie.
 
-**Motor.** Las citas las formatea el paquete `postext-citeproc` (citeproc-js y los estilos CSL). El Sandbox lo carga para los documentos que citan; en tu propio código, regístralo antes de componer:
+**Motor.** El formato de las citas lo da el paquete `postext-citeproc` (citeproc-js y los estilos CSL). El Sandbox lo carga en los documentos que contienen citas; en tu propio código, regístralo antes de componer:
 
 ```ts
 import 'postext-citeproc/register';
 ```
 
-El panel de Comprobaciones avisa de una clave que ninguna referencia define (`unknownCitationKey`) y de un bloque de referencias que no se puede leer (`referencesUnreadable`).
+El panel Revisión avisa de una clave que ninguna referencia define (`unknownCitationKey`) y de un bloque de referencias que no se puede leer (`referencesUnreadable`).
 
 
 ## Índice analítico
 
-Un índice analítico recoge los términos de un libro con las páginas en que aparecen. Marca cada término donde el texto lo trata e imprime el índice con `:::index` donde corresponda, normalmente en un capítulo propio al final. El motor busca la página de cada marca después de componer, así que los números siguen al texto: añade un párrafo, mueve un capítulo o cambia el formato de página, y el índice imprime las páginas nuevas.
+Un índice analítico recoge los términos de un libro con las páginas en que aparecen. Marca cada término donde el texto lo trata e imprime el índice con `:::index` donde corresponda, normalmente en un capítulo propio al final. El motor busca la página de cada marca después de componer, así que los números siguen al texto: si añades un párrafo, mueves un capítulo o cambias el formato de página, el índice imprime las páginas nuevas.
 
 ```md
 La :index[anemia] ferropénica es la más frecuente.
@@ -194,9 +194,9 @@ El pulso se toma en la muñeca.:index{term="Pulso!radial" main}
 
 ### Marcas de índice
 
-- **`:index[texto]`** imprime `texto` y lo registra con sus propias palabras. Las marcas de formato que lleve dentro se imprimen y no pasan a la entrada. Los atributos tras el corchete lo registran en otra entrada: `:index[déficit de hierro]{term="Anemia!ferropénica"}`.
+- **`:index[texto]`** imprime `texto` y lo registra con sus propias palabras. Las marcas de formato que lleve dentro se imprimen, pero no pasan a la entrada. Los atributos que siguen al corchete lo registran en otra entrada: `:index[déficit de hierro]{term="Anemia!ferropénica"}`.
 - **`:index{term="…"}`** no imprime nada. La marca toma la página de la palabra escrita justo antes en su línea o, si abre la línea, de la palabra siguiente. Una línea que solo contiene marcas desaparece, así que una marca en una línea propia nunca parte un párrafo ni añade espacio.
-- **Dónde.** Párrafos, encabezados, elementos de lista, citas, recuadros y definiciones de notas al pie. En pies de figura, celdas de tabla y elementos de diseño la marca se imprime tal cual. Dentro de código en línea, y tras una barra invertida (`\:index`), es texto.
+- **Dónde.** Párrafos, encabezados, elementos de lista, citas, recuadros y definiciones de notas al pie. En pies de figura, celdas de tabla y elementos de diseño, la marca se imprime tal cual. Dentro de código en línea, y tras una barra invertida (`\:index`), es texto.
 
 <table>
   <thead>
@@ -216,11 +216,11 @@ El pulso se toma en la muñeca.:index{term="Pulso!radial" main}
     </tr>
     <tr>
       <td><code>sort</code></td>
-      <td>La clave de ordenación del último nivel, cuando debe ordenarse por otras letras: <code>:index[S. Juan de la Cruz]&#123;sort="San Juan de la Cruz"&#125;</code>, <code>term="siglo XX" sort="siglo 20"</code>. Un índice en chino ordena y agrupa por la lectura que el ordenador de cadenas da a cada carácter. Si un carácter con varias lecturas se lee de otro modo, la clave se escribe con caracteres que solo tengan la lectura buscada: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> pone 重阳 bajo la C, entre 程 y 崔, y no bajo la Z. Una clave en pinyin (<code>sort="chong yang"</code>) también llega a la C, pero se ordena detrás de todas sus entradas chinas, porque el ordenador de cadenas pone las letras latinas después de los caracteres chinos (ver <a href="/es/docs/configuration-notes-references#índice-analítico">Configuración › Índice analítico</a>, <code>groupBy</code>).</td>
+      <td>La clave de ordenación del último nivel, cuando debe ordenarse por otras letras: <code>:index[S. Juan de la Cruz]&#123;sort="San Juan de la Cruz"&#125;</code>, <code>term="siglo XX" sort="siglo 20"</code>. Un índice en chino ordena y agrupa según la lectura que el algoritmo de ordenación asigna a cada carácter. Si un carácter con varias lecturas (polifónico) debe leerse de otro modo, escribe la clave con caracteres que solo tengan la lectura buscada: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> pone 重阳 bajo la C, entre 程 y 崔, y no bajo la Z. Una clave en pinyin (<code>sort="chong yang"</code>) también llega a la C, pero se ordena detrás de todas sus entradas chinas, porque el algoritmo de ordenación coloca las letras latinas después de los caracteres chinos (véase <a href="/es/docs/configuration-notes-references#índice-analítico">Configuración › Índice analítico</a>, <code>groupBy</code>).</td>
     </tr>
     <tr>
       <td><code>yomi</code>, <code>reading</code></td>
-      <td>La lectura en kana del último nivel, por la que un índice japonés lo ordena y lo agrupa: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> va en な, en la fila な行. Sin ella, una marca cuyo texto lleva furigana en kana se lee por ellos (<code>:index[&#123;東京|とう|きょう&#125;]</code> se ordena como とうきょう), después por <code>sort</code> y después por el texto; una entrada que sigue encabezada por un kanji se avisa con <code>indexReadingMissing</code>. En un índice en otro idioma <code>yomi</code> funciona como <code>sort</code>. Los furigana dentro de una marca se escriben en la forma compacta: un <code>:ruby[…]</code> obligaría a escapar sus corchetes. Desde postext 1.16.</td>
+      <td>La lectura en kana del último nivel, por la que un índice japonés lo ordena y lo agrupa: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> va en な, en la fila な行. Sin ella, una marca cuyo texto lleva furigana en kana se lee por ellos (<code>:index[&#123;東京|とう|きょう&#125;]</code> se ordena como とうきょう), después por <code>sort</code> y después por el texto; una entrada que sigue encabezada por un kanji da el aviso <code>indexReadingMissing</code>. En un índice en otro idioma, <code>yomi</code> funciona como <code>sort</code>. Los furigana dentro de una marca se escriben en la forma compacta: un <code>:ruby[…]</code> obligaría a escapar sus corchetes. Desde postext 1.16.</td>
     </tr>
     <tr>
       <td><code>main</code></td>
@@ -228,15 +228,15 @@ El pulso se toma en la muñeca.:index{term="Pulso!radial" main}
     </tr>
     <tr>
       <td><code>range</code></td>
-      <td><code>range="start"</code> y <code>range="end"</code>, con el mismo término, acotan una explicación que ocupa varias páginas: la entrada imprime <code>34–37</code>. Un inicio sin final, o un final sin inicio, imprime su única página y genera <code>indexRangeUnclosed</code>.</td>
+      <td><code>range="start"</code> y <code>range="end"</code>, con el mismo término, acotan una explicación que ocupa varias páginas: la entrada imprime <code>34–37</code>. Un inicio sin final, o un final sin inicio, imprime su única página y da el aviso <code>indexRangeUnclosed</code>.</td>
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td>Una remisión en lugar de un número de página: <code>:index&#123;term="Insuficiencia cardiaca congestiva" see="Insuficiencia cardiaca"&#125;</code> imprime <em>Insuficiencia cardiaca congestiva. Véase Insuficiencia cardiaca</em>. Los niveles del destino se separan con <code>!</code> y se imprimen con dos puntos (<em>Véase Corazón: válvulas</em>). Un destino que no es una entrada del índice genera <code>indexSeeUnknown</code>.</td>
+      <td>Una remisión en lugar de un número de página: <code>:index&#123;term="Insuficiencia cardiaca congestiva" see="Insuficiencia cardiaca"&#125;</code> imprime <em>Insuficiencia cardiaca congestiva. Véase Insuficiencia cardiaca</em>. Los niveles del destino se separan con <code>!</code> y se imprimen con dos puntos (<em>Véase Corazón: válvulas</em>). Un destino que no es una entrada del índice da el aviso <code>indexSeeUnknown</code>.</td>
     </tr>
     <tr>
       <td><code>seealso</code></td>
-      <td>Una remisión tras los números de página de la entrada: <em>Corazón, 12, 40. Véase también Circulación</em>. La página de la propia marca cuenta como la de cualquier otra, así que una marca puede indexar un pasaje y remitir a una entrada afín; una marca <code>see</code> no añade página.</td>
+      <td>Una remisión tras los números de página de la entrada: <em>Corazón, 12, 40. Véase también Circulación</em>. La página de la propia marca cuenta como la de cualquier otra, así que una misma marca puede indexar un pasaje y remitir a una entrada afín; una marca <code>see</code> no añade página.</td>
     </tr>
     <tr>
       <td><code>index</code></td>
@@ -245,11 +245,11 @@ El pulso se toma en la muñeca.:index{term="Pulso!radial" main}
   </tbody>
 </table>
 
-Una marca sin término (`:index{}` o `:index{see="…"}` a secas) no indexa nada y genera `indexMarkInvalid`.
+Una marca sin término (`:index{}` o `:index{see="…"}` a secas) no indexa nada y da el aviso `indexMarkInvalid`.
 
 ### Imprimir el índice
 
-`:::index` imprime el índice principal en el punto donde está, y `:::index{index="nombres"}` uno con nombre. La directiva se expande en bloques ordinarios, uno por entrada, que fluyen por columnas y páginas como el texto: bajo un encabezado cuyo [estilo de encabezado](/es/docs/configuration-styles#estilos-de-encabezado) fija un `layout` a dos columnas, da el índice habitual a dos columnas. Un clic sobre una entrada lleva a la línea de la directiva.
+`:::index` imprime el índice principal en el punto donde está, y `:::index{index="nombres"}`, uno con nombre. La directiva se expande en bloques ordinarios, uno por entrada, que fluyen por columnas y páginas como el texto: bajo un encabezado cuyo [estilo de encabezado](/es/docs/configuration-styles#estilos-de-encabezado) fija un `layout` de dos columnas, se obtiene el índice habitual a dos columnas. Un clic sobre una entrada lleva a la línea de la directiva.
 
 ```md
 # Índice onomástico {style="indice"}
@@ -261,10 +261,10 @@ Una marca sin término (`:index{}` o `:index{see="…"}` a secas) no indexa nada
 :::index
 ```
 
-- **Orden.** Las entradas siguen el orden alfabético del idioma del documento (`locale`, o `index.locale`): una letra acentuada se ordena con su letra base (*Árbol* en la A) y, en español, la *ñ* va tras la *n*, con una cabeza propia. Primero van las entradas que empiezan por un símbolo, después las que empiezan por una cifra y luego las letras. Las subentradas se ordenan igual dentro de su entrada, con una sangría por nivel. Un índice japonés se ordena por la lectura en el orden de la JIS X 4061 y se agrupa por filas del gojūon (あ行, か行…), con sus entradas latinas antes de los kana (ver [Composición japonesa › Índice en orden gojūon](/es/docs/japanese-layout#índice-en-orden-gojūon)).
-- **Grupos.** Cada nueva inicial abre un grupo: una letra de cabeza (`index.groups`) y una línea de espacio encima (ninguna sobre el primer grupo). La letra se compone en el mismo bloque que la primera entrada del grupo, así que nunca cierra una columna sola; una entrada sin página propia (la que solo encabeza sus subentradas) se compone con su primera subentrada por lo mismo.
-- **Números de página.** Las etiquetas que imprimen las páginas, incluidas las romanas de los preliminares. Las páginas de una entrada se ordenan y cada una aparece una vez; las consecutivas se unen en un intervalo (`12–14`, `index.mergeRanges`), una página que cae dentro de un intervalo de la misma entrada se funde con él (si es principal, el intervalo sale en negrita) e `index.rangeFormat: 'chicago'` abrevia el segundo número (`234–37`). Las páginas principales, en negrita, no se unen. En el PDF cada número enlaza con su página.
+- **Orden.** Las entradas siguen el orden alfabético del idioma del documento (`locale`, o `index.locale`): una letra acentuada se ordena con su letra base (*Árbol* en la A) y, en español, la *ñ* va tras la *n*, con su propia letra de grupo. Primero van las entradas que empiezan por un símbolo, después las que empiezan por una cifra y luego las letras. Las subentradas se ordenan igual dentro de su entrada, con una sangría por nivel. Un índice japonés se ordena por la lectura en el orden de la JIS X 4061 y se agrupa por filas del gojūon (あ行, か行…), con sus entradas latinas antes de los kana (véase [Composición japonesa › Índice en orden gojūon](/es/docs/japanese-layout#índice-en-orden-gojūon)).
+- **Grupos.** Cada nueva inicial abre un grupo: una letra de cabeza (`index.groups`) y una línea de espacio encima (ninguna sobre el primer grupo). La letra se compone en el mismo bloque que la primera entrada del grupo, así que nunca queda sola al final de una columna; por la misma razón, una entrada sin página propia (la que solo encabeza sus subentradas) se compone con su primera subentrada.
+- **Números de página.** Se imprimen las etiquetas de las páginas, incluidas las romanas de los preliminares. Las páginas de una entrada se ordenan y cada una aparece una vez; las consecutivas se unen en un intervalo (`12–14`, `index.mergeRanges`), una página que cae dentro de un intervalo de la misma entrada se funde con él (si es principal, el intervalo sale en negrita) e `index.rangeFormat: 'chicago'` abrevia el segundo número (`234–37`). Las páginas principales, en negrita, no se unen. En el PDF cada número enlaza con su página.
 - **Las remisiones** cierran la entrada: *Término. Véase Destino* cuando la entrada no tiene páginas, y *Término, 12. Véase también Destino* cuando las tiene. Los textos siguen el idioma del documento (*Véase*, *See*…) y se cambian en `index.see`.
-- **Libros.** En un libro compuesto capítulo a capítulo (el sandbox, `buildBundle`), el capítulo que imprime el índice recibe las marcas de todos los capítulos con sus páginas, y solo se vuelve a componer cuando alguna se mueve. Un documento que contiene sus marcas y su índice se vuelve a componer hasta que los números se estabilizan, como con `:::toc`.
+- **Libros.** En un libro compuesto capítulo a capítulo (el Sandbox, `buildBundle`), el capítulo que imprime el índice recibe las marcas de todos los capítulos con sus páginas, y solo se vuelve a componer cuando alguna se mueve. Un documento que contiene sus marcas y su índice se vuelve a componer hasta que los números se estabilizan, como con `:::toc`.
 
-Ver [Índice analítico](/es/docs/configuration-notes-references#índice-analítico) en la referencia de configuración para la tipografía, las sangrías y los separadores.
+La tipografía, las sangrías y los separadores se explican en [Índice analítico](/es/docs/configuration-notes-references#índice-analítico), en la referencia de configuración.

@@ -5,7 +5,7 @@ plain: "Un petit manual d'apicultura escrit en fitxers separats, un per capítol
 description: "Un manual d'apicultura en quatre estacions, compost per buildBundle amb un fitxer Markdown per capítol; l'índex dona la pàgina en què obre cadascun."
 question: "Com componc un llibre capítol a capítol sense que es talli la numeració de pàgines, capítols i figures?"
 aliases: ["llibre per capítols", "capítols en fitxers separats", "numeració de pàgines contínua", "numeració seguida", "capítol en pàgina senar", "índex del llibre", "PDF del llibre sencer", "buildBundle"]
-pageNotes: { "6": "La pàgina 6 queda en blanc: Hivern ocupa una sola pàgina, així que Primavera obre a la 7, la senar següent, i la parella que queda entre totes dues no porta capçalera ni foli.", "11": "La pàgina 11 és l'única senar de text seguit del llibre: la capçalera diu ESTIU, el títol del capítol, al costat del foli." }
+pageNotes: { "6": "La pàgina 6 queda en blanc: Hivern ocupa una sola pàgina, així que Primavera obre a la 7, la senar següent, i la parella que queda entre totes dues no porta capçalera ni foli.", "11": "La pàgina 11 és l'única senar de text corregut del llibre: la capçalera diu ESTIU, el títol del capítol, al costat del foli." }
 ---
 
 ## Què compondràs
@@ -22,25 +22,25 @@ Cada estació és un document propi, així que pots reescriure un capítol sense
 
 ### 2 · Regles que passen d'un document a l'altre
 
-El codi d'aquest pas és [la resposta curta](#la-resposta-curta) de més amunt. [`buildBundle`](/ca/docs/configuration-bundles#compondre-i-renderitzar-un-paquet) compon els documents en ordre amb una sola configuració i passa a cadascun una `continuation` amb el que han deixat els anteriors: el nombre de pàgines físiques ja compostes, perquè segueixin la paritat, els marges en mirall i les capçaleres de parelles i senars; el foli següent, i els comptadors de capítols i figures. Amb `parity: 'odd'`, un capítol que segueix un altre acabat en pàgina senar comença amb una pàgina parella en blanc, i aquesta pàgina pertany al seu propi document ([saltar abans](/ca/docs/configuration-headings#saltar-abans)). La coberta i l'índex són [estils de títol](/ca/docs/configuration-styles#estils-dencapçalament) amb `numbered: false`, per la qual cosa Tardor continua sent el capítol 1. Tots dos hereten del nivell de capítol `span: 'page'`, que posa cadascun a la seva pàgina sense necessitat de `:::pagebreak`. L'estil de l'índex desactiva la paritat heretada, que deixaria en blanc la pàgina 2.
+El codi d'aquest pas és [la resposta curta](#la-resposta-curta) de més amunt. [`buildBundle`](/ca/docs/configuration-bundles#compondre-i-renderitzar-un-paquet) compon els documents en ordre amb una sola configuració i passa a cadascun una `continuation` amb el que han deixat els anteriors: el nombre de pàgines físiques ja compostes, perquè segueixin la paritat, els marges en mirall i les capçaleres de parelles i senars; el foli següent, i els comptadors de capítols i figures. Amb `parity: 'odd'`, un capítol que segueix un altre acabat en pàgina senar comença amb una pàgina parella en blanc, i aquesta pàgina pertany al seu propi document ([salt de pàgina previ](/ca/docs/configuration-headings#salt-de-pàgina-previ)). La coberta i l'índex són [estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) amb `numbered: false`, per la qual cosa Tardor continua sent el capítol 1. Tots dos hereten del nivell de capítol `span: 'page'`, que posa cadascun a la seva pàgina sense necessitat de `:::pagebreak`. L'estil de l'índex desactiva la paritat heretada, que deixaria en blanc la pàgina 2.
 
 ### 3 · Un índex de tot el llibre
 
 <Excerpt region="contents" />
 
-`:::toc` és al primer document, però recull els capítols i les seccions de tot el llibre. `buildBundle` compon el llibre, anota cada títol amb la pàgina que li ha tocat i el torna a compondre amb aquest esquema fins que els folis deixen de moure's, tres passades com a màxim ([taula de continguts](/ca/docs/configuration-notes-references#índex-de-continguts)). Els mesos sota cada títol surten d'un atribut del títol, `{months="…"}`, que també imprimeix l'obertura.
+`:::toc` és al primer document, però recull els capítols i les seccions de tot el llibre. `buildBundle` compon el llibre, anota cada títol amb la pàgina que li ha tocat i el torna a compondre amb aquest esquema fins que els folis deixen de moure's, tres passades com a màxim ([índex general](/ca/docs/configuration-notes-references#índex-general)). Els mesos sota cada títol surten d'un atribut del títol, `{months="…"}`, que també imprimeix l'obertura.
 
 ### 4 · Una obertura, en mirall per a l'índex
 
 <Excerpt region="opener" />
 
-`{chapterNumber}` continua comptant des dels documents compostos abans, així que l'obertura de Primavera mostra un 3 encara que el seu fitxer no porta cap número. La caixa del número es calcula a partir del centre de la seva cel·la de la bresca, i número i bresca pengen tots dos de la cantonada superior dreta de la sang; si canvies el format o afegeixes sang per a impremta, es mouen junts. A l'índex, l'avanttítol (que surt de `{subtitle}`) i el títol van alineats a la dreta, contra el llom, i la bresca passa a la cantonada exterior de la pàgina parella; així el seu títol cau a la mateixa altura que el de Tardor al plec.
+`{chapterNumber}` continua comptant des dels documents compostos abans, així que l'obertura de Primavera mostra un 3 encara que el seu fitxer no porta cap número. La caixa del número es calcula a partir del centre de la seva cel·la de la bresca, i número i bresca pengen tots dos de la cantonada superior dreta de la sang; si canvies el format o afegeixes sang per a impremta, es mouen junts. A l'índex, l'avanttítol (que surt de `{subtitle}`) i el títol van alineats a la dreta, contra el llom, i la bresca passa a la cantonada exterior de la pàgina parella; així el seu títol cau a la mateixa altura que el de Tardor a la doble pàgina.
 
 ### 5 · Capçaleres a tots els documents
 
 <Excerpt region="running-heads" />
 
-Només el primer document té frontmatter, i `buildBundle` el passa a tots els capítols, així que la capçalera de les pàgines parelles imprimeix el `{title}` del llibre als cinc documents. `{chapterTitle}` i `{pageNumber}` es resolen pàgina a pàgina i surten a tots els documents; la pàgina 11, l'única senar de text seguit, porta ESTIU al costat del foli. `pages: 'body'` deixa sense capçalera les obertures i la pàgina en blanc.
+Només el primer document té frontmatter, i `buildBundle` el passa a tots els capítols, així que la capçalera de les pàgines parelles imprimeix el `{title}` del llibre als cinc documents. `{chapterTitle}` i `{pageNumber}` es resolen pàgina a pàgina i surten a tots els documents; la pàgina 11, l'única senar de text corregut, porta ESTIU al costat del foli. `pages: 'body'` deixa sense capçalera les obertures i la pàgina en blanc.
 
 ### 6 · Plecs en pantalla, un PDF per al llibre
 
@@ -75,4 +75,4 @@ Un comptador de figures que no es reinicia numera els quatre quadres de l'1 al 4
 ## Errors freqüents
 
 - A dalt d'una pàgina, i sota una figura que l'encapçala, un títol de secció perd el seu `marginTop`. Si l'aire del títol surt del marge, en aquests dos llocs queda a una línia del seu text i a la resta, a una línia i mitja. Aquí l'aire és a la mateixa línia del títol: `lineHeight` fa una línia i mitja i el marge, una línia, així que tots els títols de secció del llibre queden a la mateixa distància del seu text.
-- Per defecte, una línia justificada pot estirar els espais fins al doble de la seva amplada, i l'algorisme de tall ho prefereix a un guionet. Composta així, l'edició anglesa no partia ni una paraula i deixava espais gairebé del doble al costat de línies estretes al 0,7. `maxWordSpacing: 1.7` obliga l'algorisme a partir paraules. Després de canviar-ho, revisa l'última línia de cada paràgraf: un límit més estricte hi pot deixar una paraula sola, i s'arregla canviant unes quantes paraules del paràgraf.
+- Per defecte, una línia justificada pot estirar els espais fins al doble de la seva amplada, i l'algorisme de tall ho prefereix a un guionet. Composta així, l'edició anglesa no partia ni una paraula i deixava espais gairebé del doble al costat de línies atapeïdes al 0,7. `maxWordSpacing: 1.7` obliga l'algorisme a partir paraules. Després de canviar-ho, revisa l'última línia de cada paràgraf: un límit més estricte hi pot deixar una paraula sola, i s'arregla canviant unes quantes paraules del paràgraf.

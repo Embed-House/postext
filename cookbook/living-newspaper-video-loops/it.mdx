@@ -16,7 +16,7 @@ pageNotes: { "1": "La prima pagina di «The Wexcombe Lantern», 10 giugno 1933: 
 
 ### 1 · Fai di ogni immagine una clip che gira in loop con le altre
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una risorsa video stampa la sua locandina come immagine, così le clip prendono il posto delle fotografie e hanno la didascalia come loro. Tre opzioni del player rendono viva la pagina: `autoplay` avvia una clip quando la sua pagina è visibile (sempre senza audio, come richiedono i browser), `loop` la riproduce di nuovo dall’inizio e `exclusive: false` la lascia girare insieme alle altre clip. Per impostazione predefinita un video è esclusivo: avviarlo mette in pausa tutto ciò che sta suonando, il che va bene per una lezione ma non per una pagina di fotografie in movimento. Il simbolo di riproduzione e il codice QR sono disattivati, così sulla carta le clip si leggono come foto di cronaca.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una risorsa video stampa la sua locandina come immagine, così le clip prendono il posto delle fotografie e hanno la didascalia come loro. Tre opzioni del player rendono viva la pagina: `autoplay` avvia una clip quando la sua pagina è visibile (sempre senza audio, come richiedono i browser), `loop` la riproduce di nuovo dall’inizio e `exclusive: false` la lascia girare insieme alle altre clip. Per impostazione predefinita un video è esclusivo: quando lo avvii, mette in pausa tutto ciò che sta suonando, il che va bene per una lezione ma non per una pagina di fotografie in movimento. Il simbolo di riproduzione e il codice QR sono disattivati, così sulla carta le clip si leggono come foto di cronaca.
 
 ### 2 · Dai a ogni loop il suo posto sulla griglia
 
@@ -28,7 +28,7 @@ L’impaginazione è `layoutType: 'multiple'` con `columnCount: 4`. Il `columns`
 
 <Excerpt region="nameplate" />
 
-Il titolo di livello 1 della prima pagina è il nome del giornale, disegnato da uno slot di design: due orecchiette sopra, il nome in maiuscole Oswald e una riga della data tra un filetto sottile e uno spesso. Le pagine interne si aprono con un’etichetta di sezione rossa su una barra di 3 pt (la regione `pages`) e una riga del folio in testa a ogni pagina tranne la prima.
+Il titolo di livello 1 della prima pagina è il nome del giornale, disegnato da uno spazio grafico: due orecchiette sopra, il nome in maiuscole Oswald e una riga della data tra un filetto sottile e uno spesso. Le pagine interne si aprono con un’etichetta di sezione rossa su una barra di 3 pt (la regione `pages`) e una riga con il numero di pagina in testa a ogni pagina tranne la prima.
 
 ### 4 · Apri il giornale in Folio
 
@@ -49,7 +49,7 @@ Senza `autoplay` le immagini restano ferme finché il lettore non ne clicca una;
 
 ### Una clip esclusiva con il suo audio
 
-Un singolo video può mantenere il comportamento predefinito e suonare alle sue condizioni: imposta `player: { exclusive: true, muted: false }` nel `video` di quella risorsa, e avviarlo trattiene i loop finché non finisce.
+Un singolo video può mantenere il comportamento predefinito e suonare alle sue condizioni: imposta `player: { exclusive: true, muted: false }` nel `video` di quella risorsa: quando lo avvii, i loop restano fermi finché non finisce.
 
 ### Un formato lenzuolo su sei colonne
 

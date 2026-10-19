@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'Configuração: quadrinhos',
   sidebarTitle: 'Ajustes de quadrinhos',
-  description: 'Os ajustes de comics: o quadro e as sarjetas das páginas de quadrinhos, os estilos de requadro, o letreiramento, os estilos de balão e o elenco',
+  description: 'Como configurar os quadrinhos: a moldura e as sarjetas das páginas, os estilos de quadro e de balão, o letreiramento e o elenco',
   lang: 'pt',
   lastUpdated: '2026-10-10',
   readingTime: '8 min',
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Quadrinhos
 
-A propriedade `comics` configura as páginas de quadrinhos (`:::page`), as tiras (`:::strip`) e as páginas duplas: a moldura e as sarjetas de onde os quadros são recortados, os estilos de quadro, o letreiramento, os estilos de balão e o elenco. Só os documentos com quadrinhos a leem; um documento sem eles é diagramado exatamente como antes, e um documento com quadrinhos e sem a seção `comics` usa os padrões do seu idioma. A marcação e a forma como as páginas são letreiradas estão explicadas em [Quadrinhos](/pt/docs/comics).
+A propriedade `comics` configura as páginas de quadrinhos (`:::page`), as tiras (`:::strip`) e as páginas duplas: a moldura e as sarjetas de onde os quadros são recortados, os estilos de quadro, o letreiramento, os estilos de balão e o elenco. Só os documentos com quadrinhos a leem; um documento sem eles é diagramado exatamente como antes, e um documento com quadrinhos e sem a seção `comics` usa os valores padrão do idioma dele. A marcação e a forma como as páginas são letreiradas estão explicadas em [Quadrinhos](/pt/docs/comics).
 
 ```ts
 const config: PostextConfig = {
@@ -53,7 +53,7 @@ const config: PostextConfig = {
       <td><code>artDirection</code></td>
       <td><code>'ltr' | 'rtl'</code></td>
       <td><code>'ltr'</code></td>
-      <td>O sentido de leitura para o qual a arte foi desenhada: <code>'rtl'</code> para mangá.</td>
+      <td>O sentido de leitura para o qual os desenhos foram feitos: <code>'rtl'</code> para mangá.</td>
     </tr>
     <tr>
       <td><code>mirrorArt</code></td>
@@ -89,7 +89,7 @@ const config: PostextConfig = {
       <td><code>panelStyles</code></td>
       <td><code>NamedPanelStyleConfig[]</code></td>
       <td><code>[]</code></td>
-      <td>Estilos de quadro nomeados, escolhidos com <code>:::page&#123;style=…&#125;</code> ou <code>::panel&#123;style=…&#125;</code>. Cada um tem um <code>id</code>, um <code>name</code> opcional (só nas interfaces de editor) e os campos de um estilo de quadro; os campos sem valor seguem <code>panel</code>.</td>
+      <td>Estilos de quadro nomeados, escolhidos com <code>:::page&#123;style=…&#125;</code> ou <code>::panel&#123;style=…&#125;</code>. Cada um tem um <code>id</code>, um <code>name</code> opcional (só nas interfaces de edição) e os campos de um estilo de quadro; os campos sem valor seguem <code>panel</code>.</td>
     </tr>
     <tr>
       <td><code>lettering</code></td>
@@ -113,13 +113,13 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Imprime os cabeços e os fólios nas páginas de quadrinhos. Desligado, uma página de quadrinhos é só quadros, e o seu número continua contando.</td>
+      <td>Imprime os cabeços e os fólios nas páginas de quadrinhos. Quando desativado, uma página de quadrinhos só tem quadros, mas o número dela continua contando.</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>sem valor</td>
-      <td>Para hosts cujas páginas não são folhas: diagrama as páginas de quadrinhos numa folha impressa (<code>width</code>, <code>height</code>, <code>margins</code>) escalada para <code>fitWidth</code> px (e no máximo <code>fitHeight</code> px de altura) no topo da página. O visualizador HTML do Sandbox a define; ela nunca é salva com um documento.</td>
+      <td>Para aplicativos hospedeiros cujas páginas não são folhas: diagrama as páginas de quadrinhos numa folha impressa (<code>width</code>, <code>height</code>, <code>margins</code>) escalada para <code>fitWidth</code> px (e no máximo <code>fitHeight</code> px de altura) no topo da página. O visualizador HTML do Sandbox a define; ela nunca é salva com um documento.</td>
     </tr>
   </tbody>
 </table>
@@ -154,13 +154,13 @@ const config: PostextConfig = {
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Raio dos cantos de um quadro retangular, limitado à metade do seu lado menor. Um quadro cortado por uma linha inclinada mantém os cantos vivos.</td>
+      <td>Raio dos cantos de um quadro retangular, limitado à metade do lado menor. Um quadro cortado por uma linha inclinada mantém os cantos vivos.</td>
     </tr>
     <tr>
       <td><code>borderStyle</code></td>
       <td><code>'solid' | 'rough' | 'none'</code></td>
       <td><code>'solid'</code></td>
-      <td>Uma linha limpa, uma linha à mão que treme um pouco (com semente tirada do quadro, então sai igual em toda construção) ou nenhuma.</td>
+      <td>Uma linha limpa, uma linha à mão que treme um pouco (com uma semente derivada do quadro, por isso sai igual em todas as gerações) ou nenhuma.</td>
     </tr>
     <tr>
       <td><code>background</code></td>
@@ -172,7 +172,7 @@ const config: PostextConfig = {
       <td><code>fit</code></td>
       <td><code>'cover' | 'contain'</code></td>
       <td><code>'cover'</code></td>
-      <td><code>cover</code> recorta o desenho para preencher o quadro, nunca dentro da área segura; <code>contain</code> o mostra inteiro.</td>
+      <td><code>cover</code> recorta o desenho para preencher o quadro, sem nunca cortar a área segura; <code>contain</code> o mostra inteiro.</td>
     </tr>
     <tr>
       <td><code>bleed</code></td>
@@ -185,7 +185,7 @@ const config: PostextConfig = {
 
 ### Letreiramento
 
-`comics.lettering` define todos os balões do livro. Há um único corpo: um estilo de balão pode escalá-lo (`fontScale`), e o texto nunca é reduzido para caber num balão.
+`comics.lettering` configura todos os balões do livro. Há um único corpo: um estilo de balão pode escalá-lo (`fontScale`), e o texto nunca é reduzido para caber num balão.
 
 <table>
   <thead>
@@ -213,7 +213,7 @@ const config: PostextConfig = {
       <td><code>lineHeight</code></td>
       <td><code>number</code></td>
       <td><code>1.15</code></td>
-      <td>Distância entre as linhas, um múltiplo do corpo. Deixado no padrão, os balões verticais, chineses e japoneses usam 1,5 e os árabes 1,45.</td>
+      <td>Distância entre as linhas, um múltiplo do corpo. Se o valor padrão for mantido, os balões verticais, chineses e japoneses usam 1,5, e os árabes, 1,45.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -237,7 +237,7 @@ const config: PostextConfig = {
       <td><code>writingMode</code></td>
       <td><code>'auto' | 'horizontal' | 'vertical'</code></td>
       <td><code>'auto'</code></td>
-      <td><code>'auto'</code> letreira o japonês e o chinês tradicional, e qualquer documento composto em escrita vertical, em colunas verticais, e todo o resto na horizontal. A marca <code>vertical</code> ou <code>horizontal</code> de uma linha do roteiro compõe essa linha de outro modo (veja <a href="/pt/docs/comics#letreiramento">Quadrinhos › Letreiramento</a>).</td>
+      <td><code>'auto'</code> letreira o japonês e o chinês tradicional, e qualquer documento composto em escrita vertical, em colunas verticais, e todo o resto na horizontal. O atributo sem valor <code>vertical</code> ou <code>horizontal</code> de uma linha do roteiro letreira essa linha na outra orientação (veja <a href="/pt/docs/comics#letreiramento">Quadrinhos › Letreiramento</a>).</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>
@@ -261,13 +261,13 @@ const config: PostextConfig = {
       <td><code>inset</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5mm</code></td>
-      <td>Espaço mantido entre um balão e a borda do seu quadro. Um recordatório encostado na borda o ignora.</td>
+      <td>Espaço mantido entre um balão e a borda do quadro. Um recordatório encostado na borda o ignora.</td>
     </tr>
     <tr>
       <td><code>joinSameSpeaker</code></td>
       <td><code>'butt' | 'connector' | 'none'</code></td>
       <td><code>'butt'</code></td>
-      <td>Dois balões seguidos do mesmo personagem: corpos fundidos num só contorno, ligados por um gargalo estreito, ou mantidos separados. Uma linha do roteiro pede o seu próprio comportamento com <code>join</code> ou <code>join=false</code>.</td>
+      <td>Dois balões seguidos do mesmo personagem: corpos fundidos num só contorno, ligados por um gargalo estreito, ou mantidos separados. Uma linha do roteiro pede outro comportamento com <code>join</code> ou <code>join=false</code>.</td>
     </tr>
     <tr>
       <td><code>maxColumnChars</code></td>
@@ -279,14 +279,14 @@ const config: PostextConfig = {
       <td><code>strictPlacement</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Um balão que muda de forma para caber no quadro não parte uma palavra chinesa para isso: cada palavra que as suas novas linhas cortam, e que a forma preferida deixa inteira, custa mais do que um balão lido fora de ordem, então antes o balão se move ou a ordem muda. O letreiramento japonês, quebrado por frases, não muda. Com <code>false</code>, letreira como o postext 1.27; um documento salvo antes da 1.28 que contenha quadrinhos é lido assim.</td>
+      <td>Um balão que muda de forma para caber no quadro não divide uma palavra chinesa para isso: cada palavra que a forma preferida mantém inteira e que as novas linhas cortariam custa mais do que um balão lido fora de ordem; por isso, a colocação primeiro move o balão ou muda a ordem. O letreiramento japonês, quebrado por frases, não muda. Com <code>false</code>, letreira como o postext 1.27; um documento salvo antes da 1.28 que contenha quadrinhos é lido assim.</td>
     </tr>
   </tbody>
 </table>
 
 ### Estilos de balão
 
-Cada entrada de `comics.balloonStyles` se sobrepõe ao estilo embutido de mesmo id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), ou a `speech` quando o id é novo. Os valores padrão abaixo são os de `speech`; a [página de Quadrinhos](/pt/docs/comics#estilos-de-balão) lista o que cada estilo embutido muda. Os comprimentos em `em` são relativos ao tamanho do texto do balão.
+Cada entrada de `comics.balloonStyles` se sobrepõe ao estilo integrado de mesmo id (`speech`, `thought`, `whisper`, `shout`, `radio`, `caption`, `inner`, `note`, `sfx`), ou a `speech` quando o id é novo. Os valores padrão abaixo são os de `speech`; a [página de Quadrinhos](/pt/docs/comics#estilos-de-balão) lista o que cada estilo integrado muda. Os comprimentos em `em` são relativos ao corpo do texto do balão.
 
 <table>
   <thead>
@@ -302,7 +302,7 @@ Cada entrada de `comics.balloonStyles` se sobrepõe ao estilo embutido de mesmo 
       <td><code>id</code></td>
       <td><code>string</code></td>
       <td>obrigatório</td>
-      <td>A palavra com que uma linha do roteiro nomeia o estilo: <code>ben&#123;whisper&#125;: …</code> ou <code>style=whisper</code>.</td>
+      <td>A palavra com que uma linha do roteiro indica o estilo: <code>ben&#123;whisper&#125;: …</code> ou <code>style=whisper</code>.</td>
     </tr>
     <tr>
       <td><code>name</code></td>
@@ -356,7 +356,7 @@ Cada entrada de `comics.balloonStyles` se sobrepõe ao estilo embutido de mesmo 
       <td><code>roundness</code></td>
       <td><code>number</code></td>
       <td><code>2.2</code></td>
-      <td>O expoente de superelipse de um oval: 2 é uma elipse, e valores maiores o deixam mais quadrado.</td>
+      <td>O expoente de superelipse de uma forma oval: 2 é uma elipse, e valores maiores o deixam mais quadrado.</td>
     </tr>
     <tr>
       <td><code>burstPoints</code></td>
@@ -428,7 +428,7 @@ Cada entrada de `comics.balloonStyles` se sobrepõe ao estilo embutido de mesmo 
       <td><code>fontScale</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>O tamanho do texto, como múltiplo do tamanho do letreiramento.</td>
+      <td>O corpo do texto, como múltiplo do corpo do letreiramento.</td>
     </tr>
     <tr>
       <td><code>bold</code>, <code>italic</code></td>
@@ -511,7 +511,7 @@ Cada entrada de `comics.cast` descreve um personagem:
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>O estilo das falas do personagem que não nomeiam nenhum.</td>
+      <td>O estilo das falas do personagem que não indicam outro.</td>
     </tr>
     <tr>
       <td><code>color</code></td>
@@ -534,7 +534,7 @@ Cada entrada de `comics.cast` descreve um personagem:
   </tbody>
 </table>
 
-A `color` e a `font` próprias de uma linha têm prioridade sobre o elenco, e o elenco sobre o estilo de balão. Qualquer cor dos quadrinhos pode ser uma entrada da paleta, que acompanha a paleta como qualquer cor vinculada.
+A `color` e a `font` próprias de uma linha têm prioridade sobre o elenco, e o elenco sobre o estilo de balão. Qualquer cor dos quadrinhos pode ser uma entrada da paleta e, nesse caso, acompanha a paleta como qualquer cor vinculada.
 
 ```ts
 const resolved = resolveComicsConfig(config.comics, 'ja');

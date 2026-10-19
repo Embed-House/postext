@@ -16,7 +16,7 @@ Narcís Oller的《El transplantat》全文，依据他的《Obres completes》�
 
 ### 1 · 用语言代码指定加泰罗尼亚语
 
-代码见上面的[简短回答](#简短回答)。`locale: 'ca'`选用加泰罗尼亚语的断词模式，自postext 1.14起，这些模式遵循IEC的《Llibre d’estil》（[支持的语言区域](/zh/docs/justification#支持的语言区域)）。模式与TeX所用的相同，但断点两侧最少各留两个字母，而不是npm包里的三个，因此*ter-ra*、*cai-xa*和*plu-ja*都能断开。元音分立处保持在一起（*cièn-cia*、*ca-mions*），夹在元音之间的*i*则开始新的音节（*fe-ia*）。*ela geminada*在两个*l*之间断开：一行以*titil-*结束，下一行以*laven*开始，两边都没有间隔点，Knuth–Plass也按去掉间隔点后的宽度测量这一行。
+代码见上面的[简短回答](#简短回答)。`locale: 'ca'`选用加泰罗尼亚语的断词模式，自postext 1.14起，这些模式遵循IEC的《Llibre d’estil》（[支持的语言](/zh/docs/justification#支持的语言)）。模式与TeX所用的相同，但断点两侧最少各留两个字母，而不是npm包里的三个，因此*ter-ra*、*cai-xa*和*plu-ja*都能断开。元音分立处不断开（*cièn-cia*、*ca-mions*），夹在元音之间的*i*则开始新的音节（*fe-ia*）。*ela geminada*在两个*l*之间断开：一行以*titil-*结束，下一行以*laven*开始，两边都没有间隔点，Knuth–Plass也按去掉间隔点后的宽度测量这一行。
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="第27页：行末的titil·laven排为titil- | laven。这32页中只有这一处l·l落在行末。" />
 
@@ -26,7 +26,7 @@ Narcís Oller的《El transplantat》全文，依据他的《Obres completes》�
 
 <Excerpt region="page" />
 
-下页边距由成品尺寸、上页边距和`LINES`算出，所以版心恰好容纳29行14 pt，每个满页都止于同一条基线。89 mm的行长约容纳63个Gentium Book Plus字符。`mirror: true`让16 mm的页边距在跨页两面都留在书脊一侧（[镜像页边距](/zh/docs/configuration-page-layout#镜像页边距)）。
+下页边距由成品尺寸、上页边距和`LINES`算出，所以版心恰好容纳29行14 pt，每个满页都止于同一条基线。89 mm的行长约容纳63个Gentium Book Plus字符。`mirror: true`让16 mm的页边距在跨页两面都留在书脊一侧（[对称页边距](/zh/docs/configuration-page-layout#对称页边距)）。
 
 ### 3 · 四章共用一个章首设计
 
@@ -38,7 +38,7 @@ Narcís Oller的《El transplantat》全文，依据他的《Obres completes》�
 
 <Excerpt region="front" />
 
-前置部分的每一页都是一个带自有样式的一级标题：`# El transplantat {style="portada"}`印出frontmatter中的作者和副标题，并把标题本身作为书名。每个样式都重申自己的分页，因为样式会继承所在级别的分页设置；每个样式也清空页眉和页脚，所以这些页没有书眉和页码。卷首插图落在第2页（左页），与书名页隔着书脊相对。
+前置部分的每一页都是一个带自有样式的一级标题：`# El transplantat {style="portada"}`印出前置元数据中的作者和副标题，并把标题本身作为书名。每个样式都重申自己的分页，因为样式会继承所在级别的分页设置；每个样式也清空页眉和页脚，所以这些页没有书眉和页码。卷首插图落在第2页（左页），与书名页隔着书脊相对。
 
 ### 5 · 左页印作者，右页印书名
 

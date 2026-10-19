@@ -1,7 +1,7 @@
 ---
 title: "Carta comercial segons la DIN 5008"
-summary: "Un pressupost en alemany de dos fulls A4. L'assumpte és l'H1, i el seu disseny col·loca el membret, l'adreça i el bloc d'informació on mana la forma B."
-plain: "Un pressupost de dues pàgines d'un taller de finestres alemany. Ensenya a col·locar l'adreça i les altres parts d'una carta comercial on mana la norma alemanya, perquè encaixi en un sobre amb finestreta."
+summary: "Un pressupost en alemany de dos fulls A4. L'assumpte és l'H1, i el seu disseny col·loca el membret, l'adreça i el bloc d'informació on indica la forma B."
+plain: "Un pressupost de dues pàgines d'un taller de finestres alemany. Ensenya a col·locar l'adreça i les altres parts d'una carta comercial on indica la norma alemanya, perquè encaixi en un sobre amb finestreta."
 description: "Codi d'una carta comercial DIN 5008 a Postext, amb l'adreça a la finestreta del sobre, el bloc d'informació, les marques de plec i «Seite 2 von 2»."
 question: "Com col·loco al mil·límetre l'adreça i el bloc d'informació d'una carta segons la DIN 5008?"
 aliases: ["carta comercial", "DIN 5008", "forma B", "finestreta del sobre", "sobre amb finestreta", "camp d'adreça", "membret", "línia de remitent", "bloc d'informació", "marques de plec", "marca de perforació", "pàgina 2 de 2", "signatura", "pressupost", "Geschäftsbrief"]
@@ -38,13 +38,13 @@ La banda és una caixa fixada a la cantonada del full. `width: 'fill'` l'estén 
 
 <Excerpt region="furniture" />
 
-Qualsevol element del disseny de l'H1 fixat per sota de l'assumpte suma alçada a la reserva del títol. Amb la marca de plec de 210 mm al disseny, la salutació baixa a 222,8 mm i la carta passa a tres pàgines. La ranura de la capçalera es pinta a totes les pàgines sense reservar espai, i per això les tres marques hi van ([capçaleres i peus](/ca/docs/configuration-headers-footers#capçaleres-i-peus)). La pàgina 1 comença amb l'H1, cosa que la converteix en pàgina d'obertura (`'opener'`), així que `pages: 'body'` limita la franja blava, la línia de referència i `Seite {pageNumber} von {totalPages}` als fulls següents. La línia de referència pren els atributs de l'H1 amb `{attr.unser-zeichen}` i `{attr.datum}`.
+Qualsevol element del disseny de l'H1 fixat per sota de l'assumpte suma alçada a la reserva del títol. Amb la marca de plec de 210 mm al disseny, la salutació baixa a 222,8 mm i la carta passa a tres pàgines. La zona de la capçalera es pinta a totes les pàgines sense reservar espai, i per això les tres marques hi van ([capçaleres i peus](/ca/docs/configuration-headers-footers#capçaleres-i-peus)). La pàgina 1 comença amb l'H1, cosa que la converteix en pàgina d'obertura (`'opener'`), així que `pages: 'body'` limita la franja blava, la línia de referència i `Seite {pageNumber} von {totalPages}` als fulls següents. La línia de referència pren els atributs de l'H1 amb `{attr.unser-zeichen}` i `{attr.datum}`.
 
 ### 5 · Col·loca la signatura al flux del text
 
 <Excerpt region="signature" />
 
-`::resource{id="signature"}` posa el dibuix sota «Mit freundlichen Grüßen», i `width: 0.297` li dona 49 mm d'amplada i 21,1 mm d'alçada, una mica menys de quatre línies de 15 pt. El text que segueix un recurs al flux torna a la retícula de base. Amb `0.25`, el dibuix feia 17,8 mm d'alçada, i els 3,4 mm que la retícula hi afegia a sota allunyaven el nom de la signatura. El tipus de recurs té el `captionPrefix` buit, i Postext no compon peu quan el prefix i el peu són buits, així que sota la signatura no apareix ni rètol ni número ([tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs)). El logotip és un recurs del mateix tipus, i només el dibuixa l'element d'imatge. Cap `:ref` ni `::resource` l'anomena, així que mai no entra al flux.
+`::resource{id="signature"}` posa el dibuix sota «Mit freundlichen Grüßen», i `width: 0.297` li dona 49 mm d'amplada i 21,1 mm d'alçada, una mica menys de quatre línies de 15 pt. El text que segueix un recurs al flux torna a la retícula de base. Amb `0.25`, el dibuix feia 17,8 mm d'alçada, i els 3,4 mm que la retícula hi afegia a sota allunyaven el nom de la signatura. El tipus de recurs té el `captionPrefix` buit, i Postext no compon peu quan el prefix i el peu són buits, així que sota la signatura no apareix ni etiqueta ni número ([tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs)). El logotip és un recurs del mateix tipus, i només el dibuixa l'element d'imatge. Cap `:ref` ni `::resource` no hi fa referència, així que mai no entra al flux.
 
 ## Errors freqüents
 

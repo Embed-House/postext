@@ -10,7 +10,7 @@ pageNotes: { "1": "Página 1 de um artigo numa revista fictícia, 示例出版�
 
 ## O que você vai compor
 
-Duas páginas de um artigo de pesquisa numa revista inventada de estudos editoriais, 示例出版研究 (“Pesquisa Editorial de Exemplo”), composto como uma revista universitária chinesa compõe os seus artigos. A página é um 16开, 184 × 260 mm, com duas colunas de 23 caracteres de 小五 numa grade de 15 pt. Um bloco de título atravessa a página: o nome da revista numa faixa anil, o título em Hei negrito, os autores, as filiações e um resumo com as palavras-chave. As citações seguem a GB/T 7714—2015, a norma nacional chinesa de referências, no sistema numérico (顺序编码制): cada obra recebe um número na ordem em que é citada pela primeira vez, o número sai sobrescrito entre colchetes e três ou mais números seguidos viram um intervalo. A lista de referências dá a cada entrada o seu código de tipo de documento e escreve 等 depois de três autores de uma obra chinesa e “et al.” depois dos de uma ocidental. <RecipeLink slug="apa-thesis-with-bibtex">Um capítulo de tese citado em APA 7</RecipeLink> usa a mesma marcação de citações num estilo autor-data.
+Duas páginas de um artigo de pesquisa numa revista inventada de estudos editoriais, 示例出版研究 (“Pesquisa Editorial de Exemplo”), composto como uma revista universitária chinesa compõe os artigos. A página é um 16开, 184 × 260 mm, com duas colunas de 23 caracteres de 小五 numa grade de 15 pt. Um bloco de título atravessa a página: o nome da revista numa faixa anil, o título em Hei negrito, os autores, as filiações e um resumo com as palavras-chave. As citações seguem a GB/T 7714—2015, a norma nacional chinesa de referências, no sistema numérico (顺序编码制): cada obra recebe um número na ordem em que é citada pela primeira vez, o número sai sobrescrito entre colchetes e três ou mais números seguidos viram um intervalo. A lista de referências dá a cada entrada o código de tipo de documento e escreve 等 depois de três autores de uma obra chinesa e “et al.” depois dos de uma ocidental. <RecipeLink slug="apa-thesis-with-bibtex">Um capítulo de tese citado em APA 7</RecipeLink> usa a mesma marcação de citações num estilo autor-data.
 
 ## Preparo
 
@@ -22,15 +22,15 @@ A norma pede “et al.” depois dos três primeiros autores de uma obra ocident
 
 ### 2 · As referências num bloco CSL-YAML
 
-As obras ficam num bloco `:::references{format=csl-yaml}` no fim do Markdown, no formato que o Zotero exporta como CSL YAML ([Referências](/pt/docs/document-format-notes-references#referências)). O tipo CSL decide o código: `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] depois do seu `//` e dos anais, e `webpage` [EB/OL] com a data de acesso entre colchetes. Um artigo de revista com DOI vira [J/OL] e mantém o DOI, como a norma pede. Os nomes chineses vão em `literal`, para que o estilo não os separe em sobrenome e nome. `:::bibliography{title=""}` põe a lista sob o título sem número 参考文献, e `labelWidth` alinha as linhas seguintes com o texto da entrada, e não além dele.
+As obras ficam num bloco `:::references{format=csl-yaml}` no fim do Markdown, no formato que o Zotero exporta como CSL YAML ([Referências](/pt/docs/document-format-notes-references#referências)). O tipo CSL decide o código: `book` imprime [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] depois do `//` e dos anais, e `webpage` [EB/OL] com a data de acesso entre colchetes. Um artigo de revista com DOI vira [J/OL] e mantém o DOI, como a norma pede. Os nomes chineses vão em `literal`, para que o estilo não os separe em sobrenome e nome. `:::bibliography{title=""}` põe a lista sob o título sem número 参考文献, e `labelWidth` alinha as linhas seguintes com o texto da entrada, e não além dele.
 
-<PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Página 2: entradas ocidentais em maiúsculas com et al., entradas chinesas com 等, cada uma com o seu código de tipo." />
+<PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Página 2: entradas ocidentais em maiúsculas com et al., entradas chinesas com 等, cada uma com o código de tipo." />
 
 ### 3 · O bloco de título numa faixa
 
 <Excerpt region="masthead" />
 
-O bloco de título é o design do H1, um estilo de título que ocupa as duas colunas. A faixa é uma caixa ancorada ao refile, e o nome da revista fica sobre ela em branco. O título, os autores e as filiações vêm do título e dos seus atributos, cada um posicionado embaixo do anterior (`#title`, `below`), então um título de três linhas empurra o resto para baixo ([Largura e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)).
+O bloco de título é o design do H1, um estilo de título que ocupa as duas colunas. A faixa é uma caixa ancorada ao refile, e o nome da revista fica sobre ela em branco. O título, os autores e as filiações vêm do título e dos atributos, cada um posicionado embaixo do anterior (`#title`, `below`), por isso um título de três linhas empurra o resto para baixo ([Largura e design avançado](/pt/docs/configuration-headings#largura-e-design-avançado)).
 
 ### 4 · O resumo e os seus rótulos
 
@@ -44,7 +44,7 @@ O resumo é um boxe na largura da página, recuado dois caracteres de cada lado.
 
 ### Colchetes de canto em vez de sobrescritos
 
-Algumas revistas imprimem os números das citações na linha, no corpo do texto. `marker` muda o jeito de marcar o número e não mexe no estilo: `'brackets'` dá [1] na linha, `'corner'` dá 〔1〕.
+Algumas revistas imprimem os números das citações na linha, no mesmo corpo que o texto. `marker` muda o jeito de marcar o número e não mexe no estilo: `'brackets'` dá [1] na linha, `'corner'` dá 〔1〕.
 
 ```diff
    locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
@@ -65,7 +65,7 @@ Bibliografias mistas às vezes são ordenadas com as obras chinesas antes das oc
 
 ## Erros comuns
 
-- Uma citação narrativa, `@zhou2019` sem colchetes, nomeia os autores e acrescenta o número, mas a chave continua pelos caracteres chineses que vierem depois, então `@zhou2019认为` é lido como uma chave que não existe. Escreva o nome no texto e a citação depois dele, `周明远[@zhou2019]认为`, como os artigos chineses já fazem.
+- Uma citação narrativa, `@zhou2019` sem colchetes, nomeia os autores e acrescenta o número, mas a chave continua pelos caracteres chineses que vierem depois, de modo que `@zhou2019认为` é lido como uma chave que não existe. Escreva o nome no texto e a citação depois dele, `周明远[@zhou2019]认为`, como os artigos chineses já fazem.
 - O estilo numérico incluído não imprime localizadores: `[@zhou2019, 页 45]` dá [5] sem a página. A GB/T 7714 põe a página depois do colchete, dentro do sobrescrito, [5]45; enquanto o estilo não fizer isso, escreva a página na frase.
 - A LXGW WenKai TC, a única Kai do Fontsource, é uma fonte de Taiwan: desenha ，e 。 no meio da casa, e com `zh-Hans` o motor apara a metade direita da casa, o que corta o glifo. O resumo é composto em Noto Serif SC, e a Kai fica para os nomes dos autores, que não têm pontuação.
-- Numa grade de caracteres o balanceamento de colunas vem desligado por padrão: cada linha fica na grade e a coluna que não comporta o título seguinte termina antes. Desligado, a segunda coluna da página 1 terminaria três linhas mais curta (o título 2 结果 precisa das suas duas linhas e de duas de texto embaixo, então abre a página 2) e a última página encheria a primeira coluna e deixaria a segunda pela metade. A receita define `headings.balancing.enabled: true`: a coluna curta recebe linhas inteiras da grade acima dos títulos, sem nunca tirar um caractere da sua casa, e as duas colunas da última página terminam na mesma altura.
+- Numa grade de caracteres o equilíbrio de colunas vem desativado por padrão: cada linha fica na grade e a coluna que não comporta o título seguinte termina antes. Desativado, a segunda coluna da página 1 terminaria três linhas mais curta (o título 2 结果 precisa das duas linhas e de duas de texto embaixo, por isso abre a página 2) e a última página encheria a primeira coluna e deixaria a segunda pela metade. A receita define `headings.balancing.enabled: true`: a coluna curta recebe linhas inteiras da grade acima dos títulos, sem nunca tirar um caractere da casa, e as duas colunas da última página terminam na mesma altura.

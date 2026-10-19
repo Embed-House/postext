@@ -10,7 +10,7 @@ pageNotes: { "1": "Página 1: el antetítulo azul Letter · Gravitational-wave a
 
 ## Lo que vas a componer
 
-Cinco páginas de la carta que anunció las primeras ondas gravitacionales, *Observation of Gravitational Waves from a Binary Black Hole Merger* (Abbott et al., 2016), abreviada y compuesta de nuevo en tamaño carta a dos columnas. La página 1 abre con la prueba: la deformación registrada en Hanford y en Livingston, redibujada con los ficheros de datos abiertos del Gravitational Wave Open Science Center, cruza las dos columnas bajo el título. Debajo van la firma de la colaboración con su nota, el resumen a toda página y el texto, con las citas numeradas [1,2] y [25–27] como las imprimen las revistas de la APS. La masa de chirrido es la ecuación (1). La Tabla I pone sus errores asimétricos como superíndice y subíndice apilados, escritos como fórmulas en las celdas, y los pies imprimen las fórmulas de la propia carta. Trae tu BibTeX y tus ficheros de datos, y el mismo guion compone tu carta.
+Cinco páginas de la carta que anunció las primeras ondas gravitacionales, *Observation of Gravitational Waves from a Binary Black Hole Merger* (Abbott et al., 2016), abreviada y compuesta de nuevo en tamaño carta a dos columnas. La página 1 abre con la prueba: la deformación registrada en Hanford y en Livingston, redibujada con los archivos de datos abiertos del Gravitational Wave Open Science Center, cruza las dos columnas bajo el título. Debajo van la firma de la colaboración con su nota, el resumen a toda página y el texto, con las citas numeradas [1,2] y [25–27] como las imprimen las revistas de la APS. La masa de chirrido es la ecuación (1). La Tabla I pone sus errores asimétricos como superíndice y subíndice apilados, escritos como fórmulas en las celdas, y los pies imprimen las fórmulas de la propia carta. Trae tu BibTeX y tus archivos de datos, y el mismo guion compone tu carta.
 
 ## Elaboración
 
@@ -34,7 +34,7 @@ Desde postext 1.19 una celda compone `$…$` igual que el texto, así que cada v
 
 <Excerpt region="palette" />
 
-Las cuatro figuras se dibujan en código con los ficheros de datos que GWOSC publica junto a la carta, con licencia CC BY 4.0. Cada traza conserva una de cada ocho muestras, 430 puntos para los 0,21 s de la Figura 1, y se guarda con un carácter en base 64 por punto para su cambio respecto al anterior, de modo que las cinco trazas caben en menos de 3 KB dentro del guion. La fila del residuo es el dato menos la forma de onda, como en el original. Hanford va en naranja y Livingston en azul en todas las figuras, y el texto se queda con la tinta de la página y un solo azul. Los rótulos son trazados de MathJax en su letra sin remates (`\textsf`), de modo que un exponente o un símbolo en un eje se compone como las fórmulas del texto, y el PDF conserva cada línea y cada rótulo como vectores.
+Las cuatro figuras se dibujan en código con los archivos de datos que GWOSC publica junto a la carta, con licencia CC BY 4.0. Cada traza conserva una de cada ocho muestras, 430 puntos para los 0,21 s de la Figura 1, y se guarda con un carácter en base 64 por punto para su cambio respecto al anterior, de modo que las cinco trazas caben en menos de 3 KB dentro del guion. La fila del residuo es el dato menos la forma de onda, como en el original. Hanford va en naranja y Livingston en azul en todas las figuras, y el texto se queda con la tinta de la página y un solo azul. Los rótulos son trazados de MathJax en su letra sin remates (`\textsf`), de modo que un exponente o un símbolo en un eje se compone como las fórmulas del texto, y el PDF conserva cada línea y cada rótulo como vectores.
 
 ## Variantes
 
@@ -68,6 +68,6 @@ Cambia el formato; la medida, las columnas y todas las figuras se derivan de él
 ## Errores frecuentes
 
 - Hasta postext 1.18 un recurso `'here'` con `span: 'page'` salía del ancho de una columna en un flujo a dos columnas, y un `$` en un pie o en una celda se imprimía tal cual. Fija la 1.19 o una posterior.
-- Una letra griega, ⊙ o ≃ tecleada como carácter en un pie o en una celda cae en una fuente del sistema en pantalla y falta en el PDF, que incrusta los ficheros latinos de cada fuente. Escríbela como fórmula, `$\sigma$` o `$M_\odot$`, y dibújala en las figuras.
-- Una lista de cientos de autores no cabe en un fichero BibTeX. Escribe el nombre como lo imprime la revista, entre llaves dobles: `author={{B. Abbott et al.}}`.
-- Conserva la línea de licencia del artículo y la de los datos. Aquí una nota al pie y el colofón dicen qué se ha cortado, y la nota de cada pie nombra los datos y lo que la figura redibujada deja fuera.
+- Una letra griega, ⊙ o ≃ tecleada como carácter en un pie o en una celda cae en una fuente del sistema en pantalla y falta en el PDF, que incrusta los archivos latinos de cada fuente. Escríbela como fórmula, `$\sigma$` o `$M_\odot$`, y dibújala en las figuras.
+- Una lista de cientos de autores no cabe en un archivo BibTeX. Escribe el nombre como lo imprime la revista, entre llaves dobles: `author={{B. Abbott et al.}}`.
+- Conserva la línea de licencia del artículo y la de los datos. Aquí una nota al pie y el colofón dicen qué se ha cortado, y la nota de cada pie cita los datos y lo que la figura redibujada deja fuera.

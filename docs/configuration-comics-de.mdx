@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Comics
 
-Die Eigenschaft `comics` konfiguriert Comicseiten (`:::page`), Strips (`:::strip`) und Doppelseiten: den Rahmen und die Zwischenräume, aus denen die Panels geschnitten werden, die Panelstile, das Lettering, die Sprechblasenstile und die Figurenliste. Nur Dokumente mit Comics lesen sie; ein Dokument ohne Comics wird genau wie zuvor umbrochen, und ein Dokument mit Comics und ohne Abschnitt `comics` übernimmt die Standardwerte seiner Sprache. Die Auszeichnung und die Art, wie Seiten gelettert werden, erklärt [Comics](/de/docs/comics).
+Die Eigenschaft `comics` konfiguriert Comicseiten (`:::page`), Strips (`:::strip`) und Doppelseiten: den Rahmen der Comicseite (die Fläche innerhalb der Ränder) und die Zwischenräume, aus denen die Panels geschnitten werden, die Panelstile, das Lettering, die Sprechblasenstile und die Figurenliste. Nur Dokumente mit Comics lesen sie; ein Dokument ohne Comics wird genau wie zuvor gesetzt, und ein Dokument mit Comics und ohne Abschnitt `comics` übernimmt die Standardwerte seiner Sprache. Die Auszeichnung und die Art, wie Seiten gelettert werden, erklärt [Comics](/de/docs/comics).
 
 ```ts
 const config: PostextConfig = {
@@ -65,7 +65,7 @@ const config: PostextConfig = {
       <td><code>frame.margins</code></td>
       <td><code>PageMargins</code></td>
       <td>die Seitenränder</td>
-      <td>Eigene Ränder für Comicseiten (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Die Panels werden aus der Box geschnitten, die sie lassen; ohne Angabe aus dem Textbereich der Seite.</td>
+      <td>Eigene Ränder für Comicseiten (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>mirror</code>). Die Panels werden aus der Fläche geschnitten, die diese Ränder freilassen; ohne Angabe aus dem Satzspiegel der Seite.</td>
     </tr>
     <tr>
       <td><code>gutter.horizontal</code></td>
@@ -113,13 +113,13 @@ const config: PostextConfig = {
       <td><code>runningHeads</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Kolumnentitel und Paginas auf Comicseiten drucken. Ausgeschaltet besteht eine Comicseite ganz aus Panels, und ihre Nummer zählt trotzdem mit.</td>
+      <td>Kolumnentitel und Paginas auf Comicseiten anzeigen. Ist die Option ausgeschaltet, enthält eine Comicseite nur Panels, und ihre Seitenzahl zählt trotzdem mit.</td>
     </tr>
     <tr>
       <td><code>viewerLeaf</code></td>
       <td><code>ComicViewerLeafConfig</code></td>
       <td>nicht gesetzt</td>
-      <td>Für Hosts, deren Seiten keine Blätter sind: umbricht Comicseiten auf einem Druckblatt (<code>width</code>, <code>height</code>, <code>margins</code>), skaliert auf <code>fitWidth</code> px (und höchstens <code>fitHeight</code> px hoch), oben auf der Seite. Der HTML-Betrachter der Sandbox setzt es; es wird nie mit einem Dokument gespeichert.</td>
+      <td>Für Hosts, deren Seiten keine Blätter sind: setzt Comicseiten auf ein Druckblatt (<code>width</code>, <code>height</code>, <code>margins</code>), skaliert auf <code>fitWidth</code> px (und höchstens <code>fitHeight</code> px hoch), oben auf der Seite. Der HTML-Betrachter der Sandbox setzt es; es wird nie mit einem Dokument gespeichert.</td>
     </tr>
   </tbody>
 </table>
@@ -142,13 +142,13 @@ const config: PostextConfig = {
       <td><code>borderWidth</code></td>
       <td><code>Dimension</code></td>
       <td><code>1pt</code></td>
-      <td>Rahmenbreite; <code>0</code> zeichnet keinen. Der Rahmen wird auf dem Umriss des Panels gezogen.</td>
+      <td>Breite der Randlinie; <code>0</code> zeichnet keine. Die Randlinie wird auf dem Umriss des Panels gezogen.</td>
     </tr>
     <tr>
       <td><code>borderColor</code></td>
       <td><code>ColorValue</code></td>
       <td>schwarz</td>
-      <td>Rahmenfarbe (an die Palette koppelbar).</td>
+      <td>Farbe der Randlinie (an die Palette koppelbar).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
@@ -261,7 +261,7 @@ const config: PostextConfig = {
       <td><code>inset</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5mm</code></td>
-      <td>Abstand zwischen einer Sprechblase und dem Rahmen ihres Panels. Ein an den Rahmen gestoßener Textkasten ignoriert ihn.</td>
+      <td>Abstand zwischen einer Sprechblase und der Randlinie ihres Panels. Ein Textkasten, der an die Randlinie stößt, ignoriert ihn.</td>
     </tr>
     <tr>
       <td><code>joinSameSpeaker</code></td>
@@ -410,13 +410,13 @@ Jeder Eintrag von `comics.balloonStyles` wird über den eingebauten Stil mit der
       <td><code>position</code></td>
       <td><code>'auto' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom'</code></td>
       <td><code>'auto'</code></td>
-      <td>Wohin die Sprechblase kommt, wenn die Zeile keine Fixierung angibt: vom Lettering platziert oder an eine Ecke oder Kante des Panels.</td>
+      <td>Wohin die Sprechblase kommt, wenn ihre Zeile keine feste Position angibt: vom Lettering platziert oder an eine Ecke oder Kante des Panels.</td>
     </tr>
     <tr>
       <td><code>butt</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Eine Sprechblase an einer Ecke oder Kante bündig an den Panelrahmen stoßen (Textkästen).</td>
+      <td>Eine Sprechblase an einer Ecke oder Kante bündig an die Randlinie des Panels stoßen (Textkästen).</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>
@@ -464,7 +464,7 @@ Jeder Eintrag von `comics.balloonStyles` wird über den eingebauten Stil mit der
       <td><code>halo</code></td>
       <td><code>Dimension</code></td>
       <td>keiner</td>
-      <td>Ein um die Buchstaben gezeichneter Umriss, seine Breite, damit sich der Text über dem Bild lesen lässt (Soundeffekte).</td>
+      <td>Die Breite eines um die Buchstaben gezeichneten Umrisses, damit sich der Text über dem Bild lesen lässt (Soundeffekte).</td>
     </tr>
     <tr>
       <td><code>haloColor</code></td>
@@ -505,13 +505,13 @@ Jeder Eintrag von `comics.cast` beschreibt eine Figur:
       <td><code>name</code></td>
       <td><code>string</code></td>
       <td><code>id</code></td>
-      <td>Der Name, den die HTML-Ausgabe und das umfließende EPUB vor die Zeilen der Figur drucken und den Editoren anzeigen.</td>
+      <td>Der Name, den die HTML-Ausgabe und das umfließende EPUB vor die Zeilen der Figur setzen und den Editoren anzeigen.</td>
     </tr>
     <tr>
       <td><code>balloonStyle</code></td>
       <td><code>string</code></td>
       <td><code>speech</code></td>
-      <td>Der Stil der Zeilen der Figur, die keinen nennen.</td>
+      <td>Der Stil der Zeilen der Figur, die keinen eigenen angeben.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

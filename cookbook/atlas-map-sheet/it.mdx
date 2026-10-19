@@ -18,7 +18,7 @@ La prima tavola di un atlante delle Solan Isles, un arcipelago inventato per que
 
 <Excerpt region="palette" />
 
-Le sei tinte della carta sono voci dello stesso oggetto che contiene i colori della pagina: `colorPalette` le elenca come voci di palette e i disegni prendono i riempimenti SVG da `palette[id]`. Il testo bianco carta su `band`, il blu dell’apertura, delle barre delle didascalie e della riga d’intestazione della tabella, ha un contrasto di 9,2:1; `road`, l’unico rosso, è riservato a strade, fari e numeri dei luoghi e ha 5,4:1 rispetto alla carta. `main-color` prende l’esadecimale di `band`, e i valori predefiniti collegano a quell’id titoli, barre delle didascalie e segni degli elenchi, così ognuno di essi che la configurazione non imposta si stampa nel blu dell’atlante.
+Le sei tinte della carta sono voci dello stesso oggetto che contiene i colori della pagina: `colorPalette` le elenca come voci della tavolozza e i disegni prendono i riempimenti SVG da `palette[id]`. Il testo bianco carta su `band`, il blu dell’apertura, delle barre delle didascalie e della riga d’intestazione della tabella, ha un contrasto di 9,2:1; `road`, l’unico rosso, è riservato a strade, fari e numeri dei luoghi e ha 5,4:1 rispetto alla carta. `main-color` prende l’esadecimale di `band`, e i valori predefiniti collegano a quell’id titoli, barre delle didascalie e segni degli elenchi, così ognuno di essi che la configurazione non imposta si stampa nel blu dell’atlante.
 
 ### 2 · Dove va ogni carta
 
@@ -28,7 +28,7 @@ Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. La carta 1 è
 
 <Excerpt region="legend" />
 
-`RELIEF` elenca le fasce con i loro id di palette e le altitudini da cui cominciano. Il disegno riempie ogni fascia con `palette[id]` e la legenda sotto la carta 1 scrive uno `:swatch` con lo stesso id, così un nuovo esadecimale nella palette cambia insieme il disegno e la legenda. La legenda nomina l’unità una volta sola, a parole, perché la nota è composta in Alegreya Sans SC, che stampa una *m* minuscola come una M in maiuscoletto. A <PageRef page={2}>pagina 2</PageRef> il testo mette gli stessi campioni accanto alle due profondità dell’acqua.
+`RELIEF` elenca le fasce con i loro id della tavolozza e le altitudini da cui cominciano. Il disegno riempie ogni fascia con `palette[id]` e la legenda sotto la carta 1 scrive uno `:swatch` con lo stesso id, così un nuovo esadecimale nella tavolozza cambia insieme il disegno e la legenda. La legenda indica l’unità una volta sola, a parole, perché la nota è composta in Alegreya Sans SC, che stampa una *m* minuscola come una M in maiuscoletto. A <PageRef page={2}>pagina 2</PageRef> il testo mette gli stessi campioni accanto alle due profondità dell’acqua.
 
 ### 4 · Le carte sono risorse, numerate e collocate dalle loro citazioni
 
@@ -46,7 +46,7 @@ Una risorsa prende il suo numero dalla prima citazione nel testo, e `:ref{id="no
 
 <Excerpt region="opener" />
 
-La fascia è un riquadro ancorato a `'bleed'` e senza larghezza, così corre da un bordo all’altro. Il titolo grande è `{title}`, il nome dell’atlante preso dal frontmatter, e il testo del titolo vero e proprio segue il numero della tavola nell’occhiello. Da sola la fascia riserva lo spazio fino al suo piede, e il testo comincerebbe 3,9 mm sotto di essa; `minHeight` porta la riserva a 14 righe di griglia sotto il margine superiore, e il testo comincia 8,7 mm sotto la fascia.
+La fascia è un riquadro ancorato a `'bleed'` e senza larghezza, così corre da un bordo all’altro. Il titolo grande è `{title}`, il nome dell’atlante preso dal front matter, e il testo del titolo vero e proprio segue il numero della tavola nell’occhiello. Da sola la fascia riserva lo spazio fino al suo piede, e il testo comincerebbe 3,9 mm sotto di essa; `minHeight` porta la riserva a 14 righe di griglia sotto il margine superiore, e il testo comincia 8,7 mm sotto la fascia.
 
 ## Varianti
 

@@ -3,22 +3,22 @@
 export const metadata = {
   title: "Línia d'ordres: postext en un terminal, un script o un agent",
   sidebarTitle: "Línia d'ordres",
-  description: "Un sol executable autònom per a macOS, Linux i Windows que converteix un llibre .postext, una carpeta de llibre o Markdown solt en PDF, HTML, EPUB, imatges de pàgina i Word, empaqueta paquets i revisa llibres, amb sortida JSON per a scripts i agents",
+  description: "Un sol executable autònom, per a macOS, Linux i Windows, que converteix un llibre .postext, una carpeta de llibre o fitxers Markdown solts en PDF, HTML, EPUB, imatges de pàgina i Word. També crea paquets i revisa llibres, i pot respondre en JSON per a scripts i agents",
   lang: 'ca',
   lastUpdated: '2026-10-17',
   readingTime: '13 min',
   order: 45,
-  plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir-ne tots els fitxers en un de sol. Els programes i els assistents d'intel·ligència artificial també el poden fer servir, perquè pot respondre en un format que llegeixen sense dificultat.",
+  plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir tots els fitxers del llibre en un de sol. També el poden fer servir altres programes i els assistents d'intel·ligència artificial, perquè pot respondre en un format que llegeixen sense dificultat.",
 };
 
 # Línia d'ordres
 
 **`postext` compon el teu llibre des d'un terminal, un script o un agent.**
 
-Al [Sandbox](/ca/sandbox) escrius i dissenyes un llibre veient-lo. La línia
-d'ordres pren el mateix llibre i en produeix els fitxers sense navegador: un
+Al [Sandbox](/ca/sandbox) escrius i dissenyes un llibre mentre el veus. La línia
+d'ordres agafa el mateix llibre i en genera els fitxers sense navegador: un
 PDF a punt per a impremta, les pàgines en HTML, un EPUB, la imatge d'una pàgina
-o de totes, un document de Word. També empaqueta i desempaqueta paquets
+o de totes, un document de Word. També crea i desfà paquets
 `.postext`, importa documents de Word, descriu un llibre i el revisa per
 trobar-hi problemes.
 
@@ -26,14 +26,14 @@ trobar-hi problemes.
 els generadors de PDF, EPUB, HTML i Word, el pintor de pàgines (Skia), HarfBuzz
 per a l'àrab i altres escriptures complexes, els perfils ICC d'impremta i les
 fonts per defecte (EB Garamond i Open Sans). No cal instal·lar cap entorn
-d'execució, paquet ni biblioteca, i la maquetació és la del Sandbox: el mateix
-llibre es parteix en les mateixes pàgines.
+d'execució, paquet ni biblioteca, i la maquetació és la mateixa del Sandbox: el
+mateix llibre es reparteix en les mateixes pàgines.
 
 ## Com obtenir-lo
 
-Cada versió de Postext publica els executables a la seva
-[GitHub Release](https://github.com/drnachio/postext/releases/latest), amb
-les seves sumes de verificació (`SHA256SUMS`) i un `readme.txt`:
+Cada versió de Postext publica els executables a la
+[GitHub Release](https://github.com/drnachio/postext/releases/latest)
+corresponent, amb les sumes de verificació (`SHA256SUMS`) i un `readme.txt`:
 
 <table>
   <thead>
@@ -63,7 +63,7 @@ chmod +x postext
 
 Mou-lo a una carpeta del teu `PATH` (`/usr/local/bin`, `~/.local/bin`) per
 executar-lo com a `postext` des de qualsevol lloc. macOS posa en quarantena els
-fitxers baixats amb un navegador; treu-li la marca una vegada:
+fitxers baixats amb un navegador; treu-li la marca de quarantena una sola vegada:
 
 ```bash
 xattr -d com.apple.quarantine postext-macos-arm64
@@ -85,8 +85,8 @@ opcions d'una ordre.
 
 ## Un primer llibre
 
-Tres fitxers Markdown en una carpeta ja són un llibre, un capítol per fitxer,
-per ordre de nom:
+Tres fitxers Markdown en una carpeta ja són un llibre: un capítol per fitxer,
+per ordre alfabètic del nom:
 
 ```bash
 postext pdf chapters/ --name "Field notes" -o field-notes.pdf
@@ -102,7 +102,7 @@ postext pdf chapters/ --config design.json --resources pictures/ -o field-notes.
 ```
 
 Un llibre fet al Sandbox (**Llibres → Baixar (.postext)**) funciona tal com
-és:
+està:
 
 ```bash
 postext pdf my-book.postext -o my-book.pdf
@@ -115,12 +115,12 @@ Totes les ordres que llegeixen un llibre accepten qualsevol d'aquestes formes:
 
 - **Un fitxer `.postext`**: el paquet que el Sandbox exporta i obre (vegeu
   [Paquets](/ca/docs/configuration-bundles#paquets-fitxers-postext)).
-- **Una carpeta de llibre**: un paquet desempaquetat, amb el seu `preset.json`,
+- **Una carpeta de llibre**: un paquet desempaquetat, amb el `preset.json`,
   els capítols, els recursos i les fonts. És el que lliura la skill per a
-  agents, i `postext unpack` n'escriu una.
+  agents, i `postext unpack` en crea una.
 - **Markdown solt**: un o més fitxers `.md`, un capítol per fitxer en l'ordre
-  en què els dones, o una carpeta els fitxers `.md` de la qual es prenen per
-  nom (`01-intro.md`, `02-method.md`…). Amb aquests fitxers:
+  en què els dones, o una carpeta amb fitxers `.md`, que es prenen per ordre
+  de nom (`01-intro.md`, `02-method.md`…). Amb aquests fitxers:
   - `--config design.json`: la configuració, sigui un objecte de configuració
     sol o un `preset.json` sencer;
   - `--resources pictures/`: les imatges, cadascuna una figura amb el nom del
@@ -129,12 +129,12 @@ Totes les ordres que llegeixen un llibre accepten qualsevol d'aquestes formes:
     peus, text alternatiu), amb la mateixa forma que els `resources` d'un
     `preset.json`;
   - `--fonts fonts/`: fitxers de fonts que porta el llibre (TTF, OTF, WOFF2),
-    amb el nom de la família que indiquen les seves taules;
+    amb el nom de família que indiquen les taules de cada fitxer;
   - `--name "Title"`: el nom del llibre.
 
-`--config` també funciona amb un paquet o una carpeta: es combina per sobre de
-la configuració pròpia del llibre. Un paquet en diverses llengües es llegeix en
-la seva llengua tret que `--locale` en demani una altra (`--locale en`).
+`--config` també funciona amb un paquet o una carpeta: es combina amb la
+configuració pròpia del llibre i hi té prioritat. Un paquet en diverses llengües
+es llegeix en la llengua principal, tret que `--locale` en demani una altra (`--locale en`).
 
 ## Ordres
 
@@ -145,7 +145,7 @@ la seva llengua tret que `--locale` en demani una altra (`--locale en`).
   <tbody>
     <tr><td><code>pdf</code></td><td>El PDF, amb marcadors, enllaços, fonts incrustades i, per defecte, etiquetat per a l'accessibilitat (PDF/UA); PDF/X i CMYK per a impremta.</td></tr>
     <tr><td><code>html</code></td><td>Les pàgines en HTML amb text real: un fitxer autònom, o una carpeta amb <code>index.html</code> i <code>assets/</code>.</td></tr>
-    <tr><td><code>epub</code></td><td>Un llibre EPUB 3, amb pàgines fixes com les impreses o amb text refluïble.</td></tr>
+    <tr><td><code>epub</code></td><td>Un llibre EPUB 3, amb pàgines fixes com les impreses o amb text adaptable.</td></tr>
     <tr><td><code>image</code></td><td>Una pàgina com a imatge PNG, JPEG o WebP.</td></tr>
     <tr><td><code>images</code></td><td>Totes les pàgines, o un interval, com a imatges en una carpeta.</td></tr>
     <tr><td><code>docx</code></td><td>Els capítols com un document de Word que es torna a importar sense canvis.</td></tr>
@@ -154,12 +154,12 @@ la seva llengua tret que `--locale` en demani una altra (`--locale en`).
     <tr><td><code>unpack</code></td><td>Un fitxer <code>.postext</code> com a carpeta.</td></tr>
     <tr><td><code>info</code></td><td>Els capítols, les llengües, els recursos i les fonts del llibre, i amb <code>--pages</code> el nombre de pàgines.</td></tr>
     <tr><td><code>check</code></td><td>Compon el llibre i informa de cada problema; per a impremta, el preflight.</td></tr>
-    <tr><td><code>build</code></td><td>Compon el llibre una vegada i escriu diverses de les sortides anteriors; <code>--watch</code> continua en marxa i el torna a generar a cada desament.</td></tr>
+    <tr><td><code>build</code></td><td>Compon el llibre una vegada i escriu diverses de les sortides anteriors; amb <code>--watch</code> es queda en marxa i el torna a generar cada vegada que deses.</td></tr>
   </tbody>
 </table>
 
 Cada ordre escriu a la carpeta des d'on l'executes, amb el nom de l'entrada,
-tret que `-o` en doni la ruta. `-o -` escriu una única sortida a la sortida
+tret que indiquis una altra ruta amb `-o`. `-o -` escriu una única sortida a la sortida
 estàndard.
 
 ### pdf
@@ -170,15 +170,15 @@ postext pdf book/ --pdfx x4 --profile fogra51 -o book-print.pdf
 postext pdf book/ --color-space grayscale --no-outlines
 ```
 
-El PDF segueix els ajustos del mateix llibre (vegeu
+El PDF segueix els paràmetres del mateix llibre (vegeu
 [Generació de PDF](/ca/docs/configuration-fonts-colors-viewers#generació-de-pdf-configuració) i
 [Producció per a impremta](/ca/docs/configuration-fonts-colors-viewers#producció-per-a-impremta-configuració));
-aquestes opcions els canvien per a una execució:
+aquestes opcions els canvien només per a una execució:
 
 - `--pdfx none|x1a|x4`: l'estàndard PDF/X per a una impremta.
 - `--profile NAME|FILE`: el perfil ICC de sortida, pel nom (`fogra39`,
   `fogra51`, `fogra52`, `swop5`, `gracol2006`, `snap2007`, `ifra26` i els
-  altres perfils dels ajustos d'impremta) o un fitxer `.icc`.
+  altres perfils dels paràmetres d'impremta) o un fitxer `.icc`.
 - `--color-space rgb|cmyk|grayscale`.
 - `--accessible` / `--no-accessible`: l'estructura etiquetada per als lectors
   de pantalla.
@@ -195,11 +195,12 @@ postext html book.postext -o site/ --mode single
 Una ruta acabada en `.html` dona un sol fitxer amb les imatges i les fonts a
 dins, fàcil d'enviar. Qualsevol altra ruta és una carpeta: `index.html` al
 costat d'`assets/`, que conté les imatges, les fonts i els vídeos allotjats al
-llibre. `--assets embed|folder` tria una de les dues formes per a qualsevol
-ruta. Les pàgines són la maquetació impresa, mostrada a mida de pantalla:
+llibre. `--assets embed|folder` imposa una de les dues formes sigui quina sigui
+la ruta. Les pàgines són la maquetació impresa, mostrada a mida de pantalla:
 l'una al costat de l'altra (`--mode multi`, per defecte) o l'una sota l'altra
-(`--mode single`). Les fonts marcades `redistributable: false` s'anomenen però
-no es copien. Si la família nomena un `fallback`, s'escriuen en el seu lloc les cares d'aquesta família oberta amb el nom de la família (des de postext 1.43).
+(`--mode single`). Les fonts marcades `redistributable: false` es mencionen pel
+nom, però no es copien. Si la família indica un `fallback`, se n'escriuen en lloc
+seu les cares d'aquesta família oberta, amb el nom de la família original (des de postext 1.43).
 
 ### epub
 
@@ -210,11 +211,11 @@ postext epub book.postext --layout reflowable --cover cover.jpg
 
 `--layout fixed` (per defecte) conserva cada pàgina com la impresa, amb text
 seleccionable; `--layout reflowable` deixa que el sistema de lectura torni a
-compondre el text per a la seva pantalla (vegeu
+compondre el text per a la pantalla (vegeu
 [Llibres EPUB](/ca/docs/configuration-html-folio-epub#llibres-epub-postext-epub)). La coberta
-és la miniatura del llibre tret que `--cover` en doni una imatge. Les metadades
+és la miniatura del llibre, tret que indiquis una imatge amb `--cover`. Les metadades
 del paquet (títol, autors, llengua, identificador) surten del frontmatter del
-primer capítol, com al Sandbox. Les fonts marcades `redistributable: false` no es copien; una família que nomena un `fallback` s'incrusta amb les cares d'aquesta família oberta sota el seu propi nom (des de postext 1.43).
+primer capítol, com al Sandbox. Les fonts marcades `redistributable: false` no es copien; una família que indica un `fallback` s'incrusta amb les cares d'aquesta família oberta, però amb el nom original (des de postext 1.43).
 
 ### image i images
 
@@ -225,12 +226,12 @@ postext images book.postext -o pages/ --dpi 100
 postext images book.postext --pages 1-10,iv -f webp --pattern "{chapter}-{label}"
 ```
 
-Les pàgines s'anomenen **com estan impreses** (`12`, `iv`, un interval `7-9`)
-o **per la seva posició** al llibre amb `#` (`#1` és la primera pàgina,
-imprimeixi el que imprimeixi, `#10-#20`, `#30-` fins al final). `--pages`
-accepta una llista separada per comes. El pintor és el de la pestanya Canvas
-del Sandbox, així que una imatge mostra la pàgina exactament com s'ha
-compost, sense passar per un PDF.
+Les pàgines s'indiquen **pel número imprès** (`12`, `iv`, un interval `7-9`)
+o **per la posició** al llibre, amb `#` (`#1` és la primera pàgina,
+porti el número que porti; `#10-#20`; `#30-`, fins al final). `--pages`
+accepta una llista separada per comes. Les pàgines es pinten com a la pestanya
+Canvas del Sandbox, de manera que una imatge mostra la pàgina exactament com
+s'ha compost, sense passar per un PDF.
 
 - `--format png|jpeg|webp` (o l'extensió de `-o`), `--quality 1-100` per a
   JPEG i WebP.
@@ -239,8 +240,8 @@ compost, sense passar per un PDF.
 - `--pattern`: els noms de fitxer d'`images`, a partir de `{n}` (la posició;
   `{n:03}` l'emplena fins a tres xifres), `{label}` (el número imprès) i
   `{chapter}`; per defecte, `page-{n:03}`.
-- `--print-preview`: la pàgina com la reproduirà la impremta, passada pel
-  perfil de sortida, amb el tall i la sang dibuixats.
+- `--print-preview`: la pàgina tal com la reproduirà la impremta, convertida
+  amb el perfil de sortida i amb el tall i la sang dibuixats.
 - `--jobs N`: quantes imatges es codifiquen alhora.
 
 ### docx i import-docx
@@ -252,23 +253,23 @@ postext import-docx manuscript.docx -o manuscript.postext
 ```
 
 `docx` escriu els capítols amb estils de Word per als títols, els paràgrafs,
-els requadres, les cites, les llistes i les notes. El que el Word no pot
+els requadres, les cites, les llistes i les notes. El que Word no pot
 expressar es conserva tal com està escrit amb els estils *Postext Markup*, i la
-plantilla d'importació viatja dins del fitxer, de manera que el document es
-torna a importar sense canvis després que un editor hi hagi treballat.
-`import-docx` converteix un document de Word en un llibre: un capítol a cada
-títol de nivell 1 (`--no-split` en deixa un de sol), les imatges i les taules
-com a recursos, i `--report` imprimeix l'informe de qualitat que mostra el
+plantilla d'importació va dins del fitxer, de manera que el document es pot
+tornar a importar sense canvis després que un editor hi hagi treballat.
+`import-docx` converteix un document de Word en un llibre: crea un capítol a cada
+títol de nivell 1 (amb `--no-split`, un de sol), converteix les imatges i les taules
+en recursos, i amb `--report` imprimeix l'informe de qualitat que mostra el
 Sandbox (estils en ús, format directe, numeració escrita a mà…). `--template`
-pren una plantilla d'importació (un `.json` desat des del Sandbox o un `.docx`
-que en porti una).
+indica una plantilla d'importació (un `.json` desat des del Sandbox o un `.docx`
+que en contingui una).
 
-L'espaiat entre caràcters és una propietat de l'estil, no del text, de manera que no és al
-Markdown. `docx` escriu el `letterSpacing` dels estils de paràgraf, dels estils de títol
+L'espaiat entre caràcters és una propietat de l'estil, no del text, i per això no
+apareix al Markdown. `docx` escriu el `letterSpacing` dels estils de paràgraf, dels estils de títol
 i dels nivells de títol com a espaiat entre caràcters de l'estil de Word, i `import-docx`
-el llegeix de tornada en em de la mida de l'estil: el posa com a `letterSpacing` als estils del llibre
-que no en tenen cap (els estils de paràgraf i de títol del fitxer de `--config` als quals
-s'assignen els estils de Word, i els nivells de títol), i deixa tal com són els espaiats que el
+el torna a llegir en em de la mida de l'estil: l'assigna com a `letterSpacing` als estils del llibre
+que encara no en tenen (els estils de paràgraf i de títol del fitxer de `--config` als quals
+corresponen els estils de Word, i els nivells de títol), i no toca els espaiats que el
 llibre ja defineix. Amb `--json`, `styleTracking` enumera el que s'ha aplicat (`applied`) i el que
 s'ha deixat (`skipped`). Des de postext 1.39.
 
@@ -280,11 +281,11 @@ postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o
 postext unpack my-book.postext -o my-book/
 ```
 
-`pack` comprimeix en zip una carpeta de llibre tal com és, o construeix un
+`pack` comprimeix en zip una carpeta de llibre tal com està, o construeix un
 paquet a partir de Markdown solt. La mateixa entrada dona sempre els mateixos
-bytes, així que un paquet es pot comparar o se'n pot calcular el hash.
-`unpack` es nega a escriure en una carpeta que no sigui buida tret que es doni
-`--force`.
+bytes, de manera que es poden comparar paquets o calcular-ne el hash.
+`unpack` es nega a escriure en una carpeta que no sigui buida, tret que hi
+afegeixis `--force`.
 
 ### info i check
 
@@ -295,29 +296,29 @@ postext check chapters/ --strict --json
 ```
 
 `info` llista els capítols (títol, paraules, fitxer i, amb `--pages`, les
-seves pàgines), els recursos i cada família tipogràfica amb la seva procedència
+pàgines), els recursos i cada família tipogràfica amb la procedència
 (el llibre, una carpeta, l'executable, la memòria cau de baixades o la font de
-reserva). Si el llibre diu on comença (`start` a `preset.json`: un extracte que obre a la pàgina 58, al capítol 4), també ho mostra, i totes les ordres componen el llibre des d'aquí.
+reserva). Si el llibre indica on comença (`start` a `preset.json`: un extracte que s'obre a la pàgina 58, al capítol 4), també ho mostra, i totes les ordres componen el llibre a partir d'aquest punt.
 
-`check` compon el llibre i informa del mateix que mostra el Tauler de revisió
+`check` compon el llibre i informa del mateix que mostra el tauler Revisió
 del Sandbox: Markdown que no es tanca, recursos, directives i estils
 desconeguts, requadres que la maquetació ha hagut de forçar, fonts que falten,
-ajustos que el motor ha hagut de substituir i, en un llibre preparat per a
+paràmetres que el motor ha hagut de substituir i, en un llibre preparat per a
 impremta (o amb `--preflight`), el preflight: imatges de baixa resolució,
 filets fins, text petit en diverses tintes, tinta per sobre del límit, text a
-prop del tall. També llista el text que no es llegeix sobre el seu fons
+prop del tall. També llista el text que no es llegeix bé sobre el fons
 (`contrast`), un cop per parell de colors, amb la ràtio en pantalla i, per a
 impremta, sobre el paper del perfil de sortida. Cada problema indica el fitxer
-del capítol, la línia i la pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
+del capítol, la línia i la pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís si hi ha
 `--strict`.
 
-També avisa dels textos de disseny de la configuració que desen el text del
+També avisa quan els textos dels dissenys de la configuració contenen text del
 llibre en lloc de marcadors (`contentInConfig`), un cop per estil de títol,
-títol corrent o disseny de part, amb el camí de cada text: porta aquest text al
+capçalera o disseny de part, amb el camí de cada text: passa aquest text al
 Markdown, o afegeix el títol o el nom de l'editorial a
 `checks.contentInConfig.allow`.
 
-En un llibre amb plantilles de pàgina, `check` informa a més del text que no cap al seu marc (`frameOverflow`, amb els passos que ha provat l'escala de reajustament i els canvis que ho arreglarien), d'una història que passa de les pàgines que un marc pot afegir (`frameContinuationLimit`), d'un salt a una pàgina que no segueix (`continueTargetMissing`) i dels rètols de figura que no es poden dibuixar o que xoquen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Després dels avisos imprimeix una línia `reflow` per cada pàgina composta amb esdeveniments, i `--json` porta els passos, les propostes i el registre de reajustament com a dades. Vegeu [Pàgines compostes › Avisos](/ca/docs/composed-pages#avisos) i [Registre de reajustament](/ca/docs/composed-pages#registre-de-reajustament).
+En un llibre amb plantilles de pàgina, `check` també informa del text que no cap al marc (`frameOverflow`, amb els passos que ha provat l'escala de reajustament i els canvis que ho arreglarien), d'una història que ocupa més pàgines de les que un marc pot afegir (`frameContinuationLimit`), d'un salt a una pàgina que no ve a continuació (`continueTargetMissing`) i dels rètols de figura que no es poden dibuixar o que se superposen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Després dels avisos imprimeix una línia `reflow` per cada pàgina composta amb esdeveniments, i `--json` inclou com a dades els passos, les propostes i el registre de reajustament. Vegeu [Pàgines compostes › Avisos](/ca/docs/composed-pages#avisos) i [Registre de reajustament](/ca/docs/composed-pages#registre-de-reajustament).
 
 ### build i --watch
 
@@ -331,7 +332,7 @@ postext build chapters/ --pdf book.pdf --watch
 ordre. `--watch` es queda en marxa: quan canvia un capítol, la configuració o
 una imatge, torna a compondre el llibre amb les fonts i el motor encara
 carregats, normalment en una fracció de segon per capítol, i torna a escriure
-les sortides. Un desament que trenca el llibre imprimeix l'error i conserva els
+les sortides. Si en desar el llibre queda trencat, imprimeix l'error i conserva els
 últims fitxers bons.
 
 ## Opcions per a qualsevol llibre
@@ -342,13 +343,13 @@ les sortides. Un desament que trenca el llibre imprimeix l'error i conserva els
   </thead>
   <tbody>
     <tr><td><code>--locale TAG</code></td><td>La llengua en què es llegeix un llibre en diverses llengües (<code>es</code>, <code>en</code>, <code>pt-BR</code>…).</td></tr>
-    <tr><td><code>--chapters LIST</code></td><td>Compon només alguns capítols: <code>2</code>, <code>1,3-5</code>, <code>4-</code>. És més ràpid en un llibre llarg; les seves pàgines es numeren a partir de la seva pròpia primera pàgina.</td></tr>
-    <tr><td><code>--set PATH=VALUE</code></td><td>Canvia un ajust per a aquesta execució, com una ruta amb punts: <code>--set page.dpi=150</code>, <code>--set bodyText.fontFamily=Lora</code>, <code>--set headings.levels.0.italic=true</code>. El valor es llegeix com a JSON quan és possible (números, true i false, objectes) i, si no, com a text. Es pot repetir.</td></tr>
-    <tr><td><code>--config FILE</code></td><td>Una configuració (o un <code>preset.json</code>) per a Markdown solt, o combinada per sobre de la del llibre.</td></tr>
+    <tr><td><code>--chapters LIST</code></td><td>Compon només alguns capítols: <code>2</code>, <code>1,3-5</code>, <code>4-</code>. És més ràpid en un llibre llarg; les pàgines es numeren a partir de la primera pàgina d'aquests capítols.</td></tr>
+    <tr><td><code>--set PATH=VALUE</code></td><td>Canvia un paràmetre per a aquesta execució, indicat com una ruta amb punts: <code>--set page.dpi=150</code>, <code>--set bodyText.fontFamily=Lora</code>, <code>--set headings.levels.0.italic=true</code>. El valor es llegeix com a JSON quan és possible (números, true i false, objectes) i, si no, com a text. Es pot repetir.</td></tr>
+    <tr><td><code>--config FILE</code></td><td>Una configuració (o un <code>preset.json</code>) per a Markdown solt, o que es combina amb la del llibre i hi té prioritat.</td></tr>
     <tr><td><code>--resources DIR</code>, <code>--fonts DIR</code>, <code>--name TEXT</code></td><td>Imatges, fonts i títol per a Markdown solt.</td></tr>
     <tr><td><code>--font-dir DIR</code></td><td>Una carpeta on buscar les fonts que el llibre no porta. Es pot repetir.</td></tr>
     <tr><td><code>--offline</code></td><td>No baixa mai fonts.</td></tr>
-    <tr><td><code>--cache-dir DIR</code></td><td>On es guarden les fonts baixades.</td></tr>
+    <tr><td><code>--cache-dir DIR</code></td><td>On es desen les fonts baixades.</td></tr>
   </tbody>
 </table>
 
@@ -358,7 +359,7 @@ I per a qualsevol ordre: `--json`, `--quiet` (`-q`, només errors), `--verbose`
 ## Fonts
 
 Un llibre que porta les seves fonts (un paquet, o `--fonts` amb Markdown solt)
-es compon amb aquestes fonts i cap altra. Per a cada família que anomena la
+es compon amb aquestes fonts i cap altra. Per a cada família que esmenta la
 configuració i que el llibre no porta, `postext` busca, per aquest ordre:
 
 1. a les carpetes indicades amb `--font-dir`;
@@ -367,34 +368,34 @@ configuració i que el llibre no porta, `postext` busca, per aquest ordre:
 3. a la memòria cau de baixades;
 4. a [Google Fonts](https://fonts.google.com), que dona fitxers TrueType
    estàtics complets, o a [Fontsource](https://fontsource.org) si Google
-   Fonts no té la família (Commit Mono, FiraGO); es guarden a la memòria cau,
+   Fonts no té la família (Commit Mono, FiraGO); es desen a la memòria cau,
    així que cada família es baixa una sola vegada.
 
-Un pes que la família no porta es compon amb la font que triaria un navegador
-(la selecció de fonts de CSS: per sobre de 500 primer les més pesants, per sota
-de 400 primer les més lleugeres, de manera que el 600 d'una família amb 400 i
-700 és el seu 700, i el 550 també), i una inclinació que no porta, amb les
-seves rodones, tal com són en tots dos casos, a les imatges de pàgina igual
-que al PDF: una família de retolació amb un sol pes conserva les seves lletres
-a la negreta, i una família sense cursiva, les rodones.
+Un pes que la família no té es compon amb la font que triaria un navegador
+(la selecció de fonts de CSS: per sobre de 500, primer les més pesants; per sota
+de 400, primer les més lleugeres; així, en una família amb 400 i 700, el 600 es
+compon amb el 700, i el 550 també). Una inclinació que la família no té es
+compon amb la rodona. En tots dos casos la font es fa servir tal com és, tant a
+les imatges de pàgina com al PDF: una família de retolació amb un sol pes fa
+servir les mateixes lletres per a la negreta, i una família sense cursiva, la rodona.
 
-Es baixen els pesos que anomena la configuració: rodona, negreta i les seves
-cursives per a cada família, i qualsevol altre pes que doni un ajust, inclòs el
-de la negreta (`bodyText.boldFontWeight: 600` demana la font de pes 600). Si
-un pes que la família sí que porta no s'ha pogut carregar (sense connexió i
+Es baixen els pesos que esmenta la configuració: rodona, negreta i les cursives
+corresponents per a cada família, i qualsevol altre pes que indiqui un paràmetre,
+inclòs el de la negreta (`bodyText.boldFontWeight: 600` demana la font de pes 600). Si
+no s'ha pogut carregar un pes que la família sí que té (sense connexió i
 sense fitxer a la memòria cau, una baixada fallida, una carpeta de fonts sense
-el fitxer), el text es compon amb la font de la família que hi respon segons la
-mateixa regla i `postext check` el llista com a avís `fontFallback`: les seves línies poden
-partir d'una altra manera que al Sandbox.
+el fitxer), el text es compon amb la font de la família que triaria la
+mateixa regla, i `postext check` en dona un avís `fontFallback`: les línies es poden
+tallar d'una altra manera que al Sandbox.
 
 La memòria cau és `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` a
 Windows); `POSTEXT_CACHE_DIR` o `--cache-dir` la canvien de lloc. `--offline`
 s'estalvia la baixada. Una família que no es troba enlloc es compon en EB
-Garamond amb el seu propi nom, de manera que la maquetació i el PDF continuen
-coincidint, i un avís `missingFont` l'anomena. `postext info` mostra d'on ha
+Garamond, però conserva el nom, de manera que la maquetació i el PDF continuen
+coincidint, i un avís `missingFont` en dona el nom. `postext info` mostra d'on ha
 sortit cada família.
 
-Un paquet que deixa fora els fitxers d'una família llicenciada pot anomenar-hi una família oberta d'amplada semblant (`fallback` a les `fonts` del manifest, des de postext 1.42). `postext` busca llavors aquesta família pels passos anteriors i composa les cares que el llibre no porta amb els seus talls del mateix pes i inclinació, amb el nom de la llicenciada, de manera que la maquetació s'assembla a la que s'obté amb els fitxers i `postext check` no avisa d'un `missingFont` per a ella. Una família que el llibre porta només en part pren del `fallback` únicament la inclinació de què no en té cap. El PDF incrusta la cara oberta.
+Un paquet que no inclou els fitxers d'una família amb llicència pot indicar-ne una família oberta d'amplada semblant (`fallback` a les `fonts` del manifest, des de postext 1.42). Llavors `postext` busca aquesta família seguint els passos anteriors i compon les cares que el llibre no porta amb les variants del mateix pes i inclinació de la família oberta, però amb el nom de la família amb llicència. Així la maquetació s'assembla a la que s'obtindria amb els fitxers, i `postext check` no en dona cap avís `missingFont`. D'una família que el llibre porta només en part, del `fallback` només se'n pren la inclinació que hi falta. El PDF incrusta la cara oberta.
 
 ## Per a scripts i agents
 
@@ -403,7 +404,7 @@ els agents de programació.
 
 - **`--json`** imprimeix un objecte JSON a la sortida estàndard quan l'ordre
   acaba; tots els missatges van a la sortida d'error estàndard. L'informe
-  llista el que s'ha escrit, les pàgines, cada avís amb el seu origen i quant
+  llista el que s'ha escrit, les pàgines, cada avís amb l'origen i quant
   ha durat cada pas (en mil·lisegons):
 
 ```json
@@ -430,13 +431,13 @@ els agents de programació.
 - **Codis de sortida**: `0` fet, `1` error, `2` ús incorrecte (una opció
   desconeguda, una entrada que falta), `3` `check` ha trobat errors (o avisos
   amb `--strict`).
-- **Cap pregunta.** No espera mai cap entrada; una carpeta que no és buida es
-  rebutja en lloc de preguntar què cal fer.
+- **Cap pregunta.** No espera mai que l'usuari escrigui res; si la carpeta no
+  és buida, la rebutja en lloc de preguntar què cal fer.
 - **Sortida estàndard**: `-o -` hi escriu un PDF, una imatge o un paquet, per
-  passar-lo per una canonada a una altra ordre.
+  passar-lo a una altra ordre amb una canonada.
 - **Velocitat.** L'executable arrenca en unes quantes centèsimes de segon. Un
   llibre curt es converteix en un PDF o en la imatge d'una pàgina en molt menys
-  d'un segon; un de llarg triga el que trigui la seva maquetació (una novel·la
+  d'un segon; un de llarg triga el que en trigui la maquetació (una novel·la
   il·lustrada de 140 pàgines, uns deu segons). Per mirar unes quantes pàgines
   d'un llibre llarg, combina `--chapters` amb `image` o `images --pages`. Per
   treballar en un llibre al llarg de molts canvis, deixa en marxa
@@ -449,10 +450,10 @@ les pàgines en què treballa i per revisar un port.
 
 La línia d'ordres és el paquet `postext-cli` del
 [repositori](https://github.com/drnachio/postext/tree/main/packages/postext-cli).
-[Bun](https://bun.sh) el compila, amb el motor i els seus generadors, en un
+[Bun](https://bun.sh) el compila, juntament amb el motor i els generadors, en un
 executable per sistema, i [Skia](https://skia.org) (a través de
-`@napi-rs/canvas`) mesura i pinta el text, com ho fa el canvas del navegador al
-Sandbox. Una il·lustració SVG que conté un mapa de bits (un PNG o un JPEG incrustat com a URI de dades, com escriu `pdftocairo -svg` les il·lustracions retallades d'un PDF) la dibuixa [resvg](https://github.com/linebender/resvg), perquè el renderitzador d'SVG de Skia omet aquestes imatges. A cada versió, els executables es construeixen, s'executen a Linux,
+`@napi-rs/canvas`) mesura i pinta el text, com fa el canvas del navegador al
+Sandbox. Les il·lustracions SVG que contenen un mapa de bits (un PNG o un JPEG incrustat com a URI de dades, que és com `pdftocairo -svg` escriu les il·lustracions retallades d'un PDF) les dibuixa [resvg](https://github.com/linebender/resvg), perquè el renderitzador d'SVG de Skia omet aquestes imatges. A cada versió, els executables es construeixen, s'executen a Linux,
 Alpine, macOS i Windows i s'adjunten a la GitHub Release; npm rep
 `postext-cli` i un paquet `postext-cli-<system>` per executable.
 
@@ -471,7 +472,7 @@ d'aquest ordinador a `packages/postext-cli/bin/`.
 
 - **L'HTML** és la maquetació impresa mostrada a mida de pantalla. La pestanya
   HTML del Sandbox torna a compondre el text per a la finestra.
-- **`--chapters`** compon els capítols per separat: la numeració de les seves
+- **`--chapters`** compon els capítols per separat: la numeració de
   pàgines torna a començar, mentre que el Sandbox continua la numeració del
   llibre.
 - **Les fonts** surten del llibre, de les teves carpetes, de l'executable, de
@@ -480,13 +481,13 @@ d'aquest ordinador a `packages/postext-cli/bin/`.
   qualsevol màquina.
 - **La llengua del text** és, en un navegador, la del mateix document
   (`bodyText.shapingLanguage: 'document'`, el valor per defecte des de postext
-  1.30). El canvas de Skia accepta una llengua i conforma el text sense
+  1.30). El canvas de Skia accepta una llengua, però conforma el text sense
   tenir-la en compte, així que la línia d'ordres mesura les formes de la
-  llengua per defecte de cada font i compon sempre els seus llibres amb
-  `shapingLanguage: 'host'`, digui el que digui la configuració; el seu PDF i
-  les seves imatges de pàgina pinten aquestes mateixes formes. Un llibre la
-  font del qual té formes per a una llengua (una `l·l` catalana, un `fi` turc,
-  les xifres d'una font xinesa en un llibre anglès) es compon aquí amb les
+  llengua per defecte de cada font i compon sempre els llibres amb
+  `shapingLanguage: 'host'`, digui el que digui la configuració; el PDF i
+  les imatges de pàgina pinten aquestes mateixes formes. Si la font d'un
+  llibre té formes pròpies per a una llengua (una `l·l` catalana, un `fi` turc,
+  les xifres d'una font xinesa en un llibre anglès), aquí es compon amb les
   formes per defecte. El que `'document'` mesura d'una altra manera (les parts
   d'una paraula partida a final de línia, una paraula de dreta a esquerra, un
   text de disseny) es mesura aquí com ho mesura `'host'`, així que una línia

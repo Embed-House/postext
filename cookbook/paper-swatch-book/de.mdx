@@ -5,7 +5,7 @@ plain: "Ein kleines Musterbuch aus einem Papierladen. Jede Seite sagt, auf welch
 description: "Ein Block :::paper je Blatt gibt jeder Seite ihre Papiersorte; postext-folio blättert Glanz-, Vergé-, Velin- und Dünndruckpapier verschieden, in einem Pen."
 question: "Wie drucke ich Umschlag, Beilage oder Bildteil auf einem anderen Papier als den Rest des Buchs?"
 aliases: ["Papiersorte", "Papiermusterbuch", "Papiermuster", ":::paper", "Bildteil", "Tafelteil", "Beilage", "Dünndruckpapier", "Bibeldruckpapier", "Durchscheinen"]
-pageNotes: { "1": "Der vordere Umschlag: eine ochsenblutrote Fläche bis an jede Kante, eine kleine gesperrte Dachzeile, der Titel „The Stock Book“ in einer großen Caslon für Auszeichnungen und ein kursiver Untertitel.", "3": "Die Karte für „Book Wove, Natural“: eine Dachzeile, der Name der Sorte über einer Haarlinie, fünf Zeilen mit technischen Angaben und fetten Labels und zwei Absätze über das Papier.", "11": "Die Probeseite des Dünndruckpapiers: sechs Glossareinträge mit hängendem Einzug." }
+pageNotes: { "1": "Der vordere Umschlag: eine ochsenblutrote Fläche bis an jede Kante, eine kleine gesperrte Dachzeile, der Titel „The Stock Book“ in einer großen Caslon für Auszeichnungen und ein kursiver Untertitel.", "3": "Die Karte für „Book Wove, Natural“: eine Dachzeile, der Name der Sorte über einer Haarlinie, fünf Zeilen mit technischen Angaben und fetten Feldnamen und zwei Absätze über das Papier.", "11": "Die Probeseite des Dünndruckpapiers: sechs Glossareinträge mit hängendem Einzug." }
 ---
 
 ## Was Sie setzen
@@ -30,23 +30,23 @@ Ein Block `:::paper` beginnt auf einer neuen Seite, und der Text danach ebenfall
 
 <Excerpt region="covers" />
 
-Jeder Umschlag ist ein Überschriftenformat, dessen Design eine Farbfläche in der Größe des Endformats enthält. Das Format setzt seine Ränder für die Länge seines Abschnitts, also allein für die Umschlagseite, auf null, sodass die Fläche jede Kante erreicht und die folgenden Seiten ihre Ränder behalten.
+Jeder Umschlag ist ein Überschriftenstil, dessen Gestaltung eine Farbfläche in der Größe des Endformats enthält. Der Stil setzt seine Ränder für die Länge seines Abschnitts, also allein für die Umschlagseite, auf null, sodass die Fläche jede Kante erreicht und die folgenden Seiten ihre Ränder behalten.
 
 ### 4 · Die Karte der Sorte
 
 <Excerpt region="stock-card" />
 
-Jedes Blatt beginnt mit einer Überschrift der Ebene 1, die aus einem Platz gezeichnet wird: die Dachzeile aus den Attributen der Überschrift, der Name der Sorte und eine Haarlinie. Die Zeilen mit den technischen Angaben sind ein Absatzformat in der schmalen Labelschrift, mit fetten Labels in der Akzentfarbe.
+Jedes Blatt beginnt mit einer Überschrift der Ebene 1, die aus einem Gestaltungsfeld gezeichnet wird: die Dachzeile aus den Attributen der Überschrift, der Name der Sorte und eine Haarlinie. Die Zeilen mit den technischen Angaben sind ein Absatzformat in der schmalen Auszeichnungsschrift, mit fetten Feldnamen in der Akzentfarbe.
 
 ### 5 · Das Papier aus dem Layout zurücklesen
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jede Seite, die innerhalb eines Blocks gesetzt wird, trägt die Attribute des Blocks in `page.paper`, so wie sie geschrieben sind: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` reicht sie an den Betrachter weiter, der jedes Blatt mit seiner Sorte zeichnet; der Pen liest sie außerdem für die Statuszeile und für die Textalternative jeder Seite.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Jede Seite, die innerhalb eines Blocks gesetzt wird, enthält in `page.paper` die Attribute des Blocks, so wie sie geschrieben sind: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` reicht sie an den Betrachter weiter, der jedes Blatt mit seiner Sorte zeichnet; der Pen wertet sie außerdem für die Statuszeile und für die Textalternative jeder Seite aus.
 
 ## Varianten
 
 ### Einen Bildteil auf schwererem Glanzpapier einfügen
 
-Ein Block im Text eines beliebigen Buchs druckt diese Seiten auf ihrer eigenen Sorte; die darin zitierten Abbildungen werden platziert, bevor er schließt.
+Ein Block im Text eines beliebigen Buchs gibt diesen Seiten ihre eigene Sorte; die darin zitierten Abbildungen werden platziert, bevor er schließt.
 
 ```diff
 +:::paper{type=coatedGloss grammage=170 showThrough=false}

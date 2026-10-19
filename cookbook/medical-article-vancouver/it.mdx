@@ -16,19 +16,19 @@ Tre pagine di una rivista clinica: un articolo originale che riferisce uno studi
 
 ### 1 · Vancouver, in apice e con i link
 
-Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Tra gli stili inclusi, `elsevier-vancouver` è quello che segue *Citing Medicine* della NLM (ordine di citazione, autori come *Ettehad D, Emdin CA*, sei nomi e poi *et al.*, titoli delle riviste abbreviati), quindi è il file da cui partire. Due sostituzioni di stringa portano il suo elenco ai riferimenti d’esempio della NLM: il numero si legge *1.* invece di *[1]*, e il fascicolo segue il volume. `marker: 'superscript'` compone le citazioni come numeri in apice qualunque cosa scriva lo stile, e `doi: 'link'` mantiene ogni indirizzo `https://doi.org/` come link. Due opere non consecutive si stampano accostate, *6,9*: uno spazio dopo la virgola si allargherebbe in una riga giustificata. Nell’elenco, `labelWidth` dà ai numeri una colonna propria e `labelAlign: 'right'` fa finire insieme *9.* e *10.*, così il testo di ogni voce comincia alla stessa x, sulla prima riga come su quelle successive. È incluso anche lo stile AMA, che mette i numeri in apice da solo, ma il suo elenco differisce da Vancouver nella punteggiatura e negli intervalli di pagine.
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Tra gli stili inclusi, `elsevier-vancouver` è quello che segue *Citing Medicine* della NLM (ordine di citazione, autori come *Ettehad D, Emdin CA*, sei nomi e poi *et al.*, titoli delle riviste abbreviati), quindi è il file da cui partire. Due sostituzioni di stringa rendono il suo elenco conforme ai riferimenti d’esempio della NLM: il numero si legge *1.* invece di *[1]*, e il fascicolo segue il volume. `marker: 'superscript'` compone le citazioni come numeri in apice qualunque cosa scriva lo stile, e `doi: 'link'` mantiene ogni indirizzo `https://doi.org/` come link. Due opere non consecutive si stampano accostate, *6,9*: uno spazio dopo la virgola si allargherebbe in una riga giustificata. Nell’elenco, `labelWidth` dà ai numeri una colonna propria e `labelAlign: 'right'` fa finire insieme *9.* e *10.*, così il testo di ogni voce comincia alla stessa x, sulla prima riga come su quelle successive. È incluso anche lo stile AMA, che mette i numeri in apice da solo, ma il suo elenco differisce da Vancouver nella punteggiatura e negli intervalli di pagine.
 
 ### 2 · Un blocco del titolo sulle due colonne
 
 <Excerpt region="title" />
 
-Il titolo dell’articolo è l’unico titolo di livello 1, con lo stile `article`, che occupa tutta la larghezza della pagina e lo traccia dal suo disegno. Il tipo di articolo, gli autori, le affiliazioni e la nota vengono dagli attributi del titolo. `inlineMarks` trasforma `^1^` nell’attributo in un numero di affiliazione in apice, e il `\n` nelle affiliazioni comincia una riga per ogni istituzione. La fascia è ancorata al rifilo, così arriva al bordo superiore della carta.
+Il titolo dell’articolo è l’unico titolo di livello 1, con lo stile `article`, che occupa tutta la larghezza della pagina e lo disegna in base alla sua grafica. Il tipo di articolo, gli autori, le affiliazioni e la nota vengono dagli attributi del titolo. `inlineMarks` trasforma `^1^` nell’attributo in un numero di affiliazione in apice, e il `\n` nelle affiliazioni comincia una riga per ogni istituzione. La fascia è ancorata al rifilo, così arriva al bordo superiore della carta.
 
 ### 3 · Un abstract strutturato e un riquadro dei punti chiave
 
 <Excerpt region="abstract" />
 
-I due riquadri condividono uno stile di testo: Fira Sans a 8,3 pt con etichette in grassetto in linea, la voce che un lettore si aspetta per i testi di sintesi. L’abstract ha un fondo colorato e le etichette in verde petrolio; i punti chiave stanno sotto una striscia di 2,5 pt con le etichette in nero. `snapToGrid: false` mantiene esatto il padding, così il riquadro dell’abstract aderisce al suo testo.
+I due riquadri condividono uno stile di testo: Fira Sans a 8,3 pt con etichette in grassetto in linea, la voce che un lettore si aspetta per i testi di sintesi. L’abstract ha un fondo colorato e le etichette in verde petrolio; i punti chiave stanno sotto una banda di 2,5 pt con le etichette in nero. `snapToGrid: false` mantiene esatto il padding, così il riquadro dell’abstract aderisce al suo testo.
 
 ### 4 · Tabella 1 e Figura 1 in testa a una colonna
 

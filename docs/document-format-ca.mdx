@@ -3,26 +3,26 @@
 export const metadata = {
   title: 'Format del document',
   sidebarTitle: 'Format del document',
-  description: 'El subconjunt de Markdown que analitza Postext: el frontmatter, els encapçalaments, les llistes i els blocs de codi, el que ignora i les normes per escriure els documents font',
+  description: 'Quina part del Markdown llegeix Postext: el frontmatter, els encapçalaments, les llistes i els blocs de codi; què hi ignora, i les normes per redactar els documents font',
   lang: 'ca',
   lastUpdated: '2026-10-16',
   readingTime: '16 min',
   order: 25,
-  plainSummary: "Aquesta pàgina explica com s'escriu un text que Postext pugui compondre. S'escriu en Markdown, una manera senzilla d'escriure en què uns pocs signes marquen els títols, les llistes, les negretes i els enllaços. Aquesta pàgina tracta les línies del començament del fitxer, els títols, les llistes, el codi i les marques que Postext no té en compte. Unes altres quatre pàgines tracten els blocs, com els requadres i les columnes, les marques dins de la línia, les notes i les referències, i les imatges i les taules. La pàgina acaba amb consells per escriure un text fàcil de llegir.",
+  plainSummary: "Aquesta pàgina explica com s'escriu un text que Postext pugui compondre. S'escriu en Markdown, una manera senzilla d'escriure en què uns quants signes marquen els títols, les llistes, les negretes i els enllaços. Aquesta pàgina tracta les línies del començament del fitxer, els títols, les llistes, el codi i les marques que Postext no té en compte. Quatre pàgines més expliquen els blocs (com els requadres i les columnes), les marques dins de la línia, les notes i les referències, i les imatges i les taules. La pàgina acaba amb consells per escriure un text fàcil de llegir.",
 };
 
 # Format del document
 
-**Postext llegeix un dialecte de markdown deliberadament reduït.**
+**Postext llegeix un dialecte de Markdown reduït a propòsit.**
 
-El parser és un tokenitzador escrit a mà — no una implementació completa de CommonMark —, de manera que el format d'entrada és estret i previsible. La intenció és doble: mantenir el motor petit i ràpid, i fer que els documents siguin trivialment portables entre Postext i qualsevol altre lector de CommonMark (Obsidian, Pandoc, VS Code…). Tot allò que no aparegui en aquesta pàgina es tracta com a text pla o s'elimina del flux en línia.
+L'analitzador és un tokenitzador escrit a mà, no una implementació completa de CommonMark, de manera que el format d'entrada és limitat i previsible. L'objectiu és doble: mantenir el motor petit i ràpid, i que els documents passin sense cap esforç de Postext a qualsevol altre lector de CommonMark (Obsidian, Pandoc, VS Code…). Tot el que no surt en aquesta pàgina es tracta com a text pla o s'elimina del text en línia.
 
-Si construeixes el document per codi, la funció `parseMarkdown` (vegeu [Configuració › Anàlisi](/ca/docs/configuration-programmatic-usage#anàlisi)) et retorna exactament la mateixa estructura de blocs que consumeix el motor de composició.
+Si construeixes el document per codi, la funció `parseMarkdown` (vegeu [Configuració › Anàlisi](/ca/docs/configuration-programmatic-usage#anàlisi)) et retorna exactament l'estructura de blocs que fa servir el motor de composició.
 
 
 ## Frontmatter
 
-Un document pot començar amb un bloc opcional de frontmatter YAML tancat entre marcadors `---`:
+Un document pot començar amb un bloc opcional de frontmatter YAML, delimitat per dues línies `---`:
 
 ```md
 ---
@@ -36,26 +36,26 @@ publishDate: 2026-04-15
 La història comença aquí…
 ```
 
-Crida `extractFrontmatter(source)` per separar el frontmatter del cos. L'objecte de metadades analitzades es retorna juntament amb el markdown restant i el desplaçament (en caràcters) on comença el cos — útil si has de mapar errors o posicions del cursor al document original.
+Crida `extractFrontmatter(source)` per separar el frontmatter del cos. Retorna l'objecte de metadades analitzades, el Markdown restant i la posició (en caràcters) on comença el cos, que et serveix si has de fer correspondre errors o posicions del cursor amb el document original.
 
-El frontmatter s'analitza amb [`gray-matter`](https://github.com/jonschlinkert/gray-matter), de manera que s'accepta qualsevol forma vàlida de YAML. Postext només consulta `title`, `subtitle`, `author` i `publishDate`; les altres claus es conserven a `PostextContent.metadata` i queden disponibles per al teu ús.
+El frontmatter s'analitza amb [`gray-matter`](https://github.com/jonschlinkert/gray-matter), de manera que s'accepta qualsevol forma vàlida de YAML. Postext només consulta `title`, `subtitle`, `author` i `publishDate`; la resta de claus es conserven a `PostextContent.metadata` i les pots fer servir com vulguis.
 
-Un bloc que no és YAML vàlid —unes cometes sense tancar, text després d'un valor entre cometes— no atura la composició: `extractFrontmatter` no retorna metadades, pren com a cos el text que segueix el `---` de tancament i deixa el motiu de l'analitzador a `error`. El document es compon sense les seves metadades i la construcció afegeix una entrada `invalidFrontmatter` a `contentWarnings` (el sandbox la mostra com a **Front matter no vàlid**).
+Un bloc que no és YAML vàlid (unes cometes sense tancar, text després d'un valor entre cometes) no atura la composició: `extractFrontmatter` no retorna cap metadada, retorna com a cos el text que hi ha després del `---` de tancament i deixa a `error` el motiu que dona l'analitzador. El document es compon sense metadades, i la construcció afegeix una entrada `invalidFrontmatter` a `contentWarnings` (el Sandbox la mostra com a **Frontmatter no vàlid**).
 
-YAML dona tipus als seus valors: `1984` és un nombre, `2026-04-15` una data, `[Ana Gil, Luis Paz]` una llista. Postext imprimeix aquests quatre camps com a text, sigui quin sigui el seu tipus:
+YAML assigna un tipus a cada valor: `1984` és un nombre; `2026-04-15`, una data, i `[Ana Gil, Luis Paz]`, una llista. Postext imprimeix aquests quatre camps com a text, siguin del tipus que siguin:
 
-- un nombre, en la seva forma decimal simple, i un booleà, com a `true` o `false` (`title: 1984` imprimeix *1984*). YAML llegeix un nombre com un valor, no xifra a xifra: `1.50` imprimeix *1.5*, `017` (octal) *15* i `1:30` (base 60) *90*;
-- una data, com el seu dia del calendari escrit en la llengua del document —la configuració `locale` o, si no hi és, la llengua de la partició de mots—: `publishDate: 2026-04-15` imprimeix *15 de abril de 2026* en castellà, *April 15, 2026* en anglès i *15. April 2026* en alemany. Les dates en àrab fan servir el calendari gregorià llevat que l'etiqueta n'indiqui un altre (`ar-u-ca-islamic` imprimeix la data de l'hègira), amb les xifres que indiqui l'etiqueta (`ar-EG`: ١٥ أبريل ٢٠٢٦; `ar-u-nu-latn`: 15 أبريل 2026). Una data amb hora imprimeix el dia de la seva hora UTC i descarta l'hora: `2026-09-24T23:30:00-05:00` són les 04:30 UTC del dia 25 i imprimeix *25 de septiembre de 2026*;
-- una llista, com els seus elements separats per comes (`author: [Ana Gil, Luis Paz]` imprimeix *Ana Gil, Luis Paz*).
+- un nombre, en forma decimal simple, i un booleà, com a `true` o `false` (`title: 1984` imprimeix *1984*). YAML llegeix el nombre com a valor, no xifra a xifra: `1.50` imprimeix *1.5*; `017` (octal), *15*, i `1:30` (base 60), *90*;
+- una data, com a dia del calendari escrit en la llengua del document (el paràmetre `locale` o, si no n'hi ha, la llengua de la partició de mots): `publishDate: 2026-04-15` imprimeix *15 de abril de 2026* en castellà, *April 15, 2026* en anglès i *15. April 2026* en alemany. Les dates en àrab fan servir el calendari gregorià llevat que l'etiqueta n'indiqui un altre (`ar-u-ca-islamic` imprimeix la data de l'hègira), amb les xifres que indiqui l'etiqueta (`ar-EG`: ١٥ أبريل ٢٠٢٦; `ar-u-nu-latn`: 15 أبريل 2026). Una data amb hora imprimeix el dia que correspon a l'hora UTC i descarta l'hora: `2026-09-24T23:30:00-05:00` són les 04:30 UTC del dia 25 i imprimeix *25 de septiembre de 2026*;
+- una llista, amb els elements separats per comes (`author: [Ana Gil, Luis Paz]` imprimeix *Ana Gil, Luis Paz*).
 
-Posa el valor entre cometes per imprimir-lo exactament com està escrit —un nombre que hagi de conservar les seves xifres, una data que hagi de conservar el seu dia—: `publishDate: "15/04/2026"`, `title: "1984"`. El text arriba a `doc.metadata`, als marcadors (`{title}`, `{publishDate}`…) i al títol i l'autor del PDF. Si un d'aquests quatre camps no té forma de text —un mapa niat, un `title:` buit—, no passa a `doc.metadata`. `extractFrontmatter` continua retornant els valors amb el tipus que els va donar YAML; `metadataText(value, locale)` dona el text que Postext imprimeix per a un d'ells.
+Posa el valor entre cometes per imprimir-lo exactament com està escrit (un nombre que hagi de conservar totes les xifres, una data que hagi de conservar el dia): `publishDate: "15/04/2026"`, `title: "1984"`. Aquest text arriba a `doc.metadata`, als marcadors (`{title}`, `{publishDate}`…) i al títol i l'autor del PDF. Si un d'aquests quatre camps no es pot convertir en text (un mapa niat, un `title:` buit), queda fora de `doc.metadata`. `extractFrontmatter` continua retornant els valors amb el tipus que els ha donat YAML; `metadataText(value, locale)` retorna el text que Postext imprimeix per a cadascun.
 
 
 ## Construccions de bloc
 
-Postext reconeix set tipus de bloc de prosa i els llistats de codi, a més de les directives i les insercions de recursos que es descriuen més endavant en aquesta pàgina. Els blocs sempre acaben en trobar una línia en blanc o l'inici d'un altre bloc.
+Postext reconeix set tipus de bloc de prosa i els blocs de codi, a més de les directives i les insercions de recursos que es descriuen més endavant. Un bloc sempre s'acaba en una línia en blanc o on comença un altre bloc.
 
-<Illustration name="BlockTypesGallery" data='{"title": "Construccions de bloc de prosa d’un cop d’ull", "desc": "Els set tipus de bloc de prosa que reconeix Postext: encapçalament, paràgraf, cita, llista no ordenada, llista ordenada, llista de tasques i fórmula en bloc, cadascun amb la seva sintaxi markdown. Les directives i les insercions de recursos es descriuen per separat.", "caption": "Cada tipus de bloc de prosa i la seva entrada en markdown.", "blocks": [{"name": "Encapçalament", "syntax": "# Títol", "color": "blue"}, {"name": "Paràgraf", "syntax": "Línies de text pla", "color": "orange"}, {"name": "Cita", "syntax": "> text citat", "color": "green"}, {"name": "Llista no ordenada", "syntax": "- element", "color": "purple"}, {"name": "Llista ordenada", "syntax": "1. element", "color": "pink"}, {"name": "Llista de tasques", "syntax": "- [x] fet", "color": "teal"}, {"name": "Fórmula en bloc", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
+<Illustration name="BlockTypesGallery" data='{"title": "Construccions de bloc de prosa d’un cop d’ull", "desc": "Els set tipus de bloc de prosa que reconeix Postext: encapçalament, paràgraf, cita, llista no ordenada, llista ordenada, llista de tasques i fórmula en bloc, cadascun amb la sintaxi Markdown corresponent. Les directives i les insercions de recursos es descriuen a part.", "caption": "Cada tipus de bloc de prosa i com s’escriu en Markdown.", "blocks": [{"name": "Encapçalament", "syntax": "# Títol", "color": "blue"}, {"name": "Paràgraf", "syntax": "Línies de text pla", "color": "orange"}, {"name": "Cita", "syntax": "> text citat", "color": "green"}, {"name": "Llista no ordenada", "syntax": "- element", "color": "purple"}, {"name": "Llista ordenada", "syntax": "1. element", "color": "pink"}, {"name": "Llista de tasques", "syntax": "- [x] fet", "color": "teal"}, {"name": "Fórmula en bloc", "syntax": "$$ \\int f(x) $$", "color": "blue"}]}' />
 
 <table>
   <thead>
@@ -69,65 +69,65 @@ Postext reconeix set tipus de bloc de prosa i els llistats de codi, a més de le
     <tr>
       <td>Encapçalament</td>
       <td><code># Títol</code> … <code>###### H6</code></td>
-      <td>D'un a sis caràcters <code>#</code> seguits d'un espai i del text. Els nivells 1–6 es corresponen directament amb <code>headings.levels</code>.</td>
+      <td>D'un a sis caràcters <code>#</code> seguits d'un espai i del text de l'encapçalament. Els nivells 1–6 corresponen directament a la configuració <code>headings.levels</code>.</td>
     </tr>
     <tr>
       <td>Paràgraf</td>
       <td>Text pla en una o més línies</td>
-      <td>Les línies no buides i no especials consecutives s'uneixen amb un únic espai i s'emeten com un sol paràgraf. Entre dos caràcters xinesos o japonesos (ideogrames, kana, puntuació d'amplada completa, i cometes tipogràfiques, guions llargs o punts suspensius al costat d'aquests) el final de línia desapareix, com en CSS, de manera que un paràgraf xinès es pot tallar en qualsevol punt del codi font. Entre dos d'aquests signes (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) decideixen els caràcters que hi ha més enllà: el final de línia desapareix si un d'ells és xinès o japonès, i <code>“hello”⏎“bye”</code> conserva el seu espai. El coreà conserva el seu espai. Un salt de línia escrit al text no es conserva, tret que la línia acabi en una barra inversa (un salt de línia forçat, vegeu <a href="/ca/docs/document-format-directives#salts-de-línia">Salts de línia</a>); una línia en blanc comença un paràgraf nou. Un tabulador escrit al text també és un espai entre paraules, tret que l'estil del paràgraf fixi tabulacions; <code>:tab</code> sempre és un tabulador (vegeu <a href="/ca/docs/document-format-inline#tabuladors-i-tabulacions">Tabuladors i tabulacions</a>). Un poema, les línies del qual han de quedar tal com s'escriuen, va en un bloc <a href="/ca/docs/document-format-directives#verse"><code>:::verse</code></a>.</td>
+      <td>Les línies consecutives que no són buides ni especials s'uneixen amb un sol espai i formen un sol paràgraf. Entre dos caràcters xinesos o japonesos (ideogrames, kana, puntuació d'amplada completa, i les cometes tipogràfiques, les ratlles o els punts suspensius que els acompanyen), en canvi, el final de línia desapareix, com fa CSS, de manera que un paràgraf xinès es pot partir en qualsevol punt del codi font. Entre dos d'aquests signes (<code>“你好”⏎“再见”</code>, <code>他说……⏎“好”</code>) decideixen els caràcters del costat: el final de línia desapareix si un d'ells és xinès o japonès, i <code>“hello”⏎“bye”</code> conserva l'espai. El coreà també conserva l'espai. Un salt de línia escrit al text no es conserva, tret que la línia acabi en una barra inversa (un salt de línia forçat, vegeu <a href="/ca/docs/document-format-directives#salts-de-línia">Salts de línia</a>); una línia en blanc comença un paràgraf nou. Un tabulador escrit al text també compta com a espai entre paraules, tret que l'estil del paràgraf defineixi tabulacions; <code>:tab</code> sempre és un tabulador (vegeu <a href="/ca/docs/document-format-inline#tabuladors-i-tabulacions">Tabuladors i tabulacions</a>). Un poema, amb línies que han de quedar tal com s'escriuen, va en un bloc <a href="/ca/docs/document-format-directives#verse"><code>:::verse</code></a>.</td>
     </tr>
     <tr>
       <td>Cita (blockquote)</td>
       <td><code>&gt; text citat</code></td>
-      <td>Cada línia de la cita ha de començar amb <code>&gt;</code> (seguit d'un espai opcional). Les línies de cita consecutives es combinen en un únic bloc i s'uneixen com les d'un paràgraf. Es compon tal com diu <code>bodyText.blockquote</code>: en cursiva grisa amb el sagnat de primera línia del cos, llevat que ho canviïs (vegeu <a href="/ca/docs/configuration-text#cites">Configuració › Cites</a>).</td>
+      <td>Cada línia de la cita ha de començar amb <code>&gt;</code> (seguit, si vols, d'un espai). Les línies de cita consecutives formen un sol bloc i s'uneixen com les d'un paràgraf. Es compon tal com indica <code>bodyText.blockquote</code>: en cursiva grisa i amb el sagnat de primera línia del cos, llevat que ho canviïs (vegeu <a href="/ca/docs/configuration-text#cites">Configuració › Cites</a>).</td>
     </tr>
     <tr>
       <td>Llista no ordenada</td>
       <td><code>- element</code>, <code>* element</code>, <code>+ element</code></td>
-      <td>S'accepta qualsevol de les tres vinyetes. Un element s'imbrica en el de dalt quan la seva marca té almenys dues columnes més de sagnat que la d'aquell element: dos espais sota <code>-</code>, dos o tres sota <code>1.</code> (la columna del seu text, com a CommonMark), fins a una profunditat màxima de 5.</td>
+      <td>S'accepta qualsevol de les tres vinyetes. Un element queda niat sota el de dalt quan la marca té com a mínim dues columnes més de sagnat que la d'aquell element: dos espais sota <code>-</code>, dos o tres sota <code>1.</code> (la columna on comença el text, com a CommonMark), fins a una profunditat màxima de 5.</td>
     </tr>
     <tr>
       <td>Llista ordenada</td>
       <td><code>1. element</code>, <code>2) element</code></td>
-      <td>Dígits seguits de <code>.</code> o <code>)</code>. El nombre inicial es conserva (una llista pot començar en 5 o en 0). El separador que es renderitza a la sortida prové d'<code>orderedLists.separator</code>, no del codi font.</td>
+      <td>Xifres seguides de <code>.</code> o <code>)</code>. Es conserva el número inicial (una llista pot començar pel 5 o pel 0). El separador que es renderitza a la sortida surt d'<code>orderedLists.separator</code>, no del codi font.</td>
     </tr>
     <tr>
       <td>Llista de tasques (GFM)</td>
       <td><code>- [ ] pendent</code>, <code>- [x] fet</code></td>
-      <td>Un element de llista no ordenada amb una casella entre claudàtors. Accepta <code>x</code> en minúscula o <code>X</code> en majúscula. El motor en dibuixa la casella, amb una marca quan la tasca està feta; un caràcter indicat a <code>taskCheckboxChar</code> / <code>taskCheckedChar</code> es compon com a text al seu lloc.</td>
+      <td>Un element de llista no ordenada amb una casella entre claudàtors. Accepta <code>x</code> en minúscula o <code>X</code> en majúscula. El motor dibuixa la casella, amb una marca quan la tasca està feta; si indiques un caràcter a <code>taskCheckboxChar</code> / <code>taskCheckedChar</code>, es compon com a text en lloc de la casella.</td>
     </tr>
     <tr>
       <td>Fórmula en bloc</td>
       <td><code>$$ … $$</code></td>
-      <td>Una fórmula LaTeX composta com a bloc propi. Es renderitza centrada a la columna, ajustada a la retícula de base com una capçalera, i es manté vectorial al PDF. Les formes d'una sola línia i de tanca multilínia es descriuen a <a href="/ca/docs/document-format-inline#fórmules-matemàtiques">Fórmules matemàtiques</a>.</td>
+      <td>Una fórmula LaTeX composta com a bloc independent. Es renderitza centrada a la columna, ajustada a la retícula de base com un encapçalament, i es manté vectorial al PDF. La forma d'una sola línia i la forma delimitada en diverses línies es descriuen a <a href="/ca/docs/document-format-inline#fórmules-matemàtiques">Fórmules matemàtiques</a>.</td>
     </tr>
     <tr>
       <td>Bloc de codi</td>
       <td><code>```js</code> … <code>```</code>, <code>~~~</code> … <code>~~~</code></td>
-      <td>Un llistat, conservat tal com està escrit: cada espai, cada tabulador i cada salt de línia, sense llegir res com a Markdown. Es compon línia a línia en la lletra del codi, dins d'una caixa. Vegeu <a href="#blocs-de-codi">Blocs de codi</a>.</td>
+      <td>Un llistat que es conserva tal com està escrit: cada espai, cada tabulador i cada salt de línia, sense llegir-ne res com a Markdown. Es compon línia a línia amb la lletra del codi, dins d'una caixa. Vegeu <a href="#blocs-de-codi">Blocs de codi</a>.</td>
     </tr>
   </tbody>
 </table>
 
-Es tolera una única línia en blanc entre dos elements de llista — la llista es manté unida. Dues o més línies en blanc consecutives acaben la llista.
+Entre dos elements de llista s'admet una sola línia en blanc: la llista continua sent una. Dues o més línies en blanc seguides acaben la llista.
 
-S'accepten llistes de tipus mixtos a la mateixa profunditat (pots passar de no ordenada a ordenada a mig camí), però el motor tracta cada tram per separat a efectes de numeració. A la pràctica, convé mantenir un únic tipus per profunditat llevat que hi hagi un motiu clar per barrejar-los.
+S'accepten tipus de llista barrejats a la mateixa profunditat (pots passar de no ordenada a ordenada a mitja llista), però el motor numera cada tram per separat. A la pràctica, convé fer servir un sol tipus per profunditat, llevat que tinguis un motiu clar per barrejar-los.
 
-<Illustration name="ListNesting" data='{"title": "Profunditat d’imbricació de llistes", "desc": "Un element s’imbrica en el de dalt quan té més sagnat que la seva marca: dos espais sota una vinyeta, fins a una profunditat màxima de cinc. Cada nivell té més sagnat i pot fer servir un estil de vinyeta diferent.", "caption": "Dos espais per nivell sota una vinyeta. Profunditat màxima: cinc.", "level1": "Nivell 1", "level2": "Nivell 2 — dos espais", "level3": "Nivell 3 — quatre espais", "indentNote": "Dos espais sota una vinyeta, tres sota 1. Profunditat màxima: 5."}' />
+<Illustration name="ListNesting" data='{"title": "Profunditat de les llistes niades", "desc": "Un element queda niat sota el de dalt quan té més sagnat que la marca d’aquell element: dos espais sota una vinyeta, fins a una profunditat màxima de cinc. Cada nivell té més sagnat i pot fer servir un estil de vinyeta diferent.", "caption": "Dos espais per nivell sota una vinyeta. Profunditat màxima: cinc.", "level1": "Nivell 1", "level2": "Nivell 2 — dos espais", "level3": "Nivell 3 — quatre espais", "indentNote": "Dos espais sota una vinyeta, tres sota 1. Profunditat màxima: 5."}' />
 
 ### Atributs d'encapçalament
 
-Una línia d'encapçalament pot acabar amb un bloc d'atributs entre claus — la mateixa sintaxi `clave="valor"` de les directives:
+Una línia d'encapçalament pot acabar amb un bloc d'atributs entre claus, amb la mateixa sintaxi `clave="valor"` que fan servir les directives:
 
 ```markdown
 # El llarg camí {author="I. Zango Martín" year=1998}
 ```
 
-Les claus i el seu contingut s'eliminen del text de l'encapçalament (el títol anterior es renderitza com *El llarg camí*) i es desen a l'encapçalament com a `attrs`. S'exposen a les ranures de disseny com a marcadors `{attr.<clave>}`: a la ranura de disseny avançat del mateix encapçalament, i a les capçaleres i els peus de pàgina, on es resolen a partir de l'H1 del capítol actual. Només es reconeix un bloc equilibrat i sense claus niades al final de la línia, després d'un espai o, com que els títols xinesos s'escriuen sense espai, just després d'un caràcter xinès o japonès (`# 回目{style="x"}`). El bloc només es pren si la sintaxi d'atributs de més avall el llegeix sencer: `{x, y}`, `{紅樓|hóng lóu}` i un `{}` solt es queden al títol, igual que unes banderes soltes enganxades al títol (`# 第一回{draft}`). Els atributs se separen amb espais, així que un bloc amb comes (`{a="1", b="2"}`) i el `{.clase}` de Pandoc també es queden al títol. L'identificador de Pandoc `{#id}` sí que es llegeix: equival a `id="…"` i dona nom al títol per a les [referències creuades](/ca/docs/document-format-notes-references#referències-creuades-i-àncores). Una clau escrita en una altra escriptura es llegeix i es descarta amb un avís (vegeu més avall), així que `# 回目{style="x" 作者=曹雪芹}` continua prenent `style`. Vegeu **Configuració → Capçaleres i peus**.
+Les claus i el que contenen s'eliminen del text de l'encapçalament (el títol anterior es renderitza com *El llarg camí*) i es desen a l'encapçalament com a `attrs`. Les zones de disseny les poden fer servir com a marcadors `{attr.<clave>}`: a la zona de disseny avançat del mateix encapçalament, i a les capçaleres i els peus de pàgina, on prenen el valor de l'H1 del capítol actual. Només es reconeix un bloc equilibrat, sense claus niades, que sigui just al final de la línia, després d'un espai o, com que els títols xinesos s'escriuen sense espai, immediatament després d'un caràcter xinès o japonès (`# 回目{style="x"}`). El bloc només es llegeix com a atributs si la sintaxi d'atributs que es descriu més avall el pot llegir sencer: `{x, y}`, `{紅樓|hóng lóu}` i un `{}` solt es queden al títol, i també s'hi queden els indicadors sols enganxats al títol (`# 第一回{draft}`). Els atributs se separen amb espais, de manera que un bloc amb comes (`{a="1", b="2"}`) i el `{.clase}` de Pandoc també es queden al títol. L'identificador de Pandoc `{#id}`, en canvi, sí que es llegeix: equival a `id="…"` i dona nom a l'encapçalament per a les [referències creuades](/ca/docs/document-format-notes-references#referències-creuades-i-àncores). Una clau escrita en una altra escriptura es llegeix i es descarta amb un avís (vegeu més avall), de manera que `# 回目{style="x" 作者=曹雪芹}` continua aplicant `style`. Vegeu **Configuració → Capçaleres i peus**.
 
-Un valor que imprimeix un text de disseny pot ocupar diverses línies: els dos caràcters `\n` hi comencen una línia nova, sigui quin sigui l'`overflow` de l'element (`to="Firma X\nStrasse 1\n10115 Berlin"` imprimeix una adreça de tres línies). Si l'element té `inlineMarks`, també s'apliquen les marques en línia del valor: `authors="Ana Ruiz^1^, Luis Gil^2^"` compon els números de filiació com a superíndexs. L'escapament és propi dels valors d'atribut (i de les plantilles del mateix disseny): els caràcters `\n` del text d'un encapçalament (dins de codi en línia, per exemple) s'imprimeixen tal qual.
+Un valor que s'imprimeix en un text del disseny pot ocupar diverses línies: els dos caràcters `\n` hi comencen una línia nova, sigui quin sigui l'`overflow` de l'element (`to="Firma X\nStrasse 1\n10115 Berlin"` imprimeix una adreça de tres línies). Si l'element té `inlineMarks`, també s'apliquen les marques en línia del valor: `authors="Ana Ruiz^1^, Luis Gil^2^"` compon els números de filiació com a superíndexs. Aquesta seqüència d'escapament només val per als valors d'atribut (i per a les plantilles del mateix disseny): els caràcters `\n` del text d'un encapçalament (dins de codi en línia, per exemple) s'imprimeixen tal com són.
 
-Dos atributs tenen un significat propi. `style="<id>"` aplica a l'encapçalament un [estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) amb nom — un pròleg o una llista d'autors amb el seu propi disseny d'obertura, les seves capçaleres, la seva geometria de pàgina i la seva tipografia de cos, i sense número de capítol quan l'estil declara `numbered: false`. `toc="false"` (o `"true"`) decideix si l'encapçalament apareix a `:::toc`:
+Dos atributs tenen un significat especial. `style="<id>"` aplica a l'encapçalament un [estil d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament) amb nom: per exemple, un pròleg o una llista d'autors amb un disseny d'obertura, unes capçaleres, una geometria de pàgina i una tipografia de cos propis, i sense número de capítol si l'estil declara `numbered: false`. `toc="false"` (o `"true"`) fixa si l'encapçalament apareix a `:::toc`, per sobre del que diguin el nivell o l'estil:
 
 ```markdown
 # Pròleg {style="preliminar"}
@@ -135,7 +135,7 @@ Dos atributs tenen un significat propi. `style="<id>"` aplica a l'encapçalament
 # Índex {style="preliminar" toc="false"}
 ```
 
-Uns altres dos canvien el que imprimeix un encapçalament i com compta. `hidden="true"` (o `"false"`) sobreescriu el `hidden` del nivell o de l'estil de l'encapçalament: un encapçalament ocult no imprimeix res ni ocupa espai —ni al flux ni dins d'una caixa `:::callout`—, però continua obrint la seva pàgina, compta i apareix a l'índex, a les capçaleres amb `{chapterTitle}` i als marcadors del PDF. `jidori=N` espaia per igual un encapçalament d'una línia fins a `N` dels seus propis caràcters (字取り: `# 序章 {jidori=3}` imprimeix 序　章), i `jidori=0` desactiva l'espaiat uniforme que fixa el seu nivell o el seu estil (vegeu [Configuració › Configuració per nivell](/ca/docs/configuration-headings#configuració-per-nivell)). `indent=N` sagna un sol encapçalament `N` caràcters del text des del principi de la línia (字下げ: `## 一 {indent=5}`) i s'imposa a l'`indent` del seu nivell o del seu estil; un nombre sense unitat compta quadratins del text, `0` el deixa al principi de la línia, i funciona igual en text vertical i horitzontal. `firstLineIndent=N` sagna només la primera línia d'un encapçalament i s'imposa al `firstLineIndent` del seu nivell o del seu estil; les altres línies comencen on les deixa `indent` (els títols de la GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`). Llegeix les longituds com `indent`, i `0` treu el del nivell. `startAt=N`, un enter positiu, posa el comptador del nivell de l'encapçalament a `N` en lloc d'avançar-lo; els encapçalaments següents compten a partir d'aquí, també en els capítols posteriors, i els nivells inferiors es reinicien a sota com sempre. Amb un estil d'encapçalament que numera els apèndixs amb lletra (`numberingTemplate: 'Apéndice {1:A}'`), el primer apèndix reinicia el compte perquè es llegeixi *Apèndix A* en lloc de continuar el dels capítols:
+N'hi ha uns altres que canvien el que imprimeix un encapçalament i com es compta. `hidden="true"` (o `"false"`) substitueix el `hidden` del nivell o de l'estil de l'encapçalament: un encapçalament ocult no imprimeix res ni ocupa espai (ni al flux ni dins d'un requadre `:::callout`), però continua obrint pàgina, compta i apareix a l'índex general, a les capçaleres amb `{chapterTitle}` i als marcadors del PDF. `jidori=N` reparteix un encapçalament d'una línia, amb espais iguals, fins que ocupa l'amplada de `N` dels seus caràcters (字取り: `# 序章 {jidori=3}` imprimeix 序　章), i `jidori=0` desactiva l'espaiat uniforme que fixin el nivell o l'estil (vegeu [Configuració › Configuració per nivell](/ca/docs/configuration-headings#configuració-per-nivell)). `indent=N` sagna un sol encapçalament `N` caràcters del text de cos des del principi de la línia (字下げ: `## 一 {indent=5}`) i té prioritat sobre l'`indent` del nivell o de l'estil; un nombre sense unitat compta quadratins del text de cos, `0` col·loca l'encapçalament al principi de la línia, i funciona igual en text vertical i horitzontal. `firstLineIndent=N` sagna només la primera línia d'un encapçalament i té prioritat sobre el `firstLineIndent` del nivell o de l'estil; les altres línies comencen on les col·loca `indent` (els títols de la GB/T 9704: `## 关于加强管理的通知 {firstLineIndent=2}`). Llegeix les longituds igual que `indent`, i `0` desactiva el del nivell. `startAt=N`, un enter positiu, posa a `N` el comptador del nivell de l'encapçalament en lloc de fer-lo avançar; els encapçalaments següents compten a partir d'aquí, també en els capítols posteriors, i els nivells inferiors es reinicien com sempre. Amb un estil d'encapçalament que numera els apèndixs amb lletres (`numberingTemplate: 'Apéndice {1:A}'`), el primer apèndix reinicia el compte, de manera que diu *Apèndix A* en lloc de continuar la numeració dels capítols:
 
 ```markdown
 # A la meva mare {hidden="true" toc="false"}
@@ -147,7 +147,7 @@ Uns altres dos canvien el que imprimeix un encapçalament i com compta. `hidden=
 
 ### Caplletres
 
-Un paràgraf comença amb una caplletra quan la hi dona el nivell o l'estil del seu encapçalament, o l'estil de paràgraf del seu grup `:::paragraphs` (vegeu [Configuració › Caplletres](/ca/docs/configuration-text#caplletres)): la primera lletra es compon gran al costat de les primeres línies, que s'escurcen al seu voltant. El paràgraf no porta cap marcatge; el text s'escriu com sempre, i la lletra continua formant part de la seva paraula per a la còpia, la cerca i el mapa d'origen. Un atribut `dropcap` la canvia per a un capítol o un grup:
+Un paràgraf comença amb una caplletra quan ho fixen el nivell o l'estil del seu encapçalament, o l'estil de paràgraf del grup `:::paragraphs` on és (vegeu [Configuració › Caplletres](/ca/docs/configuration-text#caplletres)): la primera lletra es compon en gran al costat de les primeres línies, que s'escurcen per deixar-li lloc. El paràgraf no porta cap marcatge; el text s'escriu com sempre, i la lletra continua formant part de la paraula quan es copia, es cerca o es consulta el mapa d'origen. L'atribut `dropcap` l'activa o la desactiva per a un capítol o un grup:
 
 ```markdown
 # Perduts {dropcap=false}
@@ -159,13 +159,13 @@ El fanal de la primera entrada comença amb una inicial.
 :::
 ```
 
-En una línia d'encapçalament, `dropcap=false` deixa el paràgraf que segueix l'encapçalament sense la caplletra que fixa el seu nivell o el seu estil, `dropcap=N` la compon sobre `N` línies, i un `dropcap` sol dona una caplletra a aquest paràgraf (de tres línies, amb la font del paràgraf) quan el nivell no en fixa cap. A la línia d'obertura d'un `:::paragraphs`, l'atribut fa el mateix per al primer paràgraf del grup, o per a tots els paràgrafs quan l'estil diu `each: true`. El paràgraf que segueix un encapçalament es busca més enllà de les línies d'obertura i tancament dels contenidors, les directives, les caixes que han sortit del flux i les figures flotants; un paràgraf dins d'una caixa, un element de llista, una cita o un poema no porta mai caplletra. Des de postext 1.23.
+En una línia d'encapçalament, `dropcap=false` treu al paràgraf que hi ha després de l'encapçalament la caplletra que fixin el nivell o l'estil; `dropcap=N` la compon sobre `N` línies, i un `dropcap` sol dona caplletra a aquest paràgraf (de tres línies, amb la font del paràgraf) quan el nivell no en fixa cap. A la línia d'obertura d'un `:::paragraphs`, l'atribut fa el mateix amb el primer paràgraf del grup, o amb tots els paràgrafs si l'estil diu `each: true`. Per trobar el paràgraf que segueix un encapçalament, Postext salta les línies d'obertura i de tancament, les directives, les caixes que han sortit del flux i les figures flotants; un paràgraf dins d'una caixa, d'un element de llista, d'una cita o d'un poema no porta mai caplletra. Des de postext 1.23.
 
-En una pàgina composta els marcs són text corregut: `:::paragraphs{style="obertura" dropcap}` en un marc obre el seu primer paràgraf amb la capital. Dins d'un requadre `:::callout` els paràgrafs no en porten, i demanar-la-hi dona un avís `dropCap`.
+En una pàgina composta, els marcs són text corregut: `:::paragraphs{style="obertura" dropcap}` dins d'un marc obre amb la caplletra el primer paràgraf del marc. Dins d'un requadre `:::callout`, els paràgrafs no en porten, i si n'hi demanes una, Postext en dona un avís (`dropCap`).
 
 ### Blocs de codi
 
-Un llistat va entre dues tanques de tres o més accents greus (o tres o més titlles), cadascuna en una línia pròpia i amb tres espais de sagnat com a màxim. Tot el que hi ha entre elles es conserva tal com està escrit: els espais del principi i les sèries d'espais, els tabuladors, les línies en blanc i les línies que comencen per `#`, `-`, `1.`, `>`, `$` o `:::`. A dins no es llegeix res com a Markdown: ni èmfasis, ni `:ref`, ni fórmules, ni xips, ni directives, ni encapçalaments. La tanca de tancament fa servir el mateix caràcter que la d'obertura i és almenys igual de llarga, de manera que un llistat que mostra una tanca va dins d'una de més llarga o de titlles:
+Un bloc de codi va entre una línia d'obertura i una línia de tancament de tres o més accents greus (o tres o més titlles), cadascuna en una línia pròpia i amb tres espais de sagnat com a màxim. Tot el que hi ha entre les dues línies es conserva tal com està escrit: els espais del principi i les sèries d'espais, els tabuladors, les línies en blanc i les línies que comencen per `#`, `-`, `1.`, `>`, `$` o `:::`. A dins no es llegeix res com a Markdown: ni èmfasis, ni `:ref`, ni fórmules, ni xips, ni directives, ni encapçalaments. La línia de tancament fa servir el mateix caràcter que la d'obertura i ha de ser com a mínim igual de llarga; per això, un bloc de codi que mostra una d'aquestes línies va delimitat per una de més llarga o per titlles:
 
 ~~~markdown
 ```bash {title="copia.sh" lineNumbers start=12 highlight="3,5-7"}
@@ -176,7 +176,7 @@ echo "fet: $(date)"
 ```
 ~~~
 
-La cadena d'informació que segueix la tanca d'obertura indica el llenguatge (la seva primera paraula: `js`, `ts`, `python`, `bash`, `console`, `json`…), i la resta es llegeix com a atributs amb la [sintaxi dels atributs](/ca/docs/document-format-directives#valors-dels-atributs), entre claus o sense (`title="app.js" lineNumbers`). Qualsevol altra cosa després del llenguatge és el títol: ```` ```console Terminal ```` i ```` ```python normalize.py ```` imprimeixen *Terminal* i *normalize.py* damunt del llistat.
+El text que segueix la línia d'obertura indica el llenguatge (amb la primera paraula: `js`, `ts`, `python`, `bash`, `console`, `json`…), i la resta es llegeix com a atributs amb la [sintaxi dels atributs](/ca/docs/document-format-directives#valors-dels-atributs), entre claus o sense (`title="app.js" lineNumbers`). Qualsevol altra cosa que hi hagi després del llenguatge és el títol: ```` ```console Terminal ```` i ```` ```python normalize.py ```` imprimeixen *Terminal* i *normalize.py* damunt del llistat.
 
 <table>
   <thead>
@@ -188,23 +188,23 @@ La cadena d'informació que segueix la tanca d'obertura indica el llenguatge (la
   <tbody>
     <tr>
       <td><code>title="…"</code></td>
-      <td>Un títol damunt del llistat, en una fila de títol (o en una pestanya d'etiqueta a la vora de la caixa quan hi ha <code>codeStyle.label</code>).</td>
+      <td>Un títol damunt del llistat, en una fila de títol (o en una pestanya a la vora de la caixa, si hi ha <code>codeStyle.label</code>).</td>
     </tr>
     <tr>
       <td><code>label="…"</code></td>
-      <td>El text de la pestanya d'etiqueta de la caixa, com el d'un <code>:::callout</code> (amb <code>codeStyle.label</code>).</td>
+      <td>El text de la pestanya de la caixa, com el d'un <code>:::callout</code> (amb <code>codeStyle.label</code>).</td>
     </tr>
     <tr>
       <td><code>lineNumbers</code>, <code>lineNumbers=false</code></td>
-      <td>Numera les línies d'aquest llistat (o no), digui el que digui <code>codeStyle.lineNumbers</code>. Els números van en un marge davant del codi i no es copien amb ell.</td>
+      <td>Numera (o no) les línies d'aquest llistat, digui el que digui <code>codeStyle.lineNumbers</code>. Els números van en un marge davant del codi i no es copien amb el codi.</td>
     </tr>
     <tr>
       <td><code>start=N</code></td>
-      <td>El número de la primera línia (numera el llistat quan res més no ho fa).</td>
+      <td>El número de la primera línia (numera el llistat encara que res més no ho faci).</td>
     </tr>
     <tr>
       <td><code>highlight="3,5-7"</code></td>
-      <td>Acoloreix el fons de les línies indicades (comptades des de la primera línia del llistat, que és l'1): línies soltes i intervals, separats per comes.</td>
+      <td>Acoloreix el fons de les línies indicades (comptant des de la primera línia del llistat, que és la 1): línies soltes i intervals, separats per comes.</td>
     </tr>
     <tr>
       <td><code>span=page</code></td>
@@ -213,49 +213,49 @@ La cadena d'informació que segueix la tanca d'obertura indica el llenguatge (la
   </tbody>
 </table>
 
-Una tanca acaba el paràgraf de damunt, amb línia en blanc o sense, i el text que segueix la tanca de tancament comença un paràgraf nou. Una tanca que es queda oberta arriba fins al final del text i apareix als avisos (`unclosedCodeBlock`). Una tanca dins d'un `:::callout` és una caixa niada dins seu; dins de `:::paragraphs`, el llistat conserva l'estil del codi, no el de paràgraf. Postext no continua els elements de llista, així que una tanca després d'un element de llista tanca la llista. Les marques d'índex i les àncores escrites dins d'un llistat es queden tal com estan escrites.
+Un bloc de codi acaba el paràgraf de damunt, hi hagi línia en blanc o no, i el text que hi ha després de la línia de tancament comença un paràgraf nou. Si un bloc de codi es queda sense línia de tancament, arriba fins al final del text i Postext en dona un avís (`unclosedCodeBlock`). Un bloc de codi dins d'un `:::callout` és una caixa niada dins del requadre; dins de `:::paragraphs`, el llistat conserva l'estil de codi, no el de paràgraf. Postext no continua els elements de llista, així que un bloc de codi després d'un element de llista tanca la llista. Les marques d'índex i les àncores escrites dins d'un llistat es queden tal com estan escrites.
 
-El codi sagnat (quatre espais o un tabulador, després d'una línia en blanc) només es llegeix com a llistat quan `codeStyle.indentedCode` està activat: els textos de Postext sovint sagnen amb espais, i les llistes niades llegeixen els espais del principi.
+El codi sagnat (quatre espais o un tabulador, després d'una línia en blanc) només es llegeix com a llistat quan `codeStyle.indentedCode` està activat: els textos de Postext sovint fan servir espais per sagnar, i són els espais del principi els que nien els elements de les llistes.
 
-L'aspecte d'un llistat (la lletra, la caixa, l'amplada del tabulador, què passa amb una línia més ampla que la caixa, els números de línia, els colors dels seus elements) el fixa `codeStyle`; vegeu [Configuració › Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi). El codi en línia (`` `x` ``) es queda en la lletra del text llevat que `codeStyle.inline` li'n doni una. Un llibre desat abans de postext 1.23 amb tanques al text les continua llegint com aleshores, com a Markdown (`codeStyle.blocks: false`). Des de postext 1.23.
+L'aspecte d'un llistat (la lletra, la caixa, l'amplada del tabulador, què passa amb una línia més ampla que la caixa, els números de línia, els colors de cada element del codi) el fixa `codeStyle`; vegeu [Configuració › Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi). El codi en línia (`` `x` ``) es manté amb la lletra del text, llevat que `codeStyle.inline` n'hi assigni una. Un llibre desat abans de postext 1.23 que tingui blocs de codi al text els continua llegint com aleshores, com a Markdown (`codeStyle.blocks: false`). Des de postext 1.23.
 
 ## Què NO s'admet
 
-Postext no reconeix les característiques següents de CommonMark. O es tracten com a text pla (i per tant apareixeran literalment a la sortida) o es descarten silenciosament:
+Postext no reconeix les característiques següents de CommonMark. O bé es tracten com a text pla (i, per tant, apareixen tal qual a la sortida), o bé es descarten sense cap avís:
 
-- **Encapçalaments tipus setext** — la forma amb subratllat `===` / `---`. Usa encapçalaments ATX (`#`).
-- **HTML en brut** — les etiquetes `<tag>` no s'interpreten. Tampoc no s'admeten etiquetes d'estil MDX; la font Postext és markdown pur.
-- **Línies horitzontals** — `---`, `***`, `___`.
-- **Taules** — les taules amb barres verticals no s'analitzen. Les taules es modelen com a recursos estructurats a `PostextContent.resources`.
-- **Enllaços per referència** — `[texto][id]` amb el seu bloc de definició.
-- **Autoenllaços** — `<https://example.com>`.
-- **Salts de línia amb dos espais al final** — els espais es retallen. Acaba la línia amb una barra inversa (vegeu [Salts de línia](/ca/docs/document-format-directives#salts-de-línia)).
-- **Ratllat** — `~~texto~~`. El renderitzador de ratllat està reservat actualment per a tasques completades.
-- **Notes al marge** — no estan implementades, i el motor ignora `PostextContent.notes`, encara que els tipus ho acceptin. Les notes a peu de pàgina i les de final de capítol s'escriuen amb `[^id]` (vegeu [Notes a peu de pàgina](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina)); fins a postext 1.5 calia compondre-les com a text.
+- **Encapçalaments de tipus setext**: la forma subratllada amb `===` / `---`. Fes servir encapçalaments ATX (`#`).
+- **HTML en brut**: les etiquetes `<tag>` no s'interpreten. Tampoc no s'admeten etiquetes a l'estil MDX; el codi font de Postext és Markdown pur.
+- **Línies horitzontals**: `---`, `***`, `___`.
+- **Taules**: les taules amb barres verticals no s'analitzen. Les taules es descriuen com a recursos estructurats a `PostextContent.resources`.
+- **Enllaços per referència**: `[texto][id]` amb el bloc de definició.
+- **Enllaços automàtics**: `<https://example.com>`.
+- **Salts de línia fets amb dos espais al final**: els espais s'eliminen. Acaba la línia amb una barra inversa (vegeu [Salts de línia](/ca/docs/document-format-directives#salts-de-línia)).
+- **Ratllat**: `~~texto~~`. Ara per ara, el renderitzador de ratllat es reserva per a les tasques completades.
+- **Notes al marge**: no estan implementades, i el motor ignora `PostextContent.notes`, encara que els tipus ho admetin. Les notes a peu de pàgina i les de final de capítol s'escriuen amb `[^id]` (vegeu [Notes a peu de pàgina](/ca/docs/document-format-notes-references#notes-a-peu-de-pàgina)); fins a postext 1.5 calia compondre-les com a text.
 
-Aquesta llista s'anirà reduint amb el temps. Mentrestant, qualsevol cosa que no aparegui explícitament a dalt s'ha de considerar text literal.
+Aquesta llista s'anirà escurçant amb el temps. Mentrestant, tot el que no aparegui explícitament a la part de dalt s'ha de considerar text literal.
 
-Més enllà de la sintaxi, l'àrab i les altres escriptures de dreta a esquerra es componen de dreta a esquerra, amb l'algorisme bidireccional i l'enquadernació per la dreta (vegeu [Composició àrab](/ca/docs/arabic-layout)). El xinès es compon en horitzontal i en vertical, amb el tall de línies, l'amplada de la puntuació, la justificació entre caràcters, les marques, el ruby i el warichu que espera la seva regió (vegeu [Composició xinesa](/ca/docs/chinese-layout)). El japonès es compon amb les seves pròpies regles: kinsoku, espaiat dels yakumono, furigana, marques d'èmfasi, marques de kanbun i notes (vegeu [Composició japonesa](/ca/docs/japanese-layout)); el coreà passa pel mateix compositor amb les regles de la Xina continental. Els patrons de partició de mots existeixen per a vuit llengües, i les etiquetes integrades per a aquestes vuit, el xinès, el japonès i l'àrab. Vegeu [Llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures).
+Més enllà de la sintaxi, l'àrab i les altres escriptures de dreta a esquerra es componen de dreta a esquerra, amb l'algorisme bidireccional i l'enquadernació a la dreta (vegeu [Composició àrab](/ca/docs/arabic-layout)). El xinès es compon en horitzontal i en vertical, amb el tall de línies, l'amplada de la puntuació, la justificació entre caràcters, les marques, el ruby i el warichu que demana cada regió (vegeu [Composició xinesa](/ca/docs/chinese-layout)). El japonès es compon amb les seves regles: kinsoku, espaiat dels yakumono, furigana, marques d'èmfasi, marques de kanbun i notes (vegeu [Composició japonesa](/ca/docs/japanese-layout)); el coreà passa pel mateix compositor amb les regles de la Xina continental. Hi ha patrons de partició de mots per a vuit llengües, i textos integrats per a aquestes vuit, el xinès, el japonès i l'àrab. Vegeu [Llengües i escriptures](/ca/docs/configuration-language#llengües-i-escriptures).
 
 
 ## Normes de redacció
 
-Unes poques normes marquen la diferència entre un document que s'analitza netament i un que et sorprèn:
+Unes quantes normes marquen la diferència entre un document que s'analitza sense problemes i un que et dona sorpreses:
 
-- **Deixa una línia en blanc entre blocs.** Dos paràgrafs separats per una línia en blanc són dos paràgrafs. Dos paràgrafs en línies consecutives es converteixen en un — cada línia s'afegeix al paràgraf anterior.
-- **Les línies en blanc de més no afegeixen espai.** Tres línies en blanc separen dos blocs exactament igual que una. Si vols més aire entre ells, escriu una línia [`:::space`](/ca/docs/document-format-directives#space).
-- **Sagna un element imbricat fins al text de l'element de dalt.** Dos espais sota una vinyeta (`- `), tres sota `1. `, quatre sota `10. `, com imbrica les llistes CommonMark; dos espais sota `1.` també imbriquen. Un element s'imbrica sota l'element obert més proper la marca del qual queda almenys dues columnes a la seva esquerra, de manera que un sol espai no imbrica res i mai no se salta cap nivell, sigui quin sigui el pas (fins a postext 1.15 la profunditat era `floor(espais / 2) + 1`, i un `      1.` sota `   1.` sortia al nivell 4). Un tabulador arriba al múltiple de quatre columnes següent. La profunditat màxima és 5.
-- **No sagnis el primer element de la llista.** Els elements de nivell 1 comencen a la columna 0. Qualsevol espai en blanc inicial augmenta la profunditat de manera implícita.
-- **Les marques de tasca van entre claudàtors amb un únic espai.** `[ ]`, `[x]`, `[X]` — sense variacions. `[*]` o `[-]` no són marques de tasca; es renderitzen com a text literal.
-- **No s'admeten citacions dins de llistes.** Comença la citació a la columna 0, fora de la llista.
-- **Les imatges i taules viuen a `resources`.** L'`![alt](src)` en línia s'elimina precisament perquè trenca la col·locació conscient de columnes. Declara cada imatge com a recurs i referencia-la per id — el motor decideix si flota, trenca la columna o es desplaça a l'inici de la pàgina següent.
-- **Escapa els signes de dòlar amb `\$` quan no siguin matemàtiques.** Postext interpreta `$…$` com a LaTeX en línia, així que un `$` solt en prosa iniciaria una fórmula. Preus, indicadors d'ordres del shell i qualsevol altre dòlar literal s'han d'escriure com a `\$`.
-- **Escriu el marcatge en ASCII, també en text xinès i japonès.** Un mètode d'entrada xinès o japonès dona formes d'amplada completa: `：：：` per a una tanca, `＃` per a un títol, `［＾1］` per a una crida de nota, `｛…｝` per als atributs, `＊＊` per a la negreta. S'imprimeixen com a text, i la composició avisa de la línia amb `fullwidthMarkup`, indicant la forma ASCII que cal escriure. Els valors dels atributs poden anar en qualsevol escriptura i entre `“…”` o `「…」`; les claus continuen en ASCII.
+- **Deixa una línia en blanc entre blocs.** Dos paràgrafs separats per una línia en blanc són dos paràgrafs. Dos paràgrafs en línies consecutives es converteixen en un de sol: cada línia s'afegeix al paràgraf anterior.
+- **Les línies en blanc de més no afegeixen espai.** Tres línies en blanc separen dos blocs exactament igual que una. Si vols més aire entre els blocs, escriu una línia [`:::space`](/ca/docs/document-format-directives#space).
+- **Sagna un element niat fins al text de l'element de dalt.** Dos espais sota una vinyeta (`- `), tres sota `1. `, quatre sota `10. `, tal com nia les llistes CommonMark; dos espais sota `1.` també nien. Un element queda niat sota l'element obert més proper amb una marca que quedi com a mínim dues columnes a la seva esquerra; per això un sol espai no nia res i mai no se salta cap nivell, sigui quin sigui el pas (fins a postext 1.15 la profunditat era `floor(espais / 2) + 1`, i un `      1.` sota `   1.` sortia al nivell 4). Un tabulador arriba al múltiple de quatre columnes següent. La profunditat màxima és 5.
+- **No sagnis el primer element de la llista.** Els elements de nivell 1 comencen a la columna 0. El primer element d'una llista obre el nivell 1 encara que estigui sagnat (fins a postext 1.15, els espais del principi n'augmentaven la profunditat); per niar un element cal que n'hi hagi un altre a sobre.
+- **Les marques de tasca van entre claudàtors, amb un sol espai.** `[ ]`, `[x]`, `[X]`, sense variants. `[*]` o `[-]` no són marques de tasca: es renderitzen com a text literal.
+- **No s'admeten cites dins de llistes.** Comença la cita a la columna 0, fora de la llista.
+- **Les imatges i les taules van a `resources`.** L'`![alt](src)` en línia s'elimina precisament perquè les imatges en línia trenquen la col·locació, que té en compte les columnes. Declara cada imatge com a recurs i fes-hi referència per l'id: el motor decideix si flota, si trenca la columna o si passa al capdamunt de la pàgina següent.
+- **Escapa els signes de dòlar amb `\$` quan no siguin matemàtiques.** Postext interpreta `$…$` com a LaTeX en línia, de manera que un `$` solt a la prosa començaria una fórmula. Els preus, els indicadors d'ordres del shell i qualsevol altre dòlar literal s'han d'escriure com a `\$`.
+- **Escriu el marcatge en ASCII, també en text xinès i japonès.** Un mètode d'entrada xinès o japonès produeix formes d'amplada completa: `：：：` per a una línia d'obertura, `＃` per a un encapçalament, `［＾1］` per a una crida de nota, `｛…｝` per als atributs, `＊＊` per a la negreta. S'imprimeixen com a text, i la construcció dona un avís `fullwidthMarkup` per a la línia, amb la forma ASCII que cal escriure. Els valors dels atributs poden anar en qualsevol escriptura i entre `“…”` o `「…」`; les claus continuen en ASCII.
 
 
 ## Exemple complet
 
-Un document breu que exercita totes les construccions admeses:
+Un document breu que fa servir totes les construccions admeses:
 
 ```md
 ---
@@ -305,5 +305,5 @@ $$
 $$
 ```
 
-Aquest mateix document, processat pel motor, produeix un `VDTDocument` estructurat amb pàgines que contenen cadascun d'aquests blocs com a entrades tipades — consulta la pàgina d'[Arquitectura](/ca/docs/architecture) per veure com els blocs es converteixen en geometria.
+Aquest mateix document, renderitzat pel motor de composició, produeix un `VDTDocument` estructurat, amb pàgines que contenen cadascun d'aquests blocs com a entrades tipades. Consulta la pàgina d'[Arquitectura](/ca/docs/architecture) per veure com els blocs es converteixen en geometria.
 

@@ -19,52 +19,52 @@
     "slug": "configuration-programmatic-usage",
     "heading": {
       "en": "Rendering a page to a bitmap",
-      "es": "Renderizar una página a un bitmap",
-      "ca": "Renderitzar una pàgina a un bitmap",
+      "es": "Renderizar una página como mapa de bits",
+      "ca": "Renderitzar una pàgina en un mapa de bits",
       "zh": "把页面渲染为位图",
       "ar": "رسم صفحة في صورة نقطية",
       "ja": "ページをビットマップに描画する",
       "pt": "Renderizar uma página como bitmap",
       "fr": "Rendre une page en bitmap",
       "de": "Eine Seite als Bitmap rendern",
-      "it": "Rendere una pagina come bitmap"
+      "it": "Rasterizzare una pagina"
     }
   },
   "renderPageToCanvas": {
     "slug": "configuration-programmatic-usage",
     "heading": {
       "en": "Rendering a page to a bitmap",
-      "es": "Renderizar una página a un bitmap",
-      "ca": "Renderitzar una pàgina a un bitmap",
+      "es": "Renderizar una página como mapa de bits",
+      "ca": "Renderitzar una pàgina en un mapa de bits",
       "zh": "把页面渲染为位图",
       "ar": "رسم صفحة في صورة نقطية",
       "ja": "ページをビットマップに描画する",
       "pt": "Renderizar uma página como bitmap",
       "fr": "Rendre une page en bitmap",
       "de": "Eine Seite als Bitmap rendern",
-      "it": "Rendere una pagina come bitmap"
+      "it": "Rasterizzare una pagina"
     }
   },
   "renderToCanvas": {
     "slug": "configuration-programmatic-usage",
     "heading": {
       "en": "Rendering a page to a bitmap",
-      "es": "Renderizar una página a un bitmap",
-      "ca": "Renderitzar una pàgina a un bitmap",
+      "es": "Renderizar una página como mapa de bits",
+      "ca": "Renderitzar una pàgina en un mapa de bits",
       "zh": "把页面渲染为位图",
       "ar": "رسم صفحة في صورة نقطية",
       "ja": "ページをビットマップに描画する",
       "pt": "Renderizar uma página como bitmap",
       "fr": "Rendre une page en bitmap",
       "de": "Eine Seite als Bitmap rendern",
-      "it": "Rendere una pagina come bitmap"
+      "it": "Rasterizzare una pagina"
     }
   },
   "registerResourceImage": {
     "slug": "architecture",
     "heading": {
       "en": "API Surface",
-      "es": "Superficie de API",
+      "es": "API pública",
       "ca": "Superfície d'API",
       "zh": "API接口",
       "ar": "واجهة البرمجة المتاحة (API)",
@@ -79,7 +79,7 @@
     "slug": "architecture",
     "heading": {
       "en": "API Surface",
-      "es": "Superficie de API",
+      "es": "API pública",
       "ca": "Superfície d'API",
       "zh": "API接口",
       "ar": "واجهة البرمجة المتاحة (API)",
@@ -94,7 +94,7 @@
     "slug": "architecture",
     "heading": {
       "en": "API Surface",
-      "es": "Superficie de API",
+      "es": "API pública",
       "ca": "Superfície d'API",
       "zh": "API接口",
       "ar": "واجهة البرمجة المتاحة (API)",
@@ -114,7 +114,7 @@
       "zh": "排版前加载字体",
       "ar": "تحميل الخطوط قبل الإخراج",
       "ja": "レイアウトの前にフォントを読み込む",
-      "pt": "Carregar as fontes antes do layout",
+      "pt": "Carregar as fontes antes da diagramação",
       "fr": "Charger les polices avant la mise en page",
       "de": "Schriften vor dem Layout laden",
       "it": "Caricare i font prima dell’impaginazione"
@@ -129,7 +129,7 @@
       "zh": "排版前加载字体",
       "ar": "تحميل الخطوط قبل الإخراج",
       "ja": "レイアウトの前にフォントを読み込む",
-      "pt": "Carregar as fontes antes do layout",
+      "pt": "Carregar as fontes antes da diagramação",
       "fr": "Charger les polices avant la mise en page",
       "de": "Schriften vor dem Layout laden",
       "it": "Caricare i font prima dell’impaginazione"
@@ -144,7 +144,7 @@
       "zh": "排版前加载字体",
       "ar": "تحميل الخطوط قبل الإخراج",
       "ja": "レイアウトの前にフォントを読み込む",
-      "pt": "Carregar as fontes antes do layout",
+      "pt": "Carregar as fontes antes da diagramação",
       "fr": "Charger les polices avant la mise en page",
       "de": "Schriften vor dem Layout laden",
       "it": "Caricare i font prima dell’impaginazione"
@@ -201,7 +201,7 @@
       "en": "Integrating the HTML viewer",
       "es": "Integrar el visor HTML",
       "ca": "Integrar el visor HTML",
-      "zh": "集成HTML查看器",
+      "zh": "集成HTML阅读器",
       "ar": "دمج عارض HTML",
       "ja": "HTMLビューアーの統合",
       "pt": "Integração do visualizador HTML",
@@ -222,7 +222,7 @@
       "pt": "Cancelamento cooperativo dentro do motor",
       "fr": "Annulation coopérative dans le moteur",
       "de": "Kooperativer Abbruch in der Engine",
-      "it": "Annullamento cooperativo dentro il motore"
+      "it": "Annullamento cooperativo nel motore"
     }
   },
   "defaultResourceTypes": {
@@ -246,7 +246,7 @@
       "en": "HTML Viewer",
       "es": "Visor HTML",
       "ca": "Visor HTML",
-      "zh": "HTML查看器",
+      "zh": "HTML阅读器",
       "ar": "عارض HTML",
       "ja": "HTMLビューアー",
       "pt": "Visualizador HTML",
@@ -319,14 +319,14 @@
     "slug": "configuration-programmatic-usage",
     "heading": {
       "en": "Parsing",
-      "es": "Parseo",
+      "es": "Analizar el Markdown",
       "ca": "Anàlisi",
-      "zh": "解析markdown",
+      "zh": "解析Markdown",
       "ar": "التحليل",
       "ja": "解析",
-      "pt": "Análise do markdown",
+      "pt": "Análise do Markdown",
       "fr": "Analyse",
-      "de": "Parsen",
+      "de": "Einlesen",
       "it": "Parsing"
     }
   },
@@ -334,14 +334,14 @@
     "slug": "configuration-programmatic-usage",
     "heading": {
       "en": "Parsing",
-      "es": "Parseo",
+      "es": "Analizar el Markdown",
       "ca": "Anàlisi",
-      "zh": "解析markdown",
+      "zh": "解析Markdown",
       "ar": "التحليل",
       "ja": "解析",
-      "pt": "Análise do markdown",
+      "pt": "Análise do Markdown",
       "fr": "Analyse",
-      "de": "Parsen",
+      "de": "Einlesen",
       "it": "Parsing"
     }
   },
@@ -349,14 +349,14 @@
     "slug": "configuration-programmatic-usage",
     "heading": {
       "en": "Parsing",
-      "es": "Parseo",
+      "es": "Analizar el Markdown",
       "ca": "Anàlisi",
-      "zh": "解析markdown",
+      "zh": "解析Markdown",
       "ar": "التحليل",
       "ja": "解析",
-      "pt": "Análise do markdown",
+      "pt": "Análise do Markdown",
       "fr": "Analyse",
-      "de": "Parsen",
+      "de": "Einlesen",
       "it": "Parsing"
     }
   },
@@ -414,7 +414,7 @@
       "zh": "块级嵌入（可选，显式的行内放置）",
       "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
       "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-      "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+      "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
       "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
       "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
       "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -429,7 +429,7 @@
       "zh": "块级嵌入（可选，显式的行内放置）",
       "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
       "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-      "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+      "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
       "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
       "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
       "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -444,7 +444,7 @@
       "zh": "块级嵌入（可选，显式的行内放置）",
       "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
       "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-      "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+      "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
       "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
       "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
       "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -459,7 +459,7 @@
       "zh": "块级嵌入（可选，显式的行内放置）",
       "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
       "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-      "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+      "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
       "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
       "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
       "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -474,7 +474,7 @@
       "zh": "块级嵌入（可选，显式的行内放置）",
       "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
       "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
-      "pt": "Inserção em bloco (opcional, posicionamento explícito em linha)",
+      "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
       "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
       "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
       "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
@@ -499,8 +499,8 @@
     "slug": "configuration-notes-references",
     "heading": {
       "en": "Table of contents",
-      "es": "Índice de contenidos",
-      "ca": "Índex de continguts",
+      "es": "Índice general",
+      "ca": "Índex general",
       "zh": "目录",
       "ar": "جدول المحتويات",
       "ja": "目次",
@@ -514,8 +514,8 @@
     "slug": "configuration-notes-references",
     "heading": {
       "en": "Table of contents",
-      "es": "Índice de contenidos",
-      "ca": "Índex de continguts",
+      "es": "Índice general",
+      "ca": "Índex general",
       "zh": "目录",
       "ar": "جدول المحتويات",
       "ja": "目次",
@@ -529,8 +529,8 @@
     "slug": "configuration-notes-references",
     "heading": {
       "en": "Table of contents",
-      "es": "Índice de contenidos",
-      "ca": "Índex de continguts",
+      "es": "Índice general",
+      "ca": "Índex general",
       "zh": "目录",
       "ar": "جدول المحتويات",
       "ja": "目次",
@@ -696,7 +696,7 @@
       "en": "Integrating the HTML viewer",
       "es": "Integrar el visor HTML",
       "ca": "Integrar el visor HTML",
-      "zh": "集成HTML查看器",
+      "zh": "集成HTML阅读器",
       "ar": "دمج عارض HTML",
       "ja": "HTMLビューアーの統合",
       "pt": "Integração do visualizador HTML",
@@ -711,7 +711,7 @@
       "en": "Going further",
       "es": "Siguiente paso",
       "ca": "Pas següent",
-      "zh": "进一步",
+      "zh": "用于生产的集成",
       "ar": "أبعد من ذلك",
       "ja": "さらに進んだ統合",
       "pt": "Indo além",
@@ -729,7 +729,7 @@
       "zh": "在Web Worker中运行排版",
       "ar": "تشغيل الإخراج في Web Worker",
       "ja": "Web Workerでレイアウトを実行する",
-      "pt": "Executar o layout em um Web Worker",
+      "pt": "Executar a diagramação em um Web Worker",
       "fr": "Mise en page dans un Web Worker",
       "de": "Layout in einem Web Worker ausführen",
       "it": "Eseguire l’impaginazione in un Web Worker"
@@ -791,7 +791,7 @@
       "ja": "引用と参考文献",
       "pt": "Citações e bibliografia",
       "fr": "Citations et bibliographie",
-      "de": "Zitate und Literaturverzeichnis",
+      "de": "Zitationen und Literaturverzeichnis",
       "it": "Citazioni e bibliografia"
     }
   },
@@ -806,7 +806,7 @@
       "ja": "引用と参考文献",
       "pt": "Citações e bibliografia",
       "fr": "Citations et bibliographie",
-      "de": "Zitate und Literaturverzeichnis",
+      "de": "Zitationen und Literaturverzeichnis",
       "it": "Citazioni e bibliografia"
     }
   },
@@ -821,7 +821,7 @@
       "ja": "引用と参考文献",
       "pt": "Citações e bibliografia",
       "fr": "Citations et bibliographie",
-      "de": "Zitate und Literaturverzeichnis",
+      "de": "Zitationen und Literaturverzeichnis",
       "it": "Citazioni e bibliografia"
     }
   },
@@ -836,7 +836,7 @@
       "ja": "引用と参考文献",
       "pt": "Citações e bibliografia",
       "fr": "Citations et bibliographie",
-      "de": "Zitate und Literaturverzeichnis",
+      "de": "Zitationen und Literaturverzeichnis",
       "it": "Citazioni e bibliografia"
     }
   },

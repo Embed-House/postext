@@ -1,26 +1,26 @@
 ---
 title: "Ein geisteswissenschaftlicher Essay mit MLA-Verzeichnis"
-summary: "Ein literaturwissenschaftlicher Essay, dessen Zitate [@key, 48] zu Autor-Seite-Angaben nach MLA 9 werden, mit Blockzitat und Works Cited aus BibTeX-Daten."
-plain: "Ein Essay über ein Gedicht von Keats, wie eine Literaturzeitschrift ihn druckt. Der Autor schreibt für jede Quelle einen kurzen Code; Postext druckt Autor und Seite in Klammern und am Ende die Liste der zitierten Werke im MLA-Stil."
-description: "Ein literaturwissenschaftlicher Essay in Postext: Autor-Seite-Zitate nach MLA 9 per citeproc-js, Kurztitel für zwei Werke von Keats, Blockzitat, Works Cited."
+summary: "Ein literaturwissenschaftlicher Essay, dessen Zitationen [@key, 48] zu Autor-Seite-Angaben nach MLA 9 werden, mit Blockzitat und Works Cited aus BibTeX-Daten."
+plain: "Ein Essay über ein Gedicht von Keats, wie eine Literaturzeitschrift ihn druckt. Der Autor schreibt für jede Quelle einen kurzen Code; Postext setzt Autor und Seite in Klammern und am Ende die Liste der zitierten Werke im MLA-Stil."
+description: "Ein literaturwissenschaftlicher Essay in Postext: Autor-Seite-Zitationen nach MLA 9 per citeproc-js, Kurztitel für zwei Keats-Werke, Blockzitat, Works Cited."
 question: "Wie zitiere ich nach MLA und erzeuge die Liste Works Cited für einen literaturwissenschaftlichen Essay?"
 aliases: ["MLA", "MLA 9", "Works Cited", "zitierte Werke", "Autor-Seite", "literaturwissenschaftlicher Essay", "Geisteswissenschaften", "Blockzitat", "drei Bindestriche", "BibTeX", "shorttitle", "citeproc"]
-pageNotes: { "1": "Seite 1: ein schwarzes Band über der oberen Hälfte mit der Dachzeile „ESSAYS · ROMANTIC POETRY“, dem Titel „Cold Pastoral“ in großer leichter Kursiv, einem Untertitel über Keats’ „Ode on a Grecian Urn“ und der Autorenzeile „Helena Ward“, über einem tonroten Streifen; darunter die ersten Absätze mit Zitaten wie „(Jack)“ und „(McDermott)“.", "2": "Seite 2: Abschnitte in roten Kapitälchen; Zitate aus der Ode mit MLA-Angaben „(Keats, “Ode” 1–3)“, dann nur Versnummern wie „(8–9)“ und Eliots Wendung, gefolgt von „(230)“.", "3": "Seite 3: der Abschnitt über die Briefe, mit „(Keats, Letters 41)“ und einem um 2 em eingezogenen Blockzitat, dessen Angabe „(Keats, Letters 48)“ auf seinen Schlusspunkt folgt.", "4": "Seite 4: „Works Cited“, alphabetisch mit hängendem Einzug; das zweite Werk von Keats beginnt mit einem Strich von drei Geviert; darunter ein kleines Impressum." }
+pageNotes: { "1": "Seite 1: ein schwarzes Band über der oberen Hälfte mit der Dachzeile „ESSAYS · ROMANTIC POETRY“, dem Titel „Cold Pastoral“ in großer leichter Kursiv, einem Untertitel über Keats’ „Ode on a Grecian Urn“ und der Autorenzeile „Helena Ward“, über einem tonroten Streifen; darunter die ersten Absätze mit Zitationen wie „(Jack)“ und „(McDermott)“.", "2": "Seite 2: Abschnitte in roten Kapitälchen; Zitate aus der Ode mit MLA-Angaben „(Keats, “Ode” 1–3)“, dann nur Versnummern wie „(8–9)“ und Eliots Wendung, gefolgt von „(230)“.", "3": "Seite 3: der Abschnitt über die Briefe, mit „(Keats, Letters 41)“ und einem um 2 em eingezogenen Blockzitat, dessen Angabe „(Keats, Letters 48)“ auf seinen Schlusspunkt folgt.", "4": "Seite 4: „Works Cited“, alphabetisch mit hängendem Einzug; das zweite Werk von Keats beginnt mit einem Strich von drei Geviert; darunter ein kleines Impressum." }
 ---
 
 ## Was Sie setzen
 
-Ein Essay aus einer literaturwissenschaftlichen Vierteljahresschrift: vier Seiten über die Frage, wer die letzten beiden Verse von Keats’ „Ode on a Grecian Urn“ spricht. Die Seite ist eine Zeitschriftenseite von 150 × 230 mm in Spectral, mit Abschnittsüberschriften und Kolumnentiteln in Spectral SC, und der Auftakt sitzt in einem Band in der Farbe schwarzer Glasur über einem Streifen aus rotem Ton, den beiden Farben einer attischen Vase. Die Zitate folgen MLA 9, dem Stil der meisten Institute für Literatur und Kunstgeschichte: Autor und Seite in Klammern, nur die Seite, wenn der Satz den Autor nennt, ein Kurztitel, wenn zwei Werke denselben Autor haben, und eine Liste Works Cited auf eigener Seite. Jedes Zitat ist ein Schlüssel im Text, und der Stil ist eine einzige Einstellung.
+Ein Essay aus einer literaturwissenschaftlichen Vierteljahresschrift: vier Seiten über die Frage, wer die letzten beiden Verse von Keats’ „Ode on a Grecian Urn“ spricht. Die Seite ist eine Zeitschriftenseite von 150 × 230 mm in Spectral, mit Abschnittsüberschriften und Kolumnentiteln in Spectral SC, und der Auftakt sitzt in einem Band in der Farbe schwarzer Glasur über einem Streifen aus rotem Ton, den beiden Farben einer attischen Vase. Die Zitationen folgen MLA 9, dem Stil der meisten Institute für Literatur und Kunstgeschichte: Autor und Seite in Klammern, nur die Seite, wenn der Satz den Autor nennt, ein Kurztitel, wenn zwei Werke denselben Autor haben, und eine Liste Works Cited auf eigener Seite. Jede Zitation ist ein Schlüssel im Text, und der Stil ist eine einzige Einstellung.
 
 ## Zubereitung
 
 ### 1 · Der Stil ist MLA, die Daten sind BibTeX
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Zitier-Engine wird einmal registriert, und `citations.style` nennt den mitgelieferten MLA-Stil; citeproc-js schreibt daraus jedes Zitat und die Liste. Die Quellen stehen in einem Block `:::references{format=bibtex}` am Ende des Essays, so geschrieben, wie eine Literaturverwaltung sie exportiert. MLA braucht für die beiden Werke von Keats einen Kurztitel, und das Feld `shorttitle` jedes Eintrags liefert ihn (in CSL heißt das Feld `title-short`).
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Zitier-Engine wird einmal registriert, und `citations.style` gibt den mitgelieferten MLA-Stil an; citeproc-js schreibt daraus jede Zitation und die Liste. Die Quellen stehen in einem Block `:::references{format=bibtex}` am Ende des Essays, so geschrieben, wie eine Literaturverwaltung sie exportiert. MLA braucht für die beiden Werke von Keats einen Kurztitel, und das Feld `shorttitle` jedes Eintrags liefert ihn (in CSL heißt das Feld `title-short`).
 
 ### 2 · Vier Arten von Zitaten
 
-Der Text zitiert ein Werk mit `[@jack1967]`, was „(Jack)“ druckt, weil der Essay sich auf das Buch als Ganzes bezieht. Mit einer Seite druckt `[@keats-letters, 41]` „(Keats, *Letters* 41)“: Es werden zwei Werke von Keats zitiert, also fügt citeproc den Kurztitel hinzu, um sie zu unterscheiden. Nennt der Satz den Kritiker bereits, lässt `[-@eliot1932, 230]` den Namen weg und druckt „(230)“. Ein erzählendes Zitat ohne Seite, `@stillinger1974 records`, druckt nur den Namen, „Stillinger records“, mit einem Leerzeichen danach: MLA hat nichts, was in Klammern stehen könnte. Ist die Ode einmal mit ihren Versnummern zitiert, tragen spätere Zitate daraus nur noch die Nummern, in einfachen runden Klammern getippt, wie MLA es erlaubt.
+Der Text zitiert ein Werk mit `[@jack1967]`, was „(Jack)“ ergibt, weil der Essay sich auf das Buch als Ganzes bezieht. Mit einer Seite ergibt `[@keats-letters, 41]` „(Keats, *Letters* 41)“: Es werden zwei Werke von Keats zitiert, also fügt citeproc den Kurztitel hinzu, um sie zu unterscheiden. Nennt der Satz den Kritiker bereits, lässt `[-@eliot1932, 230]` den Namen weg und ergibt „(230)“. Eine erzählende Zitation ohne Seite, `@stillinger1974 records`, ergibt nur den Namen, „Stillinger records“, mit einem Leerzeichen danach: MLA hat nichts, was in Klammern stehen könnte. Ist die Ode einmal mit ihren Versnummern zitiert, erhalten spätere Zitate daraus nur noch die Nummern, in einfachen runden Klammern getippt, wie MLA es erlaubt.
 
 ### 3 · Ein Blockzitat mit seiner Angabe nach dem Schlusspunkt
 
@@ -32,7 +32,7 @@ Der Brief über die Negative Capability umfasst mehr als vier Zeilen Prosa und w
 
 <Excerpt region="works-cited" />
 
-Die Überschrift erhält ein Format, das auf eine neue Seite umbricht, und `:::bibliography{title=""}` setzt die Liste ohne zweiten Titel darunter. Die Liste ist alphabetisch mit hängendem Einzug, und das zweite Werk von Keats beginnt anstelle seines Namens mit einem Strich von drei Geviert, wie MLA es für wiederholte Autoren verlangt. Am Fuß dieser Seite und der Auftaktseite, wo die Kolumnentitel entfallen, steht die Pagina am Fuß.
+Die Überschrift erhält einen Stil, der auf eine neue Seite umbricht, und `:::bibliography{title=""}` setzt die Liste ohne zweiten Titel darunter. Die Liste ist alphabetisch mit hängendem Einzug, und das zweite Werk von Keats beginnt anstelle seines Namens mit einem Strich von drei Geviert, wie MLA es für wiederholte Autoren verlangt. Am Fuß dieser Seite und der Auftaktseite, wo die Kolumnentitel entfallen, steht die Pagina am Fuß.
 
 ### 5 · Der Auftakt in zwei Farben einer Vase
 
@@ -40,13 +40,13 @@ Die Überschrift erhält ein Format, das auf eine neue Seite umbricht, und `:::b
 
 <Excerpt region="palette" />
 
-Das Band ist 116 mm hoch und enthält Dachzeile, Titel zu 56 pt in Spectral Light kursiv, Untertitel und Autorenzeile, alle aus Attributen der Überschrift gespeist. Der Tonstreifen ist ein zweiter Kasten, 3 mm über dem Fuß des Bands verankert.
+Das Band ist 116 mm hoch und enthält Dachzeile, Titel zu 56 pt in Spectral Light kursiv, Untertitel und Autorenzeile, alle aus Attributen der Überschrift gespeist. Der Tonstreifen ist ein zweites Element, 3 mm über dem Fuß des Bands verankert.
 
 ## Varianten
 
 ### Die Liste nach dem Essay fortlaufend setzen
 
-Eine Zeitschrift, die Works Cited ohne neue Seite nach dem letzten Absatz setzt, nimmt den Umbruch aus dem Überschriftenformat.
+Eine Zeitschrift, die Works Cited ohne neue Seite nach dem letzten Absatz setzt, nimmt den Umbruch aus dem Überschriftenstil.
 
 ```diff
 -  headingStyles: [{ id: 'works-cited', breakBefore: { enabled: true, parity: 'any' } }],
@@ -64,4 +64,4 @@ Derselbe Essay setzt in Chicago das Jahr hinter den Autor, „(Brooks 1947, 165)
 
 ## Häufige Fehler
 
-- citeproc-js druckt Titel so, wie die Daten sie liefern. MLA schreibt englische Titel mit großen Anfangsbuchstaben der Hauptwörter (Title Case); schreiben Sie sie also auch so in die Quellen.
+- citeproc-js gibt Titel so aus, wie die Daten sie liefern. MLA schreibt englische Titel mit großen Anfangsbuchstaben der Hauptwörter (Title Case); schreiben Sie sie also auch so in die Quellen.

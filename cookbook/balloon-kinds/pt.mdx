@@ -16,7 +16,7 @@ A página 7 de *O farol de Porthcove*, uma história em quadrinhos sobre uma noi
 
 ### 1 · Dê nome ao tipo na linha do roteiro
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. Uma linha do roteiro é `speaker{kind}: text`, e o tipo é o id de um estilo de balão. Os nove estilos embutidos cobrem os tipos de sempre: um oval com rabicho curvo para a fala, uma nuvem com bolinhas para o pensamento, um contorno tracejado para o sussurro, uma explosão com rabicho em cunha para o grito, um contorno em zigue-zague com rabicho em zigue-zague para uma voz pelo rádio ([estilos de balão](/pt/docs/comics#estilos-de-balão)). Um estilo na configuração com o mesmo id muda só o que ele nomeia: aqui, a cor do traço, o amarelo dos recordatórios e as 16 pontas da explosão. `caption`, `note` e `sfx` são personagens reservados: caixas de narração encaixadas num canto, a nota do editor a 0,8 × o corpo e letras de display sem balão.
+O código é [a resposta curta](#a-resposta-curta) logo acima. Uma linha do roteiro é `speaker{kind}: text`, e o tipo é o id de um estilo de balão. Os nove estilos padrão cobrem os tipos de sempre: um oval com rabicho curvo para a fala, uma nuvem com bolinhas para o pensamento, um contorno tracejado para o sussurro, uma explosão com rabicho em cunha para o grito, um contorno em zigue-zague com rabicho em zigue-zague para uma voz pelo rádio ([estilos de balão](/pt/docs/comics#estilos-de-balão)). Um estilo na configuração com o mesmo id muda só o que ele define: aqui, a cor do traço, o amarelo dos recordatórios e as 16 pontas da explosão. `caption`, `note` e `sfx` são personagens reservados: caixas de narração encaixadas num canto, a nota do editor a 0,8 × o corpo e letras de display sem balão.
 
 <PageShot page={2} crop="0,0,1,0.34" caption="A chamada de rádio: um recordatório, o balão de rádio do mestre apontando para o aparelho, a resposta do faroleiro e a nota do editor." />
 
@@ -24,11 +24,11 @@ O código é [a resposta curta](#a-resposta-curta) logo acima. Uma linha do rote
 
 <Excerpt region="art" />
 
-Cada desenho traz âncoras em frações da imagem: a boca para onde aponta o rabicho de uma fala, a cabeça para onde aponta um pensamento, o rosto que nenhum balão pode cobrir ([personagens e âncoras](/pt/docs/comics#personagens-e-âncoras)). O mestre do barco nunca aparece: a âncora dele no desenho da tempestade é o aparelho de rádio e, no desenho do mar, o barco. Quando quem fala não está no quadro, `tail=right` (ou `left`, `top`, `bottom`) leva o rabicho até essa borda, e `at="44% 22%"` fixa o centro de um balão num ponto do desenho, onde ele fica qualquer que seja o recorte. Duas linhas seguidas do mesmo personagem se juntam num só contorno com um só rabicho. `left` e `right` são lados do desenho, então as dez edições escrevem a mesma linha para o faroleiro no quadro do mar, cuja luz fica à direita do desenho: `tail=right`, seja a página lida da esquerda para a direita ou da direita para a esquerda. Já `start` e `end` seguem o sentido de leitura da página.
+Cada desenho traz âncoras em frações da imagem: a boca para onde aponta o rabicho de uma fala, a cabeça para onde aponta um pensamento, o rosto que nenhum balão pode cobrir ([personagens e âncoras](/pt/docs/comics#personagens-e-âncoras)). O mestre do barco nunca aparece: a âncora dele no desenho da tempestade é o aparelho de rádio e, no desenho do mar, o barco. Quando quem fala não está no quadro, `tail=right` (ou `left`, `top`, `bottom`) leva o rabicho até essa borda, e `at="44% 22%"` fixa o centro de um balão num ponto do desenho, onde ele fica qualquer que seja o recorte. Duas linhas seguidas do mesmo personagem se juntam num só contorno com um só rabicho. `left` e `right` são lados do desenho, de modo que as dez edições escrevem a mesma linha para o faroleiro no quadro do mar, cuja luz fica à direita do desenho: `tail=right`, seja a página lida da esquerda para a direita ou da direita para a esquerda. Já `start` e `end` seguem o sentido de leitura da página.
 
 ### 3 · Dê a um personagem uma voz própria
 
-O elenco da resposta curta dá a toda linha `skipper:` o estilo de rádio, então o roteiro nunca repete `{radio}`. Uma linha ainda pode dizer outra coisa: no quadro da manhã, o mestre chama do barco, `skipper{speech tail=bottom}:`, num balão comum cujo rabicho sai pelo pé do quadro.
+O elenco da resposta curta dá a toda linha `skipper:` o estilo de rádio, por isso o roteiro nunca repete `{radio}`. Uma linha ainda pode dizer outra coisa: no quadro da manhã, o mestre chama do barco, `skipper{speech tail=bottom}:`, num balão comum cujo rabicho sai pelo pé do quadro.
 
 ### 4 · Letreire cada edição com as suas próprias fontes
 
@@ -58,5 +58,5 @@ Qualquer outro id vira um estilo próprio, aplicado sobre o balão de fala.
 
 ## Erros comuns
 
-- Um ponto fixado é um ponto do desenho, mantido qualquer que seja o recorte. Uma onomatopeia fixada tão perto da borda que sairia do quadro (KA-BRUUM em `at="16% 28%"`) é empurrada de volta para dentro, então pode ficar um pouco afastada do ponto escrito.
+- Um ponto fixado é um ponto do desenho, mantido qualquer que seja o recorte. Uma onomatopeia fixada tão perto da borda que sairia do quadro (KA-BRUUM em `at="16% 28%"`) é empurrada de volta para dentro, por isso pode ficar um pouco afastada do ponto escrito.
 - Uma voz fora de quadro é letreirada junto à borda para onde aponta o rabicho: o agradecimento do mestre, `tail=bottom`, fica no pé do quadro da manhã, embora seja a primeira linha do quadro. Aponte o rabicho para a borda de cima quando uma linha dessas tiver de ser lida primeiro.

@@ -16,9 +16,9 @@ Der Anfang von Kapitel 1 der Jiaxu-Handschrift der *Geschichte des Steins*, der 
 
 ### 1 · Die Seitenspalte zum Kopfsteg machen
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine senkrechte Seite ist eine waagerechte Seite, um eine Vierteldrehung gedreht; so wird die Seitenspalte eines [anderthalbspaltigen Layouts](/de/docs/configuration-page-layout#layout-typen) zu einer Leiste quer über die Seite, und `sideColumnSide: 'left'` setzt diese Leiste an den Kopf ([Senkrechte Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) rundet `sideColumnPercent: 19` auf 10 Zeichen des Grundtexts, 120 pt, und den Spaltenabstand auf zwei; die Spaltenlinie wird zur Haarlinie zwischen Kommentaren und Text. Das Kommentarformat hat keinen Kasten: Kai zu 7 pt, 17 Zeichen je Spalte, eine Größe, bei der keiner der zehn Kommentare mit einer Spalte aus einem einzigen Zeichen endet, und `snapToGrid: false`, damit sich die Kommentare in ihrem eigenen Abstand von 10 pt stapeln statt in den 21 pt des Grundtexts.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Eine senkrechte Seite ist eine waagerechte Seite, um eine Vierteldrehung gedreht; so wird die Seitenspalte eines [anderthalbspaltigen Layouts](/de/docs/configuration-page-layout#layout-typen) zu einer Leiste quer über die Seite, und `sideColumnSide: 'left'` setzt diese Leiste an den Kopf ([Senkrechte Schrift](/de/docs/configuration-page-layout#vertikale-schrift)). Das [Zeichenraster](/de/docs/configuration-east-asian#zeichenraster) rundet `sideColumnPercent: 19` auf 10 Zeichen des Grundtexts, 120 pt, und den Spaltenabstand auf zwei; die Spaltenlinie wird zur Haarlinie zwischen Kommentaren und Text. Der Kastenstil der Kommentare zeichnet weder Fläche noch Kontur: Kai zu 7 pt, 17 Zeichen je Spalte, eine Größe, bei der keiner der zehn Kommentare mit einer Spalte aus einem einzigen Zeichen endet, und `snapToGrid: false`, damit sich die Kommentare in ihrem eigenen Abstand von 10 pt stapeln statt in den 21 pt des Grundtexts.
 
-Beide Arten von Kommentar sind dort ausgezeichnet, wo die Handschrift sie hat. Ein Seitenkommentar ist ein Span [`:warichu[…]`](/de/docs/document-format-inline#chinesische-zeichen-ruby-und-warichu), den `cjk.warichu` einfärbt; ein Kopfstegkommentar ist ein Kasten, mit `span="side"` direkt vor der Passage eingefasst, die er bespricht:
+Beide Arten von Kommentar sind dort ausgezeichnet, wo die Handschrift sie hat. Ein Seitenkommentar ist ein Inline-Element [`:warichu[…]`](/de/docs/document-format-inline#chinesische-zeichen-ruby-und-warichu), den `cjk.warichu` einfärbt; ein Kopfstegkommentar ist ein Kasten, mit `span="side"` direkt vor der Passage eingefasst, die er bespricht:
 
 ```markdown
 :::callout{type="meipi" span="side"}
@@ -38,19 +38,19 @@ Auf einer senkrechten Seite wird ein Auftakt im Bezugsrahmen des Flusses angeleg
 
 <Excerpt region="fore-edge" />
 
-Das sind die Kolumnentitel am Außensteg aus [Senkrechte Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente): `anchor.to: 'outer'` ist der Rand fern vom Bund, in einem rechts gebundenen Buch links auf einer rechten und rechts auf einer linken Seite, und `writingMode: 'vertical-rl'` setzt den Text die Seite hinab. Der Satzspiegel schließt hier die Kommentarleiste ein; „vier Zeichen unter dem Kopf“ wird also ab der Oberkante der roten Kommentare gemessen. `trad-chinese-informal` druckt die Paginas 一 bis 六.
+Das sind die Kolumnentitel am Außensteg aus [Senkrechte Textelemente](/de/docs/configuration-headers-footers#vertikale-textelemente): `anchor.to: 'outer'` ist der Rand fern vom Bund, in einem rechts gebundenen Buch links auf einer rechten und rechts auf einer linken Seite, und `writingMode: 'vertical-rl'` setzt den Text die Seite hinab. Der Satzspiegel schließt hier die Kommentarleiste ein; „vier Zeichen unter dem Kopf“ wird also ab der Oberkante der roten Kommentare gemessen. `trad-chinese-informal` ergibt die Paginas 一 bis 六.
 
 ### 4 · Jede Stimme mit dem Text laden, den sie setzt
 
 <Excerpt region="voices" />
 
-Fontsource liefert jede chinesische Schrift als etwa hundert Dateien je Schriftstärke. Song setzt das ganze Beispiel im normalen Schnitt und nur 第一回 fett, Kai nur die Kopfstegkommentare und die Notiz zur Ausgabe und Hei nur die Kolumnentitel, die Paginas und das Impressum, sodass jeder Aufruf die Dateien lädt, die seine eigenen Zeichen brauchen. `vertical: true` lädt außerdem die senkrechten Satzzeichen jeder Schrift für den Canvas.
+Fontsource liefert jede chinesische Schrift als etwa hundert Dateien je Schriftstärke. Song setzt das ganze Beispiel im normalen Schnitt und nur 第一回 fett, Kai nur die Kopfstegkommentare und die Notiz zur Ausgabe und Hei nur die Kolumnentitel, die Paginas und das Impressum, sodass jeder Aufruf die Dateien lädt, die seine eigenen Zeichen brauchen. `vertical: true` lädt außerdem die senkrechten Satzzeichen jeder Schrift für das Canvas.
 
 ### 5 · Zwei Druckfarben
 
 <Excerpt region="palette" />
 
-Die Seite druckt in zwei Farben, so wie die Handschrift geschrieben wurde: ein warmes Schwarz für den Text und ein Zinnoberrot für jeden Kommentar, die Dachzeile des Kapitels und sonst nichts. Das Zinnoberrot erreicht auf dem Papier einen Kontrast von 5,5 : 1, genug für die Reihen der Seitenkommentare zu 6 pt. `main-color` zeigt darauf, sodass eine Voreinstellung, die die Konfiguration nicht neu festlegt, rot druckt, nie blau.
+Die Seite steht in zwei Farben, so wie die Handschrift geschrieben wurde: ein warmes Schwarz für den Text und ein Zinnoberrot für jeden Kommentar, die Dachzeile des Kapitels und sonst nichts. Das Zinnoberrot erreicht auf dem Papier einen Kontrast von 5,5 : 1, genug für die Reihen der Seitenkommentare zu 6 pt. `main-color` zeigt darauf, sodass eine Voreinstellung, die die Konfiguration nicht neu festlegt, rot erscheint, nie blau.
 
 ## Varianten
 
@@ -75,4 +75,4 @@ Dieselbe Technik auf einer waagerechten Seite zeigt <RecipeLink slug="annotated-
 - Die Leiste fasst, was ihre Seite fasst. Ein Kommentar, der für ihren Rest zu lang ist, rückt nach rechts zurück, bis seine letzte Spalte den linken Rand des Texts erreicht, und einer, der dann immer noch nicht passt, wartet auf die nächste Seite, mit jedem Kommentar, der nach ihm eingefasst ist. Jeder Kommentar beginnt auf einer Textspalte und lässt nach dem vorigen eine Spalte des Grundtexts frei. Die drei Kommentare der Handschrift zur Rede des Steins nehmen elf Spalten der Leiste ein: Vor 今之人 eingefasst, wo die Transkription sie hat, wartete der letzte, 斯亦太過, auf <PageRef page={5}>Seite 5</PageRef> und schob die Kommentare dort eine Stufe weiter. Diese Ausgabe bricht die Rede einen Satz früher, vor 竟不如我, und alle drei stehen auf <PageRef page={4}>Seite 4</PageRef>.
 - Das Raster füllt jede Seite ohne weitere Einstellung mit ihren 18 Spalten: Auf einem Zeichenraster ist `avoidWidows` standardmäßig aus, sodass ein Absatz in der letzten Spalte einer Seite beginnen darf. Eingeschaltet würde es diesen Absatz als Ganzes weiterschieben, die Seite würde eine Spalte zu früh enden, und ein vor dem Absatz eingefasster Kommentar bliebe zurück. `avoidOrphans` bleibt aktiv, wie es ein chinesisches Raster standardmäßig hat: Die letzte Spalte eines Absatzes allein am Kopf einer Seite (孤行) ist das, was ein chinesischer Lektor vermeidet.
 - Zwei unmittelbar hintereinander geschriebene Seitenkommentare falten sich zu Reihen, die sich wie eine einzige Anmerkung lesen. Das Markdown hält zwischen ihnen ein ideografisches Leerzeichen (U+3000).
-- Noto Serif TC hat für manche Formen der Handschrift keine Glyphe, etwa 縂, 竒 und 数. Der Canvas ergänzt sie aus einer Systemschrift, und das PDF lässt sie leer und führt sie unter C25 auf. Diese Ausgabe setzt ihre Standardformen und behält die Varianten, die die Schriften haben.
+- Noto Serif TC hat für manche Formen der Handschrift keine Glyphe, etwa 縂, 竒 und 数. Das Canvas ergänzt sie aus einer Systemschrift, und das PDF lässt sie leer und führt sie unter C25 auf. Diese Ausgabe setzt ihre Standardformen und behält die Varianten, die die Schriften haben.

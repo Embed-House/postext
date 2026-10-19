@@ -10,7 +10,7 @@ pageNotes: {"1": "La apertura de la unidad: una pintura de un valle con su río,
 
 ## Lo que vas a componer
 
-Nueve páginas de *Nuestro río*, unidad 4 de un libro inventado de Ciencias sociales de 3.º, en una página de 210 × 280 mm, en español, catalán e inglés. Un valle pintado abre la unidad, una página de índice lista dos partes y siguen tres temas a doble página, cada uno sobre su fondo: azul agua, verde campo, arena sol. Cada tema lleva una pestaña con su número y su título, texto a dos columnas y recuadros con pestaña que crecen con su texto. El segundo tema es un único mapa pintado a doble página, con el río, los pueblos y los tres cursos nombrados desde el Markdown. Los tres textos difieren en un quinto o más y caben en las mismas plantillas: un recuadro toma la altura que piden sus palabras y empuja al siguiente, y el mapa se reduce un poco antes que cualquier texto.
+Nueve páginas de *Nuestro río*, unidad 4 de un libro inventado de Ciencias sociales de 3.º, en una página de 210 × 280 mm, en español, catalán e inglés. Un valle pintado abre la unidad, una página de índice lista dos partes y siguen tres temas a doble página, cada uno sobre su fondo: azul agua, verde campo, arena sol. Cada tema lleva una pestaña con su número y su título, texto a dos columnas y recuadros con pestaña que crecen con su texto. El segundo tema es un único mapa pintado a doble página, con el río, los pueblos y los tres cursos rotulados desde el Markdown. Los tres textos difieren en un quinto o más y caben en las mismas plantillas: un recuadro toma la altura que piden sus palabras y empuja al siguiente, y el mapa se reduce un poco antes que cualquier texto.
 
 ## Elaboración
 
@@ -24,7 +24,7 @@ Un estilo de recuadro se hace en tres pasos. `caja` guarda la forma, la tipograf
 
 <Excerpt region="answer" />
 
-La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), fija su `palette` (las tres entradas `tema` toman los colores de la familia, y el fondo, la pestaña, el número y todos los recuadros cambian a la vez) y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma. El número es `{headingNumber}`, el contador del título que tomó el marco, pintado sobre el relleno izquierdo del marco: ninguna valla de página lo repite, y un clic sobre él llega al número, no al marco.
+La base es una doble página: un fondo hasta el sangrado, una pestaña de título con su número y un texto a dos columnas. Un tema la extiende (`extends: 'tema'`), fija su `palette` (las tres entradas `tema` toman los colores de la familia, y el fondo, la pestaña, el número y todos los recuadros cambian a la vez) y añade sus marcos. La pestaña y el número son decoración anclada al marco del título, así que la pestaña es tan alta como el título que pida el idioma. El número es `{headingNumber}`, el contador del título que tomó el marco, pintado sobre el relleno izquierdo del marco: ningún bloque de página lo repite, y un clic sobre él llega al número, no al marco.
 
 ### 3 · Deja que los grupos se repartan el sitio
 
@@ -40,7 +40,7 @@ El mapa es una pintura sin una sola letra. Cada lugar es un ancla de la imagen, 
 
 <Excerpt region="contents" />
 
-`:::toc{keep="part" levels="1-2"}` lista los temas y sus apartados y mantiene cada fila de parte con sus entradas. Una valla `:::part` con `parts.page: false` es solo una fila del índice y una sección para las cabeceras: no añade portadilla. El índice es una página compuesta: su plantilla tiene un marco con `takes: "toc"` que recibe el `:::toc` y lo compone con las reglas del propio índice, así que las filas de parte, los puntos guía y `keep` funcionan como en el texto corrido, y el fondo claro es la decoración de la plantilla.
+`:::toc{keep="part" levels="1-2"}` lista los temas y sus apartados y mantiene cada fila de parte con sus entradas. Una línea `:::part` con `parts.page: false` es solo una fila del índice y una sección para las cabeceras: no añade portadilla. El índice es una página compuesta: su plantilla tiene un marco con `takes: "toc"` que recibe el `:::toc` y lo compone con las reglas del propio índice, así que las filas de parte, los puntos guía y `keep` funcionan como en el texto corrido, y el fondo claro es la decoración de la plantilla.
 
 ## Variantes
 

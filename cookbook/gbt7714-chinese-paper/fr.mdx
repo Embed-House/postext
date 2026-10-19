@@ -1,11 +1,11 @@
 ---
 title: "Un article chinois cité selon GB/T 7714"
-summary: "Un article de revue chinoise en deux colonnes : les citations [@key] s’impriment en exposant [1] et [2–4], les références portent [M], [J], [D] et [EB/OL]."
+summary: "Un article de revue chinoise en deux colonnes : les citations [@key] s’impriment en exposant [1] et [2–4], les références affichent [M], [J], [D] et [EB/OL]."
 plain: "Un court article de recherche d’une revue chinoise. L’auteur écrit un code pour chaque source ; Postext numérote les sources dans l’ordre où elles sont citées et imprime la liste des références comme l’exigent les revues chinoises."
 description: "Un article de revue chinoise avec Postext, cité selon GB/T 7714—2015 : appels numérotés en exposant, intervalles, codes de type, 等 et et al. selon la langue."
 question: "Comment citer selon GB/T 7714 dans un article chinois, avec des numéros en exposant et des codes de type ?"
 aliases: ["GB/T 7714", "GB/T 7714—2015", "参考文献著录规则", "顺序编码制", "références chinoises", "bibliographie chinoise", "文献类型标识", "[M] [J] [D]", "et al. 等", "article de revue chinoise", "学报", "appels en exposant", "CSL-YAML", "citeproc", "Chinese references"]
-pageNotes: { "1": "Page 1 d’un article dans une revue fictive, 示例出版研究. Un bandeau indigo en haut porte le nom de la revue en blanc, et le volume et le numéro à droite. Dessous, un titre centré sur deux lignes en Hei gras, les noms des deux auteurs, leurs affiliations en petits caractères gris, et le résumé sur les deux colonnes avec les étiquettes indigo 摘　要：, 关键词：, 文献标志码： et 文章编号：. Plus bas, deux colonnes de texte chinois sur une grille de caractères : le 引言 non numéroté, avec de petits appels en exposant [1], [2–4], [5,6], [7], [4] et [8], puis 1 实验方法 avec les sections 1.1 à 1.3.", "2": "Page 2 : le titre courant 42 示例出版研究 2026年第3期 au-dessus d’un filet fin ; les sections 2 结果 et 3 讨论 dans la colonne de gauche ; 4 结论 ouvre la colonne de droite, puis le titre 参考文献 et la liste numérotée [1] à [8] dans un corps plus petit : trois entrées anglaises en capitales avec « et al. » et les codes [M], [J/OL], des entrées chinoises avec 等 et [J], [M], [D], [EB/OL], [C]. Au pied de la liste, une note grise en caractères latins indique quelles œuvres sont fictives." }
+pageNotes: { "1": "Page 1 d’un article dans une revue fictive, 示例出版研究. Un bandeau indigo en haut contient le nom de la revue en blanc, et le volume et le numéro à droite. Dessous, un titre centré sur deux lignes en Hei gras, les noms des deux auteurs, leurs affiliations en petits caractères gris, et le résumé sur les deux colonnes avec les étiquettes indigo 摘　要：, 关键词：, 文献标志码： et 文章编号：. Plus bas, deux colonnes de texte chinois sur une grille de caractères : le 引言 non numéroté, avec de petits appels en exposant [1], [2–4], [5,6], [7], [4] et [8], puis 1 实验方法 avec les sections 1.1 à 1.3.", "2": "Page 2 : le titre courant 42 示例出版研究 2026年第3期 au-dessus d’un filet fin ; les sections 2 结果 et 3 讨论 dans la colonne de gauche ; 4 结论 ouvre la colonne de droite, puis le titre 参考文献 et la liste numérotée [1] à [8] dans un corps plus petit : trois entrées anglaises en capitales avec « et al. » et les codes [M], [J/OL], des entrées chinoises avec 等 et [J], [M], [D], [EB/OL], [C]. Au pied de la liste, une note grise en caractères latins indique quelles œuvres sont fictives." }
 ---
 
 ## Ce que vous allez composer
@@ -44,7 +44,7 @@ Le résumé est un encadré sur toute la largeur de la page, en retrait de deux 
 
 ### Des crochets à la place des exposants
 
-Certaines revues impriment les numéros d’appel sur la ligne, au corps du texte. `marker` change la façon dont le numéro est marqué et ne touche pas au style : `'brackets'` donne [1] sur la ligne, `'corner'` donne 〔1〕.
+Certaines revues impriment les numéros d’appel sur la ligne, au corps du texte courant. `marker` change la façon dont le numéro est marqué et ne touche pas au style : `'brackets'` donne [1] sur la ligne, `'corner'` donne 〔1〕.
 
 ```diff
    locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
@@ -65,7 +65,7 @@ Les bibliographies mixtes sont parfois triées avec les œuvres chinoises avant 
 
 ## Erreurs fréquentes
 
-- Une citation narrative, `@zhou2019` sans crochets, nomme les auteurs et ajoute le numéro, mais une clé se prolonge à travers les caractères chinois : `@zhou2019认为` se lit comme une clé qui n’existe pas. Écrivez le nom dans le texte et la citation après, `周明远[@zhou2019]认为`, comme le font de toute façon les articles chinois.
+- Une citation narrative, `@zhou2019` sans crochets, cite les auteurs et ajoute le numéro, mais une clé se prolonge à travers les caractères chinois : `@zhou2019认为` est lu comme une clé qui n’existe pas. Écrivez le nom dans le texte et la citation après, `周明远[@zhou2019]认为`, comme le font de toute façon les articles chinois.
 - Le style numérique fourni n’imprime pas de localisateurs : `[@zhou2019, 页 45]` donne [5] sans la page. GB/T 7714 place la page après le crochet dans l’exposant, [5]45 ; tant que le style ne le fait pas, écrivez la page dans la phrase.
 - LXGW WenKai TC, le seul Kai de Fontsource, est un caractère taïwanais : il dessine ，et 。 au milieu de la cellule, et sous `zh-Hans` le moteur retire la moitié droite de la cellule, ce qui entame le glyphe. Le résumé est composé en Noto Serif SC, et le Kai est réservé aux noms des auteurs, qui n’ont pas de ponctuation.
 - Sur une grille de caractères, l’équilibrage des colonnes est désactivé par défaut : chaque ligne reste sur la grille, et une colonne qui ne peut pas recevoir le titre suivant se termine plus court. Sans lui, la seconde colonne de la page 1 se terminerait trois lignes plus court (le titre 2 结果 demande ses deux lignes et deux lignes de texte dessous, il ouvre donc la page 2), et la dernière page remplirait sa première colonne et laisserait la seconde à moitié vide. La recette définit `headings.balancing.enabled: true` : une colonne courte prend des lignes de grille entières au-dessus de ses titres, jamais en écartant les caractères de leurs cellules, et les deux colonnes de la dernière page se terminent au même niveau.

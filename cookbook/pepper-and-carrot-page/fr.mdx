@@ -10,13 +10,13 @@ pageNotes: { "1": "La page de titre : « Épisode 8 : L’anniversaire de Pep
 
 ## Ce que vous allez composer
 
-Les planches 5 et 6 de l’épisode 8 de *Pepper&Carrot*, « L’anniversaire de Pepper », de David Revoy, la bande dessinée en ligne sous licence libre (CC BY 4.0) sur une jeune sorcière et son chat. Revoy publie ses planches sans leur texte, et la communauté traduit la transcription dans des dizaines de langues. Postext rassemble ici ces morceaux : les cases sont découpées dans ses planches sans texte, la grille de la planche est la sienne, et chaque bulle, chaque cri, chaque onomatopée et le titre du grimoire sont lettrés par le moteur à partir de la version originale française et des traductions officielles anglaise, espagnole, catalane, chinoise, japonaise, arabe, portugaise, allemande et italienne. Une page de titre porte les crédits qu’exige la licence.
+Les planches 5 et 6 de l’épisode 8 de *Pepper&Carrot*, « L’anniversaire de Pepper », de David Revoy, la bande dessinée en ligne sous licence libre (CC BY 4.0) sur une jeune sorcière et son chat. Revoy publie ses planches sans leur texte, et la communauté traduit la transcription dans des dizaines de langues. Postext rassemble ici ces morceaux : les cases sont découpées dans ses planches sans texte, la grille de la planche est la sienne, et chaque bulle, chaque cri, chaque onomatopée et le titre du grimoire sont lettrés par le moteur à partir de la version originale française et des traductions officielles anglaise, espagnole, catalane, chinoise, japonaise, arabe, portugaise, allemande et italienne. Une page de titre contient les crédits qu’exige la licence.
 
 ## Préparation
 
 ### 1 · Transformer la transcription en script
 
-Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Un script de conversion lit les fichiers sources de l’épisode : il découpe chaque planche en cases le long de ses gouttières blanches et écrit le découpage qu’il a mesuré (`29.9 / 49.3 / *` pour la planche 5), prend les mots de chaque bulle dans le SVG de la traduction et nomme le personnage qui parle d’après la transcription ([traduire une bande dessinée](/fr/docs/comics#traduire-une-bande-dessinée)). Le résultat est une ligne par bulle, `pepper{shout break}: …`, avec la forme de la bulle d’origine : un contour en dents de scie devient `shout`, une bulle qui débordait du cadre `break`. L’accent des démons, avec ses *š* et ses *ā*, est celui des traducteurs et reste tel quel.
+Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Un script de conversion lit les fichiers sources de l’épisode : il découpe chaque planche en cases le long de ses gouttières blanches et écrit le découpage qu’il a mesuré (`29.9 / 49.3 / *` pour la planche 5), prend les mots de chaque bulle dans le SVG de la traduction et identifie le personnage qui parle d’après la transcription ([traduire une bande dessinée](/fr/docs/comics#traduire-une-bande-dessinée)). Le résultat est une ligne par bulle, `pepper{shout break}: …`, avec la forme de la bulle d’origine : un contour en dents de scie devient `shout`, une bulle qui débordait du cadre `break`. L’accent des démons, avec ses *š* et ses *ā*, est celui des traducteurs et reste tel quel.
 
 <PageShot page={2} crop="0,0,1,0.34" caption="Planche 5, case 1 : le cri de Pepper, lettré à partir de la version originale française, et le titre du livre en or sur sa couverture." />
 
@@ -24,13 +24,13 @@ Le code est [la réponse courte](#la-réponse-courte) ci-dessus. Un script de co
 
 <Excerpt region="art" />
 
-Les bulles de Revoy figurent dans ses fichiers sources sous forme de tracés vectoriels, queues comprises. La conversion suit chaque queue jusqu’à sa pointe et l’enregistre comme ancrage du personnage, en fractions de la case : les nouvelles bulles pointent là où pointaient les siennes, vers la bouche ouverte de Pepper, vers le démon du milieu ([locuteurs et ancres](/fr/docs/comics#locuteurs-et-ancres)). Les zones sûres gardent le sujet de chaque case quand les cases s’écartent des siennes de quelques millimètres.
+Les bulles de Revoy figurent dans ses fichiers sources sous forme de tracés vectoriels, queues comprises. La conversion suit chaque queue jusqu’à sa pointe et l’enregistre comme ancre du personnage, en fractions de la case : les nouvelles bulles pointent là où pointaient les siennes, vers la bouche ouverte de Pepper, vers le démon du milieu ([locuteurs et ancres](/fr/docs/comics#locuteurs-et-ancres)). Les zones de sécurité gardent le sujet de chaque case quand les cases s’écartent des siennes de quelques millimètres.
 
 ### 3 · Donner à chaque voix ses propres lettres
 
 <Excerpt region="editions" />
 
-La distribution de la réponse courte donne aux démons des bulles noires à lettres blanches, comme les dessine Revoy, et une voix à eux : Grenze Gotisch, une gothique, dans les éditions en alphabet latin. Le style `plate` compose du texte sur un objet : le titre du grimoire en Zen Antique doré avec un fin halo sombre, tourné avec `rotate` et incliné avec `skew` pour se poser sur la couverture, coupé en lignes avec `\` comme la couverture le coupe. Chaque édition prend les caractères de son écriture ; les bulles japonaises sont verticales, et les planches japonaise et arabe se lisent de droite à gauche ([lettrage](/fr/docs/comics#lettrage)).
+La liste des personnages de la réponse courte donne aux démons des bulles noires à lettres blanches, comme les dessine Revoy, et une voix à eux : Grenze Gotisch, une gothique, dans les éditions en alphabet latin. Le style `plate` compose du texte sur un objet : le titre du grimoire en Zen Antique doré avec un fin halo sombre, tourné avec `rotate` et incliné avec `skew` pour se poser sur la couverture, coupé en lignes avec `\` comme la couverture le coupe. Chaque édition prend les caractères de son écriture ; les bulles japonaises sont verticales, et les planches japonaise et arabe se lisent de droite à gauche ([lettrage](/fr/docs/comics#lettrage)).
 
 ### 4 · Créditer chaque traducteur, avec toutes ses lettres
 

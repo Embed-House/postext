@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Dokumentformat: Anmerkungen und Verweise',
   sidebarTitle: 'Anmerkungen und Verweise',
-  description: 'Fußnoten, Querverweise und Anker, Zitate und Literaturverzeichnis sowie die Registermarken',
+  description: 'Fußnoten, Querverweise und ihre Verweisziele, Zitate und das Literaturverzeichnis sowie die Marken für das Register am Ende des Buchs',
   lang: 'de',
   lastUpdated: '2026-10-16',
   readingTime: '14 min',
   order: 28,
   parent: 'document-format',
-  plainSummary: "Diese Seite behandelt die Zeichen, die auf eine andere Stelle im Buch oder auf etwas außerhalb verweisen. Ein Fußnotenzeichen verweist auf eine Anmerkung unten auf der Seite. Ein Querverweis nennt eine Abbildung, einen Abschnitt oder eine Seite mit ihrer Nummer. Eine Quellenangabe nennt ein Buch oder einen Artikel, aus dem Sie zitieren, und das Literaturverzeichnis führt sie alle auf. Registermarken wählen die Wörter aus, die das Register am Ende des Buchs mit ihren Seiten aufführt.",
+  plainSummary: "Diese Seite behandelt die Zeichen, die auf eine andere Stelle im Buch oder auf etwas außerhalb verweisen. Ein Fußnotenzeichen verweist auf eine Anmerkung unten auf der Seite. Ein Querverweis nennt eine Abbildung, einen Abschnitt oder eine Seite mit ihrer Nummer. Eine Quellenangabe nennt ein Buch oder einen Artikel, aus dem Sie zitieren, und das Literaturverzeichnis führt alle diese Werke auf. Registermarken legen fest, welche Wörter das Register am Ende des Buchs mit ihren Seiten aufführt.",
 };
 
 # Dokumentformat: Anmerkungen und Verweise
@@ -17,7 +17,7 @@ export const metadata = {
 
 ## Fußnoten
 
-Eine Fußnote hat zwei Teile: die Marke `[^id]` an der Stelle, an der die Anmerkung zitiert wird, und die Definition, einen eigenen Absatz, der irgendwo im Kapitel mit `[^id]:` beginnt.
+Eine Fußnote hat zwei Teile: das Fußnotenzeichen `[^id]` an der Stelle, die auf die Anmerkung verweist, und die Definition, einen eigenen Absatz, der irgendwo im Kapitel mit `[^id]:` beginnt.
 
 ```md
 The keeper climbed the tower every evening.[^steps] The wind put out his candle,
@@ -26,28 +26,28 @@ so he learned to count the steps in the dark.
 [^steps]: The cast-iron staircase has 112 steps; the tower was built in 1861.
 ```
 
-- **Marke.** `[^id]` druckt die Nummer der Anmerkung hochgestellt, angehängt an das Wort davor (schreiben Sie sie wie oben nach dem Satzzeichen). Die ID besteht aus Buchstaben, Ziffern, `-`, `_`, `.` und `:`. Die Marke funktioniert in Absätzen, Listeneinträgen, Zitaten und Kästen; in Überschriften, Legenden und Tabellenzellen wird sie so gedruckt, wie sie geschrieben ist.
-- **Definition.** Ein Absatz, der mit `[^id]:` beginnt; sein Text reicht bis zur nächsten Leerzeile und nimmt die üblichen Inline-Auszeichnungen an (fett, kursiv, Links, `:ref`, Formeln, Chips). Definitionen verlassen den Fluss, wo immer sie stehen; sie können also unter dem Absatz stehen, der sie zitiert, oder gesammelt am Ende des Kapitels. Die erste Definition einer ID gilt.
-- **Nummern.** Anmerkungen werden in der Reihenfolge ihrer ersten Zitierung nummeriert, in jedem Kapitel neu beginnend (eine Überschrift der Ebene 1 und jedes Dokument eines Buchs); eine zweimal zitierte Anmerkung behält ihre erste Nummer und wird einmal gesetzt. `footnotes.numbering: 'document'` zählt die Nummern durch das ganze Buch weiter, und `'page'` beginnt sie auf jeder Seite neu, wie es chinesische Bücher tun; `footnotes.numberFormat: 'circled-decimal'` schreibt ① ② ③ auf die Grundlinie. `footnotes.numberFormat: 'symbols'` kennzeichnet sie mit `*`, `†`, `‡`, `§`, `‖`, `¶`, danach verdoppelt, auf jeder Seite neu beginnend, wie in Fachzeitschriften.
-- **Japanischer Text.** Schreiben Sie die Marke vor ein satzschließendes 。 (`先生[^1]。`): Sie bleibt beim Zeichen davor, und 。 eröffnet nie eine Zeile. Ein senkrecht gesetztes japanisches Buch setzt seine Marken （1） standardmäßig rechts neben die Zeile und seine Anmerkungen hinter das Kapitel; `footnotes.markerPosition: 'side'` setzt eine kleine Marke neben das Wort, ohne Platz in der Zeile einzunehmen, und `footnotes.placement: 'spread'` setzt die Anmerkungen neben den Text jeder Doppelseite (siehe [Konfiguration › Fußnoten](/de/docs/configuration-notes-references#fußnoten)).
-- **Wohin die Anmerkung kommt.** Standardmäßig an den Fuß der Spalte, die die zitierende Zeile enthält, unter eine kurze Linie: Zeile und Anmerkung teilen sich immer eine Spalte, und eine Zeile, deren Anmerkung nicht passt, wandert mit ihr weiter. In einem einspaltigen Layout ist das der Fuß der Seite. `footnotes.placement: 'chapterEnd'` setzt stattdessen alle Anmerkungen eines Kapitels hinter dessen letzten Block, standardmäßig an den Fuß der Spalte, die sie abschließen. Größen, Linie und Abstände finden Sie unter [Fußnoten](/de/docs/configuration-notes-references#fußnoten) in der Konfigurationsreferenz.
-- **Prüfungen.** Eine Marke ohne Definition (`undefinedFootnote`) druckt ihre Nummer über einer leeren Anmerkung; eine Definition, die keine Marke zitiert (`unusedFootnote`), wird nicht gesetzt. Die Sandbox führt beide im Bedienfeld Prüfungen auf.
+- **Fußnotenzeichen.** `[^id]` setzt die Nummer der Anmerkung hochgestellt und ohne Abstand an das Wort davor (schreiben Sie es wie oben nach dem Satzzeichen). Die ID besteht aus Buchstaben, Ziffern, `-`, `_`, `.` und `:`. Das Zeichen funktioniert in Absätzen, Listeneinträgen, Zitatblöcken und Kästen; in Überschriften, Legenden und Tabellenzellen erscheint es so, wie es geschrieben ist.
+- **Definition.** Ein Absatz, der mit `[^id]:` beginnt; sein Text reicht bis zur nächsten Leerzeile und kann die üblichen Inline-Auszeichnungen enthalten (fett, kursiv, Links, `:ref`, Formeln, Chips). Definitionen werden aus dem Textfluss herausgenommen, wo immer sie stehen; sie können also unter dem Absatz stehen, der auf sie verweist, oder gesammelt am Ende des Kapitels. Die erste Definition einer ID gilt.
+- **Nummern.** Anmerkungen werden in der Reihenfolge nummeriert, in der zum ersten Mal auf sie verwiesen wird, und die Zählung beginnt in jedem Kapitel neu (bei jeder Überschrift der Ebene 1 und in jedem Dokument eines Buchs); eine Anmerkung, auf die zweimal verwiesen wird, behält ihre erste Nummer und wird nur einmal gesetzt. `footnotes.numbering: 'document'` zählt die Nummern durch das ganze Buch weiter, und `'page'` beginnt sie auf jeder Seite neu, wie es chinesische Bücher tun; `footnotes.numberFormat: 'circled-decimal'` schreibt ① ② ③ auf die Grundlinie. `footnotes.numberFormat: 'symbols'` kennzeichnet sie mit `*`, `†`, `‡`, `§`, `‖`, `¶`, danach verdoppelt, auf jeder Seite neu beginnend, wie in Fachzeitschriften.
+- **Japanischer Text.** Schreiben Sie das Fußnotenzeichen vor ein satzschließendes 。 (`先生[^1]。`): Es bleibt beim Zeichen davor, und 。 steht nie am Zeilenanfang. Ein senkrecht gesetztes japanisches Buch setzt seine Fußnotenzeichen （1） standardmäßig rechts neben die Zeile und seine Anmerkungen hinter das Kapitel; `footnotes.markerPosition: 'side'` setzt ein kleines Zeichen neben das Wort, ohne Platz in der Zeile einzunehmen, und `footnotes.placement: 'spread'` setzt die Anmerkungen neben den Text jeder Doppelseite (siehe [Konfiguration › Fußnoten](/de/docs/configuration-notes-references#fußnoten)).
+- **Wo die Anmerkung steht.** Standardmäßig am Fuß der Spalte, die die verweisende Zeile enthält, unter einer kurzen Linie: Zeile und Anmerkung teilen sich immer eine Spalte, und eine Zeile, deren Anmerkung nicht passt, wandert mit ihr weiter. In einem einspaltigen Layout ist das der Fuß der Seite. `footnotes.placement: 'chapterEnd'` setzt stattdessen alle Anmerkungen eines Kapitels hinter dessen letzten Block, standardmäßig an den Fuß der Spalte, in der sie enden. Größen, Linie und Abstände finden Sie unter [Fußnoten](/de/docs/configuration-notes-references#fußnoten) in der Konfigurationsreferenz.
+- **Prüfungen.** Ein Fußnotenzeichen ohne Definition (`undefinedFootnote`) setzt seine Nummer über eine leere Anmerkung; eine Definition, auf die kein Zeichen verweist (`unusedFootnote`), wird nicht gesetzt. Die Sandbox führt beide im Bedienfeld Prüfungen auf.
 
 
-## Querverweise und Anker
+## Querverweise und Verweisziele
 
-Ein Querverweis benennt eine Stelle im Buch und druckt ihre Nummer, ihren Titel oder ihre Seite: *siehe Abschnitt 3.2*, *wie Kapitel 4 erläutert*, *auf S. 112*. Wörter und Nummern folgen dem Text; wird ein Abschnitt verschoben, werden die Kapitel neu nummeriert oder das Buch neu umbrochen, aktualisiert sich jeder Verweis. Im PDF, im HTML und in den Vorschauen der Sandbox ist jeder Verweis ein Link: Ein Klick führt den Leser zu seinem Ziel, auch in ein anderes Kapitel.
+Ein Querverweis bezieht sich auf eine Stelle im Buch und gibt ihre Nummer, ihren Titel oder ihre Seite aus: *siehe Abschnitt 3.2*, *wie Kapitel 4 erläutert*, *auf S. 112*. Wörter und Nummern folgen dem Text; wird ein Abschnitt verschoben, werden die Kapitel neu nummeriert oder das Buch neu umbrochen, aktualisiert sich jeder Verweis. Im PDF, im HTML und in den Vorschauen der Sandbox ist jeder Verweis ein Link: Ein Klick führt den Leser zu seinem Ziel, auch in ein anderes Kapitel.
 
-**Anker.** Ein Verweis braucht etwas, worauf er zeigt:
+**Verweisziele.** Ein Verweis braucht etwas, worauf er zeigt:
 
 - **Eine Überschrift** mit einem Bezeichner: `## Method {#sec-method}` (die Form von Pandoc; `id="sec-method"` funktioniert ebenfalls).
-- **Ein Kasten oder ein anderer Container**, der mit einem Bezeichner geöffnet wird: `:::callout{#box-safety title="Safety"}`. Auf einen Kasten eines nummerierten Formats (ein Theorem) wird mit seiner Bezeichnung und Nummer verwiesen: *Theorem 2*.
-- **Eine abgesetzte Formel** mit einem `\label{eq:x}` (siehe [Mathematische Formeln](/de/docs/document-format-inline#mathematische-formeln)): Ein Verweis druckt ihre Nummer so, wie die Formel es tut, *(3)*.
-- **Eine Stelle im Text**: `:anchor{#key-idea}` setzt einen unsichtbaren Anker; `[the key idea]{#key-idea}` behält seine Wörter und benennt sie.
+- **Ein Kasten oder ein anderer Container**, der mit einem Bezeichner geöffnet wird: `:::callout{#box-safety title="Safety"}`. Auf einen Kasten mit nummeriertem Stil (ein Theorem) wird mit seiner Bezeichnung und Nummer verwiesen: *Theorem 2*.
+- **Eine abgesetzte Formel** mit einem `\label{eq:x}` (siehe [Mathematische Formeln](/de/docs/document-format-inline#mathematische-formeln)): Ein Verweis gibt ihre Nummer so aus, wie sie an der Formel steht: *(3)*.
+- **Eine Stelle im Text**: `:anchor{#key-idea}` setzt ein unsichtbares Verweisziel; `[the key idea]{#key-idea}` behält seine Wörter und macht sie zum Verweisziel.
 
-Ein Bezeichner besteht aus Buchstaben, Ziffern, `-`, `_`, `.` und `:`. Er muss im Buch eindeutig sein: Das Bedienfeld Prüfungen führt einen doppelt gesetzten auf (`duplicateAnchor`), und Verweise erreichen sein erstes Vorkommen.
+Ein Bezeichner besteht aus Buchstaben, Ziffern, `-`, `_`, `.` und `:`. Er muss im Buch eindeutig sein: Das Bedienfeld Prüfungen führt einen doppelt vergebenen Bezeichner auf (`duplicateAnchor`), und Verweise führen zu seinem ersten Vorkommen.
 
-**Verweise.** `:ref{id="…"}` benennt einen Anker so, wie es eine Abbildung oder eine Tabelle benennt:
+**Verweise.** `:ref{id="…"}` verweist auf ein Verweisziel genauso wie auf eine Abbildung oder eine Tabelle:
 
 ```md
 ## Method {#sec-method}
@@ -56,30 +56,30 @@ The results of :ref{id="sec-method"} hold on :ref{id="sec-method" style=page}.
 ```
 
 <table>
-<thead><tr><th><code>style</code></th><th>druckt</th></tr></thead>
+<thead><tr><th><code>style</code></th><th>gibt aus</th></tr></thead>
 <tbody>
-<tr><td><em>(keiner)</em></td><td>eine nummerierte Überschrift mit ihrem Wort und ihrer Nummer (<em>Abschnitt 3.2</em>, <em>Kapitel 4</em>), eine nicht nummerierte Überschrift mit ihrem Titel, einen Anker mit seinem Text, eine Gleichung mit ihrer Nummer, wie sie gedruckt ist (<em>(3)</em>), einen nummerierten Kasten mit seiner Bezeichnung und Nummer (<em>Theorem 2</em>)</td></tr>
+<tr><td><em>(keiner)</em></td><td>eine nummerierte Überschrift mit ihrem Wort und ihrer Nummer (<em>Abschnitt 3.2</em>, <em>Kapitel 4</em>), eine nicht nummerierte Überschrift mit ihrem Titel, ein Verweisziel mit seinem Text, eine Gleichung mit ihrer Nummer, wie sie an der Gleichung steht (<em>(3)</em>), einen nummerierten Kasten mit seiner Bezeichnung und Nummer (<em>Theorem 2</em>)</td></tr>
 <tr><td><code>number</code></td><td>nur die Nummer (<em>3.2</em>, <em>3</em>, <em>2</em>)</td></tr>
-<tr><td><code>title</code></td><td>den Titel der Überschrift, den Text des Ankers oder den <code>title</code> des Kastens</td></tr>
-<tr><td><code>page</code></td><td>die Seite, auf der das Ziel gelandet ist (<em>S. 112</em>)</td></tr>
+<tr><td><code>title</code></td><td>den Titel der Überschrift, den Text des Verweisziels oder den <code>title</code> des Kastens</td></tr>
+<tr><td><code>page</code></td><td>die Seite, auf der das Ziel steht (<em>S. 112</em>)</td></tr>
 <tr><td><code>pageNumber</code></td><td>nur die Seitenzahl (<em>112</em>)</td></tr>
 </tbody>
 </table>
 
-`\eqref{x}` und `\ref{x}` aus LaTeX funktionieren auch im Text: `\eqref` als Verweis ohne Format, `\ref` als `style=number`, sodass `\ref{thm:main}` *2* druckt und `\ref{fig:map}` die Nummer einer Abbildung. Ein `~` direkt davor ist ein geschütztes Leerzeichen (`Theorem~\ref{thm:main}`). Innerhalb von `$…$` gehören sie zur Formel.
+`\eqref{x}` und `\ref{x}` aus LaTeX funktionieren auch im Text: `\eqref` als Verweis ohne Format, `\ref` als `style=number`, sodass `\ref{thm:main}` *2* ausgibt und `\ref{fig:map}` die Nummer einer Abbildung. Ein `~` direkt davor ist ein geschütztes Leerzeichen (`Theorem~\ref{thm:main}`). Innerhalb von `$…$` gehören sie zur Formel.
 
-`text="…"` druckt Ihre eigenen Wörter und verlinkt trotzdem; `case=capitalize` beginnt die Bezeichnung mit einem Großbuchstaben (*Section 3.2* am Satzanfang). Die Wörter folgen der Dokumentsprache (*sección 3.2*, *第3.2节*, *S. 112*) und lassen sich unter [Querverweise](/de/docs/configuration-notes-references#querverweise) in der Konfiguration ändern; eine Überschriftennummer, die ihre Vorlage bereits ausschreibt (*Chapter 4*, *第四章*), wird so gedruckt, wie sie ist.
+`text="…"` gibt Ihre eigenen Wörter aus und bleibt trotzdem ein Link; `case=capitalize` beginnt die Bezeichnung mit einem Großbuchstaben (*Section 3.2* am Satzanfang). Die Wörter folgen der Dokumentsprache (*sección 3.2*, *第3.2节*, *S. 112*) und lassen sich unter [Querverweise](/de/docs/configuration-notes-references#querverweise) in der Konfiguration ändern; eine Überschriftennummer, deren Vorlage das Wort bereits ausschreibt (*Chapter 4*, *第四章*), erscheint unverändert.
 
-**Zeilenumbrüche.** Ein Verweis, der Wörter druckt, bricht wie der umgebende Text an seinen Leerzeichen um: der Text eines Ankers (`[close the lever so that it points backwards]{#step}`), ein Titel, Ihr eigenes `text="…"`. Seine Leerzeichen sind Leerzeichen der Zeile, sodass sie sich auf einer Zeile im Blocksatz mit den anderen dehnen, und der Verweis bleibt ein einziger Link, in zwei Stücken, wenn er über zwei Zeilen läuft. Seine Wörter werden nie getrennt. Innerhalb einer solchen Bezeichnung bleibt eine Zahl, eine römische Zahl oder ein einzelner Buchstabe beim Wort davor, sodass `text="Fig. 1a"` oder `text="plate IV"` nie getrennt wird. Eine Bezeichnung, die eine Nummer oder eine Seite enthält (*Abschnitt 3.2*, *S. 112*, *Abb. 1.7*, *Theorem 2*), bricht nie um, gleich welchen Zwischenraum ihre Vorlage enthält, und ein geschütztes Leerzeichen in einer Bezeichnung verbindet wie überall. `crossRefs.breakLabels: false` hält jede Bezeichnung ganz, wie bis postext 1.27, als eine Bezeichnung ein einziges Wort war, das nicht in die Zeile davor hinaufrücken konnte; siehe [Querverweise](/de/docs/configuration-notes-references#querverweise).
+**Zeilenumbrüche.** Ein Verweis, der Wörter ausgibt, bricht wie der umgebende Text an seinen Leerzeichen um: der Text eines Verweisziels (`[close the lever so that it points backwards]{#step}`), ein Titel, Ihr eigenes `text="…"`. Seine Leerzeichen gehören zur Zeile und dehnen sich im Blocksatz mit den anderen; der Verweis bleibt ein einziger Link, auch wenn er in zwei Teilen über zwei Zeilen läuft. Seine Wörter werden nie getrennt. Innerhalb einer solchen Bezeichnung bleibt eine Zahl, eine römische Zahl oder ein einzelner Buchstabe beim Wort davor, sodass `text="Fig. 1a"` oder `text="plate IV"` nie getrennt wird. Eine Bezeichnung, die eine Nummer oder eine Seite enthält (*Abschnitt 3.2*, *S. 112*, *Abb. 1.7*, *Theorem 2*), bricht nie um, gleich welchen Zwischenraum ihre Vorlage enthält, und ein geschütztes Leerzeichen in einer Bezeichnung hält die Wörter zusammen wie überall. `crossRefs.breakLabels: false` hält jede Bezeichnung zusammen, wie bis postext 1.27: Damals war eine Bezeichnung ein einziges Wort, das nicht in die vorige Zeile hinaufrücken konnte; siehe [Querverweise](/de/docs/configuration-notes-references#querverweise).
 
-**Seitenverweise** sind erst bekannt, wenn das Buch gesetzt ist. Die Engine setzt das Dokument mit den Seiten des vorigen Durchgangs erneut, bis sie stabil bleiben, wie beim Inhaltsverzeichnis; bis dahin druckt eine Seite *?*.
+**Seitenverweise** sind erst bekannt, wenn das Buch gesetzt ist. Die Engine setzt das Dokument mit den Seiten des vorigen Durchlaufs erneut, bis sie sich nicht mehr ändern, wie beim Inhaltsverzeichnis; bis dahin erscheint statt der Seite ein *?*.
 
-**pandoc-crossref.** Für pandoc-crossref geschriebener Text liest sich gleich: `@sec:method`, `[@fig:map]` und `[-@tbl:data]` für die bloße Nummer. Das Präfix (`sec`, `fig`, `tbl`, `eq`, `lst`) kann Teil des Bezeichners sein (`{#sec:method}`) oder fehlen (`{#method}`). Ein `@`, das direkt an einem Wort klebt, wie in einer E-Mail-Adresse, bleibt Text.
+**pandoc-crossref.** Für pandoc-crossref geschriebener Text wird genauso gelesen: `@sec:method`, `[@fig:map]` und `[-@tbl:data]` für die bloße Nummer. Das Präfix (`sec`, `fig`, `tbl`, `eq`, `lst`) kann Teil des Bezeichners sein (`{#sec:method}`) oder fehlen (`{#method}`). Ein `@`, das direkt an einem Wort klebt, wie in einer E-Mail-Adresse, bleibt Text.
 
-Ein Verweis auf eine ID, die nichts setzt, druckt *?*, und das Bedienfeld Prüfungen führt ihn auf (`unknownResourceId`). Im Editor der Sandbox bietet `@` die Abbildungen, Tabellen, Überschriften mit ID und Anker des Buchs an.
+Ein Verweis auf eine ID, die nirgends vergeben ist, gibt *?* aus, und das Bedienfeld Prüfungen führt ihn auf (`unknownResourceId`). Im Editor der Sandbox bietet `@` die Abbildungen, Tabellen, Überschriften mit ID und Verweisziele des Buchs an.
 
 
-## Zitate und Literaturverzeichnis
+## Zitationen und Literaturverzeichnis
 
 Schreiben Sie Zitate so, wie Pandoc sie liest, halten Sie die Literaturangaben im Dokument und wählen Sie den Zitierstil in den Einstellungen: Der Wechsel von APA zu IEEE oder zu Chicago-Anmerkungen ändert die Stileinstellung, nicht den Text. Jedes Zitat verlinkt auf seinen Eintrag im Literaturverzeichnis.
 
@@ -91,12 +91,12 @@ As [@garcia2020, p. 33] shows, reading on paper is faster [see @lopez2019, chap.
 ```
 
 - **`[@key]`** zitiert in Klammern; mehrere Werke stehen in einem Klammerpaar, getrennt durch `;`.
-- **Fundstelle:** nach einem Komma `p. 33`, `pp. 4–6`, `chap. 2`, `sec. IV`, `fig. 3`, `vol. 2`, `n. 12`, `l. 4`, `§ 4.2`; eine bloße Zahl ist eine Seite. Spanische (`pág.`, `cap.`) und chinesische (`页`, `章`) Wörter funktionieren ebenfalls. Ein Bereich nimmt einen Halbgeviertstrich oder die zwei Bindestriche von TeX: `pp. 4--6` druckt *4–6*.
-- **Präfix und Suffix:** Text vor dem `@` (`see`) und nach dem Schlüssel oder der Fundstelle (`, emphasis added`). Das Suffix behält das davor geschriebene Komma, mit oder ohne Fundstelle: `[@brown2020, inter alia]` druckt *(Brown et al., 2020, inter alia)*, wie bei Pandoc; ohne Komma geschrieben (`[@brown2020 inter alia]`) hat es keines. Hervorhebung in einem Präfix oder Suffix wird in jedem Stil als Hervorhebung gesetzt: `[*e.g.*, @brown2020, *inter alia*]`.
+- **Fundstelle:** nach einem Komma `p. 33`, `pp. 4–6`, `chap. 2`, `sec. IV`, `fig. 3`, `vol. 2`, `n. 12`, `l. 4`, `§ 4.2`; eine bloße Zahl ist eine Seite. Spanische (`pág.`, `cap.`) und chinesische (`页`, `章`) Wörter funktionieren ebenfalls. Ein Bereich steht mit einem Halbgeviertstrich oder mit den zwei Bindestrichen von TeX: `pp. 4--6` ergibt *4–6*.
+- **Präfix und Suffix:** Text vor dem `@` (`see`) und nach dem Schlüssel oder der Fundstelle (`, emphasis added`). Das Suffix behält das davor geschriebene Komma, mit oder ohne Fundstelle: `[@brown2020, inter alia]` ergibt *(Brown et al., 2020, inter alia)*, wie bei Pandoc; ohne Komma geschrieben (`[@brown2020 inter alia]`) hat es keines. Hervorhebung in einem Präfix oder Suffix wird in jedem Stil als Hervorhebung gesetzt: `[*e.g.*, @brown2020, *inter alia*]`.
 - **`[-@key]`** lässt den Autor weg, für einen Satz, der den Autor bereits nennt.
 - **`@key`** zitiert im Satz (*García (2020)*); `@key [p. 4]` fügt eine Fundstelle hinzu.
 - **In Legenden:** Die Legende einer Abbildung oder Tabelle und ihre Anmerkung zitieren wie der Text (`Prior best from [@cobbe2021].`). Ihre Werke gelangen ohne `nocite` ins Literaturverzeichnis, und ein nummerierter Stil nummeriert sie dort, wo die Ressource platziert wird: nach den Zitaten des Absatzes, der zuerst auf sie verweist (ihr Block `::resource` oder ihr erstes `:ref`). Ein Zitat in einer Tabellenzelle bleibt Text.
-- Ein `@`, das an einem Buchstaben oder einer Ziffer klebt (eine E-Mail-Adresse), ein `@` in Inline-Code und `\@` sind Text. Ein Zitat, für das das Buch keine Literaturangabe hat, wird so gedruckt, wie es geschrieben ist, sodass sich ein Dokument ohne Literaturangaben wie zuvor liest. In einem Zitat mehrerer Werke wird ein Schlüssel, den keine Literaturangabe definiert, fett hinter den anderen gedruckt (`(Glen, 1955) **@nye1953**`), sodass das fehlende Werk auf der Seite ebenso sichtbar ist wie unter den Warnungen. Ein Doppelpunkt nach einem Zitat ist Text: `[@french2018]: the land…`.
+- Ein `@`, das an einem Buchstaben oder einer Ziffer klebt (eine E-Mail-Adresse), ein `@` in Inline-Code und `\@` sind Text. Ein Zitat, für das das Buch keine Literaturangabe hat, erscheint so, wie es geschrieben ist; ein Dokument ohne Literaturangaben liest sich also wie zuvor. In einem Zitat mehrerer Werke wird ein Schlüssel, den keine Literaturangabe definiert, fett hinter den anderen ausgegeben (`(Glen, 1955) **@nye1953**`), sodass das fehlende Werk auf der Seite ebenso sichtbar ist wie unter den Warnungen. Ein Doppelpunkt nach einem Zitat ist Text: `[@french2018]: the land…`.
 - In chinesischem, japanischem und koreanischem Text folgt ein Zitat ohne Leerzeichen auf das letzte Zeichen (`周明远@zhou2019认为`), und ein Autor-Jahr-Zitat übernimmt die Satzzeichen voller Breite des umgebenden Texts: `（施雅风等，1988；刘时银等，2015）`.
 
 ### Literaturangaben
@@ -125,19 +125,19 @@ oder in einem Block `:::references`, in BibTeX (ein Export aus Zotero, JabRef od
 :::
 ```
 
-Der Block druckt nichts. `nocite` führt Werke auf, ohne sie zu zitieren (`@*`: alle). In einem Buch gelten Literaturangaben aus jedem Kapitel für das ganze Buch.
+Der Block selbst erscheint nicht im Satz. `nocite` führt Werke auf, ohne sie zu zitieren (`@*`: alle). In einem Buch gelten Literaturangaben aus jedem Kapitel für das ganze Buch.
 
-In einer BibTeX-Namensliste steht `and others` für die weggelassenen Namen (`author = {Tan, Wei and others}`): Jeder Stil druckt an seiner Stelle *et al.* In YAML schreiben Sie `others` als letzten Namen der Liste.
+In einer BibTeX-Namensliste steht `and others` für die weggelassenen Namen (`author = {Tan, Wei and others}`): Jeder Stil setzt an ihre Stelle *et al.* In YAML schreiben Sie `others` als letzten Namen der Liste.
 
 ### Das Literaturverzeichnis
 
-`:::bibliography` setzt die Liste der zitierten Werke dort, wo es steht; ohne einen solchen Block folgt die Liste auf das letzte Kapitel, betitelt in der Dokumentsprache (*References*, *Referencias*, *参考文献*). `:::bibliography{title="Works cited"}` ändert den Titel, und `title=""` lässt ihn weg; `scope=chapter` führt die Werke auf, die das Kapitel zitiert (ein Sammelband). Jeder Eintrag ist ein Anker (`ref-<key>`), sodass ein Markdown-Link auf `#ref-garcia2020` ihn erreicht, und das PDF taggt ihn als `BibEntry`.
+`:::bibliography` setzt die Liste der zitierten Werke dort, wo es steht; ohne einen solchen Block folgt die Liste auf das letzte Kapitel, betitelt in der Dokumentsprache (*References*, *Referencias*, *参考文献*). `:::bibliography{title="Works cited"}` ändert den Titel, und `title=""` lässt ihn weg; `scope=chapter` führt die Werke auf, die das Kapitel zitiert (für einen Sammelband). Jeder Eintrag ist ein Verweisziel (`ref-<key>`), sodass ein Markdown-Link auf `#ref-garcia2020` zu ihm führt, und das PDF zeichnet ihn als `BibEntry` aus.
 
-`scope=new` führt die bisher im Dokument zitierten Werke auf, die keine vorherige Liste gedruckt hat, in der Reihenfolge des Stils und mit seinen Nummern: Ein `:::bibliography{scope=new}` nach dem Haupttext und ein weiteres nach den Methoden ergeben die zwei Listen eines Nature-Artikels, die zweite von der ersten an weiternummeriert. Ein nummerierter Stil zählt seine Zitate durch das ganze Buch; mit `citations.numbering: 'chapter'` nummeriert jedes Kapitel (jedes Dokument und jede Überschrift der Ebene 1 nach einem Zitat) seine eigenen ab 1, und seine Kapitelliste übernimmt diese Nummern, wie es die Berichte eines Bulletins oder die Beiträge eines Tagungsbands tun.
+`scope=new` führt die bisher im Dokument zitierten Werke auf, die noch in keiner früheren Liste stehen, in der Reihenfolge des Stils und mit seinen Nummern: Ein `:::bibliography{scope=new}` nach dem Haupttext und ein weiteres nach den Methoden ergeben die zwei Listen eines Nature-Artikels, die zweite von der ersten an weiternummeriert. Ein nummerierter Stil zählt seine Zitate durch das ganze Buch; mit `citations.numbering: 'chapter'` nummeriert jedes Kapitel (jedes Dokument und jede Überschrift der Ebene 1 nach einem Zitat) seine eigenen ab 1, und seine Kapitelliste übernimmt diese Nummern – so wie bei den Berichten eines Bulletins oder den Beiträgen eines Tagungsbands.
 
 ### Zitierstile
 
-Der Stil entscheidet, was ein Zitat und ein Eintrag aussagen. Die mitgelieferten Stile sind unten aufgeführt; jeder andere CSL-Stil (im Stil-Repository von Zotero gibt es mehr als zehntausend) lässt sich aus seiner `.csl`-Datei unter **Einstellungen → Zitate** laden.
+Der Stil entscheidet, was ein Zitat und ein Eintrag aussagen. Die mitgelieferten Stile sind unten aufgeführt; jeder andere CSL-Stil (im Stil-Repository von Zotero gibt es mehr als zehntausend) lässt sich aus seiner `.csl`-Datei unter **Einstellungen → Zitationen** laden.
 
 <table>
   <thead>
@@ -166,9 +166,9 @@ Der Stil entscheidet, was ein Zitat und ein Eintrag aussagen. Die mitgelieferten
   </tbody>
 </table>
 
-Bei einem **Anmerkungsstil** wird jedes Zitat zu einer Fußnote, platziert und nummeriert nach den Fußnoteneinstellungen; spätere Zitate desselben Werks nehmen eine Kurzform an. In chinesischem Text setzt `citations.notes: 'warichu'` sie als zweizeilige Anmerkungen in die Zeile (夹注); eine Anmerkung, auf die ein chinesisches Satzzeichen folgt (`，`, `。`), verliert ihren eigenen Schlusspunkt.
+Bei einem **Anmerkungsstil** wird jedes Zitat zu einer Fußnote, platziert und nummeriert nach den Fußnoteneinstellungen; spätere Zitate desselben Werks erscheinen in Kurzform. In chinesischem Text setzt `citations.notes: 'warichu'` sie als zweizeilige Anmerkungen in die Zeile (夹注); eine Anmerkung, auf die ein chinesisches Satzzeichen folgt (`，`, `。`), verliert ihren eigenen Schlusspunkt.
 
-**Chinesisch.** Die Stile nach GB/T 7714-2015 schreiben die Dokumenttyp-Codes (`[M]`, `[J]`, `[D]`, `[EB/OL]`), lassen chinesische Namen ungeteilt und schreiben `等` nach drei Autoren eines chinesischen Werks und `et al.` nach denen eines westlichen, je nach der `language` jedes Werks. In senkrechtem Text steht eine hochgestellte Nummer rechts neben ihrem Zeichen; `citations.marker: 'corner'` schreibt `〔1〕`, das aufrecht bleibt.
+**Chinesisch.** Die Stile nach GB/T 7714-2015 geben die Dokumenttyp-Codes aus (`[M]`, `[J]`, `[D]`, `[EB/OL]`), lassen chinesische Namen ungeteilt und schreiben `等` nach drei Autoren eines chinesischen Werks und `et al.` nach denen eines westlichen, je nach der `language` jedes Werks. In senkrechtem Text steht eine hochgestellte Nummer rechts neben ihrem Zeichen; `citations.marker: 'corner'` schreibt `〔1〕`, das aufrecht bleibt.
 
 **Engine.** Zitate werden vom Paket `postext-citeproc` formatiert (citeproc-js und die CSL-Stile). Die Sandbox lädt es für Dokumente, die zitieren; in Ihrem eigenen Code registrieren Sie es vor dem Setzen:
 
@@ -181,7 +181,7 @@ Das Bedienfeld Prüfungen führt einen Schlüssel auf, den keine Literaturangabe
 
 ## Register
 
-Ein Register führt die Begriffe eines Buchs mit den Seiten auf, auf denen sie vorkommen. Markieren Sie jeden Begriff dort, wo der Text ihn behandelt, und drucken Sie das Register mit `:::index` an der Stelle, an die es gehört, meist in einem eigenen Kapitel am Ende. Die Engine ermittelt die Seite jeder Marke nach dem Setzen, sodass die Zahlen dem Text folgen: Fügen Sie einen Absatz hinzu, verschieben Sie ein Kapitel oder ändern Sie das Endformat, und das Register druckt die neuen Seiten.
+Ein Register führt die Begriffe eines Buchs mit den Seiten auf, auf denen sie vorkommen. Markieren Sie jeden Begriff dort, wo der Text ihn behandelt, und setzen Sie das Register mit `:::index` an die Stelle, an die es gehört, meist in ein eigenes Kapitel am Ende. Die Engine ermittelt die Seite jeder Marke nach dem Setzen, sodass die Zahlen dem Text folgen: Fügen Sie einen Absatz hinzu, verschieben Sie ein Kapitel oder ändern Sie das Endformat, und das Register zeigt die neuen Seiten.
 
 ```md
 Iron-deficiency :index[anaemia] is the most common kind.
@@ -194,9 +194,9 @@ The pulse is taken at the wrist.:index{term="Pulse!radial" main}
 
 ### Registermarken
 
-- **`:index[text]`** druckt `text` und ordnet ihn unter seinen eigenen Wörtern ein. Inline-Auszeichnungen darin werden gedruckt und aus dem Eintrag entfernt. Attribute nach der Klammer ordnen ihn anderswo ein: `:index[iron deficiency]{term="Anaemia!iron-deficiency"}`.
-- **`:index{term="…"}`** druckt nichts. Die Marke übernimmt die Seite des Worts, das auf ihrer Zeile direkt vor ihr steht, oder, wenn sie eine Zeile eröffnet, die des Worts danach. Eine Zeile, die nur Marken enthält, wird entfernt, sodass eine Marke auf einer eigenen Zeile nie einen Absatz teilt oder Abstand hinzufügt.
-- **Wo.** Absätze, Überschriften, Listeneinträge, Zitate, Kästen und Fußnotendefinitionen. In Legenden, Tabellenzellen und Gestaltungselementen wird eine Marke so gedruckt, wie sie geschrieben ist. In Inline-Code und nach einem Backslash (`\:index`) ist sie Text.
+- **`:index[text]`** gibt `text` aus und ordnet ihn unter seinen eigenen Wörtern ein. Inline-Auszeichnungen darin bleiben im Text erhalten, im Eintrag entfallen sie. Attribute nach der Klammer ordnen ihn anderswo ein: `:index[iron deficiency]{term="Anaemia!iron-deficiency"}`.
+- **`:index{term="…"}`** gibt nichts aus. Die Marke übernimmt die Seite des Worts, das auf ihrer Zeile direkt vor ihr steht, oder, wenn sie eine Zeile eröffnet, die des Worts danach. Eine Zeile, die nur Marken enthält, wird entfernt, sodass eine Marke auf einer eigenen Zeile nie einen Absatz teilt oder Abstand hinzufügt.
+- **Wo.** Absätze, Überschriften, Listeneinträge, Zitatblöcke, Kästen und Fußnotendefinitionen. In Legenden, Tabellenzellen und Gestaltungselementen erscheint eine Marke so, wie sie geschrieben ist. In Inline-Code und nach einem Backslash (`\:index`) ist sie Text.
 
 <table>
   <thead>
@@ -208,7 +208,7 @@ The pulse is taken at the wrist.:index{term="Pulse!radial" main}
   <tbody>
     <tr>
       <td><code>term</code></td>
-      <td>Der Eintrag, seine Ebenen durch <code>!</code> getrennt: <code>term="Heart!valves!mitral"</code> ordnet die Seite unter <em>mitral</em> ein, einem Untereintrag von <em>valves</em> unter <em>Heart</em>. Eine Ebene kann Inline-Auszeichnungen tragen (<code>term="&#42;Escherichia coli&#42;"</code>); sortiert wird sie ohne sie. Ohne <code>term</code> verwendet <code>:index[text]</code> seinen Text.</td>
+      <td>Der Eintrag, seine Ebenen durch <code>!</code> getrennt: <code>term="Heart!valves!mitral"</code> ordnet die Seite unter <em>mitral</em> ein, einem Untereintrag von <em>valves</em> unter <em>Heart</em>. Eine Ebene kann Inline-Auszeichnungen enthalten (<code>term="&#42;Escherichia coli&#42;"</code>); sortiert wird sie ohne sie. Ohne <code>term</code> verwendet <code>:index[text]</code> seinen Text.</td>
     </tr>
     <tr>
       <td><code>sub</code></td>
@@ -216,40 +216,40 @@ The pulse is taken at the wrist.:index{term="Pulse!radial" main}
     </tr>
     <tr>
       <td><code>sort</code></td>
-      <td>Der Sortierschlüssel der letzten Ebene, wenn sie nach anderen Buchstaben sortiert werden soll: <code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>, <code>term="20th century" sort="twentieth century"</code>. Ein chinesisches Register sortiert und gruppiert nach der Lesung, die die Kollation einem Zeichen gibt. Für ein Zeichen mit mehreren Lesungen, das anders gelesen wird, schreiben Sie den Schlüssel in Zeichen, die nur die gewünschte Lesung haben: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> ordnet 重阳 unter C ein, zwischen 程 und 崔, nicht unter Z. Ein Pinyin-Schlüssel (<code>sort="chong yang"</code>) erreicht ebenfalls C, sortiert aber hinter alle chinesischen Einträge von C, weil die Kollation lateinische Buchstaben hinter chinesische Zeichen setzt (siehe <a href="/de/docs/configuration-notes-references#register">Konfiguration › Register</a>, <code>groupBy</code>).</td>
+      <td>Der Sortierschlüssel der letzten Ebene, wenn sie nach anderen Buchstaben sortiert werden soll: <code>:index[St Kilda]&#123;sort="Saint Kilda"&#125;</code>, <code>term="20th century" sort="twentieth century"</code>. Ein chinesisches Register sortiert und gruppiert nach der Lesung, die die Sortierfunktion (Kollation) einem Zeichen zuweist. Für ein Zeichen mit mehreren Lesungen, das hier anders gelesen werden soll, schreiben Sie den Schlüssel in Zeichen, die nur die gewünschte Lesung haben: <code>:index[重阳]&#123;sort="崇阳"&#125;</code> ordnet 重阳 unter C ein, zwischen 程 und 崔, nicht unter Z. Ein Pinyin-Schlüssel (<code>sort="chong yang"</code>) erreicht ebenfalls C, sortiert aber hinter alle chinesischen Einträge von C, weil die Kollation lateinische Buchstaben hinter chinesische Zeichen setzt (siehe <a href="/de/docs/configuration-notes-references#register">Konfiguration › Register</a>, <code>groupBy</code>).</td>
     </tr>
     <tr>
       <td><code>yomi</code>, <code>reading</code></td>
-      <td>Die Lesung der letzten Ebene in Kana, nach der ein japanisches Register sie sortiert und gruppiert: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> wird unter な eingeordnet, in der な-Reihe. Ohne sie wird eine Marke, deren Text Furigana in Kana trägt, über diese gelesen (<code>:index[&#123;東京|とう|きょう&#125;]</code> sortiert als とうきょう), dann über <code>sort</code>, dann über den Text; ein Eintrag, der weiterhin mit einem Kanji beginnt, wird als <code>indexReadingMissing</code> gemeldet. In einem Register in einer anderen Sprache wirkt <code>yomi</code> wie <code>sort</code>. Schreiben Sie Furigana in einer Marke in der Kurzform: Ein <code>:ruby[…]</code> bräuchte maskierte Klammern. Seit postext 1.16.</td>
+      <td>Die Lesung der letzten Ebene in Kana, nach der ein japanisches Register sie sortiert und gruppiert: <code>:index[夏目漱石]&#123;yomi="なつめそうせき"&#125;</code> wird unter な eingeordnet, in der な-Reihe. Fehlt sie, wird eine Marke, deren Text Furigana in Kana hat, nach diesen gelesen (<code>:index[&#123;東京|とう|きょう&#125;]</code> sortiert als とうきょう), dann nach <code>sort</code>, dann nach dem Text; ein Eintrag, der weiterhin mit einem Kanji beginnt, wird als <code>indexReadingMissing</code> gemeldet. In einem Register in einer anderen Sprache wirkt <code>yomi</code> wie <code>sort</code>. Schreiben Sie Furigana in einer Marke in der Kurzform: Ein <code>:ruby[…]</code> bräuchte maskierte Klammern. Seit postext 1.16.</td>
     </tr>
     <tr>
       <td><code>main</code></td>
-      <td>Ein Schalter: die Hauptbehandlung des Begriffs. Ihre Seitenzahl wird fett gesetzt (<code>index.main</code>). Eine auf beide Arten markierte Seite ist fett.</td>
+      <td>Ein Attribut ohne Wert: die Hauptstelle, an der der Begriff behandelt wird. Ihre Seitenzahl wird fett gesetzt (<code>index.main</code>). Eine auf beide Arten markierte Seite ist fett.</td>
     </tr>
     <tr>
       <td><code>range</code></td>
-      <td><code>range="start"</code> und <code>range="end"</code> mit demselben Begriff begrenzen eine Behandlung, die über mehrere Seiten läuft: Der Eintrag druckt <code>34–37</code>. Ein Anfang ohne Ende oder ein Ende ohne Anfang druckt seine eine Seite und löst <code>indexRangeUnclosed</code> aus.</td>
+      <td><code>range="start"</code> und <code>range="end"</code> mit demselben Begriff begrenzen eine Passage, die über mehrere Seiten läuft: Der Eintrag zeigt <code>34–37</code>. Ein Anfang ohne Ende oder ein Ende ohne Anfang zeigt nur seine eigene Seite und löst <code>indexRangeUnclosed</code> aus.</td>
     </tr>
     <tr>
       <td><code>see</code></td>
-      <td>Ein Querverweis statt einer Seitenzahl: <code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code> druckt <em>Cardiac insufficiency. See Heart failure</em>. Ebenen des Ziels werden durch <code>!</code> getrennt und mit einem Doppelpunkt gedruckt (<em>See Heart: valves</em>). Ein Ziel, das kein Eintrag des Registers ist, löst <code>indexSeeUnknown</code> aus.</td>
+      <td>Ein Querverweis statt einer Seitenzahl: <code>:index&#123;term="Cardiac insufficiency" see="Heart failure"&#125;</code> ergibt <em>Cardiac insufficiency. See Heart failure</em>. Ebenen des Ziels werden durch <code>!</code> getrennt und erscheinen mit einem Doppelpunkt (<em>See Heart: valves</em>). Ein Ziel, das kein Eintrag des Registers ist, löst <code>indexSeeUnknown</code> aus.</td>
     </tr>
     <tr>
       <td><code>seealso</code></td>
-      <td>Ein Querverweis nach den Seitenzahlen des Eintrags: <em>Heart, 12, 40. See also Circulation</em>. Die eigene Seite der Marke zählt wie die jeder anderen Marke, sodass eine Marke eine Passage registrieren und auf einen verwandten Eintrag zeigen kann; eine Marke <code>see</code> fügt keine Seite hinzu.</td>
+      <td>Ein Querverweis nach den Seitenzahlen des Eintrags: <em>Heart, 12, 40. See also Circulation</em>. Die eigene Seite der Marke zählt wie die jeder anderen Marke, sodass eine Marke eine Passage ins Register aufnehmen und zugleich auf einen verwandten Eintrag verweisen kann; eine Marke mit <code>see</code> fügt keine Seite hinzu.</td>
     </tr>
     <tr>
       <td><code>index</code></td>
-      <td>Der Name eines eigenen Registers: <code>index="names"</code> ordnet die Marke in das Register ein, das <code>:::index&#123;index="names"&#125;</code> druckt, nicht in das Hauptregister.</td>
+      <td>Der Name eines eigenen Registers: <code>index="names"</code> ordnet die Marke in das Register ein, das <code>:::index&#123;index="names"&#125;</code> ausgibt, nicht in das Hauptregister.</td>
     </tr>
   </tbody>
 </table>
 
-Eine Marke ohne Begriff (`:index{}` oder `:index{see="…"}` allein) registriert nichts und löst `indexMarkInvalid` aus.
+Eine Marke ohne Begriff (`:index{}` oder `:index{see="…"}` allein) nimmt nichts ins Register auf und löst `indexMarkInvalid` aus.
 
-### Das Register drucken
+### Das Register setzen
 
-`:::index` druckt das Hauptregister dort, wo es steht, und `:::index{index="names"}` ein benanntes. Die Direktive entfaltet sich zu gewöhnlichen Blöcken, einem je Eintrag, die wie Text durch Spalten und Seiten fließen: Unter einer Überschrift, deren [Überschriftenstil](/de/docs/configuration-styles#überschriftenstile) ein zweispaltiges `layout` festlegt, ergibt sie das übliche zweispaltige Register. Ein Klick auf einen Eintrag führt zur Zeile der Direktive.
+`:::index` setzt das Hauptregister dort, wo es steht, und `:::index{index="names"}` ein benanntes Register. Die Direktive wird zu gewöhnlichen Blöcken aufgelöst, einem je Eintrag, die wie Text durch Spalten und Seiten fließen: Unter einer Überschrift, deren [Überschriftenstil](/de/docs/configuration-styles#überschriftenstile) ein zweispaltiges `layout` festlegt, ergibt sie das übliche zweispaltige Register. Ein Klick auf einen Eintrag führt zur Zeile der Direktive.
 
 ```md
 # Index of names {style="index"}
@@ -261,10 +261,10 @@ Eine Marke ohne Begriff (`:index{}` oder `:index{see="…"}` allein) registriert
 :::index
 ```
 
-- **Reihenfolge.** Einträge werden in der alphabetischen Reihenfolge der Dokumentsprache sortiert (`locale` oder `index.locale`): Ein Buchstabe mit Akzent wird bei seinem Grundbuchstaben eingeordnet (*Árbol* unter A), und im Spanischen folgt *ñ* auf *n*, unter einem eigenen Kopf. Einträge, die mit einem Symbol beginnen, kommen zuerst, dann die mit einer Ziffer, dann die Buchstaben. Untereinträge werden unter ihrem Eintrag ebenso sortiert, um eine Stufe je Ebene eingerückt. Ein japanisches Register sortiert nach der Lesung in der Reihenfolge von JIS X 4061 und gruppiert nach Gojūon-Reihen (あ行, か行 …), seine lateinischen Einträge vor den Kana (siehe [Japanischer Satz › Register in Gojūon-Ordnung](/de/docs/japanese-layout#register-in-gojūon-ordnung)).
-- **Gruppen.** Jeder neue Anfangsbuchstabe eröffnet eine Gruppe: einen Buchstabenkopf (`index.groups`) und eine Leerzeile darüber (keine über der ersten Gruppe). Der Kopf wird in einem Block mit dem ersten Eintrag der Gruppe gesetzt, sodass er nie allein eine Spalte beschließt; ein Eintrag ohne eigene Seite (einer, der nur seine Untereinträge anführt) wird aus demselben Grund mit seinem ersten Untereintrag gesetzt.
-- **Seitenzahlen.** Die Bezeichnungen, die die Seiten drucken, römische in der Titelei eingeschlossen. Die Seiten eines Eintrags werden sortiert und jede einmal aufgeführt; aufeinanderfolgende Seiten verbinden sich zu einem Bereich (`12–14`, `index.mergeRanges`), eine Seite innerhalb eines Bereichs desselben Eintrags geht in ihm auf (eine Hauptseite darin macht den Bereich fett), und `index.rangeFormat: 'chicago'` kürzt die zweite Zahl (`234–37`). Fette Seiten (Hauptstellen) bleiben getrennt. Im PDF verlinkt jede Zahl auf ihre Seite.
+- **Reihenfolge.** Einträge werden in der alphabetischen Reihenfolge der Dokumentsprache sortiert (`locale` oder `index.locale`): Ein Buchstabe mit Akzent wird bei seinem Grundbuchstaben eingeordnet (*Árbol* unter A), und im Spanischen folgt *ñ* auf *n*, mit eigenem Buchstabenkopf. Einträge, die mit einem Symbol beginnen, kommen zuerst, dann die mit einer Ziffer, dann die Buchstaben. Untereinträge werden unter ihrem Eintrag ebenso sortiert, um eine Stufe je Ebene eingerückt. Ein japanisches Register sortiert nach der Lesung in der Reihenfolge von JIS X 4061 und gruppiert nach Gojūon-Reihen (あ行, か行 …), seine lateinischen Einträge vor den Kana (siehe [Japanischer Satz › Register in Gojūon-Ordnung](/de/docs/japanese-layout#register-in-gojūon-ordnung)).
+- **Gruppen.** Jeder neue Anfangsbuchstabe eröffnet eine Gruppe: mit einem Buchstabenkopf (`index.groups`) und einer Leerzeile darüber (keine über der ersten Gruppe). Der Kopf wird in einem Block mit dem ersten Eintrag der Gruppe gesetzt, sodass er nie allein am Ende einer Spalte steht; ein Eintrag ohne eigene Seite (einer, der nur seine Untereinträge anführt) wird aus demselben Grund mit seinem ersten Untereintrag gesetzt.
+- **Seitenzahlen.** Die Seitenbezeichnungen, die auf den Seiten stehen, römische in der Titelei eingeschlossen. Die Seiten eines Eintrags werden sortiert und jede einmal aufgeführt; aufeinanderfolgende Seiten verbinden sich zu einem Bereich (`12–14`, `index.mergeRanges`), eine Seite innerhalb eines Bereichs desselben Eintrags geht in ihm auf (eine Hauptseite darin macht den Bereich fett), und `index.rangeFormat: 'chicago'` kürzt die zweite Zahl (`234–37`). Fette Seiten (Hauptstellen) bleiben getrennt. Im PDF verlinkt jede Zahl auf ihre Seite.
 - **Querverweise** schließen den Eintrag ab: *Begriff. See Ziel*, wenn der Eintrag keine Seiten hat, *Begriff, 12. See also Ziel*, wenn er welche hat. Die Bezeichnungen folgen der Dokumentsprache (*See*, *Véase* …) und lassen sich in `index.see` festlegen.
-- **Bücher.** In einem Buch, das Kapitel für Kapitel gesetzt wird (die Sandbox, `buildBundle`), erhält das Kapitel, das das Register druckt, die Marken jedes Kapitels mit ihren Seiten und wird nur dann neu gesetzt, wenn sich eine davon verschiebt. Ein Dokument, das sowohl seine Marken als auch sein Register enthält, wird so lange neu gesetzt, bis sich die Zahlen eingependelt haben, wie bei `:::toc`.
+- **Bücher.** In einem Buch, das Kapitel für Kapitel gesetzt wird (die Sandbox, `buildBundle`), erhält das Kapitel mit dem Register die Marken jedes Kapitels mit ihren Seiten und wird nur dann neu gesetzt, wenn sich eine davon verschiebt. Ein Dokument, das sowohl seine Marken als auch sein Register enthält, wird so lange neu gesetzt, bis sich die Zahlen eingependelt haben, wie bei `:::toc`.
 
 Typografie, Einzüge und Trennzeichen finden Sie unter [Register](/de/docs/configuration-notes-references#register) in der Konfigurationsreferenz.

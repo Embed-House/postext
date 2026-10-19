@@ -3,44 +3,44 @@
 export const metadata = {
   title: 'Pasar un libro a páginas compuestas',
   sidebarTitle: 'Pasar a páginas compuestas',
-  description: 'Cómo pasar un libro cuyas páginas guardan su texto en estilos de encabezado a plantillas de página y Markdown: con el asistente del Sandbox Pasar el texto al Markdown o a mano, y qué comprobar después',
+  description: 'Cómo pasar a plantillas de página y Markdown un libro que guarda el texto de sus páginas en estilos de encabezado, con el asistente Pasar el texto al Markdown del Sandbox o a mano, y qué comprobar después',
   lang: 'es',
   lastUpdated: '2026-10-17',
   readingTime: '8 min',
   order: 43,
-  plainSummary: "Algunos libros hechos con Postext antes de las páginas compuestas guardan las palabras de cada página en los ajustes de diseño y no en el texto. Eso los hace difíciles de editar e imposibles de traducir. Esta página muestra cómo pasar esas palabras al Markdown, donde cada página se convierte en un bloque con su propia plantilla. El Sandbox hace casi todo el trabajo con un botón, y tú revisas el resultado página por página. También explica cómo hacer lo mismo a mano con una sola página.",
+  plainSummary: "Algunos libros hechos con Postext antes de que existieran las páginas compuestas guardan las palabras de cada página en los ajustes de diseño, y no en el texto. Por eso son difíciles de editar e imposibles de traducir. Esta página muestra cómo pasar esas palabras al Markdown, donde cada página se convierte en un bloque con su propia plantilla. El Sandbox hace casi todo el trabajo con un botón, y tú revisas el resultado página por página. También explica cómo hacer lo mismo a mano con una sola página.",
 };
 
 # Pasar un libro a páginas compuestas
 
-**Un libro que guarda el texto de sus páginas en sus estilos puede pasarlo al Markdown, donde se puede editar y traducir.**
+**Si un libro guarda el texto de sus páginas en sus estilos, puedes pasarlo al Markdown, donde se puede editar y traducir.**
 
-Antes de las páginas compuestas, un libro de texto llevado a Postext solía tener cada página como un encabezado oculto cuya cabecera colocaba el texto, las cajas y las imágenes de la página donde las tenía la página impresa. Las páginas salían bien, pero las palabras vivían en la configuración: para corregir una errata había que abrir un estilo, y para traducir había que copiarlo. Una página compuesta hace el mismo trabajo con la forma en una **plantilla de página** y las palabras en el Markdown, como muestra [Libros de páginas compuestas](/es/docs/composed-page-books). Esta página lleva un libro antiguo a esa forma.
+Antes de que existieran las páginas compuestas, los libros de texto que se pasaban a Postext solían representar cada página como un encabezado oculto: su cabecera colocaba el texto, las cajas y las imágenes de la página en el mismo sitio que en la página impresa. Las páginas quedaban bien, pero las palabras estaban en la configuración, así que corregir una errata obligaba a abrir un estilo, y traducir, a copiarlo. Una página compuesta hace lo mismo con la forma en una **plantilla de página** y las palabras en el Markdown, como muestra [Libros de páginas compuestas](/es/docs/composed-page-books). Esta página explica cómo llevar un libro antiguo a esa forma.
 
-Sabes que un libro tiene la forma antigua cuando el panel **Revisión** lista *Texto guardado en la configuración* (`contentInConfig`), una entrada por cada estilo de encabezado que contiene frases, y ofrece **Pasar el texto al Markdown** a la cabeza de la lista.
+Sabrás que un libro tiene la forma antigua si el panel **Revisión** muestra el aviso *Texto guardado en la configuración* (`contentInConfig`), una vez por cada estilo de encabezado que contiene frases, y ofrece **Pasar el texto al Markdown** al principio de la lista.
 
 ## El libro de práctica
 
-Los pasos siguientes usan un libro pequeño hecho para esta página y llamado *Our World, before composed pages*: tres páginas de un libro de texto de tercero de primaria, cada una un estilo de encabezado con una cabecera que coloca una imagen, una ficha, un título y tres bloques de texto, con una banda amarilla bajo una palabra. Las palabras y las imágenes están inventadas. [Descarga el libro](/docs-examples/our-world-before.postext) y, en el Sandbox, abre **Libros**, pulsa **Nuevo** y elige **Abrir un archivo .postext…**.
+Los pasos siguientes usan un libro pequeño preparado para esta página, *Our World, before composed pages*: tres páginas de un libro de texto de tercero de primaria. Cada página es un estilo de encabezado cuya cabecera coloca una imagen, una ficha, un título y tres bloques de texto, y hay una palabra con una banda amarilla debajo. Las palabras y las imágenes son inventadas. [Descarga el libro](/docs-examples/our-world-before.postext) y, en el Sandbox, abre **Libros**, pulsa **Nuevo** y elige **Abrir un archivo .postext…**.
 
 ## Con el asistente
 
-Al importar un libro con texto en sus estilos, el cuadro **Pasar el texto al Markdown** se abre solo. Si lo cerraste, o si el libro ya estaba en tu lista, abre **Revisión** y pulsa el botón de la cabeza de la lista. Nada cambia hasta que pulsas **Pasar el texto**.
+Al importar un libro con texto en sus estilos, el cuadro **Pasar el texto al Markdown** se abre solo. Si lo cerraste, o si el libro ya estaba en tu lista, abre **Revisión** y pulsa el botón que hay al principio de la lista. No cambia nada hasta que pulsas **Pasar el texto**.
 
-1. Lee **Qué cambia**. Para el libro de práctica dice que se pasarán 16 textos (567 letras), que se escribirán 3 páginas compuestas, que los 3 estilos de encabezado pasan a ser 1, que 3 cajas de resaltado se convierten en chips y que los avisos de *Texto guardado en la configuración* bajan de 3 a 0.
-2. Mira las opciones. **Las páginas con marcos en los mismos sitios comparten plantilla** da una plantilla base a las páginas que se maquetan igual, y las demás la extienden. **Una caja de resaltado bajo palabras en negrita se convierte en chip** cambia una caja coloreada dibujada bajo palabras en negrita por un chip del estilo de chip del libro. **Las palabras sobre las imágenes se convierten en sus rótulos** aparece cuando el diseño antiguo ponía palabras cortas sobre una imagen, como los nombres de un mapa: pasan a ser líneas `::label` en anclas de la imagen. Viene desactivada hasta que la activas, porque son las páginas que más cambian.
-3. En **Antes y después** el Sandbox maqueta cada capítulo dos veces y dibuja todas las páginas que cambian, la antigua junto a la nueva. La lista dice qué páginas se ven distintas y por qué, cuando lo sabe. **Marcar en rojo lo que cambia** pinta los píxeles que difieren. En el libro de práctica las tres páginas llevan la marca *Se ve igual*.
+1. Lee **Qué cambia**. Para el libro de práctica indica que se pasarán 16 textos (567 letras), que se escribirán 3 páginas compuestas, que los 3 estilos de encabezado quedarán en 1, que 3 cajas de resaltado se convertirán en chips y que los avisos *Texto guardado en la configuración* bajarán de 3 a 0.
+2. Revisa las opciones. **Las páginas con marcos en los mismos sitios comparten plantilla** da una única plantilla base a las páginas que se maquetan igual, y las demás la extienden. **Una caja de resaltado bajo palabras en negrita se convierte en chip** sustituye la caja de color dibujada bajo unas palabras en negrita por un chip con el estilo de chip del libro. **Las palabras sobre las imágenes se convierten en sus rótulos** aparece cuando el diseño antiguo ponía palabras cortas sobre una imagen, como los nombres de un mapa, y las convierte en líneas `::label` situadas en anclas de la imagen. Está desactivada hasta que la activas, porque esas son las páginas que más cambian.
+3. En **Antes y después**, el Sandbox maqueta cada capítulo dos veces y dibuja todas las páginas que cambian, la antigua junto a la nueva. La lista indica qué páginas se ven distintas y, cuando lo sabe, por qué. **Marcar en rojo lo que cambia** pinta los píxeles que difieren. En el libro de práctica, las tres páginas aparecen marcadas como *Se ve igual*.
 4. Pulsa **Pasar el texto**.
 
 <Screenshot src="/docs-shots/es/move.webp" alt="El cuadro Pasar el texto al Markdown con la lista de lo que cambia y las tres opciones." caption="El cuadro enumera lo que va a hacer antes de hacer nada." />
 
-<Screenshot src="/docs-shots/es/move-before-after.webp" alt="El final del cuadro: la lista de páginas marcadas Se ve igual y, lado a lado, una página antes y después del paso." caption="Cada página se maqueta con el diseño antiguo y con el nuevo, una junto a otra." />
+<Screenshot src="/docs-shots/es/move-before-after.webp" alt="El final del cuadro: la lista de páginas marcadas como Se ve igual y una misma página antes y después del cambio, una al lado de la otra." caption="Cada página se maqueta con el diseño antiguo y con el nuevo, una junto a otra." />
 
-El paso queda en el historial del libro: uno por cada capítulo reescrito y otro para el diseño. **Deshacer**, en el cuadro, lo revierte todo mientras no se haya cambiado nada más, y **Cmd/Ctrl+Z** lo revierte paso a paso. El libro tal como estaba también se conserva hasta que pulsas **Quedarme con el cambio** en el panel Revisión; hasta entonces, **Dejar el libro como estaba** vuelve a escribir el diseño y el texto antiguos.
+El cambio queda registrado en el historial del libro: un paso por cada capítulo reescrito y otro para el diseño. **Deshacer**, en el cuadro, lo revierte todo mientras no hayas cambiado nada más, y **Cmd/Ctrl+Z** lo revierte paso a paso. Además, el libro tal como estaba se conserva hasta que pulsas **Quedarme con el cambio** en el panel Revisión; hasta entonces, **Dejar el libro como estaba** restaura el diseño y el texto antiguos.
 
 ## Qué comprobar después
 
-Abre el panel **Texto**. El capítulo contiene ahora un bloque por cada página:
+Abre el panel **Texto**. Ahora el capítulo tiene un bloque por cada página:
 
 ```md
 ::::page{template="page-base" background="art-p1"}
@@ -57,23 +57,23 @@ Rivers and seas
 
 Repasa el resultado en este orden.
 
-- **Las páginas que se ven distintas.** La lista del cuadro daba los motivos que conocía: la caja, el contorno o la capitular propios de un texto, una página de la que no se conocía el lado, el texto corrido que ahora se compone en el marco de flujo de la plantilla. Compara esas páginas en el lienzo.
-- **Las plantillas.** **Diseño › Página y columnas › Plantillas de página** lista una plantilla por cada diseño de página, y `page-base` para los marcos que las páginas comparten. Una página que no añade nada usa la base tal cual; las demás la extienden. Los nombres se construyen a partir de los antiguos: cambia el de una plantilla por otro que reconozcas (al renombrarla, se renombra en todas las páginas que la nombran).
-- **Los estilos de párrafo.** La fuente, el cuerpo, el peso, el color, la alineación y la interlínea de cada texto se convirtieron en un estilo de párrafo: uno de los del libro cuando coincidía exactamente y, si no, uno nuevo con el nombre de la fuente y el cuerpo (`nunito-11`). Mira **Diseño › Texto** y renombra o fusiona los nuevos.
-- **Los encabezados.** Los estilos de encabezado que salieron iguales se fusionaron y los encabezados se renombraron; los encabezados ocultos que solo cambiaban la cabecera ya no están. Si el libro tiene un índice, revísalo.
-- **Lo que queda en la configuración.** La lista *Queda en la configuración* del cuadro nombra un texto que mezcla palabras con marcadores (`Page {pageNumber}`), un texto colgado de otro elemento y el texto del diseño de un encabezado. No son contenido de una página, y los avisos de *Texto guardado en la configuración* que quedan se refieren a ellos.
-- **Los rótulos.** Si activaste *Las palabras sobre las imágenes se convierten en sus rótulos*, mira cada mapa o diagrama: los rótulos se componen de nuevo con las fuentes del libro, así que su tamaño y su lugar pueden diferir de los de las páginas antiguas.
-- **El panel Revisión.** Los marcos cuyo texto ya no cabe aparecen como *El texto no cabe en su marco*, con los arreglos que describe [Libros de páginas compuestas](/es/docs/composed-page-books#6-revisa-lo-que-no-cabe). Un libro hecho a partir de una página impresa va justo, y las primeras palabras algo más largas necesitan un arreglo.
+- **Las páginas que se ven distintas.** La lista del cuadro indicaba los motivos que conocía: la caja, el contorno o la capitular propios de un texto; una página de la que no se sabía en qué lado iba; el texto corrido que ahora se compone en el marco de flujo de la plantilla. Compara esas páginas en el canvas.
+- **Las plantillas.** **Diseño › Página y columnas › Plantillas de página** muestra una plantilla por cada diseño de página, y `page-base` para los marcos que comparten las páginas. Una página que no añade nada usa la base tal cual; las demás la extienden. Los nombres se forman a partir de los antiguos: cambia el de cada plantilla por otro que reconozcas (todas las páginas que la usan adoptan el nombre nuevo).
+- **Los estilos de párrafo.** La fuente, el cuerpo, el peso, el color, la alineación y el interlineado de cada texto se han convertido en un estilo de párrafo: uno de los que ya tenía el libro, si coincidía exactamente, o uno nuevo con el nombre de la fuente y el cuerpo (`nunito-11`). Revisa **Diseño › Texto** y cambia el nombre de los nuevos o fusiónalos.
+- **Los encabezados.** Los estilos de encabezado que han quedado iguales se han fusionado, y los encabezados se han renombrado; los encabezados ocultos que solo servían para cambiar la cabecera han desaparecido. Si el libro tiene índice, revísalo.
+- **Lo que queda en la configuración.** La lista *Queda en la configuración* del cuadro enumera los textos que siguen allí: un texto que mezcla palabras con marcadores de posición (`Page {pageNumber}`), un texto colgado de otro elemento y el texto del diseño de un encabezado. No forman parte del contenido de ninguna página, y los avisos *Texto guardado en la configuración* que quedan se refieren a ellos.
+- **Los rótulos.** Si activaste *Las palabras sobre las imágenes se convierten en sus rótulos*, revisa cada mapa o diagrama: los rótulos se vuelven a componer con las fuentes del libro, así que su tamaño y su posición pueden no coincidir con los de las páginas antiguas.
+- **El panel Revisión.** Los marcos cuyo texto ya no cabe aparecen con el aviso *El texto no cabe en su marco*, junto con los arreglos que describe [Libros de páginas compuestas](/es/docs/composed-page-books#6-revisa-lo-que-no-cabe). Un libro copiado de páginas impresas va muy justo, así que el primer texto que se alargue un poco necesitará un arreglo.
 
-Cuando el resultado te convenza, pulsa **Quedarme con el cambio**. A partir de ahí el libro se puede traducir como cualquier libro de páginas compuestas.
+Cuando el resultado te convenza, pulsa **Quedarme con el cambio**. A partir de ese momento, el libro se puede traducir como cualquier otro libro de páginas compuestas.
 
 ## A mano
 
-Un libro con pocas páginas puede pasarse sin el asistente, página a página.
+Un libro de pocas páginas se puede pasar sin el asistente, página a página.
 
-1. En modo **Diseño**, crea la plantilla de página. Dibuja un marco para cada texto sobre una página compuesta del libro, o sigue los pasos de [Libros de páginas compuestas](/es/docs/composed-page-books#2-crea-una-plantilla-de-página). Da a cada marco el estilo de caja que dibuja su aspecto y, como **Alto mínimo**, la altura que tenía el texto antiguo.
-2. En modo **Contenido**, escribe la página como un bloque `::::page{template="…"}` y pasa cada texto de la cabecera antigua a un `:::frame{slot="…"}` del bloque nuevo. Conserva las negritas y las cursivas, y los saltos de línea del texto antiguo con una barra invertida al final de la línea.
+1. En el modo **Diseño**, crea la plantilla de página. Dibuja un marco para cada texto sobre una página compuesta del libro, o sigue los pasos de [Libros de páginas compuestas](/es/docs/composed-page-books#2-crea-una-plantilla-de-página). Da a cada marco el estilo de recuadro que le da su aspecto y, como **Alto mínimo**, la altura que tenía el texto antiguo.
+2. En el modo **Contenido**, escribe la página como un bloque `::::page{template="…"}` y pasa cada texto de la cabecera antigua a un `:::frame{slot="…"}` del bloque nuevo. Conserva las negritas y las cursivas, y también los saltos de línea del texto antiguo, con una barra invertida al final de cada línea.
 3. Borra los elementos de texto del estilo de encabezado, o el estilo entero si nada más lo necesita. El aviso *Texto guardado en la configuración* de ese estilo desaparece.
 4. Compara la página con la antigua y abre **Revisión**.
 
-El mismo paso está disponible desde código como `moveTextToMarkdown`, que devuelve la configuración nueva, los capítulos y el informe que muestra el cuadro; véase [Páginas compuestas › Migrar un libro con el texto en sus estilos](/es/docs/composed-pages#migrar-un-libro-con-el-texto-en-sus-estilos). Todo lo que hace el cuadro está descrito en [Sandbox: las páginas compuestas › Pasar el texto al Markdown](/es/docs/sandbox-composed-pages#pasar-el-texto-al-markdown).
+La misma migración está disponible desde el código con `moveTextToMarkdown`, que devuelve la configuración nueva, los capítulos y el informe que muestra el cuadro (véase [Páginas compuestas › Migrar un libro con el texto en sus estilos](/es/docs/composed-pages#migrar-un-libro-con-el-texto-en-sus-estilos)). Todo lo que hace el cuadro se describe en [Sandbox: las páginas compuestas › Pasar el texto al Markdown](/es/docs/sandbox-composed-pages#pasar-el-texto-al-markdown).

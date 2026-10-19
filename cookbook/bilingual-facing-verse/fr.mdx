@@ -1,6 +1,6 @@
 ---
 title: "Traduction en regard, strophe par strophe"
-summary: "Chaque poème est un encadré sans cadre à deux colonnes : un saut de colonne fixe ouvre l’anglais sur son titre, et :::space aligne les strophes."
+summary: "Chaque poème est un encadré sans bordure à deux colonnes : un saut de colonne fixe ouvre l’anglais sur son titre, et :::space aligne les strophes."
 plain: "Un petit recueil de poèmes avec l’espagnol d’un côté et la traduction anglaise à côté. Chaque groupe de vers de la traduction commence à la hauteur de l’original."
 description: "Une plaquette bilingue composée avec Postext : chaque poème espagnol fait face à sa version anglaise dans un encadré à deux colonnes, saut fixe et :::space."
 question: "Comment placer un poème et sa traduction côte à côte, sur la même ligne, strophe par strophe ?"
@@ -10,19 +10,19 @@ pageNotes: { "3": "L’aquarelle des marais salants descend à 84 mm dans la pag
 
 ## Ce que vous allez composer
 
-Une plaquette bilingue de cinq poèmes sur un marais salant du sud de l’Espagne, en 156 × 234 mm, avec l’espagnol à gauche et la version anglaise du poète lui-même à droite, vers pour vers. Une page de titre ornée d’un flamant et la note de l’auteur viennent d’abord ; les poèmes s’ouvrent sous une aquarelle de bassins roses, de tas de sel et de flamants au lever du soleil. Chaque poème tient dans un encadré sans cadre, sous un numéro garance en Castoro Titling, l’espagnol dans une colonne et l’anglais dans l’autre. L’anglais commence sur la même ligne que l’espagnol, et chaque strophe commence à la hauteur de son original. Quand un vers anglais est trop long pour sa colonne, la fin est rejetée à la ligne avec un retrait de 2 em, et la strophe espagnole d’en face se termine par une ligne blanche de plus.
+Une plaquette bilingue de cinq poèmes sur un marais salant du sud de l’Espagne, en 156 × 234 mm, avec l’espagnol à gauche et la version anglaise du poète lui-même à droite, vers pour vers. Une page de titre ornée d’un flamant et la note de l’auteur viennent d’abord ; les poèmes s’ouvrent sous une aquarelle de bassins roses, de tas de sel et de flamants au lever du soleil. Chaque poème tient dans un encadré sans bordure, sous un numéro garance en Castoro Titling, l’espagnol dans une colonne et l’anglais dans l’autre. L’anglais commence sur la même ligne que l’espagnol, et chaque strophe commence à la hauteur de son original. Quand un vers anglais est trop long pour sa colonne, la fin est rejetée à la ligne avec un retrait de 2 em, et la strophe espagnole d’en face se termine par une ligne blanche de plus.
 
 ## Préparation
 
 ### 1 · Un poème est un encadré avec un saut de colonne fixe
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque poème est un encadré autour d’un groupe `:::columns` ; son style supprime le fond et la marge intérieure et imprime le `title` de la clôture, le numéro ([`:::columns`](/fr/docs/document-format-directives#columns)). Sans `breaks`, le groupe se coupe là où ses deux colonnes sortent de même hauteur. Les deux moitiés de ces poèmes ont la même hauteur : la coupure tombe donc de toute façon sur le titre anglais. Allongez deux vers de *The Rake* jusqu’à ce qu’ils passent à la ligne, et la coupure descend d’un bloc et laisse THE RAKE au pied de la colonne espagnole. `breaks="5"` désigne le bloc qui ouvre la seconde colonne : le titre anglais la coiffe ainsi, quelle que soit la hauteur des deux moitiés.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Chaque poème est un encadré autour d’un groupe `:::columns` ; son style supprime le fond et la marge intérieure et imprime le `title` du délimiteur, le numéro ([`:::columns`](/fr/docs/document-format-directives#columns)). Sans `breaks`, le groupe se coupe là où ses deux colonnes sortent de même hauteur. Les deux moitiés de ces poèmes ont la même hauteur : la coupure tombe donc de toute façon sur le titre anglais. Allongez deux vers de *The Rake* jusqu’à ce qu’ils passent à la ligne, et la coupure descend d’un bloc et laisse THE RAKE au pied de la colonne espagnole. `breaks="5"` désigne le bloc qui ouvre la seconde colonne : le titre anglais la coiffe ainsi, quelle que soit la hauteur des deux moitiés.
 
 ### 2 · Un bloc :::verse par colonne, une ligne blanche par changement de strophe
 
 <Excerpt region="verse" />
 
-Chaque moitié d’un poème est un bloc `:::verse` : un vers par ligne du Markdown, en drapeau et jamais coupé, et une ligne blanche entre les strophes, qui laisse une ligne blanche dans la colonne ([`:::verse`](/fr/docs/document-format-directives#verse)). Chaque strophe est un bloc : `breaks` compte donc les strophes, pas les vers. Le vers anglais *each one standing on its own reflection.* est trop long pour sa colonne de 55 mm et se rejette à la ligne avec un retrait de 2 em ; la moitié espagnole ferme son bloc après la strophe d’en face et place un `:::space{lines=2}` avant la suivante, si bien que les strophes suivantes commencent sur la même ligne. Un `:::space` n’est pas un bloc, et `breaks` ne le compte pas ([`:::space`](/fr/docs/document-format-directives#space)).
+Chaque moitié d’un poème est un bloc `:::verse` : un vers par ligne du Markdown, en drapeau et jamais coupé, et une ligne blanche entre les strophes, qui laisse une ligne blanche dans la colonne ([`:::verse`](/fr/docs/document-format-directives#verse)). Chaque strophe est un bloc : `breaks` compte donc les strophes, pas les vers. Le vers anglais *each one standing on its own reflection.* est trop long pour sa colonne de 55 mm et se rejette à la ligne avec un retrait de 2 em ; la moitié espagnole ferme son bloc après la strophe d’en face et place un `:::space{lines=2}` avant la suivante : les strophes suivantes commencent donc sur la même ligne. Un `:::space` n’est pas un bloc, et `breaks` ne le compte pas ([`:::space`](/fr/docs/document-format-directives#space)).
 
 <PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="Le poème I, page 3 : reflection. est rejeté à la ligne dans l’anglais, et la strophe espagnole se termine par deux lignes blanches au lieu d’une." />
 
@@ -30,19 +30,19 @@ Chaque moitié d’un poème est un bloc `:::verse` : un vers par ligne du Mark
 
 <Excerpt region="note" />
 
-`locale` choisit les motifs de césure. Avec `'es'`, la note espagnole coupe *ori-ginal* et *Duna-liella* ; avec les motifs anglais, les deux mots passent entiers à la ligne suivante, et seul *arras-traba* se coupe dans les deux cas ([langues prises en charge](/fr/docs/justification#langues-prises-en-charge)). Les espaces-mots peuvent se réduire à 0,8 et s’étirer jusqu’à 1,35 fois leur largeur normale, et aucune ligne justifiée d’aucune des deux notes ne dépasse cet étirement. Le titre de la note est une maquette dont l’unique élément, le titre, se place 36 mm sous le haut du bloc de texte : la note commence donc à 73 mm du bord supérieur de sa page.
+`locale` choisit les motifs de césure. Avec `'es'`, la note espagnole coupe *ori-ginal* et *Duna-liella* ; avec les motifs anglais, les deux mots passent entiers à la ligne suivante, et seul *arras-traba* se coupe dans les deux cas ([langues prises en charge](/fr/docs/justification#langues-prises-en-charge)). Les espaces-mots peuvent se réduire à 0,8 et s’étirer jusqu’à 1,35 fois leur largeur normale, et aucune ligne justifiée d’aucune des deux notes ne dépasse cet étirement. Le titre de la note est une maquette dont l’unique élément, le titre, se place 36 mm sous le haut de la zone de contenu : la note commence donc à 73 mm du bord supérieur de sa page.
 
 ### 4 · La page de titre et l’aquarelle sont des titres
 
 <Excerpt region="front" />
 
-Chacune est un titre de niveau 1 avec son propre style ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)) : la maquette de la page de titre prend `{author}` dans le frontmatter, et les deux maquettes prennent `{attr.other}` dans les attributs du titre. L’aquarelle est ancrée au bord supérieur de la page, au-dessus du bloc de texte, et le titre réserve l’espace jusqu’à son pied, à 84 mm dans la page. Le style règle `marginBottom: pt(0)` : le blanc sous l’image est donc la marge supérieure de deux lignes du poème lui-même, et le poème I commence sur la première ligne de la grille située au moins deux lignes sous l’image.
+Chacune est un titre de niveau 1 avec son propre style ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)) : la maquette de la page de titre prend `{author}` dans l’en-tête YAML, et les deux maquettes prennent `{attr.other}` dans les attributs du titre. L’aquarelle est ancrée au bord supérieur de la page, au-dessus de la zone de contenu, et le titre réserve l’espace jusqu’à son pied, à 84 mm dans la page. Le style règle `marginBottom: pt(0)` : le blanc sous l’image est donc la marge supérieure de deux lignes du poème lui-même, et le poème I commence sur la première ligne de la grille située au moins deux lignes sous l’image.
 
 ### 5 · Les titres courants nomment les deux langues
 
 <Excerpt region="heads" />
 
-Le verso porte le titre espagnol et le recto le titre anglais, dans l’ordre des colonnes. `pages: 'body'` les tient à l’écart des trois pages qui s’ouvrent sur un titre. La note et l’aquarelle reçoivent à la place un folio en pied, et le style de la page de titre vide son en-tête et son pied de page ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)).
+Le verso affiche le titre espagnol et le recto le titre anglais, dans l’ordre des colonnes. `pages: 'body'` les tient à l’écart des trois pages qui s’ouvrent sur un titre. La note et l’aquarelle reçoivent à la place un folio en pied, et le style de la page de titre vide son en-tête et son pied de page ([éléments de texte](/fr/docs/configuration-headers-footers#éléments-de-texte)).
 
 ## Variantes
 

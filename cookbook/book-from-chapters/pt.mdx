@@ -5,7 +5,7 @@ plain: "Um pequeno manual de apicultura escrito em arquivos separados, um por ca
 description: "Manual de apicultura em quatro estações, composto com buildBundle a partir de um arquivo Markdown por capítulo; o sumário dá o fólio em que cada capítulo abre."
 question: "Como faço para diagramar um livro capítulo a capítulo sem quebrar a numeração de páginas, capítulos e figuras?"
 aliases: ["livro com vários capítulos", "capítulos em arquivos separados", "numeração de páginas contínua", "numeração corrida", "capítulo em página ímpar", "sumário do livro", "PDF do livro inteiro", "buildBundle"]
-pageNotes: { "6": "A página 6 fica em branco: Winter ocupa uma página só, então Spring abre na página 7, a ímpar seguinte, e a página par entre as duas não tem cabeço nem fólio.", "11": "A página 11 é a única página ímpar de texto corrido do livro: o cabeço diz SUMMER, o título do capítulo, ao lado do fólio." }
+pageNotes: { "6": "A página 6 fica em branco: Winter ocupa uma página só, por isso Spring abre na página 7, a ímpar seguinte, e a página par entre as duas não tem cabeço nem fólio.", "11": "A página 11 é a única página ímpar de texto corrido do livro: o cabeço diz SUMMER, o título do capítulo, ao lado do fólio." }
 ---
 
 ## O que você vai compor
@@ -18,11 +18,11 @@ pageNotes: { "6": "A página 6 fica em branco: Winter ocupa uma página só, ent
 
 <Excerpt region="chapters" />
 
-Cada estação é um documento próprio, então você pode reescrever um capítulo sem abrir os outros. O primeiro documento tem o frontmatter, a capa e o sumário. Os metadados dele são os do livro: `{title}` e `{author}` os imprimem em todos os capítulos, e o PDF tira dele o título e a autoria.
+Cada estação é um documento próprio, por isso você pode reescrever um capítulo sem abrir os outros. O primeiro documento tem o front matter, a capa e o sumário. Os metadados dele são os do livro: `{title}` e `{author}` os imprimem em todos os capítulos, e o PDF tira dele o título e a autoria.
 
 ### 2 · Regras que passam de um documento para outro
 
-O código deste passo está [na resposta curta](#a-resposta-curta), mais acima. [`buildBundle`](/pt/docs/configuration-bundles#diagramar-e-renderizar-um-pacote) diagrama os documentos em ordem com uma só configuração e passa a cada um uma `continuation` com o que veio antes: o número de páginas físicas já compostas, para que a paridade, as margens espelhadas e os cabeços de páginas pares e ímpares continuem; o fólio seguinte; e os contadores de capítulos e figuras. Com `parity: 'odd'`, um capítulo que vem depois de outro terminado numa página ímpar começa com uma página par em branco, e essa página pertence ao próprio documento dele ([quebra antes](/pt/docs/configuration-headings#quebra-antes)). A capa e o sumário são [estilos de título](/pt/docs/configuration-styles#estilos-de-título) com `numbered: false`, e por isso Autumn continua sendo o capítulo 1. Os dois herdam `span: 'page'` do nível de capítulo, o que põe cada um numa página só dele sem `:::pagebreak`. O estilo do sumário desliga a paridade herdada, que de outro modo deixaria a página 2 em branco.
+O código deste passo está [na resposta curta](#a-resposta-curta), mais acima. [`buildBundle`](/pt/docs/configuration-bundles#diagramar-e-renderizar-um-pacote) diagrama os documentos em ordem com uma só configuração e passa a cada um uma `continuation` com o que veio antes: o número de páginas físicas já compostas, para que a paridade, as margens espelhadas e os cabeços de páginas pares e ímpares continuem; o fólio seguinte; e os contadores de capítulos e figuras. Com `parity: 'odd'`, um capítulo que vem depois de outro terminado numa página ímpar começa com uma página par em branco, e essa página pertence ao próprio documento dele ([quebra antes](/pt/docs/configuration-headings#quebra-antes)). A capa e o sumário são [estilos de título](/pt/docs/configuration-styles#estilos-de-título) com `numbered: false`, e por isso Autumn continua sendo o capítulo 1. Os dois herdam `span: 'page'` do nível de capítulo, o que põe cada um numa página só dele sem `:::pagebreak`. O estilo do sumário desativa a paridade herdada, que de outro modo deixaria a página 2 em branco.
 
 ### 3 · Sumário do livro inteiro
 
@@ -40,13 +40,13 @@ O código deste passo está [na resposta curta](#a-resposta-curta), mais acima. 
 
 <Excerpt region="running-heads" />
 
-Só o primeiro documento tem frontmatter, e `buildBundle` o entrega a todos os capítulos, então o cabeço das páginas pares imprime o `{title}` do livro nos cinco documentos. `{chapterTitle}` e `{pageNumber}` são resolvidos página a página e saem em todos os documentos; a página 11, a única ímpar de texto corrido, traz SUMMER ao lado do fólio. `pages: 'body'` tira os cabeços das aberturas e da página em branco.
+Só o primeiro documento tem front matter, e `buildBundle` o entrega a todos os capítulos, de modo que o cabeço das páginas pares imprime o `{title}` do livro nos cinco documentos. `{chapterTitle}` e `{pageNumber}` são resolvidos página a página e saem em todos os documentos; a página 11, a única ímpar de texto corrido, traz SUMMER ao lado do fólio. `pages: 'body'` tira os cabeços das aberturas e da página em branco.
 
 ### 6 · Páginas duplas na tela, um PDF para o livro
 
 <Excerpt region="build" />
 
-`buildBundle` devolve uma lista de documentos, um por arquivo Markdown. `showPages` emparelha as páginas por `pageIndexOffset + page.index`, então a página 1 fica sozinha como ímpar, e as páginas 2 e 3, 4 e 5 e assim por diante ficam frente a frente. `renderToPdf` recebe a mesma lista e grava um único arquivo com os rótulos de página do livro e um marcador para cada capítulo e seção.
+`buildBundle` devolve uma lista de documentos, um por arquivo Markdown. `showPages` emparelha as páginas por `pageIndexOffset + page.index`, por isso a página 1 fica sozinha como ímpar, e as páginas 2 e 3, 4 e 5 e assim por diante ficam frente a frente. `renderToPdf` recebe a mesma lista e grava um único arquivo com os rótulos de página do livro e um marcador para cada capítulo e seção.
 
 ## Variações
 
@@ -74,5 +74,5 @@ Um contador de figuras que nunca reinicia numera os quatro quadros de 1 a 4 atra
 
 ## Erros comuns
 
-- No alto de uma página, e sob uma figura que encabeça a página, um intertítulo perde o `marginTop`. Um intertítulo que tira o espaço da margem fica a uma linha do texto nesses dois lugares e a uma linha e meia em todos os outros. Aqui o espaço está na própria linha do intertítulo: `lineHeight` é uma linha e meia e a margem, uma linha, de modo que todo intertítulo do livro fica à mesma distância do seu texto.
+- No alto de uma página, e sob uma figura que encabeça a página, um intertítulo perde o `marginTop`. Um intertítulo que tira o espaço da margem fica a uma linha do texto nesses dois lugares e a uma linha e meia em todos os outros. Aqui o espaço está na própria linha do intertítulo: `lineHeight` é uma linha e meia e a margem, uma linha, de modo que todo intertítulo do livro fica à mesma distância do texto.
 - Por padrão, uma linha justificada pode esticar os espaços até o dobro da largura, e o algoritmo de quebra prefere isso a um hífen. Com esse padrão, a edição inglesa não tinha hífen nenhum, e linhas com espaços de quase o dobro da largura normal ficavam ao lado de linhas apertadas a 0,7. `maxWordSpacing: 1.7` faz o algoritmo hifenizar. Depois de mudar esse valor, confira a última linha de cada parágrafo: um limite mais apertado pode deixar uma palavra sozinha ali, e trocar umas poucas palavras do parágrafo resolve.

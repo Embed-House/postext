@@ -18,13 +18,13 @@ Las dos caras de un folleto DL de visita, de 99 × 210 mm, para un molino de mar
 
 <Excerpt region="answer" highlight="14-17" />
 
-`createBundle` comprime en un zip el capítulo, la configuración, los recursos y todos los archivos que nombran, y `openBundle` no recibe más que esos bytes. Las fuentes salen de `loadBundleFonts`, los dibujos de `registerBundleImages` y el diseño de `bundle.config`. Una fuente que no esté en `files` sale con la fuente de reserva del navegador, y un dibujo que falte se descarta con un aviso y su remisión se imprime como (?). Dentro del zip, cada `fileId` pasa a ser una ruta (`mill.svg` es ahora `resources/mill.svg`), y los recursos y el `customFonts` que devuelve `openBundle` ya usan los nombres nuevos ([abrir un paquete](/es/docs/configuration-bundles#abrir-un-paquete)).
+`createBundle` comprime en un zip el capítulo, la configuración, los recursos y todos los archivos que citan, y `openBundle` no recibe más que esos bytes. Las fuentes salen de `loadBundleFonts`, los dibujos de `registerBundleImages` y el diseño de `bundle.config`. Una fuente que no esté en `files` sale con la fuente de reserva del navegador, y un dibujo que falte se descarta con un aviso y su remisión se imprime como (?). Dentro del zip, cada `fileId` pasa a ser una ruta (`mill.svg` es ahora `resources/mill.svg`), y los recursos y el `customFonts` que devuelve `openBundle` ya usan los nombres nuevos ([abrir un paquete](/es/docs/configuration-bundles#abrir-un-paquete)).
 
 ### 2 · Mete las fuentes en el archivo
 
 <Excerpt region="faces" />
 
-Un paquete lleva una fuente cuando `customFonts` la nombra y `files` guarda sus bytes con el `fileId` de la variante; `createBundle` guarda la DM Sans 400 como `fonts/dm-sans-400-normal.woff2`. El pen descarga de Fontsource los siete woff2, pero no registra ninguno: `loadBundleFonts` añade a `document.fonts` las copias del paquete antes de que `buildBundle` mida una sola línea, y el PDF saca sus fuentes de esos mismos siete archivos.
+Un paquete lleva una fuente cuando `customFonts` la declara y `files` guarda sus bytes con el `fileId` de la variante; `createBundle` guarda la DM Sans 400 como `fonts/dm-sans-400-normal.woff2`. El pen descarga de Fontsource los siete woff2, pero no registra ninguno: `loadBundleFonts` añade a `document.fonts` las copias del paquete antes de que `buildBundle` mida una sola línea, y el PDF saca sus fuentes de esos mismos siete archivos.
 
 ### 3 · Nombra cada archivo por su fileId
 
@@ -48,7 +48,7 @@ El enlace ofrece los mismos `bytes` desde los que se compusieron las páginas: 1
 
 <Excerpt region="cover" />
 
-La portada es el diseño del título de cubierta: el dibujo anclado a la página a tamaño completo, el texto del título con `{titleText}`, el antetítulo, la entradilla y la línea de datos, que salen de sus atributos, y un texto con caja para la pestaña del idioma. El nivel 1 de los títulos lleva `span: 'page'`, así que el dibujo llega al borde inferior del papel. Si se queda en la columna, el diseño se corta al pie de la caja de texto: el dibujo acabaría 13 mm antes del borde inferior.
+La portada es el diseño del encabezado de cubierta: el dibujo anclado a la página a tamaño completo, el texto del título con `{titleText}`, el antetítulo, la entradilla y la línea de datos, que salen de sus atributos, y un texto con caja para la pestaña del idioma. El nivel 1 de los títulos lleva `span: 'page'`, así que el dibujo llega al borde inferior del papel. Si se queda en la columna, el diseño se corta al pie de la caja de texto: el dibujo acabaría 13 mm antes del borde inferior.
 
 ## Variantes
 
