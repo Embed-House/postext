@@ -71,7 +71,7 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
 interface GroupCardProps {
   /** Where the card's fold is kept (#1031). */
   cardList: string;
-  group: { name: string; kind: 'stack' | 'row'; frames: string[]; gap: Dimension; align: string; placement?: ElementPlacement };
+  group: { name: string; kind: 'stack' | 'row' | 'grid'; frames: string[]; gap: Dimension; align: string; placement?: ElementPlacement };
   entry: FrameGroupConfig | undefined;
   frames: string[];
   /** What the group's own box may hang from: the frames and the other
