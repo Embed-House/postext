@@ -47,7 +47,7 @@ const area = {
   ],
   groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
     repeat: { frames: ['servicio'] }, // rowAlign 'stretch': a row's boxes are one height
-    placement: { ...at('#concejalia', 'below', 0, 9), size: { width: 'fill', height: 'fill' } } }],
+    placement: { ...at('#concejalia', 'below', 0, 7), size: { width: 'fill', height: 'fill' } } }],
   decoration: { elements: [
     // From the area down to each of its services: a tree with a bar over the row.
     line({ id: 'rama', routing: 'tree', from: { to: '#concejalia', side: 'bottom' },
@@ -67,7 +67,7 @@ const chart = {
   ],
   groups: [{ name: 'cabeza', kind: 'stack', gap: mm(6),
     frames: ['titulo', 'entradilla', 'alcaldia'] },
-    { name: 'areas', modules: true, gap: mm(8), placement: { ...at('#alcaldia', 'below', SPINE, 9),
+    { name: 'areas', modules: true, gap: mm(6), placement: { ...at('#alcaldia', 'below', SPINE, 9),
       size: { width: mm(W - SPINE), height: 'fill' } } }],
 };
 // #endregion

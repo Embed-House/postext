@@ -1,73 +1,60 @@
 ---
-# Jeder Wert steht in Anführungszeichen. Grenzen: title ≤ 60 Zeichen (ein Ergebnis, keine Funktionsliste);
-# summary 60–160 (die Antwort in einem Satz, mit dem Mechanismus beim Namen); description 120–160.
-title: "Eine Buchseite mit Kolumnentiteln"
-summary: "Gespiegelte Ränder, ein abgesenkter Kapitelauftakt und Kolumnentitel, die wissen, auf welcher Seite der Doppelseite sie stehen, auf einer Romanseite."
-description: "Eine Romanseite in Postext: gespiegelte Ränder, ein um 52 mm abgesenkter Auftakt, Kolumnentitel nach Parität und Pagina am Fuß der Auftakte, mit Code."
-# plain: "…"           40–240 Zeichen: die Zusammenfassung in Alltagssprache, ohne Fachjargon (erscheint als „Kurz gesagt“)
-# question: "…"        optional, ≤ 110 Zeichen: formuliert answers[0] für diese Seite neu
-# pageNotes: { "3": "…" }  optional: zusätzlicher Alternativtext für eine erfasste Seite
-aliases: ["Buchseite", "Kolumnentitel", "lebender Kolumnentitel", "Kapitelauftakt", "running heads"]
+title: "Ein Organigramm und ein Fotoraster aus Modulen"
+summary: "Ein Bürgerwegweiser aus Modulen: ein Organigramm, dessen Linien die Vorlage zieht, und Fotoraster, die je Gebäude eine Karte wiederholen."
+plain: "Zwei Seiten aus dem Wegweiser einer Gemeinde: wer wofür zuständig ist, als Schaubild aus Kästen mit Linien, und wo jede Stelle zu finden ist, in Bildreihen. Die Seiten bestehen aus wenigen Bausteinen; das Markdown sagt, wie viele."
+description: "Ein Organigramm und ein Fotoraster mit Postext: Modulvorlagen, die eine Seite stapelt, Verbinder von der Gemeindespitze zu jedem Amt, Raster aus Fotokarten."
+question: "Wie baue ich ein Organigramm und ein Fotoraster aus Modulen, deren Linien die Vorlage zieht?"
+aliases: ["Organigramm", "Modul", "wiederverwendbarer Baustein", "Fotoraster", "Verbinder", "Bürgerwegweiser", "Behördenwegweiser", "Baumdiagramm", "org chart", "organigrama"]
+pageNotes: { "1": "So ist Ihre Gemeinde aufgebaut: ein Serifentitel, ein Vorspann, ein roter Kasten für Bürgermeisterin und Gemeinderat und darunter vier grüne Kästen für die Ämter, jedes mit seinen Stellen in hellen Kästen darunter; eine grüne Linie läuft vom Kasten der Gemeindespitze nach unten, mit einem Pfeil in jedes Amt, und ein Baum verbindet jedes Amt mit seinen Stellen.", "2": "So finden Sie uns: zwei blassgrüne Tafeln, Kultur und Senioren sowie Sport und Handel, jede mit drei Aquarellen in einer Reihe und darunter Name, Adresse und Öffnungszeiten; ein Hinweiskasten für das Bürgerbüro, dessen Reiter aus der Kontur wächst; ein Impressum am Fuß." }
 ---
 
 ## Was Sie setzen
 
-{/*
-  60–150 Wörter, in der Stimme eines Art Directors: die Publikation, die Gestaltungsidee und warum
-  sie anderswo schwer zu erreichen ist. Nennen Sie die Publikation („eine Taschenbuchausgabe von …“,
-  „die Juni-Ausgabe von …“). Keine Funktionslisten: Der Abschnitt Zutaten wird aus recipe.json
-  erzeugt. Die Seite fügt die Liste „Dieses Rezept beantwortet“ (aus answers) von selbst unter
-  diesem Abschnitt ein.
-*/}
-
-Die ersten Seiten eines Paperbacks: Ein Kapitel beginnt auf einer rechten Seite ein Drittel unterhalb des Kopfes, unter einer kleinen gesperrten Dachzeile und einer kurzen Linie in der einzigen Akzentfarbe des Buches, danach folgt Seite um Seite Blocksatz, links der Titel des Buches, rechts das Kapitel. Nichts auf der Seite drängt sich vor. Das Handwerk steckt in der Geometrie: Ränder, die sich über die Doppelseite spiegeln, Kolumnentitel, die wissen, auf welcher Seite sie stehen, und eine Pagina, die auf dem Auftakt an den Fuß wandert, wo ein Kolumnentitel dem Titel zu nahe käme.
+Eine Doppelseite aus dem Bürgerwegweiser von Valdeloma, einer erfundenen Gemeinde mit 8.400 Einwohnern. Die linke Seite ist das Organigramm der Gemeinde: Bürgermeisteramt und Gemeinderat in einem roten Kasten, vier Ämter in Grün und unter jedem Amt seine Stellen in hellen Kästen, verbunden durch grüne Linien mit einem Punkt oder Pfeil am Ende. Die rechte Seite zeigt, wo die Stellen sind: zwei Tafeln mit je drei Aquarellen, unter jedem Bild Name, Adresse und Öffnungszeiten, dazu ein Kasten für das Bürgerbüro. Nichts ist von Hand gezeichnet. Die Vorlage enthält drei Module (ein Amt, eine Fototafel und einen Hinweis), und jede Seite stapelt so viele davon, wie ihr Markdown enthält; die Linien folgen den Kästen, wohin der Text sie auch schiebt.
 
 ## Zubereitung
 
-{/*
-  3–7 Schritte, jeder eine H3 mit der Nummerierung „1 · …“. Jeder Schritt beginnt mit einem Excerpt
-  einer #region aus script.js (der zusammengesetzten Datei, mit ihren echten Zeilennummern), danach
-  1–3 Sätze zum WARUM, nicht zum Was: Das Was sieht der Leser selbst. Die kurze Antwort zeigt bereits
-  #region answer: Ein Schritt dazu verweist dorthin, statt sie noch einmal abzudrucken. en.mdx, es.mdx
-  und zh.mdx zeigen dieselben Regionen in derselben Reihenfolge.
-  Optionale Komponenten: Excerpt highlight="4-7", PageRef, PageShot, Gotcha, Feature, RecipeLink, Note.
-*/}
+### 1 · Ein Modul je Amt
 
-### 1 · Der Auftakt ist eine Gestaltung, keine Überschrift
+<Excerpt region="answer" />
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Überschrift der Ebene 1 behält ihren Platz im Text und im Inhaltsverzeichnis, wird aber aus einem Gestaltungsfeld mit Elementen gezeichnet: Die Dachzeile kommt aus einem Attribut der Überschrift, der Titel bricht auf einer festen Satzbreite um, und die Linie wird unter dem Titel verankert, wie hoch er auch ist. `minHeight` senkt den Grundtext auf jedem Auftakt auf dieselbe Zeile ab, wie lang der Titel auch ist.
+Eine Vorlage mit `role: 'module'` ist ein Modul: ein paar Rahmen, Gruppen und Dekor, gedacht zum Wiederverwenden. Die Organigrammseite hat eine Gruppe mit `modules: true`, und jedes `:::module{template="area"}` ihres Markdowns setzt ein weiteres Amt 6 mm unter das vorige. Die Rahmen des Moduls tragen den Namen der Instanz, `area[1].concejalia`, `area[2].concejalia` …, darum stehen seine beiden Verbinder nur einmal da: `rama`, ein Baum (`tree`) vom Fuß des Amts zu jeder Stelle seines Rasters (`#servicio[*]`), und `tronco`, ein Winkel (`elbow`) von einem Punkt nahe der linken Kante des Bürgermeisterkastens (`at: 0.06`) zur linken Seite des Amts. `#alcaldia` ist ein Rahmen der Seite, nicht des Moduls: Das Modul behält dieses Ende, und das Layout findet es auf der Seite, sodass die vier Winkel ihr erstes Stück teilen und sich wie ein einziger Stamm mit einem Pfeil in jedes Amt lesen. Die Stellen sind ein dreispaltiges Raster, das einen Rahmen `servicio` wiederholt; ein Amt mit zwei Stellen zeichnet also zwei Kästen, und sein Baum hat zwei Äste.
 
-### 2 · Kolumnentitel wissen, auf welcher Seite sie stehen
+### 2 · Tafeln aus Fotokarten
 
-<Excerpt region="running-heads" />
+<Excerpt region="gallery" />
 
-Jedes Element ist an der physischen Seite verankert und nach Parität gefiltert, sodass die Pagina immer am Außenrand und der Buchtitel auf der linken Seite steht. `pages: 'body'` hält sie vom Auftakt fern, der stattdessen eine zentrierte Pagina am Fuß aus der Fußzeile bekommt.
+Auch eine Tafel ist ein Modul: ein Kopfrahmen, der die `##`-Überschrift des Moduls aufnimmt, und ein Raster, das einen Satz aus zwei Rahmen wiederholt, das Foto und den Text darunter. Jedes `:::frame{slot="foto"}` ist eine Karte, und das `:::frame{slot="pie"}` darin geht an den Text dieser Karte. Der getönte Grund ist Dekor des Moduls, ein Kasten so groß wie das Modul, und wächst deshalb mit den Reihen und der längsten Bildunterschrift. Das Bürgerbüro ist ein drittes Modul, ein Kasten, dessen Reiter `joined` ist: Reiter und Kasten bilden eine Kontur mit einer Füllung.
 
-### 3 · Ein Akzent, überall verknüpft
+### 3 · Bilder in ihrer Druckgröße
+
+<Excerpt region="art" />
+
+Die sechs Aquarelle haben 900 × 600 px bei angegebenen 400 ppi, sind also 57 mm breit, etwa so breit wie eine Rasterspalte; das Raster vergrößert sie nie. Ihr Alternativtext steht hier im Skript, weil die Bilder in beiden Ausgaben dieselben sind; eine Bildunterschrift, die sich mit der Sprache ändert, wäre eine `::caption`-Zeile im Markdown.
+
+### 4 · Ein Grün für Linien und Kästen
 
 <Excerpt region="palette" />
 
-Jede Farbe der Konfiguration verweist auf ihren Paletteneintrag. Ändert ein Leser ein Farbfeld, färbt sich das ganze Buch um, und ein Teil oder ein Überschriftenstil kann einen Abschnitt über die ID umfärben. Wird `main-color` auf den Akzent gerichtet, erfasst das jeden Standardwert, den die Konfiguration nicht neu angibt.
+Die Verbinder, die Amtskästen und die Köpfe der Tafeln verwenden `green`, einen Eintrag der Palette; eine Gemeinde mit einer anderen Farbe ändert also einen einzigen Hexwert. Der Kasten der Gemeindespitze trägt die einzige warme Farbe der Doppelseite, dort, wohin der Blick zuerst fällt.
 
 ## Varianten
 
-{/*
-  Optional, 1–4 Einträge: eine H3 im Imperativ, ein Satz, dann ein Diff gegen script.js
-  oder ein Link zu einem verwandten Rezept.
-*/}
+### Zwei Spalten für die Stellen
 
-### Den Text zweispaltig setzen
-
-Ein breiteres Endformat nimmt zwei Spalten auf; der Auftakt läuft über beide, und die Kolumnentitel bleiben, wo sie sind.
+Mit `columns: 2` stehen die Stellen jedes Amts zu zweit in einer Reihe; der Baum zieht seinen Querbalken nur über die erste Reihe, nehmen Sie das also für Ämter mit zwei oder vier Stellen.
 
 ```diff
--  layout: { layoutType: 'single' },
-+  layout: { layoutType: 'double', gutterWidth: mm(6) },
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
 ```
+
+### Die Ecken des Stamms abrunden
+
+`radius` rundet die Knicke eines Winkels und eines Baums ab: Die Hilfsfunktion `line()` gibt jedem Verbinder 2,5 mm; mit `radius: mm(0)` wird das Organigramm eckig.
 
 ## Häufige Fehler
 
-{/*
-  Optional. Die in recipe.json aufgeführten Fallstricke und Warnungen erscheinen hier von selbst;
-  fügen Sie nur dann eine Zeile hinzu, wenn ein Fehler allein zu diesem Rezept gehört.
-*/}
+- Ein Rasterelement ist ein eigener Bereich: Der Text einer Fotokarte gehört nur dann zu ihr, wenn sein `:::frame{slot="pie"}` innerhalb des `:::frame{slot="foto"}` der Karte steht.
+- Ein Verbinder eines Moduls, der einen Rahmen der Seite nennt, wird nur auf Seiten gezeichnet, die diesen Rahmen haben; auf anderen fällt er weg, und das Umbruchprotokoll meldet `connectorDropped`.
+- Ein verbundener Reiter sitzt auf der Kante des Kastens und übernimmt dessen Füllung: Geben Sie seinem Text eine dunkle `color`, denn eine weiße Beschriftung auf einem hellen Kasten ist nicht lesbar.

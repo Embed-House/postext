@@ -1,72 +1,60 @@
 ---
-# Tots els valors van entre cometes. Límits: title ≤ 60 caràcters (un resultat, no una llista
-# de funcions); summary 60–160 (la resposta en una frase, amb el mecanisme); description 120–160.
-title: "Una pàgina de llibre amb capçaleres"
-summary: "Marges simètrics, una obertura de capítol enfonsada i capçaleres que saben a quin costat de la doble pàgina són, a la pàgina d'un llibre en rústica."
-description: "Una pàgina de llibre amb Postext: marges simètrics, obertura enfonsada 52 mm, capçaleres segons la paritat i foli al peu a les obertures, amb tot el codi."
-# plain: "…"           40–240 caràcters: el resum en paraules corrents, sense argot (es mostra com a «En poques paraules»)
-# question: "…"        opcional, ≤ 110 caràcters: reformula answers[0] per a aquesta pàgina
-# pageNotes: { "3": "…" }  opcional: text alternatiu addicional per a una pàgina capturada
-aliases: ["pàgina de llibre", "capçaleres", "obertura de capítol"]
+title: "Un organigrama i una graella de fotos fets amb mòduls"
+summary: "Una guia de serveis municipals feta amb mòduls: un organigrama les línies del qual traça la plantilla i graelles que repeteixen una fitxa per edifici."
+plain: "Dues pàgines d’una guia de l’ajuntament: qui porta cada cosa, com un esquema de caixes unides per línies, i on és cada servei, en files d’imatges. Es fan amb uns pocs blocs reutilitzables; el Markdown diu quants."
+description: "Un organigrama i una graella de fotos amb Postext: plantilles de mòdul apilades per la pàgina, connectors des de l’alcaldia a cada àrea i fitxes amb foto."
+question: "Com faig un organigrama i una graella de fotos amb mòduls, amb les línies traçades per la plantilla?"
+aliases: ["organigrama", "mòdul", "bloc reutilitzable", "graella de fotos", "connector", "guia municipal", "guia de serveis", "diagrama d’arbre", "org chart", "organigram"]
+pageNotes: { "1": "Així s’organitza el teu ajuntament: un títol amb gràcies, una entradeta, una caixa vermella per a l’alcaldia i el ple i, a sota, quatre caixes verdes d’àrea, cadascuna amb els seus serveis en caixes clares; una línia verda baixa des de l’alcaldia amb una fletxa fins a cada àrea, i un arbre uneix cada àrea amb els seus serveis.", "2": "On trobar-nos: dos panells verd clar, Cultura i gent gran i Esport i comerç, cadascun amb tres aquarel·les en fila i el nom, l’adreça i l’horari sota cadascuna; un requadre de l’oficina d’atenció al veí amb la pestanya nascuda del contorn; un colofó al peu." }
 ---
 
 ## Què compondràs
 
-{/*
-  60–150 paraules, amb veu de director d'art: la publicació, la idea de disseny i per què
-  costa d'aconseguir en un altre lloc. Anomena la publicació («una edició en rústica de…»,
-  «el número de juny de…»). Sense llistes de funcions: Ingredients es genera des de recipe.json.
-  La pàgina afegeix sola, sota aquesta secció, la llista «Aquesta recepta respon» (d'answers).
-*/}
-
-Les primeres pàgines d'una novel·la en rústica: un capítol que comença en pàgina senar, a un terç de l'alçada, sota un avanttítol petit en versaletes espaiades i un filet curt de l'únic color d'accent del llibre; després, pàgina rere pàgina de text justificat, amb el títol del llibre a l'esquerra i el del capítol a la dreta. Res a la pàgina no alça la veu. L'ofici és a la geometria: marges que s'emmirallen a la doble pàgina, capçaleres que saben a quin costat són i un foli que baixa al peu a l'obertura, on una capçalera destorbaria el títol.
+Una doble pàgina de la guia de serveis de Valdeloma, un poble inventat de 8.400 veïns. La pàgina parella és l’organigrama de l’ajuntament: l’alcaldia i el ple en una caixa vermella, quatre àrees en verd i, sota cada àrea, els seus serveis en caixes clares, units per línies verdes amb un punt o una fletxa a l’extrem. La senar explica on són els serveis: dos panells de tres aquarel·les, amb el nom, l’adreça i l’horari sota cada imatge, i un requadre per a l’oficina d’atenció al veí. Res no es dibuixa a mà. La plantilla té tres mòduls (una àrea, un panell de fotos i un avís) i cada pàgina n’apila tants com en té el seu Markdown; les línies segueixen les caixes allà on el text les porti.
 
 ## Elaboració
 
-{/*
-  De 3 a 7 passos, cadascun un H3 numerat «1 · …». Cada pas obre amb un Excerpt d'una #region
-  de script.js (el fitxer compost, amb els seus números de línia reals) i continua amb 1–3 frases
-  sobre el PERQUÈ, no sobre el què: el què ja es veu. La resposta curta ja mostra la
-  #region answer: un pas que en parli remet allà en lloc de repetir-la. en.mdx, es.mdx, ca.mdx i zh.mdx
-  mostren les mateixes regions en el mateix ordre. Components opcionals: Excerpt highlight="4-7", PageRef,
-  PageShot, Gotcha, Feature, RecipeLink, Note.
-*/}
+### 1 · Un mòdul per àrea
 
-### 1 · L'obertura és un disseny, no un títol
+<Excerpt region="answer" />
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. El títol de primer nivell conserva el seu lloc al text i a l'índex, però es dibuixa des d'una zona de disseny: l'avanttítol surt d'un atribut del títol, el títol es parteix amb una mida fixa i el filet s'ancora sota l'alçada que ocupi el títol. `minHeight` enfonsa el text fins a la mateixa línia a totes les obertures, sigui quina sigui la llargada del títol.
+Una plantilla amb `role: 'module'` és un mòdul: uns quants marcs, grups i decoració pensats per tornar-se a fer servir. La pàgina de l’organigrama té un grup amb `modules: true`, i cada `:::module{template="area"}` del seu Markdown col·loca una àrea més sota l’anterior, a 6 mm. Els marcs del mòdul prenen el nom de la instància, `area[1].concejalia`, `area[2].concejalia`…, de manera que els seus dos connectors s’escriuen una sola vegada: `rama`, un arbre (`tree`) des del peu de l’àrea fins a cada servei de la seva graella (`#servicio[*]`), i `tronco`, un angle (`elbow`) des d’un punt a prop de l’esquerra de la caixa de l’alcaldia (`at: 0.06`) fins al costat esquerre de l’àrea. `#alcaldia` és un marc de la pàgina, no del mòdul: el mòdul conserva aquest extrem i la maquetació el troba a la pàgina, de manera que els quatre angles comparteixen el primer tram i es llegeixen com un sol tronc amb una fletxa cap a cada àrea. Els serveis són una graella de tres columnes que repeteix un marc `servicio`, així que una àrea amb dos serveis dibuixa dues caixes i el seu arbre, dues branques.
 
-### 2 · Les capçaleres saben en quina pàgina són
+### 2 · Panells de fitxes amb foto
 
-<Excerpt region="running-heads" />
+<Excerpt region="gallery" />
 
-Cada element s'ancora a la pàgina física i es filtra per paritat, de manera que el foli queda sempre a la vora exterior i el títol del llibre al verso. `pages: 'body'` els manté fora de l'obertura, que rep en canvi un foli centrat al peu des del peu de pàgina.
+Un panell també és un mòdul: un marc de capçalera que pren el títol `##` del mòdul i una graella que repeteix un joc de dos marcs, la foto i les paraules de sota. Cada `:::frame{slot="foto"}` és una fitxa, i el `:::frame{slot="pie"}` que porta a dins va a les paraules d’aquesta fitxa. El fons tintat és decoració del mòdul, una caixa tan gran com el mòdul, així que creix amb les files i amb el peu més llarg. L’oficina d’atenció és un tercer mòdul, un requadre la pestanya del qual és `joined`: pestanya i requadre són un sol contorn amb un sol emplenament.
 
-### 3 · Un sol accent, enllaçat a tot arreu
+### 3 · Imatges a la mida d’impressió
+
+<Excerpt region="art" />
+
+Les sis aquarel·les fan 900 × 600 px a 400 ppp, 57 mm d’amplada, més o menys el que fa una columna de la graella, així que la graella no les amplia mai. El seu text alternatiu és aquí, a l’script, perquè les imatges són les mateixes a les dues edicions; un peu que canviés amb l’idioma seria una línia `::caption` del Markdown.
+
+### 4 · Un sol verd per a les línies i les caixes
 
 <Excerpt region="palette" />
 
-Cada color de la configuració fa referència a la seva entrada de la paleta, de manera que qui canviï una mostra canvia el to de tot el llibre, i una part o un estil d'encapçalament poden tornar a acolorir una secció pel seu id. Fer apuntar `main-color` a l'accent atrapa tots els valors per defecte que la configuració no redefineix.
+Els connectors, les caixes d’àrea i les capçaleres dels panells fan servir `green`, una entrada de la paleta, així que un poble amb un altre color canvia un sol hexadecimal. La caixa de l’alcaldia porta l’únic color càlid de la doble pàgina, el lloc on el lector mira primer.
 
 ## Variants
 
-{/*
-  Opcional, d'1 a 4 entrades: un H3 en imperatiu, una frase i un diff contra script.js,
-  o un enllaç a una recepta germana.
-*/}
+### Dues columnes de serveis
 
-### Compon el text a dues columnes
-
-Un format més ample admet dues columnes; l'obertura ocupa les dues i les capçaleres es queden on són.
+Amb `columns: 2` els serveis de cada àrea van de dos en dos; l’arbre traça la seva barra només sobre la primera fila, així que reserva-ho per a àrees amb dos o quatre serveis.
 
 ```diff
--  layout: { layoutType: 'single' },
-+  layout: { layoutType: 'double', gutterWidth: mm(6) },
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
 ```
+
+### Arrodoneix les cantonades del tronc
+
+`radius` arrodoneix els colzes d’un angle i d’un arbre: l’ajudant `line()` dona 2,5 mm a tots els connectors; amb `radius: mm(0)` l’organigrama es torna recte.
 
 ## Errors freqüents
 
-{/*
-  Opcional. Els errors freqüents i els avisos que llista recipe.json hi apareixen sols;
-  afegeix-hi una línia només per a un problema propi d'aquesta recepta.
-*/}
+- Un element de la graella és un bloc propi: les paraules d’una fitxa només li pertanyen si el seu `:::frame{slot="pie"}` està escrit dins del `:::frame{slot="foto"}` de la fitxa.
+- Un connector d’un mòdul que anomena un marc de la pàgina només es dibuixa a les pàgines que tenen aquest marc; a les altres s’omet, i el registre de recomposició diu `connectorDropped`.
+- Una pestanya unida queda sobre la vora del requadre i en pren l’emplenament: dona a les seves paraules un `color` fosc, perquè un rètol blanc sobre un requadre clar no es llegeix.

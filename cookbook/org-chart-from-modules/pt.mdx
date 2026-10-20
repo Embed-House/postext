@@ -1,72 +1,60 @@
 ---
-# Todos os valores vão entre aspas. Limites: title ≤ 60 caracteres (um resultado, não uma lista de recursos);
-# summary 60–160 (a resposta em uma frase, nomeando o mecanismo); description 120–160
-title: "Uma página de livro com cabeços"
-summary: "Margens espelhadas, uma abertura de capítulo rebaixada e cabeços que sabem em que lado da página dupla estão, numa página de livro em brochura."
-description: "Uma página de livro no Postext: margens espelhadas, abertura rebaixada 52 mm, cabeços por paridade e fólio no pé nas aberturas, com o código completo."
-# plain: "…"           40–240 caracteres: o resumo em palavras do dia a dia, sem jargão (aparece como "Em poucas palavras")
-# question: "…"        opcional, ≤ 110 caracteres: reformula answers[0] para esta página
-# pageNotes: { "3": "…" }  opcional: texto alternativo extra para uma página capturada
-aliases: ["página de livro", "cabeços", "cabeço", "abertura de capítulo", "running heads"]
+title: "Um organograma e uma grade de fotos feitos de módulos"
+summary: "Um guia de serviços da prefeitura feito de módulos: um organograma cujas linhas o modelo traça e grades que repetem uma ficha por prédio."
+plain: "Duas páginas do guia de uma prefeitura: quem cuida de quê, num esquema de caixas ligadas por linhas, e onde fica cada serviço, em fileiras de imagens. As páginas são feitas de poucos blocos reutilizáveis; o Markdown diz quantos."
+description: "Um organograma e uma grade de fotos com Postext: modelos de módulo empilhados pela página, conectores do gabinete a cada secretaria, grades de fichas com foto."
+question: "Como monto um organograma e uma grade de fotos com módulos reutilizáveis, com as linhas traçadas pelo modelo?"
+aliases: ["organograma", "módulo", "bloco reutilizável", "grade de fotos", "conector", "guia municipal", "guia de serviços", "diagrama em árvore", "org chart", "organigrama"]
+pageNotes: { "1": "Como a sua prefeitura se organiza: um título com serifa, uma linha fina, uma caixa vermelha para o gabinete do prefeito e a câmara e, embaixo, quatro caixas verdes de secretaria, cada uma com seus serviços em caixas claras; uma linha verde desce da caixa do gabinete com uma seta até cada secretaria, e uma árvore liga cada secretaria aos seus serviços.", "2": "Onde nos encontrar: dois painéis verde-claros, Cultura e terceira idade e Esporte e comércio, cada um com três aquarelas em fila e o nome, o endereço e o horário embaixo de cada uma; um boxe do atendimento ao cidadão com a aba nascida do contorno; um colofão no pé." }
 ---
 
 ## O que você vai compor
 
-{/*
-  60–150 palavras, com a voz de um diretor de arte: a publicação, a ideia de design e por que
-  ela é difícil de conseguir em outro lugar. Dê nome à publicação ("uma edição de bolso de…",
-  "a edição de junho de…"). Sem listas de recursos: a seção Ingredientes é gerada a partir de
-  recipe.json. A página acrescenta sozinha, sob esta seção, a lista "Esta receita responde" (de answers).
-*/}
-
-As primeiras páginas de um romance em brochura: um capítulo que começa numa página ímpar, a um terço da altura, sob um antetítulo pequeno em letras espaçadas e um fio curto na única cor de destaque do livro; depois, página após página de texto justificado, com o título do livro à esquerda e o do capítulo à direita. Nada na página levanta a voz. O ofício está na geometria: margens que se espelham na página dupla, cabeços que sabem de que lado estão e um fólio que desce para o pé na abertura, onde um cabeço atrapalharia o título.
+Uma página dupla do guia de serviços de Valdeloma, uma cidade inventada de 8.400 habitantes. A página da esquerda é o organograma da prefeitura: o gabinete do prefeito e a câmara numa caixa vermelha, quatro secretarias em verde e, embaixo de cada uma, seus serviços em caixas claras, ligados por linhas verdes com um ponto ou uma seta na ponta. A da direita mostra onde ficam os serviços: dois painéis de três aquarelas, com o nome, o endereço e o horário embaixo de cada imagem, e um boxe para o atendimento ao cidadão. Nada é desenhado à mão. O modelo tem três módulos (uma secretaria, um painel de fotos e um aviso), e cada página empilha tantos quantos o seu Markdown tiver; as linhas acompanham as caixas para onde o texto as levar.
 
 ## Preparo
 
-{/*
-  De 3 a 7 passos, cada um um H3 numerado "1 · …". Cada passo abre com um Excerpt de uma #region
-  de script.js (o arquivo composto, com os números de linha reais) e segue com 1–3 frases sobre o
-  PORQUÊ, não sobre o quê: o quê o leitor já vê. A resposta curta já mostra a #region answer: um
-  passo que trate dela remete para lá em vez de repeti-la. en.mdx, es.mdx e zh.mdx mostram as
-  mesmas regiões na mesma ordem.
-  Componentes opcionais: Excerpt highlight="4-7", PageRef, PageShot, Gotcha, Feature, RecipeLink, Note.
-*/}
+### 1 · Um módulo por secretaria
 
-### 1 · A abertura é um design, não um título
+<Excerpt region="answer" />
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. O título de nível 1 mantém seu lugar no texto e no sumário, mas é desenhado a partir de um espaço de design: o antetítulo vem de um atributo do título, o título quebra numa medida fixa e o fio se ancora abaixo da altura que o título ocupar. `minHeight` rebaixa o texto corrido até a mesma linha em todas as aberturas, seja qual for o comprimento do título.
+Um modelo com `role: 'module'` é um módulo: alguns quadros, grupos e enfeites feitos para serem usados de novo. A página do organograma tem um grupo com `modules: true`, e cada `:::module{template="area"}` do seu Markdown põe mais uma secretaria embaixo da anterior, a 6 mm. Os quadros do módulo recebem o nome da instância, `area[1].concejalia`, `area[2].concejalia`…, e por isso os seus dois conectores são escritos uma vez só: `rama`, uma árvore (`tree`) do pé da secretaria até cada serviço da sua grade (`#servicio[*]`), e `tronco`, um cotovelo (`elbow`) de um ponto perto da esquerda da caixa do gabinete (`at: 0.06`) até o lado esquerdo da secretaria. `#alcaldia` é um quadro da página, não do módulo: o módulo guarda essa ponta e a diagramação a encontra na página, de modo que os quatro cotovelos dividem o primeiro trecho e se leem como um só tronco com uma seta para cada secretaria. Os serviços são uma grade de três colunas que repete um quadro `servicio`, então uma secretaria com dois serviços desenha duas caixas, e a sua árvore, dois ramos.
 
-### 2 · Os cabeços sabem em que página estão
+### 2 · Painéis de fichas com foto
 
-<Excerpt region="running-heads" />
+<Excerpt region="gallery" />
 
-Cada elemento é ancorado à página física e filtrado por paridade, de modo que o fólio fica sempre na borda externa e o título do livro no verso. `pages: 'body'` os mantém fora da abertura, que recebe no lugar um fólio centralizado no pé, vindo do rodapé.
+Um painel também é um módulo: um quadro de cabeçalho que recebe o título `##` do módulo e uma grade que repete um par de quadros, a foto e o texto embaixo dela. Cada `:::frame{slot="foto"}` é uma ficha, e o `:::frame{slot="pie"}` que vai dentro dele vai para o texto dessa ficha. O fundo tingido é enfeite do módulo, uma caixa do tamanho do módulo, então cresce com as fileiras e com a legenda mais longa. O atendimento ao cidadão é um terceiro módulo, um boxe cuja aba é `joined`: aba e boxe são um só contorno com um só preenchimento.
 
-### 3 · Uma só cor de destaque, ligada em todo lugar
+### 3 · Imagens no tamanho de impressão
+
+<Excerpt region="art" />
+
+As seis aquarelas têm 900 × 600 px declarados a 400 ppi, ou 57 mm de largura, mais ou menos a largura de uma coluna da grade, e por isso a grade nunca as amplia. O texto alternativo delas está aqui no script porque as imagens são as mesmas nas duas edições; uma legenda que mudasse com o idioma seria uma linha `::caption` do Markdown.
+
+### 4 · Um só verde para as linhas e as caixas
 
 <Excerpt region="palette" />
 
-Cada cor da configuração indica sua entrada na paleta, por isso quem trocar uma amostra de cor muda o tom do livro inteiro, e uma parte ou um estilo de título pode recolorir uma seção pelo id. Apontar `main-color` para a cor de destaque pega todos os valores padrão que a configuração não redefine.
+Os conectores, as caixas das secretarias e os cabeçalhos dos painéis usam `green`, uma entrada da paleta, então uma cidade com outra cor muda um único hexadecimal. A caixa do gabinete leva a única cor quente da página dupla, o lugar para onde o leitor olha primeiro.
 
 ## Variações
 
-{/*
-  Opcional, de 1 a 4 entradas: um H3 no imperativo, uma frase e um diff contra script.js,
-  ou um link para uma receita irmã.
-*/}
+### Duas colunas de serviços
 
-### Componha o texto em duas colunas
-
-Um formato mais largo comporta duas colunas; a abertura ocupa as duas e os cabeços ficam onde estão.
+Com `columns: 2`, os serviços de cada secretaria ficam dois por fileira; a árvore traça a sua barra só sobre a primeira fileira, então use isso nas secretarias com dois ou quatro serviços.
 
 ```diff
--  layout: { layoutType: 'single' },
-+  layout: { layoutType: 'double', gutterWidth: mm(6) },
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
 ```
+
+### Arredondar os cantos do tronco
+
+`radius` arredonda as dobras de um cotovelo e de uma árvore: o auxiliar `line()` dá 2,5 mm a todos os conectores; com `radius: mm(0)`, o organograma fica com cantos retos.
 
 ## Erros comuns
 
-{/*
-  Opcional. Os erros comuns e os avisos listados em recipe.json aparecem aqui sozinhos;
-  acrescente uma linha só para um problema que pertença apenas a esta receita.
-*/}
+- Um item da grade é um bloco à parte: o texto de uma ficha com foto só pertence a ela se o seu `:::frame{slot="pie"}` estiver escrito dentro do `:::frame{slot="foto"}` da ficha.
+- Um conector de um módulo que cita um quadro da página só é desenhado nas páginas que têm esse quadro; nas outras ele é omitido, e o registro de recomposição diz `connectorDropped`.
+- Uma aba unida fica sobre a borda do boxe e recebe o preenchimento dele: dê ao texto dela uma `color` escura, porque um rótulo branco sobre um boxe claro não se lê.
