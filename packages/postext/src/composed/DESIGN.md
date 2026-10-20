@@ -2296,3 +2296,70 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   group) and three modules (`caja`: a box with a tab and a photo beside it; `arbol`: a tree of three on a
   tinted ground; `fotos`: a heading and a 2 × 2 photo grid), words in Spanish and English;
   `modules.test.ts`.
+
+### 12.20 What C8 built (#1059)
+
+- **Types.** `CornerRadius`, `BorderSide`, `BorderSides` and `BoxSideName` in `types.ts` (out of the
+  draft). `CalloutStyleConfig.borderRadius` and `ElementBoxStyle.borderRadius` take a `CornerRadius` (a
+  corner left out of the object is square); `CalloutBorderConfig.sides` and `ElementBoxStyle.borderSides`
+  give each side `{ enabled?, color?, width? }` over the whole border (a design box's whole border is on
+  when it has a colour and a width). `CalloutLabelConfig.joined` / `fillet`. `VDTDesignBoxStyle` gains
+  `borderRadiiPx` and `borderSides` as drafted; `borderRadiusPx`, `borderColor` and `borderWidthPx` stay
+  filled (the largest radius, the first side's colour, the widest side) for the readers that want one
+  value. A style whose corners or sides are all alike is folded back to the plain fields
+  (`normalizeBoxStyle`), and a style with one radius and a whole border builds the very object it built
+  before, so existing pages keep their VDT and their paint.
+- **Geometry** (`design/boxShape.ts`, exported). An outline is a rectilinear polygon walked clockwise,
+  each vertex a corner (convex, or concave for a fillet) with a radius, each edge on one side. The
+  border's inner edge is the outline with each edge moved in by its side's width: a convex corner's radii
+  shrink by the widths beside it (an ellipse when they differ: CSS's inner border edge), a fillet's grow.
+  Corners are cubic quarter ellipses. Radii are clamped per edge (two corners never take more than their
+  edge, each by its share). A border is one even-odd ring when all four sides have one colour and a
+  width; otherwise each side is a closed piece, cut at the corners where the side changes in the ratio of
+  the two widths (the whole corner to a side whose neighbour has none, as CSS draws a top border on a
+  rounded box), the pieces of one colour filled together. Departure found on the way: a ring whose inner
+  edge lies on the outer one (a side without a border) is drawn by PDF rasterisers as a hairline, so it
+  is used only for four sides. A border wider than the box fills it, as before.
+- **Painters.** Canvas `drawBoxBackground` and PDF `drawRoundedBox` send a box that has
+  `borderRadiiPx` or `borderSides` through `boxStylePathBlocks` and the C4 path painter; every other box
+  takes its old code. HTML writes `border-radius` with four values and `border-top…` per side (fixed
+  EPUB alike). Reflowable EPUB writes the same CSS on the callout rule, the corners and sides of the
+  mirrored flow in a right-to-left book as its padding.
+- **Joined tab.** `label.joined` lays the box and its tab as one outline (`boxOutline` with a
+  `ShapeTab`) and paints it as path blocks marked `boxPart: 'fill'` / `'border'` (with
+  `borderWidthPx`), in place of the box block and the tab's own box. Decisions the design left open:
+  - The tab stands on the edge, out of the box by its height: `offset` is not read; a non-zero offset
+    is `unknownConfigValue` at `label.offset` (used `0`).
+  - One fill: the box's `background` (none when `backgroundEnabled: false`); the tab's own
+    `background` is not painted. Its words keep the label `color`, so a joined tab on a white card sets a
+    dark label colour.
+  - The tab's outer corners take the radius of the box's corner it hugs; the fillets `fillet`, default
+    that radius. Beside an `inset` smaller than corner plus fillet, the fillet is held to half the room
+    and the box corner to the rest; an inset under 0.5 px is flush: the side runs straight up into the
+    tab (no corner, no fillet there).
+  - "Every position": `CalloutLabelPosition` gains `bottom-right`, `bottom-left`, `bottom-start`,
+    `bottom-end`, for plain tabs too (a `bottom-` tab is the top one turned over: its foot `offset` below
+    the box's, the block taller by what hangs below, the `rule` along the foot). No left or right side
+    tabs: the words of a tab are horizontal.
+  - Per-side borders run round the tab with the side it stands on; a flush tab's outer side is the
+    box's side it continues.
+  - The stripe stays clipped to the box rectangle with the outline's corners: square where a flush tab
+    goes on up the side.
+  - The glyph and picture icons, the rule and the words are laid as before.
+- **Readers.** Part palettes recolour each side's colour as the border, a joined fill as the fill and
+  its border pieces as the border; a frame's `look` border colour recolours every side; preflight checks
+  each side (and a joined border) as a rule; the contrast check reads a joined fill as the ground; the
+  overlap check (C2) counts a joined fill as fill and its border as an outline; design palettes
+  (`applyPaletteOverrides`) override side colours. Comic panels dressed by a box style take the largest
+  corner. `keepChromeAt` scales sides and `fillet`.
+- **Validation** (`collectConfigWarnings`): `unknownConfigKey` for corner keys, side keys and side
+  fields of callout styles and of design boxes (`style` of a box element, `box` of a text element);
+  `unknownConfigValue` for a label `position` outside the eight and for a joined tab's offset. No new
+  warning kind.
+- **Fixture.** `__tests__/composed/fixtures/cards/` (`cardShapes.test.ts`): a card with its title tab
+  grown out of it, a box with a top border only, a box rounded on two corners, a joined tab flush at the
+  top right and one hanging from the foot, a decoration band rounded on top and ruled at its foot.
+- **Not done.** Sandbox fields for per-corner radii, per-side borders and the joined tab (the Callout
+  and box editors show a per-corner radius as 0 until U10, #1063); docs (D3); a split box's fragments do
+  not square the corners where it continues (as before); a joined tab in the reflowable EPUB is a plain
+  tab.
