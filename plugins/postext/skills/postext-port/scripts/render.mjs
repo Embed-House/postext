@@ -385,6 +385,25 @@ const t0 = Date.now();
 const doc = postext.buildDocument({ markdown, resources, ...(start ? { continuation: start } : {}) }, config);
 console.log(`layout: ${doc.pages.length} pages, converged=${doc.converged}, passes=${doc.iterationCount}, ${Date.now() - t0} ms (${lang}, ${picked.length} chapter file(s))`);
 
+// ---- --frames FILE: every composed page's laid frame boxes, in mm --------------
+// {pages: [{index, template, fence, frames: {name: [x0, y0, x1, y1]}}]}, for
+// `template_dedupe.py --compare-boxes` (the same page before and after a
+// reshape: grids, modules).
+const FRAMES = opt('frames', null);
+if (FRAMES) {
+  const k = 25.4 / (doc.config?.page?.dpi ?? 96);
+  const r2 = (v) => Math.round(v * k * 100) / 100;
+  const pages = doc.pages.flatMap((p, index) => {
+    const c = p.composed;
+    if (!c) return [];
+    const frames = {};
+    for (const f of c.frames ?? []) frames[f.name] = [r2(f.rect.x), r2(f.rect.y), r2(f.rect.x + f.rect.width), r2(f.rect.y + f.rect.height)];
+    return [{ index, template: c.template, fence: c.fenceIndex, frames }];
+  });
+  writeFileSync(FRAMES, JSON.stringify({ pages }, null, 1) + '\n');
+  console.log(`frames: ${pages.length} composed page(s) -> ${FRAMES}`);
+}
+
 // ---- diagnostics ----------------------------------------------------------------
 for (const issue of postext.parseMarkdownWithIssues(markdown).issues ?? []) {
   console.log(`PARSE ${issue.kind} ${where(issue.sourceStart)}: ${JSON.stringify(markdown.slice(issue.sourceStart, Math.min(issue.sourceEnd ?? issue.sourceStart, issue.sourceStart + 60)))}`);

@@ -62,8 +62,12 @@ import colorsys
 import json
 import math
 import re
+import sys
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import template_fold as tf  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # colours
@@ -511,7 +515,13 @@ def join_decoration(a: dict, b: dict) -> None:
 def dedupe_templates(templates: list[dict], usage: dict[str, int], tol: float, max_diff: int,
                      rename: bool = True) -> tuple[list[dict], dict[str, str], list[dict]]:
     """(templates, old id -> new id, report entries). Templates already
-    using `extends` are kept as they are (their parents too)."""
+    using `extends` are kept as they are (their parents too), and so are
+    module templates (`role: "module"`, never a page's)."""
+    mods = [t for t in templates if t.get("role") == "module"]
+    if mods:
+        rest = [t for t in templates if t.get("role") != "module"]
+        out, mapping, report = dedupe_templates(rest, usage, tol, max_diff, rename)
+        return out + mods, mapping, report
     fixed = [t for t in templates if t.get("extends")]
     parents = {t["extends"] for t in fixed}
     free = [t for t in templates if not t.get("extends") and t["id"] not in parents]
@@ -861,9 +871,39 @@ def rename_in_template(t: dict, names: dict[str, str]) -> None:
     for g in t.get("groups", []):
         if isinstance(g.get("frames"), list):
             g["frames"] = [names.get(n, n) for n in g["frames"]]
+        rep = g.get("repeat")
+        if isinstance(rep, dict) and isinstance(rep.get("frames"), list):
+            rep["frames"] = [names.get(n, n) for n in rep["frames"]]
+        anchor = (g.get("placement") or {}).get("anchor")
+        if isinstance(anchor, dict) and "to" in anchor:
+            anchor["to"] = ref(anchor["to"])
     for el in decoration_of(t):
         for holder in element_refs(el):
             holder["to"] = ref(holder["to"])
+
+
+def rename_module_refs(templates: list[dict], maps: dict[str, dict[str, str]]) -> None:
+    """A page's references into a module instance (`#m[1].box-2`) follow
+    the module's frame renames."""
+    def ref(v: Any) -> Any:
+        if isinstance(v, str) and v.startswith("#") and "]." in v:
+            return "#" + _final_name(v[1:], {}, maps)
+        return v
+
+    for t in templates:
+        if t.get("role") == "module":
+            continue
+        for f in t.get("frames", []):
+            a = (f.get("placement") or {}).get("anchor")
+            if isinstance(a, dict) and "to" in a:
+                a["to"] = ref(a["to"])
+        for g in t.get("groups", []):
+            a = (g.get("placement") or {}).get("anchor")
+            if isinstance(a, dict) and "to" in a:
+                a["to"] = ref(a["to"])
+        for el in decoration_of(t):
+            for holder in element_refs(el):
+                holder["to"] = ref(holder["to"])
 
 
 def element_refs(el: dict) -> list[dict]:
@@ -970,6 +1010,9 @@ ATTR_RE = re.compile(r'([\w-]+)="([^"]*)"')
 
 CODE_FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
 PAGE_CLOSE_RE = re.compile(r"^\s*:{4,}\s*$")
+#: a container opened or closed inside a page fence (three colons)
+CONTAINER_OPEN_RE = re.compile(r"^\s*:::([A-Za-z][\w-]*)")
+CONTAINER_CLOSE_RE = re.compile(r"^\s*:::\s*$")
 
 
 def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, dict[str, str]],
@@ -979,6 +1022,9 @@ def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, 
     (`slots`: template id -> {old frame name: new})."""
     out = []
     current: dict[str, str] | None = None
+    page_slots: dict[str, str] | None = None
+    # containers open inside the page fence: (kind, module slot map)
+    stack: list[tuple[str, dict[str, str] | None]] = []
     code: str | None = None
     for line in text.split("\n"):
         m = FENCE_RE.match(line)
@@ -991,6 +1037,20 @@ def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, 
                 code = None
         elif code is not None:
             pass
+        elif stack and CONTAINER_CLOSE_RE.match(line):
+            stack.pop()
+            mods = [s for _, s in stack if s is not None]
+            current = mods[-1] if mods else page_slots
+        elif page_slots is not None and CONTAINER_OPEN_RE.match(line):
+            om = CONTAINER_OPEN_RE.match(line)
+            if om.group(1) == "module":  # type: ignore[union-attr]
+                tm = re.search(r'(?<=[\s{])template="([^"]*)"', line)
+                current = (slots or {}).get(tm.group(1) if tm else "") or {}
+                stack.append(("module", current))
+            else:
+                if current and SLOT_LINE_RE.match(line):
+                    line = SLOT_ATTR_RE.sub(lambda a: f'slot="{current.get(a.group(1), a.group(1))}"', line)
+                stack.append((om.group(1), None))  # type: ignore[union-attr]
         elif m:
             tid = ""
 
@@ -1005,8 +1065,11 @@ def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, 
                 return f'{k}="{v}"'
             line = m.group(1) + "{" + ATTR_RE.sub(sub, m.group(2)) + "}"
             current = (slots or {}).get(tid) or None
+            page_slots = current or {}
+            stack = []
         elif PAGE_CLOSE_RE.match(line):
             current = None
+            page_slots = None
         else:
             if current and SLOT_LINE_RE.match(line):
                 line = SLOT_ATTR_RE.sub(lambda a: f'slot="{current.get(a.group(1), a.group(1))}"', line)
@@ -1047,7 +1110,8 @@ def fence_attr_values(markdowns: list[str], key: str) -> list[str]:
 
 
 def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: bool = False,
-               name_frames_by_role: bool = True) -> dict:
+               name_frames_by_role: bool = True, fold_grids: bool = True, fold_modules: bool = True,
+               laid: Path | None = None) -> dict:
     lib_path, res_path = root / "library.json", root / "resources.json"
     library = json.loads(lib_path.read_text(encoding="utf-8"))
     resources = json.loads(res_path.read_text(encoding="utf-8")) if res_path.exists() else []
@@ -1122,20 +1186,54 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
     dropped = {old for m in attrs_map.values() for old in m}
     report["pictures"] = image_report
 
-    # 3. templates
+    # 3. grids and modules, from the boxes extract measured
+    fold_report: dict[str, Any] = {}
+    reg_path = root / "regions.json"
+    if (fold_grids or fold_modules) and reg_path.exists():
+        regions = json.loads(reg_path.read_text(encoding="utf-8"))
+        laid_boxes: dict[str, dict] = {}
+        if laid is not None:
+            for page in json.loads(laid.read_text(encoding="utf-8")).get("pages", []):
+                if page.get("template") and page["template"] not in laid_boxes:
+                    laid_boxes[page["template"]] = page.get("frames", {})
+        fold_report = tf.fold_book(templates, regions, markdowns, tol, frame_diff, element_diff, _group_equal,
+                                   grids=fold_grids, modules=fold_modules, laid=laid_boxes)
+        report["grids"] = fold_report["grids"]
+        report["modules"] = fold_report["modules"]
+        if fold_report.get("skipped"):
+            report["foldSkipped"] = fold_report["skipped"]
+    report["after"]["grids"] = len(report.get("grids") or [])
+    report["after"]["modules"] = len(report.get("modules") or [])
+
+    # 4. templates
     usage = fence_usage(markdowns)
     new_templates, tmap, treport = dedupe_templates(templates, usage, tol["geom"], max_diff)
     library["pageTemplates"] = new_templates
     report["templates"] = treport
-    report["after"]["pageTemplates"] = len(new_templates)
+    report["after"]["pageTemplates"] = sum(1 for t in new_templates if t.get("role") != "module")
     report["after"]["extends"] = sum(1 for t in new_templates if t.get("extends"))
 
-    # 4. frame names by role, in the templates and in every page fence
+    # 5. frame names by role, in the templates and in every page fence
     slot_maps: dict[str, dict[str, str]] = {}
     if name_frames_by_role:
         new_templates, slot_maps, frame_report = name_frames(new_templates, library.get("calloutStyles") or [])
+        rename_module_refs(new_templates, slot_maps)
         library["pageTemplates"] = new_templates
         report["frames"] = frame_report
+    # every frame of every page: its name in extract's template -> the name
+    # the laid page gives it (instances, modules, role names)
+    for m in report.get("modules") or []:
+        m["uses"] = [tmap.get(u, u) for u in m["uses"]]
+    for g in report.get("grids") or []:
+        g["template"] = tmap.get(g["template"], g["template"])
+    if fold_report.get("names"):
+        report["pages"] = {}
+        for old_id, names in fold_report["names"].items():
+            tid = tmap.get(old_id, old_id)
+            final = {}
+            for orig, cur in names.items():
+                final[orig] = _final_name(cur, slot_maps.get(tid, {}), slot_maps)
+            report["pages"][old_id] = {"template": tid, "frames": final}
 
     mark_map = {**style_maps.get("markStyles", {}), **style_maps.get("chipStyles", {})}
     new_md = [rewrite_markdown(t, tmap, attrs_map, mark_map, slot_maps) for t in markdowns]
@@ -1155,6 +1253,72 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
     return report
 
 
+def compare_boxes(before: dict, after: dict, names: dict[str, dict], tol: float = 0.5) -> dict:
+    """The laid frame boxes of two layouts (`render.mjs --frames`), page by
+    page, each frame of `before` looked up in `after` under its new name
+    (`names`: the `pages` of dedupe-report.json, by the template the frame
+    was laid with before). Returns {pages: [{page, template, frames, over:
+    [(name, new name, mm)], missing: [...]}], frames, over, missing,
+    largest}."""
+    out: dict[str, Any] = {"pages": [], "frames": 0, "over": 0, "missing": 0, "largest": 0.0}
+    pa, pb = before.get("pages", []), after.get("pages", [])
+    for k, page in enumerate(pa):
+        other = pb[k] if k < len(pb) else {"frames": {}}
+        rename = (names.get(page.get("template") or "") or {}).get("frames", {})
+        row: dict[str, Any] = {"page": k + 1, "template": page.get("template"), "after": other.get("template"),
+                               "frames": 0, "over": [], "missing": [], "largest": 0.0}
+        for name, box in page.get("frames", {}).items():
+            new = rename.get(name, name)
+            # a grid's instance on the page before keeps its item number
+            if new not in other["frames"] and "[" in name:
+                b = name[: name.index("[")]
+                if b in rename:
+                    new = rename[b] + name[name.index("["):]
+            got = other["frames"].get(new)
+            row["frames"] += 1
+            if got is None:
+                row["missing"].append(name)
+                continue
+            d = max(abs(a - b) for a, b in zip(box, got))
+            row["largest"] = max(row["largest"], round(d, 2))
+            if d > tol:
+                row["over"].append((name, new, round(d, 2)))
+        out["pages"].append(row)
+        out["frames"] += row["frames"]
+        out["over"] += len(row["over"])
+        out["missing"] += len(row["missing"])
+        out["largest"] = max(out["largest"], row["largest"])
+    return out
+
+
+def print_compare(cmp: dict) -> None:
+    for row in cmp["pages"]:
+        flag = "" if not row["over"] and not row["missing"] else "  <--"
+        print(f"page {row['page']:>3} {row['template']} -> {row['after']}: {row['frames']} frames, "
+              f"largest {row['largest']} mm{flag}")
+        for name, new, d in row["over"]:
+            print(f"      {name} -> {new}: {d} mm")
+        for name in row["missing"]:
+            print(f"      {name}: not laid after")
+    print(f"{cmp['frames']} frames: {cmp['over']} moved past the tolerance, {cmp['missing']} missing, "
+          f"largest {cmp['largest']} mm")
+
+
+INSTANCE_RE = re.compile(r"^(?:([\w-]+)\[(\d+)\]\.)?([\w-]+?)(\[\d+\])?$")
+
+
+def _final_name(cur: str, page_map: dict[str, str], maps: dict[str, dict[str, str]]) -> str:
+    """`box-2` / `grid-tab[3]` / `module-box[1].picture-1` with the frame
+    renamed by role in its own template (the page's or the module's)."""
+    m = INSTANCE_RE.match(cur)
+    if not m:
+        return cur
+    mod, n, frame, item = m.groups()
+    names = maps.get(mod, {}) if mod else page_map
+    out = names.get(frame, frame) + (item or "")
+    return f"{mod}[{n}].{out}" if mod else out
+
+
 def print_report(rep: dict) -> None:
     b, a = rep["before"], rep["after"]
     print(f"page templates {b.get('pageTemplates', 0)} -> {a.get('pageTemplates', 0)} "
@@ -1162,6 +1326,17 @@ def print_report(rep: dict) -> None:
     for kind in ("calloutStyles", "markStyles", "chipStyles", "labelStyles"):
         if kind in b:
             print(f"{kind} {b[kind]} -> {a[kind]}")
+    for g in rep.get("grids") or []:
+        print(f"  grid {g['template']}/{g['group']}: {g['items']} items, {g['columns']} column(s) x {g['rows']} row(s), "
+              f"repeats {', '.join(g['frames'])}")
+    if rep.get("modules"):
+        uses = sum(len(m["uses"]) for m in rep["modules"])
+        print(f"modules {len(rep['modules'])} ({uses} uses, "
+              f"{sum(1 for m in rep['modules'] if len(m['uses']) > 1)} used more than once)")
+        for m in rep["modules"]:
+            print(f"  {m['id']}: {m['frames']} frame(s), on {', '.join(m['uses'])}")
+    if rep.get("foldSkipped"):
+        print(f"grids and modules: skipped, {rep['foldSkipped']}")
     for t in rep.get("templates", []):
         if t.get("base"):
             print(f"  {t['id']}: shared by {len(t['children'])} templates: frames {', '.join(t['frames']) or '-'}; "
@@ -1193,13 +1368,31 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--delta-e", type=float, default=3.0, help="colours within this CIEDE2000 distance are one (default 3)")
     ap.add_argument("--max-diff", type=int, default=2, help="a template that differs in at most this many frames extends a shared one (default 2)")
     ap.add_argument("--image-tol", type=float, default=2.0, help="pictures whose thumbnails differ by at most this (0-255) are one (default 2)")
+    ap.add_argument("--no-grids", action="store_true", help="leave frames on a lattice as they are")
+    ap.add_argument("--no-modules", action="store_true", help="leave the bands of a page on the page")
+    ap.add_argument("--lattice-tol", type=float, default=1.0, help="cards whose edges and widths agree within this many mm stand on one lattice (default 1)")
+    ap.add_argument("--grid-min", type=int, default=3, help="the fewest cards with nothing hanging from them a grid takes (default 3; cards with a tab or caption: 2)")
+    ap.add_argument("--laid", metavar="FRAMES", help="the draft's laid frame boxes (render.mjs --frames): grids and modules are measured on them")
+    ap.add_argument("--compare-boxes", nargs=2, metavar=("BEFORE", "AFTER"), help="compare the frame boxes of two render.mjs --frames files (DIR's dedupe-report.json gives the new names) and exit")
+    ap.add_argument("--box-tol", type=float, default=0.5, help="with --compare-boxes: boxes within this many mm are the same (default 0.5)")
     ap.add_argument("--keep-frame-names", action="store_true", help="leave the frames named by kind and order (box-4)")
     ap.add_argument("--dry-run", action="store_true", help="report only")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
     tol = {"geom": args.geom_tol, "dim": args.style_tol, "padding": args.padding_tol, "font": args.font_tol,
-           "delta_e": args.delta_e}
-    rep = dedupe_dir(Path(args.dir), tol, args.max_diff, args.image_tol, args.dry_run, not args.keep_frame_names)
+           "delta_e": args.delta_e, "lattice": args.lattice_tol, "grid_min": args.grid_min}
+    if args.compare_boxes:
+        rep_path = Path(args.dir) / "dedupe-report.json"
+        names = json.loads(rep_path.read_text(encoding="utf-8")).get("pages", {}) if rep_path.exists() else {}
+        before, after = (json.loads(Path(p).read_text(encoding="utf-8")) for p in args.compare_boxes)
+        cmp = compare_boxes(before, after, names, args.box_tol)
+        if args.json:
+            print(json.dumps(cmp, ensure_ascii=False, indent=1))
+        else:
+            print_compare(cmp)
+        raise SystemExit(0 if cmp["over"] == 0 and cmp["missing"] == 0 else 1)
+    rep = dedupe_dir(Path(args.dir), tol, args.max_diff, args.image_tol, args.dry_run, not args.keep_frame_names,
+                     not args.no_grids, not args.no_modules, Path(args.laid) if args.laid else None)
     if args.json:
         print(json.dumps(rep, ensure_ascii=False, indent=1))
     else:

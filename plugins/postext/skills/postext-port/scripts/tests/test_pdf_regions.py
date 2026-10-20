@@ -356,7 +356,9 @@ class FrameNamesTest(unittest.TestCase):
 
     def test_dedupe_goes_on_from_named_frames(self):
         out = self.run_extract(self.two, "e", "--name-frames", "always")
-        rep = td.dedupe_dir(out, {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3}, 2, 2.0)
+        # (the names on the page itself: no modules, which would take the box)
+        rep = td.dedupe_dir(out, {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3}, 2, 2.0,
+                            fold_modules=False)
         lib = json.loads((out / "library.json").read_text(encoding="utf-8"))
         self.assertEqual(rep["after"]["pageTemplates"], 1)
         md = (out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
