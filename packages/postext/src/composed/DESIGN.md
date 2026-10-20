@@ -2670,7 +2670,7 @@ C8's box shapes (§12.20): all of them are edited in the Design panel and on the
   order knows the rest. `composedPaintOrder` appends a `{ kind: 'over' }` item after the last frame when
   the slot has such a block (never otherwise); `decorationUnder(slot)` (the slot itself when nothing is
   over, so nothing is copied) and `decorationOver(slot)` (undefined when nothing is over) give what each
-  item paints, `paintsOverFrames(block)` the test. With `part` (`'below'` / `'above'`, a page painted
+  item paints, `paintsOverFrames(block)` the test (`connectorPaintsOver` is exported for editors). With `part` (`'below'` / `'above'`, a page painted
   through a flow frame) neither decoration item is listed: the caller paints `decorationUnder` on the
   sheet between the two calls and `decorationOver` on the sheet after the `'above'` frames. What reads the
   slot as data (preflight's thin-rule and coverage checks, the part palette, the spread cut, the font and

@@ -566,6 +566,7 @@ describe("package exports", () => {
       "CONNECTOR_CAPS",
       "CONNECTOR_SIDES",
       "DEFAULT_CONNECTOR_WIDTH",
+      "connectorPaintsOver",
       "boxOutline",
       "outlineSubpath",
       "borderPieces",
