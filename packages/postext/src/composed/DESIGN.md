@@ -2817,3 +2817,33 @@ The Cookbook side of round 2: three recipes reworked and one new, each in all it
   Nº 156 sets `rowGap: 0` for those editions. A connector has no colour alpha (a cased line needs an
   opaque casing). The recipes pin postext 1.48.0: until the release, the published ones fail the
   repository's engine-pin and stale-capture tests, and are captured from npm after it.
+
+### 12.29 What D4 built (#1068)
+
+The guides of round 2, in the ten site languages, with screenshots of each interface language.
+
+- **Composed-page books** gains steps 8–11 on the textbook recipe's book, after the review page of
+  step 3: a module `tree` (a root, a grid repeating `branch`, one tree connector to `#branch[*]`)
+  inserted into the review page from the module library; a page `map-notes` whose notes point at
+  anchors of `rio` (the copy of the map with no anchors, so the spread's names do not move), with a key
+  (`:::label` in a `kind: 'legend'` style, `:icon` rows) and one name set away with a leader; a page
+  `photos` with a grid repeating `photo` + `caption`; the library and how a series shares it (Duplicate,
+  design Export/Import, or a shared module file in code); and a closing section on the rule that the
+  Markdown says what and how many, the design draws each thing once. Section 2 now names the box styles
+  the recipe has (`dato`, `actividad`).
+- **Moving a book to composed pages** gains lines in a picture → connectors and pointers, and one-off
+  frames → **Turn into a grid** / **Extract a module**, on a sample bundle
+  (`apps/web/public/docs-examples/river-places-before.postext`, built by
+  `apps/web/scripts/docs/cards-sample.mjs` from the recipe's paintings at 360 px).
+- **Sandbox: composed pages** gains Connectors and shapes, Leaders, pointers and keys, Grids and modules
+  (the library and both reshapes), Overlaps and glyph tabs.
+- **Screenshots.** `apps/web/scripts/docs/capture-composed-shots.mjs` (puppeteer-core, a running
+  `next dev`, one `<locale>-d4.localhost` origin per language) builds each step's state through the page
+  tools and opens the panels by their labels in that language: tree, modules, map-notes, leader, grid,
+  overlap, glyph-tab, reshape under `public/docs-shots/<locale>/`. The book is the English edition except
+  for es and ca, as the guides' links open it. The older shots of steps 2–7 were taken on an earlier
+  version of the recipe (green `dato-campo`) and were not retaken.
+- **Gaps found (Sandbox, not fixed here).** The frame editor has no `overlap` field, so `overlap: 'allow'`
+  (a caption pill hung over its photo, a badge off its card) cannot be set without JSON; the guide's grid
+  hangs its caption below the photo instead. The module library's drawing of a module with a repeating
+  grid draws the grid's main frame at the module's top-left, over the root.
