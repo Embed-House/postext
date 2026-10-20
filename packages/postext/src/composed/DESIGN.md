@@ -2738,9 +2738,9 @@ symbols, edited without writing JSON.
   writes `{ kind: 'connector', from: { to: '#note' }, to: { to: '#map', anchor }, routing: 'straight',
   endCap: 'dot' }` (id `pointer-<frame>-<anchor>`), or keeps the one already joining the two. The frame's
   properties have a «Pointers» group, the keyboard's way: each pointer's frame and anchor (anchors of the laid
-  pages, else typed), remove, add. Decisions: a new pointer puts the picture's frame under the decoration
-  (`layer: -1`) when neither it nor what it extends sets a layer, since connectors paint under the frames
-  (§12.23); pointers are written on the page's template (every page it lays draws them; a page whose picture
+  pages, else typed), remove, add. Decisions: a pointer leaves the picture's frame at its layer: since #1076
+  (§12.26) a connector with an anchor end paints over the frames by default (the first version of this
+  lane set the frame to `layer: -1`, as §12.23 needed then); pointers are written on the page's template (every page it lays draws them; a page whose picture
   lacks the anchor gets `labelAnchorUnknown`), never on a variant; an inherited pointer is edited on the child
   under its id and removed by hiding it (`{ id, remove: true }`). The grip is not offered on a turned frame.
 - **Connector card (U10's, #1063).** Each end has «Anchor of the picture»: the anchors of the picture the
@@ -2749,6 +2749,8 @@ symbols, edited without writing JSON.
   read `at` then). The canvas handle of such an end is drawn at the anchor's point (`connectorHandles`
   takes an `anchorPoint` reader; the frame editor gives it the page's anchors taken into the flow frame),
   where the engine ends the line. Instances (`#card[2]`) and groups offer no anchors.
+  An «Over the frames» switch writes `over` (#1076); unset, it shows the default `connectorPaintsOver`
+  gives (on when an end stops at an anchor) and says why under it.
 - **Label style editor.** Plate group: outline (`border`, starting as a 0.5 pt line in the text colour),
   corner radius. New «Lines and key» group: `align` (as the anchor places it / start / centre / end) and
   `kind: 'legend'`. New «Leader» group: on (`leader: {}`), colour (shown as the text's while unset), width,

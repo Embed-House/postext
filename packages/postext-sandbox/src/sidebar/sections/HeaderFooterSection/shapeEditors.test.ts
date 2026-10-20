@@ -68,6 +68,18 @@ describe('the slot editor (#1063)', () => {
     expect(html).not.toContain(L.connectorCapSize);
   });
 
+  it('an end at a picture\'s anchor (#1064) names it, hides the point along the side, and the line goes over the frames by default (#1076)', () => {
+    const html = renderSlot([{ kind: 'connector', id: 'c', from: { to: '#root' }, to: { to: '#leaf', anchor: 'harbour' }, routing: 'straight' }], FRAMES);
+    expect(html).toContain(L.connectorAnchor);
+    expect(html).toContain(L.pointersAnchorMissing.replace('__anchor__', 'harbour'));
+    expect(html).toContain(L.connectorOver);
+    expect(html).toContain(L.connectorOverDefaultOn);
+    const plain = renderSlot([{ kind: 'connector', id: 'c', from: { to: '#root' }, to: { to: '#leaf' }, routing: 'straight' }], FRAMES);
+    expect(plain).toContain(L.connectorOverDefaultOff);
+    const set = renderSlot([{ kind: 'connector', id: 'c', from: { to: '#root' }, to: { to: '#leaf' }, routing: 'straight', over: true }], FRAMES);
+    expect(set).not.toContain(L.connectorOverDefaultOff);
+  });
+
   it('shows a shape\'s presets, its path, view box, fit, fill and outline', () => {
     const html = renderSlot([{ kind: 'path', id: 'p', d: PATH_PRESETS.chevron, fill: { hex: '#123456', model: 'hex' }, stroke: { hex: '#000000', model: 'hex' }, placement: { anchor: { to: 'container', edge: 'top-left' } } }]);
     expect(html).toContain(`${L.headerFooterElementPath} #1`);

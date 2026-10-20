@@ -37,7 +37,7 @@ describe('sandbox_edit_labels (#1064)', () => {
     expect(added.pointer).toBe('pointer-n1-title');
     expect(added.pointers).toEqual([{ id: 'pointer-n1-title', from: 'n1', toFrame: 'map', anchor: 'title' }]);
     const tpl = () => get().config.pageTemplates!.find((t) => t.id === 'parts')!;
-    expect(tpl().frames!.find((f) => f.name === 'map')!.layer).toBe(-1);
+    expect(tpl().frames!.find((f) => f.name === 'map')!.layer).toBeUndefined();
     await call('sandbox_edit_labels', { action: 'pointer', template: 'parts', id: 'pointer-n1-title', from: 'n1', toFrame: 'map', anchor: 'legend', wait: false });
     expect(tpl().decoration!.elements[0]).toMatchObject({ kind: 'connector', to: { to: '#map', anchor: 'legend' } });
     const removed = await call('sandbox_edit_labels', { action: 'pointer', template: 'parts', id: 'pointer-n1-title', remove: true, wait: false });

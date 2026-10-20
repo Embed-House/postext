@@ -8,7 +8,7 @@
  */
 
 import { useEffect } from 'react';
-import { DEFAULT_CONNECTOR_WIDTH, DEFAULT_MAIN_COLOR, type ConnectorEnd, type DesignConnectorElement, type Dimension, type LineCap, type PageParity } from 'postext';
+import { DEFAULT_CONNECTOR_WIDTH, DEFAULT_MAIN_COLOR, connectorPaintsOver, type ConnectorEnd, type DesignConnectorElement, type Dimension, type LineCap, type PageParity } from 'postext';
 import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { anchorsOfTemplateFrame } from '../../../viewport/composed/labelAnchorGeometry';
 import { ColorPicker, DimensionInput, NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
@@ -54,7 +54,7 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
   const resources = useSandboxSelector((s) => s.resources);
   const anchorsOf = (ref: string | undefined): string[] => {
     if (!host || !ref?.startsWith('#') || ref.includes('[')) return [];
-    return anchorsOfTemplateFrame(docRef.current, host.templateId, ref.slice(1), (id) => resources?.find((r) => r.id === id)?.anchors).map((a) => a.anchorId);
+    return anchorsOfTemplateFrame(docRef?.current ?? null, host.templateId, ref.slice(1), (id) => resources?.find((r) => r.id === id)?.anchors).map((a) => a.anchorId);
   };
 
   // The canvas shows the ends of the connector being worked on: the one
@@ -250,6 +250,21 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
           onReset={() => update({ capSize: undefined })}
         />
       ) : null}
+      {/* Over the frames (#1076): by default a line with an end at a
+          picture's anchor paints over the frames, any other under them. */}
+      <ToggleSwitch
+        label={labels.connectorOver}
+        tooltip={labels.connectorOverTooltip}
+        checked={raw.over ?? connectorPaintsOver(raw)}
+        onChange={(v) => update({ over: v })}
+        isDefault={raw.over === undefined}
+        onReset={() => update({ over: undefined })}
+      />
+      {raw.over === undefined && (
+        <p className="mb-2 text-[0.7rem] text-(--slate)" data-connector-over-default="">
+          {connectorPaintsOver(raw) ? labels.connectorOverDefaultOn : labels.connectorOverDefaultOff}
+        </p>
+      )}
       <ToggleSwitch
         label={labels.connectorPin}
         tooltip={labels.connectorPinTooltip}

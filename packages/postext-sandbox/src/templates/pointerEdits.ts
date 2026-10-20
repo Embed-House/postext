@@ -1,5 +1,5 @@
 import type { ConnectorEnd, DesignConnectorElement, DesignElement, PageTemplate } from 'postext';
-import { inheritedDecoration, isRemoval, joinDecoration, splitDecoration, templateAt, uniqueName, updateFrame } from './templateEdits';
+import { inheritedDecoration, isRemoval, joinDecoration, splitDecoration, templateAt, uniqueName } from './templateEdits';
 
 // ---------------------------------------------------------------------------
 // Pointers (#1064): a line from a frame of a composed page (a note) to an
@@ -83,10 +83,9 @@ export interface PointerSpec {
  * The templates with a pointer from frame `from` to anchor `anchor` of the
  * picture in `toFrame`: the pointer `id` gets its target changed (its look
  * kept), else the one already joining the two is kept, else a new connector
- * is added to the template's decoration. The frame of the picture is put
- * under the decoration (`layer: -1`) when it sets no layer, so the line is
- * painted over the picture it points into (connectors paint in the
- * decoration layer, under the frames, §12.23). Null when the template or
+ * is added to the template's decoration. A connector with an anchor end is
+ * painted over the frames (`connectorPaintsOver`, #1076), so the picture's
+ * frame keeps its layer. Null when the template or
  * the frames are not there, or a frame points at itself.
  */
 export function setPointer(templates: Templates, templateId: string, spec: PointerSpec): { templates: PageTemplate[]; id: string; created: boolean } | null {
@@ -117,19 +116,7 @@ export function setPointer(templates: Templates, templateId: string, spec: Point
     const el: DesignConnectorElement = { kind: 'connector', id, from: { to: `#${spec.from}` }, to: { to: `#${spec.toFrame}`, anchor }, ...NEW_POINTER_LOOK };
     next = withOwnElements(templates, templateId, (els) => [...els, el]);
   }
-  next = underDecoration(next, templateId, spec.toFrame);
   return { templates: next, id, created };
-}
-
-/** The frame `name` set under the decoration (`layer: -1`) when neither the
- *  template nor what it extends gives it a layer. */
-function underDecoration(templates: PageTemplate[], templateId: string, name: string): PageTemplate[] {
-  const ids = [templateId];
-  for (let at = templateAt(templates, templateId)?.template.extends; at && !ids.includes(at); at = templateAt(templates, at)?.template.extends) ids.push(at);
-  const layered = ids.some((id) => templateAt(templates, id)?.template.frames?.some((f) => f.name === name && f.layer !== undefined));
-  const known = ids.some((id) => templateAt(templates, id)?.template.frames?.some((f) => f.name === name));
-  if (layered || !known) return templates;
-  return updateFrame(templates, templateId, 'base', name, { layer: -1 });
 }
 
 /** The templates without pointer `id` (one inherited is hidden on this

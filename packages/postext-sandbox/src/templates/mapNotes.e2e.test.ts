@@ -53,8 +53,8 @@ describe('a parts-of-a-map page made with the Sandbox\'s edits (#1064)', () => {
       templates = out.templates;
     }
     expect(pointersOf(templates, 'parts').map((p) => `${p.from}>${p.toFrame}#${p.anchor}`)).toEqual(['n1>map#title', 'n2>map#legend', 'n3>map#scale']);
-    // The map went under the decoration, so the lines show over it.
-    expect(templates[0]!.frames!.find((f) => f.name === 'map')!.layer).toBe(-1);
+    // The map keeps its layer: a pointer paints over the frames (#1076).
+    expect(templates[0]!.frames!.find((f) => f.name === 'map')!.layer).toBeUndefined();
     // The same pointer again changes nothing.
     expect(setPointer(templates, 'parts', { from: 'n1', toFrame: 'map', anchor: 'title' })!.created).toBe(false);
 
