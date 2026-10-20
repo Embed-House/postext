@@ -10,7 +10,7 @@ import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } fro
 import { parseMarkdown } from '../../parse';
 import { flowRectToPage } from '../../vdt';
 import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import type { ContentWarning, DesignConnectorElement, DesignElement, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
 import { BOX_MODULE, boxModule, MODULE_CONFIG, MODULE_RESOURCES, TOPIC_TEMPLATE, TOPIC_WORDS, topicPage, TREE_MODULE, treeModule } from './fixtures/modules';
 
 // #1062 (DESIGN §12.7): module templates a page stacks in its modules
@@ -272,13 +272,32 @@ describe('module configuration and checks (#1062)', () => {
     expect(t.frames.find((f) => f.name === 'a.izq')!.placement!.anchor.to).toBe('#a.raiz');
     expect(t.groups[0]).toMatchObject({ name: 'cuerpo', modules: true, frames: ['a.raiz', 'a.izq', 'a.der', 'b.texto', 'b.foto'], items: [{ item: 1, frames: ['a.raiz', 'a.izq', 'a.der'], module: 'a' }, { item: 2, frames: ['b.texto', 'b.foto'], module: 'b' }] });
     // Decoration anchored to the module's `'container'` reads its box.
-    const ground = t.decoration.elements.find((e) => e.id === 'a.suelo')!;
+    const ground = t.decoration.elements.find((e) => e.id === 'a.suelo')! as Extract<DesignElement, { placement: unknown }>;
     expect(ground.placement.anchor.to).toBe('#a');
     expect(t.modules!.map((m) => m.name)).toEqual(['a', 'b']);
     // Without modules: the shell as it is, cached apart.
     expect(resolvePageTemplate(MODULE_CONFIG, 'tema')!.frames.map((f) => f.name)).toEqual(['titulo']);
     // Unknown uses are left out.
     expect(resolvePageTemplate(MODULE_CONFIG, 'tema', { modules: [{ name: 'x', template: 'nada' }] })!.modules).toBeUndefined();
+  });
+
+  it('scopes a connector\'s ends to the module instance', () => {
+    const tree = (MODULE_CONFIG.pageTemplates ?? []).find((t) => t.id === 'arbol')!;
+    const joined: PageTemplate = {
+      ...tree,
+      decoration: {
+        elements: [
+          ...(tree.decoration?.elements ?? []),
+          { kind: 'connector', id: 'lineas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+        ],
+      },
+    };
+    const config = { ...MODULE_CONFIG, pageTemplates: (MODULE_CONFIG.pageTemplates ?? []).map((t) => (t.id === 'arbol' ? joined : t)) };
+    const t = resolvePageTemplate(config, 'tema', { modules: [{ name: 'a', template: 'arbol' }, { name: 'b', template: 'arbol' }] })!;
+    const lines = t.decoration.elements.filter((e): e is DesignConnectorElement => e.kind === 'connector');
+    expect(lines.map((e) => e.id)).toEqual(['a.lineas', 'b.lineas']);
+    expect(lines[1]!.from.to).toBe('#b.raiz');
+    expect((lines[1]!.to as { to: string }[]).map((e) => e.to)).toEqual(['#b.izq', '#b.der']);
   });
 
   it('scopes the slots of a :::module by its name in the parser', () => {

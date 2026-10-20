@@ -19,7 +19,7 @@
  *
  * Pure. Run by `resolvePageTemplate` when it is given the page's modules.
  */
-import type { ElementPlacement } from '../types';
+import type { ConnectorEnd, DesignConnectorElement, ElementPlacement } from '../types';
 import type { ComposedModuleUse, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from './types';
 
 /** The `role` of a module template. */
@@ -54,6 +54,24 @@ function rewritePlacement(placement: ElementPlacement | undefined, rename: (name
     size = out as ElementPlacement['size'];
   }
   return { ...placement, anchor, ...(size ? { size } : {}) };
+}
+
+/** A connector's ends (#1056) read through `rename`: `'#x'`, an instance
+ *  `'#x[2]'` and every instance `'#x[*]'` of a frame of the module name its
+ *  scoped frame; ends on frames outside the module are kept as written. */
+function rewriteConnectorEnds(
+  connector: DesignConnectorElement,
+  rename: (name: string) => string | undefined,
+): Pick<DesignConnectorElement, 'from' | 'to'> {
+  const end = (e: ConnectorEnd): ConnectorEnd => {
+    if (typeof e?.to !== 'string' || !e.to.startsWith('#')) return e;
+    const ref = e.to.slice(1);
+    const bracket = ref.indexOf('[');
+    const base = bracket >= 0 ? ref.slice(0, bracket) : ref;
+    const renamed = rename(base);
+    return renamed === undefined ? e : { ...e, to: `#${renamed}${bracket >= 0 ? ref.slice(bracket) : ''}` };
+  };
+  return { from: end(connector.from), to: Array.isArray(connector.to) ? connector.to.map(end) : end(connector.to) };
 }
 
 /**
@@ -111,11 +129,11 @@ export function expandModules(
       delete out.grid;
       return out;
     });
-    const ownElements = m.decoration.elements.map((e) => ({
-      ...e,
-      ...(typeof e.id === 'string' ? { id: scope(e.id) } : {}),
-      placement: rewritePlacement(e.placement, rename, use.name)!,
-    }));
+    const ownElements = m.decoration.elements.map((e) => {
+      const id = typeof e.id === 'string' ? { id: scope(e.id) } : {};
+      if (e.kind === 'connector') return { ...e, ...id, ...rewriteConnectorEnds(e, rename) };
+      return { ...e, ...id, placement: rewritePlacement(e.placement, rename, use.name)! };
+    });
     const flow = m.frames.find((f) => f.flow);
     const takes: ResolvedModule['takes'] = {};
     for (const f of m.frames) if (f.takes && takes[f.takes] === undefined) takes[f.takes] = scope(f.name);
