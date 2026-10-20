@@ -825,16 +825,22 @@ Each end (`ConnectorEnd`) names a box and a point on one of its sides:
       <td>none</td>
       <td>An anchor of the picture the frame holds: the end is that point of the picture, through its crop, safe area and scale, as a label's is, instead of a point of the frame's side. <code>at</code> is not read; <code>side</code> says which way the line arrives (by default, from the other end).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>a connector with an <code>anchor</code> end paints over the frames, any other under them</td>
+      <td>Paints the line after every frame of the page (<code>true</code>) or with the decoration, under the frames (<code>false</code>). Unset, a connector that has an <code>anchor</code> end paints over, so a pointer into a picture shows over the picture's frame; a line between frames stays under.</td>
+    </tr>
   </tbody>
 </table>
 
 **Ends that are not there.** An end on a frame the page does not show (collapsed, optional and empty, a card past the page's items, a picture point that its frame cuts off) is left out: a tree keeps its other children, and the page's reflow log says so (`connectorDropped`). With no `from` or no `to` left, nothing is drawn.
 
-**Paint.** Connectors are painted with the decoration, under the frames, as vector paths: on the canvas, in the PDF, in the HTML viewer and the fixed-layout EPUB, and as a layout artifact in a tagged PDF; the reflowable EPUB leaves them out with the rest of the decoration. A line that points into a picture needs the picture's frame under the decoration: give that frame `layer: -1`. On a spread a connector between frames of the two pages crosses the spine and is cut there like the rest of the decoration; on a right-to-left page `start` and `end` follow the mirrored flow.
+**Paint.** Connectors are painted as vector paths: on the canvas, in the PDF, in the HTML viewer and the fixed-layout EPUB, and as a layout artifact in a tagged PDF; the reflowable EPUB leaves them out with the rest of the decoration. A connector with an `anchor` end is painted over every frame of the page, so a line that points into a picture shows over the picture's frame without a `layer` on it; the other connectors stay with the decoration, under the frames. `over: true` raises a line between frames, `over: false` keeps a pointer under them. On a spread a connector between frames of the two pages crosses the spine and is cut there like the rest of the decoration; on a right-to-left page `start` and `end` follow the mirrored flow.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

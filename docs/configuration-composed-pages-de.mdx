@@ -825,16 +825,22 @@ Jedes Ende (`ConnectorEnd`) nennt einen Kasten und einen Punkt auf einer seiner 
       <td>keiner</td>
       <td>Ein Anker des Bilds, das der Rahmen enthält: Das Ende ist dieser Punkt des Bilds, über Beschnitt, Sicherheitsbereich und Skalierung abgebildet wie der einer Beschriftung, statt eines Punkts auf der Seite des Rahmens. <code>at</code> wird nicht gelesen; <code>side</code> gibt an, aus welcher Richtung die Linie ankommt (standardmäßig vom anderen Ende her).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>ein Verbinder mit einem <code>anchor</code>-Ende wird über den Rahmen gezeichnet, andere darunter</td>
+      <td>Zeichnet die Linie nach allen Rahmen der Seite (<code>true</code>) oder mit der Dekoration, unter den Rahmen (<code>false</code>). Ohne Wert wird ein Verbinder mit einem <code>anchor</code>-Ende darüber gezeichnet, sodass eine Linie, die in ein Bild zeigt, über dem Rahmen des Bilds sichtbar ist; eine Linie zwischen Rahmen bleibt darunter.</td>
+    </tr>
   </tbody>
 </table>
 
 **Enden, die fehlen.** Ein Ende an einem Rahmen, den die Seite nicht zeigt (eingeklappt, optional und leer, eine Karte jenseits der Einträge der Seite, ein Bildpunkt, den sein Rahmen abschneidet), wird weggelassen: Ein Baum behält seine übrigen Kinder, und das Umbruchprotokoll der Seite vermerkt es (`connectorDropped`). Bleibt kein `from` oder kein `to` übrig, wird nichts gezeichnet.
 
-**Zeichnen.** Verbinder werden mit der Dekoration gezeichnet, unter den Rahmen, als Vektorpfade: im Canvas, im PDF, im HTML-Betrachter und im EPUB mit festem Layout, und als Layout-Artefakt in einem getaggten PDF; das umfließende EPUB lässt sie mit der übrigen Dekoration weg. Eine Linie, die in ein Bild zeigt, braucht den Rahmen des Bilds unter der Dekoration: Geben Sie diesem Rahmen `layer: -1`. Auf einer Doppelseite überquert ein Verbinder zwischen Rahmen beider Seiten den Bund und wird dort wie die übrige Dekoration geschnitten; auf einer Seite von rechts nach links folgen `start` und `end` dem gespiegelten Fluss.
+**Zeichnen.** Verbinder werden als Vektorpfade gezeichnet: im Canvas, im PDF, im HTML-Betrachter und im EPUB mit festem Layout, und als Layout-Artefakt in einem getaggten PDF; das umfließende EPUB lässt sie mit der übrigen Dekoration weg. Ein Verbinder mit einem `anchor`-Ende wird über allen Rahmen der Seite gezeichnet, sodass eine Linie, die in ein Bild zeigt, ohne `layer` über dem Rahmen des Bilds sichtbar ist; die übrigen Verbinder bleiben bei der Dekoration, unter den Rahmen. `over: true` hebt eine Linie zwischen Rahmen darüber, `over: false` hält eine zeigende Linie darunter. Auf einer Doppelseite überquert ein Verbinder zwischen Rahmen beider Seiten den Bund und wird dort wie die übrige Dekoration geschnitten; auf einer Seite von rechts nach links folgen `start` und `end` dem gespiegelten Fluss.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [
