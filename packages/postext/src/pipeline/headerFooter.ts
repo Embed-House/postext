@@ -31,7 +31,7 @@ import { classifyPages } from './pageRoles';
 import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
 import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
-import { resolvePageTemplate } from '../composed/templates';
+import { repeatInstance, resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
 import { frameOfBlock, framePageRect } from '../composed/paint';
 import type { ResolvedConfig } from '../vdt';
@@ -1820,6 +1820,14 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         ...(headingNumber !== undefined ? { headingNumber } : {}),
         ...(Object.keys(headingNumberByFrame).length > 0 ? { headingNumberByFrame } : {}),
       };
+      // An element anchored to an instance of a repeated frame (#1061) the
+      // page does not have (`#card[5]` on a page of three cards) is not
+      // drawn, as one anchored to a frame that takes no room.
+      for (const el of template.decoration.elements) {
+        const to = (el as { placement?: { anchor?: { to?: unknown } } }).placement?.anchor?.to;
+        const t = typeof to === 'string' && to.startsWith('#') ? to.slice(1) : undefined;
+        if (t !== undefined && named[t] === undefined && repeatInstance(t) !== undefined) collapsed.add(t);
+      }
       const slot = resolveDesignSlot(template.decoration, 'header');
       const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
         collapsed.size > 0 ? withoutAnchoredTo(slot, collapsed) : slot,

@@ -511,7 +511,8 @@ function frameAncestors(doc: VDTDocument, page: VDTPage, frame: VDTFrame): Sourc
   }];
   const template = templateOf(doc, page);
   for (const g of template?.groups ?? []) {
-    if (!g.frames.includes(frame.name)) continue;
+    // An instance of a repeated frame (#1061) is in its frame's grid.
+    if (!g.frames.includes(frame.repeat?.frame ?? frame.name)) continue;
     out.push({ level: 'group', id: groupElementId(composed.fenceIndex, g.name), source: { kind: 'config', path: g.configPath } });
   }
   out.push(templateElement(composed));

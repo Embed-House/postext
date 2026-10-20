@@ -6667,7 +6667,9 @@ function placeDocumentPass(
       const src = frameAt.get(c.fromFrameId);
       const dst = frameAt.get(to);
       if (!src || !dst) return;
-      src.frame.continuesTo = to;
+      // An item of a grid that went on whole (#1061) left nothing on its
+      // page to point on from: the page's log says where it went.
+      if (!c.whole) src.frame.continuesTo = to;
       logContinued(src, c, { toPage: dst.page.index, toFrame: to });
     };
     for (const [name, c] of jumpReceivers) link(c, frameElementId(fence.fenceIndex, name));

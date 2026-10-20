@@ -42,11 +42,12 @@ import { chainHead, FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
-import { anchorTarget, resolveContinueIn } from '../composed/templates';
+import { anchorTarget, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
 import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
+import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
@@ -155,9 +156,12 @@ interface FitState {
   yieldAll: ReadonlySet<string>;
   /** Frames cut at their foot whose rest goes on on another page (#859). */
   goOn: ReadonlySet<string>;
+  /** Grids whose rows that do not fit go on on another page, whole
+   *  (#1061). */
+  gridsOn: ReadonlySet<string>;
 }
 
-const NO_FIT: FitState = { patches: new Map(), text: new Map(), pictures: new Map(), yieldAll: new Set(), goOn: new Set() };
+const NO_FIT: FitState = { patches: new Map(), text: new Map(), pictures: new Map(), yieldAll: new Set(), goOn: new Set(), gridsOn: new Set() };
 
 /** Where a frame that goes on to another page left its story (#859). */
 interface Spill {
@@ -168,6 +172,8 @@ interface Spill {
   pieces: number;
   headBlockId: string;
   frameId: string;
+  /** An item of a grid that goes on whole (#1061). */
+  whole?: true;
 }
 
 /** One laying out of the page's frames. */
@@ -191,6 +197,8 @@ interface Composition {
    *  part of the contents under `toc.parts.breakBefore`, #996) that are
    *  not allowed to go on yet: the ladder lets them. */
   wantsOn: Set<string>;
+  /** Instances of a grid's rows cut at the grid's foot (#1061). */
+  clipped: Set<string>;
 }
 
 /** Step of the text and picture scales the ladder tries (DESIGN §5.4). */
@@ -240,7 +248,12 @@ function chainPrev(template: ResolvedPageTemplate, receivers: ReadonlyMap<string
 const sameCut = (a: CalloutCut, b: CalloutCut): boolean =>
   a.child === b.child && a.line === b.line && JSON.stringify(a.group ?? null) === JSON.stringify(b.group ?? null);
 
-export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout {
+export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout {
+  // The grids that repeat a frame set (#1061) are laid with one instance of
+  // the set per item the page's stories hold (`<frame>[n]`): from here on
+  // they are plain frames.
+  const expanded = expandRepeats(asked.template, repeatItemsOf(asked.template, asked.stories.keys()));
+  const given: ComposedPageInput = expanded === asked.template ? asked : { ...asked, template: expanded };
   // A page added by continuation (#859) lays its template with the
   // continuation's rules (and, for the template laid again, its other
   // frames collapsed).
@@ -269,7 +282,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   const memo = new Map<string, Composition>();
   let runs = 0;
   const keyOf = (tpl: ResolvedPageTemplate, fit: FitState): string =>
-    JSON.stringify([tpl.id, [...fit.patches], [...fit.text], [...fit.pictures], [...fit.yieldAll], [...fit.goOn]]);
+    JSON.stringify([tpl.id, [...fit.patches], [...fit.text], [...fit.pictures], [...fit.yieldAll], [...fit.goOn], [...fit.gridsOn]]);
   /** Frames a page added by continuation lays with no room (#859). */
   const collapsedHere = input.continuing ? collapsedOnAddedPage(given.template, input.continuing) : new Set<string>();
   const holdsStory = (name: string): boolean => input.stories.has(headOf(name));
@@ -395,9 +408,16 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   };
   /** Story heads of the frame and of its group's frames whose content holds
    *  a picture. */
+  /** The frames a frame shares its group's room with: its group's, or for
+   *  an instance of a grid's set (#1061) its own item's. */
+  const peersOf = (name: string): string[] | undefined => {
+    const inst = instanceOf(template, name);
+    if (inst) return inst.group.items!.find((c) => c.item === inst.item)!.frames;
+    return groupOf.get(name)?.frames;
+  };
   const pictureHeads = (frame: ResolvedFrame): string[] => {
-    const g = groupOf.get(frame.name);
-    const names = g ? [frame.name, ...g.frames.filter((m) => m !== frame.name)] : [frame.name];
+    const peers = peersOf(frame.name);
+    const names = peers ? [frame.name, ...peers.filter((m) => m !== frame.name)] : [frame.name];
     const heads: string[] = [];
     for (const n of names) {
       const head = headOf(n);
@@ -424,8 +444,8 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     return false;
   };
   const movesOthers = (frame: ResolvedFrame): boolean => {
-    const g = groupOf.get(frame.name);
-    if (g && g.frames.filter((m) => byName.has(m)).length > 1) return true;
+    const peers = peersOf(frame.name);
+    if (peers && peers.filter((m) => byName.has(m)).length > 1) return true;
     return template.frames.some((f) => f.name !== frame.name && !f.grid && anchorTarget(f.placement) === frame.name);
   };
   /** `free` applies: a fixed height with room up to a higher `maxHeight`. */
@@ -461,7 +481,8 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     //    width) back, down to its minimum or its content.
     const redistribute = (): boolean => {
       const g = groupOf.get(name);
-      if (!g || g.frames.filter((m) => byName.has(m)).length <= 1) return false;
+      // (A grid's rows are as tall as their tallest cell: nothing to give.)
+      if (!g || g.kind === 'grid' || g.frames.filter((m) => byName.has(m)).length <= 1) return false;
       steps.push('redistribute');
       return attempt({ ...fit, yieldAll: new Set([...fit.yieldAll, g.name]) }, name);
     };
@@ -475,14 +496,19 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     //    `'template:<id>'` or `'page:<id>'`, #859). On a page added by
     //    continuation, a frame that would take none of what it receives
     //    sends nothing on (it would go on for ever): it warns.
+    // An instance of a grid's set (#1061) goes on with its whole row, as
+    // the grid's main frame says (`overflow.continueIn`, `fit`).
+    const grid = instanceOf(template, name)?.group;
+    const ruler = grid ? byName.get(grid.items![0]!.frames[0]!) ?? frame : frame;
     const goOn = (): boolean => {
-      if (!continuesOffPage(frame.overflow.continueIn)) return false;
+      if (!continuesOffPage(ruler.overflow.continueIn)) return false;
       steps.push('continue');
       const before = { fit, cur };
       // (Only for a story that came from another page: a page's own story
       // may go on whole.)
       const received = input.continuing?.receivers.has(headOf(name)) ?? false;
-      if (attempt(goingOn(fit, frame), name) && (!received || cur.spills.get(name)?.advanced !== false)) return true;
+      const next = grid ? { ...fit, gridsOn: new Set([...fit.gridsOn, grid.name]) } : goingOn(fit, frame);
+      if (attempt(next, name) && (!received || cur.spills.get(name)?.advanced !== false)) return true;
       ({ fit, cur } = before);
       return false;
     };
@@ -491,7 +517,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     // one size from page to page. The pictures and the text shrink only
     // when it cannot go on (the last page continuation may add, or a
     // receiver that takes none of it).
-    const order = continuesOffPage(frame.overflow.continueIn) && frame.fit.preferContinue
+    const order = continuesOffPage(ruler.overflow.continueIn) && ruler.fit.preferContinue
       ? [redistribute, goOn, scaleImages, shrinkText]
       : [scaleImages, redistribute, shrinkText, goOn];
     for (const step of order) if (step()) break;
@@ -500,9 +526,17 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   // 7. Warn, with what would make each frame that still overflows fit.
   const warnings: ContentWarning[] = [...(cur.notes ?? [])];
   const templateAttr = fence.attrSources.template;
+  // The rows of a grid cut at its foot (#1061) warn once, on the last
+  // instance cut.
+  const lastCut = new Map<string, string>();
+  for (const frame of template.frames) {
+    const inst = cur.clipped.has(frame.name) && overflows(cur, frame.name) ? instanceOf(template, frame.name) : undefined;
+    if (inst) lastCut.set(inst.group.name, frame.name);
+  }
   for (const frame of template.frames) {
     const vdt = frameIn(cur, frame.name);
     if (!vdt || vdt.overflowPx <= 0.5) continue;
+    if (cur.clipped.has(frame.name) && lastCut.get(instanceOf(template, frame.name)?.group.name ?? '') !== frame.name) continue;
     const overflowMm = Math.round((vdt.overflowPx / mmPx) * 10) / 10;
     const proposals = overflowProposals({
       frame,
@@ -569,12 +603,18 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     const story = spill ? input.stories.get(spill.head) : undefined;
     if (!spill || !story) continue;
     const came = input.continuing?.receivers.get(spill.head);
+    // An item of a grid (#1061) goes on whole, as its main frame says; the
+    // instances of its set that hold nothing go with it.
+    const cell = spill.whole ? instanceOf(template, frame.name) : undefined;
+    const cellFrames = cell ? cell.group.items!.find((c) => c.item === cell.item)!.frames : [];
+    const ruler = cell ? byName.get(cellFrames[0]!) ?? frame : frame;
+    const empty = cell?.main ? cellFrames.filter((n) => n !== frame.name && !cur.spills.has(n)) : [];
     continuations.push({
       frame: frame.name,
       fromFrameId: spill.frameId,
       head: spill.head,
       // `{attr.x}` read from the fence (#917).
-      rule: resolveContinueIn(frame.overflow.continueIn!, fence.attrs),
+      rule: resolveContinueIn(ruler.overflow.continueIn!, fence.attrs),
       template: template.id,
       collapsed: input.continuing?.collapse ?? false,
       story,
@@ -583,8 +623,9 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
       headBlockId: spill.headBlockId,
       // A story that jumped here (#917) goes on named by this page's frame.
       slot: (input.continuing?.jump ? undefined : came?.slot) ?? frame.name,
-      ...(trailing.has(frame.name) ? { trailing: trailing.get(frame.name)! } : {}),
+      ...(trailing.has(frame.name) ? { trailing: trailing.get(frame.name)! } : empty.length > 0 ? { trailing: empty } : {}),
       ...(frame.overflow.fromMark !== undefined ? { fromMark: frame.overflow.fromMark } : {}),
+      ...(spill.whole ? { whole: true as const } : {}),
     });
   }
   return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}), ...(continuations.length > 0 ? { continuations } : {}) };
@@ -715,8 +756,12 @@ function regroupStories(input: ComposedPageInput, alt: ResolvedPageTemplate): { 
   const flow = alt.frames.find((f) => f.flow);
   const flowHead = flow ? chainHead(alt, flow.name) : undefined;
   const current = input.template.frames;
+  const repeatedIn = repeatedFrames(alt);
   const headIn = (head: string): string | undefined => {
     if (names.has(head)) return chainHead(alt, head);
+    // An instance of a frame `alt` repeats too (#1061) stays an instance.
+    const inst = repeatInstance(head);
+    if (inst && repeatedIn.has(inst.frame)) return head;
     const takes = current.find((f) => f.name === head)?.takes;
     const taker = takes ? alt.frames.find((f) => f.takes === takes) : undefined;
     return taker ? chainHead(alt, taker.name) : flowHead;
@@ -939,6 +984,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
    *  the fence's page that first sent it on. */
   const frameIdOf = (name: string): string => (cont && !cont.jump ? frameElementId(fi, cont.receivers.get(name)?.slot ?? name, cont.generation) : frameElementId(fi, name));
   const byName = new Map(template.frames.map((f) => [f.name, f]));
+  /** Frames a grid repeats (#1061): their instances are `<frame>[n]`. */
+  const repeated = new Set(template.groups.flatMap((g) => (g.items ? g.repeat?.frames ?? [] : [])));
   const prev = chainPrev(template, cont?.receivers);
   /** The head of the chain a frame belongs to. */
   const headOf = (name: string): string => {
@@ -1084,6 +1131,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     const laid = new Set<string>();
     const spills = new Map<string, Spill>();
     const wantsOn = new Set<string>();
+    const clipped = new Set<string>();
     const pushed: { name: string; box: Rect; contour?: VDTExclusionContour }[] = seed
       ? [...seed].map(([name, box]) => ({ name, box, ...(seedShapes?.get(name) ? { contour: seedShapes.get(name)! } : {}) }))
       : [];
@@ -1356,7 +1404,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         const start = firstFree?.own ?? input.areas.area;
         const box = ownBox ?? { x: start.x, y: start.y, width: 0, height: 0 };
         const out = layoutGroup({
-          kind: group.kind,
+          kind: group.kind === 'row' ? 'row' : 'stack',
           box,
           elastic: !ownBox,
           limit: input.areas.area,
@@ -1400,6 +1448,159 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       groupRects.set(group.name, fin.box);
       groupDeclared.set(group.name, decl.box);
       return fin.rects;
+    };
+
+    /** Lay a grid (#1061): its cells fill rows from the start side of the
+     *  page's lines (the flow frame is mirrored on a right-to-left page, so
+     *  its left is the start), `columns` to a row, `columnGap` and `rowGap`
+     *  between them. A cell is one item of a repeated frame set (or one
+     *  frame of a grid that repeats none): the main frame takes the cell's
+     *  width and its own height rule, the set's other frames are placed as
+     *  the template draws them, anchored to the main frame or to each
+     *  other (one that anchors to nothing in the set moves with the cell).
+     *  A row is as tall as its tallest cell, the set's frames counted;
+     *  `rowAlign` places the shorter ones (`'stretch'`: their main frame
+     *  grows to the row). The grid runs down its own box, or to the foot of
+     *  the area from where the template draws its main frame. A row that
+     *  does not fit is clipped at the foot, or, when the grid goes on to
+     *  another page (`FitState.gridsOn`), it and every row after it are
+     *  left for that page, whole (`spilled`). */
+    const placeGrid = (group: ResolvedFrameGroup, members: readonly ResolvedFrame[]): { rects: Map<string, Rect>; spilled: Set<string>; laidAny: boolean; clipped: string[] } => {
+      const byMember = new Map(members.map((f) => [f.name, f]));
+      const cells = (group.items ?? (group.repeat ? [] : members.map((f) => ({ item: 0, frames: [f.name] }))))
+        .map((c) => c.frames.filter((n) => byMember.has(n)))
+        .filter((c) => c.length > 0);
+      const laidBoxes = new Map<string, Rect>();
+      const spilled = new Set<string>();
+      const cut: string[] = [];
+      const own = groupPlaceable(group);
+      const ownBox = own ? placeBox(own, template, input, refOf, () => 0) : undefined;
+      const area = input.areas.area;
+      const first = cells[0] ? byMember.get(cells[0][0]!)! : undefined;
+      /** Where the template draws a cell's main frame. */
+      const drawnOf = (main: ResolvedFrame): Rect => placeBox(framePlaceable(main), template, input, refOf, () => 0);
+      const drawnFirst = first ? drawnOf(first) : area;
+      const box: Rect = ownBox ?? { x: drawnFirst.x, y: drawnFirst.y, width: Math.max(0, area.x + area.width - drawnFirst.x), height: Math.max(0, area.y + area.height - drawnFirst.y) };
+      const foot = box.y + box.height;
+      const columns = Math.max(1, group.columns ?? 1);
+      const colGap = dimensionToPx(group.columnGap ?? group.gap, dpi, input.emPx);
+      const rowGap = dimensionToPx(group.rowGap ?? group.gap, dpi, input.emPx);
+      const colW = Math.max(1, (box.width - colGap * (columns - 1)) / columns);
+      const xOf = (c: number): number => box.x + c * (colW + colGap);
+      const px = (d: Dimension | undefined): number | undefined => (d ? dimensionToPx(d, dpi, input.emPx) : undefined);
+      /** The main frame's height in a cell `w` wide: its own rule, held
+       *  between its minimum and maximum. */
+      const mainHeight = (f: ResolvedFrame, w: number): number => {
+        const h = f.height;
+        let v: number;
+        if (h === 'auto') v = naturalOf(prepare(f))(w);
+        else if (h === 'fill') v = 0;
+        else if ('percent' in h) v = (area.height * h.percent) / 100;
+        else v = dimensionToPx(h, dpi, input.emPx);
+        const min = px(f.minHeight) ?? 0;
+        const max = px(f.maxHeight) ?? Infinity;
+        return Math.max(min, Math.min(v, max));
+      };
+      /** The boxes of a cell's frames with its main frame at `(x, y)`,
+       *  `h` tall; and the frames that count for the cell's extent. */
+      const layCell = (cell: readonly string[], x: number, y: number, h: number): { boxes: Map<string, Rect>; inCell: string[] } => {
+        const main = byMember.get(cell[0]!)!;
+        const boxes = new Map<string, Rect>([[main.name, { x, y, width: colW, height: h }]]);
+        const inCell = [main.name];
+        const set = new Set(cell);
+        const drawn = drawnOf(main);
+        const refs = (n: string): Rect | undefined => boxes.get(n) ?? refOf(n);
+        // A frame anchored in the set fills (and takes its percentages of)
+        // the cell's column, not the whole area.
+        const column = { ...input, areas: { ...input.areas, area: { x, y: area.y, width: colW, height: area.height } } };
+        let todo = cell.slice(1);
+        for (let pass = 0; todo.length > 0 && pass <= cell.length; pass++) {
+          const later: string[] = [];
+          for (const name of todo) {
+            const f = byMember.get(name)!;
+            const target = f.grid ? undefined : anchorTarget(f.placement);
+            // Anchored to a frame of the set not placed yet: next pass.
+            if (target !== undefined && set.has(target) && !boxes.has(target) && pass < cell.length) {
+              later.push(name);
+              continue;
+            }
+            const p = prepare(f);
+            const inSet = target !== undefined && set.has(target);
+            const r = placeFitted(f, framePlaceable(f), inSet ? column : input, refs, naturalOf(p), naturalWidthOf(p));
+            if (target !== undefined && !set.has(target)) {
+              // Anchored to a frame outside the set: where it says.
+              boxes.set(name, r);
+              continue;
+            }
+            // Anchored in the set, or to nothing in it: with the cell.
+            boxes.set(name, target !== undefined ? r : { ...r, x: r.x + x - drawn.x, y: r.y + y - drawn.y });
+            inCell.push(name);
+          }
+          todo = later;
+        }
+        return { boxes, inCell };
+      };
+      const stretchable = (f: ResolvedFrame): boolean => f.height === 'auto' || f.height === 'fill';
+      let cursor = box.y;
+      let laidAny = false;
+      let out = false;
+      for (let r = 0; r * columns < cells.length; r++) {
+        const row = cells.slice(r * columns, (r + 1) * columns);
+        if (out) {
+          for (const c of row) for (const n of c) spilled.add(n);
+          continue;
+        }
+        // Each cell at the row's top, to see how far it reaches above and
+        // below its main frame.
+        const measured = row.map((cell, c) => {
+          const main = byMember.get(cell[0]!)!;
+          const h = mainHeight(main, colW);
+          const { boxes, inCell } = layCell(cell, xOf(c), 0, h);
+          const u = unionRect(inCell.map((n) => boxes.get(n)!))!;
+          return { cell, main, h, above: Math.max(0, -u.y), below: u.y + u.height };
+        });
+        const above = Math.max(0, ...measured.map((m) => m.above));
+        const below = Math.max(0, ...measured.map((m) => m.below));
+        const rowH = above + below;
+        const fits = cursor + rowH <= foot + 0.5;
+        if (!fits && fit.gridsOn.has(group.name)) {
+          // This row and the rest go on, whole.
+          out = true;
+          for (const c of row) for (const n of c) spilled.add(n);
+          continue;
+        }
+        measured.forEach((m, c) => {
+          const spare = below - m.below;
+          let dy = 0;
+          let h = m.h;
+          if (spare > 0.01) {
+            const align = group.rowAlign ?? 'stretch';
+            if (align === 'end') dy = spare;
+            else if (align === 'center') dy = spare / 2;
+            else if (align === 'stretch' && stretchable(m.main)) h = Math.min(m.h + spare, px(m.main.maxHeight) ?? Infinity);
+          }
+          const { boxes } = layCell(m.cell, xOf(c), cursor + above + dy, h);
+          if (!fits) cut.push(...m.cell);
+          for (const [n, b] of boxes) {
+            // A row past the grid's foot is cut there: what is cut shows as
+            // the frames' overflow.
+            const y = Math.min(b.y, foot);
+            laidBoxes.set(n, fits ? b : { ...b, y, height: Math.max(0, Math.min(b.y + b.height, foot) - y) });
+          }
+        });
+        laidAny = true;
+        cursor += rowH + rowGap;
+      }
+      for (const [n, b] of laidBoxes) {
+        // A grid's cells are its template's drawing: no reflow events.
+        declared.set(n, b);
+        rects.set(n, b);
+      }
+      const laidRects = [...laidBoxes.values()];
+      const union = ownBox ?? unionRect(laidRects) ?? { ...box, height: 0 };
+      groupRects.set(group.name, union);
+      groupDeclared.set(group.name, union);
+      return { rects: laidBoxes, spilled, laidAny, clipped: cut };
     };
 
     /** Pour a frame's content into its box and record the frame. A frame
@@ -1486,9 +1687,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           if (blocks.length > 0) emptyRules = turned ? blocks.map((b) => ({ ...b, bbox: turnRectAbout(b.bbox, rect, frameModeTurn({ writingMode: turned })) })) : blocks;
         }
       }
+      const instance = repeated.has(repeatInstance(frame.name)?.frame ?? '') ? repeatInstance(frame.name) : undefined;
       const vdt: VDTFrame = {
         id: frameIdOf(frame.name),
         name: frame.name,
+        ...(instance ? { repeat: instance } : {}),
         rect: { ...rect },
         rotate: frame.rotate + (turned ? frameModeTurn({ writingMode: turned }) : 0),
         ...(turned ? { writingMode: turned } : {}),
@@ -1511,8 +1714,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         vdt.continuedFrom = st.lastFrameId;
         const q = frames.find((f) => f.id === st.lastFrameId);
         if (q) q.continuesTo = vdt.id;
-      } else if (holds && cont?.receivers.has(frame.name)) {
-        // Content from the page before (#859).
+      } else if (holds && cont?.receivers.has(frame.name) && !cont.receivers.get(frame.name)!.whole) {
+        // Content from the page before (#859). (An item of a grid that
+        // came whole, #1061, starts here.)
         const came = cont.receivers.get(frame.name)!;
         vdt.continuedFrom = came.fromFrameId;
         // From a page of an earlier chapter (#943).
@@ -1572,17 +1776,36 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         fill(p, placeFrame(p));
         continue;
       }
+      if (step.group.kind === 'grid') {
+        // A grid (#1061): its cells, and the items of the rows left for
+        // another page, which go on whole.
+        const grid = placeGrid(step.group, step.frames);
+        for (const n of grid.clipped) clipped.add(n);
+        let lastLaid: string | undefined;
+        for (const f of step.frames) {
+          if (!grid.spilled.has(f.name)) {
+            fill(prepare(f), grid.rects.get(f.name)!);
+            lastLaid = frameIdOf(f.name);
+            continue;
+          }
+          const st = prepare(f).st;
+          if (!st) continue;
+          laid.add(headOf(f.name));
+          spills.set(f.name, { head: headOf(f.name), cut: st.cut, advanced: grid.laidAny, pieces: st.pieces, headBlockId: st.headBlockId, frameId: lastLaid ?? frameIdOf(f.name), whole: true });
+        }
+        continue;
+      }
       const solved = placeGroup(step.group, step.frames);
       // A frame of a chain inside the group is reached once the frame
       // before it was filled: each is prepared again as it is filled.
       for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
     const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
-    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn };
+    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn, clipped };
   };
   const first = run();
-  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
-  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, ...(notes.length > 0 ? { notes } : {}) };
+  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn, clipped } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
+  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, clipped, ...(notes.length > 0 ? { notes } : {}) };
 }
 
 /** `r` turned `deg` (±90) about the centre of `about`: an axis-aligned

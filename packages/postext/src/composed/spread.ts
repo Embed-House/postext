@@ -244,7 +244,9 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
     }
   }
   // Template order on each page record, as on a single page.
-  const order = new Map(template.frames.map((f, i) => [f.name, i]));
+  // (The sheet's own record is in template order already, a grid's
+  // instances, #1061, among them.)
+  const order = new Map(out.composed.frames.map((f, i) => [f.name, i]));
   for (const list of sideFrames) list.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
   const log: [ReflowEvent[], ReflowEvent[]] = [[], []];
   for (const ev of [...resized.values(), ...out.composed.log]) log[sideOf.get(ev.frame) ?? 0].push(ev);
