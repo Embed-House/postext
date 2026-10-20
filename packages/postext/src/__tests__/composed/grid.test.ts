@@ -166,6 +166,23 @@ describe('a grid that repeats a frame set (#1061)', () => {
     expect(warningsOf(doc, 'frameOverflow')).toEqual([]);
   });
 
+  it('takes the empty frames of an item that goes on with it', () => {
+    const t = withGrid({ ...PHOTO_TEMPLATE, frames: PHOTO_TEMPLATE.frames!.map((f) => (f.name === 'foto' ? { ...f, overflow: { continueIn: 'next-page' } } : f)) }, {
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(6) }, size: { height: mm(120) } },
+    });
+    const items = CAPTIONS.en.map((c, k) => (k === 7 ? ':::frame{slot="foto"}\n::resource{id="foto-gasto"}\n:::\n' : photoItem(k, c)));
+    const doc = build(`::::page{template="fotos"}\n# Animals of the river\n\n${items.join('\n')}::::\n`, withTemplate(t));
+    const pages = composedPagesOf(doc);
+    expect(pages).toHaveLength(2);
+    // Item 8 has no caption: its pill goes on with its photo, empty, and
+    // keeps its place under it.
+    const pie8 = frame(pages[1]!, 'pie[8]');
+    const foto8 = frame(pages[1]!, 'foto[8]');
+    expect(pie8.collapsed).toBeUndefined();
+    expect(pie8.rect.y + pie8.rect.height).toBeCloseTo(foto8.rect.y + foto8.rect.height + 4 * MM, 3);
+    expect(warningsOf(doc, 'slotEmpty')).toEqual([]);
+  });
+
   it('clips the rows that do not fit when the grid cannot go on, and warns once', () => {
     const t = withGrid(PHOTO_TEMPLATE, { placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(6) }, size: { height: mm(120) } } });
     const doc = build(photoPage('Animals of the river', CAPTIONS.en), withTemplate(t));
