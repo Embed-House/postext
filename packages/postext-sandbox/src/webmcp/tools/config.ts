@@ -22,9 +22,13 @@ const CONFIG_KEYS = [
   'colorPalette', 'customFonts', 'resourceTypes', 'pageTemplates', 'labelStyles',
 ] as const satisfies readonly (keyof PostextConfig)[];
 
-// A section the engine gains must be added above: this line stops
-// compiling until it is.
-const everySection: Exclude<keyof PostextConfig, (typeof CONFIG_KEYS)[number]> extends never ? true : never = true;
+/** Keys a host sets for one layout and a book never stores: the leaf the
+ *  HTML viewer lays composed pages out on (#1045). */
+type HostOnlyKey = 'composedViewerLeaf';
+
+// A section the engine gains must be added above (or, set by hosts only,
+// to HostOnlyKey): this line stops compiling until it is.
+const everySection: Exclude<keyof PostextConfig, (typeof CONFIG_KEYS)[number] | HostOnlyKey> extends never ? true : never = true;
 void everySection;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);

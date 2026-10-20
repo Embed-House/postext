@@ -661,6 +661,7 @@ describe("package exports", () => {
       "stripLabelStylesDefaults",
       "validatePageTemplates",
       "altWithLabels",
+      "labelPlainText",
       "figureLabelBounds",
       "figureLabelMatrix",
       "figureLabelReading",

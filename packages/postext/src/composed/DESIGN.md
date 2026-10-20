@@ -1561,6 +1561,26 @@ What P9 (#862) built:
   picture, no `aria-describedby` (read once). HTML `alt` and PDF `Alt`: `altWithLabels` (`Alt (A, B)`,
   `（A、B）` for CJK, `،` for Arabic).
 
+What #1045 changed (the screen viewer):
+
+- **The leaf.** A host whose page is not a leaf sets `composedViewerLeaf` (the print page's size and
+  margins, resolved as `ResolvedConfig.composedViewerLeaf`; never saved with a document). `build.ts`
+  gives each page a composed page or spread side is laid on the leaf's geometry first (`toLeaf`:
+  size, content area, columns, flow frame), and `designFramesOn` and `headerFooter.ts` read the leaf's
+  trim and bleed for those pages (`composedLeafConfig`, `onComposedLeaf`). Frames, groups and
+  decoration therefore stand exactly where print puts them; the pages of the flow keep the host's
+  page. Before, the Sandbox's HTML viewer laid templates on its own page (a measure wide and 200,000 px
+  tall in the vertical scroll, a screen high in the columns view): frames anchored to the foot landed
+  a scroll away, frames ran past the page's width, and the columns view clipped what passed its foot.
+- **The Sandbox.** The viewer asks for the leaf when the book has a `::::page` fence and shows each
+  composed page scaled to the viewer's width (never above the leaf at the viewer's dpi) with a
+  transform inside a box of the scaled size (`fitComposedPages`): in the vertical scroll the page is
+  the leaf's height (`fitPagesToContent` keeps it), in the columns view a page taller than the screen
+  scrolls down in a box of its own, and next/previous step by the page at the leading edge. CSS `zoom`
+  was tried first: Chrome clips the lines of a vertical page's turned flow under it.
+- **Labels as text.** `labelPlainText` reads a label's forced breaks (`\\` ending a word) as spaces
+  in `altWithLabels` and the reflowable EPUB's hidden label list.
+
 ## 9. Literals allowed in the config
 
 The `contentInConfig` whitelist (§2.8): book title, author and publisher (from metadata or

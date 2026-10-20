@@ -636,7 +636,7 @@ export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
-export { altWithLabels } from './composed/labelText';
+export { altWithLabels, labelPlainText } from './composed/labelText';
 export {
   figureLabelBounds,
   figureLabelMatrix,

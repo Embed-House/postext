@@ -18,7 +18,7 @@
 //     document of its own and the chapter goes on in a new one.
 
 import type { ResolvedConfig, VDTBlock, VDTComicPage, VDTDocument, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from 'postext';
-import { canonicalLocaleTag, comicBalloonKind, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, framePageRect, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
+import { canonicalLocaleTag, comicBalloonKind, labelPlainText, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, framePageRect, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
 import type {
   CalloutNode,
   ComicNode,
@@ -1319,7 +1319,8 @@ class DocWalker {
       ...(rb.video ? { video: rb.video } : {}),
       ...(this.wraps.has(block.id) ? { wrap: this.wraps.get(block.id)! } : {}),
       // A `:::figure`'s labels (#862): the picture's text, in label order.
-      ...(rb.labels?.some((l) => l.text.trim()) ? { labels: rb.labels.map((l) => l.text.trim()).filter(Boolean) } : {}),
+      // A forced break in a label (`Pico Albar \\ 2565 m`) reads as a space.
+      ...(rb.labels?.some((l) => labelPlainText(l.text)) ? { labels: rb.labels.map((l) => labelPlainText(l.text)).filter(Boolean) } : {}),
     };
     // The labels the print draws as text, drawn over the picture (#955).
     // The pages of a right-to-left book are laid out mirrored: their

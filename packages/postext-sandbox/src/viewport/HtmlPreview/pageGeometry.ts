@@ -125,8 +125,11 @@ function liftStrandedFloats(page: VDTPage, gapPx: number): void {
  *  of nothing between them: the page keeps its full height whatever it
  *  holds. On a scroll surface a page is only a scroll unit, so it may hug
  *  its content. Mutates the document (the viewer owns it). */
-export function fitPagesToContent(doc: VDTDocument, padPx: number): void {
+export function fitPagesToContent(doc: VDTDocument, padPx: number, opts: { keepComposed?: boolean } = {}): void {
   for (const page of doc.pages) {
+    // A composed page laid out on the print leaf (#1045) is the leaf,
+    // whole: its frames stand where the template puts them on it.
+    if (opts.keepComposed && isComposedLeaf(page)) continue;
     liftStrandedFloats(page, padPx);
     let bottom = 0;
     const take = (box: BoundingBox): void => {
@@ -160,6 +163,23 @@ export function fitPagesToContent(doc: VDTDocument, padPx: number): void {
     }
     page.height = Math.max(Math.ceil(bottom + padPx), 1);
   }
+}
+
+/** Whether `page` is a composed page (`::::page{template}`): laid out on
+ *  the print leaf when the viewer asks for it (`composedViewerLeaf`,
+ *  #1045). A comic page has a leaf of its own (`page.comic`). */
+export function isComposedLeaf(page: VDTPage): boolean {
+  return page.composed !== undefined && page.comic === undefined;
+}
+
+/** The scale a composed page laid out on the print leaf (#1045) is shown
+ *  at: as wide as `fitWidthPx`, never larger than the leaf at the
+ *  viewer's dpi (whose font scale already sizes it). Undefined for a page
+ *  that is not one, or that needs none. */
+export function composedPageScale(page: VDTPage, fitWidthPx: number): number | undefined {
+  if (!isComposedLeaf(page) || !(page.width > 0) || !(fitWidthPx > 0)) return undefined;
+  const k = Math.min(1, fitWidthPx / page.width);
+  return k < 0.999 ? k : undefined;
 }
 
 /** Width of the single page vertical scroll lays out on: the measure itself

@@ -50,7 +50,8 @@ import {
   buildColumnWidthSample,
   composePageBackground,
 } from './constants';
-import { buildHtmlConfigOverride, hasComicPages, measureColumnWidthPx, partTitlesOf } from './configOverride';
+import { buildHtmlConfigOverride, hasComicPages, hasComposedPages, measureColumnWidthPx, partTitlesOf } from './configOverride';
+import { fitComposedPages } from './composedFit';
 import { configShapingLanguage } from '../../controls/measureLanguage';
 import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry';
 import { cssEscape, measureBodyBaselineOffset } from './baseline';
@@ -440,6 +441,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
     }
     columnGeomRef.current = { pageWidthPx, columnGapPx };
 
+    const composedLeaf = hasComposedPages(currentSource.markdown);
     const configOverride = buildHtmlConfigOverride(currentConfig, {
       fontScale: currentFontScale,
       columnMode: currentColumnMode,
@@ -454,6 +456,9 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       ...(hasComicPages(currentSource.markdown)
         ? { comicWidthPx: currentColumnMode === 'single' ? innerViewportW : pageWidthPx }
         : {}),
+      // Composed pages: the print leaf, scaled to the same widths after
+      // the layout (`fitComposedPages`).
+      ...(composedLeaf ? { composedLeaf: true } : {}),
     });
 
     try {
@@ -485,7 +490,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       // Vertical scroll: pages hug their content, so a part divider or a
       // chapter opener that broke to a new page is followed by the next
       // one instead of a screenful of blank (see fitPagesToContent).
-      if (mode === 'single') fitPagesToContent(doc, PADDING_PX);
+      if (mode === 'single') fitPagesToContent(doc, PADDING_PX, { keepComposed: composedLeaf });
       const indexed = renderToHtmlIndexed(doc, {
         mode,
         columnGap: columnGapPx,
@@ -649,6 +654,20 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
             }
           }
         }
+      }
+
+      // Composed pages, laid out on the print leaf, shown whole: scaled to
+      // the viewer's width, and scrolling down in the paged view (#1045).
+      if (composedLeaf) {
+        fitComposedPages(scroll, doc, {
+          mode,
+          // The viewer's width in both views: in the paged one a
+          // composition is a screen wide, not a text page (a column of a
+          // two-column book would show it at a third of its size).
+          fitWidthPx: innerViewportW,
+          unitHeightPx: Math.max(viewportHeight - PADDING_PX * 2, 400),
+          gapPx: PADDING_PX,
+        });
       }
 
       // Videos streamed over HLS get their player (#476).
@@ -834,7 +853,13 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
         if (columnModeRef.current === 'multi') {
           const { pageWidthPx, columnGapPx } = columnGeomRef.current;
           if (pageWidthPx <= 0) return;
-          const step = pageWidthPx + columnGapPx;
+          // A composed page is wider than a text page (#1045): the step
+          // from the page at the leading edge is that page's own width
+          // (or the one before it, going back).
+          const lead = leadingPageEl(scroll, rtlRef.current);
+          const other = lead && (delta > 0 ? siblingPageEl(lead, 1) : siblingPageEl(lead, -1));
+          const stepEl = delta > 0 ? lead : other;
+          const step = (stepEl ? stepEl.getBoundingClientRect().width : pageWidthPx) + columnGapPx;
           // Right to left, the next page is to the left.
           scroll.scrollBy({ left: (rtlRef.current ? -delta : delta) * step, behavior: 'smooth' });
         } else {
@@ -928,3 +953,26 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   // geometry are physical, and a book carries its own direction.
   return <div ref={hostRef} dir="ltr" className="h-full w-full" />;
 });
+
+/** The page element whose leading edge (its left, or its right in a
+ *  right-to-left row) sits nearest the scroll's in the paged view. */
+function leadingPageEl(scroll: HTMLElement, rtl: boolean): HTMLElement | null {
+  const sRect = scroll.getBoundingClientRect();
+  let best: HTMLElement | null = null;
+  let bestDist = Infinity;
+  scroll.querySelectorAll<HTMLElement>('.pt-page[data-page]').forEach((el) => {
+    const r = el.getBoundingClientRect();
+    const dist = rtl ? Math.abs(sRect.right - r.right - PADDING_PX) : Math.abs(r.left - sRect.left - PADDING_PX);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = el;
+    }
+  });
+  return best;
+}
+
+/** The page element `by` pages after `el` (before it when negative). */
+function siblingPageEl(el: HTMLElement, by: number): HTMLElement | null {
+  const index = Number(el.dataset.page) + by;
+  return el.closest('.pt-doc')?.querySelector<HTMLElement>(`.pt-page[data-page="${index}"]`) ?? null;
+}

@@ -78,6 +78,24 @@ export function sheetRectToPageFlow(
   return rect;
 }
 
+/** The config a composed page is laid out with on a host's leaf
+ *  (`composedViewerLeaf`, #1045): the document's, with the leaf's size and
+ *  margins and no cut marks. Undefined without a leaf. */
+export function composedLeafConfig(resolved: ResolvedConfig): ResolvedConfig | undefined {
+  const leaf = resolved.composedViewerLeaf;
+  if (!leaf) return undefined;
+  return {
+    ...resolved,
+    page: { ...resolved.page, width: leaf.width, height: leaf.height, margins: leaf.margins, cutLines: { ...resolved.page.cutLines, enabled: false } },
+  };
+}
+
+/** Whether `page` was laid out on the host's leaf (`composedViewerLeaf`,
+ *  #1045): a composed page of a document that has one. */
+export function onComposedLeaf(resolved: ResolvedConfig, page: { composed?: unknown; comic?: unknown }): boolean {
+  return resolved.composedViewerLeaf !== undefined && page.composed !== undefined && page.comic === undefined;
+}
+
 export function computePageMetrics(resolved: ResolvedConfig): PageMetrics {
   const dpi = resolved.page.dpi;
   const trimWidthPx = dimensionToPx(resolved.page.width, dpi);

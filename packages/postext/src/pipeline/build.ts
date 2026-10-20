@@ -150,6 +150,7 @@ import type { ComicPageSource } from '../comics/types';
 import {
   applyStyleAttrs,
   computePageMetrics,
+  composedLeafConfig,
   flowPageMirrored,
   pageMirrored,
   sheetRectToFlow,
@@ -755,8 +756,42 @@ function placeDocumentPass(
   // A right-to-left page's flow is the sheet mirrored, and the trim and
   // bleed boxes, centred on the sheet, are their own mirror images: the
   // physical frames serve it unchanged.
-  const designFramesOn = (page: VDTPage | undefined): { page: BoundingBox; bleed: BoundingBox; upright?: boolean } =>
-    (page && pageIsVertical(page) ? verticalFrames : physicalFrames);
+  // The leaf composed pages are laid out on in a host whose page is not
+  // one (`composedViewerLeaf`, #1045): the print page's size and margins,
+  // with no cut marks. A composed page set there takes the leaf's size,
+  // content area and frames (`leafPages`).
+  const leafConfig = resolved.composedViewerLeaf;
+  const leaf = leafConfig
+    ? (() => {
+        const leafResolved = composedLeafConfig(resolved)!;
+        const metrics = computePageMetrics(leafResolved);
+        return {
+          resolved: leafResolved,
+          metrics,
+          physical: { page: metrics.physical.trimBox, bleed: metrics.physical.bleedBox },
+          vertical: { page: sheetRectToFlow(metrics.physical.trimBox, metrics.pageWidthPx), bleed: sheetRectToFlow(metrics.physical.bleedBox, metrics.pageWidthPx), upright: true },
+        };
+      })()
+    : undefined;
+  const leafPages = new WeakSet<VDTPage>();
+  const designFramesOn = (page: VDTPage | undefined): { page: BoundingBox; bleed: BoundingBox; upright?: boolean } => {
+    if (leaf && page && leafPages.has(page)) return pageIsVertical(page) ? leaf.vertical : leaf.physical;
+    return page && pageIsVertical(page) ? verticalFrames : physicalFrames;
+  };
+  /** Give a fresh page the leaf's geometry (when a host sets one), for a
+   *  composed page to be laid on it. */
+  const toLeaf = (page: VDTPage): void => {
+    if (!leaf || leafPages.has(page)) return;
+    const { metrics } = leaf;
+    const shaped = createPageWithColumns(page.index, leaf.resolved, metrics.contentArea, metrics.pageWidthPx, metrics.pageHeightPx, pageIndexOffset);
+    page.width = shaped.width;
+    page.height = shaped.height;
+    page.contentArea = shaped.contentArea;
+    page.columns = shaped.columns;
+    if (shaped.flow) page.flow = shaped.flow;
+    else delete page.flow;
+    leafPages.add(page);
+  };
   doc.trimOffset = trimOffset;
   // A right-bound book (`page.binding`): hosts show its spreads mirrored.
   if (resolved.page.binding === 'right') doc.binding = 'right';
@@ -6498,12 +6533,14 @@ function placeDocumentPass(
     const laySpread = (sheet: NonNullable<ReturnType<typeof resolvePageTemplate>>, extra: { stories?: PlannedComposedPage['stories']; continuing?: ComposedContinuationInput }) => {
       breakToEvenPage();
       const verso = doc.pages[cursor.pageIndex]!;
+      toLeaf(verso);
       verso.columns = [createVDTColumn(0, verso.contentArea)];
       const start = cursor.pageIndex;
       do {
         advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
       } while (cursor.pageIndex === start);
       const recto = doc.pages[cursor.pageIndex]!;
+      toLeaf(recto);
       recto.columns = [createVDTColumn(0, recto.contentArea)];
       cursor.columnIndex = 0;
       // The sheet is laid in the pages' flow: the left page first, or the
@@ -6532,6 +6569,7 @@ function placeDocumentPass(
     /** The template `id` for the current page's side, and the boxes its
      *  `area` reads. */
     const singleOn = (page: VDTPage, id: string) => {
+      toLeaf(page);
       page.columns = [createVDTColumn(0, page.contentArea)];
       // The physical side: a recto has an odd folio (in either binding).
       const parity: 'recto' | 'verso' = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
