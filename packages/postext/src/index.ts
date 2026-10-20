@@ -690,7 +690,7 @@ export { composedPagePaintKey } from './composed/pageMemo';
 // A story that jumps into a page of a later chapter (#943).
 export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carryTypes';
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,

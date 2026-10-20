@@ -92,16 +92,10 @@ export interface LabelStyleRound2 {
   leader?: LeaderStyle;
 }
 
-// §12.6 (C10), §12.7 (C11) --------------------------------------------------
+// §12.7 (C11) --------------------------------------------------
 
-/** `FrameGroupConfig` additions. */
+/** `FrameGroupConfig` additions (C10's grid and repeat are in `types.ts`). */
 export interface FrameGroupRound2 {
-  kind?: 'stack' | 'row' | 'grid';
-  columns?: number;
-  columnGap?: Dimension;
-  rowGap?: Dimension;
-  rowAlign?: 'start' | 'center' | 'end' | 'stretch';
-  repeat?: { frames: string[]; max?: number };
   /** C11: the group takes the page's `:::module` blocks in Markdown order. */
   modules?: boolean;
   /** C11: where whole modules that do not fit go on. */

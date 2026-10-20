@@ -79,7 +79,8 @@ export const FRAME_VERTICAL_ALIGNS = ['top', 'middle', 'bottom', 'justify'] as c
 export const FRAME_EXCLUDES = ['none', 'push'] as const;
 export const FRAME_WRAPS = ['box', 'contour'] as const;
 export const FRAME_TAKES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'toc'] as const;
-export const FRAME_GROUP_KINDS = ['stack', 'row'] as const;
+export const FRAME_GROUP_KINDS = ['stack', 'row', 'grid'] as const;
+export const FRAME_GRID_ROW_ALIGNS = ['start', 'center', 'end', 'stretch'] as const;
 export const FRAME_GROUP_ALIGNS = ['start', 'center', 'end', 'space-between'] as const;
 export const TEMPLATE_AREAS = ['content', 'trim', 'bleed'] as const;
 export const FRAME_WRITING_MODES = ['horizontal-tb', 'vertical-rl'] as const;
@@ -505,17 +506,60 @@ function normalizeGroup(entry: NamedEntry<FrameGroupConfig>, grid: Required<Page
   const g = entry.value as FrameGroupConfig & Record<string, unknown>;
   const placement = isRecord(g.placement) ? g.placement : undefined;
   const cell = normalizeCell(g.grid, grid);
+  const kind = oneOf(FRAME_GROUP_KINDS, g.kind) ? g.kind : DEFAULT_FRAME_GROUP.kind;
+  const gap = dim(g.gap) ?? DEFAULT_FRAME_GROUP.gap;
+  const names = (v: unknown): string[] => (Array.isArray(v) ? v.filter((n): n is string => typeof n === 'string') : []);
+  // A grid's own fields (#1061), only on a grid: other groups resolve as
+  // they always did.
+  const repeat = kind === 'grid' && isRecord(g.repeat) ? g.repeat : undefined;
+  const repeatFrames = repeat ? [...new Set(names(repeat.frames))] : [];
+  const max = repeat && finite(repeat.max) && repeat.max >= 1 ? Math.floor(repeat.max) : undefined;
+  const gridFields: Partial<ResolvedFrameGroup> = kind === 'grid'
+    ? {
+      columns: finite(g.columns) && g.columns >= 1 ? Math.floor(g.columns) : 1,
+      columnGap: dim(g.columnGap) ?? gap,
+      rowGap: dim(g.rowGap) ?? gap,
+      rowAlign: oneOf(FRAME_GRID_ROW_ALIGNS, g.rowAlign) ? g.rowAlign : 'stretch',
+      ...(repeatFrames.length > 0 ? { repeat: { frames: repeatFrames, ...(max !== undefined ? { max } : {}) } } : {}),
+    }
+    : {};
   return {
     name: g.name,
-    kind: oneOf(FRAME_GROUP_KINDS, g.kind) ? g.kind : DEFAULT_FRAME_GROUP.kind,
-    frames: Array.isArray(g.frames) ? g.frames.filter((n): n is string => typeof n === 'string') : [],
-    gap: dim(g.gap) ?? DEFAULT_FRAME_GROUP.gap,
+    kind,
+    // A grid that repeats holds its set's frames.
+    frames: gridFields.repeat ? repeatFrames : names(g.frames),
+    gap,
+    ...gridFields,
     ...(placement ? { placement } : {}),
     ...(cell ? { grid: cell } : {}),
     align: oneOf(FRAME_GROUP_ALIGNS, g.align) ? g.align : DEFAULT_FRAME_GROUP.align,
     configPath: entry.configPath,
     fieldPaths: entry.fieldPaths,
   };
+}
+
+/** `name` read as an instance of a repeated frame (#1061): `card[2]` is
+ *  item 2 of frame `card`. Undefined for any other name. */
+export function repeatInstance(name: string): { frame: string; item: number } | undefined {
+  const open = name.lastIndexOf('[');
+  if (open <= 0 || !name.endsWith(']')) return undefined;
+  const digits = name.slice(open + 1, -1);
+  if (digits.length === 0 || digits.length > 6) return undefined;
+  for (const ch of digits) if (ch < '0' || ch > '9') return undefined;
+  const item = Number(digits);
+  return item >= 1 ? { frame: name.slice(0, open), item } : undefined;
+}
+
+/** The name of item `item`'s instance of frame `frame` (#1061). */
+export function repeatInstanceName(frame: string, item: number): string {
+  return `${frame}[${item}]`;
+}
+
+/** The frames a template's grids repeat (#1061), each with its grid. */
+export function repeatedFrames(template: Pick<ResolvedPageTemplate, 'groups'>): Map<string, ResolvedFrameGroup> {
+  const out = new Map<string, ResolvedFrameGroup>();
+  for (const g of template.groups) for (const f of g.repeat?.frames ?? []) if (!out.has(f)) out.set(f, g);
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -588,13 +632,15 @@ function settleReferences(
     }
   }
 
-  // Group members.
+  // Group members. A grid's repeated frames (#1061) are claimed first:
+  // another group that lists one of them loses it.
   const claimed = new Set<string>();
-  for (const g of groups) {
+  const claimOrder = [...groups.filter((g) => g.repeat), ...groups.filter((g) => !g.repeat)];
+  for (const g of claimOrder) {
     const raw = g.frames;
     const kept: string[] = [];
     raw.forEach((name, k) => {
-      const path = `${g.fieldPaths.frames ?? `${g.configPath}/frames`}/${k}`;
+      const path = g.repeat ? `${g.fieldPaths.repeat ?? `${g.configPath}/repeat`}/frames/${k}` : `${g.fieldPaths.frames ?? `${g.configPath}/frames`}/${k}`;
       if (!frameSet.has(name)) {
         issues.push({ kind: 'groupFrameUnknown', path, value: name, used: '', known: frameNames });
       } else if (claimed.has(name)) {
@@ -605,7 +651,18 @@ function settleReferences(
       }
     });
     g.frames = kept;
+    if (g.repeat) {
+      if (kept.length > 0) g.repeat = { ...g.repeat, frames: kept };
+      else delete g.repeat;
+    }
   }
+  /** `card[2]` names an instance of a repeated frame (#1061): decoration
+   *  and other frames may anchor to it. */
+  const repeated = new Set(groups.flatMap((g) => g.repeat?.frames ?? []));
+  const isInstance = (name: string): boolean => {
+    const at = repeatInstance(name);
+    return at !== undefined && repeated.has(at.frame);
+  };
 
   // Anchors: unknown targets first, then loops.
   type Box = ResolvedFrame | ResolvedFrameGroup;
@@ -616,7 +673,7 @@ function settleReferences(
   const anchored = (b: Box): string | undefined => (b.grid ? undefined : anchorTarget(b.placement));
   for (const b of boxes.values()) {
     const target = anchored(b);
-    if (target !== undefined && !boxSet.has(target)) {
+    if (target !== undefined && !boxSet.has(target) && !isInstance(target)) {
       issues.push({ kind: 'frameAnchorUnknown', path: anchorPath(b), value: `#${target}`, used: 'container', known: boxNames.map((n) => `#${n}`) });
       b.placement = withContainerAnchor(b.placement!);
     }
@@ -648,7 +705,7 @@ function settleReferences(
   const elementIds = new Set(decoration.map((e) => e.value.id).filter((id): id is string => typeof id === 'string'));
   decoration.forEach((e) => {
     const target = anchorTarget(e.value.placement);
-    if (target !== undefined && !elementIds.has(target) && !boxSet.has(target)) {
+    if (target !== undefined && !elementIds.has(target) && !boxSet.has(target) && !isInstance(target)) {
       issues.push({ kind: 'frameAnchorUnknown', path: `${e.configPath}/${ANCHOR_FIELD}`, value: `#${target}`, used: 'container', known: [...boxNames, ...elementIds].map((n) => `#${n}`) });
       e.value = { ...e.value, placement: withContainerAnchor(e.value.placement) } as DesignElement;
     }

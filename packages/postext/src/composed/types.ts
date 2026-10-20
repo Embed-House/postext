@@ -181,15 +181,42 @@ export interface FrameLook {
   label?: { color?: ColorValue; background?: ColorValue; rule?: { color?: ColorValue } };
 }
 
+/** The frame set a grid group lays once per content item (#1061, DESIGN
+ *  §12.6). */
+export interface FrameRepeatConfig {
+  /** The frames of the set. The first is the cell's main frame: it takes
+   *  the cell's width, and each `:::frame{slot="<main>"}` piece of the page
+   *  is one item. The others are laid as the template draws them, anchored
+   *  to the main frame or to each other. */
+  frames: string[];
+  /** The most items the grid takes; the rest goes to the flow frame
+   *  (`repeatOverflow`). Unset: no limit. */
+  max?: number;
+}
+
 export interface FrameGroupConfig {
   /** Unique per template, and distinct from every frame name (anchors
    *  name both as `'#name'`). */
   name: string;
-  /** Default `'stack'`. */
-  kind?: 'stack' | 'row';
-  /** Order on the page: top to bottom (stack), start to end (row). A frame
-   *  belongs to at most one group. */
+  /** Default `'stack'`. `'grid'` (#1061): cells of `columns` columns,
+   *  filled row by row from the start side, each row as tall as its
+   *  tallest cell. */
+  kind?: 'stack' | 'row' | 'grid';
+  /** Order on the page: top to bottom (stack), start to end (row), cell
+   *  after cell (grid). A frame belongs to at most one group. A grid that
+   *  `repeat`s takes the set's frames instead. */
   frames?: string[];
+  /** Grid: the number of columns. Default 1. */
+  columns?: number;
+  /** Grid: the space between columns, and between rows. Default 0 (a
+   *  grid's `gap` is read for both when these are unset). */
+  columnGap?: Dimension;
+  rowGap?: Dimension;
+  /** Grid: where a cell shorter than its row sits: `'stretch'` (the
+   *  default) makes its main frame as tall as the row. */
+  rowAlign?: 'start' | 'center' | 'end' | 'stretch';
+  /** Grid: the frame set laid once per item of the page's content. */
+  repeat?: FrameRepeatConfig;
   /** Default 0. */
   gap?: Dimension;
   /** The group's own box. Neither this nor `grid`: the union of its
@@ -393,9 +420,20 @@ export interface ResolvedFrame {
 
 export interface ResolvedFrameGroup {
   name: string;
-  kind: 'stack' | 'row';
+  kind: 'stack' | 'row' | 'grid';
+  /** For a grid that repeats: the set's frames (before `expandRepeats`),
+   *  or its instances, cell after cell (after). */
   frames: string[];
   gap: Dimension;
+  /** Grid only (#1061): set when `kind` is `'grid'`. */
+  columns?: number;
+  columnGap?: Dimension;
+  rowGap?: Dimension;
+  rowAlign?: 'start' | 'center' | 'end' | 'stretch';
+  repeat?: { frames: string[]; max?: number };
+  /** After `expandRepeats` (#1061): the items laid, each its number and its
+   *  instances (the main frame's first), in cell order. */
+  items?: { item: number; frames: string[] }[];
   placement?: ElementPlacement;
   grid?: Required<FrameGridCell>;
   align: 'start' | 'center' | 'end' | 'space-between';

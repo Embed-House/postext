@@ -11,6 +11,7 @@ import type {
   FrameGridCell,
   FrameGroupConfig,
   FrameLook,
+  FrameRepeatConfig,
   FrameOverflowConfig,
   FrameRulesConfig,
   LabelStyle,
@@ -27,6 +28,7 @@ import {
   FRAME_WRAPS,
   FRAME_GROUP_ALIGNS,
   FRAME_GROUP_KINDS,
+  FRAME_GRID_ROW_ALIGNS,
   FRAME_TAKES,
   FRAME_VERTICAL_ALIGNS,
   FRAME_WRITING_MODES,
@@ -73,7 +75,9 @@ const OVERFLOW_KEYS = { continueIn: true, mark: true, fromMark: true } satisfies
 const PADDING_KEYS = { top: true, right: true, bottom: true, left: true } satisfies Record<keyof CalloutPaddingConfig, true>;
 const GROUP_KEYS = {
   name: true, kind: true, frames: true, gap: true, placement: true, grid: true, align: true, remove: true,
+  columns: true, columnGap: true, rowGap: true, rowAlign: true, repeat: true,
 } satisfies Record<keyof FrameGroupConfig, true>;
+const REPEAT_KEYS = { frames: true, max: true } satisfies Record<keyof FrameRepeatConfig, true>;
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
   color: true, textTransform: true, letterSpacing: true, halo: true, background: true, padding: true, minScale: true,
@@ -203,6 +207,17 @@ function checkGroupEntry(group: unknown, path: string, push: Push): void {
   unknownKeys(group.grid, CELL_KEYS, `${path}/grid`, push);
   choice(group, 'kind', FRAME_GROUP_KINDS, DEFAULT_FRAME_GROUP.kind, path, push);
   choice(group, 'align', FRAME_GROUP_ALIGNS, DEFAULT_FRAME_GROUP.align, path, push);
+  // A grid (#1061): at least one column, a repeat of at least one item.
+  choice(group, 'rowAlign', FRAME_GRID_ROW_ALIGNS, 'stretch', path, push);
+  const columns = group.columns;
+  if (columns !== undefined && !(typeof columns === 'number' && Number.isFinite(columns) && columns >= 1)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/columns`, value: String(columns), used: '1' });
+  }
+  unknownKeys(group.repeat, REPEAT_KEYS, `${path}/repeat`, push);
+  const max = isRecord(group.repeat) ? group.repeat.max : undefined;
+  if (max !== undefined && !(typeof max === 'number' && Number.isFinite(max) && max >= 1)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/repeat/max`, value: String(max), used: '' });
+  }
 }
 
 function checkPatch(patch: unknown, path: string, push: Push, keys: Record<string, true>): void {
