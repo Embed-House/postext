@@ -194,6 +194,7 @@ export function RuleElementEditor({ raw, resolved, slotKind, siblings = [], fram
         placement={resolved.placement}
         slotKind={slotKind}
         siblings={siblings}
+        frames={frames}
         onChange={(placement) => update({ placement })}
       />
       <SelectInput

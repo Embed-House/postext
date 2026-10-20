@@ -13,6 +13,7 @@
 import { useSyncExternalStore, type Dispatch } from 'react';
 import type { SandboxAction, SandboxState } from '../context/SandboxContext';
 import type { TemplateScope } from './templateEdits';
+import type { ConnectorPickPhase } from './connectorEdits';
 import { editModeNow, onEditModeChange, selectedFrameNow, setEditMode } from '../editing/editMode';
 import { selectionTemplates } from '../selection/selectionStore';
 import { templateFrameOf } from './instanceNames';
@@ -27,12 +28,24 @@ export interface TemplateEditorSelection {
   pageIndex: number | null;
 }
 
+/** The connector of a template's decoration whose ends the canvas shows
+ *  as handles (#1063), and, while it is being picked, which end a click
+ *  on a frame sets. */
+export interface ConnectorFocus {
+  templateId: string;
+  scope: TemplateScope;
+  elementId: string;
+  /** null: shown, not picked. */
+  phase: ConnectorPickPhase | null;
+}
+
 export interface TemplateEditorState {
   designMode: boolean;
   selection: TemplateEditorSelection | null;
+  connector: ConnectorFocus | null;
 }
 
-let state: TemplateEditorState = { designMode: false, selection: null };
+let state: TemplateEditorState = { designMode: false, selection: null, connector: null };
 const listeners = new Set<() => void>();
 
 function emit(): void {
@@ -55,7 +68,7 @@ function syncFromEditMode(): void {
     selection = { templateId: at.templateId, scope, frame: at.frame, group: null, pageIndex: picked.pageIndex };
   }
   if (designMode === state.designMode && selection === state.selection) return;
-  state = { designMode, selection };
+  state = { ...state, designMode, selection };
   emit();
 }
 
@@ -93,9 +106,18 @@ export const templateEditor = {
     if (!state.selection) return;
     templateEditor.select({ ...state.selection, ...patch });
   },
+  /** The connector shown on the canvas, and the end being picked
+   *  (#1063). Picking turns the Design mode on: frames are picked there. */
+  focusConnector(connector: ConnectorFocus | null): void {
+    const a = state.connector;
+    if (a === connector || (a && connector && a.templateId === connector.templateId && a.scope === connector.scope && a.elementId === connector.elementId && a.phase === connector.phase)) return;
+    state = { ...state, connector };
+    if (connector?.phase && !state.designMode) templateEditor.setDesignMode(true);
+    emit();
+  },
   /** Back to the start (tests). */
   reset(): void {
-    state = { designMode: editModeNow() === 'design', selection: null };
+    state = { designMode: editModeNow() === 'design', selection: null, connector: null };
     emit();
   },
 };

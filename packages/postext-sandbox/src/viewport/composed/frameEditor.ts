@@ -55,7 +55,9 @@ import {
 import { templateEditor, templateEditorHost } from '../../templates/editorStore';
 import { showPageTemplatesSection } from '../../templates/showSection';
 import { emitFrameEditorEvent, type FrameDragKind } from '../../templates/frameEvents';
-import { addFrame, namesInUse, uniqueName } from '../../templates/templateEdits';
+import { addFrame, ancestorsOf, namesInUse, uniqueName } from '../../templates/templateEdits';
+import { decorationElement, pickConnectorFrame, updateDecorationElement } from '../../templates/connectorEdits';
+import { connectorHandles } from '../../templates/connectorHandles';
 import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisplayName } from '../../templates/pageEdits';
 import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
 import { nextFrameName } from '../../templates/frameChain';
@@ -82,6 +84,8 @@ const COLORS = {
   guide: '#d6482f',
   ghost: 'rgba(47, 111, 214, 0.12)',
   label: '#ffffff',
+  // A connector's ends (#1063): its start filled, the ends it goes to open.
+  connector: '#b3127a',
 };
 
 export interface FrameEditorRefs {
@@ -210,6 +214,43 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     return { p, c, host, config, template, areas, area, grid };
   };
 
+  /** The connector the Design panel edits, when it belongs to this page's
+   *  template (or one it extends), with its element as the scope holds it. */
+  const focusedConnector = () => {
+    const focus = templateEditor.getSnapshot().connector;
+    const c = composed();
+    const host = templateEditorHost();
+    if (!focus || !c || !host) return null;
+    const templates = host.getState().config.pageTemplates ?? [];
+    if (c.template !== focus.templateId && !ancestorsOf(templates, c.template).includes(focus.templateId)) return null;
+    const el = decorationElement(templates, focus.templateId, focus.scope, focus.elementId);
+    return el?.kind === 'connector' ? { focus, el, templates } : null;
+  };
+
+  /** The focused connector's ends as handles (#1063): a dot at its start,
+   *  a ring at each end it goes to, and while it is picked the frames it
+   *  joins outlined. */
+  const paintConnector = (root: SVGGElement, k: number, lw: number): void => {
+    const found = focusedConnector();
+    const c = composed();
+    if (!found || !c) return;
+    const g = geometry();
+    const frames = new Map(c.frames.map((f) => [f.name, f.rect]));
+    const handles = connectorHandles(found.el, { frames, ...(g ? { groups: g.template.groups } : {}) }, (end) => (end.gap ? mmToPx(dimensionToMm(end.gap), dpi()) : 0));
+    if (found.focus.phase) {
+      for (const h of handles) {
+        const r = frames.get(h.name);
+        if (r) root.appendChild(svgEl('rect', { x: r.x, y: r.y, width: r.width, height: r.height, fill: 'none', stroke: COLORS.connector, 'stroke-width': 2 * lw, 'stroke-dasharray': h.end === 'from' ? 'none' : `${4 * k} ${3 * k}` }));
+      }
+    }
+    const radius = 5 * k;
+    for (const h of handles) {
+      const dot = svgEl('circle', { cx: h.x, cy: h.y, r: radius, fill: h.end === 'from' ? COLORS.connector : '#ffffff', stroke: COLORS.connector, 'stroke-width': 1.5 * lw });
+      dot.dataset.connectorEnd = String(h.end);
+      root.appendChild(dot);
+    }
+  };
+
   const paint = (): void => {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     if (!active()) {
@@ -275,6 +316,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
         root.appendChild(svgEl('rect', { x: p.x - s / 2, y: p.y - s / 2, width: s, height: s, fill: '#ffffff', stroke: COLORS.frame, 'stroke-width': lw }));
       }
     }
+    paintConnector(root, k, lw);
     const ghost = drag?.started ? drag.rect : pending;
     if (ghost) {
       root.appendChild(svgEl('rect', { x: ghost.x, y: ghost.y, width: ghost.width, height: ghost.height, fill: COLORS.ghost, stroke: COLORS.frame, 'stroke-width': 1.5 * lw }));
@@ -469,6 +511,22 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     const at = locate(ev);
     if (!at) return;
     closeQuestion();
+    const picking = focusedConnector();
+    if (picking?.focus.phase) {
+      // Picking a connector's ends (#1063): a frame is an end, not a drag.
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      handledPress = true;
+      const hit = frameHitAt(page(), at.x, at.y);
+      if (hit) {
+        const out = pickConnectorFrame(picking.el, picking.focus.phase, hit.name, ev.shiftKey);
+        if (out.element !== picking.el) writeTemplates(updateDecorationElement(picking.templates, picking.focus.templateId, picking.focus.scope, picking.focus.elementId, () => out.element));
+        templateEditor.focusConnector({ ...picking.focus, phase: out.phase });
+        emitFrameEditorEvent({ type: 'select', pageIndex, templateId: picking.focus.templateId, frame: hit.name, frameId: hit.id });
+      }
+      paint();
+      return;
+    }
     const tol = HANDLE_CSS_PX * sheetPerCss();
     const selected = selectedHere();
     const onSelected = selected && !selected.rotate ? handleAt(selected.rect, at.x, at.y, tol) : null;
@@ -525,6 +583,10 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     const at = locate(ev);
     if (!at) return;
     ev.stopImmediatePropagation();
+    if (focusedConnector()?.focus.phase) {
+      slot.style.cursor = frameHitAt(page(), at.x, at.y) ? 'pointer' : 'default';
+      return;
+    }
     const selected = selectedHere();
     const handle = selected && !selected.rotate ? handleAt(selected.rect, at.x, at.y, HANDLE_CSS_PX * sheetPerCss()) : null;
     slot.style.cursor = cursorFor(handle, !!frameHitAt(page(), at.x, at.y));
@@ -571,6 +633,12 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
   if (!subscribed) {
     subscribed = true;
     templateEditor.subscribe(syncFrameEditors);
+    // Escape ends the picking of a connector's ends (#1063).
+    window.addEventListener('keydown', (ev) => {
+      const focus = templateEditor.getSnapshot().connector;
+      if (ev.key !== 'Escape' || !focus?.phase) return;
+      templateEditor.focusConnector({ ...focus, phase: null });
+    });
   }
   paint();
 }

@@ -131,6 +131,8 @@ export { pathMarkerOutline, pathSvgData, markerSvgData, quadToCubic, pathInkBox,
 export type { PathMarkerOutline } from './design/pathBlock';
 export { parseSvgPath, arcToCubics } from './design/svgPath';
 export type { SvgPathParse } from './design/svgPath';
+export { facingSide, CONNECTOR_ROUTINGS, CONNECTOR_CAPS, CONNECTOR_SIDES, DEFAULT_CONNECTOR_WIDTH } from './design/connector';
+export type { ConnectorRect } from './design/connector';
 export { boxOutline, outlineSubpath, borderPieces, shapePathBlocks, boxNeedsShape, boxStyleBorder, boxStyleRadii, boxStylePathBlocks, normalizeBoxStyle, SHAPE_SIDES, isCornerRadii, uniformRadius, cornerRadiiPx, borderSidesPx } from './design/boxShape';
 export type { ShapeSide, ShapeVertex, ShapeOutline, ShapeTab, ShapeBorder } from './design/boxShape';
 export type { DesignSlotLayout, LayoutContext, LayoutIssue, ResolvedPrimitive, ResolvedTextPrimitive, ResolvedRulePrimitive, ResolvedBoxPrimitive, ResolvedImagePrimitive, WrappedLine, DesignFrames } from './design/layout';

@@ -2,13 +2,14 @@
 
 import { Plus, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { DEFAULT_RULE_ELEMENT, DEFAULT_BOX_ELEMENT, resolveBodyTextConfig } from 'postext';
+import { DEFAULT_RULE_ELEMENT, DEFAULT_BOX_ELEMENT, DEFAULT_MAIN_COLOR, resolveBodyTextConfig } from 'postext';
 import type {
   DesignSlot,
   DesignElement,
   DesignRuleElement,
   DesignBoxElement,
   DesignImageElement,
+  DesignPathElement,
   ResolvedDesignElement,
   ResolvedDesignSlot,
 } from 'postext';
@@ -20,6 +21,11 @@ import { TextElementEditor } from './TextElementEditor';
 import { RuleElementEditor } from './RuleElementEditor';
 import { BoxElementEditor } from './BoxElementEditor';
 import { ImageElementEditor } from './ImageElementEditor';
+import { PathElementEditor } from './PathElementEditor';
+import { ConnectorElementEditor, type ConnectorHost } from './ConnectorElementEditor';
+import { elementKindLabel } from './elementKind';
+import { PATH_PRESETS } from './shapeEdits';
+import { newConnector } from '../../../templates/connectorEdits';
 import { applyAlign, type SlotKind } from './placementAdapter';
 import { foreEdgeElements } from './foreEdge';
 import { newTextElement } from './elementTemplates';
@@ -40,15 +46,18 @@ interface SlotEditorProps {
   /** The frames and groups of the page template, when the slot is a
    *  composed page's decoration: a size can run to their edges (#945). */
   frames?: readonly FrameTarget[];
+  /** The page template and scope the slot is the decoration of: it can
+   *  then hold connectors, picked on the page (#1063). */
+  connectorHost?: ConnectorHost;
 }
 
-function generateId(kind: 'text' | 'rule' | 'box' | 'image', used: Set<string>): string {
+function generateId(kind: 'text' | 'rule' | 'box' | 'image' | 'path' | 'connector', used: Set<string>): string {
   let i = 1;
   while (used.has(`${kind}${i}`)) i++;
   return `${kind}${i}`;
 }
 
-export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath, frames }: SlotEditorProps) {
+export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath, frames, connectorHost }: SlotEditorProps) {
   const labels = useSandboxLabels();
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
 
@@ -105,6 +114,26 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
       placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: { value: 20, unit: 'mm' }, height: 'auto' } },
     };
     append(template);
+  };
+
+  /** A shape (#1063): a bar filled with the main colour, ready for a
+   *  preset or a path of its own. */
+  const addPath = () => {
+    const id = generateId('path', existingIds);
+    const template: DesignPathElement = {
+      kind: 'path',
+      id,
+      d: PATH_PRESETS.bar,
+      fill: { ...DEFAULT_MAIN_COLOR },
+      placement: applyAlign(DEFAULT_BOX_ELEMENT.placement, slotKey, 'center'),
+    };
+    append(template);
+  };
+
+  /** A connector between the template's first two frames (#1063), whose
+   *  ends are then picked on the page or in its lists. */
+  const addConnector = () => {
+    append(newConnector(generateId('connector', existingIds), (frames ?? []).filter((f) => f.kind === 'frame').map((f) => f.name)));
   };
 
   /** The fore-edge heads of a vertical book, at 80 % of the body size
@@ -165,13 +194,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
           .filter((s): s is typeof s & { kind: Exclude<typeof s.kind, 'connector'> } => s.id !== rawEl.id && s.kind !== 'connector');
         const isFirst = idx === 0;
         const isLast = idx === currentRaw.length - 1;
-        const elementTitle = rawEl.kind === 'text'
-          ? labels.headerFooterElementText
-          : rawEl.kind === 'rule'
-            ? labels.headerFooterElementRule
-            : rawEl.kind === 'image'
-              ? labels.headerFooterElementImage
-              : labels.headerFooterElementBox;
+        const elementTitle = elementKindLabel(labels, rawEl.kind);
         return (
           <SearchScope key={`${slotKey}-${rawEl.id}-${idx}`} title={`${elementTitle} ${idx + 1}`} overridden={raw !== undefined}>
           <ItemCard
@@ -235,6 +258,23 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   frames={frames as FrameTarget[] | undefined}
                   onChange={(next) => updateAt(idx, next)}
                 />
+              ) : rawEl.kind === 'path' && resolvedEl?.kind === 'path' ? (
+                <PathElementEditor
+                  raw={rawEl}
+                  resolved={resolvedEl}
+                  slotKind={slotKey}
+                  siblings={siblings}
+                  frames={frames as FrameTarget[] | undefined}
+                  onChange={(next) => updateAt(idx, next)}
+                />
+              ) : rawEl.kind === 'connector' ? (
+                <ConnectorElementEditor
+                  raw={rawEl}
+                  siblings={siblings}
+                  frames={frames as FrameTarget[] | undefined}
+                  host={connectorHost}
+                  onChange={(next) => updateAt(idx, next)}
+                />
               ) : null}
               {(slotKey === 'heading' || slotKey === 'box') && rawEl.kind !== 'connector' && (
                 <ToggleSwitch
@@ -253,11 +293,14 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
       })}
       </ShowingDefaultsContext>
 
-      <div className="mt-2 flex gap-2">
+      <div className="mt-2 flex flex-wrap gap-2">
         <AddButton label={labels.headerFooterAddText} onClick={addText} />
         <AddButton label={labels.headerFooterAddRule} onClick={addRule} />
         <AddButton label={labels.headerFooterAddBox} onClick={addBox} />
         <AddButton label={labels.headerFooterAddImage} onClick={addImage} />
+        <AddButton label={labels.headerFooterAddPath} onClick={addPath} />
+        {/* Connectors join frames: a page template's decoration only. */}
+        {frames && frames.length > 0 && <AddButton label={labels.headerFooterAddConnector} onClick={addConnector} />}
       </div>
       {slotKey === 'header' && (
         <div className="mt-2 flex gap-2">

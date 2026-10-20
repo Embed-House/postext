@@ -61,6 +61,8 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
 }
 
 const UNITS = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'] as const;
+/** The corners a per-corner radius names. */
+const CORNER_KEYS = ['topLeft', 'topRight', 'bottomRight', 'bottomLeft'] as const;
 
 /** A length: `{ value, unit }`. */
 export function isDimension(v: unknown): v is { value: number; unit: string } {
@@ -106,6 +108,10 @@ export function coerceSetting(path: string, value: unknown, current: unknown): u
     }
     if (isRecord(value) && typeof value.value === 'number' && (value.unit === undefined || (UNITS as readonly unknown[]).includes(value.unit))) {
       return { value: value.value, unit: value.unit ?? current.unit };
+    }
+    // A corner radius may be given per corner (#1059/#1063): each a length.
+    if (path.endsWith('borderRadius') && isRecord(value) && Object.keys(value).length > 0 && Object.keys(value).every((k) => (CORNER_KEYS as readonly string[]).includes(k))) {
+      return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, coerceSetting(`${path}.${k}`, v, current)]));
     }
     throw new ToolError(`${path} is a length: give { "value": ${current.value}, "unit": "${current.unit}" }, a number (in ${current.unit}) or a text such as "${current.value}${current.unit}". The units: ${UNITS.join(', ')}.`);
   }

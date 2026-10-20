@@ -73,6 +73,7 @@ import { useFieldIds } from '../../controls/fieldContext';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
 import { CONTAINER_EDGES } from './HeaderFooterSection/placementAdapter';
+import { BorderSidesFields, CornerRadiusFields } from './HeaderFooterSection/shapeFields';
 import { SlotEditor } from './HeaderFooterSection/SlotEditor';
 import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
 import { hasSeveralColumns } from '../settings/multiColumnBook';
@@ -153,6 +154,13 @@ function CardButton({
   children: React.ReactNode;
 }) {
   return <IconButton label={label} icon={children} onClick={onClick} destructive={destructive} />;
+}
+
+/** What the joined switch writes (#1063): a joined tab stands on the
+ *  edge, so turning it on takes a rise off (the engine reads none and
+ *  warns about one). */
+export function joinedTabPatch(joined: boolean): Partial<CalloutLabelConfig> {
+  return joined ? { joined: true, offset: { value: 0, unit: 'pt' } } : { joined: false };
 }
 
 /** The symbols the tab's glyph picker offers (#1066); any other character
@@ -509,11 +517,17 @@ export function CalloutStyleCard({
   if (resolved.label?.icon.resourceId && !iconResources.some((r) => r.id === resolved.label?.icon.resourceId)) {
     labelResourceOptions.push({ value: resolved.label.icon.resourceId, label: resolved.label.icon.resourceId });
   }
+  const labelBottomSide = flowSideLabels(rtl, labels.calloutStyleLabelPositionBottomLeft, labels.calloutStyleLabelPositionBottomRight);
   const labelPositionOptions = [
     { value: 'top-right', label: labelSide.right },
     { value: 'top-left', label: labelSide.left },
     { value: 'top-start', label: labels.calloutStyleLabelPositionTopStart },
     { value: 'top-end', label: labels.calloutStyleLabelPositionTopEnd },
+    // Tabs hanging from the box's foot (#1059).
+    { value: 'bottom-right', label: labelBottomSide.right },
+    { value: 'bottom-left', label: labelBottomSide.left },
+    { value: 'bottom-start', label: labels.calloutStyleLabelPositionBottomStart },
+    { value: 'bottom-end', label: labels.calloutStyleLabelPositionBottomEnd },
   ];
   const title = (partial: Partial<CalloutTitleStyleConfig>) => updateGroup('titleStyle', partial);
   const body = (partial: Partial<CalloutBodyStyleConfig>) => updateGroup('body', partial);
@@ -844,17 +858,16 @@ export function CalloutStyleCard({
           fieldId={`${fieldId}-background`}
         />
       )}
-      <DimensionInput
+      {/* One radius, or one per corner (#1059/#1063). */}
+      <CornerRadiusFields
         label={labels.calloutStyleBorderRadius}
-        // A radius per corner (#1059) shows as square here: its own
-        // editor belongs to the template editor's box shapes.
-        value={uniformRadius(resolved.borderRadius) ?? { value: 0, unit: 'em' }}
-        onChange={(v) => onChange({ borderRadius: v })}
-        min={0}
+        value={resolved.borderRadius}
+        fallback={uniformRadius(resolved.borderRadius) ?? { value: 0, unit: 'em' }}
         step={0.05}
         units={SPACING_UNITS}
         isDefault={unset('borderRadius')}
         onReset={() => onResetField('borderRadius')}
+        onChange={(v) => onChange({ borderRadius: v })}
       />
       <DimensionInput
         label={labels.marginTop}
@@ -990,6 +1003,15 @@ export function CalloutStyleCard({
             />
           </>
         )}
+        {/* Per side (#1059/#1063): a side can be drawn while the whole
+            border is off (a rule over the box's top only). */}
+        <BorderSidesFields
+          sides={style.border?.sides}
+          whole={{ enabled: style.border?.enabled ?? resolved.border.enabled, color: resolved.border.color, width: resolved.border.width }}
+          units={STROKE_UNITS}
+          fieldId={fieldId}
+          onChange={(sides) => (sides === undefined ? resetGroupField('border', 'sides') : border({ sides }))}
+        />
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -1151,6 +1173,28 @@ export function CalloutStyleCard({
               isDefault={groupUnset('label', 'position')}
               onReset={() => resetGroupField('label', 'position')}
             />
+            {/* The tab and the box as one outline (#1059). */}
+            <ToggleSwitch
+              label={labels.calloutStyleLabelJoined}
+              tooltip={labels.calloutStyleLabelJoinedTooltip}
+              checked={resolved.label.joined}
+              onChange={(v) => label(joinedTabPatch(v))}
+              isDefault={groupUnset('label', 'joined')}
+              onReset={() => resetGroupField('label', 'joined')}
+            />
+            {resolved.label.joined && (
+              <DimensionInput
+                label={labels.calloutStyleLabelFillet}
+                tooltip={labels.calloutStyleLabelFilletTooltip}
+                value={resolved.label.fillet ?? uniformRadius(resolved.borderRadius) ?? { value: 0, unit: 'pt' }}
+                onChange={(v) => label({ fillet: v })}
+                min={0}
+                step={0.05}
+                units={SPACING_UNITS}
+                isDefault={groupUnset('label', 'fillet')}
+                onReset={() => resetGroupField('label', 'fillet')}
+              />
+            )}
             <DimensionInput
               label={labels.calloutStyleLabelHeight}
               value={resolved.label.height}
@@ -1171,7 +1215,7 @@ export function CalloutStyleCard({
               isDefault={groupUnset('label', 'paddingX')}
               onReset={() => resetGroupField('label', 'paddingX')}
             />
-            <DimensionInput
+            {!resolved.label.joined && <DimensionInput
               label={labels.calloutStyleLabelOffset}
               value={resolved.label.offset}
               onChange={(v) => label({ offset: v })}
@@ -1181,7 +1225,7 @@ export function CalloutStyleCard({
               tooltip={labels.calloutStyleLabelOffsetTooltip}
               isDefault={groupUnset('label', 'offset')}
               onReset={() => resetGroupField('label', 'offset')}
-            />
+            />}
             <DimensionInput
               label={labels.calloutStyleLabelInset}
               value={resolved.label.inset}

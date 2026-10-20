@@ -16,6 +16,7 @@ import {
   ColorPicker,
 } from '../../../controls';
 import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
+import { BorderSidesFields, CornerRadiusFields } from './shapeFields';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
 import {
   type SlotKind,
@@ -75,15 +76,13 @@ export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], frame
   const bgColor: ColorValue | undefined = resolved.style.backgroundColor;
   const borderColor: ColorValue | undefined = resolved.style.borderColor;
   const borderWidth: Dimension = resolved.style.borderWidth ?? ZERO;
-  // A radius per corner (#1059) is edited elsewhere: here it reads as 0.
-  const borderRadius: Dimension = uniformRadius(resolved.style.borderRadius) ?? ZERO;
 
   const isMarginFromBodyDefault = dimensionsEqual(resolvedMarginFromBody, defaultMarginFromBody);
   const isMarginFromEdgeDefault = dimensionsEqual(resolvedMarginFromEdge, defaultMarginFromEdge);
-  const isBorderRadiusDefault = dimensionsEqual(
-    borderRadius,
-    uniformRadius(DEFAULT_BOX_ELEMENT.style.borderRadius) ?? ZERO,
-  );
+  const defaultRadius = DEFAULT_BOX_ELEMENT.style.borderRadius;
+  const isBorderRadiusDefault = defaultRadius === undefined
+    ? resolved.style.borderRadius === undefined
+    : !!uniformRadius(resolved.style.borderRadius) && dimensionsEqual(uniformRadius(resolved.style.borderRadius)!, uniformRadius(defaultRadius) ?? ZERO);
   const isBgDefault =
     (bgColor && DEFAULT_BOX_ELEMENT.style.backgroundColor)
       ? colorsEqual(bgColor, DEFAULT_BOX_ELEMENT.style.backgroundColor)
@@ -164,19 +163,31 @@ export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], frame
         min={0}
         step={0.1}
       />
-      <DimensionInput
+      {/* The border per side (#1059/#1063), over the whole border. */}
+      <BorderSidesFields
+        sides={resolved.style.borderSides}
+        whole={{ enabled: !!borderColor && borderWidth.value > 0, color: borderColor ?? { hex: '#000000', model: 'hex' }, width: borderWidth }}
+        fieldId={`headerFooter-box-${raw.id}`}
+        onChange={(borderSides) => {
+          const style = { ...resolved.style };
+          if (borderSides === undefined) delete style.borderSides;
+          else style.borderSides = borderSides;
+          update({ style });
+        }}
+      />
+      <CornerRadiusFields
         label={labels.headerFooterElementBoxBorderRadius}
-        value={borderRadius}
-        onChange={(dim: Dimension) => updateStyle({ borderRadius: dim })}
-        min={0}
-        step={0.5}
+        value={resolved.style.borderRadius}
+        fallback={ZERO}
         isDefault={isBorderRadiusDefault}
         onReset={() => updateStyle({ borderRadius: DEFAULT_BOX_ELEMENT.style.borderRadius })}
+        onChange={(borderRadius) => updateStyle({ borderRadius })}
       />
       <PlacementFields
         placement={resolved.placement}
         slotKind={slotKind}
         siblings={siblings}
+        frames={frames}
         onChange={(placement) => update({ placement })}
       />
       <SelectInput

@@ -35,6 +35,7 @@ import { ReshapeFrames } from './ReshapeFrames';
 import { pageAreas, templateAreaRect } from '../../../templates/frameGeometry';
 import { templateSheet } from '../../../templates/templateSheet';
 import { SlotEditor } from '../HeaderFooterSection/SlotEditor';
+import { templateFrameInputs } from '../../../templates/connectorEdits';
 import { FrameProperties } from './FrameProperties';
 import { GroupsEditor } from './GroupsEditor';
 import { TemplateSheetSvg } from './TemplateSheetSvg';
@@ -433,10 +434,10 @@ export function TemplateEditor({ id, scope, pages, heights, frame, pageIndex = n
           <SlotEditor
             slotKey="part"
             configPath={`/pageTemplates/${templates.findIndex((t) => t.id === id)}${effScope === 'base' ? '' : `/variants/${effScope}`}/decoration`}
-            frames={[
-              ...resolved.frames.map((f) => ({ name: f.name, kind: 'frame' as const })),
-              ...resolved.groups.map((g) => ({ name: g.name, kind: 'group' as const })),
-            ]}
+            // Frames of a repeating grid are marked: a connector can go to
+            // each of their instances (#1063).
+            frames={templateFrameInputs(resolved)}
+            connectorHost={{ templateId: id, scope: effScope }}
             raw={decoration}
             extraPlaceholders={['headingNumber']}
             resolved={resolveDesignSlot(decoration, 'part')}

@@ -3,6 +3,9 @@
 import { useSandboxLabels } from '../../../context/SandboxContext';
 import type { AnchorEdge, DesignElement, Dimension, ElementPlacement, HAlign, PageRoleFilter } from 'postext';
 import { DimensionInput, SelectInput } from '../../../controls';
+import { elementKindLabel } from './elementKind';
+import { SidePointFields } from './sidePoint';
+import type { FrameTarget } from './sizeTo';
 import {
   type SlotKind,
   CONTAINER_EDGES,
@@ -33,6 +36,9 @@ interface PlacementFieldsProps {
   placement: ElementPlacement;
   slotKind: SlotKind;
   siblings?: Sibling[];
+  /** The frames and groups of the template, on a composed page's
+   *  decoration: an element can be anchored to them (#1063). */
+  frames?: readonly FrameTarget[];
   /** `impliedAlign` is set when an element-to-element edge suggests a text
    *  alignment (text elements apply it to their `align`). */
   onChange: (placement: ElementPlacement, impliedAlign?: HAlign) => void;
@@ -42,19 +48,13 @@ interface PlacementFieldsProps {
  *  picker (container / page / bleed / sibling element) followed by the
  *  fields that make sense for that target — relative edge and offsets for
  *  element and page-frame anchors, a simple alignment for the container. */
-export function PlacementFields({ placement, slotKind, siblings = [], onChange }: PlacementFieldsProps) {
+export function PlacementFields({ placement, slotKind, siblings = [], frames = [], onChange }: PlacementFieldsProps) {
   const labels = useSandboxLabels();
   const anchoredToElement = isElementAnchor(placement);
   const anchoredToFrame = isPageFrameAnchor(placement);
 
-  const kindLabel = (kind: Sibling['kind']): string =>
-    kind === 'text'
-      ? labels.headerFooterElementText
-      : kind === 'rule'
-        ? labels.headerFooterElementRule
-        : kind === 'image'
-          ? labels.headerFooterElementImage
-          : labels.headerFooterElementBox;
+  const kindLabel = (kind: Sibling['kind']): string => elementKindLabel(labels, kind);
+  const target = anchorTargetId(placement);
 
   const targetOptions = [
     { value: 'container', label: labels.headerFooterElementAnchorContainer },
@@ -63,7 +63,31 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
     // The fore-edge: running heads and folios only.
     ...(slotKind === 'header' || slotKind === 'footer' ? [{ value: 'outer', label: labels.headerFooterAnchorToOuter }] : []),
     ...siblings.map((s) => ({ value: s.id, label: `${kindLabel(s.kind)} #${s.index + 1}` })),
+    // The template's frames and groups (#1063), named as the size fields do.
+    ...frames.filter((f) => !siblings.some((s) => s.id === f.name)).map((f) => ({
+      value: f.name,
+      label: (f.kind === 'group' ? labels.headerFooterSizeToGroup : labels.headerFooterSizeToFrame).replace('__name__', f.name),
+    })),
   ];
+  // An anchor on a name the lists lack (a frame instance, one taken out)
+  // stays shown rather than read as another target.
+  if (!targetOptions.some((o) => o.value === target)) targetOptions.push({ value: target, label: target });
+  /** The point along the anchor's side (#1055), read on sides of other
+   *  elements and of frames. */
+  const atField = (
+    <SidePointFields
+      label={labels.headerFooterAnchorAt}
+      tooltip={labels.headerFooterAnchorAtTooltip}
+      ownLabel={labels.headerFooterAnchorAtOwn}
+      value={placement.anchor.at}
+      onChange={(at) => {
+        const anchor = { ...placement.anchor };
+        if (at === undefined) delete anchor.at;
+        else anchor.at = at;
+        onChange({ ...placement, anchor });
+      }}
+    />
+  );
 
   const ELEMENT_EDGE_OPTIONS: { value: AnchorEdge; label: string }[] = [
     { value: 'right-of', label: labels.headerFooterElementEdgeRightOf },
@@ -135,7 +159,7 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
     <>
       <SelectInput
         label={labels.headerFooterElementAnchorTo}
-        value={anchorTargetId(placement)}
+        value={target}
         options={targetOptions}
         onChange={(v) => {
           const next = applyAnchorTarget(placement, slotKind, v);
@@ -155,6 +179,7 @@ export function PlacementFields({ placement, slotKind, siblings = [], onChange }
             }}
             tooltip={labels.headerFooterElementEdgeTooltip}
           />
+          {atField}
           {offsetFields}
         </>
       ) : anchoredToFrame ? (

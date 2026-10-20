@@ -34,6 +34,7 @@ import { TextDotsFields } from '../../settings/TextDotsFields';
 import { useRightToLeftFlow } from '../../settings/flowSides';
 import { SizeToFields, defaultSizeTo, isSizeTo, type FrameTarget } from './sizeTo';
 import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
+import { BorderSidesFields, CornerRadiusFields } from './shapeFields';
 import {
   type SlotKind,
   alignFromPlacement,
@@ -193,6 +194,7 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
         placement={resolved.placement}
         slotKind={slotKind}
         siblings={siblings}
+        frames={frames}
         onChange={(placement, impliedAlign) =>
           update({ placement, ...(impliedAlign ? { align: impliedAlign } : {}) })
         }
@@ -673,7 +675,6 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
         const bg = box.backgroundColor;
         const bc = box.borderColor;
         const bw = box.borderWidth ?? ZERO;
-        const br = uniformRadius(box.borderRadius) ?? ZERO;
         const padH = box.padding?.left ?? box.padding?.right ?? ZERO;
         const padV = box.padding?.top ?? box.padding?.bottom ?? ZERO;
         const updateBox = (partial: Partial<ElementBoxStyle>) => {
@@ -683,6 +684,7 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
           if (nextBox.borderColor) cleaned.borderColor = nextBox.borderColor;
           if (nextBox.borderWidth) cleaned.borderWidth = nextBox.borderWidth;
           if (nextBox.borderRadius) cleaned.borderRadius = nextBox.borderRadius;
+          if (nextBox.borderSides) cleaned.borderSides = nextBox.borderSides;
           if (nextBox.padding) {
             const p = nextBox.padding;
             const hasAny =
@@ -735,15 +737,20 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
               onReset={() => updateBox({ borderWidth: undefined })}
               tooltip={labels.headerFooterElementBoxBorderWidthTooltip}
             />
-            <DimensionInput
+            <BorderSidesFields
+              sides={box.borderSides}
+              whole={{ enabled: !!bc && bw.value > 0, color: bc ?? { hex: '#000000', model: 'hex' }, width: bw }}
+              fieldId={`headerFooter-text-${raw.id}`}
+              onChange={(borderSides) => updateBox({ borderSides })}
+            />
+            <CornerRadiusFields
               label={labels.headerFooterElementBoxBorderRadius}
-              value={br}
-              onChange={(dim: Dimension) => updateBox({ borderRadius: dim })}
-              min={0}
-              step={0.5}
-              isDefault={br.value === 0}
-              onReset={() => updateBox({ borderRadius: undefined })}
               tooltip={labels.headerFooterElementBoxBorderRadiusTooltip}
+              value={box.borderRadius}
+              fallback={ZERO}
+              isDefault={box.borderRadius === undefined || (uniformRadius(box.borderRadius)?.value === 0)}
+              onReset={() => updateBox({ borderRadius: undefined })}
+              onChange={(borderRadius) => updateBox({ borderRadius })}
             />
             <DimensionInput
               label={labels.headerFooterElementBoxPaddingH}

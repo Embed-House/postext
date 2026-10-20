@@ -4,6 +4,7 @@ import type { ElementSize, ElementSizeTo } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
 import { SelectInput } from '../../../controls';
 import type { Sibling } from './PlacementFields';
+import { elementKindLabel } from './elementKind';
 import type { SlotKind } from './placementAdapter';
 
 /** A frame or a group of the page template whose decoration is being
@@ -11,6 +12,9 @@ import type { SlotKind } from './placementAdapter';
 export interface FrameTarget {
   name: string;
   kind: 'frame' | 'group';
+  /** A frame of a repeating grid (#1061): a connector can go to each of
+   *  its instances (`[*]`). */
+  repeated?: boolean;
 }
 
 export type SizeAxis = 'width' | 'height';
@@ -21,11 +25,12 @@ export function isSizeTo(size: ElementSize | undefined): size is ElementSizeTo {
   return !!size && typeof size === 'object' && 'to' in size;
 }
 
-/** The edges a side can stop at: left and right for a width, top and
- *  bottom for a height (the other pair reads as `'fill'`). */
+/** The edges a side can stop at: left, middle or right for a width, top,
+ *  middle or bottom for a height (#1055; the other pair reads as
+ *  `'fill'`). */
 export const EDGES_OF: Record<SizeAxis, readonly ElementSizeTo['edge'][]> = {
-  width: ['left', 'right'],
-  height: ['top', 'bottom'],
+  width: ['left', 'center', 'right'],
+  height: ['top', 'center', 'bottom'],
 };
 
 /** Where a side starts to run to when it is first set: the far edge of
@@ -87,14 +92,7 @@ export function SizeToFields({ axis, value, slotKind, siblings = [], frames = []
       case 'group': return labels.headerFooterSizeToGroup.replace('__name__', t.name ?? '');
       default: {
         const s = siblings.find((x) => x.id === t.name);
-        const kind = s?.kind === 'text'
-          ? labels.headerFooterElementText
-          : s?.kind === 'rule'
-            ? labels.headerFooterElementRule
-            : s?.kind === 'image'
-              ? labels.headerFooterElementImage
-              : labels.headerFooterElementBox;
-        return s ? `${kind} #${s.index + 1}` : (t.name ?? '');
+        return s ? `${elementKindLabel(labels, s.kind)} #${s.index + 1}` : (t.name ?? '');
       }
     }
   };
@@ -105,8 +103,9 @@ export function SizeToFields({ axis, value, slotKind, siblings = [], frames = []
     ...(value && !targets.some((t) => t.value === value.to) ? [{ value: value.to, label: labels.headerFooterImageMissing.replace('__id__', value.to.replace(/^#/, '')) }] : []),
     ...targets.map((t) => ({ value: t.value as string, label: label(t) })),
   ];
-  // The middle of a box (`'center'`, #1055) has no field here yet.
   const EDGE_LABELS: Partial<Record<ElementSizeTo['edge'], string>> = {
+    // The middle of the box (#1055).
+    center: labels.headerFooterSizeToEdgeCenter,
     top: labels.headerFooterFrameEdgeTop,
     bottom: labels.headerFooterFrameEdgeBottom,
     left: labels.headerFooterFrameEdgeLeft,
