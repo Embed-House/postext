@@ -14,6 +14,7 @@ import { preflightDetail, preflightTitle } from '../print/preflightText';
 import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { frameOverflowDetail } from '../warnings/frameOverflowText';
+import { frameCoveredDetail, frameOutsideDetail, repeatOverflowDetail } from '../warnings/frameOverlapText';
 import { localNumber } from '../viewport/composed/reflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
@@ -100,6 +101,9 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'frameOverflow':
     case 'frameContinuationLimit':
     case 'continueTargetMissing':
+    case 'frameCovered':
+    case 'frameOutsideArea':
+    case 'repeatOverflow':
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
@@ -299,6 +303,12 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameContinuationLimitTitle;
     case 'continueTargetMissing':
       return labels.warningsContinueTargetMissingTitle;
+    case 'frameCovered':
+      return labels.warningsFrameCoveredTitle;
+    case 'frameOutsideArea':
+      return labels.warningsFrameOutsideTitle;
+    case 'repeatOverflow':
+      return labels.warningsRepeatOverflowTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
     case 'labelAnchorUnknown':
@@ -641,6 +651,13 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels, locale)}`;
+    case 'frameCovered':
+      // Ink under a frame painted over it, and the fixes (#1053).
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameCoveredDetail(payload, labels, locale)}`;
+    case 'frameOutsideArea':
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOutsideDetail(payload, labels, locale)}`;
+    case 'repeatOverflow':
+      return `${payload.frame}[${payload.item}] — ${repeatOverflowDetail(payload, labels)}`;
     case 'continueTargetMissing':
       return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
         .replace('__page__', String(payload.page))

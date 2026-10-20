@@ -16,6 +16,7 @@ import type { VDTDocument, VDTFrame, VDTPage } from 'postext';
 import { SVG_NS } from '../CanvasPreview/dom';
 import { markFontPx } from './frameOverlay';
 import { jumpFlashNow } from '../../editions/frameJump';
+import { drawOverlapMarks } from './overlapMarks';
 
 export interface FitMark {
   frame: VDTFrame;
@@ -225,4 +226,6 @@ export function drawPageFitMarks(
     scaled: labels.composedFitScaled,
     imageScaled: labels.composedFitImageScaled,
   }, { targetFrameId: flash && flash.pageIndex === pageIndex ? flash.frameId : null, ...(locale ? { locale } : {}) });
+  // The overlap check the reader selected (#1066), over the fit marks.
+  drawOverlapMarks(svg, doc, pageIndex);
 }

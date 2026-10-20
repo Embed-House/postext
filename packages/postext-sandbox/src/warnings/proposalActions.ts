@@ -10,6 +10,17 @@
  * - `shortenText`: nothing is changed — the frame's text is selected in
  *   the editor and the reader is told how many characters to cut.
  *
+ * The overlap checks (#1053, #1066) propose fixes of the same kind: a
+ * `frameCovered`'s `layer` and `exclude` (on the covering frame), a
+ * `frameOutsideArea`'s `maxHeight`, `minHeight` (of the frame it is
+ * anchored inside) and `continueNextPage`, each a value at a JSON pointer.
+ * Their `move` is data for the engine (no setting says where a frame is):
+ * the Sandbox makes it the moved frame's `placement.offset` with the shift
+ * added, and tells it in words only for a frame it cannot move that way
+ * (no placement, an offset in ems or percent). `continueNextPage` of a
+ * frame past its edge comes with its `maxHeight` (held to the room it has,
+ * the rest goes on).
+ *
  * The edits change the form of the book, so the Sandbox asks before it
  * applies one; each is one step of the undo history (#899). Pure: the
  * Checks panel, the Reflow panel, the WebMCP tool and the tests plan an
@@ -17,7 +28,8 @@
  */
 
 import type { Dispatch } from 'react';
-import type { Dimension, FrameOverflowProposal, PostextConfig } from 'postext';
+import type { Dimension, PostextConfig } from 'postext';
+import type { FrameProposal } from './frameOverlapText';
 import type { SandboxAction } from '../context/SandboxContext';
 import type { TextChange } from '../book/textChanges';
 import { fenceTemplateChange, templateFences } from '../templates/templateUsage';
@@ -36,7 +48,7 @@ export interface ConfigLeaf {
 export type ProposalPlan =
   | {
     kind: 'config';
-    proposal: FrameOverflowProposal;
+    proposal: FrameProposal;
     leaves: ConfigLeaf[];
     /** The top-level configuration keys after the change (for
      *  `UPDATE_CONFIG`). */
@@ -44,15 +56,48 @@ export type ProposalPlan =
     /** The settings in words: «tema-cajas › dinero › fit.minScale». */
     settings: string[];
   }
-  | { kind: 'text'; proposal: FrameOverflowProposal; chapterId: string; changes: TextChange[]; baseLength: number; template: string }
-  | { kind: 'select'; proposal: FrameOverflowProposal; chapterId: string; from: number; to: number; chars: number }
+  | { kind: 'text'; proposal: FrameProposal; chapterId: string; changes: TextChange[]; baseLength: number; template: string }
+  | { kind: 'select'; proposal: FrameProposal; chapterId: string; from: number; to: number; chars: number }
   /** The proposal cannot be carried out on the book as it is now (the
    *  configuration or the text changed since the layout proposed it). */
-  | { kind: 'stale'; proposal: FrameOverflowProposal; reason: string };
+  | { kind: 'stale'; proposal: FrameProposal; reason: string };
 
 /** Whether carrying the proposal out changes the book (and so asks). */
-export function proposalChangesForm(p: FrameOverflowProposal): boolean {
+export function proposalChangesForm(p: FrameProposal): boolean {
   return p.kind !== 'shortenText';
+}
+
+/** Whether a plan is a move the Sandbox cannot make (the frame has no
+ *  placement, or its offset is in ems or percent): told in words only. */
+export function planIsAdvice(plan: ProposalPlan): boolean {
+  return plan.kind === 'stale' && plan.reason === 'move';
+}
+
+const MM_PER: Partial<Record<string, number>> = { mm: 1, cm: 10, in: 25.4, pt: 25.4 / 72 };
+
+/** A `move` of an overlap check as an edit (#1066): the moved frame's
+ *  `placement.offset` with the shift added, in mm, when the frame is
+ *  placed and its offset is in absolute units (the engine's shift is in
+ *  mm on the sheet; the offset adds to the anchor point the same way). */
+function moveLeaf(warning: Warning, p: Extract<FrameProposal, { kind: 'move' }>, config: PostextConfig): ConfigLeaf | null {
+  const w = warning.payload;
+  const path = w.kind === 'frameCovered' && p.frame === w.coveredBy ? w.coveredByPath : 'frame' in w && p.frame === w.frame && 'configPath' in w ? w.configPath : null;
+  if (!path) return null;
+  const frame = getAtPointer(config, path);
+  if (!isRecord(frame) || frame.name !== p.frame || !isRecord(frame.placement)) return null;
+  const offset = isRecord(frame.placement.offset) ? frame.placement.offset : {};
+  const next: Record<string, unknown> = { ...offset };
+  for (const [axis, delta] of [['x', p.dxMm], ['y', p.dyMm]] as const) {
+    if (delta === 0) continue;
+    const old = offset[axis];
+    let mm = 0;
+    if (old !== undefined) {
+      if (!isRecord(old) || typeof old.value !== 'number' || typeof old.unit !== 'string' || MM_PER[old.unit] === undefined) return null;
+      mm = old.value * MM_PER[old.unit]!;
+    }
+    next[axis] = { value: Math.round((mm + delta) * 10) / 10, unit: 'mm' };
+  }
+  return { pointer: `${path}/placement/offset`, value: next };
 }
 
 /** `/a/b~1c/0` → `['a', 'b/c', '0']`. */
@@ -146,15 +191,23 @@ export function valueInWords(v: unknown, locale?: string): string {
 }
 
 /** The configuration leaves a proposal sets. */
-export function proposalLeaves(p: FrameOverflowProposal): ConfigLeaf[] {
+export function proposalLeaves(p: FrameProposal): ConfigLeaf[] {
   switch (p.kind) {
     case 'allowShrink':
       return [{ pointer: p.path, value: p.value }, ...(p.also ?? []).map((a) => ({ pointer: a.path, value: a.value }))];
     case 'raiseMax':
     case 'lowerMin':
+    case 'maxHeight':
+    case 'minHeight':
       return [{ pointer: p.path, value: { ...p.value } }];
     case 'continueNextPage':
       return [{ pointer: p.path, value: 'next-page' }];
+    // The overlap fixes (#1053): the covering frame painted under, or
+    // pushing the text round it.
+    case 'layer':
+      return [{ pointer: p.path, value: p.value }];
+    case 'exclude':
+      return [{ pointer: p.path, value: 'push' }];
     default:
       return [];
   }
@@ -194,10 +247,10 @@ export function proposalContextOf(state: { config: PostextConfig; chapters: read
 }
 
 /** What carrying `proposal` of `warning` out does to the book as it is. */
-export function planProposal(warning: Warning, proposal: FrameOverflowProposal, ctx: ProposalContext): ProposalPlan {
+export function planProposal(warning: Warning, proposal: FrameProposal, ctx: ProposalContext): ProposalPlan {
   const payload = warning.payload as FrameOverflowPayload;
   const stale = (reason: string): ProposalPlan => ({ kind: 'stale', proposal, reason });
-  if (proposal.kind === 'useTemplate' || proposal.kind === 'shortenText') {
+  if ((proposal.kind === 'useTemplate' || proposal.kind === 'shortenText') && payload.kind === 'frameOverflow') {
     const chapter = warning.chapterId !== undefined ? ctx.chapters.find((c) => c.id === warning.chapterId) : ctx.chapters.length === 1 ? ctx.chapters[0] : undefined;
     if (!chapter) return stale('chapter');
     // The proposal's range is in the same text as the warning's own:
@@ -225,7 +278,18 @@ export function planProposal(warning: Warning, proposal: FrameOverflowProposal, 
     if (!change) return stale('text');
     return { kind: 'text', proposal, chapterId: chapter.id, changes: [change], baseLength: chapter.markdown.length, template: proposal.value };
   }
-  const leaves = proposalLeaves(proposal);
+  let leaves = proposalLeaves(proposal);
+  if (proposal.kind === 'move') {
+    const leaf = moveLeaf(warning, proposal, ctx.config);
+    if (!leaf) return stale('move');
+    leaves = [leaf];
+  }
+  // A frame past its edge goes on on the next page once it is held to the
+  // room it has (#1053): the two together.
+  if (proposal.kind === 'continueNextPage' && warning.payload.kind === 'frameOutsideArea') {
+    const max = warning.payload.proposals.find((q) => q.kind === 'maxHeight');
+    if (max) leaves = [...proposalLeaves(max), ...leaves];
+  }
   if (leaves.length === 0) return stale('kind');
   let next: PostextConfig = ctx.config;
   for (const leaf of leaves) {
@@ -264,6 +328,21 @@ export function applyProposalPlan(plan: ProposalPlan, dispatch: Dispatch<Sandbox
     default:
       return false;
   }
+}
+
+/** The checks of a frame that come with fixes: a frame that does not fit
+ *  (#858) and the overlap checks (#1053). */
+export const FRAME_FIX_KINDS = ['frameOverflow', 'frameCovered', 'frameOutsideArea'] as const;
+export type FrameFixKind = (typeof FRAME_FIX_KINDS)[number];
+export type FrameFixPayload = Extract<WarningPayload, { kind: FrameFixKind }>;
+
+export function isFrameFixPayload(p: WarningPayload): p is FrameFixPayload {
+  return (FRAME_FIX_KINDS as readonly string[]).includes(p.kind);
+}
+
+/** A warning's fixes, when it is a check of a frame. */
+export function proposalsOf(warning: Warning): readonly FrameProposal[] {
+  return isFrameFixPayload(warning.payload) ? warning.payload.proposals ?? [] : [];
 }
 
 /** The `frameOverflow` warnings of a list, with their proposals. */

@@ -13,6 +13,7 @@
 import { hashBundleFragment, hashBundleOrigin, readViewHash, viewHashFragment, type HashBundleRef } from '../storage/viewHash';
 import { openLinkQuietly } from '../context/hashBundle';
 import type { FrameJump } from '../warnings/composedChecks';
+import { setOverlapFocus } from './overlapFocus';
 
 export interface PendingFrameJump extends FrameJump {
   /** The book the jump is for: a preset's id (null for a project). */
@@ -96,6 +97,9 @@ export function frameJumpFragment(current: ReturnType<typeof readViewHash>, jump
  *  the page to be laid out. */
 export function requestFrameJump(jump: Omit<PendingFrameJump, 'at'>): void {
   pending = { ...jump, at: Date.now() };
+  // The overlap drawn for an earlier check goes; this jump's is drawn once
+  // it lands (`useFrameJumpRunner`).
+  setOverlapFocus(null);
   emit();
   if (typeof window === 'undefined') return;
   // The reader's copy of that language opens as it is (#1011).

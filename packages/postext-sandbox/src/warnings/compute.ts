@@ -233,6 +233,39 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'frameCovered' || w.kind === 'frameOutsideArea') {
+      // Ink of a frame under another frame, or past the trim, the bleed
+      // or the box it is anchored inside (#1053), by its book page.
+      const page = (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0);
+      const common = { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, page, configPath: w.configPath, ...(w.locale ? { locale: w.locale } : {}) };
+      out.push({
+        id: `layout-${w.kind}-${w.fenceIndex}-${w.frame}-${w.kind === 'frameCovered' ? w.coveredBy : w.past}-${w.pageIndex ?? 'x'}-${i}`,
+        payload: w.kind === 'frameCovered'
+          ? {
+            kind: 'frameCovered',
+            ...common,
+            coveredBy: w.coveredBy,
+            coveredByPath: w.coveredByPath,
+            overlapMm2: w.overlapMm2,
+            ...(w.text !== undefined ? { text: w.text } : {}),
+            ...(w.picture !== undefined ? { picture: w.picture } : {}),
+            proposals: w.proposals ?? [],
+          }
+          : {
+            kind: 'frameOutsideArea',
+            ...common,
+            past: w.past,
+            ...(w.target !== undefined ? { target: w.target } : {}),
+            excessMm: w.excessMm,
+            sides: { ...w.sides },
+            proposals: w.proposals ?? [],
+          },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'continueTargetMissing') {
       // A story that jumps to a page fence no later page has (#917).
       out.push({

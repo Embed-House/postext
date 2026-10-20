@@ -21,6 +21,7 @@ import { setPageSelection } from '../selection/selectionStore';
 import { sameLocaleTag } from '../presets/locale';
 import { hashBundleOrigin, readViewHash, viewHashFragment } from '../storage/viewHash';
 import { resolveJump } from '../warnings/composedChecks';
+import { setOverlapFocus } from './overlapFocus';
 import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type PendingFrameJump } from './frameJump';
 
 /** Pick frame `frameId` of page `pageIndex` as the page selection, at
@@ -146,6 +147,9 @@ export function useFrameJumpRunner(jumpToPage: (pageIndex: number) => void): voi
     if (window.location.hash !== fragment) window.location.hash = fragment;
     if (screenIndex >= 0) jumpRef.current(screenIndex);
     const frame = resolved.frame;
+    // An overlap check: both frames and where they meet, or the frame and
+    // what it runs past, drawn on the page until another check (#1066).
+    if (jump.overlap && screenIndex >= 0) setOverlapFocus({ ...jump.overlap, pageIndex: screenIndex });
     if (frame && page.composed) {
       selectFrame({ pageIndex: Math.max(0, screenIndex), frameId: frame.id, name: frame.name, template: page.composed.template, configPath: frame.configPath });
       // The page selection (#865): the frame is picked on the page, its

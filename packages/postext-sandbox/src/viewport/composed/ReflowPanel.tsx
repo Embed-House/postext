@@ -8,13 +8,15 @@
  * frames changed, each frame under its number with its changes in words
  * («dinero grew 8.2 mm to hold its content», «gasto moved down 8.2 mm to
  * make room for dinero»), and under a frame that still does not fit, its
- * fixes as one-click actions. Pointing at a frame in the list draws it
- * stronger on its page; a click turns to that page.
+ * fixes as one-click actions, as under a frame that lies under another
+ * or runs past its edge (#1066; a click on it draws the overlap).
+ * Pointing at a frame in the list draws it stronger on its page; a click
+ * turns to that page.
  */
 
 import { useMemo } from 'react';
 import { MoveDiagonal, X } from 'lucide-react';
-import type { VDTDocument } from 'postext';
+import type { ReflowEvent, VDTDocument } from 'postext';
 import { useSandboxDocRef, useSandboxLabels, useSandboxSelector, useSandboxWarnings } from '../../context/SandboxContext';
 import { IconButton } from '../../ui';
 import { fill } from '../../print/fillTokens';
@@ -22,6 +24,7 @@ import { ProposalActions } from '../../warnings/ProposalButtons';
 import type { Warning } from '../../warnings/types';
 import { documentReflow } from './reflowText';
 import { setReflowFocus, useReflowShown } from './reflowView';
+import { overlapFocusOf, setOverlapFocus } from '../../editions/overlapFocus';
 
 
 /** Whether the document on screen has composed pages (the switch, in the
@@ -30,12 +33,23 @@ export function hasComposedPages(doc: VDTDocument | null): boolean {
   return !!doc?.pages.some((p) => p.composed);
 }
 
-/** The `frameOverflow` check of a frame on a page of `doc`, from the
- *  Checks panel's warnings (the same layout). */
-function overflowCheck(warnings: readonly Warning[], doc: VDTDocument, pageIndex: number, fenceIndex: number, frame: string): Warning | undefined {
-  const candidates = warnings.filter((w) => w.payload.kind === 'frameOverflow' && w.payload.fenceIndex === fenceIndex && w.payload.frame === frame);
+/** The checks of a frame on a page of `doc` that come with fixes, from the
+ *  Checks panel's warnings (the same layout): its `frameOverflow` (#868)
+ *  and its overlap checks (#1053, #1066), as the page's log names them. */
+export function frameFixChecks(warnings: readonly Warning[], doc: Pick<VDTDocument, 'pageIndexOffset'>, pageIndex: number, fenceIndex: number, frame: string, events: readonly ReflowEvent[]): Warning[] {
   const page = pageIndex + 1 + (doc.pageIndexOffset ?? 0);
-  return candidates.find((w) => w.payload.kind === 'frameOverflow' && w.payload.page === page) ?? (candidates.length === 1 ? candidates[0] : undefined);
+  const out: Warning[] = [];
+  const kinds = new Set(events.map((e) => e.kind));
+  const pick = (kind: 'frameOverflow' | 'frameCovered' | 'frameOutsideArea', extra: (w: Warning) => boolean = () => true): void => {
+    const candidates = warnings.filter((w) => w.payload.kind === kind && w.payload.fenceIndex === fenceIndex && w.payload.frame === frame && extra(w));
+    const onPage = candidates.filter((w) => 'page' in w.payload && w.payload.page === page);
+    out.push(...(onPage.length > 0 ? onPage : candidates.length === 1 ? candidates : []));
+  };
+  if (kinds.has('overflow')) pick('frameOverflow');
+  // One covered event per frame painted over it.
+  for (const e of events) if (e.kind === 'covered') pick('frameCovered', (w) => w.payload.kind === 'frameCovered' && w.payload.coveredBy === e.cause);
+  if (kinds.has('outside')) pick('frameOutsideArea');
+  return out;
 }
 
 export function ReflowPanel({ currentPage, onJumpToPage }: { currentPage: number; onJumpToPage: (pageIndex: number) => void }) {
@@ -53,9 +67,12 @@ export function ReflowPanel({ currentPage, onJumpToPage }: { currentPage: number
   );
   if (!shown || !doc || !hasComposedPages(doc)) return null;
 
-  const go = (pageIndex: number, frame?: string) => {
+  const go = (pageIndex: number, frame?: string, checks: readonly Warning[] = []) => {
     onJumpToPage(pageIndex);
     if (frame) setReflowFocus({ pageIndex, frame });
+    // A frame under another or past its edge: the overlap on its page.
+    const overlap = checks.map((w) => overlapFocusOf(w.payload)).find(Boolean);
+    setOverlapFocus(overlap ? { ...overlap, pageIndex } : null);
   };
 
   return (
@@ -89,12 +106,12 @@ export function ReflowPanel({ currentPage, onJumpToPage }: { currentPage: number
               </button>
               <ol className="m-0 list-none p-0">
                 {pr.entries.map((entry) => {
-                  const overflow = entry.events.some((e) => e.kind === 'overflow') ? overflowCheck(warnings, doc, pr.pageIndex, pr.fenceIndex, entry.frame) : undefined;
+                  const checks = frameFixChecks(warnings, doc, pr.pageIndex, pr.fenceIndex, entry.frame, entry.events);
                   return (
                     <li key={entry.frame} data-reflow-frame={entry.frame}>
                       <button
                         type="button"
-                        onClick={() => go(pr.pageIndex, entry.frame)}
+                        onClick={() => go(pr.pageIndex, entry.frame, checks)}
                         onMouseEnter={() => setReflowFocus({ pageIndex: pr.pageIndex, frame: entry.frame })}
                         onFocus={() => setReflowFocus({ pageIndex: pr.pageIndex, frame: entry.frame })}
                         className="flex w-full cursor-pointer items-start gap-2 rounded border-0 bg-transparent px-2 py-1 text-start hover:bg-(--surface) focus-visible:outline-2 outline-(--brand)"
@@ -106,7 +123,7 @@ export function ReflowPanel({ currentPage, onJumpToPage }: { currentPage: number
                           {entry.lines.map((line, i) => <span key={i}>{line}</span>)}
                         </span>
                       </button>
-                      {overflow && <ProposalActions warning={overflow} onScreen />}
+                      {checks.map((w) => <ProposalActions key={w.id} warning={w} onScreen />)}
                     </li>
                   );
                 })}
