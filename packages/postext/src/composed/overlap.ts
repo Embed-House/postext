@@ -266,34 +266,37 @@ export function overlapChecks(input: OverlapCheckInput): OverlapCheckResult {
     const [lb, ob] = paintRank(b);
     return lb > la || (lb === la && ob > oa);
   };
-  for (const under of live) {
+  /** What `over` covers of `under`, by the check's rules: the covered
+   *  frame's ink that is not fill against the covering frame's opaque ink
+   *  (its pictures left out when they push with a contour), each read
+   *  through `ink` (the frames where they lie). `skipLines` leaves out the
+   *  covered frame's body lines (they run round a pushing frame). */
+  const pairInk = (under: VDTFrame, over: VDTFrame, ink: (name: string) => FrameInk, skipLines = false): { covered: Ink[]; covers: Ink[] } | undefined => {
+    if (over === under || !later(under, over)) return undefined;
     const ru = resolved.get(under.name)!;
-    if (ru.overlap === 'allow') continue;
-    const covered = inkOf.get(under.name)!.all.filter((i) => i.kind !== 'fill');
-    if (covered.length === 0) continue;
+    const ro = resolved.get(over.name)!;
+    if (ru.overlap === 'allow' || ro.overlap === 'allow') return undefined;
+    const covered = ink(under.name).all.filter((i) => i.kind !== 'fill' && !(skipLines && i.flow === 'line'));
+    // Text set round a frame's pictures (`wrap: 'contour'`) comes into
+    // their box by design: the contour, not the box, keeps it clear.
+    const contourWrap = ro.exclude === 'push' && ro.wrap === 'contour';
+    const covers = ink(over.name).covers.filter((c) => !(contourWrap && c.kind === 'picture'));
+    return covered.length > 0 && covers.length > 0 ? { covered, covers } : undefined;
+  };
+  const here = (name: string): FrameInk => inkOf.get(name)!;
+  const found: CoverPair[] = [];
+  for (const under of live) {
     for (const over of live) {
-      if (over === under || !later(under, over)) continue;
-      const ro = resolved.get(over.name)!;
-      if (ro.overlap === 'allow') continue;
-      // Text set round a frame's pictures (`wrap: 'contour'`) comes into
-      // their box by design: the contour, not the box, keeps it clear.
-      const contourWrap = ro.exclude === 'push' && ro.wrap === 'contour';
-      const covers = inkOf.get(over.name)!.covers.filter((c) => !(contourWrap && c.kind === 'picture'));
-      if (covers.length === 0) continue;
+      const pi = pairInk(under, over, here);
+      if (!pi) continue;
       let area = 0;
       let words: string | undefined;
       let picture: string | undefined;
       let hitLine = false;
       const hitBoxes: Rect[] = [];
       const hitCovers: Rect[] = [];
-      for (const ink of covered) {
-        const cuts = covers.flatMap((c) => {
-          // A line over a picture hides a hairline of it, not the picture:
-          // whether the words read on it is the contrast check's matter.
-          if (ink.kind === 'picture' && c.kind === 'text') return [];
-          const cut = intersect(ink.box, c.box);
-          return cut && cut.width >= depth && cut.height >= depth ? [{ cut, c }] : [];
-        });
+      for (const ink of pi.covered) {
+        const cuts = inkCuts(ink, pi.covers, depth);
         if (cuts.length === 0) continue;
         area += unionArea(cuts.map((x) => x.cut));
         hitBoxes.push(ink.box);
@@ -303,42 +306,143 @@ export function overlapChecks(input: OverlapCheckInput): OverlapCheckResult {
           if (ink.text !== undefined) words = words === undefined ? ink.text : words.length < 40 ? `${words} ${ink.text}` : words;
         } else if (picture === undefined && ink.resourceId) picture = ink.resourceId;
       }
-      const areaMm2 = r1(area / (mmPx * mmPx));
-      if (areaMm2 < MIN_AREA_MM2) continue;
-      const proposals: FrameCoverProposal[] = [];
-      // Painted under it, the covering frame is hidden in turn wherever the
-      // covered one is opaque (a fill, a picture): proposed only where the
-      // covered frame has nothing but text over it.
-      const underOpaque = inkOf.get(under.name)!.covers.filter((c) => c.kind !== 'text');
-      const swaps = underOpaque.some((u) => covers.some((c) => {
-        const cut = intersect(u.box, c.box);
-        return cut !== undefined && cut.width >= depth && cut.height >= depth;
-      }));
-      if (!swaps) proposals.push({ kind: 'layer', path: `${over.configPath}/layer`, value: under.layer - 1 });
-      // Body lines run round a frame that pushes; a caption or a tab do not.
-      if (hitLine && ro.exclude !== 'push' && ro.rotate === 0 && !over.writingMode) proposals.push({ kind: 'exclude', path: `${over.configPath}/exclude`, value: 'push' });
-      const move = clearingMove(hitBoxes, hitCovers);
-      if (move) proposals.push({ kind: 'move', frame: over.name, dxMm: r1(move.dx / mmPx), dyMm: r1(move.dy / mmPx) });
-      const text = words !== undefined ? words.trim().replace(/\s+/g, ' ').slice(0, 40) : undefined;
-      warnings.push({
-        kind: 'frameCovered',
-        ...base(under),
-        coveredBy: over.name,
-        coveredByPath: over.configPath,
-        overlapMm2: areaMm2,
-        ...(text ? { text } : {}),
-        ...(picture !== undefined ? { picture } : {}),
-        ...locale,
-        proposals,
-        ...where(under),
-      });
-      events.push({ frame: under.name, kind: 'covered', cause: over.name, areaMm2 });
+      if (r1(area / (mmPx * mmPx)) < MIN_AREA_MM2) continue;
+      found.push({ under, over, area, words, picture, hitLine, hitBoxes, hitCovers });
     }
+  }
+
+  // A move is proposed only where it lands clear (#1075).
+  const warned = new Set(found.map((x) => pairKey(x.under.name, x.over.name)));
+  const minArea = MIN_AREA_MM2 * mmPx * mmPx;
+  const byName = new Map(live.map((f) => [f.name, f]));
+  /** The frames that move with `name`: it, and those anchored to it. */
+  const movers = (name: string): Set<string> => {
+    const set = new Set([name]);
+    for (let grew = true; grew;) {
+      grew = false;
+      for (const f of live) {
+        const rf = resolved.get(f.name)!;
+        const to = rf.grid ? undefined : anchorTarget(rf.placement);
+        if (to !== undefined && set.has(to) && !set.has(f.name)) {
+          set.add(f.name);
+          grew = true;
+        }
+      }
+    }
+    return set;
+  };
+  const hostHere = (name: string): Rect | undefined => {
+    const h = byName.get(name);
+    return h ? hostRect(h) : input.groupRects.get(name);
+  };
+  /** How far a frame's ink runs past the page (text past the trim, the
+   *  rest past the bleed) or past the box it is anchored inside, px. */
+  const pastArea = (f: VDTFrame, ink: readonly Ink[], hostOf: (name: string) => Rect | undefined): number => {
+    const text = ink.filter((i) => i.kind === 'text').map((i) => i.box);
+    const rest = ink.filter((i) => i.kind !== 'text').map((i) => i.box);
+    let max = Math.max(text.length ? overrun(text, input.areas.page).max : 0, rest.length ? overrun(rest, input.areas.bleed).max : 0);
+    const host = insideHost(resolved.get(f.name)!, input, hostOf, (n) => resolved.get(n)?.overlap === 'allow');
+    if (host && ink.length) max = Math.max(max, overrun(ink.map((i) => i.box), host.box).max);
+    return max;
+  };
+  /**
+   * The page with the frames of `moved` shifted by (dx, dy) px, read by the
+   * check's own rules: whether the pair `target` (`under<over`) is clear,
+   * whether each moved frame stays inside what holds it (no further past
+   * it than it was), and the pieces of ink of pairs no warning names that
+   * would come to cover each other (`m` the moved frame's piece where it
+   * lies now, `b` the other frame's).
+   */
+  const tryMove: MoveTest = (moved, dx, dy, target) => {
+    const shift = (list: Ink[]): Ink[] => list.map((i) => ({ ...i, box: { ...i.box, x: i.box.x + dx, y: i.box.y + dy } }));
+    const shifted = new Map<string, FrameInk>();
+    for (const name of moved) {
+      const ink = inkOf.get(name);
+      if (ink) shifted.set(name, { all: shift(ink.all), covers: shift(ink.covers) });
+    }
+    const at = (name: string): FrameInk => shifted.get(name) ?? inkOf.get(name)!;
+    const hostAt = (name: string): Rect | undefined => {
+      const r = hostHere(name);
+      return r && moved.has(name) ? { ...r, x: r.x + dx, y: r.y + dy } : r;
+    };
+    for (const name of moved) {
+      const f = byName.get(name);
+      if (!f || resolved.get(name)!.overlap === 'allow') continue;
+      const after = pastArea(f, at(name).all, hostAt);
+      if (after >= MIN_EXCESS_MM * mmPx && after > pastArea(f, inkOf.get(name)!.all, hostHere) + 0.5) return { clear: false, outside: true, blockers: [] };
+    }
+    let clear = true;
+    const blockers: Array<{ m: Rect; b: Rect }> = [];
+    for (const under of live) {
+      for (const over of live) {
+        // Two frames that move together lie as they did to each other.
+        if (moved.has(under.name) === moved.has(over.name)) continue;
+        // Lines run round a pushing frame wherever it lies.
+        const pi = pairInk(under, over, at, resolved.get(over.name)!.exclude === 'push');
+        if (!pi) continue;
+        let area = 0;
+        const pieces: Array<{ m: Rect; b: Rect }> = [];
+        for (const ink of pi.covered) {
+          const cuts = inkCuts(ink, pi.covers, depth);
+          if (cuts.length === 0) continue;
+          area += unionArea(cuts.map((x) => x.cut));
+          for (const x of cuts) {
+            const [mv, other] = moved.has(under.name) ? [ink.box, x.c.box] : [x.c.box, ink.box];
+            pieces.push({ m: { ...mv, x: mv.x - dx, y: mv.y - dy }, b: other });
+          }
+        }
+        if (area < minArea) continue;
+        const key = pairKey(under.name, over.name);
+        if (key === target) clear = false;
+        else if (!warned.has(key)) blockers.push(...pieces);
+      }
+    }
+    return { clear, outside: false, blockers };
+  };
+
+  for (const { under, over, area, words, picture, hitLine, hitBoxes, hitCovers } of found) {
+    const ro = resolved.get(over.name)!;
+    const areaMm2 = r1(area / (mmPx * mmPx));
+    const proposals: FrameCoverProposal[] = [];
+    // Painted under it, the covering frame is hidden in turn wherever the
+    // covered one is opaque (a fill, a picture): proposed only where the
+    // covered frame has nothing but text over it.
+    const covers = pairInk(under, over, here)!.covers;
+    const underOpaque = inkOf.get(under.name)!.covers.filter((c) => c.kind !== 'text');
+    const swaps = underOpaque.some((u) => covers.some((c) => {
+      const cut = intersect(u.box, c.box);
+      return cut !== undefined && cut.width >= depth && cut.height >= depth;
+    }));
+    if (!swaps) proposals.push({ kind: 'layer', path: `${over.configPath}/layer`, value: under.layer - 1 });
+    // Body lines run round a frame that pushes; a caption or a tab do not.
+    if (hitLine && ro.exclude !== 'push' && ro.rotate === 0 && !over.writingMode) proposals.push({ kind: 'exclude', path: `${over.configPath}/exclude`, value: 'push' });
+    // The covered frame anchored to the covering one moves with it: no
+    // move takes one off the other.
+    const moved = movers(over.name);
+    const move = moved.has(under.name) ? undefined : clearingMove(hitBoxes, hitCovers, mmPx, (dx, dy) => tryMove(moved, dx, dy, pairKey(under.name, over.name)));
+    if (move) proposals.push({ kind: 'move', frame: over.name, dxMm: move.dxMm, dyMm: move.dyMm });
+    const text = words !== undefined ? words.trim().replace(/\s+/g, ' ').slice(0, 40) : undefined;
+    warnings.push({
+      kind: 'frameCovered',
+      ...base(under),
+      coveredBy: over.name,
+      coveredByPath: over.configPath,
+      overlapMm2: areaMm2,
+      ...(text ? { text } : {}),
+      ...(picture !== undefined ? { picture } : {}),
+      ...locale,
+      proposals,
+      ...where(under),
+    });
+    events.push({ frame: under.name, kind: 'covered', cause: over.name, areaMm2 });
   }
 
   // frameOutsideArea: past the trim (text) or the bleed (fills, pictures),
   // and past the box it is anchored inside.
-  const byName = new Map(live.map((f) => [f.name, f]));
+  const moveIsClear = (name: string) => (dx: number, dy: number): boolean => {
+    const t = tryMove(movers(name), dx, dy);
+    return t.clear && !t.outside && t.blockers.length === 0;
+  };
   for (const f of live) {
     const rf = resolved.get(f.name)!;
     if (rf.overlap === 'allow') continue;
@@ -350,31 +454,78 @@ export function overlapChecks(input: OverlapCheckInput): OverlapCheckResult {
     const overBleed = overrun(restInk, input.areas.bleed);
     const pageCase = overTrim.max >= overBleed.max ? { past: 'trim' as const, o: overTrim } : { past: 'bleed' as const, o: overBleed };
     if (pageCase.o.max >= MIN_EXCESS_MM * mmPx) {
-      warnings.push(outsideWarning(f, rf, pageCase.past, undefined, pageCase.o, mmPx, input, base, where, locale, byName));
+      warnings.push(outsideWarning(f, rf, pageCase.past, undefined, pageCase.o, mmPx, base, where, locale, byName, moveIsClear(f.name)));
       events.push({ frame: f.name, kind: 'outside', toMm: r1(pageCase.o.max / mmPx), past: pageCase.past });
     }
     // Anchored inside another frame or a group.
-    const target = rf.grid ? undefined : anchorTarget(rf.placement);
-    if (!target || !rf.placement) continue;
-    const edge = physicalEdge(rf.placement.anchor.edge, false);
-    if (ELEMENT_EDGES.has(edge)) continue;
-    const host = byName.get(target);
-    const hostBox = host ? hostRect(host) : input.groupRects.get(target);
-    if (!hostBox || (host && resolved.get(host.name)?.overlap === 'allow')) continue;
-    const a = anchorOn(edge, hostBox, true);
-    const ox = lengthPx(rf.placement.offset?.x, dpi, input.emPx);
-    const oy = lengthPx(rf.placement.offset?.y, dpi, input.emPx);
-    const eps = 0.5;
-    const ax = a.x + ox;
-    const ay = a.y + oy;
-    if (ax < hostBox.x - eps || ax > hostBox.x + hostBox.width + eps || ay < hostBox.y - eps || ay > hostBox.y + hostBox.height + eps) continue;
-    const o = overrun(ink.map((i) => i.box), hostBox);
+    const host = insideHost(rf, input, hostHere, (n) => resolved.get(n)?.overlap === 'allow');
+    if (!host) continue;
+    const o = overrun(ink.map((i) => i.box), host.box);
     if (o.max < MIN_EXCESS_MM * mmPx) continue;
-    const past = host ? 'frame' as const : 'group' as const;
-    warnings.push(outsideWarning(f, rf, past, target, o, mmPx, input, base, where, locale, byName));
-    events.push({ frame: f.name, kind: 'outside', toMm: r1(o.max / mmPx), past: `#${target}` });
+    const past = byName.has(host.target) ? 'frame' as const : 'group' as const;
+    warnings.push(outsideWarning(f, rf, past, host.target, o, mmPx, base, where, locale, byName, moveIsClear(f.name)));
+    events.push({ frame: f.name, kind: 'outside', toMm: r1(o.max / mmPx), past: `#${host.target}` });
   }
   return { warnings, events };
+}
+
+/** A covering pair the check found. */
+interface CoverPair {
+  under: VDTFrame;
+  over: VDTFrame;
+  /** px². */
+  area: number;
+  words?: string;
+  picture?: string;
+  hitLine: boolean;
+  /** The covered frame's ink that is hit, and the covering ink over it. */
+  hitBoxes: Rect[];
+  hitCovers: Rect[];
+}
+
+/** A frame's ink on the sheet: all it paints, and what of it hides what is
+ *  under it. */
+interface FrameInk {
+  all: Ink[];
+  covers: Ink[];
+}
+
+/** What the page would be with `moved` shifted by (dx, dy) px (#1075):
+ *  `clear`, the pair `target` no longer covers; `outside`, a moved frame
+ *  runs further past what holds it; `blockers`, pieces of ink (`m` of a
+ *  moved frame, where it lies now; `b` of another) that would cover each
+ *  other in a pair no warning names. */
+type MoveTest = (moved: ReadonlySet<string>, dx: number, dy: number, target?: string) => { clear: boolean; outside: boolean; blockers: Array<{ m: Rect; b: Rect }> };
+
+const pairKey = (under: string, over: string): string => `${under}<${over}`;
+
+/** The cuts of `ink` by `covers` deeper than `depth` on both sides. */
+function inkCuts(ink: Ink, covers: readonly Ink[], depth: number): Array<{ cut: Rect; c: Ink }> {
+  return covers.flatMap((c) => {
+    // A line over a picture hides a hairline of it, not the picture:
+    // whether the words read on it is the contrast check's matter.
+    if (ink.kind === 'picture' && c.kind === 'text') return [];
+    const cut = intersect(ink.box, c.box);
+    return cut && cut.width >= depth && cut.height >= depth ? [{ cut, c }] : [];
+  });
+}
+
+/** The frame or group a frame is anchored inside (a nine-point anchor on
+ *  `'#name'` whose point, offset added, lies in that box), and its box as
+ *  `hostOf` gives it. An `'allow'` host is not one. */
+function insideHost(rf: ResolvedFrame, input: OverlapCheckInput, hostOf: (name: string) => Rect | undefined, allows: (name: string) => boolean): { target: string; box: Rect } | undefined {
+  const target = rf.grid ? undefined : anchorTarget(rf.placement);
+  if (!target || !rf.placement) return undefined;
+  const edge = physicalEdge(rf.placement.anchor.edge, false);
+  if (ELEMENT_EDGES.has(edge)) return undefined;
+  const hostBox = hostOf(target);
+  if (!hostBox || allows(target)) return undefined;
+  const a = anchorOn(edge, hostBox, true);
+  const ax = a.x + lengthPx(rf.placement.offset?.x, input.dpi, input.emPx);
+  const ay = a.y + lengthPx(rf.placement.offset?.y, input.dpi, input.emPx);
+  const eps = 0.5;
+  if (ax < hostBox.x - eps || ax > hostBox.x + hostBox.width + eps || ay < hostBox.y - eps || ay > hostBox.y + hostBox.height + eps) return undefined;
+  return { target, box: hostBox };
 }
 
 /** A frame's box on the sheet: its content box put there by its matrix. */
@@ -426,11 +577,13 @@ function outsideWarning(
   target: string | undefined,
   o: Overrun,
   mmPx: number,
-  input: OverlapCheckInput,
   base: (f: VDTFrame) => { template: string; frame: string; fenceIndex: number; configPath: string },
   where: (f: VDTFrame) => { sourceStart?: number; sourceEnd?: number; pageIndex: number },
   locale: { locale?: string },
   byName: ReadonlyMap<string, VDTFrame>,
+  /** Whether a shift (px) of the frame lands clear of the page's other
+   *  frames (#1075). */
+  moveIsClear: (dx: number, dy: number) => boolean,
 ): ContentWarning {
   const mm = (px: number): number | undefined => (px >= MIN_EXCESS_MM * mmPx ? r1(px / mmPx) : undefined);
   const sides: { top?: number; right?: number; bottom?: number; left?: number } = {};
@@ -464,7 +617,10 @@ function outsideWarning(
   // past (data only).
   const dx = !o.fitsX ? 0 : o.left >= min && o.right < min ? o.left : o.right >= min && o.left < min ? -o.right : 0;
   const dy = !o.fitsY ? 0 : o.top >= min && o.bottom < min ? o.top : o.bottom >= min && o.top < min ? -o.bottom : 0;
-  if (dx !== 0 || dy !== 0) proposals.push({ kind: 'move', frame: f.name, dxMm: r1(dx / mmPx), dyMm: r1(dy / mmPx) });
+  // Proposed only where it lands clear of the page's other frames (#1075).
+  const dxMm = r1(dx / mmPx) + 0;
+  const dyMm = r1(dy / mmPx) + 0;
+  if ((dx !== 0 || dy !== 0) && moveIsClear(dxMm * mmPx, dyMm * mmPx)) proposals.push({ kind: 'move', frame: f.name, dxMm, dyMm });
   return {
     kind: 'frameOutsideArea',
     ...base(f),
@@ -480,9 +636,23 @@ function outsideWarning(
 
 const mmDim = (value: number): Dimension => ({ value, unit: 'mm' });
 
-/** The smallest shift of the covering boxes along one axis that takes them
- *  off the covered ones (px), or undefined when there is nothing to clear. */
-function clearingMove(covered: readonly Rect[], covers: readonly Rect[]): { dx: number; dy: number } | undefined {
+/** Up to this many times a move is pushed on past the frame it would land
+ *  on before the direction is given up. */
+const MAX_MOVE_STEPS = 8;
+
+/** `mm` rounded away from zero to 0.1 mm: a proposal never falls short. */
+const ceil1 = (mm: number): number => Math.ceil(mm * 10 - 1e-6) / 10;
+
+/**
+ * The smallest shift of the covering frame along one axis that takes its
+ * ink off the covered ink and lands clear (#1075), in mm; undefined when no
+ * direction does. Each of the four directions starts at the distance that
+ * takes the covering boxes off the covered ones; where `test` finds that the
+ * moved frames would come to cover another frame (or be covered by one), the
+ * move goes on past that frame's ink and is tested again; a direction stops
+ * when the pair is not cleared or a moved frame runs past what holds it.
+ */
+function clearingMove(covered: readonly Rect[], covers: readonly Rect[], mmPx: number, test: (dx: number, dy: number) => ReturnType<MoveTest>): { dxMm: number; dyMm: number } | undefined {
   if (covered.length === 0 || covers.length === 0) return undefined;
   const u = (rs: readonly Rect[]): Rect => {
     const x = Math.min(...rs.map((r) => r.x));
@@ -491,12 +661,30 @@ function clearingMove(covered: readonly Rect[], covers: readonly Rect[]): { dx: 
   };
   const a = u(covered);
   const c = u(covers);
-  const options = [
-    { dx: a.x + a.width - c.x, dy: 0 },
-    { dx: a.x - (c.x + c.width), dy: 0 },
-    { dx: 0, dy: a.y + a.height - c.y },
-    { dx: 0, dy: a.y - (c.y + c.height) },
+  /** Each direction: its unit vector, the distance that takes the covers
+   *  off the covered ink, and the distance that takes a moved piece `m`
+   *  past a piece `b` (px). */
+  const directions: Array<{ ux: number; uy: number; start: number; past: (m: Rect, b: Rect) => number }> = [
+    { ux: 1, uy: 0, start: a.x + a.width - c.x, past: (m, b) => b.x + b.width - m.x },
+    { ux: -1, uy: 0, start: c.x + c.width - a.x, past: (m, b) => m.x + m.width - b.x },
+    { ux: 0, uy: 1, start: a.y + a.height - c.y, past: (m, b) => b.y + b.height - m.y },
+    { ux: 0, uy: -1, start: c.y + c.height - a.y, past: (m, b) => m.y + m.height - b.y },
   ];
-  options.sort((p, q) => Math.abs(p.dx) + Math.abs(p.dy) - (Math.abs(q.dx) + Math.abs(q.dy)));
-  return options[0];
+  let best: { mm: number; dxMm: number; dyMm: number } | undefined;
+  for (const d of directions) {
+    let mm = ceil1(Math.max(0, d.start) / mmPx);
+    for (let step = 0; step < MAX_MOVE_STEPS && mm > 0 && (!best || mm < best.mm); step++) {
+      const t = test(d.ux * mm * mmPx, d.uy * mm * mmPx);
+      if (!t.clear || t.outside) break;
+      if (t.blockers.length === 0) {
+        best = { mm, dxMm: d.ux * mm, dyMm: d.uy * mm };
+        break;
+      }
+      const next = ceil1(Math.max(...t.blockers.map((p) => d.past(p.m, p.b))) / mmPx);
+      if (!(next > mm)) break;
+      mm = next;
+    }
+  }
+  // `+ 0` turns a -0 into 0.
+  return best ? { dxMm: best.dxMm + 0, dyMm: best.dyMm + 0 } : undefined;
 }

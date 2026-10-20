@@ -2074,7 +2074,7 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   covered frame has nothing opaque under the covering one: else the swap hides the other), `exclude:
   'push'` (only when body lines are hit: a caption or a tab does not run round a pushing frame), `move`
   (`frame`, `dxMm`, `dyMm`: the shortest shift along one axis that takes the covering ink off the covered
-  ink; data only).
+  ink; data only; since #1075 only one that lands clear of the page's other frames, §12.22).
 - **`frameOutsideArea`.** Departure: instead of one limit by `area`, **text is checked against the trim
   and fills and pictures against the bleed** (a band anchored to `'bleed'` on a `'content'` template bleeds
   on purpose; text past the trim is cut whatever the area; with no bleed the two are one box). And, for a
@@ -2405,3 +2405,37 @@ The Sandbox side of C2 (§12.10, §12.16), C10's `repeatOverflow` (§12.15) and 
   set writes ◉. The resolved fields already passed `settings.test.ts`. Search index regenerated.
 - **Not done.** Pointing at a frame in the Reflow panel does not draw the overlap (a click does); the
   Folio does not draw it.
+
+### 12.22 What #1075 changed (C2 finding)
+
+- **A `move` lands clear.** Before #1075 the `move` of `frameCovered` was the shortest shift along one axis
+  that took the covering ink off the covered ink, whatever lay there: on the overlap fixture «move cutout
+  8.5 mm up» uncovered the card's tab and covered the figure's caption. Now each proposed shift is tested
+  on the page by the check's own rules (`tryMove` in `overlap.ts`): the moved frame, and every frame
+  anchored to it (transitively: they move with it), against every other frame painted before or after
+  them, with the same ink, paint order, thresholds and `'allow'`/contour rules. A move is offered only when
+  the pair is cleared, no pair that had no warning comes to cover (pairs already warned may stay), and no
+  moved frame runs further past the trim, the bleed or the box it is anchored inside than it did (0.5 px
+  slack). Lines of a frame that a pushing frame covers are left out of the test: they run round it where
+  it lands.
+- **Direction.** All four directions are tried, each from the distance that takes the covering boxes off
+  the covered ones; when the moved frame would land on another frame's ink, the move goes on past that
+  ink and is tested again (up to 8 times); a direction stops when the pair is not cleared or a frame runs
+  past what holds it. The smallest clear move wins (ties: right, left, down, up). The value is rounded
+  away from zero to 0.1 mm, so the proposal never falls short of what was tested. On the fixture the
+  cut-out now moves 13.1 mm right.
+- **No move.** None when no direction lands clear, and none when the covered frame is anchored to the
+  covering one (they move together). The warning then offers `layer` / `exclude` where they apply, and
+  `overlap: 'allow'` as before; on the fixture the photo anchored inside the figure has no fix left (every
+  way off the caption takes it out of the figure).
+- **`frameOutsideArea`'s `move`** goes through the same test: it is dropped when the shift that brings a
+  frame in would make it cover another frame or be covered by one.
+- **Data unchanged.** `FrameCoverProposal` / `FrameOutsideProposal` keep their shape (`frame`, `dxMm`,
+  `dyMm`, a shift added to the frame's placement offset), so `sandbox_apply_proposal` and the panels read
+  them as before. Proposals are data: no layout moves.
+- **Not done.** The test does not reflow: text pushed round a moved frame (`exclude: 'push'`) is assumed to
+  run clear, and a group's box is not recomputed when a member moves.
+- **Tests.** `overlap.test.ts`: every offered fix on the fixture (`layer`, `exclude`, `move`, `maxHeight`,
+  `minHeight`, `continueNextPage`) applied as the Sandbox applies it clears its warning and raises no new
+  pair; the move off the tab goes right, not up onto the caption; a move goes on past a frame it would land
+  on; no move when every way out is blocked, nor when the covered frame hangs from the covering one.

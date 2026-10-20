@@ -62,6 +62,25 @@ const build = (tpl: PageTemplate = template(), markdown = MARKDOWN, extra: Poste
 const covered = (doc: VDTDocument): Covered[] => (doc.contentWarnings ?? []).filter((w): w is Covered => w.kind === 'frameCovered');
 const outside = (doc: VDTDocument): Outside[] => (doc.contentWarnings ?? []).filter((w): w is Outside => w.kind === 'frameOutsideArea');
 const pair = (doc: VDTDocument, frame: string, by: string): Covered | undefined => covered(doc).find((w) => w.frame === frame && w.coveredBy === by);
+type Proposal = Covered['proposals'][number] | Outside['proposals'][number];
+/** `tpl` with a proposal applied as the Sandbox applies it: a value set at
+ *  its path (`/pageTemplates/0/frames/<i>/<key>[/<key>]`), a move added to
+ *  the frame's placement offset. */
+const applyProposal = (tpl: PageTemplate, p: Proposal): PageTemplate => {
+  const out = structuredClone(tpl);
+  if (p.kind === 'move') {
+    const f = out.frames!.find((x) => x.name === p.frame)!;
+    const off = f.placement!.offset ?? {};
+    const v = (d: unknown): number => (d as { value?: number } | undefined)?.value ?? 0;
+    f.placement = { ...f.placement!, offset: { x: mm(v(off.x) + p.dxMm), y: mm(v(off.y) + p.dyMm) } };
+    return out;
+  }
+  const [, , , , index, ...keys] = p.path.split('/');
+  let node = out.frames![Number(index)] as unknown as Record<string, unknown>;
+  for (const k of keys.slice(0, -1)) node = (node[k] ??= {}) as Record<string, unknown>;
+  node[keys[keys.length - 1]!] = p.value;
+  return out;
+};
 
 describe('frameCovered (#1053)', () => {
   const doc = build();
@@ -74,8 +93,10 @@ describe('frameCovered (#1053)', () => {
     expect(w.sourceStart).toBeGreaterThan(0);
     // Painting the photo under the figure would hide the photo under the
     // chart: not proposed. A caption does not run round a pushing frame:
-    // no exclude either. Moving the photo off the caption is.
-    expect(w.proposals.map((p) => p.kind)).toEqual(['move']);
+    // no exclude either. The photo is anchored inside the figure, which it
+    // fills from the chart to the caption: every move off the caption
+    // takes it out of the figure (#1075), so none is proposed.
+    expect(w.proposals).toEqual([]);
   });
 
   it('reports a tab label under a cut-out photo', () => {
@@ -99,12 +120,88 @@ describe('frameCovered (#1053)', () => {
     expect(pair(build(moved), 'card', 'cutout')).toBeUndefined();
   });
 
-  it('the proposed move uncovers the caption', () => {
-    const w = pair(doc, 'figure', 'photo')!;
-    const move = w.proposals.find((p): p is Extract<Covered['proposals'][number], { kind: 'move' }> => p.kind === 'move')!;
-    const photo = template().frames!.find((f) => f.name === 'photo')!;
-    const moved = withFrames({ photo: { placement: { ...photo.placement!, offset: { x: mm(move.dxMm), y: mm(move.dyMm) } } } });
-    expect(pair(build(moved), 'figure', 'photo')).toBeUndefined();
+  it('the move off the tab goes right, not up onto the caption (#1075)', () => {
+    // 8.6 mm up takes the cut-out off the tab and puts it on the figure's
+    // caption; past the caption is further than 13 mm to the right.
+    const move = pair(doc, 'card', 'cutout')!.proposals.find((p) => p.kind === 'move')!;
+    expect(move).toMatchObject({ dyMm: 0 });
+    expect((move as { dxMm: number }).dxMm).toBeGreaterThan(8.6);
+  });
+
+  describe('where a move lands (#1075)', () => {
+    // A column of text down the page's left, a note beside it and a photo
+    // over the column's head. Up and left take the photo past the trim, down
+    // runs the length of the column: the way out is to the right, past the
+    // note.
+    const tpl: PageTemplate = {
+      id: 'overlaps',
+      frames: [
+        { name: 'column', width: mm(40), height: mm(215), placement: { anchor: { to: 'container', edge: 'top-left' } } },
+        { name: 'note', style: 'sticky', width: mm(40), height: mm(40), placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm(45) } } },
+        { name: 'photo', layer: 2, width: mm(30), placement: { anchor: { to: 'container', edge: 'top-left' }, offset: { x: mm(5) } } },
+      ],
+    };
+    const md = [
+      '::::page{template="overlaps"}',
+      ':::frame{slot="column"}',
+      'The mill keeps a record of each season. '.repeat(60),
+      ':::',
+      '',
+      ':::frame{slot="note"}',
+      'Ask at the mill for the record of the last ten years. '.repeat(8),
+      ':::',
+      '',
+      '::resource{id="cutout" slot="photo"}',
+      '::::',
+      '',
+    ].join('\n');
+
+    it('goes on past a frame it would land on', () => {
+      const doc = build(tpl, md);
+      const w = pair(doc, 'column', 'photo')!;
+      const move = w.proposals.find((p) => p.kind === 'move') as Extract<Proposal, { kind: 'move' }>;
+      // Some 35 mm takes it off the column's lines and onto the note's;
+      // past them (the note's padding is fill, not covered) it is 78 mm.
+      expect(move.dyMm).toBe(0);
+      expect(move.dxMm).toBeGreaterThan(75);
+      expect(move.dxMm).toBeLessThan(82);
+      const fixed = build(applyProposal(tpl, move), md);
+      expect(covered(fixed)).toEqual([]);
+      expect(outside(fixed).filter((x) => x.frame === 'photo')).toEqual([]);
+    });
+
+    it('proposes no move where every way out is blocked', () => {
+      // The note as wide as the rest of the page: past it the photo runs
+      // past the trim.
+      const wide = withFrames({ note: { width: mm(115) } }, tpl);
+      const w = pair(build(wide, md), 'column', 'photo')!;
+      expect(w.proposals.map((p) => p.kind)).toEqual(['layer', 'exclude']);
+    });
+
+    it('proposes no move of a frame the covered one is anchored to', () => {
+      // The column hangs from the photo: they move together.
+      const hung = withFrames({ column: { placement: { anchor: { to: '#photo', edge: 'top-left' }, offset: { x: mm(-5) } } } }, tpl);
+      const w = pair(build(hung, md), 'column', 'photo')!;
+      expect(w.proposals.some((p) => p.kind === 'move')).toBe(false);
+    });
+  });
+
+  it('applying any offered fix clears its warning and raises no other (#1075)', () => {
+    const before = new Set(covered(doc).map((w) => `${w.frame}<${w.coveredBy}`));
+    const outBefore = new Set(outside(doc).map((w) => w.frame));
+    const offered = [...covered(doc), ...outside(doc)].flatMap((w) => w.proposals.map((p) => ({ w, p })));
+    expect(offered.filter((x) => x.p.kind === 'move').length).toBeGreaterThanOrEqual(2);
+    for (const { w, p } of offered) {
+      const fixed = build(applyProposal(template(), p));
+      const after = covered(fixed).map((x) => `${x.frame}<${x.coveredBy}`);
+      expect(after.filter((k) => !before.has(k)), `${w.kind} ${w.frame} ${JSON.stringify(p)}`).toEqual([]);
+      if (w.kind === 'frameCovered') expect(after).not.toContain(`${w.frame}<${w.coveredBy}`);
+      if (p.kind === 'move') {
+        // A move also keeps every frame where it was inside.
+        expect(outside(fixed).map((x) => x.frame).filter((f) => !outBefore.has(f))).toEqual([]);
+        if (w.kind === 'frameOutsideArea') expect(outside(fixed).filter((x) => x.frame === w.frame && x.past === w.past)).toEqual([]);
+      }
+    }
   });
 
   it('proposes exclude: push for body text under a picture, and a layer swap where the text lies on nothing opaque', () => {
