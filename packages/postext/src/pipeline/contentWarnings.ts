@@ -930,6 +930,24 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'repeatOverflow':
       text = `Grid "${w.group}" of template "${w.template}" holds ${w.max} item${w.max === 1 ? '' : 's'} — item ${w.item} of "${w.frame}" goes to ${w.flowFrame ? `the flow frame "${w.flowFrame}"` : 'the flow after the page'}; raise repeat.max or move the item to another page`;
       break;
+    case 'moduleUnknown':
+      text = w.reason === 'unknown'
+        ? (w.module === '' ? `:::module names no template — write :::module{template="…"}; its content goes to the flow frame` : `Unknown module "${w.module}" — no pageTemplates entry has this id; the module's content goes to the flow frame`)
+        : w.reason === 'notModule'
+          ? `Template "${w.module}" is no module — give it role: "module" to stack it in a page; the module's content goes to the flow frame`
+          : `Template "${w.template}" has no modules group — give one of its groups modules: true; module "${w.name}" is not laid and its content goes to the flow frame`;
+      break;
+    case 'moduleAsPage':
+      text = `Template "${w.template}" is a module — a module is stacked in a page with :::module{template="${w.template}"}, never laid as a page; the page's content is set in the flow`;
+      break;
+    case 'moduleNested':
+      text = `Module "${w.module}" inside a module of template "${w.template}" — a module does not hold modules; its content is the outer module's`;
+      break;
+    case 'moduleNameRejected':
+      text = w.reason === 'taken'
+        ? `Another module of the page is named "${w.name}" — this one is named "${w.used}"; give each module its own name`
+        : `Module name "${w.name}" holds a space, ".", "#", "[" or "]" — the module is named "${w.used}"`;
+      break;
     case 'slotEmpty':
       text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
       break;

@@ -10,7 +10,7 @@
  * pure and reads any block array, so the layout (P4) can call it on its own
  * transformed `contentBlocks` and get indices into them.
  */
-import type { ContentBlock } from '../parse/types';
+import type { ComposedModuleFence, ContentBlock } from '../parse/types';
 import type { ComposedPageNode, SourceRange } from './types';
 
 /** Heading levels a template frame may `take`. */
@@ -36,11 +36,32 @@ export interface ParsedComposedPage extends ComposedPageNode {
   /** Every piece of the page that names a slot, in Markdown order
    *  (#1061): a grid that repeats a frame takes each piece as one item. */
   pieces: SlotPiece[];
+  /** The page's `:::module` blocks (#1062), in Markdown order. Their
+   *  slotted blocks are in `slots` and `pieces` under scoped names
+   *  (`<module>.<slot>`); the blocks that name no slot are the module's,
+   *  not in `unassigned`. */
+  modules: ParsedModule[];
+  /** Modules written inside a module (#1062, `moduleNested`): their blocks
+   *  are the outer module's. */
+  nestedModules: ComposedModuleFence[];
   /** Source range of the fence line. */
   fence: SourceRange;
   /** The fence had no closing fence of its length (reported by the
    *  parser as `unclosedContainer`). */
   unclosed: boolean;
+}
+
+/** A `:::module` of a composed page (#1062). */
+export interface ParsedModule {
+  fence: ComposedModuleFence;
+  /** Its opening and closing markers. */
+  start: number;
+  end: number;
+  /** Its blocks that name no slot, which go to the module's flow frame. */
+  unassigned: number[];
+  /** Its first heading of each level that names no slot, which the
+   *  module's `takes` frame receives. */
+  firstHeadings: Partial<Record<HeadingTake, number>>;
 }
 
 /** A piece of a composed page sent to a slot (#1061): a `:::frame{slot}`
@@ -123,24 +144,48 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
       }
       return { piece: { slot: b.slot.name, source, indices: range(k, e), inner: [] }, next: e + 1 };
     };
-    let k = i + 1;
-    while (k < end) {
-      const b = blocks[k]!;
-      if (b.slot) pieces.push(pieceAt(k, true).piece!);
-      if (b.type === 'containerStart') {
-        const e = endOf(blocks, k);
-        if (b.containerName === 'frame') put(b.slot, range(k + 1, e - 1));
-        else put(b.slot, range(k, e));
-        k = e + 1;
-        continue;
+    const modules: ParsedModule[] = [];
+    const nestedModules: ComposedModuleFence[] = [];
+    /** The blocks `from`…`to - 1`, by slot; what names none goes to
+     *  `sink` (the page, or the module it is written in, #1062). */
+    const walk = (from: number, to: number, sink: Pick<ParsedModule, 'unassigned' | 'firstHeadings'>, inModule: boolean): void => {
+      let k = from;
+      while (k < to) {
+        const b = blocks[k]!;
+        if (b.type === 'containerStart' && b.containerName === 'module' && b.module) {
+          // A module (#1062): its blocks that name no slot are its own; one
+          // inside a module is not a module of its own (`moduleNested`).
+          const e = endOf(blocks, k);
+          if (b.module.nested || inModule) {
+            nestedModules.push(b.module);
+            walk(k + 1, e, sink, true);
+          } else {
+            const m: ParsedModule = { fence: b.module, start: k, end: e, unassigned: [], firstHeadings: {} };
+            modules.push(m);
+            walk(k + 1, e, m, true);
+          }
+          k = e + 1;
+          continue;
+        }
+        if (b.slot) pieces.push(pieceAt(k, true).piece!);
+        if (b.type === 'containerStart') {
+          const e = endOf(blocks, k);
+          const indices = b.containerName === 'frame' ? range(k + 1, e - 1) : range(k, e);
+          if (b.slot) put(b.slot, indices);
+          else sink.unassigned.push(...indices);
+          k = e + 1;
+          continue;
+        }
+        if (b.type === 'heading' && !b.slot && b.level !== undefined) {
+          const take = `h${b.level}` as HeadingTake;
+          if (sink.firstHeadings[take] === undefined) sink.firstHeadings[take] = k;
+        }
+        if (b.slot) put(b.slot, [k]);
+        else sink.unassigned.push(k);
+        k++;
       }
-      if (b.type === 'heading' && !b.slot && b.level !== undefined) {
-        const take = `h${b.level}` as HeadingTake;
-        if (firstHeadings[take] === undefined) firstHeadings[take] = k;
-      }
-      put(b.slot, [k]);
-      k++;
-    }
+    };
+    walk(i + 1, end, { unassigned, firstHeadings }, false);
     // The page's contents: the directive, or its expanded rows (they and
     // the breaks between parts map to the directive's line).
     const tocLines = new Set<number>();
@@ -168,6 +213,8 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
       firstHeadings,
       tocRows,
       pieces,
+      modules,
+      nestedModules,
       fence: { sourceStart: start.sourceStart, sourceEnd: start.sourceEnd },
       unclosed,
       sourceStart: start.sourceStart,
@@ -187,4 +234,9 @@ export function takenBlocks(page: Pick<ParsedComposedPage, 'firstHeadings' | 'to
   if (take === 'toc') return page.tocRows;
   const at = page.firstHeadings[take];
   return at === undefined ? [] : [at];
+}
+
+/** The modules `page` lays (#1062), as `resolvePageTemplate` takes them. */
+export function pageModuleUses(page: Pick<ParsedComposedPage, 'modules'>): { name: string; template: string }[] {
+  return page.modules.map((m) => ({ name: m.fence.name, template: m.fence.template }));
 }

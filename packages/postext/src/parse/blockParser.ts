@@ -5,7 +5,7 @@
  * positions back into the original markdown.
  */
 
-import type { BlockSlot, CodeBlockInfo, ContainerName, ContentBlock, DirectiveAttrs, DirectiveName, FigureLabel, FigureWord, FigureWordKind, ListKind, ParseIssue, ParseOptions, VerseLineInfo, VerseStanza } from './types';
+import type { BlockSlot, CodeBlockInfo, ComposedModuleFence, ComposedPageFence, ContainerName, ContentBlock, DirectiveAttrs, DirectiveName, FigureLabel, FigureWord, FigureWordKind, ListKind, ParseIssue, ParseOptions, VerseLineInfo, VerseStanza } from './types';
 import type { SourceRange } from '../composed/types';
 import { attachEquationAnchors } from './equationLabels';
 import { parseAttrBlobStrict, parseDirectiveAttrs, scanDirectiveAttrs } from './attrs';
@@ -75,7 +75,7 @@ function headingAttrTokens(blob: string, spaced: boolean): ReturnType<typeof par
 }
 /** Set of fenced-container names recognized today. A `:::name` line whose
  *  name is a known container opens a block that runs until a bare `:::`. */
-export const KNOWN_CONTAINERS: ReadonlySet<ContainerName> = new Set(['callout', 'paragraphs', 'part', 'columns', 'paper', 'frame']);
+export const KNOWN_CONTAINERS: ReadonlySet<ContainerName> = new Set(['callout', 'paragraphs', 'part', 'columns', 'paper', 'frame', 'module']);
 
 /** Absolute source range of each attribute value of a blob that starts at
  *  `blobStart` (a flag: its key). A repeated key keeps the last, as
@@ -89,6 +89,10 @@ function attrSourcesOf(raw: string, blobStart: number): Record<string, SourceRan
   }
   return out;
 }
+
+/** A module's own name (#1062): no space, and none of `.`, `#`, `[`, `]`
+ *  (the characters scoped and instance names are built with). */
+const MODULE_NAME_RE = /^[^\s.#[\]]+$/u;
 
 /** The slot a blob's `slot="…"` names (#854), or undefined when it names
  *  none (or an empty one). */
@@ -685,7 +689,12 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
   // issue pointing at the opening line when EOF arrives first).
   // A composed page's entry (#854) records how many colons opened it: only
   // a bare fence of as many closes it, never a bare `:::`.
-  const containerStack: { id: number; name: ContainerName; sourceStart: number; sourceEnd: number; colons?: number; slot?: string }[] = [];
+  const containerStack: { id: number; name: ContainerName; sourceStart: number; sourceEnd: number; colons?: number; slot?: string; module?: string }[] = [];
+  /** The open composed page's fence, and what its modules (#1062) took:
+   *  the names, and how many of each template. */
+  let pageFence: ComposedPageFence | undefined;
+  let moduleNames = new Set<string>();
+  let moduleCounts = new Map<string, number>();
   let nextContainerId = 1;
   /** Composed page fences read so far (`ComposedPageFence.fenceIndex`). */
   let pageFences = 0;
@@ -721,6 +730,44 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
   const openPageAt = (): number => {
     for (let k = containerStack.length - 1; k >= 0; k--) if (containerStack[k]!.colons !== undefined) return k;
     return -1;
+  };
+  /** `slot` as the module it is written in names it (#1062):
+   *  `<module>.<slot>` inside a `:::module` of the open page. */
+  const scopeSlot = (slot: BlockSlot | undefined): BlockSlot | undefined => {
+    if (!slot) return slot;
+    const pageAt = openPageAt();
+    if (pageAt < 0) return slot;
+    for (let k = containerStack.length - 1; k > pageAt; k--) {
+      const m = containerStack[k]!.module;
+      if (m !== undefined) return { ...slot, name: `${m}.${slot.name}` };
+    }
+    return slot;
+  };
+  /** The module a `:::module` of the open page opens (#1062), its name
+   *  taken: `name` as written when it is free and valid, else
+   *  `<template>[n]`. Recorded on the page's fence unless `nested`. */
+  const openModule = (attrs: DirectiveAttrs, attrSources: Record<string, SourceRange>, sourceStart: number, sourceEnd: number, nested: boolean): ComposedModuleFence => {
+    const template = attrs.template?.trim() ?? '';
+    if (nested) return { template, name: '', nested: true, attrSources, sourceStart, sourceEnd };
+    const n = (moduleCounts.get(template) ?? 0) + 1;
+    moduleCounts.set(template, n);
+    const asked = attrs.name?.trim();
+    let rejected: ComposedModuleFence['rejected'];
+    let name: string | undefined;
+    if (asked !== undefined && asked !== '') {
+      if (!MODULE_NAME_RE.test(asked)) rejected = { name: asked, reason: 'invalid' };
+      else if (moduleNames.has(asked)) rejected = { name: asked, reason: 'taken' };
+      else name = asked;
+    }
+    if (name === undefined) {
+      let k = n;
+      while (moduleNames.has(`${template}[${k}]`)) k++;
+      name = `${template}[${k}]`;
+    }
+    moduleNames.add(name);
+    const module: ComposedModuleFence = { template, name, ...(rejected ? { rejected } : {}), attrSources, sourceStart, sourceEnd };
+    if (pageFence) (pageFence.modules ??= []).push(module);
+    return module;
   };
   /** Whether line `k` (trimmed `pl`) is a composed page fence: an opening
    *  one, or the bare fence that closes the open page. */
@@ -787,7 +834,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       if (fromLine) words[kind] = fromLine;
       else if (value !== undefined && attrSources[kind]) words[kind] = { text: value, sourceStart: attrSources[kind]!.sourceStart, sourceEnd: attrSources[kind]!.sourceEnd };
     }
-    const slot = attrsRaw ? slotOf(attrs, attrsRaw, blobStart) : undefined;
+    const slot = scopeSlot(attrsRaw ? slotOf(attrs, attrsRaw, blobStart) : undefined);
     // Each label's anchor (`resourceId#anchorId`) and, on a composed page,
     // its stable id (#857): the slot is the figure's own, else the frame's
     // it stands in.
@@ -1034,7 +1081,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     // `slot="…"` among the fence's attributes (#854).
     if (info.attrs.slot !== undefined) {
       const infoAt = rawLines[start]!.indexOf(open.info, open.indent + open.marker.length);
-      const slot = slotOf(info.attrs, open.info, srcStart + Math.max(0, infoAt));
+      const slot = scopeSlot(slotOf(info.attrs, open.info, srcStart + Math.max(0, infoAt)));
       if (slot) code.slot = slot;
     }
     blocks.push(code);
@@ -1184,7 +1231,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       const id = tokens?.find((t) => t.key === 'id');
       if (tokens && id && id.quoted && id.value !== '' && tokens.some((t) => t.key === 'slot') && tokens.every((t) => t.key === 'id' || t.key === 'slot')) {
         const blobStart = lineOffsets[i]! + line.indexOf('{') + 1;
-        const slot = slotOf(parseDirectiveAttrs(m![1]!), m![1]!, blobStart);
+        const slot = scopeSlot(slotOf(parseDirectiveAttrs(m![1]!), m![1]!, blobStart));
         blocks.push({
           type: 'resourceBlock',
           text: '',
@@ -1218,6 +1265,9 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       const colons = pageOpen[1]!.length;
       containerStack.push({ id, name: 'composedPage', sourceStart: srcStart, sourceEnd: srcEnd, colons });
       const spread = attrs.spread !== undefined && attrs.spread.trim().toLowerCase() !== 'false';
+      pageFence = { template: attrs.template?.trim() ?? '', spread, attrs, attrSources, fenceIndex: pageFences++, colons };
+      moduleNames = new Set();
+      moduleCounts = new Map();
       blocks.push({
         type: 'containerStart',
         text: '',
@@ -1225,7 +1275,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
         containerName: 'composedPage',
         containerAttrs: attrs,
         containerId: id,
-        composedPage: { template: attrs.template?.trim() ?? '', spread, attrs, attrSources, fenceIndex: pageFences++, colons },
+        composedPage: pageFence,
         sourceStart: srcStart,
         sourceEnd: srcEnd,
         sourceMap: [],
@@ -1343,12 +1393,17 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       const srcEnd = lineEndOffset(i);
       const id = nextContainerId++;
       const containerAttrs = parseDirectiveAttrs(attrsRaw);
-      // `:::frame{slot="…"}` (#854), or any container sent to a slot.
-      const slot = containerAttrs.slot !== undefined ? slotOf(containerAttrs, attrsRaw, srcStart + line.indexOf('{') + 1) : undefined;
-      containerStack.push({ id, name, sourceStart: srcStart, sourceEnd: srcEnd, ...(slot ? { slot: slot.name } : {}) });
       // Where each attribute's value is written (#857): a frame's tab text
       // (`label`) and title map back to it.
       const containerAttrSources = attrsRaw ? attrSourcesOf(attrsRaw, srcStart + line.indexOf('{') + 1) : undefined;
+      // A module of the open composed page (#1062): its own name, the
+      // slots of its blocks scoped by it. (Outside a page it is a plain
+      // box of its content.)
+      const pageAt = name === 'module' ? openPageAt() : -1;
+      const module = pageAt >= 0 ? openModule(containerAttrs, containerAttrSources ?? {}, srcStart, srcEnd, containerStack.slice(pageAt + 1).some((e) => e.name === 'module')) : undefined;
+      // `:::frame{slot="…"}` (#854), or any container sent to a slot.
+      const slot = name === 'module' ? undefined : scopeSlot(containerAttrs.slot !== undefined ? slotOf(containerAttrs, attrsRaw, srcStart + line.indexOf('{') + 1) : undefined);
+      containerStack.push({ id, name, sourceStart: srcStart, sourceEnd: srcEnd, ...(slot ? { slot: slot.name } : {}), ...(module && !module.nested ? { module: module.name } : {}) });
       blocks.push({
         type: 'containerStart',
         text: '',
@@ -1358,6 +1413,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
         ...(containerAttrSources && Object.keys(containerAttrSources).length > 0 ? { containerAttrSources } : {}),
         containerId: id,
         ...(slot ? { slot } : {}),
+        ...(module ? { module } : {}),
         sourceStart: srcStart,
         sourceEnd: srcEnd,
         sourceMap: [],
@@ -1422,11 +1478,11 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
         // `# Title {slot="titulo"}` (#854).
         const slotToken = read.filter((t) => t.key === 'slot').pop();
         if (slotToken && slotToken.value.trim() !== '') {
-          headingSlot = {
+          headingSlot = scopeSlot({
             name: slotToken.value.trim(),
             sourceStart: attrsAbsStart + (slotToken.valueStart ?? slotToken.start),
             sourceEnd: attrsAbsStart + (slotToken.valueEnd ?? slotToken.end),
-          };
+          });
         }
         headingRawContent = headingRawContent.slice(0, attrsMatch.index);
         srcEnd = contentAbsStart + headingRawContent.length;

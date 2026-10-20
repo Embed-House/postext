@@ -22,8 +22,8 @@
  */
 import type { ContentBlock } from '../parse/types';
 import type { CalloutStyleConfig } from '../types';
-import { composedPages, takenBlocks, type ParsedComposedPage } from './document';
-import { repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates';
+import { composedPages, pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
+import { isModuleTemplate, repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates';
 import { pageRepeats } from './repeat';
 import { nextFrameOf } from './geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
@@ -122,8 +122,9 @@ export function wrapComposedPages(
   let at = 0;
   let wrapped = 0;
   for (const page of pages) {
-    const template = resolvePageTemplate(config, page.template);
-    if (!template) continue;
+    // With the page's modules (#1062) laid in it; a module is never a page.
+    const template = resolvePageTemplate(config, page.template, { modules: pageModuleUses(page) });
+    if (!template || isModuleTemplate(template)) continue;
     const start = blocks.findIndex((b, i) => i >= at && b.type === 'containerStart' && b.containerName === 'composedPage' && b.composedPage?.fenceIndex === page.fenceIndex);
     if (start < 0) continue;
     const end = endOf(blocks, start);
@@ -196,6 +197,16 @@ function regroupPage(
   // Items past a grid's `max` go where content naming no frame goes.
   for (const o of repeats.overflow) put(flow, o.indices);
   for (const i of page.unassigned) put(taken.get(i) ?? flow, [i]);
+  // A module's content that names no slot (#1062): the module's `takes`
+  // frame, else its flow frame, else the page's (a module not laid).
+  for (const m of page.modules) {
+    const laid = template.modules?.find((x) => x.name === m.fence.name);
+    const own = new Map<number, string>();
+    for (const [take, frame] of Object.entries(laid?.takes ?? {})) {
+      for (const idx of takenBlocks({ firstHeadings: m.firstHeadings, tocRows: [] }, take as FrameTake)) if (!own.has(idx)) own.set(idx, frame);
+    }
+    for (const i of m.unassigned) put(own.get(i) ?? laid?.flow ?? flow, [i]);
+  }
   // The attributes of a slot's first `:::frame` fence (its `label`,
   // `title`): the frame's tab and title.
   const fenceAttrs = new Map<string, Record<string, string>>();

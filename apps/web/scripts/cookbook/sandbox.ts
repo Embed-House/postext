@@ -163,6 +163,10 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   frameCovered: "1.48.0",
   frameOutsideArea: "1.48.0",
   repeatOverflow: "1.48.0",
+  moduleUnknown: "1.48.0",
+  moduleAsPage: "1.48.0",
+  moduleNested: "1.48.0",
+  moduleNameRejected: "1.48.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

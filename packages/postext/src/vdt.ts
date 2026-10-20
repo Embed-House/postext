@@ -2949,6 +2949,13 @@ export interface VDTComposedPage {
   log: ReflowEvent[];
   /** JSON pointer of the template (`/pageTemplates/3`). */
   configPath: string;
+  /** The modules the page lays in its modules group (#1062), in order:
+   *  the instance name its frames are scoped by (`<name>.<frame>`), the
+   *  module template and its pointer, and the module's box (page px, in
+   *  the frame the frames are in) when it was laid here (one that went on
+   *  whole has none). `resolvePageTemplate(config, template, { modules })`
+   *  gives the template the page was laid with. */
+  modules?: { name: string; template: string; configPath: string; rect?: { x: number; y: number; width: number; height: number } }[];
   /** The page fence, opening line to closing fence (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
@@ -3429,6 +3436,24 @@ export type ContentWarning = ContentWarningBase & (
    *  flow frame (`flowFrame`, when the template has one), or after the
    *  page. Points at the item's `slot="…"`. */
   | { kind: 'repeatOverflow'; template: string; group: string; frame: string; item: number; max: number; flowFrame?: string; fenceIndex: number }
+  /** A `:::module{template="…"}` of a composed page (#1062) that the page
+   *  does not lay: `module` names no template (`'unknown'`), a template
+   *  whose `role` is not `'module'` (`'notModule'`), or the page's template
+   *  has no modules group (`'noGroup'`). Its content goes to the flow
+   *  frame. Points at its `template="…"`. */
+  | { kind: 'moduleUnknown'; template: string; module: string; name: string; reason: 'unknown' | 'notModule' | 'noGroup'; fenceIndex: number }
+  /** A page fence names a module template (#1062): a module is laid in a
+   *  page's modules group, never as a page. The fence's content is set in
+   *  the flow. Points at its `template="…"`. */
+  | { kind: 'moduleAsPage'; template: string; fenceIndex: number }
+  /** A `:::module` inside another module (#1062): not supported; its
+   *  blocks are the outer module's. Points at its `template="…"`. */
+  | { kind: 'moduleNested'; template: string; module: string; fenceIndex: number }
+  /** A module's `name="…"` (#1062) that another module of the page took
+   *  (`'taken'`), or that holds a space, `.`, `#`, `[` or `]`
+   *  (`'invalid'`): the module is named `used` (`<template>[n]`). Its
+   *  slots are addressed under that name. */
+  | { kind: 'moduleNameRejected'; template: string; module: string; name: string; used: string; reason: 'taken' | 'invalid'; fenceIndex: number }
   /** A three-colon `:::page` carries `template=`: a composed page needs
    *  four colons (`::::page{template=…}` … `::::`). It is read as a comic
    *  page, as before. */

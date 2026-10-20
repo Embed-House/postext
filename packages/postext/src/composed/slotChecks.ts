@@ -6,14 +6,14 @@
  * configuration, before any layout.
  */
 import type { ContentWarning } from '../vdt';
-import { takenBlocks, type ParsedComposedPage } from './document';
-import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate } from './types';
-import { continueInPage, resolveContinueIn, resolvePageTemplate } from './templates';
+import { pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
+import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate, ResolvedPageTemplate } from './types';
+import { continueInPage, isModuleTemplate, resolveContinueIn, resolvePageTemplate } from './templates';
 import { pageRepeats } from './repeat';
 
 /** The composed-page warnings, as {@link checkComposedSlots} returns them
  *  (source offsets as in the pages it read). */
-export type ComposedSlotWarning = Extract<ContentWarning, { kind: 'templateUnknown' | 'slotUnknown' | 'slotEmpty' | 'spreadMismatch' | 'repeatOverflow' }>;
+export type ComposedSlotWarning = Extract<ContentWarning, { kind: 'templateUnknown' | 'slotUnknown' | 'slotEmpty' | 'spreadMismatch' | 'repeatOverflow' | 'moduleUnknown' | 'moduleAsPage' | 'moduleNested' | 'moduleNameRejected' }>;
 
 /**
  * The frames a template has: its own and, through `extends`, its
@@ -138,6 +138,13 @@ export function checkComposedSlots(
       out.push({ kind: 'templateUnknown', template: page.template, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
       continue;
     }
+    // A module (#1062) is laid in a page's modules group, never as a page:
+    // the fence's content is set in the flow, as for an unknown template.
+    if (isModuleTemplate(resolvePageTemplate(config as Pick<ComposedPagesConfigKeys, 'pageTemplates'>, template.id))) {
+      const at = page.attrSources.template ?? page.fence;
+      out.push({ kind: 'moduleAsPage', template: template.id, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
+      continue;
+    }
     // The template decides how the page is laid; the fence says so too.
     const spread = templateSpread(template, byId);
     if (spread !== page.spread) {
@@ -150,8 +157,11 @@ export function checkComposedSlots(
     // A grid's frames take the page's pieces item by item (#1061): a frame
     // of the set is filled when an item gives it content, and items past
     // the grid's `max` go to the flow frame.
-    const resolved = resolvePageTemplate(config as Pick<ComposedPagesConfigKeys, 'pageTemplates'>, template.id);
+    // With the page's modules laid in it (#1062).
+    const resolved = resolvePageTemplate(config as Pick<ComposedPagesConfigKeys, 'pageTemplates'>, template.id, { modules: pageModuleUses(page) });
     const repeats = resolved ? pageRepeats(page, resolved) : undefined;
+    const moduleChecks = checkModules(page, template.id, resolved, config as Pick<ComposedPagesConfigKeys, 'pageTemplates'>);
+    out.push(...moduleChecks.warnings);
     const itemFilled = new Set<string>();
     for (const item of repeats?.items ?? []) for (const [f, indices] of item.frames) if (indices.length > 0) itemFilled.add(f);
     let strayContent = false;
@@ -162,8 +172,11 @@ export function checkComposedSlots(
       out.push({ kind: 'repeatOverflow', template: template.id, group: o.group, frame: o.frame, item: o.item, max: o.max, ...(flowFrame !== undefined ? { flowFrame } : {}), fenceIndex: page.fenceIndex, sourceStart: o.source.sourceStart, sourceEnd: o.source.sourceEnd });
     }
     for (const slot of Object.keys(page.slots)) {
-      if (known.has(slot) || variants.has(slot)) continue;
+      if (known.has(slot) || variants.has(slot) || moduleChecks.frames.has(slot)) continue;
       strayContent = true;
+      // The content of a module not laid goes to the flow frame: its
+      // `moduleUnknown` says so.
+      if (moduleChecks.unlaid.some((name) => slot.startsWith(`${name}.`))) continue;
       const at = page.slotSources[slot] ?? page.fence;
       out.push({ kind: 'slotUnknown', template: template.id, slot, ...(flowFrame !== undefined ? { frame: flowFrame } : {}), fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
     }
@@ -172,7 +185,7 @@ export function checkComposedSlots(
     for (const f of frames) {
       for (const idx of takenBlocks(page, f.takes)) taken.add(idx);
     }
-    const flowContent = strayContent || page.unassigned.some((i) => !taken.has(i));
+    const flowContent = strayContent || moduleChecks.toFlow || page.unassigned.some((i) => !taken.has(i));
     const continued = new Set<string>();
     for (const f of frames) {
       if (f.next) continued.add(f.next);
@@ -189,6 +202,76 @@ export function checkComposedSlots(
       if (filled) continue;
       out.push({ kind: 'slotEmpty', template: template.id, frame: f.name, fenceIndex: page.fenceIndex, sourceStart: page.fence.sourceStart, sourceEnd: page.fence.sourceEnd });
     }
+    // The frames of the modules laid (#1062), by their scoped names, at
+    // their `:::module` fence.
+    for (const m of resolved?.modules ?? []) {
+      const parsed = page.modules.find((x) => x.fence.name === m.name);
+      const moduleFrames = resolved!.frames.filter((f) => m.frames.includes(f.name));
+      const into = new Set<string>();
+      for (const f of moduleFrames) {
+        if (f.next) into.add(f.next);
+        const to = f.overflow.continueIn;
+        if (typeof to === 'string' && to.startsWith('#')) into.add(to.slice(1));
+      }
+      const takenHere = new Map<number, string>();
+      for (const [take, frame] of Object.entries(m.takes ?? {})) {
+        for (const idx of takenBlocks({ firstHeadings: parsed?.firstHeadings ?? {}, tocRows: [] }, take as FrameTake)) if (!takenHere.has(idx)) takenHere.set(idx, frame);
+      }
+      const ownFlow = (parsed?.unassigned ?? []).some((i) => !takenHere.has(i));
+      for (const f of moduleFrames) {
+        if (f.optional || into.has(f.name)) continue;
+        const filled = repeats?.repeated.has(f.name)
+          ? itemFilled.has(f.name)
+          : page.slots[f.name] !== undefined
+            || [...takenHere.values()].includes(f.name)
+            || (m.flow === f.name && ownFlow);
+        if (filled) continue;
+        const at = parsed?.fence ?? page.fence;
+        out.push({ kind: 'slotEmpty', template: template.id, frame: f.name, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
+      }
+    }
   }
   return out;
+}
+
+/**
+ * The modules of `page` (#1062): `moduleUnknown` for each `:::module` the
+ * page does not lay (its template is unknown or no module, or the page's
+ * template has no modules group), `moduleNameRejected` for a `name` it could
+ * not take, `moduleNested` for a module inside a module. `frames`: the
+ * scoped frames of the modules laid; `unlaid`: the names of the others,
+ * whose content goes to the flow frame (`toFlow` when they hold any).
+ */
+function checkModules(
+  page: ParsedComposedPage,
+  templateId: string,
+  resolved: ResolvedPageTemplate | undefined,
+  config: Pick<ComposedPagesConfigKeys, 'pageTemplates'> | undefined,
+): { warnings: ComposedSlotWarning[]; frames: Set<string>; unlaid: string[]; toFlow: boolean } {
+  const warnings: ComposedSlotWarning[] = [];
+  const frames = new Set<string>();
+  for (const m of resolved?.modules ?? []) for (const f of m.frames) frames.add(f);
+  const unlaid: string[] = [];
+  let toFlow = false;
+  const hasGroup = resolved?.groups.some((g) => g.modules) ?? false;
+  for (const m of page.modules) {
+    const fence = m.fence;
+    if (fence.rejected) {
+      const at = fence.attrSources.name ?? fence;
+      warnings.push({ kind: 'moduleNameRejected', template: templateId, module: fence.template, name: fence.rejected.name, used: fence.name, reason: fence.rejected.reason, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
+    }
+    if (resolved?.modules?.some((x) => x.name === fence.name)) continue;
+    unlaid.push(fence.name);
+    if (m.end - m.start > 1) toFlow = true;
+    const target = fence.template === '' ? undefined : resolvePageTemplate(config, fence.template);
+    const reason = !target ? 'unknown' as const : !isModuleTemplate(target) ? 'notModule' as const : 'noGroup' as const;
+    if (reason === 'noGroup' && hasGroup) continue;
+    const at = fence.attrSources.template ?? fence;
+    warnings.push({ kind: 'moduleUnknown', template: templateId, module: fence.template, name: fence.name, reason, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
+  }
+  for (const n of page.nestedModules) {
+    const at = n.attrSources.template ?? n;
+    warnings.push({ kind: 'moduleNested', template: templateId, module: n.template, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
+  }
+  return { warnings, frames, unlaid, toFlow };
 }
