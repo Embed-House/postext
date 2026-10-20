@@ -652,8 +652,10 @@ export { parseChineseNumeral } from './chineseNumerals';
 export {
   DEFAULT_FRAME, DEFAULT_FRAME_FIT, DEFAULT_FRAME_GROUP, DEFAULT_PAGE_TEMPLATE, DEFAULT_LABEL_STYLE,
   resolvePageTemplate, normalizeFrame, normalizeFrameSize, templateChain, resolveLabelStyles,
-  stripPageTemplatesDefaults, stripLabelStylesDefaults,
+  stripPageTemplatesDefaults, stripLabelStylesDefaults, isModuleTemplate,
 } from './composed/templates';
+// Modules (#1062): templates a page stacks in its modules group.
+export { expandModules, moduleScoped } from './composed/modules';
 export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
@@ -702,7 +704,7 @@ export { composedPagePaintKey } from './composed/pageMemo';
 // A story that jumps into a page of a later chapter (#943).
 export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carryTypes';
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,

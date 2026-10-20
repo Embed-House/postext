@@ -44,6 +44,7 @@ import {
   DEFAULT_FRAME_GROUP,
   DEFAULT_LABEL_STYLE,
   DEFAULT_PAGE_TEMPLATE,
+  MODULE_ROLE,
   resolveTemplateAt,
   templateChain,
   type TemplateIssue,
@@ -76,8 +77,12 @@ const OVERFLOW_KEYS = { continueIn: true, mark: true, fromMark: true } satisfies
 const PADDING_KEYS = { top: true, right: true, bottom: true, left: true } satisfies Record<keyof CalloutPaddingConfig, true>;
 const GROUP_KEYS = {
   name: true, kind: true, frames: true, gap: true, placement: true, grid: true, align: true, remove: true,
-  columns: true, columnGap: true, rowGap: true, rowAlign: true, repeat: true,
+  columns: true, columnGap: true, rowGap: true, rowAlign: true, repeat: true, modules: true, overflow: true,
 } satisfies Record<keyof FrameGroupConfig, true>;
+const GROUP_OVERFLOW_KEYS = { continueIn: true } satisfies Record<keyof NonNullable<FrameGroupConfig['overflow']>, true>;
+/** What a module template (#1062) does not have: it is laid in a page's
+ *  modules group, never as a page. */
+const MODULE_PAGE_KEYS = ['area', 'header', 'footer', 'variants', 'spread', 'gutter', 'overflowTemplate'] as const;
 const REPEAT_KEYS = { frames: true, max: true } satisfies Record<keyof FrameRepeatConfig, true>;
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
@@ -220,6 +225,24 @@ function checkGroupEntry(group: unknown, path: string, push: Push): void {
   if (max !== undefined && !(typeof max === 'number' && Number.isFinite(max) && max >= 1)) {
     push({ kind: 'unknownConfigValue', path: `${path}/repeat/max`, value: String(max), used: '' });
   }
+  // A modules group (#1062): a stack that takes the page's modules, not
+  // frames; only it goes on by whole modules.
+  unknownKeys(group.overflow, GROUP_OVERFLOW_KEYS, `${path}/overflow`, push);
+  if (group.modules !== undefined && typeof group.modules !== 'boolean') {
+    push({ kind: 'unknownConfigValue', path: `${path}/modules`, value: String(group.modules), used: 'false' });
+  }
+  const modules = group.modules === true;
+  if (modules && group.kind !== undefined && group.kind !== 'stack') {
+    push({ kind: 'unknownConfigValue', path: `${path}/kind`, value: String(group.kind), used: 'stack' });
+  }
+  if (modules && Array.isArray(group.frames) && group.frames.length > 0) {
+    push({ kind: 'unknownConfigValue', path: `${path}/frames`, value: group.frames.map(String).join(', '), used: '' });
+  }
+  const continueIn = isRecord(group.overflow) ? group.overflow.continueIn : undefined;
+  if (continueIn !== undefined) {
+    const ok = modules && typeof continueIn === 'string' && (continueIn === 'next-page' || continueIn.startsWith('template:'));
+    if (!ok) push({ kind: 'unknownConfigValue', path: `${path}/overflow/continueIn`, value: String(continueIn), used: '' });
+  }
 }
 
 function checkPatch(patch: unknown, path: string, push: Push, keys: Record<string, true>): void {
@@ -283,8 +306,25 @@ function checkTemplates(
       if (!resolved) continue;
       for (const issue of resolved.issues) push(issueWarning(issue));
       for (const frame of resolved.template.frames) checkMinMax(frame, toPx, push);
+      if (parity === undefined && resolved.template.role === MODULE_ROLE) checkModule(t, path, push);
     }
   }
+}
+
+/** What a module template (#1062) writes that only a page has: its own
+ *  `area`, running heads, variants, spread and overflow template, and a
+ *  modules group (a module inside a module, `moduleNested`, is not
+ *  supported). Each is ignored. */
+function checkModule(t: PageTemplate, path: string, push: Push): void {
+  for (const key of MODULE_PAGE_KEYS) {
+    const value = (t as unknown as Record<string, unknown>)[key];
+    if (value === undefined) continue;
+    push({ kind: 'unknownConfigValue', path: `${path}/${key}`, value: typeof value === 'object' ? JSON.stringify(value) : String(value), used: '' });
+  }
+  if (!Array.isArray(t.groups)) return;
+  t.groups.forEach((g, j) => {
+    if (isRecord(g) && g.modules === true) push({ kind: 'unknownConfigValue', path: `${path}/groups/${j}/modules`, value: 'true', used: 'false' });
+  });
 }
 
 /** `a → b → a`: the chain of `extends` from `index` until it repeats. */

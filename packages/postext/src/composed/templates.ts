@@ -2,6 +2,7 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
+import { expandModules } from './modules';
 import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
 import type {
   FrameConfig,
@@ -68,6 +69,15 @@ export const DEFAULT_PAGE_TEMPLATE = {
   gutter: ZERO,
   role: 'composed',
 };
+
+/** The `role` of a module template (#1062, DESIGN §12.7). */
+export const MODULE_ROLE = 'module';
+
+/** Whether a resolved template is a module (#1062): a page fence never lays
+ *  one (`moduleAsPage`). */
+export function isModuleTemplate(template: Pick<ResolvedPageTemplate, 'role'> | undefined): boolean {
+  return template?.role === MODULE_ROLE;
+}
 
 export const DEFAULT_LABEL_STYLE = {
   fontStyle: 'normal' as const,
@@ -525,13 +535,21 @@ function normalizeGroup(entry: NamedEntry<FrameGroupConfig>, grid: Required<Page
       ...(repeatFrames.length > 0 ? { repeat: { frames: repeatFrames, ...(max !== undefined ? { max } : {}) } } : {}),
     }
     : {};
+  // A modules group (#1062), only when it says so: it takes the page's
+  // modules, not frames of its own, and is laid as a stack.
+  const modules = g.modules === true;
+  const continueIn = modules && isRecord(g.overflow) && typeof g.overflow.continueIn === 'string' && g.overflow.continueIn !== '' ? g.overflow.continueIn : undefined;
+  const moduleFields: Partial<ResolvedFrameGroup> = modules
+    ? { modules: true, ...(continueIn !== undefined ? { overflow: { continueIn } } : {}) }
+    : {};
   return {
     name: g.name,
-    kind,
+    kind: modules ? 'stack' : kind,
     // A grid that repeats holds its set's frames.
-    frames: gridFields.repeat ? repeatFrames : names(g.frames),
+    frames: modules ? [] : gridFields.repeat ? repeatFrames : names(g.frames),
     gap,
-    ...gridFields,
+    ...(modules ? {} : gridFields),
+    ...moduleFields,
     ...(placement ? { placement } : {}),
     ...(cell ? { grid: cell } : {}),
     align: oneOf(FRAME_GROUP_ALIGNS, g.align) ? g.align : DEFAULT_FRAME_GROUP.align,
@@ -889,6 +907,17 @@ export function resolveTemplateAt(
     chain: chain.map((i) => templates[i]!.id),
     configPath: `${prefix}/${index}`,
   };
+  // A module (#1062) holds no modules of its own (`moduleNested`): its
+  // modules groups are plain stacks.
+  if (template.role === MODULE_ROLE) {
+    template.groups = template.groups.map((g) => {
+      if (!g.modules) return g;
+      const out = { ...g };
+      delete out.modules;
+      delete out.overflow;
+      return out;
+    });
+  }
   return { template, issues };
 }
 
@@ -919,6 +948,26 @@ export function resolvePageTemplate(
   if (index === undefined) return undefined;
   const styleIds = config?.calloutStyles ? config.calloutStyles.map((s) => s.id).join('\u0000') : '';
   const key = `${index}|${options.parity ?? ''}|${options.spread ? 1 : 0}|${config?.calloutStyles ? 1 : 0}|${styleIds}`;
+  // The page's modules (#1062): the template with them laid in its modules
+  // group, kept by the list as well.
+  if (options.modules && options.modules.length > 0) {
+    const uses = options.modules;
+    const moduleKey = `${key}|m|${uses.map((u) => `${u.name}\u0001${u.template}`).join('\u0000')}`;
+    let cache = resolvedCache.get(templates);
+    if (!cache) {
+      cache = new Map();
+      resolvedCache.set(templates, cache);
+    }
+    if (cache.has(moduleKey)) return cache.get(moduleKey) ?? undefined;
+    const rest: ResolvePageTemplateOptions = { ...options };
+    delete rest.modules;
+    const base = resolvePageTemplate(config, id, rest);
+    const out = base && !isModuleTemplate(base)
+      ? expandModules(base, uses, (moduleId) => resolvePageTemplate(config, moduleId))
+      : base;
+    cache.set(moduleKey, out ?? null);
+    return out;
+  }
   let cache = resolvedCache.get(templates);
   if (!cache) {
     cache = new Map();

@@ -61,13 +61,3 @@ export interface ResourceAnchorRound2 {
 export interface LabelStyleRound2 {
   leader?: LeaderStyle;
 }
-
-// §12.7 (C11) --------------------------------------------------
-
-/** `FrameGroupConfig` additions (C10's grid and repeat are in `types.ts`). */
-export interface FrameGroupRound2 {
-  /** C11: the group takes the page's `:::module` blocks in Markdown order. */
-  modules?: boolean;
-  /** C11: where whole modules that do not fit go on. */
-  overflow?: { continueIn?: string };
-}

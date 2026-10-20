@@ -223,6 +223,15 @@ export interface FrameGroupConfig {
   rowAlign?: 'start' | 'center' | 'end' | 'stretch';
   /** Grid: the frame set laid once per item of the page's content. */
   repeat?: FrameRepeatConfig;
+  /** The group takes the page's `:::module` blocks (#1062, DESIGN §12.7),
+   *  in Markdown order, one under another, `gap` between them: each module
+   *  is as wide as the group and as tall as its frames. Its `frames` are
+   *  not read; the group is laid as a stack whatever its `kind`. */
+  modules?: boolean;
+  /** A modules group (#1062): where a module that does not fit goes on,
+   *  whole (`'next-page'`, `'template:<id>'`). Unset: the module is laid
+   *  cut at the group's foot and its frames run the reflow ladder. */
+  overflow?: { continueIn?: string };
   /** Default 0. */
   gap?: Dimension;
   /** The group's own box. Neither this nor `grid`: the union of its
@@ -297,7 +306,11 @@ export interface PageTemplate extends PageTemplatePatch {
   gutter?: Dimension;
   /** Patches applied on a recto or a verso page, after `extends`. */
   variants?: { recto?: PageTemplatePatch; verso?: PageTemplatePatch };
-  /** Page role reported to design slots. Default `'composed'`. */
+  /** Page role reported to design slots. Default `'composed'`.
+   *  `'module'` (#1062, DESIGN §12.7): the template is a module, a box of
+   *  frames, groups and decoration a page stacks in its modules group
+   *  (`:::module{template="…"}`); it has no `area`, header, footer,
+   *  variants, spread or overflow template, and no page fence lays it. */
   role?: string;
 }
 
@@ -367,6 +380,38 @@ export interface ResolvePageTemplateOptions {
   /** The caller lays a sheet of two pages: no variant applies (a spread
    *  has both sides). A `spread` template is always laid this way. */
   spread?: boolean;
+  /** The modules the page lays (#1062), in Markdown order: the template
+   *  comes back with each one's frames, groups and decoration in its
+   *  modules group, scoped by the instance name (`expandModules`). */
+  modules?: readonly ComposedModuleUse[];
+}
+
+/** A module a page lays (#1062): its instance name (the fence's `name`,
+ *  else `<template>[n]`) and its module template. */
+export interface ComposedModuleUse {
+  name: string;
+  template: string;
+}
+
+/** A module laid in a template's modules group (#1062), after
+ *  `expandModules`: what of the template belongs to it, by scoped name
+ *  (`<name>.<frame>`). */
+export interface ResolvedModule extends ComposedModuleUse {
+  /** The modules group it is laid in. */
+  group: string;
+  /** JSON pointer of the module template. */
+  configPath: string;
+  /** Its frames, groups and decoration element ids, scoped, in the module
+   *  template's order. */
+  frames: string[];
+  groups: string[];
+  elements: string[];
+  /** The module's flow frame: the content of its `:::module` that names
+   *  no slot. */
+  flow?: string;
+  /** The module's frames that take the first heading of a level (or the
+   *  contents) inside its `:::module`. */
+  takes?: Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc', string>>;
 }
 
 export interface ResolvedFrameFit {
@@ -441,8 +486,14 @@ export interface ResolvedFrameGroup {
   rowAlign?: 'start' | 'center' | 'end' | 'stretch';
   repeat?: { frames: string[]; max?: number };
   /** After `expandRepeats` (#1061): the items laid, each its number and its
-   *  instances (the main frame's first), in cell order. */
-  items?: { item: number; frames: string[] }[];
+   *  instances (the main frame's first), in cell order. For a modules group
+   *  after `expandModules` (#1062): each module, its frames, `module` its
+   *  instance name. */
+  items?: { item: number; frames: string[]; module?: string }[];
+  /** The group takes the page's modules (#1062). */
+  modules?: true;
+  /** A modules group's `overflow.continueIn` (#1062). */
+  overflow?: { continueIn?: string };
   placement?: ElementPlacement;
   grid?: Required<FrameGridCell>;
   align: 'start' | 'center' | 'end' | 'space-between';
@@ -475,6 +526,9 @@ export interface ResolvedPageTemplate {
   role: string;
   /** The variant applied, if any. */
   variant?: PageSide;
+  /** The modules laid in the template's modules group (#1062), in order:
+   *  set by `expandModules`. */
+  modules?: ResolvedModule[];
   /** The template and its ancestors, nearest first. */
   chain: string[];
   /** `/pageTemplates/<i>`. */
