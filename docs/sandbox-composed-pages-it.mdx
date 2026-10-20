@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pagine composte',
   description: 'Come modificare modelli di pagina e cornici direttamente sulla pagina; la raccolta degli stili delle cornici; i controlli delle pagine composte in tutte le edizioni; lo spostamento del testo di un libro nel Markdown e la correzione di una cornice con un clic',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Sotto *Il testo non entra nella cornice*, le soluzioni che la scala di reimpagin
 Gli altri pulsanti cambiano la forma del libro, perciò ciascuno chiede conferma, indicando l’impostazione e il suo valore (*tema-fija › dinero › maxHeight = 66 mm*) o il modello che la pagina prenderà. Una modifica della grafica vale per tutte le pagine composte con quel modello. **Cambia** esegue la modifica come un passo della cronologia di annullamento: Cmd/Ctrl+Z, o il pulsante Annulla accanto a Contenuto e Grafica, la annulla. La pagina viene reimpaginata e l’avviso sparisce, o lascia il posto a ciò che resta dopo la modifica (una cornice più in basso che ora non entra).
 
 Gli stessi pulsanti accompagnano la cornice nel pannello **Che cosa si è spostato e perché** del canvas. L’avviso di un’edizione che non è a schermo propone invece di aprire quell’edizione, dove le sue soluzioni si possono applicare. Se il libro è cambiato da quando l’impaginazione ha proposto una soluzione (il modello è stato modificato, il blocco indica un altro modello), il pulsante lo dice e non cambia nulla. Un agente applica le stesse soluzioni con `sandbox_apply_proposal` ([WebMCP](/it/docs/webmcp)).
+
+
+## Nel visualizzatore HTML
+
+La scheda HTML impagina ogni pagina composta sul foglio stampato, con il suo formato e i suoi margini, e la mostra intera, in scala sulla larghezza del visualizzatore: le cornici restano dove il modello le mette in stampa. Nello scorrimento verticale una composizione è alta quanto il suo foglio e lo scorrimento prosegue con la successiva. Nella vista a colonne una composizione più alta dello schermo scorre verso il basso per conto suo, e le frecce avanzano di una pagina alla volta. Prima di postext 1.47 il visualizzatore impaginava il modello sulla propria pagina grande quanto lo schermo, e una composizione poteva risultare tagliata.

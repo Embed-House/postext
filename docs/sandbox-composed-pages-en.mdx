@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: "Editing page templates and frames on the page, the library of frame styles, checking composed pages in every edition, moving a book's text to the Markdown, and fixing a frame in one click",
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Under *Text does not fit its frame*, the fixes the reflow ladder worked out for 
 The other buttons change the book's form, so each asks first, naming the setting and its value (*tema-fija › dinero › maxHeight = 66 mm*) or the template the page will take. A design change applies to every page set with that template. **Change it** makes the change as one step of the undo history: Cmd/Ctrl+Z, or the Undo button beside Content and Design, takes it back. The page is laid out again, and the warning goes, or gives way to what the change left (a box further down that no longer fits).
 
 The same buttons follow the frame in the canvas's **What moved and why** panel. The warning of an edition that is not on screen offers to open that edition instead, where its fixes can be made. When the book changed after the layout proposed a fix (the template was edited, the fence names another template), the button says so and changes nothing. An agent makes the same fixes with `sandbox_apply_proposal` ([WebMCP](/en/docs/webmcp)).
+
+
+## In the HTML viewer
+
+The HTML tab lays each composed page out on the print leaf, with its size and margins, and shows it whole, scaled to the width of the viewer: its frames stand where the template puts them in print. In the vertical scroll a composition is as tall as its leaf and the scroll goes on to the next one. In the columns view a composition taller than the screen scrolls down on its own, and the arrows move one page at a time. Before postext 1.47 the viewer laid the template on its own screen-sized page, and a composition could be cut.

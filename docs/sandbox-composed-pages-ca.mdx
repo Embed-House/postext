@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pàgines compostes',
   description: "Com s'editen les plantilles de pàgina i els marcs directament sobre la pàgina, com s'ordena la biblioteca d'estils de marc, com es revisen les pàgines compostes en totes les edicions, com es passa el text al Markdown i com s'arregla un marc amb un clic",
   lang: 'ca',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Sota *El text no cap al seu marc*, les solucions que l'escala de reajustament ha
 Els altres botons canvien la forma del llibre, així que cadascun et pregunta abans i indica el paràmetre i el valor (*tema-fija › dinero › maxHeight = 66 mm*) o la plantilla que farà servir la pàgina. Un canvi de disseny s'aplica a totes les pàgines compostes amb aquella plantilla. **Canviar-ho** fa el canvi com un pas de l'historial de desfer: Cmd/Ctrl+Z, o el botó Desfer al costat de Contingut i Disseny, el desfà. La pàgina es torna a maquetar i l'avís desapareix, o bé en surt un altre a causa del canvi (una caixa més avall que ara no hi cap).
 
 Els mateixos botons acompanyen el marc al tauler **Què s'ha mogut i per què** del canvas. L'avís d'una edició que no és a la pantalla ofereix obrir aquella edició, on es poden aplicar les solucions. Si el llibre ha canviat des que la maquetació va proposar una solució (s'ha editat la plantilla, el bloc de pàgina indica una altra plantilla), el botó ho diu i no canvia res. Un agent aplica les mateixes solucions amb `sandbox_apply_proposal` ([WebMCP](/ca/docs/webmcp)).
+
+
+## Al visor HTML
+
+La pestanya HTML maqueta cada pàgina composta sobre el full imprès, amb la seva mida i els seus marges, i la mostra sencera, escalada a l'amplada del visor: els marcs queden on la plantilla els posa a la impressió. En el desplaçament vertical una composició ocupa l'alçada del seu full i el desplaçament continua amb la següent. A la vista per columnes una composició més alta que la pantalla es desplaça cap avall pel seu compte, i les fletxes avancen de pàgina en pàgina. Abans de postext 1.47 el visor maquetava la plantilla sobre la seva pròpia pàgina de la mida de la pantalla, i una composició podia quedar tallada.
