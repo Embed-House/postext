@@ -486,7 +486,15 @@ export function renameFrame(templates: Templates, id: string, from: string, to: 
       });
     }
     if (p.decoration?.elements) {
-      out.decoration = { elements: p.decoration.elements.map((el) => (!isRemoval(el) && el.placement?.anchor.to === `#${from}` ? { ...el, placement: { ...el.placement, anchor: { ...el.placement.anchor, to: `#${to}` } } } : el)) };
+      // A connector's ends (#1056) follow the rename too.
+      const end = <T extends { to?: unknown }>(c: T): T => (c && c.to === `#${from}` ? { ...c, to: `#${to}` } : c);
+      out.decoration = {
+        elements: p.decoration.elements.map((el) => {
+          if (isRemoval(el)) return el;
+          if (el.kind === 'connector') return { ...el, from: end(el.from), to: Array.isArray(el.to) ? el.to.map(end) : end(el.to) };
+          return el.placement?.anchor.to === `#${from}` ? { ...el, placement: { ...el.placement, anchor: { ...el.placement.anchor, to: `#${to}` } } } : el;
+        }),
+      };
     }
     return out;
   };

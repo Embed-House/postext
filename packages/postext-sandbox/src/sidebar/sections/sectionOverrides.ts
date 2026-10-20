@@ -28,7 +28,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
       return (config.tableStyles ?? []).length > 0;
     case 'pageTemplates':
       return (config.pageTemplates ?? []).length > 0;
-    // The library edits the box styles in place; Box styles carries the dot.
+    // The libraries edit in place; Box styles and Page templates carry the dot.
+    case 'modules':
     case 'frameStyles':
       return false;
     case 'bodyText':

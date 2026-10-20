@@ -1,0 +1,140 @@
+{/* docs/composed-pages-figures-de.mdx */}
+
+export const metadata = {
+  title: 'Zusammengesetzte Seiten: Abbildungen mit Beschriftungen',
+  sidebarTitle: 'Abbildungen mit Beschriftungen',
+  description: 'Abbildungen, die Wörter auf ein Bild setzen: Beschriftungen an den Ankern einer Ressource, eigener Alternativtext, eigene Bildunterschrift und Anmerkung einer Abbildung, wie eine Beschriftung gesetzt wird, abgesetzte Beschriftungen mit Hinweislinien, Legenden und Symbole im Text, und die Warnungen der Beschriftungen',
+  lang: 'de',
+  lastUpdated: '2026-10-20',
+  readingTime: '8 min',
+  order: 35,
+  parent: 'composed-pages',
+  plainSummary: "Eine Karte oder ein Schaubild in einem Buch trägt oft Wörter: die Namen von Meeren und Städten, die Teile einer Maschine. Postext setzt diese Wörter als Text auf das Bild, sodass jede Sprache ihre eigenen hat. Diese Seite zeigt, wie man sie im Markdown schreibt, wie jede platziert und gezeichnet wird und wie ein Name abseits seines Ortes stehen kann, mit einer Linie, die auf ihn zeigt. Sie behandelt auch Legenden mit Symbolen und die Warnungen für Beschriftungen, die nicht passen oder sich berühren.",
+};
+
+# Zusammengesetzte Seiten: Abbildungen mit Beschriftungen
+
+Diese Seite behandelt die Abbildungen einer zusammengesetzten Seite oder des Fließtexts, die Wörter auf ihr Bild setzen. Wie eine zusammengesetzte Seite geschrieben wird, steht unter [Zusammengesetzte Seiten](/de/docs/composed-pages); die Beschriftungsstile und die Beschriftungsfelder eines Ankers unter [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages#beschriftungsstile).
+
+
+## Abbildungen mit Beschriftungen
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` setzt eine Ressource mit Legende und Nummer, wie `::resource` es tut, und führt die Beschriftungen auf, die auf das Bild kommen: je Beschriftung eine Zeile `::label[TEXT]{…}`, Leerzeilen dazwischen sind erlaubt.
+
+- `at` gibt einen Anker der Ressource an (einen Punkt, der einmal im Bild festgelegt wird und für alle Sprachen gilt) oder für eine Beschriftung ohne Anker einen Punkt in Prozent des Bilds, `at="x% y%"`.
+- `style` gibt einen Beschriftungsstil an und hat Vorrang vor dem des Ankers.
+- `leader` zieht eine Linie von der Beschriftung zum Punkt ihres Ankers, und `leader="none"` nimmt sie weg (siehe [Hinweislinien, Legenden und Symbole](#hinweislinien-legenden-und-symbole)).
+- Der Text in den eckigen Klammern ist Inline-Markdown: fett, kursiv, Chips und Symbole, die als `:icon` geschrieben werden.
+
+
+Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Ihre Beschriftungen werden als Text auf das Bild gezeichnet und wandern mit, wo immer die Abbildung steht: in einer Spalte, in einem Gleitobjekt, in einem Rahmen, den die Einpassstufen (die Schritte, mit denen Inhalt passend gemacht wird) drehen oder skalieren, auf einer Doppelseite. Fehlt das schließende `:::` einer Abbildung, beendet sie die erste Zeile, die weder Beschriftung noch leer ist, und die Abbildung wird als nicht geschlossener Container gemeldet.
+
+### Der eigene Wortlaut einer Abbildung
+
+Eine Ressource enthält ein Bild, seine Anker und nur einen Wortlaut, doch jede Ausgabe eines Buchs braucht ihren eigenen. Eine Abbildung kann `alt`, `caption` und `note` selbst angeben, in der öffnenden Zeile oder in eigenen Zeilen; auf den Seiten dieser Datei ersetzen sie dann die Texte der Ressource:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Als Attribute der öffnenden Zeile nehmen `alt`, `caption` und `note` einen kurzen Text in Anführungszeichen auf. Die Zeilen `::alt[…]`, `::caption[…]` und `::note[…]` nehmen den Text in eckigen Klammern auf, der Inline-Markdown und `\\` für einen Zeilenumbruch enthalten darf, wie die Legende und die Anmerkung einer Ressource. Eine Zeile hat Vorrang vor dem gleichnamigen Attribut; die Zeilen stehen zwischen den Beschriftungen, Leerzeilen sind erlaubt.
+- Was die Abbildung nicht angibt, übernimmt sie von der Ressource. Ein leerer Wert bedeutet „kein Text“: `caption=""` entfernt die Legende, `alt=""` kennzeichnet das Bild als dekorativ.
+- Die Texte ersetzen die der Ressource in dem Kapitel, in dem sie stehen: Satz, Alternativtext in jedem Ausgabeformat und das getaggte PDF verwenden sie; die Ressource selbst bleibt unverändert. In einem Kapitel hat eine Ressource nur einen Wortlaut, den ihrer ersten Abbildung: Eine spätere Abbildung derselben Ressource mit anderen Texten zeigt diese nicht an, und `figureWordsShared` weist darauf hin. Eine verkleinerte Kopie, die eine eigene Legende braucht, verwendet eine zweite Ressource, die auf dieselbe Bilddatei verweist. Anders als eine Beschriftung wird eine Legende nicht Zeichen für Zeichen dem Markdown zugeordnet; `sourceAt` beantwortet einen Klick darauf wie bei der Legende einer Ressource.
+
+### Wie eine Beschriftung gesetzt wird
+
+- **Wo.** Eine Beschriftung steht am Punkt ihres Ankers, angegeben als Anteil am ganzen Bild. Wird das Bild auf seinen Sicherheitsbereich beschnitten oder kleiner gesetzt, wandert die Beschriftung mit der Zeichnung. `align` am Anker legt fest, welche Seite der Beschriftung am Punkt steht, `verticalAlign`, welche Kante auf seiner Höhe. `start` und `end` folgen der Richtung der Beschriftung selbst: im Arabischen ist `start` ihre rechte Kante. `rotate` dreht die Beschriftung im Uhrzeigersinn um den Punkt, in jedem Winkel: ein Fluss entlang seines Laufs, Hügel schräg gestellt.
+- **Aussehen.** Das `style` der Beschriftung, sonst das ihres Ankers, gibt einen Beschriftungsstil an (siehe Konfiguration › Zusammengesetzte Seiten); ohne Stil übernimmt die Beschriftung die Schrift des Grundtexts. Der Lichthof umrandet die Buchstaben unter ihrer Füllung; die Unterlage (`background`) füllt das Rechteck um den Text, erweitert um `padding`.
+- **Einpassen.** Hat ihr Anker eine `width`, bricht die Beschriftung innerhalb dieser Satzbreite zwischen den Wörtern um, nie innerhalb eines Worts. Ist ein Wort breiter als die Satzbreite, wird die ganze Beschriftung kleiner gesetzt, bis zum `minScale` ihres Stils; passt sie auch dann nicht, wird ihr breitestes Wort beim Zeichnen abgeschnitten. Ohne `width` bleibt die Beschriftung einzeilig, außer wo sie mit `\\` umbricht, wie in einer Legende.
+- **Text.** Der Text in eckigen Klammern ist Inline-Markdown und wird wie eine Legende gesetzt: fett, kursiv, Chips, Hervorhebungen, Verweise, Formeln im Text. Ein Name aus mehreren Wörtern ist eine einzige Beschriftung, gleich in welcher Reihenfolge die Wörter in einer Sprache stehen: `::label[ATLANTISCHER OZEAN]` und `::label[OCÉANO ATLÁNTICO]` stehen am selben Anker. Beschriftungen von rechts nach links werden von rechts nach links gesetzt; chinesische und japanische brechen zwischen den Zeichen um.
+- **Ausgabeformate.** Canvas, PDF, HTML-Betrachter, das EPUB mit festem Layout und Folio zeichnen die Beschriftungen. Auf einer Seite von rechts nach links bleibt eine Beschriftung dort, wo das Bild sie zeigt.
+- **Senkrecht.** Mit `writingMode: 'vertical-rl'` am Anker (oder an seinem Beschriftungsstil) wird die Beschriftung wie eine Seite im senkrechten Satz gesetzt: die Zeichen aufrecht in Zellen untereinander, die Spalten von rechts nach links, lateinische Wörter und lange Zahlen seitwärts gedreht, kurze Zahlen in einer Zelle. `width` ist dann ein Anteil der Bildhöhe, die Länge einer Spalte, und eine chinesische oder japanische Beschriftung bricht in weitere Spalten um. `align` läuft entlang der Spalte (`start` ist ihr oberes Ende), `verticalAlign` quer zu den Spalten (`top` ist die erste, rechte), und `rotate` dreht die Beschriftung weiter. Auf der gespiegelten Seite eines Buchs von rechts nach links liest sie sich genauso, abwärts in ihren Spalten und aufrecht, an derselben Stelle des Bilds (seit postext 1.40).
+- **Prüfungen.** Eine Beschriftung, die mit dem `minScale` ihres Stils noch breiter als ihre Satzbreite ist, löst `labelOverflow` aus; zwei Beschriftungen, deren Zeilen sich berühren, lösen `labelOverlap` an der späteren aus. Beide werden in jeder Sprachausgabe geprüft, eine Übersetzung mit längeren Wörtern zeigt also, wo sie Platz braucht. Die Palette eines Teils (`:::part{palette="…"}`) färbt die Beschriftungen seiner Seiten um, wie sie es bei Legenden tut. Die Kontrastprüfung misst eine Beschriftung gegen ihre Unterlage, sonst gegen ihren Lichthof; eine Beschriftung direkt auf dem Bild wird übergangen, weil ihr Hintergrund das Bild ist. Auch der Preflight für den Druck prüft Beschriftungen: kleine Schrift in Prozessfarben, Druckfarben und den Abstand zum Endformat.
+- **Auf einer Doppelseite.** Eine Abbildung, die über den Bund einer Doppelseite reicht (ein Rahmen mit `crossGutter: true`), zeichnet auf jede Seite eine Hälfte; eine Beschriftung, die in den Bundsteg hineinragt, würde vom Bund zerschnitten und wäre auf keiner der beiden Seiten lesbar. Eine solche Beschriftung rückt seitlich an den Rand des Bundstegs, auf die Seite, auf der der Punkt ihres Ankers liegt, und behält ihre Höhe; ein Punkt genau auf dem Bund kommt auf die erste Seite, wie bei einem Rahmen. Ein Anker mit `gutter: 'cross'` behält seinen Platz, für einen Titel über beide Seiten. Die Außenkanten des Blatts bleiben unberührt: Eine Beschriftung, die über das Endformat hinausreicht, wird wie das Bild beschnitten. Seit postext 1.43.
+
+### Hinweislinien, Legenden und Symbole
+
+Seit postext 1.48 kann eine Beschriftung abseits dessen stehen, was sie benennt, eine Beschriftung kann die Legende einer Karte sein, und eine Beschriftung, eine Legende oder eine Tabellenzelle kann Symbole enthalten.
+
+**Hinweislinien.** Das `labelAt` eines Ankers setzt seine Beschriftung abseits seines Punkts (ein Name im Meer, eine Notiz am Rand eines Schaubilds), und eine Hinweislinie führt von der Beschriftung zurück zum Punkt. Ihr Aussehen ist das `leader` des Beschriftungsstils (siehe [Konfiguration › Beschriftungsstile](/de/docs/configuration-composed-pages#beschriftungsstile)); das Markdown schaltet sie nur für eine einzelne Beschriftung ein oder aus:
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` mit einem beliebigen Wert außer `none`, `false` oder `off` schaltet sie ein; ohne das Attribut entscheidet das `leader` des Ankers, und fehlt auch das, bekommt eine abseits ihres Punkts gesetzte Beschriftung eine Linie, wenn ihr Stil ein `leader` hat. Auch die Notiz eines Rahmens kann auf eine Stelle des Bilds zeigen: mit einem [Verbinder](/de/docs/configuration-composed-pages#verbinder), dessen Ende einen Anker des Bilds nennt (`anchor: 'lake'`).
+
+**Mehrzeilige Beschriftungen.** `:::label{at="…" style="…"}` … `:::` innerhalb eines `:::figure` schreibt eine Beschriftung Zeile für Zeile: Jede nicht leere Zeile der Quelle ist eine Zeile der Beschriftung, eine Zeichenerklärung oder eine Anschrift braucht also kein `\\` am Ende jeder Zeile. Das erste `:::` schließt die Beschriftung, das nächste die Abbildung. `::label[…]` bleibt eine einzeilige Beschriftung, die nur dort umbricht, wo `\\` steht.
+
+**Legenden.** Eine Beschriftung in einem Stil mit `kind: 'legend'` ist die Zeichenerklärung einer Karte: Jede Zeile ist ein Eintrag, und das Symbol am Anfang eines Eintrags steht in einer Spalte, die so breit ist wie das breiteste Symbol, sodass die Wörter aller Einträge an einer Kante beginnen. Schreiben Sie das Symbol an den Anfang jeder Zeile:
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[Land]{glyph="■" color="country"} Land
+:icon[Hauptstadt]{glyph="⊙" font="Noto Sans Math"} Hauptstadt
+:icon[Stadt]{resource="town-mark" size="0.55"} Stadt
+:icon[Grenze]{line="dashed" color="border"} Grenze
+:::
+::label[:icon[Hauptstadt]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Symbole.** `:icon[alt]{…}` setzt ein kleines Symbol in die Zeile, auf die Grundlinie gestellt:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>Eine Bitmap- oder SVG-Ressource, in ihren Proportionen.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>Ein Zeichen, in der Schrift des Texts oder in der Schrift, die <code>font="…"</code> nennt.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>Ein Linienmuster, doppelt so lang wie hoch: eine Grenze oder eine Straße in einer Legende.</td></tr>
+    <tr><td><code>color="…"</code></td><td>Eine Hex-Farbe oder ein Paletteneintrag: die Farbe eines Zeichens, einer Linie oder eines Bilds.</td></tr>
+    <tr><td><code>size="…"</code></td><td>Die Höhe des Symbols in em des Texts. Standard <code>0.75</code>, die Höhe eines Großbuchstabens.</td></tr>
+  </tbody>
+</table>
+
+Von `resource`, `glyph` und `line` entscheidet das zuerst geschriebene die Art; fehlen alle drei, bleibt die Direktive Text. Der Text in den eckigen Klammern ist der Alternativtext des Symbols: Screenreader, das getaggte PDF und der Alternativtext des Bilds lesen ihn an seiner Stelle, und ein Symbol mit leeren Klammern ist Dekoration. Symbole werden in Beschriftungen von Abbildungen und in jedem Textstück einer Ressource gelesen: Legenden, Anmerkungen und Tabellenzellen. Im Grundtext, in Überschriften und in Gestaltungstexten werden sie in dieser Version nicht gelesen.
+
+### labelAnchorUnknown
+
+Das `at` eines `::label` verweist auf einen Anker, den die Ressource der Abbildung nicht hat. Die Beschriftung wird nicht gezeichnet; das umfließende EPUB führt sie weiter auf, und der Alternativtext des Bilds nennt sie. Die Warnung enthält die Ressource, den Anker, die Anker der Ressource (`known`), die Sprache, die Seite und den Quellbereich des Beschriftungstexts. Korrigieren Sie die Anker-ID, legen Sie den Anker in der Ressource an oder setzen Sie die Beschriftung mit `at="x% y%"`.
+
+Im Bedienfeld Prüfungen der Sandbox führt die Warnung zur Beschriftung im Bedienfeld Text, und ihre Stecknadel-Schaltfläche öffnet die Anker des Bildes mit diesem Namen, bereit zum Platzieren: Ein Klick ins Bild fügt den Anker hinzu.
+
+### anchorUnlabelled
+
+Das Bild der Abbildung hat einen Anker mit Beschriftungsstil, aber in dieser Sprache steht dort kein `::label` der Abbildung: Die Karte hat Platz für ein Wort, das diese Ausgabe weglässt. Es ist ein Hinweis; `postext check` führt ihn als `info` auf. Anker ohne Stil, etwa der eines Sprechers in einem Comic, werden nicht gemeldet. Die Warnung enthält die Ressource, den Anker, seinen Stil, die Sprache, die Seite und den Quellbereich der Abbildung. Schreiben Sie die Beschriftung in das Markdown dieser Sprache, oder entfernen Sie den Stil vom Anker.
+
+Im Bedienfeld Prüfungen führt sie zur Abbildung im Bedienfeld Text, und ihre Stecknadel-Schaltfläche öffnet die Anker des Bildes bei diesem Anker.
+
+### labelOverflow
+
+Eine Beschriftung ist auch bei der kleinsten Skalierung, die ihr Beschriftungsstil erlaubt (`minScale`), noch breiter als die `width` ihres Ankers: Sie wird in dieser Skalierung gezeichnet und ragt über ihre Satzbreite hinaus. Die Warnung nennt die Ressource, den Text der Beschriftung, ihren Anker (keinen bei einer Beschriftung mit Prozentangaben), die vorgegebene Breite, die erreichte Skalierung, die Sprache, die Seite und den Quellbereich des Beschriftungstexts. Sie wird in jeder Sprachausgabe geprüft, eine Sprache mit längeren Wörtern läuft also dort über, wo eine andere es nicht tut. Machen Sie die `width` des Ankers größer, kürzen Sie das Wort im Markdown dieser Ausgabe oder senken Sie das `minScale` des Beschriftungsstils. Eine chinesische oder japanische Beschriftung bricht zwischen den Zeichen um und läuft so nicht über. Seit postext 1.39.
+
+### labelOverlap
+
+Die Zeilen zweier Beschriftungen derselben Abbildung berühren sich; bei einer Beschriftung mit Unterlage zählt die Unterlage. Die in der Schreibreihenfolge spätere Beschriftung trägt die Warnung, mit dem Text der ersten früheren Beschriftung, die sie berührt, und der Zahl der früheren Beschriftungen, die sie insgesamt berührt. Die Prüfung verwendet das Rechteck jeder einzelnen Zeile, mit der Beschriftung gedreht, sodass der Raum neben einer kurzen Zeile frei bleibt; zwei Zeilen dürfen sich um bis zu ein Achtel einer Zeilenhöhe überlappen. Sie läuft in jeder Sprachausgabe. Verschieben Sie einen der Anker, verringern Sie die `width` einer Beschriftung, damit sie umbricht, oder kürzen Sie die Wörter im Markdown dieser Ausgabe. Im Bedienfeld Prüfungen der Sandbox öffnet die Stecknadel-Schaltfläche die Anker des Bildes am Anker der Beschriftung. Seit postext 1.39. Mit `overlap: 'allow'` an einem Anker oder in dessen Beschriftungsstil fällt eine Beschriftung, die schon im Original ihre Nachbarn berührt (eine dichte Karte), aus der Prüfung heraus, und kein Paar, zu dem sie gehört, wird gemeldet. Seit postext 1.42. Die Sperrzonen (`avoid`) eines Bildes stehen für die Symbole einer Karte: Rechtecke in Bruchteilen des Bildes, die im Modus **Sperrzonen** der Bildmarkierungen über Punkte und Symbole gezogen werden. Eine Beschriftung, die in eine davon hineinragt, wird genauso gemeldet, mit `symbol 2` statt einer Beschriftung (`withSymbol` in den Daten), und `overlap: 'allow'` nimmt eine Beschriftung aus beiden Prüfungen aus. Seit postext 1.42.
+
+### figureWordsShared
+
+Ein `:::figure` legt Texte (`alt`, `caption` oder `note`) für eine Ressource fest, deren Texte schon eine frühere Abbildung desselben Kapitels festgelegt hat, und die Texte unterscheiden sich. Die Seiten zeigen die Texte der ersten Abbildung und lassen diese weg. Die Warnung nennt die Ressource, die weggelassenen Texte und den Quellbereich des ersten davon; eine spätere Abbildung ohne eigene Texte ist kein Problem. Geben Sie der Abbildung eine eigene Ressource: eine zweite Ressource, die auf dieselbe Bilddatei verweist, mit eigener Legende, Nummer und eigenen Ankern. Im Bedienfeld Prüfungen der Sandbox steht sie unter Abbildungen. Seit postext 1.42.

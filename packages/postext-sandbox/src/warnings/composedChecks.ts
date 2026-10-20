@@ -13,6 +13,7 @@
 
 import type { PostextConfig, VDTDocument, VDTFrame, VDTPage } from 'postext';
 import type { Warning, WarningPayload } from './types';
+import { overlapFocusOf, type OverlapFocusOf } from '../editions/overlapFocus';
 
 /** The page-template kinds of the engine's configuration warnings (#853). */
 export const PAGE_TEMPLATE_KINDS = [
@@ -26,7 +27,7 @@ export const PAGE_TEMPLATE_KINDS = [
  *  cut between columns, figure labels at anchors (#860), design text that
  *  is content, and the templates themselves. */
 const COMPOSED_KINDS: ReadonlySet<WarningPayload['kind']> = new Set<WarningPayload['kind']>([
-  'frameOverflow', 'frameContinuationLimit', 'continueTargetMissing', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
+  'frameOverflow', 'frameContinuationLimit', 'continueTargetMissing', 'frameCovered', 'frameOutsideArea', 'repeatOverflow', 'moduleUnknown', 'moduleAsPage', 'moduleNested', 'moduleNameRejected', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
   'tocGroupSplit', 'labelAnchorUnknown', 'anchorUnlabelled', 'labelOverflow', 'labelOverlap', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
 ]);
 
@@ -74,7 +75,7 @@ function fenceOf(p: WarningPayload): number | null {
 /** The frame a payload names: the frame that overflows or is left empty,
  *  the flow frame that takes an unknown slot's content. */
 function frameNameOf(p: WarningPayload): string | null {
-  if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing' || p.kind === 'slotEmpty') return p.frame;
+  if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing' || p.kind === 'slotEmpty' || p.kind === 'frameCovered' || p.kind === 'frameOutsideArea' || p.kind === 'repeatOverflow') return p.frame;
   if (p.kind === 'slotUnknown') return p.frame ?? null;
   return null;
 }
@@ -169,7 +170,7 @@ export function composedChecksOf(locale: string, chapters: readonly EditionChapt
         }
       }
       if (doc) {
-        if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing') {
+        if (p.kind === 'frameOverflow' || p.kind === 'frameContinuationLimit' || p.kind === 'continueTargetMissing' || p.kind === 'frameCovered' || p.kind === 'frameOutsideArea') {
           const i = docPageOf(doc, p.page);
           pageIndex = i >= 0 && doc.pages[i]!.composed?.fenceIndex === p.fenceIndex ? i : composedPageIndex(doc, p.fenceIndex, p.frame);
         } else if (p.kind === 'labelAnchorUnknown' || p.kind === 'anchorUnlabelled' || p.kind === 'labelOverflow' || p.kind === 'labelOverlap') {
@@ -320,6 +321,8 @@ export interface FrameJump {
   chapterEnd?: number;
   /** A check of the design with no page opens the Design panel. */
   panel: 'markdown' | 'config';
+  /** An overlap check (#1066): what the canvas draws once there. */
+  overlap?: OverlapFocusOf;
 }
 
 export function jumpFor(check: ComposedCheck): FrameJump {
@@ -328,6 +331,7 @@ export function jumpFor(check: ComposedCheck): FrameJump {
   const end = w.chapterEnd ?? w.sourceEnd ?? start;
   const located = start !== undefined;
   const designOnly = check.fenceIndex === null && check.page === null;
+  const overlap = overlapFocusOf(w.payload);
   return {
     locale: check.locale,
     chapterIndex: check.chapterIndex,
@@ -336,6 +340,7 @@ export function jumpFor(check: ComposedCheck): FrameJump {
     frame: check.frame,
     ...(located ? { chapterStart: start, chapterEnd: end } : {}),
     panel: designOnly && !located ? 'config' : 'markdown',
+    ...(overlap ? { overlap } : {}),
   };
 }
 

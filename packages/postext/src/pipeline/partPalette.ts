@@ -23,6 +23,7 @@ import type { ResolvedConfig, VDTBlock, VDTDesignBlock, VDTDocument, VDTLine, VD
 import { resolveAllConfig } from './config';
 import { mergeCaptionStyle } from '../defaults/captionStyle';
 import { CODE_BOX_STYLE_ID } from './codeBlocks';
+import { recolorPathBlock } from '../design/pathBlock';
 
 type Remap = (hex: string | undefined) => string | undefined;
 
@@ -132,6 +133,7 @@ function frameRoles(rest: string): FrameColorRole[] {
     case 'icon.color':
     case 'marker.color':
     case 'label.color':
+    case 'label.icon.color':
       return ['text'];
     default:
       return ['fill', 'border', 'rule', 'text'];
@@ -389,6 +391,29 @@ function recolorFrame(blocks: readonly VDTDesignBlock[], styleId: string | undef
     } else if (b.kind === 'box') {
       if (b.box.backgroundColor) b.box.backgroundColor = part('fill')(b.box.backgroundColor);
       if (b.box.borderColor) b.box.borderColor = part('border')(b.box.borderColor);
+      // Each side's colour as the border's (#1059).
+      const sides = b.box.borderSides;
+      if (sides) {
+        const remap = part('border');
+        b.box.borderSides = {
+          top: sides.top && { ...sides.top, color: remap(sides.top.color) ?? sides.top.color },
+          right: sides.right && { ...sides.right, color: remap(sides.right.color) ?? sides.right.color },
+          bottom: sides.bottom && { ...sides.bottom, color: remap(sides.bottom.color) ?? sides.bottom.color },
+          left: sides.left && { ...sides.left, color: remap(sides.left.color) ?? sides.left.color },
+        };
+      }
+    } else if (b.kind === 'path' && b.boxPart) {
+      // A card joined to its tab (#1059): its fill as the box's fill, its
+      // border pieces as the box's border.
+      if (b.fill) b.fill = part(b.boxPart === 'fill' ? 'fill' : 'border')(b.fill) ?? b.fill;
+    } else if (b.kind === 'path') {
+      // A vector shape (#1055): its fill as a box's fill; its outline and
+      // markers as the frame's border when it is a filled shape, else as
+      // its rules (a line, a connector).
+      const fill = b.fill ? part('fill')(b.fill) ?? b.fill : undefined;
+      const line = part(b.fill ? 'border' : 'rule');
+      recolorPathBlock(b, (hex) => line(hex) ?? hex);
+      if (fill) b.fill = fill;
     }
   }
 }
@@ -451,7 +476,16 @@ function recolorBlock(block: VDTBlock, r: PageRemaps): void {
       styleId !== undefined ? [[`label:${setting}@${styleId}`], [`label:${setting}`], rest] : [[`label:${setting}`], rest];
     layout.color = r.by(groups('color', 'text:color'))(layout.color) ?? layout.color;
     if (layout.halo) layout.halo = { ...layout.halo, color: r.by(groups('halo.color'))(layout.halo.color) ?? layout.halo.color };
-    if (layout.background) layout.background = { ...layout.background, color: r.by(groups('background'))(layout.background.color) ?? layout.background.color };
+    if (layout.background?.color) layout.background = { ...layout.background, color: r.by(groups('background'))(layout.background.color) ?? layout.background.color };
+    // The plate's outline (#1058).
+    const border = layout.background?.border;
+    if (border) layout.background = { ...layout.background!, border: { ...border, color: r.by(groups('border.color'))(border.color) ?? border.color } };
+    // The leader (#1057): its own colour, else the label's.
+    const leader = layout.leader;
+    if (leader) {
+      const color = r.by(groups('leader.color', `label:color${styleId !== undefined ? `@${styleId}` : ''}` as FlowColorKind, 'label:color', 'text:color'))(leader.stroke.color) ?? leader.stroke.color;
+      layout.leader = { ...leader, stroke: { ...leader.stroke, color } };
+    }
   }
   if (rb.table) {
     const t = rb.table;

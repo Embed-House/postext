@@ -244,12 +244,16 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
     }
   }
   // Template order on each page record, as on a single page.
-  const order = new Map(template.frames.map((f, i) => [f.name, i]));
+  // (The sheet's own record is in template order already, a grid's
+  // instances, #1061, among them.)
+  const order = new Map(out.composed.frames.map((f, i) => [f.name, i]));
   for (const list of sideFrames) list.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
   const log: [ReflowEvent[], ReflowEvent[]] = [[], []];
   for (const ev of [...resized.values(), ...out.composed.log]) log[sideOf.get(ev.frame) ?? 0].push(ev);
   const warnings = out.warnings.map((w) => {
-    const side = w.kind === 'frameOverflow' ? sideOf.get(w.frame) ?? 0 : 0;
+    // A frame's warning is read on the page that holds the frame (#1053:
+    // the overlap checks ran on the whole sheet, before the cut).
+    const side = w.kind === 'frameOverflow' || w.kind === 'frameCovered' || w.kind === 'frameOutsideArea' ? sideOf.get(w.frame) ?? 0 : 0;
     return side === 1 ? { ...w, pageIndex: second.index } : w;
   });
   const secondSide: 'left' | 'right' = input.firstSide === 'left' ? 'right' : 'left';

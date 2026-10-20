@@ -1,5 +1,5 @@
 import { applyOrientationMarks, markOrientation, stripOrientationMarks } from './orientationMarks';
-import type { InlineLink, InlineSpan, RefCase, RefStyle } from './types';
+import type { InlineIcon, InlineLink, InlineSpan, RefCase, RefStyle } from './types';
 import { injectPlaceholderSpans } from './injectSpans';
 import { sliceSpan } from './links';
 import { parseDirectiveAttrs } from './attrs';
@@ -482,23 +482,76 @@ export interface SwatchMeta {
   sourceStart: number;
   /** Absolute source offset just past the closing `}`. */
   sourceEnd: number;
+  /** An inline symbol (`:icon[alt]{…}`, #1058) read in the swatch's
+   *  place: `color` is then its tint as written (`''` for none). */
+  icon?: InlineIcon;
+}
+
+const ICON_LINES = ['solid', 'dashed', 'dotted'] as const;
+
+/** The `:icon[alt]{…}` that opens at `index` of `text` (#1058), or null
+ *  when it is no symbol: no closing bracket, no attributes on the line,
+ *  or none of `resource`, `glyph` and `line` among them. */
+function readIcon(text: string, index: number): { end: number; color: string; icon: InlineIcon } | null {
+  const from = index + ':icon['.length;
+  const read = bracketTextEnd(text, from);
+  if (!read.closed || text[read.at + 1] !== '{') return null;
+  let close = read.at + 2;
+  while (close < text.length && text[close] !== '}' && text[close] !== '\n') close++;
+  if (text[close] !== '}') return null;
+  const attrs = parseDirectiveAttrs(text.slice(read.at + 2, close));
+  const alt = text.slice(from, read.at).replace(/\\([[\]])/g, '$1').replace(/\s+/g, ' ').trim();
+  const resource = attrs.resource?.trim();
+  const glyph = attrs.glyph;
+  const lineRaw = attrs.line?.trim().toLowerCase();
+  const sizeRaw = attrs.size !== undefined ? Number(attrs.size.trim()) : NaN;
+  const size = Number.isFinite(sizeRaw) && sizeRaw > 0 ? sizeRaw : undefined;
+  const font = attrs.font?.trim();
+  let icon: InlineIcon;
+  if (resource) icon = { alt, resource };
+  else if (glyph !== undefined && glyph.length > 0) icon = { alt, glyph, ...(font ? { font } : {}) };
+  else if (lineRaw !== undefined) icon = { alt, line: (ICON_LINES as readonly string[]).includes(lineRaw) ? lineRaw as InlineIcon['line'] : 'solid' };
+  else return null;
+  if (size !== undefined) icon.size = size;
+  return { end: close + 1, color: attrs.color?.trim() ?? '', icon };
 }
 
 /**
  * Extract inline `:swatch{…}` colour swatches from a line's text, replacing
  * each by `SWATCH_PLACEHOLDER` and returning the swatch metadata in order.
  * `:swatch{…}` takes the same attribute grammar as `:ref{…}`; a swatch
- * without a `color` is not a swatch (left as text).
+ * without a `color` is not a swatch (left as text). With `icons`, the
+ * inline symbols (`:icon[alt]{resource=…|glyph=…|line=…}`, #1058) are read
+ * too, in the same placeholder: a figure label's text, a caption, a note,
+ * a table cell (not the body text in this round).
  * Runs right after {@link extractInlineRefs} on its cleaned text.
  */
 export function extractInlineSwatches(
   text: string,
   fallbackStart: number,
+  options?: { icons?: boolean },
 ): { cleaned: string; swatches: SwatchMeta[] } {
   const swatches: SwatchMeta[] = [];
   let out = '';
   let last = 0;
-  for (let m = nextBraced(text, ':swatch{', 0); m; m = nextBraced(text, ':swatch{', m.end)) {
+  const icons = options?.icons === true && text.includes(':icon[');
+  let swatch = nextBraced(text, ':swatch{', 0);
+  let iconAt = icons ? text.indexOf(':icon[') : -1;
+  while (swatch || iconAt >= 0) {
+    if (iconAt >= 0 && (!swatch || iconAt < swatch.index)) {
+      const at = iconAt;
+      const read = at >= last ? readIcon(text, at) : null;
+      if (read) {
+        out += text.slice(last, at) + SWATCH_PLACEHOLDER;
+        swatches.push({ color: read.color, icon: read.icon, sourceStart: fallbackStart + at, sourceEnd: fallbackStart + read.end });
+        last = read.end;
+      }
+      iconAt = text.indexOf(':icon[', Math.max(at + 1, last));
+      if (swatch && swatch.index < last) swatch = nextBraced(text, ':swatch{', last);
+      continue;
+    }
+    const m = swatch!;
+    swatch = nextBraced(text, ':swatch{', m.end);
     const attrs = parseDirectiveAttrs(m.body);
     const color = attrs.color?.trim();
     if (color === undefined || color.length === 0) continue;
@@ -510,6 +563,7 @@ export function extractInlineSwatches(
     });
     out += SWATCH_PLACEHOLDER;
     last = m.end;
+    if (iconAt >= 0 && iconAt < last) iconAt = text.indexOf(':icon[', last);
   }
   out += text.slice(last);
   return { cleaned: out, swatches };
@@ -668,7 +722,7 @@ export function injectSwatchSpans(spans: InlineSpan[], swatches: SwatchMeta[]): 
     text: SWATCH_PLACEHOLDER,
     bold,
     italic,
-    swatch: { color: meta.color },
+    swatch: meta.icon ? { color: meta.color, icon: meta.icon } : { color: meta.color },
   }));
 }
 
@@ -1159,7 +1213,7 @@ function linkDestinationRanges(text: string): Array<readonly [number, number]> {
  *  break: `:ref{…}`, `:swatch{…}`, a chip's `:chip[…]{…}`, an annotation's
  *  `:ruby[…]{…}` (read by {@link directiveAttrRanges}). */
 const DIRECTIVE_BRACED = ['ref', 'swatch'];
-const DIRECTIVE_BRACKETED = ['chip', 'dots', 'name', 'book', 'ruby', 'warichu', 'ltr', 'rtl', 'sideline', 'kunten'];
+const DIRECTIVE_BRACKETED = ['chip', 'icon', 'dots', 'name', 'book', 'ruby', 'warichu', 'ltr', 'rtl', 'sideline', 'kunten'];
 
 /**
  * Turn the forced line breaks of a resource snippet ({@link SNIPPET_BREAK_RE})

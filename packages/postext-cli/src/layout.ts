@@ -155,6 +155,12 @@ function frameOverflowData(w: Extract<ContentWarning, { kind: 'frameOverflow' }>
   };
 }
 
+/** A `frameCovered` / `frameOutsideArea`'s data for `--json` (#1053). */
+function overlapData(w: Extract<ContentWarning, { kind: 'frameCovered' | 'frameOutsideArea' }>): Record<string, unknown> {
+  const { kind: _kind, sourceStart: _start, sourceEnd: _end, pageIndex: _page, ...data } = w;
+  return data;
+}
+
 function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Reporter): void {
   type Any = Parameters<typeof formatWarning>[0] & { sourceStart?: number; pageIndex?: number };
   const all: Any[] = [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(doc.configWarnings ?? [])] as Any[];
@@ -173,9 +179,12 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       // How far a frame's content went on (#859).
       ...(w.kind === 'continueTargetMissing' ? { data: { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, target: w.target, ...(w.before ? { before: true } : {}), ...(w.fromChapter !== undefined ? { fromChapter: w.fromChapter } : {}), configPath: w.configPath } } : {}),
       ...(w.kind === 'frameContinuationLimit' ? { data: { template: w.template, frame: w.frame, fenceIndex: w.fenceIndex, pages: w.pages, overflowMm: w.overflowMm, configPath: w.configPath } } : {}),
+      // A frame under another, or past what holds it (#1053): where, which
+      // frames, how much, and the fixes with their values.
+      ...(w.kind === 'frameCovered' || w.kind === 'frameOutsideArea' ? { data: overlapData(w) } : {}),
       // A figure's label and its anchor (#860): where, in which locale.
       ...(w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled'
-        ? { data: { resourceId: w.resourceId, anchor: w.anchor, ...(w.kind === 'labelAnchorUnknown' ? { known: w.known } : { style: w.style }), ...(w.locale ? { locale: w.locale } : {}) } }
+        ? { data: { resourceId: w.resourceId, anchor: w.anchor, ...(w.kind === 'labelAnchorUnknown' ? { known: w.known, ...(w.connector !== undefined ? { connector: w.connector, frame: w.frame } : {}) } : { style: w.style }), ...(w.locale ? { locale: w.locale } : {}) } }
         : {}),
       // Words on a picture that do not fit or that meet (#902).
       ...(w.kind === 'labelOverflow'

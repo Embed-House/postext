@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Composed pages',
   sidebarTitle: 'Composed pages',
-  description: 'How to write a composed page in Markdown: the page fence, opened with four colons, that chooses the template; frames and the slot attribute, which share content out among its frames; figures labelled at points of a picture; and warnings for content that does not match the template',
+  description: 'How to write a composed page in Markdown: the page fence, opened with four colons, that chooses the template; frames and the slot attribute, which share content out among its frames; repeated slots and modules; and warnings for content that does not match the template or covers another frame',
   lang: 'en',
-  lastUpdated: '2026-10-17',
-  readingTime: '9 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '41 min',
   order: 34,
-  plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, and pictures with labels such as the names on a map. It also lists the warnings Postext gives when the text and the template do not match.",
+  plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, cards repeated in a grid and blocks stacked as modules. It also lists the warnings Postext gives when the text and the template do not match.",
 };
 
 # Composed pages
@@ -90,7 +90,7 @@ A single block can name its own slot:
 
 How the content is shared out:
 
-- Several pieces with the same slot are joined in Markdown order.
+- Several pieces with the same slot are joined in Markdown order, except in a repeating grid, where each piece is a card of its own (see [Repeated slots](#repeated-slots)).
 - Content with no slot goes to the template's **flow frame** (the frame marked `flow`).
 - A heading with no slot goes first to the frame that `takes` its level (`takes: "h1"`), if the template has one, so the title of a textbook topic is just `# Title` at the top of the page.
 - A `:::toc` with no slot goes to the frame that `takes: "toc"`, if the template has one (see *The contents in a frame*, below).
@@ -98,74 +98,72 @@ How the content is shared out:
 
 A `slot` outside a composed page is read but has no effect.
 
-## Figures with labels
+### Repeated slots
+
+When the template draws a card once and lays it in a grid as many times as the page needs (a group with `repeat`, see [Configuration › Grids that repeat a frame set](/en/docs/configuration-composed-pages#grids-that-repeat-a-frame-set)), each `:::frame` that names the card's main slot is one card, in the order written:
 
 ```md
-:::figure{resource="mapa-europa" slot="mapa"}
-::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
-::label[**Madrid**]{at="madrid"}
-::label[Mar Negro]{at="62% 48%"}
+::::page{template="fotos"}
+# Animals of the river
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+The heron
 :::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+The otter
+:::
+:::
+::::
 ```
 
-`:::figure{resource="…"}` places one resource, with its caption and number, as `::resource` does, and lists the labels to set on the picture, one `::label[TEXT]{…}` line per label, with blank lines allowed between them.
+- **Members of the card.** Inside the card's piece, a block or a `:::frame` that names another frame of the set (here `pie`, the caption pill) goes to that frame of the same card. Everything else goes to the card's main frame.
+- **One block, one card.** A `::resource{id="…" slot="foto"}` on its own, outside any container, is a card too.
+- **Names.** The cards are numbered from 1: the frames of the second card are `foto[2]` and `pie[2]`, and so they appear in warnings, the reflow log and the Sandbox.
+- **How many.** The page has as many cards as pieces. A Spanish edition with five animals and an English one with four use the same template. A grid with `repeat.max` takes that many; each piece over raises `repeatOverflow` and goes to the flow frame.
 
-- `at` names an anchor of the resource (a point defined once on the picture, shared by every language), or gives a point in percentages of the picture, `at="x% y%"`, for a label with no anchor.
-- `style` names a label style and overrides the anchor's.
-- The text in brackets is inline Markdown: bold, italic, chips.
+A frame of the set is reported as `slotEmpty` only when no card of the page fills it. A repeated frame never takes a heading, and it is never the flow frame.
 
-A figure works in the running text as well as in a frame. Its labels are drawn on the picture as text and go wherever the figure goes: a column, a float, a frame turned or scaled by the reflow ladder (the steps that make content fit), a spread. When a figure's closing `:::` is missing, the first line that is neither a label nor blank ends it, and the figure is reported as an unclosed container.
+### Modules in a page
 
-### A figure's own words
-
-A resource holds one picture, its anchors and one set of words, but each edition of a book needs its own. A figure can set its own `alt`, `caption` and `note`, in the fence or on lines of their own, and they replace the resource's on the pages of that file:
+A page template with a modules group (`modules: true`, see [Configuration › Modules](/en/docs/configuration-composed-pages#modules)) takes its blocks from `:::module` containers, laid one under another in the order written. The module's template draws the block; the container holds its words:
 
 ```md
-:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
-::caption[Relieve de **Varenia**, con sus tres cordilleras]
-::note[Fuente: levantamiento de 1932]
-::label[Mar de Sal]{at="mar"}
+::::page{template="tema"}
+# The river
+
+:::module{template="caja"}
+:::frame{slot="texto" label="Did you know?"}
+A river begins in the mountains, where rain and snow gather into streams.
 :::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+The river
+:::
+:::frame{slot="izq"}
+The water it carries
+:::
+:::frame{slot="der"}
+Life on its banks
+:::
+:::
+::::
 ```
 
-- As fence attributes, `alt`, `caption` and `note` take a short quoted text. The `::alt[…]`, `::caption[…]` and `::note[…]` lines take the text in brackets, which may hold inline Markdown and `\\` for a line break, as a resource's caption and note do. A line overrides an attribute of the same name; lines go among the labels, with blank lines allowed.
-- Whatever the figure does not set stays the resource's. An empty value says nothing: `caption=""` drops the caption, `alt=""` marks the picture as decorative.
-- The words replace the resource's in the chapter where they are written: the layout, the alternative text of every output and the tagged PDF use them, while the resource itself is unchanged. In a chapter a resource has one set of words, those of its first figure: a later figure of the same resource with different words does not show them, and `figureWordsShared` reports it. A reduced copy that needs its own caption takes a second resource pointing at the same picture file. Unlike a label, a caption is not mapped character by character to the Markdown; `sourceAt` answers a click on it as it does for a resource's caption.
-
-### How a label is set
-
-- **Where.** A label stands at its anchor's point, given as a fraction of the whole picture, so when the picture is cropped to its safe area or set smaller, the label moves with the art. The anchor's `align` says which side of the label stands at the point, and `verticalAlign` which edge stands at its height. `start` and `end` follow the label's own direction: in Arabic, `start` is the label's right edge. `rotate` turns the label about the point, clockwise, at any angle: a river along its course, hills on a slant.
-- **Look.** The label's own `style`, or else its anchor's, names a label style (see Configuration › Composed pages); without one the label is set in the body text's type. A halo outlines the letters beneath their fill; a plate (`background`) fills the box round the text, widened by `padding`.
-- **Fit.** With a `width` on its anchor, the label breaks between words within that measure, never inside a word. When a word is wider than the measure, the whole label is set smaller, down to its style's `minScale`; a label still too wide at that size is drawn with its widest word cut. Without a `width` the label keeps to one line, except where it breaks with `\\`, as in a caption.
-- **Text.** The text in brackets is inline Markdown, set as a caption is: bold, italic, chips, highlight marks, references, inline formulas. A name of several words is one label, whatever the order of its words in each language: `::label[ATLANTIC OCEAN]` and `::label[OCÉANO ATLÁNTICO]` stand at the same anchor. Right-to-left labels are set right to left; Chinese and Japanese labels break between characters.
-- **Outputs.** The canvas, the PDF, the HTML viewer, the fixed-layout EPUB and Folio draw the labels. On a right-to-left page a label stays where the picture shows it.
-- **Vertical.** With `writingMode: 'vertical-rl'` on the anchor (or on its label style) the label is set as a vertical page is: its characters upright in cells one under another, the columns going from right to left, Latin words and long numbers turned sideways, short numbers in one cell. `width` is then a fraction of the picture's height (the length of a column), and a Chinese or Japanese label wraps into more columns. `align` runs along the column (`start` is its top), `verticalAlign` across the columns (`top` is the first, right-hand one), and `rotate` turns the label further. On the mirrored page of a right-to-left book it reads the same way, down its columns and upright, at the same place on the picture (since postext 1.40).
-- **Checks.** A label still wider than its measure at its style's `minScale` raises `labelOverflow`; two labels whose lines meet raise `labelOverlap` on the later one. Both are checked in each edition, so a translation with longer words shows where it needs room. A part's palette (`:::part{palette="…"}`) recolours the labels on its pages as it does captions. The contrast check measures a label against its plate, or else its halo; a label set directly on the picture is skipped, since its background is the picture. The print preflight also checks labels: small type in process colours, inks, and distance from the trim.
-- **On a spread.** A figure that crosses the spine of a spread (a frame with `crossGutter: true`) paints one half on each page, so a label reaching into the gutter band would be cut by the fold and readable on neither page. Such a label slides sideways to the edge of the band, on the side where its anchor's point lies, and keeps its height; a point exactly on the spine goes to the first page, as a frame does. An anchor with `gutter: 'cross'` keeps its place, for a title set across both pages. The outer edges of the sheet are left alone: a label that runs past the trim is cut as the picture is. Since postext 1.43.
-
-### labelAnchorUnknown
-
-The `at` of a `::label` names an anchor that the figure's resource does not have. The label is not drawn; the reflowable EPUB still lists it and the picture's alternative text names it. The warning carries the resource, the anchor, the anchors the resource has (`known`), the locale, the page and the source range of the label's text. Correct the anchor id, add the anchor to the resource, or place the label with `at="x% y%"`.
-
-In the Sandbox's Checks panel the warning leads to the label in the Text panel, and its pin button opens the picture's anchors with that name ready to place: one click on the picture adds the anchor.
-
-### anchorUnlabelled
-
-An anchor of the figure's resource has a label style, but no `::label` of the figure stands at it in this locale: the map has room for a word that this edition leaves out. It is a note; `postext check` lists it as `info`. Anchors with no style, such as a comic speaker's, are not reported. The warning carries the resource, the anchor, its style, the locale, the page and the figure's source range. Write the label in this language's Markdown, or take the style off the anchor.
-
-In the Checks panel it leads to the figure in the Text panel, and its pin button opens the picture's anchors on that anchor.
-
-### labelOverflow
-
-A label is still wider than its anchor's `width` at the smallest scale its label style allows (`minScale`): it is drawn at that scale and runs past its measure. The warning carries the resource, the label's text, its anchor (none for a label placed by percentages), the width it was given, the scale reached, the locale, the page and the source range of the label's text. It is checked in each edition, so a language with longer words overflows where another does not. Widen the anchor's `width`, shorten the word in this edition's Markdown, or lower the label style's `minScale`. A Chinese or Japanese label breaks between characters and does not overflow this way. Since postext 1.39.
-
-### labelOverlap
-
-Two labels of the same figure touch; for a label with a plate, the plate counts. The later label, in the order written, carries the warning, with the text of the first earlier label it meets and how many earlier labels it meets in all. The test uses the box of each line, turned with the label, so the space beside a short line stays free; it lets two lines overlap by up to an eighth of a line's height. It is checked in each edition. Move one of the anchors, narrow a label's `width` so that it breaks, or shorten the words in this edition's Markdown. In the Sandbox's Checks panel the pin button opens the picture's anchors at the label's anchor. Since postext 1.39. With `overlap: 'allow'` on an anchor or in its label style, a label that the original prints touching its neighbours (a dense map) is left out of the check, and no pair that includes it is reported. Since postext 1.42. A picture's `avoid` zones stand for the symbols of a map: rectangles, in fractions of the picture, drawn over its dots and icons in the **Avoid zones** mode of the picture's marks. A label that runs onto one is reported the same way, naming `symbol 2` instead of a label (`withSymbol` in the data), and `overlap: 'allow'` leaves a label out of both checks. Since postext 1.42.
-
-### figureWordsShared
-
-A `:::figure` sets words (`alt`, `caption` or `note`) for a resource whose words an earlier figure in the same chapter has already set, and they differ. The pages show the first figure's words and leave these out. The warning carries the resource, the words left out and the source range of the first of them; a later figure that gives no words of its own is no problem. Give the figure a resource of its own: a second resource that points at the same picture file, with its own caption, number and anchors. In the Sandbox's Checks panel it is filed under Figures. Since postext 1.42.
+- **`template`** names a template with `role: 'module'`. **`name`** is optional: it names the module's instance, so its frames are `ramas.raiz`, `ramas.izq`. Without it the instance is `<template>[n]`, the module's count among the page's modules of that template: `arbol[1].raiz`. A name already taken on the page, or one with a space, `.`, `#`, `[` or `]`, is replaced by that default (`moduleNameRejected`).
+- **Slots** inside a `:::module` are the module's own: `slot="raiz"` reaches the `raiz` frame of this module, and two modules of one template on a page keep their words apart. Content that names no slot goes to the module's flow frame, and a heading to the module frame that `takes` its level; with neither, to the page's flow frame.
+- **Order.** The modules stack in Markdown order, so another page sets the same blocks in another order, or with one more tree, with no new template.
+- A `:::module` outside a page fence is a plain box of its content. A module inside a module is not supported (`moduleNested`).
 
 ## Example
 
@@ -263,7 +261,7 @@ With `"wrap": "contour"` as well, the frame pushes with the shape of the picture
 
 ### Decoration, running heads and layers
 
-The template's `decoration` (pictures, rules, boxes and short texts) is placed once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print. On a right-to-left or vertical page the frames follow the mirrored or turned flow while the decoration stays on the sheet: an element placed at a start or end edge (`top-start`, see [Element placement](/en/docs/configuration-headers-footers#element-placement)) stands by its frame in every edition.
+The template's `decoration` (pictures, rules, boxes and short texts) is placed once the frames have their final boxes, so an element can anchor to a frame (`"to": "#gasto"`) and follow it, and a [connector](/en/docs/configuration-composed-pages#connectors) can join two frames with a line that stays on them however their words move them. Its texts read the page's own attributes: `fondo="banda-retos"` on the page fence gives `{attr.fondo}`, for example a background picture chosen page by page with `"resourceId": "{attr.fondo}"`. The running heads read them too. A template's `header` or `footer` replaces the section's, `false` hides it, and with neither the section's running heads print. On a right-to-left or vertical page the frames follow the mirrored or turned flow while the decoration stays on the sheet: an element placed at a start or end edge (`top-start`, see [Element placement](/en/docs/configuration-headers-footers#element-placement)) stands by its frame in every edition.
 
 Frames paint in the order of their `layer`: the decoration at layer 0, frames at 1 by default, a higher layer over a lower one, a negative layer under the decoration. `rotate` turns a frame and its content together by any angle, about the frame's centre, in the canvas, the PDF, the HTML viewer and the fixed-layout EPUB.
 
@@ -325,8 +323,35 @@ The checks read the Markdown and the configuration before any layout, so they sh
       <td>A composed page, a frame or a figure is never closed (see the recovery rules above). The Checks panel names the composed page <code>::::page</code>.</td>
       <td>Add the closing fence: as many colons as the page's opening line, or <code>:::</code> for a frame or a figure.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>A repeating grid holds <code>repeat.max</code> cards and the page gives it more (see <a href="#repeated-slots">Repeated slots</a>). One per card over, at its <code>slot="…"</code>: the card goes to the flow frame, or after the page.</td>
+      <td>Raise or remove <code>max</code> in the template, or move the extra cards to another page.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>A <code>:::module</code> names no template, a template that is no module, or the page's template has no modules group (<code>reason</code>). Its content goes to the flow frame.</td>
+      <td>Correct the <code>template</code> of the module, or give the page's template a group with <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>A page fence names a module template. Its content is set in the flow, as for an unknown template.</td>
+      <td>Name a page template on the fence and write the module inside it as a <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>A <code>:::module</code> is written inside another module. Its blocks are the outer module's.</td>
+      <td>Close the outer module before opening the next one.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>A module's <code>name</code> is taken by another module of the page, or holds a space, <code>.</code>, <code>#</code>, <code>[</code> or <code>]</code>. The module takes the name <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Give each module of the page a name of its own, made of letters, digits and dashes.</td>
+    </tr>
   </tbody>
 </table>
+
+The module warnings and `repeatOverflow` are since postext 1.48; the template side of each is described in [Configuration › Overlap, repeat and module warnings](/en/docs/configuration-composed-pages#overlap-repeat-and-module-warnings).
 
 Once the book is laid out, each of these warnings also carries the page it concerns (`pageIndex`), so the Checks panel and `postext check` give the page number next to the template, the frame or slot, and the source range.
 
@@ -351,6 +376,28 @@ An empty frame is reported too. In a stack whose frames have nothing more to giv
 **Cause.** A frame's `overflow.continueIn` is `'page:<id>'` (see [Jumping to a later page](#jumping-to-a-later-page)), and no page fence `::::page{id="<id>"}` comes after the page the story is on: the id is misspelt, the fence lacks it, the fence attribute the rule reads (`'page:{attr.sigue}'`) is missing, or the fence comes before (`before: true`). The rest continues on a page added right after, as with `'next-page'`. The warning gives the template, the frame, `target` (the id it looked for), the frame's `configPath` and the page. The id may also belong to a page fence of a later chapter of the book; a chapter laid out on its own with `buildDocument` and no `laterPageIds` knows only its own pages.
 
 **Fix.** Give the later page fence that id, or correct the name in `continueIn` or in the fence attribute it reads. A page before the story cannot take it: move that fence after the story, or name a later page.
+
+### frameCovered
+
+**Cause.** Part of a frame lies under another frame painted over it (a higher `layer`, or the same layer later in template order), where that frame is opaque: a caption under a photo, a tab under a cut-out picture, a box's last lines under a band. The check runs once the page is set, on the boxes the content gave the frames, so a page that is clear in Spanish can be covered in a longer edition. A frame covers with its fill (its style's background or `look.background`, its tab, its stripe), its pictures and its text lines; an outline covers nothing, and a frame that pushes text round the shape of its pictures (`wrap: 'contour'`) does not cover lines with their box. What can be covered: the frame's lines, its tab and title, its pictures and tables. Words over a picture are not reported: whether they read is the contrast check's job. A cut thinner than 0.3 mm is a touch, and a pair under 1 mm² is left out.
+
+The warning names the template, the frame, the covering frame (`coveredBy`, `coveredByPath`), the area hidden (`overlapMm2`), the first covered words (`text`) or picture (`picture`), the language and the page, and points at the covered frame's content. One warning per pair.
+
+**Fix.** Each proposal is data, as `frameOverflow`'s are:
+
+- `layer`: the covering frame's `layer` set under the covered one, proposed only when that does not hide something else instead;
+- `exclude`: `'push'` on the covering frame, so the covered text runs round it (only when body lines are hit);
+- `move`: `frame`, `dxMm`, `dyMm`, the smallest shift of the covering frame that clears the pair, tried on the page: it is offered only when the moved frame, and the frames anchored to it, land clear of every other frame and stay inside what holds them. When no direction lands clear, or the covered frame hangs from the covering one, no move is offered.
+
+When the overlap is meant (a drawing that reaches over the text on purpose), set `overlap: 'allow'` on either frame. Since postext 1.48.
+
+### frameOutsideArea
+
+**Cause.** A frame runs past what holds it: its text past the trim, where it is cut, or its fill and pictures past the bleed (with no bleed, both are the trim); or any part of it past the frame or group it is anchored inside, a note anchored inside a card (`top-left` of `'#card'` with an offset into it) that its text pushes past the card's foot. A frame anchored to an edge outside the other box (`below`, `right-of`) is never inside it. Overruns under 0.3 mm are left out.
+
+The warning gives `past` (`'trim'`, `'bleed'`, `'frame'` or `'group'`), `target` (the frame or group's name), `excessMm` (the largest overrun), `sides` (each side's), the language and the page.
+
+**Fix.** The proposals: `maxHeight`, the room the frame has (not proposed for a frame held by its foot, which a smaller height does not bring in); `continueNextPage` with it, for a frame of text, so what no longer fits goes on; `minHeight` of the frame it is anchored inside, grown by the overrun; `move`, the shift that brings it in when it runs past one side only, offered when it lands clear of the other frames. A badge hung off its card on purpose takes `overlap: 'allow'`. Since postext 1.48.
 
 ## When the text grows
 
@@ -606,6 +653,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td><code>overflow</code></td>
       <td>Content did not fit: <code>toMm</code> is the height cut, as in <code>frameOverflow</code>.</td>
     </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Part of the frame lies under <code>cause</code>, the frame painted over it: <code>areaMm2</code> is the area hidden, as in <code>frameCovered</code>. In words: «card lies under cutout (25.3 mm²)». Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>The frame runs <code>toMm</code> past <code>past</code>: <code>'trim'</code>, <code>'bleed'</code> or <code>'#name'</code>, the frame or group it is anchored inside, as in <code>frameOutsideArea</code>. In words: «note runs 26 mm past card». Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>A connector (<code>cause</code>, its id) left out its end on <code>frame</code>, a box the page does not show: collapsed, optional and empty, a card past the page's items, or a picture point its frame cuts off. A note, not a warning. In words: «connector ramas left out izq (not on the page)». Since postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -726,3 +785,4 @@ findElement(doc, 'cp0:dinero');   // the same frame after a relayout, with its r
 ## Comic pages
 
 A comic page (`:::page{split}`) is a composed page whose frames its split generates: one per panel, with stable ids `cm<n>:<name>`, a polygon for a slanted cell, a callout style through `box`, and Markdown poured into a text panel. See [Comics › Comic pages and composed pages](/en/docs/comics#comic-pages-and-composed-pages).
+

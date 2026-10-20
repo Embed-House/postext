@@ -36,6 +36,10 @@ function chaptersOf(locale: FixtureLocale): Chapter[] {
 
 const layouts = new Map<FixtureLocale, EditionLayout>();
 const checks: ComposedCheck[] = [];
+/** The overlap checks (#1053, #1066): the stand-in's photos hang a
+ *  millimetre or two past their boxes in every edition. Asserted on their
+ *  own; the other tests read the rest. */
+const overlapChecks: ComposedCheck[] = [];
 
 beforeAll(async () => {
   for (const locale of FIXTURE_LOCALES) {
@@ -45,7 +49,9 @@ beforeAll(async () => {
       async (content, config) => buildDocument(content, config),
     );
     layouts.set(locale, layout);
-    checks.push(...composedChecksOf(locale, layout.chapters));
+    for (const c of composedChecksOf(locale, layout.chapters)) {
+      (c.warning.payload.kind === 'frameOutsideArea' || c.warning.payload.kind === 'frameCovered' ? overlapChecks : checks).push(c);
+    }
   }
 }, 120_000);
 
@@ -88,7 +94,11 @@ describe('a composed book in three editions', () => {
       'en:slotEmpty:0:1:ahorro',
       'es:slotUnknown:0:1:texto',
     ]);
-    for (const c of checks) {
+    // The photos past their boxes, in the first chapter of every edition.
+    expect([...new Set(overlapChecks.map((c) => `${c.warning.payload.kind}:${c.chapterIndex}:${c.fenceIndex}:${c.frame}`))].sort())
+      .toEqual(['frameOutsideArea:0:0:dinero-fotos', 'frameOutsideArea:0:0:gasto-fotos']);
+    expect(new Set(overlapChecks.map((c) => c.locale))).toEqual(new Set(['es', 'en', 'ca']));
+    for (const c of [...checks, ...overlapChecks]) {
       expect(c.page).not.toBeNull();
       expect(c.frameId).toBe(`cp${c.fenceIndex}:${c.frame}`);
       const d = doc(c.locale as FixtureLocale, c.chapterIndex!);

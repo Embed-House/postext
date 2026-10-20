@@ -6,14 +6,43 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComicPage, type VDTComposedPage, type VDTFrame, type VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComicPage, type VDTComposedPage, type VDTDesignBlock, type VDTDesignSlot, type VDTFrame, type VDTPage } from '../vdt';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =
   /** `facing`: the half of a frame read on the facing page of a spread
    *  (`VDTFrame.facingBlocks`, #861): painted, never read. */
   | { kind: 'frame'; frame: VDTFrame; blocks: VDTBlock[]; facing: boolean }
-  | { kind: 'decoration' };
+  /** The template's decoration at layer 0, without its blocks painted
+   *  over the frames ({@link decorationUnder}). */
+  | { kind: 'decoration' }
+  /** The decoration's blocks painted over every frame (#1076: connectors
+   *  into pictures, {@link decorationOver}); last in the order, present
+   *  only when the decoration has such a block. */
+  | { kind: 'over' };
+
+/** Whether a decoration block is painted over the frames (#1076). */
+export function paintsOverFrames(block: VDTDesignBlock): boolean {
+  return block.kind === 'path' && block.over === true;
+}
+
+/** The part of a composed page's decoration painted at layer 0, under
+ *  the frames of layer 0 and up: the slot itself when none of its blocks
+ *  is painted over them (the common case, so nothing is copied), else the
+ *  slot without those blocks. */
+export function decorationUnder(slot: VDTDesignSlot): VDTDesignSlot;
+export function decorationUnder(slot: VDTDesignSlot | undefined): VDTDesignSlot | undefined;
+export function decorationUnder(slot: VDTDesignSlot | undefined): VDTDesignSlot | undefined {
+  if (!slot || !slot.blocks.some(paintsOverFrames)) return slot;
+  return { ...slot, blocks: slot.blocks.filter((b) => !paintsOverFrames(b)) };
+}
+
+/** The part of a composed page's decoration painted after every frame
+ *  (#1076), in slot order; undefined when there is none. */
+export function decorationOver(slot: VDTDesignSlot | undefined): VDTDesignSlot | undefined {
+  if (!slot || !slot.blocks.some(paintsOverFrames)) return undefined;
+  return { ...slot, blocks: slot.blocks.filter(paintsOverFrames) };
+}
 
 /** Ids of the floats a composed page's frames hold: the backends paint
  *  them with their frames ({@link composedPaintOrder}), not with the
@@ -72,12 +101,15 @@ export function comicHoldsText(comic: Pick<VDTComicPage, 'frames'> | undefined):
 
 /** The paint order of a composed page: frames of a layer below 0, the
  *  decoration (layer 0), then the frames of layer 0 and up; frames of
- *  one layer in template order. Each frame comes with its blocks, in
- *  `page.floats` order (its box first). With `part`, only the frames on
- *  that side of the decoration, and no decoration item. */
+ *  one layer in template order; last, when the decoration has blocks
+ *  painted over the frames (#1076), the `'over'` item. Each frame comes
+ *  with its blocks, in `page.floats` order (its box first). With `part`,
+ *  only the frames on that side of the decoration, and neither decoration
+ *  item: the caller paints the decoration on the sheet, and its `'over'`
+ *  part after the frames `'above'`. */
 export function composedPaintOrder(page: VDTPage, part?: ComposedPaintPart): ComposedPaintItem[] {
   if (part) {
-    const all = composedPaintOrder(page);
+    const all = composedPaintOrder(page).filter((item) => item.kind !== 'over');
     const at = all.findIndex((item) => item.kind === 'decoration');
     return part === 'below' ? all.slice(0, at) : all.slice(at + 1);
   }
@@ -107,6 +139,7 @@ export function composedPaintOrder(page: VDTPage, part?: ComposedPaintPart): Com
     out.push({ kind: 'frame', frame, blocks, facing: false });
   }
   if (!decorated) out.push({ kind: 'decoration' });
+  if (composed.decoration?.blocks.some(paintsOverFrames)) out.push({ kind: 'over' });
   return out;
 }
 
@@ -128,7 +161,7 @@ export function composedReadingOrder(paint: readonly ComposedPaintItem[]): Compo
     return n;
   };
   const firstIndex = (item: ComposedPaintItem): number => {
-    if (item.kind === 'decoration') return -Infinity;
+    if (item.kind === 'decoration' || item.kind === 'over') return -Infinity;
     let min = Infinity;
     for (const b of item.blocks) if (b.contentIndex !== undefined && b.contentIndex < min) min = b.contentIndex;
     return min + depth(item.frame) / 1000;

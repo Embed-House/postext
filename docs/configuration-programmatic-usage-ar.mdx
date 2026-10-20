@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'الاستخدام البرمجي',
   description: 'استعمال Postext من الشيفرة: buildDocument وتحذيراته، والقيم الافتراضية، والخطوط، والذاكرات المؤقتة، وWeb Worker',
   lang: 'ar',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '31 دقيقة',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>يعطي <code>:::figure</code> موردًا كلمات (<code>alt</code> أو <code>caption</code> أو <code>note</code>) سبق أن أعطاه شكلٌ سابق في الفصل كلماته، وهي مختلفة (<code>resourceId</code> و<code>words</code>).</td>
       <td>تعرض الصفحات كلمات الشكل الأول وتُسقط كلمات الشكل اللاحق.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>حبر إطار من إطارات صفحة مركّبة يقع تحت إطار آخر مرسوم فوقه (<code>template</code> و<code>frame</code> و<code>coveredBy</code> و<code>coveredByPath</code> و<code>fenceIndex</code> و<code>configPath</code> و<code>overlapMm2</code> و<code>text</code> أو <code>picture</code> و<code>locale</code>؛ <code>proposals</code>: <code>layer</code> و<code>exclude</code> و<code>move</code>). يصدره التنضيد، مع <code>pageIndex</code> للصفحة. منذ postext 1.48.</td>
+      <td>يُرسم الإطاران كما يقول القالب، ويبقى الحبر المغطّى مختفيًا.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>إطار من إطارات صفحة مركّبة يتجاوز خط القص (نصه)، أو النزف (خلفيته أو صوره)، أو الإطار أو المجموعة المثبَّت داخلها (<code>template</code> و<code>frame</code> و<code>fenceIndex</code> و<code>configPath</code> و<code>past</code> و<code>target</code> و<code>excessMm</code> و<code>sides</code> و<code>locale</code>؛ <code>proposals</code>: <code>maxHeight</code> و<code>minHeight</code> و<code>continueNextPage</code> و<code>move</code>). يصدره التنضيد. منذ postext 1.48.</td>
+      <td>يُرسم الإطار في موضعه، ويُقصّ ما يتجاوز خط القص.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>شبكة متكرّرة في صفحة مركّبة تتّسع لـ<code>max</code> من العناصر، والصفحة تعطيها أكثر (<code>template</code> و<code>group</code> و<code>frame</code> و<code>item</code> و<code>max</code> و<code>flowFrame</code> و<code>fenceIndex</code>). تحذير لكل عنصر زائد. منذ postext 1.48.</td>
+      <td>ينتقل العنصر إلى إطار التدفق، أو إلى ما بعد الصفحة.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>كتلة <code>:::module</code> لا تنضّدها الصفحة (<code>template</code> و<code>module</code> و<code>name</code> و<code>fenceIndex</code>؛ <code>reason</code>: <code>'unknown'</code> و<code>'notModule'</code> و<code>'noGroup'</code>). منذ postext 1.48.</td>
+      <td>ينتقل محتواها إلى إطار التدفق.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>كتلة صفحة تذكر قالب وحدة (<code>template</code> و<code>fenceIndex</code>). منذ postext 1.48.</td>
+      <td>يُنضَّد محتوى الكتلة في التدفق.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>كتلة <code>:::module</code> داخل وحدة أخرى (<code>template</code> و<code>module</code> و<code>fenceIndex</code>). منذ postext 1.48.</td>
+      <td>تصير كتلها كتلًا للوحدة الخارجية.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>اسم الوحدة <code>name</code> مأخوذ في الصفحة، أو فيه مسافة أو <code>.</code> أو <code>#</code> أو <code>[</code> أو <code>]</code> (<code>template</code> و<code>module</code> و<code>name</code> و<code>used</code> و<code>reason</code>: <code>'taken'</code> و<code>'invalid'</code>، و<code>fenceIndex</code>). منذ postext 1.48.</td>
+      <td>تأخذ الوحدة الاسم <code>used</code>، وتُخاطَب خاناتها تحت ذلك الاسم.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

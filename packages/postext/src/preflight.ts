@@ -27,6 +27,7 @@ import { authoredCmykColors } from './color/authored';
 import { resolvePrintConfig } from './defaults/print';
 import { dimensionToPx } from './units';
 import { findPxSize } from './measure/fontString';
+import { figureLabelLeaderPath } from './composed/labels';
 
 export type PreflightSeverity = 'critical' | 'warning' | 'info';
 
@@ -314,11 +315,26 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
         if (b.kind === 'rule') {
           checkRule(b.thicknessPx, b.color, pageIndex, b.bbox);
         } else if (b.kind === 'box') {
-          if (b.box.borderWidthPx > 0 && b.box.borderColor) checkRule(b.box.borderWidthPx, b.box.borderColor, pageIndex, b.bbox);
+          // A border per side (#1059): each side a rule of its own.
+          const sides = b.box.borderSides;
+          if (sides) {
+            for (const side of [sides.top, sides.right, sides.bottom, sides.left]) if (side && side.widthPx > 0) checkRule(side.widthPx, side.color, pageIndex, b.bbox);
+          } else if (b.box.borderWidthPx > 0 && b.box.borderColor) checkRule(b.box.borderWidthPx, b.box.borderColor, pageIndex, b.bbox);
           if (!isTransparent(b.box.backgroundColor)) {
             checkCoverage(b.box.backgroundColor, pageIndex, b.bbox);
             checkNearTrim(b.bbox);
           }
+        } else if (b.kind === 'path') {
+          // A vector shape (#1055): its outline is a rule of its stroke's
+          // width, its fill and markers inks over its box.
+          if (b.stroke) checkRule(b.stroke.widthPx, b.stroke.color, pageIndex, b.bbox);
+          // A box's border drawn as a fill (#1059) is a rule of its width.
+          if (b.boxPart === 'border' && b.fill && b.borderWidthPx !== undefined) checkRule(b.borderWidthPx, b.fill, pageIndex, b.bbox);
+          else if (b.fill && !isTransparent(b.fill)) {
+            checkCoverage(b.fill, pageIndex, b.bbox);
+            checkNearTrim(b.bbox);
+          }
+          for (const m of b.markers ?? []) if (!isTransparent(m.color)) checkCoverage(m.color, pageIndex, b.bbox);
         } else if (b.kind === 'image') {
           // A cover crop (#923) shows a share of the picture in its box.
           // An upright picture of a vertical flow stands turned in its box:
@@ -379,6 +395,14 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
           checkLines(layout.lines, layout.fontString, layout.color, lsrc, false);
           checkCoverage(layout.halo?.color, pageIndex);
           if (layout.background) checkCoverage(layout.background.color, pageIndex);
+          // A plate's outline and the inks of inline symbols (#1058).
+          checkCoverage(layout.background?.border?.color, pageIndex);
+          for (const line of layout.lines) for (const s of line.segments ?? []) checkCoverage(s.swatch?.icon?.color, pageIndex);
+          // A leader (#1057): a rule to the point.
+          if (layout.leader && !rb.rotation) {
+            const path = figureLabelLeaderPath(layout, block.bbox.x + rb.bodyRect.x, block.bbox.y + rb.bodyRect.y);
+            if (path) checkRule(layout.leader.stroke.widthPx, layout.leader.stroke.color, pageIndex, path.bbox);
+          }
           const r = label.rect;
           if (r && !flowPage && !rb.rotation) {
             const d = Math.min(r.x - trim.x, r.y - trim.y, trim.x + trim.width - (r.x + r.width), trim.y + trim.height - (r.y + r.height));

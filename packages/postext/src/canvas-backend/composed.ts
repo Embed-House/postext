@@ -6,7 +6,7 @@
  * (#861) all of it is clipped to the page's share of the sheet.
  */
 import type { VDTBlock, VDTComicPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
-import { comicFramePaintOrder, composedPaintOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
+import { comicFramePaintOrder, composedPaintOrder, decorationOver, decorationUnder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
 import { renderBlock } from './blockRender';
 import { setVerticalPaint } from './verticalText';
 import { withoutMirroredPaint } from './mirrorFrame';
@@ -45,8 +45,11 @@ export function renderComposedFrames(
     ctx.clip();
   }
   for (const item of composedPaintOrder(page, part)) {
-    if (item.kind === 'decoration') {
-      if (decoration) renderHeaderFooterSlot(ctx, decoration, inkHex);
+    if (item.kind === 'decoration' || item.kind === 'over') {
+      // The decoration at layer 0, and its connectors over the frames
+      // (#1076) after them.
+      const slot = item.kind === 'over' ? decorationOver(decoration) : decorationUnder(decoration);
+      if (slot) renderHeaderFooterSlot(ctx, slot, inkHex);
       continue;
     }
     renderFrameBlocks(ctx, item.frame, item.blocks, inkHex, cjk);
@@ -118,9 +121,11 @@ export function renderComicTextFrames(ctx: CanvasRenderingContext2D, page: VDTPa
 }
 
 /** A composed page's decoration painted on the sheet (a page painted
- *  through a flow frame), clipped to its share of a spread's sheet. */
-export function renderComposedDecoration(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null): void {
-  const decoration = page.composed?.decoration;
+ *  through a flow frame), clipped to its share of a spread's sheet: the
+ *  part under the frames of layer 0 and up, or (`'over'`, #1076) the part
+ *  painted after every frame. */
+export function renderComposedDecoration(ctx: CanvasRenderingContext2D, page: VDTPage, inkHex: string | null, which: 'under' | 'over' = 'under'): void {
+  const decoration = which === 'over' ? decorationOver(page.composed?.decoration) : decorationUnder(page.composed?.decoration);
   if (!decoration) return;
   const sheet = composedSheetClipOnSheet(page);
   if (!sheet) {

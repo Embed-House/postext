@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuración: recuadros',
   sidebarTitle: 'Recuadros',
-  description: 'Los estilos con nombre de los recuadros :::callout (borde, fondo, franja, título, icono, marcador y pestaña de etiqueta), los enunciados numerados, la tipografía dentro del recuadro, los recuadros partidos entre páginas y los diseños dibujados en un recuadro',
+  description: 'Los estilos con nombre de los recuadros :::callout (borde, fondo, franja, título, icono, marcador y pestaña de etiqueta), las formas del recuadro con un radio por esquina, bordes por lado y pestañas unidas, los enunciados numerados, la tipografía dentro del recuadro, los recuadros partidos entre páginas y los diseños dibujados en un recuadro',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '28 min',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ El cristal sigue caliente una hora después de apagar la llama.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
-      <td>Contorno del recuadro, trazado por dentro de su borde, como el de un elemento de caja (véase <a href="/es/docs/configuration-headers-footers#elementos-de-caja">Elementos de caja</a>).</td>
+      <td>Contorno del recuadro, trazado por dentro de su borde, como el de un elemento de caja (véase <a href="/es/docs/configuration-headers-footers#elementos-de-caja">Elementos de caja</a>). Desde postext 1.48, <code>sides</code> da a cada lado (<code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>) su propio <code>&#123; enabled?, color?, width? &#125;</code> por encima de los valores del borde completo: un filete solo sobre el recuadro, un pie más grueso (véase <a href="#esquinas-lados-y-pestañas-unidas">Esquinas, lados y pestañas unidas</a>).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>Radio de las esquinas del fondo / borde (limitado a la mitad del ancho y del alto del recuadro). La franja lo sigue: en un recuadro redondeado se recorta al marco redondeado, como CSS recorta un <code>border-left</code> a <code>border-radius</code>. La pestaña <code>label</code> conserva las esquinas rectas.</td>
+      <td>Radio de las esquinas del fondo / borde (limitado a la mitad del ancho y del alto del recuadro). La franja lo sigue: en un recuadro redondeado se recorta al marco redondeado, como CSS recorta un <code>border-left</code> a <code>border-radius</code>. La pestaña <code>label</code> conserva las esquinas rectas, salvo que esté unida al recuadro. Desde postext 1.48 admite un radio por esquina, y la esquina que no aparece en el objeto queda en ángulo recto: un recuadro redondeado solo en sus dos esquinas superiores.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -196,9 +196,9 @@ El cristal sigue caliente una hora después de apagar la llama.
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
       <td>sin definir (sin pestaña)</td>
-      <td>Una pestaña sobre el borde superior del recuadro que imprime el atributo <code>label</code> del bloque: el número de un recuadro numerado («RECUADRO 1-1»). Se pega a la esquina <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, o <code>'top-start'</code> / <code>'top-end'</code> en la dirección del propio recuadro, como <code>'start'</code> / <code>'end'</code> en la franja) con un retranqueo <code>inset</code>, sobresale <code>offset</code> por encima del borde (ese espacio forma parte del bloque, además de <code>marginTop</code>, y se conserva también en cabeza de columna), mide <code>height</code> de alto con <code>paddingX</code> a cada lado del texto, y puede llevar un recurso <code>icon</code> a su lado (<code>&#123; resourceId, width, gap &#125;</code>, hacia el interior) y un filete <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) a lo largo del borde superior desde la esquina opuesta hasta ella. Por defecto: fuente de encabezados, cuerpo del texto base, <code>700</code>, blanco sobre el color principal, <code>1.4em</code> de alto, <code>0.6em</code> de relleno, sin desplazamiento ni retranqueo, y una imagen de <code>1em</code> de ancho a <code>0.3em</code> del texto. La pestaña es una forma propia apoyada en el marco, así que conserva las esquinas rectas sea cual sea el <code>borderRadius</code> del recuadro. Desde postext 1.42, <code>icon.placement: 'inside'</code> coloca la imagen dentro de la pestaña, al principio y antes de las palabras (en el extremo derecho en un recuadro compuesto de derecha a izquierda), a <code>gap</code> de ellas: la pestaña mide lo que la imagen, el espacio, las palabras y el relleno, y la imagen, ajustada a <code>icon.width</code> y a la altura de la pestaña, queda centrada en ella. La imagen conserva sus colores, así que un anillo blanco sobre una pestaña de color y uno de color sobre una blanca son dos recursos, uno en cada estilo. <code>'beside'</code>, el valor predeterminado, coloca la imagen fuera del borde de la pestaña. Desde postext 1.43, <code>icon.tint: true</code> pinta la imagen con el <code>color</code> de la pestaña en lugar de con sus propios colores: solo se pinta su silueta, en el color de las palabras, así que un mismo anillo sirve para todos los tonos de un libro. Una imagen sin transparencia se convierte en un rectángulo liso. En el PDF un SVG conserva sus bordes y un mapa de bits se recorta por donde es medio transparente; el original de imprenta (<code>svg.pdfFileId</code>) no se usa, porque una página PDF no se puede recolorear.</td>
+      <td>Una pestaña sobre el borde superior del recuadro que imprime el atributo <code>label</code> del bloque: el número de un recuadro numerado («RECUADRO 1-1»). Se pega a la esquina <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, o <code>'top-start'</code> / <code>'top-end'</code> en la dirección del propio recuadro, como <code>'start'</code> / <code>'end'</code> en la franja) con un retranqueo <code>inset</code>, sobresale <code>offset</code> por encima del borde (ese espacio forma parte del bloque, además de <code>marginTop</code>, y se conserva también en cabeza de columna), mide <code>height</code> de alto con <code>paddingX</code> a cada lado del texto, y puede llevar un recurso <code>icon</code> a su lado (<code>&#123; resourceId, width, gap &#125;</code>, hacia el interior) y un filete <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) a lo largo del borde superior desde la esquina opuesta hasta ella. Por defecto: fuente de encabezados, cuerpo del texto base, <code>700</code>, blanco sobre el color principal, <code>1.4em</code> de alto, <code>0.6em</code> de relleno, sin desplazamiento ni retranqueo, y una imagen de <code>1em</code> de ancho a <code>0.3em</code> del texto. La pestaña es una forma propia apoyada en el marco, así que conserva las esquinas rectas sea cual sea el <code>borderRadius</code> del recuadro; con <code>joined: true</code> (desde postext 1.48), en cambio, la pestaña y el recuadro forman un solo contorno, y <code>fillet</code> redondea las esquinas interiores donde se encuentran. Las posiciones <code>bottom-right</code>, <code>bottom-left</code>, <code>bottom-start</code> y <code>bottom-end</code> (desde postext 1.48) cuelgan la pestaña del pie del recuadro, con su <code>rule</code> a lo largo del pie. Desde postext 1.48 el icono también puede ser un carácter de una fuente, <code>icon.kind: 'glyph'</code> (véase <a href="#un-glifo-en-la-pestaña">Un glifo en la pestaña</a>). Desde postext 1.42, <code>icon.placement: 'inside'</code> coloca la imagen dentro de la pestaña, al principio y antes de las palabras (en el extremo derecho en un recuadro compuesto de derecha a izquierda), a <code>gap</code> de ellas: la pestaña mide lo que la imagen, el espacio, las palabras y el relleno, y la imagen, ajustada a <code>icon.width</code> y a la altura de la pestaña, queda centrada en ella. La imagen conserva sus colores, así que un anillo blanco sobre una pestaña de color y uno de color sobre una blanca son dos recursos, uno en cada estilo. <code>'beside'</code>, el valor predeterminado, coloca la imagen fuera del borde de la pestaña. Desde postext 1.43, <code>icon.tint: true</code> pinta la imagen con el <code>color</code> de la pestaña en lugar de con sus propios colores: solo se pinta su silueta, en el color de las palabras, así que un mismo anillo sirve para todos los tonos de un libro. Una imagen sin transparencia se convierte en un rectángulo liso. En el PDF un SVG conserva sus bordes y un mapa de bits se recorta por donde es medio transparente; el original de imprenta (<code>svg.pdfFileId</code>) no se usa, porque una página PDF no se puede recolorear.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ El cristal sigue caliente una hora después de apagar la llama.
     </tr>
   </tbody>
 </table>
+
+### Esquinas, lados y pestañas unidas
+
+Un recuadro no tiene por qué ser un rectángulo con cuatro esquinas iguales y un solo borde. Desde postext 1.48, un estilo puede redondear unas esquinas y otras no, dibujar su borde solo en algunos lados y hacer que la pestaña salga del recuadro como una sola forma: la ficha de un libro de texto cuya pestaña de título y cuyo cuerpo son un único contorno, dibujado por el estilo y no pintado en una imagen detrás de la página.
+
+```ts
+calloutStyles: [
+  // Redondeado solo arriba, con un filete sobre el recuadro y un pie más grueso.
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // Una tarjeta cuya pestaña sale de su borde superior.
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **Esquinas.** `borderRadius` es una medida para las cuatro esquinas, o `{ topLeft, topRight, bottomRight, bottomLeft }`. La esquina que no aparece en el objeto queda en ángulo recto. Las esquinas son las de la hoja. Dos esquinas nunca ocupan más que el lado que las separa; si hace falta, cada una cede en proporción.
+- **Lados.** `border.sides.top`, `right`, `bottom` y `left` admiten `enabled`, `color` y `width`, y cada campo que no se indica es el del borde completo. Un recuadro con borde solo arriba es `border: { enabled: false, sides: { top: { enabled: true } } }`, o `enabled: true` con los otros tres lados desactivados. El borde interior de un lado sigue su grosor, así que una esquina redondeada entre un lado fino y uno grueso se curva como la dibuja CSS.
+- **Pestaña unida.** Con `label.joined: true`, la pestaña y el recuadro tienen un solo contorno, un solo fondo (el `background` del recuadro; el `background` propio de la pestaña no se pinta) y un solo borde que rodea la pestaña. La pestaña se apoya en el borde, fuera del recuadro en toda su altura: su `offset` debe ser `0` (otro valor se notifica como `unknownConfigValue` y se lee como `0`). Sus esquinas exteriores toman el radio de la esquina del recuadro a la que se pega, y `fillet` redondea las esquinas interiores donde se une al recuadro (por defecto, ese mismo radio). Una pestaña a ras del lado del recuadro (con un `inset` de menos de medio píxel) sube en línea recta desde ese lado. Da a las palabras un color que se lea sobre el fondo del recuadro (`label.color`), porque la pestaña ya no tiene fondo propio.
+- **Pestañas al pie.** `position: 'bottom-right'`, `'bottom-left'`, `'bottom-start'` o `'bottom-end'` cuelga la pestaña del pie del recuadro, suelta o unida: es la pestaña superior dada la vuelta, `offset` por debajo del pie y con el `rule` a lo largo del pie. No hay pestañas laterales: las palabras de una pestaña van en horizontal.
+
+Todas las salidas dibujan estas formas: el canvas y el PDF como contornos vectoriales, y el visor HTML y el EPUB de maquetación fija con CSS por esquina y por lado. El EPUB de maquetación fluida escribe las esquinas y los lados en su CSS y compone una pestaña unida como una pestaña normal. El `look.border.color` de un marco cambia el color de todos los lados, y la paleta de una parte cambia el de cada uno. Un estilo cuyas esquinas y lados son todos iguales se maqueta igual que antes.
+
+### Un glifo en la pestaña
+
+`label.icon` puede poner un carácter de una fuente en lugar de una imagen: `kind: 'glyph'` con `glyph: '◉'`. La pestaña no necesita ningún recurso de imagen, y el glifo toma el color de las palabras salvo que fije el suyo, así que un mismo estilo sirve para todos los tonos de un libro. Desde postext 1.48.
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>véase la descripción</td>
+      <td><code>'resource'</code> cuando hay <code>resourceId</code>, <code>'glyph'</code> cuando solo hay <code>glyph</code>. Si se escribe, manda <code>kind</code>: <code>kind: 'glyph'</code> pone el glifo diga lo que diga <code>resourceId</code>.</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>El carácter que hace de icono (<code>'◉'</code>, <code>'★'</code>, <code>'✎'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>number</code></td>
+      <td>los de la etiqueta</td>
+      <td>La letra y el peso del glifo: los propios de la etiqueta o, si no, la fuente de encabezados y <code>700</code>. Si la fuente no tiene el carácter, se sustituye como hace el navegador; el PDF da el aviso <code>missingGlyph</code>.</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>El tamaño del glifo como factor del cuerpo del texto de la pestaña. Con <code>1</code> comparte la línea de base de las palabras; con otros tamaños queda centrado en la pestaña.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el <code>color</code> de la etiqueta</td>
+      <td>El color del glifo. Sin definir, sigue a las palabras, y el <code>look.label.color</code> de un marco cambia el color de los dos.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>, <code>Dimension</code></td>
+      <td><code>'beside'</code>, <code>0.3em</code></td>
+      <td>Como en una imagen: <code>'inside'</code> pone el glifo dentro de la pestaña, antes de las palabras, y la pestaña crece en su ancho y en el espacio; <code>'beside'</code> lo pone fuera del borde de la pestaña. El <code>width</code> y el <code>tint</code> de una imagen no se aplican.</td>
+    </tr>
+  </tbody>
+</table>
+
+El glifo es decoración: un artefacto de maquetación en un PDF etiquetado, oculto para las tecnologías de apoyo en el HTML y omitido en el título del recuadro en el EPUB de maquetación fluida, de modo que la pestaña se lee solo por sus palabras.
 
 ### Estilos basados en otro
 

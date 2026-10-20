@@ -75,17 +75,28 @@ export interface MeasurementResult {
 export function figureLabels(block: Pick<ContentBlock, 'figure'>, bodyOffset = 0): VDTFigureLabel[] | undefined {
   const labels = block.figure?.labels;
   if (!labels || labels.length === 0) return undefined;
-  return labels.map((l) => ({
-    text: l.text,
-    at: 'anchor' in l.at ? { anchor: l.at.anchor } : { x: l.at.x, y: l.at.y },
-    ...(l.style !== undefined ? { style: l.style } : {}),
-    sourceStart: l.textStart + bodyOffset,
-    sourceEnd: l.textEnd + bodyOffset,
-    ...(l.id !== undefined ? { id: l.id } : {}),
-    ...(l.anchorRef !== undefined ? { anchorRef: l.anchorRef } : {}),
-    ...(l.attrSources.at ? { atSource: { start: l.attrSources.at.sourceStart + bodyOffset, end: l.attrSources.at.sourceEnd + bodyOffset } } : {}),
-    ...(l.sourceMap.length === l.text.length ? { sourceMap: l.sourceMap.map((o) => o + bodyOffset) } : {}),
-  }));
+  return labels.map((l) => {
+    // The inline symbols of its text (#1058): where each placeholder is.
+    const icons: { at: number; alt: string }[] = [];
+    let at = 0;
+    for (const s of l.spans) {
+      if (s.swatch?.icon) icons.push({ at, alt: s.swatch.icon.alt });
+      at += s.text.length;
+    }
+    return {
+      text: l.text,
+      ...(icons.length > 0 ? { icons } : {}),
+      at: 'anchor' in l.at ? { anchor: l.at.anchor } : { x: l.at.x, y: l.at.y },
+      ...(l.style !== undefined ? { style: l.style } : {}),
+      ...(l.leader !== undefined ? { leader: l.leader } : {}),
+      sourceStart: l.textStart + bodyOffset,
+      sourceEnd: l.textEnd + bodyOffset,
+      ...(l.id !== undefined ? { id: l.id } : {}),
+      ...(l.anchorRef !== undefined ? { anchorRef: l.anchorRef } : {}),
+      ...(l.attrSources.at ? { atSource: { start: l.attrSources.at.sourceStart + bodyOffset, end: l.attrSources.at.sourceEnd + bodyOffset } } : {}),
+      ...(l.sourceMap.length === l.text.length ? { sourceMap: l.sourceMap.map((o) => o + bodyOffset) } : {}),
+    };
+  });
 }
 
 export function runMeasurement(input: MeasurementInput): MeasurementResult {

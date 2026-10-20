@@ -15,6 +15,7 @@ export type {
   ParseOptions,
   MathMeta,
   InlineSpan,
+  InlineIcon,
   InlineLink,
   TextSpan,
   MathSpan,

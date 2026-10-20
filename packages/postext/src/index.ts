@@ -127,6 +127,14 @@ export type { PlaceholderContext, PlaceholderResult, PlaceholderResolveOptions, 
 export { resolveDesignPlaceholders, allowedPlaceholdersFor, isAllowedPlaceholder, configUsesPlaceholder } from './design/placeholders';
 export type { DesignPlaceholderContext, DesignContextKind, HeadingPlaceholderInfo } from './design/placeholders';
 export { layoutDesignSlot } from './design/layout';
+export { pathMarkerOutline, pathSvgData, markerSvgData, quadToCubic, pathInkBox, pathHit, offsetPathBlock, translatedPathBlock, pathBlockColors, recolorPathBlock } from './design/pathBlock';
+export type { PathMarkerOutline } from './design/pathBlock';
+export { parseSvgPath, arcToCubics } from './design/svgPath';
+export type { SvgPathParse } from './design/svgPath';
+export { facingSide, CONNECTOR_ROUTINGS, CONNECTOR_CAPS, CONNECTOR_SIDES, DEFAULT_CONNECTOR_WIDTH, connectorPaintsOver } from './design/connector';
+export type { ConnectorRect } from './design/connector';
+export { boxOutline, outlineSubpath, borderPieces, shapePathBlocks, boxNeedsShape, boxStyleBorder, boxStyleRadii, boxStylePathBlocks, normalizeBoxStyle, SHAPE_SIDES, isCornerRadii, uniformRadius, cornerRadiiPx, borderSidesPx } from './design/boxShape';
+export type { ShapeSide, ShapeVertex, ShapeOutline, ShapeTab, ShapeBorder } from './design/boxShape';
 export type { DesignSlotLayout, LayoutContext, LayoutIssue, ResolvedPrimitive, ResolvedTextPrimitive, ResolvedRulePrimitive, ResolvedBoxPrimitive, ResolvedImagePrimitive, WrappedLine, DesignFrames } from './design/layout';
 export { classifyPages } from './pipeline/pageRoles';
 export { migrateLegacyHeaderFooterConfig, isLegacyHeaderFooterSlot, resolveDesignSlot, stripDesignSlotDefaults, defaultTextOverflow, DEFAULT_BOX_ELEMENT } from './defaults/headerFooter';
@@ -157,6 +165,8 @@ export type {
   ResolvedTocGroupsConfig,
   DesignImageElement,
   ResolvedDesignImageElement,
+  DesignPathElement,
+  ResolvedDesignPathElement,
   HeadingCounters,
   ResourceNumberEntry,
   DocumentMetadata,
@@ -322,6 +332,8 @@ export type {
   CalloutIconPosition,
   CalloutIconCornerSide,
   CalloutLabelConfig,
+  CalloutLabelIconConfig,
+  CalloutLabelIconKind,
   CalloutTextTransform,
   CalloutMarkerTextAlign,
   CalloutBorderConfig,
@@ -476,7 +488,12 @@ export type {
   ElementPlacement,
   ElementSize,
   ElementSizeTo,
+  SidePosition,
   ElementBoxStyle,
+  CornerRadius,
+  BorderSide,
+  BorderSides,
+  BoxSideName,
   TextOverflow,
   DesignTextStroke,
   TextDotsStyle,
@@ -484,6 +501,13 @@ export type {
   DesignTextElement,
   DesignRuleElement,
   DesignBoxElement,
+  DesignConnectorElement,
+  ConnectorEnd,
+  LineCap,
+  LeaderStyle,
+  PlacedDesignElement,
+  ResolvedPlacedDesignElement,
+  ResolvedDesignConnectorElement,
   DesignElement,
   DesignSlot,
   ResolvedDesignTextElement,
@@ -505,6 +529,7 @@ export type {
   ResolvedConfig,
   VDTBlockType,
   VDTLineSegment,
+  VDTInlineIcon,
   VDTSegmentMarks,
   VDTAnnotationRun,
   VDTRuby,
@@ -542,6 +567,10 @@ export type {
   VDTDesignRuleBlock,
   VDTDesignBoxBlock,
   VDTDesignImageBlock,
+  VDTDesignPathBlock,
+  VDTPathCommand,
+  VDTPathStroke,
+  VDTPathMarker,
   VDTDesignBoxStyle,
   ResolvedResourceBlock,
   VDTResourceVideo,
@@ -582,9 +611,12 @@ export type {
   VDTFrame,
   VDTFigureLabel,
   VDTFigureLabelLayout,
+  VDTFigureLabelLeader,
   ReflowEvent,
   ReflowEventKind,
   FrameOverflowProposal,
+  FrameCoverProposal,
+  FrameOutsideProposal,
   FrameFitStep,
   VDTStripCaption,
   VDTDropCap,
@@ -610,7 +642,7 @@ export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions,
 export { computeColumnEdges } from './pipeline/resourceLayout';
 export { findAnnotations } from './parse/annotations';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations';
-export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
+export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
 export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, spaceDirectiveLines, MAX_SPACE_LINES } from './parse';
 // Composed pages in the document (#854): each `::::page` fence's content by
 // slot, and the slot checks the content warnings run.
@@ -630,17 +662,27 @@ export { parseChineseNumeral } from './chineseNumerals';
 export {
   DEFAULT_FRAME, DEFAULT_FRAME_FIT, DEFAULT_FRAME_GROUP, DEFAULT_PAGE_TEMPLATE, DEFAULT_LABEL_STYLE,
   resolvePageTemplate, normalizeFrame, normalizeFrameSize, templateChain, resolveLabelStyles,
-  stripPageTemplatesDefaults, stripLabelStylesDefaults,
+  stripPageTemplatesDefaults, stripLabelStylesDefaults, isModuleTemplate,
 } from './composed/templates';
+// Modules (#1062): templates a page stacks in its modules group.
+export { expandModules, moduleScoped } from './composed/modules';
 export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';
 // Composed pages laid out (#855): the frames of a page and how backends paint them.
-export { altWithLabels, labelPlainText } from './composed/labelText';
+export { altWithLabels, labelPlainText, withIconAlts } from './composed/labelText';
+// Inline symbols in labels and captions (#1058): their boxes and what the painters need.
+export { ICON_CAP_EM, iconLineDash, inlineIconBox, measureInlineIcon, resourceBlockIcons } from './measure/inlineIcon';
 export {
   figureLabelBounds,
+  figureLabelLeaderPath,
+  figureLabelLeaderPaths,
+  figureAnchorPointOnPage,
   figureLabelMatrix,
   figureLabelReading,
+  figureLabelLineReading,
+  hangLegendSymbols,
+  labelPlateBox,
   labelGlyphAt,
   labelPlace,
   layOutFigureLabels,
@@ -652,7 +694,7 @@ export {
   type LabelLook,
   type LabelMatrix,
 } from './composed/labels';
-export { comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameMatrix, framePageRect, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
+export { comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, paintsOverFrames, frameMatrix, framePageRect, frameClips, frameBounds, frameContentRect, frameOfBlock } from './composed/paint';
 // The boxes of a template's frames before content is poured (#863: Sandbox thumbnails and editor).
 export { templateFrameRects } from './composed/geometry';
 export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';
@@ -660,7 +702,7 @@ export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';
 // layout changed from the template's drawing, in data and in words.
 export { layoutGroup, composedOrder } from './composed/groups';
 export type { GroupItem, GroupLayoutInput, ComposedStep } from './composed/groups';
-export { composedReflowLog, describeReflowEvent, describeFitStep, describeFrameOverflowProposal, reflowEvents } from './composed/reflowLog';
+export { composedReflowLog, describeReflowEvent, describeFitStep, describeFrameOverflowProposal, describeFrameCoverProposal, describeFrameOutsideProposal, reflowEvents } from './composed/reflowLog';
 export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
 // Where a template's frames stand (#855), for hosts that draw a template
 // without laying a page out (the Sandbox's template thumbnails, #864).
@@ -675,7 +717,7 @@ export { composedPagePaintKey } from './composed/pageMemo';
 // A story that jumps into a page of a later chapter (#943).
 export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carryTypes';
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,

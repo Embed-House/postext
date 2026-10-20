@@ -15,7 +15,7 @@ import { setVerticalPaint } from './verticalText';
 import { beginMirroredFlow } from './mirrorFrame';
 import { renderComicBalloons, renderComicPage, renderComicPanels } from './comic';
 import { renderComicTextFrames, renderComposedDecoration, renderComposedFrames } from './composed';
-import { comicHoldsText, comicPaintsUnderText, composedFrameBlockIds } from '../composed/paint';
+import { comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, paintsOverFrames } from '../composed/paint';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
 import { resetContextState, restoreContext, saveContext } from './contextState';
@@ -344,6 +344,12 @@ function paintContext(
     renderComposedDecoration(ctx, page, inkHex);
     enterFlow();
     renderComposedFrames(ctx, page, inkHex, undefined, 'above', frameCjk);
+    // Connectors painted over the frames (#1076), on the sheet too.
+    if (page.composed.decoration?.blocks.some(paintsOverFrames)) {
+      leaveFlow();
+      renderComposedDecoration(ctx, page, inkHex, 'over');
+      enterFlow();
+    }
   } else if (page.composed) renderComposedFrames(ctx, page, inkHex, page.composed.decoration, undefined, frameCjk);
   if (comicUnder) renderComicTextFrames(ctx, page, inkHex);
   renderFootnoteRules(ctx, page);

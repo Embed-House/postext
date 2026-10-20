@@ -107,6 +107,9 @@ export type DirectiveName = 'pagebreak' | 'numbering' | 'columnbreak' | 'space' 
  *  between are parsed as usual and bracketed by a `containerStart` /
  *  `containerEnd` marker pair sharing a `containerId`. */
 export type ContainerName = 'callout' | 'paragraphs' | 'part' | 'columns' | 'paper' | 'frame'
+  /** A module of a composed page (#1062): `:::module{template="…"
+   *  name="…"}` … `:::` inside a page fence (see {@link ComposedModuleFence}). */
+  | 'module'
   /** A composed page (#854): `::::page{template=…}` … `::::`, four or
    *  more colons (see {@link ComposedPageFence}). Not in
    *  `KNOWN_CONTAINERS`: a three-colon `:::page` is a comic page. */
@@ -136,6 +139,31 @@ export interface ComposedPageFence {
   fenceIndex: number;
   /** How many colons open (and close) the page: 4 or more. */
   colons: number;
+  /** The page's `:::module` blocks (#1062), in Markdown order, a module
+   *  inside a module left out. */
+  modules?: ComposedModuleFence[];
+}
+
+/** A `:::module{template="…" name="…"}` block of a composed page (#1062,
+ *  DESIGN §12.7), on its `containerStart`. The slots its blocks name are
+ *  the module's: their `slot.name` is scoped by the instance name
+ *  (`<name>.<slot>`), the source range still the value as written. */
+export interface ComposedModuleFence extends SourceRange {
+  /** The `template` attribute as written (`''` when missing). */
+  template: string;
+  /** The instance name: `name` as written, else `<template>[n]`, `n` the
+   *  module's ordinal among the page's modules of that template (1-based).
+   *  `''` for a module inside a module. */
+  name: string;
+  /** The `name` asked for, when the module could not take it (`taken`: an
+   *  earlier module of the page has it; `invalid`: it holds a space, `.`,
+   *  `#`, `[` or `]`). */
+  rejected?: { name: string; reason: 'taken' | 'invalid' };
+  /** A module written inside another module: not laid as a module
+   *  (`moduleNested`); its blocks are the outer module's. */
+  nested?: true;
+  /** Absolute source range of each attribute's value. */
+  attrSources: Record<string, SourceRange>;
 }
 
 /** The `slot="…"` a block names (#854, DESIGN §3.2): a heading's
@@ -244,6 +272,33 @@ export interface InlineLink {
   mark?: { style: string; id: number };
 }
 
+/** An inline symbol (`:icon[alt]{…}`, #1058, DESIGN §12.5), read in the
+ *  text of figure labels and of captions and notes: a small picture (a
+ *  bitmap or SVG resource), a glyph set in a face of its own, or a sample
+ *  of a line (solid, dashed, dotted), the key of a map's legend. Exactly
+ *  one of `resource`, `glyph` and `line` is set (the first of them
+ *  written, in that order). */
+export interface InlineIcon {
+  /** The bracketed text: what the symbol stands for, read in its place
+   *  (alternative text, the tagged PDF). May be empty. */
+  alt: string;
+  /** The id of a bitmap or SVG resource, fitted to the icon's height. */
+  resource?: string;
+  /** One or a few characters, set in `font` (default: the text's face). */
+  glyph?: string;
+  /** A font family for `glyph`. */
+  font?: string;
+  /** A stroke drawn across the icon's box at half its height. */
+  line?: 'solid' | 'dashed' | 'dotted';
+  /** The icon's height in ems of the text around it; default the height of
+   *  a capital (0.75 em, as a swatch's side). A glyph is set at the size
+   *  whose capitals are that high. */
+  size?: number;
+  /** Set by the pipeline for a `resource` icon: the picture to draw and
+   *  its width over its height. Absent when the resource is unknown. */
+  picture?: { fileId: string; format?: string; svg: boolean; aspect: number };
+}
+
 export interface InlineSpan {
   text: string;
   bold: boolean;
@@ -318,6 +373,11 @@ export interface InlineSpan {
    *  empty outline. */
   swatch?: {
     color: string;
+    /** Set when the span is an inline symbol (`:icon[alt]{…}`, #1058)
+     *  rather than a colour swatch: it rides the swatch's placeholder, so
+     *  every pass that keeps a swatch whole keeps it whole. `color` is then
+     *  the icon's tint as written (`''` when it has none). */
+    icon?: InlineIcon;
   };
   /** Present when this span is an inline chip (`:chip[text]{style="…"}`):
    *  a boxed run of text set as one unbreakable unit. The `text` is a single
@@ -911,8 +971,12 @@ export interface ContentBlock {
   /** For the `containerStart` of a composed page (`containerName:
    *  'composedPage'`, #854): its fence. */
   composedPage?: ComposedPageFence;
+  /** For the `containerStart` of a `:::module` inside a composed page
+   *  (#1062): the module. */
+  module?: ComposedModuleFence;
   /** The slot the block names (#854): where a composed page pours it.
-   *  Absent when it names none (it goes to the template's flow frame). */
+   *  Absent when it names none (it goes to the template's flow frame).
+   *  Inside a `:::module` (#1062) its `name` is `<module>.<slot>`. */
   slot?: BlockSlot;
   /** For `containerStart` / `containerEnd` marker blocks: the container
    *  name (`'callout'`, `'paragraphs'`, `'part'`). */

@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Riga di comando',
   description: 'Un unico eseguibile autonomo per macOS, Linux e Windows. Trasforma un libro .postext, una cartella di libro o file Markdown sparsi in PDF, HTML, EPUB, immagini delle pagine e Word; crea pacchetti, controlla i libri e fornisce un output JSON per script e agenti',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
-  order: 45,
+  order: 46,
   plainSummary: "Questa pagina è per chi vuole fare libri con Postext da un terminale invece che dal sito. Scarichi un solo file per il tuo computer e lo esegui, senza installare nulla. Gli dai il tuo libro, o qualche file di testo, e il programma produce un PDF, una pagina web, un e-book, immagini delle pagine o un documento Word. Può anche cercare problemi in un libro e riunire i suoi file in uno solo. Lo possono usare anche i programmi e gli assistenti di intelligenza artificiale, perché sa rispondere in un formato che leggono facilmente.",
 };
 
@@ -308,7 +308,7 @@ titolo, testatina o grafica di parte, con il percorso di ogni testo:
 sposta quel testo nel Markdown, oppure aggiungi un titolo o il nome
 dell’editore a `checks.contentInConfig.allow`.
 
-In un libro con modelli di pagina, `check` segnala anche il testo che non entra nella sua cornice (`frameOverflow`, con i passi provati dalla scala di reimpaginazione e le modifiche che lo farebbero entrare), un flusso di testo che supera le pagine che una cornice può aggiungere (`frameContinuationLimit`), un salto verso una pagina che non viene dopo (`continueTargetMissing`) e le etichette di figura che non si possono disegnare o che si sovrappongono (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Dopo gli avvisi stampa una riga `reflow` per ogni pagina composta con eventi, e `--json` include come dati i passi, le proposte e il registro di reimpaginazione. Vedi [Pagine composte › Avvisi](/it/docs/composed-pages#avvisi) e [Registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
+In un libro con modelli di pagina, `check` segnala anche il testo che non entra nella sua cornice (`frameOverflow`, con i passi provati dalla scala di reimpaginazione e le modifiche che lo farebbero entrare), un flusso di testo che supera le pagine che una cornice può aggiungere (`frameContinuationLimit`), un salto verso una pagina che non viene dopo (`continueTargetMissing`), le etichette di figura che non si possono disegnare o che si sovrappongono (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`), le cornici nascoste sotto altre cornici o che escono dal loro bordo (`frameCovered`, `frameOutsideArea`), più schede di quante ne contiene una griglia (`repeatOverflow`) e i moduli che una pagina non può disporre (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`). Dopo gli avvisi stampa una riga `reflow` per ogni pagina composta con eventi, e `--json` include come dati i passi, le proposte e il registro di reimpaginazione. Vedi [Pagine composte › Avvisi](/it/docs/composed-pages#avvisi) e [Registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione).
 
 ### build e --watch
 

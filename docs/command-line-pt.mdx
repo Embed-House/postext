@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Linha de comando',
   description: 'Um único executável autossuficiente para macOS, Linux e Windows. Ele transforma um livro .postext, uma pasta de livro ou arquivos Markdown soltos em PDF, HTML, EPUB, imagens das páginas e Word, monta pacotes, verifica livros e oferece saída JSON para scripts e agentes',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
-  order: 45,
+  order: 46,
   plainSummary: "Esta página é para quem quer fazer livros com o Postext a partir de um terminal, sem usar o site. Você baixa um único arquivo feito para o seu computador e o executa, sem instalar mais nada. Você entrega a ele o livro, ou alguns arquivos de texto, e ele faz um PDF, uma página da web, um livro digital, imagens das páginas ou um documento do Word. Ele também verifica se o livro tem problemas e junta todos os arquivos do livro em um só. Programas e assistentes de inteligência artificial também podem usá-lo, porque ele responde em um formato que esses programas leem com facilidade.",
 };
 
@@ -314,7 +314,7 @@ ou design de parte, com o caminho de cada texto: leve esse texto para o
 Markdown, ou acrescente o título ou o nome da editora a
 `checks.contentInConfig.allow`.
 
-Em um livro com modelos de página, o `check` aponta também o texto que não cabe no bloco (`frameOverflow`, com os passos que a escada de ajuste tentou e as mudanças que o fariam caber), um texto que ultrapassa as páginas que um bloco pode acrescentar (`frameContinuationLimit`), um salto para uma página que não vem depois (`continueTargetMissing`) e os rótulos de figura que não podem ser desenhados ou que se sobrepõem (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Depois dos avisos, imprime uma linha `reflow` por página composta com eventos, e o `--json` traz os passos, as propostas e o registro de reajustes como dados. Veja [Páginas compostas › Avisos](/pt/docs/composed-pages#avisos) e [Registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
+Em um livro com modelos de página, o `check` aponta também o texto que não cabe no bloco (`frameOverflow`, com os passos que a escada de ajuste tentou e as mudanças que o fariam caber), um texto que ultrapassa as páginas que um bloco pode acrescentar (`frameContinuationLimit`), um salto para uma página que não vem depois (`continueTargetMissing`) os rótulos de figura que não podem ser desenhados ou que se sobrepõem (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`), os blocos escondidos sob outros blocos ou que passam do seu limite (`frameCovered`, `frameOutsideArea`), mais cartões do que uma grade comporta (`repeatOverflow`) e os módulos que uma página não consegue diagramar (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`). Depois dos avisos, imprime uma linha `reflow` por página composta com eventos, e o `--json` traz os passos, as propostas e o registro de reajustes como dados. Veja [Páginas compostas › Avisos](/pt/docs/composed-pages#avisos) e [Registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes).
 
 ### build e --watch
 

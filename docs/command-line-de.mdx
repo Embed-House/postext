@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'Kommandozeile',
   description: 'Eine eigenständige ausführbare Datei für macOS, Linux und Windows. Sie wandelt ein .postext-Buch, einen Buchordner oder lose Markdown-Dateien in PDF, HTML, EPUB, Seitenbilder und Word um, packt Pakete, prüft Bücher und liefert JSON-Ausgabe für Skripte und Agenten',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '12 min',
-  order: 45,
+  order: 46,
   plainSummary: "Diese Seite richtet sich an alle, die Bücher mit Postext im Terminal statt auf der Website machen wollen. Sie laden eine einzige Datei für Ihren Computer herunter und führen sie aus, ohne etwas zu installieren. Sie geben ihr Ihr Buch oder ein paar Textdateien, und sie erzeugt ein PDF, eine Webseite, ein E-Book, Bilder der Seiten oder ein Word-Dokument. Sie kann ein Buch auch auf Probleme prüfen und seine Dateien zu einer einzigen packen. Auch Programme und KI-Assistenten können sie nutzen, denn sie kann in einem Format antworten, das diese leicht lesen.",
 };
 
@@ -307,7 +307,7 @@ Buches statt Platzhaltern enthalten (`contentInConfig`), einmal je
 Textes: Verschieben Sie diesen Text ins Markdown oder tragen Sie Titel oder
 Verlagsnamen in `checks.contentInConfig.allow` ein.
 
-Bei einem Buch mit Seitenvorlagen meldet `check` außerdem Text, der nicht in seinen Rahmen passt (`frameOverflow`, mit den Einpassstufen, die versucht wurden, und den Änderungen, die das Problem beheben würden), einen Artikel, der über die Seiten hinausläuft, die ein Rahmen anfügen darf (`frameContinuationLimit`), einen Sprung auf eine Seite, die nicht folgt (`continueTargetMissing`), und Beschriftungen von Abbildungen, die sich nicht zeichnen lassen oder sich überschneiden (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Nach den Warnungen gibt es pro zusammengesetzter Seite mit Ereignissen eine `reflow`-Zeile aus, und `--json` liefert die Schritte, die Vorschläge und das Umbruchprotokoll als Daten. Siehe [Zusammengesetzte Seiten › Warnungen](/de/docs/composed-pages#warnungen) und [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll).
+Bei einem Buch mit Seitenvorlagen meldet `check` außerdem Text, der nicht in seinen Rahmen passt (`frameOverflow`, mit den Einpassstufen, die versucht wurden, und den Änderungen, die das Problem beheben würden), einen Artikel, der über die Seiten hinausläuft, die ein Rahmen anfügen darf (`frameContinuationLimit`), einen Sprung auf eine Seite, die nicht folgt (`continueTargetMissing`), Beschriftungen von Abbildungen, die sich nicht zeichnen lassen oder sich überschneiden (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`), Rahmen, die unter anderen Rahmen verborgen liegen oder über ihre Kante hinausragen (`frameCovered`, `frameOutsideArea`), mehr Karten, als ein Raster fasst (`repeatOverflow`), und Module, die eine Seite nicht setzen kann (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`). Nach den Warnungen gibt es pro zusammengesetzter Seite mit Ereignissen eine `reflow`-Zeile aus, und `--json` liefert die Schritte, die Vorschläge und das Umbruchprotokoll als Daten. Siehe [Zusammengesetzte Seiten › Warnungen](/de/docs/composed-pages#warnungen) und [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll).
 
 ### build und --watch
 

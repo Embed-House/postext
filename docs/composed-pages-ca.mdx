@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Pàgines compostes',
   sidebarTitle: 'Pàgines compostes',
-  description: 'Com s’escriu una pàgina composta en Markdown: el bloc de pàgina, delimitat per quatre signes de dos punts, que indica quina plantilla fa servir; els marcs i l’atribut slot, que reparteixen el contingut entre els marcs de la plantilla; les figures amb rètols sobre punts concrets d’una imatge, i els avisos que surten quan el contingut no lliga amb la plantilla',
+  description: 'Com s’escriu una pàgina composta en Markdown: el bloc de pàgina, delimitat per quatre signes de dos punts, que indica quina plantilla fa servir; els marcs i l’atribut slot, que reparteixen el contingut entre els marcs de la plantilla; les ranures repetides i els mòduls, i els avisos que surten quan el contingut no lliga amb la plantilla o tapa un altre marc',
   lang: 'ca',
-  lastUpdated: '2026-10-17',
-  readingTime: '9 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '46 min',
   order: 34,
-  plainSummary: "Algunes pàgines no són una columna de text corregut, sinó un conjunt de caixes, com la pàgina d'un llibre de text escolar amb una banda per al títol, un text i tres caixes de colors amb fotos. Postext en diu pàgines compostes. La forma de la pàgina la dona una plantilla de la configuració, i el Markdown només indica quin tros de text va a cada caixa. Aquesta pàgina explica com s'escriu aquest Markdown: el bloc de pàgina, els marcs, els noms de les ranures i les imatges amb rètols, com els noms d'un mapa. També recull els avisos que dona Postext quan el text i la plantilla no lliguen.",
+  plainSummary: "Algunes pàgines no són una columna de text corregut, sinó un conjunt de caixes, com la pàgina d'un llibre de text escolar amb una banda per al títol, un text i tres caixes de colors amb fotos. Postext en diu pàgines compostes. La forma de la pàgina la dona una plantilla de la configuració, i el Markdown només indica quin tros de text va a cada caixa. Aquesta pàgina explica com s'escriu aquest Markdown: el bloc de pàgina, els marcs, els noms de les ranures, les targetes repetides en una graella i els blocs apilats com a mòduls. També recull els avisos que dona Postext quan el text i la plantilla no lliguen.",
 };
 
 # Pàgines compostes
@@ -90,7 +90,7 @@ Un bloc solt també pot indicar la seva ranura:
 
 Com es reparteix el contingut:
 
-- Diversos trossos amb la mateixa ranura s'ajunten en l'ordre del Markdown.
+- Diversos trossos amb la mateixa ranura s'ajunten en l'ordre del Markdown, excepte en una graella que es repeteix, on cada tros és una targeta pròpia (vegeu [Ranures repetides](#ranures-repetides)).
 - El contingut sense ranura va al **marc de flux** de la plantilla (el que té `flow`).
 - Un encapçalament sense ranura va primer al marc que rep el seu nivell (`takes: "h1"`), si la plantilla en té cap, així que el títol d'un tema d'un llibre de text és un simple `# Títol` al capdamunt de la pàgina.
 - Un `:::toc` sense ranura va al marc amb `takes: "toc"`, si la plantilla en té cap (vegeu *L'índex general en un marc*, més avall).
@@ -98,74 +98,72 @@ Com es reparteix el contingut:
 
 Fora d'una pàgina composta, Postext llegeix l'atribut `slot`, però no té cap efecte.
 
-## Figures amb rètols
+### Ranures repetides
+
+Quan la plantilla dibuixa una targeta una sola vegada i la col·loca en una graella tantes vegades com necessita la pàgina (un grup amb `repeat`, vegeu [Configuració › Graelles que repeteixen un joc de marcs](/ca/docs/configuration-composed-pages#graelles-que-repeteixen-un-joc-de-marcs)), cada `:::frame` que indica la ranura principal de la targeta és una targeta, en l'ordre en què s'escriuen:
 
 ```md
-:::figure{resource="mapa-europa" slot="mapa"}
-::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
-::label[**Madrid**]{at="madrid"}
-::label[Mar Negro]{at="62% 48%"}
+::::page{template="fotos"}
+# Animals del riu
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+El bernat pescaire
 :::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+La llúdriga
+:::
+:::
+::::
 ```
 
-`:::figure{resource="…"}` col·loca un recurs, amb el peu i el número, com fa `::resource`, i enumera els rètols que van sobre la imatge: una línia `::label[TEXT]{…}` per rètol, amb línies en blanc entremig si es vol.
+- **Membres de la targeta.** Dins del tros de la targeta, un bloc o un `:::frame` que indica un altre marc del joc (aquí `pie`, la píndola del peu) va a aquell marc de la mateixa targeta. Tota la resta va al marc principal de la targeta.
+- **Un bloc, una targeta.** Un `::resource{id="…" slot="foto"}` sol, fora de qualsevol contenidor, també és una targeta.
+- **Noms.** Les targetes es numeren a partir d'1: els marcs de la segona targeta són `foto[2]` i `pie[2]`, i així apareixen als avisos, al registre de reajustament i al Sandbox.
+- **Quantes.** La pàgina té tantes targetes com trossos. Una edició en castellà amb cinc animals i una en anglès amb quatre fan servir la mateixa plantilla. Una graella amb `repeat.max` n'admet aquest nombre; cada tros de més genera `repeatOverflow` i va al marc de flux.
 
-- `at` indica una àncora del recurs (un punt amb nom que es defineix una sola vegada sobre la imatge i que comparteixen totes les llengües), o bé un punt en percentatges de la imatge, `at="x% y%"`, per a un rètol sense àncora.
-- `style` indica un estil de rètol i té prioritat sobre el de l'àncora.
-- El text entre claudàtors és Markdown en línia: negreta, cursiva, xips.
+Un marc del joc només es dona com a `slotEmpty` quan cap targeta de la pàgina no l'omple. Un marc repetit no rep mai cap encapçalament i no és mai el marc de flux.
 
-Una figura funciona tant al text corregut com dins d'un marc. Els rètols es dibuixen sobre la imatge com a text i van allà on vagi la figura: una columna, un flotant, un marc girat o amb el contingut reduït perquè hi càpiga, una doble pàgina. Si dins d'una figura hi ha una línia que no és ni un rètol ni una línia en blanc, la figura s'acaba en aquell punt perquè li falta el `:::` de tancament, i Postext en dona un avís de contenidor sense tancar.
+### Mòduls en una pàgina
 
-### Les paraules pròpies d'una figura
-
-El recurs guarda una imatge, les seves àncores i un sol joc de textos, però cada edició d'un llibre té els seus. La mateixa figura pot indicar l'`alt`, el `caption` i el `note`, a la línia d'obertura o en línies pròpies, i aquests textos substitueixen els del recurs a les pàgines d'aquell fitxer:
+Una plantilla de pàgina amb un grup de mòduls (`modules: true`, vegeu [Configuració › Mòduls](/ca/docs/configuration-composed-pages#mòduls)) pren els blocs dels contenidors `:::module`, col·locats l'un sota l'altre en l'ordre en què s'escriuen. La plantilla del mòdul dibuixa el bloc; el contenidor en guarda les paraules:
 
 ```md
-:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
-::caption[Relieve de **Varenia**, con sus tres cordilleras]
-::note[Fuente: levantamiento de 1932]
-::label[Mar de Sal]{at="mar"}
+::::page{template="tema"}
+# El riu
+
+:::module{template="caja"}
+:::frame{slot="texto" label="Ho sabies?"}
+Un riu neix a les muntanyes, on la pluja i la neu s'ajunten en rierols.
 :::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+El riu
+:::
+:::frame{slot="izq"}
+L'aigua que porta
+:::
+:::frame{slot="der"}
+La vida a les ribes
+:::
+:::
+::::
 ```
 
-- Com a atributs de la línia d'obertura, `alt`, `caption` i `note` porten un text breu entre cometes. Les línies `::alt[…]`, `::caption[…]` i `::note[…]` porten el text entre claudàtors, que pot tenir Markdown en línia i `\\` per a un salt de línia, com el peu i la nota d'un recurs. Una línia té prioritat sobre l'atribut del mateix nom; les línies van entre els rètols, amb línies en blanc si es vol.
-- El que la figura no indica es queda com al recurs. Un text buit no indica res: `caption=""` treu el peu i `alt=""` marca la imatge com a decorativa.
-- Els textos substitueixen els del recurs al capítol on s'escriuen: la composició, el text alternatiu de totes les sortides i el PDF etiquetat els fan servir, però el recurs mateix no canvia. Dins d'un capítol, un recurs només té un joc de textos, el de la primera figura: si una figura posterior del mateix recurs indica uns altres textos, no es mostren, i Postext en dona un avís (`figureWordsShared`). Una còpia reduïda que necessiti un peu propi ha de fer servir un segon recurs que apunti al mateix fitxer d'imatge. A diferència d'un rètol, el peu no es relaciona caràcter per caràcter amb el Markdown; `sourceAt` respon a un clic sobre el peu igual que amb el peu d'un recurs.
-
-### Com es compon un rètol
-
-- **On.** Un rètol es col·loca al punt de la seva àncora, una fracció de la imatge sencera, de manera que si la imatge es retalla a la zona segura o es compon més petita, el rètol es mou amb el dibuix. L'`align` de l'àncora indica quin costat del rètol queda sobre el punt, i `verticalAlign`, quina vora queda a la seva altura. `start` i `end` segueixen la direcció del mateix rètol: en àrab, `start` és la vora dreta. `rotate` gira el rètol al voltant del punt, en el sentit de les agulles del rellotge i amb qualsevol angle: un riu al llarg del seu curs, una serralada en diagonal.
-- **Aspecte.** L'`style` del rètol, o si no en té, el de l'àncora, indica un estil de rètol (vegeu Configuració › Pàgines compostes); sense estil, el rètol agafa la lletra del text corregut. L'halo traça el contorn de les lletres per sota del farciment; la placa (`background`) omple la caixa que envolta el text, eixamplada amb `padding`.
-- **Ajust.** Si l'àncora té `width`, el rètol es talla entre paraules dins d'aquesta amplada, mai dins d'una paraula. Quan una paraula és més ampla que aquesta amplada, tot el rètol es compon més petit, fins al `minScale` del seu estil; si tot i així no hi cap, es dibuixa amb la paraula més ampla tallada. Sense `width`, el rètol ocupa una sola línia, excepte on es talla amb `\\`, com en un peu.
-- **Text.** El text entre claudàtors és Markdown en línia i es compon com un peu: negreta, cursiva, xips, marques de ressaltat, referències i fórmules en línia. Un nom de diverses paraules és un sol rètol, sigui quin sigui l'ordre de les paraules en cada llengua: `::label[OCEÀ ATLÀNTIC]` i `::label[ATLANTIC OCEAN]` van a la mateixa àncora. Els rètols de dreta a esquerra es componen de dreta a esquerra, i els xinesos i japonesos es tallen entre caràcters.
-- **Sortides.** El canvas, el PDF, el visor HTML, l'EPUB de maquetació fixa i Folio dibuixen els rètols. En una pàgina de dreta a esquerra, el rètol es queda allà on la imatge el mostra.
-- **Vertical.** Amb `writingMode: 'vertical-rl'` a l'àncora (o al seu estil de rètol), el rètol es compon com una pàgina vertical: els caràcters drets, en cel·les l'una sota l'altra, les columnes de dreta a esquerra, les paraules llatines i els números llargs girats de costat, i els números curts en una sola cel·la. Llavors `width` és una fracció de l'alçada de la imatge, la llargada d'una columna, i un rètol xinès o japonès es reparteix en més columnes. `align` actua al llarg de la columna (`start` n'és l'extrem superior); `verticalAlign`, a través de les columnes (`top` és la primera, la de la dreta), i `rotate` continua girant el rètol. A la pàgina en mirall d'un llibre de dreta a esquerra es llegeix igual, columnes avall i amb els caràcters drets, al mateix lloc de la imatge (des de postext 1.40).
-- **Revisions.** Si un rètol continua sent més ample que la seva amplada amb el `minScale` del seu estil, genera l'avís `labelOverflow`; si les línies de dos rètols es toquen, el posterior genera l'avís `labelOverlap`. Totes dues coses es revisen en cada edició, de manera que una traducció amb paraules més llargues mostra on necessita més espai. La paleta d'una part (`:::part{palette="…"}`) canvia el color dels rètols de les seves pàgines igual que fa amb els peus. La revisió de contrast llegeix un rètol sobre la seva placa o, si no en té, dins de l'halo; el rètol sense res al darrere sobre la imatge s'omet, perquè el fons és la imatge. La revisió d'impressió té en compte la lletra petita del rètol en colors de procés, les tintes i la distància al tall.
-- **En una doble pàgina.** Una figura que travessa el llom d'una doble pàgina (un marc amb `crossGutter: true`) en pinta una meitat a cada pàgina, de manera que un rètol amb la caixa dins de la banda del llom quedaria tallat pel plec i no es llegiria a cap de les dues. El rètol es desplaça dins del seu full fins a la vora de la banda, del costat on és el punt de l'àncora, i en conserva l'alçada; un punt just sobre el llom queda a la primera pàgina, com un marc. Una àncora amb `gutter: 'cross'` conserva la posició, per a un títol que s'estén per les dues pàgines. Les vores exteriors del full no es toquen: un rètol que sobrepassa el tall es talla igual que la imatge. Des de postext 1.43.
-
-### labelAnchorUnknown
-
-Un `::label` indica amb `at` una àncora que el recurs de la figura no té. El rètol no es dibuixa; l'EPUB adaptable el continua llistant i el text alternatiu de la imatge l'inclou. L'avís indica el recurs, l'àncora, les àncores que té el recurs (`known`), la llengua, la pàgina i l'interval del text del rètol al text font. Corregeix l'id de l'àncora, afegeix l'àncora al recurs o col·loca el rètol amb `at="x% y%"`.
-
-Al tauler Revisió del Sandbox, l'avís porta al rètol al tauler Text, i el botó de l'agulla obre les àncores de la imatge amb aquest nom a punt per col·locar: un clic a la imatge afegeix l'àncora.
-
-### anchorUnlabelled
-
-Una àncora del recurs de la figura té un estil de rètol, però cap `::label` de la figura no hi va en aquesta llengua: el mapa té lloc per a una paraula que aquesta edició no posa. És una nota informativa; `postext check` la mostra com a `info`. Les àncores sense estil, com les d'un personatge de còmic, no generen cap avís. L'avís indica el recurs, l'àncora, el seu estil, la llengua, la pàgina i l'interval de la figura al text font. Escriu el rètol al Markdown d'aquesta llengua o treu l'estil de l'àncora.
-
-Al tauler Revisió, l'avís porta a la figura al tauler Text, i el botó de l'agulla obre les àncores de la imatge per aquella àncora.
-
-### labelOverflow
-
-Un rètol continua sent més ample que el `width` de la seva àncora fins i tot a l'escala més petita que permet l'estil de rètol (`minScale`): es dibuixa a aquesta escala i sobrepassa l'amplada indicada. L'avís indica el recurs, el text del rètol, l'àncora (cap, si el rètol es col·loca amb percentatges), l'amplada que se li va donar, l'escala a què ha arribat, la llengua, la pàgina i l'interval del text del rètol al text font. Es revisa en cada edició, de manera que una llengua amb paraules més llargues pot desbordar on una altra no ho fa. Eixampla el `width` de l'àncora, escurça la paraula al Markdown d'aquesta edició o redueix el `minScale` de l'estil de rètol. Un rètol xinès o japonès es talla entre caràcters i no desborda d'aquesta manera. Des de postext 1.39.
-
-### labelOverlap
-
-Les línies de dos rètols d'una mateixa figura es toquen; un rètol amb placa compta com la placa. L'avís el genera el rètol posterior, en l'ordre en què estan escrits, i indica el text del primer rètol anterior que toca i quants rètols anteriors toca en total. La prova fa servir la caixa de cada línia, girada amb el rètol, de manera que una línia curta al costat d'una de llarga deixa lliure el seu costat, i permet que dues línies se superposin fins a una vuitena part de l'alçada d'una línia. Es revisa en cada edició. Mou una de les àncores, redueix el `width` d'un rètol perquè es parteixi o escurça les paraules al Markdown d'aquesta edició. Al tauler Revisió del Sandbox, el botó de la xinxeta obre les àncores de la imatge per l'àncora del rètol. Des de postext 1.39. Amb `overlap: 'allow'` en una àncora, o en el seu estil de rètol, un rètol que l'original imprimeix tocant els veïns (un mapa dens) queda fora de la revisió, i no es dona cap avís per a cap parella on aparegui. Des de postext 1.42. Les zones `avoid` d'una imatge compten com els símbols d'un mapa: rectangles dibuixats sobre els punts i les icones, en el mode **Zones lliures** de les marques de la imatge, en fraccions de la imatge. Si un rètol n'envaeix una, també genera l'avís, amb `symbol 2` en lloc d'un altre rètol (`withSymbol` a les dades), i `overlap: 'allow'` deixa un rètol fora de les dues revisions. Des de postext 1.42.
-
-### figureWordsShared
-
-Una `:::figure` dona textos (`alt`, `caption` o `note`) a un recurs al qual una figura anterior del mateix capítol ja n'havia donat uns altres, i són diferents. Les pàgines mostren els textos de la primera figura i ometen aquests. L'avís indica el recurs, els textos omesos i l'interval al text font del primer; una figura posterior que no dona textos propis no és cap problema. Dona a la figura un recurs propi: un segon recurs que apunti al mateix fitxer d'imatge, amb el seu peu, el seu número i les seves àncores. Al tauler Revisió del Sandbox apareix al grup Figures. Des de postext 1.42.
+- **`template`** indica una plantilla amb `role: 'module'`. **`name`** és opcional: dona nom a la instància del mòdul, de manera que els seus marcs són `ramas.raiz` i `ramas.izq`. Sense nom, la instància és `<template>[n]`, el número d'ordre del mòdul entre els mòduls d'aquella plantilla a la pàgina: `arbol[1].raiz`. Un nom que ja fa servir la pàgina, o que conté un espai, `.`, `#`, `[` o `]`, se substitueix per aquest nom per defecte (`moduleNameRejected`).
+- **Les ranures** de dins d'un `:::module` són les del mòdul: `slot="raiz"` arriba al marc `raiz` d'aquest mòdul, i dos mòduls de la mateixa plantilla en una pàgina mantenen separades les seves paraules. El contingut que no indica cap ranura va al marc de flux del mòdul, i un encapçalament, al marc del mòdul que rep el seu nivell amb `takes`; si no hi ha ni l'un ni l'altre, al marc de flux de la pàgina.
+- **Ordre.** Els mòduls s'apilen en l'ordre del Markdown, així que una altra pàgina pot compondre els mateixos blocs en un altre ordre, o amb un arbre més, sense cap plantilla nova.
+- Un `:::module` fora d'un bloc de pàgina és una simple caixa amb el seu contingut. Un mòdul dins d'un altre mòdul no s'admet (`moduleNested`).
 
 ## Exemple
 
@@ -263,7 +261,7 @@ Si a més té `"wrap": "contour"`, el marc aparta el text segons la forma de les
 
 ### Decoració, capçaleres i capes
 
-La `decoration` de la plantilla (imatges, filets, caixes i textos breus) es col·loca quan els marcs ja tenen la caixa definitiva, de manera que un element es pot ancorar a un marc (`"to": "#gasto"`) i seguir-lo. Els textos de la decoració llegeixen els atributs de la mateixa pàgina: `fondo="banda-retos"` a la línia d'obertura del bloc de pàgina dona `{attr.fondo}`, per exemple per triar pàgina a pàgina una imatge de fons amb `"resourceId": "{attr.fondo}"`. Les capçaleres i els peus de pàgina també els llegeixen. El `header` o el `footer` d'una plantilla substitueix el de la secció, `false` l'amaga i, si la plantilla no en fixa cap, s'imprimeixen els de la secció. En una pàgina de dreta a esquerra o vertical, els marcs segueixen el flux, en mirall o girat, mentre que la decoració es queda fixa al full: un element col·locat en una vora d'inici o de final (`top-start`, vegeu [Posicionament d'elements](/ca/docs/configuration-headers-footers#posicionament-delements)) queda al costat del seu marc en totes les edicions.
+La `decoration` de la plantilla (imatges, filets, caixes i textos breus) es col·loca quan els marcs ja tenen la caixa definitiva, de manera que un element es pot ancorar a un marc (`"to": "#gasto"`) i seguir-lo, i un [connector](/ca/docs/configuration-composed-pages#connectors) pot unir dos marcs amb una línia que no se'n separa encara que les paraules els moguin. Els textos de la decoració llegeixen els atributs de la mateixa pàgina: `fondo="banda-retos"` a la línia d'obertura del bloc de pàgina dona `{attr.fondo}`, per exemple per triar pàgina a pàgina una imatge de fons amb `"resourceId": "{attr.fondo}"`. Les capçaleres i els peus de pàgina també els llegeixen. El `header` o el `footer` d'una plantilla substitueix el de la secció, `false` l'amaga i, si la plantilla no en fixa cap, s'imprimeixen els de la secció. En una pàgina de dreta a esquerra o vertical, els marcs segueixen el flux, en mirall o girat, mentre que la decoració es queda fixa al full: un element col·locat en una vora d'inici o de final (`top-start`, vegeu [Posicionament d'elements](/ca/docs/configuration-headers-footers#posicionament-delements)) queda al costat del seu marc en totes les edicions.
 
 Els marcs es pinten en l'ordre de la seva `layer`: la decoració a la capa 0, els marcs a la 1 per defecte; una capa més alta va damunt d'una de més baixa, i una capa negativa, a sota de la decoració. `rotate` gira un marc juntament amb el contingut, amb qualsevol angle i al voltant del centre del marc, al canvas, al PDF, al visor HTML i a l'EPUB de maquetació fixa.
 
@@ -325,8 +323,35 @@ Les revisions llegeixen el Markdown i la configuració abans de maquetar res, ai
       <td>Una pàgina composta, un marc o una figura no es tanquen mai (vegeu les regles de recuperació de més amunt). El tauler Revisió es refereix a la pàgina composta com a <code>::::page</code>.</td>
       <td>Afegeix la línia de tancament: tants signes de dos punts com la línia d'obertura de la pàgina, o <code>:::</code> per a un marc o una figura.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una graella que es repeteix admet <code>repeat.max</code> targetes i la pàgina n'hi dona més (vegeu <a href="#ranures-repetides">Ranures repetides</a>). Un avís per cada targeta de més, al seu <code>slot="…"</code>: la targeta va al marc de flux, o després de la pàgina.</td>
+      <td>Augmenta o treu el <code>max</code> de la plantilla, o passa les targetes de més a una altra pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> no indica cap plantilla, n'indica una que no és un mòdul, o la plantilla de la pàgina no té cap grup de mòduls (<code>reason</code>). El seu contingut va al marc de flux.</td>
+      <td>Corregeix el <code>template</code> del mòdul, o dona a la plantilla de la pàgina un grup amb <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un bloc de pàgina indica una plantilla de mòdul. El seu contingut es compon al flux, com amb una plantilla desconeguda.</td>
+      <td>Indica una plantilla de pàgina al bloc i escriu el mòdul a dins com a <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> està escrit dins d'un altre mòdul. Els seus blocs passen a ser del mòdul exterior.</td>
+      <td>Tanca el mòdul exterior abans d'obrir el següent.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>El <code>name</code> d'un mòdul ja el fa servir un altre mòdul de la pàgina, o conté un espai, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code>. El mòdul rep el nom <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Dona a cada mòdul de la pàgina un nom propi, fet de lletres, xifres i guionets.</td>
+    </tr>
   </tbody>
 </table>
+
+Els avisos dels mòduls i `repeatOverflow` existeixen des de postext 1.48; la part de cada un que toca la plantilla es descriu a [Configuració › Avisos de superposició, repetició i mòduls](/ca/docs/configuration-composed-pages#avisos-de-superposició-repetició-i-mòduls).
 
 Un cop maquetat el llibre, cadascun d'aquests avisos també indica la pàgina a què es refereix (`pageIndex`), de manera que el tauler Revisió i `postext check` mostren el número de pàgina al costat de la plantilla, el marc o la ranura i l'interval d'origen.
 
@@ -351,6 +376,28 @@ També es genera aquest avís per a un marc buit. En una pila on els marcs ja no
 **Causa.** L'`overflow.continueIn` d'un marc és `'page:<id>'` (vegeu [Saltar a una pàgina posterior](#saltar-a-una-pàgina-posterior)) i no hi ha cap bloc `::::page{id="<id>"}` després de la pàgina on és la història: l'id està mal escrit, el bloc no el té, falta l'atribut del bloc que llegeix la regla (`'page:{attr.sigue}'`) o el bloc va abans (`before: true`). La resta continua en una pàgina afegida just després, com amb `'next-page'`. L'avís indica la plantilla, el marc, `target` (l'id que buscava), el `configPath` del marc i la pàgina. L'id també pot ser el d'un bloc de pàgina d'un capítol posterior del llibre; un capítol compost per separat amb `buildDocument` i sense `laterPageIds` només coneix les seves pàgines.
 
 **Solució.** Posa aquest id a la línia d'obertura de la pàgina posterior, o corregeix el nom a `continueIn` o a l'atribut del bloc que llegeix la regla. Una pàgina anterior a la història no la pot rebre: mou aquell bloc després de la història o indica una pàgina posterior.
+
+### frameCovered
+
+**Causa.** Una part d'un marc queda sota un altre marc pintat a sobre (amb una `layer` més alta, o a la mateixa capa però més endavant en l'ordre de la plantilla), allà on aquest marc és opac: un peu sota una foto, una pestanya sota una imatge retallada, les últimes línies d'una caixa sota una banda. La revisió es fa quan la pàgina ja està composta, sobre les caixes que el contingut ha donat als marcs, així que una pàgina neta en castellà pot quedar tapada en una edició més llarga. Un marc tapa amb el seu fons (el fons del seu estil o `look.background`, la pestanya, la franja), amb les imatges i amb les línies de text; un contorn no tapa res, i un marc que aparta el text segons la forma de les seves imatges (`wrap: 'contour'`) no tapa les línies amb la seva caixa. El que pot quedar tapat: les línies del marc, la pestanya i el títol, les imatges i les taules. Les paraules sobre una imatge no es donen com a avís: si es llegeixen o no és cosa de la revisió de contrast. Un tall de menys de 0,3 mm és un simple contacte, i una parella de menys d'1 mm² no es té en compte.
+
+L'avís indica la plantilla, el marc, el marc que el tapa (`coveredBy`, `coveredByPath`), l'àrea amagada (`overlapMm2`), les primeres paraules tapades (`text`) o la imatge (`picture`), la llengua i la pàgina, i apunta al contingut del marc tapat. Un avís per parella.
+
+**Solució.** Cada proposta són dades, com les de `frameOverflow`:
+
+- `layer`: la `layer` del marc que tapa, posada per sota de la del marc tapat; només es proposa quan així no s'amaga una altra cosa;
+- `exclude`: `'push'` al marc que tapa, perquè el text tapat l'envolti (només quan toca línies de text de cos);
+- `move`: `frame`, `dxMm`, `dyMm`, el desplaçament més petit del marc que tapa que deixa lliure la parella, provat sobre la pàgina: només s'ofereix quan el marc desplaçat, i els marcs ancorats a ell, queden lliures de tots els altres marcs i dins del que els conté. Si cap direcció no deixa la parella lliure, o si el marc tapat penja del que el tapa, no es proposa cap desplaçament.
+
+Quan la superposició és volguda (un dibuix que passa per sobre del text expressament), posa `overlap: 'allow'` a qualsevol dels dos marcs. Des de postext 1.48.
+
+### frameOutsideArea
+
+**Causa.** Un marc sobrepassa el que el conté: el seu text passa del tall, on es retalla, o el fons i les imatges passen de la sang (sense sang, tots dos són el tall); o qualsevol part seva surt del marc o del grup dins del qual està ancorat, com una nota ancorada dins d'una targeta (`top-left` de `'#card'` amb un desplaçament cap a dins) que el seu text empeny més enllà del peu de la targeta. Un marc ancorat a una vora de fora de l'altra caixa (`below`, `right-of`) no hi és mai a dins. Els excessos de menys de 0,3 mm no es tenen en compte.
+
+L'avís indica `past` (`'trim'`, `'bleed'`, `'frame'` o `'group'`), `target` (el nom del marc o del grup), `excessMm` (l'excés més gran), `sides` (el de cada costat), la llengua i la pàgina.
+
+**Solució.** Les propostes: `maxHeight`, l'espai que té el marc (no es proposa per a un marc subjectat pel peu, que una alçada més petita no fa entrar); al costat, `continueNextPage`, per a un marc de text, perquè el que ja no hi cap continuï; `minHeight` del marc dins del qual està ancorat, augmentat en l'excés; `move`, el desplaçament que el fa entrar quan només surt per un costat, que s'ofereix quan queda lliure dels altres marcs. Una insígnia que penja de la seva targeta expressament porta `overlap: 'allow'`. Des de postext 1.48.
 
 ## Quan el text creix
 
@@ -606,6 +653,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td><code>overflow</code></td>
       <td>El contingut no hi cabia: <code>toMm</code> és l'alçada tallada, com a <code>frameOverflow</code>.</td>
     </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Una part del marc queda sota <code>cause</code>, el marc pintat a sobre: <code>areaMm2</code> és l'àrea amagada, com a <code>frameCovered</code>. En paraules: «card lies under cutout (25.3 mm²)». Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>El marc surt <code>toMm</code> més enllà de <code>past</code>: <code>'trim'</code>, <code>'bleed'</code> o <code>'#name'</code>, el marc o el grup dins del qual està ancorat, com a <code>frameOutsideArea</code>. En paraules: «note runs 26 mm past card». Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>Un connector (<code>cause</code>, el seu id) ha deixat fora l'extrem que anava a <code>frame</code>, una caixa que la pàgina no mostra: plegada, opcional i buida, una targeta més enllà dels elements de la pàgina, o un punt de la imatge que el seu marc retalla. És una nota, no un avís. En paraules: «connector ramas left out izq (not on the page)». Des de postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -726,3 +785,4 @@ findElement(doc, 'cp0:dinero');   // el mateix marc després de recompondre, amb
 ## Pàgines de còmic
 
 Una pàgina de còmic (`:::page{split}`) és una pàgina composta amb marcs generats per la seva divisió: un per vinyeta, amb identificadors estables `cm<n>:<nom>`, un polígon per a una cel·la inclinada, un estil de requadre amb `box` i Markdown repartit en una vinyeta de text. Vegeu [Còmics › Pàgines de còmic i pàgines compostes](/ca/docs/comics#pàgines-de-còmic-i-pàgines-compostes).
+

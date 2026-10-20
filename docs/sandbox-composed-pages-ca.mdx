@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ca',
   lastUpdated: '2026-10-20',
   readingTime: '14 min',
-  order: 38,
+  order: 39,
   parent: 'sandbox',
   plainSummary: "Aquesta pàgina reuneix el que el Sandbox ofereix per a les pàgines compostes, en què el text es reparteix entre marcs col·locats per una plantilla. Els marcs d'una plantilla es dibuixen i es mouen directament sobre la pàgina, i els estils de marc s'ordenen en una biblioteca. El tauler Revisió avisa, en cada llengua del llibre, de les pàgines compostes amb text que no hi cap, i ofereix botons per arreglar el marc. Un llibre fet abans que existissin les pàgines compostes pot passar d'un sol cop el text de les pàgines al Markdown.",
 };
@@ -33,7 +33,7 @@ Aquesta pàgina reuneix les parts dels taulers Disseny i Revisió que tracten de
 
 **Una història que salta a un altre capítol.** En un llibre amb un fitxer de capítol per article, si el marc d'una història l'envia a `page:<id>`, la història continua al capítol que conté aquella pàgina (des de postext 1.41; vegeu [Pàgines compostes › Saltar a una pàgina posterior](/ca/docs/composed-pages#saltar-a-una-pàgina-posterior)). El canvas, el Folio i les pestanyes PDF i EPUB componen la resta a la pàgina d'aquell capítol, amb els números de pàgina del llibre a les marques. El registre de maquetació d'un capítol desa les històries que envia, de manera que el capítol que conté la pàgina es torna a compondre quan canvia l'article, però no quan canvia un capítol intermedi. Un clic a les paraules que han arribat d'un altre capítol posa el cursor al Markdown de l'article, i la ruta que hi ha sota la previsualització indica la pàgina posterior quan el cursor és dins d'aquell text. La previsualització d'un sol capítol mostra només el que contenen les pàgines d'aquest capítol: la resta apareix amb el capítol que conté la pàgina.
 
-**Les paraules pròpies d'una figura.** Un clic en un peu o una nota que escriu la mateixa figura porta el cursor a la seva línia `::caption[…]` o `::note[…]`, o a l'atribut de la línia d'obertura, a la lletra clicada (vegeu [Pàgines compostes › Les paraules pròpies d'una figura](/ca/docs/composed-pages#les-paraules-pròpies-duna-figura)).
+**Les paraules pròpies d'una figura.** Un clic en un peu o una nota que escriu la mateixa figura porta el cursor a la seva línia `::caption[…]` o `::note[…]`, o a l'atribut de la línia d'obertura, a la lletra clicada (vegeu [Pàgines compostes › Les paraules pròpies d'una figura](/ca/docs/composed-pages-figures#les-paraules-pròpies-duna-figura)).
 
 
 ## Estils de marc
@@ -63,6 +63,9 @@ La secció recull:
 - *Rètol en una àncora que no existeix* i *Àncora sense rètol* (`labelAnchorUnknown`, `anchorUnlabelled`), amb el marc que compon la figura;
 - *Rètol més ample que la mesura* i *Rètols que es trepitgen* (`labelOverflow`, `labelOverlap`), amb el mateix marc: els rètols de cada edició es mesuren amb les paraules d'aquella llengua, de manera que una llengua amb paraules més llargues pot desbordar on una altra no ho fa. Un rètol que envaeix una de les zones `avoid` de la imatge, dibuixades en el mode **Zones lliures** de les marques de la imatge, també surt aquí; en un SVG, **Símbols del dibuix**, en aquest mateix mode, afegeix una zona sobre cada element del dibuix que té un id que comença per un prefix donat o una classe donada (des de postext 1.43);
 - *Ranura sense marc*, *Marc buit*, *Plantilla de pàgina desconeguda*, *Pàgina composta amb tres signes de dos punts* i *La doble pàgina no coincideix amb la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Marc tapat per un altre marc* i *El marc surt del seu límit* (`frameCovered`, `frameOutsideArea`), amb les paraules o la imatge tapades, l'àrea amagada o el que sobresurt, i les solucions d'un sol clic; si se'n selecciona un, el canvas marca els dos marcs, o el marc i la caixa de la qual surt (des de postext 1.48);
+- *Més elements dels que caben a la graella* (`repeatOverflow`), arxivat amb el marcatge (des de postext 1.48);
+- *Mòdul desconegut*, *Mòdul compost com a pàgina*, *Mòdul dins d'un mòdul* i *Nom de mòdul no acceptat* (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`), arxivats amb el marcatge (des de postext 1.48);
 - *Bloc de l'índex general partit entre columnes* (`tocGroupSplit`);
 - els avisos de les plantilles mateixes (un estil o un ancoratge de marc que no existeix, mides que es contradiuen, una cadena que torna sobre si mateixa) i el text de disseny que conté text del llibre (`contentInConfig`).
 

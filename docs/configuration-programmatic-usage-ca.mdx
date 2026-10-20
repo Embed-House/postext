@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ús programàtic',
   description: 'Com es fa servir Postext des del codi: buildDocument i els avisos que retorna, els valors per defecte, la càrrega de fonts, les memòries cau i el Web Worker',
   lang: 'ca',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '32 min',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td><code>figureWordsShared</code></td>
       <td>Una <code>:::figure</code> dona textos (<code>alt</code>, <code>caption</code>, <code>note</code>) a un recurs que ja ha rebut uns textos diferents d'una figura anterior del capítol (<code>resourceId</code>, <code>words</code>).</td>
       <td>Les pàgines mostren els textos de la primera figura; els de la posterior s'ometen.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>La tinta d'un marc d'una pàgina composta queda sota un altre marc pintat a sobre (<code>template</code>, <code>frame</code>, <code>coveredBy</code>, <code>coveredByPath</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>overlapMm2</code>, <code>text</code> o <code>picture</code>, <code>locale</code>; <code>proposals</code>: <code>layer</code>, <code>exclude</code>, <code>move</code>). El genera la maquetació, amb el <code>pageIndex</code> de la pàgina. Des de postext 1.48.</td>
+      <td>Els dos marcs es pinten com indica la plantilla; la tinta tapada queda amagada.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Un marc d'una pàgina composta sobrepassa el tall (el seu text), la sang (el fons o les imatges) o el marc o el grup dins del qual està ancorat (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>past</code>, <code>target</code>, <code>excessMm</code>, <code>sides</code>, <code>locale</code>; <code>proposals</code>: <code>maxHeight</code>, <code>minHeight</code>, <code>continueNextPage</code>, <code>move</code>). El genera la maquetació. Des de postext 1.48.</td>
+      <td>El marc es pinta on és; el que sobrepassa el tall es retalla.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una graella que es repeteix en una pàgina composta admet <code>max</code> elements i la pàgina n'hi dona més (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Un avís per cada element de més. Des de postext 1.48.</td>
+      <td>L'element va al marc de flux, o després de la pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> que la pàgina no compon (<code>template</code>, <code>module</code>, <code>name</code>, <code>fenceIndex</code>; <code>reason</code>: <code>'unknown'</code>, <code>'notModule'</code>, <code>'noGroup'</code>). Des de postext 1.48.</td>
+      <td>El seu contingut va al marc de flux.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un bloc de pàgina indica una plantilla de mòdul (<code>template</code>, <code>fenceIndex</code>). Des de postext 1.48.</td>
+      <td>El contingut del bloc es compon al flux.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> dins d'un altre mòdul (<code>template</code>, <code>module</code>, <code>fenceIndex</code>). Des de postext 1.48.</td>
+      <td>Els seus blocs passen a ser del mòdul exterior.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>El <code>name</code> d'un mòdul ja el fa servir un altre mòdul de la pàgina o conté un espai, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code> (<code>template</code>, <code>module</code>, <code>name</code>, <code>used</code>, <code>reason</code>: <code>'taken'</code>, <code>'invalid'</code>, <code>fenceIndex</code>). Des de postext 1.48.</td>
+      <td>El mòdul rep el nom <code>used</code> i les seves ranures s'adrecen amb aquest nom.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

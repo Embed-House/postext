@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'en',
   lastUpdated: '2026-10-20',
   readingTime: '13 min',
-  order: 38,
+  order: 39,
   parent: 'sandbox',
   plainSummary: "This page covers what the Sandbox offers for composed pages, the pages whose text is poured into frames laid out by a template. You draw and move the frames of a template right on the page, and you tidy the frame styles in a library. The Checks panel tells you, in every language of the book, which composed pages have text that does not fit, and it offers buttons that fix a frame. A book made before composed pages can have the text of its pages moved into the Markdown in one step.",
 };
@@ -33,7 +33,7 @@ This page gathers the parts of the Design and Checks panels that deal with compo
 
 **A story that jumps to another chapter.** In a book with one chapter file per article, a story whose frame sends it to `page:<id>` goes on in the chapter that has that page (since postext 1.41; see [Composed pages › Jumping to a later page](/en/docs/composed-pages#jumping-to-a-later-page)). The canvas, the Folio and the PDF and EPUB tabs set the rest on that chapter's page, with the book's page numbers in the marks. A chapter's layout record keeps the stories it sends, so the chapter that has the page is laid out again when the article changes and not when a chapter in between does. A click on the carried words puts the caret in the article's Markdown, and the path under the preview names the later page when the caret is in the carried text. The preview of one chapter shows only what its own pages hold: the rest appears with the chapter that has the page.
 
-**A figure's own words.** A click on a caption or a note that a figure writes itself puts the caret in its `::caption[…]` or `::note[…]` line, or in the attribute of the opening line, at the letter clicked (see [Composed pages › A figure's own words](/en/docs/composed-pages#a-figures-own-words)).
+**A figure's own words.** A click on a caption or a note that a figure writes itself puts the caret in its `::caption[…]` or `::note[…]` line, or in the attribute of the opening line, at the letter clicked (see [Composed pages › A figure's own words](/en/docs/composed-pages-figures#a-figures-own-words)).
 
 
 ## Frame styles
@@ -63,6 +63,9 @@ The section lists:
 - *Label at an unknown anchor* and *Anchor without a label* (`labelAnchorUnknown`, `anchorUnlabelled`), filed under the frame that sets the figure;
 - *Label wider than its measure* and *Labels run into each other* (`labelOverflow`, `labelOverlap`), filed under the same frame: each edition's labels are measured with its own words, so a language with longer words overflows where another does not. A label that runs onto one of the picture's avoid zones, drawn in the **Avoid zones** mode of the picture's marks, is listed here too; on an SVG, **Symbols of the drawing** in that mode adds a zone over each element of the drawing whose id starts with a given prefix or that carries a given class (since postext 1.43);
 - *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Frame under another frame* and *Frame runs past its edge* (`frameCovered`, `frameOutsideArea`), with the covered words or picture, the area hidden or the overrun, and the fixes in one click; selecting one marks the two frames, or the frame and the box it runs past, on the canvas (since postext 1.48);
+- *More items than the grid holds* (`repeatOverflow`), filed with the markup (since postext 1.48);
+- *Unknown module*, *Module set as a page*, *Module inside a module* and *Module name not taken* (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`), filed with the markup (since postext 1.48);
 - *Contents block cut between columns* (`tocGroupSplit`);
 - the page templates' own warnings (a frame style or anchor that does not exist, sizes that contradict each other, a chain that loops) and design text that holds the book's content (`contentInConfig`).
 

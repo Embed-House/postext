@@ -105,6 +105,8 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'frameOverflow':
     case 'frameContinuationLimit':
     case 'continueTargetMissing':
+    case 'frameCovered':
+    case 'frameOutsideArea':
       return 'typesetting';
     case 'storageUnavailable':
       return 'system';

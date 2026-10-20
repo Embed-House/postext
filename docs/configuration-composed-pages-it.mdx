@@ -3,10 +3,10 @@
 export const metadata = {
   title: 'Configurazione: pagine composte',
   sidebarTitle: 'Impostazioni delle pagine composte',
-  description: 'I modelli delle pagine composte: cornici, gruppi, decorazione, ereditarietà e varianti per pagina dispari e pari (recto/verso); gli stili delle etichette poste sulle ancore delle immagini, e gli avvisi che un modello può dare',
+  description: 'I modelli delle pagine composte: cornici, gruppi, griglie che ripetono un insieme di cornici, moduli, decorazione e connettori, ereditarietà e varianti per pagina dispari e pari (recto/verso); gli stili delle etichette poste sulle ancore delle immagini, e gli avvisi che un modello può dare',
   lang: 'it',
-  lastUpdated: '2026-10-19',
-  readingTime: '6 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '10 min',
   order: 18,
   parent: 'configuration',
   plainSummary: "Questa pagina presenta i modelli di pagina. Un modello è una pagina disegnata nelle impostazioni: riquadri con un nome, chiamati cornici, dove sta ciascuno, quanto può crescere e che aspetto ha. Il Markdown di una pagina composta riempie poi le cornici per nome, così il testo non contiene mai posizioni e le impostazioni non contengono mai testo. Un modello può partire da un altro e cambiare solo alcune cornici, e può essere diverso sulle pagine di sinistra e di destra. La pagina elenca anche gli stili delle etichette per le parole messe sulle immagini, e ogni avviso che un modello può dare insieme al modo di correggerlo.",
@@ -104,7 +104,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>nessuna</td>
-      <td>Immagini, filetti e riquadri disegnati con la pagina, nel linguaggio di elementi di <a href="/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina">intestazioni e piè di pagina</a>. Gli elementi di testo contengono solo segnaposto (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per un attributo del blocco di pagina). Un elemento si può ancorare a una cornice o a un gruppo (<code>'#dinero'</code>) e allora si sposta con esso. La decorazione si colloca dopo le cornici e non spinge mai il testo. Da postext 1.42, <code>&#123;headingNumber&#125;</code> scrive il contatore del primo titolo numerato contenuto nelle cornici della pagina (una cornice con <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> quello della cornice <code>titulo</code>, con le cifre del documento: così un bollino con il numero di un tema lo prende dal titolo, e il blocco di pagina non deve ripeterlo. La decorazione è disegnata sotto le cornici; un clic su un elemento di testo che sta sopra una cornice, in un punto in cui la cornice non ha testo proprio, raggiunge l’elemento e non la cornice. Una cornice con <code>layer</code> negativo è disegnata sotto la decorazione.</td>
+      <td>Immagini, filetti e riquadri disegnati con la pagina, nel linguaggio di elementi di <a href="/it/docs/configuration-headers-footers#intestazioni-e-piè-di-pagina">intestazioni e piè di pagina</a>. Gli elementi di testo contengono solo segnaposto (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per un attributo del blocco di pagina). Un elemento si può ancorare a una cornice o a un gruppo (<code>'#dinero'</code>) e allora si sposta con esso. La decorazione si colloca dopo le cornici e non spinge mai il testo. Da postext 1.42, <code>&#123;headingNumber&#125;</code> scrive il contatore del primo titolo numerato contenuto nelle cornici della pagina (una cornice con <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> quello della cornice <code>titulo</code>, con le cifre del documento: così un bollino con il numero di un tema lo prende dal titolo, e il blocco di pagina non deve ripeterlo. La decorazione è disegnata sotto le cornici; un clic su un elemento di testo che sta sopra una cornice, in un punto in cui la cornice non ha testo proprio, raggiunge l’elemento e non la cornice. Una cornice con <code>layer</code> negativo è disegnata sotto la decorazione. Da postext 1.48 la decorazione accetta anche gli <a href="/it/docs/configuration-headers-footers#elementi-tracciato">elementi tracciato</a> (barre, nastri, frecce a chevron disegnati come forme vettoriali) e i <a href="#connettori">connettori</a>, le linee che uniscono le cornici.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -152,7 +152,7 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>Il ruolo di pagina che vedono gli elementi grafici con un filtro <code>pages</code>.</td>
+      <td>Il ruolo di pagina che vedono gli elementi grafici con un filtro <code>pages</code>. <code>'module'</code> fa del modello un modulo: un blocco di cornici che le pagine impilano in un gruppo invece di una pagina a sé (vedi <a href="#moduli">Moduli</a>). Da postext 1.48.</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ Una cornice si colloca nella cella indicata da `grid`, se il modello ha una grig
       <td>Una cornice composta nel proprio modo di scrittura o nella propria direzione: un riquadro verticale su una pagina orizzontale, una scheda orizzontale su una pagina verticale, una citazione da destra a sinistra in un libro da sinistra a destra. Una cornice dell’altro modo di scrittura viene composta nel suo riquadro ruotato di un quarto di giro: le righe ne percorrono l’altezza e si susseguono nella larghezza, e un’altezza <code>'auto'</code> è la minima che le contiene in quella larghezza. Il testo viene disegnato come lo disegna una pagina con quel modo di scrittura. <code>direction</code> compone il testo della cornice in quella direzione, come un riquadro con <code>&#123;dir=…&#125;</code>; un blocco o un riquadro che scrive il proprio <code>dir</code> lo mantiene. Da postext 1.39. Da postext 1.40 una cornice verticale funziona anche su una pagina da destra a sinistra: è composta come su una pagina da sinistra a destra e collocata dove la mette il flusso specchiato, con il testo disegnato senza specchiatura; un’immagine in una cornice verticale di una pagina orizzontale sta dritta, con la sua didascalia, e occupa lo spazio che il riquadro le lascia nel senso della larghezza della pagina; l’EPUB a layout fluido scrive una cornice di un altro modo di scrittura come un riquadro con quel modo e la lunghezza lungo cui corrono le sue righe (in em del testo base). Da postext 1.42 anche un’immagine in una cornice di una pagina verticale che segue il modo della pagina sta dritta, con la sua didascalia.</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> esclude la cornice dai controlli di sovrapposizione: <code>frameCovered</code> non viene segnalato per una coppia di cui fa parte, che sia disegnata sopra l’altra cornice o sotto, e <code>frameOutsideArea</code> non viene segnalato per lei. Per un disegno che deve stare sopra il testo, o un bollino appeso di proposito per metà fuori dalla sua scheda. Vedi <a href="#avvisi-di-sovrapposizione-ripetizione-e-moduli">Avvisi di sovrapposizione, ripetizione e moduli</a>. Da postext 1.48.</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>Dall’alto in basso, o dall’inizio alla fine.</td>
+      <td>Dall’alto in basso, dall’inizio alla fine, o celle disposte in righe (<code>'grid'</code>, da postext 1.48; vedi <a href="#griglie-che-ripetono-un-insieme-di-cornici">Griglie che ripetono un insieme di cornici</a>).</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Le cornici del gruppo, nel loro ordine sulla pagina. Una cornice appartiene al massimo a un gruppo; un nome che non è una cornice del modello, o una cornice già elencata, viene saltato.</td>
+      <td>Le cornici del gruppo, nel loro ordine sulla pagina. Una cornice appartiene al massimo a un gruppo; un nome che non è una cornice del modello, o una cornice già elencata, viene saltato. Una griglia che si ripete prende invece le cornici di <code>repeat.frames</code>.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Una griglia: il numero di colonne, tutte della stessa larghezza.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>, <code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>il <code>gap</code> del gruppo</td>
+      <td>Una griglia: lo spazio fra due colonne, e fra due righe.</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>nessuno</td>
+      <td>Una griglia: l’insieme di cornici disposto una volta per ogni elemento del contenuto della pagina. La prima cornice di <code>frames</code> è la cornice principale della cella; <code>max</code> limita il numero di elementi, e il resto va alla cornice di flusso (<code>repeatOverflow</code>).</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Il gruppo prende i blocchi <code>:::module</code> della pagina, uno sotto l’altro nell’ordine del Markdown, con <code>gap</code> fra l’uno e l’altro. Si dispone come una pila qualunque sia il suo <code>kind</code>, e le sue <code>frames</code> non vengono lette. Vedi <a href="#moduli">Moduli</a>. Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>nessuno</td>
+      <td>Un gruppo di moduli: dove prosegue, intero, un modulo che non entra. Se non è impostato, il modulo viene tagliato al piede del gruppo e le sue cornici percorrono la scala di reimpaginazione.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ Il risultato dipende solo dal contenuto della pagina, dal modello e dalla tipogr
 
 La cornice che cresce è alta quanto lo spazio libero, qualunque cosa contenga, quindi uno stile con sfondo visibile la colorerebbe tutta: disegna la scheda nella decorazione del modello e lascia la cornice di testo senza stile.
 
+### Griglie che ripetono un insieme di cornici
+
+Una pagina di schede con foto, una pagina di schede di attività o una pagina di ritratti con un nome sotto ciascuno sono la stessa scheda disegnata molte volte. Un gruppo a griglia con `repeat` la disegna una sola volta nel modello: le cornici di una scheda, dette insieme di cornici, che la griglia dispone una volta per ogni elemento che il Markdown della pagina le dà. Quante schede ha una pagina lo decide allora il Markdown, e una traduzione che aggiunge una scheda non ha bisogno di un nuovo modello. Da postext 1.48.
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **L’insieme.** La prima cornice di `repeat.frames` è la cornice **principale** della cella: prende la larghezza della cella e mantiene la propria regola di altezza (`'auto'` è l’altezza del suo contenuto, fra `minHeight` e `maxHeight`). Le altre cornici dell’insieme si dispongono come le disegna il modello, ancorate alla cornice principale o l’una all’altra: qui la pastiglia della didascalia pende dal piede della foto. Una cornice dell’insieme ancorata a una cornice esterna resta dove la mette quell’ancoraggio.
+- **Elementi.** Ogni pezzo `:::frame{slot="foto"}` della pagina è un elemento: i pezzi di uno slot ripetuto non vengono uniti. Dentro il pezzo, un blocco che indica un membro dell’insieme (`:::frame{slot="pie"}`, `::resource{… slot="pie"}`) va a quel membro della stessa scheda; il resto va alla cornice principale. Vedi [Pagine composte › Slot ripetuti](/it/docs/composed-pages#slot-ripetuti).
+- **Istanze.** Le cornici di ogni scheda si chiamano `<frame>[n]`, contando da 1: `foto[2]` e `pie[2]` sono la seconda scheda. Gli avvisi, il registro di reimpaginazione, la mappa delle origini e la Sandbox usano questi nomi, gli id delle cornici sono `cp<n>:foto[2]`, e un elemento della decorazione o un connettore può ancorarsi a `'#foto[2]'`. Il `to: '#foto[*]'` di un connettore raggiunge tutte le schede della pagina. Un elemento ancorato a `'#foto'` legge il riquadro della griglia.
+- **Celle.** Le celle riempiono le righe dal lato d’inizio, quindi in una pagina da destra a sinistra la prima scheda sta a destra. Una riga è alta quanto la sua cella più alta, contando ciò che pende sopra la cornice principale (una linguetta) e sotto (una pastiglia); `rowAlign` colloca quelle più basse. Il riquadro della griglia è il suo `placement` o la sua cella `grid`; se non ne ha, comincia dove il modello disegna la cornice principale e arriva al bordo destro e al piede dell’area.
+- **Quando le schede non entrano.** Una riga che supera il piede della griglia viene tagliata lì, ogni scheda percorre da sola la scala di reimpaginazione, e l’ultima scheda tagliata segnala `frameOverflow`. Con `overflow.continueIn` sulla cornice principale (`'next-page'`, `'template:<id>'`), la griglia prosegue **per righe intere**: la prima riga che non entra, e tutte quelle che la seguono, si dispongono nella pagina aggiunta, nella griglia di un modello che ripete lo stesso insieme di cornici. Una cella più alta dell’intera griglia dà un avviso invece di proseguire all’infinito.
+- **`max`.** Gli elementi oltre `repeat.max` vanno alla cornice di flusso, o dopo la pagina quando il modello non ne ha una, e ciascuno produce `repeatOverflow`.
+
+Una griglia senza `repeat` dispone le cornici che elenca, una per cella, nell’ordine in cui sono scritte. Una cornice di un insieme ripetuto elencata in un altro gruppo viene saltata lì (`groupFrameTwice`), e un nome che il modello non ha è `groupFrameUnknown`. `grow` e `shrink` non si applicano alle righe di una griglia, né `redistribute` alle sue schede.
+
+### Moduli
+
+Una pagina di libro di scuola impila spesso blocchi che tornano lungo il libro in un altro ordine: un riquadro con una foto accanto, un albero di tre idee, una griglia di quattro foto sotto un titolo. Disegnare un modello per ogni ordine moltiplica i modelli. Un **modulo** è uno di questi blocchi disegnato una volta sola: un modello con `role: 'module'`, che contiene cornici, gruppi e decorazione (connettori compresi), e nessuna pagina propria. Un modello di pagina prende i moduli in un gruppo con `modules: true`; il Markdown della pagina dice quali moduli contiene e in che ordine (vedi [Pagine composte › Moduli in una pagina](/it/docs/composed-pages#moduli-in-una-pagina)). Da postext 1.48.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **Che cosa ha un modulo.** Cornici, gruppi (compresa una griglia che si ripete), decorazione e connettori. Non ha `area`, `header`, `footer`, `variants`, `spread`, `gutter` né `overflowTemplate`: ciascuno di questi viene segnalato come `unknownConfigValue` e ignorato. `extends` funziona fra moduli (un modello che estende un modulo è un modulo).
+- **Il suo riquadro.** Un modulo è largo quanto il suo gruppo e alto fin dove arrivano le sue cornici; il gruppo impila i moduli dalla sua cima, con `gap` fra l’uno e l’altro. Dentro un modulo, `'container'` è il riquadro del modulo, per le sue cornici (anche `'fill'` e le percentuali) e per la sua decorazione: un fondo dimensionato a `{ to: 'container', edge: 'bottom' }` copre il modulo qualunque altezza gli diano le sue parole.
+- **Nomi.** Le cornici, i gruppi e gli elementi di un modulo prendono come prefisso il nome dell’istanza del modulo: `<name>.<frame>`, con il nome che dà il Markdown (`name="ramas"`) oppure `<template>[n]`, il numero d’ordine del modulo tra i moduli della pagina con quel modello (`arbol[2].raiz`). Gli ancoraggi, `next`, `continueIn: '#x'` e i connettori dentro un modulo vengono riscritti verso le sue cornici, così due alberi sulla stessa pagina non si uniscono mai fra loro. L’id di una cornice è `cp0:arbol[2].raiz`.
+- **Quando i moduli non entrano.** Un modulo che supera il piede del gruppo viene tagliato lì e le sue cornici percorrono la scala di reimpaginazione; `frameOverflow` viene segnalato una volta per il gruppo. Con `overflow.continueIn` sul gruppo di moduli (`'next-page'` o `'template:<id>'`), il primo modulo che non entra e tutti quelli che lo seguono proseguono **interi** nella pagina aggiunta, con gli stessi nomi, in cima al gruppo di moduli di quella pagina.
+- **Non ancora.** Moduli affiancati (un gruppo di moduli è sempre una pila), un modulo dentro un modulo (`moduleNested`) e celle `grid` del modello dentro un modulo.
+
 ### Quando il contenuto non entra
 
 Quando il contenuto di una cornice è più alto dello spazio che le dà il suo gruppo, l’impaginazione prova in ordine i passi della [sequenza di reimpaginazione](/it/docs/composed-pages#quando-il-contenuto-ancora-non-entra) e si ferma al primo che lo fa entrare: lo spazio libero fino a `maxHeight`, il gruppo che spinge e cede, immagini più piccole, le altre cornici del gruppo portate al loro minimo, testo più piccolo, la prosecuzione in un’altra pagina. Queste impostazioni della cornice stabiliscono fin dove può spingersi ciascun passo:
@@ -555,7 +654,7 @@ Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello
 
 ### Che cosa applica l’impaginazione
 
-L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Da postext 1.42 applica anche la `palette` del modello, il `look` di una cornice e la larghezza `'auto'` (quella della riga più lunga della cornice). Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Viene letto e controllato, ma non ancora applicato: il `bodyStyle` del modello.
+L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Da postext 1.42 applica anche la `palette` del modello, il `look` di una cornice e la larghezza `'auto'` (quella della riga più lunga della cornice). Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Da postext 1.48 applica i gruppi a griglia e il loro `repeat`, i gruppi di moduli e i modelli di modulo, i connettori e gli elementi tracciato nella decorazione, e l’`overlap` di una cornice. Viene letto e controllato, ma non ancora applicato: il `bodyStyle` del modello.
 
 ### Doppie pagine
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 Un’intercolonna più larga del `gutter` tiene le schede di una griglia simmetrica lontane dal dorso, quindi nessuna si sposta. La seconda fascia e la striscia di immagini hanno `crossGutter` per attraversarlo: ciascuna si legge sulla pagina che ne contiene il centro e si disegna su entrambe. Tutte le parole della pagina, anche i nomi delle epoche sulle linguette, restano nel Markdown.
 
 In un libro verticale (`vertical-rl`) la doppia pagina si compone nel sistema di riferimento del flusso delle pagine, come le sue pagine composte singole: l’alto della pagina è il bordo destro del foglio e le righe scendono, quindi la `x` del modello scende lungo il foglio e la sua `y` va dal bordo destro del foglio a quello sinistro. Il foglio è la pagina destra seguita dalla sinistra lungo `y`, il dorso è una linea che attraversa il modello, e `gutter`, `crossGutter` e il taglio fra le pagine leggono quell’asse; la decorazione si compone sempre sul foglio fisico e si taglia al dorso. Una linea del tempo orizzontale disegnata per un libro orizzontale esce ruotata in uno verticale: scrivi il modello di un libro verticale nel sistema di riferimento del suo flusso. Da postext 1.38. Una scheda da leggere in orizzontale sul foglio prende `writingMode: 'horizontal-tb'`: viene composta in orizzontale e sta dritta sulla pagina verticale (da postext 1.39).
+
+### Connettori
+
+Un connettore è una linea della decorazione che unisce delle cornici: i rami di uno schema ad albero, un organigramma, le stanghette di una linea del tempo, le frecce di un diagramma di flusso, il puntatore di una nota verso un luogo di una carta. Si colloca quando le cornici hanno già il loro riquadro definitivo, quindi segue un testo che cresce, un’edizione con parole più lunghe o un gruppo che sposta le sue cornici, e si disegna come linea vettoriale in ogni uscita, così il modello non ha bisogno di un’immagine delle linee. I connettori sono elementi della `decoration` di un modello di pagina o di un modulo; le testatine e la grafica dei titoli non hanno cornici da unire, e un connettore lì viene segnalato (`unknownConfigValue`) e non disegnato. Da postext 1.48.
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'connector'</code>, <code>string</code></td>
+      <td>obbligatorio</td>
+      <td>L’elemento e il suo id, come per gli altri elementi della decorazione.</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>obbligatorio</td>
+      <td>Un’estremità della linea; il genitore di un albero.</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>obbligatorio</td>
+      <td>L’altra estremità, o più d’una: una linea verso ciascuna, o i figli di un albero. <code>'#card[*]'</code> vale per tutte le schede di una <a href="#griglie-che-ripetono-un-insieme-di-cornici">griglia che si ripete</a> presenti nella pagina.</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>: un segmento. <code>'elbow'</code>: di traverso, lungo e di nuovo di traverso fra lati affrontati, una L fra lati ad angolo retto. <code>'tree'</code>: un tronco da <code>from</code> fino a una barra, la barra attraverso i punti dei figli, una stanghetta verso ciascun figlio.</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>Dove sta, fra le estremità, il tratto centrale di un gomito o la barra di un albero: <code>0</code> su <code>from</code>, <code>1</code> sul <code>to</code> più vicino. Un albero con <code>trunk: 0</code> non disegna la barra: una stanghetta dal bordo del genitore verso ciascun figlio, come le tacche di una linea del tempo.</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Arrotonda le curve di un gomito o di un albero.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>il colore principale</td>
+      <td>Un colore legato alla tavolozza segue la <code>palette</code> del modello, quella del blocco di pagina e quella di una parte, come i filetti.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.75pt</code>, continua</td>
+      <td>Lo spessore della linea, e uno schema di tratteggio (pieno, vuoto, …).</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>, <code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>Un segno su <code>from</code> e su ogni <code>to</code>: un punto pieno centrato sull’estremità, o una punta di freccia il cui vertice è l’estremità.</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>La larghezza di un punto, o la lunghezza di una punta di freccia.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Unisce i riquadri che dichiara il modello, non quelli che il contenuto ha dato alle cornici.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code></td>
+      <td>come gli altri elementi</td>
+      <td><code>'all'</code></td>
+      <td>Quali pagine lo disegnano.</td>
+    </tr>
+  </tbody>
+</table>
+
+Ogni estremità (`ConnectorEnd`) indica un riquadro e un punto su uno dei suoi lati:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>obbligatorio</td>
+      <td>Una cornice, un gruppo, una scheda di una griglia che si ripete (<code>'#foto[2]'</code>) o un altro elemento della decorazione.</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>il lato rivolto verso l’altra estremità</td>
+      <td>Il lato da cui la linea lascia il riquadro o lo raggiunge. <code>start</code> ed <code>end</code> seguono la direzione delle righe della pagina. Se non è impostato, è il lato rivolto verso l’altro riquadro lungo lo spazio più ampio fra i due; i figli di un albero sono rivolti verso il genitore.</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>Il punto lungo quel lato, o una frazione del lato a partire dal suo inizio (da 0 a 1). Un lato orizzontale comincia dove cominciano le righe della pagina, uno verticale in alto.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Lo spazio fra il bordo del riquadro (o il punto dell’ancora) e la fine della linea.</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>nessuna</td>
+      <td>Un’ancora dell’immagine contenuta nella cornice: l’estremità è quel punto dell’immagine, attraverso il suo ritaglio, la sua zona sicura e la sua scala, come per un’etichetta, invece di un punto del lato della cornice. <code>at</code> non viene letto; <code>side</code> dice da che parte arriva la linea (per impostazione predefinita, dall’altra estremità).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Estremità che non ci sono.** Un’estremità su una cornice che la pagina non mostra (ridotta a zero, facoltativa e vuota, una scheda oltre gli elementi della pagina, un punto dell’immagine che la sua cornice taglia fuori) viene tralasciata: un albero tiene gli altri figli, e il registro di reimpaginazione della pagina lo annota (`connectorDropped`). Se non resta un `from` o un `to`, non si disegna nulla.
+
+**Disegno.** I connettori si disegnano con la decorazione, sotto le cornici, come tracciati vettoriali: nel canvas, nel PDF, nel visualizzatore HTML e nell’EPUB a layout fisso, e come artefatto di impaginazione in un PDF taggato; l’EPUB a layout fluido li lascia fuori insieme al resto della decorazione. Una linea che punta dentro un’immagine ha bisogno che la cornice dell’immagine stia sotto la decorazione: dai a quella cornice `layer: -1`. In una doppia pagina un connettore fra cornici delle due pagine attraversa il dorso e viene tagliato lì come il resto della decorazione; in una pagina da destra a sinistra `start` ed `end` seguono il flusso specchiato.
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**Controlli.** Un’estremità il cui `to` non indica nulla è `frameAnchorUnknown` (in `…/from/to` o `…/to/<k>/to`) e viene tralasciata; `[*]` vale solo in `to` e su una cornice ripetuta. Un’`anchor` che nessuna immagine della cornice ha è `labelAnchorUnknown`, con l’id del connettore. Una parola fuori dalle scelte di `routing`, `startCap`, `endCap` o `side`, e un `at` fuori dall’intervallo da 0 a 1, sono `unknownConfigValue`.
 
 ## Stili delle etichette
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code> esclude le etichette di questo stile dal controllo <code>labelOverlap</code>, per una carta i cui nomi si toccano nell’originale. L’<code>overlap</code> proprio di un’ancora ha la precedenza. Da postext 1.42.</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>come l’ancora colloca il riquadro</td>
+      <td>Come si allineano dentro il loro riquadro le righe di un’etichetta su più righe, <code>start</code> ed <code>end</code> nella direzione dell’etichetta. Se non è impostato, seguono l’<code>align</code> dell’ancora (centrate per impostazione predefinita); in una legenda, <code>start</code>. Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>border</code>, <code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>, <code>Dimension</code></td>
+      <td>nessuno</td>
+      <td>Una linea attorno alla piastra dell’etichetta (il suo riquadro allargato da <code>padding</code>), con o senza <code>background</code>, e gli angoli arrotondati della piastra: la legenda incorniciata di una carta. Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>nessuno</td>
+      <td>La legenda di una carta: ogni riga dell’etichetta è una voce, e il simbolo (<code>:icon</code>) che apre una voce sta in una colonna larga quanto il più largo di essi, così le parole di tutte le voci partono dallo stesso bordo. Una voce senza simbolo resta com’è. Non nelle etichette verticali. Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>nessuno</td>
+      <td>L’aspetto delle linee di richiamo delle etichette di questo stile: la linea dal riquadro di un’etichetta al punto della sua ancora. Per impostazione predefinita il colore è quello dell’etichetta, lo spessore <code>0.75pt</code>, <code>endCap: 'dot'</code> sul punto, nessun <code>startCap</code>, <code>capSize</code> tre volte lo spessore, <code>routing</code> <code>'straight'</code> (oppure <code>'elbow'</code>: esce dal riquadro ad angolo retto, poi una sola svolta verso il punto). Un’etichetta lontana dal suo punto (<code>labelAt</code>) in uno stile con <code>leader</code> ne riceve una. Da postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ Le ancore di un’immagine (`Resource.anchors`, i punti che i fumetti usano per 
       <td><code>'keep'</code></td>
       <td>Su una figura che attraversa il dorso di una doppia pagina, <code>'keep'</code> sposta l’etichetta fuori dalla fascia del margine del dorso, dalla parte in cui cade il suo punto; <code>'cross'</code> la lascia dove la mette il punto, come richiede un titolo disteso sulle due pagine. Da postext 1.43.</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>sul punto</td>
+      <td>Dove sta l’etichetta posta su questa ancora, lontano dal suo punto, in frazioni dell’immagine intera: un nome in mezzo al mare con una linea verso l’isola che nomina. <code>align</code>, <code>verticalAlign</code> e <code>rotate</code> collocano l’etichetta rispetto a questo punto; il punto proprio dell’ancora resta quello in cui finiscono le linee di richiamo e i connettori. Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>vedi sotto</td>
+      <td>Una linea dal riquadro dell’etichetta al punto dell’ancora. <code>true</code> la disegna con l’aspetto <code>leader</code> dello stile di etichetta, un oggetto cambia quell’aspetto campo per campo, <code>false</code> non ne disegna nessuna. Se non è impostato, un’etichetta lontana dal suo punto ne riceve una quando il suo stile ha un <code>leader</code>. L’attributo <code>leader</code> di una <code>::label</code> prevale. Da postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
 `start` ed `end` seguono la direzione dell’etichetta: in un’etichetta araba `start` è il suo bordo destro. Un’ancora condivisa dalle edizioni da sinistra a destra e da destra a sinistra della stessa mappa si legge meglio con l’etichetta centrata sopra o sotto il punto. Un’etichetta con `width` va a capo tra le parole; una parola più larga della giustezza riduce tutta l’etichetta, fino al `minScale` del suo stile. Come vengono disegnate le etichette è spiegato in [Pagine composte](/it/docs/composed-pages).
 
+Una linea di richiamo lascia l’etichetta dal lato del suo riquadro (la piastra, altrimenti le righe) rivolto verso il punto lungo lo spazio più ampio, dal centro di quel lato, così la linea non attraversa mai le parole dell’etichetta, anche quando è ruotata. Un punto che cade sotto il riquadro dell’etichetta, o una linea più corta del suo segno finale, non disegna nulla. Le linee di richiamo si disegnano sotto le etichette, con l’immagine, in ogni uscita che disegna le etichette, e seguono l’immagine quando viene ritagliata, ridotta, specchiata o distesa su una doppia pagina.
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## Avvisi dei modelli di pagina
 
 Altrove il motore ignora una chiave che non conosce. I modelli di pagina e gli stili delle etichette invece vengono verificati, e ogni problema diventa un avviso di configurazione in `postext check` e nel pannello Verifiche della Sandbox. Il `path` di questi avvisi è un puntatore JSON al campo in errore: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando il campo è stato ereditato, il puntatore indica il modello che l’ha scritto. Un avviso che cita un id o un nome inesistente suggerisce anche quello esistente più vicino.
 
-Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo.
+Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, il `routing`, le estremità e il `side` di un connettore, le estremità e il `routing` di una linea di richiamo) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo.
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ Una chiave scritta male di un modello, di una cornice, di un gruppo, di una grig
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Una cornice, un gruppo o un elemento della decorazione è ancorato a <code>'#name'</code> e il modello non ha cornici, gruppi o elementi con quel nome; oppure cornici e gruppi sono ancorati l’uno all’altro in un ciclo (anche attraverso un gruppo senza un proprio ancoraggio, il cui riquadro è quello delle sue cornici). L’ancoraggio vale come <code>'container'</code>, l’area.</td>
+      <td>Una cornice, un gruppo o un elemento della decorazione è ancorato a <code>'#name'</code> e il modello non ha cornici, gruppi o elementi con quel nome; oppure cornici e gruppi sono ancorati l’uno all’altro in un ciclo (anche attraverso un gruppo senza un proprio ancoraggio, il cui riquadro è quello delle sue cornici). L’ancoraggio vale come <code>'container'</code>, l’area. Un’estremità di un connettore che non indica nulla viene segnalata allo stesso modo, e quell’estremità viene tralasciata.</td>
       <td>Ancora a una cornice o a un gruppo che esiste, o rompi il ciclo ancorandone uno all’area.</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ Una chiave scritta male di un modello, di una cornice, di un gruppo, di una grig
   </tbody>
 </table>
 
-La versione della configurazione è la 15 dai modelli di pagina in poi (i pacchetti scritti prima continuano a caricarsi senza modifiche: niente di ciò che dice una configurazione più vecchia cambia significato).
+Dai connettori in poi (postext 1.48) la versione della configurazione è la 16; i modelli di pagina l’avevano portata alla 15. I pacchetti scritti prima continuano a caricarsi senza modifiche: niente di ciò che dice una configurazione più vecchia cambia significato, e un lettore precedente ai connettori lascia fuori gli elementi della decorazione che non conosce, con un `unknownConfigValue`.
+
+### Avvisi di sovrapposizione, ripetizione e moduli
+
+Questi avvisi vengono dall’impaginazione o dal Markdown della pagina, non dal solo modello, quindi indicano una pagina. Li elencano `postext check` (`--json` ne riporta i campi come `data`), il pannello Verifiche della Sandbox e i `contentWarnings` del documento. Da postext 1.48.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Avviso</th>
+      <th>Causa</th>
+      <th>Rimedio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>L’inchiostro di una cornice (le sue righe, la sua linguetta o il suo titolo, le sue immagini) sta sotto un’altra cornice disegnata sopra di essa: un <code>layer</code> più alto, o lo stesso livello ma più avanti nell’ordine del modello. Una cornice copre dove è opaca: il suo riempimento, la sua linguetta, le sue immagini, le sue righe; un contorno da solo non copre nulla, e le parole sopra un’immagine non vengono segnalate. Un avviso per coppia, con la cornice che copre (<code>coveredBy</code>), l’area nascosta (<code>overlapMm2</code>) e le prime parole o l’immagine coperte. Vedi <a href="/it/docs/composed-pages#framecovered">Pagine composte › frameCovered</a>.</td>
+      <td>Applica una proposta: il <code>layer</code> della cornice che copre sotto quello della cornice coperta, <code>exclude: 'push'</code> su di essa perché il testo le scorra attorno, o un <code>move</code> calcolato sulla pagina. Quando la sovrapposizione è voluta (un disegno sopra il testo), imposta <code>overlap: 'allow'</code> su una delle due cornici.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Una cornice esce da ciò che la contiene: il suo testo oltre il rifilo, il suo riempimento o le sue immagini oltre l’abbondanza, o una sua parte qualsiasi oltre la cornice o il gruppo dentro cui è ancorata (un ancoraggio a nove punti su <code>'#name'</code> il cui punto cade dentro quel riquadro). <code>past</code> dice quale, <code>excessMm</code> di quanto. Vedi <a href="/it/docs/composed-pages#frameoutsidearea">Pagine composte › frameOutsideArea</a>.</td>
+      <td>Applica una proposta: un <code>maxHeight</code> per la cornice, un <code>minHeight</code> per la cornice dentro cui è ancorata, <code>overflow.continueIn: 'next-page'</code> con un’altezza minore, o un <code>move</code>. Un bollino appeso di proposito fuori dalla sua scheda prende <code>overlap: 'allow'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una griglia che ripete un insieme di cornici contiene <code>repeat.max</code> elementi e la pagina gliene dà di più. Uno per ogni elemento in più, sul suo <code>slot="…"</code>: l’elemento va alla cornice di flusso (<code>flowFrame</code>), o dopo la pagina.</td>
+      <td>Alza <code>max</code>, toglilo, o sposta gli elementi in più su un’altra pagina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module&#123;template="…"&#125;</code> che la pagina non dispone: l’id non indica alcun modello (<code>reason: 'unknown'</code>), indica un modello che non è un modulo (<code>'notModule'</code>), oppure il modello della pagina non ha un gruppo di moduli (<code>'noGroup'</code>). Il suo contenuto va alla cornice di flusso.</td>
+      <td>Correggi l’id, dai al modello <code>role: 'module'</code>, o aggiungi al modello della pagina un gruppo con <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un blocco di pagina indica un modello di modulo. Un modulo si dispone nel gruppo di moduli di una pagina, mai come pagina: il contenuto del blocco viene composto nel flusso, come per un modello sconosciuto.</td>
+      <td>Indica nel blocco un modello di pagina, e metti il modulo al suo interno come <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> dentro un altro modulo. Non è supportato: i suoi blocchi appartengono al modulo esterno.</td>
+      <td>Chiudi prima il modulo esterno, o disegna il blocco interno come cornici del modulo esterno.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Il <code>name="…"</code> di un modulo è già usato da un altro modulo della pagina (<code>reason: 'taken'</code>) o contiene uno spazio, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code> (<code>'invalid'</code>). Il modulo prende invece il nome <code>used</code> (<code>&lt;template&gt;[n]</code>), e le sue cornici si indicano con quel nome.</td>
+      <td>Dai a ogni modulo della pagina un nome suo, fatto di lettere, cifre e trattini.</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped` (registro di reimpaginazione).** Un connettore la cui estremità sta su una cornice che la pagina non mostra (ridotta a zero, facoltativa e vuota, una scheda oltre gli elementi della pagina, un punto dell’immagine che la sua cornice taglia fuori) tralascia quell’estremità. Non è un avviso: lo annota il [registro di reimpaginazione](/it/docs/composed-pages#registro-di-reimpaginazione) della pagina, «connector ramas left out izq (not on the page)», così una pagina in cui è sparito un ramo si distingue da una disegnata come previsto. Per tenere l’estremità, dai un contenuto a quella cornice, oppure fai andare il connettore verso le cornici che la pagina ha.

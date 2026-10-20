@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'de',
   lastUpdated: '2026-10-20',
   readingTime: '12 min',
-  order: 38,
+  order: 39,
   parent: 'sandbox',
   plainSummary: "Diese Seite versammelt, was die Sandbox für zusammengesetzte Seiten bietet, also für Seiten, deren Text in Rahmen fließt, die eine Vorlage anordnet. Die Rahmen einer Vorlage zeichnen und verschieben Sie direkt auf der Seite, und die Rahmenstile ordnen Sie in einer Bibliothek. Das Bedienfeld Prüfungen meldet in jeder Sprache des Buchs, welche zusammengesetzten Seiten Text haben, der nicht passt, und bietet Schaltflächen an, die einen Rahmen beheben. Ein Buch, das vor den zusammengesetzten Seiten entstand, kann den Text seiner Seiten in einem Schritt ins Markdown verschieben.",
 };
@@ -33,7 +33,7 @@ Diese Seite versammelt die Teile der Bedienfelder Gestaltung und Prüfungen, die
 
 **Ein Artikel, der in ein anderes Kapitel springt.** In einem Buch mit einer Kapiteldatei je Artikel läuft ein Artikel, dessen Rahmen ihn an `page:<id>` weiterleitet, im Kapitel mit dieser Seite weiter (seit postext 1.41; siehe [Zusammengesetzte Seiten › Auf eine spätere Seite springen](/de/docs/composed-pages#auf-eine-spätere-seite-springen)). Das Canvas, das Folio und die Tabs für PDF und EPUB setzen den Rest auf die Seite dieses Kapitels, mit den Seitenzahlen des Buchs in den Vermerken. Der Layout-Eintrag eines Kapitels merkt sich die Artikel, die es weiterleitet; das Kapitel mit der Seite wird daher neu gesetzt, wenn sich der Artikel ändert, nicht aber, wenn sich ein Kapitel dazwischen ändert. Ein Klick auf die übernommenen Wörter setzt den Cursor ins Markdown des Artikels, und der Pfad unter der Vorschau nennt die spätere Seite, wenn der Cursor in diesem Text steht. Die Vorschau eines einzelnen Kapitels zeigt nur, was seine eigenen Seiten enthalten: Der Rest erscheint mit dem Kapitel, das die Seite hat.
 
-**Der eigene Wortlaut einer Abbildung.** Ein Klick auf eine Legende oder eine Anmerkung, die die Abbildung selbst schreibt, setzt den Cursor in ihre Zeile `::caption[…]` oder `::note[…]` oder in das Attribut der öffnenden Zeile, an den angeklickten Buchstaben (siehe [Zusammengesetzte Seiten › Der eigene Wortlaut einer Abbildung](/de/docs/composed-pages#der-eigene-wortlaut-einer-abbildung)).
+**Der eigene Wortlaut einer Abbildung.** Ein Klick auf eine Legende oder eine Anmerkung, die die Abbildung selbst schreibt, setzt den Cursor in ihre Zeile `::caption[…]` oder `::note[…]` oder in das Attribut der öffnenden Zeile, an den angeklickten Buchstaben (siehe [Zusammengesetzte Seiten › Der eigene Wortlaut einer Abbildung](/de/docs/composed-pages-figures#der-eigene-wortlaut-einer-abbildung)).
 
 
 ## Rahmenstile
@@ -63,6 +63,9 @@ Der Abschnitt führt auf:
 - *Beschriftung an einem unbekannten Anker* und *Anker ohne Beschriftung* (`labelAnchorUnknown`, `anchorUnlabelled`), beim Rahmen, der die Abbildung setzt;
 - *Beschriftung breiter als vorgesehen* und *Beschriftungen überdecken sich* (`labelOverflow`, `labelOverlap`), beim selben Rahmen: Die Beschriftungen jeder Ausgabe werden mit ihren eigenen Wörtern gemessen, sodass eine Sprache mit längeren Wörtern dort überläuft, wo eine andere es nicht tut. Auch eine Beschriftung, die in eine Sperrzone (`avoid`) des Bildes hineinragt, erscheint hier; die Zonen werden im Modus **Sperrzonen** der Bildmarkierungen gezogen, und bei einem SVG legt **Symbole der Zeichnung** im selben Modus eine Zone über jedes Element der Zeichnung, dessen ID mit einem bestimmten Präfix beginnt oder das eine bestimmte Klasse trägt (seit postext 1.43);
 - *Slot ohne Rahmen*, *Leerer Rahmen*, *Unbekannte Seitenvorlage*, *Zusammengesetzte Seite mit drei Doppelpunkten* und *Doppelseite passt nicht zur Vorlage* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Rahmen unter einem anderen Rahmen* und *Rahmen ragt über seine Grenze hinaus* (`frameCovered`, `frameOutsideArea`), mit den verdeckten Wörtern oder dem verdeckten Bild, der verborgenen Fläche oder dem Überstand und den Korrekturen mit einem Klick; wer einen Eintrag auswählt, sieht auf dem Canvas die beiden Rahmen markiert, oder den Rahmen und den Kasten, über den er hinausragt (seit postext 1.48);
+- *Mehr Einträge, als das Raster fasst* (`repeatOverflow`), beim Markup (seit postext 1.48);
+- *Unbekanntes Modul*, *Modul als Seite gesetzt*, *Modul in einem Modul* und *Modulname nicht übernommen* (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`), beim Markup (seit postext 1.48);
 - *Block des Inhaltsverzeichnisses über Spalten getrennt* (`tocGroupSplit`);
 - die Warnungen der Vorlagen selbst (ein Rahmenstil oder Anker, den es nicht gibt, Größen, die sich widersprechen, eine Kette, die in sich selbst zurückläuft) und Gestaltungstext, der Inhalt des Buchs enthält (`contentInConfig`).
 

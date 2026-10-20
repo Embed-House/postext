@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'Les directives ::: pour les conteneurs, les colonnes, le papier, les sauts de page, la numérotation, l’espace, les vers, la table des matières et l’index, les sauts de ligne, et le balisage des planches de bande dessinée',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
-  readingTime: '38 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '39 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "Une directive est un bloc qui commence par trois deux-points, comme :::callout ou :::columns. Cette page liste chaque directive et ce qu’elle fait. Certaines mettent le texte dans un encadré, le composent en colonnes ou l’impriment sur un autre papier. D’autres commencent une nouvelle page, changent la numérotation, ajoutent de l’espace, composent un poème vers par vers, ou impriment la table des matières et l’index. La dernière section traite des marques pour les planches de bande dessinée, les cases et les paroles des personnages.",
@@ -125,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Cinq noms de conteneur sont reconnus dans le flux du texte ; un sixième, `:::frame`, renferme le contenu d’un bloc dans une [page composée](#pages-composées). Ce que chacun produit se règle dans sa propre section de la configuration :
+Cinq noms de conteneur sont reconnus dans le flux du texte ; `:::frame` et `:::module` renferment le contenu d’un bloc et d’un module dans une [page composée](#pages-composées), et `:::figure` et `:::label` une figure et une étiquette de plusieurs lignes. Ce que chacun produit se règle dans sa propre section de la configuration :
 
 <table>
   <thead>
@@ -735,4 +735,7 @@ Une page composée est mise en page d’après un gabarit de page de la configur
 - `::::page{template="…"}` … `::::` est la page : quatre deux-points ou plus, fermés par une ligne qui n’en contient que le même nombre. Les délimiteurs à trois deux-points qu’elle renferme (`:::frame`, `:::callout`, `:::figure`…) fonctionnent comme partout, et un `:::` seul ne ferme jamais la page. Un `:::page` à trois deux-points reste une planche de bande dessinée.
 - `:::frame{slot="…" label="…"}` … `:::` renferme le contenu du bloc de ce nom : n’importe quel Markdown.
 - `slot="…"` sur un titre (`## Retos {slot="retos-titulo"}`), sur `::resource{id="…" slot="…"}`, sur un délimiteur de code ou sur un conteneur `:::` envoie ce seul élément. Le contenu sans emplacement (attribut `slot`) va dans le bloc de flux du gabarit.
-- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant. Ses `alt`, `caption` et `note`, en attributs du délimiteur ou en lignes `::alt[…]`, `::caption[…]` et `::note[…]`, remplacent les textes de la ressource pour ce chapitre (voir [Pages composées › Les textes d’une figure](/fr/docs/composed-pages#les-textes-dune-figure)).
+- `:::figure{resource="…" slot="…"}` … `:::` place une ressource avec ses lignes `::label[TEXT]{at="…" style="…"}`, `at` étant une ancre de l’image ou un point `"x% y%"`. Une figure fonctionne aussi dans le texte courant. Ses `alt`, `caption` et `note`, en attributs du délimiteur ou en lignes `::alt[…]`, `::caption[…]` et `::note[…]`, remplacent les textes de la ressource pour ce chapitre (voir [Pages composées › Les textes d’une figure](/fr/docs/composed-pages-figures#les-textes-dune-figure)).
+- `leader` sur un `::label` trace une ligne de l’étiquette jusqu’au point de son ancre, et `leader="none"` la retire. `:::label{at="…" style="…"}` … `:::`, dans une figure, écrit une étiquette ligne par ligne, comme le demande la légende d’une carte ; `:icon[alt]{glyph="…"}`, `{resource="…"}` ou `{line="dashed"}` place un symbole dans une étiquette, une légende, une note ou une cellule de tableau (voir [Pages composées › Traits de rappel, légendes de carte et symboles](/fr/docs/composed-pages-figures#traits-de-rappel-légendes-de-carte-et-symboles)). Depuis postext 1.48.
+- Dans une page dont le gabarit répète une carte dans une grille, chaque `:::frame{slot="<card>"}` est une carte, et un élément qui, à l’intérieur, désigne un autre bloc de la carte va dans ce bloc de la même carte (voir [Pages composées › Emplacements répétés](/fr/docs/composed-pages#emplacements-répétés)). Depuis postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` renferme le contenu d’un module de la page, un bloc dessiné par un gabarit de module et empilé dans le groupe de modules de la page ; les emplacements qu’il contient sont ceux du module (voir [Pages composées › Modules dans une page](/fr/docs/composed-pages#modules-dans-une-page)). Depuis postext 1.48.

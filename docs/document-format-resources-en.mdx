@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pictures, tables and videos',
   description: 'Resources in the text: references and embeds, numbering, placement and where a float lands, text wrap, bitmap size, safe areas, comic anchors and videos',
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '39 min',
   order: 29,
   parent: 'document-format',
@@ -347,8 +347,21 @@ const radio: Resource = {
 };
 ```
 
-An anchor's `id` is the speaker key of the script (`tomas: …`), or `sfx` for the point the panel's sound effects gather at; `x` and `y` are the mouth a speech balloon's tail points at, `head` the point a thought balloon's bubbles point at (the mouth when unset) and `face` a rectangle no balloon covers. The engine maps every point through the panel's crop and mirror, so a tail stays on its speaker whatever shape the panel takes; an anchor outside the safe area raises `comicAnchorOutsideSafeArea`, because a crop may cut it off. A third list, `faces`, holds the faces of people who do not speak, as rectangles like those of `avoid`: no balloon covers them, where an avoid zone gives way when a panel has no other room. Anchors belong to the picture and serve every translation of the comic. Comic panels read them for their lettering. A figure's labels use the anchors too, and since postext 1.42 the `avoid` zones of a map or a diagram mark its symbols: a label that runs onto one raises `labelOverlap` (see [Composed pages](/en/docs/composed-pages#labeloverlap)). In the Sandbox they are marked in the **Safe area & lettering** dialog of the [Resources panel](/en/docs/sandbox#resources-panel).
+An anchor's `id` is the speaker key of the script (`tomas: …`), or `sfx` for the point the panel's sound effects gather at; `x` and `y` are the mouth a speech balloon's tail points at, `head` the point a thought balloon's bubbles point at (the mouth when unset) and `face` a rectangle no balloon covers. The engine maps every point through the panel's crop and mirror, so a tail stays on its speaker whatever shape the panel takes; an anchor outside the safe area raises `comicAnchorOutsideSafeArea`, because a crop may cut it off. A third list, `faces`, holds the faces of people who do not speak, as rectangles like those of `avoid`: no balloon covers them, where an avoid zone gives way when a panel has no other room. Anchors belong to the picture and serve every translation of the comic. Comic panels read them for their lettering. A figure's labels use the anchors too, and since postext 1.42 the `avoid` zones of a map or a diagram mark its symbols: a label that runs onto one raises `labelOverlap` (see [Composed pages](/en/docs/composed-pages-figures#labeloverlap)). In the Sandbox they are marked in the **Safe area & lettering** dialog of the [Resources panel](/en/docs/sandbox#resources-panel).
 
+
+An anchor that a figure's label uses can also set the label away from its point, `labelAt: { x, y }` in fractions of the picture, and draw a line back to it, `leader: true` or a leader look; a connector of a composed page can end at the anchor's point with `anchor: '<id>'`. See [Configuration › Label fields of an anchor](/en/docs/configuration-composed-pages#label-fields-of-an-anchor). Since postext 1.48.
+
+### Symbols in captions, notes and cells
+
+A caption, a note or a table cell can hold a small symbol on its line: `:icon[alt]{glyph="⊙"}` sets a character (in the face `font="…"` names, else the text's), `:icon[alt]{resource="town-mark"}` a bitmap or SVG resource, and `:icon[alt]{line="dashed"}` a sample of a line, for a table that explains the lines of a map. `color="…"` tints it with a hex colour or a palette entry, and `size="…"` sets its height in ems (default `0.75`, a capital's height). The text in brackets is what screen readers and the tagged PDF read in its place; empty brackets make it decoration.
+
+```ts
+{ id: 'mapa-politico', typeId: 'figure', kind: 'bitmap',
+  caption: 'Capitals :icon[capital]{glyph="⊙" font="Noto Sans Math"} and towns :icon[town]{resource="town-mark"} of Varenia' }
+```
+
+Symbols are read in captions, notes, table cells and figure labels (see [Composed pages › Leaders, legends and symbols](/en/docs/composed-pages-figures#leaders-legends-and-symbols)); in body text and headings the directive stays text in this release. Since postext 1.48.
 
 ### Videos
 

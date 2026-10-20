@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: 'コマンドライン',
   description: 'macOS、Linux、Windowsで動く、自己完結した1つの実行ファイル。.postextの本、本のフォルダー、ばらのMarkdownからのPDF、HTML、EPUB、ページ画像、Word文書の作成、バンドルの作成、本の検査、そしてスクリプトやエージェント向けのJSON出力',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13分',
-  order: 45,
+  order: 46,
   plainSummary: "このページは、Webサイトではなくターミナルを使ってPostextで本を作りたい人のためのものです。自分のコンピューター用のファイルを1つダウンロードして実行するだけで、ほかに何もインストールする必要はありません。本や何本かのテキストファイルを渡すと、PDF、Webページ、電子書籍、ページの画像、Wordの文書を作ります。本に問題がないかを調べたり、本のファイルを1つにまとめたりすることもできます。結果をプログラムが読みやすい形で返せるので、ほかのプログラムやAIアシスタントからも使えます。",
 };
 
@@ -211,7 +211,7 @@ postext check chapters/ --strict --json
 
 また、設定のデザインのうち、プレースホルダーではなく本の文章そのものが書き込まれているテキスト（`contentInConfig`）も、見出しスタイル、柱、部扉のデザインごとに1回、各テキストのパスを添えて報告します。その文章をMarkdownに移すか、書名や出版社名を`checks.contentInConfig.allow`に加えてください。
 
-ページテンプレートのある本では、`check`は次も報告します。枠に収まらないテキスト（`frameOverflow`。再配置で試した手順と、収めるための修正案を添えます）、枠が追加できるページ数を超えて続く文章（`frameContinuationLimit`）、後ろにないページへのジャンプ（`continueTargetMissing`）、描けない図のラベルや重なり合う図のラベル（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）です。警告のあと、再配置の記録があるテンプレートページごとに`reflow`の行を1行出力します。`--json`では、手順、修正案、再配置の記録がデータとして付きます。[テンプレートページ › 警告](/ja/docs/composed-pages#警告)と[再配置の記録](/ja/docs/composed-pages#再配置の記録)を参照してください。
+ページテンプレートのある本では、`check`は次も報告します。枠に収まらないテキスト（`frameOverflow`。再配置で試した手順と、収めるための修正案を添えます）、枠が追加できるページ数を超えて続く文章（`frameContinuationLimit`）、後ろにないページへのジャンプ（`continueTargetMissing`）、描けない図のラベルや重なり合う図のラベル（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）、ほかの枠の下に隠れた枠や端からはみ出した枠（`frameCovered`、`frameOutsideArea`）、グリッドに収まる数を超えたカード（`repeatOverflow`）、ページに配置できないモジュール（`moduleUnknown`、`moduleAsPage`、`moduleNested`、`moduleNameRejected`）です。警告のあと、再配置の記録があるテンプレートページごとに`reflow`の行を1行出力します。`--json`では、手順、修正案、再配置の記録がデータとして付きます。[テンプレートページ › 警告](/ja/docs/composed-pages#警告)と[再配置の記録](/ja/docs/composed-pages#再配置の記録)を参照してください。
 
 ### buildと--watch
 

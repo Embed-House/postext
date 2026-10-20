@@ -3,10 +3,10 @@
 export const metadata = {
   title: '設定：テンプレートページ',
   sidebarTitle: 'テンプレートページの設定',
-  description: 'テンプレートページのためのページテンプレート：枠、グループ、装飾、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
+  description: 'テンプレートページのためのページテンプレート：枠、グループ、枠のセットを繰り返すグリッド、モジュール、装飾とコネクター、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
-  readingTime: '6分',
+  lastUpdated: '2026-10-20',
+  readingTime: '10分',
   order: 18,
   parent: 'configuration',
   plainSummary: "このページでは、ページテンプレートを説明します。テンプレートは設定の中に描いたページで、枠と呼ぶ名前付きの箱と、それぞれの位置、どこまで大きくなれるか、どう見えるかを決めます。テンプレートページのMarkdownは、その枠に名前で中身を入れます。そのため本文に位置を書くことはなく、設定に本文を書くこともありません。テンプレートはほかのテンプレートをもとにして一部の枠だけを変えられ、左ページと右ページで違う形にもできます。画像の上に置く文字のラベルスタイルと、テンプレートが出すすべての警告とその直し方も載せています。",
@@ -104,7 +104,7 @@ const config: PostextConfig = {
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>なし</td>
-      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページブロックに書いた属性を表す<code>&#123;attr.x&#125;</code>）。要素は枠やグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾は枠の後に置かれ、本文を押しのけることはありません。postext 1.42以降、<code>&#123;headingNumber&#125;</code>はページの枠に入る最初の番号付き見出し（<code>takes</code>を指定した枠）のカウンターを、<code>&#123;headingNumber.titulo&#125;</code>は枠<code>titulo</code>に入る見出しのカウンターを、文書の数字で出力します。テーマの番号を載せるバッジは見出しから番号を読むので、ページブロックに同じ番号を書き直す必要はありません。装飾は枠の下に描かれます。枠の上にある文字要素をクリックしたとき、その位置に枠自身の文字がなければ、枠ではなくその要素が選ばれます。<code>layer</code>が負の枠は装飾の下に描かれます。</td>
+      <td>ページと一緒に描く画像、罫線、ボックスで、<a href="/ja/docs/configuration-headers-footers#柱とノンブル">柱とノンブル</a>と同じ要素の書き方を使います。テキスト要素に入れられるのはプレースホルダーだけです（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>、ページブロックに書いた属性を表す<code>&#123;attr.x&#125;</code>）。要素は枠やグループに固定でき（<code>'#dinero'</code>）、その場合はそれと一緒に動きます。装飾は枠の後に置かれ、本文を押しのけることはありません。postext 1.42以降、<code>&#123;headingNumber&#125;</code>はページの枠に入る最初の番号付き見出し（<code>takes</code>を指定した枠）のカウンターを、<code>&#123;headingNumber.titulo&#125;</code>は枠<code>titulo</code>に入る見出しのカウンターを、文書の数字で出力します。テーマの番号を載せるバッジは見出しから番号を読むので、ページブロックに同じ番号を書き直す必要はありません。装飾は枠の下に描かれます。枠の上にある文字要素をクリックしたとき、その位置に枠自身の文字がなければ、枠ではなくその要素が選ばれます。<code>layer</code>が負の枠は装飾の下に描かれます。postext 1.48以降、装飾には<a href="/ja/docs/configuration-headers-footers#パス要素">パス要素</a>（ベクターの図形として描く棒、リボン、山形）と、枠どうしを結ぶ線である<a href="#コネクター">コネクター</a>も置けます。</td>
     </tr>
     <tr>
       <td><code>header</code>、<code>footer</code></td>
@@ -152,7 +152,7 @@ const config: PostextConfig = {
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td><code>pages</code>フィルターを指定したデザイン要素から見たページの役割です。</td>
+      <td><code>pages</code>フィルターを指定したデザイン要素から見たページの役割です。<code>'module'</code>はテンプレートをモジュールにします。モジュールは独立したページではなく、ページがグループの中に積み重ねる枠のまとまりです（<a href="#モジュール">モジュール</a>を参照）。postext 1.48以降。</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ const config: PostextConfig = {
       <td>独自の書字方向や文字方向で組む枠です。横組みのページの縦組みの囲み、縦組みのページの横組みのカード、左から右へ進む本の中の右から左へ進む引用などに使います。もう一方の書字方向の枠は、4分の1回転した矩形の中で組まれます。行は矩形の高さに沿って進み、幅の方向に並びます。高さが<code>'auto'</code>のときは、その幅に行が収まる最小の高さになります。文字はその書字方向のページと同じように描かれます。<code>direction</code>は枠の内容をその方向で組みます。<code>&#123;dir=…&#125;</code>を付けた囲みと同じで、自分で<code>dir</code>を書いた段落や囲みはそれを保ちます（postext 1.39以降）。postext 1.40以降は、縦組みの枠を右から左へ進むページでも使えます。左から右のページと同じように組み、鏡映したフローが置く位置に据え、文字は鏡映せずに描きます。横組みページの縦組み枠にある画像は、キャプションとともに直立し、枠がページの幅方向に残している余地を使います。リフロー型EPUBは、別の書字方向の枠を、その書字方向と、行が延びる向きの長さ（本文のem単位）を指定したボックスとして書き出します。postext 1.42以降、縦組みページでページと同じ書字方向の枠にある画像も、キャプションとともに直立します。</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>は枠を重なりの検査から外します。この枠を含む組には、ほかの枠の上に描かれる場合も下に描かれる場合も<code>frameCovered</code>が出ず、この枠には<code>frameOutsideArea</code>も出ません。本文の上に載せるための絵や、わざとカードから半分はみ出させたバッジに使います。<a href="#重なり繰り返しモジュールの警告">重なり、繰り返し、モジュールの警告</a>を参照してください。postext 1.48以降。</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>上から下か、始端から終端かです。</td>
+      <td>上から下、始端から終端、または行に並ぶセル（<code>'grid'</code>。postext 1.48以降。<a href="#枠のセットを繰り返すグリッド">枠のセットを繰り返すグリッド</a>を参照）です。</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>グループの枠を、ページ上の順に並べます。1つの枠が属するグループは多くても1つです。テンプレートの枠ではない名前や、すでに挙げた枠は飛ばします。</td>
+      <td>グループの枠を、ページ上の順に並べます。1つの枠が属するグループは多くても1つです。テンプレートの枠ではない名前や、すでに挙げた枠は飛ばします。繰り返すグリッドは、代わりに<code>repeat.frames</code>の枠を使います。</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>グリッドの列数です。どの列も同じ幅です。</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>、<code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>グループの<code>gap</code></td>
+      <td>グリッドの列と列の間、行と行の間のアキです。</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>グリッドで、行より低いセルをどこに置くかです。<code>'stretch'</code>は、主枠の高さが<code>'auto'</code>か<code>'fill'</code>のとき、その枠を行と同じ高さ（<code>maxHeight</code>まで）にします。</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>なし</td>
+      <td>グリッドで、ページの内容の項目ごとに1回ずつ配置する枠のセットです。<code>frames</code>の最初の枠がセルの主枠です。<code>max</code>は項目数の上限で、残りは流し込み枠に入ります（<code>repeatOverflow</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>グループがページの<code>:::module</code>ブロックを受け取り、Markdownの順に上から積み重ね、その間に<code>gap</code>を空けます。<code>kind</code>にかかわらず積み重ねとして配置し、<code>frames</code>は読みません。<a href="#モジュール">モジュール</a>を参照してください。postext 1.48以降。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>なし</td>
+      <td>モジュールのグループで、収まらないモジュールを丸ごと続ける先です。指定しなければ、モジュールはグループの下端で切れ、その枠が収めるための手順を順に試します。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 大きくなるほうの枠は、中身にかかわらず空き領域と同じ高さになります。そのため背景の見えるスタイルを付けると全体が塗られてしまいます。カードはテンプレートの装飾に描き、テキストの枠にはスタイルを付けないでください。
 
+### 枠のセットを繰り返すグリッド
+
+写真のカードのページ、学習活動のカードのページ、名前を下に添えた肖像のページは、どれも同じカードを何度も描いたものです。`repeat`を付けたグリッドのグループは、それをテンプレートの中で1度だけ描きます。1枚のカードの枠を枠のセットと呼び、グリッドはページのMarkdownが渡す項目ごとに1回ずつそのセットを配置します。そのためページのカードの枚数はMarkdownで決まり、翻訳でカードが1枚増えても新しいテンプレートはいりません。postext 1.48以降。
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **セット**：`repeat.frames`の最初の枠がセルの**主枠**です。主枠はセルの幅を取り、高さは自分の規則に従います（`'auto'`は`minHeight`と`maxHeight`の範囲での中身の高さです）。セットのほかの枠はテンプレートが描くとおりに、主枠かほかのセットの枠にアンカーして配置します。この例では、キャプションの札が写真の下端から下がります。セットの外の枠にアンカーしたセットの枠は、そのアンカーが示す位置にとどまります。
+- **項目**：ページの`:::frame{slot="foto"}`の1つ1つが1つの項目です。繰り返すスロットの内容はつながりません。内容の中で、セットの構成要素を指定したブロック（`:::frame{slot="pie"}`、`::resource{… slot="pie"}`）は、同じカードのその構成要素に入り、それ以外は主枠に入ります。[テンプレートページ › 繰り返すスロット](/ja/docs/composed-pages#繰り返すスロット)を参照してください。
+- **インスタンス**：各カードの枠は、1から数えて`<frame>[n]`と名付けられます。`foto[2]`と`pie[2]`が2枚目のカードです。警告、再配置の記録、ソースマップ、Sandboxはこの名前を使い、枠のidは`cp<n>:foto[2]`になります。装飾の要素やコネクターは`'#foto[2]'`にアンカーできます。コネクターの`to: '#foto[*]'`は、ページにあるすべてのカードに届きます。`'#foto'`にアンカーした要素は、グリッドのボックスを読みます。
+- **セル**：セルは行を始端側から埋めるので、右から左へ進むページでは最初のカードが右に来ます。行の高さはいちばん高いセルに合わせ、主枠の上に出るもの（タブ）と下に下がるもの（札）も数えます。低いセルの位置は`rowAlign`で決まります。グリッドのボックスは、それ自身の`placement`か`grid`のセルです。どちらもなければ、テンプレートが主枠を描く位置から始まり、領域の右端と下端まで広がります。
+- **カードが収まらないとき**：グリッドの下端を越えた行はそこで切れ、各カードはそれぞれ収めるための手順を試し、最後に切れたカードが`frameOverflow`を出します。主枠に`overflow.continueIn`（`'next-page'`、`'template:<id>'`）があれば、グリッドは**行単位で**続きます。収まらない最初の行とそれ以降のすべての行は、同じ枠のセットを繰り返すテンプレートのグリッドに入れて、追加ページに配置します。グリッド全体より高いセルは、いつまでも続ける代わりに警告を出します。
+- **`max`**：`repeat.max`を超えた項目は流し込み枠に入り、テンプレートに流し込み枠がなければページの後に入ります。そのたびに`repeatOverflow`が出ます。
+
+`repeat`のないグリッドは、挙げた枠を書いた順に1つのセルに1つずつ配置します。繰り返すセットの枠をほかのグループにも挙げると、そちらでは飛ばされ（`groupFrameTwice`）、テンプレートにない名前は`groupFrameUnknown`になります。`grow`と`shrink`はグリッドの行には働かず、`redistribute`もカードには働きません。
+
+### モジュール
+
+教科書のページは、本の中で繰り返し現れるブロックを、別の順で積み重ねていることがよくあります。写真を横に添えた囲み、3つの考えの木、見出しの下に並ぶ4枚の写真のグリッドなどです。並べ方ごとにテンプレートを描けば、テンプレートはどんどん増えます。**モジュール**は、そうしたブロックを1度だけ描いたものです。`role: 'module'`のテンプレートで、枠、グループ、装飾（コネクターを含む）を持ち、それ自身のページは持ちません。ページテンプレートは`modules: true`のグループでモジュールを受け取り、どのモジュールをどの順で入れるかはページのMarkdownが決めます（[テンプレートページ › ページの中のモジュール](/ja/docs/composed-pages#ページの中のモジュール)を参照）。postext 1.48以降。
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **モジュールが持つもの**：枠、グループ（繰り返すグリッドを含む）、装飾、コネクターです。`area`、`header`、`footer`、`variants`、`spread`、`gutter`、`overflowTemplate`は持たず、書くとそれぞれ`unknownConfigValue`として報告され、無視されます。`extends`はモジュールどうしで使えます（モジュールを拡張したテンプレートはモジュールです）。
+- **ボックス**：モジュールの幅はそのグループと同じで、高さは枠が届くところまでです。グループはモジュールを上から積み重ね、その間に`gap`を空けます。モジュールの中では、`'container'`はモジュールのボックスを指し、枠（`'fill'`とパーセントも）と装飾はそれを基準にします。`{ to: 'container', edge: 'bottom' }`まで広げた地は、言葉の量でモジュールの高さがどう変わっても、モジュール全体を覆います。
+- **名前**：モジュールの枠、グループ、要素は、モジュールのインスタンス名のもとにまとまります。`<name>.<frame>`で、名前はMarkdownが与えるもの（`name="ramas"`）、なければ`<template>[n]`です。nはページの中でそのテンプレートを使うモジュールの何番目かを示します（`arbol[2].raiz`）。モジュールの中のアンカー、`next`、`continueIn: '#x'`、コネクターはそのモジュール自身の枠に書き換えられるので、1ページに木が2つあっても互いにつながりません。枠のidは`cp0:arbol[2].raiz`です。
+- **モジュールが収まらないとき**：グループの下端を越えたモジュールはそこで切れ、その枠が収めるための手順を試します。`frameOverflow`はグループにつき1回出ます。モジュールのグループに`overflow.continueIn`（`'next-page'`または`'template:<id>'`）があれば、収まらない最初のモジュールとそれ以降のすべてのモジュールが、同じ名前のまま**丸ごと**追加ページへ移り、そのページのモジュールのグループの先頭に入ります。
+- **まだできないこと**：モジュールを横に並べること（モジュールのグループはいつも積み重ねです）、モジュールの中のモジュール（`moduleNested`）、モジュールの中でのテンプレートの`grid`のセルです。
+
 ### 内容が収まらないとき
 
 枠の中身がグループの与える場所より高いとき、割り付けは[収めるための手順](/ja/docs/composed-pages#それでも収まらないとき)を順に試し、最初に中身が収まったところで止まります。`maxHeight`までの空き場所、グループの押し下げと譲り合い、画像の縮小、グループのほかの枠を最小まで縮めること、テキストの縮小、別のページへの続き、の順です。各手順をどこまで進めてよいかは、次の枠の設定で決まります。
@@ -555,7 +654,7 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 ### 割り付けに反映される設定
 
-割り付けに反映されるのは、各枠の配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、枠の`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。postext 1.42以降は、テンプレートの`palette`、枠の`look`、幅の`'auto'`（枠のいちばん長い行に合わせた幅）も反映されます。枠の`writingMode`と`direction`は、postext 1.39以降は反映されます。テンプレートの`bodyStyle`は読み込まれて検査されますが、まだ割り付けには反映されません。
+割り付けに反映されるのは、各枠の配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、枠の`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。postext 1.42以降は、テンプレートの`palette`、枠の`look`、幅の`'auto'`（枠のいちばん長い行に合わせた幅）も反映されます。枠の`writingMode`と`direction`は、postext 1.39以降は反映されます。postext 1.48以降は、グリッドのグループとその`repeat`、モジュールのグループとモジュールのテンプレート、装飾のコネクターとパス要素、枠の`overlap`も反映されます。テンプレートの`bodyStyle`は読み込まれて検査されますが、まだ割り付けには反映されません。
 
 ### 見開き
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 列の間隔を`gutter`より広くしておけば、左右対称のグリッドのカードはのどにかからず、どれも動きません。2本目の帯と絵の帯は`crossGutter`でのどをまたぎ、それぞれ中心のあるページで読まれ、両方のページに描かれます。タブに書く時代の名前も含め、ページの言葉はすべてMarkdownに置きます。
 
 縦組み（`vertical-rl`）の本では、見開きのテンプレートも1ページのテンプレートページと同じく、ページの文章の流れの座標で割り付けます。ページの「上」は紙の右端で、行は下へ進むので、テンプレートの`x`は紙を下へ、`y`は紙の右端から左へ進みます。見開きは`y`に沿って右ページ、次に左ページと並び、のどはテンプレートを横切る線になり、`gutter`、`crossGutter`、ページ間の切り分けはこの軸で読みます。装飾は従来どおり実際の紙の上に置かれ、のどで切られます。横組みの本のために描いた横長の年表は、縦組みの本では回転して出ます。縦組みの本のテンプレートは、文章の流れの座標で書いてください（postext 1.38以降）。紙面を横に読ませたいカードには`writingMode: 'horizontal-tb'`を指定します。横組みで組まれ、縦組みのページの上で正立します（postext 1.39以降）。
+
+### コネクター
+
+コネクターは、枠どうしを結ぶ装飾の線です。樹形図の枝、組織図、年表から下ろす線、流れ図の矢印、注記から地図の一点を指す線などに使います。枠のボックスが確定してから置くので、長くなった文章、語の長い版、枠を動かしたグループにもついていきます。どの出力でもベクターの線として描くので、テンプレートに線の画像を用意する必要はありません。コネクターはページテンプレートかモジュールの`decoration`の要素です。柱と見出しのデザインには結ぶ枠がないので、そこに置いたコネクターは報告され（`unknownConfigValue`）、描かれません。postext 1.48以降。
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>プロパティ</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>、<code>id</code></td>
+      <td><code>'connector'</code>、<code>string</code></td>
+      <td>必須</td>
+      <td>要素とそのidで、装飾のほかの要素と同じです。</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>必須</td>
+      <td>線の一方の端です。木では親になります。</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>必須</td>
+      <td>もう一方の端、または複数の端です。それぞれに1本ずつ線を引くか、木の子になります。<code>'#card[*]'</code>は、ページにある<a href="#枠のセットを繰り返すグリッド">繰り返すグリッド</a>のすべてのカードを表します。</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>は1本の線分です。<code>'elbow'</code>は、向かい合う辺の間では横切り、沿って進み、また横切る線で、直角に交わる辺の間ではL字になります。<code>'tree'</code>は、<code>from</code>から横棒までの幹、子の点にわたる横棒、各子への下ろし線です。</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>折れ線の中間部分や木の横棒を、端と端の間のどこに置くかです。<code>0</code>は<code>from</code>、<code>1</code>はいちばん近い<code>to</code>の位置です。<code>trunk: 0</code>の木は横棒を描かず、年表の目盛りのように、親の辺から各子へ線を下ろします。</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>折れ線や木の曲がり角を丸めます。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>メインカラー</td>
+      <td>パレットにリンクした色は、罫線と同じく、テンプレート、ページブロック、部の<code>palette</code>に従います。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>dash</code></td>
+      <td><code>Dimension</code>、<code>Dimension[]</code></td>
+      <td><code>0.75pt</code>、実線</td>
+      <td>線の太さと、破線のパターン（線、間隔、…）です。</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>、<code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>from</code>とすべての<code>to</code>に付ける印です。端を中心とする塗りつぶした点か、先端が端に来る矢じりです。</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>width</code>の3倍</td>
+      <td>点の直径、または矢じりの長さです。</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>内容が枠に与えたボックスではなく、テンプレートが宣言したボックスを結びます。</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>、<code>pages</code></td>
+      <td>ほかの要素と同じ</td>
+      <td><code>'all'</code></td>
+      <td>どのページに描くかです。</td>
+    </tr>
+  </tbody>
+</table>
+
+それぞれの端（`ConnectorEnd`）は、ボックスと、その辺の1点を指定します。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>項目</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>必須</td>
+      <td>枠、グループ、繰り返すグリッドのカード（<code>'#foto[2]'</code>）、または装飾のほかの要素です。</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>もう一方の端に向いた辺</td>
+      <td>線がボックスから出る辺、またはボックスに届く辺です。<code>start</code>と<code>end</code>はページの行の方向に従います。指定しなければ、2つのボックスの間の広いほうの隙間をはさんで相手に向いた辺になります。木の子は親のほうを向きます。</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>その辺に沿った点、または辺の始まりからの割合（0から1）です。横の辺はページの行が始まる側から、縦の辺は上から数えます。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>ボックスの縁（またはアンカーの点）と線の端の間のアキです。</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>枠が収める画像のアンカーです。端は枠の辺の点ではなく画像のその点になり、ラベルと同じく画像のトリミング、セーフエリア、縮尺を通して求めます。<code>at</code>は読みません。<code>side</code>は線がどちらから届くかを示します（既定ではもう一方の端の側から）。</td>
+    </tr>
+  </tbody>
+</table>
+
+**ない端**：ページに表示されない枠（たたまれた枠、省略可能で空の枠、ページの項目数を超えたカード、枠に切り取られた画像の点）にある端は省かれます。木はほかの子を保ち、ページの再配置の記録にそのことが残ります（`connectorDropped`）。`from`か`to`が1つも残らなければ、何も描きません。
+
+**描画**：コネクターは装飾と一緒に、枠の下に、ベクターのパスとして描かれます。キャンバス、PDF、HTMLビューアー、固定レイアウトのEPUBで描かれ、タグ付きPDFではレイアウトのアーティファクトになります。リフロー型EPUBは、ほかの装飾と同じく出力しません。画像の中を指す線には、画像の枠を装飾の下に置く必要があるので、その枠に`layer: -1`を指定します。見開きでは、2つのページの枠を結ぶコネクターはのどをまたぎ、ほかの装飾と同じくそこで切れます。右から左へ進むページでは、`start`と`end`は鏡像の流れに従います。
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**検査**：`to`が何も指さない端は`frameAnchorUnknown`（`…/from/to`または`…/to/<k>/to`）になり、省かれます。`[*]`は`to`の中で、繰り返す枠に対してだけ使えます。枠のどの画像にもない`anchor`は、コネクターのidを添えて`labelAnchorUnknown`になります。`routing`、`startCap`、`endCap`、`side`の選択肢にない語と、0から1の範囲外の`at`は`unknownConfigValue`です。
 
 ## ラベルスタイル
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code>にすると、このスタイルのラベルは<code>labelOverlap</code>の検査から外れます。原稿で名前が接している地図向けです。アンカー自身の<code>overlap</code>が優先されます（postext 1.42以降）。</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>アンカーがボックスを置く位置に従う</td>
+      <td>複数行のラベルで、ボックスの中の行をどうそろえるかです。<code>start</code>と<code>end</code>はラベルの書字方向に従います。指定しなければアンカーの<code>align</code>に従い（既定は中央）、凡例では<code>start</code>です（postext 1.48以降）。</td>
+    </tr>
+    <tr>
+      <td><code>border</code>、<code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>、<code>Dimension</code></td>
+      <td>なし</td>
+      <td>ラベルの下地（<code>padding</code>の分だけ広げたボックス）を囲む線と、下地の角の丸みです。<code>background</code>があってもなくても使え、地図の枠付きの凡例になります（postext 1.48以降）。</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>なし</td>
+      <td>地図の凡例です。ラベルの各行が1つの項目になり、項目の先頭の記号（<code>:icon</code>）は、いちばん幅の広い記号に合わせた列に並ぶので、どの項目の言葉も同じ位置から始まります。記号のない行はそのままです。縦組みのラベルでは使えません（postext 1.48以降）。</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>なし</td>
+      <td>このスタイルのラベルに付ける引き出し線の見た目で、ラベルのボックスからアンカーの点まで引く線です。既定では、色はラベルの色、太さは<code>0.75pt</code>、点の側に<code>endCap: 'dot'</code>、<code>startCap</code>なし、<code>capSize</code>は太さの3倍、<code>routing</code>は<code>'straight'</code>です（<code>'elbow'</code>なら、ボックスから直角に出て、1回曲がって点に届きます）。<code>leader</code>のあるスタイルで点から離して置いたラベル（<code>labelAt</code>）には線が付きます（postext 1.48以降）。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ labelStyles: [
       <td><code>'keep'</code></td>
       <td>見開きののどをまたぐ図で、<code>'keep'</code>はラベルをのどの帯から外し、点のある側へ寄せます。<code>'cross'</code>は点が決めた位置に置いたままにします。両ページにまたがる見出しに必要です（postext 1.43以降）。</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>点の位置</td>
+      <td>このアンカーに置くラベルを、点から離してどこに置くかを、画像全体に対する割合で指定します。海の上に置いた名前から、その名前の島へ線を引く場合などです。<code>align</code>、<code>verticalAlign</code>、<code>rotate</code>はこの点を基準にラベルを置きます。アンカー自身の点はそのまま残り、引き出し線とコネクターはそこで終わります（postext 1.48以降）。</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>下記を参照</td>
+      <td>ラベルのボックスからアンカーの点まで引く線です。<code>true</code>はラベルスタイルの<code>leader</code>の見た目で描き、オブジェクトはその見た目を項目ごとに変え、<code>false</code>は線を描きません。指定しなければ、点から離して置いたラベルは、スタイルに<code>leader</code>があるときに線が付きます。<code>::label</code>の<code>leader</code>属性が優先されます（postext 1.48以降）。</td>
+    </tr>
   </tbody>
 </table>
 
 `start`と`end`はラベルの書字方向に従います。アラビア語のラベルでは`start`が右端です。同じ地図の左から右の版と右から左の版で共有するアンカーは、ラベルを点の上か下に中央そろえで置くと読みやすくなります。`width`のあるラベルは語と語の間で折り返し、幅より広い語があるとラベル全体をスタイルの`minScale`まで縮小します。ラベルの描き方は[テンプレートページ](/ja/docs/composed-pages)で説明しています。
 
+引き出し線は、ラベルのボックス（下地、なければ行）の辺のうち、広いほうの隙間をはさんで点に向いた辺の中央から出ます。そのため、回転したラベルでも、線がラベルの言葉を横切ることはありません。点がラベルのボックスの下にある場合や、引き出し線が端の印より短い場合は、何も描きません。引き出し線はラベルを描くどの出力でも、画像と一緒にラベルの下に描かれ、画像のトリミング、縮小、鏡像、見開きへの配置についていきます。
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## ページテンプレートの警告
 
 ほかの設定では、エンジンは知らないキーを無視します。ページテンプレートとラベルスタイルはそうではなく検査され、問題はすべて設定の警告として`postext check`とSandboxの**検査**パネルに出ます。これらの警告の`path`は、問題のある項目を指すJSONポインターです。たとえば`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`です。項目が継承されたものなら、ポインターはそれを書いたテンプレートを指します。存在しないidや名前を指す警告は、存在するもののうち最も近いものも示します。
 
-テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。
+テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`、コネクターの`routing`、端の印と`side`、引き出し線の端の印と`routing`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>枠、グループ、装飾の要素が<code>'#name'</code>に固定されているのに、テンプレートにその名前の枠、グループ、要素がありません。または、枠とグループが互いに輪になって固定されています（自分では何にも固定せず、矩形が枠を囲む範囲になるグループを経由する場合も含みます）。アンカーは<code>'container'</code>、つまり領域として扱われます。</td>
+      <td>枠、グループ、装飾の要素が<code>'#name'</code>に固定されているのに、テンプレートにその名前の枠、グループ、要素がありません。または、枠とグループが互いに輪になって固定されています（自分では何にも固定せず、矩形が枠を囲む範囲になるグループを経由する場合も含みます）。アンカーは<code>'container'</code>、つまり領域として扱われます。何も指さないコネクターの端も同じように報告され、その端は省かれます。</td>
       <td>存在する枠かグループに固定するか、どれか1つを領域に固定して輪を断ちます。</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ labelStyles: [
   </tbody>
 </table>
 
-ページテンプレートの導入以来、設定のバージョンは15です（それ以前に書かれたバンドルはこれまでどおり読み込めます。古い設定に書かれた内容の意味は何も変わりません）。
+コネクターの導入（postext 1.48）以来、設定のバージョンは16です。ページテンプレートの導入で15になっていました。それ以前に書かれたバンドルはこれまでどおり読み込めます。古い設定に書かれた内容の意味は何も変わらず、コネクターより古い読み手は、知らない装飾の要素を`unknownConfigValue`を出して省きます。
+
+### 重なり、繰り返し、モジュールの警告
+
+これらの警告はテンプレートだけでなく、割り付けやページのMarkdownから出るので、ページを示します。`postext check`（`--json`ではその項目が`data`に入ります）、Sandboxの検査パネル、文書の`contentWarnings`に挙がります。postext 1.48以降。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>警告</th>
+      <th>原因</th>
+      <th>対処</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>枠のインキ（行、タブやタイトル、画像）が、その上に描かれたほかの枠の下にあります。<code>layer</code>が大きい枠か、同じレイヤーでテンプレートの順で後にある枠です。枠が覆うのは不透明な部分、つまり塗り、タブ、画像、行です。輪郭線だけでは何も覆わず、画像の上の言葉は報告しません。組ごとに1つの警告で、覆っている枠（<code>coveredBy</code>）、隠れた面積（<code>overlapMm2</code>）、覆われた最初の言葉か画像が付きます。<a href="/ja/docs/composed-pages#framecovered">テンプレートページ › frameCovered</a>を参照してください。</td>
+      <td>修正案を適用します。覆っている枠の<code>layer</code>を覆われた枠より下にする、覆っている枠に<code>exclude: 'push'</code>を付けてテキストを回り込ませる、ページの上で割り出した<code>move</code>を使う、のいずれかです。重なりが意図したもの（本文の上の絵）なら、どちらかの枠に<code>overlap: 'allow'</code>を指定します。</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>枠がそれを収めるものの外へはみ出しています。テキストが仕上がり線を、塗りや画像が塗り足しを越えるか、枠のどこかが、その中にアンカーした枠やグループ（<code>'#name'</code>への9点のアンカーで、点がそのボックスの内側にあるもの）を越えています。<code>past</code>がどれを越えたかを、<code>excessMm</code>がその量を示します。<a href="/ja/docs/composed-pages#frameoutsidearea">テンプレートページ › frameOutsideArea</a>を参照してください。</td>
+      <td>修正案を適用します。枠の<code>maxHeight</code>、アンカーした先の枠の<code>minHeight</code>、高さを小さくしたうえでの<code>overflow.continueIn: 'next-page'</code>、または<code>move</code>です。わざとカードからはみ出させたバッジには<code>overlap: 'allow'</code>を指定します。</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>枠のセットを繰り返すグリッドが受け取る項目は<code>repeat.max</code>までなのに、ページがそれより多く渡しています。超えた項目1つごとに、その<code>slot="…"</code>の位置で出ます。項目は流し込み枠（<code>flowFrame</code>）か、ページの後に入ります。</td>
+      <td><code>max</code>を上げるか外すか、余った項目を別のページへ移します。</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>ページが配置しない<code>:::module&#123;template="…"&#125;</code>です。idがどのテンプレートも指していない（<code>reason: 'unknown'</code>）、モジュールでないテンプレートを指している（<code>'notModule'</code>）、またはページのテンプレートにモジュールのグループがない（<code>'noGroup'</code>）、のいずれかです。その内容は流し込み枠に入ります。</td>
+      <td>idを直すか、テンプレートに<code>role: 'module'</code>を指定するか、ページのテンプレートに<code>modules: true</code>のグループを加えます。</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>ページブロックがモジュールのテンプレートを指定しています。モジュールはページのモジュールのグループに配置するもので、ページにはなりません。不明なテンプレートと同じく、ブロックの内容は本文の流れに組まれます。</td>
+      <td>ページブロックにはページテンプレートを指定し、モジュールはその中に<code>:::module</code>として入れます。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td><code>:::module</code>がほかのモジュールの中にあります。これは使えず、そのブロックは外側のモジュールのものになります。</td>
+      <td>先に外側のモジュールを閉じるか、内側のブロックを外側のモジュールの枠として描きます。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>モジュールの<code>name="…"</code>が、ページのほかのモジュールですでに使われている（<code>reason: 'taken'</code>）か、スペース、<code>.</code>、<code>#</code>、<code>[</code>、<code>]</code>を含んでいます（<code>'invalid'</code>）。モジュールは代わりに<code>used</code>の名前（<code>&lt;template&gt;[n]</code>）になり、その枠もその名前で指定します。</td>
+      <td>ページのモジュールにはそれぞれ、英字、数字、ハイフンでできた固有の名前を付けます。</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped`（再配置の記録）**：ページに表示されない枠（たたまれた枠、省略可能で空の枠、ページの項目数を超えたカード、枠に切り取られた画像の点）に端があるコネクターは、その端を省きます。これは警告ではありません。ページの[再配置の記録](/ja/docs/composed-pages#再配置の記録)に「connector ramas left out izq (not on the page)」と記録されるので、枝が抜けたページと、計画どおりに描かれたページを見分けられます。端を残すには、その枠に内容を入れるか、ページにある枠へコネクターを向けます。

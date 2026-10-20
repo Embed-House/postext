@@ -1,0 +1,140 @@
+{/* docs/composed-pages-figures-fr.mdx */}
+
+export const metadata = {
+  title: 'Pages composées : figures avec étiquettes',
+  sidebarTitle: 'Figures avec étiquettes',
+  description: "Les figures qui posent des mots sur une image : étiquettes aux ancres d'une ressource, texte alternatif, légende et note propres à une figure, composition d'une étiquette, étiquettes écartées de leur point avec un trait de rappel, légendes de carte et symboles en ligne, et les avertissements des étiquettes",
+  lang: 'fr',
+  lastUpdated: '2026-10-20',
+  readingTime: '9 min',
+  order: 35,
+  parent: 'composed-pages',
+  plainSummary: "Une carte ou un schéma de livre porte souvent des mots : les noms des mers et des villes, les pièces d'une machine. Postext compose ces mots comme du texte sur l'image, si bien que chaque langue a les siens. Cette page explique comment les écrire dans le Markdown, comment chacun est placé et dessiné, et comment un nom peut se tenir à l'écart de son lieu avec un trait qui le désigne. Elle couvre aussi les légendes à symboles et les avertissements des étiquettes trop larges ou qui se touchent.",
+};
+
+# Pages composées : figures avec étiquettes
+
+Cette page traite des figures d'une page composée, ou du texte courant, qui posent des mots sur leur image. L'écriture d'une page composée est décrite dans [Pages composées](/fr/docs/composed-pages) ; les styles d'étiquette et les champs d'étiquette d'une ancre, dans [Configuration › Pages composées](/fr/docs/configuration-composed-pages#styles-détiquette).
+
+
+## Figures avec étiquettes
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` place une ressource, avec sa légende et son numéro, comme le fait `::resource`, et liste les étiquettes à placer sur l’image, à raison d’une ligne `::label[TEXT]{…}` par étiquette ; des lignes vides peuvent les séparer.
+
+- `at` désigne une ancre de la ressource (un point défini une seule fois sur l’image et commun à toutes les langues), ou donne un point en pourcentages de l’image, `at="x% y%"`, pour une étiquette sans ancre.
+- `style` désigne un style d’étiquette, qui remplace celui de l’ancre.
+- `leader` trace une ligne de l’étiquette jusqu’au point de son ancre, et `leader="none"` la retire (voir [Traits de rappel, légendes de carte et symboles](#traits-de-rappel-légendes-de-carte-et-symboles)).
+- Le texte entre crochets est du Markdown en ligne : gras, italique, pastilles, et symboles écrits `:icon`.
+
+
+Une figure fonctionne dans le texte courant comme dans un bloc. Ses étiquettes sont dessinées sur l’image comme du texte et suivent la figure partout : une colonne, un flottant, un bloc pivoté ou réduit par les étapes d’ajustement (celles qui font tenir le contenu), une double page. Quand le `:::` de fermeture d’une figure manque, la première ligne qui n’est ni une étiquette ni une ligne vide la termine, et la figure est signalée comme conteneur non fermé.
+
+### Les textes d’une figure
+
+Une ressource contient une image, ses ancres et un seul jeu de textes, mais chaque édition d’un livre a besoin des siens. Une figure peut donner elle-même son `alt`, sa `caption` et sa `note`, dans le délimiteur ou sur des lignes à part, et ces textes remplacent ceux de la ressource sur les pages de ce fichier :
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Comme attributs du délimiteur, `alt`, `caption` et `note` prennent un texte court entre guillemets. Les lignes `::alt[…]`, `::caption[…]` et `::note[…]` prennent le texte entre crochets, qui peut contenir du Markdown en ligne et `\\` pour un saut de ligne, comme la légende et la note d’une ressource. Une ligne l’emporte sur l’attribut du même nom ; les lignes se placent parmi les étiquettes, éventuellement séparées par des lignes vides.
+- Ce que la figure ne précise pas reste celui de la ressource. Une valeur vide signifie « rien » : `caption=""` supprime la légende, `alt=""` marque l’image comme décorative.
+- Ces textes remplacent ceux de la ressource dans le chapitre où ils sont écrits : la composition, le texte de remplacement de toutes les sorties et le PDF balisé les utilisent, sans que la ressource elle-même change. Dans un chapitre, une ressource n’a qu’un jeu de textes, celui de sa première figure : si une figure suivante de la même ressource donne d’autres textes, ils ne s’affichent pas, et `figureWordsShared` le signale. Une copie réduite qui a besoin de sa propre légende demande une seconde ressource pointant vers le même fichier d’image. À la différence d’une étiquette, la légende n’est pas associée au Markdown caractère par caractère ; `sourceAt` traite un clic sur elle comme sur la légende d’une ressource.
+
+### Comment une étiquette est composée
+
+- **Où.** Une étiquette se place au point de son ancre, exprimé en fraction de l’image entière : si l’image est recadrée sur sa zone de sécurité ou composée plus petite, l’étiquette se déplace avec le dessin. L’`align` de l’ancre indique quel côté de l’étiquette se trouve au point, et `verticalAlign` quel bord se trouve à sa hauteur. `start` et `end` suivent la direction de l’étiquette elle-même : en arabe, `start` est son bord droit. `rotate` fait tourner l’étiquette autour du point, dans le sens des aiguilles d’une montre et sous n’importe quel angle : un fleuve le long de son cours, une chaîne de collines en biais.
+- **Apparence.** Le `style` de l’étiquette, à défaut celui de son ancre, désigne un style d’étiquette (voir Configuration › Pages composées) ; sans style, l’étiquette prend la typographie du texte courant. Le halo trace le contour des lettres sous leur remplissage ; le fond (`background`) remplit la boîte autour du texte, élargie par `padding`.
+- **Ajustement.** Si son ancre a une `width`, l’étiquette se coupe entre les mots dans cette justification, jamais au milieu d’un mot. Quand un mot est plus large que la justification, toute l’étiquette est composée plus petite, jusqu’au `minScale` de son style ; une étiquette encore trop large à cette taille est dessinée avec son mot le plus large coupé. Sans `width`, l’étiquette tient sur une ligne, sauf là où elle est coupée par `\\`, comme dans une légende.
+- **Texte.** Le texte entre crochets est du Markdown en ligne, composé comme une légende : gras, italique, pastilles, marques de surlignage, renvois, formules en ligne. Un nom de plusieurs mots forme une seule étiquette, quel que soit l’ordre de ses mots dans chaque langue : `::label[OCÉAN ATLANTIQUE]` et `::label[ATLANTIC OCEAN]` se placent à la même ancre. Les étiquettes de droite à gauche sont composées de droite à gauche ; les étiquettes chinoises et japonaises se coupent entre les caractères.
+- **Sorties.** Le canvas, le PDF, la visionneuse HTML, l’EPUB à mise en page fixe et Folio dessinent les étiquettes. Sur une page de droite à gauche, l’étiquette reste là où l’image la montre.
+- **Vertical.** Avec `writingMode: 'vertical-rl'` sur l’ancre (ou sur son style d’étiquette), l’étiquette est composée comme une page verticale : les caractères debout, dans des cellules l’une sous l’autre, les colonnes allant de droite à gauche, les mots latins et les longs nombres tournés de côté, les nombres courts dans une seule cellule. `width` est alors une fraction de la hauteur de l’image (la longueur d’une colonne), et une étiquette chinoise ou japonaise se répartit sur davantage de colonnes. `align` agit le long de la colonne (`start` en est le haut), `verticalAlign` en travers des colonnes (`top` est la première, celle de droite), et `rotate` fait encore tourner l’étiquette. Sur la page en miroir d’un livre de droite à gauche, elle se lit de la même façon, de haut en bas dans ses colonnes, caractères debout, au même endroit de l’image (depuis postext 1.40).
+- **Vérifications.** Une étiquette encore plus large que sa justification au `minScale` de son style déclenche `labelOverflow` ; deux étiquettes dont les lignes se touchent déclenchent `labelOverlap` sur la seconde. Les deux sont vérifiées dans chaque édition : une traduction aux mots plus longs montre où il lui faut de la place. La palette d’une partie (`:::part{palette="…"}`) recolore les étiquettes de ses pages comme elle le fait des légendes. La vérification du contraste mesure une étiquette sur son fond, à défaut sur son halo ; une étiquette posée directement sur l’image est ignorée, puisque son arrière-plan est l’image. Le contrôle en amont de l’impression vérifie aussi les étiquettes : petit corps en couleurs de quadrichromie, encres et distance au rognage.
+- **Sur une double page.** Une figure qui traverse le dos d’une double page (un bloc avec `crossGutter: true`) peint sa moitié sur chaque page : une étiquette dont la boîte entrerait dans la bande du petit fond serait coupée par le pli et ne se lirait sur aucune des deux. Une telle étiquette glisse latéralement jusqu’au bord de la bande, du côté où se trouve le point de son ancre, et garde sa hauteur ; un point exactement sur le dos reste sur la première page, comme un bloc. Une ancre avec `gutter: 'cross'` garde sa place, pour un titre posé sur les deux pages. Les bords extérieurs de la feuille ne sont pas touchés : une étiquette qui dépasse le rognage est coupée comme l’image. Depuis postext 1.43.
+
+### Traits de rappel, légendes de carte et symboles
+
+Depuis postext 1.48, une étiquette peut se tenir à l’écart de ce qu’elle nomme, une étiquette peut servir de légende à une carte, et une étiquette, une légende ou une cellule de tableau peut contenir des symboles.
+
+**Traits de rappel.** Le `labelAt` d’une ancre place son étiquette à l’écart de son point (un nom en pleine mer, une note dans la marge d’un schéma), et un trait de rappel relie l’étiquette à ce point. Son aspect est le `leader` du style d’étiquette (voir [Configuration › Styles d’étiquette](/fr/docs/configuration-composed-pages#styles-détiquette)) ; le Markdown se contente de l’activer ou de le retirer pour une étiquette :
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` avec n’importe quelle valeur autre que `none`, `false` ou `off` l’active ; sans l’attribut, c’est le `leader` de l’ancre qui décide, et sans l’un ni l’autre une étiquette placée à l’écart de son point en reçoit un quand son style a un `leader`. La note d’un bloc peut elle aussi désigner un endroit de l’image : un [connecteur](/fr/docs/configuration-composed-pages#connecteurs) dont une extrémité nomme une ancre de l’image (`anchor: 'lake'`).
+
+**Étiquettes de plusieurs lignes.** `:::label{at="…" style="…"}` … `:::`, à l’intérieur d’une `:::figure`, écrit une étiquette ligne par ligne : chaque ligne non vide de la source est une ligne de l’étiquette, et une légende de carte ou une adresse n’a donc pas besoin de `\\` au bout de chaque ligne. Le premier `:::` ferme l’étiquette, le suivant la figure. `::label[…]` reste une étiquette d’une seule ligne, coupée seulement là où elle porte `\\`.
+
+**Légendes de carte.** Une étiquette dans un style avec `kind: 'legend'` est la légende d’une carte : chaque ligne est une rangée, et le symbole qui ouvre une rangée se place dans une colonne aussi large que le plus large des symboles, si bien que les mots de toutes les rangées commencent sur un même bord. Écrivez le symbole en tête de chaque ligne :
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[Pays]{glyph="■" color="country"} Pays
+:icon[Capitale]{glyph="⊙" font="Noto Sans Math"} Capitale
+:icon[Ville]{resource="town-mark" size="0.55"} Ville
+:icon[Frontière]{line="dashed" color="border"} Frontière
+:::
+::label[:icon[Capitale]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Symboles.** `:icon[alt]{…}` place un petit symbole sur la ligne, posé sur la ligne de base :
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Effet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>Une ressource bitmap ou SVG, dont les proportions sont gardées.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>Un caractère, dans la police du texte ou dans celle que nomme <code>font="…"</code>.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>Un échantillon de trait, deux fois plus long que haut : une frontière ou une route dans une légende de carte.</td></tr>
+    <tr><td><code>color="…"</code></td><td>Une couleur hexadécimale ou une entrée de la palette : la teinte d’un caractère, d’un trait ou d’une image.</td></tr>
+    <tr><td><code>size="…"</code></td><td>La hauteur du symbole en cadratins du texte. Par défaut <code>0.75</code>, la hauteur d’une capitale.</td></tr>
+  </tbody>
+</table>
+
+Le premier écrit de `resource`, `glyph` et `line` décide du genre de symbole ; sans aucun des trois, la directive reste du texte. Le texte entre crochets est le texte de remplacement du symbole : les lecteurs d’écran, le PDF balisé et le texte de remplacement de l’image le lisent à la place du symbole, et un symbole aux crochets vides est une décoration. Les symboles sont lus dans les étiquettes de figure et dans tous les textes d’une ressource : légendes, notes et cellules de tableau. Ils ne sont lus ni dans le texte courant, ni dans les titres, ni dans les textes de maquette dans cette version.
+
+### labelAnchorUnknown
+
+Une `::label` désigne avec `at` une ancre que la ressource de sa figure n’a pas. L’étiquette n’est pas dessinée ; l’EPUB recomposable la liste toujours et le texte de remplacement de l’image la cite. L’avertissement indique la ressource, l’ancre, les ancres de la ressource (`known`), la langue, la page et la position du texte de l’étiquette dans la source. Corrigez l’identifiant de l’ancre, ajoutez l’ancre à la ressource ou placez l’étiquette avec `at="x% y%"`.
+
+Dans le panneau Vérifications du Sandbox, l’avertissement mène à l’étiquette dans le panneau Texte, et son bouton à l’épingle ouvre les ancres de l’image avec ce nom prêt à être placé : un clic sur l’image ajoute l’ancre.
+
+### anchorUnlabelled
+
+Une ancre de la ressource de la figure a un style d’étiquette, mais aucune `::label` de la figure ne s’y place dans cette langue : la carte a de la place pour un mot que cette édition omet. C’est une simple note ; `postext check` la classe en `info`. Les ancres sans style, comme celles d’un personnage de BD, ne sont pas signalées. L’avertissement indique la ressource, l’ancre, son style, la langue, la page et la position de la figure dans la source. Écrivez l’étiquette dans le Markdown de cette langue, ou retirez le style de l’ancre.
+
+Dans le panneau Vérifications, il mène à la figure dans le panneau Texte, et son bouton à l’épingle ouvre les ancres de l’image sur cette ancre.
+
+### labelOverflow
+
+Une étiquette reste plus large que la `width` de son ancre à la plus petite échelle que permet son style d’étiquette (`minScale`) : elle est dessinée à cette échelle et dépasse sa justification. L’avertissement indique la ressource, le texte de l’étiquette, son ancre (aucune pour une étiquette placée en pourcentages), la largeur qui lui était donnée, l’échelle atteinte, la langue, la page et la position du texte de l’étiquette dans la source. La vérification a lieu dans chaque édition : une langue aux mots plus longs peut déborder là où une autre tient. Élargissez la `width` de l’ancre, raccourcissez le mot dans le Markdown de cette édition ou abaissez le `minScale` du style d’étiquette. Une étiquette chinoise ou japonaise se coupe entre les caractères et ne déborde pas ainsi. Depuis postext 1.39.
+
+### labelOverlap
+
+Les lignes de deux étiquettes d’une même figure se touchent ; pour une étiquette avec fond, c’est le fond qui compte. L’avertissement est attaché à la seconde des deux dans l’ordre d’écriture, avec le texte de la première étiquette antérieure qu’elle touche et le nombre d’étiquettes antérieures qu’elle touche en tout. Le test utilise la boîte propre de chaque ligne, tournée avec l’étiquette : une ligne courte à côté d’une longue laisse libre son côté, et deux lignes peuvent empiéter l’une sur l’autre d’un huitième de la hauteur d’une ligne. La vérification a lieu dans chaque édition. Déplacez l’une des ancres, réduisez la `width` d’une étiquette pour qu’elle passe à la ligne, ou raccourcissez les mots dans le Markdown de cette édition. Dans le panneau Vérifications du Sandbox, le bouton à l’épingle ouvre les ancres de l’image à l’ancre de l’étiquette. Depuis postext 1.39. Avec `overlap: 'allow'` sur une ancre, ou dans son style d’étiquette, une étiquette que l’original imprime au contact de ses voisines (une carte dense) est exclue de la vérification, et aucune paire où elle figure n’est signalée. Depuis postext 1.42. Les zones `avoid` d’une image représentent les symboles d’une carte : des rectangles tracés sur ses points et ses icônes, dans le mode **Zones à éviter** des repères de l’image, en fractions de l’image. Une étiquette qui empiète sur l’une d’elles est signalée de la même façon, avec `symbol 2` à la place d’une étiquette (`withSymbol` dans les données), et `overlap: 'allow'` exclut une étiquette des deux vérifications. Depuis postext 1.42.
+
+### figureWordsShared
+
+Une `:::figure` donne des textes (`alt`, `caption` ou `note`) à une ressource à laquelle une figure précédente du même chapitre a déjà donné les siens, et ces textes diffèrent. Les pages affichent les textes de la première figure et omettent ceux-ci. L’avertissement indique la ressource, les textes omis et la position dans la source du premier d’entre eux ; une figure suivante qui ne donne pas de textes propres ne pose aucun problème. Donnez à la figure sa propre ressource : une seconde ressource qui pointe vers le même fichier d’image, avec sa légende, son numéro et ses ancres. Dans le panneau Vérifications du Sandbox, il est classé sous Figures. Depuis postext 1.42.

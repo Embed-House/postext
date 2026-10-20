@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Uso programático',
   description: 'Como chamar o Postext a partir do código: o buildDocument e os avisos dele, os valores padrão, as fontes, os caches e o Web Worker',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '31 min',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>Uma <code>:::figure</code> dá palavras (<code>alt</code>, <code>caption</code>, <code>note</code>) a um recurso a que uma figura anterior do capítulo já deu palavras, e elas diferem (<code>resourceId</code>, <code>words</code>).</td>
       <td>As páginas mostram as palavras da primeira figura; as da posterior são omitidas.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>A tinta de um bloco de uma página composta fica sob outro bloco pintado por cima dele (<code>template</code>, <code>frame</code>, <code>coveredBy</code>, <code>coveredByPath</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>overlapMm2</code>, <code>text</code> ou <code>picture</code>, <code>locale</code>; <code>proposals</code>: <code>layer</code>, <code>exclude</code>, <code>move</code>). Vem da diagramação, com o <code>pageIndex</code> da página. Desde o postext 1.48.</td>
+      <td>Os dois blocos são pintados como o modelo diz; a tinta coberta fica escondida.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Um bloco de uma página composta passa do refile (o texto), da sangria (o fundo ou as imagens) ou do bloco ou grupo em que está ancorado por dentro (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>past</code>, <code>target</code>, <code>excessMm</code>, <code>sides</code>, <code>locale</code>; <code>proposals</code>: <code>maxHeight</code>, <code>minHeight</code>, <code>continueNextPage</code>, <code>move</code>). Vem da diagramação. Desde o postext 1.48.</td>
+      <td>O bloco é pintado onde está; o que passa do refile é cortado.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Uma grade que se repete numa página composta comporta <code>max</code> itens e a página lhe dá mais (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Um aviso por item a mais. Desde o postext 1.48.</td>
+      <td>O item vai para o bloco de fluxo, ou para depois da página.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Um <code>:::module</code> que a página não diagrama (<code>template</code>, <code>module</code>, <code>name</code>, <code>fenceIndex</code>; <code>reason</code>: <code>'unknown'</code>, <code>'notModule'</code>, <code>'noGroup'</code>). Desde o postext 1.48.</td>
+      <td>O conteúdo dele vai para o bloco de fluxo.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Um contêiner de página indica um modelo de módulo (<code>template</code>, <code>fenceIndex</code>). Desde o postext 1.48.</td>
+      <td>O conteúdo do contêiner é composto no fluxo.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Um <code>:::module</code> dentro de outro módulo (<code>template</code>, <code>module</code>, <code>fenceIndex</code>). Desde o postext 1.48.</td>
+      <td>Os elementos dele passam a ser do módulo de fora.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>O <code>name</code> de um módulo já é usado na página ou tem espaço, <code>.</code>, <code>#</code>, <code>[</code> ou <code>]</code> (<code>template</code>, <code>module</code>, <code>name</code>, <code>used</code>, <code>reason</code>: <code>'taken'</code>, <code>'invalid'</code>, <code>fenceIndex</code>). Desde o postext 1.48.</td>
+      <td>O módulo recebe o nome <code>used</code>, e os slots dele são indicados com esse nome.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

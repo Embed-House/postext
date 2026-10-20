@@ -10,6 +10,7 @@ import {
   flowRectToPage,
   pageIsMirrored,
   pageIsVertical,
+  type ContentWarning,
   type VDTBlock,
   type VDTDocument,
   type VDTDesignSlot,
@@ -17,7 +18,9 @@ import {
   type VDTDesignTextBlock,
   type VDTDesignRuleBlock,
   type VDTDesignBoxBlock,
+  type VDTDesignBoxStyle,
   type VDTDesignImageBlock,
+  type VDTDesignPathBlock,
   type VDTDesignSlotKind,
   type VDTColumn,
   type VDTFrame,
@@ -31,9 +34,11 @@ import { classifyPages } from './pageRoles';
 import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
 import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
-import { resolvePageTemplate } from '../composed/templates';
+import { repeatInstance, resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
+import { pathInkBox } from '../design/pathBlock';
 import { frameOfBlock, framePageRect } from '../composed/paint';
+import { figureAnchorPointOnPage } from '../composed/labels';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -46,6 +51,7 @@ import {
   type ResolvedRulePrimitive,
   type ResolvedBoxPrimitive,
   type ResolvedImagePrimitive,
+  type ResolvedPathPrimitive,
 } from '../design/layout';
 import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
 import { plainDesignText } from '../design/richText';
@@ -114,7 +120,26 @@ export function primitiveToBlock(prim: ResolvedPrimitive): VDTDesignBlock {
   if (prim.kind === 'text') return textPrimitiveToBlock(prim);
   if (prim.kind === 'rule') return rulePrimitiveToBlock(prim);
   if (prim.kind === 'image') return imagePrimitiveToBlock(prim);
+  if (prim.kind === 'path') return pathPrimitiveToBlock(prim);
   return boxPrimitiveToBlock(prim);
+}
+
+/** A path element's outline as the vector block (#1060): the block's box
+ *  is the ink's (`pathInkBox`), for hit tests and clips. */
+function pathPrimitiveToBlock(prim: ResolvedPathPrimitive): VDTDesignPathBlock {
+  const block: VDTDesignPathBlock = {
+    kind: 'path',
+    bbox: createBoundingBox(0, 0, 0, 0),
+    subpaths: prim.subpaths.map((sp) => sp.map((c) => ({ ...c }))),
+    ...(prim.fill ? { fill: prim.fill } : {}),
+    ...(prim.stroke ? { stroke: { ...prim.stroke, ...(prim.stroke.dash ? { dash: [...prim.stroke.dash] } : {}) } } : {}),
+    // A connector's end marks (#1056).
+    ...(prim.markers ? { markers: prim.markers.map((m) => ({ ...m })) } : {}),
+    // Painted after the frames (#1076).
+    ...(prim.over ? { over: true as const } : {}),
+  };
+  block.bbox = pathInkBox(block);
+  return block;
 }
 
 function imagePrimitiveToBlock(prim: ResolvedImagePrimitive): VDTDesignImageBlock {
@@ -164,6 +189,7 @@ function textPrimitiveToBlock(prim: ResolvedTextPrimitive): VDTDesignTextBlock {
           borderColor: prim.box.borderColor,
           borderWidthPx: prim.box.borderWidthPx,
           borderRadiusPx: prim.box.borderRadiusPx,
+          ...shapeFields(prim.box),
         }
       : undefined,
     clip: prim.needsClip,
@@ -211,7 +237,16 @@ function boxPrimitiveToBlock(prim: ResolvedBoxPrimitive): VDTDesignBoxBlock {
       borderColor: prim.box.borderColor,
       borderWidthPx: prim.box.borderWidthPx,
       borderRadiusPx: prim.box.borderRadiusPx,
+      ...shapeFields(prim.box),
     },
+  };
+}
+
+/** A box's corners of their own and border per side (#1059), copied. */
+function shapeFields(box: Pick<VDTDesignBoxStyle, 'borderRadiiPx' | 'borderSides'>): Pick<VDTDesignBoxStyle, 'borderRadiiPx' | 'borderSides'> {
+  return {
+    ...(box.borderRadiiPx ? { borderRadiiPx: [...box.borderRadiiPx] as [number, number, number, number] } : {}),
+    ...(box.borderSides ? { borderSides: { ...box.borderSides } } : {}),
   };
 }
 
@@ -274,7 +309,7 @@ export function headingDesignBoxes(
     { container, dpi, placeholders: headingPlaceholders(heading, metadata, pageIndex), frames, resourceById },
     pageIndex,
   );
-  const excluded = new Set(level.advancedDesign.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
+  const excluded = new Set(level.advancedDesign.slot.elements.filter((el) => el.kind !== 'connector' && el.reserve === false).map((el) => el.id));
   const out: Array<{ x: number; y: number; width: number; height: number }> = [];
   result.primitives.forEach((prim, i) => {
     if (excluded.has(result.elementIds[i]!)) return;
@@ -405,7 +440,7 @@ function measureDesignBand(
   const taller = result.primitives.some((p) => p.y + p.height > MEASURE_CONTAINER_HEIGHT / 4)
     ? layoutAt(2 * MEASURE_CONTAINER_HEIGHT)
     : result;
-  const excluded = new Set(design.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
+  const excluded = new Set(design.slot.elements.filter((el) => el.kind !== 'connector' && el.reserve === false).map((el) => el.id));
   let bottom = 0;
   let claimedBy: string | undefined;
   let textFloor = 0;
@@ -517,6 +552,12 @@ export interface SlotLayoutExtras {
    *  are not one array of the configuration (a template's decoration
    *  merged over the templates it extends). */
   elementPaths?: ReadonlyMap<string, string>;
+  /** Filled with the ends connectors left out (#1056): the connector's id
+   *  and the box it named. */
+  connectorDropped?: { elementId: string; targetId: string }[];
+  /** Filled with the ends connectors set at an anchor no picture of their
+   *  frame has (#1057). */
+  connectorAnchorUnknown?: { elementId: string; targetId: string; anchor: string; resourceId?: string; known: string[] }[];
 }
 
 /** `{ configPath }` when there is one. */
@@ -617,6 +658,17 @@ export function layoutSlotToVdt(
     },
     pageIndex,
   );
+  if (extras?.connectorDropped) {
+    for (const issue of result.issues) if (issue.kind === 'connectorDropped') extras.connectorDropped.push({ elementId: issue.elementId, targetId: issue.targetId });
+  }
+  if (extras?.connectorAnchorUnknown) {
+    for (const issue of result.issues) {
+      if (issue.kind !== 'connectorAnchorUnknown') continue;
+      const { kind: _kind, ...rest } = issue;
+      void _kind;
+      extras.connectorAnchorUnknown.push(rest);
+    }
+  }
   if (result.primitives.length === 0) return undefined;
   const sourceByElement = new Map<string, { start: number; end: number; text?: string; sourceMap?: number[]; prefixLen?: number; attr?: string }>();
   if (extras) {
@@ -1166,6 +1218,17 @@ export function framesInFrame(frames: DesignFrames | undefined, frame: Pick<VDTF
   return { ...frames, page: back(frames.page), bleed: back(frames.bleed), ...(frames.outer ? { outer: back(frames.outer) } : {}) };
 }
 
+/** The ends of connectors at an anchor no picture of their frame has
+ *  (#1057), per document, as `labelAnchorUnknown` warnings with the
+ *  connector's id (read by {@link connectorAnchorUnknownWarnings}). */
+const connectorAnchorWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
+
+/** The `labelAnchorUnknown` warnings of the connectors of `doc`'s composed
+ *  pages (#1057): an end set at an anchor no picture of its frame has. */
+export function connectorAnchorUnknownWarnings(doc: VDTDocument): ContentWarning[] {
+  return connectorAnchorWarnings.get(doc) ?? [];
+}
+
 export function buildHeadersAndFooters(doc: VDTDocument, resourceById?: ReadonlyMap<string, Resource>, inputs: HeaderFooterInputs = {}): void {
   // Each page's slots measure their text in the writing mode they are set
   // in (see the loop); the mode in force before is put back.
@@ -1344,7 +1407,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // A composed page (#855) takes its template's running heads: a slot of
     // its own, `false` for none, unset for the section's.
     const template = page.composed
-      ? resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, page.composed.template, { parity: recto ? 'recto' : 'verso' })
+      ? resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, page.composed.template, { parity: recto ? 'recto' : 'verso', ...(page.composed.modules ? { modules: page.composed.modules } : {}) })
       : undefined;
     const pageAttrs = page.composed && Object.keys(page.composed.attrs).length > 0 ? page.composed.attrs : undefined;
     const templateSlot = (own: DesignSlot | false | undefined, kind: 'header' | 'footer', inherited: ResolvedDesignSlot): ResolvedDesignSlot =>
@@ -1746,6 +1809,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       /** Frames that take no room on the page (#912): what anchors to
        *  them is not drawn. */
       const collapsed = new Set<string>();
+      /** Frames a connector does not reach (#1056): collapsed, or empty and
+       *  optional. */
+      const absent = new Set<string>();
+      const optional = new Set(template.frames.filter((f) => f.optional).map((f) => f.name));
       /** Empty frames' ruled lines (#914), on the sheet. */
       const rules: VDTDesignRuleBlock[] = [];
       /** The counter of the first numbered heading each frame holds
@@ -1753,10 +1820,14 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const headingNumberByFrame: Record<string, string> = {};
       let headingNumber: string | undefined;
       const floatById = new Map<string, VDTBlock>();
+      /** The page and the blocks of each frame, for a connector's end at
+       *  an anchor of the picture it holds (#1057). */
+      const frameBlocks = new Map<string, { page: VDTPage; dx: number; blocks: VDTBlock[] }>();
       const nameFrames = (p: VDTPage, dx: number) => {
         for (const b of p.floats ?? []) floatById.set(b.id, b);
         for (const f of p.composed?.frames ?? []) {
           if (f.collapsed) collapsed.add(f.name);
+          if (f.collapsed || (optional.has(f.repeat?.frame ?? f.name) && f.sourceStart === undefined && f.continuedFrom === undefined)) absent.add(f.name);
           if (!f.facingBlocks) {
             for (const id of f.blockIds) {
               const n = floatById.get(id)?.headingNumber;
@@ -1773,11 +1844,21 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
           const d = flowRectToPage(p, framePageRect({ rect: f.declaredRect ?? f.rect, writingMode: f.writingMode }));
           named[f.name] = { ...r, x: r.x + dx };
           declared[f.name] = { ...d, x: d.x + dx };
+          frameBlocks.set(f.name, { page: p, dx, blocks: f.blockIds.map((id) => floatById.get(id)).filter((b): b is VDTBlock => b !== undefined) });
           for (const rule of f.rules ?? []) {
             // A vertical page's flow turns a rule across its lines.
             const b = flowRectToPage(p, rule.bbox);
             rules.push({ ...rule, bbox: { ...b, x: b.x + dx }, direction: b.height > b.width ? 'vertical' : 'horizontal' });
           }
+        }
+        // A module's box (#1062): what its decoration anchored to its
+        // `'container'` reads (`#<name>`). A module laid elsewhere has none
+        // here, and its decoration is not drawn.
+        for (const m of p.composed?.modules ?? []) {
+          if (!m.rect || named[m.name] !== undefined) continue;
+          const r = flowRectToPage(p, m.rect);
+          named[m.name] = { ...r, x: r.x + dx };
+          declared[m.name] = { ...r, x: r.x + dx };
         }
       };
       let container: { x: number; y: number; width: number; height: number };
@@ -1820,7 +1901,40 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         ...(headingNumber !== undefined ? { headingNumber } : {}),
         ...(Object.keys(headingNumberByFrame).length > 0 ? { headingNumberByFrame } : {}),
       };
+      // An element anchored to an instance of a repeated frame (#1061) the
+      // page does not have (`#card[5]` on a page of three cards) is not
+      // drawn, as one anchored to a frame that takes no room. So is one
+      // anchored to a module (#1062), or a frame of it, that went on whole.
+      const ofModule = new Set((template.modules ?? []).flatMap((m) => [m.name, ...m.frames, ...m.groups]));
+      for (const el of template.decoration.elements) {
+        const to = (el as { placement?: { anchor?: { to?: unknown } } }).placement?.anchor?.to;
+        const t = typeof to === 'string' && to.startsWith('#') ? to.slice(1) : undefined;
+        if (t !== undefined && named[t] === undefined && (repeatInstance(t) !== undefined || ofModule.has(t))) collapsed.add(t);
+      }
       const slot = resolveDesignSlot(template.decoration, 'header');
+      const connectorDropped: { elementId: string; targetId: string }[] = [];
+      const connectorAnchorUnknown: NonNullable<SlotLayoutExtras['connectorAnchorUnknown']> = [];
+      // A connector's end at an anchor of the picture its frame holds
+      // (#1057): the first figure of the frame whose resource has it.
+      const anchorPoint = (frame: string, anchor: string): { x: number; y: number } | { hidden: true } | { resourceId?: string; known: string[] } => {
+        const held = frameBlocks.get(frame);
+        let first: VDTBlock | undefined;
+        for (const b of held?.blocks ?? []) {
+          const rb = b.resourceBlock;
+          if (!rb || (rb.kind !== 'bitmap' && rb.kind !== 'svg')) continue;
+          first ??= b;
+          const at = figureAnchorPointOnPage(held!.page, b, anchor);
+          if (!at) continue;
+          const p = { x: at.x + held!.dx, y: at.y };
+          // A point the frame cuts off (its picture runs past the frame's
+          // foot) is not shown on the page.
+          const box = named[frame];
+          if (box && (p.x < box.x - 0.5 || p.x > box.x + box.width + 0.5 || p.y < box.y - 0.5 || p.y > box.y + box.height + 0.5)) return { hidden: true };
+          return p;
+        }
+        const res = first?.resourceBlock?.resource;
+        return res ? { resourceId: res.id, known: (res.anchors ?? []).map((a) => a.id) } : { known: [] };
+      };
       const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
         collapsed.size > 0 ? withoutAnchoredTo(slot, collapsed) : slot,
         container,
@@ -1828,11 +1942,35 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         placeholders,
         dpi,
         {
-          ...sheetExtras, frames: { ...slotFrames, named, declared }, attrs: page.composed!.attrs, attrSources,
+          ...sheetExtras, frames: { ...slotFrames, named, declared, ...(absent.size > 0 ? { absent } : {}), anchorPoint }, attrs: page.composed!.attrs, attrSources, connectorDropped, connectorAnchorUnknown,
           // Each element's pointer, from the template that sets it (#857).
           elementPaths: new Map(resolveDesignSlot(template.decoration, 'header').elements.map((el, i) => [el.id, template.decorationPaths[i]!] as const)),
         },
       ));
+      // The ends connectors left out, in the reflow log of the page laid
+      // (of a spread, its first page); a pass that lays the decoration
+      // again replaces them.
+      for (const p of pair ? [pair.left, pair.right] : [page]) {
+        if (p.composed?.log.some((e) => e.kind === 'connectorDropped')) p.composed.log = p.composed.log.filter((e) => e.kind !== 'connectorDropped');
+      }
+      for (const d of connectorDropped) page.composed.log.push({ frame: d.targetId, kind: 'connectorDropped', cause: d.elementId });
+      // Ends at an anchor the frame's picture lacks (#1057): a content
+      // warning on the page laid, once per pass.
+      const unknown = connectorAnchorWarnings.get(doc) ?? [];
+      const kept = unknown.filter((w) => !(pair ? [pair.left.index, pair.right.index] : [page.index]).includes(w.pageIndex ?? -1));
+      for (const d of connectorAnchorUnknown) {
+        kept.push({
+          kind: 'labelAnchorUnknown',
+          resourceId: d.resourceId ?? '',
+          anchor: d.anchor,
+          known: d.known,
+          connector: d.elementId,
+          frame: d.targetId,
+          ...(doc.config?.locale ? { locale: doc.config.locale } : {}),
+          pageIndex: page.index,
+        });
+      }
+      if (kept.length > 0 || unknown.length > 0) connectorAnchorWarnings.set(doc, kept);
       const decoration = rules.length === 0 ? laidDecoration
         : laidDecoration ? { ...laidDecoration, blocks: [...laidDecoration.blocks, ...rules] } : { bbox: { ...container }, blocks: rules };
       if (decoration && pair) {
@@ -1852,6 +1990,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
 function withoutAnchoredTo(slot: ResolvedDesignSlot, frames: ReadonlySet<string>): ResolvedDesignSlot {
   const dropped = new Set<string>();
   const target = (el: ResolvedDesignSlot['elements'][number]): string | undefined => {
+    // A connector (#1056) drops its own ends on frames the page lacks.
+    if (el.kind === 'connector') return undefined;
     const to = el.placement.anchor.to;
     return to.startsWith('#') ? to.slice(1) : undefined;
   };

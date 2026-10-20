@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'es',
   lastUpdated: '2026-10-19',
   readingTime: '44 min',
-  order: 37,
+  order: 38,
   parent: 'sandbox',
   plainSummary: "Esta página explica dos paneles del Sandbox. El panel Diseño reúne todos los ajustes del libro, como el tamaño de página, las tipografías y los colores, ordenados en grupos y con un buscador. El panel Revisión enumera los problemas que Postext encuentra mientras trabajas, como una imagen que falta o una línea demasiado abierta. Cada problema dice dónde está y te lleva allí cuando haces clic en él.",
 };
@@ -227,7 +227,7 @@ Diagnósticos en vivo, recalculados a partir del texto, el diseño, las figuras 
   - *Flujo de columnas desconocido*: un `:::columns{flow=…}` que no es ni `snake` ni `parallel`; el grupo toma el valor por defecto (`columnsFlowUnknown`);
   - *Plantilla de página desconocida*, *Ranura sin marco*, *Marco vacío* y *Página compuesta abierta con :::*: un `::::page` cuya plantilla no está en `pageTemplates`, un `slot` que no corresponde a ningún marco de la plantilla de la página, un marco de la plantilla que no recibe nada en la página (un marco `optional` no da aviso) y un `:::page` con `template=` escrito con tres signos de dos puntos (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; véase [Páginas compuestas](/es/docs/composed-pages#avisos)).
   - *La marca spread no coincide con la plantilla*: un `::::page` cuya marca `spread` no coincide con el `spread` de su plantilla; la página se compone como dice la plantilla, en dos páginas enfrentadas o en una (`spreadMismatch`; véase [Páginas compuestas](/es/docs/composed-pages#spreadmismatch)).
-  - los rótulos de una figura: *Rótulo en un ancla que no existe*, *Ancla sin rótulo*, *Rótulo más ancho que su medida* y *Rótulos que se pisan* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`; véase [Páginas compuestas › Figuras con rótulos](/es/docs/composed-pages#figuras-con-rótulos));
+  - los rótulos de una figura: *Rótulo en un ancla que no existe*, *Ancla sin rótulo*, *Rótulo más ancho que su medida* y *Rótulos que se pisan* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`; véase [Páginas compuestas › Figuras con rótulos](/es/docs/composed-pages-figures#figuras-con-rótulos));
   - los avisos de las páginas de cómic, como una división ilegible o viñetas y celdas que no coinciden; un bocadillo que no cabe en su viñeta está en *Composición* (véase [Cómics › Avisos de cómic](/es/docs/comics#avisos-de-cómic)).
 - **Diseño**:
   - nombres de marcador de cabeceras y pies fuera de la lista permitida del motor (se aceptan `{attr.…}` y los marcadores de parte), y marcadores cuyos metadatos del documento faltan;

@@ -20,10 +20,11 @@
  * locale of the chapter.
  */
 import { labelGlyphAt } from './labels';
+import { pathHit } from '../design/pathBlock';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
-import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock } from './paint';
+import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock, paintsOverFrames } from './paint';
 import { composedPageElementId, designElementId, groupElementId } from './ids';
 import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap';
 
@@ -450,6 +451,8 @@ function designChain(
   file: FileRef,
 ): SourceElement[] | undefined {
   if (!inside(b.bbox, p)) return undefined;
+  // A vector shape (#1055) answers on its ink only, not across its box.
+  if (b.kind === 'path' && !pathHit(b, p)) return undefined;
   const out: SourceElement[] = [];
   const elementId = idOf(b.elementId ?? `#${index}`);
   if (b.kind === 'text') {
@@ -485,11 +488,12 @@ const resolvedTemplates = new WeakMap<VDTDocument, Map<string, ReturnType<typeof
 function templateOf(doc: VDTDocument, page: VDTPage): ReturnType<typeof resolvePageTemplate> {
   const composed = page.composed!;
   const parity = (page.index + (doc.pageIndexOffset ?? 0)) % 2 === 0 ? 'recto' : 'verso';
-  const key = `${composed.template}|${parity}`;
+  const modules = composed.modules ?? [];
+  const key = `${composed.template}|${parity}|${modules.map((m) => `${m.name}\u0001${m.template}`).join('\u0000')}`;
   let cache = resolvedTemplates.get(doc);
   if (!cache) { cache = new Map(); resolvedTemplates.set(doc, cache); }
   if (!cache.has(key)) {
-    cache.set(key, resolvePageTemplate({ pageTemplates: doc.config.pageTemplates, calloutStyles: doc.config.calloutStyles }, composed.template, { parity }));
+    cache.set(key, resolvePageTemplate({ pageTemplates: doc.config.pageTemplates, calloutStyles: doc.config.calloutStyles }, composed.template, { parity, ...(modules.length > 0 ? { modules } : {}) }));
   }
   return cache.get(key);
 }
@@ -508,7 +512,8 @@ function frameAncestors(doc: VDTDocument, page: VDTPage, frame: VDTFrame): Sourc
   }];
   const template = templateOf(doc, page);
   for (const g of template?.groups ?? []) {
-    if (!g.frames.includes(frame.name)) continue;
+    // An instance of a repeated frame (#1061) is in its frame's grid.
+    if (!g.frames.includes(frame.repeat?.frame ?? frame.name)) continue;
     out.push({ level: 'group', id: groupElementId(composed.fenceIndex, g.name), source: { kind: 'config', path: g.configPath } });
   }
   out.push(templateElement(composed));
@@ -665,7 +670,12 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
       }
       const deco = composed.decoration;
       if (!deco || (decorationClip && !inside(decorationClip, p))) continue;
+      // The `'over'` item (#1076) holds the connectors painted over the
+      // frames, the decoration item the rest; the blocks keep their
+      // indices in the slot.
+      const over = item.kind === 'over';
       for (let k = deco.blocks.length - 1; k >= 0; k--) {
+        if (paintsOverFrames(deco.blocks[k]!) !== over) continue;
         const chain = designChain(deco.blocks[k]!, k, p, (el) => designElementId(composed.fenceIndex, 'decoration', el), composed, file);
         if (!chain) continue;
         // Under a bare frame only a text element wins (its words come from

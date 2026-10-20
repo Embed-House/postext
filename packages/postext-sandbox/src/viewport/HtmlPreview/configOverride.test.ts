@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import type { DesignElement, PostextConfig } from 'postext';
+import type { DesignElement, PostextConfig, PlacedDesignElement } from 'postext';
 import { buildHtmlConfigOverride, hasComicPages, partTitlesOf } from './configOverride';
 
 // No canvas under node: every glyph measures 10px.
@@ -53,10 +53,10 @@ describe('buildHtmlConfigOverride', () => {
     );
     const title = out.parts!.design!.elements[0]!;
     expect(title.id).toBe('htmlViewerPartTitle');
-    expect(title.placement.anchor).toEqual({ to: 'container', edge: 'top-left' });
+    expect((title as PlacedDesignElement).placement.anchor).toEqual({ to: 'container', edge: 'top-left' });
     // Two lines of the H1 face at 144 dpi (30pt → 60px), and the body
     // starts half a line below the band so it never lands over the title.
-    expect(title.placement.size).toEqual({ width: 'fill', height: { value: 120, unit: 'px' } });
+    expect((title as PlacedDesignElement).placement.size).toEqual({ width: 'fill', height: { value: 120, unit: 'px' } });
     expect(out.parts!.margins).toEqual({
       top: { value: 150, unit: 'px' },
       bottom: { value: 0, unit: 'px' },
@@ -90,7 +90,7 @@ describe('buildHtmlConfigOverride', () => {
     );
     const title = out.parts!.design!.elements[0]!;
     expect(title.kind === 'text' && title.lineHeight).toBeCloseTo(1.2);
-    expect(title.placement.size).toEqual({ width: 'fill', height: { value: 144, unit: 'px' } });
+    expect((title as PlacedDesignElement).placement.size).toEqual({ width: 'fill', height: { value: 144, unit: 'px' } });
     expect(out.parts!.margins!.top!.value).toBeCloseTo(180);
   });
 
@@ -101,13 +101,13 @@ describe('buildHtmlConfigOverride', () => {
     };
     // Forced breaks: four lines.
     const out = buildHtmlConfigOverride(cfg, { ...opts, partTitles: ['I Uno', 'II Uno\nDos\nTres\nCuatro'] });
-    expect(out.parts!.design!.elements[0]!.placement.size).toEqual({ width: 'fill', height: { value: 240, unit: 'px' } });
+    expect((out.parts!.design!.elements[0] as PlacedDesignElement).placement.size).toEqual({ width: 'fill', height: { value: 240, unit: 'px' } });
     expect(out.parts!.margins!.top!.value).toBe(270);
     // A one-line title wraps on a narrow page: 16 words of 90px + spaces
     // over 400px take four lines of four.
     const long = Array.from({ length: 16 }, () => 'palabrota').join(' ');
     const narrow = buildHtmlConfigOverride(cfg, { ...opts, pageWidthPx: 400, partTitles: [long] });
-    expect(narrow.parts!.design!.elements[0]!.placement.size).toEqual({ width: 'fill', height: { value: 240, unit: 'px' } });
+    expect((narrow.parts!.design!.elements[0] as PlacedDesignElement).placement.size).toEqual({ width: 'fill', height: { value: 240, unit: 'px' } });
   });
 
   it('sends a leaf-relative side column to the right margin in vertical scroll', () => {
@@ -146,17 +146,17 @@ describe('buildHtmlConfigOverride', () => {
     // Leaf frames mean nothing on a page as tall as its text: everything
     // hangs off the band instead, which stands for the leaf itself — a
     // cover asks for more than the leaf's height and gets all of it.
-    expect(panel!.placement.anchor).toEqual({ to: 'container', edge: 'top-left' });
-    expect(plate!.placement.anchor).toEqual({ to: 'container', edge: 'top-left' });
+    expect((panel as PlacedDesignElement).placement.anchor).toEqual({ to: 'container', edge: 'top-left' });
+    expect((plate as PlacedDesignElement).placement.anchor).toEqual({ to: 'container', edge: 'top-left' });
     // The 850 px leaf is wider than the 800 px page: all of it shrinks.
     const k = 800 / px144(150);
-    const size = panel!.placement.size as { width: { value: number }; height: { value: number } };
+    const size = (panel as PlacedDesignElement).placement.size as { width: { value: number }; height: { value: number } };
     expect(size.width.value).toBeCloseTo(800, 5);
     expect(size.height.value).toBeCloseTo(px144(225) * k, 5);
     expect(design.minHeight!.value).toBeCloseTo(px144(225) * k, 5);
     // The plate keeps its place and size on the leaf, scaled.
-    expect((plate!.placement.offset!.x as { value: number }).value).toBeCloseTo(px144(18) * k, 5);
-    expect((plate!.placement.size!.width as { value: number }).value).toBeCloseTo(122 * k, 5);
+    expect(((plate as PlacedDesignElement).placement.offset!.x as { value: number }).value).toBeCloseTo(px144(18) * k, 5);
+    expect(((plate as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(122 * k, 5);
   });
 
   it('scales a cover down to a page of the paged view', () => {
@@ -166,7 +166,7 @@ describe('buildHtmlConfigOverride', () => {
     const design = out.headingStyles![0]!.advancedDesign!;
     const k = (852 * 0.95) / px144(225);
     expect(design.minHeight!.value).toBeCloseTo(852 * 0.95, 5);
-    expect((design.slot.elements[1]!.placement.size!.width as { value: number }).value).toBeCloseTo(122 * k, 5);
+    expect(((design.slot.elements[1] as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(122 * k, 5);
   });
 
   it('keeps the shape of a vertical cover, the leaf’s height running down the page', () => {
@@ -200,18 +200,18 @@ describe('buildHtmlConfigOverride', () => {
     const design = out.headingStyles![0]!.advancedDesign!;
     const k = Math.min(852 / px144(210), (800 * 0.95) / px144(148));
     const [cloth, rule] = design.slot.elements;
-    const size = cloth!.placement.size as { width: { value: number }; height: { value: number } };
+    const size = (cloth as PlacedDesignElement).placement.size as { width: { value: number }; height: { value: number } };
     expect(size.width.value).toBeCloseTo(px144(210) * k, 5);
     expect(size.height.value).toBeCloseTo(px144(148) * k, 5);
     expect(design.minHeight!.value).toBeCloseTo(px144(148) * k, 5);
     // The thread keeps its length: the leaf is 210 mm long down the flow,
     // not the 148 mm of its width.
-    expect((rule!.placement.size!.width as { value: number }).value).toBeCloseTo(168 * k, 5);
-    expect((rule!.placement.offset!.x as { value: number }).value).toBeCloseTo(px144(21) * k, 5);
+    expect(((rule as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(168 * k, 5);
+    expect(((rule as PlacedDesignElement).placement.offset!.x as { value: number }).value).toBeCloseTo(px144(21) * k, 5);
     // Set horizontally, the same rule stops at the leaf's 148 mm edge.
     const flat = buildHtmlConfigOverride({ ...vertical, layout: { layoutType: 'single' } }, { ...opts, layoutType: 'single', pageWidthPx: 800 });
     const kFlat = Math.min(800 / px144(148), (852 * 0.95) / px144(210));
-    const flatWidth = flat.headingStyles![0]!.advancedDesign!.slot.elements[1]!.placement.size!.width as { value: number; unit: string };
+    const flatWidth = (flat.headingStyles![0]!.advancedDesign!.slot.elements[1] as PlacedDesignElement).placement.size!.width as { value: number; unit: string };
     expect(flatWidth.unit).toBe('px');
     expect(flatWidth.value).toBeCloseTo(px144(148 - 21) * kFlat, 5);
   });
@@ -286,11 +286,11 @@ describe('buildHtmlConfigOverride', () => {
     const [plate, bar, title] = design.slot.elements;
     // The plate is cut at the leaf's edge and the bar fills the leaf, not
     // the page: both come out the column's width.
-    expect((plate!.placement.size!.width as { value: number }).value).toBeCloseTo(column, 5);
-    expect((bar!.placement.size!.width as { value: number }).value).toBeCloseTo(column, 5);
-    expect((title!.placement.offset!.x as { value: number }).value).toBeCloseTo(px144(15) * k, 5);
+    expect(((plate as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(column, 5);
+    expect(((bar as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(column, 5);
+    expect(((title as PlacedDesignElement).placement.offset!.x as { value: number }).value).toBeCloseTo(px144(15) * k, 5);
     // A sized element keeps its unit; only offsets turn into px.
-    expect(title!.placement.size!.width).toEqual({ value: 120 * k, unit: 'mm' });
+    expect((title as PlacedDesignElement).placement.size!.width).toEqual({ value: 120 * k, unit: 'mm' });
   });
 
   it('keeps a photo opener across the page when the page holds one column', () => {
@@ -298,7 +298,7 @@ describe('buildHtmlConfigOverride', () => {
     const style = out.headingStyles![0]!;
     expect(style.span).toBe('page');
     const bar = style.advancedDesign!.slot.elements[1]!;
-    expect((bar.placement.size!.width as { value: number }).value).toBeCloseTo(1000, 5);
+    expect(((bar as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(1000, 5);
   });
 
   it('keeps a panel of boxes and type across a two-column page', () => {
@@ -342,16 +342,16 @@ describe('buildHtmlConfigOverride', () => {
     expect(design.minHeight!.value).toBeCloseTo(px144(80), 5);
     const [band, stripe, title, credit] = design.slot.elements;
     // A leaf-wide panel spans the viewer's page, wider than the leaf.
-    expect((stripe!.placement.size!.width as { value: number }).value).toBeCloseTo(1200, 5);
+    expect(((stripe as PlacedDesignElement).placement.size!.width as { value: number }).value).toBeCloseTo(1200, 5);
     // The container sits in by the leaf's margins.
-    expect((title!.placement.offset!.x as { value: number }).value).toBeCloseTo(px144(15), 5);
-    expect((title!.placement.offset!.y as { value: number }).value).toBeCloseTo(px144(22), 5);
+    expect(((title as PlacedDesignElement).placement.offset!.x as { value: number }).value).toBeCloseTo(px144(15), 5);
+    expect(((title as PlacedDesignElement).placement.offset!.y as { value: number }).value).toBeCloseTo(px144(22), 5);
     // A foot anchor hangs off an invisible box as tall as the band: the
     // heading's container has no floor to measure it against.
     expect(band).toMatchObject({ kind: 'box', id: 'htmlViewerBand' });
-    expect((band!.placement.size!.height as { value: number }).value).toBeCloseTo(px144(80), 5);
-    expect(credit!.placement.anchor).toEqual({ to: '#htmlViewerBand', edge: 'align-bottom' });
-    expect((credit!.placement.offset!.y as { value: number }).value).toBeCloseTo(px144(-5), 5);
+    expect(((band as PlacedDesignElement).placement.size!.height as { value: number }).value).toBeCloseTo(px144(80), 5);
+    expect((credit as PlacedDesignElement).placement.anchor).toEqual({ to: '#htmlViewerBand', edge: 'align-bottom' });
+    expect(((credit as PlacedDesignElement).placement.offset!.y as { value: number }).value).toBeCloseTo(px144(-5), 5);
   });
 
   it('gives part body type its text colours when the divider loses its panel', () => {
@@ -405,7 +405,7 @@ describe('buildHtmlConfigOverride', () => {
     };
     const out = buildHtmlConfigOverride(inBand, { ...opts, columnMode: 'single', layoutType: 'single' });
     const design = out.headingStyles![0]!.advancedDesign!;
-    expect(design.slot.elements[0]!.placement.size).toEqual({ width: mm(122), height: 'auto' });
+    expect((design.slot.elements[0] as PlacedDesignElement).placement.size).toEqual({ width: mm(122), height: 'auto' });
     // 52 mm at 144 dpi, unchanged in value.
     expect(design.minHeight!.unit).toBe('px');
     expect(design.minHeight!.value).toBeCloseTo(52 * 144 / 25.4, 5);

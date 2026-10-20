@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'pt',
   lastUpdated: '2026-10-19',
   readingTime: '42 min',
-  order: 37,
+  order: 38,
   parent: 'sandbox',
   plainSummary: "Esta página trata de dois painéis do Sandbox. O painel Design reúne todos os ajustes do livro, como o tamanho da página, as fontes e as cores, organizados em grupos e com uma caixa de busca. O painel Verificações lista os problemas que o Postext encontra enquanto você trabalha, como uma imagem que falta ou uma linha frouxa demais. Cada problema diz onde está e leva você até lá quando você clica nele.",
 };
@@ -227,7 +227,7 @@ Diagnósticos ao vivo, recalculados a partir do texto, do design, das figuras e 
   - *Fluxo de colunas desconhecido*: um `:::columns{flow=…}` que não é nem `snake` nem `parallel`; o grupo recebe o padrão (`columnsFlowUnknown`);
   - *Modelo de página desconhecido*, *Slot sem bloco*, *Bloco vazio* e *Página composta com três sinais de dois-pontos*: um `::::page` cujo modelo não está em `pageTemplates`, um `slot` que não corresponde a nenhum bloco do modelo da página, um bloco do modelo que não recebe nada na página (um bloco `optional` não é sinalizado) e um `:::page` com `template=` escrito com três dois-pontos (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; veja [Páginas compostas](/pt/docs/composed-pages#avisos)).
   - *O atributo spread não condiz com o modelo*: um `::::page` cuja marca `spread` não corresponde ao `spread` do modelo dele; a página é diagramada conforme o modelo, em duas páginas lado a lado ou em uma (`spreadMismatch`; veja [Páginas compostas](/pt/docs/composed-pages#spreadmismatch)).
-  - os rótulos de uma figura: *Rótulo numa âncora inexistente*, *Âncora sem rótulo*, *Rótulo mais largo que a medida* e *Rótulos sobrepostos* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`; veja [Páginas compostas › Figuras com rótulos](/pt/docs/composed-pages#figuras-com-rótulos));
+  - os rótulos de uma figura: *Rótulo numa âncora inexistente*, *Âncora sem rótulo*, *Rótulo mais largo que a medida* e *Rótulos sobrepostos* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`; veja [Páginas compostas › Figuras com rótulos](/pt/docs/composed-pages-figures#figuras-com-rótulos));
   - os avisos das páginas de quadrinhos, como uma divisão ilegível ou quadros e células que não coincidem; um balão que não cabe no quadro fica em *Composição* (veja [Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)).
 - **Design**:
   - nomes de marcadores de cabeçalho e rodapé fora da lista permitida pelo motor (`{attr.…}` e os marcadores de parte são aceitos), e marcadores cujos metadados do documento estão faltando;

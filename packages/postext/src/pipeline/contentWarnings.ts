@@ -41,7 +41,7 @@ import { composedPages } from '../composed/document';
 import { composedFrameBlockIds } from '../composed/paint';
 import { bitmapLayoutSize, bitmapResolutionFor } from '../bitmapResolution';
 import { checkComposedSlots } from '../composed/slotChecks';
-import { describeFitStep, describeFrameOverflowProposal } from '../composed/reflowLog';
+import { describeFitStep, describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal } from '../composed/reflowLog';
 import type { ComposedPagesConfigKeys } from '../composed/types';
 
 /** A `:::name` line: the name starts it, whatever follows (a line the parser
@@ -927,6 +927,27 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'slotUnknown':
       text = `Slot "${w.slot}" is no frame of template "${w.template}" — the content goes to the flow frame${w.frame ? ` "${w.frame}"` : ''}`;
       break;
+    case 'repeatOverflow':
+      text = `Grid "${w.group}" of template "${w.template}" holds ${w.max} item${w.max === 1 ? '' : 's'} — item ${w.item} of "${w.frame}" goes to ${w.flowFrame ? `the flow frame "${w.flowFrame}"` : 'the flow after the page'}; raise repeat.max or move the item to another page`;
+      break;
+    case 'moduleUnknown':
+      text = w.reason === 'unknown'
+        ? (w.module === '' ? `:::module names no template — write :::module{template="…"}; its content goes to the flow frame` : `Unknown module "${w.module}" — no pageTemplates entry has this id; the module's content goes to the flow frame`)
+        : w.reason === 'notModule'
+          ? `Template "${w.module}" is no module — give it role: "module" to stack it in a page; the module's content goes to the flow frame`
+          : `Template "${w.template}" has no modules group — give one of its groups modules: true; module "${w.name}" is not laid and its content goes to the flow frame`;
+      break;
+    case 'moduleAsPage':
+      text = `Template "${w.template}" is a module — a module is stacked in a page with :::module{template="${w.template}"}, never laid as a page; the page's content is set in the flow`;
+      break;
+    case 'moduleNested':
+      text = `Module "${w.module}" inside a module of template "${w.template}" — a module does not hold modules; its content is the outer module's`;
+      break;
+    case 'moduleNameRejected':
+      text = w.reason === 'taken'
+        ? `Another module of the page is named "${w.name}" — this one is named "${w.used}"; give each module its own name`
+        : `Module name "${w.name}" holds a space, ".", "#", "[" or "]" — the module is named "${w.used}"`;
+      break;
     case 'slotEmpty':
       text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
       break;
@@ -937,6 +958,25 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} is ${w.overflowMm} mm short of its content`
         + `${steps.length > 0 ? ` after ${steps.join(', ')}` : ''} — the rest is cut at the frame's foot`
         + (fixes.length > 0 ? `; to fit: ${fixes.join('; or ')}` : '; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text');
+      break;
+    }
+    case 'frameCovered': {
+      // Ink under a frame painted over it (#1053).
+      const what = w.text !== undefined ? `"${w.text}"` : w.picture !== undefined ? `the picture "${w.picture}"` : 'its ink';
+      const fixes = (w.proposals ?? []).map(describeFrameCoverProposal);
+      text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} lies under frame "${w.coveredBy}" (${w.overlapMm2} mm² of ${what} hidden)`
+        + (fixes.length > 0 ? `; to uncover it: ${fixes.join('; or ')}` : '')
+        + `; or set overlap: 'allow' on either frame if the art is meant to sit over it`;
+      break;
+    }
+    case 'frameOutsideArea': {
+      // Ink past the trim, the bleed or the box it is anchored inside (#1053).
+      const past = w.past === 'trim' ? 'the trim (its text is cut there)' : w.past === 'bleed' ? 'the bleed' : `the ${w.past} "${w.target ?? ''}" it is anchored inside`;
+      const sides = (['top', 'right', 'bottom', 'left'] as const).filter((k) => w.sides?.[k] !== undefined).map((k) => `${k} ${w.sides[k]} mm`);
+      const fixes = (w.proposals ?? []).map(describeFrameOutsideProposal);
+      text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} runs ${w.excessMm} mm past ${past}${sides.length > 0 ? ` (${sides.join(', ')})` : ''}`
+        + (fixes.length > 0 ? `; to bring it in: ${fixes.join('; or ')}` : '; move or shrink the frame')
+        + `; or set overlap: 'allow' on the frame if it hangs out on purpose`;
       break;
     }
     case 'frameContinuationLimit':
@@ -955,6 +995,11 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
         : `Template "${w.template}" is a single page — the page is laid on one page; drop spread from the fence, or use a template with spread: true`;
       break;
     case 'labelAnchorUnknown':
+      if (w.connector !== undefined) {
+        // A connector's end at an anchor of its frame's picture (#1057).
+        text = `Connector "${w.connector}" ends at anchor "${w.anchor}" of the picture in frame "${w.frame ?? ''}"${w.locale ? ` (${w.locale})` : ''}: ${w.resourceId ? `"${w.resourceId}" has no such anchor` : 'the frame holds no picture on this page'} — that end is left out${w.known.length > 0 ? `; use one of ${w.known.slice(0, 6).map((a) => `"${a}"`).join(', ')}${w.known.length > 6 ? '…' : ''}` : ''}`;
+        break;
+      }
       text = `Label at anchor "${w.anchor}" of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''}: the resource has no such anchor — the label is not drawn; ${w.known.length > 0 ? `use one of ${w.known.slice(0, 6).map((a) => `"${a}"`).join(', ')}${w.known.length > 6 ? '…' : ''}, add the anchor to the resource,` : 'add the anchor to the resource'} or place it with at="x% y%"`;
       break;
     case 'anchorUnlabelled':

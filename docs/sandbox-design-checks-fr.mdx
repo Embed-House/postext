@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'fr',
   lastUpdated: '2026-10-19',
   readingTime: '44 min',
-  order: 37,
+  order: 38,
   parent: 'sandbox',
   plainSummary: "Cette page présente deux panneaux du Sandbox. Le panneau Maquette contient tous les réglages du livre, comme le format de la page, les polices et les couleurs, rangés en groupes avec un champ de recherche. Le panneau Vérifications liste les problèmes que Postext trouve pendant que vous travaillez, comme une image manquante ou une ligne aux mots trop espacés. Chaque problème indique où il se trouve, et un clic vous y emmène.",
 };
@@ -227,7 +227,7 @@ Des diagnostics en direct, recalculés à partir du texte, de la maquette, des f
   - *Flux de colonnes inconnu* : un `:::columns{flow=…}` qui n’est ni `snake` ni `parallel` ; le groupe prend la valeur par défaut (`columnsFlowUnknown`) ;
   - *Gabarit de page inconnu*, *Emplacement sans bloc*, *Bloc vide* et *Page composée ouverte par trois deux-points* : un `::::page` dont le gabarit ne figure pas dans `pageTemplates`, un `slot` qui ne désigne aucun bloc du gabarit de la page, un bloc du gabarit qui ne reçoit rien sur la page (un bloc `optional` n’est pas signalé) et un `:::page` portant `template=` écrit avec trois deux-points (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength` ; voir [Pages composées](/fr/docs/composed-pages#avertissements)).
   - *La double page ne correspond pas au gabarit* : un `::::page` dont l’attribut `spread` ne correspond pas au `spread` de son gabarit ; la page est composée comme le prévoit le gabarit, sur deux pages en regard ou sur une seule (`spreadMismatch` ; voir [Pages composées](/fr/docs/composed-pages#spreadmismatch)).
-  - les étiquettes d’une figure : *Étiquette sur une ancre inconnue*, *Ancre sans étiquette*, *Étiquette trop large pour son ancre* et *Étiquettes qui se chevauchent* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap` ; voir [Pages composées › Figures avec étiquettes](/fr/docs/composed-pages#figures-avec-étiquettes)) ;
+  - les étiquettes d’une figure : *Étiquette sur une ancre inconnue*, *Ancre sans étiquette*, *Étiquette trop large pour son ancre* et *Étiquettes qui se chevauchent* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap` ; voir [Pages composées › Figures avec étiquettes](/fr/docs/composed-pages-figures#figures-avec-étiquettes)) ;
   - les avertissements des pages de bande dessinée, comme une division illisible ou des cases et des cellules qui ne correspondent pas ; une bulle qui ne tient pas dans sa case figure sous *Composition* (voir [Bande dessinée › Avertissements de bande dessinée](/fr/docs/comics#avertissements-de-bande-dessinée)).
 - **Maquette** :
   - les noms de variables d’en-tête et de pied de page hors de la liste autorisée du moteur (`{attr.…}` et les variables de partie sont acceptées), et les variables dont la métadonnée du document manque ;

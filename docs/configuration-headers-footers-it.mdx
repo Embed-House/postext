@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configurazione: intestazioni e piè di pagina',
   sidebarTitle: 'Intestazioni e piè di pagina',
-  description: 'Che cosa si stampa in cima e in fondo a ogni pagina: testi con segnaposto, filetti, riquadri e immagini, diversi per le pagine pari e dispari; e dove si colloca ogni elemento',
+  description: 'Che cosa si stampa in cima e in fondo a ogni pagina: testi con segnaposto, filetti, riquadri, immagini e tracciati vettoriali, diversi per le pagine pari e dispari; e dove si colloca ogni elemento',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '32 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Le proprietà `header` e `footer` controllano gli spazi di intestazione e piè d
 
 Gli spazi usano il modello unificato degli **spazi della grafica**: ogni elemento ha un `placement` con un `anchor` (al contenitore o a un altro elemento tramite `#id`), un `offset` facoltativo e una `size` facoltativa. I vecchi campi piatti `align`, `marginFromBody`, `marginFromEdge` e `width: 'full'` sono ancora accettati in ingresso e vengono convertiti automaticamente nella nuova forma; la descrizione equivalente nella nuova forma è documentata più sotto.
 
-Ogni spazio contiene un elenco di elementi **text**, **rule**, **box** e **image**. L’ordine dell’array è l’ordine di disegno (il primo elemento si disegna per primo, l’ultimo sopra tutti). Questo vale indipendentemente dagli ancoraggi: un elemento può ancorarsi a uno elencato dopo di lui (`anchor.to: '#ttl'`), così un riquadro di sfondo può venire per primo ed essere comunque posizionato rispetto al testo che gli sta davanti.
+Ogni spazio contiene un elenco di elementi **text**, **rule**, **box**, **image** e **path** (la decorazione di una pagina composta accetta anche i **connettori**, vedi [Configurazione › Pagine composte](/it/docs/configuration-composed-pages#connettori)). L’ordine dell’array è l’ordine di disegno (il primo elemento si disegna per primo, l’ultimo sopra tutti). Questo vale indipendentemente dagli ancoraggi: un elemento può ancorarsi a uno elencato dopo di lui (`anchor.to: '#ttl'`), così un riquadro di sfondo può venire per primo ed essere comunque posizionato rispetto al testo che gli sta davanti.
 
 **Valori predefiniti incorporati.** Quando `header` o `footer` è `undefined`, postext applica un valore predefinito incorporato ragionevole invece di uno spazio vuoto:
 
@@ -46,7 +46,7 @@ Per rinunciare ai valori predefiniti incorporati, imposta `header: { elements: [
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valori predefiniti incorporati quando è <code>undefined</code>; <code>[]</code> li disattiva</td>
-      <td>Elenco ordinato di elementi di testo, filetti, riquadri e immagini.</td>
+      <td>Elenco ordinato di elementi di testo, filetti, riquadri, immagini e tracciati.</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ Gli elementi riquadro dipingono un rettangolo arrotondato dentro lo spazio: util
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Raggio degli angoli. Limitato alla metà del lato più corto al momento del rendering.</td>
+      <td>Raggio degli angoli. Limitato alla metà del lato più corto al momento del rendering. Da postext 1.48 un oggetto dà a ogni angolo il proprio raggio, e un angolo assente resta vivo: una fascia arrotondata solo sugli angoli superiori.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>tutti i lati</td>
+      <td>Il bordo lato per lato, ciascuno <code>&#123; enabled?, color?, width? &#125;</code> sopra <code>borderColor</code> e <code>borderWidth</code>. Un lato si disegna quando ha un colore e uno spessore, a meno che non dica <code>enabled: false</code>: una fascia con un filetto solo al piede è <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Da postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ Il backend PDF incorpora la risorsa come una figura (un SVG con un master di sta
 
 Un’immagine disegnata dalla grafica conta come contenuto quando la sua risorsa la descrive: l’`altText` della risorsa, altrimenti la sua didascalia come testo semplice (un chip letto attraverso la sua etichetta, un `:ref` attraverso il suo `text` quando ne ha uno), entra nel VDT (`VDTDesignImageBlock.altText`), diventa l’`alt` del suo `<img>` nell’HTML e una `Figure` con `/Alt` in un PDF con tag, letta subito dopo il testo della sua grafica (la tavola di un capitolo dopo il titolo del capitolo). Un’immagine la cui risorsa non ha né l’uno né l’altra, e una marcata `decorative`, è decorazione: `alt=""` con `role="presentation"`, e un artefatto nel PDF. L’immagine di una testatina o di un piè di pagina si ripete su ogni pagina, quindi è un elemento d’arredo, qualunque cosa indichi la sua risorsa: nessun `altText` nel VDT, `alt=""` con `role="presentation"` nell’HTML, un artefatto della pagina nel PDF.
 
+### Elementi tracciato
+
+Un elemento `path` disegna una forma vettoriale che un riquadro non sa fare: una barra che arriva al dorso con l’estremità obliqua, un nastro con una tacca, le frecce a chevron accanto a una testatina, la coda di un fumetto su una scheda. Il contorno è un dato di tracciato SVG, scritto per impostazione predefinita in frazioni del riquadro dell’elemento stesso, così la forma si allunga con il riquadro e lo segue quando il riquadro si sposta: un nastro dimensionato a `{ to: '#title', edge: 'right' }` è lungo quanto il titolo in ogni lingua. Lo accetta ogni spazio della grafica: testatine, grafica dei titoli e delle parti, righe delle parti nell’indice, grafica dei riquadri e decorazione di una pagina composta. Da postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Proprietà</th>
+      <th>Tipo</th>
+      <th>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Discriminante, e un id stabile a cui possono ancorarsi altri elementi.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Dati di tracciato SVG: <code>M L H V C S Q T A Z</code>, assoluti e relativi, nelle unità di <code>viewBox</code>. Dati che non si possono leggere (manca lo spostamento iniziale, una lettera che non è un comando, un comando senza tutti i suoi numeri) non disegnano nulla e vengono segnalati come <code>unknownConfigValue</code>; il riquadro dell’elemento resta comunque per gli elementi ancorati a esso.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>La larghezza e l’altezza dello spazio in cui è scritto <code>d</code>. Con il valore predefinito, <code>1</code> è tutta la larghezza o tutta l’altezza del riquadro. Un tracciato copiato da un disegno conserva qui la dimensione del disegno (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> allunga il <code>viewBox</code> sul riquadro lungo ciascun asse; <code>'meet'</code> lo scala in modo uniforme perché entri, centrato: un’icona che non deve deformarsi.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>riempimento nero</td>
+      <td>Il riempimento e il contorno. Senza nessuno dei due la forma si riempie di nero, come un tracciato SVG; con il solo <code>stroke</code> non ha riempimento. I colori legati alla tavolozza seguono le tavolozze della pagina e della parte.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, continuo</td>
+      <td>Lo spessore e lo schema di tratteggio del contorno, lunghezze della pagina che non si allungano con il riquadro, così una forma allungata mantiene una linea uniforme.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Collocato e dimensionato come un elemento riquadro (vedi <a href="#collocazione-degli-elementi">Collocazione degli elementi</a>): un lato non indicato, o <code>'fill'</code>, arriva al bordo del contenitore.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>come gli elementi riquadro</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>Su quali pagine compare, se resta dove il modello disegna la sua cornice (decorazione di una pagina composta), e se conta per l’altezza riservata di un titolo.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un tracciato si disegna come forma vettoriale nel canvas, nel PDF, nel visualizzatore HTML e nell’EPUB a layout fisso, come artefatto di impaginazione in un PDF con tag, e resta fuori dall’EPUB a layout fluido insieme al resto dell’arredo della pagina. Un clic risponde sul suo inchiostro, non sul suo riquadro vuoto. Una chiave che l’elemento non ha è `unknownConfigKey`. In questa versione i tracciati non si ruotano.
+
 ### Collocazione degli elementi
 
-`ElementPlacement` è il modello di posizionamento unificato usato da ogni tipo di elemento (testo, filetto, riquadro, immagine) dentro qualsiasi spazio della grafica: intestazione della pagina, piè di pagina, o spazio della **Grafica avanzata** di un livello di titolo. Tre informazioni descrivono una collocazione:
+`ElementPlacement` è il modello di posizionamento unificato usato da ogni tipo di elemento (testo, filetto, riquadro, immagine, tracciato) dentro qualsiasi spazio della grafica: intestazione della pagina, piè di pagina, o spazio della **Grafica avanzata** di un livello di titolo. Tre informazioni descrivono una collocazione:
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
     edge: AnchorEdge;
+    /** The point along the side `edge` names, on '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distance from the anchor point. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ Ogni bordo relativo a un elemento mette un angolo dell’elemento su un angolo d
 
 Un bordo relativo a un elemento usato con `'container'`, `'page'` o `'bleed'`, e un bordo del contenitore usato con `'#id'`, vengono letti come l’angolo in alto a sinistra.
 
+**Un punto lungo un lato.** In un ancoraggio a `'#id'` (un altro elemento o, in una pagina composta, una cornice o un gruppo), `at` sceglie un punto lungo il lato indicato dal bordo: `'start'`, `'center'`, `'end'`, oppure una frazione del lato dal suo inizio, da `0` a `1`. Lungo il lato l’elemento si centra su quel punto; nell’altro senso il bordo mantiene il suo posto, quindi `below` con `at: 'center'` appende una tacca sotto il centro di una cornice e `right-of` con `at: 0.5` mette un segno a metà del suo lato. Un lato orizzontale (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom`, e gli angoli, letti come il loro lato) comincia dove cominciano le righe della pagina: a destra in una pagina da destra a sinistra. Un lato verticale (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) comincia in alto. Un numero fuori dall’intervallo da 0 a 1 viene portato all’estremo più vicino; una parola diversa dalle tre viene segnalata come `unknownConfigValue` e ignorata, come `at` su `'container'`, `'page'`, `'bleed'`, `'outer'` e su `center`. Da postext 1.48; senza `at` il bordo mantiene il suo punto, come prima.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Bordi d’inizio e di fine.** `top-start`, `start`, `bottom-start`, `top-end`, `end` e `bottom-end` (con `'container'`, `'page'`, `'bleed'` o `'outer'`), e `align-start` e `align-end` (con `'#id'`), indicano il lato da cui partono le righe della pagina invece di un lato fisso. In una pagina da sinistra a destra `top-start` è `top-left`; in una pagina da destra a sinistra, e in una pagina verticale, le cui righe si susseguono da destra, è `top-right`. Con questi bordi la `x` dello spostamento va dal lato d’inizio al lato di fine: in una pagina da destra a sinistra una `x` positiva sposta l’elemento verso sinistra, e l’elemento è lo specchio di quello da sinistra a destra. La decorazione di un modello e le testatine stanno sul foglio, quindi un occhiello scritto `top-start` resta sopra la cornice del titolo in un’edizione araba come in una italiana. Una cornice sta nel flusso della pagina, già specchiato o ruotato, dove `start` è sempre la sua sinistra, come `left`. Nel disegno di un titolo, anch’esso nel flusso, `start` è `left`. Nella Sandbox l’elenco **Allineamento** dell’editor dello slot ha **Inizio** e **Fine**, e gli elenchi dei bordi hanno i lati d’inizio e di fine. Da postext 1.39; fino alla 1.38 queste parole valevano `top-left`.
 
 `anchor.to: 'page'` ancora l’elemento al **formato rifilato** (la pagina fisica dopo il taglio) e `'bleed'` al formato rifilato allargato di `cutLines.bleed` su ogni lato (identico al formato rifilato finché i segni di taglio sono disattivati). Entrambi i riquadri diventano anche il riferimento per `size: 'fill'` e per il limite automatico della larghezza, così una fascia colorata può andare da bordo a bordo indipendentemente dai margini della pagina:
@@ -740,7 +830,7 @@ Un bordo relativo a un elemento usato con `'container'`, `'page'` o `'bleed'`, e
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Una dimensione può anche arrivare fino a un bordo di un altro riquadro: `{ to, edge }`, dove `to` nomina il riquadro come fa un ancoraggio (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` di un altro elemento e, nella decorazione di una pagina composta, di una cornice o di un gruppo) e `edge` quale dei suoi bordi, `'top'` o `'bottom'` per un’altezza, `'left'` o `'right'` per una larghezza. La lunghezza va dal punto di ancoraggio dell’elemento fino a quel bordo, nel verso in cui l’elemento cresce; un bordo dietro il punto di ancoraggio dà 0, e un bordo dell’altro asse, o un riquadro che non c’è, si legge come `'fill'`. Uno sfondo che va dal piede di una fascia fino all’abbondanza resta nel modello e segue la fascia quando questa si sposta. Da postext 1.38:
+Una dimensione può anche arrivare fino a un bordo di un altro riquadro: `{ to, edge }`, dove `to` nomina il riquadro come fa un ancoraggio (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` di un altro elemento e, nella decorazione di una pagina composta, di una cornice o di un gruppo) e `edge` quale dei suoi bordi, `'top'` o `'bottom'` per un’altezza, `'left'` o `'right'` per una larghezza, oppure `'center'` per il suo centro su entrambi gli assi (da postext 1.48): una fascia dal bordo sinistro di una cornice fino al centro della cornice accanto, un filetto verticale da sotto una scheda fino al centro della riga sottostante. La lunghezza va dal punto di ancoraggio dell’elemento fino a quel bordo, nel verso in cui l’elemento cresce; un bordo dietro il punto di ancoraggio dà 0, e un bordo dell’altro asse, o un riquadro che non c’è, si legge come `'fill'`. Uno sfondo che va dal piede di una fascia fino all’abbondanza resta nel modello e segue la fascia quando questa si sposta. Da postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

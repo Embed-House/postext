@@ -6381,6 +6381,324 @@
       }
     }
   },
+  "frameCovered": {
+    "source": "engine",
+    "label": {
+      "en": "Frame under another frame",
+      "es": "Marco tapado por otro marco",
+      "ca": "Marc tapat per un altre marc",
+      "zh": "框被另一个框盖住",
+      "ar": "إطار تغطّيه إطار آخر",
+      "ja": "枠が別の枠に隠れています",
+      "pt": "Bloco coberto por outro bloco",
+      "fr": "Bloc caché par un autre bloc",
+      "de": "Rahmen unter einem anderen Rahmen",
+      "it": "Cornice coperta da un’altra cornice"
+    },
+    "cause": {
+      "en": "Ink of a frame of a composed page (its lines, its tab or title, its pictures) lies under another frame painted after it: a higher layer, or the same layer later in the template. A frame covers where it is opaque: its fill, its tab, its pictures and its lines. The warning names the covered frame, the covering one, the area hidden and the first words or the picture covered.",
+      "es": "La tinta de un marco de una página compuesta (sus líneas, su pestaña o su título, sus imágenes) queda debajo de otro marco que se pinta después: una capa más alta, o la misma capa más tarde en la plantilla. Un marco tapa donde es opaco: su fondo, su pestaña, sus imágenes y sus líneas. El aviso nombra el marco tapado, el que lo tapa, la superficie oculta y las primeras palabras o la imagen tapadas.",
+      "ca": "La tinta d'un marc d'una pàgina composta (les línies, la pestanya o el títol, les imatges) queda sota un altre marc que es pinta després: una capa més alta, o la mateixa capa més tard a la plantilla. Un marc tapa on és opac: el fons, la pestanya, les imatges i les línies. L'avís anomena el marc tapat, el que el tapa, la superfície amagada i les primeres paraules o la imatge tapades.",
+      "zh": "模板页某个框的笔墨（文字行、页签或标题、图片）位于另一个后画的框之下：图层更高，或同一图层但在模板中排得更后。框在不透明处遮挡：底色、页签、图片和文字行。警告会写明被遮住的框、遮住它的框、被遮住的面积，以及被遮住的前几个词或图片。",
+      "ar": "حبر إطار في صفحة مركّبة (أسطره أو لسانه أو عنوانه أو صوره) يقع تحت إطار آخر يُرسم بعده: طبقة أعلى، أو الطبقة نفسها لكن بعده في القالب. يغطّي الإطار حيث يكون معتمًا: خلفيته ولسانه وصوره وأسطره. يسمّي التنبيه الإطار المغطّى والإطار الذي يغطّيه والمساحة المخفية وأولى الكلمات أو الصورة المغطّاة.",
+      "ja": "組版ページの枠のインク（行、タブやタイトル、画像）が、後から描かれる別の枠の下にあります。上のレイヤー、または同じレイヤーでテンプレートの後にある枠です。枠は不透明なところ（地色、タブ、画像、行）で隠します。警告は隠れた枠、隠している枠、隠れた面積、隠れた最初の語か画像を示します。",
+      "pt": "A tinta de um bloco de uma página composta (as linhas, a aba ou o título, as imagens) fica sob outro bloco pintado depois: uma camada mais alta, ou a mesma camada mais adiante no modelo. Um bloco cobre onde é opaco: o fundo, a aba, as imagens e as linhas. O aviso nomeia o bloco coberto, o que o cobre, a área escondida e as primeiras palavras ou a imagem cobertas.",
+      "fr": "L'encre d'un bloc d'une page composée (ses lignes, son onglet ou son titre, ses images) se trouve sous un autre bloc peint après lui : une couche plus haute, ou la même couche plus loin dans le gabarit. Un bloc cache là où il est opaque : son fond, son onglet, ses images et ses lignes. L'avertissement nomme le bloc caché, celui qui le cache, la surface cachée et les premiers mots ou l'image cachés.",
+      "de": "Die Farbe eines Rahmens einer gestalteten Seite (seine Zeilen, sein Etikett oder Titel, seine Bilder) liegt unter einem anderen Rahmen, der danach gemalt wird: auf einer höheren Ebene oder auf derselben Ebene später in der Vorlage. Ein Rahmen verdeckt, wo er deckend ist: seine Fläche, sein Etikett, seine Bilder und seine Zeilen. Die Warnung nennt den verdeckten Rahmen, den verdeckenden, die verdeckte Fläche und die ersten verdeckten Wörter oder das Bild.",
+      "it": "L'inchiostro di una cornice di una pagina composta (le righe, la linguetta o il titolo, le immagini) sta sotto un'altra cornice dipinta dopo: un livello più alto, o lo stesso livello più avanti nel modello. Una cornice copre dove è opaca: lo sfondo, la linguetta, le immagini e le righe. L'avviso nomina la cornice coperta, quella che la copre, l'area nascosta e le prime parole o l'immagine coperte."
+    },
+    "fix": {
+      "en": "Take one of the proposed fixes in the Checks or Reflow panel: paint the covering frame under it (layer), make it push the text round it (exclude: push), or move it by the proposed millimetres. If the art is meant to sit over the frame, set overlap: 'allow' on either frame.",
+      "es": "Aplica uno de los arreglos propuestos en el panel Revisión o Reajuste: pinta debajo el marco que tapa (layer), haz que aparte el texto a su alrededor (exclude: push) o muévelo los milímetros propuestos. Si la imagen debe quedar encima del marco, pon overlap: 'allow' en cualquiera de los dos.",
+      "ca": "Aplica un dels arranjaments proposats al tauler Revisió o Reajustament: pinta a sota el marc que tapa (layer), fes que aparti el text al seu voltant (exclude: push) o mou-lo els mil·límetres proposats. Si la imatge ha de quedar a sobre del marc, posa overlap: 'allow' a qualsevol dels dos.",
+      "zh": "在检查面板或重排面板中采用一项建议的修改：把遮挡的框画到下面（layer），让它把文字推到周围（exclude: push），或按建议的毫米数移动它。如果图片本该盖在框上，请在任一框上设置overlap: 'allow'。",
+      "ar": "طبّق أحد الإصلاحات المقترحة في لوحة الفحوص أو لوحة إعادة التوزيع: ارسم الإطار المغطّي تحته (layer)، أو اجعله يُبعد النص من حوله (exclude: push)، أو حرّكه بالمليمترات المقترحة. إن كانت الصورة مقصودًا أن تعلو الإطار، فاضبط overlap: 'allow' على أيّ من الإطارين.",
+      "ja": "検査パネルか再配置パネルで提案された修正を使います。隠している枠を下に描く（layer）、その周りに文字を回り込ませる（exclude: push）、提案のミリ数だけ動かす、のどれかです。絵柄を枠の上に置くのが意図なら、どちらかの枠にoverlap: 'allow'を設定します。",
+      "pt": "Aplique uma das correções propostas no painel Verificações ou Rearranjo: pinte por baixo o bloco que cobre (layer), faça-o afastar o texto ao seu redor (exclude: push) ou mova-o os milímetros propostos. Se a imagem deve ficar sobre o bloco, defina overlap: 'allow' em qualquer um dos dois.",
+      "fr": "Appliquez l'une des solutions proposées dans le panneau Vérifications ou Recomposition : peignez dessous le bloc qui cache (layer), faites-lui repousser le texte autour de lui (exclude: push) ou déplacez-le des millimètres proposés. Si l'image doit se trouver par-dessus le bloc, réglez overlap: 'allow' sur l'un ou l'autre.",
+      "de": "Wählen Sie im Panel Prüfungen oder Verschiebungen eine der vorgeschlagenen Korrekturen: den verdeckenden Rahmen darunter malen (layer), ihn den Text um sich herum verdrängen lassen (exclude: push) oder ihn um die vorgeschlagenen Millimeter verschieben. Soll das Bild über dem Rahmen liegen, setzen Sie overlap: 'allow' auf einem der beiden.",
+      "it": "Applica una delle correzioni proposte nel pannello Verifiche o Spostamenti: dipingi sotto la cornice che copre (layer), falle spostare il testo intorno a sé (exclude: push) o spostala dei millimetri proposti. Se l'immagine deve stare sopra la cornice, imposta overlap: 'allow' su una delle due."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameCovered",
+        "es": "frameCovered",
+        "ca": "frameCovered",
+        "zh": "frameCovered",
+        "ar": "frameCovered",
+        "ja": "frameCovered",
+        "pt": "frameCovered",
+        "fr": "frameCovered",
+        "de": "frameCovered",
+        "it": "frameCovered"
+      }
+    }
+  },
+  "frameOutsideArea": {
+    "source": "engine",
+    "label": {
+      "en": "Frame runs past its edge",
+      "es": "El marco se sale de su límite",
+      "ca": "El marc surt del seu límit",
+      "zh": "框超出了边界",
+      "ar": "الإطار يتجاوز حدّه",
+      "ja": "枠がはみ出しています",
+      "pt": "O bloco passa do seu limite",
+      "fr": "Le bloc dépasse sa limite",
+      "de": "Rahmen ragt über seine Grenze hinaus",
+      "it": "La cornice esce dal suo limite"
+    },
+    "cause": {
+      "en": "A frame of a composed page runs past what holds it: its text past the trim, where it is cut, its fill or pictures past the bleed, or any of it past the frame or group it is anchored inside. The warning names the frame, what it runs past and by how much on each side.",
+      "es": "Un marco de una página compuesta se sale de lo que lo contiene: su texto pasa del corte, donde se corta; su fondo o sus imágenes pasan del sangrado; o cualquier parte se sale del marco o el grupo dentro del que está anclado. El aviso nombra el marco, de qué se sale y cuánto por cada lado.",
+      "ca": "Un marc d'una pàgina composta surt del que el conté: el text passa del tall, on es talla; el fons o les imatges passen de la sang; o qualsevol part surt del marc o el grup dins del qual està ancorat. L'avís anomena el marc, de què surt i quant per cada costat.",
+      "zh": "模板页的某个框超出了容纳它的范围：文字超出裁切线并在那里被裁掉，底色或图片超出出血，或者任何部分超出它锚定在其中的框或组。警告会写明这个框、它超出了什么以及每一边超出多少。",
+      "ar": "يتجاوز إطار في صفحة مركّبة ما يحتويه: نصّه خطّ القص فيُقصّ هناك، أو خلفيته أو صوره النزف، أو أيّ جزء منه الإطار أو المجموعة المثبَّت داخلها. يسمّي التنبيه الإطار وما يتجاوزه ومقدار التجاوز في كل جانب.",
+      "ja": "組版ページの枠が、それを収める範囲からはみ出しています。文字が仕上がり線を越えてそこで切れる、地色や画像が塗り足しを越える、またはアンカーした枠やグループからどこかがはみ出す、のいずれかです。警告は枠、はみ出した先、各辺のはみ出し量を示します。",
+      "pt": "Um bloco de uma página composta passa do que o contém: o texto passa do refile, onde é cortado; o fundo ou as imagens passam da sangria; ou qualquer parte passa do bloco ou grupo dentro do qual está ancorado. O aviso nomeia o bloco, do que ele passa e quanto em cada lado.",
+      "fr": "Un bloc d'une page composée dépasse ce qui le contient : son texte dépasse la coupe, où il est coupé ; son fond ou ses images dépassent le fond perdu ; ou une partie dépasse le bloc ou le groupe à l'intérieur duquel il est ancré. L'avertissement nomme le bloc, ce qu'il dépasse et de combien de chaque côté.",
+      "de": "Ein Rahmen einer gestalteten Seite ragt über das hinaus, was ihn hält: sein Text über das Endformat, wo er abgeschnitten wird, seine Fläche oder Bilder über den Anschnitt, oder ein Teil über den Rahmen oder die Gruppe, in der er verankert ist. Die Warnung nennt den Rahmen, worüber er hinausragt und um wie viel auf jeder Seite.",
+      "it": "Una cornice di una pagina composta esce da ciò che la contiene: il testo supera il rifilo, dove viene tagliato; lo sfondo o le immagini superano l'abbondanza; o una parte esce dalla cornice o dal gruppo dentro cui è ancorata. L'avviso nomina la cornice, da cosa esce e di quanto su ogni lato."
+    },
+    "fix": {
+      "en": "Take one of the proposed fixes in the Checks or Reflow panel: hold the frame to the room it has (maxHeight, and let the rest continue on the next page), raise the minHeight of the frame it is anchored inside, or move it by the proposed millimetres. If it hangs out on purpose, set overlap: 'allow' on the frame.",
+      "es": "Aplica uno de los arreglos propuestos en el panel Revisión o Reajuste: limita el marco al espacio que tiene (maxHeight, y que lo demás siga en la página siguiente), sube el minHeight del marco dentro del que está anclado o muévelo los milímetros propuestos. Si sobresale a propósito, pon overlap: 'allow' en el marco.",
+      "ca": "Aplica un dels arranjaments proposats al tauler Revisió o Reajustament: limita el marc a l'espai que té (maxHeight, i que la resta continuï a la pàgina següent), puja el minHeight del marc dins del qual està ancorat o mou-lo els mil·límetres proposats. Si sobresurt expressament, posa overlap: 'allow' al marc.",
+      "zh": "在检查面板或重排面板中采用一项建议的修改：把框限制在它的空间内（maxHeight，其余部分接到下一页），提高它锚定所在框的minHeight，或按建议的毫米数移动它。如果它是有意伸出去的，请在这个框上设置overlap: 'allow'。",
+      "ar": "طبّق أحد الإصلاحات المقترحة في لوحة الفحوص أو لوحة إعادة التوزيع: احصر الإطار في المساحة المتاحة له (maxHeight، وليُكمل الباقي في الصفحة التالية)، أو ارفع minHeight للإطار المثبَّت داخله، أو حرّكه بالمليمترات المقترحة. إن كان بروزه مقصودًا، فاضبط overlap: 'allow' على الإطار.",
+      "ja": "検査パネルか再配置パネルで提案された修正を使います。枠を収まる高さに抑える（maxHeight。残りは次のページへ）、アンカー先の枠のminHeightを上げる、提案のミリ数だけ動かす、のどれかです。意図してはみ出させているなら、枠にoverlap: 'allow'を設定します。",
+      "pt": "Aplique uma das correções propostas no painel Verificações ou Rearranjo: limite o bloco ao espaço que tem (maxHeight, e o resto continua na página seguinte), aumente o minHeight do bloco dentro do qual está ancorado ou mova-o os milímetros propostos. Se ele sobressai de propósito, defina overlap: 'allow' no bloco.",
+      "fr": "Appliquez l'une des solutions proposées dans le panneau Vérifications ou Recomposition : limitez le bloc à la place qu'il a (maxHeight, et la suite continue sur la page suivante), portez le minHeight du bloc dans lequel il est ancré, ou déplacez-le des millimètres proposés. S'il dépasse exprès, réglez overlap: 'allow' sur le bloc.",
+      "de": "Wählen Sie im Panel Prüfungen oder Verschiebungen eine der vorgeschlagenen Korrekturen: den Rahmen auf seinen Platz begrenzen (maxHeight, der Rest läuft auf der nächsten Seite weiter), minHeight des Rahmens anheben, in dem er verankert ist, oder ihn um die vorgeschlagenen Millimeter verschieben. Ragt er absichtlich hinaus, setzen Sie overlap: 'allow' auf dem Rahmen.",
+      "it": "Applica una delle correzioni proposte nel pannello Verifiche o Spostamenti: limita la cornice allo spazio che ha (maxHeight, e il resto prosegue nella pagina successiva), alza il minHeight della cornice dentro cui è ancorata o spostala dei millimetri proposti. Se sporge di proposito, imposta overlap: 'allow' sulla cornice."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameOutsideArea",
+        "es": "frameOutsideArea",
+        "ca": "frameOutsideArea",
+        "zh": "frameOutsideArea",
+        "ar": "frameOutsideArea",
+        "ja": "frameOutsideArea",
+        "pt": "frameOutsideArea",
+        "fr": "frameOutsideArea",
+        "de": "frameOutsideArea",
+        "it": "frameOutsideArea"
+      }
+    }
+  },
+  "repeatOverflow": {
+    "source": "engine",
+    "label": {
+      "en": "More items than the grid holds",
+      "es": "Más elementos de los que caben en la rejilla",
+      "ca": "Més elements dels que caben a la graella",
+      "zh": "条目多于网格的容量",
+      "ar": "عناصر أكثر مما تتّسع له الشبكة",
+      "ja": "グリッドに入りきらない項目があります",
+      "pt": "Mais itens do que a grade comporta",
+      "fr": "Plus d’éléments que la grille n’en contient",
+      "de": "Mehr Einträge, als das Raster fasst",
+      "it": "Più elementi di quanti ne contenga la griglia"
+    },
+    "cause": {
+      "en": "A grid of a page template that repeats a frame set holds at most repeat.max items, and the composed page gives it more: each item past the limit goes to the template's flow frame, or after the page.",
+      "es": "Una rejilla de una plantilla de página que repite un conjunto de marcos admite como mucho repeat.max elementos, y la página compuesta le da más: cada elemento que pasa del límite va al marco de flujo de la plantilla, o después de la página.",
+      "ca": "Una graella d'una plantilla de pàgina que repeteix un conjunt de marcs admet com a màxim repeat.max elements, i la pàgina composta n'hi dona més: cada element que passa del límit va al marc de flux de la plantilla, o després de la pàgina.",
+      "zh": "页面模板中重复一组框的网格最多容纳repeat.max个条目，而模板页给它的更多：超出上限的每个条目改放进模板的流式框，或排在这一页之后。",
+      "ar": "تتّسع شبكة في قالب صفحة تكرّر مجموعة إطارات لـrepeat.max عنصرًا على الأكثر، وتعطيها الصفحة المركّبة أكثر: كل عنصر يتجاوز الحدّ ينتقل إلى إطار التدفق في القالب، أو بعد الصفحة.",
+      "ja": "枠のセットを繰り返すページテンプレートのグリッドに入るのはrepeat.max項目までですが、組版ページがそれより多く与えています。上限を超えた項目はテンプレートの流し込み枠か、ページの後に回ります。",
+      "pt": "Uma grade de um modelo de página que repete um conjunto de blocos comporta no máximo repeat.max itens, e a página composta lhe dá mais: cada item além do limite vai para o bloco de fluxo do modelo, ou depois da página.",
+      "fr": "Une grille d'un gabarit de page qui répète un ensemble de blocs contient au plus repeat.max éléments, et la page composée lui en donne davantage : chaque élément au-delà de la limite passe dans le bloc de flux du gabarit, ou après la page.",
+      "de": "Ein Raster einer Seitenvorlage, das eine Rahmengruppe wiederholt, fasst höchstens repeat.max Einträge, und die gestaltete Seite gibt ihm mehr: Jeder Eintrag über der Grenze kommt in den Fließrahmen der Vorlage oder nach die Seite.",
+      "it": "Una griglia di un modello di pagina che ripete un insieme di cornici contiene al massimo repeat.max elementi, e la pagina composta gliene dà di più: ogni elemento oltre il limite va nella cornice di flusso del modello, o dopo la pagina."
+    },
+    "fix": {
+      "en": "Raise repeat.max on the grid, or move the items past it to another page fence.",
+      "es": "Sube repeat.max en la rejilla o lleva los elementos que sobran a otra página.",
+      "ca": "Puja repeat.max a la graella o porta els elements que sobren a una altra pàgina.",
+      "zh": "提高网格的repeat.max，或把超出的条目移到另一页。",
+      "ar": "ارفع repeat.max في الشبكة، أو انقل العناصر الزائدة إلى صفحة أخرى.",
+      "ja": "グリッドのrepeat.maxを上げるか、超えた項目を別のページへ移します。",
+      "pt": "Aumente repeat.max na grade ou leve os itens excedentes para outra página.",
+      "fr": "Augmentez repeat.max sur la grille, ou placez les éléments en trop sur une autre page.",
+      "de": "Erhöhen Sie repeat.max am Raster oder setzen Sie die überzähligen Einträge auf eine andere Seite.",
+      "it": "Aumenta repeat.max sulla griglia o sposta gli elementi in eccesso in un'altra pagina."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Repeated slots",
+        "es": "Ranuras repetidas",
+        "ca": "Ranures repetides",
+        "zh": "重复的槽位",
+        "ar": "الخانات المتكرّرة",
+        "ja": "繰り返すスロット",
+        "pt": "Slots repetidos",
+        "fr": "Emplacements répétés",
+        "de": "Wiederholte Slots",
+        "it": "Slot ripetuti"
+      }
+    }
+  },
+  "moduleUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "Unknown module",
+      "es": "Módulo desconocido",
+      "ca": "Mòdul desconegut",
+      "zh": "未知的模块",
+      "ar": "وحدة غير معروفة",
+      "ja": "不明なモジュール",
+      "pt": "Módulo desconhecido",
+      "fr": "Module inconnu",
+      "de": "Unbekanntes Modul",
+      "it": "Modulo sconosciuto"
+    },
+    "cause": {
+      "en": "A :::module block names a template id that does not exist, names no template, or names a template that is not a module (no role: \"module\"), or the page's template has no modules group. The module is not laid and its content goes to the flow frame.",
+      "es": "Un bloque :::module indica un id de plantilla que no existe, no indica ninguna plantilla o indica una plantilla que no es un módulo (sin role: \"module\"), o la plantilla de la página no tiene grupo de módulos. El módulo no se coloca y su contenido va al marco de flujo.",
+      "ca": "Un bloc :::module indica un id de plantilla que no existeix, no n'indica cap o indica una plantilla que no és un mòdul (sense role: \"module\"), o la plantilla de la pàgina no té grup de mòduls. El mòdul no es col·loca i el seu contingut va al marc de flux.",
+      "zh": ":::module块指定的模板ID不存在、没有指定模板，或指定的模板不是模块（没有role: \"module\"），或者页面的模板没有模块组。模块不会排入，它的内容改放进流式框。",
+      "ar": "تذكر كتلة :::module معرّف قالب غير موجود، أو لا تذكر قالبًا، أو تذكر قالبًا ليس وحدة (بلا role: \"module\")، أو ليس في قالب الصفحة مجموعة وحدات. لا تُوضع الوحدة وينتقل محتواها إلى إطار التدفق.",
+      "ja": ":::moduleブロックが存在しないテンプレートidを指定しているか、テンプレートを指定していないか、モジュールでない（role: \"module\"のない）テンプレートを指定しています。あるいはページのテンプレートにモジュールグループがありません。モジュールは配置されず、内容は流し込み枠に回ります。",
+      "pt": "Um bloco :::module indica um id de modelo que não existe, não indica nenhum modelo ou indica um modelo que não é um módulo (sem role: \"module\"), ou o modelo da página não tem grupo de módulos. O módulo não é colocado e o conteúdo dele vai para o bloco de fluxo.",
+      "fr": "Un bloc :::module indique un identifiant de gabarit qui n'existe pas, n'indique aucun gabarit ou indique un gabarit qui n'est pas un module (sans role: \"module\"), ou le gabarit de la page n'a pas de groupe de modules. Le module n'est pas placé et son contenu passe dans le bloc de flux.",
+      "de": "Ein :::module-Block nennt eine Vorlagen-ID, die es nicht gibt, nennt keine Vorlage oder eine Vorlage, die kein Modul ist (ohne role: \"module\"), oder die Vorlage der Seite hat keine Modulgruppe. Das Modul wird nicht gesetzt, und sein Inhalt kommt in den Fließrahmen.",
+      "it": "Un blocco :::module indica un id di modello che non esiste, non indica nessun modello o indica un modello che non è un modulo (senza role: \"module\"), oppure il modello della pagina non ha un gruppo dei moduli. Il modulo non viene collocato e il suo contenuto va nella cornice di flusso."
+    },
+    "fix": {
+      "en": "Name an existing module template, give the template role: \"module\", or give one of the page template's groups modules: true. In the Sandbox: Design › Page templates, group option Takes the page's modules; the Modules section inserts a module and adds the group.",
+      "es": "Indica una plantilla de módulo existente, da a la plantilla role: \"module\" o da modules: true a uno de los grupos de la plantilla de la página. En el Sandbox: Diseño › Plantillas de página, opción de grupo Recibe los módulos de la página; la sección Módulos inserta un módulo y añade el grupo.",
+      "ca": "Indica una plantilla de mòdul existent, dona a la plantilla role: \"module\" o dona modules: true a un dels grups de la plantilla de la pàgina. Al Sandbox: Disseny › Plantilles de pàgina, opció de grup Rep els mòduls de la pàgina; la secció Mòduls insereix un mòdul i afegeix el grup.",
+      "zh": "指定一个已有的模块模板，给模板加上role: \"module\"，或给页面模板的某个组加上modules: true。在Sandbox中：版面设计 › 页面模板，组的选项“接收页面的模块”；“模块”一节可插入模块并添加该组。",
+      "ar": "اذكر قالب وحدة موجودًا، أو أعطِ القالب role: \"module\"، أو أعطِ إحدى مجموعات قالب الصفحة modules: true. في Sandbox: التصميم › قوالب الصفحات، خيار المجموعة «تتلقّى وحدات الصفحة»؛ وقسم «الوحدات» يُدرج وحدة ويضيف المجموعة.",
+      "ja": "既存のモジュールテンプレートを指定するか、テンプレートにrole: \"module\"を付けるか、ページのテンプレートのいずれかのグループにmodules: trueを付けます。Sandboxでは、デザイン › ページテンプレートのグループの「ページのモジュールを受け取る」です。「モジュール」セクションからモジュールを挿入すると、グループも加わります。",
+      "pt": "Indique um modelo de módulo existente, dê ao modelo role: \"module\" ou dê modules: true a um dos grupos do modelo da página. No Sandbox: Design › Modelos de página, opção de grupo Recebe os módulos da página; a seção Módulos insere um módulo e acrescenta o grupo.",
+      "fr": "Indiquez un gabarit de module existant, donnez au gabarit role: \"module\" ou donnez modules: true à l'un des groupes du gabarit de la page. Dans le Sandbox : Maquette › Gabarits de page, option de groupe Reçoit les modules de la page ; la section Modules insère un module et ajoute le groupe.",
+      "de": "Nennen Sie eine vorhandene Modulvorlage, geben Sie der Vorlage role: \"module\" oder einer Gruppe der Seitenvorlage modules: true. In der Sandbox: Gestaltung › Seitenvorlagen, Gruppenoption „Nimmt die Module der Seite auf“; der Bereich Module fügt ein Modul ein und legt die Gruppe an.",
+      "it": "Indica un modello di modulo esistente, dai al modello role: \"module\" o dai modules: true a uno dei gruppi del modello della pagina. Nel Sandbox: Grafica › Modelli di pagina, opzione di gruppo Riceve i moduli della pagina; la sezione Moduli inserisce un modulo e aggiunge il gruppo."
+    }
+  },
+  "moduleAsPage": {
+    "source": "engine",
+    "label": {
+      "en": "Module set as a page",
+      "es": "Módulo compuesto como página",
+      "ca": "Mòdul compost com a pàgina",
+      "zh": "模块被当作页面排版",
+      "ar": "وحدة مُنضَّدة صفحةً",
+      "ja": "ページとして組まれたモジュール",
+      "pt": "Módulo composto como página",
+      "fr": "Module composé comme une page",
+      "de": "Modul als Seite gesetzt",
+      "it": "Modulo composto come pagina"
+    },
+    "cause": {
+      "en": "A ::::page fence names a module template as its page template. A module is only laid inside a page, so the page's content is set in the flow.",
+      "es": "Una línea ::::page indica una plantilla de módulo como plantilla de la página. Un módulo solo se coloca dentro de una página, así que el contenido de la página se compone en el flujo.",
+      "ca": "Una línia ::::page indica una plantilla de mòdul com a plantilla de la pàgina. Un mòdul només es col·loca dins d'una pàgina, així que el contingut de la pàgina es compon al flux.",
+      "zh": "页面块::::page把一个模块模板当作页面模板。模块只能排在页面之中，所以这一页的内容按正文排入。",
+      "ar": "تذكر كتلة الصفحة ::::page قالب وحدة قالبًا للصفحة. لا تُوضع الوحدة إلا داخل صفحة، لذا يُنضَّد محتوى الصفحة في التدفق.",
+      "ja": "::::pageのページブロックが、ページのテンプレートとしてモジュールテンプレートを指定しています。モジュールはページの中にしか配置されないため、ページの内容は本文の流れに組まれます。",
+      "pt": "Uma linha ::::page indica um modelo de módulo como modelo da página. Um módulo só é colocado dentro de uma página; por isso, o conteúdo da página é composto no fluxo.",
+      "fr": "Un délimiteur ::::page indique un gabarit de module comme gabarit de la page. Un module n'est placé qu'à l'intérieur d'une page : le contenu de la page est donc composé dans le flux.",
+      "de": "Eine Zeile ::::page nennt eine Modulvorlage als Vorlage der Seite. Ein Modul wird nur innerhalb einer Seite gesetzt, daher wird der Inhalt der Seite im Fließtext gesetzt.",
+      "it": "Una riga ::::page indica un modello di modulo come modello della pagina. Un modulo si colloca solo dentro una pagina, quindi il contenuto della pagina si compone nel flusso."
+    },
+    "fix": {
+      "en": "Name a page template in the fence and stack the module inside it with a :::module block.",
+      "es": "Indica una plantilla de página en la línea ::::page y apila el módulo dentro con un bloque :::module.",
+      "ca": "Indica una plantilla de pàgina a la línia ::::page i apila el mòdul a dins amb un bloc :::module.",
+      "zh": "在::::page中指定一个页面模板，再用:::module块把模块堆叠进这一页。",
+      "ar": "اذكر قالب صفحة في كتلة ::::page، وكدّس الوحدة داخلها بكتلة :::module.",
+      "ja": "::::pageにはページテンプレートを指定し、モジュールは:::moduleブロックでその中に積みます。",
+      "pt": "Indique um modelo de página na linha ::::page e empilhe o módulo dentro dela com um bloco :::module.",
+      "fr": "Indiquez un gabarit de page dans le délimiteur ::::page et empilez le module à l'intérieur avec un bloc :::module.",
+      "de": "Nennen Sie in der Zeile ::::page eine Seitenvorlage und stapeln Sie das Modul mit einem :::module-Block darin.",
+      "it": "Indica un modello di pagina nella riga ::::page e impila il modulo al suo interno con un blocco :::module."
+    }
+  },
+  "moduleNested": {
+    "source": "engine",
+    "label": {
+      "en": "Module inside a module",
+      "es": "Módulo dentro de un módulo",
+      "ca": "Mòdul dins d'un mòdul",
+      "zh": "模块里套着模块",
+      "ar": "وحدة داخل وحدة",
+      "ja": "モジュールの中のモジュール",
+      "pt": "Módulo dentro de um módulo",
+      "fr": "Module dans un module",
+      "de": "Modul in einem Modul",
+      "it": "Modulo dentro un modulo"
+    },
+    "cause": {
+      "en": "A :::module block is written inside another :::module block. A module holds no modules: the inner block's content is the outer module's.",
+      "es": "Un bloque :::module está escrito dentro de otro bloque :::module. Un módulo no contiene módulos: el contenido del bloque interior es del módulo exterior.",
+      "ca": "Un bloc :::module està escrit dins d'un altre bloc :::module. Un mòdul no conté mòduls: el contingut del bloc interior és del mòdul exterior.",
+      "zh": "一个:::module块写在另一个:::module块里面。模块不能包含模块：内层块的内容归外层模块。",
+      "ar": "كتلة :::module مكتوبة داخل كتلة :::module أخرى. الوحدة لا تحوي وحدات: محتوى الكتلة الداخلية للوحدة الخارجية.",
+      "ja": ":::moduleブロックが別の:::moduleブロックの中に書かれています。モジュールはモジュールを含めないため、内側のブロックの内容は外側のモジュールのものになります。",
+      "pt": "Um bloco :::module está escrito dentro de outro bloco :::module. Um módulo não contém módulos: o conteúdo do bloco interno pertence ao módulo externo.",
+      "fr": "Un bloc :::module est écrit à l'intérieur d'un autre bloc :::module. Un module ne contient pas de modules : le contenu du bloc intérieur appartient au module extérieur.",
+      "de": "Ein :::module-Block steht in einem anderen :::module-Block. Ein Modul enthält keine Module: Der Inhalt des inneren Blocks gehört zum äußeren Modul.",
+      "it": "Un blocco :::module è scritto dentro un altro blocco :::module. Un modulo non contiene moduli: il contenuto del blocco interno appartiene al modulo esterno."
+    },
+    "fix": {
+      "en": "Close the outer module first and write the inner one after it in the page.",
+      "es": "Cierra primero el módulo exterior y escribe el interior después, en la misma página.",
+      "ca": "Tanca primer el mòdul exterior i escriu l'interior després, a la mateixa pàgina.",
+      "zh": "先关闭外层模块，再在这一页中把内层模块写在它后面。",
+      "ar": "أغلق الوحدة الخارجية أولًا، ثم اكتب الداخلية بعدها في الصفحة.",
+      "ja": "先に外側のモジュールを閉じ、内側のモジュールはページ内でその後に書きます。",
+      "pt": "Feche primeiro o módulo externo e escreva o interno depois dele, na mesma página.",
+      "fr": "Fermez d'abord le module extérieur et écrivez le module intérieur après lui dans la page.",
+      "de": "Schließen Sie zuerst das äußere Modul und schreiben Sie das innere danach in die Seite.",
+      "it": "Chiudi prima il modulo esterno e scrivi quello interno dopo, nella pagina."
+    }
+  },
+  "moduleNameRejected": {
+    "source": "engine",
+    "label": {
+      "en": "Module name not taken",
+      "es": "Nombre de módulo no aceptado",
+      "ca": "Nom de mòdul no acceptat",
+      "zh": "模块名称未被采用",
+      "ar": "اسم وحدة لم يُقبَل",
+      "ja": "使えなかったモジュール名",
+      "pt": "Nome de módulo não aceito",
+      "fr": "Nom de module refusé",
+      "de": "Modulname nicht übernommen",
+      "it": "Nome del modulo non accettato"
+    },
+    "cause": {
+      "en": "A module's name attribute could not be taken: another module of the page has it, or it holds a space, \".\", \"#\", \"[\" or \"]\". The module is named <template>[n] instead.",
+      "es": "No se ha podido aceptar el atributo name de un módulo: otro módulo de la página ya lo tiene, o contiene un espacio, \".\", \"#\", \"[\" o \"]\". El módulo se llama <template>[n] en su lugar.",
+      "ca": "No s'ha pogut acceptar l'atribut name d'un mòdul: un altre mòdul de la pàgina ja el té, o conté un espai, \".\", \"#\", \"[\" o \"]\". El mòdul es diu <template>[n] en lloc seu.",
+      "zh": "模块的name属性无法采用：这一页的另一个模块已用了这个名称，或名称含有空格、\".\"、\"#\"、\"[\"或\"]\"。模块改名为<template>[n]。",
+      "ar": "تعذّر قبول السمة name لوحدة: وحدة أخرى في الصفحة تحمل الاسم نفسه، أو فيه مسافة أو \".\" أو \"#\" أو \"[\" أو \"]\". تُسمّى الوحدة <template>[n] بدلًا منه.",
+      "ja": "モジュールのname属性を使えませんでした。ページ内の別のモジュールが同じ名前を持っているか、空白、\".\"、\"#\"、\"[\"、\"]\"のいずれかを含んでいます。モジュールは代わりに<template>[n]という名前になります。",
+      "pt": "Não foi possível aceitar o atributo name de um módulo: outro módulo da página já o tem, ou ele contém um espaço, \".\", \"#\", \"[\" ou \"]\". O módulo se chama <template>[n] no lugar dele.",
+      "fr": "L'attribut name d'un module n'a pas pu être retenu : un autre module de la page le porte déjà, ou il contient une espace, \".\", \"#\", \"[\" ou \"]\". Le module s'appelle <template>[n] à la place.",
+      "de": "Das Attribut name eines Moduls konnte nicht übernommen werden: Ein anderes Modul der Seite trägt es schon, oder es enthält ein Leerzeichen, \".\", \"#\", \"[\" oder \"]\". Das Modul heißt stattdessen <template>[n].",
+      "it": "Non è stato possibile accettare l'attributo name di un modulo: un altro modulo della pagina lo ha già, oppure contiene uno spazio, \".\", \"#\", \"[\" o \"]\". Il modulo si chiama invece <template>[n]."
+    },
+    "fix": {
+      "en": "Give each module of the page its own name made of letters, digits and dashes.",
+      "es": "Da a cada módulo de la página su propio nombre, hecho de letras, cifras y guiones.",
+      "ca": "Dona a cada mòdul de la pàgina un nom propi, fet de lletres, xifres i guions.",
+      "zh": "给这一页的每个模块取不同的名称，只用字母、数字和连字符。",
+      "ar": "أعطِ كل وحدة في الصفحة اسمًا خاصًا بها من أحرف وأرقام وشرطات.",
+      "ja": "ページ内のモジュールごとに、英字・数字・ハイフンでできた別々の名前を付けます。",
+      "pt": "Dê a cada módulo da página um nome próprio, feito de letras, algarismos e hifens.",
+      "fr": "Donnez à chaque module de la page son propre nom, fait de lettres, de chiffres et de tirets.",
+      "de": "Geben Sie jedem Modul der Seite einen eigenen Namen aus Buchstaben, Ziffern und Bindestrichen.",
+      "it": "Dai a ogni modulo della pagina un nome proprio, fatto di lettere, cifre e trattini."
+    }
+  },
   "pageFenceLength": {
     "source": "engine",
     "label": {
@@ -7554,7 +7872,7 @@
       "it": "Correggi l’id dell’ancora in at= (l’avviso elenca le ancore della risorsa), aggiungi l’ancora alla risorsa o posiziona l’etichetta con at=\"x% y%\"."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "labelAnchorUnknown",
         "es": "labelAnchorUnknown",
@@ -7608,7 +7926,7 @@
       "it": "Scrivi l’etichetta nel Markdown di questa lingua (::label[…]{at=\"ancora\"}), oppure togli lo stile all’ancora se questa edizione fa a meno della parola."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "anchorUnlabelled",
         "es": "anchorUnlabelled",
@@ -7662,7 +7980,7 @@
       "it": "Allarga l’ancora, accorcia la parola nel Markdown di questa edizione o abbassa il minScale dello stile di etichetta."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "labelOverflow",
         "es": "labelOverflow",
@@ -7716,7 +8034,7 @@
       "it": "Sposta una delle ancore, riduci la larghezza dell’etichetta perché vada a capo, oppure accorcia le parole nel Markdown di questa edizione."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "labelOverlap",
         "es": "labelOverlap",
@@ -7770,7 +8088,7 @@
       "it": "Dai alla figura successiva una risorsa propria: una seconda risorsa che punti allo stesso file d’immagine, con la sua didascalia e il suo numero."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "figureWordsShared",
         "es": "figureWordsShared",

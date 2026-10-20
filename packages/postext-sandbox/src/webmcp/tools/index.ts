@@ -7,6 +7,7 @@ import { configTools } from './config';
 import { editionCheckTools } from './editionChecks';
 import { historyTools } from './history';
 import { frameStyleTools } from './frameStyles';
+import { moduleTools } from './modules';
 import { answerTools, libraryTools } from './library';
 import { pageTools } from './pages';
 import { resourceTools } from './resources';
@@ -26,6 +27,7 @@ export function createSandboxTools(host: SandboxToolHost): WebMcpTool[] {
     ...configTools(host),
     ...historyTools(host),
     ...frameStyleTools(host),
+    ...moduleTools(host),
     ...viewTools(host),
     ...viewerCommandTools(host),
     ...resourceTools(host),

@@ -3,7 +3,8 @@
 // problem reported as a config warning whose `path` is a JSON pointer
 // (`/pageTemplates/3/frames/2/style`). Pure.
 
-import type { CalloutPaddingConfig, Dimension, PostextConfig, Resource } from '../types';
+import type { CalloutPaddingConfig, Dimension, LeaderStyle, PostextConfig, Resource } from '../types';
+import { CONNECTOR_CAPS, LEADER_ROUTINGS } from '../design/connector';
 import type { ConfigWarning } from '../vdt';
 import type {
   FrameConfig,
@@ -11,6 +12,7 @@ import type {
   FrameGridCell,
   FrameGroupConfig,
   FrameLook,
+  FrameRepeatConfig,
   FrameOverflowConfig,
   FrameRulesConfig,
   LabelStyle,
@@ -25,20 +27,25 @@ import {
   FRAME_DIRECTIONS,
   FRAME_EXCLUDES,
   FRAME_WRAPS,
+  FRAME_OVERLAPS,
   FRAME_GROUP_ALIGNS,
   FRAME_GROUP_KINDS,
+  FRAME_GRID_ROW_ALIGNS,
   FRAME_TAKES,
   FRAME_VERTICAL_ALIGNS,
   FRAME_WRITING_MODES,
   LABEL_FONT_STYLES,
   LABEL_TEXT_TRANSFORMS,
   LABEL_OVERLAPS,
+  LABEL_ALIGNS,
+  LABEL_KINDS,
   LOOK_TREE,
   TEMPLATE_AREAS,
   DEFAULT_FRAME,
   DEFAULT_FRAME_GROUP,
   DEFAULT_LABEL_STYLE,
   DEFAULT_PAGE_TEMPLATE,
+  MODULE_ROLE,
   resolveTemplateAt,
   templateChain,
   type TemplateIssue,
@@ -62,7 +69,7 @@ const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
   exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
-  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, remove: true,
+  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, overlap: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
 const LOOK_KEYS = { background: true, border: true, stripe: true, icon: true, marker: true, titleStyle: true, body: true, label: true } satisfies Record<keyof FrameLook, true>;
 const RULES_KEYS = { every: true, color: true, width: true, inset: true } satisfies Record<keyof FrameRulesConfig, true>;
@@ -71,12 +78,22 @@ const OVERFLOW_KEYS = { continueIn: true, mark: true, fromMark: true } satisfies
 const PADDING_KEYS = { top: true, right: true, bottom: true, left: true } satisfies Record<keyof CalloutPaddingConfig, true>;
 const GROUP_KEYS = {
   name: true, kind: true, frames: true, gap: true, placement: true, grid: true, align: true, remove: true,
+  columns: true, columnGap: true, rowGap: true, rowAlign: true, repeat: true, modules: true, overflow: true,
 } satisfies Record<keyof FrameGroupConfig, true>;
+const GROUP_OVERFLOW_KEYS = { continueIn: true } satisfies Record<keyof NonNullable<FrameGroupConfig['overflow']>, true>;
+/** What a module template (#1062) does not have: it is laid in a page's
+ *  modules group, never as a page. */
+const MODULE_PAGE_KEYS = ['area', 'header', 'footer', 'variants', 'spread', 'gutter', 'overflowTemplate'] as const;
+const REPEAT_KEYS = { frames: true, max: true } satisfies Record<keyof FrameRepeatConfig, true>;
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
   color: true, textTransform: true, letterSpacing: true, halo: true, background: true, padding: true, minScale: true,
-  writingMode: true, overlap: true,
+  writingMode: true, overlap: true, align: true, border: true, radius: true, kind: true, leader: true,
 } satisfies Record<keyof LabelStyle, true>;
+const LEADER_KEYS = {
+  color: true, width: true, dash: true, startCap: true, endCap: true, capSize: true, routing: true,
+} satisfies Record<keyof LeaderStyle, true>;
+const LABEL_BORDER_KEYS = { color: true, width: true } satisfies Record<keyof NonNullable<LabelStyle['border']>, true>;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
@@ -98,7 +115,7 @@ export interface ValidatePageTemplatesOptions {
  * `unknownConfigKey` for a key no template, frame, group, grid, fit,
  * overflow, variant or label style has, and `unknownConfigValue` for a word
  * outside a setting's choices (`area`, `verticalAlign`, `exclude`, `takes`,
- * `kind`, `align`, `writingMode`, `direction`, `fontStyle`,
+ * `kind`, `align`, `writingMode`, `direction`, `overlap`, `fontStyle`,
  * `textTransform`) or a template with no id or a frame or group with no
  * name (ignored). `resolvePageTemplate` makes the same fixes the warnings
  * describe. Pure.
@@ -172,6 +189,7 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   choice(frame, 'verticalAlign', FRAME_VERTICAL_ALIGNS, DEFAULT_FRAME.verticalAlign, path, push);
   choice(frame, 'exclude', FRAME_EXCLUDES, DEFAULT_FRAME.exclude, path, push);
   choice(frame, 'wrap', FRAME_WRAPS, 'box', path, push);
+  choice(frame, 'overlap', FRAME_OVERLAPS, 'check', path, push);
   choice(frame, 'takes', FRAME_TAKES, '', path, push);
   choice(frame, 'writingMode', FRAME_WRITING_MODES, '', path, push);
   choice(frame, 'direction', FRAME_DIRECTIONS, '', path, push);
@@ -200,6 +218,35 @@ function checkGroupEntry(group: unknown, path: string, push: Push): void {
   unknownKeys(group.grid, CELL_KEYS, `${path}/grid`, push);
   choice(group, 'kind', FRAME_GROUP_KINDS, DEFAULT_FRAME_GROUP.kind, path, push);
   choice(group, 'align', FRAME_GROUP_ALIGNS, DEFAULT_FRAME_GROUP.align, path, push);
+  // A grid (#1061): at least one column, a repeat of at least one item.
+  choice(group, 'rowAlign', FRAME_GRID_ROW_ALIGNS, 'stretch', path, push);
+  const columns = group.columns;
+  if (columns !== undefined && !(typeof columns === 'number' && Number.isFinite(columns) && columns >= 1)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/columns`, value: String(columns), used: '1' });
+  }
+  unknownKeys(group.repeat, REPEAT_KEYS, `${path}/repeat`, push);
+  const max = isRecord(group.repeat) ? group.repeat.max : undefined;
+  if (max !== undefined && !(typeof max === 'number' && Number.isFinite(max) && max >= 1)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/repeat/max`, value: String(max), used: '' });
+  }
+  // A modules group (#1062): a stack that takes the page's modules, not
+  // frames; only it goes on by whole modules.
+  unknownKeys(group.overflow, GROUP_OVERFLOW_KEYS, `${path}/overflow`, push);
+  if (group.modules !== undefined && typeof group.modules !== 'boolean') {
+    push({ kind: 'unknownConfigValue', path: `${path}/modules`, value: String(group.modules), used: 'false' });
+  }
+  const modules = group.modules === true;
+  if (modules && group.kind !== undefined && group.kind !== 'stack') {
+    push({ kind: 'unknownConfigValue', path: `${path}/kind`, value: String(group.kind), used: 'stack' });
+  }
+  if (modules && Array.isArray(group.frames) && group.frames.length > 0) {
+    push({ kind: 'unknownConfigValue', path: `${path}/frames`, value: group.frames.map(String).join(', '), used: '' });
+  }
+  const continueIn = isRecord(group.overflow) ? group.overflow.continueIn : undefined;
+  if (continueIn !== undefined) {
+    const ok = modules && typeof continueIn === 'string' && (continueIn === 'next-page' || continueIn.startsWith('template:'));
+    if (!ok) push({ kind: 'unknownConfigValue', path: `${path}/overflow/continueIn`, value: String(continueIn), used: '' });
+  }
 }
 
 function checkPatch(patch: unknown, path: string, push: Push, keys: Record<string, true>): void {
@@ -263,8 +310,25 @@ function checkTemplates(
       if (!resolved) continue;
       for (const issue of resolved.issues) push(issueWarning(issue));
       for (const frame of resolved.template.frames) checkMinMax(frame, toPx, push);
+      if (parity === undefined && resolved.template.role === MODULE_ROLE) checkModule(t, path, push);
     }
   }
+}
+
+/** What a module template (#1062) writes that only a page has: its own
+ *  `area`, running heads, variants, spread and overflow template, and a
+ *  modules group (a module inside a module, `moduleNested`, is not
+ *  supported). Each is ignored. */
+function checkModule(t: PageTemplate, path: string, push: Push): void {
+  for (const key of MODULE_PAGE_KEYS) {
+    const value = (t as unknown as Record<string, unknown>)[key];
+    if (value === undefined) continue;
+    push({ kind: 'unknownConfigValue', path: `${path}/${key}`, value: typeof value === 'object' ? JSON.stringify(value) : String(value), used: '' });
+  }
+  if (!Array.isArray(t.groups)) return;
+  t.groups.forEach((g, j) => {
+    if (isRecord(g) && g.modules === true) push({ kind: 'unknownConfigValue', path: `${path}/groups/${j}/modules`, value: 'true', used: 'false' });
+  });
 }
 
 /** `a → b → a`: the chain of `extends` from `index` until it repeats. */
@@ -332,7 +396,34 @@ function checkLabelStyles(raw: unknown, prefix: string, push: Push): void {
     choice(s, 'textTransform', LABEL_TEXT_TRANSFORMS, DEFAULT_LABEL_STYLE.textTransform, path, push);
     choice(s, 'writingMode', FRAME_WRITING_MODES, 'horizontal-tb', path, push);
     choice(s, 'overlap', LABEL_OVERLAPS, 'check', path, push);
+    choice(s, 'align', LABEL_ALIGNS, '', path, push);
+    choice(s, 'kind', LABEL_KINDS, '', path, push);
+    unknownKeys(s.border, LABEL_BORDER_KEYS, `${path}/border`, push);
+    checkLeader(s.leader, `${path}/leader`, push);
   });
+}
+
+/** A leader's look (#1057): its keys, caps and routing. */
+function checkLeader(leader: unknown, path: string, push: Push): void {
+  if (!isRecord(leader)) return;
+  unknownKeys(leader, LEADER_KEYS, path, push);
+  choice(leader, 'startCap', CONNECTOR_CAPS, 'none', path, push);
+  choice(leader, 'endCap', CONNECTOR_CAPS, 'dot', path, push);
+  choice(leader, 'routing', LEADER_ROUTINGS, 'straight', path, push);
+}
+
+/** A resource anchor's `labelAt` (#1057): two fractions of the picture;
+ *  anything else is not read (the label stands at its point). A number
+ *  outside 0…1 is read as written (a label beside the picture), so only a
+ *  value that is not a point is reported. */
+function checkLabelAt(labelAt: unknown, path: string, push: Push): void {
+  if (labelAt === undefined) return;
+  const ok = isRecord(labelAt) && typeof labelAt.x === 'number' && Number.isFinite(labelAt.x) && typeof labelAt.y === 'number' && Number.isFinite(labelAt.y);
+  if (!ok) {
+    push({ kind: 'unknownConfigValue', path, value: JSON.stringify(labelAt) ?? String(labelAt), used: '' });
+    return;
+  }
+  unknownKeys(labelAt, { x: true, y: true }, path, push);
 }
 
 /** A resource anchor whose `style` no label style has. */
@@ -342,6 +433,12 @@ function checkAnchorStyles(labelStyles: unknown, resources: readonly Resource[] 
   const known = new Set(ids);
   resources.forEach((r, i) => {
     r.anchors?.forEach((a, j) => {
+      // A label set away from its point and its leader (#1057).
+      checkLabelAt((a as { labelAt?: unknown }).labelAt, `/resources/${i}/anchors/${j}/labelAt`, push);
+      const leader = (a as { leader?: unknown }).leader;
+      if (leader !== undefined && typeof leader !== 'boolean' && !isRecord(leader)) {
+        push({ kind: 'unknownConfigValue', path: `/resources/${i}/anchors/${j}/leader`, value: String(leader), used: '' });
+      } else checkLeader(leader, `/resources/${i}/anchors/${j}/leader`, push);
       if (typeof a.style !== 'string' || known.has(a.style)) return;
       const suggestion = closestKey(a.style, ids);
       push({ kind: 'labelStyleUnknown', path: `/resources/${i}/anchors/${j}/style`, value: a.style, used: '', resourceId: r.id, ...(suggestion ? { suggestion } : {}) });

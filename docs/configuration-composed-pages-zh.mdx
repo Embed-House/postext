@@ -3,10 +3,10 @@
 export const metadata = {
   title: '配置：模板页',
   sidebarTitle: '模板页设置',
-  description: '模板页所用的页面模板：框、组、装饰、继承与奇偶页变体、图片锚点上的标注样式，以及模板可能给出的警告',
+  description: '模板页所用的页面模板：框、组、重复一组框的网格、模块、装饰与连接线、继承与奇偶页变体、图片锚点上的标注样式，以及模板可能给出的警告',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
-  readingTime: '6分钟',
+  lastUpdated: '2026-10-20',
+  readingTime: '10分钟',
   order: 18,
   parent: 'configuration',
   plainSummary: "本页讲页面模板。模板是在设置里画好的一个页面：一些有名字的方框（叫做框），以及每个框放在哪里、最大能长到多大、是什么样子。模板页的Markdown再按名字把内容填进这些框，所以文字里从不写位置，设置里也从不写文字。一个模板可以以另一个模板为基础，只改其中几个框，在奇数页和偶数页上还可以不一样。本页还列出写在图片上的文字所用的标注样式，以及模板可能给出的每一条警告和改正的办法。",
@@ -104,7 +104,7 @@ const config: PostextConfig = {
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>无</td>
-      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面块某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框或组（<code>'#dinero'</code>），并随之移动。装饰在框之后排放，从不推开文字。自postext 1.42起，<code>&#123;headingNumber&#125;</code>输出页面各框中第一个带编号的标题的计数（带<code>takes</code>的框），<code>&#123;headingNumber.titulo&#125;</code>输出框<code>titulo</code>中那个标题的计数，数字采用文档的数字系统；因此带有主题编号的徽章可以直接从标题读取，页面块不必再写一遍。装饰绘制在框的下方；点击覆盖在某个框上的文字元素时，如果该点处框没有自己的文字，选中的是这个元素，而不是框。<code>layer</code>为负数的框绘制在装饰下方。</td>
+      <td>与页面一起绘制的图像、线条和方框，使用<a href="/zh/docs/configuration-headers-footers#页眉与页脚">页眉与页脚</a>的元素语言。文本元素只放占位符（<code>&#123;pageNumber&#125;</code>、<code>&#123;chapterTitle&#125;</code>，以及表示页面块某个属性的<code>&#123;attr.x&#125;</code>）。元素可以锚定到某个框或组（<code>'#dinero'</code>），并随之移动。装饰在框之后排放，从不推开文字。自postext 1.42起，<code>&#123;headingNumber&#125;</code>输出页面各框中第一个带编号的标题的计数（带<code>takes</code>的框），<code>&#123;headingNumber.titulo&#125;</code>输出框<code>titulo</code>中那个标题的计数，数字采用文档的数字系统；因此带有主题编号的徽章可以直接从标题读取，页面块不必再写一遍。装饰绘制在框的下方；点击覆盖在某个框上的文字元素时，如果该点处框没有自己的文字，选中的是这个元素，而不是框。<code>layer</code>为负数的框绘制在装饰下方。自postext 1.48起，装饰还接受<a href="/zh/docs/configuration-headers-footers#路径元素">路径元素</a>（画成矢量形状的色条、飘带、人字形）和<a href="#连接线">连接线</a>，即连接各框的线。</td>
     </tr>
     <tr>
       <td><code>header</code>、<code>footer</code></td>
@@ -152,7 +152,7 @@ const config: PostextConfig = {
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>带<code>pages</code>筛选条件的设计元素所看到的页面角色。</td>
+      <td>带<code>pages</code>筛选条件的设计元素所看到的页面角色。<code>'module'</code>让模板成为模块：一个由框组成、在页面的组中叠放的方框，而不是单独的一页（见<a href="#模块">模块</a>）。自postext 1.48起。</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ const config: PostextConfig = {
       <td>以自身书写方向或文字方向排的框：横排页面上的竖排方框、竖排页面上的横排卡片、从左到右的书里一段从右到左的引文。另一种书写方向的框在转了四分之一圈的方框里排：各行沿方框的高度排列，在宽度方向上依次排开；高度为<code>'auto'</code>时取能在该宽度里容下这些行的最小高度。它的文字按该书写方向的页面绘制。<code>direction</code>让框里的内容按该方向排，与用<code>&#123;dir=…&#125;</code>标注的方框相同；自己写了<code>dir</code>的段落或方框保持原样。自postext 1.39起。自postext 1.40起，竖排框也可用于从右到左的页面：按从左到右页面的方式排好，再放到镜像后的文字流所在的位置，文字不镜像绘制；横排页面上竖排框里的图片连同题注保持直立，占用框在页面横向上剩下的空间；流式EPUB把另一书写方向的框写成带该书写方向的盒子，并给出文字行延伸方向的长度（以正文的em计）。自postext 1.42起，竖排页面上沿用页面书写方向的框里的图片，同样连同题注保持直立。</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code>让这个框不参与重叠检查：它所在的一对框不论它画在另一个框之上还是之下，都不给出<code>frameCovered</code>，它自己也不给出<code>frameOutsideArea</code>。用于有意压在文字上的图画，或有意一半挂在卡片外面的徽章。见<a href="#重叠重复与模块的警告">重叠、重复与模块的警告</a>。自postext 1.48起。</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>从上到下，或从起始到末尾。</td>
+      <td>从上到下，从起始到末尾，或者按行排列的单元格（<code>'grid'</code>，自postext 1.48起；见<a href="#重复一组框的网格">重复一组框的网格</a>）。</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>组中的框，按它们在页面上的顺序排列。一个框最多属于一个组；不是模板中框的名称，或已经列出过的框，会被跳过。</td>
+      <td>组中的框，按它们在页面上的顺序排列。一个框最多属于一个组；不是模板中框的名称，或已经列出过的框，会被跳过。重复的网格改为取<code>repeat.frames</code>中的框。</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>网格：栏数，各栏等宽。</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>、<code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>组的<code>gap</code></td>
+      <td>网格：相邻两栏之间、相邻两行之间的距离。</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>无</td>
+      <td>网格：页面内容中每个条目排一次的框组。<code>frames</code>的第一个框是单元格的主框；<code>max</code>限定条目数，其余进入流文框（<code>repeatOverflow</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>组接收页面的<code>:::module</code>块，按Markdown的顺序上下叠放，彼此之间留出<code>gap</code>。不论它的<code>kind</code>是什么，都按纵向组排，它的<code>frames</code>不读取。见<a href="#模块">模块</a>。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>无</td>
+      <td>模块组：放不下的模块整个转到哪里接着排。未设置时，模块在组的底边截断，它的框按逐级重排的步骤尝试。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ groups: [{ name: 'cajas', kind: 'stack', frames: ['dinero', 'gasto', 'ahorro'], 
 
 增长的那个框和可用空间一样高，不论里面放了什么，所以带可见背景的样式会把整块都涂满：请把卡片画在模板的装饰里，文字框不设样式。
 
+### 重复一组框的网格
+
+一页照片卡片、一页活动卡片，或者一页每张下面写着名字的肖像，都是同一张卡片画了许多次。带`repeat`的网格组在模板里只把它画一次：一张卡片的各个框，叫做框组，网格按页面的Markdown给它的条目，每个条目排一次。这样，一页有几张卡片由Markdown决定，译本多出一张卡片也不需要新的模板。自postext 1.48起。
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **框组。** `repeat.frames`的第一个框是单元格的**主**框：它取单元格的宽度，保留自己的高度规则（`'auto'`是其内容的高度，在`minHeight`和`maxHeight`之间）。框组中的其他框按模板画出的样子排放，锚定到主框或彼此锚定：这里的题注小签挂在照片的底边上。框组中锚定到组外某个框的框，留在那个锚点所定的位置。
+- **条目。** 页面上每一段`:::frame{slot="foto"}`内容是一个条目：重复槽位的各段内容不合并。在这段内容里，指明框组中某个成员的块（`:::frame{slot="pie"}`、`::resource{… slot="pie"}`）进入同一张卡片的那个成员；其余进入主框。见[模板页 › 重复的槽位](/zh/docs/composed-pages#重复的槽位)。
+- **实例。** 每张卡片的框命名为`<frame>[n]`，从1开始计数：`foto[2]`和`pie[2]`是第二张卡片。警告、重排记录、源码映射和沙盒都用这些名称，框的id是`cp<n>:foto[2]`，装饰元素或连接线可以锚定到`'#foto[2]'`。连接线的`to: '#foto[*]'`指向本页的每一张卡片。锚定到`'#foto'`的元素读取的是网格的方框。
+- **单元格。** 单元格从起始一侧开始逐行填充，所以在从右到左的页面上，第一张卡片在右边。一行的高度等于其中最高的单元格，主框上方伸出的部分（页签）和下方挂着的部分（小签）都算在内；`rowAlign`决定较矮的单元格怎样放。网格的方框是它自己的`placement`或`grid`单元格；都没有时，它从模板画出主框的地方开始，延伸到区域的右边和底边。
+- **卡片放不下时。** 超出网格底边的一行在那里截断，每张卡片各自按逐级重排的步骤尝试，最后一张被截断的卡片报告`frameOverflow`。主框设了`overflow.continueIn`（`'next-page'`、`'template:<id>'`）时，网格**按整行**接续：第一个放不下的行及其后的每一行，排在追加的页上，放进一个重复同一框组的模板的网格里。比整个网格还高的单元格会给出警告，而不会无休止地接续下去。
+- **`max`。** 超出`repeat.max`的条目进入流文框，模板没有流文框时排在这一页之后，每个条目各给出一条`repeatOverflow`。
+
+不带`repeat`的网格按书写顺序排它列出的框，每个单元格一个。重复框组中的框如果又列在别的组里，在那里被跳过（`groupFrameTwice`）；模板中没有的名称是`groupFrameUnknown`。`grow`和`shrink`不作用于网格的行，`redistribute`也不作用于网格的卡片。
+
+### 模块
+
+课本的一页常常叠放几种在全书中反复出现、只是顺序不同的块：一个旁边配照片的方框，一棵有三个要点的树，标题下面四张照片的网格。为每种顺序画一个模板，模板就会成倍增加。**模块**就是把这样的块画一次：一个`role: 'module'`的模板，含有框、组和装饰（包括连接线），没有自己的页面。页面模板在一个`modules: true`的组中接收模块；页面的Markdown说明它有哪些模块、按什么顺序（见[模板页 › 页面中的模块](/zh/docs/composed-pages#页面中的模块)）。自postext 1.48起。
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **模块里有什么。** 框、组（包括重复的网格）、装饰和连接线。它没有`area`、`header`、`footer`、`variants`、`spread`、`gutter`或`overflowTemplate`：写了这些中的任何一个，都报告为`unknownConfigValue`并被忽略。`extends`可以用在模块之间（继承模块的模板也是模块）。
+- **它的方框。** 模块与所在的组一样宽，高度到它的框伸到的地方为止；组从顶端开始叠放各个模块，彼此之间留出`gap`。在模块内部，`'container'`是模块的方框，它的框（还有`'fill'`和百分比）以及它的装饰都以此为准：尺寸设为`{ to: 'container', edge: 'bottom' }`的底色，不论文字让模块有多高，都铺满整个模块。
+- **名称。** 模块的框、组和元素以模块的实例名为范围：`<name>.<frame>`，名称取Markdown给出的（`name="ramas"`），否则是`<template>[n]`，即这个模块在本页同一模板的模块中的序号（`arbol[2].raiz`）。模块内部的锚点、`next`、`continueIn: '#x'`和连接线都改写为指向它自己的框，所以同一页上的两棵树绝不会互相连起来。框的id写作`cp0:arbol[2].raiz`。
+- **模块放不下时。** 超出组底边的模块在那里截断，它的框按逐级重排的步骤尝试；整个组只报告一次`frameOverflow`。模块组设了`overflow.continueIn`（`'next-page'`或`'template:<id>'`）时，第一个放不下的模块及其后的每个模块都**整个**转到追加的页上，名称不变，排在那一页模块组的顶端。
+- **暂不支持。** 模块并排（模块组总是纵向组）、模块里面再套模块（`moduleNested`），以及模块内的模板`grid`单元格。
+
 ### 内容放不下时
 
 框的内容比组给它的空间高时，排版按顺序尝试[逐级重排](/zh/docs/composed-pages#仍然放不下时)的各个步骤，到第一个能让内容放下的为止：先占用空闲空间（最多到`maxHeight`），再由组推挤和让位，然后缩小图片，把组中其他框压到最小高度，缩小文字，最后到另一页接续。下面这些框的设置决定每一步能走多远：
@@ -555,7 +654,7 @@ pageTemplates: [
 
 ### 排版实际应用的设置
 
-排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。自postext 1.42起，排版也会应用模板的`palette`、框的`look`和宽度`'auto'`（与框中最长的一行同宽）。框的`writingMode`和`direction`自postext 1.39起生效。模板的`bodyStyle`会被读取和检查，但还没有应用。
+排版会应用每个框的位置和尺寸（网格、锚点、`min`/`max`、`verticalAlign`）、样式和`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（及其`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）及`overflow.mark`、`overflow.fromMark`，以及框的`fit`（逐级重排中文字和图片的缩小，见[内容放不下时](#内容放不下时)）；组内的空间协调（`grow`、`shrink`、`priority`、`pin`，以及组的`gap`和`align`，见[组如何分配空间](#组如何分配空间)）；还有模板的`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`和`overflowTemplate`。自postext 1.42起，排版也会应用模板的`palette`、框的`look`和宽度`'auto'`（与框中最长的一行同宽）。框的`writingMode`和`direction`自postext 1.39起生效。自postext 1.48起，排版应用网格组及其`repeat`、模块组和模块模板、装饰中的连接线和路径元素，以及框的`overlap`。模板的`bodyStyle`会被读取和检查，但还没有应用。
 
 ### 跨页
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 栏间距比`gutter`宽，对称网格里的卡片就不会碰到书脊，也就不会被移动。第二条色带和插图带设了`crossGutter`来跨过书脊：每一个都在其中心所在的那一页读，并在两页上都画出来。页面上的每个字，包括标签上的时代名称，都留在Markdown里。
 
 竖排（`vertical-rl`）书里，跨页模板和单页模板页一样，在页面文字流的坐标中排：页面的“上”是纸张的右边，文字向下走，所以模板的`x`沿纸张向下，`y`从纸张右边走向左边。跨页沿`y`先是右页、后是左页，书脊是横穿模板的一条线，`gutter`、`crossGutter`和两页之间的切分都按这条轴计算；装饰仍铺在实际的纸张上，在书脊处切开。为横排书画的横向年表放进竖排书会转过来：竖排书的模板要按文字流的坐标来写。自postext 1.38起。要在纸面上横着读的卡片设`writingMode: 'horizontal-tb'`：它按横排排版，在竖排页面上正立（自postext 1.39起）。
+
+### 连接线
+
+连接线是装饰中连接框的线：树状图的分支、组织结构图、时间线上垂下的短线、流程图的箭头、从一条说明指到地图上某处的指示线。它在各框的外框确定之后才排放，所以文字变长、某个版本的词更长、组移动了它的框，它都会跟着走；在每种输出中它都画成矢量线，模板不需要一张画着这些线的图片。连接线是页面模板或模块的`decoration`中的元素；书眉和标题设计里没有可连的框，写在那里的连接线会被报告（`unknownConfigValue`），也不会画出。自postext 1.48起。
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>属性</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>、<code>id</code></td>
+      <td><code>'connector'</code>、<code>string</code></td>
+      <td>必填</td>
+      <td>元素类型和它的id，与装饰中的其他元素相同。</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>必填</td>
+      <td>线的一端；在树中是父节点。</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>必填</td>
+      <td>另一端，或者几端：到每一端各画一条线，或者是树的各个子节点。<code>'#card[*]'</code>表示本页<a href="#重复一组框的网格">重复网格</a>中的每一张卡片。</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>：一段直线。<code>'elbow'</code>：在相对的两条边之间横出、纵走、再横入，在互相垂直的两条边之间画成L形。<code>'tree'</code>：从<code>from</code>画一段主干到一根横杆，横杆横跨各子节点的点，再向每个子节点垂下一段。</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>折线中间那段或树的横杆在两端之间的位置：<code>0</code>在<code>from</code>处，<code>1</code>在最近的<code>to</code>处。<code>trunk: 0</code>的树不画横杆：从父节点的边向每个子节点垂下一段，就像时间线上的刻度。</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>把折线或树的拐角画成圆角。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>主色</td>
+      <td>与调色板关联的颜色像线条一样，跟随模板的<code>palette</code>、页面块的和篇的调色板。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>dash</code></td>
+      <td><code>Dimension</code>、<code>Dimension[]</code></td>
+      <td><code>0.75pt</code>，实线</td>
+      <td>线的粗细，以及虚线样式（实、空……）。</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>、<code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>在<code>from</code>处和每个<code>to</code>处的标记：以端点为中心的实心圆点，或尖端就在端点上的箭头。</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>圆点的直径，或箭头的长度。</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>连接模板声明的方框，而不是内容给各框定下的方框。</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>、<code>pages</code></td>
+      <td>与其他元素相同</td>
+      <td><code>'all'</code></td>
+      <td>哪些页上画出它。</td>
+    </tr>
+  </tbody>
+</table>
+
+每一端（`ConnectorEnd`）指定一个方框，以及它某条边上的一个点：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>字段</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>必填</td>
+      <td>一个框、一个组、重复网格中的一张卡片（<code>'#foto[2]'</code>），或装饰中的另一个元素。</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>朝向另一端的那条边</td>
+      <td>线从方框的哪条边出去或进来。<code>start</code>和<code>end</code>按页面的行方向理解。未设置时，取隔着两者之间较宽的间隙、朝向另一个方框的那条边；树的子节点朝向父节点。</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>这条边上的点，或者从这条边起点量起的比例（0到1）。横边从页面上各行起始的地方开始，竖边从顶端开始。</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>方框边缘（或锚点）与线端之间留出的距离。</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>框中图片的一个锚点：这一端就是图片上的那个点，与标注的点一样经过图片的裁切、安全区和缩放换算，而不是框边上的一点。不读取<code>at</code>；<code>side</code>说明线从哪个方向到达（默认从另一端过来）。</td>
+    </tr>
+  </tbody>
+</table>
+
+**不在页面上的端点。** 落在页面没有显示的框上的一端（框收拢了、是可选的且为空、是超出本页条目数的卡片，或者是被所在框裁掉的图上的点）会被略去：树保留它的其他子节点，页面的重排记录会写明这一点（`connectorDropped`）。没有剩下`from`或`to`时，什么也不画。
+
+**绘制。** 连接线与装饰一起画在各框下面，是矢量路径：在画布、PDF、HTML阅读器和固定版式EPUB中都是如此，在带标签的PDF中是版面工件；流式EPUB与其他装饰一起略去它们。指进图片里的线，需要图片所在的框位于装饰之下：给那个框设`layer: -1`。在跨页上，连接两页上框的连接线跨过书脊，并与其他装饰一样在那里切开；在从右到左的页面上，`start`和`end`跟随镜像后的文字流。
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**检查。** `to`什么也没指到的一端是`frameAnchorUnknown`（位于`…/from/to`或`…/to/<k>/to`），这一端被略去；`[*]`只能用在`to`中，而且只能用于重复的框。框中没有任何图片带有的`anchor`是`labelAnchorUnknown`，附有连接线的id。`routing`、`startCap`、`endCap`或`side`取值范围以外的词，以及0到1以外的`at`，是`unknownConfigValue`。
 
 ## 标注样式
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code>让这个样式的标注不再参与<code>labelOverlap</code>检查，适用于原稿里名称本来就相互贴着的地图。锚点自己的<code>overlap</code>优先。自postext 1.42起。</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>与锚点放置方框的方式相同</td>
+      <td>多行标注的各行在方框内怎样对齐，<code>start</code>和<code>end</code>按标注的书写方向理解。未设置时，跟随锚点的<code>align</code>（默认居中）；图例中为<code>start</code>。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>border</code>、<code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>、<code>Dimension</code></td>
+      <td>无</td>
+      <td>标注底板（按<code>padding</code>扩大的方框）四周的一道线，有没有<code>background</code>都可以，以及底板的圆角：地图上带边框的图例。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>无</td>
+      <td>地图的图例：标注的每一行是一个条目，条目开头的符号（<code>:icon</code>）排在一列里，这一列和最宽的符号一样宽，所以每个条目的文字都从同一条边开始。没有符号的行保持原样。竖排标注不适用。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>无</td>
+      <td>这种样式的标注所用引线的外观：从标注的方框到其锚点的线。默认颜色取标注的颜色，宽度<code>0.75pt</code>，点上为<code>endCap: 'dot'</code>，没有<code>startCap</code>，<code>capSize</code>为宽度的三倍，<code>routing</code>为<code>'straight'</code>（或<code>'elbow'</code>：先从方框垂直伸出，再拐一次到点上）。离开其点（<code>labelAt</code>）的标注，样式有<code>leader</code>时就会画出引线。自postext 1.48起。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ labelStyles: [
       <td><code>'keep'</code></td>
       <td>在跨过跨页书脊的插图上，<code>'keep'</code>把标注从订口带移开，移向其点所在的一侧；<code>'cross'</code>让标注留在点所定的位置，横跨两页的标题需要这样。自postext 1.43起。</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>在点上</td>
+      <td>放在这个锚点上的标注离开它的点、实际所在的位置，以整张图片的比例表示：海上的一个名字，用一条线连到它所指的岛。<code>align</code>、<code>verticalAlign</code>和<code>rotate</code>围绕这个位置放置标注；锚点自己的点不变，引线和连接线止于那里。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>见下文</td>
+      <td>从标注的方框到锚点的一条线。<code>true</code>按标注样式的<code>leader</code>外观画出，对象逐个字段修改这种外观，<code>false</code>不画。未设置时，离开其点的标注在样式有<code>leader</code>时画出引线。<code>::label</code>的<code>leader</code>属性优先。自postext 1.48起。</td>
+    </tr>
   </tbody>
 </table>
 
 `start`和`end`按标注的书写方向理解：阿拉伯文标注的`start`是它的右边。同一张地图的从左向右版本和从右向左版本共用的锚点，最好让标注居中放在点的上方或下方。设有`width`的标注在词与词之间换行；比宽度还宽的词会让整个标注缩小，最小到其样式的`minScale`。标注的绘制方式见[模板页](/zh/docs/composed-pages)。
 
+引线从标注方框（有底板时是底板，否则是文字行）隔着较宽的间隙朝向那个点的一边、从这条边的中点出去，所以线从不穿过标注的文字，旋转过的标注也一样。点落在标注方框之下，或者引线比它末端的标记还短时，什么也不画。引线画在标注之下、与图片一起，在每种画出标注的输出中都是如此；图片被裁切、缩放、镜像或排在跨页上时，引线都跟着图片走。
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## 页面模板警告
 
 在其他地方，引擎会忽略它不认识的键。页面模板和标注样式则会被检查，每个问题都是一条配置警告，出现在`postext check`和沙盒的检查面板中。这些警告的`path`是指向出错字段的JSON指针：`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`。字段是继承来的时，指针指向写出它的模板。指出不存在的id或名称的警告，还会给出最接近的现有名称。
 
-模板、框、组、网格、`fit`、`overflow`、变体或标注样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。
+模板、框、组、网格、`fit`、`overflow`、变体或标注样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`，连接线的`routing`、端点标记和`side`，引线的端点标记和`routing`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>框、组或装饰元素锚定到<code>'#name'</code>，而模板中没有这个名称的框、组或元素；或者框和组之间互相锚定，形成循环（也包括经过这样一个组：它自己没有锚定，方框就是其中各框的外框）。该锚点按<code>'container'</code>（即区域）处理。</td>
+      <td>框、组或装饰元素锚定到<code>'#name'</code>，而模板中没有这个名称的框、组或元素；或者框和组之间互相锚定，形成循环（也包括经过这样一个组：它自己没有锚定，方框就是其中各框的外框）。该锚点按<code>'container'</code>（即区域）处理。连接线的某一端什么也没指到时，也这样报告，这一端被略去。</td>
       <td>锚定到存在的框或组，或把其中一个锚定到区域，打破循环。</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ labelStyles: [
   </tbody>
 </table>
 
-自页面模板起，配置版本为15（之前写出的文件包照常加载，不受影响：旧配置中的任何内容都不改变含义）。
+自连接线起（postext 1.48），配置版本为16；页面模板曾把它升到15。之前写出的文件包照常加载，不受影响：旧配置中的任何内容都不改变含义；早于连接线的读取程序会略去它不认识的装饰元素，并给出`unknownConfigValue`。
+
+### 重叠、重复与模块的警告
+
+这些警告来自排版或页面的Markdown，而不只是来自模板，所以它们会写明页码。它们列在`postext check`中（`--json`把它们的字段放在`data`里），也出现在沙盒的检查面板和文档的`contentWarnings`中。自postext 1.48起。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>警告</th>
+      <th>原因</th>
+      <th>解决办法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>某个框的着墨部分（文字行、页签或标题、图片）被画在它上面的另一个框盖住：层号更高，或同一层而在模板中排得更后。框在不透明的地方遮挡别的框：底色、页签、图片、文字行；只有轮廓线时什么也不遮挡，压在图片上的文字也不报告。每对框一条警告，附有盖住它的框（<code>coveredBy</code>）、被遮住的面积（<code>overlapMm2</code>），以及最先被盖住的文字或图片。见<a href="/zh/docs/composed-pages#framecovered">模板页 › frameCovered</a>。</td>
+      <td>采用一条建议：把盖住它的框的<code>layer</code>设到被盖住的框之下，在它上面设<code>exclude: 'push'</code>让文字绕开它，或者采用在页上算出的<code>move</code>。交叠是有意为之时（压在文字上的图画），在任一个框上设<code>overlap: 'allow'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>框超出了容纳它的范围：它的文字超出裁切线，它的底色或图片超出出血线，或者它的任何部分超出了它锚定在其内部的框或组（锚定到<code>'#name'</code>的九点锚点，其点落在那个方框之内）。<code>past</code>说明超出的是哪一个，<code>excessMm</code>说明超出多少。见<a href="/zh/docs/composed-pages#frameoutsidearea">模板页 › frameOutsideArea</a>。</td>
+      <td>采用一条建议：给这个框设<code>maxHeight</code>，给它锚定在其内部的框设<code>minHeight</code>，在降低高度的同时设<code>overflow.continueIn: 'next-page'</code>，或者采用<code>move</code>。有意挂在卡片外面的徽章设<code>overlap: 'allow'</code>。</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>重复一组框的网格最多容纳<code>repeat.max</code>个条目，而这一页给了它更多。每多出一个条目一条，位于它的<code>slot="…"</code>处：这个条目进入流文框（<code>flowFrame</code>），或排在这一页之后。</td>
+      <td>调高<code>max</code>，去掉它，或者把多出的条目移到另一页。</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>页面排不了的<code>:::module&#123;template="…"&#125;</code>：id没有对应的模板（<code>reason: 'unknown'</code>），对应的模板不是模块（<code>'notModule'</code>），或者这一页的模板没有模块组（<code>'noGroup'</code>）。它的内容进入流文框。</td>
+      <td>改正id，给模板设<code>role: 'module'</code>，或者给这一页的模板加一个<code>modules: true</code>的组。</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>页面块指定的是模块模板。模块排在页面的模块组里，从不单独成页：页面块的内容排进正文，与未知模板的处理相同。</td>
+      <td>在页面块上指定一个页面模板，把模块作为<code>:::module</code>放在里面。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td><code>:::module</code>写在另一个模块里面。这是不支持的：它的各块归外层模块所有。</td>
+      <td>先结束外层模块，或者把里面那一块画成外层模块的框。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>模块的<code>name="…"</code>已被本页的另一个模块使用（<code>reason: 'taken'</code>），或含有空格、<code>.</code>、<code>#</code>、<code>[</code>或<code>]</code>（<code>'invalid'</code>）。模块改名为<code>used</code>（<code>&lt;template&gt;[n]</code>），它的框也按这个名称来指定。</td>
+      <td>给本页的每个模块起一个不重复的名称，只用字母、数字和连字符。</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped`（重排记录）。** 连接线的一端落在页面没有显示的框上（框收拢了、是可选的且为空、是超出本页条目数的卡片，或者是被所在框裁掉的图上的点）时，这一端被略去。这不是警告：页面的[重排记录](/zh/docs/composed-pages#重排记录)会记下它，“connector ramas left out izq (not on the page)”，所以少了一条分支的页面与按计划画出的页面能区分开来。要保留这一端，就给那个框写上内容，或者让连接线只连本页有的框。

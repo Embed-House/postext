@@ -114,7 +114,7 @@ describe('decoration painted over the picture (#957)', () => {
     const markdown = chapters.find((c) => c.id === 'ch1')!.markdown;
     const doc = buildDocument({ markdown, resources: resources! }, config, createMeasurementCache());
     const page = doc.pages.find((p) => p.composed?.frames.some((f) => f.name === frame.name))!;
-    const order = composedPaintOrder(page).map((i) => (i.kind === 'decoration' ? 'decoration' : i.frame.name));
+    const order = composedPaintOrder(page).map((i) => (i.kind === 'frame' ? i.frame.name : i.kind));
     // The picture is painted before the decoration, which holds the tag.
     expect(order.indexOf(frame.name)).toBeLessThan(order.indexOf('decoration'));
     expect(page.composed!.decoration?.blocks.length).toBeGreaterThan(0);

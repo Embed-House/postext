@@ -3,9 +3,9 @@
 export const metadata = {
   title: '配置：页眉与页脚',
   sidebarTitle: '页眉与页脚',
-  description: '页眉和页脚里印什么、放在哪里：带占位符的文字、线条、方框和图像，可以按奇偶页分别设置，每个元素的位置也可以单独指定',
+  description: '页眉和页脚里印什么、放在哪里：带占位符的文字、线条、方框、图像和矢量路径，可以按奇偶页分别设置，每个元素的位置也可以单独指定',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '21分钟',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ export const metadata = {
 
 槽位使用统一的**设计槽位**模型：每个元素都有`placement`，其中有`anchor`（锚定到容器，或用`#id`锚定到另一个元素），还可以有`offset`和`size`。旧版的平铺字段`align`、`marginFromBody`、`marginFromEdge`和`width: 'full'`在输入时仍然可用，会自动转换成新结构；与之等价的新结构写法见下文。
 
-每个槽位包含一组**文本**、**线条**、**方框**和**图像**元素。数组顺序就是绘制顺序（第一个元素最先绘制，最后一个元素画在最上层）。无论锚点怎么写，这一点都成立：元素可以锚定到排在它后面的元素（`anchor.to: '#ttl'`），所以背景方框可以排在最前面，同时仍以压在它上面的那段文本为基准定位。
+每个槽位包含一组**文本**、**线条**、**方框**、**图像**和**路径**元素（模板页的装饰还接受**连接线**，见[配置 › 模板页](/zh/docs/configuration-composed-pages#连接线)）。数组顺序就是绘制顺序（第一个元素最先绘制，最后一个元素画在最上层）。无论锚点怎么写，这一点都成立：元素可以锚定到排在它后面的元素（`anchor.to: '#ttl'`），所以背景方框可以排在最前面，同时仍以压在它上面的那段文本为基准定位。
 
 **内置默认值。** 当`header`或`footer`为`undefined`时，postext会使用一套合理的内置默认设置，而不是留一个空槽位：
 
@@ -46,7 +46,7 @@ export const metadata = {
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>为<code>undefined</code>时使用内置默认值；<code>[]</code>表示禁用</td>
-      <td>文本、线条、方框和图像元素的有序列表。</td>
+      <td>文本、线条、方框、图像和路径元素的有序列表。</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ header: {
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>圆角半径。渲染时最多取较短边的一半。</td>
+      <td>圆角半径。渲染时最多取较短边的一半。自postext 1.48起，可以用一个对象给每个角各自的半径，对象中没写的角是直角：例如只有上面两个角是圆角的色带。</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>每条边</td>
+      <td>逐条边设定描边，每条边是<code>&#123; enabled?, color?, width? &#125;</code>，覆盖<code>borderColor</code>和<code>borderWidth</code>。一条边有颜色和宽度就会画出，除非它写了<code>enabled: false</code>：只在底边有一条线的色带写成<code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>。自postext 1.48起。</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ PDF后端像嵌入图一样嵌入该资源（带印刷母版的SVG会使用母�
 
 设计中画出的图片，如果资源里有对它的描述，就算作内容。描述取资源的`altText`，没有时取题注的纯文本（行内标签按其标签文字读，`:ref`有`text`时按`text`读），写入VDT（`VDTDesignImageBlock.altText`）。在HTML中，它成为`<img>`的`alt`；在带标签的PDF中，它成为带`/Alt`的`Figure`，紧接在所属设计的文本之后读出（例如章的插图页紧接在该章标题之后）。资源两者都没有的图片，以及标为`decorative`的图片，属于装饰：HTML中为`alt=""`加`role="presentation"`，PDF中为artifact。书眉或页脚中的图片每页重复出现，所以无论资源怎么描述，都只是版面附属物：VDT中没有`altText`，HTML中为`alt=""`加`role="presentation"`，PDF中为页面的artifact。
 
+### 路径元素
+
+`path`元素绘制方框画不出的矢量形状：一端斜切、伸进书脊的色条，带缺口的飘带，书眉旁边的人字形，卡片上对话气泡的尾巴。轮廓用SVG路径数据写成，默认以元素自身方框的比例表示，所以形状随方框伸缩，方框移动时也跟着走：尺寸设为`{ to: '#title', edge: 'right' }`的飘带，在每种语言里都与标题一样长。每种设计槽位都接受它：书眉、标题和篇的设计、目录中的篇名行、方框设计，以及模板页的装饰。自postext 1.48起。
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>、<code>id</code></td>
+      <td><code>'path'</code>、<code>string</code></td>
+      <td>—</td>
+      <td>类型标识，以及供其他元素锚定的稳定id。</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>SVG路径数据：<code>M L H V C S Q T A Z</code>，绝对和相对坐标都可以，单位是<code>viewBox</code>的单位。读不了的数据（开头没有移动命令、某个字母不是命令、某个命令缺少数字）什么也不画，并报告为<code>unknownConfigValue</code>；元素的方框仍然存在，供锚定在它上面的元素使用。</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>书写<code>d</code>所用空间的宽和高。取默认值时，<code>1</code>就是方框的整个宽度或高度。从图稿里复制来的路径在这里保留图稿的尺寸（<code>[24, 24]</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code>在两个方向上分别把<code>viewBox</code>拉伸到方框大小；<code>'meet'</code>等比缩放，放进方框并居中，用于不能被压扁的图标。</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>、<code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>黑色填充</td>
+      <td>填充和轮廓线。两者都不设时，形状填成黑色，与SVG路径相同；只设<code>stroke</code>时没有填充。与调色板关联的颜色跟随页面和篇的调色板。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>dash</code></td>
+      <td><code>Dimension</code>、<code>Dimension[]</code></td>
+      <td><code>0.5pt</code>，实线</td>
+      <td>轮廓线的粗细和虚线样式。它们是页面上的长度，不随方框伸缩，所以拉伸后的形状线条粗细仍然均匀。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>定位和尺寸与方框元素相同（见<a href="#元素定位">元素定位</a>）：没写或设为<code>'fill'</code>的一边延伸到容器边缘。</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>、<code>pages</code>、<code>pin</code>、<code>reserve</code></td>
+      <td>同方框元素</td>
+      <td><code>'all'</code>、<code>false</code>、<code>true</code></td>
+      <td>它出现在哪些页上，是否留在模板画出其框的地方（模板页的装饰），以及是否计入标题预留的高度。</td>
+    </tr>
+  </tbody>
+</table>
+
+路径在画布、PDF、HTML阅读器和固定版式EPUB中都画成矢量形状，在带标签的PDF中是版面工件，在流式EPUB中与其他版面附属物一起略去。点击时，响应的是它着墨的部分，而不是它的空方框。元素没有的键报告为`unknownConfigKey`。这一版本中路径不能旋转。
+
 ### 元素定位
 
-`ElementPlacement`是统一的定位模型，任何设计槽位（页眉、页脚或标题级的高级设计槽位）中的每种元素类型（文本、线条、方框、图像）都使用它。定位由三部分组成：
+`ElementPlacement`是统一的定位模型，任何设计槽位（页眉、页脚或标题级的高级设计槽位）中的每种元素类型（文本、线条、方框、图像、路径）都使用它。定位由三部分组成：
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = 槽位；page = 裁切框；bleed = 裁切框 + 出血；outer = 外侧页边距（页眉、页脚）；#id = 另一个元素
     edge: AnchorEdge;
+    /** 在'#id'上，沿`edge`所指那条边的点：'start' | 'center' | 'end' | 0…1。 */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** 距锚点的距离。 */
   offset?: { x?: Dimension; y?: Dimension };
@@ -731,6 +815,12 @@ interface ElementPlacement {
 
 相对元素的边与`'container'`、`'page'`或`'bleed'`一起使用，或容器边与`'#id'`一起使用时，都按左上角处理。
 
+**边上的一点。** 锚定到`'#id'`（另一个元素，在模板页上也可以是框或组）时，`at`在边所指的那条边上选一个点：`'start'`、`'center'`、`'end'`，或者从这条边的起点量起的比例，`0`到`1`。沿着这条边，元素以这个点为中心；在与边垂直的方向上，边保持原来的位置，所以`below`配`at: 'center'`会在框的正中下方挂一个刻度，`right-of`配`at: 0.5`会在框侧边的一半高度处放一个标记。横边（`top`、`bottom`、`below`、`above`、`align-top`、`align-bottom`，以及按所在边处理的各个角）从页面上各行起始的地方开始：在从右到左的页面上是右端。竖边（`left`、`right`、`right-of`、`left-of`、`align-left`、`align-right`、`start`、`end`）从顶端开始。0到1以外的数取较近的一端；这三个词以外的词报告为`unknownConfigValue`并被忽略，写在`'container'`、`'page'`、`'bleed'`、`'outer'`上和`center`边上的`at`也一样。自postext 1.48起；不写`at`时，边保持自己的点，与以前相同。
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **起始边与结束边。** `top-start`、`start`、`bottom-start`、`top-end`、`end`和`bottom-end`（配合`'container'`、`'page'`、`'bleed'`或`'outer'`），以及`align-start`和`align-end`（配合`'#id'`），指页面上各行起始的那一侧，而不是固定的某一侧。在从左到右的页面上，`top-start`就是`top-left`；在从右到左的页面上，以及行从右侧依次排开的竖排页面上，它是`top-right`。用这些边时，偏移的`x`从起始侧量向结束侧，所以在从右到左的页面上，正的`x`把元素往左移：元素正好是从左到右版本的镜像。模板的装饰和书眉排在纸面上，因此写成`top-start`的引题，在阿拉伯文版和西班牙文版里都会落在标题框上方。框则排在页面的文字流里，这个文字流已经镜像或转过方向，所以框的`start`始终是它的左侧，等同于`left`。标题的设计也排在文字流里，那里的`start`同样是`left`。在沙盒中，槽位编辑器的**对齐**列表有**起始**和**末尾**，各个边的列表也有起始侧和结束侧。自postext 1.39起；1.38及以前，这些词都按`top-left`处理。
 
 `anchor.to: 'page'`把元素锚定到**裁切框**（裁切后的实际页面），`'bleed'`则锚定到四边各扩出`cutLines.bleed`的裁切框（关闭裁切线时与裁切框相同）。这两个框也成为`size: 'fill'`和自动宽度限制的参照，所以色带可以不受页边距影响，从一边延伸到另一边：
@@ -739,7 +829,7 @@ interface ElementPlacement {
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-尺寸也可以一直延伸到另一个方框的某条边：`{ to, edge }`。`to`像锚点那样指明方框（`'container'`、`'page'`、`'bleed'`、`'outer'`，或另一个元素的`'#id'`；在模板页的装饰中，还可以是框或组），`edge`指明哪条边：高度用`'top'`或`'bottom'`，宽度用`'left'`或`'right'`。长度从元素的锚点量到那条边，方向就是元素伸展的方向；边在锚点背后时为0，边不在这个尺寸的轴上或方框不存在时，按`'fill'`处理。这样，从一条色带底边一直铺到出血位的底色就留在模板里，色带移动时也会跟着走。自postext 1.38起：
+尺寸也可以一直延伸到另一个方框的某条边：`{ to, edge }`。`to`像锚点那样指明方框（`'container'`、`'page'`、`'bleed'`、`'outer'`，或另一个元素的`'#id'`；在模板页的装饰中，还可以是框或组），`edge`指明哪条边：高度用`'top'`或`'bottom'`，宽度用`'left'`或`'right'`，两个方向都可以用`'center'`表示它的中线（自postext 1.48起）：例如从一个框的左边到旁边那个框中线的色带，或者从一张卡片下方一直到下一行中线的竖线。长度从元素的锚点量到那条边，方向就是元素伸展的方向；边在锚点背后时为0，边不在这个尺寸的轴上或方框不存在时，按`'fill'`处理。这样，从一条色带底边一直铺到出血位的底色就留在模板里，色带移动时也会跟着走。自postext 1.38起：
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

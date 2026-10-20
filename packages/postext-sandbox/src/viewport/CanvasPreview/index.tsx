@@ -16,9 +16,11 @@ import { createPaintedPages, type PaintedPages } from './pageReuse';
 import { clearOverlay, drawOverlay } from './overlay';
 import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
 import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks';
+import { clearOverlapMarks } from '../composed/overlapMarks';
 import { clearReflowMarks, drawReflowMarks } from '../composed/reflowMarks';
 import { onReflowViewChange, reflowFocusNow, reflowShownNow } from '../composed/reflowView';
 import { onFrameJumpChange } from '../../editions/frameJump';
+import { onOverlapFocusChange } from '../../editions/overlapFocus';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
 import { drawPickedMark } from '../../selection/pickedOverlay';
 import { carriedPosition, onPageSelectionChange } from '../../selection/selectionStore';
@@ -43,6 +45,7 @@ import {
   rowPadding,
   type FitMode,
   type GeomSnapshot,
+  sameStructure,
   type PageGaps,
   type ViewMode,
 } from './layoutUtils';
@@ -758,13 +761,10 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       displayWidth,
       displayHeight,
       viewMode,
+      binding: doc.binding === 'right' ? 'right' : 'left',
+      firstRecto: (doc.pageIndexOffset ?? 0) % 2 === 0,
     };
-    const prev = lastGeomRef.current;
-    const structureSame = !!prev
-      && prev.pageCount === geom.pageCount
-      && prev.pageWidthPx === geom.pageWidthPx
-      && prev.pageHeightPx === geom.pageHeightPx
-      && prev.viewMode === geom.viewMode
+    const structureSame = sameStructure(lastGeomRef.current, geom)
       && canvasMapRef.current.size === geom.pageCount;
 
     if (structureSame) {
@@ -945,6 +945,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   useEffect(() => onPageSelectionChange(() => setPickTick((t) => t + 1)), []);
   // …and the fit marks the frame a check just reached (#867).
   useEffect(() => onFrameJumpChange(() => setEditModeTick((t) => t + 1)), []);
+  // The overlap check the reader selected is drawn on its page (#1066).
+  useEffect(() => onOverlapFocusChange(() => setEditModeTick((t) => t + 1)), []);
   // …and the Reflow marks, with the frame the Reflow panel points at (#868).
   useEffect(() => onReflowViewChange(() => setEditModeTick((t) => t + 1)), []);
   useEffect(() => {
@@ -1058,6 +1060,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         drawReflow(overlay, pageIndex);
       } else {
         clearFitMarks(overlay);
+        clearOverlapMarks(overlay);
         clearReflowMarks(overlay);
       }
       drawn.add(pageIndex);

@@ -124,13 +124,19 @@ export function computeSourceMap(
     // Swatch placeholder: the plain char represents `:swatch{…}`. Same
     // alignment rule as a ref: map to the leading `:`, skip past the `}`.
     if (ch === SWATCH_PLACEHOLDER) {
-      while (r < blockSrcEnd && !markdown.startsWith(':swatch{', r)) r++;
+      // An inline symbol (`:icon[alt]{…}`, #1058) shares the placeholder:
+      // its text in brackets is skipped, escapes included, then its braces.
+      while (r < blockSrcEnd && !markdown.startsWith(':swatch{', r) && !markdown.startsWith(':icon[', r)) r++;
       if (r >= blockSrcEnd) {
         map[p] = blockSrcEnd;
         continue;
       }
       map[p] = r;
       let j = r;
+      if (markdown.startsWith(':icon[', r)) {
+        j = r + ':icon['.length;
+        while (j < blockSrcEnd && markdown[j] !== ']') j += markdown[j] === '\\' ? 2 : 1;
+      }
       while (j < blockSrcEnd && markdown[j] !== '}') j++;
       if (j < blockSrcEnd) j++; // consume the closing `}`
       r = j;

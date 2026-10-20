@@ -103,7 +103,7 @@ export function createFrameTools(deps: FrameToolsDeps): FrameTools {
     const book = deps.sourceOfPage(pageIndex);
     const doc = deps.docRef.current;
     if (!page?.composed || !book || !doc) return false;
-    const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template);
+    const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template, page.composed.modules ? { modules: page.composed.modules } : {});
     const target = frameClickTarget(book.markdown, page.composed, frame, template);
     if (!target) return false;
     if (target.kind === 'caret') {

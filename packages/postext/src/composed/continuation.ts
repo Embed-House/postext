@@ -23,8 +23,8 @@
 import type { CalloutCut } from '../pipeline/frameLayout';
 import type { PlannedCallout } from '../pipeline/calloutLayout';
 import { nextFrameOf } from './geometry';
-import { continueInPage, continueInTemplate } from './templates';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
+import { continueInPage, continueInTemplate, repeatInstance } from './templates';
+import type { ComposedModuleUse, ResolvedFrame, ResolvedPageTemplate } from './types';
 
 /** How many pages, one after another, the content of one composed page may
  *  go on to: the generation of added pages after which what still does not
@@ -72,6 +72,14 @@ export interface ComposedContinuation {
   trailing?: readonly string[];
   /** The sending frame's `overflow.fromMark` (#917). */
   fromMark?: string;
+  /** An item of a grid that goes on whole, by whole rows (#1061): none of
+   *  it is on the page it comes from (`fromFrameId` is the last instance
+   *  laid there, or its own id when none was). It goes on in the instance
+   *  of its name. */
+  whole?: true;
+  /** A frame of a module (#1062): the module it goes on in, laid on the
+   *  receiving page in that page's modules group. */
+  module?: ComposedModuleUse;
   /** The story comes from another chapter of the book (#943): `chapter` is
    *  the one whose file its text is in, `from` the one whose page sent it
    *  on, positions in the book. `fromFrameId` is a frame id of that page,
@@ -127,14 +135,22 @@ export function continuationTarget(
  * Those that find no free frame are `left` for another page.
  */
 export function assignReceivers(
-  template: Pick<ResolvedPageTemplate, 'frames'>,
+  template: Pick<ResolvedPageTemplate, 'frames'> & Partial<Pick<ResolvedPageTemplate, 'groups'>>,
   list: readonly ComposedContinuation[],
 ): { receivers: Map<string, ComposedContinuation>; left: ComposedContinuation[] } {
   const receivers = new Map<string, ComposedContinuation>();
   const left: ComposedContinuation[] = [];
   const names = new Set(template.frames.map((f) => f.name));
-  const flow = template.frames.find((f) => f.flow)?.name;
+  /** Frames a grid of the template repeats (#1061): an item of one goes on
+   *  in the instance of its own name, which the page makes for it. */
+  const repeated = new Set((template.groups ?? []).flatMap((g) => g.repeat?.frames ?? []));
+  const flow = template.frames.find((f) => f.flow && !repeated.has(f.name))?.name;
   for (const c of list) {
+    const inst = repeatInstance(c.frame);
+    if (inst && repeated.has(inst.frame) && !receivers.has(c.frame)) {
+      receivers.set(c.frame, c);
+      continue;
+    }
     const first = c.head !== undefined && c.head !== c.frame ? [c.head, flow, c.frame] : [c.frame, flow];
     const take = [...first, ...template.frames.map((f) => f.name)].find((n) => n !== undefined && names.has(n) && !receivers.has(n));
     if (take === undefined) left.push(c);

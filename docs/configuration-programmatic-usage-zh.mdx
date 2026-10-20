@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '以编程方式使用',
   description: '用代码调用Postext：buildDocument及其报告的警告、默认值、字体、缓存，以及Web Worker',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '22分钟',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>某幅<code>:::figure</code>为一个资源写了文字（<code>alt</code>、<code>caption</code>、<code>note</code>），而本章中前面的图已经给过这个资源文字，两者又不同（<code>resourceId</code>、<code>words</code>）。</td>
       <td>页面显示第一幅图的文字，略去后面那幅图的文字。</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>模板页中某个框的着墨部分被画在它上面的另一个框盖住（<code>template</code>、<code>frame</code>、<code>coveredBy</code>、<code>coveredByPath</code>、<code>fenceIndex</code>、<code>configPath</code>、<code>overlapMm2</code>、<code>text</code>或<code>picture</code>、<code>locale</code>；<code>proposals</code>：<code>layer</code>、<code>exclude</code>、<code>move</code>）。由排版给出，带有所在页的<code>pageIndex</code>。自postext 1.48起。</td>
+      <td>两个框都按模板的设定绘制；被盖住的部分看不见。</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>模板页中的某个框超出了裁切线（它的文字）、出血线（它的底色或图片），或者超出了它锚定在其内部的框或组（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>configPath</code>、<code>past</code>、<code>target</code>、<code>excessMm</code>、<code>sides</code>、<code>locale</code>；<code>proposals</code>：<code>maxHeight</code>、<code>minHeight</code>、<code>continueNextPage</code>、<code>move</code>）。由排版给出。自postext 1.48起。</td>
+      <td>框画在它所在的位置；超出裁切线的部分被裁掉。</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>模板页中的重复网格最多容纳<code>max</code>个条目，而这一页给了它更多（<code>template</code>、<code>group</code>、<code>frame</code>、<code>item</code>、<code>max</code>、<code>flowFrame</code>、<code>fenceIndex</code>）。每个多出的条目一条。自postext 1.48起。</td>
+      <td>这个条目进入流文框，或排在这一页之后。</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>页面排不了的<code>:::module</code>（<code>template</code>、<code>module</code>、<code>name</code>、<code>fenceIndex</code>；<code>reason</code>：<code>'unknown'</code>、<code>'notModule'</code>、<code>'noGroup'</code>）。自postext 1.48起。</td>
+      <td>它的内容进入流文框。</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>页面块指定的是模块模板（<code>template</code>、<code>fenceIndex</code>）。自postext 1.48起。</td>
+      <td>页面块的内容排进正文。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td><code>:::module</code>写在另一个模块里面（<code>template</code>、<code>module</code>、<code>fenceIndex</code>）。自postext 1.48起。</td>
+      <td>它的各块归外层模块所有。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>模块的<code>name</code>已被本页的其他模块使用，或含有空格、<code>.</code>、<code>#</code>、<code>[</code>或<code>]</code>（<code>template</code>、<code>module</code>、<code>name</code>、<code>used</code>、<code>reason</code>：<code>'taken'</code>、<code>'invalid'</code>、<code>fenceIndex</code>）。自postext 1.48起。</td>
+      <td>模块改用<code>used</code>这个名称，它的槽位也按这个名称来指定。</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

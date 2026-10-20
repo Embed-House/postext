@@ -3,8 +3,8 @@
 // viewer on screen; here each chapter asked for is laid out for the tool
 // itself, so the checks do not depend on what the reader is looking at.
 
-import { describeFrameOverflowProposal, resolvePdfGenerationConfig, resolvePrintConfig } from 'postext';
-import type { FrameOverflowProposal, PostextConfig, Resource } from 'postext';
+import { describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal, resolvePdfGenerationConfig, resolvePrintConfig } from 'postext';
+import type { FrameCoverProposal, FrameOutsideProposal, FrameOverflowProposal, PostextConfig, Resource } from 'postext';
 import { composeBookMemo } from '../../book/compose';
 import { pdfFontChecksFor } from '../../controls/pdfFontWarnings';
 import { svgFontIssues, unavailableResourceImages } from '../../controls/resourceImages';
@@ -13,7 +13,8 @@ import { detailFor, titleFor } from '../../sidebar/WarningsPanel';
 import { hasIndexedDB } from '../../storage/blobStore';
 import { WARNING_CATEGORY_ORDER, warningCategory } from '../../warnings/categories';
 import { computeComposedWarnings, computeWarnings } from '../../warnings/compute';
-import { planProposal, proposalContextOf, valueInWords } from '../../warnings/proposalActions';
+import { FRAME_FIX_KINDS, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions';
+import type { FrameProposal } from '../../warnings/frameOverlapText';
 import type { Warning } from '../../warnings/types';
 import { applyViewerEdit } from '../../editor/viewerEdits';
 import { chapterText, stateReaches } from '../chapterEdits';
@@ -145,7 +146,47 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
             ...(typeof payload.page === 'number' ? { page: payload.page } : {}),
             // A frame that does not fit: its fixes, numbered as
             // sandbox_apply_proposal takes them (#868).
-            ...(w.payload.kind === 'frameOverflow' ? { frame: w.payload.frame, proposals: proposalList(w.payload.proposals) } : {}),
+            ...(w.payload.kind === 'frameOverflow' ? { frame: w.payload.frame, proposals: proposalList(w.payload) } : {}),
+            // A frame under another, or past its edge (#1053, #1066): what
+            // the check measured, and its fixes as sandbox_apply_proposal
+            // takes them.
+            ...(w.payload.kind === 'frameCovered' ? {
+              frame: w.payload.frame,
+              template: w.payload.template,
+              coveredBy: w.payload.coveredBy,
+              overlapMm2: w.payload.overlapMm2,
+              ...(w.payload.text !== undefined ? { text: w.payload.text } : {}),
+              ...(w.payload.picture !== undefined ? { picture: w.payload.picture } : {}),
+              ...(w.payload.locale ? { locale: w.payload.locale } : {}),
+              proposals: proposalList(w.payload),
+            } : {}),
+            ...(w.payload.kind === 'frameOutsideArea' ? {
+              frame: w.payload.frame,
+              template: w.payload.template,
+              past: w.payload.past,
+              ...(w.payload.target !== undefined ? { target: w.payload.target } : {}),
+              excessMm: w.payload.excessMm,
+              sides: w.payload.sides,
+              ...(w.payload.locale ? { locale: w.payload.locale } : {}),
+              proposals: proposalList(w.payload),
+            } : {}),
+            // A :::module block not laid, set as a page, nested or renamed (#1062).
+            ...(w.payload.kind === 'moduleUnknown' || w.payload.kind === 'moduleNested' || w.payload.kind === 'moduleNameRejected' ? {
+              template: w.payload.template,
+              module: w.payload.module,
+              ...(w.payload.kind === 'moduleUnknown' ? { name: w.payload.name, reason: w.payload.reason } : {}),
+              ...(w.payload.kind === 'moduleNameRejected' ? { name: w.payload.name, used: w.payload.used, reason: w.payload.reason } : {}),
+            } : {}),
+            ...(w.payload.kind === 'moduleAsPage' ? { template: w.payload.template } : {}),
+            // A repeating grid given more items than it holds (#1061).
+            ...(w.payload.kind === 'repeatOverflow' ? {
+              frame: w.payload.frame,
+              template: w.payload.template,
+              group: w.payload.group,
+              item: w.payload.item,
+              max: w.payload.max,
+              ...(w.payload.flowFrame !== undefined ? { flowFrame: w.payload.flowFrame } : {}),
+            } : {}),
           };
         }),
         ...(wanted.length > limit ? { more: wanted.length - limit } : {}),
@@ -153,53 +194,67 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
     },
   };
 
-  /** The frame of a chapter that does not fit, as the checks found it
-   *  on a layout made for the tool. */
-  const overflowOf = async (args: Record<string, unknown>, signal?: AbortSignal) => {
+  /** The checks of a chapter's frames that come with fixes (a frame that
+   *  does not fit, one under another or past its edge), as the checks found
+   *  them on a layout made for the tool. */
+  const frameChecksOf = async (args: Record<string, unknown>, signal?: AbortSignal) => {
     const { chapter, index } = chapterOf(store.getSnapshot(), args.chapter ?? screenPosition(host).chapterIndex + 1);
     const { doc, state } = await layOutChapter(host, chapter.id, signal);
     const book = composeBookMemo(state.chapters, chapter.id);
     const found = computeComposedWarnings({ markdown: book.markdown, config: state.config, doc, resources: state.resources, book })
-      .filter((w): w is Warning & { payload: Extract<Warning['payload'], { kind: 'frameOverflow' }> } => w.payload.kind === 'frameOverflow');
+      .filter((w): w is Warning & { payload: FrameFixPayload } => isFrameFixPayload(w.payload));
     return { chapter, index, found };
   };
 
   const applyProposal: WebMcpTool = {
     name: 'sandbox_apply_proposal',
-    title: 'Sandbox: make a frame fit by a proposed fix',
-    description: "Make a frame of a composed page fit with one of the fixes the layout proposes for it: the proposals of its frameOverflow warning in sandbox_get_warnings, by their number there (from 1) or their kind. allowShrink lets its text shrink further (fit.minScale, and fit.shrinkText when it was off), raiseMax raises its maxHeight, lowerMin lowers the minHeight of another frame of its group, continueNextPage sets overflow.continueIn to next-page, and useTemplate sets the page with another template (the fence's template attribute in the chapter's text). It is the one-click fix of the Checks panel and the Reflow panel, without the question they ask the reader: one step of the history that sandbox_undo takes back. A design change applies to every page set with the template. shortenText changes nothing: it selects the frame's text in the Manuscript panel and answers how many characters to cut and where, for sandbox_write_text. Answers what was changed and whether the frame fits now, laid out again.",
+    title: 'Sandbox: fix a frame by a proposed fix',
+    description: "Fix a frame of a composed page with one of the fixes the layout proposes for it: the proposals of its frameOverflow, frameCovered or frameOutsideArea warning in sandbox_get_warnings, by their number there (from 1) or their kind. A frame that does not fit (frameOverflow): allowShrink lets its text shrink further (fit.minScale, and fit.shrinkText when it was off), raiseMax raises its maxHeight, lowerMin lowers the minHeight of another frame of its group, continueNextPage sets overflow.continueIn to next-page, and useTemplate sets the page with another template (the fence's template attribute in the chapter's text); shortenText changes nothing: it selects the frame's text in the Manuscript panel and answers how many characters to cut and where, for sandbox_write_text. A frame under another (frameCovered): layer paints the covering frame under it, exclude makes the covering frame push its text round it. A frame past its edge (frameOutsideArea): maxHeight holds it to the room it has, minHeight raises the frame it is anchored inside, continueNextPage lets the rest go on. move shifts the moved frame's placement.offset by the proposed millimetres (refused for a frame with no placement, or an offset in ems or percent). continueNextPage of a frame past its edge also sets the maxHeight it proposes. It is the one-click fix of the Checks panel and the Reflow panel, without the question they ask the reader: one step of the history that sandbox_undo takes back. A design change applies to every page set with the template. Answers what was changed and whether the check is gone, laid out again.",
     inputSchema: {
       type: 'object',
       properties: {
         chapter: { type: ['integer', 'string'], description: 'The chapter of the page: its position in the book (from 1), its title or its id. The chapter the reader is at when left out.' },
-        frame: { type: 'string', description: "The frame that does not fit, by its name in the template (the warning's frame)." },
-        page: { type: 'integer', description: 'The page number as printed, when the frame does not fit on more than one page of the chapter.' },
-        proposal: { type: ['integer', 'string'], description: 'The fix: its number in the warning\'s proposals (from 1) or its kind (allowShrink, raiseMax, lowerMin, continueNextPage, useTemplate, shortenText).' },
+        frame: { type: 'string', description: "The frame the check is about, by its name in the template (the warning's frame)." },
+        check: { type: 'string', enum: [...FRAME_FIX_KINDS], description: 'Which check of the frame to fix, when it has more than one (the warning\'s kind).' },
+        coveredBy: { type: 'string', description: 'For frameCovered: the covering frame, when the frame lies under more than one.' },
+        page: { type: 'integer', description: 'The page number as printed, when the check is on more than one page of the chapter.' },
+        proposal: { type: ['integer', 'string'], description: 'The fix: its number in the warning\'s proposals (from 1) or its kind (allowShrink, raiseMax, lowerMin, continueNextPage, useTemplate, shortenText; layer, exclude, move; maxHeight, minHeight).' },
       },
       required: ['frame', 'proposal'],
       additionalProperties: false,
     },
     execute: async (args, { signal }) => {
-      const { chapter, index, found } = await overflowOf(args, signal);
+      const { chapter, index, found } = await frameChecksOf(args, signal);
       const frame = String(args.frame);
-      const mine = found.filter((w) => w.payload.frame === frame && (args.page === undefined || w.payload.page === args.page));
+      const matches = (w: Warning & { payload: FrameFixPayload }): boolean => w.payload.frame === frame
+        && (args.check === undefined || w.payload.kind === args.check)
+        && (args.coveredBy === undefined || (w.payload.kind === 'frameCovered' && w.payload.coveredBy === args.coveredBy))
+        && (args.page === undefined || w.payload.page === args.page);
+      const mine = found.filter(matches);
       if (mine.length === 0) {
-        const others = [...new Set(found.map((w) => `${w.payload.frame} (page ${w.payload.page})`))];
+        const others = [...new Set(found.map((w) => `${w.payload.frame} (${w.payload.kind}, page ${w.payload.page})`))];
         throw new ToolError(others.length > 0
-          ? `"${frame}" fits${args.page !== undefined ? ` on page ${String(args.page)}` : ''} in chapter ${index + 1}. The frames that do not fit: ${others.join(', ')}.`
-          : `Every frame of chapter ${index + 1} fits: there is nothing to fix.`);
+          ? `"${frame}" has no ${args.check !== undefined ? String(args.check) : 'such'} check${args.page !== undefined ? ` on page ${String(args.page)}` : ''} in chapter ${index + 1}. The frames with fixes: ${others.join(', ')}.`
+          : `No frame of chapter ${index + 1} has a check to fix: every frame fits, and none lies under another or past its edge.`);
       }
-      if (mine.length > 1) throw new ToolError(`"${frame}" does not fit on pages ${mine.map((w) => w.payload.page).join(', ')}: say which with page.`);
+      if (mine.length > 1) {
+        const kinds = new Set(mine.map((w) => w.payload.kind));
+        if (kinds.size > 1) throw new ToolError(`"${frame}" has several checks (${[...kinds].join(', ')}): say which with check.`);
+        const covering = mine.map((w) => (w.payload.kind === 'frameCovered' ? w.payload.coveredBy : '')).filter(Boolean);
+        if (covering.length > 1 && new Set(covering).size > 1) throw new ToolError(`"${frame}" lies under ${covering.join(', ')}: say which with coveredBy.`);
+        throw new ToolError(`"${frame}" has this check on pages ${mine.map((w) => w.payload.page).join(', ')}: say which with page.`);
+      }
       const warning = mine[0]!;
-      const list = warning.payload.proposals;
+      const list: readonly FrameProposal[] = warning.payload.proposals;
       const proposal = typeof args.proposal === 'number'
         ? list[args.proposal - 1]
         : list.find((p) => p.kind === args.proposal);
       if (!proposal) {
-        throw new ToolError(`No such fix for "${frame}". Its fixes: ${list.map((p, i) => `${i + 1}. ${p.kind} (${describeFrameOverflowProposal(p)})`).join('; ') || 'none'}.`);
+        throw new ToolError(`No such fix for "${frame}". Its fixes: ${list.map((p, i) => `${i + 1}. ${p.kind} (${proposalWords(p)})`).join('; ') || 'none'}.`);
       }
+      const words = proposalWords(proposal);
       const plan = planProposal(warning, proposal, proposalContextOf(store.getSnapshot()));
-      const words = describeFrameOverflowProposal(proposal);
+      if (planIsAdvice(plan)) throw new ToolError(`This move cannot be made here (${words}): the frame has no placement offset in absolute units to shift. Change its placement with sandbox_set_config.`);
       if (plan.kind === 'stale') throw new ToolError('The book changed after the layout proposed this fix, so nothing was changed. Call sandbox_get_warnings again for the fixes as they are now.');
       if (plan.kind === 'select') {
         await dispatchAndWait(host, [
@@ -216,17 +271,23 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
         const landed = await stateReaches(host, () => chapterText(store.getSnapshot(), plan.chapterId) !== before, 5000);
         if (!landed) throw new ToolError('The chapter changed while the fix was on its way, so nothing was changed. Call sandbox_get_warnings again.');
       }
-      const after = await overflowOf({ chapter: chapter.id }, signal);
-      const still = after.found.find((w) => w.payload.frame === frame && w.payload.fenceIndex === warning.payload.fenceIndex);
+      const after = await frameChecksOf({ chapter: chapter.id }, signal);
+      const still = after.found.find((w) => w.payload.kind === warning.payload.kind && w.payload.frame === frame && w.payload.fenceIndex === warning.payload.fenceIndex
+        && (w.payload.kind !== 'frameCovered' || (warning.payload.kind === 'frameCovered' && w.payload.coveredBy === warning.payload.coveredBy)));
       return {
         changed: true,
+        check: warning.payload.kind,
         fix: { kind: proposal.kind, words },
         chapter: index + 1,
         ...(plan.kind === 'config'
           ? { settings: plan.leaves.map((l, i) => ({ pointer: l.pointer, setting: plan.settings[i], value: valueInWords(l.value) })) }
           : { text: { template: plan.template, from: warning.payload.template } }),
-        fits: !still,
-        ...(still ? { stillShortMm: still.payload.overflowMm, proposals: proposalList(still.payload.proposals) } : {}),
+        fixed: !still,
+        ...(warning.payload.kind === 'frameOverflow' ? { fits: !still } : {}),
+        ...(still?.payload.kind === 'frameOverflow' ? { stillShortMm: still.payload.overflowMm } : {}),
+        ...(still?.payload.kind === 'frameCovered' ? { stillCoveredMm2: still.payload.overlapMm2 } : {}),
+        ...(still?.payload.kind === 'frameOutsideArea' ? { stillPastMm: still.payload.excessMm } : {}),
+        ...(still ? { proposals: proposalList(still.payload) } : {}),
         undo: 'sandbox_undo takes it back.',
       };
     },
@@ -235,7 +296,23 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
   return [getWarnings, applyProposal];
 }
 
+/** A fix in the engine's words (English, as `postext check` says it). */
+function proposalWords(p: FrameProposal): string {
+  switch (p.kind) {
+    case 'layer':
+    case 'exclude':
+      return describeFrameCoverProposal(p as FrameCoverProposal);
+    case 'maxHeight':
+    case 'minHeight':
+    case 'move':
+      return describeFrameOutsideProposal(p as FrameOutsideProposal);
+    default:
+      return describeFrameOverflowProposal(p as FrameOverflowProposal);
+  }
+}
+
 /** A warning's fixes as the tools list them. */
-function proposalList(list: readonly FrameOverflowProposal[]): { number: number; kind: string; words: string }[] {
-  return list.map((p, i) => ({ number: i + 1, kind: p.kind, words: describeFrameOverflowProposal(p) }));
+function proposalList(payload: FrameFixPayload): { number: number; kind: string; words: string }[] {
+  const list: readonly FrameProposal[] = payload.proposals;
+  return list.map((p, i) => ({ number: i + 1, kind: p.kind, words: proposalWords(p) }));
 }

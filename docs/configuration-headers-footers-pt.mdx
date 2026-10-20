@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuração: cabeçalhos e rodapés',
   sidebarTitle: 'Cabeçalhos e rodapés',
-  description: 'O que é impresso no alto e no pé de cada página: texto com marcadores, fios, caixas e imagens, conforme a paridade da página, e onde cada elemento fica',
+  description: 'O que é impresso no alto e no pé de cada página: texto com marcadores, fios, caixas, imagens e caminhos vetoriais, conforme a paridade da página, e onde cada elemento fica',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '32 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ As propriedades `header` e `footer` controlam os espaços de cabeçalho e de rod
 
 Os espaços usam o modelo unificado de **espaço de design**: todo elemento tem um `placement` com uma `anchor` (no contêiner ou em outro elemento, por `#id`), um `offset` opcional e um `size` opcional. Os campos planos antigos `align`, `marginFromBody`, `marginFromEdge` e `width: 'full'` continuam aceitos na entrada e são migrados automaticamente para o novo formato; a descrição equivalente no novo formato está documentada abaixo.
 
-Cada espaço contém uma lista de elementos de **texto**, **fio**, **caixa** e **imagem**. A ordem do array é a ordem de pintura (o primeiro elemento é pintado primeiro, o último fica por cima). Isso vale independentemente das âncoras: um elemento pode se ancorar em outro listado depois dele (`anchor.to: '#ttl'`), de modo que uma caixa de fundo pode vir primeiro e ainda assim ser posicionada em relação ao texto que fica sobre ela.
+Cada espaço contém uma lista de elementos de **texto**, **fio**, **caixa**, **imagem** e **caminho** (a decoração de uma página composta aceita também **conectores**, veja [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages#conectores)). A ordem do array é a ordem de pintura (o primeiro elemento é pintado primeiro, o último fica por cima). Isso vale independentemente das âncoras: um elemento pode se ancorar em outro listado depois dele (`anchor.to: '#ttl'`), de modo que uma caixa de fundo pode vir primeiro e ainda assim ser posicionada em relação ao texto que fica sobre ela.
 
 **Padrões embutidos.** Quando `header` ou `footer` é `undefined`, o postext aplica um padrão embutido razoável em vez de um espaço vazio:
 
@@ -46,7 +46,7 @@ Para dispensar os padrões embutidos, defina `header: { elements: [] }` (ou `foo
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>padrões embutidos quando <code>undefined</code>; <code>[]</code> desativa</td>
-      <td>Lista ordenada de elementos de texto, fio, caixa e imagem.</td>
+      <td>Lista ordenada de elementos de texto, fio, caixa, imagem e caminho.</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ Os elementos de caixa pintam um retângulo de cantos arredondados dentro do espa
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Raio dos cantos. Limitado à metade do lado menor no momento da renderização.</td>
+      <td>Raio dos cantos. Limitado à metade do lado menor no momento da renderização. Desde o postext 1.48, um objeto dá a cada canto o próprio raio, e um canto que fica de fora é reto: uma faixa arredondada só nos cantos de cima.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>todos os lados</td>
+      <td>A borda lado a lado, cada um <code>&#123; enabled?, color?, width? &#125;</code> sobre <code>borderColor</code> e <code>borderWidth</code>. Um lado é traçado quando tem cor e largura, a não ser que diga <code>enabled: false</code>: uma faixa com um fio só no pé é <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Desde o postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ O renderizador de PDF incorpora o recurso como uma figura (um SVG com matriz de 
 
 Uma imagem desenhada por um design é conteúdo quando o recurso dela a descreve. A descrição (o `altText` do recurso ou, na falta dele, a legenda como texto simples, com um chip lido pelo rótulo e um `:ref` pelo `text` dele, quando houver) vai para a VDT (`VDTDesignImageBlock.altText`). Ela vira o `alt` do `<img>` no HTML e uma `Figure` com `/Alt` num PDF marcado, lida logo depois do texto do design (a prancha de um capítulo depois do título do capítulo). Uma imagem cujo recurso não tem nenhum dos dois, e uma marcada como `decorative`, é decoração: `alt=""` com `role="presentation"`, e um artefato no PDF. A imagem de um cabeço ou de um rodapé se repete em todas as páginas; por isso, é elemento fixo da página, independentemente do que o recurso diga: sem `altText` na VDT, `alt=""` com `role="presentation"` no HTML, um artefato da página no PDF.
 
+### Elementos de caminho
+
+Um elemento `path` desenha uma forma vetorial que uma caixa não consegue: uma barra que corre até a lombada com a ponta inclinada, uma fita com um entalhe, as divisas ao lado de um cabeço, o rabicho de um balão num cartão. O contorno são dados de caminho SVG, escritos por padrão em frações da própria caixa do elemento; assim, a forma se estica com a caixa e a acompanha quando a caixa se move: uma fita dimensionada com `{ to: '#title', edge: 'right' }` tem o comprimento do título em todos os idiomas. Todo espaço de design o aceita: cabeços, designs de título e de parte, filas de parte do sumário, designs de boxe e a decoração de uma página composta. Desde o postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriedade</th>
+      <th>Tipo</th>
+      <th>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Discriminador, e um id estável em que outros elementos podem se ancorar.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Dados de caminho SVG: <code>M L H V C S Q T A Z</code>, absolutos e relativos, nas unidades de <code>viewBox</code>. Dados que não podem ser lidos (sem movimento inicial, uma letra que não é comando, um comando com números de menos) não desenham nada e são apontados como <code>unknownConfigValue</code>; a caixa do elemento continua valendo para os elementos ancorados nela.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>A largura e a altura do espaço em que <code>d</code> está escrito. Com o padrão, <code>1</code> é a largura ou a altura inteira da caixa. Um caminho copiado de um desenho mantém aqui o tamanho do desenho (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> estica o <code>viewBox</code> até a caixa em cada eixo; <code>'meet'</code> o escala por igual para caber dentro, centralizado: um ícone que não pode ser achatado.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>preenchimento preto</td>
+      <td>O preenchimento e o contorno. Sem nenhum dos dois, a forma é preenchida de preto, como um caminho SVG; só com <code>stroke</code>, fica sem preenchimento. As cores ligadas à paleta seguem as paletas da página e da parte.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, contínuo</td>
+      <td>A espessura e o padrão de tracejado do contorno, comprimentos da página que não se esticam com a caixa; assim, uma forma esticada mantém uma linha uniforme.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Posicionado e dimensionado como um elemento de caixa (veja <a href="#posicionamento-de-elementos">Posicionamento de elementos</a>): um lado omitido, ou <code>'fill'</code>, vai até a borda do contêiner.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>como nos elementos de caixa</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>Em que páginas aparece, se fica onde o modelo desenha o bloco dele (a decoração de uma página composta) e se conta para a altura reservada de um título.</td>
+    </tr>
+  </tbody>
+</table>
+
+Um caminho é pintado como forma vetorial no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo, como artefato de layout num PDF marcado, e fica fora do EPUB refluível junto com os outros elementos fixos da página. Um clique responde sobre a tinta dele, não sobre a caixa vazia. Uma chave que o elemento não tem é `unknownConfigKey`. Nesta versão, os caminhos não giram.
+
 ### Posicionamento de elementos
 
-`ElementPlacement` é o modelo unificado de posicionamento usado por todos os tipos de elemento (texto, fio, caixa, imagem) dentro de qualquer espaço de design: cabeçalho da página, rodapé da página ou o espaço de design avançado de um nível de título. Três informações descrevem um posicionamento:
+`ElementPlacement` é o modelo unificado de posicionamento usado por todos os tipos de elemento (texto, fio, caixa, imagem, caminho) dentro de qualquer espaço de design: cabeçalho da página, rodapé da página ou o espaço de design avançado de um nível de título. Três informações descrevem um posicionamento:
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
     edge: AnchorEdge;
+    /** The point along the side `edge` names, on '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distance from the anchor point. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ Cada borda relativa a um elemento põe um canto do elemento sobre um canto do el
 
 Uma borda relativa a um elemento usada com `'container'`, `'page'` ou `'bleed'`, e uma borda de contêiner usada com `'#id'`, são lidas como o canto superior esquerdo.
 
+**Um ponto ao longo de um lado.** Numa âncora em `'#id'` (outro elemento ou, numa página composta, um bloco ou um grupo), `at` escolhe um ponto ao longo do lado que a borda indica: `'start'`, `'center'`, `'end'`, ou uma fração do lado a partir do início dele, de `0` a `1`. Ao longo do lado, o elemento fica centralizado nesse ponto; no sentido transversal, a borda mantém o lugar; assim, `below` com `at: 'center'` pendura um traço sob o meio de um bloco, e `right-of` com `at: 0.5` põe uma marca na metade do lado dele. Um lado horizontal (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom`, e os cantos, lidos como o lado deles) começa onde começam as linhas da página: à direita numa página da direita para a esquerda. Um lado vertical (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) começa no alto. Um número fora de 0 a 1 fica preso à ponta mais próxima; uma palavra diferente das três é apontada como `unknownConfigValue` e ignorada, assim como `at` em `'container'`, `'page'`, `'bleed'`, `'outer'` e em `center`. Desde o postext 1.48; sem `at`, a borda mantém o próprio ponto, como antes.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Bordas de início e de fim.** `top-start`, `start`, `bottom-start`, `top-end`, `end` e `bottom-end` (com `'container'`, `'page'`, `'bleed'` ou `'outer'`), e `align-start` e `align-end` (com `'#id'`), indicam o lado em que começam as linhas da página em vez de um lado fixo. Numa página da esquerda para a direita, `top-start` é `top-left`; numa página da direita para a esquerda, e numa página vertical, cujas linhas se sucedem a partir da direita, é `top-right`. Com essas bordas, o `x` do deslocamento vai do lado inicial ao lado final: numa página da direita para a esquerda, um `x` positivo move o elemento para a esquerda, e o elemento é o espelho do elemento da esquerda para a direita. A decoração de um modelo e os cabeços ficam na folha; por isso, um antetítulo escrito `top-start` fica sobre o bloco do título tanto numa edição árabe quanto numa brasileira. Um bloco fica no fluxo da página, já espelhado ou girado, onde `start` é sempre a esquerda dele, como `left`. No desenho de um título, que também fica no fluxo, `start` é `left`. No Sandbox, a lista **Alinhamento** do editor do espaço tem **Início** e **Fim**, e as listas de bordas têm os lados inicial e final. Desde o postext 1.39; até o 1.38 essas palavras valiam `top-left`.
 
 `anchor.to: 'page'` ancora o elemento na **caixa de refile** (a página física depois do corte) e `'bleed'`, na caixa de refile ampliada por `cutLines.bleed` em todos os lados (idêntica à caixa de refile enquanto as marcas de corte estão desativadas). Os dois quadros também passam a ser a referência para `size: 'fill'` e para a limitação automática de largura, de modo que uma faixa colorida pode ir de borda a borda, independentemente das margens da página:
@@ -740,7 +830,7 @@ Uma borda relativa a um elemento usada com `'container'`, `'page'` ou `'bleed'`,
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Um tamanho também pode ir até uma borda de outra caixa: `{ to, edge }`, em que `to` indica a caixa como faz uma âncora (`'container'`, `'page'`, `'bleed'`, `'outer'`, ou `'#id'` de outro elemento e, na decoração de uma página composta, de um bloco ou de um grupo) e `edge` indica qual das bordas dela: `'top'` ou `'bottom'` para uma altura, `'left'` ou `'right'` para uma largura. A medida vai do ponto de âncora do elemento até essa borda, no sentido em que o elemento cresce; uma borda atrás do ponto de âncora dá 0, e uma borda do outro eixo, ou uma caixa que não existe, é lida como `'fill'`. Um fundo que vai do pé de uma faixa até a sangria fica no modelo e acompanha a faixa quando ela se move. Desde o postext 1.38:
+Um tamanho também pode ir até uma borda de outra caixa: `{ to, edge }`, em que `to` indica a caixa como faz uma âncora (`'container'`, `'page'`, `'bleed'`, `'outer'`, ou `'#id'` de outro elemento e, na decoração de uma página composta, de um bloco ou de um grupo) e `edge` indica qual das bordas dela: `'top'` ou `'bottom'` para uma altura, `'left'` ou `'right'` para uma largura, ou `'center'` para o meio dela em qualquer um dos eixos (desde o postext 1.48): uma faixa da borda esquerda de um bloco até o meio do bloco ao lado, um fio vertical de baixo de um cartão até o meio da fila de baixo. A medida vai do ponto de âncora do elemento até essa borda, no sentido em que o elemento cresce; uma borda atrás do ponto de âncora dá 0, e uma borda do outro eixo, ou uma caixa que não existe, é lida como `'fill'`. Um fundo que vai do pé de uma faixa até a sangria fica no modelo e acompanha a faixa quando ela se move. Desde o postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

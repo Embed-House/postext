@@ -4,7 +4,7 @@ import type { MathRender } from '../math/types';
 import { getMathRaster } from '../math/rasterCache';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { renderResourceBlock } from './renderResourceBlock';
-import { paintSwatch } from './swatch';
+import { paintSwatchSegment } from './swatch';
 import { paintChip } from './chip';
 import { lineInkExtent, lineTrailingTracking } from '../lineInk';
 import { fillFlowText, verticalPaintActive } from './verticalText';
@@ -186,7 +186,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      paintSwatch(ctx, x, baseline, seg.width, seg.swatch?.color, style.color);
+      paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color);
       x += seg.width;
       continue;
     }
@@ -289,7 +289,7 @@ function renderComposedSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      paintSwatch(ctx, x, baseline, seg.width, seg.swatch?.color, style.color);
+      paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color);
       x += seg.width;
       continue;
     }

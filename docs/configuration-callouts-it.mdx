@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configurazione: riquadri',
   sidebarTitle: 'Riquadri',
-  description: 'Stili con nome per i riquadri :::callout: bordo, sfondo, banda, titolo, icona, marcatore e linguetta dell’etichetta; enunciati numerati; tipografia dentro il riquadro; riquadri divisi tra più pagine; progetti grafici disegnati in un riquadro',
+  description: 'Stili con nome per i riquadri :::callout: bordo, sfondo, banda, titolo, icona, marcatore e linguetta dell’etichetta; forme del riquadro con raggi per angolo, bordi per lato e linguette unite; enunciati numerati; tipografia dentro il riquadro; riquadri divisi tra più pagine; progetti grafici disegnati in un riquadro',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '27 min',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
-      <td>Contorno del riquadro, tracciato all’interno del bordo del riquadro come il bordo di un elemento riquadro (vedi <a href="/it/docs/configuration-headers-footers#elementi-riquadro">Elementi riquadro</a>).</td>
+      <td>Contorno del riquadro, tracciato all’interno del bordo del riquadro come il bordo di un elemento riquadro (vedi <a href="/it/docs/configuration-headers-footers#elementi-riquadro">Elementi riquadro</a>). Da postext 1.48, <code>sides</code> dà a ogni lato (<code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>) il proprio <code>&#123; enabled?, color?, width? &#125;</code> sopra i valori del bordo intero: un filetto solo sopra il riquadro, un piede più spesso (vedi <a href="#angoli-lati-e-linguette-unite">Angoli, lati e linguette unite</a>).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>Raggio degli angoli dello sfondo / del bordo (limitato a metà della larghezza e dell’altezza del riquadro). La banda lo segue: su un riquadro arrotondato la banda è ritagliata dal contorno arrotondato, come CSS ritaglia un <code>border-left</code> con <code>border-radius</code>. La linguetta <code>label</code> mantiene gli angoli vivi.</td>
+      <td>Raggio degli angoli dello sfondo / del bordo (limitato a metà della larghezza e dell’altezza del riquadro). La banda lo segue: su un riquadro arrotondato la banda è ritagliata dal contorno arrotondato, come CSS ritaglia un <code>border-left</code> con <code>border-radius</code>. La linguetta <code>label</code> mantiene gli angoli vivi, a meno che non sia unita al riquadro. Da postext 1.48 accetta un raggio per angolo, e un angolo assente dall’oggetto resta vivo: un riquadro arrotondato solo sui due angoli superiori.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -196,9 +196,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
       <td>non impostato (nessuna linguetta)</td>
-      <td>Una linguetta sul bordo superiore del riquadro che stampa l’attributo <code>label</code> della riga di apertura: il numero di un riquadro numerato («BOX 1-1»). Aderisce all’angolo <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, oppure <code>'top-start'</code> / <code>'top-end'</code> nella direzione del riquadro stesso, come <code>'start'</code> / <code>'end'</code> per la banda), rientrata di <code>inset</code>, sporge di <code>offset</code> sopra la sommità del riquadro (quello spazio fa parte del blocco, in aggiunta a <code>marginTop</code>, così la linguetta lo conserva anche in testa a una colonna), è alta <code>height</code> con <code>paddingX</code> su ogni lato del testo, e può portare accanto una risorsa <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>, sul lato opposto all’angolo) e un <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) lungo il bordo superiore dall’angolo opposto fino a essa. Valori predefiniti: font dei titoli, corpo del testo corrente, <code>700</code>, bianco sul colore principale, alta <code>1.4em</code>, spaziatura interna <code>0.6em</code>, senza sollevamento né rientro, un’immagine larga <code>1em</code> a <code>0.3em</code> dal testo. La linguetta è una forma a sé appoggiata sul bordo, quindi mantiene gli angoli vivi qualunque sia il <code>borderRadius</code> del riquadro. Da postext 1.42, <code>icon.placement: 'inside'</code> mette l’immagine dentro la linguetta, all’inizio e prima delle parole (all’estremo destro in un riquadro composto da destra a sinistra), a <code>gap</code> da esse: la linguetta è larga quanto immagine, spazio, parole e margine interno, e l’immagine, adattata a <code>icon.width</code> e all’altezza della linguetta, vi è centrata. L’immagine conserva i propri colori, quindi un anello bianco su una linguetta colorata e un anello colorato su una bianca sono due risorse, una per stile. <code>'beside'</code>, il valore predefinito, colloca l’immagine fuori dal bordo della linguetta. Da postext 1.43, <code>icon.tint: true</code> colora l’immagine con il <code>color</code> della linguetta invece che con i propri colori: si colora solo la sagoma dell’immagine, nel colore delle parole, così un solo anello serve a tutte le tinte di un libro. Un’immagine senza trasparenza diventa un semplice rettangolo. Nel PDF un SVG mantiene i bordi e una bitmap viene ritagliata dove è semitrasparente; l’originale di stampa (<code>svg.pdfFileId</code>) non si usa, perché una pagina PDF non si può ricolorare.</td>
+      <td>Una linguetta sul bordo superiore del riquadro che stampa l’attributo <code>label</code> della riga di apertura: il numero di un riquadro numerato («BOX 1-1»). Aderisce all’angolo <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, oppure <code>'top-start'</code> / <code>'top-end'</code> nella direzione del riquadro stesso, come <code>'start'</code> / <code>'end'</code> per la banda), rientrata di <code>inset</code>, sporge di <code>offset</code> sopra la sommità del riquadro (quello spazio fa parte del blocco, in aggiunta a <code>marginTop</code>, così la linguetta lo conserva anche in testa a una colonna), è alta <code>height</code> con <code>paddingX</code> su ogni lato del testo, e può portare accanto una risorsa <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>, sul lato opposto all’angolo) e un <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) lungo il bordo superiore dall’angolo opposto fino a essa. Valori predefiniti: font dei titoli, corpo del testo corrente, <code>700</code>, bianco sul colore principale, alta <code>1.4em</code>, spaziatura interna <code>0.6em</code>, senza sollevamento né rientro, un’immagine larga <code>1em</code> a <code>0.3em</code> dal testo. La linguetta è una forma a sé appoggiata sul bordo, quindi mantiene gli angoli vivi qualunque sia il <code>borderRadius</code> del riquadro; con <code>joined: true</code> (da postext 1.48) linguetta e riquadro sono invece un solo contorno, e <code>fillet</code> arrotonda gli angoli interni dove si incontrano. Le posizioni <code>bottom-right</code>, <code>bottom-left</code>, <code>bottom-start</code> e <code>bottom-end</code> (da postext 1.48) appendono la linguetta al piede del riquadro, con il suo <code>rule</code> lungo il piede. Da postext 1.48 l’icona può essere anche un carattere di un font, <code>icon.kind: 'glyph'</code> (vedi <a href="#un-glifo-sulla-linguetta">Un glifo sulla linguetta</a>). Da postext 1.42, <code>icon.placement: 'inside'</code> mette l’immagine dentro la linguetta, all’inizio e prima delle parole (all’estremo destro in un riquadro composto da destra a sinistra), a <code>gap</code> da esse: la linguetta è larga quanto immagine, spazio, parole e margine interno, e l’immagine, adattata a <code>icon.width</code> e all’altezza della linguetta, vi è centrata. L’immagine conserva i propri colori, quindi un anello bianco su una linguetta colorata e un anello colorato su una bianca sono due risorse, una per stile. <code>'beside'</code>, il valore predefinito, colloca l’immagine fuori dal bordo della linguetta. Da postext 1.43, <code>icon.tint: true</code> colora l’immagine con il <code>color</code> della linguetta invece che con i propri colori: si colora solo la sagoma dell’immagine, nel colore delle parole, così un solo anello serve a tutte le tinte di un libro. Un’immagine senza trasparenza diventa un semplice rettangolo. Nel PDF un SVG mantiene i bordi e una bitmap viene ritagliata dove è semitrasparente; l’originale di stampa (<code>svg.pdfFileId</code>) non si usa, perché una pagina PDF non si può ricolorare.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Angoli, lati e linguette unite
+
+Un riquadro non deve per forza essere un rettangolo con quattro angoli uguali e un solo bordo. Da postext 1.48 uno stile può arrotondare alcuni angoli e non altri, tracciare il bordo solo su alcuni lati e far nascere la linguetta dal riquadro come un’unica forma: la scheda di un libro di scuola in cui la linguetta del titolo e il corpo sono un solo contorno, disegnato dallo stile invece che dipinto in un’immagine dietro la pagina.
+
+```ts
+calloutStyles: [
+  // Arrotondato solo in alto, un filetto sopra il riquadro e un piede più spesso.
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // Una scheda la cui linguetta nasce dal bordo superiore.
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **Angoli.** `borderRadius` è una sola lunghezza per i quattro angoli, oppure `{ topLeft, topRight, bottomRight, bottomLeft }`. Un angolo assente dall’oggetto resta vivo. Gli angoli sono quelli del foglio. Due angoli non prendono mai più del lato che li separa; ciascuno cede in proporzione.
+- **Lati.** `border.sides.top`, `right`, `bottom` e `left` accettano `enabled`, `color` e `width`, e ogni campo assente è quello del bordo intero. Un riquadro con il bordo solo in alto è `border: { enabled: false, sides: { top: { enabled: true } } }`, oppure `enabled: true` con gli altri tre lati spenti. Il bordo interno di un lato segue il suo spessore, quindi un angolo arrotondato fra un lato sottile e uno spesso si curva come lo disegna CSS.
+- **Linguetta unita.** Con `label.joined: true` la linguetta e il riquadro sono un solo contorno, un solo riempimento (il `background` del riquadro; quello proprio della linguetta non viene disegnato) e un solo bordo che gira attorno alla linguetta. La linguetta sta sul bordo, fuori dal riquadro per la sua altezza: il suo `offset` deve essere `0` (un altro valore viene segnalato come `unknownConfigValue` e letto come `0`). I suoi angoli esterni prendono il raggio dell’angolo del riquadro a cui aderisce, e gli angoli interni dove incontra il riquadro sono arrotondati da `fillet` (predefinito: quel raggio). Una linguetta a filo con il lato del riquadro (un `inset` sotto il mezzo pixel) sale dritta da quel lato. Dai alle parole un colore che si legga sul riempimento del riquadro (`label.color`), perché la linguetta non ha più un riempimento suo.
+- **Linguette in basso.** `position: 'bottom-right'`, `'bottom-left'`, `'bottom-start'` o `'bottom-end'` appende la linguetta al piede del riquadro, semplice o unita: è la linguetta superiore capovolta, `offset` sotto il piede, il `rule` lungo il piede. Non ci sono linguette laterali: le parole di una linguetta corrono in orizzontale.
+
+Tutte le uscite disegnano queste forme: il canvas e il PDF come contorni vettoriali, il visualizzatore HTML e l’EPUB a layout fisso con CSS per angolo e per lato. L’EPUB a layout fluido scrive angoli e lati nel suo CSS e compone una linguetta unita come una linguetta semplice. Il `look.border.color` di una cornice ricolora tutti i lati, e la tavolozza di una parte li ricolora uno per uno. Uno stile con tutti gli angoli e tutti i lati uguali si impagina come prima.
+
+### Un glifo sulla linguetta
+
+`label.icon` può mettere un carattere di un font al posto di un’immagine: `kind: 'glyph'` con `glyph: '◉'`. La linguetta non ha bisogno di una risorsa immagine, e il glifo prende il colore delle parole a meno che non ne imposti uno suo, così un solo stile serve a tutte le tinte di un libro. Da postext 1.48.
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>vedi descrizione</td>
+      <td><code>'resource'</code> quando è impostato <code>resourceId</code>, <code>'glyph'</code> quando c’è solo <code>glyph</code>. Se è scritto, <code>kind</code> prevale: <code>kind: 'glyph'</code> mette il glifo qualunque cosa dica <code>resourceId</code>.</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Il carattere usato come icona (<code>'◉'</code>, <code>'★'</code>, <code>'✎'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>number</code></td>
+      <td>quelli dell’etichetta</td>
+      <td>Il carattere e il peso del glifo: quelli dell’etichetta, altrimenti il font dei titoli e <code>700</code>. Un font a cui manca il carattere ricorre a un sostituto come fa il browser; il PDF segnala <code>missingGlyph</code>.</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>La dimensione del glifo come fattore del corpo del testo della linguetta. A <code>1</code> condivide la linea di base delle parole; alle altre dimensioni resta centrato sulla linguetta.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>il <code>color</code> dell’etichetta</td>
+      <td>Il colore del glifo. Se non è impostato segue le parole, e il <code>look.label.color</code> di una cornice li ricolora entrambi.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>, <code>Dimension</code></td>
+      <td><code>'beside'</code>, <code>0.3em</code></td>
+      <td>Come per un’immagine: <code>'inside'</code> mette il glifo nella linguetta prima delle parole, e la linguetta cresce della sua larghezza e dello spazio; <code>'beside'</code> lo mette oltre il bordo della linguetta. La <code>width</code> e il <code>tint</code> di un’immagine non si applicano.</td>
+    </tr>
+  </tbody>
+</table>
+
+Il glifo è decorazione: un artefatto di impaginazione in un PDF taggato, nascosto alle tecnologie assistive nell’HTML e lasciato fuori dal titolo del riquadro nell’EPUB a layout fluido, così la linguetta si legge solo dalle sue parole.
 
 ### Stili basati su un altro
 

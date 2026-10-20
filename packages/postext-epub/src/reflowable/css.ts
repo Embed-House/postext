@@ -4,8 +4,8 @@
 // line heights are ratios, colours come from the resolved palette, and no
 // rule sets a width the screen would have to honour.
 
-import type { ColorValue, Dimension, ResolvedConfig, ResolvedTableStyleConfig } from 'postext';
-import { dimensionToPx, primaryFontFamily, resolvedCodeStyle } from 'postext';
+import type { ColorValue, CornerRadius, Dimension, ResolvedConfig, ResolvedTableStyleConfig } from 'postext';
+import { dimensionToPx, isCornerRadii, primaryFontFamily, resolvedCodeStyle, uniformRadius } from 'postext';
 import { cssString } from '../shared/assets';
 import { idOf, round } from './inline';
 
@@ -481,11 +481,31 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
     // A box's sides are the body flow's (#371): in a right-to-left book,
     // whose flow is mirrored, its left padding is on the page's right.
     const [padRight, padLeft] = rtl ? [pad.left, pad.right] : [pad.right, pad.left];
+    // Corners of their own and a border per side (#1059); a joined tab
+    // reflows as a plain tab.
+    const radius = isCornerRadii(s.borderRadius)
+      ? (() => {
+          const r = s.borderRadius as Exclude<CornerRadius, Dimension>;
+          const one = (d: Dimension | undefined) => (d ? em(d) : '0');
+          // The corners of the body flow's sides, as the padding's.
+          const [tl, tr, br, bl] = rtl ? [r.topRight, r.topLeft, r.bottomLeft, r.bottomRight] : [r.topLeft, r.topRight, r.bottomRight, r.bottomLeft];
+          return [tl, tr, br, bl].some((d) => d && px(d) > 0)
+            ? `border-radius: ${one(tl)} ${one(tr)} ${one(br)} ${one(bl)}`
+            : undefined;
+        })()
+      : px(uniformRadius(s.borderRadius)!) > 0 && `border-radius: ${em(uniformRadius(s.borderRadius)!)}`;
+    const sideBorders = s.border.sides
+      ? (['top', 'right', 'bottom', 'left'] as const).map((k) => {
+          const b = s.border.sides![rtl && k === 'left' ? 'right' : rtl && k === 'right' ? 'left' : k];
+          return b.enabled && px(b.width) > 0 ? `border-${k}: ${round(px(b.width) * (96 / dpi))}px solid ${b.color.hex}` : `border-${k}: none`;
+        })
+      : [];
     out.push(rule(sel, [
       s.backgroundEnabled && color(s.background, 'background-color'),
-      s.border.enabled && px(s.border.width) > 0 && `border: ${round(px(s.border.width) * (96 / dpi))}px solid ${s.border.color.hex}`,
+      !s.border.sides && s.border.enabled && px(s.border.width) > 0 && `border: ${round(px(s.border.width) * (96 / dpi))}px solid ${s.border.color.hex}`,
+      ...sideBorders,
       stripe && `${side}: ${stripe}`,
-      px(s.borderRadius) > 0 && `border-radius: ${em(s.borderRadius)}`,
+      radius,
       `padding: ${em(pad.top)} ${em(padRight)} ${em(pad.bottom)} ${em(padLeft)}`,
       `margin: ${em(s.marginTop)} 0 ${em(s.marginBottom)}`,
       fam(s.body.fontFamily),

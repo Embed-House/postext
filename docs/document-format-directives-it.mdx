@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Direttive',
   description: 'Le direttive aperte da ::: (contenitori, colonne, cambi di carta, interruzioni di pagina, numerazione, spazio, versi, indice e indice analitico, a capo) e il markup delle tavole a fumetti',
   lang: 'it',
-  lastUpdated: '2026-10-19',
-  readingTime: '36 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '37 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "Una direttiva è un blocco che comincia con tre segni di due punti, come :::callout o :::columns. Questa pagina elenca ogni direttiva e che cosa fa. Alcune mettono il testo in un riquadro, lo compongono in colonne o lo stampano su un altro tipo di carta. Altre cominciano una nuova pagina, cambiano la numerazione, aggiungono spazio, compongono una poesia verso per verso, o stampano l’indice dei contenuti e l’indice analitico. L’ultima sezione spiega come si scrivono le tavole a fumetti, le vignette e le battute dei personaggi.",
@@ -125,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Nel flusso del testo sono riconosciuti cinque nomi di contenitore; un sesto, `:::frame`, raccoglie il contenuto di una cornice in una [pagina composta](#pagine-composte). Ciò che ciascuno disegna si imposta nella relativa sezione della configurazione:
+Nel flusso del testo sono riconosciuti cinque nomi di contenitore; `:::frame` e `:::module` raccolgono il contenuto di una cornice e di un modulo in una [pagina composta](#pagine-composte), e `:::figure` e `:::label` una figura e un’etichetta di più righe. Ciò che ciascuno disegna si imposta nella relativa sezione della configurazione:
 
 <table>
   <thead>
@@ -735,4 +735,7 @@ Una pagina composta si impagina a partire da un modello di pagina della configur
 - `::::page{template="…"}` … `::::` è la pagina: quattro o più segni di due punti, chiusi da una riga che contiene soltanto lo stesso numero di segni. I blocchi aperti da tre segni di due punti al suo interno (`:::frame`, `:::callout`, `:::figure`…) funzionano come ovunque, e un `:::` da solo non chiude mai la pagina. Un `:::page` con tre segni di due punti resta una tavola di fumetto.
 - `:::frame{slot="…" label="…"}` … `:::` contiene il contenuto della cornice con quel nome: qualsiasi Markdown.
 - `slot="…"` su un titolo (`## Retos {slot="retos-titulo"}`), su `::resource{id="…" slot="…"}`, su un blocco di codice o su un contenitore `:::` manda in quella cornice solo quel blocco. Il contenuto senza slot va nella cornice di flusso del modello.
-- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente. I suoi `alt`, `caption` e `note`, come attributi del delimitatore o come righe `::alt[…]`, `::caption[…]` e `::note[…]`, sostituiscono i testi della risorsa in quel capitolo (vedi [Pagine composte › Le parole proprie di una figura](/it/docs/composed-pages#le-parole-proprie-di-una-figura)).
+- `:::figure{resource="…" slot="…"}` … `:::` colloca una risorsa con le sue righe `::label[TEXT]{at="…" style="…"}`, dove `at` è un’ancora dell’immagine o un punto `"x% y%"`. Una figura funziona anche nel testo corrente. I suoi `alt`, `caption` e `note`, come attributi del delimitatore o come righe `::alt[…]`, `::caption[…]` e `::note[…]`, sostituiscono i testi della risorsa in quel capitolo (vedi [Pagine composte › Le parole proprie di una figura](/it/docs/composed-pages-figures#le-parole-proprie-di-una-figura)).
+- `leader` su una `::label` traccia una linea dall’etichetta al punto della sua ancora, e `leader="none"` la toglie. `:::label{at="…" style="…"}` … `:::`, dentro una figura, scrive un’etichetta riga per riga, come serve alla legenda di una carta; `:icon[alt]{glyph="…"}`, `{resource="…"}` o `{line="dashed"}` mette un simbolo in un’etichetta, una didascalia, una nota o una cella di tabella (vedi [Pagine composte › Linee di richiamo, legende e simboli](/it/docs/composed-pages-figures#linee-di-richiamo-legende-e-simboli)). Da postext 1.48.
+- In una pagina il cui modello ripete una scheda in una griglia, ogni `:::frame{slot="<card>"}` è una scheda, e un blocco al suo interno che indica un’altra cornice della scheda va a quella cornice della stessa scheda (vedi [Pagine composte › Slot ripetuti](/it/docs/composed-pages#slot-ripetuti)). Da postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` contiene il contenuto di un modulo della pagina, un blocco disegnato da un modello di modulo e impilato nel gruppo di moduli della pagina; gli slot al suo interno sono quelli del modulo (vedi [Pagine composte › Moduli in una pagina](/it/docs/composed-pages#moduli-in-una-pagina)). Da postext 1.48.

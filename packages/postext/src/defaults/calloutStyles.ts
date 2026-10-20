@@ -1,7 +1,10 @@
 import { floatColumnCount } from './shared';
 import type {
+  BorderSide,
   CalloutDesignConfig,
   CalloutFixedConfig,
+  CalloutLabelIconConfig,
+  CalloutLabelIconKind,
   CalloutNumberingConfig,
   CalloutStyleConfig,
   ColorValue,
@@ -18,6 +21,7 @@ import { colorsEqual, dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
 import { defaultTableContinuationStrings } from './tableStyle';
 import { presentTag } from '../locale';
 import { resolveDesignSlot } from './headerFooter';
+import { isCornerRadii } from '../design/boxShape';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 const PT0: Dimension = { value: 0, unit: 'pt' };
@@ -72,7 +76,7 @@ export const DEFAULT_CALLOUT_STYLE_STATIC = {
     paddingX: EM(0.6),
     offset: PT0,
     inset: PT0,
-    icon: { resourceId: '', width: EM(1), gap: EM(0.3), placement: 'beside' as const, tint: false },
+    icon: { resourceId: '', width: EM(1), gap: EM(0.3), placement: 'beside' as const, tint: false, glyph: '', scale: 1 },
     rule: { enabled: false, color: { ...DEFAULT_MAIN_COLOR } as ColorValue, width: { value: 0.5, unit: 'pt' } as Dimension },
   },
   columnGap: EM(1.5),
@@ -111,6 +115,37 @@ export const DEFAULT_CALLOUT_STYLE_STATIC = {
   continuesMarkerItalic: true,
 };
 
+/** A box style's border: the whole border, and each side over it when
+ *  the style sets `sides` (#1059). */
+function resolveBorder(border: CalloutStyleConfig['border']): ResolvedCalloutStyleConfig['border'] {
+  const d = DEFAULT_CALLOUT_STYLE_STATIC.border;
+  const enabled = border?.enabled ?? d.enabled;
+  const color = border?.color ?? d.color;
+  const width = border?.width ?? d.width;
+  const sides = border?.sides;
+  if (!sides || typeof sides !== 'object') return { enabled, color, width };
+  const side = (s: BorderSide | undefined) => {
+    const o = s && typeof s === 'object' ? s : undefined;
+    return { enabled: o?.enabled ?? enabled, color: o?.color ?? color, width: o?.width ?? width };
+  };
+  return { enabled, color, width, sides: { top: side(sides.top), right: side(sides.right), bottom: side(sides.bottom), left: side(sides.left) } };
+}
+
+/** What a label tab's icon is (#1054): the `kind` it names, else a
+ *  picture when it names one and a glyph when it sets only a character.
+ *  Any other word reads as the default (reported, `unknownConfigValue`). */
+export function labelIconKind(icon: CalloutLabelIconConfig | undefined): CalloutLabelIconKind {
+  const kind = icon?.kind as unknown;
+  if (kind === 'glyph' || kind === 'resource') return kind;
+  return !icon?.resourceId && typeof icon?.glyph === 'string' && icon.glyph.length > 0 ? 'glyph' : 'resource';
+}
+
+/** The size of a label tab's glyph against the tab's words (#1054): a
+ *  positive finite factor, else `1`. */
+export function labelIconScale(scale: unknown): number {
+  return typeof scale === 'number' && Number.isFinite(scale) && scale > 0 ? scale : DEFAULT_CALLOUT_STYLE_STATIC.label.icon.scale;
+}
+
 /** One neutral style ships by default so `:::callout` works out of the box:
  *  light grey background, no stripe, no icon, no title. */
 export const DEFAULT_CALLOUT_STYLES: CalloutStyleConfig[] = [{ id: 'note', name: 'Note' }];
@@ -146,11 +181,7 @@ function resolveCalloutStyleConfig(
     width: partial.width ?? d.width,
     backgroundEnabled: partial.backgroundEnabled ?? d.backgroundEnabled,
     background: partial.background ?? d.background,
-    border: {
-      enabled: partial.border?.enabled ?? d.border.enabled,
-      color: partial.border?.color ?? d.border.color,
-      width: partial.border?.width ?? d.border.width,
-    },
+    border: resolveBorder(partial.border),
     borderRadius: partial.borderRadius ?? d.borderRadius,
     padding: {
       top: partial.padding?.top ?? d.padding.top,
@@ -191,17 +222,27 @@ function resolveCalloutStyleConfig(
             offset: partial.label.offset ?? d.label.offset,
             inset: partial.label.inset ?? d.label.inset,
             icon: {
+              kind: labelIconKind(partial.label.icon),
               resourceId: partial.label.icon?.resourceId ?? d.label.icon.resourceId,
               width: partial.label.icon?.width ?? d.label.icon.width,
               gap: partial.label.icon?.gap ?? d.label.icon.gap,
               placement: partial.label.icon?.placement === 'inside' ? 'inside' : d.label.icon.placement,
               tint: partial.label.icon?.tint === true ? true : d.label.icon.tint,
+              // The glyph (#1054): in the label's face and weight unless
+              // set, its colour the label's when the tab is laid out.
+              glyph: typeof partial.label.icon?.glyph === 'string' ? partial.label.icon.glyph : d.label.icon.glyph,
+              fontFamily: partial.label.icon?.fontFamily ?? partial.label.fontFamily ?? headings.fontFamily,
+              fontWeight: partial.label.icon?.fontWeight ?? partial.label.fontWeight ?? d.label.fontWeight,
+              scale: labelIconScale(partial.label.icon?.scale),
+              ...(partial.label.icon?.color ? { color: partial.label.icon.color } : {}),
             },
             rule: {
               enabled: partial.label.rule?.enabled ?? d.label.rule.enabled,
               color: partial.label.rule?.color ?? d.label.rule.color,
               width: partial.label.rule?.width ?? d.label.rule.width,
             },
+            joined: partial.label.joined === true,
+            ...(partial.label.fillet ? { fillet: partial.label.fillet } : {}),
           },
         }
       : {}),
@@ -447,10 +488,11 @@ export function stripCalloutStylesDefaults(
       if (s.border.enabled !== undefined && s.border.enabled !== d.border.enabled) b.enabled = s.border.enabled;
       if (s.border.color !== undefined && !colorsEqual(s.border.color, d.border.color)) b.color = s.border.color;
       if (s.border.width !== undefined && !dimensionsEqual(s.border.width, d.border.width)) b.width = s.border.width;
+      if (s.border.sides !== undefined) b.sides = s.border.sides;
       const kept = stripObject(b);
       if (kept) r.border = kept;
     }
-    if (s.borderRadius !== undefined && !dimensionsEqual(s.borderRadius, d.borderRadius)) r.borderRadius = s.borderRadius;
+    if (s.borderRadius !== undefined && (isCornerRadii(s.borderRadius) || !dimensionsEqual(s.borderRadius, d.borderRadius))) r.borderRadius = s.borderRadius;
     if (s.padding) {
       const p: CalloutStyleConfig['padding'] = {};
       if (s.padding.top !== undefined && !dimensionsEqual(s.padding.top, d.padding.top)) p.top = s.padding.top;

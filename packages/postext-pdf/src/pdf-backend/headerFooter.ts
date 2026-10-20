@@ -6,11 +6,12 @@ import type {
   VDTDesignImageBlock,
   VDTDesignBoxStyle,
 } from 'postext';
-import { segmentOrientation } from 'postext';
+import { boxNeedsShape, boxStylePathBlocks, segmentOrientation } from 'postext';
 import { drawRightToLeftRun } from './rtlRun';
 import { inkScaleOperators } from './inkScale';
 import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock';
 import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type StructElem } from './tagging';
+import { renderPathBlock } from './pathBlock';
 
 /** How an accessible render tags a design slot: its text goes to the
  *  element `text()` returns (created on first use), or counts as an
@@ -20,8 +21,8 @@ import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type Stru
  *  (`VDTDesignImageBlock.altText`, #213) is a `Figure` that `figure`
  *  creates — read after the slot's text element, `after`, when the slot
  *  has text; without `figure` (running heads) it stays an artifact. Rules,
- *  boxes and pictures without alternative text are artifacts of class
- *  `artifact`. */
+ *  boxes, vector shapes (#1055) and pictures without alternative text are
+ *  artifacts of class `artifact`. */
 /** How a slot's text is painted: `silent`, left out of text extraction
  *  and copying (the line numbers, #621). */
 export interface SlotPaintOptions {
@@ -121,7 +122,7 @@ export function roundedRectSvgPath(
  * border width. A border as wide as the box fills it. Up to postext 1.4 the
  * stroke was centred on the edge.
  */
-function drawRoundedBox(
+export function drawRoundedBox(
   ctx: PageCtx,
   xPx: number,
   yPx: number,
@@ -130,6 +131,12 @@ function drawRoundedBox(
   style: VDTDesignBoxStyle,
 ): void {
   if (wPx <= 0 || hPx <= 0) return;
+  // Corners of their own or a border per side (#1059): the shape's fill
+  // and border pieces as vector paths.
+  if (boxNeedsShape(style)) {
+    for (const b of boxStylePathBlocks(xPx, yPx, wPx, hPx, style)) renderPathBlock(ctx, b);
+    return;
+  }
   const { scale, pageHeightPt } = ctx;
   const radius = Math.max(0, Math.min(style.borderRadiusPx, wPx / 2, hPx / 2));
   const bw = style.borderColor ? Math.max(0, style.borderWidthPx) : 0;
@@ -394,6 +401,7 @@ export function renderHeaderFooterSlot(
     }
     if (mark) tagArtifact(ctx, mark.artifact);
     if (block.kind === 'rule') renderRuleBlock(ctx, block);
+    else if (block.kind === 'path') renderPathBlock(ctx, block);
     else renderBoxBlock(ctx, block);
   }
 }

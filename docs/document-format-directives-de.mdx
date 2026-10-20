@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Direktiven',
   description: 'Die :::-Direktiven: Container, Spalten, Papier, Seitenumbrüche, Nummerierung, Abstand, Verse, Inhaltsverzeichnis und Register, Zeilenumbrüche und die Auszeichnung von Comicseiten',
   lang: 'de',
-  lastUpdated: '2026-10-19',
-  readingTime: '33 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '34 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "Eine Direktive ist ein Block, der mit drei Doppelpunkten beginnt, etwa :::callout oder :::columns. Diese Seite führt jede Direktive auf und sagt, was sie tut. Manche setzen den Text in einen Kasten oder in Spalten oder drucken ihn auf einer anderen Papiersorte. Andere beginnen eine neue Seite, ändern die Nummerierung, fügen Abstand ein, setzen ein Gedicht Zeile für Zeile oder setzen das Inhaltsverzeichnis und das Register. Der letzte Abschnitt behandelt die Zeichen für Comicseiten, Panels und die Worte der Figuren.",
@@ -125,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Im Textfluss werden fünf Containernamen erkannt; ein sechster, `:::frame`, nimmt den Inhalt eines Rahmens auf einer [zusammengesetzten Seite](#zusammengesetzte-seiten) auf. Was jeder davon darstellt, legt ein eigener Abschnitt der Konfiguration fest:
+Im Textfluss werden fünf Containernamen erkannt; `:::frame` und `:::module` nehmen den Inhalt eines Rahmens und eines Moduls auf einer [zusammengesetzten Seite](#zusammengesetzte-seiten) auf, `:::figure` und `:::label` eine Abbildung und eine mehrzeilige Beschriftung. Was jeder davon darstellt, legt ein eigener Abschnitt der Konfiguration fest:
 
 <table>
   <thead>
@@ -741,4 +741,7 @@ Eine zusammengesetzte Seite wird nach einer Seitenvorlage der Konfiguration (`pa
 - `::::page{template="…"}` … `::::` ist die Seite: vier oder mehr Doppelpunkte, geschlossen von einer Zeile, die nur ebenso viele enthält. Blöcke mit drei Doppelpunkten darin (`:::frame`, `:::callout`, `:::figure` …) wirken wie überall, und ein bloßes `:::` schließt nie die Seite. Ein `:::page` mit drei Doppelpunkten bleibt eine Comicseite.
 - `:::frame{slot="…" label="…"}` … `:::` enthält den Inhalt des Rahmens mit diesem Namen: beliebiges Markdown.
 - `slot="…"` an einer Überschrift (`## Retos {slot="retos-titulo"}`), an `::resource{id="…" slot="…"}`, an einem Codeblock oder an einem `:::`-Container leitet nur diesen einen Block in den Rahmen. Inhalt ohne Slot kommt in den Flussrahmen der Vorlage.
-- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext. Ihre `alt`, `caption` und `note`, als Attribute der öffnenden Zeile oder als Zeilen `::alt[…]`, `::caption[…]` und `::note[…]`, ersetzen für dieses Kapitel den Wortlaut der Ressource (siehe [Zusammengesetzte Seiten › Der eigene Wortlaut einer Abbildung](/de/docs/composed-pages#der-eigene-wortlaut-einer-abbildung)).
+- `:::figure{resource="…" slot="…"}` … `:::` setzt eine Ressource mit ihren Zeilen `::label[TEXT]{at="…" style="…"}`, wobei `at` ein Anker des Bilds oder ein Punkt `"x% y%"` ist. Eine Abbildung funktioniert auch im Fließtext. Ihre `alt`, `caption` und `note`, als Attribute der öffnenden Zeile oder als Zeilen `::alt[…]`, `::caption[…]` und `::note[…]`, ersetzen für dieses Kapitel den Wortlaut der Ressource (siehe [Zusammengesetzte Seiten › Der eigene Wortlaut einer Abbildung](/de/docs/composed-pages-figures#der-eigene-wortlaut-einer-abbildung)).
+- `leader` an einem `::label` zieht eine Linie von der Beschriftung zum Punkt ihres Ankers, und `leader="none"` nimmt sie weg. `:::label{at="…" style="…"}` … `:::` schreibt innerhalb einer Abbildung eine Beschriftung Zeile für Zeile, wie es die Legende einer Karte braucht; `:icon[alt]{glyph="…"}`, `{resource="…"}` oder `{line="dashed"}` setzt ein Symbol in eine Beschriftung, eine Legende, eine Anmerkung oder eine Tabellenzelle (siehe [Zusammengesetzte Seiten › Hinweislinien, Legenden und Symbole](/de/docs/composed-pages-figures#hinweislinien-legenden-und-symbole)). Seit postext 1.48.
+- Auf einer Seite, deren Vorlage eine Karte in einem Raster wiederholt, ist jedes `:::frame{slot="<card>"}` eine Karte, und ein Block darin, der einen anderen Rahmen der Karte nennt, kommt in diesen Rahmen derselben Karte (siehe [Zusammengesetzte Seiten › Wiederholte Slots](/de/docs/composed-pages#wiederholte-slots)). Seit postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` enthält den Inhalt eines Moduls der Seite, eines Blocks, den eine Modulvorlage zeichnet und der in der Modulgruppe der Seite gestapelt wird; die Slots darin sind die des Moduls (siehe [Zusammengesetzte Seiten › Module auf einer Seite](/de/docs/composed-pages#module-auf-einer-seite)). Seit postext 1.48.

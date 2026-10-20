@@ -22,7 +22,7 @@ import { lastFootnoteNumber, numberFootnotes, splitFootnoteDefinitions } from '.
 import { numberStatements } from './statementNumbering';
 import { lastVerseLineNumber } from './lineNumbers';
 import { composedPages } from '../composed/document';
-import { resolvePageTemplate } from '../composed/templates';
+import { isModuleTemplate, resolvePageTemplate } from '../composed/templates';
 
 const NO_HEADINGS: HeadingCounters = { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
 
@@ -143,7 +143,8 @@ export function pageFenceIds(markdown: string, config?: PostextConfig): string[]
   const out: string[] = [];
   for (const page of composedPages(blocks)) {
     const id = page.attrs.id;
-    if (id !== undefined && id !== '' && !out.includes(id) && resolvePageTemplate(source, page.template)) out.push(id);
+    const t = id !== undefined && id !== '' && !out.includes(id) ? resolvePageTemplate(source, page.template) : undefined;
+    if (id !== undefined && t && !isModuleTemplate(t)) out.push(id);
   }
   return out;
 }

@@ -62,6 +62,7 @@ export type SettingsSectionId =
   | 'comicsBalloonStyles'
   | 'comicsCast'
   | 'pageTemplates'
+  | 'modules'
   | 'htmlViewer'
   | 'canvasViewer'
   | 'folio'
@@ -112,6 +113,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'layout', group: 'page', labelKey: 'layout', configKeys: ['layout'] },
   // Composed pages (#863): the page templates a `::::page{template}` fence sets.
   { id: 'pageTemplates', group: 'page', labelKey: 'pageTemplatesSection', configKeys: ['pageTemplates'] },
+  // The module library (#1065): the templates a page stacks with :::module.
+  { id: 'modules', group: 'page', labelKey: 'modulesSection', configKeys: ['pageTemplates'] },
   // Language and direction: `locale`, `layout.writingMode`, `page.binding`
   // (see `sectionHasOverrides` for the two nested keys).
   { id: 'writing', group: 'writing', labelKey: 'writingSection', configKeys: ['locale', 'layout', 'page'] },

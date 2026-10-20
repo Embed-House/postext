@@ -3,10 +3,10 @@
 export const metadata = {
   title: 'Configuração: páginas compostas',
   sidebarTitle: 'Ajustes de páginas compostas',
-  description: 'Os modelos das páginas compostas (blocos, grupos, decoração, herança e variantes de página ímpar e par), os estilos dos rótulos colocados nas âncoras de uma imagem e os avisos que um modelo pode gerar',
+  description: 'Os modelos das páginas compostas (blocos, grupos, grades que repetem um conjunto de blocos, módulos, decoração e conectores, herança e variantes de página ímpar e par), os estilos dos rótulos colocados nas âncoras de uma imagem e os avisos que um modelo pode gerar',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
-  readingTime: '6 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '11 min',
   order: 18,
   parent: 'configuration',
   plainSummary: "Esta página trata dos modelos de página. Um modelo é uma página desenhada nos ajustes: caixas com nome, chamadas blocos, com o lugar de cada uma, o tamanho até o qual podem crescer e a aparência. Depois, o Markdown de uma página composta preenche esses blocos pelo nome; por isso, o texto nunca guarda posições, e os ajustes nunca guardam texto. Um modelo pode partir de outro e mudar só alguns blocos, e pode ser diferente nas páginas pares e nas ímpares. A página também traz os estilos de rótulo para as palavras colocadas sobre uma imagem, e cada aviso que um modelo pode gerar, com a forma de corrigi-lo.",
@@ -104,7 +104,7 @@ Um modelo que define só o `id` e um bloco é uma página inteira, com esse bloc
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>nenhuma</td>
-      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeçalhos-e-rodapés">cabeçalhos e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo do contêiner de página). Um elemento pode se ancorar a um bloco ou a um grupo (<code>'#dinero'</code>), e nesse caso se move com ele. A decoração é posicionada depois dos blocos e nunca empurra o texto. Desde o postext 1.42, <code>&#123;headingNumber&#125;</code> escreve o contador do primeiro título numerado que os blocos da página contêm (um bloco com <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> o do bloco <code>titulo</code>, com os dígitos do documento: um selo com o número de um tema o lê do título, e o contêiner de página não precisa repeti-lo. A decoração é pintada sob os blocos; um clique num elemento de texto que está sobre um bloco, num ponto em que o bloco não tem texto próprio, chega ao elemento e não ao bloco. Um bloco com <code>layer</code> negativo é pintado sob a decoração.</td>
+      <td>Imagens, fios e caixas pintados com a página, na linguagem de elementos dos <a href="/pt/docs/configuration-headers-footers#cabeçalhos-e-rodapés">cabeçalhos e rodapés</a>. Os elementos de texto só levam marcadores (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para um atributo do contêiner de página). Um elemento pode se ancorar a um bloco ou a um grupo (<code>'#dinero'</code>), e nesse caso se move com ele. A decoração é posicionada depois dos blocos e nunca empurra o texto. Desde o postext 1.42, <code>&#123;headingNumber&#125;</code> escreve o contador do primeiro título numerado que os blocos da página contêm (um bloco com <code>takes</code>) e <code>&#123;headingNumber.titulo&#125;</code> o do bloco <code>titulo</code>, com os dígitos do documento: um selo com o número de um tema o lê do título, e o contêiner de página não precisa repeti-lo. A decoração é pintada sob os blocos; um clique num elemento de texto que está sobre um bloco, num ponto em que o bloco não tem texto próprio, chega ao elemento e não ao bloco. Um bloco com <code>layer</code> negativo é pintado sob a decoração. Desde o postext 1.48, a decoração aceita também <a href="/pt/docs/configuration-headers-footers#elementos-de-caminho">elementos de caminho</a> (barras, fitas, divisas desenhadas como formas vetoriais) e <a href="#conectores">conectores</a>, as linhas que ligam blocos.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -152,7 +152,7 @@ Um modelo que define só o `id` e um bloco é uma página inteira, com esse bloc
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>O papel de página que os elementos de design com um filtro <code>pages</code> enxergam.</td>
+      <td>O papel de página que os elementos de design com um filtro <code>pages</code> enxergam. <code>'module'</code> faz do modelo um módulo: uma caixa de blocos que as páginas empilham num grupo, em vez de uma página própria (veja <a href="#módulos">Módulos</a>). Desde o postext 1.48.</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ Um bloco é posicionado pela célula de `grid` quando o modelo tem grade e, sen�
       <td>Um bloco com modo de escrita ou direção próprios: uma caixa vertical numa página horizontal, um cartão horizontal numa página vertical, uma citação da direita para a esquerda num livro da esquerda para a direita. Um bloco do outro modo de escrita é composto na caixa dele, girada um quarto de volta: as linhas percorrem a altura da caixa e se sucedem na largura, e uma altura <code>'auto'</code> é a menor que as contém nessa largura. O texto é pintado como uma página desse modo pinta o próprio texto. <code>direction</code> compõe a história do bloco nessa direção, como uma caixa com <code>&#123;dir=…&#125;</code>; um bloco de texto ou uma caixa que define um <code>dir</code> próprio o mantém. Desde o postext 1.39. Desde o postext 1.40, um bloco vertical também funciona numa página da direita para a esquerda: é composto como numa da esquerda para a direita e colocado onde o fluxo espelhado o põe, com o texto pintado sem espelho; uma imagem num bloco vertical de uma página horizontal fica em pé, com a legenda, e ocupa o espaço que a caixa lhe deixa na largura da página; o EPUB refluível escreve um bloco de outro modo de escrita como uma caixa com esse modo e o comprimento ao longo do qual correm as linhas dele (em em do texto base). Desde o postext 1.42, uma imagem num bloco de uma página vertical que segue o modo da própria página também fica em pé, com a legenda.</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deixa o bloco fora das verificações de sobreposição: <code>frameCovered</code> não é gerado para um par de que ele faça parte, esteja ele pintado por cima do outro bloco ou por baixo, e <code>frameOutsideArea</code> não é gerado para ele. Para uma arte que deve ficar sobre o texto, ou um selo pendurado meio fora do cartão de propósito. Veja <a href="#avisos-de-sobreposição-repetição-e-módulos">Avisos de sobreposição, repetição e módulos</a>. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>De cima para baixo, ou do início ao fim.</td>
+      <td>De cima para baixo, do início ao fim, ou células em filas (<code>'grid'</code>, desde o postext 1.48; veja <a href="#grades-que-repetem-um-conjunto-de-blocos">Grades que repetem um conjunto de blocos</a>).</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Os blocos do grupo, na ordem em que aparecem na página. Um bloco pertence a um grupo no máximo; um nome que não é nenhum bloco do modelo, ou um bloco já listado, é pulado.</td>
+      <td>Os blocos do grupo, na ordem em que aparecem na página. Um bloco pertence a um grupo no máximo; um nome que não é nenhum bloco do modelo, ou um bloco já listado, é pulado. Uma grade que se repete toma os blocos de <code>repeat.frames</code> no lugar destes.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Uma grade: o número de colunas, todas da mesma largura.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>, <code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>o <code>gap</code> do grupo</td>
+      <td>Uma grade: o espaço entre duas colunas, e entre duas filas.</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>Uma grade: onde fica uma célula mais baixa que a fila. <code>'stretch'</code> dá ao bloco principal dela a altura da fila (até o <code>maxHeight</code> dele), quando a altura desse bloco é <code>'auto'</code> ou <code>'fill'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>nenhum</td>
+      <td>Uma grade: o conjunto de blocos disposto uma vez por item do conteúdo da página. O primeiro bloco de <code>frames</code> é o bloco principal da célula; <code>max</code> limita os itens, e o resto vai para o bloco de fluxo (<code>repeatOverflow</code>).</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>O grupo recebe os blocos <code>:::module</code> da página, um embaixo do outro na ordem do Markdown, com <code>gap</code> entre eles. É disposto como uma pilha qualquer que seja o <code>kind</code>, e os <code>frames</code> dele não são lidos. Veja <a href="#módulos">Módulos</a>. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>nenhum</td>
+      <td>Um grupo de módulos: onde continua, inteiro, um módulo que não cabe. Sem valor, o módulo é cortado no pé do grupo e os blocos dele sobem a escada de ajuste.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ O resultado depende só do conteúdo da página, do modelo e da tipografia: a me
 
 O bloco que cresce tem a altura do espaço livre, qualquer que seja o conteúdo, e por isso um estilo com fundo visível o pintaria inteiro: pinte o cartão na decoração do modelo e deixe o bloco de texto sem estilo.
 
+### Grades que repetem um conjunto de blocos
+
+Uma página de cartões com fotos, uma página de fichas de atividades ou uma página de retratos com um nome embaixo de cada um é o mesmo cartão desenhado muitas vezes. Um grupo de grade com `repeat` o desenha uma vez no modelo: os blocos de um cartão, chamados de conjunto de blocos, que a grade dispõe uma vez por item que o Markdown da página lhe dá. Quantos cartões uma página tem passa a depender do Markdown, e uma tradução que acrescenta um cartão não precisa de modelo novo. Desde o postext 1.48.
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **O conjunto.** O primeiro bloco de `repeat.frames` é o bloco **principal** da célula: ele toma a largura da célula e mantém a própria regra de altura (`'auto'` é a altura do conteúdo, entre `minHeight` e `maxHeight`). Os outros blocos do conjunto são dispostos como o modelo os desenha, ancorados no bloco principal ou uns nos outros: aqui, a pílula da legenda pende do pé da foto. Um bloco do conjunto ancorado num bloco de fora dele fica onde essa âncora o põe.
+- **Itens.** Cada trecho `:::frame{slot="foto"}` da página é um item: os trechos de um slot repetido não são juntados. Dentro do trecho, um elemento que indica um membro do conjunto (`:::frame{slot="pie"}`, `::resource{… slot="pie"}`) vai para esse membro do mesmo cartão; o resto vai para o bloco principal. Veja [Páginas compostas › Slots repetidos](/pt/docs/composed-pages#slots-repetidos).
+- **Instâncias.** Os blocos de cada cartão se chamam `<frame>[n]`, contados a partir de 1: `foto[2]` e `pie[2]` são o segundo cartão. Os avisos, o registro de reajustes, o mapa de origem e o Sandbox usam esses nomes, os ids dos blocos são `cp<n>:foto[2]`, e um elemento de decoração ou um conector pode se ancorar em `'#foto[2]'`. O `to: '#foto[*]'` de um conector chega a todos os cartões que a página tem. Um elemento ancorado em `'#foto'` lê a caixa da grade.
+- **Células.** As células preenchem as filas a partir do lado inicial; assim, numa página da direita para a esquerda o primeiro cartão fica à direita. Uma fila tem a altura da célula mais alta, contando o que pende acima do bloco principal (uma aba) e abaixo dele (uma pílula); `rowAlign` posiciona as mais baixas. A caixa da grade é o `placement` ou a célula `grid` dela; sem nenhum dos dois, ela começa onde o modelo desenha o bloco principal e vai até a borda direita e o pé da área.
+- **Quando os cartões não cabem.** Uma fila que passa do pé da grade é cortada ali, cada cartão sobe a escada de ajuste por conta própria, e o último cartão cortado gera `frameOverflow`. Com `overflow.continueIn` no bloco principal (`'next-page'`, `'template:<id>'`), a grade continua **por filas inteiras**: a primeira fila que não cabe, e todas as seguintes, vão para a página acrescentada, na grade de um modelo que repete o mesmo conjunto de blocos. Uma célula mais alta que a grade inteira gera um aviso em vez de continuar sem fim.
+- **`max`.** Os itens além de `repeat.max` vão para o bloco de fluxo, ou para depois da página quando o modelo não tem um, e cada um gera `repeatOverflow`.
+
+Uma grade sem `repeat` dispõe os blocos que lista, um por célula, na ordem em que estão escritos. Um bloco de um conjunto repetido listado em outro grupo é pulado ali (`groupFrameTwice`), e um nome que o modelo não tem é `groupFrameUnknown`. `grow` e `shrink` não se aplicam às filas de uma grade, nem `redistribute` aos cartões dela.
+
+### Módulos
+
+Uma página de livro didático costuma empilhar conjuntos que se repetem pelo livro em outra ordem: um boxe com uma foto ao lado, uma árvore de três ideias, uma grade de quatro fotos sob um título. Desenhar um modelo para cada ordem multiplica os modelos. Um **módulo** é um desses conjuntos desenhado uma vez: um modelo com `role: 'module'`, com blocos, grupos e decoração (conectores incluídos), e sem página própria. Um modelo de página recebe módulos num grupo com `modules: true`; o Markdown da página diz que módulos ela contém e em que ordem (veja [Páginas compostas › Módulos numa página](/pt/docs/composed-pages#módulos-numa-página)). Desde o postext 1.48.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **O que um módulo tem.** Blocos, grupos (inclusive uma grade que se repete), decoração e conectores. Não tem `area`, `header`, `footer`, `variants`, `spread`, `gutter` nem `overflowTemplate`: cada um deles é apontado como `unknownConfigValue` e ignorado. `extends` funciona entre módulos (um modelo que estende um módulo é um módulo).
+- **A caixa dele.** Um módulo tem a largura do grupo e a altura até onde chegam os blocos dele; o grupo empilha os módulos a partir do alto, com `gap` entre eles. Dentro de um módulo, `'container'` é a caixa do módulo, para os blocos dele (`'fill'` e porcentagens também) e para a decoração: um fundo dimensionado até `{ to: 'container', edge: 'bottom' }` cobre o módulo, qualquer que seja a altura que as palavras lhe deem.
+- **Nomes.** Os blocos, grupos e elementos de um módulo ficam no escopo do nome da instância do módulo: `<name>.<frame>`, com o nome que o Markdown dá (`name="ramas"`) ou então `<template>[n]`, a posição do módulo entre os módulos da página com esse modelo (`arbol[2].raiz`). As âncoras, `next`, `continueIn: '#x'` e os conectores dentro de um módulo são reescritos para os blocos do próprio módulo; assim, duas árvores numa mesma página nunca se ligam uma à outra. Um id de bloco fica `cp0:arbol[2].raiz`.
+- **Quando os módulos não cabem.** Um módulo que passa do pé do grupo é cortado ali e os blocos dele sobem a escada de ajuste; `frameOverflow` é gerado uma vez para o grupo. Com `overflow.continueIn` no grupo de módulos (`'next-page'` ou `'template:<id>'`), o primeiro módulo que não cabe e todos os seguintes continuam **inteiros** na página acrescentada, com os mesmos nomes, no alto do grupo de módulos dessa página.
+- **Ainda não.** Módulos lado a lado (um grupo de módulos é sempre uma pilha), um módulo dentro de um módulo (`moduleNested`) e células `grid` do modelo dentro de um módulo.
+
 ### Quando o conteúdo não cabe
 
 Quando o conteúdo de um bloco é mais alto que o espaço que o grupo lhe dá, a diagramação tenta, em ordem, os passos da [escada de ajuste](/pt/docs/composed-pages#quando-ainda-assim-não-cabe) e para no primeiro que faz o conteúdo caber: espaço livre até `maxHeight`, o grupo empurrando e cedendo, imagens menores, os outros blocos do grupo até o mínimo, texto menor, continuação em outra página. Estas configurações do bloco decidem até onde cada passo pode ir:
@@ -555,7 +654,7 @@ No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com 
 
 ### O que a diagramação aplica
 
-A diagramação aplica o posicionamento e os tamanhos de cada bloco (grade, âncoras, `min`/`max`, `verticalAlign`), o estilo e o `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e o `wrap` correspondente), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) com `overflow.mark` e `overflow.fromMark`, e o `fit` (a redução do texto e das imagens na escada de ajuste, veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)); a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` do grupo, veja [Como os grupos dividem o espaço](#como-os-grupos-dividem-o-espaço)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` do modelo. Desde o postext 1.42 aplica também a `palette` do modelo, o `look` de um bloco e a largura `'auto'` (a da linha mais longa do bloco). O `writingMode` e a `direction` de um bloco são aplicados desde o postext 1.39. É lido e verificado, mas ainda não aplicado: o `bodyStyle` do modelo.
+A diagramação aplica o posicionamento e os tamanhos de cada bloco (grade, âncoras, `min`/`max`, `verticalAlign`), o estilo e o `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e o `wrap` correspondente), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) com `overflow.mark` e `overflow.fromMark`, e o `fit` (a redução do texto e das imagens na escada de ajuste, veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)); a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` do grupo, veja [Como os grupos dividem o espaço](#como-os-grupos-dividem-o-espaço)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` do modelo. Desde o postext 1.42 aplica também a `palette` do modelo, o `look` de um bloco e a largura `'auto'` (a da linha mais longa do bloco). O `writingMode` e a `direction` de um bloco são aplicados desde o postext 1.39. Desde o postext 1.48 aplica os grupos de grade e o `repeat` deles, os grupos de módulos e os modelos de módulo, os conectores e os elementos de caminho da decoração, e o `overlap` de um bloco. É lido e verificado, mas ainda não aplicado: o `bodyStyle` do modelo.
 
 ### Páginas duplas
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 Um espaço entre colunas maior que o `gutter` mantém as fichas de uma grade simétrica longe da lombada, e nenhuma é movida. A segunda faixa e a tira de ilustrações têm `crossGutter` para atravessá-la: cada uma é lida na página que contém o centro dela e pintada nas duas. Todas as palavras da página, inclusive os nomes das eras nas abas, ficam no Markdown.
 
 Num livro vertical (`vertical-rl`) a página dupla é composta no referencial do fluxo das páginas, como as páginas compostas avulsas desse livro: o alto da página é a borda direita da folha e as linhas descem; por isso, o `x` do modelo desce pela folha, e o `y` vai da borda direita da folha para a esquerda. A folha é a página direita seguida da esquerda ao longo de `y`, a lombada é uma linha que atravessa o modelo, e `gutter`, `crossGutter` e o corte entre as páginas leem esse eixo; a decoração continua composta sobre a folha física e cortada na lombada. Uma linha do tempo horizontal desenhada para um livro horizontal sai girada num vertical: escreva o modelo de um livro vertical no referencial do fluxo dele. Desde o postext 1.38. Um cartão que deva ser lido na largura da folha leva `writingMode: 'horizontal-tb'`: é composto na horizontal e fica de pé na página vertical (desde o postext 1.39).
+
+### Conectores
+
+Um conector é uma linha da decoração que liga blocos: os ramos de um diagrama em árvore, um organograma, os traços de uma linha do tempo, as setas de um fluxograma, o ponteiro de uma nota para um lugar num mapa. Ele é posicionado depois que os blocos têm as caixas definitivas; assim, acompanha um texto que cresce, uma edição com palavras mais longas ou um grupo que move os blocos, e é desenhado como linha vetorial em todas as saídas, de modo que o modelo não precisa de uma imagem das linhas. Os conectores são elementos da `decoration` de um modelo de página ou de um módulo; os cabeços e os designs de título não têm blocos para ligar, e um conector ali é apontado (`unknownConfigValue`) e não é desenhado. Desde o postext 1.48.
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propriedade</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'connector'</code>, <code>string</code></td>
+      <td>obrigatório</td>
+      <td>O elemento e o id dele, como nos outros elementos da decoração.</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>obrigatório</td>
+      <td>Uma ponta da linha; o pai de uma árvore.</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>obrigatório</td>
+      <td>A outra ponta, ou várias: uma linha até cada uma, ou os filhos de uma árvore. <code>'#card[*]'</code> vale por todos os cartões de uma <a href="#grades-que-repetem-um-conjunto-de-blocos">grade que se repete</a> que a página tem.</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>: um segmento. <code>'elbow'</code>: sai, corre ao longo e entra de novo entre lados que se encaram, um L entre lados em ângulo reto. <code>'tree'</code>: um tronco de <code>from</code> até uma barra, a barra atravessando os pontos dos filhos, e uma descida até cada filho.</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>Onde fica, entre as pontas, o trecho do meio de um cotovelo ou a barra de uma árvore: <code>0</code> em <code>from</code>, <code>1</code> no <code>to</code> mais próximo. Uma árvore com <code>trunk: 0</code> não desenha barra: uma descida da borda do pai até cada filho, como os traços de uma linha do tempo.</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Arredonda as curvas de um cotovelo ou de uma árvore.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>a cor principal</td>
+      <td>Uma cor ligada à paleta segue a <code>palette</code> do modelo, a do contêiner de página e a de uma parte, como fazem os fios.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.75pt</code>, contínua</td>
+      <td>A espessura da linha, e um padrão de tracejado (traço, espaço, …).</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>, <code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>Uma marca em <code>from</code> e em cada <code>to</code>: um ponto cheio centrado na ponta, ou uma ponta de seta cujo bico é a ponta.</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>A largura de um ponto, ou o comprimento de uma ponta de seta.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Liga as caixas que o modelo declara, e não as caixas que o conteúdo deu aos blocos.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code></td>
+      <td>como nos outros elementos</td>
+      <td><code>'all'</code></td>
+      <td>Em que páginas é desenhado.</td>
+    </tr>
+  </tbody>
+</table>
+
+Cada ponta (`ConnectorEnd`) indica uma caixa e um ponto num dos lados dela:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>obrigatório</td>
+      <td>Um bloco, um grupo, um cartão de uma grade que se repete (<code>'#foto[2]'</code>) ou outro elemento da decoração.</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>o lado voltado para a outra ponta</td>
+      <td>O lado pelo qual a linha sai da caixa ou chega a ela. <code>start</code> e <code>end</code> seguem a direção das linhas da página. Sem valor, o lado voltado para a outra caixa através do maior intervalo entre elas; os filhos de uma árvore ficam voltados para o pai.</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>O ponto ao longo desse lado, ou uma fração dele a partir do início (0 a 1). Um lado horizontal começa onde começam as linhas da página; um vertical, no alto.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Espaço entre a borda da caixa (ou o ponto da âncora) e a ponta da linha.</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>nenhuma</td>
+      <td>Uma âncora da imagem que o bloco contém: a ponta é esse ponto da imagem, passando pelo recorte, pela área segura e pela escala, como a de um rótulo, em vez de um ponto do lado do bloco. <code>at</code> não é lido; <code>side</code> diz por onde a linha chega (por padrão, vindo da outra ponta).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Pontas que não estão lá.** Uma ponta num bloco que a página não mostra (recolhido, opcional e vazio, um cartão além dos itens da página, um ponto da imagem que o bloco dela corta) fica de fora: uma árvore mantém os outros filhos, e o registro de reajustes da página informa isso (`connectorDropped`). Sem nenhum `from` ou nenhum `to` restante, nada é desenhado.
+
+**Pintura.** Os conectores são pintados com a decoração, sob os blocos, como caminhos vetoriais: no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo, e como artefato de layout num PDF marcado; o EPUB refluível os deixa de fora junto com o resto da decoração. Uma linha que aponta para dentro de uma imagem precisa do bloco da imagem sob a decoração: dê a esse bloco `layer: -1`. Numa página dupla, um conector entre blocos das duas páginas atravessa a lombada e é cortado ali, como o resto da decoração; numa página da direita para a esquerda, `start` e `end` seguem o fluxo espelhado.
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**Verificações.** Uma ponta cujo `to` não indica nada é `frameAnchorUnknown` (em `…/from/to` ou `…/to/<k>/to`) e fica de fora; `[*]` só é válido em `to` e num bloco repetido. Um `anchor` que nenhuma imagem do bloco tem é `labelAnchorUnknown`, com o id do conector. Uma palavra fora das opções de `routing`, `startCap`, `endCap` ou `side`, e um `at` fora de 0 a 1, são `unknownConfigValue`.
 
 ## Estilos de rótulo
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code> deixa os rótulos deste estilo fora da verificação <code>labelOverlap</code>, para um mapa cujos nomes se tocam no original. O <code>overlap</code> próprio de uma âncora prevalece. Desde o postext 1.42.</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>conforme a âncora posiciona a caixa</td>
+      <td>Como as linhas de um rótulo de várias linhas se alinham dentro da caixa dele, com <code>start</code> e <code>end</code> na direção do rótulo. Sem valor, seguem o <code>align</code> da âncora (centrado por padrão); numa legenda de mapa, <code>start</code>. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>border</code>, <code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>, <code>Dimension</code></td>
+      <td>nenhum</td>
+      <td>Uma linha em volta da placa do rótulo (a caixa dele alargada por <code>padding</code>), com ou sem <code>background</code>, e os cantos arredondados da placa: a legenda emoldurada de um mapa. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>nenhum</td>
+      <td>A legenda de um mapa: cada linha do rótulo é uma fila, e o símbolo (<code>:icon</code>) que abre uma fila fica numa coluna da largura do mais largo deles; assim, as palavras de todas as filas começam numa mesma borda. Uma fila sem símbolo fica como está. Não vale para rótulos verticais. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>nenhum</td>
+      <td>A aparência das linhas de chamada dos rótulos deste estilo: a linha da caixa de um rótulo até o ponto da âncora dele. Por padrão, a cor do rótulo, largura <code>0.75pt</code>, <code>endCap: 'dot'</code> no ponto, sem <code>startCap</code>, <code>capSize</code> três vezes a largura e <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code>: sai da caixa em ângulo reto e faz uma curva até o ponto). Um rótulo afastado do seu ponto (<code>labelAt</code>) num estilo com <code>leader</code> recebe uma. Desde o postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ As âncoras de uma imagem (`Resource.anchors`, os pontos que os quadrinhos usam 
       <td><code>'keep'</code></td>
       <td>Numa figura que atravessa a lombada de uma página dupla, <code>'keep'</code> afasta o rótulo da faixa da medianiz, para o lado em que fica o ponto dele; <code>'cross'</code> deixa-o onde o ponto o coloca, como pede um título que ocupa as duas páginas. Desde o postext 1.43.</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>no ponto</td>
+      <td>Onde fica o rótulo posto nesta âncora, afastado do ponto dela, em frações da imagem inteira: um nome no mar com uma linha até a ilha que ele nomeia. <code>align</code>, <code>verticalAlign</code> e <code>rotate</code> posicionam o rótulo em torno desse ponto; o ponto próprio da âncora continua sendo onde terminam as linhas de chamada e os conectores. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>veja abaixo</td>
+      <td>Uma linha da caixa do rótulo até o ponto da âncora. <code>true</code> a desenha com a aparência <code>leader</code> do estilo de rótulo, um objeto muda essa aparência campo a campo, <code>false</code> não desenha nenhuma. Sem valor, um rótulo afastado do seu ponto recebe uma quando o estilo dele tem <code>leader</code>. O atributo <code>leader</code> de um <code>::label</code> prevalece. Desde o postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
 `start` e `end` seguem a direção do rótulo: num rótulo árabe, `start` é a borda direita. Uma âncora compartilhada pelas edições da esquerda para a direita e da direita para a esquerda de um mesmo mapa funciona melhor com o rótulo centrado acima ou abaixo do ponto. Um rótulo com `width` quebra entre palavras; uma palavra mais larga que a medida reduz o rótulo inteiro, até o `minScale` do estilo dele. Como os rótulos são desenhados está em [Páginas compostas](/pt/docs/composed-pages).
 
+Uma linha de chamada sai do rótulo pelo lado da caixa dele (a placa, senão as linhas) que fica voltado para o ponto através do maior intervalo, a partir do meio desse lado; assim, a linha nunca atravessa as palavras do rótulo, nem mesmo num rótulo girado. Um ponto sob a caixa do rótulo, ou uma linha de chamada mais curta que a marca da ponta, não desenha nada. As linhas de chamada são pintadas sob os rótulos, com a imagem, em todas as saídas que desenham rótulos, e acompanham a imagem quando ela é recortada, escalada, espelhada ou posta numa página dupla.
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## Avisos dos modelos de página
 
 No resto da configuração, o motor ignora uma chave que não conhece. Os modelos de página e os estilos de rótulo, por outro lado, são verificados, e cada problema é um aviso de configuração no `postext check` e no painel Verificações do Sandbox. O campo `path` desses avisos é um ponteiro JSON para o campo com problema: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando o campo foi herdado, o ponteiro indica o modelo que o escreveu. Um aviso que cita um id ou um nome inexistente também sugere o existente mais parecido.
 
-Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) é um `unknownConfigValue`, e o ajuste mantém o valor padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
+Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, o `routing`, as pontas e o `side` de um conector, as pontas e o `routing` de uma linha de chamada) é um `unknownConfigValue`, e o ajuste mantém o valor padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, 
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Um bloco, um grupo ou um elemento de decoração está ancorado a <code>'#name'</code> e o modelo não tem nenhum bloco, grupo ou elemento com esse nome; ou blocos e grupos estão ancorados uns nos outros num ciclo (também através de um grupo sem âncora própria, cuja caixa é a dos blocos dele). A âncora é lida como <code>'container'</code>, a área.</td>
+      <td>Um bloco, um grupo ou um elemento de decoração está ancorado a <code>'#name'</code> e o modelo não tem nenhum bloco, grupo ou elemento com esse nome; ou blocos e grupos estão ancorados uns nos outros num ciclo (também através de um grupo sem âncora própria, cuja caixa é a dos blocos dele). A âncora é lida como <code>'container'</code>, a área. Uma ponta de conector que não indica nada é apontada do mesmo jeito, e essa ponta fica de fora.</td>
       <td>Ancore a um bloco ou grupo que exista, ou quebre o ciclo ancorando um deles à área.</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, 
   </tbody>
 </table>
 
-A versão da configuração é a 15 desde os modelos de página (pacotes escritos antes continuam carregando sem mudanças: nada do que uma configuração anterior diz muda de sentido).
+Desde os conectores (postext 1.48), a versão da configuração é a 16; os modelos de página a tinham levado à 15. Os pacotes escritos antes continuam carregando sem mudanças: nada do que uma configuração anterior diz muda de sentido, e um leitor anterior aos conectores deixa de fora os elementos de decoração que não conhece, com um `unknownConfigValue`.
+
+### Avisos de sobreposição, repetição e módulos
+
+Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo; por isso, indicam uma página. São listados pelo `postext check` (o `--json` traz os campos deles como `data`), no painel Verificações do Sandbox e nos `contentWarnings` do documento. Desde o postext 1.48.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Aviso</th>
+      <th>Causa</th>
+      <th>Solução</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>A tinta de um bloco (as linhas, a aba ou o título, as imagens) fica sob outro bloco pintado por cima dele: uma <code>layer</code> mais alta, ou a mesma camada mais adiante na ordem do modelo. Um bloco cobre onde é opaco: o fundo, a aba, as imagens, as linhas; um contorno sozinho não cobre nada, e palavras sobre uma imagem não são apontadas. Um aviso por par, com o bloco que cobre (<code>coveredBy</code>), a área escondida (<code>overlapMm2</code>) e as primeiras palavras ou a imagem cobertas. Veja <a href="/pt/docs/composed-pages#framecovered">Páginas compostas › frameCovered</a>.</td>
+      <td>Aplique uma proposta: a <code>layer</code> do bloco que cobre abaixo da do coberto, <code>exclude: 'push'</code> nele para que o texto o contorne, ou um <code>move</code> calculado na página. Quando a sobreposição é intencional (uma arte sobre o texto), defina <code>overlap: 'allow'</code> em qualquer um dos dois blocos.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Um bloco passa do que o contém: o texto passa do refile, o fundo ou as imagens passam da sangria, ou qualquer parte dele passa do bloco ou grupo em que está ancorado por dentro (uma âncora de nove pontos em <code>'#name'</code> cujo ponto fica dentro dessa caixa). <code>past</code> diz qual, <code>excessMm</code> quanto. Veja <a href="/pt/docs/composed-pages#frameoutsidearea">Páginas compostas › frameOutsideArea</a>.</td>
+      <td>Aplique uma proposta: um <code>maxHeight</code> para o bloco, um <code>minHeight</code> para o bloco em que ele está ancorado, <code>overflow.continueIn: 'next-page'</code> com uma altura menor, ou um <code>move</code>. Um selo pendurado fora do cartão de propósito recebe <code>overlap: 'allow'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Uma grade que repete um conjunto de blocos comporta <code>repeat.max</code> itens e a página lhe dá mais. Um aviso por item a mais, no <code>slot="…"</code> dele: o item vai para o bloco de fluxo (<code>flowFrame</code>), ou para depois da página.</td>
+      <td>Aumente o <code>max</code>, retire-o, ou passe os itens a mais para outra página.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Um <code>:::module&#123;template="…"&#125;</code> que a página não diagrama: o id não indica nenhum modelo (<code>reason: 'unknown'</code>), indica um modelo que não é módulo (<code>'notModule'</code>), ou o modelo da página não tem grupo de módulos (<code>'noGroup'</code>). O conteúdo dele vai para o bloco de fluxo.</td>
+      <td>Corrija o id, dê ao modelo <code>role: 'module'</code>, ou acrescente ao modelo da página um grupo com <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Um contêiner de página indica um modelo de módulo. Um módulo é disposto no grupo de módulos de uma página, nunca como página: o conteúdo do contêiner é composto no fluxo, como com um modelo desconhecido.</td>
+      <td>Indique um modelo de página no contêiner, e ponha o módulo dentro dele como um <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Um <code>:::module</code> dentro de outro módulo. Não é suportado: os elementos dele passam a ser do módulo de fora.</td>
+      <td>Feche antes o módulo de fora, ou desenhe o conjunto de dentro como blocos do módulo de fora.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>O <code>name="…"</code> de um módulo já é usado por outro módulo da página (<code>reason: 'taken'</code>) ou tem espaço, <code>.</code>, <code>#</code>, <code>[</code> ou <code>]</code> (<code>'invalid'</code>). O módulo recebe o nome <code>used</code> (<code>&lt;template&gt;[n]</code>), e os blocos dele são indicados com esse nome.</td>
+      <td>Dê a cada módulo da página um nome próprio, feito de letras, algarismos e hifens.</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped` (registro de reajustes).** Um conector com uma ponta num bloco que a página não mostra (recolhido, opcional e vazio, um cartão além dos itens da página, um ponto da imagem que o bloco dela corta) deixa essa ponta de fora. Não é um aviso: o [registro de reajustes](/pt/docs/composed-pages#registro-de-reajustes) da página o anota, “connector ramas left out izq (not on the page)”, para que se possa distinguir uma página em que um ramo sumiu de uma desenhada como planejado. Para manter a ponta, dê conteúdo a esse bloco, ou leve o conector aos blocos que a página tem.

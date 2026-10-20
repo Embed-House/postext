@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Páginas compostas',
   sidebarTitle: 'Páginas compostas',
-  description: 'Como se escreve uma página composta em Markdown: o contêiner ::::page, aberto com quatro sinais de dois-pontos, que indica o modelo; os blocos e o atributo slot, que distribuem o conteúdo pelos blocos do modelo; as figuras com rótulos em pontos de uma imagem; e os avisos que aparecem quando o conteúdo não corresponde ao modelo',
+  description: 'Como se escreve uma página composta em Markdown: o contêiner ::::page, aberto com quatro sinais de dois-pontos, que indica o modelo; os blocos e o atributo slot, que distribuem o conteúdo pelos blocos do modelo; os slots repetidos e os módulos; e os avisos que aparecem quando o conteúdo não corresponde ao modelo ou cobre outro bloco',
   lang: 'pt',
-  lastUpdated: '2026-10-17',
-  readingTime: '9 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '44 min',
   order: 34,
-  plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: o contêiner de página, os blocos, os nomes de slot e as imagens com rótulos, como os nomes de um mapa. Ela também lista os avisos que o Postext mostra quando o texto e o modelo não combinam.",
+  plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: o contêiner de página, os blocos, os nomes de slot, os cartões repetidos numa grade e os conjuntos empilhados como módulos. Ela também lista os avisos que o Postext mostra quando o texto e o modelo não combinam.",
 };
 
 # Páginas compostas
@@ -90,7 +90,7 @@ Um elemento avulso também pode indicar o próprio slot:
 
 Como o conteúdo é distribuído:
 
-- Vários trechos com o mesmo slot são juntados na ordem do Markdown.
+- Vários trechos com o mesmo slot são juntados na ordem do Markdown, exceto numa grade que se repete, em que cada trecho é um cartão próprio (veja [Slots repetidos](#slots-repetidos)).
 - O conteúdo sem slot vai para o **bloco de fluxo** do modelo (o que está marcado com `flow`).
 - Um título sem slot vai primeiro para o bloco que recebe o nível dele (`takes: "h1"`), se o modelo tiver um; assim, o título de um tema de livro didático é só um `# Título` no alto da página.
 - Um `:::toc` sem slot vai para o bloco com `takes: "toc"`, se o modelo tiver um (veja *O sumário em um bloco*, mais abaixo).
@@ -98,74 +98,72 @@ Como o conteúdo é distribuído:
 
 Um `slot` fora de uma página composta é lido e não muda nada.
 
-## Figuras com rótulos
+### Slots repetidos
+
+Quando o modelo desenha um cartão uma vez e o dispõe numa grade quantas vezes a página precisar (um grupo com `repeat`, veja [Configuração › Grades que repetem um conjunto de blocos](/pt/docs/configuration-composed-pages#grades-que-repetem-um-conjunto-de-blocos)), cada `:::frame` que indica o slot principal do cartão é um cartão, na ordem em que foi escrito:
 
 ```md
-:::figure{resource="mapa-europa" slot="mapa"}
-::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
-::label[**Madrid**]{at="madrid"}
-::label[Mar Negro]{at="62% 48%"}
+::::page{template="fotos"}
+# Animais do rio
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+A garça
 :::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+A lontra
+:::
+:::
+::::
 ```
 
-`:::figure{resource="…"}` coloca um recurso, com a legenda e o número dele, como faz `::resource`, e lista os rótulos que vão sobre a imagem: uma linha `::label[TEXTO]{…}` por rótulo, com linhas em branco permitidas entre elas.
+- **Membros do cartão.** Dentro do trecho do cartão, um elemento ou um `:::frame` que indica outro bloco do conjunto (aqui `pie`, a pílula da legenda) vai para esse bloco do mesmo cartão. Todo o resto vai para o bloco principal do cartão.
+- **Um elemento, um cartão.** Um `::resource{id="…" slot="foto"}` sozinho, fora de qualquer contêiner, também é um cartão.
+- **Nomes.** Os cartões são numerados a partir de 1: os blocos do segundo cartão são `foto[2]` e `pie[2]`, e é assim que aparecem nos avisos, no registro de reajustes e no Sandbox.
+- **Quantos.** A página tem tantos cartões quanto trechos. Uma edição em espanhol com cinco animais e uma em inglês com quatro usam o mesmo modelo. Uma grade com `repeat.max` recebe esse número; cada trecho a mais gera `repeatOverflow` e vai para o bloco de fluxo.
 
-- `at` indica uma âncora do recurso (um ponto definido uma única vez sobre a imagem e compartilhado por todos os idiomas), ou dá um ponto em porcentagens da imagem, `at="x% y%"`, para um rótulo sem âncora.
-- `style` indica um estilo de rótulo e prevalece sobre o estilo da âncora.
-- O texto entre colchetes é Markdown em linha: negrito, itálico, chips.
+Um bloco do conjunto só é apontado como `slotEmpty` quando nenhum cartão da página o preenche. Um bloco repetido nunca recebe um título e nunca é o bloco de fluxo.
 
-Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os rótulos dela são desenhados sobre a imagem como texto e vão aonde a figura for: uma coluna, um flutuante, um bloco girado ou reduzido pela escada de ajuste (os passos que fazem o conteúdo caber), uma página dupla. Quando falta o `:::` de fechamento de uma figura, a primeira linha que não é um rótulo nem está em branco encerra a figura, e o Postext a aponta como contêiner não fechado.
+### Módulos numa página
 
-### As palavras próprias de uma figura
-
-Um recurso guarda uma imagem, as âncoras dela e um único conjunto de palavras, mas cada edição de um livro precisa das próprias palavras. Uma figura pode definir o próprio `alt`, a própria `caption` e a própria `note`, na linha de abertura ou em linhas próprias, e eles substituem os do recurso nas páginas desse arquivo:
+Um modelo de página com um grupo de módulos (`modules: true`, veja [Configuração › Módulos](/pt/docs/configuration-composed-pages#módulos)) recebe seus conjuntos de contêineres `:::module`, dispostos um embaixo do outro na ordem em que foram escritos. O modelo do módulo desenha o conjunto; o contêiner guarda as palavras dele:
 
 ```md
-:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
-::caption[Relieve de **Varenia**, con sus tres cordilleras]
-::note[Fuente: levantamiento de 1932]
-::label[Mar de Sal]{at="mar"}
+::::page{template="tema"}
+# O rio
+
+:::module{template="caja"}
+:::frame{slot="texto" label="Você sabia?"}
+Um rio nasce nas montanhas, onde a chuva e a neve se juntam em córregos.
 :::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+O rio
+:::
+:::frame{slot="izq"}
+A água que ele leva
+:::
+:::frame{slot="der"}
+A vida nas margens
+:::
+:::
+::::
 ```
 
-- Como atributos da linha de abertura, `alt`, `caption` e `note` recebem um texto curto entre aspas. As linhas `::alt[…]`, `::caption[…]` e `::note[…]` recebem o texto entre colchetes, que pode conter Markdown em linha e `\\` para uma quebra de linha, como a legenda e a nota de um recurso. Uma linha prevalece sobre o atributo de mesmo nome; as linhas ficam entre os rótulos, com linhas em branco se quiser.
-- O que a figura não define continua sendo o do recurso. Um valor vazio não diz nada: `caption=""` tira a legenda, `alt=""` marca a imagem como decorativa.
-- As palavras substituem as do recurso no capítulo em que estão escritas: a diagramação, o texto alternativo de todas as saídas e o PDF marcado as usam, e o próprio recurso não muda. Num capítulo, um recurso tem um só conjunto de palavras, o da primeira figura: se uma figura posterior do mesmo recurso trouxer outros textos, eles não aparecem, e o Postext gera o aviso `figureWordsShared`. Uma cópia reduzida que precise de legenda própria usa um segundo recurso que aponte para o mesmo arquivo de imagem. Ao contrário de um rótulo, a legenda não é associada caractere a caractere ao Markdown; `sourceAt` responde a um clique nela como faz com a legenda de um recurso.
-
-### Como um rótulo é composto
-
-- **Onde.** Um rótulo fica no ponto da âncora, dado como fração da imagem inteira; se a imagem for recortada na área segura ou composta menor, o rótulo acompanha o desenho. O `align` da âncora indica que lado do rótulo fica no ponto, e `verticalAlign`, que borda fica na altura dele. `start` e `end` seguem a direção do próprio rótulo: em árabe, `start` é a borda direita. `rotate` gira o rótulo em torno do ponto, no sentido horário e em qualquer ângulo: um rio ao longo do curso, uma serra na diagonal.
-- **Aparência.** O `style` do rótulo, ou então o da âncora, indica um estilo de rótulo (veja Configuração › Páginas compostas); sem estilo, o rótulo usa a fonte do texto do corpo. O halo traça o contorno das letras por baixo do preenchimento; a placa (`background`) preenche a caixa em volta do texto, alargada por `padding`.
-- **Ajuste.** Se a âncora tem `width`, o rótulo quebra entre palavras dentro dessa medida, nunca no meio de uma palavra. Quando uma palavra é mais larga que a medida, o rótulo inteiro é composto menor, até o `minScale` do estilo; um rótulo que ainda assim não cabe é desenhado com a palavra mais larga cortada. Sem `width`, o rótulo fica numa só linha, exceto onde quebra com `\\`, como numa legenda.
-- **Texto.** O texto entre colchetes é Markdown em linha, composto como uma legenda: negrito, itálico, chips, marcações de destaque, referências, fórmulas em linha. Um nome de várias palavras é um único rótulo, qualquer que seja a ordem das palavras em cada idioma: `::label[OCEANO ATLÂNTICO]` e `::label[ATLANTIC OCEAN]` ficam na mesma âncora. Rótulos da direita para a esquerda são compostos da direita para a esquerda; os chineses e japoneses quebram entre caracteres.
-- **Saídas.** O canvas, o PDF, o visualizador HTML, o EPUB de layout fixo e o Folio desenham os rótulos. Numa página da direita para a esquerda, o rótulo fica onde a imagem o mostra.
-- **Vertical.** Com `writingMode: 'vertical-rl'` na âncora (ou no estilo de rótulo dela), o rótulo é composto como uma página vertical: os caracteres em pé, em células uma sob a outra, as colunas da direita para a esquerda, as palavras latinas e os números longos virados de lado e os números curtos numa só célula. Então `width` é uma parte da altura da imagem, o comprimento de uma coluna, e um rótulo chinês ou japonês se reparte em mais colunas. `align` corre ao longo da coluna (`start` é a ponta de cima), `verticalAlign` através das colunas (`top` é a primeira, a da direita), e `rotate` continua girando o rótulo. Na página espelhada de um livro da direita para a esquerda, o rótulo se lê do mesmo jeito, de cima para baixo nas colunas e em pé, no mesmo ponto da imagem (desde o postext 1.40).
-- **Verificações.** Um rótulo que continua mais largo do que a medida no `minScale` do estilo gera `labelOverflow`; dois rótulos cujas linhas se tocam geram `labelOverlap` no posterior. As duas coisas são verificadas em cada edição; assim, uma tradução com palavras mais longas mostra onde precisa de espaço. A paleta de uma parte (`:::part{palette="…"}`) recolore os rótulos das páginas dela como faz com as legendas. A verificação de contraste mede um rótulo sobre a placa ou, se não houver, sobre o halo; um rótulo posto diretamente sobre a imagem é ignorado, porque o fundo dele é a imagem. O preflight de impressão também verifica os rótulos: letra pequena em cores de processo, tintas e distância ao refile.
-- **Numa página dupla.** Uma figura que atravessa a lombada de uma página dupla (um bloco com `crossGutter: true`) pinta uma metade em cada página; um rótulo que entrasse na faixa da medianiz seria cortado pela dobra e não se leria em nenhuma das duas. Esse rótulo desliza na horizontal até a borda da faixa, do lado em que fica o ponto da âncora, e mantém a altura; um ponto exatamente sobre a lombada fica na primeira página, como um bloco. Uma âncora com `gutter: 'cross'` mantém o lugar, para um título posto nas duas páginas. As bordas externas da folha não são tocadas: um rótulo que passa do refile é cortado como a imagem. Desde o postext 1.43.
-
-### labelAnchorUnknown
-
-O `at` de um `::label` indica uma âncora que o recurso da figura não tem. O rótulo não é desenhado; o EPUB refluível continua listando-o, e o texto alternativo da imagem o menciona. O aviso traz o recurso, a âncora, as âncoras que o recurso tem (`known`), o idioma, a página e o intervalo de origem do texto do rótulo. Corrija o id da âncora, adicione a âncora ao recurso ou posicione o rótulo com `at="x% y%"`.
-
-No painel Verificações do Sandbox, o aviso leva ao rótulo no painel Texto, e o botão com o alfinete abre as âncoras da imagem com esse nome pronto para colocar: um clique na imagem adiciona a âncora.
-
-### anchorUnlabelled
-
-Uma âncora do recurso da figura tem um estilo de rótulo, mas nenhum `::label` da figura fica nela neste idioma: o mapa tem espaço para uma palavra que esta edição deixa de fora. É uma nota; o `postext check` a lista como `info`. Âncoras sem estilo, como a de um personagem de quadrinhos, não são apontadas. O aviso traz o recurso, a âncora, o estilo dela, o idioma, a página e o intervalo de origem da figura. Escreva o rótulo no Markdown deste idioma ou tire o estilo da âncora.
-
-No painel Verificações, o aviso leva à figura no painel Texto, e o botão com o alfinete abre as âncoras da imagem nessa âncora.
-
-### labelOverflow
-
-Um rótulo continua mais largo do que a `width` da âncora na menor escala que o estilo de rótulo permite (`minScale`): é desenhado nessa escala e ultrapassa a medida. O aviso traz o recurso, o texto do rótulo, a âncora (nenhuma, se o rótulo foi posto com porcentagens), a largura que lhe foi dada, a escala atingida, o idioma, a página e o intervalo de origem do texto do rótulo. É verificado em cada edição; assim, um idioma de palavras mais longas transborda onde outro não. Alargue a `width` da âncora, encurte a palavra no Markdown desta edição ou baixe o `minScale` do estilo de rótulo. Um rótulo chinês ou japonês quebra entre caracteres e não transborda assim. Desde o postext 1.39.
-
-### labelOverlap
-
-Dois rótulos da mesma figura se tocam; num rótulo com placa, conta a placa. O aviso fica no rótulo posterior, na ordem em que foram escritos, com o texto do primeiro rótulo anterior que ele toca e quantos rótulos anteriores toca no total. O teste usa a caixa própria de cada linha, girada com o rótulo, de modo que o espaço ao lado de uma linha curta fica livre, e deixa duas linhas se invadirem em até um oitavo da altura de uma linha. É verificado em cada edição. Mova uma das âncoras, estreite a `width` de um rótulo para que ele quebre ou encurte as palavras no Markdown desta edição. No painel Verificações do Sandbox, o botão do alfinete abre as âncoras da imagem na âncora do rótulo. Desde o postext 1.39. Com `overlap: 'allow'` numa âncora, ou no estilo de rótulo dela, um rótulo que o original imprime tocando os vizinhos (um mapa denso) sai da verificação, e nenhum par de que ele faça parte é reportado. Desde o postext 1.42. As zonas `avoid` de uma imagem contam como os símbolos de um mapa: retângulos desenhados sobre os pontos e os ícones do mapa, no modo **Zonas a evitar** das marcas da imagem, em frações da imagem. Um rótulo que invade uma delas é reportado do mesmo modo, com `symbol 2` no lugar de outro rótulo (`withSymbol` nos dados), e `overlap: 'allow'` deixa um rótulo fora das duas verificações. Desde o postext 1.42.
-
-### figureWordsShared
-
-Uma `:::figure` define palavras (`alt`, `caption` ou `note`) para um recurso cujas palavras uma figura anterior do mesmo capítulo já definiu, e elas são diferentes. As páginas mostram as palavras da primeira figura e omitem estas. O aviso traz o recurso, as palavras omitidas e o intervalo de origem da primeira delas; uma figura posterior que não dá palavras próprias não é problema. Dê à figura um recurso próprio: um segundo recurso que aponte para o mesmo arquivo de imagem, com legenda, número e âncoras próprios. No painel Verificações do Sandbox, ele aparece em Figuras. Desde o postext 1.42.
+- **`template`** indica um modelo com `role: 'module'`. **`name`** é opcional: dá nome à instância do módulo, de modo que os blocos dela são `ramas.raiz`, `ramas.izq`. Sem ele, a instância é `<template>[n]`, a posição do módulo entre os módulos da página com esse modelo: `arbol[1].raiz`. Um nome já usado na página, ou um que tenha espaço, `.`, `#`, `[` ou `]`, é trocado por esse padrão (`moduleNameRejected`).
+- **Os slots** dentro de um `:::module` são os do próprio módulo: `slot="raiz"` chega ao bloco `raiz` deste módulo, e dois módulos do mesmo modelo numa página mantêm as palavras separadas. O conteúdo que não indica slot vai para o bloco de fluxo do módulo, e um título, para o bloco do módulo que recebe o nível dele; sem nenhum dos dois, para o bloco de fluxo da página.
+- **Ordem.** Os módulos se empilham na ordem do Markdown; assim, outra página compõe os mesmos conjuntos em outra ordem, ou com uma árvore a mais, sem modelo novo.
+- Um `:::module` fora de um contêiner de página é um boxe simples com o conteúdo dele. Um módulo dentro de um módulo não é suportado (`moduleNested`).
 
 ## Exemplo
 
@@ -263,7 +261,7 @@ Com `"wrap": "contour"` também, o bloco afasta o texto com a forma das imagens 
 
 ### Decoração, cabeços e camadas
 
-A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a caixa definitiva; por isso, um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo. Os textos dela leem os atributos da própria página: `fondo="banda-retos"` no contêiner de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção. Numa página da direita para a esquerda ou vertical, os blocos seguem o fluxo espelhado ou girado enquanto a decoração fica na folha: um elemento colocado numa borda de início ou de fim (`top-start`, veja [Posicionamento de elementos](/pt/docs/configuration-headers-footers#posicionamento-de-elementos)) fica junto do bloco correspondente em todas as edições.
+A `decoration` do modelo (imagens, fios, caixas e textos curtos) é posicionada quando os blocos já têm a caixa definitiva; por isso, um elemento pode se ancorar a um bloco (`"to": "#gasto"`) e acompanhá-lo, e um [conector](/pt/docs/configuration-composed-pages#conectores) pode ligar dois blocos com uma linha que continua presa a eles, por mais que as palavras os desloquem. Os textos dela leem os atributos da própria página: `fondo="banda-retos"` no contêiner de página dá `{attr.fondo}`, por exemplo para escolher página a página uma imagem de fundo com `"resourceId": "{attr.fondo}"`. Os cabeços e rodapés também leem esses atributos. O `header` ou o `footer` de um modelo substitui o da seção, `false` o esconde e, quando o modelo não define nenhum dos dois, saem os da seção. Numa página da direita para a esquerda ou vertical, os blocos seguem o fluxo espelhado ou girado enquanto a decoração fica na folha: um elemento colocado numa borda de início ou de fim (`top-start`, veja [Posicionamento de elementos](/pt/docs/configuration-headers-footers#posicionamento-de-elementos)) fica junto do bloco correspondente em todas as edições.
 
 Os blocos são pintados na ordem da `layer`: a decoração na camada 0, os blocos na 1 por padrão, uma camada mais alta por cima de uma mais baixa e uma camada negativa por baixo da decoração. `rotate` gira um bloco junto com o conteúdo, em qualquer ângulo e em torno do centro do bloco, no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo.
 
@@ -325,8 +323,35 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
       <td>Uma página composta, um bloco ou uma figura fica sem fechamento (veja as regras de recuperação acima). O painel Verificações chama a página composta de <code>::::page</code>.</td>
       <td>Acrescente a linha de fechamento: tantos sinais de dois-pontos quanto a linha de abertura da página, ou <code>:::</code> para um bloco ou uma figura.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Uma grade que se repete comporta <code>repeat.max</code> cartões e a página lhe dá mais (veja <a href="#slots-repetidos">Slots repetidos</a>). Um aviso por cartão a mais, no <code>slot="…"</code> dele: o cartão vai para o bloco de fluxo, ou para depois da página.</td>
+      <td>Aumente ou retire o <code>max</code> no modelo, ou passe os cartões a mais para outra página.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Um <code>:::module</code> não indica nenhum modelo, indica um modelo que não é módulo, ou o modelo da página não tem grupo de módulos (<code>reason</code>). O conteúdo dele vai para o bloco de fluxo.</td>
+      <td>Corrija o <code>template</code> do módulo, ou dê ao modelo da página um grupo com <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Um contêiner de página indica um modelo de módulo. O conteúdo dele é composto no fluxo, como com um modelo desconhecido.</td>
+      <td>Indique um modelo de página no contêiner e escreva o módulo dentro dele como um <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Um <code>:::module</code> está escrito dentro de outro módulo. Os elementos dele passam a ser do módulo de fora.</td>
+      <td>Feche o módulo de fora antes de abrir o seguinte.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>O <code>name</code> de um módulo já é usado por outro módulo da página, ou tem espaço, <code>.</code>, <code>#</code>, <code>[</code> ou <code>]</code>. O módulo recebe o nome <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Dê a cada módulo da página um nome próprio, feito de letras, algarismos e hifens.</td>
+    </tr>
   </tbody>
 </table>
+
+Os avisos de módulo e o `repeatOverflow` existem desde o postext 1.48; o lado do modelo de cada um está descrito em [Configuração › Avisos de sobreposição, repetição e módulos](/pt/docs/configuration-composed-pages#avisos-de-sobreposição-repetição-e-módulos).
 
 Depois que o livro é diagramado, cada um desses avisos traz também a página a que se refere (`pageIndex`); por isso, o painel Verificações e o `postext check` mostram o número da página ao lado do modelo, do bloco ou do slot e do intervalo de origem.
 
@@ -351,6 +376,28 @@ Um bloco vazio também gera o aviso. Numa pilha cujos blocos já não têm nada 
 **Causa.** O `overflow.continueIn` de um bloco é `'page:<id>'` (veja [Saltar para uma página posterior](#saltar-para-uma-página-posterior)), e nenhum contêiner de página `::::page{id="<id>"}` vem depois da página em que a matéria está: o id está escrito errado, o contêiner não o tem, falta o atributo do contêiner que a regra lê (`'page:{attr.sigue}'`) ou o contêiner vem antes (`before: true`). O resto continua em uma página acrescentada logo depois, como com `'next-page'`. O aviso informa o modelo, o bloco, `target` (o id procurado), o `configPath` do bloco e a página. O id pode ser também o de um contêiner de página de um capítulo posterior do livro; um capítulo diagramado sozinho com `buildDocument` e sem `laterPageIds` conhece só as próprias páginas.
 
 **Correção.** Dê esse id ao contêiner da página posterior, ou corrija o nome em `continueIn` ou no atributo do contêiner que ele lê. Uma página anterior à matéria não pode recebê-la: mova esse contêiner para depois da matéria ou indique uma página posterior.
+
+### frameCovered
+
+**Causa.** Parte de um bloco fica sob outro bloco pintado por cima dele (uma `layer` mais alta, ou a mesma camada mais adiante na ordem do modelo), onde esse bloco é opaco: uma legenda sob uma foto, uma aba sob uma imagem recortada, as últimas linhas de um boxe sob uma faixa. A verificação roda quando a página já está composta, sobre as caixas que o conteúdo deu aos blocos; por isso, uma página que está limpa em espanhol pode ficar coberta numa edição mais longa. Um bloco cobre com o fundo (o fundo do estilo dele ou `look.background`, a aba, a faixa), as imagens e as linhas de texto; um contorno não cobre nada, e um bloco que afasta o texto pela forma das imagens (`wrap: 'contour'`) não cobre linhas com a caixa dele. O que pode ficar coberto: as linhas do bloco, a aba e o título, as imagens e as tabelas. Palavras sobre uma imagem não são apontadas: se elas se leem ou não, cabe à verificação de contraste. Um corte de menos de 0,3 mm é um toque, e um par com menos de 1 mm² fica de fora.
+
+O aviso informa o modelo, o bloco, o bloco que cobre (`coveredBy`, `coveredByPath`), a área escondida (`overlapMm2`), as primeiras palavras cobertas (`text`) ou a imagem (`picture`), o idioma e a página, e aponta para o conteúdo do bloco coberto. Um aviso por par.
+
+**Correção.** Cada proposta é um dado, como as de `frameOverflow`:
+
+- `layer`: a `layer` do bloco que cobre posta abaixo da do coberto, proposta só quando isso não esconde outra coisa no lugar;
+- `exclude`: `'push'` no bloco que cobre, para que o texto coberto o contorne (só quando atinge linhas do corpo);
+- `move`: `frame`, `dxMm`, `dyMm`, o menor deslocamento do bloco que cobre que separa o par, testado na página: só é oferecido quando o bloco movido, e os blocos ancorados nele, ficam livres de todos os outros blocos e dentro do que os contém. Quando nenhuma direção fica livre, ou o bloco coberto pende do que o cobre, nenhum deslocamento é oferecido.
+
+Quando a sobreposição é intencional (um desenho que passa por cima do texto de propósito), defina `overlap: 'allow'` em qualquer um dos dois blocos. Desde o postext 1.48.
+
+### frameOutsideArea
+
+**Causa.** Um bloco passa do que o contém: o texto passa do refile, onde é cortado, ou o fundo e as imagens passam da sangria (sem sangria, as duas coisas são o refile); ou qualquer parte dele passa do bloco ou do grupo em que está ancorado por dentro, como uma nota ancorada dentro de um cartão (`top-left` de `'#card'` com um deslocamento para dentro dele) que o texto empurra para além do pé do cartão. Um bloco ancorado a uma borda fora da outra caixa (`below`, `right-of`) nunca está dentro dela. Excessos de menos de 0,3 mm ficam de fora.
+
+O aviso informa `past` (`'trim'`, `'bleed'`, `'frame'` ou `'group'`), `target` (o nome do bloco ou do grupo), `excessMm` (o maior excesso), `sides` (o de cada lado), o idioma e a página.
+
+**Correção.** As propostas: `maxHeight`, o espaço que o bloco tem (não é proposto para um bloco preso pelo pé, que uma altura menor não traz para dentro); `continueNextPage` junto com ele, para um bloco de texto, para que o que já não cabe continue; `minHeight` do bloco em que ele está ancorado, aumentado pelo excesso; `move`, o deslocamento que o traz para dentro quando ele passa de um lado só, oferecido quando ele fica livre dos outros blocos. Um selo pendurado fora do cartão de propósito recebe `overlap: 'allow'`. Desde o postext 1.48.
 
 ## Quando o texto cresce
 
@@ -606,6 +653,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
       <td><code>overflow</code></td>
       <td>O conteúdo não coube: <code>toMm</code> é a altura cortada, como em <code>frameOverflow</code>.</td>
     </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Parte do bloco fica sob <code>cause</code>, o bloco pintado por cima dele: <code>areaMm2</code> é a área escondida, como em <code>frameCovered</code>. Em palavras: “card lies under cutout (25.3 mm²)”. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>O bloco passa <code>toMm</code> além de <code>past</code>: <code>'trim'</code>, <code>'bleed'</code> ou <code>'#name'</code>, o bloco ou o grupo em que está ancorado por dentro, como em <code>frameOutsideArea</code>. Em palavras: “note runs 26 mm past card”. Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>Um conector (<code>cause</code>, o id dele) deixou de fora a ponta em <code>frame</code>, uma caixa que a página não mostra: recolhida, opcional e vazia, um cartão além dos itens da página, ou um ponto da imagem que o bloco dela corta. Uma nota, não um aviso. Em palavras: “connector ramas left out izq (not on the page)”. Desde o postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -726,3 +785,4 @@ findElement(doc, 'cp0:dinero');   // o mesmo bloco depois de uma nova diagramaç
 ## Páginas de quadrinhos
 
 Uma página de quadrinhos (`:::page{split}`) é uma página composta cujos blocos a divisão dela gera: um por quadro, com identificadores estáveis `cm<n>:<nome>`, um polígono para uma célula inclinada, um estilo de boxe por `box` e Markdown despejado num quadro de texto. Veja [Quadrinhos › Páginas de quadrinhos e páginas compostas](/pt/docs/comics#páginas-de-quadrinhos-e-páginas-compostas).
+

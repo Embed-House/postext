@@ -3,10 +3,10 @@
 export const metadata = {
   title: 'Konfiguration: zusammengesetzte Seiten',
   sidebarTitle: 'Einstellungen für zusammengesetzte Seiten',
-  description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Dekoration, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
+  description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Raster, die einen Rahmensatz wiederholen, Module, Dekoration und Verbinder, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
   lang: 'de',
-  lastUpdated: '2026-10-19',
-  readingTime: '6 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '10 min',
   order: 18,
   parent: 'configuration',
   plainSummary: "Diese Seite behandelt Seitenvorlagen. Eine Vorlage ist eine Seite, die in den Einstellungen gezeichnet wird: benannte Kästen, die Rahmen heißen, mit ihrer Lage, ihrer möglichen Größe und ihrem Aussehen. Das Markdown einer zusammengesetzten Seite füllt die Rahmen dann über ihre Namen, sodass der Text nie Positionen enthält und die Einstellungen nie Text. Eine Vorlage kann von einer anderen ausgehen und nur einige Rahmen ändern, und sie kann auf linken und rechten Seiten verschieden sein. Die Seite führt außerdem die Beschriftungsstile für Wörter auf Bildern auf sowie jede Warnung, die eine Vorlage auslösen kann, mit dem Weg, sie zu beheben.",
@@ -104,7 +104,7 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>keine</td>
-      <td>Bilder, Linien und Kästen, die mit der Seite gezeichnet werden, beschrieben mit denselben Elementen wie <a href="/de/docs/configuration-headers-footers#kopf--und-fußzeilen">Kopf- und Fußzeilen</a>. Textelemente enthalten nur Platzhalter (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> für ein Attribut des Seitenblocks). Ein Element kann an einem Rahmen oder einer Gruppe verankert werden (<code>'#dinero'</code>) und bewegt sich dann mit. Die Dekoration wird nach den Rahmen gesetzt und verdrängt nie Text. Seit postext 1.42 gibt <code>&#123;headingNumber&#125;</code> den Zähler der ersten nummerierten Überschrift aus, die die Rahmen der Seite enthalten (ein Rahmen mit <code>takes</code>), und <code>&#123;headingNumber.titulo&#125;</code> den des Rahmens <code>titulo</code>, in den Ziffern des Dokuments; ein Abzeichen mit der Nummer eines Themas liest sie also aus der Überschrift, und der Seitenblock muss sie nicht wiederholen. Die Dekoration wird unter den Rahmen gezeichnet; ein Klick auf ein Textelement, das über einem Rahmen liegt, an einer Stelle, an der der Rahmen keinen eigenen Text hat, trifft das Element, nicht den Rahmen. Ein Rahmen mit negativem <code>layer</code> wird unter der Dekoration gezeichnet.</td>
+      <td>Bilder, Linien und Kästen, die mit der Seite gezeichnet werden, beschrieben mit denselben Elementen wie <a href="/de/docs/configuration-headers-footers#kopf--und-fußzeilen">Kopf- und Fußzeilen</a>. Textelemente enthalten nur Platzhalter (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> für ein Attribut des Seitenblocks). Ein Element kann an einem Rahmen oder einer Gruppe verankert werden (<code>'#dinero'</code>) und bewegt sich dann mit. Die Dekoration wird nach den Rahmen gesetzt und verdrängt nie Text. Seit postext 1.42 gibt <code>&#123;headingNumber&#125;</code> den Zähler der ersten nummerierten Überschrift aus, die die Rahmen der Seite enthalten (ein Rahmen mit <code>takes</code>), und <code>&#123;headingNumber.titulo&#125;</code> den des Rahmens <code>titulo</code>, in den Ziffern des Dokuments; ein Abzeichen mit der Nummer eines Themas liest sie also aus der Überschrift, und der Seitenblock muss sie nicht wiederholen. Die Dekoration wird unter den Rahmen gezeichnet; ein Klick auf ein Textelement, das über einem Rahmen liegt, an einer Stelle, an der der Rahmen keinen eigenen Text hat, trifft das Element, nicht den Rahmen. Ein Rahmen mit negativem <code>layer</code> wird unter der Dekoration gezeichnet. Seit postext 1.48 nimmt die Dekoration auch <a href="/de/docs/configuration-headers-footers#pfadelemente">Pfadelemente</a> auf (Balken, Bänder, Winkel, als Vektorformen gezeichnet) und <a href="#verbinder">Verbinder</a>, die Linien, die Rahmen verbinden.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -152,7 +152,7 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>Die Seitenrolle, die Gestaltungselemente mit einem Filter <code>pages</code> sehen.</td>
+      <td>Die Seitenrolle, die Gestaltungselemente mit einem Filter <code>pages</code> sehen. <code>'module'</code> macht die Vorlage zu einem Modul: einem Kasten aus Rahmen, den Seiten in einer Gruppe stapeln, statt einer eigenen Seite (siehe <a href="#module">Module</a>). Seit postext 1.48.</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ Ein Rahmen wird über seine Rasterzelle (`grid`) platziert, wenn die Vorlage ein
       <td>Ein Rahmen in eigener Schreibrichtung oder Laufrichtung: ein senkrechter Kasten auf einer waagerechten Seite, eine waagerechte Karte auf einer senkrechten, ein Zitat von rechts nach links in einem Buch von links nach rechts. Ein Rahmen der anderen Schreibrichtung wird in seinem um eine Vierteldrehung gedrehten Kasten gesetzt: Seine Zeilen laufen die Höhe des Kastens entlang und folgen einander über seine Breite, und eine Höhe <code>'auto'</code> ist die kleinste, die sie in dieser Breite fasst. Sein Text wird so gezeichnet, wie eine Seite dieser Schreibrichtung ihren eigenen zeichnet. <code>direction</code> setzt den Text des Rahmens in dieser Richtung, wie einen Kasten mit <code>&#123;dir=…&#125;</code>; ein Block oder Kasten mit eigenem <code>dir</code> behält es. Seit postext 1.39. Seit postext 1.40 funktioniert ein senkrechter Rahmen auch auf einer Seite von rechts nach links: Er wird gesetzt wie auf einer Seite von links nach rechts und dort platziert, wo der gespiegelte Textfluss ihn hinsetzt, sein Text ungespiegelt gezeichnet; ein Bild in einem senkrechten Rahmen einer waagerechten Seite steht aufrecht, mit seiner Legende, und nimmt den Platz, den der Kasten quer zur Seite lässt; das umfließende EPUB schreibt einen Rahmen anderer Schreibrichtung als Kasten mit dieser Richtung und der Länge, entlang der seine Zeilen laufen (in em des Grundtexts). Seit postext 1.42 steht auch ein Bild in einem Rahmen einer senkrechten Seite, der der Schreibrichtung der Seite folgt, aufrecht, mit seiner Legende.</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> nimmt den Rahmen aus den Überlappungsprüfungen aus: <code>frameCovered</code> wird für kein Paar ausgelöst, zu dem er gehört, ob er über dem anderen Rahmen gezeichnet wird oder darunter, und <code>frameOutsideArea</code> wird für ihn nicht ausgelöst. Für Grafik, die über Text liegen soll, oder ein Abzeichen, das absichtlich halb über seine Karte hinaushängt. Siehe <a href="#warnungen-zu-überlappung-wiederholung-und-modulen">Warnungen zu Überlappung, Wiederholung und Modulen</a>. Seit postext 1.48.</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>Von oben nach unten oder vom Anfang zum Ende.</td>
+      <td>Von oben nach unten, vom Anfang zum Ende oder Zellen in Reihen (<code>'grid'</code>, seit postext 1.48; siehe <a href="#raster-die-einen-rahmensatz-wiederholen">Raster, die einen Rahmensatz wiederholen</a>).</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Die Rahmen der Gruppe in ihrer Reihenfolge auf der Seite. Ein Rahmen gehört höchstens zu einer Gruppe; ein Name, der kein Rahmen der Vorlage ist, oder ein bereits aufgeführter Rahmen wird übersprungen.</td>
+      <td>Die Rahmen der Gruppe in ihrer Reihenfolge auf der Seite. Ein Rahmen gehört höchstens zu einer Gruppe; ein Name, der kein Rahmen der Vorlage ist, oder ein bereits aufgeführter Rahmen wird übersprungen. Ein Raster, das sich wiederholt, nimmt stattdessen die Rahmen von <code>repeat.frames</code>.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Ein Raster: die Zahl der Spalten, alle gleich breit.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>, <code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>das <code>gap</code> der Gruppe</td>
+      <td>Ein Raster: der Abstand zwischen zwei Spalten und zwischen zwei Reihen.</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>keine</td>
+      <td>Ein Raster: der Rahmensatz, der einmal je Eintrag des Seiteninhalts gesetzt wird. Der erste Rahmen von <code>frames</code> ist der Hauptrahmen der Zelle; <code>max</code> begrenzt die Einträge, und der Rest kommt in den Flussrahmen (<code>repeatOverflow</code>).</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Die Gruppe nimmt die <code>:::module</code>-Blöcke der Seite auf, untereinander in der Reihenfolge des Markdowns, mit <code>gap</code> dazwischen. Sie wird unabhängig von ihrem <code>kind</code> als Stapel gesetzt, und ihre <code>frames</code> werden nicht gelesen. Siehe <a href="#module">Module</a>. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>keine</td>
+      <td>Eine Modulgruppe: wo ein Modul, das nicht passt, als Ganzes weiterläuft. Ohne Angabe wird das Modul am Fuß der Gruppe abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ Das Ergebnis hängt nur vom Inhalt der Seite, von der Vorlage und von der Typogr
 
 Der wachsende Rahmen ist so hoch wie der freie Platz, was auch immer er enthält; ein Stil mit sichtbarem Hintergrund würde ihn ganz ausfüllen. Zeichnen Sie die Karte daher in der Dekoration der Vorlage und lassen Sie den Textrahmen ohne Stil.
 
+### Raster, die einen Rahmensatz wiederholen
+
+Eine Seite mit Fotokarten, eine Seite mit Aufgabenkarten oder eine Seite mit Porträts und einem Namen unter jedem ist dieselbe Karte, viele Male gezeichnet. Eine Rastergruppe mit `repeat` zeichnet sie einmal in der Vorlage: die Rahmen einer Karte, der Rahmensatz, den das Raster einmal je Eintrag setzt, den das Markdown der Seite ihm gibt. Wie viele Karten eine Seite hat, entscheidet dann das Markdown, und eine Übersetzung, die eine Karte hinzufügt, braucht keine neue Vorlage. Seit postext 1.48.
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **Der Satz.** Der erste Rahmen von `repeat.frames` ist der **Hauptrahmen** der Zelle: Er nimmt die Breite der Zelle an und behält seine eigene Höhenregel (`'auto'` ist die Höhe seines Inhalts, zwischen `minHeight` und `maxHeight`). Die übrigen Rahmen des Satzes werden so gesetzt, wie die Vorlage sie zeichnet, am Hauptrahmen oder aneinander verankert: Hier hängt das Etikett mit der Legende am Fuß des Fotos. Ein Rahmen des Satzes, der an einem Rahmen außerhalb des Satzes verankert ist, bleibt dort, wo dieser Anker ihn hinsetzt.
+- **Einträge.** Jeder Teil `:::frame{slot="foto"}` der Seite ist ein Eintrag: Teile eines wiederholten Slots werden nicht aneinandergefügt. Innerhalb des Teils kommt ein Block, der ein Mitglied des Satzes nennt (`:::frame{slot="pie"}`, `::resource{… slot="pie"}`), in dieses Mitglied derselben Karte; der Rest kommt in den Hauptrahmen. Siehe [Zusammengesetzte Seiten › Wiederholte Slots](/de/docs/composed-pages#wiederholte-slots).
+- **Instanzen.** Die Rahmen jeder Karte heißen `<frame>[n]`, ab 1 gezählt: `foto[2]` und `pie[2]` sind die zweite Karte. Warnungen, das Umbruchprotokoll, die Quellenzuordnung und die Sandbox verwenden diese Namen, die Rahmen-IDs sind `cp<n>:foto[2]`, und ein Dekorationselement oder ein Verbinder kann sich an `'#foto[2]'` verankern. Das `to: '#foto[*]'` eines Verbinders erreicht jede Karte, die die Seite hat. Ein an `'#foto'` verankertes Element liest das Rechteck des Rasters.
+- **Zellen.** Die Zellen füllen die Reihen von der Anfangsseite aus; auf einer Seite von rechts nach links steht die erste Karte also rechts. Eine Reihe ist so hoch wie ihre höchste Zelle, einschließlich dessen, was über dem Hauptrahmen (ein Etikett) und unter ihm (eine Legende) hängt; `rowAlign` platziert die niedrigeren. Das Rechteck des Rasters ist sein eigenes `placement` oder seine `grid`-Zelle; ohne beides beginnt es dort, wo die Vorlage den Hauptrahmen zeichnet, und reicht bis zur rechten Kante und zum Fuß des Bereichs.
+- **Wenn die Karten nicht passen.** Eine Reihe jenseits des Fußes des Rasters wird dort abgeschnitten, jede Karte durchläuft die Einpassstufen für sich, und die letzte abgeschnittene Karte meldet `frameOverflow`. Mit `overflow.continueIn` am Hauptrahmen (`'next-page'`, `'template:<id>'`) läuft das Raster **in ganzen Reihen** weiter: Die erste Reihe, die nicht passt, und jede Reihe danach werden auf der hinzugefügten Seite gesetzt, im Raster einer Vorlage, die denselben Rahmensatz wiederholt. Eine Zelle, die höher ist als das ganze Raster, löst eine Warnung aus, statt endlos weiterzulaufen.
+- **`max`.** Die Einträge jenseits von `repeat.max` kommen in den Flussrahmen oder, wenn die Vorlage keinen hat, hinter die Seite, und jeder löst `repeatOverflow` aus.
+
+Ein Raster ohne `repeat` setzt die Rahmen, die es aufführt, je einen pro Zelle, in der geschriebenen Reihenfolge. Ein Rahmen eines wiederholten Satzes, der in einer anderen Gruppe aufgeführt ist, wird dort übersprungen (`groupFrameTwice`), und ein Name, den die Vorlage nicht hat, ist `groupFrameUnknown`. `grow` und `shrink` gelten nicht für die Reihen eines Rasters, `redistribute` nicht für seine Karten.
+
+### Module
+
+Eine Schulbuchseite stapelt oft Blöcke, die im Buch in anderer Reihenfolge wiederkehren: ein Kasten mit einem Foto daneben, ein Baum aus drei Gedanken, ein Raster aus vier Fotos unter einer Überschrift. Für jede Reihenfolge eine Vorlage zu zeichnen, vervielfacht die Vorlagen. Ein **Modul** ist einer dieser Blöcke, einmal gezeichnet: eine Vorlage mit `role: 'module'`, die Rahmen, Gruppen und Dekoration enthält (Verbinder eingeschlossen) und keine eigene Seite hat. Eine Seitenvorlage nimmt Module in einer Gruppe mit `modules: true` auf; das Markdown der Seite sagt, welche Module sie enthält und in welcher Reihenfolge (siehe [Zusammengesetzte Seiten › Module auf einer Seite](/de/docs/composed-pages#module-auf-einer-seite)). Seit postext 1.48.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **Was ein Modul hat.** Rahmen, Gruppen (auch ein Raster, das sich wiederholt), Dekoration und Verbinder. Es hat kein `area`, `header`, `footer`, `variants`, `spread`, `gutter` oder `overflowTemplate`: Jedes davon wird als `unknownConfigValue` gemeldet und ignoriert. `extends` funktioniert zwischen Modulen (eine Vorlage, die ein Modul erweitert, ist ein Modul).
+- **Sein Rechteck.** Ein Modul ist so breit wie seine Gruppe und so hoch, wie seine Rahmen reichen; die Gruppe stapelt die Module von ihrer Oberkante an, mit `gap` dazwischen. Innerhalb eines Moduls ist `'container'` das Rechteck des Moduls, für seine Rahmen (auch `'fill'` und Prozentangaben) und für seine Dekoration: Ein Grund mit der Größe `{ to: 'container', edge: 'bottom' }` bedeckt das Modul, welche Höhe ihm seine Wörter auch geben.
+- **Namen.** Die Rahmen, Gruppen und Elemente eines Moduls gelten im Bereich des Instanznamens des Moduls: `<name>.<frame>`, mit dem Namen, den das Markdown gibt (`name="ramas"`), sonst `<template>[n]`, die laufende Nummer des Moduls unter den Modulen dieser Vorlage auf der Seite (`arbol[2].raiz`). Anker, `next`, `continueIn: '#x'` und Verbinder innerhalb eines Moduls werden auf seine eigenen Rahmen umgeschrieben, sodass zwei Bäume auf einer Seite nie ineinanderlaufen. Eine Rahmen-ID lautet `cp0:arbol[2].raiz`.
+- **Wenn Module nicht passen.** Ein Modul jenseits des Fußes der Gruppe wird dort abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen; `frameOverflow` wird einmal für die Gruppe ausgelöst. Mit `overflow.continueIn` an der Modulgruppe (`'next-page'` oder `'template:<id>'`) laufen das erste Modul, das nicht passt, und jedes Modul danach **als Ganzes** auf der hinzugefügten Seite weiter, unter denselben Namen, oben in der Modulgruppe dieser Seite.
+- **Noch nicht.** Module nebeneinander (eine Modulgruppe ist immer ein Stapel), ein Modul in einem Modul (`moduleNested`) und `grid`-Zellen der Vorlage innerhalb eines Moduls.
+
 ### Wenn der Inhalt nicht passt
 
 Ist der Inhalt eines Rahmens höher als der Platz, den ihm seine Gruppe gibt, probiert das Layout der Reihe nach die [Einpassstufen](/de/docs/composed-pages#wenn-der-inhalt-immer-noch-nicht-passt) durch und hört bei der ersten auf, mit der er passt: freier Platz bis `maxHeight`, die Gruppe, die schiebt und nachgibt, kleinere Bilder, die übrigen Rahmen der Gruppe bis auf ihr Minimum, kleinerer Text, Fortsetzung auf einer anderen Seite. Diese Rahmeneinstellungen bestimmen, wie weit jede Stufe gehen darf:
@@ -555,7 +654,7 @@ Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit z
 
 ### Was der Umbruch umsetzt
 
-Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Verankerungen, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Einpassstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Seit postext 1.42 setzt er auch die `palette` der Vorlage, den `look` eines Rahmens und die Breite `'auto'` um (so breit wie die längste Zeile des Rahmens). `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Gelesen und geprüft, aber noch nicht umgesetzt wird `bodyStyle` der Vorlage.
+Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Verankerungen, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Einpassstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Seit postext 1.42 setzt er auch die `palette` der Vorlage, den `look` eines Rahmens und die Breite `'auto'` um (so breit wie die längste Zeile des Rahmens). `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Seit postext 1.48 setzt er Rastergruppen und ihr `repeat` um, Modulgruppen und Modulvorlagen, Verbinder und Pfadelemente in der Dekoration sowie das `overlap` eines Rahmens. Gelesen und geprüft, aber noch nicht umgesetzt wird `bodyStyle` der Vorlage.
 
 ### Doppelseiten
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 Ein Spaltenabstand, der breiter ist als der `gutter`, hält die Karten eines symmetrischen Rasters vom Bund fern, sodass keine verschoben wird. Das zweite Band und der Bildstreifen setzen `crossGutter`, um ihn zu überqueren: Jedes gehört zu der Seite, die seine Mitte enthält, und wird auf beiden gezeichnet. Jedes Wort der Seite, auch die Namen der Zeitalter auf den Etiketten, bleibt im Markdown.
 
 In einem senkrecht gesetzten Buch (`vertical-rl`) wird eine Doppelseite im Flussrahmen der Seiten gesetzt, wie seine einzelnen zusammengesetzten Seiten: Die Oberkante einer Seite ist der rechte Rand des Blatts, und die Zeilen laufen nach unten, sodass das `x` der Vorlage das Blatt hinunterläuft und ihr `y` vom rechten Rand des Blatts zum linken. Das Blatt besteht aus der rechten Seite, gefolgt von der linken entlang `y`; der Bund ist eine Linie quer durch die Vorlage, und `gutter`, `crossGutter` und der Schnitt zwischen den Seiten beziehen sich auf diese Achse. Die Dekoration wird weiterhin auf das physische Blatt gesetzt und am Bund geschnitten. Eine waagerechte Zeitleiste, die für ein waagerecht gesetztes Buch gezeichnet ist, erscheint in einem senkrechten gedreht: Legen Sie die Vorlage eines senkrecht gesetzten Buchs im Rahmen seines Textflusses an. Seit postext 1.38. Eine Karte, die quer über den Bogen gelesen werden soll, bekommt `writingMode: 'horizontal-tb'`: Sie wird waagerecht gesetzt und steht aufrecht auf der senkrechten Seite (seit postext 1.39).
+
+### Verbinder
+
+Ein Verbinder ist eine Linie der Dekoration, die Rahmen verbindet: die Äste eines Baumdiagramms, ein Organigramm, die Lote einer Zeitleiste, die Pfeile eines Flussdiagramms, der Zeiger einer Notiz auf einen Ort einer Karte. Er wird gesetzt, nachdem die Rahmen ihre endgültigen Rechtecke haben; er folgt also einem Text, der wächst, einer Ausgabe mit längeren Wörtern oder einer Gruppe, die ihre Rahmen verschiebt, und er wird in jedem Ausgabeformat als Vektorlinie gezeichnet, sodass die Vorlage kein Bild der Linien braucht. Verbinder sind Elemente der `decoration` einer Seitenvorlage oder eines Moduls; Kolumnentitel und Überschriftengestaltungen haben keine Rahmen, die sich verbinden ließen, und ein Verbinder dort wird gemeldet (`unknownConfigValue`) und nicht gezeichnet. Seit postext 1.48.
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Eigenschaft</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'connector'</code>, <code>string</code></td>
+      <td>erforderlich</td>
+      <td>Das Element und seine ID, wie bei den anderen Elementen der Dekoration.</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>erforderlich</td>
+      <td>Ein Ende der Linie; der Elternknoten eines Baums.</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>erforderlich</td>
+      <td>Das andere Ende oder mehrere: je eine Linie zu jedem, oder die Kinder eines Baums. <code>'#card[*]'</code> steht für jede Karte eines <a href="#raster-die-einen-rahmensatz-wiederholen">Rasters, das sich wiederholt</a>, die die Seite hat.</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>: ein Segment. <code>'elbow'</code>: quer, entlang und wieder quer zwischen Seiten, die einander gegenüberliegen, ein L zwischen Seiten im rechten Winkel. <code>'tree'</code>: ein Stamm von <code>from</code> zu einem Balken, der Balken quer über die Punkte der Kinder, ein Lot zu jedem Kind.</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>Wo das Mittelstück eines Winkels oder der Balken eines Baums zwischen den Enden steht: <code>0</code> bei <code>from</code>, <code>1</code> beim nächsten <code>to</code>. Ein Baum mit <code>trunk: 0</code> zeichnet keinen Balken: ein Lot von der Kante des Elternknotens zu jedem Kind, wie die Striche einer Zeitleiste.</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Rundet die Knicke eines Winkels oder eines Baums ab.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die Hauptfarbe</td>
+      <td>Eine an die Palette gebundene Farbe folgt der <code>palette</code> der Vorlage, der des Seitenblocks und der eines Teils, wie Linien es tun.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.75pt</code>, durchgezogen</td>
+      <td>Die Stärke der Linie und ein Strichmuster (Strich, Lücke, …).</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>, <code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>Eine Marke bei <code>from</code> und bei jedem <code>to</code>: ein gefüllter Punkt, auf dem Ende zentriert, oder eine Pfeilspitze, deren Spitze das Ende ist.</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>Die Breite eines Punkts oder die Länge einer Pfeilspitze.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Verbindet die Rechtecke, die die Vorlage angibt, nicht die Rechtecke, die der Inhalt den Rahmen gegeben hat.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code></td>
+      <td>wie bei anderen Elementen</td>
+      <td><code>'all'</code></td>
+      <td>Welche Seiten ihn zeichnen.</td>
+    </tr>
+  </tbody>
+</table>
+
+Jedes Ende (`ConnectorEnd`) nennt einen Kasten und einen Punkt auf einer seiner Seiten:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Feld</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>erforderlich</td>
+      <td>Ein Rahmen, eine Gruppe, eine Karte eines Rasters, das sich wiederholt (<code>'#foto[2]'</code>), oder ein anderes Element der Dekoration.</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>die dem anderen Ende zugewandte Seite</td>
+      <td>Die Seite, über die die Linie den Kasten verlässt oder erreicht. <code>start</code> und <code>end</code> folgen der Zeilenrichtung der Seite. Ohne Angabe die Seite, die dem anderen Kasten über die größere Lücke zwischen beiden zugewandt ist; die Kinder eines Baums sind dem Elternknoten zugewandt.</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>Der Punkt entlang dieser Seite oder ein Bruchteil von ihr ab ihrem Anfang (0 bis 1). Eine waagerechte Seite beginnt dort, wo die Zeilen der Seite beginnen, eine senkrechte oben.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Abstand zwischen der Kante des Kastens (oder dem Ankerpunkt) und dem Ende der Linie.</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>keiner</td>
+      <td>Ein Anker des Bilds, das der Rahmen enthält: Das Ende ist dieser Punkt des Bilds, über Beschnitt, Sicherheitsbereich und Skalierung abgebildet wie der einer Beschriftung, statt eines Punkts auf der Seite des Rahmens. <code>at</code> wird nicht gelesen; <code>side</code> gibt an, aus welcher Richtung die Linie ankommt (standardmäßig vom anderen Ende her).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Enden, die fehlen.** Ein Ende an einem Rahmen, den die Seite nicht zeigt (eingeklappt, optional und leer, eine Karte jenseits der Einträge der Seite, ein Bildpunkt, den sein Rahmen abschneidet), wird weggelassen: Ein Baum behält seine übrigen Kinder, und das Umbruchprotokoll der Seite vermerkt es (`connectorDropped`). Bleibt kein `from` oder kein `to` übrig, wird nichts gezeichnet.
+
+**Zeichnen.** Verbinder werden mit der Dekoration gezeichnet, unter den Rahmen, als Vektorpfade: im Canvas, im PDF, im HTML-Betrachter und im EPUB mit festem Layout, und als Layout-Artefakt in einem getaggten PDF; das umfließende EPUB lässt sie mit der übrigen Dekoration weg. Eine Linie, die in ein Bild zeigt, braucht den Rahmen des Bilds unter der Dekoration: Geben Sie diesem Rahmen `layer: -1`. Auf einer Doppelseite überquert ein Verbinder zwischen Rahmen beider Seiten den Bund und wird dort wie die übrige Dekoration geschnitten; auf einer Seite von rechts nach links folgen `start` und `end` dem gespiegelten Fluss.
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**Prüfungen.** Ein Ende, dessen `to` nichts nennt, ist `frameAnchorUnknown` (an `…/from/to` oder `…/to/<k>/to`) und wird weggelassen; `[*]` gilt nur in `to` und an einem wiederholten Rahmen. Ein `anchor`, den kein Bild des Rahmens hat, ist `labelAnchorUnknown`, mit der ID des Verbinders. Ein Wort außerhalb der Auswahl von `routing`, `startCap`, `endCap` oder `side` und ein `at` außerhalb von 0 bis 1 sind `unknownConfigValue`.
 
 ## Beschriftungsstile
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code> nimmt die Beschriftungen dieses Stils aus der Prüfung <code>labelOverlap</code> aus, für eine Karte, deren Namen sich in der Quelle berühren. Das eigene <code>overlap</code> eines Ankers hat Vorrang. Seit postext 1.42.</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>wie der Anker den Kasten platziert</td>
+      <td>Wie sich die Zeilen einer mehrzeiligen Beschriftung in ihrem Kasten ausrichten, <code>start</code> und <code>end</code> in der Richtung der Beschriftung. Ohne Angabe folgen sie dem <code>align</code> des Ankers (standardmäßig zentriert); in einer Legende <code>start</code>. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>border</code>, <code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>, <code>Dimension</code></td>
+      <td>keine</td>
+      <td>Eine Linie um die Unterlage der Beschriftung (ihren Kasten, um <code>padding</code> erweitert), mit oder ohne <code>background</code>, und die abgerundeten Ecken der Unterlage: die gerahmte Legende einer Karte. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>keine</td>
+      <td>Die Legende einer Karte: Jede Zeile der Beschriftung ist ein Eintrag, und das Symbol (<code>:icon</code>) am Anfang eines Eintrags hängt in einer Spalte, die so breit ist wie das breiteste von ihnen, sodass die Wörter aller Einträge an einer Kante beginnen. Ein Eintrag ohne Symbol bleibt, wie er ist. Nicht in senkrechten Beschriftungen. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>keine</td>
+      <td>Das Aussehen der Hinweislinien der Beschriftungen in diesem Stil: die Linie vom Kasten einer Beschriftung zum Punkt ihres Ankers. Standardmäßig die Farbe der Beschriftung, Stärke <code>0.75pt</code>, <code>endCap: 'dot'</code> am Punkt, kein <code>startCap</code>, <code>capSize</code> dreimal die Stärke, <code>routing</code> <code>'straight'</code> (oder <code>'elbow'</code>: rechtwinklig aus dem Kasten heraus, dann ein Knick auf den Punkt). Eine Beschriftung, die abseits ihres Punkts steht (<code>labelAt</code>), in einem Stil mit <code>leader</code> erhält eine. Seit postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ Die Anker eines Bilds (`Resource.anchors`, die Punkte, die Comics für Sprecher 
       <td><code>'keep'</code></td>
       <td>Bei einer Abbildung über den Bund einer Doppelseite rückt <code>'keep'</code> die Beschriftung aus dem Bundsteg, auf die Seite, auf der ihr Punkt liegt; <code>'cross'</code> lässt sie dort, wo der Punkt sie hinsetzt, wie es ein Titel über beide Seiten braucht. Seit postext 1.43.</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>am Punkt</td>
+      <td>Wo die an diesem Anker gesetzte Beschriftung steht, abseits ihres Punkts, in Bruchteilen des ganzen Bilds: ein Name im Meer mit einer Linie zu der Insel, die er benennt. <code>align</code>, <code>verticalAlign</code> und <code>rotate</code> platzieren die Beschriftung um diesen Punkt; der eigene Punkt des Ankers bleibt dort, wo Hinweislinien und Verbinder enden. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>siehe unten</td>
+      <td>Eine Linie vom Kasten der Beschriftung zum Punkt des Ankers. <code>true</code> zeichnet sie im Aussehen <code>leader</code> des Beschriftungsstils, ein Objekt ändert dieses Aussehen Feld für Feld, <code>false</code> zeichnet keine. Ohne Angabe erhält eine Beschriftung abseits ihres Punkts eine, wenn ihr Stil ein <code>leader</code> hat. Das Attribut <code>leader</code> eines <code>::label</code> hat Vorrang. Seit postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
 `start` und `end` folgen der Richtung der Beschriftung: In einer arabischen Beschriftung ist `start` die rechte Kante. Ein Anker, den die links- und die rechtsläufige Ausgabe einer Karte teilen, liest sich am besten mit der Beschriftung zentriert über oder unter dem Punkt. Eine Beschriftung mit `width` bricht zwischen den Wörtern um; ein Wort, das breiter als die Satzbreite ist, verkleinert die ganze Beschriftung bis zum `minScale` ihres Stils. Wie Beschriftungen gezeichnet werden, steht unter [Zusammengesetzte Seiten](/de/docs/composed-pages).
 
+Eine Hinweislinie verlässt die Beschriftung über die Seite ihres Kastens (ihrer Unterlage, sonst ihrer Zeilen), die dem Punkt über die größere Lücke zugewandt ist, von der Mitte dieser Seite aus, sodass die Linie nie durch die Wörter der Beschriftung läuft, auch bei einer gedrehten Beschriftung. Ein Punkt unter dem Kasten der Beschriftung oder eine Hinweislinie, die kürzer ist als ihre Endmarke, zeichnet nichts. Hinweislinien werden unter den Beschriftungen gezeichnet, mit dem Bild, in jedem Ausgabeformat, das Beschriftungen zeichnet, und sie folgen dem Bild, wenn es beschnitten, skaliert, gespiegelt oder über eine Doppelseite gesetzt wird.
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## Warnungen zu Seitenvorlagen
 
 Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, verweist der Pointer auf die Vorlage, in der es steht. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
 
-Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
+Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, `routing`, Endmarken und `side` eines Verbinders, Endmarken und `routing` einer Hinweislinie) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, 
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Ein Rahmen, eine Gruppe oder ein Dekorationselement ist an <code>'#name'</code> verankert, und die Vorlage hat keinen Rahmen, keine Gruppe und kein Element dieses Namens; oder Rahmen und Gruppen sind in einer Schleife aneinander verankert (auch über eine Gruppe ohne eigene Verankerung, deren Rechteck das ihrer Rahmen ist). Die Verankerung gilt als <code>'container'</code>, also als der Bereich.</td>
+      <td>Ein Rahmen, eine Gruppe oder ein Dekorationselement ist an <code>'#name'</code> verankert, und die Vorlage hat keinen Rahmen, keine Gruppe und kein Element dieses Namens; oder Rahmen und Gruppen sind in einer Schleife aneinander verankert (auch über eine Gruppe ohne eigene Verankerung, deren Rechteck das ihrer Rahmen ist). Die Verankerung gilt als <code>'container'</code>, also als der Bereich. Ein Ende eines Verbinders, das nichts nennt, wird ebenso gemeldet, und dieses Ende wird weggelassen.</td>
       <td>Verankern Sie an einem vorhandenen Rahmen oder einer vorhandenen Gruppe, oder brechen Sie die Schleife auf, indem Sie eines der Glieder am Bereich verankern.</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, 
   </tbody>
 </table>
 
-Seit es Seitenvorlagen gibt, ist die Konfigurationsversion 15 (früher geschriebene Pakete laden weiterhin unverändert: Was eine ältere Konfiguration angibt, behält seine Bedeutung).
+Seit es Verbinder gibt (postext 1.48), ist die Konfigurationsversion 16; die Seitenvorlagen hatten sie auf 15 gebracht. Früher geschriebene Pakete laden weiterhin unverändert: Was eine ältere Konfiguration angibt, behält seine Bedeutung, und ein Leser, der älter ist als die Verbinder, lässt die Dekorationselemente weg, die er nicht kennt, mit einem `unknownConfigValue`.
+
+### Warnungen zu Überlappung, Wiederholung und Modulen
+
+Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus der Vorlage allein; sie nennen deshalb eine Seite. Sie stehen in `postext check` (`--json` liefert ihre Felder als `data`), im Bedienfeld Prüfungen der Sandbox und in den `contentWarnings` des Dokuments. Seit postext 1.48.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Warnung</th>
+      <th>Ursache</th>
+      <th>Abhilfe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>Sichtbarer Inhalt eines Rahmens (seine Zeilen, sein Etikett oder Titel, seine Bilder) liegt unter einem anderen Rahmen, der darüber gezeichnet wird: eine höhere <code>layer</code> oder dieselbe Ebene, später in der Reihenfolge der Vorlage. Ein Rahmen deckt dort, wo er undurchsichtig ist: seine Füllung, sein Etikett, seine Bilder, seine Zeilen; eine Kontur allein deckt nichts, und Wörter über einem Bild werden nicht gemeldet. Eine Warnung je Paar, mit dem verdeckenden Rahmen (<code>coveredBy</code>), der verborgenen Fläche (<code>overlapMm2</code>) und den ersten verdeckten Wörtern oder dem verdeckten Bild. Siehe <a href="/de/docs/composed-pages#framecovered">Zusammengesetzte Seiten › frameCovered</a>.</td>
+      <td>Übernehmen Sie einen Vorschlag: die <code>layer</code> des verdeckenden Rahmens unter die des verdeckten, <code>exclude: 'push'</code> an ihm, damit der Text um ihn herumläuft, oder ein <code>move</code>, auf der Seite berechnet. Ist die Überlappung gewollt (Grafik über Text), setzen Sie <code>overlap: 'allow'</code> an einem der beiden Rahmen.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Ein Rahmen ragt über das hinaus, was ihn hält: sein Text über das Endformat, seine Füllung oder seine Bilder über den Anschnitt, oder ein Teil von ihm über den Rahmen oder die Gruppe, in der er verankert ist (ein Neun-Punkte-Anker an <code>'#name'</code>, dessen Punkt innerhalb dieses Kastens liegt). <code>past</code> sagt, worüber, <code>excessMm</code>, um wie viel. Siehe <a href="/de/docs/composed-pages#frameoutsidearea">Zusammengesetzte Seiten › frameOutsideArea</a>.</td>
+      <td>Übernehmen Sie einen Vorschlag: eine <code>maxHeight</code> für den Rahmen, eine <code>minHeight</code> für den Rahmen, in dem er verankert ist, <code>overflow.continueIn: 'next-page'</code> mit einer kleineren Höhe oder ein <code>move</code>. Ein Abzeichen, das absichtlich über seine Karte hinaushängt, erhält <code>overlap: 'allow'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Ein Raster, das einen Rahmensatz wiederholt, fasst <code>repeat.max</code> Einträge, und die Seite gibt ihm mehr. Eine Warnung je überzähligen Eintrag, an seinem <code>slot="…"</code>: Der Eintrag kommt in den Flussrahmen (<code>flowFrame</code>) oder hinter die Seite.</td>
+      <td>Erhöhen Sie <code>max</code>, entfernen Sie es, oder setzen Sie die überzähligen Einträge auf eine andere Seite.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Ein <code>:::module&#123;template="…"&#125;</code>, das die Seite nicht setzt: Die ID nennt keine Vorlage (<code>reason: 'unknown'</code>), eine Vorlage, die kein Modul ist (<code>'notModule'</code>), oder die Vorlage der Seite hat keine Modulgruppe (<code>'noGroup'</code>). Sein Inhalt kommt in den Flussrahmen.</td>
+      <td>Korrigieren Sie die ID, geben Sie der Vorlage <code>role: 'module'</code>, oder fügen Sie der Vorlage der Seite eine Gruppe mit <code>modules: true</code> hinzu.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Ein Seitenblock nennt eine Modulvorlage. Ein Modul wird in der Modulgruppe einer Seite gesetzt, nie als Seite: Der Inhalt des Seitenblocks wird im Textfluss gesetzt, wie bei einer unbekannten Vorlage.</td>
+      <td>Geben Sie im Seitenblock eine Seitenvorlage an, und setzen Sie das Modul als <code>:::module</code> hinein.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Ein <code>:::module</code> in einem anderen Modul. Nicht unterstützt: Seine Blöcke gehören zum äußeren Modul.</td>
+      <td>Schließen Sie zuerst das äußere Modul, oder zeichnen Sie den inneren Block als Rahmen des äußeren Moduls.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Der <code>name="…"</code> eines Moduls ist an ein anderes Modul der Seite vergeben (<code>reason: 'taken'</code>) oder enthält ein Leerzeichen, <code>.</code>, <code>#</code>, <code>[</code> oder <code>]</code> (<code>'invalid'</code>). Das Modul heißt stattdessen <code>used</code> (<code>&lt;template&gt;[n]</code>), und seine Rahmen werden unter diesem Namen angesprochen.</td>
+      <td>Geben Sie jedem Modul der Seite einen eigenen Namen aus Buchstaben, Ziffern und Bindestrichen.</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped` (Umbruchprotokoll).** Ein Verbinder, dessen Ende an einem Rahmen liegt, den die Seite nicht zeigt (eingeklappt, optional und leer, eine Karte jenseits der Einträge der Seite, ein Bildpunkt, den sein Rahmen abschneidet), lässt dieses Ende weg. Es ist keine Warnung: Das [Umbruchprotokoll](/de/docs/composed-pages#umbruchprotokoll) der Seite vermerkt es, „connector ramas left out izq (not on the page)“, sodass sich eine Seite, auf der ein Ast fehlt, von einer unterscheiden lässt, die wie geplant gezeichnet ist. Um das Ende zu behalten, geben Sie diesem Rahmen Inhalt, oder lassen Sie den Verbinder zu den Rahmen führen, die die Seite hat.

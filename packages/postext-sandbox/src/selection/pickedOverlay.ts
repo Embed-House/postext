@@ -30,7 +30,7 @@ export function pickedMarkFor(doc: VDTDocument, sel: PageSelection | null, pageI
   if (!rect && el.level === 'group' && page.composed) {
     // A group's box: the union of its frames on the page.
     const name = idName(el.id);
-    const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template);
+    const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, page.composed.template, page.composed.modules ? { modules: page.composed.modules } : {});
     const members = new Set(template?.groups.find((g) => g.name === name)?.frames ?? []);
     const own = page.composed.frames.filter((f) => members.has(f.name));
     const all = own.length > 0 ? own : page.composed.frames;

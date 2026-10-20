@@ -43,6 +43,7 @@ import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode';
 import { graphemesOf, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging';
+import type { ResourceImageMap } from './renderResourceBlock';
 import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces';
 import { fileRuns, inRun, noteMissingGlyphs, wordRuns, type FileRun } from '../faceFiles';
 import { needsComplexShaping } from '../complexShaping';
@@ -75,6 +76,9 @@ export interface PageCtx {
    *  bytes that did not decode), with its resource when the painter knows
    *  it. Set when the host asked for render warnings. */
   onMissingImage?: (fileId: string, resourceId?: string) => void;
+  /** The pictures embedded up front, for what a line paints inline: the
+   *  pictures of inline symbols (#1058). */
+  images?: ResourceImageMap;
   /** Set while a vertical page's flow (or a vertical design text) paints:
    *  text is set down the column (see `verticalText.ts`). */
   vertical?: VerticalPaint;

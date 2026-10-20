@@ -21,16 +21,21 @@
 
 import type { InlineSpan } from '../parse/types';
 import type { FigureLabel } from '../parse/types';
-import type { ColorValue, Dimension, Resource, ResourceAnchor, ResourceType, ResolvedParagraphStyleConfig } from '../types';
+import type { ColorValue, Dimension, LeaderStyle, LineCap, Resource, ResourceAnchor, ResourceType, ResolvedParagraphStyleConfig } from '../types';
 import type {
   BoundingBox,
   ContentWarning,
   ResolvedConfig,
   ResolvedResourceBlock,
   VDTBlock,
+  VDTDesignBoxStyle,
+  VDTDesignPathBlock,
   VDTDocument,
   VDTFigureLabel,
   VDTFigureLabelLayout,
+  VDTFigureLabelLeader,
+  VDTPage,
+  VDTPathMarker,
   VDTLine,
   VDTVerticalText,
 } from '../vdt';
@@ -43,7 +48,11 @@ import { resolveColorValue } from '../defaults/shared';
 import { layoutLabelLines } from '../pipeline/resourceLayout';
 import { uppercasePreservingLength } from '../pipeline/buildBlockKind';
 import { firstStrongDirection } from '../design/bidiText';
-import { BREAK_PLACEHOLDER } from '../parse/inlineFormatting';
+import { withIconAlts } from './labelText';
+import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../parse/inlineFormatting';
+import { flowRectToPage, flowToPage } from '../vdt';
+import { capEnd, DEFAULT_CAP_SIZE_PER_WIDTH, DEFAULT_CONNECTOR_WIDTH, polylineCommands, type Pt as LinePt } from '../design/connector';
+import { pathInkBox } from '../design/pathBlock';
 
 /** `[a, b, c, d, e, f]`, canvas `transform` order (y down). */
 export type LabelMatrix = [number, number, number, number, number, number];
@@ -72,6 +81,16 @@ export interface LabelLook {
   minScale: number;
   /** Set in vertical writing (the label style's; an anchor's wins). */
   vertical?: boolean;
+  /** How the lines line up inside the box (#1058); absent: as the anchor
+   *  places the box. */
+  align?: 'start' | 'center' | 'end';
+  /** The plate's outline and corners (#1058). */
+  border?: { color: string; widthPx: number };
+  radiusPx?: number;
+  /** A map's key (#1058): rows of symbol and text. */
+  legend?: boolean;
+  /** The style's leader look (#1057), as written. */
+  leader?: LeaderStyle;
 }
 
 const hexOf = (value: ColorValue | undefined, resolved: ResolvedConfig, fallback: ColorValue): string =>
@@ -106,6 +125,9 @@ export function resolveLabelLook(styleId: string | undefined, resolved: Resolved
     ? Math.max(0.8, (px(para.lineHeight, dpi, paraPx) ?? paraPx * LABEL_LINE_HEIGHT) / paraPx)
     : LABEL_LINE_HEIGHT;
   const haloWidth = style?.halo ? px(style.halo.width, dpi, fontPx) : undefined;
+  const borderWidth = style?.border ? px(style.border.width, dpi, fontPx) : undefined;
+  const radius = px(style?.radius, dpi, fontPx);
+  const align = style?.align === 'start' || style?.align === 'center' || style?.align === 'end' ? style.align : undefined;
   return {
     ...(style ? { styleId: style.id } : {}),
     fontFamily: style?.fontFamily ?? para?.fontFamily ?? body.fontFamily,
@@ -127,6 +149,13 @@ export function resolveLabelLook(styleId: string | undefined, resolved: Resolved
     paddingPx: Math.max(0, px(style?.padding, dpi, fontPx) ?? 0),
     minScale: style ? Math.min(1, Math.max(0.1, style.minScale)) : 0.85,
     ...(style?.writingMode === 'vertical-rl' ? { vertical: true } : {}),
+    ...(align ? { align } : {}),
+    ...(style?.border && borderWidth !== undefined && borderWidth > 0
+      ? { border: { color: hexOf(style.border.color, resolved, { hex: '#000000', model: 'hex' }), widthPx: borderWidth } }
+      : {}),
+    ...(radius !== undefined && radius > 0 ? { radiusPx: radius } : {}),
+    ...(style?.kind === 'legend' ? { legend: true } : {}),
+    ...(style?.leader && typeof style.leader === 'object' ? { leader: style.leader } : {}),
   };
 }
 
@@ -189,6 +218,41 @@ const moveLine = (line: VDTLine, dx: number, dy: number): VDTLine => ({
   ...(line.measure ? { measure: { ...line.measure, x: line.measure.x + dx } } : {}),
 });
 
+/** The segment index of the inline symbol that opens `line` (its first
+ *  segment that is not a space), or -1. */
+function openingSymbol(line: VDTLine): number {
+  const segs = line.segments;
+  if (!segs) return -1;
+  const i = segs.findIndex((s) => s.kind !== 'space');
+  return i >= 0 && segs[i]!.kind === 'swatch' && segs[i]!.swatch?.icon ? i : -1;
+}
+
+/**
+ * The rows of a legend (#1058) with the symbol that opens each row hung in
+ * one column: every such symbol's segment widened to the widest of them,
+ * the symbol centred in it, so the words after them start at one edge. A
+ * row with no symbol first is left as it is. The segments are copies: the
+ * measured lines may be shared with a cache.
+ */
+export function hangLegendSymbols(lines: readonly VDTLine[]): VDTLine[] {
+  const at = lines.map(openingSymbol);
+  let column = 0;
+  lines.forEach((line, k) => {
+    if (at[k]! >= 0) column = Math.max(column, line.segments![at[k]!]!.width);
+  });
+  return lines.map((line, k) => {
+    const i = at[k]!;
+    if (i < 0) return line;
+    const seg = line.segments![i]!;
+    const extra = column - seg.width;
+    if (extra <= 1e-9) return line;
+    const icon = seg.swatch!.icon!;
+    const segments = line.segments!.slice();
+    segments[i] = { ...seg, width: column, swatch: { ...seg.swatch, icon: { ...icon, insetPx: (icon.insetPx ?? 0) + extra / 2 } } };
+    return { ...line, segments, bbox: { ...line.bbox, width: line.bbox.width + extra } };
+  });
+}
+
 /** A label's spans with each `\\` that ends a word made a forced line
  *  break, as in a caption: two characters for two (the break and a space
  *  the next line drops), so the source map holds. */
@@ -231,7 +295,9 @@ export function layOutLabel(
   const vertical = place.vertical ?? look.vertical ?? false;
   const region = ctx.resolved.cjk.region;
   const inMode = <T,>(fn: () => T): T => (vertical ? withMeasureWritingMode('vertical-rl', fn, region) : fn());
-  const rtl = !vertical && firstStrongDirection(plain) === 'rtl';
+  // The placeholder of a swatch or an inline symbol (#1058) that opens a
+  // row is no letter: the words after it say the direction.
+  const rtl = !vertical && firstStrongDirection(plain.replaceAll(SWATCH_PLACEHOLDER, '')) === 'rtl';
   const widthPx = place.widthPx !== undefined && place.widthPx > 0 ? place.widthPx : undefined;
   const fontsAt = (sizePx: number): [string, string, string, string] => {
     const w = look.weight === 400 ? 'normal' : String(look.weight);
@@ -284,23 +350,31 @@ export function layOutLabel(
     set = measure(scale);
   }
   if (set.lines.length === 0) return undefined;
-  const boxW = set.widest;
+  // A legend (#1058): the symbol that opens each row hangs in a column as
+  // wide as the widest.
+  const setLines = look.legend && !vertical ? hangLegendSymbols(set.lines) : set.lines;
+  const boxW = setLines === set.lines ? set.widest : setLines.reduce((m, l) => Math.max(m, l.bbox.width), 0);
   const pitch = set.sizePx * look.lineHeight;
-  const boxH = Math.max(pitch * set.lines.length, set.lines.reduce((m, l) => Math.max(m, l.bbox.y + l.bbox.height), 0));
+  const boxH = Math.max(pitch * setLines.length, setLines.reduce((m, l) => Math.max(m, l.bbox.y + l.bbox.height), 0));
   const align = place.align ?? 'center';
   // `start` is the label's own start: its left edge, its right edge right
   // to left.
-  const side = align === 'center' ? 'center' : (align === 'start') !== rtl ? 'left' : 'right';
+  const sideOf = (a: 'start' | 'center' | 'end'): 'left' | 'center' | 'right' => (a === 'center' ? 'center' : (a === 'start') !== rtl ? 'left' : 'right');
+  const side = sideOf(align);
+  // The lines inside the box: the style's `align` (#1058), a legend's rows
+  // at their start, else as the box stands at its point.
+  const lineSide = look.align ? sideOf(look.align) : look.legend ? sideOf('start') : side;
   const left = side === 'center' ? -boxW / 2 : side === 'left' ? 0 : -boxW;
   const vAlign = place.verticalAlign ?? 'middle';
   const top = vAlign === 'top' ? 0 : vAlign === 'bottom' ? -boxH : -boxH / 2;
-  const lines = set.lines.map((line) => {
+  const lines = setLines.map((line) => {
     const slack = Math.max(0, boxW - line.bbox.width);
-    const dx = side === 'center' ? slack / 2 : side === 'left' ? 0 : slack;
+    const dx = lineSide === 'center' ? slack / 2 : lineSide === 'left' ? 0 : slack;
     return moveLine(line, left + dx - line.bbox.x, top);
   });
   const box: BoundingBox = { x: left, y: top, width: boxW, height: boxH };
   const pad = look.paddingPx;
+  const plateRect = { x: left - pad, y: top - pad, width: boxW + 2 * pad, height: boxH + 2 * pad };
   // A vertical label's frame is the flow frame of a vertical page: turned
   // a quarter turn clockwise on the picture, and further by `rotate`.
   const turn = (place.rotate !== undefined && Number.isFinite(place.rotate) ? place.rotate : 0) + (vertical ? 90 : 0);
@@ -318,7 +392,17 @@ export function layOutLabel(
     boldItalicFontString: set.fonts[3],
     color: look.color,
     ...(look.halo ? { halo: { color: look.halo.color, widthPx: look.halo.widthPx * scale } } : {}),
-    ...(look.background ? { background: { color: look.background, rect: { x: left - pad, y: top - pad, width: boxW + 2 * pad, height: boxH + 2 * pad } } } : {}),
+    ...(look.background || look.border
+      ? {
+          background: {
+            ...(look.background ? { color: look.background } : {}),
+            rect: plateRect,
+            ...(look.border ? { border: look.border } : {}),
+            ...(look.radiusPx !== undefined ? { radiusPx: look.radiusPx } : {}),
+          },
+        }
+      : {}),
+    ...(look.legend && !vertical ? { legend: true as const } : {}),
     ...(scale < 1 - 1e-6 ? { scale } : {}),
     ...(set.cut ? { overflow: true as const } : {}),
     ...(look.styleId !== undefined ? { styleId: look.styleId } : {}),
@@ -367,7 +451,10 @@ export function layOutFigureLabels(
     const place = labelPlace(label, rb.resource);
     if (!place) return label;
     const anchor = place.anchor;
-    const at = pictureToBody(rb, place.x, place.y);
+    // Set away from its point (#1057): the box stands at `labelAt`, the
+    // point stays where a leader ends.
+    const away = anchor ? validLabelAt(anchor.labelAt) : undefined;
+    const at = pictureToBody(rb, away?.x ?? place.x, away?.y ?? place.y);
     const look = resolveLabelLook(label.style ?? anchor?.style, ctx.resolved);
     const spans = parsed?.[i]?.spans ?? [{ text: label.text, bold: false, italic: false }];
     // The anchor's writing mode wins over the style's; a vertical label's
@@ -382,9 +469,164 @@ export function layOutFigureLabels(
       ...(anchor?.verticalAlign ? { verticalAlign: anchor.verticalAlign } : {}),
       ...(anchor?.rotate !== undefined ? { rotate: anchor.rotate } : {}),
     }, ctx);
-    return layout ? { ...label, layout } : label;
+    if (!layout) return label;
+    const leader = anchor ? labelLeader(label, anchor, away !== undefined, look, layout, pictureToBody(rb, place.x, place.y), ctx.resolved) : undefined;
+    return { ...label, layout: leader ? { ...layout, leader } : layout };
   });
 }
+
+/** `labelAt` when it is a point of the picture (two finite numbers). */
+function validLabelAt(v: unknown): { x: number; y: number } | undefined {
+  if (!v || typeof v !== 'object') return undefined;
+  const { x, y } = v as { x?: unknown; y?: unknown };
+  return typeof x === 'number' && typeof y === 'number' && Number.isFinite(x) && Number.isFinite(y) ? { x, y } : undefined;
+}
+
+const capOrNone = (v: unknown, fallback: LineCap): 'dot' | 'arrow' | undefined => {
+  const c = v === 'dot' || v === 'arrow' || v === 'none' ? v : fallback;
+  return c === 'none' ? undefined : c;
+};
+
+/** The share of the label's type size left between its words and its
+ *  leader, when it has no plate. */
+const LEADER_GAP_EM = 0.25;
+
+/**
+ * The leader of a label set at `anchor` (#1057), or undefined when it has
+ * none: the label's own `leader` attribute, else the anchor's `leader`,
+ * else a label set away from its point whose style has a leader look. The
+ * look is the style's `leader` under the anchor's (an object), field by
+ * field; the colour defaults to the label's text colour, the end at the
+ * point to a dot.
+ */
+function labelLeader(
+  label: Pick<VDTFigureLabel, 'leader'>,
+  anchor: ResourceAnchor,
+  away: boolean,
+  look: LabelLook,
+  layout: VDTFigureLabelLayout,
+  point: { x: number; y: number },
+  resolved: ResolvedConfig,
+): VDTFigureLabelLeader | undefined {
+  const own = anchor.leader;
+  const on = label.leader ?? (own === false ? false : own !== undefined && own !== null ? true : away && look.leader !== undefined);
+  if (!on) return undefined;
+  const style: LeaderStyle = { ...(look.leader ?? {}), ...(own && typeof own === 'object' ? own : {}) };
+  const dpi = resolved.page.dpi;
+  const widthPx = Math.max(0, px(style.width, dpi, look.fontPx) ?? dimensionToPx(DEFAULT_CONNECTOR_WIDTH, dpi));
+  const capSizePx = Math.max(0, px(style.capSize, dpi, look.fontPx) ?? widthPx * DEFAULT_CAP_SIZE_PER_WIDTH);
+  const dash = Array.isArray(style.dash) ? style.dash.map((d) => px(d, dpi, look.fontPx)).filter((v): v is number => v !== undefined && v >= 0) : [];
+  const color = style.color ? hexOf(style.color, resolved, { hex: look.color, model: 'hex' }) : look.color;
+  const startCap = capOrNone(style.startCap, 'none');
+  const endCap = capOrNone(style.endCap, 'dot');
+  return {
+    x: point.x,
+    y: point.y,
+    routing: style.routing === 'elbow' ? 'elbow' : 'straight',
+    stroke: { color, widthPx, ...(dash.length > 0 && dash.some((v) => v > 0) ? { dash } : {}) },
+    ...(startCap ? { startCap } : {}),
+    ...(endCap ? { endCap } : {}),
+    capSizePx,
+    gapPx: layout.background ? 0 : look.fontPx * (layout.scale ?? 1) * LEADER_GAP_EM,
+  };
+}
+
+/**
+ * The leader of a drawn label (#1057) as a path in the block's frame, the
+ * body's top-left corner at (`bodyX`, `bodyY`), or undefined when it has
+ * none or its point lies under the label's box. The line leaves the box
+ * (its plate, else its lines' box, `gapPx` out) from the middle of the
+ * side facing the point (the side with the wider clear gap to it), in the
+ * label's own frame, so it never runs over the label's words, a turned
+ * label's included; an elbow leaves that side square and turns once onto
+ * the point.
+ */
+export function figureLabelLeaderPath(layout: VDTFigureLabelLayout, bodyX: number, bodyY: number): VDTDesignPathBlock | undefined {
+  const leader = layout.leader;
+  if (!leader) return undefined;
+  const m = figureLabelMatrix(layout, bodyX, bodyY);
+  const q = pointInLabel(layout, bodyX, bodyY, bodyX + leader.x, bodyY + leader.y);
+  const e = figureLabelExtent(layout);
+  const g = leader.gapPx;
+  const r = { x: e.x - g, y: e.y - g, width: e.width + 2 * g, height: e.height + 2 * g };
+  const down = q.y - (r.y + r.height);
+  const up = r.y - q.y;
+  const right = q.x - (r.x + r.width);
+  const left = r.x - q.x;
+  const v = Math.max(down, up);
+  const h = Math.max(right, left);
+  if (v <= 0 && h <= 0) return undefined;
+  let start: LinePt;
+  let bend: LinePt;
+  if (v >= h) {
+    start = { x: r.x + r.width / 2, y: down >= up ? r.y + r.height : r.y };
+    bend = { x: start.x, y: q.y };
+  } else {
+    start = { x: right >= left ? r.x + r.width : r.x, y: r.y + r.height / 2 };
+    bend = { x: q.x, y: start.y };
+  }
+  const own: LinePt[] = leader.routing === 'elbow' ? [start, bend, { x: q.x, y: q.y }] : [start, { x: q.x, y: q.y }];
+  const pts: LinePt[] = own.map((p) => ({ x: m[0] * p.x + m[2] * p.y + m[4], y: m[1] * p.x + m[3] * p.y + m[5] }));
+  const length = pts.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - pts[i]!.x, p.y - pts[i]!.y), 0);
+  if (length < Math.max(1, leader.capSizePx)) return undefined;
+  const marks: VDTPathMarker[] = [];
+  if (leader.startCap) capEnd(pts, 0, leader.startCap, leader.capSizePx, leader.stroke.color, marks);
+  if (leader.endCap) capEnd(pts, 1, leader.endCap, leader.capSizePx, leader.stroke.color, marks);
+  const subpaths = [polylineCommands(pts, 0)].filter((sp) => sp.length > 0);
+  const stroke = leader.stroke;
+  return {
+    kind: 'path',
+    bbox: pathInkBox({ subpaths, stroke, markers: marks }),
+    subpaths,
+    stroke,
+    ...(marks.length > 0 ? { markers: marks } : {}),
+  };
+}
+
+/** The leaders of a figure's drawn labels (#1057) in the block's frame,
+ *  the body's corner at (`bodyX`, `bodyY`), in the labels' order. */
+export function figureLabelLeaderPaths(rb: Pick<ResolvedResourceBlock, 'labels'>, bodyX: number, bodyY: number): VDTDesignPathBlock[] {
+  const out: VDTDesignPathBlock[] = [];
+  for (const label of rb.labels ?? []) {
+    const path = label.layout ? figureLabelLeaderPath(label.layout, bodyX, bodyY) : undefined;
+    if (path) out.push(path);
+  }
+  return out;
+}
+
+/** A leader's point reflected about the body's vertical axis, as the rest
+ *  of a label's geometry is on a mirrored page. */
+const flipLeader = (leader: VDTFigureLabelLeader | undefined, bodyWidth: number): { leader?: VDTFigureLabelLeader } =>
+  leader ? { leader: { ...leader, x: bodyWidth - leader.x } } : {};
+
+/**
+ * Where anchor `anchorId` of the picture of `block` (a figure laid on
+ * `page`) stands on the page's sheet (#1057), through the picture's crop,
+ * safe area and scale as its labels are: undefined when the block is no
+ * picture or its resource lacks the anchor. A picture is painted the right
+ * way round on a mirrored page and upright on a vertical one, so the point
+ * is read on the body's box as the sheet shows it.
+ */
+export function figureAnchorPointOnPage(page: Pick<VDTPage, 'flow'>, block: Pick<VDTBlock, 'bbox' | 'resourceBlock'>, anchorId: string): { x: number; y: number } | undefined {
+  const rb = block.resourceBlock;
+  if (!rb || (rb.kind !== 'bitmap' && rb.kind !== 'svg')) return undefined;
+  const anchor = rb.resource.anchors?.find((a) => a.id === anchorId);
+  if (!anchor || !Number.isFinite(anchor.x) || !Number.isFinite(anchor.y)) return undefined;
+  if (!(rb.bodyRect.width > 0) || !(rb.bodyRect.height > 0)) return undefined;
+  const p = pictureToBody(rb, anchor.x, anchor.y);
+  if (rb.rotation) {
+    // A quarter-turned block: its body's frame turned onto the block's,
+    // which stands in the flow.
+    const { bx, by, turn } = bodyFrame(block);
+    const [x, y] = turn ? apply(turn, bx + p.x, by + p.y) : [bx + p.x, by + p.y];
+    return flowToPage(page, x, y);
+  }
+  // A picture is painted the right way round on a mirrored page, upright
+  // on a vertical one: the point is read on the body's box on the sheet.
+  const body = flowRectToPage(page, { x: block.bbox.x + rb.bodyRect.x, y: block.bbox.y + rb.bodyRect.y, width: rb.bodyRect.width, height: rb.bodyRect.height });
+  return { x: body.x + (p.x / rb.bodyRect.width) * body.width, y: body.y + (p.y / rb.bodyRect.height) * body.height };
+}
+
 
 // ---------------------------------------------------------------------------
 // Painting and hit-testing
@@ -401,6 +643,17 @@ export function figureLabelMatrix(layout: Pick<VDTFigureLabelLayout, 'x' | 'y' |
   const c = Math.abs(cos) < 1e-12 ? 0 : cos;
   const s = Math.abs(sin) < 1e-12 ? 0 : sin;
   return [c, s, -s, c, bodyX + layout.x, bodyY + layout.y];
+}
+
+/** A label's plate (#1058) as a design box's style, for the painters of
+ *  boxes: its fill, its outline drawn inside the plate, its corners. */
+export function labelPlateBox(plate: NonNullable<VDTFigureLabelLayout['background']>): VDTDesignBoxStyle {
+  return {
+    ...(plate.color ? { backgroundColor: plate.color } : {}),
+    ...(plate.border ? { borderColor: plate.border.color } : {}),
+    borderWidthPx: plate.border?.widthPx ?? 0,
+    borderRadiusPx: plate.radiusPx ?? 0,
+  };
 }
 
 /** What a label paints in its own frame: its background, else its lines'
@@ -614,6 +867,7 @@ export function mirrorLabelLayout(layout: VDTFigureLabelLayout, bodyWidth: numbe
     box: flipBox(layout.box),
     ...(layout.background ? { background: { ...layout.background, rect: flipBox(layout.background.rect) } } : {}),
     ...(layout.vertical ? { mirrored: true as const } : {}),
+    ...flipLeader(layout.leader, bodyWidth),
   };
   mirrored.add(out);
   return out;
@@ -643,6 +897,7 @@ export function unmirrorLabelLayout(layout: VDTFigureLabelLayout, bodyWidth: num
     })),
     box: flipBox(layout.box),
     ...(layout.background ? { background: { ...layout.background, rect: flipBox(layout.background.rect) } } : {}),
+    ...flipLeader(layout.leader, bodyWidth),
   };
 }
 
@@ -689,6 +944,7 @@ export function labelLayoutOnSheet(layout: VDTFigureLabelLayout, bodyWidth: numb
     }),
     box: flipBox(layout.box),
     ...(layout.background ? { background: { ...layout.background, rect: flipBox(layout.background.rect) } } : {}),
+    ...flipLeader(layout.leader, bodyWidth),
   };
 }
 
@@ -704,10 +960,22 @@ export function undrawnLabels(labels: readonly VDTFigureLabel[] | undefined): VD
   return out.length > 0 ? out : undefined;
 }
 
-/** A drawn label's words as read, its lines joined by a space. */
+/** A drawn label's words as read, its lines joined by a space (a legend's
+ *  rows by a semicolon), each inline symbol read as its alternative text
+ *  in brackets, or not at all when it has none (#1058). */
 export function figureLabelReading(label: VDTFigureLabel): string {
   const lines = label.layout?.lines;
-  const text = lines && lines.length > 0 ? lines.map((l) => l.text).join(' ') : label.text;
+  if (!lines || lines.length === 0) return withIconAlts(label.text, label.icons).replace(/[￼]/g, '').replace(/\s+/g, ' ').trim();
+  const rows = lines.map((l) => figureLabelLineReading(l)).filter(Boolean);
+  return rows.join(label.layout?.legend ? '; ' : ' ');
+}
+
+/** One line of a drawn label as read (see {@link figureLabelReading}). */
+export function figureLabelLineReading(line: VDTLine): string {
+  const segs = line.segments;
+  const text = segs?.some((s) => s.swatch?.icon)
+    ? segs.map((s) => (s.swatch?.icon ? (s.swatch.icon.alt ? `[${s.swatch.icon.alt}]` : '') : s.text)).join('')
+    : line.text;
   return text.replace(/[￼]/g, '').replace(/\s+/g, ' ').trim();
 }
 

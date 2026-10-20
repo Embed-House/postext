@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuração: boxes',
   sidebarTitle: 'Boxes',
-  description: 'Como definir estilos nomeados para os boxes :::callout (moldura, fundo, faixa, título, ícone, marcador e aba de rótulo), numerar enunciados, escolher a tipografia dentro do boxe, marcar os boxes divididos entre páginas e desenhar designs dentro de um boxe',
+  description: 'Como definir estilos nomeados para os boxes :::callout (moldura, fundo, faixa, título, ícone, marcador e aba de rótulo), dar ao boxe uma forma com raios por canto, bordas por lado e abas unidas, numerar enunciados, escolher a tipografia dentro do boxe, marcar os boxes divididos entre páginas e desenhar designs dentro de um boxe',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '27 min',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
-      <td>Contorno do boxe, traçado por dentro da borda do boxe, como a borda de um elemento de caixa (veja <a href="/pt/docs/configuration-headers-footers#elementos-de-caixa">Elementos de caixa</a>).</td>
+      <td>Contorno do boxe, traçado por dentro da borda do boxe, como a borda de um elemento de caixa (veja <a href="/pt/docs/configuration-headers-footers#elementos-de-caixa">Elementos de caixa</a>). Desde o postext 1.48, <code>sides</code> dá a cada lado (<code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>) o próprio <code>&#123; enabled?, color?, width? &#125;</code> sobre os valores da borda inteira: um fio só em cima do boxe, um pé mais grosso (veja <a href="#cantos-lados-e-abas-unidas">Cantos, lados e abas unidas</a>).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>Raio dos cantos do fundo / do contorno (limitado à metade da largura e da altura do boxe). A faixa o acompanha: em um boxe arredondado, a faixa é recortada pela moldura arredondada, como o CSS recorta um <code>border-left</code> pelo <code>border-radius</code>. A aba <code>label</code> mantém os cantos retos.</td>
+      <td>Raio dos cantos do fundo / do contorno (limitado à metade da largura e da altura do boxe). A faixa o acompanha: em um boxe arredondado, a faixa é recortada pela moldura arredondada, como o CSS recorta um <code>border-left</code> pelo <code>border-radius</code>. A aba <code>label</code> mantém os cantos retos, a não ser que esteja unida ao boxe. Desde o postext 1.48 aceita um raio por canto, e um canto que fica fora do objeto é reto: um boxe arredondado só nos dois cantos de cima.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -196,9 +196,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
       <td>não definido (sem aba)</td>
-      <td>Uma aba na borda superior do boxe que imprime o atributo <code>label</code> do delimitador: o número de um boxe numerado (“BOXE 1-1”). Ela encosta no canto indicado por <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, ou <code>'top-start'</code> / <code>'top-end'</code> na direção do próprio boxe, como <code>'start'</code> / <code>'end'</code> na faixa), recuada em <code>inset</code>, sobe <code>offset</code> acima do topo do boxe (esse espaço faz parte do bloco, somado a <code>marginTop</code>, para que a aba o mantenha também no alto de uma coluna), tem <code>height</code> de altura com <code>paddingX</code> de cada lado do texto e pode levar um recurso <code>icon</code> ao lado (<code>&#123; resourceId, width, gap &#125;</code>, do lado oposto ao canto) e um <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) ao longo da borda superior, do canto oposto até ela. Padrões: fonte dos títulos, tamanho do corpo, <code>700</code>, branco sobre a cor principal, <code>1.4em</code> de altura, <code>0.6em</code> de margem interna, sem deslocamento nem recuo, e uma imagem de <code>1em</code> de largura a <code>0.3em</code> do texto. A aba é uma forma própria apoiada sobre a moldura, por isso mantém os cantos retos qualquer que seja o <code>borderRadius</code> do boxe. Desde o postext 1.42, <code>icon.placement: 'inside'</code> põe a imagem dentro da aba, no início, antes das palavras (na extremidade direita num boxe composto da direita para a esquerda), a uma distância <code>gap</code> delas: a aba tem a largura da imagem, do espaço, das palavras e do preenchimento, e a imagem, ajustada a <code>icon.width</code> e à altura da aba, fica centralizada nela. A imagem mantém as próprias cores; por isso, um anel branco sobre uma aba colorida e um anel colorido sobre uma branca são dois recursos, um em cada estilo. <code>'beside'</code>, o padrão, põe a imagem além da borda da aba. Desde o postext 1.43, <code>icon.tint: true</code> pinta a imagem com a <code>color</code> da aba em vez das cores próprias: só a forma dela é pintada, na cor das palavras, e assim um mesmo anel serve a todas as cores de um livro. Uma imagem sem transparência vira um retângulo liso. No PDF um SVG mantém as bordas e um bitmap é recortado onde é meio transparente; o original de impressão (<code>svg.pdfFileId</code>) não é usado, porque uma página PDF não pode ser recolorida.</td>
+      <td>Uma aba na borda superior do boxe que imprime o atributo <code>label</code> do delimitador: o número de um boxe numerado (“BOXE 1-1”). Ela encosta no canto indicado por <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, ou <code>'top-start'</code> / <code>'top-end'</code> na direção do próprio boxe, como <code>'start'</code> / <code>'end'</code> na faixa), recuada em <code>inset</code>, sobe <code>offset</code> acima do topo do boxe (esse espaço faz parte do bloco, somado a <code>marginTop</code>, para que a aba o mantenha também no alto de uma coluna), tem <code>height</code> de altura com <code>paddingX</code> de cada lado do texto e pode levar um recurso <code>icon</code> ao lado (<code>&#123; resourceId, width, gap &#125;</code>, do lado oposto ao canto) e um <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) ao longo da borda superior, do canto oposto até ela. Padrões: fonte dos títulos, tamanho do corpo, <code>700</code>, branco sobre a cor principal, <code>1.4em</code> de altura, <code>0.6em</code> de margem interna, sem deslocamento nem recuo, e uma imagem de <code>1em</code> de largura a <code>0.3em</code> do texto. A aba é uma forma própria apoiada sobre a moldura, por isso mantém os cantos retos qualquer que seja o <code>borderRadius</code> do boxe; com <code>joined: true</code> (desde o postext 1.48), a aba e o boxe passam a ser um só contorno, e <code>fillet</code> arredonda os cantos internos onde eles se encontram. As posições <code>bottom-right</code>, <code>bottom-left</code>, <code>bottom-start</code> e <code>bottom-end</code> (desde o postext 1.48) penduram a aba no pé do boxe, com o <code>rule</code> ao longo do pé. Desde o postext 1.48 o ícone também pode ser um caractere de uma fonte, <code>icon.kind: 'glyph'</code> (veja <a href="#um-glifo-na-aba">Um glifo na aba</a>). Desde o postext 1.42, <code>icon.placement: 'inside'</code> põe a imagem dentro da aba, no início, antes das palavras (na extremidade direita num boxe composto da direita para a esquerda), a uma distância <code>gap</code> delas: a aba tem a largura da imagem, do espaço, das palavras e do preenchimento, e a imagem, ajustada a <code>icon.width</code> e à altura da aba, fica centralizada nela. A imagem mantém as próprias cores; por isso, um anel branco sobre uma aba colorida e um anel colorido sobre uma branca são dois recursos, um em cada estilo. <code>'beside'</code>, o padrão, põe a imagem além da borda da aba. Desde o postext 1.43, <code>icon.tint: true</code> pinta a imagem com a <code>color</code> da aba em vez das cores próprias: só a forma dela é pintada, na cor das palavras, e assim um mesmo anel serve a todas as cores de um livro. Uma imagem sem transparência vira um retângulo liso. No PDF um SVG mantém as bordas e um bitmap é recortado onde é meio transparente; o original de impressão (<code>svg.pdfFileId</code>) não é usado, porque uma página PDF não pode ser recolorida.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Cantos, lados e abas unidas
+
+Um boxe não precisa ser um retângulo com quatro cantos iguais e uma só borda. Desde o postext 1.48, um estilo pode arredondar alguns cantos e outros não, traçar a borda só em alguns lados e fazer a aba sair do boxe como uma única forma: o cartão de um livro didático cuja aba de título e cujo corpo são um só contorno, desenhado pelo estilo e não pintado numa imagem atrás da página.
+
+```ts
+calloutStyles: [
+  // Rounded at the top only, a rule over the box and a heavier foot.
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // A card whose tab grows out of its top edge.
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **Cantos.** `borderRadius` é um comprimento para os quatro cantos, ou `{ topLeft, topRight, bottomRight, bottomLeft }`. Um canto que fica fora do objeto é reto. Os cantos são os da folha. Dois cantos nunca tomam mais do que o lado entre eles; cada um cede na proporção.
+- **Lados.** `border.sides.top`, `right`, `bottom` e `left` recebem `enabled`, `color` e `width`, e cada campo omitido é o da borda inteira. Um boxe com borda só em cima é `border: { enabled: false, sides: { top: { enabled: true } } }`, ou `enabled: true` com os outros três lados desligados. A borda interna de um lado acompanha a largura dele; assim, um canto arredondado entre um lado fino e um grosso faz a curva como o CSS a desenha.
+- **Aba unida.** Com `label.joined: true`, a aba e o boxe são um só contorno, um só fundo (o `background` do boxe; o `background` próprio da aba não é pintado) e uma só borda que dá a volta na aba. A aba fica sobre a borda, fora do boxe na medida da altura dela: o `offset` dela tem de ser `0` (outro valor é apontado como `unknownConfigValue` e lido como `0`). Os cantos externos dela tomam o raio do canto do boxe em que ela encosta, e os cantos internos, onde ela encontra o boxe, são arredondados por `fillet` (padrão: esse raio). Uma aba rente ao lado do boxe (um `inset` de menos de meio pixel) sobe reta a partir desse lado. Dê às palavras uma cor que se leia sobre o fundo do boxe (`label.color`), porque a aba já não tem fundo próprio.
+- **Abas embaixo.** `position: 'bottom-right'`, `'bottom-left'`, `'bottom-start'` ou `'bottom-end'` pendura a aba no pé do boxe, simples ou unida: é a aba de cima virada, `offset` abaixo do pé, com o `rule` ao longo do pé. Não há abas laterais: as palavras de uma aba correm na horizontal.
+
+Todas as saídas desenham essas formas: o canvas e o PDF como contornos vetoriais, o visualizador HTML e o EPUB de layout fixo com CSS por canto e por lado. O EPUB refluível escreve os cantos e os lados no CSS dele e compõe uma aba unida como uma aba simples. O `look.border.color` de um bloco recolore todos os lados, e a paleta de uma parte recolore cada um deles. Um estilo com todos os cantos e lados iguais é diagramado como antes.
+
+### Um glifo na aba
+
+`label.icon` pode pôr um caractere de uma fonte em vez de uma imagem: `kind: 'glyph'` com `glyph: '◉'`. A aba não precisa de um recurso de imagem, e o glifo toma a cor das palavras, a não ser que defina a sua; assim, um só estilo serve a todas as cores de um livro. Desde o postext 1.48.
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>veja a descrição</td>
+      <td><code>'resource'</code> quando <code>resourceId</code> está definido, <code>'glyph'</code> quando só <code>glyph</code> está. Se for escrito, <code>kind</code> prevalece: <code>kind: 'glyph'</code> põe o glifo, diga o que disser <code>resourceId</code>.</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>O caractere posto como ícone (<code>'◉'</code>, <code>'★'</code>, <code>'✎'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>number</code></td>
+      <td>os do rótulo</td>
+      <td>A fonte e o peso do glifo: os do próprio rótulo, senão a fonte dos títulos e <code>700</code>. Uma fonte que não tem o caractere recorre a outra como faz o navegador; o PDF gera <code>missingGlyph</code>.</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>O tamanho do glifo como fator do tamanho do texto da aba. Em <code>1</code>, compartilha a linha de base das palavras; em outros tamanhos, fica centralizado na aba.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>a <code>color</code> do rótulo</td>
+      <td>A cor do glifo. Sem valor, acompanha as palavras, e o <code>look.label.color</code> de um bloco recolore os dois.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>, <code>Dimension</code></td>
+      <td><code>'beside'</code>, <code>0.3em</code></td>
+      <td>Como para uma imagem: <code>'inside'</code> põe o glifo dentro da aba, antes das palavras, e a aba cresce na largura dele e do espaço; <code>'beside'</code> o põe além da borda da aba. O <code>width</code> e o <code>tint</code> de uma imagem não se aplicam.</td>
+    </tr>
+  </tbody>
+</table>
+
+O glifo é decoração: um artefato de layout num PDF marcado, escondido das tecnologias assistivas no HTML e deixado de fora do título do boxe no EPUB refluível; assim, a aba é lida só pelas palavras.
 
 ### Estilos baseados em outro
 

@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import type { CalloutStyleConfig } from 'postext';
 import { SandboxStoreContext } from '../../context/SandboxContext';
 import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { CalloutStylesSection } from './CalloutStylesSection';
+import { COMMON_TAB_GLYPHS, CalloutStylesSection, labelIconKindPatch } from './CalloutStylesSection';
 
 function render(calloutStyles: CalloutStyleConfig[]): string {
   const state = { config: { calloutStyles }, resources: [], labels: DEFAULT_LABELS, locale: 'en', chapters: [], activeChapterId: null };
@@ -54,5 +54,38 @@ describe('CalloutStylesSection design group', () => {
     const html = render([{ ...practice, design: { ...practice.design!, enabled: false } }]);
     expect(switchRow(html, DEFAULT_LABELS.calloutStyleDesign)).toMatch(/aria-checked="false"/);
     expect(html).not.toContain(DEFAULT_LABELS.calloutStyleDesignSetsContent);
+  });
+});
+
+// #1066: the label tab's icon is a picture or a glyph, chosen without JSON.
+describe('CalloutStylesSection tab icon', () => {
+  const tab = (icon: NonNullable<CalloutStyleConfig['label']>['icon']): CalloutStyleConfig => ({ id: 'card', label: { position: 'top-left', icon } });
+
+  it('a glyph tab: the glyph field, the common symbols, face, weight, size and colour; no picture fields', () => {
+    const html = render([tab({ kind: 'glyph', glyph: '◉' })]);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleLabelIconKind);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleLabelIconGlyph);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleLabelIconGlyphCommon);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleLabelIconScale);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleIconFont);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleIconWeight);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleLabelIconGlyphPlacement);
+    expect(html).not.toContain(`>${DEFAULT_LABELS.calloutStyleLabelIconTint}<`);
+    // Every common symbol is a named button; the one set is pressed.
+    for (const g of COMMON_TAB_GLYPHS) expect(html).toContain(`aria-label="${DEFAULT_LABELS.calloutStyleLabelIconGlyphUse.replace('__glyph__', g)}"`);
+    expect(html).toMatch(/aria-label="Use ◉" aria-pressed="true"/);
+    expect(html).toMatch(/aria-label="Use ★" aria-pressed="false"/);
+  });
+
+  it('a picture tab: the resource picker, no glyph fields', () => {
+    const html = render([tab({ resourceId: 'ring' })]);
+    expect(html).toContain(DEFAULT_LABELS.calloutStyleLabelIcon);
+    expect(html).not.toContain(DEFAULT_LABELS.calloutStyleLabelIconGlyphCommon);
+  });
+
+  it('switching to a glyph starts from the first common symbol, and keeps a glyph already set', () => {
+    expect(labelIconKindPatch(undefined, 'glyph')).toEqual({ kind: 'glyph', glyph: '◉' });
+    expect(labelIconKindPatch({ glyph: '★' }, 'glyph')).toEqual({ kind: 'glyph' });
+    expect(labelIconKindPatch({ glyph: '★' }, 'resource')).toEqual({ kind: 'resource' });
   });
 });

@@ -1,5 +1,5 @@
 import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical';
-import { isLogicalEdge, physicalEdge, physicalPlacement } from './logicalEdges';
+import { edgeSide, isLogicalEdge, physicalEdge, physicalPlacement, sideFraction } from './logicalEdges';
 import { bitmapLayoutSize } from '../bitmapResolution';
 import { comicArtCrop } from '../comics/art';
 import type {
@@ -15,19 +15,24 @@ import type {
   PageRole,
   PageRoleFilter,
   ResolvedDesignBoxElement,
+  ResolvedDesignConnectorElement,
   ResolvedDesignElement,
   ResolvedDesignImageElement,
+  ResolvedDesignPathElement,
   ResolvedDesignRuleElement,
   ResolvedDesignSlot,
+  ResolvedPlacedDesignElement,
   ResolvedDesignTextElement,
   Resource,
   TextOverflow,
   VAlign,
 } from '../types';
 import { dimensionToPx } from '../units';
+import { borderSidesPx, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, uniformRadius } from './boxShape';
 import { resolveTextDots } from '../textDots';
 import { resolveDesignLineHeight } from '../defaults/headerFooter';
-import { createBoundingBox, pictureTraits, type BoundingBox } from '../vdt';
+import { createBoundingBox, pictureTraits, type BoundingBox, type VDTDesignBoxStyle, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt';
+import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath';
 import { buildFontString } from '../measure';
 import { graphemeCount } from '../measure/graphemes';
 import { joiningScriptIn } from '../measure/joining';
@@ -44,6 +49,8 @@ import {
   type DesignPlaceholderContext,
 } from './placeholders';
 import { fitLeader } from '../measure/leader';
+import { layoutConnector, type ConnectorEndBox } from './connector';
+import { repeatInstance } from '../composed/templates';
 import { hasJoiningScript, joinsWithNext } from '../bidi';
 import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText';
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText';
@@ -103,13 +110,17 @@ export interface ResolvedElementBox {
   borderColor?: string;
   borderWidthPx: number;
   borderRadiusPx: number;
+  /** One radius per corner (#1059), when the corners differ. */
+  borderRadiiPx?: [number, number, number, number];
+  /** The border per side (#1059), when the sides differ. */
+  borderSides?: VDTDesignBoxStyle['borderSides'];
   padding: ResolvedPadding;
 }
 
 /** Resolved geometry for a single element in a design slot. */
 export interface ResolvedElementGeometry {
   id: string;
-  kind: 'text' | 'rule' | 'box' | 'image';
+  kind: 'text' | 'rule' | 'box' | 'image' | 'path';
   /** Absolute page-space rectangle (the element's outer box). */
   x: number;
   y: number;
@@ -171,6 +182,20 @@ export interface ResolvedRulePrimitive extends ResolvedElementGeometry {
 export interface ResolvedBoxPrimitive extends ResolvedElementGeometry {
   kind: 'box';
   box: ResolvedElementBox;
+}
+
+/** A path element laid on its box (#1060): the outline in page px. Its
+ *  `x`/`y`/`width`/`height` are the element's box (what other elements
+ *  anchor to and what a heading design reserves), not the ink's. */
+export interface ResolvedPathPrimitive extends ResolvedElementGeometry {
+  kind: 'path';
+  subpaths: VDTPathCommand[][];
+  fill?: string;
+  stroke?: VDTPathStroke;
+  /** A connector's end marks (#1056). */
+  markers?: VDTPathMarker[];
+  /** A connector painted over the frames (#1076). */
+  over?: true;
 }
 
 /** An image element resolved to its resource payload. Only emitted when
@@ -238,7 +263,8 @@ export type ResolvedPrimitive =
   | ResolvedTextPrimitive
   | ResolvedRulePrimitive
   | ResolvedBoxPrimitive
-  | ResolvedImagePrimitive;
+  | ResolvedImagePrimitive
+  | ResolvedPathPrimitive;
 
 export interface DesignSlotLayout {
   /** Container bbox passed in (absolute page coordinates). */
@@ -259,7 +285,15 @@ export type LayoutIssue =
   | { kind: 'cyclicAnchor' | 'danglingAnchor'; elementId: string; targetId?: string }
   /** A text element did not fit its width and was cut (`mode`); `text` is
    *  the whole text it was given (placeholders filled). */
-  | { kind: 'textTruncated'; elementId: string; mode: TextTruncation; text: string };
+  | { kind: 'textTruncated'; elementId: string; mode: TextTruncation; text: string }
+  /** A connector's end (#1056) on a box the page does not have (`targetId`,
+   *  a frame collapsed, empty and optional, or missing): left out, and
+   *  with `from` or every `to` gone the connector is not drawn. */
+  | { kind: 'connectorDropped'; elementId: string; targetId: string }
+  /** A connector's end (#1057) at an anchor no picture of its frame has:
+   *  left out. `resourceId` is the frame's first picture (absent: it holds
+   *  none) and `known` that picture's anchors. */
+  | { kind: 'connectorAnchorUnknown'; elementId: string; targetId: string; anchor: string; resourceId?: string; known: string[] };
 
 /** Page-level reference frames (absolute page px) that elements may anchor
  *  to instead of the slot container: `page` is the trim box, `bleed` the
@@ -284,6 +318,15 @@ export interface DesignFrames {
    *  groups and content move them (#856): an element with `pin` anchors
    *  here. Absent: `named`. */
   declared?: Readonly<Record<string, { x: number; y: number; width: number; height: number }>>;
+  /** Frames in `named` the page shows nothing of (#1056): collapsed, or
+   *  empty and optional. A connector's end on one is dropped. */
+  absent?: ReadonlySet<string>;
+  /** The point of anchor `anchor` of the picture frame `frame` holds
+   *  (#1057), on the sheet as `named` is: the first figure of the frame's
+   *  blocks whose resource has it; `hidden` when the frame cuts that point
+   *  off. When none has it, what the frame holds instead (its first
+   *  picture and that picture's anchors). */
+  anchorPoint?: (frame: string, anchor: string) => { x: number; y: number } | { hidden: true } | { resourceId?: string; known: string[] };
 }
 
 export interface LayoutContext {
@@ -356,13 +399,29 @@ function resolveBox(
   baseFontSizePx?: number,
 ): ResolvedElementBox | undefined {
   if (!style) return undefined;
-  return {
+  const padding = resolvePadding(style.padding, dpi, baseFontSizePx);
+  if (!isCornerRadii(style.borderRadius) && style.borderSides === undefined) {
+    return {
+      backgroundColor: style.backgroundColor?.hex,
+      borderColor: style.borderColor?.hex,
+      borderWidthPx: dimPx(style.borderWidth, dpi, baseFontSizePx),
+      borderRadiusPx: dimPx(uniformRadius(style.borderRadius), dpi, baseFontSizePx),
+      padding,
+    };
+  }
+  // Corners of their own and a border per side (#1059), folded back to
+  // the plain fields where they say no more.
+  const toPx = (d: Dimension) => dimPx(d, dpi, baseFontSizePx);
+  const whole = { enabled: true, color: style.borderColor, width: style.borderWidth };
+  const shape = normalizeBoxStyle({
     backgroundColor: style.backgroundColor?.hex,
     borderColor: style.borderColor?.hex,
     borderWidthPx: dimPx(style.borderWidth, dpi, baseFontSizePx),
-    borderRadiusPx: dimPx(style.borderRadius, dpi, baseFontSizePx),
-    padding: resolvePadding(style.padding, dpi, baseFontSizePx),
-  };
+    borderRadiusPx: 0,
+    borderRadiiPx: cornerRadiiPx(style.borderRadius, toPx),
+    ...(style.borderSides !== undefined ? { borderSides: borderSidesPx(whole, style.borderSides, toPx) } : {}),
+  });
+  return { ...shape, padding };
 }
 
 function colorHex(c: ColorValue | undefined): string {
@@ -378,10 +437,19 @@ function overrideColor(c: ColorValue | undefined, overrides: Record<string, stri
 
 function overrideBoxStyle(style: ElementBoxStyle | undefined, overrides: Record<string, string>): ElementBoxStyle | undefined {
   if (!style) return style;
+  const sides = style.borderSides;
   return {
     ...style,
     backgroundColor: overrideColor(style.backgroundColor, overrides),
     borderColor: overrideColor(style.borderColor, overrides),
+    // Each side's own colour too (#1059).
+    ...(sides && typeof sides === 'object'
+      ? {
+          borderSides: Object.fromEntries(
+            Object.entries(sides).map(([k, v]) => [k, v && typeof v === 'object' && v.color ? { ...v, color: overrideColor(v.color, overrides) } : v]),
+          ) as ElementBoxStyle['borderSides'],
+        }
+      : {}),
   };
 }
 
@@ -404,6 +472,14 @@ export function applyPaletteOverrides(el: ResolvedDesignElement, overrides: Reco
       return { ...el, color: overrideColor(el.color, overrides) ?? el.color };
     case 'box':
       return { ...el, style: overrideBoxStyle(el.style, overrides) ?? el.style };
+    case 'path':
+      return {
+        ...el,
+        ...(el.fill ? { fill: overrideColor(el.fill, overrides) } : {}),
+        ...(el.stroke ? { stroke: overrideColor(el.stroke, overrides) } : {}),
+      };
+    case 'connector':
+      return { ...el, color: overrideColor(el.color, overrides) ?? el.color };
     default:
       return el;
   }
@@ -442,11 +518,11 @@ function frameFor(placement: ElementPlacement, frames: DesignFrames | undefined)
 }
 
 function topoSort(
-  elements: ResolvedDesignElement[],
+  elements: ResolvedPlacedDesignElement[],
   issues: LayoutIssue[],
   named?: DesignFrames['named'],
-): ResolvedDesignElement[] {
-  const byId = new Map<string, ResolvedDesignElement>();
+): ResolvedPlacedDesignElement[] {
+  const byId = new Map<string, ResolvedPlacedDesignElement>();
   for (const el of elements) byId.set(el.id, el);
 
   // Detect dangling
@@ -459,9 +535,9 @@ function topoSort(
 
   const visited = new Set<string>();
   const visiting = new Set<string>();
-  const out: ResolvedDesignElement[] = [];
+  const out: ResolvedPlacedDesignElement[] = [];
 
-  function visit(el: ResolvedDesignElement, path: string[]): void {
+  function visit(el: ResolvedPlacedDesignElement, path: string[]): void {
     if (visited.has(el.id)) return;
     if (visiting.has(el.id)) {
       issues.push({ kind: 'cyclicAnchor', elementId: el.id });
@@ -1088,6 +1164,24 @@ function edgeYFromPin(anchorY: number, pinY: Pin, height: number): number {
 // Main engine
 // ---------------------------------------------------------------------------
 
+/**
+ * `anchor` (the point of `edge` on `ref`) moved along the side the edge
+ * stands on to `at` (#1055): from the side's start — the left of a top or
+ * bottom side, its right when the page starts on the right (`startRight`),
+ * the top of a left or right side — a fraction of its length. Along the
+ * side the element is centred on that point (a rule's thickness on a
+ * frame's middle); across it the edge's pin stays (`below` hangs under the
+ * side, `bottom` stands inside on it). `center`, and an `at` that is no
+ * side position, leave the anchor as it is.
+ */
+function alongSide(anchor: AnchorResult, edge: AnchorEdge, at: unknown, ref: AnchorReference, startRight: boolean): AnchorResult {
+  const side = edgeSide(edge);
+  const f = sideFraction(at);
+  if (!side || f === undefined) return anchor;
+  if (side === 'left' || side === 'right') return { ...anchor, anchorY: ref.y + f * ref.height, pinY: 'middle' };
+  return { ...anchor, anchorX: ref.x + (startRight ? 1 - f : f) * ref.width, pinX: 'middle' };
+}
+
 /** A size written as `{ to, edge }` (#928). */
 function isSizeTo(size: ElementSize | undefined): size is ElementSizeTo {
   return typeof size === 'object' && size !== null && 'to' in size && 'edge' in size;
@@ -1099,7 +1193,7 @@ function isSizeTo(size: ElementSize | undefined): size is ElementSizeTo {
  *  pin, both ways from a middle one), 0 when the edge is behind it. A box
  *  that cannot be found, or an edge across the size's axis, reads as
  *  `'fill'`. */
-function withSizesTo<T extends ResolvedDesignElement>(
+function withSizesTo<T extends ResolvedPlacedDesignElement>(
   el: T,
   pin: AnchorResult,
   refOf: (to: ElementSizeTo['to']) => AnchorReference | undefined,
@@ -1108,10 +1202,11 @@ function withSizesTo<T extends ResolvedDesignElement>(
   if (!size || (!isSizeTo(size.width) && !isSizeTo(size.height) && !isSizeTo(size.maxWidth))) return el;
   const along = (s: ElementSizeTo, axis: 'x' | 'y'): ElementSize => {
     const ref = refOf(s.to);
-    const edges: Record<string, 'start' | 'end'> = axis === 'x' ? { left: 'start', right: 'end' } : { top: 'start', bottom: 'end' };
-    const side = edges[s.edge];
-    if (!ref || !side) return 'fill';
-    const at = axis === 'x' ? (side === 'start' ? ref.x : ref.x + ref.width) : (side === 'start' ? ref.y : ref.y + ref.height);
+    // `center` (#1055): the box's middle on the axis being sized.
+    const edges: Record<string, number> = axis === 'x' ? { left: 0, center: 0.5, right: 1 } : { top: 0, center: 0.5, bottom: 1 };
+    const side = Object.prototype.hasOwnProperty.call(edges, s.edge) ? edges[s.edge] : undefined;
+    if (!ref || side === undefined) return 'fill';
+    const at = axis === 'x' ? ref.x + side * ref.width : ref.y + side * ref.height;
     const from = axis === 'x' ? pin.anchorX : pin.anchorY;
     const p = axis === 'x' ? pin.pinX : pin.pinY;
     const room = p === 'start' ? at - from : p === 'end' ? from - at : 2 * Math.abs(at - from);
@@ -1122,6 +1217,83 @@ function withSizesTo<T extends ResolvedDesignElement>(
   if (isSizeTo(size.height)) out.height = along(size.height, 'y');
   if (isSizeTo(size.maxWidth)) out.maxWidth = along(size.maxWidth, 'x');
   return { ...el, placement: { ...el.placement, size: out } };
+}
+
+/**
+ * A connector (#1056) between the boxes it names: another element of the
+ * slot, else a frame or group of the page (`frames.named`, or the declared
+ * boxes with `pin`). `#card[*]` in `to` is every instance of `card` the
+ * page has, in item order. An end on a box the page does not show (absent
+ * from `named`, or in `frames.absent`) is dropped with a
+ * `connectorDropped` issue; with no `from` or no `to` left nothing is
+ * drawn.
+ */
+function layoutConnectorElement(
+  el: ResolvedDesignConnectorElement,
+  resolvedGeo: ReadonlyMap<string, ResolvedPrimitive>,
+  frames: DesignFrames,
+  issues: LayoutIssue[],
+  dpi: number,
+  startRight: boolean,
+): ResolvedPathPrimitive | undefined {
+  const boxes = (el.pin ? frames.declared : undefined) ?? frames.named ?? {};
+  const boxOf = (name: string): ConnectorEndBox['box'] | undefined => {
+    const dep = resolvedGeo.get(name);
+    if (dep) return { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
+    if (frames.absent?.has(name)) return undefined;
+    return Object.prototype.hasOwnProperty.call(boxes, name) ? boxes[name] : undefined;
+  };
+  const endOf = (end: unknown): ConnectorEndBox | undefined | null => {
+    const to = (end as { to?: unknown } | null | undefined)?.to;
+    if (typeof to !== 'string' || !to.startsWith('#')) return null;
+    const name = to.slice(1);
+    const box = boxOf(name);
+    if (!box) {
+      issues.push({ kind: 'connectorDropped', elementId: el.id, targetId: name });
+      return undefined;
+    }
+    const anchor = (end as { anchor?: unknown }).anchor;
+    if (typeof anchor === 'string' && anchor !== '' && !resolvedGeo.has(name)) {
+      // An anchor of the frame's picture (#1057): the end is that point, a
+      // box of no size the line arrives at.
+      const at = frames.anchorPoint?.(name, anchor) ?? { known: [] };
+      if ('hidden' in at) {
+        // The point is cut off by its frame (a picture past the frame's
+        // foot): nothing to point at on this page.
+        issues.push({ kind: 'connectorDropped', elementId: el.id, targetId: name });
+        return undefined;
+      }
+      if (!('x' in at)) {
+        issues.push({ kind: 'connectorAnchorUnknown', elementId: el.id, targetId: name, anchor, ...(at.resourceId !== undefined ? { resourceId: at.resourceId } : {}), known: at.known });
+        return undefined;
+      }
+      return { name, box: { x: at.x, y: at.y, width: 0, height: 0 }, end: end as ConnectorEndBox['end'] };
+    }
+    return { name, box, end: end as ConnectorEndBox['end'] };
+  };
+  const from = endOf(el.from);
+  if (!from) return undefined;
+  const written = Array.isArray(el.to) ? el.to : el.to ? [el.to] : [];
+  const ends: ConnectorEndBox[] = [];
+  for (const end of written) {
+    const to = (end as { to?: unknown } | null | undefined)?.to;
+    if (typeof to === 'string' && to.endsWith('[*]')) {
+      // Every instance of the frame the page has (#1061), in item order.
+      const frame = to.slice(1, -3);
+      const items = Object.keys(boxes)
+        .map((n) => ({ n, at: repeatInstance(n) }))
+        .filter((x) => x.at?.frame === frame)
+        .sort((a, b) => a.at!.item - b.at!.item);
+      for (const { n } of items) {
+        const e = endOf({ ...(end as object), to: `#${n}` });
+        if (e) ends.push(e);
+      }
+      continue;
+    }
+    const e = endOf(end);
+    if (e) ends.push(e);
+  }
+  return layoutConnector(el, from, ends, { dpi, startRight });
 }
 
 /** Layout one design slot against its container. */
@@ -1145,11 +1317,15 @@ export function layoutDesignSlot(
     .filter((el) => pageMatchesParity(pageIndex, el.parity) && pageMatchesRole(el.pages, context.pageRole))
     .map((el) => (overrides && Object.keys(overrides).length > 0 ? applyPaletteOverrides(el, overrides) : el))
     // Start and end edges read as the physical ones of this page (#936).
-    .map((el) => (isLogicalEdge(el.placement.anchor.edge) ? { ...el, placement: physicalPlacement(el.placement, context.startRight === true) } : el));
+    .map((el) => (el.kind !== 'connector' && isLogicalEdge(el.placement.anchor.edge) ? { ...el, placement: physicalPlacement(el.placement, context.startRight === true) } : el));
+  // Connectors (#1056) are laid after every placed element, between the
+  // boxes they join; only where there are frames to join (a composed
+  // page's decoration).
+  const placed = candidates.filter((el): el is ResolvedPlacedDesignElement => el.kind !== 'connector');
 
   // Topologically sort (dependencies first) to resolve geometry; paint
   // order is still the array order (first = back), restored below.
-  const ordered = topoSort(candidates, issues, context.frames?.named);
+  const ordered = topoSort(placed, issues, context.frames?.named);
 
   // Precompute: resolved text contents (placeholder-expanded), with the
   // `\n` escape of the template and of attribute values turned into a
@@ -1204,9 +1380,13 @@ export function layoutDesignSlot(
         if (!useElementEdge) fillRef = refGeo;
       }
     }
-    const anchor = useElementEdge
+    const onEdge = useElementEdge
       ? resolveElementAnchor(given.placement.anchor.edge, refGeo)
       : resolveContainerAnchor(given.placement.anchor.edge, refGeo);
+    // A point along a side of another element, a frame or a group (#1055).
+    const anchor = target && !frame && refGeo !== containerRef && given.placement.anchor.at !== undefined
+      ? alongSide(onEdge, given.placement.anchor.edge, given.placement.anchor.at, refGeo, context.startRight === true)
+      : onEdge;
 
     // A text element's offset may be written in ems of its own size (a
     // running head four characters below the type area).
@@ -1257,6 +1437,12 @@ export function layoutDesignSlot(
       }, fillRef, context.dpi);
       resolvedGeo.set(el.id, prim);
       primsByElement.set(given, [prim]);
+    } else if (el.kind === 'path') {
+      // Data that cannot be read draws nothing; the box still stands for
+      // the elements anchored to it.
+      const prim = layoutPathElement(el, { anchorX, anchorY, pinX: anchor.pinX, pinY: anchor.pinY }, fillRef, context.dpi);
+      resolvedGeo.set(el.id, prim);
+      if (prim.subpaths.length > 0) primsByElement.set(given, [prim]);
     } else if (el.kind === 'image') {
       const prim = layoutImageElement(el, {
         anchorX,
@@ -1277,6 +1463,14 @@ export function layoutDesignSlot(
       }, fillRef, context.dpi);
       resolvedGeo.set(el.id, prim);
       primsByElement.set(given, [prim]);
+    }
+  }
+
+  if (context.frames?.named) {
+    for (const el of candidates) {
+      if (el.kind !== 'connector') continue;
+      const prim = layoutConnectorElement(el, resolvedGeo, context.frames, issues, context.dpi, context.startRight === true);
+      if (prim) primsByElement.set(el, [prim]);
     }
   }
 
@@ -2151,6 +2345,58 @@ function altTextOf(el: ResolvedDesignImageElement, resource: Resource | undefine
   if (el.decorative) return {};
   const altText = designImageAltText(resource);
   return altText ? { altText } : {};
+}
+
+/** The black of a path that sets neither a fill nor an outline (an SVG
+ *  path's default fill). */
+const DEFAULT_PATH_FILL = '#000000';
+/** An outline's width when the element gives none: 0.5 pt, a rule's. */
+const DEFAULT_PATH_STROKE_WIDTH: Dimension = { value: 0.5, unit: 'pt' };
+
+/** A path element (#1060): its box sized and pinned as a box's, its
+ *  `viewBox` stretched to the box (`'none'`) or fitted inside it, centred
+ *  (`'meet'`), the outline in page px. Path data that cannot be read, or a
+ *  `viewBox` with no area, gives no outline. */
+function layoutPathElement(
+  el: ResolvedDesignPathElement,
+  pin: AnchorResult,
+  container: AnchorReference,
+  dpi: number,
+): ResolvedPathPrimitive {
+  const widthSize = resolveFixedSize(el.placement.size?.width, dpi);
+  const heightSize = resolveFixedSize(el.placement.size?.height, dpi);
+  const width = typeof widthSize === 'number' ? widthSize : Math.max(0, fillToContainerEdge(pin.anchorX, pin.pinX, container));
+  const height = typeof heightSize === 'number' ? heightSize : Math.max(0, fillToContainerEdgeY(pin.anchorY, pin.pinY, container));
+  const x = edgeXFromPin(pin.anchorX, pin.pinX, width);
+  const y = edgeYFromPin(pin.anchorY, pin.pinY, height);
+  const prim: ResolvedPathPrimitive = { kind: 'path', id: el.id, x, y, width, height, subpaths: [] };
+  const vb = pathViewBox(el.viewBox);
+  const parsed = typeof el.d === 'string' ? parseSvgPathCached(el.d) : undefined;
+  if (!vb || !parsed?.ok) return prim;
+  let sx = width / vb[0];
+  let sy = height / vb[1];
+  let ox = x;
+  let oy = y;
+  if (el.preserveAspectRatio === 'meet') {
+    const k = Math.min(sx, sy);
+    ox += (width - vb[0] * k) / 2;
+    oy += (height - vb[1] * k) / 2;
+    sx = k;
+    sy = k;
+  }
+  prim.subpaths = mapPath(parsed.subpaths, ox, oy, sx, sy);
+  const fill = el.fill?.hex ?? (el.stroke ? undefined : DEFAULT_PATH_FILL);
+  if (fill) prim.fill = fill;
+  if (el.stroke?.hex) {
+    const widthPx = dimPx(el.width ?? DEFAULT_PATH_STROKE_WIDTH, dpi);
+    const dash = (Array.isArray(el.dash) ? el.dash : []).map((d) => Math.max(0, dimPx(d, dpi)));
+    prim.stroke = {
+      color: el.stroke.hex,
+      widthPx: Math.max(0, widthPx),
+      ...(dash.length > 0 && dash.some((v) => v > 0) ? { dash } : {}),
+    };
+  }
+  return prim;
 }
 
 function layoutBoxElement(

@@ -91,7 +91,9 @@ import { applyStatementNumbering, numberStatements, outlineLookup } from './stat
 import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbeds } from './spanEmbeds';
 import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns';
 import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
-import { continueInPage, resolvePageTemplate } from '../composed/templates';
+import { continueInPage, isModuleTemplate, resolvePageTemplate } from '../composed/templates';
+import { moduleUsesOf } from '../composed/modules';
+import type { ComposedModuleUse } from '../composed/types';
 import { layoutComposedSpread } from '../composed/spread';
 import { assignJumpReceivers, assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import { frameElementId } from '../composed/ids';
@@ -233,7 +235,7 @@ import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines';
 import { pickTableStyle } from '../defaults/tableStyle';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout';
 import { buildLineNumbers, lineNumberWarnings } from './lineNumbers';
-import { buildHeadersAndFooters, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
+import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
 import { flowColorValues } from './partPalette';
 import { chapterNumberCounter, leadingBoldText } from './placeholders';
 import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing';
@@ -6522,7 +6524,8 @@ function placeDocumentPass(
       alternatives: () => [...new Set((resolved.pageTemplates ?? []).map((t) => t?.id))].flatMap((id) => {
         if (typeof id !== 'string' || id === current.id) return [];
         const alt = resolvePageTemplate(templateSource, id, current.spread ? { spread: true } : { parity: current.parity });
-        return alt && alt.spread === current.spread ? [alt] : [];
+        // (A module, #1062, is never a page.)
+        return alt && alt.spread === current.spread && !isModuleTemplate(alt) ? [alt] : [];
       }),
     });
     const placed: { page: VDTPage; composed: VDTComposedPage; blocks: VDTBlock[] }[] = [];
@@ -6568,12 +6571,13 @@ function placeDocumentPass(
     };
     /** The template `id` for the current page's side, and the boxes its
      *  `area` reads. */
-    const singleOn = (page: VDTPage, id: string) => {
+    const singleOn = (page: VDTPage, id: string, modules: readonly ComposedModuleUse[] | undefined) => {
       toLeaf(page);
       page.columns = [createVDTColumn(0, page.contentArea)];
       // The physical side: a recto has an odd folio (in either binding).
       const parity: 'recto' | 'verso' = (page.index + pageIndexOffset) % 2 === 0 ? 'recto' : 'verso';
-      const template = resolvePageTemplate(templateSource, id, { parity })!;
+      // With the modules the page lays (#1062) in its modules group.
+      const template = resolvePageTemplate(templateSource, id, { parity, ...(modules && modules.length > 0 ? { modules } : {}) })!;
       const frames = designFramesOn(page);
       const area = template.area === 'trim' ? frames.page : template.area === 'bleed' ? frames.bleed : page.contentArea;
       return { parity, template, areas: { area, page: frames.page, bleed: frames.bleed } };
@@ -6607,7 +6611,9 @@ function placeDocumentPass(
         continuing: { receivers: jumpReceivers, generation: 0, collapse: false, last: false, jump: true as const },
       };
     };
-    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true });
+    /** The page's modules (#1062), as the fence writes them. */
+    const fenceModules = moduleUsesOf(fence.modules);
+    const sheet = resolvePageTemplate(templateSource, fence.template, { spread: true, ...(fenceModules ? { modules: fenceModules } : {}) });
     if (sheet?.spread) {
       const out = laySpread(sheet, receive(sheet));
       placed.push(...out.sides);
@@ -6616,7 +6622,7 @@ function placeDocumentPass(
       continuations = out.continuations;
     } else {
       const page = doc.pages[cursor.pageIndex]!;
-      const { parity, template, areas } = singleOn(page, fence.template);
+      const { parity, template, areas } = singleOn(page, fence.template, fenceModules);
       const extra = receive(template);
       // Kept by what it reads (#857): a page met again is not set again.
       // A spread is laid out afresh each time (its two sides are one sheet),
@@ -6667,7 +6673,9 @@ function placeDocumentPass(
       const src = frameAt.get(c.fromFrameId);
       const dst = frameAt.get(to);
       if (!src || !dst) return;
-      src.frame.continuesTo = to;
+      // An item of a grid that went on whole (#1061) left nothing on its
+      // page to point on from: the page's log says where it went.
+      if (!c.whole) src.frame.continuesTo = to;
       logContinued(src, c, { toPage: dst.page.index, toFrame: to });
     };
     for (const [name, c] of jumpReceivers) link(c, frameElementId(fence.fenceIndex, name));
@@ -6703,7 +6711,7 @@ function placeDocumentPass(
           frame: c.frame,
           fenceIndex: fence.fenceIndex,
           target: target.page,
-          configPath: resolvePageTemplate(templateSource, c.template)?.frames.find((f) => f.name === c.frame)?.configPath ?? '',
+          configPath: resolvePageTemplate(templateSource, c.template, c.module ? { modules: [c.module] } : {})?.frames.find((f) => f.name === c.frame)?.configPath ?? '',
           ...(to ? { before: true } : {}),
           ...(from?.frame.sourceStart !== undefined ? { sourceStart: from.frame.sourceStart, sourceEnd: from.frame.sourceEnd } : {}),
           ...(from ? { pageIndex: from.page.index } : {}),
@@ -6727,7 +6735,9 @@ function placeDocumentPass(
         };
         const batch = queue.filter(same);
         queue = queue.filter((c) => !same(c));
-        const spreadSheetT = resolvePageTemplate(templateSource, target.template, { spread: true });
+        // The modules whose frames go on here, whole (#1062).
+        const batchModules = moduleUsesOf(batch.flatMap((c) => (c.module ? [c.module] : [])));
+        const spreadSheetT = resolvePageTemplate(templateSource, target.template, { spread: true, ...(batchModules ? { modules: batchModules } : {}) });
         // A template with no frames takes nothing.
         if (!spreadSheetT || spreadSheetT.frames.length === 0) continue;
         // A fresh page after the last one laid.
@@ -6753,7 +6763,7 @@ function placeDocumentPass(
           more = out.continuations;
         } else {
           const page = doc.pages[cursor.pageIndex]!;
-          const { parity, template, areas } = singleOn(page, target.template);
+          const { parity, template, areas } = singleOn(page, target.template, batchModules);
           const assigned = assignReceivers(template, batch);
           receivers = assigned.receivers;
           queue = [...assigned.left, ...queue];
@@ -9270,6 +9280,8 @@ export function* buildDocumentGen(
   // Figure labels at anchors their picture lacks, anchors left without a
   // word in this locale (#860).
   loose.push(...figureLabelWarnings(doc, (b) => (b.sourceStart !== undefined && b.sourceEnd !== undefined ? { start: b.sourceStart, end: b.sourceEnd } : undefined)));
+  // Connectors' ends at an anchor their frame's picture lacks (#1057).
+  loose.push(...connectorAnchorUnknownWarnings(doc));
   // Comic panels whose cell cannot hold their picture's safe area (#556).
   for (const page of doc.pages) {
     if (page.comic) loose.push(...comicPageLayoutWarnings(page.comic));

@@ -114,7 +114,7 @@ describe('working configuration', () => {
     expect(config.headings?.levels).toEqual([{ level: 1, breakBefore: { enabled: false } }]);
     // A save stamps the copy, so the next load reads it as it is.
     saveConfig(config);
-    expect(map.get('postext-sandbox-config-version')).toBe('15');
+    expect(map.get('postext-sandbox-config-version')).toBe('16');
     expect(loadConfig()).toEqual(config);
   });
   it('reads a stamped copy as it is', async () => {

@@ -1,0 +1,502 @@
+{
+  "locale": "en",
+  "page": {
+    "width": {
+      "value": 200,
+      "unit": "mm"
+    },
+    "height": {
+      "value": 260,
+      "unit": "mm"
+    },
+    "backgroundColor": {
+      "hex": "#e8f1f4",
+      "model": "hex"
+    },
+    "margins": {
+      "top": {
+        "value": 22,
+        "unit": "mm"
+      },
+      "bottom": {
+        "value": 18,
+        "unit": "mm"
+      },
+      "left": {
+        "value": 18,
+        "unit": "mm"
+      },
+      "right": {
+        "value": 18,
+        "unit": "mm"
+      }
+    }
+  },
+  "header": {
+    "elements": []
+  },
+  "headings": {
+    "balancing": {
+      "enabled": false
+    },
+    "levels": [
+      {
+        "level": 1,
+        "breakBefore": {
+          "enabled": false
+        }
+      }
+    ]
+  },
+  "calloutStyles": [
+    {
+      "id": "explore",
+      "background": {
+        "hex": "#ffffff",
+        "model": "hex"
+      },
+      "border": {
+        "enabled": true,
+        "color": {
+          "hex": "#2f6b3a",
+          "model": "hex"
+        },
+        "width": {
+          "value": 0.6,
+          "unit": "mm"
+        }
+      },
+      "borderRadius": {
+        "value": 3,
+        "unit": "mm"
+      },
+      "padding": {
+        "top": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "right": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "bottom": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "left": {
+          "value": 5,
+          "unit": "mm"
+        }
+      },
+      "label": {
+        "position": "top-left",
+        "joined": true,
+        "background": {
+          "hex": "#ffffff",
+          "model": "hex"
+        },
+        "color": {
+          "hex": "#2f6b3a",
+          "model": "hex"
+        },
+        "fontSize": {
+          "value": 11,
+          "unit": "pt"
+        },
+        "fontWeight": 700,
+        "height": {
+          "value": 7,
+          "unit": "mm"
+        },
+        "paddingX": {
+          "value": 3,
+          "unit": "mm"
+        },
+        "inset": {
+          "value": 6,
+          "unit": "mm"
+        }
+      }
+    },
+    {
+      "id": "ruled",
+      "backgroundEnabled": false,
+      "border": {
+        "enabled": false,
+        "color": {
+          "hex": "#c0392b",
+          "model": "hex"
+        },
+        "width": {
+          "value": 1.2,
+          "unit": "mm"
+        },
+        "sides": {
+          "top": {
+            "enabled": true
+          }
+        }
+      },
+      "padding": {
+        "top": {
+          "value": 3,
+          "unit": "mm"
+        },
+        "right": {
+          "value": 0,
+          "unit": "mm"
+        },
+        "bottom": {
+          "value": 2,
+          "unit": "mm"
+        },
+        "left": {
+          "value": 0,
+          "unit": "mm"
+        }
+      }
+    },
+    {
+      "id": "leaf",
+      "background": {
+        "hex": "#fde9c8",
+        "model": "hex"
+      },
+      "borderRadius": {
+        "topLeft": {
+          "value": 8,
+          "unit": "mm"
+        },
+        "bottomRight": {
+          "value": 8,
+          "unit": "mm"
+        }
+      },
+      "padding": {
+        "top": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "right": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "bottom": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "left": {
+          "value": 5,
+          "unit": "mm"
+        }
+      }
+    },
+    {
+      "id": "corner",
+      "background": {
+        "hex": "#dcefd0",
+        "model": "hex"
+      },
+      "borderRadius": {
+        "value": 3,
+        "unit": "mm"
+      },
+      "padding": {
+        "top": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "right": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "bottom": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "left": {
+          "value": 5,
+          "unit": "mm"
+        }
+      },
+      "label": {
+        "position": "top-right",
+        "joined": true,
+        "background": {
+          "hex": "#dcefd0",
+          "model": "hex"
+        },
+        "color": {
+          "hex": "#2f6b3a",
+          "model": "hex"
+        },
+        "fontSize": {
+          "value": 11,
+          "unit": "pt"
+        },
+        "fontWeight": 700,
+        "height": {
+          "value": 7,
+          "unit": "mm"
+        },
+        "paddingX": {
+          "value": 3,
+          "unit": "mm"
+        },
+        "inset": {
+          "value": 0,
+          "unit": "mm"
+        }
+      }
+    },
+    {
+      "id": "foot",
+      "background": {
+        "hex": "#ffffff",
+        "model": "hex"
+      },
+      "border": {
+        "enabled": true,
+        "color": {
+          "hex": "#1f5a8a",
+          "model": "hex"
+        },
+        "width": {
+          "value": 0.5,
+          "unit": "mm"
+        }
+      },
+      "borderRadius": {
+        "value": 3,
+        "unit": "mm"
+      },
+      "padding": {
+        "top": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "right": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "bottom": {
+          "value": 5,
+          "unit": "mm"
+        },
+        "left": {
+          "value": 5,
+          "unit": "mm"
+        }
+      },
+      "label": {
+        "position": "bottom-left",
+        "joined": true,
+        "background": {
+          "hex": "#ffffff",
+          "model": "hex"
+        },
+        "color": {
+          "hex": "#1f5a8a",
+          "model": "hex"
+        },
+        "fontSize": {
+          "value": 11,
+          "unit": "pt"
+        },
+        "fontWeight": 700,
+        "height": {
+          "value": 7,
+          "unit": "mm"
+        },
+        "paddingX": {
+          "value": 3,
+          "unit": "mm"
+        },
+        "inset": {
+          "value": 8,
+          "unit": "mm"
+        }
+      }
+    }
+  ],
+  "pageTemplates": [
+    {
+      "id": "cards",
+      "decoration": {
+        "elements": [
+          {
+            "kind": "box",
+            "id": "band",
+            "placement": {
+              "anchor": {
+                "to": "page",
+                "edge": "top-left"
+              },
+              "offset": {
+                "x": {
+                  "value": 18,
+                  "unit": "mm"
+                },
+                "y": {
+                  "value": 8,
+                  "unit": "mm"
+                }
+              },
+              "size": {
+                "width": {
+                  "value": 164,
+                  "unit": "mm"
+                },
+                "height": {
+                  "value": 9,
+                  "unit": "mm"
+                }
+              }
+            },
+            "style": {
+              "backgroundColor": {
+                "hex": "#ffffff",
+                "model": "hex"
+              },
+              "borderColor": {
+                "hex": "#2f6b3a",
+                "model": "hex"
+              },
+              "borderWidth": {
+                "value": 0.8,
+                "unit": "mm"
+              },
+              "borderRadius": {
+                "topLeft": {
+                  "value": 4,
+                  "unit": "mm"
+                },
+                "topRight": {
+                  "value": 4,
+                  "unit": "mm"
+                }
+              },
+              "borderSides": {
+                "top": {
+                  "enabled": false
+                },
+                "right": {
+                  "enabled": false
+                },
+                "left": {
+                  "enabled": false
+                }
+              }
+            }
+          }
+        ]
+      },
+      "frames": [
+        {
+          "name": "explore",
+          "style": "explore",
+          "width": {
+            "value": 164,
+            "unit": "mm"
+          },
+          "placement": {
+            "anchor": {
+              "to": "container",
+              "edge": "top-left"
+            },
+            "offset": {
+              "y": {
+                "value": 8,
+                "unit": "mm"
+              }
+            }
+          }
+        },
+        {
+          "name": "ruled",
+          "style": "ruled",
+          "width": {
+            "value": 78,
+            "unit": "mm"
+          },
+          "placement": {
+            "anchor": {
+              "to": "#explore",
+              "edge": "below"
+            },
+            "offset": {
+              "y": {
+                "value": 8,
+                "unit": "mm"
+              }
+            }
+          }
+        },
+        {
+          "name": "leaf",
+          "style": "leaf",
+          "width": {
+            "value": 78,
+            "unit": "mm"
+          },
+          "placement": {
+            "anchor": {
+              "to": "#explore",
+              "edge": "below"
+            },
+            "offset": {
+              "x": {
+                "value": 86,
+                "unit": "mm"
+              },
+              "y": {
+                "value": 8,
+                "unit": "mm"
+              }
+            }
+          }
+        },
+        {
+          "name": "corner",
+          "style": "corner",
+          "width": {
+            "value": 78,
+            "unit": "mm"
+          },
+          "placement": {
+            "anchor": {
+              "to": "#ruled",
+              "edge": "below"
+            },
+            "offset": {
+              "y": {
+                "value": 16,
+                "unit": "mm"
+              }
+            }
+          }
+        },
+        {
+          "name": "foot",
+          "style": "foot",
+          "width": {
+            "value": 78,
+            "unit": "mm"
+          },
+          "placement": {
+            "anchor": {
+              "to": "#leaf",
+              "edge": "below"
+            },
+            "offset": {
+              "y": {
+                "value": 16,
+                "unit": "mm"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

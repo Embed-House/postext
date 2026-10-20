@@ -30,6 +30,7 @@
  * (`ComposedPageLayout.continuations`) for `build.ts` to lay on pages it
  * adds after this one, with this function (`ComposedPageInput.continuing`).
  */
+import { isCornerRadii } from '../design/boxShape';
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
 import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
 import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
@@ -42,12 +43,15 @@ import { chainHead, FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
-import { anchorTarget, resolveContinueIn } from '../composed/templates';
+import { anchorTarget, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
 import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
-import { resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
+import { isModuleTemplate, resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
+import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
+import { moduleOfFrame } from '../composed/modules';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
+import { overlapChecks } from '../composed/overlap';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import type { BlockMeasureContext } from './measureContentBlock';
@@ -155,9 +159,12 @@ interface FitState {
   yieldAll: ReadonlySet<string>;
   /** Frames cut at their foot whose rest goes on on another page (#859). */
   goOn: ReadonlySet<string>;
+  /** Grids whose rows that do not fit go on on another page, whole
+   *  (#1061). */
+  gridsOn: ReadonlySet<string>;
 }
 
-const NO_FIT: FitState = { patches: new Map(), text: new Map(), pictures: new Map(), yieldAll: new Set(), goOn: new Set() };
+const NO_FIT: FitState = { patches: new Map(), text: new Map(), pictures: new Map(), yieldAll: new Set(), goOn: new Set(), gridsOn: new Set() };
 
 /** Where a frame that goes on to another page left its story (#859). */
 interface Spill {
@@ -168,6 +175,8 @@ interface Spill {
   pieces: number;
   headBlockId: string;
   frameId: string;
+  /** An item of a grid that goes on whole (#1061). */
+  whole?: true;
 }
 
 /** One laying out of the page's frames. */
@@ -181,6 +190,8 @@ interface Composition {
   needs: Map<string, () => number>;
   /** What `fitBox` did to each frame. */
   fitted: Map<string, { placed: Rect; kept: Rect }>;
+  /** Groups' final boxes, by name (the overlap checks, #1053). */
+  groupRects: Map<string, Rect>;
   /** The template laid (with the ladder's patches). */
   template: ResolvedPageTemplate;
   /** `textWrap` notes of the contour pushes (#883, `noContour`). */
@@ -191,6 +202,11 @@ interface Composition {
    *  part of the contents under `toc.parts.breakBefore`, #996) that are
    *  not allowed to go on yet: the ladder lets them. */
   wantsOn: Set<string>;
+  /** Instances of a grid's rows cut at the grid's foot (#1061), and frames
+   *  of modules cut at their group's foot (#1062). */
+  clipped: Set<string>;
+  /** The boxes of the modules laid (#1062), by instance name. */
+  moduleRects: Map<string, Rect>;
 }
 
 /** Step of the text and picture scales the ladder tries (DESIGN §5.4). */
@@ -240,7 +256,12 @@ function chainPrev(template: ResolvedPageTemplate, receivers: ReadonlyMap<string
 const sameCut = (a: CalloutCut, b: CalloutCut): boolean =>
   a.child === b.child && a.line === b.line && JSON.stringify(a.group ?? null) === JSON.stringify(b.group ?? null);
 
-export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout {
+export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout {
+  // The grids that repeat a frame set (#1061) are laid with one instance of
+  // the set per item the page's stories hold (`<frame>[n]`): from here on
+  // they are plain frames.
+  const expanded = expandRepeats(asked.template, repeatItemsOf(asked.template, asked.stories.keys()));
+  const given: ComposedPageInput = expanded === asked.template ? asked : { ...asked, template: expanded };
   // A page added by continuation (#859) lays its template with the
   // continuation's rules (and, for the template laid again, its other
   // frames collapsed).
@@ -252,7 +273,9 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   const fi = fence.fenceIndex;
   const mmPx = dpi / MM_PER_IN;
   const byName = new Map(template.frames.map((f) => [f.name, f]));
-  const groupOf = groupOfFrames(template);
+  // (A modules group, #1062, holds its modules' frames to lay them as one
+  // step: what a frame shares room with is the group of its own module.)
+  const groupOf = groupOfFrames({ ...template, groups: template.groups.filter((g) => !g.modules) });
   const prev = chainPrev(template, input.continuing?.receivers);
   const headOf = (name: string): string => {
     let at = name;
@@ -263,13 +286,19 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     }
     return at;
   };
+  /** The module a frame belongs to (#1062), when its modules group goes on
+   *  by whole modules (`overflow.continueIn` off the page). */
+  const movingModule = (name: string): ReturnType<typeof moduleOfFrame> => {
+    const m = moduleOfFrame(template, name);
+    return m && !input.continuing?.last && continuesOffPage(m.group.overflow?.continueIn) ? m : undefined;
+  };
 
   // Compositions by fit state: the ladder and its proposals ask for some
   // twice.
   const memo = new Map<string, Composition>();
   let runs = 0;
   const keyOf = (tpl: ResolvedPageTemplate, fit: FitState): string =>
-    JSON.stringify([tpl.id, [...fit.patches], [...fit.text], [...fit.pictures], [...fit.yieldAll], [...fit.goOn]]);
+    JSON.stringify([tpl.id, [...fit.patches], [...fit.text], [...fit.pictures], [...fit.yieldAll], [...fit.goOn], [...fit.gridsOn]]);
   /** Frames a page added by continuation lays with no room (#859). */
   const collapsedHere = input.continuing ? collapsedOnAddedPage(given.template, input.continuing) : new Set<string>();
   const holdsStory = (name: string): boolean => input.stories.has(headOf(name));
@@ -395,9 +424,17 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   };
   /** Story heads of the frame and of its group's frames whose content holds
    *  a picture. */
+  /** The frames a frame shares its group's room with: its group's, or for
+   *  an instance of a grid's set (#1061) its own item's. */
+  const peersOf = (name: string): string[] | undefined => {
+    const inst = instanceOf(template, name);
+    if (inst) return inst.group.items!.find((c) => c.item === inst.item)!.frames;
+    // A module's frame (#1062) outside a group of its own: its module's.
+    return groupOf.get(name)?.frames ?? moduleOfFrame(template, name)?.frames;
+  };
   const pictureHeads = (frame: ResolvedFrame): string[] => {
-    const g = groupOf.get(frame.name);
-    const names = g ? [frame.name, ...g.frames.filter((m) => m !== frame.name)] : [frame.name];
+    const peers = peersOf(frame.name);
+    const names = peers ? [frame.name, ...peers.filter((m) => m !== frame.name)] : [frame.name];
     const heads: string[] = [];
     for (const n of names) {
       const head = headOf(n);
@@ -424,8 +461,8 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     return false;
   };
   const movesOthers = (frame: ResolvedFrame): boolean => {
-    const g = groupOf.get(frame.name);
-    if (g && g.frames.filter((m) => byName.has(m)).length > 1) return true;
+    const peers = peersOf(frame.name);
+    if (peers && peers.filter((m) => byName.has(m)).length > 1) return true;
     return template.frames.some((f) => f.name !== frame.name && !f.grid && anchorTarget(f.placement) === frame.name);
   };
   /** `free` applies: a fixed height with room up to a higher `maxHeight`. */
@@ -461,7 +498,8 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     //    width) back, down to its minimum or its content.
     const redistribute = (): boolean => {
       const g = groupOf.get(name);
-      if (!g || g.frames.filter((m) => byName.has(m)).length <= 1) return false;
+      // (A grid's rows are as tall as their tallest cell: nothing to give.)
+      if (!g || g.kind === 'grid' || g.frames.filter((m) => byName.has(m)).length <= 1) return false;
       steps.push('redistribute');
       return attempt({ ...fit, yieldAll: new Set([...fit.yieldAll, g.name]) }, name);
     };
@@ -475,14 +513,25 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     //    `'template:<id>'` or `'page:<id>'`, #859). On a page added by
     //    continuation, a frame that would take none of what it receives
     //    sends nothing on (it would go on for ever): it warns.
+    // An instance of a grid's set (#1061) goes on with its whole row, as
+    // the grid's main frame says (`overflow.continueIn`, `fit`).
+    // A frame of a module (#1062) whose modules group goes on goes on with
+    // its whole module, as the group says.
+    const moving = movingModule(name);
+    const grid = moving ? undefined : instanceOf(template, name)?.group;
+    const ruler: ResolvedFrame = moving
+      ? { ...frame, overflow: { ...frame.overflow, continueIn: moving.group.overflow!.continueIn } }
+      : grid ? byName.get(grid.items![0]!.frames[0]!) ?? frame : frame;
     const goOn = (): boolean => {
-      if (!continuesOffPage(frame.overflow.continueIn)) return false;
+      if (!continuesOffPage(ruler.overflow.continueIn)) return false;
       steps.push('continue');
       const before = { fit, cur };
       // (Only for a story that came from another page: a page's own story
       // may go on whole.)
       const received = input.continuing?.receivers.has(headOf(name)) ?? false;
-      if (attempt(goingOn(fit, frame), name) && (!received || cur.spills.get(name)?.advanced !== false)) return true;
+      const wholeIn = moving?.group ?? grid;
+      const next = wholeIn ? { ...fit, gridsOn: new Set([...fit.gridsOn, wholeIn.name]) } : goingOn(fit, frame);
+      if (attempt(next, name) && (!received || cur.spills.get(name)?.advanced !== false)) return true;
       ({ fit, cur } = before);
       return false;
     };
@@ -491,7 +540,7 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     // one size from page to page. The pictures and the text shrink only
     // when it cannot go on (the last page continuation may add, or a
     // receiver that takes none of it).
-    const order = continuesOffPage(frame.overflow.continueIn) && frame.fit.preferContinue
+    const order = continuesOffPage(ruler.overflow.continueIn) && ruler.fit.preferContinue
       ? [redistribute, goOn, scaleImages, shrinkText]
       : [scaleImages, redistribute, shrinkText, goOn];
     for (const step of order) if (step()) break;
@@ -500,9 +549,18 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
   // 7. Warn, with what would make each frame that still overflows fit.
   const warnings: ContentWarning[] = [...(cur.notes ?? [])];
   const templateAttr = fence.attrSources.template;
+  // The rows of a grid cut at its foot (#1061) warn once, on the last
+  // instance cut.
+  // (And so do the modules cut at the foot of their group, #1062.)
+  const cutIn = (name: string): string => moduleOfFrame(template, name)?.group.name ?? instanceOf(template, name)?.group.name ?? '';
+  const lastCut = new Map<string, string>();
+  for (const frame of template.frames) {
+    if (cur.clipped.has(frame.name) && overflows(cur, frame.name)) lastCut.set(cutIn(frame.name), frame.name);
+  }
   for (const frame of template.frames) {
     const vdt = frameIn(cur, frame.name);
     if (!vdt || vdt.overflowPx <= 0.5) continue;
+    if (cur.clipped.has(frame.name) && lastCut.get(cutIn(frame.name)) !== frame.name) continue;
     const overflowMm = Math.round((vdt.overflowPx / mmPx) * 10) / 10;
     const proposals = overflowProposals({
       frame,
@@ -543,7 +601,23 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     });
   }
 
-  const { frames, blocks, log, laid, fitted } = cur;
+  // 8. What no frame's box says (#1053): ink under a frame painted over it,
+  //    and ink past the trim, the bleed or the box it is anchored inside.
+  const overlaps = overlapChecks({
+    template: cur.template,
+    frames: cur.frames,
+    blocks: cur.blocks,
+    groupRects: cur.groupRects,
+    areas: input.areas,
+    dpi,
+    emPx: input.emPx,
+    fenceIndex: fi,
+    pageIndex: input.page.index,
+    ...(input.locale ? { locale: input.locale } : {}),
+  });
+  warnings.push(...overlaps.warnings);
+  const { frames, blocks, laid, fitted } = cur;
+  const log = overlaps.events.length > 0 ? mergeLog(cur.log, overlaps.events, template) : cur.log;
   // Template order on the page record.
   const order = new Map(template.frames.map((f, i) => [f.name, i]));
   frames.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
@@ -558,6 +632,10 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     frames,
     log,
     configPath: template.configPath,
+    // The modules laid (#1062), each with its box.
+    ...(template.modules && template.modules.length > 0
+      ? { modules: template.modules.map((m) => ({ name: m.name, template: m.template, configPath: m.configPath, ...(cur.moduleRects.has(m.name) ? { rect: { ...cur.moduleRects.get(m.name)! } } : {}) })) }
+      : {}),
     sourceStart: contentBlocks[input.startIdx]!.sourceStart + input.bodyOffset,
     sourceEnd: contentBlocks[input.endIdx]!.sourceEnd + input.bodyOffset,
   };
@@ -569,12 +647,26 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
     const story = spill ? input.stories.get(spill.head) : undefined;
     if (!spill || !story) continue;
     const came = input.continuing?.receivers.get(spill.head);
+    // An item of a grid (#1061) goes on whole, as its main frame says; the
+    // instances of its set that hold nothing go with it.
+    // A module (#1062) goes on whole as its group says, its frames that
+    // hold nothing along with the first of them that goes; any frame of a
+    // module goes on in that module on the page it goes to.
+    const inModule = moduleOfFrame(template, frame.name);
+    const wholeModule = spill.whole && inModule && continuesOffPage(inModule.group.overflow?.continueIn) ? inModule : undefined;
+    const cell = spill.whole && !wholeModule ? instanceOf(template, frame.name) : undefined;
+    const cellFrames = cell ? cell.group.items!.find((c) => c.item === cell.item)!.frames : [];
+    const ruler = cell ? byName.get(cellFrames[0]!) ?? frame : frame;
+    const firstGoing = wholeModule ? wholeModule.frames.find((n) => cur.spills.has(n)) : undefined;
+    const empty = cell?.main
+      ? cellFrames.filter((n) => n !== frame.name && !cur.spills.has(n))
+      : wholeModule && firstGoing === frame.name ? wholeModule.frames.filter((n) => n !== frame.name && !cur.spills.has(n)) : [];
     continuations.push({
       frame: frame.name,
       fromFrameId: spill.frameId,
       head: spill.head,
       // `{attr.x}` read from the fence (#917).
-      rule: resolveContinueIn(frame.overflow.continueIn!, fence.attrs),
+      rule: resolveContinueIn(wholeModule ? wholeModule.group.overflow!.continueIn! : ruler.overflow.continueIn!, fence.attrs),
       template: template.id,
       collapsed: input.continuing?.collapse ?? false,
       story,
@@ -583,8 +675,10 @@ export function layoutComposedPage(given: ComposedPageInput): ComposedPageLayout
       headBlockId: spill.headBlockId,
       // A story that jumped here (#917) goes on named by this page's frame.
       slot: (input.continuing?.jump ? undefined : came?.slot) ?? frame.name,
-      ...(trailing.has(frame.name) ? { trailing: trailing.get(frame.name)! } : {}),
+      ...(trailing.has(frame.name) ? { trailing: trailing.get(frame.name)! } : empty.length > 0 ? { trailing: empty } : {}),
       ...(frame.overflow.fromMark !== undefined ? { fromMark: frame.overflow.fromMark } : {}),
+      ...(spill.whole ? { whole: true as const } : {}),
+      ...(inModule ? { module: { name: inModule.module.name, template: inModule.module.template } } : {}),
     });
   }
   return { composed, blocks, warnings, laid, ...(fitted.size > 0 ? { fitted } : {}), ...(continuations.length > 0 ? { continuations } : {}) };
@@ -715,8 +809,12 @@ function regroupStories(input: ComposedPageInput, alt: ResolvedPageTemplate): { 
   const flow = alt.frames.find((f) => f.flow);
   const flowHead = flow ? chainHead(alt, flow.name) : undefined;
   const current = input.template.frames;
+  const repeatedIn = repeatedFrames(alt);
   const headIn = (head: string): string | undefined => {
     if (names.has(head)) return chainHead(alt, head);
+    // An instance of a frame `alt` repeats too (#1061) stays an instance.
+    const inst = repeatInstance(head);
+    if (inst && repeatedIn.has(inst.frame)) return head;
     const takes = current.find((f) => f.name === head)?.takes;
     const taker = takes ? alt.frames.find((f) => f.takes === takes) : undefined;
     return taker ? chainHead(alt, taker.name) : flowHead;
@@ -919,17 +1017,28 @@ export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): 
   return {
     ...style,
     padding: { top: d(p.top), right: d(p.right), bottom: d(p.bottom), left: d(p.left) },
-    border: { ...style.border, width: d(style.border.width) },
-    borderRadius: d(style.borderRadius),
+    border: {
+      ...style.border,
+      width: d(style.border.width),
+      ...(style.border.sides
+        ? { sides: Object.fromEntries(Object.entries(style.border.sides).map(([k, v]) => [k, { ...v, width: d(v.width) }])) as NonNullable<ResolvedCalloutStyleConfig['border']['sides']> }
+        : {}),
+    },
+    borderRadius: isCornerRadii(style.borderRadius)
+      ? Object.fromEntries(Object.entries(style.borderRadius).map(([k, v]) => [k, v ? d(v) : v]))
+      : d(style.borderRadius),
     stripe: { ...style.stripe, width: d(style.stripe.width) },
     ...(style.label
-      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) } } }
+      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) }, ...(style.label.fillet ? { fillet: d(style.label.fillet) } : {}) } }
       : {}),
   };
 }
 
 /** Lay out every frame of the page once, with the reflow ladder's `fit`. */
-function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
+function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
+  /** What the frames are placed in: the page, or, while a module's frames
+   *  are placed (#1062), the page with the module's box as its area. */
+  let input = pageInput;
   const { pass, fence, dpi } = input;
   const fi = fence.fenceIndex;
   const cont = input.continuing;
@@ -939,6 +1048,8 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
    *  the fence's page that first sent it on. */
   const frameIdOf = (name: string): string => (cont && !cont.jump ? frameElementId(fi, cont.receivers.get(name)?.slot ?? name, cont.generation) : frameElementId(fi, name));
   const byName = new Map(template.frames.map((f) => [f.name, f]));
+  /** Frames a grid repeats (#1061): their instances are `<frame>[n]`. */
+  const repeated = new Set(template.groups.flatMap((g) => (g.items ? g.repeat?.frames ?? [] : [])));
   const prev = chainPrev(template, cont?.receivers);
   /** The head of the chain a frame belongs to. */
   const headOf = (name: string): string => {
@@ -1084,6 +1195,10 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
     const laid = new Set<string>();
     const spills = new Map<string, Spill>();
     const wantsOn = new Set<string>();
+    const clipped = new Set<string>();
+    const moduleRects = new Map<string, Rect>();
+    /** The foot a module cut at its group's foot is clipped to (#1062). */
+    let clipFoot: number | undefined;
     const pushed: { name: string; box: Rect; contour?: VDTExclusionContour }[] = seed
       ? [...seed].map(([name, box]) => ({ name, box, ...(seedShapes?.get(name) ? { contour: seedShapes.get(name)! } : {}) }))
       : [];
@@ -1356,7 +1471,7 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         const start = firstFree?.own ?? input.areas.area;
         const box = ownBox ?? { x: start.x, y: start.y, width: 0, height: 0 };
         const out = layoutGroup({
-          kind: group.kind,
+          kind: group.kind === 'row' ? 'row' : 'stack',
           box,
           elastic: !ownBox,
           limit: input.areas.area,
@@ -1400,6 +1515,159 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       groupRects.set(group.name, fin.box);
       groupDeclared.set(group.name, decl.box);
       return fin.rects;
+    };
+
+    /** Lay a grid (#1061): its cells fill rows from the start side of the
+     *  page's lines (the flow frame is mirrored on a right-to-left page, so
+     *  its left is the start), `columns` to a row, `columnGap` and `rowGap`
+     *  between them. A cell is one item of a repeated frame set (or one
+     *  frame of a grid that repeats none): the main frame takes the cell's
+     *  width and its own height rule, the set's other frames are placed as
+     *  the template draws them, anchored to the main frame or to each
+     *  other (one that anchors to nothing in the set moves with the cell).
+     *  A row is as tall as its tallest cell, the set's frames counted;
+     *  `rowAlign` places the shorter ones (`'stretch'`: their main frame
+     *  grows to the row). The grid runs down its own box, or to the foot of
+     *  the area from where the template draws its main frame. A row that
+     *  does not fit is clipped at the foot, or, when the grid goes on to
+     *  another page (`FitState.gridsOn`), it and every row after it are
+     *  left for that page, whole (`spilled`). */
+    const placeGrid = (group: ResolvedFrameGroup, members: readonly ResolvedFrame[]): { rects: Map<string, Rect>; spilled: Set<string>; laidAny: boolean; clipped: string[] } => {
+      const byMember = new Map(members.map((f) => [f.name, f]));
+      const cells = (group.items ?? (group.repeat ? [] : members.map((f) => ({ item: 0, frames: [f.name] }))))
+        .map((c) => c.frames.filter((n) => byMember.has(n)))
+        .filter((c) => c.length > 0);
+      const laidBoxes = new Map<string, Rect>();
+      const spilled = new Set<string>();
+      const cut: string[] = [];
+      const own = groupPlaceable(group);
+      const ownBox = own ? placeBox(own, template, input, refOf, () => 0) : undefined;
+      const area = input.areas.area;
+      const first = cells[0] ? byMember.get(cells[0][0]!)! : undefined;
+      /** Where the template draws a cell's main frame. */
+      const drawnOf = (main: ResolvedFrame): Rect => placeBox(framePlaceable(main), template, input, refOf, () => 0);
+      const drawnFirst = first ? drawnOf(first) : area;
+      const box: Rect = ownBox ?? { x: drawnFirst.x, y: drawnFirst.y, width: Math.max(0, area.x + area.width - drawnFirst.x), height: Math.max(0, area.y + area.height - drawnFirst.y) };
+      const foot = box.y + box.height;
+      const columns = Math.max(1, group.columns ?? 1);
+      const colGap = dimensionToPx(group.columnGap ?? group.gap, dpi, input.emPx);
+      const rowGap = dimensionToPx(group.rowGap ?? group.gap, dpi, input.emPx);
+      const colW = Math.max(1, (box.width - colGap * (columns - 1)) / columns);
+      const xOf = (c: number): number => box.x + c * (colW + colGap);
+      const px = (d: Dimension | undefined): number | undefined => (d ? dimensionToPx(d, dpi, input.emPx) : undefined);
+      /** The main frame's height in a cell `w` wide: its own rule, held
+       *  between its minimum and maximum. */
+      const mainHeight = (f: ResolvedFrame, w: number): number => {
+        const h = f.height;
+        let v: number;
+        if (h === 'auto') v = naturalOf(prepare(f))(w);
+        else if (h === 'fill') v = 0;
+        else if ('percent' in h) v = (area.height * h.percent) / 100;
+        else v = dimensionToPx(h, dpi, input.emPx);
+        const min = px(f.minHeight) ?? 0;
+        const max = px(f.maxHeight) ?? Infinity;
+        return Math.max(min, Math.min(v, max));
+      };
+      /** The boxes of a cell's frames with its main frame at `(x, y)`,
+       *  `h` tall; and the frames that count for the cell's extent. */
+      const layCell = (cell: readonly string[], x: number, y: number, h: number): { boxes: Map<string, Rect>; inCell: string[] } => {
+        const main = byMember.get(cell[0]!)!;
+        const boxes = new Map<string, Rect>([[main.name, { x, y, width: colW, height: h }]]);
+        const inCell = [main.name];
+        const set = new Set(cell);
+        const drawn = drawnOf(main);
+        const refs = (n: string): Rect | undefined => boxes.get(n) ?? refOf(n);
+        // A frame anchored in the set fills (and takes its percentages of)
+        // the cell's column, not the whole area.
+        const column = { ...input, areas: { ...input.areas, area: { x, y: area.y, width: colW, height: area.height } } };
+        let todo = cell.slice(1);
+        for (let pass = 0; todo.length > 0 && pass <= cell.length; pass++) {
+          const later: string[] = [];
+          for (const name of todo) {
+            const f = byMember.get(name)!;
+            const target = f.grid ? undefined : anchorTarget(f.placement);
+            // Anchored to a frame of the set not placed yet: next pass.
+            if (target !== undefined && set.has(target) && !boxes.has(target) && pass < cell.length) {
+              later.push(name);
+              continue;
+            }
+            const p = prepare(f);
+            const inSet = target !== undefined && set.has(target);
+            const r = placeFitted(f, framePlaceable(f), inSet ? column : input, refs, naturalOf(p), naturalWidthOf(p));
+            if (target !== undefined && !set.has(target)) {
+              // Anchored to a frame outside the set: where it says.
+              boxes.set(name, r);
+              continue;
+            }
+            // Anchored in the set, or to nothing in it: with the cell.
+            boxes.set(name, target !== undefined ? r : { ...r, x: r.x + x - drawn.x, y: r.y + y - drawn.y });
+            inCell.push(name);
+          }
+          todo = later;
+        }
+        return { boxes, inCell };
+      };
+      const stretchable = (f: ResolvedFrame): boolean => f.height === 'auto' || f.height === 'fill';
+      let cursor = box.y;
+      let laidAny = false;
+      let out = false;
+      for (let r = 0; r * columns < cells.length; r++) {
+        const row = cells.slice(r * columns, (r + 1) * columns);
+        if (out) {
+          for (const c of row) for (const n of c) spilled.add(n);
+          continue;
+        }
+        // Each cell at the row's top, to see how far it reaches above and
+        // below its main frame.
+        const measured = row.map((cell, c) => {
+          const main = byMember.get(cell[0]!)!;
+          const h = mainHeight(main, colW);
+          const { boxes, inCell } = layCell(cell, xOf(c), 0, h);
+          const u = unionRect(inCell.map((n) => boxes.get(n)!))!;
+          return { cell, main, h, above: Math.max(0, -u.y), below: u.y + u.height };
+        });
+        const above = Math.max(0, ...measured.map((m) => m.above));
+        const below = Math.max(0, ...measured.map((m) => m.below));
+        const rowH = above + below;
+        const fits = cursor + rowH <= foot + 0.5;
+        if (!fits && fit.gridsOn.has(group.name)) {
+          // This row and the rest go on, whole.
+          out = true;
+          for (const c of row) for (const n of c) spilled.add(n);
+          continue;
+        }
+        measured.forEach((m, c) => {
+          const spare = below - m.below;
+          let dy = 0;
+          let h = m.h;
+          if (spare > 0.01) {
+            const align = group.rowAlign ?? 'stretch';
+            if (align === 'end') dy = spare;
+            else if (align === 'center') dy = spare / 2;
+            else if (align === 'stretch' && stretchable(m.main)) h = Math.min(m.h + spare, px(m.main.maxHeight) ?? Infinity);
+          }
+          const { boxes } = layCell(m.cell, xOf(c), cursor + above + dy, h);
+          if (!fits) cut.push(...m.cell);
+          for (const [n, b] of boxes) {
+            // A row past the grid's foot is cut there: what is cut shows as
+            // the frames' overflow.
+            const y = Math.min(b.y, foot);
+            laidBoxes.set(n, fits ? b : { ...b, y, height: Math.max(0, Math.min(b.y + b.height, foot) - y) });
+          }
+        });
+        laidAny = true;
+        cursor += rowH + rowGap;
+      }
+      for (const [n, b] of laidBoxes) {
+        // A grid's cells are its template's drawing: no reflow events.
+        declared.set(n, b);
+        rects.set(n, b);
+      }
+      const laidRects = [...laidBoxes.values()];
+      const union = ownBox ?? unionRect(laidRects) ?? { ...box, height: 0 };
+      groupRects.set(group.name, union);
+      groupDeclared.set(group.name, union);
+      return { rects: laidBoxes, spilled, laidAny, clipped: cut };
     };
 
     /** Pour a frame's content into its box and record the frame. A frame
@@ -1486,9 +1754,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
           if (blocks.length > 0) emptyRules = turned ? blocks.map((b) => ({ ...b, bbox: turnRectAbout(b.bbox, rect, frameModeTurn({ writingMode: turned })) })) : blocks;
         }
       }
+      const instance = repeated.has(repeatInstance(frame.name)?.frame ?? '') ? repeatInstance(frame.name) : undefined;
       const vdt: VDTFrame = {
         id: frameIdOf(frame.name),
         name: frame.name,
+        ...(instance ? { repeat: instance } : {}),
         rect: { ...rect },
         rotate: frame.rotate + (turned ? frameModeTurn({ writingMode: turned }) : 0),
         ...(turned ? { writingMode: turned } : {}),
@@ -1511,8 +1781,9 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
         vdt.continuedFrom = st.lastFrameId;
         const q = frames.find((f) => f.id === st.lastFrameId);
         if (q) q.continuesTo = vdt.id;
-      } else if (holds && cont?.receivers.has(frame.name)) {
-        // Content from the page before (#859).
+      } else if (holds && cont?.receivers.has(frame.name) && !cont.receivers.get(frame.name)!.whole) {
+        // Content from the page before (#859). (An item of a grid that
+        // came whole, #1061, starts here.)
         const came = cont.receivers.get(frame.name)!;
         vdt.continuedFrom = came.fromFrameId;
         // From a page of an earlier chapter (#943).
@@ -1566,24 +1837,189 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       vdtByName.set(frame.name, vdt);
     };
 
-    for (const step of composedOrder(template)) {
+    /** A frame's box cut at `clipFoot` (a module cut at its group's foot,
+     *  #1062): what is cut shows as the frame's overflow. */
+    const clipAtFoot = (name: string, r: Rect): Rect => {
+      if (clipFoot === undefined || r.y + r.height <= clipFoot + 0.5) return r;
+      clipped.add(name);
+      const y = Math.min(r.y, clipFoot);
+      const out = { ...r, y, height: Math.max(0, Math.min(r.y + r.height, clipFoot) - y) };
+      rects.set(name, out);
+      return out;
+    };
+    /** The frames of `names` whose content goes on whole on another page
+     *  (#1061, #1062): none of it is laid here. */
+    const spillWhole = (names: readonly string[], advanced: boolean, lastLaid: string | undefined): void => {
+      for (const n of names) {
+        const f = byName.get(n);
+        const st = f ? prepare(f).st : undefined;
+        if (!st) continue;
+        laid.add(headOf(n));
+        spills.set(n, { head: headOf(n), cut: st.cut, advanced, pieces: st.pieces, headBlockId: st.headBlockId, frameId: lastLaid ?? frameIdOf(n), whole: true });
+      }
+    };
+    /** Place (and, `filling`, fill) one step of `composedOrder`. */
+    const runStep = (step: ReturnType<typeof composedOrder>[number], filling: boolean): void => {
       if (step.kind === 'frame') {
         const p = prepare(step.frame);
-        fill(p, placeFrame(p));
-        continue;
+        const r = clipAtFoot(step.frame.name, placeFrame(p));
+        if (filling) fill(p, r);
+        return;
+      }
+      if (step.group.modules) {
+        // A modules group (#1062): its modules, one under another.
+        placeModules(step.group, step.frames);
+        return;
+      }
+      if (step.group.kind === 'grid') {
+        // A grid (#1061): its cells, and the items of the rows left for
+        // another page, which go on whole.
+        const grid = placeGrid(step.group, step.frames);
+        if (!filling) return;
+        for (const n of grid.clipped) clipped.add(n);
+        let lastLaid: string | undefined;
+        for (const f of step.frames) {
+          if (!grid.spilled.has(f.name)) {
+            fill(prepare(f), clipAtFoot(f.name, grid.rects.get(f.name)!));
+            lastLaid = frameIdOf(f.name);
+            continue;
+          }
+          spillWhole([f.name], grid.laidAny, lastLaid);
+        }
+        return;
       }
       const solved = placeGroup(step.group, step.frames);
       // A frame of a chain inside the group is reached once the frame
       // before it was filled: each is prepared again as it is filled.
-      for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
-    }
+      for (const f of step.frames) {
+        const r = clipAtFoot(f.name, solved.get(f.name)!);
+        if (filling) fill(prepare(f), r);
+      }
+    };
+
+    /** Lay a modules group (#1062): each module, in order, in a box as wide
+     *  as the group, from where the module before it ends (`gap` between
+     *  them), as tall as its frames. A module's frames are placed as its
+     *  template draws them in that box (`'container'` is the box) and its
+     *  groups laid in it: first in the room left, to find how tall it is
+     *  (the frames held by the box's foot or middle, or sized by its
+     *  height, left out), then in a box that tall. The group runs down its
+     *  own box, else the area. A module that does not fit is cut at the
+     *  group's foot (its frames clipped there), or, when the group goes on
+     *  to another page (`FitState.gridsOn`), it and every module after it
+     *  go on, whole. The modules' declared boxes follow each other at the
+     *  heights their frames declare, so the log tells a module moved by
+     *  the one before it. */
+    const placeModules = (group: ResolvedFrameGroup, members: readonly ResolvedFrame[]): void => {
+      const byMember = new Map(members.map((f) => [f.name, f]));
+      const own = groupPlaceable(group);
+      const ownBox = own ? placeBox(own, template, pageInput, refOf, () => 0) : undefined;
+      const box = ownBox ?? pageInput.areas.area;
+      const foot = box.y + box.height;
+      const gap = dimensionToPx(group.gap, dpi, pageInput.emPx);
+      let cursor = box.y;
+      let declCursor = box.y;
+      let out = false;
+      let laidAny = false;
+      let lastLaid: string | undefined;
+      const boxes: Rect[] = [];
+      const declBoxes: Rect[] = [];
+      const restore = <K, V>(to: Map<K, V>, from: ReadonlyMap<K, V>): void => {
+        to.clear();
+        for (const [k, v] of from) to.set(k, v);
+      };
+      for (const item of group.items ?? []) {
+        const mod = template.modules?.find((m) => m.name === item.module);
+        const names = item.frames.filter((n) => byMember.has(n));
+        if (!mod || names.length === 0) continue;
+        if (out) {
+          spillWhole(names, laidAny, lastLaid);
+          continue;
+        }
+        const sub: Pick<ResolvedPageTemplate, 'frames' | 'groups'> = { frames: names.map((n) => byMember.get(n)!), groups: template.groups.filter((g) => mod.groups.includes(g.name)) };
+        const steps = composedOrder(sub);
+        const lay = (height: number, filling: boolean): void => {
+          input = { ...pageInput, areas: { ...pageInput.areas, area: { x: box.x, y: cursor, width: box.width, height: Math.max(0, height) } } };
+          try {
+            for (const step of steps) runStep(step, filling);
+          } finally {
+            input = pageInput;
+          }
+        };
+        // 1. How tall the module is: its frames placed in the room left,
+        //    then everything they set put back.
+        const kept = { rects: new Map(rects), declared: new Map(declared), groupRects: new Map(groupRects), groupDeclared: new Map(groupDeclared), pinned: pinned.length, boxShort: new Map(boxShort), fitted: new Map(fitted) };
+        lay(foot - cursor, false);
+        const placed = names.filter((n) => rects.has(n));
+        const measured = placed.filter((n) => !heldByFoot(byMember.get(n)!));
+        const reach = unionRect((measured.length > 0 ? measured : placed).map((n) => rects.get(n)!));
+        const height = reach ? Math.max(0, reach.y + reach.height - cursor) : 0;
+        restore(rects, kept.rects);
+        restore(declared, kept.declared);
+        restore(groupRects, kept.groupRects);
+        restore(groupDeclared, kept.groupDeclared);
+        restore(boxShort, kept.boxShort);
+        restore(fitted, kept.fitted);
+        pinned.length = kept.pinned;
+        const fits = cursor + height <= foot + 0.5;
+        if (!fits && fit.gridsOn.has(group.name)) {
+          // This module and the ones after it go on, whole.
+          out = true;
+          spillWhole(names, laidAny, lastLaid);
+          continue;
+        }
+        // 2. The module laid in a box that tall (cut at the foot when it
+        //    does not fit).
+        clipFoot = fits ? undefined : foot;
+        try {
+          lay(fits ? height : foot - cursor, true);
+        } finally {
+          clipFoot = undefined;
+        }
+        const u = unionRect(names.flatMap((n) => (rects.has(n) ? [rects.get(n)!] : [])));
+        const bottom = u ? Math.max(cursor, u.y + u.height) : cursor;
+        const moduleBox = { x: box.x, y: cursor, width: box.width, height: bottom - cursor };
+        moduleRects.set(mod.name, moduleBox);
+        boxes.push(moduleBox);
+        // Declared: after the modules before it as they declare themselves.
+        const shift = declCursor - cursor;
+        for (const n of names) {
+          const d = declared.get(n);
+          if (d && Math.abs(shift) > 0.001) declared.set(n, { ...d, y: d.y + shift });
+        }
+        const du = unionRect(names.flatMap((n) => (declared.has(n) ? [declared.get(n)!] : [])));
+        const declBottom = du ? Math.max(declCursor, du.y + du.height) : declCursor;
+        declBoxes.push({ x: box.x, y: declCursor, width: box.width, height: declBottom - declCursor });
+        laidAny = true;
+        lastLaid = frameIdOf(names[names.length - 1]!);
+        cursor = bottom + gap;
+        declCursor = declBottom + gap;
+      }
+      groupRects.set(group.name, ownBox ?? unionRect(boxes) ?? { ...box, height: 0 });
+      groupDeclared.set(group.name, ownBox ?? unionRect(declBoxes) ?? { ...box, height: 0 });
+    };
+
+    for (const step of composedOrder(template)) runStep(step, true);
+
     const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
-    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn };
+    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn, clipped, groupRects, moduleRects };
   };
   const first = run();
-  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
-  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, ...(notes.length > 0 ? { notes } : {}) };
+  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn, clipped, groupRects, moduleRects } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
+  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, clipped, groupRects, moduleRects, ...(notes.length > 0 ? { notes } : {}) };
 }
+
+/** A module's frame placed by its box's foot or middle, or sized by its
+ *  height (#1062): it does not say how tall the module is. */
+function heldByFoot(f: ResolvedFrame): boolean {
+  if (f.height === 'fill' || (typeof f.height === 'object' && 'percent' in f.height)) return true;
+  const anchor = f.placement?.anchor;
+  if (!anchor || anchor.to !== 'container') return false;
+  return FOOT_EDGES.has(anchor.edge);
+}
+
+/** The nine-point edges below a box's top. */
+const FOOT_EDGES: ReadonlySet<string> = new Set(['left', 'center', 'right', 'start', 'end', 'bottom-left', 'bottom', 'bottom-right', 'bottom-start', 'bottom-end']);
 
 /** `r` turned `deg` (±90) about the centre of `about`: an axis-aligned
  *  box again, its width and height swapped. */
@@ -1744,7 +2180,16 @@ export function styleWithLook(base: ResolvedCalloutStyleConfig, look: FrameLook)
     out.background = look.background;
     out.backgroundEnabled = true;
   }
-  if (look.border?.color) out.border = { ...base.border, color: look.border.color };
+  if (look.border?.color) {
+    // Every side takes the look's border colour too (#1059).
+    const color = look.border.color;
+    const sides = base.border.sides;
+    out.border = {
+      ...base.border,
+      color,
+      ...(sides ? { sides: { top: { ...sides.top, color }, right: { ...sides.right, color }, bottom: { ...sides.bottom, color }, left: { ...sides.left, color } } } : {}),
+    };
+  }
   if (look.stripe?.color) out.stripe = { ...base.stripe, color: look.stripe.color };
   if (look.icon?.color) out.icon = { ...base.icon, color: look.icon.color };
   if (look.marker?.color || look.marker?.rule?.color) {
@@ -1824,7 +2269,9 @@ export function planComposedPages(
     let end = i + 1;
     while (end < blocks.length && !(blocks[end]!.type === 'containerEnd' && blocks[end]!.containerId === b.containerId)) end++;
     end = Math.min(end, blocks.length - 1);
-    if (resolvePageTemplate(source, b.composedPage.template)) {
+    // (A module, #1062, is never laid as a page.)
+    const t = resolvePageTemplate(source, b.composedPage.template);
+    if (t && !isModuleTemplate(t)) {
       const stories = composedStories(i, end, plans);
       const list = [...stories.values()];
       out.set(i, {

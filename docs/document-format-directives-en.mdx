@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'The ::: directives: containers, columns, paper, page breaks, numbering, space, verse, contents and index, line breaks, and the markup of comic pages',
   lang: 'en',
-  lastUpdated: '2026-10-19',
-  readingTime: '34 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '35 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "A directive is a block that starts with three colons, such as :::callout or :::columns. This page lists every directive and what it does. Some put text in a box, set it in columns or print it on another kind of paper. Others start a new page, change the numbering, add space, set a poem line by line, or print the table of contents and the index. The last section covers the marks for comic pages, panels and the words of the characters.",
@@ -125,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Five container names are recognized in the text flow; a sixth, `:::frame`, holds the content of a frame in a [composed page](#composed-pages). What each one renders is set in its own section of the configuration:
+Five container names are recognized in the text flow; `:::frame` and `:::module` hold the content of a frame and of a module in a [composed page](#composed-pages), and `:::figure` and `:::label` a figure and a label of several lines. What each one renders is set in its own section of the configuration:
 
 <table>
   <thead>
@@ -741,4 +741,7 @@ A composed page is laid out from a page template of the configuration (`pageTemp
 - `::::page{template="…"}` … `::::` is the page: four or more colons, closed by a bare fence of as many. Three-colon fences inside it (`:::frame`, `:::callout`, `:::figure`…) work as they do everywhere, and a bare `:::` never closes the page. A three-colon `:::page` stays a comic page.
 - `:::frame{slot="…" label="…"}` … `:::` holds the content of the frame of that name: any Markdown.
 - `slot="…"` on a heading (`## Retos {slot="retos-titulo"}`), on `::resource{id="…" slot="…"}`, on a code fence or on a `:::` container sends that block alone. Content with no slot goes to the template's flow frame.
-- `:::figure{resource="…" slot="…"}` … `:::` places one resource with its `::label[TEXT]{at="…" style="…"}` lines, `at` being an anchor of the picture or a point `"x% y%"`. A figure works in the running text too. Its `alt`, `caption` and `note`, as fence attributes or as `::alt[…]`, `::caption[…]` and `::note[…]` lines, replace the resource's own words for that chapter (see [Composed pages › A figure's own words](/en/docs/composed-pages#a-figures-own-words)).
+- `:::figure{resource="…" slot="…"}` … `:::` places one resource with its `::label[TEXT]{at="…" style="…"}` lines, `at` being an anchor of the picture or a point `"x% y%"`. A figure works in the running text too. Its `alt`, `caption` and `note`, as fence attributes or as `::alt[…]`, `::caption[…]` and `::note[…]` lines, replace the resource's own words for that chapter (see [Composed pages › A figure's own words](/en/docs/composed-pages-figures#a-figures-own-words)).
+- `leader` on a `::label` draws a line from the label to its anchor's point, and `leader="none"` takes it away. `:::label{at="…" style="…"}` … `:::`, inside a figure, writes a label line by line, as a map's key needs; `:icon[alt]{glyph="…"}`, `{resource="…"}` or `{line="dashed"}` sets a symbol in a label, a caption, a note or a table cell (see [Composed pages › Leaders, legends and symbols](/en/docs/composed-pages-figures#leaders-legends-and-symbols)). Since postext 1.48.
+- In a page whose template repeats a card in a grid, each `:::frame{slot="<card>"}` is one card, and a block inside it that names another frame of the card goes to that frame of the same card (see [Composed pages › Repeated slots](/en/docs/composed-pages#repeated-slots)). Since postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` holds the content of one module of the page, a block drawn by a module template and stacked in the page's modules group; the slots inside it are the module's own (see [Composed pages › Modules in a page](/en/docs/composed-pages#modules-in-a-page)). Since postext 1.48.

@@ -4,7 +4,7 @@ import type { StoryJump } from './composed/carryTypes';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
@@ -545,6 +545,18 @@ export interface ResourceAnchor {
    *  does not cut it; `'cross'` leaves it where the point puts it, a title
    *  set across both pages. Default `'keep'`. */
   gutter?: 'keep' | 'cross';
+  /** Where the label set at this anchor stands, away from its point
+   *  (#1057): fractions of the whole picture, as `x` / `y`. `align`,
+   *  `verticalAlign` and `rotate` place the box about this point; the
+   *  anchor's own point stays where a leader and a connector end. Unset:
+   *  the label stands at its point. */
+  labelAt?: { x: number; y: number };
+  /** A line from the label's box to the anchor's point (#1057): `true` in
+   *  the label style's `leader` look, an object over that look field by
+   *  field, `false` none. Unset: a leader when the label stands away from
+   *  its point (`labelAt`) and its style has a `leader`. A label's own
+   *  `leader` attribute wins. */
+  leader?: boolean | LeaderStyle;
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
@@ -3217,16 +3229,52 @@ export type CalloutIconPosition = 'inline' | 'corner';
  *  (see {@link CalloutStripeSide}). */
 export type CalloutIconCornerSide = 'right' | 'left' | 'outer' | 'inner' | 'start' | 'end';
 
-/** The top corner a callout's label tab hugs: `'top-right'` / `'top-left'`
+/** The corner a callout's label tab hugs: `'top-right'` / `'top-left'`
  *  in the body flow's terms, `'top-start'` / `'top-end'` (#371) in the box's
- *  own direction (see {@link CalloutStripeSide}). */
-export type CalloutLabelPosition = 'top-right' | 'top-left' | 'top-start' | 'top-end';
+ *  own direction (see {@link CalloutStripeSide}); the `bottom-` forms
+ *  (#1059) hang the tab from the box's foot. */
+export type CalloutLabelPosition =
+  | 'top-right' | 'top-left' | 'top-start' | 'top-end'
+  | 'bottom-right' | 'bottom-left' | 'bottom-start' | 'bottom-end';
 export type CalloutTextTransform = 'none' | 'uppercase';
+
+/** A side of a box, on the sheet. */
+export type BoxSideName = 'top' | 'right' | 'bottom' | 'left';
+
+/** The radius of a box's corners (#1059): one length for all four, or
+ *  one per corner (a corner left out is square). Corners are the sheet's,
+ *  as a stripe's `left` / `right` are the body flow's. */
+export type CornerRadius =
+  | Dimension
+  | { topLeft?: Dimension; topRight?: Dimension; bottomRight?: Dimension; bottomLeft?: Dimension };
+
+/** One side of a box's border (#1059): each field left out takes the
+ *  whole border's value (`enabled`, `color`, `width`). */
+export interface BorderSide {
+  enabled?: boolean;
+  color?: ColorValue;
+  width?: Dimension;
+}
+
+/** The four sides of a box's border (#1059), each over the whole border's
+ *  values. */
+export interface BorderSides {
+  top?: BorderSide;
+  right?: BorderSide;
+  bottom?: BorderSide;
+  left?: BorderSide;
+}
 
 export interface CalloutBorderConfig {
   enabled?: boolean;
   color?: ColorValue;
   width?: Dimension;
+  /** Per side (#1059): a box with a border on its top only is
+   *  `{ enabled: true, sides: { right: { enabled: false }, bottom: {
+   *  enabled: false }, left: { enabled: false } } }`, or `enabled: false`
+   *  with `sides: { top: { enabled: true } }`. Unset: every side as the
+   *  whole border. */
+  sides?: BorderSides;
 }
 
 export interface CalloutPaddingConfig {
@@ -3282,6 +3330,38 @@ export interface CalloutIconConfig {
  *  its edge, or inside it before the words. */
 export type CalloutLabelIconPlacement = 'beside' | 'inside';
 
+/** What a label tab's icon is (#1054): a picture resource, or a character
+ *  of a font. */
+export type CalloutLabelIconKind = 'resource' | 'glyph';
+
+/** The icon of a label tab: a picture (`resourceId`, #981/#995) or a glyph
+ *  (#1054). `placement` and `gap` work alike for both; `width` and `tint`
+ *  are the picture's, `glyph`, `fontFamily`, `fontWeight`, `scale` and
+ *  `color` the glyph's. */
+export interface CalloutLabelIconConfig {
+  /** Default `'resource'` when `resourceId` is set, `'glyph'` when only
+   *  `glyph` is. */
+  kind?: CalloutLabelIconKind;
+  resourceId?: string;
+  /** The picture's width. Default `1em`. */
+  width?: Dimension;
+  /** Space between the icon and the tab (`beside`) or the words
+   *  (`inside`). Default `0.3em`. */
+  gap?: Dimension;
+  placement?: CalloutLabelIconPlacement;
+  tint?: boolean;
+  /** The character set as the icon (`'◉'`). */
+  glyph?: string;
+  /** The glyph's font family. Default: the label's. */
+  fontFamily?: string;
+  /** The glyph's weight. Default: the label's. */
+  fontWeight?: number;
+  /** The glyph's size, as a factor of the tab's text size. Default `1`. */
+  scale?: number;
+  /** The glyph's colour. Default: the label's `color`. */
+  color?: ColorValue;
+}
+
 export interface CalloutLabelConfig {
   /** Defaults to the headings font family. */
   fontFamily?: string;
@@ -3311,11 +3391,23 @@ export interface CalloutLabelConfig {
    *  and a coloured ring on a white one are two resources, one to a style;
    *  with `tint` (#995) it is painted in the label's `color` instead (its
    *  silhouette, in the colour of the words), so one ring serves every
-   *  tint of a book. */
-  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement; tint?: boolean };
+   *  tint of a book. With `kind: 'glyph'` (#1054) the icon is a character
+   *  of a font instead, a ◉ set in the tab's colour, so a ring needs no
+   *  picture resource. */
+  icon?: CalloutLabelIconConfig;
   /** A rule along the box's top edge from the far corner to the tab (or
-   *  its icon). */
+   *  its icon); along the foot for a `bottom-` tab. */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
+  /** The tab grown out of the box (#1059): box and tab are one outline,
+   *  one fill (the box's `background`) and one border running round the
+   *  tab, the tab's sides meeting the box's edge in concave fillets. The
+   *  tab stands on the edge, outside the box: `offset` must be 0 (another
+   *  value is reported and ignored). The tab's own `background` is not
+   *  painted. Default `false`. */
+  joined?: boolean;
+  /** The radius of the concave fillets of a joined tab. Default: the
+   *  radius of the box's corner the tab hugs. */
+  fillet?: Dimension;
 }
 
 /** Vertical rule drawn between a callout marker and its box. */
@@ -3488,8 +3580,8 @@ export interface CalloutStyleConfig {
   background?: ColorValue;
   /** Default off, `#cccccc`, `0.5pt`. */
   border?: CalloutBorderConfig;
-  /** Default `0`. */
-  borderRadius?: Dimension;
+  /** Default `0`. One length, or one per corner (#1059). */
+  borderRadius?: CornerRadius;
   /** Default `0.75em` on every side. */
   padding?: CalloutPaddingConfig;
   /** Default off, `left`, `1.5em`, main colour. */
@@ -3690,8 +3782,16 @@ export interface ResolvedCalloutStyleConfig {
   width: CalloutWidth;
   backgroundEnabled: boolean;
   background: ColorValue;
-  border: { enabled: boolean; color: ColorValue; width: Dimension };
-  borderRadius: Dimension;
+  border: {
+    enabled: boolean;
+    color: ColorValue;
+    width: Dimension;
+    /** Each side with the whole border's values written in (#1059); absent
+     *  when the style sets no side. */
+    sides?: Record<BoxSideName, { enabled: boolean; color: ColorValue; width: Dimension }>;
+  };
+  /** A length, or one per corner (#1059). */
+  borderRadius: CornerRadius;
   padding: { top: Dimension; right: Dimension; bottom: Dimension; left: Dimension };
   stripe: { enabled: boolean; side: CalloutStripeSide; width: Dimension; color: ColorValue };
   icon: {
@@ -3718,8 +3818,26 @@ export interface ResolvedCalloutStyleConfig {
     paddingX: Dimension;
     offset: Dimension;
     inset: Dimension;
-    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement; tint: boolean };
+    icon: {
+      kind: CalloutLabelIconKind;
+      resourceId: string;
+      width: Dimension;
+      gap: Dimension;
+      placement: CalloutLabelIconPlacement;
+      tint: boolean;
+      glyph: string;
+      fontFamily: string;
+      fontWeight: number;
+      scale: number;
+      /** Absent: the label's colour, read when the tab is laid out (so a
+       *  frame's `look` that recolours the words recolours the glyph). */
+      color?: ColorValue;
+    };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
+    /** The tab grown out of the box (#1059). */
+    joined: boolean;
+    /** Absent: the radius of the box's corner the tab hugs. */
+    fillet?: Dimension;
   };
   columnGap: Dimension;
   marker: {
@@ -6342,20 +6460,41 @@ export interface ElementAnchor {
    *  running head down the fore-edge. Elsewhere it reads as `'container'`. */
   to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`;
   edge: AnchorEdge;
+  /** The point along the side `edge` names, on another element, a frame or
+   *  a group (`'#name'`, #1055): `'start'`, `'center'`, `'end'` or a
+   *  fraction of the side (0 at its start, 1 at its end; outside 0…1 it is
+   *  held there). A horizontal side (`top`, `bottom`, `below`, `above`,
+   *  `align-top`, `align-bottom` and the `top-*` / `bottom-*` corners, read
+   *  as their side) starts where the page's lines start (the left, or the
+   *  right of a page that starts on the right); a vertical one (`left`,
+   *  `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`,
+   *  `end`) at its top. Along the side the element is centred on that point
+   *  (a vertical rule's thickness on a frame's middle); across it the edge
+   *  keeps its pin (`below` hangs under the side, `bottom` stands on it
+   *  inside the box). Absent: the edge's own point. Ignored on
+   *  `'container'`, `'page'`, `'bleed'`, `'outer'` and on `center`. */
+  at?: SidePosition;
 }
+
+/** A point along a side of a box (#1055): its start, middle or end, or a
+ *  fraction of it from the start (0…1). */
+export type SidePosition = 'start' | 'center' | 'end' | number;
 
 /** A size that runs from the element's anchor point to an edge of another
  *  box (#928): `to` names it as an anchor does (`'container'`, `'page'`,
  *  `'bleed'`, `'outer'`, `'#id'` of another element or, on a composed
  *  page's decoration, of a frame or group) and `edge` which of its edges:
- *  `'top'` / `'bottom'` for a height, `'left'` / `'right'` for a width. A
+ *  `'top'` / `'bottom'` for a height, `'left'` / `'right'` for a width,
+ *  `'center'` for its middle on either axis (#1055). A
  *  ground from the foot of a band down to the bleed:
  *  `height: { to: 'bleed', edge: 'bottom' }`; it follows the band when the
  *  band moves. The other side's edge (a width to `'top'`) reads as
  *  `'fill'`; an edge behind the anchor point gives 0. */
 export interface ElementSizeTo {
   to: ElementAnchor['to'];
-  edge: 'top' | 'bottom' | 'left' | 'right';
+  /** `'center'` (#1055): the middle of the box on the axis being sized —
+   *  its horizontal centre for a width, its vertical centre for a height. */
+  edge: 'top' | 'bottom' | 'left' | 'right' | 'center';
 }
 
 export type ElementSize = 'auto' | 'fill' | Dimension | ElementSizeTo;
@@ -6378,7 +6517,12 @@ export interface ElementBoxStyle {
   backgroundColor?: ColorValue;
   borderColor?: ColorValue;
   borderWidth?: Dimension;
-  borderRadius?: Dimension;
+  /** One length, or one per corner (#1059). */
+  borderRadius?: CornerRadius;
+  /** The border per side (#1059), each over `borderColor` / `borderWidth`
+   *  (a side is on when it has a colour and a width, unless `enabled:
+   *  false`). Unset: the whole border on every side. */
+  borderSides?: BorderSides;
   padding?: { top?: Dimension; right?: Dimension; bottom?: Dimension; left?: Dimension };
 }
 
@@ -6679,7 +6823,158 @@ export interface DesignImageElement {
   focus?: { x: number; y: number };
 }
 
-export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement;
+/** A vector shape a design draws (DESIGN §12.8, #1060): a bar that runs
+ *  into the spine, a ribbon with an arrow head, the chevrons beside a
+ *  running head. `d` is SVG path data (`M L H V C S Q T A Z`, absolute and
+ *  relative) in the units of `viewBox`, which by default is `[1, 1]`: the
+ *  path is written in fractions of the element's own box, so it stretches
+ *  with the box. Placed and sized like a box (`placement.size` widths and
+ *  heights, `'fill'` and `{ to, edge }` included; a side left out fills to
+ *  the container's edge). Path data that cannot be read draws nothing and is
+ *  reported as `unknownConfigValue`. */
+export interface DesignPathElement {
+  kind: 'path';
+  id: string;
+  parity?: PageParity;
+  /** Page roles this element renders on. Default `'all'`. */
+  pages?: PageRoleFilter;
+  /** On a composed page's decoration: anchored to a frame, stay where the
+   *  template puts that frame (see `DesignBoxElement.pin`). */
+  pin?: boolean;
+  /** Heading designs only: whether the element counts toward the height
+   *  the heading reserves. Default `true`. */
+  reserve?: boolean;
+  placement: ElementPlacement;
+  /** SVG path data, in `viewBox` units. */
+  d: string;
+  /** Width and height of the space `d` is written in. Default `[1, 1]`. */
+  viewBox?: [number, number];
+  /** Fill colour. When neither `fill` nor `stroke` is set the shape is
+   *  filled black, as an SVG path is. */
+  fill?: ColorValue;
+  /** Outline colour; absent: no outline. */
+  stroke?: ColorValue;
+  /** Outline width, not scaled with the box. Default `0.5pt`. */
+  width?: Dimension;
+  /** Outline dash pattern (on, off, …), not scaled with the box. */
+  dash?: Dimension[];
+  /** `'none'` (the default) stretches the `viewBox` to the element's box
+   *  on each axis; `'meet'` scales it evenly to fit inside, centred. */
+  preserveAspectRatio?: 'none' | 'meet';
+}
+
+/** What ends a connector's line (#1056): nothing, a filled dot centred on
+ *  the end, or a filled arrowhead whose tip is the end. */
+export type LineCap = 'none' | 'dot' | 'arrow';
+
+/** One end of a connector (#1056): a point on a side of a frame, a group,
+ *  an instance of a repeated frame (`'#card[2]'`; `'#card[*]'` in a
+ *  connector's `to` is every instance the page has) or another element of
+ *  the decoration. */
+export interface ConnectorEnd {
+  to: `#${string}`;
+  /** The side the line leaves or meets the box by; `start` / `end` follow
+   *  the page's line direction (the right and the left of a right-to-left
+   *  page). Default: the side facing the other end (for a tree's children,
+   *  the side facing the parent). */
+  side?: 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end';
+  /** The point along that side: its start, middle or end, or a fraction
+   *  from its start (0…1; a horizontal side starts where the page's lines
+   *  start, a vertical one at its top). Default `'center'`. */
+  at?: SidePosition;
+  /** Room between the box's edge and the line's end. Default 0. */
+  gap?: Dimension;
+  /** An anchor of the picture the frame holds (#1057, DESIGN §12.4): the
+   *  end is that point of the first `:::figure` / `::resource` of the
+   *  frame's story whose resource has the anchor, through the picture's
+   *  crop, safe area and scale as its labels are, instead of a point of the
+   *  frame's side. `side` then says which way the line arrives (default:
+   *  from the other end), `at` is not read, and `gap` stops the line short
+   *  of the point. An anchor no picture of the frame has: the end is left
+   *  out (`labelAnchorUnknown`, with `connector`). */
+  anchor?: string;
+}
+
+/** The look of a label's leader (#1057, DESIGN §12.4): the line from the
+ *  label's box to its anchor point. */
+export interface LeaderStyle {
+  /** Default: the label's text colour. */
+  color?: ColorValue;
+  /** Default 0.75 pt. */
+  width?: Dimension;
+  dash?: Dimension[];
+  /** At the label's end. Default `'none'`. */
+  startCap?: LineCap;
+  /** At the anchor point. Default `'dot'`. */
+  endCap?: LineCap;
+  /** The size of a dot (across) or an arrowhead (long). Default 3 × width. */
+  capSize?: Dimension;
+  /** `'straight'` (the default): one segment from the middle of the box's
+   *  side that faces the point; `'elbow'`: out of that side square, then
+   *  along to the point. */
+  routing?: 'straight' | 'elbow';
+}
+
+/**
+ * A line that joins frames on a composed page (#1056, DESIGN §12.3): a
+ * tree diagram's branches, an org chart, a timeline's drops, the arrows of
+ * a flow chart. A decoration element of page templates only (running heads
+ * and heading designs have no frames to join): laid after the frames'
+ * final boxes, so it follows a text that grows, a language that is longer,
+ * a group that moves its frames; painted under the frames as a vector
+ * path, or over them (`over`, #1076; by default a pointer into a picture). An end on a frame the page does not have (collapsed, empty and
+ * optional, an instance past the page's items) is dropped and the page's
+ * reflow log says so (`connectorDropped`).
+ */
+export interface DesignConnectorElement {
+  kind: 'connector';
+  id: string;
+  parity?: PageParity;
+  pages?: PageRoleFilter;
+  /** Read the frames' boxes as the template declares them (before groups
+   *  and content move them). Default `false`. */
+  pin?: boolean;
+  /** The line's one end; a tree's parent. */
+  from: ConnectorEnd;
+  /** The other end, or several: one line to each (`straight`, `elbow`) or
+   *  the children of a tree. */
+  to: ConnectorEnd | ConnectorEnd[];
+  /** `'straight'`: one segment. `'elbow'` (default): across, along, across
+   *  again between facing sides (an L between a side and one across it).
+   *  `'tree'`: a trunk from `from` to a bar, the bar over the children's
+   *  points, a drop to each child. */
+  routing?: 'straight' | 'elbow' | 'tree';
+  /** Corner radius of an elbow's and a tree's bends. Default 0. */
+  radius?: Dimension;
+  /** Where an elbow's middle run or a tree's bar stands between the ends,
+   *  0 (at `from`) … 1 (at the nearest `to`). Default 0.5. */
+  trunk?: number;
+  /** Default: the document's main colour. Palette-linked colours follow
+   *  part and section palettes. */
+  color?: ColorValue;
+  /** Line width. Default `0.75pt`. */
+  width?: Dimension;
+  /** Dash pattern (on, off, …). Absent: solid. */
+  dash?: Dimension[];
+  /** Marks at the ends: `startCap` at `from`, `endCap` at every `to`.
+   *  Default `'none'`. */
+  startCap?: LineCap;
+  endCap?: LineCap;
+  /** Size of a dot (across) or an arrowhead (long). Default three times
+   *  the line width. */
+  capSize?: Dimension;
+  /** Paint the line over every frame of the page (#1076) instead of with
+   *  the rest of the decoration, under the frames. Default: `true` when
+   *  an end has an `anchor` (a pointer into a picture, which its frame
+   *  would cover), else `false`. */
+  over?: boolean;
+}
+
+export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement | DesignPathElement | DesignConnectorElement;
+
+/** A design element placed by an anchor (every kind but a connector, which
+ *  is laid between the boxes it joins). */
+export type PlacedDesignElement = Exclude<DesignElement, DesignConnectorElement>;
 
 export interface DesignSlot {
   /** Array order = paint order: first = back, last = front. */
@@ -6724,11 +7019,25 @@ export interface ResolvedDesignImageElement extends Omit<DesignImageElement, 'pa
   parity: PageParity;
 }
 
+export interface ResolvedDesignPathElement extends Omit<DesignPathElement, 'parity'> {
+  parity: PageParity;
+}
+
+export interface ResolvedDesignConnectorElement extends Omit<DesignConnectorElement, 'parity'> {
+  parity: PageParity;
+}
+
 export type ResolvedDesignElement =
   | ResolvedDesignTextElement
   | ResolvedDesignRuleElement
   | ResolvedDesignBoxElement
-  | ResolvedDesignImageElement;
+  | ResolvedDesignImageElement
+  | ResolvedDesignPathElement
+  | ResolvedDesignConnectorElement;
+
+/** A resolved design element placed by an anchor (see
+ *  {@link PlacedDesignElement}). */
+export type ResolvedPlacedDesignElement = Exclude<ResolvedDesignElement, ResolvedDesignConnectorElement>;
 
 export interface ResolvedDesignSlot {
   elements: ResolvedDesignElement[];

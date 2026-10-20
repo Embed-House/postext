@@ -2,6 +2,7 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
+import { expandModules } from './modules';
 import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
 import type {
   FrameConfig,
@@ -69,6 +70,15 @@ export const DEFAULT_PAGE_TEMPLATE = {
   role: 'composed',
 };
 
+/** The `role` of a module template (#1062, DESIGN §12.7). */
+export const MODULE_ROLE = 'module';
+
+/** Whether a resolved template is a module (#1062): a page fence never lays
+ *  one (`moduleAsPage`). */
+export function isModuleTemplate(template: Pick<ResolvedPageTemplate, 'role'> | undefined): boolean {
+  return template?.role === MODULE_ROLE;
+}
+
 export const DEFAULT_LABEL_STYLE = {
   fontStyle: 'normal' as const,
   textTransform: 'none' as const,
@@ -78,8 +88,10 @@ export const DEFAULT_LABEL_STYLE = {
 export const FRAME_VERTICAL_ALIGNS = ['top', 'middle', 'bottom', 'justify'] as const;
 export const FRAME_EXCLUDES = ['none', 'push'] as const;
 export const FRAME_WRAPS = ['box', 'contour'] as const;
+export const FRAME_OVERLAPS = ['check', 'allow'] as const;
 export const FRAME_TAKES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'toc'] as const;
-export const FRAME_GROUP_KINDS = ['stack', 'row'] as const;
+export const FRAME_GROUP_KINDS = ['stack', 'row', 'grid'] as const;
+export const FRAME_GRID_ROW_ALIGNS = ['start', 'center', 'end', 'stretch'] as const;
 export const FRAME_GROUP_ALIGNS = ['start', 'center', 'end', 'space-between'] as const;
 export const TEMPLATE_AREAS = ['content', 'trim', 'bleed'] as const;
 export const FRAME_WRITING_MODES = ['horizontal-tb', 'vertical-rl'] as const;
@@ -87,6 +99,9 @@ export const FRAME_DIRECTIONS = ['ltr', 'rtl'] as const;
 export const LABEL_FONT_STYLES = ['normal', 'italic'] as const;
 export const LABEL_TEXT_TRANSFORMS = ['none', 'uppercase'] as const;
 export const LABEL_OVERLAPS = ['check', 'allow'] as const;
+/** `LabelStyle.align` and `LabelStyle.kind` (#1058). */
+export const LABEL_ALIGNS = ['start', 'center', 'end'] as const;
+export const LABEL_KINDS = ['legend'] as const;
 
 /** The shape of a frame's `look` (#976): which keys it has and what each
  *  holds, a colour or a length. */
@@ -411,6 +426,7 @@ export function normalizeFrame(
     columns: finite(f.columns) && f.columns >= 1 ? Math.round(f.columns) : DEFAULT_FRAME.columns,
     exclude: oneOf(FRAME_EXCLUDES, f.exclude) ? f.exclude : DEFAULT_FRAME.exclude,
     ...(f.wrap === 'contour' ? { wrap: 'contour' as const } : {}),
+    ...(f.overlap === 'allow' ? { overlap: 'allow' as const } : {}),
     flow: f.flow === true,
     pin: f.pin === true,
     grow: nonNegative(f.grow, DEFAULT_FRAME.grow),
@@ -502,17 +518,68 @@ function normalizeGroup(entry: NamedEntry<FrameGroupConfig>, grid: Required<Page
   const g = entry.value as FrameGroupConfig & Record<string, unknown>;
   const placement = isRecord(g.placement) ? g.placement : undefined;
   const cell = normalizeCell(g.grid, grid);
+  const kind = oneOf(FRAME_GROUP_KINDS, g.kind) ? g.kind : DEFAULT_FRAME_GROUP.kind;
+  const gap = dim(g.gap) ?? DEFAULT_FRAME_GROUP.gap;
+  const names = (v: unknown): string[] => (Array.isArray(v) ? v.filter((n): n is string => typeof n === 'string') : []);
+  // A grid's own fields (#1061), only on a grid: other groups resolve as
+  // they always did.
+  const repeat = kind === 'grid' && isRecord(g.repeat) ? g.repeat : undefined;
+  const repeatFrames = repeat ? [...new Set(names(repeat.frames))] : [];
+  const max = repeat && finite(repeat.max) && repeat.max >= 1 ? Math.floor(repeat.max) : undefined;
+  const gridFields: Partial<ResolvedFrameGroup> = kind === 'grid'
+    ? {
+      columns: finite(g.columns) && g.columns >= 1 ? Math.floor(g.columns) : 1,
+      columnGap: dim(g.columnGap) ?? gap,
+      rowGap: dim(g.rowGap) ?? gap,
+      rowAlign: oneOf(FRAME_GRID_ROW_ALIGNS, g.rowAlign) ? g.rowAlign : 'stretch',
+      ...(repeatFrames.length > 0 ? { repeat: { frames: repeatFrames, ...(max !== undefined ? { max } : {}) } } : {}),
+    }
+    : {};
+  // A modules group (#1062), only when it says so: it takes the page's
+  // modules, not frames of its own, and is laid as a stack.
+  const modules = g.modules === true;
+  const continueIn = modules && isRecord(g.overflow) && typeof g.overflow.continueIn === 'string' && g.overflow.continueIn !== '' ? g.overflow.continueIn : undefined;
+  const moduleFields: Partial<ResolvedFrameGroup> = modules
+    ? { modules: true, ...(continueIn !== undefined ? { overflow: { continueIn } } : {}) }
+    : {};
   return {
     name: g.name,
-    kind: oneOf(FRAME_GROUP_KINDS, g.kind) ? g.kind : DEFAULT_FRAME_GROUP.kind,
-    frames: Array.isArray(g.frames) ? g.frames.filter((n): n is string => typeof n === 'string') : [],
-    gap: dim(g.gap) ?? DEFAULT_FRAME_GROUP.gap,
+    kind: modules ? 'stack' : kind,
+    // A grid that repeats holds its set's frames.
+    frames: modules ? [] : gridFields.repeat ? repeatFrames : names(g.frames),
+    gap,
+    ...(modules ? {} : gridFields),
+    ...moduleFields,
     ...(placement ? { placement } : {}),
     ...(cell ? { grid: cell } : {}),
     align: oneOf(FRAME_GROUP_ALIGNS, g.align) ? g.align : DEFAULT_FRAME_GROUP.align,
     configPath: entry.configPath,
     fieldPaths: entry.fieldPaths,
   };
+}
+
+/** `name` read as an instance of a repeated frame (#1061): `card[2]` is
+ *  item 2 of frame `card`. Undefined for any other name. */
+export function repeatInstance(name: string): { frame: string; item: number } | undefined {
+  const open = name.lastIndexOf('[');
+  if (open <= 0 || !name.endsWith(']')) return undefined;
+  const digits = name.slice(open + 1, -1);
+  if (digits.length === 0 || digits.length > 6) return undefined;
+  for (const ch of digits) if (ch < '0' || ch > '9') return undefined;
+  const item = Number(digits);
+  return item >= 1 ? { frame: name.slice(0, open), item } : undefined;
+}
+
+/** The name of item `item`'s instance of frame `frame` (#1061). */
+export function repeatInstanceName(frame: string, item: number): string {
+  return `${frame}[${item}]`;
+}
+
+/** The frames a template's grids repeat (#1061), each with its grid. */
+export function repeatedFrames(template: Pick<ResolvedPageTemplate, 'groups'>): Map<string, ResolvedFrameGroup> {
+  const out = new Map<string, ResolvedFrameGroup>();
+  for (const g of template.groups) for (const f of g.repeat?.frames ?? []) if (!out.has(f)) out.set(f, g);
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -585,13 +652,15 @@ function settleReferences(
     }
   }
 
-  // Group members.
+  // Group members. A grid's repeated frames (#1061) are claimed first:
+  // another group that lists one of them loses it.
   const claimed = new Set<string>();
-  for (const g of groups) {
+  const claimOrder = [...groups.filter((g) => g.repeat), ...groups.filter((g) => !g.repeat)];
+  for (const g of claimOrder) {
     const raw = g.frames;
     const kept: string[] = [];
     raw.forEach((name, k) => {
-      const path = `${g.fieldPaths.frames ?? `${g.configPath}/frames`}/${k}`;
+      const path = g.repeat ? `${g.fieldPaths.repeat ?? `${g.configPath}/repeat`}/frames/${k}` : `${g.fieldPaths.frames ?? `${g.configPath}/frames`}/${k}`;
       if (!frameSet.has(name)) {
         issues.push({ kind: 'groupFrameUnknown', path, value: name, used: '', known: frameNames });
       } else if (claimed.has(name)) {
@@ -602,7 +671,18 @@ function settleReferences(
       }
     });
     g.frames = kept;
+    if (g.repeat) {
+      if (kept.length > 0) g.repeat = { ...g.repeat, frames: kept };
+      else delete g.repeat;
+    }
   }
+  /** `card[2]` names an instance of a repeated frame (#1061): decoration
+   *  and other frames may anchor to it. */
+  const repeated = new Set(groups.flatMap((g) => g.repeat?.frames ?? []));
+  const isInstance = (name: string): boolean => {
+    const at = repeatInstance(name);
+    return at !== undefined && repeated.has(at.frame);
+  };
 
   // Anchors: unknown targets first, then loops.
   type Box = ResolvedFrame | ResolvedFrameGroup;
@@ -613,7 +693,7 @@ function settleReferences(
   const anchored = (b: Box): string | undefined => (b.grid ? undefined : anchorTarget(b.placement));
   for (const b of boxes.values()) {
     const target = anchored(b);
-    if (target !== undefined && !boxSet.has(target)) {
+    if (target !== undefined && !boxSet.has(target) && !isInstance(target)) {
       issues.push({ kind: 'frameAnchorUnknown', path: anchorPath(b), value: `#${target}`, used: 'container', known: boxNames.map((n) => `#${n}`) });
       b.placement = withContainerAnchor(b.placement!);
     }
@@ -644,8 +724,37 @@ function settleReferences(
   // Decoration anchors: another element of the decoration, or a box.
   const elementIds = new Set(decoration.map((e) => e.value.id).filter((id): id is string => typeof id === 'string'));
   decoration.forEach((e) => {
+    if (e.value.kind === 'connector') {
+      // A connector's ends (#1056): a box, an instance (`#card[2]`), every
+      // instance (`#card[*]`, in `to` only) or another element. An end on
+      // nothing is left out; a connector left with no `from` or no `to` is
+      // not drawn.
+      const known = (to: unknown, many: boolean): boolean => {
+        if (typeof to !== 'string' || !to.startsWith('#')) return false;
+        const name = to.slice(1);
+        if (elementIds.has(name) || boxSet.has(name) || isInstance(name)) return true;
+        return many && name.endsWith('[*]') && repeated.has(name.slice(0, -3));
+      };
+      const report = (to: unknown, path: string) => issues.push({ kind: 'frameAnchorUnknown', path, value: String(to), used: '', known: [...boxNames, ...elementIds].map((n) => `#${n}`) });
+      const c = e.value;
+      const fromTo = (c.from as { to?: unknown } | undefined)?.to;
+      let from = c.from;
+      if (!known(fromTo, false)) {
+        report(fromTo, `${e.configPath}/from/to`);
+        from = undefined as unknown as typeof c.from;
+      }
+      const list = Array.isArray(c.to) ? c.to : [c.to];
+      const kept = list.filter((end, k) => {
+        const to = (end as { to?: unknown } | undefined)?.to;
+        if (known(to, true)) return true;
+        report(to, Array.isArray(c.to) ? `${e.configPath}/to/${k}/to` : `${e.configPath}/to/to`);
+        return false;
+      });
+      if (from !== c.from || kept.length !== list.length) e.value = { ...c, from, to: kept };
+      return;
+    }
     const target = anchorTarget(e.value.placement);
-    if (target !== undefined && !elementIds.has(target) && !boxSet.has(target)) {
+    if (target !== undefined && !elementIds.has(target) && !boxSet.has(target) && !isInstance(target)) {
       issues.push({ kind: 'frameAnchorUnknown', path: `${e.configPath}/${ANCHOR_FIELD}`, value: `#${target}`, used: 'container', known: [...boxNames, ...elementIds].map((n) => `#${n}`) });
       e.value = { ...e.value, placement: withContainerAnchor(e.value.placement) } as DesignElement;
     }
@@ -798,6 +907,17 @@ export function resolveTemplateAt(
     chain: chain.map((i) => templates[i]!.id),
     configPath: `${prefix}/${index}`,
   };
+  // A module (#1062) holds no modules of its own (`moduleNested`): its
+  // modules groups are plain stacks.
+  if (template.role === MODULE_ROLE) {
+    template.groups = template.groups.map((g) => {
+      if (!g.modules) return g;
+      const out = { ...g };
+      delete out.modules;
+      delete out.overflow;
+      return out;
+    });
+  }
   return { template, issues };
 }
 
@@ -828,6 +948,26 @@ export function resolvePageTemplate(
   if (index === undefined) return undefined;
   const styleIds = config?.calloutStyles ? config.calloutStyles.map((s) => s.id).join('\u0000') : '';
   const key = `${index}|${options.parity ?? ''}|${options.spread ? 1 : 0}|${config?.calloutStyles ? 1 : 0}|${styleIds}`;
+  // The page's modules (#1062): the template with them laid in its modules
+  // group, kept by the list as well.
+  if (options.modules && options.modules.length > 0) {
+    const uses = options.modules;
+    const moduleKey = `${key}|m|${uses.map((u) => `${u.name}\u0001${u.template}`).join('\u0000')}`;
+    let cache = resolvedCache.get(templates);
+    if (!cache) {
+      cache = new Map();
+      resolvedCache.set(templates, cache);
+    }
+    if (cache.has(moduleKey)) return cache.get(moduleKey) ?? undefined;
+    const rest: ResolvePageTemplateOptions = { ...options };
+    delete rest.modules;
+    const base = resolvePageTemplate(config, id, rest);
+    const out = base && !isModuleTemplate(base)
+      ? expandModules(base, uses, (moduleId) => resolvePageTemplate(config, moduleId))
+      : base;
+    cache.set(moduleKey, out ?? null);
+    return out;
+  }
   let cache = resolvedCache.get(templates);
   if (!cache) {
     cache = new Map();

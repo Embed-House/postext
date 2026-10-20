@@ -3,10 +3,10 @@
 export const metadata = {
   title: 'Configuración: páginas compuestas',
   sidebarTitle: 'Ajustes de páginas compuestas',
-  description: 'Cómo se define una plantilla de página: sus marcos, grupos y decoración, la herencia entre plantillas y las variantes para páginas pares e impares; los estilos de los rótulos que se ponen sobre una imagen, y los avisos que puede dar una plantilla',
+  description: 'Cómo se define una plantilla de página: sus marcos, grupos, rejillas que repiten un juego de marcos, módulos, decoración y conectores, la herencia entre plantillas y las variantes para páginas pares e impares; los estilos de los rótulos que se ponen sobre una imagen, y los avisos que puede dar una plantilla',
   lang: 'es',
-  lastUpdated: '2026-10-19',
-  readingTime: '6 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '10 min',
   order: 18,
   parent: 'configuration',
   plainSummary: "Esta página trata de las plantillas de página. Una plantilla es una página dibujada en los ajustes: unas cajas con nombre, llamadas marcos, con su sitio, el tamaño hasta el que pueden crecer y su aspecto. El Markdown de una página compuesta llena después esos marcos por su nombre, así que el texto nunca guarda posiciones y los ajustes nunca guardan texto. Una plantilla puede partir de otra y cambiar solo unos pocos marcos, y puede ser distinta en las páginas pares y en las impares. La página recoge también los estilos de rótulo para las palabras que se ponen sobre una imagen, y cada aviso que puede dar una plantilla con la manera de corregirlo.",
@@ -104,7 +104,7 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>ninguna</td>
-      <td>Imágenes, filetes y cajas que se pintan con la página, en el lenguaje de elementos de los <a href="/es/docs/configuration-headers-footers#cabeceras-y-pies">encabezados y pies</a>. Los elementos de texto solo admiten marcadores de posición (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para un atributo del bloque de página). Un elemento se puede anclar a un marco o a un grupo (<code>'#dinero'</code>) y entonces se mueve con él. La decoración se coloca después de los marcos y nunca empuja el texto. Desde postext 1.42, <code>&#123;headingNumber&#125;</code> escribe el contador del primer encabezado numerado que contienen los marcos de la página (un marco con <code>takes</code>), y <code>&#123;headingNumber.titulo&#125;</code>, el del marco <code>titulo</code>, con las cifras del documento; así, una insignia con el número de un tema lo toma del encabezado y el bloque de página no tiene que repetirlo. La decoración se pinta bajo los marcos; un clic en un elemento de texto que está sobre un marco, en un punto donde el marco no tiene texto propio, llega al elemento y no al marco. Un marco con <code>layer</code> negativo se pinta bajo la decoración.</td>
+      <td>Imágenes, filetes y cajas que se pintan con la página, en el lenguaje de elementos de los <a href="/es/docs/configuration-headers-footers#cabeceras-y-pies">encabezados y pies</a>. Los elementos de texto solo admiten marcadores de posición (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> para un atributo del bloque de página). Un elemento se puede anclar a un marco o a un grupo (<code>'#dinero'</code>) y entonces se mueve con él. La decoración se coloca después de los marcos y nunca empuja el texto. Desde postext 1.42, <code>&#123;headingNumber&#125;</code> escribe el contador del primer encabezado numerado que contienen los marcos de la página (un marco con <code>takes</code>), y <code>&#123;headingNumber.titulo&#125;</code>, el del marco <code>titulo</code>, con las cifras del documento; así, una insignia con el número de un tema lo toma del encabezado y el bloque de página no tiene que repetirlo. La decoración se pinta bajo los marcos; un clic en un elemento de texto que está sobre un marco, en un punto donde el marco no tiene texto propio, llega al elemento y no al marco. Un marco con <code>layer</code> negativo se pinta bajo la decoración. Desde postext 1.48 la decoración admite también <a href="/es/docs/configuration-headers-footers#elementos-de-trazado">elementos de trazado</a> (barras, cintas, galones dibujados como formas vectoriales) y <a href="#conectores">conectores</a>, las líneas que unen marcos.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -152,7 +152,7 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>El tipo de página que ven los elementos de diseño con un filtro <code>pages</code>.</td>
+      <td>El tipo de página que ven los elementos de diseño con un filtro <code>pages</code>. <code>'module'</code> convierte la plantilla en un módulo: una caja de marcos que las páginas apilan en un grupo, en lugar de una página propia (véase <a href="#módulos">Módulos</a>). Desde postext 1.48.</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td>Un marco con su propio modo de escritura o dirección: una caja vertical en una página horizontal, una ficha horizontal en una vertical, una cita de derecha a izquierda en un libro de izquierda a derecha. Un marco del otro modo de escritura se compone en su caja girada un cuarto de vuelta: sus líneas recorren la altura de la caja y se suceden a lo ancho, y una altura <code>'auto'</code> es la menor que las contiene en esa anchura. Su texto se pinta como una página de ese modo pinta el suyo. <code>direction</code> compone la historia del marco en esa dirección, como una caja con <code>&#123;dir=…&#125;</code>; un bloque o una caja que escribe su propio <code>dir</code> lo conserva. Desde postext 1.39. Desde postext 1.40 un marco vertical también funciona en una página de derecha a izquierda: se compone como en una de izquierda a derecha y se coloca donde el flujo reflejado lo pone, con su texto pintado sin reflejar; una imagen en un marco vertical de una página horizontal queda derecha, con su pie, y ocupa el sitio que le deja la caja a lo ancho de la página; el EPUB de maquetación fluida escribe un marco de otro modo de escritura como una caja con ese modo y la longitud a lo largo de la cual corren sus líneas (en em del texto base). Desde postext 1.42 una imagen en un marco de una página vertical que sigue el modo de la propia página también queda derecha, con su pie.</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deja el marco fuera de las comprobaciones de solapamiento: no se da <code>frameCovered</code> para una pareja de la que forme parte, tanto si se pinta encima del otro marco como debajo, ni <code>frameOutsideArea</code> para él. Para un dibujo que debe quedar sobre el texto, o una insignia que cuelga a propósito medio fuera de su tarjeta. Véase <a href="#avisos-de-solapamiento-repetición-y-módulos">Avisos de solapamiento, repetición y módulos</a>. Desde postext 1.48.</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ Un grupo es una pila (de arriba abajo) o una fila (del principio al final) de ma
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>De arriba abajo, o del principio al final.</td>
+      <td>De arriba abajo, del principio al final, o celdas en filas (<code>'grid'</code>, desde postext 1.48; véase <a href="#rejillas-que-repiten-un-juego-de-marcos">Rejillas que repiten un juego de marcos</a>).</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Los marcos del grupo, en su orden en la página. Un marco pertenece como mucho a un grupo; un nombre que no es ningún marco de la plantilla, o un marco ya listado, se salta.</td>
+      <td>Los marcos del grupo, en su orden en la página. Un marco pertenece como mucho a un grupo; un nombre que no es ningún marco de la plantilla, o un marco ya listado, se salta. Una rejilla que se repite toma en su lugar los marcos de <code>repeat.frames</code>.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>En una rejilla: el número de columnas, todas del mismo ancho.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>, <code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>el <code>gap</code> del grupo</td>
+      <td>En una rejilla: el espacio entre dos columnas y entre dos filas.</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>En una rejilla: dónde se sitúa una celda más baja que su fila. <code>'stretch'</code> hace que su marco principal sea tan alto como la fila (hasta su <code>maxHeight</code>) cuando la altura de ese marco es <code>'auto'</code> o <code>'fill'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>ninguno</td>
+      <td>En una rejilla: el juego de marcos que se coloca una vez por cada elemento del contenido de la página. El primer marco de <code>frames</code> es el marco principal de la celda; <code>max</code> limita los elementos, y el resto va al marco de flujo (<code>repeatOverflow</code>).</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El grupo recibe los bloques <code>:::module</code> de la página, uno debajo de otro en el orden del Markdown, con <code>gap</code> entre ellos. Se coloca como una pila sea cual sea su <code>kind</code>, y sus <code>frames</code> no se leen. Véase <a href="#módulos">Módulos</a>. Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>ninguno</td>
+      <td>En un grupo de módulos: dónde continúa, entero, un módulo que no cabe. Sin fijar, el módulo se corta al pie del grupo y sus marcos suben por la escalera de reajuste.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ El resultado depende solo del contenido de la página, de la plantilla y de la t
 
 El marco que crece mide lo que mide el espacio libre, contenga lo que contenga, así que un estilo con fondo visible lo pintaría entero: pinta la tarjeta en la decoración de la plantilla y deja el marco de texto sin estilo.
 
+### Rejillas que repiten un juego de marcos
+
+Una página de tarjetas con fotos, una de fichas de actividades o una de retratos con un nombre debajo de cada uno es la misma tarjeta dibujada muchas veces. Un grupo de rejilla con `repeat` la dibuja una sola vez en la plantilla: los marcos de una tarjeta, llamados el juego de marcos, que la rejilla coloca una vez por cada elemento que le da el Markdown de la página. Cuántas tarjetas tiene una página lo decide entonces el Markdown, y una traducción que añade una tarjeta no necesita una plantilla nueva. Desde postext 1.48.
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **El juego.** El primer marco de `repeat.frames` es el marco **principal** de la celda: toma el ancho de la celda y conserva su propia regla de altura (`'auto'` es la altura de su contenido, entre `minHeight` y `maxHeight`). Los demás marcos del juego se colocan como los dibuja la plantilla, anclados al marco principal o entre sí: aquí la pastilla del pie cuelga del pie de la foto. Un marco del juego anclado a un marco de fuera se queda donde lo pone ese anclaje.
+- **Elementos.** Cada trozo `:::frame{slot="foto"}` de la página es un elemento: los trozos de una ranura repetida no se unen. Dentro del trozo, un bloque que indica un miembro del juego (`:::frame{slot="pie"}`, `::resource{… slot="pie"}`) va a ese miembro de la misma tarjeta; el resto va al marco principal. Véase [Páginas compuestas › Ranuras repetidas](/es/docs/composed-pages#ranuras-repetidas).
+- **Instancias.** Los marcos de cada tarjeta se llaman `<frame>[n]`, contando desde 1: `foto[2]` y `pie[2]` son la segunda tarjeta. Los avisos, el registro de recomposición, el mapa de origen y el Sandbox usan estos nombres, los ids de los marcos son `cp<n>:foto[2]`, y un elemento de decoración o un conector pueden anclarse a `'#foto[2]'`. El `to: '#foto[*]'` de un conector llega a todas las tarjetas que tiene la página. Un elemento anclado a `'#foto'` lee la caja de la rejilla.
+- **Celdas.** Las celdas llenan las filas desde el lado de inicio, así que en una página de derecha a izquierda la primera tarjeta queda a la derecha. Una fila mide lo que su celda más alta, contando lo que cuelga por encima del marco principal (una pestaña) y por debajo (una pastilla); `rowAlign` sitúa las más bajas. La caja de la rejilla es su propio `placement` o su celda `grid`; si no tiene ninguno, empieza donde la plantilla dibuja el marco principal y llega hasta el borde derecho y el pie del área.
+- **Cuando las tarjetas no caben.** Una fila que pasa del pie de la rejilla se corta ahí, cada tarjeta sube por la escalera de reajuste por su cuenta, y la última tarjeta cortada da el aviso `frameOverflow`. Con `overflow.continueIn` en el marco principal (`'next-page'`, `'template:<id>'`), la rejilla continúa **por filas enteras**: la primera fila que no cabe, y todas las que la siguen, se colocan en la página añadida, en la rejilla de una plantilla que repite el mismo juego de marcos. Una celda más alta que toda la rejilla da un aviso en lugar de continuar sin fin.
+- **`max`.** Los elementos que pasan de `repeat.max` van al marco de flujo, o detrás de la página si la plantilla no lo tiene, y cada uno da el aviso `repeatOverflow`.
+
+Una rejilla sin `repeat` coloca los marcos que enumera, uno por celda, en el orden en que se escriben. Un marco de un juego repetido que aparece en otro grupo se salta allí (`groupFrameTwice`), y un nombre que la plantilla no tiene es `groupFrameUnknown`. `grow` y `shrink` no se aplican a las filas de una rejilla, ni `redistribute` a sus tarjetas.
+
+### Módulos
+
+Una página de libro de texto suele apilar bloques que se repiten por el libro en otro orden: una caja con una foto al lado, un árbol de tres ideas, una rejilla de cuatro fotos bajo un encabezado. Dibujar una plantilla para cada orden multiplica las plantillas. Un **módulo** es uno de esos bloques dibujado una sola vez: una plantilla con `role: 'module'`, con marcos, grupos y decoración (conectores incluidos), y sin página propia. Una plantilla de página recibe módulos en un grupo con `modules: true`; el Markdown de la página dice qué módulos tiene y en qué orden (véase [Páginas compuestas › Módulos en una página](/es/docs/composed-pages#módulos-en-una-página)). Desde postext 1.48.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **Qué tiene un módulo.** Marcos, grupos (incluida una rejilla que se repite), decoración y conectores. No tiene `area`, `header`, `footer`, `variants`, `spread`, `gutter` ni `overflowTemplate`: cada uno de ellos se notifica como `unknownConfigValue` y se ignora. `extends` funciona entre módulos (una plantilla que extiende un módulo es un módulo).
+- **Su caja.** Un módulo es tan ancho como su grupo y tan alto como llegan sus marcos; el grupo apila los módulos desde arriba, con `gap` entre ellos. Dentro de un módulo, `'container'` es la caja del módulo, para sus marcos (también `'fill'` y los porcentajes) y para su decoración: un fondo con el tamaño `{ to: 'container', edge: 'bottom' }` cubre el módulo sea cual sea la altura que le den sus palabras.
+- **Nombres.** Los marcos, grupos y elementos de un módulo llevan delante el nombre de su instancia: `<name>.<frame>`, con el nombre que da el Markdown (`name="ramas"`) o, si no, `<template>[n]`, el número del módulo entre los módulos de esa plantilla en la página (`arbol[2].raiz`). Los anclajes, `next`, `continueIn: '#x'` y los conectores de dentro de un módulo se reescriben hacia sus propios marcos, así que dos árboles de una misma página nunca se unen entre sí. El id de un marco es `cp0:arbol[2].raiz`.
+- **Cuando los módulos no caben.** Un módulo que pasa del pie del grupo se corta ahí y sus marcos suben por la escalera de reajuste; `frameOverflow` se da una sola vez para el grupo. Con `overflow.continueIn` en el grupo de módulos (`'next-page'` o `'template:<id>'`), el primer módulo que no cabe y todos los que lo siguen continúan **enteros** en la página añadida, con los mismos nombres, al principio del grupo de módulos de esa página.
+- **Todavía no.** Módulos uno al lado de otro (un grupo de módulos siempre es una pila), un módulo dentro de otro (`moduleNested`) y celdas `grid` de la plantilla dentro de un módulo.
+
 ### Cuando el contenido no cabe
 
 Cuando el contenido de un marco es más alto que el sitio que le da su grupo, la maquetación prueba por orden los pasos de la [escalera de reajuste](/es/docs/composed-pages#cuando-aun-así-no-cabe) y se detiene en el primero que consigue que quepa: espacio libre hasta `maxHeight`, el grupo que empuja y cede, imágenes más pequeñas, los demás marcos del grupo hasta su mínimo, texto más pequeño y continuación en otra página. Estos ajustes del marco deciden hasta dónde puede llegar cada paso:
@@ -555,7 +654,7 @@ Desde código, `resolvePageTemplate(config, id, { parity })` devuelve una planti
 
 ### Lo que aplica la maquetación
 
-La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` y `overflow.fromMark`, y su `fit` (la reducción del texto y de las imágenes en la escalera de reajuste, véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)); el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo, véase [Cómo se reparten el espacio los grupos](#cómo-se-reparten-el-espacio-los-grupos)); y el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants`, `spread` y el `overflowTemplate` de la plantilla. Desde postext 1.42 aplica también la `palette` de la plantilla, el `look` de un marco y el ancho `'auto'` (el de la línea más larga del marco). El `writingMode` y la `direction` de un marco se aplican desde postext 1.39. Se lee y se comprueba, pero todavía no se aplica: el `bodyStyle` de la plantilla.
+La maquetación aplica la colocación y los tamaños de cada marco (rejilla, anclajes, `min`/`max`, `verticalAlign`), su estilo y su `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (y su `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` y `overflow.fromMark`, y su `fit` (la reducción del texto y de las imágenes en la escalera de reajuste, véase [Cuando el contenido no cabe](#cuando-el-contenido-no-cabe)); el reparto del espacio de un grupo (`grow`, `shrink`, `priority`, `pin`, y el `gap` y el `align` del grupo, véase [Cómo se reparten el espacio los grupos](#cómo-se-reparten-el-espacio-los-grupos)); y el `area`, la `grid`, la `decoration`, el `header`, el `footer`, las `variants`, `spread` y el `overflowTemplate` de la plantilla. Desde postext 1.42 aplica también la `palette` de la plantilla, el `look` de un marco y el ancho `'auto'` (el de la línea más larga del marco). El `writingMode` y la `direction` de un marco se aplican desde postext 1.39. Desde postext 1.48 aplica los grupos de rejilla y su `repeat`, los grupos de módulos y las plantillas de módulo, los conectores y los elementos de trazado de la decoración, y el `overlap` de un marco. Se lee y se comprueba, pero todavía no se aplica: el `bodyStyle` de la plantilla.
 
 ### Dobles páginas
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 Un espacio entre columnas más ancho que el `gutter` mantiene las fichas de una rejilla simétrica lejos del lomo, así que ninguna se mueve. La segunda banda y la tira de dibujos ponen `crossGutter` para cruzarlo: cada una se lee en la página que contiene su centro y se pinta en las dos. Todas las palabras de la página, también los nombres de las edades de las pestañas, se quedan en el Markdown.
 
 En un libro vertical (`vertical-rl`) la doble página se compone en el marco del flujo de las páginas, como sus páginas compuestas sueltas: lo alto de la página es el borde derecho de la hoja y las líneas bajan, así que la `x` de la plantilla baja por la hoja y su `y` va del borde derecho de la hoja al izquierdo. La hoja es la página derecha seguida de la izquierda a lo largo de `y`, el lomo es una línea que cruza la plantilla, y `gutter`, `crossGutter` y el corte entre las páginas leen ese eje; la decoración se sigue componiendo sobre la hoja física y se corta en el lomo. Una línea del tiempo horizontal dibujada para un libro horizontal sale girada en uno vertical: escribe la plantilla de un libro vertical en el marco de su flujo. Desde postext 1.38. Una ficha que deba leerse a lo ancho de la hoja lleva `writingMode: 'horizontal-tb'`: se compone en horizontal y queda derecha en la página vertical (desde postext 1.39).
+
+### Conectores
+
+Un conector es una línea de la decoración que une marcos: las ramas de un diagrama en árbol, un organigrama, las bajadas de una línea del tiempo, las flechas de un diagrama de flujo, la línea que lleva de una nota a un lugar de un mapa. Se coloca cuando los marcos ya tienen su caja definitiva, así que sigue a un texto que crece, a una edición con palabras más largas o a un grupo que mueve sus marcos, y se dibuja como línea vectorial en todas las salidas, de modo que la plantilla no necesita una imagen de las líneas. Los conectores son elementos de la `decoration` de una plantilla de página o de un módulo; los titulillos y los diseños de encabezado no tienen marcos que unir, y un conector puesto ahí se notifica (`unknownConfigValue`) y no se dibuja. Desde postext 1.48.
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propiedad</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'connector'</code>, <code>string</code></td>
+      <td>obligatorio</td>
+      <td>El elemento y su id, como en los demás elementos de la decoración.</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>obligatorio</td>
+      <td>Un extremo de la línea; el padre de un árbol.</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>obligatorio</td>
+      <td>El otro extremo, o varios: una línea a cada uno, o los hijos de un árbol. <code>'#card[*]'</code> equivale a todas las tarjetas de una <a href="#rejillas-que-repiten-un-juego-de-marcos">rejilla que se repite</a> que tiene la página.</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>: un solo segmento. <code>'elbow'</code>: de través, a lo largo y otra vez de través entre lados enfrentados, y una L entre lados en ángulo recto. <code>'tree'</code>: un tronco desde <code>from</code> hasta una barra, la barra a lo largo de los puntos de los hijos y una bajada a cada hijo.</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>Dónde queda, entre los extremos, el tramo central de un codo o la barra de un árbol: <code>0</code> en <code>from</code>, <code>1</code> en el <code>to</code> más cercano. Un árbol con <code>trunk: 0</code> no dibuja barra: una bajada desde el borde del padre hasta cada hijo, como las marcas de una línea del tiempo.</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Redondea las curvas de un codo o de un árbol.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el color principal</td>
+      <td>Un color vinculado a la paleta sigue la <code>palette</code> de la plantilla, la del bloque de página y la de una parte, como los filetes.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.75pt</code>, continuo</td>
+      <td>El grosor de la línea y un patrón de trazos (trazo, hueco, …).</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>, <code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>Una marca en <code>from</code> y en cada <code>to</code>: un punto relleno centrado en el extremo, o una punta de flecha cuyo vértice es el extremo.</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>El ancho de un punto, o la longitud de una punta de flecha.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Une las cajas que declara la plantilla, no las que el contenido dio a los marcos.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code></td>
+      <td>como en los demás elementos</td>
+      <td><code>'all'</code></td>
+      <td>En qué páginas se dibuja.</td>
+    </tr>
+  </tbody>
+</table>
+
+Cada extremo (`ConnectorEnd`) indica una caja y un punto de uno de sus lados:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '120px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>obligatorio</td>
+      <td>Un marco, un grupo, una tarjeta de una rejilla que se repite (<code>'#foto[2]'</code>) u otro elemento de la decoración.</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>el lado que mira al otro extremo</td>
+      <td>El lado por el que la línea sale de la caja o llega a ella. <code>start</code> y <code>end</code> siguen la dirección de las líneas de la página. Sin fijar, el lado que mira a la otra caja a través del hueco más ancho entre las dos; los hijos de un árbol miran al padre.</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>El punto a lo largo de ese lado, o una fracción del lado desde su inicio (de 0 a 1). Un lado horizontal empieza donde empiezan las líneas de la página, y uno vertical, arriba.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Espacio entre el borde de la caja (o el punto del ancla) y el final de la línea.</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Un ancla de la imagen que contiene el marco: el extremo es ese punto de la imagen, a través de su recorte, su zona segura y su escala, como el de un rótulo, en lugar de un punto del lado del marco. <code>at</code> no se lee; <code>side</code> indica por dónde llega la línea (por defecto, desde el otro extremo).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Extremos que no están.** Un extremo en un marco que la página no muestra (plegado, opcional y vacío, una tarjeta más allá de los elementos de la página, un punto de la imagen que su marco recorta) se deja fuera: un árbol conserva sus demás hijos, y el registro de recomposición de la página lo anota (`connectorDropped`). Si no queda ningún `from` o ningún `to`, no se dibuja nada.
+
+**Pintado.** Los conectores se pintan con la decoración, bajo los marcos, como trazados vectoriales: en el canvas, en el PDF, en el visor HTML y en el EPUB de maquetación fija, y como artefacto de maquetación en un PDF etiquetado; el EPUB de maquetación fluida los deja fuera con el resto de la decoración. Una línea que apunta dentro de una imagen necesita que el marco de la imagen quede bajo la decoración: pon a ese marco `layer: -1`. En una doble página, un conector entre marcos de las dos páginas cruza el lomo y se corta allí como el resto de la decoración; en una página de derecha a izquierda, `start` y `end` siguen el flujo en espejo.
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**Comprobaciones.** Un extremo cuyo `to` no corresponde a nada es `frameAnchorUnknown` (en `…/from/to` o en `…/to/<k>/to`) y se deja fuera; `[*]` solo es válido en `to` y sobre un marco repetido. Un `anchor` que no tiene ninguna imagen del marco es `labelAnchorUnknown`, con el id del conector. Una palabra que no está entre las opciones de `routing`, `startCap`, `endCap` o `side`, y un `at` fuera de 0 a 1, son `unknownConfigValue`.
 
 ## Estilos de rótulo
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code> deja los rótulos de este estilo fuera de la comprobación <code>labelOverlap</code>, para un mapa cuyos nombres se tocan en el original. El <code>overlap</code> propio de un ancla prevalece. Desde postext 1.42.</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>según coloca la caja el ancla</td>
+      <td>Cómo se alinean dentro de su caja las líneas de un rótulo de varias líneas; <code>start</code> y <code>end</code> en la dirección del rótulo. Sin fijar, siguen el <code>align</code> del ancla (centradas por defecto); en una leyenda, <code>start</code>. Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>border</code>, <code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>, <code>Dimension</code></td>
+      <td>ninguno</td>
+      <td>Una línea alrededor de la placa del rótulo (su caja ampliada con <code>padding</code>), con <code>background</code> o sin él, y las esquinas redondeadas de la placa: la leyenda enmarcada de un mapa. Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>ninguno</td>
+      <td>La leyenda de un mapa: cada línea del rótulo es una fila, y el símbolo (<code>:icon</code>) que abre la fila cuelga en una columna tan ancha como el más ancho de ellos, de modo que las palabras de todas las filas empiezan en el mismo borde. Una fila sin símbolo se deja como está. No se aplica a los rótulos verticales. Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>ninguno</td>
+      <td>El aspecto de las líneas de referencia de los rótulos de este estilo: la línea que va de la caja de un rótulo al punto de su ancla. Por defecto, el color del rótulo, un grosor de <code>0.75pt</code>, <code>endCap: 'dot'</code> en el punto, sin <code>startCap</code>, un <code>capSize</code> de tres veces el grosor y <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: sale de la caja en ángulo recto y gira una vez hacia el punto). Un rótulo apartado de su punto (<code>labelAt</code>) con un estilo que tiene <code>leader</code> lleva una. Desde postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ Las anclas de una imagen (`Resource.anchors`, los puntos que usan los cómics pa
       <td><code>'keep'</code></td>
       <td>En una figura que cruza el lomo de una doble página, <code>'keep'</code> aparta el rótulo de la banda del lomo, hacia el lado donde está su punto; <code>'cross'</code> lo deja donde lo pone el punto, como pide un título a lo ancho de las dos páginas. Desde postext 1.43.</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>en el punto</td>
+      <td>Dónde queda el rótulo puesto en esta ancla, apartado de su punto, en fracciones de la imagen entera: un nombre en el mar con una línea hasta la isla que nombra. <code>align</code>, <code>verticalAlign</code> y <code>rotate</code> colocan el rótulo respecto a este punto; el punto propio del ancla sigue siendo donde terminan las líneas de referencia y los conectores. Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>véase abajo</td>
+      <td>Una línea desde la caja del rótulo hasta el punto del ancla. <code>true</code> la dibuja con el aspecto <code>leader</code> del estilo de rótulo, un objeto cambia ese aspecto campo a campo, y <code>false</code> no dibuja ninguna. Sin fijar, un rótulo apartado de su punto lleva una cuando su estilo tiene <code>leader</code>. Prevalece el atributo <code>leader</code> de un <code>::label</code>. Desde postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
 `start` y `end` siguen la dirección del rótulo: en un rótulo árabe, `start` es su borde derecho. Un ancla que comparten las ediciones de izquierda a derecha y de derecha a izquierda de un mismo mapa funciona mejor con el rótulo centrado encima o debajo del punto. Un rótulo con `width` se corta entre palabras; una palabra más ancha que la medida reduce todo el rótulo, hasta el `minScale` de su estilo. Cómo se dibujan los rótulos se explica en [Páginas compuestas](/es/docs/composed-pages).
 
+Una línea de referencia sale del rótulo por el lado de su caja (su placa o, si no, sus líneas) que mira al punto a través del hueco más ancho, desde la mitad de ese lado, así que la línea nunca atraviesa las palabras del rótulo, tampoco en un rótulo girado. Un punto bajo la caja del rótulo, o una línea más corta que su marca final, no dibuja nada. Las líneas de referencia se pintan bajo los rótulos, con la imagen, en todas las salidas que dibujan rótulos, y siguen a la imagen cuando se recorta, se escala, se refleja o se compone a doble página.
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## Avisos de las plantillas de página
 
 En el resto de la configuración, el motor ignora una clave que no conoce. Las plantillas de página y los estilos de rótulo, en cambio, se comprueban, y cada problema es un aviso de configuración en `postext check` y en el panel Revisión del Sandbox. El campo `path` de estos avisos es un puntero JSON al campo que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Cuando el campo es heredado, el puntero indica la plantilla que lo escribió. Un aviso sobre un id o un nombre que no existe propone además el más parecido de los que sí existen.
 
-Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo.
+Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, el `routing`, las marcas y el `side` de un conector, y las marcas y el `routing` de una línea de referencia) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo.
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, 
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Un marco, un grupo o un elemento de decoración está anclado a <code>'#name'</code> y la plantilla no tiene ningún marco, grupo ni elemento con ese nombre; o hay marcos y grupos anclados entre sí en un ciclo (también a través de un grupo sin anclaje propio, cuya caja es la de sus marcos). El anclaje se lee como <code>'container'</code>, el área.</td>
+      <td>Un marco, un grupo o un elemento de decoración está anclado a <code>'#name'</code> y la plantilla no tiene ningún marco, grupo ni elemento con ese nombre; o hay marcos y grupos anclados entre sí en un ciclo (también a través de un grupo sin anclaje propio, cuya caja es la de sus marcos). El anclaje se lee como <code>'container'</code>, el área. Un extremo de un conector que no corresponde a nada se notifica igual, y ese extremo se deja fuera.</td>
       <td>Ancla a un marco o a un grupo que exista, o rompe el ciclo anclando uno de ellos al área.</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, 
   </tbody>
 </table>
 
-La versión de la configuración es la 15 desde que existen las plantillas de página (los paquetes escritos antes se siguen cargando sin cambios: nada de lo que dice una configuración anterior cambia de significado).
+La versión de la configuración es la 16 desde que existen los conectores (postext 1.48); las plantillas de página la habían llevado a la 15. Los paquetes escritos antes se siguen cargando sin cambios: nada de lo que dice una configuración anterior cambia de significado, y un lector anterior a los conectores deja fuera los elementos de decoración que no conoce, con un `unknownConfigValue`.
+
+### Avisos de solapamiento, repetición y módulos
+
+Estos avisos vienen de la maquetación o del Markdown de la página, no solo de la plantilla, así que indican una página. Aparecen en `postext check` (`--json` incluye sus campos como `data`), en el panel Revisión del Sandbox y en los `contentWarnings` del documento. Desde postext 1.48.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Aviso</th>
+      <th>Causa</th>
+      <th>Solución</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>Tinta de un marco (sus líneas, su pestaña o su título, sus imágenes) queda debajo de otro marco pintado encima: una <code>layer</code> más alta, o la misma capa pero más adelante en el orden de la plantilla. Un marco tapa donde es opaco: su fondo, su pestaña, sus imágenes, sus líneas; un contorno solo no tapa nada, y las palabras sobre una imagen no se notifican. Un aviso por pareja, con el marco que tapa (<code>coveredBy</code>), la superficie oculta (<code>overlapMm2</code>) y las primeras palabras o la imagen tapadas. Véase <a href="/es/docs/composed-pages#framecovered">Páginas compuestas › frameCovered</a>.</td>
+      <td>Aplica una propuesta: la <code>layer</code> del marco que tapa por debajo de la del tapado, <code>exclude: 'push'</code> en él para que el texto lo rodee, o un <code>move</code> calculado sobre la página. Cuando el solapamiento es buscado (un dibujo sobre el texto), pon <code>overlap: 'allow'</code> en cualquiera de los dos marcos.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Un marco se sale de lo que lo contiene: su texto pasa del corte, su fondo o sus imágenes pasan del sangrado, o cualquier parte de él pasa del marco o del grupo dentro del que está anclado (un anclaje de nueve puntos sobre <code>'#name'</code> cuyo punto cae dentro de esa caja). <code>past</code> dice de cuál, y <code>excessMm</code>, cuánto. Véase <a href="/es/docs/composed-pages#frameoutsidearea">Páginas compuestas › frameOutsideArea</a>.</td>
+      <td>Aplica una propuesta: un <code>maxHeight</code> para el marco, un <code>minHeight</code> para el marco dentro del que está anclado, <code>overflow.continueIn: 'next-page'</code> con una altura menor, o un <code>move</code>. Una insignia que cuelga a propósito de su tarjeta lleva <code>overlap: 'allow'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una rejilla que repite un juego de marcos admite <code>repeat.max</code> elementos y la página le da más. Uno por cada elemento de más, en su <code>slot="…"</code>: el elemento va al marco de flujo (<code>flowFrame</code>), o detrás de la página.</td>
+      <td>Sube <code>max</code>, quítalo o pasa los elementos sobrantes a otra página.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module&#123;template="…"&#125;</code> que la página no coloca: el id no corresponde a ninguna plantilla (<code>reason: 'unknown'</code>), corresponde a una plantilla que no es un módulo (<code>'notModule'</code>), o la plantilla de la página no tiene grupo de módulos (<code>'noGroup'</code>). Su contenido va al marco de flujo.</td>
+      <td>Corrige el id, da a la plantilla <code>role: 'module'</code> o añade a la plantilla de la página un grupo con <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un bloque de página indica una plantilla de módulo. Un módulo se coloca en el grupo de módulos de una página, nunca como página: el contenido del bloque se compone en el flujo, como con una plantilla desconocida.</td>
+      <td>Indica una plantilla de página en el bloque, y pon el módulo dentro de él como <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> dentro de otro módulo. No está admitido: sus bloques pasan a ser del módulo exterior.</td>
+      <td>Cierra antes el módulo exterior, o dibuja el bloque interior como marcos del módulo exterior.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>El <code>name="…"</code> de un módulo ya lo usa otro módulo de la página (<code>reason: 'taken'</code>) o contiene un espacio, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code> (<code>'invalid'</code>). El módulo se llama en su lugar <code>used</code> (<code>&lt;template&gt;[n]</code>), y sus marcos se nombran con ese nombre.</td>
+      <td>Da a cada módulo de la página un nombre propio, hecho de letras, cifras y guiones.</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped` (registro de recomposición).** Un conector cuyo extremo está en un marco que la página no muestra (plegado, opcional y vacío, una tarjeta más allá de los elementos de la página, un punto de la imagen que su marco recorta) deja ese extremo fuera. No es un aviso: el [registro de recomposición](/es/docs/composed-pages#registro-de-recomposición) de la página lo anota, «connector ramas left out izq (not on the page)», de modo que una página a la que le falta una rama se distingue de una dibujada como estaba previsto. Para conservar el extremo, da contenido a ese marco, o haz que el conector vaya a los marcos que tiene la página.

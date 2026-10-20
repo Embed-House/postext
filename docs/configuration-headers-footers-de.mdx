@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Konfiguration: Kopf- und Fußzeilen',
   sidebarTitle: 'Kopf- und Fußzeilen',
-  description: 'Was oben und unten auf jeder Seite steht – Text mit Platzhaltern, Linien, Kästen und Bilder, getrennt für gerade und ungerade Seiten – und wie jedes Element platziert wird',
+  description: 'Was oben und unten auf jeder Seite steht – Text mit Platzhaltern, Linien, Kästen, Bilder und Vektorpfade, getrennt für gerade und ungerade Seiten – und wie jedes Element platziert wird',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '29 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Die Eigenschaften `header` und `footer` steuern die Felder für Kopf- und Fußze
 
 Die Felder verwenden das einheitliche Modell der **Gestaltungsfelder**: Jedes Element hat eine `placement` mit einem `anchor` (am Container oder über `#id` an einem anderen Element), einem optionalen `offset` und einer optionalen `size`. Die alten flachen Felder `align`, `marginFromBody`, `marginFromEdge` und `width: 'full'` werden bei der Eingabe weiterhin akzeptiert und automatisch in die neue Form überführt; die entsprechende Beschreibung in der neuen Form ist unten dokumentiert.
 
-Jedes Feld enthält eine Liste von Elementen der Arten **Text**, **Linie**, **Kasten** und **Bild**. Die Reihenfolge im Array ist die Zeichenreihenfolge (das erste Element wird zuerst gezeichnet, das letzte obenauf). Das gilt unabhängig von den Ankern: Ein Element kann an einem später aufgeführten verankert sein (`anchor.to: '#ttl'`), sodass ein Hintergrundkasten zuerst kommen und trotzdem an dem Text ausgerichtet werden kann, hinter dem er liegt.
+Jedes Feld enthält eine Liste von Elementen der Arten **Text**, **Linie**, **Kasten**, **Bild** und **Pfad** (die Dekoration einer zusammengesetzten Seite nimmt außerdem **Verbinder** auf, siehe [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages#verbinder)). Die Reihenfolge im Array ist die Zeichenreihenfolge (das erste Element wird zuerst gezeichnet, das letzte obenauf). Das gilt unabhängig von den Ankern: Ein Element kann an einem später aufgeführten verankert sein (`anchor.to: '#ttl'`), sodass ein Hintergrundkasten zuerst kommen und trotzdem an dem Text ausgerichtet werden kann, hinter dem er liegt.
 
 **Mitgelieferte Standardwerte.** Wenn `header` oder `footer` `undefined` ist, wendet postext einen sinnvollen mitgelieferten Standard an statt eines leeren Felds:
 
@@ -46,7 +46,7 @@ Um auf die mitgelieferten Standardwerte zu verzichten, setzen Sie `header: { ele
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>mitgelieferte Standardwerte bei <code>undefined</code>; <code>[]</code> schaltet ab</td>
-      <td>Geordnete Liste von Text-, Linien-, Kasten- und Bildelementen.</td>
+      <td>Geordnete Liste von Text-, Linien-, Kasten-, Bild- und Pfadelementen.</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ Kastenelemente zeichnen ein abgerundetes Rechteck in das Feld – nützlich als 
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Eckenradius. Wird beim Zeichnen auf die Hälfte der kürzeren Seite begrenzt.</td>
+      <td>Eckenradius. Wird beim Zeichnen auf die Hälfte der kürzeren Seite begrenzt. Seit postext 1.48 gibt ein Objekt jeder Ecke ihren eigenen Radius, und eine nicht angegebene Ecke bleibt eckig: ein Band, das nur an den oberen Ecken abgerundet ist.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>jede Seite</td>
+      <td>Die Kontur Seite für Seite, jede <code>&#123; enabled?, color?, width? &#125;</code> über <code>borderColor</code> und <code>borderWidth</code>. Eine Seite wird gezeichnet, wenn sie eine Farbe und eine Breite hat, außer sie gibt <code>enabled: false</code> an: Ein Band mit einer Linie nur an seinem Fuß ist <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Seit postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ Das PDF-Backend bettet die Ressource wie eine Abbildung ein (ein SVG mit einer D
 
 Ein Bild, das eine Gestaltung zeichnet, ist Inhalt, wenn seine Ressource es beschreibt: Der `altText` der Ressource, sonst ihre Legende als reiner Text (ein Chip gelesen über seine Beschriftung, ein `:ref` über seinen `text`, wenn er einen hat), kommt in den VDT (`VDTDesignImageBlock.altText`), wird zum `alt` seines `<img>` im HTML und zu einer `Figure` mit `/Alt` in einem getaggten PDF, gelesen direkt nach dem Text seiner Gestaltung (die Tafel eines Kapitels nach dessen Überschrift). Ein Bild, dessen Ressource beides nicht hat, und eines, das als `decorative` gekennzeichnet ist, ist Dekoration: `alt=""` mit `role="presentation"` und ein Artefakt im PDF. Das Bild eines Kolumnentitels oder einer Fußzeile wiederholt sich auf jeder Seite und gehört daher zu den Seitenelementen, gleich was seine Ressource angibt: kein `altText` im VDT, `alt=""` mit `role="presentation"` im HTML, ein Artefakt der Seite im PDF.
 
+### Pfadelemente
+
+Ein Element `path` zeichnet eine Vektorform, die ein Kasten nicht zeichnen kann: einen Balken, der mit schrägem Ende in den Bund läuft, ein Band mit einer Kerbe, die Winkel neben einem Kolumnentitel, den Dorn einer Sprechblase an einer Karte. Der Umriss sind SVG-Pfaddaten, standardmäßig in Bruchteilen des eigenen Rechtecks des Elements geschrieben; die Form dehnt sich also mit dem Rechteck und folgt ihm, wenn es sich verschiebt: Ein Band mit der Größe `{ to: '#title', edge: 'right' }` ist in jeder Sprache so lang wie der Titel. Jedes Gestaltungsfeld nimmt es auf: Kolumnentitel, Gestaltungen von Überschriften und Teilen, Teilzeilen des Inhaltsverzeichnisses, Kastengestaltungen und die Dekoration einer zusammengesetzten Seite. Seit postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standardwert</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Unterscheidungsmerkmal und eine stabile ID, an der andere Elemente sich verankern können.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>SVG-Pfaddaten: <code>M L H V C S Q T A Z</code>, absolut und relativ, in den Einheiten von <code>viewBox</code>. Daten, die sich nicht lesen lassen (keine anfängliche Bewegung, ein Buchstabe, der kein Befehl ist, ein Befehl, dem Zahlen fehlen), zeichnen nichts und werden als <code>unknownConfigValue</code> gemeldet; das Rechteck des Elements bleibt für die an ihm verankerten Elemente bestehen.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>Breite und Höhe des Raums, in dem <code>d</code> geschrieben ist. Mit dem Standardwert ist <code>1</code> die ganze Breite oder Höhe des Rechtecks. Ein aus einer Zeichnung kopierter Pfad behält hier die Größe seiner Zeichnung (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> dehnt die <code>viewBox</code> auf jeder Achse auf das Rechteck; <code>'meet'</code> skaliert sie gleichmäßig, bis sie hineinpasst, zentriert: ein Symbol, das nicht gestaucht werden darf.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>schwarze Füllung</td>
+      <td>Füllung und Kontur. Ohne beides wird die Form schwarz gefüllt, wie ein SVG-Pfad; mit <code>stroke</code> allein hat sie keine Füllung. An die Palette gebundene Farben folgen den Paletten der Seite und des Teils.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, durchgezogen</td>
+      <td>Stärke und Strichmuster der Kontur, Längen auf der Seite, die sich nicht mit dem Rechteck dehnen, sodass eine gedehnte Form eine gleichmäßige Linie behält.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Platziert und bemessen wie ein Kastenelement (siehe <a href="#platzierung-von-elementen">Platzierung von Elementen</a>): Eine nicht angegebene Seite oder <code>'fill'</code> reicht bis zur Kante des Containers.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>wie bei Kastenelementen</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>Auf welchen Seiten es erscheint, ob es dort bleibt, wo die Vorlage seinen Rahmen zeichnet (Dekoration einer zusammengesetzten Seite), und ob es zur reservierten Höhe einer Überschrift zählt.</td>
+    </tr>
+  </tbody>
+</table>
+
+Ein Pfad wird als Vektorform gezeichnet: im Canvas, im PDF, im HTML-Betrachter und im EPUB mit festem Layout, als Layout-Artefakt in einem getaggten PDF; im umfließenden EPUB entfällt er mit den übrigen Seitenelementen. Ein Klick trifft nur die gezeichnete Form, nicht ihr leeres Rechteck. Ein Schlüssel, den das Element nicht hat, ist ein `unknownConfigKey`. Pfade werden in dieser Version nicht gedreht.
+
 ### Platzierung von Elementen
 
-`ElementPlacement` ist das einheitliche Positionierungsmodell, das jeder Elementtyp (Text, Linie, Kasten, Bild) in jedem Gestaltungsfeld verwendet – Kopfzeile, Fußzeile oder das erweiterte Gestaltungsfeld einer Überschriftenebene. Drei Zustandsangaben beschreiben eine Platzierung:
+`ElementPlacement` ist das einheitliche Positionierungsmodell, das jeder Elementtyp (Text, Linie, Kasten, Bild, Pfad) in jedem Gestaltungsfeld verwendet – Kopfzeile, Fußzeile oder das erweiterte Gestaltungsfeld einer Überschriftenebene. Drei Zustandsangaben beschreiben eine Platzierung:
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
     edge: AnchorEdge;
+    /** The point along the side `edge` names, on '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distance from the anchor point. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ Jede elementrelative Kante setzt eine Ecke des Elements auf eine Ecke des Elemen
 
 Eine elementrelative Kante zusammen mit `'container'`, `'page'` oder `'bleed'` und eine Containerkante zusammen mit `'#id'` werden als obere linke Ecke gelesen.
 
+**Ein Punkt entlang einer Seite.** Bei einem Anker an `'#id'` (einem anderen Element oder, auf einer zusammengesetzten Seite, einem Rahmen oder einer Gruppe) wählt `at` einen Punkt entlang der Seite, die die Kante nennt: `'start'`, `'center'`, `'end'` oder einen Bruchteil der Seite ab ihrem Anfang, `0` bis `1`. Entlang der Seite wird das Element auf diesem Punkt zentriert; quer dazu behält die Kante ihren Platz, sodass `below` mit `at: 'center'` einen Strich unter die Mitte eines Rahmens hängt und `right-of` mit `at: 0.5` eine Marke auf halber Höhe seiner Seite setzt. Eine waagerechte Seite (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom` und die Ecken, als ihre Seite gelesen) beginnt dort, wo die Zeilen der Seite beginnen: auf einer Seite von rechts nach links rechts. Eine senkrechte Seite (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) beginnt oben. Eine Zahl außerhalb von 0 bis 1 wird auf das nähere Ende gesetzt; ein anderes Wort als die drei wird als `unknownConfigValue` gemeldet und ignoriert, ebenso `at` an `'container'`, `'page'`, `'bleed'`, `'outer'` und an `center`. Seit postext 1.48; ohne `at` behält die Kante wie bisher ihren eigenen Punkt.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Anfangs- und Endkanten.** `top-start`, `start`, `bottom-start`, `top-end`, `end` und `bottom-end` (mit `'container'`, `'page'`, `'bleed'` oder `'outer'`) sowie `align-start` und `align-end` (mit `'#id'`) nennen die Seite, an der die Zeilen der Seite beginnen, statt einer festen Seite. Auf einer Seite von links nach rechts ist `top-start` gleich `top-left`; auf einer Seite von rechts nach links und auf einer vertikalen Seite, deren Zeilen von rechts aufeinander folgen, ist es `top-right`. Mit diesen Kanten läuft das `x` des Versatzes von der Anfangs- zur Endseite: Auf einer Seite von rechts nach links schiebt ein positives `x` das Element nach links, das Element ist das Spiegelbild der Fassung von links nach rechts. Die Dekoration einer Vorlage und die Kolumnentitel werden auf dem Blatt gesetzt, also steht eine Dachzeile mit `top-start` in einer arabischen wie in einer deutschen Ausgabe über dem Rahmen des Titels. Ein Rahmen wird im Fluss der Seite gesetzt, der schon gespiegelt oder gedreht ist; dort ist `start` immer seine linke Seite, wie `left`. In der Gestaltung einer Überschrift, die ebenfalls im Fluss liegt, ist `start` gleich `left`. In der Sandbox hat die Liste **Ausrichtung** des Feldeditors **Anfang** und **Ende**, und die Kantenlisten haben die Anfangs- und Endseiten. Seit postext 1.39; bis 1.38 galten diese Wörter als `top-left`.
 
 `anchor.to: 'page'` verankert das Element am **Endformat** (der physischen Seite nach dem Beschnitt) und `'bleed'` am Endformat, das auf jeder Seite um `cutLines.bleed` vergrößert ist (identisch mit dem Endformat, solange Schnittmarken ausgeschaltet sind). Beide Rechtecke werden außerdem zum Bezug für `size: 'fill'` und für die automatische Breitenbegrenzung, sodass ein farbiges Band unabhängig von den Seitenrändern von Kante zu Kante laufen kann:
@@ -740,7 +830,7 @@ Eine elementrelative Kante zusammen mit `'container'`, `'page'` oder `'bleed'` u
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Eine Größe kann auch bis zu einer Kante eines anderen Kastens reichen: `{ to, edge }`, wobei `to` den Kasten wie ein Anker benennt (`'container'`, `'page'`, `'bleed'`, `'outer'` oder `'#id'` eines anderen Elements und, in der Dekoration einer zusammengesetzten Seite, eines Rahmens oder einer Gruppe) und `edge` welche seiner Kanten: `'top'` oder `'bottom'` für eine Höhe, `'left'` oder `'right'` für eine Breite. Die Länge reicht vom Ankerpunkt des Elements bis zu dieser Kante, in der Richtung, in die das Element wächst; eine Kante hinter dem Ankerpunkt ergibt 0, eine Kante der anderen Achse oder ein Kasten, den es nicht gibt, wird als `'fill'` gelesen. Ein Grund vom Fuß eines Bandes bis zum Anschnitt bleibt so in der Vorlage und folgt dem Band, wenn es sich verschiebt. Seit postext 1.38:
+Eine Größe kann auch bis zu einer Kante eines anderen Kastens reichen: `{ to, edge }`, wobei `to` den Kasten wie ein Anker benennt (`'container'`, `'page'`, `'bleed'`, `'outer'` oder `'#id'` eines anderen Elements und, in der Dekoration einer zusammengesetzten Seite, eines Rahmens oder einer Gruppe) und `edge` welche seiner Kanten: `'top'` oder `'bottom'` für eine Höhe, `'left'` oder `'right'` für eine Breite, oder `'center'` für ihre Mitte auf beiden Achsen (seit postext 1.48): ein Band von der linken Kante eines Rahmens bis zur Mitte des Rahmens daneben, eine senkrechte Linie von unter einer Karte bis zur Mitte der Reihe darunter. Die Länge reicht vom Ankerpunkt des Elements bis zu dieser Kante, in der Richtung, in die das Element wächst; eine Kante hinter dem Ankerpunkt ergibt 0, eine Kante der anderen Achse oder ein Kasten, den es nicht gibt, wird als `'fill'` gelesen. Ein Grund vom Fuß eines Bandes bis zum Anschnitt bleibt so in der Vorlage und folgt dem Band, wenn es sich verschiebt. Seit postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

@@ -18,6 +18,7 @@ import type {
   VDTDesignTextBlock,
   VDTDesignRuleBlock,
   VDTDesignBoxBlock,
+  VDTDesignPathBlock,
   VDTDesignImageBlock,
   VDTDesignBoxStyle,
   BoundingBox,
@@ -25,6 +26,7 @@ import type {
   RoundedOutline,
   RenderWarning,
 } from './vdt';
+import { markerSvgData, pathSvgData } from './design/pathBlock';
 import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt';
 import { dimensionToPx } from './units';
 import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk';
@@ -49,14 +51,15 @@ import { fontFamilyOf } from './measure/vertical';
 import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
-import type { VDTDesignTextRun, VDTResourceVideo, VDTTextDots } from './vdt';
+import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTTextDots } from './vdt';
+import { iconLineDash, inlineIconBox } from './measure/inlineIcon';
 import { textDots } from './textDots';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
-import { figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
-import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix } from './composed/paint';
+import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
+import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
@@ -1578,7 +1581,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
       x += seg.width;
       continue;
     }
@@ -1731,7 +1734,7 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
       x += seg.width;
       continue;
     }
@@ -1826,6 +1829,53 @@ function renderSwatch(x: number, baselineOffset: number, side: number, fill: str
     `width:${side.toFixed(3)}px;height:${side.toFixed(3)}px;box-sizing:border-box;` +
     `border:${stroke.toFixed(2)}px solid ${ink};${fill ? `background:${fill};` : ''}"></span>`
   );
+}
+
+/** A `'swatch'` segment: its inline symbol when it carries one (#1058),
+ *  else the colour swatch. */
+function renderSwatchSegment(
+  swatch: { color?: string; icon?: VDTInlineIcon } | undefined,
+  x: number,
+  baselineOffset: number,
+  width: number,
+  ink: string,
+  paint?: HtmlPaint,
+): string {
+  return swatch?.icon ? renderInlineIconHtml(swatch.icon, x, baselineOffset, ink, paint) : renderSwatch(x, baselineOffset, width, swatch?.color, ink);
+}
+
+/**
+ * An inline symbol (`:icon[alt]{…}`, #1058) on its line, its box standing
+ * on the baseline (`baselineOffset` from the line top): a picture as an
+ * `<img>` (a tinted one as the colour through the picture's mask), a glyph
+ * and a line sample as a small SVG, so the glyph's baseline and the
+ * stroke's dashes land where the canvas paints them. Named by its
+ * alternative text (`role="img"`), hidden when it has none.
+ */
+function renderInlineIconHtml(icon: VDTInlineIcon, x: number, baselineOffset: number, ink: string, paint?: HtmlPaint): string {
+  const box = inlineIconBox(icon, x, baselineOffset);
+  const n = (v: number): string => String(+v.toFixed(3));
+  const name = icon.alt ? `role="img" aria-label="${esc(icon.alt)}"` : 'aria-hidden="true"';
+  const pos = `position:absolute;left:${n(box.x)}px;top:${n(box.y)}px;width:${n(box.width)}px;height:${n(box.height)}px;`;
+  const color = icon.color ?? ink;
+  if (icon.kind === 'glyph' && icon.glyph && icon.fontString) {
+    return `<svg ${name} style="${pos}overflow:visible;" width="${n(box.width)}" height="${n(box.height)}"><text x="0" y="${n(box.height)}" fill="${esc(color)}" style="font:${esc(quoteFontString(icon.fontString))};">${esc(icon.glyph)}</text></svg>`;
+  }
+  if (icon.kind === 'line') {
+    const dash = iconLineDash(icon);
+    const y = n(box.height / 2);
+    return `<svg ${name} style="${pos}overflow:visible;" width="${n(box.width)}" height="${n(box.height)}"><line x1="0" y1="${y}" x2="${n(box.width)}" y2="${y}" stroke="${esc(color)}" stroke-width="${n(icon.strokePx ?? 1)}"${dash ? ` stroke-dasharray="${dash.map(n).join(' ')}"` : ''}${icon.line === 'dotted' ? ' stroke-linecap="round"' : ''}/></svg>`;
+  }
+  const url = icon.fileId ? imageUrl(paint, icon.fileId, icon.resourceId) : undefined;
+  if (!url) {
+    const stroke = Math.max(0.5, box.height * 0.06);
+    return `<span ${name} style="${pos}box-sizing:border-box;border:${stroke.toFixed(2)}px solid ${ink};"></span>`;
+  }
+  if (icon.color) {
+    const mask = `url(&quot;${esc(url)}&quot;) center / 100% 100% no-repeat`;
+    return `<span ${name} style="${pos}background:${esc(icon.color)};-webkit-mask:${mask};mask:${mask};"></span>`;
+  }
+  return `<img src="${esc(url)}" alt="${esc(icon.alt)}"${icon.alt ? '' : ' aria-hidden="true"'} style="${pos}"/>`;
 }
 
 /** Inline chip (`:chip[…]`): the box — fill, outline, radius — as one
@@ -2301,7 +2351,7 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
       continue;
     }
     if (seg.kind === 'swatch') {
-      sideways.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, block.color));
+      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
       x += seg.width;
       continue;
     }
@@ -2493,6 +2543,8 @@ function renderResourceLine(
   rootLang?: string,
   /** What a copy puts after the line (see {@link lineEndText}). */
   end = '',
+  /** The render's options: the pictures of inline symbols (#1058). */
+  paint?: HtmlPaint,
 ): string {
   const baseFont = quoteFontString(fonts.normal);
   const parts: string[] = [];
@@ -2545,7 +2597,7 @@ function renderResourceLine(
         continue;
       }
       if (seg.kind === 'swatch') {
-        parts.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, color));
+        parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, color, paint));
         x += seg.width;
         continue;
       }
@@ -2855,7 +2907,7 @@ function renderResourceTable(rb: ResolvedResourceBlock, bx: number, by: number, 
     const fonts = cell.isHeader ? headerFonts : bodyFonts;
     const color = cell.isHeader ? t.headerColor : t.color;
     cell.lines.forEach((line, i) => {
-      parts.push(renderResourceLine(line, fonts, color, rb.linkColor, color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, cell.lines[i + 1])));
+      parts.push(renderResourceLine(line, fonts, color, rb.linkColor, color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, cell.lines[i + 1]), options));
     });
   }
   return parts.join('');
@@ -2870,7 +2922,9 @@ function renderResourceTable(rb: ResolvedResourceBlock, bx: number, by: number, 
  */
 function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: number, options: HtmlPaint): string {
   const n2 = (v: number): string => String(+v.toFixed(4));
-  const parts: string[] = [];
+  // Their leaders first (#1057), under every label: vector lines hidden
+  // from assistive technology, as design paths are.
+  const parts: string[] = figureLabelLeaderPaths(rb, bx, by).map(renderDesignPathBlock);
   for (const label of rb.labels ?? []) {
     let layout = label.layout;
     if (!layout) continue;
@@ -2886,8 +2940,13 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
       : '';
     const inner: string[] = [];
     if (layout.background) {
-      const r = layout.background.rect;
-      inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;background:${layout.background.color};"></div>`);
+      const plate = layout.background;
+      const r = plate.rect;
+      // A plate's outline and corners (#1058), the outline inside the box.
+      const look = (plate.color ? `background:${plate.color};` : '')
+        + (plate.border ? `box-sizing:border-box;border:${n2(plate.border.widthPx)}px solid ${plate.border.color};` : '')
+        + (plate.radiusPx ? `border-radius:${n2(plate.radiusPx)}px;` : '');
+      inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;${look}"></div>`);
     }
     if (layout.vertical) {
       // A vertical label (#902): its frame is turned a quarter turn by the
@@ -2902,7 +2961,7 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
       layout.lines.forEach((line, i) => inner.push(renderVerticalLine(line, host, v, options.linkTargets, layout.lines[i + 1])));
     } else {
       layout.lines.forEach((line, i) => {
-        inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
+        inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : ''), options));
       });
     }
     const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
@@ -2974,7 +3033,7 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
     boldItalic: rb.captionBoldItalicFontString,
   };
   rb.captionLines.forEach((line, i) => {
-    parts.push(renderResourceLine(line, captionFonts, rb.captionColor, rb.linkColor, rb.captionLabelColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, rb.captionLines[i + 1])));
+    parts.push(renderResourceLine(line, captionFonts, rb.captionColor, rb.linkColor, rb.captionLabelColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, rb.captionLines[i + 1]), options));
   });
   const noteFonts: ResourceLineFonts = {
     normal: rb.noteFontString,
@@ -2984,7 +3043,7 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
   };
   const noteLines = [...rb.noteLines, ...(rb.continuesLines ?? [])];
   noteLines.forEach((line, i) => {
-    parts.push(renderResourceLine(line, noteFonts, rb.noteColor, rb.linkColor, rb.noteColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, noteLines[i + 1])));
+    parts.push(renderResourceLine(line, noteFonts, rb.noteColor, rb.linkColor, rb.noteColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, noteLines[i + 1]), options));
   });
   if (!rot) return anchor + parts.join('');
   return (
@@ -3008,12 +3067,25 @@ function boxStyleDecls(style: VDTDesignBoxStyle): string {
     ? `border:${style.borderWidthPx}px solid ${style.borderColor};box-sizing:border-box;`
     : '';
   const radius = style.borderRadiusPx > 0 ? `border-radius:${style.borderRadiusPx}px;` : '';
-  return `${bg}${border}${radius}`;
+  if (!style.borderRadiiPx && !style.borderSides) return `${bg}${border}${radius}`;
+  // Corners of their own and a border per side (#1059), as CSS draws them.
+  const radii = style.borderRadiiPx
+    ? `border-radius:${style.borderRadiiPx.map((r) => `${Math.max(0, r)}px`).join(' ')};`
+    : radius;
+  const sides = style.borderSides;
+  if (!sides) return `${bg}${border}${radii}`;
+  const each = (['top', 'right', 'bottom', 'left'] as const)
+    .map((side) => {
+      const b = sides[side];
+      return b && b.widthPx > 0 ? `border-${side}:${b.widthPx}px solid ${b.color};` : '';
+    })
+    .join('');
+  return `${bg}${each ? `${each}box-sizing:border-box;` : ''}${radii}`;
 }
 
 function renderBoxAt(bbox: BoundingBox, style: VDTDesignBoxStyle): string {
   if (bbox.width <= 0 || bbox.height <= 0) return '';
-  if (!style.backgroundColor && !style.borderColor) return '';
+  if (!style.backgroundColor && !style.borderColor && !style.borderSides) return '';
   return (
     `<div aria-hidden="true" style="` +
     `position:absolute;` +
@@ -3218,6 +3290,35 @@ function renderDesignRuleBlock(block: VDTDesignRuleBlock): string {
   );
 }
 
+/** A vector shape (DESIGN §12.1, #1055): an inline `<svg>` placed on its
+ *  box like a rule, its outline and markers drawn in the box's own
+ *  coordinates (ink past the box, a mitre, still shows). Decoration:
+ *  hidden from assistive technology. */
+function renderDesignPathBlock(block: VDTDesignPathBlock): string {
+  const { x, y, width, height } = block.bbox;
+  const parts: string[] = [];
+  const stroke = block.stroke && block.stroke.widthPx > 0 ? block.stroke : undefined;
+  if ((block.fill || stroke) && block.subpaths.length > 0) {
+    const attrs = [`d="${pathSvgData(block.subpaths, x, y)}"`, `fill="${block.fill ? esc(block.fill) : 'none'}"`];
+    if (block.fill && block.fillRule === 'evenodd') attrs.push('fill-rule="evenodd"');
+    if (stroke) {
+      attrs.push(`stroke="${esc(stroke.color)}"`, `stroke-width="${stroke.widthPx}"`);
+      if (stroke.dash && stroke.dash.length > 0) attrs.push(`stroke-dasharray="${stroke.dash.join(' ')}"`);
+      if (stroke.cap && stroke.cap !== 'butt') attrs.push(`stroke-linecap="${stroke.cap}"`);
+      if (stroke.join && stroke.join !== 'miter') attrs.push(`stroke-linejoin="${stroke.join}"`);
+    }
+    parts.push(`<path ${attrs.join(' ')}/>`);
+  }
+  for (const m of block.markers ?? []) parts.push(`<path d="${markerSvgData(m, x, y)}" fill="${esc(m.color)}"/>`);
+  if (parts.length === 0) return '';
+  return (
+    `<svg aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +
+    `style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;overflow:visible;">` +
+    parts.join('') +
+    `</svg>`
+  );
+}
+
 function renderDesignBoxBlock(block: VDTDesignBoxBlock): string {
   const html = renderBoxAt(block.bbox, block.box);
   // A callout stripe on a rounded frame: clipped to the frame's outline.
@@ -3285,6 +3386,7 @@ function renderDesignBlock(block: VDTDesignBlock, options?: HtmlPaint): string {
   if (block.kind === 'text') return renderDesignTextBlock(block, options);
   if (block.kind === 'rule') return renderDesignRuleBlock(block);
   if (block.kind === 'image') return renderDesignImageBlock(block, options);
+  if (block.kind === 'path') return renderDesignPathBlock(block);
   return renderDesignBoxBlock(block);
 }
 
@@ -3502,7 +3604,13 @@ function renderPageDetailed(
     const [l, t, r, b] = [sheetOnSheet.x, sheetOnSheet.y, sheetOnSheet.x + sheetOnSheet.width, sheetOnSheet.y + sheetOnSheet.height].map(frameNum);
     return `<div class="pt-sheet-clip" style="position:absolute;left:0;top:0;width:0;height:0;overflow:visible;clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px);">${html}</div>`;
   };
-  const composedDecorationHtml = page.composed?.decoration ? decorationClipped(renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options)) : '';
+  const decorationOptions: HtmlPaint = composedFlow ? { ...options, vertical: undefined } : options;
+  const underSlot = decorationUnder(page.composed?.decoration);
+  const composedDecorationHtml = underSlot ? decorationClipped(renderDesignSlot(underSlot, decorationOptions)) : '';
+  // Connectors painted over every frame (#1076): their own box, last in
+  // the paint order; through a flow frame, on the sheet after the rest.
+  const overSlot = decorationOver(page.composed?.decoration);
+  const composedOverHtml = overSlot ? decorationClipped(renderDesignSlot(overSlot, decorationOptions)) : '';
   const composedParts: string[] = [];
   /** The frames' boxes and the decoration: what a patcher of blocks must
    *  also compare (`decorationHtml`). */
@@ -3511,8 +3619,9 @@ function renderPageDetailed(
     const paint = composedPaintOrder(page);
     for (const item of composedReadingOrder(paint)) {
       const z = paint.indexOf(item) + 1;
-      if (item.kind === 'decoration') {
-        if (!composedFlow && composedDecorationHtml) composedParts.push(`<div class="pt-frame-decoration" style="position:absolute;left:0;top:0;width:0;height:0;z-index:${z};">${composedDecorationHtml}</div>`);
+      if (item.kind === 'decoration' || item.kind === 'over') {
+        const html = item.kind === 'over' ? composedOverHtml : composedDecorationHtml;
+        if (!composedFlow && html) composedParts.push(`<div class="pt-frame-decoration${item.kind === 'over' ? ' pt-frame-decoration-over' : ''}" style="position:absolute;left:0;top:0;width:0;height:0;z-index:${z};">${html}</div>`);
         continue;
       }
       if (item.blocks.length === 0) continue;
@@ -3568,8 +3677,8 @@ function renderPageDetailed(
   // flow frame), under the running heads, as the canvas paints them.
   const comicHtml = page.comic ? comicMarkup(page.comic) : '';
   const sheetComicsHtml = comicHtml + (plainFlow ? '' : comics.filter((c) => c !== page.comic).map(comicMarkup).join(''));
-  const sheetComposedHtml = composedFlow ? composedDecorationHtml : '';
-  const decorationHtml = defsHtml + gridHtml + openerHtml + footnoteRulesHtml + sheetComicsHtml + composedShape.join('') + composedDecorationHtml + slotParts.join('');
+  const sheetComposedHtml = composedFlow ? composedDecorationHtml + composedOverHtml : '';
+  const decorationHtml = defsHtml + gridHtml + openerHtml + footnoteRulesHtml + sheetComicsHtml + composedShape.join('') + composedDecorationHtml + composedOverHtml + slotParts.join('');
   // A vertical page's flow: one box turned a quarter turn clockwise, its
   // text lines turned back and set vertically (see `renderVerticalLine`).
   const anchorsHtml = (options.anchors ?? [])

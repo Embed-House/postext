@@ -20,14 +20,15 @@ import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
 import { tableCellFill, tableFrameOutline } from '../vdt';
-import { paintSwatch } from './swatch';
+import { paintSwatchSegment } from './swatch';
 import { paintChip } from './chip';
 import { renderMathSegment } from './blockRender';
 import { applySingleInkToPixels, isSingleInkSvgUrl } from '../svg/singleInk';
 import { fillSegmentWord, type WordRun } from './wordRuns';
 import { paintedSegments } from './wordPieces';
 import { uncroppedPictureBox } from '../pipeline/safeArea';
-import { figureLabelMatrix, unmirrorLabelLayout } from '../composed/labels';
+import { figureLabelLeaderPaths, figureLabelMatrix, labelPlateBox, unmirrorLabelLayout } from '../composed/labels';
+import { drawBoxBackground, renderPathBlock } from './headerFooter';
 import { mirroredPaintActive, paintUnmirrored } from './mirrorFrame';
 import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { rasterScaleOf } from './deviceScale';
@@ -454,7 +455,7 @@ function paintLineRuns(
         continue;
       }
       if (seg.kind === 'swatch') {
-        paintSwatch(ctx, x, line.baseline, seg.width, seg.swatch?.color, color);
+        paintSwatchSegment(ctx, seg.swatch, x, line.baseline, seg.width, color);
         x += seg.width;
         continue;
       }
@@ -773,6 +774,9 @@ function haloContext(ctx: CanvasRenderingContext2D, color: string, widthPx: numb
  *  top-left corner at (`bx`, `by`): each one through its matrix, its
  *  plate, its halo, then its lines. */
 export function paintFigureLabels(ctx: CanvasRenderingContext2D, rb: ResolvedResourceBlock, bx: number, by: number): void {
+  // Their leaders first (#1057), under every label, in the frame the
+  // labels' geometry is in (a mirrored page's leader is mirrored with it).
+  for (const path of figureLabelLeaderPaths(rb, bx, by)) renderPathBlock(ctx, path);
   for (const label of rb.labels ?? []) {
     const layout = label.layout;
     if (!layout) continue;
@@ -789,9 +793,14 @@ function paintFigureLabel(ctx: CanvasRenderingContext2D, rb: ResolvedResourceBlo
   saveContext(ctx);
   ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
   ctx.textAlign = 'left';
-  if (layout.background) {
-    const r = layout.background.rect;
-    ctx.fillStyle = layout.background.color;
+  const plate = layout.background;
+  if (plate && (plate.border || plate.radiusPx)) {
+    // A plate with an outline or round corners (#1058), as a design box.
+    const r = plate.rect;
+    drawBoxBackground(ctx, r.x, r.y, r.width, r.height, labelPlateBox(plate));
+  } else if (plate?.color) {
+    const r = plate.rect;
+    ctx.fillStyle = plate.color;
     ctx.fillRect(r.x, r.y, r.width, r.height);
   }
   const { fontString: f, boldFontString: b, italicFontString: i, boldItalicFontString: bi, color } = layout;

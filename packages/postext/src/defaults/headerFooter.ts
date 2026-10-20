@@ -2,8 +2,10 @@ import type {
   ColorValue,
   Dimension,
   DesignBoxElement,
+  DesignConnectorElement,
   DesignElement,
   DesignImageElement,
+  DesignPathElement,
   DesignRuleElement,
   DesignSlot,
   DesignTextElement,
@@ -11,8 +13,10 @@ import type {
   LegacyHeaderFooterRuleElement,
   LegacyHeaderFooterTextElement,
   ResolvedDesignBoxElement,
+  ResolvedDesignConnectorElement,
   ResolvedDesignElement,
   ResolvedDesignImageElement,
+  ResolvedDesignPathElement,
   ResolvedDesignRuleElement,
   ResolvedDesignSlot,
   ResolvedDesignTextElement,
@@ -473,10 +477,48 @@ function resolveImageElement(el: DesignImageElement, idx: number): ResolvedDesig
   };
 }
 
+function resolvePathElement(el: DesignPathElement, idx: number): ResolvedDesignPathElement {
+  return {
+    kind: 'path',
+    id: el.id ?? `path-${idx + 1}`,
+    parity: el.parity ?? 'all',
+    pages: el.pages ?? 'all',
+    placement: {
+      anchor: el.placement.anchor,
+      offset: el.placement.offset ?? {},
+      size: el.placement.size ?? {},
+    },
+    d: el.d,
+    ...(el.viewBox !== undefined ? { viewBox: el.viewBox } : {}),
+    ...(el.fill ? { fill: el.fill } : {}),
+    ...(el.stroke ? { stroke: el.stroke } : {}),
+    ...(el.width ? { width: el.width } : {}),
+    ...(el.dash ? { dash: el.dash } : {}),
+    ...(el.preserveAspectRatio === 'meet' ? { preserveAspectRatio: 'meet' as const } : {}),
+    ...(el.reserve === false ? { reserve: false } : {}),
+    ...(el.pin ? { pin: true } : {}),
+  };
+}
+
+/** A connector (#1056) as written, its id, parity, pages and colour
+ *  filled in (the main colour, palette-linked, so a part recolours it);
+ *  the geometry's defaults are read where it is laid (`design/connector.ts`). */
+function resolveConnectorElement(el: DesignConnectorElement, idx: number): ResolvedDesignConnectorElement {
+  return {
+    ...el,
+    id: el.id ?? `connector-${idx + 1}`,
+    parity: el.parity ?? 'all',
+    pages: el.pages ?? 'all',
+    color: el.color ?? { ...DEFAULT_MAIN_COLOR },
+  };
+}
+
 function resolveElement(el: DesignElement, idx: number, kind: DesignSlotKind): ResolvedDesignElement {
+  if (el.kind === 'connector') return resolveConnectorElement(el, idx);
   if (el.kind === 'text') return resolveTextElement(el, idx, kind);
   if (el.kind === 'rule') return resolveRuleElement(el, idx);
   if (el.kind === 'image') return resolveImageElement(el, idx);
+  if (el.kind === 'path') return resolvePathElement(el, idx);
   return resolveBoxElement(el, idx);
 }
 

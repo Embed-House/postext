@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Directivas',
   description: 'Las directivas que empiezan con ::: (contenedores, columnas, papel, saltos de página, numeración, espacio, verso, índice e índice analítico, saltos de línea) y las marcas de las páginas de cómic.',
   lang: 'es',
-  lastUpdated: '2026-10-19',
-  readingTime: '37 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '38 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "Una directiva es un bloque que empieza con tres signos de dos puntos seguidos, como :::callout o :::columns. Esta página enumera todas las directivas y lo que hace cada una. Algunas meten el texto en un recuadro, lo componen en columnas o lo imprimen en otra clase de papel. Otras empiezan una página nueva, cambian la numeración, añaden espacio, componen un poema verso a verso o imprimen el índice y el índice analítico. La última sección explica las marcas de las páginas de cómic, de las viñetas y de las palabras de los personajes.",
@@ -125,7 +125,7 @@ Mantén la linterna encendida **todas** las noches.
 :::
 ```
 
-En el flujo del texto se reconocen cinco nombres de contenedor; un sexto, `:::frame`, recoge el contenido de un marco en una [página compuesta](#páginas-compuestas). Lo que dibuja cada uno se define en su propia sección de la configuración:
+En el flujo del texto se reconocen cinco nombres de contenedor; `:::frame` y `:::module` recogen el contenido de un marco y de un módulo en una [página compuesta](#páginas-compuestas), y `:::figure` y `:::label`, una figura y un rótulo de varias líneas. Lo que dibuja cada uno se define en su propia sección de la configuración:
 
 <table>
   <thead>
@@ -741,5 +741,8 @@ Una página compuesta se maqueta a partir de una plantilla de página de la conf
 - `::::page{template="…"}` … `::::` es la página: se abre con cuatro o más signos de dos puntos y se cierra con una línea que solo tiene el mismo número de signos. Los bloques de tres signos de dos puntos que hay dentro (`:::frame`, `:::callout`, `:::figure`…) funcionan igual que en cualquier otro sitio, y un `:::` solo nunca cierra la página. Un `:::page` con tres signos de dos puntos sigue siendo una página de cómic.
 - `:::frame{slot="…" label="…"}` … `:::` recoge el contenido del marco con ese nombre: cualquier Markdown.
 - `slot="…"` en un encabezado (`## Retos {slot="retos-titulo"}`), en `::resource{id="…" slot="…"}`, en un bloque de código o en un contenedor `:::` envía solo ese bloque a la ranura indicada. El contenido sin ranura va al marco de la plantilla que recibe el texto suelto.
-- `:::figure{resource="…" slot="…"}` … `:::` coloca un recurso con sus líneas `::label[TEXTO]{at="…" style="…"}`, donde `at` es un ancla de la imagen o un punto `"x% y%"`. Una figura también funciona en el texto corrido. Sus `alt`, `caption` y `note`, como atributos de la línea de apertura o como líneas `::alt[…]`, `::caption[…]` y `::note[…]`, sustituyen los textos del recurso en ese capítulo (véase [Páginas compuestas › Las palabras propias de una figura](/es/docs/composed-pages#las-palabras-propias-de-una-figura)).
+- `:::figure{resource="…" slot="…"}` … `:::` coloca un recurso con sus líneas `::label[TEXTO]{at="…" style="…"}`, donde `at` es un ancla de la imagen o un punto `"x% y%"`. Una figura también funciona en el texto corrido. Sus `alt`, `caption` y `note`, como atributos de la línea de apertura o como líneas `::alt[…]`, `::caption[…]` y `::note[…]`, sustituyen los textos del recurso en ese capítulo (véase [Páginas compuestas › Las palabras propias de una figura](/es/docs/composed-pages-figures#las-palabras-propias-de-una-figura)).
+- `leader` en un `::label` traza una línea desde el rótulo hasta el punto de su ancla, y `leader="none"` la quita. `:::label{at="…" style="…"}` … `:::`, dentro de una figura, escribe un rótulo línea a línea, como pide la leyenda de un mapa; `:icon[alt]{glyph="…"}`, `{resource="…"}` o `{line="dashed"}` pone un símbolo en un rótulo, un pie, una nota o una celda de tabla (véase [Páginas compuestas › Líneas de referencia, leyendas y símbolos](/es/docs/composed-pages-figures#líneas-de-referencia-leyendas-y-símbolos)). Desde postext 1.48.
+- En una página cuya plantilla repite una tarjeta en una rejilla, cada `:::frame{slot="<tarjeta>"}` es una tarjeta, y un bloque de dentro que nombra otro marco de la tarjeta va a ese marco de la misma tarjeta (véase [Páginas compuestas › Ranuras repetidas](/es/docs/composed-pages#ranuras-repetidas)). Desde postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` recoge el contenido de un módulo de la página, un bloque que dibuja una plantilla de módulo y que se apila en el grupo de módulos de la página; las ranuras de dentro son las del propio módulo (véase [Páginas compuestas › Módulos en una página](/es/docs/composed-pages#módulos-en-una-página)). Desde postext 1.48.
 

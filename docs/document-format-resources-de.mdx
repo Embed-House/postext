@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Bilder, Tabellen und Videos',
   description: 'Ressourcen im Text: Verweise und Einbettungen, Nummerierung, Platzierung und wohin ein Gleitobjekt kommt, Textumfluss, Bitmap-Größe, Sicherheitsbereiche, Anker für Comics und Videos',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '38 min',
   order: 29,
   parent: 'document-format',
@@ -347,8 +347,21 @@ const radio: Resource = {
 };
 ```
 
-Die `id` eines Ankers ist der Sprecherschlüssel des Skripts (`tomas: …`) oder `sfx` für den Punkt, an dem sich die Geräuscheffekte des Panels sammeln; `x` und `y` sind der Mund, auf den der Dorn einer Sprechblase zeigt, `head` der Punkt, auf den die Bläschen einer Gedankenblase zeigen (ohne Angabe der Mund), und `face` ein Rechteck, das keine Sprechblase verdeckt. Die Engine bildet jeden Punkt über Beschnitt und Spiegelung des Panels ab, sodass ein Dorn auf seinem Sprecher bleibt, welche Form das Panel auch annimmt; ein Anker außerhalb des Sicherheitsbereichs löst `comicAnchorOutsideSafeArea` aus, weil ein Beschnitt ihn abschneiden kann. Eine dritte Liste, `faces`, enthält die Gesichter von Figuren, die nicht sprechen, als Rechtecke wie die von `avoid`: Keine Sprechblase verdeckt sie, während eine Sperrzone nachgibt, wenn ein Panel keinen anderen Platz hat. Anker gehören zum Bild und dienen jeder Übersetzung des Comics. Comic-Panels lesen sie für das Lettering. Die Beschriftungen einer Abbildung nutzen die Anker ebenfalls, und seit postext 1.42 markieren die Sperrzonen (`avoid`) einer Karte oder eines Diagramms ihre Symbole: Eine Beschriftung, die in eine davon hineinragt, löst `labelOverlap` aus (siehe [Zusammengesetzte Seiten](/de/docs/composed-pages#labeloverlap)). In der Sandbox werden sie im Dialog **Sicherheitsbereich und Lettering** des [Bedienfelds Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) markiert.
+Die `id` eines Ankers ist der Sprecherschlüssel des Skripts (`tomas: …`) oder `sfx` für den Punkt, an dem sich die Geräuscheffekte des Panels sammeln; `x` und `y` sind der Mund, auf den der Dorn einer Sprechblase zeigt, `head` der Punkt, auf den die Bläschen einer Gedankenblase zeigen (ohne Angabe der Mund), und `face` ein Rechteck, das keine Sprechblase verdeckt. Die Engine bildet jeden Punkt über Beschnitt und Spiegelung des Panels ab, sodass ein Dorn auf seinem Sprecher bleibt, welche Form das Panel auch annimmt; ein Anker außerhalb des Sicherheitsbereichs löst `comicAnchorOutsideSafeArea` aus, weil ein Beschnitt ihn abschneiden kann. Eine dritte Liste, `faces`, enthält die Gesichter von Figuren, die nicht sprechen, als Rechtecke wie die von `avoid`: Keine Sprechblase verdeckt sie, während eine Sperrzone nachgibt, wenn ein Panel keinen anderen Platz hat. Anker gehören zum Bild und dienen jeder Übersetzung des Comics. Comic-Panels lesen sie für das Lettering. Die Beschriftungen einer Abbildung nutzen die Anker ebenfalls, und seit postext 1.42 markieren die Sperrzonen (`avoid`) einer Karte oder eines Diagramms ihre Symbole: Eine Beschriftung, die in eine davon hineinragt, löst `labelOverlap` aus (siehe [Zusammengesetzte Seiten](/de/docs/composed-pages-figures#labeloverlap)). In der Sandbox werden sie im Dialog **Sicherheitsbereich und Lettering** des [Bedienfelds Ressourcen](/de/docs/sandbox#bedienfeld-ressourcen) markiert.
 
+
+Ein Anker, den eine Beschriftung einer Abbildung verwendet, kann die Beschriftung auch abseits seines Punkts setzen, `labelAt: { x, y }` in Bruchteilen des Bilds, und eine Linie zu ihm zurückziehen, `leader: true` oder ein Aussehen der Hinweislinie; ein Verbinder einer zusammengesetzten Seite kann mit `anchor: '<id>'` am Punkt des Ankers enden. Siehe [Konfiguration › Beschriftungsfelder eines Ankers](/de/docs/configuration-composed-pages#beschriftungsfelder-eines-ankers). Seit postext 1.48.
+
+### Symbole in Legenden, Anmerkungen und Zellen
+
+Eine Legende, eine Anmerkung oder eine Tabellenzelle kann ein kleines Symbol in ihrer Zeile enthalten: `:icon[alt]{glyph="⊙"}` setzt ein Zeichen (in der Schrift, die `font="…"` nennt, sonst in der des Texts), `:icon[alt]{resource="town-mark"}` eine Bitmap- oder SVG-Ressource und `:icon[alt]{line="dashed"}` ein Linienmuster, für eine Tabelle, die die Linien einer Karte erklärt. `color="…"` färbt es mit einer Hex-Farbe oder einem Paletteneintrag, und `size="…"` legt seine Höhe in em fest (Standard `0.75`, die Höhe eines Großbuchstabens). Der Text in den eckigen Klammern ist das, was Screenreader und das getaggte PDF an seiner Stelle lesen; leere Klammern machen das Symbol zur Dekoration.
+
+```ts
+{ id: 'mapa-politico', typeId: 'figure', kind: 'bitmap',
+  caption: 'Capitals :icon[capital]{glyph="⊙" font="Noto Sans Math"} and towns :icon[town]{resource="town-mark"} of Varenia' }
+```
+
+Symbole werden in Legenden, Anmerkungen, Tabellenzellen und Beschriftungen von Abbildungen gelesen (siehe [Zusammengesetzte Seiten › Hinweislinien, Legenden und Symbole](/de/docs/composed-pages-figures#hinweislinien-legenden-und-symbole)); im Grundtext und in Überschriften bleibt die Direktive in dieser Version Text. Seit postext 1.48.
 
 ### Videos
 

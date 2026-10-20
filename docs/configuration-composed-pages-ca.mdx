@@ -3,10 +3,10 @@
 export const metadata = {
   title: 'Configuració: pàgines compostes',
   sidebarTitle: 'Paràmetres de pàgines compostes',
-  description: "Les plantilles de les pàgines compostes (marcs, grups, decoració, herència i variants per a pàgina senar i parella), els estils dels rètols que es posen sobre les àncores d'una imatge i els avisos que pot donar una plantilla",
+  description: "Les plantilles de les pàgines compostes (marcs, grups, graelles que repeteixen un joc de marcs, mòduls, decoració i connectors, herència i variants per a pàgina senar i parella), els estils dels rètols que es posen sobre les àncores d'una imatge i els avisos que pot donar una plantilla",
   lang: 'ca',
-  lastUpdated: '2026-10-19',
-  readingTime: '6 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '10 min',
   order: 18,
   parent: 'configuration',
   plainSummary: "Aquesta pàgina tracta de les plantilles de pàgina. Una plantilla és una pàgina dibuixada als paràmetres: unes caixes amb nom, anomenades marcs, amb el lloc que ocupen, fins on poden créixer i quin aspecte tenen. El Markdown d'una pàgina composta omple després aquests marcs pel seu nom, de manera que el text mai no guarda posicions i els paràmetres mai no guarden text. Una plantilla pot partir d'una altra i canviar només uns quants marcs, i pot ser diferent a les pàgines parelles i a les senars. La pàgina recull també els estils de rètol per a les paraules que es posen sobre una imatge, i cada avís que pot donar una plantilla amb la manera de corregir-lo.",
@@ -104,7 +104,7 @@ Una plantilla que només fixa l'`id` i un marc és una pàgina sencera en què a
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>cap</td>
-      <td>Imatges, filets i caixes que es pinten amb la pàgina, en el llenguatge d'elements de les <a href="/ca/docs/configuration-headers-footers#capçaleres-i-peus">capçaleres i peus</a>. Els elements de text només porten marcadors (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per a un atribut del bloc de pàgina). Un element es pot ancorar a un marc o a un grup (<code>'#dinero'</code>) i llavors es mou amb ell. La decoració es col·loca després dels marcs i mai no empeny el text. Des de postext 1.42, <code>&#123;headingNumber&#125;</code> escriu el comptador del primer títol numerat que contenen els marcs de la pàgina (un marc amb <code>takes</code>) i <code>&#123;headingNumber.titulo&#125;</code>, el del marc <code>titulo</code>, amb les xifres del document; així, una insígnia amb el número d'un tema el llegeix del títol i no cal repetir-lo al bloc de pàgina. La decoració es pinta sota els marcs; un clic en un element de text situat sobre un marc, en un punt on el marc no té text propi, arriba a l'element i no al marc. Un marc amb <code>layer</code> negatiu es pinta sota la decoració.</td>
+      <td>Imatges, filets i caixes que es pinten amb la pàgina, en el llenguatge d'elements de les <a href="/ca/docs/configuration-headers-footers#capçaleres-i-peus">capçaleres i peus</a>. Els elements de text només porten marcadors (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> per a un atribut del bloc de pàgina). Un element es pot ancorar a un marc o a un grup (<code>'#dinero'</code>) i llavors es mou amb ell. La decoració es col·loca després dels marcs i mai no empeny el text. Des de postext 1.42, <code>&#123;headingNumber&#125;</code> escriu el comptador del primer títol numerat que contenen els marcs de la pàgina (un marc amb <code>takes</code>) i <code>&#123;headingNumber.titulo&#125;</code>, el del marc <code>titulo</code>, amb les xifres del document; així, una insígnia amb el número d'un tema el llegeix del títol i no cal repetir-lo al bloc de pàgina. La decoració es pinta sota els marcs; un clic en un element de text situat sobre un marc, en un punt on el marc no té text propi, arriba a l'element i no al marc. Un marc amb <code>layer</code> negatiu es pinta sota la decoració. Des de postext 1.48 la decoració també admet <a href="/ca/docs/configuration-headers-footers#elements-de-traçat">elements de traçat</a> (barres, cintes i galons dibuixats com a formes vectorials) i <a href="#connectors">connectors</a>, les línies que uneixen marcs.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -152,7 +152,7 @@ Una plantilla que només fixa l'`id` i un marc és una pàgina sencera en què a
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>El paper de pàgina que veuen els elements de disseny amb un filtre <code>pages</code>.</td>
+      <td>El paper de pàgina que veuen els elements de disseny amb un filtre <code>pages</code>. <code>'module'</code> converteix la plantilla en un mòdul: una caixa de marcs que les pàgines apilen en un grup en lloc d'ocupar una pàgina pròpia (vegeu <a href="#mòduls">Mòduls</a>). Des de postext 1.48.</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ Un marc es col·loca segons la cel·la de `grid` quan la plantilla té retícula
       <td>Un marc amb un mode d'escriptura o una direcció propis: una caixa vertical en una pàgina horitzontal, una fitxa horitzontal en una de vertical, una cita de dreta a esquerra en un llibre d'esquerra a dreta. Un marc de l'altre mode d'escriptura es compon en la seva caixa girada un quart de volta: les línies en recorren l'alçada i se succeeixen al llarg de l'amplada, i una alçada <code>'auto'</code> és la menor que les conté en aquesta amplada. El text es pinta com el pinta una pàgina d'aquest mode. <code>direction</code> compon la història del marc en aquesta direcció, com una caixa amb <code>&#123;dir=…&#125;</code>; un bloc o una caixa que escriu el seu propi <code>dir</code> el conserva. Des de postext 1.39. Des de postext 1.40 un marc vertical també funciona en una pàgina de dreta a esquerra: es compon com en una d'esquerra a dreta i es col·loca on el flux reflectit el posa, amb el text pintat sense reflectir; una imatge en un marc vertical d'una pàgina horitzontal queda dreta, amb el seu peu, i ocupa el lloc que li deixa la caixa a l'ample de la pàgina; l'EPUB adaptable escriu un marc d'un altre mode d'escriptura com una caixa amb aquest mode i amb la llargada que recorren les línies (en em del text de cos). Des de postext 1.42 una imatge en un marc d'una pàgina vertical que segueix el mode de la mateixa pàgina també queda dreta, amb el seu peu.</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> deixa el marc fora de les comprovacions de superposició: no es dona <code>frameCovered</code> per a cap parella de què formi part, tant si es pinta a sobre de l'altre marc com a sota, i no es dona <code>frameOutsideArea</code> per a aquest marc. Per a un dibuix que ha d'anar sobre el text, o una insígnia que penja mig fora de la seva targeta expressament. Vegeu <a href="#avisos-de-superposició-repetició-i-mòduls">Avisos de superposició, repetició i mòduls</a>. Des de postext 1.48.</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ Un grup és una pila (de dalt a baix) o una filera (del principi al final) de ma
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>De dalt a baix, o del principi al final.</td>
+      <td>De dalt a baix, del principi al final, o cel·les en fileres (<code>'grid'</code>, des de postext 1.48; vegeu <a href="#graelles-que-repeteixen-un-joc-de-marcs">Graelles que repeteixen un joc de marcs</a>).</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>Els marcs del grup, en l'ordre en què van a la pàgina. Un marc pertany com a màxim a un grup; un nom que no és cap marc de la plantilla, o un marc ja llistat, se salta.</td>
+      <td>Els marcs del grup, en l'ordre en què van a la pàgina. Un marc pertany com a màxim a un grup; un nom que no és cap marc de la plantilla, o un marc ja llistat, se salta. Una graella que es repeteix pren en canvi els marcs de <code>repeat.frames</code>.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Una graella: el nombre de columnes, totes de la mateixa amplada.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>, <code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>el <code>gap</code> del grup</td>
+      <td>Una graella: l'espai entre dues columnes i entre dues fileres.</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>Una graella: on queda una cel·la més baixa que la seva filera. <code>'stretch'</code> fa el marc principal tan alt com la filera (fins al seu <code>maxHeight</code>), quan l'alçada d'aquest marc és <code>'auto'</code> o <code>'fill'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>cap</td>
+      <td>Una graella: el joc de marcs que es col·loca una vegada per cada element del contingut de la pàgina. El primer marc de <code>frames</code> és el marc principal de la cel·la; <code>max</code> limita el nombre d'elements, i la resta va al marc de flux (<code>repeatOverflow</code>).</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>El grup pren els blocs <code>:::module</code> de la pàgina, l'un sota l'altre en l'ordre del Markdown, amb <code>gap</code> entremig. Es compon com una pila sigui quin sigui el seu <code>kind</code>, i els seus <code>frames</code> no es llegeixen. Vegeu <a href="#mòduls">Mòduls</a>. Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>cap</td>
+      <td>Un grup de mòduls: on continua, sencer, un mòdul que no hi cap. Si no s'indica, el mòdul es talla al peu del grup i els seus marcs recorren l'escala de reajustament.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ El resultat només depèn del contingut de la pàgina, de la plantilla i de la t
 
 El marc que creix fa tant com l'espai lliure, contingui el que contingui, així que un estil amb fons visible el pintaria sencer: pinta la targeta a la decoració de la plantilla i deixa el marc de text sense estil.
 
+### Graelles que repeteixen un joc de marcs
+
+Una pàgina de fitxes amb fotos, una pàgina de fitxes d'activitats o una pàgina de retrats amb un nom sota cadascun és la mateixa targeta dibuixada moltes vegades. Un grup de tipus graella amb `repeat` la dibuixa una sola vegada a la plantilla: els marcs d'una targeta, el que s'anomena joc de marcs, que la graella col·loca una vegada per cada element que li dona el Markdown de la pàgina. Així, quantes targetes té una pàgina ho decideix el Markdown, i una traducció que afegeix una targeta no necessita cap plantilla nova. Des de postext 1.48.
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **El joc.** El primer marc de `repeat.frames` és el marc **principal** de la cel·la: pren l'amplada de la cel·la i conserva la seva regla d'alçada (`'auto'` és l'alçada del contingut, entre `minHeight` i `maxHeight`). Els altres marcs del joc es col·loquen com els dibuixa la plantilla, ancorats al marc principal o entre si: aquí la píndola del peu penja del peu de la foto. Un marc del joc ancorat a un marc de fora del joc es queda on el posa aquest ancoratge.
+- **Elements.** Cada tros `:::frame{slot="foto"}` de la pàgina és un element: els trossos d'una ranura repetida no s'ajunten. Dins del tros, un bloc que indica un membre del joc (`:::frame{slot="pie"}`, `::resource{… slot="pie"}`) va a aquell membre de la mateixa targeta; la resta va al marc principal. Vegeu [Pàgines compostes › Ranures repetides](/ca/docs/composed-pages#ranures-repetides).
+- **Instàncies.** Els marcs de cada targeta es diuen `<frame>[n]`, comptant a partir d'1: `foto[2]` i `pie[2]` són la segona targeta. Els avisos, el registre de reajustament, el mapa d'origen i el Sandbox fan servir aquests noms, els ids dels marcs són `cp<n>:foto[2]`, i un element de decoració o un connector es poden ancorar a `'#foto[2]'`. El `to: '#foto[*]'` d'un connector arriba a totes les targetes de la pàgina. Un element ancorat a `'#foto'` llegeix la caixa de la graella.
+- **Cel·les.** Les cel·les omplen les fileres des del costat d'inici, de manera que en una pàgina de dreta a esquerra la primera targeta queda a la dreta. Una filera fa l'alçada de la seva cel·la més alta, comptant el que penja per sobre del marc principal (una pestanya) i per sota (una píndola); `rowAlign` col·loca les més baixes. La caixa de la graella és el seu `placement` o la seva cel·la de `grid`; si no en té, comença on la plantilla dibuixa el marc principal i arriba fins a la vora dreta i el peu de l'àrea.
+- **Quan les targetes no hi caben.** Una filera que passa del peu de la graella es talla allà, cada targeta recorre l'escala de reajustament pel seu compte, i l'última targeta tallada dona `frameOverflow`. Amb `overflow.continueIn` al marc principal (`'next-page'`, `'template:<id>'`), la graella continua **per fileres senceres**: la primera filera que no hi cap, i totes les que la segueixen, es col·loquen a la pàgina afegida, a la graella d'una plantilla que repeteix el mateix joc de marcs. Una cel·la més alta que tota la graella dona un avís en lloc de continuar indefinidament.
+- **`max`.** Els elements que passen de `repeat.max` van al marc de flux, o després de la pàgina si la plantilla no en té, i cadascun genera `repeatOverflow`.
+
+Una graella sense `repeat` col·loca els marcs que llista, un per cel·la, en l'ordre en què estan escrits. Un marc d'un joc repetit que apareix a la llista d'un altre grup se salta en aquell grup (`groupFrameTwice`), i un nom que la plantilla no té és `groupFrameUnknown`. `grow` i `shrink` no s'apliquen a les fileres d'una graella, ni `redistribute` a les seves targetes.
+
+### Mòduls
+
+Una pàgina d'un llibre de text sovint apila blocs que tornen a sortir al llarg del llibre en un altre ordre: una caixa amb una foto al costat, un arbre de tres idees, una graella de quatre fotos sota un encapçalament. Dibuixar una plantilla per a cada ordre multiplica les plantilles. Un **mòdul** és un d'aquests blocs dibuixat una sola vegada: una plantilla amb `role: 'module'`, amb marcs, grups i decoració (connectors inclosos), i sense pàgina pròpia. Una plantilla de pàgina pren mòduls en un grup amb `modules: true`; el Markdown de la pàgina diu quins mòduls conté i en quin ordre (vegeu [Pàgines compostes › Mòduls en una pàgina](/ca/docs/composed-pages#mòduls-en-una-pàgina)). Des de postext 1.48.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **Què té un mòdul.** Marcs, grups (també una graella que es repeteix), decoració i connectors. No té `area`, `header`, `footer`, `variants`, `spread`, `gutter` ni `overflowTemplate`: cadascun d'aquests camps es dona com a `unknownConfigValue` i s'ignora. `extends` funciona entre mòduls (una plantilla que estén un mòdul és un mòdul).
+- **La seva caixa.** Un mòdul fa l'amplada del seu grup i l'alçada fins on arriben els seus marcs; el grup apila els mòduls des de dalt, amb `gap` entremig. Dins d'un mòdul, `'container'` és la caixa del mòdul, per als seus marcs (també `'fill'` i els percentatges) i per a la seva decoració: un fons amb la mida `{ to: 'container', edge: 'bottom' }` cobreix el mòdul sigui quina sigui l'alçada que li donin les paraules.
+- **Noms.** Els marcs, els grups i els elements d'un mòdul porten com a prefix el nom de la instància del mòdul: `<name>.<frame>`, amb el nom que dona el Markdown (`name="ramas"`) o, si no, `<template>[n]`, el número d'ordre del mòdul entre els mòduls d'aquella plantilla a la pàgina (`arbol[2].raiz`). Els ancoratges, `next`, `continueIn: '#x'` i els connectors de dins d'un mòdul es reescriuen cap als seus propis marcs, de manera que dos arbres en una pàgina no s'uneixen mai entre si. L'id d'un marc és `cp0:arbol[2].raiz`.
+- **Quan els mòduls no hi caben.** Un mòdul que passa del peu del grup es talla allà i els seus marcs recorren l'escala de reajustament; `frameOverflow` es dona una sola vegada per al grup. Amb `overflow.continueIn` al grup de mòduls (`'next-page'` o `'template:<id>'`), el primer mòdul que no hi cap i tots els que el segueixen continuen **sencers** a la pàgina afegida, amb els mateixos noms, al capdamunt del grup de mòduls d'aquella pàgina.
+- **Encara no.** Mòduls l'un al costat de l'altre (un grup de mòduls és sempre una pila), un mòdul dins d'un altre mòdul (`moduleNested`) i cel·les de la `grid` de la plantilla dins d'un mòdul.
+
 ### Quan el contingut no hi cap
 
 Quan el contingut d'un marc és més alt que l'espai que li dona el grup, la maquetació prova per ordre els passos de l'[escala de reajustament](/ca/docs/composed-pages#quan-tot-i-així-no-hi-cap) i s'atura al primer que el fa cabre: l'espai lliure fins a `maxHeight`, el grup que empeny i cedeix, imatges més petites, els altres marcs del grup fins al seu mínim, text més petit i continuació en una altra pàgina. Aquests paràmetres del marc determinen fins on pot arribar cada pas:
@@ -555,7 +654,7 @@ Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantill
 
 ### El que aplica la maquetació
 
-La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Des de postext 1.42 aplica també la `palette` de la plantilla, el `look` d'un marc i l'amplada `'auto'` (la de la línia més llarga del marc). El `writingMode` i la `direction` d'un marc s'apliquen des de postext 1.39. Es llegeix i es comprova, però encara no s'aplica: el `bodyStyle` de la plantilla.
+La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Des de postext 1.42 aplica també la `palette` de la plantilla, el `look` d'un marc i l'amplada `'auto'` (la de la línia més llarga del marc). El `writingMode` i la `direction` d'un marc s'apliquen des de postext 1.39. Des de postext 1.48 aplica les graelles i el seu `repeat`, els grups de mòduls i les plantilles de mòdul, els connectors i els elements de traçat de la decoració, i l'`overlap` d'un marc. Es llegeix i es comprova, però encara no s'aplica: el `bodyStyle` de la plantilla.
 
 ### Dobles pàgines
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 Un espai entre columnes més ample que el `gutter` manté les fitxes d'una graella simètrica lluny del llom, així que cap no es mou. La segona banda i la tira de dibuixos porten `crossGutter` per travessar-lo: cadascuna es llegeix a la pàgina on té el centre i es pinta a totes dues. Totes les paraules de la pàgina, també els noms de les edats de les pestanyes, es queden al Markdown.
 
 En un llibre vertical (`vertical-rl`), la doble pàgina es compon en el sistema de coordenades del flux de les pàgines, com les pàgines compostes soles: el capdamunt de la pàgina és la vora dreta de la doble pàgina i les línies baixen, de manera que la `x` de la plantilla baixa per la doble pàgina i la `y` va de la vora dreta a l'esquerra. La doble pàgina és la pàgina dreta seguida de l'esquerra al llarg de `y`, el llom és una línia que travessa la plantilla, i `gutter`, `crossGutter` i el tall entre les pàgines llegeixen aquest eix; la decoració es continua component sobre la doble pàgina física i es talla al llom. Una línia del temps horitzontal dibuixada per a un llibre horitzontal surt girada en un de vertical: escriu la plantilla d'un llibre vertical en el sistema de coordenades del seu flux. Des de postext 1.38. Una fitxa que s'hagi de llegir al llarg de la doble pàgina porta `writingMode: 'horizontal-tb'`: es compon en horitzontal i queda dreta a la pàgina vertical (des de postext 1.39).
+
+### Connectors
+
+Un connector és una línia de la decoració que uneix marcs: les branques d'un diagrama en arbre, un organigrama, les línies que baixen d'una línia del temps, les fletxes d'un diagrama de flux, el punter d'una nota cap a un lloc d'un mapa. Es col·loca quan els marcs ja tenen la caixa definitiva, de manera que segueix un text que creix, una edició amb paraules més llargues o un grup que mou els seus marcs, i es dibuixa com a línia vectorial a totes les sortides, així que la plantilla no necessita cap imatge de les línies. Els connectors són elements de la `decoration` d'una plantilla de pàgina o d'un mòdul; les capçaleres i els dissenys d'encapçalament no tenen marcs per unir, i un connector en aquests llocs es dona com a avís (`unknownConfigValue`) i no es dibuixa. Des de postext 1.48.
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Propietat</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'connector'</code>, <code>string</code></td>
+      <td>obligatori</td>
+      <td>L'element i el seu id, com en els altres elements de la decoració.</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>obligatori</td>
+      <td>Un extrem de la línia; el pare d'un arbre.</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>obligatori</td>
+      <td>L'altre extrem, o diversos: una línia a cadascun, o els fills d'un arbre. <code>'#card[*]'</code> representa totes les targetes d'una <a href="#graelles-que-repeteixen-un-joc-de-marcs">graella que es repeteix</a> que té la pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>: un sol segment. <code>'elbow'</code>: de través, al llarg i de través un altre cop entre costats encarats, una L entre costats en angle recte. <code>'tree'</code>: un tronc des de <code>from</code> fins a una barra, la barra a través dels punts dels fills i una línia que baixa a cada fill.</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>On queda el tram central d'un colze o la barra d'un arbre entre els extrems: <code>0</code> a <code>from</code>, <code>1</code> al <code>to</code> més proper. Un arbre amb <code>trunk: 0</code> no dibuixa barra: una línia des de la vora del pare fins a cada fill, com les marques d'una línia del temps.</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Arrodoneix els girs d'un colze o d'un arbre.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el color principal</td>
+      <td>Un color vinculat a la paleta segueix la <code>palette</code> de la plantilla, la del bloc de pàgina i la d'una part, com fan els filets.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.75pt</code>, continu</td>
+      <td>El gruix de la línia i un patró de traços (traç, buit, …).</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>, <code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>Una marca a <code>from</code> i a cada <code>to</code>: un punt ple centrat a l'extrem, o una punta de fletxa amb la punta a l'extrem.</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>L'amplada d'un punt, o la llargada d'una punta de fletxa.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Uneix les caixes que declara la plantilla, no les que el contingut ha donat als marcs.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code></td>
+      <td>com els altres elements</td>
+      <td><code>'all'</code></td>
+      <td>Quines pàgines el dibuixen.</td>
+    </tr>
+  </tbody>
+</table>
+
+Cada extrem (`ConnectorEnd`) indica una caixa i un punt d'un dels seus costats:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Camp</th>
+      <th style={{ width: '200px' }}>Tipus</th>
+      <th style={{ width: '120px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>obligatori</td>
+      <td>Un marc, un grup, una targeta d'una graella que es repeteix (<code>'#foto[2]'</code>) o un altre element de la decoració.</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>el costat encarat a l'altre extrem</td>
+      <td>El costat per on la línia surt de la caixa o hi arriba. <code>start</code> i <code>end</code> segueixen la direcció de les línies de la pàgina. Si no s'indica, el costat encarat a l'altra caixa a través de l'espai més ample que les separa; els fills d'un arbre miren cap al pare.</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>El punt al llarg d'aquest costat, o una fracció del costat des del seu inici (de 0 a 1). Un costat horitzontal comença on comencen les línies de la pàgina, i un de vertical, a dalt.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>L'espai entre la vora de la caixa (o el punt de l'àncora) i l'extrem de la línia.</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Una àncora de la imatge que conté el marc: l'extrem és aquest punt de la imatge, tenint en compte el retall, la zona segura i l'escala, com el d'un rètol, en lloc d'un punt del costat del marc. <code>at</code> no es llegeix; <code>side</code> diu per on arriba la línia (per defecte, des de l'altre extrem).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Extrems que no hi són.** Un extrem en un marc que la pàgina no mostra (plegat, opcional i buit, una targeta més enllà dels elements de la pàgina, un punt de la imatge que el seu marc retalla) es deixa fora: un arbre conserva els altres fills, i el registre de reajustament de la pàgina ho anota (`connectorDropped`). Si no queda cap `from` o cap `to`, no es dibuixa res.
+
+**Pintura.** Els connectors es pinten amb la decoració, sota els marcs, com a traçats vectorials: al canvas, al PDF, al visor HTML i a l'EPUB de maquetació fixa, i com a artefacte de maquetació en un PDF etiquetat; l'EPUB de maquetació fluida els deixa fora amb la resta de la decoració. Una línia que entra dins d'una imatge necessita el marc de la imatge sota la decoració: dona a aquest marc `layer: -1`. En una doble pàgina, un connector entre marcs de les dues pàgines travessa el llom i s'hi talla com la resta de la decoració; en una pàgina de dreta a esquerra, `start` i `end` segueixen el flux en mirall.
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**Revisions.** Un extrem amb un `to` que no indica res és `frameAnchorUnknown` (a `…/from/to` o `…/to/<k>/to`) i es deixa fora; `[*]` només és vàlid a `to` i en un marc repetit. Un `anchor` que cap imatge del marc no té és `labelAnchorUnknown`, amb l'id del connector. Una paraula fora de les opcions de `routing`, `startCap`, `endCap` o `side`, i un `at` fora de l'interval de 0 a 1, són `unknownConfigValue`.
 
 ## Estils de rètol
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code> deixa els rètols d'aquest estil fora de la comprovació <code>labelOverlap</code>, per a un mapa amb noms que es toquen a l'original. L'<code>overlap</code> propi d'una àncora preval. Des de postext 1.42.</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>com col·loca la caixa l'àncora</td>
+      <td>Com s'alineen dins de la caixa les línies d'un rètol de diverses línies; <code>start</code> i <code>end</code>, en la direcció del rètol. Si no s'indica, segueixen l'<code>align</code> de l'àncora (centrades per defecte); en una llegenda, <code>start</code>. Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>border</code>, <code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>, <code>Dimension</code></td>
+      <td>cap</td>
+      <td>Una línia al voltant de la placa del rètol (la seva caixa eixamplada amb <code>padding</code>), amb <code>background</code> o sense, i les cantonades arrodonides de la placa: la llegenda emmarcada d'un mapa. Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>cap</td>
+      <td>La llegenda d'un mapa: cada línia del rètol és una fila, i el símbol (<code>:icon</code>) que obre una fila queda en una columna tan ampla com el més ample de tots, de manera que les paraules de totes les files comencen a la mateixa vora. Una fila sense símbol es queda com és. No s'aplica als rètols verticals. Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>cap</td>
+      <td>L'aspecte de les línies de referència dels rètols d'aquest estil: la línia des de la caixa d'un rètol fins al punt de la seva àncora. Per defecte, el color del rètol, un gruix de <code>0.75pt</code>, <code>endCap: 'dot'</code> al punt, cap <code>startCap</code>, un <code>capSize</code> de tres vegades el gruix i <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: surt de la caixa en angle recte i fa un sol gir fins al punt). Un rètol apartat del seu punt (<code>labelAt</code>) amb un estil que té <code>leader</code> en porta una. Des de postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ Les àncores d'una imatge (`Resource.anchors`, els punts que fan servir els còm
       <td><code>'keep'</code></td>
       <td>En una figura que travessa el llom d'una doble pàgina, <code>'keep'</code> aparta el rètol de l'espai del llom, cap al costat on hi ha el punt; <code>'cross'</code> el deixa on el posa el punt, com demana un títol a l'ample de les dues pàgines. Des de postext 1.43.</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>al punt</td>
+      <td>On queda el rètol posat en aquesta àncora, apartat del seu punt, en fraccions de tota la imatge: un nom al mar amb una línia fins a l'illa que anomena. <code>align</code>, <code>verticalAlign</code> i <code>rotate</code> col·loquen el rètol respecte a aquest punt; el punt de l'àncora continua sent on acaben les línies de referència i els connectors. Des de postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>vegeu més avall</td>
+      <td>Una línia des de la caixa del rètol fins al punt de l'àncora. <code>true</code> la dibuixa amb l'aspecte <code>leader</code> de l'estil de rètol, un objecte canvia aquest aspecte camp per camp i <code>false</code> no en dibuixa cap. Si no s'indica, un rètol apartat del seu punt en porta una quan el seu estil té <code>leader</code>. Preval l'atribut <code>leader</code> d'un <code>::label</code>. Des de postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
 `start` i `end` segueixen la direcció del rètol: en un rètol àrab, `start` és la vora dreta. Una àncora que comparteixen les edicions d'esquerra a dreta i de dreta a esquerra d'un mateix mapa funciona millor amb el rètol centrat a sobre o a sota del punt. Un rètol amb `width` es talla entre paraules; una paraula més ampla que la mesura redueix tot el rètol, fins al `minScale` de l'estil. Com es dibuixen els rètols s'explica a [Pàgines compostes](/ca/docs/composed-pages).
 
+Una línia de referència surt pel costat de la caixa del rètol (la placa o, si no en té, les línies) que mira cap al punt a través de l'espai més ample, des del centre d'aquest costat, de manera que la línia no travessa mai les paraules del rètol, tampoc si el rètol està girat. Un punt que queda sota la caixa del rètol, o una línia més curta que la seva marca final, no dibuixa res. Les línies de referència es pinten sota els rètols, amb la imatge, a totes les sortides que dibuixen rètols, i segueixen la imatge quan es retalla, s'escala, es reflecteix o es compon a través d'una doble pàgina.
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## Avisos de les plantilles de pàgina
 
 A la resta de la configuració, el motor ignora una clau que no coneix. Les plantilles de pàgina i els estils de rètol, en canvi, es comproven, i cada problema és un avís de configuració a `postext check` i al tauler Revisió del Sandbox. El camp `path` d'aquests avisos és un punter JSON al camp que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quan el camp és heretat, el punter indica la plantilla que el va escriure. Un avís sobre un id o un nom que no existeix proposa a més el nom existent que s'hi assembla més.
 
-Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) és un `unknownConfigValue`, i el paràmetre conserva el valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp.
+Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, el `routing`, les marques d'extrem i el `side` d'un connector, i les marques d'extrem i el `routing` d'una línia de referència) és un `unknownConfigValue`, i el paràmetre conserva el valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp.
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `o
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>Un marc, un grup o un element de decoració està ancorat a <code>'#name'</code> i la plantilla no té cap marc, grup ni element amb aquest nom; o hi ha marcs i grups ancorats entre si en un cicle (també a través d'un grup sense ancoratge propi, que té com a caixa la dels seus marcs). L'ancoratge es llegeix com a <code>'container'</code>, l'àrea.</td>
+      <td>Un marc, un grup o un element de decoració està ancorat a <code>'#name'</code> i la plantilla no té cap marc, grup ni element amb aquest nom; o hi ha marcs i grups ancorats entre si en un cicle (també a través d'un grup sense ancoratge propi, que té com a caixa la dels seus marcs). L'ancoratge es llegeix com a <code>'container'</code>, l'àrea. Un extrem d'un connector que no indica res es dona de la mateixa manera, i aquest extrem es deixa fora.</td>
       <td>Ancora a un marc o a un grup que existeixi, o trenca el cicle ancorant-ne un a l'àrea.</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `o
   </tbody>
 </table>
 
-La versió de la configuració és la 15 des de les plantilles de pàgina (els paquets escrits abans es continuen carregant sense canvis: res del que diu una configuració anterior no canvia de significat).
+Des dels connectors (postext 1.48) la versió de la configuració és la 16; les plantilles de pàgina l'havien portada a la 15. Els paquets escrits abans es continuen carregant sense canvis: res del que diu una configuració anterior no canvia de significat, i un lector anterior als connectors deixa fora els elements de decoració que no coneix, amb un `unknownConfigValue`.
+
+### Avisos de superposició, repetició i mòduls
+
+Aquests avisos surten de la maquetació o del Markdown de la pàgina, no només de la plantilla, així que indiquen una pàgina. Els llisten `postext check` (`--json` porta els seus camps a `data`), el tauler Revisió del Sandbox i els `contentWarnings` del document. Des de postext 1.48.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Avís</th>
+      <th>Causa</th>
+      <th>Solució</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>La tinta d'un marc (les línies, la pestanya o el títol, les imatges) queda sota un altre marc pintat a sobre: amb una <code>layer</code> més alta, o a la mateixa capa però més endavant en l'ordre de la plantilla. Un marc tapa allà on és opac: el fons, la pestanya, les imatges, les línies; un contorn sol no tapa res, i les paraules sobre una imatge no es donen com a avís. Un avís per parella, amb el marc que tapa (<code>coveredBy</code>), l'àrea amagada (<code>overlapMm2</code>) i les primeres paraules o la imatge tapades. Vegeu <a href="/ca/docs/composed-pages#framecovered">Pàgines compostes › frameCovered</a>.</td>
+      <td>Aplica una proposta: la <code>layer</code> del marc que tapa per sota de la del tapat, <code>exclude: 'push'</code> al marc que tapa perquè el text l'envolti, o un <code>move</code> calculat sobre la pàgina. Quan la superposició és volguda (un dibuix sobre el text), posa <code>overlap: 'allow'</code> a qualsevol dels dos marcs.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Un marc sobrepassa el que el conté: el text passa del tall, el fons o les imatges passen de la sang, o qualsevol part seva surt del marc o del grup dins del qual està ancorat (un ancoratge de nou punts a <code>'#name'</code> amb el punt dins d'aquesta caixa). <code>past</code> diu de què surt, i <code>excessMm</code>, quant. Vegeu <a href="/ca/docs/composed-pages#frameoutsidearea">Pàgines compostes › frameOutsideArea</a>.</td>
+      <td>Aplica una proposta: un <code>maxHeight</code> per al marc, un <code>minHeight</code> per al marc dins del qual està ancorat, <code>overflow.continueIn: 'next-page'</code> amb una alçada més petita, o un <code>move</code>. Una insígnia que penja de la seva targeta expressament porta <code>overlap: 'allow'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una graella que repeteix un joc de marcs admet <code>repeat.max</code> elements i la pàgina n'hi dona més. Un avís per cada element de més, al seu <code>slot="…"</code>: l'element va al marc de flux (<code>flowFrame</code>), o després de la pàgina.</td>
+      <td>Augmenta <code>max</code>, treu-lo, o passa els elements de més a una altra pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module&#123;template="…"&#125;</code> que la pàgina no compon: l'id no correspon a cap plantilla (<code>reason: 'unknown'</code>), correspon a una plantilla que no és un mòdul (<code>'notModule'</code>), o la plantilla de la pàgina no té cap grup de mòduls (<code>'noGroup'</code>). El seu contingut va al marc de flux.</td>
+      <td>Corregeix l'id, dona a la plantilla <code>role: 'module'</code>, o afegeix un grup amb <code>modules: true</code> a la plantilla de la pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un bloc de pàgina indica una plantilla de mòdul. Un mòdul es col·loca en el grup de mòduls d'una pàgina, mai com a pàgina: el contingut del bloc es compon al flux, com amb una plantilla desconeguda.</td>
+      <td>Indica una plantilla de pàgina al bloc, i posa-hi el mòdul a dins com a <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> dins d'un altre mòdul. No s'admet: els seus blocs passen a ser del mòdul exterior.</td>
+      <td>Tanca primer el mòdul exterior, o dibuixa el bloc interior com a marcs del mòdul exterior.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>El <code>name="…"</code> d'un mòdul ja el fa servir un altre mòdul de la pàgina (<code>reason: 'taken'</code>) o conté un espai, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code> (<code>'invalid'</code>). El mòdul rep en canvi el nom <code>used</code> (<code>&lt;template&gt;[n]</code>), i els seus marcs s'adrecen amb aquest nom.</td>
+      <td>Dona a cada mòdul de la pàgina un nom propi, fet de lletres, xifres i guionets.</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped` (registre de reajustament).** Un connector amb un extrem en un marc que la pàgina no mostra (plegat, opcional i buit, una targeta més enllà dels elements de la pàgina, un punt de la imatge que el seu marc retalla) deixa fora aquest extrem. No és un avís: el [registre de reajustament](/ca/docs/composed-pages#registre-de-reajustament) de la pàgina l'anota, «connector ramas left out izq (not on the page)», de manera que una pàgina on ha desaparegut una branca es distingeix d'una que s'ha dibuixat tal com estava previst. Per conservar l'extrem, dona contingut a aquell marc, o fes que el connector vagi als marcs que té la pàgina.

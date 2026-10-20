@@ -354,6 +354,33 @@ describe('postext cli', () => {
     expect(r.stderr).toMatch(/frameOverflow.*Frame "a" of template "small" \(en\) is [\d.]+ mm short of its content after free space, text down to 90 %/);
   }, 60_000);
 
+  // #1053: a caption under a picture frame, a tab under a cut-out photo, a
+  // note past its card and text past the trim (the engine's fixture), in
+  // words and, with the frames and fixes, in --json.
+  it('check prints frameCovered and frameOutsideArea with their fixes', () => {
+    const fixture = resolve(import.meta.dir, '..', '..', '..', 'postext', 'src', '__tests__', 'composed', 'fixtures', 'overlap');
+    const r = run(['check', join(fixture, 'overlap.md'), '--config', join(fixture, 'config.json'), '--resources', join(fixture, 'res'), '--offline', '--json'], tmpdir());
+    expect(r.code).toBe(0);
+    type W = { kind: string; message: string; page?: string; data?: Record<string, unknown> };
+    const ws = JSON.parse(r.stdout).warnings as W[];
+    const covered = ws.filter((w) => w.kind === 'frameCovered').map((w) => `${w.data!.frame}<${w.data!.coveredBy}`).sort();
+    expect(covered).toEqual(['card<cutout', 'figure<photo']);
+    const caption = ws.find((w) => w.kind === 'frameCovered' && w.data!.frame === 'figure')!;
+    expect(caption.data).toMatchObject({ template: 'overlaps', fenceIndex: 0, locale: 'en', coveredByPath: '/pageTemplates/0/frames/1' });
+    expect(caption.data!.text).toMatch(/^Rainfall/);
+    // Every move off the caption takes the photo out of the figure it is
+    // anchored inside, so none is offered (#1075); the cut-out over the card
+    // has a clear move.
+    expect((caption.data!.proposals as { kind: string }[]).map((p) => p.kind)).not.toContain('move');
+    const card = ws.find((w) => w.kind === 'frameCovered' && w.data!.frame === 'card')!;
+    expect((card.data!.proposals as { kind: string }[]).map((p) => p.kind)).toContain('move');
+    expect(caption.page).toBe('1');
+    const past = ws.filter((w) => w.kind === 'frameOutsideArea').map((w) => `${w.data!.frame}>${w.data!.past}`).sort();
+    expect(past).toEqual(['note>frame', 'strap>trim']);
+    expect(r.stderr).toMatch(/frameCovered.*Frame "card" of template "overlaps" \(en\) lies under frame "cutout"/);
+    expect(r.stderr).toMatch(/frameOutsideArea.*Frame "note" of template "overlaps" \(en\) runs [\d.]+ mm past the frame "card" it is anchored inside/);
+  }, 60_000);
+
   // #943: a magazine kept as one chapter file per article. A story jumps from
   // its file into a page fence of a later file; the CLI lays the book out
   // chapter by chapter and hands the rest to the chapter that has the page.

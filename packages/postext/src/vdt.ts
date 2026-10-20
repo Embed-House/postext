@@ -285,6 +285,39 @@ export interface VDTChip {
   sourceOffsets?: number[];
 }
 
+/**
+ * An inline symbol (`:icon[alt]{…}`, #1058) as painted: carried by a
+ * `'swatch'` segment (`swatch.icon`), whose `width` is its advance. The
+ * symbol's box is `widthPx` × `heightPx`, standing on the baseline,
+ * `insetPx` in from the segment's left edge (a legend's symbol centred in
+ * its column). A painter that does not know icons paints a swatch's empty
+ * square in its place.
+ */
+export interface VDTInlineIcon {
+  kind: 'resource' | 'glyph' | 'line';
+  /** What it stands for (may be empty). */
+  alt: string;
+  widthPx: number;
+  heightPx: number;
+  /** From the segment's left edge to the box's; absent = 0. */
+  insetPx?: number;
+  /** Resolved colour (hex): a glyph's or a line's ink, a picture's tint.
+   *  Absent: the text's colour (a picture keeps its own). */
+  color?: string;
+  /** `kind: 'resource'`: the resource and its picture. A resource that is
+   *  not known has no `fileId`: an empty outline is painted. */
+  resourceId?: string;
+  fileId?: string;
+  format?: string;
+  svg?: boolean;
+  /** `kind: 'glyph'`: the characters and the CSS font they are set in. */
+  glyph?: string;
+  fontString?: string;
+  /** `kind: 'line'`: the stroke's pattern and width. */
+  line?: 'solid' | 'dashed' | 'dotted';
+  strokePx?: number;
+}
+
 export interface VDTLineSegment {
   kind: 'text' | 'space' | 'math' | 'swatch' | 'chip';
   text: string;
@@ -312,7 +345,7 @@ export interface VDTLineSegment {
    *  a square of `width` px filled with `color` (a hex; absent when the
    *  colour did not resolve — the square is then an empty outline), sitting
    *  on the baseline and outlined in the text colour. */
-  swatch?: { color?: string };
+  swatch?: { color?: string; icon?: VDTInlineIcon };
   /** Present when `kind === 'chip'`: an inline chip (`:chip[…]`), painted
    *  as a box with its own text runs. The segment's `text` is the one-char
    *  plain-text placeholder; the words live in `chip.runs`. */
@@ -1574,6 +1607,15 @@ export interface VDTFigureLabel {
    *  quotes left out): what a viewer rewrites to move a label placed by
    *  percentages (#931). */
   atSource?: { start: number; end: number };
+  /** The inline symbols of its text (`:icon[alt]{…}`, #1058): the index
+   *  of each one's placeholder in `text` and what it stands for, so the
+   *  outputs that read a label as words read `[alt]` in its place (none
+   *  when `alt` is empty). Absent when it has none. */
+  icons?: { at: number; alt: string }[];
+  /** The label's `leader` attribute (#1057): `true` for `leader` (any
+   *  value but `none`), `false` for `leader="none"`. Absent: as its anchor
+   *  and style say. */
+  leader?: boolean;
   /** Where the label is painted: the upright box round its text (and
    *  background), in the coordinates of the block's own frame (a page's
    *  flow, or the frame of a composed page its block stands in), stamped
@@ -1612,9 +1654,15 @@ export interface VDTFigureLabelLayout {
   color: string;
   /** The glyphs stroked `2 × widthPx` wide in `color` under the text. */
   halo?: { color: string; widthPx: number };
-  /** A fill behind the text: `rect` is the box grown by the style's
-   *  padding. */
-  background?: { color: string; rect: BoundingBox };
+  /** A plate behind the text: `rect` is the box grown by the style's
+   *  padding, filled with `color` and outlined by `border` (#1058), its
+   *  corners rounded by `radiusPx`. A plate has a fill, a border or both. */
+  background?: { color?: string; rect: BoundingBox; border?: { color: string; widthPx: number }; radiusPx?: number };
+  /** Set in a `kind: 'legend'` label style (#1058): each line is a row of
+   *  the key, the first symbol of each row hung in a column as wide as the
+   *  widest (`VDTInlineIcon.insetPx`). Read row by row (a list in the
+   *  tagged PDF). */
+  legend?: true;
   /** The scale the label was set at to fit its width (`minScale` at
    *  least); absent at 1. */
   scale?: number;
@@ -1637,6 +1685,31 @@ export interface VDTFigureLabelLayout {
    *  paints the layout as {@link unmirrorLabelLayout} gives it back and
    *  the label reads down its columns as on any page. */
   mirrored?: true;
+  /** The line from the label's box to its anchor's point (#1057): drawn
+   *  with the labels, under them, by {@link figureLabelLeaderPath}. */
+  leader?: VDTFigureLabelLeader;
+}
+
+/**
+ * A figure label's leader (#1057, DESIGN §12.4). The point is in the frame
+ * of the label's `x` / `y` (px from the top-left corner of the picture's
+ * body); the line leaves the label's box (its plate, else its lines' box,
+ * `gapPx` out) from the middle of the side that faces the point, so it
+ * never crosses the label's own words, and is laid when painted, so a label
+ * moved off a spread's spine or mirrored keeps its leader on the point.
+ */
+export interface VDTFigureLabelLeader {
+  x: number;
+  y: number;
+  routing: 'straight' | 'elbow';
+  stroke: VDTPathStroke;
+  /** At the label's end. Absent: none. */
+  startCap?: 'dot' | 'arrow';
+  /** At the point. Absent: none. */
+  endCap?: 'dot' | 'arrow';
+  capSizePx: number;
+  /** Room between the label's box and the line. */
+  gapPx: number;
 }
 
 /**
@@ -2273,9 +2346,20 @@ export interface VDTTextDots {
 /** Rounded-rectangle box style resolved to absolute px / hex values. */
 export interface VDTDesignBoxStyle {
   backgroundColor?: string;
+  /** The border's colour; with {@link borderSides}, the colour of the
+   *  first side that has one (read by checks that want one colour). */
   borderColor?: string;
+  /** The border's width; with {@link borderSides}, the widest side. */
   borderWidthPx: number;
+  /** The corners' radius; with {@link borderRadiiPx}, the largest. */
   borderRadiusPx: number;
+  /** One radius per corner, top-left, top-right, bottom-right,
+   *  bottom-left (#1059). Absent: `borderRadiusPx` on every corner. */
+  borderRadiiPx?: [number, number, number, number];
+  /** The border per side (#1059), `null` for a side without one. Absent:
+   *  `borderColor` / `borderWidthPx` on every side. The painters read it
+   *  over those two. */
+  borderSides?: Record<'top' | 'right' | 'bottom' | 'left', { color: string; widthPx: number } | null>;
 }
 
 /** Text block rendered inside a design slot (header / footer / heading). */
@@ -2440,11 +2524,80 @@ export interface VDTDesignImageBlock extends VDTDesignBlockOrigin {
   tint?: string;
 }
 
+/** One command of a {@link VDTDesignPathBlock}'s outline, in absolute page
+ *  px (y down): move, line, cubic (`C`, two control points) and quadratic
+ *  (`Q`, one) Bézier curves, and close. */
+export type VDTPathCommand =
+  | { op: 'M' | 'L'; x: number; y: number }
+  | { op: 'C'; x1: number; y1: number; x2: number; y2: number; x: number; y: number }
+  | { op: 'Q'; x1: number; y1: number; x: number; y: number }
+  | { op: 'Z' };
+
+/** How a {@link VDTDesignPathBlock}'s outline is stroked: colour (`#rrggbb`
+ *  or `#rrggbbaa`), width in px, dash pattern in px (on, off, …), line
+ *  caps and joins. Absent cap: `'butt'`; absent join: `'miter'`. */
+export interface VDTPathStroke {
+  color: string;
+  widthPx: number;
+  dash?: number[];
+  cap?: 'butt' | 'round' | 'square';
+  join?: 'miter' | 'round' | 'bevel';
+}
+
+/** A mark at a point of a path (the end of a connector): a filled dot
+ *  `sizePx` across centred on the point, or a filled arrowhead whose tip is
+ *  the point, `sizePx` long, pointing along `angle` (see
+ *  `pathMarkerOutline`). */
+export interface VDTPathMarker {
+  kind: 'dot' | 'arrow';
+  x: number;
+  y: number;
+  /** Radians, the direction the line arrives in (arrows point along it). */
+  angle: number;
+  sizePx: number;
+  color: string;
+}
+
+/** A vector shape a design draws (DESIGN §12.1, #1055): lines, curves and
+ *  closed outlines, filled and/or stroked, with dots or arrowheads at
+ *  points of it. Connectors, path elements and the shapes a rounded
+ *  rectangle cannot draw paint through it. Coordinates are absolute page
+ *  px like every other design block's; `bbox` holds the whole ink (stroke
+ *  and markers included), for hit tests and clips. Decoration, never
+ *  content: a tagged PDF marks it a Layout artifact, the HTML hides it from
+ *  assistive technology, the contrast check does not read it. */
+export interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
+  kind: 'path';
+  bbox: BoundingBox;
+  subpaths: VDTPathCommand[][];
+  /** Fill colour; absent = no fill. */
+  fill?: string;
+  /** Absent: `'nonzero'`. */
+  fillRule?: 'nonzero' | 'evenodd';
+  /** Absent = no stroke. */
+  stroke?: VDTPathStroke;
+  markers?: VDTPathMarker[];
+  /** The part of a box's shape the path paints (#1059: a card joined to
+   *  its tab): `'fill'` its background, which the contrast check reads as
+   *  the ground of the text over it; `'border'` its border, drawn as a
+   *  fill {@link borderWidthPx} wide, which part palettes recolour as the
+   *  box's border and preflight checks as a rule. Absent on other paths. */
+  boxPart?: 'fill' | 'border';
+  /** The widest side of a `boxPart: 'border'` path. */
+  borderWidthPx?: number;
+  /** A connector painted over the frames (#1076, `DesignConnectorElement.over`):
+   *  the block stays in its decoration slot, but the backends paint it
+   *  after every frame of the page (`composedPaintOrder`'s `'over'` item),
+   *  not with the slot's other blocks. Absent: painted with the slot. */
+  over?: true;
+}
+
 export type VDTDesignBlock =
   | VDTDesignTextBlock
   | VDTDesignRuleBlock
   | VDTDesignBoxBlock
-  | VDTDesignImageBlock;
+  | VDTDesignImageBlock
+  | VDTDesignPathBlock;
 
 export interface VDTDesignSlot {
   bbox: BoundingBox;
@@ -2623,7 +2776,10 @@ export interface VDTComicBalloon {
 /** What happened to a frame while its page was composed (DESIGN §5.5),
  *  against the box its template declares (`VDTFrame.declaredRect`):
  *  `grew` / `resized` (smaller) and `moved` from groups and anchors (#856),
- *  `overflow` (#855); the reflow ladder (#858) adds the rest. */
+ *  `overflow` (#855); the reflow ladder (#858) adds the rest.
+ *  `connectorDropped` (#1056, information): a connector of the decoration
+ *  (`cause`, its id) left out its end on `frame`, a box the page does not
+ *  show (collapsed, empty and optional, or missing). */
 export type ReflowEventKind =
   | 'grew'
   | 'moved'
@@ -2631,7 +2787,10 @@ export type ReflowEventKind =
   | 'imageScaled'
   | 'textScaled'
   | 'continued'
-  | 'overflow';
+  | 'overflow'
+  | 'covered'
+  | 'outside'
+  | 'connectorDropped';
 
 export interface ReflowEvent {
   /** The frame's name in its template. */
@@ -2658,6 +2817,13 @@ export interface ReflowEvent {
    *  position in the book. `toPage` and `toFrame` are there once the host
    *  has both chapters. */
   toChapter?: number;
+  /** `covered` (#1053): how much of the frame's ink lies under `cause`, the
+   *  frame painted over it, in mm². */
+  areaMm2?: number;
+  /** `outside` (#1053): what the frame runs past, `toMm` being by how much
+   *  (its largest side): the trim, the bleed, or the frame or group it is
+   *  anchored inside (`'#name'`). */
+  past?: 'trim' | 'bleed' | `#${string}`;
 }
 
 /** One frame of a composed page, in sheet coordinates. Its box and its
@@ -2673,8 +2839,12 @@ export interface VDTFrame {
    *  the page before is named by the frame of the fence's own page that
    *  first sent it on (`cp0:dinero~1`). */
   id: string;
-  /** The frame's name in its template (the slot it receives). */
+  /** The frame's name in its template (the slot it receives); for an
+   *  instance of a frame a grid repeats (#1061), `<frame>[n]`. */
   name: string;
+  /** An instance of a frame a grid repeats (#1061): the template's frame
+   *  (`configPath` is its entry) and the item, 1-based. */
+  repeat?: { frame: string; item: number };
   /** The frame's box, label tab included, before any turn. */
   rect: { x: number; y: number; width: number; height: number };
   /** The box the template declares for the frame (its fixed size, or its
@@ -2826,12 +2996,20 @@ export interface VDTComposedPage {
   /** In template order. */
   frames: VDTFrame[];
   /** The template's decoration, laid with the frames' final boxes
-   *  (`buildHeadersAndFooters`); painted at layer 0. */
+   *  (`buildHeadersAndFooters`); painted at layer 0, its path blocks marked
+   *  `over` after every frame (#1076). */
   decoration?: VDTDesignSlot;
   /** What the layout changed (DESIGN §5.5). */
   log: ReflowEvent[];
   /** JSON pointer of the template (`/pageTemplates/3`). */
   configPath: string;
+  /** The modules the page lays in its modules group (#1062), in order:
+   *  the instance name its frames are scoped by (`<name>.<frame>`), the
+   *  module template and its pointer, and the module's box (page px, in
+   *  the frame the frames are in) when it was laid here (one that went on
+   *  whole has none). `resolvePageTemplate(config, template, { modules })`
+   *  gives the template the page was laid with. */
+  modules?: { name: string; template: string; configPath: string; rect?: { x: number; y: number; width: number; height: number } }[];
   /** The page fence, opening line to closing fence (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
@@ -3078,8 +3256,11 @@ export interface ConfigWarning {
    *  lettering's `writingMode`, `textTransform`, `dropFinalStop` and
    *  `joinSameSpeaker`, a balloon style's `shape`, `tail`, `target`,
    *  `position`, `align` and `textTransform` — the value it resolved to:
-   *  the default, or that of the style it is laid over), and `suggestion`
-   *  the word it is closest to, when one is close.
+   *  the default, or that of the style it is laid over; a box style's
+   *  `label.icon.kind`, `placement` and `scale`, #1054 — the kind, `beside`,
+   *  `1`), and `suggestion` the word it is closest to, when one is close.
+   *  A key a box style's `label.icon` does not have is an
+   *  `unknownConfigKey` too.
    *  `unknownNumerals`: a `numerals` value that is not `'auto'`,
    *  `'latn'`, `'arab'` or `'arabext'`; the digits follow the document
    *  language, and `used` is the digit system that gives.
@@ -3194,6 +3375,31 @@ export type FrameOverflowProposal =
   | { kind: 'useTemplate'; value: string; sourceStart?: number; sourceEnd?: number }
   | { kind: 'shortenText'; value: number; sourceStart?: number; sourceEnd?: number };
 
+/** A change that would uncover a frame's ink (#1053, `frameCovered`):
+ *  data, as {@link FrameOverflowProposal}. `layer` paints the covering
+ *  frame (`coveredBy`) under the covered one; `exclude` makes the covering
+ *  frame push the covered frame's text round it; `move` is the smallest
+ *  shift of the covering frame along one axis that clears what it covers,
+ *  in mm (data only: no config path says where the frame is). */
+export type FrameCoverProposal =
+  | { kind: 'layer'; path: string; value: number }
+  | { kind: 'exclude'; path: string; value: 'push' }
+  | { kind: 'move'; frame: string; dxMm: number; dyMm: number };
+
+/** A change that would bring a frame back inside what it runs past
+ *  (#1053, `frameOutsideArea`): `maxHeight` of the frame itself (the room
+ *  it has there, in whole millimetres; not for a frame its placement holds
+ *  by its foot), `minHeight` of the frame it is anchored inside (`frame`),
+ *  for a frame of text held to a smaller height `overflow.continueIn:
+ *  'next-page'`, so what no longer fits goes on instead of shrinking, and
+ *  `move`, the shift that brings it in when it runs past one side of an
+ *  axis (data only). */
+export type FrameOutsideProposal =
+  | { kind: 'maxHeight'; path: string; value: Dimension }
+  | { kind: 'minHeight'; path: string; value: Dimension; frame: string }
+  | { kind: 'continueNextPage'; path: string; value: 'next-page' }
+  | { kind: 'move'; frame: string; dxMm: number; dyMm: number };
+
 /** The kinds of {@link ConfigWarning} a page template gives (#853). */
 export type PageTemplateWarningKind =
   | 'templateDuplicate'
@@ -3279,6 +3485,29 @@ export type ContentWarning = ContentWarningBase & (
    *  names its slot, it takes no heading, and (the flow frame) no content
    *  is left without a slot. A frame marked `optional` is not reported. */
   | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
+  /** A grid that repeats a frame set (#1061) holds `max` items, and the
+   *  page gives it more: item `item` (and every one after it) goes to the
+   *  flow frame (`flowFrame`, when the template has one), or after the
+   *  page. Points at the item's `slot="…"`. */
+  | { kind: 'repeatOverflow'; template: string; group: string; frame: string; item: number; max: number; flowFrame?: string; fenceIndex: number }
+  /** A `:::module{template="…"}` of a composed page (#1062) that the page
+   *  does not lay: `module` names no template (`'unknown'`), a template
+   *  whose `role` is not `'module'` (`'notModule'`), or the page's template
+   *  has no modules group (`'noGroup'`). Its content goes to the flow
+   *  frame. Points at its `template="…"`. */
+  | { kind: 'moduleUnknown'; template: string; module: string; name: string; reason: 'unknown' | 'notModule' | 'noGroup'; fenceIndex: number }
+  /** A page fence names a module template (#1062): a module is laid in a
+   *  page's modules group, never as a page. The fence's content is set in
+   *  the flow. Points at its `template="…"`. */
+  | { kind: 'moduleAsPage'; template: string; fenceIndex: number }
+  /** A `:::module` inside another module (#1062): not supported; its
+   *  blocks are the outer module's. Points at its `template="…"`. */
+  | { kind: 'moduleNested'; template: string; module: string; fenceIndex: number }
+  /** A module's `name="…"` (#1062) that another module of the page took
+   *  (`'taken'`), or that holds a space, `.`, `#`, `[` or `]`
+   *  (`'invalid'`): the module is named `used` (`<template>[n]`). Its
+   *  slots are addressed under that name. */
+  | { kind: 'moduleNameRejected'; template: string; module: string; name: string; used: string; reason: 'taken' | 'invalid'; fenceIndex: number }
   /** A three-colon `:::page` carries `template=`: a composed page needs
    *  four colons (`::::page{template=…}` … `::::`). It is read as a comic
    *  page, as before. */
@@ -3309,6 +3538,53 @@ export type ContentWarning = ContentWarningBase & (
     /** Changes that would make the content fit, with their values worked
      *  out from the shortfall (each tried on the page where it can be). */
     proposals: FrameOverflowProposal[];
+  }
+  /** Ink of a frame lies under another frame painted over it (#1053): a
+   *  later `layer`, or the same layer later in template order. A frame
+   *  covers where it is opaque: its fill (the callout style's background,
+   *  `look.background`, a label tab, a stripe), its pictures and its text;
+   *  a frame with no fill covers nothing between its pictures and lines. What
+   *  is covered: the frame's lines (their boxes), its tab and title, its
+   *  pictures (by a fill or a picture: words over a picture hide a hairline
+   *  of it). `text` is the first words covered (40 characters), `picture`
+   *  the resource id of the first picture covered, `overlapMm2` the area
+   *  covered. One warning per pair of frames; `overlap: 'allow'` on either
+   *  frame leaves the pair out. The source range is the covered frame's
+   *  content. */
+  | {
+    kind: 'frameCovered';
+    template: string;
+    frame: string;
+    coveredBy: string;
+    fenceIndex: number;
+    configPath: string;
+    /** The covering frame's config path. */
+    coveredByPath: string;
+    overlapMm2: number;
+    text?: string;
+    picture?: string;
+    locale?: string;
+    proposals: FrameCoverProposal[];
+  }
+  /** A frame's ink runs past what holds it (#1053): its text past the trim,
+   *  its fill or pictures past the bleed (`past: 'trim' | 'bleed'`), or
+   *  any of it past the frame or group it is anchored inside (a nine-point
+   *  anchor on `'#name'` whose point lies in that box: `past: 'frame' |
+   *  'group'`, `target` its name). What runs past is cut at the trim, and
+   *  reads as escaping its card. `excessMm` is the largest overrun, `sides`
+   *  each side's. `overlap: 'allow'` on the frame leaves it out. */
+  | {
+    kind: 'frameOutsideArea';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    configPath: string;
+    past: 'trim' | 'bleed' | 'frame' | 'group';
+    target?: string;
+    excessMm: number;
+    sides: { top?: number; right?: number; bottom?: number; left?: number };
+    locale?: string;
+    proposals: FrameOutsideProposal[];
   }
   /** A frame's content went on to other pages (#859) as many times as a
    *  composed page may add (`pages`, 16) and still does not fit: what is
@@ -3350,8 +3626,12 @@ export type ContentWarning = ContentWarningBase & (
   /** A `::label[…]{at="…"}` of a `:::figure` (#860) names an anchor its
    *  resource does not have: the label is not drawn (the reflowable
    *  output still lists it). `known` lists the resource's anchor ids. The
-   *  source range is the label's text. */
-  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; locale?: string; labelId?: string }
+   *  source range is the label's text. With `connector` (#1057), a
+   *  connector of a composed page's decoration ends at that anchor of the
+   *  picture of `frame`, which lacks it: that end is left out; there is no
+   *  source range, `resourceId` is the frame's first picture (empty when
+   *  it holds none). */
+  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; locale?: string; labelId?: string; connector?: string; frame?: string }
   /** An anchor of a figure's resource names a label `style` but no
    *  `::label` of the figure stands at it in this locale (#860): a note,
    *  the map lacks that word in this edition. The source range is the

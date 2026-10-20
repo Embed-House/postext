@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'pt',
   lastUpdated: '2026-10-20',
   readingTime: '13 min',
-  order: 38,
+  order: 39,
   parent: 'sandbox',
   plainSummary: "Esta página reúne o que o Sandbox oferece para as páginas compostas, aquelas cujo texto é despejado em blocos dispostos por um modelo. Os blocos de um modelo são desenhados e movidos direto na página, e os estilos de bloco ficam organizados numa biblioteca. O painel Verificações avisa, em cada idioma do livro, quais páginas compostas têm um texto que não cabe, e oferece botões que corrigem um bloco. Num livro feito antes das páginas compostas, o texto das páginas pode ser levado para o Markdown de uma só vez.",
 };
@@ -33,7 +33,7 @@ Esta página reúne as partes dos painéis Design e Verificações que tratam da
 
 **Uma matéria que salta para outro capítulo.** Em um livro com um arquivo de capítulo por matéria, uma matéria cujo bloco a envia a `page:<id>` continua no capítulo que tem essa página (desde o postext 1.41; veja [Páginas compostas › Saltar para uma página posterior](/pt/docs/composed-pages#saltar-para-uma-página-posterior)). A visualização Canvas, o Folio e as abas PDF e EPUB compõem o resto na página desse capítulo, com os números de página do livro nas marcas. O registro de diagramação de um capítulo guarda as matérias que ele envia; assim, o capítulo que tem a página é diagramado de novo quando a matéria muda, e não quando muda um capítulo intermediário. Um clique nas palavras que vieram de outro capítulo põe o cursor no Markdown da matéria, e o caminho sob a visualização indica a página posterior quando o cursor está nesse texto. A visualização de um só capítulo mostra apenas o que as próprias páginas dele contêm: o resto aparece com o capítulo que tem a página.
 
-**As palavras próprias de uma figura.** Um clique numa legenda ou numa nota que a própria figura escreve leva o cursor à linha `::caption[…]` ou `::note[…]`, ou ao atributo da linha de abertura, na letra clicada (veja [Páginas compostas › As palavras próprias de uma figura](/pt/docs/composed-pages#as-palavras-próprias-de-uma-figura)).
+**As palavras próprias de uma figura.** Um clique numa legenda ou numa nota que a própria figura escreve leva o cursor à linha `::caption[…]` ou `::note[…]`, ou ao atributo da linha de abertura, na letra clicada (veja [Páginas compostas › As palavras próprias de uma figura](/pt/docs/composed-pages-figures#as-palavras-próprias-de-uma-figura)).
 
 
 ## Estilos de bloco
@@ -63,6 +63,9 @@ A seção reúne:
 - *Rótulo numa âncora inexistente* e *Âncora sem rótulo* (`labelAnchorUnknown`, `anchorUnlabelled`), junto ao bloco que compõe a figura;
 - *Rótulo mais largo que a medida* e *Rótulos sobrepostos* (`labelOverflow`, `labelOverlap`), junto ao mesmo bloco: os rótulos de cada edição são medidos com as próprias palavras, e uma língua de palavras mais longas transborda onde outra não. Um rótulo que invade uma das zonas `avoid` da imagem, desenhadas no modo **Zonas a evitar** das marcas da imagem, também aparece aqui; num SVG, **Símbolos do desenho**, nesse mesmo modo, acrescenta uma zona sobre cada elemento do desenho cujo id começa por um prefixo dado ou que tem uma classe dada (desde o postext 1.43);
 - *Slot sem bloco*, *Bloco vazio*, *Modelo de página desconhecido*, *Página composta com três sinais de dois-pontos* e *O atributo spread não condiz com o modelo* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Bloco coberto por outro bloco* e *O bloco passa do seu limite* (`frameCovered`, `frameOutsideArea`), com as palavras ou a imagem cobertas, a área escondida ou o quanto passa, e as correções em um clique; ao selecionar um deles, os dois blocos, ou o bloco e a caixa que ele ultrapassa, ficam marcados no canvas (desde o postext 1.48);
+- *Mais itens do que a grade comporta* (`repeatOverflow`), junto à marcação (desde o postext 1.48);
+- *Módulo desconhecido*, *Módulo composto como página*, *Módulo dentro de um módulo* e *Nome de módulo não aceito* (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`), junto à marcação (desde o postext 1.48);
 - *Bloco do sumário dividido entre colunas* (`tocGroupSplit`);
 - os avisos dos próprios modelos (um estilo ou uma âncora de bloco que não existe, tamanhos que se contradizem, uma cadeia que volta sobre si mesma) e o texto de design que guarda conteúdo do livro (`contentInConfig`).
 

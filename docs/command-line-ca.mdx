@@ -5,9 +5,9 @@ export const metadata = {
   sidebarTitle: "Línia d'ordres",
   description: "Un sol executable autònom, per a macOS, Linux i Windows, que converteix un llibre .postext, una carpeta de llibre o fitxers Markdown solts en PDF, HTML, EPUB, imatges de pàgina i Word. També crea paquets i revisa llibres, i pot respondre en JSON per a scripts i agents",
   lang: 'ca',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
-  order: 45,
+  order: 46,
   plainSummary: "Aquesta pàgina és per a qui vol fer llibres amb Postext des d'un terminal en lloc del web. Baixes un sol fitxer per al teu ordinador i l'executes, sense instal·lar res més. Li dones el teu llibre, o uns quants fitxers de text, i en fa un PDF, una pàgina web, un llibre electrònic, imatges de les pàgines o un document de Word. També pot revisar un llibre per trobar-hi problemes i reunir tots els fitxers del llibre en un de sol. També el poden fer servir altres programes i els assistents d'intel·ligència artificial, perquè pot respondre en un format que llegeixen sense dificultat.",
 };
 
@@ -322,7 +322,7 @@ capçalera o disseny de part, amb el camí de cada text: passa aquest text al
 Markdown, o afegeix el títol o el nom de l'editorial a
 `checks.contentInConfig.allow`.
 
-En un llibre amb plantilles de pàgina, `check` també informa del text que no cap al marc (`frameOverflow`, amb els passos que ha provat l'escala de reajustament i els canvis que ho arreglarien), d'una història que ocupa més pàgines de les que un marc pot afegir (`frameContinuationLimit`), d'un salt a una pàgina que no ve a continuació (`continueTargetMissing`) i dels rètols de figura que no es poden dibuixar o que se superposen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Després dels avisos imprimeix una línia `reflow` per cada pàgina composta amb esdeveniments, i `--json` inclou com a dades els passos, les propostes i el registre de reajustament. Vegeu [Pàgines compostes › Avisos](/ca/docs/composed-pages#avisos) i [Registre de reajustament](/ca/docs/composed-pages#registre-de-reajustament).
+En un llibre amb plantilles de pàgina, `check` també informa del text que no cap al marc (`frameOverflow`, amb els passos que ha provat l'escala de reajustament i els canvis que ho arreglarien), d'una història que ocupa més pàgines de les que un marc pot afegir (`frameContinuationLimit`), d'un salt a una pàgina que no ve a continuació (`continueTargetMissing`), dels rètols de figura que no es poden dibuixar o que se superposen (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`), dels marcs que queden amagats sota uns altres marcs o que sobrepassen la seva vora (`frameCovered`, `frameOutsideArea`), de més targetes de les que cap en una retícula (`repeatOverflow`) i dels mòduls que una pàgina no pot compondre (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`). Després dels avisos imprimeix una línia `reflow` per cada pàgina composta amb esdeveniments, i `--json` inclou com a dades els passos, les propostes i el registre de reajustament. Vegeu [Pàgines compostes › Avisos](/ca/docs/composed-pages#avisos) i [Registre de reajustament](/ca/docs/composed-pages#registre-de-reajustament).
 
 ### build i --watch
 

@@ -14,6 +14,7 @@ import { preflightDetail, preflightTitle } from '../print/preflightText';
 import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { frameOverflowDetail } from '../warnings/frameOverflowText';
+import { frameCoveredDetail, frameOutsideDetail, repeatOverflowDetail } from '../warnings/frameOverlapText';
 import { localNumber } from '../viewport/composed/reflowText';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
@@ -100,6 +101,13 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'frameOverflow':
     case 'frameContinuationLimit':
     case 'continueTargetMissing':
+    case 'frameCovered':
+    case 'frameOutsideArea':
+    case 'repeatOverflow':
+    case 'moduleUnknown':
+    case 'moduleAsPage':
+    case 'moduleNested':
+    case 'moduleNameRejected':
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
@@ -299,6 +307,20 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameContinuationLimitTitle;
     case 'continueTargetMissing':
       return labels.warningsContinueTargetMissingTitle;
+    case 'frameCovered':
+      return labels.warningsFrameCoveredTitle;
+    case 'frameOutsideArea':
+      return labels.warningsFrameOutsideTitle;
+    case 'repeatOverflow':
+      return labels.warningsRepeatOverflowTitle;
+    case 'moduleUnknown':
+      return labels.warningsModuleUnknownTitle;
+    case 'moduleAsPage':
+      return labels.warningsModuleAsPageTitle;
+    case 'moduleNested':
+      return labels.warningsModuleNestedTitle;
+    case 'moduleNameRejected':
+      return labels.warningsModuleNameRejectedTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
     case 'labelAnchorUnknown':
@@ -641,6 +663,24 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
     case 'frameOverflow':
       // The steps the reflow ladder tried and what would make it fit (#858).
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOverflowDetail(payload, labels, locale)}`;
+    case 'frameCovered':
+      // Ink under a frame painted over it, and the fixes (#1053).
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameCoveredDetail(payload, labels, locale)}`;
+    case 'frameOutsideArea':
+      return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOutsideDetail(payload, labels, locale)}`;
+    case 'repeatOverflow':
+      return `${payload.frame}[${payload.item}] — ${repeatOverflowDetail(payload, labels)}`;
+    case 'moduleUnknown':
+      // A :::module block that is not laid (#1062, #1065).
+      if (payload.reason === 'noGroup') return labels.warningsModuleNoGroupDetail.replace('__template__', payload.template).replace('__name__', payload.name);
+      if (payload.reason === 'notModule') return labels.warningsModuleNotModuleDetail.replace('__module__', payload.module);
+      return payload.module === '' ? labels.warningsModuleNoTemplateDetail : labels.warningsModuleUnknownDetail.replace('__module__', payload.module);
+    case 'moduleAsPage':
+      return labels.warningsModuleAsPageDetail.replace('__template__', payload.template);
+    case 'moduleNested':
+      return labels.warningsModuleNestedDetail.replace('__module__', payload.module);
+    case 'moduleNameRejected':
+      return (payload.reason === 'taken' ? labels.warningsModuleNameTakenDetail : labels.warningsModuleNameInvalidDetail).replace('__name__', payload.name).replace('__used__', payload.used);
     case 'continueTargetMissing':
       return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
         .replace('__page__', String(payload.page))

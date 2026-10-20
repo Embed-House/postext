@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'الإعدادات: الإطارات',
   sidebarTitle: 'الإطارات',
-  description: 'أنماط مسمّاة لإطارات :::callout: الحدّ والخلفية والشريط والعنوان والأيقونة والعلامة الخارجية ولسان التسمية؛ والعبارات المرقّمة كالمبرهنات؛ والتنسيق الطباعي داخل الإطار؛ والإطارات التي تنقسم بين الصفحات؛ والتصاميم المرسومة داخل الإطار',
+  description: 'أنماط مسمّاة لإطارات :::callout: الحدّ والخلفية والشريط والعنوان والأيقونة والعلامة الخارجية ولسان التسمية؛ وأشكال الإطار بنصف قطر لكل زاوية وحدّ لكل جانب وألسنة موصولة به؛ والعبارات المرقّمة كالمبرهنات؛ والتنسيق الطباعي داخل الإطار؛ والإطارات التي تنقسم بين الصفحات؛ والتصاميم المرسومة داخل الإطار',
   lang: 'ar',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '26 دقيقة',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>، <code>#cccccc</code>، <code>0.5pt</code></td>
-      <td>حدّ الإطار، يُرسم داخل حافته كما يُرسم حدّ عنصر الصندوق (انظر <a href="/ar/docs/configuration-headers-footers#عناصر-الصندوق">عناصر الصندوق</a>).</td>
+      <td>حدّ الإطار، يُرسم داخل حافته كما يُرسم حدّ عنصر الصندوق (انظر <a href="/ar/docs/configuration-headers-footers#عناصر-الصندوق">عناصر الصندوق</a>). ومنذ postext 1.48 يعطي <code>sides</code> كل جانب (<code>top</code> و<code>right</code> و<code>bottom</code> و<code>left</code>) قيمه الخاصة <code>&#123; enabled?, color?, width? &#125;</code> فوق قيم الحدّ كله: خط فوق الإطار وحده، أو أسفل أثقل (انظر <a href="#الزوايا-والجوانب-والألسنة-الموصولة">الزوايا والجوانب والألسنة الموصولة</a>).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>نصف قطر زوايا الخلفية / الحدّ (لا يتجاوز نصف عرض الإطار ونصف ارتفاعه). ويتبعه الشريط: في الإطار مستدير الزوايا يُقصّ الشريط على حدود الإطار المستديرة، كما تقصّ CSS الخاصية <code>border-left</code> على <code>border-radius</code>. ويحتفظ لسان <code>label</code> بزوايا قائمة.</td>
+      <td>نصف قطر زوايا الخلفية / الحدّ (لا يتجاوز نصف عرض الإطار ونصف ارتفاعه). ويتبعه الشريط: في الإطار مستدير الزوايا يُقصّ الشريط على حدود الإطار المستديرة، كما تقصّ CSS الخاصية <code>border-left</code> على <code>border-radius</code>. ويحتفظ لسان <code>label</code> بزوايا قائمة، إلا إذا كان موصولًا بالإطار. ومنذ postext 1.48 يأخذ نصف قطر لكل زاوية، والزاوية التي لا يذكرها الكائن قائمة: إطار مستدير عند زاويتيه العلويتين وحدهما.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -198,7 +198,7 @@ The glass stays hot for an hour after the flame is out.
       <td><code>label</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
       <td>غير محدَّد (بلا لسان)</td>
-      <td>لسان على الحافة العليا للإطار يطبع السمة <code>label</code> المكتوبة في سطر الفتح: رقم الإطار المرقّم («BOX 1-1»). يلتصق بالزاوية <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>، أو <code>'top-start'</code> / <code>'top-end'</code> بحسب اتجاه الإطار نفسه، كما في <code>'start'</code> / <code>'end'</code> للشريط)، بإزاحة داخلية قدرها <code>inset</code>، ويرتفع <code>offset</code> فوق أعلى الإطار (وهذه المساحة جزء من الكتلة، فوق <code>marginTop</code>، فيحتفظ بها اللسان في رأس العمود أيضًا)، ويبلغ ارتفاعه <code>height</code> مع <code>paddingX</code> على جانبي النص، ويمكن أن يكون بجانبه مورد أيقونة <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>، في الجهة البعيدة عن الزاوية) وخطًا <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) على طول الحافة العليا من الزاوية البعيدة حتى اللسان. القيم الافتراضية: خط العناوين، حجم النص، <code>700</code>، أبيض على اللون الرئيسي، ارتفاع <code>1.4em</code>، حشوة <code>0.6em</code>، بلا ارتفاع فوق الإطار ولا إزاحة داخلية، وصورة عرضها <code>1em</code> على بعد <code>0.3em</code> من الكلمات. واللسان شكل قائم بذاته فوق الإطار، فيحتفظ بزواياه القائمة أيًّا كان <code>borderRadius</code> الإطار. منذ postext 1.42 يضع <code>icon.placement: 'inside'</code> الصورة داخل اللسان في بدايته قبل الكلمات (عند الطرف الأيمن في إطار مُنضَّد من اليمين إلى اليسار) وعلى بُعد <code>gap</code> منها: يتسع اللسان بمقدار الصورة والمسافة والكلمات والحشو، وتُلائَم الصورة مع <code>icon.width</code> وارتفاع اللسان وتتوسّطه. تحتفظ الصورة بألوانها، فالحلقة البيضاء على لسان ملوّن والحلقة الملوّنة على لسان أبيض موردان اثنان، واحد في كل نمط. أما <code>'beside'</code>، وهو الافتراضي، فيضع الصورة بعد حافة اللسان. منذ postext 1.43 يرسم <code>icon.tint: true</code> الصورة بلون <code>color</code> اللسان بدل ألوانها: فلا يُرسم إلا شكلها، بلون الكلمات، فتكفي حلقة واحدة لكل ألوان الكتاب. والصورة التي لا شفافية فيها تصير مستطيلًا مصمتًا. في PDF يحتفظ SVG بحوافه، وتُقصّ الصورة النقطية عند نصف الشفافية؛ ولا تُستعمل النسخة المخصّصة للطباعة (<code>svg.pdfFileId</code>) لأن صفحة PDF لا يمكن إعادة تلوينها.</td>
+      <td>لسان على الحافة العليا للإطار يطبع السمة <code>label</code> المكتوبة في سطر الفتح: رقم الإطار المرقّم («BOX 1-1»). يلتصق بالزاوية <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>، أو <code>'top-start'</code> / <code>'top-end'</code> بحسب اتجاه الإطار نفسه، كما في <code>'start'</code> / <code>'end'</code> للشريط)، بإزاحة داخلية قدرها <code>inset</code>، ويرتفع <code>offset</code> فوق أعلى الإطار (وهذه المساحة جزء من الكتلة، فوق <code>marginTop</code>، فيحتفظ بها اللسان في رأس العمود أيضًا)، ويبلغ ارتفاعه <code>height</code> مع <code>paddingX</code> على جانبي النص، ويمكن أن يكون بجانبه مورد أيقونة <code>icon</code> (<code>&#123; resourceId, width, gap &#125;</code>، في الجهة البعيدة عن الزاوية) وخطًا <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) على طول الحافة العليا من الزاوية البعيدة حتى اللسان. القيم الافتراضية: خط العناوين، حجم النص، <code>700</code>، أبيض على اللون الرئيسي، ارتفاع <code>1.4em</code>، حشوة <code>0.6em</code>، بلا ارتفاع فوق الإطار ولا إزاحة داخلية، وصورة عرضها <code>1em</code> على بعد <code>0.3em</code> من الكلمات. واللسان شكل قائم بذاته فوق الإطار، فيحتفظ بزواياه القائمة أيًّا كان <code>borderRadius</code> الإطار؛ ومع <code>joined: true</code> (منذ postext 1.48) يصير اللسان والإطار محيطًا واحدًا، ويدوّر <code>fillet</code> الزوايا الداخلية حيث يلتقيان. والمواضع <code>bottom-right</code> و<code>bottom-left</code> و<code>bottom-start</code> و<code>bottom-end</code> (منذ postext 1.48) تعلّق اللسان من أسفل الإطار، و<code>rule</code> الخاص به على طول الأسفل. ومنذ postext 1.48 يمكن أن تكون الأيقونة أيضًا محرفًا من خط، <code>icon.kind: 'glyph'</code> (انظر <a href="#محرف-على-اللسان">محرف على اللسان</a>). منذ postext 1.42 يضع <code>icon.placement: 'inside'</code> الصورة داخل اللسان في بدايته قبل الكلمات (عند الطرف الأيمن في إطار مُنضَّد من اليمين إلى اليسار) وعلى بُعد <code>gap</code> منها: يتسع اللسان بمقدار الصورة والمسافة والكلمات والحشو، وتُلائَم الصورة مع <code>icon.width</code> وارتفاع اللسان وتتوسّطه. تحتفظ الصورة بألوانها، فالحلقة البيضاء على لسان ملوّن والحلقة الملوّنة على لسان أبيض موردان اثنان، واحد في كل نمط. أما <code>'beside'</code>، وهو الافتراضي، فيضع الصورة بعد حافة اللسان. منذ postext 1.43 يرسم <code>icon.tint: true</code> الصورة بلون <code>color</code> اللسان بدل ألوانها: فلا يُرسم إلا شكلها، بلون الكلمات، فتكفي حلقة واحدة لكل ألوان الكتاب. والصورة التي لا شفافية فيها تصير مستطيلًا مصمتًا. في PDF يحتفظ SVG بحوافه، وتُقصّ الصورة النقطية عند نصف الشفافية؛ ولا تُستعمل النسخة المخصّصة للطباعة (<code>svg.pdfFileId</code>) لأن صفحة PDF لا يمكن إعادة تلوينها.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### الزوايا والجوانب والألسنة الموصولة
+
+لا يلزم أن يكون الإطار مستطيلًا بأربع زوايا متساوية وحدّ واحد. فمنذ postext 1.48 يستطيع النمط أن يدوّر بعض الزوايا دون بعض، وأن يرسم حدّه على بعض الجوانب وحدها، وأن يُخرج لسانه من الإطار شكلًا واحدًا: بطاقة كتاب مدرسي لسانُ عنوانها ومتنُها محيطٌ واحد، يرسمه النمط بدل أن يُرسم في صورة خلف الصفحة.
+
+```ts
+calloutStyles: [
+  // Rounded at the top only, a rule over the box and a heavier foot.
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // A card whose tab grows out of its top edge.
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **الزوايا.** `borderRadius` طول واحد للزوايا الأربع، أو `{ topLeft, topRight, bottomRight, bottomLeft }`. والزاوية التي لا يذكرها الكائن قائمة. والزوايا زوايا الورقة. ولا تأخذ زاويتان أبدًا أكثر من الجانب الذي بينهما؛ فتتنازل كل منهما بالتناسب.
+- **الجوانب.** تأخذ `border.sides.top` و`right` و`bottom` و`left` القيم `enabled` و`color` و`width`، وكل حقل لا يُذكر يؤخذ من الحدّ كله. والإطار الذي له حدّ في أعلاه وحده هو `border: { enabled: false, sides: { top: { enabled: true } } }`، أو `enabled: true` مع إطفاء الجوانب الثلاثة الأخرى. وتتبع الحافة الداخلية لكل جانب عرضَه، فتنحني الزاوية المستديرة بين جانب رفيع وجانب سميك كما ترسمها CSS.
+- **اللسان الموصول.** مع `label.joined: true` يكون اللسان والإطار محيطًا واحدًا، وتعبئة واحدة (`background` الإطار؛ ولا تُرسم `background` اللسان نفسه)، وحدًّا واحدًا يدور حول اللسان. ويقف اللسان على الحافة، خارج الإطار بقدر ارتفاعه: ويجب أن يكون `offset` الخاص به `0` (وأي قيمة أخرى تُذكر بالتحذير `unknownConfigValue` وتُقرأ `0`). وتأخذ زواياه الخارجية نصف قطر زاوية الإطار التي يلتصق بها، وتُدوَّر الزوايا الداخلية حيث يلتقي بالإطار بمقدار `fillet` (الافتراضي: نصف القطر نفسه). واللسان المحاذي لجانب الإطار تمامًا (`inset` أقل من نصف بكسل) يصعد مستقيمًا من ذلك الجانب. وأعطِ الكلمات لونًا يُقرأ على تعبئة الإطار (`label.color`)، لأن اللسان لم تعد له تعبئة خاصة به.
+- **الألسنة السفلية.** يعلّق `position: 'bottom-right'` أو `'bottom-left'` أو `'bottom-start'` أو `'bottom-end'` اللسان من أسفل الإطار، عاديًّا أو موصولًا: فهو اللسان العلوي مقلوبًا، على بعد `offset` تحت الأسفل، و`rule` على طول الأسفل. ولا ألسنة جانبية: فكلمات اللسان تجري أفقيًّا.
+
+ترسم كل المخرجات هذه الأشكال: Canvas وPDF محيطاتٍ متجهية، وعارض HTML وEPUB ذو التخطيط الثابت بـCSS لكل زاوية ولكل جانب. ويكتب EPUB القابل لإعادة التدفق الزوايا والجوانب في CSS الخاص به، ويضع اللسان الموصول لسانًا عاديًّا. ويعيد `look.border.color` في إطار الصفحة المركّبة تلوين كل الجوانب، وتعيد لوحة ألوان الجزء تلوين كل جانب منها. والنمط الذي تتشابه كل زواياه وجوانبه يُنضَّد كما كان من قبل.
+
+### محرف على اللسان
+
+يستطيع `label.icon` أن يضع محرفًا من خط بدل الصورة: `kind: 'glyph'` مع `glyph: '◉'`. فلا يحتاج اللسان إلى مورد صورة، ويأخذ المحرف لون الكلمات ما لم يحدّد لونه الخاص، فيكفي نمط واحد لكل ألوان الكتاب. منذ postext 1.48.
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الحقل</th>
+      <th style={{ width: '200px' }}>النوع</th>
+      <th style={{ width: '120px' }}>الافتراضي</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>انظر الوصف</td>
+      <td><code>'resource'</code> حين يُعيَّن <code>resourceId</code>، و<code>'glyph'</code> حين لا يُعيَّن إلا <code>glyph</code>. وإذا كُتب <code>kind</code> فهو الغالب: <code>kind: 'glyph'</code> يضع المحرف أيًّا كان ما يقوله <code>resourceId</code>.</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>المحرف الذي يوضع أيقونةً (<code>'◉'</code> و<code>'★'</code> و<code>'✎'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>، <code>fontWeight</code></td>
+      <td><code>string</code>، <code>number</code></td>
+      <td>ما للتسمية</td>
+      <td>خط المحرف ووزنه: ما للتسمية نفسها، وإلا فخط العناوين و<code>700</code>. والخط الذي يخلو من المحرف يُستبدل به غيره كما يفعل المتصفح؛ ويذكر PDF التحذير <code>missingGlyph</code>.</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>حجم المحرف معاملًا لحجم نص اللسان. عند <code>1</code> يشارك الكلماتِ خطَّ أساسها؛ وفي الأحجام الأخرى يبقى في وسط اللسان.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>color</code> التسمية</td>
+      <td>لون المحرف. وإن لم يُعيَّن تبع الكلمات، ويعيد <code>look.label.color</code> في إطار الصفحة المركّبة تلوين الاثنين.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>، <code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>، <code>Dimension</code></td>
+      <td><code>'beside'</code>، <code>0.3em</code></td>
+      <td>كما للصورة: <code>'inside'</code> يضع المحرف في اللسان قبل الكلمات، فيتسع اللسان بمقدار عرضه والمسافة؛ و<code>'beside'</code> يضعه بعد حافة اللسان. ولا ينطبق <code>width</code> و<code>tint</code> الخاصان بالصورة.</td>
+    </tr>
+  </tbody>
+</table>
+
+المحرف زخرفة: أداة تخطيط (artifact) في PDF الموسوم، ومخفي عن التقنيات المساعدة في HTML، ومتروك من عنوان الإطار في EPUB القابل لإعادة التدفق، فيُقرأ اللسان بكلماته وحدها.
 
 ### أنماط مبنية على غيرها
 

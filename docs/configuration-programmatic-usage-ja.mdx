@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'プログラムからの利用',
   description: 'コードからPostextを呼び出す方法。buildDocumentとその警告、既定値、フォント、キャッシュ、そしてWeb Worker',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '32分',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>ある<code>:::figure</code>が、章の前の図がすでに文言を与えたリソースに、異なる文言（<code>alt</code>、<code>caption</code>、<code>note</code>）を与えています（<code>resourceId</code>、<code>words</code>）。</td>
       <td>ページには最初の図の文言が表示され、後の図のものは省かれます。</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>テンプレートページの枠のインキが、その上に描かれたほかの枠の下にあります（<code>template</code>、<code>frame</code>、<code>coveredBy</code>、<code>coveredByPath</code>、<code>fenceIndex</code>、<code>configPath</code>、<code>overlapMm2</code>、<code>text</code>または<code>picture</code>、<code>locale</code>。<code>proposals</code>：<code>layer</code>、<code>exclude</code>、<code>move</code>）。割り付けが出し、そのページの<code>pageIndex</code>が付きます。postext 1.48以降。</td>
+      <td>どちらの枠もテンプレートのとおりに描かれ、覆われたインキは隠れます。</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>テンプレートページの枠が、仕上がり線（テキスト）、塗り足し（塗りや画像）、またはその中にアンカーした枠やグループの外へはみ出しています（<code>template</code>、<code>frame</code>、<code>fenceIndex</code>、<code>configPath</code>、<code>past</code>、<code>target</code>、<code>excessMm</code>、<code>sides</code>、<code>locale</code>。<code>proposals</code>：<code>maxHeight</code>、<code>minHeight</code>、<code>continueNextPage</code>、<code>move</code>）。割り付けが出します。postext 1.48以降。</td>
+      <td>枠はその位置に描かれ、仕上がり線を越えた部分は切れます。</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>テンプレートページの繰り返しのグリッドが受け取る項目は<code>max</code>までなのに、ページがそれより多く渡しています（<code>template</code>、<code>group</code>、<code>frame</code>、<code>item</code>、<code>max</code>、<code>flowFrame</code>、<code>fenceIndex</code>）。超えた項目1つごとに出ます。postext 1.48以降。</td>
+      <td>項目は流し込み枠か、ページの後に入ります。</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>ページが配置しない<code>:::module</code>です（<code>template</code>、<code>module</code>、<code>name</code>、<code>fenceIndex</code>。<code>reason</code>：<code>'unknown'</code>、<code>'notModule'</code>、<code>'noGroup'</code>）。postext 1.48以降。</td>
+      <td>その内容は流し込み枠に入ります。</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>ページブロックがモジュールのテンプレートを指定しています（<code>template</code>、<code>fenceIndex</code>）。postext 1.48以降。</td>
+      <td>ブロックの内容は本文の流れに組まれます。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>ほかのモジュールの中にある<code>:::module</code>です（<code>template</code>、<code>module</code>、<code>fenceIndex</code>）。postext 1.48以降。</td>
+      <td>そのブロックは外側のモジュールのものになります。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>モジュールの<code>name</code>がページですでに使われているか、スペース、<code>.</code>、<code>#</code>、<code>[</code>、<code>]</code>を含んでいます（<code>template</code>、<code>module</code>、<code>name</code>、<code>used</code>、<code>reason</code>：<code>'taken'</code>、<code>'invalid'</code>、<code>fenceIndex</code>）。postext 1.48以降。</td>
+      <td>モジュールは<code>used</code>の名前になり、そのスロットはその名前で指定します。</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

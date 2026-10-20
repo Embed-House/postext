@@ -22,8 +22,9 @@
  */
 import type { ContentBlock } from '../parse/types';
 import type { CalloutStyleConfig } from '../types';
-import { composedPages, takenBlocks, type ParsedComposedPage } from './document';
-import { resolvePageTemplate, type PageTemplateSource } from './templates';
+import { composedPages, pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
+import { isModuleTemplate, repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates';
+import { pageRepeats } from './repeat';
 import { nextFrameOf } from './geometry';
 import type { ResolvedFrame, ResolvedPageTemplate } from './types';
 
@@ -74,11 +75,17 @@ export function chainHead(template: ResolvedPageTemplate, name: string): string 
   return at;
 }
 
+/** The flow frame of a template: the frame with `flow` that no grid
+ *  repeats (an instance takes its own item's content only, #1061). */
+function flowFrameOf(template: ResolvedPageTemplate, repeated: ReadonlySet<string>): ResolvedFrame | undefined {
+  return template.frames.find((f) => f.flow && !repeated.has(f.name));
+}
+
 /** Which story each slot of `page` goes to: the head of its frame's chain,
  *  or undefined for content left outside every story. */
-function storyOf(template: ResolvedPageTemplate, variantNames: ReadonlySet<string>) {
+function storyOf(template: ResolvedPageTemplate, variantNames: ReadonlySet<string>, repeated: ReadonlySet<string>) {
   const names = new Set(template.frames.map((f) => f.name));
-  const flow = template.frames.find((f) => f.flow);
+  const flow = flowFrameOf(template, repeated);
   return (slot: string | undefined): string | undefined => {
     if (slot !== undefined && names.has(slot)) return chainHead(template, slot);
     // A frame only a variant has: its own story, set where that side has it.
@@ -115,8 +122,9 @@ export function wrapComposedPages(
   let at = 0;
   let wrapped = 0;
   for (const page of pages) {
-    const template = resolvePageTemplate(config, page.template);
-    if (!template) continue;
+    // With the page's modules (#1062) laid in it; a module is never a page.
+    const template = resolvePageTemplate(config, page.template, { modules: pageModuleUses(page) });
+    if (!template || isModuleTemplate(template)) continue;
     const start = blocks.findIndex((b, i) => i >= at && b.type === 'containerStart' && b.containerName === 'composedPage' && b.composedPage?.fenceIndex === page.fenceIndex);
     if (start < 0) continue;
     const end = endOf(blocks, start);
@@ -150,7 +158,8 @@ function regroupPage(
   variantNames: ReadonlySet<string>,
   nextId: () => number,
 ): ContentBlock[] {
-  const story = storyOf(template, variantNames);
+  const repeats = pageRepeats(page, template);
+  const story = storyOf(template, variantNames, repeats.repeated);
   /** Pieces per frame name (a frame's own content), in Markdown order. */
   const pieces = new Map<string, number[]>();
   const loose: number[] = [];
@@ -164,36 +173,82 @@ function regroupPage(
     pieces.set(frame, list);
   };
   const names = new Set(template.frames.map((f) => f.name));
-  const flow = template.frames.find((f) => f.flow)?.name;
+  const flow = flowFrameOf(template, repeats.repeated)?.name;
   const taken = new Map<number, string>();
   for (const f of template.frames) {
+    if (repeats.repeated.has(f.name)) continue;
     for (const idx of takenBlocks(page, f.takes)) if (!taken.has(idx)) taken.set(idx, f.name);
   }
   for (const [slot, indices] of Object.entries(page.slots)) {
+    // A grid's frames take their content item by item (#1061).
+    if (repeats.repeated.has(slot)) continue;
     put(names.has(slot) || variantNames.has(slot) ? slot : flow, indices);
   }
+  /** The `:::frame` fence each instance's content came in (#1061). */
+  const instanceFences = new Map<string, number>();
+  for (const item of repeats.items) {
+    for (const [f, indices] of item.frames) {
+      const name = repeatInstanceName(f, item.item);
+      put(name, indices);
+      const fence = item.fences.get(f);
+      if (fence !== undefined) instanceFences.set(name, fence);
+    }
+  }
+  // Items past a grid's `max` go where content naming no frame goes.
+  for (const o of repeats.overflow) put(flow, o.indices);
   for (const i of page.unassigned) put(taken.get(i) ?? flow, [i]);
+  // A module's content that names no slot (#1062): the module's `takes`
+  // frame, else its flow frame, else the page's (a module not laid).
+  for (const m of page.modules) {
+    const laid = template.modules?.find((x) => x.name === m.fence.name);
+    const own = new Map<number, string>();
+    for (const [take, frame] of Object.entries(laid?.takes ?? {})) {
+      for (const idx of takenBlocks({ firstHeadings: m.firstHeadings, tocRows: [] }, take as FrameTake)) if (!own.has(idx)) own.set(idx, frame);
+    }
+    for (const i of m.unassigned) put(own.get(i) ?? laid?.flow ?? flow, [i]);
+  }
   // The attributes of a slot's first `:::frame` fence (its `label`,
   // `title`): the frame's tab and title.
   const fenceAttrs = new Map<string, Record<string, string>>();
   const fenceAttrSources = new Map<string, Record<string, { sourceStart: number; sourceEnd: number }>>();
+  const readFence = (key: string, b: ContentBlock): void => {
+    fenceAttrs.set(key, Object.fromEntries(Object.entries(b.containerAttrs ?? {}).filter(([k]) => k !== 'slot')));
+    if (b.containerAttrSources) fenceAttrSources.set(key, Object.fromEntries(Object.entries(b.containerAttrSources).filter(([k]) => k !== 'slot')));
+  };
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i]!;
     if (b.type !== 'containerStart' || b.containerName !== 'frame' || i < 0) continue;
     if (b.sourceStart < page.sourceStart || b.sourceStart > page.sourceEnd) continue;
     const slot = b.slot?.name;
-    if (slot === undefined || fenceAttrs.has(slot)) continue;
-    fenceAttrs.set(slot, Object.fromEntries(Object.entries(b.containerAttrs ?? {}).filter(([k]) => k !== 'slot')));
-    if (b.containerAttrSources) fenceAttrSources.set(slot, Object.fromEntries(Object.entries(b.containerAttrSources).filter(([k]) => k !== 'slot')));
+    if (slot === undefined || fenceAttrs.has(slot) || repeats.repeated.has(slot)) continue;
+    readFence(slot, b);
   }
+  // Each instance is dressed by its own item's fence (#1061).
+  for (const [name, at] of instanceFences) readFence(name, blocks[at]!);
   // Stories: each chain's frames' pieces, head first.
   const stories: { head: string; indices: number[]; attrs: Record<string, string>; attrSources?: Record<string, { sourceStart: number; sourceEnd: number }> }[] = [];
   const done = new Set<string>();
+  /** An instance's story (#1061): the instance of its chain's head, the
+   *  chain's frames of the set as the same item's instances. */
+  const instanceStory = (name: string): { head: string; chain: string[] } | undefined => {
+    const at = repeatInstance(name);
+    if (!at || !repeats.repeated.has(at.frame) || !names.has(at.frame)) return undefined;
+    const inSet = (f: string): boolean => repeats.repeated.has(f);
+    const baseHead = chainHead(template, at.frame);
+    const head = inSet(baseHead) ? baseHead : at.frame;
+    const chain = frameChain(template, head).map((f) => f.name);
+    // (A link out of the set is not followed: an instance's content is its
+    // item's.)
+    const stop = chain.findIndex((f) => !inSet(f));
+    const kept = stop < 0 ? chain : chain.slice(0, Math.max(1, stop));
+    return { head: repeatInstanceName(head, at.item), chain: kept.map((f) => repeatInstanceName(f, at.item)) };
+  };
   for (const name of pieces.keys()) {
-    const head = names.has(name) ? story(name)! : name;
+    const inst = names.has(name) ? undefined : instanceStory(name);
+    const head = names.has(name) ? story(name)! : inst?.head ?? name;
     if (done.has(head)) continue;
     done.add(head);
-    const chain = names.has(head) ? frameChain(template, head).map((f) => f.name) : [head];
+    const chain = names.has(head) ? frameChain(template, head).map((f) => f.name) : inst?.chain ?? [head];
     const indices: number[] = [];
     for (const f of chain) indices.push(...(pieces.get(f) ?? []).slice().sort((a, b) => a - b));
     if (indices.length === 0) continue;
@@ -223,7 +278,10 @@ function regroupPage(
     // A frame's own `direction` (#944): its story is set in it, as a box
     // fenced `{dir=…}` is; a block or a box inside that writes its own
     // `dir` keeps it.
-    const frameDir = names.has(s.head) ? frameChain(template, s.head)[0]?.direction : undefined;
+    // An instance of a repeated frame (#1061) is set as its frame.
+    const base = names.has(s.head) ? s.head : repeatInstance(s.head)?.frame;
+    const baseFrame = base !== undefined && names.has(base) ? base : undefined;
+    const frameDir = baseFrame !== undefined ? frameChain(template, baseFrame)[0]?.direction : undefined;
     // Boxes inside the story that write their own `dir` are open while
     // their blocks pass: those keep the direction they were given.
     const owning: boolean[] = [];
@@ -253,18 +311,30 @@ function regroupPage(
     // A frame set in columns (`columns`), alone in its story: its content
     // is a `:::columns` group of the box (a chain's frames may differ in
     // columns; they are set in one).
-    const chain = names.has(s.head) ? frameChain(template, s.head) : [];
+    const chain = names.has(s.head) ? frameChain(template, s.head) : baseFrame !== undefined ? [template.frames.find((f) => f.name === baseFrame)!] : [];
     const cols = chain.length === 1 && chain[0]!.columns > 1 ? chain[0]! : undefined;
     if (cols) {
       const gap: Record<string, string> = cols.columnGap ? { gap: `${cols.columnGap.value}${cols.columnGap.unit}` } : {};
       out.push({ type: 'containerStart', text: '', spans: [], containerName: 'columns', containerAttrs: { count: String(cols.columns), ...gap }, containerId: id + COLUMNS_ID_OFFSET, sourceStart: first.sourceStart, sourceEnd: first.sourceStart, sourceMap: [] });
     }
-    for (const i of s.indices) out.push(directed(blocks[i]!));
+    const instance = baseFrame !== undefined && baseFrame !== s.head ? s.head : undefined;
+    for (const i of s.indices) out.push(directed(instance !== undefined ? withInstanceLabels(blocks[i]!, page.fenceIndex, baseFrame!, instance) : blocks[i]!));
     if (cols) out.push({ type: 'containerEnd', text: '', spans: [], containerName: 'columns', containerId: id + COLUMNS_ID_OFFSET, sourceStart: last.sourceEnd, sourceEnd: last.sourceEnd, sourceMap: [] });
     out.push({ type: 'containerEnd', text: '', spans: [], containerName: 'callout', containerId: id, sourceStart: last.sourceEnd, sourceEnd: last.sourceEnd, sourceMap: [] });
   }
   for (const i of loose.sort((a, b) => a - b)) out.push(blocks[i]!);
   return out;
+}
+
+/** A figure of an instance's content with its labels' ids named by the
+ *  instance (#1061): `cp<n>:card[2]:label:<anchor>`, one per item, not the
+ *  frame's id the parser gave every item alike. */
+function withInstanceLabels(b: ContentBlock, fenceIndex: number, frame: string, instance: string): ContentBlock {
+  const labels = b.figure?.labels;
+  const from = `cp${fenceIndex}:${frame}:label:`;
+  if (!labels || !labels.some((l) => l.id?.startsWith(from))) return b;
+  const to = `cp${fenceIndex}:${instance}:label:`;
+  return { ...b, figure: { ...b.figure!, labels: labels.map((l) => (l.id?.startsWith(from) ? { ...l, id: to + l.id.slice(from.length) } : l)) } };
 }
 
 /** Whether a block sets its own direction in the Markdown (a heading's or

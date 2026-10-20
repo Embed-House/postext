@@ -56,8 +56,23 @@ describe('the Reflow panel on the p. 8 stand-in (#868)', () => {
   it('says nothing moved while the text fits the template as drawn', () => {
     const { markdown, config, resources } = page8Fixture('en');
     const doc = build(markdown, config, resources);
-    expect(documentReflow(doc, DEFAULT_LABELS, 'en')).toEqual([]);
-    expect(reflowMarksFor(composedPage(doc))).toEqual([]);
+    // What the panel lists is the overlap checks' (#1053, #1066): the
+    // stand-in's photos hang a millimetre or two past their boxes (and
+    // under what is painted over them). No frame grew, moved or shrank:
+    // no arrows on the page.
+    const pages = documentReflow(doc, DEFAULT_LABELS, 'en');
+    expect(pages).toHaveLength(1);
+    const entries = pages[0]!.entries;
+    expect(entries.some((e) => e.events.some((ev) => ev.kind === 'outside'))).toBe(true);
+    for (const entry of entries) {
+      for (const e of entry.events) expect(['covered', 'outside']).toContain(e.kind);
+      for (const line of entry.lines) expect(line).toMatch(new RegExp(`^${entry.frame} (runs [\\d.]+ mm past \\S+|lies under \\S+ \\([\\d.,]+ mm²\\))$`));
+    }
+    // In Spanish, the Sandbox's own words.
+    for (const entry of documentReflow(doc, labelsOf('es'), 'es')[0]!.entries) {
+      for (const line of entry.lines) expect(line).toMatch(new RegExp(`^${entry.frame} (se sale [\\d,]+ mm de \\S+|queda debajo de \\S+ \\([\\d.,]+ mm²\\))$`));
+    }
+    expect(reflowMarksFor(composedPage(doc)).every((m) => m.arrows.length === 0)).toBe(true);
   });
 
   for (const locale of ['en', 'es'] as const) {

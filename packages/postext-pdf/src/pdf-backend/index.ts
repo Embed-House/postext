@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, decorationOver, decorationUnder, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -425,7 +425,7 @@ function paintPage(
     page.setBleedBox(bleedPt, bleedPt, pageWidthPt - 2 * bleedPt, pageHeightPt - 2 * bleedPt);
   }
   const ctx: PageCtx = {
-    page, pageHeightPt, scale, colorSpace, tags: tree?.beginPage(page), ...(onMissingImage ? { onMissingImage } : {}),
+    page, pageHeightPt, scale, colorSpace, tags: tree?.beginPage(page), ...(onMissingImage ? { onMissingImage } : {}), images: resourceCtx.images,
     frameCjk: { region: doc.config.cjk?.region ?? 'mainland', uprightDigits: doc.config.cjk?.uprightDigits ?? 2 },
   };
   const structure = resourceCtx.structure;
@@ -664,11 +664,22 @@ function paintPage(
       // clip, in flow coordinates, mapped to the sheet, #926).
       const sheet = composedSheetClipOnSheet(vdtPage);
       if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
-      renderHeaderFooterSlot(ctx, vdtPage.composed.decoration, fontCache, resourceCtx.images, decorationMark);
+      renderHeaderFooterSlot(ctx, decorationUnder(vdtPage.composed.decoration), fontCache, resourceCtx.images, decorationMark);
       if (sheet) popClip(ctx);
     }
     enterFlow();
     paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, undefined, false, 'above');
+    // Connectors painted over the frames (#1076), on the sheet too: Layout
+    // artifacts, as the rest of the decoration.
+    const over = decorationOver(vdtPage.composed.decoration);
+    if (over) {
+      leaveFlow();
+      const sheet = composedSheetClipOnSheet(vdtPage);
+      if (sheet) pushClipRect(ctx, sheet.x, sheet.y, sheet.width, sheet.height);
+      renderHeaderFooterSlot(ctx, over, fontCache, resourceCtx.images, decorationMark);
+      if (sheet) popClip(ctx);
+      enterFlow();
+    }
   } else if (vdtPage.composed) paintComposedFrames(ctx, vdtPage, fontCache, resourceCtx, decorationMark, true);
   if (comicUnder) paintComicTextFrames(ctx, vdtPage, fontCache, resourceCtx, comicTags);
 
@@ -773,8 +784,10 @@ function paintComposedItems(
   part?: ComposedPaintPart,
 ): void {
   for (const item of composedPaintOrder(vdtPage, part)) {
-    if (item.kind === 'decoration') {
-      const decoration = vdtPage.composed?.decoration;
+    if (item.kind === 'decoration' || item.kind === 'over') {
+      // The decoration at layer 0, and its connectors over the frames
+      // (#1076) after them.
+      const decoration = item.kind === 'over' ? decorationOver(vdtPage.composed?.decoration) : decorationUnder(vdtPage.composed?.decoration);
       if (withDecoration && decoration) renderHeaderFooterSlot(ctx, decoration, fontCache, resourceCtx.images, mark);
       continue;
     }

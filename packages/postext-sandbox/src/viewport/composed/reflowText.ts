@@ -38,6 +38,10 @@ export type ReflowLabels = Pick<
   | 'reflowContinued'
   | 'reflowContinuedIn'
   | 'reflowOverflow'
+  | 'reflowCovered'
+  | 'reflowOutsideTrim'
+  | 'reflowOutsideBleed'
+  | 'reflowOutsideFrame'
 >;
 
 /** A number with at most one decimal, in the reader's numerals. */
@@ -98,6 +102,16 @@ export function reflowSentence(e: ReflowEvent, labels: ReflowLabels, opts: Reflo
     }
     case 'overflow':
       return fill(labels.reflowOverflow, { frame: e.frame, mm: n(e.toMm ?? 0) });
+    // The overlap checks (#1053): ink under a frame painted over it, ink
+    // past the trim, the bleed or the box it is anchored inside.
+    case 'covered':
+      return fill(labels.reflowCovered, { frame: e.frame, cause: e.cause ?? '', area: n(e.areaMm2 ?? 0) });
+    case 'outside': {
+      const values = { frame: e.frame, mm: n(e.toMm ?? 0) };
+      if (e.past === 'trim') return fill(labels.reflowOutsideTrim, values);
+      if (e.past === 'bleed') return fill(labels.reflowOutsideBleed, values);
+      return fill(labels.reflowOutsideFrame, { ...values, target: (e.past ?? '').replace(/^#/, '') });
+    }
     default:
       return `${e.frame} ${String(e.kind)}`;
   }
@@ -126,6 +140,10 @@ export function reflowShort(e: ReflowEvent, locale?: string): string {
       return '↪';
     case 'overflow':
       return `−${n(e.toMm ?? 0)} mm`;
+    case 'covered':
+      return `▨ ${n(e.areaMm2 ?? 0)} mm²`;
+    case 'outside':
+      return `⇥ ${n(e.toMm ?? 0)} mm`;
     default:
       return '';
   }

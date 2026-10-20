@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ca',
   lastUpdated: '2026-10-19',
   readingTime: '44 min',
-  order: 37,
+  order: 38,
   parent: 'sandbox',
   plainSummary: "Aquesta pàgina explica dos taulers del Sandbox. El tauler Disseny reuneix tots els paràmetres del llibre, com ara la mida de la pàgina, les fonts i els colors, ordenats en grups i amb un cercador. El tauler Revisió enumera els problemes que Postext troba mentre treballes, com ara una imatge que falta o una línia massa espaiada. Cada problema diu on és i t'hi porta quan hi fas clic.",
 };
@@ -227,7 +227,7 @@ Diagnòstics en viu, recalculats a partir del text, el disseny, les figures i l'
   - *Flux de columnes desconegut*: un `:::columns{flow=…}` que no és ni `snake` ni `parallel`; el grup pren el valor per defecte (`columnsFlowUnknown`);
   - *Plantilla de pàgina desconeguda*, *Ranura sense marc*, *Marc buit* i *Pàgina composta amb tres signes de dos punts*: un `::::page` amb una plantilla que no és a `pageTemplates`, un `slot` que no correspon a cap marc de la plantilla de la pàgina, un marc de la plantilla que no rep res a la pàgina (un marc `optional` no en dona avís) i un `:::page` amb `template=` escrit amb tres signes de dos punts (`templateUnknown`, `slotUnknown`, `slotEmpty`, `pageFenceLength`; vegeu [Pàgines compostes](/ca/docs/composed-pages#avisos)).
   - *La doble pàgina no coincideix amb la plantilla*: un `::::page` amb una marca `spread` que no coincideix amb l'`spread` de la seva plantilla; la pàgina es compon com diu la plantilla, en dues pàgines encarades o en una (`spreadMismatch`; vegeu [Pàgines compostes](/ca/docs/composed-pages#spreadmismatch)).
-  - els rètols d'una figura: *Rètol en una àncora que no existeix*, *Àncora sense rètol*, *Rètol més ample que la mesura* i *Rètols que es trepitgen* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`; vegeu [Pàgines compostes › Figures amb rètols](/ca/docs/composed-pages#figures-amb-rètols));
+  - els rètols d'una figura: *Rètol en una àncora que no existeix*, *Àncora sense rètol*, *Rètol més ample que la mesura* i *Rètols que es trepitgen* (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`; vegeu [Pàgines compostes › Figures amb rètols](/ca/docs/composed-pages-figures#figures-amb-rètols));
   - els avisos de les pàgines de còmic, com una divisió il·legible o vinyetes i cel·les que no coincideixen; una bafarada que no cap a la vinyeta és a *Composició* (vegeu [Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)).
 - **Disseny**:
   - noms de marcador de capçaleres i peus fora de la llista permesa del motor (s'accepten `{attr.…}` i els marcadors de part), i marcadors amb metadades que falten al document;

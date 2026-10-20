@@ -1,0 +1,140 @@
+{/* docs/composed-pages-figures-it.mdx */}
+
+export const metadata = {
+  title: 'Pagine composte: figure con etichette',
+  sidebarTitle: 'Figure con etichette',
+  description: "Le figure che mettono parole su un'immagine: etichette sugli ancoraggi di una risorsa, testo alternativo, didascalia e nota proprie di una figura, come si compone un'etichetta, etichette scostate dal loro punto con linee di richiamo, legende e simboli in linea, e gli avvisi delle etichette",
+  lang: 'it',
+  lastUpdated: '2026-10-20',
+  readingTime: '8 min',
+  order: 35,
+  parent: 'composed-pages',
+  plainSummary: "Una carta o uno schema di un libro porta spesso delle parole: i nomi dei mari e delle città, le parti di una macchina. Postext compone queste parole come testo sull'immagine, così ogni lingua ha le sue. Questa pagina spiega come scriverle nel Markdown, come ciascuna viene collocata e disegnata e come un nome può stare lontano dal suo luogo con una linea che lo indica. Tratta anche le legende con simboli e gli avvisi delle etichette che non entrano o che si toccano.",
+};
+
+# Pagine composte: figure con etichette
+
+Questa pagina tratta delle figure di una pagina composta, o del testo corrente, che mettono parole sulla loro immagine. Come si scrive una pagina composta è in [Pagine composte](/it/docs/composed-pages); gli stili di etichetta e i campi di etichetta di un ancoraggio, in [Configurazione › Pagine composte](/it/docs/configuration-composed-pages#stili-delle-etichette).
+
+
+## Figure con etichette
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` colloca una risorsa, con la sua didascalia e il suo numero, come fa `::resource`, ed elenca le etichette da posare sull’immagine: una riga `::label[TEXT]{…}` per ciascuna, con righe vuote ammesse tra l’una e l’altra.
+
+- `at` indica un’ancora della risorsa (un punto fissato una volta per tutte sull’immagine e comune a tutte le lingue), oppure dà un punto in percentuali dell’immagine, `at="x% y%"`, per un’etichetta senza ancora.
+- `style` indica uno stile di etichetta e prevale su quello dell’ancora.
+- `leader` traccia una linea dall’etichetta al punto della sua ancora, e `leader="none"` la toglie (vedi [Linee di richiamo, legende e simboli](#linee-di-richiamo-legende-e-simboli)).
+- Il testo fra parentesi quadre è Markdown in linea: grassetto, corsivo, chip e simboli scritti `:icon`.
+
+
+Una figura funziona sia nel testo corrente sia in una cornice. Le sue etichette sono disegnate sull’immagine come testo e la seguono ovunque vada: una colonna, un elemento flottante, una cornice ruotata o ridotta dalla scala di reimpaginazione (i passi che fanno entrare il contenuto), una doppia pagina. Quando manca il `:::` di chiusura di una figura, la prima riga che non è né un’etichetta né una riga vuota la chiude, e Postext segnala la figura come contenitore non chiuso.
+
+### Le parole proprie di una figura
+
+La risorsa conserva un’immagine, le sue ancore e un solo insieme di parole, ma ogni edizione di un libro ha bisogno delle proprie. Una figura può impostare da sé il proprio `alt`, la propria `caption` e la propria `note`, nella riga di apertura o in righe a sé, e questi valori sostituiscono quelli della risorsa nelle pagine di quel file:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Come attributi della riga di apertura, `alt`, `caption` e `note` prendono un testo breve tra virgolette. Le righe `::alt[…]`, `::caption[…]` e `::note[…]` prendono il testo tra parentesi quadre, che può contenere Markdown in linea e `\\` per un a capo, come la didascalia e la nota di una risorsa. Una riga prevale sull’attributo con lo stesso nome; le righe stanno tra le etichette, con righe vuote se si vuole.
+- Ciò che la figura non imposta resta quello della risorsa. Un valore vuoto vale come «niente»: `caption=""` toglie la didascalia, `alt=""` segna l’immagine come decorativa.
+- Le parole sostituiscono quelle della risorsa nel capitolo in cui sono scritte: l’impaginazione, il testo alternativo di ogni uscita e il PDF con tag le leggono, e la risorsa in sé non cambia. Una risorsa ha un solo insieme di parole in un capitolo, quello della prima figura: una figura successiva della stessa risorsa con parole diverse non le mostra, e `figureWordsShared` lo segnala. Una copia ridotta che ha bisogno di una didascalia propria usa una seconda risorsa che punti allo stesso file d’immagine. A differenza di un’etichetta, la didascalia non è associata al Markdown carattere per carattere; `sourceAt` risponde a un clic su di essa come per la didascalia di una risorsa.
+
+### Come si compone un’etichetta
+
+- **Dove.** Un’etichetta si colloca nel punto della sua ancora, una frazione dell’immagine intera: se l’immagine viene ritagliata sulla sua zona sicura o composta più piccola, l’etichetta si sposta con il disegno. L’`align` dell’ancora indica quale lato dell’etichetta sta nel punto, e `verticalAlign` quale bordo sta alla sua altezza. `start` ed `end` seguono la direzione dell’etichetta stessa: in arabo `start` è il suo bordo destro. `rotate` ruota l’etichetta attorno al punto, in senso orario e con qualsiasi angolo: un fiume lungo il suo corso, una catena di colline in diagonale.
+- **Aspetto.** Lo `style` dell’etichetta, altrimenti quello della sua ancora, indica uno stile di etichetta (vedi Configurazione › Pagine composte); senza stile l’etichetta prende il carattere del testo corrente. L’alone traccia il contorno delle lettere sotto il loro riempimento; la piastra (`background`) riempie il riquadro attorno al testo, allargato da `padding`.
+- **Adattamento.** Se la sua ancora ha una `width`, l’etichetta va a capo tra le parole entro quella giustezza, mai dentro una parola. Quando una parola è più larga della giustezza, tutta l’etichetta viene composta più piccola, fino al `minScale` del suo stile; se ancora non entra, viene disegnata con la parola più larga tagliata. Senza `width` l’etichetta resta su una riga, salvo dove va a capo con `\\`, come in una didascalia.
+- **Testo.** Il testo tra parentesi quadre è Markdown in linea, composto come una didascalia: grassetto, corsivo, chip, evidenziazioni, rimandi, formule in linea. Un nome di più parole è un’unica etichetta, qualunque sia l’ordine delle parole in ogni lingua: `::label[OCEANO ATLANTICO]` e `::label[ATLANTIC OCEAN]` stanno sulla stessa ancora. Le etichette da destra a sinistra si compongono da destra a sinistra; quelle cinesi e giapponesi vanno a capo tra i caratteri.
+- **Uscite.** Il canvas, il PDF, il visualizzatore HTML, l’EPUB a layout fisso e Folio disegnano le etichette. In una pagina da destra a sinistra l’etichetta resta dove l’immagine la mostra.
+- **Verticale.** Con `writingMode: 'vertical-rl'` sull’ancora (o sul suo stile di etichetta) l’etichetta si compone come una pagina verticale: i caratteri dritti, in celle una sotto l’altra, le colonne da destra a sinistra, le parole latine e i numeri lunghi ruotati di lato, i numeri brevi in una sola cella. `width` è allora una parte dell’altezza dell’immagine, la lunghezza di una colonna, e un’etichetta cinese o giapponese si distribuisce su più colonne. `align` corre lungo la colonna (`start` ne è l’estremo alto), `verticalAlign` attraverso le colonne (`top` è la prima, quella di destra), e `rotate` ruota ancora l’etichetta. Sulla pagina speculare di un libro da destra a sinistra si legge allo stesso modo, verso il basso nelle sue colonne e dritta, nello stesso punto dell’immagine (da postext 1.40).
+- **Controlli.** Un’etichetta ancora più larga della sua giustezza al `minScale` del suo stile produce `labelOverflow`; due etichette le cui righe si toccano producono `labelOverlap` sulla seconda. Entrambi si controllano in ogni edizione, quindi una traduzione dalle parole più lunghe mostra dove le serve spazio. La tavolozza di una parte (`:::part{palette="…"}`) ricolora le etichette delle sue pagine come fa con le didascalie. Il controllo del contrasto legge un’etichetta sulla sua piastra o, altrimenti, dentro il suo alone; l’etichetta nuda sull’immagine viene saltata, perché il suo fondo è l’immagine. Anche il preflight di stampa controlla le etichette: corpo piccolo in quadricromia, inchiostri e distanza dal rifilo.
+- **Su una doppia pagina.** Una figura che attraversa il dorso di una doppia pagina (una cornice con `crossGutter: true`) disegna una metà su ciascuna pagina: un’etichetta il cui riquadro entrasse nella fascia del dorso sarebbe tagliata dalla piega e non si leggerebbe su nessuna delle due. L’etichetta scivola lungo il foglio fino al bordo della fascia, dalla parte in cui cade il punto della sua ancora, e mantiene la sua altezza; un punto esattamente sul dorso resta sulla prima pagina, come una cornice. Un’ancora con `gutter: 'cross'` resta al suo posto, per un titolo disteso sulle due pagine. I bordi esterni del foglio non si toccano: un’etichetta che supera il taglio viene tagliata come l’immagine. Da postext 1.43.
+
+### Linee di richiamo, legende e simboli
+
+Da postext 1.48 un’etichetta può stare lontano da ciò che nomina, un’etichetta può essere la legenda di una carta, e un’etichetta, una didascalia o una cella di tabella possono contenere simboli.
+
+**Linee di richiamo.** Il `labelAt` di un’ancora mette la sua etichetta lontano dal punto (un nome in mezzo al mare, una nota a margine di uno schema), e una linea di richiamo la collega di nuovo al punto. L’aspetto è il `leader` dello stile di etichetta (vedi [Configurazione › Stili delle etichette](/it/docs/configuration-composed-pages#stili-delle-etichette)); il Markdown si limita ad attivarla o a toglierla per una singola etichetta:
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` con qualsiasi valore diverso da `none`, `false` o `off` la attiva; senza l’attributo decide il `leader` dell’ancora, e se nessuno dei due lo dice un’etichetta lontana dal suo punto ne riceve una quando il suo stile ha un `leader`. Anche la nota di una cornice può indicare un luogo dell’immagine: con un [connettore](/it/docs/configuration-composed-pages#connettori) la cui estremità nomina un’ancora dell’immagine (`anchor: 'lake'`).
+
+**Etichette di più righe.** `:::label{at="…" style="…"}` … `:::`, dentro un `:::figure`, scrive un’etichetta riga per riga: ogni riga non vuota del sorgente è una riga dell’etichetta, così una legenda o un indirizzo non hanno bisogno di `\\` alla fine di ogni riga. Il primo `:::` chiude l’etichetta, il successivo la figura. `::label[…]` resta un’etichetta di una sola riga, che va a capo solo dove scrive `\\`.
+
+**Legende.** Un’etichetta in uno stile con `kind: 'legend'` è la legenda di una carta: ogni riga è una voce, e il simbolo che apre una voce sta in una colonna larga quanto il simbolo più largo, così le parole di tutte le voci partono dallo stesso bordo. Scrivi il simbolo all’inizio di ogni riga:
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[Paese]{glyph="■" color="country"} Paese
+:icon[Capitale]{glyph="⊙" font="Noto Sans Math"} Capitale
+:icon[Città]{resource="town-mark" size="0.55"} Città
+:icon[Confine]{line="dashed" color="border"} Confine
+:::
+::label[:icon[Capitale]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Simboli.** `:icon[alt]{…}` mette un piccolo simbolo nella riga, appoggiato sulla linea di base:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>Una risorsa bitmap o SVG, in proporzione.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>Un carattere, nel carattere tipografico del testo o in quello indicato da <code>font="…"</code>.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>Un campione di linea, lungo il doppio della sua altezza: un confine o una strada in una legenda.</td></tr>
+    <tr><td><code>color="…"</code></td><td>Un colore esadecimale o una voce della tavolozza: la tinta di un glifo, di una linea o di un’immagine.</td></tr>
+    <tr><td><code>size="…"</code></td><td>L’altezza del simbolo in em del testo. Predefinito <code>0.75</code>, l’altezza di una maiuscola.</td></tr>
+  </tbody>
+</table>
+
+Il primo fra `resource`, `glyph` e `line` che compare decide il tipo; senza nessuno dei tre la direttiva resta testo. Il testo fra parentesi quadre è il testo alternativo del simbolo: gli screen reader, il PDF taggato e il testo alternativo dell’immagine lo leggono al posto del simbolo, e un simbolo con le parentesi vuote è decorazione. I simboli si leggono nelle etichette delle figure e in ogni testo breve di una risorsa: didascalie, note e celle di tabella. In questa versione non si leggono nel testo corrente, nei titoli né nei testi della grafica.
+
+### labelAnchorUnknown
+
+Una `::label` indica con `at` un’ancora che la risorsa della sua figura non ha. L’etichetta non viene disegnata; l’EPUB a layout fluido continua a elencarla e il testo alternativo dell’immagine la nomina. L’avviso riporta la risorsa, l’ancora, le ancore della risorsa (`known`), la lingua, la pagina e l’intervallo del testo dell’etichetta nel sorgente. Correggi l’id dell’ancora, aggiungi l’ancora alla risorsa o posiziona l’etichetta con `at="x% y%"`.
+
+Nel pannello **Verifiche** della Sandbox l’avviso porta all’etichetta nel pannello **Testo**, e il suo pulsante con la puntina apre le ancore dell’immagine con quel nome pronto da collocare: un clic sull’immagine aggiunge l’ancora.
+
+### anchorUnlabelled
+
+Un’ancora della risorsa della figura ha uno stile di etichetta, ma in questa lingua nessuna `::label` della figura sta su di essa: la mappa ha spazio per una parola che questa edizione tralascia. È una nota; `postext check` la riporta come `info`. Le ancore senza stile, come quelle di un personaggio di fumetto, non vengono segnalate. L’avviso riporta la risorsa, l’ancora, il suo stile, la lingua, la pagina e l’intervallo della figura nel sorgente. Scrivi l’etichetta nel Markdown di questa lingua, oppure togli lo stile all’ancora.
+
+Nel pannello **Verifiche** porta alla figura nel pannello **Testo**, e il suo pulsante con la puntina apre le ancore dell’immagine su quell’ancora.
+
+### labelOverflow
+
+Un’etichetta resta più larga della `width` della sua ancora alla scala minima che il suo stile di etichetta consente (`minScale`): viene disegnata a quella scala e supera la sua giustezza. L’avviso riporta la risorsa, il testo dell’etichetta, la sua ancora (nessuna per un’etichetta posta con percentuali), la larghezza che le era data, la scala raggiunta, la lingua, la pagina e l’intervallo del testo dell’etichetta nel sorgente. Si controlla in ogni edizione, quindi una lingua con parole più lunghe eccede dove un’altra no. Allarga la `width` dell’ancora, accorcia la parola nel Markdown di questa edizione o abbassa il `minScale` dello stile di etichetta. Un’etichetta cinese o giapponese va a capo tra i caratteri e non eccede in questo modo. Da postext 1.39.
+
+### labelOverlap
+
+Le righe di due etichette della stessa figura si toccano; un’etichetta con piastra conta come la sua piastra. L’avviso è sull’etichetta successiva, nell’ordine in cui sono scritte, con il testo della prima etichetta precedente che tocca e quante etichette precedenti tocca in tutto. Il test usa il riquadro proprio di ogni riga, ruotato con l’etichetta, quindi una riga breve accanto a una lunga lascia libero il suo lato, e consente a due righe di sovrapporsi fino a un ottavo dell’altezza di una riga. Si controlla in ogni edizione. Sposta una delle ancore, riduci la `width` di un’etichetta perché vada a capo, oppure accorcia le parole nel Markdown di questa edizione. Nel pannello **Verifiche** della Sandbox il pulsante con la puntina apre le ancore dell’immagine sull’ancora dell’etichetta. Da postext 1.39. Con `overlap: 'allow'` su un’ancora, o nel suo stile di etichetta, un’etichetta che l’originale stampa a contatto con le vicine (una carta fitta) esce dal controllo, e nessuna coppia di cui fa parte viene segnalata. Da postext 1.42. Le zone `avoid` di un’immagine contano come i simboli di una carta: rettangoli tracciati sui suoi punti e sulle sue icone, nella modalità **Zone da evitare** dei segni dell’immagine, in frazioni dell’immagine. Un’etichetta che ne invade una viene segnalata allo stesso modo, con `symbol 2` al posto di un’etichetta (`withSymbol` nei dati), e `overlap: 'allow'` esclude un’etichetta da entrambi i controlli. Da postext 1.42.
+
+### figureWordsShared
+
+Una `:::figure` dà parole (`alt`, `caption` o `note`) a una risorsa a cui una figura precedente dello stesso capitolo ha già dato le sue, e sono diverse. Le pagine mostrano le parole della prima figura e omettono queste. L’avviso riporta la risorsa, le parole omesse e l’intervallo nel sorgente della prima di esse; una figura successiva che non dà parole proprie non è un problema. Dai alla figura una risorsa propria: una seconda risorsa che punti allo stesso file d’immagine, con la sua didascalia, il suo numero e le sue ancore. Nel pannello **Verifiche** della Sandbox compare sotto *Figure*. Da postext 1.42.

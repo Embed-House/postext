@@ -6,7 +6,7 @@ describe('settings registry', () => {
   it('lists every section exactly once', () => {
     const ids = SETTINGS_SECTIONS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toHaveLength(47);
+    expect(ids).toHaveLength(48);
     expect(SETTINGS_GROUPS).toHaveLength(14);
   });
   it('puts the writing system right after the page, with its two sections', () => {
@@ -51,7 +51,7 @@ describe('settings registry', () => {
   });
 
   it('puts the page templates with the page and its columns (#863)', () => {
-    expect(sectionsInGroup('page').map((s) => s.id)).toEqual(['page', 'layout', 'pageTemplates']);
+    expect(sectionsInGroup('page').map((s) => s.id)).toEqual(['page', 'layout', 'pageTemplates', 'modules']);
     expect(SETTINGS_SECTIONS.find((s) => s.id === 'pageTemplates')!.configKeys).toEqual(['pageTemplates']);
   });
 

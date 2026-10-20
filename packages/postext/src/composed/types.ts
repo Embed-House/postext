@@ -13,6 +13,7 @@ import type {
   DesignSlot,
   Dimension,
   ElementPlacement,
+  LeaderStyle,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -160,6 +161,12 @@ export interface FrameConfig {
    *  keeps one style and writes the tint here. Merged key by key over the
    *  parent's in a patch. */
   look?: FrameLook;
+  /** The overlap checks (#1053): `'allow'` leaves the frame out of
+   *  `frameCovered`, as the frame painted over another (art meant to sit
+   *  over text) and as the one painted under, and out of
+   *  `frameOutsideArea` (a badge hung half off its card on purpose).
+   *  Default `'check'`. */
+  overlap?: 'check' | 'allow';
   /** In a template patch (`extends`, `variants`): drop the inherited frame. */
   remove?: boolean;
 }
@@ -181,15 +188,51 @@ export interface FrameLook {
   label?: { color?: ColorValue; background?: ColorValue; rule?: { color?: ColorValue } };
 }
 
+/** The frame set a grid group lays once per content item (#1061, DESIGN
+ *  §12.6). */
+export interface FrameRepeatConfig {
+  /** The frames of the set. The first is the cell's main frame: it takes
+   *  the cell's width, and each `:::frame{slot="<main>"}` piece of the page
+   *  is one item. The others are laid as the template draws them, anchored
+   *  to the main frame or to each other. */
+  frames: string[];
+  /** The most items the grid takes; the rest goes to the flow frame
+   *  (`repeatOverflow`). Unset: no limit. */
+  max?: number;
+}
+
 export interface FrameGroupConfig {
   /** Unique per template, and distinct from every frame name (anchors
    *  name both as `'#name'`). */
   name: string;
-  /** Default `'stack'`. */
-  kind?: 'stack' | 'row';
-  /** Order on the page: top to bottom (stack), start to end (row). A frame
-   *  belongs to at most one group. */
+  /** Default `'stack'`. `'grid'` (#1061): cells of `columns` columns,
+   *  filled row by row from the start side, each row as tall as its
+   *  tallest cell. */
+  kind?: 'stack' | 'row' | 'grid';
+  /** Order on the page: top to bottom (stack), start to end (row), cell
+   *  after cell (grid). A frame belongs to at most one group. A grid that
+   *  `repeat`s takes the set's frames instead. */
   frames?: string[];
+  /** Grid: the number of columns. Default 1. */
+  columns?: number;
+  /** Grid: the space between columns, and between rows. Default 0 (a
+   *  grid's `gap` is read for both when these are unset). */
+  columnGap?: Dimension;
+  rowGap?: Dimension;
+  /** Grid: where a cell shorter than its row sits: `'stretch'` (the
+   *  default) makes its main frame as tall as the row. */
+  rowAlign?: 'start' | 'center' | 'end' | 'stretch';
+  /** Grid: the frame set laid once per item of the page's content. */
+  repeat?: FrameRepeatConfig;
+  /** The group takes the page's `:::module` blocks (#1062, DESIGN §12.7),
+   *  in Markdown order, one under another, `gap` between them: each module
+   *  is as wide as the group and as tall as its frames. Its `frames` are
+   *  not read; the group is laid as a stack whatever its `kind`. */
+  modules?: boolean;
+  /** A modules group (#1062): where a module that does not fit goes on,
+   *  whole (`'next-page'`, `'template:<id>'`). Unset: the module is laid
+   *  cut at the group's foot and its frames run the reflow ladder. */
+  overflow?: { continueIn?: string };
   /** Default 0. */
   gap?: Dimension;
   /** The group's own box. Neither this nor `grid`: the union of its
@@ -264,7 +307,11 @@ export interface PageTemplate extends PageTemplatePatch {
   gutter?: Dimension;
   /** Patches applied on a recto or a verso page, after `extends`. */
   variants?: { recto?: PageTemplatePatch; verso?: PageTemplatePatch };
-  /** Page role reported to design slots. Default `'composed'`. */
+  /** Page role reported to design slots. Default `'composed'`.
+   *  `'module'` (#1062, DESIGN §12.7): the template is a module, a box of
+   *  frames, groups and decoration a page stacks in its modules group
+   *  (`:::module{template="…"}`); it has no `area`, header, footer,
+   *  variants, spread or overflow template, and no page fence lays it. */
   role?: string;
 }
 
@@ -297,6 +344,25 @@ export interface LabelStyle {
    *  `labelOverlap` check: a map whose names touch in the source (#977).
    *  An anchor's `overlap` wins. Default `'check'`. */
   overlap?: 'check' | 'allow';
+  /** How the lines of a label line up inside its box (#1058): `'start'`
+   *  and `'end'` in the label's own direction. Left out: as the anchor
+   *  places the box (`ResourceAnchor.align`, centred by default), and
+   *  `'start'` in a legend. */
+  align?: 'start' | 'center' | 'end';
+  /** A line round the label's plate (its box grown by `padding`), with or
+   *  without a `background` (#1058). */
+  border?: { color: ColorValue; width: Dimension };
+  /** The corners of the plate (#1058). */
+  radius?: Dimension;
+  /** `'legend'` (#1058): a map's key. Each line of the label is a row; the
+   *  first inline symbol (`:icon`) that opens a row hangs in a column as
+   *  wide as the widest of them, so the words of every row line up. */
+  kind?: 'legend';
+  /** The look of the leaders of labels set in this style (#1057): the line
+   *  from a label's box to its anchor's point. A label set away from its
+   *  point (`ResourceAnchor.labelAt`) gets one; `leader` on the anchor or
+   *  on the label turns it on or off. */
+  leader?: LeaderStyle;
 }
 
 /** New top-level config keys. `checks.contentInConfig` (DESIGN §2.8)
@@ -320,6 +386,38 @@ export interface ResolvePageTemplateOptions {
   /** The caller lays a sheet of two pages: no variant applies (a spread
    *  has both sides). A `spread` template is always laid this way. */
   spread?: boolean;
+  /** The modules the page lays (#1062), in Markdown order: the template
+   *  comes back with each one's frames, groups and decoration in its
+   *  modules group, scoped by the instance name (`expandModules`). */
+  modules?: readonly ComposedModuleUse[];
+}
+
+/** A module a page lays (#1062): its instance name (the fence's `name`,
+ *  else `<template>[n]`) and its module template. */
+export interface ComposedModuleUse {
+  name: string;
+  template: string;
+}
+
+/** A module laid in a template's modules group (#1062), after
+ *  `expandModules`: what of the template belongs to it, by scoped name
+ *  (`<name>.<frame>`). */
+export interface ResolvedModule extends ComposedModuleUse {
+  /** The modules group it is laid in. */
+  group: string;
+  /** JSON pointer of the module template. */
+  configPath: string;
+  /** Its frames, groups and decoration element ids, scoped, in the module
+   *  template's order. */
+  frames: string[];
+  groups: string[];
+  elements: string[];
+  /** The module's flow frame: the content of its `:::module` that names
+   *  no slot. */
+  flow?: string;
+  /** The module's frames that take the first heading of a level (or the
+   *  contents) inside its `:::module`. */
+  takes?: Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc', string>>;
 }
 
 export interface ResolvedFrameFit {
@@ -370,6 +468,9 @@ export interface ResolvedFrame {
   /** What the frame changes of its style's look (#976), colours and
    *  lengths checked. */
   look?: FrameLook;
+  /** `'allow'`: the frame is left out of the overlap checks (#1053).
+   *  Absent: checked. */
+  overlap?: 'allow';
   /** JSON pointer of the most specific entry that sets this frame
    *  (`/pageTemplates/3/frames/2`, `/pageTemplates/3/variants/recto/frames/0`). */
   configPath: string;
@@ -379,9 +480,26 @@ export interface ResolvedFrame {
 
 export interface ResolvedFrameGroup {
   name: string;
-  kind: 'stack' | 'row';
+  kind: 'stack' | 'row' | 'grid';
+  /** For a grid that repeats: the set's frames (before `expandRepeats`),
+   *  or its instances, cell after cell (after). */
   frames: string[];
   gap: Dimension;
+  /** Grid only (#1061): set when `kind` is `'grid'`. */
+  columns?: number;
+  columnGap?: Dimension;
+  rowGap?: Dimension;
+  rowAlign?: 'start' | 'center' | 'end' | 'stretch';
+  repeat?: { frames: string[]; max?: number };
+  /** After `expandRepeats` (#1061): the items laid, each its number and its
+   *  instances (the main frame's first), in cell order. For a modules group
+   *  after `expandModules` (#1062): each module, its frames, `module` its
+   *  instance name. */
+  items?: { item: number; frames: string[]; module?: string }[];
+  /** The group takes the page's modules (#1062). */
+  modules?: true;
+  /** A modules group's `overflow.continueIn` (#1062). */
+  overflow?: { continueIn?: string };
   placement?: ElementPlacement;
   grid?: Required<FrameGridCell>;
   align: 'start' | 'center' | 'end' | 'space-between';
@@ -414,6 +532,9 @@ export interface ResolvedPageTemplate {
   role: string;
   /** The variant applied, if any. */
   variant?: PageSide;
+  /** The modules laid in the template's modules group (#1062), in order:
+   *  set by `expandModules`. */
+  modules?: ResolvedModule[];
   /** The template and its ancestors, nearest first. */
   chain: string[];
   /** `/pageTemplates/<i>`. */
@@ -456,6 +577,8 @@ export interface FigureLabelNode extends SourceRange {
   text: string;
   at: { anchor: string } | { x: number; y: number };
   style?: string;
+  /** The `leader` attribute (#1057): on (`leader`), off (`leader="none"`). */
+  leader?: boolean;
   sourceMap?: number[];
 }
 
