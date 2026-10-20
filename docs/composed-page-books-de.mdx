@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'Bücher aus zusammengesetzten Seiten',
   sidebarTitle: 'Bücher aus zusammengesetzten Seiten',
-  description: 'Ein Rundgang durch die Sandbox an einem Schulbuch aus zusammengesetzten Seiten: Sie legen eine Seitenvorlage an, füllen sie aus dem Markdown, beschriften eine Karte, übersetzen die Seite, beheben zu langen Text und wählen auf der Seite und im Text aus',
+  description: 'Ein Rundgang durch die Sandbox an einem Schulbuch aus zusammengesetzten Seiten: Sie legen eine Seitenvorlage an, füllen sie aus dem Markdown, beschriften eine Karte, übersetzen die Seite, beheben zu langen Text wählen auf der Seite und im Text aus und zeichnen dann einen Baum mit Verbindern, Notizen auf einer Karte mit Zeigern und Legende, ein Raster aus Fotokarten und eine Modulbibliothek für eine Reihe',
   lang: 'de',
-  lastUpdated: '2026-10-19',
-  readingTime: '12 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '22 min',
   order: 43,
-  plainSummary: "Diese Seite zeigt Schritt für Schritt, wie Sie in der Sandbox eine Schulbuchseite mit Titelband, Text und farbigen Kästen bauen. Sie beginnen mit einem fertigen Beispielbuch und fügen ihm eine Seite hinzu. Zuerst zeichnen Sie die Seite als Vorlage, dann füllen Sie sie aus dem Markdown mit Text. Danach beschriften Sie die Orte auf einer Karte und übersetzen die Seite in eine andere Sprache. Am Ende sehen Sie, was zu tun ist, wenn ein Text für seinen Kasten zu lang ist, und wie Sie zwischen der Seite und ihrem Text hin- und herspringen.",
+  plainSummary: "Diese Seite zeigt Schritt für Schritt, wie Sie in der Sandbox eine Schulbuchseite mit Titelband, Text und farbigen Kästen bauen. Sie beginnen mit einem fertigen Beispielbuch und fügen ihm eine Seite hinzu. Zuerst zeichnen Sie die Seite als Vorlage, dann füllen Sie sie aus dem Markdown mit Text. Danach beschriften Sie die Orte auf einer Karte und übersetzen die Seite in eine andere Sprache. Dann sehen Sie, was zu tun ist, wenn ein Text für seinen Kasten zu lang ist, und wie Sie zwischen der Seite und ihrem Text hin- und herspringen. Die letzten Schritte zeichnen einen Baum aus Kästen, die Linien verbinden, Notizen, die auf Orte einer Karte zeigen, eine Seite mit Fotokarten und eine Reihe von Blöcken, die sich die Bücher einer Reihe teilen können.",
 };
 
 # Bücher aus zusammengesetzten Seiten
 
-**Sie bauen eine Schulbuchseite aus einer Vorlage, füllen sie mit Text aus dem Markdown, beschriften eine Karte, übersetzen die Seite und beheben, was nicht passt.**
+**Sie bauen eine Schulbuchseite aus einer Vorlage, füllen sie mit Text aus dem Markdown, beschriften eine Karte, übersetzen die Seite und beheben, was nicht passt; danach fügen Sie einen Baum, Notizen auf einer Karte, eine Seite mit Fotokarten und eine Modulbibliothek hinzu.**
 
 Eine Schulbuchseite besteht aus Kästen: einem Titelband, einem Text, einem Kasten für eine Definition, einem für eine Aufgabe und einer Karte. Postext setzt eine solche Seite nach einer **Seitenvorlage**, die die Kästen (ihre Rahmen) enthält; das Markdown legt nur fest, welche Wörter in welchen Rahmen kommen. Diese Seite führt die ganze Arbeit in der Sandbox vor, an einem bestehenden Buch, dem Sie eine Seite hinzufügen. Die Referenzseiten erklären, was jedes Feld und jede Markdown-Zeile bewirkt; hier machen Sie jeden Schritt einmal, der Reihe nach, und sehen, was er ändert: [Zusammengesetzte Seiten](/de/docs/composed-pages) für das Markdown, [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages) für die Vorlage, [Sandbox: zusammengesetzte Seiten](/de/docs/sandbox-composed-pages) für die Bildschirme.
 
@@ -38,8 +38,8 @@ Die neue Seite wird eine Wiederholungsseite: ein Titelband, darunter ein kurzer 
 2. Klicken Sie auf **Neu**. Eine Vorlage namens *Neue Vorlage* öffnet sich. Geben Sie ihr die **ID** `review` (das ist der Name, den das Markdown verwendet) und den **Namen** `Review page` (so zeigt ihn dieses Bedienfeld). Die ID darf Kleinbuchstaben, Ziffern und Bindestriche enthalten.
 3. Die Vorlage beginnt mit einem Rahmen, `text`, bei dem **Nimmt den freien Text der Seite auf** eingeschaltet ist. Machen Sie ihn zum Titelband: **Name (Slot)**: `title`; **Kastenstil**: `portada`, das blaue Band, das das Buch schon für seine Titel verwendet; schalten Sie **Nimmt den freien Text der Seite auf** aus; **Nimmt auf**: *Ebene 1*, damit dieser Rahmen die erste `#`-Überschrift der Seite erhält.
 4. Klicken Sie auf **Rahmen hinzufügen**. Der neue Rahmen öffnet sich unter der Liste der Rahmen. **Name (Slot)**: `text`, und schalten Sie **Nimmt den freien Text der Seite auf** ein: Alles, was die Seite außerhalb eines Rahmens schreibt, kommt hierher.
-5. Fügen Sie einen Rahmen hinzu. **Name (Slot)**: `remember`. **Kastenstil**: `dato-campo`, ein grüner Kasten mit Etikett. **Kleinste Höhe**: 30 mm, damit der Kasten eine gute Größe behält, auch wenn sein Text kurz ist.
-6. Fügen Sie einen letzten Rahmen hinzu. **Name (Slot)**: `try`. **Kastenstil**: `actividad-sol`. **Kleinste Höhe**: 30 mm.
+5. Fügen Sie einen Rahmen hinzu. **Name (Slot)**: `remember`. **Kastenstil**: `dato`, ein getönter Kasten mit Etikett. **Kleinste Höhe**: 30 mm, damit der Kasten eine gute Größe behält, auch wenn sein Text kurz ist.
+6. Fügen Sie einen letzten Rahmen hinzu. **Name (Slot)**: `try`. **Kastenstil**: `actividad`, ein Kasten mit einem Streifen an der Seite. **Kleinste Höhe**: 30 mm.
 7. Stellen Sie bei `text`, `remember` und `try` die **Breite** auf *Bis zum Rand* und die **Höhe** auf *Sein Inhalt*. Dann füllen die Rahmen die Breite der Seite aus und sind so hoch wie ihr Text.
 8. Klicken Sie unter **Gruppen** auf **Gruppe hinzufügen**. Nennen Sie sie `column`, lassen Sie sie *Gestapelt* und setzen Sie den **Abstand zwischen Rahmen** auf 6 mm. Haken Sie unter **Rahmen der Gruppe, in Seitenreihenfolge** die vier Rahmen an, und zwar in der Reihenfolge, in der sie stehen sollen, den Titel zuerst: Die Liste nummeriert die Rahmen, und mit den Pfeilen verschieben Sie einen nach oben oder unten. Eine Gruppe setzt ihre Rahmen untereinander und schiebt die unteren weiter, wenn ein Rahmen wächst: Ein längerer Text im ersten Kasten drückt den zweiten nach unten, statt ihn zu überdecken.
 
@@ -173,6 +173,175 @@ Die Seite und ihr Markdown folgen einander.
 - **Von einer Prüfung aus.** Klicken Sie auf einen Eintrag im Bedienfeld Prüfungen, und die Sandbox führt Sie zur Seite, wählt den Rahmen aus und setzt die Einfügemarke an seinen Text. In einem Buch mit mehreren Ausgaben wechselt sie zu der Ausgabe, die das Problem hat.
 
 <Screenshot src="/docs-shots/de/select.webp" alt="Die Seite mit dem zweiten Kasten orange umrandet und das Bedienfeld Text, das den ausgewählten Rahmen in seinem Markdown zeigt." caption="Ein Klick auf die Seite setzt die Einfügemarke in ihr Markdown, und der Pfad unter der Vorschau zeigt, welcher Rahmen es ist." />
+
+## 8. Einen Baum mit Verbindern zeichnen
+
+Ein Ideenbaum, ein Organigramm und eine Zeitleiste bestehen aus Kästen, die Linien verbinden. In Postext sind die Kästen Rahmen und die Linien **Verbinder**: Linien der Dekoration einer Vorlage, die Rahmen miteinander verbinden. Ein Verbinder wird gezeichnet, nachdem die Rahmen ihre endgültigen Rechtecke haben. Er folgt also einem Kasten, der mit einem längeren Text oder mit den Wörtern einer anderen Sprache wächst, und die Vorlage braucht kein Bild der Linien. Sie zeichnen den Baum einmal, als **Modul** (ein Block aus Rahmen, den jede zusammengesetzte Seite aufnehmen kann), und das Markdown legt fest, wie viele Äste er hat.
+
+1. Öffnen Sie in **Gestaltung** den Abschnitt **Seite und Spalten › Module** und klicken Sie auf **Neues Modul**. Ein Modul namens *Modul* erscheint in der Liste, mit einem Rahmen, `text`. Klicken Sie auf seinen Stift (*Modul Modul bearbeiten*): Der Vorlageneditor öffnet sich an Ort und Stelle, mit eingeschaltetem Schalter **Modul**.
+2. Geben Sie ihm die **ID** `tree` und den **Namen** `Tree of ideas`. Wählen Sie den Rahmen `text` und machen Sie ihn zur Spitze des Baums: **Name (Slot)** `root`, **Kastenstil** `dato`, **Breite** *Bis zum Rand*, **Höhe** *Sein Inhalt*, und schalten Sie **Nimmt den freien Text der Seite auf** aus.
+3. Klicken Sie auf **Rahmen hinzufügen**. **Name (Slot)**: `branch`; **Kastenstil**: `dato`; **Kleinste Höhe**: 20 mm.
+4. Klicken Sie unter **Gruppen** auf **Gruppe hinzufügen**. Nennen Sie sie `branches` und wählen Sie **Raster**: **Spalten** 3, **Abstand zwischen Spalten** und **Abstand zwischen Zeilen** 6 mm. Wählen Sie unter **Eine Rahmengruppe wiederholen** `branch` als **Hauptrahmen**: Das Raster setzt einen `branch` für jeden Eintrag, den die Seite ihm gibt. Stellen Sie **Eigenes Rechteck** auf *Rahmen root*, **Relative Position** auf *Unter* und **Versatz Y** auf 12 mm, damit das Raster unter der Wurzel beginnt, wie hoch sie auch ist.
+5. Klicken Sie unter **Dekoration** auf **Verbinder hinzufügen**. Stellen Sie in seiner Karte **Beginnt bei** auf *Rahmen root* und drücken Sie unter **Führt zu** auf *Jedes branch* (die Enden der Linie sind die gedrückten Schaltflächen). Stellen Sie **Verlauf** auf *Baum*, **Radius der Knicke** auf 2 mm, **Linienstärke** auf 1,5 pt und **Endzeichen** auf *Pfeil*. **Auf der Seite wählen** erledigt dasselbe mit der Maus, im Modus Gestaltung: Klicken Sie auf den Rahmen, an dem die Linie beginnt, dann auf jeden Rahmen, zu dem sie führt; ein zweiter Klick nimmt ein Ende wieder heraus, und Escape beendet die Auswahl.
+
+Jetzt die Wörter. Wechseln Sie zu **Inhalt** und setzen Sie im Bedienfeld **Text** die Einfügemarke in die Wiederholungsseite aus Abschnitt 3. Zurück in **Module** nennt die Liste **Seite zum Einfügen** diese Seite; klicken Sie bei *Tree of ideas* auf die Schaltfläche zum Einfügen. Die Sandbox schreibt vor die schließende Zeile der Seite einen Block `:::module{template="tree"}` mit einem leeren Rahmen je Slot. Weil die Vorlage `review` noch keine Gruppe für Module hatte, fügt sie ihr unter dem letzten Rahmen eine hinzu. Schreiben Sie die Wörter in die leeren Rahmen:
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+Jedes `:::frame{slot="branch"}` ist ein Ast. Kopieren Sie einen, und die Seite hat vier Kästen und vier Linien; nehmen Sie einen heraus, und sie hat zwei. Der Verbinder nennt `branch[*]`, also jeden Ast, den die Seite hat; die Linien folgen dem Markdown, ohne dass sich am Modul etwas ändert.
+
+<Screenshot src="/docs-shots/de/tree.webp" alt="Das Bedienfeld Gestaltung mit dem Modul Tree of ideas, geöffnet bei der Karte seines Verbinders, und die Wiederholungsseite mit einem Kasten oben, von dem Linien mit Pfeilen zu drei Kästen darunter führen." caption="Der Baum: eine Wurzel, ein Raster, das den Ast wiederholt, und ein Verbinder zu jedem Ast." />
+
+Ein Organigramm ist dasselbe Modul mit anderen Rahmen: eine Karte für die Leitung des Teams, ein Raster, das ein Foto und einen Namen wiederholt, und ein Verbinder im Verlauf Baum zu jeder Karte. Für eine Zeitleiste stellen Sie **Lage des Balkens** auf 0: kein Balken, sondern ein Lot von der Datumsleiste zu jeder Karte.
+
+## 9. Notizen auf einer Karte, mit Zeigern und Legende
+
+Eine Seite mit Notizen rund um eine Karte: Jede Notiz hat eine Linie zu dem Ort, von dem sie spricht, die Karte hat eine Legende zu ihren Zeichen, und ein Name steht abseits seines Punkts, mit einer Linie zurück zu ihm. Keine dieser Linien gehört zum Gemälde.
+
+Das Buch hat das Gemälde zweimal: `mapa` mit den Namen der Seiten 6 und 7, und `rio`, dasselbe Bild ohne Anker, klein auf der Inhaltsseite gesetzt. Diese Seite verwendet `rio`, damit die Punkte, die Sie hinzufügen, keinen Namen der Doppelseite verschieben.
+
+1. Legen Sie eine Seitenvorlage an wie in Abschnitt 2. **ID** `map-notes`, **Name** `Map with notes`. Ihre Rahmen: `title` (**Kastenstil** `portada`, **Nimmt auf** *Ebene 1*), `text` (**Nimmt den freien Text der Seite auf**), `map` (**Breite** *Bis zum Rand*) sowie `note-1`, `note-2` und `note-3` (**Kastenstil** `dato`, **Breite** 56 mm, **Kleinste Höhe** 26 mm). Stapeln Sie `title`, `text` und `map` in einer Gruppe `column` mit 6 mm zwischen den Rahmen, und legen Sie die Notizen in eine Gruppe `notes`, *In einer Reihe*, mit 8 mm dazwischen. Hängen Sie `note-1` an *Rahmen map*, *Unter*, 14 mm tiefer.
+2. Schreiben Sie die Seite ans Ende des Kapitels:
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}` ist eine mehrzeilige Beschriftung: Jede Zeile ist ein Eintrag der Legende. `:icon[…]{…}` ist ein Symbol in der Zeile: ein Zeichen, ein Linienmuster oder ein Bild des Buchs. Die Schaltfläche **Symbol für eine Beschriftung** in der Werkzeugleiste des Bedienfelds Text schreibt eines an die Einfügemarke, mit Farbe und Größe; in den eckigen Klammern steht, was ein Bildschirmleser dafür sagt, und leere Klammern bedeuten, dass die Wörter daneben schon alles sagen.
+3. Geben Sie der Legende ihr Aussehen. Klicken Sie in **Gestaltung › Abbildungen und Tabellen › Beschriftungsstile** auf **Beschriftungsstil hinzufügen**, setzen Sie seine ID auf `key`, seine Schrift auf Fredoka in 10,5 pt, eine weiße **Unterlage** mit einem **Innenabstand der Unterlage** von 2,5 mm, einen **Umriss** und einen **Eckenradius** von 1,5 mm, und schalten Sie unter **Zeilen und Legende** die Option **Legende** ein. Die Symbole stehen dann in einer eigenen Spalte, und die Wörter jedes Eintrags beginnen an einer Kante.
+4. Setzen Sie die Punkte. **Prüfungen** meldet *Beschriftung an einem unbekannten Anker* für `spring` und `key`. Klicken Sie bei einem der Einträge auf die Schaltfläche mit der Nadel: Der Dialog Anker von `rio` öffnet sich, mit beiden Namen unter *Beschriftungen ohne Anker*. Klicken Sie für `spring` auf den Wasserfall oben links im Gemälde und für `key` auf die untere linke Ecke; stellen Sie die **Ausrichtung** der Legende auf *Anfang* und ihre **Vertikale Ausrichtung** auf *Unten*, damit sie von ihrem Punkt aus nach oben und nach rechts wächst. Klicken Sie dann auf den Staudamm, die Mühle und den Hafen und nennen Sie die drei neuen Anker in ihren Zeilen `dam`, `mill` und `harbour`.
+5. Setzen Sie den Namen der Quelle abseits ihres Punkts. Wählen Sie `spring` und schalten Sie unter **Beschriftung und Hinweislinie** die Option **Abseits des Punkts** ein. Ziehen Sie den Griff der Beschriftung nach oben in den Himmel und stellen Sie **Hinweislinie** auf *An*: Die Linie von der Beschriftung zum Wasserfall wird schon beim Ziehen gezeichnet. Klicken Sie auf **Speichern**.
+6. Zeichnen Sie die Zeiger. Wählen Sie im Modus **Gestaltung** auf der Seite `note-1`: Neben der Mitte seiner rechten Seite erscheint ein runder Griff. Ziehen Sie ihn auf den Staudamm; während des Ziehens zeigt die Karte ihre Anker, und beim Loslassen entsteht ein Verbinder von der Notiz zum Anker `dam` mit einem Punkt am Ende. Verfahren Sie ebenso von `note-2` zu `mill` und von `note-3` zu `harbour`. Die Gruppe **Zeiger** des Rahmens listet sie auf; über sie fügen Sie einen Zeiger auch mit der Tastatur hinzu oder ändern ihn.
+
+<Screenshot src="/docs-shots/de/map-notes.webp" alt="Die Seite Along the river im Modus Gestaltung: die Karte mit einer Legende in der unteren linken Ecke, darunter drei Notizen mit je einer Linie zu einem Ort der Karte, und im Bedienfeld Gestaltung die Gruppe Zeiger der zweiten Notiz." caption="Jede Notiz zeigt auf einen Anker des Bilds; die Legende und die Namen sind Zeilen des Markdown." />
+
+Ein Zeiger endet am Punkt des Ankers im Bild, durch Beschnitt und Skalierung hindurch, und findet die Mühle deshalb auch dann noch, wenn die Karte kleiner gesetzt oder auf ihren Sicherheitsbereich beschnitten wird. Er wird über die Rahmen gezeichnet und ist daher über dem Bild zu sehen. Eine Notiz, die stattdessen ohne eigenen Platz auf die Karte gesetzt wird, meldet Prüfungen als *Rahmen unter einem anderen Rahmen*, mit den Lösungen (siehe [Sandbox: zusammengesetzte Seiten](/de/docs/sandbox-composed-pages#überlappungen-und-zeichen-auf-etiketten)).
+
+## 10. Eine Seite mit Fotokarten
+
+Eine Seite mit Karten (Fotos mit einer Legende darunter, Porträts mit einem Namen) ist eine Karte, viele Male gezeichnet. Ein **Raster, das einen Rahmensatz wiederholt**, zeichnet die Karte einmal, und die Seite hat so viele Karten, wie ihr Markdown schreibt.
+
+1. Legen Sie eine Vorlage `photos` an (**Name** `Photo cards`) mit `title` (`portada`, *Ebene 1*) und `text` (der freie Text), gestapelt in einer Gruppe `column`, 6 mm voneinander entfernt.
+2. Fügen Sie einen Rahmen `photo` hinzu: **Kastenstil** `foto`, gehängt an *Rahmen text*, *Unter*, 6 mm tiefer. Fügen Sie einen Rahmen `caption` hinzu: **Kastenstil** `dato`, **Breite** *Sein Inhalt*, gehängt an *Rahmen photo*, *Unter*, 2 mm tiefer.
+3. Fügen Sie eine Gruppe `cards` hinzu: **Raster**, **Spalten** 3, **Abstand zwischen Spalten** 6 mm, **Abstand zwischen Zeilen** 12 mm. Unter **Eine Rahmengruppe wiederholen** ist der **Hauptrahmen** `photo`; haken Sie `caption` unter **Rahmen, die dazugehören** an. Der Hauptrahmen nimmt die Breite einer Zelle an; die Legende hängt an ihm, so wie die Vorlage sie zeichnet.
+4. Schreiben Sie die Seite:
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+Jedes `:::frame{slot="photo"}` ist eine Karte, und das `:::frame{slot="caption"}` darin geht in die Legende dieser Karte. Die Karten füllen die Reihen von der Seite aus, an der eine Zeile beginnt, die vierte eröffnet also eine zweite Reihe. Im Modus Gestaltung heißen die Rahmen nach ihrer Karte: `photo[2]` und `caption[2]` sind die zweite Karte.
+
+<Screenshot src="/docs-shots/de/grid.webp" alt="Die Seite People and the river mit vier Fotos in einem Raster aus drei Spalten und einer Legende unter jedem, und das Bedienfeld Gestaltung mit der Gruppe cards: Raster, drei Spalten und Eine Rahmengruppe wiederholen." caption="Die Karte ist einmal gezeichnet; das Markdown gibt vier, und das Raster setzt vier." />
+
+Ein fünftes Foto nimmt die nächste Zelle, ein siebtes beginnt eine dritte Reihe. Eine Ausgabe in einer anderen Sprache kann mit derselben Vorlage mehr oder weniger Karten haben. **Höchstzahl der Einträge** begrenzt das Raster (was darüber hinausgeht, kommt in den freien Text, und Prüfungen meldet *Mehr Einträge, als das Raster fasst*), und **Inhalt, der nicht passt, läuft weiter in** *Eine danach hinzugefügte Seite* am Hauptrahmen trägt die Reihen, die nicht passen, als Ganzes auf eine hinzugefügte Seite.
+
+## 11. Eine Modulbibliothek für eine Reihe
+
+**Seite und Spalten › Module** ist die Modulbibliothek des Buchs. Jedes Modul ist mit seinen Rahmen gezeichnet und mit seiner ID benannt; dazu steht, wie viele Blöcke des Markdown es auf wie vielen Seiten verwenden (*1 Block auf 1 Seite* beim Baum), ein Stift, der es im Vorlageneditor öffnet, und die Schaltfläche, die es in die unter **Seite zum Einfügen** gewählte Seite einfügt. **Neues Modul** beginnt ein weiteres. Wer ein Modul umbenennt, schreibt jeden `:::module`-Block um, der es nennt.
+
+<Screenshot src="/docs-shots/de/modules.webp" alt="Der Abschnitt Module des Bedienfelds Gestaltung: die Liste Seite zum Einfügen, das Modul Tree of ideas mit der Angabe 1 Block auf 1 Seite und die Schaltfläche Neues Modul." caption="Die Bibliothek: jedes Modul, wo das Buch es verwendet, und wie es in eine Seite kommt." />
+
+Eine Seite nimmt Module in einer Gruppe auf, bei der **Nimmt die Module der Seite auf** eingeschaltet ist, untereinander in der Reihenfolge des Markdown. Die nächste Seite kann also einen Baum unter einem Kasten oder zwei Bäume enthalten, ohne neue Vorlage: Das Markdown legt fest, welche Blöcke in welcher Reihenfolge kommen, die Module zeichnen sie.
+
+Die Bücher einer Reihe (*Our river* für das dritte Schuljahr, *Our coast* für das vierte) teilen sich ihre Module, indem sie sich die Gestaltung teilen:
+
+- **In der Sandbox.** Beginnen Sie das nächste Buch als Kopie dieses Buchs (**Bücher**, **⋯** beim Buch, **Duplizieren**) und schreiben Sie seine Kapitel; Vorlagen, Module und Stile kommen mit der Kopie. Bei einem Buch, das es schon gibt, speichert **Exportieren** im Kopf des Bedienfelds Gestaltung die Gestaltung, und **Importieren** im anderen Buch setzt sie an die Stelle von dessen Gestaltung.
+- **Aus dem Code.** Halten Sie die Modulvorlagen in einer Datei und fügen Sie sie den `pageTemplates` jedes Buchs der Reihe hinzu:
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+Eine Änderung an einem Modul (eine dickere Linie, ein anderer Kastenstil) erreicht dann beim nächsten Satz jede Seite jedes Buchs, das es verwendet, und die Wörter bleiben im Markdown jedes Buchs.
+
+## Was das Markdown sagt und was die Gestaltung zeichnet
+
+Die Seiten der Abschnitte 8 bis 11 folgen einer Regel. Das Markdown sagt, **was** auf die Seite kommt und **wie viel**: die Wörter jedes Kastens, wie viele Äste, Notizen, Karten und Einträge der Legende, welches Modul zuerst kommt. Die Gestaltung zeichnet jedes Ding **einmal**: die Kästen, ihre Plätze, die Linien zwischen ihnen, das Aussehen der Legende, die Größe einer Zelle. Deshalb braucht eine Übersetzung keine eigene Vorlage, deshalb verwendet eine Seite mit fünf Fotos die Vorlage einer Seite mit vier, und deshalb kann eine Reihe ihre Module teilen. Eine Vorlage enthält nie die Wörter einer Seite, und das Markdown enthält nie eine Position oder eine Farbe.
 
 ## Wie es weitergeht
 

@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Passar un llibre a pàgines compostes',
   sidebarTitle: 'Passar a pàgines compostes',
-  description: "Com passar a plantilles de pàgina i a Markdown un llibre que té el text de les pàgines dins dels estils de títol, amb l'assistent «Passar el text al Markdown» del Sandbox o a mà, i què cal comprovar després",
+  description: "Com passar a plantilles de pàgina i a Markdown un llibre que té el text de les pàgines dins dels estils de títol, amb l'assistent «Passar el text al Markdown» del Sandbox o a mà, què cal comprovar després i com se substitueixen per connectors les línies fixades en una imatge i per graelles i mòduls els marcs dibuixats un per un",
   lang: 'ca',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Alguns llibres fets amb Postext abans de les pàgines compostes tenen les paraules de cada pàgina dins dels paràmetres del disseny, i no al text. Això fa que costi editar-los i que no es puguin traduir. Aquesta pàgina mostra com passar aquestes paraules al Markdown, on cada pàgina passa a ser un bloc amb una plantilla pròpia. El Sandbox fa la major part de la feina amb un sol botó, i tu en comproves el resultat pàgina per pàgina. També explica com fer el mateix a mà amb una sola pàgina.",
+  plainSummary: "Alguns llibres fets amb Postext abans de les pàgines compostes tenen les paraules de cada pàgina dins dels paràmetres del disseny, i no al text. Això fa que costi editar-los i que no es puguin traduir. Aquesta pàgina mostra com passar aquestes paraules al Markdown, on cada pàgina passa a ser un bloc amb una plantilla pròpia. El Sandbox fa la major part de la feina amb un sol botó, i tu en comproves el resultat pàgina per pàgina. També explica com fer el mateix a mà amb una sola pàgina. L'última part substitueix les línies pintades en una imatge per línies que dibuixa la maquetació, i els marcs dibuixats un per un per una graella o un mòdul.",
 };
 
 # Passar un llibre a pàgines compostes
@@ -77,3 +77,61 @@ Un llibre de poques pàgines es pot passar sense l'assistent, pàgina per pàgin
 4. Compara la pàgina amb l'antiga i obre **Revisió**.
 
 La mateixa migració es pot fer des del codi amb `moveTextToMarkdown`, que retorna la configuració nova, els capítols i l'informe que mostra el quadre; vegeu [Pàgines compostes › Migrar un llibre amb el text als estils](/ca/docs/composed-pages#migrar-un-llibre-amb-el-text-als-estils). Tot el que fa el quadre es descriu a [Sandbox: les pàgines compostes › Passar el text al Markdown](/ca/docs/sandbox-composed-pages#passar-el-text-al-markdown).
+
+## De línies en una imatge a connectors
+
+Un llibre portat fa temps sovint guarda les línies dels diagrames en una imatge: les branques d'un arbre, les caixes d'un organigrama, les línies que van d'una nota a un mapa, pintades en un fons sobre el qual hi ha les caixes. Aleshores les paraules només encaixen amb les línies en la llengua i a la mida per a les quals es va dibuixar la imatge: una paraula més llarga d'una traducció passa per sobre d'una línia, i una caixa que creix deixa enrere la seva línia. Els connectors dibuixen les mateixes línies a partir de les caixes dels marcs un cop maquetada la pàgina, de manera que segueixen el text.
+
+1. **Dibuixa les caixes com a marcs.** Cada caixa del diagrama passa a ser un marc de la plantilla, amb l'estil de caixa de la caixa antiga. Un joc de caixes iguals queda millor com una graella que repeteix un marc (secció següent).
+2. **Treu les línies de la imatge.** Fes servir la imatge sense les línies, o elimina-la si no contenia res més; un fons que es queda (paper, una superfície de color) passa a ser una caixa de la decoració o l'atribut `background` de la pàgina.
+3. **Afegeix un connector** per a cada joc de línies a la decoració de la plantilla (**Decoració › Afegeix un connector**). **Comença a** és la caixa mare; a **Va a** prem cada filla, o *Cada …* per a totes les targetes d'una graella. Un arbre de branques porta el **Traçat** *Arbre*; una línia entre dues caixes, *Colze* o *Recte*; les fletxes i els punts són la **Marca final**. Els passos són a [Llibres de pàgines compostes › Dibuixa un arbre amb connectors](/ca/docs/composed-page-books#8-dibuixa-un-arbre-amb-connectors).
+4. **Fes que les notes assenyalin la imatge.** Una línia d'una nota a un lloc d'un mapa passa a ser un assenyalador: posa una àncora a la imatge en aquell lloc (el diàleg Àncores), tria la nota en mode Disseny i arrossega la seva nansa rodona fins a l'àncora. La línia acaba en aquell punt de la imatge, sigui quin sigui el retall i l'escala; vegeu [Llibres de pàgines compostes › Notes sobre un mapa, amb assenyaladors i una llegenda](/ca/docs/composed-page-books#9-notes-sobre-un-mapa-amb-assenyaladors-i-una-llegenda).
+5. **Compara la pàgina** amb l'antiga, en cada llengua, i obre **Revisió**: un connector amb un extrem en un marc que la pàgina no mostra queda fora d'aquella pàgina, i el registre de reajustament ho indica.
+
+## D'una plantilla per pàgina a graelles i mòduls
+
+Un llibre portat marc a marc té una plantilla per cada disseny de pàgina, i la mateixa targeta o caixa dibuixada de nou a cadascuna: sis marcs de foto amb sis marcs de peu, una caixa amb la seva imatge copiada en tres plantilles. **Reorganitzar marcs**, a l'editor de plantilles, els converteix en una graella que repeteix una targeta i en un mòdul que pot contenir qualsevol pàgina, i reescriu cada pàgina composta amb la plantilla perquè es vegi com abans.
+
+El llibre per a aquests passos és *Places of the river, before grids*: una pàgina amb una plantilla que dibuixa sis targetes de fotos marc a marc (de `photo1` a `photo6`, cadascuna amb una etiqueta de peu, de `caption1` a `caption6`) i una caixa `fact` amb una imatge `fact-picture` al costat del text. Les paraules són inventades. [Descarrega el llibre](/docs-examples/river-places-before.postext) i, al Sandbox, obre **Llibres**, prem **Nou** i tria **Obrir un fitxer .postext…**.
+
+1. Passa a **Disseny** i obre **Disseny › Pàgina i columnes › Plantilles de pàgina**. La plantilla *Places of the river* està oberta.
+2. A **Reorganitzar marcs** marca de `photo1` a `photo6` i de `caption1` a `caption6`, i prem **Convertir en graella**. El Sandbox llegeix les targetes de la pàgina: tres columnes a 8 mm l'una de l'altra, dues files. Escriu un grup `grid` que repeteix `photo` i `caption`, i diu *Graella grid creada: 3 columnes, 6 targetes. Pàgines reescrites: 1.* La pàgina es veu igual.
+3. Marca `fact` i `fact-picture`, escriu `fact` a **Nom del mòdul** i prem **Extreure un mòdul**. La caixa i la imatge passen a un mòdul `fact`; allà on eren, la plantilla té ara un grup que rep mòduls.
+
+<Screenshot src="/docs-shots/ca/reshape.webp" alt="L'editor de plantilles a Reorganitzar marcs amb els dotze marcs de foto i de peu marcats, i la pàgina de sis targetes de fotos i una caixa dibuixades amb contorns discontinus." caption="Els marcs triats per a la graella: sis targetes, cadascuna una foto amb el seu peu." />
+
+El Markdown canvia amb la plantilla. Abans, cada peça indicava el seu propi marc:
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+Després, cada targeta és una peça `photo` amb el peu a dins, i la caixa és un mòdul:
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+Ara, una setena targeta és una peça `photo` més al Markdown, i una altra pàgina pot contenir la caixa `fact` sense tenir-ne els marcs: insereix-la des de **Disseny › Pàgina i columnes › Mòduls**. Les dues reorganitzacions són passos de l'historial (un per cada capítol reescrit i un per al disseny), i **Desfer**, a **Reorganitzar marcs**, les desfà mentre siguin els últims canvis. Quan una reorganització no es pot fer, n'explica el motiu: targetes d'amplades diferents, targetes que no són en una mateixa graella, marcs heretats d'una altra plantilla, una plantilla que ja té un grup de mòduls. Tots els camps que escriu la reorganització es descriuen a [Sandbox: les pàgines compostes › Graelles i mòduls](/ca/docs/sandbox-composed-pages#graelles-i-mòduls).

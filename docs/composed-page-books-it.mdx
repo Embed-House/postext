@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'Libri di pagine composte',
   sidebarTitle: 'Libri di pagine composte',
-  description: 'Un percorso guidato nella Sandbox, su un libro di testo scolastico fatto di pagine composte: crei un modello di pagina e lo riempi dal Markdown, metti i nomi su una mappa, traduci la pagina, sistemi il testo che non entra e impari a selezionare sia sulla pagina sia nel testo',
+  description: 'Un percorso guidato nella Sandbox, su un libro di testo scolastico fatto di pagine composte: crei un modello di pagina e lo riempi dal Markdown, metti i nomi su una mappa, traduci la pagina, sistemi il testo che non entra, impari a selezionare sia sulla pagina sia nel testo, poi disegni un albero con i connettori, delle note su una mappa con richiami e legenda, una griglia di schede con foto e una raccolta di moduli per una collana',
   lang: 'it',
-  lastUpdated: '2026-10-19',
-  readingTime: '12 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '22 min',
   order: 43,
-  plainSummary: "Questa pagina insegna, passo dopo passo, a fare nella Sandbox una pagina di un libro di testo scolastico, con una fascia per il titolo, un testo e dei riquadri colorati. Si parte da un libro d’esempio già finito e gli si aggiunge una pagina. Prima si disegna la pagina come modello, poi la si riempie con il testo scritto in Markdown; quindi si scrivono i nomi dei luoghi su una mappa e si traduce la pagina in un’altra lingua. Alla fine si vede che cosa fare quando un testo è troppo lungo per il suo riquadro e come passare dalla pagina al testo e viceversa.",
+  plainSummary: "Questa pagina insegna, passo dopo passo, a fare nella Sandbox una pagina di un libro di testo scolastico, con una fascia per il titolo, un testo e dei riquadri colorati. Si parte da un libro d’esempio già finito e gli si aggiunge una pagina. Prima si disegna la pagina come modello, poi la si riempie con il testo scritto in Markdown; quindi si scrivono i nomi dei luoghi su una mappa e si traduce la pagina in un’altra lingua. Poi si vede che cosa fare quando un testo è troppo lungo per il suo riquadro e come passare dalla pagina al testo e viceversa. Gli ultimi passi disegnano un albero di riquadri uniti da linee, delle note che indicano dei luoghi su una mappa, una pagina di schede con foto e un insieme di blocchi che i libri di una collana possono condividere.",
 };
 
 # Libri di pagine composte
 
-**Costruisci una pagina di un libro di testo a partire da un modello, la riempi con il testo del Markdown, etichetti una mappa, traduci la pagina e sistemi ciò che non entra.**
+**Costruisci una pagina di un libro di testo a partire da un modello, la riempi con il testo del Markdown, etichetti una mappa, traduci la pagina e sistemi ciò che non entra; poi aggiungi un albero, delle note su una mappa, una pagina di schede con foto e una raccolta di moduli.**
 
 La pagina di un libro di testo scolastico è un insieme di riquadri: una fascia per il titolo, un testo, un riquadro per una definizione, uno per un’attività, una mappa. Postext la impagina a partire da un **modello di pagina** che contiene i riquadri (le cornici del modello), e il Markdown indica soltanto quali parole vanno in quale cornice. Questa pagina ti guida in tutto il lavoro nella Sandbox, su un libro che esiste già, a cui aggiungerai una pagina. Le pagine di riferimento spiegano a che cosa serve ogni campo e ogni riga di Markdown; qui fai ogni cosa una volta, in ordine, e vedi che effetto ha: [Pagine composte](/it/docs/composed-pages) per il Markdown, [Configurazione › Pagine composte](/it/docs/configuration-composed-pages) per il modello, [Sandbox: le pagine composte](/it/docs/sandbox-composed-pages) per le schermate.
 
@@ -38,8 +38,8 @@ La pagina nuova sarà una pagina di ripasso: una fascia per il titolo, un testo 
 2. Premi **Nuovo**. Si apre un modello chiamato *Nuovo modello*. Dagli l’**ID** `review` (il nome che userà il Markdown) e il **Nome** `Review page` (quello che compare in questo pannello). L’ID accetta lettere minuscole, cifre e trattini.
 3. Il modello comincia con una cornice, `text`, che **Riceve il testo libero della pagina**. Trasformala nella fascia del titolo: **Nome (slot)**: `title` (lo slot è il nome della cornice a cui va il contenuto); **Stile del riquadro**: `portada`, la fascia blu che il libro usa già per i titoli; disattiva **Riceve il testo libero della pagina**; **Riceve il primo titolo**: *Livello 1*, così questa cornice riceve il primo titolo `#` della pagina.
 4. Premi **Aggiungi cornice**. La cornice nuova si apre sotto l’elenco delle cornici. **Nome (slot)**: `text`, e attiva **Riceve il testo libero della pagina**: tutto ciò che la pagina contiene fuori da una cornice finisce qui.
-5. Aggiungi una cornice. **Nome (slot)**: `remember`. **Stile del riquadro**: `dato-campo`, un riquadro verde con una linguetta. **Altezza minima**: 30 mm, perché il riquadro mantenga una buona misura anche quando il testo è breve.
-6. Aggiungi un’ultima cornice. **Nome (slot)**: `try`. **Stile del riquadro**: `actividad-sol`. **Altezza minima**: 30 mm.
+5. Aggiungi una cornice. **Nome (slot)**: `remember`. **Stile del riquadro**: `dato`, un riquadro colorato con una linguetta. **Altezza minima**: 30 mm, perché il riquadro mantenga una buona misura anche quando il testo è breve.
+6. Aggiungi un’ultima cornice. **Nome (slot)**: `try`. **Stile del riquadro**: `actividad`, un riquadro con una striscia lungo un lato. **Altezza minima**: 30 mm.
 7. In `text`, `remember` e `try` imposta **Larghezza** su *Fino al bordo* e **Altezza** su *Il suo contenuto*: così occupano tutta la larghezza della pagina e sono alte quanto il loro testo.
 8. Sotto **Gruppi** premi **Aggiungi gruppo**. Chiamalo `column`, lascialo *Impilate* e imposta **Spazio tra le cornici** su 6 mm. Sotto **Cornici del gruppo, nell’ordine della pagina** seleziona le quattro cornici. Selezionale nell’ordine in cui vanno, il titolo per primo: l’elenco numera i membri e le frecce ne spostano uno in alto o in basso. Un gruppo dispone le cornici una sotto l’altra e, quando una cornice cresce, sposta in basso quelle che seguono: un testo più lungo nel primo riquadro spinge giù il secondo invece di finirgli sopra.
 
@@ -173,6 +173,175 @@ La pagina e il suo Markdown restano collegati: quello che selezioni nell’una s
 - **Da una verifica.** Fai clic su una voce del pannello Verifiche e la Sandbox ti porta alla pagina, seleziona la cornice e mette il cursore nel suo testo. In un libro con più edizioni passa all’edizione che ha il problema.
 
 <Screenshot src="/docs-shots/it/select.webp" alt="La pagina con il secondo riquadro contornato di arancione e il pannello Testo che mostra la cornice selezionata nel suo Markdown." caption="Un clic sulla pagina porta il cursore nel suo Markdown, e il percorso sotto l’anteprima indica di quale cornice si tratta." />
+
+## 8. Disegnare un albero con i connettori
+
+Una mappa concettuale, un organigramma e una linea del tempo sono riquadri uniti da linee. In Postext i riquadri sono cornici e le linee sono **connettori**: linee della decorazione del modello che uniscono delle cornici. Un connettore si disegna quando le cornici hanno già il loro riquadro definitivo, quindi segue un riquadro che cresce con un testo più lungo o con le parole di un’altra lingua, e il modello non ha bisogno di un’immagine delle linee. L’albero si disegna una volta sola, come **modulo** (un blocco di cornici che qualsiasi pagina composta può contenere), e il Markdown dice quanti rami ha.
+
+1. In **Grafica** apri **Pagina e colonne › Moduli** e premi **Nuovo modulo**. Nell’elenco compare un modulo chiamato *Modulo* con una cornice, `text`. Premi la sua matita (*Modifica il modulo Modulo*): l’editor dei modelli si apre sul posto, con l’interruttore **Modulo** attivo.
+2. Dagli l’**ID** `tree` e il **Nome** `Tree of ideas`. Scegli la cornice `text` e falla diventare la cima dell’albero: **Nome (slot)** `root`, **Stile del riquadro** `dato`, **Larghezza** *Fino al bordo*, **Altezza** *Il suo contenuto*, e disattiva **Riceve il testo libero della pagina**.
+3. Premi **Aggiungi cornice**. **Nome (slot)**: `branch`; **Stile del riquadro**: `dato`; **Altezza minima**: 20 mm.
+4. Sotto **Gruppi** premi **Aggiungi gruppo**. Chiamalo `branches` e scegli **Griglia**: **Colonne** 3, **Spazio tra le colonne** e **Spazio tra le righe** 6 mm. Sotto **Ripeti un insieme di cornici** scegli `branch` come **Cornice principale**: la griglia dispone un `branch` per ogni elemento che le dà la pagina. Imposta **Riquadro proprio** su *Cornice root*, **Posizione relativa** su *Sotto* e **Scostamento Y** su 12 mm, così la griglia comincia sotto la radice, qualunque sia la sua altezza.
+5. Sotto **Decorazione** premi **Aggiungi connettore**. Nella scheda del connettore imposta **Parte da** su *Cornice root* e, sotto **Va a**, premi *Ogni branch* (le estremità della linea sono i pulsanti premuti). Imposta **Percorso** su *Albero*, **Raggio delle curve** su 2 mm, **Spessore della linea** su 1,5 pt e **Segno finale** su *Freccia*. **Scegli sulla pagina** fa lo stesso con il mouse, in modalità Grafica: fai clic sulla cornice da cui parte la linea, poi su ogni cornice a cui arriva; un secondo clic toglie un’estremità, ed Esc termina la scelta.
+
+Ora le parole. Passa a **Contenuto** e, nel pannello **Testo**, metti il cursore sulla pagina di ripasso della sezione 3. Torna in **Moduli**: l’elenco **Pagina in cui inserirlo** indica quella pagina; premi il pulsante di inserimento di *Tree of ideas*. La Sandbox scrive un blocco `:::module{template="tree"}` prima della riga che chiude la pagina, con una cornice vuota per ogni slot, e aggiunge al modello `review`, sotto la sua ultima cornice, un gruppo che riceve i moduli, perché non ne aveva. Scrivi le parole nelle cornici vuote:
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+Ogni `:::frame{slot="branch"}` è un ramo. Se ne copi uno, la pagina ha quattro riquadri e quattro linee; se ne togli uno, ne ha due. Il connettore indica `branch[*]`, tutti i rami che la pagina ha, quindi le linee seguono il Markdown senza che il modulo cambi.
+
+<Screenshot src="/docs-shots/it/tree.webp" alt="Il pannello Grafica con il modulo Tree of ideas aperto sulla scheda del connettore, e la pagina di ripasso con un riquadro in alto unito da linee con frecce a tre riquadri più in basso." caption="L’albero: una radice, una griglia che ripete il ramo e un connettore verso ogni ramo." />
+
+Un organigramma è lo stesso modulo con altre cornici: una scheda per chi guida il gruppo, una griglia che ripete una foto e un nome, e un connettore ad albero verso ogni scheda. Una linea del tempo imposta **Posizione della barra** su 0: nessuna barra, solo una linea che scende dalla fascia delle date a ogni scheda.
+
+## 9. Note su una mappa, con richiami e legenda
+
+Una pagina di note attorno a una mappa: ogni nota ha una linea verso il luogo di cui parla, la mappa ha una legenda dei suoi segni, e un nome sta lontano dal suo punto, con una linea che ci torna. Nessuna di queste linee fa parte del dipinto.
+
+Il libro ha il dipinto due volte: `mapa`, con i nomi delle pagine 6 e 7, e `rio`, la stessa immagine senza ancore, messa in piccolo nella pagina dell’indice. Questa pagina usa `rio`, così i punti che aggiungi non spostano nessun nome della doppia pagina.
+
+1. Crea un modello di pagina come nella sezione 2. **ID** `map-notes`, **Nome** `Map with notes`. Le sue cornici: `title` (**Stile del riquadro** `portada`, **Riceve** *Livello 1*), `text` (**Riceve il testo libero della pagina**), `map` (**Larghezza** *Fino al bordo*), e `note-1`, `note-2` e `note-3` (**Stile del riquadro** `dato`, **Larghezza** 56 mm, **Altezza minima** 26 mm). Impila `title`, `text` e `map` in un gruppo `column` con 6 mm tra le cornici, e disponi le note in un gruppo `notes` *In fila*, a 8 mm l’una dall’altra. Ancora `note-1` a *Cornice map*, *Sotto*, 14 mm più in basso.
+2. Scrivi la pagina in fondo al capitolo:
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}` è un’etichetta su più righe: ogni riga è una voce della legenda. `:icon[…]{…}` è un simbolo nella riga: un glifo, un campione di linea o un’immagine del libro. Il pulsante **Simbolo per un’etichetta** della barra degli strumenti del pannello Testo ne scrive uno nel punto del cursore, con il suo colore e la sua misura; tra le parentesi quadre va ciò che ne legge un lettore di schermo, e le parentesi vuote vogliono dire che le parole accanto bastano.
+3. Dai un aspetto alla legenda. In **Grafica › Figure e tabelle › Stili di etichetta** premi **Aggiungi stile di etichetta**, imposta l’id su `key`, il carattere su Fredoka a 10,5 pt, un **Fondo** bianco con una **Spaziatura interna del fondo** di 2,5 mm, un **Contorno** e un **Raggio degli angoli** di 1,5 mm, e sotto **Righe e legenda** attiva **Legenda**. I simboli stanno allora in una colonna propria e le parole di tutte le voci partono dallo stesso bordo.
+4. Colloca i punti. **Verifiche** elenca *Etichetta su un’ancora inesistente* per `spring` e per `key`. Premi il pulsante con la puntina di una delle due voci: si apre la finestra Ancore di `rio`, con entrambi i nomi sotto *Etichette senza ancora*. Fai clic sulla cascata in alto a sinistra del dipinto per `spring`, e sull’angolo in basso a sinistra per `key`; imposta l’**Allineamento** della legenda su *Inizio* e l’**Allineamento verticale** su *In basso*, così cresce verso l’alto e verso destra a partire dal suo punto. Poi fai clic sulla diga, sul mulino e sul porto, e chiama le tre nuove ancore `dam`, `mill` e `harbour` nelle loro righe.
+5. Allontana dal suo punto il nome della sorgente. Scegli `spring` e, sotto **Etichetta e linea di richiamo**, attiva **Lontano dal suo punto**. Trascina la maniglia dell’etichetta in alto, nel cielo, e imposta **Linea di richiamo** su *Sì*: la linea dall’etichetta alla cascata si disegna mentre trascini. Premi **Salva**.
+6. Disegna i richiami. In modalità **Grafica**, scegli `note-1` sulla pagina: accanto al centro del suo lato destro compare una maniglia rotonda. Trascinala sulla diga; mentre trascini compaiono le ancore della mappa, e al rilascio si scrive un connettore dalla nota all’ancora `dam`, con un punto all’estremità. Fai lo stesso da `note-2` a `mill` e da `note-3` a `harbour`. Il gruppo **Richiami** della cornice li elenca, ed è il modo per aggiungerne o modificarne uno da tastiera.
+
+<Screenshot src="/docs-shots/it/map-notes.webp" alt="La pagina Along the river in modalità Grafica: la mappa con una legenda nell’angolo in basso a sinistra, tre note sotto, ciascuna con una linea verso un luogo della mappa, e il gruppo Richiami della seconda nota nel pannello Grafica." caption="Ogni nota richiama un’ancora dell’immagine; la legenda e i nomi sono righe del Markdown." />
+
+Un richiamo termina sul punto dell’ancora nell’immagine, tenendo conto del ritaglio e della scala, quindi trova ancora il mulino quando la mappa è composta più piccola o tagliata alla sua zona sicura. Si dipinge sopra le cornici, e perciò si vede sopra l’immagine. Una nota messa invece sopra la mappa, senza uno spazio proprio, compare in Verifiche come *Cornice coperta da un’altra cornice*, con le correzioni (vedi [Sandbox: le pagine composte](/it/docs/sandbox-composed-pages#sovrapposizioni-e-glifi-sulla-linguetta)).
+
+## 10. Una pagina di schede con foto
+
+Una pagina di schede (foto con una didascalia sotto ciascuna, ritratti con un nome) è una sola scheda disegnata molte volte. Una **griglia che ripete un insieme di cornici** disegna la scheda una volta, e la pagina ha tante schede quante ne scrive il suo Markdown.
+
+1. Crea un modello `photos` (**Nome** `Photo cards`) con `title` (`portada`, *Livello 1*) e `text` (il testo libero) impilate in un gruppo `column`, a 6 mm l’una dall’altra.
+2. Aggiungi una cornice `photo`: **Stile del riquadro** `foto`, ancorata a *Cornice text*, *Sotto*, 6 mm più in basso. Aggiungi una cornice `caption`: **Stile del riquadro** `dato`, **Larghezza** *Il suo contenuto*, ancorata a *Cornice photo*, *Sotto*, 2 mm più in basso.
+3. Aggiungi un gruppo `cards`: **Griglia**, **Colonne** 3, **Spazio tra le colonne** 6 mm, **Spazio tra le righe** 12 mm. Sotto **Ripeti un insieme di cornici**, **Cornice principale** `photo`, e seleziona `caption` sotto **Cornici che la accompagnano**. La cornice principale prende la larghezza di una cella; la didascalia resta ancorata a lei come la disegna il modello.
+4. Scrivi la pagina:
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+Ogni `:::frame{slot="photo"}` è una scheda, e il `:::frame{slot="caption"}` che contiene va alla didascalia di quella scheda. Le schede riempiono le righe dal lato in cui comincia una riga di testo, quindi la quarta apre una seconda riga. In modalità Grafica le cornici prendono il nome dalla loro scheda: `photo[2]` e `caption[2]` sono la seconda scheda.
+
+<Screenshot src="/docs-shots/it/grid.webp" alt="La pagina People and the river con quattro foto in una griglia di tre colonne e una didascalia sotto ciascuna, e il pannello Grafica con il gruppo cards impostato su Griglia, tre colonne e Ripeti un insieme di cornici." caption="La scheda si disegna una volta; il Markdown ne scrive quattro, e la griglia ne dispone quattro." />
+
+Una quinta foto prende la cella successiva; una settima comincia una terza riga. Un’edizione in un’altra lingua può avere più schede o meno con lo stesso modello. **Numero massimo di elementi** pone un limite alla griglia (ciò che va oltre passa al testo libero, e Verifiche elenca *Più elementi di quanti ne contenga la griglia*), e **Il contenuto che non ci sta va in** *Una pagina aggiunta dopo questa*, sulla cornice principale, porta su una pagina aggiunta, intere, le righe che non entrano.
+
+## 11. Una raccolta di moduli per una collana
+
+**Pagina e colonne › Moduli** è la raccolta dei moduli del libro. Ogni modulo è disegnato con le sue cornici e indicato con il suo id, insieme a quanti blocchi del Markdown lo usano e in quante pagine (*1 blocco in 1 pagina* per l’albero), una matita che lo apre nell’editor dei modelli e il pulsante che lo inserisce nella pagina scelta in **Pagina in cui inserirlo**. **Nuovo modulo** ne crea un altro. Se rinomini un modulo, ogni blocco `:::module` che lo indica viene riscritto.
+
+<Screenshot src="/docs-shots/it/modules.webp" alt="La sezione Moduli del pannello Grafica: l’elenco Pagina in cui inserirlo, il modulo Tree of ideas con la scritta 1 blocco in 1 pagina e il pulsante Nuovo modulo." caption="La raccolta: ogni modulo, dove lo usa il libro e il modo di inserirlo in una pagina." />
+
+Una pagina riceve i moduli in un gruppo con **Riceve i moduli della pagina** attivo, uno sotto l’altro, nell’ordine del Markdown. Così la pagina successiva può contenere un albero sotto un riquadro, o due alberi, senza un modello nuovo: il Markdown dice quali blocchi e in che ordine, i moduli li disegnano.
+
+I libri di una collana (*Our river* per la terza elementare, *Our coast* per la quarta) condividono i moduli condividendo la grafica:
+
+- **Nella Sandbox.** Comincia il libro successivo come copia di questo (**Libri**, **⋯** sul libro, **Duplica**) e scrivine i capitoli; i modelli, i moduli e gli stili arrivano con la copia. Per un libro che esiste già, **Esporta** nell’intestazione del pannello Grafica salva la grafica, e **Importa** nell’altro libro la mette al posto della grafica che quel libro aveva.
+- **Dal codice.** Tieni i modelli dei moduli in un file e aggiungili ai `pageTemplates` di ogni libro della collana:
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+Una modifica a un modulo (una linea più spessa, un altro stile di riquadro) raggiunge allora ogni pagina di ogni libro che lo usa, la volta successiva in cui il libro viene impaginato, e le parole restano nel Markdown di ciascun libro.
+
+## Che cosa dice il Markdown e che cosa disegna la grafica
+
+Le pagine delle sezioni dalla 8 alla 11 seguono una sola regola. Il Markdown dice **che cosa** va nella pagina e **in che numero**: le parole di ogni riquadro, quanti rami, note, schede e voci della legenda, quale modulo viene per primo. La grafica disegna ogni cosa **una volta**: i riquadri, la loro posizione, le linee tra l’uno e l’altro, l’aspetto della legenda, la misura di una cella. Per questo una traduzione non ha bisogno di un modello suo, una pagina con cinque foto usa il modello di una pagina con quattro e una collana può condividere i suoi moduli. Un modello non contiene mai le parole di una pagina, e il Markdown non contiene mai una posizione o un colore.
 
 ## Dove andare dopo
 

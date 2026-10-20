@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'Livros de páginas compostas',
   sidebarTitle: 'Livros de páginas compostas',
-  description: 'Um passo a passo no Sandbox com um livro didático feito de páginas compostas: como montar um modelo de página, preenchê-lo a partir do Markdown, rotular um mapa, traduzir a página, corrigir o texto que não cabe e selecionar elementos na página e no texto',
+  description: 'Um passo a passo no Sandbox com um livro didático feito de páginas compostas: como montar um modelo de página, preenchê-lo a partir do Markdown, rotular um mapa, traduzir a página, corrigir o texto que não cabe selecionar elementos na página e no texto, e depois desenhar uma árvore com conectores, notas num mapa com indicadores e legenda, uma grade de cartões com fotos e uma biblioteca de módulos para uma coleção',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
-  readingTime: '12 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '22 min',
   order: 43,
-  plainSummary: "Esta página ensina, passo a passo, a fazer no Sandbox uma página de livro didático, com uma faixa de título, um texto e caixas coloridas. Você parte de um livro de exemplo pronto e acrescenta mais uma página a ele. Primeiro desenha a página como um modelo, depois coloca nela o texto escrito no Markdown, depois dá nome aos lugares de um mapa e traduz a página para outro idioma. No fim, vê o que fazer quando um texto não cabe na caixa e como passar da página para o texto dela, e vice-versa.",
+  plainSummary: "Esta página ensina, passo a passo, a fazer no Sandbox uma página de livro didático, com uma faixa de título, um texto e caixas coloridas. Você parte de um livro de exemplo pronto e acrescenta mais uma página a ele. Primeiro desenha a página como um modelo, depois coloca nela o texto escrito no Markdown, depois dá nome aos lugares de um mapa e traduz a página para outro idioma. Em seguida, vê o que fazer quando um texto não cabe na caixa e como passar da página para o texto dela, e vice-versa. Os últimos passos desenham uma árvore de caixas ligadas por linhas, notas que apontam para lugares de um mapa, uma página de cartões com fotos e um conjunto de blocos que os livros de uma coleção podem compartilhar.",
 };
 
 # Livros de páginas compostas
 
-**Você monta uma página de livro didático a partir de um modelo, preenche-a com texto do Markdown, rotula um mapa, traduz a página e corrige o que não cabe.**
+**Você monta uma página de livro didático a partir de um modelo, preenche-a com texto do Markdown, rotula um mapa, traduz a página e corrige o que não cabe; depois acrescenta uma árvore, notas num mapa, uma página de cartões com fotos e uma biblioteca de módulos.**
 
 A página de um livro didático é um conjunto de caixas: uma faixa de título, um texto, uma caixa para uma definição, outra para uma atividade, um mapa. O Postext diagrama uma página assim a partir de um **modelo de página**, que guarda as caixas (seus blocos), e o Markdown só indica que palavras vão em cada bloco. Esta página percorre o trabalho inteiro no Sandbox, num livro que já existe, e acrescenta uma página a ele. As páginas de referência explicam o que faz cada campo e cada linha de Markdown; aqui você faz cada coisa uma vez, em ordem, e vê o que ela muda: [Páginas compostas](/pt/docs/composed-pages) para o Markdown, [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages) para o modelo, [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages) para as telas.
 
@@ -38,8 +38,8 @@ A página nova será uma página de revisão: uma faixa de título, um texto cur
 2. Clique em **Novo**. Abre-se um modelo chamado *Modelo novo*. Dê a ele o **ID** `review` (o nome que o Markdown vai usar) e o **Nome** `Página de revisão` (o que este painel mostra). O ID aceita letras minúsculas, dígitos e hifens.
 3. O modelo começa com um bloco, `text`, que **Recebe o texto solto da página**. Transforme-o na faixa de título: **Nome (slot)**: `title`; **Estilo de boxe**: `portada`, a faixa azul que o livro já usa nos títulos; desligue **Recebe o texto solto da página**; **Recebe**: *Nível 1*, para que esse bloco receba o primeiro título `#` da página.
 4. Clique em **Adicionar bloco**. O bloco novo abre embaixo da lista de blocos. **Nome (slot)**: `text`, e ligue **Recebe o texto solto da página**: tudo o que a página tiver fora de um bloco vai para ele.
-5. Adicione um bloco. **Nome (slot)**: `remember`. **Estilo de boxe**: `dato-campo`, uma caixa verde com uma aba. **Altura mínima**: 30 mm, para que a caixa mantenha um bom tamanho quando o texto for curto.
-6. Adicione um último bloco. **Nome (slot)**: `try`. **Estilo de boxe**: `actividad-sol`. **Altura mínima**: 30 mm.
+5. Adicione um bloco. **Nome (slot)**: `remember`. **Estilo de boxe**: `dato`, uma caixa tingida com uma aba. **Altura mínima**: 30 mm, para que a caixa mantenha um bom tamanho quando o texto for curto.
+6. Adicione um último bloco. **Nome (slot)**: `try`. **Estilo de boxe**: `actividad`, uma caixa com uma faixa ao longo da lateral. **Altura mínima**: 30 mm.
 7. Em `text`, `remember` e `try`, defina **Largura** como *Até a borda* e **Altura** como *O conteúdo*: assim eles ocupam toda a largura da página e têm a altura do próprio texto.
 8. Em **Grupos**, clique em **Adicionar grupo**. Dê a ele o nome `column`, mantenha *Empilhados* e ajuste **Espaço entre blocos** para 6 mm. Em **Blocos do grupo, na ordem da página**, marque os quatro blocos. Marque-os na ordem em que vão, com o título primeiro: a lista numera os membros e as setas sobem ou descem um deles. Um grupo põe seus blocos um embaixo do outro e desloca os de baixo quando um bloco cresce; por isso, um texto mais longo na primeira caixa empurra a segunda para baixo em vez de passar por cima dela.
 
@@ -173,6 +173,175 @@ A página e o Markdown dela andam juntos.
 - **De uma verificação.** Clique numa entrada do painel Verificações e o Sandbox leva você à página, escolhe o bloco e põe o cursor no texto dele. Num livro com várias edições, passa para a edição que tem o problema.
 
 <Screenshot src="/docs-shots/pt/select.webp" alt="A página com a segunda caixa contornada em laranja e o painel Texto mostrando o bloco selecionado no Markdown." caption="Um clique na página põe o cursor no Markdown dela, e o caminho embaixo da visualização indica qual é o bloco." />
+
+## 8. Desenhar uma árvore com conectores
+
+Uma árvore de ideias, um organograma e uma linha do tempo são caixas ligadas por linhas. No Postext as caixas são blocos e as linhas são **conectores**: linhas da decoração do modelo que ligam blocos. Um conector é desenhado depois que os blocos têm suas caixas definitivas; por isso, acompanha uma caixa que cresce com um texto mais longo ou com as palavras de outro idioma, e o modelo não precisa de uma imagem das linhas. Você desenha a árvore uma vez, como um **módulo** (um conjunto de blocos que qualquer página composta pode conter), e o Markdown diz quantos ramos ela tem.
+
+1. Em **Design**, abra **Página e colunas › Módulos** e clique em **Módulo novo**. Um módulo chamado *Módulo* entra na lista com um bloco, `text`. Clique no lápis dele (*Editar o módulo Módulo*): o editor de modelos abre ali mesmo, com a chave **Módulo** ligada.
+2. Dê a ele o **ID** `tree` e o **Nome** `Árvore de ideias`. Escolha o bloco `text` e transforme-o no topo da árvore: **Nome (slot)** `root`, **Estilo de boxe** `dato`, **Largura** *Até a borda*, **Altura** *O conteúdo*, e desligue **Recebe o texto solto da página**.
+3. Clique em **Adicionar bloco**. **Nome (slot)**: `branch`; **Estilo de boxe**: `dato`; **Altura mínima**: 20 mm.
+4. Em **Grupos**, clique em **Adicionar grupo**. Dê a ele o nome `branches` e escolha **Grade**: **Colunas** 3, **Espaço entre colunas** e **Espaço entre linhas** 6 mm. Em **Repetir um conjunto de blocos**, escolha `branch` como **Bloco principal**: a grade dispõe um `branch` para cada item que a página lhe der. Ajuste **Caixa própria** para *Bloco root*, **Posição relativa** *Abaixo de* e **Deslocamento Y** 12 mm, para que a grade comece embaixo da raiz, seja qual for a altura dela.
+5. Em **Decoração**, clique em **Adicionar conector**. No cartão dele, ajuste **Começa em** para *Bloco root* e, em **Vai para**, pressione *Cada branch* (as pontas de uma linha são os botões pressionados). Ajuste **Traçado** para *Árvore*, **Raio das curvas** para 2 mm, **Espessura da linha** para 1,5 pt e **Marca final** para *Seta*. **Escolher na página** faz o mesmo com o mouse, no modo Design: clique no bloco de onde a linha sai e depois em cada bloco aonde ela chega; um segundo clique tira uma ponta, e Esc encerra a escolha.
+
+Agora as palavras. Passe para **Conteúdo** e ponha o cursor na página de revisão da seção 3, no painel **Texto**. De volta a **Módulos**, a lista **Página onde inserir** mostra essa página; clique no botão de inserir de *Árvore de ideias*. O Sandbox escreve um contêiner `:::module{template="tree"}` antes da linha que fecha a página, com um bloco vazio para cada slot, e, como o modelo `review` não tinha nenhum, acrescenta a ele um grupo que recebe módulos, embaixo do último bloco. Escreva as palavras nos blocos vazios:
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+Cada `:::frame{slot="branch"}` é um ramo. Copie um e a página terá quatro caixas e quatro linhas; tire um e terá duas. O conector indica `branch[*]`, todos os ramos que a página tiver; assim, as linhas acompanham o Markdown sem nenhuma mudança no módulo.
+
+<Screenshot src="/docs-shots/pt/tree.webp" alt="O painel Design com o módulo Árvore de ideias aberto no cartão do conector, e a página de revisão com uma caixa no alto ligada por linhas com setas a três caixas embaixo." caption="A árvore: uma raiz, uma grade que repete o ramo e um conector para cada ramo." />
+
+Um organograma é o mesmo módulo com outros blocos: um cartão para quem chefia a equipe, uma grade que repete uma foto e um nome, e um conector em árvore para cada cartão. Uma linha do tempo ajusta **Posição da barra** para 0: sem barra, uma linha que desce da faixa das datas até cada cartão.
+
+## 9. Notas num mapa, com indicadores e legenda
+
+Uma página de notas em volta de um mapa: cada nota tem uma linha até o lugar de que fala, o mapa tem uma legenda para os seus sinais, e um nome fica afastado do seu ponto, com uma linha de volta até ele. Nenhuma dessas linhas faz parte da pintura.
+
+O livro tem a pintura duas vezes: `mapa`, com os nomes das páginas 6 e 7, e `rio`, a mesma imagem sem âncoras, em tamanho pequeno na página do sumário. Esta página usa `rio`; assim, os pontos que você acrescenta a ela não mexem em nenhum nome da página dupla.
+
+1. Faça um modelo de página como na seção 2. **ID** `map-notes`, **Nome** `Mapa com notas`. Os blocos dele: `title` (**Estilo de boxe** `portada`, **Recebe** *Nível 1*), `text` (**Recebe o texto solto da página**), `map` (**Largura** *Até a borda*) e `note-1`, `note-2` e `note-3` (**Estilo de boxe** `dato`, **Largura** 56 mm, **Altura mínima** 26 mm). Empilhe `title`, `text` e `map` num grupo `column` com 6 mm entre os blocos, e disponha as notas num grupo `notes` *Em fileira*, com 8 mm entre elas. Pendure `note-1` em *Bloco map*, *Abaixo de*, 14 mm para baixo.
+2. Escreva a página no fim do capítulo:
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}` é um rótulo de várias linhas: cada linha é uma linha da legenda. `:icon[…]{…}` é um símbolo na linha: um glifo, uma amostra de linha ou uma imagem do livro. O botão **Símbolo para um rótulo** da barra de ferramentas do painel Texto escreve um no cursor, com a cor e o tamanho dele; os colchetes guardam o que um leitor de tela diz para ele, e colchetes vazios querem dizer que as palavras ao lado já dizem tudo.
+3. Dê aparência à legenda. Em **Design › Figuras e tabelas › Estilos de rótulo**, clique em **Adicionar estilo de rótulo**, dê a ele o id `key`, a fonte Fredoka a 10,5 pt, um **Fundo** branco com **Margem interna do fundo** de 2,5 mm, um **Contorno** e um **Raio dos cantos** de 1,5 mm e, em **Linhas e legenda**, ligue **Legenda**. Os símbolos passam a ficar numa coluna própria, e as palavras de todas as linhas começam na mesma borda.
+4. Ponha os pontos. **Verificações** lista *Rótulo numa âncora inexistente* para `spring` e `key`. Clique no botão de alfinete de uma delas: abre-se a janela **Âncoras** de `rio`, com os dois nomes em *Rótulos sem âncora*. Clique na cachoeira, no alto à esquerda da pintura, para `spring`, e no canto inferior esquerdo para `key`; ajuste o **Alinhamento** da legenda para *Início* e o **Alinhamento vertical** para *Embaixo*, para que ela cresça para cima e para a direita a partir do seu ponto. Depois clique na barragem, no moinho e no porto, e dê às três âncoras novas os nomes `dam`, `mill` e `harbour`, nas linhas delas.
+5. Afaste o nome da nascente do seu ponto. Escolha `spring` e, em **Rótulo e linha de chamada**, ligue **Longe do seu ponto**. Arraste a alça do rótulo para cima, até o céu, e ajuste **Linha de chamada** para *Sim*: a linha do rótulo até a cachoeira é desenhada enquanto você arrasta. Clique em **Salvar**.
+6. Desenhe os indicadores. No modo **Design**, escolha `note-1` na página: aparece uma alça redonda ao lado do meio do lado direito dele. Arraste-a até a barragem; as âncoras do mapa aparecem enquanto você arrasta, e ao soltar fica escrito um conector da nota até a âncora `dam`, com um ponto na ponta. Faça o mesmo de `note-2` até `mill` e de `note-3` até `harbour`. O grupo **Indicadores** do bloco os lista, e é por ele que você acrescenta ou muda um indicador pelo teclado.
+
+<Screenshot src="/docs-shots/pt/map-notes.webp" alt="A página Along the river no modo Design: o mapa com uma legenda no canto inferior esquerdo, três notas embaixo dele com uma linha de cada uma até um lugar do mapa, e o grupo Indicadores da segunda nota no painel Design." caption="Cada nota aponta para uma âncora da imagem; a legenda e os nomes são linhas do Markdown." />
+
+Um indicador termina no ponto da âncora na imagem, levando em conta o corte e a escala dela; por isso, continua encontrando o moinho quando o mapa fica menor ou é cortado na sua zona segura. Ele é pintado sobre os blocos e, assim, aparece por cima da imagem. Uma nota posta em cima do mapa, sem espaço próprio, aparece em Verificações como *Bloco coberto por outro bloco*, com as correções (veja [Sandbox: as páginas compostas](/pt/docs/sandbox-composed-pages#sobreposições-e-abas-com-glifo)).
+
+## 10. Uma página de cartões com fotos
+
+Uma página de cartões (fotos com uma legenda embaixo de cada uma, retratos com um nome) é um cartão desenhado muitas vezes. Uma **grade que repete um conjunto de blocos** desenha o cartão uma vez, e a página tem tantos cartões quantos o Markdown escrever.
+
+1. Faça um modelo `photos` (**Nome** `Cartões com fotos`) com `title` (`portada`, *Nível 1*) e `text` (o texto solto) empilhados num grupo `column`, a 6 mm um do outro.
+2. Acrescente um bloco `photo`: **Estilo de boxe** `foto`, pendurado em *Bloco text*, *Abaixo de*, 6 mm para baixo. Acrescente um bloco `caption`: **Estilo de boxe** `dato`, **Largura** *O conteúdo*, pendurado em *Bloco photo*, *Abaixo de*, 2 mm para baixo.
+3. Acrescente um grupo `cards`: **Grade**, **Colunas** 3, **Espaço entre colunas** 6 mm, **Espaço entre linhas** 12 mm. Em **Repetir um conjunto de blocos**, **Bloco principal** `photo`, e marque `caption` em **Blocos que o acompanham**. O bloco principal toma a largura de uma célula; a legenda fica pendurada nele como o modelo a desenha.
+4. Escreva a página:
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+Cada `:::frame{slot="photo"}` é um cartão, e o `:::frame{slot="caption"}` dentro dele vai para a legenda desse cartão. Os cartões preenchem as linhas a partir do lado em que uma linha começa; por isso, o quarto abre uma segunda linha. No modo Design, os blocos têm o nome do seu cartão: `photo[2]` e `caption[2]` são o segundo cartão.
+
+<Screenshot src="/docs-shots/pt/grid.webp" alt="A página People and the river com quatro fotos numa grade de três colunas e uma legenda embaixo de cada uma, e o painel Design mostrando o grupo cards com Grade, três colunas e Repetir um conjunto de blocos." caption="O cartão é desenhado uma vez; o Markdown dá quatro, e a grade dispõe quatro." />
+
+Uma quinta foto ocupa a célula seguinte; uma sétima começa uma terceira linha. Uma edição em outro idioma pode ter mais ou menos cartões com o mesmo modelo. **Máximo de itens** limita a grade (o que passar do limite vai para o texto solto, e Verificações lista *Mais itens do que a grade comporta*), e **O conteúdo que não cabe vai para** *Uma página acrescentada depois desta*, no bloco principal, leva as linhas que não cabem, inteiras, para uma página acrescentada.
+
+## 11. Uma biblioteca de módulos para uma coleção
+
+**Página e colunas › Módulos** é a biblioteca de módulos do livro. Cada módulo aparece desenhado com seus blocos e identificado pelo id, com quantos contêineres do Markdown o usam e em quantas páginas (*1 bloco em 1 página* para a árvore), um lápis que o abre no editor de modelos e o botão que o insere na página escolhida em **Página onde inserir**. **Módulo novo** começa outro. Renomear um módulo reescreve cada contêiner `:::module` que o cita.
+
+<Screenshot src="/docs-shots/pt/modules.webp" alt="A seção Módulos do painel Design: a lista Página onde inserir, o módulo Árvore de ideias com a indicação 1 bloco em 1 página e o botão Módulo novo." caption="A biblioteca: cada módulo, onde o livro o usa e o jeito de inseri-lo numa página." />
+
+Uma página recebe módulos num grupo com **Recebe os módulos da página** ligado, um embaixo do outro, na ordem do Markdown. Assim, a página seguinte pode ter uma árvore embaixo de uma caixa, ou duas árvores, sem modelo novo: o Markdown diz quais contêineres e em que ordem, e os módulos os desenham.
+
+Os livros de uma coleção (*Our river* para o 3º ano, *Our coast* para o 4º) compartilham os módulos ao compartilhar o design:
+
+- **No Sandbox.** Comece o livro seguinte como cópia deste (**Livros**, **⋯** no livro, **Duplicar**) e escreva os capítulos dele; os modelos, os módulos e os estilos vêm junto com a cópia. Para um livro que já existe, **Exportar**, no cabeçalho do painel Design, salva o design, e **Importar**, no outro livro, o põe no lugar do design desse livro.
+- **Por código.** Guarde os modelos dos módulos num arquivo e acrescente-os aos `pageTemplates` de cada livro da coleção:
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+Uma mudança num módulo (uma linha mais grossa, outro estilo de boxe) chega então a cada página de cada livro que o usa na próxima vez que o livro for diagramado, e as palavras ficam no Markdown de cada livro.
+
+## O que o Markdown diz e o que o design desenha
+
+As páginas das seções 8 a 11 seguem uma regra. O Markdown diz **o que** vai na página e **quantos**: as palavras de cada caixa, quantos ramos, notas, cartões e linhas da legenda, qual módulo vem primeiro. O design desenha cada coisa **uma vez**: as caixas, os lugares delas, as linhas entre elas, a aparência da legenda, o tamanho de uma célula. É por isso que uma tradução não precisa de um modelo próprio, que uma página com cinco fotos usa o modelo de uma página com quatro e que uma coleção pode compartilhar os módulos. Um modelo nunca guarda as palavras de uma página, e o Markdown nunca guarda uma posição nem uma cor.
 
 ## Para continuar
 

@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'Livres de pages composées',
   sidebarTitle: 'Livres de pages composées',
-  description: 'Visite guidée du Sandbox avec un manuel scolaire en pages composées : créer un gabarit de page, le remplir depuis le Markdown, étiqueter une carte, traduire la page, corriger le texte qui ne tient pas, puis sélectionner sur la page et dans le texte',
+  description: 'Visite guidée du Sandbox avec un manuel scolaire en pages composées : créer un gabarit de page, le remplir depuis le Markdown, étiqueter une carte, traduire la page, corriger le texte qui ne tient pas, sélectionner sur la page et dans le texte, puis dessiner un arbre avec des connecteurs, des notes sur une carte avec des renvois et une légende, une grille de cartes avec photos et une bibliothèque de modules pour une collection',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
-  readingTime: '12 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '22 min',
   order: 43,
-  plainSummary: "Cette page montre pas à pas comment créer une page de manuel scolaire dans le Sandbox : un bandeau de titre, un peu de texte et des boîtes de couleur. Vous partez d’un livre d’exemple déjà terminé et vous lui ajoutez une page. Vous dessinez d’abord la page sous forme de gabarit, puis vous y versez le texte depuis le Markdown ; ensuite, vous écrivez les noms des lieux d’une carte et vous traduisez la page dans une autre langue. Pour finir, vous voyez quoi faire quand un texte est trop long pour sa boîte, et comment passer de la page à son texte.",
+  plainSummary: "Cette page montre pas à pas comment créer une page de manuel scolaire dans le Sandbox : un bandeau de titre, un peu de texte et des boîtes de couleur. Vous partez d’un livre d’exemple déjà terminé et vous lui ajoutez une page. Vous dessinez d’abord la page sous forme de gabarit, puis vous y versez le texte depuis le Markdown ; ensuite, vous écrivez les noms des lieux d’une carte et vous traduisez la page dans une autre langue. Vous voyez ensuite quoi faire quand un texte est trop long pour sa boîte, et comment passer de la page à son texte. Les dernières étapes dessinent un arbre de boîtes reliées par des lignes, des notes qui désignent des endroits d’une carte, une page de cartes avec photos et un jeu de blocs que les livres d’une collection peuvent partager.",
 };
 
 # Livres de pages composées
 
-**Vous construisez une page de manuel à partir d’un gabarit, vous la remplissez avec le texte du Markdown, vous étiquetez une carte, vous traduisez la page et vous corrigez ce qui ne tient pas.**
+**Vous construisez une page de manuel à partir d’un gabarit, vous la remplissez avec le texte du Markdown, vous étiquetez une carte, vous traduisez la page et vous corrigez ce qui ne tient pas ; vous ajoutez ensuite un arbre, des notes sur une carte, une page de cartes avec photos et une bibliothèque de modules.**
 
 Une page de manuel scolaire est un assemblage de boîtes : un bandeau de titre, un texte, une boîte pour une définition, une autre pour une activité, une carte. Postext compose une telle page d’après un **gabarit de page** qui contient ces boîtes (ses blocs) ; le Markdown indique seulement quels mots vont dans quel bloc. Ce tutoriel fait tout le travail dans le Sandbox, sur un livre existant, auquel il ajoute une page. Les pages de référence expliquent ce que fait chaque champ et chaque ligne de Markdown ; ici, vous faites chaque chose une fois, dans l’ordre, et vous voyez ce qu’elle change : [Pages composées](/fr/docs/composed-pages) pour le Markdown, [Configuration › Pages composées](/fr/docs/configuration-composed-pages) pour le gabarit, [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages) pour les écrans.
 
@@ -38,8 +38,8 @@ La nouvelle page sera une page de révision : un bandeau de titre, un court tex
 2. Appuyez sur **Nouveau**. Un gabarit nommé *Nouveau gabarit* s’ouvre. Donnez-lui l’**ID** `review` (le nom qu’emploiera le Markdown) et le **Nom** `Review page` (le nom qu’affiche ce panneau). L’ID n’accepte que des minuscules, des chiffres et des tirets.
 3. Le gabarit commence avec un seul bloc, `text`, qui **Reçoit le texte libre de la page**. Faites-en le bandeau de titre : **Nom (emplacement)** : `title` ; **Style de bloc** : `portada`, le bandeau bleu que le livre utilise déjà pour ses titres ; désactivez **Reçoit le texte libre de la page** ; **Reçoit le premier titre** : *Niveau 1*, pour que ce bloc reçoive le premier titre `#` de la page.
 4. Appuyez sur **Ajouter un bloc**. Le nouveau bloc s’ouvre sous la liste des blocs. **Nom (emplacement)** : `text`, et activez **Reçoit le texte libre de la page** : tout ce que la page contient hors d’un bloc arrive ici.
-5. Ajoutez un bloc. **Nom (emplacement)** : `remember`. **Style de bloc** : `dato-campo`, une boîte verte avec un onglet. **Hauteur minimale** : 30 mm, pour que la boîte garde une bonne taille quand son texte est court.
-6. Ajoutez un dernier bloc. **Nom (emplacement)** : `try`. **Style de bloc** : `actividad-sol`. **Hauteur minimale** : 30 mm.
+5. Ajoutez un bloc. **Nom (emplacement)** : `remember`. **Style de bloc** : `dato`, une boîte teintée avec un onglet. **Hauteur minimale** : 30 mm, pour que la boîte garde une bonne taille quand son texte est court.
+6. Ajoutez un dernier bloc. **Nom (emplacement)** : `try`. **Style de bloc** : `actividad`, une boîte avec une bande sur le côté. **Hauteur minimale** : 30 mm.
 7. Dans `text`, `remember` et `try`, réglez **Largeur** sur *Jusqu’au bord* et **Hauteur** sur *Son contenu* : ils occupent alors toute la largeur de la page et ont la hauteur de leur texte.
 8. Sous **Groupes**, appuyez sur **Ajouter un groupe**. Nommez-le `column`, laissez-le *Empilés* et réglez **Espace entre les blocs** sur 6 mm. Sous **Blocs du groupe, dans l’ordre de la page**, cochez les quatre blocs. Cochez-les dans l’ordre où ils se succèdent, le titre d’abord : la liste numérote les blocs, et les flèches font monter ou descendre l’un d’eux d’un rang. Un groupe place ses blocs les uns sous les autres et fait descendre ceux du dessous quand un bloc grandit : un texte plus long dans la première boîte pousse donc la deuxième vers le bas au lieu de déborder sur elle.
 
@@ -173,6 +173,175 @@ La page et son Markdown restent synchronisés.
 - **D’une vérification.** Cliquez sur une entrée du panneau Vérifications : le Sandbox vous mène à la page, sélectionne le bloc et place le curseur dans son texte. Dans un livre à plusieurs éditions, il passe à l’édition où se trouve le problème.
 
 <Screenshot src="/docs-shots/fr/select.webp" alt="La page dont la deuxième boîte est entourée d’orange, et le panneau Texte qui montre le bloc sélectionné dans son Markdown." caption="Un clic sur la page place le curseur dans son Markdown, et le chemin sous l’aperçu indique de quel bloc il s’agit." />
+
+## 8. Dessiner un arbre avec des connecteurs
+
+Un arbre d’idées, un organigramme ou une frise chronologique sont des boîtes reliées par des lignes. Dans Postext, les boîtes sont des blocs et les lignes sont des **connecteurs** : des lignes du décor du gabarit qui relient des blocs. Un connecteur est dessiné une fois que les blocs ont leur boîte définitive : il suit donc une boîte qui grandit avec un texte plus long ou avec les mots d’une autre langue, et le gabarit n’a besoin d’aucune image des lignes. Vous dessinez l’arbre une seule fois, sous forme de **module** (un ensemble de blocs que n’importe quelle page composée peut contenir), et le Markdown indique combien il a de branches.
+
+1. Dans **Maquette**, ouvrez **Page et colonnes › Modules** et appuyez sur **Nouveau module**. Un module nommé *Module* s’ajoute à la liste avec un seul bloc, `text`. Appuyez sur son crayon (*Modifier le module Module*) : l’éditeur de gabarits s’ouvre sur place, avec l’interrupteur **Module** activé.
+2. Donnez-lui l’**ID** `tree` et le **Nom** `Tree of ideas`. Choisissez le bloc `text` et faites-en le haut de l’arbre : **Nom (emplacement)** `root`, **Style de bloc** `dato`, **Largeur** *Jusqu’au bord*, **Hauteur** *Son contenu*, et désactivez **Reçoit le texte libre de la page**.
+3. Appuyez sur **Ajouter un bloc**. **Nom (emplacement)** : `branch` ; **Style de bloc** : `dato` ; **Hauteur minimale** : 20 mm.
+4. Sous **Groupes**, appuyez sur **Ajouter un groupe**. Nommez-le `branches` et choisissez **Grille** : **Colonnes** 3, **Espace entre les colonnes** et **Espace entre les rangées** 6 mm. Sous **Répéter un ensemble de blocs**, choisissez `branch` comme **Bloc principal** : la grille pose un `branch` pour chaque élément que la page lui donne. Réglez **Boîte propre** sur *Bloc root*, **Position relative** sur *En dessous* et **Décalage Y** sur 12 mm : la grille commence ainsi sous la racine, quelle que soit la hauteur de celle-ci.
+5. Sous **Décor**, appuyez sur **Ajouter un connecteur**. Dans sa fiche, réglez **Part de** sur *Bloc root* et, sous **Va vers**, appuyez sur *Chaque branch* (les extrémités d’une ligne sont les boutons enfoncés). Réglez **Tracé** sur *Arbre*, **Rayon des coudes** sur 2 mm, **Épaisseur de la ligne** sur 1,5 pt et **Marque d'arrivée** sur *Flèche*. **Choisir sur la page** fait la même chose à la souris, en mode Maquette : cliquez sur le bloc d’où part la ligne, puis sur chaque bloc vers lequel elle va ; un second clic retire une extrémité, et Échap met fin au choix.
+
+Passons aux mots. Passez en **Contenu** et placez le curseur sur la page de révision de la section 3, dans le panneau **Texte**. De retour dans **Modules**, la liste **Page où l’insérer** indique cette page ; appuyez sur le bouton d’insertion de *Tree of ideas*. Le Sandbox écrit un bloc `:::module{template="tree"}` avant la ligne qui ferme la page, avec un bloc vide par emplacement, et, comme le gabarit `review` n’en avait pas, il lui ajoute sous son dernier bloc un groupe qui reçoit les modules. Écrivez les mots dans les blocs vides :
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+Chaque `:::frame{slot="branch"}` est une branche. Copiez-en un et la page a quatre boîtes et quatre lignes ; retirez-en un et elle en a deux. Le connecteur désigne `branch[*]`, toutes les branches de la page : les lignes suivent donc le Markdown sans que le module change.
+
+<Screenshot src="/docs-shots/fr/tree.webp" alt="Le panneau Maquette avec le module Tree of ideas ouvert sur la fiche de son connecteur, et la page de révision avec une boîte en haut reliée par des lignes fléchées à trois boîtes en dessous." caption="L’arbre : une racine, une grille qui répète la branche, et un connecteur vers chaque branche." />
+
+Un organigramme est le même module avec d’autres blocs : une carte pour la personne qui dirige l’équipe, une grille qui répète une photo et un nom, et un connecteur en arbre vers chaque carte. Une frise chronologique règle **Position de la barre** sur 0 : pas de barre, mais une descente depuis la bande des dates jusqu’à chaque carte.
+
+## 9. Des notes sur une carte, avec des renvois et une légende
+
+Une page de notes autour d’une carte : chaque note a une ligne vers l’endroit dont elle parle, la carte a une légende pour ses signes, et un nom se tient à l’écart de son point, relié à lui par une ligne. Aucune de ces lignes ne fait partie de la peinture.
+
+Le livre contient la peinture deux fois : `mapa`, avec les noms des pages 6 et 7, et `rio`, la même image sans ancres, posée en petit sur la page de sommaire. Cette page utilise `rio` : les points que vous y ajoutez ne déplacent donc aucun nom de la double page.
+
+1. Faites un gabarit de page comme à la section 2. **ID** `map-notes`, **Nom** `Map with notes`. Ses blocs : `title` (**Style de bloc** `portada`, **Reçoit** *Niveau 1*), `text` (**Reçoit le texte libre de la page**), `map` (**Largeur** *Jusqu’au bord*), et `note-1`, `note-2` et `note-3` (**Style de bloc** `dato`, **Largeur** 56 mm, **Hauteur minimale** 26 mm). Empilez `title`, `text` et `map` dans un groupe `column` avec 6 mm entre les blocs, et placez les notes dans un groupe `notes` *En rang*, à 8 mm l’une de l’autre. Accrochez `note-1` à *Bloc map*, *En dessous*, 14 mm plus bas.
+2. Écrivez la page à la fin du chapitre :
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}` est une étiquette de plusieurs lignes : chaque ligne est une rangée de la légende. `:icon[…]{…}` est un symbole dans la ligne : un glyphe, un échantillon de trait ou une image du livre. Le bouton **Symbole pour une étiquette** de la barre d’outils du panneau Texte en écrit un au curseur, avec sa couleur et sa taille ; les crochets contiennent ce qu’en lit un lecteur d’écran, et des crochets vides indiquent que les mots voisins suffisent.
+3. Donnez son aspect à la légende. Dans **Maquette › Figures et tableaux › Styles d’étiquette**, appuyez sur **Ajouter un style d’étiquette**, donnez-lui l’identifiant `key`, la police Fredoka en 10,5 pt, un **Fond** blanc avec une **Marge intérieure du fond** de 2,5 mm, un **Contour** et un **Rayon des coins** de 1,5 mm, puis, sous **Lignes et légende**, activez **Légende**. Les symboles se rangent alors dans une colonne à part et les mots de chaque rangée commencent sur un même bord.
+4. Placez les points. **Vérifications** liste *Étiquette sur une ancre inconnue* pour `spring` et `key`. Appuyez sur le bouton en forme d’épingle de l’une de ces entrées : la fenêtre Ancres de `rio` s’ouvre avec les deux noms sous *Étiquettes sans ancre*. Cliquez sur la cascade en haut à gauche de la peinture pour `spring`, et sur le coin inférieur gauche pour `key` ; réglez l’**Alignement** de la légende sur *Début* et son **Alignement vertical** sur *Bas*, pour qu’elle grandisse vers le haut et vers la droite depuis son point. Cliquez ensuite sur le barrage, le moulin et le port, et nommez les trois nouvelles ancres `dam`, `mill` et `harbour` dans leurs lignes.
+5. Écartez le nom de la source de son point. Choisissez `spring` et, sous **Étiquette et ligne de rappel**, activez **Loin de son point**. Faites glisser la poignée de l’étiquette vers le haut, dans le ciel, et réglez **Ligne de rappel** sur *Oui* : la ligne qui va de l’étiquette à la cascade se dessine pendant que vous faites glisser. Appuyez sur **Enregistrer**.
+6. Tracez les renvois. En mode **Maquette**, choisissez `note-1` sur la page : une poignée ronde apparaît près du milieu de son côté droit. Faites-la glisser sur le barrage ; les ancres de la carte s’affichent pendant le glissé, et le dépôt écrit un connecteur de la note vers l’ancre `dam`, avec un point à son extrémité. Faites de même de `note-2` vers `mill` et de `note-3` vers `harbour`. Le groupe **Renvois** du bloc les liste ; c’est par lui qu’on en ajoute ou qu’on en modifie un au clavier.
+
+<Screenshot src="/docs-shots/fr/map-notes.webp" alt="La page Along the river en mode Maquette : la carte avec une légende dans son coin inférieur gauche, trois notes dessous, chacune reliée par une ligne à un endroit de la carte, et le groupe Renvois de la deuxième note dans le panneau Maquette." caption="Chaque note renvoie à une ancre de l’image ; la légende et les noms sont des lignes du Markdown." />
+
+Un renvoi aboutit au point de l’ancre dans l’image, recadrage et échelle compris : il trouve donc encore le moulin quand la carte est réduite ou coupée à sa zone de sécurité. Il est peint par-dessus les blocs, et se voit donc sur l’image. Une note posée sur la carte elle-même, sans place à elle, est signalée par Vérifications comme *Bloc caché par un autre bloc*, avec les corrections (voir [Sandbox : les pages composées](/fr/docs/sandbox-composed-pages#chevauchements-et-onglets-à-glyphe)).
+
+## 10. Une page de cartes avec photos
+
+Une page de cartes (des photos avec une légende sous chacune, des portraits avec un nom) est une seule carte dessinée plusieurs fois. Une **grille qui répète un jeu de blocs** dessine la carte une fois, et la page a autant de cartes que son Markdown en écrit.
+
+1. Faites un gabarit `photos` (**Nom** `Photo cards`) avec `title` (`portada`, *Niveau 1*) et `text` (le texte libre) empilés dans un groupe `column`, à 6 mm l’un de l’autre.
+2. Ajoutez un bloc `photo` : **Style de bloc** `foto`, accroché à *Bloc text*, *En dessous*, 6 mm plus bas. Ajoutez un bloc `caption` : **Style de bloc** `dato`, **Largeur** *Son contenu*, accroché à *Bloc photo*, *En dessous*, 2 mm plus bas.
+3. Ajoutez un groupe `cards` : **Grille**, **Colonnes** 3, **Espace entre les colonnes** 6 mm, **Espace entre les rangées** 12 mm. Sous **Répéter un ensemble de blocs**, **Bloc principal** `photo`, et cochez `caption` sous **Blocs qui l’accompagnent**. Le bloc principal prend la largeur d’une cellule ; la légende s’y accroche comme le gabarit la dessine.
+4. Écrivez la page :
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+Chaque `:::frame{slot="photo"}` est une carte, et le `:::frame{slot="caption"}` qu’il contient va dans la légende de cette carte. Les cartes remplissent les rangées depuis le côté où commence une ligne : la quatrième ouvre donc une deuxième rangée. En mode Maquette, les blocs sont nommés d’après leur carte : `photo[2]` et `caption[2]` forment la deuxième carte.
+
+<Screenshot src="/docs-shots/fr/grid.webp" alt="La page People and the river avec quatre photos dans une grille de trois colonnes et une légende sous chacune, et le panneau Maquette qui montre le groupe cards avec Grille, trois colonnes et Répéter un ensemble de blocs." caption="La carte est dessinée une fois ; le Markdown en donne quatre, et la grille en pose quatre." />
+
+Une cinquième photo prend la cellule suivante ; une septième ouvre une troisième rangée. Une édition dans une autre langue peut avoir plus ou moins de cartes avec le même gabarit. **Nombre maximal d’éléments** plafonne la grille (ce qui dépasse va dans le texte libre, et Vérifications signale *Plus d’éléments que la grille n’en contient*), et **Le contenu qui ne tient pas va vers** *Une page ajoutée après celle-ci*, réglé sur le bloc principal, envoie entières sur une page ajoutée les rangées qui ne tiennent pas.
+
+## 11. Une bibliothèque de modules pour une collection
+
+**Page et colonnes › Modules** est la bibliothèque de modules du livre. Chaque module y est dessiné avec ses blocs et nommé par son identifiant, avec le nombre de blocs du Markdown qui l’utilisent et le nombre de pages où ils se trouvent (*1 bloc sur 1 page* pour l’arbre), un crayon qui l’ouvre dans l’éditeur de gabarits, et le bouton qui l’insère dans la page choisie dans **Page où l’insérer**. **Nouveau module** en commence un autre. Renommer un module réécrit chaque bloc `:::module` qui le désigne.
+
+<Screenshot src="/docs-shots/fr/modules.webp" alt="La section Modules du panneau Maquette : la liste Page où l’insérer, le module Tree of ideas avec la mention 1 bloc sur 1 page, et le bouton Nouveau module." caption="La bibliothèque : chaque module, l’endroit où le livre l’utilise, et le moyen de l’insérer dans une page." />
+
+Une page reçoit des modules dans un groupe où **Reçoit les modules de la page** est activé, l’un sous l’autre dans l’ordre du Markdown. La page suivante peut donc contenir un arbre sous une boîte, ou deux arbres, sans nouveau gabarit : le Markdown dit quels blocs et dans quel ordre, les modules les dessinent.
+
+Les livres d’une collection (*Our river* pour le CE2, *Our coast* pour le CM1) partagent leurs modules en partageant leur maquette :
+
+- **Dans le Sandbox.** Commencez le livre suivant comme une copie de celui-ci (**Livres**, **⋯** sur le livre, **Dupliquer**) et écrivez ses chapitres ; les gabarits, les modules et les styles viennent avec la copie. Pour un livre qui existe déjà, **Exporter**, dans l’en-tête du panneau Maquette, enregistre la maquette, et **Importer**, dans l’autre livre, la met à la place de la maquette de ce livre.
+- **Depuis le code.** Gardez les gabarits de module dans un seul fichier et ajoutez-les aux `pageTemplates` de chaque livre de la collection :
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+Une modification d’un module (une ligne plus épaisse, un autre style de bloc) atteint alors chaque page de chaque livre qui l’utilise à la prochaine mise en page du livre, et les mots restent dans le Markdown de chaque livre.
+
+## Ce que dit le Markdown et ce que dessine la maquette
+
+Les pages des sections 8 à 11 suivent une même règle. Le Markdown dit **ce qui** va sur la page et **combien** : les mots de chaque boîte, le nombre de branches, de notes, de cartes et de rangées de la légende, le module qui vient en premier. La maquette dessine chaque chose **une seule fois** : les boîtes, leur place, les lignes qui les relient, l’aspect de la légende, la taille d’une cellule. C’est pourquoi une traduction n’a pas besoin de son propre gabarit, pourquoi une page de cinq photos utilise le gabarit d’une page de quatre, et pourquoi une collection peut partager ses modules. Un gabarit ne contient jamais les mots d’une page, et le Markdown ne contient ni position ni couleur.
 
 ## Pour aller plus loin
 

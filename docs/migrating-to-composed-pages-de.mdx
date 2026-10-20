@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Ein Buch auf zusammengesetzte Seiten umstellen',
   sidebarTitle: 'Auf zusammengesetzte Seiten umstellen',
-  description: 'Wie Sie ein Buch, das den Text seiner Seiten in Überschriftenstilen ablegt, auf Seitenvorlagen und Markdown umstellen – mit dem Sandbox-Assistenten „Text ins Markdown verschieben“ oder von Hand – und was Sie danach prüfen',
+  description: 'Wie Sie ein Buch, das den Text seiner Seiten in Überschriftenstilen ablegt, auf Seitenvorlagen und Markdown umstellen – mit dem Sandbox-Assistenten „Text ins Markdown verschieben“ oder von Hand –, was Sie danach prüfen und wie Sie in ein Bild gemalte Linien durch Verbinder und einzeln gezeichnete Rahmen durch Raster und Module ersetzen',
   lang: 'de',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Manche Bücher, die vor den zusammengesetzten Seiten mit Postext entstanden sind, legen den Wortlaut jeder Seite in den Gestaltungseinstellungen ab statt im Text. Dadurch sind sie schwer zu bearbeiten und lassen sich nicht übersetzen. Diese Seite zeigt, wie Sie diesen Wortlaut ins Markdown verschieben; dort wird jede Seite zu einem Block mit eigener Vorlage. Die Sandbox erledigt das meiste mit einer Schaltfläche, und Sie prüfen das Ergebnis Seite für Seite. Die Seite beschreibt auch, wie Sie dasselbe für eine einzelne Seite von Hand tun.",
+  plainSummary: "Manche Bücher, die vor den zusammengesetzten Seiten mit Postext entstanden sind, legen den Wortlaut jeder Seite in den Gestaltungseinstellungen ab statt im Text. Dadurch sind sie schwer zu bearbeiten und lassen sich nicht übersetzen. Diese Seite zeigt, wie Sie diesen Wortlaut ins Markdown verschieben; dort wird jede Seite zu einem Block mit eigener Vorlage. Die Sandbox erledigt das meiste mit einer Schaltfläche, und Sie prüfen das Ergebnis Seite für Seite. Die Seite beschreibt auch, wie Sie dasselbe für eine einzelne Seite von Hand tun. Der letzte Teil ersetzt Linien, die in ein Bild gemalt sind, durch Linien, die der Satz zeichnet, und einzeln gezeichnete Rahmen durch ein Raster oder ein Modul.",
 };
 
 # Ein Buch auf zusammengesetzte Seiten umstellen
@@ -77,3 +77,61 @@ Ein Buch mit wenigen Seiten lässt sich ohne den Assistenten umstellen, eine Sei
 4. Vergleichen Sie die Seite mit der alten und öffnen Sie **Prüfungen**.
 
 Dieselbe Umstellung gibt es im Code als `moveTextToMarkdown`; sie liefert die neue Konfiguration, die Kapitel und den Bericht, den der Dialog zeigt. Siehe [Zusammengesetzte Seiten › Ein Buch umstellen, dessen Text in den Stilen steht](/de/docs/composed-pages#ein-buch-umstellen-dessen-text-in-den-stilen-steht). Alles, was der Dialog tut, steht unter [Sandbox: zusammengesetzte Seiten › Text ins Markdown verschieben](/de/docs/sandbox-composed-pages#text-ins-markdown-verschieben).
+
+## Von Linien im Bild zu Verbindern
+
+Eine alte Übertragung hält die Linien ihrer Diagramme oft in einem Bild: die Äste eines Baums, die Kästen eines Organigramms, die Linien von einer Notiz zu einer Karte, gemalt in einen Hintergrund, auf dem die Kästen sitzen. Dann passen die Wörter nur in der Sprache und in der Größe zu den Linien, für die das Bild gezeichnet wurde: Ein längeres Wort in einer Übersetzung läuft über eine Linie, und ein Kasten, der wächst, lässt seine Linie zurück. Verbinder zeichnen dieselben Linien aus den Rechtecken der Rahmen, sobald die Seite gesetzt ist, und folgen so dem Text.
+
+1. **Die Kästen als Rahmen zeichnen.** Jeder Kasten des Diagramms wird ein Rahmen der Vorlage, mit dem Kastenstil des alten Kastens. Eine Reihe gleicher Kästen ist besser ein Raster, das einen Rahmen wiederholt (nächster Abschnitt).
+2. **Die Linien aus dem Bild nehmen.** Verwenden Sie das Bild ohne seine Linien, oder lassen Sie es weg, wenn es sonst nichts enthielt; ein Hintergrund, der bleibt (Papier, eine Farbfläche), wird ein Kasten der Dekoration oder das Attribut `background` der Seite.
+3. **Einen Verbinder hinzufügen**, für jede Gruppe von Linien in der Dekoration der Vorlage (**Dekoration › Verbinder hinzufügen**). **Beginnt bei** ist der übergeordnete Kasten; drücken Sie unter **Führt zu** auf jedes Kind, oder auf *Jedes …* für jede Karte eines Rasters. Ein Baum aus Ästen nimmt den **Verlauf** *Baum*; eine Linie zwischen zwei Kästen *Winkel* oder *Gerade*; Pfeile und Punkte sind das **Endzeichen**. Die Schritte stehen unter [Bücher aus zusammengesetzten Seiten › Einen Baum mit Verbindern zeichnen](/de/docs/composed-page-books#8-einen-baum-mit-verbindern-zeichnen).
+4. **Notizen auf das Bild zeigen lassen.** Eine Linie von einer Notiz zu einem Ort einer Karte wird ein Zeiger: Setzen Sie an diesem Ort einen Anker ins Bild (im Dialog Anker), wählen Sie die Notiz im Modus Gestaltung und ziehen Sie ihren runden Griff auf den Anker. Die Linie endet an diesem Punkt des Bilds, wie es auch beschnitten und skaliert ist; siehe [Bücher aus zusammengesetzten Seiten › Notizen auf einer Karte, mit Zeigern und Legende](/de/docs/composed-page-books#9-notizen-auf-einer-karte-mit-zeigern-und-legende).
+5. **Die Seite vergleichen**, mit der alten, in jeder Sprache, und **Prüfungen** öffnen: Ein Verbinder, dessen Ende an einem Rahmen liegt, den die Seite nicht zeigt, wird auf dieser Seite weggelassen, und das Umbruchprotokoll sagt das.
+
+## Von einer Vorlage je Seite zu Rastern und Modulen
+
+Eine Übertragung, die Rahmen für Rahmen entstand, hat eine Vorlage je Seitengestaltung und in jeder dieselbe Karte oder denselben Kasten noch einmal gezeichnet: sechs Fotorahmen mit sechs Legendenrahmen, ein Kasten mit seinem Bild, in drei Vorlagen kopiert. **Rahmen umbauen** im Vorlageneditor macht daraus ein Raster, das eine Karte wiederholt, und ein Modul, das jede Seite aufnehmen kann, und schreibt jede Seite, die mit der Vorlage gesetzt ist, so um, dass sie aussieht wie vorher.
+
+Das Buch für diese Schritte ist *Places of the river, before grids*: eine Seite, deren Vorlage sechs Fotokarten Rahmen für Rahmen zeichnet (`photo1` bis `photo6`, jede mit einem abgerundeten Legendenkästchen `caption1` bis `caption6`), und einen Kasten `fact` mit einem Bild `fact-picture` neben seinem Text. Die Wörter sind erfunden. [Laden Sie das Buch herunter](/docs-examples/river-places-before.postext), öffnen Sie in der Sandbox **Bücher**, klicken Sie auf **Neu** und wählen Sie **Eine .postext-Datei öffnen …**.
+
+1. Wechseln Sie zu **Gestaltung** und öffnen Sie **Gestaltung › Seite und Spalten › Seitenvorlagen**. Die Vorlage *Places of the river* ist geöffnet.
+2. Haken Sie unter **Rahmen umbauen** `photo1` bis `photo6` und `caption1` bis `caption6` an und klicken Sie auf **In ein Raster umwandeln**. Die Sandbox liest die Karten von der Seite ab: drei Spalten im Abstand von 8 mm, zwei Reihen. Sie schreibt eine Gruppe `grid`, die `photo` und `caption` wiederholt, und meldet *Raster grid angelegt: 3 Spalten, 6 Karten. Umgeschriebene Seiten: 1.* Die Seite sieht aus wie vorher.
+3. Haken Sie `fact` und `fact-picture` an, tippen Sie `fact` in **Name des Moduls** und klicken Sie auf **Ein Modul herauslösen**. Der Kasten und sein Bild wandern in ein Modul `fact`; die Vorlage bekommt an ihrer Stelle eine Gruppe, die Module aufnimmt.
+
+<Screenshot src="/docs-shots/de/reshape.webp" alt="Der Vorlageneditor bei Rahmen umbauen mit den zwölf angehakten Foto- und Legendenrahmen, und die Seite mit sechs Fotokarten und einem Kasten, gestrichelt umrandet." caption="Die für das Raster gewählten Rahmen: sechs Karten, jede ein Foto mit seiner Legende." />
+
+Das Markdown ändert sich mit der Vorlage. Vorher nannte jeder Teil seinen eigenen Rahmen:
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+Nachher ist jede Karte ein Teil `photo` mit seiner Legende darin, und der Kasten ist ein Modul:
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+Eine siebte Karte ist jetzt ein weiterer Teil `photo` im Markdown, und eine andere Seite kann den Kasten `fact` ohne eigene Rahmen aufnehmen: Fügen Sie ihn über **Gestaltung › Seite und Spalten › Module** ein. Beide Umbauten sind Schritte des Verlaufs (einer je umgeschriebenem Kapitel und einer für die Gestaltung), und **Rückgängig** unter **Rahmen umbauen** nimmt sie zurück, solange sie die letzten sind. Lässt sich ein Umbau nicht ausführen, sagt er, warum: Karten unterschiedlicher Breite, Karten, die nicht auf einem Raster stehen, Rahmen, die aus einer anderen Vorlage geerbt sind, eine Vorlage, die schon eine Modulgruppe hat. Jedes Feld, das der Umbau schreibt, beschreibt [Sandbox: zusammengesetzte Seiten › Raster und Module](/de/docs/sandbox-composed-pages#raster-und-module).
