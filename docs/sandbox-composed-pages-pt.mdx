@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compostas',
   description: 'Como editar os modelos de página e os blocos diretamente na página, organizar os estilos de bloco numa biblioteca, verificar as páginas compostas em todas as edições, levar para o Markdown o texto de um livro e corrigir um bloco com um clique',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Sob *O texto não cabe no bloco*, as soluções que a escada de ajuste calculou 
 Os outros botões mudam a forma do livro, por isso cada um pergunta antes, dizendo o ajuste e o valor (*tema-fija › dinero › maxHeight = 66 mm*) ou o modelo que a página vai tomar. Uma mudança de design vale para todas as páginas compostas com esse modelo. **Mudar** faz a mudança como um passo do histórico de desfazer: Cmd/Ctrl+Z, ou o botão Desfazer ao lado de Conteúdo e Design, desfaz. A página é diagramada de novo, e o aviso some, ou dá lugar ao que a mudança deixou (um bloco mais abaixo que agora não cabe).
 
 Os mesmos botões acompanham o bloco no painel **O que se moveu e por quê** da tela. O aviso de uma edição que não está na tela oferece abrir essa edição, onde as soluções podem ser aplicadas. Se o livro mudou depois que a diagramação propôs uma solução (o modelo foi editado, o contêiner cita outro modelo), o botão avisa e não muda nada. Um agente aplica as mesmas soluções com `sandbox_apply_proposal` ([WebMCP](/pt/docs/webmcp)).
+
+
+## No visualizador HTML
+
+A aba HTML diagrama cada página composta sobre a folha impressa, com seu tamanho e suas margens, e a mostra inteira, na escala da largura do visualizador: os blocos ficam onde o modelo os coloca na impressão. Na rolagem vertical uma composição tem a altura da folha e a rolagem segue para a próxima. Na visualização em colunas uma composição mais alta que a tela rola para baixo por conta própria, e as setas avançam uma página por vez. Antes do postext 1.47 o visualizador diagramava o modelo sobre a própria página do tamanho da tela, e uma composição podia ficar cortada.

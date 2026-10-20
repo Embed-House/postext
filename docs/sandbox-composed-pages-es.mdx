@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'Lo que ofrece el Sandbox para las páginas compuestas: editar las plantillas y sus marcos sobre la propia página, ordenar los estilos de marco en una biblioteca, revisar las páginas compuestas en todas las ediciones, pasar al Markdown el texto de un libro y arreglar un marco con un clic',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Bajo *El texto no cabe en su marco*, las soluciones que la escalera de reajuste 
 Los demás botones cambian la forma del libro, así que cada uno pregunta antes e indica el ajuste y su valor (*tema-fija › dinero › maxHeight = 66 mm*) o la plantilla que tomará la página. Un cambio de diseño se aplica a todas las páginas compuestas con esa plantilla. **Cambiar** hace el cambio como un solo paso del historial de deshacer: Cmd/Ctrl+Z, o el botón Deshacer que hay junto a Contenido y Diseño, lo revierte. La página se vuelve a maquetar y el aviso desaparece, o deja paso a lo que el cambio haya provocado (una caja más abajo que ahora no cabe).
 
 Los mismos botones acompañan al marco en el panel **Qué se ha movido y por qué** del canvas. El aviso de una edición que no está en pantalla ofrece abrir esa edición, donde se pueden aplicar sus soluciones. Si el libro ha cambiado desde que la maquetación propuso una solución (se ha editado la plantilla o el bloque de página indica otra plantilla), el botón lo indica y no cambia nada. Un agente aplica las mismas soluciones con `sandbox_apply_proposal` ([WebMCP](/es/docs/webmcp)).
+
+
+## En el visor HTML
+
+La pestaña HTML maqueta cada página compuesta sobre la hoja impresa, con su tamaño y sus márgenes, y la muestra entera, escalada al ancho del visor: sus marcos quedan donde la plantilla los pone en la impresión. En el desplazamiento vertical una composición ocupa el alto de su hoja y el desplazamiento sigue con la siguiente. En la vista por columnas una composición más alta que la pantalla se desplaza hacia abajo por su cuenta, y las flechas avanzan de página en página. Antes de postext 1.47 el visor maquetaba la plantilla sobre su propia página del tamaño de la pantalla, y una composición podía quedar cortada.

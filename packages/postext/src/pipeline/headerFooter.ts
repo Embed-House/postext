@@ -25,7 +25,7 @@ import {
 } from '../vdt';
 import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
 import { parsePartNumber, parsePartPalette, partMarkPages } from './parts';
-import { computePageMetrics, sheetRectToFlow } from './buildHelpers';
+import { composedLeafConfig, computePageMetrics, onComposedLeaf, sheetRectToFlow } from './buildHelpers';
 import { arabicNumbersOf, resolvedLocale } from './config';
 import { classifyPages } from './pageRoles';
 import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
@@ -1184,12 +1184,21 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // Header and footer are laid out on the sheet on every page; every other
   // slot (openers, part pages, overlays) in the page's flow frame, so on a
   // vertical page their text reads vertically.
-  const physicalFrames: DesignFrames = { page: metrics.physical.trimBox, bleed: metrics.physical.bleedBox };
-  const verticalFrames: DesignFrames = {
-    page: sheetRectToFlow(metrics.physical.trimBox, metrics.pageWidthPx),
-    bleed: sheetRectToFlow(metrics.physical.bleedBox, metrics.pageWidthPx),
-    upright: true,
-  };
+  const framesOf = (m: typeof metrics): { physical: DesignFrames; vertical: DesignFrames } => ({
+    physical: { page: m.physical.trimBox, bleed: m.physical.bleedBox },
+    vertical: {
+      page: sheetRectToFlow(m.physical.trimBox, m.pageWidthPx),
+      bleed: sheetRectToFlow(m.physical.bleedBox, m.pageWidthPx),
+      upright: true,
+    },
+  });
+  const docFrames = framesOf(metrics);
+  // A composed page laid out on a host's leaf (`composedViewerLeaf`,
+  // #1045) has the leaf's sheet: its decoration and furniture are laid on
+  // it.
+  const leafConfig = composedLeafConfig(resolved);
+  const leafMetrics = leafConfig ? computePageMetrics(leafConfig) : undefined;
+  const leafFrames = leafMetrics ? framesOf(leafMetrics) : undefined;
 
   // Page roles drive the per-element `pages` filter of every slot below.
   classifyPages(doc, resolved);
@@ -1297,6 +1306,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // page's flow does; running heads and folios are horizontal on the
     // sheet, whatever the flow (see below).
     setMeasureWritingMode(pageIsVertical(page) ? 'vertical-rl' : 'horizontal-tb');
+    const onLeaf = leafMetrics !== undefined && onComposedLeaf(resolved, page);
+    const pageMetrics = onLeaf ? leafMetrics : metrics;
+    const { physical: physicalFrames, vertical: verticalFrames } = onLeaf ? leafFrames! : docFrames;
     // Per-page content area: mirrored margins swap inner/outer on even pages.
     const contentArea = page.contentArea;
     // A right-to-left page lays these out in its mirrored flow, whose trim
@@ -1318,7 +1330,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // side away from the spine (it swaps with the binding and the page's
     // parity, as mirrored margins do).
     const sheetArea = flowRectToPage(page, contentArea);
-    const trim = metrics.physical.trimBox;
+    const trim = pageMetrics.physical.trimBox;
     const recto = (page.index + pageIndexOffset) % 2 === 0;
     const outerRight = recto !== (resolved.page.binding === 'right');
     const outer = outerRight
@@ -1379,7 +1391,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       };
       page.header = asFurniture(withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
         headerSlot,
-        headerContainerBbox(sheetArea, metrics.physical.trimBox),
+        headerContainerBbox(sheetArea, pageMetrics.physical.trimBox),
         page.index + pageIndexOffset,
         placeholders,
         dpi,
@@ -1705,7 +1717,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       };
       page.footer = asFurniture(withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
         footerSlot,
-        footerContainerBbox(sheetArea, metrics.physical.trimBox),
+        footerContainerBbox(sheetArea, pageMetrics.physical.trimBox),
         page.index + pageIndexOffset,
         placeholders,
         dpi,
@@ -1722,8 +1734,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     const ruled = (p: VDTPage | undefined): boolean => (p?.composed?.frames ?? []).some((f) => f.rules && !f.facingBlocks);
     if (page.composed && template && (template.decoration.elements.length > 0 || ruled(page) || ruled(facing)) && !(facing && spreadDecorated.has(page.index))) {
       const pair = facing?.composed?.spread && page.composed.spread ? { left: page.composed.spread === 'left' ? page : facing, right: page.composed.spread === 'left' ? facing : page } : undefined;
-      const trimBox = metrics.physical.trimBox;
-      const bleedBox = metrics.physical.bleedBox;
+      const trimBox = pageMetrics.physical.trimBox;
+      const bleedBox = pageMetrics.physical.bleedBox;
       const shift = trimBox.width;
       /** A frame's box on the sheet (of the spread, the right page's set
        *  `shift` along). */

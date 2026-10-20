@@ -1786,6 +1786,11 @@ Then:
   the reflowable EPUB's hidden list. Before 1.43 the tab's picture kept its own colours; from 1.43
   `label.icon.tint: true` paints it in the tab's `label.color` (its silhouette), so one picture serves every tint.
 - Text on both sides of a contour in the middle of a measure is not set.
+- Before 1.47 the Sandbox's HTML viewer laid a composed page on its own
+  screen page (a frame at the foot a scroll away in the vertical view, the
+  page cut at the screen's foot in the columns view); from 1.47 it lays it on
+  the print leaf and scales it to the screen (`composedViewerLeaf`, host
+  only: never write it in preset.json). Judge screen editions from 1.47.
 - Text panels of comics are set in their frames on single comic pages of
   any writing mode (1.39; horizontal left-to-right only before), and on
   strips and spreads from 1.40 (a panel across the spine keeps its text on

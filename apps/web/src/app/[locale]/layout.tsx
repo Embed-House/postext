@@ -5,13 +5,6 @@ import {
   JetBrains_Mono,
   Bricolage_Grotesque,
   Geist,
-  Noto_Sans_SC,
-  Noto_Serif_SC,
-  Noto_Sans_JP,
-  Noto_Serif_JP,
-  Noto_Naskh_Arabic,
-  Noto_Sans_Arabic,
-  Noto_Kufi_Arabic,
 } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
@@ -23,6 +16,7 @@ import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { CookieConsentProvider } from "@/components/gdpr/CookieConsentProvider";
 import { CookieBanner } from "@/components/gdpr/CookieBanner";
+import { ScriptFonts } from "@/components/fonts/ScriptFonts";
 import { ScrollRegions } from "@/components/ui/ScrollRegions";
 import { SiteWebMcp } from "@/components/webmcp/SiteWebMcp";
 import { Analytics } from "@vercel/analytics/next";
@@ -34,18 +28,26 @@ import "../globals.css";
 import { htmlDir, htmlLang } from "@/i18n/locales";
 import { version } from "postext/package.json";
 
+// Only the faces of the first paint on most pages are preloaded: the UI
+// sans and the reading serif. Preloading the display, head and mono faces
+// too (~300 KB) made them race the render-blocking stylesheets on a slow
+// connection; they swap in when the stylesheet asks for them.
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   axes: ["SOFT", "WONK", "opsz"],
+  preload: false,
 });
 
+// No `wdth` axis: the site never sets font-stretch, and the axis took the
+// Latin file from 77 KB to 131 KB.
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
-  axes: ["opsz", "wdth"],
+  axes: ["opsz"],
+  preload: false,
 });
 
 const lora = Lora({
@@ -56,54 +58,6 @@ const lora = Lora({
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
   subsets: ["latin"],
-});
-
-// Han fallbacks behind the Latin faces, switched on for zh pages only
-// (globals.css `--cjk-*`). Google serves them in unicode-range slices, so a
-// page downloads only the slices its characters need.
-const notoSansSc = Noto_Sans_SC({
-  variable: "--font-noto-sans-sc",
-  preload: false,
-});
-
-const notoSerifSc = Noto_Serif_SC({
-  variable: "--font-noto-serif-sc",
-  preload: false,
-});
-
-// Japanese fallbacks, switched on for text marked lang="ja" only (globals.css
-// `:lang(ja)`): the ja pages, a glossary term's native form or a sample in a docs page,
-// whose kanji would otherwise take the Chinese forms of Noto SC on a
-// Chinese page. Sliced like the SC faces, so nothing loads on a page
-// without Japanese.
-const notoSansJp = Noto_Sans_JP({
-  variable: "--font-noto-sans-jp",
-  preload: false,
-});
-
-const notoSerifJp = Noto_Serif_JP({
-  variable: "--font-noto-serif-jp",
-  preload: false,
-});
-
-// Arabic fallbacks, switched on for ar pages only (globals.css `--ar-*`):
-// Naskh behind the serifs (display and reading), Kufi behind the section
-// heads' grotesque, Noto Sans Arabic behind the UI sans and the mono.
-const notoNaskhArabic = Noto_Naskh_Arabic({
-  variable: "--font-noto-naskh-arabic",
-  subsets: ["arabic"],
-  preload: false,
-});
-
-const notoSansArabic = Noto_Sans_Arabic({
-  variable: "--font-noto-sans-arabic",
-  subsets: ["arabic"],
-  preload: false,
-});
-
-const notoKufiArabic = Noto_Kufi_Arabic({
-  variable: "--font-noto-kufi-arabic",
-  subsets: ["arabic"],
   preload: false,
 });
 
@@ -223,14 +177,7 @@ export default async function LocaleLayout({
         fraunces.variable,
         bricolage.variable,
         lora.variable,
-        jetbrainsMono.variable,
-        notoSansSc.variable,
-        notoSerifSc.variable,
-        notoSansJp.variable,
-        notoSerifJp.variable,
-        notoNaskhArabic.variable,
-        notoSansArabic.variable,
-        notoKufiArabic.variable
+        jetbrainsMono.variable
       )}
     >
       <body className="min-h-full flex flex-col font-body">
@@ -243,6 +190,7 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <ScriptFonts locale={locale} />
         <NextIntlClientProvider messages={clientMessages}>
           {/* Base UI's tabs, selects and popovers read the direction from
               here (arrow keys, sides), not from the document. */}

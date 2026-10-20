@@ -36,27 +36,3 @@ export function readPenSources(name: string): PenSources {
   const shared = penJson ? (JSON.parse(penJson) as Record<string, unknown>) : {};
   return { panels, shared };
 }
-
-/** The JSON for CodePen's "POST to prefill editors" API
- *  (https://blog.codepen.io/documentation/prefill/), which opens the example
- *  as a new, editable pen. */
-export function penDefineData(name: string, meta: { title: string; description?: string }): string {
-  const { panels, shared } = readPenSources(name);
-  const code = (lang: PenPanel["lang"]) => panels.find((p) => p.lang === lang)?.code ?? "";
-  const stylesheets = Array.isArray(shared.stylesheets) ? (shared.stylesheets as string[]) : [];
-  const scripts = Array.isArray(shared.scripts) ? (shared.scripts as string[]) : [];
-  return JSON.stringify({
-    title: meta.title,
-    description: meta.description,
-    tags: shared.tags,
-    html: code("html"),
-    css: code("css"),
-    js: code("js"),
-    // `js_module` lets the JS panel use `import` statements (ES modules).
-    js_module: true,
-    css_external: stylesheets.join(";"),
-    js_external: scripts.join(";"),
-    // HTML and CSS collapsed, JS open: the script is the example.
-    editors: "001",
-  });
-}

@@ -399,6 +399,10 @@ export function buildHtmlConfigOverride(
      *  the paged view (see `comicsViewerLeaf`). Absent: the document has
      *  none, and its `comics` settings are left as they are. */
     comicWidthPx?: number;
+    /** Composed pages (`::::page{template}`) are laid out on the print
+     *  leaf (`composedViewerLeaf`, #1045), at the viewer's dpi: the host
+     *  scales each to the screen (see `fitComposedPages`). */
+    composedLeaf?: boolean;
   },
 ): PostextConfig {
   const {
@@ -593,6 +597,11 @@ export function buildHtmlConfigOverride(
     },
     parts,
     ...(opts.comicWidthPx ? { comics: comicsViewerLeaf(base, leafPage, opts.comicWidthPx, columnMode === 'single' ? undefined : pageHeightPx) } : {}),
+    // A composed page is fixed geometry, like a comic page: its frames
+    // stand where the template puts them on the leaf, so it is laid out on
+    // the leaf, never on a screen-sized page (whose foot is a scroll away
+    // or a screen high) (#1045).
+    ...(opts.composedLeaf ? { composedViewerLeaf: { width: leafPage.width, height: leafPage.height, margins: leafPage.margins } } : {}),
     // The HTML viewer is a continuous reading surface, not a page: running
     // headers and footers (folios, running titles, page-edge tabs anchored
     // to the bleed) have no place on it — neither the document's nor the
@@ -661,6 +670,11 @@ export function measureColumnWidthPx(
 ): number {
   const font = buildFontString(fontFamily, fontSizePx, String(fontWeight), 'normal');
   return widthIn(lang, sample, font);
+}
+
+/** Whether `markdown` may hold a composed page (a `::::page` fence). */
+export function hasComposedPages(markdown: string): boolean {
+  return /^[ \t]*::::page\b/m.test(markdown);
 }
 
 /** Whether `markdown` may hold a comic page (a `:::page` fence). */

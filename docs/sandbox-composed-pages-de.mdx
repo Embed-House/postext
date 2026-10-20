@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Zusammengesetzte Seiten',
   description: 'Seitenvorlagen und Rahmen direkt auf der Seite bearbeiten, die Bibliothek der Rahmenstile, zusammengesetzte Seiten in jeder Sprachausgabe prüfen, den Text eines Buchs ins Markdown verschieben und einen Rahmen mit einem Klick beheben',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '12 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Unter *Text passt nicht in seinen Rahmen* sind die Lösungen, die die Einpassstu
 Die anderen Schaltflächen ändern die Form des Buchs, deshalb fragt jede zuerst und nennt die Einstellung und ihren Wert (*tema-fija › dinero › maxHeight = 66 mm*) oder die Vorlage, die die Seite bekommt. Eine Änderung der Gestaltung gilt für alle Seiten mit dieser Vorlage. **Ändern** nimmt die Änderung als einen Schritt des Rückgängig-Verlaufs vor: Cmd/Strg+Z oder die Schaltfläche Rückgängig neben Inhalt und Gestaltung nimmt sie zurück. Die Seite wird neu gesetzt, und die Warnung verschwindet oder macht dem Platz, was die Änderung hinterlassen hat (ein Kasten weiter unten, der jetzt nicht mehr passt).
 
 Dieselben Schaltflächen begleiten den Rahmen im Bedienfeld **Was sich bewegt hat und warum** des Canvas. Die Warnung einer Ausgabe, die nicht angezeigt wird, bietet an, diese Ausgabe zu öffnen, wo ihre Lösungen angewendet werden können. Hat sich das Buch geändert, seit das Layout eine Lösung vorgeschlagen hat (die Vorlage wurde bearbeitet, der Seitenblock nennt eine andere Vorlage), sagt die Schaltfläche das und ändert nichts. Ein Agent wendet dieselben Lösungen mit `sandbox_apply_proposal` an ([WebMCP](/de/docs/webmcp)).
+
+
+## Im HTML-Betrachter
+
+Der Reiter HTML setzt jede zusammengesetzte Seite auf dem gedruckten Blatt mit dessen Format und Rändern und zeigt sie ganz, auf die Breite des Betrachters skaliert: Die Rahmen stehen dort, wo die Vorlage sie im Druck hinsetzt. Beim senkrechten Scrollen ist eine Komposition so hoch wie ihr Blatt, und das Scrollen geht mit der nächsten weiter. In der Spaltenansicht scrollt eine Komposition, die höher als der Bildschirm ist, für sich nach unten, und die Pfeile gehen seitenweise weiter. Vor postext 1.47 legte der Betrachter die Vorlage auf seine eigene bildschirmgroße Seite, und eine Komposition konnte abgeschnitten werden.

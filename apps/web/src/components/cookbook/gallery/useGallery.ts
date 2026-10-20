@@ -66,8 +66,11 @@ export function useCatalog(locale: Locale): CatalogSnapshot {
   );
 }
 
-/** Loads the catalogue now when the page opens filtered, otherwise when the
- *  browser is idle. */
+/** Loads the catalogue now when the page opens filtered, otherwise at the
+ *  reader's first tap, click, key or focus. Not on idle: the file is
+ *  ~600 KB of JSON to parse and index, long tasks on a phone that only
+ *  a search or a filter needs (and every control that does calls
+ *  `loadCatalog` itself). */
 export function useCatalogPrefetch(locale: Locale, now: boolean, enabled = true) {
   useEffect(() => {
     if (!enabled) return;
@@ -75,12 +78,16 @@ export function useCatalogPrefetch(locale: Locale, now: boolean, enabled = true)
       loadCatalog(locale);
       return;
     }
-    if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(() => loadCatalog(locale), { timeout: 4000 });
-      return () => window.cancelIdleCallback(id);
-    }
-    const id = window.setTimeout(() => loadCatalog(locale), 2000);
-    return () => window.clearTimeout(id);
+    const events = ["pointerdown", "keydown", "focusin"] as const;
+    const load = () => {
+      remove();
+      loadCatalog(locale);
+    };
+    const remove = () => {
+      for (const type of events) window.removeEventListener(type, load, true);
+    };
+    for (const type of events) window.addEventListener(type, load, { capture: true, passive: true });
+    return remove;
   }, [locale, now, enabled]);
 }
 

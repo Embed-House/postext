@@ -214,11 +214,12 @@ describe('collectFontUsage / missingUsedVariants', () => {
     const config = {
       bodyText: { fontFamily: 'Body' },
       calloutStyles: [{ id: 'badge', titleStyle: { fontFamily: 'Badge', fontWeight: 500 } }],
-      headings: { fontFamily: 'Head', fontWeight: 700, levels: [{ level: 2, fontFamily: 'Head', fontWeight: 400, fontStyle: 'italic' }] },
+      headings: { fontFamily: 'Head', fontWeight: 700, levels: [{ level: 2, fontFamily: 'Head', fontWeight: 400, italic: true }] },
     } as unknown as import('postext').PostextConfig;
     const usage = collectFontUsage(config);
     expect(usage.get('Badge')).toEqual([{ weight: 500, style: 'normal' }]);
-    expect(usage.get('Head')).toEqual([{ weight: 700, style: 'normal' }, { weight: 400, style: 'italic' }]);
+    // Headings as the engine resolves them: each level, level 2 its own.
+    expect(new Set(usage.get('Head')!.map((u) => `${u.weight}|${u.style}`))).toEqual(new Set(['700|normal', '400|italic']));
     // The body family needs bold and italic for markdown emphasis.
     expect(usage.get('Body')).toHaveLength(5);
   });
@@ -246,6 +247,15 @@ describe('collectFontUsage / missingUsedVariants', () => {
       { weight: 700, style: 'italic' },
     ]);
     expect(missingUsedVariants(family('Unused', []), config)).toEqual([]);
+  });
+
+  // #1047: a heading family named with no weight is set at 700, and a
+  // display face with one regular cut has no file for it.
+  it('reports the heading bold a regular-only family is missing when the heading names no weight', () => {
+    const config = { headings: { fontFamily: 'Bangers' } } as unknown as import('postext').PostextConfig;
+    expect(missingUsedVariants(family('Bangers', [[400, 'normal']]), config)).toEqual([{ weight: 700, style: 'normal' }]);
+    const regular = { headings: { fontFamily: 'Bangers', fontWeight: 400 } } as unknown as import('postext').PostextConfig;
+    expect(missingUsedVariants(family('Bangers', [[400, 'normal']]), regular)).toEqual([]);
   });
 
   it('asks no italics of the body family where emphasis is set as dots and no Latin is emphasised', () => {

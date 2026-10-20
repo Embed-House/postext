@@ -46,6 +46,21 @@
      ones. */
 }
 
+/* The CJK and Arabic web faces load on zh, ja and ar pages only
+   (components/fonts/ScriptFonts). The CJK ones are declared under these
+   names, cut for the site's text (fonts/cjk); the Arabic ones set these on
+   :root. Elsewhere the names stand for an installed copy, then the system
+   faces after them. */
+html {
+  --font-noto-sans-sc: "Noto Sans SC";
+  --font-noto-serif-sc: "Noto Serif SC";
+  --font-noto-sans-jp: "Noto Sans JP";
+  --font-noto-serif-jp: "Noto Serif JP";
+  --font-noto-naskh-arabic: "Noto Naskh Arabic";
+  --font-noto-sans-arabic: "Noto Sans Arabic";
+  --font-noto-kufi-arabic: "Noto Kufi Arabic";
+}
+
 :root:lang(zh) {
   --cjk-serif: var(--font-noto-serif-sc), "Songti SC", "STSong", "SimSun", serif;
   --cjk-sans: var(--font-noto-sans-sc), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;

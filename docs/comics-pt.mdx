@@ -250,7 +250,7 @@ Duas falas seguidas do mesmo personagem são unidas, como se letreira a pausa de
 
 ### Onomatopeias
 
-Uma linha `sfx` não tem balão: o texto é composto em tamanho grande (2,4 vezes o corpo do letreiramento), em negrito, na fonte de onomatopeias do idioma do documento, com um halo branco em volta das letras para que se leia sobre o desenho. Ela é posicionada perto da âncora `sfx` do quadro quando o desenho marca uma (uma âncora cujo id é `sfx`) ou, se não, onde não cubra nenhum rosto. `rotate`, `size`, `color` e `font` a alteram, e `at` a fixa. No letreiramento vertical, ela é composta numa coluna de no máximo cinco caracteres. As onomatopeias são pintadas depois de todos os balões da página.
+Uma linha `sfx` não tem balão: o texto é composto em tamanho grande (2,4 vezes o corpo do letreiramento) na fonte de onomatopeias do idioma do documento, em negrito se essa fonte tiver negrito (Bangers, Dela Gothic One, ZCOOL KuaiLe e Lalezar não têm e ficam no peso regular), com um halo branco em volta das letras para que se leia sobre o desenho. Ela é posicionada perto da âncora `sfx` do quadro quando o desenho marca uma (uma âncora cujo id é `sfx`) ou, se não, onde não cubra nenhum rosto. `rotate`, `size`, `color` e `font` a alteram, e `at` a fixa. No letreiramento vertical, ela é composta numa coluna de no máximo cinco caracteres. As onomatopeias são pintadas depois de todos os balões da página.
 
 Uma linha pode definir um modo de escrita próprio. Uma edição horizontal de um mangá que mantém uma onomatopeia em japonês a compõe numa coluna:
 
@@ -317,7 +317,7 @@ Um estilo de balão é um tipo de balão: o contorno, o rabicho e o letreirament
     <tr><td><code>caption</code></td><td>retângulo</td><td>nenhum</td><td>Amarelo-claro, encostado no canto superior inicial, texto alinhado pelo início.</td></tr>
     <tr><td><code>inner</code></td><td>caixa arredondada</td><td>nenhum</td><td>Preenchimento cinza, itálico: a voz interior de um personagem.</td></tr>
     <tr><td><code>note</code></td><td>retângulo</td><td>nenhum</td><td>Encostado no canto inferior final, texto a 0,8.</td></tr>
-    <tr><td><code>sfx</code></td><td>nenhum</td><td>nenhum</td><td>Texto a 2,4, em negrito, na fonte de onomatopeias, com um halo branco de 1,5 pt.</td></tr>
+    <tr><td><code>sfx</code></td><td>nenhum</td><td>nenhum</td><td>Texto a 2,4 na fonte de onomatopeias, em negrito se ela tiver, com um halo branco de 1,5 pt.</td></tr>
   </tbody>
 </table>
 

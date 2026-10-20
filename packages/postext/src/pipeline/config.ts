@@ -212,8 +212,21 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     ...(Array.isArray(config?.labelStyles) && config.labelStyles.length > 0
       ? { labelStyles: resolveLabelStyles(config.labelStyles) }
       : {}),
+    // A host's leaf for composed pages (#1045): only a host that sets it.
+    ...(config?.composedViewerLeaf ? { composedViewerLeaf: resolveComposedViewerLeaf(config.composedViewerLeaf) } : {}),
   };
   return applyPaletteToResolvedConfig(resolved, rawConfig?.colorPalette);
+}
+
+/** `composedViewerLeaf` with its unset margins at zero. */
+function resolveComposedViewerLeaf(leaf: NonNullable<PostextConfig['composedViewerLeaf']>): NonNullable<ResolvedConfig['composedViewerLeaf']> {
+  const zero = { value: 0, unit: 'mm' as const };
+  const m = leaf.margins ?? {};
+  return {
+    width: leaf.width,
+    height: leaf.height,
+    margins: { top: m.top ?? zero, bottom: m.bottom ?? zero, left: m.left ?? zero, right: m.right ?? zero, mirror: m.mirror ?? false },
+  };
 }
 
 /** The body text with the widow and orphan rules off where the document's

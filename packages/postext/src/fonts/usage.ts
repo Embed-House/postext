@@ -7,7 +7,7 @@ import type { PostextConfig } from '../types';
 import type { ContentBlock } from '../parse';
 import { DEFAULT_TEXT_ELEMENT, defaultCjkEmphasis, resolveBodyTextConfig, resolveHeaderFooterConfig, resolveHeadingsConfig, resolveOrderedListsConfig, resolveUnorderedListsConfig } from '../defaults';
 import { primaryFontFamily } from '../measure/font';
-import { comicFontFamilies } from '../comics/fonts';
+import { comicFontFamilies, comicFontUses } from '../comics/fonts';
 import { DEFAULT_CODE_STYLE } from '../defaults/codeStyle';
 import { codeFenceOpen } from '../parse/codeFence';
 
@@ -200,6 +200,19 @@ export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument)
     list.push(use);
     usage.set(family, list);
   };
+  // Nodes whose weight is not the one they write (#1047): headings, their
+  // levels and heading styles (700 by default), comic lettering, balloon
+  // styles and cast (bold when a `bold` resolves true, the built-in ones
+  // included). Their faces are counted resolved below; their subtrees
+  // (designs, elements) are still walked.
+  const resolvedElsewhere = new Set<unknown>([
+    config.headings,
+    ...(config.headings?.levels ?? []),
+    ...(config.headingStyles ?? []),
+    config.comics?.lettering,
+    ...(config.comics?.balloonStyles ?? []),
+    ...(config.comics?.cast ?? []),
+  ].filter(Boolean));
   const walk = (node: unknown): void => {
     if (!node || typeof node !== 'object') return;
     if (Array.isArray(node)) {
@@ -207,7 +220,7 @@ export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument)
       return;
     }
     const rec = node as Record<string, unknown>;
-    if (typeof rec.fontFamily === 'string' && rec.fontFamily.trim()) {
+    if (typeof rec.fontFamily === 'string' && rec.fontFamily.trim() && !resolvedElsewhere.has(rec)) {
       const weight = typeof rec.fontWeight === 'number' ? rec.fontWeight : 400;
       // `fontStyle: 'italic'` (headings) or `italic: true` (titles,
       // paragraph styles, callout bodies).
@@ -225,6 +238,8 @@ export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument)
     for (const value of Object.values(rec)) walk(value);
   };
   walk(config);
+  for (const h of headingFontUses(config)) add(primaryFontFamily(h.family), { weight: h.weight, style: h.italic ? 'italic' : 'normal' });
+  for (const c of comicFontUses(config, doc?.markdown)) add(primaryFontFamily(c.family), { weight: c.weight, style: c.style });
   const body = config.bodyText?.fontFamily;
   if (typeof body === 'string' && body.trim()) {
     const emphasis = config.cjk?.emphasis ?? 'auto';
@@ -365,14 +380,38 @@ function addBoldWeights(
     const weight = Math.max(weightOf(own, 400), bodyBold);
     if (weight !== weightOf(own, 400)) bold(family, weight, italic === true ? ['italic'] : ['normal']);
   };
-  const headings = config.headings;
-  heavier(named(headings?.fontFamily), headings?.fontWeight, false);
-  for (const level of headings?.levels ?? []) heavier(named(level.fontFamily) ?? named(headings?.fontFamily), level.fontWeight ?? headings?.fontWeight, level.italic);
-  for (const style of config.headingStyles ?? []) heavier(named(style.fontFamily), style.fontWeight, style.italic);
+  for (const h of headingFontUses(config)) heavier(primaryFontFamily(h.family), h.weight, h.italic);
   const toc = config.toc as { fontFamily?: unknown; fontWeight?: unknown; italic?: unknown; levels?: readonly { fontFamily?: unknown; fontWeight?: unknown; italic?: unknown }[]; unnumbered?: { fontFamily?: unknown; fontWeight?: unknown; italic?: unknown } } | undefined;
   for (const entry of [toc, ...(toc?.levels ?? []), toc?.unnumbered]) {
     heavier(named(entry?.fontFamily) ?? named(toc?.fontFamily), entry?.fontWeight ?? toc?.fontWeight, entry?.italic);
   }
   const index = config.index as { fontFamily?: unknown; fontWeight?: unknown } | undefined;
   heavier(named(index?.fontFamily), index?.fontWeight, false);
+}
+
+/** A heading face as the engine sets it. */
+interface HeadingFontUse { family: string; weight: number; italic: boolean }
+
+/**
+ * The faces headings are set in (#1047), resolved as the engine resolves
+ * them: each level with what it leaves unset taken from `headings` and the
+ * defaults (700, upright), and each heading style laid over every level
+ * (`createHeadingLevelResolver`), since the text may set it on any. A
+ * heading family named with no weight is asked for its bold, not the 400
+ * the configuration as written reads as.
+ */
+function headingFontUses(config: PostextConfig): HeadingFontUse[] {
+  const levels = resolveHeadingsConfig(config.headings).levels;
+  const out: HeadingFontUse[] = levels.map((l) => ({ family: l.fontFamily, weight: l.fontWeight, italic: l.italic }));
+  for (const style of config.headingStyles ?? []) {
+    if (style.fontFamily === undefined && style.fontWeight === undefined && style.italic === undefined) continue;
+    for (const l of levels) {
+      out.push({
+        family: style.fontFamily?.trim() || l.fontFamily,
+        weight: style.fontWeight ?? l.fontWeight,
+        italic: style.italic ?? l.italic,
+      });
+    }
+  }
+  return out;
 }

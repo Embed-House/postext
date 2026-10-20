@@ -52,6 +52,7 @@ import type {
   PageTemplate,
   ResolvedLabelStyle,
   Dimension,
+  PageMargins,
 } from './types';
 import type { NumeralStyle } from './numbering';
 import type { MathRender } from './math/types';
@@ -191,6 +192,9 @@ export interface ResolvedConfig {
   /** Label styles (`PostextConfig.labelStyles`, #853), resolved, when the
    *  config sets any. */
   labelStyles?: ResolvedLabelStyle[];
+  /** The leaf composed pages are laid out on (`PostextConfig.composedViewerLeaf`,
+   *  #1045), when a host sets one. */
+  composedViewerLeaf?: { width: Dimension; height: Dimension; margins: Required<PageMargins> };
 }
 
 // ---------------------------------------------------------------------------

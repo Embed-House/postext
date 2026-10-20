@@ -1,3 +1,4 @@
+import { Activity } from "react";
 import { getTranslations } from "next-intl/server";
 import { PART_CLASSES } from "@/components/brand/partColors";
 import type { Catalog, CatalogRecipe } from "@/lib/cookbook/types";
@@ -71,7 +72,12 @@ function ChapterShelf({
 }
 
 /** The book view's shelves, part by part (an h2 per part for the outline;
- *  the bands show it visually). Chapters with no recipe never appear. */
+ *  the bands show it visually). Chapters with no recipe never appear. Each
+ *  shelf is an Activity boundary: React hydrates it after the rest of the
+ *  page, at offscreen priority in short slices (a click on a shelf not yet
+ *  hydrated hydrates that shelf first), instead of one long task over every
+ *  plate of the book. Not a Suspense boundary: that would stream the shelf
+ *  out of order, hidden until a script reveals it. */
 export async function ChapterShelves({ data }: { data: GalleryData }) {
   const t = await getTranslations("Cookbook");
   const { parts, catalog, intros } = data;
@@ -91,15 +97,16 @@ export async function ChapterShelves({ data }: { data: GalleryData }) {
             {part.chapters.map((chapter, ci) => {
               const recipes = catalog.recipes.filter((r) => r.chapter === chapter.id);
               return (
-                <ChapterShelf
-                  key={chapter.id}
-                  chapter={chapter}
-                  intro={intros[chapter.id]}
-                  recipes={recipes}
-                  facets={catalog.facets}
-                  eager={firstEager && pi === 0 && ci === 0}
-                  partHeading={partHeading}
-                />
+                <Activity key={chapter.id}>
+                  <ChapterShelf
+                    chapter={chapter}
+                    intro={intros[chapter.id]}
+                    recipes={recipes}
+                    facets={catalog.facets}
+                    eager={firstEager && pi === 0 && ci === 0}
+                    partHeading={partHeading}
+                  />
+                </Activity>
               );
             })}
           </section>

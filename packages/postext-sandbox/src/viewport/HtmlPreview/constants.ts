@@ -54,7 +54,17 @@ export const SHADOW_CSS = `
     scroll-snap-type: x proximity;
     scroll-padding-inline: 24px;
   }
-  .pt-scroll[data-mode='multi'] .pt-page { scroll-snap-align: start; }
+  .pt-scroll[data-mode='multi'] .pt-page,
+  .pt-scroll[data-mode='multi'] .pt-page-fit { scroll-snap-align: start; }
+  /* A composed page taller than a page of the paged view scrolls down in
+     a box of its own (#1045), snapped as a page is. */
+  .pt-scroll[data-mode='multi'] .pt-page-scroll {
+    flex-shrink: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-align: start;
+  }
   .pt-doc { min-height: 100%; }
   /* A page is a scroll unit: what a design draws past its edge (a cover
      plate sized for the bleed) would otherwise overprint the next one. */

@@ -7714,6 +7714,13 @@ export interface ComicsConfig {
   viewerLeaf?: ComicViewerLeafConfig;
 }
 
+/** See {@link PostextConfig.composedViewerLeaf}. */
+export interface ComposedViewerLeafConfig {
+  width: Dimension;
+  height: Dimension;
+  margins?: PageMargins;
+}
+
 /** See {@link ComicsConfig.viewerLeaf}. */
 export interface ComicViewerLeafConfig {
   width: Dimension;
@@ -7870,6 +7877,14 @@ export interface PostextConfig {
   /** Named styles of the labels set at a picture's anchors (`::label`,
    *  `ResourceAnchor.style`). */
   labelStyles?: LabelStyle[];
+  /** For hosts whose page is not a leaf (the Sandbox's HTML viewer lays
+   *  the book out on pages a screen wide and a scroll tall, #1045): a
+   *  composed page (`::::page{template}`) is laid out on this leaf instead
+   *  — the print page's size and margins —, on a page of the leaf's own
+   *  size, so its frames keep the print geometry (a frame anchored to the
+   *  foot sits at the leaf's foot, not a scroll further down). The host
+   *  scales that page to the screen. Not saved with a document. */
+  composedViewerLeaf?: ComposedViewerLeafConfig;
 
   pdfGeneration?: PdfGenerationConfig;
 

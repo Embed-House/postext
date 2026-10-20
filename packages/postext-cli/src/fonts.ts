@@ -524,8 +524,9 @@ async function download(family: string, variants: FontVariantUse[], dir: string,
  *  config does not spell out, such as the headings' bold), and any other
  *  weight its settings name, the bold's included (`boldFontWeight`, #741). */
 export function wantedVariants(book: Pick<Book, 'config' | 'chapters'>): Map<string, FontVariantUse[]> {
-  const families = configFontFamilies(book.config, book.chapters.map((c) => c.markdown));
-  const usage = collectFontUsage(book.config);
+  const markdown = book.chapters.map((c) => c.markdown);
+  const families = configFontFamilies(book.config, markdown);
+  const usage = collectFontUsage(book.config, { markdown });
   const out = new Map<string, FontVariantUse[]>();
   for (const family of families) {
     const list = [...STANDARD_FONT_VARIANTS, ...(usage.get(family) ?? [])];

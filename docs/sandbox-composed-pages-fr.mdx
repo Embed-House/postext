@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pages composées',
   description: 'Modifier les gabarits de page et leurs blocs directement sur la page, ranger les styles de bloc dans une bibliothèque, vérifier les pages composées dans toutes les éditions, déplacer le texte d’un livre dans le Markdown et corriger un bloc en un clic',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '14 min',
   order: 38,
   parent: 'sandbox',
@@ -116,3 +116,8 @@ Sous *Le texte déborde de son bloc*, les solutions calculées pour ce bloc par 
 Les autres boutons changent la forme du livre ; chacun demande donc d’abord confirmation, en indiquant le réglage et sa valeur (*tema-fija › dinero › maxHeight = 66 mm*) ou le gabarit que prendra la page. Un changement de maquette vaut pour toutes les pages composées avec ce gabarit. **Modifier** applique le changement en une seule étape de l’historique d’annulation : Cmd/Ctrl+Z, ou le bouton Annuler à côté de Contenu et Maquette, le défait. La page est recomposée, et l’avertissement disparaît, ou cède la place à celui que provoque le changement (un bloc plus bas qui ne tient plus).
 
 Les mêmes boutons accompagnent le bloc dans le panneau **Ce qui a bougé, et pourquoi** du canvas. L’avertissement d’une édition qui n’est pas à l’écran propose d’ouvrir cette édition, où ses solutions peuvent être appliquées. Si le livre a changé depuis que la mise en page a proposé une solution (le gabarit a été modifié, le délimiteur indique un autre gabarit), le bouton le signale et ne change rien. Un agent applique les mêmes solutions avec `sandbox_apply_proposal` ([WebMCP](/fr/docs/webmcp)).
+
+
+## Dans la visionneuse HTML
+
+L'onglet HTML met chaque page composée en page sur la feuille imprimée, avec son format et ses marges, et l'affiche entière, à l'échelle de la largeur de la visionneuse : ses blocs restent là où le gabarit les place à l'impression. Dans le défilement vertical, une composition a la hauteur de sa feuille et le défilement continue avec la suivante. Dans la vue en colonnes, une composition plus haute que l'écran défile vers le bas à elle seule, et les flèches avancent d'une page à la fois. Avant postext 1.47, la visionneuse posait le gabarit sur sa propre page de la taille de l'écran, et une composition pouvait être coupée.
