@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 156 · A children's textbook unit in ten languages ═════
 // https://postext.dev/en/cookbook/children-textbook-pages
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Nunito, Fredoka and three pairs for Arabic, Chinese, Japanese · Needs postext ≥ 1.46.0
+// Fonts: Nunito, Fredoka and three pairs for Arabic, Chinese, Japanese · Needs postext ≥ 1.48.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
   loadVerticalAlternates,
@@ -12,9 +12,7 @@ const LANG = 'es'; // @lang: the language of the unit (es en ca pt fr de it ar z
 const RECIPE = 'children-textbook-pages';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
-// #region palette: one ink and three families (water, field, sun), each with an accent, a tint
-// for its boxes and a ground for its pages. The boxes and the pages are written once with the
-// `tema` entries (water by default); a topic's template swaps their values.
+// One ink and three families (accent, box tint, page ground); a topic swaps the `tema` entries.
 const FAMILIES = {
   agua: { main: '#1b6aa0', tint: '#e1f0fa', ground: '#d3e8f6' },
   campo: { main: '#336f27', tint: '#e5f1dc', ground: '#d9ebcb' },
@@ -23,7 +21,6 @@ const FAMILIES = {
 const palette = { ink: '#1d2f3f', muted: '#4f6272', rule: '#7e98ab', paper: '#ffffff',
   agua: FAMILIES.agua.main, campo: FAMILIES.campo.main, // the blue of the folios and the contents
   tema: FAMILIES.agua.main, 'tema-tint': FAMILIES.agua.tint, 'tema-ground': FAMILIES.agua.ground };
-// What a topic's template changes: the three `tema` entries take the family's values.
 const swap = (f) => `tema=${FAMILIES[f].main}, tema-tint=${FAMILIES[f].tint}, `
   + `tema-ground=${FAMILIES[f].ground}`;
 const col = (id) => ({ hex: palette[id], model: 'hex', paletteId: id });
@@ -31,7 +28,6 @@ const colorPalette = [
   ...Object.entries(palette).map(([id, hex]) => ({ id, name: id, value: { hex, model: 'hex' } })),
   { id: 'main-color', name: 'water (defaults)', value: { hex: palette.agua, model: 'hex' } },
 ];
-// #endregion
 
 // #region editions: how each language runs and is bound, and the two faces of its script
 // Arabic runs right to left, Chinese and Japanese down the page, all bound on the right. Frames
@@ -126,26 +122,29 @@ const withPic = (name, style, minHeight, more) => [box(name, style, minHeight,
   exclude: 'push', placement: at(`#${name}`, 'top-right', -5, 8) }];
 // #endregion
 
-const questions = [1, 2, 3].flatMap((n) => [box(`pregunta-${n}`, 'dato', CJK ? 22 : 14),
-  answer(`respuesta-${n}`, CJK ? 2 : 3)]);
+// #region repeats: a grid lays its set once per item (#foto[1], #foto[2]…); a module per use
+const grid = (name, frames, columns, placement, more, width = MEASURE) => ({ name, kind: 'grid',
+  columns, columnGap: mm(5), rowGap: mm(CJK ? 8 : 12), repeat: { frames },
+  placement: { ...placement, size: { width: mm(width), height: 'fill' } }, ...more });
+const question = { id: 'pregunta', role: 'module', // a question and the lines to answer it on
+  frames: [box('caja', 'dato', CJK ? 22 : 14, { width: 'fill' }), { ...answer('lineas',
+    CJK ? 2 : 3), width: 'fill', placement: at('#caja', 'below', 0, CJK ? 4 : 7) }] };
+// #endregion
 const under = ({ placement, ...frame }) => ({ ...frame, width: mm(TALL - DOWN) }); // the map's
 const stack = (name, frames, more) => ({ name, kind: 'stack', frames, gap: mm(CJK ? 8 : 12),
   ...more });
 const pageTemplates = [
   base,
-  // Water: text, a strip of three pictures and a box; three boxes follow on the second page.
   topic('tema-agua', 'agua', {
     frames: [
-      ...[1, 2, 3].map((n) => ({ name: `foto-${n}`, style: 'foto', width: mm((MEASURE - 10) / 3),
-        ...(n === 1 && { placement: at('#texto', 'below', 0, 8) }) })),
-      box('probar', 'palabras', CJK ? 30 : 46, { placement: at('#foto-1', 'below', 0, 10) }),
+      { name: 'foto', style: 'foto' },
+      box('probar', 'palabras', CJK ? 30 : 46, { placement: at('#foto[1]', 'below', 0, 10) }),
       ...[['sabias', 'dato', 40], ['palabras', 'palabras', CJK ? 50 : 62],
         ['actividades', 'actividad', CJK ? 46 : 58]].map((f) => box(...f, { placement: onSecond })),
     ],
-    groups: [{ name: 'fotos', kind: 'row', gap: mm(5), frames: ['foto-1', 'foto-2', 'foto-3'] },
+    groups: [grid('fotos', ['foto'], 3, at('#texto', 'below', 0, 8), { rowAlign: 'start' }),
       stack('derecha', ['sabias', 'palabras', 'actividades'])],
   }),
-  // Field: one map across the spread, under it a text and three boxes.
   topic('tema-campo', 'campo', {
     frames: [
       { name: 'mapa', crossGutter: true, width: mm(CJK ? DOWN - 6 : SHEET),
@@ -153,34 +152,34 @@ const pageTemplates = [
       ...(CJK ? [{ ...under(title), placement: at('container', 'top-left', DOWN) },
         under({ name: 'texto', flow: true, columns: 1 }), under(box('actividad', 'actividad', 24))]
         : [box('actividad', 'actividad', 24)]),
-      ...[1, 2, 3].map((n) => ({ name: `curso-${n}`, style: 'dato', minHeight: mm(46), shrink: 1,
-        width: mm(CJK ? TALL - DOWN : 56),
-        ...(n === 1 && !CJK && { placement: at('#mapa', 'below', RIGHT, 6) }) })),
+      { name: 'curso', style: 'dato', minHeight: mm(46) },
     ],
+    ...(!CJK && { decoration: { elements: [pointer(1, 'alto', 0.01),
+      pointer(2, 'medio', 0.08), pointer(3, 'bajo', 0.2)] } }),
     groups: [
       stack('izquierda', CJK ? ['titulo', 'texto', 'actividad'] : ['titulo', 'mapa', 'texto',
         'actividad'], { gap: mm(6), ...(CJK && { placement: at('container', 'top-left', DOWN) }) }),
-      { name: 'cursos', kind: CJK ? 'stack' : 'row', gap: mm(6), frames: ['curso-1', 'curso-2',
-        'curso-3'], ...(CJK && { placement: at('container', 'top-left', DOWN, RIGHT) }) },
+      grid('cursos', ['curso'], CJK ? 1 : 3, CJK ? at('container', 'top-left', DOWN, RIGHT)
+        : at('#mapa', 'below', RIGHT, 6), { columnGap: mm(6), rowGap: mm(6) }, MEASURE - DOWN * CJK),
     ],
   }),
-  // Sun: boxes with a picture at their corner that pushes the text aside.
   topic('tema-sol', 'sol', {
     frames: [
       ...withPic('cuidar', 'palabras', CJK ? 52 : 64), box('turno', 'actividad', CJK ? 30 : 40),
-      ...[1, 2, 3].flatMap((n) => withPic(`uso-${n}`, 'dato', CJK ? 52 : 66,
-        n === 1 || !CJK ? { placement: onSecond } : {})),
+      ...withPic('uso', 'dato', CJK ? 52 : 66),
     ],
     groups: [stack('izquierda', ['titulo', 'texto', 'cuidar', 'turno']),
-      stack('derecha', ['uso-1', 'uso-2', 'uso-3'])],
+      grid('usos', ['uso', 'uso-foto'], 1, onSecond, { rowAlign: 'start',
+        ...(CJK && { rowGap: mm(0) }) })], // a vertical row counts the picture beside its box
   }),
-  // Before the unit: questions, each with room to write.
   { id: 'saberes', header: false,
     decoration: { elements: [titleTab()] },
     frames: [{ ...title, style: 'titulo-plano' },
-      { name: 'texto', flow: true, width: mm(MEASURE) }, ...questions],
-    groups: [stack('pagina', ['titulo', 'texto', ...questions.map((q) => q.name)],
-      { gap: mm(CJK ? 4 : 7) })] },
+      { name: 'texto', flow: true, width: mm(MEASURE) }],
+    groups: [stack('pagina', ['titulo', 'texto'], { gap: mm(CJK ? 4 : 7) }),
+      { name: 'preguntas', modules: true, gap: mm(CJK ? 4 : 7), placement: { ...at('#texto',
+        'below', 0, CJK ? 4 : 7), size: { width: mm(MEASURE), height: 'fill' } } }] },
+  question,
   // The contents: a frame takes the :::toc and lays it by the contents' own rules.
   { id: 'indice',
     decoration: { elements: [ground(), titleTab()] },
@@ -249,7 +248,7 @@ const toc = {
 };
 // #endregion
 
-// #region art-labels: the map's label styles and anchors; the words are in the Markdown
+// #region art-labels: the map's label styles, anchors and pointers; the words are in the Markdown
 // An anchor is a point of the painting (fractions of its width and height) and a label style;
 // every language's ::label lines use the same anchors. A right-bound book shows the painting
 // mirrored, the mountains on the right, so the river runs the way its pages are read: x comes
@@ -260,7 +259,8 @@ const labelStyles = [
   { id: 'sierra', fontFamily: DISPLAY, fontSize: pt(13), fontWeight: fw(600), color: col('ink'),
     textTransform: CAPS, letterSpacing: track(0.14), halo },
   { id: 'agua', fontFamily: TEXT, fontSize: pt(11), fontWeight: BOLD, fontStyle: SLANT,
-    color: { hex: '#0b3a5c', model: 'hex' }, halo },
+    color: { hex: '#0b3a5c', model: 'hex' }, halo, // a name set away draws a leader to its point
+    leader: { width: pt(1), endCap: 'dot', capSize: mm(1.6) } },
   { id: 'mar', fontFamily: TEXT, fontSize: pt(12), fontWeight: BOLD, fontStyle: SLANT,
     color: col('paper'), halo: { color: { hex: '#0b3a5c', model: 'hex' }, width: pt(1.8) } },
   { id: 'pueblo', fontFamily: DISPLAY, fontSize: pt(12), fontWeight: fw(600), color: col('ink'),
@@ -271,9 +271,12 @@ const labelStyles = [
 ];
 const ANCHORS = [
   { id: 'sierra', x: 0.21, y: 0.055, style: 'sierra' },
-  { id: 'nacimiento', x: 0.065, y: 0.115, style: 'agua', align: 'start' },
+  // The spring and the dam: the point is the place, `labelAt` where its name stands.
+  { id: 'nacimiento', x: 0.049, y: 0.098, labelAt: { x: 0.075, y: 0.115 }, style: 'agua',
+    align: 'start' },
   { id: 'fontalba', x: 0.135, y: 0.255, style: 'pueblo', verticalAlign: 'top' },
-  { id: 'embalse', x: 0.31, y: 0.155, style: 'agua', width: 0.12 },
+  { id: 'embalse', x: 0.293, y: 0.275, labelAt: { x: 0.31, y: 0.155 }, style: 'agua',
+    width: 0.12 },
   { id: 'molinar', x: 0.505, y: 0.35, style: 'pueblo', verticalAlign: 'bottom' },
   { id: 'aldamar', x: 0.845, y: 0.505, style: 'pueblo', verticalAlign: 'bottom' },
   { id: 'mar', x: 0.965, y: 0.28, style: 'mar' },
@@ -282,7 +285,16 @@ const ANCHORS = [
   { id: 'medio', x: 0.4, y: 0.77, style: 'curso' },
   { id: 'bajo', x: 0.74, y: 0.865, style: 'curso' },
 ];
-const flipped = (a) => ({ ...a, x: Math.round((1 - a.x) * 1000) / 1000,
+// Each course box points at its stretch of the river: an elbow from the box's top to an anchor
+// of the painting; the runs across stand at different heights (`trunk`), so none crosses.
+function pointer(n, anchor, trunk) {
+  return { kind: 'connector', id: `a-${anchor}`, routing: 'elbow', trunk, radius: mm(2),
+    from: { to: `#curso[${n}]`, side: 'top' }, to: { to: '#mapa', anchor, gap: mm(4.5) },
+    color: col('tema'), width: pt(1.6), startCap: 'dot', capSize: mm(2.4) };
+}
+const flip = (x) => Math.round((1 - x) * 1000) / 1000;
+const flipped = (a) => ({ ...a, x: flip(a.x), ...(a.labelAt && { labelAt: { ...a.labelAt,
+    x: flip(a.labelAt.x) } }),
   ...(a.rotate && { rotate: -a.rotate }), ...(a.align && !AR && { align: 'end' }) });
 const anchors = RIGHT_BOUND ? ANCHORS.map(flipped) : ANCHORS;
 // #endregion
@@ -309,7 +321,6 @@ const config = {
     fontSize: pt(28), lineHeight: pt(AR ? 40 : 32), color: col('paper'), marginTop: pt(0),
     marginBottom: pt(0), breakBefore: { enabled: false } }, { level: 2, fontSize: pt(15),
     lineHeight: pt(AR ? 24 : 19), marginTop: pt(9), marginBottom: pt(3) }] },
-  // Headings that are not entries of the unit: no number, no row in the contents.
   headingStyles: [{ id: 'portada', numbered: false, toc: false, fontSize: pt(46),
     lineHeight: pt(AR ? 64 : 48) }, { id: 'previo', numbered: false, toc: false }],
   toc,

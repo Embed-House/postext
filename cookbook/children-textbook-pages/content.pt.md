@@ -35,16 +35,22 @@ Composto em Nunito e Fredoka (SIL OFL) · Texto original (CC BY 4.0) · Ilustra�
 
 Antes de começar, pense nos rios que você já viu. Escreva suas ideias nas linhas. No fim da unidade, leia de novo e veja o que mudou.
 
-:::frame{slot="pregunta-1" label="Pense 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pense 1"}
 Onde você acha que um rio começa?
 :::
-
-:::frame{slot="pregunta-2" label="Pense 2"}
-Para que as pessoas usam um rio?
 :::
 
-:::frame{slot="pregunta-3" label="Pense 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pense 2"}
+Para que as pessoas usam um rio?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pense 3"}
 Que animais e plantas vivem em um rio ou perto dele?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ Chove e neva nas montanhas. Parte da água desce pelas encostas e parte se infil
 
 Uma nascente dá só um fio de água. O fio desce pela encosta, encontra outros fios e, juntos, eles formam um **riacho**. Numa encosta íngreme, o riacho corre depressa. Ele arrasta pedrinhas e as deixa lisas de tanto rolar. Quando vários riachos se juntam, formam um riacho maior. O rio Aldara começa assim, na neve da Sierra Blanca, a 1.850 metros acima do nível do mar.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[Água limpa que brota entre rochas cobertas de musgo.]
 ::caption[Uma nascente. A água passou meses debaixo da terra.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[Um riacho que salta sobre pedras redondas.]
 ::caption[Um riacho, íngreme e rápido, com pedrinhas lisas.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[Uma pequena cachoeira que cai num poço verde.]
 ::caption[Uma cachoeira, onde o riacho cai de um degrau de rocha.]
 :::
@@ -124,15 +130,15 @@ O rio Aldara tem 94 quilômetros. Ele nasce na Sierra Blanca, atravessa um vale 
 Siga o rio com o dedo, da nascente até o mar. Que cidade fica mais perto do mar?
 :::
 
-:::frame{slot="curso-1" label="Alto curso"}
+:::frame{slot="curso" label="Alto curso"}
 O terreno é muito inclinado. A água é fria, limpa e rápida, e escava a rocha. Aqui fica Fontalba.
 :::
 
-:::frame{slot="curso-2" label="Médio curso"}
+:::frame{slot="curso" label="Médio curso"}
 O vale é mais largo e o rio corre mais devagar. Os agricultores irrigam suas plantações, e Molinar cresceu ao lado de uma ponte e de um moinho.
 :::
 
-:::frame{slot="curso-3" label="Baixo curso"}
+:::frame{slot="curso" label="Baixo curso"}
 O terreno é quase plano. O rio é largo e lento e faz grandes curvas. Em Aldamar, ele deságua no mar.
 :::
 ::::
@@ -165,27 +171,27 @@ Um rio só continua limpo se cuidarmos dele. O lixo, o óleo e a água suja deix
 ::alt[Crianças com luvas e sacos de papel recolhendo lixo na margem de um rio.]
 :::
 
-:::frame{slot="uso-1" label="1 · Água para as plantações"}
+:::frame{slot="uso" label="1 · Água para as plantações"}
 No médio curso, os agricultores abrem pequenos canais de irrigação para que a água do rio corra entre os sulcos. Sem ela, os tomates e as alfaces não cresceriam no verão. Um só canal pode levar água a muitos quilômetros de distância.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[Um agricultor levanta a comporta de um canal de irrigação numa horta.]
 :::
-
-:::frame{slot="uso-2" label="2 · Moinhos"}
-Há muito tempo, a queda da água movia a roda do moinho de Molinar. A roda fazia girar as pedras que moíam o trigo e faziam farinha para todo o vale. Hoje o velho moinho é um pequeno museu.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Moinhos"}
+Há muito tempo, a queda da água movia a roda do moinho de Molinar. A roda fazia girar as pedras que moíam o trigo e faziam farinha para todo o vale. Hoje o velho moinho é um pequeno museu.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[Um velho moinho de pedra com uma grande roda de madeira ao lado de um rio.]
 :::
-
-:::frame{slot="uso-3" label="3 · Esporte e brincadeiras"}
-Agora o baixo curso, tranquilo, é um lugar para andar de canoa. Nas manhãs de verão, as crianças de Aldamar aprendem a remar com um instrutor, e todas usam colete salva-vidas.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Esporte e brincadeiras"}
+Agora o baixo curso, tranquilo, é um lugar para andar de canoa. Nas manhãs de verão, as crianças de Aldamar aprendem a remar com um instrutor, e todas usam colete salva-vidas.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Crianças com coletes salva-vidas remam em duas canoas por um rio tranquilo.]
+:::
 :::
 ::::

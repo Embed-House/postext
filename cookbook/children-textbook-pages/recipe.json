@@ -16,10 +16,14 @@
   "features": {
     "primary": [
       "composed-pages",
-      "frame-groups",
-      "callout-label-tabs"
+      "frame-grids",
+      "page-modules"
     ],
     "also": [
+      "frame-connectors",
+      "figure-leaders",
+      "frame-groups",
+      "callout-label-tabs",
       "figure-labels",
       "toc",
       "composed-spreads",
@@ -32,9 +36,7 @@
       "running-heads",
       "heading-styles",
       "color-palette",
-      "resources",
-      "canvas-rendering",
-      "pdf-export"
+      "resources"
     ]
   },
   "answers": [
@@ -44,8 +46,8 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.46.0",
-    "postextPdf": "1.46.0"
+    "postext": "1.48.0",
+    "postextPdf": "1.48.0"
   },
   "kit": [
     "core",
@@ -237,7 +239,7 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-17",
-  "updated": "2026-10-19",
+  "updated": "2026-10-20",
   "downloads": {
     "pdf": true
   },

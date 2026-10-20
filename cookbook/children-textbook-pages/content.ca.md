@@ -35,16 +35,22 @@ Composat en Nunito i Fredoka (SIL OFL) · Text original (CC BY 4.0) · Il·lustr
 
 Abans de començar, pensa en els rius que has vist. Escriu les teves idees a les línies. Al final de la unitat torna a llegir-les i mira què ha canviat.
 
-:::frame{slot="pregunta-1" label="Pensa 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pensa 1"}
 On creus que comença un riu?
 :::
-
-:::frame{slot="pregunta-2" label="Pensa 2"}
-Per a què fan servir les persones un riu?
 :::
 
-:::frame{slot="pregunta-3" label="Pensa 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pensa 2"}
+Per a què fan servir les persones un riu?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pensa 3"}
 Quins animals i plantes viuen en un riu o al seu costat?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ A les muntanyes plou i neva. Una part de l’aigua baixa pels vessants i una alt
 
 Una font només dona un fil d’aigua. El fil baixa pel pendent, es troba amb altres fils i, tots junts, formen un **rierol**. En un pendent fort, el rierol corre de pressa. Arrossega còdols i els deixa llisos de tant fer-los rodar. Quan s’ajunten diversos rierols, en fan un de més gran. El riu Aldara comença així, entre la neu de la Serra Blanca, a 1.850 metres sobre el nivell del mar.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[Aigua clara que brolla entre roques cobertes de molsa.]
 ::caption[Una font. L’aigua ha passat mesos sota terra.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[Un rierol que salta sobre pedres rodones.]
 ::caption[Un rierol, costerut i ràpid, amb còdols polits.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[Una petita cascada que cau en una bassa verda.]
 ::caption[Una cascada, on el rierol cau per un esglaó de roca.]
 :::
@@ -124,15 +130,15 @@ El riu Aldara fa 94 quilòmetres de llarg. Neix a la Serra Blanca, creua una val
 Segueix el riu amb el dit des del naixement fins al mar. Quina població és més a prop del mar?
 :::
 
-:::frame{slot="curso-1" label="Curs alt"}
+:::frame{slot="curso" label="Curs alt"}
 El pendent és fort. L’aigua és freda, clara i ràpida, i excava la roca. Aquí hi ha Fontalba.
 :::
 
-:::frame{slot="curso-2" label="Curs mitjà"}
+:::frame{slot="curso" label="Curs mitjà"}
 La vall és més ampla i el riu va més a poc a poc. Els pagesos reguen els camps, i Molinar va créixer al costat d’un pont i d’un molí.
 :::
 
-:::frame{slot="curso-3" label="Curs baix"}
+:::frame{slot="curso" label="Curs baix"}
 La terra és gairebé plana. El riu és ample i lent, i dibuixa grans meandres. A Aldamar desemboca al mar.
 :::
 ::::
@@ -165,27 +171,27 @@ Un riu només es manté net si el cuidem. Les escombraries, l’oli i l’aigua 
 ::alt[Nens amb guants i bosses de paper recollint escombraries a la riba d’un riu.]
 :::
 
-:::frame{slot="uso-1" label="1 · Aigua per als camps"}
+:::frame{slot="uso" label="1 · Aigua per als camps"}
 Al curs mitjà, els pagesos obren petites séquies perquè l’aigua del riu corri entre els solcs. Sense ella, els tomàquets i els enciams no creixerien a l’estiu. Una sola séquia pot portar aigua a molts quilòmetres de distància.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[Un pagès aixeca una comporta d’una séquia en un camp d’hortalisses.]
 :::
-
-:::frame{slot="uso-2" label="2 · Molins"}
-Fa molt de temps, l’aigua en caure feia girar la roda del molí de Molinar. La roda movia les moles que molien el blat per fer farina per a tota la vall. Avui el vell molí és un petit museu.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Molins"}
+Fa molt de temps, l’aigua en caure feia girar la roda del molí de Molinar. La roda movia les moles que molien el blat per fer farina per a tota la vall. Avui el vell molí és un petit museu.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[Un vell molí de pedra amb una gran roda de fusta al costat d’un riu.]
 :::
-
-:::frame{slot="uso-3" label="3 · Esport i joc"}
-Ara el curs baix, tranquil, és un lloc per a les piragües. Els matins d’estiu, els nens i les nenes d’Aldamar aprenen a remar amb un monitor, i tots porten armilla salvavides.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Esport i joc"}
+Ara el curs baix, tranquil, és un lloc per a les piragües. Els matins d’estiu, els nens i les nenes d’Aldamar aprenen a remar amb un monitor, i tots porten armilla salvavides.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Nens amb armilles salvavides remen en dues piragües per un riu tranquil.]
+:::
 :::
 ::::

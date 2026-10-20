@@ -35,16 +35,22 @@ Composto in Nunito e Fredoka (SIL OFL) · Testo originale (CC BY 4.0) · Illustr
 
 Prima di cominciare, pensa ai fiumi che hai visto. Scrivi le tue idee sulle righe. Alla fine dell’unità rileggile e guarda che cosa è cambiato.
 
-:::frame{slot="pregunta-1" label="Pensa 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pensa 1"}
 Dove pensi che cominci un fiume?
 :::
-
-:::frame{slot="pregunta-2" label="Pensa 2"}
-A che cosa serve un fiume alle persone?
 :::
 
-:::frame{slot="pregunta-3" label="Pensa 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pensa 2"}
+A che cosa serve un fiume alle persone?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Pensa 3"}
 Quali animali e piante vivono in un fiume o lungo le sue rive?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ In montagna piove e nevica. Una parte dell’acqua scende lungo i pendii e una p
 
 Una sorgente dà solo un filo d’acqua. Il filo scende lungo il pendio, incontra altri fili e tutti insieme formano un **ruscello**. Dove il pendio è ripido, il ruscello corre veloce. Trascina i sassi e li rende lisci a forza di farli rotolare. Quando più ruscelli si uniscono, ne formano uno più grande. Il fiume Aldara comincia così, tra la neve della Sierra Blanca, a 1850 metri sul livello del mare.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[Acqua limpida che sgorga tra rocce coperte di muschio.]
 ::caption[Una sorgente. L’acqua è rimasta sottoterra per mesi.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[Un ruscello che salta su pietre rotonde.]
 ::caption[Un ruscello, ripido e veloce, con sassi levigati.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[Una piccola cascata che cade in una pozza verde.]
 ::caption[Una cascata, dove il ruscello scende da un gradino di roccia.]
 :::
@@ -124,15 +130,15 @@ Il fiume Aldara è lungo 94 chilometri. Nasce nella Sierra Blanca, attraversa un
 Segui il fiume con il dito dalla sorgente fino al mare. Quale paese è più vicino al mare?
 :::
 
-:::frame{slot="curso-1" label="Corso superiore"}
+:::frame{slot="curso" label="Corso superiore"}
 Il pendio è ripido. L’acqua è fredda, limpida e veloce, e scava la roccia. Qui si trova Fontalba.
 :::
 
-:::frame{slot="curso-2" label="Corso medio"}
+:::frame{slot="curso" label="Corso medio"}
 La valle è più larga e il fiume va più piano. I contadini irrigano i campi, e Molinar è cresciuta accanto a un ponte e a un mulino.
 :::
 
-:::frame{slot="curso-3" label="Corso inferiore"}
+:::frame{slot="curso" label="Corso inferiore"}
 Il terreno è quasi piatto. Il fiume è largo e lento, e disegna grandi curve. Ad Aldamar arriva alla foce e si getta nel mare.
 :::
 ::::
@@ -165,27 +171,27 @@ Un fiume resta pulito solo se ce ne prendiamo cura. I rifiuti, l’olio e l’ac
 ::alt[Bambini con guanti e sacchetti di carta raccolgono rifiuti sulla riva di un fiume.]
 :::
 
-:::frame{slot="uso-1" label="1 · Acqua per i campi"}
+:::frame{slot="uso" label="1 · Acqua per i campi"}
 Nel corso medio i contadini aprono piccoli canali di irrigazione, così l’acqua del fiume scorre tra i solchi. Senza di essa, pomodori e lattughe d’estate non crescerebbero. Un solo canale può portare l’acqua a molti chilometri di distanza.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[Un contadino alza la paratoia di un canale di irrigazione in un campo di ortaggi.]
 :::
-
-:::frame{slot="uso-2" label="2 · Mulini"}
-Tanto tempo fa, l’acqua che cadeva faceva girare la ruota del mulino di Molinar. La ruota muoveva le macine che macinavano il grano per fare la farina di tutta la valle. Oggi il vecchio mulino è un piccolo museo.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Mulini"}
+Tanto tempo fa, l’acqua che cadeva faceva girare la ruota del mulino di Molinar. La ruota muoveva le macine che macinavano il grano per fare la farina di tutta la valle. Oggi il vecchio mulino è un piccolo museo.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[Un vecchio mulino di pietra con una grande ruota di legno accanto a un fiume.]
 :::
-
-:::frame{slot="uso-3" label="3 · Sport e giochi"}
-Oggi il corso inferiore, tranquillo, è un posto per le canoe. Nelle mattine d’estate i bambini di Aldamar imparano a pagaiare con un istruttore, e tutti indossano il giubbotto salvagente.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Sport e giochi"}
+Oggi il corso inferiore, tranquillo, è un posto per le canoe. Nelle mattine d’estate i bambini di Aldamar imparano a pagaiare con un istruttore, e tutti indossano il giubbotto salvagente.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Bambini con giubbotti salvagente pagaiano su due canoe lungo un fiume tranquillo.]
+:::
 :::
 ::::

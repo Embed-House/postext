@@ -35,16 +35,22 @@ subtitle: "道德与法治　三年级"
 
 开始学习以前，想一想你见过的河。把你的想法写在旁边的线上。学完这个单元，再读一读，看看有什么变化。
 
-:::frame{slot="pregunta-1" label="想一想　一"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="想一想　一"}
 你觉得一条河是从哪里开始的？
 :::
-
-:::frame{slot="pregunta-2" label="想一想　二"}
-人们用河流来做什么？
 :::
 
-:::frame{slot="pregunta-3" label="想一想　三"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="想一想　二"}
+人们用河流来做什么？
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="想一想　三"}
 哪些动物和植物生活在河里或河边？
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ subtitle: "道德与法治　三年级"
 
 一个泉眼只流出细细的一股水。细流顺着山坡往下流，遇到别的细流，合在一起就成了**小溪**。山坡很陡，小溪就流得很急。它推着小石子往前滚，把石子磨得光溜溜的。几条小溪汇到一起，就成了一条更大的溪流。阿尔达拉河就是这样开始的。它的源头在白山的积雪里，比海平面高一千八百五十米。
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[清清的水从长满青苔的岩石中间冒出来。]
 ::caption[泉眼。这里的水在地下流了好几个月。]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[一条小溪从圆圆的石头上跳着流过去。]
 ::caption[小溪，又陡又急，石子被磨得很光滑。]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[一道小瀑布落进一个绿色的水潭。]
 ::caption[瀑布。小溪在这里从一级石头台阶上落下去。]
 :::
@@ -124,15 +130,15 @@ subtitle: "道德与法治　三年级"
 用手指顺着河流，从源头一直划到大海。哪个城镇离大海最近？
 :::
 
-:::frame{slot="curso-1" label="上游"}
+:::frame{slot="curso" label="上游"}
 山坡很陡。河水又冷又清，流得很急，不停地冲刷着岩石。丰塔尔巴就在这里。
 :::
 
-:::frame{slot="curso-2" label="中游"}
+:::frame{slot="curso" label="中游"}
 山谷变宽了，河水流得慢了。农民用河水浇地。莫利纳尔是在一座桥和一座磨坊旁边发展起来的。
 :::
 
-:::frame{slot="curso-3" label="下游"}
+:::frame{slot="curso" label="下游"}
 地面差不多是平的。河面很宽，水流很慢，转出一个个大弯。河水在阿尔达马尔流进大海。
 :::
 ::::
@@ -165,27 +171,27 @@ subtitle: "道德与法治　三年级"
 ::alt[孩子们戴着手套，拿着纸袋，在河岸上捡垃圾。]
 :::
 
-:::frame{slot="uso-1" label="一　农田用水"}
+:::frame{slot="uso" label="一　农田用水"}
 在中游，农民挖出一条条小水渠，让河水流进一行行庄稼中间。没有河水，夏天的西红柿和生菜就长不起来。一条水渠能把水送到好几公里以外的地方。
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[一位农民在菜地里提起水渠的闸门。]
 :::
-
-:::frame{slot="uso-2" label="二　磨坊"}
-很久以前，落下来的水推动莫利纳尔磨坊的水轮。水轮带动石磨转动，把小麦磨成面粉，供给整个山谷。现在，这座老磨坊成了一个小小的博物馆。
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="二　磨坊"}
+很久以前，落下来的水推动莫利纳尔磨坊的水轮。水轮带动石磨转动，把小麦磨成面粉，供给整个山谷。现在，这座老磨坊成了一个小小的博物馆。
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[河边一座古老的石头磨坊，旁边有一个大木轮。]
 :::
-
-:::frame{slot="uso-3" label="三　运动和游戏"}
-现在，平静的下游成了划皮划艇的地方。夏天的早上，阿尔达马尔的孩子们跟着教练学划船，每个人都穿着救生衣。
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="三　运动和游戏"}
+现在，平静的下游成了划皮划艇的地方。夏天的早上，阿尔达马尔的孩子们跟着教练学划船，每个人都穿着救生衣。
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[孩子们穿着救生衣，在平静的河面上划着两条皮划艇。]
+:::
 :::
 ::::
