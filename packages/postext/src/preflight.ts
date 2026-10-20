@@ -319,6 +319,15 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
             checkCoverage(b.box.backgroundColor, pageIndex, b.bbox);
             checkNearTrim(b.bbox);
           }
+        } else if (b.kind === 'path') {
+          // A vector shape (#1055): its outline is a rule of its stroke's
+          // width, its fill and markers inks over its box.
+          if (b.stroke) checkRule(b.stroke.widthPx, b.stroke.color, pageIndex, b.bbox);
+          if (b.fill && !isTransparent(b.fill)) {
+            checkCoverage(b.fill, pageIndex, b.bbox);
+            checkNearTrim(b.bbox);
+          }
+          for (const m of b.markers ?? []) if (!isTransparent(m.color)) checkCoverage(m.color, pageIndex, b.bbox);
         } else if (b.kind === 'image') {
           // A cover crop (#923) shows a share of the picture in its box.
           // An upright picture of a vertical flow stands turned in its box:

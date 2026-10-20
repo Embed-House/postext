@@ -2484,11 +2484,67 @@ export interface VDTDesignImageBlock extends VDTDesignBlockOrigin {
   tint?: string;
 }
 
+/** One command of a {@link VDTDesignPathBlock}'s outline, in absolute page
+ *  px (y down): move, line, cubic (`C`, two control points) and quadratic
+ *  (`Q`, one) Bézier curves, and close. */
+export type VDTPathCommand =
+  | { op: 'M' | 'L'; x: number; y: number }
+  | { op: 'C'; x1: number; y1: number; x2: number; y2: number; x: number; y: number }
+  | { op: 'Q'; x1: number; y1: number; x: number; y: number }
+  | { op: 'Z' };
+
+/** How a {@link VDTDesignPathBlock}'s outline is stroked: colour (`#rrggbb`
+ *  or `#rrggbbaa`), width in px, dash pattern in px (on, off, …), line
+ *  caps and joins. Absent cap: `'butt'`; absent join: `'miter'`. */
+export interface VDTPathStroke {
+  color: string;
+  widthPx: number;
+  dash?: number[];
+  cap?: 'butt' | 'round' | 'square';
+  join?: 'miter' | 'round' | 'bevel';
+}
+
+/** A mark at a point of a path (the end of a connector): a filled dot
+ *  `sizePx` across centred on the point, or a filled arrowhead whose tip is
+ *  the point, `sizePx` long, pointing along `angle` (see
+ *  `pathMarkerOutline`). */
+export interface VDTPathMarker {
+  kind: 'dot' | 'arrow';
+  x: number;
+  y: number;
+  /** Radians, the direction the line arrives in (arrows point along it). */
+  angle: number;
+  sizePx: number;
+  color: string;
+}
+
+/** A vector shape a design draws (DESIGN §12.1, #1055): lines, curves and
+ *  closed outlines, filled and/or stroked, with dots or arrowheads at
+ *  points of it. Connectors, path elements and the shapes a rounded
+ *  rectangle cannot draw paint through it. Coordinates are absolute page
+ *  px like every other design block's; `bbox` holds the whole ink (stroke
+ *  and markers included), for hit tests and clips. Decoration, never
+ *  content: a tagged PDF marks it a Layout artifact, the HTML hides it from
+ *  assistive technology, the contrast check does not read it. */
+export interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
+  kind: 'path';
+  bbox: BoundingBox;
+  subpaths: VDTPathCommand[][];
+  /** Fill colour; absent = no fill. */
+  fill?: string;
+  /** Absent: `'nonzero'`. */
+  fillRule?: 'nonzero' | 'evenodd';
+  /** Absent = no stroke. */
+  stroke?: VDTPathStroke;
+  markers?: VDTPathMarker[];
+}
+
 export type VDTDesignBlock =
   | VDTDesignTextBlock
   | VDTDesignRuleBlock
   | VDTDesignBoxBlock
-  | VDTDesignImageBlock;
+  | VDTDesignImageBlock
+  | VDTDesignPathBlock;
 
 export interface VDTDesignSlot {
   bbox: BoundingBox;

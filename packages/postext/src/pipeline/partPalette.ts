@@ -23,6 +23,7 @@ import type { ResolvedConfig, VDTBlock, VDTDesignBlock, VDTDocument, VDTLine, VD
 import { resolveAllConfig } from './config';
 import { mergeCaptionStyle } from '../defaults/captionStyle';
 import { CODE_BOX_STYLE_ID } from './codeBlocks';
+import { recolorPathBlock } from '../design/pathBlock';
 
 type Remap = (hex: string | undefined) => string | undefined;
 
@@ -390,6 +391,14 @@ function recolorFrame(blocks: readonly VDTDesignBlock[], styleId: string | undef
     } else if (b.kind === 'box') {
       if (b.box.backgroundColor) b.box.backgroundColor = part('fill')(b.box.backgroundColor);
       if (b.box.borderColor) b.box.borderColor = part('border')(b.box.borderColor);
+    } else if (b.kind === 'path') {
+      // A vector shape (#1055): its fill as a box's fill; its outline and
+      // markers as the frame's border when it is a filled shape, else as
+      // its rules (a line, a connector).
+      const fill = b.fill ? part('fill')(b.fill) ?? b.fill : undefined;
+      const line = part(b.fill ? 'border' : 'rule');
+      recolorPathBlock(b, (hex) => line(hex) ?? hex);
+      if (fill) b.fill = fill;
     }
   }
 }

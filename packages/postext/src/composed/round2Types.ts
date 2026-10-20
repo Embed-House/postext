@@ -5,44 +5,7 @@
  * into `types.ts`, `composed/types.ts` or `vdt.ts` and deletes it here. When
  * the file is empty the last issue removes it.
  */
-import type { BoundingBox, VDTDesignBlockOrigin } from '../vdt';
-import type { ColorValue, Dimension, ElementPlacement, PageParity, PageRoleFilter } from '../types';
-
-// §12.1 (C5 lands it; C8, C9 reuse it) -------------------------------------
-
-export type VDTPathCommand =
-  | { op: 'M' | 'L'; x: number; y: number }
-  | { op: 'C'; x1: number; y1: number; x2: number; y2: number; x: number; y: number }
-  | { op: 'Q'; x1: number; y1: number; x: number; y: number }
-  | { op: 'Z' };
-
-export interface VDTPathStroke {
-  color: string;
-  widthPx: number;
-  dash?: number[];
-  cap?: 'butt' | 'round' | 'square';
-  join?: 'miter' | 'round' | 'bevel';
-}
-
-export interface VDTPathMarker {
-  kind: 'dot' | 'arrow';
-  x: number;
-  y: number;
-  /** Radians, the direction the line arrives in (arrows point along it). */
-  angle: number;
-  sizePx: number;
-  color: string;
-}
-
-export interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
-  kind: 'path';
-  bbox: BoundingBox;
-  subpaths: VDTPathCommand[][];
-  fill?: string;
-  fillRule?: 'nonzero' | 'evenodd';
-  stroke?: VDTPathStroke;
-  markers?: VDTPathMarker[];
-}
+import type { ColorValue, Dimension, ElementPlacement, PageParity, PageRoleFilter, SidePosition } from '../types';
 
 // §12.1, §12.8 (C8) ---------------------------------------------------------
 
@@ -74,10 +37,6 @@ export interface CalloutLabelRound2 {
   joined?: boolean;
   fillet?: Dimension;
 }
-
-// §12.2 (C4) ----------------------------------------------------------------
-
-export type SidePosition = 'start' | 'center' | 'end' | number;
 
 // §12.3, §12.4 (C5, C6) -----------------------------------------------------
 

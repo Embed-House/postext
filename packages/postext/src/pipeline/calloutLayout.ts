@@ -92,6 +92,7 @@ import { FRAME_STYLE_ID } from '../composed/wrap';
 import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './columnsGroup';
 import type { LineInsetStep } from '../measure/types';
 import type { CalloutLineWidth, GroupPos } from './cutTypes';
+import { offsetPathBlock } from '../design/pathBlock';
 export type { CalloutLineWidth, GroupPos } from './cutTypes';
 
 // ---------------------------------------------------------------------------
@@ -660,6 +661,11 @@ export function offsetBlock(blk: VDTBlock, ox: number, oy: number): void {
 
 /** Shift one block of a design slot by `(ox, oy)`. */
 export function offsetDesignBlock(b: VDTDesignBlock, ox: number, oy: number): void {
+  // A vector shape (#1055): its box, outline and markers.
+  if (b.kind === 'path') {
+    offsetPathBlock(b, ox, oy);
+    return;
+  }
   b.bbox.x += ox;
   b.bbox.y += oy;
   if (b.kind === 'text') {

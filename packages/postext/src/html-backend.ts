@@ -18,6 +18,7 @@ import type {
   VDTDesignTextBlock,
   VDTDesignRuleBlock,
   VDTDesignBoxBlock,
+  VDTDesignPathBlock,
   VDTDesignImageBlock,
   VDTDesignBoxStyle,
   BoundingBox,
@@ -25,6 +26,7 @@ import type {
   RoundedOutline,
   RenderWarning,
 } from './vdt';
+import { markerSvgData, pathSvgData } from './design/pathBlock';
 import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt';
 import { dimensionToPx } from './units';
 import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk';
@@ -3273,6 +3275,35 @@ function renderDesignRuleBlock(block: VDTDesignRuleBlock): string {
   );
 }
 
+/** A vector shape (DESIGN §12.1, #1055): an inline `<svg>` placed on its
+ *  box like a rule, its outline and markers drawn in the box's own
+ *  coordinates (ink past the box, a mitre, still shows). Decoration:
+ *  hidden from assistive technology. */
+function renderDesignPathBlock(block: VDTDesignPathBlock): string {
+  const { x, y, width, height } = block.bbox;
+  const parts: string[] = [];
+  const stroke = block.stroke && block.stroke.widthPx > 0 ? block.stroke : undefined;
+  if ((block.fill || stroke) && block.subpaths.length > 0) {
+    const attrs = [`d="${pathSvgData(block.subpaths, x, y)}"`, `fill="${block.fill ? esc(block.fill) : 'none'}"`];
+    if (block.fill && block.fillRule === 'evenodd') attrs.push('fill-rule="evenodd"');
+    if (stroke) {
+      attrs.push(`stroke="${esc(stroke.color)}"`, `stroke-width="${stroke.widthPx}"`);
+      if (stroke.dash && stroke.dash.length > 0) attrs.push(`stroke-dasharray="${stroke.dash.join(' ')}"`);
+      if (stroke.cap && stroke.cap !== 'butt') attrs.push(`stroke-linecap="${stroke.cap}"`);
+      if (stroke.join && stroke.join !== 'miter') attrs.push(`stroke-linejoin="${stroke.join}"`);
+    }
+    parts.push(`<path ${attrs.join(' ')}/>`);
+  }
+  for (const m of block.markers ?? []) parts.push(`<path d="${markerSvgData(m, x, y)}" fill="${esc(m.color)}"/>`);
+  if (parts.length === 0) return '';
+  return (
+    `<svg aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +
+    `style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;overflow:visible;">` +
+    parts.join('') +
+    `</svg>`
+  );
+}
+
 function renderDesignBoxBlock(block: VDTDesignBoxBlock): string {
   const html = renderBoxAt(block.bbox, block.box);
   // A callout stripe on a rounded frame: clipped to the frame's outline.
@@ -3340,6 +3371,7 @@ function renderDesignBlock(block: VDTDesignBlock, options?: HtmlPaint): string {
   if (block.kind === 'text') return renderDesignTextBlock(block, options);
   if (block.kind === 'rule') return renderDesignRuleBlock(block);
   if (block.kind === 'image') return renderDesignImageBlock(block, options);
+  if (block.kind === 'path') return renderDesignPathBlock(block);
   return renderDesignBoxBlock(block);
 }
 

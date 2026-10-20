@@ -4,8 +4,10 @@ import type {
   VDTDesignRuleBlock,
   VDTDesignBoxBlock,
   VDTDesignImageBlock,
+  VDTDesignPathBlock,
   VDTDesignBoxStyle,
 } from '../vdt';
+import { pathMarkerOutline } from '../design/pathBlock';
 import { fillTextDots } from './textDots';
 import { drawResourceImage, roundedOutlinePath } from './renderResourceBlock';
 import { fillFlowText, drawUprightInBox, setVerticalPaint, verticalPaintActive } from './verticalText';
@@ -227,6 +229,53 @@ function renderBoxBlock(ctx: CanvasRenderingContext2D, block: VDTDesignBoxBlock)
   restoreContext(ctx);
 }
 
+/** A vector shape (DESIGN §12.1, #1055): its outline traced with plain
+ *  path calls, filled, then stroked, then its markers filled on top. */
+export function renderPathBlock(ctx: CanvasRenderingContext2D, block: VDTDesignPathBlock): void {
+  const stroke = block.stroke && block.stroke.widthPx > 0 ? block.stroke : undefined;
+  saveContext(ctx);
+  if (block.fill || stroke) {
+    ctx.beginPath();
+    for (const sp of block.subpaths) {
+      for (const c of sp) {
+        if (c.op === 'M') ctx.moveTo(c.x, c.y);
+        else if (c.op === 'L') ctx.lineTo(c.x, c.y);
+        else if (c.op === 'C') ctx.bezierCurveTo(c.x1, c.y1, c.x2, c.y2, c.x, c.y);
+        else if (c.op === 'Q') ctx.quadraticCurveTo(c.x1, c.y1, c.x, c.y);
+        else ctx.closePath();
+      }
+    }
+    if (block.fill) {
+      ctx.fillStyle = block.fill;
+      ctx.fill(block.fillRule ?? 'nonzero');
+    }
+    if (stroke) {
+      ctx.strokeStyle = stroke.color;
+      ctx.lineWidth = stroke.widthPx;
+      ctx.lineCap = stroke.cap ?? 'butt';
+      ctx.lineJoin = stroke.join ?? 'miter';
+      ctx.setLineDash(stroke.dash ?? []);
+      ctx.stroke();
+    }
+  }
+  for (const m of block.markers ?? []) {
+    const o = pathMarkerOutline(m);
+    ctx.beginPath();
+    if (o.kind === 'dot') {
+      ctx.arc(o.cx, o.cy, o.r, 0, Math.PI * 2);
+    } else {
+      const [a, b, c] = o.points;
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineTo(c.x, c.y);
+      ctx.closePath();
+    }
+    ctx.fillStyle = m.color;
+    ctx.fill();
+  }
+  restoreContext(ctx);
+}
+
 /** Image block (e.g. a callout icon): drawn from the resource image
  *  registry, with a neutral placeholder when the image is not decoded yet. */
 function renderImageBlock(ctx: CanvasRenderingContext2D, block: VDTDesignImageBlock, inkHex: string | null): void {
@@ -275,6 +324,7 @@ export function renderHeaderFooterSlot(
     if (block.kind === 'text') renderTextBlock(ctx, block);
     else if (block.kind === 'rule') renderRuleBlock(ctx, block);
     else if (block.kind === 'image') renderImageBlock(ctx, block, inkHex);
+    else if (block.kind === 'path') renderPathBlock(ctx, block);
     else renderBoxBlock(ctx, block);
   }
 }

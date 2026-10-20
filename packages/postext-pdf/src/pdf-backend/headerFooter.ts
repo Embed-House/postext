@@ -11,6 +11,7 @@ import { drawRightToLeftRun } from './rtlRun';
 import { inkScaleOperators } from './inkScale';
 import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock';
 import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type StructElem } from './tagging';
+import { renderPathBlock } from './pathBlock';
 
 /** How an accessible render tags a design slot: its text goes to the
  *  element `text()` returns (created on first use), or counts as an
@@ -20,8 +21,8 @@ import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type Stru
  *  (`VDTDesignImageBlock.altText`, #213) is a `Figure` that `figure`
  *  creates — read after the slot's text element, `after`, when the slot
  *  has text; without `figure` (running heads) it stays an artifact. Rules,
- *  boxes and pictures without alternative text are artifacts of class
- *  `artifact`. */
+ *  boxes, vector shapes (#1055) and pictures without alternative text are
+ *  artifacts of class `artifact`. */
 /** How a slot's text is painted: `silent`, left out of text extraction
  *  and copying (the line numbers, #621). */
 export interface SlotPaintOptions {
@@ -394,6 +395,7 @@ export function renderHeaderFooterSlot(
     }
     if (mark) tagArtifact(ctx, mark.artifact);
     if (block.kind === 'rule') renderRuleBlock(ctx, block);
+    else if (block.kind === 'path') renderPathBlock(ctx, block);
     else renderBoxBlock(ctx, block);
   }
 }

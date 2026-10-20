@@ -1,4 +1,4 @@
-import { composedFrameBlockIds, frameBounds } from 'postext';
+import { composedFrameBlockIds, frameBounds, offsetPathBlock } from 'postext';
 import type { BoundingBox, LayoutType, VDTBlock, VDTDocument, VDTPage } from 'postext';
 
 export interface PageGeometryInput {
@@ -67,6 +67,11 @@ function shiftBlockY(block: VDTBlock, dy: number): void {
   if (overlay) {
     overlay.bbox.y += dy;
     for (const b of overlay.blocks) {
+      // A vector shape (#1055) moves its outline and markers with its box.
+      if (b.kind === 'path') {
+        offsetPathBlock(b, 0, dy);
+        continue;
+      }
       b.bbox.y += dy;
       if (b.kind === 'text') for (const l of b.lines) l.baselineY += dy;
     }

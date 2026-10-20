@@ -20,6 +20,7 @@
  * locale of the chapter.
  */
 import { labelGlyphAt } from './labels';
+import { pathHit } from '../design/pathBlock';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
@@ -450,6 +451,8 @@ function designChain(
   file: FileRef,
 ): SourceElement[] | undefined {
   if (!inside(b.bbox, p)) return undefined;
+  // A vector shape (#1055) answers on its ink only, not across its box.
+  if (b.kind === 'path' && !pathHit(b, p)) return undefined;
   const out: SourceElement[] = [];
   const elementId = idOf(b.elementId ?? `#${index}`);
   if (b.kind === 'text') {
