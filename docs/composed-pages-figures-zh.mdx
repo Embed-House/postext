@@ -31,7 +31,9 @@ export const metadata = {
 
 - `at`指定资源的一个锚点（在图上定义一次、各语言共用的点）；没有锚点的标注，则用图片宽高的百分比直接给出一个点：`at="x% y%"`。
 - `style`指定一种标注样式，优先于锚点自带的样式。
-- 方括号中的文字是行内Markdown：粗体、斜体、行内标签。
+- `leader`从标注画一条线到它的锚点，`leader="none"`去掉这条线（见[引线、图例与符号](#引线图例与符号)）。
+- 方括号中的文字是行内Markdown：粗体、斜体、行内标签，以及写成`:icon`的符号。
+
 
 插图在正文中和在框中都能用。它的标注作为文字画在图片上，插图放到哪里，标注就跟到哪里：栏中、浮动体里、被逐级重排（为放下内容而依次尝试的步骤）旋转或缩放的框里，以及跨页上。插图缺少结束的`:::`时，第一个既不是标注也不是空行的行就结束这幅插图，并把它报告为未闭合的容器。
 
@@ -61,6 +63,57 @@ export const metadata = {
 - **竖排**：在锚点（或其标注样式）上设置`writingMode: 'vertical-rl'`后，标注按竖排页面的方式排出：字符直立，一格一格自上而下，各列从右向左；拉丁文单词和长数字横倒着排，短数字合在一格里。这时`width`是占图片高度的比例，即一列的长度，中文或日文标注会排成更多列。`align`沿列的方向（`start`是列的上端），`verticalAlign`横跨各列（`top`是第一列，即最右一列），`rotate`再继续旋转标注。在从右向左书籍的镜像页上，标注同样自上而下读、字符直立，落在图片上的同一位置（自postext 1.40起）。
 - **检查**：标注缩到其样式的`minScale`仍比宽度更宽时，会给出`labelOverflow`；两个标注的文字行相碰时，较后的那个给出`labelOverlap`。两项都在每个版本中分别检查，所以词更长的译文能显示出它需要更多空间的地方。篇的调色板（`:::part{palette="…"}`）会像给题注重新上色那样，给该篇各页的标注重新上色。对比度检查拿标注与它的底板比较，没有底板就与光晕比较；直接放在图片上的标注不检查，因为它的底色就是图片。印前检查也会检查标注中用多种油墨叠印的小字、标注的墨量，以及它与裁切线的距离。
 - **在跨页上**：跨过跨页书脊的插图（带`crossGutter: true`的框）在两页上各画一半；标注若伸进订口带，会被折缝截断，两页上都读不全。这样的标注会横向滑到订口带的边缘，停在锚点所在的那一侧，高度不变；恰好落在书脊上的点归第一页，和框一样。设了`gutter: 'cross'`的锚点留在原处，适合横跨两页的标题。纸面的外侧边缘不做调整：超出裁切线的标注和图片一样被裁掉。自postext 1.43起。
+
+### 引线、图例与符号
+
+自postext 1.48起，标注可以离开它所指的东西，可以作为地图的图例，标注、题注和表格单元格里还可以放符号。
+
+**引线。** 锚点的`labelAt`让它的标注离开所指的点（海上的一个地名，示意图页边的一条说明），引线则从标注画一条线回到那个点。引线的外观是标注样式的`leader`（见[配置 › 标注样式](/zh/docs/configuration-composed-pages#标注样式)）；Markdown只为某一个标注打开或关闭它：
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader`取`none`、`false`或`off`以外的任何值都会打开引线；没有这个属性时由锚点的`leader`决定；两者都没有时，离开所指之点的标注只要其样式有`leader`，就会画出引线。框里的说明也可以指向图上的某个地方：用一条[连接线](/zh/docs/configuration-composed-pages#连接线)，让它的一端指定图片的锚点（`anchor: 'lake'`）。
+
+**多行标注。** 在`:::figure`里，`:::label{at="…" style="…"}` … `:::`逐行写一个标注：源码中每个非空行都是标注的一行，所以图例或地址不必在每行末尾写`\\`。第一个`:::`结束标注，下一个结束插图。`::label[…]`仍是单行标注，只在写了`\\`的地方换行。
+
+**图例。** 样式设了`kind: 'legend'`的标注是地图的图例：每一行是一个条目，条目开头的符号排在一列里，这一列和最宽的符号一样宽，所以各条目的文字从同一条边开始。每行先写符号：
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[国家]{glyph="■" color="country"} 国家
+:icon[首都]{glyph="⊙" font="Noto Sans Math"} 首都
+:icon[城镇]{resource="town-mark" size="0.55"} 城镇
+:icon[边界]{line="dashed" color="border"} 边界
+:::
+::label[:icon[首都]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**符号。** `:icon[alt]{…}`在行内放一个小符号，立在基线上：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>属性</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>一个位图或SVG资源，保持原有比例。</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>一个字符，用文字的字体，或用<code>font="…"</code>指定的字体。</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>一段线条样本，长是高的两倍：图例里的边界或道路。</td></tr>
+    <tr><td><code>color="…"</code></td><td>十六进制颜色或调色板条目：字形、线条或图片的色调。</td></tr>
+    <tr><td><code>size="…"</code></td><td>符号的高度，以文字的em为单位。默认<code>0.75</code>，即大写字母的高度。</td></tr>
+  </tbody>
+</table>
+
+`resource`、`glyph`和`line`中先写的那个决定符号的种类；三者都没有时，这条指令仍是文字。方括号中的文字是符号的替代文本：读屏软件、带标签的PDF和图片的替代文本都在符号的位置上读出它，方括号为空的符号是装饰。图的标注和资源的每一段文字（题注、附注和表格单元格）都会读取符号。在这一版本中，正文、标题和设计文字不读取符号。
 
 ### labelAnchorUnknown
 

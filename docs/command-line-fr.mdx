@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ligne de commande',
   description: 'Un exécutable autonome pour macOS, Linux et Windows qui transforme un livre .postext, un dossier de livre ou des fichiers Markdown isolés en PDF, HTML, EPUB, images de pages et Word, crée des paquets et vérifie des livres, avec une sortie JSON pour les scripts et les agents',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
   order: 46,
   plainSummary: "Cette page s’adresse à ceux qui veulent faire des livres avec Postext depuis un terminal plutôt que depuis le site. Vous téléchargez un seul fichier pour votre ordinateur et vous le lancez, sans rien installer. Vous lui donnez votre livre, ou quelques fichiers texte, et il produit un PDF, une page web, un livre numérique, des images des pages ou un document Word. Il peut aussi vérifier qu’un livre n’a pas de problème et réunir ses fichiers en un seul. Les programmes et les assistants d’IA peuvent l’utiliser eux aussi, car il sait répondre dans un format qu’ils lisent facilement.",
@@ -322,7 +322,7 @@ titre, titre courant ou maquette de partie, avec le chemin de chaque texte :
 déplacez ce texte dans le Markdown, ou ajoutez le titre ou le nom de l’éditeur
 à `checks.contentInConfig.allow`.
 
-Pour un livre à gabarits de page, `check` signale aussi le texte qui ne tient pas dans son bloc (`frameOverflow`, avec les étapes d’ajustement essayées et les changements qui le feraient tenir), un article qui dépasse les pages qu’un bloc peut ajouter (`frameContinuationLimit`), un renvoi vers une page qui ne suit pas (`continueTargetMissing`) et les étiquettes de figure qui ne peuvent pas être dessinées ou qui se heurtent (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Après les avertissements, il imprime une ligne `reflow` par page composée qui a des événements, et `--json` fournit les étapes, les propositions et le journal de recomposition comme données. Voir [Pages composées › Avertissements](/fr/docs/composed-pages#avertissements) et [Journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
+Pour un livre à gabarits de page, `check` signale aussi le texte qui ne tient pas dans son bloc (`frameOverflow`, avec les étapes d’ajustement essayées et les changements qui le feraient tenir), un article qui dépasse les pages qu’un bloc peut ajouter (`frameContinuationLimit`), un renvoi vers une page qui ne suit pas (`continueTargetMissing`), les étiquettes de figure qui ne peuvent pas être dessinées ou qui se heurtent (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`), les blocs cachés sous d’autres blocs ou qui dépassent leur limite (`frameCovered`, `frameOutsideArea`), une grille qui reçoit plus de cartes qu’elle n’en contient (`repeatOverflow`) et les modules qu’une page ne peut pas placer (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`). Après les avertissements, il imprime une ligne `reflow` par page composée qui a des événements, et `--json` fournit les étapes, les propositions et le journal de recomposition comme données. Voir [Pages composées › Avertissements](/fr/docs/composed-pages#avertissements) et [Journal de recomposition](/fr/docs/composed-pages#journal-de-recomposition).
 
 ### build et --watch
 

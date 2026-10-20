@@ -63,6 +63,8 @@ La sezione raccoglie:
 - *Etichetta su un’ancora inesistente* e *Ancora senza etichetta* (`labelAnchorUnknown`, `anchorUnlabelled`), sotto la cornice che compone la figura;
 - *Etichetta più larga della giustezza* e *Etichette che si sovrappongono* (`labelOverflow`, `labelOverlap`), sotto la stessa cornice: le etichette di ogni edizione sono misurate con le sue parole, quindi una lingua con parole più lunghe può eccedere dove un’altra no. Anche un’etichetta che invade una delle zone `avoid` dell’immagine, tracciate nella modalità **Zone da evitare** dei segni dell’immagine, compare qui; in un SVG, **Simboli del disegno**, nella stessa modalità, aggiunge una zona su ogni elemento del disegno il cui id inizia con un prefisso dado o che ha una classe data (da postext 1.43);
 - *Slot senza cornice*, *Cornice vuota*, *Modello di pagina sconosciuto*, *Pagina composta con tre segni di due punti* e *L’indicazione spread non corrisponde al modello* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Cornice coperta da un’altra cornice* e *La cornice esce dal suo limite* (`frameCovered`, `frameOutsideArea`), con le parole o l’immagine coperte, l’area nascosta o l’uscita, e le correzioni con un clic; selezionarne uno segna sul canvas le due cornici, o la cornice e il riquadro da cui esce (da postext 1.48);
+- *Più elementi di quanti ne contenga la griglia* (`repeatOverflow`), insieme agli avvisi del markup (da postext 1.48);
 - *Blocco dell’indice diviso tra colonne* (`tocGroupSplit`);
 - gli avvisi dei modelli stessi (uno stile o un’ancora di cornice che non esiste, misure che si contraddicono, una catena che torna su sé stessa) e il testo grafico che contiene il testo del libro (`contentInConfig`).
 

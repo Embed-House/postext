@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Pagine composte',
   sidebarTitle: 'Pagine composte',
-  description: 'Come si scrive una pagina composta in Markdown: il blocco di pagina, delimitato da quattro segni di due punti, che indica il modello; le cornici e l’attributo slot, che distribuiscono il contenuto tra le cornici del modello; le figure con etichette su punti precisi di un’immagine, e gli avvisi che compaiono quando il contenuto non si adatta al modello',
+  description: 'Come si scrive una pagina composta in Markdown: il blocco di pagina, delimitato da quattro segni di due punti, che indica il modello; le cornici e l’attributo slot, che distribuiscono il contenuto tra le cornici del modello; gli slot ripetuti e i moduli, e gli avvisi che compaiono quando il contenuto non si adatta al modello o copre un’altra cornice',
   lang: 'it',
   lastUpdated: '2026-10-20',
   readingTime: '43 min',
   order: 34,
-  plainSummary: "Alcune pagine non sono una sola colonna di testo corrente ma un insieme di riquadri, come la pagina di un libro di scuola con una fascia per il titolo, un testo e tre riquadri colorati con le loro foto. Postext le chiama pagine composte. La forma della pagina è un modello nella configurazione, e il Markdown dice soltanto quale pezzo di testo va in quale riquadro. Questa pagina spiega come scrivere quel Markdown: il blocco della pagina, le cornici, i nomi degli slot e le immagini con etichette, come i nomi su una carta geografica. Elenca anche gli avvisi che Postext dà quando il testo e il modello non combaciano.",
+  plainSummary: "Alcune pagine non sono una sola colonna di testo corrente ma un insieme di riquadri, come la pagina di un libro di scuola con una fascia per il titolo, un testo e tre riquadri colorati con le loro foto. Postext le chiama pagine composte. La forma della pagina è un modello nella configurazione, e il Markdown dice soltanto quale pezzo di testo va in quale riquadro. Questa pagina spiega come scrivere quel Markdown: il blocco della pagina, le cornici, i nomi degli slot, le schede ripetute in una griglia e i blocchi impilati come moduli. Elenca anche gli avvisi che Postext dà quando il testo e il modello non combaciano.",
 };
 
 # Pagine composte
@@ -90,13 +90,80 @@ Un singolo blocco può indicare da sé il suo slot:
 
 Il contenuto si distribuisce così:
 
-- Più pezzi con lo stesso slot vengono uniti nell’ordine del Markdown.
+- Più pezzi con lo stesso slot vengono uniti nell’ordine del Markdown, tranne in una griglia che si ripete, dove ogni pezzo è una scheda a sé (vedi [Slot ripetuti](#slot-ripetuti)).
 - Il contenuto senza slot va nella **cornice di flusso** del modello (la cornice marcata `flow`).
 - Un titolo senza slot va per prima cosa nella cornice che riceve il suo livello (`takes: "h1"`), se il modello ne ha una; così il titolo di un argomento del libro di scuola è semplicemente `# Titolo` in cima alla pagina.
 - Un `:::toc` senza slot va alla cornice con `takes: "toc"`, se il modello ne ha una (vedi *L’indice in una cornice*, più sotto).
 - Il contenuto che indica uno slot che il modello non ha va nella cornice di flusso e viene segnalato (`slotUnknown`).
 
 Fuori da una pagina composta, uno `slot` viene letto ma non ha alcun effetto.
+
+### Slot ripetuti
+
+Quando il modello disegna una scheda una sola volta e la dispone in una griglia tante volte quante servono alla pagina (un gruppo con `repeat`, vedi [Configurazione › Griglie che ripetono un insieme di cornici](/it/docs/configuration-composed-pages#griglie-che-ripetono-un-insieme-di-cornici)), ogni `:::frame` che indica lo slot principale della scheda è una scheda, nell’ordine in cui è scritto:
+
+```md
+::::page{template="fotos"}
+# Gli animali del fiume
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+L’airone
+:::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+La lontra
+:::
+:::
+::::
+```
+
+- **I membri della scheda.** Dentro il pezzo della scheda, un blocco o un `:::frame` che indica un’altra cornice dell’insieme (qui `pie`, la pastiglia della didascalia) va a quella cornice della stessa scheda. Tutto il resto va alla cornice principale della scheda.
+- **Un blocco, una scheda.** Anche un `::resource{id="…" slot="foto"}` da solo, fuori da qualsiasi contenitore, è una scheda.
+- **Nomi.** Le schede sono numerate da 1: le cornici della seconda scheda sono `foto[2]` e `pie[2]`, e con questi nomi compaiono negli avvisi, nel registro di reimpaginazione e nella Sandbox.
+- **Quante.** La pagina ha tante schede quanti sono i pezzi. Un’edizione spagnola con cinque animali e una inglese con quattro usano lo stesso modello. Una griglia con `repeat.max` ne prende al massimo quel numero; ogni pezzo in più produce `repeatOverflow` e va alla cornice di flusso.
+
+Una cornice dell’insieme viene segnalata come `slotEmpty` solo quando nessuna scheda della pagina la riempie. Una cornice ripetuta non riceve mai un titolo e non è mai la cornice di flusso.
+
+### Moduli in una pagina
+
+Un modello di pagina con un gruppo di moduli (`modules: true`, vedi [Configurazione › Moduli](/it/docs/configuration-composed-pages#moduli)) prende i suoi blocchi da contenitori `:::module`, disposti uno sotto l’altro nell’ordine in cui sono scritti. Il modello del modulo disegna il blocco; il contenitore ne contiene le parole:
+
+```md
+::::page{template="tema"}
+# Il fiume
+
+:::module{template="caja"}
+:::frame{slot="texto" label="Lo sapevi?"}
+Un fiume nasce in montagna, dove la pioggia e la neve si raccolgono in ruscelli.
+:::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+Il fiume
+:::
+:::frame{slot="izq"}
+L’acqua che porta
+:::
+:::frame{slot="der"}
+La vita sulle sue rive
+:::
+:::
+::::
+```
+
+- **`template`** indica un modello con `role: 'module'`. **`name`** è facoltativo: dà un nome all’istanza del modulo, così le sue cornici sono `ramas.raiz`, `ramas.izq`. Senza di esso l’istanza è `<template>[n]`, il numero d’ordine del modulo tra i moduli della pagina con quel modello: `arbol[1].raiz`. Un nome già usato nella pagina, o uno che contiene uno spazio, `.`, `#`, `[` o `]`, viene sostituito da quello predefinito (`moduleNameRejected`).
+- **Gli slot** dentro un `:::module` sono quelli del modulo: `slot="raiz"` raggiunge la cornice `raiz` di questo modulo, e due moduli dello stesso modello in una pagina tengono separate le loro parole. Il contenuto che non indica uno slot va alla cornice di flusso del modulo, e un titolo alla cornice del modulo che riceve il suo livello (`takes`); se non c’è né l’una né l’altra, alla cornice di flusso della pagina.
+- **Ordine.** I moduli si impilano nell’ordine del Markdown, così un’altra pagina compone gli stessi blocchi in un altro ordine, o con un albero in più, senza un nuovo modello.
+- Un `:::module` fuori da un blocco di pagina è un semplice riquadro con il suo contenuto. Un modulo dentro un modulo non è supportato (`moduleNested`).
 
 ## Esempio
 
@@ -194,7 +261,7 @@ Con in più `"wrap": "contour"`, la cornice sposta il testo con la forma delle i
 
 ### Decorazione, testatine e livelli
 
-La `decoration` del modello (immagini, filetti, riquadri e testi brevi) viene posata quando le cornici hanno già il loro riquadro definitivo, per cui un elemento può ancorarsi a una cornice (`"to": "#gasto"`) e seguirla. I suoi testi leggono gli attributi della pagina stessa: `fondo="banda-retos"` nella riga di apertura della pagina dà `{attr.fondo}`, per esempio per scegliere pagina per pagina un’immagine di sfondo con `"resourceId": "{attr.fondo}"`. Anche le testatine li leggono. L’`header` o il `footer` di un modello sostituisce quello della sezione, `false` lo nasconde e, se il modello non ne imposta nessuno, si stampano le testatine della sezione. In una pagina da destra a sinistra o verticale le cornici seguono il flusso specchiato o ruotato, mentre la decorazione resta sul foglio: un elemento posto su un bordo d’inizio o di fine (`top-start`, vedi [Collocazione degli elementi](/it/docs/configuration-headers-footers#collocazione-degli-elementi)) resta accanto alla sua cornice in ogni edizione.
+La `decoration` del modello (immagini, filetti, riquadri e testi brevi) viene posata quando le cornici hanno già il loro riquadro definitivo, per cui un elemento può ancorarsi a una cornice (`"to": "#gasto"`) e seguirla, e un [connettore](/it/docs/configuration-composed-pages#connettori) può unire due cornici con una linea che resta attaccata a esse comunque le spostino le loro parole. I suoi testi leggono gli attributi della pagina stessa: `fondo="banda-retos"` nella riga di apertura della pagina dà `{attr.fondo}`, per esempio per scegliere pagina per pagina un’immagine di sfondo con `"resourceId": "{attr.fondo}"`. Anche le testatine li leggono. L’`header` o il `footer` di un modello sostituisce quello della sezione, `false` lo nasconde e, se il modello non ne imposta nessuno, si stampano le testatine della sezione. In una pagina da destra a sinistra o verticale le cornici seguono il flusso specchiato o ruotato, mentre la decorazione resta sul foglio: un elemento posto su un bordo d’inizio o di fine (`top-start`, vedi [Collocazione degli elementi](/it/docs/configuration-headers-footers#collocazione-degli-elementi)) resta accanto alla sua cornice in ogni edizione.
 
 Le cornici si disegnano nell’ordine del loro `layer`: la decorazione al livello 0, le cornici al livello 1 per impostazione predefinita, un livello più alto sopra uno più basso, un livello negativo sotto la decorazione. `rotate` ruota una cornice insieme al suo contenuto, di qualsiasi angolo e attorno al centro della cornice, nel canvas, nel PDF, nel visualizzatore HTML e nell’EPUB a layout fisso.
 
@@ -256,8 +323,35 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
       <td>Una pagina composta, una cornice o una figura non viene mai chiusa (vedi sopra come si riprende il parser). Il pannello **Verifiche** chiama la pagina composta <code>::::page</code>.</td>
       <td>Aggiungi la riga di chiusura: tanti segni di due punti quanti ne ha la riga di apertura della pagina, oppure <code>:::</code> per una cornice o una figura.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una griglia che si ripete contiene <code>repeat.max</code> schede e la pagina gliene dà di più (vedi <a href="#slot-ripetuti">Slot ripetuti</a>). Uno per ogni scheda in più, sul suo <code>slot="…"</code>: la scheda va alla cornice di flusso, o dopo la pagina.</td>
+      <td>Alza o togli <code>max</code> nel modello, oppure sposta le schede in più su un’altra pagina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> non indica alcun modello, ne indica uno che non è un modulo, oppure il modello della pagina non ha un gruppo di moduli (<code>reason</code>). Il suo contenuto va alla cornice di flusso.</td>
+      <td>Correggi il <code>template</code> del modulo, oppure dai al modello della pagina un gruppo con <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un blocco di pagina indica un modello di modulo. Il suo contenuto viene composto nel flusso, come per un modello sconosciuto.</td>
+      <td>Indica nel blocco un modello di pagina e scrivi il modulo al suo interno come <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> è scritto dentro un altro modulo. I suoi blocchi appartengono al modulo esterno.</td>
+      <td>Chiudi il modulo esterno prima di aprire il successivo.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Il <code>name</code> di un modulo è già usato da un altro modulo della pagina, oppure contiene uno spazio, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code>. Il modulo prende il nome <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Dai a ogni modulo della pagina un nome suo, fatto di lettere, cifre e trattini.</td>
+    </tr>
   </tbody>
 </table>
+
+Gli avvisi dei moduli e `repeatOverflow` esistono da postext 1.48; il lato del modello di ciascuno è descritto in [Configurazione › Avvisi di sovrapposizione, ripetizione e moduli](/it/docs/configuration-composed-pages#avvisi-di-sovrapposizione-ripetizione-e-moduli).
 
 Una volta impaginato il libro, ciascuno di questi avvisi riporta anche la pagina a cui si riferisce (`pageIndex`), così il pannello **Verifiche** e `postext check` danno il numero di pagina accanto al modello, alla cornice o allo slot e all’intervallo del sorgente.
 
@@ -282,6 +376,28 @@ Anche una cornice vuota viene segnalata. In una pila le cui cornici non hanno pi
 **Causa.** L’`overflow.continueIn` di una cornice è `'page:<id>'` (vedi [Saltare a una pagina più avanti](#saltare-a-una-pagina-più-avanti)), e dopo la pagina in cui si trova l’articolo non viene nessun blocco di pagina `::::page{id="<id>"}`: l’id è scritto male, il blocco non lo ha, manca l’attributo del blocco che la regola legge (`'page:{attr.sigue}'`), oppure il blocco viene prima (`before: true`). Il resto prosegue in una pagina aggiunta subito dopo, come con `'next-page'`. L’avviso riporta il modello, la cornice, `target` (l’id cercato), il `configPath` della cornice e la pagina. L’id può essere anche quello di un blocco di pagina di un capitolo successivo del libro; un capitolo composto da solo con `buildDocument` e senza `laterPageIds` conosce soltanto le proprie pagine.
 
 **Correzione.** Dai quell’id al blocco della pagina che deve ricevere il seguito, oppure correggi il nome in `continueIn` o nell’attributo del blocco che legge. Una pagina che viene prima dell’articolo non può riceverlo: sposta quel blocco dopo l’articolo, oppure indica una pagina più avanti.
+
+### frameCovered
+
+**Causa.** Una parte di una cornice sta sotto un’altra cornice disegnata sopra di essa (un `layer` più alto, o lo stesso livello ma più avanti nell’ordine del modello), nel punto in cui quella cornice è opaca: una didascalia sotto una foto, una linguetta sotto un’immagine scontornata, le ultime righe di un riquadro sotto una fascia. Il controllo si esegue quando la pagina è composta, sui riquadri che il contenuto ha dato alle cornici, quindi una pagina libera in spagnolo può risultare coperta in un’edizione più lunga. Una cornice copre con il suo riempimento (lo sfondo del suo stile o `look.background`, la sua linguetta, la sua striscia), con le sue immagini e con le sue righe di testo; un contorno non copre nulla, e una cornice che sposta il testo attorno alla forma delle sue immagini (`wrap: 'contour'`) non copre le righe con il suo riquadro. Ciò che può essere coperto: le righe della cornice, la sua linguetta e il suo titolo, le sue immagini e le sue tabelle. Le parole sopra un’immagine non vengono segnalate: se si leggono lo stabilisce il controllo del contrasto. Una sovrapposizione più sottile di 0,3 mm è un contatto, e una coppia sotto 1 mm² viene tralasciata.
+
+L’avviso indica il modello, la cornice, la cornice che copre (`coveredBy`, `coveredByPath`), l’area nascosta (`overlapMm2`), le prime parole coperte (`text`) o l’immagine coperta (`picture`), la lingua e la pagina, e punta al contenuto della cornice coperta. Un avviso per coppia.
+
+**Correzione.** Ogni proposta è un dato, come quelle di `frameOverflow`:
+
+- `layer`: il `layer` della cornice che copre portato sotto quello della cornice coperta, proposto solo quando non nasconde invece qualcos’altro;
+- `exclude`: `'push'` sulla cornice che copre, così il testo coperto le scorre attorno (solo quando sono toccate righe di testo corrente);
+- `move`: `frame`, `dxMm`, `dyMm`, lo spostamento più piccolo della cornice che copre che libera la coppia, provato sulla pagina: viene offerto solo quando la cornice spostata, e le cornici ancorate a essa, finiscono libere da ogni altra cornice e restano dentro ciò che le contiene. Quando nessuna direzione porta a una posizione libera, o la cornice coperta pende da quella che copre, non si offre alcuno spostamento.
+
+Quando la sovrapposizione è voluta (un disegno che di proposito passa sopra il testo), imposta `overlap: 'allow'` su una delle due cornici. Da postext 1.48.
+
+### frameOutsideArea
+
+**Causa.** Una cornice esce da ciò che la contiene: il suo testo oltre il rifilo, dove viene tagliato, o il suo riempimento e le sue immagini oltre l’abbondanza (senza abbondanza, entrambi sono il rifilo); oppure una sua parte qualsiasi oltre la cornice o il gruppo dentro cui è ancorata, come una nota ancorata dentro una scheda (`top-left` di `'#card'` con uno scostamento verso l’interno) che il suo testo spinge oltre il piede della scheda. Una cornice ancorata a un bordo esterno dell’altro riquadro (`below`, `right-of`) non sta mai al suo interno. Le uscite sotto 0,3 mm vengono tralasciate.
+
+L’avviso riporta `past` (`'trim'`, `'bleed'`, `'frame'` o `'group'`), `target` (il nome della cornice o del gruppo), `excessMm` (l’uscita più grande), `sides` (quella di ogni lato), la lingua e la pagina.
+
+**Correzione.** Le proposte: `maxHeight`, lo spazio che la cornice ha (non proposto per una cornice tenuta dal piede, che un’altezza minore non fa rientrare); `continueNextPage` insieme a essa, per una cornice di testo, così ciò che non entra più prosegue; `minHeight` della cornice dentro cui è ancorata, cresciuto dell’uscita; `move`, lo spostamento che la fa rientrare quando esce da un solo lato, offerto quando finisce libera dalle altre cornici. Un bollino appeso di proposito fuori dalla sua scheda prende `overlap: 'allow'`. Da postext 1.48.
 
 ## Quando il testo cresce
 
@@ -536,6 +652,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>overflow</code></td>
       <td>Il contenuto non è entrato: <code>toMm</code> è l’altezza tagliata, come in <code>frameOverflow</code>.</td>
+    </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Una parte della cornice sta sotto <code>cause</code>, la cornice disegnata sopra di essa: <code>areaMm2</code> è l’area nascosta, come in <code>frameCovered</code>. A parole: «card lies under cutout (25.3 mm²)». Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>La cornice esce di <code>toMm</code> oltre <code>past</code>: <code>'trim'</code>, <code>'bleed'</code> o <code>'#name'</code>, la cornice o il gruppo dentro cui è ancorata, come in <code>frameOutsideArea</code>. A parole: «note runs 26 mm past card». Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>Un connettore (<code>cause</code>, il suo id) ha tralasciato la sua estremità su <code>frame</code>, un riquadro che la pagina non mostra: ridotto a zero, facoltativo e vuoto, una scheda oltre gli elementi della pagina, o un punto dell’immagine che la sua cornice taglia fuori. È una nota, non un avviso. A parole: «connector ramas left out izq (not on the page)». Da postext 1.48.</td>
     </tr>
   </tbody>
 </table>

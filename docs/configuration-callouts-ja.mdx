@@ -3,9 +3,9 @@
 export const metadata = {
   title: '設定：囲み',
   sidebarTitle: '囲み',
-  description: ':::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコン、外側のマーカー、ラベルのタブ、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み、囲みの中に描くデザイン',
+  description: ':::calloutの囲みに付ける名前付きスタイル：枠線、背景、帯、タイトル、アイコン、外側のマーカー、ラベルのタブ、角ごとの半径・辺ごとの枠線・つながったタブによる囲みの形、番号付きの定理、囲みの中の文字組み、ページをまたいで分割された囲み、囲みの中に描くデザイン',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '26分',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
-      <td>囲みの枠線です。ボックス要素の枠線と同じく、囲みの縁の内側に引きます（<a href="/ja/docs/configuration-headers-footers#ボックス要素">ボックス要素</a>を参照）。</td>
+      <td>囲みの枠線です。ボックス要素の枠線と同じく、囲みの縁の内側に引きます（<a href="/ja/docs/configuration-headers-footers#ボックス要素">ボックス要素</a>を参照）。postext 1.48以降、<code>sides</code>で各辺（<code>top</code>、<code>right</code>、<code>bottom</code>、<code>left</code>）に、枠線全体の値より優先する<code>&#123; enabled?, color?, width? &#125;</code>を指定できます。囲みの上だけの罫線や、太い下辺に使います（<a href="#角辺つながったタブ">角、辺、つながったタブ</a>を参照）。</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>背景と枠線の角の半径です（囲みの幅と高さの半分までに制限されます）。帯もこれに従います。角の丸い囲みでは、CSSが<code>border-left</code>を<code>border-radius</code>で切り抜くのと同じように、帯を丸い枠で切り抜きます。<code>label</code>のタブは角を四角いまま保ちます。</td>
+      <td>背景と枠線の角の半径です（囲みの幅と高さの半分までに制限されます）。帯もこれに従います。角の丸い囲みでは、CSSが<code>border-left</code>を<code>border-radius</code>で切り抜くのと同じように、帯を丸い枠で切り抜きます。<code>label</code>のタブは、囲みとつながっていなければ角を四角いまま保ちます。postext 1.48以降は角ごとに半径を指定でき、オブジェクトに書かなかった角は四角になります。上の2つの角だけを丸めた囲みなどに使います。</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -196,9 +196,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
       <td>未設定（タブなし）</td>
-      <td>囲みの上辺に付け、ブロックの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>、または帯の<code>'start'</code>/<code>'end'</code>と同じく囲み自身の書字方向に従う<code>'top-start'</code>/<code>'top-end'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>、持ち上げと内側へのずらしはなし、画像は幅<code>1em</code>で文字から<code>0.3em</code>離します。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。postext 1.42以降は、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、内側余白の合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43以降は、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
+      <td>囲みの上辺に付け、ブロックの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>、または帯の<code>'start'</code>/<code>'end'</code>と同じく囲み自身の書字方向に従う<code>'top-start'</code>/<code>'top-end'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>、持ち上げと内側へのずらしはなし、画像は幅<code>1em</code>で文字から<code>0.3em</code>離します。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。<code>joined: true</code>（postext 1.48以降）を指定すると、タブと囲みは1つの輪郭になり、<code>fillet</code>が両者の接する内側の角を丸めます。<code>bottom-right</code>、<code>bottom-left</code>、<code>bottom-start</code>、<code>bottom-end</code>の位置（postext 1.48以降）は、タブを囲みの下端から下げ、<code>rule</code>を下辺に沿って引きます。postext 1.48以降は、アイコンにフォントの文字も使えます（<code>icon.kind: 'glyph'</code>。<a href="#タブの上のグリフ">タブの上のグリフ</a>を参照）。postext 1.42以降は、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、内側余白の合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43以降は、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### 角、辺、つながったタブ
+
+囲みは、4つの角が等しく枠線が1本の長方形である必要はありません。postext 1.48以降、スタイルは一部の角だけを丸め、一部の辺だけに枠線を引き、タブを囲みから1つの形として生やせます。題名のタブと本体が1つの輪郭になった教科書のカードを、ページの裏に置いた画像ではなく、スタイルで描けます。
+
+```ts
+calloutStyles: [
+  // Rounded at the top only, a rule over the box and a heavier foot.
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // A card whose tab grows out of its top edge.
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **角**：`borderRadius`は4つの角に共通の1つの長さか、`{ topLeft, topRight, bottomRight, bottomLeft }`です。オブジェクトに書かなかった角は四角になります。角は紙面の上での角です。2つの角が、その間の辺より多くを取ることはなく、それぞれが比率に応じて譲ります。
+- **辺**：`border.sides.top`、`right`、`bottom`、`left`は`enabled`、`color`、`width`を取り、書かなかった項目は枠線全体の値になります。上辺だけに枠線のある囲みは`border: { enabled: false, sides: { top: { enabled: true } } }`か、`enabled: true`にしてほかの3辺を切ります。辺の内側の縁はその太さに従うので、細い辺と太い辺の間の丸い角は、CSSと同じ曲線になります。
+- **つながったタブ**：`label.joined: true`にすると、タブと囲みは1つの輪郭、1つの塗り（囲みの`background`。タブ自身の`background`は塗りません）、タブの周りを回る1本の枠線になります。タブは辺の上に立ち、その高さだけ囲みの外に出るので、`offset`は`0`でなければなりません（ほかの値は`unknownConfigValue`として報告され、`0`として読みます）。タブの外側の角は、寄せている囲みの角の半径を取り、囲みと接する内側の角は`fillet`で丸めます（既定はその半径）。囲みの辺にぴったり寄せたタブ（`inset`が半ピクセル未満）は、その辺からまっすぐ立ち上がります。タブにはもう自分の塗りがないので、文字には囲みの塗りの上で読める色を付けます（`label.color`）。
+- **下のタブ**：`position: 'bottom-right'`、`'bottom-left'`、`'bottom-start'`、`'bottom-end'`は、タブを囲みの下端から下げます。つながったタブでも、そうでないタブでも使えます。上のタブを裏返したもので、`offset`は下端より下、`rule`は下辺に沿います。横のタブはありません。タブの文字は横に進むからです。
+
+これらの形はどの出力でも描かれます。キャンバスとPDFはベクターの輪郭として、HTMLビューアーと固定レイアウトのEPUBは角ごと・辺ごとのCSSで描きます。リフロー型EPUBは角と辺をCSSに書き、つながったタブはふつうのタブとして組みます。枠の`look.border.color`はすべての辺の色を変え、部のパレットは各辺の色を変えます。角と辺がすべて同じスタイルは、これまでと同じように組まれます。
+
+### タブの上のグリフ
+
+`label.icon`には、画像の代わりにフォントの文字を置けます。`kind: 'glyph'`と`glyph: '◉'`です。タブに画像のリソースはいらず、グリフは自分の色を指定しなければ文字の色になるので、1つのスタイルで本のすべての色調をまかなえます。postext 1.48以降。
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>項目</th>
+      <th style={{ width: '200px' }}>型</th>
+      <th style={{ width: '120px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>説明を参照</td>
+      <td><code>resourceId</code>があれば<code>'resource'</code>、<code>glyph</code>だけなら<code>'glyph'</code>です。書いた場合は<code>kind</code>が優先され、<code>kind: 'glyph'</code>なら<code>resourceId</code>にかかわらずグリフを置きます。</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>アイコンとして置く文字です（<code>'◉'</code>、<code>'★'</code>、<code>'✎'</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>、<code>fontWeight</code></td>
+      <td><code>string</code>、<code>number</code></td>
+      <td>ラベルの値</td>
+      <td>グリフの書体とウェイトです。ラベル自身のもの、なければ見出しの書体と<code>700</code>です。その文字を持たない書体は、ブラウザーと同じく代替の書体に切り替わり、PDFでは<code>missingGlyph</code>が出ます。</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>タブの文字サイズに対する倍率で表したグリフの大きさです。<code>1</code>では文字とベースラインを共有し、それ以外の大きさではタブの中央にとどまります。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>ラベルの<code>color</code></td>
+      <td>グリフの色です。指定しなければ文字の色に従い、枠の<code>look.label.color</code>は両方の色を変えます。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>、<code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>、<code>Dimension</code></td>
+      <td><code>'beside'</code>、<code>0.3em</code></td>
+      <td>画像と同じです。<code>'inside'</code>はグリフをタブの中の文字の前に置き、タブはその幅と間隔の分だけ広がります。<code>'beside'</code>はタブの縁の外に置きます。画像の<code>width</code>と<code>tint</code>は働きません。</td>
+    </tr>
+  </tbody>
+</table>
+
+グリフは装飾です。タグ付きPDFではレイアウトのアーティファクト、HTMLでは支援技術から隠され、リフロー型EPUBでは囲みのタイトルから外されるので、タブは文字だけで読まれます。
 
 ### ほかのスタイルを元にしたスタイル
 

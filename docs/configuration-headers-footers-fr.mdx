@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuration : en-têtes et pieds de page',
   sidebarTitle: 'En-têtes et pieds de page',
-  description: 'Ce qui s’imprime en haut et en bas de chaque page : texte avec variables, filets, boîtes et images, selon la parité de la page, et la place de chaque élément',
+  description: 'Ce qui s’imprime en haut et en bas de chaque page : texte avec variables, filets, boîtes, images et tracés vectoriels, selon la parité de la page, et la place de chaque élément',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '34 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Les propriétés `header` et `footer` règlent les zones d’en-tête et de pied
 
 Ces zones suivent le modèle unifié des **zones de maquette** : chaque élément a un `placement` doté d’une `anchor` (au conteneur, ou à un autre élément par `#id`), d’un `offset` facultatif et d’une `size` facultative. Les anciens champs à plat `align`, `marginFromBody`, `marginFromEdge` et `width: 'full'` sont toujours acceptés en entrée et migrés automatiquement vers la nouvelle forme ; la description équivalente dans la nouvelle forme est documentée plus bas.
 
-Chaque zone contient une liste d’éléments **texte**, **filet**, **boîte** et **image**. L’ordre du tableau est l’ordre de peinture (le premier élément est peint en premier, le dernier par-dessus tous les autres). Cela vaut quelles que soient les ancres : un élément peut s’ancrer à un élément listé après lui (`anchor.to: '#ttl'`), de sorte qu’une boîte de fond peut venir en premier et être tout de même positionnée par rapport au texte derrière lequel elle se trouve.
+Chaque zone contient une liste d’éléments **texte**, **filet**, **boîte**, **image** et **tracé** (le décor d’une page composée accepte aussi des **connecteurs**, voir [Configuration › Pages composées](/fr/docs/configuration-composed-pages#connecteurs)). L’ordre du tableau est l’ordre de peinture (le premier élément est peint en premier, le dernier par-dessus tous les autres). Cela vaut quelles que soient les ancres : un élément peut s’ancrer à un élément listé après lui (`anchor.to: '#ttl'`), de sorte qu’une boîte de fond peut venir en premier et être tout de même positionnée par rapport au texte derrière lequel elle se trouve.
 
 **Valeurs par défaut intégrées.** Lorsque `header` ou `footer` vaut `undefined`, postext applique une valeur par défaut intégrée raisonnable plutôt qu’une zone vide :
 
@@ -46,7 +46,7 @@ Pour renoncer aux valeurs par défaut intégrées, définissez `header: { elemen
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valeurs par défaut intégrées si <code>undefined</code> ; <code>[]</code> les désactive</td>
-      <td>Liste ordonnée d’éléments texte, filet, boîte et image.</td>
+      <td>Liste ordonnée d’éléments texte, filet, boîte, image et tracé.</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ Les éléments boîte peignent un rectangle aux coins arrondis dans la zone : u
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Rayon des coins. Limité à la moitié du plus petit côté au moment du rendu.</td>
+      <td>Rayon des coins. Limité à la moitié du plus petit côté au moment du rendu. Depuis postext 1.48, un objet donne à chaque coin son propre rayon, un coin absent restant carré : un bandeau arrondi sur ses coins supérieurs seulement.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>tous les côtés</td>
+      <td>La bordure côté par côté, chacun <code>&#123; enabled?, color?, width? &#125;</code>, qui l’emporte sur <code>borderColor</code> et <code>borderWidth</code>. Un côté est tracé quand il a une couleur et une épaisseur, sauf s’il indique <code>enabled: false</code> : un bandeau avec un filet à son pied seulement s’écrit <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Depuis postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ Le moteur de rendu PDF incorpore la ressource comme une figure (un SVG doté d�
 
 Une image dessinée par une maquette est du contenu lorsque sa ressource la décrit : l’`altText` de la ressource, ou à défaut sa légende en texte brut (une pastille lue par son libellé, un `:ref` par son `text` s’il en a un), entre dans le VDT (`VDTDesignImageBlock.altText`), devient l’`alt` de son `<img>` en HTML et une `Figure` avec `/Alt` dans un PDF balisé, lue juste après le texte de sa maquette (la planche d’un chapitre après le titre du chapitre). Une image dont la ressource n’a ni l’un ni l’autre, ou qui est marquée `decorative`, est une décoration : `alt=""` avec `role="presentation"`, et un artefact dans le PDF. L’image d’un titre courant ou d’un pied de page se répète sur chaque page : elle relève donc de l’habillage de la page, quoi que contienne sa ressource : pas d’`altText` dans le VDT, `alt=""` avec `role="presentation"` en HTML, un artefact de la page dans le PDF.
 
+### Éléments tracé
+
+Un élément `path` dessine une forme vectorielle qu’une boîte ne sait pas faire : une barre qui file jusqu’au dos avec un bout en biais, un ruban à encoche, les chevrons à côté d’un titre courant, la pointe d’une bulle sur une carte. Le contour est un tracé SVG, écrit par défaut en fractions de la boîte de l’élément : la forme s’étire avec la boîte et la suit quand la boîte bouge. Un ruban dimensionné à `{ to: '#title', edge: 'right' }` est aussi long que le titre dans toutes les langues. Toutes les zones de maquette l’acceptent : titres courants, maquettes de titre et de partie, lignes de partie de la table des matières, maquettes d’encadré et décor d’une page composée. Depuis postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Discriminant, et identifiant stable auquel d’autres éléments peuvent s’ancrer.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Données de tracé SVG : <code>M L H V C S Q T A Z</code>, absolues et relatives, dans les unités de <code>viewBox</code>. Des données illisibles (pas de déplacement initial, une lettre qui n’est pas une commande, une commande à laquelle il manque des nombres) ne dessinent rien et sont signalées comme <code>unknownConfigValue</code> ; la boîte de l’élément reste en place pour les éléments qui lui sont ancrés.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>La largeur et la hauteur de l’espace dans lequel <code>d</code> est écrit. Avec la valeur par défaut, <code>1</code> vaut toute la largeur ou toute la hauteur de la boîte. Un tracé copié d’un dessin garde ici la taille de son dessin (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> étire la <code>viewBox</code> sur la boîte dans chaque axe ; <code>'meet'</code> la met à l’échelle uniformément pour qu’elle tienne dedans, centrée : une icône qui ne doit pas être écrasée.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>remplissage noir</td>
+      <td>Le remplissage et le contour. Sans l’un ni l’autre, la forme est remplie de noir, comme un tracé SVG ; avec <code>stroke</code> seul, elle n’a pas de remplissage. Les couleurs liées à la palette suivent les palettes de la page et de la partie.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, plein</td>
+      <td>L’épaisseur et le motif de tirets du contour, des longueurs de la page qui ne s’étirent pas avec la boîte : une forme étirée garde un trait régulier.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Placé et dimensionné comme un élément boîte (voir <a href="#placement-des-éléments">Placement des éléments</a>) : un côté absent, ou <code>'fill'</code>, va jusqu’au bord du conteneur.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>comme les éléments boîte</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>Les pages où il apparaît, s’il reste là où le gabarit dessine son bloc (décor d’une page composée), et s’il compte dans la hauteur réservée d’un titre.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un tracé est peint comme une forme vectorielle sur le canvas, dans le PDF, dans la visionneuse HTML et dans l’EPUB à mise en page fixe, comme un artefact de mise en page dans un PDF balisé, et il est omis de l’EPUB recomposable avec le reste de l’habillage de la page. Un clic répond sur son encre, non sur sa boîte vide. Une clé que l’élément n’a pas est une `unknownConfigKey`. Les tracés ne pivotent pas dans cette version.
+
 ### Placement des éléments
 
-`ElementPlacement` est le modèle de positionnement unifié qu’utilisent tous les types d’éléments (texte, filet, boîte, image) dans n’importe quelle zone de maquette : en-tête de page, pied de page ou maquette avancée d’un niveau de titre. Trois données décrivent un placement :
+`ElementPlacement` est le modèle de positionnement unifié qu’utilisent tous les types d’éléments (texte, filet, boîte, image, tracé) dans n’importe quelle zone de maquette : en-tête de page, pied de page ou maquette avancée d’un niveau de titre. Trois données décrivent un placement :
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
     edge: AnchorEdge;
+    /** The point along the side `edge` names, on '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distance from the anchor point. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ Chaque bord relatif à un élément place un coin de l’élément sur un coin d
 
 Un bord relatif à un élément utilisé avec `'container'`, `'page'` ou `'bleed'`, et un bord de conteneur utilisé avec `'#id'`, sont lus comme le coin supérieur gauche.
 
+**Un point le long d’un côté.** Sur un ancrage à `'#id'` (un autre élément ou, sur une page composée, un bloc ou un groupe), `at` choisit un point le long du côté que désigne le bord : `'start'`, `'center'`, `'end'`, ou une fraction du côté depuis son début, de `0` à `1`. Le long du côté, l’élément est centré sur ce point ; en travers, le bord garde sa place : `below` avec `at: 'center'` suspend un repère sous le milieu d’un bloc, et `right-of` avec `at: 0.5` place une marque à mi-hauteur de son côté. Un côté horizontal (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom`, et les coins, lus comme leur côté) commence là où commencent les lignes de la page : à droite sur une page de droite à gauche. Un côté vertical (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) commence en haut. Un nombre hors de l’intervalle 0 à 1 est ramené à l’extrémité la plus proche ; un mot autre que les trois est signalé comme `unknownConfigValue` et ignoré, de même que `at` sur `'container'`, `'page'`, `'bleed'`, `'outer'` et sur `center`. Depuis postext 1.48 ; sans `at`, le bord garde son propre point, comme avant.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Bords de début et de fin.** `top-start`, `start`, `bottom-start`, `top-end`, `end` et `bottom-end` (avec `'container'`, `'page'`, `'bleed'` ou `'outer'`), ainsi que `align-start` et `align-end` (avec `'#id'`), désignent le côté où commencent les lignes de la page plutôt qu’un côté fixe. Sur une page de gauche à droite, `top-start` vaut `top-left` ; sur une page de droite à gauche, et sur une page verticale, dont les lignes se suivent depuis la droite, il vaut `top-right`. Avec ces bords, le `x` du décalage va du côté début au côté fin : sur une page de droite à gauche, un `x` positif déplace l’élément vers la gauche, et l’élément est le reflet de celui de gauche à droite. Le décor d’un gabarit et les titres courants sont posés sur la feuille : un surtitre écrit `top-start` se place au-dessus du bloc du titre dans une édition arabe comme dans une édition espagnole. Un bloc est posé dans le flux de la page, déjà en miroir ou tourné, où `start` est toujours sa gauche, comme `left`. Dans la maquette d’un titre, posé lui aussi dans le flux, `start` vaut `left`. Dans le Sandbox, la liste **Alignement** de l’éditeur de zone propose **Début** et **Fin**, et les listes de bords les côtés début et fin. Depuis postext 1.39 ; jusqu’à la 1.38, ces mots se lisaient comme `top-left`.
 
 `anchor.to: 'page'` ancre l’élément à la **zone de coupe** (la page physique après rognage) et `'bleed'` à la zone de coupe agrandie de `cutLines.bleed` de chaque côté (identique à la zone de coupe tant que les traits de coupe sont désactivés). Ces deux cadres servent aussi de référence pour `size: 'fill'` et pour la limitation automatique de la largeur : une bande de couleur peut ainsi aller d’un bord à l’autre quelles que soient les marges de la page :
@@ -740,7 +830,7 @@ Un bord relatif à un élément utilisé avec `'container'`, `'page'` ou `'bleed
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Une taille peut aussi aller jusqu’à un bord d’une autre boîte : `{ to, edge }`, où `to` désigne la boîte comme le fait un ancrage (`'container'`, `'page'`, `'bleed'`, `'outer'`, ou `'#id'` d’un autre élément et, dans le décor d’une page composée, d’un bloc ou d’un groupe) et `edge` lequel de ses bords, `'top'` ou `'bottom'` pour une hauteur, `'left'` ou `'right'` pour une largeur. La longueur va du point d’ancrage de l’élément jusqu’à ce bord, dans le sens où l’élément grandit ; un bord situé derrière le point d’ancrage donne 0, et un bord de l’autre axe, ou une boîte absente, se lit comme `'fill'`. Un fond qui va du pied d’un bandeau jusqu’au fond perdu reste dans le gabarit et suit le bandeau quand celui-ci bouge. Depuis postext 1.38 :
+Une taille peut aussi aller jusqu’à un bord d’une autre boîte : `{ to, edge }`, où `to` désigne la boîte comme le fait un ancrage (`'container'`, `'page'`, `'bleed'`, `'outer'`, ou `'#id'` d’un autre élément et, dans le décor d’une page composée, d’un bloc ou d’un groupe) et `edge` lequel de ses bords, `'top'` ou `'bottom'` pour une hauteur, `'left'` ou `'right'` pour une largeur, ou `'center'` pour son milieu dans l’un ou l’autre axe (depuis postext 1.48) : un bandeau qui va du bord gauche d’un bloc jusqu’au milieu du bloc voisin, un filet vertical qui descend de sous une carte jusqu’au milieu de la rangée du dessous. La longueur va du point d’ancrage de l’élément jusqu’à ce bord, dans le sens où l’élément grandit ; un bord situé derrière le point d’ancrage donne 0, et un bord de l’autre axe, ou une boîte absente, se lit comme `'fill'`. Un fond qui va du pied d’un bandeau jusqu’au fond perdu reste dans le gabarit et suit le bandeau quand celui-ci bouge. Depuis postext 1.38 :
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

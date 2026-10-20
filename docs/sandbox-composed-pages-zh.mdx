@@ -63,6 +63,8 @@ export const metadata = {
 - *标注指向不存在的锚点*和*锚点缺少标注*（`labelAnchorUnknown`、`anchorUnlabelled`），归在排这幅图的框下；
 - *标注超出设定宽度*和*标注相互重叠*（`labelOverflow`、`labelOverlap`），也归在这个框下：每个版本的标注用该版本自己的文字测量，所以词更长的语言可能放不下，换一种语言却放得下。标注压到图片的`avoid`区域（在图片标记的**避让区**模式下画出）时，也列在这里；对于SVG，该模式中的**图中的符号**会在图中每个id以指定前缀开头或带有指定class的元素上添加一个区域（自postext 1.43起）；
 - *槽位没有对应的框*、*空框*、*未知的页面模板*、*模板页只写了三个冒号*和*跨页标记与模板不符*（`slotUnknown`、`slotEmpty`、`templateUnknown`、`pageFenceLength`、`spreadMismatch`）；
+- *框被另一个框盖住*和*框超出了边界*（`frameCovered`、`frameOutsideArea`），附有被盖住的文字或图片、被遮住的面积或超出的距离，以及一键修正；选中一条，画布上会标出这两个框，或者标出这个框和它超出的那个方框（自postext 1.48起）；
+- *条目多于网格的容量*（`repeatOverflow`），与标记方面的问题列在一起（自postext 1.48起）；
 - *目录分组跨栏拆分*（`tocGroupSplit`）；
 - 页面模板本身的警告（框样式或锚点不存在、尺寸相互矛盾、串接链首尾相连形成循环），以及包含书中内容的设计文字（`contentInConfig`）。
 

@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuración: cabeceras y pies de página',
   sidebarTitle: 'Cabeceras y pies de página',
-  description: 'Qué se imprime en la cabecera y al pie de cada página: textos con marcadores, filetes, cajas e imágenes, según la página sea par o impar, y dónde se coloca cada elemento.',
+  description: 'Qué se imprime en la cabecera y al pie de cada página: textos con marcadores, filetes, cajas, imágenes y trazados vectoriales, según la página sea par o impar, y dónde se coloca cada elemento.',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '33 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Las propiedades `header` y `footer` controlan las zonas de cabecera y de pie de 
 
 Las zonas usan el modelo unificado de **zona de diseño**: cada elemento tiene un `placement` con un `anchor` (al contenedor o a otro elemento, mediante `#id`), un `offset` opcional y un `size` opcional. Los antiguos campos planos `align`, `marginFromBody`, `marginFromEdge` y `width: 'full'` se siguen aceptando como entrada y se convierten automáticamente al formato nuevo; más abajo se explica a qué equivalen.
 
-Cada zona contiene una lista de elementos de **texto**, de **línea** (`rule`, un filete), de **caja** (`box`) y de **imagen** (`image`). El orden del array es el orden de pintado (el primer elemento se pinta primero y el último queda encima). Esto se cumple sean cuales sean los anclajes: un elemento puede anclarse a otro que aparece después en la lista (`anchor.to: '#ttl'`), así que una caja de fondo puede ir primero y colocarse respecto al texto que queda encima de ella.
+Cada zona contiene una lista de elementos de **texto**, de **línea** (`rule`, un filete), de **caja** (`box`), de **imagen** (`image`) y de **trazado** (`path`) (la decoración de una página compuesta admite además **conectores**; véase [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages#conectores)). El orden del array es el orden de pintado (el primer elemento se pinta primero y el último queda encima). Esto se cumple sean cuales sean los anclajes: un elemento puede anclarse a otro que aparece después en la lista (`anchor.to: '#ttl'`), así que una caja de fondo puede ir primero y colocarse respecto al texto que queda encima de ella.
 
 **Valores por defecto incluidos.** Cuando `header` o `footer` son `undefined`, postext aplica unos valores integrados razonables en lugar de dejar la zona vacía:
 
@@ -46,7 +46,7 @@ Para prescindir de los valores integrados, fija `header: { elements: [] }` (o `f
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valores por defecto integrados cuando es <code>undefined</code>; <code>[]</code> los desactiva</td>
-      <td>Lista ordenada de elementos de texto, línea, caja e imagen.</td>
+      <td>Lista ordenada de elementos de texto, línea, caja, imagen y trazado.</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ Los elementos de caja pintan un rectángulo redondeado dentro de la zona; sirven
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Radio de las esquinas. Al dibujar, se limita a la mitad del lado más corto.</td>
+      <td>Radio de las esquinas. Al dibujar, se limita a la mitad del lado más corto. Desde postext 1.48, un objeto da a cada esquina su propio radio, y la esquina que no aparece queda en ángulo recto: una banda redondeada solo en sus esquinas superiores.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>todos los lados</td>
+      <td>El borde lado a lado, cada uno <code>&#123; enabled?, color?, width? &#125;</code> por encima de <code>borderColor</code> y <code>borderWidth</code>. Un lado se dibuja cuando tiene color y grosor, salvo que diga <code>enabled: false</code>: una banda con un filete solo al pie es <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Desde postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ El backend de PDF incrusta el recurso igual que una figura (si un SVG tiene un o
 
 Una imagen que dibuja un diseño cuenta como contenido cuando su recurso la describe. Esa descripción (el `altText` del recurso o, si no lo tiene, su pie como texto sin formato, en el que un chip se lee por su etiqueta y una `:ref` por su `text`, si lo tiene) pasa al VDT (`VDTDesignImageBlock.altText`). Se convierte en el `alt` del `<img>` en HTML y en una `Figure` con `/Alt` en un PDF etiquetado, que se lee justo después del texto de su diseño (la lámina de un capítulo, después del encabezado del capítulo). Una imagen cuyo recurso no tiene ni lo uno ni lo otro, o una marcada como `decorative`, es decorativa: `alt=""` con `role="presentation"`, y un artefacto en el PDF. La imagen de un titulillo o de un pie se repite en todas las páginas, así que se trata como un elemento fijo de la página diga lo que diga su recurso: sin `altText` en el VDT, con `alt=""` y `role="presentation"` en HTML, y como un artefacto de la página en el PDF.
 
+### Elementos de trazado
+
+Un elemento `path` dibuja una forma vectorial que una caja no puede dibujar: una barra que llega al lomo con el extremo en diagonal, una cinta con una muesca, los galones junto a un titulillo, el pico de bocadillo de una tarjeta. El contorno son datos de trazado SVG, escritos por defecto en fracciones de la caja del propio elemento, así que la forma se estira con la caja y la sigue cuando la caja se mueve: una cinta con el tamaño `{ to: '#title', edge: 'right' }` mide lo mismo que el título en todos los idiomas. Lo admiten todas las zonas de diseño: titulillos, diseños de encabezado y de parte, filas de parte del índice, diseños de recuadro y la decoración de una página compuesta. Desde postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propiedad</th>
+      <th>Tipo</th>
+      <th>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Discriminador, y un id estable al que otros elementos pueden anclarse.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Datos de trazado SVG: <code>M L H V C S Q T A Z</code>, absolutos y relativos, en las unidades de <code>viewBox</code>. Unos datos que no se pueden leer (sin un movimiento inicial, con una letra que no es una orden, con una orden a la que le faltan números) no dibujan nada y se notifican como <code>unknownConfigValue</code>; la caja del elemento sigue existiendo para los elementos anclados a él.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>El ancho y el alto del espacio en el que se escribe <code>d</code>. Con el valor por defecto, <code>1</code> es todo el ancho o todo el alto de la caja. Un trazado copiado de un dibujo conserva aquí el tamaño de su dibujo (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> estira el <code>viewBox</code> hasta la caja en cada eje; <code>'meet'</code> lo escala por igual para que quepa dentro, centrado: un icono que no debe deformarse.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>relleno negro</td>
+      <td>El relleno y el contorno. Sin ninguno de los dos, la forma se rellena de negro, como un trazado SVG; solo con <code>stroke</code>, no tiene relleno. Los colores vinculados a la paleta siguen las paletas de la página y de la parte.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, continuo</td>
+      <td>El grosor y el patrón de trazos del contorno, medidas de página que no se estiran con la caja, de modo que una forma estirada conserva un trazo uniforme.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Se coloca y se dimensiona como un elemento de caja (véase <a href="#colocación-de-elementos">Colocación de elementos</a>): un lado que no se indica, o <code>'fill'</code>, llega hasta el borde del contenedor.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>como en los elementos de caja</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>En qué páginas aparece, si se queda donde la plantilla dibuja su marco (la decoración de una página compuesta) y si cuenta para la altura que reserva un encabezado.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un trazado se pinta como forma vectorial en el canvas, en el PDF, en el visor HTML y en el EPUB de maquetación fija, como artefacto de maquetación en un PDF etiquetado, y se deja fuera del EPUB de maquetación fluida con el resto de los elementos fijos de la página. Un clic responde sobre su tinta, no sobre su caja vacía. Una clave que el elemento no tiene es `unknownConfigKey`. En esta versión los trazados no se giran.
+
 ### Colocación de elementos
 
-`ElementPlacement` es el modelo unificado de colocación que usan todos los tipos de elemento (texto, línea, caja, imagen) dentro de cualquier zona de diseño: la cabecera, el pie de página o la zona de diseño avanzado de un nivel de encabezado. Tres datos describen una colocación:
+`ElementPlacement` es el modelo unificado de colocación que usan todos los tipos de elemento (texto, línea, caja, imagen, trazado) dentro de cualquier zona de diseño: la cabecera, el pie de página o la zona de diseño avanzado de un nivel de encabezado. Tres datos describen una colocación:
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = el bloque; page = caja de corte; bleed = caja de corte + sangre; outer = el margen exterior (cabecera, pie); #id = otro elemento
     edge: AnchorEdge;
+    /** El punto a lo largo del lado que indica `edge`, en '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distancia desde el punto de anclaje. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ Cada borde relativo a otro elemento pone una esquina del elemento sobre una esqu
 
 Un borde relativo a otro elemento usado con `'container'`, `'page'` o `'bleed'`, y un borde de contenedor usado con `'#id'`, se leen como la esquina superior izquierda.
 
+**Un punto a lo largo de un lado.** En un anclaje a `'#id'` (otro elemento o, en una página compuesta, un marco o un grupo), `at` elige un punto a lo largo del lado que indica el borde: `'start'`, `'center'`, `'end'` o una fracción del lado desde su inicio, de `0` a `1`. A lo largo del lado, el elemento se centra en ese punto; en el otro eje, el borde conserva su sitio, así que `below` con `at: 'center'` cuelga una marca bajo el centro de un marco y `right-of` con `at: 0.5` pone una señal a media altura de su lado. Un lado horizontal (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom`, y las esquinas, leídas como su lado) empieza donde empiezan las líneas de la página: a la derecha en una página de derecha a izquierda. Un lado vertical (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) empieza arriba. Un número fuera de 0 a 1 se lleva al extremo más cercano; una palabra distinta de las tres se notifica como `unknownConfigValue` y se ignora, igual que `at` en `'container'`, `'page'`, `'bleed'`, `'outer'` y en `center`. Desde postext 1.48; sin `at`, el borde conserva su propio punto, como antes.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Bordes de inicio y de final.** `top-start`, `start`, `bottom-start`, `top-end`, `end` y `bottom-end` (con `'container'`, `'page'`, `'bleed'` u `'outer'`), y `align-start` y `align-end` (con `'#id'`), indican el lado por el que empiezan las líneas de la página en lugar de un lado fijo. En una página de izquierda a derecha, `top-start` es `top-left`; en una página de derecha a izquierda, y en una página vertical, cuyas líneas se suceden desde la derecha, es `top-right`. Con estos bordes, la `x` del desplazamiento va del lado de inicio al lado final, así que en una página de derecha a izquierda una `x` positiva mueve el elemento hacia la izquierda: el elemento es la imagen en espejo del de izquierda a derecha. La decoración de una plantilla y los titulillos se colocan sobre la hoja, de modo que un antetítulo escrito con `top-start` queda sobre el marco del título tanto en una edición árabe como en una española. Un marco se coloca en el flujo de la página, que ya está en espejo o girado, y allí `start` es siempre su izquierda, igual que `left`. En el diseño de un encabezado, que también se coloca en el flujo, `start` equivale a `left`. En el Sandbox, la lista **Alineación** del editor de la zona incluye **Inicio** y **Final**, y las listas de bordes incluyen los lados de inicio y de final. Desde postext 1.39; hasta la 1.38, estas palabras se leían como `top-left`.
 
 `anchor.to: 'page'` ancla el elemento a la **caja de corte** (la página física una vez cortada), y `'bleed'`, a la caja de corte ampliada por todos los lados en `cutLines.bleed` (idéntica a la caja de corte mientras las marcas de corte estén desactivadas). Ambos marcos pasan a ser también la referencia de `size: 'fill'` y de la limitación automática del ancho, así que una banda de color puede ir de borde a borde, sean cuales sean los márgenes de la página:
@@ -740,7 +830,7 @@ Un borde relativo a otro elemento usado con `'container'`, `'page'` o `'bleed'`,
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Un tamaño también puede llegar hasta un borde de otra caja: `{ to, edge }`, donde `to` indica la caja igual que en un anclaje (`'container'`, `'page'`, `'bleed'`, `'outer'`, o el `'#id'` de otro elemento y, en la decoración de una página compuesta, de un marco o de un grupo) y `edge` indica cuál de sus bordes: `'top'` o `'bottom'` para una altura, `'left'` o `'right'` para una anchura. La medida va desde el punto de anclaje del elemento hasta ese borde, en el sentido en que crece el elemento; un borde situado detrás del punto de anclaje da 0, y un borde del otro eje, o una caja que no existe, se lee como `'fill'`. Así, un fondo que va desde el pie de una banda hasta el sangrado se queda en la plantilla y sigue a la banda cuando esta se mueve. Desde postext 1.38:
+Un tamaño también puede llegar hasta un borde de otra caja: `{ to, edge }`, donde `to` indica la caja igual que en un anclaje (`'container'`, `'page'`, `'bleed'`, `'outer'`, o el `'#id'` de otro elemento y, en la decoración de una página compuesta, de un marco o de un grupo) y `edge` indica cuál de sus bordes: `'top'` o `'bottom'` para una altura, `'left'` o `'right'` para una anchura, o `'center'` para su mitad en cualquiera de los dos ejes (desde postext 1.48): una banda desde el borde izquierdo de un marco hasta la mitad del marco de al lado, un filete vertical desde debajo de una tarjeta hasta la mitad de la fila de abajo. La medida va desde el punto de anclaje del elemento hasta ese borde, en el sentido en que crece el elemento; un borde situado detrás del punto de anclaje da 0, y un borde del otro eje, o una caja que no existe, se lee como `'fill'`. Así, un fondo que va desde el pie de una banda hasta el sangrado se queda en la plantilla y sigue a la banda cuando esta se mueve. Desde postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

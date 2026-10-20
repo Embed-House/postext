@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Uso programmatico',
   description: 'Chiamare Postext dal codice: buildDocument e i suoi avvisi, i valori predefiniti, i font, le cache e il Web Worker',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '31 min',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>Una <code>:::figure</code> dà parole (<code>alt</code>, <code>caption</code>, <code>note</code>) a una risorsa a cui una figura precedente del capitolo ha già dato le sue, e sono diverse (<code>resourceId</code>, <code>words</code>).</td>
       <td>Le pagine mostrano le parole della prima figura; quelle della successiva sono omesse.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>L’inchiostro di una cornice di una pagina composta sta sotto un’altra cornice disegnata sopra di essa (<code>template</code>, <code>frame</code>, <code>coveredBy</code>, <code>coveredByPath</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>overlapMm2</code>, <code>text</code> o <code>picture</code>, <code>locale</code>; <code>proposals</code>: <code>layer</code>, <code>exclude</code>, <code>move</code>). Lo segnala l’impaginazione, con il <code>pageIndex</code> della pagina. Da postext 1.48.</td>
+      <td>Le due cornici si disegnano come dice il modello; l’inchiostro coperto resta nascosto.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Una cornice di una pagina composta esce oltre il rifilo (il suo testo), l’abbondanza (il suo riempimento o le sue immagini) o la cornice o il gruppo dentro cui è ancorata (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>past</code>, <code>target</code>, <code>excessMm</code>, <code>sides</code>, <code>locale</code>; <code>proposals</code>: <code>maxHeight</code>, <code>minHeight</code>, <code>continueNextPage</code>, <code>move</code>). Lo segnala l’impaginazione. Da postext 1.48.</td>
+      <td>La cornice si disegna dove si trova; ciò che supera il rifilo viene tagliato.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una griglia che si ripete in una pagina composta contiene <code>max</code> elementi e la pagina gliene dà di più (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Uno per ogni elemento in più. Da postext 1.48.</td>
+      <td>L’elemento va alla cornice di flusso, o dopo la pagina.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> che la pagina non dispone (<code>template</code>, <code>module</code>, <code>name</code>, <code>fenceIndex</code>; <code>reason</code>: <code>'unknown'</code>, <code>'notModule'</code>, <code>'noGroup'</code>). Da postext 1.48.</td>
+      <td>Il suo contenuto va alla cornice di flusso.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un blocco di pagina indica un modello di modulo (<code>template</code>, <code>fenceIndex</code>). Da postext 1.48.</td>
+      <td>Il contenuto del blocco viene composto nel flusso.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> dentro un altro modulo (<code>template</code>, <code>module</code>, <code>fenceIndex</code>). Da postext 1.48.</td>
+      <td>I suoi blocchi appartengono al modulo esterno.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Il <code>name</code> di un modulo è già usato nella pagina o contiene uno spazio, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code> (<code>template</code>, <code>module</code>, <code>name</code>, <code>used</code>, <code>reason</code>: <code>'taken'</code>, <code>'invalid'</code>, <code>fenceIndex</code>). Da postext 1.48.</td>
+      <td>Il modulo prende il nome <code>used</code> e i suoi slot si indicano con quel nome.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

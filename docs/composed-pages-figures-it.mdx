@@ -31,7 +31,9 @@ Questa pagina tratta delle figure di una pagina composta, o del testo corrente, 
 
 - `at` indica un’ancora della risorsa (un punto fissato una volta per tutte sull’immagine e comune a tutte le lingue), oppure dà un punto in percentuali dell’immagine, `at="x% y%"`, per un’etichetta senza ancora.
 - `style` indica uno stile di etichetta e prevale su quello dell’ancora.
-- Il testo fra parentesi quadre è Markdown in linea: grassetto, corsivo, chip.
+- `leader` traccia una linea dall’etichetta al punto della sua ancora, e `leader="none"` la toglie (vedi [Linee di richiamo, legende e simboli](#linee-di-richiamo-legende-e-simboli)).
+- Il testo fra parentesi quadre è Markdown in linea: grassetto, corsivo, chip e simboli scritti `:icon`.
+
 
 Una figura funziona sia nel testo corrente sia in una cornice. Le sue etichette sono disegnate sull’immagine come testo e la seguono ovunque vada: una colonna, un elemento flottante, una cornice ruotata o ridotta dalla scala di reimpaginazione (i passi che fanno entrare il contenuto), una doppia pagina. Quando manca il `:::` di chiusura di una figura, la prima riga che non è né un’etichetta né una riga vuota la chiude, e Postext segnala la figura come contenitore non chiuso.
 
@@ -61,6 +63,57 @@ La risorsa conserva un’immagine, le sue ancore e un solo insieme di parole, ma
 - **Verticale.** Con `writingMode: 'vertical-rl'` sull’ancora (o sul suo stile di etichetta) l’etichetta si compone come una pagina verticale: i caratteri dritti, in celle una sotto l’altra, le colonne da destra a sinistra, le parole latine e i numeri lunghi ruotati di lato, i numeri brevi in una sola cella. `width` è allora una parte dell’altezza dell’immagine, la lunghezza di una colonna, e un’etichetta cinese o giapponese si distribuisce su più colonne. `align` corre lungo la colonna (`start` ne è l’estremo alto), `verticalAlign` attraverso le colonne (`top` è la prima, quella di destra), e `rotate` ruota ancora l’etichetta. Sulla pagina speculare di un libro da destra a sinistra si legge allo stesso modo, verso il basso nelle sue colonne e dritta, nello stesso punto dell’immagine (da postext 1.40).
 - **Controlli.** Un’etichetta ancora più larga della sua giustezza al `minScale` del suo stile produce `labelOverflow`; due etichette le cui righe si toccano producono `labelOverlap` sulla seconda. Entrambi si controllano in ogni edizione, quindi una traduzione dalle parole più lunghe mostra dove le serve spazio. La tavolozza di una parte (`:::part{palette="…"}`) ricolora le etichette delle sue pagine come fa con le didascalie. Il controllo del contrasto legge un’etichetta sulla sua piastra o, altrimenti, dentro il suo alone; l’etichetta nuda sull’immagine viene saltata, perché il suo fondo è l’immagine. Anche il preflight di stampa controlla le etichette: corpo piccolo in quadricromia, inchiostri e distanza dal rifilo.
 - **Su una doppia pagina.** Una figura che attraversa il dorso di una doppia pagina (una cornice con `crossGutter: true`) disegna una metà su ciascuna pagina: un’etichetta il cui riquadro entrasse nella fascia del dorso sarebbe tagliata dalla piega e non si leggerebbe su nessuna delle due. L’etichetta scivola lungo il foglio fino al bordo della fascia, dalla parte in cui cade il punto della sua ancora, e mantiene la sua altezza; un punto esattamente sul dorso resta sulla prima pagina, come una cornice. Un’ancora con `gutter: 'cross'` resta al suo posto, per un titolo disteso sulle due pagine. I bordi esterni del foglio non si toccano: un’etichetta che supera il taglio viene tagliata come l’immagine. Da postext 1.43.
+
+### Linee di richiamo, legende e simboli
+
+Da postext 1.48 un’etichetta può stare lontano da ciò che nomina, un’etichetta può essere la legenda di una carta, e un’etichetta, una didascalia o una cella di tabella possono contenere simboli.
+
+**Linee di richiamo.** Il `labelAt` di un’ancora mette la sua etichetta lontano dal punto (un nome in mezzo al mare, una nota a margine di uno schema), e una linea di richiamo la collega di nuovo al punto. L’aspetto è il `leader` dello stile di etichetta (vedi [Configurazione › Stili delle etichette](/it/docs/configuration-composed-pages#stili-delle-etichette)); il Markdown si limita ad attivarla o a toglierla per una singola etichetta:
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` con qualsiasi valore diverso da `none`, `false` o `off` la attiva; senza l’attributo decide il `leader` dell’ancora, e se nessuno dei due lo dice un’etichetta lontana dal suo punto ne riceve una quando il suo stile ha un `leader`. Anche la nota di una cornice può indicare un luogo dell’immagine: con un [connettore](/it/docs/configuration-composed-pages#connettori) la cui estremità nomina un’ancora dell’immagine (`anchor: 'lake'`).
+
+**Etichette di più righe.** `:::label{at="…" style="…"}` … `:::`, dentro un `:::figure`, scrive un’etichetta riga per riga: ogni riga non vuota del sorgente è una riga dell’etichetta, così una legenda o un indirizzo non hanno bisogno di `\\` alla fine di ogni riga. Il primo `:::` chiude l’etichetta, il successivo la figura. `::label[…]` resta un’etichetta di una sola riga, che va a capo solo dove scrive `\\`.
+
+**Legende.** Un’etichetta in uno stile con `kind: 'legend'` è la legenda di una carta: ogni riga è una voce, e il simbolo che apre una voce sta in una colonna larga quanto il simbolo più largo, così le parole di tutte le voci partono dallo stesso bordo. Scrivi il simbolo all’inizio di ogni riga:
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[Paese]{glyph="■" color="country"} Paese
+:icon[Capitale]{glyph="⊙" font="Noto Sans Math"} Capitale
+:icon[Città]{resource="town-mark" size="0.55"} Città
+:icon[Confine]{line="dashed" color="border"} Confine
+:::
+::label[:icon[Capitale]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Simboli.** `:icon[alt]{…}` mette un piccolo simbolo nella riga, appoggiato sulla linea di base:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attributo</th>
+      <th>Effetto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>Una risorsa bitmap o SVG, in proporzione.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>Un carattere, nel carattere tipografico del testo o in quello indicato da <code>font="…"</code>.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>Un campione di linea, lungo il doppio della sua altezza: un confine o una strada in una legenda.</td></tr>
+    <tr><td><code>color="…"</code></td><td>Un colore esadecimale o una voce della tavolozza: la tinta di un glifo, di una linea o di un’immagine.</td></tr>
+    <tr><td><code>size="…"</code></td><td>L’altezza del simbolo in em del testo. Predefinito <code>0.75</code>, l’altezza di una maiuscola.</td></tr>
+  </tbody>
+</table>
+
+Il primo fra `resource`, `glyph` e `line` che compare decide il tipo; senza nessuno dei tre la direttiva resta testo. Il testo fra parentesi quadre è il testo alternativo del simbolo: gli screen reader, il PDF taggato e il testo alternativo dell’immagine lo leggono al posto del simbolo, e un simbolo con le parentesi vuote è decorazione. I simboli si leggono nelle etichette delle figure e in ogni testo breve di una risorsa: didascalie, note e celle di tabella. In questa versione non si leggono nel testo corrente, nei titoli né nei testi della grafica.
 
 ### labelAnchorUnknown
 

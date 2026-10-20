@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Imagens, tabelas e vídeos',
   description: 'Como pôr recursos no texto: referências e inserções, numeração, posicionamento e o lugar onde cada flutuante vai parar, contorno de texto, tamanho dos bitmaps, áreas seguras, âncoras de quadrinhos e vídeos',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '42 min',
   order: 29,
   parent: 'document-format',
@@ -349,6 +349,19 @@ const radio: Resource = {
 
 O `id` de uma âncora é a chave de personagem do roteiro (`tomas: …`), ou `sfx` para o ponto onde se reúnem as onomatopeias do quadro; `x` e `y` são a boca para onde aponta o rabicho de um balão de fala, `head` o ponto para onde apontam as bolinhas de um balão de pensamento (a boca, quando não definido) e `face` um retângulo que nenhum balão cobre. O motor projeta cada ponto pelo recorte e pelo espelhamento do quadro, de modo que um rabicho continua apontando para o personagem, seja qual for a forma do quadro; uma âncora fora da área segura gera `comicAnchorOutsideSafeArea`, porque um recorte pode cortá-la. As âncoras pertencem à imagem e servem a todas as traduções dos quadrinhos. Uma terceira lista, `faces`, guarda os rostos de quem não fala, como retângulos iguais aos de `avoid`: nenhum balão os cobre, enquanto uma zona a evitar cede quando o quadro não tem outro lugar. Os quadros de quadrinhos as leem para o letreiramento. Os rótulos de uma figura usam as âncoras também e, desde o postext 1.42, as zonas `avoid` de um mapa ou de um esquema marcam seus símbolos: um rótulo que invade uma delas gera `labelOverlap` (veja [Páginas compostas](/pt/docs/composed-pages-figures#labeloverlap)). No Sandbox, elas são marcadas no diálogo **Área segura e letreiramento** do [painel Recursos](/pt/docs/sandbox#painel-recursos).
 
+
+Uma âncora que o rótulo de uma figura usa também pode afastar o rótulo do seu ponto, `labelAt: { x, y }` em frações da imagem, e traçar uma linha de volta até ele, `leader: true` ou uma aparência de linha de chamada; um conector de uma página composta pode terminar no ponto da âncora com `anchor: '<id>'`. Veja [Configuração › Campos de rótulo de uma âncora](/pt/docs/configuration-composed-pages#campos-de-rótulo-de-uma-âncora). Desde o postext 1.48.
+
+### Símbolos em legendas, notas e células
+
+Uma legenda, uma nota ou uma célula de tabela pode trazer um pequeno símbolo na linha: `:icon[alt]{glyph="⊙"}` põe um caractere (na fonte que `font="…"` indica, senão na do texto), `:icon[alt]{resource="town-mark"}` um recurso bitmap ou SVG, e `:icon[alt]{line="dashed"}` uma amostra de linha, para uma tabela que explica as linhas de um mapa. `color="…"` o tinge com uma cor hexadecimal ou uma entrada da paleta, e `size="…"` define a altura dele em ems (padrão `0.75`, a altura de uma maiúscula). O texto entre colchetes é o que os leitores de tela e o PDF marcado leem no lugar dele; colchetes vazios fazem dele uma decoração.
+
+```ts
+{ id: 'mapa-politico', typeId: 'figure', kind: 'bitmap',
+  caption: 'Capitals :icon[capital]{glyph="⊙" font="Noto Sans Math"} and towns :icon[town]{resource="town-mark"} of Varenia' }
+```
+
+Os símbolos são lidos em legendas, notas, células de tabela e rótulos de figura (veja [Páginas compostas › Linhas de chamada, legendas de mapa e símbolos](/pt/docs/composed-pages-figures#linhas-de-chamada-legendas-de-mapa-e-símbolos)); no texto corrido e nos títulos, a diretiva continua sendo texto nesta versão. Desde o postext 1.48.
 
 ### Vídeos
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '命令行',
   description: '适用于macOS、Linux和Windows的单个独立可执行文件。它能把.postext图书、图书文件夹或零散的Markdown文件转成PDF、HTML、EPUB、页面图像和Word文档，还能打包文件包、检查图书，并为脚本和智能体输出JSON',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '9分钟',
   order: 46,
   plainSummary: "本页写给想在终端里而不是在网站上用Postext做书的人。你下载一个适合自己电脑的文件，直接运行，不用另装任何东西。你把书或者几个文本文件交给它，它就能做出PDF、网页、电子书、页面图片或Word文档。它还能检查书里的问题，并把书的所有文件打包成一个文件。其他程序和AI助手也能使用它，因为它可以用这些程序容易读懂的格式回答。",
@@ -211,7 +211,7 @@ postext check chapters/ --strict --json
 
 它还会报告配置的设计中直接写着书中文字、而没有用占位符的地方（`contentInConfig`），每个标题样式、书眉或篇名页设计报告一次，并附上每段文字的路径：把这些文字移到Markdown中，或者把书名、出版社名这类文字列入`checks.contentInConfig.allow`。
 
-对有页面模板的书，`check`还会报告放不进框的文字（`frameOverflow`，附重排阶梯试过的步骤和能让它放下的改动）、接续的文字超出了框最多能追加的页数（`frameContinuationLimit`）、跳转的目标页不在后面（`continueTargetMissing`），以及画不出或相互碰撞的插图标注（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）。警告之后，每个有重排事件的模板页打印一行`reflow`；加上`--json`时，步骤、建议和重排记录都作为数据输出。见[模板页 › 警告](/zh/docs/composed-pages#警告)和[重排记录](/zh/docs/composed-pages#重排记录)。
+对有页面模板的书，`check`还会报告放不进框的文字（`frameOverflow`，附重排阶梯试过的步骤和能让它放下的改动）、接续的文字超出了框最多能追加的页数（`frameContinuationLimit`）、跳转的目标页不在后面（`continueTargetMissing`）、画不出或相互碰撞的插图标注（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`）、被别的框遮住或超出边界的框（`frameCovered`、`frameOutsideArea`）、超过网格容量的卡片（`repeatOverflow`），以及页面排不了的模块（`moduleUnknown`、`moduleAsPage`、`moduleNested`、`moduleNameRejected`）。警告之后，每个有重排事件的模板页打印一行`reflow`；加上`--json`时，步骤、建议和重排记录都作为数据输出。见[模板页 › 警告](/zh/docs/composed-pages#警告)和[重排记录](/zh/docs/composed-pages#重排记录)。
 
 ### build和--watch
 

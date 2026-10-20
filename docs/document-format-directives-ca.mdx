@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Directives',
   description: 'Les directives que comencen amb ::: (contenidors, columnes, paper, salts de pàgina, numeració, espai, vers, índex general i índex analític, salts de línia) i el marcatge de les pàgines de còmic',
   lang: 'ca',
-  lastUpdated: '2026-10-19',
-  readingTime: '37 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '38 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "Una directiva és un bloc que comença amb tres signes de dos punts seguits, com ara :::callout o :::columns. Aquesta pàgina explica totes les directives i què fa cadascuna. Algunes posen el text en un requadre, el componen en columnes o l'imprimeixen en una altra classe de paper. D'altres comencen una pàgina nova, canvien la numeració, afegeixen espai, componen un poema vers a vers o imprimeixen l'índex general i l'índex analític. L'última secció explica les marques de les pàgines de còmic, de les vinyetes i de les paraules dels personatges.",
@@ -125,7 +125,7 @@ Mantén la llanterna encesa **totes** les nits.
 :::
 ```
 
-Al flux del text es reconeixen cinc noms de contenidor; un sisè, `:::frame`, conté el contingut d'un marc en una [pàgina composta](#pàgines-compostes). El que renderitza cadascun es defineix a la seva secció de la configuració:
+Al flux del text es reconeixen cinc noms de contenidor; `:::frame` i `:::module` contenen el contingut d'un marc i d'un mòdul en una [pàgina composta](#pàgines-compostes), i `:::figure` i `:::label`, una figura i un rètol de diverses línies. El que renderitza cadascun es defineix a la seva secció de la configuració:
 
 <table>
   <thead>
@@ -736,3 +736,6 @@ Una pàgina composta es maqueta a partir d'una plantilla de pàgina de la config
 - `:::frame{slot="…" label="…"}` … `:::` conté el contingut del marc amb aquest nom: qualsevol Markdown.
 - `slot="…"` en un encapçalament (`## Retos {slot="retos-titulo"}`), a `::resource{id="…" slot="…"}`, en la línia d'obertura d'un bloc de codi o en un contenidor `:::` envia només aquell bloc. El contingut sense ranura va al marc de flux de la plantilla.
 - `:::figure{resource="…" slot="…"}` … `:::` col·loca un recurs amb les seves línies `::label[TEXT]{at="…" style="…"}`, on `at` és una àncora de la imatge o un punt `"x% y%"`. Una figura també funciona al text corregut. Els seus `alt`, `caption` i `note`, com a atributs de la línia d'obertura o com a línies `::alt[…]`, `::caption[…]` i `::note[…]`, substitueixen els textos del recurs en aquell capítol (vegeu [Pàgines compostes › Les paraules pròpies d'una figura](/ca/docs/composed-pages-figures#les-paraules-pròpies-duna-figura)).
+- `leader` en un `::label` dibuixa una línia des del rètol fins al punt de la seva àncora, i `leader="none"` la treu. `:::label{at="…" style="…"}` … `:::`, dins d'una figura, escriu un rètol línia per línia, com demana la llegenda d'un mapa; `:icon[alt]{glyph="…"}`, `{resource="…"}` o `{line="dashed"}` posa un símbol en un rètol, un peu, una nota o una cel·la de taula (vegeu [Pàgines compostes › Línies de referència, llegendes i símbols](/ca/docs/composed-pages-figures#línies-de-referència-llegendes-i-símbols)). Des de postext 1.48.
+- En una pàgina amb una plantilla que repeteix una targeta en una graella, cada `:::frame{slot="<card>"}` és una targeta, i un bloc de dins que indica un altre marc de la targeta va a aquell marc de la mateixa targeta (vegeu [Pàgines compostes › Ranures repetides](/ca/docs/composed-pages#ranures-repetides)). Des de postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` conté el contingut d'un mòdul de la pàgina, un bloc que dibuixa una plantilla de mòdul i que s'apila al grup de mòduls de la pàgina; les ranures de dins són les del mòdul (vegeu [Pàgines compostes › Mòduls en una pàgina](/ca/docs/composed-pages#mòduls-en-una-pàgina)). Des de postext 1.48.

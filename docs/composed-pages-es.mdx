@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Páginas compuestas',
   sidebarTitle: 'Páginas compuestas',
-  description: 'Cómo se escribe una página compuesta en Markdown: el bloque de página, delimitado por cuatro signos de dos puntos, que indica la plantilla; los marcos y el atributo slot, que reparten el contenido entre los marcos de la plantilla; las figuras con rótulos sobre puntos concretos de una imagen, y los avisos que saltan cuando el contenido no encaja con la plantilla',
+  description: 'Cómo se escribe una página compuesta en Markdown: el bloque de página, delimitado por cuatro signos de dos puntos, que indica la plantilla; los marcos y el atributo slot, que reparten el contenido entre los marcos de la plantilla; las ranuras repetidas y los módulos, y los avisos que saltan cuando el contenido no encaja con la plantilla o tapa otro marco',
   lang: 'es',
   lastUpdated: '2026-10-20',
   readingTime: '47 min',
   order: 34,
-  plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página está en una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: el bloque de página, los marcos, los nombres de ranura y las imágenes con rótulos, como los nombres escritos sobre un mapa. También recoge los avisos que da Postext cuando el texto y la plantilla no encajan.",
+  plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página está en una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: el bloque de página, los marcos, los nombres de ranura, las tarjetas repetidas en una rejilla y los bloques apilados como módulos. También recoge los avisos que da Postext cuando el texto y la plantilla no encajan.",
 };
 
 # Páginas compuestas
@@ -90,13 +90,80 @@ Un bloque suelto también puede indicar su propia ranura:
 
 Cómo se reparte el contenido:
 
-- Si varios trozos tienen la misma ranura, se unen en el orden del Markdown.
+- Si varios trozos tienen la misma ranura, se unen en el orden del Markdown, salvo en una rejilla que se repite, donde cada trozo es una tarjeta propia (véase [Ranuras repetidas](#ranuras-repetidas)).
 - El contenido sin ranura va al **marco de flujo** de la plantilla (el marcado con `flow`).
 - Un encabezado sin ranura va primero al marco que recibe su nivel (`takes: "h1"`), si la plantilla tiene alguno; así, el título de un tema de libro de texto es un simple `# Título` al principio de la página.
 - Un `:::toc` sin ranura va al marco con `takes: "toc"`, si la plantilla tiene alguno (véase *El índice en un marco*, más abajo).
 - El contenido que indica una ranura que no existe en la plantilla va al marco de flujo, con el aviso `slotUnknown`.
 
 Fuera de una página compuesta, `slot` se acepta pero no tiene ningún efecto.
+
+### Ranuras repetidas
+
+Cuando la plantilla dibuja una tarjeta una sola vez y la coloca en una rejilla tantas veces como necesite la página (un grupo con `repeat`; véase [Configuración › Rejillas que repiten un juego de marcos](/es/docs/configuration-composed-pages#rejillas-que-repiten-un-juego-de-marcos)), cada `:::frame` que indica la ranura principal de la tarjeta es una tarjeta, en el orden en que se escribe:
+
+```md
+::::page{template="fotos"}
+# Animales del río
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+La garza
+:::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+La nutria
+:::
+:::
+::::
+```
+
+- **Miembros de la tarjeta.** Dentro del trozo de la tarjeta, un bloque o un `:::frame` que indica otro marco del juego (aquí `pie`, la pastilla del pie) va a ese marco de la misma tarjeta. Todo lo demás va al marco principal de la tarjeta.
+- **Un bloque, una tarjeta.** Un `::resource{id="…" slot="foto"}` suelto, fuera de cualquier contenedor, también es una tarjeta.
+- **Nombres.** Las tarjetas se numeran desde 1: los marcos de la segunda tarjeta son `foto[2]` y `pie[2]`, y así aparecen en los avisos, en el registro de recomposición y en el Sandbox.
+- **Cuántas.** La página tiene tantas tarjetas como trozos. Una edición en español con cinco animales y una en inglés con cuatro usan la misma plantilla. Una rejilla con `repeat.max` admite ese número; cada trozo de más da el aviso `repeatOverflow` y va al marco de flujo.
+
+Un marco del juego solo se notifica como `slotEmpty` cuando ninguna tarjeta de la página lo rellena. Un marco repetido nunca recibe un encabezado, y nunca es el marco de flujo.
+
+### Módulos en una página
+
+Una plantilla de página con un grupo de módulos (`modules: true`; véase [Configuración › Módulos](/es/docs/configuration-composed-pages#módulos)) toma sus bloques de los contenedores `:::module`, colocados uno debajo de otro en el orden en que se escriben. La plantilla del módulo dibuja el bloque; el contenedor guarda sus palabras:
+
+```md
+::::page{template="tema"}
+# El río
+
+:::module{template="caja"}
+:::frame{slot="texto" label="¿Sabías que…?"}
+Un río nace en las montañas, donde la lluvia y la nieve se juntan en arroyos.
+:::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+El río
+:::
+:::frame{slot="izq"}
+El agua que lleva
+:::
+:::frame{slot="der"}
+La vida en sus orillas
+:::
+:::
+::::
+```
+
+- **`template`** indica una plantilla con `role: 'module'`. **`name`** es opcional: da nombre a la instancia del módulo, de modo que sus marcos son `ramas.raiz` y `ramas.izq`. Sin él, la instancia es `<template>[n]`, el número del módulo entre los módulos de esa plantilla en la página: `arbol[1].raiz`. Un nombre que ya está ocupado en la página, o que contiene un espacio, `.`, `#`, `[` o `]`, se sustituye por ese nombre por defecto (`moduleNameRejected`).
+- **Las ranuras** de dentro de un `:::module` son las del propio módulo: `slot="raiz"` llega al marco `raiz` de este módulo, y dos módulos de una misma plantilla en una página no mezclan sus palabras. El contenido sin ranura va al marco de flujo del módulo, y un encabezado, al marco del módulo que recibe su nivel; si no hay ninguno de los dos, al marco de flujo de la página.
+- **Orden.** Los módulos se apilan en el orden del Markdown, así que otra página puede poner los mismos bloques en otro orden, o con un árbol más, sin plantilla nueva.
+- Un `:::module` fuera de un bloque de página es una caja normal con su contenido. Un módulo dentro de otro no está admitido (`moduleNested`).
 
 ## Ejemplo
 
@@ -194,7 +261,7 @@ Si además tiene `"wrap": "contour"`, el marco aparta el texto con la forma de l
 
 ### Decoración, cabeceras y capas
 
-La `decoration` de la plantilla (imágenes, filetes, cajas y textos breves) se coloca cuando los marcos ya tienen su caja definitiva, así que un elemento puede anclarse a un marco (`"to": "#gasto"`) y seguirlo. Sus textos leen los atributos de la propia página: `fondo="banda-retos"` en el bloque de página da `{attr.fondo}`, por ejemplo para elegir página a página una imagen de fondo con `"resourceId": "{attr.fondo}"`. Las cabeceras y los pies de página también los leen. El `header` o el `footer` de una plantilla sustituye al de la sección, `false` lo oculta y, si la plantilla no fija ninguno, se imprimen los de la sección. En una página de derecha a izquierda o vertical, los marcos siguen el flujo en espejo o girado, mientras que la decoración se queda fija en la hoja: un elemento colocado en un borde de inicio o de final (`top-start`, véase [Colocación de elementos](/es/docs/configuration-headers-footers#colocación-de-elementos)) queda junto a su marco en todas las ediciones.
+La `decoration` de la plantilla (imágenes, filetes, cajas y textos breves) se coloca cuando los marcos ya tienen su caja definitiva, así que un elemento puede anclarse a un marco (`"to": "#gasto"`) y seguirlo, y un [conector](/es/docs/configuration-composed-pages#conectores) puede unir dos marcos con una línea que se mantiene sobre ellos por mucho que sus palabras los muevan. Sus textos leen los atributos de la propia página: `fondo="banda-retos"` en el bloque de página da `{attr.fondo}`, por ejemplo para elegir página a página una imagen de fondo con `"resourceId": "{attr.fondo}"`. Las cabeceras y los pies de página también los leen. El `header` o el `footer` de una plantilla sustituye al de la sección, `false` lo oculta y, si la plantilla no fija ninguno, se imprimen los de la sección. En una página de derecha a izquierda o vertical, los marcos siguen el flujo en espejo o girado, mientras que la decoración se queda fija en la hoja: un elemento colocado en un borde de inicio o de final (`top-start`, véase [Colocación de elementos](/es/docs/configuration-headers-footers#colocación-de-elementos)) queda junto a su marco en todas las ediciones.
 
 Los marcos se pintan en el orden de su `layer`: la decoración en la capa 0, los marcos en la 1 por defecto, una capa más alta encima de una más baja y una capa negativa debajo de la decoración. `rotate` gira un marco junto con su contenido, en cualquier ángulo y alrededor del centro del marco, en el canvas, en el PDF, en el visor HTML y en el EPUB de maquetación fija.
 
@@ -256,8 +323,35 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
       <td>Una página compuesta, un marco o una figura no se cierra nunca (véanse las reglas de recuperación de más arriba). El panel Revisión llama <code>::::page</code> a la página compuesta.</td>
       <td>Añade la línea de cierre: tantos signos de dos puntos como en la línea de apertura de la página, o <code>:::</code> para un marco o una figura.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Una rejilla que se repite admite <code>repeat.max</code> tarjetas y la página le da más (véase <a href="#ranuras-repetidas">Ranuras repetidas</a>). Uno por cada tarjeta de más, en su <code>slot="…"</code>: la tarjeta va al marco de flujo, o detrás de la página.</td>
+      <td>Sube o quita el <code>max</code> de la plantilla, o pasa las tarjetas sobrantes a otra página.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> no indica ninguna plantilla, indica una plantilla que no es un módulo, o la plantilla de la página no tiene grupo de módulos (<code>reason</code>). Su contenido va al marco de flujo.</td>
+      <td>Corrige el <code>template</code> del módulo, o da a la plantilla de la página un grupo con <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un bloque de página indica una plantilla de módulo. Su contenido se compone en el flujo, como con una plantilla desconocida.</td>
+      <td>Indica una plantilla de página en el bloque y escribe el módulo dentro de él como <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> está escrito dentro de otro módulo. Sus bloques pasan a ser del módulo exterior.</td>
+      <td>Cierra el módulo exterior antes de abrir el siguiente.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>El <code>name</code> de un módulo ya lo usa otro módulo de la página, o contiene un espacio, <code>.</code>, <code>#</code>, <code>[</code> o <code>]</code>. El módulo toma el nombre <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Da a cada módulo de la página un nombre propio, hecho de letras, cifras y guiones.</td>
+    </tr>
   </tbody>
 </table>
+
+Los avisos de módulos y `repeatOverflow` existen desde postext 1.48; la parte de cada uno que toca a la plantilla se describe en [Configuración › Avisos de solapamiento, repetición y módulos](/es/docs/configuration-composed-pages#avisos-de-solapamiento-repetición-y-módulos).
 
 Una vez maquetado el libro, cada uno de estos avisos indica además la página a la que se refiere (`pageIndex`), así que el panel **Revisión** y `postext check` dan el número de página junto a la plantilla, el marco o la ranura y el rango de origen.
 
@@ -282,6 +376,28 @@ También se avisa de un marco vacío. En una pila cuyos marcos ya no tienen nada
 **Causa.** El `overflow.continueIn` de un marco es `'page:<id>'` (véase [Saltar a una página posterior](#saltar-a-una-página-posterior)) y no hay ningún bloque de página `::::page{id="<id>"}` después de la página en la que está la historia: el id está mal escrito, el bloque no lo tiene, falta el atributo de la línea de apertura que lee la regla (`'page:{attr.sigue}'`) o el bloque está antes (`before: true`). El resto continúa en una página añadida justo después, como con `'next-page'`. El aviso indica la plantilla, el marco, `target` (el id que buscaba), el `configPath` del marco y la página. El id también puede ser el de un bloque de página de un capítulo posterior del libro; un capítulo maquetado por separado con `buildDocument` y sin `laterPageIds` solo conoce sus propias páginas.
 
 **Solución.** Pon ese id en el bloque de la página posterior, o corrige el nombre en `continueIn` o en el atributo de la línea de apertura que lee. Una página anterior a la historia no puede recibirla: mueve ese bloque detrás de la historia o indica una página posterior.
+
+### frameCovered
+
+**Causa.** Parte de un marco queda debajo de otro marco pintado encima (una `layer` más alta, o la misma capa pero más adelante en el orden de la plantilla), allí donde ese marco es opaco: un pie debajo de una foto, una pestaña debajo de una imagen recortada, las últimas líneas de una caja debajo de una banda. La comprobación se hace cuando la página ya está compuesta, sobre las cajas que el contenido dio a los marcos, así que una página que está despejada en español puede quedar tapada en una edición más larga. Un marco tapa con su fondo (el fondo de su estilo o `look.background`, su pestaña, su franja), con sus imágenes y con sus líneas de texto; un contorno no tapa nada, y un marco que aparta el texto siguiendo la forma de sus imágenes (`wrap: 'contour'`) no tapa las líneas con su caja. Lo que puede quedar tapado: las líneas del marco, su pestaña y su título, sus imágenes y tablas. Las palabras sobre una imagen no se notifican: si se leen o no lo decide la comprobación de contraste. Un corte de menos de 0,3 mm es un roce, y una pareja de menos de 1 mm² se deja fuera.
+
+El aviso indica la plantilla, el marco, el marco que lo tapa (`coveredBy`, `coveredByPath`), la superficie oculta (`overlapMm2`), las primeras palabras tapadas (`text`) o la imagen (`picture`), el idioma y la página, y señala el contenido del marco tapado. Un aviso por pareja.
+
+**Solución.** Cada propuesta es un dato, igual que las de `frameOverflow`:
+
+- `layer`: la `layer` del marco que tapa, puesta debajo de la del tapado; solo se propone cuando así no se oculta otra cosa;
+- `exclude`: `'push'` en el marco que tapa, para que el texto tapado lo rodee (solo cuando se tocan líneas del texto);
+- `move`: `frame`, `dxMm`, `dyMm`, el desplazamiento más pequeño del marco que tapa que despeja la pareja, probado sobre la página: solo se ofrece cuando el marco movido, y los marcos anclados a él, quedan libres de cualquier otro marco y dentro de lo que los contiene. Si ninguna dirección queda libre, o el marco tapado cuelga del que lo tapa, no se ofrece ningún desplazamiento.
+
+Cuando el solapamiento es buscado (un dibujo que pasa por encima del texto a propósito), pon `overlap: 'allow'` en cualquiera de los dos marcos. Desde postext 1.48.
+
+### frameOutsideArea
+
+**Causa.** Un marco se sale de lo que lo contiene: su texto pasa del corte, donde se recorta, o su fondo y sus imágenes pasan del sangrado (sin sangrado, los dos límites son el corte); o cualquier parte de él pasa del marco o del grupo dentro del que está anclado, como una nota anclada dentro de una tarjeta (`top-left` de `'#card'` con un desplazamiento hacia dentro) que su texto empuja por debajo del pie de la tarjeta. Un marco anclado a un borde exterior de la otra caja (`below`, `right-of`) nunca está dentro de ella. Los excesos de menos de 0,3 mm se dejan fuera.
+
+El aviso da `past` (`'trim'`, `'bleed'`, `'frame'` o `'group'`), `target` (el nombre del marco o del grupo), `excessMm` (el exceso mayor), `sides` (el de cada lado), el idioma y la página.
+
+**Solución.** Las propuestas: `maxHeight`, el sitio que tiene el marco (no se propone para un marco sujeto por su pie, al que una altura menor no hace entrar); con ella, `continueNextPage` para un marco de texto, de modo que lo que ya no cabe continúe; `minHeight` del marco dentro del que está anclado, aumentado en lo que sobresale; `move`, el desplazamiento que lo hace entrar cuando solo se sale por un lado, que se ofrece cuando queda libre de los demás marcos. Una insignia que cuelga de su tarjeta a propósito lleva `overlap: 'allow'`. Desde postext 1.48.
 
 ## Cuando el texto crece
 
@@ -536,6 +652,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>overflow</code></td>
       <td>El contenido no cabía: <code>toMm</code> es la altura cortada, como en <code>frameOverflow</code>.</td>
+    </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Parte del marco queda debajo de <code>cause</code>, el marco pintado encima: <code>areaMm2</code> es la superficie oculta, como en <code>frameCovered</code>. En palabras: «card lies under cutout (25.3 mm²)». Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>El marco se sale <code>toMm</code> de <code>past</code>: <code>'trim'</code>, <code>'bleed'</code> o <code>'#name'</code>, el marco o el grupo dentro del que está anclado, como en <code>frameOutsideArea</code>. En palabras: «note runs 26 mm past card». Desde postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>Un conector (<code>cause</code>, su id) dejó fuera su extremo en <code>frame</code>, una caja que la página no muestra: plegada, opcional y vacía, una tarjeta más allá de los elementos de la página, o un punto de la imagen que su marco recorta. Es una nota, no un aviso. En palabras: «connector ramas left out izq (not on the page)». Desde postext 1.48.</td>
     </tr>
   </tbody>
 </table>

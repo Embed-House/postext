@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Programmatische Nutzung',
   description: 'Postext aus Code aufrufen: buildDocument und seine Warnungen, Standardwerte, Schriften, Caches und der Web Worker',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '28 min',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>Eine <code>:::figure</code> gibt einer Ressource Worte (<code>alt</code>, <code>caption</code>, <code>note</code>), der eine frühere Abbildung des Kapitels schon ihre gegeben hat, und sie unterscheiden sich (<code>resourceId</code>, <code>words</code>).</td>
       <td>Die Seiten zeigen die Worte der ersten Abbildung; die der späteren werden ausgelassen.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>Sichtbarer Inhalt eines Rahmens einer zusammengesetzten Seite liegt unter einem anderen Rahmen, der darüber gezeichnet wird (<code>template</code>, <code>frame</code>, <code>coveredBy</code>, <code>coveredByPath</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>overlapMm2</code>, <code>text</code> oder <code>picture</code>, <code>locale</code>; <code>proposals</code>: <code>layer</code>, <code>exclude</code>, <code>move</code>). Vom Layout ausgelöst, mit dem <code>pageIndex</code> der Seite. Seit postext 1.48.</td>
+      <td>Beide Rahmen werden so gezeichnet, wie die Vorlage es angibt; was verdeckt ist, bleibt unsichtbar.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Ein Rahmen einer zusammengesetzten Seite ragt über das Endformat (sein Text), den Anschnitt (seine Füllung oder seine Bilder) oder den Rahmen oder die Gruppe hinaus, in der er verankert ist (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>past</code>, <code>target</code>, <code>excessMm</code>, <code>sides</code>, <code>locale</code>; <code>proposals</code>: <code>maxHeight</code>, <code>minHeight</code>, <code>continueNextPage</code>, <code>move</code>). Vom Layout ausgelöst. Seit postext 1.48.</td>
+      <td>Der Rahmen wird dort gezeichnet, wo er steht; was über das Endformat hinausragt, wird abgeschnitten.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Ein Raster einer zusammengesetzten Seite, das sich wiederholt, fasst <code>max</code> Einträge, und die Seite gibt ihm mehr (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Eine Warnung je überzähligen Eintrag. Seit postext 1.48.</td>
+      <td>Der Eintrag kommt in den Flussrahmen oder hinter die Seite.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Ein <code>:::module</code>, das die Seite nicht setzt (<code>template</code>, <code>module</code>, <code>name</code>, <code>fenceIndex</code>; <code>reason</code>: <code>'unknown'</code>, <code>'notModule'</code>, <code>'noGroup'</code>). Seit postext 1.48.</td>
+      <td>Sein Inhalt kommt in den Flussrahmen.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Ein Seitenblock nennt eine Modulvorlage (<code>template</code>, <code>fenceIndex</code>). Seit postext 1.48.</td>
+      <td>Der Inhalt des Seitenblocks wird im Textfluss gesetzt.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Ein <code>:::module</code> in einem anderen Modul (<code>template</code>, <code>module</code>, <code>fenceIndex</code>). Seit postext 1.48.</td>
+      <td>Seine Blöcke gehören zum äußeren Modul.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Der <code>name</code> eines Moduls ist auf der Seite schon vergeben oder enthält ein Leerzeichen, <code>.</code>, <code>#</code>, <code>[</code> oder <code>]</code> (<code>template</code>, <code>module</code>, <code>name</code>, <code>used</code>, <code>reason</code>: <code>'taken'</code>, <code>'invalid'</code>, <code>fenceIndex</code>). Seit postext 1.48.</td>
+      <td>Das Modul heißt <code>used</code>, und seine Slots werden unter diesem Namen angesprochen.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

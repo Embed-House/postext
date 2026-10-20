@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Imágenes, tablas y vídeos',
   description: 'Cómo se usan los recursos en el texto: referencias e inserciones, numeración, colocación y dónde cae cada flotante; el texto que rodea las imágenes, el tamaño de los mapas de bits, las zonas seguras, las anclas de cómic y los vídeos',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '44 min',
   order: 29,
   parent: 'document-format',
@@ -349,6 +349,19 @@ const radio: Resource = {
 
 El `id` de un ancla es la clave de personaje del guion (`tomas: …`), o `sfx` para el punto en el que se reúnen las onomatopeyas de la viñeta; `x` e `y` son la boca a la que apunta el rabillo de un bocadillo de diálogo; `head`, el punto al que apuntan las burbujas de un bocadillo de pensamiento (la boca, si no se fija), y `face`, un rectángulo que ningún bocadillo tapa. El motor traslada cada punto según el recorte y el reflejo de la viñeta, de modo que el rabillo sigue apuntando a su personaje sea cual sea la forma de la viñeta; un ancla fuera de la zona segura da el aviso `comicAnchorOutsideSafeArea`, porque un recorte puede dejarla fuera. Una tercera lista, `faces`, guarda las caras de los personajes que no hablan, como rectángulos iguales a los de `avoid`: ningún bocadillo las tapa, mientras que una zona libre cede cuando a la viñeta no le queda otro sitio. Las anclas pertenecen al dibujo y sirven para todas las traducciones del cómic. Las viñetas de cómic las usan para la rotulación. Los rótulos de una figura también usan las anclas y, desde postext 1.42, las zonas `avoid` de un mapa o de un esquema marcan sus símbolos: un rótulo que invade una de ellas da el aviso `labelOverlap` (consulta [Páginas compuestas](/es/docs/composed-pages-figures#labeloverlap)). En el Sandbox se marcan en el diálogo **Zona segura y rotulación** del [panel Recursos](/es/docs/sandbox#panel-de-recursos).
 
+
+Un ancla que usa el rótulo de una figura también puede apartar el rótulo de su punto, `labelAt: { x, y }` en fracciones de la imagen, y trazar una línea de vuelta hasta él, `leader: true` o un aspecto de línea de referencia; un conector de una página compuesta puede terminar en el punto del ancla con `anchor: '<id>'`. Consulta [Configuración › Campos de rótulo de un anclaje](/es/docs/configuration-composed-pages#campos-de-rótulo-de-un-anclaje). Desde postext 1.48.
+
+### Símbolos en pies, notas y celdas
+
+Un pie, una nota o una celda de tabla pueden llevar un símbolo pequeño en su línea: `:icon[alt]{glyph="⊙"}` pone un carácter (en la letra que nombra `font="…"` o, si no, en la del texto), `:icon[alt]{resource="town-mark"}` un recurso de mapa de bits o SVG, y `:icon[alt]{line="dashed"}` una muestra de línea, para una tabla que explica las líneas de un mapa. `color="…"` lo tiñe con un color hexadecimal o una entrada de la paleta, y `size="…"` fija su altura en em (por defecto `0.75`, la altura de una mayúscula). El texto entre corchetes es lo que leen en su lugar los lectores de pantalla y el PDF etiquetado; con los corchetes vacíos, el símbolo es decoración.
+
+```ts
+{ id: 'mapa-politico', typeId: 'figure', kind: 'bitmap',
+  caption: 'Capitals :icon[capital]{glyph="⊙" font="Noto Sans Math"} and towns :icon[town]{resource="town-mark"} of Varenia' }
+```
+
+Los símbolos se leen en los pies, las notas, las celdas de tabla y los rótulos de figura (consulta [Páginas compuestas › Líneas de referencia, leyendas y símbolos](/es/docs/composed-pages-figures#líneas-de-referencia-leyendas-y-símbolos)); en el texto corrido y en los encabezados la directiva sigue siendo texto en esta versión. Desde postext 1.48.
 
 ### Vídeos
 

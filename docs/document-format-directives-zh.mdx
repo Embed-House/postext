@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: '指令',
   description: ':::指令一览：容器、分栏、换用纸张、分页、编号、留白、诗歌、目录与索引、换行，以及漫画页的标记',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
-  readingTime: '23分钟',
+  lastUpdated: '2026-10-20',
+  readingTime: '24分钟',
   order: 26,
   parent: 'document-format',
   plainSummary: "指令是以三个冒号开头的块，比如:::callout或:::columns。本页列出每一种指令和它的作用。有的把文字放进框里、排成几栏，或印在另一种纸上。有的另起一页、改变编号、加一段空白、逐行排一首诗，或印出目录和索引。最后一节讲漫画页、分格和人物台词用的标记。",
@@ -125,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-正文流中能识别五种容器名；第六种`:::frame`用于[模板页](#模板页)，盛放一个框的内容。每种排出来是什么样子，由配置中相应的部分决定：
+正文流中能识别五种容器名；`:::frame`和`:::module`在[模板页](#模板页)中分别盛放一个框和一个模块的内容，`:::figure`和`:::label`则分别盛放一幅插图和一个多行标注。每种排出来是什么样子，由配置中相应的部分决定：
 
 <table>
   <thead>
@@ -736,3 +736,6 @@ otto: 好吗？
 - `:::frame{slot="…" label="…"}` … `:::`存放同名框的内容，可以是任何Markdown。
 - 写在标题（`## Retos {slot="retos-titulo"}`）、`::resource{id="…" slot="…"}`、代码围栏或`:::`容器上的`slot="…"`只把这一个块送到该槽位。没有槽位的内容进入模板的流文框。
 - `:::figure{resource="…" slot="…"}` … `:::`放置一个资源及其标注行`::label[文字]{at="…" style="…"}`，`at`是图片的一个锚点，或者一个点`"x% y%"`。插图在正文中也能用。它的`alt`、`caption`和`note`，无论写成起始行属性，还是写成`::alt[…]`、`::caption[…]`和`::note[…]`行，都会在该章替换资源自己的文字（见[模板页 › 图自己的文字](/zh/docs/composed-pages-figures#图自己的文字)）。
+- `::label`上的`leader`从标注画一条线到它的锚点，`leader="none"`去掉这条线。插图里的`:::label{at="…" style="…"}` … `:::`逐行写一个标注，地图的图例就需要这样写；`:icon[alt]{glyph="…"}`、`{resource="…"}`或`{line="dashed"}`在标注、题注、附注或表格单元格中放一个符号（见[模板页 › 引线、图例与符号](/zh/docs/composed-pages-figures#引线图例与符号)）。自postext 1.48起。
+- 在模板把一张卡片在网格中重复排列的页面里，每个`:::frame{slot="<card>"}`是一张卡片，其中指明卡片另一个框的块进入同一张卡片的那个框（见[模板页 › 重复的槽位](/zh/docs/composed-pages#重复的槽位)）。自postext 1.48起。
+- `:::module{template="…" name="…"}` … `:::`盛放页面上一个模块的内容：模块是由模块模板画出、叠放在页面模块组中的一块；其中的槽位属于这个模块自己（见[模板页 › 页面中的模块](/zh/docs/composed-pages#页面中的模块)）。自postext 1.48起。

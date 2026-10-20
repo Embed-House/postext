@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Pages composées',
   sidebarTitle: 'Pages composées',
-  description: 'Comment écrire une page composée en Markdown : le délimiteur de page (une ligne de quatre deux-points) qui indique le gabarit ; les blocs et l’attribut slot, qui répartissent le contenu entre les blocs du gabarit ; les figures dont les étiquettes se placent sur des points précis de l’image ; et les avertissements émis quand le contenu ne correspond pas au gabarit',
+  description: 'Comment écrire une page composée en Markdown : le délimiteur de page (une ligne de quatre deux-points) qui indique le gabarit ; les blocs et l’attribut slot, qui répartissent le contenu entre les blocs du gabarit ; les emplacements répétés et les modules ; et les avertissements émis quand le contenu ne correspond pas au gabarit ou recouvre un autre bloc',
   lang: 'fr',
   lastUpdated: '2026-10-20',
   readingTime: '45 min',
   order: 34,
-  plainSummary: "Certaines pages ne sont pas une simple colonne de texte courant mais un assemblage de blocs, comme une page de manuel scolaire avec un bandeau de titre, un texte et trois encadrés de couleur accompagnés de photos. Postext les appelle des pages composées. La forme de la page est un gabarit rangé dans la configuration, et le Markdown indique seulement quel morceau de texte va dans quel bloc. Cette page montre comment écrire ce Markdown : le délimiteur de page, les blocs, les noms d’emplacement et les images avec des étiquettes, comme les noms sur une carte. Elle liste aussi les avertissements qu’émet Postext quand le texte et le gabarit ne concordent pas.",
+  plainSummary: "Certaines pages ne sont pas une simple colonne de texte courant mais un assemblage de blocs, comme une page de manuel scolaire avec un bandeau de titre, un texte et trois encadrés de couleur accompagnés de photos. Postext les appelle des pages composées. La forme de la page est un gabarit rangé dans la configuration, et le Markdown indique seulement quel morceau de texte va dans quel bloc. Cette page montre comment écrire ce Markdown : le délimiteur de page, les blocs, les noms d’emplacement, les cartes répétées dans une grille et les blocs empilés sous forme de modules. Elle liste aussi les avertissements qu’émet Postext quand le texte et le gabarit ne concordent pas.",
 };
 
 # Pages composées
@@ -90,13 +90,80 @@ Un élément isolé peut indiquer lui-même son emplacement :
 
 Le contenu se répartit ainsi :
 
-- Plusieurs morceaux qui ont le même emplacement sont réunis dans l’ordre du Markdown.
+- Plusieurs morceaux qui ont le même emplacement sont réunis dans l’ordre du Markdown, sauf dans une grille répétée, où chaque morceau est une carte à part (voir [Emplacements répétés](#emplacements-répétés)).
 - Le contenu sans emplacement va dans le **bloc de flux** du gabarit (le bloc marqué `flow`).
 - Un titre sans emplacement va d’abord au bloc qui prend son niveau (`takes: "h1"`), si le gabarit en a un : le titre d’un thème de manuel s’écrit donc simplement `# Titre` en haut de la page.
 - Un `:::toc` sans emplacement va au bloc qui a `takes: "toc"`, si le gabarit en a un (voir *La table des matières dans un bloc*, plus bas).
 - Le contenu qui indique un emplacement absent du gabarit va dans le bloc de flux et est signalé (`slotUnknown`).
 
 Hors d’une page composée, un `slot` est lu mais n’a aucun effet.
+
+### Emplacements répétés
+
+Quand le gabarit dessine une carte une seule fois et la pose dans une grille autant de fois que la page le demande (un groupe avec `repeat`, voir [Configuration › Grilles qui répètent un jeu de blocs](/fr/docs/configuration-composed-pages#grilles-qui-répètent-un-jeu-de-blocs)), chaque `:::frame` qui désigne l’emplacement principal de la carte est une carte, dans l’ordre d’écriture :
+
+```md
+::::page{template="fotos"}
+# Les animaux du fleuve
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+Le héron
+:::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+La loutre
+:::
+:::
+::::
+```
+
+- **Membres de la carte.** Dans le morceau de la carte, un élément ou un `:::frame` qui désigne un autre bloc du jeu (ici `pie`, la pastille de légende) va dans ce bloc de la même carte. Tout le reste va dans le bloc principal de la carte.
+- **Un élément, une carte.** Un `::resource{id="…" slot="foto"}` isolé, hors de tout conteneur, est lui aussi une carte.
+- **Noms.** Les cartes sont numérotées à partir de 1 : les blocs de la deuxième carte sont `foto[2]` et `pie[2]`, et c’est sous ces noms qu’ils apparaissent dans les avertissements, le journal de recomposition et le Sandbox.
+- **Combien.** La page a autant de cartes que de morceaux. Une édition espagnole à cinq animaux et une édition anglaise à quatre utilisent le même gabarit. Une grille avec `repeat.max` en prend ce nombre ; chaque morceau en trop déclenche `repeatOverflow` et va dans le bloc de flux.
+
+Un bloc du jeu n’est signalé comme `slotEmpty` que si aucune carte de la page ne le remplit. Un bloc répété ne prend jamais de titre, et il n’est jamais le bloc de flux.
+
+### Modules dans une page
+
+Un gabarit de page doté d’un groupe de modules (`modules: true`, voir [Configuration › Modules](/fr/docs/configuration-composed-pages#modules)) prend ses blocs dans des conteneurs `:::module`, posés l’un sous l’autre dans l’ordre d’écriture. Le gabarit du module dessine le bloc ; le conteneur en fournit les mots :
+
+```md
+::::page{template="tema"}
+# Le fleuve
+
+:::module{template="caja"}
+:::frame{slot="texto" label="Le savais-tu"}
+Un fleuve naît dans les montagnes, où la pluie et la neige se rassemblent en ruisseaux.
+:::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+Le fleuve
+:::
+:::frame{slot="izq"}
+L’eau qu’il transporte
+:::
+:::frame{slot="der"}
+La vie sur ses rives
+:::
+:::
+::::
+```
+
+- **`template`** désigne un gabarit avec `role: 'module'`. **`name`** est facultatif : il nomme l’instance du module, dont les blocs sont alors `ramas.raiz`, `ramas.izq`. Sans lui, l’instance est `<template>[n]`, le rang du module parmi les modules de ce gabarit sur la page : `arbol[1].raiz`. Un nom déjà pris sur la page, ou qui contient une espace, `.`, `#`, `[` ou `]`, est remplacé par ce nom par défaut (`moduleNameRejected`).
+- **Les emplacements** d’un `:::module` sont ceux du module : `slot="raiz"` atteint le bloc `raiz` de ce module, et deux modules du même gabarit sur une page gardent leurs mots séparés. Le contenu qui n’indique aucun emplacement va dans le bloc de flux du module, et un titre dans le bloc du module qui prend son niveau (`takes`) ; à défaut des deux, dans le bloc de flux de la page.
+- **Ordre.** Les modules s’empilent dans l’ordre du Markdown : une autre page compose donc les mêmes blocs dans un autre ordre, ou avec un arbre de plus, sans nouveau gabarit.
+- Un `:::module` hors d’un délimiteur de page est une simple boîte qui contient son contenu. Un module dans un module n’est pas pris en charge (`moduleNested`).
 
 ## Exemple
 
@@ -194,7 +261,7 @@ Avec en plus `"wrap": "contour"`, le bloc repousse le texte selon la forme des i
 
 ### Décor, titres courants et calques
 
-Le décor du gabarit (`decoration` : images, filets, boîtes et textes courts) est posé une fois que les blocs ont leur boîte définitive : un élément peut donc s’ancrer à un bloc (`"to": "#gasto"`) et le suivre. Ses textes peuvent utiliser les attributs de la page elle-même : `fondo="banda-retos"` sur le délimiteur de page fournit `{attr.fondo}`, par exemple pour choisir page par page une image de fond avec `"resourceId": "{attr.fondo}"`. Les titres courants y ont accès eux aussi. Le `header` ou le `footer` d’un gabarit remplace celui de la section, `false` le masque, et sans l’un ni l’autre ce sont les titres courants de la section qui s’impriment. Sur une page de droite à gauche ou verticale, les blocs suivent le flux en miroir ou tourné tandis que le décor reste sur la feuille : un élément placé sur un bord de début ou de fin (`top-start`, voir [Placement des éléments](/fr/docs/configuration-headers-footers#placement-des-éléments)) reste près de son bloc dans toutes les éditions.
+Le décor du gabarit (`decoration` : images, filets, boîtes et textes courts) est posé une fois que les blocs ont leur boîte définitive : un élément peut donc s’ancrer à un bloc (`"to": "#gasto"`) et le suivre, et un [connecteur](/fr/docs/configuration-composed-pages#connecteurs) peut relier deux blocs par une ligne qui reste attachée à eux, où que leurs mots les déplacent. Ses textes peuvent utiliser les attributs de la page elle-même : `fondo="banda-retos"` sur le délimiteur de page fournit `{attr.fondo}`, par exemple pour choisir page par page une image de fond avec `"resourceId": "{attr.fondo}"`. Les titres courants y ont accès eux aussi. Le `header` ou le `footer` d’un gabarit remplace celui de la section, `false` le masque, et sans l’un ni l’autre ce sont les titres courants de la section qui s’impriment. Sur une page de droite à gauche ou verticale, les blocs suivent le flux en miroir ou tourné tandis que le décor reste sur la feuille : un élément placé sur un bord de début ou de fin (`top-start`, voir [Placement des éléments](/fr/docs/configuration-headers-footers#placement-des-éléments)) reste près de son bloc dans toutes les éditions.
 
 Les blocs se peignent dans l’ordre de leur `layer` : le décor au calque 0, les blocs au calque 1 par défaut, un calque plus élevé par-dessus un calque plus bas, un calque négatif sous le décor. `rotate` fait tourner un bloc et son contenu ensemble, de n’importe quel angle, autour du centre du bloc, dans le canvas, le PDF, la visionneuse HTML et l’EPUB à mise en page fixe.
 
@@ -256,8 +323,35 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
       <td>Une page composée, un bloc ou une figure n’est jamais fermé (voir plus haut comment l’analyseur se rattrape). Le panneau Vérifications désigne la page composée par <code>::::page</code>.</td>
       <td>Ajouter le délimiteur de fermeture : autant de deux-points que sur la ligne d’ouverture de la page, ou <code>:::</code> pour un bloc ou une figure.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Une grille répétée contient <code>repeat.max</code> cartes et la page lui en donne davantage (voir <a href="#emplacements-répétés">Emplacements répétés</a>). Un avertissement par carte en trop, sur son <code>slot="…"</code> : la carte va dans le bloc de flux, ou après la page.</td>
+      <td>Relever ou retirer <code>max</code> dans le gabarit, ou déplacer les cartes en trop sur une autre page.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> n’indique aucun gabarit, indique un gabarit qui n’est pas un module, ou le gabarit de la page n’a pas de groupe de modules (<code>reason</code>). Son contenu va dans le bloc de flux.</td>
+      <td>Corriger le <code>template</code> du module, ou donner au gabarit de la page un groupe avec <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un délimiteur de page indique un gabarit de module. Son contenu est composé dans le flux, comme pour un gabarit inconnu.</td>
+      <td>Indiquer un gabarit de page dans le délimiteur et y écrire le module sous forme de <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> est écrit dans un autre module. Ses éléments appartiennent au module extérieur.</td>
+      <td>Fermer le module extérieur avant d’ouvrir le suivant.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Le <code>name</code> d’un module est déjà pris par un autre module de la page, ou contient une espace, <code>.</code>, <code>#</code>, <code>[</code> ou <code>]</code>. Le module prend le nom <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Donner à chaque module de la page un nom qui lui soit propre, fait de lettres, de chiffres et de tirets.</td>
+    </tr>
   </tbody>
 </table>
+
+Les avertissements des modules et `repeatOverflow` existent depuis postext 1.48 ; le versant gabarit de chacun est décrit dans [Configuration › Avertissements de chevauchement, de répétition et de modules](/fr/docs/configuration-composed-pages#avertissements-de-chevauchement-de-répétition-et-de-modules).
 
 Une fois le livre mis en page, chacun de ces avertissements indique aussi la page qu’il concerne (`pageIndex`) : le panneau Vérifications et `postext check` donnent le numéro de page à côté du gabarit, du bloc ou de l’emplacement, et de la position dans la source.
 
@@ -282,6 +376,28 @@ Un bloc vide est signalé lui aussi. Dans une pile dont les blocs n’ont plus r
 **Cause.** L’`overflow.continueIn` d’un bloc vaut `'page:<id>'` (voir [Renvoyer la suite à une page plus loin](#renvoyer-la-suite-à-une-page-plus-loin)), et aucun délimiteur de page `::::page{id="<id>"}` ne vient après la page où se trouve l’article : l’identifiant est mal écrit, le délimiteur ne l’a pas, l’attribut du délimiteur qu’utilise la règle (`'page:{attr.sigue}'`) manque, ou le délimiteur vient avant (`before: true`). Le reste se poursuit sur une page ajoutée juste après, comme avec `'next-page'`. L’avertissement indique le gabarit, le bloc, `target` (l’identifiant cherché), le `configPath` du bloc et la page. L’identifiant peut aussi être celui d’un délimiteur de page d’un chapitre ultérieur du livre ; un chapitre composé seul avec `buildDocument` et sans `laterPageIds` ne connaît que ses propres pages.
 
 **Correction.** Donnez cet identifiant au délimiteur de la page qui doit recevoir la suite, ou corrigez le nom dans `continueIn` ou dans l’attribut du délimiteur qu’il utilise. Une page placée avant l’article ne peut pas le recevoir : déplacez ce délimiteur après l’article, ou indiquez une page placée plus loin.
+
+### frameCovered
+
+**Cause.** Une partie d’un bloc se trouve sous un autre bloc peint par-dessus (un `layer` plus élevé, ou le même calque plus loin dans l’ordre du gabarit), là où ce bloc est opaque : une légende sous une photo, un onglet sous une image détourée, les dernières lignes d’un encadré sous un bandeau. La vérification a lieu une fois la page composée, sur les boîtes que le contenu a données aux blocs : une page dégagée en espagnol peut donc être recouverte dans une édition plus longue. Un bloc recouvre par son fond (le fond de son style ou `look.background`, son onglet, sa bande), ses images et ses lignes de texte ; un simple contour ne recouvre rien, et un bloc qui repousse le texte selon la forme de ses images (`wrap: 'contour'`) ne recouvre pas les lignes avec sa boîte. Ce qui peut être recouvert : les lignes du bloc, son onglet et son titre, ses images et ses tableaux. Les mots posés sur une image ne sont pas signalés : c’est à la vérification du contraste de dire s’ils se lisent. Une coupure de moins de 0,3 mm compte comme un contact, et une paire de moins de 1 mm² est laissée de côté.
+
+L’avertissement indique le gabarit, le bloc, le bloc qui le recouvre (`coveredBy`, `coveredByPath`), la surface cachée (`overlapMm2`), les premiers mots recouverts (`text`) ou l’image recouverte (`picture`), la langue et la page, et désigne le contenu du bloc recouvert. Un avertissement par paire.
+
+**Correction.** Chaque proposition est une donnée, comme celles de `frameOverflow` :
+
+- `layer` : le `layer` du bloc qui recouvre, placé sous celui du bloc recouvert, proposé seulement si cela ne cache pas autre chose à la place ;
+- `exclude` : `'push'` sur le bloc qui recouvre, pour que le texte recouvert le contourne (seulement quand des lignes de texte courant sont touchées) ;
+- `move` : `frame`, `dxMm`, `dyMm`, le plus petit déplacement du bloc qui recouvre qui dégage la paire, essayé sur la page : il n’est proposé que si le bloc déplacé, et les blocs qui lui sont ancrés, ne touchent plus aucun autre bloc et restent dans ce qui les contient. Quand aucune direction ne dégage la paire, ou que le bloc recouvert est suspendu au bloc qui le recouvre, aucun déplacement n’est proposé.
+
+Quand le chevauchement est voulu (un dessin qui passe exprès par-dessus le texte), mettez `overlap: 'allow'` sur l’un des deux blocs. Depuis postext 1.48.
+
+### frameOutsideArea
+
+**Cause.** Un bloc dépasse ce qui le contient : son texte dépasse le bord de coupe, où il est coupé, ou son fond et ses images dépassent le fond perdu (sans fond perdu, les deux limites sont le bord de coupe) ; ou une partie quelconque du bloc dépasse le bloc ou le groupe à l’intérieur duquel il est ancré, comme une note ancrée dans une carte (`top-left` de `'#card'` avec un décalage vers l’intérieur) que son texte pousse au-delà du pied de la carte. Un bloc ancré à un bord extérieur de l’autre boîte (`below`, `right-of`) n’est jamais à l’intérieur de celle-ci. Les dépassements de moins de 0,3 mm sont laissés de côté.
+
+L’avertissement donne `past` (`'trim'`, `'bleed'`, `'frame'` ou `'group'`), `target` (le nom du bloc ou du groupe), `excessMm` (le plus grand dépassement), `sides` (celui de chaque côté), la langue et la page.
+
+**Correction.** Les propositions : `maxHeight`, la place dont dispose le bloc (non proposée pour un bloc tenu par son pied, qu’une hauteur plus petite ne fait pas rentrer) ; avec elle `continueNextPage`, pour un bloc de texte, afin que ce qui ne tient plus se poursuive ; le `minHeight` du bloc à l’intérieur duquel il est ancré, augmenté du dépassement ; `move`, le déplacement qui le fait rentrer quand il ne dépasse que d’un côté, proposé si le bloc ne touche alors aucun autre bloc. Une pastille qui déborde exprès de sa carte prend `overlap: 'allow'`. Depuis postext 1.48.
 
 ## Quand le texte s’allonge
 
@@ -536,6 +652,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>overflow</code></td>
       <td>Le contenu ne tenait pas : <code>toMm</code> est la hauteur coupée, comme dans <code>frameOverflow</code>.</td>
+    </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Une partie du bloc se trouve sous <code>cause</code>, le bloc peint par-dessus : <code>areaMm2</code> est la surface cachée, comme dans <code>frameCovered</code>. En mots : « card lies under cutout (25.3 mm²) ». Depuis postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>Le bloc dépasse de <code>toMm</code> la limite <code>past</code> : <code>'trim'</code>, <code>'bleed'</code> ou <code>'#name'</code>, le bloc ou le groupe à l’intérieur duquel il est ancré, comme dans <code>frameOutsideArea</code>. En mots : « note runs 26 mm past card ». Depuis postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>Un connecteur (<code>cause</code>, son id) a laissé de côté son extrémité sur <code>frame</code>, une boîte que la page ne montre pas : repliée, facultative et vide, une carte au-delà des éléments de la page, ou un point de l’image que son bloc coupe. Une note, pas un avertissement. En mots : « connector ramas left out izq (not on the page) ». Depuis postext 1.48.</td>
     </tr>
   </tbody>
 </table>

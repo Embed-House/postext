@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Utilisation programmatique',
   description: 'Appeler Postext depuis le code : buildDocument et ses avertissements, les valeurs par défaut, les polices, les caches et le Web Worker',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '33 min',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>Une <code>:::figure</code> donne des textes (<code>alt</code>, <code>caption</code>, <code>note</code>) à une ressource à laquelle une figure précédente du chapitre a déjà donné les siens, et ils diffèrent (<code>resourceId</code>, <code>words</code>).</td>
       <td>Les pages affichent les textes de la première figure ; ceux de la figure suivante sont omis.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>L’encre d’un bloc d’une page composée se trouve sous un autre bloc peint par-dessus (<code>template</code>, <code>frame</code>, <code>coveredBy</code>, <code>coveredByPath</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>overlapMm2</code>, <code>text</code> ou <code>picture</code>, <code>locale</code> ; <code>proposals</code> : <code>layer</code>, <code>exclude</code>, <code>move</code>). Émis par la mise en page, avec le <code>pageIndex</code> de la page. Depuis postext 1.48.</td>
+      <td>Les deux blocs sont peints comme le prévoit le gabarit ; l’encre recouverte est cachée.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>Un bloc d’une page composée dépasse le bord de coupe (son texte), le fond perdu (son fond ou ses images) ou le bloc ou le groupe à l’intérieur duquel il est ancré (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>past</code>, <code>target</code>, <code>excessMm</code>, <code>sides</code>, <code>locale</code> ; <code>proposals</code> : <code>maxHeight</code>, <code>minHeight</code>, <code>continueNextPage</code>, <code>move</code>). Émis par la mise en page. Depuis postext 1.48.</td>
+      <td>Le bloc est peint là où il se trouve ; ce qui dépasse le bord de coupe est coupé.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Une grille répétée d’une page composée contient <code>max</code> éléments et la page lui en donne davantage (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Un avertissement par élément en trop. Depuis postext 1.48.</td>
+      <td>L’élément va dans le bloc de flux, ou après la page.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Un <code>:::module</code> que la page ne place pas (<code>template</code>, <code>module</code>, <code>name</code>, <code>fenceIndex</code> ; <code>reason</code> : <code>'unknown'</code>, <code>'notModule'</code>, <code>'noGroup'</code>). Depuis postext 1.48.</td>
+      <td>Son contenu va dans le bloc de flux.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Un délimiteur de page indique un gabarit de module (<code>template</code>, <code>fenceIndex</code>). Depuis postext 1.48.</td>
+      <td>Le contenu du délimiteur est composé dans le flux.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Un <code>:::module</code> à l’intérieur d’un autre module (<code>template</code>, <code>module</code>, <code>fenceIndex</code>). Depuis postext 1.48.</td>
+      <td>Ses éléments appartiennent au module extérieur.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Le <code>name</code> d’un module est déjà pris sur la page ou contient une espace, <code>.</code>, <code>#</code>, <code>[</code> ou <code>]</code> (<code>template</code>, <code>module</code>, <code>name</code>, <code>used</code>, <code>reason</code> : <code>'taken'</code>, <code>'invalid'</code>, <code>fenceIndex</code>). Depuis postext 1.48.</td>
+      <td>Le module prend le nom <code>used</code>, et ses emplacements se désignent sous ce nom.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

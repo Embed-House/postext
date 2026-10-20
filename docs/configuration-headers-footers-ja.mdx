@@ -3,9 +3,9 @@
 export const metadata = {
   title: '設定：柱とノンブル',
   sidebarTitle: '柱とノンブル',
-  description: '各ページの上下に印刷するものの設定。プレースホルダーを含むテキスト、罫線、ボックス、画像、奇偶ページごとの指定、そして各要素の配置',
+  description: '各ページの上下に印刷するものの設定。プレースホルダーを含むテキスト、罫線、ボックス、画像、ベクターのパス、奇偶ページごとの指定、そして各要素の配置',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '31分',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ export const metadata = {
 
 スロットは統一された**デザインスロット**モデルを使います。どの要素にも`placement`があり、そこに`anchor`（コンテナー、または`#id`で指定する別の要素へのアンカー）、省略可能な`offset`、省略可能な`size`を指定します。従来のフラットなフィールド`align`、`marginFromBody`、`marginFromEdge`、`width: 'full'`も入力としては引き続き受け付け、新しい形へ自動的に移行します。新しい形での同等の記述は以下で説明します。
 
-各スロットには**テキスト**、**罫線**、**ボックス**、**画像**の要素のリストが入ります。配列の順序が描画順です（最初の要素が最初に描かれ、最後の要素がいちばん上に描かれます）。これはアンカーの指定にかかわらず変わりません。要素はリストで後に来る要素にもアンカーできる（`anchor.to: '#ttl'`）ため、背景のボックスを先頭に置いたまま、その前面に来るテキストを基準に位置を決められます。
+各スロットには**テキスト**、**罫線**、**ボックス**、**画像**、**パス**の要素のリストが入ります（テンプレートページの装飾には**コネクター**も置けます。[設定 › テンプレートページ](/ja/docs/configuration-composed-pages#コネクター)を参照）。配列の順序が描画順です（最初の要素が最初に描かれ、最後の要素がいちばん上に描かれます）。これはアンカーの指定にかかわらず変わりません。要素はリストで後に来る要素にもアンカーできる（`anchor.to: '#ttl'`）ため、背景のボックスを先頭に置いたまま、その前面に来るテキストを基準に位置を決められます。
 
 **組み込みの既定値**。`header`または`footer`が`undefined`のとき、postextは空のスロットではなく、適切な組み込みの既定値を適用します。
 
@@ -46,7 +46,7 @@ export const metadata = {
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td><code>undefined</code>のときは組み込みの既定値、<code>[]</code>で無効</td>
-      <td>テキスト、罫線、ボックス、画像の要素の順序付きリスト。</td>
+      <td>テキスト、罫線、ボックス、画像、パスの要素の順序付きリスト。</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ VDTでは、縦組みのブロックに`vertical`が付きます（`VDTDesignTex
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>角の半径。描画時に、短いほうの辺の半分までに制限されます。</td>
+      <td>角の半径。描画時に、短いほうの辺の半分までに制限されます。postext 1.48以降は、オブジェクトで角ごとに半径を指定でき、書かなかった角は四角になります。上の2つの角だけを丸めた帯などに使います。</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>すべての辺</td>
+      <td>辺ごとの枠線で、それぞれ<code>borderColor</code>と<code>borderWidth</code>より優先する<code>&#123; enabled?, color?, width? &#125;</code>です。色と太さのある辺は、<code>enabled: false</code>と書かないかぎり描かれます。下端だけに罫線のある帯は<code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>です（postext 1.48以降）。</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ PDFバックエンドはリソースを図と同じように埋め込み（印�
 
 リソースが画像を説明している場合、デザインが描く画像はコンテンツになります。リソースの`altText`、なければプレーンテキストにしたキャプション（チップはラベルで、`:ref`は`text`があればそれで読みます）がVDTに入り（`VDTDesignImageBlock.altText`）、HTMLでは`<img>`の`alt`、タグ付きPDFでは`/Alt`付きの`Figure`になり、そのデザインのテキストの直後に読まれます（章の図版は章の見出しの後）。リソースにどちらもない画像と、`decorative`を指定した画像は装飾になり、HTMLでは`role="presentation"`付きの`alt=""`、PDFではアーティファクトになります。柱やフッターの画像はすべてのページで繰り返されるため、リソースの内容にかかわらず紙面の付属物として扱われます。VDTには`altText`がなく、HTMLでは`role="presentation"`付きの`alt=""`、PDFではページのアーティファクトになります。
 
+### パス要素
+
+`path`要素は、ボックスでは描けないベクターの図形を描きます。端を斜めに切ってのどまで伸びる帯、切り込みの入ったリボン、柱の横の山形、カードに付ける吹き出しのしっぽなどです。輪郭はSVGのパスデータで、既定では要素自身のボックスに対する割合で書くので、図形はボックスに合わせて伸び、ボックスが動けば一緒に動きます。`{ to: '#title', edge: 'right' }`まで広げたリボンは、どの言語でもタイトルと同じ長さになります。どのデザインスロットでも使えます。柱、見出しと部のデザイン、目次の部の行、囲みのデザイン、テンプレートページの装飾です。postext 1.48以降。
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>、<code>id</code></td>
+      <td><code>'path'</code>、<code>string</code></td>
+      <td>—</td>
+      <td>種別と、ほかの要素がアンカーできる固定のidです。</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>SVGのパスデータです。<code>M L H V C S Q T A Z</code>の絶対・相対のコマンドを、<code>viewBox</code>の単位で書きます。読めないデータ（最初の移動がない、コマンドでない文字がある、数が足りないコマンドがある）は何も描かず、<code>unknownConfigValue</code>として報告されます。要素のボックスは、そこにアンカーした要素のために残ります。</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td><code>d</code>を書く空間の幅と高さです。既定では<code>1</code>がボックスの幅全体または高さ全体です。図面からコピーしたパスは、ここに元の図面の大きさを書きます（<code>[24, 24]</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code>は<code>viewBox</code>を軸ごとにボックスへ引き伸ばし、<code>'meet'</code>は縦横同じ比率で縮めてボックスの中央に収めます。つぶれてはいけないアイコンに使います。</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>、<code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>黒の塗り</td>
+      <td>塗りと輪郭線です。どちらもなければ、SVGのパスと同じく黒で塗ります。<code>stroke</code>だけなら塗りはありません。パレットにリンクした色は、ページと部のパレットに従います。</td>
+    </tr>
+    <tr>
+      <td><code>width</code>、<code>dash</code></td>
+      <td><code>Dimension</code>、<code>Dimension[]</code></td>
+      <td><code>0.5pt</code>、実線</td>
+      <td>輪郭線の太さと破線のパターンです。ボックスに合わせて伸びないページ上の長さなので、引き伸ばした図形でも線の太さは均一です。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>ボックス要素と同じく配置し、大きさを決めます（<a href="#要素の配置">要素の配置</a>を参照）。書かなかった辺や<code>'fill'</code>は、コンテナーの端まで伸びます。</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>、<code>pages</code>、<code>pin</code>、<code>reserve</code></td>
+      <td>ボックス要素と同じ</td>
+      <td><code>'all'</code>、<code>false</code>、<code>true</code></td>
+      <td>どのページに出すか、テンプレートが枠を描く位置にとどまるか（テンプレートページの装飾）、見出しの確保する高さに含めるかです。</td>
+    </tr>
+  </tbody>
+</table>
+
+パスは、キャンバス、PDF、HTMLビューアー、固定レイアウトのEPUBではベクターの図形として描かれ、タグ付きPDFではレイアウトのアーティファクトになり、リフロー型EPUBではほかの紙面の付属物と同じく出力されません。クリックは空のボックスではなく、インキのある部分に反応します。要素にないキーは`unknownConfigKey`です。このリリースではパスを回転できません。
+
 ### 要素の配置
 
-`ElementPlacement`は、あらゆるデザインスロット（ページのヘッダー、ページのフッター、見出しレベルの詳細デザインのスロット）の中で、すべての種類の要素（テキスト、罫線、ボックス、画像）が使う統一された配置モデルです。配置は3つの状態で記述します。
+`ElementPlacement`は、あらゆるデザインスロット（ページのヘッダー、ページのフッター、見出しレベルの詳細デザインのスロット）の中で、すべての種類の要素（テキスト、罫線、ボックス、画像、パス）が使う統一された配置モデルです。配置は3つの状態で記述します。
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
     edge: AnchorEdge;
+    /** The point along the side `edge` names, on '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distance from the anchor point. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ interface ElementPlacement {
 
 `'container'`、`'page'`、`'bleed'`とともに使った要素基準の辺、および`'#id'`とともに使ったコンテナーの辺は、左上の角として扱われます。
 
+**辺に沿った点。**`'#id'`（別の要素、テンプレートページでは枠やグループ）へのアンカーでは、`at`で辺が示す側に沿った点を選べます。`'start'`、`'center'`、`'end'`、または辺の始まりからの割合（`0`から`1`）です。辺に沿った向きでは要素をその点の中央に置き、辺を横切る向きでは辺の位置を保ちます。そのため`below`に`at: 'center'`を付ければ枠の中央の下に目盛りが下がり、`right-of`に`at: 0.5`を付ければ辺の高さの半分に印が来ます。横の辺（`top`、`bottom`、`below`、`above`、`align-top`、`align-bottom`、そして辺として読む角）は、ページの行が始まる側から始まります。右から左へ進むページでは右からです。縦の辺（`left`、`right`、`right-of`、`left-of`、`align-left`、`align-right`、`start`、`end`）は上から始まります。0から1の範囲外の数は近いほうの端に留め、3つの語以外の語は`unknownConfigValue`として報告して無視します。`'container'`、`'page'`、`'bleed'`、`'outer'`、および`center`に付けた`at`も同じく無視します。postext 1.48以降。`at`がなければ、辺はこれまでどおり自分の点を使います。
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **行頭側と行末側の辺。**`top-start`、`start`、`bottom-start`、`top-end`、`end`、`bottom-end`（`'container'`、`'page'`、`'bleed'`、`'outer'`とともに）と、`align-start`、`align-end`（`'#id'`とともに）は、決まった側ではなく、ページの行が始まる側を指します。左から右へ進むページでは`top-start`は`top-left`、右から左へ進むページと、行が右から順に並ぶ縦組みのページでは`top-right`です。これらの辺では、オフセットの`x`は行頭側から行末側へ向かって測ります。右から左へ進むページでは正の`x`で要素が左へ動き、左から右へ進むページの要素の鏡像になります。テンプレートの装飾と柱は紙面に配置されるので、`top-start`と書いたリードは、アラビア語版でもスペイン語版でもタイトルの枠の上に来ます。枠はページの版面の流れ（すでに鏡像になっているか回転している）に配置され、そこでの`start`は常に左側で、`left`と同じです。見出しのデザインも流れの中に配置されるので、`start`は`left`です。Sandboxでは、スロットエディターの**そろえ**のリストに**先頭**と**末尾**があり、辺のリストにも行頭側と行末側があります（postext 1.39以降）。1.38までは、これらの語は`top-left`として扱われていました。
 
 `anchor.to: 'page'`は要素を**トリムボックス**（断裁後の物理的なページ）に、`'bleed'`は各辺を`cutLines.bleed`だけ広げたトリムボックスにアンカーします（トンボが無効な間はトリムボックスと同じです）。どちらの枠も`size: 'fill'`と自動幅の制限の基準にもなるため、ページの余白にかかわらず、色の帯を端から端まで伸ばせます。
@@ -740,7 +830,7 @@ interface ElementPlacement {
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-サイズは、別のボックスの辺まで伸ばすこともできます。`{ to, edge }`と書き、`to`でアンカーと同じようにボックスを指定し（`'container'`、`'page'`、`'bleed'`、`'outer'`、別の要素の`'#id'`、テンプレートページの装飾では枠やグループも）、`edge`でその辺を選びます。高さなら`'top'`か`'bottom'`、幅なら`'left'`か`'right'`です。長さは要素のアンカー点からその辺まで、要素が伸びる向きに測ります。辺がアンカー点の後ろにあれば0、別の軸の辺や存在しないボックスは`'fill'`として扱います。帯の下端から塗り足しまでの地色はテンプレートの中で完結し、帯が動けば一緒に動きます（postext 1.38以降）。
+サイズは、別のボックスの辺まで伸ばすこともできます。`{ to, edge }`と書き、`to`でアンカーと同じようにボックスを指定し（`'container'`、`'page'`、`'bleed'`、`'outer'`、別の要素の`'#id'`、テンプレートページの装飾では枠やグループも）、`edge`でその辺を選びます。高さなら`'top'`か`'bottom'`、幅なら`'left'`か`'right'`、どちらの軸でも中央なら`'center'`です（postext 1.48以降）。枠の左端から隣の枠の中央までの帯や、カードの下から下の行の中央まで下ろす縦の罫線に使います。長さは要素のアンカー点からその辺まで、要素が伸びる向きに測ります。辺がアンカー点の後ろにあれば0、別の軸の辺や存在しないボックスは`'fill'`として扱います。帯の下端から塗り足しまでの地色はテンプレートの中で完結し、帯が動けば一緒に動きます（postext 1.38以降）。
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

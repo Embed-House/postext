@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Imatges, taules i vídeos',
   description: "Com s'afegeixen imatges, taules i vídeos al text: referències i insercions, numeració, col·locació i lloc on va a parar un flotant, text al voltant de les imatges, mida dels mapes de bits, zones segures, àncores de còmic i vídeos",
   lang: 'ca',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '44 min',
   order: 29,
   parent: 'document-format',
@@ -348,6 +348,19 @@ const radio: Resource = {
 
 L'`id` d'una àncora és la clau del personatge al guió (`tomas: …`), o `sfx` per al punt on s'agrupen les onomatopeies de la vinyeta; `x` i `y` són la boca on apunta la cua d'una bafarada de diàleg; `head`, el punt on apunten les bombolles d'una bafarada de pensament (la boca, si no es defineix), i `face`, un rectangle que cap bafarada no tapa. El motor aplica a cada punt el retall i l'efecte mirall de la vinyeta, de manera que una cua continua apuntant al personatge sigui quina sigui la forma de la vinyeta; una àncora fora de la zona segura genera `comicAnchorOutsideSafeArea`, perquè un retall la pot deixar fora. Les àncores pertanyen al dibuix i serveixen per a totes les traduccions del còmic. Una tercera llista, `faces`, desa les cares dels personatges que no parlen, com a rectangles iguals que els d'`avoid`: cap bafarada no les tapa, mentre que una zona lliure cedeix quan a la vinyeta no queda cap altre lloc. Les vinyetes de còmic les tenen en compte per a la retolació. Els rètols d'una figura també fan servir les àncores i, des de postext 1.42, les zones `avoid` d'un mapa o d'un esquema marquen els seus símbols: si un rètol n'envaeix una, genera l'avís `labelOverlap` (vegeu [Pàgines compostes](/ca/docs/composed-pages-figures#labeloverlap)). Al Sandbox es marquen al diàleg **Zona segura i retolació** del [tauler Recursos](/ca/docs/sandbox#tauler-de-recursos).
 
+
+Una àncora que fa servir el rètol d'una figura també pot posar el rètol lluny del seu punt, amb `labelAt: { x, y }` en fraccions de la imatge, i dibuixar una línia fins al punt, amb `leader: true` o un aspecte de línia de referència; un connector d'una pàgina composta pot acabar al punt de l'àncora amb `anchor: '<id>'`. Vegeu [Configuració › Camps de rètol d'una àncora](/ca/docs/configuration-composed-pages#camps-de-rètol-duna-àncora). Des de postext 1.48.
+
+### Símbols als peus, a les notes i a les cel·les
+
+Un peu, una nota o una cel·la de taula poden portar un símbol petit dins de la línia: `:icon[alt]{glyph="⊙"}` posa un caràcter (amb la lletra que indica `font="…"` o, si no, la del text), `:icon[alt]{resource="town-mark"}`, un recurs de mapa de bits o SVG, i `:icon[alt]{line="dashed"}`, una mostra de línia, per a una taula que explica les línies d'un mapa. `color="…"` el tenyeix amb un color hexadecimal o una entrada de la paleta, i `size="…"` en fixa l'alçada en ems (per defecte `0.75`, l'alçada d'una majúscula). El text entre claudàtors és el que llegeixen al seu lloc els lectors de pantalla i el PDF etiquetat; amb els claudàtors buits, el símbol és decoratiu.
+
+```ts
+{ id: 'mapa-politico', typeId: 'figure', kind: 'bitmap',
+  caption: 'Capitals :icon[capital]{glyph="⊙" font="Noto Sans Math"} i pobles :icon[poble]{resource="town-mark"} de Varenia' }
+```
+
+Els símbols es llegeixen als peus, a les notes, a les cel·les de taula i als rètols de figura (vegeu [Pàgines compostes › Línies de referència, llegendes i símbols](/ca/docs/composed-pages-figures#línies-de-referència-llegendes-i-símbols)); al text de cos i als encapçalaments, en aquesta versió, la directiva queda com a text. Des de postext 1.48.
 
 ### Vídeos
 

@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Konfiguration: Kästen',
   sidebarTitle: 'Kästen',
-  description: 'Benannte Stile für :::callout-Kästen: Kontur, Füllung, Streifen, Titel, Symbol, Marke und Etikett; nummerierte Aussagen; Typografie im Kasten; Kästen, die über mehrere Seiten geteilt werden; und Gestaltungen im Kasten',
+  description: 'Benannte Stile für :::callout-Kästen: Kontur, Füllung, Streifen, Titel, Symbol, Marke und Etikett; Kastenformen mit Radien je Ecke, Konturen je Seite und verbundenen Etiketten; nummerierte Aussagen; Typografie im Kasten; Kästen, die über mehrere Seiten geteilt werden; und Gestaltungen im Kasten',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '25 min',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>, <code>#cccccc</code>, <code>0.5pt</code></td>
-      <td>Umrisslinie des Kastens, innerhalb der Kastenkante gezeichnet wie die Kontur eines Kastenelements (siehe <a href="/de/docs/configuration-headers-footers#kastenelemente">Kastenelemente</a>).</td>
+      <td>Umrisslinie des Kastens, innerhalb der Kastenkante gezeichnet wie die Kontur eines Kastenelements (siehe <a href="/de/docs/configuration-headers-footers#kastenelemente">Kastenelemente</a>). Seit postext 1.48 gibt <code>sides</code> jeder Seite (<code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>) ein eigenes <code>&#123; enabled?, color?, width? &#125;</code> über den Werten der ganzen Kontur: nur eine Linie über dem Kasten, ein kräftigerer Fuß (siehe <a href="#ecken-seiten-und-verbundene-etiketten">Ecken, Seiten und verbundene Etiketten</a>).</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>Eckenradius von Hintergrund / Kontur (begrenzt auf die halbe Breite und Höhe des Kastens). Der Streifen folgt ihm: Bei einem abgerundeten Kasten wird der Streifen auf die abgerundete Form beschnitten, so wie CSS ein <code>border-left</code> auf <code>border-radius</code> beschneidet. Das Etikett <code>label</code> behält eckige Ecken.</td>
+      <td>Eckenradius von Hintergrund / Kontur (begrenzt auf die halbe Breite und Höhe des Kastens). Der Streifen folgt ihm: Bei einem abgerundeten Kasten wird der Streifen auf die abgerundete Form beschnitten, so wie CSS ein <code>border-left</code> auf <code>border-radius</code> beschneidet. Das Etikett <code>label</code> behält eckige Ecken, außer es ist mit dem Kasten verbunden. Seit postext 1.48 nimmt es einen Radius je Ecke an; eine Ecke, die im Objekt fehlt, bleibt eckig: ein Kasten, der nur an den beiden oberen Ecken abgerundet ist.</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -196,9 +196,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
       <td>nicht gesetzt (kein Etikett)</td>
-      <td>Ein Etikett an der Oberkante des Kastens, das das Attribut <code>label</code> des Kastens zeigt – die Nummer eines nummerierten Kastens („BOX 1-1“). Es schmiegt sich an die Ecke <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, oder <code>'top-start'</code> / <code>'top-end'</code> in der Richtung des Kastens selbst, wie <code>'start'</code> / <code>'end'</code> beim Streifen), um <code>inset</code> eingerückt, ragt <code>offset</code> über die Oberkante des Kastens hinaus (dieser Raum gehört zum Block, zusätzlich zu <code>marginTop</code>, sodass das Etikett ihn auch am Kopf einer Spalte behält), ist <code>height</code> hoch mit <code>paddingX</code> auf jeder Seite des Texts und kann daneben eine Ressource <code>icon</code> haben (<code>&#123; resourceId, width, gap &#125;</code>, auf der von der Ecke abgewandten Seite) sowie eine Linie <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) entlang der Oberkante von der gegenüberliegenden Ecke bis zu ihm. Standardwerte: Schrift der Überschriften, Größe des Fließtexts, <code>700</code>, Weiß auf der Hauptfarbe, <code>1.4em</code> hoch, <code>0.6em</code> Innenabstand, weder angehoben noch eingerückt, ein Bild <code>1em</code> breit und <code>0.3em</code> vom Text entfernt. Das Etikett ist eine eigene Form, die auf der Kontur steht, und behält daher eckige Ecken, gleich welchen <code>borderRadius</code> der Kasten hat. Seit postext 1.42 setzt <code>icon.placement: 'inside'</code> das Bild in das Etikett, an dessen Anfang vor den Wörtern (am rechten Ende in einem von rechts nach links gesetzten Kasten), im Abstand <code>gap</code>: Das Etikett ist so breit wie Bild, Abstand, Wörter und Innenabstand, und das Bild, eingepasst in <code>icon.width</code> und die Höhe des Etiketts, ist darin zentriert. Das Bild behält seine Farben; ein weißer Ring auf farbigem Etikett und ein farbiger Ring auf weißem sind also zwei Ressourcen, je eine pro Stil. <code>'beside'</code>, der Standard, setzt das Bild außerhalb des Etiketts neben dessen Rand. Seit postext 1.43 zeichnet <code>icon.tint: true</code> das Bild in der <code>color</code> des Etiketts statt in seinen eigenen Farben: Nur die Form des Bildes wird gezeichnet, in der Farbe der Wörter, sodass ein Ring für jede Farbe eines Buches reicht. Ein Bild ohne Transparenz wird zu einem schlichten Rechteck. Im PDF behält ein SVG seine Kanten, eine Bitmap wird dort beschnitten, wo sie halb durchsichtig ist; die Druckvorlage (<code>svg.pdfFileId</code>) wird nicht verwendet, weil sich eine PDF-Seite nicht umfärben lässt.</td>
+      <td>Ein Etikett an der Oberkante des Kastens, das das Attribut <code>label</code> des Kastens zeigt – die Nummer eines nummerierten Kastens („BOX 1-1“). Es schmiegt sich an die Ecke <code>position</code> (<code>'top-right'</code> / <code>'top-left'</code>, oder <code>'top-start'</code> / <code>'top-end'</code> in der Richtung des Kastens selbst, wie <code>'start'</code> / <code>'end'</code> beim Streifen), um <code>inset</code> eingerückt, ragt <code>offset</code> über die Oberkante des Kastens hinaus (dieser Raum gehört zum Block, zusätzlich zu <code>marginTop</code>, sodass das Etikett ihn auch am Kopf einer Spalte behält), ist <code>height</code> hoch mit <code>paddingX</code> auf jeder Seite des Texts und kann daneben eine Ressource <code>icon</code> haben (<code>&#123; resourceId, width, gap &#125;</code>, auf der von der Ecke abgewandten Seite) sowie eine Linie <code>rule</code> (<code>&#123; enabled, color, width &#125;</code>) entlang der Oberkante von der gegenüberliegenden Ecke bis zu ihm. Standardwerte: Schrift der Überschriften, Größe des Fließtexts, <code>700</code>, Weiß auf der Hauptfarbe, <code>1.4em</code> hoch, <code>0.6em</code> Innenabstand, weder angehoben noch eingerückt, ein Bild <code>1em</code> breit und <code>0.3em</code> vom Text entfernt. Das Etikett ist eine eigene Form, die auf der Kontur steht, und behält daher eckige Ecken, gleich welchen <code>borderRadius</code> der Kasten hat; mit <code>joined: true</code> (seit postext 1.48) bilden Etikett und Kasten dagegen einen einzigen Umriss, und <code>fillet</code> rundet die inneren Ecken ab, an denen sie sich treffen. Die Positionen <code>bottom-right</code>, <code>bottom-left</code>, <code>bottom-start</code> und <code>bottom-end</code> (seit postext 1.48) hängen das Etikett an den Fuß des Kastens, seine <code>rule</code> entlang des Fußes. Seit postext 1.48 kann das Symbol auch ein Zeichen einer Schrift sein, <code>icon.kind: 'glyph'</code> (siehe <a href="#ein-zeichen-auf-dem-etikett">Ein Zeichen auf dem Etikett</a>). Seit postext 1.42 setzt <code>icon.placement: 'inside'</code> das Bild in das Etikett, an dessen Anfang vor den Wörtern (am rechten Ende in einem von rechts nach links gesetzten Kasten), im Abstand <code>gap</code>: Das Etikett ist so breit wie Bild, Abstand, Wörter und Innenabstand, und das Bild, eingepasst in <code>icon.width</code> und die Höhe des Etiketts, ist darin zentriert. Das Bild behält seine Farben; ein weißer Ring auf farbigem Etikett und ein farbiger Ring auf weißem sind also zwei Ressourcen, je eine pro Stil. <code>'beside'</code>, der Standard, setzt das Bild außerhalb des Etiketts neben dessen Rand. Seit postext 1.43 zeichnet <code>icon.tint: true</code> das Bild in der <code>color</code> des Etiketts statt in seinen eigenen Farben: Nur die Form des Bildes wird gezeichnet, in der Farbe der Wörter, sodass ein Ring für jede Farbe eines Buches reicht. Ein Bild ohne Transparenz wird zu einem schlichten Rechteck. Im PDF behält ein SVG seine Kanten, eine Bitmap wird dort beschnitten, wo sie halb durchsichtig ist; die Druckvorlage (<code>svg.pdfFileId</code>) wird nicht verwendet, weil sich eine PDF-Seite nicht umfärben lässt.</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### Ecken, Seiten und verbundene Etiketten
+
+Ein Kasten muss kein Rechteck mit vier gleichen Ecken und einer einzigen Kontur sein. Seit postext 1.48 kann ein Stil manche Ecken abrunden und andere nicht, seine Kontur nur an einigen Seiten zeichnen und sein Etikett als eine einzige Form aus dem Kasten wachsen lassen: die Karte eines Schulbuchs, deren Titeletikett und Körper ein einziger Umriss sind, gezeichnet vom Stil statt in ein Bild hinter der Seite gemalt.
+
+```ts
+calloutStyles: [
+  // Rounded at the top only, a rule over the box and a heavier foot.
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // A card whose tab grows out of its top edge.
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **Ecken.** `borderRadius` ist eine Länge für alle vier Ecken oder `{ topLeft, topRight, bottomRight, bottomLeft }`. Eine Ecke, die im Objekt fehlt, ist eckig. Die Ecken sind die des Blatts. Zwei Ecken nehmen nie mehr als die Seite zwischen ihnen; jede gibt anteilig nach.
+- **Seiten.** `border.sides.top`, `right`, `bottom` und `left` nehmen `enabled`, `color` und `width` an, und jedes fehlende Feld kommt von der ganzen Kontur. Ein Kasten mit einer Kontur nur oben ist `border: { enabled: false, sides: { top: { enabled: true } } }`, oder `enabled: true` mit den drei anderen Seiten ausgeschaltet. Die Innenkante einer Seite folgt ihrer Breite, sodass eine abgerundete Ecke zwischen einer dünnen und einer dicken Seite so geschwungen ist, wie CSS sie zeichnet.
+- **Verbundenes Etikett.** Mit `label.joined: true` sind Etikett und Kasten ein Umriss, eine Füllung (der `background` des Kastens; der eigene `background` des Etiketts wird nicht gezeichnet) und eine Kontur, die um das Etikett herumläuft. Das Etikett steht auf der Kante, um seine Höhe außerhalb des Kastens: Sein `offset` muss `0` sein (ein anderer Wert wird als `unknownConfigValue` gemeldet und als `0` gelesen). Seine äußeren Ecken übernehmen den Radius der Kastenecke, an die es sich schmiegt, und die inneren Ecken, an denen es auf den Kasten trifft, rundet `fillet` ab (Standard: dieser Radius). Ein Etikett, das bündig mit der Seite des Kastens steht (ein `inset` unter einem halben Pixel), steigt gerade aus dieser Seite auf. Geben Sie den Wörtern eine Farbe, die auf der Füllung des Kastens lesbar ist (`label.color`), da das Etikett keine eigene Füllung mehr hat.
+- **Etiketten am Fuß.** `position: 'bottom-right'`, `'bottom-left'`, `'bottom-start'` oder `'bottom-end'` hängt das Etikett an den Fuß des Kastens, einfach oder verbunden: Es ist das umgedrehte obere Etikett, `offset` unter dem Fuß, die `rule` entlang des Fußes. Seitliche Etiketten gibt es nicht: Die Wörter eines Etiketts laufen quer.
+
+Jedes Ausgabeformat zeichnet diese Formen: Canvas und PDF als Vektorumrisse, der HTML-Betrachter und das EPUB mit festem Layout mit CSS je Ecke und je Seite. Das umfließende EPUB schreibt die Ecken und Seiten in sein CSS und setzt ein verbundenes Etikett als einfaches Etikett. Das `look.border.color` eines Rahmens färbt jede Seite um, und eine Teilpalette färbt jede einzeln um. Ein Stil, dessen Ecken und Seiten alle gleich sind, wird wie bisher gesetzt.
+
+### Ein Zeichen auf dem Etikett
+
+`label.icon` kann statt eines Bilds ein Zeichen einer Schrift setzen: `kind: 'glyph'` mit `glyph: '◉'`. Das Etikett braucht keine Bildressource, und das Zeichen übernimmt die Farbe der Wörter, sofern es keine eigene angibt, sodass ein Stil für jede Farbe eines Buchs reicht. Seit postext 1.48.
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Feld</th>
+      <th style={{ width: '200px' }}>Typ</th>
+      <th style={{ width: '120px' }}>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>siehe Beschreibung</td>
+      <td><code>'resource'</code>, wenn <code>resourceId</code> gesetzt ist, <code>'glyph'</code>, wenn nur <code>glyph</code> gesetzt ist. Ausdrücklich angegeben hat <code>kind</code> Vorrang: <code>kind: 'glyph'</code> setzt das Zeichen, gleich was <code>resourceId</code> angibt.</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>keiner</td>
+      <td>Das Zeichen, das als Symbol gesetzt wird (<code>'◉'</code>, <code>'★'</code>, <code>'✎'</code>).</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>, <code>fontWeight</code></td>
+      <td><code>string</code>, <code>number</code></td>
+      <td>die des Etiketts</td>
+      <td>Schrift und Schriftstärke des Zeichens: die des Etiketts, sonst die Schrift der Überschriften und <code>700</code>. Fehlt der Schrift das Zeichen, greift der Ersatz wie im Browser; das PDF meldet <code>missingGlyph</code>.</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Die Größe des Zeichens als Faktor der Textgröße des Etiketts. Bei <code>1</code> teilt es die Grundlinie der Wörter; bei anderen Größen bleibt es auf dem Etikett zentriert.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die <code>color</code> des Etiketts</td>
+      <td>Die Farbe des Zeichens. Ohne Angabe folgt es den Wörtern, und das <code>look.label.color</code> eines Rahmens färbt beide um.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>, <code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>, <code>Dimension</code></td>
+      <td><code>'beside'</code>, <code>0.3em</code></td>
+      <td>Wie bei einem Bild: <code>'inside'</code> setzt das Zeichen in das Etikett vor die Wörter, und das Etikett wächst um seine Breite und den Abstand; <code>'beside'</code> setzt es jenseits des Etikettrands. <code>width</code> und <code>tint</code> eines Bilds gelten nicht.</td>
+    </tr>
+  </tbody>
+</table>
+
+Das Zeichen ist Dekoration: ein Layout-Artefakt in einem getaggten PDF, im HTML vor assistiven Technologien verborgen und im umfließenden EPUB aus dem Titel des Kastens weggelassen, sodass das Etikett nur über seine Wörter gelesen wird.
 
 ### Stile, die auf einem anderen basieren
 

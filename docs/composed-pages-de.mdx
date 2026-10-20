@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Zusammengesetzte Seiten',
   sidebarTitle: 'Zusammengesetzte Seiten',
-  description: 'Wie Sie eine zusammengesetzte Seite in Markdown schreiben: der Seitenblock, eingeleitet mit vier Doppelpunkten, der die Vorlage angibt; Rahmen und das Attribut slot, die den Inhalt auf die Rahmen der Vorlage verteilen; Abbildungen mit Beschriftungen an festen Punkten eines Bilds; und die Warnungen, wenn Inhalt und Vorlage nicht zusammenpassen',
+  description: 'Wie Sie eine zusammengesetzte Seite in Markdown schreiben: der Seitenblock, eingeleitet mit vier Doppelpunkten, der die Vorlage angibt; Rahmen und das Attribut slot, die den Inhalt auf die Rahmen der Vorlage verteilen; wiederholte Slots und Module; und die Warnungen, wenn Inhalt und Vorlage nicht zusammenpassen oder ein Rahmen einen anderen verdeckt',
   lang: 'de',
   lastUpdated: '2026-10-20',
   readingTime: '41 min',
   order: 34,
-  plainSummary: "Manche Seiten bestehen nicht aus einer Spalte Fließtext, sondern aus mehreren Feldern, so wie eine Schulbuchseite mit einem Titelband, einem Text und drei farbigen Kästen mit Fotos. Postext nennt sie zusammengesetzte Seiten. Die Form der Seite ist eine Vorlage in der Konfiguration, und das Markdown sagt nur, welcher Teil des Textes in welches Feld gehört. Diese Seite zeigt, wie Sie dieses Markdown schreiben: den Seitenblock, die Rahmen, die Slot-Namen und Bilder mit Beschriftungen wie den Namen auf einer Landkarte. Sie führt außerdem die Warnungen auf, die Postext ausgibt, wenn Text und Vorlage nicht zusammenpassen.",
+  plainSummary: "Manche Seiten bestehen nicht aus einer Spalte Fließtext, sondern aus mehreren Feldern, so wie eine Schulbuchseite mit einem Titelband, einem Text und drei farbigen Kästen mit Fotos. Postext nennt sie zusammengesetzte Seiten. Die Form der Seite ist eine Vorlage in der Konfiguration, und das Markdown sagt nur, welcher Teil des Textes in welches Feld gehört. Diese Seite zeigt, wie Sie dieses Markdown schreiben: den Seitenblock, die Rahmen, die Slot-Namen, Karten, die sich in einem Raster wiederholen, und Blöcke, die als Module übereinanderstehen. Sie führt außerdem die Warnungen auf, die Postext ausgibt, wenn Text und Vorlage nicht zusammenpassen.",
 };
 
 # Zusammengesetzte Seiten
@@ -90,13 +90,80 @@ Ein einzelner Block kann seinen Slot selbst angeben:
 
 So wird der Inhalt verteilt:
 
-- Mehrere Teile mit demselben Slot werden in der Reihenfolge des Markdowns aneinandergefügt.
+- Mehrere Teile mit demselben Slot werden in der Reihenfolge des Markdowns aneinandergefügt, außer in einem Raster, das sich wiederholt: Dort ist jeder Teil eine eigene Karte (siehe [Wiederholte Slots](#wiederholte-slots)).
 - Inhalt ohne Slot kommt in den **Flussrahmen** der Vorlage (den mit `flow` markierten Rahmen).
 - Eine Überschrift ohne Slot kommt zuerst in den Rahmen, der ihre Ebene übernimmt (`takes: "h1"`), sofern die Vorlage einen solchen hat; der Titel eines Schulbuchthemas ist also einfach `# Titel` oben auf der Seite.
 - Ein `:::toc` ohne Slot kommt in den Rahmen mit `takes: "toc"`, sofern die Vorlage einen hat (siehe *Das Inhaltsverzeichnis in einem Rahmen*, weiter unten).
 - Inhalt, der einen Slot angibt, den die Vorlage nicht kennt, kommt in den Flussrahmen und wird gemeldet (`slotUnknown`).
 
 Außerhalb einer zusammengesetzten Seite wird ein `slot` zwar eingelesen, bewirkt aber nichts.
+
+### Wiederholte Slots
+
+Zeichnet die Vorlage eine Karte nur einmal und legt sie so oft in ein Raster, wie die Seite braucht (eine Gruppe mit `repeat`, siehe [Konfiguration › Raster, die einen Rahmensatz wiederholen](/de/docs/configuration-composed-pages#raster-die-einen-rahmensatz-wiederholen)), dann ist jedes `:::frame`, das den Hauptslot der Karte nennt, eine Karte, in der geschriebenen Reihenfolge:
+
+```md
+::::page{template="fotos"}
+# Tiere am Fluss
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+Der Reiher
+:::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+Der Fischotter
+:::
+:::
+::::
+```
+
+- **Teile der Karte.** Innerhalb des Teils einer Karte kommt ein Block oder ein `:::frame`, der einen anderen Rahmen des Satzes nennt (hier `pie`, das Etikett mit der Legende), in diesen Rahmen derselben Karte. Alles andere kommt in den Hauptrahmen der Karte.
+- **Ein Block, eine Karte.** Auch ein einzelnes `::resource{id="…" slot="foto"}` außerhalb jedes Containers ist eine Karte.
+- **Namen.** Die Karten werden ab 1 gezählt: Die Rahmen der zweiten Karte heißen `foto[2]` und `pie[2]`, und so erscheinen sie in Warnungen, im Umbruchprotokoll und in der Sandbox.
+- **Wie viele.** Die Seite hat so viele Karten wie Teile. Eine spanische Ausgabe mit fünf Tieren und eine englische mit vier verwenden dieselbe Vorlage. Ein Raster mit `repeat.max` nimmt so viele auf; jeder Teil darüber hinaus löst `repeatOverflow` aus und kommt in den Flussrahmen.
+
+Ein Rahmen des Satzes wird nur dann als `slotEmpty` gemeldet, wenn keine Karte der Seite ihn füllt. Ein wiederholter Rahmen übernimmt nie eine Überschrift und ist nie der Flussrahmen.
+
+### Module auf einer Seite
+
+Eine Seitenvorlage mit einer Modulgruppe (`modules: true`, siehe [Konfiguration › Module](/de/docs/configuration-composed-pages#module)) nimmt ihre Blöcke aus `:::module`-Containern, untereinander in der geschriebenen Reihenfolge. Die Vorlage des Moduls zeichnet den Block, der Container enthält seine Wörter:
+
+```md
+::::page{template="tema"}
+# Der Fluss
+
+:::module{template="caja"}
+:::frame{slot="texto" label="Wusstest du?"}
+Ein Fluss beginnt im Gebirge, wo sich Regen und Schnee zu Bächen sammeln.
+:::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+Der Fluss
+:::
+:::frame{slot="izq"}
+Das Wasser, das er führt
+:::
+:::frame{slot="der"}
+Das Leben an seinen Ufern
+:::
+:::
+::::
+```
+
+- **`template`** nennt eine Vorlage mit `role: 'module'`. **`name`** ist optional: Es benennt die Instanz des Moduls, sodass seine Rahmen `ramas.raiz` und `ramas.izq` heißen. Ohne Namen ist die Instanz `<template>[n]`, die laufende Nummer des Moduls unter den Modulen dieser Vorlage auf der Seite: `arbol[1].raiz`. Ein Name, der auf der Seite schon vergeben ist, oder einer mit Leerzeichen, `.`, `#`, `[` oder `]`, wird durch diesen Standardnamen ersetzt (`moduleNameRejected`).
+- **Slots** innerhalb eines `:::module` gehören dem Modul: `slot="raiz"` erreicht den Rahmen `raiz` dieses Moduls, und zwei Module derselben Vorlage auf einer Seite halten ihre Wörter auseinander. Inhalt ohne Slot kommt in den Flussrahmen des Moduls, eine Überschrift in den Rahmen des Moduls, der ihre Ebene übernimmt (`takes`); fehlt beides, in den Flussrahmen der Seite.
+- **Reihenfolge.** Die Module stapeln sich in der Reihenfolge des Markdowns; eine andere Seite setzt dieselben Blöcke also in anderer Reihenfolge oder mit einem Baum mehr, ohne neue Vorlage.
+- Ein `:::module` außerhalb eines Seitenblocks ist ein einfacher Kasten mit seinem Inhalt. Ein Modul in einem Modul wird nicht unterstützt (`moduleNested`).
 
 ## Beispiel
 
@@ -194,7 +261,7 @@ Kommt `"wrap": "contour"` hinzu, verdrängt der Rahmen mit der Form der Bilder, 
 
 ### Dekoration, Kolumnentitel und Ebenen
 
-Die Dekoration der Vorlage (`decoration`: Bilder, Linien, Kästen und kurze Texte) wird gesetzt, sobald die Rahmen ihre endgültige Position haben; ein Element kann sich daher an einem Rahmen verankern (`"to": "#gasto"`) und ihm folgen. Ihre Texte übernehmen die Attribute der Seite selbst: `fondo="banda-retos"` im Seitenblock ergibt `{attr.fondo}`, etwa für ein Hintergrundbild, das Seite für Seite mit `"resourceId": "{attr.fondo}"` gewählt wird. Auch die Kolumnentitel übernehmen sie. Das `header` oder `footer` einer Vorlage ersetzt das des Abschnitts, `false` blendet es aus, und ohne beides erscheinen die Kolumnentitel des Abschnitts. Auf einer Seite von rechts nach links oder im senkrechten Satz folgen die Rahmen dem gespiegelten oder gedrehten Fluss, während die Dekoration auf dem Blatt bleibt: Ein Element an einer Anfangs- oder Endkante (`top-start`, siehe [Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)) steht in jeder Sprachausgabe bei seinem Rahmen.
+Die Dekoration der Vorlage (`decoration`: Bilder, Linien, Kästen und kurze Texte) wird gesetzt, sobald die Rahmen ihre endgültige Position haben; ein Element kann sich daher an einem Rahmen verankern (`"to": "#gasto"`) und ihm folgen, und ein [Verbinder](/de/docs/configuration-composed-pages#verbinder) kann zwei Rahmen mit einer Linie verbinden, die an ihnen bleibt, wie weit ihre Wörter sie auch verschieben. Ihre Texte übernehmen die Attribute der Seite selbst: `fondo="banda-retos"` im Seitenblock ergibt `{attr.fondo}`, etwa für ein Hintergrundbild, das Seite für Seite mit `"resourceId": "{attr.fondo}"` gewählt wird. Auch die Kolumnentitel übernehmen sie. Das `header` oder `footer` einer Vorlage ersetzt das des Abschnitts, `false` blendet es aus, und ohne beides erscheinen die Kolumnentitel des Abschnitts. Auf einer Seite von rechts nach links oder im senkrechten Satz folgen die Rahmen dem gespiegelten oder gedrehten Fluss, während die Dekoration auf dem Blatt bleibt: Ein Element an einer Anfangs- oder Endkante (`top-start`, siehe [Platzierung von Elementen](/de/docs/configuration-headers-footers#platzierung-von-elementen)) steht in jeder Sprachausgabe bei seinem Rahmen.
 
 Rahmen werden in der Reihenfolge ihrer `layer` gezeichnet: die Dekoration auf Ebene 0, Rahmen standardmäßig auf Ebene 1, eine höhere Ebene über einer niedrigeren, eine negative Ebene unter der Dekoration. `rotate` dreht einen Rahmen samt Inhalt um einen beliebigen Winkel um seinen Mittelpunkt, im Canvas, im PDF, im HTML-Betrachter und im EPUB mit festem Layout.
 
@@ -256,8 +323,35 @@ Die Prüfungen werten Markdown und Konfiguration aus, noch bevor das Buch gesetz
       <td>Eine zusammengesetzte Seite, ein Rahmen oder eine Abbildung wird nie geschlossen (siehe oben, wie der Parser den Fehler korrigiert). Das Bedienfeld Prüfungen bezeichnet die zusammengesetzte Seite als <code>::::page</code>.</td>
       <td>Ergänzen Sie die schließende Zeile: so viele Doppelpunkte wie in der öffnenden Zeile der Seite, oder <code>:::</code> für einen Rahmen oder eine Abbildung.</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>Ein Raster, das sich wiederholt, fasst <code>repeat.max</code> Karten, und die Seite gibt ihm mehr (siehe <a href="#wiederholte-slots">Wiederholte Slots</a>). Eine Warnung je überzählige Karte, an ihrem <code>slot="…"</code>: Die Karte kommt in den Flussrahmen oder hinter die Seite.</td>
+      <td>Erhöhen oder entfernen Sie <code>max</code> in der Vorlage, oder setzen Sie die überzähligen Karten auf eine andere Seite.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>Ein <code>:::module</code> nennt keine Vorlage, eine Vorlage, die kein Modul ist, oder die Vorlage der Seite hat keine Modulgruppe (<code>reason</code>). Sein Inhalt kommt in den Flussrahmen.</td>
+      <td>Korrigieren Sie das <code>template</code> des Moduls, oder geben Sie der Vorlage der Seite eine Gruppe mit <code>modules: true</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>Ein Seitenblock nennt eine Modulvorlage. Sein Inhalt wird im Textfluss gesetzt, wie bei einer unbekannten Vorlage.</td>
+      <td>Geben Sie im Seitenblock eine Seitenvorlage an, und schreiben Sie das Modul als <code>:::module</code> hinein.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>Ein <code>:::module</code> steht in einem anderen Modul. Seine Blöcke gehören zum äußeren Modul.</td>
+      <td>Schließen Sie das äußere Modul, bevor Sie das nächste öffnen.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>Der <code>name</code> eines Moduls ist schon an ein anderes Modul der Seite vergeben oder enthält ein Leerzeichen, <code>.</code>, <code>#</code>, <code>[</code> oder <code>]</code>. Das Modul erhält den Namen <code>used</code> (<code>arbol[2]</code>).</td>
+      <td>Geben Sie jedem Modul der Seite einen eigenen Namen aus Buchstaben, Ziffern und Bindestrichen.</td>
+    </tr>
   </tbody>
 </table>
+
+Die Modulwarnungen und `repeatOverflow` gibt es seit postext 1.48; die Seite der Vorlage beschreibt jeweils [Konfiguration › Warnungen zu Überlappung, Wiederholung und Modulen](/de/docs/configuration-composed-pages#warnungen-zu-überlappung-wiederholung-und-modulen).
 
 Sobald das Buch gesetzt ist, enthält jede dieser Warnungen auch die Seite, die sie betrifft (`pageIndex`), sodass das Bedienfeld Prüfungen und `postext check` die Seitenzahl neben der Vorlage, dem Rahmen oder Slot und dem Quellbereich angeben.
 
@@ -282,6 +376,28 @@ Auch ein leerer Rahmen wird gemeldet. In einem Stapel, dessen Rahmen nichts mehr
 **Ursache.** Das `overflow.continueIn` eines Rahmens ist `'page:<id>'` (siehe [Auf eine spätere Seite springen](#auf-eine-spätere-seite-springen)), und nach der Seite, auf der der Artikel steht, folgt kein Seitenblock `::::page{id="<id>"}`: Die ID ist falsch geschrieben, dem Seitenblock fehlt sie, das Attribut des Seitenblocks, das die Regel auswertet (`'page:{attr.sigue}'`), fehlt, oder der Seitenblock steht davor (`before: true`). Der Rest läuft auf einer Seite weiter, die direkt danach hinzukommt, wie bei `'next-page'`. Die Warnung nennt Vorlage, Rahmen, `target` (die gesuchte ID), den `configPath` des Rahmens und die Seite. Die ID darf auch zu einem Seitenblock in einem späteren Kapitel des Buchs gehören; ein Kapitel, das allein mit `buildDocument` und ohne `laterPageIds` gesetzt wird, kennt nur seine eigenen Seiten.
 
 **Behebung.** Geben Sie dem späteren Seitenblock diese ID, oder berichtigen Sie den Namen in `continueIn` oder in dem Attribut des Seitenblocks, das dafür ausgewertet wird. Eine Seite vor dem Artikel kann ihn nicht aufnehmen: Setzen Sie diesen Seitenblock hinter den Artikel, oder geben Sie eine spätere Seite an.
+
+### frameCovered
+
+**Ursache.** Ein Teil eines Rahmens liegt unter einem anderen Rahmen, der darüber gezeichnet wird (eine höhere `layer` oder dieselbe Ebene, später in der Reihenfolge der Vorlage), und zwar dort, wo dieser Rahmen deckt: eine Legende unter einem Foto, ein Etikett unter einem freigestellten Bild, die letzten Zeilen eines Kastens unter einem Band. Die Prüfung läuft, sobald die Seite gesetzt ist, auf den Rechtecken, die der Inhalt den Rahmen gegeben hat; eine Seite, die auf Spanisch frei ist, kann daher in einer längeren Ausgabe verdeckt sein. Ein Rahmen deckt mit seiner Füllung (dem Hintergrund seines Stils oder `look.background`, seinem Etikett, seinem Streifen), mit seinen Bildern und mit seinen Textzeilen; eine Kontur deckt nichts, und ein Rahmen, der Text um die Form seiner Bilder schiebt (`wrap: 'contour'`), deckt Zeilen nicht mit seinem Rechteck. Verdeckt werden können die Zeilen des Rahmens, sein Etikett und sein Titel, seine Bilder und Tabellen. Wörter über einem Bild werden nicht gemeldet: Ob sie lesbar sind, prüft die Kontrastprüfung. Eine Überschneidung schmaler als 0,3 mm gilt als Berührung, und ein Paar unter 1 mm² bleibt außer Betracht.
+
+Die Warnung nennt die Vorlage, den Rahmen, den verdeckenden Rahmen (`coveredBy`, `coveredByPath`), die verborgene Fläche (`overlapMm2`), die ersten verdeckten Wörter (`text`) oder das Bild (`picture`), die Sprache und die Seite, und sie zeigt auf den Inhalt des verdeckten Rahmens. Eine Warnung je Paar.
+
+**Behebung.** Jeder Vorschlag ist ein Datensatz, wie bei `frameOverflow`:
+
+- `layer`: die `layer` des verdeckenden Rahmens unter die des verdeckten gesetzt, nur vorgeschlagen, wenn dadurch nicht etwas anderes verdeckt wird;
+- `exclude`: `'push'` am verdeckenden Rahmen, sodass der verdeckte Text um ihn herumläuft (nur, wenn Zeilen des Grundtexts betroffen sind);
+- `move`: `frame`, `dxMm`, `dyMm`, die kleinste Verschiebung des verdeckenden Rahmens, die das Paar freistellt, auf der Seite erprobt: Sie wird nur angeboten, wenn der verschobene Rahmen und die an ihm verankerten Rahmen frei von allen anderen Rahmen landen und innerhalb dessen bleiben, was sie hält. Landet keine Richtung frei oder hängt der verdeckte Rahmen am verdeckenden, wird keine Verschiebung angeboten.
+
+Ist die Überlappung gewollt (eine Zeichnung, die absichtlich über den Text reicht), setzen Sie `overlap: 'allow'` an einem der beiden Rahmen. Seit postext 1.48.
+
+### frameOutsideArea
+
+**Ursache.** Ein Rahmen ragt über das hinaus, was ihn hält: sein Text über das Endformat, wo er abgeschnitten wird, oder seine Füllung und seine Bilder über den Anschnitt (ohne Anschnitt ist beides das Endformat); oder irgendein Teil von ihm über den Rahmen oder die Gruppe, in der er verankert ist, etwa eine Notiz, die innerhalb einer Karte verankert ist (`top-left` von `'#card'` mit einem Versatz hinein) und die ihr Text über den Fuß der Karte schiebt. Ein Rahmen, der an einer Kante außerhalb des anderen Kastens verankert ist (`below`, `right-of`), liegt nie in ihm. Überstände unter 0,3 mm bleiben außer Betracht.
+
+Die Warnung nennt `past` (`'trim'`, `'bleed'`, `'frame'` oder `'group'`), `target` (den Namen des Rahmens oder der Gruppe), `excessMm` (den größten Überstand), `sides` (den Überstand jeder Seite), die Sprache und die Seite.
+
+**Behebung.** Die Vorschläge: `maxHeight`, der Platz, den der Rahmen hat (nicht vorgeschlagen für einen Rahmen, der an seinem Fuß gehalten wird, da eine kleinere Höhe ihn nicht hereinholt); dazu `continueNextPage` für einen Textrahmen, damit weiterläuft, was nicht mehr passt; `minHeight` des Rahmens, in dem er verankert ist, um den Überstand vergrößert; `move`, die Verschiebung, die ihn hereinholt, wenn er nur über eine Seite hinausragt, angeboten, wenn er frei von den anderen Rahmen landet. Ein Abzeichen, das absichtlich über seine Karte hinaushängt, erhält `overlap: 'allow'`. Seit postext 1.48.
 
 ## Wenn der Text wächst
 
@@ -536,6 +652,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>overflow</code></td>
       <td>Der Inhalt hat nicht gepasst: <code>toMm</code> ist die abgeschnittene Höhe, wie bei <code>frameOverflow</code>.</td>
+    </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>Ein Teil des Rahmens liegt unter <code>cause</code>, dem Rahmen, der darüber gezeichnet wird: <code>areaMm2</code> ist die verborgene Fläche, wie bei <code>frameCovered</code>. In Worten: „card lies under cutout (25.3 mm²)“. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>Der Rahmen ragt <code>toMm</code> über <code>past</code> hinaus: <code>'trim'</code>, <code>'bleed'</code> oder <code>'#name'</code>, den Rahmen oder die Gruppe, in der er verankert ist, wie bei <code>frameOutsideArea</code>. In Worten: „note runs 26 mm past card“. Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>Ein Verbinder (<code>cause</code>, seine ID) hat sein Ende an <code>frame</code> weggelassen, einem Kasten, den die Seite nicht zeigt: eingeklappt, optional und leer, eine Karte jenseits der Einträge der Seite oder ein Bildpunkt, den sein Rahmen abschneidet. Ein Hinweis, keine Warnung. In Worten: „connector ramas left out izq (not on the page)“. Seit postext 1.48.</td>
     </tr>
   </tbody>
 </table>

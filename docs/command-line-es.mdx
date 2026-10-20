@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Línea de comandos',
   description: 'Un único ejecutable autónomo para macOS, Linux y Windows. Convierte un libro .postext, una carpeta de libro o archivos Markdown sueltos en PDF, HTML, EPUB, imágenes de las páginas y Word; además, crea paquetes, revisa libros y devuelve resultados en JSON para scripts y agentes',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '13 min',
   order: 46,
   plainSummary: "Esta página es para quien quiere hacer libros con Postext desde una terminal en lugar de desde la web. Descargas un único archivo para tu ordenador y lo ejecutas, sin instalar nada más. Le das tu libro, o unos cuantos archivos de texto, y te hace un PDF, una página web, un libro electrónico, imágenes de las páginas o un documento de Word. También puede revisar un libro en busca de problemas y juntar todos sus archivos en uno. Otros programas y los asistentes de inteligencia artificial también pueden usarlo, porque sabe responder en un formato que leen con facilidad.",
@@ -309,7 +309,7 @@ lugar de marcadores (`contentInConfig`), una vez por cada estilo de encabezado, 
 de parte, con la ruta de cada texto: pasa ese texto al Markdown, o añade el título o el nombre de la
 editorial a `checks.contentInConfig.allow`.
 
-En un libro con plantillas de página, `check` informa además del texto que no cabe en su marco (`frameOverflow`, con los pasos que probó la escalera de reajuste y los cambios que lo resolverían), de una historia que supera las páginas que un marco puede añadir (`frameContinuationLimit`), de un salto a una página que no viene después (`continueTargetMissing`) y de los rótulos de figura que no se pueden dibujar o que chocan entre sí (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`). Después de los avisos imprime una línea `reflow` por cada página compuesta con sucesos, y `--json` incluye los pasos, las propuestas y el registro de recomposición como datos. Consulta [Páginas compuestas › Avisos](/es/docs/composed-pages#avisos) y [Registro de recomposición](/es/docs/composed-pages#registro-de-recomposición).
+En un libro con plantillas de página, `check` informa además del texto que no cabe en su marco (`frameOverflow`, con los pasos que probó la escalera de reajuste y los cambios que lo resolverían), de una historia que supera las páginas que un marco puede añadir (`frameContinuationLimit`), de un salto a una página que no viene después (`continueTargetMissing`), de los rótulos de figura que no se pueden dibujar o que chocan entre sí (`labelAnchorUnknown`, `anchorUnlabelled`, `labelOverflow`, `labelOverlap`), de los marcos tapados por otros marcos o que se salen de su borde (`frameCovered`, `frameOutsideArea`), de más tarjetas de las que admite una rejilla (`repeatOverflow`) y de los módulos que una página no puede colocar (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`). Después de los avisos imprime una línea `reflow` por cada página compuesta con sucesos, y `--json` incluye los pasos, las propuestas y el registro de recomposición como datos. Consulta [Páginas compuestas › Avisos](/es/docs/composed-pages#avisos) y [Registro de recomposición](/es/docs/composed-pages#registro-de-recomposición).
 
 ### build y --watch
 

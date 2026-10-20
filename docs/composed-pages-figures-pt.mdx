@@ -31,7 +31,9 @@ Esta página trata das figuras de uma página composta, ou do texto corrido, que
 
 - `at` indica uma âncora do recurso (um ponto definido uma única vez sobre a imagem e compartilhado por todos os idiomas), ou dá um ponto em porcentagens da imagem, `at="x% y%"`, para um rótulo sem âncora.
 - `style` indica um estilo de rótulo e prevalece sobre o estilo da âncora.
-- O texto entre colchetes é Markdown em linha: negrito, itálico, chips.
+- `leader` traça uma linha do rótulo até o ponto da âncora, e `leader="none"` a retira (veja [Linhas de chamada, legendas de mapa e símbolos](#linhas-de-chamada-legendas-de-mapa-e-símbolos)).
+- O texto entre colchetes é Markdown em linha: negrito, itálico, chips e símbolos escritos com `:icon`.
+
 
 Uma figura funciona tanto no texto corrido quanto dentro de um bloco. Os rótulos dela são desenhados sobre a imagem como texto e vão aonde a figura for: uma coluna, um flutuante, um bloco girado ou reduzido pela escada de ajuste (os passos que fazem o conteúdo caber), uma página dupla. Quando falta o `:::` de fechamento de uma figura, a primeira linha que não é um rótulo nem está em branco encerra a figura, e o Postext a aponta como contêiner não fechado.
 
@@ -61,6 +63,57 @@ Um recurso guarda uma imagem, as âncoras dela e um único conjunto de palavras,
 - **Vertical.** Com `writingMode: 'vertical-rl'` na âncora (ou no estilo de rótulo dela), o rótulo é composto como uma página vertical: os caracteres em pé, em células uma sob a outra, as colunas da direita para a esquerda, as palavras latinas e os números longos virados de lado e os números curtos numa só célula. Então `width` é uma parte da altura da imagem, o comprimento de uma coluna, e um rótulo chinês ou japonês se reparte em mais colunas. `align` corre ao longo da coluna (`start` é a ponta de cima), `verticalAlign` através das colunas (`top` é a primeira, a da direita), e `rotate` continua girando o rótulo. Na página espelhada de um livro da direita para a esquerda, o rótulo se lê do mesmo jeito, de cima para baixo nas colunas e em pé, no mesmo ponto da imagem (desde o postext 1.40).
 - **Verificações.** Um rótulo que continua mais largo do que a medida no `minScale` do estilo gera `labelOverflow`; dois rótulos cujas linhas se tocam geram `labelOverlap` no posterior. As duas coisas são verificadas em cada edição; assim, uma tradução com palavras mais longas mostra onde precisa de espaço. A paleta de uma parte (`:::part{palette="…"}`) recolore os rótulos das páginas dela como faz com as legendas. A verificação de contraste mede um rótulo sobre a placa ou, se não houver, sobre o halo; um rótulo posto diretamente sobre a imagem é ignorado, porque o fundo dele é a imagem. O preflight de impressão também verifica os rótulos: letra pequena em cores de processo, tintas e distância ao refile.
 - **Numa página dupla.** Uma figura que atravessa a lombada de uma página dupla (um bloco com `crossGutter: true`) pinta uma metade em cada página; um rótulo que entrasse na faixa da medianiz seria cortado pela dobra e não se leria em nenhuma das duas. Esse rótulo desliza na horizontal até a borda da faixa, do lado em que fica o ponto da âncora, e mantém a altura; um ponto exatamente sobre a lombada fica na primeira página, como um bloco. Uma âncora com `gutter: 'cross'` mantém o lugar, para um título posto nas duas páginas. As bordas externas da folha não são tocadas: um rótulo que passa do refile é cortado como a imagem. Desde o postext 1.43.
+
+### Linhas de chamada, legendas de mapa e símbolos
+
+Desde o postext 1.48, um rótulo pode ficar afastado do que nomeia, um rótulo pode ser a legenda de um mapa, e um rótulo, uma legenda ou uma célula de tabela pode trazer símbolos.
+
+**Linhas de chamada.** O `labelAt` de uma âncora afasta o rótulo do seu ponto (um nome no mar, uma nota na margem de um esquema), e uma linha de chamada liga o rótulo de volta ao ponto. A aparência é o `leader` do estilo de rótulo (veja [Configuração › Estilos de rótulo](/pt/docs/configuration-composed-pages#estilos-de-rótulo)); o Markdown só a liga ou desliga para um rótulo:
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` com qualquer valor que não seja `none`, `false` ou `off` liga a linha; sem o atributo, decide o `leader` da âncora e, sem nenhum dos dois, um rótulo afastado do seu ponto recebe uma linha quando o estilo dele tem `leader`. A nota de um bloco também pode apontar para um lugar da imagem: um [conector](/pt/docs/configuration-composed-pages#conectores) cuja ponta indica uma âncora da imagem (`anchor: 'lake'`).
+
+**Rótulos de várias linhas.** `:::label{at="…" style="…"}` … `:::`, dentro de um `:::figure`, escreve um rótulo linha por linha: cada linha não vazia da origem é uma linha do rótulo; assim, uma legenda de mapa ou um endereço não precisa de `\\` no fim de cada linha. O primeiro `:::` fecha o rótulo, e o seguinte, a figura. `::label[…]` continua sendo um rótulo de uma linha, quebrado só onde diz `\\`.
+
+**Legendas de mapa.** Um rótulo num estilo com `kind: 'legend'` é a legenda de um mapa: cada linha é uma fila, e o símbolo que abre uma fila fica numa coluna da largura do símbolo mais largo; assim, as palavras das filas começam numa mesma borda. Escreva o símbolo no começo de cada linha:
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[País]{glyph="■" color="country"} País
+:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Capital
+:icon[Cidade]{resource="town-mark" size="0.55"} Cidade
+:icon[Fronteira]{line="dashed" color="border"} Fronteira
+:::
+::label[:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Símbolos.** `:icon[alt]{…}` põe um pequeno símbolo na linha, apoiado na linha de base:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Atributo</th>
+      <th>Efeito</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>Um recurso bitmap ou SVG, mantendo a proporção.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>Um caractere, na fonte do texto ou na fonte que <code>font="…"</code> indica.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>Uma amostra de linha, duas vezes mais longa que alta: uma fronteira ou uma estrada numa legenda de mapa.</td></tr>
+    <tr><td><code>color="…"</code></td><td>Uma cor hexadecimal ou uma entrada da paleta: a cor de um caractere, de uma linha ou de uma imagem.</td></tr>
+    <tr><td><code>size="…"</code></td><td>A altura do símbolo em ems do texto. Padrão <code>0.75</code>, a altura de uma maiúscula.</td></tr>
+  </tbody>
+</table>
+
+O primeiro de `resource`, `glyph` e `line` que estiver escrito decide o tipo; sem nenhum deles, a diretiva continua sendo texto. O texto entre colchetes é o texto alternativo do símbolo: os leitores de tela, o PDF marcado e o texto alternativo da imagem o leem no lugar do símbolo, e um símbolo com colchetes vazios é decoração. Os símbolos são lidos nos rótulos de figura e em todos os trechos de um recurso: legendas, notas e células de tabela. Nesta versão, não são lidos no texto corrido, nos títulos nem nos textos de design.
 
 ### labelAnchorUnknown
 

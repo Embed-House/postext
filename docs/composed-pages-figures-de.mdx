@@ -31,7 +31,9 @@ Diese Seite behandelt die Abbildungen einer zusammengesetzten Seite oder des Fli
 
 - `at` gibt einen Anker der Ressource an (einen Punkt, der einmal im Bild festgelegt wird und für alle Sprachen gilt) oder für eine Beschriftung ohne Anker einen Punkt in Prozent des Bilds, `at="x% y%"`.
 - `style` gibt einen Beschriftungsstil an und hat Vorrang vor dem des Ankers.
-- Der Text in den eckigen Klammern ist Inline-Markdown: fett, kursiv, Chips.
+- `leader` zieht eine Linie von der Beschriftung zum Punkt ihres Ankers, und `leader="none"` nimmt sie weg (siehe [Hinweislinien, Legenden und Symbole](#hinweislinien-legenden-und-symbole)).
+- Der Text in den eckigen Klammern ist Inline-Markdown: fett, kursiv, Chips und Symbole, die als `:icon` geschrieben werden.
+
 
 Eine Abbildung funktioniert im Fließtext ebenso wie in einem Rahmen. Ihre Beschriftungen werden als Text auf das Bild gezeichnet und wandern mit, wo immer die Abbildung steht: in einer Spalte, in einem Gleitobjekt, in einem Rahmen, den die Einpassstufen (die Schritte, mit denen Inhalt passend gemacht wird) drehen oder skalieren, auf einer Doppelseite. Fehlt das schließende `:::` einer Abbildung, beendet sie die erste Zeile, die weder Beschriftung noch leer ist, und die Abbildung wird als nicht geschlossener Container gemeldet.
 
@@ -61,6 +63,57 @@ Eine Ressource enthält ein Bild, seine Anker und nur einen Wortlaut, doch jede 
 - **Senkrecht.** Mit `writingMode: 'vertical-rl'` am Anker (oder an seinem Beschriftungsstil) wird die Beschriftung wie eine Seite im senkrechten Satz gesetzt: die Zeichen aufrecht in Zellen untereinander, die Spalten von rechts nach links, lateinische Wörter und lange Zahlen seitwärts gedreht, kurze Zahlen in einer Zelle. `width` ist dann ein Anteil der Bildhöhe, die Länge einer Spalte, und eine chinesische oder japanische Beschriftung bricht in weitere Spalten um. `align` läuft entlang der Spalte (`start` ist ihr oberes Ende), `verticalAlign` quer zu den Spalten (`top` ist die erste, rechte), und `rotate` dreht die Beschriftung weiter. Auf der gespiegelten Seite eines Buchs von rechts nach links liest sie sich genauso, abwärts in ihren Spalten und aufrecht, an derselben Stelle des Bilds (seit postext 1.40).
 - **Prüfungen.** Eine Beschriftung, die mit dem `minScale` ihres Stils noch breiter als ihre Satzbreite ist, löst `labelOverflow` aus; zwei Beschriftungen, deren Zeilen sich berühren, lösen `labelOverlap` an der späteren aus. Beide werden in jeder Sprachausgabe geprüft, eine Übersetzung mit längeren Wörtern zeigt also, wo sie Platz braucht. Die Palette eines Teils (`:::part{palette="…"}`) färbt die Beschriftungen seiner Seiten um, wie sie es bei Legenden tut. Die Kontrastprüfung misst eine Beschriftung gegen ihre Unterlage, sonst gegen ihren Lichthof; eine Beschriftung direkt auf dem Bild wird übergangen, weil ihr Hintergrund das Bild ist. Auch der Preflight für den Druck prüft Beschriftungen: kleine Schrift in Prozessfarben, Druckfarben und den Abstand zum Endformat.
 - **Auf einer Doppelseite.** Eine Abbildung, die über den Bund einer Doppelseite reicht (ein Rahmen mit `crossGutter: true`), zeichnet auf jede Seite eine Hälfte; eine Beschriftung, die in den Bundsteg hineinragt, würde vom Bund zerschnitten und wäre auf keiner der beiden Seiten lesbar. Eine solche Beschriftung rückt seitlich an den Rand des Bundstegs, auf die Seite, auf der der Punkt ihres Ankers liegt, und behält ihre Höhe; ein Punkt genau auf dem Bund kommt auf die erste Seite, wie bei einem Rahmen. Ein Anker mit `gutter: 'cross'` behält seinen Platz, für einen Titel über beide Seiten. Die Außenkanten des Blatts bleiben unberührt: Eine Beschriftung, die über das Endformat hinausreicht, wird wie das Bild beschnitten. Seit postext 1.43.
+
+### Hinweislinien, Legenden und Symbole
+
+Seit postext 1.48 kann eine Beschriftung abseits dessen stehen, was sie benennt, eine Beschriftung kann die Legende einer Karte sein, und eine Beschriftung, eine Legende oder eine Tabellenzelle kann Symbole enthalten.
+
+**Hinweislinien.** Das `labelAt` eines Ankers setzt seine Beschriftung abseits seines Punkts (ein Name im Meer, eine Notiz am Rand eines Schaubilds), und eine Hinweislinie führt von der Beschriftung zurück zum Punkt. Ihr Aussehen ist das `leader` des Beschriftungsstils (siehe [Konfiguration › Beschriftungsstile](/de/docs/configuration-composed-pages#beschriftungsstile)); das Markdown schaltet sie nur für eine einzelne Beschriftung ein oder aus:
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` mit einem beliebigen Wert außer `none`, `false` oder `off` schaltet sie ein; ohne das Attribut entscheidet das `leader` des Ankers, und fehlt auch das, bekommt eine abseits ihres Punkts gesetzte Beschriftung eine Linie, wenn ihr Stil ein `leader` hat. Auch die Notiz eines Rahmens kann auf eine Stelle des Bilds zeigen: mit einem [Verbinder](/de/docs/configuration-composed-pages#verbinder), dessen Ende einen Anker des Bilds nennt (`anchor: 'lake'`).
+
+**Mehrzeilige Beschriftungen.** `:::label{at="…" style="…"}` … `:::` innerhalb eines `:::figure` schreibt eine Beschriftung Zeile für Zeile: Jede nicht leere Zeile der Quelle ist eine Zeile der Beschriftung, eine Zeichenerklärung oder eine Anschrift braucht also kein `\\` am Ende jeder Zeile. Das erste `:::` schließt die Beschriftung, das nächste die Abbildung. `::label[…]` bleibt eine einzeilige Beschriftung, die nur dort umbricht, wo `\\` steht.
+
+**Legenden.** Eine Beschriftung in einem Stil mit `kind: 'legend'` ist die Zeichenerklärung einer Karte: Jede Zeile ist ein Eintrag, und das Symbol am Anfang eines Eintrags steht in einer Spalte, die so breit ist wie das breiteste Symbol, sodass die Wörter aller Einträge an einer Kante beginnen. Schreiben Sie das Symbol an den Anfang jeder Zeile:
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[Land]{glyph="■" color="country"} Land
+:icon[Hauptstadt]{glyph="⊙" font="Noto Sans Math"} Hauptstadt
+:icon[Stadt]{resource="town-mark" size="0.55"} Stadt
+:icon[Grenze]{line="dashed" color="border"} Grenze
+:::
+::label[:icon[Hauptstadt]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Symbole.** `:icon[alt]{…}` setzt ein kleines Symbol in die Zeile, auf die Grundlinie gestellt:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribut</th>
+      <th>Wirkung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>Eine Bitmap- oder SVG-Ressource, in ihren Proportionen.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>Ein Zeichen, in der Schrift des Texts oder in der Schrift, die <code>font="…"</code> nennt.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>Ein Linienmuster, doppelt so lang wie hoch: eine Grenze oder eine Straße in einer Legende.</td></tr>
+    <tr><td><code>color="…"</code></td><td>Eine Hex-Farbe oder ein Paletteneintrag: die Farbe eines Zeichens, einer Linie oder eines Bilds.</td></tr>
+    <tr><td><code>size="…"</code></td><td>Die Höhe des Symbols in em des Texts. Standard <code>0.75</code>, die Höhe eines Großbuchstabens.</td></tr>
+  </tbody>
+</table>
+
+Von `resource`, `glyph` und `line` entscheidet das zuerst geschriebene die Art; fehlen alle drei, bleibt die Direktive Text. Der Text in den eckigen Klammern ist der Alternativtext des Symbols: Screenreader, das getaggte PDF und der Alternativtext des Bilds lesen ihn an seiner Stelle, und ein Symbol mit leeren Klammern ist Dekoration. Symbole werden in Beschriftungen von Abbildungen und in jedem Textstück einer Ressource gelesen: Legenden, Anmerkungen und Tabellenzellen. Im Grundtext, in Überschriften und in Gestaltungstexten werden sie in dieser Version nicht gelesen.
 
 ### labelAnchorUnknown
 

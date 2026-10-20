@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuració: capçaleres i peus de pàgina',
   sidebarTitle: 'Capçaleres i peus de pàgina',
-  description: "Què s'imprimeix a dalt i a baix de cada pàgina (text amb marcadors, filets, caixes i imatges), com canvia segons si la pàgina és parella o senar, i on es col·loca cada element",
+  description: "Què s'imprimeix a dalt i a baix de cada pàgina (text amb marcadors, filets, caixes, imatges i traçats vectorials), com canvia segons si la pàgina és parella o senar, i on es col·loca cada element",
   lang: 'ca',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '33 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ Les propietats `header` i `footer` controlen les zones de disseny de la capçale
 
 Les zones fan servir el model unificat de **zona de disseny**: cada element té un `placement` amb un `anchor` (al contenidor o a un altre element per `#id`), un `offset` opcional i un `size` opcional. Els camps plans antics `align`, `marginFromBody`, `marginFromEdge` i `width: 'full'` encara s'accepten com a entrada i es converteixen automàticament al format nou; més avall es documenta l'equivalència.
 
-Cada zona conté una llista d'elements de **text**, de **filet** (`rule`), de **caixa** (`box`) i d'**imatge** (`image`). L'ordre de l'array és l'ordre de pintura (el primer element es pinta primer, i l'últim, a sobre de tot). Això es compleix diguin el que diguin els ancoratges: un element es pot ancorar a un altre que apareix després a la llista (`anchor.to: '#ttl'`), de manera que una caixa de fons pot anar primer i col·locar-se respecte al text que queda al damunt.
+Cada zona conté una llista d'elements de **text**, de **filet** (`rule`), de **caixa** (`box`), d'**imatge** (`image`) i de **traçat** (`path`) (la decoració d'una pàgina composta també admet **connectors**, vegeu [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages#connectors)). L'ordre de l'array és l'ordre de pintura (el primer element es pinta primer, i l'últim, a sobre de tot). Això es compleix diguin el que diguin els ancoratges: un element es pot ancorar a un altre que apareix després a la llista (`anchor.to: '#ttl'`), de manera que una caixa de fons pot anar primer i col·locar-se respecte al text que queda al damunt.
 
 **Valors per defecte integrats.** Quan `header` o `footer` són `undefined`, Postext aplica un valor per defecte raonable en lloc d'una zona buida:
 
@@ -46,7 +46,7 @@ Per prescindir dels valors per defecte, fixa `header: { elements: [] }` (o `foot
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>valors per defecte integrats quan és <code>undefined</code>; <code>[]</code> els desactiva</td>
-      <td>Llista ordenada d'elements de text, de filet, de caixa i d'imatge.</td>
+      <td>Llista ordenada d'elements de text, de filet, de caixa, d'imatge i de traçat.</td>
     </tr>
   </tbody>
 </table>
@@ -584,9 +584,15 @@ Els elements de caixa pinten un rectangle arrodonit dins de la zona, útil com a
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Radi de les cantonades. En renderitzar, es limita a la meitat del costat més curt.</td>
+      <td>Radi de les cantonades. En renderitzar, es limita a la meitat del costat més curt. Des de postext 1.48, un objecte dona a cada cantonada el seu radi, i una cantonada que no hi surt queda recta: una banda arrodonida només a les cantonades de dalt.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>tots els costats</td>
+      <td>La vora costat per costat, cadascun amb <code>&#123; enabled?, color?, width? &#125;</code> per sobre de <code>borderColor</code> i <code>borderWidth</code>. Un costat es dibuixa quan té color i gruix, llevat que indiqui <code>enabled: false</code>: una banda amb un filet només al peu és <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Des de postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -693,9 +699,85 @@ El generador de PDF incrusta el recurs com una figura (si un SVG té original d'
 
 Una imatge que dibuixa un disseny és contingut quan el seu recurs la descriu. La descripció (l'`altText` del recurs o, si no en té, el peu com a text sense format, amb els xips (`:chip`) llegits pel text i les `:ref` pel seu `text`, si en tenen) passa al VDT (`VDTDesignImageBlock.altText`). En HTML és l'`alt` de l'`<img>`, i en un PDF etiquetat, una `Figure` amb `/Alt`, que es llegeix just després del text del disseny (la làmina d'un capítol, després de l'encapçalament del capítol). Una imatge amb un recurs que no té cap de les dues coses, i una imatge marcada com a `decorative`, és decoració: `alt=""` amb `role="presentation"`, i un artefacte al PDF. La imatge d'una capçalera o d'un peu de pàgina es repeteix a totes les pàgines, així que es tracta com a element de paginació digui el que digui el recurs: sense `altText` al VDT, `alt=""` amb `role="presentation"` en HTML i un artefacte de la pàgina al PDF.
 
+### Elements de traçat
+
+Un element `path` dibuixa una forma vectorial que una caixa no pot fer: una barra que arriba al llom amb l'extrem inclinat, una cinta amb una osca, els galons al costat d'una capçalera, la cua d'una bafarada en una targeta. El contorn són dades de traçat SVG, escrites per defecte en fraccions de la caixa del mateix element, de manera que la forma s'estira amb la caixa i la segueix quan la caixa es mou: una cinta amb la mida `{ to: '#title', edge: 'right' }` és tan llarga com el títol en totes les llengües. L'admet qualsevol zona de disseny: capçaleres i peus, dissenys d'encapçalament i de part, files de part de l'índex general, dissenys de requadre i la decoració d'una pàgina composta. Des de postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Discriminador, i un id estable al qual es poden ancorar altres elements.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Dades de traçat SVG: <code>M L H V C S Q T A Z</code>, absolutes i relatives, en les unitats de <code>viewBox</code>. Unes dades que no es poden llegir (sense moviment inicial, amb una lletra que no és cap ordre, o amb una ordre a la qual falten números) no dibuixen res i es donen com a <code>unknownConfigValue</code>; la caixa de l'element es manté per als elements que s'hi ancoren.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>L'amplada i l'alçada de l'espai on s'escriu <code>d</code>. Amb el valor per defecte, <code>1</code> és tota l'amplada o tota l'alçada de la caixa. Un traçat copiat d'un dibuix hi conserva la mida del dibuix (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> estira el <code>viewBox</code> fins a la caixa en cada eix; <code>'meet'</code> l'escala per igual perquè hi càpiga a dins, centrat: per a una icona que no s'ha de deformar.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>farciment negre</td>
+      <td>El farciment i el contorn. Sense cap dels dos, la forma s'omple de negre, com un traçat SVG; amb només <code>stroke</code>, no té farciment. Els colors vinculats a la paleta segueixen les paletes de la pàgina i de la part.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, continu</td>
+      <td>El gruix i el patró de traços del contorn, longituds de pàgina que no s'estiren amb la caixa, de manera que una forma estirada manté una línia regular.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Es col·loca i es dimensiona com un element de caixa (vegeu <a href="#posicionament-delements">Posicionament d'elements</a>): un costat que no s'indica, o <code>'fill'</code>, arriba fins a la vora del contenidor.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>com els elements de caixa</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>A quines pàgines apareix, si es queda on la plantilla en dibuixa el marc (a la decoració d'una pàgina composta) i si compta per a l'alçada reservada d'un encapçalament.</td>
+    </tr>
+  </tbody>
+</table>
+
+Un traçat es pinta com a forma vectorial al canvas, al PDF, al visor HTML i a l'EPUB de maquetació fixa; és un artefacte de maquetació al PDF etiquetat, i l'EPUB de maquetació fluida el deixa fora amb la resta d'elements de paginació. Un clic respon sobre la seva tinta, no sobre la caixa buida. Una clau que l'element no té es dona com a `unknownConfigKey`. En aquesta versió els traçats no es giren.
+
 ### Posicionament d'elements
 
-`ElementPlacement` és el model unificat de posicionament que fan servir tots els tipus d'elements (text, filet, caixa, imatge) dins de qualsevol zona de disseny: la capçalera, el peu de pàgina o la zona de disseny avançat d'un nivell d'encapçalament. Tres camps descriuen un `placement`:
+`ElementPlacement` és el model unificat de posicionament que fan servir tots els tipus d'elements (text, filet, caixa, imatge, traçat) dins de qualsevol zona de disseny: la capçalera, el peu de pàgina o la zona de disseny avançat d'un nivell d'encapçalament. Tres camps descriuen un `placement`:
 
 ```ts
 interface ElementPlacement {
@@ -703,6 +785,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = el bloc; page = caixa de tall; bleed = caixa de tall + sang; outer = el marge exterior (capçalera, peu); #id = un altre element
     edge: AnchorEdge;
+    /** El punt al llarg del costat que indica `edge`, en un '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distància des del punt d'ancoratge. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -730,6 +814,12 @@ Cada vora relativa a un altre element posa una cantonada de l'element sobre una 
 
 Una vora relativa a un altre element usada amb `'container'`, `'page'` o `'bleed'`, i una vora de contenidor usada amb `'#id'`, es llegeixen com la cantonada superior esquerra.
 
+**Un punt al llarg d'un costat.** En un ancoratge a `'#id'` (un altre element o, en una pàgina composta, un marc o un grup), `at` tria un punt al llarg del costat que indica la vora: `'start'`, `'center'`, `'end'`, o una fracció del costat des del seu inici, de `0` a `1`. Al llarg del costat, l'element queda centrat en aquest punt; de través, la vora es manté al seu lloc, de manera que `below` amb `at: 'center'` penja una marca sota el centre d'un marc i `right-of` amb `at: 0.5` posa un senyal a mitja alçada del seu costat. Un costat horitzontal (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom`, i les cantonades, llegides com el seu costat) comença on comencen les línies de la pàgina: a la dreta en una pàgina de dreta a esquerra. Un costat vertical (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) comença a dalt. Un número fora de l'interval de 0 a 1 es queda a l'extrem més proper; una paraula que no sigui cap de les tres es dona com a `unknownConfigValue` i no es té en compte, igual que `at` amb `'container'`, `'page'`, `'bleed'`, `'outer'` i amb `center`. Des de postext 1.48; sense `at`, la vora conserva el seu punt, com abans.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Vores d'inici i de final.** `top-start`, `start`, `bottom-start`, `top-end`, `end` i `bottom-end` (amb `'container'`, `'page'`, `'bleed'` o `'outer'`), i `align-start` i `align-end` (amb `'#id'`), indiquen el costat per on comencen les línies de la pàgina en lloc d'un costat fix. En una pàgina d'esquerra a dreta, `top-start` és `top-left`; en una pàgina de dreta a esquerra, i en una pàgina vertical, on les línies se succeeixen des de la dreta, és `top-right`. Amb aquestes vores, la `x` del desplaçament va del costat d'inici al costat final, de manera que en una pàgina de dreta a esquerra una `x` positiva mou l'element cap a l'esquerra: l'element és la imatge en mirall del d'esquerra a dreta. La decoració d'una plantilla i les capçaleres es col·loquen al full, així que un avantítol amb `top-start` queda sobre el marc del títol tant en una edició àrab com en una de catalana. Un marc es col·loca en el flux de la pàgina, que ja està emmirallat o girat, on `start` sempre és l'esquerra, igual que `left`. En el disseny d'un encapçalament, que també es col·loca en el flux, `start` és `left`. Al Sandbox, la llista **Alineació** de l'editor de la zona té **Inici** i **Final**, i les llistes de vores tenen els costats d'inici i final. Des de postext 1.39; fins a la 1.38 aquestes paraules es llegien com a `top-left`.
 
 `anchor.to: 'page'` ancora l'element a la **caixa de tall** (la pàgina física un cop tallada) i `'bleed'`, a la caixa de tall ampliada per `cutLines.bleed` a tots els costats (idèntica a la caixa de tall mentre les marques de tall estiguin desactivades). Tots dos marcs també passen a ser la referència de `size: 'fill'` i del límit automàtic d'amplada, de manera que una banda de color pot anar de vora a vora sense dependre dels marges de la pàgina:
@@ -738,7 +828,7 @@ Una vora relativa a un altre element usada amb `'container'`, `'page'` o `'bleed
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-Una mida també pot arribar fins a una vora d'una altra caixa: `{ to, edge }`, on `to` indica la caixa com ho fa un ancoratge (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` d'un altre element i, a la decoració d'una pàgina composta, d'un marc o d'un grup) i `edge`, quina de les seves vores: `'top'` o `'bottom'` per a una alçada, `'left'` o `'right'` per a una amplada. La mida va del punt d'ancoratge de l'element fins a aquesta vora, en el sentit en què creix l'element; una vora que queda darrere del punt d'ancoratge dona 0, i una vora de l'altre eix, o una caixa que no existeix, es llegeix com a `'fill'`. Un fons que va del peu d'una banda fins a la sang es queda a la plantilla i segueix la banda quan aquesta es mou. Des de postext 1.38:
+Una mida també pot arribar fins a una vora d'una altra caixa: `{ to, edge }`, on `to` indica la caixa com ho fa un ancoratge (`'container'`, `'page'`, `'bleed'`, `'outer'`, o `'#id'` d'un altre element i, a la decoració d'una pàgina composta, d'un marc o d'un grup) i `edge`, quina de les seves vores: `'top'` o `'bottom'` per a una alçada, `'left'` o `'right'` per a una amplada, o `'center'` per al seu centre en qualsevol dels dos eixos (des de postext 1.48): una banda des de la vora esquerra d'un marc fins al centre del marc del costat, un filet vertical des de sota d'una targeta fins al centre de la filera de sota. La mida va del punt d'ancoratge de l'element fins a aquesta vora, en el sentit en què creix l'element; una vora que queda darrere del punt d'ancoratge dona 0, i una vora de l'altre eix, o una caixa que no existeix, es llegeix com a `'fill'`. Un fons que va del peu d'una banda fins a la sang es queda a la plantilla i segueix la banda quan aquesta es mou. Des de postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

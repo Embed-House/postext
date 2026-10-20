@@ -63,6 +63,8 @@ La sección recoge:
 - *Rótulo en un ancla que no existe* y *Ancla sin rótulo* (`labelAnchorUnknown`, `anchorUnlabelled`), en el marco que compone la figura;
 - *Rótulo más ancho que su medida* y *Rótulos que se pisan* (`labelOverflow`, `labelOverlap`), en ese mismo marco: los rótulos de cada edición se miden con sus propias palabras, así que en un idioma de palabras más largas pueden desbordarse donde en otro no. Un rótulo que invade una de las zonas `avoid` de la imagen, que se dibujan en el modo **Zonas libres** de sus marcas, también aparece aquí; en un SVG, **Símbolos del dibujo**, en ese mismo modo, añade una zona sobre cada elemento del dibujo cuyo id empieza por un prefijo dado o que lleva una clase dada (desde postext 1.43);
 - *Ranura sin marco*, *Marco vacío*, *Plantilla de página desconocida*, *Página compuesta abierta con :::* y *La marca spread no coincide con la plantilla* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
+- *Marco tapado por otro marco* y *El marco se sale de su límite* (`frameCovered`, `frameOutsideArea`), con las palabras o la imagen tapadas, la superficie oculta o lo que sobresale, y los arreglos de un clic; al seleccionar uno, el canvas marca los dos marcos, o el marco y la caja de la que se sale (desde postext 1.48);
+- *Más elementos de los que caben en la rejilla* (`repeatOverflow`), junto al marcado (desde postext 1.48);
 - *Bloque del índice partido entre columnas* (`tocGroupSplit`);
 - los avisos de las propias plantillas (un estilo o un ancla de marco que no existe, tamaños que se contradicen, una cadena que vuelve sobre sí misma) y el texto de diseño que guarda contenido del libro (`contentInConfig`).
 

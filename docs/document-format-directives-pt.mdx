@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Diretivas',
   description: 'As diretivas iniciadas por ::: (contêineres, colunas, papel, quebras de página, numeração, espaço, verso, sumário e índice remissivo, quebras de linha) e a marcação das páginas de quadrinhos',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
-  readingTime: '37 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '38 min',
   order: 26,
   parent: 'document-format',
   plainSummary: "Uma diretiva é um bloco que começa com três sinais de dois-pontos seguidos, como :::callout ou :::columns. Esta página lista todas as diretivas e o que cada uma faz. Algumas colocam o texto num boxe, compõem o texto em colunas ou o imprimem em outro tipo de papel. Outras começam uma página nova, mudam a numeração, acrescentam espaço, compõem um poema verso a verso ou imprimem o sumário e o índice remissivo. A última seção trata das marcas das páginas de quadrinhos, dos quadros e das falas dos personagens.",
@@ -125,7 +125,7 @@ Keep the lantern lit **every** night.
 :::
 ```
 
-Cinco nomes de contêiner são reconhecidos no fluxo do texto; um sexto, `:::frame`, guarda o conteúdo de um bloco numa [página composta](#páginas-compostas). O que cada um produz é definido numa seção própria da configuração:
+Cinco nomes de contêiner são reconhecidos no fluxo do texto; `:::frame` e `:::module` guardam o conteúdo de um bloco e de um módulo numa [página composta](#páginas-compostas), e `:::figure` e `:::label`, uma figura e um rótulo de várias linhas. O que cada um produz é definido numa seção própria da configuração:
 
 <table>
   <thead>
@@ -742,3 +742,6 @@ Uma página composta é diagramada a partir de um modelo de página da configura
 - `:::frame{slot="…" label="…"}` … `:::` guarda o conteúdo do bloco com esse nome: qualquer Markdown.
 - `slot="…"` num título (`## Retos {slot="retos-titulo"}`), em `::resource{id="…" slot="…"}`, num bloco de código delimitado ou num contêiner `:::` manda só esse elemento. O conteúdo sem slot vai para o bloco de fluxo do modelo.
 - `:::figure{resource="…" slot="…"}` … `:::` coloca um recurso com as linhas `::label[TEXTO]{at="…" style="…"}`, em que `at` é uma âncora da imagem ou um ponto `"x% y%"`. Uma figura também funciona no texto corrido. Seus `alt`, `caption` e `note`, como atributos da linha de abertura ou como linhas `::alt[…]`, `::caption[…]` e `::note[…]`, substituem os textos do recurso naquele capítulo (veja [Páginas compostas › As palavras próprias de uma figura](/pt/docs/composed-pages-figures#as-palavras-próprias-de-uma-figura)).
+- `leader` num `::label` traça uma linha do rótulo até o ponto da âncora, e `leader="none"` a retira. `:::label{at="…" style="…"}` … `:::`, dentro de uma figura, escreve um rótulo linha por linha, como pede a legenda de um mapa; `:icon[alt]{glyph="…"}`, `{resource="…"}` ou `{line="dashed"}` põe um símbolo num rótulo, numa legenda, numa nota ou numa célula de tabela (veja [Páginas compostas › Linhas de chamada, legendas de mapa e símbolos](/pt/docs/composed-pages-figures#linhas-de-chamada-legendas-de-mapa-e-símbolos)). Desde o postext 1.48.
+- Numa página cujo modelo repete um cartão numa grade, cada `:::frame{slot="<cartão>"}` é um cartão, e um elemento dentro dele que indica outro bloco do cartão vai para esse bloco do mesmo cartão (veja [Páginas compostas › Slots repetidos](/pt/docs/composed-pages#slots-repetidos)). Desde o postext 1.48.
+- `:::module{template="…" name="…"}` … `:::` guarda o conteúdo de um módulo da página, um conjunto desenhado por um modelo de módulo e empilhado no grupo de módulos da página; os slots dentro dele são os do próprio módulo (veja [Páginas compostas › Módulos numa página](/pt/docs/composed-pages#módulos-numa-página)). Desde o postext 1.48.

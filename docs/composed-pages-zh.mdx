@@ -3,12 +3,12 @@
 export const metadata = {
   title: '模板页',
   sidebarTitle: '模板页',
-  description: '怎样用Markdown写模板页：以四个冒号开头的页面块指明所用的模板；框和slot属性把内容分到模板的各个框；插图可以在图片的指定位置加标注；内容与模板对不上时会给出警告',
+  description: '怎样用Markdown写模板页：以四个冒号开头的页面块指明所用的模板；框和slot属性把内容分到模板的各个框；重复的槽位与模块；内容与模板对不上或盖住另一个框时会给出警告',
   lang: 'zh',
   lastUpdated: '2026-10-20',
   readingTime: '28分钟',
   order: 34,
-  plainSummary: "有些页面不是一栏连续的正文，而是由一组框拼成，比如课本里的一页：顶上一条标题色带，下面一段课文，再加三个配有照片的彩色方框。Postext把这样的页面叫作模板页。页面的样子由配置中的模板决定，Markdown只说明哪段文字放进哪个框。本页介绍这种Markdown的写法：页面块、框、槽位名，以及像地图上的地名那样带标注的图片。本页还列出文字与模板对不上时Postext给出的警告。",
+  plainSummary: "有些页面不是一栏连续的正文，而是由一组框拼成，比如课本里的一页：顶上一条标题色带，下面一段课文，再加三个配有照片的彩色方框。Postext把这样的页面叫作模板页。页面的样子由配置中的模板决定，Markdown只说明哪段文字放进哪个框。本页介绍这种Markdown的写法：页面块、框、槽位名、在网格中重复排列的卡片，以及作为模块叠放的块。本页还列出文字与模板对不上时Postext给出的警告。",
 };
 
 # 模板页
@@ -90,13 +90,80 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 
 内容按以下规则分配：
 
-- 槽位相同的几段内容按Markdown中的顺序合在一起。
+- 槽位相同的几段内容按Markdown中的顺序合在一起；重复的网格除外，在那里每段内容各是一张卡片（见[重复的槽位](#重复的槽位)）。
 - 没有槽位的内容进入模板的**流文框**（标为`flow`的框）。
 - 没有槽位的标题，如果模板里有接收其级别的框（`takes: "h1"`），就先进入那个框；所以课本里一课的标题只需在页首写`# 标题`。
 - 没有槽位的`:::toc`交给设置了`takes: "toc"`的框，前提是模板里有这样的框（见下文“目录排在框里”）。
 - 如果内容写的槽位在模板里没有，它会进入流文框，并给出报告（`slotUnknown`）。
 
 写在模板页之外的`slot`照样会读取，但不起作用。
+
+### 重复的槽位
+
+模板把一张卡片画一次，再按页面的需要在网格中排出任意多次（带`repeat`的组，见[配置 › 重复一组框的网格](/zh/docs/configuration-composed-pages#重复一组框的网格)）时，每个指明卡片主槽位的`:::frame`就是一张卡片，按书写顺序排列：
+
+```md
+::::page{template="fotos"}
+# 河边的动物
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+苍鹭
+:::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+水獭
+:::
+:::
+::::
+```
+
+- **卡片的成员。** 在卡片这段内容里，指明这组框中另一个框（这里是`pie`，即题注小签）的块或`:::frame`，进入同一张卡片的那个框。其余内容进入卡片的主框。
+- **一个块，一张卡片。** 单独写、不在任何容器里的`::resource{id="…" slot="foto"}`也是一张卡片。
+- **名称。** 卡片从1开始编号：第二张卡片的框是`foto[2]`和`pie[2]`，警告、重排记录和沙盒里都用这些名称。
+- **数量。** 页面上有几段内容，就有几张卡片。有五种动物的西班牙语版和有四种的英语版用同一个模板。设了`repeat.max`的网格最多容纳这么多张；每多出一段就给出`repeatOverflow`，这段内容进入流文框。
+
+这组框中的某个框，只有在本页没有任何卡片填它时，才报告为`slotEmpty`。重复的框从不接收标题，也从不是流文框。
+
+### 页面中的模块
+
+带模块组（`modules: true`，见[配置 › 模块](/zh/docs/configuration-composed-pages#模块)）的页面模板，从`:::module`容器中取得它的各块，按书写顺序上下叠放。块由模块的模板画出，容器里放的是它的文字：
+
+```md
+::::page{template="tema"}
+# 河流
+
+:::module{template="caja"}
+:::frame{slot="texto" label="你知道吗？"}
+河流发源于山中，雨水和雪水在那里汇成溪流。
+:::
+::resource{id="rio" slot="foto"}
+:::
+
+:::module{template="arbol" name="ramas"}
+:::frame{slot="raiz"}
+河流
+:::
+:::frame{slot="izq"}
+它带来的水
+:::
+:::frame{slot="der"}
+两岸的生命
+:::
+:::
+::::
+```
+
+- `template`指定一个`role: 'module'`的模板。`name`可以不写：它给这个模块实例命名，于是它的框是`ramas.raiz`、`ramas.izq`。不写时，实例名是`<template>[n]`，即这个模块在本页同一模板的模块中的序号：`arbol[1].raiz`。本页已被占用的名称，或含有空格、`.`、`#`、`[`或`]`的名称，换成这个默认名称（`moduleNameRejected`）。
+- **槽位**：`:::module`里的槽位属于这个模块自己：`slot="raiz"`指向本模块的`raiz`框，所以一页上同一模板的两个模块，文字互不混淆。没有指明槽位的内容进入模块的流文框，标题进入模块中接收其级别（`takes`）的框；两者都没有时，进入页面的流文框。
+- **顺序。** 模块按Markdown的顺序叠放，所以另一页可以把同样的块换个顺序排，或者多放一棵树，而不需要新的模板。
+- 写在页面块之外的`:::module`是一个装着其内容的普通方框。模块里面再套模块是不支持的（`moduleNested`）。
 
 ## 示例
 
@@ -194,7 +261,7 @@ Si necesitas o quieres comprar algo muy caro…
 
 ### 装饰、书眉与层
 
-模板的装饰（`decoration`：图片、线条、方框和短文字）在各框的外框确定之后才排放，所以元素可以锚定到某个框（`"to": "#gasto"`）并跟着它走。装饰中的文字读取本页自己的属性：页面块上的`fondo="banda-retos"`给出`{attr.fondo}`，例如用`"resourceId": "{attr.fondo}"`逐页选择背景图。书眉和页脚也读取这些属性。模板的`header`或`footer`取代所在章节的设置，`false`把它隐藏，两者都没设时印出所在章节的书眉和页脚。在从右到左或竖排的页面上，框随镜像或旋转后的行文方向排布，装饰则留在纸面上：用起始边或结束边定位的元素（`top-start`，见[元素定位](/zh/docs/configuration-headers-footers#元素定位)）在每个版本里都会留在它的框旁边。
+模板的装饰（`decoration`：图片、线条、方框和短文字）在各框的外框确定之后才排放，所以元素可以锚定到某个框（`"to": "#gasto"`）并跟着它走，[连接线](/zh/docs/configuration-composed-pages#连接线)也可以用一条线连起两个框，不管它们的文字把它们推到哪里，线都连在框上。装饰中的文字读取本页自己的属性：页面块上的`fondo="banda-retos"`给出`{attr.fondo}`，例如用`"resourceId": "{attr.fondo}"`逐页选择背景图。书眉和页脚也读取这些属性。模板的`header`或`footer`取代所在章节的设置，`false`把它隐藏，两者都没设时印出所在章节的书眉和页脚。在从右到左或竖排的页面上，框随镜像或旋转后的行文方向排布，装饰则留在纸面上：用起始边或结束边定位的元素（`top-start`，见[元素定位](/zh/docs/configuration-headers-footers#元素定位)）在每个版本里都会留在它的框旁边。
 
 各框按`layer`的顺序绘制：装饰在第0层，框默认在第1层，层号高的画在层号低的上面，负数层画在装饰下面。`rotate`让框连同其内容绕框的中心旋转任意角度，在画布、PDF、HTML阅读器和固定版式EPUB中都是如此。
 
@@ -256,8 +323,35 @@ Si necesitas o quieres comprar algo muy caro…
       <td>模板页、框或插图始终没有结束（见上文的恢复规则）。检查面板把模板页称为<code>::::page</code>。</td>
       <td>补上结束行：模板页用与开始行同样数目的冒号，框或插图用<code>:::</code>。</td>
     </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>重复网格最多容纳<code>repeat.max</code>张卡片，而这一页给了它更多（见<a href="#重复的槽位">重复的槽位</a>）。每多出一张卡片一条，位于它的<code>slot="…"</code>处：这张卡片进入流文框，或排在这一页之后。</td>
+      <td>在模板中调高或去掉<code>max</code>，或者把多出的卡片移到另一页。</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td><code>:::module</code>没有指定模板，指定的模板不是模块，或者这一页的模板没有模块组（<code>reason</code>）。它的内容进入流文框。</td>
+      <td>改正模块的<code>template</code>，或者给这一页的模板加一个<code>modules: true</code>的组。</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>页面块指定的是模块模板。它的内容排进正文，与未知模板的处理相同。</td>
+      <td>在页面块上指定一个页面模板，把模块作为<code>:::module</code>写在里面。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td><code>:::module</code>写在另一个模块里面。它的各块归外层模块所有。</td>
+      <td>先结束外层模块，再开始下一个。</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>模块的<code>name</code>已被本页的另一个模块使用，或含有空格、<code>.</code>、<code>#</code>、<code>[</code>或<code>]</code>。模块改用<code>used</code>给出的名称（<code>arbol[2]</code>）。</td>
+      <td>给本页的每个模块起一个不重复的名称，只用字母、数字和连字符。</td>
+    </tr>
   </tbody>
 </table>
+
+模块的各条警告和`repeatOverflow`自postext 1.48起提供；每条警告在模板一侧的情况见[配置 › 重叠、重复与模块的警告](/zh/docs/configuration-composed-pages#重叠重复与模块的警告)。
 
 全书排好之后，这些警告还会带上所涉及的页（`pageIndex`），检查面板和`postext check`在模板、框或槽位以及源码范围旁边给出页码。
 
@@ -282,6 +376,28 @@ Si necesitas o quieres comprar algo muy caro…
 **原因**：框的`overflow.continueIn`为`'page:<id>'`（见[跳转到后面的页面](#跳转到后面的页面)），而文章所在的页之后没有页面块`::::page{id="<id>"}`：可能是id拼错了，页面块上没有写这个id，规则读取的页面块属性（`'page:{attr.sigue}'`）缺失，或者那个页面块在前面（`before: true`）。其余部分与`'next-page'`一样，排在紧接着追加的一页上。警告给出模板、框、`target`（要找的id）、框的`configPath`以及页码。这个id也可以属于书中靠后章节的某个页面块；只用`buildDocument`单独排版、又没有`laterPageIds`的章节，只认得自己的页面。
 
 **解决**：给后面那个页面块加上这个id，或者改正`continueIn`中的名称或它读取的页面块属性。文章之前的页不能接续文章：把那个页面块移到文章之后，或者指定后面的一页。
+
+### frameCovered
+
+**原因**：框的一部分被画在它上面的另一个框盖住（层号更高，或同一层而在模板中排得更后），而那个框在这里是不透明的：照片下面压着的题注，镂空图片下面的页签，被一条色带盖住的方框最后几行。这项检查在页面排好之后、按内容给各框定下的外框进行，所以一页在西班牙语里不被遮挡，在文字更长的版本里可能就被盖住了。框用它的底色（样式的背景或`look.background`、页签、色条）、图片和文字行遮挡别的框；轮廓线什么也不遮挡，让文字沿图片形状绕排的框（`wrap: 'contour'`）也不会用自己的外框遮住文字行。可能被遮住的有：框的文字行、页签和标题、图片和表格。压在图片上的文字不报告：它能不能看清，由对比度检查负责。宽度不到0.3毫米的交叠算作相碰，面积不到1平方毫米的一对框不计。
+
+警告写明模板、框、盖住它的框（`coveredBy`、`coveredByPath`）、被遮住的面积（`overlapMm2`）、最先被盖住的文字（`text`）或图片（`picture`）、语言和页码，并指向被盖住的框的内容。每对框一条警告。
+
+**解决**：每条建议都是数据，与`frameOverflow`的建议相同：
+
+- `layer`：把盖住它的框的`layer`设到被盖住的框之下，只在这样不会转而遮住别的东西时提出；
+- `exclude`：在盖住它的框上设`'push'`，让被盖住的文字绕开它（只在正文的行被压住时提出）；
+- `move`：`frame`、`dxMm`、`dyMm`，即让这对框分开所需的、盖住它的框的最小位移，会在页上试排：只有当移动后的框以及锚定在它上面的框都不碰到其他任何框、也都留在容纳它们的范围之内时才提出。没有哪个方向能分开，或者被盖住的框挂在盖住它的框上时，不提出移动。
+
+交叠是有意为之时（一幅有意伸到文字上方的图画），在任一个框上设`overlap: 'allow'`。自postext 1.48起。
+
+### frameOutsideArea
+
+**原因**：框超出了容纳它的范围：它的文字超出裁切线，会被裁掉，或者它的底色和图片超出出血线（没有出血时，两者都是裁切线）；或者它的任何部分超出了它锚定在其内部的框或组，例如锚定在卡片内部的一条说明（锚定到`'#card'`的`top-left`，偏移伸进卡片里），被自己的文字推出了卡片的底边。锚定在另一个方框外侧某条边上（`below`、`right-of`）的框从不算在它内部。超出不到0.3毫米的不计。
+
+警告给出`past`（`'trim'`、`'bleed'`、`'frame'`或`'group'`）、`target`（那个框或组的名称）、`excessMm`（最大的超出量）、`sides`（每一侧的超出量）、语言和页码。
+
+**解决**：建议有：`maxHeight`，即这个框能占的空间（对于底边固定的框不提出，因为降低高度并不能让它回到范围内）；文字框同时还有`continueNextPage`，让放不下的部分接着排；它锚定在其内部的那个框的`minHeight`，加上超出的量；`move`，在它只超出一侧时让它回到范围内的位移，只有移动后不碰到其他框时才提出。有意挂在卡片外面的徽章设`overlap: 'allow'`。自postext 1.48起。
 
 ## 文字变长时
 
@@ -536,6 +652,18 @@ dinero grew 13.9 mm; gasto moved down 13.9 mm; gasto-fotos moved down 13.9 mm; a
     <tr>
       <td><code>overflow</code></td>
       <td>内容放不下：<code>toMm</code>是被截掉的高度，与<code>frameOverflow</code>中的相同。</td>
+    </tr>
+    <tr>
+      <td><code>covered</code></td>
+      <td>框的一部分被<code>cause</code>盖住，即画在它上面的那个框：<code>areaMm2</code>是被遮住的面积，与<code>frameCovered</code>中的相同。写成文字是“card lies under cutout (25.3 mm²)”。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>outside</code></td>
+      <td>框超出<code>past</code>达<code>toMm</code>：<code>past</code>是<code>'trim'</code>、<code>'bleed'</code>或<code>'#name'</code>，即它锚定在其内部的框或组，与<code>frameOutsideArea</code>中的相同。写成文字是“note runs 26 mm past card”。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>connectorDropped</code></td>
+      <td>连接线（<code>cause</code>，即它的id）略去了它在<code>frame</code>上的那一端，因为页面上没有显示这个方框：它收拢了，是可选的且为空，是超出本页条目数的卡片，或者是被所在框裁掉的图上的点。这是一条记录，不是警告。写成文字是“connector ramas left out izq (not on the page)”。自postext 1.48起。</td>
     </tr>
   </tbody>
 </table>

@@ -3,9 +3,9 @@
 export const metadata = {
   title: '配置：标注框',
   sidebarTitle: '标注框',
-  description: '怎样为:::callout标注框定义命名样式：边框、底色、色条、标题、图标、框外标记和标签页签；怎样给命题编号；框内文字怎样排；框跨页拆分时怎样处理；怎样在框内绘制设计',
+  description: '怎样为:::callout标注框定义命名样式：边框、底色、色条、标题、图标、框外标记和标签页签；逐角设定圆角、逐边设定边框、与框相连的页签等框形；怎样给命题编号；框内文字怎样排；框跨页拆分时怎样处理；怎样在框内绘制设计',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '18分钟',
   order: 16,
   parent: 'configuration',
@@ -142,15 +142,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>border</code></td>
-      <td><code>&#123; enabled, color, width &#125;</code></td>
+      <td><code>&#123; enabled, color, width, sides &#125;</code></td>
       <td><code>false</code>、<code>#cccccc</code>、<code>0.5pt</code></td>
-      <td>框的轮廓线，与框元素的边框一样描在框边缘的内侧（见<a href="/zh/docs/configuration-headers-footers#方框元素">框元素</a>）。</td>
+      <td>框的轮廓线，与框元素的边框一样描在框边缘的内侧（见<a href="/zh/docs/configuration-headers-footers#方框元素">框元素</a>）。自postext 1.48起，<code>sides</code>给每条边（<code>top</code>、<code>right</code>、<code>bottom</code>、<code>left</code>）各自的<code>&#123; enabled?, color?, width? &#125;</code>，覆盖整道边框的值：例如只在框顶画一条线，或者底边画得更粗（见<a href="#圆角边与相连的页签">圆角、边与相连的页签</a>）。</td>
     </tr>
     <tr>
       <td><code>borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0</code></td>
-      <td>底色 / 边框的圆角半径（上限为框宽和框高的一半）。色条随之变化：在圆角框上，色条被裁切到圆角框形之内，就像CSS按<code>border-radius</code>裁切<code>border-left</code>一样。<code>label</code>页签保持直角。</td>
+      <td>底色 / 边框的圆角半径（上限为框宽和框高的一半）。色条随之变化：在圆角框上，色条被裁切到圆角框形之内，就像CSS按<code>border-radius</code>裁切<code>border-left</code>一样。<code>label</code>页签保持直角，除非它与框相连。自postext 1.48起，它可以每个角取一个半径，对象中没写的角是直角：例如只有上面两个角是圆角的框。</td>
     </tr>
     <tr>
       <td><code>padding</code></td>
@@ -196,9 +196,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
       <td>未设置（无页签）</td>
-      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>，或按框自身书写方向的<code>'top-start'</code> / <code>'top-end'</code>，与色条的<code>'start'</code> / <code>'end'</code>相同），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>，不上移也不内缩，图片宽<code>1em</code>、与文字相距<code>0.3em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。</td>
+      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>，或按框自身书写方向的<code>'top-start'</code> / <code>'top-end'</code>，与色条的<code>'start'</code> / <code>'end'</code>相同），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>，不上移也不内缩，图片宽<code>1em</code>、与文字相距<code>0.3em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角；设了<code>joined: true</code>（自postext 1.48起）时，页签和框则是同一道轮廓，<code>fillet</code>把两者相接处的内角倒圆。<code>bottom-right</code>、<code>bottom-left</code>、<code>bottom-start</code>和<code>bottom-end</code>这几个位置（自postext 1.48起）把页签挂在框的底边上，它的<code>rule</code>沿底边画。自postext 1.48起，图标也可以是某种字体的一个字符，即<code>icon.kind: 'glyph'</code>（见<a href="#页签上的字形">页签上的字形</a>）。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -286,6 +286,94 @@ The glass stays hot for an hour after the flame is out.
     </tr>
   </tbody>
 </table>
+
+### 圆角、边与相连的页签
+
+框不一定是四个角一样、只有一道边框的矩形。自postext 1.48起，样式可以只把部分角做成圆角，只在部分边上画边框，还可以让页签从框里长出来，与框成为一个形状：教科书里标题页签和卡片本体合为一道轮廓的卡片，由样式画出，而不是画进页面背后的一张图片里。
+
+```ts
+calloutStyles: [
+  // 只有上面是圆角，框顶一条线，底边更粗。
+  { id: 'ficha', background: { model: 'hex', hex: '#fff4d6' },
+    borderRadius: { topLeft: { value: 3, unit: 'mm' }, topRight: { value: 3, unit: 'mm' } },
+    border: { enabled: false, color: { model: 'hex', hex: '#c58b00' }, width: { value: 0.75, unit: 'pt' },
+      sides: { top: { enabled: true }, bottom: { enabled: true, width: { value: 2, unit: 'pt' } } } } },
+  // 页签从顶边长出来的卡片。
+  { id: 'tarjeta', background: { model: 'hex', hex: '#ffffff' }, borderRadius: { value: 3, unit: 'mm' },
+    border: { enabled: true, color: { model: 'hex', hex: '#2a6f97' }, width: { value: 1, unit: 'pt' } },
+    label: { position: 'top-left', inset: { value: 4, unit: 'mm' }, joined: true, fillet: { value: 2, unit: 'mm' },
+      color: { model: 'hex', hex: '#2a6f97' } } },
+]
+```
+
+- **角。** `borderRadius`是四个角共用的一个长度，或者写成`{ topLeft, topRight, bottomRight, bottomLeft }`。对象中没写的角是直角。这里的角指纸面上的角。相邻两个角的半径之和不会超过它们之间那条边的长度；超出时两个角按比例缩小。
+- **边。** `border.sides.top`、`right`、`bottom`和`left`接受`enabled`、`color`和`width`，没写的字段取整道边框的值。只在顶边有边框的框写成`border: { enabled: false, sides: { top: { enabled: true } } }`，或者写`enabled: true`再关掉另外三条边。每条边的内缘随它的宽度而定，所以细边和粗边之间的圆角会像CSS画的那样弯过去。
+- **相连的页签。** 设`label.joined: true`时，页签和框是同一道轮廓、同一个底色（框的`background`；页签自己的`background`不绘制），一道边框绕过页签。页签立在框边上，在框外伸出它的高度：它的`offset`必须是`0`（其他值报告为`unknownConfigValue`，并按`0`处理）。页签外侧的角采用它所贴近的那个框角的半径，它与框相接处的内角由`fillet`倒圆（默认取那个半径）。与框的侧边齐平的页签（`inset`小于半个像素）从那条侧边直接向上伸出。文字要用在框的底色上看得清的颜色（`label.color`），因为页签不再有自己的底色。
+- **底部页签。** `position: 'bottom-right'`、`'bottom-left'`、`'bottom-start'`或`'bottom-end'`把页签挂在框的底边上，可以是普通页签，也可以是相连的页签：它就是把顶部页签翻过来，在底边下方`offset`处，`rule`沿底边画。没有侧边页签：页签的文字是横排的。
+
+每种输出都会画出这些形状：画布和PDF画成矢量轮廓，HTML阅读器和固定版式EPUB用逐角、逐边的CSS。流式EPUB把角和边写进CSS，把相连的页签排成普通页签。框的`look.border.color`给每条边重新着色，篇的调色板也会给每条边重新着色。各个角和各条边都一样的样式，排出来与以前相同。
+
+### 页签上的字形
+
+`label.icon`可以放某种字体的一个字符，而不是一张图片：`kind: 'glyph'`配`glyph: '◉'`。页签不需要图片资源，字形除非自己设了颜色，否则采用文字的颜色，所以一个样式可以用于全书的各种色调。自postext 1.48起。
+
+```ts
+label: {
+  position: 'top-left', background: { model: 'hex', hex: '#0885bf' }, color: { model: 'hex', hex: '#ffffff' },
+  icon: { kind: 'glyph', glyph: '◉', placement: 'inside', scale: 1.1 },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>字段</th>
+      <th style={{ width: '200px' }}>类型</th>
+      <th style={{ width: '120px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'resource' | 'glyph'</code></td>
+      <td>见说明</td>
+      <td>设了<code>resourceId</code>时为<code>'resource'</code>，只设了<code>glyph</code>时为<code>'glyph'</code>。写明<code>kind</code>时以它为准：<code>kind: 'glyph'</code>不管<code>resourceId</code>写了什么，都放字形。</td>
+    </tr>
+    <tr>
+      <td><code>glyph</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>作为图标的字符（<code>'◉'</code>、<code>'★'</code>、<code>'✎'</code>）。</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code>、<code>fontWeight</code></td>
+      <td><code>string</code>、<code>number</code></td>
+      <td>页签的</td>
+      <td>字形的字体和字重：取页签自己的，否则取标题字体和<code>700</code>。字体里没有这个字符时，按浏览器的方式回退；PDF报告<code>missingGlyph</code>。</td>
+    </tr>
+    <tr>
+      <td><code>scale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>字形的大小，是页签文字字号的倍数。为<code>1</code>时，它与文字共用基线；为其他值时，它在页签中保持居中。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>页签的<code>color</code></td>
+      <td>字形的颜色。未设置时跟随文字，框的<code>look.label.color</code>会给两者一起重新着色。</td>
+    </tr>
+    <tr>
+      <td><code>placement</code>、<code>gap</code></td>
+      <td><code>'beside' | 'inside'</code>、<code>Dimension</code></td>
+      <td><code>'beside'</code>、<code>0.3em</code></td>
+      <td>与图片相同：<code>'inside'</code>把字形放进页签、文字之前，页签加宽字形的宽度和间距；<code>'beside'</code>把它放在页签边缘之外。图片的<code>width</code>和<code>tint</code>不适用。</td>
+    </tr>
+  </tbody>
+</table>
+
+字形是装饰：在带标签的PDF中是版面工件，在HTML中对辅助技术隐藏，在流式EPUB中不写进框的标题，所以页签只按它的文字读出。
 
 ### 基于其他样式的样式
 

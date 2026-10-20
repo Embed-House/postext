@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Images, tableaux et vidéos',
   description: 'Les ressources dans le texte : renvois et insertions, numérotation, placement des flottants et endroit où ils arrivent, habillage du texte, taille des bitmaps, zones de sécurité, ancres des personnages et vidéos',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '45 min',
   order: 29,
   parent: 'document-format',
@@ -349,6 +349,19 @@ const radio: Resource = {
 
 L’`id` d’une ancre est la clé de personnage du script (`tomas: …`), ou `sfx` pour le point où se regroupent les onomatopées de la case ; `x` et `y` sont la bouche vers laquelle pointe la queue d’une bulle de dialogue, `head` le point vers lequel pointent les petites bulles d’une bulle de pensée (la bouche s’il n’est pas défini) et `face` un rectangle qu’aucune bulle ne couvre. Le moteur fait passer chaque point par le recadrage et le miroir de la case : une queue reste donc pointée sur son personnage, quelle que soit la forme que prend la case ; une ancre hors de la zone de sécurité déclenche `comicAnchorOutsideSafeArea`, car un recadrage peut la couper. Une troisième liste, `faces`, contient les visages des personnes qui ne parlent pas, sous forme de rectangles comme ceux d’`avoid` : aucune bulle ne les couvre, alors qu’une zone à éviter cède quand une case n’a pas d’autre place. Les ancres appartiennent à l’image et servent à toutes les traductions de la bande dessinée. Les cases de bande dessinée les lisent pour le lettrage. Les étiquettes d’une figure utilisent aussi les ancres et, depuis postext 1.42, les zones `avoid` d’une carte ou d’un schéma marquent ses symboles : une étiquette qui empiète sur l’une d’elles déclenche `labelOverlap` (voir [Pages composées](/fr/docs/composed-pages-figures#labeloverlap)). Dans le Sandbox, on les marque dans la boîte de dialogue **Zone de sécurité et lettrage** du [panneau Ressources](/fr/docs/sandbox#panneau-ressources).
 
+
+Une ancre dont se sert l’étiquette d’une figure peut aussi placer cette étiquette à l’écart de son point, `labelAt: { x, y }` en fractions de l’image, et tracer une ligne qui y revient, `leader: true` ou un aspect de ligne de rappel ; un connecteur d’une page composée peut se terminer sur le point de l’ancre avec `anchor: '<id>'`. Voir [Configuration › Champs d’étiquette d’une ancre](/fr/docs/configuration-composed-pages#champs-détiquette-dune-ancre). Depuis postext 1.48.
+
+### Symboles dans les légendes, les notes et les cellules
+
+Une légende, une note ou une cellule de tableau peut porter un petit symbole sur sa ligne : `:icon[alt]{glyph="⊙"}` place un caractère (dans la police que nomme `font="…"`, sinon dans celle du texte), `:icon[alt]{resource="town-mark"}` une ressource bitmap ou SVG, et `:icon[alt]{line="dashed"}` un échantillon de trait, pour un tableau qui explique les traits d’une carte. `color="…"` le teinte d’une couleur hexadécimale ou d’une entrée de la palette, et `size="…"` fixe sa hauteur en cadratins (par défaut `0.75`, la hauteur d’une capitale). Le texte entre crochets est ce que lisent à sa place les lecteurs d’écran et le PDF balisé ; des crochets vides en font une décoration.
+
+```ts
+{ id: 'mapa-politico', typeId: 'figure', kind: 'bitmap',
+  caption: 'Capitals :icon[capital]{glyph="⊙" font="Noto Sans Math"} and towns :icon[town]{resource="town-mark"} of Varenia' }
+```
+
+Les symboles sont lus dans les légendes, les notes, les cellules de tableau et les étiquettes de figure (voir [Pages composées › Traits de rappel, légendes de carte et symboles](/fr/docs/composed-pages-figures#traits-de-rappel-légendes-de-carte-et-symboles)) ; dans le texte courant et les titres, la directive reste du texte dans cette version. Depuis postext 1.48.
 
 ### Vidéos
 
