@@ -6418,6 +6418,21 @@
       "fr": "Appliquez l'une des solutions proposées dans le panneau Vérifications ou Recomposition : peignez dessous le bloc qui cache (layer), faites-lui repousser le texte autour de lui (exclude: push) ou déplacez-le des millimètres proposés. Si l'image doit se trouver par-dessus le bloc, réglez overlap: 'allow' sur l'un ou l'autre.",
       "de": "Wählen Sie im Panel Prüfungen oder Verschiebungen eine der vorgeschlagenen Korrekturen: den verdeckenden Rahmen darunter malen (layer), ihn den Text um sich herum verdrängen lassen (exclude: push) oder ihn um die vorgeschlagenen Millimeter verschieben. Soll das Bild über dem Rahmen liegen, setzen Sie overlap: 'allow' auf einem der beiden.",
       "it": "Applica una delle correzioni proposte nel pannello Verifiche o Spostamenti: dipingi sotto la cornice che copre (layer), falle spostare il testo intorno a sé (exclude: push) o spostala dei millimetri proposti. Se l'immagine deve stare sopra la cornice, imposta overlap: 'allow' su una delle due."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameCovered",
+        "es": "frameCovered",
+        "ca": "frameCovered",
+        "zh": "frameCovered",
+        "ar": "frameCovered",
+        "ja": "frameCovered",
+        "pt": "frameCovered",
+        "fr": "frameCovered",
+        "de": "frameCovered",
+        "it": "frameCovered"
+      }
     }
   },
   "frameOutsideArea": {
@@ -6457,6 +6472,21 @@
       "fr": "Appliquez l'une des solutions proposées dans le panneau Vérifications ou Recomposition : limitez le bloc à la place qu'il a (maxHeight, et la suite continue sur la page suivante), portez le minHeight du bloc dans lequel il est ancré, ou déplacez-le des millimètres proposés. S'il dépasse exprès, réglez overlap: 'allow' sur le bloc.",
       "de": "Wählen Sie im Panel Prüfungen oder Verschiebungen eine der vorgeschlagenen Korrekturen: den Rahmen auf seinen Platz begrenzen (maxHeight, der Rest läuft auf der nächsten Seite weiter), minHeight des Rahmens anheben, in dem er verankert ist, oder ihn um die vorgeschlagenen Millimeter verschieben. Ragt er absichtlich hinaus, setzen Sie overlap: 'allow' auf dem Rahmen.",
       "it": "Applica una delle correzioni proposte nel pannello Verifiche o Spostamenti: limita la cornice allo spazio che ha (maxHeight, e il resto prosegue nella pagina successiva), alza il minHeight della cornice dentro cui è ancorata o spostala dei millimetri proposti. Se sporge di proposito, imposta overlap: 'allow' sulla cornice."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "frameOutsideArea",
+        "es": "frameOutsideArea",
+        "ca": "frameOutsideArea",
+        "zh": "frameOutsideArea",
+        "ar": "frameOutsideArea",
+        "ja": "frameOutsideArea",
+        "pt": "frameOutsideArea",
+        "fr": "frameOutsideArea",
+        "de": "frameOutsideArea",
+        "it": "frameOutsideArea"
+      }
     }
   },
   "repeatOverflow": {
@@ -6496,6 +6526,21 @@
       "fr": "Augmentez repeat.max sur la grille, ou placez les éléments en trop sur une autre page.",
       "de": "Erhöhen Sie repeat.max am Raster oder setzen Sie die überzähligen Einträge auf eine andere Seite.",
       "it": "Aumenta repeat.max sulla griglia o sposta gli elementi in eccesso in un'altra pagina."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Repeated slots",
+        "es": "Ranuras repetidas",
+        "ca": "Ranures repetides",
+        "zh": "重复的槽位",
+        "ar": "الخانات المتكرّرة",
+        "ja": "繰り返すスロット",
+        "pt": "Slots repetidos",
+        "fr": "Emplacements répétés",
+        "de": "Wiederholte Slots",
+        "it": "Slot ripetuti"
+      }
     }
   },
   "moduleUnknown": {
