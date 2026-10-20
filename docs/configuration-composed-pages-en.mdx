@@ -748,13 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>the main colour</td>
-      <td>A palette-linked colour follows the template's <code>palette</code>, the page fence's and a part's, as rules do. A colour with an alpha channel (<code>#rrggbbaa</code>) paints the line and its marks translucent, so a picture under it shows through (since postext 1.48).</td>
+      <td>A palette-linked colour follows the template's <code>palette</code>, the page fence's and a part's, as rules do. A colour with an alpha channel (<code>#rrggbbaa</code>) paints the line and its marks translucent, so a picture under it shows through (since postext 1.49).</td>
     </tr>
     <tr>
       <td><code>opacity</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>How opaque the line and its marks are, from <code>0</code> to <code>1</code>, times the colour's own alpha. Kept apart from the colour, so a palette-linked colour stays linked. A cased line is two connectors: a wide pale one at <code>opacity: 0.6</code> under a dashed one. Since postext 1.48.</td>
+      <td>How opaque the line and its marks are, from <code>0</code> to <code>1</code>, times the colour's own alpha. Kept apart from the colour, so a palette-linked colour stays linked. A cased line is two connectors: a wide pale one at <code>opacity: 0.6</code> under a dashed one. Since postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -766,7 +766,7 @@ decoration: {
       <td><code>startCap</code>, <code>endCap</code></td>
       <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>A mark at <code>from</code> and at every <code>to</code>: a filled dot centred on the end, or an arrowhead whose tip is the end. <code>'ring'</code>: a hollow dot centred on the end, stroked in the line's width, the line stopping at its edge; <code>'bar'</code>: a stroke across the line at the end, in its width (both since postext 1.48).</td>
+      <td>A mark at <code>from</code> and at every <code>to</code>: a filled dot centred on the end, or an arrowhead whose tip is the end. <code>'ring'</code>: a hollow dot centred on the end, stroked in the line's width, the line stopping at its edge; <code>'bar'</code>: a stroke across the line at the end, in its width (both since postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
@@ -979,7 +979,7 @@ labelStyles: [
       <td><code>leader</code></td>
       <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>none</td>
-      <td>The look of the leaders of the labels set in this style: the line from a label's box to its anchor's point. Colour by default the label's, width <code>0.75pt</code>, <code>endCap: 'dot'</code> at the point, no <code>startCap</code>, <code>capSize</code> three times the width, <code>routing</code> <code>'straight'</code> (or <code>'elbow'</code>: out of the box square, then one turn onto the point). A label set away from its point (<code>labelAt</code>) in a style with a <code>leader</code> gets one. Since postext 1.48. <code>startCap</code> and <code>endCap</code> take the connector's marks, <code>'ring'</code> and <code>'bar'</code> included, and <code>opacity</code> (0 to 1) or a colour with an alpha channel makes the line translucent.</td>
+      <td>The look of the leaders of the labels set in this style: the line from a label's box to its anchor's point. Colour by default the label's, width <code>0.75pt</code>, <code>endCap: 'dot'</code> at the point, no <code>startCap</code>, <code>capSize</code> three times the width, <code>routing</code> <code>'straight'</code> (or <code>'elbow'</code>: out of the box square, then one turn onto the point). A label set away from its point (<code>labelAt</code>) in a style with a <code>leader</code> gets one. Since postext 1.48. <code>startCap</code> and <code>endCap</code> take the connector's marks, <code>'ring'</code> and <code>'bar'</code> included, and <code>opacity</code> (0 to 1) or a colour with an alpha channel makes the line translucent (since postext 1.49).</td>
     </tr>
   </tbody>
 </table>

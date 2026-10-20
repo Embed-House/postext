@@ -748,13 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>اللون الرئيسي</td>
-      <td>اللون المرتبط بلوحة الألوان يتبع <code>palette</code> القالب، ولوحة كتلة الصفحة، ولوحة الجزء، كما تفعل الخطوط الفاصلة. اللون ذو قناة ألفا (<code>#rrggbbaa</code>) يرسم الخط وعلاماته شفافةً جزئيًا، فتظهر الصورة التي تحته (منذ postext 1.48).</td>
+      <td>اللون المرتبط بلوحة الألوان يتبع <code>palette</code> القالب، ولوحة كتلة الصفحة، ولوحة الجزء، كما تفعل الخطوط الفاصلة. اللون ذو قناة ألفا (<code>#rrggbbaa</code>) يرسم الخط وعلاماته شفافةً جزئيًا، فتظهر الصورة التي تحته (منذ postext 1.49).</td>
     </tr>
     <tr>
       <td><code>opacity</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>مدى عتامة الخط وعلاماته، من <code>0</code> إلى <code>1</code>، مضروبًا في ألفا اللون نفسه. يبقى منفصلًا عن اللون، فيظل اللون المرتبط بلوحة الألوان مرتبطًا. الخط المُبطَّن موصلان: خط عريض فاتح بقيمة <code>opacity: 0.6</code> تحت خط متقطع. منذ postext 1.48.</td>
+      <td>مدى عتامة الخط وعلاماته، من <code>0</code> إلى <code>1</code>، مضروبًا في ألفا اللون نفسه. يبقى منفصلًا عن اللون، فيظل اللون المرتبط بلوحة الألوان مرتبطًا. الخط المُبطَّن موصلان: خط عريض فاتح بقيمة <code>opacity: 0.6</code> تحت خط متقطع. منذ postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>، <code>dash</code></td>
@@ -766,7 +766,7 @@ decoration: {
       <td><code>startCap</code>، <code>endCap</code></td>
       <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>علامة عند <code>from</code> وعند كل <code>to</code>: نقطة مصمتة في وسط الطرف، أو رأس سهم طرفه هو الطرف. <code>'ring'</code>: نقطة مجوّفة في وسط الطرف، تُخطّ بسماكة الخط، ويتوقف الخط عند حافتها؛ <code>'bar'</code>: شَرطة تعترض الخط عند الطرف، بسماكته (كلاهما منذ postext 1.48).</td>
+      <td>علامة عند <code>from</code> وعند كل <code>to</code>: نقطة مصمتة في وسط الطرف، أو رأس سهم طرفه هو الطرف. <code>'ring'</code>: نقطة مجوّفة في وسط الطرف، تُخطّ بسماكة الخط، ويتوقف الخط عند حافتها؛ <code>'bar'</code>: شَرطة تعترض الخط عند الطرف، بسماكته (كلاهما منذ postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
@@ -979,7 +979,7 @@ labelStyles: [
       <td><code>leader</code></td>
       <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>لا شيء</td>
-      <td>مظهر خطوط الإشارة للتسميات المنضّدة بهذا النمط: الخط من مستطيل التسمية إلى نقطة مرساتها. اللون افتراضيًا لون التسمية، والعرض <code>0.75pt</code>، و<code>endCap: 'dot'</code> عند النقطة، ولا <code>startCap</code>، و<code>capSize</code> ثلاثة أضعاف العرض، و<code>routing</code> بقيمة <code>'straight'</code> (أو <code>'elbow'</code>: يخرج من المستطيل مستقيمًا، ثم ينعطف مرة واحدة إلى النقطة). والتسمية الموضوعة بعيدًا عن نقطتها (<code>labelAt</code>) بنمط فيه <code>leader</code> تأخذ خطًّا. منذ postext 1.48. تقبل <code>startCap</code> و<code>endCap</code> علامات الموصل، ومنها <code>'ring'</code> و<code>'bar'</code>، ويجعل <code>opacity</code> (من 0 إلى 1) أو لونٌ ذو قناة ألفا الخطَّ شفافًا جزئيًا.</td>
+      <td>مظهر خطوط الإشارة للتسميات المنضّدة بهذا النمط: الخط من مستطيل التسمية إلى نقطة مرساتها. اللون افتراضيًا لون التسمية، والعرض <code>0.75pt</code>، و<code>endCap: 'dot'</code> عند النقطة، ولا <code>startCap</code>، و<code>capSize</code> ثلاثة أضعاف العرض، و<code>routing</code> بقيمة <code>'straight'</code> (أو <code>'elbow'</code>: يخرج من المستطيل مستقيمًا، ثم ينعطف مرة واحدة إلى النقطة). والتسمية الموضوعة بعيدًا عن نقطتها (<code>labelAt</code>) بنمط فيه <code>leader</code> تأخذ خطًّا. منذ postext 1.48. تقبل <code>startCap</code> و<code>endCap</code> علامات الموصل، ومنها <code>'ring'</code> و<code>'bar'</code>، ويجعل <code>opacity</code> (من 0 إلى 1) أو لونٌ ذو قناة ألفا الخطَّ شفافًا جزئيًا (منذ postext 1.49).</td>
     </tr>
   </tbody>
 </table>

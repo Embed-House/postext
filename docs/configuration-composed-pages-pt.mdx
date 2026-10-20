@@ -748,13 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>a cor principal</td>
-      <td>Uma cor ligada à paleta segue a <code>palette</code> do modelo, a do contêiner de página e a de uma parte, como fazem os fios. Uma cor com canal alfa (<code>#rrggbbaa</code>) pinta a linha e as suas marcas translúcidas e deixa ver a imagem que está por baixo (desde o postext 1.48).</td>
+      <td>Uma cor ligada à paleta segue a <code>palette</code> do modelo, a do contêiner de página e a de uma parte, como fazem os fios. Uma cor com canal alfa (<code>#rrggbbaa</code>) pinta a linha e as suas marcas translúcidas e deixa ver a imagem que está por baixo (desde o postext 1.49).</td>
     </tr>
     <tr>
       <td><code>opacity</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>O quanto a linha e as suas marcas são opacas, de <code>0</code> a <code>1</code>, multiplicado pelo alfa da própria cor. Fica separado da cor, então uma cor ligada à paleta continua ligada. Uma linha com contorno são dois conectores: um largo e claro com <code>opacity: 0.6</code> sob outro tracejado. Desde o postext 1.48.</td>
+      <td>O quanto a linha e as suas marcas são opacas, de <code>0</code> a <code>1</code>, multiplicado pelo alfa da própria cor. Fica separado da cor, então uma cor ligada à paleta continua ligada. Uma linha com contorno são dois conectores: um largo e claro com <code>opacity: 0.6</code> sob outro tracejado. Desde o postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -766,7 +766,7 @@ decoration: {
       <td><code>startCap</code>, <code>endCap</code></td>
       <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Uma marca em <code>from</code> e em cada <code>to</code>: um ponto cheio centrado na ponta, ou uma ponta de seta cujo bico é a ponta. <code>'ring'</code>: um ponto vazado centrado na ponta, traçado na espessura da linha, que chega até a sua borda; <code>'bar'</code>: um traço atravessado na ponta, na espessura da linha (ambos desde o postext 1.48).</td>
+      <td>Uma marca em <code>from</code> e em cada <code>to</code>: um ponto cheio centrado na ponta, ou uma ponta de seta cujo bico é a ponta. <code>'ring'</code>: um ponto vazado centrado na ponta, traçado na espessura da linha, que chega até a sua borda; <code>'bar'</code>: um traço atravessado na ponta, na espessura da linha (ambos desde o postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
@@ -979,7 +979,7 @@ labelStyles: [
       <td><code>leader</code></td>
       <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>nenhum</td>
-      <td>A aparência das linhas de chamada dos rótulos deste estilo: a linha da caixa de um rótulo até o ponto da âncora dele. Por padrão, a cor do rótulo, largura <code>0.75pt</code>, <code>endCap: 'dot'</code> no ponto, sem <code>startCap</code>, <code>capSize</code> três vezes a largura e <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code>: sai da caixa em ângulo reto e faz uma curva até o ponto). Um rótulo afastado do seu ponto (<code>labelAt</code>) num estilo com <code>leader</code> recebe uma. Desde o postext 1.48. <code>startCap</code> e <code>endCap</code> aceitam as marcas do conector, <code>'ring'</code> e <code>'bar'</code> incluídas, e <code>opacity</code> (de 0 a 1) ou uma cor com canal alfa deixam a linha translúcida.</td>
+      <td>A aparência das linhas de chamada dos rótulos deste estilo: a linha da caixa de um rótulo até o ponto da âncora dele. Por padrão, a cor do rótulo, largura <code>0.75pt</code>, <code>endCap: 'dot'</code> no ponto, sem <code>startCap</code>, <code>capSize</code> três vezes a largura e <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code>: sai da caixa em ângulo reto e faz uma curva até o ponto). Um rótulo afastado do seu ponto (<code>labelAt</code>) num estilo com <code>leader</code> recebe uma. Desde o postext 1.48. <code>startCap</code> e <code>endCap</code> aceitam as marcas do conector, <code>'ring'</code> e <code>'bar'</code> incluídas, e <code>opacity</code> (de 0 a 1) ou uma cor com canal alfa deixam a linha translúcida (desde o postext 1.49).</td>
     </tr>
   </tbody>
 </table>

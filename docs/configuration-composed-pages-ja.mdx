@@ -748,13 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>メインカラー</td>
-      <td>パレットにリンクした色は、罫線と同じく、テンプレート、ページブロック、部の<code>palette</code>に従います。アルファチャンネル付きの色（<code>#rrggbbaa</code>）は線と印を半透明に塗り、下の画像が透けて見えます（postext 1.48以降）。</td>
+      <td>パレットにリンクした色は、罫線と同じく、テンプレート、ページブロック、部の<code>palette</code>に従います。アルファチャンネル付きの色（<code>#rrggbbaa</code>）は線と印を半透明に塗り、下の画像が透けて見えます（postext 1.49以降）。</td>
     </tr>
     <tr>
       <td><code>opacity</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>線と印の不透明度で、<code>0</code>から<code>1</code>まで、色自体のアルファに掛け合わされます。色とは別に持つので、パレットにリンクした色はリンクしたままです。縁取りした線は2本のコネクターで作ります。太く淡い線（<code>opacity: 0.6</code>）の上に破線を重ねます。postext 1.48以降。</td>
+      <td>線と印の不透明度で、<code>0</code>から<code>1</code>まで、色自体のアルファに掛け合わされます。色とは別に持つので、パレットにリンクした色はリンクしたままです。縁取りした線は2本のコネクターで作ります。太く淡い線（<code>opacity: 0.6</code>）の上に破線を重ねます。postext 1.49以降。</td>
     </tr>
     <tr>
       <td><code>width</code>、<code>dash</code></td>
@@ -766,7 +766,7 @@ decoration: {
       <td><code>startCap</code>、<code>endCap</code></td>
       <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td><code>from</code>とすべての<code>to</code>に付ける印です。端を中心とする塗りつぶした点か、先端が端に来る矢じりです。<code>'ring'</code>は端を中心とする中空の円で、線の太さで描かれ、線はその縁で止まります。<code>'bar'</code>は端で線を横切る短い線で、太さは線と同じです（どちらもpostext 1.48以降）。</td>
+      <td><code>from</code>とすべての<code>to</code>に付ける印です。端を中心とする塗りつぶした点か、先端が端に来る矢じりです。<code>'ring'</code>は端を中心とする中空の円で、線の太さで描かれ、線はその縁で止まります。<code>'bar'</code>は端で線を横切る短い線で、太さは線と同じです（どちらもpostext 1.49以降）。</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
@@ -979,7 +979,7 @@ labelStyles: [
       <td><code>leader</code></td>
       <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>なし</td>
-      <td>このスタイルのラベルに付ける引き出し線の見た目で、ラベルのボックスからアンカーの点まで引く線です。既定では、色はラベルの色、太さは<code>0.75pt</code>、点の側に<code>endCap: 'dot'</code>、<code>startCap</code>なし、<code>capSize</code>は太さの3倍、<code>routing</code>は<code>'straight'</code>です（<code>'elbow'</code>なら、ボックスから直角に出て、1回曲がって点に届きます）。<code>leader</code>のあるスタイルで点から離して置いたラベル（<code>labelAt</code>）には線が付きます（postext 1.48以降）。<code>startCap</code>と<code>endCap</code>にはコネクターの印が使え、<code>'ring'</code>と<code>'bar'</code>も含みます。<code>opacity</code>（0から1）またはアルファチャンネル付きの色で線が半透明になります。</td>
+      <td>このスタイルのラベルに付ける引き出し線の見た目で、ラベルのボックスからアンカーの点まで引く線です。既定では、色はラベルの色、太さは<code>0.75pt</code>、点の側に<code>endCap: 'dot'</code>、<code>startCap</code>なし、<code>capSize</code>は太さの3倍、<code>routing</code>は<code>'straight'</code>です（<code>'elbow'</code>なら、ボックスから直角に出て、1回曲がって点に届きます）。<code>leader</code>のあるスタイルで点から離して置いたラベル（<code>labelAt</code>）には線が付きます（postext 1.48以降）。<code>startCap</code>と<code>endCap</code>にはコネクターの印が使え、<code>'ring'</code>と<code>'bar'</code>も含みます。<code>opacity</code>（0から1）またはアルファチャンネル付きの色で線が半透明になります（postext 1.49以降）。</td>
     </tr>
   </tbody>
 </table>

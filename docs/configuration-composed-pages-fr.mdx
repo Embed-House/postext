@@ -748,13 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>la couleur principale</td>
-      <td>Une couleur liée à la palette suit la <code>palette</code> du gabarit, celle du délimiteur de page et celle d’une partie, comme les filets. Une couleur avec un canal alpha (<code>#rrggbbaa</code>) peint la ligne et ses marques en transparence, et laisse voir l’image qui se trouve dessous (depuis postext 1.48).</td>
+      <td>Une couleur liée à la palette suit la <code>palette</code> du gabarit, celle du délimiteur de page et celle d’une partie, comme les filets. Une couleur avec un canal alpha (<code>#rrggbbaa</code>) peint la ligne et ses marques en transparence, et laisse voir l’image qui se trouve dessous (depuis postext 1.49).</td>
     </tr>
     <tr>
       <td><code>opacity</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>L’opacité de la ligne et de ses marques, de <code>0</code> à <code>1</code>, multipliée par l’alpha de la couleur elle-même. Elle reste à part de la couleur : une couleur liée à la palette reste liée. Une ligne bordée se fait avec deux connecteurs : un large et pâle à <code>opacity: 0.6</code> sous un autre en tirets. Depuis postext 1.48.</td>
+      <td>L’opacité de la ligne et de ses marques, de <code>0</code> à <code>1</code>, multipliée par l’alpha de la couleur elle-même. Elle reste à part de la couleur : une couleur liée à la palette reste liée. Une ligne bordée se fait avec deux connecteurs : un large et pâle à <code>opacity: 0.6</code> sous un autre en tirets. Depuis postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -766,7 +766,7 @@ decoration: {
       <td><code>startCap</code>, <code>endCap</code></td>
       <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Une marque à <code>from</code> et à chaque <code>to</code> : un point plein centré sur l’extrémité, ou une pointe de flèche dont la pointe est l’extrémité. <code>'ring'</code> : un point creux centré sur l’extrémité, tracé dans l’épaisseur de la ligne, qui s’arrête à son bord ; <code>'bar'</code> : un trait en travers de la ligne à l’extrémité, de la même épaisseur (tous deux depuis postext 1.48).</td>
+      <td>Une marque à <code>from</code> et à chaque <code>to</code> : un point plein centré sur l’extrémité, ou une pointe de flèche dont la pointe est l’extrémité. <code>'ring'</code> : un point creux centré sur l’extrémité, tracé dans l’épaisseur de la ligne, qui s’arrête à son bord ; <code>'bar'</code> : un trait en travers de la ligne à l’extrémité, de la même épaisseur (tous deux depuis postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
@@ -979,7 +979,7 @@ labelStyles: [
       <td><code>leader</code></td>
       <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>aucun</td>
-      <td>L’aspect des traits de rappel des étiquettes de ce style : la ligne qui va de la boîte d’une étiquette au point de son ancre. Par défaut, la couleur de l’étiquette, une épaisseur de <code>0.75pt</code>, <code>endCap: 'dot'</code> au point, pas de <code>startCap</code>, un <code>capSize</code> de trois fois l’épaisseur, <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code> : sortie d’équerre de la boîte, puis un seul coude jusqu’au point). Une étiquette placée à l’écart de son point (<code>labelAt</code>) dans un style doté d’un <code>leader</code> en reçoit un. Depuis postext 1.48. <code>startCap</code> et <code>endCap</code> prennent les marques du connecteur, <code>'ring'</code> et <code>'bar'</code> compris, et <code>opacity</code> (de 0 à 1) ou une couleur avec un canal alpha rendent la ligne transparente.</td>
+      <td>L’aspect des traits de rappel des étiquettes de ce style : la ligne qui va de la boîte d’une étiquette au point de son ancre. Par défaut, la couleur de l’étiquette, une épaisseur de <code>0.75pt</code>, <code>endCap: 'dot'</code> au point, pas de <code>startCap</code>, un <code>capSize</code> de trois fois l’épaisseur, <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code> : sortie d’équerre de la boîte, puis un seul coude jusqu’au point). Une étiquette placée à l’écart de son point (<code>labelAt</code>) dans un style doté d’un <code>leader</code> en reçoit un. Depuis postext 1.48. <code>startCap</code> et <code>endCap</code> prennent les marques du connecteur, <code>'ring'</code> et <code>'bar'</code> compris, et <code>opacity</code> (de 0 à 1) ou une couleur avec un canal alpha rendent la ligne transparente (depuis postext 1.49).</td>
     </tr>
   </tbody>
 </table>

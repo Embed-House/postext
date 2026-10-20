@@ -77,7 +77,7 @@ Since postext 1.48 a label can stand away from what it names, a label can be a m
 :::
 ```
 
-`leader` with any value but `none`, `false` or `off` turns it on; without the attribute, the anchor's `leader` decides, and with neither a label set away from its point gets one when its style has a `leader`. A frame's note can point at a place of the picture as well: a [connector](/en/docs/configuration-composed-pages#connectors) whose end names a picture anchor (`anchor: 'lake'`). The look decides the marks and the ink: a ring at the point (`endCap: 'ring'`) leaves the place it names visible, and a translucent colour or an `opacity` lets the picture show through the line.
+`leader` with any value but `none`, `false` or `off` turns it on; without the attribute, the anchor's `leader` decides, and with neither a label set away from its point gets one when its style has a `leader`. A frame's note can point at a place of the picture as well: a [connector](/en/docs/configuration-composed-pages#connectors) whose end names a picture anchor (`anchor: 'lake'`). The look decides the marks and the ink: a ring at the point (`endCap: 'ring'`) leaves the place it names visible, and a translucent colour or an `opacity` lets the picture show through the line (since postext 1.49).
 
 **Labels of several lines.** `:::label{at="…" style="…"}` … `:::`, inside a `:::figure`, writes a label line by line: every line of the source that is not blank is a line of the label, so a key or an address needs no `\\` at the end of each line. The first `:::` closes the label, the next one the figure. `::label[…]` stays a label of one line, broken only where it says `\\`.
 

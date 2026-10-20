@@ -748,13 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>el color principal</td>
-      <td>Un color vinculado a la paleta sigue la <code>palette</code> de la plantilla, la del bloque de página y la de una parte, como los filetes. Un color con canal alfa (<code>#rrggbbaa</code>) pinta la línea y sus marcas translúcidas, y deja ver la imagen que hay debajo (desde postext 1.48).</td>
+      <td>Un color vinculado a la paleta sigue la <code>palette</code> de la plantilla, la del bloque de página y la de una parte, como los filetes. Un color con canal alfa (<code>#rrggbbaa</code>) pinta la línea y sus marcas translúcidas, y deja ver la imagen que hay debajo (desde postext 1.49).</td>
     </tr>
     <tr>
       <td><code>opacity</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
-      <td>Lo opacas que son la línea y sus marcas, de <code>0</code> a <code>1</code>, multiplicado por el alfa del propio color. Va aparte del color, así que un color vinculado a la paleta sigue vinculado. Una línea con orla son dos conectores: uno ancho y pálido con <code>opacity: 0.6</code> debajo de otro discontinuo. Desde postext 1.48.</td>
+      <td>Lo opacas que son la línea y sus marcas, de <code>0</code> a <code>1</code>, multiplicado por el alfa del propio color. Va aparte del color, así que un color vinculado a la paleta sigue vinculado. Una línea con orla son dos conectores: uno ancho y pálido con <code>opacity: 0.6</code> debajo de otro discontinuo. Desde postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -766,7 +766,7 @@ decoration: {
       <td><code>startCap</code>, <code>endCap</code></td>
       <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Una marca en <code>from</code> y en cada <code>to</code>: un punto relleno centrado en el extremo, o una punta de flecha cuyo vértice es el extremo. <code>'ring'</code>: un punto hueco centrado en el extremo, trazado con el grosor de la línea, que llega hasta su borde; <code>'bar'</code>: un trazo atravesado en el extremo, del grosor de la línea (los dos desde postext 1.48).</td>
+      <td>Una marca en <code>from</code> y en cada <code>to</code>: un punto relleno centrado en el extremo, o una punta de flecha cuyo vértice es el extremo. <code>'ring'</code>: un punto hueco centrado en el extremo, trazado con el grosor de la línea, que llega hasta su borde; <code>'bar'</code>: un trazo atravesado en el extremo, del grosor de la línea (los dos desde postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
@@ -979,7 +979,7 @@ labelStyles: [
       <td><code>leader</code></td>
       <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>ninguno</td>
-      <td>El aspecto de las líneas de referencia de los rótulos de este estilo: la línea que va de la caja de un rótulo al punto de su ancla. Por defecto, el color del rótulo, un grosor de <code>0.75pt</code>, <code>endCap: 'dot'</code> en el punto, sin <code>startCap</code>, un <code>capSize</code> de tres veces el grosor y <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: sale de la caja en ángulo recto y gira una vez hacia el punto). Un rótulo apartado de su punto (<code>labelAt</code>) con un estilo que tiene <code>leader</code> lleva una. Desde postext 1.48. <code>startCap</code> y <code>endCap</code> admiten las marcas del conector, <code>'ring'</code> y <code>'bar'</code> incluidas, y <code>opacity</code> (de 0 a 1) o un color con canal alfa vuelven translúcida la línea.</td>
+      <td>El aspecto de las líneas de referencia de los rótulos de este estilo: la línea que va de la caja de un rótulo al punto de su ancla. Por defecto, el color del rótulo, un grosor de <code>0.75pt</code>, <code>endCap: 'dot'</code> en el punto, sin <code>startCap</code>, un <code>capSize</code> de tres veces el grosor y <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: sale de la caja en ángulo recto y gira una vez hacia el punto). Un rótulo apartado de su punto (<code>labelAt</code>) con un estilo que tiene <code>leader</code> lleva una. Desde postext 1.48. <code>startCap</code> y <code>endCap</code> admiten las marcas del conector, <code>'ring'</code> y <code>'bar'</code> incluidas, y <code>opacity</code> (de 0 a 1) o un color con canal alfa vuelven translúcida la línea (desde postext 1.49).</td>
     </tr>
   </tbody>
 </table>
