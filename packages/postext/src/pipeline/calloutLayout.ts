@@ -1166,11 +1166,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
       ?? (input.uprightMaxLength !== undefined && raw.type === 'resourceBlock'
         // A turned frame's picture takes room across the page along the
-        // box's stacking axis: what the box has left, the gaps kept. A
-        // resource block is never kept in the measure memo.
+        // box's stacking axis: what the box has left, the gaps kept. Only
+        // the gaps the box sets (#1078): none above the box's first block,
+        // none below its last, as the spacing below and the box's height
+        // count them; else a frame as tall as its picture needs would set
+        // the picture smaller than it measured it. A resource block is
+        // never kept in the measure memo.
         ? measureContentBlock(raw, blockIdx, width, derivedCtx, {
           styleOverride,
-          uprightMaxLength: Math.max(1, input.uprightMaxLength - (st.cursorY - innerTop) - Math.max(st.prevMarginBottom, resourceGapPx) - (resourceGapBelow ? resourceGapPx : 0)),
+          uprightMaxLength: Math.max(1, input.uprightMaxLength - (st.cursorY - innerTop)
+            - (st.first ? st.prevMarginBottom : Math.max(st.prevMarginBottom, resourceGapPx))
+            - (resourceGapBelow && !isLastRealOf(k) ? resourceGapPx : 0)),
         })
         : input.measureMemo
           ? measureBlockMemo(input.measureMemo, ctx, style, derivedCtx, raw, blockIdx, width, styleOverride)
