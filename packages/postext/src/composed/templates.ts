@@ -706,6 +706,35 @@ function settleReferences(
   // Decoration anchors: another element of the decoration, or a box.
   const elementIds = new Set(decoration.map((e) => e.value.id).filter((id): id is string => typeof id === 'string'));
   decoration.forEach((e) => {
+    if (e.value.kind === 'connector') {
+      // A connector's ends (#1056): a box, an instance (`#card[2]`), every
+      // instance (`#card[*]`, in `to` only) or another element. An end on
+      // nothing is left out; a connector left with no `from` or no `to` is
+      // not drawn.
+      const known = (to: unknown, many: boolean): boolean => {
+        if (typeof to !== 'string' || !to.startsWith('#')) return false;
+        const name = to.slice(1);
+        if (elementIds.has(name) || boxSet.has(name) || isInstance(name)) return true;
+        return many && name.endsWith('[*]') && repeated.has(name.slice(0, -3));
+      };
+      const report = (to: unknown, path: string) => issues.push({ kind: 'frameAnchorUnknown', path, value: String(to), used: '', known: [...boxNames, ...elementIds].map((n) => `#${n}`) });
+      const c = e.value;
+      const fromTo = (c.from as { to?: unknown } | undefined)?.to;
+      let from = c.from;
+      if (!known(fromTo, false)) {
+        report(fromTo, `${e.configPath}/from/to`);
+        from = undefined as unknown as typeof c.from;
+      }
+      const list = Array.isArray(c.to) ? c.to : [c.to];
+      const kept = list.filter((end, k) => {
+        const to = (end as { to?: unknown } | undefined)?.to;
+        if (known(to, true)) return true;
+        report(to, Array.isArray(c.to) ? `${e.configPath}/to/${k}/to` : `${e.configPath}/to/to`);
+        return false;
+      });
+      if (from !== c.from || kept.length !== list.length) e.value = { ...c, from, to: kept };
+      return;
+    }
     const target = anchorTarget(e.value.placement);
     if (target !== undefined && !elementIds.has(target) && !boxSet.has(target) && !isInstance(target)) {
       issues.push({ kind: 'frameAnchorUnknown', path: `${e.configPath}/${ANCHOR_FIELD}`, value: `#${target}`, used: 'container', known: [...boxNames, ...elementIds].map((n) => `#${n}`) });

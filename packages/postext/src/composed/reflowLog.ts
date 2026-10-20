@@ -131,6 +131,8 @@ function describeEvent(e: ReflowEvent, pageLabel?: (index: number) => string): s
       const past = e.past === undefined ? 'its area' : e.past.startsWith('#') ? e.past.slice(1) : `the ${e.past}`;
       return `${e.frame} runs ${num(e.toMm ?? 0)} mm past ${past}`;
     }
+    case 'connectorDropped':
+      return `connector ${e.cause ?? ''} left out ${e.frame} (not on the page)`.replace('  ', ' ');
     default:
       return `${e.frame} ${String(e.kind)}`;
   }

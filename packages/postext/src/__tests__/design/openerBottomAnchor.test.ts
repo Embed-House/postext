@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline';
-import type { DesignElement, HeadingStyleConfig, PostextConfig } from '../../types';
+import type { DesignElement, DesignTextElement, HeadingStyleConfig, PostextConfig } from '../../types';
 import type { VDTBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt';
 
 // Deterministic text measurement stub (no DOM in the node test env): each
@@ -24,7 +24,7 @@ const mm = (value: number) => ({ value, unit: 'mm' as const });
 const DPI = 72;
 const px = (millimetres: number) => (millimetres / 25.4) * DPI;
 
-const title = (edge: 'bottom-left' | 'left' | 'top-left', offsetY = 0): DesignElement => ({
+const title = (edge: 'bottom-left' | 'left' | 'top-left', offsetY = 0): DesignTextElement => ({
   kind: 'text', id: 'title', content: '{titleText}', fontSize: pt(20), overflow: 'wrap',
   placement: { anchor: { to: 'container', edge }, offset: { y: mm(offsetY) } },
 });

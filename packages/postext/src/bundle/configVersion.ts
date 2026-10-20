@@ -17,7 +17,7 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 15 since #853 (14 from
+ * The configuration rules this engine writes: 16 since #1056 (15 from #853, 14 from
  * postext 1.30, 13 from 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
@@ -196,6 +196,11 @@ import { hasCJK } from '../measure/cjk';
  *   changes meaning, so one stored under 14 is read as it is (no pin): the
  *   number marks a configuration that may hold templates, so an older
  *   reader can say it lays out without them.
+ * - 16 (#1056), composed pages round 2: a template's decoration may hold
+ *   connectors (`kind: 'connector'`), the first decoration element that is
+ *   not placed by an anchor. An engine that reads 15 or less leaves them
+ *   out (`unknownConfigValue`). Nothing older changes meaning: one stored
+ *   under 15 is read as it is (no pin).
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -214,9 +219,10 @@ import { hasCJK } from '../measure/cjk';
  * version-13 pins (which every older one gets too); one stored under 13
  * was written by postext 1.29 and gets the version-14 pin (which every
  * older one gets too); one stored under 14 was written by postext 1.30 to
- * 1.33 and gets nothing.
+ * 1.33 and gets nothing; one stored under 15 was written by postext 1.34 to
+ * 1.47 and gets nothing either.
  */
-export const CONFIG_VERSION = 15;
+export const CONFIG_VERSION = 16;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -325,6 +331,9 @@ const TASK_BOX_RULES = 13;
  *  keys and change no older one, so they pin nothing: kept to say where
  *  the number came from. */
 export const COMPOSED_PAGES_RULES = 15;
+/** The rules that draw connectors in a template's decoration (#1056): new
+ *  keys only, nothing to pin. */
+export const CONNECTOR_RULES = 16;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1813,7 +1822,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
   if (rules < SHAPING_LANGUAGE_RULES) out = pinLegacyShapingLanguage(out);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) out = pinLegacyTaskBox(out);
-  // COMPOSED_PAGES_RULES (15, #853): new keys only, nothing to pin.
+  // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
+  // keys only, nothing to pin.
   return out;
 }
 
@@ -1905,6 +1915,7 @@ export function migrateBundleConfig(
   if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
   if (rules < SHAPING_LANGUAGE_RULES) merged = pinLegacyShapingLanguage(merged);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) merged = pinLegacyTaskBox(merged);
-  // COMPOSED_PAGES_RULES (15, #853): new keys only, nothing to pin.
+  // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
+  // keys only, nothing to pin.
   return merged;
 }

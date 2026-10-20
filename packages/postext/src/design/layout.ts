@@ -15,11 +15,13 @@ import type {
   PageRole,
   PageRoleFilter,
   ResolvedDesignBoxElement,
+  ResolvedDesignConnectorElement,
   ResolvedDesignElement,
   ResolvedDesignImageElement,
   ResolvedDesignPathElement,
   ResolvedDesignRuleElement,
   ResolvedDesignSlot,
+  ResolvedPlacedDesignElement,
   ResolvedDesignTextElement,
   Resource,
   TextOverflow,
@@ -28,7 +30,7 @@ import type {
 import { dimensionToPx } from '../units';
 import { resolveTextDots } from '../textDots';
 import { resolveDesignLineHeight } from '../defaults/headerFooter';
-import { createBoundingBox, pictureTraits, type BoundingBox, type VDTPathCommand, type VDTPathStroke } from '../vdt';
+import { createBoundingBox, pictureTraits, type BoundingBox, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt';
 import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath';
 import { buildFontString } from '../measure';
 import { graphemeCount } from '../measure/graphemes';
@@ -46,6 +48,8 @@ import {
   type DesignPlaceholderContext,
 } from './placeholders';
 import { fitLeader } from '../measure/leader';
+import { layoutConnector, type ConnectorEndBox } from './connector';
+import { repeatInstance } from '../composed/templates';
 import { hasJoiningScript, joinsWithNext } from '../bidi';
 import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText';
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText';
@@ -183,6 +187,8 @@ export interface ResolvedPathPrimitive extends ResolvedElementGeometry {
   subpaths: VDTPathCommand[][];
   fill?: string;
   stroke?: VDTPathStroke;
+  /** A connector's end marks (#1056). */
+  markers?: VDTPathMarker[];
 }
 
 /** An image element resolved to its resource payload. Only emitted when
@@ -272,7 +278,11 @@ export type LayoutIssue =
   | { kind: 'cyclicAnchor' | 'danglingAnchor'; elementId: string; targetId?: string }
   /** A text element did not fit its width and was cut (`mode`); `text` is
    *  the whole text it was given (placeholders filled). */
-  | { kind: 'textTruncated'; elementId: string; mode: TextTruncation; text: string };
+  | { kind: 'textTruncated'; elementId: string; mode: TextTruncation; text: string }
+  /** A connector's end (#1056) on a box the page does not have (`targetId`,
+   *  a frame collapsed, empty and optional, or missing): left out, and
+   *  with `from` or every `to` gone the connector is not drawn. */
+  | { kind: 'connectorDropped'; elementId: string; targetId: string };
 
 /** Page-level reference frames (absolute page px) that elements may anchor
  *  to instead of the slot container: `page` is the trim box, `bleed` the
@@ -297,6 +307,9 @@ export interface DesignFrames {
    *  groups and content move them (#856): an element with `pin` anchors
    *  here. Absent: `named`. */
   declared?: Readonly<Record<string, { x: number; y: number; width: number; height: number }>>;
+  /** Frames in `named` the page shows nothing of (#1056): collapsed, or
+   *  empty and optional. A connector's end on one is dropped. */
+  absent?: ReadonlySet<string>;
 }
 
 export interface LayoutContext {
@@ -423,6 +436,8 @@ export function applyPaletteOverrides(el: ResolvedDesignElement, overrides: Reco
         ...(el.fill ? { fill: overrideColor(el.fill, overrides) } : {}),
         ...(el.stroke ? { stroke: overrideColor(el.stroke, overrides) } : {}),
       };
+    case 'connector':
+      return { ...el, color: overrideColor(el.color, overrides) ?? el.color };
     default:
       return el;
   }
@@ -461,11 +476,11 @@ function frameFor(placement: ElementPlacement, frames: DesignFrames | undefined)
 }
 
 function topoSort(
-  elements: ResolvedDesignElement[],
+  elements: ResolvedPlacedDesignElement[],
   issues: LayoutIssue[],
   named?: DesignFrames['named'],
-): ResolvedDesignElement[] {
-  const byId = new Map<string, ResolvedDesignElement>();
+): ResolvedPlacedDesignElement[] {
+  const byId = new Map<string, ResolvedPlacedDesignElement>();
   for (const el of elements) byId.set(el.id, el);
 
   // Detect dangling
@@ -478,9 +493,9 @@ function topoSort(
 
   const visited = new Set<string>();
   const visiting = new Set<string>();
-  const out: ResolvedDesignElement[] = [];
+  const out: ResolvedPlacedDesignElement[] = [];
 
-  function visit(el: ResolvedDesignElement, path: string[]): void {
+  function visit(el: ResolvedPlacedDesignElement, path: string[]): void {
     if (visited.has(el.id)) return;
     if (visiting.has(el.id)) {
       issues.push({ kind: 'cyclicAnchor', elementId: el.id });
@@ -1136,7 +1151,7 @@ function isSizeTo(size: ElementSize | undefined): size is ElementSizeTo {
  *  pin, both ways from a middle one), 0 when the edge is behind it. A box
  *  that cannot be found, or an edge across the size's axis, reads as
  *  `'fill'`. */
-function withSizesTo<T extends ResolvedDesignElement>(
+function withSizesTo<T extends ResolvedPlacedDesignElement>(
   el: T,
   pin: AnchorResult,
   refOf: (to: ElementSizeTo['to']) => AnchorReference | undefined,
@@ -1162,6 +1177,66 @@ function withSizesTo<T extends ResolvedDesignElement>(
   return { ...el, placement: { ...el.placement, size: out } };
 }
 
+/**
+ * A connector (#1056) between the boxes it names: another element of the
+ * slot, else a frame or group of the page (`frames.named`, or the declared
+ * boxes with `pin`). `#card[*]` in `to` is every instance of `card` the
+ * page has, in item order. An end on a box the page does not show (absent
+ * from `named`, or in `frames.absent`) is dropped with a
+ * `connectorDropped` issue; with no `from` or no `to` left nothing is
+ * drawn.
+ */
+function layoutConnectorElement(
+  el: ResolvedDesignConnectorElement,
+  resolvedGeo: ReadonlyMap<string, ResolvedPrimitive>,
+  frames: DesignFrames,
+  issues: LayoutIssue[],
+  dpi: number,
+  startRight: boolean,
+): ResolvedPathPrimitive | undefined {
+  const boxes = (el.pin ? frames.declared : undefined) ?? frames.named ?? {};
+  const boxOf = (name: string): ConnectorEndBox['box'] | undefined => {
+    const dep = resolvedGeo.get(name);
+    if (dep) return { x: dep.x, y: dep.y, width: dep.width, height: dep.height };
+    if (frames.absent?.has(name)) return undefined;
+    return Object.prototype.hasOwnProperty.call(boxes, name) ? boxes[name] : undefined;
+  };
+  const endOf = (end: unknown): ConnectorEndBox | undefined | null => {
+    const to = (end as { to?: unknown } | null | undefined)?.to;
+    if (typeof to !== 'string' || !to.startsWith('#')) return null;
+    const name = to.slice(1);
+    const box = boxOf(name);
+    if (!box) {
+      issues.push({ kind: 'connectorDropped', elementId: el.id, targetId: name });
+      return undefined;
+    }
+    return { name, box, end: end as ConnectorEndBox['end'] };
+  };
+  const from = endOf(el.from);
+  if (!from) return undefined;
+  const written = Array.isArray(el.to) ? el.to : el.to ? [el.to] : [];
+  const ends: ConnectorEndBox[] = [];
+  for (const end of written) {
+    const to = (end as { to?: unknown } | null | undefined)?.to;
+    if (typeof to === 'string' && to.endsWith('[*]')) {
+      // Every instance of the frame the page has (#1061), in item order.
+      const frame = to.slice(1, -3);
+      const items = Object.keys(boxes)
+        .map((n) => ({ n, at: repeatInstance(n) }))
+        .filter((x) => x.at?.frame === frame)
+        .sort((a, b) => a.at!.item - b.at!.item);
+      for (const { n } of items) {
+        const e = endOf({ ...(end as object), to: `#${n}` });
+        if (e) ends.push(e);
+      }
+      continue;
+    }
+    const e = endOf(end);
+    if (e) ends.push(e);
+  }
+  return layoutConnector(el, from, ends, { dpi, startRight });
+}
+
 /** Layout one design slot against its container. */
 export function layoutDesignSlot(
   slot: ResolvedDesignSlot,
@@ -1183,11 +1258,15 @@ export function layoutDesignSlot(
     .filter((el) => pageMatchesParity(pageIndex, el.parity) && pageMatchesRole(el.pages, context.pageRole))
     .map((el) => (overrides && Object.keys(overrides).length > 0 ? applyPaletteOverrides(el, overrides) : el))
     // Start and end edges read as the physical ones of this page (#936).
-    .map((el) => (isLogicalEdge(el.placement.anchor.edge) ? { ...el, placement: physicalPlacement(el.placement, context.startRight === true) } : el));
+    .map((el) => (el.kind !== 'connector' && isLogicalEdge(el.placement.anchor.edge) ? { ...el, placement: physicalPlacement(el.placement, context.startRight === true) } : el));
+  // Connectors (#1056) are laid after every placed element, between the
+  // boxes they join; only where there are frames to join (a composed
+  // page's decoration).
+  const placed = candidates.filter((el): el is ResolvedPlacedDesignElement => el.kind !== 'connector');
 
   // Topologically sort (dependencies first) to resolve geometry; paint
   // order is still the array order (first = back), restored below.
-  const ordered = topoSort(candidates, issues, context.frames?.named);
+  const ordered = topoSort(placed, issues, context.frames?.named);
 
   // Precompute: resolved text contents (placeholder-expanded), with the
   // `\n` escape of the template and of attribute values turned into a
@@ -1325,6 +1404,14 @@ export function layoutDesignSlot(
       }, fillRef, context.dpi);
       resolvedGeo.set(el.id, prim);
       primsByElement.set(given, [prim]);
+    }
+  }
+
+  if (context.frames?.named) {
+    for (const el of candidates) {
+      if (el.kind !== 'connector') continue;
+      const prim = layoutConnectorElement(el, resolvedGeo, context.frames, issues, context.dpi, context.startRight === true);
+      if (prim) primsByElement.set(el, [prim]);
     }
   }
 

@@ -206,6 +206,16 @@ export function expandRepeats(template: ResolvedPageTemplate, items: ReadonlyMap
   // Decoration anchored to a frame of the set reads the grid's box; to an
   // instance (`#card[2]`), that instance.
   const elements = template.decoration.elements.map((e) => {
+    if (e.kind === 'connector') {
+      // A connector's end on a frame of the set (`#card`, no instance)
+      // reads the grid's box too; `#card[2]` and `#card[*]` are left for
+      // the layout, which knows the page's instances (#1056).
+      const end = <T extends { to: `#${string}` }>(c: T): T => {
+        const tg = c && typeof c.to === 'string' ? gridOf.get(c.to.slice(1)) : undefined;
+        return tg ? { ...c, to: `#${tg.name}` } : c;
+      };
+      return { ...e, from: end(e.from), to: Array.isArray(e.to) ? e.to.map(end) : end(e.to) };
+    }
     const target = anchorTarget(e.placement);
     const tg = target !== undefined ? gridOf.get(target) : undefined;
     return tg ? { ...e, placement: retarget(e.placement, tg.name)! } : e;

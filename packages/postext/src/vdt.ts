@@ -2723,7 +2723,10 @@ export interface VDTComicBalloon {
 /** What happened to a frame while its page was composed (DESIGN §5.5),
  *  against the box its template declares (`VDTFrame.declaredRect`):
  *  `grew` / `resized` (smaller) and `moved` from groups and anchors (#856),
- *  `overflow` (#855); the reflow ladder (#858) adds the rest. */
+ *  `overflow` (#855); the reflow ladder (#858) adds the rest.
+ *  `connectorDropped` (#1056, information): a connector of the decoration
+ *  (`cause`, its id) left out its end on `frame`, a box the page does not
+ *  show (collapsed, empty and optional, or missing). */
 export type ReflowEventKind =
   | 'grew'
   | 'moved'
@@ -2733,7 +2736,8 @@ export type ReflowEventKind =
   | 'continued'
   | 'overflow'
   | 'covered'
-  | 'outside';
+  | 'outside'
+  | 'connectorDropped';
 
 export interface ReflowEvent {
   /** The frame's name in its template. */

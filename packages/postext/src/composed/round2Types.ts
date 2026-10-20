@@ -5,7 +5,7 @@
  * into `types.ts`, `composed/types.ts` or `vdt.ts` and deletes it here. When
  * the file is empty the last issue removes it.
  */
-import type { ColorValue, Dimension, PageParity, PageRoleFilter, SidePosition } from '../types';
+import type { ColorValue, Dimension, LineCap } from '../types';
 
 // §12.1, §12.8 (C8) ---------------------------------------------------------
 
@@ -38,37 +38,7 @@ export interface CalloutLabelRound2 {
   fillet?: Dimension;
 }
 
-// §12.3, §12.4 (C5, C6) -----------------------------------------------------
-
-export type LineCap = 'none' | 'dot' | 'arrow';
-
-export interface ConnectorEnd {
-  to: `#${string}`;
-  side?: 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end';
-  at?: SidePosition;
-  gap?: Dimension;
-  /** C6: an anchor of the picture the frame holds. */
-  anchor?: string;
-}
-
-export interface DesignConnectorElement {
-  kind: 'connector';
-  id: string;
-  parity?: PageParity;
-  pages?: PageRoleFilter;
-  pin?: boolean;
-  from: ConnectorEnd;
-  to: ConnectorEnd | ConnectorEnd[];
-  routing?: 'straight' | 'elbow' | 'tree';
-  radius?: Dimension;
-  trunk?: number;
-  color?: ColorValue;
-  width?: Dimension;
-  dash?: Dimension[];
-  startCap?: LineCap;
-  endCap?: LineCap;
-  capSize?: Dimension;
-}
+// §12.4 (C6; the connector of §12.3 and `LineCap` are in `types.ts` since C5)
 
 export interface LeaderStyle {
   color?: ColorValue;

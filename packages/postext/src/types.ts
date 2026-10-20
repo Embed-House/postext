@@ -6788,7 +6788,87 @@ export interface DesignPathElement {
   preserveAspectRatio?: 'none' | 'meet';
 }
 
-export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement | DesignPathElement;
+/** What ends a connector's line (#1056): nothing, a filled dot centred on
+ *  the end, or a filled arrowhead whose tip is the end. */
+export type LineCap = 'none' | 'dot' | 'arrow';
+
+/** One end of a connector (#1056): a point on a side of a frame, a group,
+ *  an instance of a repeated frame (`'#card[2]'`; `'#card[*]'` in a
+ *  connector's `to` is every instance the page has) or another element of
+ *  the decoration. */
+export interface ConnectorEnd {
+  to: `#${string}`;
+  /** The side the line leaves or meets the box by; `start` / `end` follow
+   *  the page's line direction (the right and the left of a right-to-left
+   *  page). Default: the side facing the other end (for a tree's children,
+   *  the side facing the parent). */
+  side?: 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end';
+  /** The point along that side: its start, middle or end, or a fraction
+   *  from its start (0…1; a horizontal side starts where the page's lines
+   *  start, a vertical one at its top). Default `'center'`. */
+  at?: SidePosition;
+  /** Room between the box's edge and the line's end. Default 0. */
+  gap?: Dimension;
+  /** Reserved for leaders to a picture's anchor (DESIGN §12.4); not read
+   *  yet. */
+  anchor?: string;
+}
+
+/**
+ * A line that joins frames on a composed page (#1056, DESIGN §12.3): a
+ * tree diagram's branches, an org chart, a timeline's drops, the arrows of
+ * a flow chart. A decoration element of page templates only (running heads
+ * and heading designs have no frames to join): laid after the frames'
+ * final boxes, so it follows a text that grows, a language that is longer,
+ * a group that moves its frames; painted under the frames as a vector
+ * path. An end on a frame the page does not have (collapsed, empty and
+ * optional, an instance past the page's items) is dropped and the page's
+ * reflow log says so (`connectorDropped`).
+ */
+export interface DesignConnectorElement {
+  kind: 'connector';
+  id: string;
+  parity?: PageParity;
+  pages?: PageRoleFilter;
+  /** Read the frames' boxes as the template declares them (before groups
+   *  and content move them). Default `false`. */
+  pin?: boolean;
+  /** The line's one end; a tree's parent. */
+  from: ConnectorEnd;
+  /** The other end, or several: one line to each (`straight`, `elbow`) or
+   *  the children of a tree. */
+  to: ConnectorEnd | ConnectorEnd[];
+  /** `'straight'`: one segment. `'elbow'` (default): across, along, across
+   *  again between facing sides (an L between a side and one across it).
+   *  `'tree'`: a trunk from `from` to a bar, the bar over the children's
+   *  points, a drop to each child. */
+  routing?: 'straight' | 'elbow' | 'tree';
+  /** Corner radius of an elbow's and a tree's bends. Default 0. */
+  radius?: Dimension;
+  /** Where an elbow's middle run or a tree's bar stands between the ends,
+   *  0 (at `from`) … 1 (at the nearest `to`). Default 0.5. */
+  trunk?: number;
+  /** Default: the document's main colour. Palette-linked colours follow
+   *  part and section palettes. */
+  color?: ColorValue;
+  /** Line width. Default `0.75pt`. */
+  width?: Dimension;
+  /** Dash pattern (on, off, …). Absent: solid. */
+  dash?: Dimension[];
+  /** Marks at the ends: `startCap` at `from`, `endCap` at every `to`.
+   *  Default `'none'`. */
+  startCap?: LineCap;
+  endCap?: LineCap;
+  /** Size of a dot (across) or an arrowhead (long). Default three times
+   *  the line width. */
+  capSize?: Dimension;
+}
+
+export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement | DesignPathElement | DesignConnectorElement;
+
+/** A design element placed by an anchor (every kind but a connector, which
+ *  is laid between the boxes it joins). */
+export type PlacedDesignElement = Exclude<DesignElement, DesignConnectorElement>;
 
 export interface DesignSlot {
   /** Array order = paint order: first = back, last = front. */
@@ -6837,12 +6917,21 @@ export interface ResolvedDesignPathElement extends Omit<DesignPathElement, 'pari
   parity: PageParity;
 }
 
+export interface ResolvedDesignConnectorElement extends Omit<DesignConnectorElement, 'parity'> {
+  parity: PageParity;
+}
+
 export type ResolvedDesignElement =
   | ResolvedDesignTextElement
   | ResolvedDesignRuleElement
   | ResolvedDesignBoxElement
   | ResolvedDesignImageElement
-  | ResolvedDesignPathElement;
+  | ResolvedDesignPathElement
+  | ResolvedDesignConnectorElement;
+
+/** A resolved design element placed by an anchor (see
+ *  {@link PlacedDesignElement}). */
+export type ResolvedPlacedDesignElement = Exclude<ResolvedDesignElement, ResolvedDesignConnectorElement>;
 
 export interface ResolvedDesignSlot {
   elements: ResolvedDesignElement[];

@@ -830,9 +830,10 @@ function buildTemplates(designs: Design[], share: boolean, taken: Set<string>): 
       const firstShared = decos[0]!.filter((_, i) => commonIdx[0]!.has(i));
       decos[mi]!.filter((_, i) => commonIdx[mi]!.has(i)).forEach((e, j) => { if (firstShared[j] && firstShared[j]!.id !== e.id) renamed.set(e.id, firstShared[j]!.id); });
       const ownDeco = decos[mi]!.filter((_, i) => !commonIdx[mi]!.has(i)).map((e) => {
+        if (e.kind === 'connector') return e;
         const to = e.placement?.anchor?.to;
         const target = typeof to === 'string' && to.startsWith('#') ? renamed.get(to.slice(1)) : undefined;
-        return target ? ({ ...e, placement: { ...e.placement, anchor: { ...e.placement.anchor, to: `#${target}` } } } as DesignElement) : e;
+        return target ?({ ...e, placement: { ...e.placement, anchor: { ...e.placement.anchor, to: `#${target}` } } } as DesignElement) : e;
       });
       if (own.length === 0 && ownDeco.length === 0) {
         d.template = baseId;

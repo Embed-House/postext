@@ -130,6 +130,8 @@ function pathPrimitiveToBlock(prim: ResolvedPathPrimitive): VDTDesignPathBlock {
     subpaths: prim.subpaths.map((sp) => sp.map((c) => ({ ...c }))),
     ...(prim.fill ? { fill: prim.fill } : {}),
     ...(prim.stroke ? { stroke: { ...prim.stroke, ...(prim.stroke.dash ? { dash: [...prim.stroke.dash] } : {}) } } : {}),
+    // A connector's end marks (#1056).
+    ...(prim.markers ? { markers: prim.markers.map((m) => ({ ...m })) } : {}),
   };
   block.bbox = pathInkBox(block);
   return block;
@@ -292,7 +294,7 @@ export function headingDesignBoxes(
     { container, dpi, placeholders: headingPlaceholders(heading, metadata, pageIndex), frames, resourceById },
     pageIndex,
   );
-  const excluded = new Set(level.advancedDesign.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
+  const excluded = new Set(level.advancedDesign.slot.elements.filter((el) => el.kind !== 'connector' && el.reserve === false).map((el) => el.id));
   const out: Array<{ x: number; y: number; width: number; height: number }> = [];
   result.primitives.forEach((prim, i) => {
     if (excluded.has(result.elementIds[i]!)) return;
@@ -423,7 +425,7 @@ function measureDesignBand(
   const taller = result.primitives.some((p) => p.y + p.height > MEASURE_CONTAINER_HEIGHT / 4)
     ? layoutAt(2 * MEASURE_CONTAINER_HEIGHT)
     : result;
-  const excluded = new Set(design.slot.elements.filter((el) => el.reserve === false).map((el) => el.id));
+  const excluded = new Set(design.slot.elements.filter((el) => el.kind !== 'connector' && el.reserve === false).map((el) => el.id));
   let bottom = 0;
   let claimedBy: string | undefined;
   let textFloor = 0;
@@ -535,6 +537,9 @@ export interface SlotLayoutExtras {
    *  are not one array of the configuration (a template's decoration
    *  merged over the templates it extends). */
   elementPaths?: ReadonlyMap<string, string>;
+  /** Filled with the ends connectors left out (#1056): the connector's id
+   *  and the box it named. */
+  connectorDropped?: { elementId: string; targetId: string }[];
 }
 
 /** `{ configPath }` when there is one. */
@@ -635,6 +640,9 @@ export function layoutSlotToVdt(
     },
     pageIndex,
   );
+  if (extras?.connectorDropped) {
+    for (const issue of result.issues) if (issue.kind === 'connectorDropped') extras.connectorDropped.push({ elementId: issue.elementId, targetId: issue.targetId });
+  }
   if (result.primitives.length === 0) return undefined;
   const sourceByElement = new Map<string, { start: number; end: number; text?: string; sourceMap?: number[]; prefixLen?: number; attr?: string }>();
   if (extras) {
@@ -1764,6 +1772,10 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       /** Frames that take no room on the page (#912): what anchors to
        *  them is not drawn. */
       const collapsed = new Set<string>();
+      /** Frames a connector does not reach (#1056): collapsed, or empty and
+       *  optional. */
+      const absent = new Set<string>();
+      const optional = new Set(template.frames.filter((f) => f.optional).map((f) => f.name));
       /** Empty frames' ruled lines (#914), on the sheet. */
       const rules: VDTDesignRuleBlock[] = [];
       /** The counter of the first numbered heading each frame holds
@@ -1775,6 +1787,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         for (const b of p.floats ?? []) floatById.set(b.id, b);
         for (const f of p.composed?.frames ?? []) {
           if (f.collapsed) collapsed.add(f.name);
+          if (f.collapsed || (optional.has(f.repeat?.frame ?? f.name) && f.sourceStart === undefined && f.continuedFrom === undefined)) absent.add(f.name);
           if (!f.facingBlocks) {
             for (const id of f.blockIds) {
               const n = floatById.get(id)?.headingNumber;
@@ -1847,6 +1860,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         if (t !== undefined && named[t] === undefined && repeatInstance(t) !== undefined) collapsed.add(t);
       }
       const slot = resolveDesignSlot(template.decoration, 'header');
+      const connectorDropped: { elementId: string; targetId: string }[] = [];
       const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
         collapsed.size > 0 ? withoutAnchoredTo(slot, collapsed) : slot,
         container,
@@ -1854,11 +1868,18 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         placeholders,
         dpi,
         {
-          ...sheetExtras, frames: { ...slotFrames, named, declared }, attrs: page.composed!.attrs, attrSources,
+          ...sheetExtras, frames: { ...slotFrames, named, declared, ...(absent.size > 0 ? { absent } : {}) }, attrs: page.composed!.attrs, attrSources, connectorDropped,
           // Each element's pointer, from the template that sets it (#857).
           elementPaths: new Map(resolveDesignSlot(template.decoration, 'header').elements.map((el, i) => [el.id, template.decorationPaths[i]!] as const)),
         },
       ));
+      // The ends connectors left out, in the reflow log of the page laid
+      // (of a spread, its first page); a pass that lays the decoration
+      // again replaces them.
+      for (const p of pair ? [pair.left, pair.right] : [page]) {
+        if (p.composed?.log.some((e) => e.kind === 'connectorDropped')) p.composed.log = p.composed.log.filter((e) => e.kind !== 'connectorDropped');
+      }
+      for (const d of connectorDropped) page.composed.log.push({ frame: d.targetId, kind: 'connectorDropped', cause: d.elementId });
       const decoration = rules.length === 0 ? laidDecoration
         : laidDecoration ? { ...laidDecoration, blocks: [...laidDecoration.blocks, ...rules] } : { bbox: { ...container }, blocks: rules };
       if (decoration && pair) {
@@ -1878,6 +1899,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
 function withoutAnchoredTo(slot: ResolvedDesignSlot, frames: ReadonlySet<string>): ResolvedDesignSlot {
   const dropped = new Set<string>();
   const target = (el: ResolvedDesignSlot['elements'][number]): string | undefined => {
+    // A connector (#1056) drops its own ends on frames the page lacks.
+    if (el.kind === 'connector') return undefined;
     const to = el.placement.anchor.to;
     return to.startsWith('#') ? to.slice(1) : undefined;
   };

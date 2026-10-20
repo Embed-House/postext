@@ -2149,3 +2149,68 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   path element shows in the slot editor with the box's title and no editor of its own: U10 (#1063) adds it.
 - **Not done.** No `CONFIG_VERSION` bump (C5 owns it, §12.11). No `fillRule`, caps or joins on the element.
   Paths are not rotated, and a path in a vertical page's flow is laid in the flow frame like a box.
+
+### 12.18 What C5 built (#1056)
+
+- **Types.** `DesignConnectorElement`, `ConnectorEnd` and `LineCap` moved from the draft into `types.ts`
+  (exported); the connector is a member of `DesignElement` (`ResolvedDesignConnectorElement` of
+  `ResolvedDesignElement`). It has no `placement`, so `PlacedDesignElement` /
+  `ResolvedPlacedDesignElement` name every other kind; the code that reads `placement` (topological
+  sort, logical edges, `withoutAnchoredTo`, the repeat expansion, the page-design migrators) skips
+  connectors. `LeaderStyle` (C6) stays in the draft and imports `LineCap`. `CONFIG_VERSION` 16
+  (`CONNECTOR_RULES`, no pin: one stored under 15 is read as it is).
+- **Where it is laid.** In `layoutDesignSlot`, after every placed element (an end may name another
+  element of the decoration as well as a frame, group or instance), and only when the context has frames
+  (`frames.named`): the composed decoration. Painted in array order with the rest (layer 0, under the
+  frames). Geometry in `design/connector.ts` (`layoutConnector`, pure); the primitive is C9's
+  `ResolvedPathPrimitive` with `markers` added (→ `VDTDesignPathBlock`). `applyPaletteOverrides`
+  recolours `color`, so part palettes and `:::part palette` follow; the default colour is the main
+  colour, palette-linked.
+- **Decisions where §12.3 was open.**
+  - Default side: the side of the box facing the other box, by the wider clear gap between the two (a
+    tie goes vertical), else by the larger distance of the centres. A tree's parent faces the union of
+    its children; each child faces the parent.
+  - `at` and `start`/`end` read as C4's side points: a horizontal side starts on the right of a
+    right-to-left page, a vertical side at its top.
+  - `elbow` between perpendicular sides is an L; `trunk` places the middle run (0 at `from`). `radius`
+    rounds each bend with a quarter-circle cubic, held to half a segment between two bends and the whole
+    of an end segment; a rounded connector joins round.
+  - `tree`: the bar stands `trunk` of the way from the parent's point to the nearest child (on the
+    trunk's axis); the two outermost points (children, or the parent) hang from the bar's ends as one
+    polyline (bends rounded), the others drop straight. **`trunk: 0`** (added): the bar would lie on the
+    parent's own edge, under the frame, so none is drawn: a drop from that edge to each child, the start
+    cap at the head of each drop (a timeline's ticks).
+  - Caps: `startCap` at `from` (a tree's parent; with `trunk: 0` each drop's head), `endCap` at every
+    `to`; marks that coincide (a fan leaving one point the same way) are drawn once. An arrow's line stops
+    `0.6 × capSize` short of the tip so its end never shows beside the point. Defaults: width 0.75 pt,
+    `capSize` 3 × width.
+  - `[*]` expands at layout over the instances the page has (`named` keys `frame[n]`, item order); an end
+    `#card` on a repeated frame reads the grid's box (`expandRepeats`), as decoration anchors do.
+- **Dropped ends.** An end whose box is not in `named` (missing, an instance past the page's items, an
+  element dropped with its anchor) or is in the new `DesignFrames.absent` (frames `collapsed`, and optional
+  frames with no content: `sourceStart` unset and not continued) is left out with a `connectorDropped`
+  layout issue; with no `from` or no `to` left nothing is drawn. `layoutSlotToVdt` hands the issues out
+  (`SlotLayoutExtras.connectorDropped`) and the decoration pass logs each as a `ReflowEvent`
+  `{ kind: 'connectorDropped', frame: <end>, cause: <connector id> }` on the page laid (a spread's first
+  page); a pass that lays the decoration again replaces them. In words: «connector c left out opcional
+  (not on the page)».
+- **Spreads, right to left.** Nothing new: laid on the sheet with the spread's named boxes, cut by
+  `splitSpreadDecoration` (by the ink box) and clipped as the rest; mirrored frames give the geometry.
+  Departure: §12.3's «other page of a spread with no `crossGutter` path» is not a drop case: a connector
+  between frames of the two pages always crosses the gutter.
+- **Validation.** `settleReferences`: `frameAnchorUnknown` at `…/from/to`, `…/to/to` or `…/to/<k>/to` for
+  an end on nothing (`[*]` valid only in `to` and on a repeated frame); that end is left out.
+  `collectConfigWarnings` (`collectConnectorWarnings`): `unknownConfigValue` for `routing` (used `elbow`),
+  `startCap` / `endCap` (`none`), an end's `side` and `at` (a number outside 0…1 is held), and for a
+  connector in a slot that is not a template's decoration (`<slot>.elements[i].kind`, used `''`: not drawn
+  there). No new warning kinds.
+- **Outputs.** Every backend paints C4's path block (canvas, PDF vector paths, HTML/EPUB inline SVG,
+  tagged PDF artifact, Folio through the canvas); the source map answers on the ink with the element's
+  config path, and never over a frame (C4's `pathHit`).
+- **Fixture and tests.** `__tests__/composed/fixtures/connectors.ts`: a three-level food-chain tree, a
+  school org chart with two trees, a school-year timeline with drops, in English, Spanish and Catalan (a
+  leaf of the Spanish and Catalan trees wraps to two lines). `connectors.test.ts`: routings, caps, gap,
+  `at`, pin, part palette, `#foto[*]` over a grid, a spread, right to left, dropped ends, source map,
+  validation.
+- **Not done.** `ConnectorEnd.anchor` and leaders (C6); Sandbox (U10), docs (D3), skill (S6). Connectors
+  inside modules are C11's to rewrite.

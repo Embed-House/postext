@@ -2,6 +2,7 @@ import type {
   ColorValue,
   Dimension,
   DesignBoxElement,
+  DesignConnectorElement,
   DesignElement,
   DesignImageElement,
   DesignPathElement,
@@ -12,6 +13,7 @@ import type {
   LegacyHeaderFooterRuleElement,
   LegacyHeaderFooterTextElement,
   ResolvedDesignBoxElement,
+  ResolvedDesignConnectorElement,
   ResolvedDesignElement,
   ResolvedDesignImageElement,
   ResolvedDesignPathElement,
@@ -498,7 +500,21 @@ function resolvePathElement(el: DesignPathElement, idx: number): ResolvedDesignP
   };
 }
 
+/** A connector (#1056) as written, its id, parity, pages and colour
+ *  filled in (the main colour, palette-linked, so a part recolours it);
+ *  the geometry's defaults are read where it is laid (`design/connector.ts`). */
+function resolveConnectorElement(el: DesignConnectorElement, idx: number): ResolvedDesignConnectorElement {
+  return {
+    ...el,
+    id: el.id ?? `connector-${idx + 1}`,
+    parity: el.parity ?? 'all',
+    pages: el.pages ?? 'all',
+    color: el.color ?? { ...DEFAULT_MAIN_COLOR },
+  };
+}
+
 function resolveElement(el: DesignElement, idx: number, kind: DesignSlotKind): ResolvedDesignElement {
+  if (el.kind === 'connector') return resolveConnectorElement(el, idx);
   if (el.kind === 'text') return resolveTextElement(el, idx, kind);
   if (el.kind === 'rule') return resolveRuleElement(el, idx);
   if (el.kind === 'image') return resolveImageElement(el, idx);

@@ -11,6 +11,7 @@ import type {
   DesignImageElement,
   DesignTextElement,
   Dimension,
+  PlacedDesignElement,
 } from '../types';
 import type { PageSide } from '../composed/types';
 import { stripPlaceholders } from '../pipeline/placeholders';
@@ -209,11 +210,11 @@ export function hasPlaceholder(content: string): boolean {
 const sideOf = (el: { parity?: string }): PageSide | undefined =>
   el.parity === 'odd' ? 'recto' : el.parity === 'even' ? 'verso' : undefined;
 
-const isTopLeftPage = (el: { placement?: DesignElement['placement'] }): boolean =>
+const isTopLeftPage = (el: { placement?: PlacedDesignElement['placement'] }): boolean =>
   el.placement?.anchor?.to === 'page' && (el.placement.anchor.edge ?? 'top-left') === 'top-left';
 
 function rectOf(el: DesignElement): { x: number; y: number; w?: number; h?: number } | undefined {
-  if (!isTopLeftPage(el)) return undefined;
+  if (el.kind === 'connector' || !isTopLeftPage(el)) return undefined;
   const p = el.placement;
   const w = typeof p.size?.width === 'object' && 'value' in p.size.width ? toMm(p.size.width) : undefined;
   const h = typeof p.size?.height === 'object' && 'value' in p.size.height ? toMm(p.size.height) : undefined;
@@ -573,7 +574,7 @@ export function planDesign(input: DesignInput): PlannedDesign {
     changed = false;
     for (const el of elements) {
       if (inSlot.has(el.id)) continue;
-      const to = el.placement?.anchor?.to;
+      const to = el.kind === 'connector' ? undefined : el.placement?.anchor?.to;
       const slotBound = to === 'container' || to === 'outer' || to === undefined
         || (typeof to === 'string' && to.startsWith('#') && byId.has(to.slice(1)) && inSlot.has(to.slice(1)) && !movedIds.has(to.slice(1)));
       if (slotBound) {
@@ -685,6 +686,7 @@ function coversPage(el: DesignElement, page: { width: number; height: number }):
 /** Decoration anchors that named a text now in a frame name the frame. */
 export function remapDecorationAnchors(decoration: DesignElement[], movedTo: Map<string, number>, frames: readonly PlannedFrame[]): DesignElement[] {
   return decoration.map((el) => {
+    if (el.kind === 'connector') return el;
     const to = el.placement?.anchor?.to;
     if (typeof to !== 'string' || !to.startsWith('#')) return el;
     const i = movedTo.get(to.slice(1));

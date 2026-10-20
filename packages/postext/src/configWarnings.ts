@@ -59,6 +59,7 @@ import { resolveContentInConfigCheck } from './defaults/checks';
 import { stripPlaceholders } from './pipeline/placeholders';
 import { configDesignSlots } from './design/slots';
 import { parseSvgPath, pathViewBox } from './design/svgPath';
+import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES } from './design/connector';
 import { metadataText } from './frontmatter';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
@@ -132,7 +133,49 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
     ...collectDesignPathWarnings(config),
+    ...collectConnectorWarnings(config),
   ];
+}
+
+/** Connectors (#1056): one outside a page template's decoration (a
+ *  running head, a heading design, a part page, a box design has no frames
+ *  to join: not drawn), and a `routing`, `startCap` / `endCap` or an end's
+ *  `side` / `at` outside its choices (`unknownConfigValue`). */
+function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  const word = (path: string, value: unknown, choices: readonly string[], used: string): void => {
+    if (value === undefined || (typeof value === 'string' && choices.includes(value))) return;
+    const suggestion = typeof value === 'string' ? closestKey(value, choices) : undefined;
+    out.push({ kind: 'unknownConfigValue', path, value: String(value), used, ...(suggestion ? { suggestion } : {}) });
+  };
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => {
+      const e = el as unknown as Record<string, unknown> | null;
+      if (!e || typeof e !== 'object' || e.kind !== 'connector') return;
+      const path = `${slot.path}.elements[${i}]`;
+      if (slot.kind !== 'decoration') {
+        out.push({ kind: 'unknownConfigValue', path: `${path}.kind`, value: 'connector', used: '' });
+        return;
+      }
+      word(`${path}.routing`, e.routing, CONNECTOR_ROUTINGS, 'elbow');
+      word(`${path}.startCap`, e.startCap, CONNECTOR_CAPS, 'none');
+      word(`${path}.endCap`, e.endCap, CONNECTOR_CAPS, 'none');
+      const end = (raw: unknown, at: string): void => {
+        if (!raw || typeof raw !== 'object') return;
+        const r = raw as Record<string, unknown>;
+        word(`${at}.side`, r.side, CONNECTOR_SIDES, '');
+        const pos = r.at;
+        if (pos === undefined) return;
+        if (typeof pos === 'number' && Number.isFinite(pos)) {
+          if (pos < 0 || pos > 1) out.push({ kind: 'unknownConfigValue', path: `${at}.at`, value: String(pos), used: String(Math.max(0, Math.min(1, pos))) });
+        } else word(`${at}.at`, pos, SIDE_POSITIONS, 'center');
+      };
+      end(e.from, `${path}.from`);
+      if (Array.isArray(e.to)) e.to.forEach((t, k) => end(t, `${path}.to[${k}]`));
+      else end(e.to, `${path}.to`);
+    });
+  }
+  return out;
 }
 
 const DESIGN_PATH_KEYS = {

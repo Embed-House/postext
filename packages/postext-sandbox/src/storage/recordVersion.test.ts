@@ -35,7 +35,7 @@ const deps = { ids: () => 'x', untitled: (n: number) => `Chapter ${n}` };
 describe('record version follows the engine\'s CONFIG_VERSION', () => {
   it('is the engine constant', async () => {
     const { PROJECT_RECORD_VERSION } = await import('./projectMigration');
-    expect(CONFIG_VERSION).toBe(15);
+    expect(CONFIG_VERSION).toBe(16);
     expect(PROJECT_RECORD_VERSION).toBe(CONFIG_VERSION);
   });
 
@@ -65,7 +65,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
       config: { math: { fontSizeScale: 1.2 } },
     };
     const once = migrateProjectRecord(saved, deps)!;
-    expect(once.version).toBe(15);
+    expect(once.version).toBe(16);
     expect(once.config.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
     const twice = migrateProjectRecord(once, deps)!;
     expect(twice.config).toEqual(once.config);
