@@ -137,6 +137,9 @@ export function iconDirective(spec: IconSpec, alt: string, options: { color?: st
   if (options.size !== undefined && Number.isFinite(options.size) && options.size > 0) attrs.push(`size=${quoteValue(String(Math.round(options.size * 100) / 100))}`);
   // A backslash means nothing in a spoken name and would start an escape
   // (or a `\\` line break in a label), so it is dropped, not escaped.
-  const text = alt.replace(/[\n\r]+/g, ' ').replace(/\\/g, '').replace(/([[\]])/g, '\\$1').trim();
+  const text = alt
+    .replace(/[\n\r]+/g, ' ')
+    .replace(/[\\[\]]/g, (c) => (c === '\\' ? '' : `\\${c}`))
+    .trim();
   return `:icon[${text}]{${attrs.join(' ')}}`;
 }
