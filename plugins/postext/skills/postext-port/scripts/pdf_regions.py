@@ -1244,8 +1244,16 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     borders: list[dict] = []
     if not opts.raster_ground:
         for f in [f for f in frames if f.kind == "box"]:
-            if f.lines or (f.tab is not None and getattr(f.tab, "line", None) is not None):
+            if any(l.plain.strip() for l in f.lines):
                 continue
+            if f.tab is not None and getattr(f.tab, "line", None) is not None:
+                if f.parent is not None and f.parent.kind in ("picture", "figure"):
+                    continue     # a tabbed box on a picture (an inset): its words stay a frame
+                # the tab's words are a frame of their own; the box is a border round what it holds
+                t = Frame("tab", f.tab.box, shape=f.tab, lines=[f.tab.line])
+                t.zone = f.zone
+                frames.append(t)
+                f.tab = None
             frames.remove(f)
             held = [g for g in frames if g.parent is f or (g.parent is None and inside_mm(g.box, f.box, 0.5))]
             for g in frames:
@@ -1294,7 +1302,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     for f in ordered:
         describe_frame(f, ctx, opts, report)
     # the page's line art, read against the frames: connectors, pointers, what is left
-    art = None if opts.raster_ground else read_line_art(sh, ordered, line_shows(page, origin))
+    art = None if opts.raster_ground else read_line_art(sh, ordered, line_shows(page, origin, sh.get("shapes", [])))
     pic_n = 0
     for f in ordered:
         if f.kind in ("picture", "figure"):
@@ -1811,21 +1819,37 @@ def erase_survivors(pm: fitz.Pixmap, sh: dict, dpi: int):
 # ---------------------------------------------------------------------------
 
 
-def line_shows(page: fitz.Page, origin: tuple):
-    """Does a line show just back from its end, or does a picture painted
-    after it (a photo, a fill: the page's paint order) cover it there? A
-    line over a map points into it; one under a photo ends at its side."""
+def line_shows(page: fitz.Page, origin: tuple, shapes: list):
+    """Does a line show over a picture just back from its end, or does the
+    picture, painted after it (the page's paint order), cover it there? A
+    line over a map points into it; one under a photo ends at its side. What
+    is painted after the line in a small part of the picture's box (the dot
+    and the halo at a pointer's end, a label's plate) does not count."""
     log = page.get_bboxlog()
+    # a path's place in the paint order: the bbox log lists more than the paths (images,
+    # text, shadings), so each path is matched to its own entry, in order
+    at_log: dict[int, int] = {}
+    j = 0
+    for s in sorted(shapes, key=lambda s: s.seq):
+        r = s.rect_pt
+        for k in range(j, len(log)):
+            kind, q = log[k]
+            if kind.endswith("-path") and all(abs(a - b) < 0.6 for a, b in zip(q, r)):
+                at_log[s.seq] = k
+                j = k + 1
+                break
 
-    def shows(p: tuple, d_back: tuple, ids: set) -> bool:
-        seqs = [i for i in ids if isinstance(i, int)]
+    def shows(p: tuple, d_back: tuple, ids: set, box: tuple) -> bool:
+        seqs = [at_log.get(i, i) for i in ids if isinstance(i, int)]
         if not seqs:
             return True
         last = max(seqs)
         q = ((p[0] + d_back[0] * 0.5) * MM + origin[0], (p[1] + d_back[1] * 0.5) * MM + origin[1])
+        big = 0.4 * area(box) * MM * MM
         for i in range(last + 1, len(log)):
             kind, r = log[i]
-            if kind in ("fill-image", "fill-path", "fill-shade") and r[0] <= q[0] <= r[2] and r[1] <= q[1] <= r[3]:
+            if kind in ("fill-image", "fill-path", "fill-shade") and r[0] <= q[0] <= r[2] and r[1] <= q[1] <= r[3] \
+                    and (r[2] - r[0]) * (r[3] - r[1]) >= big:
                 return False
         return True
     return shows
@@ -1854,7 +1878,27 @@ def read_line_art(sh: dict, frames: list[Frame], shows: Any = None) -> dict:
     lfs = la_frames(frames, shows)
     segs = la.merge_collinear([g for s in sh.get("lines", []) for g in s.segs])
     conns, left = [], []
+    pics = [f for f in lfs if f.kind in ("picture", "figure")]
+
+    def picture_art(net: list) -> bool:
+        """Lines inside a picture that touch only the picture and frames set
+        on it (a map's scale bar, its key's samples) are the picture's art."""
+        for pf in pics:
+            if not all(la.inside(g.point(g.lo), pf.box, 0.3) and la.inside(g.point(g.hi), pf.box, 0.3) for g in net):
+                continue
+            ok = True
+            for g in net:
+                for p, d in ((g.point(g.lo), la._dir(g.axis, -1)), (g.point(g.hi), la._dir(g.axis, 1))):
+                    f = la.attach(p, d, lfs)
+                    if f is not None and f is not pf and not inside_mm(f.box, pf.box, 0.5):
+                        ok = False
+            if ok:
+                return True
+        return False
+
     for net in la.nets(segs):
+        if picture_art(net):
+            continue
         c, rest = la.read_net(net, lfs)
         conns += c
         left += rest
@@ -1867,7 +1911,23 @@ def read_line_art(sh: dict, frames: list[Frame], shows: Any = None) -> dict:
         used |= c.ids
     for g in left:
         used |= g.ids
-    return {"connectors": conns, "left": left, "used": used, "frames": lfs}
+    # a dot drawn at a line's end is the connector's cap (and leaves the picture's cut with the line)
+    caps: dict[int, dict] = {}
+    cap_shapes: dict[int, Any] = {}
+    dots = [s for s in sh.get("shapes", []) if s.kind == "art" and s.fill and not s.stroke and s.w <= 3.0
+            and s.h <= 3.0 and abs(s.w - s.h) < 0.4 and any(it[0] == "c" for it in s.items)]
+    for c in conns:
+        for k, e in [("startCap", c.start)] + [("endCap", e) for e in c.ends]:
+            if e.xy is None:
+                continue
+            hit = next((dt for dt in dots if math.hypot((dt.box[0] + dt.box[2]) / 2 - e.xy[0],
+                                                        (dt.box[1] + dt.box[3]) / 2 - e.xy[1]) < 0.8), None)
+            if hit is None:
+                continue
+            caps.setdefault(id(c), {})[k] = "dot"
+            caps[id(c)]["capSize"] = mmv((hit.w + hit.h) / 2)
+            cap_shapes[id(hit)] = hit
+    return {"connectors": conns, "left": left, "used": used, "frames": lfs, "caps": caps, "cap_shapes": cap_shapes}
 
 
 def lines_over(art: dict, sh: dict, box: tuple, origin: tuple) -> list:
@@ -1882,6 +1942,9 @@ def lines_over(art: dict, sh: dict, box: tuple, origin: tuple) -> list:
         w = max(s.width, 0.5)
         r = fitz.Rect(s.rect_pt)
         out.append(fitz.Rect(r.x0 - w, r.y0 - w, r.x1 + w, r.y1 + w))
+    for s in art.get("cap_shapes", {}).values():
+        r = fitz.Rect(s.rect_pt)
+        out.append(fitz.Rect(r.x0 - 0.5, r.y0 - 0.5, r.x1 + 0.5, r.y1 + 0.5))
     return out
 
 
@@ -1971,6 +2034,8 @@ def connector_element(n: int, c: Any, by_name: dict) -> dict:
     el["width"] = ptv(width)
     if dash:
         el["dash"] = [mmv(v) for v in dash]
+    if c.over and not any(isinstance(e, dict) and e.get("anchor") for e in [el["from"]] + ends):
+        el["over"] = True        # drawn over a picture it crosses (one that ends in it is over by default)
     return el
 
 
@@ -2156,6 +2221,8 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     residual = [s for s in sh["shapes"] if s.kind == "art"
                 and not any(inside_mm(s.box, f.box, 0.6) or centre_in(s.box, f.box) for f in pics)
                 and not any(inside_mm(s.box, f.box, 0.3) for f in covering)]
+    caps = art["caps"]
+    residual = [s for s in residual if id(s) not in art["cap_shapes"]]
     if len(residual) > opts.max_paths:
         raster_left += residual
         residual = []
@@ -2216,7 +2283,9 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     # connectors
     by_name = {f.name: f for f in frames}
     for n, c in enumerate(art["connectors"], 1):
-        els.append(connector_element(n, c, by_name))
+        el = connector_element(n, c, by_name)
+        el.update(caps.get(id(c), {}))
+        els.append(el)
         stats["connectors"] += 1
         stats[{"tree": "trees", "elbow": "elbows", "straight": "straight"}[c.routing]] += 1
         if any(e.point is not None for e in [c.start] + c.ends):
@@ -2229,9 +2298,11 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
                                   "y": round((p[1] - f.box[1]) / bh, 4)} for i, p in enumerate(pts, 1)]
     # the raster ground: what nothing above paints
     left_ids = {id(s) for s in raster_left}
-    painted = [s.raw for s in sh["shapes"] if s.kind != "hidden" and id(s) not in left_ids]
     masks = [(f.box[0] - 0.6, f.box[1] - 0.6, f.box[2] + 0.6, f.box[3] + 0.6) for f in pics]
     masks += [f.box for f in covering]
+    # what lies wholly under a mask is not compared: a map's thousands of paths are not redrawn
+    painted = [s.raw for s in sh["shapes"] if s.kind != "hidden" and id(s) not in left_ids
+               and not any(inside_mm(s.box, m, 0.0) for m in masks)]
     g = residual_ground(pdf_path, pno, origin, painted, masks, opts, ground_id)
     if g is not None:
         stats["ground"] = True

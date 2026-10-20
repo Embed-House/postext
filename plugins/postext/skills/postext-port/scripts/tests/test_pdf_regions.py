@@ -432,6 +432,7 @@ def draw_diagram_page(doc):
     text(page, 148, 132, "down to the sea.", size=10)
     page.draw_polyline([fitz.Point(145 * MM, 130 * MM), fitz.Point(80 * MM, 130 * MM),
                         fitz.Point(80 * MM, 145 * MM)], color=GREY, width=0.5)
+    page.draw_circle(fitz.Point(80 * MM, 145 * MM), 0.6 * MM, color=None, fill=GREY)   # its dot
     # two pills and the line between them
     page.draw_line(fitz.Point(60 * MM, 194 * MM), fitz.Point(140 * MM, 194 * MM), color=LINE, width=1)
     for x0, w in ((20, "Spring"), (140, "Autumn")):
@@ -512,6 +513,8 @@ class VectorDecorationTest(unittest.TestCase):
         self.assertEqual(c["routing"], "elbow")
         self.assertEqual(c["from"]["side"], "left")
         self.assertEqual(c["to"]["side"], "top")        # the last run comes down onto the point
+        self.assertEqual(c.get("endCap"), "dot")        # the dot drawn at the point
+        self.assertAlmostEqual(c["capSize"]["value"], 1.2, delta=0.15)
         rid = next(r for r in self.res if any(a.get("id") == c["to"]["anchor"] for a in r.get("anchors", [])))
         a = next(a for a in rid["anchors"] if a["id"] == c["to"]["anchor"])
         self.assertTrue(0.4 < a["x"] < 0.8 and 0.5 < a["y"] < 0.9, a)

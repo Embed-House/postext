@@ -64,8 +64,9 @@ class Frame:
     name: str
     box: tuple                # x0, y0, x1, y1 in mm
     kind: str = "text"        # picture / figure ends can be anchors
-    # (point, direction back along the line, the line's source paths) -> does the line show there,
-    # over the picture? A line drawn under a photo ends at its side, one drawn over it points into it.
+    # (point, direction back along the line, the line's source paths, the frame's box) -> does the
+    # line show there, over the picture? A line drawn under a photo ends at its side, one drawn over
+    # it points into it.
     shows: Any = None
 
     @property
@@ -81,6 +82,7 @@ class End:
     gap: float = 0.0
     point: tuple | None = None    # an anchor end: the point inside the picture (mm)
     span: float = 0.0             # the side's length (mm): `at` is written when off its middle by 0.3 mm
+    xy: tuple | None = None       # where the source's line ends (mm), to find a cap drawn there
 
     def config(self) -> dict:
         out: dict[str, Any] = {"to": f"#{self.frame}", "side": self.side}
@@ -100,6 +102,7 @@ class Connector:
     key: tuple
     trunk: float | None = None
     ids: set = field(default_factory=set)
+    over: bool = False            # the line runs over a picture it does not end in (painted after it)
 
 
 # ---------------------------------------------------------------------------
@@ -219,12 +222,41 @@ def side_point(box: tuple, side: str, p: tuple) -> tuple[float, float]:
 def end_at(frame: Frame, p: tuple, d_back: tuple, ids: set | None = None) -> End:
     """The end of a line at `p` on `frame`, the line lying towards `d_back`
     from it: a point of the picture when it ends deep inside one, over it."""
-    if frame.kind in ("picture", "figure") and inside(p, frame.box) and depth(p, frame.box) > DEEP \
-            and (frame.shows is None or frame.shows(p, d_back, ids or set())):
-        return End(frame.name, side_facing(d_back), point=p)
+    if frame.kind in ("picture", "figure") and inside(p, frame.box) and depth(p, frame.box) > TINY \
+            and (depth(p, frame.box) > DEEP or frame.shows is not None) and over(frame, p, d_back, ids):
+        return End(frame.name, side_facing(d_back), point=p, xy=p)
     side = side_facing(d_back)
     at, gap = side_point(frame.box, side, p)
-    return End(frame.name, side, at, gap, span=side_length(frame.box, side))
+    return End(frame.name, side, at, gap, span=side_length(frame.box, side), xy=p)
+
+
+def over(frame: Frame, p: tuple, d_back: tuple, ids: set | None) -> bool:
+    """Does a line show over `frame` (a picture) at `p`? Without a way to
+    tell, a picture painted under its lines."""
+    if frame.kind not in ("picture", "figure"):
+        return False
+    return frame.shows is None or bool(frame.shows(p, d_back, ids or set(), frame.box))
+
+
+def crosses_over(segs: list, frames: list[Frame], ends: set) -> bool:
+    """Does one of the segments run over a picture (not one of its ends)
+    that it shows on? The connector then paints over the frames."""
+    for g in segs:
+        for f in frames:
+            if f.kind not in ("picture", "figure") or f.name in ends:
+                continue
+            x0, y0, x1, y1 = f.box
+            if g.axis == "h":
+                lo, hi = max(g.lo, x0), min(g.hi, x1)
+                if not (y0 < g.c < y1) or hi - lo < 1.0:
+                    continue
+            else:
+                lo, hi = max(g.lo, y0), min(g.hi, y1)
+                if not (x0 < g.c < x1) or hi - lo < 1.0:
+                    continue
+            if over(f, g.point((lo + hi) / 2), _dir(g.axis, -1), g.ids):
+                return True
+    return False
 
 
 def side_length(box: tuple, side: str) -> float:
@@ -532,7 +564,7 @@ def read_chain(chain: list[Seg], frames: list[Frame]) -> Connector | None:
             if abs(trunk - 0.5) < 0.02:
                 trunk = None
     ids = set().union(*(s.ids for s in chain))
-    return Connector("elbow", ea, [eb], chain[0].key, trunk, ids)
+    return Connector("elbow", ea, [eb], chain[0].key, trunk, ids, over=crosses_over(chain, frames, {ea.frame, eb.frame}))
 
 
 def read_segment(s: Seg, frames: list[Frame]) -> tuple[list[Connector], list[Seg]]:
@@ -548,11 +580,17 @@ def read_segment(s: Seg, frames: list[Frame]) -> tuple[list[Connector], list[Seg
     a_lo = end_at(start, lo_p, fwd, s.ids) if start else None
     a_hi = end_at(end, hi_p, back, s.ids) if end else None
     stations: list[tuple[float, float, Any]] = []     # (enter, exit, frame or anchor End)
+    shown_over: set = set()
     for a0, a1, f in hs:
         if a_lo is not None and a_lo.point is not None and f.name == start.name:
             continue
         if a_hi is not None and a_hi.point is not None and f.name == end.name:
             continue
+        if f.kind in ("picture", "figure") and f.shows is not None:
+            lo, hi = max(a0, s.lo), min(a1, s.hi)
+            if hi > lo and over(f, s.point((lo + hi) / 2), back, s.ids):
+                shown_over.add(f.name)     # drawn over the picture: it does not cut the line
+                continue
         stations.append((a0, a1, f))
     if a_lo is not None and a_lo.point is not None:
         stations.append((s.lo, s.lo, a_lo))
@@ -579,7 +617,10 @@ def read_segment(s: Seg, frames: list[Frame]) -> tuple[list[Connector], list[Seg
                 e2 = first if isinstance(first, End) else _side_end(first, s, a0, fwd, back, leaving=False)
                 if isinstance(e1, End) and e1.point is not None:
                     e1, e2 = e2, e1
-                conns.append(Connector("straight", e1, [e2], s.key, None, set(s.ids)))
+                lo_t, hi_t = min(p_exit, a0), max(p_exit, a0)
+                run = Seg(s.axis, s.c, lo_t, hi_t, s.key, s.ids)
+                conns.append(Connector("straight", e1, [e2], s.key, None, set(s.ids),
+                                       over=crosses_over([run], frames, {e1.frame, e2.frame})))
         elif a0 - s.lo > RUN:
             stubs.append(Seg(s.axis, s.c, s.lo, min(a0, s.hi), s.key, set(s.ids)))
         prev = (a1, last)
@@ -605,7 +646,7 @@ def _side_end(f: Frame, s: Seg, t: float, fwd: tuple, back: tuple, leaving: bool
     """A run's end on the side of `f` it leaves (going forward) or meets."""
     side = side_facing(fwd if leaving else back)
     at, _ = side_point(f.box, side, s.point(t))
-    return End(f.name, side, at, 0.0, span=side_length(f.box, side))
+    return End(f.name, side, at, 0.0, span=side_length(f.box, side), xy=s.point(t))
 
 
 # ---------------------------------------------------------------------------

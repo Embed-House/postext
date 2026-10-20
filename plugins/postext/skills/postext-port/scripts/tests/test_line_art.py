@@ -107,12 +107,19 @@ class ChainTest(unittest.TestCase):
         self.assertEqual(c.ends[0].side, "bottom")       # the last run arrives from below
 
     def test_a_line_under_a_photo_ends_at_its_side(self):
-        under = lambda p, d, col: False  # noqa: E731
+        under = lambda p, d, ids, box: False  # noqa: E731
         frames = [la.Frame("pill", (40, 10, 60, 18)), la.Frame("photo", (30, 30, 70, 60), "picture", under)]
         conns, _ = read(frames, [((50, 18), (50, 45))])
         self.assertEqual(len(conns), 1)
         self.assertIsNone(conns[0].ends[0].point)
         self.assertEqual(conns[0].ends[0].side, "top")
+
+    def test_a_line_drawn_over_a_picture_between_two_frames_paints_over(self):
+        shown = lambda p, d, ids, box: True  # noqa: E731
+        frames = [la.Frame("a", (10, 10, 30, 20)), la.Frame("map", (40, 5, 90, 25), "figure", shown),
+                  la.Frame("b", (100, 10, 120, 20))]
+        conns, _ = read(frames, [((30, 15), (100, 15))])
+        self.assertEqual([(c.start.frame, c.ends[0].frame, c.over) for c in conns], [("a", "b", True)])
 
     def test_a_line_through_three_pills_joins_each_pair(self):
         frames = [la.Frame("p1", (10, 10, 30, 20)), la.Frame("p2", (60, 10, 80, 20)), la.Frame("p3", (110, 10, 130, 20))]
