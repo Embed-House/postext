@@ -9,6 +9,7 @@
  * `comics.readingDirection` (or the page's `direction`).
  */
 
+import { cornerRadiiPx, isCornerRadii, uniformRadius } from '../design/boxShape';
 import type { ColorPaletteEntry, ComicCastMember, Dimension, Resource, ResolvedBalloonStyleConfig, ResolvedComicsConfig, ResolvedPanelStyleConfig } from '../types';
 import type { BoundingBox, ContentWarning, ResolvedConfig, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPage, VDTPoint } from '../vdt';
 import { flowRectToPage } from '../vdt';
@@ -780,7 +781,11 @@ export function layoutComicFrame(source: ComicPageSource, ctx: ComicFrameContext
     const bg = boxDraws ? undefined
       : attrColor(attrs.bg, resolved.colorPalette) ?? (box ? (box.backgroundEnabled ? box.background.hex : 'transparent') : style.background.hex);
     const borderColor = box && !border ? box.border.color.hex : style.borderColor.hex;
-    const radiusPx = dimensionToPx(box ? box.borderRadius : style.borderRadius, dpi);
+    // A box style's corners of their own (#1059): a panel has one radius,
+    // the largest.
+    const radiusPx = box && isCornerRadii(box.borderRadius)
+      ? Math.max(...cornerRadiiPx(box.borderRadius, (d) => dimensionToPx(d, dpi)))
+      : dimensionToPx(box ? uniformRadius(box.borderRadius)! : style.borderRadius, dpi);
     const index = panels.length;
     const panel: VDTComicPanel = {
       index,

@@ -514,6 +514,9 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
         const rect = sheet(b.bbox, inFlow);
         if (b.kind === 'box') {
           fill(rect, b.box.backgroundColor);
+        } else if (b.kind === 'path' && b.boxPart === 'fill') {
+          // A card joined to its tab (#1059): its fill is the ground.
+          fill(rect, b.fill);
         } else if (b.kind === 'image') {
           picture(rect);
         } else if (b.kind === 'text') {

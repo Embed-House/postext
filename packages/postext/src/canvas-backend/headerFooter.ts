@@ -8,6 +8,7 @@ import type {
   VDTDesignBoxStyle,
 } from '../vdt';
 import { pathMarkerOutline } from '../design/pathBlock';
+import { boxNeedsShape, boxStylePathBlocks } from '../design/boxShape';
 import { fillTextDots } from './textDots';
 import { drawResourceImage, roundedOutlinePath } from './renderResourceBlock';
 import { fillFlowText, drawUprightInBox, setVerticalPaint, verticalPaintActive } from './verticalText';
@@ -74,6 +75,12 @@ export function drawBoxBackground(
   style: VDTDesignBoxStyle,
 ): void {
   if (w <= 0 || h <= 0) return;
+  // Corners of their own or a border per side (#1059): the shape's fill
+  // and border pieces as vectors.
+  if (boxNeedsShape(style)) {
+    for (const b of boxStylePathBlocks(x, y, w, h, style)) renderPathBlock(ctx, b);
+    return;
+  }
   if (!style.backgroundColor && !style.borderColor) return;
   const bw = style.borderColor ? Math.max(0, style.borderWidthPx) : 0;
   const solid = bw > 0 && (bw >= w || bw >= h);

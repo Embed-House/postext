@@ -121,7 +121,9 @@ function percentText(n: number): string {
  * - a design element's point along a side (`anchor.at`) or size edge
  *   (`size.width.edge`…) outside its choices (`unknownConfigValue`, #1055);
  * - a path element's keys, path data, `viewBox` and
- *   `preserveAspectRatio` (#1060).
+ *   `preserveAspectRatio` (#1060);
+ * - box shapes (#1059): corner and side keys a box does not have, a label
+ *   tab's `position` outside its choices, a joined tab with an `offset`.
  * Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
@@ -132,7 +134,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config), ...collectLabelIconWarnings(config),
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
-    ...collectDesignPathWarnings(config),
+    ...collectDesignPathWarnings(config), ...collectBoxShapeWarnings(config),
     ...collectConnectorWarnings(config),
   ];
 }
@@ -219,6 +221,71 @@ function collectDesignPathWarnings(config: PostextConfig): ConfigWarning[] {
       if (par !== undefined && par !== 'none' && par !== 'meet') {
         const suggestion = closestKey(String(par), ['none', 'meet']);
         out.push({ kind: 'unknownConfigValue', path: `${path}.preserveAspectRatio`, value: String(par), used: 'none', ...(suggestion ? { suggestion } : {}) });
+      }
+    });
+  }
+  return out;
+}
+
+const CORNER_KEYS = ['topLeft', 'topRight', 'bottomRight', 'bottomLeft'] as const;
+const SIDE_KEYS = ['top', 'right', 'bottom', 'left'] as const;
+const BORDER_SIDE_KEYS = ['enabled', 'color', 'width'] as const;
+const LABEL_POSITIONS = ['top-right', 'top-left', 'top-start', 'top-end', 'bottom-right', 'bottom-left', 'bottom-start', 'bottom-end'] as const;
+
+/** The keys of `value` (a plain object) that are not in `known`, as
+ *  `unknownConfigKey` warnings under `path`. */
+function unknownKeys(value: unknown, known: readonly string[], path: string, out: ConfigWarning[]): void {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return;
+  for (const [key, v] of Object.entries(value)) {
+    if (v === undefined || known.includes(key)) continue;
+    const suggestion = closestKey(key, known);
+    out.push({ kind: 'unknownConfigKey', path: `${path}.${key}`, value: key, used: '', ...(suggestion ? { suggestion } : {}) });
+  }
+}
+
+/** A corner radius that names its corners and a border per side (#1059):
+ *  keys they do not have. */
+function shapeKeyWarnings(radius: unknown, sides: unknown, radiusPath: string, sidesPath: string, out: ConfigWarning[]): void {
+  if (radius && typeof radius === 'object' && !('value' in radius && 'unit' in radius)) unknownKeys(radius, CORNER_KEYS, radiusPath, out);
+  if (!sides || typeof sides !== 'object' || Array.isArray(sides)) return;
+  unknownKeys(sides, SIDE_KEYS, sidesPath, out);
+  for (const k of SIDE_KEYS) unknownKeys((sides as Record<string, unknown>)[k], BORDER_SIDE_KEYS, `${sidesPath}.${k}`, out);
+}
+
+/** Box shapes (#1059): a box style's `borderRadius` corners and
+ *  `border.sides`, a design box's `borderRadius` and `borderSides` (keys
+ *  they do not have: `unknownConfigKey`); a label tab's `position` outside
+ *  its choices, and a joined tab with an `offset` (it stands on the edge:
+ *  the offset is not read) — `unknownConfigValue`. */
+function collectBoxShapeWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  (config.calloutStyles ?? []).forEach((s, i) => {
+    if (!s || typeof s !== 'object') return;
+    const path = `calloutStyles[${i}]`;
+    shapeKeyWarnings(s.borderRadius, (s.border as { sides?: unknown } | undefined)?.sides, `${path}.borderRadius`, `${path}.border.sides`, out);
+    const label = s.label as { position?: unknown; joined?: unknown; offset?: unknown } | undefined;
+    if (!label || typeof label !== 'object') return;
+    const position = label.position;
+    if (position !== undefined && !(LABEL_POSITIONS as readonly unknown[]).includes(position)) {
+      const suggestion = typeof position === 'string' ? closestKey(position, LABEL_POSITIONS) : undefined;
+      const used = typeof position === 'string' && position.startsWith('bottom-') ? 'bottom-left' : 'top-left';
+      out.push({ kind: 'unknownConfigValue', path: `${path}.label.position`, value: String(position), used, ...(suggestion ? { suggestion } : {}) });
+    }
+    const offset = label.offset as { value?: unknown } | undefined;
+    if (label.joined === true && offset && typeof offset === 'object' && typeof offset.value === 'number' && offset.value !== 0) {
+      out.push({ kind: 'unknownConfigValue', path: `${path}.label.offset`, value: String(offset.value), used: '0' });
+    }
+  });
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => {
+      if (!el || typeof el !== 'object') return;
+      const path = `${slot.path}.elements[${i}]`;
+      // A box element's `style`, a text element's `box`.
+      for (const key of ['style', 'box'] as const) {
+        const box = (el as unknown as Record<string, unknown>)[key];
+        if (!box || typeof box !== 'object') continue;
+        const b = box as { borderRadius?: unknown; borderSides?: unknown };
+        shapeKeyWarnings(b.borderRadius, b.borderSides, `${path}.${key}.borderRadius`, `${path}.${key}.borderSides`, out);
       }
     });
   }

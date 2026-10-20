@@ -4,7 +4,7 @@ import { AlignCenter, AlignJustify, AlignLeft, AlignRight } from 'lucide-react';
 
 import { useState } from 'react';
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import { DEFAULT_TEXT_ELEMENT, dimensionsEqual, colorsEqual } from 'postext';
+import { DEFAULT_TEXT_ELEMENT, dimensionsEqual, colorsEqual, uniformRadius } from 'postext';
 import type {
   DesignTextElement,
   ResolvedDesignTextElement,
@@ -673,7 +673,7 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
         const bg = box.backgroundColor;
         const bc = box.borderColor;
         const bw = box.borderWidth ?? ZERO;
-        const br = box.borderRadius ?? ZERO;
+        const br = uniformRadius(box.borderRadius) ?? ZERO;
         const padH = box.padding?.left ?? box.padding?.right ?? ZERO;
         const padV = box.padding?.top ?? box.padding?.bottom ?? ZERO;
         const updateBox = (partial: Partial<ElementBoxStyle>) => {

@@ -152,6 +152,9 @@ function designInk(blocks: readonly VDTDesignBlock[], out: Ink[]): void {
     if (b.kind === 'box') {
       if (opaque(b.box.backgroundColor)) out.push({ box: { ...b.bbox }, kind: 'fill' });
       else if (b.box.borderColor && b.box.borderWidthPx > 0) out.push({ box: { ...b.bbox }, kind: 'fill' });
+    } else if (b.kind === 'path' && b.boxPart && b.fill) {
+      // A card joined to its tab (#1059), as a box.
+      out.push({ box: { ...b.bbox }, kind: 'fill' });
     } else if (b.kind === 'image') {
       out.push({ box: { ...b.bbox }, kind: 'picture' });
     } else if (b.kind === 'rule') {
@@ -174,7 +177,8 @@ function designInk(blocks: readonly VDTDesignBlock[], out: Ink[]): void {
 /** A box's border alone does not hide what is under its middle: the fill
  *  pieces that only stroke an outline cover along it. */
 function isOutlineOnly(b: VDTDesignBlock): boolean {
-  return b.kind === 'box' && !opaque(b.box.backgroundColor) && !!b.box.borderColor && b.box.borderWidthPx > 0;
+  return (b.kind === 'box' && !opaque(b.box.backgroundColor) && !!b.box.borderColor && b.box.borderWidthPx > 0)
+    || (b.kind === 'path' && b.boxPart === 'border');
 }
 
 /** The ink of one frame, in its blocks' own (laid-out) coordinates: what

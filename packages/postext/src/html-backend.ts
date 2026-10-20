@@ -3065,12 +3065,25 @@ function boxStyleDecls(style: VDTDesignBoxStyle): string {
     ? `border:${style.borderWidthPx}px solid ${style.borderColor};box-sizing:border-box;`
     : '';
   const radius = style.borderRadiusPx > 0 ? `border-radius:${style.borderRadiusPx}px;` : '';
-  return `${bg}${border}${radius}`;
+  if (!style.borderRadiiPx && !style.borderSides) return `${bg}${border}${radius}`;
+  // Corners of their own and a border per side (#1059), as CSS draws them.
+  const radii = style.borderRadiiPx
+    ? `border-radius:${style.borderRadiiPx.map((r) => `${Math.max(0, r)}px`).join(' ')};`
+    : radius;
+  const sides = style.borderSides;
+  if (!sides) return `${bg}${border}${radii}`;
+  const each = (['top', 'right', 'bottom', 'left'] as const)
+    .map((side) => {
+      const b = sides[side];
+      return b && b.widthPx > 0 ? `border-${side}:${b.widthPx}px solid ${b.color};` : '';
+    })
+    .join('');
+  return `${bg}${each ? `${each}box-sizing:border-box;` : ''}${radii}`;
 }
 
 function renderBoxAt(bbox: BoundingBox, style: VDTDesignBoxStyle): string {
   if (bbox.width <= 0 || bbox.height <= 0) return '';
-  if (!style.backgroundColor && !style.borderColor) return '';
+  if (!style.backgroundColor && !style.borderColor && !style.borderSides) return '';
   return (
     `<div aria-hidden="true" style="` +
     `position:absolute;` +

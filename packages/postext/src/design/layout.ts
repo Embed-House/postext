@@ -28,9 +28,10 @@ import type {
   VAlign,
 } from '../types';
 import { dimensionToPx } from '../units';
+import { borderSidesPx, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, uniformRadius } from './boxShape';
 import { resolveTextDots } from '../textDots';
 import { resolveDesignLineHeight } from '../defaults/headerFooter';
-import { createBoundingBox, pictureTraits, type BoundingBox, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt';
+import { createBoundingBox, pictureTraits, type BoundingBox, type VDTDesignBoxStyle, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt';
 import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath';
 import { buildFontString } from '../measure';
 import { graphemeCount } from '../measure/graphemes';
@@ -109,6 +110,10 @@ export interface ResolvedElementBox {
   borderColor?: string;
   borderWidthPx: number;
   borderRadiusPx: number;
+  /** One radius per corner (#1059), when the corners differ. */
+  borderRadiiPx?: [number, number, number, number];
+  /** The border per side (#1059), when the sides differ. */
+  borderSides?: VDTDesignBoxStyle['borderSides'];
   padding: ResolvedPadding;
 }
 
@@ -382,13 +387,29 @@ function resolveBox(
   baseFontSizePx?: number,
 ): ResolvedElementBox | undefined {
   if (!style) return undefined;
-  return {
+  const padding = resolvePadding(style.padding, dpi, baseFontSizePx);
+  if (!isCornerRadii(style.borderRadius) && style.borderSides === undefined) {
+    return {
+      backgroundColor: style.backgroundColor?.hex,
+      borderColor: style.borderColor?.hex,
+      borderWidthPx: dimPx(style.borderWidth, dpi, baseFontSizePx),
+      borderRadiusPx: dimPx(uniformRadius(style.borderRadius), dpi, baseFontSizePx),
+      padding,
+    };
+  }
+  // Corners of their own and a border per side (#1059), folded back to
+  // the plain fields where they say no more.
+  const toPx = (d: Dimension) => dimPx(d, dpi, baseFontSizePx);
+  const whole = { enabled: true, color: style.borderColor, width: style.borderWidth };
+  const shape = normalizeBoxStyle({
     backgroundColor: style.backgroundColor?.hex,
     borderColor: style.borderColor?.hex,
     borderWidthPx: dimPx(style.borderWidth, dpi, baseFontSizePx),
-    borderRadiusPx: dimPx(style.borderRadius, dpi, baseFontSizePx),
-    padding: resolvePadding(style.padding, dpi, baseFontSizePx),
-  };
+    borderRadiusPx: 0,
+    borderRadiiPx: cornerRadiiPx(style.borderRadius, toPx),
+    ...(style.borderSides !== undefined ? { borderSides: borderSidesPx(whole, style.borderSides, toPx) } : {}),
+  });
+  return { ...shape, padding };
 }
 
 function colorHex(c: ColorValue | undefined): string {
@@ -404,10 +425,19 @@ function overrideColor(c: ColorValue | undefined, overrides: Record<string, stri
 
 function overrideBoxStyle(style: ElementBoxStyle | undefined, overrides: Record<string, string>): ElementBoxStyle | undefined {
   if (!style) return style;
+  const sides = style.borderSides;
   return {
     ...style,
     backgroundColor: overrideColor(style.backgroundColor, overrides),
     borderColor: overrideColor(style.borderColor, overrides),
+    // Each side's own colour too (#1059).
+    ...(sides && typeof sides === 'object'
+      ? {
+          borderSides: Object.fromEntries(
+            Object.entries(sides).map(([k, v]) => [k, v && typeof v === 'object' && v.color ? { ...v, color: overrideColor(v.color, overrides) } : v]),
+          ) as ElementBoxStyle['borderSides'],
+        }
+      : {}),
   };
 }
 

@@ -314,7 +314,11 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
         if (b.kind === 'rule') {
           checkRule(b.thicknessPx, b.color, pageIndex, b.bbox);
         } else if (b.kind === 'box') {
-          if (b.box.borderWidthPx > 0 && b.box.borderColor) checkRule(b.box.borderWidthPx, b.box.borderColor, pageIndex, b.bbox);
+          // A border per side (#1059): each side a rule of its own.
+          const sides = b.box.borderSides;
+          if (sides) {
+            for (const side of [sides.top, sides.right, sides.bottom, sides.left]) if (side && side.widthPx > 0) checkRule(side.widthPx, side.color, pageIndex, b.bbox);
+          } else if (b.box.borderWidthPx > 0 && b.box.borderColor) checkRule(b.box.borderWidthPx, b.box.borderColor, pageIndex, b.bbox);
           if (!isTransparent(b.box.backgroundColor)) {
             checkCoverage(b.box.backgroundColor, pageIndex, b.bbox);
             checkNearTrim(b.bbox);
@@ -323,7 +327,9 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
           // A vector shape (#1055): its outline is a rule of its stroke's
           // width, its fill and markers inks over its box.
           if (b.stroke) checkRule(b.stroke.widthPx, b.stroke.color, pageIndex, b.bbox);
-          if (b.fill && !isTransparent(b.fill)) {
+          // A box's border drawn as a fill (#1059) is a rule of its width.
+          if (b.boxPart === 'border' && b.fill && b.borderWidthPx !== undefined) checkRule(b.borderWidthPx, b.fill, pageIndex, b.bbox);
+          else if (b.fill && !isTransparent(b.fill)) {
             checkCoverage(b.fill, pageIndex, b.bbox);
             checkNearTrim(b.bbox);
           }

@@ -30,6 +30,7 @@
  * (`ComposedPageLayout.continuations`) for `build.ts` to lay on pages it
  * adds after this one, with this function (`ComposedPageInput.continuing`).
  */
+import { isCornerRadii } from '../design/boxShape';
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
 import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
 import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
@@ -1016,11 +1017,19 @@ export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): 
   return {
     ...style,
     padding: { top: d(p.top), right: d(p.right), bottom: d(p.bottom), left: d(p.left) },
-    border: { ...style.border, width: d(style.border.width) },
-    borderRadius: d(style.borderRadius),
+    border: {
+      ...style.border,
+      width: d(style.border.width),
+      ...(style.border.sides
+        ? { sides: Object.fromEntries(Object.entries(style.border.sides).map(([k, v]) => [k, { ...v, width: d(v.width) }])) as NonNullable<ResolvedCalloutStyleConfig['border']['sides']> }
+        : {}),
+    },
+    borderRadius: isCornerRadii(style.borderRadius)
+      ? Object.fromEntries(Object.entries(style.borderRadius).map(([k, v]) => [k, v ? d(v) : v]))
+      : d(style.borderRadius),
     stripe: { ...style.stripe, width: d(style.stripe.width) },
     ...(style.label
-      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) } } }
+      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) }, ...(style.label.fillet ? { fillet: d(style.label.fillet) } : {}) } }
       : {}),
   };
 }
@@ -2171,7 +2180,16 @@ export function styleWithLook(base: ResolvedCalloutStyleConfig, look: FrameLook)
     out.background = look.background;
     out.backgroundEnabled = true;
   }
-  if (look.border?.color) out.border = { ...base.border, color: look.border.color };
+  if (look.border?.color) {
+    // Every side takes the look's border colour too (#1059).
+    const color = look.border.color;
+    const sides = base.border.sides;
+    out.border = {
+      ...base.border,
+      color,
+      ...(sides ? { sides: { top: { ...sides.top, color }, right: { ...sides.right, color }, bottom: { ...sides.bottom, color }, left: { ...sides.left, color } } } : {}),
+    };
+  }
   if (look.stripe?.color) out.stripe = { ...base.stripe, color: look.stripe.color };
   if (look.icon?.color) out.icon = { ...base.icon, color: look.icon.color };
   if (look.marker?.color || look.marker?.rule?.color) {

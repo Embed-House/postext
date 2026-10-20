@@ -2317,9 +2317,20 @@ export interface VDTTextDots {
 /** Rounded-rectangle box style resolved to absolute px / hex values. */
 export interface VDTDesignBoxStyle {
   backgroundColor?: string;
+  /** The border's colour; with {@link borderSides}, the colour of the
+   *  first side that has one (read by checks that want one colour). */
   borderColor?: string;
+  /** The border's width; with {@link borderSides}, the widest side. */
   borderWidthPx: number;
+  /** The corners' radius; with {@link borderRadiiPx}, the largest. */
   borderRadiusPx: number;
+  /** One radius per corner, top-left, top-right, bottom-right,
+   *  bottom-left (#1059). Absent: `borderRadiusPx` on every corner. */
+  borderRadiiPx?: [number, number, number, number];
+  /** The border per side (#1059), `null` for a side without one. Absent:
+   *  `borderColor` / `borderWidthPx` on every side. The painters read it
+   *  over those two. */
+  borderSides?: Record<'top' | 'right' | 'bottom' | 'left', { color: string; widthPx: number } | null>;
 }
 
 /** Text block rendered inside a design slot (header / footer / heading). */
@@ -2537,6 +2548,14 @@ export interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
   /** Absent = no stroke. */
   stroke?: VDTPathStroke;
   markers?: VDTPathMarker[];
+  /** The part of a box's shape the path paints (#1059: a card joined to
+   *  its tab): `'fill'` its background, which the contrast check reads as
+   *  the ground of the text over it; `'border'` its border, drawn as a
+   *  fill {@link borderWidthPx} wide, which part palettes recolour as the
+   *  box's border and preflight checks as a rule. Absent on other paths. */
+  boxPart?: 'fill' | 'border';
+  /** The widest side of a `boxPart: 'border'` path. */
+  borderWidthPx?: number;
 }
 
 export type VDTDesignBlock =

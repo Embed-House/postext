@@ -17,6 +17,7 @@ import {
   type VDTDesignTextBlock,
   type VDTDesignRuleBlock,
   type VDTDesignBoxBlock,
+  type VDTDesignBoxStyle,
   type VDTDesignImageBlock,
   type VDTDesignPathBlock,
   type VDTDesignSlotKind,
@@ -184,6 +185,7 @@ function textPrimitiveToBlock(prim: ResolvedTextPrimitive): VDTDesignTextBlock {
           borderColor: prim.box.borderColor,
           borderWidthPx: prim.box.borderWidthPx,
           borderRadiusPx: prim.box.borderRadiusPx,
+          ...shapeFields(prim.box),
         }
       : undefined,
     clip: prim.needsClip,
@@ -231,7 +233,16 @@ function boxPrimitiveToBlock(prim: ResolvedBoxPrimitive): VDTDesignBoxBlock {
       borderColor: prim.box.borderColor,
       borderWidthPx: prim.box.borderWidthPx,
       borderRadiusPx: prim.box.borderRadiusPx,
+      ...shapeFields(prim.box),
     },
+  };
+}
+
+/** A box's corners of their own and border per side (#1059), copied. */
+function shapeFields(box: Pick<VDTDesignBoxStyle, 'borderRadiiPx' | 'borderSides'>): Pick<VDTDesignBoxStyle, 'borderRadiiPx' | 'borderSides'> {
+  return {
+    ...(box.borderRadiiPx ? { borderRadiiPx: [...box.borderRadiiPx] as [number, number, number, number] } : {}),
+    ...(box.borderSides ? { borderSides: { ...box.borderSides } } : {}),
   };
 }
 

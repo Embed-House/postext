@@ -44,6 +44,7 @@ import {
   resolveDesignSlot,
   resolveHeadingsConfig,
   resolveUnorderedListsConfig,
+  uniformRadius,
 } from 'postext';
 import {
   useSandboxDispatch,
@@ -798,7 +799,9 @@ export function CalloutStyleCard({
       )}
       <DimensionInput
         label={labels.calloutStyleBorderRadius}
-        value={resolved.borderRadius}
+        // A radius per corner (#1059) shows as square here: its own
+        // editor belongs to the template editor's box shapes.
+        value={uniformRadius(resolved.borderRadius) ?? { value: 0, unit: 'em' }}
         onChange={(v) => onChange({ borderRadius: v })}
         min={0}
         step={0.05}

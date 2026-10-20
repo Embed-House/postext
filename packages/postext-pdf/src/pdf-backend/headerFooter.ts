@@ -6,7 +6,7 @@ import type {
   VDTDesignImageBlock,
   VDTDesignBoxStyle,
 } from 'postext';
-import { segmentOrientation } from 'postext';
+import { boxNeedsShape, boxStylePathBlocks, segmentOrientation } from 'postext';
 import { drawRightToLeftRun } from './rtlRun';
 import { inkScaleOperators } from './inkScale';
 import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock';
@@ -131,6 +131,12 @@ export function drawRoundedBox(
   style: VDTDesignBoxStyle,
 ): void {
   if (wPx <= 0 || hPx <= 0) return;
+  // Corners of their own or a border per side (#1059): the shape's fill
+  // and border pieces as vector paths.
+  if (boxNeedsShape(style)) {
+    for (const b of boxStylePathBlocks(xPx, yPx, wPx, hPx, style)) renderPathBlock(ctx, b);
+    return;
+  }
   const { scale, pageHeightPt } = ctx;
   const radius = Math.max(0, Math.min(style.borderRadiusPx, wPx / 2, hPx / 2));
   const bw = style.borderColor ? Math.max(0, style.borderWidthPx) : 0;

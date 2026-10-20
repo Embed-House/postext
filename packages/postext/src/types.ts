@@ -3217,16 +3217,52 @@ export type CalloutIconPosition = 'inline' | 'corner';
  *  (see {@link CalloutStripeSide}). */
 export type CalloutIconCornerSide = 'right' | 'left' | 'outer' | 'inner' | 'start' | 'end';
 
-/** The top corner a callout's label tab hugs: `'top-right'` / `'top-left'`
+/** The corner a callout's label tab hugs: `'top-right'` / `'top-left'`
  *  in the body flow's terms, `'top-start'` / `'top-end'` (#371) in the box's
- *  own direction (see {@link CalloutStripeSide}). */
-export type CalloutLabelPosition = 'top-right' | 'top-left' | 'top-start' | 'top-end';
+ *  own direction (see {@link CalloutStripeSide}); the `bottom-` forms
+ *  (#1059) hang the tab from the box's foot. */
+export type CalloutLabelPosition =
+  | 'top-right' | 'top-left' | 'top-start' | 'top-end'
+  | 'bottom-right' | 'bottom-left' | 'bottom-start' | 'bottom-end';
 export type CalloutTextTransform = 'none' | 'uppercase';
+
+/** A side of a box, on the sheet. */
+export type BoxSideName = 'top' | 'right' | 'bottom' | 'left';
+
+/** The radius of a box's corners (#1059): one length for all four, or
+ *  one per corner (a corner left out is square). Corners are the sheet's,
+ *  as a stripe's `left` / `right` are the body flow's. */
+export type CornerRadius =
+  | Dimension
+  | { topLeft?: Dimension; topRight?: Dimension; bottomRight?: Dimension; bottomLeft?: Dimension };
+
+/** One side of a box's border (#1059): each field left out takes the
+ *  whole border's value (`enabled`, `color`, `width`). */
+export interface BorderSide {
+  enabled?: boolean;
+  color?: ColorValue;
+  width?: Dimension;
+}
+
+/** The four sides of a box's border (#1059), each over the whole border's
+ *  values. */
+export interface BorderSides {
+  top?: BorderSide;
+  right?: BorderSide;
+  bottom?: BorderSide;
+  left?: BorderSide;
+}
 
 export interface CalloutBorderConfig {
   enabled?: boolean;
   color?: ColorValue;
   width?: Dimension;
+  /** Per side (#1059): a box with a border on its top only is
+   *  `{ enabled: true, sides: { right: { enabled: false }, bottom: {
+   *  enabled: false }, left: { enabled: false } } }`, or `enabled: false`
+   *  with `sides: { top: { enabled: true } }`. Unset: every side as the
+   *  whole border. */
+  sides?: BorderSides;
 }
 
 export interface CalloutPaddingConfig {
@@ -3348,8 +3384,18 @@ export interface CalloutLabelConfig {
    *  picture resource. */
   icon?: CalloutLabelIconConfig;
   /** A rule along the box's top edge from the far corner to the tab (or
-   *  its icon). */
+   *  its icon); along the foot for a `bottom-` tab. */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
+  /** The tab grown out of the box (#1059): box and tab are one outline,
+   *  one fill (the box's `background`) and one border running round the
+   *  tab, the tab's sides meeting the box's edge in concave fillets. The
+   *  tab stands on the edge, outside the box: `offset` must be 0 (another
+   *  value is reported and ignored). The tab's own `background` is not
+   *  painted. Default `false`. */
+  joined?: boolean;
+  /** The radius of the concave fillets of a joined tab. Default: the
+   *  radius of the box's corner the tab hugs. */
+  fillet?: Dimension;
 }
 
 /** Vertical rule drawn between a callout marker and its box. */
@@ -3522,8 +3568,8 @@ export interface CalloutStyleConfig {
   background?: ColorValue;
   /** Default off, `#cccccc`, `0.5pt`. */
   border?: CalloutBorderConfig;
-  /** Default `0`. */
-  borderRadius?: Dimension;
+  /** Default `0`. One length, or one per corner (#1059). */
+  borderRadius?: CornerRadius;
   /** Default `0.75em` on every side. */
   padding?: CalloutPaddingConfig;
   /** Default off, `left`, `1.5em`, main colour. */
@@ -3724,8 +3770,16 @@ export interface ResolvedCalloutStyleConfig {
   width: CalloutWidth;
   backgroundEnabled: boolean;
   background: ColorValue;
-  border: { enabled: boolean; color: ColorValue; width: Dimension };
-  borderRadius: Dimension;
+  border: {
+    enabled: boolean;
+    color: ColorValue;
+    width: Dimension;
+    /** Each side with the whole border's values written in (#1059); absent
+     *  when the style sets no side. */
+    sides?: Record<BoxSideName, { enabled: boolean; color: ColorValue; width: Dimension }>;
+  };
+  /** A length, or one per corner (#1059). */
+  borderRadius: CornerRadius;
   padding: { top: Dimension; right: Dimension; bottom: Dimension; left: Dimension };
   stripe: { enabled: boolean; side: CalloutStripeSide; width: Dimension; color: ColorValue };
   icon: {
@@ -3768,6 +3822,10 @@ export interface ResolvedCalloutStyleConfig {
       color?: ColorValue;
     };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
+    /** The tab grown out of the box (#1059). */
+    joined: boolean;
+    /** Absent: the radius of the box's corner the tab hugs. */
+    fillet?: Dimension;
   };
   columnGap: Dimension;
   marker: {
@@ -6447,7 +6505,12 @@ export interface ElementBoxStyle {
   backgroundColor?: ColorValue;
   borderColor?: ColorValue;
   borderWidth?: Dimension;
-  borderRadius?: Dimension;
+  /** One length, or one per corner (#1059). */
+  borderRadius?: CornerRadius;
+  /** The border per side (#1059), each over `borderColor` / `borderWidth`
+   *  (a side is on when it has a colour and a width, unless `enabled:
+   *  false`). Unset: the whole border on every side. */
+  borderSides?: BorderSides;
   padding?: { top?: Dimension; right?: Dimension; bottom?: Dimension; left?: Dimension };
 }
 

@@ -7,37 +7,6 @@
  */
 import type { ColorValue, Dimension, LineCap } from '../types';
 
-// §12.1, §12.8 (C8) ---------------------------------------------------------
-
-export interface VDTDesignBoxStyleRound2 {
-  borderRadiiPx?: [number, number, number, number];
-  borderSides?: Record<'top' | 'right' | 'bottom' | 'left', { color: string; widthPx: number } | null>;
-}
-
-export type CornerRadius =
-  | Dimension
-  | { topLeft?: Dimension; topRight?: Dimension; bottomRight?: Dimension; bottomLeft?: Dimension };
-
-export interface BorderSide {
-  enabled?: boolean;
-  color?: ColorValue;
-  width?: Dimension;
-}
-
-export interface BorderSides {
-  top?: BorderSide;
-  right?: BorderSide;
-  bottom?: BorderSide;
-  left?: BorderSide;
-}
-
-/** `CalloutLabelConfig` additions (joined tab, §12.8; the glyph icon of
- *  §12.9 is in `types.ts` since C3). */
-export interface CalloutLabelRound2 {
-  joined?: boolean;
-  fillet?: Dimension;
-}
-
 // §12.4 (C6; the connector of §12.3 and `LineCap` are in `types.ts` since C5)
 
 export interface LeaderStyle {

@@ -391,6 +391,21 @@ function recolorFrame(blocks: readonly VDTDesignBlock[], styleId: string | undef
     } else if (b.kind === 'box') {
       if (b.box.backgroundColor) b.box.backgroundColor = part('fill')(b.box.backgroundColor);
       if (b.box.borderColor) b.box.borderColor = part('border')(b.box.borderColor);
+      // Each side's colour as the border's (#1059).
+      const sides = b.box.borderSides;
+      if (sides) {
+        const remap = part('border');
+        b.box.borderSides = {
+          top: sides.top && { ...sides.top, color: remap(sides.top.color) ?? sides.top.color },
+          right: sides.right && { ...sides.right, color: remap(sides.right.color) ?? sides.right.color },
+          bottom: sides.bottom && { ...sides.bottom, color: remap(sides.bottom.color) ?? sides.bottom.color },
+          left: sides.left && { ...sides.left, color: remap(sides.left.color) ?? sides.left.color },
+        };
+      }
+    } else if (b.kind === 'path' && b.boxPart) {
+      // A card joined to its tab (#1059): its fill as the box's fill, its
+      // border pieces as the box's border.
+      if (b.fill) b.fill = part(b.boxPart === 'fill' ? 'fill' : 'border')(b.fill) ?? b.fill;
     } else if (b.kind === 'path') {
       // A vector shape (#1055): its fill as a box's fill; its outline and
       // markers as the frame's border when it is a filled shape, else as

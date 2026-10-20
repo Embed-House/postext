@@ -131,6 +131,8 @@ export { pathMarkerOutline, pathSvgData, markerSvgData, quadToCubic, pathInkBox,
 export type { PathMarkerOutline } from './design/pathBlock';
 export { parseSvgPath, arcToCubics } from './design/svgPath';
 export type { SvgPathParse } from './design/svgPath';
+export { boxOutline, outlineSubpath, borderPieces, shapePathBlocks, boxNeedsShape, boxStyleBorder, boxStyleRadii, boxStylePathBlocks, normalizeBoxStyle, SHAPE_SIDES, isCornerRadii, uniformRadius, cornerRadiiPx, borderSidesPx } from './design/boxShape';
+export type { ShapeSide, ShapeVertex, ShapeOutline, ShapeTab, ShapeBorder } from './design/boxShape';
 export type { DesignSlotLayout, LayoutContext, LayoutIssue, ResolvedPrimitive, ResolvedTextPrimitive, ResolvedRulePrimitive, ResolvedBoxPrimitive, ResolvedImagePrimitive, WrappedLine, DesignFrames } from './design/layout';
 export { classifyPages } from './pipeline/pageRoles';
 export { migrateLegacyHeaderFooterConfig, isLegacyHeaderFooterSlot, resolveDesignSlot, stripDesignSlotDefaults, defaultTextOverflow, DEFAULT_BOX_ELEMENT } from './defaults/headerFooter';
@@ -486,6 +488,10 @@ export type {
   ElementSizeTo,
   SidePosition,
   ElementBoxStyle,
+  CornerRadius,
+  BorderSide,
+  BorderSides,
+  BoxSideName,
   TextOverflow,
   DesignTextStroke,
   TextDotsStyle,

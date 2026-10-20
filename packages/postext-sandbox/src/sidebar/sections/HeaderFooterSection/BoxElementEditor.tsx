@@ -1,7 +1,7 @@
 'use client';
 
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import { DEFAULT_BOX_ELEMENT, colorsEqual, dimensionsEqual } from 'postext';
+import { DEFAULT_BOX_ELEMENT, colorsEqual, dimensionsEqual, uniformRadius } from 'postext';
 import type {
   DesignBoxElement,
   ResolvedDesignBoxElement,
@@ -75,13 +75,14 @@ export function BoxElementEditor({ raw, resolved, slotKind, siblings = [], frame
   const bgColor: ColorValue | undefined = resolved.style.backgroundColor;
   const borderColor: ColorValue | undefined = resolved.style.borderColor;
   const borderWidth: Dimension = resolved.style.borderWidth ?? ZERO;
-  const borderRadius: Dimension = resolved.style.borderRadius ?? ZERO;
+  // A radius per corner (#1059) is edited elsewhere: here it reads as 0.
+  const borderRadius: Dimension = uniformRadius(resolved.style.borderRadius) ?? ZERO;
 
   const isMarginFromBodyDefault = dimensionsEqual(resolvedMarginFromBody, defaultMarginFromBody);
   const isMarginFromEdgeDefault = dimensionsEqual(resolvedMarginFromEdge, defaultMarginFromEdge);
   const isBorderRadiusDefault = dimensionsEqual(
     borderRadius,
-    DEFAULT_BOX_ELEMENT.style.borderRadius ?? ZERO,
+    uniformRadius(DEFAULT_BOX_ELEMENT.style.borderRadius) ?? ZERO,
   );
   const isBgDefault =
     (bgColor && DEFAULT_BOX_ELEMENT.style.backgroundColor)
