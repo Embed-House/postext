@@ -160,7 +160,8 @@ const pageTemplates = [
       stack('izquierda', CJK ? ['titulo', 'texto', 'actividad'] : ['titulo', 'mapa', 'texto',
         'actividad'], { gap: mm(6), ...(CJK && { placement: at('container', 'top-left', DOWN) }) }),
       grid('cursos', ['curso'], CJK ? 1 : 3, CJK ? at('container', 'top-left', DOWN, RIGHT)
-        : at('#mapa', 'below', RIGHT, 6), { columnGap: mm(6), rowGap: mm(6) }, MEASURE - DOWN * CJK),
+        : at('#mapa', 'below', RIGHT, 6), { columnGap: mm(6), rowGap: mm(6) },
+        CJK ? TALL - DOWN : MEASURE),
     ],
   }),
   topic('tema-sol', 'sol', {
