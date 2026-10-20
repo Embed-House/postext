@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 157 · A school atlas labelled from the Markdown ═══════
 // https://postext.dev/en/cookbook/school-atlas-labelled-maps
 // Code: MIT · Text: original (CC BY 4.0) · Maps: painted with diffusion models, symbols set in code
-// Fonts: Source Sans 3, Source Serif 4, Noto Naskh and Kufi Arabic (OFL) · Needs postext ≥ 1.39.0
+// Fonts: Source Sans 3, Source Serif 4, Noto Naskh and Kufi Arabic (OFL) · Needs postext ≥ 1.48.0
 //
 // Three pages of a school atlas of Varenia, an invented country: a locator map, the relief map
 // across a double page and a section through the mountains. The maps are painted without a letter.
@@ -55,7 +55,10 @@ const caps = (id, size, color, spacing, more) => style(id, size, color, {
   ...more });
 const labelStyles = [
   water('ocean', 9.5, 0.3), water('sea', 7.5, 0.16), water('river', 6.8, 0, { halo }),
-  caps('range', 7, 'relief', 0.32, { halo }), caps('region', 6.5, 'muted', 0.24, { halo }),
+  caps('range', 7, 'relief', 0.32, { halo }), caps('region', 6.5, 'muted', 0.24, { halo,
+    leader: { color: col('ink'), width: pt(0.6), endCap: 'dot', capSize: mm(1.2) } }),
+  style('legend', 7.6, 'ink', { kind: 'legend', background: col('paper'), padding: mm(2.4),
+    border: { color: col('muted'), width: pt(0.4) }, radius: mm(1) }),
   caps('country', 8.5, 'muted', 0.36, { halo }), caps('nation', 12, 'ink', 0.42, { halo }),
   style('capital', 7.6, 'ink', { fontWeight: 700, halo }), style('town', 7, 'ink', { halo }),
   style('peak', 6.5, 'ink', { fontWeight: AR ? 700 : 600, halo }),
@@ -90,12 +93,22 @@ const sheet = {
   // A longer text pushes the map and the key down; the map is set smaller before the text is.
   groups: [{ name: 'column', kind: 'stack', frames: ['text', 'map', 'key'], gap: mm(6) }],
 };
+const locator = { id: 'locator', extends: 'sheet', frames: [{ name: 'key', remove: true },
+  { name: 'tasks', placement: at('#map', 'below', 0, 6) }],
+  groups: [{ name: 'column', frames: ['text', 'map'] }] };
+// Line A–B: two connectors between two anchors of the map's picture, cased in paper, dotted ends.
+const section = (id, color, width, more) => ({ kind: 'connector', id, routing: 'straight',
+  from: { to: '#map', anchor: 'a-end' }, to: { to: '#map', anchor: 'b-end' }, color: col(color),
+  width: mm(width), ...more });
+const sectionLine = [section('section-casing', 'paper', 0.9), section('section-line', 'ink', 0.5,
+  { dash: [mm(1), mm(1)], startCap: 'dot', endCap: 'dot', capSize: mm(2) })];
 // The double sheet: one band and one map across both pages, the boxes under the map.
 const spread = {
-  id: 'spread', spread: true, header: false, decoration: { elements: [band, kicker] },
+  id: 'spread', spread: true, header: false,
+  decoration: { elements: [band, kicker, ...sectionLine] },
   frames: [
     { name: 'title', takes: 'h1', width: mm(177), placement: at('container', 'top-left', 0, -3) },
-    { name: 'map', crossGutter: true, // the one frame that runs across the spine
+    { name: 'map', crossGutter: true, layer: -1, // the one frame that runs across the spine
       placement: at('container', 'top-left', 0, BAND - PAGE.top + 5) },
     { name: 'text', flow: true, columns: 2, columnGap: mm(7), width: mm(177) },
     { name: 'key', style: 'key', width: mm(72), placement: at('#map', 'below', 213, 6) },
@@ -139,7 +152,7 @@ const config = {
   locale: t({ es: 'es', en: 'en-gb', ar: 'ar' }), // written out: Arabic sets the page right to left
   colorPalette, labelStyles, calloutStyles, footer,
   header: { elements: [] },
-  pageTemplates: [sheet, spread],
+  pageTemplates: [sheet, locator, spread],
   // The maps are a type of their own with no caption: their titles are the pages' headings.
   resourceTypes: [{ id: 'map', name: t({ es: 'Mapa', en: 'Map', ar: 'خريطة' }), shortLabel: '',
     numberingTemplate: '', resetOn: 'never', counterFormat: 'decimal', captionPrefix: '',
@@ -232,11 +245,10 @@ function reliefMap([w, h], art) { // the spread: the painted relief, borders, to
   const s = frame(WIN.relief, w);
   let out = picture(art, w, h);
   for (const run of BORDERS.relief) out += cased(mapPath(s, run), 'border', 0.7, '2.4 1.2');
-  out += cased(mapPath(s, PROFILE), 'ink', 0.5, '1 1');
+  // The line of section A–B is not drawn here: two connectors of the template join its ends.
   const dot = (x, y, r, more = '') => `<circle cx="${s.X(x)}" cy="${s.Y(y)}" r="${r}" `
     + `fill="${palette.ink}"${more}/>`;
   const ring = ` stroke="${palette.paper}" stroke-width="0.5"`;
-  for (const [x, y] of PROFILE) out += dot(x, y, 1, ring);
   for (const [, x, y, kind] of TOWNS) {
     out += kind === 'capital'
       ? `<rect x="${s.X(x) - 1.4}" y="${s.Y(y) - 1.4}" width="2.8" height="2.8" `
@@ -310,11 +322,13 @@ const ANCHORS = {
     r('scale-25', SCALE.x + 25, SCALE.y + 3, 'tick', below),
     r('scale-50', SCALE.x + 50, SCALE.y + 3, 'tick', below),
     r('north', NORTH.x, NORTH.y - 8, 'point', above),
+    r('a-end', ...PROFILE[0]), r('b-end', ...PROFILE[1]),
   ],
   locator: [
     l('varenia', 205, 80, 'nation'), l('ostelia', 150, -100, 'country'),
     l('brunavia', 560, -120, 'country'), l('lira', 210, -250, 'sea', { rotate: 20 }),
     l('ocean', -180, -40, 'ocean', { width: 0.2 }), l('almaren', 259, 127 + 22, 'capital', below),
+    { id: 'key', x: 0.115, y: 0.965, style: 'legend', verticalAlign: 'bottom' },
   ],
   // The section: fractions of the drawing, whose plot starts 14 mm in and runs 3 to 51 mm down.
   section: (() => {
@@ -324,9 +338,9 @@ const ANCHORS = {
       { id: 'a', x: x(0), y: (h - 5.5) / h, style: 'point', ...below },
       { id: 'b', x: x(0.98), y: (h - 5.5) / h, style: 'point', ...below },
       ...[500, 1000, 1500, 2000].map((m) => ({ id: `m${m}`, x: 7 / w, y: y(m), style: 'tick' })),
-      { id: 'sela', x: x(0.3), y: y(380), style: 'region' },
+      { id: 'sela', x: x(0.3), y: y(40), style: 'region', labelAt: { x: x(0.3), y: y(850) } },
       { id: 'crest', x: x(0.47), y: y(2260), style: 'range', ...above },
-      { id: 'plain', x: x(0.82), y: y(430), style: 'region' },
+      { id: 'plain', x: x(0.82), y: y(160), style: 'region', labelAt: { x: x(0.82), y: y(850) } },
     ];
   })(),
 };
@@ -344,6 +358,12 @@ const resources = Object.entries(MAP).map(([id, [w, h]]) => ({ id, typeId: 'map'
 for (const [id, draw] of Object.entries(drawings)) {
   await loadSvg(`${id}.svg`, draw(MAP[id], await dataUrl(PAINTINGS[id])));
 }
+// #endregion
+
+// #region art-key: the key's colour sample, a square each row of the legend tints (:icon{color})
+resources.push({ id: 'key-mark', typeId: 'map', kind: 'svg', createdAt: 0, updatedAt: 0,
+  svg: { fileId: 'key-mark.svg', width: 40, height: 40 } });
+await loadSvg('key-mark.svg', svg(4, 4, `<rect width="4" height="4" fill="${palette.ink}"/>`));
 // #endregion
 
 // ─── 3 · Fonts ──────────────────────────────────────────────────────────────
