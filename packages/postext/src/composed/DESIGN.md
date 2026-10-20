@@ -2507,3 +2507,84 @@ The Sandbox side of C2 (§12.10, §12.16), C10's `repeatOverflow` (§12.15) and 
   layout (right on the sheet by construction, not covered by a test); frames painted unmirrored on a
   mirrored page (#960) read their blocks' boxes through the page's flow like any other (unchecked). Sandbox
   (U11), docs (D3) and the skill (S6) have their own issues.
+
+### 12.24 What U12 built (#1065)
+
+The Sandbox side of C10 (§12.6, §12.15) and C11 (§12.7, §12.19): grid groups and modules edited in the
+Design panel, a module library, and two reshapes that move a port of one-off frames to them.
+
+- **Grid groups.** The groups editor's kind is stack / row / grid; a grid shows columns, column and row
+  gaps (the group's `gap` when unset), `rowAlign` and «Repeat a set of frames»: the main frame (a select
+  of the frames no other group holds), the frames that go with it (checkboxes) and `max` (0: none). A
+  repeating grid hides the plain member list (its `frames` are not read). A group can be switched to «Takes
+  the page's modules» (`modules: true`, kind and members cleared) with «goes on to the next page»
+  (`overflow.continueIn: 'next-page'`).
+- **Modules in the template editor.** A «Module» switch sets `role: 'module'` (and clears area, spread,
+  gutter, running heads, overflow template, variants); a module's editor hides those fields and the
+  template grid. The Page templates list tags modules. Renaming a module's id rewrites the `:::module`
+  blocks that name it (a page template's, the `::::page` fences, as before).
+- **Module library** (Design › Page & columns › Modules, section `modules`): every module drawn by its
+  sheet, its id and «N blocks on M pages» (`moduleUsage`, read from the Markdown of every chapter: blocks,
+  pages, by chapter, the page templates holding it); «New module» (one `text` frame); Edit opens the template
+  editor in place on the module; Insert writes `:::module{template}` with an empty `:::frame{slot}` per
+  frame (none for a `takes` frame; a grid's set as one empty item with its members inside) before the
+  closing fence of a composed page of the chapter in the editor (a select, the page at the caret first),
+  puts the caret in its first slot, and adds a modules group to the page's template when it has none
+  (under its last frame, `width`/`height` `'fill'`, 6 mm gap). Decision: the library lists module
+  templates only; a template that is used as page and module is not distinguished.
+- **Instances on the canvas and in the Markdown.** Design mode already names instances by their `[n]`.
+  `pageSites` now also lists the slotted pieces one level inside a `:::frame` (`within`), left out of
+  `sitesOf`; with the page template's repeat sets (`repeatSetsOf`) a site is read as its instance
+  (`instanceOfSite`: the n-th top-level piece of the set, as `pageRepeats` counts) and an instance as its
+  site (`siteOfInstance`). A click on `card[3]` puts the caret in the third item, on `caption[3]` in the
+  caption written inside it, or writes an empty `:::frame{slot="caption"}` inside the item; the caret in
+  an item marks its instance. Every viewer's pick reaches the template editor through `selectFrame`, which
+  now opens the template frame that draws the pick (`templateFrameOf`: `card[2]` → `card`, a module frame
+  `caja[1].nota` → frame `nota` of module `caja`). Departure: the canvas frame editor's drag handles are
+  not drawn on an instance or a module frame (a drag would move every copy; the panel edits them).
+- **«Turn into a grid»** (`templates/framesToGrid.ts`, «Reshape frames» in the template editor, base scope,
+  not on spreads or modules). The frames picked are split in cards and what hangs from each by their names
+  without the number (`foto1`/`foto2` one kind, `pie1`/`pie2` another; the cards are the first kind none of
+  whose frames hangs from a frame of another kind; a member goes with the card of its number, else the card
+  it hangs from, else the nearest); the lattice is read off the first laid page of the document on screen
+  set with the template (tops within 0.6 mm make a row, starts make columns, equal widths, one column gap,
+  full rows but the last, one row gap measured as the engine measures rows: reach above the card plus reach
+  below its top). The grid repeats the first card's set renamed without the number when free, `rowAlign:
+  'start'` (so a shorter card keeps its height), its box the first row's start, as wide as the columns, to
+  the area's foot, anchored as the first card was when that hangs by its top-left (`below`, `right-of`,
+  `align-top`, `align-left`, or `top-left` of the area), else at the area's top-left. Anchors elsewhere to a
+  card or a member point at its instance (`#foto2` → `#foto[2]`); groups lose the cards (and go when empty).
+  Every page set with the template gets one item per card, in reading order (`:::frame{slot="foto"}` with
+  the member written inside it; a card written as a block is wrapped when it has members). Refusals are
+  worded in the panel (too few, inherited, not laid, flow or `takes`, already repeated, off the lattice,
+  widths, members differ).
+- **«Extract a module»** (`planExtractModule`). The frames picked, a group (stack, row or grid) all of whose
+  frames are picked, and the decoration anchored to them (a connector when both ends are) move into a new
+  module after the page template; frames anchored outside the selection are placed at their laid offset in
+  the module's box (percent widths and `'fill'`/percent heights fixed to the laid size). The page template
+  gets a modules group where they stood: as wide as their union, anchored as the topmost frame was (same
+  rule as the grid) else at the area's top-left, `height: 'fill'`, or the union's height when something
+  else hangs from a moved frame; what hung from a moved frame hangs from the group, its offset shifted by
+  as much as that frame's edge stood from the group's (`edgeShift`). Every page set with the template gets
+  the pieces of the moved frames wrapped in one `:::module{template}` where the first stood (an empty block
+  when the page wrote none, so the module is still laid). Refused: a template with a modules group already
+  (stacking a second extraction is not done), a grid picked in part, flow / `takes` frames, a module.
+- **Page looks the same.** `templates/reshape.e2e.test.ts` lays a page of five one-off photo cards (with
+  caption pills) on a three-column lattice and a box with a tab and a picture, turns the cards into a grid,
+  extracts the box into a module, and compares every frame box before and after (within 0.3 px) under its
+  new name (`foto2` → `foto[2]`, `nota` → `caja[1].nota`), alone and both on one page.
+- **Undo.** Both reshapes, a module insert, rename and create are the chapters' text changes (one step per
+  chapter) then one design step (`applyTemplateRewrite`), as a style merge; «Reshape frames» offers Undo
+  while they are the latest steps.
+- **Checks.** `moduleUnknown` (each reason worded), `moduleAsPage`, `moduleNested`, `moduleNameRejected`
+  are composed checks of the Checks panel (filed with the markup, as `repeatOverflow`), with titles and
+  details in the ten languages, the Cookbook warnings registry explains them, and `sandbox_get_warnings`
+  gives their data.
+- **WebMCP.** `sandbox_modules` (modules with frames, groups and uses; page templates with their modules
+  group), `sandbox_create_module`, `sandbox_rename_module`, `sandbox_insert_module` (chapter, page fence
+  ordinal; `groupAdded`), `sandbox_frames_to_grid` and `sandbox_extract_module` (the boxes read off a laid
+  chapter; answers the old → new names), each answering its `undoSteps`. None is consequential.
+- **Not done.** A frame hanging from a moved frame keeps the shift measured on the page read (the group then has a fixed height): on a page where the moved frames come out at other heights it follows the group's box (an anchor from a page frame to a module's frame, `#caja[1].nota`, is not resolved by the engine; worth an engine issue). A second module extracted into an existing modules group; reshaping inherited frames or a
+  variant's (variants are only retargeted); right-to-left and vertical pages are read in their flow frame
+  but not tested; the Folio and HTML viewers reach instances through the same pick path but have no test of
+  their own; a canvas multi-selection (the frames are picked in the panel).
