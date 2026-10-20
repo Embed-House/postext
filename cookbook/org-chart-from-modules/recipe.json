@@ -1,0 +1,186 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 162,
+  "status": "draft",
+  "chapter": "page",
+  "order": 180,
+  "level": 3,
+  "genres": [
+    "report",
+    "catalogue"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "page-modules",
+      "frame-connectors",
+      "frame-grids"
+    ],
+    "also": [
+      "composed-pages",
+      "frame-groups",
+      "frame-decoration",
+      "callout-styles",
+      "mirrored-margins",
+      "running-heads",
+      "resources",
+      "color-palette",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q188"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.48.0",
+    "postextPdf": "1.48.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images"
+  ],
+  "sample": {
+    "locales": [
+      "es",
+      "en"
+    ]
+  },
+  "capture": {
+    "hero": [
+      1,
+      2
+    ],
+    "card": "spread",
+    "pages": "all",
+    "expect": {
+      "pages": [
+        2,
+        2
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [
+      {
+        "what": {
+          "en": "A guide to the council services of Valdeloma, an invented town, written for this recipe in Spanish and English",
+          "es": "Una guía de los servicios municipales de Valdeloma, un pueblo inventado, escrita para esta receta en español e inglés"
+        },
+        "who": "Postext Cookbook",
+        "license": "CC-BY-4.0"
+      }
+    ],
+    "images": [
+      {
+        "what": {
+          "en": "The reading room of a town library, in watercolour.",
+          "es": "La sala de lectura de una biblioteca municipal, en acuarela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "biblioteca-900.jpg"
+      },
+      {
+        "what": {
+          "en": "Children with violins and a piano at a music school, in watercolour.",
+          "es": "Niños con violines y un piano en una escuela de música, en acuarela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "musica-900.jpg"
+      },
+      {
+        "what": {
+          "en": "Older people playing cards and painting at a day centre, in watercolour.",
+          "es": "Mayores jugando a las cartas y pintando en un centro de día, en acuarela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "centro-mayores-900.jpg"
+      },
+      {
+        "what": {
+          "en": "A covered pool under a timber roof, in watercolour.",
+          "es": "Una piscina cubierta bajo un techo de madera, en acuarela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "piscina-900.jpg"
+      },
+      {
+        "what": {
+          "en": "Children playing basketball in a sports hall, in watercolour.",
+          "es": "Niños jugando al baloncesto en un polideportivo, en acuarela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "polideportivo-900.jpg"
+      },
+      {
+        "what": {
+          "en": "A Saturday market under the arcades of a town square, in watercolour.",
+          "es": "Un mercado de sábado en los soportales de una plaza, en acuarela."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mercado-900.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Public Sans",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Source Serif 4",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-20",
+  "updated": "2026-10-20",
+  "downloads": {
+    "pdf": true
+  },
+  "related": [
+    "children-textbook-pages",
+    "illustrated-timeline-spread"
+  ],
+  "folio": {
+    "paper": {
+      "type": "coatedSilk",
+      "grammage": 130
+    },
+    "binding": {
+      "type": "saddleStitch",
+      "cover": "case",
+      "coverMaterial": "paper",
+      "coverColor": "#1d6b57"
+    },
+    "surface": {
+      "type": "oak"
+    },
+    "lighting": {
+      "environment": "daylight"
+    }
+  }
+}
