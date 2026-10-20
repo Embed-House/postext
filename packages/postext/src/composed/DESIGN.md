@@ -2847,3 +2847,72 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   (a caption pill hung over its photo, a badge off its card) cannot be set without JSON; the guide's grid
   hangs its caption below the photo instead. The module library's drawing of a module with a repeating
   grid draws the grid's main frame at the module's top-left, over the root.
+
+### 12.30 What S6 built (#1070)
+
+- **Where.** The porting skill only (`plugins/postext/skills/postext-port/scripts`): `pdf_regions.py extract`
+  writes a page's line art and furniture as vector decoration of its template, with the geometry in a new
+  module `line_art.py` (pure functions over millimetres, tested without a PDF). No engine change.
+  `--raster-ground` keeps round 1's output (one JPEG ground per page, no connectors, no path elements,
+  empty boxes as frames); the CLI, the file layout and every other output stay as they were.
+- **Lines.** A stroke-only path of `l` items, at most `--line-width` (2 pt) wide, each piece straight across
+  or down (pieces under 0.5 mm dropped: rounded corners drawn as short lines), not closing a rectangle, is a
+  *line*: it is taken out of box candidates and picture clusters before either is read. A three-sided
+  bracket (a tree's bar and drops) was read as an empty box frame holding the children, and its strokes went
+  into the ground; both stopped. Pieces of one look on one line merge; pieces that meet form nets.
+- **Reading a net** (`read_net`), in this order:
+  - *Trees.* A segment with two or more perpendicular segments running off one side (drops) and exactly one
+    off the other (the trunk) is a bar. The parent is the first frame the trunk reaches walking away from the
+    bar (through other bars: two bars on one trunk, as a two-level diagram draws them, are two trees of one
+    parent); each child the first frame its drop reaches (a walk stops at another bar, so the upper tree does
+    not take the lower one's children). A trunk drawn under a frame on its way (a box of the middle row) makes
+    that frame the parent of the bar below, which paints the same. `trunk` is the bar's place between the
+    parent's point and the nearest child's; `at` is written when a point is off the side's middle by more
+    than 0.3 mm, `gap` when a line stops short of its frame. A drop that reaches no frame and the bar beyond
+    the outermost child are left as lines.
+  - *Elbows.* Two or three segments end to end between two frames; the sides are the ones the line leaves
+    and meets by, so two segments give the engine's L; `trunk` places the middle run of three.
+  - *Straight runs.* Any other segment is cut at the frames it passes: one `straight` connector per run
+    between two frames (a line through a row of pills behind a photo becomes pill to photo to pill, which
+    paints what the source shows), the stubs that reach no frame left as lines.
+  - *Pointers.* An end more than 2 mm inside a picture or figure frame whose line was painted after the
+    picture there (the page's paint order, `get_bboxlog`; a photo placed after the line covers it) is an
+    anchor end: `{ to: '#picture', anchor: 'pointer-N', side }`, the side the last run arrives from, and the
+    point becomes an anchor `pointer-N` (fractions of the cut picture's box) of that picture's resource,
+    after its label anchors. Such lines (and every line drawn as decoration that crosses a picture cut from
+    the page) are redacted from the picture's cut. A line under a photo ends at the photo's side.
+  - Left lines covered whole by an opaque frame (a filled box or tab, a picture) are dropped; the rest are
+    one `path` element per look (`lines-N`).
+- **Furniture.** In paint order: the page's colour (`page-colour`, a box anchored to the bleed with `fill`
+  sizes when the fill covers the trim; a box or path otherwise), the cards (`card`: a box with per-corner
+  radii read from the corner curves, C8; a card with one tab of its colour standing on its top edge is one
+  C9 path outline, flush sides straight, and that tab's frame style loses its background), borders, loose
+  shapes (`shape-N` paths, consecutive paths of one look joined), lines, connectors, then the running heads
+  and folios as before. Translucent shapes, even-odd fills with holes and pages with more than
+  `--max-paths` loose shapes keep those shapes in the raster ground.
+- **Borders with no words.** A box frame with no lines of its own and no tab words is no frame: its holder's
+  children move to the holder's parent, and a decoration box (`border-N`) is anchored to the top-left of
+  the first frame it holds and sized to a box of no size (`border-N-end`) anchored off the foot of the last
+  one, so the border grows with what it holds (the engine's `{ to, edge }` sizes have no margin of their
+  own: the helper carries the far padding). One inside a picture is the picture's art (the cut has it).
+- **The raster ground.** The page without its text is compared at `--ground-dpi` with the same page's paths
+  redrawn on a blank page (every drawn path but the ones left to the raster), outside picture frames and
+  opaque frames; what differs after a one-pixel opening (photos behind the page, art a card clips off a
+  picture, shadings) is the ground: a transparent PNG (`{rid}-ground.png`), under the cards when the page
+  has a page-size image, over them otherwise. Fewer than `--ground-min-px` pixels (60): no ground, no
+  `ground=` attribute and no image element. `regions.json` gains `decoration` (counts per kind, ground or
+  not).
+- **template_dedupe.py.** `rename_in_template` renames every reference of a decoration element
+  (`element_refs`: the anchor, `{ to, edge }` sizes, connector ends); a shared base keeps a decoration
+  element only when the base has every frame and element it names (`element_targets`).
+- **Departures.** §12.4's leader of a *label* (`labelAt`, `::label{leader}`) is not written: a source's
+  pointer from a note box is a frame-to-anchor connector; labels on the picture stay at their points.
+  Connector caps are not read (dots and arrows at line ends stay loose shapes). Diagonal lines and curves stay
+  shapes or art. A drop that leaves the page (a spread's bar) is kept as a line on this page only.
+- **Tests.** `tests/test_line_art.py` (segments, trees, two-level trees, elbows into a picture, a line under
+  a photo, runs through pills, gaps, path data, the card outline) and `VectorDecorationTest` in
+  `tests/test_pdf_regions.py`: an invented diagram page (page colour, card with its title tab, a tree, a
+  drawn map with a note pointing into it, two pills and their line, a border round two boxes, a loose rule)
+  checked element by element, the pointer gone from the map's cut, no ground, `--raster-ground` unchanged,
+  dedupe renames, and with `POSTEXT_CLI` the draft passes `postext check` without unknown keys, values or
+  anchors.

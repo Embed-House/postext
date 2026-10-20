@@ -671,8 +671,12 @@ Pick the path per [sources.md](references/sources.md):
   fences, slots and anchors in every edition (composed-pages.md §3.4, §6).
   From a PDF, draft it with the scripts, then curate (composed-pages.md §3.7):
   `scripts/pdf_regions.py extract source.pdf --pages 4-28 --out work/regions --lang es --fonts my-book/fonts --overlay`
-  (frames, styles, ground, pictures cut without their text, labels, page
-  fences; a one-page run names its frames by role itself, `--name-frames`),
+  (frames, styles, pictures cut without their text, labels, page fences;
+  the page colour, cards, borders, shapes and a diagram's lines as vector
+  decoration: connectors between frames, pointers into pictures at new
+  anchors, path elements; a raster ground only for art nothing else draws,
+  `--raster-ground` for the round-1 JPEG; a one-page run names its frames by
+  role itself, `--name-frames`),
   `scripts/template_dedupe.py work/regions` (one template per kind
   of page, `extends` children, merged styles and grounds, frames named by
   role with their `slot="…"` rewritten in every language), and
