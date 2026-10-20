@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Dialog } from "@base-ui/react/dialog";
 import type MiniSearch from "minisearch";
@@ -113,11 +113,17 @@ function highlight(text: string, terms: string[], phrase = "") {
   );
 }
 
+const noSubscribe = () => () => {};
+
+/** The server cannot know the reader's platform (Node has a `navigator` of
+ *  its own), so it and the hydrating render print "⌘K"; React swaps in the
+ *  platform's hint right after hydration instead of a text mismatch. */
 function useShortcutLabel() {
-  return useMemo(() => {
-    if (typeof navigator === "undefined") return "⌘K";
-    return navigator.platform.toLowerCase().includes("mac") ? "⌘K" : "Ctrl K";
-  }, []);
+  return useSyncExternalStore(
+    noSubscribe,
+    () => (navigator.platform.toLowerCase().includes("mac") ? "⌘K" : "Ctrl K"),
+    () => "⌘K",
+  );
 }
 
 async function fetchJson<T>(url: string): Promise<T | null> {
