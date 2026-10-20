@@ -122,6 +122,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
   /** `reserve` is left out of the element unless it is switched off. */
   const setReserve = (index: number, reserve: boolean) => {
     const next = { ...currentRaw[index]! };
+    if (next.kind === 'connector') return;
     if (reserve) delete next.reserve;
     else next.reserve = false;
     updateAt(index, next);
@@ -158,9 +159,10 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
       <ItemCardListActions list={cardList} ids={currentRaw.map((el) => el.id)} />
       {currentRaw.map((rawEl, idx) => {
         const resolvedEl = resolvedElements[idx];
+        // A connector (#1056) is not placed by an anchor: nothing anchors to it.
         const siblings = currentRaw
           .map((s, i) => ({ id: s.id, kind: s.kind, index: i }))
-          .filter((s) => s.id !== rawEl.id);
+          .filter((s): s is typeof s & { kind: Exclude<typeof s.kind, 'connector'> } => s.id !== rawEl.id && s.kind !== 'connector');
         const isFirst = idx === 0;
         const isLast = idx === currentRaw.length - 1;
         const elementTitle = rawEl.kind === 'text'
@@ -234,7 +236,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : null}
-              {(slotKey === 'heading' || slotKey === 'box') && (
+              {(slotKey === 'heading' || slotKey === 'box') && rawEl.kind !== 'connector' && (
                 <ToggleSwitch
                   label={labels.headerFooterElementReserve}
                   checked={rawEl.reserve !== false}

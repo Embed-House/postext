@@ -1,6 +1,7 @@
 /* The 紅樓夢 showcase bundle (apps/web/public/presets/hongloumeng) as the
    Sandbox opens it: the Checks panel has nothing to say about its design. */
 import { describe, expect, it } from 'vitest';
+import type { PlacedDesignElement } from 'postext';
 import { dimensionToPx, parseMarkdown, type Dimension, type PostextConfig } from 'postext';
 import { computeWarnings } from '../warnings/compute';
 import { buildHtmlConfigOverride } from '../viewport/HtmlPreview/configOverride';
@@ -67,7 +68,7 @@ describe('hongloumeng in the Sandbox', () => {
       const out = buildHtmlConfigOverride(configOf('zh-Hant'), { fontScale: 1, columnMode: 'multi', pageWidthPx, layoutType: 'single', viewportHeightPx, locale: 'en', optimalLineBreaking: false });
       const els = out.headingStyles!.find((s) => s.id === 'cover')!.advancedDesign!.slot.elements;
       const px = (d: unknown) => dimensionToPx(d as Dimension, 144);
-      const at = (id: string) => els.find((e) => e.id === id)!.placement;
+      const at = (id: string) => (els.find((e) => e.id === id) as PlacedDesignElement).placement;
       const band = at('htmlViewerBand');
       const [bandW, bandH] = [px(band.size!.width), px(band.size!.height)];
       // The band keeps the leaf's shape, 210 by 148, and the picture fills it.

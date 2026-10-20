@@ -4,7 +4,7 @@
 // text in, so neither depends on the page that hosts the Sandbox.
 
 import { describe, expect, it } from 'vitest';
-import type { PostextConfig } from 'postext';
+import type { PostextConfig, PlacedDesignElement } from 'postext';
 import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub';
 import { configShapingLanguage } from '../../controls/measureLanguage';
 import { buildHtmlConfigOverride, measureColumnWidthPx } from './configOverride';
@@ -32,7 +32,7 @@ const book = (shapingLanguage: 'document' | 'host'): PostextConfig => ({
 });
 
 const bandHeight = (config: PostextConfig): unknown =>
-  buildHtmlConfigOverride(config, { ...opts, partTitles: ['2026 2027 2028 2029'] }).parts!.design!.elements[0]!.placement.size;
+  (buildHtmlConfigOverride(config, { ...opts, partTitles: ['2026 2027 2028 2029'] }).parts!.design!.elements[0] as PlacedDesignElement).placement.size;
 
 describe('the HTML viewer on a page in another language (#770)', () => {
   it('counts the lines of a part title as the layout sets it', () => {
@@ -47,7 +47,7 @@ describe('the HTML viewer on a page in another language (#770)', () => {
     try {
       // Other type sizes than above: nothing measured before answers.
       const larger = { ...book('host'), headings: { levels: [{ level: 1 as const, fontSize: { value: 20.5, unit: 'pt' as const }, lineHeight: { value: 30, unit: 'pt' as const } }] } };
-      expect(buildHtmlConfigOverride(larger, { ...opts, pageWidthPx: 360, partTitles: ['2026 2027 2028 2029'] }).parts!.design!.elements[0]!.placement.size)
+      expect((buildHtmlConfigOverride(larger, { ...opts, pageWidthPx: 360, partTitles: ['2026 2027 2028 2029'] }).parts!.design!.elements[0] as PlacedDesignElement).placement.size)
         .toEqual({ width: 'fill', height: { value: 60, unit: 'px' } });
     } finally {
       LanguageContext.host = 'en';

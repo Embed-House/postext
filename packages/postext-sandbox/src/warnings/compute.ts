@@ -608,9 +608,15 @@ function collectChipOverlapWarnings(markdown: string, doc: VDTDocument | null): 
   return out;
 }
 
+/** The elements placed by an anchor (a connector, #1056, is not). */
+function placedOf<T extends { kind: string }>(elements: readonly T[]): Exclude<T, { kind: 'connector' }>[] {
+  return elements.filter((e): e is Exclude<T, { kind: 'connector' }> => e.kind !== 'connector');
+}
+
 function detectAnchorIssues(
-  elements: Array<{ id: string; placement: { anchor: { to: string } } }>,
+  all: ReadonlyArray<{ id: string; kind: string; placement?: { anchor: { to: string } } }>,
 ): { cyclic: string[]; dangling: Array<{ id: string; target: string }> } {
+  const elements = placedOf(all).filter((e): e is typeof e & { placement: { anchor: { to: string } } } => e.placement !== undefined);
   const ids = new Set(elements.map((e) => e.id));
   const edges = new Map<string, string | null>();
   const dangling: Array<{ id: string; target: string }> = [];
