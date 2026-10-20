@@ -528,6 +528,10 @@ def zh_config(lang: str) -> dict:
         },
         "headings": {
             "fontFamily": f.kai,
+            # LXGW WenKai ships a regular only: the headings (whose designs
+            # paint the title at 400) are measured in it, not in a 700 the
+            # face has no file for (#1047).
+            "fontWeight": 400,
             "color": col("ink"),
             "keepWithNext": True,
             "levels": [
@@ -953,6 +957,10 @@ def zh_hant_config() -> dict:
         },
         "headings": {
             "fontFamily": f.kai,
+            # LXGW WenKai ships a regular only: the headings (whose designs
+            # paint the title at 400) are measured in it, not in a 700 the
+            # face has no file for (#1047).
+            "fontWeight": 400,
             "color": col("ink"),
             "keepWithNext": True,
             "levels": [

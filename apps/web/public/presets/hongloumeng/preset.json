@@ -1402,6 +1402,7 @@
   },
   "headings": {
    "fontFamily": "LXGW WenKai TC",
+   "fontWeight": 400,
    "color": {
     "hex": "#1f1b16",
     "model": "hex",
@@ -7146,6 +7147,7 @@
     },
     "headings": {
      "fontFamily": "LXGW WenKai",
+     "fontWeight": 400,
      "color": {
       "hex": "#1f1b16",
       "model": "hex",

@@ -880,9 +880,10 @@ function sortedUses(uses: readonly FontVariantUse[]): FontVariantUse[] {
  * The faces the built-in designs are set in where a configuration leaves
  * them as they are: the headings and their levels, the lists, the running
  * heads and folios (Open Sans at 600 when no `header` or `footer` is
- * given). The engine's `collectFontUsage` reads the configuration as
- * written, so it does not see them; a face a build is set in must be with
- * the layout worker before it starts (#757).
+ * given). The engine's `collectFontUsage` resolves the headings (#1047)
+ * but reads the rest of the configuration as written, so it does not see
+ * the others; a face a build is set in must be with the layout worker
+ * before it starts (#757).
  */
 function defaultFontUses(config: PostextConfig): Map<string, FontVariantUse[]> {
   try {
@@ -920,8 +921,10 @@ export function configFontUses(config: PostextConfig, markdown?: FontContentText
     // Only the families the configuration sets text in.
     if (out.has(name)) for (const use of uses) add(name, use);
   }
-  // The faces comic pages are lettered in: a shout and a sound effect are
-  // set in bold, an inner voice in italics, whatever the styles say.
+  // The faces comic pages are lettered in: a shout is set in bold, an
+  // inner voice in italics, a line's emphasis in either, whatever the
+  // styles say. A face with no bold (the default sound-effect faces) is
+  // only asked; the engine sets it at 400 (#1047).
   for (const family of comicFontFamilies(config, markdown)) {
     for (const use of STANDARD_FONT_VARIANTS) add(family, use);
   }

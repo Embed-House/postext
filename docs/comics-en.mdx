@@ -250,7 +250,7 @@ Two lines in a row from the same speaker are joined, as a speaker's pause is let
 
 ### Sound effects
 
-An `sfx` line has no balloon: its text is set large (2.4 times the lettering size), bold, in the sound-effect face of the document language, with a white halo around the letters so it reads over the picture. It is placed near the panel's `sfx` anchor when the picture marks one (an anchor whose id is `sfx`), else wherever it covers no face. `rotate`, `size`, `color` and `font` change it, and `at` pins it. In vertical lettering it is set in a column, at most five characters long. Sound effects are painted after all the balloons of the page.
+An `sfx` line has no balloon: its text is set large (2.4 times the lettering size) in the sound-effect face of the document language, bold where that face has a bold (Bangers, Dela Gothic One, ZCOOL KuaiLe and Lalezar have none and stay regular), with a white halo around the letters so it reads over the picture. It is placed near the panel's `sfx` anchor when the picture marks one (an anchor whose id is `sfx`), else wherever it covers no face. `rotate`, `size`, `color` and `font` change it, and `at` pins it. In vertical lettering it is set in a column, at most five characters long. Sound effects are painted after all the balloons of the page.
 
 A line can set its own writing mode. A horizontal edition of a manga that keeps a sound effect in Japanese sets it in a column:
 
@@ -317,7 +317,7 @@ A balloon style is a kind of balloon: its outline, its tail and its lettering. N
     <tr><td><code>caption</code></td><td>rectangle</td><td>none</td><td>Pale yellow, butted to the top-start corner, text aligned to the start.</td></tr>
     <tr><td><code>inner</code></td><td>rounded box</td><td>none</td><td>Grey fill, italic: a character's inner voice.</td></tr>
     <tr><td><code>note</code></td><td>rectangle</td><td>none</td><td>Butted to the bottom-end corner, text at 0.8.</td></tr>
-    <tr><td><code>sfx</code></td><td>none</td><td>none</td><td>Text at 2.4, bold, in the sound-effect face, with a 1.5 pt white halo.</td></tr>
+    <tr><td><code>sfx</code></td><td>none</td><td>none</td><td>Text at 2.4 in the sound-effect face, bold where it has a bold, with a 1.5 pt white halo.</td></tr>
   </tbody>
 </table>
 

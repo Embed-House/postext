@@ -65,6 +65,17 @@ export function defaultComicSfxFont(locale: string | undefined): string {
   }
 }
 
+/** The default sound-effect faces that ship one regular cut and no bold
+ *  (`LXGW WenKai TC` has one). */
+const ONE_CUT_SFX_FACES: ReadonlySet<string> = new Set(['Bangers', 'Dela Gothic One', 'ZCOOL KuaiLe', 'Lalezar']);
+
+/** Whether the built-in `sfx` style sets its lines in bold in `family`:
+ *  yes, unless the face is a default sound-effect face with no bold of its
+ *  own, where a 700 would only be synthesized. */
+function sfxBold(family: string | undefined): boolean {
+  return !(family && ONE_CUT_SFX_FACES.has(family.trim()));
+}
+
 /**
  * The words each comics setting that takes one of a few chooses from
  * (#590): a value written otherwise is read as the setting's default (the
@@ -162,7 +173,8 @@ const BALLOON_BASE: Omit<ResolvedBalloonStyleConfig, 'id' | 'name'> = {
 };
 
 /** The built-in balloon styles, by kind (sound effects take their face from
- *  the document language at resolution). */
+ *  the document language at resolution, and their bold from that face:
+ *  bold unless it is a one-cut default face, `Bangers` and the like). */
 export const DEFAULT_BALLOON_STYLES: readonly BalloonStyleConfig[] = [
   { id: 'speech', name: 'Speech' },
   { id: 'thought', name: 'Thought', shape: 'cloud', tail: 'bubbles', target: 'head' },
@@ -172,7 +184,7 @@ export const DEFAULT_BALLOON_STYLES: readonly BalloonStyleConfig[] = [
   { id: 'caption', name: 'Caption', shape: 'rectangle', fill: HEX('#fff4c2'), tail: 'none', position: 'top-start', butt: true, align: 'start', aspect: 3 },
   { id: 'inner', name: 'Inner voice', shape: 'rounded', fill: HEX('#f2f2f2'), tail: 'none', italic: true, align: 'start', aspect: 3 },
   { id: 'note', name: 'Note', shape: 'rectangle', tail: 'none', position: 'bottom-end', butt: true, align: 'start', fontScale: 0.8, aspect: 4 },
-  { id: 'sfx', name: 'Sound effect', shape: 'none', tail: 'none', fontScale: 2.4, bold: true, halo: PT(1.5), haloColor: HEX('#ffffff'), strokeWidth: PT(0) },
+  { id: 'sfx', name: 'Sound effect', shape: 'none', tail: 'none', fontScale: 2.4, halo: PT(1.5), haloColor: HEX('#ffffff'), strokeWidth: PT(0) },
 ];
 
 /** The ids of the built-in balloon styles. */
@@ -263,6 +275,7 @@ function resolveBalloonStyle(partial: BalloonStyleConfig, locale: string | undef
   const family = partial.fontFamily ?? sfxFont;
   if (family) out.fontFamily = family;
   if (partial.bold !== undefined) out.bold = partial.bold;
+  else if (partial.id === 'sfx') out.bold = sfxBold(family);
   if (partial.italic !== undefined) out.italic = partial.italic;
   if (partial.color) out.color = partial.color;
   if (partial.textTransform) out.textTransform = partial.textTransform;
@@ -440,11 +453,14 @@ export function stripComicsDefaults(config: ComicsConfig | undefined, locale?: s
     const kept = config.balloonStyles.flatMap((s) => {
       const builtIn = DEFAULT_BALLOON_STYLES.find((d) => d.id === s.id);
       const base = resolveBalloonStyle(builtIn ?? { id: s.id }, locale);
+      // A sound effect's default bold follows its face: a `bold` is the
+      // default only for the face the entry sets.
+      const faced = builtIn && s.fontFamily !== undefined ? resolveBalloonStyle(layBalloon({ id: s.id, fontFamily: s.fontFamily }, builtIn), locale) : base;
       const r: BalloonStyleConfig = { id: s.id };
       for (const [k, v] of Object.entries(s)) {
         if (k === 'id' || v === undefined) continue;
         if (k === 'name' && v === (builtIn?.name ?? s.id)) continue;
-        if (k !== 'name' && equalValue(v, (base as unknown as Record<string, unknown>)[k])) continue;
+        if (k !== 'name' && equalValue(v, ((k === 'bold' ? faced : base) as unknown as Record<string, unknown>)[k])) continue;
         (r as unknown as Record<string, unknown>)[k] = v;
       }
       // A built-in style left as it is needs no entry.

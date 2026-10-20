@@ -178,7 +178,7 @@ describe('prepareFonts', () => {
   it('lists every face a configuration asks for, in a fixed order', () => {
     const faces = configFontFaces(RICH_CONFIG, RICH_TEXT);
     const keys = faces.map((f) => `${f.family} ${f.weight}${f.style === 'italic' ? 'i' : ''}`);
-    for (const k of ['Body Serif 400', 'Body Serif 700', 'Body Serif 400i', 'Body Serif 700i', 'Head Sans 400', 'Callout Title 600', 'Design Face 400', 'Contents Face 400']) {
+    for (const k of ['Body Serif 400', 'Body Serif 700', 'Body Serif 400i', 'Body Serif 700i', 'Head Sans 700', 'Callout Title 600', 'Design Face 400', 'Contents Face 400']) {
       expect(keys).toContain(k);
     }
     expect(configFontFaces(RICH_CONFIG, RICH_TEXT)).toEqual(faces);
@@ -231,7 +231,8 @@ describe('prepareFonts', () => {
     const key = (f: { family: string; weight: number; style: string }) => `${f.family} ${f.weight} ${f.style}`;
     expect(report.loaded.map(key)).toContain('Body Serif 400 normal');
     expect(report.synthesized.map(key)).toEqual(expect.arrayContaining(['Body Serif 700 normal', 'Body Serif 400 italic', 'Body Serif 700 italic']));
-    expect(report.missing.map(key)).toContain('Gone Sans 400 normal');
+    // Headings are set at 700 unless they say otherwise (#1047).
+    expect(report.missing.map(key)).toContain('Gone Sans 700 normal');
   });
 
   it('does nothing where there is no font set', async () => {
@@ -447,15 +448,16 @@ describe('a weight or slant the family has no face for (#650)', () => {
   const four = (family: string) => {
     for (const [weight, style] of [['400', 'normal'], ['700', 'normal'], ['400', 'italic'], ['700', 'italic']]) fonts.add(loadedFace(family, weight!, style));
   };
-  // The 600 of the head is a level's weight under the headings' family:
-  // no node names both, so only the pages say it is set; its `*…*` sets
-  // a 600 italic.
+  // The 600 of the head is a level's weight under the headings' family,
+  // which the configuration resolved gives (#1047); its `*…*` sets a 600
+  // italic, which only the pages say.
   const config: PostextConfig = { bodyText: { fontFamily: 'Near Serif' }, headings: { fontFamily: 'Near Serif', levels: [{ level: 1, fontWeight: 600 }] } };
   const content = { markdown: '# A head with *slant* in it\n\nBody text with **bold** and *italic*.' };
 
   it('asks the resolver for a face a neighbour of the family would answer for', async () => {
     four('Near Serif');
-    expect(configFontFaces(config, content.markdown).map(key)).not.toContain('Near Serif 600 normal');
+    expect(configFontFaces(config, content.markdown).map(key)).toContain('Near Serif 600 normal');
+    expect(configFontFaces(config, content.markdown).map(key)).not.toContain('Near Serif 600 italic');
     const asked: string[] = [];
     const doc = await buildDocumentWithFonts(content, config, {
       fontSet: fonts,
