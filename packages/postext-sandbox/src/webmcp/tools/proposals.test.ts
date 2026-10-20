@@ -89,9 +89,9 @@ describe('sandbox_apply_proposal', () => {
     expect(next.settings[0].value).toBe('"next-page"');
   });
 
-  it('refuses a frame that fits, a fix it does not have, and says which frames do not fit', async () => {
+  it('refuses a frame with nothing to fix, a fix it does not have, and says which frames have fixes', async () => {
     const { call } = harness(book());
-    expect((await call('sandbox_apply_proposal', { frame: 'gasto', proposal: 1 })).error).toMatch(/"gasto" fits .* The frames that do not fit: dinero \(page 1\)/);
+    expect((await call('sandbox_apply_proposal', { frame: 'gasto', proposal: 1 })).error).toMatch(/"gasto" has no such check in chapter 1\. The frames with fixes: dinero \(frameOverflow, page 1\)/);
     expect((await call('sandbox_apply_proposal', { frame: 'dinero', proposal: 'lowerMin' })).error).toMatch(/No such fix for "dinero"\. Its fixes: 1\. /);
     expect((await call('sandbox_apply_proposal', { frame: 'dinero', proposal: 99 })).error).toMatch(/No such fix/);
   });

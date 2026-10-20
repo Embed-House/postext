@@ -2343,6 +2343,7 @@
     "designBadgeMax": "الأقصى __mm__ مم",
     "designBadgePinned": "مثبّت",
     "proposalsTitle": "كي يتّسع ⁦__frame__⁩ لمحتواه",
+    "proposalsOverlapTitle": "كي يظهر ⁦__frame__⁩ كاملًا في حدّه",
     "proposalApplyHint": "أجرِ هذا التعديل (يُطلب التأكيد أولًا)",
     "proposalSelectHint": "حدّد نص الإطار في المحرّر",
     "proposalConfirmConfig": "أتغيّر التصميم: ⁦__changes__⁩؟ تتبعه كل الصفحات المنضَّدة بهذا القالب. للتراجع اضغط Cmd/Ctrl+Z.",

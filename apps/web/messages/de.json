@@ -2344,6 +2344,7 @@
     "designBadgeMax": "max. __mm__ mm",
     "designBadgePinned": "fixiert",
     "proposalsTitle": "Damit __frame__ passt",
+    "proposalsOverlapTitle": "Damit __frame__ frei liegt",
     "proposalApplyHint": "Diese Änderung vornehmen (mit Rückfrage)",
     "proposalSelectHint": "Den Text des Rahmens im Editor auswählen",
     "proposalConfirmConfig": "Gestaltung ändern: __changes__? Alle Seiten mit dieser Vorlage ändern sich mit. Cmd/Strg+Z macht es rückgängig.",

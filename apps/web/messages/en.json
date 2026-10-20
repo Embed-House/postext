@@ -2344,6 +2344,7 @@
     "designBadgeMax": "max __mm__ mm",
     "designBadgePinned": "pinned",
     "proposalsTitle": "Make __frame__ fit",
+    "proposalsOverlapTitle": "To set __frame__ clear",
     "proposalApplyHint": "Make this change (you are asked first)",
     "proposalSelectHint": "Select the frame's text in the editor",
     "proposalConfirmConfig": "Change the design: __changes__? Every page set with this template follows. Cmd/Ctrl+Z takes it back.",

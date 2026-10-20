@@ -2344,6 +2344,7 @@
     "designBadgeMax": "max. __mm__ mm",
     "designBadgePinned": "fissata",
     "proposalsTitle": "Far entrare il contenuto in __frame__",
+    "proposalsOverlapTitle": "Per liberare __frame__",
     "proposalApplyHint": "Applica questa modifica (prima ti viene chiesta conferma)",
     "proposalSelectHint": "Seleziona il testo della cornice nell’editor",
     "proposalConfirmConfig": "Cambiare la grafica: __changes__? Tutte le pagine composte con questo modello si adeguano. Cmd/Ctrl+Z la annulla.",

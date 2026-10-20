@@ -18,7 +18,7 @@ import { Button, ConfirmPopover, announce } from '../ui';
 import { fill } from '../print/fillTokens';
 import type { SandboxLabels } from '../types';
 import { setOverlapFocus } from '../editions/overlapFocus';
-import { frameProposalText, type FrameProposal } from './frameOverlapText';
+import { frameProposalText, outsideProposalText, type FrameProposal } from './frameOverlapText';
 import { applyProposalPlan, isFrameFixPayload, planIsAdvice, planProposal, proposalChangesForm, proposalContextOf, valueInWords, type ProposalPlan } from './proposalActions';
 import type { Warning } from './types';
 
@@ -29,13 +29,9 @@ function coveringFrame(warning: Warning): string {
 
 /** A fix in the panel's words, for this warning. */
 export function proposalText(proposal: FrameProposal, warning: Warning, labels: SandboxLabels, locale?: string): string {
-  const text = frameProposalText(proposal, labels, locale, coveringFrame(warning));
   // A frame past its edge goes on once held to its room: both, in words.
-  if (proposal.kind === 'continueNextPage' && warning.payload.kind === 'frameOutsideArea') {
-    const max = warning.payload.proposals.find((q) => q.kind === 'maxHeight');
-    if (max) return `${frameProposalText(max, labels, locale)}, ${text}`;
-  }
-  return text;
+  if (warning.payload.kind === 'frameOutsideArea') return outsideProposalText(proposal, warning.payload.proposals, labels, locale);
+  return frameProposalText(proposal, labels, locale, coveringFrame(warning));
 }
 
 /** The question a plan asks before it is carried out. */
@@ -93,9 +89,12 @@ export function ProposalActions({ warning, onScreen, openEdition, editionName }:
   const plan = (proposal: FrameProposal) => planProposal(warning, proposal, proposalContextOf(state));
   const run = (proposal: FrameProposal) => announce(runProposal(plan(proposal), warning, labels, dispatch, locale));
   const proposals: readonly FrameProposal[] = p.proposals;
+  // A frame that does not fit is made to fit; one under another or past its
+  // edge is set clear.
+  const heading = p.kind === 'frameOverflow' ? labels.proposalsTitle : labels.proposalsOverlapTitle;
   return (
-    <div className="flex flex-col gap-0.5 px-3 pb-1.5 ps-9" data-proposals="" role="group" aria-label={fill(labels.proposalsTitle, { frame: p.frame })}>
-      <span className="text-[0.62rem] font-semibold uppercase tracking-[0.04em] text-(--slate)">{fill(labels.proposalsTitle, { frame: p.frame })}</span>
+    <div className="flex flex-col gap-0.5 px-3 pb-1.5 ps-9" data-proposals="" role="group" aria-label={fill(heading, { frame: p.frame })}>
+      <span className="text-[0.62rem] font-semibold uppercase tracking-[0.04em] text-(--slate)">{fill(heading, { frame: p.frame })}</span>
       <div className="flex flex-wrap gap-1">
         {proposals.map((proposal, i) => {
           const text = proposalText(proposal, warning, labels, locale);

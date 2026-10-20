@@ -268,6 +268,7 @@ describe('one-click fixes of an overlap (#1066)', () => {
       x: { value: Math.round((-4 + move.dxMm) * 10) / 10, unit: 'mm' },
       y: { value: Math.round((-14 + move.dyMm) * 10) / 10, unit: 'mm' },
     });
+    expect(proposalQuestion(plan, w, DEFAULT_LABELS, 'en')).toMatch(/^Change the design: overlaps › cutout › placement\.offset = x -?[\d.]+ mm, y -?[\d.]+ mm\?/);
     runProposal(plan, w, DEFAULT_LABELS, history.dispatch);
     expect(covered(layout().warnings, 'card')).toBeUndefined();
     // A frame with no placement cannot be shifted: the move is told only.

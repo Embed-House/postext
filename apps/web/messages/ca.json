@@ -2343,6 +2343,7 @@
     "designBadgeMax": "màx. __mm__ mm",
     "designBadgePinned": "fixat",
     "proposalsTitle": "Perquè __frame__ hi càpiga",
+    "proposalsOverlapTitle": "Per deixar __frame__ a la vista",
     "proposalApplyHint": "Fes aquest canvi (abans es demana confirmació)",
     "proposalSelectHint": "Selecciona el text del marc a l'editor",
     "proposalConfirmConfig": "Vols canviar el disseny: __changes__? Canviaran totes les pàgines compostes amb aquesta plantilla. Cmd/Ctrl+Z ho desfà.",

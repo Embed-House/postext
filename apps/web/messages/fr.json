@@ -2343,6 +2343,7 @@
     "designBadgeMax": "max. __mm__ mm",
     "designBadgePinned": "épinglé",
     "proposalsTitle": "Pour que __frame__ tienne",
+    "proposalsOverlapTitle": "Pour dégager __frame__",
     "proposalApplyHint": "Faire ce changement (une confirmation est demandée)",
     "proposalSelectHint": "Sélectionner le texte du bloc dans l’éditeur",
     "proposalConfirmConfig": "Modifier la maquette : __changes__ ? Le changement s’applique à toutes les pages composées avec ce gabarit. Cmd/Ctrl+Z l’annule.",

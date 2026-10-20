@@ -1818,6 +1818,7 @@ export interface SandboxLabels {
   designBadgeMax: string;
   designBadgePinned: string;
   proposalsTitle: string;
+  proposalsOverlapTitle: string;
   proposalApplyHint: string;
   proposalSelectHint: string;
   proposalConfirmConfig: string;

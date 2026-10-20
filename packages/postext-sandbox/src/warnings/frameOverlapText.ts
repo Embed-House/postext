@@ -50,9 +50,17 @@ export function frameProposalText(p: FrameProposal, labels: SandboxLabels, local
   }
 }
 
+/** A fix of a frame past its edge: `continueNextPage` comes with the
+ *  `maxHeight` it needs (#1066), so it is worded with it. */
+export function outsideProposalText(p: FrameProposal, proposals: readonly FrameProposal[], labels: SandboxLabels, locale?: string): string {
+  const text = frameProposalText(p, labels, locale);
+  const max = p.kind === 'continueNextPage' ? proposals.find((q) => q.kind === 'maxHeight') : undefined;
+  return max ? `${frameProposalText(max, labels, locale)}, ${text}` : text;
+}
+
 /** The fixes and the `overlap: 'allow'` way out, after a detail. */
-function fixesText(proposals: readonly FrameProposal[], labels: SandboxLabels, locale: string | undefined, by: string): string {
-  const fixes = proposals.map((p) => frameProposalText(p, labels, locale, by));
+function fixesText(proposals: readonly FrameProposal[], labels: SandboxLabels, locale: string | undefined, by: string, outside = false): string {
+  const fixes = proposals.map((p) => (outside ? outsideProposalText(p, proposals, labels, locale) : frameProposalText(p, labels, locale, by)));
   return [fixes.length > 0 ? fill(labels.warningsFrameOverlapFixes, { fixes: fixes.join('; ') }) : null, labels.warningsFrameOverlapAllow].filter(Boolean).join(' ');
 }
 
@@ -79,7 +87,7 @@ export function frameOutsideDetail(payload: OutsidePayload, labels: SandboxLabel
         ? labels.warningsFrameOutsideFrameDetail
         : labels.warningsFrameOutsideGroupDetail;
   const head = fill(template, { page: payload.page, mm: localNumber(payload.excessMm, locale), target: payload.target ?? '', template: payload.template });
-  return `${head} ${fixesText(payload.proposals ?? [], labels, locale, '')}`;
+  return `${head} ${fixesText(payload.proposals ?? [], labels, locale, '', true)}`;
 }
 
 /** A `repeatOverflow`'s detail line. */

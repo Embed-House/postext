@@ -3265,6 +3265,7 @@
     "designBadgeMax": "máx. __mm__ mm",
     "designBadgePinned": "fijado",
     "proposalsTitle": "Para que quepa __frame__",
+    "proposalsOverlapTitle": "Para dejar __frame__ a la vista",
     "proposalApplyHint": "Hacer este cambio (antes se pide confirmación)",
     "proposalSelectHint": "Seleccionar el texto del marco en el editor",
     "proposalConfirmConfig": "¿Cambiar el diseño: __changes__? Todas las páginas compuestas con esta plantilla lo siguen. Cmd/Ctrl+Z lo deshace.",

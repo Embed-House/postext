@@ -2343,6 +2343,7 @@
     "designBadgeMax": "最大__mm__ mm",
     "designBadgePinned": "固定",
     "proposalsTitle": "__frame__を収めるには",
+    "proposalsOverlapTitle": "__frame__を隠れず・はみ出さないようにするには",
     "proposalApplyHint": "この変更を行う（先に確認します）",
     "proposalSelectHint": "エディターでこの枠の文字を選択する",
     "proposalConfirmConfig": "デザインを変更しますか：__changes__。このテンプレートで組んだページはすべて変わります。Cmd/Ctrl+Zで取り消せます。",

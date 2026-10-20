@@ -187,6 +187,8 @@ export function valueInWords(v: unknown, locale?: string): string {
     }
   }
   if (typeof v === 'string') return `"${v}"`;
+  // An offset (a move, #1066): «x −4 mm, y −22,5 mm».
+  if (isRecord(v)) return Object.entries(v).map(([k, x]) => `${k} ${valueInWords(x, locale)}`).join(', ');
   return String(v);
 }
 

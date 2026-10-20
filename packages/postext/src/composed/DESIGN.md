@@ -2404,4 +2404,4 @@ The Sandbox side of C2 (§12.10, §12.16), C10's `repeatOverflow` (§12.15) and 
   weight, size (`scale`), colour (the words' when unset), placement and gap; switching to a glyph with none
   set writes ◉. The resolved fields already passed `settings.test.ts`. Search index regenerated.
 - **Not done.** Pointing at a frame in the Reflow panel does not draw the overlap (a click does); the
-  overlap is not drawn in the Folio or the edition comparison's second page set beyond the fit marks' path.
+  Folio does not draw it.

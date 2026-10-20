@@ -1725,6 +1725,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     designBadgeMax: t("designBadgeMax"),
     designBadgePinned: t("designBadgePinned"),
     proposalsTitle: t("proposalsTitle"),
+    proposalsOverlapTitle: t("proposalsOverlapTitle"),
     proposalApplyHint: t("proposalApplyHint"),
     proposalSelectHint: t("proposalSelectHint"),
     proposalConfirmConfig: t("proposalConfirmConfig"),

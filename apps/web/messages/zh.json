@@ -2343,6 +2343,7 @@
     "designBadgeMax": "最大__mm__ mm",
     "designBadgePinned": "固定",
     "proposalsTitle": "让__frame__放得下",
+    "proposalsOverlapTitle": "让__frame__不被遮挡、不越界",
     "proposalApplyHint": "做这项修改（会先请你确认）",
     "proposalSelectHint": "在编辑器中选中这个框的文字",
     "proposalConfirmConfig": "修改版面设计：__changes__？使用这个模板的每一页都会随之改变。Cmd/Ctrl+Z可撤销。",

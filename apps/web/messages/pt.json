@@ -2340,6 +2340,7 @@
     "designBadgeMax": "máx. __mm__ mm",
     "designBadgePinned": "fixo",
     "proposalsTitle": "Como fazer __frame__ caber",
+    "proposalsOverlapTitle": "Para deixar __frame__ à vista",
     "proposalApplyHint": "Fazer esta mudança (pede confirmação antes)",
     "proposalSelectHint": "Selecionar o texto do bloco no editor",
     "proposalConfirmConfig": "Mudar o design: __changes__? Todas as páginas diagramadas com este modelo mudam também. Cmd/Ctrl+Z desfaz.",
