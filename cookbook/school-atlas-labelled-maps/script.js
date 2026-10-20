@@ -108,7 +108,7 @@ const spread = {
   decoration: { elements: [band, kicker, ...sectionLine] },
   frames: [
     { name: 'title', takes: 'h1', width: mm(177), placement: at('container', 'top-left', 0, -3) },
-    { name: 'map', crossGutter: true, layer: -1, // the one frame that runs across the spine
+    { name: 'map', crossGutter: true, // the one frame that runs across the spine
       placement: at('container', 'top-left', 0, BAND - PAGE.top + 5) },
     { name: 'text', flow: true, columns: 2, columnGap: mm(7), width: mm(177) },
     { name: 'key', style: 'key', width: mm(72), placement: at('#map', 'below', 213, 6) },
