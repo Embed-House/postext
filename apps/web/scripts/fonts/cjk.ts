@@ -51,7 +51,7 @@ async function sourceFont(face: CjkFace): Promise<Uint8Array> {
   const file = path.join(CACHE_DIR, path.basename(face.source));
   if (!fs.existsSync(file)) {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
-    const url = `https://raw.githubusercontent.com/google/fonts/${GOOGLE_FONTS_COMMIT}/${face.source.replace("[", "%5B").replace("]", "%5D")}`;
+    const url = `https://raw.githubusercontent.com/google/fonts/${GOOGLE_FONTS_COMMIT}/${face.source.split("/").map(encodeURIComponent).join("/")}`;
     console.log(`downloading ${face.family} (${url})`);
     const res = await fetch(url);
     if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
