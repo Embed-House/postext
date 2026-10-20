@@ -2993,8 +2993,9 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   under a dashed one, `over: true` to sit on a picture).
 - **Sandbox.** The connector editor's start and end marks offer Ring and Bar (a list now: five marks do
   not fit a segmented row) and an Opacity field (0–100 %) under the line colour; four new labels and the
-  mark-size tooltip in the ten site languages. U11's leader editor was not on develop: its mark lists
-  should take ring and bar and an opacity field like the connector's.
+  mark-size tooltip in the ten site languages. U11's leader look (label styles) takes the same marks (a
+  list) and Opacity field, the anchors panel's end mark the two new marks; they reuse the connector's
+  labels. The docs say «since postext 1.49» (1.48.0 was out before this landed).
 - **Docs.** `configuration-composed-pages` (connector table: `opacity` row, alpha note, the new caps and
   sizes, checks; the label style's `leader`) and `composed-pages-figures` (leaders), ten languages.
 - **Not done.** The atlas recipe's casing and a timeline with rings belong to R8 (#1069, the Cookbook);
