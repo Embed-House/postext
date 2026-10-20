@@ -3000,3 +3000,41 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   sizes, checks; the label style's `leader`) and `composed-pages-figures` (leaders), ten languages.
 - **Not done.** The atlas recipe's casing and a timeline with rings belong to R8 (#1069, the Cookbook);
   the skill (S6).
+
+### 12.33 What #1078 changed (R8 finding)
+
+- **The finding.** On a vertical page a grid of a box and a picture anchored inside it (the frame set
+  `uso` + `uso-foto`) laid its rows (columns on the page) wider than the boxes, and the ladder scaled the
+  last row's picture down. `placeGrid` was not at fault: it measures a row in the flow frame, where the
+  block axis is `y` as on a horizontal page, from the cells' frame boxes. The picture's frame was wider
+  than the picture it held.
+- **Cause.** A picture in a frame of a vertical page stands upright (#971): `uprightIn` hands the box
+  `uprightMaxLength`, the room across the lines. The natural measure (`naturalOf`) gives it the area's
+  whole extent and the frame takes the height the picture settles at (a bitmap at its size). Laid in that
+  box (`fill`, `uprightMaxLength` = the frame's height), the callout layouter took off a line's gap above
+  the picture and one below it (`inlineResourceGapInBoxes`) although the box sets neither for its first
+  block nor for its last; the picture came out two lines smaller and the frame kept the measured height.
+  Any `'auto'`-height frame holding only a picture showed it (a grid only made it visible: its rows add
+  the empty room up, and the last row went past the foot).
+- **Fix** (`calloutLayout.ts`, where a resource child is measured with `uprightMaxLength`): the gaps taken
+  off are the ones the box sets, `st.prevMarginBottom` alone above its first block (as its spacing is) and
+  nothing below its last real child (`isLastRealOf`). Measure and fill now agree; the grid's row measure
+  is unchanged and counts what the cells show.
+- **Parity.** Horizontal pages never pass `uprightMaxLength`: no change (bench-layout hashes of the
+  presets, the composed recipes' horizontal editions). Vertical pages change wherever a picture is the
+  first or last block of a box whose room across the lines bounds it: the picture grows by up to two lines
+  to the size its frame was laid for (frames do not move). bench-layout hashes of six presets are equal,
+  the two vertical ones (Kokoro, Hongloumeng) included: their pictures are not bounded so. Of the
+  composed recipes only Nº 156's Chinese and Japanese editions change (the contents' map, the field map,
+  the pictures beside the boxes): there the pictures beside the boxes now stand at their size and reach
+  past their boxes, which is what their 44 mm frames ask for (below).
+- **The recipe.** With pictures at their size, a 44 mm `uso-foto` (along the lines) on the vertical
+  editions holds a 720 × 540 px painting at 330 ppi at 55.4 × 41.6 mm: 8 + 55.4 mm across the lines, past
+  the 52 mm box, so the row is honestly 63.4 mm and three of them do not fit 184 mm with any `rowGap`.
+  The vertical editions get the template's 8 mm back when the picture stands inside its box: a 30 mm
+  frame (`PIC = CJK ? 30 : 56`) sets the paintings 40 × 30 mm (`gridVertical.test.ts` reproduces the
+  frame set: rows 8 mm apart, no picture scaled); the same `PIC` keeps the `cuidar` box's picture
+  (52 mm box, `turno` 8 mm after it in a stack) from reaching the next box.
+- **Not done.** A frame narrower than its picture needs along the lines still sets the picture in it as
+  before (the column bounds the upright height, `UPRIGHT_MIN_PICTURE_SHARE`); no warning for a picture
+  that hangs past the box it is anchored in (the overlap checks of C2 see frames, not their anchors).
