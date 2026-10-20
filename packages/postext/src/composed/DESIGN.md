@@ -1866,3 +1866,59 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   role for the part palette.
 - **Not done.** Sandbox controls (U13) and docs (D3). A frame `look` has no glyph colour of its own
   (it recolours the glyph through `label.color` only).
+
+### 12.13 What C7 built (#1058)
+
+- **Inline symbols.** `:icon[alt]{…}` is read by `extractInlineSwatches(…, { icons: true })` and
+  rides the swatch's placeholder (`SWATCH_PLACEHOLDER`, `InlineSpan.swatch.icon`, `VDTLineSegment
+  .swatch.icon`): every pass that keeps a swatch whole (bidi, tracking, Knuth–Plass, the CJK composer,
+  the measure cache, which now keys on the icon) keeps a symbol whole, and a painter that does not
+  know icons paints a swatch's outline. Kind by the first attribute written of `resource`, `glyph`,
+  `line` (an unknown `line` value reads `solid`); none of them: the directive stays text. `color` is a
+  hex or a palette id (`resolveSwatchSpans`, which also fits a resource icon's picture: bitmap or SVG,
+  its aspect, square for an SVG with no size; any other resource or an unknown id paints an outline).
+- **Where it is read.** A figure label (`::label[…]`, `:::label`), and every resource snippet:
+  captions, notes and table cells (`parseInlineSnippetSpans` reads them always, so the Sandbox's
+  snippet map agrees with the measurer). Not the body text, headings or design texts in this round.
+- **Size** (`measure/inlineIcon.ts`). The box stands on the baseline; height `size` ems, default
+  `ICON_CAP_EM` 0.75 (a swatch's side). A picture keeps its proportions; a glyph is set at `height /
+  0.75` px (its capitals as high as the box) in `font` (else the text's face with its size changed) and
+  takes its advance; a line sample is twice as long as high, stroke 0.09 em (1 px at least), dashed
+  3:2 stroke widths, dotted as round dots two widths apart. `size` is the height for every kind (the
+  design said "em" without saying of what).
+- **Kept lines.** `:::label{at=… style=…}` … `:::` inside a `:::figure`: every non-blank source line is a
+  line of the label (departure: the design asked for a hard-break mark at each line end; in a label
+  each line is meant as one, so the mark is optional and dropped when present). Lines are read one by
+  one and joined with `BREAK_PLACEHOLDER`, mapped to the end of the earlier line; `\\` still breaks
+  inside a line. The first `:::` closes the label, the next the figure. `::label[…]` stays one line.
+- **`LabelStyle`.** `align` lines the lines up inside the box (in the label's direction); left out, as
+  the anchor places the box (the old behaviour), `start` in a legend. `border` and `radius` make the
+  plate (`background` in the VDT, its `color` now optional, `border`, `radiusPx`), painted as a
+  design box (outline inside the plate). `kind: 'legend'` (`layout.legend`): the symbol that opens a
+  row (its first non-space segment) has its segment widened to the widest such symbol and is centred
+  in it (`VDTInlineIcon.insetPx`, `hangLegendSymbols`), so the words of the rows start on one edge;
+  a row without one is left as it is. Not in vertical labels. Direction of a label is read past the
+  placeholders, so an Arabic row that opens with a symbol is right to left.
+- **Scale bars.** Nothing new: the bar is artwork, its numbers are labels at anchors along it.
+- **Reading.** `VDTFigureLabel.icons` (placeholder index + alt): `labelPlainText` / `altWithLabels`
+  (undrawn labels, reflowable EPUB list) read `[alt]`, nothing for an empty alt; `figureLabelReading`
+  joins a legend's rows with `; `. Tagged PDF: a legend is `L` › `LI` › `LBody` per row (`ListNumbering
+  None`) in the figure's label `Div`; a symbol with alt is a `Span` with `/ActualText [alt]`, its glyph
+  under an empty `/ActualText`; one without is a layout artifact. HTML: `role="img" aria-label`.
+- **Outputs.** Canvas `paintInlineIcon` (pictures through the image registry, glyphs through
+  `fillContextText`); PDF `paintSwatchSegmentPdf` (`PageCtx.images` for the pictures, which
+  `preloadResourceImages` embeds from `resourceBlockIcons`, tinted ones with their stencil; glyph faces
+  join the font collection); fixed HTML/EPUB an inline SVG per glyph or stroke, an `<img>` (a mask over
+  the tint) per picture; reflowable EPUB glyphs and line samples inline (styled in place, the book's
+  stylesheet unchanged), a picture as `[alt]`. Preflight counts the plate's outline and the symbols'
+  inks; the part palette recolours the outline (`label:border.color`). The glyph faces a text names join
+  `configFontFamilies` / `collectFontUsage` (`iconFontFamilies`).
+- **Checks.** `unknownConfigValue` for `align` and `kind`, `unknownConfigKey` inside `border`.
+- **Fixture.** `__tests__/composed/fixtures/legendMap.ts`: a political map's key (country ■ in a
+  palette colour, capital ⊙, town picture, dashed border), the capital's name with its ⊙ and the
+  scale's numbers, in English, Spanish and Arabic (the Arabic key at an anchor whose box grows the
+  other way). Parity: VDT hashes of six presets unchanged.
+- **Not done.** Symbols in body text; a picture symbol in the reflowable EPUB (read as its name); a
+  content warning for an icon naming an unknown resource; single ink on the canvas for SVG symbols (the
+  PDF recolours them, as every SVG it embeds); turning back a picture symbol in the HTML of a mirrored page is unchecked. Sandbox (U11),
+  docs (D3) and the skill have their own issues.
