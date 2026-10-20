@@ -33,11 +33,31 @@ export interface ParsedComposedPage extends ComposedPageNode {
    *  the page breaks between parts. A frame with `takes: 'toc'` receives
    *  them. */
   tocRows: number[];
+  /** Every piece of the page that names a slot, in Markdown order
+   *  (#1061): a grid that repeats a frame takes each piece as one item. */
+  pieces: SlotPiece[];
   /** Source range of the fence line. */
   fence: SourceRange;
   /** The fence had no closing fence of its length (reported by the
    *  parser as `unclosedContainer`). */
   unclosed: boolean;
+}
+
+/** A piece of a composed page sent to a slot (#1061): a `:::frame{slot}`
+ *  container (its blocks, its own markers left out), or any other block or
+ *  container that names a slot (markers included). */
+export interface SlotPiece {
+  slot: string;
+  /** The `slot="…"` value. */
+  source: SourceRange;
+  /** Block indices, in order. */
+  indices: number[];
+  /** The opening marker of a `:::frame` piece. */
+  fence?: number;
+  /** Within a `:::frame` piece, the blocks and containers one level down
+   *  that name a slot of their own (a frame's blocks stay with it, except
+   *  in a grid that repeats both). */
+  inner: SlotPiece[];
 }
 
 /** Index of the marker closing the container opened at `start`, or the
@@ -82,9 +102,31 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
       slotSources[slot.name] ??= { sourceStart: slot.sourceStart, sourceEnd: slot.sourceEnd };
     };
     const range = (from: number, to: number): number[] => Array.from({ length: Math.max(0, to - from + 1) }, (_, k) => from + k);
+    const pieces: SlotPiece[] = [];
+    /** The piece of the block or container at `k` (it names a slot), and
+     *  the index past it. */
+    const pieceAt = (k: number, outer: boolean): { piece?: SlotPiece; next: number } => {
+      const b = blocks[k]!;
+      const e = b.type === 'containerStart' ? endOf(blocks, k) : k;
+      if (!b.slot) return { next: e + 1 };
+      const source = { sourceStart: b.slot.sourceStart, sourceEnd: b.slot.sourceEnd };
+      if (b.type === 'containerStart' && b.containerName === 'frame') {
+        const inner: SlotPiece[] = [];
+        if (outer) {
+          for (let j = k + 1; j < e;) {
+            const at = pieceAt(j, false);
+            if (at.piece) inner.push(at.piece);
+            j = at.next;
+          }
+        }
+        return { piece: { slot: b.slot.name, source, indices: range(k + 1, e - 1), fence: k, inner }, next: e + 1 };
+      }
+      return { piece: { slot: b.slot.name, source, indices: range(k, e), inner: [] }, next: e + 1 };
+    };
     let k = i + 1;
     while (k < end) {
       const b = blocks[k]!;
+      if (b.slot) pieces.push(pieceAt(k, true).piece!);
       if (b.type === 'containerStart') {
         const e = endOf(blocks, k);
         if (b.containerName === 'frame') put(b.slot, range(k + 1, e - 1));
@@ -125,6 +167,7 @@ export function composedPages(blocks: readonly ContentBlock[]): ParsedComposedPa
       slotSources,
       firstHeadings,
       tocRows,
+      pieces,
       fence: { sourceStart: start.sourceStart, sourceEnd: start.sourceEnd },
       unclosed,
       sourceStart: start.sourceStart,

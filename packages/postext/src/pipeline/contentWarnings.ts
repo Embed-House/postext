@@ -927,6 +927,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'slotUnknown':
       text = `Slot "${w.slot}" is no frame of template "${w.template}" — the content goes to the flow frame${w.frame ? ` "${w.frame}"` : ''}`;
       break;
+    case 'repeatOverflow':
+      text = `Grid "${w.group}" of template "${w.template}" holds ${w.max} item${w.max === 1 ? '' : 's'} — item ${w.item} of "${w.frame}" goes to ${w.flowFrame ? `the flow frame "${w.flowFrame}"` : 'the flow after the page'}; raise repeat.max or move the item to another page`;
+      break;
     case 'slotEmpty':
       text = `Frame "${w.frame}" of template "${w.template}" receives no content — give it a slot="${w.frame}" piece, or mark the frame optional`;
       break;

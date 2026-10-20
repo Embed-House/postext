@@ -2773,8 +2773,12 @@ export interface VDTFrame {
    *  the page before is named by the frame of the fence's own page that
    *  first sent it on (`cp0:dinero~1`). */
   id: string;
-  /** The frame's name in its template (the slot it receives). */
+  /** The frame's name in its template (the slot it receives); for an
+   *  instance of a frame a grid repeats (#1061), `<frame>[n]`. */
   name: string;
+  /** An instance of a frame a grid repeats (#1061): the template's frame
+   *  (`configPath` is its entry) and the item, 1-based. */
+  repeat?: { frame: string; item: number };
   /** The frame's box, label tab included, before any turn. */
   rect: { x: number; y: number; width: number; height: number };
   /** The box the template declares for the frame (its fixed size, or its
@@ -3382,6 +3386,11 @@ export type ContentWarning = ContentWarningBase & (
    *  names its slot, it takes no heading, and (the flow frame) no content
    *  is left without a slot. A frame marked `optional` is not reported. */
   | { kind: 'slotEmpty'; template: string; frame: string; fenceIndex: number }
+  /** A grid that repeats a frame set (#1061) holds `max` items, and the
+   *  page gives it more: item `item` (and every one after it) goes to the
+   *  flow frame (`flowFrame`, when the template has one), or after the
+   *  page. Points at the item's `slot="…"`. */
+  | { kind: 'repeatOverflow'; template: string; group: string; frame: string; item: number; max: number; flowFrame?: string; fenceIndex: number }
   /** A three-colon `:::page` carries `template=`: a composed page needs
    *  four colons (`::::page{template=…}` … `::::`). It is read as a comic
    *  page, as before. */

@@ -8,11 +8,12 @@
 import type { ContentWarning } from '../vdt';
 import { takenBlocks, type ParsedComposedPage } from './document';
 import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate } from './types';
-import { continueInPage, resolveContinueIn } from './templates';
+import { continueInPage, resolveContinueIn, resolvePageTemplate } from './templates';
+import { pageRepeats } from './repeat';
 
 /** The composed-page warnings, as {@link checkComposedSlots} returns them
  *  (source offsets as in the pages it read). */
-export type ComposedSlotWarning = Extract<ContentWarning, { kind: 'templateUnknown' | 'slotUnknown' | 'slotEmpty' | 'spreadMismatch' }>;
+export type ComposedSlotWarning = Extract<ContentWarning, { kind: 'templateUnknown' | 'slotUnknown' | 'slotEmpty' | 'spreadMismatch' | 'repeatOverflow' }>;
 
 /**
  * The frames a template has: its own and, through `extends`, its
@@ -146,9 +147,20 @@ export function checkComposedSlots(
     const frames = templateFrames(template, byId);
     const known = new Set(frames.map((f) => f.name));
     const variants = variantFrameNames(template);
+    // A grid's frames take the page's pieces item by item (#1061): a frame
+    // of the set is filled when an item gives it content, and items past
+    // the grid's `max` go to the flow frame.
+    const resolved = resolvePageTemplate(config as Pick<ComposedPagesConfigKeys, 'pageTemplates'>, template.id);
+    const repeats = resolved ? pageRepeats(page, resolved) : undefined;
+    const itemFilled = new Set<string>();
+    for (const item of repeats?.items ?? []) for (const [f, indices] of item.frames) if (indices.length > 0) itemFilled.add(f);
     let strayContent = false;
     // The frame stray content goes to (#858: named in the warning).
-    const flowFrame = frames.find((f) => f.flow === true)?.name;
+    const flowFrame = frames.find((f) => f.flow === true && !repeats?.repeated.has(f.name))?.name;
+    for (const o of repeats?.overflow ?? []) {
+      strayContent = true;
+      out.push({ kind: 'repeatOverflow', template: template.id, group: o.group, frame: o.frame, item: o.item, max: o.max, ...(flowFrame !== undefined ? { flowFrame } : {}), fenceIndex: page.fenceIndex, sourceStart: o.source.sourceStart, sourceEnd: o.source.sourceEnd });
+    }
     for (const slot of Object.keys(page.slots)) {
       if (known.has(slot) || variants.has(slot)) continue;
       strayContent = true;
@@ -169,9 +181,11 @@ export function checkComposedSlots(
     }
     for (const f of frames) {
       if (f.optional || continued.has(f.name) || jumpedInto.get(page.fenceIndex)?.has(f.name)) continue;
-      const filled = page.slots[f.name] !== undefined
-        || takenBlocks(page, f.takes).length > 0
-        || (f.flow === true && flowContent);
+      const filled = repeats?.repeated.has(f.name)
+        ? itemFilled.has(f.name)
+        : page.slots[f.name] !== undefined
+          || takenBlocks(page, f.takes).length > 0
+          || (f.flow === true && flowContent);
       if (filled) continue;
       out.push({ kind: 'slotEmpty', template: template.id, frame: f.name, fenceIndex: page.fenceIndex, sourceStart: page.fence.sourceStart, sourceEnd: page.fence.sourceEnd });
     }
