@@ -2363,3 +2363,45 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   and box editors show a per-corner radius as 0 until U10, #1063); docs (D3); a split box's fragments do
   not square the corners where it continues (as before); a joined tab in the reflowable EPUB is a plain
   tab.
+
+### 12.21 What U13 built (#1066)
+
+The Sandbox side of C2 (§12.10, §12.16), C10's `repeatOverflow` (§12.15) and C3's glyph tab icon (§12.9,
+§12.12).
+
+- **Checks panel.** `frameCovered` and `frameOutsideArea` are layout warnings of the Sandbox
+  (`warnings/compute.ts`, by book page) and composed checks (`composedChecks.ts`): listed by page, frame
+  and edition, filed with the typesetting; `repeatOverflow` (read from the source, as the slot checks) is a
+  composed check filed with the markup. Titles and details in the panel's words in all ten site languages
+  (`warnings/frameOverlapText.ts`): the covered words or picture, the area hidden, what the frame runs past
+  and by how much, the fixes, and the `overlap: 'allow'` way out.
+- **Canvas.** Selecting an overlap check (a jump of the Checks panel, a frame of the Reflow panel) sets an
+  overlap focus (`editions/overlapFocus.ts`) that the canvas draws in the overlay
+  (`viewport/composed/overlapMarks.ts`) until another check is selected or a fix is made:
+  for `frameCovered` the covered frame's box (blue, dashed), the covering frame's (red) and the rectangle
+  where the two meet; for `frameOutsideArea` the frame, the box it runs past (trim, bleed, host frame, or the
+  union of the group's frames as laid) dashed, and a band on each side it runs past as deep as the check's
+  `sides`. Decision: the boxes are the frames as laid (a turned frame by the upright box holding it), not
+  the ink boxes the engine measured, which the VDT does not keep; the meeting rectangle can so be larger than
+  `overlapMm2`. A spread's trim and bleed are not drawn (its sheet is cut at the spine).
+- **Fixes.** Every proposal of the two checks is a one-click confirmed change in the Checks and Reflow
+  panels, one step of the undo history, as `frameOverflow`'s (#868): `layer`, `exclude`, `maxHeight`,
+  `minHeight` set the value at their pointer. Departures: **`move` is made**, as the moved frame's
+  `placement.offset` with the shift added (in mm; an offset in cm, in or pt is converted), and is only told
+  in words for a frame with no placement or an offset in ems or percent; a template with recto/verso
+  variants that mirror offsets is not special-cased. **`continueNextPage` of a `frameOutsideArea` also sets
+  the `maxHeight` it comes with** (alone it does not bring the frame in). On the fixture every proposal of
+  the four checks removes its check (`frameOverlap.e2e.test.ts`).
+- **Reflow panel.** `covered` and `outside` events in words («figure lies under photo (25.3 mm²)», «note
+  runs 26 mm past card»), short marks `▨ 25.3 mm²` / `⇥ 26 mm`; the fixes listed under each frame the events
+  name (`frameFixChecks`). The p. 8 stand-in's test asserts the real lines (the photos' overruns) again.
+- **WebMCP.** `sandbox_get_warnings` lists the new kinds with their data (`coveredBy`, `overlapMm2`, `text`,
+  `picture`, `past`, `target`, `excessMm`, `sides`, `locale`; `group`, `item`, `max`, `flowFrame`) and
+  numbered fixes in the engine's words; `sandbox_apply_proposal` takes any check of a frame with fixes
+  (`check`, `coveredBy` to choose) and answers `fixed` (and `fits` for an overflow). No new tool.
+- **Glyph tab icon.** The box style editor's label group has a kind switch (picture / glyph); a glyph tab
+  shows its glyph field, a row of common symbols (◉ ● ○ ■ □ ▲ ★ ✓ ✎ ➜, toggle buttons named «Use ◉»), face,
+  weight, size (`scale`), colour (the words' when unset), placement and gap; switching to a glyph with none
+  set writes ◉. The resolved fields already passed `settings.test.ts`. Search index regenerated.
+- **Not done.** Pointing at a frame in the Reflow panel does not draw the overlap (a click does); the
+  overlap is not drawn in the Folio or the edition comparison's second page set beyond the fit marks' path.
