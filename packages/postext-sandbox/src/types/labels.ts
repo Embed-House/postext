@@ -374,6 +374,7 @@ export interface SandboxLabels {
   warningsModuleNameTakenDetail: string;
   warningsModuleNameInvalidDetail: string;
   warningsFixLayer: string;
+  warningsFixAllowOverlap: string;
   warningsFixExclude: string;
   warningsFixMaxHeight: string;
   warningsFixMinHeight: string;
@@ -4123,6 +4124,8 @@ export interface SandboxLabels {
   pageTemplatesFrameStyleTooltip: string;
   pageTemplatesFrameLayer: string;
   pageTemplatesFrameLayerTooltip: string;
+  pageTemplatesFrameOverlap: string;
+  pageTemplatesFrameOverlapTooltip: string;
   pageTemplatesFrameRotate: string;
   pageTemplatesFrameRotateTooltip: string;
   pageTemplatesFrameAsPage: string;

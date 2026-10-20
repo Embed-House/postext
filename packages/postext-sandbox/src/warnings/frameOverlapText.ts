@@ -16,8 +16,20 @@ import { localNumber } from '../viewport/composed/reflowText';
 import { fitProposalText } from './frameOverflowText';
 import type { WarningPayload } from './types';
 
-/** A fix the layout proposes for a frame, whatever check found it. */
-export type FrameProposal = FrameOverflowProposal | FrameCoverProposal | FrameOutsideProposal;
+/** The way out of an overlap check the Sandbox adds to the layout's fixes
+ *  (#1081): `overlap: 'allow'` on the frame placed so on purpose (a
+ *  `frameCovered`'s covering frame, a `frameOutsideArea`'s own), the field
+ *  the frame editor's «May overlap on purpose» switch writes. */
+export interface AllowOverlapProposal {
+  kind: 'allowOverlap';
+  frame: string;
+  /** JSON pointer of the frame's `overlap`. */
+  path: string;
+}
+
+/** A fix the layout proposes for a frame, whatever check found it (and the
+ *  Sandbox's `allowOverlap`). */
+export type FrameProposal = FrameOverflowProposal | FrameCoverProposal | FrameOutsideProposal | AllowOverlapProposal;
 
 type CoveredPayload = Extract<WarningPayload, { kind: 'frameCovered' }>;
 type OutsidePayload = Extract<WarningPayload, { kind: 'frameOutsideArea' }>;
@@ -45,6 +57,8 @@ export function frameProposalText(p: FrameProposal, labels: SandboxLabels, local
       return fill(labels.warningsFixMaxHeight, { mm: localNumber(p.value.value, locale) });
     case 'minHeight':
       return fill(labels.warningsFixMinHeight, { frame: p.frame, mm: localNumber(p.value.value, locale) });
+    case 'allowOverlap':
+      return fill(labels.warningsFixAllowOverlap, { frame: p.frame });
     default:
       return fitProposalText(p, labels, locale);
   }

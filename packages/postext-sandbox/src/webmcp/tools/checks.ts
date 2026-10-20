@@ -13,7 +13,7 @@ import { detailFor, titleFor } from '../../sidebar/WarningsPanel';
 import { hasIndexedDB } from '../../storage/blobStore';
 import { WARNING_CATEGORY_ORDER, warningCategory } from '../../warnings/categories';
 import { computeComposedWarnings, computeWarnings } from '../../warnings/compute';
-import { FRAME_FIX_KINDS, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions';
+import { FRAME_FIX_KINDS, fixesOfPayload, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions';
 import type { FrameProposal } from '../../warnings/frameOverlapText';
 import type { Warning } from '../../warnings/types';
 import { applyViewerEdit } from '../../editor/viewerEdits';
@@ -209,7 +209,7 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
   const applyProposal: WebMcpTool = {
     name: 'sandbox_apply_proposal',
     title: 'Sandbox: fix a frame by a proposed fix',
-    description: "Fix a frame of a composed page with one of the fixes the layout proposes for it: the proposals of its frameOverflow, frameCovered or frameOutsideArea warning in sandbox_get_warnings, by their number there (from 1) or their kind. A frame that does not fit (frameOverflow): allowShrink lets its text shrink further (fit.minScale, and fit.shrinkText when it was off), raiseMax raises its maxHeight, lowerMin lowers the minHeight of another frame of its group, continueNextPage sets overflow.continueIn to next-page, and useTemplate sets the page with another template (the fence's template attribute in the chapter's text); shortenText changes nothing: it selects the frame's text in the Manuscript panel and answers how many characters to cut and where, for sandbox_write_text. A frame under another (frameCovered): layer paints the covering frame under it, exclude makes the covering frame push its text round it. A frame past its edge (frameOutsideArea): maxHeight holds it to the room it has, minHeight raises the frame it is anchored inside, continueNextPage lets the rest go on. move shifts the moved frame's placement.offset by the proposed millimetres (refused for a frame with no placement, or an offset in ems or percent). continueNextPage of a frame past its edge also sets the maxHeight it proposes. It is the one-click fix of the Checks panel and the Reflow panel, without the question they ask the reader: one step of the history that sandbox_undo takes back. A design change applies to every page set with the template. Answers what was changed and whether the check is gone, laid out again.",
+    description: "Fix a frame of a composed page with one of the fixes the layout proposes for it: the proposals of its frameOverflow, frameCovered or frameOutsideArea warning in sandbox_get_warnings, by their number there (from 1) or their kind. A frame that does not fit (frameOverflow): allowShrink lets its text shrink further (fit.minScale, and fit.shrinkText when it was off), raiseMax raises its maxHeight, lowerMin lowers the minHeight of another frame of its group, continueNextPage sets overflow.continueIn to next-page, and useTemplate sets the page with another template (the fence's template attribute in the chapter's text); shortenText changes nothing: it selects the frame's text in the Manuscript panel and answers how many characters to cut and where, for sandbox_write_text. A frame under another (frameCovered): layer paints the covering frame under it, exclude makes the covering frame push its text round it. A frame past its edge (frameOutsideArea): maxHeight holds it to the room it has, minHeight raises the frame it is anchored inside, continueNextPage lets the rest go on. move shifts the moved frame's placement.offset by the proposed millimetres (refused for a frame with no placement, or an offset in ems or percent). continueNextPage of a frame past its edge also sets the maxHeight it proposes. Both overlap checks end with allowOverlap: overlap 'allow' on the frame placed so on purpose (the covering frame of a frameCovered, the frame itself of a frameOutsideArea), which the checks then leave out. It is the one-click fix of the Checks panel and the Reflow panel, without the question they ask the reader: one step of the history that sandbox_undo takes back. A design change applies to every page set with the template. Answers what was changed and whether the check is gone, laid out again.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -218,7 +218,7 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
         check: { type: 'string', enum: [...FRAME_FIX_KINDS], description: 'Which check of the frame to fix, when it has more than one (the warning\'s kind).' },
         coveredBy: { type: 'string', description: 'For frameCovered: the covering frame, when the frame lies under more than one.' },
         page: { type: 'integer', description: 'The page number as printed, when the check is on more than one page of the chapter.' },
-        proposal: { type: ['integer', 'string'], description: 'The fix: its number in the warning\'s proposals (from 1) or its kind (allowShrink, raiseMax, lowerMin, continueNextPage, useTemplate, shortenText; layer, exclude, move; maxHeight, minHeight).' },
+        proposal: { type: ['integer', 'string'], description: 'The fix: its number in the warning\'s proposals (from 1) or its kind (allowShrink, raiseMax, lowerMin, continueNextPage, useTemplate, shortenText; layer, exclude, move; maxHeight, minHeight; allowOverlap).' },
       },
       required: ['frame', 'proposal'],
       additionalProperties: false,
@@ -245,7 +245,7 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
         throw new ToolError(`"${frame}" has this check on pages ${mine.map((w) => w.payload.page).join(', ')}: say which with page.`);
       }
       const warning = mine[0]!;
-      const list: readonly FrameProposal[] = warning.payload.proposals;
+      const list = fixesOfPayload(warning.payload);
       const proposal = typeof args.proposal === 'number'
         ? list[args.proposal - 1]
         : list.find((p) => p.kind === args.proposal);
@@ -306,6 +306,9 @@ function proposalWords(p: FrameProposal): string {
     case 'minHeight':
     case 'move':
       return describeFrameOutsideProposal(p as FrameOutsideProposal);
+    // The Sandbox's way out of an overlap check (#1081).
+    case 'allowOverlap':
+      return `set overlap: 'allow' on "${p.frame}"`;
     default:
       return describeFrameOverflowProposal(p as FrameOverflowProposal);
   }
@@ -313,6 +316,5 @@ function proposalWords(p: FrameProposal): string {
 
 /** A warning's fixes as the tools list them. */
 function proposalList(payload: FrameFixPayload): { number: number; kind: string; words: string }[] {
-  const list: readonly FrameProposal[] = payload.proposals;
-  return list.map((p, i) => ({ number: i + 1, kind: p.kind, words: proposalWords(p) }));
+  return fixesOfPayload(payload).map((p, i) => ({ number: i + 1, kind: p.kind, words: proposalWords(p) }));
 }

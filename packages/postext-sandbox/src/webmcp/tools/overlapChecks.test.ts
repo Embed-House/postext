@@ -49,14 +49,18 @@ describe('sandbox_get_warnings on the overlap fixture', () => {
     expect(figure.text).toMatch(/^Rainfall/);
     expect(figure.detail).toMatch(/lies under photo/);
     // Every move off the caption takes the photo out of the figure it is
-    // anchored inside (#1075): no fix is offered but overlap: 'allow'.
-    expect(figure.proposals ?? []).toEqual([]);
+    // anchored inside (#1075): no fix is offered but overlap: 'allow' on
+    // the photo (#1081).
+    expect(figure.proposals).toEqual([{ number: 1, kind: 'allowOverlap', words: 'set overlap: \'allow\' on "photo"' }]);
     const card = listed.find((w) => w.kind === 'frameCovered' && w.frame === 'card')!;
-    expect(card.proposals).toEqual([{ number: 1, kind: 'move', words: expect.stringMatching(/^move "cutout" [\d.]+ mm right$/) }]);
+    expect(card.proposals).toEqual([
+      { number: 1, kind: 'move', words: expect.stringMatching(/^move "cutout" [\d.]+ mm right$/) },
+      { number: 2, kind: 'allowOverlap', words: 'set overlap: \'allow\' on "cutout"' },
+    ]);
     const note = listed.find((w) => w.kind === 'frameOutsideArea' && w.frame === 'note')!;
     expect(note).toMatchObject({ past: 'frame', target: 'card', title: 'Frame runs past its edge' });
     expect((note.sides as { bottom: number }).bottom).toBeGreaterThan(10);
-    expect(note.proposals!.map((p) => p.kind)).toEqual(['maxHeight', 'continueNextPage', 'minHeight']);
+    expect(note.proposals!.map((p) => p.kind)).toEqual(['maxHeight', 'continueNextPage', 'minHeight', 'allowOverlap']);
     expect(listed.find((w) => w.kind === 'frameOutsideArea' && w.frame === 'strap')).toMatchObject({ past: 'trim' });
   });
 });
@@ -81,6 +85,28 @@ describe('sandbox_apply_proposal on an overlap', () => {
     const done = await call('sandbox_apply_proposal', { frame: 'note', proposal: min.number });
     expect(done).toMatchObject({ ok: true, check: 'frameOutsideArea', fixed: true });
     expect(done.settings[0].pointer).toBe('/pageTemplates/0/frames/2/minHeight');
+  });
+
+  it('lets the covering frame overlap on purpose, the field the frame editor writes (#1081)', async () => {
+    const { call, get } = harness(book());
+    const done = await call('sandbox_apply_proposal', { frame: 'figure', proposal: 'allowOverlap' });
+    expect(done).toMatchObject({ ok: true, changed: true, check: 'frameCovered', fixed: true, fix: { kind: 'allowOverlap' } });
+    expect(done.settings[0]).toMatchObject({ pointer: '/pageTemplates/0/frames/1/overlap', setting: 'overlaps › photo › overlap', value: '"allow"' });
+    expect(get().config.pageTemplates![0]!.frames!.find((f) => f.name === 'photo')!.overlap).toBe('allow');
+    // A frame past its edge on purpose: allowed on itself.
+    const note = await call('sandbox_apply_proposal', { frame: 'note', proposal: 'allowOverlap' });
+    expect(note).toMatchObject({ ok: true, check: 'frameOutsideArea', fixed: true });
+    expect(note.settings[0].setting).toBe('overlaps › note › overlap');
+  });
+
+  it('reads and writes a frame\'s overlap as a setting', async () => {
+    const { call } = harness(book());
+    const done = await call('sandbox_set_config', { changes: [{ path: 'pageTemplates[id=overlaps].frames[name=strap].overlap', value: 'allow' }], wait: false });
+    expect(done.ok, JSON.stringify(done)).toBe(true);
+    const read = await call('sandbox_get_config', { effective: true });
+    expect(JSON.stringify(read.effective)).toContain('"overlap":"allow"');
+    const found = await call('sandbox_get_warnings');
+    expect((found.warnings as Listed[]).some((w) => w.kind === 'frameOutsideArea' && w.frame === 'strap')).toBe(false);
   });
 
   it('refuses a frame with no check, a check it does not have, and a fix it does not have', async () => {

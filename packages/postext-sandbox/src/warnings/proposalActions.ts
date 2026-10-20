@@ -21,6 +21,11 @@
  * frame past its edge comes with its `maxHeight` (held to the room it has,
  * the rest goes on).
  *
+ * To both overlap checks the Sandbox adds one way out of its own (#1081),
+ * `allowOverlap`: `overlap: 'allow'` on the frame placed so on purpose
+ * (a `frameCovered`'s covering frame, a `frameOutsideArea`'s own), the
+ * field the frame editor's switch writes; listed after the layout's.
+ *
  * The edits change the form of the book, so the Sandbox asks before it
  * applies one; each is one step of the undo history (#899). Pure: the
  * Checks panel, the Reflow panel, the WebMCP tool and the tests plan an
@@ -29,7 +34,7 @@
 
 import type { Dispatch } from 'react';
 import type { Dimension, PostextConfig } from 'postext';
-import type { FrameProposal } from './frameOverlapText';
+import type { AllowOverlapProposal, FrameProposal } from './frameOverlapText';
 import type { SandboxAction } from '../context/SandboxContext';
 import type { TextChange } from '../book/textChanges';
 import { fenceTemplateChange, templateFences } from '../templates/templateUsage';
@@ -210,6 +215,8 @@ export function proposalLeaves(p: FrameProposal): ConfigLeaf[] {
       return [{ pointer: p.path, value: p.value }];
     case 'exclude':
       return [{ pointer: p.path, value: 'push' }];
+    case 'allowOverlap':
+      return [{ pointer: p.path, value: 'allow' }];
     default:
       return [];
   }
@@ -342,9 +349,33 @@ export function isFrameFixPayload(p: WarningPayload): p is FrameFixPayload {
   return (FRAME_FIX_KINDS as readonly string[]).includes(p.kind);
 }
 
-/** A warning's fixes, when it is a check of a frame. */
+/** The `overlap: 'allow'` way out of an overlap check (#1081): on the
+ *  covering frame of a `frameCovered` (the one laid over the other on
+ *  purpose: a caption pill over its photo), on the frame itself of a
+ *  `frameOutsideArea` (a badge hung off its card). */
+export function allowOverlapOf(payload: WarningPayload): AllowOverlapProposal | undefined {
+  if (payload.kind === 'frameCovered') return { kind: 'allowOverlap', frame: payload.coveredBy, path: `${payload.coveredByPath}/overlap` };
+  if (payload.kind === 'frameOutsideArea') return { kind: 'allowOverlap', frame: payload.frame, path: `${payload.configPath}/overlap` };
+  return undefined;
+}
+
+/** A check's fixes as the panels and the tools list them: the layout's,
+ *  then the overlap checks' `allowOverlap`. */
+export function fixesOfPayload(payload: WarningPayload): readonly FrameProposal[] {
+  if (!isFrameFixPayload(payload)) return [];
+  const own: readonly FrameProposal[] = payload.proposals ?? [];
+  const allow = allowOverlapOf(payload);
+  return allow ? [...own, allow] : own;
+}
+
+/** A warning's fixes, when it is a check of a frame (the layout's only). */
 export function proposalsOf(warning: Warning): readonly FrameProposal[] {
   return isFrameFixPayload(warning.payload) ? warning.payload.proposals ?? [] : [];
+}
+
+/** A warning's fixes with the Sandbox's `allowOverlap` (#1081). */
+export function fixesOf(warning: Warning): readonly FrameProposal[] {
+  return fixesOfPayload(warning.payload);
 }
 
 /** The `frameOverflow` warnings of a list, with their proposals. */

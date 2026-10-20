@@ -335,6 +335,9 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
           onReset={reset('style')}
         />
         <NumberInput label={labels.pageTemplatesFrameLayer} value={frame.layer} min={-10} max={10} onChange={(n) => set({ layer: n })} tooltip={labels.pageTemplatesFrameLayerTooltip} isDefault={!has('layer')} onReset={reset('layer')} />
+        {/* Over or past its edge on purpose (#1081): the overlap checks
+            (frameCovered, frameOutsideArea) leave the frame out. */}
+        <ToggleSwitch label={labels.pageTemplatesFrameOverlap} tooltip={labels.pageTemplatesFrameOverlapTooltip} checked={frame.overlap === 'allow'} onChange={(v) => set({ overlap: v ? 'allow' : 'check' })} isDefault={!has('overlap')} onReset={reset('overlap')} />
         <NumberInput label={labels.pageTemplatesFrameRotate} value={frame.rotate} min={-180} max={180} suffix="°" onChange={(n) => set({ rotate: n })} tooltip={labels.pageTemplatesFrameRotateTooltip} isDefault={!has('rotate')} onReset={reset('rotate')} />
         {/* The frame's own writing mode and direction (#944). */}
         <SelectInput

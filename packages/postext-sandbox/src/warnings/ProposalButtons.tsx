@@ -19,7 +19,7 @@ import { fill } from '../print/fillTokens';
 import type { SandboxLabels } from '../types';
 import { setOverlapFocus } from '../editions/overlapFocus';
 import { frameProposalText, outsideProposalText, type FrameProposal } from './frameOverlapText';
-import { applyProposalPlan, isFrameFixPayload, planIsAdvice, planProposal, proposalChangesForm, proposalContextOf, valueInWords, type ProposalPlan } from './proposalActions';
+import { applyProposalPlan, fixesOf, isFrameFixPayload, planIsAdvice, planProposal, proposalChangesForm, proposalContextOf, valueInWords, type ProposalPlan } from './proposalActions';
 import type { Warning } from './types';
 
 /** The covering frame a fix of `warning` changes (a `frameCovered`'s). */
@@ -75,7 +75,9 @@ export function ProposalActions({ warning, onScreen, openEdition, editionName }:
   const { state, dispatch } = useSandbox();
   const { labels } = state;
   const p = warning.payload;
-  if (!isFrameFixPayload(p) || p.proposals.length === 0) return null;
+  // The layout's fixes and, for an overlap check, `overlap: 'allow'`.
+  const proposals = fixesOf(warning);
+  if (!isFrameFixPayload(p) || proposals.length === 0) return null;
   if (!onScreen) {
     return openEdition ? (
       <div className="flex flex-wrap gap-1 px-3 pb-1.5 ps-9" data-proposals="">
@@ -88,7 +90,6 @@ export function ProposalActions({ warning, onScreen, openEdition, editionName }:
   const locale = state.locale;
   const plan = (proposal: FrameProposal) => planProposal(warning, proposal, proposalContextOf(state));
   const run = (proposal: FrameProposal) => announce(runProposal(plan(proposal), warning, labels, dispatch, locale));
-  const proposals: readonly FrameProposal[] = p.proposals;
   // A frame that does not fit is made to fit; one under another or past its
   // edge is set clear.
   const heading = p.kind === 'frameOverflow' ? labels.proposalsTitle : labels.proposalsOverlapTitle;

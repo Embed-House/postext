@@ -2925,3 +2925,32 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   checked element by element, the pointer gone from the map's cut, no ground, `--raster-ground` unchanged,
   dedupe renames, and with `POSTEXT_CLI` the draft passes `postext check` without unknown keys, values or
   anchors.
+
+### 12.31 What #1081 and #1082 changed (D4 findings)
+
+- **`overlap` in the frame editor (#1081).** The template editor's frame properties have a switch «May
+  overlap on purpose» after **Layer**, in the frame's look: on writes `overlap: 'allow'`, off `'check'`,
+  reset takes the field off. Its help names the two checks it silences (*Frame under another frame*,
+  *Frame runs past its edge*). Labels in the 12 places, search index regenerated.
+- **The Checks panel's way out is a fix.** Both overlap checks now end their fixes with a Sandbox-only
+  proposal `allowOverlap` (`AllowOverlapProposal { frame, path }`, `warnings/frameOverlapText.ts`;
+  `allowOverlapOf` / `fixesOf` in `proposalActions.ts`): `overlap: 'allow'` at the pointer the check names,
+  one confirmed click and one undo step like the others, in the Checks and Reflow panels and in
+  `sandbox_apply_proposal` (listed after the layout's fixes, so their numbers do not move). Decision: for
+  `frameCovered` it goes on the **covering** frame (`coveredByPath`: the one laid over on purpose, a caption
+  pill over its photo), for `frameOutsideArea` on the frame itself. The engine's payloads are unchanged;
+  the detail sentence «set overlap to allow» stays.
+- **Repeating grids drawn in their cells (#1082).** `templateSheet` (every template drawing: the module
+  library, the Page templates list and the editor's sheet) lays a repeating grid's set as `placeGrid` does,
+  on the template alone: the grid's own box (its placement, resolved against the frames' drawn boxes, so a
+  grid `below` an `'auto'` root starts under the root's drawn height), else from the main frame's drawn
+  place to the area's right edge and foot; equal columns, the main frame the cell's width and its height
+  rule; members anchored in the set placed with the column as their area, members anchored to nothing moved
+  with the cell, members anchored outside the set drawn once where the template puts them; row heights by
+  reach above/below the main frame, `rowAlign`, cut at the foot. Decision: it draws a row of items, at least
+  two (to show the repeat), at most `repeat.max` (`sketchItems`). `SheetFrame.instance` numbers the copies;
+  only the first copy of a frame is a button in the editor's sheet (one name, one keyboard stop).
+- **Not done.** A frame outside the set anchored to a frame of the set is drawn from the template's place
+  of that frame, not from the grid's box (as the engine reads it); right-to-left cells are not mirrored;
+  the drawing does not read a laid page. The composed-page-books guide's grid still hangs its caption under
+  the photo (D4 chose that for want of the switch); a docs follow-up can now show `overlap: 'allow'`.
