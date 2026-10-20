@@ -2,7 +2,6 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Download } from "lucide-react";
 import { ChapterOpener } from "@/components/brand/ChapterOpener";
 import { Kicker } from "@/components/brand/Kicker";
-import { penDefineData } from "@/lib/codepen";
 import { GUIDE_BUNDLE_FILE, GUIDE_BUNDLE_PATH, guideBundleStats } from "@/lib/guideBundle";
 import { CodeBlock } from "./CodeBlock";
 import { htmlLang } from "@/i18n/locales";
@@ -121,7 +120,7 @@ for (const doc of buildBundle(book))
             </a>
           </div>
           <div className="md:col-span-8">
-            <CodeBlock code={code} title="open-guide.js" codepen={penDefineData("open-guide", { title: t("penTitle") })}>
+            <CodeBlock code={code} title="open-guide.js" codepen={{ name: "open-guide", title: t("penTitle") }}>
               <span className="syntax-keyword">import</span> {"{ openBundle, loadBundleFonts, registerBundleImages,"}{"\n"}
               {"  buildBundle, renderPageToCanvas }"} <span className="syntax-keyword">from</span>{" "}
               <span className="syntax-string">{'"postext"'}</span>;{"\n"}

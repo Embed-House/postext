@@ -3,7 +3,8 @@
 import { useState, useCallback, useId } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Copy, SquareArrowOutUpRight } from "lucide-react";
-import { openInCodePen } from "@/lib/codepenClient";
+import { openCodePenWindow, submitToCodePen } from "@/lib/codepenClient";
+import { loadPenSources, penDefine, type PenRef } from "@/lib/codepenDefine";
 import { cn } from "@/lib/utils";
 
 interface CodeBlockProps {
@@ -12,9 +13,9 @@ interface CodeBlockProps {
   /** A file name or language shown in the block's title bar. */
   title?: string;
   className?: string;
-  /** Prefill JSON for CodePen (see `penDefineData`): adds an "Open in
-   *  CodePen" button that runs a working version of the example. */
-  codepen?: string;
+  /** The docs example behind the block: adds an "Open in CodePen" button
+   *  that runs a working version of it. */
+  codepen?: PenRef;
   children: React.ReactNode;
 }
 
@@ -31,6 +32,21 @@ export function CodeBlock({ code, copyable = true, title, className, codepen, ch
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [code]);
+
+  // The popup opens inside the click (a later one is blocked); the pen is
+  // posted to it when the sources arrive.
+  const handleCodePen = useCallback(() => {
+    if (!codepen) return;
+    const { name, ...meta } = codepen;
+    const popup = openCodePenWindow(windowName);
+    loadPenSources(name).then(
+      (sources) => submitToCodePen(penDefine(sources, meta), windowName, popup),
+      () => popup?.close(),
+    );
+  }, [codepen, windowName]);
+  const prefetchPen = useCallback(() => {
+    if (codepen) loadPenSources(codepen.name).catch(() => {});
+  }, [codepen]);
 
   return (
     // Code reads left to right on every page.
@@ -62,7 +78,9 @@ export function CodeBlock({ code, copyable = true, title, className, codepen, ch
           {codepen && (
             <button
               type="button"
-              onClick={() => openInCodePen(codepen, windowName)}
+              onClick={handleCodePen}
+              onPointerEnter={prefetchPen}
+              onFocus={prefetchPen}
               aria-label={t("openInCodePenAriaLabel")}
               title={t("openInCodePenAriaLabel")}
               className={buttonClass}

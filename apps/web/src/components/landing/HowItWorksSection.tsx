@@ -2,7 +2,6 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { abbreviate } from "@/components/brand/abbreviate";
 import { ChapterOpener } from "@/components/brand/ChapterOpener";
 import { Kicker } from "@/components/brand/Kicker";
-import { penDefineData } from "@/lib/codepen";
 import { CodeBlock } from "./CodeBlock";
 
 const codeRaw = `import { buildDocument, renderPage } from "postext";
@@ -82,7 +81,7 @@ export async function HowItWorksSection() {
             <CodeBlock
               code={codeRaw}
               title="book.ts"
-              codepen={penDefineData("home-book", { title: `Postext · ${api("title")}` })}
+              codepen={{ name: "home-book", title: `Postext · ${api("title")}` }}
             >
               <span className="syntax-keyword">import</span> {"{ buildDocument, renderPage }"}{" "}
               <span className="syntax-keyword">from</span> <span className="syntax-string">{'"postext"'}</span>;{"\n"}
