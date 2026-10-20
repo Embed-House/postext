@@ -132,7 +132,7 @@ function svgEl<K extends keyof SVGElementTagNameMap>(name: K, attrs: Record<stri
 
 /** The template a composed page is set with, resolved for its side. */
 function pageTemplate(config: PostextConfig, composed: VDTComposedPage): ResolvedPageTemplate | undefined {
-  return resolvePageTemplate(config, composed.template, composed.variant ? { parity: composed.variant } : {});
+  return resolvePageTemplate(config, composed.template, { ...(composed.variant ? { parity: composed.variant } : {}), ...(composed.modules ? { modules: composed.modules } : {}) });
 }
 
 const dragKind = (d: { kind: 'frame' | 'draw'; handle: Handle }): FrameDragKind => (d.kind === 'draw' ? 'draw' : d.handle === 'move' ? 'move' : 'resize');

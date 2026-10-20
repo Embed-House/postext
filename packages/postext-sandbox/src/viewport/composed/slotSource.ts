@@ -40,6 +40,10 @@ export interface PageSites {
   sites: SlotSite[];
   /** Blocks that name no slot (the flow frame's, or a `takes` frame's). */
   unslotted: { start: number; end: number; heading?: number }[];
+  /** The page's `:::module` blocks (#1062): the instance name their slots
+   *  are scoped by, fence to closing fence, and where the closing fence's
+   *  line starts. */
+  modules: { name: string; start: number; end: number; closerStart: number }[];
 }
 
 const LABEL_RE = /\blabel\s*=\s*"([^"]*)"/;
@@ -72,11 +76,21 @@ export function pageSites(markdown: string, pageStart: number, pageEnd: number):
     closerStart: abs(closed ? closing.sourceStart : text.length),
     sites: [],
     unslotted: [],
+    modules: [],
   };
   let k = open + 1;
   const last = closed ? close : blocks.length;
   while (k < last) {
     const b = blocks[k]!;
+    if (b.type === 'containerStart' && b.containerName === 'module' && b.module && !b.module.nested) {
+      // A module (#1062): its slots are its own, named `<module>.<slot>`
+      // by the parser; read inside it.
+      const e = endMarker(blocks, k);
+      const endBlock = blocks[e]!;
+      out.modules.push({ name: b.module.name, start: abs(b.sourceStart), end: abs(endBlock.sourceEnd), closerStart: abs(endBlock.sourceStart) });
+      k++;
+      continue;
+    }
     if (b.type === 'containerStart') {
       const e = endMarker(blocks, k);
       const endBlock = blocks[e]!;
@@ -149,10 +163,13 @@ export function siteCaret(markdown: string, site: SlotSite): number {
 /** An empty `:::frame{slot}` fence for `slot`, written at the end of the
  *  page (before its closing fence), and where the caret goes in it. */
 export function emptyFrameInsertion(markdown: string, page: PageSites, slot: string): { at: number; insert: string; caret: number } {
-  const at = page.closerStart;
+  // A frame of a module (#1062): inside its `:::module`, by the module's
+  // own slot name.
+  const module = page.modules.find((m) => slot.startsWith(`${m.name}.`));
+  const at = module ? module.closerStart : page.closerStart;
   const before = markdown.slice(0, at);
-  const lead = before.endsWith('\n\n') || at === page.openerEnd + 1 ? '' : before.endsWith('\n') ? '\n' : '\n\n';
-  const open = `:::frame{slot="${slot}"}\n`;
+  const lead = before.endsWith('\n\n') || (!module && at === page.openerEnd + 1) ? '' : before.endsWith('\n') ? '\n' : '\n\n';
+  const open = `:::frame{slot="${module ? slot.slice(module.name.length + 1) : slot}"}\n`;
   const insert = `${lead}${open}\n:::\n`;
   return { at, insert, caret: at + lead.length + open.length };
 }

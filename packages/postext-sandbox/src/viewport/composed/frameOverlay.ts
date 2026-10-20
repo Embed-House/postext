@@ -48,7 +48,7 @@ export interface FrameMark {
 export function frameMarksFor(doc: Pick<VDTDocument, 'config'>, page: VDTPage, opts: FrameMarksOptions): FrameMark[] {
   const composed = page.composed;
   if (!composed) return [];
-  const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, composed.template);
+  const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, composed.template, composed.modules ? { modules: composed.modules } : {});
   const active = opts.mode === 'content' && opts.markdown !== null && opts.caret !== null ? frameAtCaret(opts.markdown, page, opts.caret) : null;
   // The caret's chain: its slot's frame and the frames its text goes on in.
   const activeHead = active ? chainHeadOf(template, active.name) : null;

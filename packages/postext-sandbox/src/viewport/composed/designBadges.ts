@@ -48,7 +48,7 @@ export function designBadgesFor(
 ): DesignBadge[] {
   const c = page.composed;
   if (!c) return [];
-  const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, c.template, c.variant ? { parity: c.variant } : {});
+  const template = resolvePageTemplate(doc.config as unknown as PageTemplateSource, c.template, { ...(c.variant ? { parity: c.variant } : {}), ...(c.modules ? { modules: c.modules } : {}) });
   if (!template) return [];
   const dpi = doc.config.page?.dpi ?? 300;
   const pxPerMm = dpi / 25.4;
