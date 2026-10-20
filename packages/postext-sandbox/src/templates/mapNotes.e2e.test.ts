@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildDocument, createMeasurementCache, type LabelStyle, type PostextConfig, type Resource, type VDTDocument } from 'postext';
+import { buildDocument, createMeasurementCache, type DesignConnectorElement, type LabelStyle, type PostextConfig, type Resource, type VDTDocument } from 'postext';
 import { applyTextChanges } from '../book/textChanges';
 import { setLabelLeader } from '../editor/labelAttrs';
 import { labelsInChapters } from '../panels/resources/figureLabels';
@@ -7,6 +7,8 @@ import { applyMarks, marksOf, withLabelAway, withLabelFields, withLeader, withPo
 import { withLeaderLook } from '../sidebar/sections/LabelStylesSection';
 import { frameAnchorsOnPage, labelsOnPage } from '../viewport/composed/labelAnchorGeometry';
 import { pointersOf, setPointer } from './pointerEdits';
+import { connectorHandles } from './connectorHandles';
+import { updateConnectorEnd } from './connectorEdits';
 import { MAP_NOTES_CONFIG, MAP_NOTES_MARKDOWN, MAP_NOTES_RESOURCES } from './mapNotes.fixture';
 
 // #1064, done when: a "parts of a map" page with its pointers and its key
@@ -91,6 +93,14 @@ describe('a parts-of-a-map page made with the Sandbox\'s edits (#1064)', () => {
       const want = points.find((p) => p.anchorId === anchor)!.point;
       // The line ends on the anchor's point: where the Sandbox draws it.
       expect(Math.hypot(end.x! - want.x, end.y! - want.y), id).toBeLessThan(0.5);
+      // The connector card's handle for that end stands on the same point.
+      const el = templates[0]!.decoration!.elements.find((e) => e.id === id) as DesignConnectorElement;
+      const frames = new Map(page.composed!.frames.map((f) => [f.name, f.rect]));
+      const handle = connectorHandles(el, { frames, anchorPoint: (frame, at) => points.find((p) => p.frame === frame && p.anchorId === at)?.point }).find((h) => h.end === 0)!;
+      expect(Math.hypot(handle.x - want.x, handle.y - want.y), id).toBeLessThan(0.01);
+      // Without the anchor (the card's «None: a side of the box») it is on the frame's side.
+      const bare = connectorHandles(updateConnectorEnd(el, 0, { anchor: undefined }), { frames }).find((h) => h.end === 0)!;
+      expect(Math.hypot(bare.x - want.x, bare.y - want.y), id).toBeGreaterThan(1);
     }
     const labels = labelsOnPage(doc, pageIndex);
     const byAnchor = (id: string) => labels.find((l) => l.anchorId === id)!;

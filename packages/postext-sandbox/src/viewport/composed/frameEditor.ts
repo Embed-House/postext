@@ -259,7 +259,14 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     if (!found || !c) return;
     const g = geometry();
     const frames = new Map(c.frames.map((f) => [f.name, f.rect]));
-    const handles = connectorHandles(found.el, { frames, ...(g ? { groups: g.template.groups } : {}) }, (end) => (end.gap ? mmToPx(dimensionToMm(end.gap), dpi()) : 0));
+    // An end at a picture's anchor (#1064) is drawn at the anchor's point,
+    // read on the sheet and taken into the flow frame the marks are drawn in.
+    const anchors = anchorsHere();
+    const anchorPoint = (frame: string, anchor: string) => {
+      const a = anchors.find((p) => p.frame === frame && p.anchorId === anchor);
+      return a ? sheetToFlow(page(), a.point.x, a.point.y) : undefined;
+    };
+    const handles = connectorHandles(found.el, { frames, anchorPoint, ...(g ? { groups: g.template.groups } : {}) }, (end) => (end.gap ? mmToPx(dimensionToMm(end.gap), dpi()) : 0));
     if (found.focus.phase) {
       for (const h of handles) {
         const r = frames.get(h.name);

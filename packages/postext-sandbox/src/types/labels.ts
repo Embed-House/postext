@@ -3254,6 +3254,9 @@ export interface SandboxLabels {
   pointersRemove: string;
   pointersNoAnchors: string;
   pointersCanvasHint: string;
+  connectorAnchor: string;
+  connectorAnchorTooltip: string;
+  connectorAnchorNone: string;
   markStyleBandColor: string;
   markStyleColorTooltip: string;
   markStylePaddingXTooltip: string;

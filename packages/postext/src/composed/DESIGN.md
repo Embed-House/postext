@@ -2743,6 +2743,12 @@ symbols, edited without writing JSON.
   (§12.23); pointers are written on the page's template (every page it lays draws them; a page whose picture
   lacks the anchor gets `labelAnchorUnknown`), never on a variant; an inherited pointer is edited on the child
   under its id and removed by hiding it (`{ id, remove: true }`). The grip is not offered on a turned frame.
+- **Connector card (U10's, #1063).** Each end has «Anchor of the picture»: the anchors of the picture the
+  end's frame holds on the pages laid with the template (an anchor the pages lack is kept and named as such),
+  or «None: a side of the box»; with an anchor the point-along-the-side field is hidden (the engine does not
+  read `at` then). The canvas handle of such an end is drawn at the anchor's point (`connectorHandles`
+  takes an `anchorPoint` reader; the frame editor gives it the page's anchors taken into the flow frame),
+  where the engine ends the line. Instances (`#card[2]`) and groups offer no anchors.
 - **Label style editor.** Plate group: outline (`border`, starting as a 0.5 pt line in the text colour),
   corner radius. New «Lines and key» group: `align` (as the anchor places it / start / centre / end) and
   `kind: 'legend'`. New «Leader» group: on (`leader: {}`), colour (shown as the text's while unset), width,

@@ -30,6 +30,10 @@ export interface ConnectorHandleBoxes {
   frames: ReadonlyMap<string, ConnectorRect>;
   /** The template's groups and the frames each holds. */
   groups?: readonly { name: string; frames: readonly string[] }[];
+  /** The point of anchor `anchor` of the picture frame `frame` holds (#1064,
+   *  `ConnectorEnd.anchor`), in the same frame as the boxes; an end that
+   *  names an anchor is drawn there, as the engine ends the line there. */
+  anchorPoint?: (frame: string, anchor: string) => { x: number; y: number } | undefined;
 }
 
 function union(rects: readonly ConnectorRect[]): ConnectorRect | undefined {
@@ -112,7 +116,8 @@ export function connectorHandles(el: Pick<DesignConnectorElement, 'from' | 'to' 
   }
   for (const t of tos) {
     const side = physical(t.end.side) ?? (fromBox ? facingSide(t.box, fromBox.box) : 'top');
-    out.push({ end: t.index, name: t.name, side, ...sidePoint(t.box, side, t.end, gapPx(t.end)) });
+    const at = t.end.anchor ? boxes.anchorPoint?.(t.name, t.end.anchor) : undefined;
+    out.push({ end: t.index, name: t.name, side, ...(at ?? sidePoint(t.box, side, t.end, gapPx(t.end))) });
   }
   return out;
 }
