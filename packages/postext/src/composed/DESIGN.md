@@ -1646,7 +1646,7 @@ interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
 Canvas (`Path2D`-free, plain `moveTo/lineTo/bezierCurveTo`), PDF (`m l c h f/S/B`, dash `d`), HTML/EPUB
 (inline `<svg>` positioned like a rule), tagged PDF (Layout artifact), preflight (ink colours),
 contrast (ignored: not text), part palettes (`partPalette.ts` recolours `fill`/`stroke`/markers like a
-rule's colour). The part of C5 that lands first adds it; C8 and C9 reuse it.
+rule's colour). It landed with C4 (#1055, §12.13) ahead of C5; C5, C8 and C9 reuse it.
 
 `VDTDesignBoxStyle` gains `borderRadiiPx?: [tl, tr, br, bl]` and `borderSides?: { top, right, bottom,
 left: { color, widthPx } | null }` (C8); a box with neither paints as today.
@@ -1922,3 +1922,52 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   content warning for an icon naming an unknown resource; single ink on the canvas for SVG symbols (the
   PDF recolours them, as every SVG it embeds); turning back a picture symbol in the HTML of a mirrored page is unchecked. Sandbox (U11),
   docs (D3) and the skill have their own issues.
+
+### 12.14 What C4 built (#1055)
+
+- **The vector block.** `VDTDesignPathBlock`, `VDTPathCommand`, `VDTPathStroke`, `VDTPathMarker` in
+  `vdt.ts` as drafted (§12.1), a fifth member of `VDTDesignBlock`. Shared helpers in
+  `design/pathBlock.ts` (exported): `pathMarkerOutline` (a dot is a circle `sizePx` across; an arrow a
+  triangle whose tip is the point, `sizePx` long along `angle`, its base 0.7 × `sizePx` wide),
+  `pathSvgData` / `markerSvgData`, `quadToCubic`, `pathInkBox` (points and control points grown by half
+  the stroke, plus markers: for hit tests and clips, not a tight bound), `offsetPathBlock` /
+  `translatedPathBlock`, `pathBlockColors`, `recolorPathBlock`, `pathHit`.
+- **Painters.** Canvas `renderPathBlock` (moveTo/lineTo/bezierCurveTo/quadraticCurveTo, `fill(rule)`,
+  then `stroke` with width, `setLineDash`, cap, join; markers filled on top). HTML: an inline
+  `<svg aria-hidden="true">` placed on `bbox` with `overflow:visible` (a mitre past the box still
+  shows), the path in the box's own coordinates; fixed-layout EPUB takes the same markup. PDF
+  (`pdf-backend/pathBlock.ts`): `m l c h`, a quadratic as its cubic, `f`/`f*`, `S`, `B`/`B*`, `w`, `J`,
+  `j`, `d` (scaled to points), alpha through the shared ExtGState; a dot is four cubics, an arrow a
+  triangle. Tagged PDF: the slot's artifact like a rule (a Layout artifact on decoration).
+- **Other consumers.** `offsetDesignBlock` moves the outline and markers with the box (so spreads'
+  `splitSpreadDecoration`, callout overlays and `movedCopies` follow); so does the Sandbox's float shift
+  (`HtmlPreview/pageGeometry.ts`, the one other hand-written mover). Preflight: the stroke is a rule
+  (`thinRule`, coverage), the fill and the markers are ink (coverage, `nearTrim` for a fill). Part
+  palettes (`recolorFrame`, a box frame's overlay): the fill as the frame's fill; stroke and markers as
+  its border when the path is filled (a shape), as its rules otherwise (a line). The source map answers
+  on the ink only (`pathHit`: fill by its rule, stroke within half its width or 2 px, markers), so the
+  empty box of an elbow never takes a click; under a frame it never wins, as rules. Contrast: ignored.
+  No `never`-checked switch over design kinds exists; the three painters' final `else` were the only
+  compile errors, every other consumer was found by search.
+- **Side points.** `ElementAnchor.at` and `ElementSizeTo.edge: 'center'` in `types.ts`; `SidePosition`
+  moved out of the draft. Resolution in `layoutDesignSlot` (`alongSide`), so composed decoration,
+  running heads, heading and part designs and box designs read it alike. Decisions the design left open:
+  - Along the side the element is **centred on the point** (pin `middle`) for every `at`, `'start'` and
+    `'end'` included; across the side the edge keeps its pin (`below` hangs under the foot, `bottom`
+    stands inside on it). A vertical rule's thickness so straddles a frame's middle with no offset.
+    `'bottom'` + `at: 'start'` is therefore centred on the corner, not `bottom-left`.
+  - `at` applies to an anchor on another slot element as well as on a frame or group (`'#name'`);
+    ignored on `container`, `page`, `bleed`, `outer` and `center`.
+  - The element edges read as their side: `below`/`above`/`align-top`/`align-bottom` horizontal,
+    `right-of`/`left-of`/`align-left`/`align-right` vertical; corners and `-start`/`-end` forms as
+    theirs (logical edges are made physical first). A horizontal side starts on the right when the slot
+    starts there (`startRight`: right-to-left and vertical sheets); a vertical side always at its top.
+  - A number is held in 0…1; a word other than the three is ignored.
+- **Validation.** `collectConfigWarnings` walks every design slot (`configDesignSlots`):
+  `unknownConfigValue` at `<slot>.elements[i].placement.anchor.at` (a bad word: `used: ''`, with a
+  suggestion; a number outside 0…1: `used` the held value) and at `…placement.size.<axis>.edge`
+  (`used: 'fill'`).
+- **Not done.** Frames' own placements (`composed/geometry.ts` `anchorOn`) do not read `at`: the design
+  names design slots only. No path *element* yet: C5 (connectors) and C9 (path elements) produce the
+  block; `applyPaletteOverrides` and `primitiveToBlock` gain their path branch with them. Docs (D3) and
+  the Sandbox fields for `at` and `'center'` belong to their own issues.
