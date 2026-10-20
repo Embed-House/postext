@@ -285,6 +285,9 @@ importers:
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.70.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
+      harfbuzzjs:
+        specifier: 1.6.2
+        version: 1.6.2
       puppeteer-core:
         specifier: ^25.12.0
         version: 25.12.0
@@ -297,6 +300,9 @@ importers:
       vitest:
         specifier: ^5.0.0
         version: 5.0.0(@types/node@26.5.0)(msw@2.13.0(@types/node@26.5.0)(typescript@6.0.3))(vite@8.0.6(@types/node@26.5.0)(jiti@2.7.0)(yaml@2.9.0))
+      wawoff2:
+        specifier: ^2.0.1
+        version: 2.0.1(patch_hash=4464a351270771a5804bde96859b403462c3a9ec2b1fcff9a200cb7c3fda6e0d)
 
   packages/postext:
     dependencies:
