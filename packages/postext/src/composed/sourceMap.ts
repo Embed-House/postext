@@ -488,11 +488,12 @@ const resolvedTemplates = new WeakMap<VDTDocument, Map<string, ReturnType<typeof
 function templateOf(doc: VDTDocument, page: VDTPage): ReturnType<typeof resolvePageTemplate> {
   const composed = page.composed!;
   const parity = (page.index + (doc.pageIndexOffset ?? 0)) % 2 === 0 ? 'recto' : 'verso';
-  const key = `${composed.template}|${parity}`;
+  const modules = composed.modules ?? [];
+  const key = `${composed.template}|${parity}|${modules.map((m) => `${m.name}\u0001${m.template}`).join('\u0000')}`;
   let cache = resolvedTemplates.get(doc);
   if (!cache) { cache = new Map(); resolvedTemplates.set(doc, cache); }
   if (!cache.has(key)) {
-    cache.set(key, resolvePageTemplate({ pageTemplates: doc.config.pageTemplates, calloutStyles: doc.config.calloutStyles }, composed.template, { parity }));
+    cache.set(key, resolvePageTemplate({ pageTemplates: doc.config.pageTemplates, calloutStyles: doc.config.calloutStyles }, composed.template, { parity, ...(modules.length > 0 ? { modules } : {}) }));
   }
   return cache.get(key);
 }

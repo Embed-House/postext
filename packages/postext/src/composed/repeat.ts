@@ -197,9 +197,26 @@ export function expandRepeats(template: ResolvedPageTemplate, items: ReadonlyMap
   const groups = template.groups.map((g): ResolvedFrameGroup => {
     const cells = instancesOf.get(g.name);
     if (!cells) {
-      // A frame of a set listed in another group was left out of it by
-      // validation; nothing else changes.
-      return g;
+      // A modules group (#1062) lists the frames of a grid inside one of
+      // its modules: their instances instead, cell after cell. (In any
+      // other group, a frame of a set was left out by validation.)
+      if (!g.modules) return g;
+      const swap = (list: readonly string[]): string[] => {
+        const out: string[] = [];
+        const done = new Set<string>();
+        for (const n of list) {
+          const grid = gridOf.get(n);
+          if (!grid) {
+            out.push(n);
+            continue;
+          }
+          if (done.has(grid.name)) continue;
+          done.add(grid.name);
+          for (const cell of instancesOf.get(grid.name) ?? []) out.push(...cell.frames.map((f) => f.name));
+        }
+        return out;
+      };
+      return { ...g, frames: swap(g.frames), ...(g.items ? { items: g.items.map((c) => ({ ...c, frames: swap(c.frames) })) } : {}) };
     }
     return { ...g, frames: cells.flatMap((c) => c.frames.map((f) => f.name)), items: cells.map((c) => ({ item: c.item, frames: c.frames.map((f) => f.name) })) };
   });

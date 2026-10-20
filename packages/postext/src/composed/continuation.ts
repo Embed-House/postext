@@ -24,7 +24,7 @@ import type { CalloutCut } from '../pipeline/frameLayout';
 import type { PlannedCallout } from '../pipeline/calloutLayout';
 import { nextFrameOf } from './geometry';
 import { continueInPage, continueInTemplate, repeatInstance } from './templates';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
+import type { ComposedModuleUse, ResolvedFrame, ResolvedPageTemplate } from './types';
 
 /** How many pages, one after another, the content of one composed page may
  *  go on to: the generation of added pages after which what still does not
@@ -77,6 +77,9 @@ export interface ComposedContinuation {
    *  laid there, or its own id when none was). It goes on in the instance
    *  of its name. */
   whole?: true;
+  /** A frame of a module (#1062): the module it goes on in, laid on the
+   *  receiving page in that page's modules group. */
+  module?: ComposedModuleUse;
   /** The story comes from another chapter of the book (#943): `chapter` is
    *  the one whose file its text is in, `from` the one whose page sent it
    *  on, positions in the book. `fromFrameId` is a frame id of that page,

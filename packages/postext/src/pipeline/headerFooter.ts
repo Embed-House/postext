@@ -1370,7 +1370,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
     // A composed page (#855) takes its template's running heads: a slot of
     // its own, `false` for none, unset for the section's.
     const template = page.composed
-      ? resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, page.composed.template, { parity: recto ? 'recto' : 'verso' })
+      ? resolvePageTemplate({ pageTemplates: resolved.pageTemplates, calloutStyles: resolved.calloutStyles }, page.composed.template, { parity: recto ? 'recto' : 'verso', ...(page.composed.modules ? { modules: page.composed.modules } : {}) })
       : undefined;
     const pageAttrs = page.composed && Object.keys(page.composed.attrs).length > 0 ? page.composed.attrs : undefined;
     const templateSlot = (own: DesignSlot | false | undefined, kind: 'header' | 'footer', inherited: ResolvedDesignSlot): ResolvedDesignSlot =>
@@ -1810,6 +1810,15 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
             rules.push({ ...rule, bbox: { ...b, x: b.x + dx }, direction: b.height > b.width ? 'vertical' : 'horizontal' });
           }
         }
+        // A module's box (#1062): what its decoration anchored to its
+        // `'container'` reads (`#<name>`). A module laid elsewhere has none
+        // here, and its decoration is not drawn.
+        for (const m of p.composed?.modules ?? []) {
+          if (!m.rect || named[m.name] !== undefined) continue;
+          const r = flowRectToPage(p, m.rect);
+          named[m.name] = { ...r, x: r.x + dx };
+          declared[m.name] = { ...r, x: r.x + dx };
+        }
       };
       let container: { x: number; y: number; width: number; height: number };
       let slotFrames: { page: typeof trimBox; bleed: typeof trimBox } = physicalFrames;
@@ -1853,11 +1862,13 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       };
       // An element anchored to an instance of a repeated frame (#1061) the
       // page does not have (`#card[5]` on a page of three cards) is not
-      // drawn, as one anchored to a frame that takes no room.
+      // drawn, as one anchored to a frame that takes no room. So is one
+      // anchored to a module (#1062), or a frame of it, that went on whole.
+      const ofModule = new Set((template.modules ?? []).flatMap((m) => [m.name, ...m.frames, ...m.groups]));
       for (const el of template.decoration.elements) {
         const to = (el as { placement?: { anchor?: { to?: unknown } } }).placement?.anchor?.to;
         const t = typeof to === 'string' && to.startsWith('#') ? to.slice(1) : undefined;
-        if (t !== undefined && named[t] === undefined && repeatInstance(t) !== undefined) collapsed.add(t);
+        if (t !== undefined && named[t] === undefined && (repeatInstance(t) !== undefined || ofModule.has(t))) collapsed.add(t);
       }
       const slot = resolveDesignSlot(template.decoration, 'header');
       const connectorDropped: { elementId: string; targetId: string }[] = [];
