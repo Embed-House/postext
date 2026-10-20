@@ -18,6 +18,7 @@ import {
   type VDTDesignRuleBlock,
   type VDTDesignBoxBlock,
   type VDTDesignImageBlock,
+  type VDTDesignPathBlock,
   type VDTDesignSlotKind,
   type VDTColumn,
   type VDTFrame,
@@ -33,6 +34,7 @@ import { dimensionToPx } from '../units';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
 import { repeatInstance, resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
+import { pathInkBox } from '../design/pathBlock';
 import { frameOfBlock, framePageRect } from '../composed/paint';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
@@ -46,6 +48,7 @@ import {
   type ResolvedRulePrimitive,
   type ResolvedBoxPrimitive,
   type ResolvedImagePrimitive,
+  type ResolvedPathPrimitive,
 } from '../design/layout';
 import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
 import { plainDesignText } from '../design/richText';
@@ -114,7 +117,22 @@ export function primitiveToBlock(prim: ResolvedPrimitive): VDTDesignBlock {
   if (prim.kind === 'text') return textPrimitiveToBlock(prim);
   if (prim.kind === 'rule') return rulePrimitiveToBlock(prim);
   if (prim.kind === 'image') return imagePrimitiveToBlock(prim);
+  if (prim.kind === 'path') return pathPrimitiveToBlock(prim);
   return boxPrimitiveToBlock(prim);
+}
+
+/** A path element's outline as the vector block (#1060): the block's box
+ *  is the ink's (`pathInkBox`), for hit tests and clips. */
+function pathPrimitiveToBlock(prim: ResolvedPathPrimitive): VDTDesignPathBlock {
+  const block: VDTDesignPathBlock = {
+    kind: 'path',
+    bbox: createBoundingBox(0, 0, 0, 0),
+    subpaths: prim.subpaths.map((sp) => sp.map((c) => ({ ...c }))),
+    ...(prim.fill ? { fill: prim.fill } : {}),
+    ...(prim.stroke ? { stroke: { ...prim.stroke, ...(prim.stroke.dash ? { dash: [...prim.stroke.dash] } : {}) } } : {}),
+  };
+  block.bbox = pathInkBox(block);
+  return block;
 }
 
 function imagePrimitiveToBlock(prim: ResolvedImagePrimitive): VDTDesignImageBlock {

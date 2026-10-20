@@ -5,7 +5,7 @@
  * into `types.ts`, `composed/types.ts` or `vdt.ts` and deletes it here. When
  * the file is empty the last issue removes it.
  */
-import type { ColorValue, Dimension, ElementPlacement, PageParity, PageRoleFilter, SidePosition } from '../types';
+import type { ColorValue, Dimension, PageParity, PageRoleFilter, SidePosition } from '../types';
 
 // §12.1, §12.8 (C8) ---------------------------------------------------------
 
@@ -100,23 +100,4 @@ export interface FrameGroupRound2 {
   modules?: boolean;
   /** C11: where whole modules that do not fit go on. */
   overflow?: { continueIn?: string };
-}
-
-// §12.8 (C9) ----------------------------------------------------------------
-
-export interface DesignPathElement {
-  kind: 'path';
-  id: string;
-  parity?: PageParity;
-  pages?: PageRoleFilter;
-  pin?: boolean;
-  reserve?: boolean;
-  placement: ElementPlacement;
-  d: string;
-  viewBox?: [number, number];
-  fill?: ColorValue;
-  stroke?: ColorValue;
-  width?: Dimension;
-  dash?: Dimension[];
-  preserveAspectRatio?: 'none' | 'meet';
 }

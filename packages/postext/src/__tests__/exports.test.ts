@@ -559,6 +559,8 @@ describe("package exports", () => {
       "translatedPathBlock",
       "pathBlockColors",
       "recolorPathBlock",
+      "parseSvgPath",
+      "arcToCubics",
       "classifyPages",
       "migrateLegacyHeaderFooterConfig",
       "isLegacyHeaderFooterSlot",

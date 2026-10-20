@@ -1,7 +1,7 @@
 'use client';
 
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import type { AnchorEdge, Dimension, ElementPlacement, HAlign, PageRoleFilter } from 'postext';
+import type { AnchorEdge, DesignElement, Dimension, ElementPlacement, HAlign, PageRoleFilter } from 'postext';
 import { DimensionInput, SelectInput } from '../../../controls';
 import {
   type SlotKind,
@@ -25,7 +25,7 @@ const ZERO: Dimension = { value: 0, unit: 'pt' };
 
 export interface Sibling {
   id: string;
-  kind: 'text' | 'rule' | 'box' | 'image';
+  kind: DesignElement['kind'];
   index: number;
 }
 

@@ -129,6 +129,8 @@ export type { DesignPlaceholderContext, DesignContextKind, HeadingPlaceholderInf
 export { layoutDesignSlot } from './design/layout';
 export { pathMarkerOutline, pathSvgData, markerSvgData, quadToCubic, pathInkBox, pathHit, offsetPathBlock, translatedPathBlock, pathBlockColors, recolorPathBlock } from './design/pathBlock';
 export type { PathMarkerOutline } from './design/pathBlock';
+export { parseSvgPath, arcToCubics } from './design/svgPath';
+export type { SvgPathParse } from './design/svgPath';
 export type { DesignSlotLayout, LayoutContext, LayoutIssue, ResolvedPrimitive, ResolvedTextPrimitive, ResolvedRulePrimitive, ResolvedBoxPrimitive, ResolvedImagePrimitive, WrappedLine, DesignFrames } from './design/layout';
 export { classifyPages } from './pipeline/pageRoles';
 export { migrateLegacyHeaderFooterConfig, isLegacyHeaderFooterSlot, resolveDesignSlot, stripDesignSlotDefaults, defaultTextOverflow, DEFAULT_BOX_ELEMENT } from './defaults/headerFooter';
@@ -159,6 +161,8 @@ export type {
   ResolvedTocGroupsConfig,
   DesignImageElement,
   ResolvedDesignImageElement,
+  DesignPathElement,
+  ResolvedDesignPathElement,
   HeadingCounters,
   ResourceNumberEntry,
   DocumentMetadata,

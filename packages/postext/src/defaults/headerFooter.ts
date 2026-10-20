@@ -4,6 +4,7 @@ import type {
   DesignBoxElement,
   DesignElement,
   DesignImageElement,
+  DesignPathElement,
   DesignRuleElement,
   DesignSlot,
   DesignTextElement,
@@ -13,6 +14,7 @@ import type {
   ResolvedDesignBoxElement,
   ResolvedDesignElement,
   ResolvedDesignImageElement,
+  ResolvedDesignPathElement,
   ResolvedDesignRuleElement,
   ResolvedDesignSlot,
   ResolvedDesignTextElement,
@@ -473,10 +475,34 @@ function resolveImageElement(el: DesignImageElement, idx: number): ResolvedDesig
   };
 }
 
+function resolvePathElement(el: DesignPathElement, idx: number): ResolvedDesignPathElement {
+  return {
+    kind: 'path',
+    id: el.id ?? `path-${idx + 1}`,
+    parity: el.parity ?? 'all',
+    pages: el.pages ?? 'all',
+    placement: {
+      anchor: el.placement.anchor,
+      offset: el.placement.offset ?? {},
+      size: el.placement.size ?? {},
+    },
+    d: el.d,
+    ...(el.viewBox !== undefined ? { viewBox: el.viewBox } : {}),
+    ...(el.fill ? { fill: el.fill } : {}),
+    ...(el.stroke ? { stroke: el.stroke } : {}),
+    ...(el.width ? { width: el.width } : {}),
+    ...(el.dash ? { dash: el.dash } : {}),
+    ...(el.preserveAspectRatio === 'meet' ? { preserveAspectRatio: 'meet' as const } : {}),
+    ...(el.reserve === false ? { reserve: false } : {}),
+    ...(el.pin ? { pin: true } : {}),
+  };
+}
+
 function resolveElement(el: DesignElement, idx: number, kind: DesignSlotKind): ResolvedDesignElement {
   if (el.kind === 'text') return resolveTextElement(el, idx, kind);
   if (el.kind === 'rule') return resolveRuleElement(el, idx);
   if (el.kind === 'image') return resolveImageElement(el, idx);
+  if (el.kind === 'path') return resolvePathElement(el, idx);
   return resolveBoxElement(el, idx);
 }
 

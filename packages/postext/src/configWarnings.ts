@@ -10,6 +10,7 @@
 
 import type {
   CalloutLabelIconConfig,
+  DesignPathElement,
   CanvasViewerConfig,
   ColumnBalancingConfig,
   HeadingLevelConfig,
@@ -57,6 +58,7 @@ import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { resolveContentInConfigCheck } from './defaults/checks';
 import { stripPlaceholders } from './pipeline/placeholders';
 import { configDesignSlots } from './design/slots';
+import { parseSvgPath, pathViewBox } from './design/svgPath';
 import { metadataText } from './frontmatter';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
@@ -116,7 +118,9 @@ function percentText(n: number): string {
  * - the design texts that hold the book's content instead of placeholders
  *   (`contentInConfig`, #849, tuned by `checks.contentInConfig`);
  * - a design element's point along a side (`anchor.at`) or size edge
- *   (`size.width.edge`…) outside its choices (`unknownConfigValue`, #1055).
+ *   (`size.width.edge`…) outside its choices (`unknownConfigValue`, #1055);
+ * - a path element's keys, path data, `viewBox` and
+ *   `preserveAspectRatio` (#1060).
  * Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
@@ -127,7 +131,55 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config), ...collectLabelIconWarnings(config),
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
+    ...collectDesignPathWarnings(config),
   ];
+}
+
+const DESIGN_PATH_KEYS = {
+  kind: true, id: true, parity: true, pages: true, pin: true, reserve: true, placement: true,
+  d: true, viewBox: true, fill: true, stroke: true, width: true, dash: true, preserveAspectRatio: true,
+} satisfies Record<keyof DesignPathElement, true>;
+
+/** The longest piece of bad path data a warning repeats. */
+const PATH_DATA_SAMPLE = 60;
+
+/** The path elements of every design slot (#1060): a key a path element
+ *  does not have (`unknownConfigKey`); path data that cannot be read (its
+ *  first characters in `value`) and a `viewBox` that is no pair of
+ *  positive numbers (`unknownConfigValue`, `used` empty: the element draws
+ *  nothing); a `preserveAspectRatio` other than `none` and `meet`
+ *  (`used: 'none'`). */
+function collectDesignPathWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  const names = Object.keys(DESIGN_PATH_KEYS);
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => {
+      if (!el || typeof el !== 'object' || (el as { kind?: unknown }).kind !== 'path') return;
+      const path = `${slot.path}.elements[${i}]`;
+      for (const key of Object.keys(el)) {
+        if (Object.prototype.hasOwnProperty.call(DESIGN_PATH_KEYS, key)) continue;
+        const suggestion = closestKey(key, names);
+        out.push({ kind: 'unknownConfigKey', path: `${path}.${key}`, value: key, used: '', ...(suggestion ? { suggestion } : {}) });
+      }
+      const e = el as DesignPathElement;
+      const d = e.d as unknown;
+      const parsed = typeof d === 'string' ? parseSvgPath(d) : undefined;
+      if (!parsed?.ok) {
+        const text = typeof d === 'string' ? d : String(d);
+        const sample = text.length > PATH_DATA_SAMPLE ? `${text.slice(0, PATH_DATA_SAMPLE - 1)}…` : text;
+        out.push({ kind: 'unknownConfigValue', path: `${path}.d`, value: sample, used: '' });
+      }
+      if (e.viewBox !== undefined && !pathViewBox(e.viewBox)) {
+        out.push({ kind: 'unknownConfigValue', path: `${path}.viewBox`, value: JSON.stringify(e.viewBox) ?? String(e.viewBox), used: '' });
+      }
+      const par = e.preserveAspectRatio as unknown;
+      if (par !== undefined && par !== 'none' && par !== 'meet') {
+        const suggestion = closestKey(String(par), ['none', 'meet']);
+        out.push({ kind: 'unknownConfigValue', path: `${path}.preserveAspectRatio`, value: String(par), used: 'none', ...(suggestion ? { suggestion } : {}) });
+      }
+    });
+  }
+  return out;
 }
 
 const SIDE_POSITIONS = ['start', 'center', 'end'] as const;

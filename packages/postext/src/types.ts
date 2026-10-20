@@ -6748,7 +6748,47 @@ export interface DesignImageElement {
   focus?: { x: number; y: number };
 }
 
-export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement;
+/** A vector shape a design draws (DESIGN §12.8, #1060): a bar that runs
+ *  into the spine, a ribbon with an arrow head, the chevrons beside a
+ *  running head. `d` is SVG path data (`M L H V C S Q T A Z`, absolute and
+ *  relative) in the units of `viewBox`, which by default is `[1, 1]`: the
+ *  path is written in fractions of the element's own box, so it stretches
+ *  with the box. Placed and sized like a box (`placement.size` widths and
+ *  heights, `'fill'` and `{ to, edge }` included; a side left out fills to
+ *  the container's edge). Path data that cannot be read draws nothing and is
+ *  reported as `unknownConfigValue`. */
+export interface DesignPathElement {
+  kind: 'path';
+  id: string;
+  parity?: PageParity;
+  /** Page roles this element renders on. Default `'all'`. */
+  pages?: PageRoleFilter;
+  /** On a composed page's decoration: anchored to a frame, stay where the
+   *  template puts that frame (see `DesignBoxElement.pin`). */
+  pin?: boolean;
+  /** Heading designs only: whether the element counts toward the height
+   *  the heading reserves. Default `true`. */
+  reserve?: boolean;
+  placement: ElementPlacement;
+  /** SVG path data, in `viewBox` units. */
+  d: string;
+  /** Width and height of the space `d` is written in. Default `[1, 1]`. */
+  viewBox?: [number, number];
+  /** Fill colour. When neither `fill` nor `stroke` is set the shape is
+   *  filled black, as an SVG path is. */
+  fill?: ColorValue;
+  /** Outline colour; absent: no outline. */
+  stroke?: ColorValue;
+  /** Outline width, not scaled with the box. Default `0.5pt`. */
+  width?: Dimension;
+  /** Outline dash pattern (on, off, …), not scaled with the box. */
+  dash?: Dimension[];
+  /** `'none'` (the default) stretches the `viewBox` to the element's box
+   *  on each axis; `'meet'` scales it evenly to fit inside, centred. */
+  preserveAspectRatio?: 'none' | 'meet';
+}
+
+export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement | DesignPathElement;
 
 export interface DesignSlot {
   /** Array order = paint order: first = back, last = front. */
@@ -6793,11 +6833,16 @@ export interface ResolvedDesignImageElement extends Omit<DesignImageElement, 'pa
   parity: PageParity;
 }
 
+export interface ResolvedDesignPathElement extends Omit<DesignPathElement, 'parity'> {
+  parity: PageParity;
+}
+
 export type ResolvedDesignElement =
   | ResolvedDesignTextElement
   | ResolvedDesignRuleElement
   | ResolvedDesignBoxElement
-  | ResolvedDesignImageElement;
+  | ResolvedDesignImageElement
+  | ResolvedDesignPathElement;
 
 export interface ResolvedDesignSlot {
   elements: ResolvedDesignElement[];

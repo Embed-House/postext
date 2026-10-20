@@ -17,6 +17,7 @@ import type {
   ResolvedDesignBoxElement,
   ResolvedDesignElement,
   ResolvedDesignImageElement,
+  ResolvedDesignPathElement,
   ResolvedDesignRuleElement,
   ResolvedDesignSlot,
   ResolvedDesignTextElement,
@@ -27,7 +28,8 @@ import type {
 import { dimensionToPx } from '../units';
 import { resolveTextDots } from '../textDots';
 import { resolveDesignLineHeight } from '../defaults/headerFooter';
-import { createBoundingBox, pictureTraits, type BoundingBox } from '../vdt';
+import { createBoundingBox, pictureTraits, type BoundingBox, type VDTPathCommand, type VDTPathStroke } from '../vdt';
+import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath';
 import { buildFontString } from '../measure';
 import { graphemeCount } from '../measure/graphemes';
 import { joiningScriptIn } from '../measure/joining';
@@ -109,7 +111,7 @@ export interface ResolvedElementBox {
 /** Resolved geometry for a single element in a design slot. */
 export interface ResolvedElementGeometry {
   id: string;
-  kind: 'text' | 'rule' | 'box' | 'image';
+  kind: 'text' | 'rule' | 'box' | 'image' | 'path';
   /** Absolute page-space rectangle (the element's outer box). */
   x: number;
   y: number;
@@ -171,6 +173,16 @@ export interface ResolvedRulePrimitive extends ResolvedElementGeometry {
 export interface ResolvedBoxPrimitive extends ResolvedElementGeometry {
   kind: 'box';
   box: ResolvedElementBox;
+}
+
+/** A path element laid on its box (#1060): the outline in page px. Its
+ *  `x`/`y`/`width`/`height` are the element's box (what other elements
+ *  anchor to and what a heading design reserves), not the ink's. */
+export interface ResolvedPathPrimitive extends ResolvedElementGeometry {
+  kind: 'path';
+  subpaths: VDTPathCommand[][];
+  fill?: string;
+  stroke?: VDTPathStroke;
 }
 
 /** An image element resolved to its resource payload. Only emitted when
@@ -238,7 +250,8 @@ export type ResolvedPrimitive =
   | ResolvedTextPrimitive
   | ResolvedRulePrimitive
   | ResolvedBoxPrimitive
-  | ResolvedImagePrimitive;
+  | ResolvedImagePrimitive
+  | ResolvedPathPrimitive;
 
 export interface DesignSlotLayout {
   /** Container bbox passed in (absolute page coordinates). */
@@ -404,6 +417,12 @@ export function applyPaletteOverrides(el: ResolvedDesignElement, overrides: Reco
       return { ...el, color: overrideColor(el.color, overrides) ?? el.color };
     case 'box':
       return { ...el, style: overrideBoxStyle(el.style, overrides) ?? el.style };
+    case 'path':
+      return {
+        ...el,
+        ...(el.fill ? { fill: overrideColor(el.fill, overrides) } : {}),
+        ...(el.stroke ? { stroke: overrideColor(el.stroke, overrides) } : {}),
+      };
     default:
       return el;
   }
@@ -1280,6 +1299,12 @@ export function layoutDesignSlot(
       }, fillRef, context.dpi);
       resolvedGeo.set(el.id, prim);
       primsByElement.set(given, [prim]);
+    } else if (el.kind === 'path') {
+      // Data that cannot be read draws nothing; the box still stands for
+      // the elements anchored to it.
+      const prim = layoutPathElement(el, { anchorX, anchorY, pinX: anchor.pinX, pinY: anchor.pinY }, fillRef, context.dpi);
+      resolvedGeo.set(el.id, prim);
+      if (prim.subpaths.length > 0) primsByElement.set(given, [prim]);
     } else if (el.kind === 'image') {
       const prim = layoutImageElement(el, {
         anchorX,
@@ -2174,6 +2199,58 @@ function altTextOf(el: ResolvedDesignImageElement, resource: Resource | undefine
   if (el.decorative) return {};
   const altText = designImageAltText(resource);
   return altText ? { altText } : {};
+}
+
+/** The black of a path that sets neither a fill nor an outline (an SVG
+ *  path's default fill). */
+const DEFAULT_PATH_FILL = '#000000';
+/** An outline's width when the element gives none: 0.5 pt, a rule's. */
+const DEFAULT_PATH_STROKE_WIDTH: Dimension = { value: 0.5, unit: 'pt' };
+
+/** A path element (#1060): its box sized and pinned as a box's, its
+ *  `viewBox` stretched to the box (`'none'`) or fitted inside it, centred
+ *  (`'meet'`), the outline in page px. Path data that cannot be read, or a
+ *  `viewBox` with no area, gives no outline. */
+function layoutPathElement(
+  el: ResolvedDesignPathElement,
+  pin: AnchorResult,
+  container: AnchorReference,
+  dpi: number,
+): ResolvedPathPrimitive {
+  const widthSize = resolveFixedSize(el.placement.size?.width, dpi);
+  const heightSize = resolveFixedSize(el.placement.size?.height, dpi);
+  const width = typeof widthSize === 'number' ? widthSize : Math.max(0, fillToContainerEdge(pin.anchorX, pin.pinX, container));
+  const height = typeof heightSize === 'number' ? heightSize : Math.max(0, fillToContainerEdgeY(pin.anchorY, pin.pinY, container));
+  const x = edgeXFromPin(pin.anchorX, pin.pinX, width);
+  const y = edgeYFromPin(pin.anchorY, pin.pinY, height);
+  const prim: ResolvedPathPrimitive = { kind: 'path', id: el.id, x, y, width, height, subpaths: [] };
+  const vb = pathViewBox(el.viewBox);
+  const parsed = typeof el.d === 'string' ? parseSvgPathCached(el.d) : undefined;
+  if (!vb || !parsed?.ok) return prim;
+  let sx = width / vb[0];
+  let sy = height / vb[1];
+  let ox = x;
+  let oy = y;
+  if (el.preserveAspectRatio === 'meet') {
+    const k = Math.min(sx, sy);
+    ox += (width - vb[0] * k) / 2;
+    oy += (height - vb[1] * k) / 2;
+    sx = k;
+    sy = k;
+  }
+  prim.subpaths = mapPath(parsed.subpaths, ox, oy, sx, sy);
+  const fill = el.fill?.hex ?? (el.stroke ? undefined : DEFAULT_PATH_FILL);
+  if (fill) prim.fill = fill;
+  if (el.stroke?.hex) {
+    const widthPx = dimPx(el.width ?? DEFAULT_PATH_STROKE_WIDTH, dpi);
+    const dash = (Array.isArray(el.dash) ? el.dash : []).map((d) => Math.max(0, dimPx(d, dpi)));
+    prim.stroke = {
+      color: el.stroke.hex,
+      widthPx: Math.max(0, widthPx),
+      ...(dash.length > 0 && dash.some((v) => v > 0) ? { dash } : {}),
+    };
+  }
+  return prim;
 }
 
 function layoutBoxElement(
