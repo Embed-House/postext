@@ -3038,3 +3038,85 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
 - **Not done.** A frame narrower than its picture needs along the lines still sets the picture in it as
   before (the column bounds the upright height, `UPRIGHT_MIN_PICTURE_SHARE`); no warning for a picture
   that hangs past the box it is anchored in (the overlap checks of C2 see frames, not their anchors).
+
+### 12.34 What S7 built (#1071)
+
+- **Where.** The porting skill only: `template_dedupe.py` runs a fold (new `scripts/template_fold.py`, pure
+  functions over the templates, the measured boxes and the Markdown) after it merges the styles and the grounds
+  and before it merges the templates. No engine change. It needs `regions.json` and templates one per page as
+  `extract` wrote them (else it is skipped and the report says why); `--no-grids` / `--no-modules` turn either off.
+- **Boxes.** Read off the draft as the engine lays it when given (`--laid FRAMES`, written by the new
+  `render.mjs --frames`: every composed page's laid frame boxes in mm), else off `regions.json`. Decision: the laid
+  boxes, not the measured ones, are the reference, because the extract's stack and row groups already move frames
+  off their measured places (on a real textbook 129 of 367 frames by more than 0.3 mm), and the fold must keep the
+  page as the draft lays it.
+- **Grids** (C10, after U12's «Turn into a grid»). Departure from U12: nothing is picked; every set of frames of
+  one look (kind, style, layer, rotate, optional; widths within `--lattice-tol`, 1 mm) is tried, largest first, no
+  frame in two grids. A lattice: tops make rows, starts make columns, full rows but the last, one column gap, one
+  row gap measured as the engine measures rows; one height rule (cards whose own `minHeight`/`maxHeight`/`height`
+  differ while their laid heights differ are no lattice; laid alike, the main frame takes the smallest laid
+  height); no other frame of the same or a higher layer with its centre among the cards (two boxes of one width
+  far apart with others between them are no grid), frames hanging from a card excepted. Members, unlike U12, are
+  found by geometry, not by names: a frame above, below or inside a card (centre over it, within 5 mm), one of
+  each look per card, that every card has and that hangs the same way (offsets within the tolerance). Anchors:
+  `top-left` off the card (above, inside), `below` the card (under it); members as wide as their words and
+  centred over cards of one width become `top` / `bottom` with `width: 'auto'`, the narrowest width as `minWidth`
+  and the widest as `maxWidth`. Cards with no members need `--grid-min` (3) cards. The grid's box is the first
+  row's reach from the first card's start, as wide as the columns, `height: 'fill'`, `rowAlign: 'start'`,
+  anchored as the topmost frame of the first card was (U12's rule). A row or stack group left empty is dropped
+  and what hung from it hangs from the lowest card of the last row (a frame `below` a row of photos). Names:
+  `grid` (`grid-2`), the set `grid-<kind>` (`grid-picture`, `grid-box`), never positional, so the role naming
+  after it leaves them.
+- **Modules** (C11, after U12's «Extract a module»). Departure from U12: the whole page is read, not a picked set,
+  and modules are shared across pages. Units: union of a containment parent (`regions.json`), anchors to another
+  frame or group, a group's members, a connector's ends. The shell: flow frames, `takes` frames, frames in a
+  `next` / `continueIn: '#x'` chain, and every unit holding one of them. The bands: the other units, side by side
+  joined, top to bottom; only the bands below the shell's lowest frame are folded, into one modules group (C11
+  allows one per page, stacked). A page where a frame or group left on it anchors to a band frame is left as it is.
+  Group: from the first band's top-left, as wide as the bands, `height: 'fill'`, anchored as the first band's
+  topmost frame was when that hung from the shell by its top-left (`below` the text), else at the area's
+  top-left; `gap` the median gap between bands; a band further off keeps the difference as its frames' offset
+  (`lead`), so its module carries it. A module: the band's frames anchored inside it as they were, the rest at
+  their laid offset in the module's box (percent sizes and `'fill'` heights fixed); the band's groups; the
+  decoration whose targets are all in the band (iterated, so a border and its size helper go together; never
+  one anchored to the page) plus every element the page paints at a fixed place inside the band's box
+  (re-anchored to the module), so its paint order among the band's own decoration holds (the engine paints a
+  module's decoration after the page's). Frames named `<kind>-<n>` in the module (role names follow), elements
+  `deco-<kind>-<n>` (an element id like `box-1` would be taken for a frame by the role naming). Modules alike
+  (same frames by name, `frame_diff`, `_group_equal` and `element_diff` within `--geom-tol`) are one template,
+  `module-<what it holds>` (`module-box-picture2`). Page: `:::module{template}` blocks, one per band in band order,
+  holding the band's pieces (container, leaf and `{slot}` heading pieces) with their slots renamed, where the
+  first moved piece stood; instance names `<template>[n]` as C11 numbers them. Page references left into a module
+  frame become `#<template>[n].<frame>`. Parity rule found on the way: a module frame outside a group of its own
+  runs the ladder with its whole module as peers (it scales the module's pictures; on the page it scaled only its
+  own), so a box or text frame that stood in no group gets `fit.scaleImages: false` in its module when the module
+  holds pictures.
+- **The rest of dedupe.** Module templates are kept out of the template merge and the shared base;
+  `rewrite_markdown` follows `:::module` blocks (their slots by the module's renames) and nested containers;
+  `rename_in_template` also renames group anchors and grid sets; `rename_module_refs` keeps page references into a
+  module in step with the module's role names. The report gains `grids`, `modules` (with their uses), `after.grids`
+  / `after.modules` and `pages`: per extract template, every frame's old name → the name on the laid page
+  (`grid-picture[3]`, `module-box-picture[1].picture-in-box`).
+- **Checking.** `template_dedupe.py DIR --compare-boxes BEFORE AFTER [--box-tol 0.5]` reads two `--frames` files and
+  `pages`, and lists every frame that moved or is missing; `compare_pages.py --score [FILE]` gives round 1's
+  likeness (grey, blurred 2 px, mean difference, share over 40) per page, and reads `postext images` PNGs too.
+- **A real textbook** (28 pages, round-1 port 27 templates for 28 pages). After the fold: 28 page templates and a
+  `page-base` (unchanged), 23 modules (each used once: no two bands of the book are alike within 3 mm), 6 grids
+  (3 × 1 photos, 3 × 2 figures, a 3 × 1 photo row, a row of three boxes, two boxes with a tab each, 2 × 2 photos).
+  Laid frames: 367 compared, 1 off by more than 0.5 mm (a centred tab set `auto`, 1.55 mm narrower than the
+  measured width); `postext check` warnings the same kinds and counts as before; likeness 6.04 / 2.79 % before,
+  6.05 / 2.79 % after. The shells do not merge: each page's title tab is as wide as its words and drawn into the
+  page's card outline, and the flowing text keeps its measured height, so no two shells are alike.
+- **Not done.** Shells merged across pages (they need the title tab and the card outline to follow the title's
+  width, an engine or extract change); modules side by side (C11 stacks them); per-item looks in a grid (a pill of
+  another colour per card is no member); a lattice with one card off by more than the tolerance (a row of photos
+  pushed 1.1 mm by the draft's own groups); bands above a shell frame and bands tied to the shell by a connector
+  stay on the page. Sandbox, docs (D3/D4) and the release (S8) are other lanes.
+- **Tests.** `tests/test_template_fold.py` on invented pages: a 3 × 2 photo wall with pills (grid, items, reading
+  order, names), tabs as wide as their words (centred `auto` members), a badge among the cards and a card off the
+  lattice (no grid / a grid of the pills only), what hung from a row group, two pages with two bands each (two
+  modules used twice, the group's gap and anchor, the connector and the shape moved, the folio left), a band tied
+  to the flowing text, `:::module` slot renames, `compare_boxes`; `dedupe_dir` end to end (shells merge, modules
+  kept apart, role names in the module and its Markdown, `pages`), with `POSTEXT_REPO` the draft laid out before
+  and after with no frame off by 0.5 mm, with `POSTEXT_CLI` `postext check` without unknown anchors, slots,
+  templates or module warnings.

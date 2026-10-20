@@ -677,9 +677,13 @@ Pick the path per [sources.md](references/sources.md):
   anchors, path elements; a raster ground only for art nothing else draws,
   `--raster-ground` for the round-1 JPEG; a one-page run names its frames by
   role itself, `--name-frames`),
-  `scripts/template_dedupe.py work/regions` (one template per kind
-  of page, `extends` children, merged styles and grounds, frames named by
-  role with their `slot="…"` rewritten in every language), and
+  `scripts/template_dedupe.py work/regions --laid laid.json` (one template per kind
+  of page, `extends` children, merged styles and grounds, frames on a lattice
+  as a repeating grid, the bands under a page's text as modules with
+  `:::module` blocks in the Markdown, frames named by role with their
+  `slot="…"` rewritten in every language; `laid.json` is the draft's frames
+  from `scripts/render.mjs --frames`, and `--compare-boxes` checks the folded
+  pages lay out as before), and
   `scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts` to lay
   the draft out and compare it with the source. `scripts/anchors.py` does a
   single map or diagram (`--page 6 --box x0,y0,x1,y1`) and writes other

@@ -5,6 +5,12 @@
 //   node render.mjs <project | book.postext> [--lang es] [--chapters all|0,2] [--out book.pdf]
 //        [--jpeg out-dir --pages 3,7-9 --dpi 100 --quality 85]
 //        [--png out-dir --dpi 60 --pages 1-8] [--preflight] [--tools DIR | --repo /path/to/postext]
+//        [--frames frames.json]
+//
+// --frames writes every composed page's laid frame boxes in mm
+// ({pages: [{index, template, fence, frames: {name: [x0, y0, x1, y1]}}]}):
+// template_dedupe.py reads a draft's with --laid and compares two with
+// --compare-boxes (the pages before and after it folds grids and modules).
 //
 // --jpeg paints the pages straight from the layout with the engine's own
 // canvas renderer (`renderPageToCanvas` on @napi-rs/canvas), the painter the

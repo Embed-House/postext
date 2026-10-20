@@ -230,15 +230,19 @@ draft.
 ```bash
 python3 scripts/pdf_regions.py extract source.pdf --pages 4-28 --out work/regions \
     --lang es --fonts my-book/fonts [--font-map map.json] --overlay
-python3 scripts/template_dedupe.py work/regions          # kinds of page, styles, grounds
+python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts   # the draft as extracted
+node scripts/render.mjs work/regions --frames work/laid.json                   # its frames as laid
+python3 scripts/template_dedupe.py work/regions --laid work/laid.json          # kinds of page, styles, grounds, grids, modules
 python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
 postext check work/regions; python3 scripts/composed_check.py check work/regions
+node scripts/render.mjs work/regions --frames work/folded.json
+python3 scripts/template_dedupe.py work/regions --compare-boxes work/laid.json work/folded.json
 ```
 
 <table>
 <tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
 <tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, with <code>--overlay</code> the source pages with every frame drawn</td></tr>
-<tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged, frames named by role (below); <code>dedupe-report.json</code> with every merge and its largest difference and every frame renamed</td></tr>
+<tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged, frames on a lattice as grid groups, the bands under each page's text as modules (below), frames named by role (below); <code>dedupe-report.json</code> with every merge and its largest difference, every grid and module, every frame renamed and (<code>pages</code>) every frame's name on the laid page</td></tr>
 <tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits</td></tr>
 <tr><td><code>anchors.py</code></td><td>for one map or diagram, or for another edition's labels</td><td><code>anchors.json</code> (the resource's <code>anchors</code>, <code>labelStyles</code>, the labels) and <code>figure.&lt;lang&gt;.md</code>; <code>anchors.py relabel work/regions/figures.json --strings en=en.json</code> writes other editions from a strings file keyed by the source text or the anchor id</td></tr>
 </table>
@@ -272,6 +276,56 @@ name (`box-light-blue` to `tip`) before the pages are translated: rename a
 style and the frames named after it keep their names, rename the frames in
 the Sandbox when a role word is better. A label word on a tab
 (`label="Tip"`) is content and never goes into a name.
+
+Grids and modules. `extract` writes one template per page with one frame per
+box, which repeats what a designer drew once: a wall of photos with a pill
+each, a box with its tab and pictures. `template_dedupe.py` folds them, after
+it merges the styles and before it merges the templates:
+
+- **Grids.** Frames of one look (kind, style, layer, the same width within
+  `--lattice-tol`, 1 mm) whose tops make rows and starts make columns, with
+  one column gap and one row gap (measured as the engine lays a row: the
+  reach above the card, a tab, plus the reach below its top, a caption) and
+  nothing else among them, become a `kind: "grid"` group repeating the first
+  card's set (`grid-picture`, `grid-box`). A frame that hangs from every card
+  the same way (above, below or inside it, one per card) is a member:
+  anchored off the card's top-left, `below` it, or, when the source centres
+  members as wide as their words, off its middle (`top` / `bottom`, width
+  `auto`, the narrowest as `minWidth`). Cards held to heights of their own
+  that differ are no grid. Cards with nothing hanging from them need
+  `--grid-min` (3) of them. Each page's pieces become one
+  `:::frame{slot="grid-picture"}` item per card in reading order with the
+  members' pieces inside; anchors, groups, connector ends and decoration
+  that named a card name its instance (`#grid-picture[3]`), and what hung
+  from a row group of the cards hangs from the lowest card of the last row.
+- **Modules.** The page's frames are joined into units (a box and what it
+  holds, frames anchored to one another, a group's members, a connector's
+  ends); units side by side are one band, and every band below the page's
+  shell (the flowing text, the frame that `takes` the title, the frames
+  chained to them and the units tied to them) becomes a module laid in one
+  modules group (`modules: true`) where the bands stood, with the gap most of
+  them keep (a band further off keeps the difference in its frames' offset).
+  The decoration that reads only a band's frames (its card, a border, a
+  connector between two of its boxes) and the shapes the page paints inside
+  the band go with it. Bands alike across the book (frames, styles, groups,
+  decoration within `--geom-tol`) are one module template (`module-box-picture2`);
+  the page writes `:::module{template="…"}` with the band's pieces inside, the
+  slots renamed to the module's frames, so every word stays in the Markdown. A
+  page where something left on it hangs from a band keeps its frames. A text
+  frame that stood in no group gets `fit.scaleImages: false` in its module:
+  a module frame's ladder scales the pictures of the whole module, the page's
+  scaled only its own.
+- **Looking the same.** The boxes are read off the draft as the engine lays it
+  (`--laid`, from `render.mjs --frames`: groups move frames off the measured
+  boxes), else off `regions.json`. Lay the result out again and compare:
+  `--compare-boxes BEFORE AFTER` lists every frame that moved by more than
+  `--box-tol` (0.5 mm) under its new name, and `compare_pages.py --score`
+  gives the pages' likeness to the source before and after (round 1's
+  measure: grey, 60 dpi, blurred 2 px, mean difference and share over 40).
+  `--no-grids` and `--no-modules` leave the pages as they were. What stays
+  one per page is what the source draws per page: a title tab as wide as its
+  words drawn into the card's outline, the measured height of the flowing
+  text; pages with nothing in common keep modules used once.
 
 What the extraction decides, so you know what to check:
 

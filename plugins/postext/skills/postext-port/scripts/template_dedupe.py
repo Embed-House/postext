@@ -8,6 +8,9 @@ same page ground on every page) become one resource.
   template_dedupe.py DIR [--geom-tol 3] [--style-tol 0.5] [--padding-tol 1.5]
                          [--delta-e 3] [--max-diff 2] [--image-tol 2]
                          [--keep-frame-names] [--dry-run] [--json]
+                         [--laid FRAMES] [--no-grids] [--no-modules]
+                         [--lattice-tol 1] [--grid-min 3]
+  template_dedupe.py DIR --compare-boxes BEFORE AFTER [--box-tol 0.5]
 
 DIR is what `pdf_regions.py extract` wrote: library.json (pageTemplates,
 calloutStyles, markStyles, chipStyles, labelStyles), resources.json and
@@ -22,6 +25,18 @@ chapters/<lang>/*.md. The script rewrites the three in place (with
   frame whose padding differs from the kept style's by more than 0.3 mm
   keeps its own `padding`. Frame `style`s, anchor `style`s and the
   `{style="…"}` of `:mark`/`:chip` in the Markdown follow the new ids.
+- **Grids and modules** (template_fold.py, before the templates are
+  merged; it needs regions.json). Frames of one look on a lattice become a
+  repeating grid group, with what hangs from each card as its members, and
+  the page's pieces one `:::frame{slot}` item per card; the bands of frames
+  under the page's flowing text and title become modules in one modules
+  group, alike ones across the book one module template, and the page
+  writes `:::module{template}` blocks holding the bands' pieces. --laid
+  reads the boxes off the draft as laid (`render.mjs --frames`) rather
+  than as measured; --no-grids / --no-modules skip either. The report's
+  `pages` gives every frame's name on the laid page, which
+  --compare-boxes BEFORE AFTER uses to list every frame that moved by more
+  than --box-tol mm once the result is laid out again.
 - **Templates.** Two templates are one kind of page when every frame of the
   same name has the same style, role and flags and stands within --geom-tol
   mm (position, width, minimum and maximum height); their groups are the
