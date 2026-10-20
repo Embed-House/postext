@@ -95,15 +95,21 @@ describe('border pieces', () => {
 });
 
 describe('shape path blocks', () => {
-  it('paints one colour of border as one even-odd ring over the fill', () => {
-    const blocks = shapePathBlocks(boxOutline(box, [4, 4, 4, 4]), '#ffffff', {
-      top: { color: '#123456', widthPx: 2 }, right: null, bottom: { color: '#123456', widthPx: 2 }, left: null,
-    });
+  it('paints one colour of border on every side as one even-odd ring over the fill', () => {
+    const side = { color: '#123456', widthPx: 2 };
+    const blocks = shapePathBlocks(boxOutline(box, [4, 0, 4, 0]), '#ffffff', { top: side, right: { ...side, widthPx: 1 }, bottom: side, left: side });
     expect(blocks.map((b) => [b.boxPart, b.fill, b.fillRule ?? 'nonzero', b.subpaths.length])).toEqual([
       ['fill', '#ffffff', 'nonzero', 1],
       ['border', '#123456', 'evenodd', 2],
     ]);
     expect(blocks[1]!.borderWidthPx).toBe(2);
+  });
+
+  it('paints a border on some sides only as their pieces, no edge left on the outline', () => {
+    const blocks = shapePathBlocks(boxOutline(box, [4, 4, 4, 4]), undefined, {
+      top: { color: '#123456', widthPx: 2 }, right: null, bottom: { color: '#123456', widthPx: 2 }, left: null,
+    });
+    expect(blocks.map((b) => [b.boxPart, b.fillRule ?? 'nonzero', b.subpaths.length])).toEqual([['border', 'nonzero', 2]]);
   });
 
   it('paints the pieces of each colour of border apart', () => {

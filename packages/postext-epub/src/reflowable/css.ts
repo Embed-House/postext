@@ -487,14 +487,16 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       ? (() => {
           const r = s.borderRadius as Exclude<CornerRadius, Dimension>;
           const one = (d: Dimension | undefined) => (d ? em(d) : '0');
-          return [r.topLeft, r.topRight, r.bottomRight, r.bottomLeft].some((d) => d && px(d) > 0)
-            ? `border-radius: ${one(r.topLeft)} ${one(r.topRight)} ${one(r.bottomRight)} ${one(r.bottomLeft)}`
+          // The corners of the body flow's sides, as the padding's.
+          const [tl, tr, br, bl] = rtl ? [r.topRight, r.topLeft, r.bottomLeft, r.bottomRight] : [r.topLeft, r.topRight, r.bottomRight, r.bottomLeft];
+          return [tl, tr, br, bl].some((d) => d && px(d) > 0)
+            ? `border-radius: ${one(tl)} ${one(tr)} ${one(br)} ${one(bl)}`
             : undefined;
         })()
       : px(uniformRadius(s.borderRadius)!) > 0 && `border-radius: ${em(uniformRadius(s.borderRadius)!)}`;
     const sideBorders = s.border.sides
       ? (['top', 'right', 'bottom', 'left'] as const).map((k) => {
-          const b = s.border.sides![k];
+          const b = s.border.sides![rtl && k === 'left' ? 'right' : rtl && k === 'right' ? 'left' : k];
           return b.enabled && px(b.width) > 0 ? `border-${k}: ${round(px(b.width) * (96 / dpi))}px solid ${b.color.hex}` : `border-${k}: none`;
         })
       : [];

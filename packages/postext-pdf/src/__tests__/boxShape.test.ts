@@ -28,15 +28,15 @@ async function paint(blocks: VDTDesignBlock[], tagged = false): Promise<string> 
 const box = (style: VDTDesignBoxStyle): VDTDesignBlock => ({ kind: 'box', bbox: { x: 10, y: 20, width: 100, height: 50 }, box: style });
 
 describe('box shapes in the PDF backend (#1059)', () => {
-  it('fills a box with a border on its top only as a fill and one even-odd ring', async () => {
+  it('fills a box with a border on its top only: the fill, then the top piece', async () => {
     const content = await paint([box({
       backgroundColor: '#ffffff', borderColor: '#ff0000', borderWidthPx: 2, borderRadiusPx: 0,
       borderSides: { top: { color: '#ff0000', widthPx: 2 }, right: null, bottom: null, left: null },
     })]);
     // The fill: the box's rectangle (y up from 400).
     expect(content).toMatch(/1 1 1 rg\n10 380 m\n110 380 l\n110 330 l\n10 330 l\n10 380 l\nh\nf\n/);
-    // The border: outer edge and inner edge (2 pt down on the top only).
-    expect(content).toMatch(/1 0 0 rg\n10 380 m[^]*10 378 m[^]*h\nf\*\n/);
+    // The border: the top edge, then back along the inner edge 2 pt down.
+    expect(content).toMatch(/1 0 0 rg\n10 380 m\n110 380 l\n110 378 l\n10 378 l\nh\nf\n/);
   });
 
   it('rounds only the corners a style names, with cubic curves', async () => {

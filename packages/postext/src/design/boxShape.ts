@@ -317,8 +317,8 @@ function boundsOf(subpaths: readonly VDTPathCommand[][]): BoundingBox {
 }
 
 /** The path blocks that paint `outline` filled in `fill` with `border`
- *  inside it: the fill, then the border — one ring when every side with a
- *  border has one colour, else the pieces of each colour. A border that
+ *  inside it: the fill, then the border — one ring when all four sides
+ *  have a border of one colour, else the pieces of each colour. A border that
  *  leaves no room inside fills the shape in its colour. */
 export function shapePathBlocks(outline: ShapeOutline, fill: string | undefined, border: ShapeBorder | undefined): VDTDesignPathBlock[] {
   const widths: Record<ShapeSide, number> = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -342,13 +342,16 @@ export function shapePathBlocks(outline: ShapeOutline, fill: string | undefined,
   }
   // Each block its own box: the passes that move blocks move them in place.
   if (fill) out.push({ kind: 'path', bbox: { ...bbox }, subpaths: [outer], fill, boxPart: 'fill' });
-  if (colors.size === 1) {
+  // One ring when every side has a border of one colour; otherwise the
+  // pieces, so no edge of the inner outline lies on the outer one (a
+  // rasteriser draws such an edge as a hairline).
+  if (colors.size === 1 && SHAPE_SIDES.every((side) => widths[side] > 0)) {
     const [[color, sides]] = [...colors];
     out.push({
       kind: 'path', bbox: { ...bbox }, subpaths: [outer.map((c) => ({ ...c })), outlineSubpath(outline, widths)], fill: color, fillRule: 'evenodd',
       boxPart: 'border', borderWidthPx: widest(sides),
     });
-  } else if (colors.size > 1) {
+  } else if (colors.size > 0) {
     const pieces = borderPieces(outline, widths);
     for (const [color, sides] of colors) {
       const subpaths = sides.flatMap((s) => pieces.get(s) ?? []);
