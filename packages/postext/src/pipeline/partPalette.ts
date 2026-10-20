@@ -132,6 +132,7 @@ function frameRoles(rest: string): FrameColorRole[] {
     case 'icon.color':
     case 'marker.color':
     case 'label.color':
+    case 'label.icon.color':
       return ['text'];
     default:
       return ['fill', 'border', 'rule', 'text'];

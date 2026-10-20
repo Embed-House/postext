@@ -2041,10 +2041,16 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const textW = flowTextWidth(labelText, lbFont);
     // A picture inside the tab (#981) sits at its start, before the words:
     // the tab is as wide as the picture, the gap, the words and the padding.
-    const iconResource = lb.icon.resourceId ? ctx.resourceById.get(lb.icon.resourceId) : undefined;
+    const glyphIcon = lb.icon.kind === 'glyph' && lb.icon.glyph.length > 0;
+    const iconResource = !glyphIcon && lb.icon.resourceId ? ctx.resourceById.get(lb.icon.resourceId) : undefined;
     const iconFileId = iconResource?.bitmap?.fileId ?? iconResource?.svg?.fileId;
-    const inside = lb.icon.placement === 'inside' && !!iconFileId;
-    let iconFit = { w: 0, h: 0 };
+    // A glyph (#1054): a character of a font at `scale` of the words' size,
+    // as wide as its advance, centred on the tab's middle as the words are.
+    const glyphPx = glyphIcon ? lbFontPx * lb.icon.scale : 0;
+    const glyphFont = glyphIcon ? buildFontString(lb.icon.fontFamily, glyphPx, lb.icon.fontWeight.toString()) : '';
+    const glyphW = glyphIcon ? flowTextWidth(lb.icon.glyph, glyphFont) : 0;
+    const inside = lb.icon.placement === 'inside' && (!!iconFileId || glyphIcon);
+    let iconFit = { w: glyphW, h: 0 };
     if (iconFileId) {
       const dims = iconResource?.bitmap ?? iconResource?.svg;
       const boxW = px(lb.icon.width);
@@ -2088,7 +2094,25 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       clip: false,
     }));
     let edgeX = onRight ? tabX : tabX + tabW;
-    if (inside) {
+    // The glyph block at `x`: pagination furniture to a reader (a tagged
+    // PDF's artifact, hidden in HTML), so the tab reads only its words.
+    const glyphBlock = (x: number): VDTDesignTextBlock => ({
+      kind: 'text',
+      bbox: createBoundingBox(x, tabY, glyphW, tabH),
+      fontString: glyphFont,
+      color: (lb.icon.color ?? lb.color).hex,
+      lines: [{ text: lb.icon.glyph, xOffset: 0, baselineY: tabY + tabH / 2 + glyphPx * 0.36, width: glyphW }],
+      clip: false,
+      artifact: true,
+    });
+    if (glyphIcon) {
+      const gap = px(lb.icon.gap);
+      const gx = inside
+        ? (iconAtRight ? tabX + tabW - padX - glyphW : tabX + padX)
+        : (onRight ? tabX - gap - glyphW : tabX + tabW + gap);
+      overlayBlocks.push(glyphBlock(gx));
+      if (!inside) edgeX = onRight ? gx : gx + glyphW;
+    } else if (inside) {
       const ix = iconAtRight ? tabX + tabW - padX - iconFit.w : tabX + padX;
       overlayBlocks.push({ kind: 'image', bbox: createBoundingBox(ix, tabY + (tabH - iconFit.h) / 2, iconFit.w, iconFit.h), fileId: iconFileId!, ...traitsOf(iconResource, iconFileId!), ...tintOf });
     } else if (iconFileId) {

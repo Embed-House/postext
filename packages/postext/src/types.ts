@@ -3282,6 +3282,38 @@ export interface CalloutIconConfig {
  *  its edge, or inside it before the words. */
 export type CalloutLabelIconPlacement = 'beside' | 'inside';
 
+/** What a label tab's icon is (#1054): a picture resource, or a character
+ *  of a font. */
+export type CalloutLabelIconKind = 'resource' | 'glyph';
+
+/** The icon of a label tab: a picture (`resourceId`, #981/#995) or a glyph
+ *  (#1054). `placement` and `gap` work alike for both; `width` and `tint`
+ *  are the picture's, `glyph`, `fontFamily`, `fontWeight`, `scale` and
+ *  `color` the glyph's. */
+export interface CalloutLabelIconConfig {
+  /** Default `'resource'` when `resourceId` is set, `'glyph'` when only
+   *  `glyph` is. */
+  kind?: CalloutLabelIconKind;
+  resourceId?: string;
+  /** The picture's width. Default `1em`. */
+  width?: Dimension;
+  /** Space between the icon and the tab (`beside`) or the words
+   *  (`inside`). Default `0.3em`. */
+  gap?: Dimension;
+  placement?: CalloutLabelIconPlacement;
+  tint?: boolean;
+  /** The character set as the icon (`'◉'`). */
+  glyph?: string;
+  /** The glyph's font family. Default: the label's. */
+  fontFamily?: string;
+  /** The glyph's weight. Default: the label's. */
+  fontWeight?: number;
+  /** The glyph's size, as a factor of the tab's text size. Default `1`. */
+  scale?: number;
+  /** The glyph's colour. Default: the label's `color`. */
+  color?: ColorValue;
+}
+
 export interface CalloutLabelConfig {
   /** Defaults to the headings font family. */
   fontFamily?: string;
@@ -3311,8 +3343,10 @@ export interface CalloutLabelConfig {
    *  and a coloured ring on a white one are two resources, one to a style;
    *  with `tint` (#995) it is painted in the label's `color` instead (its
    *  silhouette, in the colour of the words), so one ring serves every
-   *  tint of a book. */
-  icon?: { resourceId?: string; width?: Dimension; gap?: Dimension; placement?: CalloutLabelIconPlacement; tint?: boolean };
+   *  tint of a book. With `kind: 'glyph'` (#1054) the icon is a character
+   *  of a font instead, a ◉ set in the tab's colour, so a ring needs no
+   *  picture resource. */
+  icon?: CalloutLabelIconConfig;
   /** A rule along the box's top edge from the far corner to the tab (or
    *  its icon). */
   rule?: { enabled?: boolean; color?: ColorValue; width?: Dimension };
@@ -3718,7 +3752,21 @@ export interface ResolvedCalloutStyleConfig {
     paddingX: Dimension;
     offset: Dimension;
     inset: Dimension;
-    icon: { resourceId: string; width: Dimension; gap: Dimension; placement: CalloutLabelIconPlacement; tint: boolean };
+    icon: {
+      kind: CalloutLabelIconKind;
+      resourceId: string;
+      width: Dimension;
+      gap: Dimension;
+      placement: CalloutLabelIconPlacement;
+      tint: boolean;
+      glyph: string;
+      fontFamily: string;
+      fontWeight: number;
+      scale: number;
+      /** Absent: the label's colour, read when the tab is laid out (so a
+       *  frame's `look` that recolours the words recolours the glyph). */
+      color?: ColorValue;
+    };
     rule: { enabled: boolean; color: ColorValue; width: Dimension };
   };
   columnGap: Dimension;

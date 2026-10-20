@@ -68,18 +68,11 @@ export interface BorderSides {
   left?: BorderSide;
 }
 
-/** `CalloutLabelConfig` additions (joined tab, §12.8; glyph icon, §12.9). */
+/** `CalloutLabelConfig` additions (joined tab, §12.8; the glyph icon of
+ *  §12.9 is in `types.ts` since C3). */
 export interface CalloutLabelRound2 {
   joined?: boolean;
   fillet?: Dimension;
-  icon?: {
-    kind?: 'resource' | 'glyph';
-    glyph?: string;
-    fontFamily?: string;
-    fontWeight?: number;
-    scale?: number;
-    color?: ColorValue;
-  };
 }
 
 // §12.2 (C4) ----------------------------------------------------------------

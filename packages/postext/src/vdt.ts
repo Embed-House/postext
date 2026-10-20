@@ -3078,8 +3078,11 @@ export interface ConfigWarning {
    *  lettering's `writingMode`, `textTransform`, `dropFinalStop` and
    *  `joinSameSpeaker`, a balloon style's `shape`, `tail`, `target`,
    *  `position`, `align` and `textTransform` — the value it resolved to:
-   *  the default, or that of the style it is laid over), and `suggestion`
-   *  the word it is closest to, when one is close.
+   *  the default, or that of the style it is laid over; a box style's
+   *  `label.icon.kind`, `placement` and `scale`, #1054 — the kind, `beside`,
+   *  `1`), and `suggestion` the word it is closest to, when one is close.
+   *  A key a box style's `label.icon` does not have is an
+   *  `unknownConfigKey` too.
    *  `unknownNumerals`: a `numerals` value that is not `'auto'`,
    *  `'latn'`, `'arab'` or `'arabext'`; the digits follow the document
    *  language, and `used` is the digit system that gives.

@@ -2,6 +2,8 @@ import { floatColumnCount } from './shared';
 import type {
   CalloutDesignConfig,
   CalloutFixedConfig,
+  CalloutLabelIconConfig,
+  CalloutLabelIconKind,
   CalloutNumberingConfig,
   CalloutStyleConfig,
   ColorValue,
@@ -72,7 +74,7 @@ export const DEFAULT_CALLOUT_STYLE_STATIC = {
     paddingX: EM(0.6),
     offset: PT0,
     inset: PT0,
-    icon: { resourceId: '', width: EM(1), gap: EM(0.3), placement: 'beside' as const, tint: false },
+    icon: { resourceId: '', width: EM(1), gap: EM(0.3), placement: 'beside' as const, tint: false, glyph: '', scale: 1 },
     rule: { enabled: false, color: { ...DEFAULT_MAIN_COLOR } as ColorValue, width: { value: 0.5, unit: 'pt' } as Dimension },
   },
   columnGap: EM(1.5),
@@ -110,6 +112,21 @@ export const DEFAULT_CALLOUT_STYLE_STATIC = {
   continuesMarkerAlign: 'right' as const,
   continuesMarkerItalic: true,
 };
+
+/** What a label tab's icon is (#1054): the `kind` it names, else a
+ *  picture when it names one and a glyph when it sets only a character.
+ *  Any other word reads as the default (reported, `unknownConfigValue`). */
+export function labelIconKind(icon: CalloutLabelIconConfig | undefined): CalloutLabelIconKind {
+  const kind = icon?.kind as unknown;
+  if (kind === 'glyph' || kind === 'resource') return kind;
+  return !icon?.resourceId && typeof icon?.glyph === 'string' && icon.glyph.length > 0 ? 'glyph' : 'resource';
+}
+
+/** The size of a label tab's glyph against the tab's words (#1054): a
+ *  positive finite factor, else `1`. */
+export function labelIconScale(scale: unknown): number {
+  return typeof scale === 'number' && Number.isFinite(scale) && scale > 0 ? scale : DEFAULT_CALLOUT_STYLE_STATIC.label.icon.scale;
+}
 
 /** One neutral style ships by default so `:::callout` works out of the box:
  *  light grey background, no stripe, no icon, no title. */
@@ -191,11 +208,19 @@ function resolveCalloutStyleConfig(
             offset: partial.label.offset ?? d.label.offset,
             inset: partial.label.inset ?? d.label.inset,
             icon: {
+              kind: labelIconKind(partial.label.icon),
               resourceId: partial.label.icon?.resourceId ?? d.label.icon.resourceId,
               width: partial.label.icon?.width ?? d.label.icon.width,
               gap: partial.label.icon?.gap ?? d.label.icon.gap,
               placement: partial.label.icon?.placement === 'inside' ? 'inside' : d.label.icon.placement,
               tint: partial.label.icon?.tint === true ? true : d.label.icon.tint,
+              // The glyph (#1054): in the label's face and weight unless
+              // set, its colour the label's when the tab is laid out.
+              glyph: typeof partial.label.icon?.glyph === 'string' ? partial.label.icon.glyph : d.label.icon.glyph,
+              fontFamily: partial.label.icon?.fontFamily ?? partial.label.fontFamily ?? headings.fontFamily,
+              fontWeight: partial.label.icon?.fontWeight ?? partial.label.fontWeight ?? d.label.fontWeight,
+              scale: labelIconScale(partial.label.icon?.scale),
+              ...(partial.label.icon?.color ? { color: partial.label.icon.color } : {}),
             },
             rule: {
               enabled: partial.label.rule?.enabled ?? d.label.rule.enabled,

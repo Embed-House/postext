@@ -322,6 +322,8 @@ export type {
   CalloutIconPosition,
   CalloutIconCornerSide,
   CalloutLabelConfig,
+  CalloutLabelIconConfig,
+  CalloutLabelIconKind,
   CalloutTextTransform,
   CalloutMarkerTextAlign,
   CalloutBorderConfig,

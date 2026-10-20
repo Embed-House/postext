@@ -9,6 +9,7 @@
  */
 
 import type {
+  CalloutLabelIconConfig,
   CanvasViewerConfig,
   ColumnBalancingConfig,
   HeadingLevelConfig,
@@ -62,7 +63,7 @@ import { outputProfileInfo } from './color/catalogue';
 import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
 import { closestKey } from './util/closestKey';
 import { isResourceCounterReset } from './defaults/resourceTypes';
-import { calloutStyleChain } from './defaults/calloutStyles';
+import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles';
 import { validatePageTemplates } from './composed/validate';
 import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
 
@@ -121,7 +122,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
   return [
     ...collectValueWarnings(config), ...collectSideColumnWarnings(config), ...collectColumnCountWarnings(config), ...collectUnknownKeyWarnings(config),
     ...collectCjkGridWarnings(config), ...collectChoiceWarnings(config), ...collectNumeralsWarnings(config),
-    ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config),
+    ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config), ...collectLabelIconWarnings(config),
     ...collectContentInConfigWarnings(config, options),
   ];
 }
@@ -150,6 +151,45 @@ function collectCalloutStyleWarnings(config: PostextConfig): ConfigWarning[] {
     if (loops.has(key)) return;
     loops.add(key);
     out.push({ kind: 'calloutStyleExtendsCycle', path, value: cycle.map((k) => styles[k]!.id).join(' → '), used: '' });
+  });
+  return out;
+}
+
+const LABEL_ICON_KEYS = {
+  kind: true, resourceId: true, width: true, gap: true, placement: true, tint: true,
+  glyph: true, fontFamily: true, fontWeight: true, scale: true, color: true,
+} satisfies Record<keyof CalloutLabelIconConfig, true>;
+
+/** The icon of a box style's label tab (#981, #995, #1054): a key it does
+ *  not have (`unknownConfigKey`), and a `kind`, `placement` or `scale`
+ *  the engine does not read (`unknownConfigValue`, with what it reads
+ *  instead). */
+function collectLabelIconWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  (config.calloutStyles ?? []).forEach((s, i) => {
+    const icon = (s as { label?: { icon?: unknown } } | undefined)?.label?.icon;
+    if (!icon || typeof icon !== 'object' || Array.isArray(icon)) return;
+    const path = `calloutStyles[${i}].label.icon`;
+    const names = Object.keys(LABEL_ICON_KEYS);
+    for (const [key, value] of Object.entries(icon)) {
+      if (value === undefined || Object.prototype.hasOwnProperty.call(LABEL_ICON_KEYS, key)) continue;
+      const suggestion = closestKey(key, names);
+      out.push({ kind: 'unknownConfigKey', path: `${path}.${key}`, value: key, used: '', ...(suggestion ? { suggestion } : {}) });
+    }
+    const ic = icon as CalloutLabelIconConfig;
+    const kind = ic.kind as unknown;
+    if (kind !== undefined && kind !== 'resource' && kind !== 'glyph') {
+      const suggestion = closestKey(String(kind), ['resource', 'glyph']);
+      out.push({ kind: 'unknownConfigValue', path: `${path}.kind`, value: String(kind), used: labelIconKind(ic), ...(suggestion ? { suggestion } : {}) });
+    }
+    const placement = ic.placement as unknown;
+    if (placement !== undefined && placement !== 'beside' && placement !== 'inside') {
+      const suggestion = closestKey(String(placement), ['beside', 'inside']);
+      out.push({ kind: 'unknownConfigValue', path: `${path}.placement`, value: String(placement), used: 'beside', ...(suggestion ? { suggestion } : {}) });
+    }
+    if (ic.scale !== undefined && labelIconScale(ic.scale) !== ic.scale) {
+      out.push({ kind: 'unknownConfigValue', path: `${path}.scale`, value: String(ic.scale), used: String(labelIconScale(ic.scale)) });
+    }
   });
   return out;
 }

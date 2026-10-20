@@ -69,10 +69,11 @@ export function configFontFamilies(config: PostextConfig, markdown?: FontContent
     families.add(level.fontFamily);
     families.add(level.separatorFontFamily);
   }
-  // Callout styles: title, glyph icon / marker and body fonts. Unset fields
-  // inherit the headings / body families collected above.
+  // Callout styles: title, glyph icon / marker, the glyph of the label tab
+  // (#1054) and body fonts. Unset fields inherit the headings / body
+  // families collected above.
   for (const style of config.calloutStyles ?? []) {
-    for (const family of [style.titleStyle?.fontFamily, style.icon?.fontFamily, style.marker?.fontFamily, style.body?.fontFamily]) {
+    for (const family of [style.titleStyle?.fontFamily, style.icon?.fontFamily, style.marker?.fontFamily, style.label?.icon?.fontFamily, style.body?.fontFamily]) {
       if (family) families.add(family);
     }
   }
