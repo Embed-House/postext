@@ -545,6 +545,18 @@ export interface ResourceAnchor {
    *  does not cut it; `'cross'` leaves it where the point puts it, a title
    *  set across both pages. Default `'keep'`. */
   gutter?: 'keep' | 'cross';
+  /** Where the label set at this anchor stands, away from its point
+   *  (#1057): fractions of the whole picture, as `x` / `y`. `align`,
+   *  `verticalAlign` and `rotate` place the box about this point; the
+   *  anchor's own point stays where a leader and a connector end. Unset:
+   *  the label stands at its point. */
+  labelAt?: { x: number; y: number };
+  /** A line from the label's box to the anchor's point (#1057): `true` in
+   *  the label style's `leader` look, an object over that look field by
+   *  field, `false` none. Unset: a leader when the label stands away from
+   *  its point (`labelAt`) and its style has a `leader`. A label's own
+   *  `leader` attribute wins. */
+  leader?: boolean | LeaderStyle;
 }
 
 /** A user-managed resource instance. Binary payloads (bitmaps, SVGs) are
@@ -6872,9 +6884,35 @@ export interface ConnectorEnd {
   at?: SidePosition;
   /** Room between the box's edge and the line's end. Default 0. */
   gap?: Dimension;
-  /** Reserved for leaders to a picture's anchor (DESIGN §12.4); not read
-   *  yet. */
+  /** An anchor of the picture the frame holds (#1057, DESIGN §12.4): the
+   *  end is that point of the first `:::figure` / `::resource` of the
+   *  frame's story whose resource has the anchor, through the picture's
+   *  crop, safe area and scale as its labels are, instead of a point of the
+   *  frame's side. `side` then says which way the line arrives (default:
+   *  from the other end), `at` is not read, and `gap` stops the line short
+   *  of the point. An anchor no picture of the frame has: the end is left
+   *  out (`labelAnchorUnknown`, with `connector`). */
   anchor?: string;
+}
+
+/** The look of a label's leader (#1057, DESIGN §12.4): the line from the
+ *  label's box to its anchor point. */
+export interface LeaderStyle {
+  /** Default: the label's text colour. */
+  color?: ColorValue;
+  /** Default 0.75 pt. */
+  width?: Dimension;
+  dash?: Dimension[];
+  /** At the label's end. Default `'none'`. */
+  startCap?: LineCap;
+  /** At the anchor point. Default `'dot'`. */
+  endCap?: LineCap;
+  /** The size of a dot (across) or an arrowhead (long). Default 3 × width. */
+  capSize?: Dimension;
+  /** `'straight'` (the default): one segment from the middle of the box's
+   *  side that faces the point; `'elbow'`: out of that side square, then
+   *  along to the point. */
+  routing?: 'straight' | 'elbow';
 }
 
 /**

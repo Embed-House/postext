@@ -480,6 +480,12 @@ function recolorBlock(block: VDTBlock, r: PageRemaps): void {
     // The plate's outline (#1058).
     const border = layout.background?.border;
     if (border) layout.background = { ...layout.background!, border: { ...border, color: r.by(groups('border.color'))(border.color) ?? border.color } };
+    // The leader (#1057): its own colour, else the label's.
+    const leader = layout.leader;
+    if (leader) {
+      const color = r.by(groups('leader.color', `label:color${styleId !== undefined ? `@${styleId}` : ''}` as FlowColorKind, 'label:color', 'text:color'))(leader.stroke.color) ?? leader.stroke.color;
+      layout.leader = { ...leader, stroke: { ...leader.stroke, color } };
+    }
   }
   if (rb.table) {
     const t = rb.table;

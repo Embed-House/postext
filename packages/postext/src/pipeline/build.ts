@@ -235,7 +235,7 @@ import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines';
 import { pickTableStyle } from '../defaults/tableStyle';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout';
 import { buildLineNumbers, lineNumberWarnings } from './lineNumbers';
-import { buildHeadersAndFooters, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
+import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
 import { flowColorValues } from './partPalette';
 import { chapterNumberCounter, leadingBoldText } from './placeholders';
 import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing';
@@ -9280,6 +9280,8 @@ export function* buildDocumentGen(
   // Figure labels at anchors their picture lacks, anchors left without a
   // word in this locale (#860).
   loose.push(...figureLabelWarnings(doc, (b) => (b.sourceStart !== undefined && b.sourceEnd !== undefined ? { start: b.sourceStart, end: b.sourceEnd } : undefined)));
+  // Connectors' ends at an anchor their frame's picture lacks (#1057).
+  loose.push(...connectorAnchorUnknownWarnings(doc));
   // Comic panels whose cell cannot hold their picture's safe area (#556).
   for (const page of doc.pages) {
     if (page.comic) loose.push(...comicPageLayoutWarnings(page.comic));

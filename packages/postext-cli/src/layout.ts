@@ -184,7 +184,7 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       ...(w.kind === 'frameCovered' || w.kind === 'frameOutsideArea' ? { data: overlapData(w) } : {}),
       // A figure's label and its anchor (#860): where, in which locale.
       ...(w.kind === 'labelAnchorUnknown' || w.kind === 'anchorUnlabelled'
-        ? { data: { resourceId: w.resourceId, anchor: w.anchor, ...(w.kind === 'labelAnchorUnknown' ? { known: w.known } : { style: w.style }), ...(w.locale ? { locale: w.locale } : {}) } }
+        ? { data: { resourceId: w.resourceId, anchor: w.anchor, ...(w.kind === 'labelAnchorUnknown' ? { known: w.known, ...(w.connector !== undefined ? { connector: w.connector, frame: w.frame } : {}) } : { style: w.style }), ...(w.locale ? { locale: w.locale } : {}) } }
         : {}),
       // Words on a picture that do not fit or that meet (#902).
       ...(w.kind === 'labelOverflow'

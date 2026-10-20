@@ -88,6 +88,7 @@ export function figureLabels(block: Pick<ContentBlock, 'figure'>, bodyOffset = 0
       ...(icons.length > 0 ? { icons } : {}),
       at: 'anchor' in l.at ? { anchor: l.at.anchor } : { x: l.at.x, y: l.at.y },
       ...(l.style !== undefined ? { style: l.style } : {}),
+      ...(l.leader !== undefined ? { leader: l.leader } : {}),
       sourceStart: l.textStart + bodyOffset,
       sourceEnd: l.textEnd + bodyOffset,
       ...(l.id !== undefined ? { id: l.id } : {}),

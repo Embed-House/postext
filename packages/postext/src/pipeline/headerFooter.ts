@@ -10,6 +10,7 @@ import {
   flowRectToPage,
   pageIsMirrored,
   pageIsVertical,
+  type ContentWarning,
   type VDTBlock,
   type VDTDocument,
   type VDTDesignSlot,
@@ -37,6 +38,7 @@ import { repeatInstance, resolvePageTemplate } from '../composed/templates';
 import { splitSpreadDecoration } from '../composed/spread';
 import { pathInkBox } from '../design/pathBlock';
 import { frameOfBlock, framePageRect } from '../composed/paint';
+import { figureAnchorPointOnPage } from '../composed/labels';
 import type { ResolvedConfig } from '../vdt';
 import type { PageRole } from '../types';
 import {
@@ -551,6 +553,9 @@ export interface SlotLayoutExtras {
   /** Filled with the ends connectors left out (#1056): the connector's id
    *  and the box it named. */
   connectorDropped?: { elementId: string; targetId: string }[];
+  /** Filled with the ends connectors set at an anchor no picture of their
+   *  frame has (#1057). */
+  connectorAnchorUnknown?: { elementId: string; targetId: string; anchor: string; resourceId?: string; known: string[] }[];
 }
 
 /** `{ configPath }` when there is one. */
@@ -653,6 +658,14 @@ export function layoutSlotToVdt(
   );
   if (extras?.connectorDropped) {
     for (const issue of result.issues) if (issue.kind === 'connectorDropped') extras.connectorDropped.push({ elementId: issue.elementId, targetId: issue.targetId });
+  }
+  if (extras?.connectorAnchorUnknown) {
+    for (const issue of result.issues) {
+      if (issue.kind !== 'connectorAnchorUnknown') continue;
+      const { kind: _kind, ...rest } = issue;
+      void _kind;
+      extras.connectorAnchorUnknown.push(rest);
+    }
   }
   if (result.primitives.length === 0) return undefined;
   const sourceByElement = new Map<string, { start: number; end: number; text?: string; sourceMap?: number[]; prefixLen?: number; attr?: string }>();
@@ -1201,6 +1214,17 @@ export function framesInFrame(frames: DesignFrames | undefined, frame: Pick<VDTF
   const o = frame.rect;
   const back = (r: { x: number; y: number; width: number; height: number }) => ({ x: o.x + (r.x - o.x) / s, y: o.y + (r.y - o.y) / s, width: r.width / s, height: r.height / s });
   return { ...frames, page: back(frames.page), bleed: back(frames.bleed), ...(frames.outer ? { outer: back(frames.outer) } : {}) };
+}
+
+/** The ends of connectors at an anchor no picture of their frame has
+ *  (#1057), per document, as `labelAnchorUnknown` warnings with the
+ *  connector's id (read by {@link connectorAnchorUnknownWarnings}). */
+const connectorAnchorWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
+
+/** The `labelAnchorUnknown` warnings of the connectors of `doc`'s composed
+ *  pages (#1057): an end set at an anchor no picture of its frame has. */
+export function connectorAnchorUnknownWarnings(doc: VDTDocument): ContentWarning[] {
+  return connectorAnchorWarnings.get(doc) ?? [];
 }
 
 export function buildHeadersAndFooters(doc: VDTDocument, resourceById?: ReadonlyMap<string, Resource>, inputs: HeaderFooterInputs = {}): void {
@@ -1794,6 +1818,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const headingNumberByFrame: Record<string, string> = {};
       let headingNumber: string | undefined;
       const floatById = new Map<string, VDTBlock>();
+      /** The page and the blocks of each frame, for a connector's end at
+       *  an anchor of the picture it holds (#1057). */
+      const frameBlocks = new Map<string, { page: VDTPage; dx: number; blocks: VDTBlock[] }>();
       const nameFrames = (p: VDTPage, dx: number) => {
         for (const b of p.floats ?? []) floatById.set(b.id, b);
         for (const f of p.composed?.frames ?? []) {
@@ -1815,6 +1842,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
           const d = flowRectToPage(p, framePageRect({ rect: f.declaredRect ?? f.rect, writingMode: f.writingMode }));
           named[f.name] = { ...r, x: r.x + dx };
           declared[f.name] = { ...d, x: d.x + dx };
+          frameBlocks.set(f.name, { page: p, dx, blocks: f.blockIds.map((id) => floatById.get(id)).filter((b): b is VDTBlock => b !== undefined) });
           for (const rule of f.rules ?? []) {
             // A vertical page's flow turns a rule across its lines.
             const b = flowRectToPage(p, rule.bbox);
@@ -1883,6 +1911,22 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       }
       const slot = resolveDesignSlot(template.decoration, 'header');
       const connectorDropped: { elementId: string; targetId: string }[] = [];
+      const connectorAnchorUnknown: NonNullable<SlotLayoutExtras['connectorAnchorUnknown']> = [];
+      // A connector's end at an anchor of the picture its frame holds
+      // (#1057): the first figure of the frame whose resource has it.
+      const anchorPoint = (frame: string, anchor: string): { x: number; y: number } | { resourceId?: string; known: string[] } => {
+        const held = frameBlocks.get(frame);
+        let first: VDTBlock | undefined;
+        for (const b of held?.blocks ?? []) {
+          const rb = b.resourceBlock;
+          if (!rb || (rb.kind !== 'bitmap' && rb.kind !== 'svg')) continue;
+          first ??= b;
+          const at = figureAnchorPointOnPage(held!.page, b, anchor);
+          if (at) return { x: at.x + held!.dx, y: at.y };
+        }
+        const res = first?.resourceBlock?.resource;
+        return res ? { resourceId: res.id, known: (res.anchors ?? []).map((a) => a.id) } : { known: [] };
+      };
       const laidDecoration = template.decoration.elements.length === 0 ? undefined : withMeasureWritingMode('horizontal-tb', () => layoutSlotToVdt(
         collapsed.size > 0 ? withoutAnchoredTo(slot, collapsed) : slot,
         container,
@@ -1890,7 +1934,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         placeholders,
         dpi,
         {
-          ...sheetExtras, frames: { ...slotFrames, named, declared, ...(absent.size > 0 ? { absent } : {}) }, attrs: page.composed!.attrs, attrSources, connectorDropped,
+          ...sheetExtras, frames: { ...slotFrames, named, declared, ...(absent.size > 0 ? { absent } : {}), anchorPoint }, attrs: page.composed!.attrs, attrSources, connectorDropped, connectorAnchorUnknown,
           // Each element's pointer, from the template that sets it (#857).
           elementPaths: new Map(resolveDesignSlot(template.decoration, 'header').elements.map((el, i) => [el.id, template.decorationPaths[i]!] as const)),
         },
@@ -1902,6 +1946,23 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         if (p.composed?.log.some((e) => e.kind === 'connectorDropped')) p.composed.log = p.composed.log.filter((e) => e.kind !== 'connectorDropped');
       }
       for (const d of connectorDropped) page.composed.log.push({ frame: d.targetId, kind: 'connectorDropped', cause: d.elementId });
+      // Ends at an anchor the frame's picture lacks (#1057): a content
+      // warning on the page laid, once per pass.
+      const unknown = connectorAnchorWarnings.get(doc) ?? [];
+      const kept = unknown.filter((w) => !(pair ? [pair.left.index, pair.right.index] : [page.index]).includes(w.pageIndex ?? -1));
+      for (const d of connectorAnchorUnknown) {
+        kept.push({
+          kind: 'labelAnchorUnknown',
+          resourceId: d.resourceId ?? '',
+          anchor: d.anchor,
+          known: d.known,
+          connector: d.elementId,
+          frame: d.targetId,
+          ...(doc.config?.locale ? { locale: doc.config.locale } : {}),
+          pageIndex: page.index,
+        });
+      }
+      if (kept.length > 0 || unknown.length > 0) connectorAnchorWarnings.set(doc, kept);
       const decoration = rules.length === 0 ? laidDecoration
         : laidDecoration ? { ...laidDecoration, blocks: [...laidDecoration.blocks, ...rules] } : { bbox: { ...container }, blocks: rules };
       if (decoration && pair) {

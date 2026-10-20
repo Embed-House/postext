@@ -27,8 +27,8 @@ import { applySingleInkToPixels, isSingleInkSvgUrl } from '../svg/singleInk';
 import { fillSegmentWord, type WordRun } from './wordRuns';
 import { paintedSegments } from './wordPieces';
 import { uncroppedPictureBox } from '../pipeline/safeArea';
-import { figureLabelMatrix, labelPlateBox, unmirrorLabelLayout } from '../composed/labels';
-import { drawBoxBackground } from './headerFooter';
+import { figureLabelLeaderPaths, figureLabelMatrix, labelPlateBox, unmirrorLabelLayout } from '../composed/labels';
+import { drawBoxBackground, renderPathBlock } from './headerFooter';
 import { mirroredPaintActive, paintUnmirrored } from './mirrorFrame';
 import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { rasterScaleOf } from './deviceScale';
@@ -774,6 +774,9 @@ function haloContext(ctx: CanvasRenderingContext2D, color: string, widthPx: numb
  *  top-left corner at (`bx`, `by`): each one through its matrix, its
  *  plate, its halo, then its lines. */
 export function paintFigureLabels(ctx: CanvasRenderingContext2D, rb: ResolvedResourceBlock, bx: number, by: number): void {
+  // Their leaders first (#1057), under every label, in the frame the
+  // labels' geometry is in (a mirrored page's leader is mirrored with it).
+  for (const path of figureLabelLeaderPaths(rb, bx, by)) renderPathBlock(ctx, path);
   for (const label of rb.labels ?? []) {
     const layout = label.layout;
     if (!layout) continue;

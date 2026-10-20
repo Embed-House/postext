@@ -112,3 +112,16 @@ describe('labels on the pages of a right-to-left book (#969)', () => {
     expect(arOverlay(figure('::label[縦書き]{at="v"}'))).toBeUndefined();
   });
 });
+
+describe('a label’s leader over the picture in the reflowable EPUB (#1057)', () => {
+  it('draws the line and its dot in the layer, before the label', () => {
+    const away = resource({ anchors: [{ id: 'a', x: 0.2, y: 0.8, labelAt: { x: 0.7, y: 0.2 }, leader: { color: { hex: '#7a3b10', model: 'hex' } } }] });
+    const svg = overlay(figure('::label[Lake]{at="a"}'), away)!;
+    const line = svg.indexOf('<path d="M');
+    expect(line).toBeGreaterThan(-1);
+    expect(svg).toMatch(/<path d="M[^"]+" fill="none" stroke="#7a3b10" stroke-width="[\d.]+"\/><path d="[^"]+" fill="#7a3b10"\/>/);
+    expect(line).toBeLessThan(svg.indexOf('>Lake</tspan>'));
+    // No leader asked for: none drawn.
+    expect(overlay(figure('::label[Lake]{at="a" leader="none"}'), away)).not.toContain('<path');
+  });
+});

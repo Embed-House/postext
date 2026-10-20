@@ -1616,8 +1616,9 @@ P12 #885 comics on frames (§7, §7.1).
 
 ## 12. Round 2 (#1051): lines, shapes, repeats, modules and overlap checks
 
-Design of #1052 (C1). Status: approved. Draft types: [`round2Types.ts`](./round2Types.ts) (no runtime
-effect; each issue moves its part into `types.ts` / `composed/types.ts` and deletes it from the draft).
+Design of #1052 (C1). Status: approved. Draft types: `round2Types.ts` (no runtime effect; each issue
+moved its part into `types.ts` / `composed/types.ts` and deleted it from the draft; C6, the last part
+left, removed the file).
 Each issue records what it built in a §12.x of its own, as §5.x did for round 1.
 
 Why: a port of a 28-page children's textbook (checked privately) could only draw the lines of its

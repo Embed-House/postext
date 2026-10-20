@@ -58,7 +58,7 @@ import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
-import { figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
+import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
 import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
@@ -2922,7 +2922,9 @@ function renderResourceTable(rb: ResolvedResourceBlock, bx: number, by: number, 
  */
 function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: number, options: HtmlPaint): string {
   const n2 = (v: number): string => String(+v.toFixed(4));
-  const parts: string[] = [];
+  // Their leaders first (#1057), under every label: vector lines hidden
+  // from assistive technology, as design paths are.
+  const parts: string[] = figureLabelLeaderPaths(rb, bx, by).map(renderDesignPathBlock);
   for (const label of rb.labels ?? []) {
     let layout = label.layout;
     if (!layout) continue;

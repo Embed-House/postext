@@ -12,8 +12,8 @@
 // vertical column stays in the list of labels that follows the picture, out
 // of sight, as before.
 
-import type { ResolvedResourceBlock, VDTFigureLabelLayout, VDTLine, VDTLineSegment } from 'postext';
-import { figureLabelMatrix, labelLayoutOnSheet, parseFontString, uncroppedPictureBox } from 'postext';
+import type { ResolvedResourceBlock, VDTDesignPathBlock, VDTFigureLabelLayout, VDTLine, VDTLineSegment } from 'postext';
+import { figureLabelLeaderPath, figureLabelMatrix, labelLayoutOnSheet, markerSvgData, parseFontString, pathSvgData, uncroppedPictureBox } from 'postext';
 import { familyStack } from './css';
 import { fontPx, xmlAttr, xmlText } from './inline';
 
@@ -110,6 +110,18 @@ function labelGroup(layout: VDTFigureLabelLayout): string {
   return body ? `<g transform="matrix(${m.map(n).join(' ')})">${body}</g>` : '';
 }
 
+/** A label's leader (#1057) as SVG paths in the body's coordinates. */
+function leaderSvg(path: VDTDesignPathBlock): string {
+  const out: string[] = [];
+  const stroke = path.stroke;
+  if (stroke && stroke.widthPx > 0 && path.subpaths.length > 0) {
+    const dash = stroke.dash && stroke.dash.length > 0 ? ` stroke-dasharray="${stroke.dash.map(n).join(' ')}"` : '';
+    out.push(`<path d="${pathSvgData(path.subpaths)}" fill="none" stroke="${xmlAttr(stroke.color)}" stroke-width="${n(stroke.widthPx)}"${dash}/>`);
+  }
+  for (const m of path.markers ?? []) out.push(`<path d="${markerSvgData(m)}" fill="${xmlAttr(m.color)}"/>`);
+  return out.join('');
+}
+
 /**
  * The SVG laid over the picture of a figure with labels, or undefined when
  * no label can be drawn that way. Its viewBox is the picture's box in the
@@ -122,9 +134,10 @@ export function figureLabelsOverlay(rb: ResolvedResourceBlock, options: { mirror
   if (rb.kind !== 'bitmap' && rb.kind !== 'svg') return undefined;
   // The labels of a mirrored page are given back as they stand on the sheet.
   const onSheet = (layout: VDTFigureLabelLayout): VDTFigureLabelLayout => (options.mirrored ? labelLayoutOnSheet(layout, rb.bodyRect.width) : layout);
-  const groups = (rb.labels ?? [])
-    .map((l) => (l.layout && drawable(l.layout) ? labelGroup(onSheet(l.layout)) : ''))
-    .filter(Boolean);
+  const drawn = (rb.labels ?? []).filter((l) => l.layout && drawable(l.layout)).map((l) => onSheet(l.layout!));
+  // The leaders of the labels drawn here (#1057), under every label.
+  const leaders = drawn.map((layout) => figureLabelLeaderPath(layout, 0, 0)).filter((p): p is VDTDesignPathBlock => p !== undefined).map(leaderSvg);
+  const groups = [...leaders, ...drawn.map(labelGroup)].filter(Boolean);
   if (groups.length === 0) return undefined;
   const { width, height } = rb.bodyRect;
   const box = rb.bodySource ? uncroppedPictureBox(0, 0, width, height, rb.bodySource) : { x: 0, y: 0, width, height };

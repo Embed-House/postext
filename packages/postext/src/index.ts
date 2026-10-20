@@ -502,6 +502,7 @@ export type {
   DesignConnectorElement,
   ConnectorEnd,
   LineCap,
+  LeaderStyle,
   PlacedDesignElement,
   ResolvedPlacedDesignElement,
   ResolvedDesignConnectorElement,
@@ -608,6 +609,7 @@ export type {
   VDTFrame,
   VDTFigureLabel,
   VDTFigureLabelLayout,
+  VDTFigureLabelLeader,
   ReflowEvent,
   ReflowEventKind,
   FrameOverflowProposal,
@@ -671,6 +673,9 @@ export { altWithLabels, labelPlainText, withIconAlts } from './composed/labelTex
 export { ICON_CAP_EM, iconLineDash, inlineIconBox, measureInlineIcon, resourceBlockIcons } from './measure/inlineIcon';
 export {
   figureLabelBounds,
+  figureLabelLeaderPath,
+  figureLabelLeaderPaths,
+  figureAnchorPointOnPage,
   figureLabelMatrix,
   figureLabelReading,
   figureLabelLineReading,

@@ -995,6 +995,11 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
         : `Template "${w.template}" is a single page — the page is laid on one page; drop spread from the fence, or use a template with spread: true`;
       break;
     case 'labelAnchorUnknown':
+      if (w.connector !== undefined) {
+        // A connector's end at an anchor of its frame's picture (#1057).
+        text = `Connector "${w.connector}" ends at anchor "${w.anchor}" of the picture in frame "${w.frame ?? ''}"${w.locale ? ` (${w.locale})` : ''}: ${w.resourceId ? `"${w.resourceId}" has no such anchor` : 'the frame holds no picture on this page'} — that end is left out${w.known.length > 0 ? `; use one of ${w.known.slice(0, 6).map((a) => `"${a}"`).join(', ')}${w.known.length > 6 ? '…' : ''}` : ''}`;
+        break;
+      }
       text = `Label at anchor "${w.anchor}" of "${w.resourceId}"${w.locale ? ` (${w.locale})` : ''}: the resource has no such anchor — the label is not drawn; ${w.known.length > 0 ? `use one of ${w.known.slice(0, 6).map((a) => `"${a}"`).join(', ')}${w.known.length > 6 ? '…' : ''}, add the anchor to the resource,` : 'add the anchor to the resource'} or place it with at="x% y%"`;
       break;
     case 'anchorUnlabelled':

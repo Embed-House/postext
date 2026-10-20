@@ -921,12 +921,16 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
   };
 
   /** Where a label stands and its style, from its attributes. */
-  const labelAtStyle = (attrs: DirectiveAttrs): Pick<FigureLabel, 'at' | 'style'> => {
+  const labelAtStyle = (attrs: DirectiveAttrs): Pick<FigureLabel, 'at' | 'style' | 'leader'> => {
     const atRaw = attrs.at ?? '';
     const pct = LABEL_AT_PERCENT_RE.exec(atRaw);
     const at = pct ? { x: Number(pct[1]) / 100, y: Number(pct[2]) / 100 } : { anchor: atRaw.trim() };
     const style = attrs.style?.trim();
-    return { at, ...(style ? { style } : {}) };
+    // `leader` (#1057): a bare flag or any value turns the label's leader
+    // on, `none` (or `false`, `off`) off.
+    const leaderRaw = attrs.leader;
+    const leader = leaderRaw === undefined ? undefined : !['none', 'false', 'off'].includes(leaderRaw.trim().toLowerCase());
+    return { at, ...(style ? { style } : {}), ...(leader !== undefined ? { leader } : {}) };
   };
 
   /**

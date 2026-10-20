@@ -287,7 +287,11 @@ export type LayoutIssue =
   /** A connector's end (#1056) on a box the page does not have (`targetId`,
    *  a frame collapsed, empty and optional, or missing): left out, and
    *  with `from` or every `to` gone the connector is not drawn. */
-  | { kind: 'connectorDropped'; elementId: string; targetId: string };
+  | { kind: 'connectorDropped'; elementId: string; targetId: string }
+  /** A connector's end (#1057) at an anchor no picture of its frame has:
+   *  left out. `resourceId` is the frame's first picture (absent: it holds
+   *  none) and `known` that picture's anchors. */
+  | { kind: 'connectorAnchorUnknown'; elementId: string; targetId: string; anchor: string; resourceId?: string; known: string[] };
 
 /** Page-level reference frames (absolute page px) that elements may anchor
  *  to instead of the slot container: `page` is the trim box, `bleed` the
@@ -315,6 +319,11 @@ export interface DesignFrames {
   /** Frames in `named` the page shows nothing of (#1056): collapsed, or
    *  empty and optional. A connector's end on one is dropped. */
   absent?: ReadonlySet<string>;
+  /** The point of anchor `anchor` of the picture frame `frame` holds
+   *  (#1057), on the sheet as `named` is: the first figure of the frame's
+   *  blocks whose resource has it. When none has it, what the frame holds
+   *  instead (its first picture and that picture's anchors). */
+  anchorPoint?: (frame: string, anchor: string) => { x: number; y: number } | { resourceId?: string; known: string[] };
 }
 
 export interface LayoutContext {
@@ -1239,6 +1248,17 @@ function layoutConnectorElement(
     if (!box) {
       issues.push({ kind: 'connectorDropped', elementId: el.id, targetId: name });
       return undefined;
+    }
+    const anchor = (end as { anchor?: unknown }).anchor;
+    if (typeof anchor === 'string' && anchor !== '' && !resolvedGeo.has(name)) {
+      // An anchor of the frame's picture (#1057): the end is that point, a
+      // box of no size the line arrives at.
+      const at = frames.anchorPoint?.(name, anchor) ?? { known: [] };
+      if (!('x' in at)) {
+        issues.push({ kind: 'connectorAnchorUnknown', elementId: el.id, targetId: name, anchor, ...(at.resourceId !== undefined ? { resourceId: at.resourceId } : {}), known: at.known });
+        return undefined;
+      }
+      return { name, box: { x: at.x, y: at.y, width: 0, height: 0 }, end: end as ConnectorEndBox['end'] };
     }
     return { name, box, end: end as ConnectorEndBox['end'] };
   };

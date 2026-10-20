@@ -3,7 +3,8 @@
 // problem reported as a config warning whose `path` is a JSON pointer
 // (`/pageTemplates/3/frames/2/style`). Pure.
 
-import type { CalloutPaddingConfig, Dimension, PostextConfig, Resource } from '../types';
+import type { CalloutPaddingConfig, Dimension, LeaderStyle, PostextConfig, Resource } from '../types';
+import { CONNECTOR_CAPS, LEADER_ROUTINGS } from '../design/connector';
 import type { ConfigWarning } from '../vdt';
 import type {
   FrameConfig,
@@ -87,8 +88,11 @@ const REPEAT_KEYS = { frames: true, max: true } satisfies Record<keyof FrameRepe
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
   color: true, textTransform: true, letterSpacing: true, halo: true, background: true, padding: true, minScale: true,
-  writingMode: true, overlap: true, align: true, border: true, radius: true, kind: true,
+  writingMode: true, overlap: true, align: true, border: true, radius: true, kind: true, leader: true,
 } satisfies Record<keyof LabelStyle, true>;
+const LEADER_KEYS = {
+  color: true, width: true, dash: true, startCap: true, endCap: true, capSize: true, routing: true,
+} satisfies Record<keyof LeaderStyle, true>;
 const LABEL_BORDER_KEYS = { color: true, width: true } satisfies Record<keyof NonNullable<LabelStyle['border']>, true>;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -395,7 +399,31 @@ function checkLabelStyles(raw: unknown, prefix: string, push: Push): void {
     choice(s, 'align', LABEL_ALIGNS, '', path, push);
     choice(s, 'kind', LABEL_KINDS, '', path, push);
     unknownKeys(s.border, LABEL_BORDER_KEYS, `${path}/border`, push);
+    checkLeader(s.leader, `${path}/leader`, push);
   });
+}
+
+/** A leader's look (#1057): its keys, caps and routing. */
+function checkLeader(leader: unknown, path: string, push: Push): void {
+  if (!isRecord(leader)) return;
+  unknownKeys(leader, LEADER_KEYS, path, push);
+  choice(leader, 'startCap', CONNECTOR_CAPS, 'none', path, push);
+  choice(leader, 'endCap', CONNECTOR_CAPS, 'dot', path, push);
+  choice(leader, 'routing', LEADER_ROUTINGS, 'straight', path, push);
+}
+
+/** A resource anchor's `labelAt` (#1057): two fractions of the picture;
+ *  anything else is not read (the label stands at its point). A number
+ *  outside 0…1 is read as written (a label beside the picture), so only a
+ *  value that is not a point is reported. */
+function checkLabelAt(labelAt: unknown, path: string, push: Push): void {
+  if (labelAt === undefined) return;
+  const ok = isRecord(labelAt) && typeof labelAt.x === 'number' && Number.isFinite(labelAt.x) && typeof labelAt.y === 'number' && Number.isFinite(labelAt.y);
+  if (!ok) {
+    push({ kind: 'unknownConfigValue', path, value: JSON.stringify(labelAt) ?? String(labelAt), used: '' });
+    return;
+  }
+  unknownKeys(labelAt, { x: true, y: true }, path, push);
 }
 
 /** A resource anchor whose `style` no label style has. */
@@ -405,6 +433,12 @@ function checkAnchorStyles(labelStyles: unknown, resources: readonly Resource[] 
   const known = new Set(ids);
   resources.forEach((r, i) => {
     r.anchors?.forEach((a, j) => {
+      // A label set away from its point and its leader (#1057).
+      checkLabelAt((a as { labelAt?: unknown }).labelAt, `/resources/${i}/anchors/${j}/labelAt`, push);
+      const leader = (a as { leader?: unknown }).leader;
+      if (leader !== undefined && typeof leader !== 'boolean' && !isRecord(leader)) {
+        push({ kind: 'unknownConfigValue', path: `/resources/${i}/anchors/${j}/leader`, value: String(leader), used: '' });
+      } else checkLeader(leader, `/resources/${i}/anchors/${j}/leader`, push);
       if (typeof a.style !== 'string' || known.has(a.style)) return;
       const suggestion = closestKey(a.style, ids);
       push({ kind: 'labelStyleUnknown', path: `/resources/${i}/anchors/${j}/style`, value: a.style, used: '', resourceId: r.id, ...(suggestion ? { suggestion } : {}) });

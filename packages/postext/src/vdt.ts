@@ -1612,6 +1612,10 @@ export interface VDTFigureLabel {
    *  outputs that read a label as words read `[alt]` in its place (none
    *  when `alt` is empty). Absent when it has none. */
   icons?: { at: number; alt: string }[];
+  /** The label's `leader` attribute (#1057): `true` for `leader` (any
+   *  value but `none`), `false` for `leader="none"`. Absent: as its anchor
+   *  and style say. */
+  leader?: boolean;
   /** Where the label is painted: the upright box round its text (and
    *  background), in the coordinates of the block's own frame (a page's
    *  flow, or the frame of a composed page its block stands in), stamped
@@ -1681,6 +1685,31 @@ export interface VDTFigureLabelLayout {
    *  paints the layout as {@link unmirrorLabelLayout} gives it back and
    *  the label reads down its columns as on any page. */
   mirrored?: true;
+  /** The line from the label's box to its anchor's point (#1057): drawn
+   *  with the labels, under them, by {@link figureLabelLeaderPath}. */
+  leader?: VDTFigureLabelLeader;
+}
+
+/**
+ * A figure label's leader (#1057, DESIGN §12.4). The point is in the frame
+ * of the label's `x` / `y` (px from the top-left corner of the picture's
+ * body); the line leaves the label's box (its plate, else its lines' box,
+ * `gapPx` out) from the middle of the side that faces the point, so it
+ * never crosses the label's own words, and is laid when painted, so a label
+ * moved off a spread's spine or mirrored keeps its leader on the point.
+ */
+export interface VDTFigureLabelLeader {
+  x: number;
+  y: number;
+  routing: 'straight' | 'elbow';
+  stroke: VDTPathStroke;
+  /** At the label's end. Absent: none. */
+  startCap?: 'dot' | 'arrow';
+  /** At the point. Absent: none. */
+  endCap?: 'dot' | 'arrow';
+  capSizePx: number;
+  /** Room between the label's box and the line. */
+  gapPx: number;
 }
 
 /**
@@ -3591,8 +3620,12 @@ export type ContentWarning = ContentWarningBase & (
   /** A `::label[…]{at="…"}` of a `:::figure` (#860) names an anchor its
    *  resource does not have: the label is not drawn (the reflowable
    *  output still lists it). `known` lists the resource's anchor ids. The
-   *  source range is the label's text. */
-  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; locale?: string; labelId?: string }
+   *  source range is the label's text. With `connector` (#1057), a
+   *  connector of a composed page's decoration ends at that anchor of the
+   *  picture of `frame`, which lacks it: that end is left out; there is no
+   *  source range, `resourceId` is the frame's first picture (empty when
+   *  it holds none). */
+  | { kind: 'labelAnchorUnknown'; resourceId: string; anchor: string; known: string[]; locale?: string; labelId?: string; connector?: string; frame?: string }
   /** An anchor of a figure's resource names a label `style` but no
    *  `::label` of the figure stands at it in this locale (#860): a note,
    *  the map lacks that word in this edition. The source range is the

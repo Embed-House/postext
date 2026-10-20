@@ -13,6 +13,7 @@ import type {
   DesignSlot,
   Dimension,
   ElementPlacement,
+  LeaderStyle,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -357,6 +358,11 @@ export interface LabelStyle {
    *  first inline symbol (`:icon`) that opens a row hangs in a column as
    *  wide as the widest of them, so the words of every row line up. */
   kind?: 'legend';
+  /** The look of the leaders of labels set in this style (#1057): the line
+   *  from a label's box to its anchor's point. A label set away from its
+   *  point (`ResourceAnchor.labelAt`) gets one; `leader` on the anchor or
+   *  on the label turns it on or off. */
+  leader?: LeaderStyle;
 }
 
 /** New top-level config keys. `checks.contentInConfig` (DESIGN §2.8)
@@ -571,6 +577,8 @@ export interface FigureLabelNode extends SourceRange {
   text: string;
   at: { anchor: string } | { x: number; y: number };
   style?: string;
+  /** The `leader` attribute (#1057): on (`leader`), off (`leader="none"`). */
+  leader?: boolean;
   sourceMap?: number[];
 }
 

@@ -27,6 +27,7 @@ import { authoredCmykColors } from './color/authored';
 import { resolvePrintConfig } from './defaults/print';
 import { dimensionToPx } from './units';
 import { findPxSize } from './measure/fontString';
+import { figureLabelLeaderPath } from './composed/labels';
 
 export type PreflightSeverity = 'critical' | 'warning' | 'info';
 
@@ -397,6 +398,11 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
           // A plate's outline and the inks of inline symbols (#1058).
           checkCoverage(layout.background?.border?.color, pageIndex);
           for (const line of layout.lines) for (const s of line.segments ?? []) checkCoverage(s.swatch?.icon?.color, pageIndex);
+          // A leader (#1057): a rule to the point.
+          if (layout.leader && !rb.rotation) {
+            const path = figureLabelLeaderPath(layout, block.bbox.x + rb.bodyRect.x, block.bbox.y + rb.bodyRect.y);
+            if (path) checkRule(layout.leader.stroke.widthPx, layout.leader.stroke.color, pageIndex, path.bbox);
+          }
           const r = label.rect;
           if (r && !flowPage && !rb.rotation) {
             const d = Math.min(r.x - trim.x, r.y - trim.y, trim.x + trim.width - (r.x + r.width), trim.y + trim.height - (r.y + r.height));

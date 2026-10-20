@@ -166,6 +166,11 @@ function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
         if (!raw || typeof raw !== 'object') return;
         const r = raw as Record<string, unknown>;
         word(`${at}.side`, r.side, CONNECTOR_SIDES, '');
+        // An anchor of the frame's picture (#1057): a name; which names the
+        // picture has is known only once the page is laid out.
+        if (r.anchor !== undefined && (typeof r.anchor !== 'string' || r.anchor.trim() === '')) {
+          out.push({ kind: 'unknownConfigValue', path: `${at}.anchor`, value: String(r.anchor), used: '' });
+        }
         const pos = r.at;
         if (pos === undefined) return;
         if (typeof pos === 'number' && Number.isFinite(pos)) {
@@ -418,7 +423,7 @@ function collectPageTemplateWarnings(config: PostextConfig, options: ConfigWarni
   const overrides = config.htmlViewer?.overrides;
   const any = config.pageTemplates !== undefined || config.labelStyles !== undefined
     || overrides?.pageTemplates !== undefined || overrides?.labelStyles !== undefined
-    || (options.resources ?? []).some((r) => r.anchors?.some((a) => a.style !== undefined));
+    || (options.resources ?? []).some((r) => r.anchors?.some((a) => a.style !== undefined || a.labelAt !== undefined || a.leader !== undefined));
   if (!any) return [];
   const resolved = resolveAllConfig(config);
   const dpi = resolved.page.dpi;

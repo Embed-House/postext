@@ -36,7 +36,8 @@ type Side = 'top' | 'bottom' | 'left' | 'right';
 /** Line width of a connector that sets none: 0.75 pt. */
 export const DEFAULT_CONNECTOR_WIDTH: Dimension = { value: 0.75, unit: 'pt' };
 /** A cap's size against the line width when `capSize` is not set. */
-const CAP_SIZE_PER_WIDTH = 3;
+export const DEFAULT_CAP_SIZE_PER_WIDTH = 3;
+const CAP_SIZE_PER_WIDTH = DEFAULT_CAP_SIZE_PER_WIDTH;
 /** How far an arrowhead's line stops short of the tip, of the head's
  *  length: the line ends inside the head, so its square end never shows
  *  beside the point. */
@@ -45,6 +46,8 @@ const ARROW_INSET = 0.6;
 export const CONNECTOR_ROUTINGS = ['straight', 'elbow', 'tree'] as const;
 export const CONNECTOR_CAPS = ['none', 'dot', 'arrow'] as const;
 export const CONNECTOR_SIDES = ['top', 'bottom', 'left', 'right', 'start', 'end'] as const;
+/** How a label's leader runs (#1057). */
+export const LEADER_ROUTINGS = ['straight', 'elbow'] as const;
 
 const EPS = 0.01;
 
@@ -105,7 +108,7 @@ function sidePoint(box: ConnectorRect, side: Side, at: unknown, gap: number, sta
   }
 }
 
-interface Pt {
+export interface Pt {
   x: number;
   y: number;
 }
@@ -137,7 +140,7 @@ const KAPPA = 0.5522847498;
 
 /** The commands of a polyline, each bend rounded by `radius` (held to half
  *  a segment between two bends, the whole of an end segment). */
-function polylineCommands(points: readonly Pt[], radius: number): VDTPathCommand[] {
+export function polylineCommands(points: readonly Pt[], radius: number): VDTPathCommand[] {
   const pts = simplify(points);
   if (pts.length < 2) return [];
   const cmds: VDTPathCommand[] = [{ op: 'M', x: pts[0]!.x, y: pts[0]!.y }];
@@ -167,7 +170,7 @@ function polylineCommands(points: readonly Pt[], radius: number): VDTPathCommand
 
 /** An end of a polyline marked with a cap: the mark, and the line pulled
  *  back inside an arrowhead. `ends`: 0 the first point, 1 the last. */
-function capEnd(points: Pt[], which: 0 | 1, cap: LineCap, size: number, color: string, marks: VDTPathMarker[]): void {
+export function capEnd(points: Pt[], which: 0 | 1, cap: LineCap, size: number, color: string, marks: VDTPathMarker[]): void {
   const pts = simplify(points);
   if (cap === 'none' || pts.length < 2) return;
   const tip = which === 0 ? pts[0]! : pts[pts.length - 1]!;
@@ -212,6 +215,13 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
   const endCap = capOf(el.endCap);
   const gapOf = (e: ConnectorEnd): number => Math.max(0, px(e.gap, dpi) ?? 0);
   const sideOf = (e: ConnectorEndBox, other: ConnectorRect): Side => physicalSide(e.end.side, startRight) ?? facingSide(e.box, other);
+  // An end at a point of a picture (#1057): a box of no size. With no
+  // side written, the line arrives on the axis it leaves the other end by
+  // (a note's side points along a horizontal line to the point), from the
+  // side the other end stands on.
+  const isPoint = (e: ConnectorEndBox): boolean => e.box.width === 0 && e.box.height === 0 && physicalSide(e.end.side, startRight) === undefined;
+  const arriving = (p: Pt, otherSide: Side, other: Pt): Side =>
+    (vertical(otherSide) ? (other.y <= p.y ? 'top' : 'bottom') : (other.x <= p.x ? 'left' : 'right'));
   const point = (e: ConnectorEndBox, side: Side): Pt => sidePoint(e.box, side, e.end.at, gapOf(e.end), startRight);
 
   const lines: Pt[][] = [];
@@ -229,7 +239,8 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
     const n = ps === 'bottom' ? { x: 0, y: 1 } : ps === 'top' ? { x: 0, y: -1 } : ps === 'right' ? { x: 1, y: 0 } : { x: -1, y: 0 };
     const along = (q: Pt) => q.x * n.x + q.y * n.y;
     const across = (q: Pt) => (vertical(ps) ? q.x : q.y);
-    const kids = to.map((e) => point(e, physicalSide(e.end.side, startRight) ?? facingSide(e.box, from.box)));
+    const opposite: Record<Side, Side> = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' };
+    const kids = to.map((e) => point(e, isPoint(e) ? opposite[ps] : physicalSide(e.end.side, startRight) ?? facingSide(e.box, from.box)));
     const reach = Math.min(...kids.map((k) => along(k) - along(p)));
     const bar = along(p) + trunk * reach;
     const onBar = (c: number): Pt => (vertical(ps) ? { x: c, y: bar * n.y } : { x: bar * n.x, y: c });
@@ -279,8 +290,10 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
     }
   } else {
     to.forEach((e) => {
-      const s0 = sideOf(from, e.box);
-      const s1 = sideOf(e, from.box);
+      let s0 = sideOf(from, e.box);
+      let s1 = sideOf(e, from.box);
+      if (isPoint(e) && !isPoint(from)) s1 = arriving({ x: e.box.x, y: e.box.y }, s0, point(from, s0));
+      else if (isPoint(from) && !isPoint(e)) s0 = arriving({ x: from.box.x, y: from.box.y }, s1, point(e, s1));
       const a = point(from, s0);
       const b = point(e, s1);
       let line: Pt[];

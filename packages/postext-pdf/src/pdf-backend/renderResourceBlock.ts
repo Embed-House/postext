@@ -39,8 +39,9 @@ import type {
   VDTPage,
 } from 'postext';
 import type { PdfColorSpace } from 'postext';
-import { altWithLabels, figureLabelMatrix, labelPlateBox, resourceBlockIcons, undrawnLabels, unmirrorLabelLayout, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
+import { altWithLabels, figureLabelLeaderPaths, figureLabelMatrix, labelPlateBox, resourceBlockIcons, undrawnLabels, unmirrorLabelLayout, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
 import { drawRoundedBox, roundedRectSvgPath } from './headerFooter';
+import { renderPathBlock } from './pathBlock';
 import { pdfUri } from './links';
 import { parseFontString } from '../fontString';
 import { FontCache, declarationOf, fontFilesOf, inDeclarationOrder, type PdfFontFile, type PdfFontProvider } from '../fontCache';
@@ -1123,6 +1124,12 @@ function paintFigureLabels(
 ): void {
   const drawn = (rb.labels ?? []).filter((l) => l.layout);
   if (drawn.length === 0) return;
+  // Their leaders first (#1057), under every label: vector lines, a layout
+  // artifact, in the frame the labels' geometry is in.
+  for (const path of figureLabelLeaderPaths(rb, bx, by)) {
+    tagArtifact(ctx, { type: 'Layout' });
+    renderPathBlock(ctx, path);
+  }
   const group = structure ? structure.figureLabelsElem(block) : undefined;
   for (const label of drawn) {
     let layout = label.layout!;
