@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Programmatic usage',
   description: 'Calling Postext from code: buildDocument and its warnings, defaults, fonts, caches and the Web Worker',
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '28 min',
   order: 20,
   parent: 'configuration',
@@ -168,6 +168,41 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td><code>figureWordsShared</code></td>
       <td>A <code>:::figure</code> gives words (<code>alt</code>, <code>caption</code>, <code>note</code>) to a resource that an earlier figure of the chapter already worded, and they differ (<code>resourceId</code>, <code>words</code>).</td>
       <td>The pages show the first figure's words; the later figure's are left out.</td>
+    </tr>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>Ink of a frame of a composed page lies under another frame painted over it (<code>template</code>, <code>frame</code>, <code>coveredBy</code>, <code>coveredByPath</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>overlapMm2</code>, <code>text</code> or <code>picture</code>, <code>locale</code>; <code>proposals</code>: <code>layer</code>, <code>exclude</code>, <code>move</code>). Raised by the layout, with the <code>pageIndex</code> of the page. Since postext 1.48.</td>
+      <td>Both frames are painted as the template says; the covered ink is hidden.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>A frame of a composed page runs past the trim (its text), the bleed (its fill or pictures) or the frame or group it is anchored inside (<code>template</code>, <code>frame</code>, <code>fenceIndex</code>, <code>configPath</code>, <code>past</code>, <code>target</code>, <code>excessMm</code>, <code>sides</code>, <code>locale</code>; <code>proposals</code>: <code>maxHeight</code>, <code>minHeight</code>, <code>continueNextPage</code>, <code>move</code>). Raised by the layout. Since postext 1.48.</td>
+      <td>The frame is painted where it is; what runs past the trim is cut.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>A repeating grid of a composed page holds <code>max</code> items and the page gives it more (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). One per item over. Since postext 1.48.</td>
+      <td>The item goes to the flow frame, or after the page.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>A <code>:::module</code> the page does not lay (<code>template</code>, <code>module</code>, <code>name</code>, <code>fenceIndex</code>; <code>reason</code>: <code>'unknown'</code>, <code>'notModule'</code>, <code>'noGroup'</code>). Since postext 1.48.</td>
+      <td>Its content goes to the flow frame.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>A page fence names a module template (<code>template</code>, <code>fenceIndex</code>). Since postext 1.48.</td>
+      <td>The fence's content is set in the flow.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>A <code>:::module</code> inside another module (<code>template</code>, <code>module</code>, <code>fenceIndex</code>). Since postext 1.48.</td>
+      <td>Its blocks are the outer module's.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>A module's <code>name</code> is taken on the page or holds a space, <code>.</code>, <code>#</code>, <code>[</code> or <code>]</code> (<code>template</code>, <code>module</code>, <code>name</code>, <code>used</code>, <code>reason</code>: <code>'taken'</code>, <code>'invalid'</code>, <code>fenceIndex</code>). Since postext 1.48.</td>
+      <td>The module is named <code>used</code> and its slots are addressed under that name.</td>
     </tr>
     <tr>
       <td><code>unknownChipStyle</code></td>

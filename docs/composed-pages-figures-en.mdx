@@ -31,7 +31,9 @@ This page covers the figures of a composed page, or of the running text, that se
 
 - `at` names an anchor of the resource (a point defined once on the picture, shared by every language), or gives a point in percentages of the picture, `at="x% y%"`, for a label with no anchor.
 - `style` names a label style and overrides the anchor's.
-- The text in brackets is inline Markdown: bold, italic, chips.
+- `leader` draws a line from the label to its anchor's point, and `leader="none"` takes it away (see [Leaders, legends and symbols](#leaders-legends-and-symbols)).
+- The text in brackets is inline Markdown: bold, italic, chips, and symbols written `:icon`.
+
 
 A figure works in the running text as well as in a frame. Its labels are drawn on the picture as text and go wherever the figure goes: a column, a float, a frame turned or scaled by the reflow ladder (the steps that make content fit), a spread. When a figure's closing `:::` is missing, the first line that is neither a label nor blank ends it, and the figure is reported as an unclosed container.
 
@@ -61,6 +63,57 @@ A resource holds one picture, its anchors and one set of words, but each edition
 - **Vertical.** With `writingMode: 'vertical-rl'` on the anchor (or on its label style) the label is set as a vertical page is: its characters upright in cells one under another, the columns going from right to left, Latin words and long numbers turned sideways, short numbers in one cell. `width` is then a fraction of the picture's height (the length of a column), and a Chinese or Japanese label wraps into more columns. `align` runs along the column (`start` is its top), `verticalAlign` across the columns (`top` is the first, right-hand one), and `rotate` turns the label further. On the mirrored page of a right-to-left book it reads the same way, down its columns and upright, at the same place on the picture (since postext 1.40).
 - **Checks.** A label still wider than its measure at its style's `minScale` raises `labelOverflow`; two labels whose lines meet raise `labelOverlap` on the later one. Both are checked in each edition, so a translation with longer words shows where it needs room. A part's palette (`:::part{palette="…"}`) recolours the labels on its pages as it does captions. The contrast check measures a label against its plate, or else its halo; a label set directly on the picture is skipped, since its background is the picture. The print preflight also checks labels: small type in process colours, inks, and distance from the trim.
 - **On a spread.** A figure that crosses the spine of a spread (a frame with `crossGutter: true`) paints one half on each page, so a label reaching into the gutter band would be cut by the fold and readable on neither page. Such a label slides sideways to the edge of the band, on the side where its anchor's point lies, and keeps its height; a point exactly on the spine goes to the first page, as a frame does. An anchor with `gutter: 'cross'` keeps its place, for a title set across both pages. The outer edges of the sheet are left alone: a label that runs past the trim is cut as the picture is. Since postext 1.43.
+
+### Leaders, legends and symbols
+
+Since postext 1.48 a label can stand away from what it names, a label can be a map's key, and a label, a caption or a table cell can hold symbols.
+
+**Leaders.** An anchor's `labelAt` sets its label away from its point (a name in the sea, a note in the margin of a diagram), and a leader draws the line from the label back to the point. The look is the label style's `leader` (see [Configuration › Label styles](/en/docs/configuration-composed-pages#label-styles)); the Markdown only turns it on or off for one label:
+
+```md
+:::figure{resource="relieve" slot="mapa"}
+::label[Sierra Alta]{at="peaks" leader}
+::label[Lago Verde]{at="lake" leader="none"}
+:::
+```
+
+`leader` with any value but `none`, `false` or `off` turns it on; without the attribute, the anchor's `leader` decides, and with neither a label set away from its point gets one when its style has a `leader`. A frame's note can point at a place of the picture as well: a [connector](/en/docs/configuration-composed-pages#connectors) whose end names a picture anchor (`anchor: 'lake'`).
+
+**Labels of several lines.** `:::label{at="…" style="…"}` … `:::`, inside a `:::figure`, writes a label line by line: every line of the source that is not blank is a line of the label, so a key or an address needs no `\\` at the end of each line. The first `:::` closes the label, the next one the figure. `::label[…]` stays a label of one line, broken only where it says `\\`.
+
+**Legends.** A label in a style with `kind: 'legend'` is a map's key: each line is a row, and the symbol that opens a row stands in a column as wide as the widest symbol, so the words of the rows start on one edge. Write the symbol first on each line:
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="key" style="key"}
+:icon[Country]{glyph="■" color="country"} Country
+:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Capital
+:icon[Town]{resource="town-mark" size="0.55"} Town
+:icon[Border]{line="dashed" color="border"} Border
+:::
+::label[:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+**Symbols.** `:icon[alt]{…}` sets a small symbol on the line, standing on the baseline:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Attribute</th>
+      <th>Effect</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>resource="…"</code></td><td>A bitmap or SVG resource, kept in proportion.</td></tr>
+    <tr><td><code>glyph="…"</code></td><td>A character, in the text's face or in the face <code>font="…"</code> names.</td></tr>
+    <tr><td><code>line="solid|dashed|dotted"</code></td><td>A sample of a line, twice as long as it is high: a border or a road in a key.</td></tr>
+    <tr><td><code>color="…"</code></td><td>A hex colour or a palette entry: the tint of a glyph, a line or a picture.</td></tr>
+    <tr><td><code>size="…"</code></td><td>The symbol's height in ems of the text. Default <code>0.75</code>, the height of a capital.</td></tr>
+  </tbody>
+</table>
+
+The first of `resource`, `glyph` and `line` written decides the kind; with none of them the directive stays text. The text in brackets is the symbol's alternative text: screen readers, the tagged PDF and the alternative text of the picture read it in place of the symbol, and a symbol with empty brackets is decoration. Symbols are read in figure labels and in every snippet of a resource: captions, notes and table cells. They are not read in body text, headings or design texts in this release.
 
 ### labelAnchorUnknown
 

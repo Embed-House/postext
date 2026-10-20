@@ -3,9 +3,9 @@
 export const metadata = {
   title: 'Configuration: headers and footers',
   sidebarTitle: 'Headers and footers',
-  description: 'What prints at the top and the foot of every page: text with placeholders, rules, boxes and images, by page parity, and where each element sits',
+  description: 'What prints at the top and the foot of every page: text with placeholders, rules, boxes, images and vector paths, by page parity, and where each element sits',
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-20',
   readingTime: '29 min',
   order: 6,
   parent: 'configuration',
@@ -23,7 +23,7 @@ The `header` and `footer` properties control per-page header and footer slots. H
 
 Slots use the unified **design slot** model: every element has a `placement` with an `anchor` (to the container or to another element by `#id`), an optional `offset`, and an optional `size`. The legacy flat fields `align`, `marginFromBody`, `marginFromEdge`, and `width: 'full'` are still accepted on input and are migrated to the new shape automatically; the equivalent new-shape description is documented below.
 
-Each slot holds a list of **text**, **rule**, **box** and **image** elements. Array order is paint order (first element paints first, last element paints on top). This holds whatever the anchors say: an element may anchor to one listed after it (`anchor.to: '#ttl'`), so a background box can come first and still be positioned against the text it sits behind.
+Each slot holds a list of **text**, **rule**, **box**, **image** and **path** elements (a composed page's decoration also takes **connectors**, see [Configuration › Composed pages](/en/docs/configuration-composed-pages#connectors)). Array order is paint order (first element paints first, last element paints on top). This holds whatever the anchors say: an element may anchor to one listed after it (`anchor.to: '#ttl'`), so a background box can come first and still be positioned against the text it sits behind.
 
 **Built-in defaults.** When `header` or `footer` is `undefined`, postext applies a sensible built-in default rather than an empty slot:
 
@@ -46,7 +46,7 @@ To opt out of the built-in defaults, set `header: { elements: [] }` (or `footer:
       <td><code>elements</code></td>
       <td><code>HeaderFooterElement[]</code></td>
       <td>built-in defaults when <code>undefined</code>; <code>[]</code> disables</td>
-      <td>Ordered list of text, rule, box and image elements.</td>
+      <td>Ordered list of text, rule, box, image and path elements.</td>
     </tr>
   </tbody>
 </table>
@@ -586,9 +586,15 @@ Box elements paint a rounded rectangle inside the slot — useful as a backdrop 
     </tr>
     <tr>
       <td><code>style.borderRadius</code></td>
-      <td><code>Dimension</code></td>
+      <td><code>Dimension | &#123; topLeft?, topRight?, bottomRight?, bottomLeft? &#125;</code></td>
       <td><code>0 pt</code></td>
-      <td>Corner radius. Clamped to half the smaller side at render time.</td>
+      <td>Corner radius. Clamped to half the smaller side at render time. Since postext 1.48 an object gives each corner its own radius, a corner left out being square: a band rounded on its top corners only.</td>
+    </tr>
+    <tr>
+      <td><code>style.borderSides</code></td>
+      <td><code>&#123; top?, right?, bottom?, left? &#125;</code></td>
+      <td>every side</td>
+      <td>The border side by side, each <code>&#123; enabled?, color?, width? &#125;</code> over <code>borderColor</code> and <code>borderWidth</code>. A side is drawn when it has a colour and a width, unless it says <code>enabled: false</code>: a band with a rule at its foot only is <code>borderSides: &#123; top: &#123; enabled: false &#125;, right: &#123; enabled: false &#125;, left: &#123; enabled: false &#125; &#125;</code>. Since postext 1.48.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>
@@ -695,9 +701,85 @@ The PDF backend embeds the resource like a figure (an SVG with a print master us
 
 A picture that a design draws counts as content when its resource describes it. The description (the resource's `altText`, or else its caption as plain text, with a chip read by its label and a `:ref` by its `text` when it has one) goes into the VDT (`VDTDesignImageBlock.altText`). It becomes the `alt` of the `<img>` in HTML and a `Figure` with `/Alt` in a tagged PDF, read right after the text of its design (a chapter's plate after the chapter's heading). A picture whose resource has neither, and one marked `decorative`, is decoration: `alt=""` with `role="presentation"`, and an artifact in the PDF. A running head's or footer's picture repeats on every page, so it is furniture whatever its resource says: no `altText` in the VDT, `alt=""` with `role="presentation"` in HTML, an artifact of the page in the PDF.
 
+### Path elements
+
+A `path` element draws a vector shape that a box cannot: a bar that runs into the spine with a slanted end, a ribbon with a notch, the chevrons beside a running head, a speech-bubble tail on a card. The outline is SVG path data, written in fractions of the element's own box by default, so the shape stretches with the box and follows it when the box moves: a ribbon sized to `{ to: '#title', edge: 'right' }` is as long as the title in every language. Every design slot takes it: running heads, heading and part designs, contents part rows, box designs and a composed page's decoration. Since postext 1.48.
+
+```ts
+{
+  kind: 'path', id: 'ribbon',
+  d: 'M0 0 H1 L0.94 0.5 L1 1 H0 Z',
+  fill: { hex: '#c0392b', model: 'hex' },
+  placement: { anchor: { to: '#title', edge: 'align-left' }, size: { width: { to: '#title', edge: 'right' }, height: { value: 9, unit: 'mm' } } },
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'path'</code>, <code>string</code></td>
+      <td>—</td>
+      <td>Discriminator, and a stable id other elements may anchor to.</td>
+    </tr>
+    <tr>
+      <td><code>d</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>SVG path data: <code>M L H V C S Q T A Z</code>, absolute and relative, in the units of <code>viewBox</code>. Data that cannot be read (no initial move, a letter that is no command, a command short of its numbers) draws nothing and is reported as <code>unknownConfigValue</code>; the element's box still stands for the elements anchored to it.</td>
+    </tr>
+    <tr>
+      <td><code>viewBox</code></td>
+      <td><code>[number, number]</code></td>
+      <td><code>[1, 1]</code></td>
+      <td>The width and height of the space <code>d</code> is written in. With the default, <code>1</code> is the whole width or height of the box. A path copied from a drawing keeps its drawing's size here (<code>[24, 24]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>preserveAspectRatio</code></td>
+      <td><code>'none' | 'meet'</code></td>
+      <td><code>'none'</code></td>
+      <td><code>'none'</code> stretches the <code>viewBox</code> to the box on each axis; <code>'meet'</code> scales it evenly to fit inside, centred: an icon that must not be squashed.</td>
+    </tr>
+    <tr>
+      <td><code>fill</code>, <code>stroke</code></td>
+      <td><code>ColorValue</code></td>
+      <td>black fill</td>
+      <td>The fill and the outline. With neither, the shape is filled black, as an SVG path is; with <code>stroke</code> alone it has no fill. Palette-linked colours follow the palettes of the page and the part.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.5pt</code>, solid</td>
+      <td>The outline's thickness and dash pattern, page lengths that do not stretch with the box, so a stretched shape keeps an even line.</td>
+    </tr>
+    <tr>
+      <td><code>placement</code></td>
+      <td><code>ElementPlacement</code></td>
+      <td>—</td>
+      <td>Placed and sized as a box element is (see <a href="#element-placement">Element placement</a>): a side left out, or <code>'fill'</code>, runs to the container's edge.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code>, <code>pin</code>, <code>reserve</code></td>
+      <td>as box elements</td>
+      <td><code>'all'</code>, <code>false</code>, <code>true</code></td>
+      <td>Which pages it appears on, whether it stays where the template draws its frame (a composed page's decoration), and whether it counts toward a heading's reserved height.</td>
+    </tr>
+  </tbody>
+</table>
+
+A path is painted as a vector shape on the canvas, in the PDF, in the HTML viewer and in the fixed-layout EPUB, as a layout artifact in a tagged PDF, and left out of the reflowable EPUB with the rest of the page furniture. A click answers on its ink, not on its empty box. A key the element does not have is `unknownConfigKey`. Paths are not rotated in this release.
+
 ### Element placement
 
-`ElementPlacement` is the unified positioning model used by every element type (text, rule, box, image) inside any design slot — page header, page footer, or heading-level advanced design slot. Three pieces of state describe a placement:
+`ElementPlacement` is the unified positioning model used by every element type (text, rule, box, image, path) inside any design slot — page header, page footer, or heading-level advanced design slot. Three pieces of state describe a placement:
 
 ```ts
 interface ElementPlacement {
@@ -705,6 +787,8 @@ interface ElementPlacement {
   anchor: {
     to: 'container' | 'page' | 'bleed' | 'outer' | `#${string}`; // container = the slot; page = trim box; bleed = trim box + bleed; outer = the outer margin (header, footer); #id = another element
     edge: AnchorEdge;
+    /** The point along the side `edge` names, on '#id': 'start' | 'center' | 'end' | 0…1. */
+    at?: 'start' | 'center' | 'end' | number;
   };
   /** Distance from the anchor point. */
   offset?: { x?: Dimension; y?: Dimension };
@@ -732,6 +816,12 @@ Each element-relative edge puts one corner of the element on a corner of the ele
 
 An element-relative edge used with `'container'`, `'page'` or `'bleed'`, and a container edge used with `'#id'`, are read as the top-left corner.
 
+**A point along a side.** On an anchor to `'#id'` (another element, or on a composed page a frame or a group), `at` picks a point along the side the edge names: `'start'`, `'center'`, `'end'`, or a fraction of the side from its start, `0` to `1`. Along the side the element is centred on that point; across it the edge keeps its place, so `below` with `at: 'center'` hangs a tick under the middle of a frame and `right-of` with `at: 0.5` sets a mark halfway down its side. A horizontal side (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom`, and the corners, read as their side) starts where the page's lines start: on the right of a right-to-left page. A vertical side (`left`, `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`, `end`) starts at its top. A number outside 0 to 1 is held at the nearer end; a word other than the three is reported as `unknownConfigValue` and ignored, as is `at` on `'container'`, `'page'`, `'bleed'`, `'outer'` and on `center`. Since postext 1.48; without `at` the edge keeps its own point, as before.
+
+```json
+{ "kind": "rule", "id": "tick", "direction": "vertical", "placement": { "anchor": { "to": "#card", "edge": "below", "at": "center" }, "size": { "height": { "value": 4, "unit": "mm" } } } }
+```
+
 **Start and end edges.** `top-start`, `start`, `bottom-start`, `top-end`, `end` and `bottom-end` (with `'container'`, `'page'`, `'bleed'` or `'outer'`), and `align-start` and `align-end` (with `'#id'`), name the side the page's lines start from instead of a fixed side. On a left-to-right page `top-start` is `top-left`; on a right-to-left page, and on a vertical page, whose lines follow each other from the right, it is `top-right`. With these edges the offset's `x` runs from the start side to the end side, so on a right-to-left page a positive `x` moves the element left: the element is the mirror image of the left-to-right one. A template's decoration and the running heads are laid on the sheet, so a kicker written `top-start` stands over the title frame in an Arabic edition and in a Spanish one alike. A frame is laid in the page's flow, already mirrored or turned, where `start` is always its left, the same as `left`. In a heading's design, laid in the flow too, `start` is `left`. In the Sandbox the slot editor's **Alignment** list has **Start** and **End**, and the edge lists have the start and end sides. Since postext 1.39; up to 1.38 these words read as `top-left`.
 
 `anchor.to: 'page'` anchors the element to the **trim box** (the physical page after cutting) and `'bleed'` to the trim box grown by `cutLines.bleed` on every side (identical to the trim box while cut lines are disabled). Both frames also become the reference for `size: 'fill'` and for the automatic width clamp, so a coloured band can run edge to edge regardless of the page margins:
@@ -740,7 +830,7 @@ An element-relative edge used with `'container'`, `'page'` or `'bleed'`, and a c
 { "kind": "box", "id": "band", "placement": { "anchor": { "to": "bleed", "edge": "top-left" }, "size": { "width": "fill", "height": { "value": 6, "unit": "cm" } } }, "style": { "backgroundColor": { "hex": "#1d3557", "model": "hex" } } }
 ```
 
-A size can also run to an edge of another box: `{ to, edge }`, where `to` names the box as an anchor does (`'container'`, `'page'`, `'bleed'`, `'outer'`, or `'#id'` of another element and, on a composed page's decoration, of a frame or a group) and `edge` says which of its edges: `'top'` or `'bottom'` for a height, `'left'` or `'right'` for a width. The length runs from the element's anchor point to that edge, the way the element grows; an edge behind the anchor point gives 0, and an edge across the size's axis, or a box that is not there, reads as `'fill'`. A ground from the foot of a band down to the bleed stays in the template and follows the band when the band moves. Since postext 1.38:
+A size can also run to an edge of another box: `{ to, edge }`, where `to` names the box as an anchor does (`'container'`, `'page'`, `'bleed'`, `'outer'`, or `'#id'` of another element and, on a composed page's decoration, of a frame or a group) and `edge` says which of its edges: `'top'` or `'bottom'` for a height, `'left'` or `'right'` for a width, or `'center'` for its middle on either axis (since postext 1.48): a band from a frame's left edge to the middle of the frame beside it, a vertical rule from under a card down to the middle of the row below. The length runs from the element's anchor point to that edge, the way the element grows; an edge behind the anchor point gives 0, and an edge across the size's axis, or a box that is not there, reads as `'fill'`. A ground from the foot of a band down to the bleed stays in the template and follows the band when the band moves. Since postext 1.38:
 
 ```json
 { "kind": "box", "id": "ground", "placement": { "anchor": { "to": "#band", "edge": "below" }, "size": { "width": "fill", "height": { "to": "bleed", "edge": "bottom" } } }, "style": { "backgroundColor": { "hex": "#f6efe0", "model": "hex" } } }

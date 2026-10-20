@@ -3,10 +3,10 @@
 export const metadata = {
   title: 'Configuration: composed pages',
   sidebarTitle: 'Composed pages settings',
-  description: 'Page templates for composed pages: frames, groups, decoration, inheritance and recto/verso variants, the label styles of picture anchors, and the warnings a template can give',
+  description: 'Page templates for composed pages: frames, groups, grids that repeat a frame set, modules, decoration and connectors, inheritance and recto/verso variants, the label styles of picture anchors, and the warnings a template can give',
   lang: 'en',
-  lastUpdated: '2026-10-19',
-  readingTime: '6 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '10 min',
   order: 18,
   parent: 'configuration',
   plainSummary: "This page covers page templates. A template is a page drawn in the settings: named boxes called frames, where each one sits, how big it may grow and how it looks. The Markdown of a composed page then fills the frames by name, so the text never holds positions and the settings never hold text. A template can start from another one and change only a few frames, and it can differ on left and right pages. The page also lists the label styles for words set on pictures, and every warning a template can give with the way to fix it.",
@@ -104,7 +104,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>decoration</code></td>
       <td><code>DesignSlot</code></td>
       <td>none</td>
-      <td>Images, rules and boxes painted with the page, written with the same elements as <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text. Since postext 1.42, <code>&#123;headingNumber&#125;</code> prints the counter of the first numbered heading the page's frames hold (a frame with <code>takes</code>) and <code>&#123;headingNumber.titulo&#125;</code> that of the frame <code>titulo</code>, in the document's digits, so a badge with a topic's number reads it from the heading and the page fence need not repeat it. Decoration is painted under the frames; a click on a text element that lies over a frame, at a point where the frame has no text of its own, reaches the element, not the frame. A frame with a negative <code>layer</code> is painted under the decoration.</td>
+      <td>Images, rules and boxes painted with the page, written with the same elements as <a href="/en/docs/configuration-headers-footers#headers--footers">headers and footers</a>. Text elements hold placeholders only (<code>&#123;pageNumber&#125;</code>, <code>&#123;chapterTitle&#125;</code>, <code>&#123;attr.x&#125;</code> for an attribute of the page fence). An element may anchor to a frame or a group (<code>'#dinero'</code>) and then moves with it. Decoration is laid after the frames and never pushes text. Since postext 1.42, <code>&#123;headingNumber&#125;</code> prints the counter of the first numbered heading the page's frames hold (a frame with <code>takes</code>) and <code>&#123;headingNumber.titulo&#125;</code> that of the frame <code>titulo</code>, in the document's digits, so a badge with a topic's number reads it from the heading and the page fence need not repeat it. Decoration is painted under the frames; a click on a text element that lies over a frame, at a point where the frame has no text of its own, reaches the element, not the frame. A frame with a negative <code>layer</code> is painted under the decoration. Since postext 1.48 the decoration also takes <a href="/en/docs/configuration-headers-footers#path-elements">path elements</a> (bars, ribbons, chevrons drawn as vector shapes) and <a href="#connectors">connectors</a>, the lines that join frames.</td>
     </tr>
     <tr>
       <td><code>header</code>, <code>footer</code></td>
@@ -152,7 +152,7 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>role</code></td>
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
-      <td>The page role that design elements with a <code>pages</code> filter see.</td>
+      <td>The page role that design elements with a <code>pages</code> filter see. <code>'module'</code> makes the template a module: a box of frames that pages stack in a group instead of a page of its own (see <a href="#modules">Modules</a>). Since postext 1.48.</td>
     </tr>
   </tbody>
 </table>
@@ -354,6 +354,12 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td>A frame set in its own writing mode or direction: a vertical box on a horizontal page, a horizontal card on a vertical one, a right-to-left quotation in a left-to-right book. A frame of the other writing mode is laid out in its box turned a quarter turn: its lines run along the box's height and follow each other across its width, and an <code>'auto'</code> height is the least that holds them in that width. Its text is painted as a page of that mode paints its own. <code>direction</code> sets the frame's story in that direction, as a box fenced <code>&#123;dir=…&#125;</code> is; a block or box that writes its own <code>dir</code> keeps it. Since postext 1.39. Since postext 1.40 a vertical frame also works on a right-to-left page, laid out as on a left-to-right one and placed where the mirrored flow puts it, its text painted unmirrored; a picture in a vertical frame of a horizontal page stands upright with its caption and takes the room the box has left across the page; the reflowable EPUB writes a frame of another writing mode as a box with that mode and the length its lines run along (in ems of the body text). Since postext 1.42 a picture in a frame of a vertical page that follows the page's own mode stands upright with its caption in the same way.</td>
     </tr>
     <tr>
+      <td><code>overlap</code></td>
+      <td><code>'check' | 'allow'</code></td>
+      <td><code>'check'</code></td>
+      <td><code>'allow'</code> leaves the frame out of the overlap checks: <code>frameCovered</code> is not raised for a pair it belongs to, whether it is painted over the other frame or under it, and <code>frameOutsideArea</code> is not raised for it. For art meant to sit over text, or a badge hung half off its card on purpose. See <a href="#overlap-repeat-and-module-warnings">Overlap, repeat and module warnings</a>. Since postext 1.48.</td>
+    </tr>
+    <tr>
       <td><code>remove</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -402,15 +408,51 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
     </tr>
     <tr>
       <td><code>kind</code></td>
-      <td><code>'stack' | 'row'</code></td>
+      <td><code>'stack' | 'row' | 'grid'</code></td>
       <td><code>'stack'</code></td>
-      <td>Top to bottom, or start to end.</td>
+      <td>Top to bottom, start to end, or cells in rows (<code>'grid'</code>, since postext 1.48; see <a href="#grids-that-repeat-a-frame-set">Grids that repeat a frame set</a>).</td>
     </tr>
     <tr>
       <td><code>frames</code></td>
       <td><code>string[]</code></td>
       <td><code>[]</code></td>
-      <td>The frames of the group, in their order on the page. A frame belongs to one group at most; a name that is not a frame of the template, or a frame already listed, is skipped.</td>
+      <td>The frames of the group, in their order on the page. A frame belongs to one group at most; a name that is not a frame of the template, or a frame already listed, is skipped. A grid that repeats takes the frames of <code>repeat.frames</code> instead.</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>A grid: the number of columns, all of one width.</td>
+    </tr>
+    <tr>
+      <td><code>columnGap</code>, <code>rowGap</code></td>
+      <td><code>Dimension</code></td>
+      <td>the group's <code>gap</code></td>
+      <td>A grid: the room between two columns, and between two rows.</td>
+    </tr>
+    <tr>
+      <td><code>rowAlign</code></td>
+      <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
+      <td><code>'stretch'</code></td>
+      <td>A grid: where a cell shorter than its row sits. <code>'stretch'</code> makes its main frame as tall as the row (up to its <code>maxHeight</code>), when that frame's height is <code>'auto'</code> or <code>'fill'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeat</code></td>
+      <td><code>&#123; frames, max? &#125;</code></td>
+      <td>none</td>
+      <td>A grid: the frame set laid once per item of the page's content. The first frame of <code>frames</code> is the cell's main frame; <code>max</code> caps the items, and the rest goes to the flow frame (<code>repeatOverflow</code>).</td>
+    </tr>
+    <tr>
+      <td><code>modules</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>The group takes the page's <code>:::module</code> blocks, one under another in Markdown order, <code>gap</code> between them. It is laid as a stack whatever its <code>kind</code>, and its <code>frames</code> are not read. See <a href="#modules">Modules</a>. Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>overflow.continueIn</code></td>
+      <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
+      <td>none</td>
+      <td>A modules group: where a module that does not fit goes on, whole. Unset, the module is cut at the group's foot and its frames climb the reflow ladder.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -511,6 +553,63 @@ The result depends only on the page's content, the template and the typography: 
 
 The frame that grows is as tall as the room, whatever it holds, so a style with a visible background would paint all of it: paint the card in the template's decoration and leave the text frame without a style.
 
+### Grids that repeat a frame set
+
+A page of photo cards, a page of activity cards or a page of portraits with a name under each one is the same card drawn many times. A grid group with `repeat` draws it once in the template: the frames of one card, called the frame set, which the grid lays once per item the page's Markdown gives it. How many cards a page has is then up to the Markdown, and a translation that adds a card needs no new template. Since postext 1.48.
+
+```ts
+frames: [
+  { name: 'titulo', takes: 'h1' },
+  { name: 'foto', style: 'marco', placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } } } },
+  { name: 'pie', style: 'pastilla', width: 'auto', layer: 2, overlap: 'allow',
+    placement: { anchor: { to: '#foto', edge: 'bottom' }, offset: { y: { value: 4, unit: 'mm' } } } },
+],
+groups: [{
+  name: 'fotos', kind: 'grid', columns: 3,
+  columnGap: { value: 6, unit: 'mm' }, rowGap: { value: 10, unit: 'mm' },
+  repeat: { frames: ['foto', 'pie'] },
+}],
+```
+
+- **The set.** The first frame of `repeat.frames` is the cell's **main** frame: it takes the cell's width and keeps its own height rule (`'auto'` is the height of its content, between `minHeight` and `maxHeight`). The other frames of the set are laid as the template draws them, anchored to the main frame or to each other: here the caption pill hangs from the foot of the photo. A frame of the set anchored to a frame outside it stays where that anchor puts it.
+- **Items.** Each `:::frame{slot="foto"}` piece of the page is one item: pieces of a repeated slot are not joined. Inside the piece, a block that names a member of the set (`:::frame{slot="pie"}`, `::resource{… slot="pie"}`) goes to that member of the same card; the rest goes to the main frame. See [Composed pages › Repeated slots](/en/docs/composed-pages#repeated-slots).
+- **Instances.** Each card's frames are named `<frame>[n]`, counted from 1: `foto[2]` and `pie[2]` are the second card. Warnings, the reflow log, the source map and the Sandbox use these names, the frame ids are `cp<n>:foto[2]`, and a decoration element or a connector can anchor to `'#foto[2]'`. A connector's `to: '#foto[*]'` reaches every card the page has. An element anchored to `'#foto'` reads the grid's box.
+- **Cells.** Cells fill the rows from the start side, so on a right-to-left page the first card is on the right. A row is as tall as its tallest cell, counting what hangs above the main frame (a tab) and below it (a pill); `rowAlign` places the shorter ones. The grid's box is its own `placement` or `grid` cell; without one it starts where the template draws the main frame and runs to the right edge and the foot of the area.
+- **When the cards do not fit.** A row past the grid's foot is cut there, each card climbs the reflow ladder on its own, and the last card cut reports `frameOverflow`. With `overflow.continueIn` on the main frame (`'next-page'`, `'template:<id>'`), the grid goes on **by whole rows**: the first row that does not fit, and every row after it, are laid on the added page, in the grid of a template that repeats the same frame set. A cell taller than the whole grid warns instead of going on for ever.
+- **`max`.** The items past `repeat.max` go to the flow frame, or after the page when the template has none, and each one raises `repeatOverflow`.
+
+A grid without `repeat` lays the frames it lists, one per cell, in the order written. A frame of a repeated set listed in another group is skipped there (`groupFrameTwice`), and a name the template does not have is `groupFrameUnknown`. `grow` and `shrink` do not apply to the rows of a grid, nor `redistribute` to its cards.
+
+### Modules
+
+A textbook page often stacks blocks that recur across the book in another order: a box with a photo beside it, a tree of three ideas, a grid of four photos under a heading. Drawing a template for each order multiplies templates. A **module** is one of those blocks drawn once: a template with `role: 'module'`, holding frames, groups and decoration (connectors included), and no page of its own. A page template takes modules in a group with `modules: true`; the page's Markdown says which modules it holds and in what order (see [Composed pages › Modules in a page](/en/docs/composed-pages#modules-in-a-page)). Since postext 1.48.
+
+```ts
+pageTemplates: [
+  { id: 'tema', frames: [{ name: 'titulo', takes: 'h1' }],
+    groups: [{ name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' },
+      placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: { value: 6, unit: 'mm' } },
+        size: { width: 'fill', height: 'fill' } } }] },
+  { id: 'arbol', role: 'module',
+    frames: [
+      { name: 'raiz', style: 'nodo', width: { value: 56, unit: 'mm' }, placement: { anchor: { to: 'container', edge: 'top' } } },
+      { name: 'izq', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: -44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+      { name: 'der', style: 'nodo', width: { value: 56, unit: 'mm' },
+        placement: { anchor: { to: '#raiz', edge: 'below' }, offset: { x: { value: 44, unit: 'mm' }, y: { value: 10, unit: 'mm' } } } },
+    ],
+    decoration: { elements: [
+      { kind: 'connector', id: 'ramas', routing: 'tree', from: { to: '#raiz' }, to: [{ to: '#izq' }, { to: '#der' }] },
+    ] } },
+],
+```
+
+- **What a module has.** Frames, groups (a grid that repeats included), decoration and connectors. It has no `area`, `header`, `footer`, `variants`, `spread`, `gutter` or `overflowTemplate`: each of those is reported as `unknownConfigValue` and ignored. `extends` works between modules (a template that extends a module is a module).
+- **Its box.** A module is as wide as its group and as tall as its frames reach; the group stacks the modules from its top, `gap` between them. Inside a module, `'container'` is the module's box, for its frames (`'fill'` and percentages too) and for its decoration: a ground sized to `{ to: 'container', edge: 'bottom' }` covers the module whatever height its words give it.
+- **Names.** A module's frames, groups and elements are scoped by the module's instance name: `<name>.<frame>`, with the name the Markdown gives (`name="ramas"`) or else `<template>[n]`, the module's count among the page's modules of that template (`arbol[2].raiz`). Anchors, `next`, `continueIn: '#x'` and connectors inside a module are rewritten to its own frames, so two trees on one page never join each other. A frame id reads `cp0:arbol[2].raiz`.
+- **When modules do not fit.** A module past the group's foot is cut there and its frames climb the reflow ladder; `frameOverflow` is raised once for the group. With `overflow.continueIn` on the modules group (`'next-page'` or `'template:<id>'`), the first module that does not fit and every module after it go on **whole** to the added page, under the same names, at the top of that page's modules group.
+- **Not yet.** Modules side by side (a modules group is always a stack), a module inside a module (`moduleNested`) and template `grid` cells inside a module.
+
 ### When content does not fit
 
 When a frame's content is taller than the room its group gives it, the layout tries, in order, the steps of the [reflow ladder](/en/docs/composed-pages#when-it-still-does-not-fit) and stops at the first that makes it fit: free space up to `maxHeight`, the group pushing and yielding, smaller pictures, the other frames of the group down to their minimum, smaller text, continuation on another page. These frame settings decide how far each step may go:
@@ -555,7 +654,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### What the layout applies
 
-The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Since postext 1.42 it also applies the template's `palette`, a frame's `look` and an `'auto'` width (as wide as the frame's longest line). A frame's `writingMode` and `direction` are applied since postext 1.39. Read and checked, but not yet applied: the template's `bodyStyle`.
+The layout applies the placement and sizes of every frame (grid, anchors, `min`/`max`, `verticalAlign`), its style and `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (and its `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) with `overflow.mark` and `overflow.fromMark`, and its `fit` (the reflow ladder's text and picture scaling, see [When content does not fit](#when-content-does-not-fit)); a group's negotiation of space (`grow`, `shrink`, `priority`, `pin`, and the group's `gap` and `align`, see [How groups share space](#how-groups-share-space)); and the template's `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` and `overflowTemplate`. Since postext 1.42 it also applies the template's `palette`, a frame's `look` and an `'auto'` width (as wide as the frame's longest line). A frame's `writingMode` and `direction` are applied since postext 1.39. Since postext 1.48 it applies grid groups and their `repeat`, modules groups and module templates, connectors and path elements in the decoration, and a frame's `overlap`. Read and checked, but not yet applied: the template's `bodyStyle`.
 
 ### Spreads
 
@@ -585,6 +684,166 @@ pageTemplates: [{
 A column gap wider than the `gutter` keeps the cards of a symmetric grid clear of the spine, so none of them is moved. The second band and the picture strip set `crossGutter` to run across it: each is read on the page that holds its centre and painted on both. Every word of the page, the era names on the tabs included, stays in the Markdown.
 
 On a vertical (`vertical-rl`) book a spread is laid in the pages' flow frame, as its single composed pages are: the top of a page is the sheet's right edge and the lines run down, so the template's `x` runs down the sheet and its `y` from the sheet's right edge to its left. The sheet is the right page followed by the left one along `y`, the spine is a line across the template, and `gutter`, `crossGutter` and the cut between the pages read that axis; decoration is still laid over the physical sheet and cut at the spine. A horizontal timeline drawn for a horizontal book comes out turned on a vertical one: write a vertical book's template in its flow's frame. Since postext 1.38. A card that should read across the sheet takes `writingMode: 'horizontal-tb'`: it is set horizontally and stands upright on the vertical page (since postext 1.39).
+
+### Connectors
+
+A connector is a line of the decoration that joins frames: the branches of a tree diagram, an org chart, the drops of a timeline, the arrows of a flow chart, a note's pointer to a place on a map. It is laid after the frames have their final boxes, so it follows a text that grows, an edition with longer words or a group that moves its frames, and it is drawn as a vector line in every output, so the template needs no picture of the lines. Connectors are elements of a page template's or a module's `decoration`; running heads and heading designs have no frames to join, and a connector there is reported (`unknownConfigValue`) and not drawn. Since postext 1.48.
+
+```ts
+decoration: {
+  elements: [
+    { kind: 'connector', id: 'ramas', routing: 'tree', radius: { value: 2, unit: 'mm' },
+      width: { value: 1.25, unit: 'pt' }, from: { to: '#raiz' }, to: [{ to: '#a' }, { to: '#b' }], endCap: 'arrow' },
+  ],
+},
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Property</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>kind</code>, <code>id</code></td>
+      <td><code>'connector'</code>, <code>string</code></td>
+      <td>required</td>
+      <td>The element and its id, as for the other elements of the decoration.</td>
+    </tr>
+    <tr>
+      <td><code>from</code></td>
+      <td><code>ConnectorEnd</code></td>
+      <td>required</td>
+      <td>One end of the line; the parent of a tree.</td>
+    </tr>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>ConnectorEnd | ConnectorEnd[]</code></td>
+      <td>required</td>
+      <td>The other end, or several: one line to each, or the children of a tree. <code>'#card[*]'</code> stands for every card of a <a href="#grids-that-repeat-a-frame-set">repeating grid</a> the page has.</td>
+    </tr>
+    <tr>
+      <td><code>routing</code></td>
+      <td><code>'straight' | 'elbow' | 'tree'</code></td>
+      <td><code>'elbow'</code></td>
+      <td><code>'straight'</code>: one segment. <code>'elbow'</code>: across, along and across again between sides that face each other, an L between sides at right angles. <code>'tree'</code>: a trunk from <code>from</code> to a bar, the bar across the children's points, a drop to each child.</td>
+    </tr>
+    <tr>
+      <td><code>trunk</code></td>
+      <td><code>number</code></td>
+      <td><code>0.5</code></td>
+      <td>Where an elbow's middle run or a tree's bar stands between the ends: <code>0</code> at <code>from</code>, <code>1</code> at the nearest <code>to</code>. A tree with <code>trunk: 0</code> draws no bar: a drop from the parent's edge to each child, as the ticks of a timeline.</td>
+    </tr>
+    <tr>
+      <td><code>radius</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Rounds the bends of an elbow or a tree.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>the main colour</td>
+      <td>A palette-linked colour follows the template's <code>palette</code>, the page fence's and a part's, as rules do.</td>
+    </tr>
+    <tr>
+      <td><code>width</code>, <code>dash</code></td>
+      <td><code>Dimension</code>, <code>Dimension[]</code></td>
+      <td><code>0.75pt</code>, solid</td>
+      <td>The line's thickness, and a dash pattern (on, off, …).</td>
+    </tr>
+    <tr>
+      <td><code>startCap</code>, <code>endCap</code></td>
+      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none'</code></td>
+      <td>A mark at <code>from</code> and at every <code>to</code>: a filled dot centred on the end, or an arrowhead whose tip is the end.</td>
+    </tr>
+    <tr>
+      <td><code>capSize</code></td>
+      <td><code>Dimension</code></td>
+      <td>3 × <code>width</code></td>
+      <td>The width of a dot, or the length of an arrowhead.</td>
+    </tr>
+    <tr>
+      <td><code>pin</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Joins the boxes the template declares, not the boxes the content gave the frames.</td>
+    </tr>
+    <tr>
+      <td><code>parity</code>, <code>pages</code></td>
+      <td>as other elements</td>
+      <td><code>'all'</code></td>
+      <td>Which pages draw it.</td>
+    </tr>
+  </tbody>
+</table>
+
+Each end (`ConnectorEnd`) names a box and a point on one of its sides:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Field</th>
+      <th style={{ width: '200px' }}>Type</th>
+      <th style={{ width: '120px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>to</code></td>
+      <td><code>'#name'</code></td>
+      <td>required</td>
+      <td>A frame, a group, a card of a repeating grid (<code>'#foto[2]'</code>) or another element of the decoration.</td>
+    </tr>
+    <tr>
+      <td><code>side</code></td>
+      <td><code>'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'</code></td>
+      <td>the side facing the other end</td>
+      <td>The side the line leaves or meets the box by. <code>start</code> and <code>end</code> follow the page's line direction. Unset, the side that faces the other box across the wider gap between them; a tree's children face the parent.</td>
+    </tr>
+    <tr>
+      <td><code>at</code></td>
+      <td><code>'start' | 'center' | 'end' | number</code></td>
+      <td><code>'center'</code></td>
+      <td>The point along that side, or a fraction of it from its start (0 to 1). A horizontal side starts where the page's lines start, a vertical one at its top.</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>0</code></td>
+      <td>Room between the box's edge (or the anchor point) and the end of the line.</td>
+    </tr>
+    <tr>
+      <td><code>anchor</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>An anchor of the picture the frame holds: the end is that point of the picture, through its crop, safe area and scale, as a label's is, instead of a point of the frame's side. <code>at</code> is not read; <code>side</code> says which way the line arrives (by default, from the other end).</td>
+    </tr>
+  </tbody>
+</table>
+
+**Ends that are not there.** An end on a frame the page does not show (collapsed, optional and empty, a card past the page's items, a picture point that its frame cuts off) is left out: a tree keeps its other children, and the page's reflow log says so (`connectorDropped`). With no `from` or no `to` left, nothing is drawn.
+
+**Paint.** Connectors are painted with the decoration, under the frames, as vector paths: on the canvas, in the PDF, in the HTML viewer and the fixed-layout EPUB, and as a layout artifact in a tagged PDF; the reflowable EPUB leaves them out with the rest of the decoration. A line that points into a picture needs the picture's frame under the decoration: give that frame `layer: -1`. On a spread a connector between frames of the two pages crosses the spine and is cut there like the rest of the decoration; on a right-to-left page `start` and `end` follow the mirrored flow.
+
+```ts
+frames: [
+  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
+],
+decoration: { elements: [
+  { kind: 'connector', id: 'a-lago', from: { to: '#nota', side: 'end' },
+    to: { to: '#mapa', anchor: 'lago', gap: { value: 1.2, unit: 'mm' } }, endCap: 'dot' },
+] },
+```
+
+**Checks.** An end whose `to` names nothing is `frameAnchorUnknown` (at `…/from/to` or `…/to/<k>/to`) and is left out; `[*]` is valid only in `to` and on a repeated frame. An `anchor` that no picture of the frame has is `labelAnchorUnknown`, with the connector's id. A word outside the choices of `routing`, `startCap`, `endCap` or `side`, and an `at` outside 0 to 1, are `unknownConfigValue`.
 
 ## Label styles
 
@@ -686,6 +945,30 @@ labelStyles: [
       <td><code>'check'</code></td>
       <td><code>'allow'</code> leaves the labels of this style out of the <code>labelOverlap</code> check, for a map whose names touch in the source. An anchor's own <code>overlap</code> wins. Since postext 1.42.</td>
     </tr>
+    <tr>
+      <td><code>align</code></td>
+      <td><code>'start' | 'center' | 'end'</code></td>
+      <td>as the anchor places the box</td>
+      <td>How the lines of a label of several lines line up inside its box, <code>start</code> and <code>end</code> in the label's direction. Unset, they follow the anchor's <code>align</code> (centred by default); in a legend, <code>start</code>. Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>border</code>, <code>radius</code></td>
+      <td><code>&#123; color, width &#125;</code>, <code>Dimension</code></td>
+      <td>none</td>
+      <td>A line round the label's plate (its box grown by <code>padding</code>), with or without a <code>background</code>, and the plate's rounded corners: the framed key of a map. Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>kind</code></td>
+      <td><code>'legend'</code></td>
+      <td>none</td>
+      <td>A map's key: each line of the label is a row, and the symbol (<code>:icon</code>) that opens a row hangs in a column as wide as the widest of them, so the words of every row start on one edge. A row without a symbol is left as it is. Not in vertical labels. Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td>none</td>
+      <td>The look of the leaders of the labels set in this style: the line from a label's box to its anchor's point. Colour by default the label's, width <code>0.75pt</code>, <code>endCap: 'dot'</code> at the point, no <code>startCap</code>, <code>capSize</code> three times the width, <code>routing</code> <code>'straight'</code> (or <code>'elbow'</code>: out of the box square, then one turn onto the point). A label set away from its point (<code>labelAt</code>) in a style with a <code>leader</code> gets one. Since postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -753,16 +1036,37 @@ A picture's anchors (`Resource.anchors`, the points comics use for speakers) tak
       <td><code>'keep'</code></td>
       <td>On a figure across the spine of a spread, <code>'keep'</code> slides the label off the gutter band, to the side its point lies on; <code>'cross'</code> leaves it where the point puts it, as a title across both pages needs. Since postext 1.43.</td>
     </tr>
+    <tr>
+      <td><code>labelAt</code></td>
+      <td><code>&#123; x: number; y: number &#125;</code></td>
+      <td>at the point</td>
+      <td>Where the label set at this anchor stands, away from its point, in fractions of the whole picture: a name in the sea with a line to the island it names. <code>align</code>, <code>verticalAlign</code> and <code>rotate</code> place the label about this point; the anchor's own point stays where leaders and connectors end. Since postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>leader</code></td>
+      <td><code>boolean | LeaderStyle</code></td>
+      <td>see below</td>
+      <td>A line from the label's box to the anchor's point. <code>true</code> draws it in the label style's <code>leader</code> look, an object changes that look field by field, <code>false</code> draws none. Unset, a label set away from its point gets one when its style has a <code>leader</code>. The <code>leader</code> attribute of a <code>::label</code> wins. Since postext 1.48.</td>
+    </tr>
   </tbody>
 </table>
 
 `start` and `end` follow the label's direction: in an Arabic label, `start` is its right edge. An anchor shared by left-to-right and right-to-left editions of one map reads best with the label centred above or below its point. A label with a `width` breaks between words; a word wider than the measure sets the whole label smaller, down to its style's `minScale`. How labels are drawn is described in [Composed pages](/en/docs/composed-pages).
 
+A leader leaves the label by the side of its box (its plate, else its lines) that faces the point across the wider gap, from the middle of that side, so the line never runs through the label's words, a turned label included. A point under the label's box, or a leader shorter than its end mark, draws nothing. Leaders are painted under the labels, with the picture, in every output that draws labels, and they follow the picture when it is cropped, scaled, mirrored or set across a spread.
+
+```ts
+anchors: [
+  { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
+  { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow' } },
+],
+```
+
 ## Page template warnings
 
 Elsewhere the engine ignores a key it does not know. Page templates and label styles are checked instead, and every problem is a configuration warning in `postext check` and in the Sandbox's Checks panel. The `path` of these warnings is a JSON pointer to the field at fault: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. When the field was inherited, the pointer names the template that wrote it. A warning that names an id or a name that does not exist also suggests the closest one that does.
 
-A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field.
+A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, a connector's `routing`, caps and `side`, a leader's caps and `routing`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field.
 
 <table>
   <thead>
@@ -800,7 +1104,7 @@ A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or 
     </tr>
     <tr>
       <td><code>frameAnchorUnknown</code></td>
-      <td>A frame, a group or a decoration element is anchored to <code>'#name'</code> and the template has no frame, group or element of that name; or frames and groups are anchored to each other in a loop (also through a group anchored to nothing of its own, whose box is that of its frames). The anchor reads as <code>'container'</code>, the area.</td>
+      <td>A frame, a group or a decoration element is anchored to <code>'#name'</code> and the template has no frame, group or element of that name; or frames and groups are anchored to each other in a loop (also through a group anchored to nothing of its own, whose box is that of its frames). The anchor reads as <code>'container'</code>, the area. An end of a connector that names nothing is reported the same way, and that end is left out.</td>
       <td>Anchor to a frame or group that exists, or break the loop by anchoring one of them to the area.</td>
     </tr>
     <tr>
@@ -836,4 +1140,57 @@ A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or 
   </tbody>
 </table>
 
-Since page templates, the configuration version is 15 (bundles written earlier still load unchanged: nothing an older configuration says changes meaning).
+Since connectors (postext 1.48) the configuration version is 16; page templates had brought it to 15. Bundles written earlier still load unchanged: nothing an older configuration says changes meaning, and a reader older than connectors leaves out the decoration elements it does not know, with an `unknownConfigValue`.
+
+### Overlap, repeat and module warnings
+
+These warnings come from the layout or from the page's Markdown, not from the template alone, so they name a page. They are listed by `postext check` (`--json` carries their fields as `data`), in the Sandbox's Checks panel and in the document's `contentWarnings`. Since postext 1.48.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '190px' }}>Warning</th>
+      <th>Cause</th>
+      <th>Fix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>frameCovered</code></td>
+      <td>Ink of a frame (its lines, its tab or title, its pictures) lies under another frame painted over it: a higher <code>layer</code>, or the same layer later in template order. A frame covers where it is opaque: its fill, its tab, its pictures, its lines; an outline alone covers nothing, and words over a picture are not reported. One warning per pair, with the covering frame (<code>coveredBy</code>), the area hidden (<code>overlapMm2</code>) and the first words or the picture covered. See <a href="/en/docs/composed-pages#framecovered">Composed pages › frameCovered</a>.</td>
+      <td>Apply a proposal: the covering frame's <code>layer</code> under the covered one, <code>exclude: 'push'</code> on it so the text runs round it, or a <code>move</code> worked out on the page. When the overlap is meant (art over text), set <code>overlap: 'allow'</code> on either frame.</td>
+    </tr>
+    <tr>
+      <td><code>frameOutsideArea</code></td>
+      <td>A frame runs past what holds it: its text past the trim, its fill or pictures past the bleed, or any of it past the frame or group it is anchored inside (a nine-point anchor on <code>'#name'</code> whose point lies within that box). <code>past</code> says which, <code>excessMm</code> by how much. See <a href="/en/docs/composed-pages#frameoutsidearea">Composed pages › frameOutsideArea</a>.</td>
+      <td>Apply a proposal: a <code>maxHeight</code> for the frame, a <code>minHeight</code> for the frame it is anchored inside, <code>overflow.continueIn: 'next-page'</code> with a smaller height, or a <code>move</code>. A badge hung off its card on purpose takes <code>overlap: 'allow'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>repeatOverflow</code></td>
+      <td>A grid that repeats a frame set holds <code>repeat.max</code> items and the page gives it more. One per item over, at its <code>slot="…"</code>: the item goes to the flow frame (<code>flowFrame</code>), or after the page.</td>
+      <td>Raise <code>max</code>, remove it, or move the extra items to another page.</td>
+    </tr>
+    <tr>
+      <td><code>moduleUnknown</code></td>
+      <td>A <code>:::module&#123;template="…"&#125;</code> the page does not lay: the id names no template (<code>reason: 'unknown'</code>), a template that is no module (<code>'notModule'</code>), or the page's template has no modules group (<code>'noGroup'</code>). Its content goes to the flow frame.</td>
+      <td>Correct the id, give the template <code>role: 'module'</code>, or add a group with <code>modules: true</code> to the page's template.</td>
+    </tr>
+    <tr>
+      <td><code>moduleAsPage</code></td>
+      <td>A page fence names a module template. A module is laid in a page's modules group, never as a page: the fence's content is set in the flow, as for an unknown template.</td>
+      <td>Name a page template on the fence, and put the module inside it as a <code>:::module</code>.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNested</code></td>
+      <td>A <code>:::module</code> inside another module. Not supported: its blocks are the outer module's.</td>
+      <td>Close the outer module first, or draw the inner block as frames of the outer module.</td>
+    </tr>
+    <tr>
+      <td><code>moduleNameRejected</code></td>
+      <td>A module's <code>name="…"</code> is taken by another module of the page (<code>reason: 'taken'</code>) or holds a space, <code>.</code>, <code>#</code>, <code>[</code> or <code>]</code> (<code>'invalid'</code>). The module is named <code>used</code> (<code>&lt;template&gt;[n]</code>) instead, and its frames are addressed under that name.</td>
+      <td>Give each module of the page a name of its own, made of letters, digits and dashes.</td>
+    </tr>
+  </tbody>
+</table>
+
+**`connectorDropped` (reflow log).** A connector whose end is on a frame the page does not show (collapsed, optional and empty, a card past the page's items, a picture point its frame cuts off) leaves that end out. It is not a warning: the page's [reflow log](/en/docs/composed-pages#reflow-log) records it, «connector ramas left out izq (not on the page)», so a page where a branch went missing can be told from one drawn as planned. To keep the end, give that frame content, or let the connector go to the frames the page has.
