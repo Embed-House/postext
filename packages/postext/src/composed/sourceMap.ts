@@ -24,7 +24,7 @@ import { pathHit } from '../design/pathBlock';
 import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
 import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
 import { resolvePageTemplate } from './templates';
-import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock } from './paint';
+import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock, paintsOverFrames } from './paint';
 import { composedPageElementId, designElementId, groupElementId } from './ids';
 import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap';
 
@@ -670,7 +670,12 @@ export function sourceAt(doc: VDTDocument, pageIndex: number, x: number, y: numb
       }
       const deco = composed.decoration;
       if (!deco || (decorationClip && !inside(decorationClip, p))) continue;
+      // The `'over'` item (#1076) holds the connectors painted over the
+      // frames, the decoration item the rest; the blocks keep their
+      // indices in the slot.
+      const over = item.kind === 'over';
       for (let k = deco.blocks.length - 1; k >= 0; k--) {
+        if (paintsOverFrames(deco.blocks[k]!) !== over) continue;
         const chain = designChain(deco.blocks[k]!, k, p, (el) => designElementId(composed.fenceIndex, 'decoration', el), composed, file);
         if (!chain) continue;
         // Under a bare frame only a text element wins (its words come from

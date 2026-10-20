@@ -157,8 +157,9 @@ export const MAP_PARTS_TEMPLATE: PageTemplate = {
   header: false,
   frames: [
     { name: 'titulo', takes: 'h1', placement: { anchor: { to: 'container', edge: 'top-left' } } },
-    // Under the decoration (layer -1): the connectors run onto the map.
-    { name: 'mapa', layer: -1, width: mm(118), height: mm(96), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(18) } } },
+    // At the default layer: the connectors end at anchors of its picture,
+    // so they paint over the frames (#1076).
+    { name: 'mapa', width: mm(118), height: mm(96), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(18) } } },
     { name: 'n1', style: 'nota', width: mm(44), placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(8) } } },
     { name: 'n2', style: 'nota', width: mm(44) },
     { name: 'n3', style: 'nota', width: mm(44) },
@@ -182,7 +183,7 @@ export const MAP_PARTS_SPREAD_TEMPLATE: PageTemplate = {
   gutter: mm(16),
   frames: [
     { name: 'titulo', takes: 'h1', placement: { anchor: { to: 'container', edge: 'top-left' } } },
-    { name: 'mapa', layer: -1, width: mm(160), height: mm(120), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(30) } } },
+    { name: 'mapa', width: mm(160), height: mm(120), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(30) } } },
     { name: 'n1', style: 'nota', width: mm(70), placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(20) } } },
     { name: 'n2', style: 'nota', width: mm(70) },
     { name: 'n3', style: 'nota', width: mm(70) },

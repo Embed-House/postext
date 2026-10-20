@@ -59,7 +59,7 @@ import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
 import { altWithLabels } from './composed/labelText';
 import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
-import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix } from './composed/paint';
+import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint';
 import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
@@ -3604,7 +3604,13 @@ function renderPageDetailed(
     const [l, t, r, b] = [sheetOnSheet.x, sheetOnSheet.y, sheetOnSheet.x + sheetOnSheet.width, sheetOnSheet.y + sheetOnSheet.height].map(frameNum);
     return `<div class="pt-sheet-clip" style="position:absolute;left:0;top:0;width:0;height:0;overflow:visible;clip-path:polygon(${l}px ${t}px,${r}px ${t}px,${r}px ${b}px,${l}px ${b}px);">${html}</div>`;
   };
-  const composedDecorationHtml = page.composed?.decoration ? decorationClipped(renderDesignSlot(page.composed.decoration, composedFlow ? { ...options, vertical: undefined } : options)) : '';
+  const decorationOptions: HtmlPaint = composedFlow ? { ...options, vertical: undefined } : options;
+  const underSlot = decorationUnder(page.composed?.decoration);
+  const composedDecorationHtml = underSlot ? decorationClipped(renderDesignSlot(underSlot, decorationOptions)) : '';
+  // Connectors painted over every frame (#1076): their own box, last in
+  // the paint order; through a flow frame, on the sheet after the rest.
+  const overSlot = decorationOver(page.composed?.decoration);
+  const composedOverHtml = overSlot ? decorationClipped(renderDesignSlot(overSlot, decorationOptions)) : '';
   const composedParts: string[] = [];
   /** The frames' boxes and the decoration: what a patcher of blocks must
    *  also compare (`decorationHtml`). */
@@ -3613,8 +3619,9 @@ function renderPageDetailed(
     const paint = composedPaintOrder(page);
     for (const item of composedReadingOrder(paint)) {
       const z = paint.indexOf(item) + 1;
-      if (item.kind === 'decoration') {
-        if (!composedFlow && composedDecorationHtml) composedParts.push(`<div class="pt-frame-decoration" style="position:absolute;left:0;top:0;width:0;height:0;z-index:${z};">${composedDecorationHtml}</div>`);
+      if (item.kind === 'decoration' || item.kind === 'over') {
+        const html = item.kind === 'over' ? composedOverHtml : composedDecorationHtml;
+        if (!composedFlow && html) composedParts.push(`<div class="pt-frame-decoration${item.kind === 'over' ? ' pt-frame-decoration-over' : ''}" style="position:absolute;left:0;top:0;width:0;height:0;z-index:${z};">${html}</div>`);
         continue;
       }
       if (item.blocks.length === 0) continue;
@@ -3670,8 +3677,8 @@ function renderPageDetailed(
   // flow frame), under the running heads, as the canvas paints them.
   const comicHtml = page.comic ? comicMarkup(page.comic) : '';
   const sheetComicsHtml = comicHtml + (plainFlow ? '' : comics.filter((c) => c !== page.comic).map(comicMarkup).join(''));
-  const sheetComposedHtml = composedFlow ? composedDecorationHtml : '';
-  const decorationHtml = defsHtml + gridHtml + openerHtml + footnoteRulesHtml + sheetComicsHtml + composedShape.join('') + composedDecorationHtml + slotParts.join('');
+  const sheetComposedHtml = composedFlow ? composedDecorationHtml + composedOverHtml : '';
+  const decorationHtml = defsHtml + gridHtml + openerHtml + footnoteRulesHtml + sheetComicsHtml + composedShape.join('') + composedDecorationHtml + composedOverHtml + slotParts.join('');
   // A vertical page's flow: one box turned a quarter turn clockwise, its
   // text lines turned back and set vertically (see `renderVerticalLine`).
   const anchorsHtml = (options.anchors ?? [])

@@ -135,6 +135,8 @@ function pathPrimitiveToBlock(prim: ResolvedPathPrimitive): VDTDesignPathBlock {
     ...(prim.stroke ? { stroke: { ...prim.stroke, ...(prim.stroke.dash ? { dash: [...prim.stroke.dash] } : {}) } } : {}),
     // A connector's end marks (#1056).
     ...(prim.markers ? { markers: prim.markers.map((m) => ({ ...m })) } : {}),
+    // Painted after the frames (#1076).
+    ...(prim.over ? { over: true as const } : {}),
   };
   block.bbox = pathInkBox(block);
   return block;

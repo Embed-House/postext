@@ -200,6 +200,20 @@ export interface ConnectorLayoutOptions {
   startRight: boolean;
 }
 
+/** Whether a connector is painted over the frames (#1076): its `over`
+ *  when it is a boolean, else whether an end as written (`from`, any `to`)
+ *  names a picture's `anchor`, a point inside a frame that would cover a
+ *  line painted under it. Read from the element, not from the ends the
+ *  page keeps, so a dropped end does not change the layer. */
+export function connectorPaintsOver(el: Pick<ResolvedDesignConnectorElement, 'over' | 'from' | 'to'>): boolean {
+  if (typeof el.over === 'boolean') return el.over;
+  const anchored = (end: unknown): boolean => {
+    const anchor = (end as { anchor?: unknown } | null | undefined)?.anchor;
+    return typeof anchor === 'string' && anchor.trim() !== '';
+  };
+  return anchored(el.from) || (Array.isArray(el.to) ? el.to.some(anchored) : anchored(el.to));
+}
+
 /** The outline and marks of `el` between `from` and `to` (every end that
  *  the page has, in order), or undefined when nothing is left to draw. */
 export function layoutConnector(el: ResolvedDesignConnectorElement, from: ConnectorEndBox, to: readonly ConnectorEndBox[], opts: ConnectorLayoutOptions): ResolvedPathPrimitive | undefined {
@@ -342,5 +356,6 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
     subpaths,
     stroke,
     ...(marks.length > 0 ? { markers: marks } : {}),
+    ...(connectorPaintsOver(el) ? { over: true as const } : {}),
   };
 }

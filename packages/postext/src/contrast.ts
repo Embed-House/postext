@@ -666,6 +666,9 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
         walkSlot(page.composed?.decoration, false, 'design');
         continue;
       }
+      // Connectors over the frames (#1076) are lines, not a ground, and
+      // were walked with the decoration.
+      if (item.kind === 'over') continue;
       if (item.facing) continue;
       frameToSheet = frameMatrix(item.frame);
       for (const block of item.blocks) walkBlock(block);

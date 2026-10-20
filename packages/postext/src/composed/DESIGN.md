@@ -2654,3 +2654,52 @@ C8's box shapes (§12.20): all of them are edited in the Design panel and on the
 - **Not done.** Connector ends on a module's frames (`#tree[1].left`) are not listed (typed through the tools
   only). The handles are not drawn outside the Design mode nor in the Folio. Dragging an end along its side
   to set `at` is left for later.
+
+### 12.26 What #1076 changed (C6 finding)
+
+- **The key.** `DesignConnectorElement.over?: boolean`: the line is painted after every frame of the page.
+  Default (`connectorPaintsOver`, `design/connector.ts`): `true` when an end as written (`from` or any `to`)
+  has a non-empty `anchor`, else `false`; read from the element, not from the ends the page keeps, so a
+  dropped end does not move the line to another layer. `over: true` raises a plain frame-to-frame
+  connector, `over: false` keeps a pointer under the frames. A value that is not a boolean is
+  `unknownConfigValue` at `…/over` (`used` the default). No `CONFIG_VERSION` bump: one new optional key.
+- **One slot, two paint items.** §5.18 rejected a `layer` on decoration elements because the decoration
+  would become two paint items in every backend. The decoration stays one slot in the VDT
+  (`VDTComposedPage.decoration`): the connector's path block carries `over: true`
+  (`VDTDesignPathBlock.over`, set by the layout through `ResolvedPathPrimitive.over`), and only the paint
+  order knows the rest. `composedPaintOrder` appends a `{ kind: 'over' }` item after the last frame when
+  the slot has such a block (never otherwise); `decorationUnder(slot)` (the slot itself when nothing is
+  over, so nothing is copied) and `decorationOver(slot)` (undefined when nothing is over) give what each
+  item paints, `paintsOverFrames(block)` the test. With `part` (`'below'` / `'above'`, a page painted
+  through a flow frame) neither decoration item is listed: the caller paints `decorationUnder` on the
+  sheet between the two calls and `decorationOver` on the sheet after the `'above'` frames. What reads the
+  slot as data (preflight's thin-rule and coverage checks, the part palette, the spread cut, the font and
+  image collectors, the Sandbox's page geometry) reads it unchanged.
+- **Backends.** Canvas (`renderComposedFrames`, `renderComposedDecoration(…, 'over')`; Folio through
+  it), PDF (`paintComposedItems`; the flow-frame branch paints the over part on the sheet after the
+  frames, under the same Layout artifact mark as the rest of the decoration, so the structure tree is
+  unchanged and the artifact comes later in the content stream), HTML and fixed EPUB (the over part in
+  its own `pt-frame-decoration pt-frame-decoration-over` box with the last `z-index` of the paint order;
+  through a flow frame, on the sheet after the decoration; `decorationHtml` includes it for patchers).
+  `composedReadingOrder` reads the over item with the decoration, first: it holds no content. The
+  reflowable EPUB reads frames only. Contrast skips the over item (lines are not a ground; the slot is
+  walked once with the decoration item, as before).
+- **Source map.** `sourceAt` reads the paint order backwards, so the over item is hit before every frame:
+  on its ink (C4's `pathHit`) the connector answers inside the picture's frame; the decoration item hits
+  only the blocks that are not over (indices stay the slot's, so element ids do not change).
+- **Checks.** `frameCovered` reads frames only, so a connector over a frame's text or picture is not
+  reported (a test pins it); `labelOverlap` is unchanged.
+- **Fixture.** `fixtures/mapParts.ts` lost its `layer: -1` (single page and spread): the map frame is at
+  the default layer and its pointers paint over it. With `layer: -1` patched back the lines are the same
+  paths and still painted last (`overConnectors.test.ts`).
+- **Parity.** A book without anchored connectors and without `over: true` has no `over` mark and no over
+  item: its VDT and its output in every backend are unchanged (bench-layout hashes, the composed recipes'
+  vdtHash). On a page whose connectors end at anchors the paint order changes (they move from layer 0 to
+  last) and the VDT gains the mark; where the picture's frame was at `layer: -1` the look is the same.
+- **Tests.** `overConnectors.test.ts` (default and both overrides, paint and reading order, canvas left to
+  right and right to left, HTML z-index and the flow-frame page, source map, `frameCovered`, validation);
+  `postext-pdf` `connectorOver.test.ts` (stroke after the picture left to right and through the mirrored
+  flow, before it with `over: false`, a Layout artifact when tagged).
+- **Not done.** Other decoration elements over the frames (a rule or box that should sit over a photo
+  still needs the photo's frame at a negative layer); an over connector between frames of different
+  layers is painted over both, never between them. Sandbox (U10/U11), docs (D3), skill (S6).

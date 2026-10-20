@@ -2585,6 +2585,11 @@ export interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
   boxPart?: 'fill' | 'border';
   /** The widest side of a `boxPart: 'border'` path. */
   borderWidthPx?: number;
+  /** A connector painted over the frames (#1076, `DesignConnectorElement.over`):
+   *  the block stays in its decoration slot, but the backends paint it
+   *  after every frame of the page (`composedPaintOrder`'s `'over'` item),
+   *  not with the slot's other blocks. Absent: painted with the slot. */
+  over?: true;
 }
 
 export type VDTDesignBlock =
@@ -2991,7 +2996,8 @@ export interface VDTComposedPage {
   /** In template order. */
   frames: VDTFrame[];
   /** The template's decoration, laid with the frames' final boxes
-   *  (`buildHeadersAndFooters`); painted at layer 0. */
+   *  (`buildHeadersAndFooters`); painted at layer 0, its path blocks marked
+   *  `over` after every frame (#1076). */
   decoration?: VDTDesignSlot;
   /** What the layout changed (DESIGN §5.5). */
   log: ReflowEvent[];

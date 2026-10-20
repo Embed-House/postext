@@ -59,7 +59,7 @@ import { resolveContentInConfigCheck } from './defaults/checks';
 import { stripPlaceholders } from './pipeline/placeholders';
 import { configDesignSlots } from './design/slots';
 import { parseSvgPath, pathViewBox } from './design/svgPath';
-import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES } from './design/connector';
+import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector';
 import { metadataText } from './frontmatter';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
@@ -141,8 +141,9 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
 
 /** Connectors (#1056): one outside a page template's decoration (a
  *  running head, a heading design, a part page, a box design has no frames
- *  to join: not drawn), and a `routing`, `startCap` / `endCap` or an end's
- *  `side` / `at` outside its choices (`unknownConfigValue`). */
+ *  to join: not drawn), and a `routing`, `startCap` / `endCap`, an `over`
+ *  that is not a boolean (#1076) or an end's `side` / `at` outside its
+ *  choices (`unknownConfigValue`). */
 function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
   const out: ConfigWarning[] = [];
   const word = (path: string, value: unknown, choices: readonly string[], used: string): void => {
@@ -162,7 +163,13 @@ function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
       word(`${path}.routing`, e.routing, CONNECTOR_ROUTINGS, 'elbow');
       word(`${path}.startCap`, e.startCap, CONNECTOR_CAPS, 'none');
       word(`${path}.endCap`, e.endCap, CONNECTOR_CAPS, 'none');
-      const end = (raw: unknown, at: string): void => {
+      // Over the frames or under them (#1076): a boolean; anything else is
+      // read as unset (over when an end names a picture's anchor).
+      if (e.over !== undefined && typeof e.over !== 'boolean') {
+        const used = connectorPaintsOver({ from: e.from, to: e.to } as Parameters<typeof connectorPaintsOver>[0]);
+        out.push({ kind: 'unknownConfigValue', path: `${path}.over`, value: String(e.over), used: String(used) });
+      }
+      const end =(raw: unknown, at: string): void => {
         if (!raw || typeof raw !== 'object') return;
         const r = raw as Record<string, unknown>;
         word(`${at}.side`, r.side, CONNECTOR_SIDES, '');

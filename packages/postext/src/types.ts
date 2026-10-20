@@ -6922,7 +6922,7 @@ export interface LeaderStyle {
  * and heading designs have no frames to join): laid after the frames'
  * final boxes, so it follows a text that grows, a language that is longer,
  * a group that moves its frames; painted under the frames as a vector
- * path. An end on a frame the page does not have (collapsed, empty and
+ * path, or over them (`over`, #1076; by default a pointer into a picture). An end on a frame the page does not have (collapsed, empty and
  * optional, an instance past the page's items) is dropped and the page's
  * reflow log says so (`connectorDropped`).
  */
@@ -6963,6 +6963,11 @@ export interface DesignConnectorElement {
   /** Size of a dot (across) or an arrowhead (long). Default three times
    *  the line width. */
   capSize?: Dimension;
+  /** Paint the line over every frame of the page (#1076) instead of with
+   *  the rest of the decoration, under the frames. Default: `true` when
+   *  an end has an `anchor` (a pointer into a picture, which its frame
+   *  would cover), else `false`. */
+  over?: boolean;
 }
 
 export type DesignElement = DesignTextElement | DesignRuleElement | DesignBoxElement | DesignImageElement | DesignPathElement | DesignConnectorElement;

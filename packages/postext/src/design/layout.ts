@@ -194,6 +194,8 @@ export interface ResolvedPathPrimitive extends ResolvedElementGeometry {
   stroke?: VDTPathStroke;
   /** A connector's end marks (#1056). */
   markers?: VDTPathMarker[];
+  /** A connector painted over the frames (#1076). */
+  over?: true;
 }
 
 /** An image element resolved to its resource payload. Only emitted when
