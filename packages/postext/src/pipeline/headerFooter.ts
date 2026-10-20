@@ -1914,7 +1914,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const connectorAnchorUnknown: NonNullable<SlotLayoutExtras['connectorAnchorUnknown']> = [];
       // A connector's end at an anchor of the picture its frame holds
       // (#1057): the first figure of the frame whose resource has it.
-      const anchorPoint = (frame: string, anchor: string): { x: number; y: number } | { resourceId?: string; known: string[] } => {
+      const anchorPoint = (frame: string, anchor: string): { x: number; y: number } | { hidden: true } | { resourceId?: string; known: string[] } => {
         const held = frameBlocks.get(frame);
         let first: VDTBlock | undefined;
         for (const b of held?.blocks ?? []) {
@@ -1922,7 +1922,13 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
           if (!rb || (rb.kind !== 'bitmap' && rb.kind !== 'svg')) continue;
           first ??= b;
           const at = figureAnchorPointOnPage(held!.page, b, anchor);
-          if (at) return { x: at.x + held!.dx, y: at.y };
+          if (!at) continue;
+          const p = { x: at.x + held!.dx, y: at.y };
+          // A point the frame cuts off (its picture runs past the frame's
+          // foot) is not shown on the page.
+          const box = named[frame];
+          if (box && (p.x < box.x - 0.5 || p.x > box.x + box.width + 0.5 || p.y < box.y - 0.5 || p.y > box.y + box.height + 0.5)) return { hidden: true };
+          return p;
         }
         const res = first?.resourceBlock?.resource;
         return res ? { resourceId: res.id, known: (res.anchors ?? []).map((a) => a.id) } : { known: [] };

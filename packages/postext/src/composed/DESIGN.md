@@ -2440,3 +2440,70 @@ The Sandbox side of C2 (§12.10, §12.16), C10's `repeatOverflow` (§12.15) and 
   `minHeight`, `continueNextPage`) applied as the Sandbox applies it clears its warning and raises no new
   pair; the move off the tab goes right, not up onto the caption; a move goes on past a frame it would land
   on; no move when every way out is blocked, nor when the covered frame hangs from the covering one.
+
+### 12.23 What C6 built (#1057)
+
+- **Types.** `LeaderStyle` moved into `types.ts` (exported); `ResourceAnchor.labelAt` / `.leader` and
+  `LabelStyle.leader` are in the real types; the C6 part was the last of `round2Types.ts`: the draft file is
+  removed. `LeaderStyle` has two keys the draft lacked: `capSize` (default 3 × width, as a connector's) and
+  `routing: 'straight' | 'elbow'` (default `straight`). VDT: `VDTFigureLabel.leader` (the attribute) and
+  `VDTFigureLabelLayout.leader: VDTFigureLabelLeader` (point, routing, stroke, caps, cap size, gap). No
+  `CONFIG_VERSION` bump: only new optional keys.
+- **Connector ends at a picture's anchor.** `DesignFrames.anchorPoint(frame, anchor)` (filled by the
+  decoration pass in `headerFooter.ts` from each frame's blocks) answers with the point of the first
+  bitmap or SVG block of the frame whose resource has the anchor, through `figureAnchorPointOnPage`
+  (`composed/labels.ts`): `pictureToBody` (crop, safe area) on the body's box *on the sheet*
+  (`flowRectToPage`), so the ladder's scale, mirrored pages (a picture is painted the right way round) and
+  vertical pages (upright pictures) need nothing more; a quarter-turned block goes through its turn. On a
+  spread the point takes the right page's shift with the frame's box. The end is a box of no size at the
+  point; `at` is not read, `gap` stops the line short of the point.
+- **Decisions where §12.4 was open.**
+  - The side of an end at a point with no `side` written: the line arrives on the axis it leaves the other
+    end by (a note's side gives a horizontal last run), from the side the other end stands on; a tree's
+    point children arrive against the trunk. The connector's default (`facingSide`) turned the last run
+    vertical whenever the point was further down than across, which ran a note's pointer through the map.
+  - A point its frame cuts off (outside the frame's box on the sheet: a picture pushed past the frame's
+    foot) is not pointed at: the end is dropped as `connectorDropped` (reflow log), with no warning.
+  - Unknown anchor: `labelAnchorUnknown` with `connector` and `frame` added (no new kind, so no
+    `WARNING_SINCE`); `resourceId` is the frame's first picture, empty when the frame holds none on the
+    page; that end is dropped. A non-string `anchor` is `unknownConfigValue` (`collectConnectorWarnings`).
+  - Connectors stay in the decoration layer (0). To point *into* a picture its frame goes under the
+    decoration with `layer: -1` (the fixture does so). Raising a connector over the frames was not added,
+    for the reason given in §5.18 (two decoration paint items in every backend).
+- **Labels away from their point.** `labelAt` (fractions of the whole picture, any finite numbers) moves the
+  label's frame origin; `align`, `verticalAlign` and `rotate` place the box about it. Which labels get a
+  leader: the label's attribute (`leader`, any value but `none` / `false` / `off`; `leader="none"` turns it
+  off), else the anchor's `leader` (`true`, an object, `false`), else a label set away from its point whose
+  style has a `leader` look. The look is the style's `leader` under the anchor's object, field by field;
+  colour by default the label's text colour (the part palette recolours it by `label:leader.color`, then by
+  the label's colour); width 0.75 pt; end cap `dot`, no start cap.
+- **Leader geometry** (`figureLabelLeaderPath`, laid when painted, not stored as a path). In the label's own
+  frame: the box (the plate, else the lines' box) grown by a gap (0 with a plate, 0.25 em of the label's set
+  size without); the side with the wider clear gap to the point (as `facingSide`), at its middle; straight to
+  the point, or an elbow out of that side square with one turn onto the point. Leaving by the facing side
+  keeps the line off the label's words, a turned label included (the points go through the label's matrix).
+  A point under the grown box, or a line shorter than its cap, draws nothing. Because it is laid from the
+  layout, `keepLabelsOffGutter` and `mirrorLabelLayout` / `unmirrorLabelLayout` / `labelLayoutOnSheet`
+  (which reflect the point about the body as the rest) keep it on target. Caps and the polyline reuse the
+  connector's `capEnd` and `polylineCommands`.
+- **Paint.** `figureLabelLeaderPaths(rb, bx, by)` gives C4's path blocks, painted before the figure's labels
+  (under every plate and halo): canvas `renderPathBlock` (Folio through it), PDF `renderPathBlock` under a
+  Layout artifact (the structure tree is unchanged), HTML and fixed EPUB the design path's hidden inline SVG
+  inside the figure's label markup, the reflowable EPUB paths in its label layer for the labels it draws.
+  Preflight checks the line as a rule (`thinRule`, coverage). `labelOverlap` ignores leaders (they are not
+  label boxes): a leader across another label is not reported.
+- **Validation** (`validatePageTemplates`): `unknownConfigKey` / `unknownConfigValue` inside
+  `labelStyles[i].leader` (caps, routing) and `resources[i].anchors[j].leader` (also a value that is neither
+  a boolean nor an object), a `labelAt` that is not a point (`unknownConfigValue`) or has other keys. The
+  anchor checks run when an anchor has `labelAt` or `leader` too.
+- **Fixture and tests.** `__tests__/composed/fixtures/mapParts.ts`: the parts of a map (a painted map, its
+  title, key and scale as labels, three notes joined to them, two names with leaders) in English, Spanish
+  (longer notes) and Arabic (mirrored), and a spread variant. `leaders.test.ts`: connectors on target in two
+  languages, under the ladder, right to left, across a spread, on grid instances, cut-off and unknown
+  anchors; `labelAt`, straight and elbow leaders, attributes, style looks, mirroring, canvas and HTML paint,
+  validation. `postext-pdf` `figureLeader.test.ts`; the reflowable EPUB's `labels.test.ts`.
+- **Not done.** A connector over the frames without `layer: -1`; a connector that ends at a label's box (it
+  ends at the anchor's point); the leader of a vertical label on a mirrored page is drawn from the mirrored
+  layout (right on the sheet by construction, not covered by a test); frames painted unmirrored on a
+  mirrored page (#960) read their blocks' boxes through the page's flow like any other (unchecked). Sandbox
+  (U11), docs (D3) and the skill (S6) have their own issues.

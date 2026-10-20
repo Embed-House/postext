@@ -82,16 +82,19 @@ const note = (slot: string, text: string): string => `:::frame{slot="${slot}"}\n
 /** The figure: the map and its labels. */
 function mapFigure(locale: MapPartsLocale, slot: string): string {
   const t = MAP_PARTS_TEXT[locale];
+  // A right-to-left edition sets the parts at the anchors whose boxes grow
+  // to the right of the same points (its labels' start is their right).
+  const at = (id: string): string => (locale === 'ar' ? `${id}-rtl` : id);
   return [
     `:::figure{resource="varenia" slot="${slot}"}`,
     `::alt[${t.alt}]`,
-    `::label[${t.title}]{at="title"}`,
-    ':::label{at="legend"}',
-    `:icon[${t.key.country}]{glyph="■" color="#e0b23a"} ${t.key.country}`,
+    `::label[${t.title}]{at="${at('title')}"}`,
+    `:::label{at="${at('legend')}"}`,
+    `:icon[${t.key.country}]{glyph="■" font="Noto Sans Math" color="#e0b23a"} ${t.key.country}`,
     `:icon[${t.key.river}]{line="solid" color="#5b8fc7"} ${t.key.river}`,
-    `:icon[${t.key.peak}]{glyph="▲" color="#8a6a4a"} ${t.key.peak}`,
+    `:icon[${t.key.peak}]{glyph="▲" font="Noto Sans Math" color="#8a6a4a"} ${t.key.peak}`,
     ':::',
-    `::label[:icon[]{line="solid"} ${t.km}]{at="scale"}`,
+    `::label[:icon[]{line="solid"} ${t.km}]{at="${at('scale')}"}`,
     `::label[${t.peaks}]{at="peaks"}`,
     `::label[${t.lake}]{at="lake"}`,
     ':::',
@@ -125,7 +128,7 @@ export function mapPartsPage(locale: MapPartsLocale, options: { template?: strin
 export const MAP_PARTS_RESOURCES: Resource[] = [
   {
     id: 'varenia',
-    typeId: 'figure',
+    typeId: 'mapa',
     kind: 'bitmap',
     caption: '',
     createdAt: 0,
@@ -137,6 +140,9 @@ export const MAP_PARTS_RESOURCES: Resource[] = [
       { id: 'title', x: 0.035, y: 0.05, align: 'start', verticalAlign: 'top', style: 'title' },
       { id: 'legend', x: 0.035, y: 0.5, align: 'start', verticalAlign: 'middle', style: 'key' },
       { id: 'scale', x: 0.035, y: 0.95, align: 'start', verticalAlign: 'bottom', style: 'scale' },
+      { id: 'title-rtl', x: 0.035, y: 0.05, align: 'end', verticalAlign: 'top', style: 'title' },
+      { id: 'legend-rtl', x: 0.035, y: 0.5, align: 'end', verticalAlign: 'middle', style: 'key' },
+      { id: 'scale-rtl', x: 0.035, y: 0.95, align: 'end', verticalAlign: 'bottom', style: 'scale' },
       // Names set away from what they name, with a leader to it.
       { id: 'peaks', x: 0.42, y: 0.8, labelAt: { x: 0.62, y: 0.6 }, style: 'name', leader: true },
       { id: 'lake', x: 0.531, y: 0.865, labelAt: { x: 0.76, y: 0.93 }, style: 'name', leader: { routing: 'elbow', endCap: 'dot' } },
@@ -151,7 +157,8 @@ export const MAP_PARTS_TEMPLATE: PageTemplate = {
   header: false,
   frames: [
     { name: 'titulo', takes: 'h1', placement: { anchor: { to: 'container', edge: 'top-left' } } },
-    { name: 'mapa', width: mm(118), height: mm(96), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(18) } } },
+    // Under the decoration (layer -1): the connectors run onto the map.
+    { name: 'mapa', layer: -1, width: mm(118), height: mm(96), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(18) } } },
     { name: 'n1', style: 'nota', width: mm(44), placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(8) } } },
     { name: 'n2', style: 'nota', width: mm(44) },
     { name: 'n3', style: 'nota', width: mm(44) },
@@ -175,8 +182,8 @@ export const MAP_PARTS_SPREAD_TEMPLATE: PageTemplate = {
   gutter: mm(16),
   frames: [
     { name: 'titulo', takes: 'h1', placement: { anchor: { to: 'container', edge: 'top-left' } } },
-    { name: 'mapa', width: mm(160), height: mm(120), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(30) } } },
-    { name: 'n1', style: 'nota', width: mm(70), placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { x: mm(40), y: mm(20) } } },
+    { name: 'mapa', layer: -1, width: mm(160), height: mm(120), fit: { scaleImages: true, imageMinScale: 0.5 }, placement: { anchor: { to: 'container', edge: 'top-right' }, offset: { y: mm(30) } } },
+    { name: 'n1', style: 'nota', width: mm(70), placement: { anchor: { to: '#titulo', edge: 'below' }, offset: { y: mm(20) } } },
     { name: 'n2', style: 'nota', width: mm(70) },
     { name: 'n3', style: 'nota', width: mm(70) },
   ],
@@ -191,6 +198,7 @@ export function mapPartsConfig(locale: MapPartsLocale): PostextConfig {
     bodyText: { fontFamily: face, fontSize: pt(10.5), lineHeight: pt(14) } as never,
     headings: { fontFamily: face, balancing: { enabled: false }, levels: [{ level: 1, fontSize: pt(20), lineHeight: pt(24), breakBefore: { enabled: false } }] } as never,
     captionStyle: { fontFamily: face } as never,
+    resourceTypes: [{ id: 'mapa', name: 'Map', shortLabel: 'Map', numberingTemplate: '', resetOn: 'never', counterFormat: 'decimal', captionPrefix: '', defaultPlacement: { position: 'here' } }] as never,
     calloutStyles: [
       {
         id: 'nota', backgroundEnabled: true, background: hex('#eef4f7'), border: { enabled: true, color: hex('#2e4a5c'), width: pt(0.9) }, borderRadius: mm(2),

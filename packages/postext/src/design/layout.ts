@@ -321,9 +321,10 @@ export interface DesignFrames {
   absent?: ReadonlySet<string>;
   /** The point of anchor `anchor` of the picture frame `frame` holds
    *  (#1057), on the sheet as `named` is: the first figure of the frame's
-   *  blocks whose resource has it. When none has it, what the frame holds
-   *  instead (its first picture and that picture's anchors). */
-  anchorPoint?: (frame: string, anchor: string) => { x: number; y: number } | { resourceId?: string; known: string[] };
+   *  blocks whose resource has it; `hidden` when the frame cuts that point
+   *  off. When none has it, what the frame holds instead (its first
+   *  picture and that picture's anchors). */
+  anchorPoint?: (frame: string, anchor: string) => { x: number; y: number } | { hidden: true } | { resourceId?: string; known: string[] };
 }
 
 export interface LayoutContext {
@@ -1254,6 +1255,12 @@ function layoutConnectorElement(
       // An anchor of the frame's picture (#1057): the end is that point, a
       // box of no size the line arrives at.
       const at = frames.anchorPoint?.(name, anchor) ?? { known: [] };
+      if ('hidden' in at) {
+        // The point is cut off by its frame (a picture past the frame's
+        // foot): nothing to point at on this page.
+        issues.push({ kind: 'connectorDropped', elementId: el.id, targetId: name });
+        return undefined;
+      }
       if (!('x' in at)) {
         issues.push({ kind: 'connectorAnchorUnknown', elementId: el.id, targetId: name, anchor, ...(at.resourceId !== undefined ? { resourceId: at.resourceId } : {}), known: at.known });
         return undefined;

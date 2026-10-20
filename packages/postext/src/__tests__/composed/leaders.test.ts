@@ -134,6 +134,19 @@ describe('a connector to an anchor of the picture its frame holds (#1057)', () =
     expect(Math.abs(last(pathOf(page, 'a-escala')!).y - last(pathOf(composedPages(plain)[0]!, 'a-escala')!).y)).toBeGreaterThan(10);
   });
 
+  it('drops an end whose point its frame cuts off (the picture pushed past the frame\'s foot)', () => {
+    const lead = Array.from({ length: 600 }, (_, i) => `word${i}`).join(' ');
+    const doc = build('en', { lead });
+    const page = composedPages(doc)[0]!;
+    const dropped = page.composed!.log.filter((e) => e.kind === 'connectorDropped');
+    expect(dropped.length).toBeGreaterThan(0);
+    for (const e of dropped) {
+      expect(e.frame).toBe('mapa');
+      expect(pathOf(page, e.cause!)).toBeUndefined();
+    }
+    expect((doc.contentWarnings ?? []).filter((w) => w.kind === 'labelAnchorUnknown')).toEqual([]);
+  });
+
   it('on a right-to-left page ends where the picture, painted the right way round, shows the anchor', () => {
     const doc = build('ar');
     const page = composedPages(doc)[0]!;
@@ -152,7 +165,7 @@ describe('a connector to an anchor of the picture its frame holds (#1057)', () =
     const body = bodyOnSheet(page, block);
     const sheetX = body.x + anchorOf('title').x * body.width;
     expect(figureAnchorPointOnPage(page, block, 'title')!.x).toBeCloseTo(sheetX, 6);
-    const titleLayout = labelLayoutOnSheet(labelAt(block, 'title').layout!, block.resourceBlock!.bodyRect.width);
+    const titleLayout = labelLayoutOnSheet(labelAt(block, 'title-rtl').layout!, block.resourceBlock!.bodyRect.width);
     expect(body.x + titleLayout.x).toBeCloseTo(sheetX, 3);
   });
 
