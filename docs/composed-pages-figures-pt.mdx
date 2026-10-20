@@ -77,7 +77,7 @@ Desde o postext 1.48, um rótulo pode ficar afastado do que nomeia, um rótulo p
 :::
 ```
 
-`leader` com qualquer valor que não seja `none`, `false` ou `off` liga a linha; sem o atributo, decide o `leader` da âncora e, sem nenhum dos dois, um rótulo afastado do seu ponto recebe uma linha quando o estilo dele tem `leader`. A nota de um bloco também pode apontar para um lugar da imagem: um [conector](/pt/docs/configuration-composed-pages#conectores) cuja ponta indica uma âncora da imagem (`anchor: 'lake'`).
+`leader` com qualquer valor que não seja `none`, `false` ou `off` liga a linha; sem o atributo, decide o `leader` da âncora e, sem nenhum dos dois, um rótulo afastado do seu ponto recebe uma linha quando o estilo dele tem `leader`. A nota de um bloco também pode apontar para um lugar da imagem: um [conector](/pt/docs/configuration-composed-pages#conectores) cuja ponta indica uma âncora da imagem (`anchor: 'lake'`). A aparência decide as marcas e a tinta: um anel no ponto (`endCap: 'ring'`) deixa ver o lugar que ele indica, e uma cor translúcida ou um `opacity` deixam ver a imagem através da linha.
 
 **Rótulos de várias linhas.** `:::label{at="…" style="…"}` … `:::`, dentro de um `:::figure`, escreve um rótulo linha por linha: cada linha não vazia da origem é uma linha do rótulo; assim, uma legenda de mapa ou um endereço não precisa de `\\` no fim de cada linha. O primeiro `:::` fecha o rótulo, e o seguinte, a figura. `::label[…]` continua sendo um rótulo de uma linha, quebrado só onde diz `\\`.
 

@@ -77,7 +77,7 @@ Seit postext 1.48 kann eine Beschriftung abseits dessen stehen, was sie benennt,
 :::
 ```
 
-`leader` mit einem beliebigen Wert außer `none`, `false` oder `off` schaltet sie ein; ohne das Attribut entscheidet das `leader` des Ankers, und fehlt auch das, bekommt eine abseits ihres Punkts gesetzte Beschriftung eine Linie, wenn ihr Stil ein `leader` hat. Auch die Notiz eines Rahmens kann auf eine Stelle des Bilds zeigen: mit einem [Verbinder](/de/docs/configuration-composed-pages#verbinder), dessen Ende einen Anker des Bilds nennt (`anchor: 'lake'`).
+`leader` mit einem beliebigen Wert außer `none`, `false` oder `off` schaltet sie ein; ohne das Attribut entscheidet das `leader` des Ankers, und fehlt auch das, bekommt eine abseits ihres Punkts gesetzte Beschriftung eine Linie, wenn ihr Stil ein `leader` hat. Auch die Notiz eines Rahmens kann auf eine Stelle des Bilds zeigen: mit einem [Verbinder](/de/docs/configuration-composed-pages#verbinder), dessen Ende einen Anker des Bilds nennt (`anchor: 'lake'`). Das Aussehen bestimmt Marken und Farbe: ein Ring am Punkt (`endCap: 'ring'`) lässt die Stelle sichtbar, die er nennt, und eine durchscheinende Farbe oder ein `opacity` lässt das Bild durch die Linie scheinen.
 
 **Mehrzeilige Beschriftungen.** `:::label{at="…" style="…"}` … `:::` innerhalb eines `:::figure` schreibt eine Beschriftung Zeile für Zeile: Jede nicht leere Zeile der Quelle ist eine Zeile der Beschriftung, eine Zeichenerklärung oder eine Anschrift braucht also kein `\\` am Ende jeder Zeile. Das erste `:::` schließt die Beschriftung, das nächste die Abbildung. `::label[…]` bleibt eine einzeilige Beschriftung, die nur dort umbricht, wo `\\` steht.
 

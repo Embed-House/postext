@@ -77,7 +77,7 @@ Depuis postext 1.48, une étiquette peut se tenir à l’écart de ce qu’elle 
 :::
 ```
 
-`leader` avec n’importe quelle valeur autre que `none`, `false` ou `off` l’active ; sans l’attribut, c’est le `leader` de l’ancre qui décide, et sans l’un ni l’autre une étiquette placée à l’écart de son point en reçoit un quand son style a un `leader`. La note d’un bloc peut elle aussi désigner un endroit de l’image : un [connecteur](/fr/docs/configuration-composed-pages#connecteurs) dont une extrémité nomme une ancre de l’image (`anchor: 'lake'`).
+`leader` avec n’importe quelle valeur autre que `none`, `false` ou `off` l’active ; sans l’attribut, c’est le `leader` de l’ancre qui décide, et sans l’un ni l’autre une étiquette placée à l’écart de son point en reçoit un quand son style a un `leader`. La note d’un bloc peut elle aussi désigner un endroit de l’image : un [connecteur](/fr/docs/configuration-composed-pages#connecteurs) dont une extrémité nomme une ancre de l’image (`anchor: 'lake'`). L’aspect décide des marques et de l’encre : un anneau sur le point (`endCap: 'ring'`) laisse voir l’endroit qu’il désigne, et une couleur transparente ou une `opacity` laissent voir l’image à travers la ligne.
 
 **Étiquettes de plusieurs lignes.** `:::label{at="…" style="…"}` … `:::`, à l’intérieur d’une `:::figure`, écrit une étiquette ligne par ligne : chaque ligne non vide de la source est une ligne de l’étiquette, et une légende de carte ou une adresse n’a donc pas besoin de `\\` au bout de chaque ligne. Le premier `:::` ferme l’étiquette, le suivant la figure. `::label[…]` reste une étiquette d’une seule ligne, coupée seulement là où elle porte `\\`.
 

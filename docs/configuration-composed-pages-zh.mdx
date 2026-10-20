@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>主色</td>
-      <td>与调色板关联的颜色像线条一样，跟随模板的<code>palette</code>、页面块的和篇的调色板。</td>
+      <td>与调色板关联的颜色像线条一样，跟随模板的<code>palette</code>、页面块的和篇的调色板。带alpha通道的颜色（<code>#rrggbbaa</code>）会把线条及其标记画成半透明，下面的图片可以透出来（自postext 1.48起）。</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>线条及其标记的不透明度，从<code>0</code>到<code>1</code>，与颜色本身的alpha相乘。它与颜色分开存放，所以与调色板关联的颜色仍保持关联。衬底线由两条连接线组成：一条较宽的浅色线（<code>opacity: 0.6</code>）垫在一条虚线下面。自postext 1.48起。</td>
     </tr>
     <tr>
       <td><code>width</code>、<code>dash</code></td>
@@ -758,15 +764,15 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>、<code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>在<code>from</code>处和每个<code>to</code>处的标记：以端点为中心的实心圆点，或尖端就在端点上的箭头。</td>
+      <td>在<code>from</code>处和每个<code>to</code>处的标记：以端点为中心的实心圆点，或尖端就在端点上的箭头。<code>'ring'</code>：以端点为中心的空心圆，按线条粗细描边，线条止于圆的边缘；<code>'bar'</code>：在端点处横穿线条的一道短横，粗细与线条相同（两者均自postext 1.48起）。</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>圆点的直径，或箭头的长度。</td>
+      <td>圆点或圆环的直径，箭头或短横的长度。</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**检查。** `to`什么也没指到的一端是`frameAnchorUnknown`（位于`…/from/to`或`…/to/<k>/to`），这一端被略去；`[*]`只能用在`to`中，而且只能用于重复的框。框中没有任何图片带有的`anchor`是`labelAnchorUnknown`，附有连接线的id。`routing`、`startCap`、`endCap`或`side`取值范围以外的词，以及0到1以外的`at`，是`unknownConfigValue`。
+**检查。** `to`什么也没指到的一端是`frameAnchorUnknown`（位于`…/from/to`或`…/to/<k>/to`），这一端被略去；`[*]`只能用在`to`中，而且只能用于重复的框。框中没有任何图片带有的`anchor`是`labelAnchorUnknown`，附有连接线的id。`routing`、`startCap`、`endCap`或`side`取值范围以外的词，以及0到1以外的`at`，是`unknownConfigValue`。不在0到1之间的数字或不是数字的`opacity`也是`unknownConfigValue`（超出范围的数字会被限制在范围内）。
 
 ## 标注样式
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>无</td>
-      <td>这种样式的标注所用引线的外观：从标注的方框到其锚点的线。默认颜色取标注的颜色，宽度<code>0.75pt</code>，点上为<code>endCap: 'dot'</code>，没有<code>startCap</code>，<code>capSize</code>为宽度的三倍，<code>routing</code>为<code>'straight'</code>（或<code>'elbow'</code>：先从方框垂直伸出，再拐一次到点上）。离开其点（<code>labelAt</code>）的标注，样式有<code>leader</code>时就会画出引线。自postext 1.48起。</td>
+      <td>这种样式的标注所用引线的外观：从标注的方框到其锚点的线。默认颜色取标注的颜色，宽度<code>0.75pt</code>，点上为<code>endCap: 'dot'</code>，没有<code>startCap</code>，<code>capSize</code>为宽度的三倍，<code>routing</code>为<code>'straight'</code>（或<code>'elbow'</code>：先从方框垂直伸出，再拐一次到点上）。离开其点（<code>labelAt</code>）的标注，样式有<code>leader</code>时就会画出引线。自postext 1.48起。<code>startCap</code>和<code>endCap</code>可用连接线的各种标记，包括<code>'ring'</code>和<code>'bar'</code>；<code>opacity</code>（0到1）或带alpha通道的颜色会让线条半透明。</td>
     </tr>
   </tbody>
 </table>

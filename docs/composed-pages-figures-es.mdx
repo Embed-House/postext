@@ -77,7 +77,7 @@ Desde postext 1.48, un rótulo puede quedar apartado de lo que nombra, un rótul
 :::
 ```
 
-`leader` con cualquier valor que no sea `none`, `false` u `off` la activa; sin el atributo decide el `leader` del ancla y, si tampoco lo hay, un rótulo apartado de su punto lleva línea cuando su estilo tiene `leader`. La nota de un marco también puede señalar un lugar de la imagen: un [conector](/es/docs/configuration-composed-pages#conectores) cuyo extremo nombra un ancla de la imagen (`anchor: 'lake'`).
+`leader` con cualquier valor que no sea `none`, `false` u `off` la activa; sin el atributo decide el `leader` del ancla y, si tampoco lo hay, un rótulo apartado de su punto lleva línea cuando su estilo tiene `leader`. La nota de un marco también puede señalar un lugar de la imagen: un [conector](/es/docs/configuration-composed-pages#conectores) cuyo extremo nombra un ancla de la imagen (`anchor: 'lake'`). El aspecto decide las marcas y la tinta: un anillo en el punto (`endCap: 'ring'`) deja ver el lugar que nombra, y un color translúcido o un `opacity` dejan ver la imagen a través de la línea.
 
 **Rótulos de varias líneas.** `:::label{at="…" style="…"}` … `:::`, dentro de un `:::figure`, escribe un rótulo línea a línea: cada línea del original que no está en blanco es una línea del rótulo, así que una leyenda o una dirección no necesitan `\\` al final de cada línea. El primer `:::` cierra el rótulo, y el siguiente, la figura. `::label[…]` sigue siendo un rótulo de una sola línea, que solo se corta donde pone `\\`.
 
