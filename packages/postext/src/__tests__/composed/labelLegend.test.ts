@@ -11,6 +11,7 @@ import { altWithLabels } from '../../composed/labelText';
 import { resolveAllConfig } from '../../pipeline/config';
 import { validatePageTemplates } from '../../composed/validate';
 import { ICON_CAP_EM } from '../../measure/inlineIcon';
+import { collectFontUsage, configFontFamilies } from '../../fonts/usage';
 import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel, VDTLine, VDTLineSegment } from '../../index';
 import { legendMapFixture, type LegendMapLocale } from './fixtures/legendMap';
 
@@ -94,6 +95,13 @@ describe('inline symbols (#1058)', () => {
     expect(spans.find((s) => s.swatch)?.swatch).toEqual({ color: 'accent', icon: { alt: '', line: 'dotted' } });
     const body = parseMarkdown('See :icon[x]{glyph="*"} here.')[0]!;
     expect(body.text).toContain(':icon[x]');
+  });
+
+  it('asks the hosts for the faces its glyphs are set in', () => {
+    const md = figure('::label[:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Corvel]{at="capital"}', '::label[:icon[]{line="solid" font="Unused"}]{at="capital"}');
+    expect(configFontFamilies({}, md)).toContain('Noto Sans Math');
+    expect(configFontFamilies({}, md)).not.toContain('Unused');
+    expect(collectFontUsage({}, { markdown: md }).get('Noto Sans Math')).toEqual([{ weight: 400, style: 'normal' }]);
   });
 
   it('sizes a glyph, a line sample and a picture to the capital height, or to size= ems', () => {

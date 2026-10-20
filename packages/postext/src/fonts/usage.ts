@@ -10,6 +10,7 @@ import { primaryFontFamily } from '../measure/font';
 import { comicFontFamilies, comicFontUses } from '../comics/fonts';
 import { DEFAULT_CODE_STYLE } from '../defaults/codeStyle';
 import { codeFenceOpen } from '../parse/codeFence';
+import { parseDirectiveAttrs } from '../parse/attrs';
 
 /** The text of the document (one string, or the chapters of a book): the
  *  families a config names are not all the families a build uses — comic
@@ -123,9 +124,33 @@ export function configFontFamilies(config: PostextConfig, markdown?: FontContent
   // when the text holds a fence, and the inline code face when the
   // configuration sets one.
   for (const family of codeFontFamilies(config, markdown)) families.add(family);
+  // The glyphs of inline symbols (#1058), in the faces the text names.
+  for (const family of iconFontFamilies(markdown)) families.add(family);
   // A CSS font stack sets its text in the first family (the engine's
   // `primaryFontFamily`): load that one.
   return [...new Set(Array.from(families, primaryFontFamily))];
+}
+
+/** The faces the glyphs of inline symbols are set in (#1058): every
+ *  `font="…"` of a `:icon[…]{glyph=… font=…}` the text writes (in a
+ *  figure's labels and its `::caption` / `::note` lines). Read with a scan,
+ *  not an expression: a long line is never read again from each opening. */
+export function iconFontFamilies(markdown: FontContentText): string[] {
+  if (markdown === undefined) return [];
+  const out = new Set<string>();
+  for (const text of typeof markdown === 'string' ? [markdown] : markdown) {
+    for (let at = text.indexOf(':icon['); at >= 0; at = text.indexOf(':icon[', at + 1)) {
+      const close = text.indexOf(']{', at);
+      const lineEnd = text.indexOf('\n', at);
+      if (close < 0 || (lineEnd >= 0 && close > lineEnd)) continue;
+      const end = text.indexOf('}', close);
+      if (end < 0 || (lineEnd >= 0 && end > lineEnd)) continue;
+      const attrs = parseDirectiveAttrs(text.slice(close + 2, end));
+      const font = attrs.font?.trim();
+      if (font && attrs.glyph) out.add(primaryFontFamily(font));
+    }
+  }
+  return [...out];
 }
 
 /** Whether `text` holds a line that opens a code fence. */
@@ -241,6 +266,8 @@ export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument)
   walk(config);
   for (const h of headingFontUses(config)) add(primaryFontFamily(h.family), { weight: h.weight, style: h.italic ? 'italic' : 'normal' });
   for (const c of comicFontUses(config, doc?.markdown)) add(primaryFontFamily(c.family), { weight: c.weight, style: c.style });
+  // The glyphs of inline symbols (#1058): upright, regular.
+  for (const family of iconFontFamilies(doc?.markdown)) add(family, { weight: 400, style: 'normal' });
   const body = config.bodyText?.fontFamily;
   if (typeof body === 'string' && body.trim()) {
     const emphasis = config.cjk?.emphasis ?? 'auto';

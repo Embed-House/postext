@@ -112,6 +112,8 @@ export function legendMapConfig(locale: LegendMapLocale): PostextConfig {
     locale,
     page: { width: mm(210), height: mm(170), margins: { top: mm(15), bottom: mm(15), left: mm(15), right: mm(15) } } as never,
     bodyText: { fontFamily: face, fontSize: pt(10.5) } as never,
+    headings: { fontFamily: face } as never,
+    captionStyle: { fontFamily: face } as never,
     colorPalette: [
       { id: 'country', name: 'country', value: hex('#d9a92f') },
       { id: 'border', name: 'border', value: hex('#8a3b52') },
