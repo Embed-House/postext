@@ -3323,14 +3323,17 @@ export type FrameCoverProposal =
 
 /** A change that would bring a frame back inside what it runs past
  *  (#1053, `frameOutsideArea`): `maxHeight` of the frame itself (the room
- *  it has there, in whole millimetres), `minHeight` of the frame it is
- *  anchored inside (`frame`), and, for a frame of text held to a smaller
- *  height, `overflow.continueIn: 'next-page'`, so what no longer fits goes
- *  on instead of shrinking. */
+ *  it has there, in whole millimetres; not for a frame its placement holds
+ *  by its foot), `minHeight` of the frame it is anchored inside (`frame`),
+ *  for a frame of text held to a smaller height `overflow.continueIn:
+ *  'next-page'`, so what no longer fits goes on instead of shrinking, and
+ *  `move`, the shift that brings it in when it runs past one side of an
+ *  axis (data only). */
 export type FrameOutsideProposal =
   | { kind: 'maxHeight'; path: string; value: Dimension }
   | { kind: 'minHeight'; path: string; value: Dimension; frame: string }
-  | { kind: 'continueNextPage'; path: string; value: 'next-page' };
+  | { kind: 'continueNextPage'; path: string; value: 'next-page' }
+  | { kind: 'move'; frame: string; dxMm: number; dyMm: number };
 
 /** The kinds of {@link ConfigWarning} a page template gives (#853). */
 export type PageTemplateWarningKind =

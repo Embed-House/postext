@@ -209,6 +209,8 @@ export function describeFrameOutsideProposal(p: FrameOutsideProposal): string {
       return `raise the minHeight of "${p.frame}" to ${dim(p.value)}`;
     case 'continueNextPage':
       return 'let the rest continue on the next page (overflow.continueIn: "next-page")';
+    case 'move':
+      return describeFrameCoverProposal(p);
     default:
       return (p as { kind: string }).kind;
   }

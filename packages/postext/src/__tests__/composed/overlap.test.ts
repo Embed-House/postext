@@ -170,7 +170,7 @@ describe('frameOutsideArea (#1053)', () => {
     expect(w.sides.bottom).toBeGreaterThan(10);
     expect(w.excessMm).toBe(w.sides.bottom);
     const kinds = w.proposals.map((p) => p.kind);
-    expect(kinds).toEqual(['maxHeight', 'continueNextPage', 'minHeight']);
+    expect(kinds).toEqual(['maxHeight', 'continueNextPage', 'minHeight', 'move']);
     const max = w.proposals[0] as Extract<Outside['proposals'][number], { kind: 'maxHeight' }>;
     expect(max.path).toBe('/pageTemplates/0/frames/4/maxHeight');
     const min = w.proposals[2] as Extract<Outside['proposals'][number], { kind: 'minHeight' }>;
@@ -185,6 +185,11 @@ describe('frameOutsideArea (#1053)', () => {
     const w = outside(doc).find((x) => x.frame === 'strap')!;
     expect(w).toMatchObject({ past: 'trim', configPath: '/pageTemplates/0/frames/5' });
     expect(w.sides.bottom).toBeGreaterThan(0.3);
+    // Held by its foot, a smaller height would not bring it in: moved up it is.
+    expect(w.proposals).toEqual([{ kind: 'move', frame: 'strap', dxMm: 0, dyMm: -w.sides.bottom! }]);
+    const strap = template().frames!.find((f) => f.name === 'strap')!;
+    const up = withFrames({ strap: { placement: { ...strap.placement!, offset: { x: mm(20), y: mm(14 - w.sides.bottom! - 0.5) } } } });
+    expect(outside(build(up)).filter((x) => x.frame === 'strap')).toEqual([]);
     expect(formatWarning(w)).toContain('runs');
     expect(formatWarning(w)).toContain('past the trim');
   });

@@ -423,10 +423,15 @@ function outsideWarning(
     if (v !== undefined) sides[side] = v;
   }
   const proposals: FrameOutsideProposal[] = [];
-  if (o.bottom >= MIN_EXCESS_MM * mmPx && !f.rotate) {
+  // Which side of its box the frame's placement holds: a smaller height
+  // brings a frame held by its top in at the foot, half as much one held
+  // by its middle, and none held by its foot.
+  const pinY = rf.grid || !rf.placement ? 'start' : anchorOn(physicalEdge(rf.placement.anchor.edge, false), { x: 0, y: 0, width: 1, height: 1 }, anchorTarget(rf.placement) !== undefined).pinY;
+  const min = MIN_EXCESS_MM * mmPx;
+  if (o.bottom >= min && !f.rotate && pinY !== 'end') {
     // The frame held to the room it has: its height less what runs past,
     // in whole millimetres down.
-    const room = Math.floor((f.rect.height - o.bottom) / mmPx);
+    const room = Math.floor((f.rect.height - (pinY === 'middle' ? 2 : 1) * o.bottom) / mmPx);
     if (room > 0) {
       proposals.push({ kind: 'maxHeight', path: `${f.configPath}/maxHeight`, value: mmDim(room) });
       const holdsText = f.blockIds.length > 1;
@@ -439,6 +444,11 @@ function outsideWarning(
       proposals.push({ kind: 'minHeight', path: `${host.configPath}/minHeight`, value: mmDim(need), frame: host.name });
     }
   }
+  // The shift that brings it in, when only one side of each axis runs
+  // past (data only).
+  const dx = o.left >= min && o.right < min ? o.left : o.right >= min && o.left < min ? -o.right : 0;
+  const dy = o.top >= min && o.bottom < min ? o.top : o.bottom >= min && o.top < min ? -o.bottom : 0;
+  if (dx !== 0 || dy !== 0) proposals.push({ kind: 'move', frame: f.name, dxMm: r1(dx / mmPx), dyMm: r1(dy / mmPx) });
   return {
     kind: 'frameOutsideArea',
     ...base(f),
