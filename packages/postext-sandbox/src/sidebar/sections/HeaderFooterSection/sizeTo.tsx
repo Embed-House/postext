@@ -105,7 +105,8 @@ export function SizeToFields({ axis, value, slotKind, siblings = [], frames = []
     ...(value && !targets.some((t) => t.value === value.to) ? [{ value: value.to, label: labels.headerFooterImageMissing.replace('__id__', value.to.replace(/^#/, '')) }] : []),
     ...targets.map((t) => ({ value: t.value as string, label: label(t) })),
   ];
-  const EDGE_LABELS: Record<ElementSizeTo['edge'], string> = {
+  // The middle of a box (`'center'`, #1055) has no field here yet.
+  const EDGE_LABELS: Partial<Record<ElementSizeTo['edge'], string>> = {
     top: labels.headerFooterFrameEdgeTop,
     bottom: labels.headerFooterFrameEdgeBottom,
     left: labels.headerFooterFrameEdgeLeft,
@@ -128,7 +129,7 @@ export function SizeToFields({ axis, value, slotKind, siblings = [], frames = []
           label={labels.headerFooterSizeToEdge}
           tooltip={labels.headerFooterSizeToEdgeTooltip}
           value={value.edge}
-          options={EDGES_OF[axis].map((e) => ({ value: e, label: EDGE_LABELS[e] }))}
+          options={EDGES_OF[axis].map((e) => ({ value: e, label: EDGE_LABELS[e] ?? e }))}
           onChange={(v) => onChange({ to: value.to, edge: v as ElementSizeTo['edge'] })}
         />
       )}
