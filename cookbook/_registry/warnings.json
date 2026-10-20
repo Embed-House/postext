@@ -7827,7 +7827,7 @@
       "it": "Correggi l’id dell’ancora in at= (l’avviso elenca le ancore della risorsa), aggiungi l’ancora alla risorsa o posiziona l’etichetta con at=\"x% y%\"."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "labelAnchorUnknown",
         "es": "labelAnchorUnknown",
@@ -7881,7 +7881,7 @@
       "it": "Scrivi l’etichetta nel Markdown di questa lingua (::label[…]{at=\"ancora\"}), oppure togli lo stile all’ancora se questa edizione fa a meno della parola."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "anchorUnlabelled",
         "es": "anchorUnlabelled",
@@ -7935,7 +7935,7 @@
       "it": "Allarga l’ancora, accorcia la parola nel Markdown di questa edizione o abbassa il minScale dello stile di etichetta."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "labelOverflow",
         "es": "labelOverflow",
@@ -7989,7 +7989,7 @@
       "it": "Sposta una delle ancore, riduci la larghezza dell’etichetta perché vada a capo, oppure accorcia le parole nel Markdown di questa edizione."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "labelOverlap",
         "es": "labelOverlap",
@@ -8043,7 +8043,7 @@
       "it": "Dai alla figura successiva una risorsa propria: una seconda risorsa che punti allo stesso file d’immagine, con la sua didascalia e il suo numero."
     },
     "docs": {
-      "slug": "composed-pages",
+      "slug": "composed-pages-figures",
       "heading": {
         "en": "figureWordsShared",
         "es": "figureWordsShared",

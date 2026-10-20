@@ -35,6 +35,7 @@
     "japanese-layout",
     "comics",
     "composed-pages",
+    "composed-pages-figures",
     "contributing",
     "sandbox",
     "sandbox-design-checks",
@@ -42,6 +43,8 @@
     "sandbox-previews",
     "sandbox-books-saving",
     "sandbox-embedding",
+    "composed-page-books",
+    "migrating-to-composed-pages",
     "skill",
     "command-line",
     "webmcp"
@@ -1740,6 +1743,102 @@
               "description": "قوالب الصفحات والإطارات تُحرَّر على الصفحة نفسها، ومكتبة أنماط الأطر، وفحوص الصفحات المركّبة في كل النسخ، ونقل النص إلى Markdown، وإصلاح إطار بنقرة واحدة",
               "plainSummary": "تجمع هذه الصفحة ما يقدّمه Sandbox للصفحات المركّبة، أي الصفحات التي يُصبّ نصها في إطارات يرتّبها قالب. تُرسم إطارات القالب وتُحرَّك على الصفحة مباشرةً، وتُحفظ أنماط الإطارات في مكتبة. وتخبرك لوحة الفحوص، في كل لغة من لغات الكتاب، أيّ الصفحات المركّبة لا يتسع إطارها لنصها، وتعرض أزرارًا تصلح الإطار. ويمكن للكتاب الذي صُنع قبل الصفحات المركّبة أن ينقل نص صفحاته إلى Markdown دفعةً واحدة.",
               "intro": "تجمع هذه الصفحة أجزاء لوحتَي التصميم والفحوص التي تتعلق بالصفحات المركّبة (الصفحات المكتوبة بـ `::::page`، وتصبّ محتواها في إطارات قالب الصفحة). وباقي اللوحتين في [Sandbox: لوحتا التصميم والفحوص](/ar/docs/sandbox-design-checks)، وطريقة كتابة الصفحة المركّبة في [الصفحات المركّبة](/ar/docs/composed-pages)."
+            }
+          }
+        }
+      ],
+      "done": true
+    },
+    {
+      "from": "composed-pages",
+      "entry": {
+        "en": {},
+        "es": {},
+        "ca": {},
+        "fr": {},
+        "de": {},
+        "it": {},
+        "pt": {},
+        "zh": {},
+        "ja": {},
+        "ar": {}
+      },
+      "pages": [
+        {
+          "slug": "composed-pages-figures",
+          "sections": [
+            "Figures with labels"
+          ],
+          "locales": {
+            "en": {
+              "title": "Composed pages: figures with labels",
+              "sidebarTitle": "Figures with labels",
+              "description": "Figures that set words on a picture: labels at the anchors of a resource, a figure's own alternative text, caption and note, how a label is set, labels away from their point with leaders, legends and inline symbols, and the warnings of labels",
+              "plainSummary": "A map or a diagram in a book often has words on it: the names of seas and towns, the parts of a machine. Postext sets those words as text on the picture, so each language can have its own. This page shows how to write them in the Markdown, how each one is placed and drawn, and how a name can stand away from its place with a line pointing to it. It also covers keys with symbols, and the warnings for labels that do not fit or run into each other.",
+              "intro": "This page covers the figures of a composed page, or of the running text, that set words on their picture. How a composed page is written is on [Composed pages](/en/docs/composed-pages); the label styles and the label fields of an anchor are on [Configuration › Composed pages](/en/docs/configuration-composed-pages#label-styles)."
+            },
+            "es": {
+              "title": "Páginas compuestas: figuras con rótulos",
+              "sidebarTitle": "Figuras con rótulos",
+              "description": "Figuras que ponen palabras sobre una imagen: rótulos en los anclajes de un recurso, el texto alternativo, el pie y la nota propios de una figura, cómo se compone un rótulo, rótulos apartados de su punto con líneas de referencia, leyendas y símbolos en línea, y los avisos de los rótulos",
+              "plainSummary": "Un mapa o un esquema de un libro suele llevar palabras encima: los nombres de mares y ciudades, las piezas de una máquina. Postext compone esas palabras como texto sobre la imagen, de modo que cada idioma tenga las suyas. Esta página explica cómo se escriben en el Markdown, cómo se coloca y se dibuja cada una y cómo un nombre puede quedar apartado de su sitio con una línea que lo señala. También trata las leyendas con símbolos y los avisos de los rótulos que no caben o que se tocan.",
+              "intro": "Esta página trata de las figuras de una página compuesta, o del texto corrido, que ponen palabras sobre su imagen. Cómo se escribe una página compuesta está en [Páginas compuestas](/es/docs/composed-pages); los estilos de rótulo y los campos de rótulo de un anclaje, en [Configuración › Páginas compuestas](/es/docs/configuration-composed-pages#estilos-de-rótulo)."
+            },
+            "ca": {
+              "title": "Pàgines compostes: figures amb rètols",
+              "sidebarTitle": "Figures amb rètols",
+              "description": "Figures que posen paraules sobre una imatge: rètols als ancoratges d'un recurs, el text alternatiu, el peu i la nota propis d'una figura, com es compon un rètol, rètols apartats del seu punt amb línies de referència, llegendes i símbols en línia, i els avisos dels rètols",
+              "plainSummary": "Un mapa o un esquema d'un llibre sovint porta paraules a sobre: els noms de mars i ciutats, les peces d'una màquina. Postext compon aquestes paraules com a text sobre la imatge, de manera que cada llengua tingui les seves. Aquesta pàgina explica com s'escriuen al Markdown, com es col·loca i es dibuixa cadascuna i com un nom pot quedar apartat del seu lloc amb una línia que l'assenyala. També tracta les llegendes amb símbols i els avisos dels rètols que no hi caben o que es toquen.",
+              "intro": "Aquesta pàgina tracta de les figures d'una pàgina composta, o del text corregut, que posen paraules sobre la seva imatge. Com s'escriu una pàgina composta és a [Pàgines compostes](/ca/docs/composed-pages); els estils de rètol i els camps de rètol d'un ancoratge, a [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages#estils-de-rètol)."
+            },
+            "fr": {
+              "title": "Pages composées : figures avec étiquettes",
+              "sidebarTitle": "Figures avec étiquettes",
+              "description": "Les figures qui posent des mots sur une image : étiquettes aux ancres d'une ressource, texte alternatif, légende et note propres à une figure, composition d'une étiquette, étiquettes écartées de leur point avec un trait de rappel, légendes de carte et symboles en ligne, et les avertissements des étiquettes",
+              "plainSummary": "Une carte ou un schéma de livre porte souvent des mots : les noms des mers et des villes, les pièces d'une machine. Postext compose ces mots comme du texte sur l'image, si bien que chaque langue a les siens. Cette page explique comment les écrire dans le Markdown, comment chacun est placé et dessiné, et comment un nom peut se tenir à l'écart de son lieu avec un trait qui le désigne. Elle couvre aussi les légendes à symboles et les avertissements des étiquettes trop larges ou qui se touchent.",
+              "intro": "Cette page traite des figures d'une page composée, ou du texte courant, qui posent des mots sur leur image. L'écriture d'une page composée est décrite dans [Pages composées](/fr/docs/composed-pages) ; les styles d'étiquette et les champs d'étiquette d'une ancre, dans [Configuration › Pages composées](/fr/docs/configuration-composed-pages#styles-détiquette)."
+            },
+            "de": {
+              "title": "Zusammengesetzte Seiten: Abbildungen mit Beschriftungen",
+              "sidebarTitle": "Abbildungen mit Beschriftungen",
+              "description": "Abbildungen, die Wörter auf ein Bild setzen: Beschriftungen an den Ankern einer Ressource, eigener Alternativtext, eigene Bildunterschrift und Anmerkung einer Abbildung, wie eine Beschriftung gesetzt wird, abgesetzte Beschriftungen mit Hinweislinien, Legenden und Symbole im Text, und die Warnungen der Beschriftungen",
+              "plainSummary": "Eine Karte oder ein Schaubild in einem Buch trägt oft Wörter: die Namen von Meeren und Städten, die Teile einer Maschine. Postext setzt diese Wörter als Text auf das Bild, sodass jede Sprache ihre eigenen hat. Diese Seite zeigt, wie man sie im Markdown schreibt, wie jede platziert und gezeichnet wird und wie ein Name abseits seines Ortes stehen kann, mit einer Linie, die auf ihn zeigt. Sie behandelt auch Legenden mit Symbolen und die Warnungen für Beschriftungen, die nicht passen oder sich berühren.",
+              "intro": "Diese Seite behandelt die Abbildungen einer zusammengesetzten Seite oder des Fließtexts, die Wörter auf ihr Bild setzen. Wie eine zusammengesetzte Seite geschrieben wird, steht unter [Zusammengesetzte Seiten](/de/docs/composed-pages); die Beschriftungsstile und die Beschriftungsfelder eines Ankers unter [Konfiguration › Zusammengesetzte Seiten](/de/docs/configuration-composed-pages#beschriftungsstile)."
+            },
+            "it": {
+              "title": "Pagine composte: figure con etichette",
+              "sidebarTitle": "Figure con etichette",
+              "description": "Le figure che mettono parole su un'immagine: etichette sugli ancoraggi di una risorsa, testo alternativo, didascalia e nota proprie di una figura, come si compone un'etichetta, etichette scostate dal loro punto con linee di richiamo, legende e simboli in linea, e gli avvisi delle etichette",
+              "plainSummary": "Una carta o uno schema di un libro porta spesso delle parole: i nomi dei mari e delle città, le parti di una macchina. Postext compone queste parole come testo sull'immagine, così ogni lingua ha le sue. Questa pagina spiega come scriverle nel Markdown, come ciascuna viene collocata e disegnata e come un nome può stare lontano dal suo luogo con una linea che lo indica. Tratta anche le legende con simboli e gli avvisi delle etichette che non entrano o che si toccano.",
+              "intro": "Questa pagina tratta delle figure di una pagina composta, o del testo corrente, che mettono parole sulla loro immagine. Come si scrive una pagina composta è in [Pagine composte](/it/docs/composed-pages); gli stili di etichetta e i campi di etichetta di un ancoraggio, in [Configurazione › Pagine composte](/it/docs/configuration-composed-pages#stili-delle-etichette)."
+            },
+            "pt": {
+              "title": "Páginas compostas: figuras com rótulos",
+              "sidebarTitle": "Figuras com rótulos",
+              "description": "Figuras que põem palavras sobre uma imagem: rótulos nas âncoras de um recurso, o texto alternativo, a legenda e a nota próprios de uma figura, como um rótulo é composto, rótulos afastados do seu ponto com linhas de chamada, legendas de mapa e símbolos em linha, e os avisos dos rótulos",
+              "plainSummary": "Um mapa ou um esquema de um livro costuma ter palavras por cima: os nomes de mares e cidades, as peças de uma máquina. O Postext compõe essas palavras como texto sobre a imagem, para que cada idioma tenha as suas. Esta página mostra como escrevê-las no Markdown, como cada uma é posicionada e desenhada e como um nome pode ficar afastado do seu lugar com uma linha que aponta para ele. Também trata das legendas com símbolos e dos avisos de rótulos que não cabem ou que se tocam.",
+              "intro": "Esta página trata das figuras de uma página composta, ou do texto corrido, que põem palavras sobre a sua imagem. Como se escreve uma página composta está em [Páginas compostas](/pt/docs/composed-pages); os estilos de rótulo e os campos de rótulo de uma âncora, em [Configuração › Páginas compostas](/pt/docs/configuration-composed-pages#estilos-de-rótulo)."
+            },
+            "zh": {
+              "title": "模板页：带标注的插图",
+              "sidebarTitle": "带标注的插图",
+              "description": "在图上放文字的插图：资源锚点上的标注，插图自己的替代文本、题注和注释，标注的排法，离开所指之点、用引线连回的标注，图例和行内符号，以及标注的警告",
+              "plainSummary": "书里的地图或示意图上常常有文字：海和城市的名字，机器的各个部件。Postext把这些文字作为文本排在图上，每种语言都可以有自己的文字。本页说明怎样在Markdown里写这些标注，每个标注怎样放置和绘制，以及名字怎样离开所指的地方，用一条线指回去。本页还介绍带符号的图例，以及标注放不下或互相碰到时的警告。",
+              "intro": "本页介绍模板页或正文中在图上放文字的插图。模板页的写法见[模板页](/zh/docs/composed-pages)；标注样式和锚点的标注字段见[配置 › 模板页](/zh/docs/configuration-composed-pages#标注样式)。"
+            },
+            "ja": {
+              "title": "テンプレートページ：ラベル付きの図",
+              "sidebarTitle": "ラベル付きの図",
+              "description": "画像の上に文字を置く図：リソースのアンカーに置くラベル、図ごとの代替テキスト・キャプション・注記、ラベルの組み方、引き出し線で結ぶ離れたラベル、凡例とインラインの記号、ラベルの警告",
+              "plainSummary": "本の地図や図解には、海や町の名前、機械の部品名など、文字が載っていることがよくあります。Postextはこうした文字を画像の上にテキストとして組むので、言語ごとに別の文字を持てます。このページでは、Markdownでの書き方、ひとつひとつのラベルの置き方と描き方、名前を指す場所から離して線で結ぶ方法を説明します。記号を使った凡例や、収まらないラベルや重なるラベルの警告も扱います。",
+              "intro": "このページでは、テンプレートページや本文の図のうち、画像の上に文字を置くものを扱います。テンプレートページの書き方は[テンプレートページ](/ja/docs/composed-pages)に、ラベルスタイルとアンカーのラベル用フィールドは[設定 › テンプレートページ](/ja/docs/configuration-composed-pages#ラベルスタイル)にあります。"
+            },
+            "ar": {
+              "title": "الصفحات المركّبة: أشكال بتسميات",
+              "sidebarTitle": "أشكال بتسميات",
+              "description": "أشكال تضع كلمات على صورة: تسميات عند مراسي المورد، ونص بديل وتعليق وملاحظة خاصة بالشكل، وكيف تُنضَّد التسمية، وتسميات بعيدة عن نقطتها بخطوط إشارة، ومفاتيح الخرائط والرموز داخل السطر، وتحذيرات التسميات",
+              "plainSummary": "كثيرًا ما تحمل خريطة أو مخطط في كتاب كلمات فوقه: أسماء البحار والمدن، وأجزاء آلة. ينضّد Postext هذه الكلمات نصًّا على الصورة، فيكون لكل لغة كلماتها. تشرح هذه الصفحة كيف تُكتب في Markdown، وكيف توضع كل واحدة وتُرسم، وكيف يقف اسم بعيدًا عن مكانه مع خط يشير إليه. وتتناول أيضًا مفاتيح الخرائط ذات الرموز، وتحذيرات التسميات التي لا تتسع أو التي تتلامس.",
+              "intro": "تتناول هذه الصفحة أشكال الصفحة المركّبة، أو النص الجاري، التي تضع كلمات على صورتها. أما كيف تُكتب الصفحة المركّبة ففي [الصفحات المركّبة](/ar/docs/composed-pages)؛ وأنماط التسميات وحقول التسمية في المرساة في [الإعداد › الصفحات المركّبة](/ar/docs/configuration-composed-pages#أنماط-التسميات)."
             }
           }
         }

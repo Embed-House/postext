@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: 'How to write a composed page in Markdown: the page fence, opened with four colons, that chooses the template; frames and the slot attribute, which share content out among its frames; figures labelled at points of a picture; and warnings for content that does not match the template',
   lang: 'en',
-  lastUpdated: '2026-10-17',
-  readingTime: '9 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '41 min',
   order: 34,
   plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, and pictures with labels such as the names on a map. It also lists the warnings Postext gives when the text and the template do not match.",
 };
@@ -97,75 +97,6 @@ How the content is shared out:
 - Content that names a slot the template does not have goes to the flow frame and is reported (`slotUnknown`).
 
 A `slot` outside a composed page is read but has no effect.
-
-## Figures with labels
-
-```md
-:::figure{resource="mapa-europa" slot="mapa"}
-::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
-::label[**Madrid**]{at="madrid"}
-::label[Mar Negro]{at="62% 48%"}
-:::
-```
-
-`:::figure{resource="…"}` places one resource, with its caption and number, as `::resource` does, and lists the labels to set on the picture, one `::label[TEXT]{…}` line per label, with blank lines allowed between them.
-
-- `at` names an anchor of the resource (a point defined once on the picture, shared by every language), or gives a point in percentages of the picture, `at="x% y%"`, for a label with no anchor.
-- `style` names a label style and overrides the anchor's.
-- The text in brackets is inline Markdown: bold, italic, chips.
-
-A figure works in the running text as well as in a frame. Its labels are drawn on the picture as text and go wherever the figure goes: a column, a float, a frame turned or scaled by the reflow ladder (the steps that make content fit), a spread. When a figure's closing `:::` is missing, the first line that is neither a label nor blank ends it, and the figure is reported as an unclosed container.
-
-### A figure's own words
-
-A resource holds one picture, its anchors and one set of words, but each edition of a book needs its own. A figure can set its own `alt`, `caption` and `note`, in the fence or on lines of their own, and they replace the resource's on the pages of that file:
-
-```md
-:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
-::caption[Relieve de **Varenia**, con sus tres cordilleras]
-::note[Fuente: levantamiento de 1932]
-::label[Mar de Sal]{at="mar"}
-:::
-```
-
-- As fence attributes, `alt`, `caption` and `note` take a short quoted text. The `::alt[…]`, `::caption[…]` and `::note[…]` lines take the text in brackets, which may hold inline Markdown and `\\` for a line break, as a resource's caption and note do. A line overrides an attribute of the same name; lines go among the labels, with blank lines allowed.
-- Whatever the figure does not set stays the resource's. An empty value says nothing: `caption=""` drops the caption, `alt=""` marks the picture as decorative.
-- The words replace the resource's in the chapter where they are written: the layout, the alternative text of every output and the tagged PDF use them, while the resource itself is unchanged. In a chapter a resource has one set of words, those of its first figure: a later figure of the same resource with different words does not show them, and `figureWordsShared` reports it. A reduced copy that needs its own caption takes a second resource pointing at the same picture file. Unlike a label, a caption is not mapped character by character to the Markdown; `sourceAt` answers a click on it as it does for a resource's caption.
-
-### How a label is set
-
-- **Where.** A label stands at its anchor's point, given as a fraction of the whole picture, so when the picture is cropped to its safe area or set smaller, the label moves with the art. The anchor's `align` says which side of the label stands at the point, and `verticalAlign` which edge stands at its height. `start` and `end` follow the label's own direction: in Arabic, `start` is the label's right edge. `rotate` turns the label about the point, clockwise, at any angle: a river along its course, hills on a slant.
-- **Look.** The label's own `style`, or else its anchor's, names a label style (see Configuration › Composed pages); without one the label is set in the body text's type. A halo outlines the letters beneath their fill; a plate (`background`) fills the box round the text, widened by `padding`.
-- **Fit.** With a `width` on its anchor, the label breaks between words within that measure, never inside a word. When a word is wider than the measure, the whole label is set smaller, down to its style's `minScale`; a label still too wide at that size is drawn with its widest word cut. Without a `width` the label keeps to one line, except where it breaks with `\\`, as in a caption.
-- **Text.** The text in brackets is inline Markdown, set as a caption is: bold, italic, chips, highlight marks, references, inline formulas. A name of several words is one label, whatever the order of its words in each language: `::label[ATLANTIC OCEAN]` and `::label[OCÉANO ATLÁNTICO]` stand at the same anchor. Right-to-left labels are set right to left; Chinese and Japanese labels break between characters.
-- **Outputs.** The canvas, the PDF, the HTML viewer, the fixed-layout EPUB and Folio draw the labels. On a right-to-left page a label stays where the picture shows it.
-- **Vertical.** With `writingMode: 'vertical-rl'` on the anchor (or on its label style) the label is set as a vertical page is: its characters upright in cells one under another, the columns going from right to left, Latin words and long numbers turned sideways, short numbers in one cell. `width` is then a fraction of the picture's height (the length of a column), and a Chinese or Japanese label wraps into more columns. `align` runs along the column (`start` is its top), `verticalAlign` across the columns (`top` is the first, right-hand one), and `rotate` turns the label further. On the mirrored page of a right-to-left book it reads the same way, down its columns and upright, at the same place on the picture (since postext 1.40).
-- **Checks.** A label still wider than its measure at its style's `minScale` raises `labelOverflow`; two labels whose lines meet raise `labelOverlap` on the later one. Both are checked in each edition, so a translation with longer words shows where it needs room. A part's palette (`:::part{palette="…"}`) recolours the labels on its pages as it does captions. The contrast check measures a label against its plate, or else its halo; a label set directly on the picture is skipped, since its background is the picture. The print preflight also checks labels: small type in process colours, inks, and distance from the trim.
-- **On a spread.** A figure that crosses the spine of a spread (a frame with `crossGutter: true`) paints one half on each page, so a label reaching into the gutter band would be cut by the fold and readable on neither page. Such a label slides sideways to the edge of the band, on the side where its anchor's point lies, and keeps its height; a point exactly on the spine goes to the first page, as a frame does. An anchor with `gutter: 'cross'` keeps its place, for a title set across both pages. The outer edges of the sheet are left alone: a label that runs past the trim is cut as the picture is. Since postext 1.43.
-
-### labelAnchorUnknown
-
-The `at` of a `::label` names an anchor that the figure's resource does not have. The label is not drawn; the reflowable EPUB still lists it and the picture's alternative text names it. The warning carries the resource, the anchor, the anchors the resource has (`known`), the locale, the page and the source range of the label's text. Correct the anchor id, add the anchor to the resource, or place the label with `at="x% y%"`.
-
-In the Sandbox's Checks panel the warning leads to the label in the Text panel, and its pin button opens the picture's anchors with that name ready to place: one click on the picture adds the anchor.
-
-### anchorUnlabelled
-
-An anchor of the figure's resource has a label style, but no `::label` of the figure stands at it in this locale: the map has room for a word that this edition leaves out. It is a note; `postext check` lists it as `info`. Anchors with no style, such as a comic speaker's, are not reported. The warning carries the resource, the anchor, its style, the locale, the page and the figure's source range. Write the label in this language's Markdown, or take the style off the anchor.
-
-In the Checks panel it leads to the figure in the Text panel, and its pin button opens the picture's anchors on that anchor.
-
-### labelOverflow
-
-A label is still wider than its anchor's `width` at the smallest scale its label style allows (`minScale`): it is drawn at that scale and runs past its measure. The warning carries the resource, the label's text, its anchor (none for a label placed by percentages), the width it was given, the scale reached, the locale, the page and the source range of the label's text. It is checked in each edition, so a language with longer words overflows where another does not. Widen the anchor's `width`, shorten the word in this edition's Markdown, or lower the label style's `minScale`. A Chinese or Japanese label breaks between characters and does not overflow this way. Since postext 1.39.
-
-### labelOverlap
-
-Two labels of the same figure touch; for a label with a plate, the plate counts. The later label, in the order written, carries the warning, with the text of the first earlier label it meets and how many earlier labels it meets in all. The test uses the box of each line, turned with the label, so the space beside a short line stays free; it lets two lines overlap by up to an eighth of a line's height. It is checked in each edition. Move one of the anchors, narrow a label's `width` so that it breaks, or shorten the words in this edition's Markdown. In the Sandbox's Checks panel the pin button opens the picture's anchors at the label's anchor. Since postext 1.39. With `overlap: 'allow'` on an anchor or in its label style, a label that the original prints touching its neighbours (a dense map) is left out of the check, and no pair that includes it is reported. Since postext 1.42. A picture's `avoid` zones stand for the symbols of a map: rectangles, in fractions of the picture, drawn over its dots and icons in the **Avoid zones** mode of the picture's marks. A label that runs onto one is reported the same way, naming `symbol 2` instead of a label (`withSymbol` in the data), and `overlap: 'allow'` leaves a label out of both checks. Since postext 1.42.
-
-### figureWordsShared
-
-A `:::figure` sets words (`alt`, `caption` or `note`) for a resource whose words an earlier figure in the same chapter has already set, and they differ. The pages show the first figure's words and leave these out. The warning carries the resource, the words left out and the source range of the first of them; a later figure that gives no words of its own is no problem. Give the figure a resource of its own: a second resource that points at the same picture file, with its own caption, number and anchors. In the Sandbox's Checks panel it is filed under Figures. Since postext 1.42.
 
 ## Example
 
@@ -726,3 +657,4 @@ findElement(doc, 'cp0:dinero');   // the same frame after a relayout, with its r
 ## Comic pages
 
 A comic page (`:::page{split}`) is a composed page whose frames its split generates: one per panel, with stable ids `cm<n>:<name>`, a polygon for a slanted cell, a callout style through `box`, and Markdown poured into a text panel. See [Comics › Comic pages and composed pages](/en/docs/comics#comic-pages-and-composed-pages).
+

@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'Cómo se escribe una página compuesta en Markdown: el bloque de página, delimitado por cuatro signos de dos puntos, que indica la plantilla; los marcos y el atributo slot, que reparten el contenido entre los marcos de la plantilla; las figuras con rótulos sobre puntos concretos de una imagen, y los avisos que saltan cuando el contenido no encaja con la plantilla',
   lang: 'es',
-  lastUpdated: '2026-10-17',
-  readingTime: '9 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '47 min',
   order: 34,
   plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página está en una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: el bloque de página, los marcos, los nombres de ranura y las imágenes con rótulos, como los nombres escritos sobre un mapa. También recoge los avisos que da Postext cuando el texto y la plantilla no encajan.",
 };
@@ -97,75 +97,6 @@ Cómo se reparte el contenido:
 - El contenido que indica una ranura que no existe en la plantilla va al marco de flujo, con el aviso `slotUnknown`.
 
 Fuera de una página compuesta, `slot` se acepta pero no tiene ningún efecto.
-
-## Figuras con rótulos
-
-```md
-:::figure{resource="mapa-europa" slot="mapa"}
-::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
-::label[**Madrid**]{at="madrid"}
-::label[Mar Negro]{at="62% 48%"}
-:::
-```
-
-`:::figure{resource="…"}` coloca un recurso, con su pie y su número, igual que `::resource`, y enumera los rótulos que se ponen sobre la imagen: una línea `::label[TEXTO]{…}` por rótulo, y se admiten líneas en blanco entre ellas.
-
-- `at` remite a un ancla del recurso (un punto con nombre que se define una sola vez sobre la imagen y que comparten todos los idiomas) o indica un punto en porcentajes de la imagen, `at="x% y%"`, para un rótulo sin ancla.
-- `style` elige un estilo de rótulo y sustituye al del ancla.
-- El texto entre corchetes es Markdown en línea: negrita, cursiva, chips.
-
-Una figura funciona igual en el texto corrido que en un marco. Sus rótulos se dibujan como texto sobre la imagen y van adonde vaya la figura: una columna, un flotante, un marco girado o reducido por la escalera de reajuste (los pasos que hacen caber el contenido), una doble página. Si a una figura le falta el `:::` de cierre, la termina la primera línea que no sea un rótulo ni esté en blanco, y un aviso la marca como contenedor sin cerrar.
-
-### Las palabras propias de una figura
-
-Un recurso guarda una imagen, sus anclas y un solo juego de textos, pero cada edición de un libro necesita los suyos. Una figura puede fijar su propio `alt`, `caption` y `note`, en la línea de apertura o en líneas propias, y estos sustituyen a los del recurso en las páginas de ese archivo:
-
-```md
-:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
-::caption[Relieve de **Varenia**, con sus tres cordilleras]
-::note[Fuente: levantamiento de 1932]
-::label[Mar de Sal]{at="mar"}
-:::
-```
-
-- En la línea de apertura, los atributos `alt`, `caption` y `note` admiten un texto breve entre comillas. Las líneas `::alt[…]`, `::caption[…]` y `::note[…]` contienen el texto entre corchetes, que puede incluir Markdown en línea y `\\` para un salto de línea, igual que el pie y la nota de un recurso. Una línea prevalece sobre el atributo del mismo nombre; las líneas se escriben entre los rótulos, y se admiten líneas en blanco.
-- Lo que la figura no fija se queda como en el recurso. Un valor vacío deja el texto en blanco: `caption=""` quita el pie y `alt=""` marca la imagen como decorativa.
-- Estos textos sustituyen a los del recurso en el capítulo en el que se escriben: la maquetación, el texto alternativo de todas las salidas y el PDF etiquetado los usan, mientras que el recurso en sí no cambia. En un capítulo, un recurso tiene un solo juego de textos, el de su primera figura: si una figura posterior del mismo recurso trae otros textos, no se muestran, y salta el aviso `figureWordsShared`. Una copia reducida que necesite un pie propio requiere un segundo recurso que apunte al mismo archivo de imagen. A diferencia de un rótulo, el pie no se asocia carácter a carácter con el Markdown; `sourceAt` responde a un clic sobre él igual que con el pie de un recurso.
-
-### Cómo se compone un rótulo
-
-- **Dónde.** Un rótulo se coloca en el punto de su ancla, expresado como fracción de la imagen entera, de modo que si la imagen se recorta a su zona segura o se compone más pequeña, el rótulo se mueve con el dibujo. El `align` del ancla indica qué lado del rótulo queda en el punto, y `verticalAlign`, qué borde queda a su altura. `start` y `end` siguen la dirección del propio rótulo: en árabe, `start` es su borde derecho. `rotate` gira el rótulo alrededor del punto, en el sentido de las agujas del reloj y con cualquier ángulo: un río que sigue su curso, unas colinas en diagonal.
-- **Aspecto.** El `style` del rótulo, o si no tiene, el de su ancla, indica un estilo de rótulo (véase Configuración › Páginas compuestas); sin estilo, el rótulo se compone con la letra del texto base. El halo perfila las letras por debajo de su relleno; la placa (`background`) rellena la caja que rodea el texto, ampliada con `padding`.
-- **Ajuste.** Si su ancla tiene `width`, el rótulo se corta entre palabras dentro de esa medida, nunca dentro de una palabra. Cuando una palabra es más ancha que la medida, todo el rótulo se compone más pequeño, hasta el `minScale` de su estilo; si aun así no cabe, se dibuja con su palabra más ancha cortada. Sin `width`, el rótulo ocupa una sola línea, salvo donde se corta con `\\`, como en un pie.
-- **Texto.** El texto entre corchetes es Markdown en línea y se compone como un pie: negrita, cursiva, chips, marcas de resaltado, referencias y fórmulas en línea. Un nombre de varias palabras es un solo rótulo, cualquiera que sea el orden de sus palabras en cada idioma: `::label[OCÉANO ATLÁNTICO]` y `::label[ATLANTIC OCEAN]` se colocan en la misma ancla. Los rótulos de derecha a izquierda se componen de derecha a izquierda; los chinos y japoneses se cortan entre caracteres.
-- **Salidas.** El canvas, el PDF, el visor HTML, el EPUB de maquetación fija y Folio dibujan los rótulos. En una página de derecha a izquierda, el rótulo se queda donde lo muestra la imagen.
-- **Vertical.** Con `writingMode: 'vertical-rl'` en el ancla (o en su estilo de rótulo), el rótulo se compone como una página vertical: los caracteres derechos, en celdas una debajo de otra; las columnas, de derecha a izquierda; las palabras latinas y los números largos, girados de lado, y los números cortos, en una sola celda. `width` pasa a ser entonces una fracción de la altura de la imagen (la longitud de una columna), y un rótulo chino o japonés se reparte en más columnas. `align` actúa a lo largo de la columna (`start` es su extremo superior); `verticalAlign`, a lo ancho de las columnas (`top` es la primera, la de la derecha), y `rotate` gira el rótulo además. En la página en espejo de un libro de derecha a izquierda se lee igual, hacia abajo por sus columnas y con los caracteres derechos, en el mismo lugar de la imagen (desde postext 1.40).
-- **Comprobaciones.** Un rótulo que sigue siendo más ancho que su medida con el `minScale` de su estilo da el aviso `labelOverflow`; si las líneas de dos rótulos se tocan, el posterior da `labelOverlap`. Ambos se comprueban en cada edición, así que una traducción con palabras más largas muestra dónde necesita sitio. La paleta de una parte (`:::part{palette="…"}`) cambia el color de los rótulos de sus páginas, igual que el de los pies. La comprobación de contraste mide el rótulo sobre su placa o, si no la tiene, sobre su halo; un rótulo puesto directamente sobre la imagen se omite, porque su fondo es la propia imagen. La verificación previa a la impresión (preflight) también revisa los rótulos: la letra pequeña en colores de proceso, las tintas y la distancia al corte.
-- **En una doble página.** Una figura que cruza el lomo de una doble página (un marco con `crossGutter: true`) pinta una mitad en cada página, así que un rótulo que entrara en la banda del lomo quedaría cortado por el pliegue y no se leería en ninguna de las dos. Ese rótulo se desplaza en horizontal hasta el borde de la banda, del lado en que está el punto de su ancla, y conserva su altura; un punto justo sobre el lomo va a la primera página, como un marco. Un ancla con `gutter: 'cross'` conserva su sitio, para un título que se extiende por las dos páginas. Los bordes exteriores de la hoja no se tocan: un rótulo que sobrepasa el corte se corta igual que la imagen. Desde postext 1.43.
-
-### labelAnchorUnknown
-
-El `at` de un `::label` remite a un ancla que no existe en el recurso de la figura. El rótulo no se dibuja; el EPUB de maquetación fluida lo sigue incluyendo en la lista y el texto alternativo de la imagen lo menciona. El aviso indica el recurso, el ancla, las anclas que sí tiene el recurso (`known`), el idioma, la página y el rango de origen del texto del rótulo. Corrige el id del ancla, añade el ancla al recurso o coloca el rótulo con `at="x% y%"`.
-
-En el panel **Revisión** del Sandbox, el aviso lleva al rótulo en el panel **Texto**, y su botón de la chincheta abre las anclas de la imagen con ese nombre listo para colocarlo: basta un clic en la imagen para añadir el ancla.
-
-### anchorUnlabelled
-
-Un ancla del recurso de la figura tiene un estilo de rótulo, pero en este idioma ningún `::label` de la figura se coloca en ella: el mapa tiene sitio para una palabra que esta edición no pone. Es una nota; `postext check` la muestra como `info`. Las anclas sin estilo, como la de un personaje de cómic, no dan aviso. El aviso indica el recurso, el ancla, su estilo, el idioma, la página y el rango de origen de la figura. Escribe el rótulo en el Markdown de este idioma o quita el estilo del ancla.
-
-En el panel **Revisión** lleva a la figura en el panel **Texto**, y su botón de la chincheta abre las anclas de la imagen por esa ancla.
-
-### labelOverflow
-
-Un rótulo sigue siendo más ancho que el `width` de su ancla incluso en la escala más pequeña que permite su estilo de rótulo (`minScale`): se dibuja a esa escala y sobrepasa su medida. El aviso indica el recurso, el texto del rótulo, su ancla (ninguna si el rótulo se coloca con porcentajes), el ancho asignado, la escala alcanzada, el idioma, la página y el rango de origen del texto del rótulo. Se comprueba en cada edición, así que en un idioma de palabras más largas puede desbordarse donde en otro no. Ensancha el `width` del ancla, acorta la palabra en el Markdown de esta edición o baja el `minScale` del estilo de rótulo. Un rótulo chino o japonés se corta entre caracteres y no se desborda de esta forma. Desde postext 1.39.
-
-### labelOverlap
-
-Dos rótulos de una misma figura se tocan; si un rótulo tiene placa, cuenta la placa. El aviso aparece en el rótulo posterior, según el orden en que están escritos, con el texto del primer rótulo anterior que toca y el número total de rótulos anteriores con los que choca. La prueba usa la caja de cada línea, girada con el rótulo, de modo que el espacio junto a una línea corta queda libre; además, tolera que dos líneas se solapen hasta una octava parte de la altura de una línea. Se comprueba en cada edición. Mueve una de las anclas, estrecha el `width` de un rótulo para que se corte en más líneas o acorta las palabras en el Markdown de esta edición. En el panel **Revisión** del Sandbox, el botón de la chincheta abre las anclas de la imagen por el ancla del rótulo. Desde postext 1.39. Con `overlap: 'allow'` en un ancla o en su estilo de rótulo, un rótulo que en el original se imprime tocando a sus vecinos (un mapa denso) queda fuera de la comprobación, y no se avisa de ninguna pareja en la que participe. Desde postext 1.42. Las zonas `avoid` de una imagen representan los símbolos de un mapa: rectángulos, en fracciones de la imagen, que se dibujan sobre sus puntos e iconos en el modo **Zonas libres** de las marcas de la imagen. Un rótulo que invade una de ellas da el mismo aviso, que menciona `symbol 2` en lugar de otro rótulo (`withSymbol` en los datos), y `overlap: 'allow'` deja el rótulo fuera de las dos comprobaciones. Desde postext 1.42.
-
-### figureWordsShared
-
-Una `:::figure` da textos (`alt`, `caption` o `note`) a un recurso al que una figura anterior del mismo capítulo ya había dado los suyos, y son distintos. Las páginas muestran los textos de la primera figura y omiten estos. El aviso indica el recurso, los textos omitidos y el rango de origen del primero de ellos; una figura posterior que no da textos propios no causa ningún problema. Dale a la figura un recurso propio: un segundo recurso que apunte al mismo archivo de imagen, con su propio pie, número y anclas. En el panel **Revisión** del Sandbox aparece en el grupo **Figuras y tablas**. Desde postext 1.42.
 
 ## Ejemplo
 
@@ -726,3 +657,4 @@ findElement(doc, 'cp0:dinero');   // el mismo marco tras recomponer, con su rect
 ## Páginas de cómic
 
 Una página de cómic (`:::page{split}`) es una página compuesta cuyos marcos genera su reparto: uno por viñeta, con ids estables `cm<n>:<nombre>`, un polígono para una celda inclinada, un estilo de recuadro mediante `box` y Markdown vertido en una viñeta de texto. Consulta [Cómics › Páginas de cómic y páginas compuestas](/es/docs/comics#páginas-de-cómic-y-páginas-compuestas).
+

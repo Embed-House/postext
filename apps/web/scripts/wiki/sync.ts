@@ -59,6 +59,7 @@ const DOC_PAGES: Record<string, string> = {
   "japanese-layout": "Japanese-Layout",
   comics: "Comics",
   "composed-pages": "Composed-Pages",
+  "composed-pages-figures": "Composed-Pages-Figures-with-Labels",
   contributing: "Contributing",
   sandbox: "Sandbox",
   "sandbox-design-checks": "Sandbox-Design-and-Checks-Panels",

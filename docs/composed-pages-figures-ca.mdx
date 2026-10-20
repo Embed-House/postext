@@ -1,0 +1,87 @@
+{/* docs/composed-pages-figures-ca.mdx */}
+
+export const metadata = {
+  title: 'Pàgines compostes: figures amb rètols',
+  sidebarTitle: 'Figures amb rètols',
+  description: "Figures que posen paraules sobre una imatge: rètols als ancoratges d'un recurs, el text alternatiu, el peu i la nota propis d'una figura, com es compon un rètol, rètols apartats del seu punt amb línies de referència, llegendes i símbols en línia, i els avisos dels rètols",
+  lang: 'ca',
+  lastUpdated: '2026-10-20',
+  readingTime: '9 min',
+  order: 35,
+  parent: 'composed-pages',
+  plainSummary: "Un mapa o un esquema d'un llibre sovint porta paraules a sobre: els noms de mars i ciutats, les peces d'una màquina. Postext compon aquestes paraules com a text sobre la imatge, de manera que cada llengua tingui les seves. Aquesta pàgina explica com s'escriuen al Markdown, com es col·loca i es dibuixa cadascuna i com un nom pot quedar apartat del seu lloc amb una línia que l'assenyala. També tracta les llegendes amb símbols i els avisos dels rètols que no hi caben o que es toquen.",
+};
+
+# Pàgines compostes: figures amb rètols
+
+Aquesta pàgina tracta de les figures d'una pàgina composta, o del text corregut, que posen paraules sobre la seva imatge. Com s'escriu una pàgina composta és a [Pàgines compostes](/ca/docs/composed-pages); els estils de rètol i els camps de rètol d'un ancoratge, a [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages#estils-de-rètol).
+
+
+## Figures amb rètols
+
+```md
+:::figure{resource="mapa-europa" slot="mapa"}
+::label[OCÉANO ATLÁNTICO]{at="atlantico" style="mar"}
+::label[**Madrid**]{at="madrid"}
+::label[Mar Negro]{at="62% 48%"}
+:::
+```
+
+`:::figure{resource="…"}` col·loca un recurs, amb el peu i el número, com fa `::resource`, i enumera els rètols que van sobre la imatge: una línia `::label[TEXT]{…}` per rètol, amb línies en blanc entremig si es vol.
+
+- `at` indica una àncora del recurs (un punt amb nom que es defineix una sola vegada sobre la imatge i que comparteixen totes les llengües), o bé un punt en percentatges de la imatge, `at="x% y%"`, per a un rètol sense àncora.
+- `style` indica un estil de rètol i té prioritat sobre el de l'àncora.
+- El text entre claudàtors és Markdown en línia: negreta, cursiva, xips.
+
+Una figura funciona tant al text corregut com dins d'un marc. Els rètols es dibuixen sobre la imatge com a text i van allà on vagi la figura: una columna, un flotant, un marc girat o amb el contingut reduït perquè hi càpiga, una doble pàgina. Si dins d'una figura hi ha una línia que no és ni un rètol ni una línia en blanc, la figura s'acaba en aquell punt perquè li falta el `:::` de tancament, i Postext en dona un avís de contenidor sense tancar.
+
+### Les paraules pròpies d'una figura
+
+El recurs guarda una imatge, les seves àncores i un sol joc de textos, però cada edició d'un llibre té els seus. La mateixa figura pot indicar l'`alt`, el `caption` i el `note`, a la línia d'obertura o en línies pròpies, i aquests textos substitueixen els del recurs a les pàgines d'aquell fitxer:
+
+```md
+:::figure{resource="relieve" alt="Mapa de relieve de Varenia"}
+::caption[Relieve de **Varenia**, con sus tres cordilleras]
+::note[Fuente: levantamiento de 1932]
+::label[Mar de Sal]{at="mar"}
+:::
+```
+
+- Com a atributs de la línia d'obertura, `alt`, `caption` i `note` porten un text breu entre cometes. Les línies `::alt[…]`, `::caption[…]` i `::note[…]` porten el text entre claudàtors, que pot tenir Markdown en línia i `\\` per a un salt de línia, com el peu i la nota d'un recurs. Una línia té prioritat sobre l'atribut del mateix nom; les línies van entre els rètols, amb línies en blanc si es vol.
+- El que la figura no indica es queda com al recurs. Un text buit no indica res: `caption=""` treu el peu i `alt=""` marca la imatge com a decorativa.
+- Els textos substitueixen els del recurs al capítol on s'escriuen: la composició, el text alternatiu de totes les sortides i el PDF etiquetat els fan servir, però el recurs mateix no canvia. Dins d'un capítol, un recurs només té un joc de textos, el de la primera figura: si una figura posterior del mateix recurs indica uns altres textos, no es mostren, i Postext en dona un avís (`figureWordsShared`). Una còpia reduïda que necessiti un peu propi ha de fer servir un segon recurs que apunti al mateix fitxer d'imatge. A diferència d'un rètol, el peu no es relaciona caràcter per caràcter amb el Markdown; `sourceAt` respon a un clic sobre el peu igual que amb el peu d'un recurs.
+
+### Com es compon un rètol
+
+- **On.** Un rètol es col·loca al punt de la seva àncora, una fracció de la imatge sencera, de manera que si la imatge es retalla a la zona segura o es compon més petita, el rètol es mou amb el dibuix. L'`align` de l'àncora indica quin costat del rètol queda sobre el punt, i `verticalAlign`, quina vora queda a la seva altura. `start` i `end` segueixen la direcció del mateix rètol: en àrab, `start` és la vora dreta. `rotate` gira el rètol al voltant del punt, en el sentit de les agulles del rellotge i amb qualsevol angle: un riu al llarg del seu curs, una serralada en diagonal.
+- **Aspecte.** L'`style` del rètol, o si no en té, el de l'àncora, indica un estil de rètol (vegeu Configuració › Pàgines compostes); sense estil, el rètol agafa la lletra del text corregut. L'halo traça el contorn de les lletres per sota del farciment; la placa (`background`) omple la caixa que envolta el text, eixamplada amb `padding`.
+- **Ajust.** Si l'àncora té `width`, el rètol es talla entre paraules dins d'aquesta amplada, mai dins d'una paraula. Quan una paraula és més ampla que aquesta amplada, tot el rètol es compon més petit, fins al `minScale` del seu estil; si tot i així no hi cap, es dibuixa amb la paraula més ampla tallada. Sense `width`, el rètol ocupa una sola línia, excepte on es talla amb `\\`, com en un peu.
+- **Text.** El text entre claudàtors és Markdown en línia i es compon com un peu: negreta, cursiva, xips, marques de ressaltat, referències i fórmules en línia. Un nom de diverses paraules és un sol rètol, sigui quin sigui l'ordre de les paraules en cada llengua: `::label[OCEÀ ATLÀNTIC]` i `::label[ATLANTIC OCEAN]` van a la mateixa àncora. Els rètols de dreta a esquerra es componen de dreta a esquerra, i els xinesos i japonesos es tallen entre caràcters.
+- **Sortides.** El canvas, el PDF, el visor HTML, l'EPUB de maquetació fixa i Folio dibuixen els rètols. En una pàgina de dreta a esquerra, el rètol es queda allà on la imatge el mostra.
+- **Vertical.** Amb `writingMode: 'vertical-rl'` a l'àncora (o al seu estil de rètol), el rètol es compon com una pàgina vertical: els caràcters drets, en cel·les l'una sota l'altra, les columnes de dreta a esquerra, les paraules llatines i els números llargs girats de costat, i els números curts en una sola cel·la. Llavors `width` és una fracció de l'alçada de la imatge, la llargada d'una columna, i un rètol xinès o japonès es reparteix en més columnes. `align` actua al llarg de la columna (`start` n'és l'extrem superior); `verticalAlign`, a través de les columnes (`top` és la primera, la de la dreta), i `rotate` continua girant el rètol. A la pàgina en mirall d'un llibre de dreta a esquerra es llegeix igual, columnes avall i amb els caràcters drets, al mateix lloc de la imatge (des de postext 1.40).
+- **Revisions.** Si un rètol continua sent més ample que la seva amplada amb el `minScale` del seu estil, genera l'avís `labelOverflow`; si les línies de dos rètols es toquen, el posterior genera l'avís `labelOverlap`. Totes dues coses es revisen en cada edició, de manera que una traducció amb paraules més llargues mostra on necessita més espai. La paleta d'una part (`:::part{palette="…"}`) canvia el color dels rètols de les seves pàgines igual que fa amb els peus. La revisió de contrast llegeix un rètol sobre la seva placa o, si no en té, dins de l'halo; el rètol sense res al darrere sobre la imatge s'omet, perquè el fons és la imatge. La revisió d'impressió té en compte la lletra petita del rètol en colors de procés, les tintes i la distància al tall.
+- **En una doble pàgina.** Una figura que travessa el llom d'una doble pàgina (un marc amb `crossGutter: true`) en pinta una meitat a cada pàgina, de manera que un rètol amb la caixa dins de la banda del llom quedaria tallat pel plec i no es llegiria a cap de les dues. El rètol es desplaça dins del seu full fins a la vora de la banda, del costat on és el punt de l'àncora, i en conserva l'alçada; un punt just sobre el llom queda a la primera pàgina, com un marc. Una àncora amb `gutter: 'cross'` conserva la posició, per a un títol que s'estén per les dues pàgines. Les vores exteriors del full no es toquen: un rètol que sobrepassa el tall es talla igual que la imatge. Des de postext 1.43.
+
+### labelAnchorUnknown
+
+Un `::label` indica amb `at` una àncora que el recurs de la figura no té. El rètol no es dibuixa; l'EPUB adaptable el continua llistant i el text alternatiu de la imatge l'inclou. L'avís indica el recurs, l'àncora, les àncores que té el recurs (`known`), la llengua, la pàgina i l'interval del text del rètol al text font. Corregeix l'id de l'àncora, afegeix l'àncora al recurs o col·loca el rètol amb `at="x% y%"`.
+
+Al tauler Revisió del Sandbox, l'avís porta al rètol al tauler Text, i el botó de l'agulla obre les àncores de la imatge amb aquest nom a punt per col·locar: un clic a la imatge afegeix l'àncora.
+
+### anchorUnlabelled
+
+Una àncora del recurs de la figura té un estil de rètol, però cap `::label` de la figura no hi va en aquesta llengua: el mapa té lloc per a una paraula que aquesta edició no posa. És una nota informativa; `postext check` la mostra com a `info`. Les àncores sense estil, com les d'un personatge de còmic, no generen cap avís. L'avís indica el recurs, l'àncora, el seu estil, la llengua, la pàgina i l'interval de la figura al text font. Escriu el rètol al Markdown d'aquesta llengua o treu l'estil de l'àncora.
+
+Al tauler Revisió, l'avís porta a la figura al tauler Text, i el botó de l'agulla obre les àncores de la imatge per aquella àncora.
+
+### labelOverflow
+
+Un rètol continua sent més ample que el `width` de la seva àncora fins i tot a l'escala més petita que permet l'estil de rètol (`minScale`): es dibuixa a aquesta escala i sobrepassa l'amplada indicada. L'avís indica el recurs, el text del rètol, l'àncora (cap, si el rètol es col·loca amb percentatges), l'amplada que se li va donar, l'escala a què ha arribat, la llengua, la pàgina i l'interval del text del rètol al text font. Es revisa en cada edició, de manera que una llengua amb paraules més llargues pot desbordar on una altra no ho fa. Eixampla el `width` de l'àncora, escurça la paraula al Markdown d'aquesta edició o redueix el `minScale` de l'estil de rètol. Un rètol xinès o japonès es talla entre caràcters i no desborda d'aquesta manera. Des de postext 1.39.
+
+### labelOverlap
+
+Les línies de dos rètols d'una mateixa figura es toquen; un rètol amb placa compta com la placa. L'avís el genera el rètol posterior, en l'ordre en què estan escrits, i indica el text del primer rètol anterior que toca i quants rètols anteriors toca en total. La prova fa servir la caixa de cada línia, girada amb el rètol, de manera que una línia curta al costat d'una de llarga deixa lliure el seu costat, i permet que dues línies se superposin fins a una vuitena part de l'alçada d'una línia. Es revisa en cada edició. Mou una de les àncores, redueix el `width` d'un rètol perquè es parteixi o escurça les paraules al Markdown d'aquesta edició. Al tauler Revisió del Sandbox, el botó de la xinxeta obre les àncores de la imatge per l'àncora del rètol. Des de postext 1.39. Amb `overlap: 'allow'` en una àncora, o en el seu estil de rètol, un rètol que l'original imprimeix tocant els veïns (un mapa dens) queda fora de la revisió, i no es dona cap avís per a cap parella on aparegui. Des de postext 1.42. Les zones `avoid` d'una imatge compten com els símbols d'un mapa: rectangles dibuixats sobre els punts i les icones, en el mode **Zones lliures** de les marques de la imatge, en fraccions de la imatge. Si un rètol n'envaeix una, també genera l'avís, amb `symbol 2` en lloc d'un altre rètol (`withSymbol` a les dades), i `overlap: 'allow'` deixa un rètol fora de les dues revisions. Des de postext 1.42.
+
+### figureWordsShared
+
+Una `:::figure` dona textos (`alt`, `caption` o `note`) a un recurs al qual una figura anterior del mateix capítol ja n'havia donat uns altres, i són diferents. Les pàgines mostren els textos de la primera figura i ometen aquests. L'avís indica el recurs, els textos omesos i l'interval al text font del primer; una figura posterior que no dona textos propis no és cap problema. Dona a la figura un recurs propi: un segon recurs que apunti al mateix fitxer d'imatge, amb el seu peu, el seu número i les seves àncores. Al tauler Revisió del Sandbox apareix al grup Figures. Des de postext 1.42.

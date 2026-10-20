@@ -40,7 +40,7 @@ import path from "node:path";
 import GithubSlugger from "github-slugger";
 
 const LOCALES = ["en", "es", "ca", "zh", "ar", "ja", "pt", "fr", "de", "it"];
-const LAST_UPDATED = "2026-10-17";
+const LAST_UPDATED = "2026-10-20";
 const ROOT = path.resolve(import.meta.dirname, "../../../..");
 const DOCS = path.join(ROOT, "docs");
 const COOKBOOK = path.join(ROOT, "cookbook");

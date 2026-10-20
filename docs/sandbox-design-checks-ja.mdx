@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'ja',
   lastUpdated: '2026-10-19',
   readingTime: '39分',
-  order: 37,
+  order: 38,
   parent: 'sandbox',
   plainSummary: "このページでは、Sandboxの2つのパネルを説明します。デザインパネルには、ページの大きさ、フォント、色など、本のすべての設定が入っていて、グループに分かれ、検索欄もあります。検査パネルには、作業中にPostextが見つけた問題が並びます。画像が見つからない、行がゆるすぎる、といった問題です。それぞれの問題には場所が示され、クリックするとそこへ移ります。",
 };
@@ -227,7 +227,7 @@ export const metadata = {
   - **不明な段組みの流し方**：`snake`でも`parallel`でもない`:::columns{flow=…}`です。グループには既定値が使われます（`columnsFlowUnknown`）。
   - **不明なページテンプレート**、**枠のないスロット**、**空の枠**、**コロン3つで始まるテンプレートページ**：テンプレートが`pageTemplates`にない`::::page`、ページのテンプレートのどの枠も指さない`slot`、そのページで何も受け取らないテンプレートの枠（`optional`の枠は報告されません）、`template=`を付けたのにコロン3つで書かれた`:::page`です（`templateUnknown`、`slotUnknown`、`slotEmpty`、`pageFenceLength`。[テンプレートページ](/ja/docs/composed-pages#警告)を参照）。
   - **見開きの指定がテンプレートと一致しません**：`spread`の指定がテンプレートの`spread`と合わない`::::page`です。ページはテンプレートのとおり、向かい合う2ページか1ページに組まれます（`spreadMismatch`。[テンプレートページ](/ja/docs/composed-pages#spreadmismatch)を参照）。
-  - 図のラベル：**存在しないアンカーのラベル**、**ラベルのないアンカー**、**ラベルが幅に収まっていません**、**ラベル同士が重なっています**（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`。[テンプレートページ › ラベル付きの図](/ja/docs/composed-pages#ラベル付きの図)を参照）。
+  - 図のラベル：**存在しないアンカーのラベル**、**ラベルのないアンカー**、**ラベルが幅に収まっていません**、**ラベル同士が重なっています**（`labelAnchorUnknown`、`anchorUnlabelled`、`labelOverflow`、`labelOverlap`。[テンプレートページ › ラベル付きの図](/ja/docs/composed-pages-figures#ラベル付きの図)を参照）。
   - 漫画のページの警告。読めない分割、コマとセルの不一致などです。コマに収まらない吹き出しは**組版**に入ります（[漫画 › 漫画の警告](/ja/docs/comics#漫画の警告)を参照）。
 - **デザイン**：
   - エンジンの許可リストにない柱とノンブルのプレースホルダー名（`{attr.…}`と部のプレースホルダーは受け付けます）と、文書のメタデータが欠けているプレースホルダー。

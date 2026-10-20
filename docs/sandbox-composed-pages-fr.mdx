@@ -7,7 +7,7 @@ export const metadata = {
   lang: 'fr',
   lastUpdated: '2026-10-20',
   readingTime: '14 min',
-  order: 38,
+  order: 39,
   parent: 'sandbox',
   plainSummary: "Cette page présente ce que le Sandbox propose pour les pages composées, c’est-à-dire les pages dont le texte se répartit dans des blocs disposés par un gabarit. Vous dessinez et déplacez les blocs d’un gabarit directement sur la page, et vous rangez les styles de bloc dans une bibliothèque. Le panneau Vérifications signale, dans chaque langue du livre, les pages composées dont le texte ne tient pas, et propose des boutons qui corrigent un bloc. Dans un livre créé avant les pages composées, le texte des pages peut être déplacé dans le Markdown en une seule fois.",
 };
@@ -33,7 +33,7 @@ Cette page réunit les parties des panneaux Maquette et Vérifications qui conce
 
 **Un article qui renvoie à un autre chapitre.** Dans un livre qui consacre un fichier de chapitre à chaque article, un article dont le bloc l’envoie vers `page:<id>` se poursuit dans le chapitre qui a cette page (depuis postext 1.41 ; voir [Pages composées › Renvoyer la suite à une page plus loin](/fr/docs/composed-pages#renvoyer-la-suite-à-une-page-plus-loin)). Le canvas, le Folio et les onglets PDF et EPUB composent la suite sur la page de ce chapitre, avec les numéros de page du livre dans les mentions de suite. L’enregistrement de mise en page d’un chapitre garde les articles qu’il envoie : le chapitre qui a la page est donc recomposé quand l’article change, et non quand un chapitre intermédiaire change. Un clic sur les mots arrivés d’un autre chapitre place le curseur dans le Markdown de l’article, et le chemin sous l’aperçu indique la page de destination quand le curseur se trouve dans ce texte. L’aperçu d’un seul chapitre ne montre que ce que contiennent ses propres pages : la suite apparaît avec le chapitre qui a la page.
 
-**Les textes d’une figure.** Un clic sur une légende ou une note que la figure écrit elle-même place le curseur dans sa ligne `::caption[…]` ou `::note[…]`, ou dans l’attribut du délimiteur, sur la lettre cliquée (voir [Pages composées › Les textes d’une figure](/fr/docs/composed-pages#les-textes-dune-figure)).
+**Les textes d’une figure.** Un clic sur une légende ou une note que la figure écrit elle-même place le curseur dans sa ligne `::caption[…]` ou `::note[…]`, ou dans l’attribut du délimiteur, sur la lettre cliquée (voir [Pages composées › Les textes d’une figure](/fr/docs/composed-pages-figures#les-textes-dune-figure)).
 
 
 ## Styles de bloc

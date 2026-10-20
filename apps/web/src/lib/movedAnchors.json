@@ -473,32 +473,35 @@
     }
   },
   "composed-pages": {
-    "ar": {
-      "composed-pages": "سور-الصفحة>كتلة-الصفحة سجل-إعادة-الترتيب>سجل-إعادة-التوزيع ترحيل-كتاب-يحمل-نصه-في-أنماطه>نقل-كتاب-نصّه-في-أنماطه الفهرس-في-إطار>المحتويات-في-إطار"
-    },
-    "ca": {
-      "composed-pages": "la-tanca-de-pàgina>el-bloc-de-pàgina marcs-i-slots>marcs-i-ranures líndex-en-un-marc>líndex-general-en-un-marc"
-    },
-    "de": {
-      "composed-pages": "die-seitenbegrenzung>der-seitenblock die-eigenen-worte-einer-abbildung>der-eigene-wortlaut-einer-abbildung dekor-kolumnentitel-und-ebenen>dekoration-kolumnentitel-und-ebenen ein-buch-mit-text-in-seinen-stilen-umstellen>ein-buch-umstellen-dessen-text-in-den-stilen-steht"
+    "en": {
+      "composed-pages-figures": "figures-with-labels a-figures-own-words how-a-label-is-set labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
     },
     "es": {
-      "composed-pages": "la-valla-de-página>el-bloque-de-página marcos-y-slots>marcos-y-ranuras"
+      "composed-pages-figures": "figuras-con-rótulos las-palabras-propias-de-una-figura cómo-se-compone-un-rótulo labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
     },
-    "fr": {
-      "composed-pages": "blocs-et-slots>blocs-et-emplacements les-mots-propres-dune-figure>les-textes-dune-figure"
-    },
-    "it": {
-      "composed-pages": "il-recinto-della-pagina>il-blocco-di-pagina pagine-di-fumetto>tavole-a-fumetti"
-    },
-    "ja": {
-      "composed-pages": "ページフェンス>ページブロック 飾り柱レイヤー>装飾柱レイヤー リフローの記録>再配置の記録 スタイルにテキストを持つ本の移行>テキストをスタイルに置いた本の移行"
-    },
-    "pt": {
-      "composed-pages": "a-cerca-de-página>o-contêiner-de-página como-a-página-é-composta>como-a-página-é-diagramada"
+    "ca": {
+      "composed-pages-figures": "figures-amb-rètols les-paraules-pròpies-duna-figura com-es-compon-un-rètol labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
     },
     "zh": {
-      "composed-pages": "页面围栏>页面块 文字续排时>文字接续时 续排标记>接续标记"
+      "composed-pages-figures": "带标注的插图 图自己的文字 标注如何排出 labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
+    },
+    "ar": {
+      "composed-pages-figures": "أشكال-بتسميات كلمات-الشكل-الخاصة كيف-تُنضَّد-التسمية labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
+    },
+    "ja": {
+      "composed-pages-figures": "ラベル付きの図 図に固有の文言 ラベルの組み方 labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
+    },
+    "pt": {
+      "composed-pages-figures": "figuras-com-rótulos as-palavras-próprias-de-uma-figura como-um-rótulo-é-composto labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
+    },
+    "fr": {
+      "composed-pages-figures": "figures-avec-étiquettes les-textes-dune-figure comment-une-étiquette-est-composée labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
+    },
+    "de": {
+      "composed-pages-figures": "abbildungen-mit-beschriftungen der-eigene-wortlaut-einer-abbildung wie-eine-beschriftung-gesetzt-wird labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
+    },
+    "it": {
+      "composed-pages-figures": "figure-con-etichette le-parole-proprie-di-una-figura come-si-compone-unetichetta labelanchorunknown anchorunlabelled labeloverflow labeloverlap figurewordsshared"
     }
   },
   "configuration-bundles": {
