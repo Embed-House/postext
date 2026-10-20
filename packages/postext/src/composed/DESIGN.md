@@ -2048,3 +2048,61 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   instance (`next: 'card[2]'` is still `overflowTargetUnknown`); a chain inside a cell whose later link
   has an `'auto'` height measures empty when the grid is solved (as for groups, §5.9); connectors'
   `[*]` (C5); Sandbox (U12), docs (D3) and the warnings docs list.
+
+### 12.16 What C2 built (#1053)
+
+- **Where it runs.** `composed/overlap.ts` (`overlapChecks`, pure), called once at the end of
+  `layoutComposedPage` on the composition the ladder settled on (step 8, after `frameOverflow`), with the
+  groups' final boxes (`Composition.groupRects`, new). A spread is checked on the whole sheet before
+  `layoutComposedSpread` cuts it, so the facing copies never take part; `spread.ts` moves each warning to
+  the page that holds its frame, as for `frameOverflow`. The page memo keeps the warnings with the layout.
+  Every box goes to the sheet by its frame's `frameMatrix` (scale, turn, own writing mode) and is compared
+  as the axis-aligned box holding it; a frame whose content overflows is clipped to its box first.
+- **What covers, what is covered.** A frame covers with its overlay boxes that have an opaque background
+  (the style's or `look`'s fill, the tab, a stripe, a code highlight; alpha under 50 % does not count; an
+  outline alone does not cover), its overlay pictures (icons), its pictures (`bodyRect` of a bitmap, SVG or
+  video) and its text lines. What is covered: body lines (`VDTLine.bbox`), caption and note lines, overlay
+  text (tab, title, marks: a box from the font size round the baseline), pictures, tables. Departure:
+  **words cover words, not pictures** (a line over a photo hides a hairline of it; whether the words read is
+  the contrast check's), so text set on art is not reported and lowering a picture under text is a fix.
+  A frame whose pictures push with `wrap: 'contour'` does not cover lines with its pictures' box (the
+  contour is what keeps them clear). Thresholds: a cut thinner than 0.3 mm on either side is a touch; a
+  pair under 1 mm² is not reported.
+- **`frameCovered`** (one per pair, the covered frame's source range and page): `coveredBy`,
+  `coveredByPath`, `overlapMm2`, `text` (the first covered words, 40 characters) or `picture`, `locale`,
+  `proposals`: `layer` (the covering frame's `layer` to the covered one's − 1, proposed only when the
+  covered frame has nothing opaque under the covering one: else the swap hides the other), `exclude:
+  'push'` (only when body lines are hit: a caption or a tab does not run round a pushing frame), `move`
+  (`frame`, `dxMm`, `dyMm`: the shortest shift along one axis that takes the covering ink off the covered
+  ink; data only).
+- **`frameOutsideArea`.** Departure: instead of one limit by `area`, **text is checked against the trim
+  and fills and pictures against the bleed** (a band anchored to `'bleed'` on a `'content'` template bleeds
+  on purpose; text past the trim is cut whatever the area; with no bleed the two are one box). And, for a
+  nine-point anchor on `'#frame'` / `'#group'` whose anchor point (offset added) lies inside that box
+  (0.5 px slack), all the frame's ink against that box (`past: 'frame' | 'group'`, `target`). Element edges
+  (`below`, `right-of`…) and anchor points outside the box are never "inside". Data: `excessMm`, `sides`
+  (each side's overrun from 0.3 mm), `proposals`: `maxHeight` (the frame's height less the overrun at the
+  foot, whole mm down; twice the overrun for a frame held by its middle, none for one held by its foot,
+  which a smaller height does not bring in), `continueNextPage` (with it, for a frame of text with no
+  `next` / `continueIn`), `minHeight` of the frame it is anchored inside (its height plus the overrun, whole
+  mm up), and, added to the design, `move` (`frame`, `dxMm`, `dyMm`: the shift that brings it in when it
+  runs past one side of an axis; data only), the one fix of a strap held by its foot below the trim.
+- **`FrameConfig.overlap: 'check' | 'allow'`** (resolved as `overlap?: 'allow'`), validated
+  (`unknownConfigValue`, used `'check'`). Decision: `'allow'` also leaves the frame out of
+  `frameOutsideArea` (a badge hung off its card on purpose is the same kind of art), and an `'allow'` host
+  is not checked as the box a frame is anchored inside.
+- **Reflow log.** `ReflowEventKind` gains `covered` (`cause` the covering frame, `areaMm2`) and `outside`
+  (`toMm` the largest overrun, `past`: `'trim' | 'bleed' | '#name'`), merged in template order;
+  `describeReflowEvent` says «card lies under cutout (25.3 mm²)», «note runs 26 mm past card».
+- **Outputs.** `formatWarning` words both with their fixes (`describeFrameCoverProposal`,
+  `describeFrameOutsideProposal`, exported); `postext check --json` carries the warning's fields as `data`;
+  `WARNING_SINCE` 1.47.0 for both. Not done here: the Sandbox payloads, labels and `sandbox_get_warnings`
+  (U13, #1066, which owns the WebMCP coverage of the new kinds); decoration covering a frame of a negative
+  layer (decoration is laid after the frames); the cookbook's C37 does not fail on the new kinds (a
+  policy for the coordinator).
+- **Fixture.** `__tests__/composed/fixtures/overlap/` (config, Markdown, three placeholder pictures): a
+  caption under a picture frame on a higher layer, a tab under a cut-out photo, a note anchored inside a
+  card that runs past its foot, a strap of text below the trim; `overlap.test.ts` and the CLI test read it.
+  The page-8 stand-in (`fixtures/page8.ts`) now reports its photos hanging 1.3–1.8 mm past the foot of
+  their boxes; `fit.test.ts` and `groups.test.ts` leave the overlap events out of their reflow
+  assertions.
