@@ -577,7 +577,7 @@ def heading_styles(loc: str) -> list[dict]:
         {
             "id": "colophon", "name": "Credits", "numbered": False, "toc": False,
             "breakBefore": {"enabled": True, "parity": "any"},
-            "fontFamily": display_face(loc),
+            "fontFamily": display_face(loc), "fontWeight": 400,
             "fontSize": pt(26), "lineHeight": pt(30),
             "color": col("accent"),
             "marginBottom": pt(14),
@@ -600,7 +600,9 @@ def comics_config(loc: str) -> dict:
         "panelStyles": [{"id": "rounded", "name": "Rounded", "borderRadius": mm(5.8), "borderStyle": "none"}],
         "lettering": {"fontSize": pt(9)},
         "balloonStyles": [
-            {"id": "sfx", "fontScale": SFX_SCALE.get(loc, 3.4)},
+            # The sound-effect faces (Bangers, Dela Gothic One, ZCOOL KuaiLe,
+            # Lalezar) have one regular cut: not the built-in style's bold.
+            {"id": "sfx", "fontScale": SFX_SCALE.get(loc, 3.4), "bold": False},
             # Zen Antique has no bold: the Japanese shouts take the heavy
             # display face, as manga letterers do.
             *([{"id": "shout", "fontFamily": "Dela Gothic One", "bold": False}] if loc == "ja" else []),
@@ -646,7 +648,9 @@ def config(loc: str) -> dict:
         "layout": {"layoutType": "single"},
         "bodyText": body,
         "headings": {
-            "fontFamily": display_face(loc),
+            # The display faces have one regular cut; the heading default of
+            # 700 would be a synthesized bold (fontFallback).
+            "fontFamily": display_face(loc), "fontWeight": 400,
             "color": col("ink"),
             "keepWithNext": True,
             "levels": [{"level": 1, "numberingTemplate": "", "fontSize": pt(26), "lineHeight": pt(30), "marginBottom": pt(14)}],

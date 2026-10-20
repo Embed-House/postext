@@ -116,6 +116,17 @@ describe('pepper-carrot in the Sandbox', () => {
     }
   });
 
+  it('sets the one-cut display faces at their own weight, not a synthesized bold', () => {
+    // Bangers, Dela Gothic One, ZCOOL KuaiLe and Lalezar ship a regular
+    // only; the headings default to 700 and the built-in `sfx` style is bold.
+    for (const locale of EDITIONS) {
+      const config = configOf(locale);
+      expect(config.headings?.fontWeight, locale).toBe(400);
+      expect(config.headingStyles?.find((s) => s.id === 'colophon')?.fontWeight, locale).toBe(400);
+      expect(config.comics?.balloonStyles?.find((s) => s.id === 'sfx')?.bold, locale).toBe(false);
+    }
+  });
+
   it('ships every variant each edition asks of its faces', async () => {
     const { families } = fontsToCustomFonts('pepper-carrot', manifest.fonts);
     for (const locale of EDITIONS) {

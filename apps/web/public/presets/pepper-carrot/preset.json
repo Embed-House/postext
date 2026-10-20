@@ -251,6 +251,7 @@
   },
   "headings": {
    "fontFamily": "Bangers",
+   "fontWeight": 400,
    "color": {
     "hex": "#1d1a17",
     "model": "hex",
@@ -572,6 +573,7 @@
      "parity": "any"
     },
     "fontFamily": "Bangers",
+    "fontWeight": 400,
     "fontSize": {
      "value": 26,
      "unit": "pt"
@@ -702,7 +704,8 @@
    "balloonStyles": [
     {
      "id": "sfx",
-     "fontScale": 3.4
+     "fontScale": 3.4,
+     "bold": false
     },
     {
      "id": "writing",
@@ -1122,6 +1125,7 @@
     },
     "headings": {
      "fontFamily": "Dela Gothic One",
+     "fontWeight": 400,
      "color": {
       "hex": "#1d1a17",
       "model": "hex",
@@ -1508,6 +1512,7 @@
        "parity": "any"
       },
       "fontFamily": "Dela Gothic One",
+      "fontWeight": 400,
       "fontSize": {
        "value": 26,
        "unit": "pt"
@@ -1586,7 +1591,8 @@
      "balloonStyles": [
       {
        "id": "sfx",
-       "fontScale": 3.4
+       "fontScale": 3.4,
+       "bold": false
       },
       {
        "id": "shout",
@@ -1791,6 +1797,7 @@
     },
     "headings": {
      "fontFamily": "ZCOOL KuaiLe",
+     "fontWeight": 400,
      "color": {
       "hex": "#1d1a17",
       "model": "hex",
@@ -2112,6 +2119,7 @@
        "parity": "any"
       },
       "fontFamily": "ZCOOL KuaiLe",
+      "fontWeight": 400,
       "fontSize": {
        "value": 26,
        "unit": "pt"
@@ -2190,7 +2198,8 @@
      "balloonStyles": [
       {
        "id": "sfx",
-       "fontScale": 2.1
+       "fontScale": 2.1,
+       "bold": false
       },
       {
        "id": "writing",
@@ -2390,6 +2399,7 @@
     },
     "headings": {
      "fontFamily": "Lalezar",
+     "fontWeight": 400,
      "color": {
       "hex": "#1d1a17",
       "model": "hex",
@@ -2711,6 +2721,7 @@
        "parity": "any"
       },
       "fontFamily": "Lalezar",
+      "fontWeight": 400,
       "fontSize": {
        "value": 26,
        "unit": "pt"
