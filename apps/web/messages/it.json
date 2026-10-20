@@ -3602,7 +3602,7 @@
     "leaderDashDotted": "Punteggiato",
     "leaderDashCustom": "Personalizzato",
     "leaderCapSize": "Dimensione del segno",
-    "leaderCapSizeTooltip": "Il diametro del punto o la lunghezza della punta di freccia. Se non impostato: tre volte lo spessore della linea.",
+    "leaderCapSizeTooltip": "Il diametro del punto o dell’anello, la lunghezza della punta di freccia o della barra. Se non impostato: tre volte lo spessore della linea.",
     "labelStyleBorder": "Contorno",
     "labelStyleBorderTooltip": "Una linea intorno al fondo dell’etichetta (il suo riquadro più il margine interno), con o senza colore di fondo: la cornice di una legenda, un nome in un riquadro.",
     "labelStyleBorderColor": "Colore del contorno",

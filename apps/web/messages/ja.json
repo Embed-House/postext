@@ -3601,7 +3601,7 @@
     "leaderDashDotted": "点線",
     "leaderDashCustom": "カスタム",
     "leaderCapSize": "印の大きさ",
-    "leaderCapSizeTooltip": "点の直径、または矢印の長さ。未設定なら線の太さの 3 倍です。",
+    "leaderCapSizeTooltip": "点やリングの直径、矢印やバーの長さ。未設定なら線の太さの 3 倍です。",
     "labelStyleBorder": "枠線",
     "labelStyleBorderTooltip": "ラベルの下地（ボックスに余白を足したもの）を囲む線。下地の色の有無は問いません：凡例の枠、枠に入った名前。",
     "labelStyleBorderColor": "枠線の色",

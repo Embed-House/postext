@@ -3602,7 +3602,7 @@
     "leaderDashDotted": "Dotted",
     "leaderDashCustom": "Custom",
     "leaderCapSize": "Mark size",
-    "leaderCapSizeTooltip": "Across a dot, or the length of an arrowhead. Unset: three times the line’s width.",
+    "leaderCapSizeTooltip": "Across a dot or a ring, the length of an arrowhead or a bar. Unset: three times the line’s width.",
     "labelStyleBorder": "Outline",
     "labelStyleBorderTooltip": "A line round the label’s plate (its box grown by the padding), with or without a background: a key’s frame, a name in a box.",
     "labelStyleBorderColor": "Outline colour",

@@ -3601,7 +3601,7 @@
     "leaderDashDotted": "Pointillé",
     "leaderDashCustom": "Personnalisé",
     "leaderCapSize": "Taille de la marque",
-    "leaderCapSizeTooltip": "Le diamètre du point ou la longueur de la pointe de flèche. Non défini : trois fois l’épaisseur du trait.",
+    "leaderCapSizeTooltip": "Le diamètre du point ou de l’anneau, la longueur de la pointe de flèche ou de la barre. Non défini : trois fois l’épaisseur du trait.",
     "labelStyleBorder": "Contour",
     "labelStyleBorderTooltip": "Un trait autour du fond de l’étiquette (sa boîte agrandie de la marge), avec ou sans couleur de fond : le cadre d’une légende, un nom dans une boîte.",
     "labelStyleBorderColor": "Couleur du contour",

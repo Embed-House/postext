@@ -1381,7 +1381,7 @@
     "leaderDashDotted": "Punteado",
     "leaderDashCustom": "Propio",
     "leaderCapSize": "Tamaño de la marca",
-    "leaderCapSizeTooltip": "El diámetro del punto o el largo de la punta de flecha. Sin fijar: tres veces el grosor de la línea.",
+    "leaderCapSizeTooltip": "El diámetro del punto o del anillo, el largo de la punta de flecha o de la barra. Sin fijar: tres veces el grosor de la línea.",
     "labelStyleBorder": "Contorno",
     "labelStyleBorderTooltip": "Una línea alrededor del fondo del rótulo (su caja más el relleno), con color de fondo o sin él: el marco de una leyenda, un nombre en una caja.",
     "labelStyleBorderColor": "Color del contorno",

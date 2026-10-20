@@ -3601,7 +3601,7 @@
     "leaderDashDotted": "منقّط",
     "leaderDashCustom": "مخصص",
     "leaderCapSize": "حجم العلامة",
-    "leaderCapSizeTooltip": "قطر النقطة أو طول رأس السهم. إن لم يُضبط: ثلاثة أضعاف سماكة الخط.",
+    "leaderCapSizeTooltip": "قطر النقطة أو الحلقة، أو طول رأس السهم أو الشَّرطة. إن لم يُضبط: ثلاثة أضعاف سماكة الخط.",
     "labelStyleBorder": "الإطار",
     "labelStyleBorderTooltip": "خط حول لوحة التسمية (صندوقها مع الحشوة)، بخلفية أو بدونها: إطار مفتاح الخريطة، أو اسم داخل صندوق.",
     "labelStyleBorderColor": "لون الإطار",

@@ -3601,7 +3601,7 @@
     "leaderDashDotted": "点线",
     "leaderDashCustom": "自定义",
     "leaderCapSize": "标记大小",
-    "leaderCapSizeTooltip": "圆点的直径或箭头的长度。不设置时为线宽的三倍。",
+    "leaderCapSizeTooltip": "圆点或圆环的直径，箭头或短横的长度。不设置时为线宽的三倍。",
     "labelStyleBorder": "轮廓线",
     "labelStyleBorderTooltip": "围绕标注底板（标注框加内边距）的一条线，可有可无背景：图例的边框、框中的名字。",
     "labelStyleBorderColor": "轮廓线颜色",

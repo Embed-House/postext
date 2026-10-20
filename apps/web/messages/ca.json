@@ -3601,7 +3601,7 @@
     "leaderDashDotted": "Puntejat",
     "leaderDashCustom": "Propi",
     "leaderCapSize": "Mida de la marca",
-    "leaderCapSizeTooltip": "El diàmetre del punt o la llargada de la punta de fletxa. Sense fixar: tres vegades el gruix de la línia.",
+    "leaderCapSizeTooltip": "El diàmetre del punt o de l'anella, la llargada de la punta de fletxa o de la barra. Sense fixar: tres vegades el gruix de la línia.",
     "labelStyleBorder": "Contorn",
     "labelStyleBorderTooltip": "Una línia al voltant del fons del rètol (la seva caixa més el farciment), amb color de fons o sense: el marc d’una llegenda, un nom en una caixa.",
     "labelStyleBorderColor": "Color del contorn",

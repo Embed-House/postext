@@ -3602,7 +3602,7 @@
     "leaderDashDotted": "Gepunktet",
     "leaderDashCustom": "Eigen",
     "leaderCapSize": "Größe des Zeichens",
-    "leaderCapSizeTooltip": "Durchmesser des Punkts oder Länge der Pfeilspitze. Nicht gesetzt: dreimal die Linienstärke.",
+    "leaderCapSizeTooltip": "Durchmesser des Punkts oder Rings, Länge der Pfeilspitze oder des Strichs. Nicht gesetzt: dreimal die Linienstärke.",
     "labelStyleBorder": "Umriss",
     "labelStyleBorderTooltip": "Eine Linie um die Unterlage der Beschriftung (ihr Kasten samt Innenabstand), mit oder ohne Farbe: der Rahmen einer Legende, ein Name im Kasten.",
     "labelStyleBorderColor": "Farbe des Umrisses",

@@ -3598,7 +3598,7 @@
     "leaderDashDotted": "Pontilhado",
     "leaderDashCustom": "Próprio",
     "leaderCapSize": "Tamanho da marca",
-    "leaderCapSizeTooltip": "O diâmetro do ponto ou o comprimento da ponta da seta. Sem definir: três vezes a espessura da linha.",
+    "leaderCapSizeTooltip": "O diâmetro do ponto ou do anel, o comprimento da ponta da seta ou da barra. Sem definir: três vezes a espessura da linha.",
     "labelStyleBorder": "Contorno",
     "labelStyleBorderTooltip": "Uma linha em volta do fundo do rótulo (a sua caixa mais o preenchimento), com ou sem cor de fundo: a moldura de uma legenda, um nome numa caixa.",
     "labelStyleBorderColor": "Cor do contorno",
