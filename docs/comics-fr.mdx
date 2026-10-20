@@ -250,7 +250,7 @@ Deux lignes à la suite du même locuteur sont jointes, comme on lettre la pause
 
 ### Onomatopées
 
-Une ligne `sfx` n’a pas de bulle : son texte est composé en grand (2,4 fois le corps du lettrage), en gras, dans le caractère d’onomatopées de la langue du document, avec un halo blanc autour des lettres pour qu’il se lise sur le dessin. Il est placé près de l’ancre `sfx` de la case quand le dessin en marque une (une ancre dont l’identifiant est `sfx`), sinon là où il ne couvre aucun visage. `rotate`, `size`, `color` et `font` le modifient, et `at` l’épingle. En lettrage vertical, il est composé en colonne, de cinq caractères au plus. Les onomatopées sont dessinées après toutes les bulles de la planche.
+Une ligne `sfx` n’a pas de bulle : son texte est composé en grand (2,4 fois le corps du lettrage) dans le caractère d’onomatopées de la langue du document, en gras si ce caractère a un gras (Bangers, Dela Gothic One, ZCOOL KuaiLe et Lalezar n’en ont pas et restent en romain), avec un halo blanc autour des lettres pour qu’il se lise sur le dessin. Il est placé près de l’ancre `sfx` de la case quand le dessin en marque une (une ancre dont l’identifiant est `sfx`), sinon là où il ne couvre aucun visage. `rotate`, `size`, `color` et `font` le modifient, et `at` l’épingle. En lettrage vertical, il est composé en colonne, de cinq caractères au plus. Les onomatopées sont dessinées après toutes les bulles de la planche.
 
 Une ligne peut fixer son propre mode d’écriture. Une édition horizontale d’un manga qui garde une onomatopée en japonais la compose en colonne :
 
@@ -317,7 +317,7 @@ Un style de bulle est un type de bulle : son contour, sa queue et son lettrage.
     <tr><td><code>caption</code></td><td>rectangle</td><td>aucun</td><td>Jaune pâle, collé contre le coin haut du côté de départ, texte aligné au début.</td></tr>
     <tr><td><code>inner</code></td><td>boîte arrondie</td><td>aucun</td><td>Fond gris, italique : la voix intérieure d’un personnage.</td></tr>
     <tr><td><code>note</code></td><td>rectangle</td><td>aucun</td><td>Collé contre le coin bas du côté de fin, texte à 0,8.</td></tr>
-    <tr><td><code>sfx</code></td><td>aucun</td><td>aucun</td><td>Texte à 2,4, en gras, dans le caractère d’onomatopées, avec un halo blanc de 1,5 pt.</td></tr>
+    <tr><td><code>sfx</code></td><td>aucun</td><td>aucun</td><td>Texte à 2,4 dans le caractère d’onomatopées, en gras s’il en a un, avec un halo blanc de 1,5 pt.</td></tr>
   </tbody>
 </table>
 

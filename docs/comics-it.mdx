@@ -250,7 +250,7 @@ Due righe consecutive dello stesso personaggio si uniscono, come si rende in let
 
 ### Onomatopee
 
-Una riga `sfx` non ha nuvoletta: il suo testo si compone grande (2,4 volte il corpo del lettering), in grassetto, nel carattere delle onomatopee della lingua del documento, con un alone bianco attorno alle lettere perché si legga sopra l’immagine. Si colloca vicino all’ancora `sfx` della vignetta quando l’immagine ne segna una (un’ancora il cui id è `sfx`), altrimenti dovunque non copra un volto. `rotate`, `size`, `color` e `font` la modificano, e `at` la ancora. Nel lettering verticale si compone in colonna, lunga al massimo cinque caratteri. Le onomatopee si disegnano dopo tutte le nuvolette della tavola.
+Una riga `sfx` non ha nuvoletta: il suo testo si compone grande (2,4 volte il corpo del lettering) nel carattere delle onomatopee della lingua del documento, in grassetto se quel carattere ha un grassetto (Bangers, Dela Gothic One, ZCOOL KuaiLe e Lalezar non lo hanno e restano in tondo), con un alone bianco attorno alle lettere perché si legga sopra l’immagine. Si colloca vicino all’ancora `sfx` della vignetta quando l’immagine ne segna una (un’ancora il cui id è `sfx`), altrimenti dovunque non copra un volto. `rotate`, `size`, `color` e `font` la modificano, e `at` la ancora. Nel lettering verticale si compone in colonna, lunga al massimo cinque caratteri. Le onomatopee si disegnano dopo tutte le nuvolette della tavola.
 
 Una riga può impostare la propria modalità di scrittura. Un’edizione orizzontale di un manga che mantiene un’onomatopea in giapponese la compone in colonna:
 
@@ -317,7 +317,7 @@ Uno stile di nuvoletta è un tipo di nuvoletta: il suo contorno, la sua coda e i
     <tr><td><code>caption</code></td><td>rettangolo</td><td>nessuno</td><td>Giallo pallido, accostato all’angolo in alto sul lato d’inizio, testo allineato all’inizio.</td></tr>
     <tr><td><code>inner</code></td><td>riquadro arrotondato</td><td>nessuno</td><td>Riempimento grigio, corsivo: la voce interiore di un personaggio.</td></tr>
     <tr><td><code>note</code></td><td>rettangolo</td><td>nessuno</td><td>Accostato all’angolo in basso sul lato finale, testo a 0,8.</td></tr>
-    <tr><td><code>sfx</code></td><td>nessuno</td><td>nessuno</td><td>Testo a 2,4, in grassetto, nel carattere delle onomatopee, con un alone bianco di 1,5 pt.</td></tr>
+    <tr><td><code>sfx</code></td><td>nessuno</td><td>nessuno</td><td>Testo a 2,4 nel carattere delle onomatopee, in grassetto se ne ha uno, con un alone bianco di 1,5 pt.</td></tr>
   </tbody>
 </table>
 

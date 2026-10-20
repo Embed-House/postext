@@ -168,3 +168,26 @@ describe('comics config', () => {
     });
   });
 });
+
+// #1047: the default sound-effect faces (Bangers, Dela Gothic One, ZCOOL
+// KuaiLe, Lalezar) ship no bold; the built-in sfx style set them at 700,
+// synthesized.
+describe('the built-in sfx bold follows its face (#1047)', () => {
+  it('sets a one-cut default face upright regular', () => {
+    for (const locale of ['en', 'ja', 'zh-Hans', 'ar']) {
+      expect(pickBalloonStyle(resolveComicsConfig(undefined, locale), 'sfx')?.bold).toBe(false);
+    }
+  });
+
+  it('keeps the bold in a face that has one, and the bold a configuration sets', () => {
+    expect(pickBalloonStyle(resolveComicsConfig(undefined, 'zh-Hant'), 'sfx')?.bold).toBe(true);
+    expect(pickBalloonStyle(resolveComicsConfig({ balloonStyles: [{ id: 'sfx', fontFamily: 'Anton' }] }, 'en'), 'sfx')?.bold).toBe(true);
+    expect(pickBalloonStyle(resolveComicsConfig({ balloonStyles: [{ id: 'sfx', bold: true }] }, 'en'), 'sfx')?.bold).toBe(true);
+  });
+
+  it('strips a bold only where it is the default of the face the entry sets', () => {
+    expect(stripComicsDefaults({ balloonStyles: [{ id: 'sfx', bold: false }] }, 'en')).toBeUndefined();
+    expect(stripComicsDefaults({ balloonStyles: [{ id: 'sfx', fontFamily: 'Anton', bold: false }] }, 'en')?.balloonStyles).toEqual([{ id: 'sfx', fontFamily: 'Anton', bold: false }]);
+    expect(stripComicsDefaults({ balloonStyles: [{ id: 'sfx', fontFamily: 'Anton', bold: true }] }, 'en')?.balloonStyles).toEqual([{ id: 'sfx', fontFamily: 'Anton' }]);
+  });
+});

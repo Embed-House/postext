@@ -169,3 +169,54 @@ describe('collectFontUsage: the summaries of the contents (#770)', () => {
     }
   });
 });
+
+// #1047: the configuration as written reads an unset weight as 400, but the
+// engine sets headings at 700 and a balloon style at 700 when its `bold`
+// resolves true. A one-cut face named there was asked for its regular only,
+// and the 700 the layout then used was synthesized with no warning first.
+describe('collectFontUsage: resolved heading and comic weights (#1047)', () => {
+  it('asks a heading family named with no weight for the heading bold', () => {
+    const usage = collectFontUsage({ headings: { fontFamily: 'Bangers' } });
+    expect(has(usage, 'Bangers', 700)).toBe(true);
+    expect(has(usage, 'Bangers', 400)).toBe(false);
+  });
+
+  it('reads a level and a heading style over the headings they inherit from', () => {
+    const usage = collectFontUsage({
+      headings: { fontFamily: 'Head', fontWeight: 600, levels: [{ level: 2, fontFamily: 'Level', italic: true }] },
+      headingStyles: [{ id: 'opener', fontFamily: 'Opener' }, { id: 'light', fontWeight: 300 }],
+    });
+    expect(has(usage, 'Head', 600)).toBe(true);
+    expect(has(usage, 'Level', 600, 'italic')).toBe(true);
+    expect(has(usage, 'Level', 600)).toBe(false);
+    // A style with no weight takes the level's; one with no face, the level's face.
+    expect(has(usage, 'Opener', 600)).toBe(true);
+    expect(has(usage, 'Head', 300)).toBe(true);
+  });
+
+  it('asks a heading family for the body bold only when it is heavier than the heading weight', () => {
+    const usage = collectFontUsage({ bodyText: { fontFamily: 'Body', boldFontWeight: 600 }, headings: { fontFamily: 'Head' } });
+    expect(has(usage, 'Head', 600)).toBe(false);
+    expect(has(usage, 'Head', 700)).toBe(true);
+  });
+
+  it('asks a default-face sound effect for 400 and a shout for the lettering bold', () => {
+    const markdown = ':::page\n::panel\nana{shout}: Hey!\nsfx: BOOM\n:::\n';
+    const usage = collectFontUsage({ locale: 'en' }, { markdown });
+    expect(has(usage, 'Bangers', 400)).toBe(true);
+    expect(has(usage, 'Bangers', 700)).toBe(false);
+    expect(has(usage, 'Comic Neue', 700)).toBe(true);
+  });
+
+  it('counts the bold a balloon style sets in its own face, built-in styles included', () => {
+    const usage = collectFontUsage({
+      locale: 'en',
+      comics: { balloonStyles: [{ id: 'sfx', fontFamily: 'Anton' }, { id: 'roar', fontFamily: 'Roar', bold: true }], lettering: { fontFamily: 'Hand' } },
+    });
+    // No text: every style. A sound effect in a face of its own keeps its bold.
+    expect(has(usage, 'Anton', 700)).toBe(true);
+    expect(has(usage, 'Roar', 700)).toBe(true);
+    expect(has(usage, 'Hand', 700)).toBe(true); // the built-in shout
+    expect(has(usage, 'Hand', 400)).toBe(true);
+  });
+});
