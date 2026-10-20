@@ -3457,6 +3457,10 @@ export interface SandboxLabels {
   connectorCapNone: string;
   connectorCapDot: string;
   connectorCapArrow: string;
+  connectorCapRing: string;
+  connectorCapBar: string;
+  connectorOpacity: string;
+  connectorOpacityTooltip: string;
   connectorCapSize: string;
   connectorCapSizeTooltip: string;
   connectorPin: string;

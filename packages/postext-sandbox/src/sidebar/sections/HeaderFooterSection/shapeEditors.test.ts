@@ -55,11 +55,18 @@ describe('the slot editor (#1063)', () => {
     // The start is not offered as an end.
     expect(html).not.toContain(`aria-label="${L.connectorToUse.replace('__name__', L.headerFooterSizeToFrame.replace('__name__', 'root'))}"`);
     expect(html).toContain(L.connectorPick);
-    for (const label of [L.connectorSide, L.connectorAt, L.connectorGap, L.connectorRouting, L.connectorRadius, L.connectorTrunk, L.connectorColor, L.connectorWidth, L.connectorDash, L.connectorStartCap, L.connectorEndCap, L.connectorCapSize, L.connectorPin]) {
+    for (const label of [L.connectorSide, L.connectorAt, L.connectorGap, L.connectorRouting, L.connectorRadius, L.connectorTrunk, L.connectorColor, L.connectorWidth, L.connectorDash, L.connectorStartCap, L.connectorEndCap, L.connectorCapSize, L.connectorOpacity, L.connectorPin]) {
       expect(html, label).toContain(label);
     }
     // One set of end fields for the start and one per end.
     expect(html.split(`>${L.connectorSide}<`).length - 1).toBe(3);
+  });
+
+  it('offers a ring and a bar as marks (#1079)', () => {
+    const html = renderSlot([{ kind: 'connector', id: 'c', from: { to: '#root' }, to: { to: '#leaf' }, startCap: 'bar', endCap: 'ring', opacity: 0.4 }], FRAMES);
+    expect(html).toContain(L.connectorCapRing);
+    expect(html).toContain(L.connectorCapBar);
+    expect(html).toContain('value="40"');
   });
 
   it('a straight connector has no bend fields; no mark, no mark size', () => {

@@ -111,6 +111,8 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
     { value: 'none', label: labels.connectorCapNone },
     { value: 'dot', label: labels.connectorCapDot },
     { value: 'arrow', label: labels.connectorCapArrow },
+    { value: 'ring', label: labels.connectorCapRing },
+    { value: 'bar', label: labels.connectorCapBar },
   ];
 
   return (
@@ -208,6 +210,21 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
         onReset={() => update({ color: undefined })}
         fieldId={`connector-color-${raw.id}`}
       />
+      <NumberInput
+        label={labels.connectorOpacity}
+        tooltip={labels.connectorOpacityTooltip}
+        value={Math.round((raw.opacity ?? 1) * 100)}
+        min={0}
+        max={100}
+        step={5}
+        suffix="%"
+        onChange={(v) => {
+          const o = Math.max(0, Math.min(100, v)) / 100;
+          update({ opacity: o >= 1 ? undefined : o });
+        }}
+        isDefault={raw.opacity === undefined}
+        onReset={() => update({ opacity: undefined })}
+      />
       <DimensionInput
         label={labels.connectorWidth}
         value={width}
@@ -220,7 +237,6 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
       />
       <DashField label={labels.connectorDash} tooltip={labels.connectorDashTooltip} value={raw.dash} onChange={(dash) => update({ dash })} />
       <SelectInput
-        variant="segmented"
         label={labels.connectorStartCap}
         value={raw.startCap ?? 'none'}
         options={capOptions}
@@ -229,7 +245,6 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
         onReset={() => update({ startCap: undefined })}
       />
       <SelectInput
-        variant="segmented"
         label={labels.connectorEndCap}
         value={raw.endCap ?? 'none'}
         options={capOptions}
