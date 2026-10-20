@@ -48,7 +48,11 @@ describe('sandbox_get_warnings on the overlap fixture', () => {
     expect(figure.overlapMm2).toBeGreaterThan(10);
     expect(figure.text).toMatch(/^Rainfall/);
     expect(figure.detail).toMatch(/lies under photo/);
-    expect(figure.proposals).toEqual([{ number: 1, kind: 'move', words: expect.stringMatching(/^move "photo" [\d.]+ mm down$/) }]);
+    // Every move off the caption takes the photo out of the figure it is
+    // anchored inside (#1075): no fix is offered but overlap: 'allow'.
+    expect(figure.proposals ?? []).toEqual([]);
+    const card = listed.find((w) => w.kind === 'frameCovered' && w.frame === 'card')!;
+    expect(card.proposals).toEqual([{ number: 1, kind: 'move', words: expect.stringMatching(/^move "cutout" [\d.]+ mm right$/) }]);
     const note = listed.find((w) => w.kind === 'frameOutsideArea' && w.frame === 'note')!;
     expect(note).toMatchObject({ past: 'frame', target: 'card', title: 'Frame runs past its edge' });
     expect((note.sides as { bottom: number }).bottom).toBeGreaterThan(10);

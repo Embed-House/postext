@@ -159,8 +159,9 @@ describe('the overlap checks in the Checks panel (#1066)', () => {
     const { layout } = setUp();
     const w = covered(layout().warnings, 'figure')!;
     const detail = detailFor(w.payload, DEFAULT_LABELS, 'en');
-    expect(detail).toMatch(/^figure \(en\) — page 1 · “Rainfall[^”]*” lies under photo, which is painted over it: [\d.,]+ mm² hidden \(template overlaps\)\. Any of these fixes it: move photo [\d.]+ mm down\. /);
-    expect(detail).toMatch(/set overlap to allow\.$/);
+    // Every move off the caption takes the photo out of the figure it is
+    // anchored inside (#1075): no fix but `overlap: 'allow'`.
+    expect(detail).toMatch(/^figure \(en\) — page 1 · “Rainfall[^”]*” lies under photo, which is painted over it: [\d.,]+ mm² hidden \(template overlaps\)\. If the frames are meant to sit so, set overlap to allow\.$/);
   });
 
   it('words a grid given more items than it holds', () => {
@@ -301,10 +302,14 @@ describe('one-click fixes of an overlap (#1066)', () => {
         const again = layout().warnings.find((x) => x.payload.kind === w.payload.kind && 'frame' in x.payload && x.payload.frame === (w.payload as { frame: string }).frame
           && (x.payload.kind !== 'frameCovered' || x.payload.coveredBy === (w.payload as { coveredBy?: string }).coveredBy));
         expect(again, `${w.payload.kind} of ${(w.payload as { frame: string }).frame} after ${p.kind}`).toBeUndefined();
+        // Nor does it raise an overlap the page did not have (#1075).
+        const pairs = (ws: typeof first): string[] => ws.flatMap((x) => (x.payload.kind === 'frameCovered' ? [`${x.payload.frame}<${x.payload.coveredBy}`] : []));
+        const had = new Set(pairs(first));
+        expect(pairs(layout().warnings).filter((k) => !had.has(k)), `${w.payload.kind} ${p.kind}`).toEqual([]);
         history.undo();
         tried++;
       }
     }
-    expect(tried).toBeGreaterThanOrEqual(6);
+    expect(tried).toBeGreaterThanOrEqual(5);
   });
 });
