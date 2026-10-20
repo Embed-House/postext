@@ -43,6 +43,7 @@ import {
   rowPadding,
   type FitMode,
   type GeomSnapshot,
+  sameStructure,
   type PageGaps,
   type ViewMode,
 } from './layoutUtils';
@@ -758,13 +759,10 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       displayWidth,
       displayHeight,
       viewMode,
+      binding: doc.binding === 'right' ? 'right' : 'left',
+      firstRecto: (doc.pageIndexOffset ?? 0) % 2 === 0,
     };
-    const prev = lastGeomRef.current;
-    const structureSame = !!prev
-      && prev.pageCount === geom.pageCount
-      && prev.pageWidthPx === geom.pageWidthPx
-      && prev.pageHeightPx === geom.pageHeightPx
-      && prev.viewMode === geom.viewMode
+    const structureSame = sameStructure(lastGeomRef.current, geom)
       && canvasMapRef.current.size === geom.pageCount;
 
     if (structureSame) {

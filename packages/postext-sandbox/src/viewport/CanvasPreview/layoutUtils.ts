@@ -10,6 +10,23 @@ export interface GeomSnapshot {
   displayWidth: number;
   displayHeight: number;
   viewMode: ViewMode;
+  /** The spine side: a right-bound book reverses its spread rows (#1074). */
+  binding: 'left' | 'right';
+  /** Page 0 is a recto: it decides which pages share a spread (#1074). */
+  firstRecto: boolean;
+}
+
+/** Whether the page rows built for `prev` still fit `next`: only the size on
+ *  screen may differ. A language switch keeps the page count and size but
+ *  can turn the binding or the recto parity (EN ↔ zh vertical, #1074). */
+export function sameStructure(prev: GeomSnapshot | null, next: GeomSnapshot): boolean {
+  return !!prev
+    && prev.pageCount === next.pageCount
+    && prev.pageWidthPx === next.pageWidthPx
+    && prev.pageHeightPx === next.pageHeightPx
+    && prev.viewMode === next.viewMode
+    && prev.binding === next.binding
+    && prev.firstRecto === next.firstRecto;
 }
 
 export const PAGE_PADDING = 32;

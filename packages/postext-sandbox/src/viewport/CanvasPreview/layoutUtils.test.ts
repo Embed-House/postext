@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_PAGE_GAPS, PAGE_PADDING, fitRowPageWidth, groupPagesIntoRows, innerRowWidth, rowPadding } from './layoutUtils';
+import { DEFAULT_PAGE_GAPS, PAGE_PADDING, fitRowPageWidth, groupPagesIntoRows, innerRowWidth, rowPadding, sameStructure, type GeomSnapshot } from './layoutUtils';
 
 describe('groupPagesIntoRows', () => {
   it('lists every page on its own row in single mode', () => {
@@ -52,5 +52,28 @@ describe('the space around the pages (canvasViewer, #1002)', () => {
     expect(fitRowPageWidth(1000, 1, 24)).toBe(1000 - PAGE_PADDING * 2);
     expect(fitRowPageWidth(1000, 2, 24)).toBe((1000 - PAGE_PADDING * 2 - 24) / 2);
     expect(fitRowPageWidth(1000, 2, 0)).toBe((1000 - PAGE_PADDING * 2) / 2);
+  });
+});
+
+describe('sameStructure (#1074)', () => {
+  const geom: GeomSnapshot = {
+    pageCount: 12, pageWidthPx: 600, pageHeightPx: 800, displayWidth: 400, displayHeight: 533,
+    viewMode: 'spread', binding: 'left', firstRecto: true,
+  };
+
+  it('keeps the rows when only the size on screen changed', () => {
+    expect(sameStructure(geom, { ...geom, displayWidth: 500, displayHeight: 666 })).toBe(true);
+  });
+
+  it('rebuilds the rows when a language switch turns the binding', () => {
+    expect(sameStructure(geom, { ...geom, binding: 'right' })).toBe(false);
+  });
+
+  it('rebuilds the rows when page 0 changes side', () => {
+    expect(sameStructure(geom, { ...geom, firstRecto: false })).toBe(false);
+  });
+
+  it('builds the rows the first time', () => {
+    expect(sameStructure(null, geom)).toBe(false);
   });
 });
