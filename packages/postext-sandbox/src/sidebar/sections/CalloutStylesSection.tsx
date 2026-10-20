@@ -14,6 +14,7 @@ import type {
   CalloutIconKind,
   CalloutIconPosition,
   CalloutLabelConfig,
+  CalloutLabelIconKind,
   CalloutListStyleConfig,
   CalloutMarkerTextAlign,
   CalloutMarkerConfig,
@@ -67,7 +68,8 @@ import {
   TextInput,
   ToggleSwitch,
 } from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
+import { Button, ConfirmPopover, IconButton, cn } from '../../ui';
+import { useFieldIds } from '../../controls/fieldContext';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
 import { CONTAINER_EDGES } from './HeaderFooterSection/placementAdapter';
@@ -151,6 +153,51 @@ function CardButton({
   children: React.ReactNode;
 }) {
   return <IconButton label={label} icon={children} onClick={onClick} destructive={destructive} />;
+}
+
+/** The symbols the tab's glyph picker offers (#1066); any other character
+ *  is typed in the glyph field. */
+export const COMMON_TAB_GLYPHS = ['◉', '●', '○', '■', '□', '▲', '★', '✓', '✎', '➜'] as const;
+
+/** What switching a tab icon's kind writes (#1066): the kind, and for a
+ *  glyph tab with no glyph yet the first common symbol, so the switch
+ *  shows one at once. */
+export function labelIconKindPatch(icon: CalloutLabelConfig['icon'], kind: CalloutLabelIconKind): Partial<NonNullable<CalloutLabelConfig['icon']>> {
+  return kind === 'glyph' && !icon?.glyph ? { kind, glyph: COMMON_TAB_GLYPHS[0] } : { kind };
+}
+
+/** A row of common symbols for a tab's glyph: a click sets it. Each is a
+ *  button named «Use ◉» and pressed when it is the glyph set. */
+function GlyphPicker({ label, useLabel, value, onPick }: { label: string; useLabel: string; value: string; onPick: (glyph: string) => void }) {
+  return (
+    <FieldRow stacked label={label}>
+      <GlyphButtons label={label} useLabel={useLabel} value={value} onPick={onPick} />
+    </FieldRow>
+  );
+}
+
+function GlyphButtons({ label, useLabel, value, onPick }: { label: string; useLabel: string; value: string; onPick: (glyph: string) => void }) {
+  const ids = useFieldIds();
+  return (
+    <div id={ids?.controlId} role="group" aria-label={label} className="flex flex-wrap gap-1" data-glyph-picker="">
+      {COMMON_TAB_GLYPHS.map((g) => (
+        <button
+          key={g}
+          type="button"
+          aria-label={useLabel.replace('__glyph__', g)}
+          aria-pressed={value === g}
+          onClick={() => onPick(g)}
+          className={cn(
+            'inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded border text-sm leading-none transition-colors pt-large:h-11 pt-large:w-11',
+            'focus-visible:outline-2 focus-visible:-outline-offset-2 outline-(--brand)',
+            value === g ? 'border-(--brand) bg-(--brand) text-(--background)' : 'border-(--rule) bg-transparent text-(--foreground) hover:bg-(--surface)',
+          )}
+        >
+          <span aria-hidden="true">{g}</span>
+        </button>
+      ))}
+    </div>
+  );
 }
 
 /** The fields the icon and the marker share; the position fields exist on
@@ -1146,6 +1193,98 @@ export function CalloutStyleCard({
               onReset={() => resetGroupField('label', 'inset')}
             />
             <SelectInput
+              label={labels.calloutStyleLabelIconKind}
+              value={resolved.label.icon.kind}
+              options={[
+                { value: 'resource', label: labels.calloutStyleLabelIconKindPicture },
+                { value: 'glyph', label: labels.calloutStyleIconKindGlyph },
+              ]}
+              onChange={(v) => updateLabelIcon(labelIconKindPatch(style.label?.icon, v as CalloutLabelIconKind))}
+              tooltip={labels.calloutStyleLabelIconKindTooltip}
+              isDefault={labelIconUnset('kind')}
+              onReset={() => resetLabelIconField('kind')}
+            />
+            {resolved.label.icon.kind === 'glyph' && (
+              <>
+                <TextInput
+                  label={labels.calloutStyleLabelIconGlyph}
+                  value={resolved.label.icon.glyph}
+                  onChange={(v) => updateLabelIcon({ glyph: v })}
+                  tooltip={labels.calloutStyleLabelIconGlyphTooltip}
+                  widthCh={6}
+                  isDefault={labelIconUnset('glyph')}
+                  onReset={() => resetLabelIconField('glyph')}
+                />
+                <GlyphPicker
+                  label={labels.calloutStyleLabelIconGlyphCommon}
+                  useLabel={labels.calloutStyleLabelIconGlyphUse}
+                  value={resolved.label.icon.glyph}
+                  onPick={(glyph) => updateLabelIcon({ glyph })}
+                />
+                <FontPicker
+                  label={labels.calloutStyleIconFont}
+                  value={resolved.label.icon.fontFamily}
+                  onChange={(v) => updateLabelIcon({ fontFamily: v })}
+                  isDefault={labelIconUnset('fontFamily')}
+                  onReset={() => resetLabelIconField('fontFamily')}
+                  searchPlaceholder={labels.bodyFontSearch}
+                  noResultsLabel={labels.bodyFontNoResults}
+                />
+                <NumberInput
+                  label={labels.calloutStyleIconWeight}
+                  value={resolved.label.icon.fontWeight}
+                  onChange={(v) => updateLabelIcon({ fontWeight: v })}
+                  min={100}
+                  max={900}
+                  step={10}
+                  isDefault={labelIconUnset('fontWeight')}
+                  onReset={() => resetLabelIconField('fontWeight')}
+                />
+                <NumberInput
+                  label={labels.calloutStyleLabelIconScale}
+                  value={resolved.label.icon.scale}
+                  onChange={(v) => updateLabelIcon({ scale: v })}
+                  min={0.1}
+                  max={4}
+                  step={0.05}
+                  tooltip={labels.calloutStyleLabelIconScaleTooltip}
+                  isDefault={labelIconUnset('scale')}
+                  onReset={() => resetLabelIconField('scale')}
+                />
+                <ColorPicker
+                  label={labels.calloutStyleIconColor}
+                  // Unset, the glyph takes the tab's words' colour.
+                  value={resolved.label.icon.color ?? resolved.label.color}
+                  onChange={(v) => updateLabelIcon({ color: v })}
+                  isDefault={labelIconUnset('color')}
+                  onReset={() => resetLabelIconField('color')}
+                  fieldId={`${fieldId}-label-glyph`}
+                />
+                <SelectInput
+                  label={labels.calloutStyleLabelIconGlyphPlacement}
+                  value={resolved.label.icon.placement}
+                  options={[
+                    { value: 'beside', label: labels.calloutStyleLabelIconBeside },
+                    { value: 'inside', label: labels.calloutStyleLabelIconInside },
+                  ]}
+                  onChange={(v) => updateLabelIcon({ placement: v as 'beside' | 'inside' })}
+                  isDefault={labelIconUnset('placement')}
+                  onReset={() => resetLabelIconField('placement')}
+                />
+                <DimensionInput
+                  label={labels.calloutStyleLabelIconGap}
+                  value={resolved.label.icon.gap}
+                  onChange={(v) => updateLabelIcon({ gap: v })}
+                  min={0}
+                  step={0.05}
+                  units={SPACING_UNITS}
+                  isDefault={labelIconUnset('gap')}
+                  onReset={() => resetLabelIconField('gap')}
+                />
+              </>
+            )}
+            {resolved.label.icon.kind !== 'glyph' && (
+            <SelectInput
               label={labels.calloutStyleLabelIcon}
               value={resolved.label.icon.resourceId}
               options={labelResourceOptions}
@@ -1154,7 +1293,8 @@ export function CalloutStyleCard({
               isDefault={labelIconUnset('resourceId')}
               onReset={() => resetLabelIconField('resourceId')}
             />
-            {resolved.label.icon.resourceId && (
+            )}
+            {resolved.label.icon.kind !== 'glyph' && resolved.label.icon.resourceId && (
               <>
                 <DimensionInput
                   label={labels.calloutStyleLabelIconWidth}
