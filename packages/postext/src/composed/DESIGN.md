@@ -1830,3 +1830,39 @@ artifact; HTML `aria-hidden`.
   (`sourceAt` hits paths like rules: never over a frame), the JSON validation and the warnings docs list.
 - Issue map: C2 #1053 §12.10 · C3 #1054 §12.9 · C4 #1055 §12.2 · C5 #1056 §12.1, §12.3 · C6 #1057 §12.4 ·
   C7 #1058 §12.5 · C8 #1059 §12.1, §12.8 · C9 #1060 §12.8 · C10 #1061 §12.6 · C11 #1062 §12.7.
+
+### 12.12 What C3 built (#1054)
+
+Recorded where the implementation settles a point §12.9 leaves open, or departs from it.
+
+- **Types.** `CalloutLabelConfig.icon` is `CalloutLabelIconConfig` (exported, with
+  `CalloutLabelIconKind`); the draft's icon part left `round2Types.ts` (its `joined` / `fillet` stay
+  for C8). The resolved icon always carries `kind`, `glyph`, `fontFamily`, `fontWeight` and `scale`;
+  `color` is absent unless set.
+- **Kind.** `kind` as written when it is `'resource'` or `'glyph'`; unset (or another word), a glyph
+  when the icon sets `glyph` and no `resourceId`, else a picture. So a picture icon with a stray
+  `glyph` stays a picture; `kind: 'glyph'` wins over a `resourceId`.
+- **Defaults.** Face and weight: the label's (`label.fontFamily`, else the headings face;
+  `label.fontWeight`, else 700). `scale` of the tab's text size, 1; a value that is not a positive
+  finite number reads as 1. `color` is read when the tab is laid out: unset, the label's `color`, so a
+  frame's `look.label.color` recolours the glyph with the words.
+- **Geometry.** The glyph's box is its advance at `fontSize × scale`. `inside`: at the tab's start
+  (`paddingX` in, the right end in a right-to-left box), the words `gap` after it; the tab grows by
+  advance + gap. `beside`: `gap` past the tab's edge on the side away from the corner; the label rule
+  stops at the glyph's outer edge. Picture `width` and `tint` do not apply. The baseline is the tab's
+  middle plus 0.36 of the glyph size, the formula of the words: at scale 1 the glyph shares their
+  baseline, at other scales it stays centred on the tab. `gap` is measured as the picture's (the box's
+  em), and `keepChromeAt` (a frame at `scale`) does not scale it, as it does not for pictures.
+- **Outputs.** The glyph is a design text block of the box overlay with `artifact: true`; no new VDT
+  field. Canvas paints it as any design text; the PDF draws it as text in the glyph's face, a layout
+  artifact in a tagged PDF (the tab's tagged content is its words); HTML and fixed EPUB set it in a
+  `<div aria-hidden="true">`; the reflowable EPUB leaves it out of the box's title (it reads only
+  non-artifact overlay text). Text extraction of the PDF (pdftotext, copy) still sees the glyph, as it
+  sees a repeated callout title: no empty `/ActualText` over it.
+- **Checks.** `unknownConfigValue` for `label.icon.kind`, `placement` and `scale` (with what is read);
+  `unknownConfigKey` for a key `label.icon` does not have. A glyph the face lacks: the PDF's existing
+  `missingGlyph` warning (the glyph goes through the same text primitives); canvas and HTML fall back
+  as the browser does. The glyph's family joins `configFontFamilies`; `label.icon.color` is a text
+  role for the part palette.
+- **Not done.** Sandbox controls (U13) and docs (D3). A frame `look` has no glyph colour of its own
+  (it recolours the glyph through `label.color` only).
