@@ -9,7 +9,7 @@
 
 import type { ResolvedPageTemplate, VDTComposedPage, VDTFrame, VDTPage } from 'postext';
 import { frameAtSource, frameByName } from './frameHit';
-import { emptyFrameInsertion, flowInsertion, pageSites, siteCaret, sitesOf, slotAtOffset, type PageSites } from './slotSource';
+import { emptyFrameInsertion, flowInsertion, instanceOfSite, pageSites, repeatSetsOf, siteCaret, siteOfInstance, sitesOf, slotAtOffset, type PageSites, type SlotSite } from './slotSource';
 
 /** The frame of the template whose content `name`'s content goes on
  *  from: the head of its chain (`next`, `overflow.continueIn: '#frame'`). */
@@ -45,9 +45,20 @@ export type FrameClickTarget =
  * fence, or the flow's next line. A frame a chain continues into goes to
  * the chain's head.
  */
-export function frameClickTarget(markdown: string, composed: VDTComposedPage, frame: Pick<VDTFrame, 'name'>, template?: Pick<ResolvedPageTemplate, 'frames'>): FrameClickTarget | null {
+export function frameClickTarget(markdown: string, composed: VDTComposedPage, frame: Pick<VDTFrame, 'name'> & Partial<Pick<VDTFrame, 'repeat'>>, template?: Pick<ResolvedPageTemplate, 'frames'> & Partial<Pick<ResolvedPageTemplate, 'groups'>>): FrameClickTarget | null {
   const sites = pageSites(markdown, composed.sourceStart, composed.sourceEnd);
   if (!sites) return null;
+  // An instance of a grid's frame (#1061, #1065): its item's piece, or the
+  // member written inside it; a member not written yet gets an empty
+  // `:::frame{slot}` inside the item's piece.
+  const repeat = frame.repeat;
+  const sets = repeatSetsOf(template && template.groups ? { groups: template.groups } : undefined);
+  if (repeat && sets.has(repeat.frame)) {
+    const site = siteOfInstance(sites, repeat.frame, repeat.item, sets);
+    if (site && site.slot === repeat.frame) return { kind: 'caret', offset: siteCaret(markdown, site), slot: repeat.frame };
+    if (site && site.kind === 'frame') return { kind: 'insert', ...memberInsertion(markdown, site, repeat.frame), slot: repeat.frame };
+    if (site) return { kind: 'caret', offset: siteCaret(markdown, site), slot: site.slot };
+  }
   const name = chainHeadOf(template, frame.name);
   const own = sitesOf(sites, name)[0];
   if (own) return { kind: 'caret', offset: siteCaret(markdown, own), slot: name };
@@ -66,13 +77,37 @@ export function frameClickTarget(markdown: string, composed: VDTComposedPage, fr
 /** The frame the source offset is written for on `page`: the frame its
  *  content was poured into, else the frame of the slot it is written in
  *  (an empty fence, the fence lines); null off the page's frames. */
-export function frameAtCaret(markdown: string, page: Pick<VDTPage, 'composed'>, offset: number, sites?: PageSites | null): VDTFrame | null {
+export function frameAtCaret(
+  markdown: string,
+  page: Pick<VDTPage, 'composed'>,
+  offset: number,
+  sites?: PageSites | null,
+  template?: { groups: readonly { repeat?: { frames: readonly string[] } }[] },
+): VDTFrame | null {
   const composed = page.composed;
   if (!composed || offset < composed.sourceStart || offset > composed.sourceEnd) return null;
   const s = sites === undefined ? pageSites(markdown, composed.sourceStart, composed.sourceEnd) : sites;
-  const site = s ? slotAtOffset(s, offset) : null;
-  if (site) return frameByName(page, site.slot);
+  // A grid's frames (#1061, #1065): the slot is read as the instance of
+  // the item it is written in; a member written inside an item counts.
+  const sets = repeatSetsOf(template);
+  const site = s ? slotAtOffset(s, offset, (inner) => sets.has(inner.slot)) : null;
+  if (site && s) {
+    const instance = sets.size > 0 ? instanceOfSite(s, site, sets) : null;
+    if (instance) return frameByName(page, instance) ?? frameAtSource(page, offset);
+    return frameByName(page, site.slot);
+  }
   return frameAtSource(page, offset);
+}
+
+/** An empty `:::frame{slot}` fence for a grid member written inside its
+ *  item's piece (before the piece's closing fence), and where the caret
+ *  goes in it. */
+export function memberInsertion(markdown: string, item: SlotSite, slot: string): { at: number; insert: string; caret: number } {
+  const at = item.contentEnd;
+  const before = markdown.slice(0, at);
+  const lead = before.endsWith('\n\n') || at === item.contentStart ? '' : before.endsWith('\n') ? '\n' : '\n\n';
+  const open = `:::frame{slot="${slot}"}\n`;
+  return { at, insert: `${lead}${open}\n:::\n`, caret: at + lead.length + open.length };
 }
 
 /** Where a click on a comic's text frame off its words puts the caret

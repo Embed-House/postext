@@ -14,6 +14,8 @@ import { useSyncExternalStore, type Dispatch } from 'react';
 import type { SandboxAction, SandboxState } from '../context/SandboxContext';
 import type { TemplateScope } from './templateEdits';
 import { editModeNow, onEditModeChange, selectedFrameNow, setEditMode } from '../editing/editMode';
+import { selectionTemplates } from '../selection/selectionStore';
+import { templateFrameOf } from './instanceNames';
 
 export interface TemplateEditorSelection {
   templateId: string;
@@ -45,9 +47,12 @@ function syncFromEditMode(): void {
   const designMode = editModeNow() === 'design';
   const picked = selectedFrameNow();
   let selection = state.selection;
-  if (picked && (selection?.templateId !== picked.template || selection.frame !== picked.name || selection.pageIndex !== picked.pageIndex)) {
+  // A grid's instance or a module's frame (#1065) is edited as the frame
+  // of the template that draws it.
+  const at = picked ? templateFrameOf(picked, host?.getState().config.pageTemplates ?? selectionTemplates()) : null;
+  if (picked && at && (selection?.templateId !== at.templateId || selection.frame !== at.frame || selection.pageIndex !== picked.pageIndex)) {
     const scope = (SCOPE_RE.exec(picked.configPath)?.[1] as TemplateScope | undefined) ?? 'base';
-    selection = { templateId: picked.template, scope, frame: picked.name, group: null, pageIndex: picked.pageIndex };
+    selection = { templateId: at.templateId, scope, frame: at.frame, group: null, pageIndex: picked.pageIndex };
   }
   if (designMode === state.designMode && selection === state.selection) return;
   state = { designMode, selection };
