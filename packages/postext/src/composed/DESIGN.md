@@ -2954,3 +2954,48 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   of that frame, not from the grid's box (as the engine reads it); right-to-left cells are not mirrored;
   the drawing does not read a laid page. The composed-page-books guide's grid still hangs its caption under
   the photo (D4 chose that for want of the switch); a docs follow-up can now show `overlap: 'allow'`.
+
+### 12.32 What #1079 changed (R8 finding)
+
+- **Caps.** `LineCap` gains `'ring'` (a hollow dot centred on the end, stroked in the line's width) and
+  `'bar'` (a stroke across the line at the end, in its width), for connectors and leader looks alike
+  (`CONNECTOR_CAPS`, so `collectConnectorWarnings` and `checkLeader` accept them with no new code).
+  `VDTPathMarker.kind` gains both and `widthPx` (the stroke of a ring or a bar; a marker without one
+  strokes at a tenth of its size). Decisions: a ring's **outer edge** is `capSize` across, as a dot's
+  is, so swapping a dot for a ring keeps the mark's size (the stroke's middle is `(capSize − width) / 2`
+  out); a bar is `capSize` long, square-cut. `pathMarkerOutline` returns the two new outlines;
+  `markerSvgData` traces them, `markerSvgElement` (exported) writes a marker as a filled or stroked
+  `<path>` for HTML, fixed EPUB and the reflowable EPUB's label layer. Canvas strokes them solid
+  (`setLineDash([])`, butt), PDF strokes them in their own `q … Q`. `pathInkBox` and `pathHit` (on the
+  ring's stroke, not its hole) follow.
+- **Where the line stops** (`capInset`, `design/connector.ts`). A ring: where the line's corners meet
+  the ring's outer edge (`√(R² − (w/2)²)` short of the centre), so nothing shows in the hole and the
+  overlap is a sliver under the ring's ink; a bar: at its inner side (`w / 2`), no overlap and no gap.
+  For a **translucent** colour only, a dot stops the line at its edge in the same way and an arrow at its
+  base (instead of `0.6 × capSize` inside it), so no spot is inked twice; opaque dots and arrows lay out
+  as before (no VDT change for existing books). `capEnd` takes the line width as a new last argument.
+- **Alpha.** Nothing was needed for `#rrggbbaa`: `ColorValue.hex` carries it from the config to the path
+  block (EF-30), canvas and SVG paint it as a CSS colour and the PDF's `colorFromHex` → `alphaStateOp`
+  sends it through the shared ExtGState (`ca` for fills, `CA` for strokes). Added: `opacity?: number`
+  (0…1) on `DesignConnectorElement` and `LeaderStyle`, times the colour's own alpha
+  (`colorWithOpacity`, exported; `#rgb`/`#rgba`/`#rrggbb`/`#rrggbbaa` → `#rrggbbaa`, other forms
+  unchanged). Why a key and not only the colour: a palette-linked colour (the connector's default main
+  colour included) takes the palette entry's `hex`, which would drop an alpha written beside it, and the
+  Sandbox's colour picker has no alpha. A connector applies it in `layoutConnector` (after
+  `applyPaletteOverrides`); a leader keeps it apart in `VDTFigureLabelLeader.opacity` and applies it in
+  `figureLabelLeaderPath`, because the part palette's remap matches the leader's stroke colour as written.
+  Validation: an `opacity` outside 0…1 is `unknownConfigValue` with the held value as `used`, a value
+  that is not a number `used: '1'` (`opacityWarning`, at `…elements[i].opacity` and in a leader look at
+  `…/leader/opacity`). No `CONFIG_VERSION` bump: one new optional key.
+- **Translucency within one block.** A connector's lines are one stroke (one `S` / `stroke()` / `<path>`),
+  so a tree's bar and drops do not darken where they meet; each mark is painted on its own, so two
+  marks that overlap ink that spot twice. A cased line is two connectors (a wide pale one with `opacity`
+  under a dashed one, `over: true` to sit on a picture).
+- **Sandbox.** The connector editor's start and end marks offer Ring and Bar (a list now: five marks do
+  not fit a segmented row) and an Opacity field (0–100 %) under the line colour; four new labels and the
+  mark-size tooltip in the ten site languages. U11's leader editor was not on develop: its mark lists
+  should take ring and bar and an opacity field like the connector's.
+- **Docs.** `configuration-composed-pages` (connector table: `opacity` row, alpha note, the new caps and
+  sizes, checks; the label style's `leader`) and `composed-pages-figures` (leaders), ten languages.
+- **Not done.** The atlas recipe's casing and a timeline with rings belong to R8 (#1069, the Cookbook);
+  the skill (S6).
