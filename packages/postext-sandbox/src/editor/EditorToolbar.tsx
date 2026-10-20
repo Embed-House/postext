@@ -22,6 +22,7 @@ import {
   Languages,
   ArrowLeftRight,
   LayoutTemplate,
+  Shapes,
 } from 'lucide-react';
 import { isCjkLanguage } from 'postext';
 import type { EditorView } from '@codemirror/view';
@@ -31,6 +32,15 @@ import { useHistoryAvailability, useHistoryCommands } from '../history/HistoryBu
 import { IconButton } from '../ui';
 import { composedPageInsertion } from './composedInsert';
 import { TemplatePicker } from './TemplatePicker';
+import { IconPicker } from './IconPicker';
+
+/** Write `text` over the selection and put the caret after it (#1064: a
+ *  label's symbol). */
+export function insertAtCaret(view: EditorView, text: string) {
+  const { from, to } = view.state.selection.main;
+  view.dispatch({ changes: { from, to, insert: text }, selection: { anchor: from + text.length } });
+  view.focus();
+}
 
 interface EditorToolbarProps {
   viewRef: React.RefObject<EditorView | null>;
@@ -135,6 +145,8 @@ export function EditorToolbar({ viewRef, lang, readOnly = false }: EditorToolbar
   const { labels } = state;
   const composedRef = useRef<HTMLButtonElement>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const iconRef = useRef<HTMLButtonElement>(null);
+  const [iconOpen, setIconOpen] = useState(false);
 
   const getView = () => viewRef.current;
 
@@ -295,6 +307,29 @@ export function EditorToolbar({ viewRef, lang, readOnly = false }: EditorToolbar
         onClick={() => setPickerOpen((o) => !o)}
         disabled={readOnly}
         data-action="composed-page"
+      />
+      {/* A symbol for a label or a map's key (#1064, `:icon`). */}
+      <IconButton
+        ref={iconRef}
+        label={labels.iconPickerOpen}
+        icon={<Shapes size={16} aria-hidden="true" />}
+        tooltipSide="bottom"
+        aria-haspopup="dialog"
+        aria-expanded={iconOpen}
+        onClick={() => setIconOpen((o) => !o)}
+        disabled={readOnly}
+        data-action="label-icon"
+      />
+      <IconPicker
+        open={iconOpen && !readOnly}
+        onOpenChange={setIconOpen}
+        anchor={iconRef}
+        labels={labels}
+        resources={state.resources ?? []}
+        onInsert={(directive) => {
+          const v = getView();
+          if (v) insertAtCaret(v, directive);
+        }}
       />
       <TemplatePicker
         open={pickerOpen && !readOnly}

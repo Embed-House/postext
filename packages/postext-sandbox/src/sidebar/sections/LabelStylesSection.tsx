@@ -2,7 +2,7 @@
 
 import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { ColorValue, Dimension, DimensionUnit, LabelStyle, ParagraphStyleConfig } from 'postext';
+import type { ColorValue, Dimension, DimensionUnit, LabelStyle, LeaderStyle, LineCap, ParagraphStyleConfig } from 'postext';
 import { resolveBodyTextConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
@@ -23,6 +23,33 @@ const PLATE_UNITS: DimensionUnit[] = ['px', 'pt', 'em'];
 const WHITE: ColorValue = { hex: '#ffffff', model: 'hex' };
 const DEFAULT_HALO: NonNullable<LabelStyle['halo']> = { color: WHITE, width: { value: 2, unit: 'px' } };
 const DEFAULT_PADDING: Dimension = { value: 2, unit: 'px' };
+/** A plate's outline when it is switched on (#1058): a hairline in the
+ *  words' colour. */
+const DEFAULT_BORDER_WIDTH: Dimension = { value: 0.5, unit: 'pt' };
+const LINE_UNITS: DimensionUnit[] = ['pt', 'px', 'mm'];
+/** The dash patterns the leader's look offers (#1057): solid (none
+ *  written), dashed and dotted, in points. */
+const DASHES: Record<'dashed' | 'dotted', Dimension[]> = {
+  dashed: [{ value: 3, unit: 'pt' }, { value: 2, unit: 'pt' }],
+  dotted: [{ value: 0.75, unit: 'pt' }, { value: 1.5, unit: 'pt' }],
+};
+type DashName = 'solid' | 'dashed' | 'dotted' | 'custom';
+/** Which of {@link DASHES} a dash pattern is. */
+export function dashName(dash: Dimension[] | undefined): DashName {
+  if (!dash || dash.length === 0) return 'solid';
+  for (const name of ['dashed', 'dotted'] as const) {
+    const d = DASHES[name];
+    if (d.length === dash.length && d.every((x, i) => x.value === dash[i]!.value && x.unit === dash[i]!.unit)) return name;
+  }
+  return 'custom';
+}
+/** The leader look of a style with `patch` applied: an undefined value takes
+ *  the key off; the look stays (as `{}`) while the leader is on. */
+export function withLeaderLook(look: LeaderStyle | undefined, patch: Partial<LeaderStyle>): LeaderStyle {
+  const next: LeaderStyle = { ...(look ?? {}), ...patch };
+  for (const k of Object.keys(patch) as (keyof LeaderStyle)[]) if (patch[k] === undefined) delete next[k];
+  return next;
+}
 /** The value of the select that stands for "the field is not written". */
 const INHERIT = '__inherit__';
 const NO_PARAGRAPH_STYLE = '';
@@ -116,6 +143,31 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
     { value: 'check', label: labels.resourceLabelAnchorsOverlapCheck },
     { value: 'allow', label: labels.resourceLabelAnchorsOverlapAllow },
   ];
+  const alignOptions = [
+    { value: INHERIT, label: labels.labelStyleAlignAsAnchor },
+    { value: 'start', label: labels.resourceLabelAnchorsAlignStart },
+    { value: 'center', label: labels.resourceLabelAnchorsAlignCenter },
+    { value: 'end', label: labels.resourceLabelAnchorsAlignEnd },
+  ];
+  const capOptions = [
+    { value: 'none', label: labels.leaderCapNone },
+    { value: 'dot', label: labels.leaderCapDot },
+    { value: 'arrow', label: labels.leaderCapArrow },
+  ];
+  const dashOptions = [
+    { value: 'solid', label: labels.leaderDashSolid },
+    { value: 'dashed', label: labels.leaderDashDashed },
+    { value: 'dotted', label: labels.leaderDashDotted },
+    ...(dashName(style.leader?.dash) === 'custom' ? [{ value: 'custom', label: labels.leaderDashCustom }] : []),
+  ];
+  const routingOptions = [
+    { value: 'straight', label: labels.leaderRoutingStraight },
+    { value: 'elbow', label: labels.leaderRoutingElbow },
+  ];
+  const leader = style.leader;
+  const setLeader = (patch: Partial<LeaderStyle>) => onChange({ leader: withLeaderLook(leader, patch) });
+  const leaderUnset = (k: keyof LeaderStyle) => leader?.[k] === undefined;
+  const textColor = style.color ?? inheritedColor;
 
   return (
     <SearchScope title={`${style.name ?? ''} ${style.id}`} overridden>
@@ -314,6 +366,144 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
           isDefault={unset('padding')}
           onReset={reset('padding')}
         />
+        <ToggleSwitch
+          label={labels.labelStyleBorder}
+          tooltip={labels.labelStyleBorderTooltip}
+          checked={style.border !== undefined}
+          onChange={(on) => (on ? onChange({ border: { color: textColor, width: DEFAULT_BORDER_WIDTH } }) : onResetField('border'))}
+          isDefault={unset('border')}
+          onReset={reset('border')}
+        />
+        {style.border && (
+          <>
+            <ColorPicker
+              label={labels.labelStyleBorderColor}
+              value={style.border.color}
+              onChange={(v) => onChange({ border: { ...style.border!, color: v } })}
+              fieldId={`labelStyle-${style.id}-borderColor`}
+            />
+            <DimensionInput
+              label={labels.labelStyleBorderWidth}
+              value={style.border.width}
+              onChange={(v) => onChange({ border: { ...style.border!, width: v } })}
+              min={0}
+              step={0.25}
+              units={LINE_UNITS}
+            />
+          </>
+        )}
+        <DimensionInput
+          label={labels.labelStyleRadius}
+          value={style.radius ?? { value: 0, unit: 'pt' }}
+          onChange={(v) => onChange({ radius: v })}
+          min={0}
+          step={0.5}
+          units={PLATE_UNITS}
+          tooltip={labels.labelStyleRadiusTooltip}
+          isDefault={unset('radius')}
+          onReset={reset('radius')}
+        />
+      </CollapsibleSection>
+
+      <CollapsibleSection title={labels.labelStyleLinesGroup} sectionId={`${sectionId}.lines`} variant="subsection">
+        <SelectInput
+          label={labels.labelStyleAlign}
+          tooltip={labels.labelStyleAlignTooltip}
+          value={style.align ?? INHERIT}
+          options={alignOptions}
+          onChange={(v) => (v === INHERIT ? onResetField('align') : onChange({ align: v as LabelStyle['align'] }))}
+          isDefault={unset('align')}
+          onReset={reset('align')}
+        />
+        <ToggleSwitch
+          label={labels.labelStyleLegend}
+          tooltip={labels.labelStyleLegendTooltip}
+          checked={style.kind === 'legend'}
+          onChange={(on) => (on ? onChange({ kind: 'legend' }) : onResetField('kind'))}
+          isDefault={unset('kind')}
+          onReset={reset('kind')}
+        />
+      </CollapsibleSection>
+
+      <CollapsibleSection title={labels.labelStyleLeaderGroup} sectionId={`${sectionId}.leader`} variant="subsection">
+        <ToggleSwitch
+          label={labels.labelStyleLeader}
+          tooltip={labels.labelStyleLeaderTooltip}
+          checked={leader !== undefined}
+          onChange={(on) => (on ? onChange({ leader: {} }) : onResetField('leader'))}
+          isDefault={unset('leader')}
+          onReset={reset('leader')}
+        />
+        {leader && (
+          <>
+            <ColorPicker
+              label={labels.leaderColor}
+              value={leader.color ?? textColor}
+              onChange={(v) => setLeader({ color: v })}
+              tooltip={labels.leaderColorTooltip}
+              isDefault={leaderUnset('color')}
+              onReset={() => setLeader({ color: undefined })}
+              fieldId={`labelStyle-${style.id}-leaderColor`}
+            />
+            <DimensionInput
+              label={labels.leaderWidth}
+              value={leader.width ?? { value: 0.75, unit: 'pt' }}
+              onChange={(v) => setLeader({ width: v })}
+              min={0.1}
+              step={0.25}
+              units={LINE_UNITS}
+              isDefault={leaderUnset('width')}
+              onReset={() => setLeader({ width: undefined })}
+            />
+            <SelectInput
+              label={labels.leaderDash}
+              value={dashName(leader.dash)}
+              options={dashOptions}
+              variant="segmented"
+              onChange={(v) => (v === 'custom' ? undefined : setLeader({ dash: v === 'solid' ? undefined : DASHES[v as 'dashed' | 'dotted'] }))}
+              isDefault={leaderUnset('dash')}
+              onReset={() => setLeader({ dash: undefined })}
+            />
+            <SelectInput
+              label={labels.leaderStartCap}
+              value={leader.startCap ?? 'none'}
+              options={capOptions}
+              variant="segmented"
+              onChange={(v) => setLeader({ startCap: v as LineCap })}
+              isDefault={leaderUnset('startCap')}
+              onReset={() => setLeader({ startCap: undefined })}
+            />
+            <SelectInput
+              label={labels.leaderEndCap}
+              value={leader.endCap ?? 'dot'}
+              options={capOptions}
+              variant="segmented"
+              onChange={(v) => setLeader({ endCap: v as LineCap })}
+              isDefault={leaderUnset('endCap')}
+              onReset={() => setLeader({ endCap: undefined })}
+            />
+            <DimensionInput
+              label={labels.leaderCapSize}
+              value={leader.capSize ?? { value: 2.25, unit: 'pt' }}
+              onChange={(v) => setLeader({ capSize: v })}
+              min={0}
+              step={0.25}
+              units={LINE_UNITS}
+              tooltip={labels.leaderCapSizeTooltip}
+              isDefault={leaderUnset('capSize')}
+              onReset={() => setLeader({ capSize: undefined })}
+            />
+            <SelectInput
+              label={labels.leaderRouting}
+              value={leader.routing ?? 'straight'}
+              options={routingOptions}
+              variant="segmented"
+              onChange={(v) => setLeader({ routing: v as LeaderStyle['routing'] })}
+              isDefault={leaderUnset('routing')}
+              onReset={() => setLeader({ routing: undefined })}
+            />
+          </>
+        )}
       </CollapsibleSection>
 
       <CollapsibleSection title={labels.labelStyleFitGroup} sectionId={`${sectionId}.fit`} variant="subsection">

@@ -13,6 +13,7 @@ import { resolveAt, usePageTemplates } from './model';
 import { useBookTexts } from '../../../frameStyles/useBookTexts';
 import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage';
 import { resolveBookStyles } from '../../../frameStyles/library';
+import { FramePointers } from './FramePointers';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
@@ -537,6 +538,8 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
           <TextControl value={overflow.fromMark ?? ''} onChange={(v) => setIn('overflow', 'fromMark', v.trim() === '' ? undefined : v)} ariaLabel={labels.pageTemplatesFromMark} widthCh={14} />
         </FieldRow>
       </FieldGroup>
+
+      <FramePointers templateId={templateId} name={name} frames={others} />
 
       <ConfirmPopover message={labels.pageTemplatesFrameDeleteConfirm.replace('__name__', name)} onConfirm={() => { write(removeFrame(templates, templateId, scope, name)); onRemoved(); }}>
         {({ open }) => (

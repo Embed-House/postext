@@ -1,4 +1,4 @@
-import type { Resource, ResourceAnchor, ResourceSafeArea } from 'postext';
+import type { LeaderStyle, Resource, ResourceAnchor, ResourceSafeArea } from 'postext';
 import { COMIC_RESERVED_KEYS, normalizeSafeArea } from 'postext';
 
 // ---------------------------------------------------------------------------
@@ -31,6 +31,9 @@ export interface PictureMarks {
 export type MarkTarget =
   | { kind: 'safe' }
   | { kind: 'mouth'; index: number }
+  /** Where the label set at a map's anchor stands away from its point
+   *  (`ResourceAnchor.labelAt`, #1064); at the point while unset. */
+  | { kind: 'label'; index: number }
   | { kind: 'head'; index: number }
   | { kind: 'face'; index: number }
   | { kind: 'avoid'; index: number }
@@ -59,7 +62,13 @@ export const clampPoint = (p: Point): Point => ({ x: clamp(p.x, 0, 1), y: clamp(
 export function marksOf(resource: Resource): PictureMarks {
   return {
     safeArea: normalizeSafeArea(resource.safeArea),
-    anchors: (resource.anchors ?? []).map((a) => ({ ...a, head: a.head && { ...a.head }, face: a.face && { ...a.face } })),
+    anchors: (resource.anchors ?? []).map((a) => ({
+      ...a,
+      head: a.head && { ...a.head },
+      face: a.face && { ...a.face },
+      ...(a.labelAt ? { labelAt: { ...a.labelAt } } : {}),
+      ...(a.leader && typeof a.leader === 'object' ? { leader: structuredClone(a.leader) } : {}),
+    })),
     avoid: (resource.avoid ?? []).map((r) => ({ ...r })),
     faces: (resource.faces ?? []).map((r) => ({ ...r })),
   };
@@ -129,9 +138,10 @@ export function rectOf(marks: PictureMarks, target: MarkTarget): ResourceSafeAre
 /** The point of `target` in `marks`, if it is one (a head falls back to the
  *  mouth, as the engine reads it). */
 export function pointOf(marks: PictureMarks, target: MarkTarget): Point | undefined {
-  if (target.kind !== 'mouth' && target.kind !== 'head') return undefined;
+  if (target.kind !== 'mouth' && target.kind !== 'head' && target.kind !== 'label') return undefined;
   const a = marks.anchors[target.index];
   if (!a) return undefined;
+  if (target.kind === 'label') return a.labelAt ?? { x: a.x, y: a.y };
   return target.kind === 'head' ? (a.head ?? { x: a.x, y: a.y }) : { x: a.x, y: a.y };
 }
 
@@ -149,6 +159,7 @@ export function withPoint(marks: PictureMarks, target: MarkTarget, p: Point): Pi
   const q = clampPoint(p);
   if (target.kind === 'mouth') return withAnchor(marks, target.index, (a) => ({ ...a, x: q.x, y: q.y }));
   if (target.kind === 'head') return withAnchor(marks, target.index, (a) => ({ ...a, head: q }));
+  if (target.kind === 'label') return withAnchor(marks, target.index, (a) => ({ ...a, labelAt: q }));
   return marks;
 }
 
@@ -198,6 +209,8 @@ export function nudge(marks: PictureMarks, target: MarkTarget, dx: number, dy: n
 export function removeMark(marks: PictureMarks, target: MarkTarget): PictureMarks {
   if (target.kind === 'mouth') return { ...marks, anchors: marks.anchors.filter((_, i) => i !== target.index) };
   if (target.kind === 'head') return withAnchor(marks, target.index, ({ head: _head, ...rest }) => rest);
+  // The label goes back to its point.
+  if (target.kind === 'label') return withAnchor(marks, target.index, ({ labelAt: _at, ...rest }) => rest);
   if (target.kind === 'face') return withAnchor(marks, target.index, ({ face: _face, ...rest }) => rest);
   if (target.kind === 'avoid') return { ...marks, avoid: marks.avoid.filter((_, i) => i !== target.index) };
   if (target.kind === 'bystander') return { ...marks, faces: marks.faces.filter((_, i) => i !== target.index) };
@@ -319,6 +332,65 @@ export function anchorOutsideSafeArea(anchor: ResourceAnchor, safeArea: Resource
 }
 
 const round = (v: number) => Math.round(v * 10000) / 10000;
+
+/** A leader look with its unset keys left out; undefined when nothing is
+ *  set (the label style's look then holds). */
+export function leaderStyleClean(style: LeaderStyle | undefined): LeaderStyle | undefined {
+  if (!style) return undefined;
+  const out: LeaderStyle = {};
+  for (const [k, v] of Object.entries(style) as [keyof LeaderStyle, unknown][]) {
+    if (v === undefined || (Array.isArray(v) && v.length === 0)) continue;
+    (out as Record<string, unknown>)[k] = v;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** The step a label is set off its point by when it is first moved away
+ *  with a button (fractions of the picture): up and to the right. */
+export const LABEL_AWAY_STEP = { x: 0.08, y: -0.08 };
+
+/** The marks with the label of anchor `index` set away from its point (by
+ *  {@link LABEL_AWAY_STEP}, turned back into the picture near an edge), or
+ *  back at it (`away` false). */
+export function withLabelAway(marks: PictureMarks, index: number, away: boolean): PictureMarks {
+  const a = marks.anchors[index];
+  if (!a) return marks;
+  if (!away) return removeMark(marks, { kind: 'label', index });
+  if (a.labelAt) return marks;
+  const x = a.x + LABEL_AWAY_STEP.x <= 1 ? a.x + LABEL_AWAY_STEP.x : a.x - LABEL_AWAY_STEP.x;
+  const y = a.y + LABEL_AWAY_STEP.y >= 0 ? a.y + LABEL_AWAY_STEP.y : a.y - LABEL_AWAY_STEP.y;
+  return withPoint(marks, { kind: 'label', index }, { x, y });
+}
+
+/** What an anchor says of the leader of the label set at it: `'style'`
+ *  (unset: the label style decides), `'on'` or `'off'`. */
+export type LeaderChoice = 'style' | 'on' | 'off';
+export function leaderChoiceOf(a: Pick<ResourceAnchor, 'leader'> | undefined): LeaderChoice {
+  const v = a?.leader;
+  return v === undefined ? 'style' : v === false ? 'off' : 'on';
+}
+
+/** The marks with the leader of anchor `index` set: `'style'` takes the key
+ *  away, `'off'` writes false, `'on'` keeps a look the anchor has (else
+ *  true); `look` replaces the anchor's own look (an empty one is true). */
+export function withLeader(marks: PictureMarks, index: number, choice: LeaderChoice, look?: LeaderStyle): PictureMarks {
+  return withAnchor(marks, index, (a) => {
+    const { leader: before, ...rest } = a;
+    if (choice === 'style') return rest;
+    if (choice === 'off') return { ...rest, leader: false };
+    const own = look !== undefined ? leaderStyleClean(look) : before && typeof before === 'object' ? before : undefined;
+    return { ...rest, leader: own ?? true };
+  });
+}
+
+/** Whether a leader is drawn for the label at `a` (#1057, as the engine
+ *  decides it): the label's own attribute, else the anchor's `leader`, else
+ *  a label set away from its point whose style has a `leader` look. */
+export function leaderDrawn(a: Pick<ResourceAnchor, 'leader' | 'labelAt'>, styleHasLeader: boolean, labelAttr?: boolean): boolean {
+  if (labelAttr !== undefined) return labelAttr;
+  if (a.leader !== undefined) return a.leader !== false;
+  return !!a.labelAt && styleHasLeader;
+}
 const roundRect = (r: ResourceSafeArea): ResourceSafeArea => ({ x: round(r.x), y: round(r.y), width: round(r.width), height: round(r.height) });
 
 /** The marks as the resource stores them: four decimals (a hundredth of a
@@ -340,6 +412,9 @@ export function normalizeMarks(marks: PictureMarks): PictureMarks {
     if (a.writingMode !== undefined) out.writingMode = a.writingMode;
     if (a.overlap !== undefined) out.overlap = a.overlap;
     if (a.gutter !== undefined) out.gutter = a.gutter;
+    // A label set away from its point and its leader (#1057, #1064).
+    if (a.labelAt && Number.isFinite(a.labelAt.x) && Number.isFinite(a.labelAt.y)) out.labelAt = { x: round(a.labelAt.x), y: round(a.labelAt.y) };
+    if (a.leader !== undefined) out.leader = typeof a.leader === 'object' ? leaderStyleClean(a.leader) ?? true : a.leader;
     return out;
   });
   const avoid = marks.avoid.map(validRect).filter((r): r is ResourceSafeArea => !!r).map(roundRect);

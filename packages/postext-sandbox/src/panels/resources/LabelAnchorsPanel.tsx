@@ -2,11 +2,13 @@
 
 import { useEffect, useId, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react';
 import { MapPin, Plus, Trash2, TriangleAlert, X } from 'lucide-react';
-import type { LabelStyle, ResourceAnchor, ResourceSafeArea } from 'postext';
+import type { LabelStyle, LeaderStyle, ResourceAnchor, ResourceSafeArea } from 'postext';
 import { useSandboxLabels } from '../../context/SandboxContext';
 import { Button, IconButton, NumberField, SegmentedControl, Select, Switch } from '../../ui';
-import { anchorIdProblem, anchorOutsideSafeArea, withAnchor, withLabelFields, type AnchorIdProblem, type LabelFields, type PictureMarks } from './pictureMarks';
+import { anchorIdProblem, anchorOutsideSafeArea, leaderChoiceOf, leaderDrawn, withAnchor, withLabelAway, withLabelFields, withLeader, withPoint, type AnchorIdProblem, type LabelFields, type LeaderChoice, type PictureMarks } from './pictureMarks';
 import type { MarkdownLabel } from './figureLabels';
+import type { LabelLeaderChoice } from '../../editor/labelAttrs';
+import { labelLeaderChoice } from './labelLeaderEdit';
 
 // ---------------------------------------------------------------------------
 // The Anchors mode of the picture marks dialog (#866): the anchors a map's
@@ -63,6 +65,11 @@ export interface LabelAnchorsPanelProps {
   showNames: boolean;
   onShowNames: (on: boolean) => void;
   denseMap: boolean;
+  /** Write a label's own `leader` attribute into its chapter (#1064). */
+  onLabelLeader?: (label: MarkdownLabel, choice: LabelLeaderChoice) => void;
+  /** Whether label style `id` has a leader look (a label away from its
+   *  point then gets a leader by default). */
+  styleHasLeader?: (id: string | undefined) => boolean;
 }
 
 /** From how many anchors a map is dense: names are shown for the points in
@@ -97,7 +104,7 @@ export function withTickedFields(marks: PictureMarks, indices: Iterable<number>,
 }
 
 export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
-  const { marks, area, labelStyles, byAnchor, waiting, waitingLabel, placing, onPlacing, selected, onSelect, commit, edit, beginEdit, remove, addAtCentre, showIdErrors, idInputs, addButton, ticked, onTick, showNames, onShowNames, denseMap } = props;
+  const { marks, area, labelStyles, byAnchor, waiting, waitingLabel, placing, onPlacing, selected, onSelect, commit, edit, beginEdit, remove, addAtCentre, showIdErrors, idInputs, addButton, ticked, onTick, showNames, onShowNames, denseMap, onLabelLeader, styleHasLeader } = props;
   const labels = useSandboxLabels();
   const [filter, setFilter] = useState('');
   const uid = useId();
@@ -255,6 +262,8 @@ export function LabelAnchorsPanel(props: LabelAnchorsPanelProps) {
                   beginEdit={beginEdit}
                   remove={remove}
                   idInputs={idInputs}
+                  onLabelLeader={onLabelLeader}
+                  styleHasLeader={styleHasLeader ?? noLeader}
                 />
               )}
             </li>
@@ -284,10 +293,14 @@ interface AnchorFieldsProps {
   beginEdit: (index: number) => void;
   remove: (index: number) => void;
   idInputs: MutableRefObject<Map<number, HTMLInputElement>>;
+  onLabelLeader?: (label: MarkdownLabel, choice: LabelLeaderChoice) => void;
+  styleHasLeader: (id: string | undefined) => boolean;
 }
 
+const noLeader = () => false;
+
 /** The fields of the anchor picked in the list. */
-function AnchorFields({ tick, anchor: a, index: i, marks, texts, styleOptions, problem, problemText, outside, commit, edit, beginEdit, remove, idInputs }: AnchorFieldsProps) {
+function AnchorFields({ tick, anchor: a, index: i, marks, texts, styleOptions, problem, problemText, outside, commit, edit, beginEdit, remove, idInputs, onLabelLeader, styleHasLeader }: AnchorFieldsProps) {
   const labels = useSandboxLabels();
   const uid = useId();
   const set = (patch: Parameters<typeof withLabelFields>[2]) => commit(withLabelFields(marks, i, patch));
@@ -449,7 +462,128 @@ function AnchorFields({ tick, anchor: a, index: i, marks, texts, styleOptions, p
         </span>
       </div>
       <p id={`${uid}-width-hint`} className="m-0 text-[11px] text-(--slate)">{labels.resourceLabelAnchorsWidthHint}</p>
+      <LeaderFields anchor={a} index={i} marks={marks} texts={texts} commit={commit} edit={edit} beginEdit={beginEdit} onLabelLeader={onLabelLeader} styleHasLeader={styleHasLeader} />
     </div>
+  );
+}
+
+const pctOf = (v: number) => Math.round(v * 1000) / 10;
+
+type LeaderFieldsProps = Pick<AnchorFieldsProps, 'anchor' | 'index' | 'marks' | 'texts' | 'commit' | 'edit' | 'beginEdit' | 'onLabelLeader' | 'styleHasLeader'>;
+
+/** Where the label of an anchor stands and its leader (#1064): set away
+ *  from the point (`labelAt`, also dragged by its handle on the picture or
+ *  nudged with the arrows), the anchor's leader (as the style says, on,
+ *  off) and its line (routing, the mark at the point), and each label's own
+ *  `leader` attribute, written in the chapter's Markdown. */
+export function LeaderFields({ anchor: a, index: i, marks, texts, commit, edit, beginEdit, onLabelLeader, styleHasLeader }: LeaderFieldsProps) {
+  const labels = useSandboxLabels();
+  const uid = useId();
+  const choice = leaderChoiceOf(a);
+  const own: LeaderStyle = a.leader && typeof a.leader === 'object' ? a.leader : {};
+  const setLook = (patch: Partial<LeaderStyle>) => {
+    const next: LeaderStyle = { ...own, ...patch };
+    for (const k of Object.keys(patch) as (keyof LeaderStyle)[]) if (patch[k] === undefined) delete next[k];
+    commit(withLeader(marks, i, 'on', next));
+  };
+  const drawn = leaderDrawn(a, styleHasLeader(texts[0]?.style ?? a.style), texts[0]?.leader);
+  const at = a.labelAt;
+  return (
+    <section aria-labelledby={`${uid}-title`} className="mt-1 flex flex-col gap-1.5 border-t pt-1.5" style={{ borderColor: 'var(--pt-control-border)' }}>
+      <h4 id={`${uid}-title`} className="m-0 text-xs font-semibold">{labels.leaderSectionTitle}</h4>
+      <div className="flex flex-wrap items-center gap-2">
+        <span id={`${uid}-away`} className="w-24 shrink-0 text-(--slate)">{labels.labelAwayLabel}</span>
+        <Switch checked={!!at} onCheckedChange={(on) => commit(withLabelAway(marks, i, on))} ariaLabelledBy={`${uid}-away`} ariaDescribedBy={`${uid}-away-hint`} />
+      </div>
+      {at && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5" onFocusCapture={() => beginEdit(i)}>
+          <span className="inline-flex items-center gap-2">
+            <span id={`${uid}-ax`} className="w-24 shrink-0 text-(--slate)">{labels.labelAwayX}</span>
+            <NumberField value={pctOf(at.x)} onValueChange={(v) => edit(withPoint(marks, { kind: 'label', index: i }, { x: Number.isFinite(v) ? v / 100 : at.x, y: at.y }))} min={0} max={100} step={1} widthCh={5} ariaLabelledBy={`${uid}-ax`} />
+            <span className="text-(--slate)">%</span>
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span id={`${uid}-ay`} className="shrink-0 text-(--slate)">{labels.labelAwayY}</span>
+            <NumberField value={pctOf(at.y)} onValueChange={(v) => edit(withPoint(marks, { kind: 'label', index: i }, { x: at.x, y: Number.isFinite(v) ? v / 100 : at.y }))} min={0} max={100} step={1} widthCh={5} ariaLabelledBy={`${uid}-ay`} />
+            <span className="text-(--slate)">%</span>
+          </span>
+        </div>
+      )}
+      <p id={`${uid}-away-hint`} className="m-0 text-[11px] text-(--slate)">{labels.labelAwayHint}</p>
+      <div className="flex flex-wrap items-center gap-2">
+        <span id={`${uid}-leader`} className="w-24 shrink-0 text-(--slate)">{labels.leaderLabel}</span>
+        <SegmentedControl<LeaderChoice>
+          size="sm"
+          value={choice}
+          onValueChange={(v) => commit(withLeader(marks, i, v))}
+          ariaLabel={labels.leaderLabel}
+          ariaLabelledBy={`${uid}-leader`}
+          ariaDescribedBy={`${uid}-leader-state`}
+          options={[
+            { value: 'style', label: labels.leaderAsStyle },
+            { value: 'on', label: labels.leaderOn },
+            { value: 'off', label: labels.leaderOff },
+          ]}
+        />
+      </div>
+      <p id={`${uid}-leader-state`} role="status" className="m-0 text-[11px] text-(--slate)">{drawn ? labels.leaderStateDrawn : labels.leaderStateNone}</p>
+      {choice === 'on' && (
+        <>
+          <div className="flex flex-wrap items-center gap-2">
+            <span id={`${uid}-routing`} className="w-24 shrink-0 text-(--slate)">{labels.leaderRouting}</span>
+            <SegmentedControl<'straight' | 'elbow'>
+              size="sm"
+              value={own.routing ?? 'straight'}
+              onValueChange={(v) => setLook({ routing: v === 'straight' ? undefined : v })}
+              ariaLabel={labels.leaderRouting}
+              ariaLabelledBy={`${uid}-routing`}
+              options={[
+                { value: 'straight', label: labels.leaderRoutingStraight },
+                { value: 'elbow', label: labels.leaderRoutingElbow },
+              ]}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span id={`${uid}-cap`} className="w-24 shrink-0 text-(--slate)">{labels.leaderEndCap}</span>
+            <SegmentedControl<'dot' | 'arrow' | 'none'>
+              size="sm"
+              value={own.endCap ?? 'dot'}
+              onValueChange={(v) => setLook({ endCap: v === 'dot' ? undefined : v })}
+              ariaLabel={labels.leaderEndCap}
+              ariaLabelledBy={`${uid}-cap`}
+              options={[
+                { value: 'dot', label: labels.leaderCapDot },
+                { value: 'arrow', label: labels.leaderCapArrow },
+                { value: 'none', label: labels.leaderCapNone },
+              ]}
+            />
+          </div>
+        </>
+      )}
+      {onLabelLeader && texts.length > 0 && (
+        <>
+          <ul className="m-0 flex list-none flex-col gap-1 p-0" aria-label={labels.leaderPerLabel}>
+            {texts.map((t) => (
+              <li key={`${t.chapterId}:${t.start}`} className="flex flex-wrap items-center gap-2">
+                <span dir="auto" className="w-24 shrink-0 truncate text-(--foreground)" title={t.text}>{t.text}</span>
+                <SegmentedControl<LabelLeaderChoice>
+                  size="sm"
+                  value={labelLeaderChoice(t)}
+                  onValueChange={(v) => onLabelLeader(t, v)}
+                  ariaLabel={labels.leaderOfLabel.replace('__text__', t.text)}
+                  options={[
+                    { value: 'anchor', label: labels.leaderAsAnchor },
+                    { value: 'on', label: labels.leaderOn },
+                    { value: 'off', label: labels.leaderOff },
+                  ]}
+                />
+              </li>
+            ))}
+          </ul>
+          <p className="m-0 text-[11px] text-(--slate)">{labels.leaderPerLabelHint}</p>
+        </>
+      )}
+    </section>
   );
 }
 

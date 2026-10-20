@@ -30,8 +30,9 @@ export type MarkShape =
 export interface MarkState {
   hover?: string | null;
   active?: string | null;
-  /** The label being dragged and how far (sheet px). */
-  drag?: { key: string; dx: number; dy: number } | null;
+  /** The label being dragged and how far (sheet px); `away`: the drag sets
+   *  the label away from its point (`labelAt`, #1064) instead of moving it. */
+  drag?: { key: string; dx: number; dy: number; away?: boolean } | null;
 }
 
 /** The words a mark's tag uses (the Sandbox labels). */
@@ -66,6 +67,17 @@ export function labelMarkShapes(labels: readonly PageLabel[], k: number, state: 
     });
     if (dragged) {
       out.push({ kind: 'polygon', points: pl.corners.map((c) => ({ x: c.x + dragged.dx, y: c.y + dragged.dy })), stroke: MARK_COLORS.boxActive, width: 1.4 * k, fill: MARK_COLORS.ghost });
+    }
+    // A label away from its point (#1064): the line to the anchor's point,
+    // as its leader runs, and the point itself; an Alt-drag shows the line
+    // to the point it leaves.
+    const home = pl.anchorPoint ?? (dragged?.away ? pl.point : undefined);
+    if (home) {
+      const lx = pl.point.x + (dragged?.dx ?? 0);
+      const ly = pl.point.y + (dragged?.dy ?? 0);
+      out.push({ kind: 'line', x1: lx, y1: ly, x2: home.x, y2: home.y, stroke: '#ffffff', width: 2.4 * k });
+      out.push({ kind: 'line', x1: lx, y1: ly, x2: home.x, y2: home.y, stroke: MARK_COLORS.point, width: 1.2 * k });
+      out.push({ kind: 'circle', cx: home.x, cy: home.y, r: 2.5 * k, fill: MARK_COLORS.point, stroke: '#ffffff', width: k });
     }
     if (labelMovable(pl)) {
       const px = pl.point.x + (dragged?.dx ?? 0);
