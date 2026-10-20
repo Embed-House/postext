@@ -251,7 +251,9 @@ export function layoutComposedSpread(input: ComposedSpreadInput): ComposedSpread
   const log: [ReflowEvent[], ReflowEvent[]] = [[], []];
   for (const ev of [...resized.values(), ...out.composed.log]) log[sideOf.get(ev.frame) ?? 0].push(ev);
   const warnings = out.warnings.map((w) => {
-    const side = w.kind === 'frameOverflow' ? sideOf.get(w.frame) ?? 0 : 0;
+    // A frame's warning is read on the page that holds the frame (#1053:
+    // the overlap checks ran on the whole sheet, before the cut).
+    const side = w.kind === 'frameOverflow' || w.kind === 'frameCovered' || w.kind === 'frameOutsideArea' ? sideOf.get(w.frame) ?? 0 : 0;
     return side === 1 ? { ...w, pageIndex: second.index } : w;
   });
   const secondSide: 'left' | 'right' = input.firstSide === 'left' ? 'right' : 'left';

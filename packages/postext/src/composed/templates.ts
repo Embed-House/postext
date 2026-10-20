@@ -78,6 +78,7 @@ export const DEFAULT_LABEL_STYLE = {
 export const FRAME_VERTICAL_ALIGNS = ['top', 'middle', 'bottom', 'justify'] as const;
 export const FRAME_EXCLUDES = ['none', 'push'] as const;
 export const FRAME_WRAPS = ['box', 'contour'] as const;
+export const FRAME_OVERLAPS = ['check', 'allow'] as const;
 export const FRAME_TAKES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'toc'] as const;
 export const FRAME_GROUP_KINDS = ['stack', 'row', 'grid'] as const;
 export const FRAME_GRID_ROW_ALIGNS = ['start', 'center', 'end', 'stretch'] as const;
@@ -415,6 +416,7 @@ export function normalizeFrame(
     columns: finite(f.columns) && f.columns >= 1 ? Math.round(f.columns) : DEFAULT_FRAME.columns,
     exclude: oneOf(FRAME_EXCLUDES, f.exclude) ? f.exclude : DEFAULT_FRAME.exclude,
     ...(f.wrap === 'contour' ? { wrap: 'contour' as const } : {}),
+    ...(f.overlap === 'allow' ? { overlap: 'allow' as const } : {}),
     flow: f.flow === true,
     pin: f.pin === true,
     grow: nonNegative(f.grow, DEFAULT_FRAME.grow),

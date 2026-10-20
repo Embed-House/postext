@@ -310,9 +310,12 @@ describe('the page-8 stand-in reflows (#856)', () => {
       const { markdown, config, resources } = page8Fixture(locale);
       const before = buildDocument({ markdown, resources }, config, createMeasurementCache());
       const page0 = before.pages[0]!;
-      // The template's own drawing holds the page's text: nothing to report.
-      expect(page0.composed!.log).toEqual([]);
-      expect(composedReflowLog(before)).toEqual([]);
+      // The template's own drawing holds the page's text: nothing to report
+      // but what the overlap checks find (#1053): the stand-in's photos hang
+      // a millimetre or two past the foot of their boxes.
+      const reflowOnly = (events: readonly { kind: string }[]) => events.filter((e) => e.kind !== 'covered' && e.kind !== 'outside');
+      expect(reflowOnly(page0.composed!.log)).toEqual([]);
+      expect(composedReflowLog(before).flatMap((e) => reflowOnly(e.events))).toEqual([]);
       const longer = lengthened(markdown, paras(3, locale === 'es' ? 'Más dinero' : 'More money'));
       const after = buildDocument({ markdown: longer, resources }, config, createMeasurementCache());
       const page1 = after.pages[0]!;

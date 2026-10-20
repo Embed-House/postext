@@ -1,0 +1,114 @@
+{
+  "locale": "en",
+  "page": {
+    "width": { "value": 200, "unit": "mm" },
+    "height": { "value": 260, "unit": "mm" },
+    "margins": {
+      "top": { "value": 20, "unit": "mm" },
+      "bottom": { "value": 20, "unit": "mm" },
+      "left": { "value": 20, "unit": "mm" },
+      "right": { "value": 20, "unit": "mm" }
+    }
+  },
+  "headings": { "balancing": { "enabled": false }, "levels": [{ "level": 1, "breakBefore": { "enabled": false } }] },
+  "resourceTypes": [
+    {
+      "id": "pic",
+      "name": "Picture",
+      "shortLabel": "Pic",
+      "numberingTemplate": "",
+      "resetOn": "never",
+      "counterFormat": "decimal",
+      "captionPrefix": "",
+      "defaultPlacement": { "position": "here" }
+    }
+  ],
+  "calloutStyles": [
+    {
+      "id": "card",
+      "backgroundEnabled": true,
+      "background": { "hex": "#e6f3b4", "model": "hex" },
+      "border": { "enabled": false },
+      "borderRadius": { "value": 1.5, "unit": "mm" },
+      "padding": {
+        "top": { "value": 4, "unit": "mm" },
+        "right": { "value": 4, "unit": "mm" },
+        "bottom": { "value": 4, "unit": "mm" },
+        "left": { "value": 4, "unit": "mm" }
+      },
+      "label": {
+        "position": "top-left",
+        "background": { "hex": "#2f6b3a", "model": "hex" },
+        "color": { "hex": "#ffffff", "model": "hex" },
+        "fontSize": { "value": 11, "unit": "pt" },
+        "height": { "value": 6.4, "unit": "mm" },
+        "paddingX": { "value": 2.5, "unit": "mm" },
+        "offset": { "value": 6.4, "unit": "mm" },
+        "inset": { "value": 0, "unit": "mm" },
+        "rule": { "enabled": false, "color": { "hex": "#2f6b3a", "model": "hex" } }
+      }
+    },
+    {
+      "id": "sticky",
+      "backgroundEnabled": true,
+      "background": { "hex": "#fdf0c4", "model": "hex" },
+      "border": { "enabled": false },
+      "padding": {
+        "top": { "value": 3, "unit": "mm" },
+        "right": { "value": 3, "unit": "mm" },
+        "bottom": { "value": 3, "unit": "mm" },
+        "left": { "value": 3, "unit": "mm" }
+      }
+    }
+  ],
+  "pageTemplates": [
+    {
+      "id": "overlaps",
+      "frames": [
+        { "name": "figure", "width": { "value": 100, "unit": "mm" }, "placement": { "anchor": { "to": "container", "edge": "top-left" } } },
+        {
+          "name": "photo",
+          "layer": 2,
+          "width": { "value": 66, "unit": "mm" },
+          "placement": { "anchor": { "to": "#figure", "edge": "bottom-right" } }
+        },
+        {
+          "name": "card",
+          "style": "card",
+          "width": { "value": 110, "unit": "mm" },
+          "minHeight": { "value": 40, "unit": "mm" },
+          "padding": { "right": { "value": 48, "unit": "mm" } },
+          "placement": { "anchor": { "to": "#figure", "edge": "below" }, "offset": { "y": { "value": 18, "unit": "mm" } } }
+        },
+        {
+          "name": "cutout",
+          "layer": 2,
+          "width": { "value": 24, "unit": "mm" },
+          "placement": {
+            "anchor": { "to": "#card", "edge": "top-left" },
+            "offset": { "x": { "value": -4, "unit": "mm" }, "y": { "value": -14, "unit": "mm" } }
+          }
+        },
+        {
+          "name": "note",
+          "style": "sticky",
+          "width": { "value": 40, "unit": "mm" },
+          "height": { "value": 56, "unit": "mm" },
+          "placement": {
+            "anchor": { "to": "#card", "edge": "top-right" },
+            "offset": { "x": { "value": -4, "unit": "mm" }, "y": { "value": 10, "unit": "mm" } }
+          }
+        },
+        {
+          "name": "strap",
+          "width": { "value": 90, "unit": "mm" },
+          "height": { "value": 16, "unit": "mm" },
+          "placement": {
+            "anchor": { "to": "page", "edge": "bottom-left" },
+            "offset": { "x": { "value": 20, "unit": "mm" }, "y": { "value": 14, "unit": "mm" } }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -2731,7 +2731,9 @@ export type ReflowEventKind =
   | 'imageScaled'
   | 'textScaled'
   | 'continued'
-  | 'overflow';
+  | 'overflow'
+  | 'covered'
+  | 'outside';
 
 export interface ReflowEvent {
   /** The frame's name in its template. */
@@ -2758,6 +2760,13 @@ export interface ReflowEvent {
    *  position in the book. `toPage` and `toFrame` are there once the host
    *  has both chapters. */
   toChapter?: number;
+  /** `covered` (#1053): how much of the frame's ink lies under `cause`, the
+   *  frame painted over it, in mm². */
+  areaMm2?: number;
+  /** `outside` (#1053): what the frame runs past, `toMm` being by how much
+   *  (its largest side): the trim, the bleed, or the frame or group it is
+   *  anchored inside (`'#name'`). */
+  past?: 'trim' | 'bleed' | `#${string}`;
 }
 
 /** One frame of a composed page, in sheet coordinates. Its box and its
@@ -3301,6 +3310,28 @@ export type FrameOverflowProposal =
   | { kind: 'useTemplate'; value: string; sourceStart?: number; sourceEnd?: number }
   | { kind: 'shortenText'; value: number; sourceStart?: number; sourceEnd?: number };
 
+/** A change that would uncover a frame's ink (#1053, `frameCovered`):
+ *  data, as {@link FrameOverflowProposal}. `layer` paints the covering
+ *  frame (`coveredBy`) under the covered one; `exclude` makes the covering
+ *  frame push the covered frame's text round it; `move` is the smallest
+ *  shift of the covering frame along one axis that clears what it covers,
+ *  in mm (data only: no config path says where the frame is). */
+export type FrameCoverProposal =
+  | { kind: 'layer'; path: string; value: number }
+  | { kind: 'exclude'; path: string; value: 'push' }
+  | { kind: 'move'; frame: string; dxMm: number; dyMm: number };
+
+/** A change that would bring a frame back inside what it runs past
+ *  (#1053, `frameOutsideArea`): `maxHeight` of the frame itself (the room
+ *  it has there, in whole millimetres), `minHeight` of the frame it is
+ *  anchored inside (`frame`), and, for a frame of text held to a smaller
+ *  height, `overflow.continueIn: 'next-page'`, so what no longer fits goes
+ *  on instead of shrinking. */
+export type FrameOutsideProposal =
+  | { kind: 'maxHeight'; path: string; value: Dimension }
+  | { kind: 'minHeight'; path: string; value: Dimension; frame: string }
+  | { kind: 'continueNextPage'; path: string; value: 'next-page' };
+
 /** The kinds of {@link ConfigWarning} a page template gives (#853). */
 export type PageTemplateWarningKind =
   | 'templateDuplicate'
@@ -3421,6 +3452,53 @@ export type ContentWarning = ContentWarningBase & (
     /** Changes that would make the content fit, with their values worked
      *  out from the shortfall (each tried on the page where it can be). */
     proposals: FrameOverflowProposal[];
+  }
+  /** Ink of a frame lies under another frame painted over it (#1053): a
+   *  later `layer`, or the same layer later in template order. A frame
+   *  covers where it is opaque: its fill (the callout style's background,
+   *  `look.background`, a label tab, a stripe), its pictures and its text;
+   *  a frame with no fill covers nothing between its pictures and lines. What
+   *  is covered: the frame's lines (their boxes), its tab and title, its
+   *  pictures (by a fill or a picture: words over a picture hide a hairline
+   *  of it). `text` is the first words covered (40 characters), `picture`
+   *  the resource id of the first picture covered, `overlapMm2` the area
+   *  covered. One warning per pair of frames; `overlap: 'allow'` on either
+   *  frame leaves the pair out. The source range is the covered frame's
+   *  content. */
+  | {
+    kind: 'frameCovered';
+    template: string;
+    frame: string;
+    coveredBy: string;
+    fenceIndex: number;
+    configPath: string;
+    /** The covering frame's config path. */
+    coveredByPath: string;
+    overlapMm2: number;
+    text?: string;
+    picture?: string;
+    locale?: string;
+    proposals: FrameCoverProposal[];
+  }
+  /** A frame's ink runs past what holds it (#1053): its text past the trim,
+   *  its fill or pictures past the bleed (`past: 'trim' | 'bleed'`), or
+   *  any of it past the frame or group it is anchored inside (a nine-point
+   *  anchor on `'#name'` whose point lies in that box: `past: 'frame' |
+   *  'group'`, `target` its name). What runs past is cut at the trim, and
+   *  reads as escaping its card. `excessMm` is the largest overrun, `sides`
+   *  each side's. `overlap: 'allow'` on the frame leaves it out. */
+  | {
+    kind: 'frameOutsideArea';
+    template: string;
+    frame: string;
+    fenceIndex: number;
+    configPath: string;
+    past: 'trim' | 'bleed' | 'frame' | 'group';
+    target?: string;
+    excessMm: number;
+    sides: { top?: number; right?: number; bottom?: number; left?: number };
+    locale?: string;
+    proposals: FrameOutsideProposal[];
   }
   /** A frame's content went on to other pages (#859) as many times as a
    *  composed page may add (`pages`, 16) and still does not fit: what is

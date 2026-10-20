@@ -102,11 +102,6 @@ export interface FrameGroupRound2 {
   overflow?: { continueIn?: string };
 }
 
-/** `FrameConfig` addition (§12.10). */
-export interface FrameRound2 {
-  overlap?: 'check' | 'allow';
-}
-
 // §12.8 (C9) ----------------------------------------------------------------
 
 export interface DesignPathElement {

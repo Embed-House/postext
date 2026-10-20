@@ -5,7 +5,7 @@
  * template declares it (its fixed size, or its `minHeight` when its height
  * follows its content) is compared with the box the layout gave it.
  */
-import type { FrameFitStep, FrameOverflowProposal, ReflowEvent, VDTDocument } from '../vdt';
+import type { FrameCoverProposal, FrameFitStep, FrameOutsideProposal, FrameOverflowProposal, ReflowEvent, VDTDocument } from '../vdt';
 import type { Rect } from './geometry';
 
 /** A frame's declared and final boxes, and the names whose change moves
@@ -125,6 +125,12 @@ function describeEvent(e: ReflowEvent, pageLabel?: (index: number) => string): s
       return `${e.frame}: text at ${pct(e.scale ?? 1)}`;
     case 'continued':
       return `${e.frame} continued${e.toPage !== undefined ? ` on page ${pageLabel ? pageLabel(e.toPage) : String(e.toPage + 1)}` : ''}${e.cause ? ` in ${e.cause}` : ''}`;
+    case 'covered':
+      return `${e.frame} lies under ${e.cause ?? 'another frame'}${e.areaMm2 !== undefined ? ` (${num(e.areaMm2)} mm²)` : ''}`;
+    case 'outside': {
+      const past = e.past === undefined ? 'its area' : e.past.startsWith('#') ? e.past.slice(1) : `the ${e.past}`;
+      return `${e.frame} runs ${num(e.toMm ?? 0)} mm past ${past}`;
+    }
     default:
       return `${e.frame} ${String(e.kind)}`;
   }
@@ -170,6 +176,39 @@ export function describeFrameOverflowProposal(p: FrameOverflowProposal): string 
       return `set the page with template "${p.value}"`;
     case 'shortenText':
       return `cut about ${p.value} characters`;
+    default:
+      return (p as { kind: string }).kind;
+  }
+}
+
+/** A fix of a `frameCovered` in words, in English (#1053): «paint
+ *  "photo" under it (layer: 0)». */
+export function describeFrameCoverProposal(p: FrameCoverProposal): string {
+  switch (p.kind) {
+    case 'layer':
+      return `paint the covering frame under it (layer: ${p.value})`;
+    case 'exclude':
+      return 'make the covering frame push its text round it (exclude: "push")';
+    case 'move': {
+      const parts: string[] = [];
+      if (p.dxMm !== 0) parts.push(`${Math.abs(p.dxMm)} mm ${p.dxMm > 0 ? 'right' : 'left'}`);
+      if (p.dyMm !== 0) parts.push(`${Math.abs(p.dyMm)} mm ${p.dyMm > 0 ? 'down' : 'up'}`);
+      return `move "${p.frame}" ${parts.join(' and ') || 'off it'}`;
+    }
+    default:
+      return (p as { kind: string }).kind;
+  }
+}
+
+/** A fix of a `frameOutsideArea` in words, in English (#1053). */
+export function describeFrameOutsideProposal(p: FrameOutsideProposal): string {
+  switch (p.kind) {
+    case 'maxHeight':
+      return `hold it to maxHeight ${dim(p.value)}`;
+    case 'minHeight':
+      return `raise the minHeight of "${p.frame}" to ${dim(p.value)}`;
+    case 'continueNextPage':
+      return 'let the rest continue on the next page (overflow.continueIn: "next-page")';
     default:
       return (p as { kind: string }).kind;
   }

@@ -160,6 +160,12 @@ export interface FrameConfig {
    *  keeps one style and writes the tint here. Merged key by key over the
    *  parent's in a patch. */
   look?: FrameLook;
+  /** The overlap checks (#1053): `'allow'` leaves the frame out of
+   *  `frameCovered`, as the frame painted over another (art meant to sit
+   *  over text) and as the one painted under, and out of
+   *  `frameOutsideArea` (a badge hung half off its card on purpose).
+   *  Default `'check'`. */
+  overlap?: 'check' | 'allow';
   /** In a template patch (`extends`, `variants`): drop the inherited frame. */
   remove?: boolean;
 }
@@ -411,6 +417,9 @@ export interface ResolvedFrame {
   /** What the frame changes of its style's look (#976), colours and
    *  lengths checked. */
   look?: FrameLook;
+  /** `'allow'`: the frame is left out of the overlap checks (#1053).
+   *  Absent: checked. */
+  overlap?: 'allow';
   /** JSON pointer of the most specific entry that sets this frame
    *  (`/pageTemplates/3/frames/2`, `/pageTemplates/3/variants/recto/frames/0`). */
   configPath: string;

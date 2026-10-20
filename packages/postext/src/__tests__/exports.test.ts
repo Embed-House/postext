@@ -713,6 +713,8 @@ describe("package exports", () => {
       "describeReflowEvent",
       "describeFitStep",
       "describeFrameOverflowProposal",
+      "describeFrameCoverProposal",
+      "describeFrameOutsideProposal",
       "reflowEvents",
       "frameOrder",
       "framePlaceable",

@@ -595,6 +595,8 @@ export type {
   ReflowEvent,
   ReflowEventKind,
   FrameOverflowProposal,
+  FrameCoverProposal,
+  FrameOutsideProposal,
   FrameFitStep,
   VDTStripCaption,
   VDTDropCap,
@@ -675,7 +677,7 @@ export type { ComposedPaintItem, ComposedPaintPart } from './composed/paint';
 // layout changed from the template's drawing, in data and in words.
 export { layoutGroup, composedOrder } from './composed/groups';
 export type { GroupItem, GroupLayoutInput, ComposedStep } from './composed/groups';
-export { composedReflowLog, describeReflowEvent, describeFitStep, describeFrameOverflowProposal, reflowEvents } from './composed/reflowLog';
+export { composedReflowLog, describeReflowEvent, describeFitStep, describeFrameOverflowProposal, describeFrameCoverProposal, describeFrameOutsideProposal, reflowEvents } from './composed/reflowLog';
 export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
 // Where a template's frames stand (#855), for hosts that draw a template
 // without laying a page out (the Sandbox's template thumbnails, #864).

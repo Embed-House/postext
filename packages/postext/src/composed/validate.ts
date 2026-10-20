@@ -26,6 +26,7 @@ import {
   FRAME_DIRECTIONS,
   FRAME_EXCLUDES,
   FRAME_WRAPS,
+  FRAME_OVERLAPS,
   FRAME_GROUP_ALIGNS,
   FRAME_GROUP_KINDS,
   FRAME_GRID_ROW_ALIGNS,
@@ -66,7 +67,7 @@ const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
   exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
-  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, remove: true,
+  overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, overlap: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
 const LOOK_KEYS = { background: true, border: true, stripe: true, icon: true, marker: true, titleStyle: true, body: true, label: true } satisfies Record<keyof FrameLook, true>;
 const RULES_KEYS = { every: true, color: true, width: true, inset: true } satisfies Record<keyof FrameRulesConfig, true>;
@@ -105,7 +106,7 @@ export interface ValidatePageTemplatesOptions {
  * `unknownConfigKey` for a key no template, frame, group, grid, fit,
  * overflow, variant or label style has, and `unknownConfigValue` for a word
  * outside a setting's choices (`area`, `verticalAlign`, `exclude`, `takes`,
- * `kind`, `align`, `writingMode`, `direction`, `fontStyle`,
+ * `kind`, `align`, `writingMode`, `direction`, `overlap`, `fontStyle`,
  * `textTransform`) or a template with no id or a frame or group with no
  * name (ignored). `resolvePageTemplate` makes the same fixes the warnings
  * describe. Pure.
@@ -179,6 +180,7 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   choice(frame, 'verticalAlign', FRAME_VERTICAL_ALIGNS, DEFAULT_FRAME.verticalAlign, path, push);
   choice(frame, 'exclude', FRAME_EXCLUDES, DEFAULT_FRAME.exclude, path, push);
   choice(frame, 'wrap', FRAME_WRAPS, 'box', path, push);
+  choice(frame, 'overlap', FRAME_OVERLAPS, 'check', path, push);
   choice(frame, 'takes', FRAME_TAKES, '', path, push);
   choice(frame, 'writingMode', FRAME_WRITING_MODES, '', path, push);
   choice(frame, 'direction', FRAME_DIRECTIONS, '', path, push);

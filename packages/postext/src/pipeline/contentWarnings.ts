@@ -41,7 +41,7 @@ import { composedPages } from '../composed/document';
 import { composedFrameBlockIds } from '../composed/paint';
 import { bitmapLayoutSize, bitmapResolutionFor } from '../bitmapResolution';
 import { checkComposedSlots } from '../composed/slotChecks';
-import { describeFitStep, describeFrameOverflowProposal } from '../composed/reflowLog';
+import { describeFitStep, describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal } from '../composed/reflowLog';
 import type { ComposedPagesConfigKeys } from '../composed/types';
 
 /** A `:::name` line: the name starts it, whatever follows (a line the parser
@@ -940,6 +940,25 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} is ${w.overflowMm} mm short of its content`
         + `${steps.length > 0 ? ` after ${steps.join(', ')}` : ''} — the rest is cut at the frame's foot`
         + (fixes.length > 0 ? `; to fit: ${fixes.join('; or ')}` : '; give it more height (height, maxHeight), chain it to another frame with next, or shorten the text');
+      break;
+    }
+    case 'frameCovered': {
+      // Ink under a frame painted over it (#1053).
+      const what = w.text !== undefined ? `"${w.text}"` : w.picture !== undefined ? `the picture "${w.picture}"` : 'its ink';
+      const fixes = (w.proposals ?? []).map(describeFrameCoverProposal);
+      text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} lies under frame "${w.coveredBy}" (${w.overlapMm2} mm² of ${what} hidden)`
+        + (fixes.length > 0 ? `; to uncover it: ${fixes.join('; or ')}` : '')
+        + `; or set overlap: 'allow' on either frame if the art is meant to sit over it`;
+      break;
+    }
+    case 'frameOutsideArea': {
+      // Ink past the trim, the bleed or the box it is anchored inside (#1053).
+      const past = w.past === 'trim' ? 'the trim (its text is cut there)' : w.past === 'bleed' ? 'the bleed' : `the ${w.past} "${w.target ?? ''}" it is anchored inside`;
+      const sides = (['top', 'right', 'bottom', 'left'] as const).filter((k) => w.sides?.[k] !== undefined).map((k) => `${k} ${w.sides[k]} mm`);
+      const fixes = (w.proposals ?? []).map(describeFrameOutsideProposal);
+      text = `Frame "${w.frame}" of template "${w.template}"${w.locale ? ` (${w.locale})` : ''} runs ${w.excessMm} mm past ${past}${sides.length > 0 ? ` (${sides.join(', ')})` : ''}`
+        + (fixes.length > 0 ? `; to bring it in: ${fixes.join('; or ')}` : '; move or shrink the frame')
+        + `; or set overlap: 'allow' on the frame if it hangs out on purpose`;
       break;
     }
     case 'frameContinuationLimit':

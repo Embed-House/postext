@@ -49,6 +49,7 @@ import { resolvePageTemplate, type PageTemplateSource } from '../composed/templa
 import { frameElementId } from '../composed/ids';
 import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
+import { overlapChecks } from '../composed/overlap';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import type { BlockMeasureContext } from './measureContentBlock';
@@ -187,6 +188,8 @@ interface Composition {
   needs: Map<string, () => number>;
   /** What `fitBox` did to each frame. */
   fitted: Map<string, { placed: Rect; kept: Rect }>;
+  /** Groups' final boxes, by name (the overlap checks, #1053). */
+  groupRects: Map<string, Rect>;
   /** The template laid (with the ladder's patches). */
   template: ResolvedPageTemplate;
   /** `textWrap` notes of the contour pushes (#883, `noContour`). */
@@ -577,7 +580,23 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     });
   }
 
-  const { frames, blocks, log, laid, fitted } = cur;
+  // 8. What no frame's box says (#1053): ink under a frame painted over it,
+  //    and ink past the trim, the bleed or the box it is anchored inside.
+  const overlaps = overlapChecks({
+    template: cur.template,
+    frames: cur.frames,
+    blocks: cur.blocks,
+    groupRects: cur.groupRects,
+    areas: input.areas,
+    dpi,
+    emPx: input.emPx,
+    fenceIndex: fi,
+    pageIndex: input.page.index,
+    ...(input.locale ? { locale: input.locale } : {}),
+  });
+  warnings.push(...overlaps.warnings);
+  const { frames, blocks, laid, fitted } = cur;
+  const log = overlaps.events.length > 0 ? mergeLog(cur.log, overlaps.events, template) : cur.log;
   // Template order on the page record.
   const order = new Map(template.frames.map((f, i) => [f.name, i]));
   frames.sort((a, b) => order.get(a.name)! - order.get(b.name)!);
@@ -1801,11 +1820,11 @@ function composePage(input: ComposedPageInput, template: ResolvedPageTemplate, f
       for (const f of step.frames) fill(prepare(f), solved.get(f.name)!);
     }
     const log = mergeLog(reflowEvents(motionsOf(template, rects, declared), dpi / MM_PER_IN), [...fitLog, ...overflowLog], template);
-    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn, clipped };
+    return { frames, blocks, log, laid, needs, pushRects, pushShapes, fitted, notes, spills, wantsOn, clipped, groupRects };
   };
   const first = run();
-  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn, clipped } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
-  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, clipped, ...(notes.length > 0 ? { notes } : {}) };
+  const { frames, blocks, log, laid, needs, fitted, notes, spills, wantsOn, clipped, groupRects } = first.pushRects.size > 0 ? run(first.pushRects, first.pushShapes) : first;
+  return { frames, blocks, log, laid, needs, template, fitted, spills, wantsOn, clipped, groupRects, ...(notes.length > 0 ? { notes } : {}) };
 }
 
 /** `r` turned `deg` (±90) about the centre of `about`: an axis-aligned

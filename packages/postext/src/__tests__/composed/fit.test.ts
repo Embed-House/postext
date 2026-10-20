@@ -199,7 +199,8 @@ describe('frameOverflow: the steps tried and the proposals (#858)', () => {
       expect(text).toContain(`Frame "dinero" of template "tema-cajas" (${locale})`);
       expect(text).toContain('text down to 90 %');
       expect(text).toContain('to fit:');
-      expect(page0(doc).composed!.log.slice(-2)).toEqual([{ frame: 'dinero', kind: 'textScaled', scale: 0.9 }, { frame: 'dinero', kind: 'overflow', toMm: w.overflowMm }]);
+      // (The overlap checks' events, #1053, come after the ladder's.)
+      expect(page0(doc).composed!.log.filter((e) => e.kind !== 'covered' && e.kind !== 'outside').slice(-2)).toEqual([{ frame: 'dinero', kind: 'textScaled', scale: 0.9 }, { frame: 'dinero', kind: 'overflow', toMm: w.overflowMm }]);
     });
   }
 
