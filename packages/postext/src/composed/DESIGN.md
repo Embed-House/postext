@@ -1971,3 +1971,80 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   names design slots only. No path *element* yet: C5 (connectors) and C9 (path elements) produce the
   block; `applyPaletteOverrides` and `primitiveToBlock` gain their path branch with them. Docs (D3) and
   the Sandbox fields for `at` and `'center'` belong to their own issues.
+
+### 12.15 What C10 built (#1061)
+
+- **Config.** `FrameGroupConfig.kind: 'grid'` with `columns` (default 1), `columnGap` / `rowGap` (default:
+  the group's `gap`), `rowAlign` (default `'stretch'`) and `repeat: FrameRepeatConfig { frames, max? }`
+  (`composed/types.ts`). `normalizeGroup` adds the grid fields only to a grid, so every other group
+  resolves to the same object as before (page memo keys and `layoutKey`s of templates without grids do
+  not move). A repeating grid's `frames` are its set (`repeat.frames`); written `frames` are not read.
+  A grid that repeats nothing lays the frames it lists, one per cell.
+- **Validation.** Repeating grids claim their frames before the other groups: a repeated frame listed
+  in another group is `groupFrameTwice` there (the repeat keeps it), a frame the template lacks
+  `groupFrameUnknown` at `…/repeat/frames/<k>`; `columns < 1`, an unknown `rowAlign` and `repeat.max < 1`
+  are `unknownConfigValue`. Anchors (frames and decoration) to `#<frame>[n]` of a repeated frame are
+  valid. No new config warning kinds.
+- **Items** (`composed/repeat.ts`, `pageRepeats`). `composedPages` records every slotted piece of a
+  page in Markdown order with the slotted pieces one level down inside a `:::frame`
+  (`ParsedComposedPage.pieces`). Each piece sent to a frame of a set is one item (a top-level
+  `::resource{slot="<member>"}` too, as §12.6 says); inside it a block or container naming another
+  frame of the set goes to that instance (a nested `:::frame{slot="<member>"}` without its markers); a
+  block naming a frame outside the set stays with the piece, as before. Items past `max` go to the flow
+  frame (else after the page) with the new content warning `repeatOverflow` (`template`, `group`,
+  `frame`, `item`, `max`, `flowFrame?`, at the item's `slot="…"`), one per item over. A repeated frame
+  is never the flow frame and takes no heading (`takes` is ignored on it). `slotEmpty` for a frame of
+  a set only when no item fills it.
+- **Stories** (`wrap.ts`). One story per instance, `FRAME_ATTR` = `<frame>[n]`, dressed by its own
+  item's `:::frame` fence (`label`, `title`), its figure labels' ids rewritten to
+  `cp<n>:<frame>[n]:label:<anchor>`. A chain (`next`, `continueIn: '#x'`) among the frames of a set
+  threads the item's text through its own instances; a link out of the set is not followed.
+- **Expansion** (`expandRepeats`). In `layoutComposedPage` (the entry of single pages, spreads,
+  continuation pages and `useTemplate` trials), from the items its stories hold (`repeatItemsOf`), not
+  in `composePage`: the ladder then works on instances too. Instances replace the set in template
+  order, item after item, main first; they copy the frame (`configPath`, `fieldPaths` unchanged) with
+  anchors, `next` and `continueIn: '#x'` inside the set rewritten to the same item (links out of the set
+  dropped). Frames and decoration outside the set anchored to a frame *of* the set read the grid's box
+  (`#<group>`). The grid gets `frames` = its instances and `items` (cells). On a continuation page the
+  items are those it receives, numbered as on the fence's page.
+- **Geometry** (`placeGrid` in `composePage`, one group step). The grid's box is its own
+  `placement`/`grid`; without one it starts where the template draws the main frame (its own
+  placement, kept on the instances for that) and runs to the area's right edge and foot. Columns are
+  equal; cells fill rows left to right in flow coordinates, which on a right-to-left page (mirrored
+  flow) is right to left. The main frame takes the cell's width and its own height rule (`'auto'`:
+  the content's, min/max applied). A member anchored in the set is placed with the cell's column as its
+  area (`'fill'` and percentages are the cell's); one anchored to nothing is moved with the cell (the
+  set as drawn, translated); one anchored outside the set stays where that anchor puts it and does
+  not count for the cell. A row's height is the most any cell reaches above its main frame (a tab) plus
+  the most any reaches below its top (a caption pill hanging under it); mains of a row share a top.
+  `rowAlign`: `start`/`center`/`end` move shorter cells, `stretch` grows an `'auto'`/`'fill'` main frame
+  to the row (up to `maxHeight`). Grid cells give no reflow events (declared = laid). The grid's box for
+  `#<group>` anchors is its own box, else the union of the laid cells.
+- **Overflow and ladder.** A row past the grid's foot is cut there (every rect clipped to the foot); the
+  ladder runs per instance (free, push, pictures of the instance and its own item's frames, text);
+  `redistribute` does not apply to grids. Clipped rows warn once: `frameOverflow` on the last instance
+  cut, in template order. With the main frame's `overflow.continueIn` off the page, the continue step
+  (taken for any instance, by the main frame's `continueIn` and `fit.preferContinue`) adds the grid to
+  `FitState.gridsOn`: the first row that does not fit and every row after it are not laid; each of
+  their instances that holds a story spills whole (`Spill.whole`), and becomes a
+  `ComposedContinuation` with `whole: true`, the main frame's rule, and the item's empty instances as
+  `trailing`. `assignReceivers` sends an instance continuation to the instance of its own name on any
+  template that repeats that frame. On a received page the step is reverted when no row fits
+  (`advanced` = a row was laid), so a cell taller than the box warns instead of going on for ever.
+  `link` does not set `continuesTo` for whole items (nothing of them is on the sending page) and the
+  receiving instance has no `continuedFrom`; the sending page's log gets a `continued` event per
+  instance (`toPage`, `toFrame`).
+- **VDT, ids, source map.** `VDTFrame.name` is the instance name, `VDTFrame.repeat = { frame, item }`,
+  ids `cp<fence>:<frame>[n]` (`~<k>` on continuation pages). `sourceAt`/`findElement` treat an instance
+  as a frame of its grid (`frame.repeat.frame` in the group's frames). Spread sides keep the laid
+  record's order. The page memo keeps grid pages (keys unchanged: the expansion is a function of the
+  template and the page's content).
+- **Decoration.** `#card[2]` resolves through `DesignFrames.named` (instance names); an element
+  anchored to an instance the page lacks is not drawn (as for a collapsed frame).
+- **Parity.** Templates without grids lay out byte for byte as before: bench-layout hashes of five
+  presets equal, composed-page recipes unchanged (see the report of #1061).
+- **Not done.** `grow`/`shrink` on rows and a per-row ladder (scaling a whole row's pictures or text
+  together); `fitBox` (spread gutter) on grid cells; a chain from a frame outside the set into an
+  instance (`next: 'card[2]'` is still `overflowTargetUnknown`); a chain inside a cell whose later link
+  has an `'auto'` height measures empty when the grid is solved (as for groups, §5.9); connectors'
+  `[*]` (C5); Sandbox (U12), docs (D3) and the warnings docs list.
