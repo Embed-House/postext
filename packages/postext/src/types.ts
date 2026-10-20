@@ -6392,17 +6392,17 @@ export interface ElementAnchor {
   edge: AnchorEdge;
   /** The point along the side `edge` names, on another element, a frame or
    *  a group (`'#name'`, #1055): `'start'`, `'center'`, `'end'` or a
-   *  fraction of the side (0 at its start, 1 at its end). A horizontal side
-   *  (`top`, `bottom`, `below`, `above`, `align-top`, `align-bottom` and the
-   *  `top-*` / `bottom-*` corners, read as their side) starts where the
-   *  page's lines start (the left, or the right of a page that starts on
-   *  the right); a vertical one (`left`, `right`, `right-of`, `left-of`,
-   *  `align-left`, `align-right`, `start`, `end`) at its top. The element
-   *  is pinned to that point the way the side's corner or middle would be
-   *  (`'start'` like `bottom-left`, `'center'` and a fraction centred on
-   *  it, `'end'` like `bottom-right`) and keeps the edge's other axis. Absent:
-   *  the edge's own point. Ignored on `'container'`, `'page'`, `'bleed'`,
-   *  `'outer'` and on `center`. */
+   *  fraction of the side (0 at its start, 1 at its end; outside 0…1 it is
+   *  held there). A horizontal side (`top`, `bottom`, `below`, `above`,
+   *  `align-top`, `align-bottom` and the `top-*` / `bottom-*` corners, read
+   *  as their side) starts where the page's lines start (the left, or the
+   *  right of a page that starts on the right); a vertical one (`left`,
+   *  `right`, `right-of`, `left-of`, `align-left`, `align-right`, `start`,
+   *  `end`) at its top. Along the side the element is centred on that point
+   *  (a vertical rule's thickness on a frame's middle); across it the edge
+   *  keeps its pin (`below` hangs under the side, `bottom` stands on it
+   *  inside the box). Absent: the edge's own point. Ignored on
+   *  `'container'`, `'page'`, `'bleed'`, `'outer'` and on `center`. */
   at?: SidePosition;
 }
 

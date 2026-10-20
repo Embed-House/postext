@@ -114,7 +114,9 @@ function percentText(n: number): string {
  * - page templates and label styles (see `validatePageTemplates`), and a
  *   box style whose `extends` names no style or comes back to itself;
  * - the design texts that hold the book's content instead of placeholders
- *   (`contentInConfig`, #849, tuned by `checks.contentInConfig`).
+ *   (`contentInConfig`, #849, tuned by `checks.contentInConfig`);
+ * - a design element's point along a side (`anchor.at`) or size edge
+ *   (`size.width.edge`…) outside its choices (`unknownConfigValue`, #1055).
  * Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
@@ -124,7 +126,48 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectCjkGridWarnings(config), ...collectChoiceWarnings(config), ...collectNumeralsWarnings(config),
     ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config), ...collectLabelIconWarnings(config),
     ...collectContentInConfigWarnings(config, options),
+    ...collectDesignAnchorWarnings(config),
   ];
+}
+
+const SIDE_POSITIONS = ['start', 'center', 'end'] as const;
+const SIZE_TO_EDGES = ['top', 'bottom', 'left', 'right', 'center'] as const;
+
+/** The points along a side and the edges of a size of every design
+ *  element (#1055): an `anchor.at` that is no side position — a word other
+ *  than `start`, `center` and `end` (ignored: the edge's own point), a
+ *  number outside 0…1 (held there) — and a `{ to, edge }` size whose edge
+ *  is none of `top`, `bottom`, `left`, `right` and `center` (`'fill'`). */
+function collectDesignAnchorWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => {
+      const placement = (el as { placement?: unknown } | null)?.placement;
+      if (!placement || typeof placement !== 'object') return;
+      const path = `${slot.path}.elements[${i}].placement`;
+      const anchor = (placement as { anchor?: unknown }).anchor;
+      const at = anchor && typeof anchor === 'object' ? (anchor as { at?: unknown }).at : undefined;
+      if (at !== undefined) {
+        if (typeof at === 'number' && Number.isFinite(at)) {
+          if (at < 0 || at > 1) out.push({ kind: 'unknownConfigValue', path: `${path}.anchor.at`, value: String(at), used: String(Math.max(0, Math.min(1, at))) });
+        } else if (typeof at !== 'string' || !(SIDE_POSITIONS as readonly string[]).includes(at)) {
+          const suggestion = typeof at === 'string' ? closestKey(at, SIDE_POSITIONS) : undefined;
+          out.push({ kind: 'unknownConfigValue', path: `${path}.anchor.at`, value: String(at), used: '', ...(suggestion ? { suggestion } : {}) });
+        }
+      }
+      const size = (placement as { size?: unknown }).size;
+      if (!size || typeof size !== 'object') return;
+      for (const key of ['width', 'height', 'maxWidth'] as const) {
+        const v = (size as Record<string, unknown>)[key];
+        if (!v || typeof v !== 'object' || !('to' in v)) continue;
+        const edge = (v as { edge?: unknown }).edge;
+        if (typeof edge === 'string' && (SIZE_TO_EDGES as readonly string[]).includes(edge)) continue;
+        const suggestion = typeof edge === 'string' ? closestKey(edge, SIZE_TO_EDGES) : undefined;
+        out.push({ kind: 'unknownConfigValue', path: `${path}.size.${key}.edge`, value: String(edge), used: 'fill', ...(suggestion ? { suggestion } : {}) });
+      }
+    });
+  }
+  return out;
 }
 
 /** Box styles based on another (#905): an `extends` that names no style

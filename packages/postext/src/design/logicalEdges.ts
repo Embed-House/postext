@@ -53,3 +53,30 @@ export function physicalPlacement<P extends ElementPlacement>(placement: P, star
     ...(startRight && x && x.value !== 0 ? { offset: { ...placement.offset, x: { ...x, value: -x.value } } } : {}),
   };
 }
+
+/** The side of a box each physical edge stands on (#1055), for a point
+ *  along it (`ElementAnchor.at`): the nine-point sides and corners, read
+ *  as their side, and the element edges. `center` has none. */
+const SIDE_OF_EDGE: Readonly<Record<string, 'top' | 'bottom' | 'left' | 'right'>> = {
+  top: 'top', 'top-left': 'top', 'top-right': 'top', above: 'top', 'align-top': 'top',
+  bottom: 'bottom', 'bottom-left': 'bottom', 'bottom-right': 'bottom', below: 'bottom', 'align-bottom': 'bottom',
+  left: 'left', 'left-of': 'left', 'align-left': 'left',
+  right: 'right', 'right-of': 'right', 'align-right': 'right',
+};
+
+/** The side `edge` (a physical one, see {@link physicalEdge}) stands on, or
+ *  undefined for `center`. */
+export function edgeSide(edge: AnchorEdge): 'top' | 'bottom' | 'left' | 'right' | undefined {
+  return Object.prototype.hasOwnProperty.call(SIDE_OF_EDGE, edge) ? SIDE_OF_EDGE[edge] : undefined;
+}
+
+/** A point along a side as a fraction from its start (`'start'` 0,
+ *  `'center'` ½, `'end'` 1, a number held between 0 and 1), or undefined
+ *  for anything else. */
+export function sideFraction(at: unknown): number | undefined {
+  if (at === 'start') return 0;
+  if (at === 'center') return 0.5;
+  if (at === 'end') return 1;
+  if (typeof at === 'number' && Number.isFinite(at)) return Math.max(0, Math.min(1, at));
+  return undefined;
+}

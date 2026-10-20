@@ -1,5 +1,5 @@
 import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical';
-import { isLogicalEdge, physicalEdge, physicalPlacement } from './logicalEdges';
+import { edgeSide, isLogicalEdge, physicalEdge, physicalPlacement, sideFraction } from './logicalEdges';
 import { bitmapLayoutSize } from '../bitmapResolution';
 import { comicArtCrop } from '../comics/art';
 import type {
@@ -1088,6 +1088,24 @@ function edgeYFromPin(anchorY: number, pinY: Pin, height: number): number {
 // Main engine
 // ---------------------------------------------------------------------------
 
+/**
+ * `anchor` (the point of `edge` on `ref`) moved along the side the edge
+ * stands on to `at` (#1055): from the side's start — the left of a top or
+ * bottom side, its right when the page starts on the right (`startRight`),
+ * the top of a left or right side — a fraction of its length. Along the
+ * side the element is centred on that point (a rule's thickness on a
+ * frame's middle); across it the edge's pin stays (`below` hangs under the
+ * side, `bottom` stands inside on it). `center`, and an `at` that is no
+ * side position, leave the anchor as it is.
+ */
+function alongSide(anchor: AnchorResult, edge: AnchorEdge, at: unknown, ref: AnchorReference, startRight: boolean): AnchorResult {
+  const side = edgeSide(edge);
+  const f = sideFraction(at);
+  if (!side || f === undefined) return anchor;
+  if (side === 'left' || side === 'right') return { ...anchor, anchorY: ref.y + f * ref.height, pinY: 'middle' };
+  return { ...anchor, anchorX: ref.x + (startRight ? 1 - f : f) * ref.width, pinX: 'middle' };
+}
+
 /** A size written as `{ to, edge }` (#928). */
 function isSizeTo(size: ElementSize | undefined): size is ElementSizeTo {
   return typeof size === 'object' && size !== null && 'to' in size && 'edge' in size;
@@ -1108,10 +1126,11 @@ function withSizesTo<T extends ResolvedDesignElement>(
   if (!size || (!isSizeTo(size.width) && !isSizeTo(size.height) && !isSizeTo(size.maxWidth))) return el;
   const along = (s: ElementSizeTo, axis: 'x' | 'y'): ElementSize => {
     const ref = refOf(s.to);
-    const edges: Record<string, 'start' | 'end'> = axis === 'x' ? { left: 'start', right: 'end' } : { top: 'start', bottom: 'end' };
-    const side = edges[s.edge];
-    if (!ref || !side) return 'fill';
-    const at = axis === 'x' ? (side === 'start' ? ref.x : ref.x + ref.width) : (side === 'start' ? ref.y : ref.y + ref.height);
+    // `center` (#1055): the box's middle on the axis being sized.
+    const edges: Record<string, number> = axis === 'x' ? { left: 0, center: 0.5, right: 1 } : { top: 0, center: 0.5, bottom: 1 };
+    const side = Object.prototype.hasOwnProperty.call(edges, s.edge) ? edges[s.edge] : undefined;
+    if (!ref || side === undefined) return 'fill';
+    const at = axis === 'x' ? ref.x + side * ref.width : ref.y + side * ref.height;
     const from = axis === 'x' ? pin.anchorX : pin.anchorY;
     const p = axis === 'x' ? pin.pinX : pin.pinY;
     const room = p === 'start' ? at - from : p === 'end' ? from - at : 2 * Math.abs(at - from);
@@ -1204,9 +1223,13 @@ export function layoutDesignSlot(
         if (!useElementEdge) fillRef = refGeo;
       }
     }
-    const anchor = useElementEdge
+    const onEdge = useElementEdge
       ? resolveElementAnchor(given.placement.anchor.edge, refGeo)
       : resolveContainerAnchor(given.placement.anchor.edge, refGeo);
+    // A point along a side of another element, a frame or a group (#1055).
+    const anchor = target && !frame && refGeo !== containerRef && given.placement.anchor.at !== undefined
+      ? alongSide(onEdge, given.placement.anchor.edge, given.placement.anchor.at, refGeo, context.startRight === true)
+      : onEdge;
 
     // A text element's offset may be written in ems of its own size (a
     // running head four characters below the type area).
