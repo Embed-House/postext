@@ -49,7 +49,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
     const first = loadConfig()!;
     expect(first.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
     saveConfig(first);
-    expect(map.get('postext-sandbox-config-version')).toBe('15');
+    expect(map.get('postext-sandbox-config-version')).toBe('16');
     const second = loadConfig()!;
     expect(second).toEqual(first);
     saveConfig(second);
