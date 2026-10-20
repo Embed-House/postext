@@ -9,7 +9,7 @@
  * Pure: chapter offsets.
  */
 
-import type { VDTDocument } from 'postext';
+import { resolvePageTemplate, type PageTemplateSource, type VDTDocument } from 'postext';
 import type { TextChange } from '../book/textChanges';
 import { pageSites, type PageSites, type SlotSite } from '../viewport/composed/slotSource';
 import { pageAreas, templateAreaRect, type Rect } from './frameGeometry';
@@ -132,6 +132,25 @@ export function rewritePage(markdown: string, page: PageSites, remove: readonly 
   }
   text += markdown.slice(pos, page.end);
   return { from: page.start, to: page.end, insert: text, expect: markdown.slice(page.start, page.end) };
+}
+
+/** The first page of `doc` set with template `templateId` (`prefer` first
+ *  when it is one) that the conversions read, laid: null when the document
+ *  has none. */
+export function laidTemplatePage(
+  doc: Pick<VDTDocument, 'pages' | 'trimOffset' | 'config'>,
+  templateId: string,
+  prefer?: number | null,
+): { pageIndex: number; rects: Map<string, Rect>; area: Rect; dpi: number } | null {
+  const order = prefer !== undefined && prefer !== null ? [prefer, ...doc.pages.keys()] : [...doc.pages.keys()];
+  const area = resolvePageTemplate(doc.config as unknown as PageTemplateSource, templateId)?.area;
+  for (const i of order) {
+    const c = doc.pages[i]?.composed;
+    if (!c || c.template !== templateId || c.spread || c.continuationOf !== undefined) continue;
+    const laid = laidFrames(doc, i, area);
+    if (laid) return { pageIndex: i, ...laid };
+  }
+  return null;
 }
 
 /** A laid composed page's frames (page px by name), its template's area

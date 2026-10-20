@@ -192,6 +192,58 @@ export function ensureModulesGroup(templates: Templates, pageTemplateId: string)
   };
 }
 
+/** The composed pages of a chapter: each fence's ordinal, template and
+ *  range (fence to closing fence). */
+export function chapterPages(markdown: string): { fence: number; template: string; start: number; end: number }[] {
+  return templateFences(markdown).flatMap((f, fence) => {
+    const sites = pageSites(markdown, f.fenceStart, markdown.length);
+    return sites ? [{ fence, template: f.template, start: sites.start, end: sites.end }] : [];
+  });
+}
+
+/** The ordinal of the page fence holding `offset`, or null. */
+export function pageAtOffset(markdown: string, offset: number): number | null {
+  return chapterPages(markdown).find((p) => offset >= p.start && offset <= p.end)?.fence ?? null;
+}
+
+export type InsertModulePlan =
+  | {
+    ok: true;
+    templates?: PageTemplate[];
+    chapters: { chapterId: string; changes: TextChange[]; baseLength: number }[];
+    /** The page template and its modules group (`added`: made now). */
+    pageTemplate: string;
+    group: string;
+    added: boolean;
+    /** Where the caret goes in the chapter after the change. */
+    caret: number;
+  }
+  | { ok: false; reason: 'noPage' | 'unknownModule' | 'pageTemplate' };
+
+/** Module `moduleId` written into page fence `fence` (its ordinal in the
+ *  chapter): a `:::module` block with an empty slot per frame before the
+ *  page's closing fence; the page's template gets a modules group when it
+ *  has none. */
+export function planInsertModule(templates: Templates, chapter: { id: string; markdown: string }, fence: number, moduleId: string): InsertModulePlan {
+  const mod = resolvePageTemplate({ pageTemplates: [...templates] }, moduleId);
+  if (!mod || !isModule(templateAt(templates, moduleId)?.template)) return { ok: false, reason: 'unknownModule' };
+  const f = templateFences(chapter.markdown)[fence];
+  const sites = f ? pageSites(chapter.markdown, f.fenceStart, chapter.markdown.length) : null;
+  if (!f || !sites) return { ok: false, reason: 'noPage' };
+  const group = ensureModulesGroup(templates, f.template);
+  if (!group) return { ok: false, reason: 'pageTemplate' };
+  const ins = moduleInsertion(chapter.markdown, sites, moduleBlockText(mod));
+  return {
+    ok: true,
+    ...(group.added ? { templates: group.templates } : {}),
+    chapters: [{ chapterId: chapter.id, changes: [{ from: ins.at, to: ins.at, insert: ins.insert, expect: '' }], baseLength: chapter.markdown.length }],
+    pageTemplate: f.template,
+    group: group.group,
+    added: group.added,
+    caret: ins.caret,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // «Extract a module»
 // ---------------------------------------------------------------------------
