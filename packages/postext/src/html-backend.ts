@@ -49,7 +49,8 @@ import { fontFamilyOf } from './measure/vertical';
 import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
-import type { VDTDesignTextRun, VDTResourceVideo, VDTTextDots } from './vdt';
+import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTTextDots } from './vdt';
+import { iconLineDash, inlineIconBox } from './measure/inlineIcon';
 import { textDots } from './textDots';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
@@ -1578,7 +1579,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
       x += seg.width;
       continue;
     }
@@ -1731,7 +1732,7 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
       x += seg.width;
       continue;
     }
@@ -1826,6 +1827,53 @@ function renderSwatch(x: number, baselineOffset: number, side: number, fill: str
     `width:${side.toFixed(3)}px;height:${side.toFixed(3)}px;box-sizing:border-box;` +
     `border:${stroke.toFixed(2)}px solid ${ink};${fill ? `background:${fill};` : ''}"></span>`
   );
+}
+
+/** A `'swatch'` segment: its inline symbol when it carries one (#1058),
+ *  else the colour swatch. */
+function renderSwatchSegment(
+  swatch: { color?: string; icon?: VDTInlineIcon } | undefined,
+  x: number,
+  baselineOffset: number,
+  width: number,
+  ink: string,
+  paint?: HtmlPaint,
+): string {
+  return swatch?.icon ? renderInlineIconHtml(swatch.icon, x, baselineOffset, ink, paint) : renderSwatch(x, baselineOffset, width, swatch?.color, ink);
+}
+
+/**
+ * An inline symbol (`:icon[alt]{…}`, #1058) on its line, its box standing
+ * on the baseline (`baselineOffset` from the line top): a picture as an
+ * `<img>` (a tinted one as the colour through the picture's mask), a glyph
+ * and a line sample as a small SVG, so the glyph's baseline and the
+ * stroke's dashes land where the canvas paints them. Named by its
+ * alternative text (`role="img"`), hidden when it has none.
+ */
+function renderInlineIconHtml(icon: VDTInlineIcon, x: number, baselineOffset: number, ink: string, paint?: HtmlPaint): string {
+  const box = inlineIconBox(icon, x, baselineOffset);
+  const n = (v: number): string => String(+v.toFixed(3));
+  const name = icon.alt ? `role="img" aria-label="${esc(icon.alt)}"` : 'aria-hidden="true"';
+  const pos = `position:absolute;left:${n(box.x)}px;top:${n(box.y)}px;width:${n(box.width)}px;height:${n(box.height)}px;`;
+  const color = icon.color ?? ink;
+  if (icon.kind === 'glyph' && icon.glyph && icon.fontString) {
+    return `<svg ${name} style="${pos}overflow:visible;" width="${n(box.width)}" height="${n(box.height)}"><text x="0" y="${n(box.height)}" fill="${esc(color)}" style="font:${esc(quoteFontString(icon.fontString))};">${esc(icon.glyph)}</text></svg>`;
+  }
+  if (icon.kind === 'line') {
+    const dash = iconLineDash(icon);
+    const y = n(box.height / 2);
+    return `<svg ${name} style="${pos}overflow:visible;" width="${n(box.width)}" height="${n(box.height)}"><line x1="0" y1="${y}" x2="${n(box.width)}" y2="${y}" stroke="${esc(color)}" stroke-width="${n(icon.strokePx ?? 1)}"${dash ? ` stroke-dasharray="${dash.map(n).join(' ')}"` : ''}${icon.line === 'dotted' ? ' stroke-linecap="round"' : ''}/></svg>`;
+  }
+  const url = icon.fileId ? imageUrl(paint, icon.fileId, icon.resourceId) : undefined;
+  if (!url) {
+    const stroke = Math.max(0.5, box.height * 0.06);
+    return `<span ${name} style="${pos}box-sizing:border-box;border:${stroke.toFixed(2)}px solid ${ink};"></span>`;
+  }
+  if (icon.color) {
+    const mask = `url(&quot;${esc(url)}&quot;) center / 100% 100% no-repeat`;
+    return `<span ${name} style="${pos}background:${esc(icon.color)};-webkit-mask:${mask};mask:${mask};"></span>`;
+  }
+  return `<img src="${esc(url)}" alt="${esc(icon.alt)}"${icon.alt ? '' : ' aria-hidden="true"'} style="${pos}"/>`;
 }
 
 /** Inline chip (`:chip[…]`): the box — fill, outline, radius — as one
@@ -2301,7 +2349,7 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
       continue;
     }
     if (seg.kind === 'swatch') {
-      sideways.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, block.color));
+      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
       x += seg.width;
       continue;
     }
@@ -2493,6 +2541,8 @@ function renderResourceLine(
   rootLang?: string,
   /** What a copy puts after the line (see {@link lineEndText}). */
   end = '',
+  /** The render's options: the pictures of inline symbols (#1058). */
+  paint?: HtmlPaint,
 ): string {
   const baseFont = quoteFontString(fonts.normal);
   const parts: string[] = [];
@@ -2545,7 +2595,7 @@ function renderResourceLine(
         continue;
       }
       if (seg.kind === 'swatch') {
-        parts.push(renderSwatch(x, line.baseline - line.bbox.y, seg.width, seg.swatch?.color, color));
+        parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, color, paint));
         x += seg.width;
         continue;
       }
@@ -2855,7 +2905,7 @@ function renderResourceTable(rb: ResolvedResourceBlock, bx: number, by: number, 
     const fonts = cell.isHeader ? headerFonts : bodyFonts;
     const color = cell.isHeader ? t.headerColor : t.color;
     cell.lines.forEach((line, i) => {
-      parts.push(renderResourceLine(line, fonts, color, rb.linkColor, color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, cell.lines[i + 1])));
+      parts.push(renderResourceLine(line, fonts, color, rb.linkColor, color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, cell.lines[i + 1]), options));
     });
   }
   return parts.join('');
@@ -2886,8 +2936,13 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
       : '';
     const inner: string[] = [];
     if (layout.background) {
-      const r = layout.background.rect;
-      inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;background:${layout.background.color};"></div>`);
+      const plate = layout.background;
+      const r = plate.rect;
+      // A plate's outline and corners (#1058), the outline inside the box.
+      const look = (plate.color ? `background:${plate.color};` : '')
+        + (plate.border ? `box-sizing:border-box;border:${n2(plate.border.widthPx)}px solid ${plate.border.color};` : '')
+        + (plate.radiusPx ? `border-radius:${n2(plate.radiusPx)}px;` : '');
+      inner.push(`<div aria-hidden="true" style="position:absolute;left:${n2(r.x)}px;top:${n2(r.y)}px;width:${n2(r.width)}px;height:${n2(r.height)}px;${look}"></div>`);
     }
     if (layout.vertical) {
       // A vertical label (#902): its frame is turned a quarter turn by the
@@ -2902,7 +2957,7 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
       layout.lines.forEach((line, i) => inner.push(renderVerticalLine(line, host, v, options.linkTargets, layout.lines[i + 1])));
     } else {
       layout.lines.forEach((line, i) => {
-        inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : '')));
+        inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : ''), options));
       });
     }
     const dir = layout.direction === 'rtl' ? ' dir="rtl"' : '';
@@ -2974,7 +3029,7 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
     boldItalic: rb.captionBoldItalicFontString,
   };
   rb.captionLines.forEach((line, i) => {
-    parts.push(renderResourceLine(line, captionFonts, rb.captionColor, rb.linkColor, rb.captionLabelColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, rb.captionLines[i + 1])));
+    parts.push(renderResourceLine(line, captionFonts, rb.captionColor, rb.linkColor, rb.captionLabelColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, rb.captionLines[i + 1]), options));
   });
   const noteFonts: ResourceLineFonts = {
     normal: rb.noteFontString,
@@ -2984,7 +3039,7 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
   };
   const noteLines = [...rb.noteLines, ...(rb.continuesLines ?? [])];
   noteLines.forEach((line, i) => {
-    parts.push(renderResourceLine(line, noteFonts, rb.noteColor, rb.linkColor, rb.noteColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, noteLines[i + 1])));
+    parts.push(renderResourceLine(line, noteFonts, rb.noteColor, rb.linkColor, rb.noteColor, options.linkTargets, options.dir, options.rootLang, lineEndText(line, noteLines[i + 1]), options));
   });
   if (!rot) return anchor + parts.join('');
   return (

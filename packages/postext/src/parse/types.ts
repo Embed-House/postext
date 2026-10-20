@@ -244,6 +244,33 @@ export interface InlineLink {
   mark?: { style: string; id: number };
 }
 
+/** An inline symbol (`:icon[alt]{…}`, #1058, DESIGN §12.5), read in the
+ *  text of figure labels and of captions and notes: a small picture (a
+ *  bitmap or SVG resource), a glyph set in a face of its own, or a sample
+ *  of a line (solid, dashed, dotted), the key of a map's legend. Exactly
+ *  one of `resource`, `glyph` and `line` is set (the first of them
+ *  written, in that order). */
+export interface InlineIcon {
+  /** The bracketed text: what the symbol stands for, read in its place
+   *  (alternative text, the tagged PDF). May be empty. */
+  alt: string;
+  /** The id of a bitmap or SVG resource, fitted to the icon's height. */
+  resource?: string;
+  /** One or a few characters, set in `font` (default: the text's face). */
+  glyph?: string;
+  /** A font family for `glyph`. */
+  font?: string;
+  /** A stroke drawn across the icon's box at half its height. */
+  line?: 'solid' | 'dashed' | 'dotted';
+  /** The icon's height in ems of the text around it; default the height of
+   *  a capital (0.75 em, as a swatch's side). A glyph is set at the size
+   *  whose capitals are that high. */
+  size?: number;
+  /** Set by the pipeline for a `resource` icon: the picture to draw and
+   *  its width over its height. Absent when the resource is unknown. */
+  picture?: { fileId: string; format?: string; svg: boolean; aspect: number };
+}
+
 export interface InlineSpan {
   text: string;
   bold: boolean;
@@ -318,6 +345,11 @@ export interface InlineSpan {
    *  empty outline. */
   swatch?: {
     color: string;
+    /** Set when the span is an inline symbol (`:icon[alt]{…}`, #1058)
+     *  rather than a colour swatch: it rides the swatch's placeholder, so
+     *  every pass that keeps a swatch whole keeps it whole. `color` is then
+     *  the icon's tint as written (`''` when it has none). */
+    icon?: InlineIcon;
   };
   /** Present when this span is an inline chip (`:chip[text]{style="…"}`):
    *  a boxed run of text set as one unbreakable unit. The `text` is a single

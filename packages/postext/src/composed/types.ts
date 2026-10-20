@@ -297,6 +297,20 @@ export interface LabelStyle {
    *  `labelOverlap` check: a map whose names touch in the source (#977).
    *  An anchor's `overlap` wins. Default `'check'`. */
   overlap?: 'check' | 'allow';
+  /** How the lines of a label line up inside its box (#1058): `'start'`
+   *  and `'end'` in the label's own direction. Left out: as the anchor
+   *  places the box (`ResourceAnchor.align`, centred by default), and
+   *  `'start'` in a legend. */
+  align?: 'start' | 'center' | 'end';
+  /** A line round the label's plate (its box grown by `padding`), with or
+   *  without a `background` (#1058). */
+  border?: { color: ColorValue; width: Dimension };
+  /** The corners of the plate (#1058). */
+  radius?: Dimension;
+  /** `'legend'` (#1058): a map's key. Each line of the label is a row; the
+   *  first inline symbol (`:icon`) that opens a row hangs in a column as
+   *  wide as the widest of them, so the words of every row line up. */
+  kind?: 'legend';
 }
 
 /** New top-level config keys. `checks.contentInConfig` (DESIGN §2.8)

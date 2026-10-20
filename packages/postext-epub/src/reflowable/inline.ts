@@ -166,6 +166,21 @@ function rawOf(seg: VDTLineSegment, ctx: InlineContext): string | undefined {
     const tex = seg.mathRender.tex;
     return `<span class="pt-math" role="math" aria-label="${xmlAttr(tex)}">${mathSvg(seg.mathRender, ctx.basePx, true)}</span>`;
   }
+  if (seg.kind === 'swatch' && seg.swatch?.icon) {
+    // An inline symbol (#1058): its glyph or a line sample in the reader's
+    // text; a picture is read as its alternative text in brackets (the
+    // reflowable book does not carry the pictures of symbols).
+    const icon = seg.swatch.icon;
+    const name = icon.alt ? `role="img" aria-label="${xmlAttr(icon.alt)}"` : 'aria-hidden="true"';
+    const color = icon.color ? `color:${xmlAttr(icon.color)};` : '';
+    if (icon.kind === 'glyph' && icon.glyph) return `<span class="pt-icon" ${name}${color ? ` style="${color}"` : ''}>${xmlText(icon.glyph)}</span>`;
+    if (icon.kind === 'line') {
+      // Styled in place: the book's stylesheet stays what it was.
+      const style = `display:inline-block;width:1.5em;height:0;border-top:0.09em ${icon.line ?? 'solid'} currentColor;vertical-align:0.3em;${color}`;
+      return `<span class="pt-icon" ${name} style="${style}"></span>`;
+    }
+    return icon.alt ? `<span class="pt-icon">[${xmlText(icon.alt)}]</span>` : '';
+  }
   if (seg.kind === 'swatch') {
     const color = seg.swatch?.color;
     return color

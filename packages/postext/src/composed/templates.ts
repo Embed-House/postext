@@ -87,6 +87,9 @@ export const FRAME_DIRECTIONS = ['ltr', 'rtl'] as const;
 export const LABEL_FONT_STYLES = ['normal', 'italic'] as const;
 export const LABEL_TEXT_TRANSFORMS = ['none', 'uppercase'] as const;
 export const LABEL_OVERLAPS = ['check', 'allow'] as const;
+/** `LabelStyle.align` and `LabelStyle.kind` (#1058). */
+export const LABEL_ALIGNS = ['start', 'center', 'end'] as const;
+export const LABEL_KINDS = ['legend'] as const;
 
 /** The shape of a frame's `look` (#976): which keys it has and what each
  *  holds, a colour or a length. */

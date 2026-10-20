@@ -39,8 +39,8 @@ import type {
   VDTPage,
 } from 'postext';
 import type { PdfColorSpace } from 'postext';
-import { altWithLabels, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
-import { roundedRectSvgPath } from './headerFooter';
+import { altWithLabels, figureLabelMatrix, labelPlateBox, resourceBlockIcons, undrawnLabels, unmirrorLabelLayout, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
+import { drawRoundedBox, roundedRectSvgPath } from './headerFooter';
 import { pdfUri } from './links';
 import { parseFontString } from '../fontString';
 import { FontCache, declarationOf, fontFilesOf, inDeclarationOrder, type PdfFontFile, type PdfFontProvider } from '../fontCache';
@@ -59,7 +59,6 @@ import {
   endActualTextSpan,
   type LineTextState,
   drawLinePx,
-  drawSwatchPx,
   fillRectPx,
   fillRectsPx,
   colorFromHex,
@@ -90,6 +89,7 @@ import {
   type VectorFontResolver,
 } from './svgVector';
 import { inkScaleOperators } from './inkScale';
+import { paintSwatchSegmentPdf } from './inlineIcon';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { withSegmentLanguage } from '../shapingLanguage';
@@ -412,6 +412,8 @@ export async function preloadResourceImages(
   // #995): a bitmap among them also gets the stencil of its alpha.
   const tintedIds = new Set<string>();
   for (const block of blocks) for (const b of block.designOverlay?.blocks ?? []) if (b.kind === 'image' && b.tint) tintedIds.add(b.fileId);
+  // A tinted inline symbol (#1058).
+  for (const block of blocks) for (const icon of resourceBlockIcons(block.resourceBlock)) if (icon.fileId && icon.color) tintedIds.add(icon.fileId);
   for (const page of doc.pages) {
     for (const slot of [page.header, page.footer, page.openerBand, page.composed?.decoration]) {
       for (const b of slot?.blocks ?? []) if (b.kind === 'image' && b.tint) tintedIds.add(b.fileId);
@@ -558,6 +560,9 @@ export async function preloadResourceImages(
     for (const cell of rb?.table?.cells ?? []) {
       if (cell.image) await embed(cell.image.fileId, cell.image.format);
     }
+    // The pictures of inline symbols in its caption, notes, labels and
+    // cells (#1058).
+    for (const icon of resourceBlockIcons(rb)) if (icon.fileId) await embed(icon.fileId, icon.svg ? 'svg' : icon.format);
     // Callout icons and markers (`kind: 'resource'`) draw through the same map.
     const iconFileId = block.callout?.iconFileId;
     if (iconFileId) await embed(iconFileId, block.callout?.iconFormat);
@@ -745,8 +750,7 @@ function paintLineRuns(
         continue;
       }
       if (seg.kind === 'swatch') {
-        tagContent(ctx, elem);
-        drawSwatchPx(ctx, x, line.baseline, seg.width, seg.swatch?.color, color);
+        paintSwatchSegmentPdf(ctx, seg, x, line.baseline, color, fontCache, baseFont, elem);
         x += seg.width;
         continue;
       }
@@ -1142,10 +1146,13 @@ function paintFigureLabels(
     } else delete ctx.vertical;
     try {
       const fonts: PaintFonts = { normal: layout.fontString, bold: layout.boldFontString, italic: layout.italicFontString, boldItalic: layout.boldItalicFontString };
-      if (layout.background) {
+      const plate = layout.background;
+      if (plate) {
         tagArtifact(ctx, { type: 'Layout' });
-        const r = layout.background.rect;
-        fillRectPx(ctx, r.x, r.y, r.width, r.height, colorFromHex(layout.background.color, ctx.colorSpace));
+        const r = plate.rect;
+        // A plate with an outline or round corners (#1058), as a design box.
+        if (plate.border || plate.radiusPx) drawRoundedBox(ctx, r.x, r.y, r.width, r.height, labelPlateBox(plate));
+        else if (plate.color) fillRectPx(ctx, r.x, r.y, r.width, r.height, colorFromHex(plate.color, ctx.colorSpace));
       }
       if (layout.halo && layout.halo.widthPx > 0) {
         // The glyphs stroked hollow under the text: painted once more, an
@@ -1159,10 +1166,12 @@ function paintFigureLabels(
           delete ctx.textOutline;
         }
       }
-      const elem = group?.child('P');
+      // A legend (#1058) is read as a list, one item per row.
+      const list = layout.legend ? group?.child('L', { attributes: [{ owner: 'List', entries: { ListNumbering: 'None' } }] }) : undefined;
+      const elem = list ? undefined : group?.child('P');
       const color = colorFromHex(layout.color, ctx.colorSpace);
-      if (!elem && structure) tagArtifact(ctx, { type: 'Layout' });
-      for (const line of layout.lines) paintLine(ctx, line, fonts, fontCache, color, linkColor, linkRegistry, refTarget, color, elem);
+      if (!elem && !list && structure) tagArtifact(ctx, { type: 'Layout' });
+      for (const line of layout.lines) paintLine(ctx, line, fonts, fontCache, color, linkColor, linkRegistry, refTarget, color, list ? list.child('LI').child('LBody') : elem);
     } finally {
       popFrame(ctx);
       if (unmirror) {

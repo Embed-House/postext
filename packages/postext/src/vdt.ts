@@ -285,6 +285,39 @@ export interface VDTChip {
   sourceOffsets?: number[];
 }
 
+/**
+ * An inline symbol (`:icon[alt]{…}`, #1058) as painted: carried by a
+ * `'swatch'` segment (`swatch.icon`), whose `width` is its advance. The
+ * symbol's box is `widthPx` × `heightPx`, standing on the baseline,
+ * `insetPx` in from the segment's left edge (a legend's symbol centred in
+ * its column). A painter that does not know icons paints a swatch's empty
+ * square in its place.
+ */
+export interface VDTInlineIcon {
+  kind: 'resource' | 'glyph' | 'line';
+  /** What it stands for (may be empty). */
+  alt: string;
+  widthPx: number;
+  heightPx: number;
+  /** From the segment's left edge to the box's; absent = 0. */
+  insetPx?: number;
+  /** Resolved colour (hex): a glyph's or a line's ink, a picture's tint.
+   *  Absent: the text's colour (a picture keeps its own). */
+  color?: string;
+  /** `kind: 'resource'`: the resource and its picture. A resource that is
+   *  not known has no `fileId`: an empty outline is painted. */
+  resourceId?: string;
+  fileId?: string;
+  format?: string;
+  svg?: boolean;
+  /** `kind: 'glyph'`: the characters and the CSS font they are set in. */
+  glyph?: string;
+  fontString?: string;
+  /** `kind: 'line'`: the stroke's pattern and width. */
+  line?: 'solid' | 'dashed' | 'dotted';
+  strokePx?: number;
+}
+
 export interface VDTLineSegment {
   kind: 'text' | 'space' | 'math' | 'swatch' | 'chip';
   text: string;
@@ -312,7 +345,7 @@ export interface VDTLineSegment {
    *  a square of `width` px filled with `color` (a hex; absent when the
    *  colour did not resolve — the square is then an empty outline), sitting
    *  on the baseline and outlined in the text colour. */
-  swatch?: { color?: string };
+  swatch?: { color?: string; icon?: VDTInlineIcon };
   /** Present when `kind === 'chip'`: an inline chip (`:chip[…]`), painted
    *  as a box with its own text runs. The segment's `text` is the one-char
    *  plain-text placeholder; the words live in `chip.runs`. */
@@ -1574,6 +1607,11 @@ export interface VDTFigureLabel {
    *  quotes left out): what a viewer rewrites to move a label placed by
    *  percentages (#931). */
   atSource?: { start: number; end: number };
+  /** The inline symbols of its text (`:icon[alt]{…}`, #1058): the index
+   *  of each one's placeholder in `text` and what it stands for, so the
+   *  outputs that read a label as words read `[alt]` in its place (none
+   *  when `alt` is empty). Absent when it has none. */
+  icons?: { at: number; alt: string }[];
   /** Where the label is painted: the upright box round its text (and
    *  background), in the coordinates of the block's own frame (a page's
    *  flow, or the frame of a composed page its block stands in), stamped
@@ -1612,9 +1650,15 @@ export interface VDTFigureLabelLayout {
   color: string;
   /** The glyphs stroked `2 × widthPx` wide in `color` under the text. */
   halo?: { color: string; widthPx: number };
-  /** A fill behind the text: `rect` is the box grown by the style's
-   *  padding. */
-  background?: { color: string; rect: BoundingBox };
+  /** A plate behind the text: `rect` is the box grown by the style's
+   *  padding, filled with `color` and outlined by `border` (#1058), its
+   *  corners rounded by `radiusPx`. A plate has a fill, a border or both. */
+  background?: { color?: string; rect: BoundingBox; border?: { color: string; widthPx: number }; radiusPx?: number };
+  /** Set in a `kind: 'legend'` label style (#1058): each line is a row of
+   *  the key, the first symbol of each row hung in a column as wide as the
+   *  widest (`VDTInlineIcon.insetPx`). Read row by row (a list in the
+   *  tagged PDF). */
+  legend?: true;
   /** The scale the label was set at to fit its width (`minScale` at
    *  least); absent at 1. */
   scale?: number;

@@ -35,7 +35,7 @@ import { bitmapLayoutSize } from '../bitmapResolution';
 import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs';
 import { measuringVertically, withMeasureWritingMode } from '../measure/vertical';
 import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
-import type { InlineSpan, RefCase } from '../parse';
+import type { InlineIcon, InlineSpan, RefCase } from '../parse';
 import { suffixJoiner } from '../parse/inlineFormatting';
 import { resourceSafeArea, safeAreaHeightRange, safeAreaSource } from './safeArea';
 import { layoutVideo } from './videoOverlay';
@@ -230,17 +230,47 @@ export interface TableRowMetrics {
  *  value is looked up as a document palette entry id. An unresolved colour
  *  is left as written (the measurer then draws an empty outline). Spans
  *  without a swatch pass through. */
-export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEntry[] | undefined): InlineSpan[] {
+export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEntry[] | undefined, resources?: readonly Resource[]): InlineSpan[] {
   return spans.map((span) => {
     if (!span.swatch) return span;
-    const raw = span.swatch.color.trim();
-    const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?$/i.exec(raw);
-    if (short) return { ...span, swatch: { color: `#${short.slice(1).filter(Boolean).map((d) => d + d).join('')}`.toLowerCase() } };
-    if (/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(raw)) return { ...span, swatch: { color: raw.toLowerCase() } };
-    if (isSwatchFill(raw)) return { ...span, swatch: { color: raw } };
-    const entry = palette?.find((e) => e.id === raw);
-    return entry ? { ...span, swatch: { color: entry.value.hex } } : span;
+    const icon = span.swatch.icon;
+    // An inline symbol (#1058): its tint as a swatch's colour, and the
+    // picture of a resource icon.
+    if (icon) {
+      const color = span.swatch.color.trim() ? resolveSwatchColor(span.swatch.color, palette) ?? '' : '';
+      const picture = icon.resource !== undefined ? iconPicture(resources?.find((r) => r.id === icon.resource)) : undefined;
+      if (color === span.swatch.color && !picture) return span;
+      return { ...span, swatch: { color, icon: picture ? { ...icon, picture } : icon } };
+    }
+    const color = resolveSwatchColor(span.swatch.color, palette);
+    return color !== undefined ? { ...span, swatch: { color } } : span;
   });
+}
+
+/** A swatch's colour as a fill (see {@link resolveSwatchSpans}), or
+ *  undefined when it names no palette entry. */
+function resolveSwatchColor(value: string, palette: ColorPaletteEntry[] | undefined): string | undefined {
+  const raw = value.trim();
+  const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?$/i.exec(raw);
+  if (short) return `#${short.slice(1).filter(Boolean).map((d) => d + d).join('')}`.toLowerCase();
+  if (/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(raw)) return raw.toLowerCase();
+  if (isSwatchFill(raw)) return raw;
+  return palette?.find((e) => e.id === raw)?.value.hex;
+}
+
+/** The picture an inline symbol draws from a resource (#1058): a bitmap's
+ *  or an SVG's file and its proportions (square when an SVG declares no
+ *  size); undefined for any other resource. */
+function iconPicture(resource: Resource | undefined): NonNullable<InlineIcon['picture']> | undefined {
+  if (resource?.kind === 'bitmap' && resource.bitmap?.fileId) {
+    const { width, height } = resource.bitmap;
+    return { fileId: resource.bitmap.fileId, format: resource.bitmap.format, svg: false, aspect: width > 0 && height > 0 ? width / height : 1 };
+  }
+  if (resource?.kind === 'svg' && resource.svg?.fileId) {
+    const { width, height } = resource.svg;
+    return { fileId: resource.svg.fileId, svg: true, aspect: width && height && width > 0 && height > 0 ? width / height : 1 };
+  }
+  return undefined;
 }
 
 /** Inline chips of a table cell, sized against the cell's font. */
@@ -1075,7 +1105,7 @@ function layoutTableIn(
         resourceTypes,
         resources,
         refStyle,
-      ), style.palette), style.chips, set), style.annotations, set.fontString);
+      ), style.palette, resources), style.chips, set), style.annotations, set.fontString);
       const align = cellAlignOf(cell.align, opposite);
       const m = measureCellContent(
         spans,
@@ -1367,7 +1397,7 @@ function layoutCaptionTextIn(input: CaptionTextInput): CaptionTextLayout {
       resourceTypes,
       resources,
       refStyle,
-    ), resolved.colorPalette), chipContextOf(resolved), captionFontPx), { cjk: resolved.cjk, dpi }, captionFontString);
+    ), resolved.colorPalette, resources), chipContextOf(resolved), captionFontPx), { cjk: resolved.cjk, dpi }, captionFontString);
     // Description spans pick up the configured slant on top of their own markup.
     const descSpans: InlineSpan[] = cs.descriptionItalic
       ? resolvedSpans.map((s) => ({ ...s, italic: s.italic || true }))
@@ -1439,7 +1469,7 @@ export function layoutLabelLines(input: LabelLinesInput): VDTLine[] {
       input.resourceTypes ?? [],
       input.resources ?? [],
       refStyle,
-    ), resolved.colorPalette), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
+    ), resolved.colorPalette, input.resources), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
     const tracking = input.letterSpacingPx ?? 0;
     // A name on a map breaks between words only.
     const lines = measureSnippetLines(spans, input.fonts, Math.max(1, input.maxWidthPx), lineHeightPx, {
@@ -1702,7 +1732,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
       resourceTypes,
       resources,
       refStyle,
-    ), palette), chipContextOf(resolved), noteFontPx), { cjk: resolved.cjk, dpi }, noteFontString);
+    ), palette, resources), chipContextOf(resolved), noteFontPx), { cjk: resolved.cjk, dpi }, noteFontString);
     const slanted: InlineSpan[] = cs.note.italic
       ? noteSpans.map((s) => ({ ...s, italic: s.italic || true }))
       : noteSpans;

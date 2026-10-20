@@ -4,7 +4,7 @@ import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
 import { parseFontString } from '../fontString';
 import { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
+import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
 import { paintChip } from './chip';
 import { drawTaskBoxPx } from './taskBox';
 import { drawRightToLeftRun } from './rtlRun';
@@ -19,6 +19,7 @@ import { tagArtifact, tagContent, type StructElem } from './tagging';
 import type { StructureFlow } from './structureFlow';
 import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
 import { inkScaleOperators } from './inkScale';
+import { paintSwatchSegmentPdf } from './inlineIcon';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
@@ -303,8 +304,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      tagContent(ctx, elem);
-      drawSwatchPx(ctx, x, baseline, seg.width, seg.swatch?.color, blockColor);
+      paintSwatchSegmentPdf(ctx, seg, x, baseline, blockColor, fontCache, blockFont, elem);
       x += seg.width;
       continue;
     }

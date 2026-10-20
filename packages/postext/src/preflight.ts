@@ -379,6 +379,9 @@ function runPreflight(doc: VDTDocument, options: PreflightOptions, placed?: Plac
           checkLines(layout.lines, layout.fontString, layout.color, lsrc, false);
           checkCoverage(layout.halo?.color, pageIndex);
           if (layout.background) checkCoverage(layout.background.color, pageIndex);
+          // A plate's outline and the inks of inline symbols (#1058).
+          checkCoverage(layout.background?.border?.color, pageIndex);
+          for (const line of layout.lines) for (const s of line.segments ?? []) checkCoverage(s.swatch?.icon?.color, pageIndex);
           const r = label.rect;
           if (r && !flowPage && !rb.rotation) {
             const d = Math.min(r.x - trim.x, r.y - trim.y, trim.x + trim.width - (r.x + r.width), trim.y + trim.height - (r.y + r.height));

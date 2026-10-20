@@ -39,6 +39,8 @@ const PAGE_FENCE_RE = /^(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
 const LONG_CLOSE_RE = /^(:{4,})\s*$/;
 /** A `::label[TEXT]{…}` line of a `:::figure` (#854). */
 const LABEL_LINE_RE = /^::label\[/;
+/** A `:::label{…}` fence of a `:::figure` (#1058): a label over several lines. */
+const LABEL_CONTAINER_RE = /^:::label(?:\{([^}]*)\})?$/;
 /** `::alt[…]`, `::caption[…]`, `::note[…]`: a figure's own words (#935). */
 const FIGURE_WORD_LINE_RE = /^::(alt|caption|note)\[/;
 /** `at="62% 48%"`: a label's place in percents of the picture. */
@@ -433,13 +435,14 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
    *  its forced line breaks (#620) become `BREAK_PLACEHOLDER` (see
    *  `replaceBodyBreaks`; `raw` joins its lines with a line feed after a
    *  line that ends in a backslash). Maths issues are reported once, by
-   *  the reading with `report`. */
-  const inlineRun = (raw: string, srcStart: number, srcEnd: number, hardBreaks = false, report = true): { text: string; spans: ContentBlock['spans']; sourceMap: number[] } => {
+   *  the reading with `report`. With `icons` the inline symbols
+   *  (`:icon[…]{…}`, #1058) are read: a figure label's text. */
+  const inlineRun = (raw: string, srcStart: number, srcEnd: number, hardBreaks = false, report = true, icons = false): { text: string; spans: ContentBlock['spans']; sourceMap: number[] } => {
     const chipExtract = extractInlineChips(protectCodeSpans(raw), srcStart);
     const fnExtract = extractInlineFootnotes(chipExtract.cleaned, srcStart);
     const refExtract = extractInlineRefs(fnExtract.cleaned, srcStart);
     const citeExtract = extractInlineCitations(refExtract.cleaned, srcStart);
-    const swExtract = extractInlineSwatches(citeExtract.cleaned, srcStart);
+    const swExtract = extractInlineSwatches(citeExtract.cleaned, srcStart, { icons });
     const mathExtract = extractInlineMath(swExtract.cleaned, null, srcStart, srcEnd);
     if (report) issues.push(...mathExtract.issues);
     // Tabs (#622): `:tab` and tab characters, outside code and maths.
@@ -761,6 +764,15 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
         k++;
         continue;
       }
+      // A label written over several lines (#1058): `:::label{at=…}` up to
+      // its own `:::`, each line a line of the label.
+      const multi = LABEL_CONTAINER_RE.test(t) ? parseLabelContainer(k) : undefined;
+      if (multi) {
+        labels.push(multi.label);
+        last = multi.close;
+        k = multi.close + 1;
+        continue;
+      }
       const label = LABEL_LINE_RE.test(t) ? parseLabel(k) : undefined;
       if (!label) break;
       labels.push(label);
@@ -847,22 +859,87 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     const attrSources = blob ? attrSourcesOf(blob, blobStart) : {};
     const textStart = lineStart + open;
     const textEnd = lineStart + close;
-    const run = inlineRun(raw.slice(open, close), textStart, textEnd);
-    const atRaw = attrs.at ?? '';
-    const pct = LABEL_AT_PERCENT_RE.exec(atRaw);
-    const at = pct ? { x: Number(pct[1]) / 100, y: Number(pct[2]) / 100 } : { anchor: atRaw.trim() };
-    const style = attrs.style?.trim();
+    const run = inlineRun(raw.slice(open, close), textStart, textEnd, false, true, true);
     return {
       text: run.text,
       spans: run.spans,
       sourceMap: run.sourceMap,
-      at,
-      ...(style ? { style } : {}),
+      ...labelAtStyle(attrs),
       textStart,
       textEnd,
       attrSources,
       sourceStart: lineStart + lead,
       sourceEnd: lineStart + body.length,
+    };
+  };
+
+  /** Where a label stands and its style, from its attributes. */
+  const labelAtStyle = (attrs: DirectiveAttrs): Pick<FigureLabel, 'at' | 'style'> => {
+    const atRaw = attrs.at ?? '';
+    const pct = LABEL_AT_PERCENT_RE.exec(atRaw);
+    const at = pct ? { x: Number(pct[1]) / 100, y: Number(pct[2]) / 100 } : { anchor: atRaw.trim() };
+    const style = attrs.style?.trim();
+    return { at, ...(style ? { style } : {}) };
+  };
+
+  /**
+   * The `:::label{at=… style=…}` whose fence is line `k` (#1058), up to the
+   * first `:::` after it: a label whose lines are kept as written, one line
+   * of the label per non-blank source line (a map's key, a name over two
+   * lines). A backslash or two spaces ending a line (Markdown's hard break)
+   * say the same and are dropped; `\\` still breaks inside a line. Each
+   * line is read as a one-line label's text is; the break between two is
+   * one `BREAK_PLACEHOLDER`, at the end of the earlier line in the source.
+   * Undefined when no `:::` closes it or it holds no text.
+   */
+  const parseLabelContainer = (k: number): { label: FigureLabel; close: number } | undefined => {
+    let close = k + 1;
+    while (close < rawLines.length && !CONTAINER_CLOSE_RE.test(rawLines[close]!.trim())) close++;
+    if (close >= rawLines.length) return undefined;
+    const fence = rawLines[k]!;
+    const blob = LABEL_CONTAINER_RE.exec(fence.trim())![1] ?? '';
+    const blobStart = lineOffsets[k]! + fence.indexOf('{') + 1;
+    const attrs = parseDirectiveAttrs(blob);
+    const attrSources = blob ? attrSourcesOf(blob, blobStart) : {};
+    let text = '';
+    const spans: ContentBlock['spans'] = [];
+    const sourceMap: number[] = [];
+    let textStart = -1;
+    let textEnd = -1;
+    for (let j = k + 1; j < close; j++) {
+      const raw = rawLines[j]!;
+      const lead = raw.length - raw.trimStart().length;
+      // A hard break's mark ends the line: dropped, the line is kept.
+      let body = raw.trimEnd();
+      if (body.endsWith('\\') && !body.endsWith('\\\\')) body = body.slice(0, -1).trimEnd();
+      if (body.length <= lead) continue;
+      const start = lineOffsets[j]! + lead;
+      const run = inlineRun(body.slice(lead), start, start + body.length - lead, false, true, true);
+      if (run.text.trim() === '') continue;
+      if (textStart >= 0) {
+        text += BREAK_PLACEHOLDER;
+        spans.push({ text: BREAK_PLACEHOLDER, bold: false, italic: false });
+        sourceMap.push(textEnd);
+      } else textStart = start;
+      text += run.text;
+      spans.push(...run.spans);
+      sourceMap.push(...run.sourceMap);
+      textEnd = start + body.length - lead;
+    }
+    if (textStart < 0) return undefined;
+    return {
+      label: {
+        text,
+        spans,
+        sourceMap,
+        ...labelAtStyle(attrs),
+        textStart,
+        textEnd,
+        attrSources,
+        sourceStart: lineOffsets[k]! + (fence.length - fence.trimStart().length),
+        sourceEnd: lineEndOffset(close),
+      },
+      close,
     };
   };
 

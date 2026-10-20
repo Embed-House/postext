@@ -1320,7 +1320,7 @@ class DocWalker {
       ...(this.wraps.has(block.id) ? { wrap: this.wraps.get(block.id)! } : {}),
       // A `:::figure`'s labels (#862): the picture's text, in label order.
       // A forced break in a label (`Pico Albar \\ 2565 m`) reads as a space.
-      ...(rb.labels?.some((l) => labelPlainText(l.text)) ? { labels: rb.labels.map((l) => labelPlainText(l.text)).filter(Boolean) } : {}),
+      ...(rb.labels?.some((l) => labelPlainText(l.text, l.icons)) ? { labels: rb.labels.map((l) => labelPlainText(l.text, l.icons)).filter(Boolean) } : {}),
     };
     // The labels the print draws as text, drawn over the picture (#955).
     // The pages of a right-to-left book are laid out mirrored: their

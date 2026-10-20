@@ -127,12 +127,9 @@ export interface ResourceAnchorRound2 {
 
 // §12.5 (C7) ----------------------------------------------------------------
 
-/** `LabelStyle` additions. */
+/** `LabelStyle` additions (`align`, `border`, `radius` and `kind` are in
+ *  `composed/types.ts` since C7, #1058). */
 export interface LabelStyleRound2 {
-  align?: 'start' | 'center' | 'end';
-  border?: { color: ColorValue; width: Dimension };
-  radius?: Dimension;
-  kind?: 'legend';
   leader?: LeaderStyle;
 }
 

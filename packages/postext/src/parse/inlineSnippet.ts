@@ -10,7 +10,8 @@ import { extractInlineMath, injectMathSpans } from './inlineMath';
  * Inline snippets — the self-contained rich-text runs held by a resource
  * (table cells, captions, notes). They share the body text's inline
  * microformat (`**bold**`, `*italic*`, `` `code` ``, `:ref{…}`, `:swatch{…}`,
- * `:chip[…]`) but live
+ * `:chip[…]`; and the inline symbols `:icon[…]{…}`, #1058, which the body
+ * text does not read) but live
  * outside the markdown document, so their "source" is the snippet string
  * itself and offsets are relative to it.
  *
@@ -42,7 +43,7 @@ export function parseInlineSnippetSpans(content: string, options?: { citations?:
   const chips = extractInlineChips(protectDollarEscapes(replaceSnippetBreaks(protectCodeSpans(content))), 0);
   const { cleaned, refs } = extractInlineRefs(chips.cleaned, 0);
   const cites = options?.citations ? extractInlineCitations(cleaned, 0) : { cleaned, citations: [] };
-  const sw = extractInlineSwatches(cites.cleaned, 0);
+  const sw = extractInlineSwatches(cites.cleaned, 0, { icons: true });
   const maths = sw.cleaned.includes('$') ? extractInlineMath(sw.cleaned, null, 0, sw.cleaned.length, true) : { cleaned: sw.cleaned, maths: [] };
   // A line end between two Chinese or Japanese characters is no space
   // (#181); elsewhere it stays whitespace.

@@ -1,7 +1,8 @@
 import { FORCED_BREAK, measureForcedBreaks } from './hardBreaks';
 import { placeTab, type TabLeaderPlacement, type TabRun, type TabStopPx } from './tabs';
 import type { TabStopAlign } from '../types';
-import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt';
+import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTInlineIcon, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt';
+import { measureInlineIcon } from './inlineIcon';
 import { uprightArabicSpans, uprightFace } from '../uprightArabic';
 import { createBoundingBox } from '../vdt';
 import type { MathRender } from '../math/types';
@@ -144,7 +145,7 @@ export interface RichToken {
   labelTab?: 'lead' | 'gap';
   /** When present, this token is an inline colour swatch (`:swatch{…}`): an
    *  atomic square of `width` px, filled with `color` (hex) when resolved. */
-  swatch?: { color?: string };
+  swatch?: { color?: string; icon?: VDTInlineIcon };
   /** When present, this token is an inline chip (`:chip[…]`): an atomic box
    *  of `width` px (margins included) with its own text runs. */
   chip?: VDTChip;
@@ -1242,6 +1243,11 @@ export function atomicSpanToken(
   if (span.chip) return chipToken(span, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
   if (span.swatch) {
     const swatchFont = pickSpanFont(span.bold, span.italic, normalFont, boldFont, italicFont, boldItalicFont);
+    if (span.swatch.icon) {
+      // An inline symbol (#1058): one box, its own width.
+      const icon = measureInlineIcon(span.swatch.icon, span.swatch.color, normalFont);
+      return { text: span.text, bold: span.bold, italic: span.italic, captionLabel: span.captionLabel, kind: 'text', width: icon.widthPx, swatch: { icon } };
+    }
     return {
       text: span.text,
       bold: span.bold,

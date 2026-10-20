@@ -10,8 +10,23 @@ import type { VDTFigureLabel } from '../vdt';
 /** A label's text read as one line (#1045): its forced line breaks (a
  *  `\\` that ends a word, `Pico Albar \\ 2565 m`) are spaces, as is any
  *  run of white space. `VDTFigureLabel.text` keeps them, as written. */
-export function labelPlainText(text: string): string {
-  return text.replace(/\\\\(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+export function labelPlainText(text: string, icons?: VDTFigureLabel['icons']): string {
+  return withIconAlts(text, icons).replace(/\\\\(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** `text` with the placeholder of each inline symbol (`icons`, #1058) read
+ *  as its alternative text in brackets, `[Capital]`, or as nothing when it
+ *  has none. */
+export function withIconAlts(text: string, icons: VDTFigureLabel['icons']): string {
+  if (!icons || icons.length === 0) return text;
+  let out = '';
+  let from = 0;
+  for (const { at, alt } of [...icons].sort((a, b) => a.at - b.at)) {
+    if (at < from || at >= text.length) continue;
+    out += text.slice(from, at) + (alt ? `[${alt}]` : '');
+    from = at + 1;
+  }
+  return out + text.slice(from);
 }
 
 /** A figure's alternative text followed by its labels, in the order
@@ -19,8 +34,8 @@ export function labelPlainText(text: string): string {
  *  enumeration comma for Chinese and Japanese labels, the Arabic comma for
  *  Arabic ones. The labels alone when there is no alternative text; the
  *  text as it is when there are no labels. */
-export function altWithLabels(alt: string, labels: readonly Pick<VDTFigureLabel, 'text'>[] | undefined): string {
-  const texts = (labels ?? []).map((l) => labelPlainText(l.text)).filter(Boolean);
+export function altWithLabels(alt: string, labels: readonly Pick<VDTFigureLabel, 'text' | 'icons'>[] | undefined): string {
+  const texts = (labels ?? []).map((l) => labelPlainText(l.text, l.icons)).filter(Boolean);
   if (texts.length === 0) return alt;
   const all = texts.join('');
   if (/[぀-ヿ㐀-鿿]/.test(all)) return alt ? `${alt}（${texts.join('、')}）` : texts.join('、');

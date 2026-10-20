@@ -63,7 +63,7 @@ function drawRoundedRectPath(
  * centred on the edge and reached half its width outside the box. Used by
  * design boxes, text-element boxes and callout frames.
  */
-function drawBoxBackground(
+export function drawBoxBackground(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,

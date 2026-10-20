@@ -452,7 +452,10 @@ function recolorBlock(block: VDTBlock, r: PageRemaps): void {
       styleId !== undefined ? [[`label:${setting}@${styleId}`], [`label:${setting}`], rest] : [[`label:${setting}`], rest];
     layout.color = r.by(groups('color', 'text:color'))(layout.color) ?? layout.color;
     if (layout.halo) layout.halo = { ...layout.halo, color: r.by(groups('halo.color'))(layout.halo.color) ?? layout.halo.color };
-    if (layout.background) layout.background = { ...layout.background, color: r.by(groups('background'))(layout.background.color) ?? layout.background.color };
+    if (layout.background?.color) layout.background = { ...layout.background, color: r.by(groups('background'))(layout.background.color) ?? layout.background.color };
+    // The plate's outline (#1058).
+    const border = layout.background?.border;
+    if (border) layout.background = { ...layout.background!, border: { ...border, color: r.by(groups('border.color'))(border.color) ?? border.color } };
   }
   if (rb.table) {
     const t = rb.table;

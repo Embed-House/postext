@@ -162,6 +162,9 @@ function addLinesFonts(lines: readonly VDTLine[] | undefined, faces: FaceSet, ou
     for (const seg of segments) {
       if (seg.kind === 'space' || seg.kind === 'math' || seg.kind === 'swatch') {
         if (seg.kind === 'space') add(out, faces.normal, seg.text);
+        // An inline symbol's glyph, in its own face (#1058).
+        const icon = seg.swatch?.icon;
+        if (icon?.glyph && icon.fontString) add(out, icon.fontString, icon.glyph);
         continue;
       }
       // A chip may set its own family; its runs carry their faces.

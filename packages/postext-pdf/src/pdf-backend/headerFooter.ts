@@ -121,7 +121,7 @@ export function roundedRectSvgPath(
  * border width. A border as wide as the box fills it. Up to postext 1.4 the
  * stroke was centred on the edge.
  */
-function drawRoundedBox(
+export function drawRoundedBox(
   ctx: PageCtx,
   xPx: number,
   yPx: number,

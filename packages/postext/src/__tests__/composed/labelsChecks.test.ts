@@ -256,7 +256,7 @@ describe('part palettes recolour label styles (#902)', () => {
     expect(first.background!.color).toBe('#ffeecc');
     expect(first.halo!.color).toBe('#ffeecc');
     expect(last.color.toLowerCase()).toBe('#f6c297');
-    expect(last.background!.color.toLowerCase()).toBe('#112233');
+    expect(last.background!.color!.toLowerCase()).toBe('#112233');
     expect(last.halo!.color.toLowerCase()).toBe('#112233');
   });
 

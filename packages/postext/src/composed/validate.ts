@@ -33,6 +33,8 @@ import {
   LABEL_FONT_STYLES,
   LABEL_TEXT_TRANSFORMS,
   LABEL_OVERLAPS,
+  LABEL_ALIGNS,
+  LABEL_KINDS,
   LOOK_TREE,
   TEMPLATE_AREAS,
   DEFAULT_FRAME,
@@ -75,8 +77,9 @@ const GROUP_KEYS = {
 const LABEL_STYLE_KEYS = {
   id: true, name: true, paragraphStyle: true, fontFamily: true, fontSize: true, fontWeight: true, fontStyle: true,
   color: true, textTransform: true, letterSpacing: true, halo: true, background: true, padding: true, minScale: true,
-  writingMode: true, overlap: true,
+  writingMode: true, overlap: true, align: true, border: true, radius: true, kind: true,
 } satisfies Record<keyof LabelStyle, true>;
+const LABEL_BORDER_KEYS = { color: true, width: true } satisfies Record<keyof NonNullable<LabelStyle['border']>, true>;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
@@ -332,6 +335,9 @@ function checkLabelStyles(raw: unknown, prefix: string, push: Push): void {
     choice(s, 'textTransform', LABEL_TEXT_TRANSFORMS, DEFAULT_LABEL_STYLE.textTransform, path, push);
     choice(s, 'writingMode', FRAME_WRITING_MODES, 'horizontal-tb', path, push);
     choice(s, 'overlap', LABEL_OVERLAPS, 'check', path, push);
+    choice(s, 'align', LABEL_ALIGNS, '', path, push);
+    choice(s, 'kind', LABEL_KINDS, '', path, push);
+    unknownKeys(s.border, LABEL_BORDER_KEYS, `${path}/border`, push);
   });
 }
 

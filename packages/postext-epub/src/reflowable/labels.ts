@@ -91,8 +91,14 @@ function labelGroup(layout: VDTFigureLabelLayout): string {
   const m = figureLabelMatrix(layout, 0, 0);
   const out: string[] = [];
   if (layout.background) {
-    const r = layout.background.rect;
-    out.push(`<rect x="${n(r.x)}" y="${n(r.y)}" width="${n(r.width)}" height="${n(r.height)}" fill="${xmlAttr(layout.background.color)}"/>`);
+    const plate = layout.background;
+    const r = plate.rect;
+    // A plate's outline (drawn inside it) and corners (#1058).
+    const bw = plate.border?.widthPx ?? 0;
+    const rect = bw > 0 ? { x: r.x + bw / 2, y: r.y + bw / 2, width: Math.max(0, r.width - bw), height: Math.max(0, r.height - bw) } : r;
+    const radius = plate.radiusPx ? ` rx="${n(Math.max(0, plate.radiusPx - bw / 2))}"` : '';
+    const stroke = plate.border && bw > 0 ? ` stroke="${xmlAttr(plate.border.color)}" stroke-width="${n(bw)}"` : '';
+    out.push(`<rect x="${n(rect.x)}" y="${n(rect.y)}" width="${n(rect.width)}" height="${n(rect.height)}"${radius} fill="${plate.color ? xmlAttr(plate.color) : 'none'}"${stroke}/>`);
   }
   if (layout.halo && layout.halo.widthPx > 0) {
     const halo = ` fill="${xmlAttr(layout.halo.color)}" stroke="${xmlAttr(layout.halo.color)}" stroke-width="${n(2 * layout.halo.widthPx)}" stroke-linejoin="round"`;
