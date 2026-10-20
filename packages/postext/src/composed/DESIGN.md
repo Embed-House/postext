@@ -1613,3 +1613,220 @@ decoration, backends) · P14 #856 groups (§5.3, log) · P16 #857 source map and
 (§6) · P5 #858 ladder and warnings (§5.4, §5.7) · P15 #859 continuation (§5.6) · P6 #860 anchors
 and labels (§2.6, §3.3) · P7 #861 spreads (§2.1) · P9 #862 HTML/EPUB (§8) · P11 #883 contours (§5.12) ·
 P12 #885 comics on frames (§7, §7.1).
+
+## 12. Round 2 (#1051): lines, shapes, repeats, modules and overlap checks
+
+Design of #1052 (C1). Status: approved. Draft types: [`round2Types.ts`](./round2Types.ts) (no runtime
+effect; each issue moves its part into `types.ts` / `composed/types.ts` and deletes it from the draft).
+Each issue records what it built in a §12.x of its own, as §5.x did for round 1.
+
+Why: a port of a 28-page children's textbook (checked privately) could only draw the lines of its
+tree diagrams, its org chart, its timeline spread and its map notes inside a raster ground per page,
+needed 27 one-off templates for 28 pages, drew its card and tabs into the same grounds, and passed
+`check` with a clipped caption and a tab under a photo.
+
+### 12.1 One vector primitive: `VDTDesignPathBlock`
+
+Connectors (C5, C6), path elements (C9) and the shapes of C8 that a rounded rectangle cannot draw (a
+card joined to its tab) all paint through one new design block, so each backend learns one thing:
+
+```ts
+interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
+  kind: 'path'
+  bbox: BoundingBox                         // union of the ink, for hit tests and clips
+  subpaths: VDTPathCommand[][]              // page px; M L C Q Z (absolute)
+  fill?: string                             // resolved colour; absent = no fill
+  fillRule?: 'nonzero' | 'evenodd'
+  stroke?: { color: string; widthPx: number; dash?: number[]; cap?: 'butt'|'round'|'square';
+             join?: 'miter'|'round'|'bevel' }
+  markers?: { kind: 'dot' | 'arrow'; x: number; y: number; angle: number; sizePx: number; color: string }[]
+}
+```
+
+Canvas (`Path2D`-free, plain `moveTo/lineTo/bezierCurveTo`), PDF (`m l c h f/S/B`, dash `d`), HTML/EPUB
+(inline `<svg>` positioned like a rule), tagged PDF (Layout artifact), preflight (ink colours),
+contrast (ignored: not text), part palettes (`partPalette.ts` recolours `fill`/`stroke`/markers like a
+rule's colour). The part of C5 that lands first adds it; C8 and C9 reuse it.
+
+`VDTDesignBoxStyle` gains `borderRadiiPx?: [tl, tr, br, bl]` and `borderSides?: { top, right, bottom,
+left: { color, widthPx } | null }` (C8); a box with neither paints as today.
+
+### 12.2 Anchoring to a point of a side (C4)
+
+- `ElementSizeTo.edge` adds `'center'`: the middle of the target box on the axis being sized
+  (horizontal centre for a width, vertical centre for a height).
+- `ElementAnchor.at?: 'start' | 'center' | 'end' | number`: on a side edge (`top`, `bottom`, `left`,
+  `right` and the `-start`/`-end` forms read as their side) of a `'#frame'`/`'#group'`, the point along
+  that side (a number is a fraction, 0 at the side's start in the page's line direction). Default: the
+  edge's own point (today's behaviour). Ignored on the container, page and bleed.
+- Both are read by every design slot (composed decoration, header/footer, heading designs).
+
+### 12.3 Connectors (C5)
+
+A decoration element of composed templates (not of running heads: they have no frames):
+
+```ts
+interface DesignConnectorElement {
+  kind: 'connector'; id: string; parity?; pages?; pin?
+  from: ConnectorEnd                        // one end
+  to: ConnectorEnd | ConnectorEnd[]         // one or more; '#card[*]' expands to every instance (§12.6)
+  routing?: 'straight' | 'elbow' | 'tree'   // default 'elbow'
+  radius?: Dimension                        // corner radius of elbow/tree bends, default 0
+  trunk?: number                            // tree/elbow: where the bar runs between the ends, 0..1, default 0.5
+  color?: ColorValue                        // palette-linked like rules; default the main colour
+  width?: Dimension                         // default 0.75 pt
+  dash?: Dimension[]
+  startCap?: 'none' | 'dot' | 'arrow'; endCap?: 'none' | 'dot' | 'arrow'   // default 'none'
+  capSize?: Dimension                       // default 3 × width
+}
+interface ConnectorEnd {
+  to: `#${string}`                          // frame, group, frame instance '#card[2]', module frame '#tree[1].left'
+  side?: 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end'   // default: the side facing the other end
+  at?: 'start' | 'center' | 'end' | number  // default 'center'
+  gap?: Dimension                           // room between the frame's edge and the line, default 0
+  anchor?: string                           // C6: a figure anchor id of the picture the frame holds
+}
+```
+
+- **Routing.** `straight`: one segment. `elbow`: horizontal–vertical–horizontal between left/right
+  sides, vertical–horizontal–vertical between top/bottom sides, an L when the sides are perpendicular;
+  the bar at `trunk` of the way. `tree`: one parent (`from`) and children (`to`): a trunk from the parent
+  to the bar at `trunk` of the gap between the parent's side and the nearest child, the bar across the
+  children's points (and the parent's, when it is outside them), one drop to each child. A child whose
+  side point is on the bar's line gets no drop.
+- **When.** Laid with the decoration, after the frames' final boxes (§5.8), so it follows groups, the
+  ladder and continuation. `pin: true` reads declared boxes. An end on a frame that is collapsed, empty
+  and optional, missing on this page, or on the other page of a spread with no `crossGutter` path:
+  the end is dropped (a tree keeps its other children) and the reflow log says `connectorDropped`
+  (info). Every end dropped: nothing is drawn.
+- **Paint.** Decoration layer (0), under the frames; a `VDTDesignPathBlock` with markers. Spreads:
+  laid on the sheet like the rest of the decoration (§5.10), split per page by `splitSpreadDecoration`
+  (a path is clipped by the page's `sheetClip`). Right-to-left pages: `start`/`end` follow the flow;
+  the geometry comes from mirrored frame boxes, nothing else to mirror.
+- **Validation.** `frameAnchorUnknown` for an unknown `to` (pointer into `from`/`to`), `unknownConfigValue`
+  for routing, caps, side, `at` outside 0..1.
+
+### 12.4 Leaders to picture anchors (C6)
+
+- A `ConnectorEnd` with `anchor` ends at that anchor of the picture its frame holds (the first
+  `:::figure`/`::resource` of the frame's story that has the anchor), through crop, safe area and fit
+  scale as labels are mapped (`pictureToBody`, `composed/labels.ts`). Unknown anchor:
+  `labelAnchorUnknown` with `connector: id`.
+- Labels: `ResourceAnchor.labelAt?: { x: number; y: number }` (fractions of the picture) sets the label
+  away from its point, and `leader?: boolean | LeaderStyle` draws a line from the label's box (nearest
+  side, centre) to the point; `LabelStyle.leader?: LeaderStyle` gives the look:
+  `{ color?, width?, dash?, startCap?, endCap? }` (default end cap `'dot'`). In Markdown,
+  `::label[…]{at="legend" leader}` turns it on for one label; `leader="none"` off.
+- Painted with the figure's labels (after the picture), as path blocks in the figure's label layer;
+  HTML/EPUB as SVG in the figure; the alt text is unchanged.
+
+### 12.5 Legends and inline symbols in labels (C7)
+
+- `:icon[alt]{resource="id"}` (a bitmap or SVG resource) and `:icon[alt]{glyph="⊙" font="…"}` and
+  `:icon[alt]{line="solid|dashed|dotted" color="…"}` (a line sample), inline in label text: sized to the
+  line's cap height by default (`size=` em), tinted with `color=`. Allowed in labels and, since the
+  label line setter is the caption setter, in captions; not in body text in this round.
+- Labels keep authored line breaks (a hard break in the label's Markdown, two trailing spaces or `\`
+  at the end of a line inside a `::label` container form), besides `\\`.
+- `LabelStyle` gains `align?: 'start' | 'center' | 'end'` (the lines inside the label box), `border?:
+  { color, width }`, `radius?`, and `kind?: 'legend'`: a legend is a label whose lines are rows of symbol
+  + text aligned on the symbol column (the first `:icon` of each line hangs in a column as wide as the
+  widest symbol).
+- Scale bars stay artwork; their numbers are labels on anchors along the bar.
+
+### 12.6 Repeating frames (C10)
+
+```ts
+interface FrameGroupConfig {
+  kind?: 'stack' | 'row' | 'grid'
+  columns?: number; columnGap?: Dimension; rowGap?: Dimension     // grid
+  rowAlign?: 'start' | 'center' | 'end' | 'stretch'               // grid: cells in a row, default 'stretch'
+  repeat?: { frames: string[]; max?: number }                     // grid: the frame set laid per cell
+}
+```
+
+- The first frame of `repeat.frames` is the cell's **main** frame: the set is laid in each cell with the
+  main frame taking the cell's width and the other frames anchored as the template draws them (to the
+  main frame or to each other; anchors to frames outside the set are kept).
+- **Items.** Each `:::frame{slot="<main>"}` piece of the page is one item (pieces no longer
+  concatenate for a repeated slot). Inside an item, a block with `slot="<member>"` (a member of the set)
+  goes to that member's instance; the rest goes to the main frame. One `::resource{slot="<main>"}` (or
+  `slot="<member>"`) outside a container is also an item of its own.
+- **Instances** are named `<frame>[n]` (1-based) for the main frame and every member of the set:
+  `#card[2]`, `#caption[2]`; `[*]` in a connector's `to` expands to all. Warnings, reflow log, source map, `VDTFrame.id`
+  (`cp<fence>:<frame>[n]`) and the Sandbox use the instance name.
+- **Layout.** Cells fill rows start to end; a row is as tall as its tallest cell (`rowAlign` places
+  shorter ones); `max` caps the items, the rest is `slotUnknown`-like (`repeatOverflow`). The grid is one
+  group step (§5.9); `grow`/`shrink` apply to rows. Ladder: a grid that does not fit its box first runs
+  the ladder per row (text, then pictures, per instance), then continues **by whole rows** when the
+  main frame has `overflow.continueIn` (the instances that did not fit go to the receiving page's grid),
+  else warns `frameOverflow` on the last instance.
+- Resolution: `resolvePageTemplate` stays per template; the instances are made in `composePage` from the
+  page's item count (`expandRepeats`, before geometry), so the template cache is unchanged.
+
+### 12.7 Modules (C11)
+
+- A template with `role: 'module'` is a **module**: frames, groups, decoration, connectors; no `area`,
+  header, footer, variants or spread; never used by a page fence (`moduleAsPage`).
+- A page template asks for modules in a group: `groups: [{ name: 'body', kind: 'stack', modules: true }]`
+  takes the page's modules in Markdown order; `:::module{template="arbol-3" name="?"}` (three colons,
+  inside a page fence) holds that module's content, its blocks addressed by the module's slot names.
+- **Instances** are scoped: `<name>.<frame>` with `name` from the fence or `<template>[n]`; anchors and
+  connectors inside a module are rewritten to the instance; a module frame anchored to `'container'` reads
+  its module box. A module is a box of the group: as wide as the group, as tall as its content (its
+  frames' union), with the group's `gap` between modules.
+- **Expansion.** Like repeats, modules are expanded per page in `composePage` into ordinary frames, groups
+  and decoration (`expandModules`) before geometry: everything after (groups, ladder, continuation, source
+  map, paint) sees plain frames. A module that does not fit moves whole to a continuation page when the
+  page's module group continues (`overflow.continueIn` on the group, new), else the ladder runs on its
+  frames.
+- `extends` works between modules; a module may hold grids (§12.6); a module inside a module is not
+  supported in this round (`moduleNested`).
+
+### 12.8 Shapes (C8, C9)
+
+- Callout/frame styles and `ElementBoxStyle`: `borderRadius` takes a `Dimension` or `{ topLeft?,
+  topRight?, bottomRight?, bottomLeft? }`; `border` (callouts) / `borderSides` (decoration boxes) take
+  per-side `{ enabled?, color?, width? }` over the whole border's values.
+- **Joined tab** (`CalloutLabelConfig.joined?: boolean`, `fillet?: Dimension`): the tab and the box are
+  one outline: the tab's side corners meet the box with concave fillets (default the box radius), the
+  box's border runs round the tab, one fill. Works for every `position`; with `offset` 0 only (a joined
+  tab sits on the edge).
+- **Path element** (`DesignPathElement`, every design slot): `{ kind: 'path', id, placement, d, viewBox?:
+  [w, h], fill?, stroke?, width?, dash?, preserveAspectRatio?: 'none' | 'meet' }`: SVG path data in the
+  `viewBox` (default `[1, 1]`: fractions of the box), stretched to the element's box (`'none'`, default)
+  or fitted. Colours palette-linked. Bad path data: `unknownConfigValue` and nothing drawn.
+
+### 12.9 Glyph tab icon (C3)
+
+`CalloutLabelConfig.icon` gains `kind?: 'resource' | 'glyph'` (default `'resource'` when
+`resourceId`), `glyph`, `fontFamily`, `fontWeight`, `scale` (of the tab's text size, default 1) and
+`color` (default the label `color`). `placement` and `gap` as for pictures. Tagged PDF: the glyph is an
+artifact; HTML `aria-hidden`.
+
+### 12.10 Overlap checks (C2)
+
+- `frameCovered` (warning): a line of a frame (its ink box) or a picture block lies under the box of a
+  frame painted later (higher `layer`, or the same layer later in template order) that has a fill, a
+  picture or text over that point; or under a decoration path/box painted later (none today, decoration
+  is below frames). Data: page, template, `frame`, `coveredBy`, overlap mm², the first covered words.
+  Proposals: `{ kind: 'layer', path: …/coveredBy/layer, value }`, `{ kind: 'exclude', path:
+  …/coveredBy/exclude, value: 'push' }`, `{ kind: 'move' }` (data only).
+- `frameOutsideArea` (warning): a frame's final box (ink, for an auto frame) runs past the trim (bleed
+  for `area: 'bleed'` templates) or past the box of the frame or group it is anchored *inside*
+  (a nine-point anchor on `#x` with an offset into it). Proposals: `maxHeight`, `minHeight` of siblings,
+  `continueIn`.
+- `FrameConfig.overlap?: 'check' | 'allow'` (default `'check'`): `'allow'` on the covering frame (art
+  meant to sit over text) or on the covered one silences the pair.
+- Both are content warnings of the layout with `WARNING_SINCE` the release that ships C2, listed by
+  `postext check`, the Sandbox Checks panel (U13) and `sandbox_get_warnings`.
+
+### 12.11 Order, versions, outputs
+
+- `CONFIG_VERSION` 15 → 16 with C5 (the first issue that adds a decoration kind): no migration; older
+  readers drop unknown decoration elements with `unknownConfigValue`.
+- Every engine issue paints on canvas, PDF, fixed HTML/EPUB and tagged PDF, keeps reflowable EPUB/HTML
+  unchanged (decoration is not reflowed), updates `preflight.ts`, `partPalette.ts`, the source map
+  (`sourceAt` hits paths like rules: never over a frame), the JSON validation and the warnings docs list.
+- Issue map: C2 #1053 §12.10 · C3 #1054 §12.9 · C4 #1055 §12.2 · C5 #1056 §12.1, §12.3 · C6 #1057 §12.4 ·
+  C7 #1058 §12.5 · C8 #1059 §12.1, §12.8 · C9 #1060 §12.8 · C10 #1061 §12.6 · C11 #1062 §12.7.
