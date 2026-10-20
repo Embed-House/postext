@@ -160,8 +160,9 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   labelOverlap: "1.39.0",
   figureWordsShared: "1.42.0",
   headingClaimsColumn: "1.43.0",
-  frameCovered: "1.47.0",
-  frameOutsideArea: "1.47.0",
+  frameCovered: "1.48.0",
+  frameOutsideArea: "1.48.0",
+  repeatOverflow: "1.48.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one
