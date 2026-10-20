@@ -65,6 +65,7 @@ The section lists:
 - *Slot with no frame*, *Empty frame*, *Unknown page template*, *Composed page with three colons* and *Spread flag and template disagree* (`slotUnknown`, `slotEmpty`, `templateUnknown`, `pageFenceLength`, `spreadMismatch`);
 - *Frame under another frame* and *Frame runs past its edge* (`frameCovered`, `frameOutsideArea`), with the covered words or picture, the area hidden or the overrun, and the fixes in one click; selecting one marks the two frames, or the frame and the box it runs past, on the canvas (since postext 1.48);
 - *More items than the grid holds* (`repeatOverflow`), filed with the markup (since postext 1.48);
+- *Unknown module*, *Module set as a page*, *Module inside a module* and *Module name not taken* (`moduleUnknown`, `moduleAsPage`, `moduleNested`, `moduleNameRejected`), filed with the markup (since postext 1.48);
 - *Contents block cut between columns* (`tocGroupSplit`);
 - the page templates' own warnings (a frame style or anchor that does not exist, sizes that contradict each other, a chain that loops) and design text that holds the book's content (`contentInConfig`).
 

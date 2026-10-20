@@ -65,6 +65,7 @@ export const metadata = {
 - *槽位没有对应的框*、*空框*、*未知的页面模板*、*模板页只写了三个冒号*和*跨页标记与模板不符*（`slotUnknown`、`slotEmpty`、`templateUnknown`、`pageFenceLength`、`spreadMismatch`）；
 - *框被另一个框盖住*和*框超出了边界*（`frameCovered`、`frameOutsideArea`），附有被盖住的文字或图片、被遮住的面积或超出的距离，以及一键修正；选中一条，画布上会标出这两个框，或者标出这个框和它超出的那个方框（自postext 1.48起）；
 - *条目多于网格的容量*（`repeatOverflow`），与标记方面的问题列在一起（自postext 1.48起）；
+- *未知的模块*、*模块被当作页面排版*、*模块里套着模块*和*模块名称未被采用*（`moduleUnknown`、`moduleAsPage`、`moduleNested`、`moduleNameRejected`），与标记方面的问题列在一起（自postext 1.48起）；
 - *目录分组跨栏拆分*（`tocGroupSplit`）；
 - 页面模板本身的警告（框样式或锚点不存在、尺寸相互矛盾、串接链首尾相连形成循环），以及包含书中内容的设计文字（`contentInConfig`）。
 
