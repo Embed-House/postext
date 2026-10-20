@@ -2778,3 +2778,42 @@ symbols, edited without writing JSON.
   but the grip of a pointer is the frame editor's, which the Folio does not have); a pointer's look (colour,
   width, routing) has no fields of its own yet beyond what the design JSON says; the anchor's leader colour,
   width and dash are the style's only; the picker does not check that the caret is in a label.
+
+### 12.28 What R8 built (#1069)
+
+The Cookbook side of round 2: three recipes reworked and one new, each in all its editions.
+
+- **Nº 158 (timeline).** The six one-off cards (`c1`…`c6`) and the twelve decoration elements that drew a
+  dot and a tick per card are one card frame per band, repeated by a `grid` (three columns, placed in the
+  template grid's cell), and one `tree` connector per band with `trunk: 0`, a `gap` under the band and a
+  `dot` start cap, whose `to` is `#asia[*]`. Departure from the recipe's old teaching: the cards no longer
+  trade width (`shrink` in a `row`); a longer text grows its row and `rowAlign: 'stretch'` levels the row.
+  The hollow dot became a filled cap (connectors have no outlined marker).
+- **Nº 157 (atlas).** The dashed line of section left the painted SVG: two `straight` connectors (a paper
+  casing under a dashed ink line, no alpha on connector colours) between two unlabelled anchors of the
+  map's picture; since #1076 no `layer: -1`. The locator sheet `extends` the sheet, removes the key frame
+  and carries its key as a `kind: 'legend'` label (`:::label` container, `:icon` rows: a tinted square SVG
+  resource and a dashed line sample). The section names its valley and plain with `labelAt` and a style
+  `leader`. Borders, towns, peaks, the scale and the north arrow stay in the map's SVG (map data; scale
+  bars stay artwork, §12.5).
+- **Nº 156 (children's unit).** Photos, course boxes and the boxes with a picture are grids (the picture
+  of a box written inside its `:::frame` as a member of the set); the three questions with their answer
+  lines are a module stacked by the page's modules group; each course box points at its stretch of the
+  river with an `elbow` connector to a map anchor, the three runs kept apart by their `trunk`; the spring
+  and the dam are named away from their places with leaders (`flipped` mirrors `labelAt` too). The
+  pointers are left out of the vertical editions.
+- **Nº 162 (new, `org-chart-from-modules`).** An org chart stacked from a department module (a box, a
+  grid of services, a `tree` to `#servicio[*]`, an `elbow` from the page's mayor box) and a page of photo
+  galleries (module: heading + grid repeating photo and caption, a module-sized ground) with a notice
+  module whose tab is `joined`. Spanish and English.
+- **Engine fix found on the way.** A module's connector naming a frame of the page that stacks it was
+  `frameAnchorUnknown` (validation reads the module alone) and lost its end before layout; such ends are
+  now kept for module templates and dropped at layout with `connectorDropped` when the page lacks the
+  frame (`settleReferences`, `moduleConnectorPage.test.ts`).
+- **Cookbook tooling.** The lint (`detect.ts`) and the capture probe (`lib/probe.js`, C8) read a figure's
+  `:::label` container.
+- **Findings, not fixed.** In a vertical (`vertical-rl`) grid whose set has a picture anchored to the
+  box's corner, rows came out wider than the boxes and the last cell's picture was scaled by the ladder;
+  Nº 156 sets `rowGap: 0` for those editions. A connector has no colour alpha (a cased line needs an
+  opaque casing). The recipes pin postext 1.48.0: until the release, the published ones fail the
+  repository's engine-pin and stale-capture tests, and are captured from npm after it.
