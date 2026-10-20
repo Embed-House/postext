@@ -638,7 +638,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       const focus = templateEditor.getSnapshot().connector;
       if (ev.key !== 'Escape' || !focus?.phase) return;
       templateEditor.focusConnector({ ...focus, phase: null });
-    });
+    }, true);
   }
   paint();
 }

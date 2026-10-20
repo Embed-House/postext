@@ -48,18 +48,17 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
   const focused = !!host && focus?.templateId === host.templateId && focus.scope === host.scope && focus.elementId === raw.id;
   const picking = focused ? focus!.phase : null;
 
-  // The canvas shows this connector's ends while its editor is open.
-  useEffect(() => {
-    if (!host) return;
-    const now = templateEditor.getSnapshot().connector;
-    if (!now || now.elementId !== raw.id || now.templateId !== host.templateId) {
-      templateEditor.focusConnector({ templateId: host.templateId, scope: host.scope, elementId: raw.id, phase: null });
-    }
-    return () => {
-      const at = templateEditor.getSnapshot().connector;
-      if (at?.elementId === raw.id && at.templateId === host.templateId) templateEditor.focusConnector(null);
-    };
-  }, [host?.templateId, host?.scope, raw.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  // The canvas shows the ends of the connector being worked on: the one
+  // whose fields were last touched (a card's fields stay mounted while it
+  // is folded, so mounting is no sign of it), until its editor goes.
+  const show = () => {
+    if (!host || focused) return;
+    templateEditor.focusConnector({ templateId: host.templateId, scope: host.scope, elementId: raw.id, phase: null });
+  };
+  useEffect(() => () => {
+    const at = templateEditor.getSnapshot().connector;
+    if (host && at?.elementId === raw.id && at.templateId === host.templateId) templateEditor.focusConnector(null);
+  }, [host?.templateId, raw.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const update = (partial: Partial<DesignConnectorElement>) => {
     const next = { ...raw, ...partial } as Record<string, unknown>;
@@ -106,7 +105,7 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
   ];
 
   return (
-    <>
+    <div onFocusCapture={show} onPointerDownCapture={show} data-connector-editor={raw.id}>
       <SelectInput
         label={labels.connectorFrom}
         tooltip={labels.connectorFromTooltip}
@@ -128,7 +127,7 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
       {ends.length === 0 && <p className="mb-1 text-[0.7rem] text-(--slate)">{labels.connectorNoEnds}</p>}
       {host && (
         <div className="mb-2">
-          <Button variant="outline" size="xs" aria-pressed={!!picking} onClick={pick} title={labels.connectorPickTooltip}>
+          <Button variant={picking ? 'primary' : 'outline'} size="xs" aria-pressed={!!picking} onClick={pick} title={labels.connectorPickTooltip}>
             {labels.connectorPick}
           </Button>
           <p role="status" aria-live="polite" className="mt-1 text-[0.7rem] text-(--slate)">
@@ -262,7 +261,7 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
         onReset={() => update({ parity: undefined })}
       />
       <PagesSelect value={raw.pages} onChange={(pages) => update({ pages })} />
-    </>
+    </div>
   );
 }
 
