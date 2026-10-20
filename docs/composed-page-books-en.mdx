@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'Composed-page books',
   sidebarTitle: 'Composed-page books',
-  description: 'A walk through the Sandbox with a school textbook made of composed pages: build a page template, fill it from the Markdown, label a map, translate the page, fix text that does not fit, and select on the page and in the text',
+  description: 'A walk through the Sandbox with a school textbook made of composed pages: build a page template, fill it from the Markdown, label a map, translate the page, fix text that does not fit, select on the page and in the text, then draw a tree with connectors, notes on a map with pointers and a key, a grid of photo cards and a module library for a series',
   lang: 'en',
-  lastUpdated: '2026-10-19',
-  readingTime: '12 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '22 min',
   order: 43,
-  plainSummary: "This page teaches, step by step, how to make a school textbook page in the Sandbox: a page with a title band, some text and coloured boxes. You start from a finished example book and add one more page to it. First you draw the page as a template, then you pour the text into it from the Markdown, then you name the places on a map and translate the page into another language. At the end you see what to do when a text is too long for its box and how to jump between the page and its text.",
+  plainSummary: "This page teaches, step by step, how to make a school textbook page in the Sandbox: a page with a title band, some text and coloured boxes. You start from a finished example book and add one more page to it. First you draw the page as a template, then you pour the text into it from the Markdown, then you name the places on a map and translate the page into another language. Then you see what to do when a text is too long for its box and how to jump between the page and its text. The last steps draw a tree of boxes joined by lines, notes that point at places on a map, a page of photo cards and a set of blocks that the books of a series can share.",
 };
 
 # Composed-page books
 
-**You build one page of a textbook from a template, fill it with text from the Markdown, label a map, translate the page and fix what does not fit.**
+**You build one page of a textbook from a template, fill it with text from the Markdown, label a map, translate the page and fix what does not fit; then you add a tree, notes on a map, a page of photo cards and a module library.**
 
 A page of a school textbook is a set of boxes: a title band, a text, a box for a definition, a box for an activity, a map. Postext lays such a page out from a **page template** that holds the boxes (its frames), and the Markdown only says which words go in which frame. This page walks through the whole job in the Sandbox, on a book that already exists, and adds one page to it. The reference pages say what each field and each line of Markdown does; here you do each thing once, in order, and see what it changes: [Composed pages](/en/docs/composed-pages) for the Markdown, [Configuration › Composed pages](/en/docs/configuration-composed-pages) for the template, [Sandbox: composed pages](/en/docs/sandbox-composed-pages) for the screens.
 
@@ -38,8 +38,8 @@ The new page will be a review page: a title band, a short text under it and two 
 2. Press **New**. A template called *New template* opens. Give it the **ID** `review` (the name the Markdown will use) and the **Name** `Review page` (what this panel shows). The ID takes lowercase letters, digits and dashes.
 3. The template starts with one frame, `text`, that **Takes the page's loose text**. Make it the title band: **Name (slot)**: `title`; **Box style**: `portada`, the blue band the book already uses for its titles; switch **Takes the page's loose text** off; **Takes**: *Level 1*, so that this frame receives the page's first `#` heading.
 4. Press **Add frame**. The new frame opens below the list of frames. **Name (slot)**: `text`, and switch **Takes the page's loose text** on: whatever the page writes outside a frame goes here.
-5. Add a frame. **Name (slot)**: `remember`. **Box style**: `dato-campo`, a green box with a tab. **Smallest height**: 30 mm, so that the box keeps a good size when its text is short.
-6. Add a last frame. **Name (slot)**: `try`. **Box style**: `actividad-sol`. **Smallest height**: 30 mm.
+5. Add a frame. **Name (slot)**: `remember`. **Box style**: `dato`, a tinted box with a tab. **Smallest height**: 30 mm, so that the box keeps a good size when its text is short.
+6. Add a last frame. **Name (slot)**: `try`. **Box style**: `actividad`, a box with a stripe down its side. **Smallest height**: 30 mm.
 7. In `text`, `remember` and `try` set **Width** to *Up to the edge* and **Height** to *Its content*: they then fill the width of the page and are as tall as their text.
 8. Under **Groups** press **Add group**. Name it `column`, leave it *Stacked* and set **Space between frames** to 6 mm. Under **Members, in page order** tick the four frames. Tick them in the order they go, the title first: the list numbers the members and the arrows move one up or down. A group lays its frames one under the other and moves the ones below when a frame grows, so a longer text in the first box pushes the second box down instead of running over it.
 
@@ -173,6 +173,175 @@ The page and its Markdown follow each other.
 - **From a check.** Click an entry of the Checks panel and the Sandbox takes you to the page, picks the frame and puts the caret at its text. In a book with several editions it switches to the edition that has the problem.
 
 <Screenshot src="/docs-shots/en/select.webp" alt="The page with the second box outlined in orange, and the Text panel showing the selected frame in its Markdown." caption="A click on the page puts the caret in its Markdown, and the path under the preview says which frame it is." />
+
+## 8. Draw a tree with connectors
+
+A tree of ideas, an org chart and a timeline are boxes joined by lines. In Postext the boxes are frames and the lines are **connectors**: lines of the template's decoration that join frames. A connector is drawn after the frames have their final boxes, so it follows a box that grows with a longer text or with the words of another language, and the template needs no picture of the lines. You draw the tree once, as a **module** (a block of frames that any composed page can hold), and the Markdown says how many branches it has.
+
+1. In **Design**, open **Page & columns › Modules** and press **New module**. A module called *Module* joins the list with one frame, `text`. Press its pencil (*Edit module Module*): the template editor opens in place, with the **Module** switch on.
+2. Give it the **ID** `tree` and the **Name** `Tree of ideas`. Pick the frame `text` and make it the top of the tree: **Name (slot)** `root`, **Box style** `dato`, **Width** *Up to the edge*, **Height** *Its content*, and switch **Takes the page's loose text** off.
+3. Press **Add frame**. **Name (slot)**: `branch`; **Box style**: `dato`; **Smallest height**: 20 mm.
+4. Under **Groups** press **Add group**. Name it `branches` and choose **Grid**: **Columns** 3, **Gap between columns** and **Gap between rows** 6 mm. Under **Repeat a set of frames** choose `branch` as the **Main frame**: the grid lays one `branch` per item the page gives it. Set **Box of its own** to *Frame root*, **Relative position** *Below* and **Offset Y** 12 mm, so the grid starts under the root whatever its height.
+5. Under **Decoration** press **Add connector**. In its card set **Starts at** to *Frame root* and, under **Goes to**, press *Every branch* (the ends a line has are pressed). Set **Route** to *Tree*, **Bend radius** to 2 mm, **Line width** to 1.5 pt and **End mark** to *Arrow*. **Pick on the page** does the same with the mouse, in Design mode: click the frame the line starts from, then each frame it goes to; a second click takes an end out, and Escape ends the picking.
+
+Now the words. Switch to **Content** and put the caret on the review page of section 3 in the **Text** panel. Back in **Modules**, the **Page to insert into** list names that page; press the insert button of *Tree of ideas*. The Sandbox writes a `:::module{template="tree"}` block before the page's closing fence, with an empty frame for each slot, and adds a group that takes modules to the template `review`, under its last frame, because it had none. Write the words into the empty frames:
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+Each `:::frame{slot="branch"}` is one branch. Copy one and the page has four boxes and four lines; take one out and it has two. The connector names `branch[*]`, every branch the page has, so the lines follow the Markdown without a change to the module.
+
+<Screenshot src="/docs-shots/en/tree.webp" alt="The Design panel with the module Tree of ideas open at its connector card, and the review page with a box on top joined by lines with arrows to three boxes below." caption="The tree: one root, a grid that repeats the branch, and one connector to every branch." />
+
+An org chart is the same module with other frames: a card for the head of the team, a grid that repeats a photo and a name, and a tree connector to every card. A timeline sets **Bar position** to 0: no bar, a drop from the strip of dates to each card.
+
+## 9. Notes on a map, with pointers and a key
+
+A page of notes round a map: each note has a line to the place it speaks of, the map has a key to its signs, and one name stands away from its point with a line back to it. None of these lines is part of the painting.
+
+The book has the painting twice: `mapa`, with the names of pages 6 and 7, and `rio`, the same picture without anchors, set small on the contents page. This page uses `rio`, so the points you add to it do not move a name of the spread.
+
+1. Make a page template as in section 2. **ID** `map-notes`, **Name** `Map with notes`. Its frames: `title` (**Box style** `portada`, **Takes** *Level 1*), `text` (**Takes the page's loose text**), `map` (**Width** *Up to the edge*), and `note-1`, `note-2` and `note-3` (**Box style** `dato`, **Width** 56 mm, **Smallest height** 26 mm). Stack `title`, `text` and `map` in a group `column` with 6 mm between frames, and lay the notes in a group `notes` *In a row* with 8 mm between them. Hang `note-1` from *Frame map*, *Below*, 14 mm down.
+2. Write the page at the end of the chapter:
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}` is a label of several lines: each line is a row of the key. `:icon[…]{…}` is a symbol on the line: a glyph, a sample of a line, or a picture of the book. The **Symbol for a label** button of the Text panel's toolbar writes one at the caret, with its colour and size; the brackets hold what a screen reader says for it, and empty brackets mean the words beside it say it all.
+3. Give the key its look. In **Design › Figures & tables › Label styles** press **Add label style**, set its id to `key`, its face to Fredoka at 10.5 pt, a white **Plate** with a **Plate padding** of 2.5 mm, an **Outline** and a **Corner radius** of 1.5 mm, and under **Lines and key** switch **Key (legend)** on. The symbols then stand in a column of their own and the words of every row start on one edge.
+4. Place the points. **Checks** lists *Label at an unknown anchor* for `spring` and `key`. Press the pin button of one: the Anchors dialog of `rio` opens with both names under *Labels without an anchor*. Click the waterfall at the top left of the painting for `spring`, and the lower left corner for `key`; set the key's **Alignment** to *Start* and its **Vertical alignment** to *Bottom*, so it grows up and to the right of its point. Then click the dam, the mill and the harbour, and name the three new anchors `dam`, `mill` and `harbour` in their rows.
+5. Set the name of the spring away from its point. Pick `spring` and, under **Label and leader**, switch **Away from its point** on. Drag the label's handle up into the sky and set **Leader** to *On*: the line from the label to the waterfall is drawn as you drag. Press **Save**.
+6. Draw the pointers. In **Design** mode, pick `note-1` on the page: a round grip shows beside the middle of its right side. Drag it onto the dam; the anchors of the map show while you drag, and the drop writes a connector from the note to the anchor `dam` with a dot at its end. Do the same from `note-2` to `mill` and from `note-3` to `harbour`. The frame's **Pointers** group lists them, and is the way to add or change one with the keyboard.
+
+<Screenshot src="/docs-shots/en/map-notes.webp" alt="The page Along the river in Design mode: the map with a key in its lower left corner, three notes under it with a line from each to a place on the map, and the Pointers group of the second note in the Design panel." caption="Each note points at an anchor of the picture; the key and the names are lines of the Markdown." />
+
+A pointer ends at the anchor's point of the picture, through its crop and scale, so it still finds the mill when the map is set smaller or cut to its safe area. It is painted over the frames, so it shows over the picture. A note placed on top of the map instead, with no room of its own, is listed by Checks as *Frame under another frame*, with the fixes (see [Sandbox: composed pages](/en/docs/sandbox-composed-pages#overlaps-and-glyph-tabs)).
+
+## 10. A page of photo cards
+
+A page of cards (photos with a caption under each, portraits with a name) is one card drawn many times. A **grid that repeats a frame set** draws the card once, and the page has as many cards as its Markdown writes.
+
+1. Make a template `photos` (**Name** `Photo cards`) with `title` (`portada`, *Level 1*) and `text` (the loose text) stacked in a group `column`, 6 mm apart.
+2. Add a frame `photo`: **Box style** `foto`, hung from *Frame text*, *Below*, 6 mm down. Add a frame `caption`: **Box style** `dato`, **Width** *Its content*, hung from *Frame photo*, *Below*, 2 mm down.
+3. Add a group `cards`: **Grid**, **Columns** 3, **Gap between columns** 6 mm, **Gap between rows** 12 mm. Under **Repeat a set of frames**, **Main frame** `photo`, and tick `caption` under **Frames that go with it**. The main frame takes the width of a cell; the caption hangs from it as the template draws it.
+4. Write the page:
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+Each `:::frame{slot="photo"}` is one card, and the `:::frame{slot="caption"}` inside it goes to the caption of that card. The cards fill the rows from the side where a line starts, so the fourth opens a second row. In Design mode the frames are named by their card: `photo[2]` and `caption[2]` are the second card.
+
+<Screenshot src="/docs-shots/en/grid.webp" alt="The page People and the river with four photos in a grid of three columns and a caption under each, and the Design panel showing the group cards with Grid, three columns and Repeat a set of frames." caption="The card is drawn once; the Markdown gives four, and the grid lays four." />
+
+A fifth photo takes the next cell; a seventh starts a third row. An edition in another language can have more cards or fewer with the same template. **Most items** caps the grid (what is past it goes to the loose text, and Checks lists *More items than the grid holds*), and **Content that does not fit goes to** *A page added after this one* on the main frame carries the rows that do not fit to an added page, whole.
+
+## 11. A module library for a series
+
+**Page & columns › Modules** is the book's module library. Each module is drawn with its frames and named by its id, with how many blocks of the Markdown use it on how many pages (*1 block on 1 page* for the tree), a pencil that opens it in the template editor, and the button that inserts it into the page chosen in **Page to insert into**. **New module** starts another. Renaming a module rewrites every `:::module` block that names it.
+
+<Screenshot src="/docs-shots/en/modules.webp" alt="The Modules section of the Design panel: the list Page to insert into, the module Tree of ideas with the words 1 block on 1 page, and the New module button." caption="The library: each module, where the book uses it, and the way to insert it into a page." />
+
+A page takes modules in a group with **Takes the page's modules** on, one under another in the order of the Markdown. So the next page can hold a tree under a box, or two trees, with no new template: the Markdown says which blocks and in what order, the modules draw them.
+
+The books of a series (*Our river* for Year 3, *Our coast* for Year 4) share their modules by sharing the design:
+
+- **In the Sandbox.** Start the next book as a copy of this one (**Books**, **⋯** on the book, **Duplicate**) and write its chapters; the templates, the modules and the styles come with the copy. For a book that exists already, **Export** in the header of the Design panel saves the design, and **Import** in the other book puts it in place of that book's design.
+- **From code.** Keep the module templates in one file and add them to the `pageTemplates` of every book of the series:
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+A change to a module (a thicker line, another box style) then reaches every page of every book that uses it the next time the book is laid out, and the words stay in each book's Markdown.
+
+## What the Markdown says and what the design draws
+
+The pages of sections 8 to 11 follow one rule. The Markdown says **what** goes on the page and **how many**: the words of each box, how many branches, notes, cards and rows of the key, which module comes first. The design draws each thing **once**: the boxes, their places, the lines between them, the look of the key, the size of a cell. That is why a translation needs no template of its own, why a page with five photos uses the template of a page with four, and why a series can share its modules. A template never holds the words of a page, and the Markdown never holds a position or a colour.
 
 ## Where to go next
 
