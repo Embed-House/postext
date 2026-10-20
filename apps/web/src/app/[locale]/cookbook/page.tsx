@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Activity, Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ChapterShelves } from "@/components/cookbook/gallery/ChapterShelf";
@@ -104,7 +104,10 @@ export default async function CookbookPage({ params }: { params: Promise<{ local
               <CookbookFilters locale={locale} chapters={data.chapters} />
             </Suspense>
             <div id="cb-book" className="cb-book">
-              <EditorsPicks data={data} locale={locale} />
+              {/* Hydrated after the page, like the shelves (ChapterShelf). */}
+              <Activity>
+                <EditorsPicks data={data} locale={locale} />
+              </Activity>
               <ChapterShelves data={data} />
             </div>
             <Suspense fallback={<ResultsSkeleton />}>
