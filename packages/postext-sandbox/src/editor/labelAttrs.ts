@@ -123,7 +123,7 @@ export type IconSpec =
   | { kind: 'line'; line: 'solid' | 'dashed' | 'dotted' };
 
 /** The `:icon[alt]{…}` directive of `spec`: `alt` is what a reader hears
- *  for the symbol (brackets escaped), `color` a hex or a palette id, `size`
+ *  for the symbol (brackets escaped, backslashes dropped), `color` a hex or a palette id, `size`
  *  the symbol's height in ems. */
 export function iconDirective(spec: IconSpec, alt: string, options: { color?: string; size?: number } = {}): string {
   const attrs: string[] = [];
@@ -135,6 +135,8 @@ export function iconDirective(spec: IconSpec, alt: string, options: { color?: st
   const color = options.color?.trim();
   if (color) attrs.push(`color=${quoteValue(color)}`);
   if (options.size !== undefined && Number.isFinite(options.size) && options.size > 0) attrs.push(`size=${quoteValue(String(Math.round(options.size * 100) / 100))}`);
-  const text = alt.replace(/[\n\r]+/g, ' ').replace(/([[\]])/g, '\\$1').trim();
+  // A backslash means nothing in a spoken name and would start an escape
+  // (or a `\\` line break in a label), so it is dropped, not escaped.
+  const text = alt.replace(/[\n\r]+/g, ' ').replace(/\\/g, '').replace(/([[\]])/g, '\\$1').trim();
   return `:icon[${text}]{${attrs.join(' ')}}`;
 }

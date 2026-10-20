@@ -83,3 +83,9 @@ describe('the :icon directive (#1064)', () => {
     expect(pickerDirective({ ...INITIAL_ICON_PICKER, kind: 'line', line: 'dashed', color: '#336699', size: 1.2 })).toBe(':icon[]{line="dashed" color="#336699" size="1.2"}');
   });
 });
+
+describe('iconDirective alt text (CodeQL js/incomplete-sanitization)', () => {
+  it('drops backslashes and escapes brackets, so the alt cannot end the directive', () => {
+    expect(iconDirective({ kind: 'glyph', glyph: '⊙' }, 'a\\] b [c]\\')).toBe(':icon[a\\] b \\[c\\]]{glyph="⊙"}');
+  });
+});
