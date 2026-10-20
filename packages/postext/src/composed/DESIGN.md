@@ -2107,3 +2107,45 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   The page-8 stand-in (`fixtures/page8.ts`) now reports its photos hanging 1.3–1.8 mm past the foot of
   their boxes; `fit.test.ts` and `groups.test.ts` leave the overlap events out of their reflow
   assertions.
+
+### 12.17 What C9 built (#1060)
+
+- **The element.** `DesignPathElement` moved out of the draft into `types.ts` as drafted (§12.8), a fifth
+  member of `DesignElement`, with `ResolvedDesignPathElement` (`resolvePathElement`: id `path-<n>`,
+  placement as a box's). Every design slot takes it: composed decoration, running heads (a page
+  template's too), heading and part designs, contents part rows, box designs. `applyPaletteOverrides`
+  recolours a palette-linked `fill` and `stroke`; on a composed frame's overlay the block is recoloured by
+  `partPalette.ts` as C4 left it.
+- **Path data.** `design/svgPath.ts` (`parseSvgPath`, `arcToCubics`, `mapPath`, `pathViewBox`; the first
+  two exported): `M L H V C S Q T A Z`, absolute and relative, implicit repeats (a repeated move draws
+  lines), compact numbers (`M.5.5`, `-1-1`, exponents), arc flags without separators. `H`/`V` become `L`,
+  `S`/`T` their full curve with the reflected control point, an arc cubics of at most a quarter turn (SVG
+  1.1 F.6: radii scaled up when too small, a zero radius a line, the same point nothing). One pass over
+  the characters, no regular expressions; at most 64 KiB of data. Errors: no initial move, a letter that is
+  no command, a command short of its numbers, numbers after a close, a flag other than 0/1, empty data.
+  Parses are kept per data string (256, cleared whole), so a running head's chevrons are read once.
+- **Layout** (`layoutPathElement`): the box is sized and pinned as a box element's (a side left out or
+  `'fill'` fills to the container's edge; `{ to, edge }` sizes and `anchor.at` as for every element), the
+  outline mapped from `viewBox` units onto it: `'none'` scales each axis, `'meet'` the smaller scale on
+  both, centred. The primitive keeps the element's box (what other elements anchor to, what a heading
+  reserves); the block's `bbox` is `pathInkBox` (the ink), so a spread cuts, and the source map answers,
+  by the ink.
+- **Decisions the design left open.**
+  - Neither `fill` nor `stroke`: filled black, as an SVG path is. `stroke` alone: no fill.
+  - `width` (default 0.5 pt, a rule's) and `dash` are page lengths, not scaled with the box (a stretched
+    outline keeps an even line). Caps and joins stay the block's defaults (butt, miter); no `fillRule`
+    key (non-zero): neither is in the design.
+  - Bad path data or a `viewBox` that is no pair of positive numbers draws nothing, but the element's box
+    still stands for the elements anchored to it (a label beside a broken shape stays put).
+  - Warnings (`collectConfigWarnings`, every design slot): `unknownConfigValue` at `…elements[i].d`
+    (`value` the data's first 60 characters, `used: ''`), at `…viewBox` (`used: ''`), at
+    `…preserveAspectRatio` (`used: 'none'`, with a suggestion); `unknownConfigKey` for a key the element
+    does not have (the only element kind checked so; the others keep their silence). No new warning kind.
+- **Outputs.** No backend change: the block C4 landed paints on canvas, PDF, HTML and fixed EPUB, is an
+  artifact in tagged PDF, and is left out of the reflowable EPUB with the rest of the page furniture. Tests
+  drive each from a laid-out element (`design/pathElement.test.ts`, the PDF and EPUB packages'
+  `pathElement.test.ts`).
+- **Sandbox.** `PlacementFields`' `Sibling.kind` is `DesignElement['kind']` (the one compile error); a
+  path element shows in the slot editor with the box's title and no editor of its own: U10 (#1063) adds it.
+- **Not done.** No `CONFIG_VERSION` bump (C5 owns it, §12.11). No `fillRule`, caps or joins on the element.
+  Paths are not rotated, and a path in a vertical page's flow is laid in the flow frame like a box.
