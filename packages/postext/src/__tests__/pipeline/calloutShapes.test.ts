@@ -172,7 +172,7 @@ describe('a card joined to its tab (#1059)', () => {
     const body = resolveBodyTextConfig(undefined);
     const [style] = resolveCalloutStylesConfig(
       [{ id: 'card', border: { enabled: true, sides: { top: { color: hex('#111111') } } } }],
-      body, resolveHeadingsConfig(undefined, body), resolveUnorderedListsConfig(undefined, body),
+      body, resolveHeadingsConfig(undefined), resolveUnorderedListsConfig(undefined, body),
     );
     const looked = styleWithLook(style!, { border: { color: hex('#ee0000') } });
     expect(looked.border.color.hex).toBe('#ee0000');

@@ -7,6 +7,7 @@
  * background picture.
  */
 import { describe, it, expect } from 'vitest';
+// @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
 import { buildDocument } from '../../pipeline';
 import { createMeasurementCache } from '../../measure';
