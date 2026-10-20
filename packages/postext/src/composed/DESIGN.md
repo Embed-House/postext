@@ -2086,7 +2086,8 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   which a smaller height does not bring in), `continueNextPage` (with it, for a frame of text with no
   `next` / `continueIn`), `minHeight` of the frame it is anchored inside (its height plus the overrun, whole
   mm up), and, added to the design, `move` (`frame`, `dxMm`, `dyMm`: the shift that brings it in when it
-  runs past one side of an axis; data only), the one fix of a strap held by its foot below the trim.
+  runs past one side of an axis and is no larger than the box along it; data only), the one fix of a strap
+  held by its foot below the trim.
 - **`FrameConfig.overlap: 'check' | 'allow'`** (resolved as `overlap?: 'allow'`), validated
   (`unknownConfigValue`, used `'check'`). Decision: `'allow'` also leaves the frame out of
   `frameOutsideArea` (a badge hung off its card on purpose is the same kind of art), and an `'allow'` host

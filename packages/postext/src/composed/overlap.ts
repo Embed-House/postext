@@ -386,6 +386,10 @@ interface Overrun {
   bottom: number;
   left: number;
   max: number;
+  /** The ink is no wider (`fitsX`) or taller (`fitsY`) than the limit: a
+   *  move can bring it in along that axis. */
+  fitsX: boolean;
+  fitsY: boolean;
 }
 
 /** How far the union of `boxes` runs past `limit` on each side, px. */
@@ -394,13 +398,21 @@ function overrun(boxes: readonly Rect[], limit: Rect): Overrun {
   let right = 0;
   let bottom = 0;
   let left = 0;
+  let x0 = Infinity;
+  let y0 = Infinity;
+  let x1 = -Infinity;
+  let y1 = -Infinity;
   for (const b of boxes) {
+    x0 = Math.min(x0, b.x);
+    y0 = Math.min(y0, b.y);
+    x1 = Math.max(x1, b.x + b.width);
+    y1 = Math.max(y1, b.y + b.height);
     top = Math.max(top, limit.y - b.y);
     left = Math.max(left, limit.x - b.x);
     bottom = Math.max(bottom, b.y + b.height - (limit.y + limit.height));
     right = Math.max(right, b.x + b.width - (limit.x + limit.width));
   }
-  return { top, right, bottom, left, max: Math.max(top, right, bottom, left) };
+  return { top, right, bottom, left, max: Math.max(top, right, bottom, left), fitsX: x1 - x0 <= limit.width + 0.5, fitsY: y1 - y0 <= limit.height + 0.5 };
 }
 
 function outsideWarning(
@@ -446,8 +458,8 @@ function outsideWarning(
   }
   // The shift that brings it in, when only one side of each axis runs
   // past (data only).
-  const dx = o.left >= min && o.right < min ? o.left : o.right >= min && o.left < min ? -o.right : 0;
-  const dy = o.top >= min && o.bottom < min ? o.top : o.bottom >= min && o.top < min ? -o.bottom : 0;
+  const dx = !o.fitsX ? 0 : o.left >= min && o.right < min ? o.left : o.right >= min && o.left < min ? -o.right : 0;
+  const dy = !o.fitsY ? 0 : o.top >= min && o.bottom < min ? o.top : o.bottom >= min && o.top < min ? -o.bottom : 0;
   if (dx !== 0 || dy !== 0) proposals.push({ kind: 'move', frame: f.name, dxMm: r1(dx / mmPx), dyMm: r1(dy / mmPx) });
   return {
     kind: 'frameOutsideArea',

@@ -170,7 +170,8 @@ describe('frameOutsideArea (#1053)', () => {
     expect(w.sides.bottom).toBeGreaterThan(10);
     expect(w.excessMm).toBe(w.sides.bottom);
     const kinds = w.proposals.map((p) => p.kind);
-    expect(kinds).toEqual(['maxHeight', 'continueNextPage', 'minHeight', 'move']);
+    // (Taller than the card, it is not brought in by a move.)
+    expect(kinds).toEqual(['maxHeight', 'continueNextPage', 'minHeight']);
     const max = w.proposals[0] as Extract<Outside['proposals'][number], { kind: 'maxHeight' }>;
     expect(max.path).toBe('/pageTemplates/0/frames/4/maxHeight');
     const min = w.proposals[2] as Extract<Outside['proposals'][number], { kind: 'minHeight' }>;
