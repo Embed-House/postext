@@ -21,7 +21,7 @@ import type { ConnectorEnd, Dimension, LineCap, ResolvedDesignConnectorElement }
 import type { VDTPathCommand, VDTPathMarker } from '../vdt';
 import { dimensionToPx } from '../units';
 import { sideFraction } from './logicalEdges';
-import { pathInkBox } from './pathBlock';
+import { colorWithOpacity, pathInkBox } from './pathBlock';
 import type { ResolvedPathPrimitive } from './layout';
 
 export interface ConnectorRect {
@@ -44,7 +44,7 @@ const CAP_SIZE_PER_WIDTH = DEFAULT_CAP_SIZE_PER_WIDTH;
 const ARROW_INSET = 0.6;
 
 export const CONNECTOR_ROUTINGS = ['straight', 'elbow', 'tree'] as const;
-export const CONNECTOR_CAPS = ['none', 'dot', 'arrow'] as const;
+export const CONNECTOR_CAPS = ['none', 'dot', 'arrow', 'ring', 'bar'] as const;
 export const CONNECTOR_SIDES = ['top', 'bottom', 'left', 'right', 'start', 'end'] as const;
 /** How a label's leader runs (#1057). */
 export const LEADER_ROUTINGS = ['straight', 'elbow'] as const;
@@ -60,7 +60,22 @@ function px(d: unknown, dpi: number): number | undefined {
 }
 
 function capOf(v: unknown): LineCap {
-  return v === 'dot' || v === 'arrow' ? v : 'none';
+  return v === 'dot' || v === 'arrow' || v === 'ring' || v === 'bar' ? v : 'none';
+}
+
+/** An opacity as written (#1079): a finite number held in 0…1, else
+ *  undefined (opaque). */
+export function opacityOf(v: unknown): number | undefined {
+  return typeof v === 'number' && Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : undefined;
+}
+
+/** Whether a hex colour lets what is under it show (#1079): `#rgba` or
+ *  `#rrggbbaa` with an alpha below full. */
+function translucent(color: string): boolean {
+  const m = /^#([0-9a-f]{4}|[0-9a-f]{8})$/i.exec(color);
+  if (!m) return false;
+  const a = m[1]!.length === 4 ? m[1]!.slice(3) : m[1]!.slice(6);
+  return !/^f+$/i.test(a);
 }
 
 /** The physical side of a written one: `start` / `end` follow the page's
@@ -168,18 +183,43 @@ export function polylineCommands(points: readonly Pt[], radius: number): VDTPath
   return cmds;
 }
 
+/** How far the line stops short of a mark's point: inside an arrowhead
+ *  (at its base when the colour is translucent, so the two never ink the
+ *  same spot twice), at the edge of a ring (the line's corners on its outer
+ *  edge, so nothing shows in the hole), at the inner side of a bar, at the
+ *  edge of a dot when translucent; else at the point. */
+function capInset(cap: LineCap, size: number, widthPx: number, color: string): number {
+  const half = Math.min(widthPx, size) / 2;
+  switch (cap) {
+    case 'arrow':
+      return translucent(color) ? size : size * ARROW_INSET;
+    case 'ring':
+      return Math.sqrt(Math.max(0, (size / 2) ** 2 - half ** 2));
+    case 'bar':
+      return widthPx / 2;
+    case 'dot':
+      return translucent(color) ? Math.sqrt(Math.max(0, (size / 2) ** 2 - half ** 2)) : 0;
+    default:
+      return 0;
+  }
+}
+
 /** An end of a polyline marked with a cap: the mark, and the line pulled
- *  back inside an arrowhead. `ends`: 0 the first point, 1 the last. */
-export function capEnd(points: Pt[], which: 0 | 1, cap: LineCap, size: number, color: string, marks: VDTPathMarker[]): void {
+ *  back inside an arrowhead, to a ring's edge, to a bar (see
+ *  {@link capInset}). `which`: 0 the first point, 1 the last. `widthPx`:
+ *  the line's width, the stroke of a ring or a bar. */
+export function capEnd(points: Pt[], which: 0 | 1, cap: LineCap, size: number, color: string, marks: VDTPathMarker[], widthPx = 0): void {
   const pts = simplify(points);
   if (cap === 'none' || pts.length < 2) return;
   const tip = which === 0 ? pts[0]! : pts[pts.length - 1]!;
   const from = which === 0 ? pts[1]! : pts[pts.length - 2]!;
   const angle = Math.atan2(tip.y - from.y, tip.x - from.x);
-  marks.push({ kind: cap, x: tip.x, y: tip.y, angle, sizePx: size, color });
-  if (cap !== 'arrow') return;
+  const stroked = cap === 'ring' || cap === 'bar';
+  marks.push({ kind: cap, x: tip.x, y: tip.y, angle, sizePx: size, color, ...(stroked ? { widthPx } : {}) });
+  const inset = capInset(cap, size, widthPx, color);
+  if (inset <= 0) return;
   const segment = Math.hypot(tip.x - from.x, tip.y - from.y);
-  const back = Math.min(size * ARROW_INSET, segment);
+  const back = Math.min(inset, segment);
   const moved = { x: tip.x - Math.cos(angle) * back, y: tip.y - Math.sin(angle) * back };
   // The original arrays hold the same point objects `simplify` kept.
   const at = which === 0 ? points.indexOf(tip) : points.lastIndexOf(tip);
@@ -224,7 +264,7 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
   const radius = Math.max(0, px(el.radius, dpi) ?? 0);
   const trunk = typeof el.trunk === 'number' && Number.isFinite(el.trunk) ? Math.max(0, Math.min(1, el.trunk)) : 0.5;
   const routing = el.routing === 'straight' || el.routing === 'tree' ? el.routing : 'elbow';
-  const color = el.color?.hex ?? '#000000';
+  const color = colorWithOpacity(el.color?.hex ?? '#000000', opacityOf(el.opacity));
   const startCap = capOf(el.startCap);
   const endCap = capOf(el.endCap);
   const gapOf = (e: ConnectorEnd): number => Math.max(0, px(e.gap, dpi) ?? 0);
@@ -275,8 +315,8 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
       // timeline's ticks), the start mark at the head of each drop.
       for (const k of kids) {
         const drop = [onBar(across(k)), k];
-        capEnd(drop, 0, startCap, capSize, color, marks);
-        capEnd(drop, 1, endCap, capSize, color, marks);
+        capEnd(drop, 0, startCap, capSize, color, marks, widthPx);
+        capEnd(drop, 1, endCap, capSize, color, marks, widthPx);
         lines.push(drop);
       }
     } else if (lo === hi) {
@@ -284,21 +324,21 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
       // the bar to each child.
       for (const k of kids) {
         const line = [p, onBar(across(p)), k];
-        capEnd(line, 0, startCap, capSize, color, marks);
-        capEnd(line, 1, endCap, capSize, color, marks);
+        capEnd(line, 0, startCap, capSize, color, marks, widthPx);
+        capEnd(line, 1, endCap, capSize, color, marks, widthPx);
         lines.push(line);
       }
     } else {
       const main = [items[lo]!.pt, onBar(across(items[lo]!.pt)), onBar(across(items[hi]!.pt)), items[hi]!.pt];
-      capEnd(main, 0, capFor(lo), capSize, color, marks);
-      capEnd(main, 1, capFor(hi), capSize, color, marks);
+      capEnd(main, 0, capFor(lo), capSize, color, marks, widthPx);
+      capEnd(main, 1, capFor(hi), capSize, color, marks, widthPx);
       lines.push(main);
       items.forEach((it, i) => {
         if (i === lo || i === hi) return;
         const foot = onBar(across(it.pt));
         if (Math.abs(along(it.pt) - bar) < EPS) return;
         const drop = [foot, it.pt];
-        capEnd(drop, 1, capFor(i), capSize, color, marks);
+        capEnd(drop, 1, capFor(i), capSize, color, marks, widthPx);
         lines.push(drop);
       });
     }
@@ -321,8 +361,8 @@ export function layoutConnector(el: ResolvedDesignConnectorElement, from: Connec
       } else line = vertical(s0) ? [a, { x: a.x, y: b.y }, b] : [a, { x: b.x, y: a.y }, b];
       // A fan of lines from one end marks each line's start (one mark
       // where they leave the same way).
-      capEnd(line, 0, startCap, capSize, color, marks);
-      capEnd(line, 1, endCap, capSize, color, marks);
+      capEnd(line, 0, startCap, capSize, color, marks, widthPx);
+      capEnd(line, 1, endCap, capSize, color, marks, widthPx);
       lines.push(line);
     });
   }

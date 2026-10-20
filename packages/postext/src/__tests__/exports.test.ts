@@ -552,6 +552,8 @@ describe("package exports", () => {
       "pathMarkerOutline",
       "pathSvgData",
       "markerSvgData",
+      "markerSvgElement",
+      "colorWithOpacity",
       "quadToCubic",
       "pathInkBox",
       "pathHit",

@@ -6864,8 +6864,11 @@ export interface DesignPathElement {
 }
 
 /** What ends a connector's line (#1056): nothing, a filled dot centred on
- *  the end, or a filled arrowhead whose tip is the end. */
-export type LineCap = 'none' | 'dot' | 'arrow';
+ *  the end, a filled arrowhead whose tip is the end, a ring (#1079: a
+ *  hollow dot centred on the end, stroked in the line's width, the line
+ *  stopping at its edge) or a bar (#1079: a stroke across the line at the
+ *  end, in the line's width). */
+export type LineCap = 'none' | 'dot' | 'arrow' | 'ring' | 'bar';
 
 /** One end of a connector (#1056): a point on a side of a frame, a group,
  *  an instance of a repeated frame (`'#card[2]'`; `'#card[*]'` in a
@@ -6898,8 +6901,13 @@ export interface ConnectorEnd {
 /** The look of a label's leader (#1057, DESIGN §12.4): the line from the
  *  label's box to its anchor point. */
 export interface LeaderStyle {
-  /** Default: the label's text colour. */
+  /** Default: the label's text colour. A colour with an alpha channel
+   *  (`#rrggbbaa`) paints the line translucent (#1079). */
   color?: ColorValue;
+  /** How opaque the line and its marks are, 0…1 (#1079), times the
+   *  colour's own alpha. Default 1. Kept apart from the colour, so a
+   *  palette-linked colour stays linked. */
+  opacity?: number;
   /** Default 0.75 pt. */
   width?: Dimension;
   dash?: Dimension[];
@@ -6907,7 +6915,8 @@ export interface LeaderStyle {
   startCap?: LineCap;
   /** At the anchor point. Default `'dot'`. */
   endCap?: LineCap;
-  /** The size of a dot (across) or an arrowhead (long). Default 3 × width. */
+  /** The size of a dot or a ring (across), an arrowhead (long) or a bar
+   *  (across the line). Default 3 × width. */
   capSize?: Dimension;
   /** `'straight'` (the default): one segment from the middle of the box's
    *  side that faces the point; `'elbow'`: out of that side square, then
@@ -6950,8 +6959,15 @@ export interface DesignConnectorElement {
    *  0 (at `from`) … 1 (at the nearest `to`). Default 0.5. */
   trunk?: number;
   /** Default: the document's main colour. Palette-linked colours follow
-   *  part and section palettes. */
+   *  part and section palettes. A colour with an alpha channel
+   *  (`#rrggbbaa`) paints the line translucent (#1079): a pale casing under
+   *  a dashed line lets the picture under it show through. */
   color?: ColorValue;
+  /** How opaque the line and its marks are, 0…1 (#1079), times the
+   *  colour's own alpha. Default 1. Kept apart from the colour, so a
+   *  palette-linked colour (the default main colour included) stays
+   *  linked. */
+  opacity?: number;
   /** Line width. Default `0.75pt`. */
   width?: Dimension;
   /** Dash pattern (on, off, …). Absent: solid. */
@@ -6960,8 +6976,8 @@ export interface DesignConnectorElement {
    *  Default `'none'`. */
   startCap?: LineCap;
   endCap?: LineCap;
-  /** Size of a dot (across) or an arrowhead (long). Default three times
-   *  the line width. */
+  /** Size of a dot or a ring (across), an arrowhead (long) or a bar
+   *  (across the line). Default three times the line width. */
   capSize?: Dimension;
   /** Paint the line over every frame of the page (#1076) instead of with
    *  the rest of the decoration, under the frames. Default: `true` when

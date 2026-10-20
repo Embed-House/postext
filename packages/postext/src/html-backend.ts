@@ -26,7 +26,7 @@ import type {
   RoundedOutline,
   RenderWarning,
 } from './vdt';
-import { markerSvgData, pathSvgData } from './design/pathBlock';
+import { markerSvgElement, pathSvgData } from './design/pathBlock';
 import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt';
 import { dimensionToPx } from './units';
 import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk';
@@ -3309,7 +3309,7 @@ function renderDesignPathBlock(block: VDTDesignPathBlock): string {
     }
     parts.push(`<path ${attrs.join(' ')}/>`);
   }
-  for (const m of block.markers ?? []) parts.push(`<path d="${markerSvgData(m, x, y)}" fill="${esc(m.color)}"/>`);
+  for (const m of block.markers ?? []) parts.push(markerSvgElement(m, x, y, esc));
   if (parts.length === 0) return '';
   return (
     `<svg aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +

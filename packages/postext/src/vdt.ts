@@ -1704,10 +1704,13 @@ export interface VDTFigureLabelLeader {
   routing: 'straight' | 'elbow';
   stroke: VDTPathStroke;
   /** At the label's end. Absent: none. */
-  startCap?: 'dot' | 'arrow';
+  startCap?: 'dot' | 'arrow' | 'ring' | 'bar';
   /** At the point. Absent: none. */
-  endCap?: 'dot' | 'arrow';
+  endCap?: 'dot' | 'arrow' | 'ring' | 'bar';
   capSizePx: number;
+  /** The look's `opacity` (#1079), applied to the stroke's colour when the
+   *  line is laid (after part palettes recolour it). Absent: opaque. */
+  opacity?: number;
   /** Room between the label's box and the line. */
   gapPx: number;
 }
@@ -2545,17 +2548,22 @@ export interface VDTPathStroke {
 }
 
 /** A mark at a point of a path (the end of a connector): a filled dot
- *  `sizePx` across centred on the point, or a filled arrowhead whose tip is
- *  the point, `sizePx` long, pointing along `angle` (see
- *  `pathMarkerOutline`). */
+ *  `sizePx` across centred on the point, a filled arrowhead whose tip is
+ *  the point, `sizePx` long, pointing along `angle`, a ring (#1079) `sizePx`
+ *  across its outer edge, or a bar (#1079) `sizePx` long across `angle`,
+ *  centred on the point (see `pathMarkerOutline`). */
 export interface VDTPathMarker {
-  kind: 'dot' | 'arrow';
+  /** `dot` and `arrow` are filled; `ring` and `bar` (#1079) are stroked
+   *  {@link widthPx} wide. */
+  kind: 'dot' | 'arrow' | 'ring' | 'bar';
   x: number;
   y: number;
   /** Radians, the direction the line arrives in (arrows point along it). */
   angle: number;
   sizePx: number;
   color: string;
+  /** The stroke width of a `ring` or a `bar` (the line's width). */
+  widthPx?: number;
 }
 
 /** A vector shape a design draws (DESIGN §12.1, #1055): lines, curves and

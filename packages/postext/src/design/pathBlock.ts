@@ -11,18 +11,43 @@ import { createBoundingBox, type BoundingBox, type VDTDesignPathBlock, type VDTP
  *  little narrower than it is long. */
 const ARROW_WIDTH_RATIO = 0.7;
 
-/** The shape a marker fills: a dot is a circle `sizePx` across centred on
- *  the point; an arrow a triangle whose tip is the point, `sizePx` long
- *  along `angle`, its base `0.7 × sizePx` wide. */
+/** The shape of a marker: a dot is a circle `sizePx` across centred on the
+ *  point; an arrow a triangle whose tip is the point, `sizePx` long along
+ *  `angle`, its base `0.7 × sizePx` wide; both filled. A ring (#1079) is a
+ *  circle stroked `widthPx` wide whose outer edge is `sizePx` across (`r`
+ *  the stroke's middle), centred on the point; a bar (#1079) a segment
+ *  `sizePx` long across `angle`, centred on the point, stroked `widthPx`
+ *  wide with square-cut ends. */
 export type PathMarkerOutline =
   | { kind: 'dot'; cx: number; cy: number; r: number }
-  | { kind: 'arrow'; points: [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }] };
+  | { kind: 'arrow'; points: [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }] }
+  | { kind: 'ring'; cx: number; cy: number; r: number; widthPx: number }
+  | { kind: 'bar'; points: [{ x: number; y: number }, { x: number; y: number }]; widthPx: number };
+
+/** The stroke width of a stroked marker (a ring, a bar): its own, else a
+ *  tenth of its size. */
+function markerWidth(m: VDTPathMarker): number {
+  const w = m.widthPx;
+  return typeof w === 'number' && Number.isFinite(w) && w > 0 ? w : Math.max(0, m.sizePx) / 10;
+}
 
 export function pathMarkerOutline(m: VDTPathMarker): PathMarkerOutline {
   const size = Math.max(0, m.sizePx);
   if (m.kind === 'dot') return { kind: 'dot', cx: m.x, cy: m.y, r: size / 2 };
   const dx = Math.cos(m.angle);
   const dy = Math.sin(m.angle);
+  if (m.kind === 'ring') {
+    const widthPx = Math.min(markerWidth(m), size);
+    return { kind: 'ring', cx: m.x, cy: m.y, r: Math.max(0, (size - widthPx) / 2), widthPx };
+  }
+  if (m.kind === 'bar') {
+    const half = size / 2;
+    return {
+      kind: 'bar',
+      points: [{ x: m.x - dy * half, y: m.y + dx * half }, { x: m.x + dy * half, y: m.y - dx * half }],
+      widthPx: markerWidth(m),
+    };
+  }
   const bx = m.x - dx * size;
   const by = m.y - dy * size;
   const half = (size * ARROW_WIDTH_RATIO) / 2;
@@ -34,6 +59,24 @@ export function pathMarkerOutline(m: VDTPathMarker): PathMarkerOutline {
       { x: bx + dy * half, y: by - dx * half },
     ],
   };
+}
+
+/**
+ * `color` (a `#rgb`, `#rgba`, `#rrggbb` or `#rrggbbaa` hex) with its alpha
+ * times `opacity` (#1079), as `#rrggbbaa`. An opacity that is not a number
+ * below 1 leaves the colour as it is; any other colour form is returned
+ * unchanged.
+ */
+export function colorWithOpacity(color: string, opacity: number | undefined): string {
+  if (typeof opacity !== 'number' || !Number.isFinite(opacity) || opacity >= 1) return color;
+  const m = /^#([0-9a-f]{3,8})$/i.exec(color);
+  if (!m) return color;
+  let h = m[1]!.toLowerCase();
+  if (h.length === 3 || h.length === 4) h = [...h].map((c) => c + c).join('');
+  if (h.length !== 6 && h.length !== 8) return color;
+  const a = h.length === 8 ? parseInt(h.slice(6), 16) / 255 : 1;
+  const out = Math.round(Math.max(0, Math.min(1, a * Math.max(0, opacity))) * 255);
+  return `#${h.slice(0, 6)}${out.toString(16).padStart(2, '0')}`;
 }
 
 /** A number for an SVG path or attribute: at most three decimals. */
@@ -68,15 +111,30 @@ export function pathSvgData(subpaths: readonly (readonly VDTPathCommand[])[], ox
   return out.join('');
 }
 
-/** The SVG path data of a marker's outline, shifted by `(-ox, -oy)`. */
+/** The SVG path data of a marker's outline, shifted by `(-ox, -oy)`: the
+ *  shape a dot or an arrow fills, the line a ring or a bar strokes. */
 export function markerSvgData(m: VDTPathMarker, ox = 0, oy = 0): string {
   const o = pathMarkerOutline(m);
-  if (o.kind === 'dot') {
+  if (o.kind === 'dot' || o.kind === 'ring') {
     const { cx, cy, r } = o;
     return `M${n(cx - r - ox)} ${n(cy - oy)}A${n(r)} ${n(r)} 0 1 0 ${n(cx + r - ox)} ${n(cy - oy)}A${n(r)} ${n(r)} 0 1 0 ${n(cx - r - ox)} ${n(cy - oy)}Z`;
   }
+  if (o.kind === 'bar') {
+    const [a, b] = o.points;
+    return `M${n(a.x - ox)} ${n(a.y - oy)}L${n(b.x - ox)} ${n(b.y - oy)}`;
+  }
   const [a, b, c] = o.points;
   return `M${n(a.x - ox)} ${n(a.y - oy)}L${n(b.x - ox)} ${n(b.y - oy)}L${n(c.x - ox)} ${n(c.y - oy)}Z`;
+}
+
+/** A marker as an SVG `<path>` element, shifted by `(-ox, -oy)`: filled
+ *  (a dot, an arrow) or stroked (a ring, a bar). `attr` escapes the colour
+ *  for an attribute. */
+export function markerSvgElement(m: VDTPathMarker, ox: number, oy: number, attr: (v: string) => string): string {
+  const d = markerSvgData(m, ox, oy);
+  const o = pathMarkerOutline(m);
+  if (o.kind !== 'ring' && o.kind !== 'bar') return `<path d="${d}" fill="${attr(m.color)}"/>`;
+  return `<path d="${d}" fill="none" stroke="${attr(m.color)}" stroke-width="${n(o.widthPx)}"/>`;
 }
 
 /** The cubic Bézier of a quadratic one from `(x0, y0)` (control points at
@@ -125,6 +183,8 @@ export function pathInkBox(block: Pick<VDTDesignPathBlock, 'subpaths' | 'stroke'
   for (const m of block.markers ?? []) {
     const o = pathMarkerOutline(m);
     if (o.kind === 'dot') add(o.cx, o.cy, o.r);
+    else if (o.kind === 'ring') add(o.cx, o.cy, o.r + o.widthPx / 2);
+    else if (o.kind === 'bar') for (const p of o.points) add(p.x, p.y, o.widthPx / 2);
     else for (const p of o.points) add(p.x, p.y, 0);
   }
   if (x0 > x1) return createBoundingBox(0, 0, 0, 0);
@@ -278,6 +338,15 @@ export function pathHit(block: VDTDesignPathBlock, p: { x: number; y: number }, 
     const o = pathMarkerOutline(m);
     if (o.kind === 'dot') {
       if (Math.hypot(p.x - o.cx, p.y - o.cy) <= Math.max(o.r, tolerancePx)) return true;
+      continue;
+    }
+    if (o.kind === 'ring') {
+      // On the ring's stroke, not in its hole.
+      if (Math.abs(Math.hypot(p.x - o.cx, p.y - o.cy) - o.r) <= Math.max(o.widthPx / 2, tolerancePx)) return true;
+      continue;
+    }
+    if (o.kind === 'bar') {
+      if (segmentDistance(p, o.points[0], o.points[1]) <= Math.max(o.widthPx / 2, tolerancePx)) return true;
       continue;
     }
     const [a, b, c] = o.points;

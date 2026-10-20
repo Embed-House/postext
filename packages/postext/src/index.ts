@@ -127,7 +127,7 @@ export type { PlaceholderContext, PlaceholderResult, PlaceholderResolveOptions, 
 export { resolveDesignPlaceholders, allowedPlaceholdersFor, isAllowedPlaceholder, configUsesPlaceholder } from './design/placeholders';
 export type { DesignPlaceholderContext, DesignContextKind, HeadingPlaceholderInfo } from './design/placeholders';
 export { layoutDesignSlot } from './design/layout';
-export { pathMarkerOutline, pathSvgData, markerSvgData, quadToCubic, pathInkBox, pathHit, offsetPathBlock, translatedPathBlock, pathBlockColors, recolorPathBlock } from './design/pathBlock';
+export { pathMarkerOutline, pathSvgData, markerSvgData, markerSvgElement, colorWithOpacity, quadToCubic, pathInkBox, pathHit, offsetPathBlock, translatedPathBlock, pathBlockColors, recolorPathBlock } from './design/pathBlock';
 export type { PathMarkerOutline } from './design/pathBlock';
 export { parseSvgPath, arcToCubics } from './design/svgPath';
 export type { SvgPathParse } from './design/svgPath';

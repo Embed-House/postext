@@ -51,8 +51,8 @@ import { firstStrongDirection } from '../design/bidiText';
 import { withIconAlts } from './labelText';
 import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../parse/inlineFormatting';
 import { flowRectToPage, flowToPage } from '../vdt';
-import { capEnd, DEFAULT_CAP_SIZE_PER_WIDTH, DEFAULT_CONNECTOR_WIDTH, polylineCommands, type Pt as LinePt } from '../design/connector';
-import { pathInkBox } from '../design/pathBlock';
+import { capEnd, DEFAULT_CAP_SIZE_PER_WIDTH, DEFAULT_CONNECTOR_WIDTH, opacityOf, polylineCommands, type Pt as LinePt } from '../design/connector';
+import { colorWithOpacity, pathInkBox } from '../design/pathBlock';
 
 /** `[a, b, c, d, e, f]`, canvas `transform` order (y down). */
 export type LabelMatrix = [number, number, number, number, number, number];
@@ -482,8 +482,8 @@ function validLabelAt(v: unknown): { x: number; y: number } | undefined {
   return typeof x === 'number' && typeof y === 'number' && Number.isFinite(x) && Number.isFinite(y) ? { x, y } : undefined;
 }
 
-const capOrNone = (v: unknown, fallback: LineCap): 'dot' | 'arrow' | undefined => {
-  const c = v === 'dot' || v === 'arrow' || v === 'none' ? v : fallback;
+const capOrNone = (v: unknown, fallback: LineCap): Exclude<LineCap, 'none'> | undefined => {
+  const c = v === 'dot' || v === 'arrow' || v === 'ring' || v === 'bar' || v === 'none' ? v : fallback;
   return c === 'none' ? undefined : c;
 };
 
@@ -519,6 +519,7 @@ function labelLeader(
   const color = style.color ? hexOf(style.color, resolved, { hex: look.color, model: 'hex' }) : look.color;
   const startCap = capOrNone(style.startCap, 'none');
   const endCap = capOrNone(style.endCap, 'dot');
+  const opacity = opacityOf(style.opacity);
   return {
     x: point.x,
     y: point.y,
@@ -527,6 +528,7 @@ function labelLeader(
     ...(startCap ? { startCap } : {}),
     ...(endCap ? { endCap } : {}),
     capSizePx,
+    ...(opacity !== undefined && opacity < 1 ? { opacity } : {}),
     gapPx: layout.background ? 0 : look.fontPx * (layout.scale ?? 1) * LEADER_GAP_EM,
   };
 }
@@ -570,10 +572,11 @@ export function figureLabelLeaderPath(layout: VDTFigureLabelLayout, bodyX: numbe
   const length = pts.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - pts[i]!.x, p.y - pts[i]!.y), 0);
   if (length < Math.max(1, leader.capSizePx)) return undefined;
   const marks: VDTPathMarker[] = [];
-  if (leader.startCap) capEnd(pts, 0, leader.startCap, leader.capSizePx, leader.stroke.color, marks);
-  if (leader.endCap) capEnd(pts, 1, leader.endCap, leader.capSizePx, leader.stroke.color, marks);
+  // The look's opacity (#1079) on the colour the part palette left.
+  const stroke = leader.opacity !== undefined ? { ...leader.stroke, color: colorWithOpacity(leader.stroke.color, leader.opacity) } : leader.stroke;
+  if (leader.startCap) capEnd(pts, 0, leader.startCap, leader.capSizePx, stroke.color, marks, stroke.widthPx);
+  if (leader.endCap) capEnd(pts, 1, leader.endCap, leader.capSizePx, stroke.color, marks, stroke.widthPx);
   const subpaths = [polylineCommands(pts, 0)].filter((sp) => sp.length > 0);
-  const stroke = leader.stroke;
   return {
     kind: 'path',
     bbox: pathInkBox({ subpaths, stroke, markers: marks }),

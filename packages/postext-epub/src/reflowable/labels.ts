@@ -13,7 +13,7 @@
 // of sight, as before.
 
 import type { ResolvedResourceBlock, VDTDesignPathBlock, VDTFigureLabelLayout, VDTLine, VDTLineSegment } from 'postext';
-import { figureLabelLeaderPath, figureLabelMatrix, labelLayoutOnSheet, markerSvgData, parseFontString, pathSvgData, uncroppedPictureBox } from 'postext';
+import { figureLabelLeaderPath, figureLabelMatrix, labelLayoutOnSheet, markerSvgElement, parseFontString, pathSvgData, uncroppedPictureBox } from 'postext';
 import { familyStack } from './css';
 import { fontPx, xmlAttr, xmlText } from './inline';
 
@@ -118,7 +118,7 @@ function leaderSvg(path: VDTDesignPathBlock): string {
     const dash = stroke.dash && stroke.dash.length > 0 ? ` stroke-dasharray="${stroke.dash.map(n).join(' ')}"` : '';
     out.push(`<path d="${pathSvgData(path.subpaths)}" fill="none" stroke="${xmlAttr(stroke.color)}" stroke-width="${n(stroke.widthPx)}"${dash}/>`);
   }
-  for (const m of path.markers ?? []) out.push(`<path d="${markerSvgData(m)}" fill="${xmlAttr(m.color)}"/>`);
+  for (const m of path.markers ?? []) out.push(markerSvgElement(m, 0, 0, xmlAttr));
   return out.join('');
 }
 
