@@ -5238,33 +5238,5 @@
       "it": "Quaderni di scrittura, righe da ripassare e rigature scolastiche"
     },
     "theme": "publications"
-  },
-  "Q188": {
-    "kind": "how",
-    "text": {
-      "en": "How do I build an org chart and a photo grid from reusable modules, with the lines drawn by the template?",
-      "es": "¿Cómo hago un organigrama y una rejilla de fotos con módulos reutilizables, con las líneas trazadas por la plantilla?",
-      "ca": "Com faig un organigrama i una graella de fotos amb mòduls reutilitzables, amb les línies traçades per la plantilla?",
-      "zh": "怎样用可复用的模块拼出组织结构图和照片网格，连线由模板来画？",
-      "ar": "كيف أبني مخططًا تنظيميًا وشبكة صور من وحدات قابلة لإعادة الاستعمال، والقالب يرسم الخطوط؟",
-      "ja": "使い回せるモジュールで組織図と写真のグリッドを作り、線はテンプレートに引かせるには？",
-      "pt": "Como faço um organograma e uma grade de fotos com módulos reutilizáveis, com as linhas traçadas pelo modelo?",
-      "fr": "Comment construire un organigramme et une grille de photos avec des modules réutilisables, les traits étant tracés par le modèle ?",
-      "de": "Wie baue ich ein Organigramm und ein Fotoraster aus wiederverwendbaren Modulen, deren Linien die Vorlage zieht?",
-      "it": "Come costruisco un organigramma e una griglia di foto con moduli riutilizzabili, con le linee tracciate dal modello?"
-    },
-    "index": {
-      "en": "Org charts and photo grids built from modules",
-      "es": "Organigramas y rejillas de fotos hechos con módulos",
-      "ca": "Organigrames i graelles de fotos fets amb mòduls",
-      "zh": "用模块拼出的组织结构图与照片网格",
-      "ar": "مخططات تنظيمية وشبكات صور مبنية من وحدات",
-      "ja": "モジュールで作る組織図と写真グリッド",
-      "pt": "Organogramas e grades de fotos feitos com módulos",
-      "fr": "Organigrammes et grilles de photos faits de modules",
-      "de": "Organigramme und Fotoraster aus Modulen",
-      "it": "Organigrammi e griglie di foto fatti di moduli"
-    },
-    "theme": "page"
   }
 }
