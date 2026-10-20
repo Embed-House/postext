@@ -2881,6 +2881,10 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
     point becomes an anchor `pointer-N` (fractions of the cut picture's box) of that picture's resource,
     after its label anchors. Such lines (and every line drawn as decoration that crosses a picture cut from
     the page) are redacted from the picture's cut. A line under a photo ends at the photo's side.
+  - A drop is taken as far as its child's far edge; what runs on past it (a pill's line down to the photo
+    under it) is read again as a straight run. A frame-to-frame run drawn over a picture it crosses (paint
+    order, as for pointers) gets `over: true`. Lines inside a picture that touch only it and frames set on it
+    (a map's scale bar, its key's samples) stay the picture's art.
   - Left lines covered whole by an opaque frame (a filled box or tab, a picture) are dropped; the rest are
     one `path` element per look (`lines-N`).
 - **Furniture.** In paint order: the page's colour (`page-colour`, a box anchored to the bleed with `fill`
@@ -2895,6 +2899,10 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   the first frame it holds and sized to a box of no size (`border-N-end`) anchored off the foot of the last
   one, so the border grows with what it holds (the engine's `{ to, edge }` sizes have no margin of their
   own: the helper carries the far padding). One inside a picture is the picture's art (the cut has it).
+  A box whose only words are its tab becomes such a border plus a tab frame with the words (unless it lies
+  on a picture: an inset keeps its labelled frame). A fill the render check calls hidden (a tinted folder
+  mostly covered by its photo and white panel, only a ring showing) is still drawn: as a shape under the
+  frames, and in the comparison.
 - **The raster ground.** The page without its text is compared at `--ground-dpi` with the same page's paths
   redrawn on a blank page (every drawn path but the ones left to the raster), outside picture frames and
   opaque frames; what differs after a one-pixel opening (photos behind the page, art a card clips off a
@@ -2907,8 +2915,9 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   element only when the base has every frame and element it names (`element_targets`).
 - **Departures.** §12.4's leader of a *label* (`labelAt`, `::label{leader}`) is not written: a source's
   pointer from a note box is a frame-to-anchor connector; labels on the picture stay at their points.
-  Connector caps are not read (dots and arrows at line ends stay loose shapes). Diagonal lines and curves stay
-  shapes or art. A drop that leaves the page (a spread's bar) is kept as a line on this page only.
+  Arrowheads are not read (a dot at a line's end is: a filled round path under 3 mm centred within 0.8 mm
+  of the end becomes `startCap` / `endCap: 'dot'` with its diameter as `capSize`, and leaves the picture's
+  cut). Diagonal lines and curves stay shapes or art. A drop that leaves the page (a spread's bar) is kept as a line on this page only.
 - **Tests.** `tests/test_line_art.py` (segments, trees, two-level trees, elbows into a picture, a line under
   a photo, runs through pills, gaps, path data, the card outline) and `VectorDecorationTest` in
   `tests/test_pdf_regions.py`: an invented diagram page (page colour, card with its title tab, a tree, a

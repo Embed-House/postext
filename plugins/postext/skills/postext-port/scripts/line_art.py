@@ -450,7 +450,11 @@ def read_trees(net: list[Seg], frames: list[Frame], pieces: Pieces) -> list[Conn
         tstart = bar.c - sign * min(pdist, reach)
         pieces.take(trunk, tstart, bar.c)
         for dr, fr, ext in kids:
-            pieces.take(dr, bar.c, bar.c + sign * ext)
+            # the drop as far as the child's far edge: what runs on past it (a pill's line on down
+            # to the photo under it) is read again as a line of its own
+            far = (fr.box[3] if dr.axis == "v" else fr.box[2]) if sign > 0 else (fr.box[1] if dr.axis == "v" else fr.box[0])
+            reach_to = min(bar.c + ext, far) if sign > 0 else max(bar.c - ext, far)
+            pieces.take(dr, bar.c, reach_to)
             conn.ids |= dr.ids
     return out
 

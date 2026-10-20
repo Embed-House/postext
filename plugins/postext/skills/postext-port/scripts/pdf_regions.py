@@ -2218,8 +2218,8 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
         if b.get("tab") is not None:
             els.append(box_element(f"border-{n}-tab", b["tab"], abs_placement(b["tab"].box)))
     # shapes left on the page (icons, chevrons, ornaments): paths, unless there are too many
-    residual = [s for s in sh["shapes"] if s.kind == "art"
-                and not any(inside_mm(s.box, f.box, 0.6) or centre_in(s.box, f.box) for f in pics)
+    residual = [s for s in sh["shapes"] if s.kind in ("art", "hidden")
+                and not any(inter(s.box, f.box) >= 0.8 * max(area(s.box), 1e-6) for f in pics)
                 and not any(inside_mm(s.box, f.box, 0.3) for f in covering)]
     caps = art["caps"]
     residual = [s for s in residual if id(s) not in art["cap_shapes"]]
@@ -2300,9 +2300,12 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     left_ids = {id(s) for s in raster_left}
     masks = [(f.box[0] - 0.6, f.box[1] - 0.6, f.box[2] + 0.6, f.box[3] + 0.6) for f in pics]
     masks += [f.box for f in covering]
-    # what lies wholly under a mask is not compared: a map's thousands of paths are not redrawn
-    painted = [s.raw for s in sh["shapes"] if s.kind != "hidden" and id(s) not in left_ids
-               and not any(inside_mm(s.box, m, 0.0) for m in masks)]
+    # what lies under a mask is not compared: a map's thousands of paths are not redrawn, nor a
+    # picture's art that the source clips at the card's edge (redrawn unclipped, it would paint
+    # past the card and make a ground of nothing)
+    painted = [s.raw for s in sh["shapes"] if id(s) not in left_ids
+               and not any(inside_mm(s.box, m, 0.0) for m in masks)
+               and not (s.kind == "art" and any(inter(s.box, m) >= 0.5 * max(area(s.box), 1e-6) for m in masks))]
     g = residual_ground(pdf_path, pno, origin, painted, masks, opts, ground_id)
     if g is not None:
         stats["ground"] = True
