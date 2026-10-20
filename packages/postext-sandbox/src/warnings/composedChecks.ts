@@ -27,7 +27,7 @@ export const PAGE_TEMPLATE_KINDS = [
  *  cut between columns, figure labels at anchors (#860), design text that
  *  is content, and the templates themselves. */
 const COMPOSED_KINDS: ReadonlySet<WarningPayload['kind']> = new Set<WarningPayload['kind']>([
-  'frameOverflow', 'frameContinuationLimit', 'continueTargetMissing', 'frameCovered', 'frameOutsideArea', 'repeatOverflow', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
+  'frameOverflow', 'frameContinuationLimit', 'continueTargetMissing', 'frameCovered', 'frameOutsideArea', 'repeatOverflow', 'moduleUnknown', 'moduleAsPage', 'moduleNested', 'moduleNameRejected', 'slotUnknown', 'slotEmpty', 'templateUnknown', 'spreadMismatch', 'pageFenceLength',
   'tocGroupSplit', 'labelAnchorUnknown', 'anchorUnlabelled', 'labelOverflow', 'labelOverlap', 'contentInConfig', ...PAGE_TEMPLATE_KINDS,
 ]);
 

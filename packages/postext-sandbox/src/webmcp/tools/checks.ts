@@ -170,6 +170,14 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
               ...(w.payload.locale ? { locale: w.payload.locale } : {}),
               proposals: proposalList(w.payload),
             } : {}),
+            // A :::module block not laid, set as a page, nested or renamed (#1062).
+            ...(w.payload.kind === 'moduleUnknown' || w.payload.kind === 'moduleNested' || w.payload.kind === 'moduleNameRejected' ? {
+              template: w.payload.template,
+              module: w.payload.module,
+              ...(w.payload.kind === 'moduleUnknown' ? { name: w.payload.name, reason: w.payload.reason } : {}),
+              ...(w.payload.kind === 'moduleNameRejected' ? { name: w.payload.name, used: w.payload.used, reason: w.payload.reason } : {}),
+            } : {}),
+            ...(w.payload.kind === 'moduleAsPage' ? { template: w.payload.template } : {}),
             // A repeating grid given more items than it holds (#1061).
             ...(w.payload.kind === 'repeatOverflow' ? {
               frame: w.payload.frame,

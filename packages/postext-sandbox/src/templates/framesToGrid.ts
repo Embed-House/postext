@@ -192,12 +192,6 @@ function cellsOf(frames: readonly FrameConfig[], selected: ReadonlySet<string>, 
   return [...cells.values()];
 }
 
-const unionOf = (rs: readonly Rect[]): Rect => {
-  const x = Math.min(...rs.map((r) => r.x));
-  const y = Math.min(...rs.map((r) => r.y));
-  return { x, y, width: Math.max(...rs.map((r) => r.x + r.width)) - x, height: Math.max(...rs.map((r) => r.y + r.height)) - y };
-};
-
 /** Turn `frames` of template `templateId` (its own frames) into a grid. */
 export function planFramesToGrid(input: {
   templates: readonly PageTemplate[];

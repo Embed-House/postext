@@ -30,6 +30,8 @@ import {
   type TemplateScope,
 } from '../../../templates/templateEdits';
 import { renameTemplateChanges } from '../../../templates/templateUsage';
+import { renameModuleChanges } from '../../../templates/moduleEdits';
+import { ReshapeFrames } from './ReshapeFrames';
 import { pageAreas, templateAreaRect } from '../../../templates/frameGeometry';
 import { templateSheet } from '../../../templates/templateSheet';
 import { SlotEditor } from '../HeaderFooterSection/SlotEditor';
@@ -137,7 +139,7 @@ export const PageTemplatesSection = memo(function PageTemplatesSection() {
                     <span className="truncate text-[0.7rem]" style={{ color: 'var(--slate)' }}>
                       <span dir="ltr">{t.id}</span>
                       {' · '}
-                      {pagesText(n)}
+                      {t.role === 'module' ? labels.pageTemplatesModuleTag : pagesText(n)}
                       {t.extends ? ` · ${labels.pageTemplatesBasedOnShort.replace('__name__', templateAt(templates, t.extends)?.template.name || t.extends)}` : ''}
                     </span>
                   </span>
@@ -166,10 +168,13 @@ export const PageTemplatesSection = memo(function PageTemplatesSection() {
           heights={heights.get(selectedId)}
           onScope={(s) => select(selectedId, { scope: s, frame: selection?.frame ?? null })}
           frame={selection?.templateId === selectedId ? selection.frame : null}
+          pageIndex={selection?.pageIndex ?? null}
           onFrame={(f) => templateEditor.select({ templateId: selectedId, scope, frame: f, group: null, pageIndex: selection?.pageIndex ?? null })}
           onRenamed={(next) => {
+            // A page fence names a template; a :::module block, a module (#1065).
+            const isModule = templates.find((t) => t.id === selectedId)?.role === 'module';
             for (const ch of chapters) {
-              const changes = renameTemplateChanges(ch.markdown, selectedId, next);
+              const changes = isModule ? renameModuleChanges(ch.markdown, selectedId, next) : renameTemplateChanges(ch.markdown, selectedId, next);
               if (changes.length > 0) applyViewerEdit(dispatch, ch.id, changes, ch.markdown.length);
             }
             select(next, { scope });
@@ -181,29 +186,35 @@ export const PageTemplatesSection = memo(function PageTemplatesSection() {
   );
 });
 
-interface TemplateEditorProps {
+export interface TemplateEditorProps {
   id: string;
   scope: TemplateScope;
   pages: number;
   heights?: ReadonlyMap<string, number>;
   frame: string | null;
+  /** The page a frame was picked on: «Reshape frames» reads it first. */
+  pageIndex?: number | null;
   onScope: (scope: TemplateScope) => void;
   onFrame: (frame: string | null) => void;
   onRenamed: (id: string) => void;
   onRemoved: () => void;
 }
 
-function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, onRenamed, onRemoved }: TemplateEditorProps) {
+/** One template's editor (the Page templates section; the Modules section
+ *  opens it on a module, #1065). */
+export function TemplateEditor({ id, scope, pages, heights, frame, pageIndex = null, onScope, onFrame, onRenamed, onRemoved }: TemplateEditorProps) {
   const labels = useSandboxLabels();
   const { templates, write } = usePageTemplates();
   const config = useSandboxSelector((s) => s.config);
   const own = templateAt(templates, id)?.template;
   const [idDraft, setIdDraft] = useState(id);
   useEffect(() => setIdDraft(id), [id]);
-  const resolved = resolveAt({ pageTemplates: templates }, id, own?.spread ? 'base' : scope);
+  const resolved = resolveAt({ pageTemplates: templates }, id, own?.spread || own?.role === 'module' ? 'base' : scope);
   if (!own || !resolved) return null;
   const spread = resolved.spread;
-  const effScope: TemplateScope = spread ? 'base' : scope;
+  // A module (#1062, #1065) has no area, running heads, variants or spread.
+  const isMod = resolved.role === 'module';
+  const effScope: TemplateScope = spread || isMod ? 'base' : scope;
   const scoped = (effScope === 'base' ? own : own.variants?.[effScope]) ?? {};
   const sheet = templateSheet(config, resolved, effScope === 'verso' ? 'verso' : 'recto', heights);
   const set = (patch: Partial<PageTemplate>) => write(updateTemplate(templates, id, effScope, patch));
@@ -259,7 +270,7 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
   return (
     <SearchScope title={`${own.name ?? ''} ${own.id}`} overridden>
       <div className="rounded border p-2" style={{ borderColor: 'var(--rule)' }}>
-        {!spread && (
+        {!spread && !isMod && (
           <FieldRow stacked label={labels.pageTemplatesScope} tooltip={labels.pageTemplatesScopeTooltip}>
             <SegmentedControl<TemplateScope>
               value={effScope}
@@ -306,6 +317,15 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             isDefault={!has('extends')}
             onReset={() => set({ extends: undefined })}
           />
+          <ToggleSwitch
+            label={labels.pageTemplatesModuleRole}
+            tooltip={labels.pageTemplatesModuleRoleTooltip}
+            checked={isMod}
+            onChange={(v) => set(v ? { role: 'module', spread: undefined, gutter: undefined, area: undefined, header: undefined, footer: undefined, overflowTemplate: undefined, variants: undefined } : { role: undefined })}
+            isDefault={!has('role')}
+          />
+          {!isMod && (
+          <>
           <ToggleSwitch label={labels.pageTemplatesSpread} tooltip={labels.pageTemplatesSpreadTooltip} checked={spread} onChange={(v) => set({ spread: v || undefined })} isDefault={!has('spread')} onReset={() => set({ spread: undefined })} />
           {spread && (
             <DimensionInput label={labels.pageTemplatesGutter} value={resolved.gutter} onChange={(d) => set({ gutter: d })} tooltip={labels.pageTemplatesGutterTooltip} isDefault={!has('gutter')} onReset={() => set({ gutter: undefined })} />
@@ -333,6 +353,8 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             isDefault={!has('overflowTemplate')}
             onReset={() => set({ overflowTemplate: undefined })}
           />
+          </>
+          )}
           <FieldRow stacked label={labels.pageTemplatesPalette} tooltip={labels.pageTemplatesPaletteTooltip}>
             <TextControl
               value={scoped.palette ?? ''}
@@ -342,7 +364,7 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
               widthCh={24}
             />
           </FieldRow>
-          <NumberInput
+          {!isMod && <NumberInput
             label={labels.pageTemplatesGridColumns}
             value={resolved.grid?.columns ?? 0}
             min={0}
@@ -351,8 +373,8 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             tooltip={labels.pageTemplatesGridTooltip}
             isDefault={!has('grid')}
             onReset={() => set({ grid: undefined })}
-          />
-          {resolved.grid && (
+          />}
+          {resolved.grid && !isMod && (
             <>
               <NumberInput label={labels.pageTemplatesGridRows} value={resolved.grid.rows} min={1} max={48} onChange={(n) => set({ grid: { ...resolved.grid!, ...(grid ?? {}), rows: n } })} isDefault={!has('grid')} />
               <DimensionInput label={labels.pageTemplatesGridColumnGap} value={resolved.grid.columnGap} onChange={(d) => set({ grid: { ...resolved.grid!, ...(grid ?? {}), columnGap: d } })} isDefault={!has('grid')} />
@@ -389,16 +411,23 @@ function TemplateEditor({ id, scope, pages, heights, frame, onScope, onFrame, on
             // into the next frame picked.
             <FrameProperties key={`${id}:${effScope}:${frame}`} templateId={id} scope={effScope} name={frame} onRenamed={(n) => onFrame(n)} onRemoved={() => onFrame(null)} />
           )}
+          {/* One-off frames into a grid or a module (#1065): the template's
+              own frames, on a page that is not a spread. */}
+          {effScope === 'base' && !spread && !isMod && (own.frames ?? []).length > 1 && (
+            <ReshapeFrames key={id} templateId={id} frames={(own.frames ?? []).filter((f) => !f.remove).map((f) => f.name)} pageIndex={pageIndex} />
+          )}
         </FieldGroup>
 
         <FieldGroup title={labels.pageTemplatesGroupGroups} description={labels.pageTemplatesGroupGroupsDescription}>
           <GroupsEditor templateId={id} scope={effScope} />
         </FieldGroup>
 
-        <FieldGroup title={labels.pageTemplatesGroupRunning}>
-          {headSelect('header')}
-          {headSelect('footer')}
-        </FieldGroup>
+        {!isMod && (
+          <FieldGroup title={labels.pageTemplatesGroupRunning}>
+            {headSelect('header')}
+            {headSelect('footer')}
+          </FieldGroup>
+        )}
 
         <FieldGroup title={labels.pageTemplatesGroupDecoration} description={labels.pageTemplatesGroupDecorationDescription}>
           <SlotEditor

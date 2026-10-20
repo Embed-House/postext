@@ -49,6 +49,10 @@ export type WarningKind =
   | 'frameCovered'
   | 'frameOutsideArea'
   | 'repeatOverflow'
+  | 'moduleUnknown'
+  | 'moduleAsPage'
+  | 'moduleNested'
+  | 'moduleNameRejected'
   | 'spreadMismatch'
   | 'labelAnchorUnknown'
   | 'anchorUnlabelled'
@@ -323,6 +327,16 @@ export type WarningPayload =
    *  more: item `item` goes to the flow frame (`flowFrame`), or after the
    *  page. */
   | { kind: 'repeatOverflow'; template: string; group: string; frame: string; item: number; max: number; flowFrame?: string; fenceIndex: number }
+  /** A `:::module` block (#1062) whose template is unknown, no module, or
+   *  that the page's template has no modules group for: not laid, its
+   *  content in the flow frame. */
+  | { kind: 'moduleUnknown'; template: string; module: string; name: string; reason: 'unknown' | 'notModule' | 'noGroup'; fenceIndex: number }
+  /** A page fence naming a module template (#1062). */
+  | { kind: 'moduleAsPage'; template: string; fenceIndex: number }
+  /** A module written inside a module (#1062). */
+  | { kind: 'moduleNested'; template: string; module: string; fenceIndex: number }
+  /** A module `name` the page could not take (#1062): the name `used`. */
+  | { kind: 'moduleNameRejected'; template: string; module: string; name: string; used: string; reason: 'taken' | 'invalid'; fenceIndex: number }
   /** A composed page's fence and its template disagree about spreads
    *  (#861): the template decides (`templateSpread`: laid over two facing
    *  pages; else on one); `fence` is the fence's own `spread`. */

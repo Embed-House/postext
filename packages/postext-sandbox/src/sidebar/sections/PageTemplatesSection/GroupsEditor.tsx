@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import type { AnchorEdge, Dimension, ElementPlacement, FrameGroupConfig } from 'postext';
 import { useSandboxLabels } from '../../../context/SandboxContext';
-import { DimensionInput, FieldRow, ItemCard, ItemCardListActions, moveCardState, openCard, SelectInput, TextControl } from '../../../controls';
+import { DimensionInput, FieldRow, ItemCard, ItemCardListActions, moveCardState, NumberInput, openCard, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../../ui';
 import { addGroup, moveMember, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits';
 import { resolveAt, usePageTemplates } from './model';
@@ -71,7 +71,21 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
 interface GroupCardProps {
   /** Where the card's fold is kept (#1031). */
   cardList: string;
-  group: { name: string; kind: 'stack' | 'row' | 'grid'; frames: string[]; gap: Dimension; align: string; placement?: ElementPlacement };
+  group: {
+    name: string;
+    kind: 'stack' | 'row' | 'grid';
+    frames: string[];
+    gap: Dimension;
+    align: string;
+    placement?: ElementPlacement;
+    columns?: number;
+    columnGap?: Dimension;
+    rowGap?: Dimension;
+    rowAlign?: 'start' | 'center' | 'end' | 'stretch';
+    repeat?: { frames: string[]; max?: number };
+    modules?: true;
+    overflow?: { continueIn?: string };
+  };
   entry: FrameGroupConfig | undefined;
   frames: string[];
   /** What the group's own box may hang from: the frames and the other
@@ -120,35 +134,62 @@ function GroupCard({ cardList, group, entry, frames, targets, taken, onChange, o
           widthCh={14}
         />
       </FieldRow>
-      <SelectInput
-        label={labels.pageTemplatesGroupKind}
-        value={group.kind}
-        variant="segmented"
-        options={[
-          { value: 'stack', label: labels.pageTemplatesGroupKindStack },
-          { value: 'row', label: labels.pageTemplatesGroupKindRow },
-        ]}
-        onChange={(v) => onChange({ kind: v })}
-        tooltip={labels.pageTemplatesGroupKindTooltip}
-        isDefault={!has('kind')}
-        onReset={() => onChange({ kind: undefined })}
+      {/* A modules group (#1062, #1065): the page's :::module blocks,
+          stacked; its kind and members are not read. */}
+      <ToggleSwitch
+        label={labels.pageTemplatesGroupModules}
+        tooltip={labels.pageTemplatesGroupModulesTooltip}
+        checked={!!group.modules}
+        onChange={(on) => onChange(on ? { modules: true, kind: undefined, frames: undefined, repeat: undefined, columns: undefined, columnGap: undefined, rowGap: undefined, rowAlign: undefined } : { modules: undefined, overflow: undefined })}
+        isDefault={!has('modules')}
       />
+      {group.modules && (
+        <ToggleSwitch
+          label={labels.pageTemplatesGroupModulesContinue}
+          tooltip={labels.pageTemplatesGroupModulesContinueTooltip}
+          checked={group.overflow?.continueIn !== undefined}
+          onChange={(on) => onChange({ overflow: on ? { continueIn: 'next-page' } : undefined })}
+          isDefault={!has('overflow')}
+        />
+      )}
+      {!group.modules && (
+        <SelectInput
+          label={labels.pageTemplatesGroupKind}
+          value={group.kind}
+          variant="segmented"
+          options={[
+            { value: 'stack', label: labels.pageTemplatesGroupKindStack },
+            { value: 'row', label: labels.pageTemplatesGroupKindRow },
+            { value: 'grid', label: labels.pageTemplatesGroupKindGrid },
+          ]}
+          onChange={(v) => onChange(v === 'grid' ? { kind: v } : { kind: v, columns: undefined, columnGap: undefined, rowGap: undefined, rowAlign: undefined, repeat: undefined })}
+          tooltip={labels.pageTemplatesGroupKindTooltip}
+          isDefault={!has('kind')}
+          onReset={() => onChange({ kind: undefined, columns: undefined, columnGap: undefined, rowGap: undefined, rowAlign: undefined, repeat: undefined })}
+        />
+      )}
       <DimensionInput label={labels.pageTemplatesGroupGap} value={group.gap ?? MM0} onChange={(d) => onChange({ gap: d })} isDefault={!has('gap')} onReset={() => onChange({ gap: undefined })} />
-      <SelectInput
-        label={labels.pageTemplatesGroupAlign}
-        value={group.align}
-        options={[
-          { value: 'start', label: labels.pageTemplatesGroupAlignStart },
-          { value: 'center', label: labels.pageTemplatesGroupAlignCenter },
-          { value: 'end', label: labels.pageTemplatesGroupAlignEnd },
-          { value: 'space-between', label: labels.pageTemplatesGroupAlignBetween },
-        ]}
-        onChange={(v) => onChange({ align: v })}
-        tooltip={labels.pageTemplatesGroupAlignTooltip}
-        isDefault={!has('align')}
-        onReset={() => onChange({ align: undefined })}
-      />
+      {!group.modules && group.kind === 'grid' && (
+        <GridFields group={group} entry={entry} frames={frames} taken={taken} onChange={onChange} />
+      )}
+      {!group.modules && group.kind !== 'grid' && (
+        <SelectInput
+          label={labels.pageTemplatesGroupAlign}
+          value={group.align}
+          options={[
+            { value: 'start', label: labels.pageTemplatesGroupAlignStart },
+            { value: 'center', label: labels.pageTemplatesGroupAlignCenter },
+            { value: 'end', label: labels.pageTemplatesGroupAlignEnd },
+            { value: 'space-between', label: labels.pageTemplatesGroupAlignBetween },
+          ]}
+          onChange={(v) => onChange({ align: v })}
+          tooltip={labels.pageTemplatesGroupAlignTooltip}
+          isDefault={!has('align')}
+          onReset={() => onChange({ align: undefined })}
+        />
+      )}
       <GroupBoxFields placement={group.placement} targets={targets} isSet={has('placement')} onChange={(p) => onChange({ placement: p })} />
+      {!group.modules && !(group.kind === 'grid' && group.repeat) && (
       <fieldset className="m-0 mt-1 border-0 p-0">
         <legend className="mb-1 p-0 text-xs" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupMembers}</legend>
         <p className="mb-1 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupMembersHint}</p>
@@ -173,7 +214,94 @@ function GroupCard({ cardList, group, entry, frames, targets, taken, onChange, o
           })}
         </ul>
       </fieldset>
+      )}
     </ItemCard>
+  );
+}
+
+/** A grid's own fields (#1061, #1065): its columns, gaps, how a short cell
+ *  stands in its row, and the set of frames it repeats per item. */
+function GridFields({ group, entry, frames, taken, onChange }: Pick<GroupCardProps, 'group' | 'entry' | 'frames' | 'taken' | 'onChange'>) {
+  const labels = useSandboxLabels();
+  const has = (k: keyof FrameGroupConfig) => entry?.[k] !== undefined;
+  const repeat = group.repeat;
+  const free = frames.filter((f) => !taken.has(f));
+  const main = repeat?.frames[0];
+  const setRepeat = (next: { frames: string[]; max?: number } | undefined) => onChange({ repeat: next });
+  return (
+    <>
+      <NumberInput
+        label={labels.pageTemplatesGroupColumns}
+        tooltip={labels.pageTemplatesGroupColumnsTooltip}
+        value={group.columns ?? 1}
+        min={1}
+        max={12}
+        onChange={(n) => onChange({ columns: n })}
+        isDefault={!has('columns')}
+        onReset={() => onChange({ columns: undefined })}
+      />
+      <DimensionInput label={labels.pageTemplatesGroupColumnGap} value={group.columnGap ?? group.gap ?? MM0} onChange={(d) => onChange({ columnGap: d })} isDefault={!has('columnGap')} onReset={() => onChange({ columnGap: undefined })} />
+      <DimensionInput label={labels.pageTemplatesGroupRowGap} value={group.rowGap ?? group.gap ?? MM0} onChange={(d) => onChange({ rowGap: d })} isDefault={!has('rowGap')} onReset={() => onChange({ rowGap: undefined })} />
+      <SelectInput
+        label={labels.pageTemplatesGroupRowAlign}
+        tooltip={labels.pageTemplatesGroupRowAlignTooltip}
+        value={group.rowAlign ?? 'stretch'}
+        options={[
+          { value: 'start', label: labels.pageTemplatesGroupRowAlignStart },
+          { value: 'center', label: labels.pageTemplatesGroupRowAlignCenter },
+          { value: 'end', label: labels.pageTemplatesGroupRowAlignEnd },
+          { value: 'stretch', label: labels.pageTemplatesGroupRowAlignStretch },
+        ]}
+        onChange={(v) => onChange({ rowAlign: v })}
+        isDefault={!has('rowAlign')}
+        onReset={() => onChange({ rowAlign: undefined })}
+      />
+      <ToggleSwitch
+        label={labels.pageTemplatesGroupRepeat}
+        tooltip={labels.pageTemplatesGroupRepeatTooltip}
+        checked={!!repeat}
+        onChange={(on) => setRepeat(on ? { frames: [group.frames[0] ?? free[0] ?? ''].filter(Boolean) } : undefined)}
+        isDefault={!has('repeat')}
+      />
+      {repeat && (
+        <>
+          <SelectInput
+            label={labels.pageTemplatesGroupRepeatMain}
+            tooltip={labels.pageTemplatesGroupRepeatMainTooltip}
+            value={main ?? ''}
+            options={free.map((f) => ({ value: f, label: f }))}
+            onChange={(v) => setRepeat({ ...repeat, frames: [v, ...repeat.frames.filter((m) => m !== v)] })}
+          />
+          <fieldset className="m-0 mt-1 border-0 p-0">
+            <legend className="mb-1 p-0 text-xs" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupRepeatMembers}</legend>
+            <p className="mb-1 text-[0.7rem]" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesGroupRepeatMembersHint}</p>
+            <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+              {free.filter((f) => f !== main).map((f) => (
+                <li key={f} className="flex min-h-6 items-center text-xs">
+                  <label className="flex min-w-0 flex-1 items-center gap-1.5">
+                    <input
+                      type="checkbox"
+                      checked={repeat.frames.includes(f)}
+                      onChange={(e) => setRepeat({ ...repeat, frames: e.target.checked ? [...repeat.frames, f] : repeat.frames.filter((m) => m !== f) })}
+                    />
+                    <span className="truncate" dir="ltr">{f}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </fieldset>
+          <NumberInput
+            label={labels.pageTemplatesGroupRepeatMax}
+            tooltip={labels.pageTemplatesGroupRepeatMaxTooltip}
+            value={repeat.max ?? 0}
+            min={0}
+            max={99}
+            onChange={(n) => setRepeat({ frames: repeat.frames, ...(n > 0 ? { max: n } : {}) })}
+            isDefault={repeat.max === undefined}
+          />
+        </>
+      )}
+    </>
   );
 }
 

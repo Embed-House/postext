@@ -104,6 +104,10 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'frameCovered':
     case 'frameOutsideArea':
     case 'repeatOverflow':
+    case 'moduleUnknown':
+    case 'moduleAsPage':
+    case 'moduleNested':
+    case 'moduleNameRejected':
     case 'spreadMismatch':
     case 'labelAnchorUnknown':
     case 'anchorUnlabelled':
@@ -309,6 +313,14 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameOutsideTitle;
     case 'repeatOverflow':
       return labels.warningsRepeatOverflowTitle;
+    case 'moduleUnknown':
+      return labels.warningsModuleUnknownTitle;
+    case 'moduleAsPage':
+      return labels.warningsModuleAsPageTitle;
+    case 'moduleNested':
+      return labels.warningsModuleNestedTitle;
+    case 'moduleNameRejected':
+      return labels.warningsModuleNameRejectedTitle;
     case 'spreadMismatch':
       return labels.warningsSpreadMismatchTitle;
     case 'labelAnchorUnknown':
@@ -658,6 +670,17 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOutsideDetail(payload, labels, locale)}`;
     case 'repeatOverflow':
       return `${payload.frame}[${payload.item}] — ${repeatOverflowDetail(payload, labels)}`;
+    case 'moduleUnknown':
+      // A :::module block that is not laid (#1062, #1065).
+      if (payload.reason === 'noGroup') return labels.warningsModuleNoGroupDetail.replace('__template__', payload.template).replace('__name__', payload.name);
+      if (payload.reason === 'notModule') return labels.warningsModuleNotModuleDetail.replace('__module__', payload.module);
+      return payload.module === '' ? labels.warningsModuleNoTemplateDetail : labels.warningsModuleUnknownDetail.replace('__module__', payload.module);
+    case 'moduleAsPage':
+      return labels.warningsModuleAsPageDetail.replace('__template__', payload.template);
+    case 'moduleNested':
+      return labels.warningsModuleNestedDetail.replace('__module__', payload.module);
+    case 'moduleNameRejected':
+      return (payload.reason === 'taken' ? labels.warningsModuleNameTakenDetail : labels.warningsModuleNameInvalidDetail).replace('__name__', payload.name).replace('__used__', payload.used);
     case 'continueTargetMissing':
       return `${payload.frame} — ${(payload.before ? labels.warningsContinueTargetBeforeDetail : labels.warningsContinueTargetMissingDetail)
         .replace('__page__', String(payload.page))
