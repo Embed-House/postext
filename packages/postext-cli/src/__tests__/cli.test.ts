@@ -368,7 +368,12 @@ describe('postext cli', () => {
     const caption = ws.find((w) => w.kind === 'frameCovered' && w.data!.frame === 'figure')!;
     expect(caption.data).toMatchObject({ template: 'overlaps', fenceIndex: 0, locale: 'en', coveredByPath: '/pageTemplates/0/frames/1' });
     expect(caption.data!.text).toMatch(/^Rainfall/);
-    expect((caption.data!.proposals as { kind: string }[]).map((p) => p.kind)).toContain('move');
+    // Every move off the caption takes the photo out of the figure it is
+    // anchored inside, so none is offered (#1075); the cut-out over the card
+    // has a clear move.
+    expect((caption.data!.proposals as { kind: string }[]).map((p) => p.kind)).not.toContain('move');
+    const card = ws.find((w) => w.kind === 'frameCovered' && w.data!.frame === 'card')!;
+    expect((card.data!.proposals as { kind: string }[]).map((p) => p.kind)).toContain('move');
     expect(caption.page).toBe('1');
     const past = ws.filter((w) => w.kind === 'frameOutsideArea').map((w) => `${w.data!.frame}>${w.data!.past}`).sort();
     expect(past).toEqual(['note>frame', 'strap>trim']);
