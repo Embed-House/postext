@@ -2214,3 +2214,85 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   validation.
 - **Not done.** `ConnectorEnd.anchor` and leaders (C6); Sandbox (U10), docs (D3), skill (S6). Connectors
   inside modules are C11's to rewrite.
+
+### 12.19 What C11 built (#1062)
+
+- **Config.** `PageTemplate.role: 'module'` (`MODULE_ROLE`, `isModuleTemplate`) makes a template a module;
+  `FrameGroupConfig.modules: boolean` and `overflow: { continueIn }` (moved out of the round 2 draft into
+  `composed/types.ts`). `normalizeGroup` adds `modules: true` (and `overflow` when it continues) only to a
+  modules group, which resolves as a `'stack'` with no frames; every other group resolves to the same
+  object as before. Validation (`unknownConfigValue`, each ignored): a module's `area`, `header`, `footer`,
+  `variants`, `spread`, `gutter`, `overflowTemplate`; a modules group inside a module (resolved as a plain
+  stack); a modules group of another `kind` or with `frames`; a group `overflow.continueIn` other than
+  `'next-page'` / `'template:<id>'`, or on a group that is no modules group. `extends` between modules is
+  the usual `extends` (`role` is inherited, so a template extending a module is a module); a cycle is
+  `templateExtendsCycle`, and the module it leaves unresolved is `moduleUnknown` on the page. No new config
+  warning kinds.
+- **Markdown.** `:::module{template="…" name="…"}` (three colons) is a container (`ContainerName
+  'module'`) inside a page fence; outside one it is a plain box of its content. Decision: **the parser
+  scopes the slots** of the blocks inside a module (`slot.name` = `<name>.<slot>`, the source range still
+  the value as written) and names figure labels by the scoped slot, so `composedPages`, `wrap.ts`, the slot
+  checks, label ids and the Sandbox's `pageSites` read module slots as page slots with no change. The
+  instance name is `name` when it is free and has no space, `.`, `#`, `[` or `]`, else `<template>[n]`, `n`
+  the module's ordinal among the page's modules of that template (named ones counted), the next free one
+  on a clash. The fence records its modules (`ComposedPageFence.modules`, `ContentBlock.module`); a
+  module inside a module is `nested` (not scoped, its blocks the outer module's). `ParsedComposedPage
+  .modules` holds each module's blocks that name no slot and its first headings: they go to the module's
+  `takes` frame, else its flow frame, else the page's flow frame.
+- **Expansion** (`composed/modules.ts`, `expandModules`). Departure from §12.7: not in `composePage` but in
+  `resolvePageTemplate(config, id, { modules })` (cached by the list): the stories (`wrap.ts`), the slot
+  checks, the build (`singleOn`, spreads, continuation pages), the decoration (`headerFooter.ts`), the
+  source map and the Sandbox all resolve the page's template with the page's modules
+  (`VDTComposedPage.modules`), so every reader sees the same frames. Each module's frames, groups and
+  decoration are appended to the page's, scoped (`<name>.<x>`); anchors, sizes `to`, `next` and
+  `continueIn: '#x'` to the module's own names are rewritten (links out of the module dropped); frames lose
+  `flow`, `takes` (kept on `ResolvedModule`) and `grid` (a module has no template grid: a cell reads as no
+  placement); decoration anchored or sized to `'container'` reads `#<name>`, the module's box. The modules
+  group lists every module frame in module order and `items` (`{ item, frames, module }`); the modules'
+  own groups follow the page's, so `groupOfFrames` gives a module frame its modules group and
+  `composedOrder` lays the group as one step. `expandRepeats` (C10) then replaces a module grid's set in
+  the modules group and its items by the instances (`fotos[1].foto[3]`). A use whose template is unknown or
+  no module is left out.
+- **Layout** (`placeModules` in `composePage`, one group step). The group's box is its own placement, else
+  the area. Each module, in order, gets a box as wide as the group from the foot of the one before
+  (`gap` between): its steps (`composedOrder` of its frames and groups) run with that box as the area
+  (`'container'`, `'fill'`, percentages), first in the room left with nothing filled, to find its height
+  (the union of its frames, those held by the foot or middle or sized by the area's height left out), then
+  in a box that tall, filled. The page's own frames before and after see the modules as one group box
+  (`#<group>`). Declared boxes follow each other at their declared heights, so a module pushed down by the
+  one before logs `moved` like a stack. RTL needs nothing: the flow is mirrored (the tree's left branch is
+  on the start side). Module boxes are `VDTComposedPage.modules[].rect` (with `name`, `template`,
+  `configPath`), read by the decoration as `#<name>`.
+- **Overflow and continuation.** A module past the group's foot is laid with its frames clipped there
+  (`clipped`), each runs the ladder (scaling pictures among its module's frames, `peersOf`), and clipped
+  frames warn once per modules group (`frameOverflow` on the last cut). With the group's
+  `overflow.continueIn` off the page, the ladder's continue step for any module frame (by that rule and
+  the frame's `fit.preferContinue`; not on the last continuation page) adds the group to
+  `FitState.gridsOn`: the first module that does not fit and every one after it are not laid; their frames
+  that hold a story spill whole, each continuation carrying `module` (name and template) and, on the first
+  of a module, the module's empty frames as `trailing`. `build.ts` resolves the receiving page's template
+  with those modules, so they are laid there under the same names (`cp0:arbol[6].raiz~1`), at the top of
+  the group (the page's other frames collapse as on any `'next-page'`). Without the group's rule a module
+  frame's own `overflow.continueIn` works as on any frame.
+- **Warnings** (content, `WARNING_SINCE` 1.48.0): `moduleUnknown` (`reason`: `'unknown'` id, `'notModule'`,
+  `'noGroup'`: the page's template has no modules group; at `template="…"`; its content goes to the flow
+  frame and raises no `slotUnknown`), `moduleAsPage` (a fence names a module: set in the flow, as for an
+  unknown template; `planComposedPages`, `wrapComposedPages`, `pageFenceIds` and `useTemplate`
+  alternatives leave modules out), `moduleNested`, `moduleNameRejected` (`reason` `'taken'` /
+  `'invalid'`, `used` the name given instead). `slotEmpty` covers module frames at their `:::module` line.
+- **Ids, source map, Sandbox.** `VDTFrame.name` / ids are scoped (`cp0:caja[1].texto`), `configPath` the
+  module template's entry; `sourceAt` / `findElement` work through `templateOf` with the page's modules.
+  Sandbox (selection only, no panels): the five viewport readers of the page's template pass
+  `composed.modules`; `pageSites` reads slots inside `:::module` blocks and lists the modules, and a click on
+  an empty module frame writes `:::frame{slot="<own slot>"}` inside its `:::module`.
+- **Parity.** Templates without modules groups and pages without `:::module` lay out as before (see the
+  report of #1062 for the bench and recipe hashes).
+- **Not done.** Modules side by side (a modules group is always a stack; a grid of modules would be a
+  follow-up); a module inside a module; template grids (`grid` cells) inside a module; connectors and leaders
+  across modules (C5/C6 not landed here); decoration of a module that went on whole is drawn only on the page
+  that lays it, and a module element anchored to the page (`'page'`, `'bleed'`) is drawn once per instance;
+  Sandbox module library and Design panel entries (U12), docs (D3), skill (S7).
+- **Fixture.** `__tests__/composed/fixtures/modules.ts`: a page shell (`tema`: a title and the modules
+  group) and three modules (`caja`: a box with a tab and a photo beside it; `arbol`: a tree of three on a
+  tinted ground; `fotos`: a heading and a 2 × 2 photo grid), words in Spanish and English;
+  `modules.test.ts`.
