@@ -8,6 +8,7 @@ import { editionCheckTools } from './editionChecks';
 import { historyTools } from './history';
 import { frameStyleTools } from './frameStyles';
 import { moduleTools } from './modules';
+import { labelTools } from './labels';
 import { answerTools, libraryTools } from './library';
 import { pageTools } from './pages';
 import { resourceTools } from './resources';
@@ -28,6 +29,7 @@ export function createSandboxTools(host: SandboxToolHost): WebMcpTool[] {
     ...historyTools(host),
     ...frameStyleTools(host),
     ...moduleTools(host),
+    ...labelTools(host),
     ...viewTools(host),
     ...viewerCommandTools(host),
     ...resourceTools(host),

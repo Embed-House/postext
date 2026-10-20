@@ -64,6 +64,21 @@ export const MARKS_SCHEMA: JsonSchema = {
           writingMode: { type: 'string', enum: ['horizontal-tb', 'vertical-rl'], description: 'vertical-rl sets the label in vertical writing, characters upright in columns from right to left (default horizontal-tb).' },
           overlap: { type: 'string', enum: ['check', 'allow'], description: 'allow leaves the label set here out of the labelOverlap check: the source prints it touching its neighbours (a dense map). Default check.' },
           gutter: { type: 'string', enum: ['keep', 'cross'], description: 'On a figure across the spine of a spread: keep slides the label off the binding band, to the side its point lies on (default); cross leaves it where the point puts it, a title set across both pages.' },
+          labelAt: { ...POINT_SCHEMA, description: 'Where the label set here stands, away from its point (fractions of the picture): align, verticalAlign and rotate place the label about this point; a leader and a pointer still end at x, y. Unset: the label stands at its point.' },
+          leader: {
+            type: ['boolean', 'object'],
+            description: 'A line from the label to its point: true in the label style\'s leader look, an object over that look field by field, false none. Unset: a leader when the label stands away (labelAt) and its style has a leader. A label\'s own leader attribute (sandbox_edit_labels) wins.',
+            properties: {
+              color: { description: 'A colour value ({ hex, model } or a palette link), default the label\'s text colour.' },
+              width: { description: 'A length ({ value, unit }), default 0.75pt.' },
+              dash: { type: 'array', description: 'Dash lengths (on, off, …).' },
+              startCap: { type: 'string', enum: ['none', 'dot', 'arrow'] },
+              endCap: { type: 'string', enum: ['none', 'dot', 'arrow'] },
+              capSize: { description: 'A length, default three times the width.' },
+              routing: { type: 'string', enum: ['straight', 'elbow'] },
+            },
+            additionalProperties: false,
+          },
         },
         required: ['id', 'x', 'y'],
         additionalProperties: false,
@@ -97,6 +112,8 @@ function labelFieldProblem(a: ResourceAnchor): string | undefined {
   if (a.gutter !== undefined && !GUTTERS.has(a.gutter)) return 'gutter is keep or cross';
   if (a.width !== undefined && !(Number.isFinite(a.width) && a.width > 0 && a.width <= 1)) return 'width is a fraction of the picture\'s width, above 0 and up to 1';
   if (a.style !== undefined && (typeof a.style !== 'string' || !a.style.trim())) return 'style is a label style id';
+  if (a.labelAt !== undefined && !(a.labelAt && Number.isFinite(a.labelAt.x) && Number.isFinite(a.labelAt.y))) return 'labelAt is a point { x, y } in fractions of the picture';
+  if (a.leader !== undefined && typeof a.leader !== 'boolean' && (typeof a.leader !== 'object' || a.leader === null || Array.isArray(a.leader))) return 'leader is true, false or a leader look';
   return undefined;
 }
 
