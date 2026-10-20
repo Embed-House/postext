@@ -29,7 +29,8 @@ export function FramePointers({ templateId, name, frames }: { templateId: string
   const anchorsIn = (frame: string) => anchorsOfTemplateFrame(docRef.current, templateId, frame, (id) => resources?.find((r) => r.id === id)?.anchors).map((a) => a.anchorId);
   const [toFrame, setToFrame] = useState('');
   const [anchor, setAnchor] = useState('');
-  const target = toFrame || frameNames[0] || '';
+  // The first frame whose picture has anchors, unless one was picked.
+  const target = toFrame || frameNames.find((f) => anchorsIn(f).length > 0) || frameNames[0] || '';
   const offered = target ? anchorsIn(target) : [];
   const chosen = anchor && offered.includes(anchor) ? anchor : (offered[0] ?? anchor);
 

@@ -2703,3 +2703,70 @@ C8's box shapes (§12.20): all of them are edited in the Design panel and on the
 - **Not done.** Other decoration elements over the frames (a rule or box that should sit over a photo
   still needs the photo's frame at a negative layer); an over connector between frames of different
   layers is painted over both, never between them. Sandbox (U10/U11), docs (D3), skill (S6).
+
+### 12.27 What U11 built (#1064)
+
+The Sandbox side of C6 (§12.4, §12.23) and C7 (§12.5, §12.13): leaders and pointers, legends and inline
+symbols, edited without writing JSON.
+
+- **Label away from its point** (anchor editor, the picture marks dialog's Anchors mode). Each anchor has a
+  «Label and leader» group: a switch sets the label away (`labelAt`, one step up and right of the point,
+  turned back inside the picture near an edge) and its place in % of the picture. On the picture, a label set
+  away has a handle where it stands (a tag with its words), the anchor picked a dashed grip beside its point;
+  either is dragged, or focused and nudged with the arrow keys (Shift: five steps), and Delete sets the label
+  back at its point (`MarkTarget` kind `label`, `pictureMarks.ts`). The line from the handle to the point is
+  drawn live, solid in the style's colour when a leader will be drawn (`leaderDrawn`, the engine's rule:
+  label attribute, else anchor, else away with a style look), dashed white when not. Decision: the dialog
+  keeps `labelAt` inside the picture (0..1) like the points; the engine reads any number, and a value set
+  outside it by hand or by a tool is kept.
+- **Leader per anchor.** «As the style / On / Off» writes `leader` unset / `true` (an object kept) / `false`;
+  with On, routing (straight, elbow) and the mark at the point (dot, arrow, none) write the anchor's own look.
+  Colour, width, dash and caps of a look are the label style's (below); the anchor offers only these two.
+- **Leader per label.** Every `::label` / `:::label` set at the anchor is listed with «As the anchor / On / Off»,
+  which writes `leader` / `leader="none"` into the chapter's Markdown at once (`editor/labelAttrs.ts`
+  `setLabelAttr`: the other attributes kept as written, scanned by hand), one step of the history; it is the
+  text's, so it is not part of the dialog's Cancel or Undo. The dialog's lists now read the container form
+  too (`figureLabels.ts`; its lines shown joined by « / », symbols left out).
+- **Canvas.** A label set away from its point shows a line to the anchor's point and the point (Design
+  mode); dragging it moves `labelAt`, no longer the anchor (before this, the drop wrote the label's place
+  into the anchor's point). Alt held while dragging a label at its point sets it away the same way. The point
+  of an anchor whose label is away is moved in the dialog.
+- **Pointers** (`templates/pointerEdits.ts`). A pointer is a connector of the template's own decoration with
+  one `to` end that names an anchor. On a composed page in Design mode the selected frame has a round grip
+  beside the middle of its end side; dragging it shows every anchor of the pictures in the page's other
+  frames (`frameAnchorsOnPage`, through crop, safe area, scale and turn as labels are) and a drop near one
+  writes `{ kind: 'connector', from: { to: '#note' }, to: { to: '#map', anchor }, routing: 'straight',
+  endCap: 'dot' }` (id `pointer-<frame>-<anchor>`), or keeps the one already joining the two. The frame's
+  properties have a «Pointers» group, the keyboard's way: each pointer's frame and anchor (anchors of the laid
+  pages, else typed), remove, add. Decisions: a new pointer puts the picture's frame under the decoration
+  (`layer: -1`) when neither it nor what it extends sets a layer, since connectors paint under the frames
+  (§12.23); pointers are written on the page's template (every page it lays draws them; a page whose picture
+  lacks the anchor gets `labelAnchorUnknown`), never on a variant; an inherited pointer is edited on the child
+  under its id and removed by hiding it (`{ id, remove: true }`). The grip is not offered on a turned frame.
+- **Label style editor.** Plate group: outline (`border`, starting as a 0.5 pt line in the text colour),
+  corner radius. New «Lines and key» group: `align` (as the anchor places it / start / centre / end) and
+  `kind: 'legend'`. New «Leader» group: on (`leader: {}`), colour (shown as the text's while unset), width,
+  dash (solid, dashed 3/2 pt, dotted 0.75/1.5 pt; another pattern shows as «Custom» and is kept), start and
+  end caps, cap size, routing.
+- **Symbol picker** (text editor toolbar, `editor/IconPicker.tsx`). A picture of the book (bitmap or SVG
+  resource), a glyph (a row of ten common map symbols, or any typed, with an optional face) or a line sample
+  (solid, dashed, dotted); colour (a swatch or a hex / palette id typed), size in ems (0: the default),
+  the words a reader hears; the directive is shown and written at the caret (`iconDirective`). It is offered
+  everywhere in the text; the engine reads it in labels and resource snippets only (§12.13).
+- **WebMCP.** `sandbox_edit_labels` (new, not consequential): `leader` (a label's own attribute, by
+  resource and anchor or text), `icon` (a symbol at the start or end of those labels), `pointer` (add,
+  change by id, remove). `sandbox_save_resource` takes `labelAt` and `leader` on anchors (checked). The
+  label style keys go through `sandbox_set_config` as before.
+- **i18n, search, AAA.** 84 strings in all ten languages; settings search index regenerated. Every new
+  control is labelled; the dialog's label handles and grips are 44 px targets that the arrow keys and Delete
+  work on; the leader's state is said in words under the choice. The canvas grip of a pointer is a mouse
+  target, as the frame editor's handles are (it takes no touch); the frame's «Pointers» group is the way
+  for the keyboard and for a finger.
+- **Tests.** `mapNotes.e2e.test.ts` builds a parts-of-a-map page with these edits only (three pointers, a key
+  style, two names away with leaders, a label's own `leader="none"`) and checks on the laid page that each
+  pointer ends on the anchor's point as the Sandbox locates it, the leaders and the legend; `labelAttrs`,
+  `pointerEdits`, `labelLeaders` (marks, panel render), `webmcp/tools/labels.test.ts`.
+- **Not done.** Leaders and pointers in the Folio's label editor (its pages take the canvas editor's drop,
+  but the grip of a pointer is the frame editor's, which the Folio does not have); a pointer's look (colour,
+  width, routing) has no fields of its own yet beyond what the design JSON says; the anchor's leader colour,
+  width and dash are the style's only; the picker does not check that the caret is in a label.
