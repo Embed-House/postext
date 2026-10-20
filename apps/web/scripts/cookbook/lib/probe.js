@@ -1094,12 +1094,20 @@ export function facts({ select = 'last', hero = [] } = {}) {
     let comicBody = false;
     // A :::figure's ::label lines (#860) are its labels, not embeds.
     let figureBody = false;
+    // A :::label container inside a figure (#1058): its lines are the
+    // label's, and its first ::: closes the label, not the figure.
+    let labelBody = false;
     body.split('\n').forEach((raw, i) => {
       const line = raw.trim();
       if (comicBody) {
         if (CLOSE_RE.test(line)) comicBody = false;
         return;
       }
+      if (labelBody) {
+        if (CLOSE_RE.test(line)) labelBody = false;
+        return;
+      }
+      if (figureBody && /^:::label\{/.test(line)) { directives.add('label'); labelBody = true; return; }
       if (line.startsWith('::::')) {
         if (COMPOSED_CLOSE_RE.test(line)) return;
         if (COMPOSED_OPEN_RE.test(line)) { directives.add('page'); return; }
