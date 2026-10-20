@@ -2588,3 +2588,69 @@ Design panel, a module library, and two reshapes that move a port of one-off fra
   variant's (variants are only retargeted); right-to-left and vertical pages are read in their flow frame
   but not tested; the Folio and HTML viewers reach instances through the same pick path but have no test of
   their own; a canvas multi-selection (the frames are picked in the panel).
+
+### 12.25 What U10 built (#1063)
+
+The Sandbox side of C4's side points (§12.14), C5's connectors (§12.18), C9's path element (§12.17) and
+C8's box shapes (§12.20): all of them are edited in the Design panel and on the canvas without JSON.
+
+- **Connectors.** The decoration of a page template (the slot editor given the template's frames and a
+  `connectorHost`) has «Add connector»; a new one runs from the template's first frame to its second as an
+  elbow. Its card (`ConnectorElementEditor`): the start in a list of the template's frames, groups and the
+  decoration's placed elements; the ends as a row of toggle buttons (pressed: an end), with every instance of
+  a repeated frame as `#card[*]` and an end on a name the list lacks (an instance `#card[2]`, a frame taken
+  out) still listed so it can be taken out; per end (start and each `to`) its side («Facing» when unset),
+  point on the side (start, middle, end or a fraction, shared with the placement fields) and gap; routing,
+  bend radius and bar position (not on a straight line), colour (palette-aware, default the main colour),
+  width, dash, start and end marks and the mark size (shown when a mark is set, default 3 × width), pin,
+  parity and pages. The edits are pure (`templates/connectorEdits.ts`): a list of one end is written as an
+  object, several as a list.
+- **Picking on the page.** «Pick on the page» (a toggle button) sets the template editor's connector focus
+  (`editorStore.connector`, phase `from`) and turns the Design mode on. On a page of that template (or one
+  extending it) a click on a frame is an end, not a drag (`frameEditor.ts`): the first sets the start, and
+  the ends start afresh; each later click adds an end or takes it out again; Shift-click adds or takes out an
+  end in either phase; a click on the start itself does nothing; Escape (or the button) ends the picking. A
+  live line under the button says what the next click does. Decisions: re-picking the start clears the ends
+  (the issue's «pick a frame and then its targets»); a line never goes to its own start (setting the start
+  takes it out of the ends). The write is one step of the history.
+- **Handles.** While a connector's card is open its ends are drawn in the Design mode marks: a filled dot at
+  the start, a ring at each end, and while picking the frames joined outlined (solid the start, dashed the
+  ends). Geometry in `templates/connectorHandles.ts`, the engine's rules (default side facing the other end, a
+  tree's parent facing the union of its children; `at`, `gap`), in the flow frame (`start` is its left: a
+  right-to-left page's flow is the sheet mirrored). `facingSide`, `CONNECTOR_ROUTINGS`, `CONNECTOR_CAPS`,
+  `CONNECTOR_SIDES` and `DEFAULT_CONNECTOR_WIDTH` are now exported by `postext`. The e2e test builds a tree of
+  three connectors and a joined card with these edits and checks every handle lies on the engine's line.
+  Departure: the handles show in Design mode only (the marks layer); they are not draggable (an end is moved
+  by picking or by its fields).
+- **Shapes.** «Add shape» in every design slot writes a bar filled with the main colour. Its card
+  (`PathElementEditor`): presets bar, ribbon (a band with a pointed head and a notched tail), arrow, chevron
+  and wave, each a toggle button with its outline drawn, writing `d` in the default 1 × 1 view box (and
+  taking a `viewBox` off); the path field checks the data with `parseSvgPath` as it is typed and writes it only
+  when it parses, saying at which character it goes wrong (`role="alert"`, `aria-invalid`); view box width and
+  height, fit (stretch / keep proportions), fill and outline switches with their colours, outline width and
+  dash; size (lengths or `{ to, edge }`), placement, parity and pages as a box's.
+- **Corners and sides.** One component pair (`shapeFields.tsx`) for callout and frame styles (the frame
+  styles section reuses the style card), decoration boxes and a text element's box: «Same radius on every
+  corner» (off: four corner lengths, each starting from what it showed; on again: the largest) and «Same
+  border on every side» (off: per side a switch, colour and width over the whole border's, each with its
+  reset; a side switched to the whole border's state takes its own `enabled` off). On a callout style the
+  sides are offered whether or not the whole border is on (a border on the top only is `enabled: false` plus
+  a side). The callout card shows a per-corner radius for what it is (the 0 that `uniformRadius` gave is
+  gone).
+- **Tabs.** The label group has «Joined to the box» and, when joined, the fillet radius (default shown: the
+  corner radius); turning it on writes `offset: 0` (a joined tab is on the edge, C8 warns on another) and
+  the rise field is hidden. The position list has the four foot positions (left and right named by the flow,
+  as the top ones).
+- **Placement.** Decoration elements can be anchored to the template's frames and groups (they were only
+  reachable through a size); a name the lists lack stays shown. On an anchor to another element or a frame
+  the «Point on the side» field writes `anchor.at` («the edge's own point» when unset, start, middle, end, a
+  fraction). The size-to edge offers the middle (`'center'`).
+- **WebMCP.** No new tool: everything above is configuration `sandbox_set_config` writes. A gap found on the
+  way: a per-corner `borderRadius` was refused as «a length»; `coerceSetting` now takes an object of corner
+  keys, each coerced as a length. `connectorShapes.test.ts` draws the tree, the shape, the corners, the sides
+  and the joined tab through the tools and writes every new leaf back unchanged.
+- **Words.** 103 new labels, one changed (the size-to edge tooltip names the middle), in the ten site
+  languages; the settings search index regenerated.
+- **Not done.** Connector ends on a module's frames (`#tree[1].left`) are not listed (typed through the tools
+  only). The handles are not drawn outside the Design mode nor in the Folio. Dragging an end along its side
+  to set `at` is left for later.
