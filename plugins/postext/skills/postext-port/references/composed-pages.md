@@ -464,6 +464,14 @@ What the extraction decides, so you know what to check:
   corner of a rounded box or card it sits in is cut as a PNG clipped to the
   box's inner rectangle and corner radii (the outline less half its stroke),
   transparent past the curve.
+- **Cuts inside their box** (skill 1.61). A cut without its own alpha goes
+  no further than the inside of the box that holds it (the box less half
+  its rule) and no further than a filled rectangle its art is drawn on (a
+  map's sea: masks and page colour past it are not the picture's). What is
+  left of the holder's rule in the cut is painted out in the picture's
+  ground, never redacted (that would take the box's fill too); the frame
+  draws the rule. `report.json` notes every cut whose box still crosses a
+  box's rule. A cut-out with alpha keeps its overhang.
 - **Pictures and labels.** Images and clusters of line art are pictures,
   cut at `--dpi` with all text removed. Words on a picture's ink, short
   words on it or just off its edge (a globe's degrees) are its labels:

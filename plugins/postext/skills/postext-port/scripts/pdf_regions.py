@@ -1616,8 +1616,12 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                                      neighbours=None if opts.raster_ground else neighbours_of(f.box, sh, origin),
                                      art=[s for s in sh.get("shapes", []) if s.kind == "art"],
                                      background=ground_round(f.box), over=drawn_over(f, ordered),
-                                     rounds=sh["boxes"] + cards)
+                                     rounds=sh["boxes"] + cards, holders=sh["boxes"])
             res.append(f.resource)
+            frame_of = {id(g.shape): g.name for g in ordered if g.shape is not None}
+            for s in crossed_rules(f.box, sh["boxes"] + sh["tabs"]):
+                report["notes"].append(f"{f.name}: the cut crosses the rule of {frame_of.get(id(s), 'a box')} "
+                                       f"at {r2(s.box)} mm; check the cut")
             if f.kind == "figure":
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
                 notes: list[str] = []
@@ -2109,7 +2113,7 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
 def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: tuple, rid: str,
                 opts: argparse.Namespace, renders: Renders, cards: list | None = None, remove: list | None = None,
                 neighbours: list | None = None, art: list | None = None, background: str | None = None,
-                over: set | None = None, rounds: list | None = None) -> dict:
+                over: set | None = None, rounds: list | None = None, holders: list | None = None) -> dict:
     """The picture's file. A picture cut from the page keeps only the picture: its text, the
     lines drawn as decoration, the highlights round it and the boxes and tabs the draft lays
     over it (`over`: ids of their shapes; each is drawn by its own frame or mark) leave the
@@ -2119,7 +2123,8 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
     is then no wider than the paint it has of its own (`trim_to_ink`: white margins, a
     neighbour's strip). `art`: the page's art shapes, `background`: the colour the picture
     stands on, `rounds`: the rounded boxes and cards of the page, whose corners clip a
-    picture set in them (`round_clip`)."""
+    picture set in them (`round_clip`), `holders`: the page's boxes; a cut without alpha
+    stays inside the one that holds it (`holder_of`) and its rule is painted out."""
     p = f.picture
     out_dir = Path(opts.out) / "resources"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -2162,6 +2167,15 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
             clipped = (max(f.box[0], cb[0]), max(f.box[1], cb[1]), min(f.box[2], cb[2]), min(f.box[3], cb[3]))
             if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
                 f.box = clipped
+        # likewise no further than the inside of the box that holds it (its rule is the frame's),
+        # and no further than a filled rectangle the art is drawn on (its own ground)
+        holder = holder_of(f.box, holders or [], over)
+        for edge in ([inner_round(holder)[0]] if holder is not None else []) + [art_ground(f.box, art or [])]:
+            if edge is None:
+                continue
+            clipped = meet_box(f.box, edge)
+            if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
+                f.box = clipped
         one = fitz.open(str(pdf_path))
         page = one[pno]
         page.add_redact_annot(page.rect, fill=False)
@@ -2194,6 +2208,12 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
                 page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
                                       graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
                                       text=fitz.PDF_REDACT_TEXT_NONE)
+        if holder is not None and holder.stroke:
+            # the holder's rule is drawn by its frame: painted out where the cut still meets it
+            # (`paint_out`), never redacted (that would take the box's fill, the picture's ground)
+            w = 6 * (holder.width or 0) + 0.6
+            r = fitz.Rect(holder.rect_pt)
+            holes.append(((r.x0 - w, r.y0 - w, r.x1 + w, r.y1 + w), [holder.stroke], rule_of(holder)))
         if neighbours is not None:
             trim_to_ink(page, f, origin, background, [(r, c) for r, c, _ in holes] + under,
                         card=cards[f.zone] if cards and 0 <= f.zone < len(cards) else None)
@@ -2217,6 +2237,52 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
     if alpha:
         res["contour"] = {"threshold": 0.5, "margin": mmv(1.5)}
     return res
+
+
+def holder_of(box: tuple, boxes: list, over: set | None = None) -> Shape | None:
+    """The smallest box that holds most of a picture (a box laid over the
+    picture, `over`, holds nothing)."""
+    cands = [s for s in boxes if id(s) not in (over or set()) and inter(box, s.box) >= 0.6 * area(box)
+             and area(s.box) > area(box) * 0.9]
+    return min(cands, key=lambda s: area(s.box)) if cands else None
+
+
+def art_ground(box: tuple, art: list, share: float = 0.9) -> tuple | None:
+    """A filled rectangle the picture's art is drawn on (a map's sea, a
+    diagram's panel): the first one painted inside the picture's box that
+    covers half of it and has `share` of the other art inside it. The cut
+    goes no further (a white mask or the page's colour past it is not the
+    picture's). None when there is none."""
+    inside = [s for s in art if inside_mm(s.box, box, 0.5)]
+    cands = sorted((s for s in inside if s.fill and s.rect_like() and area(s.box) >= 0.5 * area(box)),
+                   key=lambda s: s.seq)
+    for g in cands:
+        rest = [s for s in inside if s is not g and s.seq > g.seq]
+        if rest and sum(1 for s in rest if inside_mm(s.box, g.box, 0.3)) >= share * len(rest):
+            return g.box
+    return None
+
+
+def rule_of(s: Shape) -> Any:
+    """A box's stroke alone, as `paint_out` reads a hole's shape."""
+    import types
+    return types.SimpleNamespace(fill=None, stroke=s.stroke, width=s.width, kind="box", radius=s.radius)
+
+
+def crossed_rules(box: tuple, shapes: list, inset: float = 0.5) -> list:
+    """The boxes whose rule runs through a cut's box (more than `inset` mm
+    inside it, over a millimetre of it)."""
+    x0, y0, x1, y1 = box[0] + inset, box[1] + inset, box[2] - inset, box[3] - inset
+    out = []
+    for s in shapes:
+        if not s.stroke:
+            continue
+        sx0, sy0, sx1, sy1 = s.box
+        across = min(sx1, x1) - max(sx0, x0) > 1.0
+        down = min(sy1, y1) - max(sy0, y0) > 1.0
+        if (across and any(y0 < y < y1 for y in (sy0, sy1))) or (down and any(x0 < x < x1 for x in (sx0, sx1))):
+            out.append(s)
+    return out
 
 
 def inner_round(s: Shape) -> tuple[tuple, list[float]]:
