@@ -117,8 +117,11 @@ export async function layOut(
   return { docs, chapters, pageCount, laidOut };
 }
 
-function describeIssue(issue: { kind: string; containerName?: string }): string {
+function describeIssue(issue: { kind: string; containerName?: string; directiveName?: string }): string {
   switch (issue.kind) {
+    case 'strayFence':
+      // #1125: one-line directives take no closing fence.
+      return `a bare ::: after :::${issue.directiveName ?? 'directive'} closes nothing (the directive is one line): the fence is dropped, delete it`;
     case 'unclosedMath':
       return 'a $ opens maths that never closes';
     case 'unclosedContainer':

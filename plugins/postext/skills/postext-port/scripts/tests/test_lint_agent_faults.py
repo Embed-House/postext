@@ -174,6 +174,27 @@ class SmallCapsByHand(unittest.TestCase):
         self.assertEqual(having(lint(cfg, '# One\n\n:chip[NASA]{style="big"}\n'), "smallCapsByHand"), [])
 
 
+class StrayFence(unittest.TestCase):
+    """#1125: a bare ::: after a one-line directive closes nothing."""
+
+    def test_after_toc_at_the_top_level(self):
+        out = lint({}, "# Contents\n\n:::toc\n:::\n\nText.\n")
+        hits = having(out, "strayFence")
+        self.assertEqual(len(hits), 1, out)
+        self.assertIn(":::toc is one line", hits[0])
+
+    def test_inside_a_composed_page_it_does_not_close_the_page(self):
+        cfg = {"pageTemplates": [{"id": "t", "frames": [{"name": "body", "flow": True}]}]}
+        out = lint(cfg, '::::page{template="t"}\n# Index\n\n:::index\n\n:::\n\nMore.\n::::\n')
+        self.assertEqual(len(having(out, "strayFence")), 1, out)
+        self.assertEqual([ln for ln in out if "never closed" in ln], [], out)
+
+    def test_closing_a_box_after_a_space_is_fine(self):
+        out = lint({}, '# One\n\n:::callout{type="note"}\nA note.\n\n:::space{lines=2}\n:::\n')
+        self.assertEqual(having(out, "strayFence"), [])
+        self.assertEqual(having(out, "stray :::"), [])
+
+
 class LabelInComic(unittest.TestCase):
     def test_a_label_line_in_a_comic_page_warns_instead_of_crashing(self):
         with tempfile.TemporaryDirectory() as tmp:

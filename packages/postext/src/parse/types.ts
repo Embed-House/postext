@@ -673,7 +673,7 @@ export type MathSpan = InlineSpan & { math: MathMeta };
 
 export type ListKind = 'unordered' | 'ordered' | 'task';
 
-export type ParseIssueKind = 'unclosedMath' | 'unclosedMathBlock' | 'unclosedContainer' | 'unclosedCodeBlock';
+export type ParseIssueKind = 'unclosedMath' | 'unclosedMathBlock' | 'unclosedContainer' | 'unclosedCodeBlock' | 'strayFence';
 
 interface ParseIssueBase {
   kind: ParseIssueKind;
@@ -713,7 +713,19 @@ export interface UnclosedCodeBlockIssue extends ParseIssueBase {
   lang?: string;
 }
 
-export type ParseIssue = UnclosedMathIssue | UnclosedContainerIssue | UnclosedCodeBlockIssue;
+/** A bare `:::` right after a one-line directive (`:::toc`, `:::index`,
+ *  `:::pagebreak`, `:::space`…) with no `:::` container open to close
+ *  (#1125): those directives take no closing fence, so the line is
+ *  dropped instead of printed. `sourceStart`/`sourceEnd` cover the fence
+ *  line. */
+export interface StrayFenceIssue extends ParseIssueBase {
+  kind: 'strayFence';
+  delimiter: ':::';
+  /** The directive the fence follows. */
+  directiveName: DirectiveName;
+}
+
+export type ParseIssue = UnclosedMathIssue | UnclosedContainerIssue | UnclosedCodeBlockIssue | StrayFenceIssue;
 
 /** How a text is read (see `parseMarkdownWithIssues`). */
 export interface ParseOptions {

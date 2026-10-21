@@ -296,6 +296,16 @@ describe('postext cli', () => {
     expect(report.exitCode).toBe(0);
   }, 60_000);
 
+  // #1125: a closing fence after a one-line directive is reported, not printed.
+  it('check reports a stray ::: after :::toc', () => {
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '03.md'), '# Contents\n\n:::toc\n:::\n');
+    const report = JSON.parse(run(['check', 'ch', '--offline', '--json'], dir).stdout) as { warnings: { kind: string; message: string; at?: string }[] };
+    const stray = report.warnings.filter((w) => w.kind === 'strayFence');
+    expect(stray).toHaveLength(1);
+    expect(stray[0]!.message).toContain(':::toc');
+  }, 60_000);
+
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();
     writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n::resource{id="nowhere"}\n');

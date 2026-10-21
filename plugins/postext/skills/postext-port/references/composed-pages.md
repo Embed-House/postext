@@ -1689,7 +1689,6 @@ with their entries and page numbers.
 # Contenido {toc="false"}
 
 :::toc
-:::
 
 ::resource{id="mapa-contenido" slot="mapa"}
 ::::

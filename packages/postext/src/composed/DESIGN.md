@@ -385,7 +385,11 @@ The parser emits (as built in P3, #854):
   it there; the closing fence closes any container still open inside the page; each is reported as
   `unclosedContainer`. A closing fence of another colon count stays text. A `:::figure` whose `:::` is
   missing ends at its first line that is neither a label nor blank (`unclosedContainer`, name
-  `figure`).
+  `figure`). A bare `:::` with no `:::` container open (at the top level or right inside a page) whose
+  last non-blank line before it is a one-line directive (`:::toc`, `:::index`, `:::pagebreak`,
+  `:::space`, `:::columnbreak`, `:::numbering`, `:::bibliography`) is a closing fence written for a
+  directive that takes none: it is dropped and reported as `strayFence` (#1125). Any other bare `:::`
+  there stays text.
 - Since P4 (#855) the layout sets a composed page on a page of its own from its template (§5.8). A
   page whose template is unknown is still set in the flow, in Markdown order, on pages of its own.
 
