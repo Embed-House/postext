@@ -723,7 +723,10 @@ Pick the path per [sources.md](references/sources.md):
   editions' `::label` lines from a strings file (`--strings en=en.json`); it
   merges a label printed twice at one point and writes `overlap: "allow"`
   for names the source prints touching, and `scripts/pdf_figures.py symbols`
-  lists a map's dots as `avoid` zones. Close the draft with
+  lists a map's dots as `avoid` zones. A key of symbols and words (a map's
+  colours, a weather map's fronts) comes out as a `kind: "legend"` label on
+  its picture, or a key table in a frame when it stands alone
+  (`scripts/legends.py`, composed-pages.md §6.14). Close the draft with
   `scripts/composed_check.py check work/regions --json > work/check.json`
   (0 overlaps) and `scripts/compare_pages.py … --score work/score.json
   --check work/check.json` (composed-pages.md §3.7, §6.18).

@@ -589,7 +589,11 @@ What the extraction decides, so you know what to check:
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
   `# merged` note in the report (`report.json` `notes`, the `anchors.py`
-  output), not a second anchor. Names the source prints touching (a
+  output), not a second anchor. A line printed twice on the page (a fake
+  bold of two offset prints, a fill and a stroke drawn apart: the same text,
+  its box within 0.3 mm) is one line in `pdf_regions.py extract`
+  (`legends.drop_duplicate_lines`); an offset copy sets the line bold, with a
+  `# dropped a second copy` note. Names the source prints touching (a
   continent with a hundred country and capital names) get `overlap:
   "allow"` on their anchors (from 1.42), so `labelOverlap` stops listing what
   the source itself prints; `anchors.py` writes it once on the map's label
@@ -1974,6 +1978,25 @@ label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSiz
   words. Scale bars stay art: their numbers are labels at anchors along the
   bar. Before 1.48 a key was labels one per line with the symbols in the
   picture.
+- **The draft writes it** (`pdf_regions.py extract`, `scripts/legends.py`,
+  skill 1.61). Two rows or more of a small symbol (at most 15 × 8 mm) and a
+  few words (six at most), the symbols starting within 1 mm of each other
+  at a steady pitch and of two looks or more (a list of one bullet repeated
+  is no key), are a key. A filled rectangle becomes
+  `:icon[…]{glyph="■" color="#…"}` (the label's face must carry U+25A0, or
+  add `font=`), a straight stroked segment `:icon[…]{line="solid|dashed|dotted"
+  color="#…"}`, any other drawing (a front's triangle, a semicircle, a
+  pictogram) an SVG resource `icon-<hash>` written once per shape and colour
+  for the whole book, named by `:icon[…]{resource="icon-…"}` (`size=` when
+  it stands taller or shorter than a capital). On a picture the key is a
+  `:::label{at="legend" style="legend-…"}` block in its `:::figure`, an
+  anchor `legend` (`align: start`, `verticalAlign: top`) at the key's first
+  row, the label style `kind: "legend"` with the plate drawn round the key
+  as `background`, `padding` and `border`, and the key leaves the picture's
+  cut. A key standing alone is a frame holding a two-column table without
+  rules (symbol, words; `columnWidths` from the source). The rows keep the
+  label's line pitch, not the source's: raise the style's `fontSize` or set
+  the rows apart in the Markdown when the source spaces them widely.
 
 ### 6.15 Cards, tabs and shapes without a picture (1.48)
 
