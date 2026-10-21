@@ -152,7 +152,7 @@ describe('inline chips in the PDF', () => {
     expect(content).toMatch(/0\.8 0\.2 0 rg/);
     const outlines = out.catalog.lookup(PDFName.of('Outlines'), PDFDict);
     const first = outlines.lookup(PDFName.of('First'), PDFDict);
-    expect(first.lookup(PDFName.of('Title'), PDFHexString, PDFString).decodeText()).toBe('Title');
+    expect(first.lookup(PDFName.of('Title'), PDFString, PDFHexString).decodeText()).toBe('Title');
     if (hasPdftotext) {
       const file = path.join(os.tmpdir(), `postext-heading-chip-${process.pid}.pdf`);
       fs.writeFileSync(file, await out.save());
