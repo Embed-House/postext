@@ -2347,6 +2347,14 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   - The stripe stays clipped to the box rectangle with the outline's corners: square where a flush tab
     goes on up the side.
   - The glyph and picture icons, the rule and the words are laid as before.
+- **Tab corners (#1102).** `label.borderRadius` (a `CornerRadius`, the sheet's corners) gives the tab
+  corners of its own. A tab apart from the box is a box block with `borderRadiiPx` (one radius on every
+  corner folds back to `borderRadiusPx`), so the painters draw it through `boxOutline` as they draw a
+  box with corners of its own; unset, the tab stays square. A joined tab reads the two outer corners
+  (`topLeft` / `topRight` at the head, `bottomLeft` / `bottomRight` at the foot) into
+  `ShapeTab.radius` as a pair, the corner at `x0` and the one at `x1`, each clamped to half the tab's
+  width and its height less the fillet as the single radius was; unset, both copy the box corner the tab
+  hugs. The fillets keep `fillet`, default the box corner.
 - **Readers.** Part palettes recolour each side's colour as the border, a joined fill as the fill and
   its border pieces as the border; a frame's `look` border colour recolours every side; preflight checks
   each side (and a joined border) as a rule; the contrast check reads a joined fill as the ground; the

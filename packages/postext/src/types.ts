@@ -3408,6 +3408,13 @@ export interface CalloutLabelConfig {
   /** The radius of the concave fillets of a joined tab. Default: the
    *  radius of the box's corner the tab hugs. */
   fillet?: Dimension;
+  /** The tab's own corners (#1102): one radius, or one per corner, on the
+   *  sheet's corners as the box's `borderRadius`. A tab apart from the box
+   *  rounds the corners it names (square by default); a joined tab rounds
+   *  its two outer corners (`topLeft` / `topRight` for a tab at the head,
+   *  `bottomLeft` / `bottomRight` at the foot), which otherwise copy the
+   *  box's corner it hugs. The fillets keep their own radius. */
+  borderRadius?: CornerRadius;
 }
 
 /** Vertical rule drawn between a callout marker and its box. */
@@ -3519,6 +3526,12 @@ export interface CalloutListStyleConfig {
   /** Size and weight of the bullet glyph (inherit `unorderedLists`). */
   bulletFontSize?: Dimension;
   bulletFontWeight?: number;
+  /** Face of the bullet glyph (#1103), for a bullet set in a symbol or
+   *  display face. Unset, each list level keeps its own face
+   *  (`unorderedLists.fontFamily` or the level's); a style that sets
+   *  {@link bulletFontSize} and inherits the list face from the body sets
+   *  its bullets in the box's body face. */
+  bulletFontFamily?: string;
 }
 
 /** A named callout style, selected by `:::callout{type="<id>"}`. */
@@ -3838,6 +3851,8 @@ export interface ResolvedCalloutStyleConfig {
     joined: boolean;
     /** Absent: the radius of the box's corner the tab hugs. */
     fillet?: Dimension;
+    /** Absent: a square tab, or a joined one with the box's corner. */
+    borderRadius?: CornerRadius;
   };
   columnGap: Dimension;
   marker: {
@@ -3893,6 +3908,8 @@ export interface ResolvedCalloutStyleConfig {
     itemSpacing: Dimension;
     bulletFontSize?: Dimension;
     bulletFontWeight?: number;
+    /** Absent when the style sets none. */
+    bulletFontFamily?: string;
     /** `true` when the style sets `lists.color` itself. The colour then
      *  reaches the numbers of the box's ordered lists even when it equals
      *  `unorderedLists.color` (the value an unset field inherits). Absent
