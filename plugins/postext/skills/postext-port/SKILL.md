@@ -645,8 +645,10 @@ Pick the path per [sources.md](references/sources.md):
   Cut the figures with
   `scripts/pdf_figures.py stubs source.pdf draft/resources.json --out-dir my-book/resources`,
   and the tables with `scripts/extract_tables.py source.pdf --pages N` (cells
-  with their align, bold and fills; the rules as the nearest table-style
-  preset, never per cell).
+  with their align, bold and fills, merges, title row as caption, group
+  bands; the rules as the nearest table-style preset, never per cell).
+  `pdf_extract.py` already sets ruled tables as table resources with their
+  models (sources.md, PDF step 5).
 - **DOCX / PPTX / ODT / EPUB / HTML / LaTeX / Markdown / JATS / DocBook**:
   `scripts/pandoc_to_postext.py SOURCE --dump-styles`, then
   `scripts/pandoc_to_postext.py SOURCE --out draft --lang es --style-map map.json --link-refs`.
