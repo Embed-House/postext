@@ -476,6 +476,23 @@ What the extraction decides, so you know what to check:
   `template_dedupe.py` renames connector ends and size targets with the
   frames and keeps a connector or border in a shared base only when the
   base has its frames.
+- **Hatching, paint order and the raster fallback** (skill 1.61). Three or
+  more strokes of one look, each one straight piece, parallel, side by
+  side and evenly spaced (0.2 to 4 mm), that touch no other stroke and have
+  no line of text set between two of them are hatching: one `hatch-N` path,
+  never connectors and stubs. A fill over most of the page that the source
+  paints after a loose shape it covers keeps that place among the shapes
+  (a translucent one stays in the raster ground). Shapes of one look merge
+  into one path only when they do not overlap (two bars of an X wound
+  opposite ways open a hole where they cross in one path). Shapes over a
+  picture cut from its own image (an image with alpha) are not dropped, and
+  the ground keeps what shows round that image's outline (its frame shows
+  the image itself). A page sends its loose shapes, its hatching and its
+  stray line pieces to the raster ground (`report.json` says why) when it
+  has more loose shapes than `--max-paths`, clipped art outside its
+  pictures, six stray line pieces or more and more of them than connector
+  pieces, or a full-page image; connectors, cards, borders and the page
+  colour stay vectors. `--vector-ground` keeps the vectors.
 - **Clip paths** (skill 1.61). Paths are read with the clips they are
   painted in (`get_drawings(extended=True)`): each path's box is what shows
   inside its innermost clip, and straight lines are cut to it before they

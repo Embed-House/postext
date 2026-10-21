@@ -8,7 +8,7 @@ reading order (references/composed-pages.md, round 2).
   pdf_regions.py extract SOURCE.pdf --pages 4-28 --out DIR [--lang es]
         [--fonts DIR] [--font-map map.json] [--dpi 300] [--ground-dpi 150]
         [--highlights mark|chip] [--fit 0.9] [--wrap-slack 3] [--chapter pages]
-        [--name-frames auto|always|never] [--raster-ground] [--line-width 2]
+        [--name-frames auto|always|never] [--raster-ground] [--vector-ground] [--line-width 2]
         [--json]
   pdf_regions.py manifest DIR [--fonts DIR] [--id ID] [--name NAME]
         Writes DIR/preset.json, a draft project that opens and builds as it
@@ -52,8 +52,11 @@ What `extract` reads on every page:
   template lays (the picture as cut, the text frame at its measure). The page's colour, the cards (a
   card with a title tab grown out of it is one path), borders with no words
   (decoration boxes round the frames they hold, never empty frames) and
-  loose shapes are decoration too. The raster ground keeps only what none
-  of these paints (a transparent PNG); a page with nothing left has none.
+  loose shapes are decoration too (evenly spaced parallel strokes are one
+  hatch path). The raster ground keeps only what none of these paints (a
+  transparent PNG); a page with nothing left has none. A page with too many
+  loose shapes, clipped art off its pictures, mostly stray line pieces or a
+  full-page image keeps its loose art in the ground (--vector-ground: not).
 - **Running heads and folios**: text outside the cards (or in the top and
   bottom bands of a page without cards). A folio becomes `{pageNumber}`,
   other words a page attribute printed by the decoration (`{attr.head}`):
@@ -1244,6 +1247,15 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     clusters = join_lines(cluster_boxes(items, opts.art_gap),
                           [s for s in out["lines"] if not in_tab(s.box)], opts.art_gap,
                           [s.box for s in out["boxes"]] + [t.box for t in tabs])
+    # evenly spaced parallel strokes that join nothing (a cover's hatching): one shape, never lines
+    loose = [s for s in out["lines"] + out.get("leaders", []) if not getattr(s, "in_cluster", False)]
+    out["hatches"] = find_hatches(loose, [l.box for l in lines])
+    for grp in out["hatches"]:
+        for s in grp:
+            s.kind = "hatch"
+    out["lines"] = [s for s in out["lines"] if s.kind == "line"]
+    if "leaders" in out:
+        out["leaders"] = [s for s in out["leaders"] if s.kind == "leader"]
     pictures = []
     for im in big:
         pictures.append({"box": im["box"], "images": [im], "vector": 0})
@@ -1409,8 +1421,103 @@ def join_lines(clusters: list[dict], lines: list, gap: float, stops: list | None
                       "lines": sum(c["lines"] for c in touched) + 1}
             clusters = [c for c in clusters if not any(c is t for t in touched)] + [merged]
             pending.remove(s)
+            s.in_cluster = True
             changed = True
     return sorted(clusters, key=lambda c: (round(c["box"][1], 2), round(c["box"][0], 2)))
+
+
+def _touch(a: tuple, b: tuple, tol: float) -> bool:
+    return a[0] - tol <= b[2] and b[0] - tol <= a[2] and a[1] - tol <= b[3] and b[1] - tol <= a[3]
+
+
+def find_hatches(shapes: list, text_boxes: list, step_max: float = 4.0, least: int = 3) -> list[list]:
+    """Hatching: `least` or more strokes of one look, each a single straight
+    piece, parallel (within a degree), side by side along their length and
+    at an even spacing (each step within a quarter of the first, 0.2 to
+    `step_max` mm), touching no other stroke (a tree's drops meet its bar)
+    and with no line of text set between two of them (a table's rules). Read
+    as lines they came out as connectors and stubs; as one shape they are
+    one path. Returns the groups of shapes, in paint order."""
+    import collections
+
+    rows = []
+    for s in shapes:
+        pcs = s.mm_lines()
+        if not pcs or len(pcs) != 1:
+            continue
+        (x0, y0), (x1, y1) = pcs[0]
+        length = math.hypot(x1 - x0, y1 - y0)
+        if length < 2.0:
+            continue
+        ang = math.atan2(y1 - y0, x1 - x0) % math.pi
+        rows.append((s, ang, pcs[0], length))
+    buckets: dict[tuple, list] = collections.defaultdict(list)
+    for r in rows:
+        s = r[0]
+        buckets[(s.stroke, round(s.width, 2), tuple(s.dash), round(math.degrees(r[1])) % 180)].append(r)
+    out: list[list] = []
+    for key, rs in sorted(buckets.items(), key=lambda kv: str(kv[0])):
+        if len(rs) < least:
+            continue
+        a = statistics.median(r[1] for r in rs)
+        u, n = (math.cos(a), math.sin(a)), (-math.sin(a), math.cos(a))
+
+        def off(r: tuple) -> float:
+            (x0, y0), (x1, y1) = r[2]
+            return n[0] * (x0 + x1) / 2 + n[1] * (y0 + y1) / 2
+
+        def span(r: tuple) -> tuple[float, float]:
+            ts = sorted(u[0] * p[0] + u[1] * p[1] for p in r[2])
+            return ts[0], ts[1]
+
+        runs: list[list] = []
+        run: list = []
+        step = None
+        for r in sorted(rs, key=off):
+            if run:
+                d = off(r) - off(run[-1])
+                (a0, a1), (b0, b1) = span(run[-1]), span(r)
+                side = min(a1, b1) - max(a0, b0) > 0.5 * min(a1 - a0, b1 - b0)
+                if side and 0.2 < d <= step_max and (step is None or abs(d - step) <= 0.25 * step):
+                    step = d if step is None else step
+                    run.append(r)
+                    continue
+                runs.append(run)
+            run, step = [r], None
+        runs.append(run)
+        for run in runs:
+            if len(run) < least:
+                continue
+            members = {id(r[0]) for r in run}
+            others = [o for o in shapes if id(o) not in members]
+            if any(_touch(r[0].box, o.box, 0.6) for r in run for o in others):
+                continue
+            offs = [off(r) for r in run]
+            between = False
+            for b in text_boxes:
+                if not inside_mm(b, union([r[0].box for r in run]), 0.0):
+                    continue
+                corners = [n[0] * x + n[1] * y for x in (b[0], b[2]) for y in (b[1], b[3])]
+                lo, hi = min(corners), max(corners)
+                if any(o1 < lo and hi < o2 for o1, o2 in zip(offs, offs[1:])):
+                    between = True
+                    break
+            if not between:
+                out.append(sorted((r[0] for r in run), key=lambda s: s.seq))
+    return sorted(out, key=lambda g: g[0].seq)
+
+
+def hatch_element(eid: str, grp: list) -> dict:
+    """A hatch as one path element: its strokes as one line each."""
+    s0 = grp[0]
+    pieces = [s.mm_lines()[0] for s in grp]
+    pad = max(0.3, s0.width * PT_MM / 2 + 0.1)
+    xs = [p[0] for pc in pieces for p in pc]
+    ys = [p[1] for pc in pieces for p in pc]
+    box = (min(xs) - pad, min(ys) - pad, max(xs) + pad, max(ys) + pad)
+    d = " ".join(f"M{la._n(a[0] - box[0])} {la._n(a[1] - box[1])} L{la._n(b[0] - box[0])} {la._n(b[1] - box[1])}"
+                 for a, b in pieces)
+    return path_element(eid, box, d, None, s0.stroke, s0.width, s0.dash)
 
 
 def merge_pictures(pics: list[dict]) -> list[dict]:
@@ -2705,6 +2812,7 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
                 file = out_dir / f"{rid}.png"
                 im.save(file, optimize=True)
                 alpha = True
+                f.from_image = xref       # the image alone: what the page paints round or over it is not in the cut
     if file is None:
         # A picture cut from the page (no transparency to cut out) lies on its card and is cut no
         # further than the card. A map whose overflow is masked by white rectangles at the card's
@@ -3504,7 +3612,7 @@ def redraw(page: fitz.Page, drawings: list[dict]) -> None:
 
 
 def residual_ground(pdf_path: str, pno: int, origin: tuple, painted: list[dict], masks: list[tuple],
-                    opts: argparse.Namespace, rid: str) -> dict | None:
+                    opts: argparse.Namespace, rid: str, drop_images: list[int] | None = None) -> dict | None:
     """What of the page no decoration element and no frame paints: the page
     without its text, against the paths the decoration and the frames draw.
     None when nothing is left (the page needs no ground); else a PNG that is
@@ -3517,6 +3625,11 @@ def residual_ground(pdf_path: str, pno: int, origin: tuple, painted: list[dict],
     page.add_redact_annot(page.rect, fill=False)
     page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE, graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                           text=fitz.PDF_REDACT_TEXT_REMOVE)
+    for xref in drop_images or []:      # a picture cut from its image: its frame shows it, not the ground
+        try:
+            page.delete_image(xref)
+        except Exception:
+            pass
     clip = to_pt((0, 0, origin[2], origin[3]), origin)
     full = page.get_pixmap(dpi=opts.ground_dpi, clip=clip, alpha=False)
     blank = fitz.open()
@@ -3573,7 +3686,7 @@ def drawn_raw(s: Shape) -> dict:
     def pt(p: tuple) -> fitz.Point:
         return fitz.Point(p[0] * MM + ox, p[1] * MM + oy)
 
-    pieces = s.mm_lines() if s.kind in ("line", "leader") else None
+    pieces = s.mm_lines() if s.kind in ("line", "leader", "hatch") else None
     if pieces is not None:
         return dict(s.raw, items=[("l", pt(a), pt(b)) for a, b in pieces])
     if s.rect_like():
@@ -3598,26 +3711,37 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     covering = [f for f in frames if f.kind in ("box", "tab") and f.shape is not None and f.shape.fill
                 and getattr(f.shape, "card_tab", None) is None and not art_over(f)]
     raster_left: list[Shape] = []
-    # the page's colour
+    # pictures cut from their image alone: what the page paints over them is not in their cut
+    pics_cut = [f for f in pics if not getattr(f, "from_image", None)]
+    loose = [s for s in sh["shapes"] if s.kind in ("art", "hidden")]
+    # the page's colour; a fill over most of the page painted after a loose shape it covers keeps
+    # its place in the paint order (with the shapes), a translucent one stays in the raster ground
     n_fill = 0
+    late: list[tuple[int, Any]] = []
     for g in sh["ground"]:
         if not isinstance(g, Shape):
             continue
         n_fill += 1
         eid = "page-colour" if n_fill == 1 else f"page-colour-{n_fill}"
         b = g.box
+        if (g.raw.get("fill_opacity") if g.raw.get("fill_opacity") is not None else 1) < 0.98:
+            raster_left.append(g)
+            continue
         if g.rect_like() and b[0] <= 0.5 and b[1] <= 0.5 and b[2] >= W - 0.5 and b[3] >= H - 0.5:
-            els.append({"kind": "box", "id": eid, "style": {"backgroundColor": colour(g.fill)},
-                        "placement": {"anchor": {"to": "bleed", "edge": "top-left"},
-                                      "size": {"width": "fill", "height": "fill"}}})
+            el = {"kind": "box", "id": eid, "style": {"backgroundColor": colour(g.fill)},
+                  "placement": {"anchor": {"to": "bleed", "edge": "top-left"},
+                                "size": {"width": "fill", "height": "fill"}}}
         elif g.rect_like():
-            els.append(box_element(eid, g, abs_placement(b)))
+            el = box_element(eid, g, abs_placement(b))
         else:
             el = shape_path(eid, g)
             if el is None:
                 raster_left.append(g)
-            else:
-                els.append(el)
+                continue
+        if any(o.seq < g.seq and inter(o.box, g.box) > 0 for o in loose):
+            late.append((g.seq, el))
+        else:
+            els.append(el)
     big_image = any(isinstance(g, dict) and "image" in g for g in sh["ground"])
     ground_at = len(els)
     # the cards, a tab grown out of one with it
@@ -3657,15 +3781,36 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
             els.append(fill_element(f))
             stats["fills"] = stats.get("fills", 0) + 1
     # shapes left on the page (icons, chevrons, ornaments): paths, unless there are too many
-    residual = [s for s in sh["shapes"] if s.kind in ("art", "hidden")
-                and not any(inter(s.box, claim_of(f)) >= 0.8 * max(area(s.box), 1e-6) for f in pics)
+    residual = [s for s in loose
+                if not any(inter(s.box, claim_of(f)) >= 0.8 * max(area(s.box), 1e-6) for f in pics_cut)
                 and not any(inside_mm(s.box, f.box, 0.3) for f in covering)
                 and not drawn_before_fill(s, frames)]
     caps = art["caps"]
     residual = [s for s in residual if id(s) not in art["cap_shapes"]]
-    if len(residual) > opts.max_paths:
-        raster_left += residual
-        residual = []
+    hatches = sh.get("hatches", [])
+    # the raster fallback: loose art the vectors would draw badly goes to the raster ground
+    conn_ids = set().union(*(c.ids for c in art["connectors"])) if art["connectors"] else set()
+    conn_segs = sum(len(c.ends) + (1 if c.routing == "tree" else 0) for c in art["connectors"])
+    stray = [g for g in art["left"] if not (g.ids & conn_ids)]
+    reasons = []
+    if not getattr(opts, "vector_ground", False):
+        if len(residual) + len(hatches) > opts.max_paths:
+            reasons.append(f"{len(residual) + len(hatches)} loose shapes (over --max-paths {opts.max_paths})")
+        if any(s.clipped and not s.rect_like() for s in residual):
+            reasons.append("clipped art outside the pictures")
+        if len(stray) >= 6 and len(stray) > conn_segs:
+            reasons.append(f"{len(stray)} stray line pieces, {conn_segs} connector pieces")
+        if big_image:
+            reasons.append("a full-page image")
+    if reasons:
+        raster_left += residual + [s for grp in hatches for s in grp]
+        residual, hatches = [], []
+        stray_seqs = {i for g in stray for i in g.ids}
+        raster_left += [s for s in sh.get("lines", []) if s.seq in stray_seqs and s.seq not in conn_ids]
+        art = dict(art, left=[g for g in art["left"] if g.ids & conn_ids])
+        stats["rasterFallback"] = reasons
+        report["notes"].append("the loose art of this page is in its raster ground: " + "; ".join(reasons)
+                               + " (--vector-ground keeps it as vectors)")
     pn = 0
     run: list[Shape] = []
 
@@ -3702,13 +3847,31 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
                 els.append(path_element(f"shape-{pn}", box, d, s0.fill, s0.stroke, s0.width, s0.dash))
         run.clear()
 
-    for s in sorted(residual, key=lambda s: s.seq):
-        if run and (s.fill, s.stroke, round(s.width, 2), tuple(s.dash)) != \
-                (run[0].fill, run[0].stroke, round(run[0].width, 2), tuple(run[0].dash)):
+    # one path per run of shapes of one look that do not overlap: shapes that cross (the bars of
+    # an X wound opposite ways) as one non-zero path open holes where they meet
+    seq_items: list[tuple[int, str, Any]] = [(s.seq, "shape", s) for s in residual]
+    seq_items += [(grp[0].seq, "hatch", grp) for grp in hatches]
+    seq_items += [(q, "ground", el) for q, el in late]
+    hn = 0
+    for _, what, it in sorted(seq_items, key=lambda x: (x[0], x[1])):
+        if what != "shape":
+            flush()
+            if what == "hatch":
+                hn += 1
+                els.append(hatch_element(f"hatch-{hn}", it))
+            else:
+                els.append(it)
+            continue
+        s = it
+        if run and ((s.fill, s.stroke, round(s.width, 2), tuple(s.dash)) !=
+                    (run[0].fill, run[0].stroke, round(run[0].width, 2), tuple(run[0].dash))
+                    or any(inter(s.box, o.box) > 0 for o in run)):
             flush()
         run.append(s)
     flush()
     stats["paths"] = pn
+    if hn:
+        stats["hatches"] = hn
     # lines that join no two frames: paths, one per look
     by_key: dict[tuple, list] = {}
     for g in art["left"]:
@@ -3739,7 +3902,7 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
                                   "y": round((p[1] - f.box[1]) / bh, 4)} for i, p in enumerate(pts, 1)]
     # the raster ground: what nothing above paints
     left_ids = {id(s) for s in raster_left}
-    masks = [(b[0] - 0.6, b[1] - 0.6, b[2] + 0.6, b[3] + 0.6) for b in (claim_of(f) for f in pics)]
+    masks = [(b[0] - 0.6, b[1] - 0.6, b[2] + 0.6, b[3] + 0.6) for b in (claim_of(f) for f in pics_cut)]
     masks += [f.box for f in covering]
     # what lies under a mask is not compared: a map's thousands of paths are not redrawn, nor a
     # picture's art that the source clips at the card's edge (redrawn unclipped, it would paint
@@ -3747,7 +3910,8 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     painted = [drawn_raw(s) for s in sh["shapes"] if id(s) not in left_ids and s.kind != "unseen"
                and not any(inside_mm(s.box, m, 0.0) for m in masks)
                and not (s.kind == "art" and any(inter(s.box, m) >= 0.5 * max(area(s.box), 1e-6) for m in masks))]
-    g = residual_ground(pdf_path, pno, origin, painted, masks, opts, ground_id)
+    g = residual_ground(pdf_path, pno, origin, painted, masks, opts, ground_id,
+                        drop_images=[f.from_image for f in pics if getattr(f, "from_image", None)])
     if g is not None:
         stats["ground"] = True
         stats["groundPixels"] = g["pixels"]
@@ -4566,6 +4730,10 @@ def main(argv: list[str] | None = None) -> int:
                         "between frames, pointers into pictures, paths (default 2)")
     p.add_argument("--max-paths", type=int, default=150,
                    help="a page with more loose shapes than this keeps them in its raster ground (default 150)")
+    p.add_argument("--vector-ground", action="store_true",
+                   help="keep a page's loose art as vectors even when it would go to the raster ground (more "
+                        "loose shapes than --max-paths, clipped art outside the pictures, more stray line pieces "
+                        "than connector pieces, a full-page image)")
     p.add_argument("--ground-min-px", type=int, default=60,
                    help="a page whose raster ground would hold fewer pixels than this (at --ground-dpi) gets none "
                         "(default 60)")

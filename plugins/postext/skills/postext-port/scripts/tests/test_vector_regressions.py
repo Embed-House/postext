@@ -448,5 +448,184 @@ class ClipTest(unittest.TestCase):
         self.assertIsNone(pr.clip_segment((0, 20), (10, 20), (2, 0, 6, 10)))
 
 
+# ---------------------------------------------------------------------------
+# III-4: hatching, paint order, merged shapes, the raster fallback (#1141)
+# ---------------------------------------------------------------------------
+
+COVER = (0.95, 0.92, 0.82)
+HATCH = (0.2, 0.25, 0.4)
+CROSS = (0.8, 0.15, 0.1)
+BANDS = (0.1, 0.55, 0.5)
+LOWER = (0.3, 0.45, 0.7)
+DOT = (0.95, 0.75, 0.1)
+
+
+def bar(page, a, b, half, color):
+    """A thick bar from a to b (mm) as a filled four-sided path."""
+    import math
+
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    n = math.hypot(dx, dy)
+    ox, oy = -dy / n * half, dx / n * half
+    pts = [P(a[0] + ox, a[1] + oy), P(b[0] + ox, b[1] + oy), P(b[0] - ox, b[1] - oy), P(a[0] - ox, a[1] - oy)]
+    page.draw_polyline(pts + [pts[0]], color=None, fill=color, closePath=True)
+
+
+def draw_cover(doc):
+    """A cover: its colour, a title, a block of thin hatching, an X of two
+    bars, three diagonal bands, a dot painted before the lower panel that
+    covers most of the page but not the dot's top."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    page.draw_rect(R(-3, -3, 213, 300), color=None, fill=COVER)
+    page.draw_circle(P(105, 80), 8 * MM, color=None, fill=DOT)
+    page.draw_rect(R(0, 84, 210, 297), color=None, fill=LOWER)
+    text(page, 20, 30, "THE BIG BOOK", size=28, font="hebo")
+    for k in range(12):
+        x = 20 + k * 2.0
+        page.draw_line(P(x, 40), P(x, 70), color=HATCH, width=0.6)
+    bar(page, (130, 110), (190, 170), 4, CROSS)
+    bar(page, (190, 110), (130, 170), 4, CROSS)
+    for k in range(3):
+        y = 200 + k * 25
+        page.draw_polyline([P(10, y), P(60, y), P(80, y + 15), P(30, y + 15), P(10, y)], color=None, fill=BANDS,
+                           closePath=True)
+    return page
+
+
+def png_rgba(w: int, h: int) -> bytes:
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            if (x - w / 2) ** 2 + (y - h / 2) ** 2 < (w / 2.2) ** 2:
+                px[x, y] = (40 + x % 50, 120, 200, 255)
+    buf = io.BytesIO()
+    im.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def png_rgb(w: int, h: int) -> bytes:
+    im = Image.new("RGB", (w, h))
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            px[x, y] = ((x * 3) % 255, (y * 2) % 255, 120)
+    buf = io.BytesIO()
+    im.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def draw_image_pages(doc):
+    """A cut-out drawing (an image with alpha) with a lone star over it, and
+    a page whose ground is a photo with three icons and many specks on it."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    body(page, 20, 4)
+    page.insert_image(R(50, 80, 130, 160), stream=png_rgba(160, 160))
+    star = [P(90 + dx, 115 + dy) for dx, dy in ((0, -8), (2.5, -2.5), (8, -2), (3.5, 2), (5, 8), (0, 4.5), (-5, 8),
+                                                (-3.5, 2), (-8, -2), (-2.5, -2.5))]
+    page.draw_polyline(star + [star[0]], color=None, fill=DOT, closePath=True)
+    body(page, 200, 4)
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    page.insert_image(R(0, 0, 210, 297), stream=png_rgb(105, 148))
+    for k in range(3):
+        page.draw_circle(P(40 + k * 60, 260), 6 * MM, color=None, fill=DOT)
+    text(page, 20, 40, "A PHOTO PAGE", size=28, font="hebo", color=(1, 1, 1))
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class CoverTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        doc = fitz.open()
+        draw_cover(doc)
+        cls.tmp, cls.out = run_extract(doc)
+        cls.lib, cls.res, cls.md, cls.regions = load(cls.out)
+        cls.els = cls.lib["pageTemplates"][0]["decoration"]["elements"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_the_hatching_is_one_shape(self):
+        hatch = [e for e in self.els if e["id"].startswith("hatch-")]
+        self.assertEqual(len(hatch), 1, [e["id"] for e in self.els])
+        self.assertEqual(hatch[0]["d"].count("M"), 12)
+        self.assertFalse([e for e in self.els if e["kind"] == "connector"])
+        self.assertFalse([e for e in self.els if e["id"].startswith("lines-")])
+
+    def test_the_bars_of_the_x_are_two_paths(self):
+        red = [e for e in self.els if e["kind"] == "path" and e.get("fill") and e["fill"]["hex"] == "#cc261a"]
+        self.assertEqual(len(red), 2, red)
+        self.assertTrue(all(e["d"].count("M") == 1 for e in red))
+        # the three bands that do not touch are one path
+        bands = [e for e in self.els if e["kind"] == "path" and e.get("fill") and e["fill"]["hex"] == "#1a8c80"]
+        self.assertEqual(len(bands), 1)
+        self.assertEqual(bands[0]["d"].count("M"), 3)
+
+    def test_the_lower_panel_keeps_its_place_in_the_paint_order(self):
+        ids = [e["id"] for e in self.els]
+        dot = next(i for i, e in enumerate(self.els) if e.get("fill", {}).get("hex") == "#f2bf1a")
+        panel = next(i for i, e in enumerate(self.els) if e.get("style", {}).get("backgroundColor", {}).get("hex")
+                     in ("#4d73b2", "#4d73b3"))
+        self.assertLess(dot, panel, ids)
+        self.assertEqual(self.els[0]["id"], "page-colour")
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class RasterFallbackTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        doc = fitz.open()
+        draw_image_pages(doc)
+        cls.tmp, cls.out = run_extract(doc)
+        cls.vtmp, cls.vout = run_extract(doc, "--vector-ground")
+        cls.lib, cls.res, cls.md, cls.regions = load(cls.out)
+        cls.report = json.loads((cls.out / "report.json").read_text(encoding="utf-8"))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+        cls.vtmp.cleanup()
+
+    def test_a_shape_over_a_cut_out_image_is_kept(self):
+        els = self.lib["pageTemplates"][0]["decoration"]["elements"]
+        star = [e for e in els if e["kind"] == "path" and e.get("fill", {}).get("hex") == "#f2bf1a"]
+        self.assertEqual(len(star), 1, [e["id"] for e in els])
+        res = next(r for r in self.res if r["typeId"] == "picture")
+        self.assertTrue(res["file"].endswith(".png"))
+        # the ground holds no copy of the image under the frame
+        self.assertFalse(any(r["typeId"] == "ground" and r["id"].startswith("p01") for r in self.res))
+
+    def test_a_full_page_image_sends_the_loose_art_to_the_ground(self):
+        els = self.lib["pageTemplates"][1]["decoration"]["elements"]
+        self.assertFalse([e for e in els if e["kind"] == "path"])
+        self.assertTrue(any("full-page image" in n for n in self.report["notes"]["2"]))
+        self.assertTrue(any(r["typeId"] == "ground" and r["id"].startswith("p02") for r in self.res))
+
+    def test_vector_ground_keeps_the_vectors(self):
+        lib = json.loads((self.vout / "library.json").read_text(encoding="utf-8"))
+        els = lib["pageTemplates"][1]["decoration"]["elements"]
+        self.assertEqual(len([e for e in els if e["kind"] == "path"]), 1)    # the three dots, one path
+
+
+class HatchHelpersTest(unittest.TestCase):
+    def test_a_trees_drops_are_no_hatching(self):
+        class S:
+            def __init__(self, a, b, seq):
+                self.a, self.b, self.seq = a, b, seq
+                self.stroke, self.width, self.dash = "#333333", 0.5, []
+                self.box = (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
+
+            def mm_lines(self):
+                return [(self.a, self.b)]
+
+        drops = [S((20 + 3 * k, 50), (20 + 3 * k, 60), k) for k in range(4)]
+        self.assertEqual(len(pr.find_hatches(drops, [])), 1)
+        bar_ = S((20, 50), (29, 50), 9)
+        self.assertEqual(pr.find_hatches(drops + [bar_], []), [])
+        # rules with a line of text between two of them: a table's, not hatching
+        self.assertEqual(pr.find_hatches(drops, [(23.5, 52, 25.5, 56)]), [])
+
+
 if __name__ == "__main__":
     unittest.main()
