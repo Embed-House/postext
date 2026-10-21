@@ -135,17 +135,46 @@ def colour(h: str) -> dict:
     return {"hex": h.lower(), "model": "hex"}
 
 
-def hexc(c: Any) -> str | None:
+WHITE_SNAP = 0.985        # a colour this close to white on every channel is white
+
+
+def rgb_of(c: Any) -> tuple[float, float, float] | None:
+    """A PDF colour as RGB 0-1, converted the way MuPDF converts it for its
+    render: PyMuPDF hands paths in RGB already (Separation, DeviceN, ICC and
+    Lab colours through their alternate space and profile); grey and CMYK
+    tuples, which other readers give, go through MuPDF's own conversion, not
+    a naive formula. None for what it cannot read."""
     if c is None:
         return None
     if isinstance(c, int):
-        return "#%06x" % c
+        return ((c >> 16 & 255) / 255, (c >> 8 & 255) / 255, (c & 255) / 255)
+    c = tuple(float(v) for v in c)
+    if len(c) == 3:
+        return c
     if len(c) == 1:
-        c = (c[0], c[0], c[0])
-    if len(c) == 4:  # CMYK
-        k = c[3]
-        c = ((1 - c[0]) * (1 - k), (1 - c[1]) * (1 - k), (1 - c[2]) * (1 - k))
-    return "#%02x%02x%02x" % tuple(max(0, min(255, round(v * 255))) for v in c[:3])
+        return (c[0], c[0], c[0])
+    if len(c) == 4:
+        try:
+            pm = fitz.Pixmap(fitz.csCMYK, fitz.IRect(0, 0, 1, 1), False)
+            pm.set_pixel(0, 0, tuple(max(0, min(255, round(v * 255))) for v in c))
+            rgb = fitz.Pixmap(fitz.csRGB, pm).pixel(0, 0)
+            return tuple(v / 255 for v in rgb[:3])
+        except Exception:
+            k = c[3]
+            return ((1 - c[0]) * (1 - k), (1 - c[1]) * (1 - k), (1 - c[2]) * (1 - k))
+    return None
+
+
+def hexc(c: Any) -> str | None:
+    """`rgb_of` as #rrggbb. White that a colour-managed conversion left a
+    shade off (a Lab or ICC white comes back as #fdfefe) is written white,
+    so a white rule or stroke stays white beside the page's white."""
+    rgb = rgb_of(c)
+    if rgb is None:
+        return None
+    if min(rgb) >= WHITE_SNAP:
+        return "#ffffff"
+    return "#%02x%02x%02x" % tuple(max(0, min(255, round(v * 255))) for v in rgb)
 
 
 def whiteish(h: str | None) -> bool:
@@ -816,6 +845,27 @@ class Shape:
         return (self.box[0], self.box[1] - half, self.box[2], self.box[3] + half)
 
 
+RULE_FILL_MM = 1.0        # a filled rectangle thinner than this is a rule
+
+
+def fill_rule(s: Shape) -> la.Seg | None:
+    """A filled rectangle under 1 mm thick read as a line: one segment along
+    its length, as thick as the rectangle (pt), in its fill colour. None for
+    anything else (a stroked, curved or square shape)."""
+    if not s.fill or s.stroke or not s.items or len(s.items) > 5 or any(it[0] == "c" for it in s.items):
+        return None
+    if not s.rect_like():
+        return None
+    thick, long = min(s.w, s.h), max(s.w, s.h)
+    if not 0 < thick < RULE_FILL_MM or long < 1.5 or long < 3 * thick:
+        return None
+    key = (s.fill, round(thick * MM, 2), ())
+    x0, y0, x1, y1 = s.box
+    if s.w >= s.h:
+        return la.Seg("h", (y0 + y1) / 2, x0, x1, key, {s.seq})
+    return la.Seg("v", (x0 + x1) / 2, y0, y1, key, {s.seq})
+
+
 def dash_mm(dashes: Any) -> list[float]:
     """A PDF dash array (`[ 3 2 ] 0`) in mm; [] for a solid line."""
     if not dashes or not isinstance(dashes, str) or "[" not in dashes:
@@ -872,6 +922,16 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             s.kind = "line"
             s.segs = segs
             out["lines"].append(s)
+        # a rule drawn as a filled rectangle under 1 mm thick (guides, table and
+        # margin rules from layout programs) is a line of that thickness too
+        for s in shapes:
+            seg = s.kind == "art" and fill_rule(s)
+            if not seg:
+                continue
+            s.kind = "line"
+            s.stroke, s.fill, s.width = s.fill, None, seg.key[1]
+            s.segs = [seg]
+            out["lines"].append(s)
     for s in shapes:
         if s.kind in ("band", "line"):
             continue
@@ -902,6 +962,8 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     for s in sorted(cands, key=lambda s: s.seq):
         twin = next((m for m in merged if all(abs(a - b) < 1.0 for a, b in zip(m.box, s.box))), None)
         if twin:
+            if not twin.fill and s.fill:
+                twin.fill_seq = s.seq     # the fill is painted with the later path
             twin.fill = twin.fill or s.fill
             twin.stroke = twin.stroke or s.stroke
             twin.width = twin.width or s.width
@@ -1538,6 +1600,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     # styles, content, resources
     rid_base = f"{opts.prefix}{pno + 1:02d}"
     res: list[dict] = []
+    if not opts.raster_ground:
+        mark_art_over_fills(ordered, sh)
     for f in ordered:
         describe_frame(f, ctx, opts, report)
     # the page's line art, read against the frames: connectors, pointers, what is left
@@ -1551,7 +1615,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                                      remove=lines_over(art, sh, f.box, origin) if art else None,
                                      neighbours=None if opts.raster_ground else neighbours_of(f.box, sh, origin),
                                      art=[s for s in sh.get("shapes", []) if s.kind == "art"],
-                                     background=ground_round(f.box), over=drawn_over(f, ordered))
+                                     background=ground_round(f.box), over=drawn_over(f, ordered),
+                                     rounds=sh["boxes"] + cards)
             res.append(f.resource)
             if f.kind == "figure":
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
@@ -1969,9 +2034,12 @@ def tab_style(s: Shape, lines: list[Line], ctx: dict) -> dict:
 
 def box_style(f: Frame, ctx: dict, report: dict) -> dict:
     s: Shape = f.shape
-    st: dict[str, Any] = {"id": "box", "backgroundEnabled": bool(s.fill)}
-    if s.fill:
+    st: dict[str, Any] = {"id": "box", "backgroundEnabled": bool(s.fill) and not art_over(f)}
+    if s.fill and not art_over(f):
         st["background"] = colour(s.fill)
+    elif s.fill:
+        report["notes"].append(f"{f.name}: art is painted over its fill; the fill is decoration "
+                               f"({f.name}-fill), the box style has none")
     st["border"] = {"enabled": True, "color": colour(s.stroke), "width": ptv(s.width or 0.5)} if s.stroke else {"enabled": False}
     st["borderRadius"] = mmv(s.radius())
     text = [l for l in f.lines if l.size < ctx["heading_min"]]
@@ -2041,7 +2109,7 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
 def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: tuple, rid: str,
                 opts: argparse.Namespace, renders: Renders, cards: list | None = None, remove: list | None = None,
                 neighbours: list | None = None, art: list | None = None, background: str | None = None,
-                over: set | None = None) -> dict:
+                over: set | None = None, rounds: list | None = None) -> dict:
     """The picture's file. A picture cut from the page keeps only the picture: its text, the
     lines drawn as decoration, the highlights round it and the boxes and tabs the draft lays
     over it (`over`: ids of their shapes; each is drawn by its own frame or mark) leave the
@@ -2050,7 +2118,8 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
     is opaque and would hide it where it lies over it). The cut
     is then no wider than the paint it has of its own (`trim_to_ink`: white margins, a
     neighbour's strip). `art`: the page's art shapes, `background`: the colour the picture
-    stands on."""
+    stands on, `rounds`: the rounded boxes and cards of the page, whose corners clip a
+    picture set in them (`round_clip`)."""
     p = f.picture
     out_dir = Path(opts.out) / "resources"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -2136,6 +2205,10 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
             pm.save(str(file), jpg_quality=90)
     from PIL import Image
 
+    if not alpha:
+        clipped = round_clip(file, f, rounds or [])
+        if clipped is not None:
+            file = clipped
     with Image.open(file) as im:
         w, h = im.size
     res = {"id": rid, "typeId": "picture", "kind": "bitmap", "file": f"resources/{file.name}", "width": w,
@@ -2144,6 +2217,54 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
     if alpha:
         res["contour"] = {"threshold": 0.5, "margin": mmv(1.5)}
     return res
+
+
+def inner_round(s: Shape) -> tuple[tuple, list[float]]:
+    """The inside of a box's outline (mm): its rectangle less half the
+    stroke, and each corner's radius less the same."""
+    half = (s.width * PT_MM / 2) if s.stroke else 0.0
+    x0, y0, x1, y1 = s.box
+    return (x0 + half, y0 + half, x1 - half, y1 - half), [max(0.0, r - half) for r in s.corner_radii()]
+
+
+def round_clip(file: Path, f: Frame, rounds: list, scale: int = 2) -> Path | None:
+    """A picture set in a rounded box or card and running into one of its
+    corners, clipped to the box's inner rectangle and radii: a PNG whose
+    corners are transparent (the source clips the picture so; cut square,
+    it showed the ground past the curve). None when no rounded box holds the
+    picture's corners."""
+    import numpy as np
+    from PIL import Image
+
+    best = None
+    for s in rounds:
+        rect, radii = inner_round(s)
+        if max(radii) < 0.3 or not inside_mm(f.box, s.box, 0.5):
+            continue
+        x0, y0, x1, y1 = rect
+        b = f.box
+        reach = [b[0] < x0 + radii[0] and b[1] < y0 + radii[0], b[2] > x1 - radii[1] and b[1] < y0 + radii[1],
+                 b[2] > x1 - radii[2] and b[3] > y1 - radii[2], b[0] < x0 + radii[3] and b[3] > y1 - radii[3]]
+        if any(r > 0.3 and hit for r, hit in zip(radii, reach)) and (best is None or area(s.box) < area(best[0].box)):
+            best = (s, rect, radii)
+    if best is None:
+        return None
+    _, rect, radii = best
+    with Image.open(file) as im:
+        rgb = im.convert("RGB")
+    w, h = rgb.size
+    kx, ky = w / max(f.box[2] - f.box[0], 1e-6), h / max(f.box[3] - f.box[1], 1e-6)
+    k = (kx + ky) / 2
+    px = ((rect[0] - f.box[0]) * kx * scale, (rect[1] - f.box[1]) * ky * scale,
+          (rect[2] - f.box[0]) * kx * scale, (rect[3] - f.box[1]) * ky * scale)
+    out = outside_round_rect(h * scale, w * scale, px, [r * k * scale for r in radii])
+    cover = 1.0 - out.reshape(h, scale, w, scale).mean(axis=(1, 3))
+    rgba = np.dstack([np.asarray(rgb), np.round(cover * 255).astype(np.uint8)])
+    png = file.with_suffix(".png")
+    Image.fromarray(rgba, "RGBA").save(png, optimize=True)
+    if png != file:
+        file.unlink(missing_ok=True)
+    return png
 
 
 def paint_out(pm: fitz.Pixmap, clip: fitz.Rect, dpi: int, holes: list, background: str | None):
@@ -2374,6 +2495,61 @@ def line_shows(page: fitz.Page, origin: tuple, shapes: list):
     return shows
 
 
+def fill_seq(s: Shape) -> int:
+    """Where a box's fill comes in the page's paint order."""
+    return getattr(s, "fill_seq", s.seq)
+
+
+def mark_art_over_fills(frames: list[Frame], sh: dict) -> None:
+    """Boxes with art painted over their fill (an icon, guides, a rule, a
+    connector inside the box): the frame paints over the decoration, so
+    the fill goes to the decoration (`fill_element`), under that art, and
+    the frame's style is left without it (`box_style`). Art inside a
+    picture or a box nested in this one is theirs. Sets `f.art_over` (the
+    shapes) on each such frame."""
+    pics = [g for g in frames if g.kind in ("picture", "figure")]
+    for f in frames:
+        s = f.shape
+        if f.kind != "box" or s is None or not s.fill or getattr(s, "card_tab", None) is not None:
+            continue
+        nested = [g.box for g in frames if g is not f and g.kind in ("box", "tab") and inside_mm(g.box, f.box, 0.5)]
+        over = [a for a in sh.get("shapes", []) if a.kind in ("art", "line") and a.seq > fill_seq(s)
+                and inside_mm(a.box, f.box, 0.3)
+                and not any(inter(a.box, g.box) >= 0.8 * max(area(a.box), 1e-6) for g in pics)
+                and not any(inside_mm(a.box, b, 0.3) for b in nested)]
+        if over:
+            f.art_over = over
+
+
+def art_over(f: Frame) -> bool:
+    return bool(getattr(f, "art_over", None))
+
+
+def drawn_before_fill(s: Any, frames: list[Frame]) -> bool:
+    """A shape inside a box whose fill went to the decoration, painted
+    before that fill: the source's fill hides it."""
+    if isinstance(s, la.Seg):
+        seqs, box = [i for i in s.ids if isinstance(i, int)], s.box()
+    else:
+        seqs, box = [s.seq], s.box
+    if not seqs:
+        return False
+    return any(art_over(f) and inside_mm(box, f.box, 0.3) and max(seqs) < fill_seq(f.shape) for f in frames)
+
+
+def fill_element(f: Frame) -> dict:
+    """The fill of a box with art over it, as decoration laid on the box's
+    frame (it follows the frame), painted before that art."""
+    st: dict[str, Any] = {"backgroundColor": colour(f.shape.fill)}
+    r = radius_value(f.shape.corner_radii())
+    if r:
+        st["borderRadius"] = r
+    to = f"#{f.name}"
+    return {"kind": "box", "id": f"{f.name}-fill", "style": st,
+            "placement": {"anchor": {"to": to, "edge": "top-left"},
+                          "size": {"width": {"to": to, "edge": "right"}, "height": {"to": to, "edge": "bottom"}}}}
+
+
 def la_frames(frames: list[Frame], shows: Any = None) -> list:
     """The frames as line_art sees them: pictures (ends can point into them),
     boxes and tabs that paint a ground (they cover what runs under them), the
@@ -2383,7 +2559,7 @@ def la_frames(frames: list[Frame], shows: Any = None) -> list:
         if f.kind in ("picture", "figure"):
             kind = f.kind
         elif f.kind in ("box", "tab") and f.shape is not None and f.shape.fill \
-                and getattr(f.shape, "card_tab", None) is None:
+                and getattr(f.shape, "card_tab", None) is None and not art_over(f):
             kind = "opaque"
         else:
             kind = "text"
@@ -2424,6 +2600,8 @@ def read_line_art(sh: dict, frames: list[Frame], shows: Any = None) -> dict:
     # what an opaque frame or a picture covers whole is not drawn (the picture's cut keeps its own)
     covered = [g for g in left if any(f.kind in la.OPAQUE and la.inside(g.point(g.lo), f.box, 0.3)
                                       and la.inside(g.point(g.hi), f.box, 0.3) for f in lfs)]
+    # what a box's fill hid in the source stays hidden when the fill goes to the decoration
+    covered += [g for g in left if g not in covered and drawn_before_fill(g, frames)]
     left = [g for g in left if g not in covered]
     used = set()
     for c in conns:
@@ -2681,7 +2859,7 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
              "borders": 0, "cards": 0, "ground": False}
     pics = [f for f in frames if f.kind in ("picture", "figure")]
     covering = [f for f in frames if f.kind in ("box", "tab") and f.shape is not None and f.shape.fill
-                and getattr(f.shape, "card_tab", None) is None]
+                and getattr(f.shape, "card_tab", None) is None and not art_over(f)]
     raster_left: list[Shape] = []
     # the page's colour
     n_fill = 0
@@ -2736,10 +2914,16 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
         stats["borders"] += 1
         if b.get("tab") is not None:
             els.append(box_element(f"border-{n}-tab", b["tab"], abs_placement(b["tab"].box)))
+    # the fills of boxes with art over them, under that art (the frame keeps the rest of its look)
+    for f in frames:
+        if art_over(f):
+            els.append(fill_element(f))
+            stats["fills"] = stats.get("fills", 0) + 1
     # shapes left on the page (icons, chevrons, ornaments): paths, unless there are too many
     residual = [s for s in sh["shapes"] if s.kind in ("art", "hidden")
                 and not any(inter(s.box, claim_of(f)) >= 0.8 * max(area(s.box), 1e-6) for f in pics)
-                and not any(inside_mm(s.box, f.box, 0.3) for f in covering)]
+                and not any(inside_mm(s.box, f.box, 0.3) for f in covering)
+                and not drawn_before_fill(s, frames)]
     caps = art["caps"]
     residual = [s for s in residual if id(s) not in art["cap_shapes"]]
     if len(residual) > opts.max_paths:
