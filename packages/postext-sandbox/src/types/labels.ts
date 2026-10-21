@@ -3719,6 +3719,9 @@ export interface SandboxLabels {
   resourceTypePlacementCaptionMeasureTooltip: string;
   resourceCaptionMeasureSlot: string;
   resourceCaptionMeasurePicture: string;
+  resourceCaptionSideOff: string;
+  resourceCaptionSideMargin: string;
+  resourceCaptionSideInside: string;
   resourceTypePlacementWrap: string;
   resourceTypePlacementWrapTooltip: string;
   resourceWrapNone: string;

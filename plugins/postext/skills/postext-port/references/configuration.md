@@ -1372,6 +1372,10 @@ align?:   'left' (default) | 'center' | 'right' | 'start' | 'end'   (start/end �
                          flow sides, so in an RTL book 'left' is the sheet's right)
 captionSide?: boolean    caption in the float-only side column, level with the figure (oneAndHalf+floats): column floats and,
                          ≥ 1.28, a 'here' embed one column wide (layout.inlineCaptionSide; not in a box, a vertical page or with wrap)
+              | 'inside' ≥ 1.52: caption + note beside a picture inside its own slot, any layout (1 or 2 columns,
+                         page span, 'here', box, frame): picture = `width` of the slot (default 0.5) at `align`'s side,
+                         caption = the rest after layout.gutterWidth, top-aligned; block = the taller of the two;
+                         band < 1/5 of the slot -> caption under. Pictures only; no wrap, rotate or vertical page
 columns?: number         ≥ 1.18: a span:'column' float across this many adjacent columns (picture across 2 of 5);
                          ≥ the page's column count = page-wide; ignored for page/side spans, rotate, here;
                          captionSide only on 1-column floats
