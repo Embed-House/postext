@@ -713,7 +713,12 @@ Pick the path per [sources.md](references/sources.md):
   resource caption, ornaments
   by a running head are anchored to it; a box with art over its fill gets the
   fill as decoration under that art, bars under 1 mm are lines, a picture in
-  a rounded box is clipped to its corners),
+  a rounded box is clipped to its corners, a chart keeps its axes and its
+  lettering in its cut and lifts no labels, connector ends are measured on
+  the boxes the template lays and a slanted leader points into its picture,
+  art is read inside the clips it is painted in, hatching is one shape, and
+  a page whose loose art vectors would draw badly keeps it in its raster
+  ground unless `--vector-ground`),
   `scripts/template_dedupe.py work/regions --laid laid.json` (one template per kind
   of page, `extends` children, merged styles and grounds, frames on a lattice
   as a repeating grid (cards that differ only in colour too, each naming a look from
